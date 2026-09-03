@@ -1,0 +1,17 @@
+﻿# Dependências de Desenvolvimento, Qualidade e Testes — Ecossistema AIDD
+-r requirements.txt
+
+# Testes e Cobertura
+pytest>=7.4.0
+pytest-cov>=4.1.0
+pytest-asyncio>=0.21.0
+pytest-mock>=3.11.0
+
+# Linters e Qualidade
+flake8>=6.0.0
+black>=23.7.0
+mypy>=1.4.0
+
+# Ferramental de Segurança
+bandit>=1.7.5
+pip-audit>=2.6.0
