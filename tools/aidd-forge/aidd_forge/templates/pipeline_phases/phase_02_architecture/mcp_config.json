@@ -1,0 +1,10 @@
+{
+  "phase": "phase_02_architecture",
+  "mcpServers": {
+    "schemas": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-schemas"],
+      "schema_draft": "2020-12"
+    }
+  }
+}

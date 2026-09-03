@@ -1,0 +1,40 @@
+<!-- Componente UI: Modulo1 -->
+<div class="bg-slate-900/60 rounded-xl border border-slate-800 p-5 space-y-4 shadow-xl" id="module-modulo1">
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-800 pb-3">
+        <div>
+            <h3 class="text-sm font-bold text-slate-100 flex items-center gap-2">
+                <span class="w-2.5 h-2.5 rounded-full bg-sky-500"></span>
+                Modulo1
+            </h3>
+            <p class="text-xs text-slate-400">Módulo de gestão e operações para Modulo1</p>
+        </div>
+        <div class="flex items-center gap-2">
+            <button type="button" onclick="carregarModulo1()" class="p-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 transition" title="Recarregar dados" aria-label="Recarregar dados">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+            </button>
+            <button type="button" onclick="abrirModalNovo('modulo1')" class="px-3 py-1.5 bg-sky-600 hover:bg-sky-500 text-white rounded-lg text-xs font-semibold flex items-center gap-1.5 transition shadow-lg shadow-sky-600/20" aria-label="Criar novo Modulo1">
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+                <span>Novo Modulo1</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- Tabela / Lista de Itens -->
+    <div class="overflow-x-auto">
+        <table class="w-full text-left text-xs">
+            <thead class="bg-slate-950/80 text-slate-400 uppercase tracking-wider font-semibold border-b border-slate-800">
+                <tr>
+                    <th class="p-2.5">ID</th>
+                    <th class="p-2.5">Título</th>
+                    <th class="p-2.5">Descrição</th>
+                    <th class="p-2.5">Status</th>
+                    <th class="p-2.5">Data Criação</th>
+                    <th class="p-2.5 text-right">Ações</th>
+                </tr>
+            </thead>
+            <tbody id="tabela-modulo1-corpo" class="divide-y divide-slate-800/60 text-slate-300">
+                <tr><td colspan="6" class="p-4 text-center text-slate-500">Carregando modulo1...</td></tr>
+            </tbody>
+        </table>
+    </div>
+</div>

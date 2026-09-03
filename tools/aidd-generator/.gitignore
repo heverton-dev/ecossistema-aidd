@@ -1,0 +1,53 @@
+# Dependências
+node_modules/
+venv/
+env/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.venv/
+
+# Locks de dependências
+package-lock.json
+yarn.lock
+bun.lock
+uv.lock
+Cargo.lock
+
+# Build
+dist/
+build/
+.next/
+.nuxt/
+out/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+npm-debug.log*
+
+# Temp
+*.tmp
+.cache/
+
+# Cobertura
+.coverage
+htmlcov/
+
+# Credenciais locais (NUNCA commitar)
+.env
+.env.*
+!.env.example
+
+# Cache interno da ferramenta (requisições delegadas + saídas de fase,
+# geradas em tempo de execução — nunca são código-fonte)
+scripts/.aidd/
+.aidd/cache/

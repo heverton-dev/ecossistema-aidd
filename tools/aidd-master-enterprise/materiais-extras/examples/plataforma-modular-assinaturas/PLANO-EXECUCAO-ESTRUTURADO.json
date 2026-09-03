@@ -1,0 +1,46 @@
+{
+  "projeto": {
+    "nome": "plataforma-de-assinaturas",
+    "descricao": "Plataforma de Assinaturas e Cursos Modular",
+    "versao": "2.0.0",
+    "arquitetura": "AIDD Modular Data-Driven",
+    "dual_database": true,
+    "openapi_swagger": true,
+    "docker_ready": true,
+    "status": "INICIALIZADO"
+  },
+  "modulos_instalados": [
+    "core"
+  ],
+  "fases": [
+    {
+      "id": "fase-01-core-setup",
+      "nome": "Configuracao do Core, Dual Database e EventBus",
+      "status": "CONCLUIDO",
+      "expected_outputs": [
+        "src/core/database.py",
+        "src/core/events.py",
+        "src/core/openapi.py"
+      ]
+    },
+    {
+      "id": "fase-02-modulos-iniciais",
+      "nome": "Criacao dos Modulos de Dominio",
+      "status": "PENDENTE",
+      "expected_outputs": [
+        "src/modules/"
+      ]
+    },
+    {
+      "id": "fase-03-infra-e-deploy",
+      "nome": "Empacotamento Docker, Deploy Script e Testes de Carga",
+      "status": "CONCLUIDO",
+      "expected_outputs": [
+        "Dockerfile",
+        "docker-compose.yml",
+        "deploy.sh",
+        "tests/load/locustfile.py"
+      ]
+    }
+  ]
+}

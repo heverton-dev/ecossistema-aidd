@@ -1,0 +1,138 @@
+{
+  "metadata": {
+    "versao": "1.0",
+    "data_criacao": "2026-08-30",
+    "ultima_atualizacao": "2026-09-03T19:05:24.471928+00:00",
+    "objetivo": "Registro de compatibilidade de orquestração por harness",
+    "principio": "Universalidade — cada harness auto-detecta: orquestração OU headless-only"
+  },
+  "harness_compatibility": {
+    "claude-code": {
+      "nome": "Claude Code",
+      "orquestracao": "✅ SUPORTADO",
+      "protocolo_delegado": true,
+      "fallback_headless": true,
+      "modo_padrao": "delegado",
+      "data_teste": "2026-08-30",
+      "versao_testada": "1.0",
+      "nota": "Modo nativo — detecta CLAUDECODE=1, aguarda resposta em .aidd/cache/",
+      "instrucoes": "Nenhuma configuração necessária. Automático."
+    },
+    "codex": {
+      "nome": "Google Codex",
+      "orquestracao": "⏳ NÃO TESTADO",
+      "protocolo_delegado": null,
+      "fallback_headless": true,
+      "modo_padrao": "headless",
+      "data_teste": null,
+      "versao_testada": null,
+      "nota": "Suporta headless. Orquestração: requer detecção de env var CODEX_* ou similar.",
+      "instrucoes": "Configure LLM_MODEL=google/codex-* e chave de API do Google."
+    },
+    "gemini-cli": {
+      "nome": "Google Gemini CLI",
+      "orquestracao": "⏳ NÃO TESTADO",
+      "protocolo_delegado": null,
+      "fallback_headless": true,
+      "modo_padrao": "headless",
+      "data_teste": null,
+      "versao_testada": null,
+      "nota": "Suporta headless. Orquestração: verificar suporte para monitorar filesystem async.",
+      "instrucoes": "Configure LLM_MODEL=google/gemini-* e chave de API do Google."
+    },
+    "opencode": {
+      "nome": "OpenCode",
+      "orquestracao": "⏳ NÃO TESTADO",
+      "protocolo_delegado": null,
+      "fallback_headless": true,
+      "modo_padrao": "headless",
+      "data_teste": null,
+      "versao_testada": null,
+      "nota": "Suporta headless. Orquestração: requer implementação de hook.",
+      "instrucoes": "Configure LLM_MODEL=openai/* e OPENAI_API_KEY."
+    },
+    "mimocode": {
+      "nome": "MimoCode",
+      "orquestracao": "⏳ NÃO TESTADO",
+      "protocolo_delegado": null,
+      "fallback_headless": true,
+      "modo_padrao": "headless",
+      "data_teste": null,
+      "versao_testada": null,
+      "nota": "Suporta headless. Orquestração: desconhecido.",
+      "instrucoes": "Configure LLM_MODEL e chave apropriada."
+    },
+    "hermes": {
+      "nome": "Hermes",
+      "orquestracao": "⏳ NÃO TESTADO",
+      "protocolo_delegado": null,
+      "fallback_headless": true,
+      "modo_padrao": "headless",
+      "data_teste": null,
+      "versao_testada": null,
+      "nota": "Suporta headless. Orquestração: desconhecido.",
+      "instrucoes": "Configure LLM_MODEL e chave apropriada."
+    },
+    "deepseek": {
+      "nome": "DeepSeek",
+      "orquestracao": "⏳ NÃO TESTADO",
+      "protocolo_delegado": null,
+      "fallback_headless": true,
+      "modo_padrao": "headless",
+      "data_teste": null,
+      "versao_testada": null,
+      "nota": "Suporta headless. Orquestração: desconhecido.",
+      "instrucoes": "Configure LLM_MODEL=deepseek/* e chave de API."
+    },
+    "ollama": {
+      "nome": "Ollama (local)",
+      "orquestracao": "⏳ NÃO TESTADO",
+      "protocolo_delegado": null,
+      "fallback_headless": true,
+      "modo_padrao": "headless",
+      "data_teste": null,
+      "versao_testada": null,
+      "nota": "Suporta headless local. Orquestração: N/A (local não pode orquestrar subprocessos remotos).",
+      "instrucoes": "Configure LLM_MODEL=ollama/model-name e OLLAMA_BASE_URL."
+    },
+    "antigravity": {
+      "nome": "Antigravity",
+      "orquestracao": "⏳ NÃO SUPORTADO",
+      "protocolo_delegado": false,
+      "fallback_headless": true,
+      "modo_padrao": "headless",
+      "data_teste": "2026-09-03",
+      "versao_testada": "2.1",
+      "nota": "Auto-adicionado pelo teste de compatibilidade",
+      "instrucoes": ""
+    }
+  },
+  "como_testar": {
+    "passo_1": "Execute script de detecção automática",
+    "comando": "python scripts/gates/G_HARNESS_COMPAT.py --auto-detect",
+    "resultado_esperado": "Arquivo atualizado com detecção real, não suposição"
+  },
+  "como_adicionar_novo_harness": {
+    "passo_1": "Adicione entrada em harness_compatibility com status inicial ⏳",
+    "passo_2": "Implemente detecção de env var no script G_HARNESS_COMPAT.py",
+    "passo_3": "Teste manualmente em novo harness",
+    "passo_4": "Atualize HARNESS-COMPAT.json com resultado real",
+    "passo_5": "Commite com prova (output de teste, screenshot, etc)"
+  },
+  "principio_aidd": {
+    "universalidade": "Nenhum harness é forçado a usar orquestração. Todos suportam headless.",
+    "determinismo": "G_HARNESS_COMPAT.py é 100% Python — descobre compatibilidade sem teoria.",
+    "rastreabilidade": "Cada harness tem timestamp de último teste + versão testada.",
+    "transparencia": "Arquivo JSON público — usuário vê exatamente o status de cada harness."
+  },
+  "componentes_injetados": [
+    {
+      "id": "61efb4bec35c",
+      "tipo": "mcp",
+      "nome": "mcp-verificador-cve",
+      "descricao": "Servidor MCP que expoe uma tool de consulta simulada de CVEs conhecidas para pacotes Python informados pelo nome, como apoio a auditoria de seguranca de dependencias.",
+      "dest": "mcps/mcp-verificador-cve/server.py",
+      "data_injecao": "2026-09-03T19:05:24.471916+00:00"
+    }
+  ]
+}

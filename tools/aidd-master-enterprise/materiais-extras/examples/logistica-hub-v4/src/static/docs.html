@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="pt-BR" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Logistica Hub Suite v5.1 — Documentacao Tecnica Oficial</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #020617;
+            --sidebar-bg: #050b18;
+            --border: rgba(255, 255, 255, 0.08);
+            --border-hover: rgba(255, 255, 255, 0.16);
+            --primary: #3b82f6;
+            --primary-light: #60a5fa;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --code-bg: #030712;
+            --callout-bg: rgba(59, 130, 246, 0.08);
+            --callout-border: rgba(59, 130, 246, 0.3);
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Plus Jakarta Sans', sans-serif; }
+        body { background-color: var(--bg); color: var(--text-main); min-height: 100vh; display: flex; flex-direction: column; }
+
+        header { height: 56px; background: rgba(2, 6, 23, 0.95); backdrop-filter: blur(20px); border-bottom: 1px solid var(--border); position: fixed; top: 0; left: 0; right: 0; z-index: 50; display: flex; align-items: center; justify-content: space-between; padding: 0 2rem; }
+        .brand-group { display: flex; align-items: center; gap: 0.8rem; }
+        .brand-badge { background: rgba(59, 130, 246, 0.15); border: 1px solid rgba(59, 130, 246, 0.3); color: var(--primary-light); font-size: 0.72rem; font-weight: 800; padding: 0.2rem 0.5rem; border-radius: 9999px; }
+        
+        .btn { padding: 0.45rem 0.9rem; border-radius: 8px; font-size: 0.82rem; font-weight: 600; border: 1px solid var(--border); background: rgba(255, 255, 255, 0.04); color: #fff; text-decoration: none; cursor: pointer; display: inline-flex; align-items: center; gap: 0.4rem; transition: all 0.2s; }
+        .btn:hover { background: rgba(255, 255, 255, 0.08); border-color: var(--border-hover); }
+        .btn-primary { background: var(--primary); border-color: var(--primary); }
+
+        .layout-container { display: grid; grid-template-columns: 290px 1fr 240px; margin-top: 56px; min-height: calc(100vh - 56px); }
+        @media (max-width: 1100px) { .layout-container { grid-template-columns: 260px 1fr; } aside.toc { display: none; } }
+        @media (max-width: 768px) { .layout-container { grid-template-columns: 1fr; } aside.sidebar { display: none; } }
+
+        aside.sidebar { background: var(--sidebar-bg); border-right: 1px solid var(--border); position: sticky; top: 56px; height: calc(100vh - 56px); overflow-y: auto; padding: 1.2rem 0.8rem; display: flex; flex-direction: column; gap: 1.2rem; }
+        .search-trigger { display: flex; align-items: center; justify-content: space-between; background: rgba(255, 255, 255, 0.04); border: 1px solid var(--border); padding: 0.55rem 0.8rem; border-radius: 8px; color: var(--text-muted); font-size: 0.82rem; cursor: pointer; }
+        .search-trigger kbd { background: rgba(255, 255, 255, 0.08); padding: 0.1rem 0.4rem; border-radius: 4px; font-family: 'JetBrains Mono', monospace; font-size: 0.7rem; }
+        
+        .sidebar-nav { list-style: none; }
+        .nav-cat { font-size: 0.72rem; font-weight: 800; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; padding: 0.8rem 0.6rem 0.3rem 0.6rem; }
+        .nav-item { display: flex; align-items: center; gap: 0.5rem; padding: 0.5rem 0.7rem; border-radius: 8px; color: #cbd5e1; font-size: 0.86rem; font-weight: 600; text-decoration: none; cursor: pointer; transition: all 0.15s; }
+        .nav-item:hover, .nav-item.active { background: rgba(59, 130, 246, 0.12); color: var(--primary-light); }
+
+        main.content { padding: 3.5rem 4rem; max-width: 900px; margin: 0 auto; width: 100%; }
+        .breadcrumb { font-size: 0.82rem; color: var(--text-muted); margin-bottom: 1.5rem; }
+        .doc-title { font-size: 2.4rem; font-weight: 800; letter-spacing: -0.03em; margin-bottom: 0.8rem; color: #fff; }
+        .doc-subtitle { font-size: 1.15rem; color: var(--text-muted); line-height: 1.6; margin-bottom: 2rem; padding-bottom: 1.5rem; border-bottom: 1px solid var(--border); }
+        
+        h2 { font-size: 1.5rem; font-weight: 800; margin-top: 2.2rem; margin-bottom: 1rem; color: #fff; }
+        p { font-size: 0.98rem; line-height: 1.7; color: #cbd5e1; margin-bottom: 1.2rem; }
+        ul, ol { padding-left: 1.4rem; margin-bottom: 1.2rem; color: #cbd5e1; line-height: 1.7; }
+        li { margin-bottom: 0.4rem; }
+
+        .doc-table { width: 100%; border-collapse: collapse; margin: 1.5rem 0 2rem 0; font-size: 0.88rem; }
+        .doc-table th, .doc-table td { padding: 0.85rem 1rem; text-align: left; border-bottom: 1px solid var(--border); }
+        .doc-table th { background: rgba(255, 255, 255, 0.02); font-size: 0.75rem; font-weight: 800; color: var(--text-muted); text-transform: uppercase; }
+        .doc-table td code { font-family: 'JetBrains Mono', monospace; font-size: 0.82rem; color: var(--primary-light); background: rgba(59, 130, 246, 0.1); padding: 0.15rem 0.35rem; border-radius: 4px; }
+
+        pre.code-box { background: var(--code-bg); border: 1px solid var(--border); border-radius: 12px; padding: 1.2rem; font-family: 'JetBrains Mono', monospace; font-size: 0.82rem; line-height: 1.6; color: #e2e8f0; overflow-x: auto; margin: 1.5rem 0; }
+        .callout { background: var(--callout-bg); border: 1px solid var(--callout-border); border-radius: 12px; padding: 1.2rem 1.4rem; margin: 1.5rem 0; display: flex; gap: 1rem; align-items: flex-start; }
+        .callout.tip { background: rgba(16, 185, 129, 0.08); border-color: rgba(16, 185, 129, 0.3); }
+
+        .modal-search { position: fixed; inset: 0; background: rgba(0, 0, 0, 0.85); backdrop-filter: blur(16px); display: none; align-items: flex-start; justify-content: center; padding-top: 12vh; z-index: 100; }
+        .search-container { background: #080c18; border: 1px solid var(--border-hover); border-radius: 16px; width: 100%; max-width: 600px; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.9); overflow: hidden; }
+        .search-input-header { display: flex; align-items: center; gap: 0.8rem; padding: 1.2rem 1.5rem; border-bottom: 1px solid var(--border); }
+        .search-input-header input { background: none; border: none; color: #fff; font-size: 1.1rem; width: 100%; outline: none; }
+        .search-results-list { max-height: 380px; overflow-y: auto; padding: 0.8rem; }
+        .search-item { padding: 0.8rem 1rem; border-radius: 8px; cursor: pointer; }
+        .search-item:hover { background: rgba(59, 130, 246, 0.15); }
+        .search-item-title { font-weight: 700; font-size: 0.95rem; color: #fff; }
+        .search-item-sub { font-size: 0.8rem; color: var(--text-muted); }
+
+        aside.toc { position: sticky; top: 56px; height: calc(100vh - 56px); padding: 2rem 1.5rem; font-size: 0.82rem; }
+        .toc-title { font-weight: 700; color: var(--text-muted); text-transform: uppercase; margin-bottom: 1rem; font-size: 0.72rem; letter-spacing: 0.05em; }
+        .toc-link { display: block; color: var(--text-muted); text-decoration: none; margin-bottom: 0.6rem; transition: color 0.15s; }
+        .toc-link:hover { color: var(--primary-light); }
+    
+/* =========================================================================
+   DESIGN SYSTEM UNIVERSAL (SCROLLBAR 4PX & BUTTON WRAP PROTECTION)
+   ========================================================================= */
+* {
+    scrollbar-width: thin;
+    scrollbar-color: rgba(59, 130, 246, 0.4) transparent;
+}
+::-webkit-scrollbar {
+    width: 4px !important;
+    height: 4px !important;
+}
+::-webkit-scrollbar-track {
+    background: transparent !important;
+}
+::-webkit-scrollbar-thumb {
+    background: rgba(59, 130, 246, 0.35) !important;
+    border-radius: 9999px !important;
+    transition: background 0.2s ease !important;
+}
+::-webkit-scrollbar-thumb:hover {
+    background: rgba(59, 130, 246, 0.75) !important;
+}
+
+button, .btn, .btn-primary, .btn-secondary, .btn-gold, .btn-danger,
+.tab-btn, .resp-status-btn, .lang-tab, .endpoint-link, .nav-item {
+    white-space: nowrap !important;
+    text-overflow: ellipsis;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    flex-shrink: 0 !important;
+    line-height: 1.2 !important;
+}
+
+    </style>
+</head>
+<body>
+    <header>
+        <div class="brand-group">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#3b82f6" stroke-width="2.5"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
+            <span style="font-weight: 800; font-size: 0.95rem;">Logistica Hub Suite v5.1</span>
+            <span class="brand-badge">Documentacao Oficial</span>
+        </div>
+        <div style="display: flex; gap: 0.8rem;">
+            <a href="/" class="btn">Aplicacao Super-App</a>
+            <a href="/webhooks" class="btn" style="border-color: rgba(139, 92, 246, 0.4); color: #c4b5fd;">Webhook Studio</a>
+            <a href="/mcp" class="btn" style="border-color: rgba(16,185,129,0.4); color: #34d399;">Portal MCP</a>
+            <a href="/docs" class="btn btn-primary">Swagger Studio (/docs)</a>
+        </div>
+    </header>
+
+    <div class="layout-container">
+        <aside class="sidebar">
+            <div class="search-trigger" onclick="abrirBusca()">
+                <div style="display: flex; align-items: center; gap: 0.5rem;">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                    Pesquisar na suite...
+                </div>
+                <kbd>Ctrl K</kbd>
+            </div>
+            <ul class="sidebar-nav" id="sidebar-nav-list"></ul>
+        </aside>
+
+        <main class="content">
+            <div class="breadcrumb" id="breadcrumb-box">Docs > Arquitetura</div>
+            <h1 class="doc-title" id="page-title">Carregando...</h1>
+            <p class="doc-subtitle" id="page-subtitle"></p>
+            <div id="page-content-area"></div>
+        </main>
+
+        <aside class="toc">
+            <div class="toc-title">Navegacao Rapida</div>
+            <div id="toc-links-area"></div>
+        </aside>
+    </div>
+
+    <div class="modal-search" id="search-modal" onclick="fecharBusca(event)">
+        <div class="search-container" onclick="event.stopPropagation()">
+            <div class="search-input-header">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#60a5fa" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                <input type="text" id="modal-search-input" placeholder="Pesquisar em toda a documentacao da suite..." oninput="filtrarResultadosBusca(this.value)">
+                <kbd style="color: var(--text-muted); font-size: 0.75rem; background: rgba(255,255,255,0.06); padding: 0.2rem 0.5rem; border-radius: 4px;">ESC</kbd>
+            </div>
+            <div class="search-results-list" id="search-results-box"></div>
+        </div>
+    </div>
+
+    <script>
+        const docPages = [
+            {
+                "id": "intro",
+                "cat": "1. Arquitetura da Suite",
+                "title": "Logistica Hub v5.1 — Visao Geral",
+                "subtitle": "Plataforma corporativa integrada para gestao de frotas, entregas rastreadas, WMS e faturamento de fretes.",
+                "content": `
+                    <div class="callout tip">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+                        <div>
+                            <strong>Padrão Monólito Modular AIDD v5.1:</strong> Arquitetura de microsserviços verticais integrados em um único núcleo de alta performance com Full CRUD em todas as fatias, EventBus assíncrono, Webhooks HMAC e Servidor Nativo MCP (Model Context Protocol).
+                        </div>
+                    </div>
+
+                    <h2>Princípios Inegociáveis de Engenharia (O Mínimo é o Perfeito)</h2>
+                    <p>O Logística Hub v5.1 implementa os 4 Pilares da Diligência Operacional:</p>
+                    <ul>
+                        <li><strong>Full CRUD em 100% dos Módulos:</strong> Criação, leitura, atualização e exclusão persistidas em banco de dados SQLite WAL com confirmações visuais táteis.</li>
+                        <li><strong>Documentação OpenAPI 3.1 & Swagger Studio:</strong> Todas as 20 rotas de API possuem esquemas de entrada, saídas e testador interativo ao vivo.</li>
+                        <li><strong>Disparadores de Webhook em Tempo Real:</strong> Cada operação emite eventos assíncronos no EventBus e despacha payloads estruturados para integrações externas.</li>
+                        <li><strong>Conectividade Universal com IA (MCP):</strong> 20 ferramentas tipadas em JSON-RPC 2.0 prontas para Claude Desktop, Cursor e Antigravity.</li>
+                    </ul>
+                `
+            },
+            {
+                "id": "mod_frotas",
+                "cat": "2. Módulos & Full CRUD",
+                "title": "1. Gestão de Frotas & Veículos",
+                "subtitle": "Controle patrimonial de caminhões, motoristas, telemetria e disponibilidade operacional.",
+                "content": `
+                    <h2>Operações CRUD da Frota</h2>
+                    <table class="doc-table">
+                        <thead>
+                            <tr><th>Operação</th><th>Método & Rota</th><th>Ferramenta MCP</th><th>Evento / Webhook</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr><td><strong>Criar</strong></td><td><code>POST /api/frotas/veiculos/salvar</code></td><td><code>frotas_cadastrar_veiculo</code></td><td><code>frotas.veiculo_cadastrado</code></td></tr>
+                            <tr><td><strong>Ler</strong></td><td><code>GET /api/frotas/veiculos</code></td><td><code>frotas_listar_veiculos</code></td><td>-</td></tr>
+                            <tr><td><strong>Atualizar</strong></td><td><code>POST /api/frotas/veiculos/alternar</code></td><td><code>frotas_alternar_status</code></td><td><code>frotas.status_alterado</code></td></tr>
+                            <tr><td><strong>Excluir</strong></td><td><code>POST /api/frotas/veiculos/excluir</code></td><td><code>frotas_excluir_veiculo</code></td><td><code>frotas.veiculo_removido</code></td></tr>
+                        </tbody>
+                    </table>
+                `
+            },
+            {
+                "id": "mod_entregas",
+                "cat": "2. Módulos & Full CRUD",
+                "title": "2. Entregas & Rastreamento",
+                "subtitle": "Ciclo de vida de remessas com código de rastreamento UUID e disparos de faturamento.",
+                "content": `
+                    <h2>Operações CRUD de Entregas</h2>
+                    <table class="doc-table">
+                        <thead>
+                            <tr><th>Operação</th><th>Método & Rota</th><th>Ferramenta MCP</th><th>Evento / Webhook</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr><td><strong>Criar</strong></td><td><code>POST /api/entregas/salvar</code></td><td><code>entregas_criar_remessa</code></td><td><code>entregas.remessa_criada</code></td></tr>
+                            <tr><td><strong>Ler</strong></td><td><code>GET /api/entregas/listar</code></td><td><code>entregas_listar</code></td><td>-</td></tr>
+                            <tr><td><strong>Atualizar / Finalizar</strong></td><td><code>POST /api/entregas/finalizar</code></td><td><code>entregas_atualizar_status</code></td><td><code>cross_domain.entrega_to_financeiro</code></td></tr>
+                            <tr><td><strong>Excluir</strong></td><td><code>POST /api/entregas/excluir</code></td><td><code>entregas_excluir_remessa</code></td><td><code>entregas.remessa_cancelada</code></td></tr>
+                        </tbody>
+                    </table>
+                `
+            },
+            {
+                "id": "mod_wms",
+                "cat": "2. Módulos & Full CRUD",
+                "title": "3. Armazém WMS & Localização",
+                "subtitle": "Mapeamento de endereçamento de paletes, SKUs industriais e inventário contínuo.",
+                "content": `
+                    <h2>Operações CRUD de Estoque WMS</h2>
+                    <table class="doc-table">
+                        <thead>
+                            <tr><th>Operação</th><th>Método & Rota</th><th>Ferramenta MCP</th><th>Evento / Webhook</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr><td><strong>Criar</strong></td><td><code>POST /api/wms/estoque/salvar</code></td><td><code>wms_adicionar_item</code></td><td><code>wms.item_adicionado</code></td></tr>
+                            <tr><td><strong>Ler</strong></td><td><code>GET /api/wms/estoque</code></td><td><code>wms_consultar_estoque</code></td><td>-</td></tr>
+                            <tr><td><strong>Atualizar</strong></td><td><code>POST /api/wms/estoque/ajustar</code></td><td><code>wms_ajustar_estoque</code></td><td><code>wms.estoque_ajustado</code></td></tr>
+                            <tr><td><strong>Excluir</strong></td><td><code>POST /api/wms/estoque/excluir</code></td><td><code>wms_excluir_item</code></td><td><code>wms.item_removido</code></td></tr>
+                        </tbody>
+                    </table>
+                `
+            },
+            {
+                "id": "mod_financeiro",
+                "cat": "2. Módulos & Full CRUD",
+                "title": "4. Financeiro de Fretes & DRE",
+                "subtitle": "Gestão de receitas de frete, custos de combustível, pedágios e saldo líquido da frota.",
+                "content": `
+                    <h2>Operações CRUD Financeiras</h2>
+                    <table class="doc-table">
+                        <thead>
+                            <tr><th>Operação</th><th>Método & Rota</th><th>Ferramenta MCP</th><th>Evento / Webhook</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr><td><strong>Criar</strong></td><td><code>POST /api/financeiro/fretes/salvar</code></td><td><code>financeiro_lancar_movimentacao</code></td><td><code>financeiro.lancamento_criado</code></td></tr>
+                            <tr><td><strong>Ler</strong></td><td><code>GET /api/financeiro/fretes</code></td><td><code>financeiro_listar_fretes</code></td><td>-</td></tr>
+                            <tr><td><strong>Atualizar</strong></td><td><code>POST /api/financeiro/fretes/alternar-status</code></td><td><code>financeiro_alternar_status</code></td><td><code>financeiro.status_alterado</code></td></tr>
+                            <tr><td><strong>Excluir</strong></td><td><code>POST /api/financeiro/fretes/excluir</code></td><td><code>financeiro_excluir_lancamento</code></td><td><code>financeiro.lancamento_excluido</code></td></tr>
+                        </tbody>
+                    </table>
+                `
+            },
+            {
+                "id": "mod_suporte",
+                "cat": "2. Módulos & Full CRUD",
+                "title": "5. Central de Incidentes & SLA",
+                "subtitle": "Monitoramento de panes mecânicas, sinistros e conformidade com níveis de serviço.",
+                "content": `
+                    <h2>Operações CRUD de Incidentes SLA</h2>
+                    <table class="doc-table">
+                        <thead>
+                            <tr><th>Operação</th><th>Método & Rota</th><th>Ferramenta MCP</th><th>Evento / Webhook</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr><td><strong>Criar</strong></td><td><code>POST /api/suporte/incidentes/salvar</code></td><td><code>suporte_abrir_incidente</code></td><td><code>suporte.incidente_aberto</code></td></tr>
+                            <tr><td><strong>Ler</strong></td><td><code>GET /api/suporte/incidentes</code></td><td><code>suporte_listar_incidentes</code></td><td>-</td></tr>
+                            <tr><td><strong>Atualizar / Resolver</strong></td><td><code>POST /api/suporte/incidentes/resolver</code></td><td><code>suporte_resolver_incidente</code></td><td><code>suporte.incidente_resolvido</code></td></tr>
+                            <tr><td><strong>Excluir</strong></td><td><code>POST /api/suporte/incidentes/excluir</code></td><td><code>suporte_excluir_incidente</code></td><td><code>suporte.incidente_excluido</code></td></tr>
+                        </tbody>
+                    </table>
+                `
+            },
+            {
+                "id": "mcp_server_specs",
+                "cat": "3. Inteligência Artificial (MCP)",
+                "title": "Servidor Nativo Universal MCP 4.0",
+                "subtitle": "20 Ferramentas Model Context Protocol prontas para Claude Desktop, Cursor e Antigravity.",
+                "content": `
+                    <h2>JSON-RPC 2.0 Nativo</h2>
+                    <p>O servidor expõe em <code>/api/mcp/rpc</code> e na rota <code>/mcp</code> todas as 20 ferramentas cobrindo 100% das operações da suíte.</p>
+                `
+            },
+            {
+                "id": "webhook_studio_specs",
+                "cat": "4. Webhook Configuration Studio",
+                "title": "Webhook Configuration Studio v4",
+                "subtitle": "Gerenciamento visual de endpoints, simulação de eventos, logs de auditoria e validação HMAC-SHA256.",
+                "content": `
+                    <h2>Arquitetura do Webhook Studio</h2>
+                    <p>O Webhook Configuration Studio (acessível via <code>/webhooks</code>) fornece gerenciamento unificado de integrações assíncronas para toda a suíte empresarial.</p>
+                    <table class="doc-table">
+                        <thead>
+                            <tr><th>Recurso</th><th>Descrição</th><th>Rota / Interface</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr><td><strong>Gerenciador de Endpoints</strong></td><td>Cadastro de URLs de destino com retry configurável (1x a 5x) e geração de secret token.</td><td><code>GET/POST /api/webhooks</code></td></tr>
+                            <tr><td><strong>Simulador Interativo</strong></td><td>Playground para disparar eventos simulados e inspecionar headers, assinatura HMAC e latência em tempo real.</td><td><code>POST /api/webhooks/testar</code></td></tr>
+                            <tr><td><strong>Auditoria de Entregas</strong></td><td>Histórico detalhado de cada disparo com status code, tempo de execução (ms) e botão de reenvio.</td><td><code>GET /api/webhooks/logs</code></td></tr>
+                            <tr><td><strong>Assinatura HMAC-SHA256</strong></td><td>Cabeçalhos <code>X-Webhook-Signature</code> e <code>X-Hub-Signature-256</code> incluídos em cada requisição.</td><td><code>sha256=&lt;hash&gt;</code></td></tr>
+                        </tbody>
+                    </table>
+                `
+            },
+            {
+                "id": "cybersecurity_shield",
+                "cat": "5. Cibersegurança & Blindagem",
+                "title": "Blindagem Cibernética Militar (Hardened Shield)",
+                "subtitle": "Arquitetura defensiva de 7 camadas, conformidade OWASP Top 10, Nginx Anti-DDoS e Autenticação JWT.",
+                "content": `
+                    <div class="callout tip">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                        <div>
+                            <strong>Certificação de Blindagem AIDD v4:</strong> O sistema é protegido contra todas as vulnerabilidades do OWASP Top 10, ataques de injeção SQL, Clickjacking, MIME-sniffing, Timing Attacks, brute-force e ataques de negação de serviço (DoS/DDoS).
+                        </div>
+                    </div>
+
+                    <h2>As 7 Camadas Defensivas da Aplicação</h2>
+                    <table class="doc-table">
+                        <thead>
+                            <tr><th>Camada</th><th>Mecanismo Defensivo</th><th>Impacto na Segurança</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr><td><strong>1. Nginx Reverse Proxy</strong></td><td>Rate Limiting (100 req/s), limite de conexões simultâneas e buffer restrito.</td><td>Bloqueia ataques DDoS e brute-force na borda sem consumir CPU do Python.</td></tr>
+                            <tr><td><strong>2. Headers OWASP</strong></td><td><code>HSTS (2 anos)</code>, <code>X-Frame-Options: DENY</code>, <code>X-Content-Type-Options: nosniff</code>, <code>CSP</code>.</td><td>Impenetrabilidade contra Clickjacking, XSS e ataques via browser.</td></tr>
+                            <tr><td><strong>3. JWT Cryptographic Engine</strong></td><td>Assinatura HMAC-SHA256, expiração de tokens e <code>hmac.compare_digest</code>.</td><td>Imunidade total contra Timing Attacks e adulteração de payloads (Tampering).</td></tr>
+                            <tr><td><strong>4. SQL Parametrizado</strong></td><td>100% de consultas com placeholders <code>?</code> no SQLite WAL.</td><td>Zero vulnerabilidades de SQL Injection comprovado em varreduras DAST.</td></tr>
+                            <tr><td><strong>5. Trilha Forense</strong></td><td>Tabela <code>logs_auditoria</code> e logs Nginx formatados em JSON.</td><td>Rastreabilidade completa de todas as ações de usuários e IAs.</td></tr>
+                            <tr><td><strong>6. Container Non-Root</strong></td><td>Execução sob usuário restrito <code>aidduser</code> (UID 10001) com healthcheck.</td><td>Impede qualquer tentativa de escalonamento de privilégios para a VPS.</td></tr>
+                            <tr><td><strong>7. Gate Determinístico</strong></td><td>Script automatizado <code>G_SEGURANCA.py</code> executado no pipeline CI/CD.</td><td>Bloqueia qualquer regressão de segurança antes da publicação.</td></tr>
+                        </tbody>
+                    </table>
+
+                    <h2>Comando de Auditoria & Teste de Fogo Local</h2>
+                    <pre class="code-box">python scripts/gates/G_SEGURANCA.py</pre>
+                    <p>Executa a bateria completa de 7 camadas de testes verificando criptografia, headers, queries SQL, Nginx e Docker.</p>
+                `
+            }
+        ];
+        let currentPageIndex = 0;
+
+        function montarSidebar() {
+            const nav = document.getElementById('sidebar-nav-list');
+            let html = '';
+            let currentCat = '';
+
+            docPages.forEach((page, idx) => {
+                if (page.cat !== currentCat) {
+                    currentCat = page.cat;
+                    html += '<li class="nav-cat">' + currentCat + '</li>';
+                }
+                const activeClass = idx === 0 ? 'active' : '';
+                html += '<li><a class="nav-item ' + activeClass + '" onclick="carregarPagina(' + idx + ')" id="nav-item-' + idx + '">' + page.title + '</a></li>';
+            });
+            nav.innerHTML = html;
+        }
+
+        function carregarPagina(index) {
+            if (index < 0 || index >= docPages.length) return;
+            currentPageIndex = index;
+            const p = docPages[index];
+
+            document.querySelectorAll('.nav-item').forEach((el, i) => {
+                el.classList.toggle('active', i === index);
+            });
+
+            document.getElementById('breadcrumb-box').innerText = 'Docs > ' + p.cat + ' > ' + p.title;
+            document.getElementById('page-title').innerText = p.title;
+            document.getElementById('page-subtitle').innerText = p.subtitle;
+            document.getElementById('page-content-area').innerHTML = p.content;
+
+            const h2Elements = document.getElementById('page-content-area').querySelectorAll('h2');
+            const tocArea = document.getElementById('toc-links-area');
+            let tocHtml = '';
+            h2Elements.forEach((h2, i) => {
+                const anchorId = 'section-' + i;
+                h2.id = anchorId;
+                tocHtml += '<a href="#' + anchorId + '" class="toc-link">' + h2.innerText + '</a>';
+            });
+            tocArea.innerHTML = tocHtml || '<span style="color: var(--text-muted);">Topico unico</span>';
+
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function abrirBusca() {
+            document.getElementById('search-modal').style.display = 'flex';
+            document.getElementById('modal-search-input').focus();
+            filtrarResultadosBusca('');
+        }
+
+        function fecharBusca() {
+            document.getElementById('search-modal').style.display = 'none';
+        }
+
+        function filtrarResultadosBusca(query) {
+            const q = query.toLowerCase();
+            const box = document.getElementById('search-results-box');
+            const results = docPages.filter(p => !q || p.title.toLowerCase().includes(q) || p.subtitle.toLowerCase().includes(q) || p.content.toLowerCase().includes(q));
+
+            box.innerHTML = results.map(p => {
+                const idx = docPages.indexOf(p);
+                return '<div class="search-item" onclick="carregarPagina(' + idx + '); fecharBusca();">' +
+                       '<div class="search-item-title">' + p.title + '</div>' +
+                       '<div class="search-item-sub">' + p.cat + ' • ' + p.subtitle + '</div>' +
+                       '</div>';
+            }).join('');
+        }
+
+        document.addEventListener('keydown', (e) => {
+            if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
+                e.preventDefault();
+                abrirBusca();
+            }
+            if (e.key === 'Escape') fecharBusca();
+        });
+
+        window.onload = () => {
+            montarSidebar();
+            carregarPagina(0);
+        };
+    </script>
+</body>
+</html>

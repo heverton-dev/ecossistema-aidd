@@ -1,0 +1,21 @@
+﻿MISSION: UNIFIED AIDD ECOSYSTEM IMPLEMENTATION (ORC 3)
+
+You are the Master Orchestrator Agent within ORCA ADE. Your mission is to build the unified ecossistema-aidd repository according to the strategic plan in planos/PLANO-EXECUCAO-ECOSSISTEMA-AIDD.md.
+
+Use triad orchestration (ORC 3):
+- Lead Orchestrator: Antigravity (current session)
+- Governance & Skills Specialist: Claude Code (worktree)
+- Integration & Testing Specialist: MimoCode (worktree)
+
+EXECUTION PHASES:
+1. GIT & SETUP: Initialize git in current directory, set branch to main, add remote origin https://github.com/heverton-dev/ecossistema-aidd.git and create a complete .gitignore.
+2. IMPORT TOOLS: Copy non-destructively the 4 certified projects from C:\Users\trcnologia\Desktop\proj_aidd into tools/ (aidd-forge, aidd-generator, aidd-master, aidd-master-enterprise), keeping 100% of code and tests intact.
+3. GOVERNANCE & SKILLS: Create canonical AGENTS.md and configure the 4 universal skills with Slash Commands in .agent/ and .claude/:
+   - /forge [path] -> skills/aidd-forge-runner
+   - /generate <idea> -> skills/aidd-generator-runner
+   - /master <module> -> skills/aidd-master-runner
+   - /enterprise <type> <name> -> skills/aidd-enterprise-runner
+4. UNIFIED CLI & GATES: Create root CLI ecossistema.py and quality gate gates/G_ECOSSISTEMA_INTEGRIDADE.py to audit all subprojects.
+5. DOCUMENTATION & RELEASE: Create README.md portal, run validation tests ensuring exit code 0, make the initial commit and push to origin main.
+
+Begin execution immediately with Phase 1.

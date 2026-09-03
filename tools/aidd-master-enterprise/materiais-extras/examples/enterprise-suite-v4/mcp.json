@@ -1,0 +1,13 @@
+{
+  "mcpServers": {
+    "aidd-enterprise-suite": {
+      "command": "python",
+      "args": [
+        "C:\\Users\\trcnologia\\Desktop\\enterprise-suite-v4\\src\\core\\mcp_server.py"
+      ],
+      "env": {
+        "PYTHONIOENCODING": "utf-8"
+      }
+    }
+  }
+}

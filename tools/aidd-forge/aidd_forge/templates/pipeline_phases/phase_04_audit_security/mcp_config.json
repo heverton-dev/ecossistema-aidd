@@ -1,0 +1,10 @@
+{
+  "phase": "phase_04_audit_security",
+  "mcpServers": {
+    "filesystem": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-filesystem", "../phase_03_implementation"],
+      "scope": "read-only"
+    }
+  }
+}

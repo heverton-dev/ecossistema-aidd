@@ -1,0 +1,8 @@
+[run]
+source = scripts/phases
+omit =
+    scripts/phases/utils_*.py
+
+[report]
+fail_under = 70
+show_missing = True

@@ -1,0 +1,66 @@
+{
+  "projeto": {
+    "nome": "aidd_project",
+    "slug": "aidd_project",
+    "versao": "4.1.0",
+    "framework": "AIDD Master Pack v5.1 Enterprise Anti-Fail",
+    "status": "em_desenvolvimento",
+    "criado_em": "2026-09-01T19:40:15.611929"
+  },
+  "arquitetura": {
+    "padrao": "Monólito Modular com Clean Architecture",
+    "comunicacao": "EventBus Pub/Sub Assíncrono",
+    "documentacao": "OpenAPI 3.1 & Swagger Studio Nativo (/docs)",
+    "webhooks": "Webhook Configuration Studio com Assinatura HMAC SHA-256 (/webhooks)",
+    "mcp": "Model Context Protocol Native Server (/mcp & JSON-RPC 2.0)",
+    "persistencia": "SQLite Concorrente WAL Mode (Write-Ahead Logging)",
+    "design_system": "Impeccable Super-App UI com 4px scrollbar e Single-Line Header"
+  },
+  "modulos": [
+    {
+      "nome": "Modulo1",
+      "slug": "modulo1",
+      "descricao": "Módulo de gestão e operações para Modulo1",
+      "status": "implementado",
+      "rotas": [
+        "/api/modulo1",
+        "/api/modulo1/obter",
+        "/api/modulo1/criar",
+        "/api/modulo1/atualizar",
+        "/api/modulo1/deletar"
+      ],
+      "eventos": [
+        "modulo1_criado",
+        "modulo1_atualizado",
+        "modulo1_deletado"
+      ],
+      "testes": "tests/unit/test_modulo1.py"
+    }
+  ],
+  "gates_qualidade": [
+    {
+      "gate": "G_ESTRUTURA",
+      "descricao": "Validação de layout modular, manifestos e Clean Architecture"
+    },
+    {
+      "gate": "G_QUALIDADE",
+      "descricao": "Análise estática de sintaxe e eliminação de stubs vazios"
+    },
+    {
+      "gate": "G_TESTES",
+      "descricao": "Execução obrigatória de 100% dos testes unitários com pytest"
+    },
+    {
+      "gate": "G_CONTRACTS",
+      "descricao": "Validação de esquemas OpenAPI 3.1 e contratos MCP"
+    },
+    {
+      "gate": "G_SEGREDOS",
+      "descricao": "Varredura de entropia de Shannon contra vazamento de chaves"
+    },
+    {
+      "gate": "G_HARNESS_COMPAT",
+      "descricao": "Conformidade multi-harness (Antigravity, Cline, OpenHands, Cursor)"
+    }
+  ]
+}

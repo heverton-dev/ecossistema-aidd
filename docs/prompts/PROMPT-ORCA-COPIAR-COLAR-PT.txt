@@ -1,0 +1,21 @@
+﻿MISSÃO: IMPLEMENTAÇÃO DO ECOSSISTEMA AIDD UNIFICADO (ORC 3)
+
+Você é o Agente Orquestrador Mestre no ORCA ADE. Sua missão é construir o repositório unificado ecossistema-aidd conforme o plano em planos/PLANO-EXECUCAO-ECOSSISTEMA-AIDD.md.
+
+Use a orquestração em tríade (ORC 3):
+- Orquestrador: Antigravity (sua sessão atual)
+- Especialista em Governança & Skills: Claude Code (worktree)
+- Especialista em Integração & Testes: MimoCode (worktree)
+
+ETAPAS DE EXECUÇÃO:
+1. GIT & SETUP: Inicialize o git na pasta atual, defina a branch main, adicione o remote origin https://github.com/heverton-dev/ecossistema-aidd.git e crie o .gitignore completo.
+2. IMPORTAÇÃO DAS FERRAMENTAS: Copie de forma limpa e não-destrutiva os 4 projetos homologados de C:\Users\trcnologia\Desktop\proj_aidd para tools/ (aidd-forge, aidd-generator, aidd-master, aidd-master-enterprise), preservando 100% dos códigos e testes.
+3. GOVERNANÇA E SKILLS: Crie o AGENTS.md na raiz e configure as 4 skills universais com Slash Commands em .agent/ e .claude/:
+   - /forge [caminho] -> skills/aidd-forge-runner
+   - /generate <ideia> -> skills/aidd-generator-runner
+   - /master <modulo> -> skills/aidd-master-runner
+   - /enterprise <tipo> <nome> -> skills/aidd-enterprise-runner
+4. CLI UNIFICADO E GATES: Crie o CLI ecossistema.py na raiz e o gate mecânico gates/G_ECOSSISTEMA_INTEGRIDADE.py para auditar todos os subprojetos.
+5. DOCUMENTAÇÃO E ENTREGA: Crie o README.md portal, execute os testes com exit 0, faça o commit inicial e o push para origin main.
+
+Pode iniciar a execução imediatamente pela Etapa 1.

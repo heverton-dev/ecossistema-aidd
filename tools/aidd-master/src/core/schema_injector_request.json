@@ -1,0 +1,50 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://aidd-master.local/schemas/schema_injector_request.json",
+  "title": "InjectorRequest",
+  "description": "Contrato universal para o Injetor de Componentes AIDD (Skills, MCPs, Rules, Specs, Configs e Agents). Todo pedido de injeção — vindo da CLI ou do IntentRouter em PT-BR — DEVE validar contra este contrato antes de qualquer materialização em disco.",
+  "type": "object",
+  "properties": {
+    "tipo": {
+      "type": "string",
+      "description": "Tipo de componente a ser injetado no ecossistema AIDD.",
+      "enum": ["skill", "mcp", "rule", "spec", "config", "agent"]
+    },
+    "nome": {
+      "type": "string",
+      "description": "Identificador slug do componente (kebab-case), usado para nomear arquivos e diretórios de destino.",
+      "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$",
+      "minLength": 2,
+      "maxLength": 80
+    },
+    "descricao": {
+      "type": "string",
+      "description": "Descrição funcional do componente em Português do Brasil, usada em cabeçalhos gerados e nos catálogos de registro.",
+      "minLength": 3,
+      "maxLength": 500
+    },
+    "camada_alvo": {
+      "type": "string",
+      "description": "Camada arquitetural de destino resolvida pelo Detector Híbrido. Não é fornecida pelo usuário final: é preenchida por 'detector_camada.py' a partir de 'tipo' e da matriz de perfis do projeto alvo.",
+      "enum": [
+        "kernel_core",
+        "governanca_regras",
+        "documentacao_oficial",
+        "harness_multiplataforma",
+        "templates_scaffold",
+        "interface_orquestracao"
+      ]
+    },
+    "conteudo": {
+      "type": "string",
+      "description": "Corpo do artefato a ser materializado. Se omitido, o Materializador gera um scaffold padrão e completo (nunca um stub) a partir do 'tipo' e da 'descricao'."
+    },
+    "alvo_projeto": {
+      "type": "string",
+      "description": "Identificador do projeto de destino no ecossistema AIDD (perfil resolvido em 'profiles_registry.py'). Nesta implementação apenas 'aidd-master' possui perfil resolvido; demais identificadores retornam Result.fail(codigo='PROJETO_NAO_SUPORTADO').",
+      "default": "aidd-master"
+    }
+  },
+  "required": ["tipo", "nome", "descricao", "alvo_projeto"],
+  "additionalProperties": false
+}

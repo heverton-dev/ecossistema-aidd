@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AIDD Project Generator — Interface Web</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Header -->
+        <header class="app-header">
+            <div class="brand">
+                <div class="brand-logo">⚡</div>
+                <div class="brand-info">
+                    <h1>AIDD Generator</h1>
+                    <span class="brand-subtitle">AI-Driven Development • Interface Local</span>
+                </div>
+            </div>
+
+            <nav class="nav-tabs">
+                <button class="nav-btn active" data-tab="tab-novo" id="nav-btn-novo">
+                    <span class="icon">✨</span> Novo Projeto
+                </button>
+                <button class="nav-btn" data-tab="tab-progresso" id="nav-btn-progresso">
+                    <span class="icon">⏳</span> Progresso
+                    <span class="badge-pulse hidden" id="progresso-pulse"></span>
+                </button>
+                <button class="nav-btn" data-tab="tab-resultado" id="nav-btn-resultado">
+                    <span class="icon">📊</span> Resultado
+                </button>
+                <button class="nav-btn" data-tab="tab-workspace" id="nav-btn-workspace">
+                    <span class="icon">🗂️</span> Workspace
+                </button>
+                <button class="nav-btn" data-tab="tab-config" id="nav-btn-config">
+                    <span class="icon">⚙️</span> Configurações
+                    <span class="status-dot" id="header-status-dot" title="Status da IA"></span>
+                </button>
+            </nav>
+        </header>
+
+        <!-- Main Content Area -->
+        <main class="app-main">
+
+            <!-- ========================================================= -->
+            <!-- ABA 1: NOVO PROJETO (TELA INICIAL)                        -->
+            <!-- ========================================================= -->
+            <section id="tab-novo" class="tab-content active">
+                <!-- Alerta se não configurado -->
+                <div id="alerta-sem-chave" class="alert alert-warning hidden">
+                    <div class="alert-icon">⚠️</div>
+                    <div class="alert-body">
+                        <h3>Chave de IA Não Configurada</h3>
+                        <p>Para gerar projetos, é necessário configurar um provedor e uma chave de IA (como Groq ou NVIDIA NIM com camadas gratuitas).</p>
+                    </div>
+                    <button class="btn btn-warning-action" id="btn-ir-config-alerta">Configurar Agora</button>
+                </div>
+
+                <div class="card form-card">
+                    <div class="card-header">
+                        <h2>Criar Novo Projeto com AIDD</h2>
+                        <p>Descreva o que você deseja construir e a ferramenta orquestrará a arquitetura completa em até 8 fases com rigor de engenharia.</p>
+                    </div>
+
+                    <form id="form-novo-projeto" onsubmit="return false;">
+                        <div class="form-group">
+                            <label for="input-ideia">O que você quer construir? <span class="required">*</span></label>
+                            <textarea 
+                                id="input-ideia" 
+                                rows="5" 
+                                placeholder="Ex: Um sistema de gerenciamento de tarefas para equipes com API REST em Python, autenticação JWT e relatórios em PDF..."
+                                required></textarea>
+                            <span class="form-hint">Dica: Quanto mais clara a descrição (objetivo, regras de negócio, integrações), mais precisa será a arquitetura.</span>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="input-pasta">Pasta de destino <span class="required">*</span></label>
+                            <div class="input-with-action">
+                                <input type="text" id="input-pasta" placeholder="../meu-novo-projeto" required>
+                                <button type="button" class="btn btn-secondary btn-sm" id="btn-sugerir-pasta" title="Sugerir pasta baseada na ideia">Sugerir</button>
+                            </div>
+                            <span class="form-hint" id="hint-pasta-absoluta">A pasta será criada automaticamente caso não exista.</span>
+                        </div>
+
+                        <div class="form-group checkbox-group">
+                            <label class="custom-checkbox">
+                                <input type="checkbox" id="check-implementar-codigo">
+                                <span class="checkbox-box"></span>
+                                <div class="checkbox-label">
+                                    <strong>Gerar código funcional (--implementar-codigo)</strong>
+                                    <span>Executa a Fase 8 completa com implementação de scripts Python reais, geração de testes e loop de correção via IA (leva mais tempo).</span>
+                                </div>
+                            </label>
+                        </div>
+
+                        <div class="form-actions">
+                            <button type="submit" class="btn btn-primary btn-lg" id="btn-gerar-projeto">
+                                <span class="btn-icon">🚀</span> Gerar Projeto
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </section>
+
+
+            <!-- ========================================================= -->
+            <!-- ABA 2: PROGRESSO DA GERAÇÃO                               -->
+            <!-- ========================================================= -->
+            <section id="tab-progresso" class="tab-content">
+                <!-- Monitorar Pasta Arbitrária -->
+                <div class="card monitor-card">
+                    <div class="card-header">
+                        <h3>Monitorar Projeto</h3>
+                        <p>Cole o caminho de uma pasta de projeto AIDD para acompanhar o progresso das fases.</p>
+                    </div>
+                    <div class="form-group">
+                        <div class="input-with-action">
+                            <input type="text" id="input-monitor-pasta" placeholder="C:\caminho\para\projeto">
+                            <button type="button" class="btn btn-secondary btn-sm" id="btn-monitorar-pasta">Monitorar</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card progress-overview-card">
+                    <div class="progress-header-info">
+                        <div>
+                            <h2 id="progresso-titulo-ideia">Executando Pipeline...</h2>
+                            <p id="progresso-pasta-sub">Pasta: <span id="progresso-caminho-pasta">-</span></p>
+                        </div>
+                        <div class="progress-metrics-badge">
+                            <div class="metric-item">
+                                <span class="metric-label">Tempo Decorrido</span>
+                                <span class="metric-value" id="progresso-tempo">0.0s</span>
+                            </div>
+                            <div class="metric-item">
+                                <span class="metric-label">Status</span>
+                                <span class="metric-value status-tag status-executando" id="progresso-tag-status">Em Execução</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Barra de progresso -->
+                    <div class="progress-bar-container">
+                        <div class="progress-bar-fill" id="progresso-barra-fill" style="width: 0%;"></div>
+                    </div>
+                    <div class="progress-bar-meta">
+                        <span id="progresso-texto-fases">0 de 7 fases concluídas</span>
+                        <span id="progresso-texto-porcentagem">0%</span>
+                    </div>
+
+                    <div class="progress-actions">
+                        <button class="btn btn-danger btn-sm" id="btn-cancelar-pipeline">
+                            <span class="icon">🛑</span> Cancelar Execução
+                        </button>
+                    </div>
+                </div>
+
+                <!-- CARD DE ERRO AMIGÁVEL (Exibido apenas em caso de falha) -->
+                <div id="card-erro-amigavel" class="card error-card hidden">
+                    <div class="error-header">
+                        <div class="error-icon">❌</div>
+                        <div class="error-body">
+                            <h3>Falha na Execução do Pipeline</h3>
+                            <p id="erro-amigavel-texto">Ocorreu um erro durante a geração.</p>
+                        </div>
+                    </div>
+
+                    <div id="erro-acao-container" class="error-action-box hidden">
+                        <button class="btn btn-warning-action" id="btn-erro-ir-config">
+                            <span class="icon">⚙️</span> Ir para Configurações de IA
+                        </button>
+                    </div>
+
+                    <!-- Detalhes técnicos colapsáveis (escondidos por padrão) -->
+                    <details class="tech-details" id="detalhes-tecnicos-wrapper">
+                        <summary>Ver Detalhes Técnicos (Logs e Stack Trace)</summary>
+                        <div class="tech-details-content">
+                            <pre id="erro-tecnico-log">Sem detalhes técnicos adicionais.</pre>
+                        </div>
+                    </details>
+                </div>
+
+                <!-- CHECKLIST DE FASES AO VIVO -->
+                <div class="card phases-list-card">
+                    <div class="card-header">
+                        <h3>Checklist de Fases do Pipeline</h3>
+                        <p>Acompanhamento mecânico em tempo real lendo os artefatos gerados pelo AIDD.</p>
+                    </div>
+
+                    <div class="phases-grid" id="container-fases-grid">
+                        <!-- Fases injetadas via JavaScript -->
+                    </div>
+                </div>
+
+                <!-- Terminal / Logs em tempo real -->
+                <div class="card logs-card">
+                    <div class="card-header logs-header">
+                        <h3>Terminal de Execução</h3>
+                        <button class="btn btn-ghost btn-xs" id="btn-toggle-logs">Expandir/Recolher</button>
+                    </div>
+                    <div class="terminal-body" id="terminal-logs-body">
+                        <div class="log-line">Aguardando início...</div>
+                    </div>
+                </div>
+            </section>
+
+
+            <!-- ========================================================= -->
+            <!-- ABA 3: RESULTADO DO PROJETO                               -->
+            <!-- ========================================================= -->
+            <section id="tab-resultado" class="tab-content">
+                <div id="resultado-vazio" class="card empty-state-card">
+                    <div class="empty-icon">📁</div>
+                    <h2>Nenhum Resultado Disponível</h2>
+                    <p>Você ainda não executou a geração de nenhum projeto nesta sessão.</p>
+                    <button class="btn btn-primary" id="btn-ir-novo-vazio">Criar Projeto Agora</button>
+                </div>
+
+                <div id="resultado-conteudo" class="hidden">
+                    <!-- Resumo Principal -->
+                    <div class="card result-hero-card">
+                        <div class="result-hero-header">
+                            <div>
+                                <span class="result-badge-success" id="resultado-badge-status">✅ Projeto Concluído com Sucesso</span>
+                                <h2 id="resultado-titulo-projeto">Projeto Gerado</h2>
+                                <p class="result-path-display">
+                                    <span>Caminho:</span> <code id="resultado-pasta-caminho">-</code>
+                                </p>
+                            </div>
+                            <div class="result-cta">
+                                <button class="btn btn-primary btn-lg" id="btn-abrir-explorer">
+                                    <span class="icon">📂</span> Abrir no Explorador de Arquivos
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Métricas Reais do Projeto -->
+                        <div class="stats-grid">
+                            <div class="stat-card" id="card-score-autocritica">
+                                <span class="stat-label">Score Auto-crítica (Fase 7)</span>
+                                <span class="stat-value text-accent" id="resultado-score-valor">--/100</span>
+                                <span class="stat-sub" id="resultado-score-sub">Auditoria determinística</span>
+                            </div>
+                            <div class="stat-card">
+                                <span class="stat-label">Gates de Qualidade</span>
+                                <span class="stat-value text-success" id="resultado-gates-valor">--</span>
+                                <span class="stat-sub" id="resultado-gates-sub">Verificações mecânicas</span>
+                            </div>
+                            <div class="stat-card">
+                                <span class="stat-label">Tokens Consumidos</span>
+                                <span class="stat-value text-info" id="resultado-tokens-valor">0</span>
+                                <span class="stat-sub">Medição real (usage)</span>
+                            </div>
+                            <div class="stat-card" id="card-resultado-testes">
+                                <span class="stat-label">Testes Unitários (Fase 8)</span>
+                                <span class="stat-value" id="resultado-testes-valor">--</span>
+                                <span class="stat-sub" id="resultado-testes-sub">Cobertura de testes</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Detalhes de Auto-crítica (Fase 7) se houver -->
+                    <div class="card autocritica-card" id="card-detalhes-autocritica">
+                        <div class="card-header">
+                            <h3>Auditoria e Diagnóstico de Qualidade (Fase 7)</h3>
+                        </div>
+                        <div class="autocritica-grid">
+                            <div class="autocritica-col">
+                                <h4>💪 Pontos Fortes</h4>
+                                <ul class="check-list" id="lista-pontos-fortes">
+                                    <li>Nenhum dado</li>
+                                </ul>
+                            </div>
+                            <div class="autocritica-col">
+                                <h4>⚠️ Oportunidades de Melhoria</h4>
+                                <ul class="warning-list" id="lista-pontos-fracos">
+                                    <li>Nenhum dado</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Ações Finais -->
+                    <div class="result-footer-actions">
+                        <button class="btn btn-secondary" id="btn-novo-apos-conclusao">
+                            <span class="icon">✨</span> Criar Outro Projeto
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+
+            <!-- ========================================================= -->
+            <!-- ABA 4: CONFIGURAÇÕES DE IA                                -->
+            <!-- ========================================================= -->
+            <section id="tab-config" class="tab-content">
+                <div class="card config-card">
+                    <div class="card-header">
+                        <h2>Configuração do Modelo de IA</h2>
+                        <p>Configure a chave de API para o modo headless. As configurações são salvas diretamente no arquivo <code>.env</code> na raiz da ferramenta.</p>
+                    </div>
+
+                    <form id="form-config" onsubmit="return false;">
+                        <div class="form-group">
+                            <label for="select-provedor">Provedor de IA <span class="required">*</span></label>
+                            <select id="select-provedor">
+                                <!-- Provedores injetados via JS -->
+                            </select>
+                            <span class="form-hint" id="hint-provedor-desc"></span>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="input-modelo">Modelo (LLM_MODEL)</label>
+                            <input type="text" id="input-modelo" placeholder="ex: groq/llama-3.3-70b-versatile">
+                            <span class="form-hint">Identificador do modelo utilizado pelo LiteLLM.</span>
+                        </div>
+
+                        <div class="form-group hidden" id="grupo-base-url">
+                            <label for="input-base-url">Base URL (Endpoint customizado)</label>
+                            <input type="text" id="input-base-url" placeholder="https://api.openai.com/v1 ou http://localhost:11434/v1">
+                            <span class="form-hint">Obrigatório apenas para provedores customizados ou instâncias locais.</span>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="input-chave-api">
+                                Chave de API <span class="required">*</span>
+                                <span class="key-status-badge" id="badge-chave-status">Não configurada</span>
+                            </label>
+                            <div class="input-with-action">
+                                <input type="password" id="input-chave-api" placeholder="Cole sua chave aqui" autocomplete="off">
+                                <button type="button" class="btn btn-ghost btn-sm" id="btn-toggle-senha" title="Mostrar/Ocultar">👁️</button>
+                            </div>
+                            <span class="form-hint" id="hint-chave">A chave nunca é exposta em texto puro na interface depois de salva.</span>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="input-timeout">Timeout por chamada (segundos)</label>
+                            <input type="number" id="input-timeout" value="120" min="30" max="600">
+                        </div>
+
+                        <!-- Feedback de teste da chave -->
+                        <div id="feedback-teste-chave" class="alert hidden">
+                            <div class="alert-icon" id="feedback-teste-icon">ℹ️</div>
+                            <div class="alert-body">
+                                <p id="feedback-teste-msg">Testando conexão...</p>
+                            </div>
+                        </div>
+
+                        <div class="form-actions config-actions">
+                            <button type="button" class="btn btn-secondary" id="btn-testar-chave">
+                                <span class="btn-icon">🧪</span> Testar Chave
+                            </button>
+                            <button type="button" class="btn btn-primary" id="btn-salvar-config">
+                                <span class="btn-icon">💾</span> Salvar Configurações
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </section>
+
+
+            <!-- ========================================================= -->
+            <!-- ABA 5: WORKSPACE (PLANO-EXECUCAO-ESTRUTURADO)             -->
+            <!-- ========================================================= -->
+            <section id="tab-workspace" class="tab-content">
+                <div id="workspace-conteudo" class="hidden">
+                    <!-- Objetivo Geral -->
+                    <div class="card">
+                        <div class="card-header">
+                            <h2>Objetivo do Projeto</h2>
+                            <p id="workspace-objetivo">-</p>
+                        </div>
+                        <div class="stats-grid">
+                            <div class="stat-card">
+                                <span class="stat-label">Última Atualização</span>
+                                <span class="stat-value text-info" id="workspace-data">-</span>
+                                <span class="stat-sub">data da última mudança</span>
+                            </div>
+                            <div class="stat-card">
+                                <span class="stat-label">Etapas Concluídas</span>
+                                <span class="stat-value text-success" id="workspace-completas">-</span>
+                                <span class="stat-sub" id="workspace-progresso-sub">-</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Barra de Progresso -->
+                    <div class="card">
+                        <div class="progress-bar-container">
+                            <div class="progress-bar-fill" id="workspace-barra-fill" style="width: 0%;"></div>
+                        </div>
+                        <div class="progress-bar-meta">
+                            <span id="workspace-texto-etapas">0 de 0 etapas concluídas</span>
+                            <span id="workspace-texto-porcentagem">0%</span>
+                        </div>
+                    </div>
+
+                    <!-- Lista de Etapas -->
+                    <div class="card">
+                        <div class="card-header">
+                            <h3>Etapas do Plano de Execução</h3>
+                        </div>
+                        <div class="phases-grid" id="workspace-etapas-grid">
+                            <!-- Etapas injetadas via JavaScript -->
+                        </div>
+                    </div>
+                </div>
+
+                <div id="workspace-vazio" class="card empty-state-card">
+                    <div class="empty-icon">🗂️</div>
+                    <h2>PLANO-EXECUCAO-ESTRUTURADO.json não encontrado</h2>
+                    <p>O arquivo de plano de execução não foi encontrado na raiz do projeto.</p>
+                </div>
+            </section>
+
+        </main>
+
+        <!-- Footer -->
+        <footer class="app-footer">
+            <span>AIDD Generator • Engenharia Agêntica em 5 Camadas • Zero Alucinação</span>
+            <span id="footer-versao">v2.1</span>
+        </footer>
+    </div>
+
+    <!-- Scripts -->
+    <script src="/static/js/app.js"></script>
+</body>
+</html>

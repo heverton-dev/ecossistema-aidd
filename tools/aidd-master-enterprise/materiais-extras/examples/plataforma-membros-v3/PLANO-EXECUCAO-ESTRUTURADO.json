@@ -1,0 +1,53 @@
+{
+  "projeto": {
+    "nome": "plataforma-de-cursos",
+    "descricao": "Plataforma de Cursos e Area de Membros com Checkout",
+    "arquitetura": "AIDD 4 Camadas",
+    "zero_api_key_mode": true,
+    "status": "CONCLUIDO_COM_SUCESSO"
+  },
+  "fases": [
+    {
+      "id": "fase-01-analise",
+      "nome": "Analise e Modelagem de Contratos",
+      "status": "CONCLUIDO",
+      "mesa_orca": "mesa-analise",
+      "expected_outputs": [
+        "docs/ARQUITETURA.md"
+      ],
+      "gates_validados": [
+        "G_SEGREDOS",
+        "G_QUALIDADE",
+        "G_HARNESS_COMPAT"
+      ]
+    },
+    {
+      "id": "fase-02-implementacao",
+      "nome": "Implementacao do Core Determinístico",
+      "status": "CONCLUIDO",
+      "mesa_orca": "mesa-dev",
+      "expected_outputs": [
+        "src/main.py"
+      ],
+      "gates_validados": [
+        "G_SEGREDOS",
+        "G_QUALIDADE",
+        "G_HARNESS_COMPAT"
+      ]
+    },
+    {
+      "id": "fase-03-validacao",
+      "nome": "Auditoria de Gates e Testes Finais",
+      "status": "CONCLUIDO",
+      "mesa_orca": "mesa-qa",
+      "expected_outputs": [
+        "tests/"
+      ],
+      "gates_validados": [
+        "G_SEGREDOS",
+        "G_QUALIDADE",
+        "G_HARNESS_COMPAT"
+      ]
+    }
+  ]
+}

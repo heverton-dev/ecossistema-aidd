@@ -1,0 +1,759 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AIDD Enterprise Suite v5.1 — Cross-Project</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #030712;
+            --surface: rgba(17, 24, 39, 0.85);
+            --border: rgba(255, 255, 255, 0.08);
+            --border-hover: rgba(255, 255, 255, 0.16);
+            --primary: #3b82f6;
+            --primary-hover: #2563eb;
+            --danger: #ef4444;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --purple: #a855f7;
+            --text: #f9fafb;
+            --muted: #9ca3af;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Plus Jakarta Sans', sans-serif; }
+
+        /* =========================================================================
+           DESIGN SYSTEM UNIVERSAL (SCROLLBAR 4PX & BUTTON WRAP PROTECTION)
+           ========================================================================= */
+        * {
+            scrollbar-width: thin;
+            scrollbar-color: rgba(59, 130, 246, 0.4) transparent;
+        }
+        ::-webkit-scrollbar {
+            width: 4px !important;
+            height: 4px !important;
+        }
+        ::-webkit-scrollbar-track {
+            background: transparent !important;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: rgba(59, 130, 246, 0.35) !important;
+            border-radius: 9999px !important;
+            transition: background 0.2s ease !important;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(59, 130, 246, 0.75) !important;
+        }
+
+        /* Proteção Universal: Botões em Linha Única */
+        button, .btn, .btn-primary, .btn-secondary, .btn-gold, .btn-danger,
+        .tab-btn, .app-tab, .resp-status-btn, .lang-tab, .endpoint-link {
+            white-space: nowrap !important;
+            text-overflow: ellipsis;
+            display: inline-flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            flex-shrink: 0 !important;
+            line-height: 1.2 !important;
+        }
+
+        body {
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            background-image: 
+                radial-gradient(circle at 50% -20%, rgba(59, 130, 246, 0.25), transparent 60%),
+                radial-gradient(circle at 100% 40%, rgba(168, 85, 247, 0.12), transparent 50%);
+            background-attachment: fixed;
+            padding: 1.5rem 3rem;
+        }
+
+        /* HEADER SUPERIOR */
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 1.2rem;
+            margin-bottom: 1.8rem;
+        }
+        .brand { display: flex; align-items: center; gap: 0.8rem; font-size: 1.25rem; font-weight: 800; }
+        .app-switcher {
+            display: flex;
+            background: rgba(255, 255, 255, 0.04);
+            padding: 0.3rem;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            gap: 0.3rem;
+        }
+        .app-tab {
+            padding: 0.55rem 1.1rem;
+            border-radius: 8px;
+            font-size: 0.84rem;
+            font-weight: 700;
+            cursor: pointer;
+            color: var(--muted);
+            border: none;
+            background: none;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+        .app-tab:hover { color: #fff; }
+        .app-tab.active { background: var(--primary); color: #fff; box-shadow: 0 4px 14px rgba(59, 130, 246, 0.4); }
+
+        .btn { padding: 0.55rem 1.1rem; border-radius: 8px; font-weight: 700; font-size: 0.84rem; border: 1px solid var(--border); background: rgba(255,255,255,0.05); color: #fff; text-decoration: none; cursor: pointer; display: inline-flex; align-items: center; gap: 0.4rem; transition: all 0.2s; }
+        .btn:hover { background: rgba(255,255,255,0.1); border-color: var(--border-hover); }
+        .btn-primary { background: var(--primary); border-color: var(--primary); }
+        .btn-danger { background: rgba(239, 68, 68, 0.15); border-color: rgba(239, 68, 68, 0.4); color: #f87171; }
+        .btn-danger:hover { background: var(--danger); color: #fff; }
+
+        .banner-cross {
+            background: rgba(59, 130, 246, 0.08);
+            border: 1px solid rgba(59, 130, 246, 0.25);
+            border-radius: 12px;
+            padding: 0.9rem 1.5rem;
+            margin-bottom: 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-size: 0.88rem;
+        }
+
+        /* VISTAS */
+        .app-view { display: none; }
+        .app-view.active { display: block; animation: fadeIn 0.2s ease-in-out; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* CRM KANBAN */
+        .kanban { display: grid; grid-template-columns: repeat(5, minmax(220px, 1fr)); gap: 1.2rem; }
+        .column { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 1rem; min-height: 480px; }
+        .lead-card { background: rgba(31, 41, 55, 0.85); border: 1px solid var(--border); border-radius: 10px; padding: 1rem; margin-bottom: 0.8rem; cursor: grab; transition: all 0.15s; }
+        .lead-card:hover { border-color: var(--primary); transform: translateY(-2px); }
+
+        /* ERP TABELA */
+        table { width: 100%; border-collapse: collapse; background: var(--surface); border-radius: 12px; overflow: hidden; border: 1px solid var(--border); }
+        th, td { padding: 1rem 1.2rem; text-align: left; border-bottom: 1px solid var(--border); font-size: 0.88rem; }
+        th { font-weight: 700; color: var(--muted); text-transform: uppercase; font-size: 0.78rem; letter-spacing: 0.04em; }
+
+        /* HELPDESK */
+        .ticket-list { display: flex; flex-direction: column; gap: 0.8rem; }
+        .ticket-card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 1.2rem 1.5rem; display: flex; justify-content: space-between; align-items: center; }
+
+        /* MODAIS */
+        .modal-overlay { position: fixed; inset: 0; background: rgba(0, 0, 0, 0.8); backdrop-filter: blur(8px); display: none; align-items: center; justify-content: center; z-index: 100; }
+        .modal-box { background: #0b0f19; border: 1px solid var(--border-hover); border-radius: 16px; width: 100%; max-width: 500px; padding: 2rem; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.9); }
+        .form-group { margin-bottom: 1.2rem; }
+        .form-group label { display: block; font-size: 0.82rem; font-weight: 700; color: var(--muted); margin-bottom: 0.4rem; }
+        .form-group input, .form-group select, .form-group textarea { width: 100%; padding: 0.7rem 0.9rem; background: rgba(255,255,255,0.05); border: 1px solid var(--border); border-radius: 8px; color: #fff; font-size: 0.9rem; outline: none; }
+        .form-group input:focus, .form-group select:focus, .form-group textarea:focus { border-color: var(--primary); }
+
+        /* =========================================================================
+           TOAST NOTIFICATION CONTAINER (HIGH-END GLASSMORPHISM)
+           ========================================================================= */
+        #aidd-toast-container {
+            position: fixed;
+            bottom: 1.5rem;
+            right: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+            z-index: 99999;
+            pointer-events: none;
+        }
+
+        .aidd-toast {
+            pointer-events: auto;
+            min-width: 280px;
+            max-width: 420px;
+            background: rgba(15, 23, 42, 0.92);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            border-radius: 12px;
+            padding: 0.85rem 1.1rem;
+            color: #f8fafc;
+            font-size: 0.86rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.6);
+            transform: translateY(20px) scale(0.95);
+            opacity: 0;
+            transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .aidd-toast.show { transform: translateY(0) scale(1); opacity: 1; }
+        .aidd-toast-icon { display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+        .aidd-toast.toast-success { border-color: rgba(16, 185, 129, 0.4); }
+        .aidd-toast.toast-success .aidd-toast-icon { color: #34d399; }
+        .aidd-toast.toast-error { border-color: rgba(239, 68, 68, 0.4); }
+        .aidd-toast.toast-error .aidd-toast-icon { color: #f87171; }
+        .aidd-toast.toast-warning { border-color: rgba(245, 158, 11, 0.4); }
+        .aidd-toast.toast-warning .aidd-toast-icon { color: #fbbf24; }
+        .aidd-toast.toast-info { border-color: rgba(59, 130, 246, 0.4); }
+        .aidd-toast.toast-info .aidd-toast-icon { color: #60a5fa; }
+
+        /* =========================================================================
+           CUSTOM CONFIRM MODAL (DESIGN SYSTEM INTEGRATED)
+           ========================================================================= */
+        #aidd-dialog-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(3, 7, 18, 0.75);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 99998;
+            opacity: 0;
+            transition: opacity 0.2s ease;
+        }
+
+        #aidd-dialog-overlay.show { display: flex; opacity: 1; }
+
+        .aidd-dialog-card {
+            background: #0b1329;
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            border-radius: 16px;
+            width: 100%;
+            max-width: 440px;
+            padding: 1.8rem;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7);
+            display: flex;
+            flex-direction: column;
+            gap: 1.2rem;
+            transform: scale(0.95);
+            transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        #aidd-dialog-overlay.show .aidd-dialog-card { transform: scale(1); }
+        .aidd-dialog-header { display: flex; align-items: center; gap: 0.8rem; }
+        .aidd-dialog-title { font-size: 1.15rem; font-weight: 800; color: #fff; }
+        .aidd-dialog-msg { font-size: 0.9rem; color: #94a3b8; line-height: 1.6; }
+        .aidd-dialog-actions { display: flex; justify-content: flex-end; gap: 0.75rem; margin-top: 0.5rem; }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="brand">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#3b82f6" stroke-width="2.5"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+            <span>AIDD Enterprise Suite v5.1</span>
+        </div>
+
+        <!-- APP SWITCHER -->
+        <div class="app-switcher">
+            <button class="app-tab active" onclick="trocarApp('crm')">CRM Vendas</button>
+            <button class="app-tab" onclick="trocarApp('erp')">ERP Financeiro</button>
+            <button class="app-tab" onclick="trocarApp('helpdesk')">Helpdesk SLA</button>
+            <button class="app-tab" onclick="trocarApp('membros')">Cursos VIP</button>
+            <button class="app-tab" onclick="trocarApp('catalogo')">Catálogo Digital</button>
+        </div>
+
+        <div style="display: flex; gap: 0.8rem;">
+            <a href="/docs/guia" class="btn" style="border-color: rgba(59,130,246,0.5); color: #93c5fd;">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+                Documentação da Suíte
+            </a>
+            <a href="/docs" target="_blank" class="btn btn-primary">Swagger /docs</a>
+        </div>
+    </header>
+
+    <div class="banner-cross">
+        <div style="display: flex; align-items: center; gap: 0.6rem;">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#60a5fa" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+            <span><strong>Cross-Domain EventBus Online:</strong> Quando um lead é movido para <em>Fechado / Ganho</em> no CRM, o <strong>ERP gera a Conta a Receber</strong> e notifica os webhooks em tempo real!</span>
+        </div>
+        <span style="background: rgba(16,185,129,0.2); color: #6ee7b7; padding: 0.25rem 0.7rem; border-radius: 9999px; font-weight: 800; font-size: 0.75rem;">EVENTBUS ATIVO</span>
+    </div>
+
+    <!-- VISTA 1: CRM -->
+    <div id="view-crm" class="app-view active">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+            <h2 style="font-size: 1.35rem; font-weight: 800;">Pipeline de Vendas (Kanban Drag & Drop & Full-CRUD)</h2>
+            <button class="btn btn-primary" onclick="abrirModalLead()">+ Cadastrar Lead</button>
+        </div>
+        <div class="kanban" id="kanban-crm">Carregando CRM...</div>
+    </div>
+
+    <!-- VISTA 2: ERP -->
+    <div id="view-erp" class="app-view">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+            <div>
+                <h2 style="font-size: 1.35rem; font-weight: 800;">Gestão Financeira & DRE em Tempo Real</h2>
+                <div id="resumo-erp-box" style="font-weight: 700; color: #10b981; margin-top: 0.3rem;"></div>
+            </div>
+            <button class="btn btn-primary" onclick="abrirModalConta()">+ Novo Lançamento</button>
+        </div>
+        <table>
+            <thead>
+                <tr>
+                    <th>DESCRIÇÃO</th>
+                    <th>TIPO</th>
+                    <th>CATEGORIA</th>
+                    <th>VALOR</th>
+                    <th>VENCIMENTO</th>
+                    <th>STATUS (1-CLIQUE)</th>
+                    <th>AÇÕES</th>
+                </tr>
+            </thead>
+            <tbody id="tabela-erp">Carregando ERP...</tbody>
+        </table>
+    </div>
+
+    <!-- VISTA 3: HELPDESK -->
+    <div id="view-helpdesk" class="app-view">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+            <h2 style="font-size: 1.35rem; font-weight: 800;">Fila de Chamados & Monitor de SLA</h2>
+            <button class="btn btn-primary" onclick="abrirModalTicket()">+ Novo Chamado</button>
+        </div>
+        <div class="ticket-list" id="lista-helpdesk">Carregando Helpdesk...</div>
+    </div>
+
+    <!-- VISTA 4: MEMBROS -->
+    <div id="view-membros" class="app-view">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+            <h2 style="font-size: 1.35rem; font-weight: 800;">Plataforma de Membros & Cursos VIP</h2>
+            <button class="btn btn-primary" onclick="abrirModalAssinatura()">+ Assinar Plano VIP</button>
+        </div>
+        <div id="grade-cursos" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem;"></div>
+    </div>
+
+    <!-- VISTA 5: CATÁLOGO -->
+    <div id="view-catalogo" class="app-view">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+            <h2 style="font-size: 1.35rem; font-weight: 800;">Catálogo Digital & Checkout E-commerce</h2>
+            <button class="btn btn-primary" onclick="abrirModalPedido()">+ Novo Pedido</button>
+        </div>
+        <div id="grade-produtos" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem;"></div>
+    </div>
+
+    <!-- MODAL LEAD CRM -->
+    <div class="modal-overlay" id="modal-lead">
+        <div class="modal-box">
+            <h3 style="font-size: 1.2rem; font-weight: 800; margin-bottom: 1.2rem;">Cadastrar / Editar Lead</h3>
+            <input type="hidden" id="lead-id">
+            <div class="form-group"><label>Nome do Lead / Decisor</label><input type="text" id="lead-nome" required></div>
+            <div class="form-group"><label>E-mail Corporativo</label><input type="email" id="lead-email" required></div>
+            <div class="form-group"><label>WhatsApp</label><input type="text" id="lead-telefone" required></div>
+            <div class="form-group"><label>Empresa</label><input type="text" id="lead-empresa"></div>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                <div class="form-group"><label>Valor Estimado (R$)</label><input type="number" id="lead-valor" value="15000"></div>
+                <div class="form-group"><label>Score (0-100)</label><input type="number" id="lead-score" value="75"></div>
+            </div>
+            <div style="display: flex; justify-content: flex-end; gap: 0.8rem; margin-top: 1.5rem;">
+                <button class="btn" onclick="fecharModais()">Cancelar</button>
+                <button class="btn btn-primary" onclick="salvarLead()">Salvar Lead</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL CONTA ERP -->
+    <div class="modal-overlay" id="modal-conta">
+        <div class="modal-box">
+            <h3 style="font-size: 1.2rem; font-weight: 800; margin-bottom: 1.2rem;">Novo Lançamento ERP</h3>
+            <div class="form-group"><label>Descrição</label><input type="text" id="conta-desc" required></div>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                <div class="form-group"><label>Tipo</label><select id="conta-tipo"><option value="receita">Receita</option><option value="despesa">Despesa</option></select></div>
+                <div class="form-group"><label>Categoria</label><input type="text" id="conta-cat" value="Geral"></div>
+            </div>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                <div class="form-group"><label>Valor (R$)</label><input type="number" id="conta-valor" value="1000"></div>
+                <div class="form-group"><label>Vencimento</label><input type="date" id="conta-venc" value="2026-09-30"></div>
+            </div>
+            <div style="display: flex; justify-content: flex-end; gap: 0.8rem; margin-top: 1.5rem;">
+                <button class="btn" onclick="fecharModais()">Cancelar</button>
+                <button class="btn btn-primary" onclick="salvarConta()">Salvar Lançamento</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL TICKET HELPDESK -->
+    <div class="modal-overlay" id="modal-ticket">
+        <div class="modal-box">
+            <h3 style="font-size: 1.2rem; font-weight: 800; margin-bottom: 1.2rem;">Abrir Chamado Helpdesk</h3>
+            <div class="form-group"><label>Assunto</label><input type="text" id="ticket-assunto" required></div>
+            <div class="form-group"><label>Descrição Detalhada</label><textarea id="ticket-desc" rows="3"></textarea></div>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                <div class="form-group"><label>Cliente</label><input type="text" id="ticket-cliente" required></div>
+                <div class="form-group"><label>Criticidade</label><select id="ticket-prio"><option value="P1">P1 - Crítico (SLA 2h)</option><option value="P2">P2 - Alto (SLA 4h)</option><option value="P3">P3 - Médio (SLA 24h)</option></select></div>
+            </div>
+            <div style="display: flex; justify-content: flex-end; gap: 0.8rem; margin-top: 1.5rem;">
+                <button class="btn" onclick="fecharModais()">Cancelar</button>
+                <button class="btn btn-primary" onclick="salvarTicket()">Criar Chamado</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- FEEDBACK UI CONTAINERS -->
+    <div id="aidd-toast-container"></div>
+    <div id="aidd-dialog-overlay">
+        <div class="aidd-dialog-card">
+            <div class="aidd-dialog-header">
+                <div id="aidd-dialog-icon"></div>
+                <div class="aidd-dialog-title" id="aidd-dialog-title">Confirmação</div>
+            </div>
+            <div class="aidd-dialog-msg" id="aidd-dialog-msg">Deseja prosseguir com esta ação?</div>
+            <div class="aidd-dialog-actions">
+                <button class="btn" id="aidd-dialog-btn-cancel" style="background: rgba(255,255,255,0.05); color: #cbd5e1;">Cancelar</button>
+                <button class="btn btn-primary" id="aidd-dialog-btn-confirm" style="background: #3b82f6; border-color: #3b82f6;">Confirmar</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // FEEDBACK UI ENGINE
+        const ICONS_MAP = {
+            success: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>',
+            error: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>',
+            warning: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>',
+            info: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>'
+        };
+
+        window.showToast = function(message, type = 'info', duration = 3500) {
+            const container = document.getElementById('aidd-toast-container');
+            const toast = document.createElement('div');
+            toast.className = 'aidd-toast toast-' + type;
+            
+            const iconDiv = document.createElement('div');
+            iconDiv.className = 'aidd-toast-icon';
+            iconDiv.innerHTML = ICONS_MAP[type] || ICONS_MAP.info;
+
+            const textSpan = document.createElement('span');
+            textSpan.textContent = message;
+
+            toast.appendChild(iconDiv);
+            toast.appendChild(textSpan);
+            container.appendChild(toast);
+
+            requestAnimationFrame(() => toast.classList.add('show'));
+
+            setTimeout(() => {
+                toast.classList.remove('show');
+                setTimeout(() => {
+                    if (toast.parentNode) toast.parentNode.removeChild(toast);
+                }, 300);
+            }, duration);
+        };
+
+        window.showConfirm = function(title, message, isDanger = false) {
+            return new Promise((resolve) => {
+                const overlay = document.getElementById('aidd-dialog-overlay');
+                const titleEl = document.getElementById('aidd-dialog-title');
+                const msgEl = document.getElementById('aidd-dialog-msg');
+                const iconEl = document.getElementById('aidd-dialog-icon');
+                const btnCancel = document.getElementById('aidd-dialog-btn-cancel');
+                const btnConfirm = document.getElementById('aidd-dialog-btn-confirm');
+
+                titleEl.textContent = title || 'Confirmação';
+                msgEl.textContent = message || 'Deseja confirmar esta operação?';
+                
+                iconEl.innerHTML = isDanger ? ICONS_MAP.warning : ICONS_MAP.info;
+                iconEl.style.color = isDanger ? '#f87171' : '#60a5fa';
+
+                if (isDanger) {
+                    btnConfirm.style.background = '#ef4444';
+                    btnConfirm.style.borderColor = '#ef4444';
+                } else {
+                    btnConfirm.style.background = '#3b82f6';
+                    btnConfirm.style.borderColor = '#3b82f6';
+                }
+
+                overlay.style.display = 'flex';
+                requestAnimationFrame(() => overlay.classList.add('show'));
+
+                function cleanup() {
+                    overlay.classList.remove('show');
+                    setTimeout(() => { overlay.style.display = 'none'; }, 200);
+                    btnConfirm.onclick = null;
+                    btnCancel.onclick = null;
+                }
+
+                btnConfirm.onclick = () => { cleanup(); resolve(true); };
+                btnCancel.onclick = () => { cleanup(); resolve(false); };
+            });
+        };
+
+        window.alert = function(msg) {
+            window.showToast(msg, 'info');
+        };
+
+        let leadArrastado = null;
+
+        function fecharModais() {
+            document.querySelectorAll('.modal-overlay').forEach(m => m.style.display = 'none');
+        }
+
+        function trocarApp(app) {
+            document.querySelectorAll('.app-tab').forEach(b => {
+                b.classList.toggle('active', b.innerText.toLowerCase().includes(app));
+            });
+            document.querySelectorAll('.app-view').forEach(v => {
+                v.classList.remove('active');
+            });
+            document.getElementById('view-' + app).classList.add('active');
+
+            if (app === 'crm') carregarCRM();
+            if (app === 'erp') carregarERP();
+            if (app === 'helpdesk') carregarHelpdesk();
+            if (app === 'membros') carregarMembros();
+            if (app === 'catalogo') carregarCatalogo();
+        }
+
+        /* CRM */
+        async function carregarCRM() {
+            const data = await fetch('/api/crm/pipeline').then(r => r.json());
+            const k = document.getElementById('kanban-crm');
+            k.innerHTML = Object.entries(data).map(([stKey, col]) => `
+                <div class="column" ondragover="event.preventDefault()" ondrop="soltarLead(event, '${stKey}')">
+                    <div style="font-weight: 800; font-size: 0.92rem; margin-bottom: 0.8rem; color: #93c5fd; display: flex; justify-content: space-between;">
+                        <span>${col.nome}</span>
+                        <span>${col.itens.length}</span>
+                    </div>
+                    ${col.itens.map(l => `
+                        <div class="lead-card" draggable="true" ondragstart="leadArrastado = ${l.id}">
+                            <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+                                <div style="font-weight: 700; font-size: 0.92rem;">${l.nome}</div>
+                                <span style="background: rgba(59,130,246,0.2); color: #93c5fd; font-size: 0.72rem; padding: 0.1rem 0.4rem; border-radius: 4px; font-weight: 800;">${l.score} pts</span>
+                            </div>
+                            <div style="color: var(--muted); font-size: 0.8rem; margin: 0.2rem 0;">${l.empresa || 'Cliente'}</div>
+                            <div style="font-weight: 800; color: #10b981; margin-top: 0.4rem;">R$ ${l.valor_estimado.toFixed(2)}</div>
+                            <div style="display: flex; gap: 0.4rem; margin-top: 0.6rem;">
+                                <button class="btn btn-danger" style="padding: 0.2rem 0.5rem; font-size: 0.72rem;" onclick="excluirLead(${l.id})">Excluir</button>
+                            </div>
+                        </div>
+                    `).join('')}
+                </div>
+            `).join('');
+        }
+
+        function abrirModalLead() {
+            document.getElementById('lead-id').value = '';
+            document.getElementById('lead-nome').value = '';
+            document.getElementById('lead-email').value = '';
+            document.getElementById('lead-telefone').value = '';
+            document.getElementById('lead-empresa').value = '';
+            document.getElementById('modal-lead').style.display = 'flex';
+        }
+
+        async function salvarLead() {
+            const body = {
+                id: document.getElementById('lead-id').value || null,
+                nome: document.getElementById('lead-nome').value,
+                email: document.getElementById('lead-email').value,
+                telefone: document.getElementById('lead-telefone').value,
+                empresa: document.getElementById('lead-empresa').value,
+                valor_estimado: parseFloat(document.getElementById('lead-valor').value),
+                score: parseInt(document.getElementById('lead-score').value)
+            };
+            await fetch('/api/crm/leads/salvar', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(body) });
+            fecharModais();
+            showToast('Lead salvo com sucesso!', 'success');
+            carregarCRM();
+        }
+
+        async function excluirLead(id) {
+            const ok = await showConfirm('Excluir Lead', 'Deseja realmente remover este lead do pipeline comercial?', true);
+            if (ok) {
+                await fetch('/api/crm/leads/excluir', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({ id }) });
+                showToast('Lead excluído do pipeline!', 'info');
+                carregarCRM();
+            }
+        }
+
+        async function soltarLead(e, novoSt) {
+            if (leadArrastado) {
+                await fetch('/api/crm/pipeline/mover', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({ lead_id: leadArrastado, novo_status: novoSt }) });
+                if (novoSt === 'ganho') {
+                    showToast('🎉 Lead GANHO! Conta a Receber criada automaticamente no ERP!', 'success');
+                } else {
+                    showToast('Lead movido para ' + novoSt.toUpperCase(), 'info');
+                }
+                carregarCRM();
+                leadArrastado = null;
+            }
+        }
+
+        /* ERP */
+        async function carregarERP() {
+            const [resumo, contas] = await Promise.all([
+                fetch('/api/erp/fluxo-caixa').then(r => r.json()),
+                fetch('/api/erp/contas').then(r => r.json())
+            ]);
+            document.getElementById('resumo-erp-box').innerText = `Saldo Realizado: R$ ${resumo.saldo_realizado.toFixed(2)} | Projetado: R$ ${resumo.saldo_projetado.toFixed(2)}`;
+            document.getElementById('tabela-erp').innerHTML = contas.map(c => `
+                <tr>
+                    <td style="font-weight: 700;">${c.descricao}</td>
+                    <td style="color: ${c.tipo === 'receita' ? '#10b981' : '#ef4444'}; font-weight: 800;">${c.tipo.toUpperCase()}</td>
+                    <td>${c.categoria}</td>
+                    <td style="font-weight: 800;">R$ ${c.valor.toFixed(2)}</td>
+                    <td>${c.data_vencimento}</td>
+                    <td>
+                        <button class="btn" style="border-color: ${c.status === 'pago' ? '#10b981' : '#f59e0b'}; color: ${c.status === 'pago' ? '#10b981' : '#f59e0b'}; font-size: 0.78rem; padding: 0.3rem 0.7rem;" onclick="alternarStatusERP(${c.id})">
+                            ${c.status.toUpperCase()}
+                        </button>
+                    </td>
+                    <td>
+                        <button class="btn btn-danger" style="padding: 0.3rem 0.6rem; font-size: 0.75rem;" onclick="excluirConta(${c.id})">Excluir</button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function abrirModalConta() {
+            document.getElementById('modal-conta').style.display = 'flex';
+        }
+
+        async function salvarConta() {
+            const body = {
+                descricao: document.getElementById('conta-desc').value,
+                tipo: document.getElementById('conta-tipo').value,
+                categoria: document.getElementById('conta-cat').value,
+                valor: parseFloat(document.getElementById('conta-valor').value),
+                data_vencimento: document.getElementById('conta-venc').value
+            };
+            await fetch('/api/erp/contas/salvar', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(body) });
+            fecharModais();
+            showToast('Lançamento financeiro salvo com sucesso!', 'success');
+            carregarERP();
+        }
+
+        async function alternarStatusERP(id) {
+            await fetch('/api/erp/contas/alternar-status', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({ id }) });
+            showToast('Status financeiro atualizado!', 'info');
+            carregarERP();
+        }
+
+        async function excluirConta(id) {
+            const ok = await showConfirm('Excluir Lançamento', 'Deseja excluir este lançamento financeiro?', true);
+            if (ok) {
+                await fetch('/api/erp/contas/excluir', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({ id }) });
+                showToast('Lançamento excluído!', 'info');
+                carregarERP();
+            }
+        }
+
+        /* HELPDESK */
+        async function carregarHelpdesk() {
+            const tickets = await fetch('/api/helpdesk/tickets').then(r => r.json());
+            document.getElementById('lista-helpdesk').innerHTML = tickets.map(t => `
+                <div class="ticket-card">
+                    <div>
+                        <span style="background: rgba(239,68,68,0.2); color: #f87171; padding: 0.2rem 0.5rem; border-radius: 4px; font-weight: 800; font-size: 0.75rem;">${t.prioridade}</span>
+                        <span style="font-weight: 800; margin-left: 0.5rem;">${t.protocolo}</span>
+                        <h4 style="margin-top: 0.4rem; font-size: 1rem;">${t.assunto}</h4>
+                        <p style="color: var(--muted); font-size: 0.82rem; margin-top: 0.2rem;">${t.cliente_nome} (${t.cliente_email})</p>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 1rem;">
+                        <span style="color: #60a5fa; font-weight: 800; font-size: 0.85rem;">SLA: ${t.sla_limite_horas}h</span>
+                        <button class="btn" onclick="avancarTicket(${t.id})" style="border-color: rgba(59,130,246,0.4);">${t.status.toUpperCase()}</button>
+                        <button class="btn btn-danger" style="padding: 0.35rem 0.6rem; font-size: 0.75rem;" onclick="excluirTicket(${t.id})">Excluir</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function abrirModalTicket() {
+            document.getElementById('modal-ticket').style.display = 'flex';
+        }
+
+        async function salvarTicket() {
+            const body = {
+                assunto: document.getElementById('ticket-assunto').value,
+                descricao: document.getElementById('ticket-desc').value,
+                cliente_nome: document.getElementById('ticket-cliente').value,
+                cliente_email: 'cliente@empresa.com',
+                prioridade: document.getElementById('ticket-prio').value
+            };
+            await fetch('/api/helpdesk/tickets/salvar', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(body) });
+            fecharModais();
+            showToast('Chamado aberto com sucesso!', 'success');
+            carregarHelpdesk();
+        }
+
+        async function avancarTicket(id) {
+            await fetch('/api/helpdesk/tickets/avancar-status', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({ id }) });
+            showToast('Status do chamado avançado!', 'info');
+            carregarHelpdesk();
+        }
+
+        async function excluirTicket(id) {
+            const ok = await showConfirm('Excluir Chamado', 'Deseja realmente remover este chamado de suporte?', true);
+            if (ok) {
+                await fetch('/api/helpdesk/tickets/excluir', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({ id }) });
+                showToast('Chamado excluído!', 'info');
+                carregarHelpdesk();
+            }
+        }
+
+        /* MEMBROS */
+        async function carregarMembros() {
+            const cursos = await fetch('/api/membros/cursos').then(r => r.json());
+            document.getElementById('grade-cursos').innerHTML = cursos.map(c => `
+                <div style="background: var(--surface); border: 1px solid var(--border); border-radius: 14px; overflow: hidden; display: flex; flex-direction: column;">
+                    <div style="height: 120px; background: linear-gradient(135deg, rgba(59,130,246,0.4), rgba(168,85,247,0.4)); display: flex; align-items: center; justify-content: center; font-size: 2.5rem;">
+                        🎓
+                    </div>
+                    <div style="padding: 1.2rem; flex: 1; display: flex; flex-direction: column; justify-content: space-between;">
+                        <div>
+                            <span style="font-size: 0.72rem; font-weight: 800; color: #a855f7; text-transform: uppercase;">${c.categoria}</span>
+                            <h4 style="font-size: 1.05rem; font-weight: 800; margin-top: 0.3rem;">${c.titulo}</h4>
+                            <p style="color: var(--muted); font-size: 0.82rem; margin-top: 0.4rem; line-height: 1.5;">${c.descricao}</p>
+                        </div>
+                        <div style="margin-top: 1.2rem; display: flex; justify-content: space-between; align-items: center;">
+                            <span style="font-size: 0.78rem; font-weight: 700; color: #60a5fa;">${c.aulas} Aulas</span>
+                            <span style="background: rgba(16,185,129,0.15); color: #34d399; padding: 0.2rem 0.5rem; border-radius: 4px; font-weight: 800; font-size: 0.72rem;">LIBERADO</span>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        async function abrirModalAssinatura() {
+            await fetch('/api/membros/assinar', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({ nome: 'Membro VIP', email: 'vip@empresa.com', plano: 'Anual Enterprise', valor: 997.0 })
+            });
+            showToast('🎉 Assinatura VIP Ativada! Conta gerada no ERP!', 'success');
+        }
+
+        /* CATÁLOGO */
+        async function carregarCatalogo() {
+            const prods = await fetch('/api/catalogo/produtos').then(r => r.json());
+            document.getElementById('grade-produtos').innerHTML = prods.map(p => `
+                <div style="background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 1.5rem; display: flex; flex-direction: column; justify-content: space-between;">
+                    <div>
+                        <div style="font-weight: 800; font-size: 1.05rem;">${p.nome}</div>
+                        <div style="color: var(--muted); font-size: 0.84rem; margin: 0.5rem 0; line-height: 1.5;">${p.descricao}</div>
+                    </div>
+                    <div>
+                        <div style="font-size: 1.3rem; font-weight: 800; color: #10b981; margin: 0.8rem 0;">R$ ${p.preco.toFixed(2)}</div>
+                        <button class="btn btn-primary" style="width: 100%; justify-content: center;" onclick="comprarProduto('${p.nome}', ${p.preco})">Comprar Agora</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        async function comprarProduto(nome, preco) {
+            await fetch('/api/catalogo/pedidos/salvar', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({
+                    cliente_nome: 'Cliente Direto Catálogo',
+                    cliente_telefone: '11999998888',
+                    total: preco,
+                    itens: [{ nome, preco }]
+                })
+            });
+            showToast('🎉 Pedido confirmado! Receita lançada no ERP automaticamente!', 'success');
+        }
+
+        window.onload = () => carregarCRM();
+    </script>
+</body>
+</html>

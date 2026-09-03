@@ -1,0 +1,70 @@
+{
+  "nome": "ecossistema-aidd",
+  "versao": "1.0.0",
+  "data_execucao": "2026-09-03",
+  "repositorio": "https://github.com/heverton-dev/ecossistema-aidd.git",
+  "orquestracao": {
+    "framework": "ORCA ADE",
+    "lead_orchestrator": "Antigravity",
+    "governance_specialist": "Claude Code",
+    "integration_specialist": "MimoCode"
+  },
+  "fases": [
+    {
+      "fase": 1,
+      "nome": "GIT & SETUP",
+      "status": "CONCLUIDO",
+      "detalhes": "Inicialização do Git, branch main, remoto origin configurado e .gitignore canônico criado."
+    },
+    {
+      "fase": 2,
+      "nome": "IMPORT TOOLS",
+      "status": "CONCLUIDO",
+      "detalhes": "Cópia não-destrutiva de aidd-forge, aidd-generator, aidd-master e aidd-master-enterprise preservando 100% de integridade e sem .git interno."
+    },
+    {
+      "fase": 3,
+      "nome": "GOVERNANCE & SKILLS",
+      "status": "CONCLUIDO",
+      "detalhes": "Criação de AGENTS.md canônico, CLAUDE.md, regras Cursor, 4 skills universais e Slash Commands em .agent/commands e .claude/commands."
+    },
+    {
+      "fase": 4,
+      "nome": "UNIFIED CLI & GATES",
+      "status": "CONCLUIDO",
+      "detalhes": "Implementação da CLI raiz ecossistema.py e Quality Gate gates/G_ECOSSISTEMA_INTEGRIDADE.py com aprovação determinística 100% verde."
+    },
+    {
+      "fase": 5,
+      "nome": "DOCUMENTATION & RELEASE",
+      "status": "CONCLUIDO",
+      "detalhes": "README.md portal estruturado, validação de testes dos subprojetos (191 testes verdes), commit inicial e push para origin main."
+    }
+  ],
+  "ferramentas": [
+    {
+      "id": "aidd-forge",
+      "caminho": "tools/aidd-forge",
+      "skill": "skills/aidd-forge-runner",
+      "slash_command": "/forge [caminho]"
+    },
+    {
+      "id": "aidd-generator",
+      "caminho": "tools/aidd-generator",
+      "skill": "skills/aidd-generator-runner",
+      "slash_command": "/generate <ideia>"
+    },
+    {
+      "id": "aidd-master",
+      "caminho": "tools/aidd-master",
+      "skill": "skills/aidd-master-runner",
+      "slash_command": "/master <modulo>"
+    },
+    {
+      "id": "aidd-master-enterprise",
+      "caminho": "tools/aidd-master-enterprise",
+      "skill": "skills/aidd-enterprise-runner",
+      "slash_command": "/enterprise <tipo> <nome>"
+    }
+  ]
+}

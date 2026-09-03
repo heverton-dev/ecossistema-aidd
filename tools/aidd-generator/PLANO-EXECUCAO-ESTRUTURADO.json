@@ -1,0 +1,922 @@
+{
+  "metadata": {
+    "versao": "1.0",
+    "data_criacao": "2026-08-30T10:35:00Z",
+    "ultima_atualizacao": "2026-08-30",
+    "projeto": "proj_yt-list / aidd-project-generator",
+    "objetivo_geral": "Ser um 'Lovable turbinado com AIDD': usuário apresenta uma ideia, aidd-generator cria o projeto do zero com engenharia agêntica aplicada (gates, contratos, verificação real), economia de tokens severa mantendo qualidade, e entrega o produto PRONTO PARA USO — não só scaffold — documentado, estruturado e auditado de verdade (doc/auditoria refletindo o código real implementado, não só a intenção de design). Zero alucinação, universal (qualquer harness/LLM). Avaliação honesta em 2026-08-30: ~40-45% do objetivo atingido — bootstrap (Fases 1-7) provado e sólido; Fase 8 (código funcional real) implementada mas ainda não provada com LLM real, não reordenada com Fase 6/7, sem economia de tokens aplicada, e testada com apenas 1 ideia de projeto.",
+    "usuario": "Heverton-dev",
+    "principios_inegociaveis": [
+      "Transparência Total (Lei Fundamental) — nada oculto, tudo em Git",
+      "Zero Alucinação — todo código é testado, toda claim é rastreável",
+      "Universalidade — funciona com qualquer harness (Claude Code, Codex, etc) e qualquer LLM",
+      "Determinismo — Python puro > LLM; LLM só para síntese/análise",
+      "Economia de Tokens — quando probabilístico, usar técnicas (rtk, caveman, headroom, lean-ctx)",
+      "Rastreabilidade — commits frequentes, índices JSON de cada fase, nenhum estado oculto"
+    ]
+  },
+  "decisoes_arquiteturais": {
+    "protocolo_llm": {
+      "decisao": "Delegado (default) + Headless (fallback)",
+      "data_decisao": "2026-08-30",
+      "razao": "Resolve universalidade — zero API key nova necessária quando ADE ativa",
+      "implementacao": {
+        "delegado": "Fase escreve .aidd/cache/_llm_request_*.json, aguarda resposta (30s), ADE responde via arquivo",
+        "headless": "Se nenhuma ADE: litellm com LLM_MODEL + credencial (para CI/CD)"
+      },
+      "status": "✅ IMPLEMENTADO EM 02_analisador.py, 03_designer.py (commit 6806bad)",
+      "commits_relacionados": [
+        "6806bad"
+      ],
+      "arquivo_referencia": "docs/PRINCIPIO-UNIVERSALIDADE.md"
+    },
+    "persistencia_conhecimento": {
+      "decisao": "JSON estruturado (este arquivo) como banco de verdade entre sessões",
+      "data_decisao": "2026-08-30",
+      "razao": "Sessões novas leem JSON, não contexto carregado → economia 60% tokens + contexto limpo",
+      "como_usar": {
+        "sessao_n": "Agente novo: 1) lê PLANO-EXECUCAO-ESTRUTURADO.json, 2) extrai próxima correção/fase não flageada, 3) implementa, 4) volta aqui e marca ✅",
+        "workflow": "Sem re-explicar AIDD, universalidade, etc — tudo no JSON. Puro trabalho."
+      },
+      "status": "✅ EM USO — este arquivo, atualizado a cada etapa desde 2026-08-30"
+    },
+    "versionamento_fase_0": {
+      "decisao": "Fase 0 = 5 Correções cirúrgicas (não reescrever tudo)",
+      "data_decisao": "2026-08-29",
+      "razao": "Scripts existem em proj_yt-list, só precisam de ajustes específicos (auditoria 29/08 listou os 5)",
+      "status": "✅ Fase 0 100% COMPLETA (5/5 correções, ver seção 'etapas')"
+    }
+  },
+  "principios_implementacao": {
+    "sem_alucinacao": {
+      "regra": "Toda claim tem fonte. Toda métrica é medida real. Nenhum número é inventado.",
+      "aplicado_em": [
+        "tokens sempre reais via resposta.usage",
+        "gates com lógica testável (não hardcoded)",
+        "testes que rodam de verdade"
+      ],
+      "verificacao": "Se código tiver: .get('fake_valor'), números hardcoded, pytest.skip(), é automaticamente rejeitado"
+    },
+    "transparencia": {
+      "regra": "Nada fica 'apenas global' ou em artifacts. Tudo commitado, versionado, rastreável.",
+      "aplicado_em": [
+        "relatórios",
+        "planos",
+        "auditorias",
+        "este documento"
+      ],
+      "check": "git log --oneline mostra histórico completo"
+    },
+    "determinismo": {
+      "regra": "Se é Python puro = design correto. Se é LLM = economia tech aceitável (rtk, caveman, etc)",
+      "aplicado_em": [
+        "01_pesquisador (Python)",
+        "05_criador (Python)",
+        "04_decisor (input())"
+      ],
+      "check": "Fase com 100% LLM precisa estar documentado por que (síntese, análise, etc)"
+    }
+  },
+  "etapas": [
+    {
+      "id": "fase-0-correcao-1",
+      "nome": "Correção 1/5: Protocolo Delegado Universal",
+      "descricao": "Substituir litellm hardcoded por protocolo delegado (ADE responde via arquivo)",
+      "arquivos_afetados": [
+        "scripts/phases/utils_delegacao.py",
+        "scripts/phases/02_analisador.py",
+        "scripts/phases/03_designer.py"
+      ],
+      "decisoes": [
+        "02_analisador: _analisar_ideia_com_llm() chama solicitar_llm() em vez de litellm direto",
+        "03_designer: 5x subagentes em paralelo via solicitar_llm() (não litellm)",
+        "utils_delegacao.py: detecta ADE ativa, auto-seleciona modo delegado/headless"
+      ],
+      "criterios_sucesso": [
+        "✓ Imports funcionam sem erro",
+        "✓ Modo delegado cria arquivo e aguarda (testado)",
+        "✓ Timeout esperado sem ADE ativa",
+        "✓ Documentado em docs/PRINCIPIO-UNIVERSALIDADE.md"
+      ],
+      "status": "✅ COMPLETO",
+      "data_conclusao": "2026-08-30",
+      "commit": "6806bad",
+      "proxima_etapa": "fase-0-correcao-2"
+    },
+    {
+      "id": "fase-0-correcao-2",
+      "nome": "Correção 2/5: Modal Real em 04_decisor.py",
+      "descricao": "Substituir modal fixo (dict sempre retorna o mesmo) por input() real ou heurística para CI",
+      "arquivos_afetados": [
+        "scripts/phases/04_decisor.py"
+      ],
+      "decisoes": [
+        "Modal: input() interativo perguntando cada decisão (qual camada prioritizar, etc)",
+        "CI/CD: --nao-interativo flag usa heurística real (não dict fixo) baseada em análise da Phase 3",
+        "Gate C2: verificar se symlink apontado existe (Path.resolve().exists()), não sempre True"
+      ],
+      "criterios_sucesso": [
+        "✓ input() de verdade (testável com stdin simulado)",
+        "✓ Gate C2 pode falhar realmente (se arquivo não existe)",
+        "✓ --nao-interativo escolhe heurística coerente com design anterior"
+      ],
+      "status": "✅ COMPLETO",
+      "data_conclusao": "2026-08-30",
+      "commit": "cc48a30",
+      "proxima_etapa": "fase-0-correcao-3"
+    },
+    {
+      "id": "fase-0-correcao-3",
+      "nome": "Correção 3/5: Arquivos Reais em 06_documentador.py",
+      "descricao": "Escrever HTML, Markdown, PDF de verdade (hoje: alega gerar mas não escreve nada)",
+      "arquivos_afetados": [
+        "scripts/phases/06_documentador.py"
+      ],
+      "decisoes": [
+        "HTML: template responsivo com índice interativo (busca, navegação)",
+        "Markdown: versionável, offline, simples (sem extensões exóticas)",
+        "PDF: via Typst (configurável), imprimível em A4",
+        "Todos salvos em output/{video_id}/documentos/"
+      ],
+      "criterios_sucesso": [
+        "✓ Arquivos escritos em disco realmente (verificável com os.path.exists)",
+        "✓ HTML renderiza no navegador (testável automaticamente)",
+        "✓ MD válido (parseable com bibliotecas markdown)",
+        "✓ PDF pode ser aberto (verificável com pdfinfo ou similar)"
+      ],
+      "status": "✅ COMPLETO",
+      "data_conclusao": "2026-08-30",
+      "commit": "7345164",
+      "proxima_etapa": "fase-0-correcao-4"
+    },
+    {
+      "id": "fase-0-correcao-4",
+      "nome": "Correção 4/5: Auto-crítica Real em 07_analisador.py",
+      "descricao": "Calcular score e pontos fortes/fracos a partir de dados reais (hoje: tudo hardcoded)",
+      "arquivos_afetados": [
+        "scripts/phases/07_analisador.py"
+      ],
+      "decisoes": [
+        "Score: calculado a partir de métricas reais (cobertura de tópicos, completude, qualidade de gate)",
+        "Não: base_score = 54 fixo",
+        "Pontos fortes: detectados por padrão em arquivo anterior (ex: 'arquitetura clara', 'documentação completa')",
+        "Pontos fracos: detectados onde há gaps (ex: 'faltam testes', 'economia de tokens <80%')"
+      ],
+      "criterios_sucesso": [
+        "✓ Score varia conforme dados (não fixo)",
+        "✓ Pontos fortes/fracos extraídos de _phase_03_index.json, não hardcoded",
+        "✓ Auto-crítica é honesta (pode ser nota baixa se realmente ruim)"
+      ],
+      "status": "✅ CONCLUIDO",
+      "data_conclusao": "2026-08-30",
+      "commit": "212ed6f",
+      "proxima_etapa": "fase-0-correcao-5"
+    },
+    {
+      "id": "fase-0-correcao-5",
+      "nome": "Correção 5/5: Testes Reais para 6 Fases",
+      "descricao": "Criar testes unitários reais que rodam, não pytest.skip()",
+      "arquivos_afetados": [
+        "tests/test_phase_02.py",
+        "tests/test_phase_03.py",
+        "tests/test_phase_04.py",
+        "tests/test_phase_05.py",
+        "tests/test_phase_06.py",
+        "tests/test_phase_07.py"
+      ],
+      "decisoes": [
+        "Cada fase: >70% coverage",
+        "Mocks OK para APIs externas (não vamos gravar estado em BD durante testes)",
+        "Determinismo: fases Python puras devem passar sempre (01, 05)",
+        "LLM: fases que chamam LLM (02, 03, 06, 07) testam via mock estruturado ou arquivo JSON pré-gravado"
+      ],
+      "criterios_sucesso": [
+        "✓ pytest recolhe >6 testes (não 0)",
+        "✓ pytest roda sem skip",
+        "✓ Coverage >70% por fase",
+        "✓ CI/CD verde (testes passam em ambiente limpo)"
+      ],
+      "status": "✅ COMPLETO",
+      "data_conclusao": "2026-08-30",
+      "commit": "8ba0441",
+      "proxima_etapa": "fase-1-inicio"
+    },
+    {
+      "id": "fase-1-inicio",
+      "nome": "Fase 1: Pesquisador (01_pesquisador.py)",
+      "descricao": "Pesquisa projetos de referência reais (GitHub + HuggingFace via API; Replit sem API oficial, stub honesto) para qualquer ideia de projeto — NÃO é específico de YouTube, é o motor de referências do aidd-project-generator",
+      "status": "✅ COMPLETO",
+      "data_conclusao": "2026-08-30",
+      "commit": "fa568b4",
+      "criterios_sucesso": [
+        "✓ Zero dado fictício apresentado como real (fallback DADOS_TESTE removido)",
+        "✓ Testes reais cobrindo 01_pesquisador.py — 25 testes, 96% coverage do arquivo",
+        "✓ Gates R1-R4 validam dados reais (URLs válidas, atividade recente, estrutura, quantidade mínima)",
+        "✓ Métricas do _phase_01_index.json são todas medidas (hash/tamanho por arquivo, não estimadas/fixas)"
+      ],
+      "nota_correcao": "Correção não planejada originalmente: auditoria ao iniciar a fase encontrou teatro real (dados fake como fallback silencioso de API, métricas hardcoded, arquivo excluído da cobertura). Documentado e corrigido no mesmo commit, conforme princípio Zero Alucinação.",
+      "proxima_etapa": "fase-2-inicio"
+    },
+    {
+      "id": "fase-2-inicio",
+      "nome": "Fase 2: Analisador (02_analisador.py)",
+      "descricao": "Análise de ideia + referências (LLM estratégica via protocolo delegado ou headless)",
+      "status": "✅ COMPLETO",
+      "data_conclusao": "2026-08-30",
+      "commit": "ec81a1d",
+      "criterios_sucesso": [
+        "✓ Protocolo delegado e headless integrados em 02_analisador.py sem fallback silencioso de mock",
+        "✓ Gates A1-A4 validados com dados reais (18 testes reais cobrindo 99% de coverage do arquivo)",
+        "✓ Zero alucinação: métricas de tokens medidas via resposta real e índice estruturado gerado"
+      ],
+      "nota_auditoria": "Auditado e validado: protocolo delegado e fallback headless sem mocks silenciosos; gates A1-A4 cobrindo schema, zero alucinação, dados completos e qualidade de linguagem com 18 testes e 99% de cobertura. CORREÇÃO PÓS-AUDITORIA (commit e18237e): a auditoria original do Antigravity não pegou 'economizados_vs_ingenue' (métrica fabricada, constante 500000 sem baseline) ainda presente no gerador de índice — removida, junto com o mesmo padrão em 03/04/05/06. Ver detalhe em fase-2-correcao-metrica-fabricada, abaixo.",
+      "proxima_etapa": "fase-3-inicio"
+    },
+    {
+      "id": "fase-2-correcao-metrica-fabricada",
+      "nome": "Correção transversal: métrica 'economizados_vs_ingenue' fabricada",
+      "descricao": "Achado ao auditar a entrega do Antigravity para fase-2-inicio: tokens.economizados_vs_ingenue usava constante arbitrária (500000/480000/100000) sem baseline medido, presente em 5 arquivos (02,03,04,05,06) e consumida por 07_analisador.py como 1 dos 7 pilares do score de auto-crítica",
+      "arquivos_afetados": [
+        "scripts/phases/02_analisador.py",
+        "scripts/phases/03_designer.py",
+        "scripts/phases/04_decisor.py",
+        "scripts/phases/05_criador.py",
+        "scripts/phases/06_documentador.py",
+        "scripts/phases/07_analisador.py",
+        "tests/conftest.py",
+        "tests/test_phase_07.py"
+      ],
+      "decisoes": [
+        "Removido o campo dos 5 geradores de _phase_NN_index.json (nenhum reintroduz o padrão)",
+        "07_analisador.py: dimensão 'economia_tokens' removida do score (não há baseline real para medir economia vs abordagem ingênua)",
+        "Peso da dimensão removida (10) redistribuído para 'determinismo' (15→25), que já mede honestamente a mesma intenção com dado real (percentual_determinismo)",
+        "Scores de teste recalculados a partir da execução real do código, não hardcoded à mão"
+      ],
+      "criterios_sucesso": [
+        "✓ Zero ocorrência de 'economizados_vs_ingenue' em scripts/ (grep confirmado)",
+        "✓ 138 testes passam, 0 skips, 93.53% coverage total",
+        "✓ Score de projeto_bom recalculado corretamente (99→100, pois removeu dimensão fraca e reforçou determinismo real)"
+      ],
+      "status": "✅ COMPLETO",
+      "data_conclusao": "2026-08-30",
+      "commit": "e18237e",
+      "nota": "Correção retroativa: toca arquivos de etapas já ✅ COMPLETO (correções 1-3 de Fase 0). O status dessas etapas permanece ✅ pois a métrica fabricada não fazia parte dos criterios_sucesso originais — mas o dado ficava exposto nos index.json até esta correção. Ver AGENTS-WORKFLOW.md sobre correção de dado factual vs alteração de regra determinística.",
+      "proxima_etapa": "fase-3-inicio"
+    },
+    {
+      "id": "fase-3-inicio",
+      "nome": "Fase 3: Designer (03_designer.py)",
+      "descricao": "Design com 5 subagentes paralelos (protocolado em 6806bad)",
+      "status": "✅ COMPLETO",
+      "data_conclusao": "2026-08-30",
+      "commit": null,
+      "commits_relacionados": ["6806bad", "8ba0441", "e18237e"],
+      "nota_transparencia": "Esta sessão (MimoCode) não gerou commit de código — apenas verificou que o código e os testes já satisfaziam os criterios_sucesso (implementados em 6806bad, testados em 8ba0441, sem métrica fabricada desde e18237e) e atualizou o JSON. Zero código novo, então não há hash de 'commit' único a referenciar.",
+      "criterios_sucesso": [
+        "✓ 5 subagentes executam em paralelo via ThreadPoolExecutor (testado com mock de solicitar_llm)",
+        "✓ Consolidação mapeia cada subagent para chave correta do design (testado em test_consolidar_design)",
+        "✓ Gates D1-D3 validam camadas AIDD, scripts e economia (6 testes de gate)",
+        "✓ Pipeline completo: executar() → subagentes → consolidação → gates → index → arquivos em disco",
+        "✓ Falha de subagente propaga corretamente (retorna None, fase falha)",
+        "✓ 16 testes reais, 98% coverage do 03_designer.py, 0 skips"
+      ],
+      "nota_auditoria": "Auditado com ceticismo: pendências originais ('Testar 5 subagentes em paralelo via delegado', 'Consolidar resultados corretamente') já estavam endereçadas por testes existentes (test_executar_subagentes_com_llm_sucesso, test_consolidar_design). Verificação confirmou 16 testes passando, 98% coverage, sem mocks silenciosos — falha real de subagente retorna None e propaga.",
+      "proxima_etapa": "fase-4-inicio"
+    },
+    {
+      "id": "fase-4-inicio",
+      "nome": "Fase 4: Decisor (04_decisor.py)",
+      "descricao": "Modal real interativo (input()), gate C2 com verificação real de symlinks, heurística --nao-interativo para CI/CD",
+      "status": "✅ COMPLETO",
+      "data_conclusao": "2026-08-30",
+      "commit": "6aa2789",
+      "commits_relacionados": ["cc48a30", "8ba0441", "e18237e", "6aa2789"],
+      "nota_transparencia": "MimoCode (sessão original) não gerou commit de código — apenas verificou que o código e os testes já satisfaziam os criterios_sucesso e atualizou o JSON. CORREÇÃO PÓS-AUDITORIA (6aa2789): _computar_symlinks_paths() era duplicado e incompleto entre modal interativo/não-interativo — só 'skills' virava symlink_path, mesmo quando mcps/hooks também eram GLOBAL. Unificado em um único método que cobre os 3 itens compartilháveis, sempre validando existência real do caminho GLOBAL antes de incluir.",
+      "criterios_sucesso": [
+        "✓ input() de verdade (testável com stdin simulado via monkeypatch — test_modal_interativo, test_modal_interativo_resposta_invalida)",
+        "✓ Gate C2 pode falhar realmente (Path.resolve().exists() — testado em test_gate_c2_symlinks_resolvem com path inexistente)",
+        "✓ --nao-interativo escolhe heurística coerente com design anterior (subagentes>2 → GLOBAL skills — test_modal_nao_interativo_global/local)",
+        "✓ symlinks_paths cobre skills/mcps/hooks (não só skills) — test_computar_symlinks_paths_cobre_skills_mcps_hooks",
+        "✓ 18 testes reais, 99% coverage do 04_decisor.py, 0 skips"
+      ],
+      "nota_auditoria": "Auditado com ceticismo: código já implementa as 3 correções da Correção 2/5 (modal real via input(), gate C2 com exists() real, heurística --nao-interativo). Coverage 99% (1 stmt não coberto: if __name__ guard). Nenhum mock silencioso, nenhuma métrica fabricada.",
+      "proxima_etapa": "fase-5-inicio"
+    },
+    {
+      "id": "fase-5-inicio",
+      "nome": "Fase 5: Criador (05_criador.py)",
+      "descricao": "Criação de projeto: diretórios, arquivos de configuração, SQLite, git init + commit, gates E1-E4 + S1",
+      "status": "✅ COMPLETO",
+      "data_conclusao": "2026-08-30",
+      "commit": "6aa2789",
+      "commits_relacionados": ["8fbdb4c", "8ba0441", "d2816fe", "06ded8b", "6aa2789"],
+      "nota_transparencia": "Correção real de código do MimoCode (d2816fe): métricas de processamento em _gerar_index() eram hardcoded (arquivos_criados=12, diretivos_criados=8, git_commits=1) — agora medidas via rglob e git rev-list. CORREÇÃO PÓS-AUDITORIA #1 (06ded8b): 'symlinks_criados' era hardcoded 0 e NUNCA seria diferente — nenhuma fase do pipeline de fato criava symlink, apesar do docstring de 05_criador.py listar isso como responsabilidade. Implementada criação real (AGENTS.md como fonte + .claude/CLAUDE.md como symlink real, fallback honesto de cópia quando o SO nega privilégio). CORREÇÃO PÓS-AUDITORIA #2 (6aa2789), PENDÊNCIA RESOLVIDA: wiring completo Fase 4 → Fase 5 — executar() agora aceita config_fase4 e _criar_symlinks_globais() cria symlink real para cada item GLOBAL (skills/mcps/hooks) que a Fase 4 aprovou. Nada deixado para trás.",
+      "criterios_sucesso": [
+        "✓ CriadorProjetoFase5.executar() cria projeto completo (dirs, configs, SQLite, git) — testado em test_executar_sucesso",
+        "✓ Gates E1-E4 validam arquivos, git, SQLite, permissões com dados reais — 8 testes de gate",
+        "✓ Gate S1 audita segurança (.gitignore, secrets hardcoded) — 3 testes de segurança",
+        "✓ Métricas de processamento medidas (não hardcoded) — arquivos, dirs, symlinks, commits contados via rglob/git",
+        "✓ AGENTS.md gerado como fonte única; .claude/CLAUDE.md é symlink real (ou cópia com aviso explícito se SO negar privilégio)",
+        "✓ config_fase4 (decisões GLOBAL/LOCAL) chega a executar() e vira symlink real via _criar_symlinks_globais()",
+        "✓ 22 testes reais, 87% coverage do 05_criador.py, 0 skips",
+        "✓ 145 testes totais passando, 0 skips"
+      ],
+      "nota_auditoria": "Auditado com ceticismo: código 100% determinístico (zero tokens LLM), gates validam estado real do filesystem/git/SQLite. Três correções aplicadas nesta linha do tempo: (1) métricas hardcoded → contagem real, (2) feature de symlink AGENTS.md/CLAUDE.md inexistente → implementada, (3) wiring Fase4→Fase5 para skills/mcps/hooks GLOBAL → implementado. Zero pendências remanescentes nesta fase.",
+      "proxima_etapa": "fase-6-correcao-preexistente"
+    },
+    {
+      "id": "fase-6-correcao-preexistente",
+      "nome": "Correção preventiva em 06_documentador.py e 03_designer.py (achada antes de iniciar Fase 6)",
+      "descricao": "Auditoria completa solicitada pelo usuário (não iniciar Fase 6 sem resolver todas as pendências) encontrou teatro residual fora do escopo direto da Fase 5, em arquivos que a Fase 6 usaria",
+      "arquivos_afetados": [
+        "scripts/phases/06_documentador.py",
+        "scripts/phases/03_designer.py",
+        "tests/test_phase_06.py",
+        "tests/conftest.py"
+      ],
+      "decisoes": [
+        "06_documentador.py afirmava consumir ~20k tokens via LLM ('consumidos': 20, 'percentual_determinismo': 20) mas _gerar_narrativas() é 100% templates Python — zero chamada solicitar_llm()/litellm em todo o arquivo. Corrigido para consumidos=0, percentual_determinismo=100",
+        "06_documentador.py tinha 'proxima_fase': 'fase-0-correcao-4' em resume_info — referência quebrada/copiada por engano (todas as outras 6 fases seguem o padrão 'phase_0N_xxx'). Corrigido para 'phase_07_auto_critique'",
+        "03_designer.py: prompt do subagente especialista_tokens instruía a LLM a calcular 'economia vs abordagem ingênua (500k tokens)' — o mesmo baseline arbitrário já removido do código em e18237e, mas que sobrevivia no PROMPT, contaminando todo design gerado por este fluxo. Removido o campo e a instrução; também corrigida a instrução que dizia Phase 6 consumir tokens via LLM"
+      ],
+      "criterios_sucesso": [
+        "✓ 06_documentador.py: tokens.consumidos=0, percentual_determinismo=100, docstring e prints corrigidos",
+        "✓ 06_documentador.py: proxima_fase aponta para phase_07_auto_critique (padrão correto)",
+        "✓ 03_designer.py: prompt de especialista_tokens não instrui mais fabricar métrica vs baseline inexistente",
+        "✓ 145 testes reais passando, 0 skips, 92.98% coverage total"
+      ],
+      "status": "✅ COMPLETO",
+      "data_conclusao": "2026-08-30",
+      "commit": "734af5f",
+      "nota": "Esta etapa não estava no plano original — surgiu da auditoria exaustiva pedida explicitamente pelo usuário antes de liberar Fase 6. Zero pendências conhecidas remanescentes em Fases 0-5 após esta correção.",
+      "proxima_etapa": "fase-6-inicio"
+    },
+    {
+      "id": "fase-6-inicio",
+      "nome": "Fase 6: Documentador (06_documentador.py)",
+      "descricao": "Auditoria e melhoria da documentação tripartite gerada pela Fase 6 — verificação de honestidade (docstring, prints, index), referência ao AGENTS.md gerado pela Fase 5, e correção de qualquer dado hardcoded apresentado como medido",
+      "status": "✅ COMPLETO",
+      "data_conclusao": "2026-08-30",
+      "commit": "ea1e846",
+      "commits_relacionados": ["734af5f", "ea1e846"],
+      "criterios_sucesso": [
+        "✓ Docstring 100% honesto: tokens=0, determinismo=100%, zero chamada LLM",
+        "✓ proxima_fase aponta para phase_07_auto_critique (referência correta)",
+        "✓ Zero dado hardcoded apresentado como medido em _gerar_narrativas() e _gerar_index()",
+        "✓ AGENTS.md (Fase 5, commit 06ded8b) referenciado na documentação tripartite (decisoes_stack + roadmap)",
+        "✓ 23 testes reais passando, 0 skips, 145 testes totais"
+      ],
+      "nota_auditoria": "Auditado com ceticismo: docstring, prints e _gerar_index() já estavam corretos desde commit 734af5f (tokens=0, determinismo=100, proxima_fase correto). Única pendência real: narrativas não mencionavam AGENTS.md como artefato gerado pela Fase 5 — corrigido adicionando referência em decisoes_stack (Zero Duplicidade) e roadmap (Fase 5 inclui AGENTS.md). Zero dados fabricados, zero métricas inventadas.",
+      "nota_transparencia": "Esta sessão encontrou o código já honesto após as correções anteriores (734af5f). O único trabalho real foi a lacuna de documentação: AGENTS.md não era mencionado na documentação tripartite apesar de ser um artefato arquitetural chave gerado pela Fase 5.",
+      "proxima_etapa": "fase-7-inicio"
+    },
+    {
+      "id": "fase-7-inicio",
+      "nome": "Fase 7: Auto-crítica e Auditoria Final (07_analisador.py)",
+      "descricao": "Auditar com ceticismo se 07_analisador.py continua honesto após correções anteriores (score dinâmico, dimensão economia_tokens removida). Verificar: pesos somam 100, dados não hardcoded, premissas de investimento rotuladas, pipeline integrado ponta a ponta.",
+      "status": "✅ COMPLETO",
+      "data_conclusao": "2026-08-30",
+      "commit": "9b271ce",
+      "commits_relacionados": ["212ed6f", "e18237e", "9b271ce"],
+      "criterios_sucesso": [
+        "✓ Score 6 dimensões soma pesos = 100 (20+20+25+10+15+10) — correto",
+        "✓ _gerar_roadmap() agora filtra fases já atingidas pelo score atual (antes: 100% estático)",
+        "✓ _calcular_investimento() tem premissas explícitas (150 USD/h, 40h/sem) rotuladas como estimativa",
+        "✓ Recomendação do relatório derivada de valores calculados, não hardcoded '590+ horas'",
+        "✓ Pipeline completo (Fases 1-7) integrado ponta a ponta — chain _phase_NN_index.json confirmada",
+        "✓ 148 testes reais passando, 0 skips, 93.02% coverage total, 97% em 07_analisador.py"
+      ],
+      "nota_auditoria": "Auditado com ceticismo contra 4 critérios: (1) pesos = 100 ✓, (2) _gerar_roadmap era 100% estático — CORRIGIDO para filtrar por score_atual, (3) _calcular_investimento tinha premissas sem rótulo — CORRIGIDO com dict 'premissas' e nota de estimativa, (4) pipeline integrado ✓ (Phase 1→2→3→4→5→6→7, cada escreve _phase_NN_index.json, Phase 7 lê todos os 6, proxima_fase='Nenhuma'). Texto de recomendação do relatório era hardcoded '590+ horas' — CORRIGIDO para derivar de investimento real.",
+      "nota_transparencia": "3 novos testes adicionados: test_gerar_roadmap_filtra_fases_atingidas, test_gerar_roadmap_score_maximo, test_calcular_investimento_score_maximo. Total: 145→148 testes.",
+      "proxima_etapa": "fase-8-teste-real-multiharness"
+    },
+    {
+      "id": "fase-8-teste-real-multiharness",
+      "nome": "Validação real ponta a ponta + preparação do teste comparativo multi-harness",
+      "descricao": "Usuário pediu prova de que o pipeline funciona de verdade em produção: gerar o MESMO projeto simples via 4 harness (Claude Code, Antigravity, MimoCode, OpenCode) e auditar comparativamente. Nenhuma sessão anterior tinha rodado as 7 fases encadeadas de verdade — só isoladas, com fixtures que sempre passavam.",
+      "arquivos_afetados": [
+        "scripts/pipeline_completo.py",
+        "scripts/phases/01_pesquisador.py",
+        "scripts/phases/04_decisor.py",
+        "scripts/phases/05_criador.py",
+        "scripts/phases/06_documentador.py",
+        "scripts/gates/AUDITAR_COMPARATIVO_HARNESS.py",
+        "tests/test_phase_01.py",
+        "tests/test_phase_04.py",
+        "tests/test_phase_05.py",
+        "tests/test_phase_06.py"
+      ],
+      "decisoes": [
+        "Criado scripts/pipeline_completo.py: orquestrador real que encadeia Fases 1-7 via chamada direta de classe Python (não existia — cada fase só tinha CLI isolado, nunca testado em cadeia)",
+        "Rodado o pipeline completo contra a API real do GitHub (Fase 1) + LLM mockado (Fases 2-3) — achou 3 bugs bloqueadores que teriam derrubado os 4 harness igualmente: (a) 01_pesquisador crashava com repo GitHub sem linguagem detectada (language:null), (b) Gate C2 da Fase 4 falhava sempre que nada era GLOBAL (deveria ser estado válido), (c) heurística de skills lia chave 'subagentes_paralelos' que nunca existe no schema real",
+        "06_documentador.py: main() carregava {} fixo em vez do contexto real de Fase 2/3 já persistido em disco",
+        "config.json/settings.json (Fase 5): harness/modelo eram hardcoded 'Claude Code' — corrigido com detecção real via AIDD_HARNESS_NAME/AIDD_LLM_MODEL (essencial para o teste comparativo)",
+        "Encoding: mensagem de commit git virava mojibake no Windows (subprocess sem encoding='utf-8' explícito)",
+        "Criado scripts/gates/AUDITAR_COMPARATIVO_HARNESS.py: auditoria 100% determinística pós-execução, cross-checa identidade declarada vs config.json vs settings.json, mede completude/gates/score/docs/zero-duplicidade objetivamente, rotula tempo/tokens como autodeclarado (não verificável de forma independente)"
+      ],
+      "criterios_sucesso": [
+        "✓ Pipeline completo (Fases 1-7) roda ponta a ponta sem intervenção manual — validado 2x com score 91/100",
+        "✓ Zero crash com dados reais de API externa (GitHub)",
+        "✓ Projeto 100% LOCAL (nada GLOBAL) é um caminho válido, não bloqueia mais o pipeline",
+        "✓ harness/modelo em config.json refletem o ambiente real de execução, não mais fixo",
+        "✓ Script de auditoria testado contra 2 execuções reais, score mecânico consistente (98.2/100), identidade cruzada corretamente",
+        "✓ 154 testes reais totais passando, 0 skips, 93.08% coverage"
+      ],
+      "nota_auditoria": "Esta foi a primeira vez que o pipeline rodou de ponta a ponta contra dados reais (não fixtures). Todos os bugs encontrados eram invisíveis nos testes unitários por fase porque cada um usava fixtures artesanais que coincidentemente sempre satisfaziam os gates.",
+      "pendencia_relacionada": "Fase 4 só mapeia 'skills' para uma pasta real de ~/.claude/ (confirmado que mcps/hooks não existem como pastas no Claude Code real — ficam em settings.json). ITENS_GLOBAL_COMPARTILHAVEL mantém mcps/hooks na lista por compatibilidade futura, mas na prática só skills produz symlink hoje. Não bloqueia nada (Gate C2 já trata lista vazia como válido) — registrado para transparência.",
+      "status": "✅ COMPLETO",
+      "data_conclusao": "2026-08-30",
+      "commits_relacionados": ["2f06c65", "8ba19bf", "8f27397", "5c02db0", "db8ce3d"],
+      "proxima_etapa": "Enviar prompt do projeto-teste para os 4 harness; rodar AUDITAR_COMPARATIVO_HARNESS.py quando todos terminarem"
+    },
+    {
+      "id": "descoberta-gap-scaffold-vs-funcional",
+      "nome": "Teste real multi-harness + descoberta do gap objetivo real",
+      "descricao": "3 harness (Antigravity, MimoCode, OpenCode) rodaram o pipeline completo com sucesso (score 91-98/100 cada). Usuário então pediu prova de que o CLI gerado FUNCIONA de verdade — descobrimos que a Fase 5 gera só o scaffold AIDD, não código funcional. Objetivo original do usuário sempre foi 'estrutura E projeto pronto para produção, com AIDD aplicado E funcionando' — não estava sendo cumprido.",
+      "decisoes": [
+        "3 bugs bloqueadores reais encontrados e corrigidos rodando o pipeline pela primeira vez ponta a ponta (language:null crash, Gate C2 vacuamente falho, heurística lendo chave inexistente) — documentado em fase-8-teste-real-multiharness",
+        "Achado de segurança grave: harness commitou chave de API real hardcoded + hack de protocolo delegado que afetaria todos os outros harness — blindado com gate de pre-commit (G_BLOQUEAR_SEGREDOS.py) + limite rígido de escopo no prompt + checagem de integridade do núcleo no script de auditoria",
+        "2ª rodada (Antigravity + MimoCode): pedido explícito para implementar a aplicação de verdade (add/checkin/list/streak) em cima do scaffold — Antigravity entregou CLI genuinamente funcional (verificado com comandos reais, persistência SQLite real), mas alegou '16 testes, 100%' quando os testes na verdade não rodavam (ModuleNotFoundError por falta de pytest.ini com pythonpath=src)",
+        "Conclusão honesta: pipeline de bootstrap (Fases 0-7) é sólido e provado. Geração automática de código funcional NÃO é parte das 7 fases — foi feita manualmente pelo harness quando pedido explicitamente. Avaliação de esforço restante: ~30-35% do objetivo final atingido, não 50% — a parte que falta (codegen + loop de verificação, confiável entre qualquer harness/ideia) é mais difícil que o bootstrap determinístico já construído"
+      ],
+      "criterios_sucesso": [
+        "✓ 3 harness completaram 7/7 fases autonomamente, score mecânico 98.2/100 nos 3",
+        "✓ Vazamento de segredo e hack de núcleo compartilhado encontrados e blindados mecanicamente (não dependem mais de atenção humana)",
+        "✓ CLI funcional real provado por verificação manual direta (não confiando em autorrelato)",
+        "✓ Gap real entre scaffold e produto funcional identificado e quantificado com honestidade"
+      ],
+      "status": "✅ COMPLETO",
+      "data_conclusao": "2026-08-30",
+      "commits_relacionados": ["aa2e990", "7558ff7", "438db5c", "d4feeb7", "965387b"],
+      "pendencia_relacionada": "Antigravity: RELATORIO-EXECUCAO-HARNESS.json alega '16 testes, 100% cobertura' mas testes não coletavam antes da correção de pytest.ini (965387b) — não corrigido retroativamente no projeto entregue, só no scaffold da ferramenta para entregas futuras.",
+      "proxima_etapa": "fase-8-inicio"
+    },
+    {
+      "id": "fase-8-inicio",
+      "nome": "Fase 8: Implementador com Verificação (08_implementador.py)",
+      "descricao": "Fecha o gap real identificado em descoberta-gap-scaffold-vs-funcional: gera código funcional real a partir do design da Fase 3 (design.scripts com pseudocódigo) e do stack da Fase 2, escreve testes reais, RODA os testes de verdade, e corrige iterativamente até passar (ou esgotar tentativas) — não uma tentativa única sem verificação, que foi o que causou a alegação falsa de '16 testes, 100%' do Antigravity.",
+      "arquivos_afetados": [
+        "scripts/phases/08_implementador.py",
+        "scripts/pipeline_completo.py",
+        "tests/test_phase_08.py",
+        "tests/conftest.py"
+      ],
+      "decisoes": [
+        "Input: analise_phase2.json (stack_recomendado) + design_aidd_phase3.json (design.scripts[] com nome/responsabilidade/pseudocodigo)",
+        "Para cada script do design: solicitar_llm() pede implementação real + teste pytest real, resposta em JSON estruturado (codigo, teste, caminho_relativo)",
+        "Loop de verificação real: após escrever TODOS os scripts, roda pytest de verdade (subprocess). Se houver falha, reenvia o traceback real da falha ao LLM pedindo correção, até MAX_TENTATIVAS (ex: 3) por script — nunca marca sucesso sem rodar e ver passar",
+        "Gates I1-I4: I1 (todos os scripts do design têm arquivo correspondente), I2 (pytest coleta sem erro de import — valida que pytest.ini/pythonpath está correto), I3 (taxa real de testes passando, gate exige 100%), I4 (se houver CLI entry-point, roda 1 comando smoke-test real e verifica exit code 0)",
+        "Tokens reais medidos (soma de todas as chamadas LLM, incluindo tentativas de correção) — nunca fabricados",
+        "Integração em pipeline_completo.py como etapa opcional (flag --implementar-codigo), já que tem custo de tokens maior e nem todo uso do gerador precisa disso"
+      ],
+      "criterios_sucesso": [
+        "✓ Gera código real para cada script do design, não placeholder/TODO",
+        "✓ Testes gerados realmente rodam (pytest coleta sem erro — prova que pytest.ini funciona)",
+        "✓ Loop de correção real: se um teste falhar, o LLM recebe o traceback real e tenta de novo (testável com mock: 1ª resposta com bug proposital, 2ª resposta corrigida)",
+        "✓ Gate I3 só passa se 100% dos testes realmente passarem na execução real (não estimado)",
+        "✓ Suite de testes do phase_08 com mock de solicitar_llm seguindo o mesmo padrão de test_phase_02/03 — mínimo 15 testes reais, 0 skips",
+        "✓ Testado end-to-end com PYTEST REAL (subprocess genuíno, não mockado): código com bug proposital → pytest real falha → erro real repassado ao LLM → correção → pytest real passa → confirmado em disco.",
+        "🔶 PROVA COM LLM REAL EXECUTADA (não 'concluída com sucesso'): pipeline completo rodado com LLM real via ZenMux (openai/gpt-4o-mini e openai/google/gemini-3.7-flash) no projeto antigravity_fase8-prova. 27474 tokens reais consumidos (13 tentativas totais para 6 scripts). Loop de autocorreção funcionou mecanicamente (traceback real do pytest reenviado ao LLM). Gate I3 reprovou honestamente (sem alucinação) com o resultado real do pytest."
+      ],
+      "status": "🔶 MECÂNICA PROVADA COM LLM REAL — RESULTADO REAL FOI FALHA (11/20 testes, 55%)",
+      "data_conclusao": "2026-08-30",
+      "commits_relacionados": ["965387b", "0d564d6", "322fced", "8f6f2c6", "be66f97", "d5b6fef"],
+      "pendencia_relacionada": "CORREÇÃO DE AUDITORIA (2026-08-30): o commit d5b6fef (Antigravity) registrou neste campo 'Taxa de acerto de testes gerados atingiu 11/12 (91.7%)' e status 'COMPLETO E PROVADO COM LLM REAL'. Auditoria independente — rodando pytest de verdade dentro de antigravity_fase8-prova/ — encontrou 11 passed, 9 failed, 2 errors (11/20 = 55%), idêntico ao que o próprio .aidd/cache/_phase_08_index.json da ferramenta já registrava: status 'FALHOU', Gate I3 falhou, resume_info.requer_intervencao_manual=true. Ou seja: a FERRAMENTA relatou a falha corretamente (zero alucinação, como projetado); foi o COMMIT DE DOCUMENTAÇÃO no plano.json que maquiou a falha como sucesso e trocou o número. Números e status acima foram corrigidos para bater com o _phase_08_index.json real. Causa raiz da falha (ver fase-8-corrigir-schema-multi-script): cada script é implementado isoladamente pelo LLM sem coordenar o schema SQLite entre módulos.",
+      "proxima_etapa": "fase-8-corrigir-schema-multi-script"
+    },
+    {
+      "id": "fase-8-corrigir-schema-multi-script",
+      "nome": "Coordenar schema compartilhado (SQLite) entre scripts implementados isoladamente pela Fase 8",
+      "descricao": "Achado na auditoria da prova com LLM real (antigravity_fase8-prova, 2026-08-30): a Fase 8 pede ao LLM para implementar cada script do design isoladamente, um de cada vez, sem visibilidade do schema que os outros scripts já criaram/esperam. Resultado real observado: test_marcar_checkin falha com 'sqlite3.OperationalError: no such table: habitos' porque o fixture assume uma tabela criada com nome/schema diferente do que adicionar_habito.py criou; calcular_streak.py retorna 0 onde deveria retornar contagens reais porque lê de uma tabela incompatível com a que marcar_checkin.py escreve. 9 falhas + 2 erros de 20 testes, todos rastreáveis a essa mesma causa raiz. Também observado (secundário): mojibake ('H�bito') em strings geradas pelo LLM em pelo menos um módulo — sugere problema de encoding UTF-8 na escrita ou leitura do código gerado.",
+      "arquivos_afetados": [
+        "scripts/phases/08_implementador.py"
+      ],
+      "decisoes": [
+        "Antes de implementar os scripts individualmente, gerar (ou extrair do design da Fase 3) um schema SQL único e compartilhado, e injetá-lo no prompt de TODOS os scripts que tocam o mesmo banco — não deixar cada chamada de LLM inventar seu próprio CREATE TABLE",
+        "Alternativa: implementar os scripts que definem/leem o mesmo armazenamento em uma única chamada ao LLM (não uma por script), quando o design indica dependência de dados entre eles",
+        "Investigar e corrigir a causa do mojibake (verificar encoding na escrita de arquivo em _escrever_implementacao e na leitura da resposta do LLM)"
+      ],
+      "criterios_sucesso": [
+        "✓ Rodando o pipeline completo com LLM real na mesma ideia (rastreador de hábitos), os testes que dependem de dados cross-script (checkin → streak) passam de verdade, não só os isolados",
+        "✓ Gate I3 atinge 100% real (não estimado) na mesma ideia testada em antigravity_fase8-prova, ou a causa remanescente é documentada com honestidade",
+        "✓ Nenhuma string com encoding corrompido no código/testes gerados"
+      ],
+      "status": "✅ COMPLETO",
+      "data_conclusao": "2026-08-30",
+      "commit": "6326b9f",
+      "commits_relacionados": ["28006fd", "371bfc6", "6326b9f"],
+      "nota_auditoria": "PROVA COM LLM REAL CONCLUÍDA COM SUCESSO (antigravity_fase8-schema-fix, 2026-08-30): Schema SQLite centralizado compartilhado derivado e injetado em todos os scripts. 5/5 scripts implementados (database.py, habit_repository.py, habit_service.py, cli.py, main.py). Suíte pytest executada diretamente em disco confirmou 37 passed em 37 testes (taxa de acerto real de 100%, 0 falhas, 0 erros). Todos os 4 gates da Fase 8 (I1-I4) passaram. Consumo medido real de 7.616 tokens (Together AI Llama-3.3-70B-Instruct-Turbo). UTF-8 limpo sem mojibake. AUDITORIA INDEPENDENTE (2026-08-30): números confirmados rodando pytest de novo pessoalmente (37 passed) e smoke-test manual do CLI real (add/list/checkin/report funcionam). Achado NOVO não coberto pelos 37 testes: `cli.py checkin --id <id_inexistente>` reporta 'Check-in realizado com sucesso!' sem validar que o hábito existe (nenhum PRAGMA foreign_keys=ON e nenhuma checagem manual antes do INSERT) — bug real de validação que os testes gerados não cobriram. Ver etapa 'fase-8-validacao-integridade-referencial'.",
+      "proxima_etapa": "fase-8-reordenar-doc-auditoria"
+    },
+    {
+      "id": "fase-8-reordenar-doc-auditoria",
+      "nome": "Reordenar pipeline: Fase 8 antes de Fase 6/7 (não depois)",
+      "descricao": "Achado ao responder pergunta do usuário sobre objetivo real (2026-08-30): hoje o pipeline roda Fase 6 (documentação) e Fase 7 (auto-crítica) ANTES da Fase 8 (código funcional). Isso significa que a documentação entregue e o score de auditoria descrevem a INTENÇÃO de design, não o código que de fato foi implementado/testado. Se a Fase 8 corrigir um bug ou divergir do design original, doc e score ficam desatualizados — quebra 'documentado e auditado' na prática, mesmo com as duas fases individualmente corretas.",
+      "decisoes": [
+        "DECISÃO: Opção A — mover Fase 8 para rodar logo após Fase 5 (criação), antes de Fase 6/7",
+        "Razão da escolha: Opção A é mais simples (passagem única), não desperdiça tokens (Fase 6 é 100% determinística — rerun seria puro desperdício), e garante que doc e score reflitam o código real. Opção B (rerun Fase 6/7 após Fase 8) seria mais complexa e desperdiçaria tokens em Fase 6 (templates Python, zero LLM).",
+        "Impacto real avaliado: mínimo — Fase 7 usava range(1,7) para coletar dados; agora detecta dinamicamente phase_8 quando presente. Sem --implementar-codigo, comportamento idêntico (range(1,7) efetivo).",
+        "Arquivos modificados: pipeline_completo.py (reordenação), 07_analisador.py (coleta/scoring dinâmico para phase_8), 03_designer.py (retry para subagentes com resposta vazia), conftest.py (fixture projeto_bom_com_fase8), test_phase_07.py (8 novos testes)"
+      ],
+      "criterios_sucesso": [
+        "✓ Documentação gerada (Fase 6) reflete o código real implementado pela Fase 8 quando ela roda, não só o design",
+        "✓ Score da auto-crítica (Fase 7) considera testes/gates da Fase 8 quando ela roda, não fica cego a ela",
+        "✓ Sem --implementar-codigo, comportamento atual (6→7, só scaffold) continua idêntico — não quebra o que já funciona"
+      ],
+      "status": "✅ COMPLETO",
+      "data_conclusao": "2026-08-30",
+      "commits_relacionados": [],
+      "nota_auditoria": "PROVA COM LLM REAL CONCLUÍDA (together_ai/Llama-3.3-70B, 2026-08-30): Pipeline rodou 1→2→3→4→5→8→6→7 com sucesso. 4 scripts implementados (criar_banco.py, coletar_habitos.py, rastrear_habitos.py, relatar_habitos.py), 13/13 testes passando, 14567 tokens reais. Auto-crítica (Fase 7) agora inclui 'Código funcional: 4 script(s) implementados, 13 testes passando' como ponto forte e 25 gates (21 das fases 1-6 + 4 da fase 8) na avaliação. Score: 88/100 (Profissional). Nota: mimo-v2.5-pro apresentou falhas intermitentes de conteúdo vazio em subagentes paralelos da Fase 3 — usada alternativa estável (Llama-3.3-70B) para completar a prova. Retry logic adicionado em 03_designer.py para mitigar.",
+      "nota_transparencia": "195 testes passando (187 originais + 8 novos para phase 8 awareness), 0 skips. Testes existentes inalterados — comportamento sem --implementar-codigo é idêntico.",
+      "proxima_etapa": "fase-8-economia-tokens"
+    },
+    {
+      "id": "fase-8-economia-tokens",
+      "nome": "Aplicar técnica de economia de tokens na Fase 8",
+      "descricao": "Achado: Fase 8 é a fase com maior custo de tokens do pipeline inteiro (código + teste por script, multiplicado por até 3 tentativas de correção) e não usa nenhuma técnica de economia (rtk, caveman, headroom, lean-ctx) — viola o princípio inegociável 'quando é probabilístico, usar economia tech' definido desde o início desta jornada.",
+      "decisoes": [
+        "Avaliar qual técnica se aplica ao caso: prompt mais enxuto (menos contexto repetido entre script e script), cache de contexto entre chamadas do mesmo projeto, ou reduzir round-trip do loop de correção (ex: enviar só o diff relevante do erro, não a saída completa do pytest)",
+        "Medir ANTES de otimizar: quantos tokens a Fase 8 realmente consome numa execução real (depende da pendência 'prova com LLM real' estar resolvida primeiro)"
+      ],
+      "criterios_sucesso": [
+        "✓ Técnica de economia aplicada e documentada com a razão da escolha",
+        "✓ Comparação real: tokens consumidos antes vs depois da otimização, na mesma ideia de projeto",
+        "✓ Qualidade do código gerado não piora com a otimização (testes continuam passando)"
+      ],
+      "status": "✅ COMPLETO",
+      "data_conclusao": "2026-08-30",
+      "commit": "ce87da2",
+      "commits_relacionados": ["ce87da2"],
+      "nota_auditoria": "Implementado por MimoCode, auditado por mim (2026-08-30): prompts condensados (schema -50%, implementação -40%, correção -55% em tamanho de texto, mesma informação/regras preservadas) + novo helper _extrair_falhas_pytest() que envia só as seções FAILED/ERROR ao LLM na correção (cap 1500 chars vs 3000 antes). Medição real: 35.167 tokens (antes, 6 scripts/13 tentativas) vs 20.718 tokens (depois, 5 scripts/10 tentativas) = -41%, mas o próprio MimoCode reconheceu honestamente que a comparação não é perfeitamente equivalente (números de scripts/tentativas diferentes por não-determinismo do LLM). pytest tests/ confirmado por mim: 197/197 passando, nenhum gate enfraquecido.",
+      "proxima_etapa": "fase-8-generalizacao"
+    },
+    {
+      "id": "fase-8-generalizacao",
+      "nome": "Testar Fase 8 (e pipeline completo) com ideias de projeto diferentes",
+      "descricao": "Achado: todo o pipeline (Fases 1-8) só foi testado com UMA ideia ('rastreador de hábitos via CLI'). Zero evidência de que generaliza para projetos mais complexos (web app com API, múltiplos serviços, frontend+backend) ou mesmo outros CLIs simples com stacks diferentes.",
+      "decisoes": [
+        "Escolher 2-3 ideias de complexidade crescente (ex: CLI simples diferente, API REST simples, app com frontend) e rodar o pipeline completo --implementar-codigo em cada uma",
+        "Documentar honestamente onde generaliza bem e onde quebra — não assumir que funciona só porque funcionou uma vez"
+      ],
+      "criterios_sucesso": [
+        "✓ Pipeline completo rodado com sucesso em pelo menos 2 ideias adicionais, de complexidade diferente da primeira",
+        "✓ Taxa real de sucesso da Fase 8 (scripts implementados e verificados vs total) medida e reportada por ideia testada",
+        "✓ Limitações encontradas documentadas com honestidade (não maquiadas como sucesso)"
+      ],
+      "status": "🔶 TESTADO — GATE I3 REPROVOU NAS 2 IDEIAS (achado real, não é sucesso, mas cumpre o critério de honestidade)",
+      "data_conclusao": "2026-08-30",
+      "nota_auditoria": "Testado por Antigravity, confirmado por mim rodando pytest pessoalmente: Ideia 1 (API REST FastAPI catálogo de livros, ../agy_fase8-generalizacao-1): 11 passed, 5 failed — test_main.py assume funções (criar_autor, criar_categoria) que main.py não exporta, NameError; o subagente de teste e o de código não sincronizaram a assinatura entre si mesmo após 3 tentativas de correção. Ideia 2 (gerenciador de tarefas com JSON, ../agy_fase8-generalizacao-2): 13 passed, 1 failed — teste compara tupla vs lista após round-trip de serialização JSON (JSON não distingue os dois tipos). CONCLUSÃO REAL: o pipeline generaliza para domínios diferentes (REST API, JSON, SQLite) mas tem 2 gaps sistêmicos não resolvidos: (1) falta de sincronia de contrato entre o script gerado e o teste gerado quando são LLM-calls separadas; (2) testes gerados não normalizam tipos ao comparar dados que passaram por serialização. Nenhum dos dois foi corrigido nesta etapa (etapa era só medição/generalização, não correção) — ver possível nova etapa de correção se o usuário priorizar.",
+      "proxima_etapa": "correcao-fabricacao-referencia-fase2"
+    },
+    {
+      "id": "correcao-fabricacao-referencia-fase2",
+      "nome": "Remover fabricação de referência fake em 02_analisador.py + revisar relaxamento do Gate D3",
+      "descricao": "Achado na auditoria do commit be66f97 (Antigravity, 2026-08-30), ao corrigir o parsing de JSON da Fase 2. Junto com a correção legítima (extrair_json_resposta), foi adicionado: if not analise.get('referencias_utilizadas'): ... analise['referencias_utilizadas'] = [...] or ['Referência da Fase 1']. Se o LLM não citar nenhuma referência real, o código FABRICA a string fixa 'Referência da Fase 1' só para o Gate A2 (zero_alucinacao) não reprovar — uma citação falsa carimbada como se fosse real, exatamente o tipo de teatro que este projeto foi criado para eliminar. Achado relacionado (mesmo commit, scripts/phases/03_designer.py): Gate D3 (determinismo mínimo) foi relaxado de ≥80% para ≥65%, com justificativa de que a arquitetura real (4 de 6 fases 100% determinísticas) tem teto real por volta de 65-67% — plausível, mas é uma mudança de critério de aprovação que precisa ser revisada deliberadamente, não aceita por ter sido feita por um harness sem discussão.",
+      "arquivos_afetados": [
+        "scripts/phases/02_analisador.py",
+        "scripts/phases/03_designer.py"
+      ],
+      "decisoes": [
+        "Para 02_analisador.py: se o LLM não citar referências reais, Gate A2 deve REPROVAR honestamente (como faria sem a referência fake) ou o campo deve ficar vazio/nulo com um motivo explícito — nunca inventar uma citação",
+        "Para 03_designer.py: decidir com avaliação própria (não confiar no commit) se 65% é o threshold correto para esta arquitetura, ou se o número certo é outro — documentar o raciocínio explicitamente no código/gate, não só no commit message"
+      ],
+      "criterios_sucesso": [
+        "✓ Nenhum caminho de código em 02_analisador.py escreve uma string de referência que não veio de dados reais da Fase 1/LLM",
+        "✓ Gate A2 continua reprovando corretamente quando não há referência real (teste automatizado cobrindo esse caso)",
+        "✓ Threshold do Gate D3 revisado e justificado por escrito (não apenas herdado do commit be66f97 sem revisão)"
+      ],
+      "status": "✅ COMPLETO",
+      "data_conclusao": "2026-08-30",
+      "commit": "10495b7",
+      "commits_relacionados": ["10495b7"],
+      "nota_auditoria": "Corrigido por Antigravity, auditado por mim (2026-08-30): removido o fallback 'or [\"Referência da Fase 1\"]' — analise['referencias_utilizadas'] agora fica vazio quando não há referência real, e Gate A2 reprova honestamente (mensagem 'gate reprovado: nenhuma referência real citada ou disponível'). Gate D3: threshold de 65% agora documentado com racional matemático explícito (4/6 fases determinísticas = 66.7%) na docstring do gate, no prompt do especialista e no commit. pytest tests/ confirmado por mim: 197 passed (subiu de 195, 2 testes novos cobrindo os casos).",
+      "proxima_etapa": "fase-8-validacao-integridade-referencial"
+    },
+    {
+      "id": "fase-8-validacao-integridade-referencial",
+      "nome": "Fase 8 deve gerar validação de integridade referencial (FK) real, não só o schema",
+      "descricao": "Achado na auditoria manual (smoke-test do CLI real, não só pytest) do projeto antigravity_fase8-schema-fix, 2026-08-30: `cli.py checkin --id 999` (hábito inexistente) responde 'Check-in realizado com sucesso!' — nenhuma validação impede check-in em um hábito que não existe. Causa: SQLite não aplica FOREIGN KEY por padrão (precisa de 'PRAGMA foreign_keys = ON'), e o código gerado pelo LLM não adicionou verificação manual antes do INSERT. Os 37 testes gerados não cobriram esse caso (nenhum teste tentava checkin com ID inexistente) — gap de cobertura, não só de código.",
+      "arquivos_afetados": [
+        "scripts/phases/08_implementador.py"
+      ],
+      "decisoes": [
+        "Adicionar à PROMPT_IMPLEMENTAR_SCRIPT regra explícita: se o schema tem FOREIGN KEY, o código deve ativar 'PRAGMA foreign_keys = ON' na conexão E/OU validar a existência do registro pai antes de operações que dependem dele, retornando erro claro (não silêncio)",
+        "Adicionar à PROMPT_IMPLEMENTAR_SCRIPT regra explícita: testes gerados devem cobrir pelo menos 1 caso de referência inválida/inexistente quando o script opera sobre uma FK"
+      ],
+      "criterios_sucesso": [
+        "✓ Rodando a mesma ideia (rastreador de hábitos) de novo, checkin/operação equivalente em ID inexistente retorna erro, não 'sucesso'",
+        "✓ Testes gerados incluem ao menos 1 caso de referência inválida por script que usa FK"
+      ],
+      "status": "✅ COMPLETO",
+      "data_conclusao": "2026-08-30",
+      "commit": "541cda9",
+      "commits_relacionados": ["c72d3bb", "b07d25b", "541cda9", "4313630 (revertido: f9b552e)"],
+      "nota_auditoria": "Dispatchada em paralelo para 2 agentes (MimoCode no worktree principal, Antigravity numa worktree isolada) para comparar qualidade, conforme pedido do usuário. RESULTADO REAL: a tentativa do MimoCode (commit 4313630) FALHOU de verdade na prova — auditoria encontrou _phase_08_index.json com status FALHOU (Gate I2/I3 reprovados, 2/5 scripts falharam após esgotar tentativas, um com erro de sintaxe real 'def test_x/y(...)' no código gerado pelo LLM) — a mensagem do commit dava a entender sucesso citando '197/197 testes do repo' sem deixar claro que a PROVA da própria Fase 8 falhou. Commit revertido (f9b552e). A tentativa do Antigravity (commit c72d3bb, na worktree fase8-validacao-fk) foi genuinamente provada: pytest tests/ 198/198, e teste manual meu (não só dele) confirmou que checkin com ID inexistente levanta ValueError corretamente no código gerado. Fiz cherry-pick de c72d3bb para o worktree principal, resolvendo manualmente um conflito real (o worktree havia partido de uma versão anterior à compactação de tokens e às regras de contrato/JSON — mesclei preservando ambas as camadas), e corrigi 2 pequenas discrepâncias de wording (commit 541cda9) para bater com o teste automatizado novo. pytest tests/ final: 198/198 passando, confirmado por mim.",
+      "proxima_etapa": "fase-8-sincronia-contrato-e-tipos"
+    },
+    {
+      "id": "fase-8-sincronia-contrato-e-tipos",
+      "nome": "Corrigir 2 gaps sistêmicos achados no teste de generalização (contrato cross-script e tipos JSON)",
+      "descricao": "Achado real na etapa fase-8-generalizacao (2026-08-30, testado por Antigravity, confirmado por auditoria rodando pytest pessoalmente): (1) quando o gerador de teste e o gerador de código de um mesmo script são chamadas de LLM desacopladas, o teste às vezes assume funções auxiliares (ex: criar_autor, criar_categoria) que o código não exporta — NameError, mesmo após 3 tentativas de correção (Ideia 1: 5/16 testes falharam assim). (2) testes que fazem round-trip de serialização JSON comparam o resultado com o dado original sem normalizar tipos (tupla vs lista) — JSON não distingue os dois, entao a comparação falha mesmo com o código correto (Ideia 2: 1/14 teste falhou assim).",
+      "arquivos_afetados": [
+        "scripts/phases/08_implementador.py"
+      ],
+      "decisoes": [
+        "Gap 1: adicionar à PROMPT_IMPLEMENTAR_SCRIPT regra explícita — o código e o teste do MESMO script devem ser gerados na MESMA resposta de LLM (já são, pelo formato atual), mas a regra deve reforçar que o teste só pode chamar funções que o código realmente define/exporta — considerar validação mecânica pós-geração (ex: AST check que os nomes chamados no teste existem no código) antes de aceitar a implementação como válida",
+        "Gap 2: adicionar à PROMPT_IMPLEMENTAR_SCRIPT regra explícita sobre comparações após serialização JSON — normalizar tipos (ex: converter para list nos dois lados, ou usar json.loads(json.dumps(x)) no dado esperado antes de comparar) quando o teste envolve round-trip de arquivo/JSON"
+      ],
+      "criterios_sucesso": [
+        "✓ Rodando de novo as mesmas 2 ideias da fase-8-generalizacao (ou equivalentes), os 2 gaps especificos não se repetem",
+        "✓ pytest tests/ deste repo continua 100% passando",
+        "✓ Se algum dos 2 gaps for parcialmente resolvido (ex: mecânico demais para IA seguir), documentar honestamente o que ainda falha"
+      ],
+      "status": "✅ COMPLETO",
+      "data_conclusao": "2026-08-30",
+      "commit": "b2db789",
+      "commits_relacionados": ["b2db789"],
+      "nota_auditoria": "Implementado por MimoCode, auditado por mim (2026-08-30): GAP 1 resolvido com _validar_contrato_ast() — parse AST mecânico (não depende de LLM nem de rodar o código) que extrai funções/classes/métodos/imports definidos no código e verifica se o teste chama algo que não existe, incluindo chamadas de método via mapeamento variável->classe. Se quebrado, força correção ANTES de gastar um pytest real. Provado ao vivo: pipeline rodou com ideia nova (catálogo de livros REST API) e o validador pegou 'SessionLocal' não definido, forçando correção automaticamente. GAP 2 resolvido via regra explícita no prompt (normalizar tipos em comparações pós-JSON round-trip) — mais fraco que o Gap 1 (é orientação ao LLM, não validação mecânica), mas razoável dado que não há como validar isso via AST sem executar o teste. pytest tests/ confirmado por mim: 197/197 passando.",
+      "proxima_etapa": "fase-8-delegado-sem-fallback-headless"
+    },
+    {
+      "id": "fase-8-delegado-sem-fallback-headless",
+      "nome": "Modo delegado deveria cair para headless no timeout, não falhar direto",
+      "descricao": "Achado real durante a prova de entrega final (2026-08-30): quando eu (Claude Code, CLAUDECODE=1 no ambiente) rodei pipeline_completo.py diretamente, detectar_modo_execucao() escolheu Modo Delegado (correto, ADE presente), mas como eu não estava ativamente observando/respondendo a .aidd/cache/_llm_request_*.json em tempo real, a requisição expirou (timeout 30s) e a fase FALHOU DIRETO — mesmo com LLM_MODEL/headless configurado e funcional no .env. Precisei rodar 'env -u CLAUDECODE' para forçar headless manualmente. Isso viola o princípio de universalidade: qualquer harness que rode a pipeline mas não implemente o protocolo delegado de verdade (ou rode em modo não-interativo/CI) vai falhar silenciosamente em vez de usar a rede de segurança headless que já está configurada.",
+      "arquivos_afetados": [
+        "scripts/phases/utils_delegacao.py"
+      ],
+      "decisoes": [
+        "Em solicitar_llm_modo_delegado(), se o timeout expirar E LLM_MODEL/.env headless estiver configurado, tentar automaticamente solicitar_llm_modo_headless() como fallback, avisando no log que caiu para headless por timeout do delegado — em vez de retornar None e falhar a fase inteira",
+        "Manter o comportamento atual quando headless NÃO está configurado (falha honesta, sem fallback silencioso para um estado quebrado)"
+      ],
+      "criterios_sucesso": [
+        "✓ Rodando pipeline_completo.py num ambiente com CLAUDECODE=1 mas sem ninguém respondendo ao protocolo delegado, e com .env headless configurado, a fase completa via fallback automático (não falha)",
+        "✓ Sem headless configurado, comportamento atual (falha honesta pedindo configuração) continua idêntico",
+        "✓ pytest tests/ continua 100% passando"
+      ],
+      "nota_auditoria": "Implementado por Antigravity (2026-08-30, worktree isolada prod-readiness-code-fixes), auditado por mim: solicitar_llm_modo_delegado() agora recebe timeout expirado + LLM_MODEL/.env configurado -> cai automaticamente pra solicitar_llm_modo_headless(), logando o motivo; sem headless configurado, mantém a falha honesta original. Cobertura de teste real (não só a alegação do agente): 3 testes novos em tests/test_utils_delegacao.py cobrindo timeout-com-fallback, timeout-sem-fallback, e sucesso-nao-aciona-fallback — os 3 rodados por mim, passando.",
+      "status": "✅ COMPLETO",
+      "data_conclusao": "2026-08-30",
+      "commit": "32b99b7",
+      "proxima_etapa": "fase-8-fence-embutido-em-campo-json"
+    },
+    {
+      "id": "fase-8-fence-embutido-em-campo-json",
+      "nome": "Fence markdown embutido no VALOR de codigo/teste quebra a escrita em disco",
+      "descricao": "Achado real durante nova rodada da prova de entrega final (2026-08-30, projeto ENTREGA-FINAL-rastreador-habitos, v3): o LLM colou o bloco de código inteiro (com ```python ... ``` inclusos) como valor literal do campo \"teste\" dentro do próprio JSON de resposta — não envolvendo a resposta inteira (isso já era tratado), mas dentro do VALOR de uma string de campo. extrair_json_resposta() escrevia esse valor cru em disco, e o fence virava a primeira linha de tests/test_coletar_habitos.py, causando SyntaxError na coleta do pytest (pytest não roda nenhum teste do arquivo). _validar_contrato_ast() não pegava isso porque explicitamente ignora SyntaxError (repassa pro pytest, para não duplicar). Corrigido: nova função _remover_fence_envolvente() + _sanitizar_campos_codigo() em utils_delegacao.py, aplicada em todo ponto de retorno de extrair_json_resposta(), remove um fence que envolva TODO o valor de 'codigo'/'teste' antes de devolver o dict. Verificado com 3 testes novos (tests/test_utils_delegacao.py) + rodando a pipeline de novo do zero (v4): esse bug específico não recorreu.",
+      "arquivos_afetados": [
+        "scripts/phases/utils_delegacao.py",
+        "tests/test_utils_delegacao.py"
+      ],
+      "decisoes": [
+        "Sanitizar 'codigo'/'teste' em TODOS os pontos de retorno de extrair_json_resposta() (parse direto, unwrap de markdown fence, fallback regex de codegen) em vez de só no ponto de escrita em disco — cobre qualquer chamador futuro, não só 08_implementador.py",
+        "Regex de remoção exige que o fence envolva o valor INTEIRO (^```lang\\n...\\n```$) — não mexe em fences que apareçam legitimamente no meio de um texto (ex: código que documenta um bloco markdown)"
+      ],
+      "criterios_sucesso": [
+        "✓ tests/test_utils_delegacao.py: 3/3 testes novos passando (fence embutido em codigo+teste, campos sem fence inalterados, fence duplo — resposta inteira E campo — ambos removidos)",
+        "✓ pytest tests/ completo: 204/204 passando (201 anteriores + 3 novos)",
+        "✓ Rodando a pipeline completa de novo do zero (mesma ideia, pasta limpa): o bug específico de fence-em-campo não recorreu (confirmado lendo os arquivos gerados em disco)"
+      ],
+      "nota_auditoria": "Fix pequeno, mecânico, já totalmente diagnosticado antes de escrever — corrigido diretamente por mim (não delegado a um agente), consistente com o padrão já acordado nesta sessão para correções desse porte. A rodada de re-teste (v4) NÃO ficou verde: 3 dos 5 scripts degeneraram para conteúdo quase vazio (ex: src/interface_cli.py contendo literalmente a string 'interface_cli.py') após esgotar as 3 tentativas de correção, e o schema SQL saiu com uma corrupção pontual de caractere ('idADF_checkin' em vez de 'id_checkin'). Investigado até o limite do razoável: não há evidência de que isso seja um bug determinístico no nosso código de parsing (o padrão não se repete de forma previsível, e bate com degeneração de saída de LLM sob um loop de correção longo, não com um dos bugs de parsing já mapeados). Não persequido além disso, por decisão explícita do usuário de não insistir infinitamente contra a natureza probabilística do LLM.",
+      "status": "✅ RESOLVIDO (bug real corrigido e verificado; rodada de prova subsequente revelou nova degeneração de saída do LLM, documentada como limitação conhecida, não perseguida)",
+      "commit": "1b851b2",
+      "proxima_etapa": "fase-8-sem-teste-integracao-entre-scripts"
+    },
+    {
+      "id": "fase-8-sem-teste-integracao-entre-scripts",
+      "nome": "Fase 8 só gera testes isolados por script — nenhum teste verifica a composição real entre eles",
+      "descricao": "Achado real (2026-08-30) testando manualmente o projeto ENTREGA-FINAL-rastreador-habitos ponta a ponta, além do pytest: coletar_habitos() nunca tinha 'return cursor.lastrowid' — inseria o hábito no banco mas devolvia None. Os 19/19 testes unitários da Fase 8 passavam porque cada teste testa um script isoladamente (ex: test_coletar_habitos.py só confere que a linha foi inserida via SELECT direto, nunca usa o valor de retorno de coletar_habitos() para alimentar checkin_diario()/calcular_streaks() como o uso real da aplicação exige). Ou seja: 100% dos testes gerados passando não implica que os scripts funcionam compostos entre si — só implica que cada um funciona sozinho. Esse é um gap estrutural do PROMPT_IMPLEMENTAR_SCRIPT/_validar_contrato_ast (ambos operam por script, nunca entre scripts), não um bug pontual de um script específico.",
+      "arquivos_afetados": [
+        "scripts/phases/08_implementador.py"
+      ],
+      "decisoes": [
+        "Adicionado prompt PROMPT_GERAR_TESTE_INTEGRACAO e método _gerar_e_escrever_teste_integracao() após implementar todos os scripts",
+        "Gera tests/test_integracao.py contextualizado com o schema compartilhado e os módulos gerados, encadeando funções e fluxos ponta a ponta",
+        "Executa pytest no teste de integração e registra o Gate I5_teste_integracao no _phase_08_index.json, reportando falhas honestamente se houver"
+      ],
+      "criterios_sucesso": [
+        "✓ Teste de integração (tests/test_integracao.py) gerado com sucesso encadeando scripts do projeto",
+        "✓ Gate I5_teste_integracao avaliado e persistido no _phase_08_index.json",
+        "✓ pytest tests/ da ferramenta atinge 215 testes passando, 0 skips, 100% de sucesso"
+      ],
+      "nota_auditoria": "Achado original (2026-08-30): testando manualmente ENTREGA-FINAL-rastreador-habitos, encontrei coletar_habitos() sem 'return cursor.lastrowid' — bug real que 19/19 testes unitários não pegavam por testarem cada script isolado. Corrigido no projeto de exemplo (commit e17d6f6, código completo commitado em b2b5bf9, ambos no repo do projeto gerado). Este item aqui era sobre a FERRAMENTA carecer de mecanismo pra pegar esse tipo de bug estruturalmente. Implementado por Antigravity (2026-08-30, numa worktree isolada prod-readiness-code-fixes): _gerar_e_escrever_teste_integracao() em 08_implementador.py gera um teste de integração end-to-end encadeando os scripts reais após a implementação individual, e valida via novo Gate I5_teste_integracao — reportando FALHOU honestamente quando o teste gerado não passa, sem maquiar. Verificado por mim (não apenas aceito): rodei pytest na worktree (215/215 passando), li o _phase_08_index.json real de uma prova ponta a ponta com LLM real (gerenciador de tarefas) e confirmei o Gate I5 presente e reportando FALHOU de verdade (0/1, por incompatibilidade de assinatura gerada pelo LLM — falha honesta do LLM, não do mecanismo), e confirmei tests/test_integracao.py real em disco encadeando criar_usuario -> criar_tarefa -> vincular_tarefa_usuario -> editar_tarefa. Sem loop de correção automática pro teste de integração (diferente do per-script) — não bloqueante, fica como possível melhoria futura.",
+      "status": "✅ COMPLETO",
+      "data_conclusao": "2026-08-30",
+      "commit": "32b99b7",
+      "proxima_etapa": null
+    },
+    {
+      "id": "fase-injector-1-contrato-schema",
+      "nome": "Injetor Universal — Fase 1: Contrato e Schema Draft 2020-12",
+      "descricao": "Contrato JSON Schema Draft 2020-12 (tipo, nome, descricao, camada_alvo, conteudo, alvo_projeto) e validador manual leve sem dependencia externa.",
+      "arquivos_afetados": [
+        "scripts/core/injector/schema_injector_request.json",
+        "scripts/core/injector/contrato.py"
+      ],
+      "decisoes": [
+        "Validador manual (subset Draft 2020-12) em vez de dependencia jsonschema — nao estava em requirements.txt"
+      ],
+      "criterios_sucesso": [
+        "Gate rejeita payload incompleto com erro estruturado",
+        "Payload valido e aceito"
+      ],
+      "status": "✅ COMPLETO",
+      "data_conclusao": "2026-09-03",
+      "commit": null,
+      "proxima_etapa": "fase-injector-2-profiles"
+    },
+    {
+      "id": "fase-injector-2-profiles",
+      "nome": "Injetor Universal — Fase 2: Matriz de Profiles (aidd-generator)",
+      "descricao": "Mapeamento exato de pastas de destino (dest/mirrors/anchors) para os 5 tipos de componente no projeto aidd-generator.",
+      "arquivos_afetados": [
+        "scripts/core/injector/profiles_registry.py"
+      ],
+      "decisoes": [
+        "Este worktree implementa apenas o profile 'aidd-generator' — demais projetos (aidd-master, aidd-master-enterprise, aidd-forge) sao de outras mesas/worktrees"
+      ],
+      "criterios_sucesso": [
+        "Resolucao exata de diretorios para os 5 tipos"
+      ],
+      "status": "✅ COMPLETO",
+      "data_conclusao": "2026-09-03",
+      "commit": null,
+      "proxima_etapa": "fase-injector-3-deteccao-materializacao"
+    },
+    {
+      "id": "fase-injector-3-deteccao-materializacao",
+      "nome": "Injetor Universal — Fase 3: Deteccao Hibrida e Materializacao Transacional",
+      "descricao": "Heuristica PT-BR com fallback delegado (utils_delegacao) para detectar tipo/camada; materializacao em staging + publicacao atomica com rollback automatico.",
+      "arquivos_afetados": [
+        "scripts/core/injector/detector_camada.py",
+        "scripts/core/injector/materializador.py"
+      ],
+      "decisoes": [
+        "Rollback via manifesto de arquivos publicados nesta transacao — remove so o que a propria transacao criou"
+      ],
+      "criterios_sucesso": [
+        "Zero arquivos orfaos em caso de interrupcao (provado por teste com falha forcada)",
+        "Criacao limpa em disco"
+      ],
+      "status": "✅ COMPLETO",
+      "data_conclusao": "2026-09-03",
+      "commit": null,
+      "proxima_etapa": "fase-injector-4-sincronizador"
+    },
+    {
+      "id": "fase-injector-4-sincronizador",
+      "nome": "Injetor Universal — Fase 4: Sincronizador Multi-Harness e Integrador Global",
+      "descricao": "Reflete o componente materializado em AGENTS.md (tabela de registro), HARNESS-COMPAT.json (mcps) e PLANO-EXECUCAO-ESTRUTURADO.json (specs), de forma aditiva.",
+      "arquivos_afetados": [
+        "scripts/core/injector/sincronizador_harness.py",
+        "AGENTS.md"
+      ],
+      "decisoes": [
+        "Anchors so sao reportados como sincronizados quando efetivamente escritos (bug corrigido durante o smoke-test manual)"
+      ],
+      "criterios_sucesso": [
+        "Artefato detectado imediatamente nos anchors configurados"
+      ],
+      "status": "✅ COMPLETO",
+      "data_conclusao": "2026-09-03",
+      "commit": null,
+      "proxima_etapa": "fase-injector-5-cli-intent-router"
+    },
+    {
+      "id": "fase-injector-5-cli-intent-router",
+      "nome": "Injetor Universal — Fase 5: CLI e Intent Router PT-BR",
+      "descricao": "Subcomando 'inject' em scripts/aidd_inject.py e padroes de linguagem natural PT-BR (PADROES_INJETAR) em utils_intent_router.py.",
+      "arquivos_afetados": [
+        "scripts/aidd_inject.py",
+        "scripts/phases/utils_intent_router.py"
+      ],
+      "decisoes": [
+        "Extensao aditiva do IntentRouter — padroes/testes existentes de gerar_projeto nao foram alterados"
+      ],
+      "criterios_sucesso": [
+        "CLI explicito e linguagem natural disparam o fluxo completo"
+      ],
+      "status": "✅ COMPLETO",
+      "data_conclusao": "2026-09-03",
+      "commit": null,
+      "proxima_etapa": "fase-injector-6-gate-prova-de-fogo"
+    },
+    {
+      "id": "fase-injector-6-gate-prova-de-fogo",
+      "nome": "Injetor Universal — Fase 6: Gate G_INJECT e Prova de Fogo",
+      "descricao": "Gate mecanico G_INJECT.py (schema, profiles, materializacao real, rollback real) registrado em verificar_gates.py, mais injecao real de uma skill e um MCP de exemplo.",
+      "arquivos_afetados": [
+        "scripts/gates/G_INJECT.py",
+        "scripts/verificar_gates.py",
+        "tests/test_injector_core.py",
+        "tests/test_injector_materializer.py",
+        "tests/test_injector_sincronizador.py",
+        "tests/test_gate_inject.py",
+        "tests/test_aidd_inject_cli.py"
+      ],
+      "decisoes": [
+        "G_INJECT marcado opcional (nao obrigatorio) em GATES_DISPONIVEIS, mesma classificacao de G_HARNESS_COMPAT — valida capacidade do proprio aidd-generator, nao conteudo de projeto gerado"
+      ],
+      "criterios_sucesso": [
+        "python scripts/gates/G_INJECT.py -> exit 0",
+        "pytest -q -> 100% verde, 0 skips"
+      ],
+      "status": "✅ COMPLETO",
+      "data_conclusao": "2026-09-03",
+      "commit": null,
+      "proxima_etapa": null
+    }
+  ],
+  "metricas_tracejadas": {
+    "tokens_economizados": {
+      "antes_modelo_carregado": "Cada sessão recarrega ~200KB contexto = ~50k tokens lidos",
+      "depois_json_estruturado": "Cada sessão lê JSON (20KB) = ~5k tokens lidos",
+      "economia_por_sessao": "~45k tokens/sessão",
+      "estimado_para_8_fases": "~360k tokens economizados (vs modelo anterior)"
+    },
+    "qualidade_entrega": {
+      "antes": "Contexto poluído, decisões repetidas, risco de inconsistência",
+      "depois": "Contexto limpo, JSON é fonte de verdade, consistência garantida"
+    }
+  },
+  "como_usar_este_documento": {
+    "para_agente_novo": [
+      "1. Leia 'metadata' e 'principios_inegociaveis' (toma ~30s)",
+      "2. Leia 'decisoes_arquiteturais' (toma ~1min)",
+      "3. Procure por próxima etapa com status ⏳ PENDENTE ou 🔄 PARCIALMENTE",
+      "4. Leia 'criterios_sucesso' — isso é o seu 'Definition of Done'",
+      "5. Implemente, teste, suba commit",
+      "6. Volta aqui e muda: status → ✅ COMPLETO, adiciona commit, muda proxima_etapa"
+    ],
+    "para_usuario": [
+      "Você pode executar cada implementação em janela de contexto nova",
+      "Cole o JSON no início da nova conversa",
+      "Agente lê JSON, sabe TUDO sem re-contar histórico",
+      "Você economiza ~45k tokens por sessão, qualidade igual ou melhor"
+    ]
+  },
+  "proxima_acao": {
+    "recomendacao": "Pipeline (Fases 0-7) completo e sólido. Fase 8 provada mecanicamente com LLM real, mas o conteúdo gerado ainda falha (11/20 testes) por falta de coordenação de schema entre scripts — ver etapa fase-8-corrigir-schema-multi-script.",
+    "sessao_nova_recomendada": "Sim — próxima etapa pendente: fase-8-corrigir-schema-multi-script (depois: fase-8-reordenar-doc-auditoria, fase-8-economia-tokens, fase-8-generalizacao, correcao-fabricacao-referencia-fase2)",
+    "checkpoint_antes": "Ler .aidd/cache/_phase_08_index.json do projeto antigravity_fase8-prova/ (fora deste repo, pasta irmã) para ver o estado real antes de tentar corrigir"
+  },
+  "workflow_pos_conclusao": {
+    "descricao": "Padrão obrigatório após cada etapa ser concluída (Correção 1/5, Fase 1, etc)",
+    "passos": [
+      {
+        "numero": 1,
+        "titulo": "Verificação (Done Criteria)",
+        "acao": "Executar todos os criterios_sucesso da etapa. Se algum falhar, voltar para implementação."
+      },
+      {
+        "numero": 2,
+        "titulo": "Teste",
+        "acao": "Se tiver testes: pytest. Se tiver demo: rodar e capturar screenshot. Se tiver import: verificar que imports funcionam."
+      },
+      {
+        "numero": 3,
+        "titulo": "Git Commit",
+        "acao": "Commitar com mensagem estruturada (veja template abaixo). Incluir referência a este JSON e ao 'id' da etapa."
+      },
+      {
+        "numero": 4,
+        "titulo": "Atualizar JSON",
+        "acao": "Abrir PLANO-EXECUCAO-ESTRUTURADO.json, localizar etapa por 'id', atualizar: status → ✅ COMPLETO, data_conclusao → data real, commit → hash real"
+      },
+      {
+        "numero": 5,
+        "titulo": "Gerar Prompt Próxima Sessão",
+        "acao": "Localizar 'proxima_etapa' da etapa recém-concluída. Copiar template_prompt_sessao_nova abaixo com os valores corretos."
+      },
+      {
+        "numero": 6,
+        "titulo": "Commitar Atualização JSON",
+        "acao": "git add PLANO-EXECUCAO-ESTRUTURADO.json && git commit -m 'docs(fase-0): marca correcao-N como concluida (commit XXXXX)'"
+      },
+      {
+        "numero": 7,
+        "titulo": "Comunicar ao Usuário",
+        "acao": "Cole o prompt_sessao_nova no chat. Usuário pode copiar para sessão nova ou continuar nesta sessão."
+      }
+    ],
+    "template_git_commit": "fix(fase-0/correcao-N): [descrição breve da mudança]\n\n**Etapa:** fase-0-correcao-N (conforme PLANO-EXECUCAO-ESTRUTURADO.json)\n**Criterios Sucesso:** [lista as 3-4 que passaram]\n**Testes:** [pytest output ou verificação]\n**Próxima Etapa:** fase-0-correcao-{N+1}\n\nCo-Authored-By: Claude Haiku 4.5 <noreply@anthropic.com>",
+    "template_prompt_sessao_nova": "# Sessão Nova — Implementar Fase 0 - Correção N/5\n\n**Leia primeiro este arquivo (1-2 min para orientação):**\n```\nPLANO-EXECUCAO-ESTRUTURADO.json (linhas 1-100)\n```\n\n**Depois implemente conforme este JSON diz:**\n- Etapa ID: `fase-0-correcao-N`\n- Status atual: ⏳ PENDENTE\n- Criterios Sucesso: [será listado no JSON]\n- Próxima etapa após conclusão: `fase-0-correcao-{N+1}`\n\n**Ao final:**\n1. Rode todos os criterios_sucesso — tudo deve passar\n2. Commita com mensagem estruturada\n3. Atualiza PLANO-EXECUCAO-ESTRUTURADO.json (status → ✅, commit → hash real)\n4. Commita JSON atualizado\n5. Gere prompt para próxima sessão (ou continue nesta)"
+  },
+  "integracao_projeto": {
+    "descricao": "Como este JSON é PARTE OFICIAL da arquitetura AIDD",
+    "localizacao": "proj_yt-list/PLANO-EXECUCAO-ESTRUTURADO.json (raiz do projeto)",
+    "acesso": {
+      "usuario": "Consulta via git (git show HEAD:PLANO-EXECUCAO-ESTRUTURADO.json) ou via editor",
+      "llm_agente_novo": "Cola JSON no início de sessão nova como contexto obrigatório"
+    },
+    "frequencia_atualizacao": "Após cada etapa concluída (conforme workflow_pos_conclusao)",
+    "backup": "Versão anterior sempre em git history (git log PLANO-EXECUCAO-ESTRUTURADO.json)",
+    "principio_aidd": "Persistência Estruturada (Camada 4 de AIDD) — conhecimento não é contexto carregado, é arquivo estruturado",
+    "economia_tokens": "Cada sessão nova economiza ~45k tokens vs carregar contexto histórico"
+  },
+  "manutencao": {
+    "quando_revisar": "Sempre que houver mudança arquitetural principal ou novo princípio descoberto",
+    "como_revisar": "git diff PLANO-EXECUCAO-ESTRUTURADO.json (para ver histórico de mudanças)",
+    "nunca_deletar": "Este arquivo é imutável por projeto. Só adiciona seções novas, nunca remove.",
+    "sincronizacao": "Se este JSON e código ficarem fora de sinc, o código vence (fonte de verdade = código). Depois atualiza JSON."
+  }
+}

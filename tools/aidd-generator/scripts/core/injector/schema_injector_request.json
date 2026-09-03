@@ -1,0 +1,47 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://aidd-generator.local/schemas/schema_injector_request.json",
+  "title": "InjectorRequest",
+  "description": "Contrato universal para requisicoes de injecao de componentes (skill, mcp, rule, spec, config) no ecossistema AIDD.",
+  "type": "object",
+  "required": ["tipo", "nome", "descricao"],
+  "additionalProperties": false,
+  "properties": {
+    "tipo": {
+      "type": "string",
+      "description": "Tipo de componente a ser injetado.",
+      "enum": ["skill", "mcp", "rule", "spec", "config"]
+    },
+    "nome": {
+      "type": "string",
+      "description": "Slug do componente (kebab-case, usado em nomes de arquivo e diretorio).",
+      "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$",
+      "minLength": 3,
+      "maxLength": 80
+    },
+    "descricao": {
+      "type": "string",
+      "description": "Descricao em linguagem natural do proposito do componente.",
+      "minLength": 8,
+      "maxLength": 2000
+    },
+    "camada_alvo": {
+      "type": "string",
+      "description": "Camada arquitetural AIDD de destino (1 a 5). Auto-detectada quando omitida.",
+      "enum": ["1", "2", "3", "4", "5"]
+    },
+    "conteudo": {
+      "type": "object",
+      "description": "Overrides opcionais de conteudo por arquivo materializado (chave = nome logico, valor = texto).",
+      "additionalProperties": {
+        "type": "string"
+      }
+    },
+    "alvo_projeto": {
+      "type": "string",
+      "description": "Projeto AIDD de destino. Default: aidd-generator.",
+      "enum": ["aidd-generator", "aidd-master", "aidd-master-enterprise", "aidd-forge"],
+      "default": "aidd-generator"
+    }
+  }
+}

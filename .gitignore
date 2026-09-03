@@ -1,0 +1,64 @@
+﻿# Python
+__pycache__/
+*.py[cod]
+*.class
+*.so
+.Python
+env/
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+.pytest_cache/
+.coverage
+htmlcov/
+.tox/
+.nox/
+.hypothesis/
+
+# Ambientes Virtuais
+.venv/
+venv/
+ENV/
+env.bak/
+venv.bak/
+
+# Logs e Telemetria
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+logs/
+
+# Segredos e Configurações Sensíveis
+.env
+.env.local
+.env.*.local
+*.pem
+*.key
+*.cert
+
+# IDEs e Editores
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
+
+# Banco de dados e caches locais
+*.sqlite3
+*.db-journal
+.cache/

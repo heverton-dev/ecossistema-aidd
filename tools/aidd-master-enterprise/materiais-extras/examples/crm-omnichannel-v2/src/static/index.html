@@ -1,0 +1,666 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CRM Enterprise Omnichannel — AIDD v2.0</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #030712;
+            --surface: rgba(17, 24, 39, 0.85);
+            --surface-card: rgba(31, 41, 55, 0.6);
+            --border: rgba(255, 255, 255, 0.08);
+            --border-highlight: rgba(96, 165, 250, 0.5);
+            --primary: #3b82f6;
+            --primary-hover: #2563eb;
+            --accent-gold: #f59e0b;
+            --danger: #ef4444;
+            --success: #10b981;
+            --text: #f9fafb;
+            --muted: #9ca3af;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Plus Jakarta Sans', sans-serif; }
+        
+        body {
+            background-color: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            background-image: 
+                radial-gradient(circle at 50% -20%, rgba(59, 130, 246, 0.25), transparent 60%),
+                radial-gradient(circle at 100% 40%, rgba(168, 85, 247, 0.15), transparent 50%);
+            background-attachment: fixed;
+            padding: 2rem 3rem;
+            overflow-x: hidden;
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            font-size: 1.35rem;
+            font-weight: 800;
+            letter-spacing: -0.02em;
+        }
+
+        .brand-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            background: linear-gradient(135deg, #3b82f6, #6366f1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            box-shadow: 0 4px 15px rgba(59, 130, 246, 0.4);
+        }
+
+        .btn {
+            padding: 0.65rem 1.3rem;
+            border-radius: 10px;
+            font-weight: 700;
+            font-size: 0.88rem;
+            border: 1px solid var(--border);
+            background: rgba(255, 255, 255, 0.05);
+            color: #fff;
+            text-decoration: none;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .btn:hover { background: rgba(255, 255, 255, 0.1); border-color: rgba(255, 255, 255, 0.2); }
+        .btn-primary { background: var(--primary); border-color: var(--primary); color: #fff; }
+        .btn-primary:hover { background: var(--primary-hover); transform: translateY(-2px); box-shadow: 0 4px 15px rgba(59, 130, 246, 0.4); }
+        .btn-danger { background: rgba(239, 68, 68, 0.15); border-color: rgba(239, 68, 68, 0.3); color: #f87171; }
+        .btn-danger:hover { background: var(--danger); color: #fff; }
+
+        .metrics-bar {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2.5rem;
+        }
+        .metric-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 1.2rem 1.5rem;
+            backdrop-filter: blur(16px);
+        }
+        .metric-label { font-size: 0.78rem; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: 0.05em; }
+        .metric-value { font-size: 1.7rem; font-weight: 800; margin-top: 0.4rem; }
+
+        .controls-bar {
+            display: flex;
+            justify-content: space-between;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+        .search-box {
+            flex: 1;
+            max-width: 450px;
+            position: relative;
+        }
+        .search-box input {
+            width: 100%;
+            padding: 0.75rem 1rem 0.75rem 2.8rem;
+            background: rgba(17, 24, 39, 0.9);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            color: #fff;
+            font-size: 0.92rem;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+        .search-box input:focus { border-color: var(--primary); }
+        .search-box svg {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--muted);
+        }
+
+        .kanban {
+            display: grid;
+            grid-template-columns: repeat(5, minmax(260px, 1fr));
+            gap: 1.5rem;
+            align-items: start;
+        }
+        .column {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 1.2rem;
+            backdrop-filter: blur(16px);
+            min-height: 520px;
+            display: flex;
+            flex-direction: column;
+            transition: background 0.2s;
+        }
+        .column.drag-over {
+            background: rgba(59, 130, 246, 0.12);
+            border-color: var(--border-highlight);
+        }
+        .column-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-bottom: 1rem;
+            margin-bottom: 1rem;
+            border-bottom: 1px solid var(--border);
+        }
+        .column-title { font-size: 0.95rem; font-weight: 800; color: #93c5fd; }
+        .column-badge {
+            background: rgba(255, 255, 255, 0.06);
+            padding: 0.2rem 0.6rem;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 800;
+        }
+
+        .cards-list {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            flex: 1;
+        }
+
+        .lead-card {
+            background: rgba(31, 41, 55, 0.85);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 1.1rem;
+            cursor: grab;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            user-select: none;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+        }
+        .lead-card:hover {
+            border-color: var(--border-highlight);
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.5);
+        }
+        .lead-card.dragging {
+            opacity: 0.4;
+            transform: scale(0.95);
+        }
+
+        .lead-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 0.5rem;
+        }
+        .lead-name { font-weight: 700; font-size: 0.95rem; color: #f8fafc; }
+        .lead-actions {
+            display: flex;
+            gap: 0.4rem;
+        }
+        .btn-icon {
+            background: none;
+            border: none;
+            color: var(--muted);
+            cursor: pointer;
+            padding: 0.2rem;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: color 0.2s;
+        }
+        .btn-icon:hover { color: #fff; }
+        .btn-icon.delete:hover { color: var(--danger); }
+
+        .lead-company { font-size: 0.82rem; color: var(--muted); margin-bottom: 0.8rem; }
+        .lead-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: 0.7rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        .lead-score {
+            font-size: 0.72rem;
+            font-weight: 800;
+            padding: 0.2rem 0.5rem;
+            border-radius: 9999px;
+            background: rgba(59, 130, 246, 0.15);
+            color: #93c5fd;
+        }
+        .lead-value {
+            font-weight: 800;
+            font-size: 0.92rem;
+            color: var(--success);
+        }
+
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(3, 7, 18, 0.85);
+            backdrop-filter: blur(16px);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 100;
+            padding: 1.5rem;
+        }
+        .modal-content {
+            background: #0b0f19;
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            width: 100%;
+            max-width: 520px;
+            padding: 2rem;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.8);
+        }
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--border);
+        }
+        .form-group { margin-bottom: 1.2rem; }
+        .form-label { display: block; font-size: 0.8rem; font-weight: 700; color: var(--muted); margin-bottom: 0.4rem; text-transform: uppercase; }
+        .form-input {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            background: #060911;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            color: #fff;
+            font-size: 0.92rem;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+        .form-input:focus { border-color: var(--primary); }
+
+        .toast {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            background: rgba(17, 24, 39, 0.95);
+            border: 1px solid var(--border);
+            backdrop-filter: blur(12px);
+            padding: 1rem 1.5rem;
+            border-radius: 14px;
+            display: none;
+            align-items: center;
+            gap: 0.8rem;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+            z-index: 200;
+        }
+    
+/* =========================================================================
+   DESIGN SYSTEM UNIVERSAL (SCROLLBAR 4PX & BUTTON WRAP PROTECTION)
+   ========================================================================= */
+* {
+    scrollbar-width: thin;
+    scrollbar-color: rgba(59, 130, 246, 0.4) transparent;
+}
+::-webkit-scrollbar {
+    width: 4px !important;
+    height: 4px !important;
+}
+::-webkit-scrollbar-track {
+    background: transparent !important;
+}
+::-webkit-scrollbar-thumb {
+    background: rgba(59, 130, 246, 0.35) !important;
+    border-radius: 9999px !important;
+    transition: background 0.2s ease !important;
+}
+::-webkit-scrollbar-thumb:hover {
+    background: rgba(59, 130, 246, 0.75) !important;
+}
+
+button, .btn, .btn-primary, .btn-secondary, .btn-gold, .btn-danger,
+.tab-btn, .resp-status-btn, .lang-tab, .endpoint-link, .nav-item {
+    white-space: nowrap !important;
+    text-overflow: ellipsis;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    flex-shrink: 0 !important;
+    line-height: 1.2 !important;
+}
+
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="brand">
+            <div class="brand-icon">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+            </div>
+            CRM Enterprise Omnichannel
+        </div>
+        <div style="display: flex; gap: 0.8rem;">
+            <a href="/docs" target="_blank" class="btn">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+                Swagger API /docs
+            </a>
+            <button class="btn btn-primary" onclick="abrirModalNovo()">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                Novo Lead
+            </button>
+        </div>
+    </header>
+
+    <div class="metrics-bar">
+        <div class="metric-card">
+            <div class="metric-label">PIPELINE TOTAL ESTIMADO</div>
+            <div class="metric-value" id="val-pipeline-total" style="color: #60a5fa;">R$ 0,00</div>
+        </div>
+        <div class="metric-card">
+            <div class="metric-label">LEADS ATIVOS NO FUNIL</div>
+            <div class="metric-value" id="val-total-leads">0</div>
+        </div>
+        <div class="metric-card">
+            <div class="metric-label">SCORE MÉDIO DE QUALIFICAÇÃO</div>
+            <div class="metric-value" id="val-avg-score" style="color: #10b981;">0 pts</div>
+        </div>
+        <div class="metric-card">
+            <div class="metric-label">FECHADOS / GANHOS</div>
+            <div class="metric-value" id="val-ganhos" style="color: #f59e0b;">R$ 0,00</div>
+        </div>
+    </div>
+
+    <div class="controls-bar">
+        <div class="search-box">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+            <input type="text" id="input-busca" placeholder="Buscar por lead, empresa ou email..." oninput="filtrarKanban(this.value)">
+        </div>
+        <div style="display: flex; align-items: center; gap: 0.5rem; color: var(--muted); font-size: 0.85rem;">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+            Arraste os cards entre as colunas para atualizar em tempo real
+        </div>
+    </div>
+
+    <div class="kanban" id="kanban-board">
+    </div>
+
+    <div class="modal-overlay" id="modal-lead">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="modal-title" style="font-size: 1.25rem; font-weight: 800;">Novo Lead</h3>
+                <button onclick="fecharModal()" style="background: none; border: none; color: #fff; cursor: pointer; font-size: 1.5rem;">&times;</button>
+            </div>
+            <form id="form-lead" onsubmit="salvarLead(event)">
+                <input type="hidden" id="lead-id" value="">
+                
+                <div class="form-group">
+                    <label class="form-label">NOME COMPLETO</label>
+                    <input type="text" class="form-input" id="lead-nome" required placeholder="Ex: Dr. Roberto Alencar">
+                </div>
+
+                <div style="display: flex; gap: 1rem;">
+                    <div class="form-group" style="flex: 1;">
+                        <label class="form-label">EMAIL</label>
+                        <input type="email" class="form-input" id="lead-email" required placeholder="roberto@empresa.com">
+                    </div>
+                    <div class="form-group" style="flex: 1;">
+                        <label class="form-label">WHATSAPP</label>
+                        <input type="text" class="form-input" id="lead-telefone" required placeholder="11999998888">
+                    </div>
+                </div>
+
+                <div style="display: flex; gap: 1rem;">
+                    <div class="form-group" style="flex: 1;">
+                        <label class="form-label">EMPRESA</label>
+                        <input type="text" class="form-input" id="lead-empresa" placeholder="Empresa S.A.">
+                    </div>
+                    <div class="form-group" style="flex: 1;">
+                        <label class="form-label">VALOR ESTIMADO (R$)</label>
+                        <input type="number" step="0.01" class="form-input" id="lead-valor" required placeholder="25000.00">
+                    </div>
+                </div>
+
+                <div style="display: flex; gap: 1rem;">
+                    <div class="form-group" style="flex: 1;">
+                        <label class="form-label">SCORE QUALIFICAÇÃO (0-100)</label>
+                        <input type="number" class="form-input" id="lead-score" min="0" max="100" value="75" required>
+                    </div>
+                    <div class="form-group" style="flex: 1;">
+                        <label class="form-label">ESTÁGIO DO FUNIL</label>
+                        <select class="form-input" id="lead-status">
+                            <option value="novo">Novos Leads</option>
+                            <option value="qualificado">Qualificados</option>
+                            <option value="proposta">Proposta Enviada</option>
+                            <option value="negociacao">Em Negociação</option>
+                            <option value="ganho">Fechado / Ganho</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div style="display: flex; justify-content: flex-end; gap: 0.8rem; margin-top: 1.5rem;">
+                    <button type="button" class="btn btn-outline" onclick="fecharModal()">Cancelar</button>
+                    <button type="submit" class="btn btn-primary">Salvar Lead</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="toast" id="toast">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+        <span id="toast-msg" style="font-size: 0.92rem; font-weight: 600;">Notificação</span>
+    </div>
+
+    <script>
+        let kanbanCache = {};
+        let leadArrastadoId = null;
+
+        function showToast(msg) {
+            const toast = document.getElementById('toast');
+            document.getElementById('toast-msg').innerText = msg;
+            toast.style.display = 'flex';
+            setTimeout(() => { toast.style.display = 'none'; }, 3500);
+        }
+
+        async function carregarKanban() {
+            const res = await fetch('/api/pipeline');
+            kanbanCache = await res.json();
+            renderizarKanban();
+            atualizarMetricas();
+        }
+
+        function atualizarMetricas() {
+            let totalValor = 0;
+            let totalLeads = 0;
+            let somaScore = 0;
+            let valorGanho = 0;
+
+            Object.entries(kanbanCache).forEach(([key, col]) => {
+                col.itens.forEach(l => {
+                    totalValor += l.valor_estimado;
+                    totalLeads++;
+                    somaScore += l.score;
+                    if (key === 'ganho') valorGanho += l.valor_estimado;
+                });
+            });
+
+            document.getElementById('val-pipeline-total').innerText = 'R$ ' + totalValor.toLocaleString('pt-BR', {minimumFractionDigits: 2});
+            document.getElementById('val-total-leads').innerText = totalLeads;
+            document.getElementById('val-avg-score').innerText = totalLeads ? Math.round(somaScore / totalLeads) + ' pts' : '0 pts';
+            document.getElementById('val-ganhos').innerText = 'R$ ' + valorGanho.toLocaleString('pt-BR', {minimumFractionDigits: 2});
+        }
+
+        function renderizarKanban(filtroTexto = '') {
+            const board = document.getElementById('kanban-board');
+            board.innerHTML = Object.entries(kanbanCache).map(([statusKey, col]) => {
+                const itensFiltrados = col.itens.filter(l => {
+                    if (!filtroTexto) return true;
+                    const t = filtroTexto.toLowerCase();
+                    return l.nome.toLowerCase().includes(t) || (l.empresa && l.empresa.toLowerCase().includes(t)) || l.email.toLowerCase().includes(t);
+                });
+
+                return `
+                    <div class="column" ondragover="permitirDrop(event)" ondragleave="sairDrop(event)" ondrop="soltarLead(event, '${statusKey}')">
+                        <div class="column-header">
+                            <div>
+                                <div class="column-title">${col.nome}</div>
+                                <div style="font-size: 0.8rem; font-weight: 700; color: var(--muted); margin-top: 0.2rem;">
+                                    R$ ${col.total_valor.toLocaleString('pt-BR', {minimumFractionDigits: 2})}
+                                </div>
+                            </div>
+                            <span class="column-badge">${itensFiltrados.length}</span>
+                        </div>
+
+                        <div class="cards-list">
+                            ${itensFiltrados.map(l => `
+                                <div class="lead-card" draggable="true" ondragstart="iniciarArrasto(event, ${l.id})" ondragend="finalizarArrasto(event)">
+                                    <div class="lead-header">
+                                        <div class="lead-name">${l.nome}</div>
+                                        <div class="lead-actions">
+                                            <button class="btn-icon" title="Editar Lead" onclick="editarLead(${l.id})">
+                                                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+                                            </button>
+                                            <button class="btn-icon delete" title="Excluir Lead" onclick="excluirLead(${l.id}, '${l.nome}')">
+                                                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <div class="lead-company">${l.empresa || 'Empresa Direta'} • ${l.telefone}</div>
+                                    <div class="lead-footer">
+                                        <span class="lead-score">Score: ${l.score}</span>
+                                        <span class="lead-value">R$ ${l.valor_estimado.toLocaleString('pt-BR', {minimumFractionDigits: 2})}</span>
+                                    </div>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function iniciarArrasto(e, leadId) {
+            leadArrastadoId = leadId;
+            e.target.classList.add('dragging');
+            e.dataTransfer.setData('text/plain', leadId);
+        }
+
+        function finalizarArrasto(e) {
+            e.target.classList.remove('dragging');
+        }
+
+        function permitirDrop(e) {
+            e.preventDefault();
+            e.currentTarget.classList.add('drag-over');
+        }
+
+        function sairDrop(e) {
+            e.currentTarget.classList.remove('drag-over');
+        }
+
+        async function soltarLead(e, novoStatus) {
+            e.preventDefault();
+            e.currentTarget.classList.remove('drag-over');
+            
+            if (leadArrastadoId) {
+                const res = await fetch('/api/pipeline/mover', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({ lead_id: leadArrastadoId, novo_status: novoStatus })
+                });
+                const data = await res.json();
+                if (data.sucesso) {
+                    showToast('Lead movido para ' + novoStatus.toUpperCase() + ' [Webhook n8n disparado!]');
+                    carregarKanban();
+                }
+                leadArrastadoId = null;
+            }
+        }
+
+        function filtrarKanban(texto) {
+            renderizarKanban(texto);
+        }
+
+        function abrirModalNovo() {
+            document.getElementById('modal-title').innerText = 'Novo Lead';
+            document.getElementById('lead-id').value = '';
+            document.getElementById('form-lead').reset();
+            document.getElementById('modal-lead').style.display = 'flex';
+        }
+
+        async function editarLead(id) {
+            const res = await fetch('/api/leads/detalhes?id=' + id);
+            const lead = await res.json();
+            
+            document.getElementById('modal-title').innerText = 'Editar Lead #' + id;
+            document.getElementById('lead-id').value = lead.id;
+            document.getElementById('lead-nome').value = lead.nome;
+            document.getElementById('lead-email').value = lead.email;
+            document.getElementById('lead-telefone').value = lead.telefone;
+            document.getElementById('lead-empresa').value = lead.empresa || '';
+            document.getElementById('lead-valor').value = lead.valor_estimado;
+            document.getElementById('lead-score').value = lead.score;
+            document.getElementById('lead-status').value = lead.status;
+            document.getElementById('modal-lead').style.display = 'flex';
+        }
+
+        async function salvarLead(e) {
+            e.preventDefault();
+            const payload = {
+                id: document.getElementById('lead-id').value || null,
+                nome: document.getElementById('lead-nome').value,
+                email: document.getElementById('lead-email').value,
+                telefone: document.getElementById('lead-telefone').value,
+                empresa: document.getElementById('lead-empresa').value,
+                valor_estimado: document.getElementById('lead-valor').value,
+                score: document.getElementById('lead-score').value,
+                status: document.getElementById('lead-status').value
+            };
+
+            const res = await fetch('/api/leads/salvar', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify(payload)
+            });
+            const data = await res.json();
+            if (data.sucesso) {
+                fecharModal();
+                showToast(data.mensagem + ' [Webhook n8n ativo]');
+                carregarKanban();
+            }
+        }
+
+        async function excluirLead(id, nome) {
+            if (confirm('Deseja realmente remover o lead "' + nome + '" do funil?')) {
+                const res = await fetch('/api/leads/deletar', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({ id })
+                });
+                const data = await res.json();
+                if (data.sucesso) {
+                    showToast('Lead removido com sucesso!');
+                    carregarKanban();
+                }
+            }
+        }
+
+        function fecharModal() {
+            document.getElementById('modal-lead').style.display = 'none';
+        }
+
+        window.onload = carregarKanban;
+    </script>
+</body>
+</html>

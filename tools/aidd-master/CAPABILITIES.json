@@ -1,0 +1,30 @@
+{
+  "skill": [
+    {
+      "nome": "seguranca-cibernetica",
+      "descricao": "Skill de auditoria e boas praticas de ciberseguranca (OWASP, hardening, resposta a incidentes) para o ecossistema AIDD.",
+      "camada_alvo": "harness_multiplataforma",
+      "alvo_projeto": "aidd-master",
+      "arquivos": [
+        "C:\\Users\\trcnologia\\orca\\workspaces\\aidd-master\\feat-add-skills-mcps-rules-specs\\.skills\\seguranca-cibernetica\\SKILL.md",
+        "C:\\Users\\trcnologia\\orca\\workspaces\\aidd-master\\feat-add-skills-mcps-rules-specs\\.claude\\skills\\seguranca-cibernetica\\SKILL.md",
+        "C:\\Users\\trcnologia\\orca\\workspaces\\aidd-master\\feat-add-skills-mcps-rules-specs\\.agent\\skills\\seguranca-cibernetica\\SKILL.md",
+        "C:\\Users\\trcnologia\\orca\\workspaces\\aidd-master\\feat-add-skills-mcps-rules-specs\\.mimocode\\skills\\seguranca-cibernetica\\SKILL.md",
+        "C:\\Users\\trcnologia\\orca\\workspaces\\aidd-master\\feat-add-skills-mcps-rules-specs\\.gemini\\skills\\seguranca-cibernetica\\SKILL.md"
+      ],
+      "atualizado_em": "2026-09-03T16:02:00.780045"
+    }
+  ],
+  "mcp": [
+    {
+      "nome": "auditoria-seguranca",
+      "descricao": "Ferramenta MCP que executa uma varredura basica de seguranca (segredos hardcoded, dependencias, more) no diretorio informado.",
+      "camada_alvo": "kernel_core",
+      "alvo_projeto": "aidd-master",
+      "arquivos": [
+        "C:\\Users\\trcnologia\\orca\\workspaces\\aidd-master\\feat-add-skills-mcps-rules-specs\\src\\core\\mcp\\auditoria-seguranca.py"
+      ],
+      "atualizado_em": "2026-09-03T16:02:11.627681"
+    }
+  ]
+}
