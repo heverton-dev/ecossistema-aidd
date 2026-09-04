@@ -18,7 +18,245 @@ import uuid
 import sqlite3
 import datetime
 import hashlib
+import threading
 from abc import ABC, abstractmethod
+
+# ---------------------------------------------------------------------------
+# Row Level Security (RLS) — Application-Layer Enforcement for SQLite
+# ---------------------------------------------------------------------------
+# PostgreSQL uses native RLS policies (ALTER TABLE ENABLE ROW LEVEL SECURITY).
+# SQLite has no native RLS, so we enforce it at the application layer via
+# RLSConnection: a transparent wrapper that intercepts DML and injects
+# tenant_id filters automatically.
+# ---------------------------------------------------------------------------
+
+RLS_TABLE_REGISTRY: set = set()
+_RLS_TENANT_CONTEXT = threading.local()
+
+
+def _get_current_tenant() -> str | None:
+    return getattr(_RLS_TENANT_CONTEXT, 'tenant_id', None)
+
+
+def _strip_sql_comments(sql: str) -> str:
+    """Remove SQL line comments (-- ...) for reliable keyword detection."""
+    return re.sub(r'--[^\n]*', '', sql)
+
+
+class RLSConnection:
+    """Transparent wrapper around sqlite3.Connection that enforces tenant
+    isolation on all RLS‑enabled tables. SELECT/UPDATE/DELETE are filtered
+    by ``tenant_id``; INSERT auto‑injects the current ``tenant_id``.
+    Provides a ``cursor()`` method delegating to the underlying connection
+    so that existing audit utilities (e.g., ``append_audit_log``) work.
+    """
+
+    def __init__(self, real_conn):
+        self._conn = real_conn
+
+    # expose cursor for legacy callers
+    def cursor(self):
+        """Return a cursor from the wrapped ``sqlite3.Connection``.
+        Required because some modules (e.g., ``services.py``) call
+        ``conn.cursor()`` directly.  Delegating keeps the wrapper transparent.
+        """
+        return self._conn.cursor()
+
+    # -- query rewriting --------------------------------------------------
+
+    def _rewrite_query(self, sql: str, params: tuple) -> tuple:
+        """Rewrite *sql* to enforce tenant isolation on RLS‑enabled tables.
+        Returns ``(new_sql, new_params)``. Non‑RLS tables pass through unchanged.
+        """
+        tenant_id = _get_current_tenant()
+        if not tenant_id or not RLS_TABLE_REGISTRY:
+            return sql, params
+
+        clean = _strip_sql_comments(sql).strip()
+        if not clean:
+            return sql, params
+
+        first_word = clean.split()[0].upper()
+
+        # --- INSERT: inject tenant_id into column list and VALUES ---------
+        if first_word == 'INSERT':
+            return self._rewrite_insert(clean, sql, params, tenant_id)
+
+        # --- SELECT: wrap with tenant filter subquery ---------------------
+        if first_word == 'SELECT':
+            return self._rewrite_select(clean, sql, params, tenant_id)
+
+        # --- UPDATE: add tenant_id WHERE filter --------------------------
+        if first_word == 'UPDATE':
+            return self._rewrite_update(clean, sql, params, tenant_id)
+
+        # --- DELETE FROM: add tenant_id WHERE filter ---------------------
+        if first_word == 'DELETE':
+            return self._rewrite_delete(clean, sql, params, tenant_id)
+
+        return sql, params
+
+    def _rewrite_insert(self, clean: str, original_sql: str, params: tuple, tenant_id: str) -> tuple:
+        # Regex to capture table, column list, and values placeholders
+        m = re.match(r"INSERT\s+(?:OR\s+\w+\s+)?INTO\s+(\w+)\s*\(([^)]+)\)\s*VALUES\s*\(([^)]+)\)", clean, re.IGNORECASE)
+        if not m:
+            return original_sql, params
+        table, cols_str, vals_str = m.groups()
+        if table not in RLS_TABLE_REGISTRY:
+            return original_sql, params
+        cols = [c.strip().strip('"').strip('`') for c in cols_str.split(',')]
+        if 'tenant_id' in cols:
+            return original_sql, params
+        # Build new column and value lists with tenant_id
+        new_cols = 'tenant_id, ' + cols_str
+        new_vals = '?, ' + vals_str
+        new_sql = f"INSERT INTO {table} ({new_cols}) VALUES ({new_vals})"
+        # Preserve any trailing part of the original SQL (e.g., RETURNING clause)
+        trailing = original_sql[m.end():]
+        if trailing:
+            new_sql += trailing
+        return new_sql, (tenant_id,) + params
+
+    def _rewrite_select(self, clean: str, original_sql: str, params: tuple, tenant_id: str) -> tuple:
+        # Find the "FROM <table>" that targets an RLS table
+        m = re.search(r'\bFROM\s+(\w+)', clean, re.IGNORECASE)
+        if not m:
+            return original_sql, params
+        table = m.group(1)
+        if table not in RLS_TABLE_REGISTRY:
+            return original_sql, params
+
+        # If there's already a WHERE, inject tenant_id right after it
+        if re.search(r'\bWHERE\b', clean, re.IGNORECASE):
+            new_sql = re.sub(
+                r'\bWHERE\b',
+                'WHERE tenant_id = ? AND',
+                original_sql,
+                count=1,
+                flags=re.IGNORECASE
+            )
+        else:
+            # Add WHERE clause before ORDER BY / LIMIT / ; / end
+            m_end = re.search(r'\b(ORDER\s+BY|LIMIT|GROUP\s+BY)\b', original_sql, re.IGNORECASE)
+            if m_end:
+                pos = m_end.start()
+                new_sql = original_sql[:pos] + 'WHERE tenant_id = ? ' + original_sql[pos:]
+            else:
+                stripped = original_sql.rstrip().rstrip(';')
+                new_sql = stripped + ' WHERE tenant_id = ?'
+                if original_sql.rstrip().endswith(';'):
+                    new_sql += ';'
+
+        return new_sql, (tenant_id,) + params
+
+    def _rewrite_update(self, clean: str, original_sql: str, params: tuple, tenant_id: str) -> tuple:
+        m = re.match(r'UPDATE\s+(\w+)', clean, re.IGNORECASE)
+        if not m:
+            return original_sql, params
+        table = m.group(1)
+        if table not in RLS_TABLE_REGISTRY:
+            return original_sql, params
+
+        if re.search(r'\bWHERE\b', original_sql, re.IGNORECASE):
+            # Insert tenant filter after existing WHERE keyword
+            new_sql = re.sub(
+                r'\bWHERE\b',
+                'WHERE tenant_id = ? AND',
+                original_sql,
+                count=1,
+                flags=re.IGNORECASE
+            )
+            # params order: original first param (e.g., new values), then tenant_id, then remaining params
+            if len(params) >= 1:
+                new_params = (params[0], tenant_id) + params[1:]
+            else:
+                new_params = (tenant_id,)
+        else:
+            stripped = original_sql.rstrip().rstrip(';')
+            new_sql = stripped + ' WHERE tenant_id = ?'
+            if original_sql.rstrip().endswith(';'):
+                new_sql += ';'
+            # Append tenant_id after existing params
+            new_params = params + (tenant_id,)
+
+        return new_sql, new_params
+
+    def _rewrite_delete(self, clean: str, original_sql: str, params: tuple, tenant_id: str) -> tuple:
+        m = re.match(r'DELETE\s+FROM\s+(\w+)', clean, re.IGNORECASE)
+        if not m:
+            return original_sql, params
+        table = m.group(1)
+        if table not in RLS_TABLE_REGISTRY:
+            return original_sql, params
+
+        if re.search(r'\bWHERE\b', original_sql, re.IGNORECASE):
+            new_sql = re.sub(
+                r'\bWHERE\b',
+                'WHERE tenant_id = ? AND',
+                original_sql,
+                count=1,
+                flags=re.IGNORECASE
+            )
+        else:
+            stripped = original_sql.rstrip().rstrip(';')
+            new_sql = stripped + ' WHERE tenant_id = ?'
+            if original_sql.rstrip().endswith(';'):
+                new_sql += ';'
+
+        return new_sql, (tenant_id,) + params
+
+    # -- delegate to underlying connection --------------------------------
+
+    def execute(self, sql: str, params=None):
+        params = params if params is not None else ()
+        new_sql, new_params = self._rewrite_query(sql, params)
+        return self._conn.execute(new_sql, new_params)
+
+    def executemany(self, sql: str, seq_of_params):
+        tenant_id = _get_current_tenant()
+        if tenant_id and RLS_TABLE_REGISTRY:
+            clean = _strip_sql_comments(sql).strip()
+            first_word = clean.split()[0].upper() if clean else ''
+            if first_word == 'INSERT':
+                m = re.match(r'INSERT\s+(?:OR\s+\w+\s+)?INTO\s+(\w+)\s*\(([^)]+)\)\s*VALUES\s*\(([^)]+)\)', clean, re.IGNORECASE)
+                if m and m.group(1) in RLS_TABLE_REGISTRY:
+                    table, cols_str, vals_str = m.groups()
+                    new_cols = 'tenant_id, ' + cols_str
+                    new_vals = '?, ' + vals_str
+                    trailing = sql[m.end():]
+                    sql = f'INSERT INTO {table} ({new_cols}) VALUES ({new_vals})' + trailing
+                    seq_of_params = [(tenant_id,) + p for p in seq_of_params]
+        return self._conn.executemany(sql, seq_of_params)
+
+    def executescript(self, sql: str):
+        return self._conn.executescript(sql)
+
+    def commit(self):
+        self._conn.commit()
+
+    def rollback(self):
+        self._conn.rollback()
+
+    def close(self):
+        self._conn.close()
+
+    @property
+    def row_factory(self):
+        return self._conn.row_factory
+
+    @row_factory.setter
+    def row_factory(self, value):
+        self._conn.row_factory = value
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        if exc_type is not None:
+            self._conn.rollback()
+        else:
+            self._conn.commit()
+        return False
 
 
 def append_audit_log(cursor, action: str, payload: dict):
@@ -36,20 +274,24 @@ def append_audit_log(cursor, action: str, payload: dict):
         (log_id, timestamp, action, payload_json, prev_hash, curr_hash)
     )
 
+
 def enable_rls_tenant(cursor, table_name: str):
+    """Enable RLS for a table.  On PostgreSQL uses native policies; on SQLite
+    registers the table for application-layer enforcement via RLSConnection."""
     if hasattr(cursor, '_cursor') or type(cursor).__name__ == 'PostgresCursorProxy':
         cursor.execute(f"ALTER TABLE {table_name} ENABLE ROW LEVEL SECURITY;")
         cursor.execute(f"CREATE POLICY tenant_isolation ON {table_name} USING (tenant_id = current_setting('app.current_tenant_id')::uuid);")
     else:
-        # RLS enforced at application layer
-        pass
+        RLS_TABLE_REGISTRY.add(table_name)
+
 
 def set_tenant(cursor, tenant_id: str):
+    """Set the active tenant context.  On PostgreSQL uses SET; on SQLite
+    stores it in thread-local storage for RLSConnection to pick up."""
     if hasattr(cursor, '_cursor') or type(cursor).__name__ == 'PostgresCursorProxy':
         cursor.execute(f"SET app.current_tenant_id = '{tenant_id}';")
     else:
-        # RLS enforced at application layer
-        pass
+        _RLS_TENANT_CONTEXT.tenant_id = tenant_id
 
 
 _PLACEHOLDER_RE = re.compile(r"\?")
@@ -74,7 +316,9 @@ class DatabaseAdapter(ABC):
 
 
 class SQLiteAdapter(DatabaseAdapter):
-    """Motor local embarcado (Zero Setup). Comportamento idêntico ao pré-v5.0."""
+    """Motor local embarcado (Zero Setup). Comportamento idêntico ao pré-v5.0.
+    Quando RLS_TABLE_REGISTRY não está vazio, get_connection() retorna um
+    RLSConnection que intercepta queries e injeta filtros de tenant_id."""
 
     def __init__(self, db_url: str):
         self.db_path = db_url.replace("sqlite:///", "")
@@ -86,7 +330,7 @@ class SQLiteAdapter(DatabaseAdapter):
         conn.execute("PRAGMA busy_timeout=5000;")
         conn.execute("PRAGMA foreign_keys=ON;")
         conn.row_factory = sqlite3.Row
-        return conn
+        return RLSConnection(conn)
 
     def init_system_tables(self):
         conn = sqlite3.connect(self.db_path, timeout=10.0)
