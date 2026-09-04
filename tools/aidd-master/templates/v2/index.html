@@ -1,0 +1,1405 @@
+<!DOCTYPE html>
+<html lang="pt-BR" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Plataforma Core Suite v5.1 — Hospital & Biotech Enterprise Monolith</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            50: '#f0f9ff',
+                            100: '#e0f2fe',
+                            500: '#0284c7',
+                            600: '#0369a1',
+                            700: '#075985',
+                            900: '#0c4a6e'
+                        },
+                        medical: {
+                            red: '#ef4444',
+                            orange: '#f97316',
+                            yellow: '#eab308',
+                            green: '#22c55e',
+                            blue: '#3b82f6',
+                            dark: '#090d16',
+                            card: '#0f172a',
+                            border: '#1e293b'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        ::-webkit-scrollbar { width: 4px; height: 4px; }
+        ::-webkit-scrollbar-track { background: #090d16; }
+        ::-webkit-scrollbar-thumb { background: #1e293b; border-radius: 2px; }
+        ::-webkit-scrollbar-thumb:hover { background: #334155; }
+        .tab-btn {
+            border: 1px solid transparent;
+            border-radius: 12px;
+            transition: all 0.2s ease;
+        }
+        .tab-btn:hover {
+            background: rgba(255, 255, 255, 0.04);
+            border-color: rgba(255, 255, 255, 0.08);
+        }
+        .tab-btn.active {
+            color: #38bdf8 !important;
+            border: 1px solid rgba(56, 189, 248, 0.35) !important;
+            background: rgba(14, 165, 233, 0.12) !important;
+            box-shadow: 0 4px 12px -2px rgba(14, 165, 233, 0.15);
+        }
+        .modal-backdrop {
+            background-color: rgba(2, 6, 23, 0.75);
+            backdrop-filter: blur(4px);
+        }
+    </style>
+</head>
+<body class="bg-[#090d16] text-slate-100 min-h-screen font-sans antialiased flex flex-col selection:bg-sky-500/30 selection:text-sky-200">
+
+    <!-- TOPBAR CORPORATIVO -->
+    <header class="min-h-[64px] h-16 border-b border-slate-800 bg-[#0f172a]/95 backdrop-blur sticky top-0 z-40 px-6 flex items-center justify-between gap-4">
+        <div class="flex items-center gap-3.5 flex-shrink-0">
+            <div class="w-10 h-10 rounded-xl bg-sky-500/10 border border-sky-500/30 flex items-center justify-center text-sky-400 font-black shadow-lg shadow-sky-500/10">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M19 14l-7 7m0 0l-7-7m7 7V3"/>
+                </svg>
+            </div>
+            <div>
+                <div class="flex items-center gap-2">
+                    <span class="font-extrabold tracking-tight text-sm text-slate-100">Plataforma Core</span>
+                    <span class="text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded-full bg-sky-500/20 text-sky-400 border border-sky-500/30">v5.1 Enterprise</span>
+                    <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                </div>
+                <p class="text-[11px] text-slate-400 hidden sm:block mt-0.5">Hospital & Clinical Core • Clean Architecture Cross-Domain</p>
+            </div>
+        </div>
+
+        <!-- BUSCA GLOBAL / SPOTLIGHT TRIGGER (Ctrl + K) -->
+        <div class="relative flex items-center mx-4 flex-1 max-w-lg hidden md:flex cursor-pointer" onclick="abrirSpotlight()">
+            <svg class="w-4 h-4 text-slate-400 absolute left-3.5 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+            </svg>
+            <input type="text" id="app-global-search" placeholder="Comandos, ações e busca rápida (Ctrl + K)..." 
+                   readonly onclick="abrirSpotlight()"
+                   class="w-full bg-slate-950/90 border border-slate-700/80 text-xs rounded-xl pl-10 pr-14 py-2 focus:outline-none focus:border-sky-500 text-slate-100 placeholder-slate-500 shadow-inner cursor-pointer">
+            <kbd class="absolute right-2.5 text-[10px] bg-slate-800 border border-slate-700 text-slate-400 px-2 py-0.5 rounded font-mono shadow-sm pointer-events-none">Ctrl K</kbd>
+        </div>
+
+        <!-- LINKS STUDIO & TOOLS -->
+        <div class="flex items-center gap-2 flex-shrink-0">
+            <a href="/docs" target="_blank" class="text-xs text-slate-300 hover:text-white bg-slate-800/80 hover:bg-slate-700 px-3 py-2 rounded-xl border border-slate-700 flex items-center gap-1.5 transition">
+                <svg class="w-3.5 h-3.5 text-sky-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"/></svg>
+                <span>Swagger Studio</span>
+            </a>
+            <a href="/webhooks" target="_blank" class="text-xs text-slate-300 hover:text-white bg-slate-800/80 hover:bg-slate-700 px-3 py-2 rounded-xl border border-slate-700 flex items-center gap-1.5 transition">
+                <svg class="w-3.5 h-3.5 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+                <span>Webhooks</span>
+            </a>
+            <a href="/mcp" target="_blank" class="text-xs text-slate-300 hover:text-white bg-slate-800/80 hover:bg-slate-700 px-3 py-2 rounded-xl border border-slate-700 flex items-center gap-1.5 transition">
+                <svg class="w-3.5 h-3.5 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m18-6h-2m2 6h-2M7 19h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2zM9 9h6v6H9V9z"/></svg>
+                <span>MCP Native (16)</span>
+            </a>
+            <a href="/docs/guia" target="_blank" class="text-xs text-slate-300 hover:text-white bg-slate-800/80 hover:bg-slate-700 px-3 py-2 rounded-xl border border-slate-700 flex items-center gap-1.5 transition">
+                <svg class="w-3.5 h-3.5 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/></svg>
+                <span>Guia Técnico</span>
+            </a>
+            <button onclick="carregarTodosModulos()" class="text-xs bg-sky-600 hover:bg-sky-500 text-white px-3.5 py-2 rounded-xl font-medium shadow-md shadow-sky-600/20 transition flex items-center gap-1.5">
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+                <span>Sincronizar</span>
+            </button>
+        </div>
+    </header>
+
+    <!-- KPI STATS SUMMARY BAR -->
+    <div class="bg-[#0b0f19]/90 border-b border-slate-800 px-6 py-4">
+        <div class="max-w-7xl mx-auto grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3.5">
+            <div class="bg-slate-950/80 p-3.5 rounded-xl border border-slate-800/80 hover:border-slate-700 transition">
+                <div class="text-[11px] text-slate-400 font-medium">Aguardando Triagem</div>
+                <div id="kpi-fila-triagem" class="text-xl font-bold text-sky-400 mt-0.5">--</div>
+            </div>
+            <div class="bg-slate-950/80 p-3.5 rounded-xl border border-slate-800/80 hover:border-slate-700 transition">
+                <div class="text-[11px] text-rose-400 font-medium">Emergências (P1/P2)</div>
+                <div id="kpi-emergencias" class="text-xl font-bold text-rose-400 mt-0.5">--</div>
+            </div>
+            <div class="bg-slate-950/80 p-3.5 rounded-xl border border-slate-800/80 hover:border-slate-700 transition">
+                <div class="text-[11px] text-amber-400 font-medium">Cirurgias no Bloco</div>
+                <div id="kpi-cirurgias" class="text-xl font-bold text-amber-400 mt-0.5">--</div>
+            </div>
+            <div class="bg-slate-950/80 p-3.5 rounded-xl border border-slate-800/80 hover:border-slate-700 transition">
+                <div class="text-[11px] text-orange-400 font-medium">Estoque Crítico</div>
+                <div id="kpi-estoque-critico" class="text-xl font-bold text-orange-400 mt-0.5">--</div>
+            </div>
+            <div class="bg-slate-950/80 p-3.5 rounded-xl border border-slate-800/80 hover:border-slate-700 transition">
+                <div class="text-[11px] text-emerald-400 font-medium">Faturamento Liquidado</div>
+                <div id="kpi-fat-liquidado" class="text-xl font-bold text-emerald-400 mt-0.5">R$ 0,00</div>
+            </div>
+            <div class="bg-slate-950/80 p-3.5 rounded-xl border border-slate-800/80 hover:border-slate-700 transition">
+                <div class="text-[11px] text-indigo-400 font-medium">Faturamento Aberto</div>
+                <div id="kpi-fat-aberto" class="text-xl font-bold text-indigo-400 mt-0.5">R$ 0,00</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- NAVEGAÇÃO DE ABAS VERTICAIS (PERFEITAMENTE CENTRALIZADA) -->
+    <nav class="bg-[#0f172a] border-b border-slate-800 px-6 sticky top-16 z-30 flex items-center justify-center overflow-x-auto shadow-md">
+        <div class="max-w-7xl w-full flex items-center justify-center gap-2 sm:gap-3 py-2">
+            <button onclick="mudarAba('triagem')" id="tab-btn-triagem" class="tab-btn active px-4 py-2.5 text-xs font-semibold text-slate-300 hover:text-white rounded-xl flex items-center gap-2 transition whitespace-nowrap border border-transparent">
+                <svg class="w-4 h-4 text-rose-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
+                <span>1. Triagem Manchester</span>
+            </button>
+            <button onclick="mudarAba('pep')" id="tab-btn-pep" class="tab-btn px-4 py-2.5 text-xs font-semibold text-slate-300 hover:text-white rounded-xl flex items-center gap-2 transition whitespace-nowrap border border-transparent">
+                <svg class="w-4 h-4 text-sky-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+                <span>2. Prontuário & Prescrições (PEP)</span>
+            </button>
+            <button onclick="mudarAba('cirurgico')" id="tab-btn-cirurgico" class="tab-btn px-4 py-2.5 text-xs font-semibold text-slate-300 hover:text-white rounded-xl flex items-center gap-2 transition whitespace-nowrap border border-transparent">
+                <svg class="w-4 h-4 text-amber-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.121 14.121L19 19m-7-7l7-7m-7 7l-2.879 2.879a3 3 0 11-4.242-4.242L12 12z"/></svg>
+                <span>3. Centro Cirúrgico</span>
+            </button>
+            <button onclick="mudarAba('farmacia')" id="tab-btn-farmacia" class="tab-btn px-4 py-2.5 text-xs font-semibold text-slate-300 hover:text-white rounded-xl flex items-center gap-2 transition whitespace-nowrap border border-transparent">
+                <svg class="w-4 h-4 text-emerald-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"/></svg>
+                <span>4. Farmácia Hospitalar</span>
+            </button>
+            <button onclick="mudarAba('faturamento')" id="tab-btn-faturamento" class="tab-btn px-4 py-2.5 text-xs font-semibold text-slate-300 hover:text-white rounded-xl flex items-center gap-2 transition whitespace-nowrap border border-transparent">
+                <svg class="w-4 h-4 text-indigo-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                <span>5. Faturamento TISS/TUSS</span>
+            </button>
+        </div>
+    </nav>
+
+    <!-- CONTEÚDO PRINCIPAL (COM RESPIRO E ESPAÇAMENTO HARMÔNICO) -->
+    <main class="flex-1 max-w-7xl w-full mx-auto p-6 sm:p-8 space-y-6">
+
+        <!-- ========================================================================= -->
+        <!-- ABA 1: TRIAGEM MANCHESTER -->
+        <!-- ========================================================================= -->
+        <section id="sec-triagem" class="space-y-4">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-slate-900/60 p-4 rounded-xl border border-slate-800">
+                <div>
+                    <h2 class="text-base font-bold text-slate-100 flex items-center gap-2">
+                        <span class="w-2 h-2 rounded-full bg-rose-500"></span>
+                        Pronto-Socorro & Triagem Manchester
+                    </h2>
+                    <p class="text-xs text-slate-400">Classificação de risco com SLA regressivo automático e alocação de leitos</p>
+                </div>
+                <button onclick="abrirModalTriagem()" class="bg-rose-600 hover:bg-rose-500 text-white text-xs font-semibold px-3 py-2 rounded-lg transition shadow-lg shadow-rose-600/20 flex items-center gap-1.5 self-start sm:self-auto">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+                    <span>Nova Triagem de Urgência</span>
+                </button>
+            </div>
+
+            <div class="bg-slate-900/40 rounded-xl border border-slate-800 overflow-hidden shadow-xl">
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left text-xs">
+                        <thead class="bg-slate-950/80 text-slate-400 border-b border-slate-800 uppercase tracking-wider font-semibold">
+                            <tr>
+                                <th class="p-3">Protocolo</th>
+                                <th class="p-3">Paciente</th>
+                                <th class="p-3">Sinais Vitais & Queixa</th>
+                                <th class="p-3">Classificação</th>
+                                <th class="p-3">SLA Limite</th>
+                                <th class="p-3">Leito / Box</th>
+                                <th class="p-3">Status</th>
+                                <th class="p-3 text-right">Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tabela-triagens" class="divide-y divide-slate-800/60 text-slate-300">
+                            <!-- Injetado dinamicamente -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- ========================================================================= -->
+        <!-- ABA 2: PEP CLÍNICO & PRESCRIÇÕES -->
+        <!-- ========================================================================= -->
+        <section id="sec-pep" class="space-y-4 hidden">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-slate-900/60 p-4 rounded-xl border border-slate-800">
+                <div>
+                    <h2 class="text-base font-bold text-slate-100 flex items-center gap-2">
+                        <span class="w-2 h-2 rounded-full bg-sky-500"></span>
+                        Prontuário Eletrônico (PEP) & Prescrições Clínicas
+                    </h2>
+                    <p class="text-xs text-slate-400">Histórico médico, CID-10, notas de evolução diária e prescrição digital de fármacos</p>
+                </div>
+                <div class="flex items-center gap-2">
+                    <button onclick="abrirModalNovoPEP()" class="bg-sky-600 hover:bg-sky-500 text-white text-xs font-semibold px-3 py-2 rounded-lg transition shadow-lg shadow-sky-600/20 flex items-center gap-1.5">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+                        <span>Novo Prontuário</span>
+                    </button>
+                    <button onclick="abrirModalPrescricao()" class="bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-semibold px-3 py-2 rounded-lg transition shadow-lg shadow-emerald-600/20 flex items-center gap-1.5">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+                        <span>Emitir Prescrição</span>
+                    </button>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                <!-- Prontuários -->
+                <div class="bg-slate-900/40 rounded-xl border border-slate-800 overflow-hidden shadow-xl">
+                    <div class="p-3 bg-slate-950/80 border-b border-slate-800 font-bold text-xs text-sky-400 flex items-center justify-between">
+                        <span>Prontuários Clínicos Ativos</span>
+                        <span id="pep-count" class="text-slate-500 font-mono text-[11px]">0</span>
+                    </div>
+                    <div id="lista-prontuarios" class="divide-y divide-slate-800/60 max-h-[500px] overflow-y-auto">
+                        <!-- Injetado dinamicamente -->
+                    </div>
+                </div>
+
+                <!-- Prescrições -->
+                <div class="bg-slate-900/40 rounded-xl border border-slate-800 overflow-hidden shadow-xl">
+                    <div class="p-3 bg-slate-950/80 border-b border-slate-800 font-bold text-xs text-emerald-400 flex items-center justify-between">
+                        <span>Prescrições Médicas Hospitalares</span>
+                        <span id="presc-count" class="text-slate-500 font-mono text-[11px]">0</span>
+                    </div>
+                    <div id="lista-prescricoes" class="divide-y divide-slate-800/60 max-h-[500px] overflow-y-auto">
+                        <!-- Injetado dinamicamente -->
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ========================================================================= -->
+        <!-- ABA 3: CENTRO CIRÚRGICO -->
+        <!-- ========================================================================= -->
+        <section id="sec-cirurgico" class="space-y-4 hidden">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-slate-900/60 p-4 rounded-xl border border-slate-800">
+                <div>
+                    <h2 class="text-base font-bold text-slate-100 flex items-center gap-2">
+                        <span class="w-2 h-2 rounded-full bg-amber-500"></span>
+                        Centro Cirúrgico & Escala de Salas
+                    </h2>
+                    <p class="text-xs text-slate-400">Escala de procedimentos, equipe anestésica, controle de OPME e avanço de fase</p>
+                </div>
+                <button onclick="abrirModalCirurgia()" class="bg-amber-600 hover:bg-amber-500 text-white text-xs font-semibold px-3 py-2 rounded-lg transition shadow-lg shadow-amber-600/20 flex items-center gap-1.5">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+                    <span>Agendar Cirurgia</span>
+                </button>
+            </div>
+
+            <div class="bg-slate-900/40 rounded-xl border border-slate-800 overflow-hidden shadow-xl">
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left text-xs">
+                        <thead class="bg-slate-950/80 text-slate-400 border-b border-slate-800 uppercase tracking-wider font-semibold">
+                            <tr>
+                                <th class="p-3">Cód.</th>
+                                <th class="p-3">Paciente</th>
+                                <th class="p-3">Procedimento</th>
+                                <th class="p-3">Sala Bloco</th>
+                                <th class="p-3">Equipe Médica</th>
+                                <th class="p-3">Data / Hora</th>
+                                <th class="p-3">OPME</th>
+                                <th class="p-3">Status</th>
+                                <th class="p-3 text-right">Avançar Fase</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tabela-cirurgias" class="divide-y divide-slate-800/60 text-slate-300">
+                            <!-- Injetado dinamicamente -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- ========================================================================= -->
+        <!-- ABA 4: FARMÁCIA HOSPITALAR -->
+        <!-- ========================================================================= -->
+        <section id="sec-farmacia" class="space-y-4 hidden">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-slate-900/60 p-4 rounded-xl border border-slate-800">
+                <div>
+                    <h2 class="text-base font-bold text-slate-100 flex items-center gap-2">
+                        <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+                        Farmácia Hospitalar & Dispensação Controlada
+                    </h2>
+                    <p class="text-xs text-slate-400">Rastreio de lotes, termolábeis, substâncias controladas e dispensação fracionada</p>
+                </div>
+                <div class="flex items-center gap-2">
+                    <button onclick="abrirModalMedicamento()" class="bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-semibold px-3 py-2 rounded-lg transition shadow-lg shadow-emerald-600/20 flex items-center gap-1.5">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+                        <span>Cadastrar Lote / Fármaco</span>
+                    </button>
+                </div>
+            </div>
+
+            <div class="bg-slate-900/40 rounded-xl border border-slate-800 overflow-hidden shadow-xl">
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left text-xs">
+                        <thead class="bg-slate-950/80 text-slate-400 border-b border-slate-800 uppercase tracking-wider font-semibold">
+                            <tr>
+                                <th class="p-3">Código</th>
+                                <th class="p-3">Medicamento</th>
+                                <th class="p-3">Lote</th>
+                                <th class="p-3">Categoria</th>
+                                <th class="p-3">Disponível / Mín.</th>
+                                <th class="p-3">Conservação</th>
+                                <th class="p-3">Validade</th>
+                                <th class="p-3">Status</th>
+                                <th class="p-3 text-right">Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tabela-farmacia" class="divide-y divide-slate-800/60 text-slate-300">
+                            <!-- Injetado dinamicamente -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- ========================================================================= -->
+        <!-- ABA 5: FATURAMENTO TISS/TUSS -->
+        <!-- ========================================================================= -->
+        <section id="sec-faturamento" class="space-y-4 hidden">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-slate-900/60 p-4 rounded-xl border border-slate-800">
+                <div>
+                    <h2 class="text-base font-bold text-slate-100 flex items-center gap-2">
+                        <span class="w-2 h-2 rounded-full bg-indigo-500"></span>
+                        Faturamento Hospitalar TISS/TUSS & Auditoria
+                    </h2>
+                    <p class="text-xs text-slate-400">Contas empresariais, diárias de UTI, tabela TUSS e liquidação de convênios</p>
+                </div>
+                <button onclick="abrirModalGuia()" class="bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold px-3 py-2 rounded-lg transition shadow-lg shadow-indigo-600/20 flex items-center gap-1.5">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+                    <span>Emitir Guia TISS</span>
+                </button>
+            </div>
+
+            <div class="bg-slate-900/40 rounded-xl border border-slate-800 overflow-hidden shadow-xl">
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left text-xs">
+                        <thead class="bg-slate-950/80 text-slate-400 border-b border-slate-800 uppercase tracking-wider font-semibold">
+                            <tr>
+                                <th class="p-3">Nº Guia TISS</th>
+                                <th class="p-3">Paciente</th>
+                                <th class="p-3">Convênio</th>
+                                <th class="p-3">Cód. TUSS & Procedimento</th>
+                                <th class="p-3">Valor Total</th>
+                                <th class="p-3">Status</th>
+                                <th class="p-3 text-right">Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tabela-faturamento" class="divide-y divide-slate-800/60 text-slate-300">
+                            <!-- Injetado dinamicamente -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- ========================================================================= -->
+    <!-- MODAIS DE CRUD COMPLETO -->
+    <!-- ========================================================================= -->
+
+    <!-- MODAL 1: TRIAGEM -->
+    <div id="modal-triagem" class="fixed inset-0 modal-backdrop z-50 flex items-center justify-center p-4 hidden">
+        <div class="bg-slate-900 border border-slate-800 rounded-xl w-full max-w-lg p-6 space-y-4 shadow-2xl">
+            <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+                <h3 class="text-sm font-bold text-slate-100 flex items-center gap-2">
+                    <svg class="w-4 h-4 text-rose-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
+                    Nova Triagem Manchester
+                </h3>
+                <button onclick="fecharModal('modal-triagem')" class="text-slate-400 hover:text-white p-1 rounded-lg hover:bg-slate-800 transition"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg></button>
+            </div>
+            <form onsubmit="salvarNovaTriagem(event)" class="space-y-3 text-xs">
+                <div>
+                    <label class="block text-slate-400 mb-1">Nome Completo do Paciente</label>
+                    <input type="text" id="triagem-nome" required class="w-full bg-slate-950 border border-slate-800 rounded-lg p-2 text-slate-100 focus:border-rose-500 outline-none">
+                </div>
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-slate-400 mb-1">Idade</label>
+                        <input type="number" id="triagem-idade" required value="35" class="w-full bg-slate-950 border border-slate-800 rounded-lg p-2 text-slate-100 focus:border-rose-500 outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-slate-400 mb-1">Classificação Manchester</label>
+                        <select id="triagem-classificacao" class="w-full bg-slate-950 border border-slate-800 rounded-lg p-2 text-slate-100 focus:border-rose-500 outline-none">
+                            <option value="vermelho" class="text-red-400 font-bold">Vermelho (Emergência - 0 min)</option>
+                            <option value="laranja" class="text-orange-400 font-bold">Laranja (Muito Urgente - 10 min)</option>
+                            <option value="amarelo" class="text-yellow-400 font-bold">Amarelo (Urgente - 60 min)</option>
+                            <option value="verde" selected class="text-green-400 font-bold">Verde (Pouco Urgente - 120 min)</option>
+                            <option value="azul" class="text-blue-400 font-bold">Azul (Não Urgente - 240 min)</option>
+                        </select>
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-slate-400 mb-1">Sinais Vitais (PA, FC, SpO2, Temp, Dor)</label>
+                    <input type="text" id="triagem-sinais" placeholder="Ex: PA 130x80, FC 78, SpO2 98%, Temp 36.8°C" required class="w-full bg-slate-950 border border-slate-800 rounded-lg p-2 text-slate-100 focus:border-rose-500 outline-none">
+                </div>
+                <div>
+                    <label class="block text-slate-400 mb-1">Queixa Principal / Sintomas</label>
+                    <textarea id="triagem-queixa" rows="2" required placeholder="Relato clínico do paciente..." class="w-full bg-slate-950 border border-slate-800 rounded-lg p-2 text-slate-100 focus:border-rose-500 outline-none"></textarea>
+                </div>
+                <div class="flex justify-end gap-2 pt-2 border-t border-slate-800">
+                    <button type="button" onclick="fecharModal('modal-triagem')" class="px-3 py-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 transition">Cancelar</button>
+                    <button type="submit" class="px-4 py-2 rounded-lg bg-rose-600 hover:bg-rose-500 text-white font-semibold transition shadow-lg shadow-rose-600/20">Classificar Paciente</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL 2: NOVO PEP -->
+    <div id="modal-pep" class="fixed inset-0 modal-backdrop z-50 flex items-center justify-center p-4 hidden">
+        <div class="bg-slate-900 border border-slate-800 rounded-xl w-full max-w-lg p-6 space-y-4 shadow-2xl">
+            <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+                <h3 class="text-sm font-bold text-slate-100 flex items-center gap-2">
+                    <svg class="w-4 h-4 text-sky-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+                    Novo Prontuário Eletrônico (PEP)
+                </h3>
+                <button onclick="fecharModal('modal-pep')" class="text-slate-400 hover:text-white p-1 rounded-lg hover:bg-slate-800 transition"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg></button>
+            </div>
+            <form onsubmit="salvarNovoPEP(event)" class="space-y-3 text-xs">
+                <div>
+                    <label class="block text-slate-400 mb-1">Nome do Paciente</label>
+                    <input type="text" id="pep-paciente" required class="w-full bg-slate-950 border border-slate-800 rounded-lg p-2 text-slate-100 focus:border-sky-500 outline-none">
+                </div>
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-slate-400 mb-1">Médico Responsável</label>
+                        <input type="text" id="pep-medico" required value="Dra. Beatriz Helena" class="w-full bg-slate-950 border border-slate-800 rounded-lg p-2 text-slate-100 focus:border-sky-500 outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-slate-400 mb-1">CRM</label>
+                        <input type="text" id="pep-crm" required value="CRM/SP 148902" class="w-full bg-slate-950 border border-slate-800 rounded-lg p-2 text-slate-100 focus:border-sky-500 outline-none">
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-slate-400 mb-1">Diagnóstico CID-10</label>
+                    <input type="text" id="pep-cid10" placeholder="Ex: I20.0 - Angina instável" required class="w-full bg-slate-950 border border-slate-800 rounded-lg p-2 text-slate-100 focus:border-sky-500 outline-none">
+                </div>
+                <div>
+                    <label class="block text-slate-400 mb-1">Anotação de Evolução Clínica</label>
+                    <textarea id="pep-evolucao" rows="3" required placeholder="Conduta clínica, hipóteses e exame físico..." class="w-full bg-slate-950 border border-slate-800 rounded-lg p-2 text-slate-100 focus:border-sky-500 outline-none"></textarea>
+                </div>
+                <div class="flex justify-end gap-2 pt-2 border-t border-slate-800">
+                    <button type="button" onclick="fecharModal('modal-pep')" class="px-3 py-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 transition">Cancelar</button>
+                    <button type="submit" class="px-4 py-2 rounded-lg bg-sky-600 hover:bg-sky-500 text-white font-semibold transition shadow-lg shadow-sky-600/20">Salvar Prontuário</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL 3: PRESCRIÇÃO -->
+    <div id="modal-prescricao" class="fixed inset-0 modal-backdrop z-50 flex items-center justify-center p-4 hidden">
+        <div class="bg-slate-900 border border-slate-800 rounded-xl w-full max-w-lg p-6 space-y-4 shadow-2xl">
+            <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+                <h3 class="text-sm font-bold text-slate-100 flex items-center gap-2">
+                    <svg class="w-4 h-4 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"/></svg>
+                    Emitir Prescrição Digital
+                </h3>
+                <button onclick="fecharModal('modal-prescricao')" class="text-slate-400 hover:text-white p-1 rounded-lg hover:bg-slate-800 transition"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg></button>
+            </div>
+            <form onsubmit="salvarPrescricao(event)" class="space-y-3 text-xs">
+                <div>
+                    <label class="block text-slate-400 mb-1">Selecione o Prontuário</label>
+                    <select id="presc-prontuario-id" class="w-full bg-slate-950 border border-slate-800 rounded-lg p-2 text-slate-100 focus:border-emerald-500 outline-none">
+                        <!-- Opções injetadas -->
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-slate-400 mb-1">Medicamento / Princípio Ativo</label>
+                    <input type="text" id="presc-medicamento" placeholder="Ex: Nitroglicerina 50mg/10ml Ampola" required class="w-full bg-slate-950 border border-slate-800 rounded-lg p-2 text-slate-100 focus:border-emerald-500 outline-none">
+                </div>
+                <div class="grid grid-cols-3 gap-3">
+                    <div>
+                        <label class="block text-slate-400 mb-1">Dosagem</label>
+                        <input type="text" id="presc-dosagem" placeholder="Ex: 5 mcg/min" required class="w-full bg-slate-950 border border-slate-800 rounded-lg p-2 text-slate-100 focus:border-emerald-500 outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-slate-400 mb-1">Frequência</label>
+                        <input type="text" id="presc-freq" placeholder="Ex: Contínua" required class="w-full bg-slate-950 border border-slate-800 rounded-lg p-2 text-slate-100 focus:border-emerald-500 outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-slate-400 mb-1">Via</label>
+                        <select id="presc-via" class="w-full bg-slate-950 border border-slate-800 rounded-lg p-2 text-slate-100 focus:border-emerald-500 outline-none">
+                            <option value="Intravenosa">Intravenosa</option>
+                            <option value="Via Oral">Via Oral</option>
+                            <option value="Subcutânea">Subcutânea</option>
+                            <option value="Intramuscular">Intramuscular</option>
+                            <option value="Inalatória">Inalatória</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="flex justify-end gap-2 pt-2 border-t border-slate-800">
+                    <button type="button" onclick="fecharModal('modal-prescricao')" class="px-3 py-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 transition">Cancelar</button>
+                    <button type="submit" class="px-4 py-2 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white font-semibold transition shadow-lg shadow-emerald-600/20">Assinar & Emitir</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL 4: CIRURGIA -->
+    <div id="modal-cirurgia" class="fixed inset-0 modal-backdrop z-50 flex items-center justify-center p-4 hidden">
+        <div class="bg-slate-900 border border-slate-800 rounded-xl w-full max-w-lg p-6 space-y-4 shadow-2xl">
+            <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+                <h3 class="text-sm font-bold text-slate-100 flex items-center gap-2">
+                    <svg class="w-4 h-4 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.121 14.121L19 19m-7-7l7-7m-7 7l-2.879 2.879a3 3 0 11-4.242-4.242L12 12z"/></svg>
+                    Agendamento Cirúrgico
+                </h3>
+                <button onclick="fecharModal('modal-cirurgia')" class="text-slate-400 hover:text-white p-1 rounded-lg hover:bg-slate-800 transition"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg></button>
+            </div>
+            <form onsubmit="salvarNovaCirurgia(event)" class="space-y-3 text-xs">
+                <div>
+                    <label class="block text-slate-400 mb-1">Paciente</label>
+                    <input type="text" id="cir-paciente" required class="w-full bg-slate-950 border border-slate-800 rounded-lg p-2 text-slate-100 focus:border-amber-500 outline-none">
+                </div>
+                <div>
+                    <label class="block text-slate-400 mb-1">Procedimento</label>
+                    <input type="text" id="cir-proc" placeholder="Ex: Colecistectomia por Videolaparoscopia" required class="w-full bg-slate-950 border border-slate-800 rounded-lg p-2 text-slate-100 focus:border-amber-500 outline-none">
+                </div>
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-slate-400 mb-1">Sala Cirúrgica</label>
+                        <select id="cir-sala" class="w-full bg-slate-950 border border-slate-800 rounded-lg p-2 text-slate-100 focus:border-amber-500 outline-none">
+                            <option value="Sala 01 - Geral">Sala 01 - Geral</option>
+                            <option value="Sala 02 - Bloco Central">Sala 02 - Bloco Central</option>
+                            <option value="Sala 03 - Ortopedia">Sala 03 - Ortopedia</option>
+                            <option value="Sala 04 - Hemodinâmica">Sala 04 - Hemodinâmica</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-slate-400 mb-1">Data / Hora</label>
+                        <input type="text" id="cir-data" placeholder="2026-09-01 15:30" required value="2026-09-01 16:00" class="w-full bg-slate-950 border border-slate-800 rounded-lg p-2 text-slate-100 focus:border-amber-500 outline-none">
+                    </div>
+                </div>
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-slate-400 mb-1">Cirurgião Chefe</label>
+                        <input type="text" id="cir-medico" required value="Dr. Ricardo Valente" class="w-full bg-slate-950 border border-slate-800 rounded-lg p-2 text-slate-100 focus:border-amber-500 outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-slate-400 mb-1">Anestesista</label>
+                        <input type="text" id="cir-anest" required value="Dra. Camila Ramos" class="w-full bg-slate-950 border border-slate-800 rounded-lg p-2 text-slate-100 focus:border-amber-500 outline-none">
+                    </div>
+                </div>
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-slate-400 mb-1">Tipo de Anestesia</label>
+                        <select id="cir-tipo-anest" class="w-full bg-slate-950 border border-slate-800 rounded-lg p-2 text-slate-100 focus:border-amber-500 outline-none">
+                            <option value="Geral Balanceada">Geral Balanceada</option>
+                            <option value="Raquianestesia">Raquianestesia</option>
+                            <option value="Sedação + Local">Sedação + Local</option>
+                        </select>
+                    </div>
+                    <div class="flex items-center gap-2 pt-5">
+                        <input type="checkbox" id="cir-opme" class="w-4 h-4 rounded bg-slate-950 border-slate-800 text-amber-600 focus:ring-0">
+                        <label for="cir-opme" class="text-slate-300">Requer OPME</label>
+                    </div>
+                </div>
+                <div class="flex justify-end gap-2 pt-2 border-t border-slate-800">
+                    <button type="button" onclick="fecharModal('modal-cirurgia')" class="px-3 py-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 transition">Cancelar</button>
+                    <button type="submit" class="px-4 py-2 rounded-lg bg-amber-600 hover:bg-amber-500 text-white font-semibold transition shadow-lg shadow-amber-600/20">Agendar Procedimento</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL 5: MEDICAMENTO -->
+    <div id="modal-medicamento" class="fixed inset-0 modal-backdrop z-50 flex items-center justify-center p-4 hidden">
+        <div class="bg-slate-900 border border-slate-800 rounded-xl w-full max-w-lg p-6 space-y-4 shadow-2xl">
+            <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+                <h3 class="text-sm font-bold text-slate-100 flex items-center gap-2">
+                    <svg class="w-4 h-4 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+                    Cadastrar Lote na Farmácia
+                </h3>
+                <button onclick="fecharModal('modal-medicamento')" class="text-slate-400 hover:text-white p-1 rounded-lg hover:bg-slate-800 transition"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg></button>
+            </div>
+            <form onsubmit="salvarMedicamento(event)" class="space-y-3 text-xs">
+                <div>
+                    <label class="block text-slate-400 mb-1">Medicamento / Apresentação</label>
+                    <input type="text" id="med-nome" placeholder="Ex: Midazolam 15mg/3ml Ampola" required class="w-full bg-slate-950 border border-slate-800 rounded-lg p-2 text-slate-100 focus:border-emerald-500 outline-none">
+                </div>
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-slate-400 mb-1">Lote</label>
+                        <input type="text" id="med-lote" placeholder="LOT-MDZ-01" required class="w-full bg-slate-950 border border-slate-800 rounded-lg p-2 text-slate-100 focus:border-emerald-500 outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-slate-400 mb-1">Categoria</label>
+                        <select id="med-cat" class="w-full bg-slate-950 border border-slate-800 rounded-lg p-2 text-slate-100 focus:border-emerald-500 outline-none">
+                            <option value="anestesico">Anestésico</option>
+                            <option value="antibiotico">Antibiótico</option>
+                            <option value="controlado">Controlado / Tarja Preta</option>
+                            <option value="analgesico">Analgésico / AINE</option>
+                            <option value="alto_custo">Alto Custo / Imunobiológico</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-slate-400 mb-1">Quantidade Disponível</label>
+                        <input type="number" id="med-qtd" required value="50" class="w-full bg-slate-950 border border-slate-800 rounded-lg p-2 text-slate-100 focus:border-emerald-500 outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-slate-400 mb-1">Estoque Mínimo</label>
+                        <input type="number" id="med-min" required value="15" class="w-full bg-slate-950 border border-slate-800 rounded-lg p-2 text-slate-100 focus:border-emerald-500 outline-none">
+                    </div>
+                </div>
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-slate-400 mb-1">Validade</label>
+                        <input type="text" id="med-val" placeholder="2027-12-31" required value="2027-12-31" class="w-full bg-slate-950 border border-slate-800 rounded-lg p-2 text-slate-100 focus:border-emerald-500 outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-slate-400 mb-1">Conservação</label>
+                        <input type="text" id="med-temp" placeholder="Ambiente (15-25°C)" value="Ambiente (15-25°C)" class="w-full bg-slate-950 border border-slate-800 rounded-lg p-2 text-slate-100 focus:border-emerald-500 outline-none">
+                    </div>
+                </div>
+                <div class="flex justify-end gap-2 pt-2 border-t border-slate-800">
+                    <button type="button" onclick="fecharModal('modal-medicamento')" class="px-3 py-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 transition">Cancelar</button>
+                    <button type="submit" class="px-4 py-2 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white font-semibold transition shadow-lg shadow-emerald-600/20">Salvar Medicamento</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL 6: GUIA TISS -->
+    <div id="modal-guia" class="fixed inset-0 modal-backdrop z-50 flex items-center justify-center p-4 hidden">
+        <div class="bg-slate-900 border border-slate-800 rounded-xl w-full max-w-lg p-6 space-y-4 shadow-2xl">
+            <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+                <h3 class="text-sm font-bold text-slate-100 flex items-center gap-2">
+                    <svg class="w-4 h-4 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+                    Emitir Guia Hospitalar TISS
+                </h3>
+                <button onclick="fecharModal('modal-guia')" class="text-slate-400 hover:text-white p-1 rounded-lg hover:bg-slate-800 transition"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg></button>
+            </div>
+            <form onsubmit="salvarNovaGuia(event)" class="space-y-3 text-xs">
+                <div>
+                    <label class="block text-slate-400 mb-1">Paciente</label>
+                    <input type="text" id="guia-paciente" required class="w-full bg-slate-950 border border-slate-800 rounded-lg p-2 text-slate-100 focus:border-indigo-500 outline-none">
+                </div>
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-slate-400 mb-1">Convênio / Operadora</label>
+                        <select id="guia-conv" class="w-full bg-slate-950 border border-slate-800 rounded-lg p-2 text-slate-100 focus:border-indigo-500 outline-none">
+                            <option value="Bradesco Saúde Top">Bradesco Saúde Top</option>
+                            <option value="Unimed Pleno">Unimed Pleno</option>
+                            <option value="SulAmérica Especial">SulAmérica Especial</option>
+                            <option value="Amil Fácil">Amil Fácil</option>
+                            <option value="Particular / Direto">Particular / Direto</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-slate-400 mb-1">Código TUSS (8 Dígitos)</label>
+                        <input type="text" id="guia-tuss" placeholder="40801055" required value="40801055" class="w-full bg-slate-950 border border-slate-800 rounded-lg p-2 text-slate-100 focus:border-indigo-500 outline-none">
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-slate-400 mb-1">Descrição do Procedimento / Honorários</label>
+                    <input type="text" id="guia-desc" placeholder="Ex: Diária de UTI + Procedimento Cirúrgico" required class="w-full bg-slate-950 border border-slate-800 rounded-lg p-2 text-slate-100 focus:border-indigo-500 outline-none">
+                </div>
+                <div>
+                    <label class="block text-slate-400 mb-1">Valor Total (R$)</label>
+                    <input type="number" step="0.01" id="guia-valor" required value="5400.00" class="w-full bg-slate-950 border border-slate-800 rounded-lg p-2 text-slate-100 focus:border-indigo-500 outline-none">
+                </div>
+                <div class="flex justify-end gap-2 pt-2 border-t border-slate-800">
+                    <button type="button" onclick="fecharModal('modal-guia')" class="px-3 py-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 transition">Cancelar</button>
+                    <button type="submit" class="px-4 py-2 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white font-semibold transition shadow-lg shadow-indigo-600/20">Emitir Guia</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- TOAST NOTIFICATIONS -->
+    <div id="toast-container" class="fixed bottom-4 right-4 z-50 flex flex-col gap-2 pointer-events-none"></div>
+
+    <script>
+        // CONTROLE DE NAVEGAÇÃO DE ABAS
+        function mudarAba(aba) {
+            ['triagem', 'pep', 'cirurgico', 'farmacia', 'faturamento'].forEach(a => {
+                const sec = document.getElementById('sec-' + a);
+                const btn = document.getElementById('tab-btn-' + a);
+                if (sec && btn) {
+                    if (a === aba) {
+                        sec.classList.remove('hidden');
+                        btn.classList.add('active');
+                    } else {
+                        sec.classList.add('hidden');
+                        btn.classList.remove('active');
+                    }
+                }
+            });
+        }
+
+        // CONTROLE DE MODAIS
+        function abrirModal(id) { document.getElementById(id).classList.remove('hidden'); }
+        function fecharModal(id) { document.getElementById(id).classList.add('hidden'); }
+        function abrirModalTriagem() { abrirModal('modal-triagem'); }
+        function abrirModalNovoPEP() { abrirModal('modal-pep'); }
+        function abrirModalPrescricao() { abrirModal('modal-prescricao'); }
+        function abrirModalCirurgia() { abrirModal('modal-cirurgia'); }
+        function abrirModalMedicamento() { abrirModal('modal-medicamento'); }
+        function abrirModalGuia() { abrirModal('modal-guia'); }
+
+        // SISTEMA DE TOAST
+        function mostrarToast(msg, tipo = 'success') {
+            const container = document.getElementById('toast-container');
+            const el = document.createElement('div');
+            const bg = tipo === 'success' ? 'bg-emerald-600' : 'bg-rose-600';
+            el.className = `${bg} text-white text-xs font-semibold px-4 py-3 rounded-lg shadow-xl flex items-center gap-2 transform transition-all duration-300 opacity-0 translate-y-2 pointer-events-auto`;
+            el.innerHTML = `
+                <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+                <span>${msg}</span>
+            `;
+            container.appendChild(el);
+            setTimeout(() => { el.classList.remove('opacity-0', 'translate-y-2'); }, 10);
+            setTimeout(() => {
+                el.classList.add('opacity-0', 'translate-y-2');
+                setTimeout(() => el.remove(), 300);
+            }, 3500);
+        }
+
+        // CARREGAR TODOS OS DADOS
+        async function carregarTodosModulos() {
+            await Promise.all([
+                carregarKPIs(),
+                carregarTriagens(),
+                carregarPEP(),
+                carregarCirurgias(),
+                carregarFarmacia(),
+                carregarFaturamento()
+            ]);
+            mostrarToast("Sincronização completa realizada com sucesso");
+        }
+
+        // 1. CARREGAR KPIS
+        async function carregarKPIs() {
+            try {
+                const res = await fetch('/api/dashboard/kpis');
+                const data = await res.json();
+                if (data.sucesso && data.kpis) {
+                    const k = data.kpis;
+                    document.getElementById('kpi-fila-triagem').innerText = k.pacientes_aguardando_triagem;
+                    document.getElementById('kpi-emergencias').innerText = k.emergencias_vermelho_laranja;
+                    document.getElementById('kpi-cirurgias').innerText = k.cirurgias_programadas_hoje;
+                    document.getElementById('kpi-estoque-critico').innerText = k.medicamentos_estoque_critico;
+                    document.getElementById('kpi-fat-liquidado').innerText = 'R$ ' + Number(k.faturamento_liquidado_brl).toLocaleString('pt-BR', {minimumFractionDigits: 2});
+                    document.getElementById('kpi-fat-aberto').innerText = 'R$ ' + Number(k.faturamento_aberto_brl).toLocaleString('pt-BR', {minimumFractionDigits: 2});
+                }
+            } catch (e) {
+                console.error("Erro KPIs:", e);
+            }
+        }
+
+        // 2. CARREGAR TRIAGENS
+        async function carregarTriagens() {
+            try {
+                const res = await fetch('/api/triagem/pacientes');
+                const list = await res.json();
+                const tbody = document.getElementById('tabela-triagens');
+                tbody.innerHTML = '';
+                
+                const coresBadge = {
+                    vermelho: 'bg-red-500/20 text-red-400 border-red-500/40',
+                    laranja: 'bg-orange-500/20 text-orange-400 border-orange-500/40',
+                    amarelo: 'bg-yellow-500/20 text-yellow-400 border-yellow-500/40',
+                    verde: 'bg-green-500/20 text-green-400 border-green-500/40',
+                    azul: 'bg-blue-500/20 text-blue-400 border-blue-500/40'
+                };
+
+                list.forEach(t => {
+                    const tr = document.createElement('tr');
+                    tr.className = 'hover:bg-slate-800/40 transition';
+                    tr.innerHTML = `
+                        <td class="p-3 font-mono font-bold text-sky-400">${t.protocolo}</td>
+                        <td class="p-3">
+                            <div class="font-semibold text-slate-100">${t.paciente_nome}</div>
+                            <div class="text-[10px] text-slate-400">${t.idade} anos</div>
+                        </td>
+                        <td class="p-3 max-w-xs">
+                            <div class="text-[11px] font-medium text-slate-200">${t.queixa_principal}</div>
+                            <div class="text-[10px] text-slate-400">${t.sinais_vitais}</div>
+                        </td>
+                        <td class="p-3">
+                            <span class="text-[10px] uppercase font-bold px-2 py-0.5 rounded border ${coresBadge[t.classificacao] || ''}">
+                                ${t.classificacao}
+                            </span>
+                        </td>
+                        <td class="p-3 font-mono text-slate-300">${t.tempo_espera_max_min} min</td>
+                        <td class="p-3">
+                            <span class="text-[11px] bg-slate-800 px-2 py-0.5 rounded text-slate-300 border border-slate-700">${t.leito_alocado || 'Aguardando'}</span>
+                        </td>
+                        <td class="p-3">
+                            <span class="text-[10px] px-2 py-0.5 rounded ${t.status === 'em_atendimento' ? 'bg-sky-500/20 text-sky-400' : 'bg-slate-800 text-slate-400'}">${t.status}</span>
+                        </td>
+                        <td class="p-3 text-right space-x-1">
+                            ${t.status === 'aguardando' ? `<button onclick="chamarTriagem(${t.id})" class="text-[11px] bg-sky-600 hover:bg-sky-500 text-white px-2 py-1 rounded">Chamar</button>` : ''}
+                            <button onclick="removerTriagem(${t.id})" class="text-[11px] text-rose-400 hover:text-rose-300 p-1">Excluir</button>
+                        </td>
+                    `;
+                    tbody.appendChild(tr);
+                });
+            } catch (e) { console.error("Erro Triagens:", e); }
+        }
+
+        async function chamarTriagem(id) {
+            await fetch('/api/triagem/chamar', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({id, leito: 'Box Atendimento ' + id})
+            });
+            mostrarToast("Paciente chamado para leito");
+            carregarTriagens();
+            carregarKPIs();
+        }
+
+        async function removerTriagem(id) {
+            await fetch('/api/triagem/remover', {
+                method: 'DELETE',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({id})
+            });
+            mostrarToast("Triagem excluída");
+            carregarTriagens();
+            carregarKPIs();
+        }
+
+        async function salvarNovaTriagem(e) {
+            e.preventDefault();
+            const data = {
+                paciente_nome: document.getElementById('triagem-nome').value,
+                idade: parseInt(document.getElementById('triagem-idade').value),
+                classificacao: document.getElementById('triagem-classificacao').value,
+                sinais_vitais: document.getElementById('triagem-sinais').value,
+                queixa_principal: document.getElementById('triagem-queixa').value
+            };
+            await fetch('/api/triagem/novo', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify(data)
+            });
+            fecharModal('modal-triagem');
+            mostrarToast("Paciente classificado com sucesso no Manchester");
+            carregarTriagens();
+            carregarKPIs();
+        }
+
+        // 3. CARREGAR PEP & PRESCRIÇÕES
+        async function carregarPEP() {
+            try {
+                const [rPep, rPresc] = await Promise.all([
+                    fetch('/api/pep/prontuarios'),
+                    fetch('/api/pep/prescricoes')
+                ]);
+                const peps = await rPep.json();
+                const prescs = await rPresc.json();
+
+                document.getElementById('pep-count').innerText = peps.length;
+                document.getElementById('presc-count').innerText = prescs.length;
+
+                const lPep = document.getElementById('lista-prontuarios');
+                lPep.innerHTML = '';
+                const selectPront = document.getElementById('presc-prontuario-id');
+                selectPront.innerHTML = '';
+
+                peps.forEach(p => {
+                    const opt = document.createElement('option');
+                    opt.value = p.id;
+                    opt.innerText = `${p.numero_prontuario} - ${p.paciente_nome}`;
+                    selectPront.appendChild(opt);
+
+                    const div = document.createElement('div');
+                    div.className = 'p-3 hover:bg-slate-800/30 transition text-xs space-y-1';
+                    div.innerHTML = `
+                        <div class="flex items-center justify-between">
+                            <span class="font-mono font-bold text-sky-400">${p.numero_prontuario}</span>
+                            <span class="text-[10px] text-slate-400">${p.medico_responsavel} (${p.crm})</span>
+                        </div>
+                        <div class="font-semibold text-slate-100">${p.paciente_nome}</div>
+                        <div class="text-[11px] text-amber-400 font-medium">${p.diagnostico_cid10}</div>
+                        <p class="text-[11px] text-slate-300 bg-slate-950/60 p-2 rounded border border-slate-800">${p.evolucao_clinica}</p>
+                    `;
+                    lPep.appendChild(div);
+                });
+
+                const lPresc = document.getElementById('lista-prescricoes');
+                lPresc.innerHTML = '';
+                prescs.forEach(pr => {
+                    const div = document.createElement('div');
+                    div.className = 'p-3 hover:bg-slate-800/30 transition text-xs flex items-center justify-between gap-2';
+                    div.innerHTML = `
+                        <div>
+                            <div class="font-semibold text-slate-100">${pr.medicamento}</div>
+                            <div class="text-[10px] text-slate-400">Paciente: <span class="text-slate-200">${pr.paciente_nome}</span> • ${pr.dosagem} (${pr.frequencia} - ${pr.via_administracao})</div>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <span class="text-[10px] px-2 py-0.5 rounded font-bold ${pr.status === 'dispensada' ? 'bg-emerald-500/20 text-emerald-400' : 'bg-amber-500/20 text-amber-400'}">${pr.status}</span>
+                        </div>
+                    `;
+                    lPresc.appendChild(div);
+                });
+            } catch (e) { console.error("Erro PEP:", e); }
+        }
+
+        async function salvarNovoPEP(e) {
+            e.preventDefault();
+            const data = {
+                paciente_nome: document.getElementById('pep-paciente').value,
+                medico_responsavel: document.getElementById('pep-medico').value,
+                crm: document.getElementById('pep-crm').value,
+                diagnostico_cid10: document.getElementById('pep-cid10').value,
+                evolucao_clinica: document.getElementById('pep-evolucao').value
+            };
+            await fetch('/api/pep/prontuarios', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify(data)
+            });
+            fecharModal('modal-pep');
+            mostrarToast("Novo Prontuário Eletrônico cadastrado");
+            carregarPEP();
+        }
+
+        async function salvarPrescricao(e) {
+            e.preventDefault();
+            const data = {
+                prontuario_id: parseInt(document.getElementById('presc-prontuario-id').value),
+                medicamento: document.getElementById('presc-medicamento').value,
+                dosagem: document.getElementById('presc-dosagem').value,
+                frequencia: document.getElementById('presc-freq').value,
+                via_administracao: document.getElementById('presc-via').value
+            };
+            await fetch('/api/pep/prescricoes', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify(data)
+            });
+            fecharModal('modal-prescricao');
+            mostrarToast("Prescrição emitida e enviada para Farmácia");
+            carregarPEP();
+        }
+
+        // 4. CARREGAR CIRURGIAS
+        async function carregarCirurgias() {
+            try {
+                const res = await fetch('/api/cirurgico/agendamentos');
+                const list = await res.json();
+                const tbody = document.getElementById('tabela-cirurgias');
+                tbody.innerHTML = '';
+
+                list.forEach(c => {
+                    const tr = document.createElement('tr');
+                    tr.className = 'hover:bg-slate-800/40 transition';
+                    tr.innerHTML = `
+                        <td class="p-3 font-mono font-bold text-amber-400">${c.codigo_agendamento}</td>
+                        <td class="p-3 font-semibold text-slate-100">${c.paciente_nome}</td>
+                        <td class="p-3 text-slate-200">${c.procedimento}</td>
+                        <td class="p-3 text-slate-300 font-mono text-[11px]">${c.sala_bloco}</td>
+                        <td class="p-3 text-[11px] text-slate-400">
+                            <div>${c.cirurgiao_principal}</div>
+                            <div class="text-slate-500">${c.anestesista}</div>
+                        </td>
+                        <td class="p-3 font-mono text-slate-300 text-[11px]">${c.data_hora_cirurgia}</td>
+                        <td class="p-3">
+                            <span class="text-[10px] px-1.5 py-0.5 rounded ${c.necessita_opme ? 'bg-indigo-500/20 text-indigo-400' : 'bg-slate-800 text-slate-500'}">
+                                ${c.necessita_opme ? 'Sim (OPME)' : 'Não'}
+                            </span>
+                        </td>
+                        <td class="p-3">
+                            <span class="text-[10px] px-2 py-0.5 rounded font-bold uppercase ${c.status === 'concluida' ? 'bg-emerald-500/20 text-emerald-400' : 'bg-amber-500/20 text-amber-400'}">${c.status}</span>
+                        </td>
+                        <td class="p-3 text-right space-x-1">
+                            ${c.status !== 'concluida' ? `
+                                <button onclick="avancarCirurgia(${c.id}, 'em_andamento')" class="text-[10px] bg-slate-800 hover:bg-slate-700 px-2 py-1 rounded">Em Bloco</button>
+                                <button onclick="avancarCirurgia(${c.id}, 'concluida')" class="text-[10px] bg-emerald-600 hover:bg-emerald-500 text-white px-2 py-1 rounded">Concluir</button>
+                            ` : '<span class="text-slate-500 text-[11px]">Finalizado</span>'}
+                        </td>
+                    `;
+                    tbody.appendChild(tr);
+                });
+            } catch (e) { console.error("Erro Cirurgias:", e); }
+        }
+
+        async function avancarCirurgia(id, novo_status) {
+            await fetch('/api/cirurgico/avancar-status', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({id, novo_status})
+            });
+            mostrarToast(`Fase cirúrgica avançada para: ${novo_status}`);
+            carregarCirurgias();
+            carregarFaturamento();
+            carregarKPIs();
+        }
+
+        async function salvarNovaCirurgia(e) {
+            e.preventDefault();
+            const data = {
+                paciente_nome: document.getElementById('cir-paciente').value,
+                procedimento: document.getElementById('cir-proc').value,
+                sala_bloco: document.getElementById('cir-sala').value,
+                data_hora_cirurgia: document.getElementById('cir-data').value,
+                cirurgiao_principal: document.getElementById('cir-medico').value,
+                anestesista: document.getElementById('cir-anest').value,
+                tipo_anestesia: document.getElementById('cir-tipo-anest').value,
+                necessita_opme: document.getElementById('cir-opme').checked
+            };
+            await fetch('/api/cirurgico/novo', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify(data)
+            });
+            fecharModal('modal-cirurgia');
+            mostrarToast("Procedimento cirúrgico agendado");
+            carregarCirurgias();
+            carregarKPIs();
+        }
+
+        // 5. CARREGAR FARMÁCIA
+        async function carregarFarmacia() {
+            try {
+                const res = await fetch('/api/farmacia/estoque');
+                const list = await res.json();
+                const tbody = document.getElementById('tabela-farmacia');
+                tbody.innerHTML = '';
+
+                list.forEach(m => {
+                    const tr = document.createElement('tr');
+                    tr.className = 'hover:bg-slate-800/40 transition';
+                    tr.innerHTML = `
+                        <td class="p-3 font-mono font-bold text-emerald-400">${m.codigo_item}</td>
+                        <td class="p-3 font-semibold text-slate-100">${m.medicamento}</td>
+                        <td class="p-3 font-mono text-slate-400 text-[11px]">${m.lote}</td>
+                        <td class="p-3 text-[11px] uppercase text-slate-300">${m.categoria}</td>
+                        <td class="p-3 font-mono font-bold ${m.status_estoque === 'critico' ? 'text-rose-400' : 'text-emerald-400'}">
+                            ${m.quantidade_disponivel} <span class="text-[10px] text-slate-500 font-normal">/ mín: ${m.quantidade_minima}</span>
+                        </td>
+                        <td class="p-3 text-[10px] text-slate-400">${m.temperatura_armazenamento}</td>
+                        <td class="p-3 font-mono text-slate-300 text-[11px]">${m.validade}</td>
+                        <td class="p-3">
+                            <span class="text-[10px] px-2 py-0.5 rounded font-bold uppercase ${m.status_estoque === 'critico' ? 'bg-rose-500/20 text-rose-400' : 'bg-emerald-500/20 text-emerald-400'}">${m.status_estoque}</span>
+                        </td>
+                        <td class="p-3 text-right space-x-1">
+                            <button onclick="dispensarRapido('${m.codigo_item}')" class="text-[10px] bg-emerald-600 hover:bg-emerald-500 text-white px-2 py-1 rounded">Dispensar -1</button>
+                            <button onclick="removerMedicamento(${m.id})" class="text-[10px] text-rose-400 hover:text-rose-300 p-1">Excluir</button>
+                        </td>
+                    `;
+                    tbody.appendChild(tr);
+                });
+            } catch (e) { console.error("Erro Farmácia:", e); }
+        }
+
+        async function dispensarRapido(codigo_item) {
+            await fetch('/api/farmacia/dispensar', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({
+                    codigo_item,
+                    quantidade: 1,
+                    farmaceutico_crf: 'CRF/SP 44.921'
+                })
+            });
+            mostrarToast("Dispensação unitária realizada");
+            carregarFarmacia();
+            carregarKPIs();
+        }
+
+        async function removerMedicamento(id) {
+            await fetch('/api/farmacia/remover-item', {
+                method: 'DELETE',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({id})
+            });
+            mostrarToast("Item removido do estoque");
+            carregarFarmacia();
+            carregarKPIs();
+        }
+
+        async function salvarMedicamento(e) {
+            e.preventDefault();
+            const data = {
+                medicamento: document.getElementById('med-nome').value,
+                lote: document.getElementById('med-lote').value,
+                categoria: document.getElementById('med-cat').value,
+                quantidade_disponivel: parseInt(document.getElementById('med-qtd').value),
+                quantidade_minima: parseInt(document.getElementById('med-min').value),
+                validade: document.getElementById('med-val').value,
+                temperatura_armazenamento: document.getElementById('med-temp').value
+            };
+            await fetch('/api/farmacia/medicamento', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify(data)
+            });
+            fecharModal('modal-medicamento');
+            mostrarToast("Lote cadastrado na farmácia");
+            carregarFarmacia();
+            carregarKPIs();
+        }
+
+        // 6. CARREGAR FATURAMENTO
+        async function carregarFaturamento() {
+            try {
+                const res = await fetch('/api/faturamento/guias');
+                const list = await res.json();
+                const tbody = document.getElementById('tabela-faturamento');
+                tbody.innerHTML = '';
+
+                list.forEach(g => {
+                    const tr = document.createElement('tr');
+                    tr.className = 'hover:bg-slate-800/40 transition';
+                    tr.innerHTML = `
+                        <td class="p-3 font-mono font-bold text-indigo-400">${g.numero_guia}</td>
+                        <td class="p-3 font-semibold text-slate-100">${g.paciente_nome}</td>
+                        <td class="p-3 text-slate-300 font-medium">${g.convenio}</td>
+                        <td class="p-3 text-[11px] text-slate-400">
+                            <span class="font-mono text-slate-300">${g.codigo_tuss}</span> - ${g.descricao_procedimento}
+                        </td>
+                        <td class="p-3 font-mono font-bold text-emerald-400">
+                            R$ ${Number(g.valor_total).toLocaleString('pt-BR', {minimumFractionDigits: 2})}
+                        </td>
+                        <td class="p-3">
+                            <span class="text-[10px] px-2 py-0.5 rounded font-bold uppercase ${g.status_guia === 'liquidada' ? 'bg-emerald-500/20 text-emerald-400' : 'bg-indigo-500/20 text-indigo-400'}">${g.status_guia}</span>
+                        </td>
+                        <td class="p-3 text-right space-x-1">
+                            ${g.status_guia !== 'liquidada' ? `<button onclick="liquidarGuia(${g.id})" class="text-[10px] bg-emerald-600 hover:bg-emerald-500 text-white px-2 py-1 rounded">Liquidar</button>` : '<span class="text-slate-500 text-[11px]">Pago</span>'}
+                            <button onclick="cancelarGuia(${g.id})" class="text-[10px] text-rose-400 hover:text-rose-300 p-1">Cancelar</button>
+                        </td>
+                    `;
+                    tbody.appendChild(tr);
+                });
+            } catch (e) { console.error("Erro Faturamento:", e); }
+        }
+
+        async function liquidarGuia(id) {
+            await fetch('/api/faturamento/atualizar-status', {
+                method: 'PUT',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({id, status_guia: 'liquidada'})
+            });
+            mostrarToast("Guia hospitalar liquidada e repasse confirmado");
+            carregarFaturamento();
+            carregarKPIs();
+        }
+
+        async function cancelarGuia(id) {
+            await fetch('/api/faturamento/cancelar-guia', {
+                method: 'DELETE',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({id})
+            });
+            mostrarToast("Guia cancelada");
+            carregarFaturamento();
+            carregarKPIs();
+        }
+
+        async function salvarNovaGuia(e) {
+            e.preventDefault();
+            const data = {
+                paciente_nome: document.getElementById('guia-paciente').value,
+                convenio: document.getElementById('guia-conv').value,
+                codigo_tuss: document.getElementById('guia-tuss').value,
+                descricao_procedimento: document.getElementById('guia-desc').value,
+                valor_total: parseFloat(document.getElementById('guia-valor').value)
+            };
+            await fetch('/api/faturamento/nova-guia', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify(data)
+            });
+            fecharModal('modal-guia');
+            mostrarToast("Guia hospitalar emitida");
+            carregarFaturamento();
+            carregarKPIs();
+        }
+    </script>
+
+    <!-- SPOTLIGHT COMMAND PALETTE MODAL (Ctrl + K) -->
+    <div id="spotlight-modal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-md z-50 hidden items-start justify-center pt-20 px-4 transition-all" onclick="fecharSpotlight(event)">
+        <div class="bg-[#0f172a] border border-slate-700/80 rounded-2xl w-full max-w-2xl shadow-2xl overflow-hidden flex flex-col max-h-[80vh] animate-in fade-in zoom-in-95 duration-150" onclick="event.stopPropagation()">
+            <!-- Input Bar -->
+            <div class="p-4 border-b border-slate-800 flex items-center gap-3 bg-slate-900/60">
+                <svg class="w-5 h-5 text-sky-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+                <input type="text" id="spotlight-input" placeholder="Digite uma ação, tela ou busca (ex: Triagem, Swagger, Cirurgia, Farmácia)..." 
+                       oninput="filtrarSpotlight(this.value)" onkeydown="navegarSpotlightTeclado(event)"
+                       class="w-full bg-transparent text-sm text-slate-100 placeholder-slate-500 focus:outline-none font-medium">
+                <kbd class="text-[10px] bg-slate-800 border border-slate-700 text-slate-400 px-2 py-0.5 rounded font-mono flex-shrink-0 cursor-pointer" onclick="fecharSpotlight()">ESC</kbd>
+            </div>
+
+            <!-- Lista de Comandos -->
+            <div id="spotlight-results" class="overflow-y-auto p-2 space-y-1 text-xs max-h-[55vh]">
+                <!-- Injetado via JS -->
+            </div>
+
+            <!-- Footer -->
+            <div class="p-2.5 bg-slate-950 border-t border-slate-800 flex items-center justify-between text-[11px] text-slate-400 px-4">
+                <div class="flex items-center gap-3">
+                    <span><kbd class="bg-slate-800 px-1.5 py-0.5 rounded border border-slate-700 text-[10px]">↑</kbd> <kbd class="bg-slate-800 px-1.5 py-0.5 rounded border border-slate-700 text-[10px]">↓</kbd> Navegar</span>
+                    <span><kbd class="bg-slate-800 px-1.5 py-0.5 rounded border border-slate-700 text-[10px]">↵</kbd> Executar</span>
+                    <span><kbd class="bg-slate-800 px-1.5 py-0.5 rounded border border-slate-700 text-[10px]">ESC</kbd> Fechar</span>
+                </div>
+                <span class="text-sky-400 font-mono font-semibold">Spotlight Command Palette</span>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // SPOTLIGHT COMMAND PALETTE ENGINE (100% SVG NATIVO - ZERO EMOJIS)
+        function getSpotlightIconSvg(type) {
+            const icons = {
+                app: '<svg class="w-4 h-4 text-sky-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>',
+                docs: '<svg class="w-4 h-4 text-sky-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"/></svg>',
+                webhooks: '<svg class="w-4 h-4 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>',
+                mcp: '<svg class="w-4 h-4 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m18-6h-2m2 6h-2M7 19h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2zM9 9h6v6H9V9z"/></svg>',
+                guia: '<svg class="w-4 h-4 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/></svg>',
+                json: '<svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>',
+                triagem: '<svg class="w-4 h-4 text-rose-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>',
+                pep: '<svg class="w-4 h-4 text-sky-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>',
+                cirurgia: '<svg class="w-4 h-4 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.121 14.121L19 19m-7-7l7-7m-7 7l-2.879 2.879a3 3 0 11-4.242-4.242L12 12z"/></svg>',
+                farmacia: '<svg class="w-4 h-4 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"/></svg>',
+                faturamento: '<svg class="w-4 h-4 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>',
+                sync: '<svg class="w-4 h-4 text-sky-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>',
+                critico: '<span class="w-2.5 h-2.5 rounded-full bg-rose-500 flex-shrink-0"></span>',
+                urgente: '<span class="w-2.5 h-2.5 rounded-full bg-amber-500 flex-shrink-0"></span>',
+                alerta: '<span class="w-2.5 h-2.5 rounded-full bg-orange-500 flex-shrink-0"></span>'
+            };
+            return icons[type] || '<svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>';
+        }
+
+        const SPOTLIGHT_COMMANDS = [
+            // NAVEGAÇÃO
+            { id: 'nav-app', cat: 'Navegação', title: 'Super-App Clínico (Home)', desc: 'Dashboard e painéis do Super-App', iconType: 'app', action: () => { window.location.href = '/'; } },
+            { id: 'nav-docs', cat: 'Navegação', title: 'Swagger Studio (OpenAPI)', desc: 'Documentação interativa REST e live playground', iconType: 'docs', action: () => { window.open('/docs', '_blank'); } },
+            { id: 'nav-wh', cat: 'Navegação', title: 'Webhook Studio', desc: 'Simulador de eventos e logs de webhook', iconType: 'webhooks', action: () => { window.open('/webhooks', '_blank'); } },
+            { id: 'nav-mcp', cat: 'Navegação', title: 'MCP Native Server Portal', desc: '16 Ferramentas JSON-RPC para Claude Desktop e LLMs', iconType: 'mcp', action: () => { window.open('/mcp', '_blank'); } },
+            { id: 'nav-guia', cat: 'Navegação', title: 'Manual Enciclopédico & Design System', desc: '11 Capítulos de arquitetura, segurança e UI', iconType: 'guia', action: () => { window.open('/docs/guia', '_blank'); } },
+            { id: 'nav-json', cat: 'Navegação', title: 'Exportar OpenAPI JSON', desc: 'Download do manifesto bruto openapi.json', iconType: 'json', action: () => { window.open('/openapi.json', '_blank'); } },
+
+            // AÇÕES RÁPIDAS
+            { id: 'act-triagem', cat: 'Ações Rápidas', title: 'Nova Triagem Manchester (P1-P5)', desc: 'Classificar novo paciente de urgência', iconType: 'triagem', action: () => { trocarAba('triagem'); abrirModal('modal-triagem'); } },
+            { id: 'act-pep', cat: 'Ações Rápidas', title: 'Novo Prontuário Eletrônico (PEP)', desc: 'Registrar histórico e evolução clínica', iconType: 'pep', action: () => { trocarAba('pep'); abrirModal('modal-prontuario'); } },
+            { id: 'act-cirurgia', cat: 'Ações Rápidas', title: 'Agendar Cirurgia no Bloco', desc: 'Reserva de sala operatória e equipe', iconType: 'cirurgia', action: () => { trocarAba('cirurgias'); abrirModal('modal-cirurgia'); } },
+            { id: 'act-farmacia', cat: 'Ações Rápidas', title: 'Cadastrar Lote na Farmácia', desc: 'Entrada de medicamentos e controle de estoque', iconType: 'farmacia', action: () => { trocarAba('farmacia'); abrirModal('modal-medicamento'); } },
+            { id: 'act-guia', cat: 'Ações Rápidas', title: 'Emitir Guia de Faturamento TISS', desc: 'Cobrança convênio com códigos TUSS', iconType: 'faturamento', action: () => { trocarAba('faturamento'); abrirModal('modal-guia'); } },
+            { id: 'act-sync', cat: 'Ações Rápidas', title: 'Sincronizar Todos os Módulos', desc: 'Recarrega os KPIs e tabelas de todos os módulos', iconType: 'sync', action: () => { carregarTodosModulos(); mostrarToast('Dados sincronizados!'); } },
+
+            // FILTROS RÁPIDOS
+            { id: 'flt-emergencia', cat: 'Filtros Rápidos', title: 'Exibir Triagens Vermelho / Laranja', desc: 'Focar apenas em pacientes de emergência imediata', iconType: 'critico', action: () => { trocarAba('triagem'); filtrarTriagemManchester('vermelho'); } },
+            { id: 'flt-cirurgias', cat: 'Filtros Rápidos', title: 'Exibir Cirurgias em Andamento', desc: 'Filtrar salas do bloco ativas no momento', iconType: 'urgente', action: () => { trocarAba('cirurgias'); filtrarCirurgiasStatus('em_andamento'); } },
+            { id: 'flt-farmacia', cat: 'Filtros Rápidos', title: 'Exibir Farmácia Estoque Crítico', desc: 'Listar fármacos abaixo do estoque mínimo', iconType: 'alerta', action: () => { trocarAba('farmacia'); filtrarFarmaciaCriticos(true); } }
+        ];
+
+        let spotlightSelectedIndex = 0;
+        let spotlightFilteredCommands = [...SPOTLIGHT_COMMANDS];
+
+        function abrirSpotlight() {
+            const modal = document.getElementById('spotlight-modal');
+            const input = document.getElementById('spotlight-input');
+            if (modal) {
+                modal.classList.remove('hidden');
+                modal.classList.add('flex');
+                input.value = '';
+                filtrarSpotlight('');
+                setTimeout(() => input.focus(), 50);
+            }
+        }
+
+        function fecharSpotlight() {
+            const modal = document.getElementById('spotlight-modal');
+            if (modal) {
+                modal.classList.add('hidden');
+                modal.classList.remove('flex');
+            }
+        }
+
+        function filtrarSpotlight(q) {
+            const query = (q || '').toLowerCase().trim();
+            spotlightFilteredCommands = SPOTLIGHT_COMMANDS.filter(cmd => 
+                !query || 
+                cmd.title.toLowerCase().includes(query) || 
+                cmd.desc.toLowerCase().includes(query) || 
+                cmd.cat.toLowerCase().includes(query)
+            );
+            spotlightSelectedIndex = 0;
+            renderizarSpotlightResultados();
+        }
+
+        function renderizarSpotlightResultados() {
+            const container = document.getElementById('spotlight-results');
+            if (spotlightFilteredCommands.length === 0) {
+                container.innerHTML = `
+                    <div class="p-8 text-center text-slate-500">
+                        <svg class="w-8 h-8 mx-auto mb-2 text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                        <p class="font-medium">Nenhum comando ou ação encontrada</p>
+                    </div>`;
+                return;
+            }
+
+            let html = '';
+            let currentCat = '';
+            spotlightFilteredCommands.forEach((cmd, idx) => {
+                if (cmd.cat !== currentCat) {
+                    currentCat = cmd.cat;
+                    html += `<div class="text-[10px] font-bold uppercase tracking-wider text-slate-400 px-3 pt-2 pb-1">${currentCat}</div>`;
+                }
+                const isSelected = idx === spotlightSelectedIndex;
+                const iconSvg = getSpotlightIconSvg(cmd.iconType);
+                html += `
+                <div onclick="executarSpotlightComando(${idx})" 
+                     class="spotlight-item flex items-center justify-between p-2.5 px-3 rounded-xl cursor-pointer transition ${isSelected ? 'bg-sky-600/20 text-white border border-sky-500/40 shadow-sm' : 'hover:bg-slate-800/60 text-slate-300'}">
+                    <div class="flex items-center gap-3 min-w-0">
+                        <div class="w-7 h-7 rounded-lg bg-slate-800/80 border border-slate-700/80 flex items-center justify-center flex-shrink-0">${iconSvg}</div>
+                        <div class="min-w-0">
+                            <div class="font-semibold text-xs text-slate-100 truncate">${cmd.title}</div>
+                            <div class="text-[11px] text-slate-400 truncate">${cmd.desc}</div>
+                        </div>
+                    </div>
+                    <span class="text-[10px] text-slate-400 bg-slate-800 px-2 py-0.5 rounded border border-slate-700 flex-shrink-0">${cmd.cat}</span>
+                </div>`;
+            });
+            container.innerHTML = html;
+        }
+
+        function executarSpotlightComando(idx) {
+            const cmd = spotlightFilteredCommands[idx];
+            if (cmd && cmd.action) {
+                fecharSpotlight();
+                cmd.action();
+            }
+        }
+
+        function navegarSpotlightTeclado(e) {
+            if (e.key === 'ArrowDown') {
+                e.preventDefault();
+                if (spotlightSelectedIndex < spotlightFilteredCommands.length - 1) {
+                    spotlightSelectedIndex++;
+                    renderizarSpotlightResultados();
+                }
+            } else if (e.key === 'ArrowUp') {
+                e.preventDefault();
+                if (spotlightSelectedIndex > 0) {
+                    spotlightSelectedIndex--;
+                    renderizarSpotlightResultados();
+                }
+            } else if (e.key === 'Enter') {
+                e.preventDefault();
+                executarSpotlightComando(spotlightSelectedIndex);
+            } else if (e.key === 'Escape') {
+                e.preventDefault();
+                fecharSpotlight();
+            }
+        }
+
+        // LISTENER GLOBAL Ctrl + K / Cmd + K
+        document.addEventListener('keydown', (e) => {
+            if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k') {
+                e.preventDefault();
+                abrirSpotlight();
+            } else if (e.key === 'Escape') {
+                fecharSpotlight();
+            }
+        });
+
+        // INICIALIZAÇÃO NO CARREGAMENTO
+        document.addEventListener('DOMContentLoaded', () => {
+            carregarTodosModulos();
+        });
+    </script>
+</body>
+</html>
