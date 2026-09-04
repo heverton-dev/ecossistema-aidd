@@ -490,10 +490,20 @@ Este projeto foi gerado pela skill aidd-project-generator v2.1
 3. Implementar Phase 6 (Documentação)
 """
         (self.pasta_projeto / 'AGENTS.md').write_text(agents_md, encoding='utf-8')
-        self._criar_symlink_ou_copia(
-            self.pasta_projeto / '.claude/CLAUDE.md',
-            self.pasta_projeto / 'AGENTS.md'
-        )
+
+        # Sincronização multi-harness (Universalidade — Zero Duplicidade)
+        harnesses_alvos = [
+            ('.claude', 'CLAUDE.md'),
+            ('.agent', 'AGENT.md'),
+            ('.codex', 'CODEX.md'),
+            ('.gemini', 'GEMINI.md'),
+            ('.mimocode', 'MIMO.md'),
+        ]
+        for h_dir, h_file in harnesses_alvos:
+            self._criar_symlink_ou_copia(
+                self.pasta_projeto / h_dir / h_file,
+                self.pasta_projeto / 'AGENTS.md'
+            )
 
         # config.json
         config = {

@@ -29,7 +29,20 @@ if sys.platform == 'win32':
 # =============================================================================
 
 def detectar_harness():
-    """Identifica qual harness está rodando este script."""
+    """Identifica qual harness está rodando este script de forma universal."""
+    try:
+        from phases.utils_modelo import detectar_harness_nome
+    except ImportError:
+        try:
+            from scripts.phases.utils_modelo import detectar_harness_nome
+        except ImportError:
+            detectar_harness_nome = None
+
+    if detectar_harness_nome:
+        h_nome = detectar_harness_nome()
+        if h_nome != 'desconhecido':
+            slug = h_nome.lower().replace(' ', '-')
+            return slug, 'detectado'
 
     # Claude Code
     if os.environ.get('CLAUDECODE') == '1':
@@ -38,14 +51,6 @@ def detectar_harness():
     # Antigravity / Gemini
     if os.environ.get('ANTIGRAVITY_AGENT') or os.environ.get('GEMINI_CLI') or 'antigravity' in os.environ.get('GEMINI_SYSTEM_INSTRUCTIONS_PATH', '').lower():
         return 'antigravity', 'detectado'
-
-    # Codex (futuro)
-    if any(k.startswith('CODEX') for k in os.environ.keys()):
-        return 'codex', 'detectado'
-
-    # Gemini CLI (futuro)
-    if any(k.startswith('GEMINI') for k in os.environ.keys()):
-        return 'gemini-cli', 'detectado'
 
     # Fallback: desconhecido
     return 'antigravity' if 'antigravity' in str(Path.cwd()).lower() or Path('.gemini').exists() or Path('../../.gemini').exists() else 'desconhecido', 'auto'
