@@ -782,12 +782,16 @@ output/
             conn = sqlite3.connect(str(self.pasta_projeto / 'estado_projeto.db'))
             cursor = conn.cursor()
 
-            # Tabela de metadata
+            # Tabela de metadata — generica, independente do dominio da ideia
+            # (bug real corrigido em 04/09/2026: antes era hardcoded para
+            # "yt_videos_processados" com colunas de video/canal do YouTube,
+            # resíduo de um projeto de exemplo anterior, criada sempre,
+            # não importa a ideia informada pelo usuário)
             cursor.execute("""
-            CREATE TABLE IF NOT EXISTS yt_videos_processados (
+            CREATE TABLE IF NOT EXISTS itens_processados (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
-                video_id TEXT UNIQUE NOT NULL,
-                canal TEXT NOT NULL,
+                item_id TEXT UNIQUE NOT NULL,
+                categoria TEXT NOT NULL,
                 titulo TEXT NOT NULL,
                 status TEXT DEFAULT 'pendente',
                 data_processamento TEXT,

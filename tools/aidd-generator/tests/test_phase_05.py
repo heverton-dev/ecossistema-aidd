@@ -423,7 +423,7 @@ def test_criar_sqlite(criador_05, tmp_path):
     conn = sqlite3.connect(str(db_path))
     tabelas = conn.execute("SELECT name FROM sqlite_master WHERE type='table'").fetchall()
     conn.close()
-    assert any('yt_videos_processados' in t[0] for t in tabelas)
+    assert any('itens_processados' in t[0] for t in tabelas)
 
 
 def test_git_init_commit(criador_05, tmp_path, monkeypatch):
