@@ -3,7 +3,9 @@
 > **Repositório:** `https://github.com/heverton-dev/ecossistema-aidd`
 > **Diretório Local:** `C:\Users\trcnologia\Desktop\ecossistema-aidd`
 > **Data da Auditoria:** 04/09/2026
-> **Status:** DIAGNOSTICADO — AGUARDANDO EXECUÇÃO
+> **Status:** CONCLUÍDO — todos os 8 riscos corrigidos e validados em 04/09/2026
+> **Commits:** e551ec1 (R1+R2), 3ddb6a2 (R5), 21e7b85 (R4), b99ecd7 (R3), 992db8b (R6), 47278ea (R7), 0db2d32 (R8)
+> **Validação final:** 1278 testes passando / 0 falhas nas 4 ferramentas, 4 gates da raiz aprovados (`python ecossistema.py audit`)
 > **Referência:** Este documento complementa `docs/planos/PLANO-EXECUCAO-ECOSSISTEMA-AIDD.md`, corrigindo desvios entre o que foi planejado/declarado e o estado real verificado por comando.
 
 ---
@@ -19,16 +21,16 @@ Todo achado abaixo foi reproduzido com o comando exato que o comprova. Nenhuma c
 
 ## 2. SUMÁRIO EXECUTIVO DOS RISCOS (ordenados por severidade)
 
-| # | Risco | Severidade | Arquivo(s) | Regra de Ouro violada |
-|---|---|---|---|---|
-| R1 | Suite de testes de `aidd-master` não coleta (`ModuleNotFoundError: database`) | **CRÍTICA** | `tools/aidd-master/templates/v2/` (vazio) | #2 Qualidade Binária |
-| R2 | `pytest.ini` da raiz quebrado por BOM UTF-8 | **CRÍTICA** | `pytest.ini` | #2 Qualidade Binária |
-| R3 | Duplicação byte-a-byte de núcleo entre `aidd-master` e `aidd-master-enterprise` | Alta | `src/core/{caveman_protocol,subagent_engine,nextjs_exporter}.py` | #3 Fonte Única / Desacoplamento |
-| R4 | Mecanismo de symlink AGENTS.md→harness falha silenciosamente no Windows | Alta | teste `test_phase_05.py` (aidd-generator), `.claude/CLAUDE.md` da raiz | #3 Transparência Total |
-| R5 | 2 testes falhando em `aidd-generator` | Alta | `tests/test_phase_05.py`, `tests/test_preflight_llm.py` | #2 Qualidade Binária |
-| R6 | Gates `G_HARNESS_COMPAT.py` / `G_SEGREDOS.py` prometidos mas ausentes na raiz | Média | `gates/` (raiz) | #6 Supremacia Agnóstica |
-| R7 | Nenhum CI na raiz do ecossistema | Média | `.github/workflows` (ausente) | #2 Qualidade Binária |
-| R8 | Estado JSON declarado como "vivo" é snapshot estático com número incorreto | Baixa | `PLANO-EXECUCAO-ESTRUTURADO.json` | #3 Persistência Estruturada |
+| # | Risco | Severidade | Arquivo(s) | Regra de Ouro violada | Status |
+|---|---|---|---|---|---|
+| R1 | Suite de testes de `aidd-master` não coleta (`ModuleNotFoundError: database`) | **CRÍTICA** | `tools/aidd-master/templates/v2/` (vazio) | #2 Qualidade Binária | ✅ RESOLVIDO |
+| R2 | `pytest.ini` da raiz quebrado por BOM UTF-8 | **CRÍTICA** | `pytest.ini` | #2 Qualidade Binária | ✅ RESOLVIDO |
+| R3 | Duplicação byte-a-byte de núcleo entre `aidd-master` e `aidd-master-enterprise` (22 de 24 arquivos, não só os 3 originalmente achados) | Alta | `tools/*/src/core/*.py` | #3 Fonte Única / Desacoplamento | ✅ RESOLVIDO (gate de drift por hash, sem acoplamento) |
+| R4 | Mecanismo de symlink AGENTS.md→harness falha silenciosamente no Windows | Alta | `05_criador.py` (aidd-generator) | #3 Transparência Total | ✅ RESOLVIDO (manifest + gate de drift auto-contido no projeto gerado) |
+| R5 | 2 testes falhando em `aidd-generator` | Alta | `tests/test_phase_05.py`, `tests/test_preflight_llm.py` | #2 Qualidade Binária | ✅ RESOLVIDO (causa raiz: testes não-herméticos, não bug de produto) |
+| R6 | Gates `G_HARNESS_COMPAT.py` / `G_SEGREDOS.py` prometidos mas ausentes na raiz | Média | `gates/` (raiz) | #6 Supremacia Agnóstica | ✅ RESOLVIDO |
+| R7 | Nenhum CI na raiz do ecossistema | Média | `.github/workflows` (ausente) | #2 Qualidade Binária | ✅ RESOLVIDO |
+| R8 | Estado JSON declarado como "vivo" é snapshot estático com número incorreto | Baixa | `PLANO-EXECUCAO-ESTRUTURADO.json` | #3 Persistência Estruturada | ✅ RESOLVIDO (`ecossistema.py status --testes`) |
 
 ---
 

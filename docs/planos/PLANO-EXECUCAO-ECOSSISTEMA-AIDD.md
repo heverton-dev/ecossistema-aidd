@@ -120,3 +120,9 @@ Cada ferramenta do ecossistema terá uma Skill formalmente registrada com YAML F
 1. **Acesso em 1 Único Lugar:** Um único `git clone` disponibiliza todo o ferramental AIDD pronto para rodar.
 2. **Zero Fricção de Linha de Comando:** O usuário opera qualquer uma das ferramentas digitando `/forge`, `/generate`, `/master` ou `/enterprise` no chat do seu assistente favorito.
 3. **Imutabilidade e Segurança:** As 4 ferramentas originais já auditadas e com 100% de testes verdes são preservadas, funcionando em harmonia sob um mesmo teto de governança.
+
+---
+
+## 6. NOTA DE AUDITORIA (04/09/2026)
+
+Uma auditoria pós-execução encontrou 8 desvios reais entre o que este plano prometia (gates `G_HARNESS_COMPAT`/`G_SEGREDOS`, symlinks funcionais, "191 testes verdes" como validação global, cópia não-destrutiva íntegra) e o estado real do repositório — todos corrigidos e validados. Ver `docs/planos/PLANO-CORRECAO-RISCOS-ECOSSISTEMA-AIDD.md` para o diagnóstico completo e `PLANO-EXECUCAO-ESTRUTURADO.json` (bloco `testes`, gerado por `python ecossistema.py status --testes`) para a contagem real e reproduzível: **1278 testes passando, 0 falhas**, nas 4 ferramentas.
