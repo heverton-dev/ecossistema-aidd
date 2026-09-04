@@ -60,9 +60,16 @@ def cmd_enterprise(args):
     return run_command(cmd, cwd=ent_dir, env=env)
 
 def cmd_audit(args):
-    gate_script = os.path.join(ROOT_DIR, "gates", "G_ECOSSISTEMA_INTEGRIDADE.py")
-    cmd = [sys.executable, gate_script] + args
-    return run_command(cmd, cwd=ROOT_DIR)
+    gates = [
+        "G_ECOSSISTEMA_INTEGRIDADE.py",
+        "G_DRIFT_NUCLEO_COMPARTILHADO.py",
+    ]
+    for gate in gates:
+        gate_script = os.path.join(ROOT_DIR, "gates", gate)
+        codigo = run_command([sys.executable, gate_script] + args, cwd=ROOT_DIR)
+        if codigo != 0:
+            return codigo
+    return 0
 
 def cmd_status(args):
     print_banner()

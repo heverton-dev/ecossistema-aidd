@@ -1,0 +1,37 @@
+{
+  "descricao": "Baseline de sincronismo entre tools/aidd-master/src/core/ e tools/aidd-master-enterprise/src/core/ (R3 do PLANO-CORRECAO-RISCOS-ECOSSISTEMA-AIDD.md). Mantidas como copias independentes por decisao (sem acoplamento em runtime entre as duas ferramentas) - este arquivo documenta o que DEVE permanecer identico e o que diverge de proposito. G_DRIFT_NUCLEO_COMPARTILHADO.py falha se um par marcado como esperado_identico=true divergir sem este baseline ser atualizado.",
+  "gerado_em": "2026-09-04",
+  "arquivos": {
+    "__init__.py": { "esperado_identico": true, "motivo": null },
+    "caveman_protocol.py": { "esperado_identico": true, "motivo": null },
+    "circuit_breaker.py": { "esperado_identico": true, "motivo": null },
+    "cqrs.py": { "esperado_identico": true, "motivo": null },
+    "database.py": { "esperado_identico": true, "motivo": null },
+    "database_adapter.py": { "esperado_identico": true, "motivo": null },
+    "events.py": { "esperado_identico": true, "motivo": null },
+    "fleet_discovery.py": { "esperado_identico": true, "motivo": null },
+    "fuzzing.py": { "esperado_identico": true, "motivo": null },
+    "intent_router.py": {
+      "esperado_identico": false,
+      "motivo": "Implementacoes divergiram organicamente antes deste baseline existir (330 vs 312 linhas) - nao auditado em detalhe, apenas documentado como excecao conhecida."
+    },
+    "jobs.py": { "esperado_identico": true, "motivo": null },
+    "local_first.py": { "esperado_identico": true, "motivo": null },
+    "logs.py": { "esperado_identico": true, "motivo": null },
+    "mcp_server.py": {
+      "esperado_identico": false,
+      "motivo": "aidd-master tem register_injected_tools() (integracao com o Injetor Universal) que aidd-master-enterprise nao tem - divergencia de feature, nao bug."
+    },
+    "metrics.py": { "esperado_identico": true, "motivo": null },
+    "nextjs_exporter.py": { "esperado_identico": true, "motivo": null },
+    "openapi.py": { "esperado_identico": true, "motivo": null },
+    "opentelemetry.py": { "esperado_identico": true, "motivo": null },
+    "outbox_worker.py": { "esperado_identico": true, "motivo": null },
+    "result.py": { "esperado_identico": true, "motivo": null },
+    "saga.py": { "esperado_identico": true, "motivo": null },
+    "security.py": { "esperado_identico": true, "motivo": null },
+    "subagent_engine.py": { "esperado_identico": true, "motivo": null },
+    "token_revocation.py": { "esperado_identico": true, "motivo": null },
+    "webhooks.py": { "esperado_identico": true, "motivo": null }
+  }
+}
