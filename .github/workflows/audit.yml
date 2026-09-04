@@ -1,0 +1,56 @@
+name: Auditoria do Ecossistema AIDD
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  gates-raiz:
+    name: Gates determinísticos da raiz
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Configurar Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Coleta de testes da raiz (pytest.ini nao deve quebrar)
+        run: python -m pytest --collect-only -q
+
+      - name: Rodar os 4 gates deterministicos (ecossistema.py audit)
+        run: python ecossistema.py audit
+
+  testes-por-ferramenta:
+    name: Testes de tools/${{ matrix.ferramenta }}
+    needs: gates-raiz
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        ferramenta:
+          - aidd-forge
+          - aidd-generator
+          - aidd-master
+          - aidd-master-enterprise
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Configurar Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Instalar dependências
+        working-directory: tools/${{ matrix.ferramenta }}
+        run: |
+          python -m pip install --upgrade pip
+          if [ -f requirements-dev.txt ]; then pip install -r requirements-dev.txt; fi
+          if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+          pip install pytest
+
+      - name: Rodar suíte de testes
+        working-directory: tools/${{ matrix.ferramenta }}
+        run: pytest -q
