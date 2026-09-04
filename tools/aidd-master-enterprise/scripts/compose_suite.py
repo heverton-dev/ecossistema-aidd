@@ -379,8 +379,8 @@ class AppHandler(http.server.SimpleHTTPRequestHandler):
         super().__init__(*args, directory=STATIC_DIR, **kwargs)
 
     def _set_rls_tenant_context(self):
-        """Extrai tenant_id do JWT (header Authorization) e configura o contexto
-        RLS para isolamento multi-tenant automático em todas as queries."""
+        \"\"\"Extrai tenant_id do JWT (header Authorization) e configura o contexto
+        RLS para isolamento multi-tenant automático em todas as queries.\"\"\"
         from core.database import _RLS_TENANT_CONTEXT
         auth = self.headers.get('Authorization', '')
         if auth:
