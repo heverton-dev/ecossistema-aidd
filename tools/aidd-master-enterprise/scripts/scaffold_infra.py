@@ -246,7 +246,8 @@ spec:
               port: 3000
             initialDelaySeconds: 5
             periodSeconds: 10
-          resources: {{{{ toYaml .Values.resources }}}}
+          resources:
+            {{{{- toYaml .Values.resources | nindent 12 }}}}
 """
 
 

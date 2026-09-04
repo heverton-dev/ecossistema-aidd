@@ -71,4 +71,7 @@ jobs:
 
       - name: Rodar suíte de testes
         working-directory: tools/${{ matrix.ferramenta }}
-        run: pytest -q
+        # python -m pytest (nao so `pytest`) - o -m adiciona o diretorio
+        # atual ao sys.path, necessario para aidd-forge importar seu
+        # proprio pacote (aidd_forge/) sem estar pip-installado.
+        run: python -m pytest -q
