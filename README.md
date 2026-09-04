@@ -35,7 +35,7 @@ O **Ecossistema AIDD** reúne sob uma arquitetura unificada, modular e de altís
                                               │
          ┌──────────────────┬─────────────────┴────────────────┬───────────────────┐
          ▼                  ▼                                  ▼                   ▼
-  [ tools/aidd-forge ] [ tools/aidd-generator ]     [ tools/aidd-master ]  [ tools/aidd-master-enterprise ]
+  [ tools/aidd-forge ] [ tools/aidd-generator ]     [ tools/aidd-master ]  [ tools/aidd-enterprise ]
   Bootstrap, Fencing    Fábrica Autônoma             Monólito Modular       Missão Crítica Regulada
   & Context-Purge       (Pipeline 8 Fases)           Vertical Slices & DB   Hashes SHA-256 & Zero-Trust
        (/forge)            (/generate)                    (/master)                 (/enterprise)
@@ -50,7 +50,7 @@ O **Ecossistema AIDD** reúne sob uma arquitetura unificada, modular e de altís
 | **AIDD Forge** | `tools/aidd-forge` | `/forge [caminho]` | Bootstrap de governança agêntica, micro-ambientes isolados por fase (`.aidd/pipeline/`), context-purge e 7 Quality Gates determinísticos. |
 | **AIDD Generator** | `tools/aidd-generator` | `/generate <ideia>` | Fábrica autônoma que transforma uma descrição em linguagem natural em software completo através de 8 fases com contratos JSON Schema Draft 2020-12. |
 | **AIDD Master** | `tools/aidd-master` | `/master <modulo>` | Framework para monólitos modulares de alta performance com fatias verticais (`Vertical Slices`), SQLite concorrente em modo WAL, Result Monad e Swagger Studio. |
-| **AIDD Master Enterprise** | `tools/aidd-master-enterprise` | `/enterprise <tipo> <nome>` | Plataforma corporativa de missão crítica com injeção transacional de componentes (`skill`, `rule`, `mcp`), validação de hashes criptográficos SHA-256 e RLS. |
+| **AIDD Enterprise** | `tools/aidd-enterprise` | `/enterprise <tipo> <nome>` | Plataforma corporativa de missão crítica com injeção transacional de componentes (`skill`, `rule`, `mcp`), validação de hashes criptográficos SHA-256 e RLS. |
 
 ---
 
@@ -83,7 +83,7 @@ python ecossistema.py generate "Sistema de gerenciamento de frotas com telemetri
 # Criar nova fatia modular no aidd-master
 python ecossistema.py master add-module estoque
 
-# Injetar componente certificado no aidd-master-enterprise
+# Injetar componente certificado no aidd-enterprise
 python ecossistema.py enterprise inject skill auth-oauth2
 ```
 
@@ -111,7 +111,7 @@ ecossistema-aidd/
 │
 ├── gates/                                  ──► Meta-Quality Gates determinísticos
 │   ├── G_ECOSSISTEMA_INTEGRIDADE.py        ──► Auditoria automatizada de integridade estrutural e sintática
-│   ├── G_DRIFT_NUCLEO_COMPARTILHADO.py     ──► Drift entre aidd-master e aidd-master-enterprise
+│   ├── G_DRIFT_NUCLEO_COMPARTILHADO.py     ──► Drift entre aidd-master e aidd-enterprise
 │   ├── G_HARNESS_COMPAT.py                 ──► Sincronismo de artefatos multi-harness da raiz
 │   └── G_SEGREDOS.py                       ──► Varredura de credenciais hardcoded
 │
@@ -119,13 +119,13 @@ ecossistema-aidd/
 │   ├── aidd-forge-runner/                  ──► Runner do AIDD Forge
 │   ├── aidd-generator-runner/              ──► Runner do AIDD Generator
 │   ├── aidd-master-runner/                 ──► Runner do AIDD Master
-│   └── aidd-enterprise-runner/             ──► Runner do AIDD Master Enterprise
+│   └── aidd-enterprise-runner/             ──► Runner do AIDD Enterprise
 │
 ├── tools/                                  ──► Os 4 Projetos Homologados (100% intactos e autocontidos)
 │   ├── aidd-forge/                         ──► Repositório completo do AIDD Forge
 │   ├── aidd-generator/                     ──► Repositório completo do AIDD Generator
 │   ├── aidd-master/                        ──► Repositório completo do AIDD Master
-│   └── aidd-master-enterprise/             ──► Repositório completo do AIDD Master Enterprise
+│   └── aidd-enterprise/                    ──► Repositório completo do AIDD Enterprise
 │
 └── planos/                                 ──► Planos táticos e de orquestração
     └── PLANO-EXECUCAO-ECOSSISTEMA-AIDD.md  ──► Especificação do ecossistema

@@ -4,7 +4,7 @@
 ECOSSISTEMA AIDD — QUALITY GATE: G_DRIFT_NUCLEO_COMPARTILHADO
 =============================================================================
 Detecta divergência silenciosa entre tools/aidd-master/src/core/ e
-tools/aidd-master-enterprise/src/core/ (R3 do
+tools/aidd-enterprise/src/core/ (R3 do
 PLANO-CORRECAO-RISCOS-ECOSSISTEMA-AIDD.md).
 
 Contexto: as duas ferramentas nasceram da mesma linhagem e compartilham
@@ -40,7 +40,7 @@ import sys
 
 ROOT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 DIR_A = os.path.join(ROOT_DIR, "tools", "aidd-master", "src", "core")
-DIR_B = os.path.join(ROOT_DIR, "tools", "aidd-master-enterprise", "src", "core")
+DIR_B = os.path.join(ROOT_DIR, "tools", "aidd-enterprise", "src", "core")
 BASELINE_PATH = os.path.join(ROOT_DIR, "gates", "baseline_nucleo_compartilhado.json")
 
 
@@ -84,7 +84,7 @@ def atualizar_baseline():
 
     novo_baseline = {
         "descricao": baseline_antigo.get("descricao", "Baseline de sincronismo entre "
-            "tools/aidd-master/src/core/ e tools/aidd-master-enterprise/src/core/."),
+            "tools/aidd-master/src/core/ e tools/aidd-enterprise/src/core/."),
         "gerado_em": baseline_antigo.get("gerado_em", "auto"),
         "arquivos": entradas,
     }
@@ -97,7 +97,7 @@ def atualizar_baseline():
 
 def checar_drift():
     print("=" * 70)
-    print(" [GATE] G_DRIFT_NUCLEO_COMPARTILHADO — aidd-master vs aidd-master-enterprise")
+    print(" [GATE] G_DRIFT_NUCLEO_COMPARTILHADO — aidd-master vs aidd-enterprise")
     print("=" * 70)
 
     if not os.path.isdir(DIR_A) or not os.path.isdir(DIR_B):
@@ -127,7 +127,7 @@ def checar_drift():
         elif entrada.get("esperado_identico") is False:
             print(f"[INFO] {nome}: divergencia conhecida e documentada — {entrada.get('motivo')}")
         else:
-            print(f"[OK] {nome}: sincronizado com aidd-master-enterprise.")
+            print(f"[OK] {nome}: sincronizado com aidd-enterprise.")
 
     if nao_catalogados:
         for nome, identico_agora in nao_catalogados:

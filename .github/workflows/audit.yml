@@ -52,7 +52,7 @@ jobs:
           - aidd-forge
           - aidd-generator
           - aidd-master
-          - aidd-master-enterprise
+          - aidd-enterprise
     steps:
       - uses: actions/checkout@v4
 

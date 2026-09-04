@@ -6,10 +6,10 @@
     "tools/aidd-forge/tests/unit/test_gates.py": "Fixture de teste - AWS_KEY fake 'AKIAABCDEFGHIJKLMNOP' usado para validar o proprio gate de deteccao.",
     "tools/aidd-generator/tests/test_gate_cybersecurity_owasp.py": "Fixture de teste - chave 'sk-abc123...' fake usada para validar G_CYBERSECURITY_OWASP.py.",
     "tools/aidd-generator/tests/test_verificar_gates.py": "Fixture de teste - chave 'sk-proj-...' fake usada para validar o orquestrador de gates.",
-    "tools/aidd-master-enterprise/materiais-extras/examples/enterprise-suite-v4/nginx/ssl/generate_ssl.py": "Placeholder de chave PEM truncada e invalida (nao decodifica), usada so como conteudo de demonstracao no script que gera certificado SSL de desenvolvimento.",
-    "tools/aidd-master-enterprise/materiais-extras/examples/logistica-hub-v4/nginx/ssl/generate_ssl.py": "Mesma natureza do arquivo acima (mesmo template de exemplo).",
-    "tools/aidd-master-enterprise/templates/core/nginx/ssl/generate_ssl.py": "Mesma natureza do arquivo acima (template fonte).",
-    "tools/aidd-master-enterprise/templates/v2/nginx/ssl/generate_ssl.py": "Mesma natureza do arquivo acima (template fonte).",
+    "tools/aidd-enterprise/materiais-extras/examples/enterprise-suite-v4/nginx/ssl/generate_ssl.py": "Placeholder de chave PEM truncada e invalida (nao decodifica), usada so como conteudo de demonstracao no script que gera certificado SSL de desenvolvimento.",
+    "tools/aidd-enterprise/materiais-extras/examples/logistica-hub-v4/nginx/ssl/generate_ssl.py": "Mesma natureza do arquivo acima (mesmo template de exemplo).",
+    "tools/aidd-enterprise/templates/core/nginx/ssl/generate_ssl.py": "Mesma natureza do arquivo acima (template fonte).",
+    "tools/aidd-enterprise/templates/v2/nginx/ssl/generate_ssl.py": "Mesma natureza do arquivo acima (template fonte).",
     "tools/aidd-master/templates/core/nginx/ssl/generate_ssl.py": "Mesma natureza do arquivo acima (template fonte, aidd-master).",
     "tools/aidd-master/templates/v2/nginx/ssl/generate_ssl.py": "Mesma natureza do arquivo acima (template fonte, aidd-master)."
   }

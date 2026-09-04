@@ -1,6 +1,6 @@
 # Comando /enterprise
 
-Injeta componentes de missão crítica com validação de hashes SHA-256 e conformidade Zero-Trust no `aidd-master-enterprise`.
+Injeta componentes de missão crítica com validação de hashes SHA-256 e conformidade Zero-Trust no `aidd-enterprise`.
 
 ## Uso:
 `/enterprise <tipo> <nome>`

@@ -1,5 +1,5 @@
 {
-  "descricao": "Baseline de sincronismo entre tools/aidd-master/src/core/ e tools/aidd-master-enterprise/src/core/ (R3 do PLANO-CORRECAO-RISCOS-ECOSSISTEMA-AIDD.md). Mantidas como copias independentes por decisao (sem acoplamento em runtime entre as duas ferramentas) - este arquivo documenta o que DEVE permanecer identico e o que diverge de proposito. G_DRIFT_NUCLEO_COMPARTILHADO.py falha se um par marcado como esperado_identico=true divergir sem este baseline ser atualizado.",
+  "descricao": "Baseline de sincronismo entre tools/aidd-master/src/core/ e tools/aidd-enterprise/src/core/ (R3 do PLANO-CORRECAO-RISCOS-ECOSSISTEMA-AIDD.md). Mantidas como copias independentes por decisao (sem acoplamento em runtime entre as duas ferramentas) - este arquivo documenta o que DEVE permanecer identico e o que diverge de proposito. G_DRIFT_NUCLEO_COMPARTILHADO.py falha se um par marcado como esperado_identico=true divergir sem este baseline ser atualizado.",
   "gerado_em": "2026-09-04",
   "arquivos": {
     "__init__.py": { "esperado_identico": true, "motivo": null },
@@ -20,7 +20,7 @@
     "logs.py": { "esperado_identico": true, "motivo": null },
     "mcp_server.py": {
       "esperado_identico": false,
-      "motivo": "aidd-master tem register_injected_tools() (integracao com o Injetor Universal) que aidd-master-enterprise nao tem - divergencia de feature, nao bug."
+      "motivo": "aidd-master tem register_injected_tools() (integracao com o Injetor Universal) que aidd-enterprise nao tem - divergencia de feature, nao bug."
     },
     "metrics.py": { "esperado_identico": true, "motivo": null },
     "nextjs_exporter.py": { "esperado_identico": true, "motivo": null },

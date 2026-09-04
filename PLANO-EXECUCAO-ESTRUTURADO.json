@@ -67,14 +67,14 @@
       "slash_command": "/master <modulo>"
     },
     {
-      "id": "aidd-master-enterprise",
-      "caminho": "tools/aidd-master-enterprise",
+      "id": "aidd-enterprise",
+      "caminho": "tools/aidd-enterprise",
       "skill": "skills/aidd-enterprise-runner",
       "slash_command": "/enterprise <tipo> <nome>"
     }
   ],
   "testes": {
-    "medido_em": "2026-09-04T16:22:38.794707+00:00",
+    "medido_em": "2026-09-04T22:10:53.844262+00:00",
     "metodo": "python -m pytest -q --tb=no em cada tools/<ferramenta>, parseado do resumo real (nao digitado a mao)",
     "por_ferramenta": {
       "aidd-forge": {
@@ -95,15 +95,15 @@
       },
       "aidd-master": {
         "status": "ok",
-        "passed": 163,
+        "passed": 169,
         "failed": 0,
         "skipped": 4,
         "errors": 0,
         "exit_code": 0
       },
-      "aidd-master-enterprise": {
+      "aidd-enterprise": {
         "status": "ok",
-        "passed": 168,
+        "passed": 174,
         "failed": 0,
         "skipped": 4,
         "errors": 0,

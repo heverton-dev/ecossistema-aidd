@@ -8,7 +8,7 @@ Roteia comandos para as 4 ferramentas integradas:
   - forge      -> tools/aidd-forge
   - generate   -> tools/aidd-generator
   - master     -> tools/aidd-master
-  - enterprise -> tools/aidd-master-enterprise
+  - enterprise -> tools/aidd-enterprise
   - audit      -> gates/G_ECOSSISTEMA_INTEGRIDADE.py
   - status     -> Resumo do status do ecossistema
 """
@@ -53,7 +53,7 @@ def cmd_master(args):
     return run_command(cmd, cwd=master_dir, env=env)
 
 def cmd_enterprise(args):
-    ent_dir = os.path.join(TOOLS_DIR, "aidd-master-enterprise")
+    ent_dir = os.path.join(TOOLS_DIR, "aidd-enterprise")
     aidd_script = os.path.join(ent_dir, "scripts", "aidd.py")
     env = {"PYTHONPATH": ent_dir}
     cmd = [sys.executable, aidd_script] + args
@@ -86,7 +86,7 @@ def cmd_status(args):
         ("aidd-forge", "Bootstrap, governança, fatiamento e context-purge"),
         ("aidd-generator", "Fábrica autônoma de software (Pipeline 8 fases)"),
         ("aidd-master", "Suíte Modular com Fatias Verticais e SQLite WAL"),
-        ("aidd-master-enterprise", "Missão crítica, conformidade SHA-256 e Zero-Trust")
+        ("aidd-enterprise", "Missão crítica, conformidade SHA-256 e Zero-Trust")
     ]
     for name, desc in tools:
         path = os.path.join(TOOLS_DIR, name)
@@ -103,7 +103,7 @@ def cmd_status(args):
     print("  /forge [caminho]        -> Dispara aidd-forge")
     print("  /generate <ideia>       -> Dispara aidd-generator")
     print("  /master <modulo>        -> Dispara aidd-master")
-    print("  /enterprise <tipo> <nome> -> Dispara aidd-master-enterprise")
+    print("  /enterprise <tipo> <nome> -> Dispara aidd-enterprise")
     print("-" * 72)
     return 0
 
@@ -116,7 +116,7 @@ Comandos disponíveis:
   forge <args>        Executa operações do aidd-forge (ex: forge init [pasta])
   generate <args>     Executa o pipeline do aidd-generator (ex: generate "Minha Ideia")
   master <args>       Executa comandos do aidd-master (ex: master add-module faturamento)
-  enterprise <args>   Executa comandos do aidd-master-enterprise (ex: enterprise inject skill auth)
+  enterprise <args>   Executa comandos do aidd-enterprise (ex: enterprise inject skill auth)
   audit               Executa o Meta-Quality Gate de Integridade
   status              Exibe o status do ecossistema e ferramentas integradas
   status --testes     Roda pytest real em cada ferramenta e atualiza

@@ -25,7 +25,7 @@ TOOLS_REQUIRED = [
     "aidd-forge",
     "aidd-generator",
     "aidd-master",
-    "aidd-master-enterprise"
+    "aidd-enterprise"
 ]
 
 SKILLS_REQUIRED = [

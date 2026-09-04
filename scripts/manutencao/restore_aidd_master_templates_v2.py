@@ -4,7 +4,7 @@ Restaura tools/aidd-master/templates/v2/ (R1 do
 PLANO-CORRECAO-RISCOS-ECOSSISTEMA-AIDD.md).
 
 Diagnostico confirmado: o diretorio esta vazio ha muito tempo (nao existe nem
-em proj_aidd/aidd-master/templates/v2), enquanto aidd-master-enterprise
+em proj_aidd/aidd-master/templates/v2), enquanto aidd-enterprise
 (fork historico da mesma linhagem) recebeu e manteve os 25 arquivos
 (database.py, cqrs.py, local_first.py, circuit_breaker.py, saga.py, etc.)
 que tests/unit/test_database_adapter.py e tests/unit/test_cqrs_local_first.py
@@ -17,7 +17,7 @@ import shutil
 import sys
 
 ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-SRC = os.path.join(ROOT, "tools", "aidd-master-enterprise", "templates", "v2")
+SRC = os.path.join(ROOT, "tools", "aidd-enterprise", "templates", "v2")
 DST = os.path.join(ROOT, "tools", "aidd-master", "templates", "v2")
 
 

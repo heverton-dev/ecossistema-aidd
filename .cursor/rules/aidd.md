@@ -4,7 +4,7 @@ Todas as 4 ferramentas estão organizadas em tools/:
 - tools/aidd-forge
 - tools/aidd-generator
 - tools/aidd-master
-- tools/aidd-master-enterprise
+- tools/aidd-enterprise
 
 Auditoria completa (todos os Quality Gates da raiz): python ecossistema.py audit
 CLI Unificada: python ecossistema.py

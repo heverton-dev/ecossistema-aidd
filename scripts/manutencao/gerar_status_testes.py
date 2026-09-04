@@ -21,7 +21,7 @@ from datetime import datetime, timezone
 ROOT_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 PLANO_PATH = os.path.join(ROOT_DIR, "PLANO-EXECUCAO-ESTRUTURADO.json")
 
-FERRAMENTAS = ["aidd-forge", "aidd-generator", "aidd-master", "aidd-master-enterprise"]
+FERRAMENTAS = ["aidd-forge", "aidd-generator", "aidd-master", "aidd-enterprise"]
 
 _PADRAO_RESUMO = re.compile(
     r"(?:(?P<passed>\d+) passed)?"
