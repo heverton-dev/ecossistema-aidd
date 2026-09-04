@@ -28,7 +28,10 @@ jobs:
         # exit 4 = erro de config real (ex.: o BOM que quebrava isso antes
         # do R2) - esse sim deve reprovar o job.
         run: |
-          python -m pytest --collect-only -q; codigo=$?
+          set +e
+          python -m pytest --collect-only -q
+          codigo=$?
+          set -e
           if [ "$codigo" -ne 0 ] && [ "$codigo" -ne 5 ]; then
             echo "pytest.ini com erro real de configuracao (exit $codigo)"
             exit "$codigo"
