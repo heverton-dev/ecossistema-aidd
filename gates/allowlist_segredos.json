@@ -1,0 +1,16 @@
+{
+  "descricao": "Arquivos rastreados pelo git que batem com os padroes de segredo do G_SEGREDOS.py mas foram auditados manualmente e confirmados como fixtures de teste ou placeholders de demonstracao, nunca credenciais reais. Adicionar aqui exige justificativa - nunca usar so para silenciar o gate.",
+  "auditado_em": "2026-09-04",
+  "arquivos": {
+    "tools/aidd-forge/tests/integration/test_full_forge_pipeline.py": "Fixture de teste - valor fake 'sk-live-1234567890abcdef' usado para validar deteccao de segredos hardcoded, nao e uma chave real.",
+    "tools/aidd-forge/tests/unit/test_gates.py": "Fixture de teste - AWS_KEY fake 'AKIAABCDEFGHIJKLMNOP' usado para validar o proprio gate de deteccao.",
+    "tools/aidd-generator/tests/test_gate_cybersecurity_owasp.py": "Fixture de teste - chave 'sk-abc123...' fake usada para validar G_CYBERSECURITY_OWASP.py.",
+    "tools/aidd-generator/tests/test_verificar_gates.py": "Fixture de teste - chave 'sk-proj-...' fake usada para validar o orquestrador de gates.",
+    "tools/aidd-master-enterprise/materiais-extras/examples/enterprise-suite-v4/nginx/ssl/generate_ssl.py": "Placeholder de chave PEM truncada e invalida (nao decodifica), usada so como conteudo de demonstracao no script que gera certificado SSL de desenvolvimento.",
+    "tools/aidd-master-enterprise/materiais-extras/examples/logistica-hub-v4/nginx/ssl/generate_ssl.py": "Mesma natureza do arquivo acima (mesmo template de exemplo).",
+    "tools/aidd-master-enterprise/templates/core/nginx/ssl/generate_ssl.py": "Mesma natureza do arquivo acima (template fonte).",
+    "tools/aidd-master-enterprise/templates/v2/nginx/ssl/generate_ssl.py": "Mesma natureza do arquivo acima (template fonte).",
+    "tools/aidd-master/templates/core/nginx/ssl/generate_ssl.py": "Mesma natureza do arquivo acima (template fonte, aidd-master).",
+    "tools/aidd-master/templates/v2/nginx/ssl/generate_ssl.py": "Mesma natureza do arquivo acima (template fonte, aidd-master)."
+  }
+}
