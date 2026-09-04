@@ -70,7 +70,10 @@ Cada comando possui contrato formal executável em qualquer harness (Antigravity
 
 O ecossistema dispõe de Quality Gates globais em gates/:
 - gates/G_ECOSSISTEMA_INTEGRIDADE.py: Audita a integridade física, sintática e estrutural dos 4 subprojetos e das skills.
-- Execução unificada via CLI: python ecossistema.py audit
+- gates/G_DRIFT_NUCLEO_COMPARTILHADO.py: Detecta divergência não documentada entre os arquivos de núcleo compartilhados por linhagem entre aidd-master e aidd-master-enterprise (baseline em gates/baseline_nucleo_compartilhado.json).
+- gates/G_HARNESS_COMPAT.py: Verifica que os artefatos multi-harness da raiz (comandos, skills, arquivos-ponteiro) permanecem sincronizados entre si.
+- gates/G_SEGREDOS.py: Escaneia todo o repositório rastreado pelo git em busca de credenciais hardcoded (allowlist auditada em gates/allowlist_segredos.json).
+- Execução unificada via CLI: python ecossistema.py audit (roda os 4 gates em sequência)
 
 ---
 

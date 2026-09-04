@@ -6,5 +6,5 @@ Todas as 4 ferramentas estão organizadas em tools/:
 - tools/aidd-master
 - tools/aidd-master-enterprise
 
-Quality Gate canônico: python gates/G_ECOSSISTEMA_INTEGRIDADE.py
+Auditoria completa (todos os Quality Gates da raiz): python ecossistema.py audit
 CLI Unificada: python ecossistema.py

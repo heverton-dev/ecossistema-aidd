@@ -110,7 +110,10 @@ ecossistema-aidd/
 │   └── rules/                              ──► Diretivas operacionais
 │
 ├── gates/                                  ──► Meta-Quality Gates determinísticos
-│   └── G_ECOSSISTEMA_INTEGRIDADE.py        ──► Auditoria automatizada de integridade estrutural e sintática
+│   ├── G_ECOSSISTEMA_INTEGRIDADE.py        ──► Auditoria automatizada de integridade estrutural e sintática
+│   ├── G_DRIFT_NUCLEO_COMPARTILHADO.py     ──► Drift entre aidd-master e aidd-master-enterprise
+│   ├── G_HARNESS_COMPAT.py                 ──► Sincronismo de artefatos multi-harness da raiz
+│   └── G_SEGREDOS.py                       ──► Varredura de credenciais hardcoded
 │
 ├── skills/                                 ──► Definições oficiais das 4 skills universais
 │   ├── aidd-forge-runner/                  ──► Runner do AIDD Forge

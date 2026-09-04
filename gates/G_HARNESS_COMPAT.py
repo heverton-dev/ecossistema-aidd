@@ -31,6 +31,7 @@ Uso:
 """
 
 import os
+import re
 import sys
 
 ROOT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -94,6 +95,22 @@ def checar():
             erros.append(f"Arquivo-ponteiro {ponteiro} existe mas não referencia {fonte}.")
         else:
             print(f"[OK] {ponteiro} referencia {fonte} corretamente.")
+
+    print("\n--- Gates documentados em AGENTS.md vs gates/ em disco ---")
+    agents_md = _ler("AGENTS.md") or ""
+    documentados = set(re.findall(r"gates/(G_[A-Z_]+\.py)", agents_md))
+    em_disco = {
+        f for f in os.listdir(os.path.join(ROOT_DIR, "gates"))
+        if f.startswith("G_") and f.endswith(".py")
+    }
+    faltando_no_agents = em_disco - documentados
+    faltando_em_disco = documentados - em_disco
+    if faltando_no_agents:
+        erros.append(f"Gate(s) em disco mas não documentado(s) em AGENTS.md: {', '.join(sorted(faltando_no_agents))}")
+    if faltando_em_disco:
+        erros.append(f"Gate(s) documentado(s) em AGENTS.md mas ausente(s) em disco: {', '.join(sorted(faltando_em_disco))}")
+    if not faltando_no_agents and not faltando_em_disco:
+        print(f"[OK] {len(em_disco)} gate(s) em disco, todos documentados em AGENTS.md.")
 
     print("\n" + "=" * 70)
     if erros:
