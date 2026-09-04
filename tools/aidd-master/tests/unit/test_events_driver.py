@@ -106,8 +106,19 @@ def test_event_emitted_on_instance_a_is_processed_on_instance_b_via_redis():
         instancia_a = instancia_b = None
         while time.time() < deadline:
             try:
-                instancia_a = EventBus(driver=RedisStreamsDriver(redis_url, group_name="grupo-teste"))
-                instancia_b = EventBus(driver=RedisStreamsDriver(redis_url, group_name="grupo-teste"))
+                # RedisStreamsDriver.__init__ usa redis.from_url(), que e
+                # preguicoso (nao conecta de fato) - so construir o driver
+                # nao prova que o servidor esta pronto para servir comandos.
+                # PING forca o primeiro round-trip real; sem isso o primeiro
+                # comando de verdade (xgroup_create dentro de .on(), mais
+                # abaixo) pode cair numa janela estreita logo apos o
+                # container subir e falhar com connection reset sem retry.
+                driver_a = RedisStreamsDriver(redis_url, group_name="grupo-teste")
+                driver_a._redis.ping()
+                driver_b = RedisStreamsDriver(redis_url, group_name="grupo-teste")
+                driver_b._redis.ping()
+                instancia_a = EventBus(driver=driver_a)
+                instancia_b = EventBus(driver=driver_b)
                 break
             except Exception as e:
                 last_error = e
