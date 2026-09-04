@@ -73,6 +73,11 @@ def escanear():
     achados_conhecidos = 0
 
     for caminho_rel in _arquivos_rastreados():
+        # O proprio allowlist cita os valores fake nas justificativas para
+        # documentar cada achado com precisao — isso bate nos padroes por
+        # definicao. Excluido do scan, nao do motivo de existir.
+        if caminho_rel == "gates/allowlist_segredos.json":
+            continue
         caminho_abs = os.path.join(ROOT_DIR, caminho_rel)
         if not os.path.isfile(caminho_abs):
             continue

@@ -38,7 +38,13 @@
       "fase": 5,
       "nome": "DOCUMENTATION & RELEASE",
       "status": "CONCLUIDO",
-      "detalhes": "README.md portal estruturado, validação de testes dos subprojetos (191 testes verdes), commit inicial e push para origin main."
+      "detalhes": "README.md portal estruturado, commit inicial e push para origin main. NOTA (corrigido em 2026-09-04): a alegação original aqui era '191 testes verdes' referindo-se ao ecossistema inteiro — na verdade era só a contagem isolada de aidd-forge, nunca medida para as outras 3 ferramentas. Ver bloco 'testes' abaixo para a contagem real e reproduzível de todas as 4."
+    },
+    {
+      "fase": 6,
+      "nome": "AUDITORIA E CORRECAO DE RISCOS",
+      "status": "CONCLUIDO",
+      "detalhes": "Auditoria completa encontrou 8 riscos reais divergindo das Regras de Ouro do AGENTS.md (ver docs/planos/PLANO-CORRECAO-RISCOS-ECOSSISTEMA-AIDD.md). Corrigidos: pytest.ini quebrado por BOM, templates/v2 do aidd-master ausente do git, 2 testes nao-hermeticos no aidd-generator, deteccao de drift entre copias de fallback multi-harness, gate de drift de nucleo compartilhado entre aidd-master/aidd-master-enterprise, gates G_HARNESS_COMPAT e G_SEGREDOS materializados na raiz, CI minimo via .github/workflows/audit.yml, e este bloco 'testes' passou a ser gerado por script (python ecossistema.py status --testes) em vez de digitado a mao."
     }
   ],
   "ferramentas": [
@@ -66,5 +72,43 @@
       "skill": "skills/aidd-enterprise-runner",
       "slash_command": "/enterprise <tipo> <nome>"
     }
-  ]
+  ],
+  "testes": {
+    "medido_em": "2026-09-04T16:22:38.794707+00:00",
+    "metodo": "python -m pytest -q --tb=no em cada tools/<ferramenta>, parseado do resumo real (nao digitado a mao)",
+    "por_ferramenta": {
+      "aidd-forge": {
+        "status": "ok",
+        "passed": 191,
+        "failed": 0,
+        "skipped": 1,
+        "errors": 0,
+        "exit_code": 0
+      },
+      "aidd-generator": {
+        "status": "ok",
+        "passed": 756,
+        "failed": 0,
+        "skipped": 0,
+        "errors": 0,
+        "exit_code": 0
+      },
+      "aidd-master": {
+        "status": "ok",
+        "passed": 163,
+        "failed": 0,
+        "skipped": 4,
+        "errors": 0,
+        "exit_code": 0
+      },
+      "aidd-master-enterprise": {
+        "status": "ok",
+        "passed": 168,
+        "failed": 0,
+        "skipped": 4,
+        "errors": 0,
+        "exit_code": 0
+      }
+    }
+  }
 }

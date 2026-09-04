@@ -74,6 +74,12 @@ def cmd_audit(args):
     return 0
 
 def cmd_status(args):
+    if "--testes" in args:
+        sys.path.insert(0, os.path.join(ROOT_DIR, "scripts", "manutencao"))
+        from gerar_status_testes import gerar
+        gerar()
+        return 0
+
     print_banner()
     print("\nFerramentas Integradas em tools/:")
     tools = [
@@ -113,6 +119,8 @@ Comandos disponíveis:
   enterprise <args>   Executa comandos do aidd-master-enterprise (ex: enterprise inject skill auth)
   audit               Executa o Meta-Quality Gate de Integridade
   status              Exibe o status do ecossistema e ferramentas integradas
+  status --testes     Roda pytest real em cada ferramenta e atualiza
+                      PLANO-EXECUCAO-ESTRUTURADO.json com a contagem medida
   help                Exibe esta ajuda
 """)
 
