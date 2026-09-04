@@ -1,0 +1,11 @@
+{
+  "linguagens_comuns": {
+    "unknown": 2,
+    "PHP": 2,
+    "Python": 2
+  },
+  "total_referencias": 10,
+  "fontes": [
+    "github"
+  ]
+}

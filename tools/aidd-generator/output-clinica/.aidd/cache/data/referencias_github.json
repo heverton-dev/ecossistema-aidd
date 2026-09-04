@@ -1,0 +1,142 @@
+[
+  {
+    "nome": "mouredev/hello-git",
+    "url": "https://github.com/mouredev/hello-git",
+    "fonte": "github",
+    "data_coletada": "2026-09-04T00:09:24.897655+00:00",
+    "metadata": {
+      "stars": 14824,
+      "forks": 4773,
+      "linguagens": "unknown",
+      "ultimo_commit": "2026-09-03T04:01:30Z",
+      "licenca": "Apache License 2.0",
+      "descricao": "Curso para aprender a trabajar con el sistema de control de versiones Git y la plataforma GitHub desde cero y para principiantes."
+    }
+  },
+  {
+    "nome": "RamonSilva20/mapos",
+    "url": "https://github.com/RamonSilva20/mapos",
+    "fonte": "github",
+    "data_coletada": "2026-09-04T00:09:24.897667+00:00",
+    "metadata": {
+      "stars": 1104,
+      "forks": 688,
+      "linguagens": "PHP",
+      "ultimo_commit": "2026-08-24T01:59:24Z",
+      "licenca": "Apache License 2.0",
+      "descricao": "Sistema de Controle de Ordens de Serviço"
+    }
+  },
+  {
+    "nome": "Ganso/refugiOS",
+    "url": "https://github.com/Ganso/refugiOS",
+    "fonte": "github",
+    "data_coletada": "2026-09-04T00:09:24.897671+00:00",
+    "metadata": {
+      "stars": 622,
+      "forks": 54,
+      "linguagens": "Python",
+      "ultimo_commit": "2026-08-08T08:30:12Z",
+      "licenca": "GNU Affero General Public License v3.0",
+      "descricao": "refugiOS es un sistema operativo portátil diseñado para situaciones de emergencia, falta de conectividad a Internet o necesidad extrema de privacidad"
+    }
+  },
+  {
+    "nome": "DesignLiquido/delegua",
+    "url": "https://github.com/DesignLiquido/delegua",
+    "fonte": "github",
+    "data_coletada": "2026-09-04T00:09:24.897673+00:00",
+    "metadata": {
+      "stars": 492,
+      "forks": 47,
+      "linguagens": "TypeScript",
+      "ultimo_commit": "2026-09-03T01:26:01Z",
+      "licenca": "MIT License",
+      "descricao": "Linguagem de programação 100% em português baseada em TypeScript, independente de sistema operacional e dispositivo, e suporte a múltiplos dialetos."
+    }
+  },
+  {
+    "nome": "thiagopena/djangoSIGE",
+    "url": "https://github.com/thiagopena/djangoSIGE",
+    "fonte": "github",
+    "data_coletada": "2026-09-04T00:09:24.897676+00:00",
+    "metadata": {
+      "stars": 467,
+      "forks": 264,
+      "linguagens": "Python",
+      "ultimo_commit": "2026-08-17T18:06:52Z",
+      "licenca": "MIT License",
+      "descricao": "Sistema Integrado de Gestão Empresarial baseado em Django"
+    }
+  },
+  {
+    "nome": "guru-br/catalogo_empresas",
+    "url": "https://github.com/guru-br/catalogo_empresas",
+    "fonte": "github",
+    "data_coletada": "2026-09-04T00:09:24.897679+00:00",
+    "metadata": {
+      "stars": 439,
+      "forks": 125,
+      "linguagens": "unknown",
+      "ultimo_commit": "2026-06-11T13:55:48Z",
+      "licenca": "GNU General Public License v3.0",
+      "descricao": "Lista de empresas e ou instituições das quais possuem em sua stack principal e ou demais sistemas relevantes com Ruby."
+    }
+  },
+  {
+    "nome": "Hitmasu/OpenCNPJ",
+    "url": "https://github.com/Hitmasu/OpenCNPJ",
+    "fonte": "github",
+    "data_coletada": "2026-09-04T00:09:24.897682+00:00",
+    "metadata": {
+      "stars": 402,
+      "forks": 58,
+      "linguagens": "C#",
+      "ultimo_commit": "2026-09-03T01:26:53Z",
+      "licenca": "MIT License",
+      "descricao": "API pública de busca e consulta de CNPJs do Brasil"
+    }
+  },
+  {
+    "nome": "rt-evil-inc/gira-mais",
+    "url": "https://github.com/rt-evil-inc/gira-mais",
+    "fonte": "github",
+    "data_coletada": "2026-09-04T00:09:24.897684+00:00",
+    "metadata": {
+      "stars": 293,
+      "forks": 19,
+      "linguagens": "TypeScript",
+      "ultimo_commit": "2026-08-27T16:42:36Z",
+      "licenca": "Other",
+      "descricao": "Aplicação alternativa para o sistema de bicicletas partilhadas de Lisboa"
+    }
+  },
+  {
+    "nome": "rtenorioh/Press-Ticket",
+    "url": "https://github.com/rtenorioh/Press-Ticket",
+    "fonte": "github",
+    "data_coletada": "2026-09-04T00:09:24.897687+00:00",
+    "metadata": {
+      "stars": 291,
+      "forks": 163,
+      "linguagens": "JavaScript",
+      "ultimo_commit": "2026-08-27T02:03:48Z",
+      "licenca": "MIT License",
+      "descricao": "O sistema de multicanais \"Press-Ticket\" foi projetado para oferecer uma solução eficiente e integrada de suporte ao cliente, facilitando a comunicação e a gestão de tickets de atendimento diretamente "
+    }
+  },
+  {
+    "nome": "novosga/novosga",
+    "url": "https://github.com/novosga/novosga",
+    "fonte": "github",
+    "data_coletada": "2026-09-04T00:09:24.897689+00:00",
+    "metadata": {
+      "stars": 275,
+      "forks": 258,
+      "linguagens": "PHP",
+      "ultimo_commit": "2026-08-24T14:19:06Z",
+      "licenca": "MIT License",
+      "descricao": "Sistema de Gerenciamento de Atendimento adaptável para grandes e pequenas organizações."
+    }
+  }
+]

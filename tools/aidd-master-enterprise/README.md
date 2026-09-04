@@ -1,4 +1,4 @@
-﻿# 📦 AIDD Master Enterprise
+# 📦 AIDD Master Enterprise
 
 > **O Framework Definitivo para Monólitos Modulares, Clean Architecture, Fatias Verticais e Governança Anti-Atalhos por Gates Rígidos.**
 
@@ -17,6 +17,18 @@ O **AIDD Master Enterprise** eleva o ecossistema de desenvolvimento assistido po
 - **Model Context Protocol (`/mcp`):** Servidor JSON-RPC 2.0 nativo pronto para integração com Claude, Cursor, Antigravity e OpenHands.
 - **Design System Corporativo Impeccable:** CSS padronizado com variáveis `:root`, dark mode, cards studio e scrollbars sutis de 4px.
 - **Suíte de 10 Gates Rígidos:** `G_ESTRUTURA`, `G_ARQUITETURA` (AST de Bounded Context), `G_QUALIDADE`, `G_TESTES`, `G_CONTRACTS`, `G_PERFORMANCE` (SLOs e OTel), `G_SEGREDOS`, `G_SEGURANCA` (OWASP e CVE pip-audit), `G_CHAOS` e `G_HARNESS_COMPAT`.
+
+---
+
+## 🌐 SUPREMACIA AGNÓSTICA — Princípio da Universalidade Total
+
+O **AIDD Master Enterprise** opera sob a Supremacia Agnóstica como pilar de segurança Zero-Trust:
+
+1. 💻 **Ambiente e SO Agnóstico:** Execução sem privilégios proprietários em Windows, Linux e macOS (Python puro).
+2. 🤖 **Harness e ADE Agnóstico:** Integração e espelhamento transparente para **OpenCode, Antigravity, Claude Code, MimoCode, Freebuff, Hermes, DeepSeek, Codex, Cursor e Gemini CLI**.
+3. 🧠 **Conformidade Criptográfica (SHA-256):** Toda injeção e governança valida hashes criptográficos de integridade antes da publicação, independente do assistente emissor.
+4. 🔀 **Orquestração Adaptativa:** Suporta concorrencia por Git Worktrees no ORCA, subagentes nativos em harnesses de IDE ou micro-ambientes isolados em pipelines de CI/CD regulados.
+5. 📦 **Contratos e Schemas Inegociáveis:** Validações mecânicas binárias que rejeitam silenciosidade e garantem determinismo absoluto em qualquer plataforma.
 
 ---
 

@@ -1,0 +1,77 @@
+{
+  "agentes_detectados": [
+    {
+      "nome": "claude",
+      "comando": "claude",
+      "caminho": "C:\\Users\\trcnologia\\.local\\bin\\claude.EXE",
+      "especialidades": [
+        "arquitetura",
+        "analise",
+        "design",
+        "documentacao",
+        "codigo"
+      ],
+      "prioridade": 1,
+      "descricao": "Claude Code (Anthropic)",
+      "ativo": true
+    },
+    {
+      "nome": "antigravity",
+      "comando": "agy",
+      "caminho": "C:\\Users\\trcnologia\\AppData\\Local\\agy\\bin\\agy.EXE",
+      "especialidades": [
+        "arquitetura",
+        "codigo",
+        "design",
+        "testes"
+      ],
+      "prioridade": 2,
+      "descricao": "Antigravity (agy)",
+      "ativo": true
+    },
+    {
+      "nome": "mimocode",
+      "comando": "mimo",
+      "caminho": "C:\\Users\\trcnologia\\AppData\\Roaming\\npm\\mimo.CMD",
+      "especialidades": [
+        "arquitetura",
+        "codigo",
+        "analise",
+        "design"
+      ],
+      "prioridade": 2,
+      "descricao": "MimoCode Engine",
+      "ativo": true
+    },
+    {
+      "nome": "opencode",
+      "comando": "opencode",
+      "caminho": "C:\\Users\\trcnologia\\AppData\\Roaming\\npm\\opencode.CMD",
+      "especialidades": [
+        "codigo",
+        "analise"
+      ],
+      "prioridade": 3,
+      "descricao": "OpenCode",
+      "ativo": true
+    },
+    {
+      "nome": "gemini",
+      "comando": "gemini",
+      "caminho": "C:\\Users\\trcnologia\\AppData\\Roaming\\npm\\gemini.CMD",
+      "especialidades": [
+        "analise",
+        "codigo",
+        "documentacao"
+      ],
+      "prioridade": 3,
+      "descricao": "Google Gemini CLI",
+      "ativo": true
+    }
+  ],
+  "total_detectados": 5,
+  "agente_default": "claude",
+  "modo": "multi-agente",
+  "override_config": null,
+  "timestamp": "2026-09-04T00:09:23.346147+00:00"
+}

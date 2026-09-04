@@ -1,0 +1,10 @@
+{
+  "phase": "phase_03_implementation",
+  "mcpServers": {
+    "database": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-postgres"],
+      "scope": "read-write"
+    }
+  }
+}

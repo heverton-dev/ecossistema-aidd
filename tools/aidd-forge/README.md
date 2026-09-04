@@ -1,4 +1,4 @@
-﻿# 🔨 AIDD Forge
+# 🔨 AIDD Forge
 
 > **Motor Universal de Governança Agêntica, Descarte de Contexto e Economia Extrema de Tokens**
 
@@ -27,9 +27,15 @@ forge init [caminho_do_projeto]
 
 ---
 
-## 🌐 Agnosticismo Total de Harness
+## 🌐 SUPREMACIA AGNÓSTICA — Princípio da Universalidade Total
 
-O AIDD Forge **não é amarrado a nenhuma ferramenta específica**. Ele opera em qualquer IDE ou harness:
+O AIDD Forge **não é amarrado a nenhuma ferramenta ou ambiente específico**. Ele opera com Supremacia Agnóstica em qualquer IDE, terminal, CI ou harness:
+
+1. 💻 **Ambiente e SO Agnóstico:** Funciona deterministicamente em Windows, Linux e macOS (Python puro).
+2. 🤖 **Harness e ADE Agnóstico:** Suporte nativo e transparente a **OpenCode, Antigravity, Claude Code, MimoCode, Freebuff, Hermes, DeepSeek, Codex, Cursor e Gemini CLI**.
+3. 🧠 **Zero Token Fallacy:** 100% mecânico e determinístico para bootstrap, fatiamento e gates (Zero chamada LLM desnecessária).
+4. 🔀 **Fatiamento & Purga Granular:** Cria micro-ambientes isolados por fase (`pipeline_phases/phase_00_bootstrap` até `phase_04_audit_security`) com `AGENTS.md` e `mcp_config.json` dedicados para descarte total de contexto.
+5. 📦 **Governança Multi-Harness Automática:**
 
 | Harness / Ambiente | Como o Forge Suporta |
 | :--- | :--- |
@@ -37,7 +43,7 @@ O AIDD Forge **não é amarrado a nenhuma ferramenta específica**. Ele opera em
 | **Claude Code** | Injeção de `CLAUDE.md` e comandos em `.claude/commands/`. |
 | **Cursor IDE** | Regras em `.cursor/rules/forge.md` e `.cursor/rules/aidd-init.md`. |
 | **Codex / CLI** | Detecção automática via PATH e fallback em worktrees. |
-| **Open Code / MimoCode** | Compatibilidade nativa com a pasta `.agent/` e slash router. |
+| **OpenCode / MimoCode / Freebuff** | Compatibilidade nativa com a pasta `.agent/`, `.claude/` e slash router. |
 | **Ollama / LLMs Locais** | Suporte de inventário e execução determinística local. |
 
 ---

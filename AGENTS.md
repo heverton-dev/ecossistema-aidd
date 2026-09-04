@@ -1,4 +1,4 @@
-﻿# 🏛️ AGENTS.md — Governança Canônica do Ecossistema AIDD Unificado
+# 🏛️ AGENTS.md — Governança Canônica do Ecossistema AIDD Unificado
 
 > **Repositório:** https://github.com/heverton-dev/ecossistema-aidd  
 > **Status:** PRODUÇÃO & ORQUESTRADO (ORCA ADE / ORC 3)  
@@ -34,6 +34,9 @@ O **Ecossistema AIDD** unifica 4 ferramentas complementares de Engenharia Agênt
    - Purge imediato de contexto entre execuções de subagentes.
 5. **Zero Stubs / Zero Mocks Falsos em Produção:**
    - Código gerado deve ser 100% funcional, tipado e com testes unitários e de integração reais.
+6. **Supremacia Agnóstica (Universalidade Total):**
+   - Absolutamente TUDO (skills, mcps, specs, hooks, slash commands, fluxos, configurações) deve operar de forma 100% agnóstica a ambiente de execução, sistema operacional, harness (OpenCode, Antigravity, Claude, Mimo, Freebuff, Hermes, DeepSeek, etc.) e provedor de LLM.
+   - Nenhuma dependência proprietária ou vendor lock-in é permitida no ecossistema.
 
 ---
 

@@ -1,0 +1,10 @@
+{
+  "phase": "phase_01_requirements",
+  "mcpServers": {
+    "filesystem": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-filesystem", "."],
+      "scope": "read-write"
+    }
+  }
+}

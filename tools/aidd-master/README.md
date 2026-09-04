@@ -1,4 +1,4 @@
-﻿# 📦 AIDD Master (Enterprise Modular Framework)
+# 📦 AIDD Master (Enterprise Modular Framework)
 
 > **O Framework Definitivo para Monólitos Modulares, Clean Architecture, Fatias Verticais e Governança Anti-Atalhos por Gates Rígidos.**
 
@@ -17,6 +17,18 @@ O **AIDD Master** eleva o ecossistema de desenvolvimento assistido por IA ao ní
 - **Model Context Protocol (`/mcp`):** Servidor JSON-RPC 2.0 nativo pronto para integração com Claude, Cursor, Antigravity e OpenHands.
 - **Design System Corporativo Impeccable:** CSS padronizado com variáveis `:root`, dark mode, cards studio e scrollbars sutis de 4px.
 - **Suíte de 10 Gates Rígidos:** `G_ESTRUTURA`, `G_ARQUITETURA` (AST de Bounded Context), `G_QUALIDADE`, `G_TESTES`, `G_CONTRACTS`, `G_PERFORMANCE` (SLOs e OTel), `G_SEGREDOS`, `G_SEGURANCA` (OWASP e CVE pip-audit), `G_CHAOS` e `G_HARNESS_COMPAT`.
+
+---
+
+## 🌐 SUPREMACIA AGNÓSTICA — Princípio da Universalidade Total
+
+O **AIDD Master** opera sob Supremacia Agnóstica irrestrita:
+
+1. 💻 **Ambiente e SO Agnóstico:** Funciona em Windows, Linux e macOS (Python puro sem acoplamentos de shell).
+2. 🤖 **Harness e ADE Agnóstico:** Integração e espelhamento transparente para **OpenCode, Antigravity, Claude Code, MimoCode, Freebuff, Hermes, DeepSeek, Codex, Cursor e Gemini CLI**.
+3. 🧠 **Zero Token para Engenharia Mecânica:** Fatiamento vertical, rotas, schemas, SQLite WAL e gates operam em 100% determinismo puro (Zero chamadas LLM).
+4. 🔀 **Orquestração Adaptativa:** Roda em worktrees concorrentes no ORCA, subagentes nativos em harnesses habilitados ou standalone via CLI com purga estrita de contexto.
+5. 📦 **Universalidade de Injeção:** Injetor transacional com sincronização idempotente em `CAPABILITIES.json`, `AGENTS.md` e routers de intenção.
 
 ---
 

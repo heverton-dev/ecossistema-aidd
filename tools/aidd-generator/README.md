@@ -2,6 +2,23 @@
 
 Gerador de projetos de software usando a metodologia **AIDD** (AI-Driven Development). Dada uma ideia em linguagem natural, o pipeline percorre 7-8 fases e produz um projeto completo: schemas, scripts, testes, documentação e — opcionalmente — código funcional gerado por LLM.
 
+## 🌐 SUPREMACIA AGNÓSTICA — Princípio da Universalidade Total
+
+Este projeto foi construído sob o princípio inegociável da **Supremacia Agnóstica** da Engenharia Agêntica Aplicada (AIDD).
+
+NADA aqui é proprietário ou dependente de um único ecossistema:
+
+1. 💻 **Ambiente e SO Agnóstico:** Roda de forma 100% idêntica em Windows, Linux e macOS (Python puro).
+2. 🤖 **Harness e ADE Agnóstico:** Suporte nativo e transparente a **OpenCode, Antigravity, Claude Code, MimoCode, Freebuff, Hermes, DeepSeek, Codex, Cursor e Gemini CLI**.
+3. 🧠 **LLM e Cognição Agnóstica:**
+   - *Modo Delegado:* Aproveita a sessão do agente já autenticado no host (Zero API Keys necessárias).
+   - *Modo Headless:* Fallback universal via LiteLLM para dezenas de provedores (Groq, NVIDIA NIM, OpenAI, Anthropic, Ollama local).
+4. 🔀 **Orquestração Adaptativa em 3 Níveis:**
+   - *Nível Fleet:* Git Worktrees concorrentes por agente (quando em ORCA ADE).
+   - *Nível Harness:* Subagentes nativos do assistente em uso.
+   - *Nível Local:* `ContextPurgeEngine` com fatiamento limpo e purga estrita de memória a cada fase (CLI puro e CI/CD).
+5. 📦 **Artefatos Universais:** Skills, MCPs, JSON Schemas Draft 2020-12, Slash Commands e `AGENTS.md` são escritos uma única vez e projetados deterministicamente para todos os harnesses ativos (Zero Duplicidade).
+
 ## O que é
 
 O aidd-generator automatiza a criação de projetos seguindo 5 camadas:

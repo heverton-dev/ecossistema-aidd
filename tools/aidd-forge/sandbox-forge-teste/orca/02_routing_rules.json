@@ -1,0 +1,12 @@
+{
+  "mode": "unconfigured",
+  "default_harness_override": null,
+  "roles": {
+    "architect": { "harness": null, "worktree_isolated": true },
+    "database": { "harness": null, "worktree_isolated": true },
+    "frontend": { "harness": null, "worktree_isolated": true },
+    "backend": { "harness": null, "worktree_isolated": true },
+    "security": { "harness": null, "worktree_isolated": true },
+    "qa": { "harness": null, "worktree_isolated": true }
+  }
+}
