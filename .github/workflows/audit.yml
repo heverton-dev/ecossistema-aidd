@@ -23,7 +23,17 @@ jobs:
           pip install -r requirements-dev.txt
 
       - name: Coleta de testes da raiz (pytest.ini nao deve quebrar)
-        run: python -m pytest --collect-only -q
+        # exit 5 = "no tests collected" (esperado: gates/*.py nao tem
+        # def test_* hoje) - condicao valida, nao falha de config.
+        # exit 4 = erro de config real (ex.: o BOM que quebrava isso antes
+        # do R2) - esse sim deve reprovar o job.
+        run: |
+          python -m pytest --collect-only -q; codigo=$?
+          if [ "$codigo" -ne 0 ] && [ "$codigo" -ne 5 ]; then
+            echo "pytest.ini com erro real de configuracao (exit $codigo)"
+            exit "$codigo"
+          fi
+          echo "OK (exit $codigo - config valida)"
 
       - name: Rodar os 4 gates deterministicos (ecossistema.py audit)
         run: python ecossistema.py audit
