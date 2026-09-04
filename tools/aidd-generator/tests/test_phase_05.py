@@ -8,6 +8,7 @@ _git_init_commit, _gerar_index, executar) e main(). Fase 100% determinística.
 """
 
 import json
+import os
 import sqlite3
 import subprocess
 import sys
@@ -292,6 +293,14 @@ def test_criar_arquivos_configuracao_sem_env_e_honesto(criador_05, tmp_path, mon
     for var in ['AIDD_HARNESS_NAME', 'AIDD_LLM_MODEL', 'LLM_MODEL', 'CLAUDECODE',
                 'CLAUDE_MODEL', 'ANTHROPIC_MODEL']:
         monkeypatch.delenv(var, raising=False)
+    # detectar_harness_nome() trata QUALQUER variavel *_SESSION/*_HARNESS do
+    # ambiente real como sinal de harness ativo (deteccao agnostica dinamica).
+    # Sem limpar isso, o teste falha quando rodado de dentro de um harness
+    # real que seta variaveis desse formato (ex.: CLAUDE_CODE_CHILD_SESSION,
+    # setada pelo proprio Claude Code que executa este pytest).
+    for var in list(os.environ):
+        if var.endswith('_SESSION') or var.endswith('_HARNESS'):
+            monkeypatch.delenv(var, raising=False)
 
     criador = criador_05.CriadorProjetoFase5(tmp_path / 'projeto')
     criador._criar_estrutura()

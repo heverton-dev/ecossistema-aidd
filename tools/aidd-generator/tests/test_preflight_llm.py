@@ -36,6 +36,13 @@ def test_sem_llm_model_falha(monkeypatch):
     for key in ('GROQ_API_KEY', 'NVIDIA_NIM_API_KEY', 'OPENROUTER_API_KEY',
                 'TOGETHERAI_API_KEY', 'OPENAI_API_KEY'):
         monkeypatch.delenv(key, raising=False)
+    # Sinais de Protocolo Delegado que detectar_via_ambiente() reconhece — sem
+    # limpar isso, o teste falha quando rodado de dentro de um harness real
+    # (ex.: CLAUDECODE=1 setado pelo proprio Claude Code que executa o pytest).
+    for key in ('CLAUDECODE', 'MIMOCODE', 'MIMO_SESSION', 'MIMO_WORKSPACE',
+                'OPENCODE', 'OPENCODE_SESSION', 'ANTIGRAVITY_CLI', 'AGY_SESSION',
+                'ORCA_WORKSPACE', 'AIDD_HARNESS_NAME'):
+        monkeypatch.delenv(key, raising=False)
 
     ok, msg = preflight_llm.verificar_llm_pronto()
 
