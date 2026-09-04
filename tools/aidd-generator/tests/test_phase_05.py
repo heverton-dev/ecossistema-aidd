@@ -156,7 +156,9 @@ def test_executar_todos_gates(criador_05, tmp_path, monkeypatch):
     git_init_commit(tmp_path)
 
     gates, todos_passaram = criador_05.ValidadorGatesPhase5.executar_todos(tmp_path)
-    assert len(gates) == 5
+    # E1-E5 + S1 (o modulo sempre documentou 6 gates; E5 nunca existira ate
+    # a correcao de sincronismo multi-harness — ver test_gate_e5_*)
+    assert len(gates) == 6
     assert todos_passaram is True
 
 
@@ -178,8 +180,9 @@ def test_criar_symlink_ou_copia_sucesso(criador_05, tmp_path, monkeypatch, capsy
         chamadas.append((self, target))
     monkeypatch.setattr(Path, 'symlink_to', symlink_ok)
 
-    criador_05.CriadorProjetoFase5._criar_symlink_ou_copia(link, alvo)
+    foi_symlink_real = criador_05.CriadorProjetoFase5._criar_symlink_ou_copia(link, alvo)
 
+    assert foi_symlink_real is True
     assert len(chamadas) == 1
     assert chamadas[0][0] == link
     assert chamadas[0][1] == alvo.resolve()
@@ -198,11 +201,83 @@ def test_criar_symlink_ou_copia_fallback_honesto(criador_05, tmp_path, monkeypat
         raise OSError("sem privilegio")
     monkeypatch.setattr(Path, 'symlink_to', symlink_falha)
 
-    criador_05.CriadorProjetoFase5._criar_symlink_ou_copia(link, alvo)
+    foi_symlink_real = criador_05.CriadorProjetoFase5._criar_symlink_ou_copia(link, alvo)
 
+    assert foi_symlink_real is False
     assert not link.is_symlink()
     assert link.read_text(encoding='utf-8') == 'conteudo real'
     assert 'Não foi possível criar symlink' in capsys.readouterr().out
+
+
+def test_sync_manifest_e_gate_criados_apenas_com_fallback(criador_05, tmp_path, monkeypatch):
+    """Se algum harness cair para cópia, o projeto deve ganhar
+    .aidd/sync_manifest.json + scripts/gates/G_SYNC_HARNESS.py — a
+    infraestrutura que permite detectar drift depois da geração (R4:
+    symlink-ou-cópia sozinho só é honesto no instante da criação)."""
+    def symlink_falha(self, *a, **kw):
+        raise OSError("sem privilegio")
+    monkeypatch.setattr(Path, 'symlink_to', symlink_falha)
+
+    criador = criador_05.CriadorProjetoFase5(tmp_path / 'projeto')
+    criador._criar_estrutura()
+    criador._criar_arquivos_configuracao('Ideia de teste')
+
+    manifest_path = tmp_path / 'projeto' / '.aidd' / 'sync_manifest.json'
+    gate_path = tmp_path / 'projeto' / 'scripts' / 'gates' / 'G_SYNC_HARNESS.py'
+    assert manifest_path.exists()
+    assert gate_path.exists()
+
+    manifest = json.loads(manifest_path.read_text(encoding='utf-8'))
+    assert manifest['fonte'] == 'AGENTS.md'
+    assert '.claude/CLAUDE.md' in manifest['copias_fallback']
+    assert len(manifest['copias_fallback']) == 5  # claude, agent, codex, gemini, mimocode
+
+
+def test_sync_manifest_nao_criado_quando_symlink_real(criador_05, tmp_path, monkeypatch):
+    """Ambiente com privilégio de symlink: nada pode divergir, então o
+    manifesto/gate de drift não precisam existir."""
+    def symlink_ok(self, target):
+        pass
+    monkeypatch.setattr(Path, 'symlink_to', symlink_ok)
+
+    criador = criador_05.CriadorProjetoFase5(tmp_path / 'projeto')
+    criador._criar_estrutura()
+    criador._criar_arquivos_configuracao('Ideia de teste')
+
+    assert not (tmp_path / 'projeto' / '.aidd' / 'sync_manifest.json').exists()
+    assert not (tmp_path / 'projeto' / 'scripts' / 'gates' / 'G_SYNC_HARNESS.py').exists()
+
+
+def test_gate_sync_harness_detecta_drift(criador_05, tmp_path, monkeypatch):
+    """O gate deixado dentro do projeto (G_SYNC_HARNESS.py) deve detectar,
+    de fato, quando uma cópia de fallback fica desatualizada em relação a
+    AGENTS.md — o cenário real que motivou R4."""
+    def symlink_falha(self, *a, **kw):
+        raise OSError("sem privilegio")
+    monkeypatch.setattr(Path, 'symlink_to', symlink_falha)
+
+    projeto = tmp_path / 'projeto'
+    criador = criador_05.CriadorProjetoFase5(projeto)
+    criador._criar_estrutura()
+    criador._criar_arquivos_configuracao('Ideia de teste')
+
+    gate_path = projeto / 'scripts' / 'gates' / 'G_SYNC_HARNESS.py'
+
+    # Recém-gerado: tudo sincronizado, gate passa.
+    ok_antes = subprocess.run([sys.executable, str(gate_path)], cwd=str(projeto),
+                               capture_output=True, text=True)
+    assert ok_antes.returncode == 0
+
+    # Simula o cenário real de R4: usuário edita AGENTS.md depois da geração,
+    # ninguém re-sincroniza as cópias manualmente.
+    (projeto / 'AGENTS.md').write_text('conteudo editado depois da geracao',
+                                        encoding='utf-8')
+
+    resultado = subprocess.run([sys.executable, str(gate_path)], cwd=str(projeto),
+                                capture_output=True, text=True)
+    assert resultado.returncode == 1
+    assert '.claude/CLAUDE.md' in resultado.stdout
+    assert 'desatualizada' in resultado.stdout.lower()
 
 
 def test_criar_symlinks_globais_wiring_fase4(criador_05, tmp_path, monkeypatch):

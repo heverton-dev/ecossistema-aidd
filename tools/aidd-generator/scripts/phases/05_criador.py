@@ -90,6 +90,11 @@ class ValidadorGatesPhase5:
         gate_e4 = ValidadorGatesPhase5._gate_e4_permissoes(pasta_projeto)
         gates_resultado.append(gate_e4)
 
+        # Gate E5: Sincronismo multi-harness (symlink real ou cópia honesta,
+        # sem drift em relação a AGENTS.md no instante da geração)
+        gate_e5 = ValidadorGatesPhase5._gate_e5_sincronizacao_harness(pasta_projeto)
+        gates_resultado.append(gate_e5)
+
         # Gate S1: AUDITORIA DE SEGURANÇA
         gate_s1 = ValidadorGatesPhase5._gate_s1_auditoria_seguranca(pasta_projeto)
         gates_resultado.append(gate_s1)
@@ -206,6 +211,45 @@ class ValidadorGatesPhase5:
 
         return Gate('E4_permissoes',
                    'Validar permissões de scripts',
+                   passou,
+                   detalhes)
+
+    @staticmethod
+    def _gate_e5_sincronizacao_harness(pasta: Path) -> Gate:
+        """E5: symlinks multi-harness reais, ou cópias de fallback honestas
+        e sincronizadas com AGENTS.md no instante da geração.
+
+        Reaproveita scripts/gates/G_SYNC_HARNESS.py (o mesmo gate deixado
+        dentro do projeto para o dono re-executar depois) em vez de duplicar
+        a lógica de comparação aqui — uma só fonte de verdade para o check.
+        """
+        gate_path = pasta / 'scripts/gates/G_SYNC_HARNESS.py'
+        if not gate_path.exists():
+            # Nenhuma cópia de fallback foi necessária (todos os harness
+            # conseguiram symlink real) — nada a sincronizar, gate trivialmente ok.
+            return Gate('E5_sincronizacao_harness',
+                       'Validar sincronismo multi-harness (symlink/cópia)',
+                       True,
+                       'Todos os harness usaram symlink real — nada pode divergir')
+
+        try:
+            resultado = subprocess.run(
+                [sys.executable, str(gate_path)],
+                cwd=str(pasta),
+                capture_output=True,
+                text=True,
+                encoding='utf-8',
+                errors='replace',
+                timeout=10
+            )
+            passou = resultado.returncode == 0
+            detalhes = resultado.stdout.strip().splitlines()[-1] if resultado.stdout.strip() else resultado.stderr.strip()
+        except Exception as e:
+            passou = False
+            detalhes = f"Erro ao executar G_SYNC_HARNESS.py: {e}"
+
+        return Gate('E5_sincronizacao_harness',
+                   'Validar sincronismo multi-harness (symlink/cópia)',
                    passou,
                    detalhes)
 
@@ -358,12 +402,17 @@ class CriadorProjetoFase5:
         (self.pasta_projeto / 'scripts/schemas').mkdir(parents=True, exist_ok=True)
 
     @staticmethod
-    def _criar_symlink_ou_copia(link_path: Path, alvo: Path):
+    def _criar_symlink_ou_copia(link_path: Path, alvo: Path) -> bool:
         """Cria link_path como symlink real apontando para alvo.
 
         Sem fallback silencioso: se o symlink não puder ser criado
         (ex: Windows sem Modo Desenvolvedor/privilégio), cria uma cópia
         do conteúdo e AVISA explicitamente — nunca finge que é symlink.
+
+        Retorna True se foi symlink real, False se foi cópia de fallback
+        (usado pelo chamador para registrar no manifesto de sincronismo —
+        ver _registrar_sync_manifest — já que uma cópia pode divergir de
+        `alvo` no futuro se `alvo` for editado e ninguém re-sincronizar).
         """
         link_path.parent.mkdir(parents=True, exist_ok=True)
         if link_path.exists() or link_path.is_symlink():
@@ -371,9 +420,106 @@ class CriadorProjetoFase5:
 
         try:
             link_path.symlink_to(alvo.resolve())
+            return True
         except OSError as e:
             print(f"   ⚠️  Não foi possível criar symlink {link_path} → {alvo} ({e}). Copiando conteúdo em vez de symlink.")
             link_path.write_text(alvo.read_text(encoding='utf-8'), encoding='utf-8')
+            return False
+
+    def _registrar_sync_manifest(self, fonte: Path, copias_relativas: List[str]):
+        """Grava .aidd/sync_manifest.json e scripts/gates/G_SYNC_HARNESS.py
+        no PRÓPRIO projeto gerado — sem depender do aidd-generator nem de
+        nenhuma outra ferramenta do ecossistema (auto-contido).
+
+        O gate é standalone e re-executável a qualquer momento pelo dono do
+        projeto (`python scripts/gates/G_SYNC_HARNESS.py`) para detectar se
+        alguma cópia de fallback ficou desatualizada em relação a AGENTS.md
+        depois da geração — o problema real que symlink-ou-cópia sozinho não
+        resolve (cópia só é honesta no instante em que foi feita).
+        """
+        manifest = {
+            'fonte': fonte.name,
+            'gerado_em': datetime.now(timezone.utc).isoformat(),
+            'copias_fallback': copias_relativas,
+            'motivo': 'SO negou permissao de symlink no momento da geracao '
+                      '(ex.: Windows sem Modo Desenvolvedor/privilegio).',
+        }
+        (self.pasta_projeto / '.aidd/sync_manifest.json').write_text(
+            json.dumps(manifest, indent=2, ensure_ascii=False),
+            encoding='utf-8'
+        )
+
+        gate_script = '''#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+"""
+GATE: G_SYNC_HARNESS — Deteccao de drift entre AGENTS.md e copias de
+fallback (.claude/CLAUDE.md, .agent/AGENT.md, etc.) criadas quando o SO
+negou permissao de symlink no momento da geracao do projeto.
+
+Por que existe: quando symlink real nao e possivel, o gerador cria uma
+COPIA do conteudo de AGENTS.md. A copia so e honesta no instante em que
+foi feita — se AGENTS.md for editado depois e ninguem re-sincronizar as
+copias manualmente, elas ficam obsoletas em silencio. Este gate roda a
+qualquer momento e avisa exatamente isso, sem inventar numero nem esconder
+o problema (Zero Alucinacao / Transparencia Total).
+
+Uso: python scripts/gates/G_SYNC_HARNESS.py
+Saida: exit 0 (sincronizado ou nada a checar) / exit 1 (drift detectado)
+"""
+
+import json
+import sys
+from pathlib import Path
+
+RAIZ = Path(__file__).resolve().parent.parent.parent
+MANIFEST_PATH = RAIZ / '.aidd' / 'sync_manifest.json'
+
+
+def checar_drift():
+    if not MANIFEST_PATH.exists():
+        print("[OK] Nenhum manifesto de sincronismo — todas as copias de harness "
+              "sao symlinks reais (nada pode divergir).")
+        return 0
+
+    manifest = json.loads(MANIFEST_PATH.read_text(encoding='utf-8'))
+    fonte_path = RAIZ / manifest['fonte']
+    if not fonte_path.exists():
+        print(f"[FALHA] Fonte '{manifest['fonte']}' nao existe mais.")
+        return 1
+
+    fonte_conteudo = fonte_path.read_text(encoding='utf-8')
+    divergentes = []
+
+    for relativo in manifest.get('copias_fallback', []):
+        copia_path = RAIZ / relativo
+        if copia_path.is_symlink():
+            continue  # symlink real nao pode divergir por definicao
+        if not copia_path.exists():
+            divergentes.append((relativo, 'arquivo nao existe mais'))
+            continue
+        if copia_path.read_text(encoding='utf-8') != fonte_conteudo:
+            divergentes.append((relativo, f'conteudo diferente de {manifest["fonte"]}'))
+
+    if divergentes:
+        print(f"[FALHA] {len(divergentes)} copia(s) desatualizada(s) em relacao a "
+              f"{manifest['fonte']}:")
+        for relativo, motivo in divergentes:
+            print(f"  - {relativo}: {motivo}")
+        print(f"\\nCorrija copiando o conteudo atual de {manifest['fonte']} para "
+              f"cada arquivo listado acima.")
+        return 1
+
+    print(f"[OK] {len(manifest.get('copias_fallback', []))} copia(s) sincronizada(s) "
+          f"com {manifest['fonte']}.")
+    return 0
+
+
+if __name__ == '__main__':
+    sys.exit(checar_drift())
+'''
+        gate_path = self.pasta_projeto / 'scripts/gates/G_SYNC_HARNESS.py'
+        gate_path.parent.mkdir(parents=True, exist_ok=True)
+        gate_path.write_text(gate_script, encoding='utf-8')
 
     @staticmethod
     def _criar_symlink_dir_ou_copia(link_path: Path, alvo: Path) -> bool:
@@ -499,11 +645,21 @@ Este projeto foi gerado pela skill aidd-project-generator v2.1
             ('.gemini', 'GEMINI.md'),
             ('.mimocode', 'MIMO.md'),
         ]
+        agents_md_path = self.pasta_projeto / 'AGENTS.md'
+        copias_fallback = []
         for h_dir, h_file in harnesses_alvos:
-            self._criar_symlink_ou_copia(
-                self.pasta_projeto / h_dir / h_file,
-                self.pasta_projeto / 'AGENTS.md'
-            )
+            link_path = self.pasta_projeto / h_dir / h_file
+            foi_symlink_real = self._criar_symlink_ou_copia(link_path, agents_md_path)
+            if not foi_symlink_real:
+                copias_fallback.append(link_path.relative_to(self.pasta_projeto).as_posix())
+
+        # Manifesto de sincronismo + gate de drift (só materializado se houve
+        # ao menos uma cópia de fallback — symlink real não pode divergir).
+        # Sem isso, uma cópia fica honesta só no instante da criação: se
+        # AGENTS.md for editado depois e ninguém re-sincronizar manualmente,
+        # nada no projeto avisa que .claude/CLAUDE.md (etc.) ficou obsoleto.
+        if copias_fallback:
+            self._registrar_sync_manifest(agents_md_path, copias_fallback)
 
         # config.json
         config = {
