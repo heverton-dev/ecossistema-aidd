@@ -325,7 +325,26 @@ def solicitar_llm_modo_headless(
         print("✗ litellm não instalado. Use: python -m pip install litellm")
         return None
 
-    modelo = modelo or os.environ.get('LLM_MODEL', 'claude-opus-5')
+    if not modelo or modelo == 'desconhecido':
+        modelo = os.environ.get('LLM_MODEL')
+
+    if not modelo or modelo == 'desconhecido':
+        try:
+            from .utils_modelo import detectar_modelo_harness
+            h_model = detectar_modelo_harness()
+            if h_model and h_model != 'desconhecido':
+                modelo = h_model
+        except Exception:
+            pass
+
+    if not modelo or modelo == 'desconhecido':
+        raise LLMNaoConfiguradoException(
+            mensagem_usuario=(
+                "Nenhum modelo LLM configurado para o Modo Headless. "
+                "Configure LLM_MODEL e a chave do provedor no arquivo .env (veja .env.example)."
+            ),
+            detalhes_tecnicos="Modelo não especificado ou 'desconhecido' no modo headless."
+        )
 
     print(f"✓ Modo Headless: chamando {modelo} diretamente")
     print(f"  Contexto: {contexto}")
@@ -429,7 +448,7 @@ def detectar_modo_execucao() -> str:
     3. Se variáveis de ADE não detectadas, headless (mas relata aviso)
     """
 
-    # Força explícita via argumento
+    # 1. Força explícita via argumento
     if '--modo' in sys.argv:
         idx = sys.argv.index('--modo')
         if idx + 1 < len(sys.argv):
@@ -437,23 +456,52 @@ def detectar_modo_execucao() -> str:
             if modo in ['delegado', 'headless']:
                 return modo
 
-    # Detectar ADE ativa
-    ade_detectado = False
+    # 2. Força explícita via variável de ambiente
+    modo_env = os.environ.get('AIDD_MODO')
+    if modo_env in ['delegado', 'headless']:
+        return modo_env
+
+    # 3. Detectar ADE / Harness ativo na sessão
+    ade_detectados = []
 
     # Claude Code
     if os.environ.get('CLAUDECODE') == '1':
-        print("🔍 Detectado: Claude Code (CLAUDECODE=1)")
-        ade_detectado = True
+        ade_detectados.append('Claude Code')
 
-    # Outros harnesses (extensível)
-    # Adicione conforme suporte for adicionado para Codex, Gemini CLI, etc.
+    # OpenCode
+    if os.environ.get('OPENCODE') or os.environ.get('OPENCODE_SESSION') or os.environ.get('OPENCODE_CONFIG_DIR'):
+        ade_detectados.append('OpenCode')
 
-    if ade_detectado:
+    # Antigravity
+    if os.environ.get('ANTIGRAVITY_CLI') or os.environ.get('AGY_SESSION') or os.environ.get('ANTIGRAVITY_AGENT'):
+        ade_detectados.append('Antigravity')
+
+    # MimoCode
+    if os.environ.get('MIMOCODE') or os.environ.get('MIMO_SESSION') or os.environ.get('MIMO_WORKSPACE'):
+        ade_detectados.append('MimoCode')
+
+    # Gemini CLI
+    if os.environ.get('GEMINI_SESSION') or os.environ.get('GEMINI_CLI'):
+        ade_detectados.append('Gemini CLI')
+
+    # Checagem complementar de ambiente
+    try:
+        from .utils_fleet_discovery import detectar_via_ambiente
+        outros = detectar_via_ambiente()
+        for o in outros:
+            nome_cap = o.capitalize()
+            if nome_cap not in ade_detectados:
+                ade_detectados.append(nome_cap)
+    except Exception:
+        pass
+
+    if ade_detectados:
+        print(f"🔍 Detectado harness ativo na sessão: {', '.join(ade_detectados)}")
         return 'delegado'
-    else:
-        print("⚠️  Nenhuma ADE detectada — usando Modo Headless")
-        print("   (Configure LLM_MODEL e credencial para usar este modo)")
-        return 'headless'
+
+    print("⚠️  Nenhuma ADE detectada via sessão ativa — usando Modo Headless")
+    print("   (Configure LLM_MODEL e credencial para usar este modo)")
+    return 'headless'
 
 
 # =============================================================================

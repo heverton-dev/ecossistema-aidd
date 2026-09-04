@@ -103,6 +103,25 @@ def extrair_classes_publicas(codigo_fonte: str) -> List[Dict[str, Any]]:
     return classes
 
 
+def extrair_variaveis_publicas(codigo_fonte: str) -> List[str]:
+    """Extrai constantes e variáveis públicas de nível de módulo via AST."""
+    try:
+        arvore = ast.parse(codigo_fonte)
+    except SyntaxError:
+        return []
+
+    nomes = []
+    for node in arvore.body:
+        if isinstance(node, ast.Assign):
+            for target in node.targets:
+                if isinstance(target, ast.Name) and not target.id.startswith('_'):
+                    nomes.append(target.id)
+        elif isinstance(node, ast.AnnAssign):
+            if isinstance(node.target, ast.Name) and not node.target.id.startswith('_'):
+                nomes.append(node.target.id)
+    return nomes
+
+
 def extrair_schema_json(caminho: Path) -> Optional[Dict]:
     """Carrega e valida um arquivo JSON de schema."""
     if not caminho.exists():
@@ -182,12 +201,14 @@ def validar_contratos_entre_modulos(
                 codigo = f.read()
             funcoes = extrair_funcoes_publicas(codigo)
             classes = extrair_classes_publicas(codigo)
+            variaveis = extrair_variaveis_publicas(codigo)
             exportacoes[nome] = {
                 'funcoes': {f['nome']: f for f in funcoes},
                 'classes': {c['nome']: c for c in classes},
+                'variaveis': set(variaveis),
             }
         except (SyntaxError, OSError):
-            exportacoes[nome] = {'funcoes': {}, 'classes': {}}
+            exportacoes[nome] = {'funcoes': {}, 'classes': {}, 'variaveis': set()}
 
     # Verificar imports cruzados — se A importa de B, as funções chamadas devem existir em B
     for nome, caminho in modulos:
@@ -212,6 +233,7 @@ def validar_contratos_entre_modulos(
                         existe = (
                             nome_importado in exp['funcoes']
                             or nome_importado in exp['classes']
+                            or nome_importado in exp['variaveis']
                         )
                         resultados.append(ResultadoValidacao(
                             f'I2_contrato_{nome}_imports_{modulo_importado}.{nome_importado}',
