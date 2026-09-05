@@ -1,0 +1,512 @@
+<title>Linha de Montagem AIDD</title>
+<style>
+  :root{
+    --chalk: #EDE9DD;
+    --chalk-2: #E2DDCC;
+    --ink: #2A271F;
+    --ink-dim: #5C5748;
+    --rule: #C9C2AC;
+    --copper: #B4652A;
+    --copper-dim: #8f5323;
+    --teal: #3C645D;
+    --teal-bg: #dfe6e2;
+    --card: #F7F4EC;
+    --shadow: 0 1px 0 rgba(42,39,31,0.06);
+    --mech-dot: #6b6553;
+    --cog-dot: var(--copper);
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --chalk: #17181A;
+      --chalk-2: #1E2023;
+      --ink: #E7E3D8;
+      --ink-dim: #A29C8C;
+      --rule: #3A3B3C;
+      --copper: #E08A45;
+      --copper-dim: #f0a86b;
+      --teal: #7DA79D;
+      --teal-bg: #202b29;
+      --card: #1C1E21;
+      --shadow: 0 1px 0 rgba(0,0,0,0.3);
+      --mech-dot: #83806f;
+      --cog-dot: var(--copper);
+    }
+  }
+  :root[data-theme="dark"]{
+    --chalk: #17181A;
+    --chalk-2: #1E2023;
+    --ink: #E7E3D8;
+    --ink-dim: #A29C8C;
+    --rule: #3A3B3C;
+    --copper: #E08A45;
+    --copper-dim: #f0a86b;
+    --teal: #7DA79D;
+    --teal-bg: #202b29;
+    --card: #1C1E21;
+    --shadow: 0 1px 0 rgba(0,0,0,0.3);
+    --mech-dot: #83806f;
+    --cog-dot: var(--copper);
+  }
+
+  *{box-sizing:border-box;}
+  @media (prefers-reduced-motion: reduce){ *{animation:none !important; transition:none !important;} }
+
+  /* scrollbars: 4px, cor copper (acento predominante do design system) */
+  *{
+    scrollbar-width:thin;
+    scrollbar-color:var(--copper) transparent;
+  }
+  *::-webkit-scrollbar{ width:4px; height:4px; }
+  *::-webkit-scrollbar-track{ background:transparent; }
+  *::-webkit-scrollbar-thumb{ background-color:var(--copper); border-radius:2px; }
+  *::-webkit-scrollbar-thumb:hover{ background-color:var(--copper-dim); }
+  *::-webkit-scrollbar-corner{ background:transparent; }
+
+  body{
+    background:var(--chalk);
+    color:var(--ink);
+    font-family: Charter, "Iowan Old Style", "Georgia", "Times New Roman", serif;
+    font-size:16px;
+    line-height:1.6;
+    margin:0;
+    padding:0 0 6rem;
+  }
+
+  .display{
+    font-family: Futura, "Century Gothic", "Avenir Next", "URW Gothic", sans-serif;
+    letter-spacing:0.01em;
+  }
+  .mono{
+    font-family: ui-monospace, "SFMono-Regular", "Cascadia Mono", "Consolas", "Liberation Mono", monospace;
+  }
+
+  /* ---------- masthead ---------- */
+  .masthead{
+    max-width:920px;
+    margin:0 auto;
+    padding:3.2rem 1.5rem 2.2rem;
+    border-bottom:1px solid var(--rule);
+  }
+  .eyebrow{
+    font-family: Futura, "Century Gothic", sans-serif;
+    font-size:0.72rem;
+    letter-spacing:0.18em;
+    text-transform:uppercase;
+    color:var(--copper);
+    margin:0 0 0.9rem;
+  }
+  h1{
+    font-family: Futura, "Century Gothic", "Avenir Next", sans-serif;
+    font-weight:600;
+    font-size:clamp(2.1rem, 5vw, 3rem);
+    line-height:1.05;
+    letter-spacing:-0.01em;
+    text-wrap:balance;
+    margin:0 0 0.9rem;
+  }
+  .masthead p{
+    max-width:60ch;
+    color:var(--ink-dim);
+    font-size:1.05rem;
+    margin:0.4rem 0 0;
+  }
+  .masthead .meta{
+    display:flex;
+    gap:1.5rem;
+    margin-top:1.6rem;
+    font-family:Futura,"Century Gothic",sans-serif;
+    font-size:0.72rem;
+    letter-spacing:0.1em;
+    text-transform:uppercase;
+    color:var(--ink-dim);
+  }
+  .masthead .meta b{ color:var(--ink); font-weight:600; }
+
+  /* ---------- overview strip ---------- */
+  .overview{
+    max-width:920px;
+    margin:2rem auto 0;
+    padding:0 1.5rem;
+  }
+  .overview-grid{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:1px;
+    background:var(--rule);
+    border:1px solid var(--rule);
+  }
+  .overview-cell{
+    background:var(--card);
+    padding:1rem 1.1rem 1.2rem;
+  }
+  .overview-cell .cmd{
+    font-size:0.78rem;
+    color:var(--teal);
+    display:block;
+    margin-bottom:0.5rem;
+  }
+  .overview-cell .name{
+    font-family:Futura,"Century Gothic",sans-serif;
+    font-weight:600;
+    font-size:0.95rem;
+    margin:0 0 0.4rem;
+  }
+  .overview-cell .role{
+    font-size:0.85rem;
+    color:var(--ink-dim);
+    line-height:1.45;
+  }
+  @media (max-width:760px){ .overview-grid{ grid-template-columns:1fr 1fr; } }
+  @media (max-width:460px){ .overview-grid{ grid-template-columns:1fr; } }
+
+  /* ---------- legend ---------- */
+  .legend{
+    max-width:920px;
+    margin:1.6rem auto 0;
+    padding:0 1.5rem;
+    display:flex;
+    gap:1.8rem;
+    flex-wrap:wrap;
+    font-size:0.78rem;
+    color:var(--ink-dim);
+  }
+  .legend span{ display:inline-flex; align-items:center; gap:0.45rem; }
+  .swatch{ width:0.6rem; height:0.6rem; flex:none; }
+  .swatch.mech{ background:var(--mech-dot); border-radius:1px; }
+  .swatch.cog{ background:var(--cog-dot); border-radius:50%; }
+
+  /* ---------- tool sections ---------- */
+  section.tool{
+    max-width:920px;
+    margin:3.2rem auto 0;
+    padding:0 1.5rem;
+  }
+  .tool-head{
+    display:flex;
+    align-items:baseline;
+    justify-content:space-between;
+    gap:1rem;
+    border-top:2px solid var(--ink);
+    padding-top:0.9rem;
+    flex-wrap:wrap;
+  }
+  .tool-head h2{
+    font-family:Futura,"Century Gothic","Avenir Next",sans-serif;
+    font-weight:600;
+    font-size:1.5rem;
+    margin:0;
+  }
+  .tool-head .cmd-tag{
+    font-size:0.82rem;
+    color:var(--teal);
+    background:var(--teal-bg);
+    padding:0.25rem 0.6rem;
+    border-radius:3px;
+    white-space:nowrap;
+  }
+  .tool-tagline{
+    color:var(--ink-dim);
+    max-width:62ch;
+    margin:0.6rem 0 1.6rem;
+  }
+
+  /* station track */
+  .track-wrap{ overflow-x:auto; padding-bottom:0.6rem; margin-bottom:0.3rem; }
+  .track{
+    display:flex;
+    align-items:stretch;
+    gap:0;
+    min-width:max-content;
+    position:relative;
+  }
+  .node{
+    display:flex;
+    flex-direction:column;
+    gap:0.5rem;
+    padding:0 1.4rem 0 0;
+    position:relative;
+    min-width:150px;
+  }
+  .node:not(:last-child)::after{
+    content:"";
+    position:absolute;
+    top:0.55rem;
+    left:calc(100% - 1.3rem);
+    width:1.1rem;
+    height:1px;
+    background:var(--rule);
+  }
+  .node .num{
+    font-family:Futura,"Century Gothic",sans-serif;
+    font-size:0.72rem;
+    font-weight:600;
+    display:inline-flex;
+    align-items:center;
+    gap:0.4rem;
+    color:var(--ink-dim);
+  }
+  .node .num .dot{ width:0.55rem; height:0.55rem; flex:none; }
+  .node.mech .num .dot{ background:var(--mech-dot); border-radius:1px; }
+  .node.cog .num .dot{ background:var(--cog-dot); border-radius:50%; }
+  .node .label{
+    font-family:Futura,"Century Gothic",sans-serif;
+    font-size:0.88rem;
+    font-weight:600;
+    line-height:1.25;
+  }
+  .node .detail{
+    font-size:0.8rem;
+    color:var(--ink-dim);
+    line-height:1.45;
+    max-width:20ch;
+  }
+
+  .tool-body p{ margin:0 0 1rem; }
+  .tool-body p:last-child{ margin-bottom:0; }
+  .tool-body{ margin-top:1.4rem; }
+
+  .order-note{
+    font-size:0.85rem;
+    color:var(--ink-dim);
+    border-left:2px solid var(--copper);
+    padding-left:0.9rem;
+    margin:1rem 0 1.6rem;
+  }
+  .order-note b{ color:var(--ink); font-weight:600; }
+
+  /* gates row */
+  .gates-row{
+    display:flex;
+    flex-wrap:wrap;
+    gap:0.4rem;
+    margin:0.4rem 0 1.6rem;
+  }
+  .gate{
+    font-size:0.72rem;
+    padding:0.28rem 0.55rem;
+    border-radius:2px;
+    background:
+      repeating-linear-gradient(135deg, transparent 0 6px, var(--rule) 6px 7px);
+    border:1px solid var(--rule);
+    color:var(--ink-dim);
+  }
+  .gate.on{
+    color:var(--copper-dim);
+    border-color:var(--copper);
+    background: repeating-linear-gradient(135deg, transparent 0 6px, color-mix(in srgb, var(--copper) 22%, transparent) 6px 7px);
+  }
+
+  /* callout */
+  .callout{
+    margin:1.6rem 0 0;
+    padding:1rem 1.2rem;
+    background:var(--card);
+    border:1px solid var(--rule);
+    border-left:3px solid var(--copper);
+    font-size:0.9rem;
+    color:var(--ink-dim);
+  }
+  .callout b{ color:var(--ink); font-weight:600; }
+  .callout .mono{ color:var(--teal); }
+
+  /* footer */
+  footer{
+    max-width:920px;
+    margin:3.5rem auto 0;
+    padding:1.6rem 1.5rem 0;
+    border-top:1px solid var(--rule);
+    font-size:0.78rem;
+    color:var(--ink-dim);
+  }
+  footer .mono{ display:block; margin-top:0.5rem; line-height:1.7; }
+</style>
+
+<div class="masthead">
+  <p class="eyebrow">Ecossistema AIDD &middot; Nota Técnica</p>
+  <h1 class="display">Linha de Montagem AIDD</h1>
+  <p>Como as quatro ferramentas do ecossistema — Forge, Generator, Master e Enterprise — dividem seu trabalho em estações determinísticas (Zero Token) e estações cognitivas (subagentes efêmeros), da detecção de ambiente até os quality gates finais.</p>
+  <div class="meta">
+    <span>Fonte: <b>AGENTS.md</b> + docs/01-fases-de-execucao.md por ferramenta</span>
+    <span>4 ferramentas mapeadas</span>
+  </div>
+</div>
+
+<div class="overview">
+  <div class="overview-grid">
+    <div class="overview-cell">
+      <span class="cmd mono">/forge [caminho]</span>
+      <p class="name display">Forge</p>
+      <p class="role">Bootstrap: micro-ambientes, skills e gates instalados no repositório.</p>
+    </div>
+    <div class="overview-cell">
+      <span class="cmd mono">/generate &lt;ideia&gt;</span>
+      <p class="name display">Generator</p>
+      <p class="role">Fábrica autônoma: ideia em linguagem natural &rarr; software completo em 8 fases.</p>
+    </div>
+    <div class="overview-cell">
+      <span class="cmd mono">/master &lt;modulo&gt;</span>
+      <p class="name display">Master</p>
+      <p class="role">Fatias verticais de negócio com Clean Architecture e SQLite WAL.</p>
+    </div>
+    <div class="overview-cell">
+      <span class="cmd mono">/enterprise &lt;tipo&gt; &lt;nome&gt;</span>
+      <p class="name display">Enterprise</p>
+      <p class="role">Núcleo do Master + injeção certificada de componentes (SHA-256, Zero-Trust).</p>
+    </div>
+  </div>
+</div>
+
+<div class="legend">
+  <span><i class="swatch mech"></i> estação mecânica &mdash; Python puro, zero token</span>
+  <span><i class="swatch cog"></i> estação cognitiva &mdash; subagente efêmero de IA</span>
+</div>
+
+<!-- ================= FORGE ================= -->
+<section class="tool" id="forge">
+  <div class="tool-head">
+    <h2 class="display">01 &middot; AIDD Forge</h2>
+    <span class="cmd-tag mono">/forge [caminho]</span>
+  </div>
+  <p class="tool-tagline">Não escreve código de negócio &mdash; blinda o repositório. Seis estações, todas mecânicas, executadas em menos de um segundo.</p>
+
+  <div class="track-wrap">
+    <div class="track">
+      <div class="node mech"><span class="num"><i class="dot"></i>Est. 0</span><span class="label">Detecção Silenciosa</span><span class="detail">detector.py &mdash; varre o PATH por Claude Code, Codex, Antigravity, Cursor, Ollama, ORCA</span></div>
+      <div class="node mech"><span class="num"><i class="dot"></i>Est. 1</span><span class="label">Ponte de Roteamento</span><span class="detail">orca_bridge.py &mdash; inventário + fallback em cascata se só há 1 agente</span></div>
+      <div class="node mech"><span class="num"><i class="dot"></i>Est. 2</span><span class="label">Cerco de Fases</span><span class="detail">phase_fencer.py &mdash; 5 micro-ambientes isolados, cada um com AGENTS.md próprio</span></div>
+      <div class="node mech"><span class="num"><i class="dot"></i>Est. 3</span><span class="label">Injeção de 6 Skills</span><span class="detail">caveman-ultra, orca-orchestration, impeccable-ui, open-code-review, post-mortem, cybersecurity-audit</span></div>
+      <div class="node mech"><span class="num"><i class="dot"></i>Est. 4</span><span class="label">7 Quality Gates</span><span class="detail">instala hook pre-commit com veredito binário exit 0 / exit 1</span></div>
+      <div class="node mech"><span class="num"><i class="dot"></i>Est. 5</span><span class="label">Interface Zero-Fricção</span><span class="detail">slash_router.py &mdash; mapeia /forge para .claude, .agent, .cursor</span></div>
+    </div>
+  </div>
+
+  <div class="gates-row">
+    <span class="gate on mono">G_BLOQUEAR_SEGREDOS</span>
+    <span class="gate on mono">G_ESTRUTURA_AST</span>
+    <span class="gate on mono">G_HARNESS_COMPAT</span>
+    <span class="gate on mono">G_CONTRACTS</span>
+    <span class="gate on mono">G_TESTES_REAIS</span>
+    <span class="gate on mono">G_CYBERSECURITY_OWASP</span>
+    <span class="gate on mono">G_PERFORMANCE</span>
+  </div>
+
+  <div class="tool-body">
+    <p>A estação 2 é a que mais diferencia o Forge: em vez de um único <span class="mono">AGENTS.md</span> monolítico, o fluxo é fatiado em <span class="mono">phase_00_bootstrap</span> &rarr; <span class="mono">phase_04_audit_security</span>, cada um com seu próprio arquivo de regras (~380 tokens) e seu próprio <span class="mono">mcp_config.json</span> &mdash; nenhuma fase enxerga MCPs de outra fase.</p>
+  </div>
+</section>
+
+<!-- ================= GENERATOR ================= -->
+<section class="tool" id="generator">
+  <div class="tool-head">
+    <h2 class="display">02 &middot; AIDD Generator</h2>
+    <span class="cmd-tag mono">/generate &lt;ideia&gt;</span>
+  </div>
+  <p class="tool-tagline">Fábrica autônoma de 8 fases especializadas com descarte imediato de contexto entre elas.</p>
+
+  <div class="track-wrap">
+    <div class="track">
+      <div class="node mech"><span class="num"><i class="dot"></i>Fase 0</span><span class="label">Fleet Discovery</span><span class="detail">detecção + preflight de conectividade, sem gastar tokens</span></div>
+      <div class="node mech"><span class="num"><i class="dot"></i>Fase 1</span><span class="label">Pesquisador</span><span class="detail">escopo preliminar, 100% determinístico</span></div>
+      <div class="node cog"><span class="num"><i class="dot"></i>Fase 2</span><span class="label">Analisador</span><span class="detail">subagente efêmero &mdash; entidades, invariantes, fluxos</span></div>
+      <div class="node cog"><span class="num"><i class="dot"></i>Fase 3</span><span class="label">Designer</span><span class="detail">5 subagentes concorrentes &mdash; contratos JSON Draft 2020-12</span></div>
+      <div class="node cog"><span class="num"><i class="dot"></i>Fase 4</span><span class="label">Planejador</span><span class="detail">stack, banco (SQLite WAL), modo automático ou interativo</span></div>
+      <div class="node mech"><span class="num"><i class="dot"></i>Fase 5</span><span class="label">Criador</span><span class="detail">materializa a árvore física do projeto</span></div>
+      <div class="node cog"><span class="num"><i class="dot"></i>Fase 8</span><span class="label">Implementador</span><span class="detail">micro-tasks AST + Result Monad + auto-cura 5-Porquês</span></div>
+      <div class="node mech"><span class="num"><i class="dot"></i>Fase 6</span><span class="label">Documentador</span><span class="detail">roda depois da 8 &mdash; documenta o código real, já testado</span></div>
+      <div class="node mech"><span class="num"><i class="dot"></i>Fase 7</span><span class="label">Auto-crítica</span><span class="detail">score de qualidade final, 0 a 100</span></div>
+    </div>
+  </div>
+
+  <div class="order-note">
+    <b>A numeração das fases não é a ordem de execução.</b> A esteira real roda 1&nbsp;&rarr;&nbsp;2&nbsp;&rarr;&nbsp;3&nbsp;&rarr;&nbsp;4&nbsp;&rarr;&nbsp;5&nbsp;&rarr;&nbsp;<b>8</b>&nbsp;&rarr;&nbsp;6&nbsp;&rarr;&nbsp;7: o Implementador (fase 8) roda antes do Documentador (fase 6) de propósito, para que a documentação reflita código já compilado e testado &mdash; não o design teórico.
+  </div>
+
+  <div class="gates-row">
+    <span class="gate on mono">G_BLOQUEAR_SEGREDOS</span>
+    <span class="gate on mono">G_INTEGRACAO_CROSS_SCRIPT (I3)</span>
+    <span class="gate on mono">G_CYBERSECURITY_OWASP</span>
+  </div>
+
+  <div class="tool-body">
+    <p>A fase 8 tem a mecânica mais elaborada do ecossistema: a AST decompõe cada script em funções individuais, cada função é obrigada a retornar <span class="mono">Result[T, E]</span>, e se o <span class="mono">pytest</span> falhar após a geração, o <span class="mono">PostMortemAnalyzer</span> isola o traceback, aplica o método 5-Porquês e regenera cirurgicamente só a função defeituosa &mdash; o subagente é destruído assim que a compilação AST fecha válida.</p>
+  </div>
+</section>
+
+<!-- ================= MASTER ================= -->
+<section class="tool" id="master">
+  <div class="tool-head">
+    <h2 class="display">03 &middot; AIDD Master</h2>
+    <span class="cmd-tag mono">/master &lt;modulo&gt;</span>
+  </div>
+  <p class="tool-tagline">Esteira de 5 fases para compor fatias verticais de negócio (rotas, modelos, serviços, UI, testes).</p>
+
+  <div class="track-wrap">
+    <div class="track">
+      <div class="node mech"><span class="num"><i class="dot"></i>Fase 0</span><span class="label">Pre-Flight</span><span class="detail">python scripts/aidd.py setup &mdash; Python &ge; 3.10, SQLite WAL, chaves JWT</span></div>
+      <div class="node cog"><span class="num"><i class="dot"></i>Fase 1</span><span class="label">Concepção Natural</span><span class="detail">Intent Router traduz pedido PT-BR em SPEC-&lt;modulo&gt;.md (~1.200 tokens)</span></div>
+      <div class="node cog"><span class="num"><i class="dot"></i>Fase 2</span><span class="label">Composição Efêmera</span><span class="detail">1 subprocesso descartável por módulo &mdash; Context-Purge ao final de cada um</span></div>
+      <div class="node mech"><span class="num"><i class="dot"></i>Fase 3</span><span class="label">Validação BDD/TDD</span><span class="detail">pytest + contratos OpenAPI 3.1 + transações ACID/Outbox</span></div>
+      <div class="node mech"><span class="num"><i class="dot"></i>Fase 4</span><span class="label">10 Quality Gates</span><span class="detail">com auto-healing: falha transitória aciona autofix.py e reexecuta</span></div>
+    </div>
+  </div>
+
+  <div class="gates-row">
+    <span class="gate on mono">G_ARQUITETURA</span>
+    <span class="gate on mono">G_CHAOS</span>
+    <span class="gate on mono">G_CONTRACTS</span>
+    <span class="gate on mono">G_ESTRUTURA</span>
+    <span class="gate on mono">G_HARNESS_COMPAT</span>
+    <span class="gate on mono">G_INJECT</span>
+    <span class="gate on mono">G_PERFORMANCE</span>
+    <span class="gate on mono">G_QUALIDADE</span>
+    <span class="gate on mono">G_SEGREDOS</span>
+    <span class="gate on mono">G_SEGURANCA</span>
+    <span class="gate on mono">G_TESTES</span>
+  </div>
+
+  <div class="tool-body">
+    <p>Fase 2 é o coração do Master: o <span class="mono">subagent_engine.py</span> abre um subprocesso isolado por módulo, que recebe <b>só</b> a especificação daquela fatia e escreve <span class="mono">models.py</span>, <span class="mono">services.py</span>, <span class="mono">routes.py</span> e <span class="mono">test_&lt;modulo&gt;.py</span> com Result Monad e cobertura de 100% do CRUD &mdash; sem nenhum acúmulo de contexto entre módulos paralelos.</p>
+  </div>
+</section>
+
+<!-- ================= ENTERPRISE ================= -->
+<section class="tool" id="enterprise">
+  <div class="tool-head">
+    <h2 class="display">04 &middot; AIDD Enterprise</h2>
+    <span class="cmd-tag mono">/enterprise &lt;tipo&gt; &lt;nome&gt;</span>
+  </div>
+  <p class="tool-tagline">Compartilha as fases 0&ndash;4 do Master (mesmo núcleo &mdash; drift vigiado por <span class="mono">G_DRIFT_NUCLEO_COMPARTILHADO</span>) e soma uma 6&ordf; camada exclusiva.</p>
+
+  <div class="track-wrap">
+    <div class="track">
+      <div class="node mech"><span class="num"><i class="dot"></i>Fase 0&ndash;4</span><span class="label">Núcleo Master</span><span class="detail">idêntico ao Master: Pre-Flight &rarr; Concepção &rarr; Composição &rarr; TDD &rarr; 10 Gates</span></div>
+      <div class="node cog"><span class="num"><i class="dot"></i>Camada 6</span><span class="label">Injeção de Componentes</span><span class="detail">component_registry.py detecta a camada-alvo de skill/mcp/rule/agent/spec/config</span></div>
+      <div class="node mech"><span class="num"><i class="dot"></i>Camada 6</span><span class="label">6 Builders Físicos</span><span class="detail">inject_skill / inject_mcp / inject_rule / inject_agent / inject_spec / inject_config</span></div>
+      <div class="node mech"><span class="num"><i class="dot"></i>Camada 6</span><span class="label">Integrador Global</span><span class="detail">global_integrator.py sincroniza AGENTS.md, CLAUDE.md, GEMINI.md, intent_router.py</span></div>
+      <div class="node mech"><span class="num"><i class="dot"></i>Camada 6</span><span class="label">Certificação SHA-256</span><span class="detail">aidd_core_injector.py: hashlib.sha256 sobre cada arquivo staged &mdash; base do Zero-Trust</span></div>
+    </div>
+  </div>
+
+  <div class="gates-row">
+    <span class="gate on mono">G_ARQUITETURA</span>
+    <span class="gate on mono">G_CHAOS</span>
+    <span class="gate on mono">G_CONTRACTS</span>
+    <span class="gate on mono">G_ESTRUTURA</span>
+    <span class="gate on mono">G_HARNESS_COMPAT</span>
+    <span class="gate on mono">G_INJECT</span>
+    <span class="gate on mono">G_PERFORMANCE</span>
+    <span class="gate on mono">G_QUALIDADE</span>
+    <span class="gate on mono">G_SEGREDOS</span>
+    <span class="gate on mono">G_SEGURANCA</span>
+    <span class="gate on mono">G_TESTES</span>
+  </div>
+
+  <div class="callout">
+    <b>Divergência doc &times; código encontrada nesta apuração:</b> <span class="mono">docs/07-sistema-de-injecao-de-componentes.md</span> marca a camada 6 como <b>&ldquo;PLANEJADO (Aguardando Aprovação)&rdquo;</b>, mas os arquivos <span class="mono">scripts/injector/aidd_core_injector.py</span> e <span class="mono">target_profile.py</span> já existem no repositório e já implementam o hash SHA-256. Além disso, <span class="mono">docs/01-fases-de-execucao.md</span> do Enterprise está hoje byte-a-byte idêntico ao do Master (texto ainda não atualizado após o commit <span class="mono">b115282</span>, que renomeou <span class="mono">aidd-master-enterprise</span> &rarr; <span class="mono">aidd-enterprise</span>). Tratar a camada 6 como recurso plenamente documentado seria impreciso &mdash; ela existe em código, não (ainda) na governança escrita.
+  </div>
+</section>
+
+<footer>
+  Regras de ouro comuns às 4 ferramentas (AGENTS.md &sect;2): determinismo primeiro, qualidade binária (exit 0/1), persistência em arquivo/SQLite, Tríade Caveman Ultra, zero stubs, universalidade multi-harness.
+  <span class="mono">Fontes: AGENTS.md &middot; tools/aidd-forge/docs/01-fases-de-execucao.md &middot; tools/aidd-generator/docs/01-fases-de-execucao.md &middot; tools/aidd-master/docs/01-fases-de-execucao.md &middot; tools/aidd-enterprise/docs/01-fases-de-execucao.md &middot; tools/aidd-enterprise/docs/07-sistema-de-injecao-de-componentes.md</span>
+</footer>
