@@ -69,7 +69,7 @@ Por certeza de resultado (do mais garantido ao mais incerto), não por número:
 | # | Item | Dimensão afetada | Status | Documento |
 |---|---|---|---|---|
 | 1 | Cobertura de comandos — aidd-forge/aidd-generator | Testabilidade (9→10) | ✅ CONCLUÍDO em 05/09/2026 — nota do item 10/10, dimensão Testabilidade sobe para 10/10. Auditado por reprodução independente dos 5 casos (770 testes passando, zero regressão, zero chamada real de LLM confirmada empiricamente, escopo 100% respeitado) | `01-cobertura-comandos-forge-generator.md` |
-| 2 | Disclosure plan/prompt | Transparência (8,5→9?) | ⏳ Não iniciado | `03-transparencia-disclosure-plan-prompt.md` |
+| 2 | Disclosure plan/prompt | Transparência (8,5→9) | ✅ CONCLUÍDO em 05/09/2026 — nota do item 10/10, dimensão Transparência sobe para 9/10. Auditado por reprodução independente via subprocess real (10 combinações + 2 cenários extras próprios), byte-identidade confirmada entre as 2 ferramentas, zero regressão | `03-transparencia-disclosure-plan-prompt.md` |
 | 3 | Prova adversarial dos gates originais | Gates Mecânicos (8→?) | ⏳ Não iniciado | `02-prova-adversarial-gates-originais.md` |
 | 4 | Unificação do injetor aidd-enterprise | Modularização (9→10?) + Distribuição (9→10?) | ⏳ Não iniciado | `04-unificacao-injetor-aidd-enterprise.md` |
 | 5 | Investigação do mecanismo do agy | Universalidade (9→10?) | ⏳ Não iniciado | `05-investigacao-mecanismo-agy.md` |

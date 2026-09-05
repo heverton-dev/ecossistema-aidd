@@ -658,13 +658,17 @@ def cmd_plan(prompt: str, base_dir: str = ".", auto_apply: bool = False):
             if slug not in found_modules:
                 found_modules.append(slug)
                 
-    if not found_modules:
+    if found_modules:
+        mecanismo_usado = f"casamento de palavra-chave — domínio(s) reconhecido(s): {', '.join(found_modules)} (lista fixa, SEM LLM)"
+    else:
         words = re.findall(r'\b[a-zA-Z]{4,}\b', prompt_lower)
         stop_words = {"crie", "uma", "aplicacao", "aplicativo", "sistema", "para", "com", "suite", "modulo", "faca", "gere"}
         found_modules = [w for w in words if w not in stop_words][:4]
-
-    if not found_modules:
-        found_modules = ["principal", "configuracao"]
+        if found_modules:
+            mecanismo_usado = "⚠️ fallback de extração de palavras — NENHUM domínio conhecido reconhecido, sem LLM (heurística mais fraca)"
+        else:
+            found_modules = ["principal", "configuracao"]
+            mecanismo_usado = "⚠️ nenhuma palavra significativa encontrada — usando módulos padrão fixos, sem LLM"
 
     slug_name = "-".join(found_modules[:3]) + "-suite"
     target_path = os.path.abspath(os.path.join(base_dir, f"app_{slug_name}"))
@@ -758,6 +762,7 @@ Execute `python scripts/aidd.py apply --dir "{target_path}"` para compor o códi
     print(f"Destino:       {target_path}")
     print(f"Status:        PLANEJADO (Aguardando Aprovação)")
     print(f"Fatias ({len(found_modules)}):   {', '.join(found_modules)}")
+    print(f"Mecanismo:     {mecanismo_usado}")
     print(f"Documentos:    SPEC-ARQUITETURA.md | PLANO-EXECUCAO-ESTRUTURADO.json")
     print("=" * 80)
 
@@ -952,7 +957,7 @@ def main():
 
     # plan (Fase 1.5 - Especificação e Planejamento)
     p_plan = subparsers.add_parser("plan", help="Gera especificação arquitetural e plano antes de compor")
-    p_plan.add_argument("prompt", help="Instrução em linguagem natural (ex: 'Crie um CRM e ERP de faturamento')")
+    p_plan.add_argument("prompt", help="Instrução em linguagem natural (ex: 'Crie um CRM e ERP de faturamento') — processada por casamento de palavras-chave contra lista fixa de domínios, SEM uso de LLM/IA generativa")
     p_plan.add_argument("--dir", default=".", help="Diretório base de destino")
     p_plan.add_argument("--apply", action="store_true", help="Executa a composição imediatamente após planejar")
 
@@ -971,7 +976,7 @@ def main():
 
     # prompt (comando explícito de linguagem natural)
     p_prompt = subparsers.add_parser("prompt", help="Gera aplicação a partir de prompt em linguagem natural")
-    p_prompt.add_argument("texto", help="Instrução em linguagem natural (ex: 'Crie um CRM e ERP de faturamento')")
+    p_prompt.add_argument("texto", help="Instrução em linguagem natural (ex: 'Crie um CRM e ERP de faturamento') — processada por casamento de palavras-chave contra lista fixa de domínios, SEM uso de LLM/IA generativa")
     p_prompt.add_argument("--dir", default=".", help="Diretório base de destino")
 
     # setup

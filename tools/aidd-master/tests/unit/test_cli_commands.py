@@ -101,7 +101,7 @@ def test_cmd_audit_falha_deliberada_especifica_g_estrutura(suite_composta):
 # FASE 2 — PLAN / APPLY
 # =============================================================================
 
-def test_cmd_plan_dominio_conhecido(tmp_path):
+def test_cmd_plan_dominio_conhecido(tmp_path, capsys):
     """2.1a: Prompt com domínio conhecido detecta módulo e grava arquivos."""
     from aidd import cmd_plan
     cmd_plan("crie um crm", base_dir=str(tmp_path))
@@ -121,8 +121,11 @@ def test_cmd_plan_dominio_conhecido(tmp_path):
     spec = spec_path.read_text(encoding="utf-8")
     assert "CRM" in spec
 
+    captured = capsys.readouterr()
+    assert "Mecanismo:     casamento de palavra-chave — domínio(s) reconhecido(s): crm (lista fixa, SEM LLM)" in captured.out
 
-def test_cmd_plan_dominio_desconhecido_fallback_palavras(tmp_path):
+
+def test_cmd_plan_dominio_desconhecido_fallback_palavras(tmp_path, capsys):
     """2.1b: Prompt sem domínio conhecido extrai palavras (>3 letras sem stopwords)."""
     from aidd import cmd_plan
     cmd_plan("desenvolva consultoria veterinaria agendamento", base_dir=str(tmp_path))
@@ -143,8 +146,11 @@ def test_cmd_plan_dominio_desconhecido_fallback_palavras(tmp_path):
     for m in modulos:
         assert m.upper() in spec
 
+    captured = capsys.readouterr()
+    assert "Mecanismo:     ⚠️ fallback de extração de palavras — NENHUM domínio conhecido reconhecido, sem LLM (heurística mais fraca)" in captured.out
 
-def test_cmd_plan_prompt_sem_substancia_fallback_final(tmp_path):
+
+def test_cmd_plan_prompt_sem_substancia_fallback_final(tmp_path, capsys):
     """2.1c: Prompt sem palavras substanciais recorre a ['principal', 'configuracao']."""
     from aidd import cmd_plan
     cmd_plan("crie uma aplicacao com", base_dir=str(tmp_path))
@@ -163,6 +169,43 @@ def test_cmd_plan_prompt_sem_substancia_fallback_final(tmp_path):
     spec = spec_path.read_text(encoding="utf-8")
     assert "PRINCIPAL" in spec
     assert "CONFIGURACAO" in spec
+
+    captured = capsys.readouterr()
+    assert "Mecanismo:     ⚠️ nenhuma palavra significativa encontrada — usando módulos padrão fixos, sem LLM" in captured.out
+
+
+def test_cli_help_plan_disclosure_sem_llm():
+    """Valida subprocess de 'plan --help' exibindo disclosure de SEM LLM."""
+    env = os.environ.copy()
+    env["PYTHONIOENCODING"] = "utf-8"
+    proc = subprocess.run(
+        [sys.executable, AIDD_SCRIPT, "plan", "--help"],
+        capture_output=True,
+        text=True,
+        encoding="utf-8",
+        errors="replace",
+        env=env
+    )
+    assert proc.returncode == 0
+    stdout_unwrapped = re.sub(r"\s+", " ", proc.stdout)
+    assert "processada por casamento de palavras-chave contra lista fixa de domínios, SEM uso de LLM/IA generativa" in stdout_unwrapped
+
+
+def test_cli_help_prompt_disclosure_sem_llm():
+    """Valida subprocess de 'prompt --help' exibindo disclosure de SEM LLM."""
+    env = os.environ.copy()
+    env["PYTHONIOENCODING"] = "utf-8"
+    proc = subprocess.run(
+        [sys.executable, AIDD_SCRIPT, "prompt", "--help"],
+        capture_output=True,
+        text=True,
+        encoding="utf-8",
+        errors="replace",
+        env=env
+    )
+    assert proc.returncode == 0
+    stdout_unwrapped = re.sub(r"\s+", " ", proc.stdout)
+    assert "processada por casamento de palavras-chave contra lista fixa de domínios, SEM uso de LLM/IA generativa" in stdout_unwrapped
 
 
 def test_cmd_apply_executa_plano_com_sucesso(tmp_path):
