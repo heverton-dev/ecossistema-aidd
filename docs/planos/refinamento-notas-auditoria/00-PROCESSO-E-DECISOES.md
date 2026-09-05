@@ -68,7 +68,7 @@ Por certeza de resultado (do mais garantido ao mais incerto), não por número:
 
 | # | Item | Dimensão afetada | Status | Documento |
 |---|---|---|---|---|
-| 1 | Cobertura de comandos — aidd-forge/aidd-generator | Testabilidade (9→10?) | 🔶 Diagnóstico concluído — achado real bem mais estreito do que suposto: aidd-forge já está coberto, só `pipeline_completo.py`'s `main()` (aidd-generator) tem gap real. Definição de Pronto travada, aguardando aprovação | `01-cobertura-comandos-forge-generator.md` |
+| 1 | Cobertura de comandos — aidd-forge/aidd-generator | Testabilidade (9→10) | ✅ CONCLUÍDO em 05/09/2026 — nota do item 10/10, dimensão Testabilidade sobe para 10/10. Auditado por reprodução independente dos 5 casos (770 testes passando, zero regressão, zero chamada real de LLM confirmada empiricamente, escopo 100% respeitado) | `01-cobertura-comandos-forge-generator.md` |
 | 2 | Disclosure plan/prompt | Transparência (8,5→9?) | ⏳ Não iniciado | `03-transparencia-disclosure-plan-prompt.md` |
 | 3 | Prova adversarial dos gates originais | Gates Mecânicos (8→?) | ⏳ Não iniciado | `02-prova-adversarial-gates-originais.md` |
 | 4 | Unificação do injetor aidd-enterprise | Modularização (9→10?) + Distribuição (9→10?) | ⏳ Não iniciado | `04-unificacao-injetor-aidd-enterprise.md` |

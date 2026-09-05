@@ -1,6 +1,6 @@
 # Item 1 — Cobertura de Comandos: aidd-forge e aidd-generator
 
-> **Status:** Diagnóstico concluído em 05/09/2026. Definição de Pronto travada abaixo — aguardando sua aprovação antes de qualquer implementação.
+> **Status:** ✅ CONCLUÍDO em 05/09/2026 — nota final 10/10 (ver Veredito ao final do documento).
 > **Origem:** pergunta do usuário — "podemos superar o 10, sem fabricação?" — aplicada à dimensão Testabilidade/Cobertura Real (hoje 9/10).
 > **Contribui para:** Testabilidade/Cobertura Real.
 
@@ -186,6 +186,35 @@ ENTREGÁVEL: lista exata de arquivos criados/alterados; comando + output
 real que comprova cada um dos 5 testes; qualquer desvio necessário,
 reportado explicitamente em vez de decidido sozinho.
 ```
+
+---
+
+## Veredito — Auditoria
+
+**Auditoria independente realizada — não me baseei no relatório do agente executor.** Entregável real: um único arquivo novo, `tools/aidd-generator/tests/unit/test_pipeline_completo_cli.py` (5 testes), confirmado por `git status` no repo inteiro — nada mais foi tocado (aidd-forge intocado, documento deste item não alterado, sem commit/push feito).
+
+**Suíte completa reproduzida por mim:** `python -m pytest tests/ -q` → **770 passed**, exit code real 0 (765 pré-existentes + 5 novos, sem regressão). Os 5 testes novos isolados (`pytest tests/unit/test_pipeline_completo_cli.py -v`) → 5 passed, exit 0.
+
+**Reproduções independentes fora do arquivo do executor** (não confiei só em rodar o arquivo dele):
+- **1.1 (argparse sem `--pasta`):** rodei o CLI real via subprocess, zero mock — `python scripts/pipeline_completo.py "ideia sem pasta"` → argparse recusa com `exit code 2` (padrão do argparse para argumento obrigatório ausente), confirma a asserção `!= 0` sem depender de nenhum teste.
+- **1.2 (preflight falho nunca chama `executar_pipeline`):** escrevi do zero um script de auditoria separado (não importei o arquivo de teste do executor), com um "espião" que levanta `RuntimeError` se `executar_pipeline` for chamada. Resultado real: `executar_pipeline foi chamada? False`, `codigo de saida: 1`, mensagem `❌ PREFLIGHT FALHOU — auditoria independente - motivo fake` no stdout — prova concreta e própria de que a garantia de segurança (nunca gastar tempo/tokens de LLM quando o preflight reprova) é real, não apenas afirmada pelo executor.
+- **1.3 (`LLMNaoConfiguradoException` sem stack trace):** escrevi um segundo script independente, com um módulo carregado do zero (nova instância, não reaproveitando a do caso 1.2), que levanta `LLMNaoConfiguradoException("mensagem amigavel de auditoria independente", "DETALHE TECNICO SIGILOSO QUE NAO PODE VAZAR")` — texto próprio, nunca usado pelo executor. Resultado real: `exit 1`, a mensagem amigável aparece na saída, e nem `"Traceback"` nem o detalhe técnico sigiloso aparecem — confirma que o comportamento de não vazar stack trace é do produto, não um acaso do teste do executor.
+- **1.4 (sucesso):** mesmo script, mockando `executar_pipeline` para devolver um resultado com `score_final: 77` (valor deliberadamente diferente do `92` usado pelo executor, para eliminar qualquer chance de coincidência de string). Resultado real: `exit 0`, saída mostra `PIPELINE COMPLETO — score final: 77/100`.
+- **1.5 (falha de fase):** mesmo script, mockando `executar_pipeline` para devolver `fase_que_falhou: 'phase_07_autocritica'` (também deliberadamente diferente do `phase_02_analysis` do executor). Resultado real: `exit 1`, saída mostra `PIPELINE FALHOU na phase_07_autocritica`.
+
+Os 5 casos (1.1 a 1.5) foram, portanto, **todos** reproduzidos por mim do zero, fora do arquivo de teste do executor — 3 deles (1.3/1.4/1.5) usando valores deliberadamente diferentes dos escolhidos pelo executor, o que descarta qualquer hipótese de que os testes originais só "combinam por acaso" com o comportamento real.
+
+**Zero chamada real de LLM confirmada empiricamente (não só por ausência no `git status`):** `scripts/.aidd/cache/` está no `.gitignore` inteiro, então `git status` nunca mostraria arquivo novo lá de qualquer forma. Contornei isso contando os arquivos do diretório antes/depois de rodar SÓ os 5 testes novos, isolados: **126 → 126, delta zero.** (A suíte completa de 770 testes escreve nesse cache como comportamento pré-existente de outros testes, não relacionado a este item — confirmado pelo mesmo delta-zero ao isolar só o arquivo novo.)
+
+**Notável:** fechou de primeira, sem nenhuma correção necessária — mesmo padrão do Pacote 4 (rodada 1).
+
+### Nota Final — Item 1 (Cobertura de Comandos): 10/10
+
+**Por que 10:**
+- Todos os critérios de saída definidos na Definição de Pronto foram cumpridos e verificados com reprodução real — os 5 casos (1.1 a 1.5) foram reproduzidos por mim inteiramente do zero, fora do arquivo de teste do executor, 3 deles com valores deliberadamente diferentes dos do executor (score `77` vs `92`, fase `phase_07_autocritica` vs `phase_02_analysis`, mensagens de exceção próprias) para descartar qualquer coincidência de string.
+- Escopo 100% respeitado: nenhum arquivo fora do combinado foi tocado, nenhuma chamada real de LLM (confirmado empiricamente, delta zero no cache), nenhuma regressão (770 passed, exit 0 real), nenhum arquivo órfão no repositório em nenhuma das reproduções.
+- Fechou de primeira, sem nenhuma correção necessária no código do executor.
+- **Efeito na dimensão Testabilidade/Cobertura Real:** o único gap real identificado no diagnóstico (`pipeline_completo.py`'s `main()` nunca testado como CLI) está fechado com evidência genuína e integralmente reproduzida por mim — argparse, preflight, tratamento de exceção e os 2 exit codes finais agora têm teste real, mockando só a chamada cara. Combinado com o achado de que `aidd-forge` já não tinha gap nenhum (verificado no diagnóstico, não neste veredito), a dimensão **sobe de 9 para 10/10**.
 
 ## Prompt de Execução — English version
 
