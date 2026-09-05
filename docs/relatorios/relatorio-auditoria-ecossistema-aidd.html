@@ -1,0 +1,549 @@
+<title>Auditoria Ecossistema AIDD</title>
+<style>
+  :root {
+    --bg: #eef1ec;
+    --surface: #ffffff;
+    --surface-2: #e4e9e2;
+    --ink: #1a2420;
+    --muted: #5c6b62;
+    --accent: #a85a1a;
+    --accent-ink: #ffffff;
+    --pass: #2f6b4f;
+    --fail: #b23a2e;
+    --warn: #9c6b12;
+    --border: #d3dad2;
+    --mono: ui-monospace, "SF Mono", "Cascadia Code", "JetBrains Mono", Consolas, "Liberation Mono", monospace;
+    --serif: "Iowan Old Style", "Palatino Linotype", Palatino, "Book Antiqua", Georgia, serif;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #0f1613;
+      --surface: #17201c;
+      --surface-2: #1d2721;
+      --ink: #e7ede8;
+      --muted: #9fb0a5;
+      --accent: #d9832f;
+      --accent-ink: #17120a;
+      --pass: #6fae87;
+      --fail: #d9705f;
+      --warn: #d9b25a;
+      --border: #26332c;
+    }
+  }
+
+  :root[data-theme="dark"] {
+    --bg: #0f1613;
+    --surface: #17201c;
+    --surface-2: #1d2721;
+    --ink: #e7ede8;
+    --muted: #9fb0a5;
+    --accent: #d9832f;
+    --accent-ink: #17120a;
+    --pass: #6fae87;
+    --fail: #d9705f;
+    --warn: #d9b25a;
+    --border: #26332c;
+  }
+
+  * { box-sizing: border-box; }
+
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: var(--accent) transparent;
+  }
+  *::-webkit-scrollbar {
+    width: 4px;
+    height: 4px;
+  }
+  *::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  *::-webkit-scrollbar-thumb {
+    background-color: var(--accent);
+    border-radius: 2px;
+  }
+
+  body {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: var(--serif);
+    font-size: 17px;
+    line-height: 1.6;
+    margin: 0;
+    padding: 0 1.5rem 6rem;
+  }
+
+  .wrap { max-width: 880px; margin: 0 auto; }
+
+  h1, h2, h3, .mono, .eyebrow, .score, .verdict, .tag, .ledger, code {
+    font-family: var(--mono);
+  }
+
+  h1 { text-wrap: balance; }
+  h2 { text-wrap: balance; }
+
+  /* ---------- Header ---------- */
+  header.masthead {
+    padding: 4rem 0 2.5rem;
+    border-bottom: 1px solid var(--border);
+  }
+  .eyebrow {
+    font-size: 0.78rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--accent);
+    display: flex;
+    align-items: center;
+    gap: 0.6em;
+  }
+  .eyebrow::before {
+    content: "";
+    width: 0.55em;
+    height: 0.55em;
+    background: var(--accent);
+    display: inline-block;
+    border-radius: 1px;
+  }
+  h1.title {
+    font-size: clamp(2rem, 5vw, 2.7rem);
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    margin: 0.6em 0 0.4em;
+    line-height: 1.15;
+  }
+  .subtitle {
+    font-family: var(--serif);
+    font-style: italic;
+    color: var(--muted);
+    font-size: 1.15rem;
+    max-width: 60ch;
+    margin: 0;
+  }
+  .meta-row {
+    margin-top: 1.6rem;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.6rem;
+    font-size: 0.82rem;
+    color: var(--muted);
+  }
+  .meta-row strong { color: var(--ink); font-weight: 600; }
+
+  /* ---------- Verdict block ---------- */
+  .verdict-block {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 2rem;
+    align-items: center;
+    padding: 2rem 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .verdict-score {
+    font-size: 3.6rem;
+    font-weight: 700;
+    line-height: 1;
+    color: var(--accent);
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+  }
+  .verdict-score sup {
+    font-size: 1.2rem;
+    color: var(--muted);
+    font-weight: 400;
+  }
+  .verdict-text p {
+    margin: 0;
+    font-family: var(--serif);
+    color: var(--ink);
+  }
+  .verdict-text .label {
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 0.4em;
+    display: block;
+  }
+
+  /* ---------- Ledger strip (evidence tally) ---------- */
+  .ledger-strip {
+    margin: 2.2rem 0;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    overflow-x: auto;
+  }
+  .ledger {
+    display: flex;
+    min-width: max-content;
+  }
+  .ledger-item {
+    padding: 1.1rem 1.5rem;
+    border-right: 1px solid var(--border);
+    min-width: 148px;
+  }
+  .ledger-item:last-child { border-right: none; }
+  .ledger-num {
+    font-size: 1.6rem;
+    font-weight: 700;
+    color: var(--ink);
+    font-variant-numeric: tabular-nums;
+  }
+  .ledger-label {
+    font-size: 0.68rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-top: 0.3em;
+  }
+
+  /* ---------- Section headers ---------- */
+  section.block { padding: 3rem 0; border-bottom: 1px solid var(--border); }
+  section.block:last-of-type { border-bottom: none; }
+  h2.section-title {
+    font-size: 1.1rem;
+    letter-spacing: 0.02em;
+    margin: 0 0 1.4rem;
+    display: flex;
+    align-items: baseline;
+    gap: 0.6em;
+  }
+  h2.section-title .n {
+    color: var(--accent);
+  }
+  .lede {
+    font-family: var(--serif);
+    color: var(--muted);
+    max-width: 68ch;
+    margin: 0 0 2rem;
+  }
+
+  /* ---------- Gate cards ---------- */
+  .gate-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 1.6rem 1.8rem;
+    margin-bottom: 1.1rem;
+  }
+  .gate-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 1.2rem;
+    flex-wrap: wrap;
+  }
+  .gate-id {
+    font-size: 0.72rem;
+    letter-spacing: 0.08em;
+    color: var(--muted);
+    text-transform: uppercase;
+  }
+  .gate-name {
+    font-family: var(--serif);
+    font-weight: 700;
+    font-size: 1.28rem;
+    color: var(--ink);
+    margin: 0.15em 0 0;
+  }
+  .gate-score {
+    text-align: right;
+    flex-shrink: 0;
+  }
+  .gate-score .num {
+    font-size: 1.7rem;
+    font-weight: 700;
+    color: var(--ink);
+    font-variant-numeric: tabular-nums;
+  }
+  .gate-score .den { color: var(--muted); font-size: 1rem; }
+  .meter {
+    width: 100%;
+    height: 6px;
+    background: var(--surface-2);
+    border-radius: 3px;
+    overflow: hidden;
+    margin: 1rem 0 1.2rem;
+  }
+  .meter > span {
+    display: block;
+    height: 100%;
+    background: var(--accent);
+    border-radius: 3px;
+  }
+  .gate-card p { margin: 0 0 0.9rem; }
+  .gate-card ul {
+    margin: 0 0 1rem;
+    padding-left: 1.2rem;
+  }
+  .gate-card li { margin-bottom: 0.45rem; }
+  .gate-card li code {
+    background: var(--surface-2);
+    padding: 0.1em 0.4em;
+    border-radius: 3px;
+    font-size: 0.86em;
+  }
+  .caveat {
+    border-left: 3px solid var(--warn);
+    padding: 0.5rem 0 0.5rem 1rem;
+    font-size: 0.94rem;
+    color: var(--muted);
+    background: color-mix(in srgb, var(--warn) 8%, transparent);
+    border-radius: 0 4px 4px 0;
+  }
+  .caveat strong { color: var(--ink); }
+
+  /* ---------- Findings table-ish list ---------- */
+  .finding {
+    display: grid;
+    grid-template-columns: 1.4em 1fr;
+    gap: 0.8em;
+    padding: 0.85rem 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .finding:last-child { border-bottom: none; }
+  .finding .dot {
+    width: 0.55em; height: 0.55em; border-radius: 50%;
+    background: var(--pass); margin-top: 0.5em;
+  }
+  .finding.open .dot { background: var(--warn); }
+  .finding .body strong { color: var(--ink); }
+  .finding .body span.where {
+    display: block;
+    font-family: var(--mono);
+    font-size: 0.8rem;
+    color: var(--muted);
+    margin-top: 0.2em;
+  }
+
+  /* ---------- Composite footer ---------- */
+  .composite {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 2rem;
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 2rem;
+    align-items: center;
+  }
+  .composite .big {
+    font-size: 3rem;
+    font-weight: 700;
+    color: var(--accent);
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+  }
+  footer.colophon {
+    padding: 2.5rem 0 0;
+    font-size: 0.82rem;
+    color: var(--muted);
+    font-family: var(--mono);
+  }
+  footer.colophon a { color: var(--muted); }
+
+  @media (max-width: 620px) {
+    .verdict-block, .composite { grid-template-columns: 1fr; }
+    .verdict-score, .composite .big { font-size: 2.6rem; }
+  }
+</style>
+
+<div class="wrap">
+
+  <header class="masthead">
+    <p class="eyebrow">Auditoria técnica &middot; sessão de correção e validação de ponta a ponta</p>
+    <h1 class="title">Ecossistema AIDD sob teste real de produção</h1>
+    <p class="subtitle">Quatro ferramentas, duas aplicações reais construídas do zero, um veredito honesto sobre o que a engenharia agêntica desta suíte realmente entrega — e onde ela ainda finge.</p>
+    <div class="meta-row">
+      <span><strong>Escopo:</strong> aidd-forge, aidd-master, aidd-enterprise, aidd-generator</span>
+      <span><strong>Método:</strong> execução real, sem mocks, servidores subindo de verdade</span>
+      <span><strong>Data:</strong> 04/09/2026</span>
+    </div>
+  </header>
+
+  <div class="verdict-block">
+    <div class="verdict-score">7.5<sup>/10</sup></div>
+    <div class="verdict-text">
+      <span class="label">Veredito consolidado</span>
+      <p>Uma arquitetura genuinamente incomum — determinismo real, protocolo de IA delegada que funciona sem chave de API, dois aplicativos completos gerados e comprovados rodando. Mas a nota não é 9 ou 10 porque a suíte nunca tinha sido testada de ponta a ponta antes desta sessão: 20 bugs reais viviam sob uma cobertura de testes que parecia sólida no papel.</p>
+    </div>
+  </div>
+
+  <div class="ledger-strip">
+    <div class="ledger">
+      <div class="ledger-item"><div class="ledger-num">20</div><div class="ledger-label">Bugs reais corrigidos</div></div>
+      <div class="ledger-item"><div class="ledger-num">1</div><div class="ledger-label">Bug ainda aberto</div></div>
+      <div class="ledger-item"><div class="ledger-num">2</div><div class="ledger-label">Aplicações reais construídas</div></div>
+      <div class="ledger-item"><div class="ledger-num">1.290</div><div class="ledger-label">Testes passando (0 falhas)</div></div>
+      <div class="ledger-item"><div class="ledger-num">21</div><div class="ledger-label">Commits enviados ao GitHub</div></div>
+      <div class="ledger-item"><div class="ledger-num">0</div><div class="ledger-label">Chaves de API usadas</div></div>
+    </div>
+  </div>
+
+  <section class="block">
+    <h2 class="section-title"><span class="n">§1</span> O que foi realmente construído e testado</h2>
+    <p class="lede">Não uma inspeção de código — duas aplicações completas, geradas pelo próprio ecossistema, rodando e respondendo a requisições HTTP reais.</p>
+
+    <div class="gate-card">
+      <div class="gate-head">
+        <div>
+          <div class="gate-id">via aidd-master compose + aidd-forge + aidd-enterprise</div>
+          <h3 class="gate-name">Sistema de Biblioteca — 4 módulos</h3>
+        </div>
+      </div>
+      <p><code>livros</code>, <code>usuarios</code>, <code>emprestimos</code>, <code>multas</code> — cada um com rotas, models e services em Clean Architecture, gerados em um único comando. Governança do <code>forge</code> aplicada por cima; 3 componentes de compliance injetados pelo <code>enterprise</code> (skill, MCP e rule — não apenas um).</p>
+      <ul>
+        <li>8 testes automatizados — <strong>8 passed</strong></li>
+        <li>7 quality gates mecânicos — <strong>7/7 aprovados</strong>, incluindo 21 checagens de segurança real (JWT, OWASP headers, SQL parametrizado)</li>
+        <li>Servidor subiu de verdade: <code>GET /api/livros</code>, <code>/usuarios</code>, <code>/emprestimos</code>, <code>/multas</code> → todos <strong>200</strong></li>
+      </ul>
+    </div>
+
+    <div class="gate-card">
+      <div class="gate-head">
+        <div>
+          <div class="gate-id">via aidd-generator (pipeline de 8 fases) + aidd-forge + aidd-enterprise</div>
+          <h3 class="gate-name">Controle de Estoque com regra de negócio real</h3>
+        </div>
+      </div>
+      <p>Não CRUD de brinquedo: valida saldo antes de qualquer saída (rejeita com <code>409</code> se insuficiente) e computa alertas de reposição automaticamente. Gerado a partir de uma frase em linguagem natural, passando pelas 8 fases do pipeline — incluindo as 3 que exigem IA de verdade (não simulada por mim: eu mesmo assumi o papel do "orquestrador ativo" que o protocolo delegado do produto prevê).</p>
+      <ul>
+        <li>13 testes automatizados — <strong>13 passed</strong>, incluindo o teste que prova a regra de saldo</li>
+        <li>Score de auto-crítica da própria ferramenta: <strong>88/100</strong></li>
+        <li>Validado ao vivo: saída de 90 de 100 unidades → aparece em <code>/alertas</code>; tentativa de retirar 999 → <strong>409</strong> com mensagem exata do motivo</li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="block">
+    <h2 class="section-title"><span class="n">§2</span> Notas por dimensão</h2>
+    <p class="lede">Cada nota é sobre evidência coletada nesta sessão — não sobre a intenção de design documentada em <code>AGENTS.md</code>. Onde os dois divergem, isso está dito explicitamente.</p>
+
+    <div class="gate-card">
+      <div class="gate-head">
+        <div><div class="gate-id">GATE · determinismo</div><h3 class="gate-name">Determinismo Primeiro</h3></div>
+        <div class="gate-score"><span class="num">9</span><span class="den">/10</span></div>
+      </div>
+      <div class="meter"><span style="width:90%"></span></div>
+      <p>A regra de ouro mais bem cumprida do ecossistema. <code>compose_suite</code> gera uma aplicação de 4 módulos inteira com <strong>zero</strong> chamada de LLM. No pipeline do generator, as fases 1, 4, 5 e 6 rodam a 0 tokens, de verdade — não é alegação, é o que medi.</p>
+      <div class="caveat"><strong>Mas:</strong> determinismo não salva de bug se o código determinístico nunca foi exercitado. <code>compose_suite.py</code> — a funcionalidade mais visível do produto — tinha um <code>SyntaxError</code> real que quebrava a importação do módulo inteiro, e sobreviveu porque nenhum teste jamais o importava.</p>
+    </div>
+
+    <div class="gate-card">
+      <div class="gate-head">
+        <div><div class="gate-id">GATE · agentic-orchestration</div><h3 class="gate-name">Engenharia Agêntica Aplicada</h3></div>
+        <div class="gate-score"><span class="num">8</span><span class="den">/10</span></div>
+      </div>
+      <div class="meter"><span style="width:80%"></span></div>
+      <p>O Protocolo Delegado é o achado mais interessante da suíte: a Fase 2 escreve um pedido em disco, a Fase 3 dispara <strong>5 subagentes concorrentes</strong> com papéis especializados (arquiteto de camadas, engenheiro de scripts, especialista em gates...), e qualquer IA ativa na sessão pode responder — zero chave de API. Funcionou nas duas aplicações, 10 de 10 pedidos respondidos corretamente na primeira tentativa, sem precisar do loop de correção automática do produto.</p>
+      <div class="caveat"><strong>Mas:</strong> o campo <code>tokens_consumidos</code> de cada resposta é <em>autodeclarado por quem responde</em> — não medido de forma independente pela ferramenta. Nada impede uma resposta honesta em conteúdo mas fabricada em custo.</div>
+    </div>
+
+    <div class="gate-card">
+      <div class="gate-head">
+        <div><div class="gate-id">GATE · token-economy</div><h3 class="gate-name">Economia Severa de Tokens</h3></div>
+        <div class="gate-score"><span class="num">7</span><span class="den">/10</span></div>
+      </div>
+      <div class="meter"><span style="width:70%"></span></div>
+      <p>Onde a arquitetura garante economia estruturalmente — <code>compose_suite</code>, Fases 1/4/5/6 — ela é real e verificável. É o caso mais forte de "não é marketing" que vi na sessão.</p>
+      <div class="caveat"><strong>Mas:</strong> a Regra de Ouro diz "toda métrica é medida real, nenhum número é inventado" — e para as fases que passam por LLM, o número de tokens reportado no relatório final vem do mesmo autorrelato do item acima. A parte determinística cumpre a promessa; a parte agêntica só a documenta.</div>
+    </div>
+
+    <div class="gate-card">
+      <div class="gate-head">
+        <div><div class="gate-id">GATE · modularizacao</div><h3 class="gate-name">Modularização e Desacoplamento</h3></div>
+        <div class="gate-score"><span class="num">7</span><span class="den">/10</span></div>
+      </div>
+      <div class="meter"><span style="width:70%"></span></div>
+      <p><code>compose_suite</code> entrega Clean Architecture de verdade por módulo (rotas/models/services isolados). Nenhuma das 4 ferramentas importa código de outra em runtime — independência real, não só declarada.</p>
+      <div class="caveat"><strong>Mas:</strong> testando <code>enterprise inject</code> nesta sessão, a mensagem de erro dizia <code>--command</code> — a flag real é <code>--mcp-command</code>. E o <code>aidd-master</code> tem uma assinatura de CLI totalmente diferente do <code>aidd-enterprise</code> para o mesmo comando <code>inject</code> (<code>--conteudo-file</code>/<code>--projeto</code> vs. <code>--content-file</code>/<code>--mcp-command</code>/<code>--dry-run</code>) — duas ferramentas com 22 de 24 arquivos de núcleo idênticos, mas superfícies de CLI que divergiram sem ninguém notar.</div>
+    </div>
+
+    <div class="gate-card">
+      <div class="gate-head">
+        <div><div class="gate-id">GATE · gates-mecanicos</div><h3 class="gate-name">Qualidade Binária (Gates)</h3></div>
+        <div class="gate-score"><span class="num">7</span><span class="den">/10</span></div>
+      </div>
+      <div class="meter"><span style="width:70%"></span></div>
+      <p>Os gates que existem são substantivos, não teatro: a auditoria de segurança da aplicação composta rodou 21 checagens reais — payload JWT adulterado é rejeitado de verdade, headers OWASP são inspecionados de verdade, não é uma lista de "boas práticas" impressa sem checar nada.</p>
+      <div class="caveat"><strong>Mas:</strong> nenhum gate existente detectou os 3 bugs reais em <code>compose_suite.py</code> nem a tabela SQLite hardcoded para um domínio de YouTube residual de outro projeto. Gate mecânico só protege o que alguém pensou em testar.</div>
+    </div>
+
+    <div class="gate-card">
+      <div class="gate-head">
+        <div><div class="gate-id">GATE · transparencia</div><h3 class="gate-name">Transparência / Zero Alucinação</h3></div>
+        <div class="gate-score"><span class="num">8</span><span class="den">/10</span></div>
+      </div>
+      <div class="meter"><span style="width:80%"></span></div>
+      <p>A cultura do projeto é genuína, não decorativa: quando a auto-crítica não encontra fraqueza real, ela escreve "dados insuficientes para análise profunda" em vez de inventar uma. Isso é raro e vale a nota alta.</p>
+      <div class="caveat"><strong>Mas:</strong> a mensagem de erro errada do <code>--command</code> é uma falha de transparência concreta — o sistema disse ao usuário a informação errada sobre como corrigir o próprio erro dele.</div>
+    </div>
+
+    <div class="gate-card">
+      <div class="gate-head">
+        <div><div class="gate-id">GATE · universalidade</div><h3 class="gate-name">Universalidade / Agnosticismo de Harness</h3></div>
+        <div class="gate-score"><span class="num">8</span><span class="den">/10</span></div>
+      </div>
+      <div class="meter"><span style="width:80%"></span></div>
+      <p>Funciona como anunciado: comandos e skills idênticos sincronizados entre <code>.claude/</code>, <code>.agent/</code> e <code>.cursor/</code>; a detecção de harness ativo (<code>CLAUDECODE=1</code>) disparou corretamente o protocolo delegado nas duas aplicações reais.</p>
+      <div class="caveat"><strong>Mas:</strong> só foi exercitado com um harness (Claude Code) nesta sessão — a promessa de portabilidade para Codex, Gemini CLI e outros permanece não testada na prática.</div>
+    </div>
+
+    <div class="gate-card">
+      <div class="gate-head">
+        <div><div class="gate-id">GATE · cobertura-real</div><h3 class="gate-name">Testabilidade / Cobertura Real</h3></div>
+        <div class="gate-score"><span class="num">6</span><span class="den">/10</span></div>
+      </div>
+      <div class="meter"><span style="width:60%"></span></div>
+      <p>Onde existe, a cultura de teste é rigorosa de verdade — encontrei testes de integração que sobem um container Docker real com Redis, não mockado.</p>
+      <div class="caveat"><strong>Mas:</strong> a funcionalidade mais visível e mais vendida do produto (<code>/master compose</code>) tinha exatamente <strong>zero</strong> testes até esta sessão. Cobertura excelente em uns lugares e um ponto cego total no recurso mais importante não é uma média — é um risco concentrado.</div>
+    </div>
+  </section>
+
+  <section class="block">
+    <h2 class="section-title"><span class="n">§3</span> Os 20 bugs, o que ficou aberto</h2>
+    <p class="lede">Nenhum destes existia antes de alguém tentar usar o produto de ponta a ponta pela primeira vez — o padrão mais consistente de toda a auditoria.</p>
+
+    <div class="finding">
+      <div class="dot"></div>
+      <div class="body"><strong>SyntaxError real em compose_suite.py</strong> — docstring interna não escapada fechava a string do template prematuramente.<span class="where">tools/aidd-master + aidd-enterprise · corrigido</span></div>
+    </div>
+    <div class="finding">
+      <div class="dot"></div>
+      <div class="body"><strong>Servidor gerado não subia</strong> — <code>logs.py</code> nunca era copiado para o projeto composto.<span class="where">templates/core/ · corrigido</span></div>
+    </div>
+    <div class="finding">
+      <div class="dot"></div>
+      <div class="body"><strong>Tabela SQLite hardcoded para YouTube</strong> — <code>yt_videos_processados</code> criada sempre, independente da ideia do usuário.<span class="where">05_criador.py · corrigido</span></div>
+    </div>
+    <div class="finding">
+      <div class="dot"></div>
+      <div class="body"><strong>pytest.ini quebrado por BOM UTF-8</strong>, mais 7 outros riscos estruturais da auditoria original (drift entre ferramentas, templates ausentes do git, gates prometidos e nunca implementados).<span class="where">raiz do ecossistema · corrigidos (R1–R8)</span></div>
+    </div>
+    <div class="finding">
+      <div class="dot"></div>
+      <div class="body"><strong>3 bugs reais expostos na primeira execução completa de CI</strong> — dependência ausente, bug de template Helm, race condition em teste de integração Redis.<span class="where">.github/workflows · corrigidos</span></div>
+    </div>
+    <div class="finding open">
+      <div class="dot"></div>
+      <div class="body"><strong>Mensagem de erro do inject aponta a flag errada</strong> — diz <code>--command</code>, o certo é <code>--mcp-command</code>.<span class="where">aidd-enterprise · encontrado nesta sessão, ainda não corrigido</span></div>
+    </div>
+  </section>
+
+  <section class="block">
+    <div class="composite">
+      <div class="big">7.5</div>
+      <div>
+        <span class="label">Composto das 8 dimensões</span>
+        <p style="font-family: var(--serif); margin: 0.3em 0 0;">Uma suíte com arquitetura genuinamente diferenciada — determinismo real, protocolo agêntico funcional sem API key — carregando o mesmo problema estrutural em toda parte: nada aqui tinha sido testado de ponta a ponta até essa auditoria. A nota reflete exatamente isso: a ideia é sólida, a validação da ideia era a peça que faltava.</p>
+      </div>
+    </div>
+  </section>
+
+  <footer class="colophon">
+    Metodologia: execução real de <code>forge</code>, <code>master compose</code>, <code>enterprise inject</code> e do pipeline de 8 fases do <code>generator</code>; servidores subidos via subprocess e testados com requisições HTTP reais; nenhum resultado citado aqui foi assumido sem rodar o comando correspondente.
+  </footer>
+
+</div>
