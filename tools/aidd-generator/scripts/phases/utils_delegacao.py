@@ -253,6 +253,7 @@ def solicitar_llm_modo_delegado(
             "id": "abc12345",
             "conteudo": "resposta LLM",
             "tokens_consumidos": 1234,
+            "origem_medicao": "autodeclarado",
             "modelo_usado": "claude-opus-5",
             "timestamp_resposta": "2026-08-30T10:30:00Z"
         }
@@ -281,9 +282,13 @@ def solicitar_llm_modo_delegado(
             return solicitar_llm_modo_headless(prompt, contexto, fase, modelo=modelo)
         return None
 
+    # Garantir que modo delegado sempre rotule como autodeclarado,
+    # sobrescrevendo qualquer valor que o ADE externo tenha escrito
+    resposta['origem_medicao'] = 'autodeclarado'
+
     print(f"✓ Resposta recebida:")
     print(f"  Modelo: {resposta.get('modelo_usado', 'desconhecido')}")
-    print(f"  Tokens: {resposta.get('tokens_consumidos', '?')}")
+    print(f"  Tokens: {resposta.get('tokens_consumidos', '?')} (origem: {resposta['origem_medicao']})")
 
     return resposta
 
@@ -314,6 +319,7 @@ def solicitar_llm_modo_headless(
         {
             "conteudo": "resposta LLM",
             "tokens_consumidos": 1234,
+            "origem_medicao": "medido_api",
             "modelo_usado": "claude-opus-5",
             "timestamp_resposta": "2026-08-30T10:30:00Z"
         }
@@ -367,17 +373,21 @@ def solicitar_llm_modo_headless(
 
             conteudo = resposta.choices[0].message.content
             tokens = resposta.usage.total_tokens if hasattr(resposta.usage, 'total_tokens') else None
+            origem_medicao = "medido_api" if tokens is not None else "indisponivel"
 
             resultado = {
                 "conteudo": conteudo,
                 "tokens_consumidos": tokens,
+                "origem_medicao": origem_medicao,
                 "modelo_usado": modelo,
                 "timestamp_resposta": datetime.now(timezone.utc).isoformat(),
             }
 
             print(f"✓ Resposta obtida via {modelo}")
-            if tokens:
-                print(f"  Tokens consumidos: {tokens}")
+            if tokens is not None:
+                print(f"  Tokens consumidos: {tokens} (origem: {origem_medicao})")
+            else:
+                print(f"  Tokens: não disponível (origem: {origem_medicao})")
 
             return resultado
 
@@ -528,7 +538,7 @@ def solicitar_llm(
         timeout_delegacao: Timeout para modo delegado (segundos)
 
     Returns:
-        Dict com keys: conteudo, tokens_consumidos, modelo_usado, timestamp_resposta
+        Dict com keys: conteudo, tokens_consumidos, origem_medicao, modelo_usado, timestamp_resposta
         ou None se erro/timeout
     """
 

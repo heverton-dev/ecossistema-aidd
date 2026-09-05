@@ -96,7 +96,7 @@ Dois pacotes têm um limite estrutural que nenhuma quantidade de trabalho remove
 | 2. Testabilidade + Determinismo | ✅ Concluído (implementado por agente externo, auditado e confirmado por mim) | Testabilidade 6→**9/10**; Determinismo 9→**9.5/10** (ambos alvo atingido) | `02-testabilidade-e-determinismo.md` |
 | 3. Modularização | ✅ Concluído | Modularização 7→**9/10** (alvo atingido) | `03-modularizacao-injector.md` |
 | 4. Cobertura restante | ✅ Concluído | Testabilidade/Cobertura Real permanece **9/10** (alvo já perseguido pelo Pacote 2, agora com evidência completa dos 7 comandos restantes, não parcial) | `04-cobertura-comandos-restantes.md` |
-| 5. Tokens + Agêntico | ⏳ Não iniciado | 7/10, 8/10 → alvo 8/10, 8.5/10 | *(a criar)* |
+| 5. Tokens + Agêntico | ✅ Concluído | Economia de Tokens 7→**8/10**; Engenharia Agêntica 8→**8.5/10** (ambos alvo atingido) | `05-economia-tokens-e-agentico.md` |
 | 6. Universalidade | 📌 Registrado como limite fixo | 8/10 → 8/10 (sem mudança possível) | este arquivo, §5 |
 | 7. Agnosticismo de Distribuição | ✅ Concluído | Gap novo, fora da tabela original de 8 dimensões — nota final **9/10** (limitação residual documentada: `aidd-master`/`aidd-enterprise` seguem com injetores antigos fora do mecanismo unificado) | `07-agnosticismo-distribuicao-componentes.md` |
 

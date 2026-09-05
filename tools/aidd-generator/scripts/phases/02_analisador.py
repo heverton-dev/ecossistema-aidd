@@ -224,7 +224,7 @@ class AnalisadorFase2:
 
         tempo_inicio = datetime.now()
 
-        # 1. Analisar ideia com LLM real (via litellm — qualquer provedor/harness)
+        # 1. Analisar ideia com LLM (via protocolo delegado ou headless)
         print(f"\n🤖 Analisando ideia...")
 
         analise = self._analisar_ideia_com_llm(ideia_projeto, referencias_phase1)
@@ -275,14 +275,14 @@ class AnalisadorFase2:
         print(f"✅ PHASE 2 COMPLETO")
         print(f"   Status: {index['status']}")
         print(f"   Tempo: {tempo_execucao:.1f}s")
-        print(f"   Tokens (reais): {index['tokens']['consumidos']}")
+        print(f"   Tokens: {index['tokens']['consumidos']} (origem: {index['tokens']['origem_medicao']})")
         print(f"{'=' * 60}\n")
 
         return index
 
     def _analisar_ideia_com_llm(self, ideia: str, referencias: Dict) -> Optional[Dict]:
         """
-        Chama LLM real via protocolo delegado (agnóstico a harness).
+        Chama LLM via protocolo unificado (delegado ou headless).
 
         Modo Delegado (default): ADE ativa (Claude Code, Codex, etc.) responde
                                   via arquivo JSON — zero credencial nova.
@@ -319,10 +319,14 @@ class AnalisadorFase2:
         try:
             conteudo = resposta['conteudo']
             tokens_usados = resposta.get('tokens_consumidos')
+            origem_medicao = resposta.get('origem_medicao')
+            if not origem_medicao:
+                origem_medicao = 'indisponivel' if tokens_usados is None else 'autodeclarado'
             modelo_usado = resposta.get('modelo_usado', 'desconhecido')
 
             analise = extrair_json_resposta(conteudo)
             analise['_tokens_reais_consumidos'] = tokens_usados
+            analise['_origem_medicao'] = origem_medicao
             analise['_modelo_usado'] = modelo_usado
 
             # Se LLM omitiu ou deixou vazio, tenta recuperar apenas das referências reais fornecidas da Fase 1
@@ -334,7 +338,7 @@ class AnalisadorFase2:
                     lista_refs = [r.get('titulo') or r.get('url') or r.get('nome') for r in referencias if isinstance(r, dict)]
                 analise['referencias_utilizadas'] = [r for r in lista_refs[:3] if r]
 
-            print(f"   ✅ Análise recebida ({tokens_usados} tokens via {modelo_usado})")
+            print(f"   ✅ Análise recebida ({tokens_usados} tokens via {modelo_usado}, origem: {origem_medicao})")
             return analise
 
         except json.JSONDecodeError as e:
@@ -349,6 +353,16 @@ class AnalisadorFase2:
         """Gera _phase_02_index.json"""
 
         tokens_reais = analise.get('_tokens_reais_consumidos')
+        origem_medicao = analise.get('_origem_medicao')
+        if not origem_medicao:
+            origem_medicao = 'indisponivel' if tokens_reais is None else 'autodeclarado'
+
+        if origem_medicao == 'medido_api':
+            desc_medicao = 'medido_api (litellm resposta.usage.total_tokens)'
+        elif origem_medicao == 'autodeclarado':
+            desc_medicao = 'autodeclarado (resposta do orquestrador/ADE)'
+        else:
+            desc_medicao = 'nao disponivel (provedor nao retornou usage)'
 
         index = {
             'fase_id': 'phase_02_analysis',
@@ -363,7 +377,8 @@ class AnalisadorFase2:
 
             'tokens': {
                 'consumidos': tokens_reais,
-                'medicao': 'real (litellm resposta.usage.total_tokens)' if tokens_reais is not None else 'nao disponivel (provedor nao retornou usage)',
+                'origem_medicao': origem_medicao,
+                'medicao': desc_medicao,
                 'percentual_determinismo': 0  # Phase 2 é 100% LLM
             },
 

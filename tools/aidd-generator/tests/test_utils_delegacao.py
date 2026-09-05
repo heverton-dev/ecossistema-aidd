@@ -304,3 +304,115 @@ class TestLLMNaoConfiguradoException:
         # detalhes_tecnicos DEVE conter o erro original
         assert "Traceback" in exc_info.value.detalhes_tecnicos
 
+
+# =============================================================================
+# TESTES DE ORIGEM DE MEDIÇÃO (TRANSPARÊNCIA DE TOKENS)
+# =============================================================================
+
+def test_modo_delegado_inclui_origem_autodeclarado_mesmo_sem_campo_na_resposta(monkeypatch):
+    """ADE externa responde sem campo origem_medicao (como qualquer ADE real hoje):
+    código local deve garantir origem_medicao == 'autodeclarado'."""
+    import utils_delegacao
+
+    resposta_sem_origem = {
+        'id': 'req123',
+        'conteudo': 'resposta gerada',
+        'tokens_consumidos': 450,
+        'modelo_usado': 'claude-sonnet-4-6',
+        'timestamp_resposta': '2026-09-05T12:00:00Z',
+    }
+    monkeypatch.setattr(utils_delegacao.RequisicaoLLMDelegada, 'aguardar_resposta', lambda *a, **kw: resposta_sem_origem)
+
+    resp = utils_delegacao.solicitar_llm_modo_delegado(
+        prompt="Analise", contexto="Fase 2", fase="phase_02", timeout=1
+    )
+
+    assert resp is not None
+    assert resp.get('origem_medicao') == 'autodeclarado'
+    assert resp.get('tokens_consumidos') == 450
+
+
+def test_modo_delegado_sobrescreve_alegacao_de_origem_da_ade(monkeypatch):
+    """Se ADE maliciosamente ou por engano alegar 'medido_api', o código local
+    sobrescreve para 'autodeclarado' porque modo delegado é não-verificável por definição."""
+    import utils_delegacao
+
+    resposta_falsificada = {
+        'id': 'req456',
+        'conteudo': 'resposta gerada',
+        'tokens_consumidos': 500,
+        'origem_medicao': 'medido_api',  # tentativa de fingir que mediu
+        'modelo_usado': 'gpt-4o',
+        'timestamp_resposta': '2026-09-05T12:00:00Z',
+    }
+    monkeypatch.setattr(utils_delegacao.RequisicaoLLMDelegada, 'aguardar_resposta', lambda *a, **kw: resposta_falsificada)
+
+    resp = utils_delegacao.solicitar_llm_modo_delegado(
+        prompt="Analise", contexto="Fase 2", fase="phase_02", timeout=1
+    )
+
+    assert resp is not None
+    assert resp.get('origem_medicao') == 'autodeclarado'
+
+
+def test_modo_headless_rotula_medido_api_quando_provider_retorna_usage(monkeypatch):
+    """Headless Mode com resposta do litellm contendo usage deve rotular medido_api."""
+    import utils_delegacao
+    import sys
+
+    class FakeUsage:
+        total_tokens = 321
+
+    class FakeMessage:
+        content = "conteudo da resposta"
+
+    class FakeChoice:
+        message = FakeMessage()
+
+    class FakeCompletionResponse:
+        choices = [FakeChoice()]
+        usage = FakeUsage()
+
+    fake_litellm = type(sys)('litellm')
+    fake_litellm.completion = lambda *a, **kw: FakeCompletionResponse()
+    monkeypatch.setitem(sys.modules, 'litellm', fake_litellm)
+    monkeypatch.setenv('LLM_MODEL', 'anthropic/claude-3-haiku')
+
+    resp = utils_delegacao.solicitar_llm_modo_headless(
+        prompt="prompt", contexto="ctx", fase="phase_02"
+    )
+
+    assert resp is not None
+    assert resp['tokens_consumidos'] == 321
+    assert resp['origem_medicao'] == 'medido_api'
+
+
+def test_modo_headless_rotula_indisponivel_quando_provider_sem_usage(monkeypatch):
+    """Headless Mode quando provider não retorna usage deve rotular indisponivel."""
+    import utils_delegacao
+    import sys
+
+    class FakeMessage:
+        content = "conteudo da resposta"
+
+    class FakeChoice:
+        message = FakeMessage()
+
+    class FakeCompletionResponse:
+        choices = [FakeChoice()]
+        usage = object()  # sem atributo total_tokens
+
+    fake_litellm = type(sys)('litellm')
+    fake_litellm.completion = lambda *a, **kw: FakeCompletionResponse()
+    monkeypatch.setitem(sys.modules, 'litellm', fake_litellm)
+    monkeypatch.setenv('LLM_MODEL', 'anthropic/claude-3-haiku')
+
+    resp = utils_delegacao.solicitar_llm_modo_headless(
+        prompt="prompt", contexto="ctx", fase="phase_02"
+    )
+
+    assert resp is not None
+    assert resp['tokens_consumidos'] is None
+    assert resp['origem_medicao'] == 'indisponivel'
+
+

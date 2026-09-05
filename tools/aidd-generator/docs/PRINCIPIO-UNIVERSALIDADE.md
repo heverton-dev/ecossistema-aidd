@@ -257,5 +257,14 @@ Contudo: Phase 1 (Pesquisa) coleta metadados, não arquivos. Não esperamos dado
 
 ---
 
-**Última atualização:** 30/08/2026  
-**Próxima revisão:** Após Correção 1/5 ser testada com sucesso
+**P: No Modo Delegado, a contagem de tokens é real e verificada?**
+
+R: **Não.** No Modo Delegado, o número de tokens é **autodeclarado** pelo ADE externo que escreveu a resposta no arquivo JSON. O código local não tem como auditar nem verificar esse número de forma independente, pois não possui acesso à conta, credenciais nem ao faturamento do harness/provedor que gerou a resposta.
+
+Isso é uma **limitação estrutural do próprio design** (um arquivo JSON desacoplado no sistema de arquivos como protocolo universal), **não um bug a ser corrigido depois**. Por esse motivo e em conformidade estrita com a Lei Fundamental de Transparência do AGENTS.md, todo valor de token no Modo Delegado é rotulado honestamente como `origem_medicao: "autodeclarado"`. Somente o Modo Headless (chamada direta via API pelo litellm) mede tokens reais via provider (`origem_medicao: "medido_api"`).
+
+---
+
+**Última atualização:** 05/09/2026  
+**Próxima revisão:** Em cada auditoria de transparência
+

@@ -540,7 +540,19 @@ class ImplementadorFase8:
         self.modelo_final = model_override or self.modelo_harness
         self.modelo_nome_amigavel = obter_nome_amigavel_modelo(self.modelo_final)
         self._tokens_totais = 0
+        self._origens_medicao: List[str] = []
         self.schema_compartilhado: Optional[str] = None
+
+    def _obter_origem_medicao_agregada(self) -> str:
+        """Aplica regra de contaminação (Decisão 3) para consolidar origem dos tokens."""
+        if 'autodeclarado' in self._origens_medicao:
+            return 'autodeclarado'
+        elif self._origens_medicao and all(o == 'medido_api' for o in self._origens_medicao):
+            return 'medido_api'
+        elif not self._origens_medicao:
+            return 'indisponivel'
+        else:
+            return 'indisponivel'
 
     def executar(self, ideia_projeto: str, analise: Dict, design: Dict) -> Optional[Dict]:
         """Executa pipeline completo da Fase 8"""
@@ -615,7 +627,8 @@ class ImplementadorFase8:
 
         print(f"\n{'=' * 60}")
         print(f"✅ PHASE 8 COMPLETO — {len(scripts_implementados)} script(s) implementados e verificados")
-        print(f"   Tokens (reais): {self._tokens_totais}")
+        origem_agregada = self._obter_origem_medicao_agregada()
+        print(f"   Tokens: {self._tokens_totais} (origem: {origem_agregada})")
         print(f"{'=' * 60}\n")
 
         return index
@@ -1077,6 +1090,11 @@ class ImplementadorFase8:
             return Result.fail("LLM não respondeu")
 
         self._tokens_totais += resposta.get('tokens_consumidos') or 0
+        origem = resposta.get('origem_medicao')
+        if not origem:
+            origem = 'indisponivel' if resposta.get('tokens_consumidos') is None else 'autodeclarado'
+        self._origens_medicao.append(origem)
+
         try:
             dados = extrair_json_resposta(resposta['conteudo'])
             if not isinstance(dados, dict):
@@ -1305,6 +1323,14 @@ Rules:
                      gates: List[Gate], tempo_execucao: float,
                      teste_integracao_gerado: bool = False,
                      resultado_integracao: Optional[Dict] = None) -> Dict:
+        origem_agregada = self._obter_origem_medicao_agregada()
+        if origem_agregada == 'medido_api':
+            desc_medicao = 'medido_api (soma de todas as chamadas LLM, incluindo correções)'
+        elif origem_agregada == 'autodeclarado':
+            desc_medicao = 'autodeclarado (resposta do orquestrador/ADE, soma de todas as chamadas)'
+        else:
+            desc_medicao = 'nao disponivel'
+
         return {
             'fase_id': 'phase_08_implementacao',
             'versao': '2.1',
@@ -1318,7 +1344,8 @@ Rules:
 
             'tokens': {
                 'consumidos': self._tokens_totais,
-                'medicao': 'real (soma de todas as chamadas LLM, incluindo correções)',
+                'origem_medicao': origem_agregada,
+                'medicao': desc_medicao,
                 'percentual_determinismo': 0
             },
 

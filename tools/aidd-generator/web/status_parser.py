@@ -157,6 +157,8 @@ def analisar_status_pasta_projeto(
         status = 'pendente'
         duracao = 0.0
         tokens = 0
+        origem_medicao = None
+        rotulo_medicao = None
         gates_fase: List[Dict[str, Any]] = []
 
         if dados_index:
@@ -176,13 +178,17 @@ def analisar_status_pasta_projeto(
             duracao = float(timestamps.get('duracao_segundos') or dados_index.get('duracao_segundos', 0.0))
             tempo_total += duracao
 
-            # Extração de tokens consumidos reais
+            # Extração de tokens consumidos e origem da medição
             tokens_obj = dados_index.get('tokens', {})
             if isinstance(tokens_obj, dict):
                 tokens_consumidos = tokens_obj.get('consumidos')
                 if isinstance(tokens_consumidos, (int, float)):
                     tokens = int(tokens_consumidos)
                     total_tokens += tokens
+                origem_medicao = tokens_obj.get('origem_medicao')
+                rotulo_medicao = tokens_obj.get('medicao')
+                if not origem_medicao and tokens_consumidos is not None:
+                    origem_medicao = 'autodeclarado' if tokens > 0 else 'nao_aplicavel'
 
             # Gates da fase
             gates_fase = extrair_gates_de_index(dados_index)
@@ -207,6 +213,8 @@ def analisar_status_pasta_projeto(
             'status': status,
             'duracao_segundos': duracao,
             'tokens_consumidos': tokens,
+            'origem_medicao': origem_medicao,
+            'rotulo_medicao': rotulo_medicao,
             'gates': gates_fase
         })
 

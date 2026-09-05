@@ -76,7 +76,10 @@ class AnalisadorCriticoAutomatico:
         investimento = self._calcular_investimento(roadmap)
         print(f"   ✓ {investimento['total_horas']}h, ${investimento['custo_total']}k")
 
-        # 8. Gerar relatório markdown
+        # 8. Consolidar tokens por origem de medição (transparência de métricas)
+        tokens_consolidado = self._consolidar_tokens_por_origem(dados)
+
+        # 9. Gerar relatório markdown
         print(f"\n📄 Gerando relatório markdown...")
         relatorio = self._gerar_relatorio_markdown({
             'score': score,
@@ -85,9 +88,10 @@ class AnalisadorCriticoAutomatico:
             'requisitos': requisitos,
             'roadmap': roadmap,
             'investimento': investimento,
+            'tokens_consolidado': tokens_consolidado,
         })
 
-        # 9. Salvar artefatos
+        # 10. Salvar artefatos
         print(f"\n💾 Salvando artefatos...")
         self._salvar_artefatos({
             'relatorio': relatorio,
@@ -95,6 +99,7 @@ class AnalisadorCriticoAutomatico:
             'roadmap': roadmap,
             'pontos_fortes': pontos_fortes,
             'pontos_fracos': pontos_fracos,
+            'tokens_consolidado': tokens_consolidado,
         })
         print(f"   ✓ AVALIACAO-AUTO-CRITICA.md")
         print(f"   ✓ .aidd/ROADMAP-EVOLUCAO.md")
@@ -106,6 +111,7 @@ class AnalisadorCriticoAutomatico:
         print(f"✅ PHASE 7 COMPLETO — AUTO-CRÍTICA REALIZADA")
         print(f"   Score: {score['total']}/100")
         print(f"   Status: {score['classificacao']}")
+        print(f"   Tokens: {tokens_consolidado['consolidado_texto']}")
         print(f"   Roadmap: {len(roadmap['fases'])} fases até 100/100")
         print(f"   Tempo: {tempo_execucao:.1f}s")
         print(f"{'=' * 60}\n")
@@ -114,6 +120,7 @@ class AnalisadorCriticoAutomatico:
             'status': 'COMPLETO',
             'score': score['total'],
             'tempo_execucao': tempo_execucao,
+            'tokens_consolidado': tokens_consolidado,
             'artefatos': ['AVALIACAO-AUTO-CRITICA.md', '.aidd/ROADMAP-EVOLUCAO.md']
         }
 
@@ -539,6 +546,52 @@ class AnalisadorCriticoAutomatico:
             },
         }
 
+    def _consolidar_tokens_por_origem(self, dados: Dict) -> Dict:
+        """Consolida tokens consumidos segregando por confiabilidade/origem de medição.
+        Nunca soma tokens autodeclarados e medidos como se tivessem a mesma confiabilidade."""
+        medido_api = 0
+        autodeclarado = 0
+        por_fase = {}
+
+        for i in range(1, 9):
+            chave = f'phase_{i}'
+            if chave not in dados:
+                continue
+            phase = dados[chave]
+            tokens_obj = phase.get('tokens', {})
+            consumidos = tokens_obj.get('consumidos')
+            origem = tokens_obj.get('origem_medicao')
+
+            if not origem:
+                if consumidos == 0 or consumidos is None:
+                    origem = 'indisponivel' if consumidos is None else 'nao_aplicavel'
+                else:
+                    origem = 'autodeclarado'
+
+            if isinstance(consumidos, (int, float)):
+                c_val = int(consumidos)
+                if origem == 'medido_api':
+                    medido_api += c_val
+                elif origem == 'autodeclarado':
+                    autodeclarado += c_val
+            else:
+                c_val = None
+
+            por_fase[chave] = {
+                'consumidos': c_val,
+                'origem_medicao': origem,
+            }
+
+        texto_consolidado = f"{medido_api} tokens medidos via API + {autodeclarado} tokens autodeclarados pela ADE"
+
+        return {
+            'total_medido_api': medido_api,
+            'total_autodeclarado': autodeclarado,
+            'total_consumidos': medido_api + autodeclarado,
+            'consolidado_texto': texto_consolidado,
+            'por_fase': por_fase,
+        }
+
     def _gerar_relatorio_markdown(self, resultado: Dict) -> str:
         """Gerar relatório markdown completo"""
         md = f"""# 📊 AUTO-CRÍTICA: Projeto {self.pasta_projeto.name}
@@ -605,7 +658,19 @@ class AnalisadorCriticoAutomatico:
 - **Custo:** ${resultado['investimento']['custo_total']}k
 - **Timeline:** ~{resultado['investimento']['timeline_meses']} meses
 - **Premissas:** {resultado['investimento']['premissas']['custo_por_hora_usd']} USD/hora, {resultado['investimento']['premissas']['horas_por_semana']}h/semana ({resultado['investimento']['premissas']['nota']})
+"""
 
+        tok_info = resultado.get('tokens_consolidado')
+        if tok_info:
+            md += f"""
+## 🪙 Consumo de Tokens por Origem de Medição
+
+- **Tokens Medidos via API (litellm):** {tok_info['total_medido_api']}
+- **Tokens Autodeclarados pela ADE (não-verificáveis):** {tok_info['total_autodeclarado']}
+- **Consolidação:** {tok_info['consolidado_texto']}
+"""
+
+        md += """
 ## 📌 Recomendação
 """
         total_h = resultado['investimento']['total_horas']
@@ -645,6 +710,8 @@ Projeto com score máximo — foco em manutenção e evolução incremental.
             f.write("# 🚀 Roadmap de Evolução\n\n")
             f.write(artefatos['relatorio'])
 
+        tok_info = artefatos.get('tokens_consolidado', {})
+
         # Salvar index JSON
         index = {
             'fase_id': 'phase_07_auto_critique',
@@ -657,6 +724,10 @@ Projeto com score máximo — foco em manutenção e evolução incremental.
                 'consumidos': 0,
                 'economizados': 0,
                 'percentual_determinismo': 100,
+                'total_medido_api': tok_info.get('total_medido_api', 0),
+                'total_autodeclarado': tok_info.get('total_autodeclarado', 0),
+                'consolidado_texto': tok_info.get('consolidado_texto', ''),
+                'por_fase': tok_info.get('por_fase', {}),
             },
             'processamento': {
                 'score_calculado': artefatos['score']['total'],

@@ -309,7 +309,18 @@ class DesignerFase3:
         self.modelo_harness = detectar_modelo_harness()
         self.modelo_final = model_override or self.modelo_harness
         self.modelo_nome_amigavel = obter_nome_amigavel_modelo(self.modelo_final)
-        self._tokens_reais_totais = None
+        self._tokens_totais = None
+        self._origem_medicao_totais = 'indisponivel'
+
+    @property
+    def _tokens_reais_totais(self):
+        return self._tokens_totais
+
+    @_tokens_reais_totais.setter
+    def _tokens_reais_totais(self, valor):
+        self._tokens_totais = valor
+        if valor is not None and self._origem_medicao_totais == 'indisponivel':
+            self._origem_medicao_totais = 'autodeclarado'
 
     def executar(self, ideia_projeto: str, analise_anterior: Dict) -> Optional[Dict]:
         """Executa pipeline completo da Phase 3"""
@@ -429,13 +440,17 @@ class DesignerFase3:
 
                 conteudo = resposta.get('conteudo', '')
                 tokens = resposta.get('tokens_consumidos')
+                origem = resposta.get('origem_medicao')
+                if not origem:
+                    origem = 'indisponivel' if tokens is None else 'autodeclarado'
+
                 if not conteudo or not conteudo.strip():
                     if tentativa < max_tentativas:
                         continue
                     raise RuntimeError(f"Subagente {nome} retornou conteúdo vazio após {max_tentativas} tentativas")
 
                 try:
-                    return extrair_json_resposta(conteudo), tokens
+                    return extrair_json_resposta(conteudo), tokens, origem
                 except Exception as e:
                     if tentativa < max_tentativas:
                         time.sleep(2)
@@ -444,6 +459,7 @@ class DesignerFase3:
 
         with ThreadPoolExecutor(max_workers=5) as executor:
             futures = {}
+            origens_coletadas = []
 
             for nome, prompt in subagentes:
                 print(f"   🤖 {nome.capitalize()} → solicitando via protocolo delegado...")
@@ -452,19 +468,31 @@ class DesignerFase3:
             subagente_timeout = int(os.getenv('SUBAGENTE_TIMEOUT', '300'))
             for nome, future in futures.items():
                 try:
-                    resultado, tokens = future.result(timeout=subagente_timeout)
+                    resultado, tokens, origem = future.result(timeout=subagente_timeout)
                     resultados[nome] = resultado
+                    origens_coletadas.append(origem)
                     if tokens is not None:
                         tokens_totais += tokens
                     else:
                         algum_tokens_indisponivel = True
-                    print(f"   ✅ {nome.capitalize()} completo ({tokens or '?'} tokens)")
+                    print(f"   ✅ {nome.capitalize()} completo ({tokens or '?'} tokens, origem: {origem})")
                 except Exception as e:
                     print(f"   ❌ {nome} falhou: {type(e).__name__}: {e}")
                     return None
 
+        # Regra de contaminação (Decisão 3):
+        # Se QUALQUER chamada for 'autodeclarado', o agregado é 'autodeclarado'.
+        # Só é 'medido_api' se TODAS forem 'medido_api'.
+        if 'autodeclarado' in origens_coletadas:
+            origem_agregada = 'autodeclarado'
+        elif origens_coletadas and all(o == 'medido_api' for o in origens_coletadas):
+            origem_agregada = 'medido_api'
+        else:
+            origem_agregada = 'indisponivel'
+
         # Guardado como atributo para uso em _gerar_index
-        self._tokens_reais_totais = None if algum_tokens_indisponivel else tokens_totais
+        self._tokens_totais = None if algum_tokens_indisponivel else tokens_totais
+        self._origem_medicao_totais = origem_agregada
 
         return resultados
 
@@ -483,6 +511,13 @@ class DesignerFase3:
     def _gerar_index(self, design: Dict, gates: List[Gate], tempo_execucao: float) -> Dict:
         """Gera _phase_03_index.json"""
 
+        if self._origem_medicao_totais == 'medido_api':
+            desc_medicao = 'medido_api (litellm, soma das 5 chamadas)'
+        elif self._origem_medicao_totais == 'autodeclarado':
+            desc_medicao = 'autodeclarado (resposta do orquestrador/ADE, soma das chamadas)'
+        else:
+            desc_medicao = 'nao disponivel'
+
         index = {
             'fase_id': 'phase_03_design',
             'versao': '2.1',
@@ -495,8 +530,9 @@ class DesignerFase3:
             },
 
             'tokens': {
-                'consumidos': self._tokens_reais_totais,
-                'medicao': 'real (litellm, soma das 5 chamadas)' if self._tokens_reais_totais is not None else 'nao disponivel',
+                'consumidos': self._tokens_totais,
+                'origem_medicao': self._origem_medicao_totais,
+                'medicao': desc_medicao,
                 'percentual_determinismo': 0  # Phase 3 é 100% LLM
             },
 
