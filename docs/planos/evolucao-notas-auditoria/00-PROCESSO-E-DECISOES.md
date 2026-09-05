@@ -95,10 +95,10 @@ Dois pacotes têm um limite estrutural que nenhuma quantidade de trabalho remove
 | 1. Transparência + Gates | ✅ Concluído | Gates Mecânicos 7/10 → **8/10 (alvo atingido)**. Transparência 8/10 → **8.5/10** (alvo 9/10 só fecha quando Pacotes 4 e 5 também resolverem suas partes desta dimensão — ver §3 do documento do pacote) | `01-transparencia-e-gates.md` |
 | 2. Testabilidade + Determinismo | ✅ Concluído (implementado por agente externo, auditado e confirmado por mim) | Testabilidade 6→**9/10**; Determinismo 9→**9.5/10** (ambos alvo atingido) | `02-testabilidade-e-determinismo.md` |
 | 3. Modularização | 🔒 Bloqueado (aguardando decisão A/B/C) | 7/10 → alvo 9/10 | *(a criar)* |
-| 4. Cobertura restante | ⏳ Não iniciado | contribui para Testabilidade | *(a criar)* |
+| 4. Cobertura restante | ✅ Concluído | Testabilidade/Cobertura Real permanece **9/10** (alvo já perseguido pelo Pacote 2, agora com evidência completa dos 7 comandos restantes, não parcial) | `04-cobertura-comandos-restantes.md` |
 | 5. Tokens + Agêntico | ⏳ Não iniciado | 7/10, 8/10 → alvo 8/10, 8.5/10 | *(a criar)* |
 | 6. Universalidade | 📌 Registrado como limite fixo | 8/10 → 8/10 (sem mudança possível) | este arquivo, §5 |
-| 7. Agnosticismo de Distribuição | 🔍 Diagnóstico verificado por amostragem, aguardando 4 decisões do usuário | Gap novo, fora da tabela original de 8 dimensões — nota a definir quando a Definição de Pronto for travada | `07-agnosticismo-distribuicao-componentes.md` |
+| 7. Agnosticismo de Distribuição | ✅ Concluído | Gap novo, fora da tabela original de 8 dimensões — nota final **9/10** (limitação residual documentada: `aidd-master`/`aidd-enterprise` seguem com injetores antigos fora do mecanismo unificado) | `07-agnosticismo-distribuicao-componentes.md` |
 
 Esta tabela é atualizada ao final de cada pacote — nunca antes da validação real daquele pacote.
 
