@@ -80,7 +80,7 @@ Dois pacotes têm um limite estrutural que nenhuma quantidade de trabalho remove
 
 | Pacote | Status | Nota antes → depois | Documento |
 |---|---|---|---|
-| 1. Transparência + Gates | ⏳ Não iniciado | 8/10, 7/10 → alvo 9/10, 8/10 | *(a criar)* |
+| 1. Transparência + Gates | ✅ Concluído | Gates Mecânicos 7/10 → **8/10 (alvo atingido)**. Transparência 8/10 → **8.5/10** (alvo 9/10 só fecha quando Pacotes 4 e 5 também resolverem suas partes desta dimensão — ver §3 do documento do pacote) | `01-transparencia-e-gates.md` |
 | 2. Testabilidade + Determinismo | ⏳ Não iniciado | 6/10, 9/10 → alvo 9/10, 9.5/10 | *(a criar)* |
 | 3. Modularização | 🔒 Bloqueado (aguardando decisão A/B/C) | 7/10 → alvo 9/10 | *(a criar)* |
 | 4. Cobertura restante | ⏳ Não iniciado | contribui para Testabilidade | *(a criar)* |

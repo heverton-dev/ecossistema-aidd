@@ -1,0 +1,7 @@
+{
+  "descricao": "Flags citadas em print(...)/raise(...) que o G_CLI_HELP_CONSISTENCIA.py aponta como 'nao definidas via add_argument neste arquivo' mas que, auditadas manualmente, pertencem a uma FERRAMENTA EXTERNA (ex.: git, docker) mencionada como conselho/aviso ao usuario, nao uma alegacao sobre a propria CLI. Adicionar aqui exige justificativa - nunca usar so para silenciar o gate.",
+  "auditado_em": "2026-09-04",
+  "entradas": {
+    "tools/aidd-generator/scripts/gates/G_BLOQUEAR_SEGREDOS.py:--no-verify": "Aviso ao usuario para NAO usar 'git commit --no-verify' para contornar o gate - --no-verify e flag do git, nao deste script."
+  }
+}

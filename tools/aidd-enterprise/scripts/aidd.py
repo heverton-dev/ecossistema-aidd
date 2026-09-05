@@ -844,7 +844,7 @@ def run_inject(tipo, nome, base_dir=".", descricao="", content=None, content_fil
             component["content"] = _default_component_content(tipo, nome, descricao)
     elif tipo == "mcp":
         if not command:
-            print("[ERRO] type 'mcp' exige --command (ex: --command python).")
+            print("[ERRO] type 'mcp' exige --mcp-command (ex: --mcp-command python).")
             sys.exit(1)
         component["mcp"] = {"command": command, "args": mcp_args or [], "env": mcp_env or {}}
     elif tipo == "config":

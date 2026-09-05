@@ -65,6 +65,7 @@ def cmd_audit(args):
         "G_DRIFT_NUCLEO_COMPARTILHADO.py",
         "G_HARNESS_COMPAT.py",
         "G_SEGREDOS.py",
+        "G_CLI_HELP_CONSISTENCIA.py",
     ]
     for gate in gates:
         gate_script = os.path.join(ROOT_DIR, "gates", gate)
