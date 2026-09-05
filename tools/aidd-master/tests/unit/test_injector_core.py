@@ -455,3 +455,317 @@ def test_cli_inject_mcp_com_command_ponta_a_ponta(tmp_path):
     assert dados["mcpServers"]["postgres-live"]["args"] == ["-y", "@modelcontextprotocol/server-postgres"]
     assert dados["mcpServers"]["postgres-live"]["env"] == {"DATABASE_URL": "postgresql://localhost/db"}
 
+
+# ---------------------------------------------------------------------------
+# Fase 7 — 5 Novas Capacidades do Injetor Universal Canônico
+# ---------------------------------------------------------------------------
+
+def test_sha256_hash_drift_detection(tmp_path):
+    """(a) Injeta componente, altera arquivo manualmente e verifica drift; reinjeta e confirma ok."""
+    payload = {
+        "tipo": "skill",
+        "nome": "skill-drift-check",
+        "descricao": "Skill para testar drift de hash SHA-256.",
+        "alvo_projeto": "aidd-master",
+    }
+    resolucao = profiles_registry.resolver_destinos(payload, str(tmp_path)).valor
+    mat_res = materializador.materializar(payload, resolucao)
+    assert mat_res.sucesso is True
+    sync_res = sincronizador_harness.sincronizar(payload, resolucao, mat_res.valor["arquivos_criados"])
+    assert sync_res.sucesso is True
+
+    # 1. Antes de alterar, verificação passa
+    check1 = sincronizador_harness.verificar_sincronizacao(str(tmp_path))
+    assert check1.sucesso is True
+    assert check1.valor["verificados"] > 0
+    assert len(check1.valor["problemas"]) == 0
+
+    # 2. Edita manualmente um arquivo gerado
+    arq_editado = mat_res.valor["arquivos_criados"][0]
+    with open(arq_editado, "a", encoding="utf-8") as f:
+        f.write("\n# Modificacao manual para gerar drift\n")
+
+    check2 = sincronizador_harness.verificar_sincronizacao(str(tmp_path))
+    assert check2.sucesso is False
+    assert check2.codigo == "SYNC_DIVERGENTE"
+    assert len(check2.detalhes["problemas"]) >= 1
+    assert "Hash divergente" in check2.detalhes["problemas"][0]
+
+    # 3. Reinjeta com sobrescrever=True sem editar nada e confirma ok
+    mat_res2 = materializador.materializar(payload, resolucao, sobrescrever=True)
+    assert mat_res2.sucesso is True
+    sync_res2 = sincronizador_harness.sincronizar(payload, resolucao, mat_res2.valor["arquivos_criados"])
+    assert sync_res2.sucesso is True
+
+    check3 = sincronizador_harness.verificar_sincronizacao(str(tmp_path))
+    assert check3.sucesso is True
+    assert len(check3.valor["problemas"]) == 0
+
+
+def test_remover_componente_e_limpar_diretorios_vazios(tmp_path):
+    """(b) Injeta componente, remove via remover_componente() e valida deleção física e limpeza."""
+    payload = {
+        "tipo": "rule",
+        "nome": "regra-remocao",
+        "descricao": "Regra para testar remocao completa.",
+        "alvo_projeto": "aidd-master",
+    }
+    resolucao = profiles_registry.resolver_destinos(payload, str(tmp_path)).valor
+    mat_res = materializador.materializar(payload, resolucao)
+    assert mat_res.sucesso is True
+    sync_res = sincronizador_harness.sincronizar(payload, resolucao, mat_res.valor["arquivos_criados"])
+    assert sync_res.sucesso is True
+
+    for arq in mat_res.valor["arquivos_criados"]:
+        assert os.path.isfile(arq)
+
+    # Remove o componente
+    rem_res = materializador.remover_componente("rule", "regra-remocao", str(tmp_path))
+    assert rem_res.sucesso is True
+
+    # Arquivos devem sumir
+    for arq in mat_res.valor["arquivos_criados"]:
+        assert not os.path.exists(arq)
+
+    # Diretório vazio que continha o arquivo deve ter sido limpo se ficou vazio
+    for arq in mat_res.valor["arquivos_criados"]:
+        d = os.path.dirname(arq)
+        if os.path.exists(d):
+            assert len(os.listdir(d)) > 0
+
+    # Registro no CAPABILITIES.json não deve conter mais o componente
+    with open(tmp_path / "CAPABILITIES.json", "r", encoding="utf-8") as f:
+        catalogo = json.load(f)
+    assert all(c.get("nome") != "regra-remocao" for c in catalogo.get("rule", []))
+
+    # Tentar remover de novo deve falhar com COMPONENTE_NAO_ENCONTRADO
+    rem_res2 = materializador.remover_componente("rule", "regra-remocao", str(tmp_path))
+    assert rem_res2.sucesso is False
+    assert rem_res2.codigo == "COMPONENTE_NAO_ENCONTRADO"
+
+
+def test_remover_componente_hook_limpa_tambem_destino_canonico(tmp_path):
+    """remover_componente() de um 'hook' também apaga a cópia canônica
+    (componentes/{alvo_projeto}/hooks/{nome}/hook.sh) escrita por materializar()
+    fora da lista 'arquivos_criados' — sem isso, remover deixava esse arquivo órfão."""
+    payload = {
+        "tipo": "hook",
+        "nome": "hook-remocao-canonica",
+        "descricao": "Hook para testar limpeza do destino canonico na remocao.",
+        "alvo_projeto": "aidd-master",
+    }
+    resolucao = profiles_registry.resolver_destinos(payload, str(tmp_path)).valor
+    mat_res = materializador.materializar(payload, resolucao)
+    assert mat_res.sucesso is True
+    sync_res = sincronizador_harness.sincronizar(payload, resolucao, mat_res.valor["arquivos_criados"])
+    assert sync_res.sucesso is True
+
+    canon_dest = materializador.resolve_canonical_destination("hook", "hook-remocao-canonica", alvo_projeto="aidd-master")
+    assert canon_dest.is_file()
+
+    rem_res = materializador.remover_componente("hook", "hook-remocao-canonica", str(tmp_path))
+    assert rem_res.sucesso is True
+
+    for arq in mat_res.valor["arquivos_criados"]:
+        assert not os.path.exists(arq)
+    assert not canon_dest.exists()
+
+
+def test_rollback_full_snapshot_restaura_conteudo_previo(tmp_path, monkeypatch):
+    """(c) Cria destino pré-existente com conteúdo X; força falha na 2ª escrita; confirma volta de X."""
+    payload = {
+        "tipo": "skill",
+        "nome": "skill-rollback-snap",
+        "descricao": "Skill para testar rollback com snapshot prévio.",
+        "alvo_projeto": "aidd-master",
+    }
+    resolucao = profiles_registry.resolver_destinos(payload, str(tmp_path)).valor
+    dest_principal = resolucao["dest_principal"]
+    os.makedirs(os.path.dirname(dest_principal), exist_ok=True)
+
+    conteudo_original = "CONTEUDO_ORIGINAL_PRE_EXISTENTE_12345"
+    with open(dest_principal, "w", encoding="utf-8") as f:
+        f.write(conteudo_original)
+
+    # Interceptar open() em materializador para falhar na segunda escrita (quando destino != dest_principal)
+    real_open = open
+    escritas = []
+    falhou = [False]
+
+    def mock_open(file, mode="r", *args, **kwargs):
+        if "w" in mode and "b" not in mode:
+            escritas.append(str(file))
+            if len(escritas) >= 2 and not falhou[0]:
+                falhou[0] = True
+                raise OSError("Falha simulada na segunda escrita para forçar rollback")
+        return real_open(file, mode, *args, **kwargs)
+
+    monkeypatch.setattr("builtins.open", mock_open)
+
+    res = materializador.materializar(payload, resolucao, sobrescrever=True)
+    assert res.sucesso is False
+    assert res.codigo == "MATERIALIZACAO_FALHOU"
+
+    # Restaura monkeypatch para ler arquivo
+    monkeypatch.undo()
+
+    # O arquivo pré-existente deve ter tido seu conteúdo original restaurado
+    with open(dest_principal, "r", encoding="utf-8") as f:
+        assert f.read() == conteudo_original
+
+    # O segundo arquivo (que falhou) não deve existir
+    if len(resolucao.get("mirrors", [])) > 0:
+        assert not os.path.exists(resolucao["mirrors"][0])
+
+
+def test_materializar_dry_run_nao_escreve_em_disco(tmp_path):
+    """(d) materializar(dry_run=True) não cria arquivos e retorna destinos esperados."""
+    payload = {
+        "tipo": "agent",
+        "nome": "agente-dry",
+        "descricao": "Agente para testar modo dry_run.",
+        "alvo_projeto": "aidd-master",
+    }
+    resolucao = profiles_registry.resolver_destinos(payload, str(tmp_path)).valor
+    res = materializador.materializar(payload, resolucao, dry_run=True)
+
+    assert res.sucesso is True
+    assert res.detalhes.get("dry_run") is True
+
+    destinos = res.valor if isinstance(res.valor, list) else res.valor.get("destinos", [])
+    assert len(destinos) > 0
+    for d in destinos:
+        assert not os.path.exists(d), f"Arquivo não deveria ter sido criado: {d}"
+
+
+def test_config_com_mapa_arbitrario_de_arquivos(tmp_path):
+    """(e) Injeta config com 'arquivos', valida rejeição de path traversal e scaffold padrão sem 'arquivos'."""
+    # 1. Config com arquivos válidos
+    payload_valido = {
+        "tipo": "config",
+        "nome": "cfg-multi",
+        "descricao": "Configuração multi-arquivos.",
+        "alvo_projeto": "aidd-master",
+        "arquivos": {
+            "a/b.json": '{"status": "ok"}',
+            "c.txt": "conteudo c",
+        },
+    }
+    resolucao = profiles_registry.resolver_destinos(payload_valido, str(tmp_path)).valor
+    res_valido = materializador.materializar(payload_valido, resolucao)
+    assert res_valido.sucesso is True
+    assert (tmp_path / "a" / "b.json").read_text(encoding="utf-8") == '{"status": "ok"}'
+    assert (tmp_path / "c.txt").read_text(encoding="utf-8") == "conteudo c"
+
+    # 2. Config com path traversal (rejeição estrita e nenhum arquivo escrito)
+    payload_inseguro = {
+        "tipo": "config",
+        "nome": "cfg-bad",
+        "descricao": "Configuração com path traversal.",
+        "alvo_projeto": "aidd-master",
+        "arquivos": {
+            "../fora.txt": "conteudo malicioso",
+        },
+    }
+    res_inseguro = materializador.materializar(payload_inseguro, resolucao)
+    assert res_inseguro.sucesso is False
+    assert res_inseguro.codigo == "PATH_TRAVERSAL_REJEITADO"
+    assert not (tmp_path.parent / "fora.txt").exists()
+
+    # 3. Config sem 'arquivos' (zero regressão — scaffold fixo padrão)
+    payload_sem_arquivos = {
+        "tipo": "config",
+        "nome": "cfg-padrao",
+        "descricao": "Configuração clássica sem mapa de arquivos.",
+        "alvo_projeto": "aidd-master",
+    }
+    res_padrao = materializador.materializar(payload_sem_arquivos, resolucao)
+    assert res_padrao.sucesso is True
+    dest_principal = resolucao["dest_principal"]
+    assert os.path.isfile(dest_principal)
+    with open(dest_principal, "r", encoding="utf-8") as f:
+        dados = json.load(f)
+    assert dados["nome"] == "cfg-padrao"
+    assert "parametros" in dados
+
+
+def test_cli_inject_remover_e_dry_run_ponta_a_ponta(tmp_path):
+    """Valida CLI 'aidd inject' com flags --dry-run e --remover ponta a ponta."""
+    aidd_py = os.path.join(_ROOT, "scripts", "aidd.py")
+
+    # 1. Executa com --dry-run
+    res_dry = subprocess.run(
+        [
+            sys.executable, aidd_py, "inject", "rule", "regra-cli-dry",
+            "--descricao", "Regra dry run CLI",
+            "--dry-run",
+            "--dir", str(tmp_path),
+        ],
+        capture_output=True, text=True, encoding="utf-8", errors="replace",
+    )
+    assert res_dry.returncode == 0, res_dry.stdout + res_dry.stderr
+    assert "[DRY-RUN]" in res_dry.stdout
+    assert not (tmp_path / "templates" / "rules" / "regra-cli-dry.md").exists()
+
+    # 2. Injeta de verdade
+    res_inj = subprocess.run(
+        [
+            sys.executable, aidd_py, "inject", "rule", "regra-cli-real",
+            "--descricao", "Regra real CLI",
+            "--dir", str(tmp_path),
+        ],
+        capture_output=True, text=True, encoding="utf-8", errors="replace",
+    )
+    assert res_inj.returncode == 0, res_inj.stdout + res_inj.stderr
+    regra_path = tmp_path / "templates" / "rules" / "regra-cli-real.md"
+    assert regra_path.is_file()
+
+    # 3. Remove com --remover
+    res_rem = subprocess.run(
+        [
+            sys.executable, aidd_py, "inject", "rule", "regra-cli-real",
+            "--remover",
+            "--dir", str(tmp_path),
+        ],
+        capture_output=True, text=True, encoding="utf-8", errors="replace",
+    )
+    assert res_rem.returncode == 0, res_rem.stdout + res_rem.stderr
+    assert not regra_path.exists()
+
+
+def test_cli_verificar_drift_ponta_a_ponta(tmp_path):
+    """Valida o subcomando 'aidd verificar-drift' ponta a ponta: passa após injeção
+    limpa e reprova (exit 1) depois de uma edição manual do arquivo gerado."""
+    aidd_py = os.path.join(_ROOT, "scripts", "aidd.py")
+
+    res_inj = subprocess.run(
+        [
+            sys.executable, aidd_py, "inject", "rule", "regra-cli-drift",
+            "--descricao", "Regra para checar drift via CLI",
+            "--dir", str(tmp_path),
+        ],
+        capture_output=True, text=True, encoding="utf-8", errors="replace",
+    )
+    assert res_inj.returncode == 0, res_inj.stdout + res_inj.stderr
+    regra_path = tmp_path / "templates" / "rules" / "regra-cli-drift.md"
+    assert regra_path.is_file()
+
+    res_ok = subprocess.run(
+        [sys.executable, aidd_py, "verificar-drift", "--dir", str(tmp_path)],
+        capture_output=True, text=True, encoding="utf-8", errors="replace",
+    )
+    assert res_ok.returncode == 0, res_ok.stdout + res_ok.stderr
+    assert "SUCESSO" in res_ok.stdout
+
+    with open(regra_path, "a", encoding="utf-8") as f:
+        f.write("\n# Edicao manual para gerar drift via CLI\n")
+
+    res_fail = subprocess.run(
+        [sys.executable, aidd_py, "verificar-drift", "--dir", str(tmp_path)],
+        capture_output=True, text=True, encoding="utf-8", errors="replace",
+    )
+    assert res_fail.returncode == 1, res_fail.stdout + res_fail.stderr
+    assert "SYNC_DIVERGENTE" in res_fail.stdout
+
+
+

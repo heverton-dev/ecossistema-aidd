@@ -606,7 +606,7 @@ def _core_src_path() -> str:
     return os.path.join(master_root, "src", "core")
 
 
-def _executar_injecao(payload, target_dir: str, sobrescrever: bool = False) -> int:
+def _executar_injecao(payload, target_dir: str, sobrescrever: bool = False, dry_run: bool = False) -> int:
     """Executa o pipeline completo do Injetor Universal: resolver -> materializar -> sincronizar."""
     core_src = _core_src_path()
     if core_src not in sys.path:
@@ -615,8 +615,9 @@ def _executar_injecao(payload, target_dir: str, sobrescrever: bool = False) -> i
     from materializador import materializar
     from sincronizador_harness import sincronizar
 
+    prefixo = "[DRY-RUN] " if dry_run else ""
     print("=" * 80)
-    print(f"🧩 [AIDD INJECT] Injetando '{payload.get('tipo')}' -> '{payload.get('nome')}'")
+    print(f"🧩 {prefixo}[AIDD INJECT] Injetando '{payload.get('tipo')}' -> '{payload.get('nome')}'")
     print(f"📁 Diretório Alvo: {os.path.abspath(target_dir)}")
     print("=" * 80)
 
@@ -626,12 +627,30 @@ def _executar_injecao(payload, target_dir: str, sobrescrever: bool = False) -> i
         return 1
     resolucao = resolucao_result.valor
 
-    materializacao_result = materializar(payload, resolucao, sobrescrever=sobrescrever)
+    materializacao_result = materializar(
+        payload, resolucao, sobrescrever=sobrescrever, dry_run=dry_run
+    )
     if not materializacao_result.sucesso:
         print(f"[ERRO] {materializacao_result.codigo}: {materializacao_result.erro}")
         return 1
 
-    arquivos = materializacao_result.valor["arquivos_criados"]
+    if dry_run:
+        destinos = (
+            materializacao_result.valor
+            if isinstance(materializacao_result.valor, list)
+            else materializacao_result.valor.get("destinos", [])
+        )
+        print("\n🔍 [DRY-RUN] Destinos que seriam escritos (nenhum arquivo modificado):")
+        for d in destinos:
+            print(f"   - {d}")
+        print("\n✨ [DRY-RUN]: Simulação concluída com sucesso!")
+        return 0
+
+    arquivos = (
+        materializacao_result.valor
+        if isinstance(materializacao_result.valor, list)
+        else materializacao_result.valor.get("arquivos_criados", [])
+    )
     print("\n📄 Arquivos materializados:")
     for a in arquivos:
         print(f"   - {a}")
@@ -653,6 +672,18 @@ def cmd_inject(args):
     core_src = _core_src_path()
     if core_src not in sys.path:
         sys.path.insert(0, core_src)
+
+    if getattr(args, "remover", False):
+        from materializador import remover_componente
+        target_dir = getattr(args, "dir", ".")
+        res = remover_componente(args.tipo, args.nome, target_dir)
+        if res.sucesso:
+            print(f"🗑️ [SUCESSO] Componente '{args.nome}' ({args.tipo}) removido com sucesso de {target_dir}.")
+            sys.exit(0)
+        else:
+            print(f"[ERRO] {res.codigo}: {res.erro}")
+            sys.exit(1)
+
     from detector_camada import construir_request
 
     conteudo = None
@@ -709,7 +740,32 @@ def cmd_inject(args):
         payload_result.valor,
         getattr(args, "dir", "."),
         sobrescrever=getattr(args, "sobrescrever", False),
+        dry_run=getattr(args, "dry_run", False),
     ))
+
+
+def cmd_verificar_drift(args):
+    """Roda a checagem de drift (SHA-256) dos componentes registrados em CAPABILITIES.json."""
+    ensure_environment()
+    core_src = _core_src_path()
+    if core_src not in sys.path:
+        sys.path.insert(0, core_src)
+    from sincronizador_harness import verificar_sincronizacao
+
+    target_dir = os.path.abspath(getattr(args, "dir", "."))
+    print("=" * 80)
+    print(f"🔍 [AIDD VERIFICAR-DRIFT] Verificando drift em {target_dir}")
+    print("=" * 80)
+
+    res = verificar_sincronizacao(target_dir)
+    if res.sucesso:
+        print(f"\n✅ [SUCESSO] Nenhum drift detectado ({res.valor.get('verificados', 0)} arquivo(s) verificado(s)).")
+        sys.exit(0)
+    else:
+        print(f"\n[ERRO] {res.codigo}: {res.erro}")
+        for problema in res.detalhes.get("problemas", []):
+            print(f"   - {problema}")
+        sys.exit(1)
 
 
 def _tentar_injecao_por_linguagem_natural(raw_prompt: str) -> bool:
@@ -952,7 +1008,7 @@ def parse_natural_language_intent(prompt: str, base_dir: str = "."):
 
 
 def main():
-    known_cmds = {"setup", "init", "plan", "apply", "prompt", "compose", "compose-orca", "add-module", "test", "audit", "bench", "heal", "deploy", "status", "export-frontend", "refine-module", "scaffold-infra", "inject", "-h", "--help"}
+    known_cmds = {"setup", "init", "plan", "apply", "prompt", "compose", "compose-orca", "add-module", "test", "audit", "bench", "heal", "deploy", "status", "export-frontend", "refine-module", "scaffold-infra", "inject", "verificar-drift", "-h", "--help"}
     if len(sys.argv) > 1 and sys.argv[1] not in known_cmds:
         raw_prompt = " ".join(sys.argv[1:])
         if _tentar_injecao_por_linguagem_natural(raw_prompt):
@@ -1059,7 +1115,13 @@ def main():
     p_inject.add_argument("--mcp-env", dest="mcp_env", default=None, help="Objeto JSON de variáveis de ambiente para o servidor MCP externo, ex: '{\"KEY\": \"VAL\"}'")
     p_inject.add_argument("--projeto", default="aidd-master", help="Projeto alvo com perfil resolvido (default: aidd-master)")
     p_inject.add_argument("--sobrescrever", action="store_true", help="Sobrescreve destinos já existentes em disco")
+    p_inject.add_argument("--remover", action="store_true", help="Remove um componente previamente injetado")
+    p_inject.add_argument("--dry-run", action="store_true", help="Simula a injeção sem escrever arquivos no disco")
     p_inject.add_argument("--dir", default=".", help="Diretório raiz do projeto (default: diretório atual)")
+
+    # verificar-drift (checagem de integridade SHA-256 dos componentes injetados)
+    p_drift = subparsers.add_parser("verificar-drift", help="Verifica se os componentes injetados ainda batem com os hashes SHA-256 registrados em CAPABILITIES.json (detecta drift/edição manual)")
+    p_drift.add_argument("--dir", default=".", help="Diretório raiz do projeto (default: diretório atual)")
 
     args = parser.parse_args()
     if not args.command:
@@ -1084,7 +1146,8 @@ def main():
         "export-frontend": cmd_export_frontend,
         "refine-module": cmd_refine_module,
         "scaffold-infra": cmd_scaffold_infra,
-        "inject": cmd_inject
+        "inject": cmd_inject,
+        "verificar-drift": cmd_verificar_drift,
     }
     cmds[args.command](args)
 

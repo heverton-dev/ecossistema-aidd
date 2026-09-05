@@ -19,6 +19,8 @@ import json
 import os
 from typing import Any, Dict, List
 
+import hashlib
+
 try:
     from result import Result
 except ImportError:
@@ -44,6 +46,16 @@ def _atualizar_registry(registry_path: str, payload: Dict[str, Any], arquivos_cr
         else:
             catalogo = {}
 
+        root_dir = os.path.dirname(os.path.abspath(registry_path))
+        arquivos_hashes: Dict[str, str] = {}
+        for arq in arquivos_criados:
+            abs_arq = os.path.abspath(arq) if os.path.isabs(arq) else os.path.abspath(os.path.join(root_dir, arq))
+            if os.path.isfile(abs_arq):
+                with open(abs_arq, "rb") as f_hash:
+                    h = hashlib.sha256(f_hash.read()).hexdigest()
+                rel_path = os.path.relpath(abs_arq, root_dir).replace("\\", "/")
+                arquivos_hashes[rel_path] = h
+
         tipo = payload["tipo"]
         lista = catalogo.setdefault(tipo, [])
         lista[:] = [e for e in lista if e.get("nome") != payload["nome"]]
@@ -53,6 +65,7 @@ def _atualizar_registry(registry_path: str, payload: Dict[str, Any], arquivos_cr
             "camada_alvo": payload.get("camada_alvo"),
             "alvo_projeto": payload["alvo_projeto"],
             "arquivos": arquivos_criados,
+            "arquivos_hashes": arquivos_hashes,
             "atualizado_em": _timestamp(),
         })
 
@@ -64,6 +77,56 @@ def _atualizar_registry(registry_path: str, payload: Dict[str, Any], arquivos_cr
         return Result.ok({"registry": registry_path, "tipo": tipo})
     except (OSError, json.JSONDecodeError) as e:
         return Result.fail(f"Falha ao atualizar registry {registry_path}: {e}", codigo="REGISTRY_FALHOU")
+
+
+def verificar_sincronizacao(root_dir: str) -> Result:
+    """Verifica se os arquivos registrados em CAPABILITIES.json existem e batem seus hashes SHA-256."""
+    registry_path = os.path.join(root_dir, "CAPABILITIES.json")
+    if not os.path.isfile(registry_path):
+        return Result.ok({"verificados": 0, "problemas": []})
+
+    try:
+        with open(registry_path, "r", encoding="utf-8") as f:
+            catalogo = json.load(f)
+    except (OSError, json.JSONDecodeError) as e:
+        return Result.fail(f"Falha ao ler registry {registry_path}: {e}", codigo="REGISTRY_INVALIDO")
+
+    problemas: List[str] = []
+    total_verificados = 0
+
+    for tipo, componentes in catalogo.items():
+        if not isinstance(componentes, list):
+            continue
+        for comp in componentes:
+            if not isinstance(comp, dict):
+                continue
+            nome = comp.get("nome", "desconhecido")
+            hashes = comp.get("arquivos_hashes", {})
+            for rel_path, expected_hash in hashes.items():
+                total_verificados += 1
+                full_path = os.path.join(root_dir, rel_path)
+                if not os.path.isfile(full_path):
+                    problemas.append(f"Arquivo ausente: {rel_path} (componente '{nome}')")
+                else:
+                    try:
+                        with open(full_path, "rb") as f_arq:
+                            actual_hash = hashlib.sha256(f_arq.read()).hexdigest()
+                        if actual_hash != expected_hash:
+                            problemas.append(
+                                f"Hash divergente em {rel_path} (componente '{nome}'): "
+                                f"esperado {expected_hash}, obtido {actual_hash}"
+                            )
+                    except OSError as exc:
+                        problemas.append(f"Erro ao ler {rel_path} (componente '{nome}'): {exc}")
+
+    if problemas:
+        return Result.fail(
+            f"Sincronização divergente: {len(problemas)} problema(s) detectado(s).",
+            codigo="SYNC_DIVERGENTE",
+            detalhes={"problemas": problemas},
+        )
+
+    return Result.ok({"verificados": total_verificados, "problemas": []})
 
 
 def _upsert_secao_componentes(caminho: str, payload: Dict[str, Any]) -> Result:

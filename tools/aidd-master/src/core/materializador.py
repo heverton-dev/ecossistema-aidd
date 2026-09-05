@@ -159,7 +159,7 @@ _GERADORES = {
 }
 
 CANONICAL_TEMPLATES: Dict[str, str] = {
-    "hook": "componentes/aidd-master/hooks/{nome}/hook.sh",
+    "hook": "componentes/{alvo_projeto}/hooks/{nome}/hook.sh",
 }
 
 
@@ -172,14 +172,17 @@ def _default_ecossistema_root() -> Path:
 
 
 def resolve_canonical_destination(
-    tipo: str, nome: str, ecossistema_root: Optional[Path] = None
+    tipo: str,
+    nome: str,
+    alvo_projeto: str = "aidd-master",
+    ecossistema_root: Optional[Path] = None,
 ) -> Optional[Path]:
     """Resolve o caminho canônico do componente no monorepo."""
     if tipo not in CANONICAL_TEMPLATES:
         return None
     if ecossistema_root is None:
         ecossistema_root = _default_ecossistema_root()
-    return Path(ecossistema_root) / CANONICAL_TEMPLATES[tipo].format(nome=nome)
+    return Path(ecossistema_root) / CANONICAL_TEMPLATES[tipo].format(nome=nome, alvo_projeto=alvo_projeto)
 
 
 def sincronizar_componente(
@@ -228,20 +231,216 @@ def resolver_conteudo(payload: Dict[str, Any]) -> str:
     return gerador(payload["nome"], payload["descricao"])
 
 
-def materializar(payload: Dict[str, Any], resolucao: Dict[str, Any], sobrescrever: bool = False) -> Result:
+def _caminho_seguro(rel: str) -> bool:
+    """Valida se o caminho relativo é estritamente seguro contra path traversal."""
+    if not rel or not isinstance(rel, str):
+        return False
+    if os.path.isabs(rel) or ":" in rel:
+        return False
+    norm = rel.replace("\\", "/")
+    if norm.startswith("/"):
+        return False
+    partes = norm.split("/")
+    for p in partes:
+        if p in ("..", ".", ""):
+            return False
+    return True
+
+
+def remover_componente(tipo: str, nome: str, root_dir: str = ".") -> Result:
+    """Remove um componente registrado em CAPABILITIES.json e limpa arquivos e diretórios vazios."""
+    root_dir = os.path.abspath(root_dir)
+    registry_path = os.path.join(root_dir, "CAPABILITIES.json")
+    if not os.path.isfile(registry_path):
+        return Result.fail(
+            f"Registro CAPABILITIES.json não encontrado em {root_dir}.",
+            codigo="COMPONENTE_NAO_ENCONTRADO",
+        )
+
+    try:
+        with open(registry_path, "r", encoding="utf-8") as f:
+            catalogo = json.load(f)
+    except (OSError, json.JSONDecodeError) as exc:
+        return Result.fail(
+            f"Falha ao ler registry {registry_path}: {exc}",
+            codigo="REGISTRY_INVALIDO",
+        )
+
+    lista = catalogo.get(tipo, [])
+    componente = None
+    for c in lista:
+        if isinstance(c, dict) and c.get("nome") == nome:
+            componente = c
+            break
+
+    if componente is None:
+        return Result.fail(
+            f"Componente '{nome}' do tipo '{tipo}' não encontrado no catálogo.",
+            codigo="COMPONENTE_NAO_ENCONTRADO",
+        )
+
+    arquivos_remover: List[str] = []
+    if "arquivos_hashes" in componente and isinstance(componente["arquivos_hashes"], dict):
+        arquivos_remover = [os.path.join(root_dir, p) for p in componente["arquivos_hashes"].keys()]
+    elif "arquivos" in componente and isinstance(componente["arquivos"], list):
+        arquivos_remover = [
+            p if os.path.isabs(p) else os.path.join(root_dir, p)
+            for p in componente["arquivos"]
+        ]
+
+    # Destino canônico (ex.: componentes/{alvo_projeto}/hooks/{nome}/hook.sh) é escrito
+    # por materializar() fora da lista "arquivos_criados"/"arquivos_hashes" (melhor
+    # esforço, não falha a operação) — sem isso aqui, remover_componente() deixaria
+    # esse arquivo órfão. Testa as duas raízes possíveis (ecossistema real e root_dir
+    # do teste/projeto) porque materializar() também escreve nas duas quando aplicável.
+    alvo_projeto = componente.get("alvo_projeto", "aidd-master")
+    for candidato_root in (_default_ecossistema_root(), Path(root_dir)):
+        try:
+            canonical = resolve_canonical_destination(
+                tipo, nome, alvo_projeto=alvo_projeto, ecossistema_root=candidato_root
+            )
+        except Exception:
+            canonical = None
+        if canonical is not None:
+            arquivos_remover.append(str(canonical))
+
+    removidos: List[str] = []
+    for arq in arquivos_remover:
+        abs_p = os.path.abspath(arq)
+        if os.path.isfile(abs_p):
+            try:
+                os.remove(abs_p)
+                removidos.append(abs_p)
+            except OSError:
+                pass
+
+        # Limpeza de diretórios vazios subindo até root_dir
+        d = os.path.dirname(abs_p)
+        while d != root_dir and d.startswith(root_dir) and os.path.isdir(d):
+            try:
+                if not os.listdir(d):
+                    os.rmdir(d)
+                    d = os.path.dirname(d)
+                else:
+                    break
+            except OSError:
+                break
+
+    catalogo[tipo] = [c for c in lista if c.get("nome") != nome]
+    try:
+        with open(registry_path, "w", encoding="utf-8", newline="\n") as f:
+            json.dump(catalogo, f, ensure_ascii=False, indent=2)
+            f.write("\n")
+    except OSError as exc:
+        return Result.fail(
+            f"Falha ao persistir registry atualizado: {exc}",
+            codigo="REGISTRY_FALHOU",
+        )
+
+    return Result.ok({"removidos": removidos, "nome": nome, "tipo": tipo})
+
+
+def _executar_rollback(
+    criados: List[str],
+    dirs_criados: List[str],
+    snapshot: Dict[str, Optional[bytes]],
+) -> None:
+    for c in reversed(criados):
+        try:
+            old_bytes = snapshot.get(c)
+            if old_bytes is None:
+                if os.path.isfile(c):
+                    os.remove(c)
+            else:
+                with open(c, "wb") as f_roll:
+                    f_roll.write(old_bytes)
+        except OSError:
+            pass
+    for d in reversed(dirs_criados):
+        try:
+            if os.path.isdir(d) and not os.listdir(d):
+                os.rmdir(d)
+        except OSError:
+            pass
+
+
+def materializar(
+    payload: Dict[str, Any],
+    resolucao: Dict[str, Any],
+    sobrescrever: bool = False,
+    dry_run: bool = False,
+) -> Result:
     """Escreve o artefato principal e seus espelhos multi-harness de forma transacional.
 
-    Se qualquer escrita falhar no meio da operação, todos os arquivos já
-    criados nesta chamada são removidos (rollback) antes de retornar a falha
-    — garantindo zero arquivos órfãos em caso de interrupção.
+    Se qualquer escrita falhar no meio da operação, o estado prévio exato de
+    cada destino é restaurado (rollback de snapshot completo).
     """
     root_dir = resolucao.get("root_dir")
     if not root_dir:
         root_dir = os.path.abspath(".")
 
+    # Rota especial: config com mapa arbitrário de arquivos
+    if payload.get("tipo") == "config" and payload.get("arquivos"):
+        mapa_arquivos = payload["arquivos"]
+        for rel in mapa_arquivos:
+            if not _caminho_seguro(rel):
+                return Result.fail(
+                    f"Caminho inseguro detectado: {rel}",
+                    codigo="PATH_TRAVERSAL_REJEITADO",
+                    detalhes={"caminho": rel},
+                )
+
+        destinos = [os.path.join(root_dir, rel) for rel in mapa_arquivos.keys()]
+        if dry_run:
+            return Result.ok(destinos, detalhes={"dry_run": True})
+
+        if not sobrescrever:
+            existentes = [d for d in destinos if os.path.isfile(d)]
+            if existentes:
+                return Result.fail(
+                    f"Destino já existe (use sobrescrever=True para forçar): {existentes[0]}",
+                    codigo="DESTINO_JA_EXISTE",
+                    detalhes={"existentes": existentes},
+                )
+
+        snapshot: Dict[str, Optional[bytes]] = {}
+        for d in destinos:
+            if os.path.isfile(d):
+                try:
+                    with open(d, "rb") as f_snap:
+                        snapshot[d] = f_snap.read()
+                except OSError:
+                    snapshot[d] = None
+            else:
+                snapshot[d] = None
+
+        criados: List[str] = []
+        dirs_criados: List[str] = []
+        try:
+            for rel, cont in mapa_arquivos.items():
+                dest = os.path.join(root_dir, rel)
+                parent = os.path.dirname(dest)
+                if parent and not os.path.isdir(parent):
+                    os.makedirs(parent, exist_ok=True)
+                    dirs_criados.append(parent)
+                with open(dest, "w", encoding="utf-8", newline="\n") as f:
+                    f.write(cont)
+                criados.append(dest)
+            return Result.ok({"arquivos_criados": criados, "conteudo": mapa_arquivos})
+        except Exception as e:
+            _executar_rollback(criados, dirs_criados, snapshot)
+            return Result.fail(
+                f"Falha na materialização, rollback executado: {e}",
+                codigo="MATERIALIZACAO_FALHOU",
+                detalhes={"arquivos_removidos_no_rollback": criados},
+            )
+
     # Rota especial: MCP externo com command (registra em mcp.json no projeto alvo)
     if payload.get("tipo") == "mcp" and payload.get("command"):
         mcp_path = os.path.join(root_dir, "mcp.json")
+        if dry_run:
+            return Result.ok([mcp_path], detalhes={"dry_run": True})
+
         dados: Dict[str, Any] = {"mcpServers": {}}
         conteudo_antigo: Optional[str] = None
         existia_antes = os.path.isfile(mcp_path)
@@ -296,6 +495,9 @@ def materializar(payload: Dict[str, Any], resolucao: Dict[str, Any], sobrescreve
     destinos: List[str] = [resolucao["dest_principal"]] + list(resolucao.get("mirrors", []))
     conteudo = resolver_conteudo(payload)
 
+    if dry_run:
+        return Result.ok(destinos, detalhes={"dry_run": True})
+
     if not sobrescrever:
         existentes = [d for d in destinos if os.path.isfile(d)]
         if existentes:
@@ -305,8 +507,19 @@ def materializar(payload: Dict[str, Any], resolucao: Dict[str, Any], sobrescreve
                 detalhes={"existentes": existentes},
             )
 
-    criados: List[str] = []
-    dirs_criados: List[str] = []
+    snapshot = {}
+    for d in destinos:
+        if os.path.isfile(d):
+            try:
+                with open(d, "rb") as f_snap:
+                    snapshot[d] = f_snap.read()
+            except OSError:
+                snapshot[d] = None
+        else:
+            snapshot[d] = None
+
+    criados = []
+    dirs_criados = []
     try:
         for destino in destinos:
             parent = os.path.dirname(destino)
@@ -318,7 +531,10 @@ def materializar(payload: Dict[str, Any], resolucao: Dict[str, Any], sobrescreve
             criados.append(destino)
 
         # Integração canônica Package 7 (ex.: hook)
-        canonical_dest = resolve_canonical_destination(payload["tipo"], payload["nome"])
+        alvo_projeto = payload.get("alvo_projeto", "aidd-master")
+        canonical_dest = resolve_canonical_destination(
+            payload["tipo"], payload["nome"], alvo_projeto=alvo_projeto
+        )
         if canonical_dest is not None and str(canonical_dest) not in destinos:
             try:
                 canonical_dest.parent.mkdir(parents=True, exist_ok=True)
@@ -328,7 +544,10 @@ def materializar(payload: Dict[str, Any], resolucao: Dict[str, Any], sobrescreve
 
         if (Path(root_dir) / "componentes").is_dir():
             target_canonical = resolve_canonical_destination(
-                payload["tipo"], payload["nome"], ecossistema_root=Path(root_dir)
+                payload["tipo"],
+                payload["nome"],
+                alvo_projeto=alvo_projeto,
+                ecossistema_root=Path(root_dir),
             )
             if target_canonical is not None and str(target_canonical) not in destinos:
                 try:
@@ -338,22 +557,12 @@ def materializar(payload: Dict[str, Any], resolucao: Dict[str, Any], sobrescreve
                     pass
 
         if payload["tipo"] in CANONICAL_TEMPLATES:
-            sincronizar_componente(payload["tipo"], ferramenta="aidd-master")
+            sincronizar_componente(payload["tipo"], ferramenta=alvo_projeto)
 
         return Result.ok({"arquivos_criados": criados, "conteudo": conteudo})
 
-    except OSError as e:
-        for c in reversed(criados):
-            try:
-                os.remove(c)
-            except OSError:
-                pass
-        for d in reversed(dirs_criados):
-            try:
-                if os.path.isdir(d) and not os.listdir(d):
-                    os.removedirs(d)
-            except OSError:
-                pass
+    except Exception as e:
+        _executar_rollback(criados, dirs_criados, snapshot)
         return Result.fail(
             f"Falha na materialização, rollback executado: {e}",
             codigo="MATERIALIZACAO_FALHOU",

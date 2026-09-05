@@ -57,6 +57,11 @@
       "type": "string",
       "description": "Identificador do projeto de destino no ecossistema AIDD (perfil resolvido em 'profiles_registry.py'). Nesta implementação apenas 'aidd-master' possui perfil resolvido; demais identificadores retornam Result.fail(codigo='PROJETO_NAO_SUPORTADO').",
       "default": "aidd-master"
+    },
+    "arquivos": {
+      "type": "object",
+      "additionalProperties": { "type": "string" },
+      "description": "Mapeamento opcional de caminhos relativos e seus conteúdos de texto para injeção do tipo 'config'."
     }
   },
   "required": ["tipo", "nome", "descricao", "alvo_projeto"],
