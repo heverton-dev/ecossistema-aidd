@@ -67,6 +67,8 @@ Um pacote tem um limite estrutural que nenhuma quantidade de trabalho remove. Is
 
 **Pacote 6 (Universalidade) deixou de ser um teto em 05/09/2026 e foi CONCLUÍDO na mesma sessão** — a premissa que o travava ("só há Claude Code instalado nesta máquina") estava desatualizada; na verdade os 7 harnesses citados (Claude Code, Antigravity, MimoCode, OpenCode, FreeBuff, Gemini CLI, Hermes) estão todos instalados. Testes reais contra essas instalações encontraram e corrigiram um bug real (BOM UTF-8 quebrando o parser do `gemini-cli`) — comprovado contra a instalação real do `gemini-cli`, não simulado — e substituíram uma imprecisão documental real em `AGENTS.md §5` por uma seção honesta harness-por-harness. Nota final 9/10 (residual: `agy`/Antigravity e `freebuff` continuam sem mecanismo de descoberta confirmado). Ver `06-universalidade.md` para o diagnóstico completo, a Definição de Pronto e o veredito da auditoria.
 
+> **Atualização (Rodada 2, 05/09/2026):** o residual do `agy` deixou de ser "mecanismo desconhecido" — identificado por investigação estática de custo zero (Item 5 da Rodada 2, sem gastar chamada de LLM). Uma contradição real com a documentação oficial do `agy` permanece registrada, não escondida. `freebuff` continua sem novidade. Ver §9 abaixo e `docs/planos/refinamento-notas-auditoria/00-PROCESSO-E-DECISOES.md`.
+
 ---
 
 ## 6. Ordem de execução acordada
@@ -95,11 +97,11 @@ Um pacote tem um limite estrutural que nenhuma quantidade de trabalho remove. Is
 |---|---|---|---|
 | 1. Transparência + Gates | ✅ Concluído | Gates Mecânicos 7/10 → **8/10 (alvo atingido)**. Transparência 8/10 → **8.5/10** (alvo 9/10 só fecha quando Pacotes 4 e 5 também resolverem suas partes desta dimensão — ver §3 do documento do pacote) | `01-transparencia-e-gates.md` |
 | 2. Testabilidade + Determinismo | ✅ Concluído (implementado por agente externo, auditado e confirmado por mim) | Testabilidade 6→**9/10**; Determinismo 9→**9.5/10** (ambos alvo atingido) | `02-testabilidade-e-determinismo.md` |
-| 3. Modularização | ✅ Concluído | Modularização 7→**9/10** (alvo atingido) | `03-modularizacao-injector.md` |
+| 3. Modularização | ✅ Concluído | Modularização 7→**9/10** (alvo atingido). Residual (migrar `aidd-enterprise` para o núcleo canônico) fechado na Rodada 2, Item 4 → **10/10** | `03-modularizacao-injector.md` |
 | 4. Cobertura restante | ✅ Concluído | Testabilidade/Cobertura Real permanece **9/10** (alvo já perseguido pelo Pacote 2, agora com evidência completa dos 7 comandos restantes, não parcial) | `04-cobertura-comandos-restantes.md` |
 | 5. Tokens + Agêntico | ✅ Concluído | Economia de Tokens 7→**8/10**; Engenharia Agêntica 8→**8.5/10** (ambos alvo atingido) | `05-economia-tokens-e-agentico.md` |
 | 6. Universalidade | ✅ Concluído | Universalidade/Agnosticismo 8→**9/10** (alvo atingido) | `06-universalidade.md` |
-| 7. Agnosticismo de Distribuição | ✅ Concluído | Gap novo, fora da tabela original de 8 dimensões — nota final **9/10** (limitação residual documentada: `aidd-master`/`aidd-enterprise` seguem com injetores antigos fora do mecanismo unificado) | `07-agnosticismo-distribuicao-componentes.md` |
+| 7. Agnosticismo de Distribuição | ✅ Concluído | Gap novo, fora da tabela original de 8 dimensões — nota final **9/10** (limitação residual documentada: `aidd-master`/`aidd-enterprise` seguem com injetores antigos fora do mecanismo unificado). Residual do tipo `hook` fechado na Rodada 2, Item 4 (ambos ganharam sincronização canônica `componentes/`) | `07-agnosticismo-distribuicao-componentes.md` |
 
 Esta tabela é atualizada ao final de cada pacote — nunca antes da validação real daquele pacote.
 
@@ -110,3 +112,15 @@ Esta tabela é atualizada ao final de cada pacote — nunca antes da validação
 - Nenhuma nota sobe no relatório sem o comando de validação correspondente ter sido rodado de verdade nesta sessão.
 - Nenhum pacote é declarado concluído por "parecer suficiente" — só pela Definição de Pronto escrita antes de começar.
 - Onde o teto é estrutural (§5), a honestidade sobre o teto é o próprio critério de sucesso, não um obstáculo a esconder.
+
+---
+
+## 9. Continuação — Rodada 2 (Refinamento das Notas de Auditoria)
+
+Depois desta rodada fechar os 7 pacotes acima, uma segunda rodada (05/09/2026, mesmo processo — Definição de Pronto travada antes de cada item, validação real antes de marcar concluído) fechou 3 das lacunas residuais deixadas aqui:
+
+- **Pacote 3 (Modularização):** residual "migrar `aidd-enterprise` para o núcleo canônico" fechado no Item 4 — nota sobe para **10/10**.
+- **Pacote 7 (Agnosticismo de Distribuição):** residual do tipo `hook` (sincronização canônica `componentes/`) fechado, também no Item 4.
+- **Pacote 6 (Universalidade):** residual "mecanismo do `agy` desconhecido" virou "mecanismo identificado, com uma contradição documental real não resolvida" no Item 5 — sem gastar chamada de LLM adicional.
+
+Registro completo, com Definição de Pronto, auditorias e vereditos de cada item: `docs/planos/refinamento-notas-auditoria/00-PROCESSO-E-DECISOES.md`.

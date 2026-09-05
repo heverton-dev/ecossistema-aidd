@@ -33,6 +33,8 @@ Reconfirmei a divergência original e encontrei uma camada extra que muda a resp
 - **Independente da decisão acima:** corrigir o ponto cego do gate de drift (`G_DRIFT_NUCLEO_COMPARTILHADO.py`) — se um arquivo do baseline com `esperado_identico: true` desaparecer de um dos lados, o gate reprova, em vez de simplesmente não ter nada para comparar.
 - **Fora de escopo deste pacote, registrado para o futuro:** migrar `aidd-enterprise` para a mesma arquitetura canônica (aposentando `aidd_core_injector.py` de vez) — não faço isso agora para não inflar o escopo; fica como próximo incremento natural, na mesma nota já registrada como limitação residual do Pacote 7.
 
+> **Atualização (Rodada 2, 05/09/2026):** este incremento foi feito — ver Item 4 (`docs/planos/refinamento-notas-auditoria/04-unificacao-injetor-aidd-enterprise.md`). `aidd-enterprise` foi migrado em 2 fases auditadas para o mesmo núcleo canônico modular de `aidd-master`, com enriquecimento prévio do núcleo (drift SHA-256, remoção, rollback com snapshot completo, dry_run, config com mapa arbitrário de arquivos) para não perder nenhuma capacidade física que `aidd-enterprise` já tinha (5 harnesses incluindo MimoCode, hook em formato `.json`, merge de `mcp.json`). `aidd_core_injector.py`/`target_profile.py` foram aposentados. Lacuna fechada.
+
 **Preciso que você confirme esta abordagem (em vez das opções A/B/C originais) antes de eu escrever o prompt de execução.**
 
 ---
