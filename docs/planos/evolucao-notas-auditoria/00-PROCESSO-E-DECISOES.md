@@ -76,7 +76,15 @@ Dois pacotes têm um limite estrutural que nenhuma quantidade de trabalho remove
 4. Cobertura dos comandos restantes
 5. Economia de Tokens + Engenharia Agêntica
 6. Universalidade (registro apenas, sem execução)
-7. Agnosticismo de Distribuição de Componentes — **bloqueado até as 4 decisões do usuário** (ver `07-agnosticismo-distribuicao-componentes.md` §"Decisões pendentes"); entrou fora de ordem por pedido explícito do usuário, mas só começa a ser implementado depois de resolvidas essas decisões, como qualquer outro pacote
+7. Agnosticismo de Distribuição de Componentes — implementado antes dos Pacotes 3-6, mesmo entrando depois deles nesta lista.
+
+**Por que o Pacote 7 furou a fila — sem inflar uma justificativa técnica que não existe:**
+- **Não há dependência técnica que force essa ordem.** É sequenciamento por oportunidade, não por necessidade estrutural.
+- **Pacote 3 continua genuinamente bloqueado** (decisão A/B/C sobre o injector `aidd-master`/`aidd-enterprise` ainda não veio) — não avançaria de qualquer forma, então não está sendo "passado para trás".
+- **Pacotes 4 e 5 ainda não têm diagnóstico nem Definição de Pronto escritos** — o Pacote 7 só chegou à frente porque suas 4 decisões de arquitetura foram resolvidas rapidamente, numa única conversa, com o usuário. Ele "amadureceu" primeiro, não tem prioridade técnica sobre os outros.
+- **Pacote 6 nunca teve ciclo de execução** (só registro de teto estrutural), não entra nesta comparação.
+- **Vantagem real de sequenciamento (não obrigatória, mas vale registrar):** o Pacote 7 mexe em `gates/G_HARNESS_COMPAT.py` e acrescenta gate novo à bateria de `ecossistema.py audit`. Fazer isso antes dos Pacotes 4 e 5 (que também tocam infraestrutura de gates) significa que esses dois já encontram essa parte corrigida, em vez de construir sobre um gate com ponto cego conhecido.
+- **Nota de escopo:** os injetores unificados no Pacote 7 (Fase 4 — `aidd-forge`'s `injector_profiles.py`, `aidd-generator`'s `scripts/core/injector/`, que materializam componentes em projetos) são um subsistema diferente do injector do Pacote 3 (`aidd-master`/`aidd-enterprise`'s comando `inject`, que injeta componentes dentro de um projeto já composto). Zero sobreposição de código entre os dois — só risco de confusão de nome a evitar.
 
 ---
 
