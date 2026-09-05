@@ -203,3 +203,24 @@ class TestDetectorCamada:
         assert resultado.tipo is None
         assert resultado.confianca == 0.0
         assert resultado.origem == "heuristica"
+
+
+# =============================================================================
+# Destino Canonico e Raiz do Monorepo
+# =============================================================================
+
+class TestCanonicalDestination:
+    def test_canonical_root_resolves_to_monorepo_root(self):
+        from pathlib import Path
+        import scripts.core.injector.injetor as injetor_mod
+        injetor_file = Path(injetor_mod.__file__).resolve()
+        ecossistema_root = injetor_file.parents[5]
+        assert (ecossistema_root / "gates" / "manifesto_harnesses.json").exists(), (
+            f"Raiz calculada invalida: {ecossistema_root} (gates/manifesto_harnesses.json nao existe)"
+        )
+        assert (ecossistema_root / "ecossistema.py").exists()
+
+        dest_canonico = ecossistema_root / injetor_mod.CANONICAL_TEMPLATES["skill"].format(nome="demo")
+        assert dest_canonico == ecossistema_root / "componentes" / "aidd-generator" / "skills" / "demo" / "SKILL.md"
+        assert "tools/componentes" not in dest_canonico.as_posix()
+

@@ -945,3 +945,20 @@ DELIVERABLE: exact list of files changed; for each fix, the command +
 real output that proves it; any necessary deviation, explicitly reported
 instead of decided by yourself.
 ```
+
+---
+
+## Nota Final — Pacote 7 (Agnosticismo de Distribuição de Componentes): 9/10
+
+**Fechada em 05/09/2026, após 2 rodadas de implementação (Prompt A, Prompt B), 2 rodadas corretivas via agente externo, e 1 correção final aplicada por mim mesmo (mecânica, achada na checagem pré-commit).**
+
+**Achado crítico encontrado e corrigido na checagem final, antes do commit: rodar a suíte de testes de `aidd-forge`/`aidd-generator` poluía a árvore real do monorepo a cada execução.** `resolve_canonical_destination()`/`sincronizar_componente()` (nos dois tools) sempre calculavam a raiz do monorepo a partir de `Path(__file__)`, sem nenhum parâmetro isolado por teste. Testes pré-existentes (`test_materializador.py`/`test_universal_injector.py` em aidd-forge, `test_aidd_inject_cli.py` em aidd-generator — nenhum deles tocado por Prompt B ou pelas 2 correções anteriores) chamam os injetores com `tmp_path` isolando o destino "de projeto", mas não o destino canônico, que sempre gravava na `componentes/` REAL deste repositório. Reproduzi: depois de limpar todo o lixo de teste e confirmar `git status` limpo, rodei a suíte completa e o lixo reapareceu sozinho.
+
+**Correção aplicada por mim (fix mecânico, sem precisar de nova rodada do agente externo):** extraída a resolução da raiz para uma função isolada e monkeypatchável — `_default_ecossistema_root()` — em `tools/aidd-forge/aidd_forge/core/injector_profiles.py` e em `tools/aidd-generator/scripts/core/injector/injetor.py`. Criado `tools/aidd-forge/tests/conftest.py` com fixture autouse que isola essa raiz para `tmp_path` em todo teste (exceto o marcado `@pytest.mark.raiz_real`, que prova a resolução real). Estendida a fixture `_isolar_cwd` já existente em `tools/aidd-generator/tests/test_aidd_inject_cli.py` para isolar a mesma raiz. Revalidei rodando as 4 suítes múltiplas vezes seguidas, checando `git status` a cada rodada — zero poluição, zero regressão (aidd-forge 197 passed/1 skipped, aidd-generator 757 passed, aidd-master 195/4, aidd-enterprise 199/4). `components verify --tipo todos` e `ecossistema.py audit` (6 gates) seguem exit 0.
+
+**Por que 9, não 10:**
+- O gap original (as 4 skills-runner invisíveis ao Claude Code) está fechado de forma **auto-reforçada**: o gate `G_COMPONENTE_AGNOSTICO.py` falha o build se qualquer componente tocado perder cobertura de harness — testado ao vivo (violação deliberada → falha → sync → passa).
+- Os 8 tipos de componente são hoje modelados de forma uniforme, com fonte canônica única e mecanismo de sync/verify determinístico, sem symlink em nenhum ponto do mecanismo novo, e agora também sem efeito colateral em `pytest`/CI.
+- Os 2 injetores mais ativos (`aidd-forge`, `aidd-generator`) foram unificados de verdade — testado com múltiplos tipos, incluindo os antes rejeitados.
+- **Limitação residual conhecida, documentada, fora do escopo do Prompt B:** `aidd-master`/`aidd-enterprise` continuam com seus próprios injetores antigos (`profiles_registry.py` + `aidd.py inject`), sem passar por `componentes/`/`gestor_componentes.py` (confirmado via grep: `aidd-master/scripts/aidd.py` não referencia nenhum dos dois). Não foi prometido por este pacote — é um próximo incremento natural.
+- Ao todo, 3 rodadas de correção foram necessárias por defeitos reais encontrados só por reprodução ao vivo (nunca hipotéticos): bug de path off-by-one, tipos inalcançáveis por validador desatualizado, symlink reintroduzido, retorno de sync descartado, lixo de teste não limpo, e o efeito colateral de poluição via `pytest`. O processo funcionou exatamente como desenhado — nunca confiar, sempre reproduzir —, mas o número de rodadas impede a nota máxima.

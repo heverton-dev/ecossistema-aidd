@@ -32,6 +32,7 @@ def cmd_init(args: argparse.Namespace) -> int:
     files_result = injector.run()
     links_result = injector.link_ide_rules(IDE_RULE_ALIASES)
     skills_result = injector.link_skills()
+    mirror_skills_result = injector.mirror_skills_all_harnesses()
 
     fencer = PhaseFencer(TEMPLATES_ROOT, target, force=args.force)
     fence_result = fencer.run()

@@ -16,7 +16,13 @@ from dataclasses import dataclass, field
 from pathlib import Path
 
 from aidd_forge.core.agents_md_anchor import render_component_table
-from aidd_forge.core.injector_profiles import ComponentProfile, resolve_destination, resolve_profile
+from aidd_forge.core.injector_profiles import (
+    ComponentProfile,
+    resolve_canonical_destination,
+    resolve_destination,
+    resolve_profile,
+    sincronizar_componente,
+)
 
 STUB_CONTEUDOS: frozenset[str] = frozenset({"", "pass", "todo", "..."})
 
@@ -51,6 +57,7 @@ class MaterializationResult:
     created: list[Path] = field(default_factory=list)
     registry_updated: Path | None = None
     anchor_updated: Path | None = None
+    sync_warning: str | None = None
 
 
 @dataclass
@@ -101,11 +108,38 @@ class Materializador:
                 f"falha ao materializar '{request.nome}' ({request.tipo}); rollback aplicado: {exc}"
             ) from exc
 
+        canonical_dest = resolve_canonical_destination(request.tipo, request.nome)
+        if canonical_dest is not None and canonical_dest != dest:
+            try:
+                canonical_dest.parent.mkdir(parents=True, exist_ok=True)
+                canonical_dest.write_text(request.conteudo, encoding="utf-8")
+            except Exception:
+                pass
+
+        if (self.target_root / "componentes").is_dir():
+            target_canonical = resolve_canonical_destination(
+                request.tipo, request.nome, ecossistema_root=self.target_root
+            )
+            if target_canonical is not None and target_canonical != dest:
+                try:
+                    target_canonical.parent.mkdir(parents=True, exist_ok=True)
+                    target_canonical.write_text(request.conteudo, encoding="utf-8")
+                except Exception:
+                    pass
+
+        sync_code = sincronizar_componente(request.tipo, ferramenta="aidd-forge")
+        sync_warning = (
+            f"sincronizacao multi-harness retornou codigo {sync_code}"
+            if sync_code != 0
+            else None
+        )
+
         return MaterializationResult(
             dest=dest,
             created=[dest],
             registry_updated=registry_path,
             anchor_updated=anchor_path,
+            sync_warning=sync_warning,
         )
 
     def _write(self, path: Path, content: str) -> None:

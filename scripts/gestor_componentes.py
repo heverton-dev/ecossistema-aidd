@@ -65,7 +65,8 @@ def _listar_componentes_fonte(manifesto, tipo, nome_escopo):
     if not os.path.isdir(dir_fonte):
         return []
 
-    unidade = tipo_cfg["unidade"]
+    overrides = tipo_cfg.get("overrides_por_escopo", {}).get(nome_escopo, {})
+    unidade = overrides.get("unidade", tipo_cfg["unidade"])
     resultado = []
     for entrada in sorted(os.listdir(dir_fonte)):
         if entrada in IGNORAR_ENTRADAS:
@@ -73,8 +74,25 @@ def _listar_componentes_fonte(manifesto, tipo, nome_escopo):
         caminho = os.path.join(dir_fonte, entrada)
         if unidade == "diretorio" and os.path.isdir(caminho):
             resultado.append((entrada, caminho, True))
-        elif unidade == "arquivo" and os.path.isfile(caminho):
-            resultado.append((entrada, caminho, False))
+        elif unidade == "arquivo":
+            if os.path.isfile(caminho):
+                resultado.append((entrada, caminho, False))
+            elif os.path.isdir(caminho):
+                # Suporta componente empacotado em pasta com arquivo único: <nome>/<nome>.<ext>
+                sub_arquivos = [
+                    f for f in sorted(os.listdir(caminho))
+                    if f not in IGNORAR_ENTRADAS and os.path.isfile(os.path.join(caminho, f))
+                ]
+                if sub_arquivos:
+                    candidato = None
+                    for arq in sub_arquivos:
+                        if os.path.splitext(arq)[0] == entrada:
+                            candidato = arq
+                            break
+                    if not candidato:
+                        candidato = sub_arquivos[0]
+                    caminho_arq = os.path.join(caminho, candidato)
+                    resultado.append((entrada, caminho_arq, False))
     return resultado
 
 
@@ -98,7 +116,13 @@ def _resolver_destinos(manifesto, tipo, nome_escopo, nome):
             rel = template_extra.format(nome=nome)
             destinos.append(os.path.normpath(os.path.join(root_escopo, rel)))
     else:  # destino-unico-por-ferramenta
-        rel = tipo_cfg["dest_unico_template"].format(nome=nome)
+        overrides = tipo_cfg.get("overrides_por_escopo", {}).get(nome_escopo, {})
+        template_unico = overrides.get("dest_unico_template", tipo_cfg["dest_unico_template"])
+        nome_formatado = nome
+        ext_template = os.path.splitext(template_unico)[1]
+        if ext_template and nome.endswith(ext_template):
+            nome_formatado = nome[:-len(ext_template)]
+        rel = template_unico.format(nome=nome_formatado)
         destinos.append(os.path.normpath(os.path.join(root_escopo, rel)))
 
     vistos = set()

@@ -13,13 +13,21 @@ _SCRIPTS_DIR = Path(__file__).resolve().parent.parent / 'scripts'
 sys.path.insert(0, str(_SCRIPTS_DIR))
 
 import aidd_inject
+from scripts.core.injector import injetor as _injetor_mod
 
 
 @pytest.fixture(autouse=True)
 def _isolar_cwd(tmp_path, monkeypatch):
     """Protege o repo real: qualquer chamada que caia no cwd default (--root omitido)
-    cai neste diretório temporário, nunca no repositório de verdade."""
+    cai neste diretório temporário, nunca no repositório de verdade.
+
+    Isola também a fonte canônica (`componentes/aidd-generator/...`): desde o
+    Prompt Corretivo 2, `injetar()` grava um espelho canônico via
+    `_default_ecossistema_root()` (achado do Prompt Corretivo 3) — sem este
+    monkeypatch, cada teste desta suíte gravaria de verdade na árvore real do
+    monorepo, mesmo usando `--root tmp_path`."""
     monkeypatch.chdir(tmp_path)
+    monkeypatch.setattr(_injetor_mod, "_default_ecossistema_root", lambda: tmp_path / "_ecossistema_fake_root")
 
 
 class TestCliInjectExplicito:

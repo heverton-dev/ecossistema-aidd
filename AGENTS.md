@@ -37,6 +37,7 @@ O **Ecossistema AIDD** unifica 4 ferramentas complementares de Engenharia Agênt
 6. **Supremacia Agnóstica (Universalidade Total):**
    - Absolutamente TUDO (skills, mcps, specs, hooks, slash commands, fluxos, configurações) deve operar de forma 100% agnóstica a ambiente de execução, sistema operacional, harness (OpenCode, Antigravity, Claude, Mimo, Freebuff, Hermes, DeepSeek, etc.) e provedor de LLM.
    - Nenhuma dependência proprietária ou vendor lock-in é permitida no ecossistema.
+   - **Protocolo Permanente de Agnosticidade:** consulte e siga estritamente o checklist canônico em `docs/protocolos/PROTOCOLO-AGNOSTICIDADE-COMPONENTES.md`.
 
 ---
 
@@ -74,7 +75,8 @@ O ecossistema dispõe de Quality Gates globais em gates/:
 - gates/G_HARNESS_COMPAT.py: Verifica que os artefatos multi-harness da raiz (comandos, skills, arquivos-ponteiro) permanecem sincronizados entre si.
 - gates/G_SEGREDOS.py: Escaneia todo o repositório rastreado pelo git em busca de credenciais hardcoded (allowlist auditada em gates/allowlist_segredos.json).
 - gates/G_CLI_HELP_CONSISTENCIA.py: Compara, via AST, flags citadas em print()/raise() contra flags realmente definidas via add_argument nos pontos de entrada argparse das 4 ferramentas (allowlist de flags de ferramenta externa em gates/allowlist_cli_help.json).
-- Execução unificada via CLI: python ecossistema.py audit (roda os 4 gates em sequência)
+- gates/G_COMPONENTE_AGNOSTICO.py: Audita a integridade e cobertura multi-harness de todo componente novo ou modificado contra o manifesto.
+- Execução unificada via CLI: python ecossistema.py audit (roda os 6 gates em sequência)
 
 ---
 

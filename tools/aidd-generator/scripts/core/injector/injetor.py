@@ -33,6 +33,8 @@ from scripts.core.injector.materializador import materializar
 from scripts.core.injector.sincronizador_harness import sincronizar
 from scripts.core.injector import scaffolds
 
+import subprocess
+
 _GERADORES = {
     "skill": scaffolds.gerar_skill,
     "rule": scaffolds.gerar_rule,
@@ -40,6 +42,67 @@ _GERADORES = {
     "config": scaffolds.gerar_config,
     "mcp": scaffolds.gerar_mcp,
 }
+
+CANONICAL_TEMPLATES: Dict[str, str] = {
+    "skill": "componentes/aidd-generator/skills/{nome}/SKILL.md",
+    "mcp": "componentes/aidd-generator/mcps/{nome}/server.py",
+    "rule": "rules/{nome}.md",
+    "spec": "componentes/aidd-generator/specs/{nome}.md",
+    "config": "componentes/aidd-generator/config/{nome}.json",
+    "command": "componentes/aidd-generator/comandos/{nome}.md",
+    "hook": "componentes/aidd-generator/hooks/{nome}/hook.sh",
+    "sub-agent": "componentes/aidd-generator/subagentes/{nome}.md",
+    "script": "componentes/aidd-generator/scripts/{nome}.py",
+}
+
+
+def _default_ecossistema_root() -> Path:
+    """Raiz real do monorepo ecossistema-aidd.
+
+    Isolada numa funcao propria (em vez de inline em cada chamador) para que
+    testes possam monkeypatchar este ponto unico e evitar gravar na arvore
+    real do repositorio durante `pytest` (ver `conftest.py`).
+    """
+    return Path(__file__).resolve().parents[5]
+
+
+def sincronizar_componente(
+    tipo: str,
+    ferramenta: str = "aidd-generator",
+    ecossistema_root: Optional[Path] = None,
+) -> int:
+    """Invoca o sincronizador multi-harness do ecossistema AIDD."""
+    if ecossistema_root is None:
+        ecossistema_root = _default_ecossistema_root()
+
+    script_ecossistema = ecossistema_root / "ecossistema.py"
+    if script_ecossistema.exists():
+        cmd = [
+            sys.executable,
+            str(script_ecossistema),
+            "components",
+            "sync",
+            "--tipo",
+            tipo,
+            "--ferramenta",
+            ferramenta,
+        ]
+        try:
+            res = subprocess.run(cmd, cwd=str(ecossistema_root), capture_output=True, text=True)
+            return res.returncode
+        except Exception:
+            pass
+
+    try:
+        scripts_dir = str(ecossistema_root / "scripts")
+        if scripts_dir not in sys.path:
+            sys.path.insert(0, scripts_dir)
+        import gestor_componentes
+        gestor_componentes.sync(tipo=tipo, ferramenta=ferramenta)
+        return 0
+    except Exception:
+        return 1
+
 
 
 @dataclass
@@ -54,6 +117,7 @@ class ResultadoInjecao:
     anchors_atualizados: List[str] = field(default_factory=list)
     erro: Optional[str] = None
     erros: List[str] = field(default_factory=list)
+    sync_warning: Optional[str] = None
 
 
 def injetar(
@@ -110,8 +174,12 @@ def injetar(
     except (ProjetoNaoSuportadoError, TipoNaoSuportadoError) as exc:
         return ResultadoInjecao(sucesso=False, erro=str(exc))
 
-    gerador = _GERADORES[tipo]
-    conteudo_principal = conteudo.get("principal") or gerador(nome, descricao)
+    gerador = _GERADORES.get(tipo)
+    if gerador is not None:
+        conteudo_padrao = gerador(nome, descricao)
+    else:
+        conteudo_padrao = f"# {nome}\n\n{descricao}\n"
+    conteudo_principal = conteudo.get("principal") or conteudo_padrao
 
     arquivos = {rota.dest: conteudo_principal}
     for mirror in rota.mirrors:
@@ -126,6 +194,31 @@ def injetar(
             erro=resultado_materializacao.erro,
         )
 
+    # Grava na fonte canonica de componentes e dispara sync multi-harness
+    if tipo in CANONICAL_TEMPLATES:
+        ecossistema_root = _default_ecossistema_root()
+        dest_canonico = ecossistema_root / CANONICAL_TEMPLATES[tipo].format(nome=nome)
+        try:
+            dest_canonico.parent.mkdir(parents=True, exist_ok=True)
+            dest_canonico.write_text(conteudo_principal, encoding="utf-8")
+        except Exception:
+            pass
+
+        if (root / "componentes").is_dir():
+            dest_root_canonico = root / CANONICAL_TEMPLATES[tipo].format(nome=nome)
+            try:
+                dest_root_canonico.parent.mkdir(parents=True, exist_ok=True)
+                dest_root_canonico.write_text(conteudo_principal, encoding="utf-8")
+            except Exception:
+                pass
+
+    sync_code = sincronizar_componente(tipo, ferramenta="aidd-generator")
+    sync_warning = (
+        f"sincronizacao multi-harness retornou codigo {sync_code}"
+        if sync_code != 0
+        else None
+    )
+
     resultado_sync = sincronizar(root, tipo, nome, descricao, rota.dest, rota.anchors)
 
     return ResultadoInjecao(
@@ -135,4 +228,5 @@ def injetar(
         dest=rota.dest,
         arquivos_publicados=resultado_materializacao.arquivos_publicados,
         anchors_atualizados=resultado_sync.anchors_atualizados,
+        sync_warning=sync_warning,
     )

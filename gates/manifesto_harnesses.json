@@ -64,6 +64,12 @@
       "status_evidencia": "PROPOSTO NESTA MIGRAÇÃO, mas com precedente real: tools/aidd-generator/scripts/core/injector/profiles_registry.py e tools/aidd-master/src/core/profiles_registry.py já definem o tipo 'mcp' com UM destino físico e mirrors=[] (nenhum espelho por harness). MCP servers são referenciados por cada harness via seu próprio arquivo de config (ex.: .mcp.json) apontando para 1 caminho - não por pasta duplicada por harness. Este manifesto formaliza esse precedente real; não inventa duplicação onde ela não existe no código já em produção.",
       "harnesses_aplicaveis": [],
       "dest_unico_template": "mcps/{nome}",
+      "overrides_por_escopo": {
+        "aidd-master": {
+          "dest_unico_template": "src/core/mcp/{nome}.py",
+          "unidade": "arquivo"
+        }
+      },
       "nota_revisao": "PARA REVISÃO DO USUÁRIO / Prompt B: este manifesto só garante presença física do código-fonte do servidor MCP em 1 caminho canônico por ferramenta; não gera nem escreve o arquivo de config (.mcp.json ou equivalente) que cada harness usaria para registrar/invocar esse servidor - isso é wiring de injetor, fora de escopo desta migração."
     },
     "spec": {
@@ -80,7 +86,13 @@
       "unidade": "arquivo",
       "status_evidencia": "confirmado por precedente real: os mesmos dois profiles_registry.py definem 'config' com destino único, sem mirrors (aidd-generator: 'config/{nome}.json'; aidd-master: 'templates/core/config/{nome}.json').",
       "harnesses_aplicaveis": [],
-      "dest_unico_template": "config/{nome}"
+      "dest_unico_template": "config/{nome}",
+      "overrides_por_escopo": {
+        "aidd-master": {
+          "dest_unico_template": "templates/core/config/{nome}.json",
+          "unidade": "arquivo"
+        }
+      }
     },
     "hook": {
       "pasta_fonte": "hooks",
@@ -103,7 +115,7 @@
       "pasta_fonte": "scripts",
       "distribuicao": "destino-unico-por-ferramenta",
       "unidade": "arquivo",
-      "status_evidencia": "confirmado por precedente real: 'scripts/manutencao/' na raiz já é um destino único sem mirrors por harness; nenhum profile interno (aidd-generator ou aidd-master) define tipo 'script' com mirrors.",
+      "status_evidencia": "SEM PRECEDENTE EM PROFILES_REGISTRY - nenhum profile interno (aidd-generator ou aidd-master) define o tipo 'script'. PROPOSTO NESTA MIGRAÇÃO por simetria com os demais tipos de destino único, PARA REVISÃO EXPLÍCITA DO USUÁRIO.",
       "harnesses_aplicaveis": [],
       "dest_unico_template": "scripts/{nome}"
     }

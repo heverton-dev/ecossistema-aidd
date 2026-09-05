@@ -46,7 +46,6 @@ PROFILES: Dict[str, Dict[str, Dict[str, Any]]] = {
             "mirrors": [
                 ".claude/skills/{nome}/SKILL.md",
                 ".agent/skills/{nome}/SKILL.md",
-                ".mimocode/skills/{nome}/SKILL.md",
                 ".gemini/skills/{nome}/SKILL.md",
             ],
             "registry": "CAPABILITIES.json",

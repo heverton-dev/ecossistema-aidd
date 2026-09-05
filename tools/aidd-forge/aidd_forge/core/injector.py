@@ -142,3 +142,41 @@ class Injector:
                 shutil.copytree(skill_dir, link_path)
 
         return result
+
+    def mirror_skills_all_harnesses(
+        self, skills_subdir: str = "skills"
+    ) -> InjectionResult:
+        """Espelha as skills em todas as pastas de harness declaradas no manifesto:
+        .claude/skills/ e .gemini/skills/ (alem de .agent/skills/ ja feito por link_skills).
+        """
+        result = InjectionResult()
+        skills_root = self.target_root / skills_subdir
+        if not skills_root.exists():
+            return result
+
+        harness_dirs = [".claude/skills", ".gemini/skills"]
+        for rel_harness in harness_dirs:
+            target_harness_root = self.target_root / rel_harness
+            target_harness_root.mkdir(parents=True, exist_ok=True)
+
+            for skill_dir in sorted(p for p in skills_root.iterdir() if p.is_dir()):
+                if not (skill_dir / "SKILL.md").exists():
+                    continue
+
+                link_path = target_harness_root / skill_dir.name
+                if link_path.exists() or link_path.is_symlink():
+                    if not self.force:
+                        result.skipped.append(link_path)
+                        continue
+                    if link_path.is_symlink() or link_path.is_file():
+                        link_path.unlink()
+                    else:
+                        shutil.rmtree(link_path)
+                    result.overwritten.append(link_path)
+                else:
+                    result.created.append(link_path)
+
+                shutil.copytree(skill_dir, link_path)
+
+        return result
+

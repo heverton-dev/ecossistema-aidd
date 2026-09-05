@@ -12,10 +12,15 @@ from __future__ import annotations
 
 TIPO_PARA_CAMADA: dict[str, int] = {
     "rule": 1,
+    "config": 1,
     "spec": 2,
+    "script": 3,
+    "hook": 3,
     "mcp": 4,
     "skill": 5,
     "roteiro": 5,
+    "command": 5,
+    "sub-agent": 5,
 }
 
 

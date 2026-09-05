@@ -10,7 +10,7 @@
     "tipo": {
       "type": "string",
       "description": "Tipo de componente a ser injetado.",
-      "enum": ["skill", "mcp", "rule", "spec", "config"]
+      "enum": ["skill", "mcp", "rule", "spec", "config", "command", "hook", "sub-agent", "script"]
     },
     "nome": {
       "type": "string",

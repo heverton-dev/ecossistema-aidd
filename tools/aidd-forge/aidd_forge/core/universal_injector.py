@@ -15,6 +15,7 @@ from typing import Any
 from aidd_forge.core.camada_detector import detectar_camada
 from aidd_forge.core.harness_sync import HarnessSyncResult, sincronizar_skill
 from aidd_forge.core.injection_schema import validate_request
+from aidd_forge.core.injector_profiles import sincronizar_componente
 from aidd_forge.core.materializador import InjectionRequest, MaterializationResult, Materializador
 
 TIPOS_COM_HARNESS_SYNC: frozenset[str] = frozenset({"skill"})
@@ -28,6 +29,7 @@ class UniversalInjectionResult:
     materialization: MaterializationResult | None = None
     harness_sync: HarnessSyncResult | None = None
     camada: int | None = None
+    sync_warning: str | None = None
 
     @property
     def ok(self) -> bool:
@@ -62,10 +64,18 @@ class UniversalInjector:
         except Exception as exc:
             return UniversalInjectionResult(errors=[str(exc)], camada=camada)
 
+        sync_code = sincronizar_componente(tipo, ferramenta="aidd-forge")
+        sync_warning = materialization.sync_warning
+        if sync_code != 0 and not sync_warning:
+            sync_warning = f"sincronizacao multi-harness retornou codigo {sync_code}"
+
         harness_result = None
         if tipo in TIPOS_COM_HARNESS_SYNC:
             harness_result = sincronizar_skill(nome, self.target_root, force=force)
 
         return UniversalInjectionResult(
-            materialization=materialization, harness_sync=harness_result, camada=camada
+            materialization=materialization,
+            harness_sync=harness_result,
+            camada=camada,
+            sync_warning=sync_warning,
         )

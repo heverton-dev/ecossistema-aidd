@@ -6,7 +6,7 @@
   "properties": {
     "tipo": {
       "type": "string",
-      "enum": ["skill", "mcp", "rule", "spec", "roteiro"]
+      "enum": ["skill", "mcp", "rule", "spec", "roteiro", "config", "command", "hook", "sub-agent", "script"]
     },
     "nome": {
       "type": "string",

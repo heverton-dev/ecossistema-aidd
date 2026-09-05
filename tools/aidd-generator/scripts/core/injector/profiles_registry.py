@@ -53,6 +53,26 @@ PROFILES: Dict[str, Dict[str, Dict[str, object]]] = {
             "mirrors": [],
             "anchors": ["AGENTS.md"],
         },
+        "command": {
+            "dest": ".claude/commands/{nome}.md",
+            "mirrors": [],
+            "anchors": ["AGENTS.md"],
+        },
+        "hook": {
+            "dest": ".claude/hooks/{nome}/hook.sh",
+            "mirrors": [],
+            "anchors": [],
+        },
+        "sub-agent": {
+            "dest": ".claude/agents/{nome}.md",
+            "mirrors": [],
+            "anchors": [],
+        },
+        "script": {
+            "dest": "scripts/{nome}.py",
+            "mirrors": [],
+            "anchors": [],
+        },
     },
 }
 

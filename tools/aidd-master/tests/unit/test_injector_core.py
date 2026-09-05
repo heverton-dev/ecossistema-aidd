@@ -103,8 +103,18 @@ def test_perfil_skill_inclui_espelhos_multi_harness(tmp_path):
     payload = {"tipo": "skill", "nome": "x", "descricao": "abc", "alvo_projeto": "aidd-master"}
     resultado = profiles_registry.resolver_destinos(payload, str(tmp_path))
     mirrors = resultado.valor["mirrors"]
-    for harness in (".claude", ".agent", ".mimocode", ".gemini"):
+    for harness in (".claude", ".agent", ".gemini"):
         assert any(harness in m for m in mirrors), f"harness {harness} não espelhado"
+    assert not any("mimocode" in m for m in mirrors), "mimocode não deve mais constar em mirrors de skill"
+
+
+def test_perfis_aidd_master_sem_mimocode_em_nenhum_mirror():
+    """Garante que 'mimocode' não aparece em nenhum valor de mirrors em PROFILES['aidd-master']."""
+    perfil_master = profiles_registry.PROFILES.get("aidd-master", {})
+    for tipo, config in perfil_master.items():
+        mirrors = config.get("mirrors", [])
+        for m in mirrors:
+            assert "mimocode" not in m.lower(), f"mimocode encontrado em mirror de {tipo}: {m}"
 
 
 # ---------------------------------------------------------------------------

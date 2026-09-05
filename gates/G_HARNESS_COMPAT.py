@@ -36,13 +36,9 @@ import sys
 
 ROOT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
-COMANDOS = ["forge.md", "generate.md", "master.md", "enterprise.md"]
-SKILLS = [
-    "aidd-forge-runner",
-    "aidd-generator-runner",
-    "aidd-master-runner",
-    "aidd-enterprise-runner",
-]
+sys.path.insert(0, os.path.join(ROOT_DIR, "scripts"))
+import gestor_componentes
+
 PONTEIROS = [
     (".claude/CLAUDE.md", "AGENTS.md"),
     (".cursor/rules/aidd.md", "AGENTS.md"),
@@ -64,27 +60,15 @@ def checar():
 
     erros = []
 
-    print("\n--- Comandos: .agent/commands/ vs .claude/commands/ ---")
-    for cmd in COMANDOS:
-        conteudo_agent = _ler(f".agent/commands/{cmd}")
-        conteudo_claude = _ler(f".claude/commands/{cmd}")
-        if conteudo_agent is None or conteudo_claude is None:
-            erros.append(f"Comando {cmd} ausente em .agent/commands/ ou .claude/commands/.")
-        elif conteudo_agent != conteudo_claude:
-            erros.append(f"Comando {cmd} divergiu entre .agent/commands/ e .claude/commands/.")
-        else:
-            print(f"[OK] {cmd} idêntico nos dois harness.")
-
-    print("\n--- Skills: skills/ vs .agent/skills/ ---")
-    for skill in SKILLS:
-        conteudo_raiz = _ler(f"skills/{skill}/SKILL.md")
-        conteudo_agent = _ler(f".agent/skills/{skill}/SKILL.md")
-        if conteudo_raiz is None or conteudo_agent is None:
-            erros.append(f"SKILL.md de {skill} ausente em skills/ ou .agent/skills/.")
-        elif conteudo_raiz != conteudo_agent:
-            erros.append(f"SKILL.md de {skill} divergiu entre skills/ e .agent/skills/.")
-        else:
-            print(f"[OK] {skill}/SKILL.md idêntico nos dois locais.")
+    print("\n--- Verificacao Universal de Componentes (gates/manifesto_harnesses.json) ---")
+    total_verificados, problemas = gestor_componentes.verify("todos")
+    print(f"Componentes verificados: {total_verificados}")
+    if problemas:
+        for p in problemas:
+            erros.append(f"Componente divergente ou ausente em harness: {p}")
+            print(f"[ERRO] {p}")
+    else:
+        print("[OK] Todos os componentes sincronizados com a fonte canonica em todos os harnesses.")
 
     print("\n--- Arquivos-ponteiro para AGENTS.md ---")
     for ponteiro, fonte in PONTEIROS:

@@ -22,7 +22,17 @@ from typing import Any, Dict, List, Optional
 if sys.platform == 'win32':
     sys.stdout.reconfigure(encoding='utf-8')
 
-TIPOS_VALIDOS = ("skill", "mcp", "rule", "spec", "config")
+TIPOS_VALIDOS = (
+    "skill",
+    "mcp",
+    "rule",
+    "spec",
+    "config",
+    "command",
+    "hook",
+    "sub-agent",
+    "script",
+)
 PROJETOS_VALIDOS = (
     "aidd-generator",
     "aidd-master",
