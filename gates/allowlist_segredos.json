@@ -11,6 +11,8 @@
     "tools/aidd-enterprise/templates/core/nginx/ssl/generate_ssl.py": "Mesma natureza do arquivo acima (template fonte).",
     "tools/aidd-enterprise/templates/v2/nginx/ssl/generate_ssl.py": "Mesma natureza do arquivo acima (template fonte).",
     "tools/aidd-master/templates/core/nginx/ssl/generate_ssl.py": "Mesma natureza do arquivo acima (template fonte, aidd-master).",
-    "tools/aidd-master/templates/v2/nginx/ssl/generate_ssl.py": "Mesma natureza do arquivo acima (template fonte, aidd-master)."
+    "tools/aidd-master/templates/v2/nginx/ssl/generate_ssl.py": "Mesma natureza do arquivo acima (template fonte, aidd-master).",
+    "docs/planos/refinamento-notas-auditoria/02-prova-adversarial-gates-originais.md": "Documento de teste de prova adversarial documentando chaves fake para validacao do G_SEGREDOS.",
+    "gates/test_g_segredos.py": "Fixture de teste unitario do proprio gate G_SEGREDOS testando chave fake da AWS."
   }
 }
