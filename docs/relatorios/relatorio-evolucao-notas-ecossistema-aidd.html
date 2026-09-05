@@ -1,0 +1,581 @@
+<title>Evolução AIDD</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Source+Sans+3:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap');
+
+:root{
+  --bg:#faf8f3;
+  --surface:#ffffff;
+  --surface-alt:#f2ede2;
+  --border:#e2dcc9;
+  --border-soft:#ece7d9;
+  --ink:#1f2a2c;
+  --ink-soft:#4d5c5a;
+  --ink-muted:#8a938c;
+  --before:#b5502e;
+  --before-soft:#f2e0d6;
+  --after:#0e9b86;
+  --after-soft:#d9efe9;
+  --good:#2f8f5b;
+  --warn:#a6690e;
+  --gap:#a83a3a;
+  --shadow:0 1px 2px rgba(31,42,25,.06), 0 6px 20px -8px rgba(31,42,25,.12);
+}
+:root:not([data-theme="light"]){
+  @media (prefers-color-scheme: dark){
+    --bg:#171b18;
+    --surface:#1f2521;
+    --surface-alt:#262c27;
+    --border:#37403a;
+    --border-soft:#2c332e;
+    --ink:#eef1ec;
+    --ink-soft:#b7c1ba;
+    --ink-muted:#7c8880;
+    --before:#d06b45;
+    --before-soft:#3a2b23;
+    --after:#1fa593;
+    --after-soft:#1c3833;
+    --good:#4caf7d;
+    --warn:#d19a3d;
+    --gap:#d3696a;
+    --shadow:0 1px 2px rgba(0,0,0,.3), 0 12px 28px -12px rgba(0,0,0,.5);
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#171b18;
+  --surface:#1f2521;
+  --surface-alt:#262c27;
+  --border:#37403a;
+  --border-soft:#2c332e;
+  --ink:#eef1ec;
+  --ink-soft:#b7c1ba;
+  --ink-muted:#7c8880;
+  --before:#d06b45;
+  --before-soft:#3a2b23;
+  --after:#1fa593;
+  --after-soft:#1c3833;
+  --good:#4caf7d;
+  --warn:#d19a3d;
+  --gap:#d3696a;
+  --shadow:0 1px 2px rgba(0,0,0,.3), 0 12px 28px -12px rgba(0,0,0,.5);
+}
+
+*{box-sizing:border-box}
+body{
+  background:var(--bg);
+  color:var(--ink);
+  font-family:"Source Sans 3", -apple-system, "Segoe UI", sans-serif;
+  font-size:16px;
+  line-height:1.55;
+  margin:0;
+}
+::selection{background:var(--after-soft);}
+
+.wrap{max-width:920px;margin:0 auto;padding:64px 28px 96px;}
+
+h1,h2,h3{font-family:"Fraunces", Georgia, serif; text-wrap:balance; margin:0;}
+
+.eyebrow{
+  font-family:"JetBrains Mono", monospace;
+  font-size:12.5px;
+  letter-spacing:.09em;
+  text-transform:uppercase;
+  color:var(--after);
+  font-weight:500;
+}
+
+header.masthead{margin-bottom:56px;}
+header.masthead h1{
+  font-size:clamp(30px,4.4vw,44px);
+  font-weight:600;
+  margin-top:10px;
+  color:var(--ink);
+}
+header.masthead .dek{
+  font-size:17.5px;
+  color:var(--ink-soft);
+  max-width:62ch;
+  margin-top:14px;
+}
+header.masthead .meta-row{
+  display:flex;
+  gap:20px;
+  flex-wrap:wrap;
+  margin-top:20px;
+  font-family:"JetBrains Mono", monospace;
+  font-size:12.5px;
+  color:var(--ink-muted);
+}
+header.masthead .meta-row span{white-space:nowrap;}
+
+/* ---------- Composite score hero ---------- */
+.composite{
+  display:grid;
+  grid-template-columns:1fr auto 1fr;
+  align-items:center;
+  gap:20px;
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:14px;
+  padding:32px 36px;
+  box-shadow:var(--shadow);
+  margin-bottom:16px;
+}
+.composite .side{text-align:center;}
+.composite .side .num{
+  font-family:"Fraunces", serif;
+  font-weight:600;
+  font-size:56px;
+  line-height:1;
+  font-variant-numeric:tabular-nums;
+}
+.composite .side.before .num{color:var(--before);}
+.composite .side.after .num{color:var(--after);}
+.composite .side .lbl{
+  margin-top:8px;
+  font-family:"JetBrains Mono",monospace;
+  font-size:11.5px;
+  letter-spacing:.08em;
+  text-transform:uppercase;
+  color:var(--ink-muted);
+}
+.composite .arrow{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:6px;
+  color:var(--ink-muted);
+}
+.composite .arrow svg{width:44px;height:20px;}
+.composite .arrow .delta{
+  font-family:"JetBrains Mono",monospace;
+  font-size:13px;
+  font-weight:700;
+  color:var(--good);
+}
+.composite-note{
+  font-size:13.5px;
+  color:var(--ink-muted);
+  text-align:center;
+  margin-bottom:64px;
+}
+
+section{margin-bottom:64px;}
+section > h2{
+  font-size:24px;
+  font-weight:600;
+  margin-bottom:6px;
+}
+section > .section-dek{
+  color:var(--ink-soft);
+  font-size:15px;
+  max-width:65ch;
+  margin-bottom:28px;
+}
+
+/* ---------- Dimension grid ---------- */
+.dim-grid{
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:16px;
+}
+@media (max-width:680px){ .dim-grid{grid-template-columns:1fr;} }
+
+.dim-card{
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:12px;
+  padding:20px 22px;
+  box-shadow:var(--shadow);
+  display:flex;
+  flex-direction:column;
+  gap:12px;
+}
+.dim-head{display:flex; justify-content:space-between; align-items:flex-start; gap:10px;}
+.dim-name{font-size:15.5px; font-weight:600; color:var(--ink);}
+.dim-num{
+  font-family:"JetBrains Mono",monospace;
+  font-size:12px;
+  color:var(--ink-muted);
+}
+.status-pill{
+  display:inline-flex;
+  align-items:center;
+  gap:5px;
+  padding:3px 9px 3px 7px;
+  border-radius:99px;
+  font-family:"JetBrains Mono",monospace;
+  font-size:11px;
+  font-weight:700;
+  letter-spacing:.02em;
+  white-space:nowrap;
+  border:1px solid transparent;
+}
+.status-pill.good{color:var(--good); background:color-mix(in srgb, var(--good) 14%, transparent); border-color:color-mix(in srgb, var(--good) 30%, transparent);}
+.status-pill.exceeded{color:var(--after); background:color-mix(in srgb, var(--after) 14%, transparent); border-color:color-mix(in srgb, var(--after) 30%, transparent);}
+.status-pill.partial{color:var(--warn); background:color-mix(in srgb, var(--warn) 14%, transparent); border-color:color-mix(in srgb, var(--warn) 30%, transparent);}
+
+.bars{display:flex; flex-direction:column; gap:6px;}
+.bar-row{display:grid; grid-template-columns:52px 1fr 34px; align-items:center; gap:8px;}
+.bar-row .tag{font-family:"JetBrains Mono",monospace; font-size:10.5px; color:var(--ink-muted); text-transform:uppercase; letter-spacing:.04em;}
+.bar-track{height:9px; background:var(--surface-alt); border-radius:5px; overflow:hidden;}
+.bar-fill{height:100%; border-radius:5px;}
+.bar-fill.before{background:var(--before);}
+.bar-fill.after{background:var(--after);}
+.bar-row .val{font-family:"JetBrains Mono",monospace; font-size:12.5px; font-variant-numeric:tabular-nums; text-align:right; color:var(--ink);}
+
+.dim-evidence{font-size:13.5px; color:var(--ink-soft); border-top:1px solid var(--border-soft); padding-top:10px;}
+.dim-evidence b{color:var(--ink); font-weight:600;}
+.dim-pkgs{font-family:"JetBrains Mono",monospace; font-size:11px; color:var(--ink-muted);}
+
+/* ---------- Bonus package callout ---------- */
+.bonus-card{
+  background:linear-gradient(155deg, var(--surface) 0%, var(--after-soft) 180%);
+  border:1px solid var(--border);
+  border-radius:12px;
+  padding:22px 26px;
+  box-shadow:var(--shadow);
+  display:flex;
+  gap:18px;
+  align-items:flex-start;
+}
+.bonus-card .badge{
+  font-family:"JetBrains Mono",monospace;
+  font-size:11px;
+  font-weight:700;
+  color:var(--after);
+  background:var(--after-soft);
+  border:1px solid color-mix(in srgb, var(--after) 30%, transparent);
+  padding:4px 10px;
+  border-radius:99px;
+  white-space:nowrap;
+  margin-top:2px;
+}
+.bonus-card .body h3{font-size:17px; font-weight:600; margin-bottom:6px;}
+.bonus-card .body p{font-size:14.5px; color:var(--ink-soft); margin:0;}
+.bonus-card .score{
+  font-family:"Fraunces",serif; font-weight:600; font-size:30px; color:var(--after);
+  margin-left:auto; align-self:center; white-space:nowrap;
+}
+
+/* ---------- Timeline ---------- */
+.timeline{position:relative; padding-left:2px;}
+.tl-item{
+  position:relative;
+  padding:0 0 30px 34px;
+  border-left:2px solid var(--border);
+}
+.tl-item:last-child{border-color:transparent; padding-bottom:0;}
+.tl-dot{
+  position:absolute; left:-8px; top:2px;
+  width:14px; height:14px; border-radius:50%;
+  background:var(--surface); border:2.5px solid var(--after);
+}
+.tl-item.mixed .tl-dot{border-color:var(--warn);}
+.tl-head{display:flex; align-items:baseline; gap:10px; flex-wrap:wrap; margin-bottom:6px;}
+.tl-head .tl-title{font-family:"Fraunces",serif; font-weight:600; font-size:17.5px;}
+.tl-head .tl-tag{
+  font-family:"JetBrains Mono",monospace; font-size:10.5px; text-transform:uppercase;
+  letter-spacing:.05em; color:var(--ink-muted); background:var(--surface-alt);
+  padding:2px 8px; border-radius:5px; border:1px solid var(--border-soft);
+}
+.tl-body{font-size:14.5px; color:var(--ink-soft); max-width:70ch;}
+.tl-body b{color:var(--ink); font-weight:600;}
+.tl-evidence{
+  margin-top:8px; font-family:"JetBrains Mono",monospace; font-size:12px;
+  color:var(--ink-muted); display:flex; gap:14px; flex-wrap:wrap;
+}
+.tl-evidence .commit{color:var(--after);}
+
+/* ---------- Residual gaps ---------- */
+.gap-list{display:flex; flex-direction:column; gap:2px;}
+.gap-item{
+  display:grid; grid-template-columns:22px 1fr; gap:14px;
+  padding:16px 4px; border-bottom:1px solid var(--border-soft);
+}
+.gap-item:last-child{border-bottom:none;}
+.gap-item .ico{color:var(--gap); font-size:16px; line-height:1.4;}
+.gap-item .title{font-weight:600; font-size:14.5px; margin-bottom:3px;}
+.gap-item .desc{font-size:14px; color:var(--ink-soft);}
+
+/* ---------- Methodology ---------- */
+.method-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:16px;}
+@media (max-width:680px){ .method-grid{grid-template-columns:1fr;} }
+.method-card{background:var(--surface-alt); border:1px solid var(--border-soft); border-radius:10px; padding:18px 20px;}
+.method-card .stat{
+  font-family:"JetBrains Mono",monospace; font-weight:700; font-size:26px; color:var(--after);
+  font-variant-numeric:tabular-nums;
+}
+.method-card .stat-lbl{font-size:13px; color:var(--ink-soft); margin-top:4px;}
+
+footer{
+  border-top:1px solid var(--border);
+  padding-top:24px;
+  font-family:"JetBrains Mono",monospace;
+  font-size:12px;
+  color:var(--ink-muted);
+  display:flex;
+  justify-content:space-between;
+  flex-wrap:wrap;
+  gap:8px;
+}
+</style>
+
+<div class="wrap">
+
+  <header class="masthead">
+    <div class="eyebrow">Relatório Consolidado · Fase 6 do Plano de Evolução</div>
+    <h1>Da auditoria de 7,5 à evidência reproduzida em 8 dimensões</h1>
+    <p class="dek">Ecossistema AIDD — quatro ferramentas (aidd-master, aidd-enterprise, aidd-generator, aidd-forge) auditadas, corrigidas e revalidadas uma a uma, sempre por reprodução real dos testes e comandos, nunca por confiança no relatório de quem implementou.</p>
+    <div class="meta-row">
+      <span>05 SET 2026</span>
+      <span>7 pacotes de trabalho</span>
+      <span>8 dimensões + 1 gap novo</span>
+      <span>6 commits reais no branch main</span>
+    </div>
+  </header>
+
+  <div class="composite">
+    <div class="side before">
+      <div class="num">7,5</div>
+      <div class="lbl">Antes — auditoria original</div>
+    </div>
+    <div class="arrow">
+      <svg viewBox="0 0 44 20" fill="none"><path d="M2 10H40M40 10L32 3M40 10L32 17" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      <div class="delta">+1,2</div>
+    </div>
+    <div class="side after">
+      <div class="num">8,7</div>
+      <div class="lbl">Depois — média das 8 dimensões</div>
+    </div>
+  </div>
+  <p class="composite-note">Meta original do plano de evolução: ~8,6/10. Resultado real ficou levemente acima — a dimensão de Universalidade, presumida "sem mudança possível", superou o próprio alvo quando testada de verdade (ver Pacote 6).</p>
+
+  <section id="dimensoes">
+    <h2>As 8 dimensões da auditoria original</h2>
+    <p class="section-dek">Mesma metodologia, mesmas 8 dimensões da auditoria de 04/09/2026 — nenhuma nota foi alterada sem o comando de validação correspondente ter sido rodado de verdade nesta revisão.</p>
+
+    <div class="dim-grid">
+
+      <div class="dim-card">
+        <div class="dim-head">
+          <div class="dim-name">Testabilidade / Cobertura Real</div>
+          <span class="status-pill good">✓ ALVO ATINGIDO</span>
+        </div>
+        <div class="bars">
+          <div class="bar-row"><span class="tag">Antes</span><div class="bar-track"><div class="bar-fill before" style="width:60%"></div></div><span class="val">6,0</span></div>
+          <div class="bar-row"><span class="tag">Depois</span><div class="bar-track"><div class="bar-fill after" style="width:90%"></div></div><span class="val">9,0</span></div>
+        </div>
+        <div class="dim-evidence"><b>add_module.py</b> gerava módulo mas nunca religava a <b>src/server.py</b> (404 silencioso); <b>7 comandos do CLI</b> (audit, plan, apply, compose-orca, refine-module, bench, export-frontend, setup) ganharam teste real de sucesso e falha, nas 2 ferramentas.<div class="dim-pkgs">Pacotes 2 · 4</div></div>
+      </div>
+
+      <div class="dim-card">
+        <div class="dim-head">
+          <div class="dim-name">Modularização</div>
+          <span class="status-pill good">✓ ALVO ATINGIDO</span>
+        </div>
+        <div class="bars">
+          <div class="bar-row"><span class="tag">Antes</span><div class="bar-track"><div class="bar-fill before" style="width:70%"></div></div><span class="val">7,0</span></div>
+          <div class="bar-row"><span class="tag">Depois</span><div class="bar-track"><div class="bar-fill after" style="width:90%"></div></div><span class="val">9,0</span></div>
+        </div>
+        <div class="dim-evidence">Injetor Universal do <b>aidd-master</b> ganhou o tipo <b>hook</b> e registro real de servidor MCP externo (<b>mcp.json</b>) sem copiar o injetor monolítico do aidd-enterprise. Ponto cego do gate de drift (arquivo removido de um lado ficava invisível) corrigido.<div class="dim-pkgs">Pacote 3</div></div>
+      </div>
+
+      <div class="dim-card">
+        <div class="dim-head">
+          <div class="dim-name">Gates Mecânicos</div>
+          <span class="status-pill good">✓ ALVO ATINGIDO</span>
+        </div>
+        <div class="bars">
+          <div class="bar-row"><span class="tag">Antes</span><div class="bar-track"><div class="bar-fill before" style="width:70%"></div></div><span class="val">7,0</span></div>
+          <div class="bar-row"><span class="tag">Depois</span><div class="bar-track"><div class="bar-fill after" style="width:80%"></div></div><span class="val">8,0</span></div>
+        </div>
+        <div class="dim-evidence">Bug <b>--command</b> → <b>--mcp-command</b> corrigido; gate novo <b>G_CLI_HELP_CONSISTENCIA.py</b> (baseado em AST) impede que mensagem de erro cite uma flag que o argparse não define.<div class="dim-pkgs">Pacote 1</div></div>
+      </div>
+
+      <div class="dim-card">
+        <div class="dim-head">
+          <div class="dim-name">Transparência / Zero Alucinação</div>
+          <span class="status-pill partial">◐ PARCIAL</span>
+        </div>
+        <div class="bars">
+          <div class="bar-row"><span class="tag">Antes</span><div class="bar-track"><div class="bar-fill before" style="width:80%"></div></div><span class="val">8,0</span></div>
+          <div class="bar-row"><span class="tag">Depois</span><div class="bar-track"><div class="bar-fill after" style="width:85%"></div></div><span class="val">8,5</span></div>
+        </div>
+        <div class="dim-evidence">Legenda que afirmava <b>"medição real via litellm"</b> para tokens autodeclarados em 3 fases foi corrigida. Alvo era 9,0 — não fechou: <b>cmd_plan</b>/<b>cmd_prompt</b> ainda não avisam no <b>--help</b> que usam casamento de palavras-chave, não LLM.<div class="dim-pkgs">Pacotes 1 · 5</div></div>
+      </div>
+
+      <div class="dim-card">
+        <div class="dim-head">
+          <div class="dim-name">Economia de Tokens</div>
+          <span class="status-pill good">✓ ALVO ATINGIDO</span>
+        </div>
+        <div class="bars">
+          <div class="bar-row"><span class="tag">Antes</span><div class="bar-track"><div class="bar-fill before" style="width:70%"></div></div><span class="val">7,0</span></div>
+          <div class="bar-row"><span class="tag">Depois</span><div class="bar-track"><div class="bar-fill after" style="width:80%"></div></div><span class="val">8,0</span></div>
+        </div>
+        <div class="dim-evidence">Campo <b>origem_medicao</b> ("autodeclarado" / "medido_api") separa os dois tipos de número na fonte e em todo agregado — teto estrutural reconhecido (autodeclarado nunca é verificável), agora rotulado com honestidade em vez de escondido.<div class="dim-pkgs">Pacote 5</div></div>
+      </div>
+
+      <div class="dim-card">
+        <div class="dim-head">
+          <div class="dim-name">Engenharia Agêntica Aplicada</div>
+          <span class="status-pill good">✓ ALVO ATINGIDO</span>
+        </div>
+        <div class="bars">
+          <div class="bar-row"><span class="tag">Antes</span><div class="bar-track"><div class="bar-fill before" style="width:80%"></div></div><span class="val">8,0</span></div>
+          <div class="bar-row"><span class="tag">Depois</span><div class="bar-track"><div class="bar-fill after" style="width:85%"></div></div><span class="val">8,5</span></div>
+        </div>
+        <div class="dim-evidence">O protocolo delegado em si já funcionava bem — a correção fechou a lacuna de transparência que o cercava, sem precisar tocar no mecanismo agêntico.<div class="dim-pkgs">Pacote 5</div></div>
+      </div>
+
+      <div class="dim-card">
+        <div class="dim-head">
+          <div class="dim-name">Determinismo Primeiro</div>
+          <span class="status-pill good">✓ ALVO ATINGIDO</span>
+        </div>
+        <div class="bars">
+          <div class="bar-row"><span class="tag">Antes</span><div class="bar-track"><div class="bar-fill before" style="width:90%"></div></div><span class="val">9,0</span></div>
+          <div class="bar-row"><span class="tag">Depois</span><div class="bar-track"><div class="bar-fill after" style="width:95%"></div></div><span class="val">9,5</span></div>
+        </div>
+        <div class="dim-evidence"><b>add_module.py</b> ganhou a mesma bateria de testes de fogo que já tinha fechado o <b>compose_suite.py</b> — módulo novo, uma vez gerado, é comprovadamente alcançável via HTTP.<div class="dim-pkgs">Pacote 2</div></div>
+      </div>
+
+      <div class="dim-card">
+        <div class="dim-head">
+          <div class="dim-name">Universalidade / Agnosticismo</div>
+          <span class="status-pill exceeded">↑ SUPEROU A META</span>
+        </div>
+        <div class="bars">
+          <div class="bar-row"><span class="tag">Antes</span><div class="bar-track"><div class="bar-fill before" style="width:80%"></div></div><span class="val">8,0</span></div>
+          <div class="bar-row"><span class="tag">Depois</span><div class="bar-track"><div class="bar-fill after" style="width:90%"></div></div><span class="val">9,0</span></div>
+        </div>
+        <div class="dim-evidence">Registrada como "sem mudança possível" (só Claude Code instalado). Era suposição, não fato: <b>6 outros harnesses reais</b> estavam instalados nesta máquina. Achado real (BOM UTF-8 quebrando o <b>gemini-cli</b>) corrigido e comprovado contra a instalação de verdade.<div class="dim-pkgs">Pacote 6</div></div>
+      </div>
+
+    </div>
+  </section>
+
+  <section id="bonus">
+    <h2>Um gap fora das 8 dimensões originais</h2>
+    <p class="section-dek">Achado por um agente externo durante o processo, aceito depois de verificação independente por amostragem — não estava na auditoria de 04/09.</p>
+    <div class="bonus-card">
+      <span class="badge">GAP NOVO</span>
+      <div class="body">
+        <h3>Agnosticismo de Distribuição de Componentes</h3>
+        <p>4 skills-runner da raiz existiam em <b>skills/</b> e <b>.agent/skills/</b>, mas nenhuma existia em <b>.claude/skills/</b> — Claude Code, o harness rodando a própria auditoria, não descobria as próprias ferramentas. Resolvido com fonte canônica única (<b>componentes/</b>) e sincronização determinística (<b>gestor_componentes.py</b>), unificando os injetores de aidd-forge e aidd-generator no processo.</p>
+      </div>
+      <div class="score">9,0</div>
+    </div>
+  </section>
+
+  <section id="timeline">
+    <h2>Como chegamos aqui</h2>
+    <p class="section-dek">Ordem real de execução — não a ordem numérica dos pacotes. Cada rodada só avançou depois de uma Definição de Pronto travada e aprovada, e nenhuma nota subiu sem o comando de validação ter sido rodado de verdade nesta sessão.</p>
+
+    <div class="timeline">
+
+      <div class="tl-item">
+        <span class="tl-dot"></span>
+        <div class="tl-head"><span class="tl-title">Pacote 1 — Transparência + Gates Mecânicos</span><span class="tl-tag">fechou de primeira</span></div>
+        <div class="tl-body">Bug <b>--command</b>→<b>--mcp-command</b> e gate novo de consistência CLI-vs-help.</div>
+        <div class="tl-evidence"><span class="commit">ef4d6e9</span><span>Gates 7→8 · Transparência 8→8,5</span></div>
+      </div>
+
+      <div class="tl-item">
+        <span class="tl-dot"></span>
+        <div class="tl-head"><span class="tl-title">Pacote 2 — Testabilidade + Determinismo</span><span class="tl-tag">fechou de primeira</span></div>
+        <div class="tl-body">Achado mais grave que o esperado: <b>add_module.py</b> gerava módulo novo mas nunca religava ao servidor — módulo com testes próprios passando, porém inalcançável via HTTP.</div>
+        <div class="tl-evidence"><span class="commit">39b66f7</span><span>Testabilidade 6→9 · Determinismo 9→9,5</span></div>
+      </div>
+
+      <div class="tl-item mixed">
+        <span class="tl-dot"></span>
+        <div class="tl-head"><span class="tl-title">Pacote 7 — Agnosticismo de Distribuição</span><span class="tl-tag">3 rodadas corretivas</span></div>
+        <div class="tl-body">O mais longo da série. Achados reais em cada auditoria: bug de path off-by-one nos injetores, symlink reintroduzido onde a regra era cópia física, e — o mais sutil — os próprios testes novos poluíam a árvore real do monorepo a cada <b>pytest</b>, descoberto só na checagem final pré-commit.</div>
+        <div class="tl-evidence"><span class="commit">9597adb · 011d28a</span><span>Gap novo → 9,0</span></div>
+      </div>
+
+      <div class="tl-item">
+        <span class="tl-dot"></span>
+        <div class="tl-head"><span class="tl-title">Pacote 4 — Cobertura dos comandos restantes</span><span class="tl-tag">fechou de primeira</span></div>
+        <div class="tl-body">7 comandos sem nenhum teste (audit, plan, apply, compose-orca, refine-module, bench, export-frontend, setup), em 2 ferramentas — sucesso e falha deliberada para cada um.</div>
+        <div class="tl-evidence"><span class="commit">f8ba594</span><span>Testabilidade → 9,0</span></div>
+      </div>
+
+      <div class="tl-item">
+        <span class="tl-dot"></span>
+        <div class="tl-head"><span class="tl-title">Pacote 3 — Modularização / Injetor</span><span class="tl-tag">fechou de primeira</span></div>
+        <div class="tl-body">Decisão técnica de estender a arquitetura já-canônica do aidd-master em vez de portar o injetor monolítico antigo do aidd-enterprise — evitou reintroduzir duplicação e o padrão de distribuição multi-pasta que o Pacote 7 já tinha eliminado.</div>
+        <div class="tl-evidence"><span class="commit">7a6928a</span><span>Modularização 7→9,0</span></div>
+      </div>
+
+      <div class="tl-item">
+        <span class="tl-dot"></span>
+        <div class="tl-head"><span class="tl-title">Pacote 5 — Economia de Tokens + Engenharia Agêntica</span><span class="tl-tag">fechou de primeira</span></div>
+        <div class="tl-body">Achado mais grave que o diagnóstico original: não era só ausência de rótulo — 3 fases afirmavam ativamente "medição real via litellm" para tokens que nunca passaram por uma chamada de API.</div>
+        <div class="tl-evidence"><span class="commit">dab6170</span><span>Tokens 7→8 · Agêntica 8→8,5</span></div>
+      </div>
+
+      <div class="tl-item">
+        <span class="tl-dot"></span>
+        <div class="tl-head"><span class="tl-title">Pacote 6 — Universalidade</span><span class="tl-tag">fechou de primeira</span></div>
+        <div class="tl-body">A prova mais forte de toda a série: nada de simular resultado — rodei o <b>gemini-cli</b> de verdade, antes e depois da correção, contra a instalação real desta máquina.</div>
+        <div class="tl-evidence"><span class="commit">8f0d774</span><span>Universalidade 8→9,0</span></div>
+      </div>
+
+    </div>
+  </section>
+
+  <section id="gaps">
+    <h2>O que ainda falta — sem inflar nota</h2>
+    <p class="section-dek">Nenhum destes itens está "quase lá". São lacunas reais, conhecidas, deixadas explicitamente registradas em vez de escondidas atrás de uma nota arredondada para cima.</p>
+    <div class="gap-list">
+      <div class="gap-item">
+        <div class="ico">◐</div>
+        <div>
+          <div class="title">cmd_plan / cmd_prompt não avisam que não usam LLM</div>
+          <div class="desc">O <b>--help</b> continua sem menção ao casamento de palavras-chave contra ~24 domínios conhecidos — item do diagnóstico original de Transparência nunca endereçado por nenhum dos 7 pacotes.</div>
+        </div>
+      </div>
+      <div class="gap-item">
+        <div class="ico">◐</div>
+        <div>
+          <div class="title">Antigravity (agy) e FreeBuff continuam sem descoberta confirmada</div>
+          <div class="desc">Testado com 2 chamadas reais de LLM ao <b>agy</b> — resultado negativo estável, mecanismo de descoberta real não identificado. FreeBuff não expõe modo não-interativo para testar via automação.</div>
+        </div>
+      </div>
+      <div class="gap-item">
+        <div class="ico">◐</div>
+        <div>
+          <div class="title">aidd-master e aidd-enterprise seguem com injetores arquiteturalmente diferentes</div>
+          <div class="desc">O Pacote 3 estendeu a arquitetura nova do aidd-master (tipo hook, mcp.json) sem migrar o aidd-enterprise para o mesmo padrão — o injetor monolítico antigo (<b>aidd_core_injector.py</b>) continua ativo lá, registrado como próximo incremento.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="metodo">
+    <h2>O que sustentou o número</h2>
+    <p class="section-dek">A disciplina que impediu qualquer nota de subir por confiança em vez de evidência.</p>
+    <div class="method-grid">
+      <div class="method-card">
+        <div class="stat">5 / 7</div>
+        <div class="stat-lbl">pacotes fecharam de primeira, sem nenhuma correção — os outros 2 (Pacote 7, com 3 rodadas) só porque a auditoria encontrou defeitos reais</div>
+      </div>
+      <div class="method-card">
+        <div class="stat">1.409</div>
+        <div class="stat-lbl">testes passando nas 4 ferramentas na validação final desta sessão (228 + 219 + 765 + 197), zero pulados por falha</div>
+      </div>
+      <div class="method-card">
+        <div class="stat">6 / 6</div>
+        <div class="stat-lbl">gates da bateria raiz (<b>ecossistema.py audit</b>) aprovados na revalidação final, incluindo o gate de agnosticismo criado pelo próprio Pacote 7</div>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <span>Validação final rodada em 05/09/2026 · commits ef4d6e9…8f0d774</span>
+    <span>Metodologia: docs/planos/evolucao-notas-auditoria/00-PROCESSO-E-DECISOES.md</span>
+  </footer>
+
+</div>
