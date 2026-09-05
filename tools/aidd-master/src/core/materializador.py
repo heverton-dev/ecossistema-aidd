@@ -13,7 +13,10 @@ from __future__ import annotations
 import datetime
 import json
 import os
-from typing import Any, Dict, List
+import subprocess
+import sys
+from pathlib import Path
+from typing import Any, Dict, List, Optional
 
 try:
     from result import Result
@@ -23,6 +26,18 @@ except ImportError:
 
 def _timestamp() -> str:
     return datetime.datetime.now().isoformat()
+
+
+def gerar_conteudo_hook(nome: str, descricao: str) -> str:
+    return (
+        "#!/usr/bin/env bash\n"
+        f"# Hook: {nome}\n"
+        f"# Descrição: {descricao}\n"
+        f"# Gerado em: {_timestamp()}\n"
+        "set -euo pipefail\n\n"
+        f'echo "[HOOK] Executando hook \'{nome}\'..."\n'
+        "exit 0\n"
+    )
 
 
 def gerar_conteudo_skill(nome: str, descricao: str) -> str:
@@ -140,7 +155,69 @@ _GERADORES = {
     "spec": gerar_conteudo_spec,
     "config": gerar_conteudo_config,
     "agent": gerar_conteudo_agent,
+    "hook": gerar_conteudo_hook,
 }
+
+CANONICAL_TEMPLATES: Dict[str, str] = {
+    "hook": "componentes/aidd-master/hooks/{nome}/hook.sh",
+}
+
+
+def _default_ecossistema_root() -> Path:
+    """Raiz real do monorepo ecossistema-aidd.
+
+    Isolada para monkeypatch em testes (mesmo padrão do aidd-forge).
+    """
+    return Path(__file__).resolve().parents[4]
+
+
+def resolve_canonical_destination(
+    tipo: str, nome: str, ecossistema_root: Optional[Path] = None
+) -> Optional[Path]:
+    """Resolve o caminho canônico do componente no monorepo."""
+    if tipo not in CANONICAL_TEMPLATES:
+        return None
+    if ecossistema_root is None:
+        ecossistema_root = _default_ecossistema_root()
+    return Path(ecossistema_root) / CANONICAL_TEMPLATES[tipo].format(nome=nome)
+
+
+def sincronizar_componente(
+    tipo: str,
+    ferramenta: str = "aidd-master",
+    ecossistema_root: Optional[Path] = None,
+) -> int:
+    """Dispara a sincronização multi-harness via ecossistema.py ou fallback."""
+    if ecossistema_root is None:
+        ecossistema_root = _default_ecossistema_root()
+
+    script_ecossistema = ecossistema_root / "ecossistema.py"
+    if script_ecossistema.exists():
+        cmd = [
+            sys.executable,
+            str(script_ecossistema),
+            "components",
+            "sync",
+            "--tipo",
+            tipo,
+            "--ferramenta",
+            ferramenta,
+        ]
+        try:
+            res = subprocess.run(cmd, cwd=str(ecossistema_root), capture_output=True, text=True)
+            return res.returncode
+        except Exception:
+            pass
+
+    try:
+        scripts_dir = str(ecossistema_root / "scripts")
+        if scripts_dir not in sys.path:
+            sys.path.insert(0, scripts_dir)
+        import gestor_componentes
+        gestor_componentes.sync(tipo=tipo, ferramenta=ferramenta)
+        return 0
+    except Exception:
+        return 1
 
 
 def resolver_conteudo(payload: Dict[str, Any]) -> str:
@@ -158,6 +235,64 @@ def materializar(payload: Dict[str, Any], resolucao: Dict[str, Any], sobrescreve
     criados nesta chamada são removidos (rollback) antes de retornar a falha
     — garantindo zero arquivos órfãos em caso de interrupção.
     """
+    root_dir = resolucao.get("root_dir")
+    if not root_dir:
+        root_dir = os.path.abspath(".")
+
+    # Rota especial: MCP externo com command (registra em mcp.json no projeto alvo)
+    if payload.get("tipo") == "mcp" and payload.get("command"):
+        mcp_path = os.path.join(root_dir, "mcp.json")
+        dados: Dict[str, Any] = {"mcpServers": {}}
+        conteudo_antigo: Optional[str] = None
+        existia_antes = os.path.isfile(mcp_path)
+
+        if existia_antes:
+            try:
+                with open(mcp_path, "r", encoding="utf-8") as f:
+                    conteudo_antigo = f.read()
+                existente = json.loads(conteudo_antigo)
+                if not isinstance(existente, dict):
+                    return Result.fail(
+                        "mcp.json existente não é um objeto JSON válido.",
+                        codigo="MCP_JSON_INVALIDO",
+                    )
+                dados = existente
+                if "mcpServers" not in dados or not isinstance(dados["mcpServers"], dict):
+                    dados["mcpServers"] = {}
+            except Exception as exc:
+                return Result.fail(
+                    f"mcp.json existente é inválido: {exc}",
+                    codigo="MCP_JSON_INVALIDO",
+                )
+
+        dados["mcpServers"][payload["nome"]] = {
+            "command": payload["command"],
+            "args": payload.get("args", []),
+            "env": payload.get("env", {}),
+        }
+
+        novo_conteudo = json.dumps(dados, indent=2, ensure_ascii=False) + "\n"
+        try:
+            with open(mcp_path, "w", encoding="utf-8", newline="\n") as f:
+                f.write(novo_conteudo)
+            return Result.ok({"arquivos_criados": [mcp_path], "conteudo": novo_conteudo})
+        except OSError as exc:
+            if existia_antes and conteudo_antigo is not None:
+                try:
+                    with open(mcp_path, "w", encoding="utf-8", newline="\n") as f:
+                        f.write(conteudo_antigo)
+                except OSError:
+                    pass
+            elif not existia_antes and os.path.exists(mcp_path):
+                try:
+                    os.remove(mcp_path)
+                except OSError:
+                    pass
+            return Result.fail(
+                f"Falha ao escrever mcp.json, rollback executado: {exc}",
+                codigo="MATERIALIZACAO_FALHOU",
+            )
+
     destinos: List[str] = [resolucao["dest_principal"]] + list(resolucao.get("mirrors", []))
     conteudo = resolver_conteudo(payload)
 
@@ -181,6 +316,29 @@ def materializar(payload: Dict[str, Any], resolucao: Dict[str, Any], sobrescreve
             with open(destino, "w", encoding="utf-8", newline="\n") as f:
                 f.write(conteudo)
             criados.append(destino)
+
+        # Integração canônica Package 7 (ex.: hook)
+        canonical_dest = resolve_canonical_destination(payload["tipo"], payload["nome"])
+        if canonical_dest is not None and str(canonical_dest) not in destinos:
+            try:
+                canonical_dest.parent.mkdir(parents=True, exist_ok=True)
+                canonical_dest.write_text(conteudo, encoding="utf-8")
+            except Exception:
+                pass
+
+        if (Path(root_dir) / "componentes").is_dir():
+            target_canonical = resolve_canonical_destination(
+                payload["tipo"], payload["nome"], ecossistema_root=Path(root_dir)
+            )
+            if target_canonical is not None and str(target_canonical) not in destinos:
+                try:
+                    target_canonical.parent.mkdir(parents=True, exist_ok=True)
+                    target_canonical.write_text(conteudo, encoding="utf-8")
+                except Exception:
+                    pass
+
+        if payload["tipo"] in CANONICAL_TEMPLATES:
+            sincronizar_componente(payload["tipo"], ferramenta="aidd-master")
 
         return Result.ok({"arquivos_criados": criados, "conteudo": conteudo})
 

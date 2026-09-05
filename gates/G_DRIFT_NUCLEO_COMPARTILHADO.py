@@ -109,6 +109,31 @@ def checar_drift():
     erros = []
     nao_catalogados = []
 
+    # 1. Verifica se algum arquivo com esperado_identico=True desapareceu de DIR_A ou DIR_B
+    for nome, entrada in sorted(baseline.items()):
+        if entrada.get("esperado_identico") is True:
+            caminho_a = os.path.join(DIR_A, nome)
+            caminho_b = os.path.join(DIR_B, nome)
+            existe_a = os.path.isfile(caminho_a)
+            existe_b = os.path.isfile(caminho_b)
+
+            if not existe_a and not existe_b:
+                erros.append(
+                    f"{nome}: baseline espera IDENTICO, mas o arquivo desapareceu de "
+                    f"ambas as ferramentas (DIR_A e DIR_B)."
+                )
+            elif not existe_a:
+                erros.append(
+                    f"{nome}: baseline espera IDENTICO, mas o arquivo desapareceu de "
+                    f"DIR_A ({DIR_A})."
+                )
+            elif not existe_b:
+                erros.append(
+                    f"{nome}: baseline espera IDENTICO, mas o arquivo desapareceu de "
+                    f"DIR_B ({DIR_B})."
+                )
+
+    # 2. Compara conteúdo de arquivos presentes em ambas
     for nome in comuns:
         caminho_a = os.path.join(DIR_A, nome)
         caminho_b = os.path.join(DIR_B, nome)
@@ -126,7 +151,7 @@ def checar_drift():
             )
         elif entrada.get("esperado_identico") is False:
             print(f"[INFO] {nome}: divergencia conhecida e documentada — {entrada.get('motivo')}")
-        else:
+        elif entrada.get("esperado_identico") is True and identico_agora:
             print(f"[OK] {nome}: sincronizado com aidd-enterprise.")
 
     if nao_catalogados:

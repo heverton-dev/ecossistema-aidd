@@ -8,7 +8,7 @@
     "tipo": {
       "type": "string",
       "description": "Tipo de componente a ser injetado no ecossistema AIDD.",
-      "enum": ["skill", "mcp", "rule", "spec", "config", "agent"]
+      "enum": ["skill", "mcp", "rule", "spec", "config", "agent", "hook"]
     },
     "nome": {
       "type": "string",
@@ -38,6 +38,20 @@
     "conteudo": {
       "type": "string",
       "description": "Corpo do artefato a ser materializado. Se omitido, o Materializador gera um scaffold padrão e completo (nunca um stub) a partir do 'tipo' e da 'descricao'."
+    },
+    "command": {
+      "type": "string",
+      "description": "Comando executável para registro de servidor MCP externo em mcp.json (usado quando tipo == 'mcp')."
+    },
+    "args": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Argumentos de linha de comando para o servidor MCP externo."
+    },
+    "env": {
+      "type": "object",
+      "additionalProperties": { "type": "string" },
+      "description": "Variáveis de ambiente injetadas na execução do servidor MCP externo."
     },
     "alvo_projeto": {
       "type": "string",

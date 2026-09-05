@@ -662,12 +662,44 @@ def cmd_inject(args):
             conteudo = f.read()
 
     descricao = args.descricao or f"Componente '{args.nome}' ({args.tipo}) injetado via CLI AIDD."
+
+    mcp_command = getattr(args, "mcp_command", None)
+    mcp_args = None
+    mcp_env = None
+    if mcp_command:
+        raw_args = getattr(args, "mcp_args", None)
+        if raw_args:
+            try:
+                parsed_args = json.loads(raw_args)
+                if not isinstance(parsed_args, list) or not all(isinstance(x, str) for x in parsed_args):
+                    print("[ERRO] ARGUMENTO_INVALIDO: --mcp-args deve ser uma lista JSON de strings.")
+                    sys.exit(1)
+                mcp_args = parsed_args
+            except json.JSONDecodeError as e:
+                print(f"[ERRO] JSON_INVALIDO: Falha ao decodificar --mcp-args: {e}")
+                sys.exit(1)
+
+        raw_env = getattr(args, "mcp_env", None)
+        if raw_env:
+            try:
+                parsed_env = json.loads(raw_env)
+                if not isinstance(parsed_env, dict) or not all(isinstance(k, str) and isinstance(v, str) for k, v in parsed_env.items()):
+                    print("[ERRO] ARGUMENTO_INVALIDO: --mcp-env deve ser um objeto JSON de chave/valor string.")
+                    sys.exit(1)
+                mcp_env = parsed_env
+            except json.JSONDecodeError as e:
+                print(f"[ERRO] JSON_INVALIDO: Falha ao decodificar --mcp-env: {e}")
+                sys.exit(1)
+
     payload_result = construir_request(
         tipo=args.tipo,
         nome=args.nome,
         descricao=descricao,
         alvo_projeto=getattr(args, "projeto", "aidd-master"),
         conteudo=conteudo,
+        command=mcp_command,
+        args=mcp_args,
+        env=mcp_env,
     )
     if not payload_result.sucesso:
         print(f"[ERRO] {payload_result.codigo}: {payload_result.erro}")
@@ -1012,11 +1044,14 @@ def main():
     p_infra.add_argument("--dir", default=".", help="Diretório do projeto")
 
     # inject (Injetor Universal de Componentes)
-    p_inject = subparsers.add_parser("inject", help="Injeta e integra um novo componente (skill/mcp/rule/spec/config/agent)")
-    p_inject.add_argument("tipo", choices=["skill", "mcp", "rule", "spec", "config", "agent"], help="Tipo de componente a injetar")
+    p_inject = subparsers.add_parser("inject", help="Injeta e integra um novo componente (skill/mcp/rule/spec/config/agent/hook)")
+    p_inject.add_argument("tipo", choices=["skill", "mcp", "rule", "spec", "config", "agent", "hook"], help="Tipo de componente a injetar")
     p_inject.add_argument("nome", help="Nome/slug do componente (kebab-case, ex.: 'seguranca-cibernetica')")
     p_inject.add_argument("--descricao", "-d", default="", help="Descrição funcional do componente em PT-BR")
     p_inject.add_argument("--conteudo-file", dest="conteudo_file", default=None, help="Arquivo com o conteúdo completo do artefato (senão, gera scaffold padrão completo)")
+    p_inject.add_argument("--mcp-command", dest="mcp_command", default=None, help="Comando executável para servidor MCP externo (registra em mcp.json)")
+    p_inject.add_argument("--mcp-args", dest="mcp_args", default=None, help="Lista JSON de argumentos para o servidor MCP externo, ex: '[\"--flag\"]'")
+    p_inject.add_argument("--mcp-env", dest="mcp_env", default=None, help="Objeto JSON de variáveis de ambiente para o servidor MCP externo, ex: '{\"KEY\": \"VAL\"}'")
     p_inject.add_argument("--projeto", default="aidd-master", help="Projeto alvo com perfil resolvido (default: aidd-master)")
     p_inject.add_argument("--sobrescrever", action="store_true", help="Sobrescreve destinos já existentes em disco")
     p_inject.add_argument("--dir", default=".", help="Diretório raiz do projeto (default: diretório atual)")

@@ -17,6 +17,7 @@ import os
 import py_compile
 import subprocess
 import sys
+from pathlib import Path
 
 import pytest
 
@@ -54,7 +55,7 @@ def test_gate_rejeita_payload_incompleto():
 
 
 def test_gate_rejeita_tipo_invalido():
-    payload = {"tipo": "hook", "nome": "x", "descricao": "abc", "alvo_projeto": "aidd-master"}
+    payload = {"tipo": "tipo_inventado", "nome": "x", "descricao": "abc", "alvo_projeto": "aidd-master"}
     resultado = profiles_registry.validar_payload(payload)
     assert resultado.sucesso is False
     assert resultado.codigo == "TIPO_INVALIDO"
@@ -73,6 +74,12 @@ def test_gate_aceita_payload_completo():
     assert resultado.sucesso is True
 
 
+def test_gate_aceita_payload_hook():
+    payload = {"tipo": "hook", "nome": "meu-hook", "descricao": "Hook de teste válido.", "alvo_projeto": "aidd-master"}
+    resultado = profiles_registry.validar_payload(payload)
+    assert resultado.sucesso is True
+
+
 # ---------------------------------------------------------------------------
 # Fase 2 — Matriz de Perfis (resolução exata de diretórios)
 # ---------------------------------------------------------------------------
@@ -84,6 +91,7 @@ def test_gate_aceita_payload_completo():
     ("spec", os.path.join("docs", "specs", "meu-componente.md")),
     ("config", os.path.join("templates", "core", "config", "meu-componente.json")),
     ("agent", os.path.join("templates", "agents", "meu-componente.md")),
+    ("hook", os.path.join(".agent", "hooks", "meu-componente", "hook.sh")),
 ])
 def test_perfis_resolvem_destino_exato_por_tipo(tmp_path, tipo, sufixo_esperado):
     payload = {"tipo": tipo, "nome": "meu-componente", "descricao": "abc", "alvo_projeto": "aidd-master"}
@@ -298,3 +306,152 @@ def test_cli_linguagem_natural_ponta_a_ponta(tmp_path):
     caminho_mcp = tmp_path / "src" / "core" / "mcp" / "diagnostico-de-rede.py"
     assert caminho_mcp.is_file()
     py_compile.compile(str(caminho_mcp), doraise=True)
+
+
+# ---------------------------------------------------------------------------
+# Fase 1 (Hook Universal) & Fase 2 (MCP externo via mcp.json)
+# ---------------------------------------------------------------------------
+
+def test_materializador_hook_escreve_alvo_espelhos_e_canonico(tmp_path):
+    fake_eco = tmp_path / "_ecossistema_fake_root"
+    payload = {"tipo": "hook", "nome": "pre-commit-hook", "descricao": "Hook de pre-commit.", "alvo_projeto": "aidd-master"}
+    resolucao = profiles_registry.resolver_destinos(payload, str(tmp_path)).valor
+
+    resultado = materializador.materializar(payload, resolucao)
+    assert resultado.sucesso is True
+    assert (tmp_path / ".agent" / "hooks" / "pre-commit-hook" / "hook.sh").is_file()
+    assert (tmp_path / ".claude" / "hooks" / "pre-commit-hook" / "hook.sh").is_file()
+    assert (tmp_path / ".gemini" / "hooks" / "pre-commit-hook" / "hook.sh").is_file()
+
+    # Cópia na raiz canônica isolada via fixture
+    canon_dest = fake_eco / "componentes" / "aidd-master" / "hooks" / "pre-commit-hook" / "hook.sh"
+    assert canon_dest.is_file()
+
+
+def test_cli_inject_hook_ponta_a_ponta(tmp_path):
+    aidd_py = os.path.join(_ROOT, "scripts", "aidd.py")
+    try:
+        res = subprocess.run(
+            [sys.executable, aidd_py, "inject", "hook", "ci-audit", "-d", "Hook de auditoria de CI", "--dir", str(tmp_path)],
+            capture_output=True, text=True, encoding="utf-8", errors="replace",
+        )
+        assert res.returncode == 0, res.stdout + res.stderr
+        assert (tmp_path / ".agent" / "hooks" / "ci-audit" / "hook.sh").is_file()
+        assert (tmp_path / ".claude" / "hooks" / "ci-audit" / "hook.sh").is_file()
+    finally:
+        repo_root = Path(_ROOT).parents[1]
+        import shutil
+        for p in [
+            repo_root / "componentes" / "aidd-master" / "hooks" / "ci-audit",
+            repo_root / "tools" / "aidd-master" / ".agent" / "hooks" / "ci-audit",
+            repo_root / "tools" / "aidd-master" / ".claude" / "hooks" / "ci-audit",
+            repo_root / "tools" / "aidd-master" / ".gemini" / "hooks" / "ci-audit",
+        ]:
+            if p.exists():
+                shutil.rmtree(p, ignore_errors=True)
+
+
+def test_mcp_sem_command_mantem_comportamento_legado(tmp_path):
+    payload = {"tipo": "mcp", "nome": "legado-tool", "descricao": "MCP em Python in-process.", "alvo_projeto": "aidd-master"}
+    resolucao = profiles_registry.resolver_destinos(payload, str(tmp_path)).valor
+
+    resultado = materializador.materializar(payload, resolucao)
+    assert resultado.sucesso is True
+    py_tool = tmp_path / "src" / "core" / "mcp" / "legado-tool.py"
+    assert py_tool.is_file()
+    assert not (tmp_path / "mcp.json").exists()
+
+
+def test_mcp_com_command_cria_mcp_json_e_nao_cria_py(tmp_path):
+    payload = {
+        "tipo": "mcp",
+        "nome": "db-server",
+        "descricao": "Servidor MCP externo.",
+        "alvo_projeto": "aidd-master",
+        "command": "node",
+        "args": ["server.js", "--port", "3000"],
+        "env": {"NODE_ENV": "production"},
+    }
+    resolucao = profiles_registry.resolver_destinos(payload, str(tmp_path)).valor
+
+    resultado = materializador.materializar(payload, resolucao)
+    assert resultado.sucesso is True
+    mcp_json_path = tmp_path / "mcp.json"
+    assert mcp_json_path.is_file()
+    # Não cria o .py
+    assert not (tmp_path / "src" / "core" / "mcp" / "db-server.py").exists()
+
+    with open(mcp_json_path, "r", encoding="utf-8") as f:
+        dados = json.load(f)
+    assert "db-server" in dados["mcpServers"]
+    assert dados["mcpServers"]["db-server"]["command"] == "node"
+    assert dados["mcpServers"]["db-server"]["args"] == ["server.js", "--port", "3000"]
+    assert dados["mcpServers"]["db-server"]["env"] == {"NODE_ENV": "production"}
+
+
+def test_mcp_com_command_faz_merge_preservando_entradas_anteriores(tmp_path):
+    # Cria primeiro server
+    payload1 = {
+        "tipo": "mcp", "nome": "server-um", "descricao": "Primeiro", "alvo_projeto": "aidd-master",
+        "command": "cmd1", "args": ["--a"], "env": {},
+    }
+    resolucao1 = profiles_registry.resolver_destinos(payload1, str(tmp_path)).valor
+    r1 = materializador.materializar(payload1, resolucao1)
+    assert r1.sucesso is True
+
+    # Cria segundo server
+    payload2 = {
+        "tipo": "mcp", "nome": "server-dois", "descricao": "Segundo", "alvo_projeto": "aidd-master",
+        "command": "cmd2", "args": ["--b"], "env": {"K": "V"},
+    }
+    resolucao2 = profiles_registry.resolver_destinos(payload2, str(tmp_path)).valor
+    r2 = materializador.materializar(payload2, resolucao2)
+    assert r2.sucesso is True
+
+    with open(tmp_path / "mcp.json", "r", encoding="utf-8") as f:
+        dados = json.load(f)
+    assert "server-um" in dados["mcpServers"]
+    assert "server-dois" in dados["mcpServers"]
+    assert dados["mcpServers"]["server-um"]["command"] == "cmd1"
+    assert dados["mcpServers"]["server-dois"]["command"] == "cmd2"
+
+
+def test_mcp_com_command_rejeita_mcp_json_invalido(tmp_path):
+    mcp_json_path = tmp_path / "mcp.json"
+    mcp_json_path.write_text("{conteudo-corrompido: json invalido", encoding="utf-8")
+
+    payload = {
+        "tipo": "mcp", "nome": "falha-mcp", "descricao": "Falha", "alvo_projeto": "aidd-master",
+        "command": "dummy", "args": [], "env": {},
+    }
+    resolucao = profiles_registry.resolver_destinos(payload, str(tmp_path)).valor
+    resultado = materializador.materializar(payload, resolucao)
+    assert resultado.sucesso is False
+    assert resultado.codigo == "MCP_JSON_INVALIDO"
+    # Preserva o arquivo original sem sobrescrever silenciosamente
+    assert mcp_json_path.read_text(encoding="utf-8") == "{conteudo-corrompido: json invalido"
+
+
+def test_cli_inject_mcp_com_command_ponta_a_ponta(tmp_path):
+    aidd_py = os.path.join(_ROOT, "scripts", "aidd.py")
+    res = subprocess.run(
+        [
+            sys.executable, aidd_py, "inject", "mcp", "postgres-live",
+            "--descricao", "Servidor Postgres MCP",
+            "--mcp-command", "npx",
+            "--mcp-args", '["-y", "@modelcontextprotocol/server-postgres"]',
+            "--mcp-env", '{"DATABASE_URL": "postgresql://localhost/db"}',
+            "--dir", str(tmp_path),
+        ],
+        capture_output=True, text=True, encoding="utf-8", errors="replace",
+    )
+    assert res.returncode == 0, res.stdout + res.stderr
+    mcp_json_path = tmp_path / "mcp.json"
+    assert mcp_json_path.is_file()
+    with open(mcp_json_path, "r", encoding="utf-8") as f:
+        dados = json.load(f)
+    assert "postgres-live" in dados["mcpServers"]
+    assert dados["mcpServers"]["postgres-live"]["command"] == "npx"
+    assert dados["mcpServers"]["postgres-live"]["args"] == ["-y", "@modelcontextprotocol/server-postgres"]
+    assert dados["mcpServers"]["postgres-live"]["env"] == {"DATABASE_URL": "postgresql://localhost/db"}
+

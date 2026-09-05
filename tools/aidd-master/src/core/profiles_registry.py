@@ -32,7 +32,7 @@ except ImportError:
 
 _SCHEMA_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "schema_injector_request.json")
 
-TIPOS_VALIDOS: Tuple[str, ...] = ("skill", "mcp", "rule", "spec", "config", "agent")
+TIPOS_VALIDOS: Tuple[str, ...] = ("skill", "mcp", "rule", "spec", "config", "agent", "hook")
 
 _NOME_RE = re.compile(r"^[a-z0-9]+(-[a-z0-9]+)*$")
 
@@ -82,6 +82,15 @@ PROFILES: Dict[str, Dict[str, Dict[str, Any]]] = {
             "router_anchor": "src/core/intent_router.py",
             "registry": "CAPABILITIES.json",
             "camada_alvo": "interface_orquestracao",
+        },
+        "hook": {
+            "dest": ".agent/hooks/{nome}/hook.sh",
+            "mirrors": [
+                ".claude/hooks/{nome}/hook.sh",
+                ".gemini/hooks/{nome}/hook.sh",
+            ],
+            "registry": "CAPABILITIES.json",
+            "camada_alvo": "harness_multiplataforma",
         },
     }
 }
@@ -206,4 +215,5 @@ def resolver_destinos(payload: Dict[str, Any], root_dir: str) -> Result:
         "router_anchor": router_anchor,
         "registry": registry_path,
         "camada_alvo": perfil.get("camada_alvo"),
+        "root_dir": root_dir,
     })

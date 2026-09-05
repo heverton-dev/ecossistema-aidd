@@ -43,6 +43,7 @@ _PALAVRAS_CHAVE: Dict[str, Tuple[str, ...]] = {
     "spec": ("spec", "especificacao", "especificação", "especificações"),
     "config": ("config", "configuracao", "configuração", "configuracoes"),
     "agent": ("agente", "agentes", "agent", "agents"),
+    "hook": ("hook", "hooks", "gancho", "ganchos"),
 }
 
 _VERBOS_INJECAO = (
@@ -127,6 +128,9 @@ def construir_request(
     descricao: str,
     alvo_projeto: str = _PROJETO_PADRAO,
     conteudo: Optional[str] = None,
+    command: Optional[str] = None,
+    args: Optional[List[str]] = None,
+    env: Optional[Dict[str, str]] = None,
 ) -> Result:
     """Constrói e enriquece (com 'camada_alvo') um InjectorRequest a partir de campos explícitos."""
     if tipo not in TIPOS_VALIDOS:
@@ -147,5 +151,10 @@ def construir_request(
     }
     if conteudo:
         payload["conteudo"] = conteudo
+
+    if tipo == "mcp" and command is not None:
+        payload["command"] = command
+        payload["args"] = list(args) if args is not None else []
+        payload["env"] = dict(env) if env is not None else {}
 
     return Result.ok(payload)
