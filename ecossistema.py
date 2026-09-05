@@ -13,6 +13,7 @@ Roteia comandos para as 4 ferramentas integradas:
   - status     -> Resumo do status do ecossistema
 """
 
+import argparse
 import os
 import sys
 import subprocess
@@ -58,6 +59,33 @@ def cmd_enterprise(args):
     env = {"PYTHONPATH": ent_dir}
     cmd = [sys.executable, aidd_script] + args
     return run_command(cmd, cwd=ent_dir, env=env)
+
+def cmd_components(args):
+    sys.path.insert(0, os.path.join(ROOT_DIR, "scripts"))
+    import gestor_componentes
+
+    if not args or args[0] not in ("sync", "verify"):
+        print("Erro: uso 'python ecossistema.py components sync|verify --tipo <tipo|todos> [--ferramenta <nome>] [--dry-run]'")
+        return 1
+
+    acao = args[0]
+    resto = args[1:]
+
+    parser = argparse.ArgumentParser(prog=f"ecossistema.py components {acao}")
+    parser.add_argument("--tipo", required=True)
+    parser.add_argument("--ferramenta", default=None)
+    if acao == "sync":
+        parser.add_argument("--dry-run", action="store_true")
+    args_ns = parser.parse_args(resto)
+
+    try:
+        if acao == "sync":
+            return gestor_componentes._cmd_sync(args_ns)
+        return gestor_componentes._cmd_verify(args_ns)
+    except ValueError as exc:
+        print(f"Erro: {exc}")
+        return 1
+
 
 def cmd_audit(args):
     gates = [
@@ -118,6 +146,9 @@ Comandos disponíveis:
   generate <args>     Executa o pipeline do aidd-generator (ex: generate "Minha Ideia")
   master <args>       Executa comandos do aidd-master (ex: master add-module faturamento)
   enterprise <args>   Executa comandos do aidd-enterprise (ex: enterprise inject skill auth)
+  components sync|verify --tipo <tipo|todos> [--ferramenta <nome>] [--dry-run]
+                      Sincroniza/verifica distribuicao fisica multi-harness de
+                      componentes (gates/manifesto_harnesses.json)
   audit               Executa o Meta-Quality Gate de Integridade
   status              Exibe o status do ecossistema e ferramentas integradas
   status --testes     Roda pytest real em cada ferramenta e atualiza
@@ -138,6 +169,7 @@ def main():
         "generate": cmd_generate,
         "master": cmd_master,
         "enterprise": cmd_enterprise,
+        "components": cmd_components,
         "audit": cmd_audit,
         "status": cmd_status,
         "help": lambda a: print_help() or 0,

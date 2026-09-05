@@ -1,0 +1,135 @@
+{
+  "versao": "1.0.0",
+  "data_criacao": "2026-09-05",
+  "fonte_unica": "componentes/",
+  "descricao": "Manifesto único de distribuição física de componentes do Ecossistema AIDD entre harnesses (Regra de Ouro #6 - AGENTS.md, Supremacia Agnóstica). Consumido por scripts/gestor_componentes.py (comandos 'python ecossistema.py components sync|verify'). A partir desta migração, as pastas físicas por harness (.agent, .claude, .gemini, skills/ bare etc.) são DESTINOS GERADOS por sync - nunca mais editadas manualmente. Fonte de diagnóstico original: docs/planos/PLANO-CORRECAO-SKILLS-AGNOSTICAS.md.",
+
+  "harnesses_suportados": {
+    "claude-code": {
+      "prefixo_pasta": ".claude",
+      "confirmado": true
+    },
+    "antigravity": {
+      "prefixo_pasta": ".agent",
+      "confirmado": true
+    },
+    "opencode": {
+      "prefixo_pasta": ".agent",
+      "confirmado": true
+    },
+    "mimocode": {
+      "prefixo_pasta": ".agent",
+      "confirmado": true,
+      "nota": "Decisão do usuário (2026-09-05): '.mimocode/' próprio é redundante - AGENTS.md §5 já afirmava que MimoCode lê '.agent/', mas o disco mantinha '.mimocode/skills/' como pasta separada em tools/aidd-master e tools/aidd-enterprise. Diff de segurança confirmou conteúdo idêntico a '.agent/skills/' antes da remoção (ver relatório desta execução). MimoCode passa a apontar só para '.agent/', sem pasta própria."
+    },
+    "gemini-cli": {
+      "prefixo_pasta": ".gemini",
+      "confirmado": true,
+      "nota": "Nunca documentado em AGENTS.md antes desta migração, mas '.gemini/skills/' já estava em uso real (tools/aidd-master/.gemini/skills/seguranca-cibernetica). Tratado como convenção legítima, não redundante - AGENTS.md §5 foi atualizado para documentá-lo."
+    },
+    "cursor": {
+      "mecanismo": "arquivo_unico_de_regra",
+      "arquivo_regra": ".cursor/rules/aidd.md",
+      "confirmado": true,
+      "nota": "Mecanismo diferente por decisão do usuário: 1 arquivo de regra apontando para AGENTS.md, não uma pasta física por componente. Por isso não aparece em nenhum 'harnesses_aplicaveis' abaixo - fica de fora do sync/verify por tipo de componente."
+    }
+  },
+
+  "tipos_componente": {
+    "skill": {
+      "pasta_fonte": "skills",
+      "distribuicao": "multi-harness",
+      "unidade": "diretorio",
+      "status_evidencia": "confirmado por reprodução direta (docs/planos/PLANO-CORRECAO-SKILLS-AGNOSTICAS.md secao 2.1)",
+      "harnesses_aplicaveis": ["claude-code", "antigravity", "opencode", "mimocode", "gemini-cli"],
+      "dest_harness_template": "{prefixo_pasta}/skills/{nome}",
+      "extra_destinos_compartilhado": ["skills/{nome}"],
+      "extra_destinos_por_ferramenta": [".skills/{nome}", "skills/{nome}"],
+      "nota_extra_destinos": "'.skills/{nome}' e 'skills/{nome}' (bare) são cópias adicionais sem harness específico, já em uso real e inconsistente por ferramenta antes desta migração (aidd-master/aidd-enterprise usavam '.skills/'; aidd-generator usava 'skills/' bare). O sync agora materializa AMBAS para todas as ferramentas, fechando a divergência sem escolher apenas uma."
+    },
+    "command": {
+      "pasta_fonte": "comandos",
+      "distribuicao": "multi-harness",
+      "unidade": "arquivo",
+      "status_evidencia": "confirmado (gates/G_HARNESS_COMPAT.py já compara .agent/commands/*.md vs .claude/commands/*.md)",
+      "harnesses_aplicaveis": ["claude-code", "antigravity", "opencode", "mimocode"],
+      "dest_harness_template": "{prefixo_pasta}/commands/{nome}",
+      "escopos_aplicaveis": ["compartilhado"],
+      "nota": "gemini-cli excluído deste tipo: nenhuma evidência real de '.gemini/commands/' em uso (só '.gemini/skills/' está confirmado). Escopo hoje é só 'compartilhado' (raiz) - nenhuma ferramenta em tools/* tem slash-commands próprios; cada uma expõe equivalente via CLI ('python ecossistema.py <ferramenta> ...')."
+    },
+    "mcp": {
+      "pasta_fonte": "mcps",
+      "distribuicao": "destino-unico-por-ferramenta",
+      "unidade": "diretorio",
+      "status_evidencia": "PROPOSTO NESTA MIGRAÇÃO, mas com precedente real: tools/aidd-generator/scripts/core/injector/profiles_registry.py e tools/aidd-master/src/core/profiles_registry.py já definem o tipo 'mcp' com UM destino físico e mirrors=[] (nenhum espelho por harness). MCP servers são referenciados por cada harness via seu próprio arquivo de config (ex.: .mcp.json) apontando para 1 caminho - não por pasta duplicada por harness. Este manifesto formaliza esse precedente real; não inventa duplicação onde ela não existe no código já em produção.",
+      "harnesses_aplicaveis": [],
+      "dest_unico_template": "mcps/{nome}",
+      "nota_revisao": "PARA REVISÃO DO USUÁRIO / Prompt B: este manifesto só garante presença física do código-fonte do servidor MCP em 1 caminho canônico por ferramenta; não gera nem escreve o arquivo de config (.mcp.json ou equivalente) que cada harness usaria para registrar/invocar esse servidor - isso é wiring de injetor, fora de escopo desta migração."
+    },
+    "spec": {
+      "pasta_fonte": "specs",
+      "distribuicao": "destino-unico-por-ferramenta",
+      "unidade": "arquivo",
+      "status_evidencia": "confirmado por precedente real: ambos os profiles_registry.py internos (aidd-generator e aidd-master) definem 'spec' com destino único 'docs/specs/{nome}.md', sem mirrors.",
+      "harnesses_aplicaveis": [],
+      "dest_unico_template": "docs/specs/{nome}"
+    },
+    "config": {
+      "pasta_fonte": "config",
+      "distribuicao": "destino-unico-por-ferramenta",
+      "unidade": "arquivo",
+      "status_evidencia": "confirmado por precedente real: os mesmos dois profiles_registry.py definem 'config' com destino único, sem mirrors (aidd-generator: 'config/{nome}.json'; aidd-master: 'templates/core/config/{nome}.json').",
+      "harnesses_aplicaveis": [],
+      "dest_unico_template": "config/{nome}"
+    },
+    "hook": {
+      "pasta_fonte": "hooks",
+      "distribuicao": "multi-harness",
+      "unidade": "diretorio",
+      "status_evidencia": "SEM PRECEDENTE FÍSICO NO REPOSITÓRIO - nenhum '.claude/settings.json' encontrado em nenhuma ferramenta, nenhuma pasta 'hooks/' de componente (só '.git/hooks/*.sample', irrelevante ao ecossistema AIDD). PROPOSTO NESTA MIGRAÇÃO por simetria com 'skill', PARA REVISÃO EXPLÍCITA DO USUÁRIO.",
+      "harnesses_aplicaveis": ["claude-code", "antigravity", "opencode", "mimocode", "gemini-cli"],
+      "dest_harness_template": "{prefixo_pasta}/hooks/{nome}",
+      "nota_revisao": "Claude Code, na prática, registra hooks via chave 'hooks' de '.claude/settings.json' referenciando um script - a pasta '{prefixo}/hooks/' aqui só garante presença física do script; o wiring em settings.json (ou equivalente) de cada harness fica para Prompt B."
+    },
+    "sub-agent": {
+      "pasta_fonte": "subagentes",
+      "distribuicao": "multi-harness",
+      "unidade": "arquivo",
+      "status_evidencia": "SEM PRECEDENTE FÍSICO NO REPOSITÓRIO para este conceito. 'templates/agents/*.md' já existente em tools/aidd-master e tools/aidd-enterprise são TEMPLATES injetados em projetos GERADOS por essas ferramentas (personas de subagente para o produto final downstream) - conceito diferente de 'sub-agent descoberto pelo harness ao trabalhar neste monorepo'; por isso NÃO foram migrados para este tipo. PROPOSTO NESTA MIGRAÇÃO por simetria com 'skill', PARA REVISÃO EXPLÍCITA DO USUÁRIO. Apenas Claude Code tem convenção real confirmada externamente ('.claude/agents/{nome}.md', recurso documentado do produto Claude Code); as demais pastas abaixo são proposta simétrica NÃO confirmada.",
+      "harnesses_aplicaveis": ["claude-code", "antigravity", "opencode", "mimocode", "gemini-cli"],
+      "dest_harness_template": "{prefixo_pasta}/agents/{nome}"
+    },
+    "script": {
+      "pasta_fonte": "scripts",
+      "distribuicao": "destino-unico-por-ferramenta",
+      "unidade": "arquivo",
+      "status_evidencia": "confirmado por precedente real: 'scripts/manutencao/' na raiz já é um destino único sem mirrors por harness; nenhum profile interno (aidd-generator ou aidd-master) define tipo 'script' com mirrors.",
+      "harnesses_aplicaveis": [],
+      "dest_unico_template": "scripts/{nome}"
+    }
+  },
+
+  "escopos": {
+    "compartilhado": {
+      "root": ".",
+      "tipos_aplicaveis": ["skill", "command"],
+      "nota": "componentes/compartilhado/{skills,comandos}/ só cobre os 2 tipos com componentes reais ecosystem-wide hoje (as 4 skills-runner e os 4 slash commands). Os demais tipos não têm hoje nenhum componente que não seja amarrado a 1 ferramenta específica."
+    },
+    "aidd-forge": {
+      "root": "tools/aidd-forge",
+      "tipos_aplicaveis": ["skill", "mcp", "spec", "hook", "config", "command", "sub-agent", "script"]
+    },
+    "aidd-master": {
+      "root": "tools/aidd-master",
+      "tipos_aplicaveis": ["skill", "mcp", "spec", "hook", "config", "command", "sub-agent", "script"]
+    },
+    "aidd-enterprise": {
+      "root": "tools/aidd-enterprise",
+      "tipos_aplicaveis": ["skill", "mcp", "spec", "hook", "config", "command", "sub-agent", "script"]
+    },
+    "aidd-generator": {
+      "root": "tools/aidd-generator",
+      "tipos_aplicaveis": ["skill", "mcp", "spec", "hook", "config", "command", "sub-agent", "script"]
+    }
+  }
+}

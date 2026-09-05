@@ -158,7 +158,6 @@ DECISÕES JÁ TOMADAS PELO USUÁRIO (não reabra estas discussões):
    mcp, spec, hook, config, comando, subagente, script — não só skill.
 
 ARQUITETURA-ALVO (você vai construir isto):
-```
 componentes/
   aidd-forge/        {skills, mcps, specs, hooks, config, comandos, subagentes, scripts}/
   aidd-master/         (mesma estrutura)
@@ -168,7 +167,6 @@ componentes/
                                                  não de 1 ferramenta específica
                                                  (aqui vivem as 4 skills-runner e os
                                                  slash-commands da raiz)
-```
 Este diretório `componentes/` é a ÚNICA fonte de verdade a partir de agora.
 As pastas hoje existentes (`.agent/skills`, `.claude/skills`, `.gemini/skills`,
 `skills/` bare, etc.) passam a ser DESTINOS GERADOS pelo comando de sync —
@@ -314,7 +312,6 @@ DECISIONS ALREADY MADE BY THE USER (do not reopen these):
    spec, hook, config, command, sub-agent, script — not just skill.
 
 TARGET ARCHITECTURE (you are going to build this):
-```
 componentes/
   aidd-forge/        {skills, mcps, specs, hooks, config, comandos, subagentes, scripts}/
   aidd-master/         (same structure)
@@ -324,7 +321,6 @@ componentes/
                                                  not tied to one specific tool
                                                  (this is where the 4 runner
                                                  skills and root slash-commands live)
-```
 This `componentes/` directory is the ONLY source of truth from now on.
 The folders that exist today (`.agent/skills`, `.claude/skills`,
 `.gemini/skills`, bare `skills/`, etc.) become GENERATED DESTINATIONS
@@ -672,6 +668,280 @@ Definition of Done, explicitly reported instead of decided by yourself.
 
 ---
 
-## Veredito
+## Veredito — Auditoria do Prompt A
 
-*(pendente — Prompt A pronto para envio ao agente executor; Prompt B só deve ser enviado depois do resultado do Prompt A auditado e aprovado)*
+**Auditoria independente realizada — não me baseei no relatório do agente executor.**
+
+**Confirmado correto, por reprodução direta:**
+- `gates/manifesto_harnesses.json` criado, bem estruturado, com evidência real citada para cada tipo de componente (inclusive marcando explicitamente "SEM PRECEDENTE, PARA REVISÃO" nos tipos `hook` e `sub-agent`, exatamente como pedido — não inventou silenciosamente).
+- `componentes/` criado com a árvore certa; `scripts/gestor_componentes.py` implementado corretamente: cópia física via `shutil.copy2` (nunca symlink), `verify` só lê (`filecmp.cmp(shallow=False)`, comparação byte-exata), `sync` sempre cria pasta de destino ausente.
+- `python ecossistema.py components verify --tipo todos` → 14 componentes, exit 0 (confirmei na raiz e por `--ferramenta` em cada uma das 4 ferramentas + compartilhado).
+- As 4 skills-runner agora existem fisicamente em `.claude/skills/` (bug original fechado) — confirmei por `diff` que o conteúdo é idêntico ao da fonte canônica.
+- `.mimocode/skills/` removido só depois de diff de segurança contra `.agent/skills/` — reproduzi o diff eu mesmo: única diferença é o byte de fim de linha (LF vs CRLF) na última linha, não é divergência de conteúdo real.
+- Zero regressão: `python ecossistema.py audit` (5 gates) exit 0; as 4 suítes completas sem mudança de contagem (aidd-master 194 passed/4 skipped; aidd-enterprise 199/4; aidd-generator 756; aidd-forge 191/1).
+- `AGENTS.md §5` corretamente atualizado documentando `.claude/skills/` e `.gemini/skills/`.
+
+**3 achados reais que preciso que você decida antes de eu liberar o Prompt B:**
+
+1. **`.mimocode/skills` foi removido do disco, mas o código que RECRIA esse destino continua ativo.** `tools/aidd-master/src/core/profiles_registry.py` (o "Injetor Universal" de `aidd-master`, confirmei que está de fato ligado ao comando real `aidd.py inject` — não é código morto) lista `.mimocode/skills/{nome}/SKILL.md` como um dos 4 espelhos legítimos ao injetar uma skill. Ou seja: a próxima vez que alguém rodar `aidd-master inject skill <nome>`, `.mimocode/skills/` reaparece — a remoção não é durável. Isso não estava no meu radar quando propus a Decisão 1 (só tinha checado `AGENTS.md`, não o código do injetor). Preciso decidir: atualizar `profiles_registry.py` para remover `.mimocode` da lista de espelhos (alinha com a decisão já tomada), ou reconsiderar a Decisão 1 à luz dessa evidência de código real?
+
+2. **Os destinos propostos para `mcp` e `config` no manifesto não batem com o que `aidd-master` já usa de verdade.** O manifesto diz `mcp` → `mcps/{nome}` e `config` → `config/{nome}`, alegando "confirmado por precedente real" nos dois `profiles_registry.py`. Conferi os dois arquivos: isso é verdade para o de `aidd-generator` (`mcps/{nome}/server.py`, `config/{nome}.json`), mas **não** para o de `aidd-master`, que usa `src/core/mcp/{nome}.py` e `templates/core/config/{nome}.json` — caminhos completamente diferentes. Nenhum componente desses tipos foi migrado ainda (por isso isso não quebrou nada hoje), mas se o Prompt B (Fase 4, unificação dos injetores) usar o manifesto como está, corre o risco de mudar onde `aidd-master` procura seus MCPs/configs de verdade, quebrando código que já espera o caminho antigo.
+
+3. **Achado menor:** o tipo `script` no manifesto diz "confirmado por precedente real", mas na verdade nenhum dos dois registries define esse tipo — deveria ter sido marcado "SEM PRECEDENTE, PARA REVISÃO" como `hook`/`sub-agent` foram. Baixo risco (nenhum script foi migrado ainda), mas é uma imprecisão a corrigir no manifesto.
+
+**Recomendação:** antes de liberar o Prompt B, peço uma pequena correção adicional (posso escrever o prompt disso, é pontual): (a) atualizar `profiles_registry.py` de `aidd-master` removendo `.mimocode` da lista de espelhos de `skill`; (b) tornar o manifesto capaz de declarar destino por-ferramenta quando ela já tem uma convenção própria divergente (em vez de um template único global para `mcp`/`config`), preservando `src/core/mcp/{nome}.py` e `templates/core/config/{nome}.json` como destino de `aidd-master` especificamente; (c) corrigir a evidência de `script` no manifesto. Nenhum desses 3 itens é grande — são ajustes cirúrgicos, não replanejamento.
+
+**Nota — ainda não atribuída.** A nota desta dimensão só é fechada ao final do Prompt B (esta é uma migração de infraestrutura de meio de caminho, não o pacote completo).
+
+---
+
+## Prompt Corretivo — 3 ajustes pontuais antes do Prompt B
+
+> Copie o bloco abaixo integralmente para o agente executor. Autocontido. Roda depois do Prompt A (já aplicado) e antes do Prompt B (ainda não enviado).
+
+```
+Você vai aplicar 3 correções pontuais no trabalho já feito de migração de
+componentes do ecossistema-aidd (monorepo em
+C:\Users\trcnologia\Desktop\ecossistema-aidd), achadas numa auditoria
+independente do resultado anterior. Não são um replanejamento — são 3
+ajustes cirúrgicos. Valide tudo de verdade (execuções reais, exit codes
+reais, nunca mascarados por pipe).
+
+CONTEXTO JÁ CONFIRMADO NA AUDITORIA (não precisa redescobrir):
+- `tools/aidd-master/src/core/profiles_registry.py` (o "Injetor
+  Universal" de aidd-master, ativamente ligado ao comando real
+  `python scripts/aidd.py inject` — confirmado via grep, não é código
+  morto) ainda lista `.mimocode/skills/{nome}/SKILL.md` como um dos
+  espelhos do tipo `skill`. A migração anterior removeu as pastas
+  `.mimocode/skills/` do disco (decisão do usuário: MimoCode não tem
+  pasta própria, usa `.agent/`) mas não atualizou este arquivo — ou seja,
+  a próxima vez que alguém rodar `aidd-master inject skill <nome>`, a
+  pasta reaparece, desfazendo parte da migração.
+- O mesmo `profiles_registry.py` define, para `aidd-master`:
+  `"mcp": {"dest": "src/core/mcp/{nome}.py", ...}` e
+  `"config": {"dest": "templates/core/config/{nome}.json", ...}`.
+  O manifesto criado na migração anterior (`gates/manifesto_harnesses.json`)
+  declarou, para os MESMOS tipos, `mcps/{nome}` e `config/{nome}` como
+  destino único GLOBAL (mesmo template para todas as ferramentas) —
+  isso bate com o registry de `aidd-generator`
+  (`tools/aidd-generator/scripts/core/injector/profiles_registry.py`,
+  que usa exatamente esses caminhos), mas diverge do de `aidd-master`.
+  Nenhum componente desses 2 tipos foi migrado ainda para `aidd-master`
+  (por isso isso não quebrou nada até agora), mas precisa ser corrigido
+  antes que a unificação dos injetores (próxima etapa do projeto) construa
+  em cima do caminho errado.
+- O tipo `script` no manifesto tem o campo `status_evidencia` dizendo
+  "confirmado por precedente real", mas na verdade nenhum dos dois
+  `profiles_registry.py` (aidd-master ou aidd-generator) define um tipo
+  `script` — não há precedente nenhum, é uma proposta nova. Deveria estar
+  marcado como os tipos `hook`/`sub-agent` já estão (texto claro de "sem
+  precedente, proposto para revisão").
+
+CORREÇÃO 1 — Remover `.mimocode` dos espelhos ativos de `aidd-master`
+1.1. Em `tools/aidd-master/src/core/profiles_registry.py`, no dicionário
+     `PROFILES["aidd-master"]["skill"]["mirrors"]`, remova a entrada
+     `.mimocode/skills/{nome}/SKILL.md`. Mantenha as outras 3
+     (.claude, .agent, .gemini).
+1.2. Confirme, por teste automatizado (leia
+     `tools/aidd-master/tests/unit/test_injector_core.py` primeiro — se já
+     cobre `PROFILES`, estenda; se não, crie um teste mínimo), que
+     `"mimocode"` não aparece em nenhum valor de `mirrors` de nenhum tipo
+     em `PROFILES["aidd-master"]`.
+1.3. Rode a suíte completa de `aidd-master`
+     (`python -m pytest tests/ -q`) e confirme que nada quebrou.
+
+CORREÇÃO 2 — Permitir destino por-ferramenta divergente para tipos
+"destino-unico-por-ferramenta"
+2.1. Em `gates/manifesto_harnesses.json`, adicione um campo opcional
+     `overrides_por_escopo` dentro dos tipos `mcp` e `config`, permitindo
+     sobrescrever `dest_unico_template` (e, quando necessário, `unidade`)
+     para um escopo (ferramenta) específico. Exemplo de forma (adapte a
+     estrutura ao que fizer mais sentido no código, mas preserve a
+     capacidade de override por escopo):
+     "mcp": {
+       ...,
+       "dest_unico_template": "mcps/{nome}",
+       "overrides_por_escopo": {
+         "aidd-master": {
+           "dest_unico_template": "src/core/mcp/{nome}.py",
+           "unidade": "arquivo"
+         }
+       }
+     }
+     Aplique o mesmo padrão para `config` (`aidd-master` override:
+     `dest_unico_template: "templates/core/config/{nome}.json"`,
+     `unidade: "arquivo"`).
+2.2. Em `scripts/gestor_componentes.py`, ajuste `_resolver_destinos` (para
+     ler o override de `dest_unico_template` quando existir para o escopo
+     atual) e `_listar_componentes_fonte` (para ler o override de
+     `unidade` quando existir para o escopo atual, já que `aidd-master`
+     trata `mcp`/`config` como ARQUIVO único, não diretório, diferente do
+     default usado por `aidd-generator`). Não quebre o comportamento
+     default (sem override) para os demais tipos/ferramentas.
+2.3. Teste real: crie um componente de teste
+     `componentes/aidd-master/mcps/teste-auditoria/teste-auditoria.py`
+     (arquivo único, já que o override de `aidd-master` trata `mcp` como
+     arquivo), rode
+     `python ecossistema.py components sync --tipo mcp --ferramenta aidd-master`,
+     e confirme que ele aparece em
+     `tools/aidd-master/src/core/mcp/teste-auditoria.py` (não em
+     `tools/aidd-master/mcps/teste-auditoria/...`). Repita o mesmo teste
+     para `config`. Depois, LIMPE o componente de teste e o destino
+     gerado (não deixe lixo no repositório nem no manifesto).
+2.4. Confirme que `aidd-generator` continua resolvendo `mcp`/`config` no
+     caminho antigo (`mcps/{nome}/...`, `config/{nome}.json`) sem
+     regressão — ele não tem override, deve continuar usando o
+     `dest_unico_template` default.
+
+CORREÇÃO 3 — Corrigir a evidência do tipo `script` no manifesto
+3.1. Em `gates/manifesto_harnesses.json`, tipo `script`, reescreva o
+     campo `status_evidencia` para deixar claro que NENHUM dos dois
+     `profiles_registry.py` define este tipo — é uma proposta nova por
+     simetria com os demais tipos de destino único, não um precedente
+     confirmado. Use o mesmo padrão de honestidade já usado nos tipos
+     `hook`/`sub-agent` do próprio manifesto.
+
+CRITÉRIO DE SAÍDA (rode e cole o output real de cada um):
+- `python ecossistema.py components verify --tipo todos` → exit 0.
+- `python ecossistema.py audit` → exit 0 (5 gates, sem regressão).
+- Suítes completas das 4 ferramentas → sem regressão.
+- O teste da Correção 2.3 (falha antes da correção / passa depois,
+  incluindo confirmação de que o componente de teste foi limpo ao final).
+- O teste da Correção 1.2.
+
+REGRAS DE ESCOPO — NÃO FAÇA:
+- Não implemente nada do Prompt B (unificação dos injetores, camada
+  híbrida, gates novos) — isso continua para depois, só depois desta
+  correção ser auditada.
+- Não faça `git commit` nem `git push`.
+- Não altere `docs/planos/evolucao-notas-auditoria/07-agnosticismo-distribuicao-componentes.md`.
+
+ENTREGÁVEL: lista exata de arquivos alterados; para cada correção,
+comando + output real que comprova; qualquer desvio necessário,
+reportado explicitamente em vez de decidido sozinho.
+```
+
+## Prompt Corretivo — English version
+
+```
+You are going to apply 3 targeted corrections to component-migration work
+already done in the ecossistema-aidd monorepo
+(C:\Users\trcnologia\Desktop\ecossistema-aidd), found during an
+independent audit of the previous result. These are not a replan — they
+are 3 surgical fixes. Validate everything for real (real runs, real exit
+codes, never masked by a pipe).
+
+ALREADY-CONFIRMED CONTEXT FROM THE AUDIT (no need to rediscover):
+- `tools/aidd-master/src/core/profiles_registry.py` (aidd-master's
+  "Universal Injector", actively wired to the real
+  `python scripts/aidd.py inject` command — confirmed via grep, not dead
+  code) still lists `.mimocode/skills/{nome}/SKILL.md` as one of the
+  mirrors for the `skill` type. The previous migration removed the
+  `.mimocode/skills/` folders from disk (user decision: MimoCode has no
+  folder of its own, it uses `.agent/`) but never updated this file —
+  meaning the next time someone runs `aidd-master inject skill <name>`,
+  the folder reappears, undoing part of the migration.
+- The same `profiles_registry.py` defines, for `aidd-master`:
+  `"mcp": {"dest": "src/core/mcp/{nome}.py", ...}` and
+  `"config": {"dest": "templates/core/config/{nome}.json", ...}`.
+  The manifest created in the previous migration
+  (`gates/manifesto_harnesses.json`) declared, for the SAME types,
+  `mcps/{nome}` and `config/{nome}` as a GLOBAL single destination (same
+  template for every tool) — this matches aidd-generator's registry
+  (`tools/aidd-generator/scripts/core/injector/profiles_registry.py`,
+  which uses exactly those paths), but diverges from aidd-master's. No
+  component of these 2 types has been migrated for aidd-master yet
+  (that's why nothing broke so far), but it needs fixing before injector
+  unification (the project's next step) builds on top of the wrong path.
+- The `script` type in the manifest has its `status_evidencia` field
+  saying "confirmed by real precedent", but actually neither
+  `profiles_registry.py` (aidd-master or aidd-generator) defines a
+  `script` type at all — there is no precedent, it's a new proposal. It
+  should be marked the same way `hook`/`sub-agent` already are (clear
+  "no precedent, proposed for review" text).
+
+FIX 1 — Remove `.mimocode` from aidd-master's active mirrors
+1.1. In `tools/aidd-master/src/core/profiles_registry.py`, in the
+     `PROFILES["aidd-master"]["skill"]["mirrors"]` dict, remove the entry
+     `.mimocode/skills/{nome}/SKILL.md`. Keep the other 3 (.claude,
+     .agent, .gemini).
+1.2. Confirm, via an automated test (read
+     `tools/aidd-master/tests/unit/test_injector_core.py` first — if it
+     already covers `PROFILES`, extend it; if not, create a minimal
+     test), that `"mimocode"` no longer appears in any `mirrors` value of
+     any type in `PROFILES["aidd-master"]`.
+1.3. Run aidd-master's full test suite (`python -m pytest tests/ -q`) and
+     confirm nothing broke.
+
+FIX 2 — Allow a divergent per-tool destination for
+"destino-unico-por-ferramenta" types
+2.1. In `gates/manifesto_harnesses.json`, add an optional
+     `overrides_por_escopo` field inside the `mcp` and `config` types,
+     allowing `dest_unico_template` (and, when needed, `unidade`) to be
+     overridden for one specific scope (tool). Example shape (adapt the
+     structure to whatever makes most sense in the code, but preserve the
+     ability to override per scope):
+     "mcp": {
+       ...,
+       "dest_unico_template": "mcps/{nome}",
+       "overrides_por_escopo": {
+         "aidd-master": {
+           "dest_unico_template": "src/core/mcp/{nome}.py",
+           "unidade": "arquivo"
+         }
+       }
+     }
+     Apply the same pattern to `config` (aidd-master override:
+     `dest_unico_template: "templates/core/config/{nome}.json"`,
+     `unidade: "arquivo"`).
+2.2. In `scripts/gestor_componentes.py`, adjust `_resolver_destinos` (to
+     read the `dest_unico_template` override when one exists for the
+     current scope) and `_listar_componentes_fonte` (to read the
+     `unidade` override when one exists for the current scope, since
+     aidd-master treats `mcp`/`config` as a single FILE, not a directory,
+     unlike aidd-generator's default). Do not break the default behavior
+     (no override) for other types/tools.
+2.3. Real test: create a test component
+     `componentes/aidd-master/mcps/teste-auditoria/teste-auditoria.py`
+     (single file, since aidd-master's override treats `mcp` as a file),
+     run
+     `python ecossistema.py components sync --tipo mcp --ferramenta aidd-master`,
+     and confirm it lands at
+     `tools/aidd-master/src/core/mcp/teste-auditoria.py` (not at
+     `tools/aidd-master/mcps/teste-auditoria/...`). Repeat the same test
+     for `config`. Afterward, CLEAN UP the test component and the
+     generated destination (leave no garbage in the repository or the
+     manifest).
+2.4. Confirm that aidd-generator still resolves `mcp`/`config` at the old
+     path (`mcps/{nome}/...`, `config/{nome}.json`) with no regression —
+     it has no override, it should keep using the default
+     `dest_unico_template`.
+
+FIX 3 — Correct the `script` type's evidence in the manifest
+3.1. In `gates/manifesto_harnesses.json`, for the `script` type, rewrite
+     the `status_evidencia` field to make clear that NEITHER
+     `profiles_registry.py` defines this type — it's a new proposal by
+     symmetry with the other single-destination types, not a confirmed
+     precedent. Use the same honest pattern already used for the
+     `hook`/`sub-agent` types in the manifest itself.
+
+EXIT CRITERIA (run and paste the real output of each):
+- `python ecossistema.py components verify --tipo todos` → exit 0.
+- `python ecossistema.py audit` → exit 0 (5 gates, no regression).
+- Full test suites of the 4 tools → no regression.
+- The Fix 2.3 test (failing before the fix / passing after, including
+  confirmation that the test component was cleaned up at the end).
+- The Fix 1.2 test.
+
+SCOPE RULES — DO NOT:
+- Do not implement anything from Prompt B (injector unification, hybrid
+  layer, new gates) — that continues afterward, only after this fix has
+  been audited.
+- Do not `git commit` or `git push`.
+- Do not modify
+  `docs/planos/evolucao-notas-auditoria/07-agnosticismo-distribuicao-componentes.md`.
+
+DELIVERABLE: exact list of files changed; for each fix, the command +
+real output that proves it; any necessary deviation, explicitly reported
+instead of decided by yourself.
+```

@@ -80,7 +80,9 @@ O ecossistema dispõe de Quality Gates globais em gates/:
 
 ## 5. REGRAS DE COMPATIBILIDADE MULTI-HARNESS
 
-- **Antigravity / MimoCode / OpenCode:** Carrega definições em .agent/commands/ e .agent/skills/.
-- **Claude Code:** Carrega comandos em .claude/commands/ e lê CLAUDE.md.
-- **Cursor IDE:** Carrega regras a partir de .cursor/rules/.
+- **Antigravity / MimoCode / OpenCode:** Carrega definições em .agent/commands/ e .agent/skills/ — as 3 ferramentas compartilham a MESMA pasta `.agent/` (MimoCode não tem pasta própria; `.mimocode/` foi removido por ser redundante).
+- **Claude Code:** Carrega comandos em .claude/commands/, skills em .claude/skills/ e lê CLAUDE.md.
+- **Gemini CLI:** Carrega skills em .gemini/skills/.
+- **Cursor IDE:** Carrega regras a partir de .cursor/rules/ (mecanismo de arquivo único, não pasta por componente).
 - **Raiz Canônica:** Todos os harnesses convergem para as definições canônicas de AGENTS.md e da CLI ecossistema.py.
+- **Fonte física única de todo componente (skill, mcp, spec, hook, config, command, sub-agent, script):** `componentes/<ferramenta ou compartilhado>/<tipo>/`. O mapeamento de cada tipo para as pastas físicas por harness listadas acima está formalizado em `gates/manifesto_harnesses.json` e é aplicado por `python ecossistema.py components sync|verify --tipo <tipo>`. As pastas físicas por harness (.agent/, .claude/, .gemini/, skills/ bare, etc.) são DESTINOS GERADOS por esse comando — nunca editadas manualmente a partir desta migração.
