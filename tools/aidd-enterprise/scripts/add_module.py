@@ -555,6 +555,7 @@ def test_validacao_titulo_obrigatorio_{slug}(test_env):
 
     # 6. Atualizar PLANO-EXECUCAO-ESTRUTURADO.json se existir
     plano_path = os.path.join(target_dir, "PLANO-EXECUCAO-ESTRUTURADO.json")
+    server_path = os.path.join(src_dir, "server.py")
     if os.path.isfile(plano_path):
         try:
             with open(plano_path, "r", encoding="utf-8") as f:
@@ -584,6 +585,28 @@ def test_validacao_titulo_obrigatorio_{slug}(test_env):
                 with open(plano_path, "w", encoding="utf-8") as f:
                     json.dump(plano, f, ensure_ascii=False, indent=2)
                 print(f"  [+] Manifesto 'PLANO-EXECUCAO-ESTRUTURADO.json' atualizado com o módulo '{slug}'!")
+
+            # 7. Religar src/server.py com o módulo recém-criado. Só roda quando
+            # add_module.py é chamado dentro de um projeto JÁ COMPOSTO (server.py
+            # já existe) — durante a composição inicial, compose_suite() chama
+            # criar_modulo() antes de gerar o server.py e cuida disso sozinho,
+            # então regenerar aqui de novo seria trabalho duplicado.
+            if os.path.isfile(server_path):
+                try:
+                    from compose_suite import generate_modular_server_code
+                except ImportError:
+                    from scripts.compose_suite import generate_modular_server_code
+
+                suite_name = plano.get("projeto", {}).get("nome", "AIDD Suite")
+                db_engine = plano.get("projeto", {}).get("db_engine", "sqlite")
+                module_slugs = [m.get("slug") for m in plano["modulos"] if isinstance(m, dict) and m.get("slug")]
+                if slug not in module_slugs:
+                    module_slugs.append(slug)
+
+                server_code = generate_modular_server_code(suite_name, module_slugs, db_engine=db_engine)
+                with open(server_path, "w", encoding="utf-8") as f:
+                    f.write(server_code)
+                print(f"  [+] 'src/server.py' regenerado e religado com o módulo '{slug}'!")
         except Exception as e:
             print(f"  [!] Aviso ao atualizar manifesto: {e}")
 

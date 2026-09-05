@@ -1503,6 +1503,8 @@ def compose_suite(target_dir: str, suite_name: str, modules: list, db_engine: st
             {"gate": "G_CHAOS", "descricao": "Simulação de Quedas (Chaos) e resiliência do sistema"}
         ]
     }
+    plano_dict["projeto"]["db_engine"] = db_engine
+
     with open(os.path.join(target_dir, "PLANO-EXECUCAO-ESTRUTURADO.json"), "w", encoding="utf-8") as f:
         json.dump(plano_dict, f, ensure_ascii=False, indent=2)
 
