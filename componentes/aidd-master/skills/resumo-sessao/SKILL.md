@@ -1,4 +1,4 @@
-﻿---
+---
 name: resumo-sessao
 description: Registra e exporta todo o histórico factual da sessão de chat em um documento Markdown estruturado na pasta `secoes/`, contendo telemetria de tokens, horários, harness, resumo executivo e histórico completo de User Inputs e Model Outputs.
 commands:

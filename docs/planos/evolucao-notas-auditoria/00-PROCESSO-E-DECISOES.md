@@ -59,12 +59,13 @@ Cada um segue a mesma estrutura interna: Definição de Pronto → Diagnóstico 
 
 ---
 
-## 5. Os dois tetos reconhecidos — não tentamos fingir que somem
+## 5. O teto reconhecido — não tentamos fingir que some
 
-Dois pacotes têm um limite estrutural que nenhuma quantidade de trabalho remove. Isso está decidido e registrado agora para que nenhum ciclo futuro prometa 10/10 onde isso seria mentira:
+Um pacote tem um limite estrutural que nenhuma quantidade de trabalho remove. Isso está decidido e registrado agora para que nenhum ciclo futuro prometa 10/10 onde isso seria mentira:
 
-- **Pacote 5 (Economia de Tokens / Engenharia Agêntica):** o número de tokens no modo delegado é autodeclarado por quem responde (inclusive por mim, quando respondi manualmente nesta sessão) — não há como verificar de forma independente. "Pronto" aqui significa que essa limitação fica **rotulada e documentada honestamente**, nunca que ela deixa de existir.
-- **Pacote 6 (Universalidade):** só há um harness real disponível para teste nesta máquina (Claude Code). Sem Codex, Gemini CLI ou outro ADE instalado, qualquer "correção" seria documentação prometendo algo não comprovado. Este pacote fica registrado como **limite fixo**, sem ciclo de implementação — não avança até que essa condição externa mude.
+- **Pacote 5 (Economia de Tokens / Engenharia Agêntica):** o número de tokens no modo delegado é autodeclarado por quem responde (inclusive por mim, quando respondi manualmente nesta sessão) — não há como verificar de forma independente. "Pronto" aqui significa que essa limitação fica **rotulada e documentada honestamente**, nunca que ela deixa de existir. ✅ Concluído — ver `05-economia-tokens-e-agentico.md`.
+
+**Pacote 6 (Universalidade) deixou de ser um teto em 05/09/2026 e foi CONCLUÍDO na mesma sessão** — a premissa que o travava ("só há Claude Code instalado nesta máquina") estava desatualizada; na verdade os 7 harnesses citados (Claude Code, Antigravity, MimoCode, OpenCode, FreeBuff, Gemini CLI, Hermes) estão todos instalados. Testes reais contra essas instalações encontraram e corrigiram um bug real (BOM UTF-8 quebrando o parser do `gemini-cli`) — comprovado contra a instalação real do `gemini-cli`, não simulado — e substituíram uma imprecisão documental real em `AGENTS.md §5` por uma seção honesta harness-por-harness. Nota final 9/10 (residual: `agy`/Antigravity e `freebuff` continuam sem mecanismo de descoberta confirmado). Ver `06-universalidade.md` para o diagnóstico completo, a Definição de Pronto e o veredito da auditoria.
 
 ---
 
@@ -97,7 +98,7 @@ Dois pacotes têm um limite estrutural que nenhuma quantidade de trabalho remove
 | 3. Modularização | ✅ Concluído | Modularização 7→**9/10** (alvo atingido) | `03-modularizacao-injector.md` |
 | 4. Cobertura restante | ✅ Concluído | Testabilidade/Cobertura Real permanece **9/10** (alvo já perseguido pelo Pacote 2, agora com evidência completa dos 7 comandos restantes, não parcial) | `04-cobertura-comandos-restantes.md` |
 | 5. Tokens + Agêntico | ✅ Concluído | Economia de Tokens 7→**8/10**; Engenharia Agêntica 8→**8.5/10** (ambos alvo atingido) | `05-economia-tokens-e-agentico.md` |
-| 6. Universalidade | 📌 Registrado como limite fixo | 8/10 → 8/10 (sem mudança possível) | este arquivo, §5 |
+| 6. Universalidade | ✅ Concluído | Universalidade/Agnosticismo 8→**9/10** (alvo atingido) | `06-universalidade.md` |
 | 7. Agnosticismo de Distribuição | ✅ Concluído | Gap novo, fora da tabela original de 8 dimensões — nota final **9/10** (limitação residual documentada: `aidd-master`/`aidd-enterprise` seguem com injetores antigos fora do mecanismo unificado) | `07-agnosticismo-distribuicao-componentes.md` |
 
 Esta tabela é atualizada ao final de cada pacote — nunca antes da validação real daquele pacote.

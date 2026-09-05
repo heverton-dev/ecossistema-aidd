@@ -82,9 +82,15 @@ O ecossistema dispõe de Quality Gates globais em gates/:
 
 ## 5. REGRAS DE COMPATIBILIDADE MULTI-HARNESS
 
-- **Antigravity / MimoCode / OpenCode:** Carrega definições em .agent/commands/ e .agent/skills/ — as 3 ferramentas compartilham a MESMA pasta `.agent/` (MimoCode não tem pasta própria; `.mimocode/` foi removido por ser redundante).
-- **Claude Code:** Carrega comandos em .claude/commands/, skills em .claude/skills/ e lê CLAUDE.md.
-- **Gemini CLI:** Carrega skills em .gemini/skills/.
-- **Cursor IDE:** Carrega regras a partir de .cursor/rules/ (mecanismo de arquivo único, não pasta por componente).
+- **Claude Code / Grok / OpenCode / Mimo (MimoCode):** Carregam skills a partir de `.claude/skills/` (confirmado via inspeção direta e saídas JSON de debug dos harnesses reais instalados). Claude Code adicionalmente carrega comandos em `.claude/commands/` e lê `CLAUDE.md`.
+- **Pasta `.agent/`:** Mantida como destino físico gerado pelo mecanismo de sincronização (`.agent/commands/` e `.agent/skills/`) para compatibilidade com ferramentas que adotem essa convenção, mas os testes reais confirmam que OpenCode e MimoCode descobrem skills em `.claude/skills/`, e não em `.agent/skills/`.
+- **Gemini CLI:** Carrega skills em `.gemini/skills/` (requer arquivos estritamente sem UTF-8 BOM no início).
+- **Hermes Agent:** Adota a convenção de `.agents/skills` (plural) e `.hermes/skills`, exigindo autorização explícita por projeto via `hermes skills trust <dir>` (teste real com `hermes skills trust .` confirmou a busca exclusiva por `.hermes\skills` ou `.agents\skills`, não descobrindo `.claude/skills/` nem `.agent/skills/`).
+- **Antigravity (agy):** Mecanismo de descoberta de skills de projeto não identificado/não confirmado nesta auditoria (duas chamadas reais `agy --print` reportaram não localizar as skills 'aidd'; não presumir funcionamento automático).
+- **Freebuff:** Instalado na máquina, porém não expõe modo não interativo via CLI para validação automatizada.
+- **Kiro CLI:** Utiliza conceito e diretório próprios (`.kiro/agents/`), não fazendo parte do padrão de skills deste ecossistema.
+- **Cursor IDE:** Carrega regras a partir de `.cursor/rules/` (mecanismo de arquivo único, não pasta por componente).
 - **Raiz Canônica:** Todos os harnesses convergem para as definições canônicas de AGENTS.md e da CLI ecossistema.py.
 - **Fonte física única de todo componente (skill, mcp, spec, hook, config, command, sub-agent, script):** `componentes/<ferramenta ou compartilhado>/<tipo>/`. O mapeamento de cada tipo para as pastas físicas por harness listadas acima está formalizado em `gates/manifesto_harnesses.json` e é aplicado por `python ecossistema.py components sync|verify --tipo <tipo>`. As pastas físicas por harness (.agent/, .claude/, .gemini/, skills/ bare, etc.) são DESTINOS GERADOS por esse comando — nunca editadas manualmente a partir desta migração.
+
+> **Nota de Proveniência:** Esta seção reflete testes empíricos executados em 2026-09-05 contra instalações reais dos 7 harnesses nesta máquina — não suposições conceituais. Deve ser re-verificada caso essas ferramentas passem por atualizações ou caso os mecanismos exatos de descoberta do `agy` e `freebuff` sejam identificados no futuro.

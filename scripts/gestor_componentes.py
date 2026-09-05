@@ -209,11 +209,31 @@ def _comparar_diretorio(origem, destino):
     return problemas
 
 
+def _checar_bom_em_componentes():
+    boms = []
+    dir_componentes = os.path.join(ROOT_DIR, "componentes")
+    if not os.path.isdir(dir_componentes):
+        return boms
+    for raiz, _dirs, arquivos in os.walk(dir_componentes):
+        for arquivo in arquivos:
+            caminho = os.path.join(raiz, arquivo)
+            try:
+                with open(caminho, "rb") as f:
+                    if f.read(3) == b"\xef\xbb\xbf":
+                        boms.append(os.path.relpath(caminho, ROOT_DIR))
+            except Exception:
+                pass
+    return boms
+
+
 def verify(tipo, ferramenta=None):
     """Só lê e compara. Retorna (total_componentes_verificados, lista_de_problemas)."""
     manifesto = carregar_manifesto()
     problemas = []
     total_componentes = 0
+
+    for bom_arq in _checar_bom_em_componentes():
+        problemas.append(f"arquivo com UTF-8 BOM proibido (EF BB BF): {bom_arq}")
 
     for tipo_atual in _tipos_a_processar(manifesto, tipo):
         for nome_escopo in _escopos_do_tipo(manifesto, tipo_atual, ferramenta):

@@ -1,4 +1,4 @@
-﻿---
+---
 name: componentes-runner
 description: Cria, atualiza e sincroniza componentes agnosticos (skills, mcps, specs, hooks, configs, commands, sub-agents, scripts) entre todos os harnesses do ecossistema AIDD.
 ---
