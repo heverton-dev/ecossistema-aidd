@@ -31,6 +31,8 @@ Dois dos 8 gaps da auditoria original são, na prática, o mesmo trabalho físic
 | 5 | Economia de Tokens + Engenharia Agêntica | Rotulagem `medido` vs `autodeclarado` no protocolo delegado |
 | 6 | Universalidade | Sem ciclo de implementação — ver §5 |
 
+**Pacote 7 — adicionado em 05/09/2026, fora dos 8 gaps originais:** por pedido explícito do usuário, um gap novo (não coberto pela auditoria original) entrou no mesmo processo — distribuição incompleta de componentes (skills/MCPs/specs/config/hooks) entre pastas de harness, violando a Regra de Ouro #6 (Supremacia Agnóstica) do `AGENTS.md`. Diagnosticado inicialmente por um agente externo a pedido do usuário; verificado por amostragem independente antes de ser aceito no processo. Distinto do Pacote 6: aquele é sobre *execução* multi-harness (bloqueado por falta de outros harnesses instalados); este é sobre *distribuição de arquivos* (100% verificável e corrigível nesta máquina, sem bloqueio estrutural). Ver `07-agnosticismo-distribuicao-componentes.md`.
+
 ---
 
 ## 3. Regra fixa: nenhum pacote começa sem Definição de Pronto escrita antes
@@ -51,6 +53,7 @@ Cada pacote, quando sua vez chegar, ganha o próprio documento nesta mesma pasta
 - `04-cobertura-comandos-restantes.md`
 - `05-economia-tokens-e-agentico.md`
 - `06-universalidade.md` (registro do limite, sem plano de implementação)
+- `07-agnosticismo-distribuicao-componentes.md` (adicionado fora dos 8 gaps originais, ver §2)
 
 Cada um segue a mesma estrutura interna: Definição de Pronto → Diagnóstico específico (herdado ou aprofundado a partir do `PLANO-EVOLUCAO-NOTAS-AUDITORIA.md`) → Implementação → Evidência de teste real → Veredito final (nota antes/depois, com justificativa).
 
@@ -73,6 +76,7 @@ Dois pacotes têm um limite estrutural que nenhuma quantidade de trabalho remove
 4. Cobertura dos comandos restantes
 5. Economia de Tokens + Engenharia Agêntica
 6. Universalidade (registro apenas, sem execução)
+7. Agnosticismo de Distribuição de Componentes — **bloqueado até as 4 decisões do usuário** (ver `07-agnosticismo-distribuicao-componentes.md` §"Decisões pendentes"); entrou fora de ordem por pedido explícito do usuário, mas só começa a ser implementado depois de resolvidas essas decisões, como qualquer outro pacote
 
 ---
 
@@ -81,11 +85,12 @@ Dois pacotes têm um limite estrutural que nenhuma quantidade de trabalho remove
 | Pacote | Status | Nota antes → depois | Documento |
 |---|---|---|---|
 | 1. Transparência + Gates | ✅ Concluído | Gates Mecânicos 7/10 → **8/10 (alvo atingido)**. Transparência 8/10 → **8.5/10** (alvo 9/10 só fecha quando Pacotes 4 e 5 também resolverem suas partes desta dimensão — ver §3 do documento do pacote) | `01-transparencia-e-gates.md` |
-| 2. Testabilidade + Determinismo | ⏳ Não iniciado | 6/10, 9/10 → alvo 9/10, 9.5/10 | *(a criar)* |
+| 2. Testabilidade + Determinismo | ✅ Concluído (implementado por agente externo, auditado e confirmado por mim) | Testabilidade 6→**9/10**; Determinismo 9→**9.5/10** (ambos alvo atingido) | `02-testabilidade-e-determinismo.md` |
 | 3. Modularização | 🔒 Bloqueado (aguardando decisão A/B/C) | 7/10 → alvo 9/10 | *(a criar)* |
 | 4. Cobertura restante | ⏳ Não iniciado | contribui para Testabilidade | *(a criar)* |
 | 5. Tokens + Agêntico | ⏳ Não iniciado | 7/10, 8/10 → alvo 8/10, 8.5/10 | *(a criar)* |
 | 6. Universalidade | 📌 Registrado como limite fixo | 8/10 → 8/10 (sem mudança possível) | este arquivo, §5 |
+| 7. Agnosticismo de Distribuição | 🔍 Diagnóstico verificado por amostragem, aguardando 4 decisões do usuário | Gap novo, fora da tabela original de 8 dimensões — nota a definir quando a Definição de Pronto for travada | `07-agnosticismo-distribuicao-componentes.md` |
 
 Esta tabela é atualizada ao final de cada pacote — nunca antes da validação real daquele pacote.
 

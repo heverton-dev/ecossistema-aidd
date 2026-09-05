@@ -1,0 +1,301 @@
+<title>Mapa de Skills AIDD</title>
+<style>
+  :root{
+    --chalk: #EDE9DD;
+    --chalk-2: #E2DDCC;
+    --ink: #2A271F;
+    --ink-dim: #5C5748;
+    --rule: #C9C2AC;
+    --copper: #B4652A;
+    --copper-dim: #8f5323;
+    --teal: #3C645D;
+    --teal-bg: #dfe6e2;
+    --red: #A2402C;
+    --red-bg: #ecdcd6;
+    --card: #F7F4EC;
+    --shadow: 0 1px 0 rgba(42,39,31,0.06);
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --chalk: #17181A;
+      --chalk-2: #1E2023;
+      --ink: #E7E3D8;
+      --ink-dim: #A29C8C;
+      --rule: #3A3B3C;
+      --copper: #E08A45;
+      --copper-dim: #f0a86b;
+      --teal: #7DA79D;
+      --teal-bg: #202b29;
+      --red: #D9765F;
+      --red-bg: #2b1e1b;
+      --card: #1C1E21;
+      --shadow: 0 1px 0 rgba(0,0,0,0.3);
+    }
+  }
+  :root[data-theme="dark"]{
+    --chalk: #17181A;
+    --chalk-2: #1E2023;
+    --ink: #E7E3D8;
+    --ink-dim: #A29C8C;
+    --rule: #3A3B3C;
+    --copper: #E08A45;
+    --copper-dim: #f0a86b;
+    --teal: #7DA79D;
+    --teal-bg: #202b29;
+    --red: #D9765F;
+    --red-bg: #2b1e1b;
+    --card: #1C1E21;
+    --shadow: 0 1px 0 rgba(0,0,0,0.3);
+  }
+
+  *{ box-sizing:border-box; }
+  @media (prefers-reduced-motion: reduce){ *{ animation:none !important; transition:none !important; } }
+
+  *{ scrollbar-width:thin; scrollbar-color:var(--copper) transparent; }
+  *::-webkit-scrollbar{ width:4px; height:4px; }
+  *::-webkit-scrollbar-track{ background:transparent; }
+  *::-webkit-scrollbar-thumb{ background-color:var(--copper); border-radius:2px; }
+  *::-webkit-scrollbar-thumb:hover{ background-color:var(--copper-dim); }
+
+  body{
+    background:var(--chalk);
+    color:var(--ink);
+    font-family: Charter, "Iowan Old Style", "Georgia", "Times New Roman", serif;
+    font-size:16px;
+    line-height:1.6;
+    margin:0;
+    padding:0 0 6rem;
+  }
+  .display{ font-family: Futura, "Century Gothic", "Avenir Next", "URW Gothic", sans-serif; letter-spacing:0.01em; }
+  .mono{ font-family: ui-monospace, "SFMono-Regular", "Cascadia Mono", "Consolas", "Liberation Mono", monospace; }
+
+  a{ color:var(--copper-dim); }
+
+  /* ---------- masthead ---------- */
+  .masthead{ max-width:960px; margin:0 auto; padding:3.2rem 1.5rem 2.2rem; border-bottom:1px solid var(--rule); }
+  .eyebrow{ font-family:Futura,"Century Gothic",sans-serif; font-size:0.72rem; letter-spacing:0.18em; text-transform:uppercase; color:var(--copper); margin:0 0 0.9rem; }
+  h1{ font-family:Futura,"Century Gothic","Avenir Next",sans-serif; font-weight:600; font-size:clamp(2.1rem, 5vw, 3rem); line-height:1.05; letter-spacing:-0.01em; text-wrap:balance; margin:0 0 0.9rem; }
+  .masthead p{ max-width:64ch; color:var(--ink-dim); font-size:1.05rem; margin:0.4rem 0 0; }
+  .masthead .meta{ display:flex; flex-wrap:wrap; gap:1.5rem; margin-top:1.6rem; font-family:Futura,"Century Gothic",sans-serif; font-size:0.72rem; letter-spacing:0.1em; text-transform:uppercase; color:var(--ink-dim); }
+  .masthead .meta b{ color:var(--ink); font-weight:600; }
+
+  /* ---------- layer sections ---------- */
+  section.layer{ max-width:960px; margin:3.2rem auto 0; padding:0 1.5rem; }
+  .layer-head{ display:flex; align-items:baseline; justify-content:space-between; gap:1rem; border-top:2px solid var(--ink); padding-top:0.9rem; flex-wrap:wrap; }
+  .layer-head h2{ font-family:Futura,"Century Gothic","Avenir Next",sans-serif; font-weight:600; font-size:1.4rem; margin:0; }
+  .layer-head .tag{ font-size:0.78rem; color:var(--teal); background:var(--teal-bg); padding:0.25rem 0.6rem; border-radius:3px; white-space:nowrap; }
+  .layer-tagline{ color:var(--ink-dim); max-width:66ch; margin:0.6rem 0 1.5rem; }
+
+  /* ---------- skill table ---------- */
+  .skill-table{ width:100%; border-collapse:collapse; font-size:0.88rem; }
+  .skill-table caption{ text-align:left; font-family:Futura,"Century Gothic",sans-serif; font-size:0.72rem; letter-spacing:0.08em; text-transform:uppercase; color:var(--ink-dim); margin-bottom:0.5rem; }
+  .skill-table th{ text-align:left; font-family:Futura,"Century Gothic",sans-serif; font-weight:600; font-size:0.74rem; letter-spacing:0.05em; text-transform:uppercase; color:var(--ink-dim); border-bottom:1px solid var(--ink); padding:0 0.7rem 0.55rem 0; }
+  .skill-table td{ padding:0.7rem 0.7rem 0.7rem 0; border-bottom:1px solid var(--rule); vertical-align:top; }
+  .skill-table tr:last-child td{ border-bottom:none; }
+  .skill-table td.name{ font-family:Futura,"Century Gothic",sans-serif; font-weight:600; white-space:nowrap; }
+  .skill-table td .cmd{ color:var(--teal); }
+  .skill-table td.exec{ color:var(--ink-dim); }
+  .overflow{ overflow-x:auto; }
+
+  .status{ display:inline-flex; align-items:center; gap:0.4rem; font-size:0.76rem; white-space:nowrap; }
+  .status .dot{ width:0.5rem; height:0.5rem; border-radius:50%; flex:none; }
+  .status.wired .dot{ background:var(--teal); }
+  .status.wired{ color:var(--teal); }
+  .status.templated .dot{ background:var(--copper); }
+  .status.templated{ color:var(--copper-dim); }
+  .status.gap .dot{ background:var(--red); }
+  .status.gap{ color:var(--red); }
+
+  /* ---------- flow diagram ---------- */
+  .flow-wrap{ overflow-x:auto; padding-bottom:0.6rem; }
+  .flow{ display:flex; align-items:stretch; gap:0; min-width:max-content; }
+  .fnode{ display:flex; flex-direction:column; gap:0.4rem; padding:0.9rem 1.6rem 0.9rem 0; position:relative; min-width:170px; }
+  .fnode:not(:last-child)::after{ content:"\2192"; position:absolute; top:1.4rem; left:calc(100% - 1.35rem); color:var(--ink-dim); font-size:1rem; }
+  .fnode .k{ font-family:Futura,"Century Gothic",sans-serif; font-size:0.68rem; letter-spacing:0.08em; text-transform:uppercase; color:var(--ink-dim); }
+  .fnode .v{ font-size:0.86rem; font-weight:600; font-family:Futura,"Century Gothic",sans-serif; line-height:1.3; }
+  .fnode .d{ font-size:0.78rem; color:var(--ink-dim); line-height:1.4; max-width:19ch; }
+
+  /* ---------- callout ---------- */
+  .callout{ margin:1.6rem 0 0; padding:1.1rem 1.3rem; background:var(--card); border:1px solid var(--rule); border-left:3px solid var(--red); font-size:0.9rem; color:var(--ink-dim); }
+  .callout.fix{ border-left-color:var(--copper); }
+  .callout b{ color:var(--ink); font-weight:600; }
+  .callout .mono{ color:var(--teal); }
+  .callout p{ margin:0 0 0.6rem; }
+  .callout p:last-child{ margin-bottom:0; }
+
+  .duplicates{ font-size:0.82rem; color:var(--ink-dim); margin-top:1rem; }
+  .duplicates b{ color:var(--ink); }
+
+  footer{ max-width:960px; margin:3.5rem auto 0; padding:1.6rem 1.5rem 0; border-top:1px solid var(--rule); font-size:0.78rem; color:var(--ink-dim); }
+  footer .mono{ display:block; margin-top:0.5rem; line-height:1.7; }
+</style>
+
+<div class="masthead">
+  <p class="eyebrow">Ecossistema AIDD &middot; Auditoria de Skills</p>
+  <h1 class="display">Mapa de Skills e Comandos</h1>
+  <p>Quatro camadas de skills convivem no monorepo: os quatro runners canônicos da raiz, os quality gates que os fecham, as skills locais de cada ferramenta em <span class="mono">tools/*/.claude/skills</span>, e os templates que o Forge injeta em projetos de terceiros. Este relatório documenta o que cada uma executa, seus comandos, e onde a fiação realmente conecta &mdash; incluindo um ponto de integração que está documentado mas não é descoberto pelo Skill tool do Claude Code.</p>
+  <div class="meta">
+    <span>Fonte: <b>AGENTS.md</b> + inspeção direta dos 4 subprojetos</span>
+    <span>4 camadas &middot; 15 skills mapeadas</span>
+  </div>
+</div>
+
+<section class="layer">
+  <div class="layer-head">
+    <h2>Camada 1 &middot; Orquestrador raiz</h2>
+    <span class="tag mono">skills/*-runner</span>
+  </div>
+  <p class="layer-tagline">Cada skill é um wrapper 1:1 para um subcomando de <span class="mono">ecossistema.py</span>, que roteia para o script real dentro de <span class="mono">tools/&lt;ferramenta&gt;</span>.</p>
+  <div class="overflow">
+    <table class="skill-table">
+      <thead>
+        <tr><th>Skill</th><th>Comando</th><th>Executa</th><th>Integração</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="name">aidd-forge-runner</td>
+          <td class="cmd mono">/forge [caminho]</td>
+          <td class="exec">aidd_forge.cli em tools/aidd-forge</td>
+          <td><span class="status gap"><span class="dot"></span>não descoberta</span></td>
+        </tr>
+        <tr>
+          <td class="name">aidd-generator-runner</td>
+          <td class="cmd mono">/generate &lt;ideia&gt;</td>
+          <td class="exec">pipeline_completo.py &middot; 8 fases</td>
+          <td><span class="status gap"><span class="dot"></span>não descoberta</span></td>
+        </tr>
+        <tr>
+          <td class="name">aidd-master-runner</td>
+          <td class="cmd mono">/master &lt;modulo&gt;</td>
+          <td class="exec">scripts/aidd.py add-module</td>
+          <td><span class="status gap"><span class="dot"></span>não descoberta</span></td>
+        </tr>
+        <tr>
+          <td class="name">aidd-enterprise-runner</td>
+          <td class="cmd mono">/enterprise &lt;tipo&gt; &lt;nome&gt;</td>
+          <td class="exec">scripts/aidd.py inject</td>
+          <td><span class="status gap"><span class="dot"></span>não descoberta</span></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="callout">
+    <p><b>Gap de integração real.</b> As 4 skills vivem em <span class="mono">skills/</span> (espelhadas em <span class="mono">.agent/skills/</span> para Antigravity/MimoCode/OpenCode), mas nunca em <span class="mono">.claude/skills/</span>. O Skill tool do Claude Code só descobre skills sob esse caminho &mdash; confirmado nesta própria auditoria, onde apenas as skills de <span class="mono">tools/*/.claude/skills</span> foram auto-registradas.</p>
+    <p>Na prática, quem dispara <span class="mono">/forge</span> no Claude Code é o prompt-texto em <span class="mono">.claude/commands/forge.md</span>, que instrui a rodar <span class="mono">python ecossistema.py forge init</span> via Bash &mdash; a skill referenciada dentro dele é documentação, não execução. Isso contraria a Regra de Ouro nº6 do AGENTS.md (Supremacia Agnóstica).</p>
+  </div>
+</section>
+
+<section class="layer">
+  <div class="layer-head">
+    <h2>Camada 2 &middot; Quality Gates</h2>
+    <span class="tag mono">gates/*.py</span>
+  </div>
+  <p class="layer-tagline">Não são skills &mdash; são o fecho determinístico que qualquer skill acima deve respeitar antes de commit. Disparados em bloco via <span class="mono">python ecossistema.py audit</span>.</p>
+  <div class="overflow">
+    <table class="skill-table">
+      <thead><tr><th>Gate</th><th>Audita</th></tr></thead>
+      <tbody>
+        <tr><td class="name">G_ECOSSISTEMA_INTEGRIDADE</td><td class="exec">Integridade física/sintática/estrutural dos 4 subprojetos e skills</td></tr>
+        <tr><td class="name">G_DRIFT_NUCLEO_COMPARTILHADO</td><td class="exec">Divergência não documentada entre núcleo compartilhado master/enterprise</td></tr>
+        <tr><td class="name">G_HARNESS_COMPAT</td><td class="exec">Sincronismo dos artefatos multi-harness (comandos, skills, ponteiros)</td></tr>
+        <tr><td class="name">G_SEGREDOS</td><td class="exec">Credenciais hardcoded em todo o repositório rastreado pelo git</td></tr>
+        <tr><td class="name">G_CLI_HELP_CONSISTENCIA</td><td class="exec">Flags citadas em print/raise vs. flags definidas via argparse (AST)</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<section class="layer">
+  <div class="layer-head">
+    <h2>Camada 3 &middot; Skills locais por ferramenta</h2>
+    <span class="tag mono">tools/*/.claude/skills</span>
+  </div>
+  <p class="layer-tagline">Descobertas nativamente pelo Skill tool ao trabalhar dentro do subdiretório da ferramenta. Duas têm lógica própria implementada; duas são esqueletos gerados pelo Injetor Universal, sem fluxo de execução codificado.</p>
+  <div class="overflow">
+    <table class="skill-table">
+      <thead><tr><th>Skill</th><th>Onde</th><th>O que executa</th><th>Comando</th><th>Status</th></tr></thead>
+      <tbody>
+        <tr>
+          <td class="name">resumo-sessao</td>
+          <td class="exec">aidd-master, aidd-enterprise</td>
+          <td class="exec">Exporta histórico da sessão para secoes/*.md (telemetria, timeline, artefatos)</td>
+          <td class="cmd mono">/resumo-sessao</td>
+          <td><span class="status wired"><span class="dot"></span>lógica própria</span></td>
+        </tr>
+        <tr>
+          <td class="name">project-spec-tracker</td>
+          <td class="exec">aidd-generator</td>
+          <td class="exec">SPEC vivo com SQLite (fase/item/status/quem/commit), gera MD/HTML/PDF</td>
+          <td class="cmd mono">/project-spec-tracker</td>
+          <td><span class="status wired"><span class="dot"></span>lógica própria</span></td>
+        </tr>
+        <tr>
+          <td class="name">seguranca-cibernetica</td>
+          <td class="exec">aidd-master</td>
+          <td class="exec">Esqueleto de auditoria OWASP/hardening &mdash; sem lógica própria</td>
+          <td class="exec">linguagem natural</td>
+          <td><span class="status templated"><span class="dot"></span>gerado, genérico</span></td>
+        </tr>
+        <tr>
+          <td class="name">auditoria-seguranca-dependencias</td>
+          <td class="exec">aidd-generator</td>
+          <td class="exec">Audita requirements.txt contra padrões de risco &mdash; sem lógica própria</td>
+          <td class="cmd mono">/auditoria-seguranca-dependencias</td>
+          <td><span class="status templated"><span class="dot"></span>gerado, genérico</span></td>
+        </tr>
+        <tr>
+          <td class="name">validador-contratos</td>
+          <td class="exec">aidd-forge/sandbox-forge-teste</td>
+          <td class="exec">Um-liner: valida payloads JSON contra schema &mdash; fixture de teste</td>
+          <td class="exec">&mdash;</td>
+          <td><span class="status templated"><span class="dot"></span>fixture</span></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <p class="duplicates">Duplicação por harness: <b>resumo-sessao</b> repete idêntica em <span class="mono">.claude</span>/<span class="mono">.agent</span>/<span class="mono">.mimocode</span>; <b>seguranca-cibernetica</b> repete em <span class="mono">.claude</span>/<span class="mono">.gemini</span>/<span class="mono">.mimocode</span>/<span class="mono">.agent</span> &mdash; mesmo conteúdo, uma cópia por convenção de harness.</p>
+</section>
+
+<section class="layer">
+  <div class="layer-head">
+    <h2>Camada 4 &middot; Templates do Forge</h2>
+    <span class="tag mono">aidd_forge/templates/skills</span>
+  </div>
+  <p class="layer-tagline">Não servem ao próprio ecossistema &mdash; são copiadas para o projeto-alvo quando alguém roda <span class="mono">/forge</span> nesse projeto. Cada uma carrega um gate de saída explícito (<span class="mono">exit 0</span> só sob condição verificável), padrão mais rigoroso que a Camada 3.</p>
+  <div class="overflow">
+    <table class="skill-table">
+      <thead><tr><th>Skill</th><th>Papel no pipeline injetado</th></tr></thead>
+      <tbody>
+        <tr><td class="name">caveman-ultra</td><td class="exec">Raciocínio interno telegráfico + saída PT-BR para todo subagente efêmero</td></tr>
+        <tr><td class="name">orca-orchestration</td><td class="exec">Multi-agente em worktrees isoladas por worker + decision gates p/ schema e segredo</td></tr>
+        <tr><td class="name">impeccable-ui</td><td class="exec">Design system Slate/Indigo, modais WCAG 2.1, zero emoji em UI de produção</td></tr>
+        <tr><td class="name">open-code-review</td><td class="exec">Linter de acoplamento Clean Architecture via grafo de imports real</td></tr>
+        <tr><td class="name">post-mortem</td><td class="exec">5-Porques após falha de gate, antes de qualquer patch aplicado</td></tr>
+        <tr><td class="name">cybersecurity-audit</td><td class="exec">Varredura estática OWASP Top 10 em modo cego, somente relatório</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<section class="layer">
+  <div class="layer-head">
+    <h2>Como a fiação conecta</h2>
+  </div>
+  <div class="flow-wrap">
+    <div class="flow">
+      <div class="fnode"><span class="k">01</span><span class="v">Slash command</span><span class="d">/forge, /generate, /master, /enterprise</span></div>
+      <div class="fnode"><span class="k">02</span><span class="v">.claude/commands/*.md</span><span class="d">prompt-texto lido pelo Claude Code</span></div>
+      <div class="fnode"><span class="k">03</span><span class="v">ecossistema.py</span><span class="d">roteia p/ script real da ferramenta</span></div>
+      <div class="fnode"><span class="k">04</span><span class="v">tools/&lt;ferramenta&gt;</span><span class="d">skills locais cobrem sessão/spec/segurança</span></div>
+      <div class="fnode"><span class="k">05</span><span class="v">ecossistema.py audit</span><span class="d">5 gates antes do commit</span></div>
+    </div>
+  </div>
+  <div class="callout fix">
+    <p><b>Correção recomendada.</b> Espelhar <span class="mono">skills/*-runner</span> também para <span class="mono">.claude/skills/*-runner</span>, para que o Skill tool nativo do Claude Code as descubra sem depender só do slash-command manual.</p>
+  </div>
+</section>
+
+<footer>
+  Relatório gerado por auditoria direta do repositório (sem alucinação de caminho) &middot; ecossistema-aidd
+  <span class="mono">docs/relatorios/relatorio-skills-e-comandos-aidd.html</span>
+</footer>

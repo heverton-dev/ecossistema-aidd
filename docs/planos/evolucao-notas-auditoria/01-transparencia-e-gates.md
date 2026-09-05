@@ -49,6 +49,85 @@ Rodei uma checagem sistemática (flags citadas em texto vs. flags realmente defi
 
 ---
 
+## Prompt de Implementação (registro retroativo)
+
+> Este pacote já foi implementado diretamente (ver Veredito abaixo), sem passar por um agente executor separado. O prompt abaixo é um registro retroativo — documentado para manter a mesma estrutura dos demais pacotes e para servir de referência caso um pacote equivalente precise ser reaberto ou replicado em `proj_aidd/`.
+
+```
+Você vai corrigir um bug real e comprovado de inconsistência entre flags de
+CLI e mensagens de erro no ecossistema-aidd (monorepo em
+C:\Users\trcnologia\Desktop\ecossistema-aidd), e criar um gate determinístico
+permanente contra recorrência desse tipo de bug nas 4 ferramentas
+(aidd-forge, aidd-master, aidd-enterprise, aidd-generator).
+
+BUG COMPROVADO: `tools/aidd-enterprise/scripts/aidd.py:847` tem
+`print("[ERRO] type 'mcp' exige --command (ex: --command python).")` — mas a
+flag realmente definida via `add_argument` é `--mcp-command`, não
+`--command`. Corrija a mensagem para citar `--mcp-command`.
+
+DEFINIÇÃO DE PRONTO:
+
+1. Aplique a correção pontual acima.
+
+2. Crie `gates/G_CLI_HELP_CONSISTENCIA.py` (gate raiz, mesmo padrão de
+   `gates/G_HARNESS_COMPAT.py` e `gates/G_DRIFT_NUCLEO_COMPARTILHADO.py` já
+   existentes nesse mesmo diretório — leia um deles primeiro para seguir o
+   estilo). Use `ast.parse` (não regex ingênua) para: (a) extrair todas as
+   flags definidas via `.add_argument(...)` em cada arquivo; (b) localizar
+   citações de flags (`--palavra`) SOMENTE dentro de strings que são
+   argumento direto de uma chamada `print(...)` ou de uma exceção construída
+   dentro de um `raise ...(...)` — essa restrição de escopo é deliberada:
+   elimina por construção os falsos positivos de citações de flags de
+   ferramentas externas (`subprocess.run(["git", ...])`), variáveis CSS
+   (`--primary: #2563eb;`) e docstrings/comentários explicando conceitos
+   genéricos, sem precisar de uma lista de exclusão por caso. Compare as
+   flags citadas contra as definidas; divergência = gate reprova, apontando
+   arquivo, linha e o trecho exato.
+
+3. Rode o gate contra TODOS os arquivos com `ArgumentParser` das 4
+   ferramentas — não assuma que são poucos, faça
+   `grep -rl "ArgumentParser" tools/*/scripts` (e `tools/*/aidd_forge` /
+   equivalente do aidd-forge) primeiro para ter a lista real e completa.
+   Investigue manualmente qualquer divergência que o gate acusar antes de
+   decidir se é bug real ou falso positivo — não crie exceção sem entender
+   a causa.
+
+4. Se restar algum falso positivo legítimo (ex.: uma flag de ferramenta
+   externa citada como aviso dentro de um `print()`, não como flag própria),
+   documente em `gates/allowlist_cli_help.json` (mesmo padrão de
+   `gates/allowlist_segredos.json`) com justificativa — nunca use a
+   allowlist só para silenciar o gate sem entender o caso.
+
+5. Prove que o gate detecta o bug de verdade: reverta temporariamente a
+   correção do item 1, rode o gate e confirme que ele reprova apontando a
+   linha exata; reaplique a correção e confirme que volta a passar. Reporte
+   os dois outputs reais.
+
+6. Registre o gate em `ecossistema.py` (`cmd_audit`, raiz) como mais um gate
+   determinístico da bateria, e documente em `AGENTS.md`.
+
+7. Escreva testes automatizados do próprio gate (arquivo
+   `gates/test_g_cli_help_consistencia.py`): um caso sintético inconsistente
+   que precisa fazer o gate reprovar, um caso são que precisa passar, e um
+   teste por cada classe de falso positivo (subprocess externo, CSS não
+   impresso, docstring genérica) confirmando que continuam corretamente
+   ignorados.
+
+8. Rode e cole o resultado real de: `python ecossistema.py audit` (raiz) e
+   as suítes completas de `aidd-forge`, `aidd-master`, `aidd-enterprise`,
+   `aidd-generator`. Todos precisam passar sem regressão.
+
+REGRAS DE ESCOPO — NÃO FAÇA: não toque em nenhum outro arquivo; não crie
+heurísticas frágeis por caso quando uma restrição de escopo estrutural
+resolve; não faça `git commit`/`git push`.
+
+ENTREGÁVEL: lista de arquivos alterados, evidência real (comando + output)
+de cada item acima, e qualquer desvio necessário da Definição de Pronto
+reportado explicitamente em vez de decidido sozinho.
+```
+
+---
+
 ## Veredito
 
 **Implementação:**
