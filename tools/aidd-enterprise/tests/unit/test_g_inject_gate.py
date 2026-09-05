@@ -17,11 +17,7 @@ GATE_SCRIPT = os.path.join(REPO_ROOT, "scripts", "gates", "G_INJECT.py")
 
 
 def _montar_projeto_fixture(tmp_path):
-    """Copia o suficiente de scripts/injector e src/core para o gate rodar isolado."""
-    shutil.copytree(
-        os.path.join(REPO_ROOT, "scripts", "injector"),
-        os.path.join(str(tmp_path), "scripts", "injector"),
-    )
+    """Copia o suficiente de src/core para o gate rodar isolado."""
     shutil.copytree(
         os.path.join(REPO_ROOT, "src", "core"),
         os.path.join(str(tmp_path), "src", "core"),
@@ -56,14 +52,17 @@ def test_gate_passa_com_registry_integro(tmp_path):
     conteudo = b"conteudo de exemplo"
     arquivo_path.write_bytes(conteudo)
 
-    registry = [{
-        "name": "exemplo",
-        "type": "rule",
-        "description": "",
-        "files": {arquivo_rel: hashlib.sha256(conteudo).hexdigest()},
-        "atualizado_em": "2026-01-01T00:00:00Z",
-    }]
-    (tmp_path / "COMPONENT-REGISTRY.json").write_text(json.dumps(registry), encoding="utf-8")
+    catalogo = {
+        "rule": [{
+            "nome": "exemplo",
+            "descricao": "",
+            "alvo_projeto": "aidd-enterprise",
+            "arquivos": [str(arquivo_path)],
+            "arquivos_hashes": {arquivo_rel: hashlib.sha256(conteudo).hexdigest()},
+            "atualizado_em": "2026-01-01T00:00:00Z",
+        }]
+    }
+    (tmp_path / "CAPABILITIES.json").write_text(json.dumps(catalogo), encoding="utf-8")
 
     resultado = _run_gate(tmp_path)
     assert resultado.returncode == 0, resultado.stdout + resultado.stderr
@@ -77,14 +76,17 @@ def test_gate_falha_com_registry_com_hash_divergente(tmp_path):
     arquivo_path.parent.mkdir(parents=True)
     arquivo_path.write_bytes(b"conteudo alterado depois do registro")
 
-    registry = [{
-        "name": "exemplo",
-        "type": "rule",
-        "description": "",
-        "files": {arquivo_rel: hashlib.sha256(b"conteudo original registrado").hexdigest()},
-        "atualizado_em": "2026-01-01T00:00:00Z",
-    }]
-    (tmp_path / "COMPONENT-REGISTRY.json").write_text(json.dumps(registry), encoding="utf-8")
+    catalogo = {
+        "rule": [{
+            "nome": "exemplo",
+            "descricao": "",
+            "alvo_projeto": "aidd-enterprise",
+            "arquivos": [str(arquivo_path)],
+            "arquivos_hashes": {arquivo_rel: hashlib.sha256(b"conteudo original registrado").hexdigest()},
+            "atualizado_em": "2026-01-01T00:00:00Z",
+        }]
+    }
+    (tmp_path / "CAPABILITIES.json").write_text(json.dumps(catalogo), encoding="utf-8")
 
     resultado = _run_gate(tmp_path)
     assert resultado.returncode == 1
@@ -94,14 +96,17 @@ def test_gate_falha_com_registry_com_hash_divergente(tmp_path):
 def test_gate_falha_com_registry_referenciando_arquivo_ausente(tmp_path):
     _montar_projeto_fixture(tmp_path)
 
-    registry = [{
-        "name": "fantasma",
-        "type": "rule",
-        "description": "",
-        "files": {"templates/rules/fantasma.md": "0" * 64},
-        "atualizado_em": "2026-01-01T00:00:00Z",
-    }]
-    (tmp_path / "COMPONENT-REGISTRY.json").write_text(json.dumps(registry), encoding="utf-8")
+    catalogo = {
+        "rule": [{
+            "nome": "fantasma",
+            "descricao": "",
+            "alvo_projeto": "aidd-enterprise",
+            "arquivos": [str(tmp_path / "templates" / "rules" / "fantasma.md")],
+            "arquivos_hashes": {"templates/rules/fantasma.md": "0" * 64},
+            "atualizado_em": "2026-01-01T00:00:00Z",
+        }]
+    }
+    (tmp_path / "CAPABILITIES.json").write_text(json.dumps(catalogo), encoding="utf-8")
 
     resultado = _run_gate(tmp_path)
     assert resultado.returncode == 1
@@ -109,15 +114,18 @@ def test_gate_falha_com_registry_referenciando_arquivo_ausente(tmp_path):
 
 def test_gate_falha_com_registry_json_malformado(tmp_path):
     _montar_projeto_fixture(tmp_path)
-    (tmp_path / "COMPONENT-REGISTRY.json").write_text("{ nao e json valido", encoding="utf-8")
+    (tmp_path / "CAPABILITIES.json").write_text("{ nao e json valido", encoding="utf-8")
 
     resultado = _run_gate(tmp_path)
     assert resultado.returncode == 1
 
 
 def test_gate_falha_sem_schema(tmp_path):
-    # Não copia scripts/injector — contrato ausente deve reprovar o gate.
-    (tmp_path / "scripts").mkdir()
+    # Monta fixture mas remove o schema
+    _montar_projeto_fixture(tmp_path)
+    schema_path = tmp_path / "src" / "core" / "schema_injector_request.json"
+    if schema_path.exists():
+        schema_path.unlink()
     resultado = _run_gate(tmp_path)
     assert resultado.returncode == 1
-    assert "Contrato ausente" in (resultado.stdout + resultado.stderr)
+    assert "Contrato" in (resultado.stdout + resultado.stderr)

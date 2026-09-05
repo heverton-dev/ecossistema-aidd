@@ -830,36 +830,59 @@ def _default_component_content(tipo: str, nome: str, descricao: str) -> str:
 
 
 def run_inject(tipo, nome, base_dir=".", descricao="", content=None, content_file=None,
-                command=None, mcp_args=None, mcp_env=None, files_json=None, dry_run=False):
+                command=None, mcp_args=None, mcp_env=None, files_json=None, dry_run=False,
+                sobrescrever=False):
     """Motor compartilhado de injeção — usado pelo comando CLI 'inject' e pelo IntentRouter PT-BR."""
-    scripts_dir = os.path.dirname(os.path.abspath(__file__))
-    if scripts_dir not in sys.path:
-        sys.path.insert(0, scripts_dir)
-    from injector import aidd_core_injector as injector_core
+    root_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    src_core = os.path.join(root_dir, "src", "core")
+    src_dir = os.path.join(root_dir, "src")
+    for d in (src_core, src_dir):
+        if d not in sys.path:
+            sys.path.insert(0, d)
 
-    component = {"type": tipo, "name": nome, "description": descricao}
+    from profiles_registry import resolver_destinos
+    from materializador import materializar
+    from sincronizador_harness import sincronizar
+
+    component = {
+        "tipo": tipo,
+        "nome": nome,
+        "descricao": descricao or f"Componente '{nome}' ({tipo}) injetado via CLI AIDD.",
+        "alvo_projeto": "aidd-enterprise",
+    }
 
     if tipo in ("skill", "rule", "spec", "agent", "hook"):
         if content_file:
             with open(content_file, "r", encoding="utf-8") as f:
-                component["content"] = f.read()
+                component["conteudo"] = f.read()
         elif content:
-            component["content"] = content
+            component["conteudo"] = content
         else:
-            component["content"] = _default_component_content(tipo, nome, descricao)
+            component["conteudo"] = _default_component_content(tipo, nome, descricao)
     elif tipo == "mcp":
         if not command:
             print("[ERRO] type 'mcp' exige --mcp-command (ex: --mcp-command python).")
             sys.exit(1)
-        component["mcp"] = {"command": command, "args": mcp_args or [], "env": mcp_env or {}}
+        component["command"] = command
+        component["args"] = mcp_args or []
+        component["env"] = mcp_env or {}
     elif tipo == "config":
         if not files_json:
             print("[ERRO] type 'config' exige --files-json apontando para um JSON {caminho: conteudo}.")
             sys.exit(1)
         with open(files_json, "r", encoding="utf-8") as f:
-            component["files"] = json.load(f)
+            component["arquivos"] = json.load(f)
 
-    resultado = injector_core.materialize(component, base_dir=base_dir, dry_run=dry_run)
+    resolucao_result = resolver_destinos(component, base_dir)
+    if not resolucao_result.sucesso:
+        print("=" * 80)
+        print(f"🧩 [INJECTOR] Injeção de componente: {tipo} '{nome}'")
+        print("=" * 80)
+        print(f"[FAIL] ❌ {resolucao_result.erro}")
+        sys.exit(1)
+    resolucao = resolucao_result.valor
+
+    resultado = materializar(component, resolucao, sobrescrever=sobrescrever, dry_run=dry_run)
 
     print("=" * 80)
     if dry_run:
@@ -874,15 +897,43 @@ def run_inject(tipo, nome, base_dir=".", descricao="", content=None, content_fil
             print(f"  - {problema}")
         sys.exit(1)
 
-    for caminho in resultado.valor:
+    if dry_run:
+        destinos = resultado.valor if isinstance(resultado.valor, list) else resultado.valor.get("destinos", [])
+        for caminho in destinos:
+            print(f"  [+] {caminho}")
+        print(f"\n[OK] SUCESSO: {len(destinos)} arquivo(s) simulados (dry-run).")
+        return resultado
+
+    arquivos = resultado.valor if isinstance(resultado.valor, list) else resultado.valor.get("arquivos_criados", [])
+    for caminho in arquivos:
         print(f"  [+] {caminho}")
-    print(f"\n[OK] SUCESSO: {len(resultado.valor)} arquivo(s) {'simulados (dry-run)' if dry_run else 'materializados e sincronizados'}.")
+
+    sync_result = sincronizar(component, resolucao, arquivos)
+    if not sync_result.sucesso:
+        print(f"\n⚠️  [AVISO] Sincronização multi-harness parcial: {sync_result.erro}")
+
+    print(f"\n[OK] SUCESSO: {len(arquivos)} arquivo(s) materializados e sincronizados.")
     return resultado
 
 
 def cmd_inject(args):
     """Comando CLI 'inject' — injeta e sincroniza um componente em todos os harnesses."""
     ensure_environment()
+    if getattr(args, "remover", False):
+        root_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+        src_core = os.path.join(root_dir, "src", "core")
+        if src_core not in sys.path:
+            sys.path.insert(0, src_core)
+        from materializador import remover_componente
+        target_dir = getattr(args, "dir", ".")
+        res = remover_componente(args.tipo, args.nome, target_dir)
+        if res.sucesso:
+            print(f"🗑️ [SUCESSO] Componente '{args.nome}' ({args.tipo}) removido com sucesso de {target_dir}.")
+            sys.exit(0)
+        else:
+            print(f"[FAIL] ❌ {res.codigo}: {res.erro}")
+            sys.exit(1)
+
     mcp_args = [a for a in (args.mcp_args.split(",") if args.mcp_args else []) if a]
     mcp_env = {}
     if args.mcp_env:
@@ -898,50 +949,54 @@ def cmd_inject(args):
     )
 
 
-def _slugify(texto: str) -> str:
-    """Converte texto livre em PT-BR para um slug ^[a-z][a-z0-9-]*$."""
-    texto = unicodedata.normalize("NFKD", texto.strip().lower()).encode("ascii", "ignore").decode("ascii")
-    texto = re.sub(r"[^a-z0-9]+", "-", texto).strip("-")
-    partes = [p for p in texto.split("-") if p][:4]
-    slug = "-".join(partes)
-    if not slug or not slug[0].isalpha():
-        slug = f"componente-{slug}" if slug else "componente"
-    return slug
+def _tentar_injecao_por_linguagem_natural(raw_prompt: str, base_dir: str = ".") -> bool:
+    """Reconhece pedidos PT-BR de injeção de componente antes do fallback para 'plan'."""
+    root_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    src_core = os.path.join(root_dir, "src", "core")
+    src_dir = os.path.join(root_dir, "src")
+    for d in (src_core, src_dir):
+        if d not in sys.path:
+            sys.path.insert(0, d)
+    try:
+        from intent_router import IntentRouter
+        from detector_camada import detectar_de_texto
+    except ImportError:
+        return False
 
+    intent = IntentRouter().parse_intent_result(raw_prompt)
+    if intent.action != "inject":
+        return False
 
-_INTENT_VERBOS = re.compile(
-    r"\b(adicion\w*|cri[ae]r?|criando|gera\w*|nov[ao]s?|quero|preciso|instala\w*)\b",
-    re.IGNORECASE,
-)
+    payload_result = detectar_de_texto(raw_prompt, alvo_projeto="aidd-enterprise")
+    if not payload_result.sucesso:
+        print(f"[ERRO] {payload_result.codigo}: {payload_result.erro}")
+        candidatos = (payload_result.detalhes or {}).get("candidatos")
+        if candidatos:
+            print(f"        Candidatos possíveis: {', '.join(candidatos)}")
+        else:
+            print("        Use o comando explícito: python scripts/aidd.py inject <tipo> <nome>")
+        sys.exit(1)
 
-_INTENT_KEYWORD_PATTERNS = [
-    ("skill", re.compile(r"\bskill\s+(?:de\s+|para\s+)?([a-zA-Z0-9À-ÿ][\w\-À-ÿ ]{1,60})", re.IGNORECASE)),
-    ("mcp", re.compile(r"\bmcp\s+(?:de\s+|para\s+)?([a-zA-Z0-9À-ÿ][\w\-À-ÿ ]{1,60})", re.IGNORECASE)),
-    ("rule", re.compile(r"\bregra\s+(?:de\s+|para\s+)?([a-zA-Z0-9À-ÿ][\w\-À-ÿ ]{1,60})", re.IGNORECASE)),
-    ("spec", re.compile(r"\b(?:especifica[cç][aã]o|spec)\s+(?:de\s+|para\s+)?([a-zA-Z0-9À-ÿ][\w\-À-ÿ ]{1,60})", re.IGNORECASE)),
-    ("config", re.compile(r"\bconfigura[cç][aã]o\s+(?:de\s+|para\s+)?([a-zA-Z0-9À-ÿ][\w\-À-ÿ ]{1,60})", re.IGNORECASE)),
-    ("hook", re.compile(r"\bhook\s+(?:de\s+|para\s+)?([a-zA-Z0-9À-ÿ][\w\-À-ÿ ]{1,60})", re.IGNORECASE)),
-    ("agent", re.compile(r"\b(?:agente|subagente)\s+(?:de\s+|para\s+)?([a-zA-Z0-9À-ÿ][\w\-À-ÿ ]{1,60})", re.IGNORECASE)),
-]
+    payload = payload_result.valor
+    print(f"[IntentRouter] Intenção detectada: inject '{payload['tipo']}' → '{payload['nome']}'")
+    run_inject(
+        tipo=payload["tipo"],
+        nome=payload["nome"],
+        base_dir=base_dir,
+        descricao=payload["descricao"],
+    )
+    return True
 
 
 def parse_natural_language_intent(prompt: str, base_dir: str = "."):
     """Ponto de entrada por Linguagem Natural.
 
     Roteia para o Universal Component Injector (inject) quando o pedido
-    descreve claramente um componente (ex: "adicione uma skill de X",
-    "novo mcp de Y", "crie uma regra de Z"). Caso nenhum padrão de injeção
+    descreve claramente um componente. Caso nenhum padrão de injeção
     seja identificado, cai no fluxo padrão de Plano / SPEC (Fase 1.5).
     """
-    if _INTENT_VERBOS.search(prompt):
-        for tipo, pattern in _INTENT_KEYWORD_PATTERNS:
-            m = pattern.search(prompt)
-            if m:
-                nome = _slugify(m.group(1))
-                print(f"[IntentRouter] Intenção detectada: inject '{tipo}' → '{nome}'")
-                run_inject(tipo, nome, base_dir=base_dir, descricao=prompt.strip())
-                return
-
+    if _tentar_injecao_por_linguagem_natural(prompt, base_dir=base_dir):
+        return
     cmd_plan(prompt, base_dir=base_dir, auto_apply=False)
 
 
@@ -1054,6 +1109,7 @@ def main():
     p_inject.add_argument("--mcp-env", default=None, help="[mcp] Variáveis de ambiente no formato CHAVE=valor,CHAVE2=valor2")
     p_inject.add_argument("--files-json", default=None, help="[config] Caminho de um JSON {caminho: conteudo}")
     p_inject.add_argument("--dry-run", action="store_true", help="Simula a injeção sem escrever no filesystem")
+    p_inject.add_argument("--remover", action="store_true", help="Remove um componente previamente injetado")
     p_inject.add_argument("--dir", default=".", help="Diretório do projeto")
 
     args = parser.parse_args()

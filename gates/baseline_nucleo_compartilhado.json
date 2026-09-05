@@ -8,6 +8,10 @@
     "cqrs.py": { "esperado_identico": true, "motivo": null },
     "database.py": { "esperado_identico": true, "motivo": null },
     "database_adapter.py": { "esperado_identico": true, "motivo": null },
+    "detector_camada.py": {
+      "esperado_identico": false,
+      "motivo": "Configuracao de _PROJETO_PADRAO aponta para o projeto local ('aidd-enterprise' vs 'aidd-master')."
+    },
     "events.py": { "esperado_identico": true, "motivo": null },
     "fleet_discovery.py": { "esperado_identico": true, "motivo": null },
     "fuzzing.py": { "esperado_identico": true, "motivo": null },
@@ -18,6 +22,10 @@
     "jobs.py": { "esperado_identico": true, "motivo": null },
     "local_first.py": { "esperado_identico": true, "motivo": null },
     "logs.py": { "esperado_identico": true, "motivo": null },
+    "materializador.py": {
+      "esperado_identico": false,
+      "motivo": "aidd-enterprise gera hooks em formato JSON e limpa o destino canonico especifico componentes/aidd-enterprise/hooks/{nome}/{nome}.json, enquanto aidd-master gera hook.sh."
+    },
     "mcp_server.py": {
       "esperado_identico": false,
       "motivo": "aidd-master tem register_injected_tools() (integracao com o Injetor Universal) que aidd-enterprise nao tem - divergencia de feature, nao bug."
@@ -27,9 +35,14 @@
     "openapi.py": { "esperado_identico": true, "motivo": null },
     "opentelemetry.py": { "esperado_identico": true, "motivo": null },
     "outbox_worker.py": { "esperado_identico": true, "motivo": null },
+    "profiles_registry.py": {
+      "esperado_identico": false,
+      "motivo": "aidd-master suporta perfil aidd-master enquanto aidd-enterprise define perfil aidd-enterprise cobrindo os 5 harnesses para skill e hook (.claude, .agent, .mimocode, .gemini, .skills/.hooks)."
+    },
     "result.py": { "esperado_identico": true, "motivo": null },
     "saga.py": { "esperado_identico": true, "motivo": null },
     "security.py": { "esperado_identico": true, "motivo": null },
+    "sincronizador_harness.py": { "esperado_identico": true, "motivo": null },
     "subagent_engine.py": { "esperado_identico": true, "motivo": null },
     "token_revocation.py": { "esperado_identico": true, "motivo": null },
     "webhooks.py": { "esperado_identico": true, "motivo": null }

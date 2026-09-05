@@ -156,7 +156,25 @@ _PATTERNS: List[IntentPattern] = [
         default_options={},
         description="Execução de gates mecânicos",
     ),
+    # Injetor Universal de Componentes (skill / mcp / rule / spec / config / agent / hook)
+    IntentPattern(
+        action="inject",
+        regex=re.compile(
+            r"(?:adicione|adicionar|cri(?:e|ar)|nov[oa]|ger(?:e|ar)|instal(?:e|ar))\s+"
+            r"(?:um[a]?\s+)?"
+            r"(?:skill|habilidade|mcp|regras?|rules?|specs?|especifica[cç][aã]o|"
+            r"configs?|configura[cç][aã]o|agentes?|hooks?|ganchos?)\b.*",
+            re.IGNORECASE,
+        ),
+        default_options={},
+        description="Injeção de componente (skill/mcp/rule/spec/config/agent/hook) via linguagem natural PT-BR",
+    ),
 ]
+
+
+# === INJECTOR:AGENTS START (mantido pelo Sincronizador de Harness — não editar manualmente) ===
+_INJECTED_AGENT_PATTERNS: List[IntentPattern] = []
+# === INJECTOR:AGENTS END ===
 
 
 def _extract_modules(raw: Optional[str]) -> List[str]:
@@ -215,7 +233,7 @@ class IntentRouter:
     """
 
     def __init__(self, extra_patterns: Optional[List[IntentPattern]] = None):
-        self._patterns: List[IntentPattern] = list(_PATTERNS)
+        self._patterns: List[IntentPattern] = list(_PATTERNS) + list(_INJECTED_AGENT_PATTERNS)
         if extra_patterns:
             self._patterns.extend(extra_patterns)
 
