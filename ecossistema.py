@@ -94,8 +94,8 @@ def cmd_orchestrate(args):
     )
     parser.add_argument("plano", help="Diretorio do plano (ex: docs/planos/skill-gerador-planos-auditoria)")
     parser.add_argument("--dry-run", action="store_true", help="Apenas gera e imprime o Flight Plan, sem tocar em git ou spawnar agentes.")
-    parser.add_argument("--resume", action="store_true", help="(futuro) Retoma um Flight Plan previamente iniciado.")
-    parser.add_argument("--yes", action="store_true", help="(futuro) Nao pede confirmacao.")
+    parser.add_argument("--resume", action="store_true", help="Retoma um Flight Plan previamente iniciado (crash recovery).")
+    parser.add_argument("--yes", action="store_true", help="Nao pede confirmacao interativa do Plano de Voo.")
     parser.add_argument(
         "--harness", default="mimo",
         choices=["mimo", "opencode", "claude", "agy"],
@@ -107,12 +107,13 @@ def cmd_orchestrate(args):
     )
     ns = parser.parse_args(args)
 
-    orchestrator_scripts = os.path.join(
-        ROOT_DIR, "componentes", "compartilhado", "skills", "orca-plan-orchestrator", "scripts"
+    orchestrator_root = os.path.join(
+        ROOT_DIR, "componentes", "compartilhado", "skills", "orca-plan-orchestrator"
     )
-    sys.path.insert(0, orchestrator_scripts)
+    sys.path.insert(0, orchestrator_root)
 
-    from flight_plan import gerar_plano_de_voo, renderizar_plano_de_voo
+    from scripts.flight_plan import gerar_plano_de_voo, renderizar_plano_de_voo
+    from scripts.orchestrator_engine import executar_orquestracao
 
     profiles_path = ns.profiles
     if profiles_path is None:
@@ -121,21 +122,23 @@ def cmd_orchestrate(args):
             "orca-plan-orchestrator", ".orca", "harness_profiles.json.example",
         )
 
-    try:
-        data = gerar_plano_de_voo(ns.plano, profiles_path, harness=ns.harness)
-    except (FileNotFoundError, ValueError, KeyError) as exc:
-        print(f"Erro ao gerar Flight Plan: {exc}")
-        return 1
-
-    rendered = renderizar_plano_de_voo(data)
-    print(rendered)
-
     if ns.dry_run:
+        try:
+            data = gerar_plano_de_voo(ns.plano, profiles_path, harness=ns.harness)
+        except (FileNotFoundError, ValueError, KeyError) as exc:
+            print(f"Erro ao gerar Flight Plan: {exc}")
+            return 1
+        print(renderizar_plano_de_voo(data))
         print("[DRY-RUN] Flight Plan gerado com sucesso. Nenhuma acao executada.")
         return 0
 
-    print("[TODO] Modo executivo ainda nao implementado.")
-    return 0
+    try:
+        return executar_orquestracao(
+            ns.plano, profiles_path, harness=ns.harness, resume=ns.resume, yes=ns.yes,
+        )
+    except (FileNotFoundError, ValueError, KeyError, RuntimeError) as exc:
+        print(f"Erro na orquestracao: {exc}")
+        return 1
 
 
 def cmd_plan(args):
