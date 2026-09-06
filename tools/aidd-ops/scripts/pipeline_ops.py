@@ -324,11 +324,46 @@ def cmd_preflight(args_list):
         return 1
 
 
+def cmd_deploy(args_list):
+    """Subcomando deploy: orquestra o pipeline completo de 10 fases (Pacote 9)."""
+    from pipeline_ops_deploy import DeployOrchestrator
+
+    parser = argparse.ArgumentParser(
+        prog="pipeline_ops deploy",
+        description="AIDD-Ops — Orquestrador de Deploy Ponta a Ponta de Infraestrutura (Gap 5, Pacote 9)",
+    )
+    parser.add_argument("ambiente", help="Identificador do ambiente alvo (ex: piloto-clinicas, staging, prod)")
+    parser.add_argument("--host", default="127.0.0.1", help="IP ou hostname da VPS alvo (default: 127.0.0.1)")
+    parser.add_argument("--plano", default=None, help="Caminho para PLANO-INFRAESTRUTURA.json (opcional)")
+    parser.add_argument("--domain", default=None, help="Domínio ou subdomínio de borda (ex: app.exemplo.com)")
+    parser.add_argument("--user", default="root", help="Usuário SSH (default: root)")
+    parser.add_argument("--port", type=int, default=22, help="Porta SSH (default: 22)")
+    parser.add_argument("--real", action="store_true", help="Executa contra infraestrutura real (padrão é --dry-run seguro)")
+    args = parser.parse_args(args_list)
+
+    dry_run = not args.real
+
+    orchestrator = DeployOrchestrator(
+        ambiente=args.ambiente,
+        host=args.host,
+        plano_path=args.plano,
+        dominio=args.domain,
+        user_ssh=args.user,
+        port_ssh=args.port,
+        dry_run=dry_run,
+    )
+
+    res = orchestrator.executar_deploy_completo()
+    return 0 if res.sucesso else 1
+
+
 def main():
     if len(sys.argv) > 1 and sys.argv[1] == "bootstrap":
         sys.exit(cmd_bootstrap(sys.argv[2:]))
     if len(sys.argv) > 1 and sys.argv[1] == "preflight":
         sys.exit(cmd_preflight(sys.argv[2:]))
+    if len(sys.argv) > 1 and sys.argv[1] == "deploy":
+        sys.exit(cmd_deploy(sys.argv[2:]))
 
     parser = argparse.ArgumentParser(
         prog="pipeline_ops",
