@@ -64,6 +64,8 @@ Basta clonar o repositório e abrir no seu assistente ou IDE preferido (Antigrav
 - **`/generate <ideia>`**: Constrói um novo sistema do zero com arquitetura e testes.
 - **`/master <modulo>`**: Adiciona uma nova fatia vertical de negócio (`src/modules/<modulo>/`).
 - **`/enterprise <tipo> <nome>`**: Injeta um componente homologado com verificação de integridade SHA-256.
+- **`/orchestrate [plano]`**: Orquestra a execução multi-agente de planos fatiados via ORCA ADE com git worktrees efêmeras.
+- **`/plan <nome>`**: Cria e valida deterministicamente novos planos estruturados em `docs/planos/`.
 
 ### 2. Via CLI Unificada (`ecossistema.py`)
 
@@ -71,8 +73,14 @@ Basta clonar o repositório e abrir no seu assistente ou IDE preferido (Antigrav
 # Ver o status de todas as ferramentas e componentes
 python ecossistema.py status
 
-# Rodar a auditoria e Quality Gates de integridade global
+# Rodar a auditoria e os 7 Meta-Quality Gates globais
 python ecossistema.py audit
+
+# Orquestrar plano via ORCA ADE (Modo Interativo por padrão, controle do desenvolvedor)
+python ecossistema.py orchestrate docs/planos/<plano>
+
+# Criar e gerenciar planos
+python ecossistema.py plan init <nome>
 
 # Disparar o aidd-forge
 python ecossistema.py forge init meu-novo-projeto
@@ -94,32 +102,37 @@ python ecossistema.py enterprise inject skill auth-oauth2
 ```text
 ecossistema-aidd/
 ├── AGENTS.md                               ──► Governança canônica unificada e fonte única de verdade
+├── MEMORY.md                               ──► Memória estruturada e contexto consolidado do ecossistema
 ├── PLANO-EXECUCAO-ESTRUTURADO.json         ──► Telemetria e persistência estruturada do ecossistema
 ├── README.md                               ──► Portal central do ecossistema
 ├── ecossistema.py                          ──► CLI unificada de orquestração
 │
-├── .agent/                                 ──► Compatibilidade canônica (Antigravity, OpenCode, MimoCode)
-│   ├── commands/                           ──► Slash commands: forge, generate, master, enterprise
+├── componentes/                            ──► Fonte física canônica única de todos os componentes
+│   ├── compartilhado/                      ──► Skills, comandos e utilitários universais
+│   ├── aidd-master/                        ──► Componentes específicos do AIDD Master
+│   ├── aidd-enterprise/                    ──► Componentes específicos do AIDD Enterprise
+│   └── aidd-generator/                     ──► Componentes específicos do AIDD Generator
+│
+├── .agent/                                 ──► Compatibilidade gerada (Antigravity, OpenCode, MimoCode)
+│   ├── commands/                           ──► Slash commands: forge, generate, master, enterprise, orchestrate, plan
 │   └── skills/                             ──► Skills espelhadas para o ambiente
 │
 ├── .claude/                                ──► Configurações para Claude Code
 │   ├── CLAUDE.md                           ──► Apontamento para ../AGENTS.md
-│   └── commands/                           ──► Comandos /forge, /generate, /master, /enterprise
+│   ├── commands/                           ──► Slash commands espelhados
+│   └── skills/                             ──► Skills espelhadas para Claude Code
 │
 ├── .cursor/                                ──► Regras de contexto para Cursor IDE
-│   └── rules/                              ──► Diretivas operacionais
+│   └── rules/                              ──► Diretivas operacionais (aidd.md apontando para AGENTS.md)
 │
-├── gates/                                  ──► Meta-Quality Gates determinísticos
-│   ├── G_ECOSSISTEMA_INTEGRIDADE.py        ──► Auditoria automatizada de integridade estrutural e sintática
+├── gates/                                  ──► Os 7 Meta-Quality Gates determinísticos
+│   ├── G_ECOSSISTEMA_INTEGRIDADE.py        ──► Integridade física, sintática e estrutural
 │   ├── G_DRIFT_NUCLEO_COMPARTILHADO.py     ──► Drift entre aidd-master e aidd-enterprise
-│   ├── G_HARNESS_COMPAT.py                 ──► Sincronismo de artefatos multi-harness da raiz
-│   └── G_SEGREDOS.py                       ──► Varredura de credenciais hardcoded
-│
-├── skills/                                 ──► Definições oficiais das 4 skills universais
-│   ├── aidd-forge-runner/                  ──► Runner do AIDD Forge
-│   ├── aidd-generator-runner/              ──► Runner do AIDD Generator
-│   ├── aidd-master-runner/                 ──► Runner do AIDD Master
-│   └── aidd-enterprise-runner/             ──► Runner do AIDD Enterprise
+│   ├── G_HARNESS_COMPAT.py                 ──► Sincronismo multi-harness universal
+│   ├── G_SEGREDOS.py                       ──► Varredura de credenciais hardcoded
+│   ├── G_CLI_HELP_CONSISTENCIA.py          ──► Consistência entre flags e help da CLI
+│   ├── G_COMPONENTE_AGNOSTICO.py           ──► Cobertura agnóstica de componentes
+│   └── G_ZERO_HEADLESS.py                  ──► Bloqueio de subagentes desassistidos
 │
 ├── tools/                                  ──► Os 4 Projetos Homologados (100% intactos e autocontidos)
 │   ├── aidd-forge/                         ──► Repositório completo do AIDD Forge
@@ -127,8 +140,10 @@ ecossistema-aidd/
 │   ├── aidd-master/                        ──► Repositório completo do AIDD Master
 │   └── aidd-enterprise/                    ──► Repositório completo do AIDD Enterprise
 │
-└── planos/                                 ──► Planos táticos e de orquestração
-    └── PLANO-EXECUCAO-ECOSSISTEMA-AIDD.md  ──► Especificação do ecossistema
+└── docs/                                   ──► Documentação, planos, testes e relatórios
+    ├── planos/                             ──► Planos táticos e de orquestração
+    ├── protocolos/                         ──► Protocolos canônicos de governança
+    └── testes/                             ──► Baterias de testes e relatórios de auditoria
 ```
 
 ---
