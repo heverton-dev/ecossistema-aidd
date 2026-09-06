@@ -65,6 +65,12 @@ Cada comando possui contrato formal executável em qualquer harness (Antigravity
 - **Ação:** Injeta e valida componentes certificados com hashes SHA-256 e conformidade Zero-Trust.
 - **CLI Equivalente:** python ecossistema.py enterprise inject <tipo> <nome>
 
+### /orchestrate [plano]
+- **Skill:** skills/orca-plan-orchestrator
+- **Ação:** Orquestra a execução paralela e determinística de planos de software via ORCA ADE com git worktrees efêmeras e hooks reativos.
+- **CLI Equivalente:** python ecossistema.py orchestrate [plano]
+
+
 ---
 
 ## 4. AUDITORIA E META-QUALITY GATES

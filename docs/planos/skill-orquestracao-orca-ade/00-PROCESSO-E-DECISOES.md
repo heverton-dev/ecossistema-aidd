@@ -50,11 +50,15 @@ Tabela de correção (usada em todos os itens desta pasta, substitui o `harness_
 
 | # | Item | Status | Documento |
 |---|---|---|---|
-| 1 | Núcleo mecânico (parser/state/worktree) | ⏳ Prompt gerado, aguardando execução | `01-nucleo-mecanico-parser-state-worktree.md` |
-| 2 | Gate auditor integrado | ⏳ Prompt gerado, aguardando execução | `02-gate-auditor-integracao.md` |
-| 3 | Harness profiles + agent spawner (sem disparo real) | ⏳ Prompt gerado, aguardando execução | `03-harness-profiles-agent-spawner.md` |
-| 4 | Hooks + circuit breaker | ⏳ Prompt gerado, aguardando execução | `04-hooks-circuit-breaker.md` |
-| 5 | CLI orchestrate + Plano de Voo | ⏳ Prompt gerado, aguardando execução | `05-cli-orchestrate-plano-de-voo.md` |
-| 6 | Validação end-to-end com agentes reais | 🔒 Bloqueado — aguardando Itens 1-5 concluídos E aprovação explícita separada de gasto de LLM | `06-validacao-end-to-end-agentes-reais.md` |
+| 1 | Núcleo mecânico (parser/state/worktree) | ✅ Concluído (Auditado) | `01-nucleo-mecanico-parser-state-worktree.md` |
+| 2 | Gate auditor integrado | ✅ Concluído (Auditado) | `02-gate-auditor-integracao.md` |
+| 3 | Harness profiles + agent spawner (sem disparo real) | ✅ Concluído (Auditado) | `03-harness-profiles-agent-spawner.md` |
+| 4 | Hooks + circuit breaker | ✅ Concluído (Auditado) | `04-hooks-circuit-breaker.md` |
+| 5 | CLI orchestrate + Plano de Voo | ✅ Concluído (Auditado) | `05-cli-orchestrate-plano-de-voo.md` |
+| 6 | Validação end-to-end com agentes reais | ✅ Concluído (Auditado E2E com Stub / Zero Token) | `06-validacao-end-to-end-agentes-reais.md` |
+
+
+
 
 Esta tabela é atualizada para ✅ Concluído só depois que o resultado real de cada item existir, auditado por reprodução.
+
