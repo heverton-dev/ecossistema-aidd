@@ -255,9 +255,80 @@ def cmd_bootstrap(args_list):
         return 1
 
 
+def cmd_preflight(args_list):
+    """Subcomando preflight: executa a bateria E2E contra o ambiente alvo."""
+    from core.preflight import PreflightRunner
+
+    parser = argparse.ArgumentParser(
+        prog="pipeline_ops preflight",
+        description="AIDD-Ops — Bateria de Testes Pré-Produção E2E (Pre-Flight, Gap 4)",
+    )
+    parser.add_argument("ambiente", help="Identificador do ambiente alvo ou domínio/IP (ex: staging, prod, app.exemplo.com)")
+    parser.add_argument("--host", default=None, help="Hostname específico para testes de DNS/SSL (opcional)")
+    parser.add_argument("--timeout", type=float, default=5.0, help="Timeout em segundos para verificações de rede (default: 5.0)")
+    parser.add_argument("--retries", type=int, default=3, help="Número de tentativas com retry (default: 3)")
+    parser.add_argument("--retry-interval", type=float, default=1.0, help="Intervalo em segundos entre tentativas (default: 1.0)")
+    parser.add_argument("--servicos", nargs="*", default=[], help="Pares servico=url para testar healthz (ex: traefik=http://localhost:8080/ping)")
+    parser.add_argument("--webhook-url", default=None, help="Endpoint de webhook para simulação ponta a ponta")
+    parser.add_argument("--subdominios", nargs="*", default=[], help="Lista de subdomínios para resolução DNS")
+    parser.add_argument("--json", action="store_true", help="Imprime exclusivamente o relatório JSON estruturado")
+    parser.add_argument("--dry-run", action="store_true", help="Simula execução em modo dry-run")
+    args = parser.parse_args(args_list)
+
+    servicos_list = []
+    for s in args.servicos:
+        if "=" in s:
+            nome_s, url_s = s.split("=", 1)
+            servicos_list.append({"nome": nome_s.strip(), "url": url_s.strip()})
+
+    alvo_host = args.host or args.ambiente
+
+    runner = PreflightRunner(
+        alvo=alvo_host,
+        timeout=args.timeout,
+        retries=args.retries,
+        retry_interval=args.retry_interval,
+    )
+
+    res = runner.executar_bateria(
+        servicos_healthz=servicos_list,
+        subdominios_dns=args.subdominios or ([alvo_host] if alvo_host else []),
+        webhook_url=args.webhook_url,
+        hostname_ssl=alvo_host,
+    )
+
+    dados_relatorio = res.valor if res.sucesso else res.detalhes
+
+    if args.json:
+        print(json.dumps(dados_relatorio, indent=2, ensure_ascii=False))
+        return 0 if res.sucesso else 1
+
+    print("=" * 72)
+    print(f" [AIDD-Ops] Bateria Pré-Produção Pre-Flight E2E")
+    print(f" Ambiente: {args.ambiente} | Alvo: {alvo_host} | Timeout: {args.timeout}s (retries: {args.retries})")
+    print("=" * 72)
+
+    resumo = dados_relatorio.get("resumo", {})
+    print(f"\nResumo: {resumo.get('passou', 0)} passou, {resumo.get('falhou', 0)} falhou, {resumo.get('nao_aplicavel', 0)} N/A")
+
+    for ch in dados_relatorio.get("checagens", []):
+        tag = f"[{ch['status'].upper()}]"
+        print(f"  - {ch['nome']:<12} {tag:<12} -> {ch['detalhes']}")
+
+    print("=" * 72)
+    if res.sucesso:
+        print("[SUCESSO] Todos os testes pré-voo foram homologados.")
+        return 0
+    else:
+        print(f"[ERRO] {res.codigo}: {res.erro}")
+        return 1
+
+
 def main():
     if len(sys.argv) > 1 and sys.argv[1] == "bootstrap":
         sys.exit(cmd_bootstrap(sys.argv[2:]))
+    if len(sys.argv) > 1 and sys.argv[1] == "preflight":
+        sys.exit(cmd_preflight(sys.argv[2:]))
 
     parser = argparse.ArgumentParser(
         prog="pipeline_ops",
