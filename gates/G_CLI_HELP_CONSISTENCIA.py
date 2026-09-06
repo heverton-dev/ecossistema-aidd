@@ -65,6 +65,7 @@ ARQUIVOS_AUDITADOS = [
     "tools/aidd-generator/scripts/gates/G_CYBERSECURITY_OWASP.py",
     "tools/aidd-generator/scripts/gates/AUDITAR_COMPARATIVO_HARNESS.py",
     "tools/aidd-generator/scripts/gates/G_BLOQUEAR_SEGREDOS.py",
+    "tools/aidd-ops/scripts/pipeline_ops.py",
 ]
 
 # Flags que o próprio argparse injeta automaticamente ou que são universais

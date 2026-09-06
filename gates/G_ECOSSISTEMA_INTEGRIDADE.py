@@ -5,8 +5,8 @@ ECOSSISTEMA AIDD — QUALITY GATE: G_ECOSSISTEMA_INTEGRIDADE
 =============================================================================
 Validação determinística de integridade do meta-repositório ecossistema-aidd.
 Audita:
-1. Existência e integridade estrutural das 4 ferramentas em tools/
-2. Existência e conformidade das 4 skills universais (YAML frontmatter)
+1. Existência e integridade estrutural das 5 ferramentas em tools/
+2. Existência e conformidade das 5 skills universais (YAML frontmatter)
 3. Presença dos Slash Commands para multi-harness (.agent/ e .claude/)
 4. Validação sintática (ast.parse) dos scripts centrais
 5. Presença de governança canônica (AGENTS.md, .gitignore)
@@ -25,21 +25,24 @@ TOOLS_REQUIRED = [
     "aidd-forge",
     "aidd-generator",
     "aidd-master",
-    "aidd-enterprise"
+    "aidd-enterprise",
+    "aidd-ops"
 ]
 
 SKILLS_REQUIRED = [
     "aidd-forge-runner",
     "aidd-generator-runner",
     "aidd-master-runner",
-    "aidd-enterprise-runner"
+    "aidd-enterprise-runner",
+    "aidd-ops-runner"
 ]
 
 COMMANDS_REQUIRED = [
     "forge.md",
     "generate.md",
     "master.md",
-    "enterprise.md"
+    "enterprise.md",
+    "ops.md"
 ]
 
 def audit():

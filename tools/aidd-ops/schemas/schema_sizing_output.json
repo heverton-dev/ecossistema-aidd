@@ -1,0 +1,88 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "aidd-ops-sizing-output",
+  "title": "AIDD-Ops Fase 3 — Sizing Output",
+  "description": "Contrato de saída da Fase 3 (Sizing). Especificação de VPS e lista de bancos lógicos necessários.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["vps", "bancos_logicos", "ferramentas_com_banco", "ferramentas_sem_banco", "fontes_consultadas"],
+  "properties": {
+    "vps": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["vcpu", "ram_gb", "disco_gb"],
+      "properties": {
+        "vcpu": {
+          "type": "number",
+          "description": "Total de vCPUs recomendadas",
+          "minimum": 1
+        },
+        "ram_gb": {
+          "type": "number",
+          "description": "Total de RAM em GB recomendada",
+          "minimum": 0.5
+        },
+        "disco_gb": {
+          "type": "number",
+          "description": "Total de disco em GB recomendado",
+          "minimum": 10
+        }
+      }
+    },
+    "bancos_logicos": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["ferramenta", "nome_banco"],
+        "properties": {
+          "ferramenta": {
+            "type": "string",
+            "description": "Nome da ferramenta que requer o banco"
+          },
+          "nome_banco": {
+            "type": "string",
+            "description": "Nome lógico do banco a ser criado na instância PostgreSQL centralizada"
+          }
+        }
+      },
+      "description": "Lista de bancos lógicos a serem criados sob demanda"
+    },
+    "ferramentas_com_banco": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Ferramentas que necessitam de banco relacional"
+    },
+    "ferramentas_sem_banco": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Ferramentas que NÃO necessitam de banco relacional"
+    },
+    "fontes_consultadas": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["ferramenta", "url", "requisitos_encontrados"],
+        "properties": {
+          "ferramenta": {
+            "type": "string"
+          },
+          "url": {
+            "type": "string",
+            "format": "uri"
+          },
+          "requisitos_encontrados": {
+            "type": "boolean",
+            "description": "Se a documentação oficial continha requisitos explícitos de vCPU/RAM/disco"
+          },
+          "notas": {
+            "type": "string",
+            "description": "Notas sobre a fonte (ex: requisitos não documentados oficialmente)"
+          }
+        }
+      },
+      "description": "Fontes oficiais consultadas para cada ferramenta"
+    }
+  }
+}

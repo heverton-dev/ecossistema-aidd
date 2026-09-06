@@ -1,0 +1,107 @@
+{
+  "versao": "1.0.0",
+  "descricao": "Catálogo de nichos de mercado do AIDD-Ops MVP. Fonte: PLANO ARQUITETURAL NOVA FEATURE AIDD-OPS.md §6.",
+  "nichos": [
+    {
+      "slug": "clinicas",
+      "nome_exibicao": "Clínicas & Odontologia",
+      "ferramentas": [
+        { "nome": "Typebot" },
+        { "nome": "Twenty CRM" },
+        { "nome": "Chatwoot" },
+        { "nome": "Evolution API" },
+        { "nome": "Cal.com" }
+      ],
+      "palavras_chave": [
+        "clinica", "clinicas", "clínica", "clínicas",
+        "odontologia", "dentista", "dentistas",
+        "consulta medica", "consultorio", "consultório",
+        "paciente", "prontuario", "prontuário",
+        "agendamento medico", "agendamento clinico",
+        "no-show", "no show", "faltas"
+      ]
+    },
+    {
+      "slug": "delivery",
+      "nome_exibicao": "Lanchonetes & Delivery",
+      "ferramentas": [
+        { "nome": "Typebot" },
+        { "nome": "Evolution API" },
+        { "nome": "Odoo" },
+        { "nome": "Listmonk" }
+      ],
+      "palavras_chave": [
+        "delivery", "lanchonete", "lanchonetes",
+        "restaurante", "restaurantes",
+        "pedido", "pedidos",
+        "cardapio", "cardápio",
+        "ifood", "rappi", "marketplace",
+        "comida", "delivery de comida",
+        "kds", "cozinha"
+      ]
+    },
+    {
+      "slug": "farmacias",
+      "nome_exibicao": "Farmácias & Drogarias",
+      "ferramentas": [
+        { "nome": "Typebot" },
+        { "nome": "Chatwoot" }
+      ],
+      "palavras_chave": [
+        "farmacia", "farmácia", "farmacias", "farmácias",
+        "drogaria", "drogarias",
+        "receita medica", "receita médica",
+        "medicamento", "medicamentos",
+        "remedio", "remédio", "remedios", "remédios",
+        "estoque", "reposicao", "reposição",
+        "paciente cronico", "paciente crônico",
+        "prescricao", "prescrição"
+      ]
+    },
+    {
+      "slug": "b2b_industrial",
+      "nome_exibicao": "Indústrias & Vendas B2B",
+      "ferramentas": [
+        { "nome": "EspoCRM" },
+        { "nome": "Mautic" },
+        { "nome": "Documenso" },
+        { "nome": "ERPNext" }
+      ],
+      "palavras_chave": [
+        "industria", "indústria", "industrias", "indústrias",
+        "b2b", "vendas b2b", "business to business",
+        "industrial", "industrializacao",
+        "orcamento tecnico", "orçamento técnico",
+        "nutricao", "nutrição", "nutricao longa",
+        "contrato", "contratos",
+        "assatura digital", "assinatura digital",
+        "faturamento", "nota fiscal",
+        "venda tecnica", "venda técnica",
+        "rfq", "request for quotation",
+        "cotacao", "cotação"
+      ]
+    },
+    {
+      "slug": "energia_solar",
+      "nome_exibicao": "Energia Solar",
+      "ferramentas": [
+        { "nome": "Typebot" },
+        { "nome": "Twenty CRM" },
+        { "nome": "Cal.com" },
+        { "nome": "Documenso" }
+      ],
+      "palavras_chave": [
+        "energia solar", "solar", "fotovoltaica",
+        "placa solar", "placas solares",
+        "kwp", "kwatt", "kilowatt",
+        "painel solar", "painéis solares",
+        "conta de luz", "conta de energia",
+        "geracao de energia", "geração de energia",
+        "inversor", "inversores",
+        "visita tecnica", "visita técnica",
+        "pre-proposta", "pré-proposta",
+        "roi", "retorno sobre investimento"
+      ]
+    }
+  ]
+}

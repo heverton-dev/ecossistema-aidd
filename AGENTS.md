@@ -8,7 +8,7 @@
 
 ## 1. VISÃO GERAL DO ECOSSISTEMA
 
-O **Ecossistema AIDD** unifica 4 ferramentas complementares de Engenharia Agêntica de Software em um monorepo modular e desacoplado:
+O **Ecossistema AIDD** unifica 5 ferramentas complementares de Engenharia Agêntica de Software em um monorepo modular e desacoplado:
 
 | Ferramenta | Diretório | Papel Principal | Slash Command |
 | :--- | :--- | :--- | :--- |
@@ -16,6 +16,7 @@ O **Ecossistema AIDD** unifica 4 ferramentas complementares de Engenharia Agênt
 | **AIDD Generator** | 	ools/aidd-generator | Fábrica autônoma de software (Pipeline 8 fases a partir de ideia natural) | /generate <ideia> |
 | **AIDD Master** | 	ools/aidd-master | Suíte modular com Clean Architecture, Fatias Verticais e SQLite WAL | /master <modulo> |
 | **AIDD Enterprise** | 	ools/aidd-enterprise | Plataforma de Missão Crítica com Injeção de Componentes SHA-256 e Zero-Trust | /enterprise <tipo> <nome> |
+| **AIDD Ops** | 	ools/aidd-ops | Meta-Orquestrador Agêntico de Infraestrutura — MVP em construção, ver docs/planos/integracao-aidd-ops/ | (em construção — Pacote 3) |
 
 ---
 
@@ -80,7 +81,7 @@ Cada comando possui contrato formal executável em qualquer harness (Antigravity
 ## 4. AUDITORIA E META-QUALITY GATES
 
 O ecossistema dispõe de Quality Gates globais em gates/:
-- gates/G_ECOSSISTEMA_INTEGRIDADE.py: Audita a integridade física, sintática e estrutural dos 4 subprojetos e das skills.
+- gates/G_ECOSSISTEMA_INTEGRIDADE.py: Audita a integridade física, sintática e estrutural dos 5 subprojetos e das skills.
 - gates/G_DRIFT_NUCLEO_COMPARTILHADO.py: Detecta divergência não documentada entre os arquivos de núcleo compartilhados por linhagem entre aidd-master e aidd-enterprise (baseline em gates/baseline_nucleo_compartilhado.json).
 - gates/G_HARNESS_COMPAT.py: Verifica que os artefatos multi-harness da raiz (comandos, skills, arquivos-ponteiro) permanecem sincronizados entre si.
 - gates/G_SEGREDOS.py: Escaneia todo o repositório rastreado pelo git em busca de credenciais hardcoded (allowlist auditada em gates/allowlist_segredos.json).

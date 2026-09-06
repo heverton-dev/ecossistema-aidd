@@ -4,17 +4,19 @@
 ECOSSISTEMA AIDD — CLI UNIFICADA DO META-REPOSITÓRIO
 =============================================================================
 Ponto único de entrada e orquestração do ecossistema-aidd.
-Roteia comandos para as 4 ferramentas integradas:
+Roteia comandos para as 5 ferramentas integradas:
   - forge      -> tools/aidd-forge
   - generate   -> tools/aidd-generator
   - master     -> tools/aidd-master
   - enterprise -> tools/aidd-enterprise
+  - aidd-ops   -> tools/aidd-ops (MVP Fases 1-3: Intake, Curadoria, Sizing)
   - audit      -> gates/G_ECOSSISTEMA_INTEGRIDADE.py
   - status     -> Resumo do status do ecossistema
 """
 
 import argparse
 import os
+import shutil
 import sys
 import subprocess
 
@@ -59,6 +61,13 @@ def cmd_enterprise(args):
     env = {"PYTHONPATH": ent_dir}
     cmd = [sys.executable, aidd_script] + args
     return run_command(cmd, cwd=ent_dir, env=env)
+
+def cmd_ops(args):
+    ops_dir = os.path.join(TOOLS_DIR, "aidd-ops")
+    pipeline_script = os.path.join(ops_dir, "scripts", "pipeline_ops.py")
+    env = {"PYTHONPATH": ops_dir}
+    cmd = [sys.executable, pipeline_script] + args
+    return run_command(cmd, cwd=ops_dir, env=env)
 
 def cmd_components(args):
     sys.path.insert(0, os.path.join(ROOT_DIR, "scripts"))
@@ -126,7 +135,6 @@ def cmd_orchestrate(args):
     harness_escolhido = ns.harness
     if harness_escolhido is None:
         if sys.stdin.isatty():
-            import shutil
             candidatos = ["claude", "agy", "mimo", "opencode"]
             print("\n[ORCA ADE] Seleção Interativa de Harness:")
             disponiveis = []
@@ -209,7 +217,8 @@ def cmd_status(args):
         ("aidd-forge", "Bootstrap, governança, fatiamento e context-purge"),
         ("aidd-generator", "Fábrica autônoma de software (Pipeline 8 fases)"),
         ("aidd-master", "Suíte Modular com Fatias Verticais e SQLite WAL"),
-        ("aidd-enterprise", "Missão crítica, conformidade SHA-256 e Zero-Trust")
+        ("aidd-enterprise", "Missão crítica, conformidade SHA-256 e Zero-Trust"),
+        ("aidd-ops", "Meta-Orquestrador Agêntico de Infraestrutura (Pacote 3)")
     ]
     for name, desc in tools:
         path = os.path.join(TOOLS_DIR, name)
@@ -222,6 +231,7 @@ def cmd_status(args):
         "aidd-generator-runner",
         "aidd-master-runner",
         "aidd-enterprise-runner",
+        "aidd-ops-runner",
         "orca-plan-orchestrator",
         "planos-auditoria-runner",
         "componentes-runner"
@@ -251,6 +261,7 @@ Comandos disponíveis:
   generate <args>     Executa o pipeline do aidd-generator (ex: generate "Minha Ideia")
   master <args>       Executa comandos do aidd-master (ex: master add-module faturamento)
   enterprise <args>   Executa comandos do aidd-enterprise (ex: enterprise inject skill auth)
+  ops <args>          Executa o pipeline do aidd-ops (ex: ops "<texto>" --pasta <dest>)
   components sync|verify --tipo <tipo|todos> [--ferramenta <nome>] [--dry-run]
                       Sincroniza/verifica distribuicao fisica multi-harness de
                       componentes (gates/manifesto_harnesses.json)
@@ -281,6 +292,7 @@ def main():
         "generate": cmd_generate,
         "master": cmd_master,
         "enterprise": cmd_enterprise,
+        "ops": cmd_ops,
         "components": cmd_components,
         "orchestrate": cmd_orchestrate,
         "plan": cmd_plan,
