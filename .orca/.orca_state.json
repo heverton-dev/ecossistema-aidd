@@ -55,13 +55,11 @@
       "updated_at": 1788736000.0
     },
     "templates-canonicos-e-generator-flag": {
-      "state": "IN_PROGRESS",
-      "branch": "ephemeral/orca-f8-templates",
-      "worktree": ".orca/worktrees/f8-templates",
+      "state": "MERGED",
+      "branch": null,
       "commit_sha": null,
-      "actor_id": "general-3",
       "pid": null,
-      "updated_at": 1788730000.0
+      "updated_at": 1788737000.0
     },
     "validacao-e2e-piloto-real": {
       "state": "PENDING",
