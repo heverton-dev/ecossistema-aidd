@@ -39,6 +39,9 @@ O **Ecossistema AIDD** unifica 5 ferramentas complementares de Engenharia Agênt
    - Absolutamente TUDO (skills, mcps, specs, hooks, slash commands, fluxos, configurações) deve operar de forma 100% agnóstica a ambiente de execução, sistema operacional, harness (OpenCode, Antigravity, Claude, Mimo, Freebuff, Hermes, DeepSeek, etc.) e provedor de LLM.
    - Nenhuma dependência proprietária ou vendor lock-in é permitida no ecossistema.
    - **Protocolo Permanente de Agnosticidade:** consulte e siga estritamente o checklist canônico em `docs/protocolos/PROTOCOLO-AGNOSTICIDADE-COMPONENTES.md`.
+7. **Desenvolvedor no Controle (Zero Subagentes Headless Paralelos):**
+   - É estritamente proibido ao assistente disparar subagentes paralelos invisíveis via tools (`task create`, `task start`, `invoke_subagent`, `background_task`) ou via subprocessos ocultos de CLI que concorram sem observabilidade.
+   - Toda execução de worktree opera em modo interativo sequencial governado pelo desenvolvedor no terminal, eliminando saturação de contexto, rate limits e timeouts silenciosos.
 
 ---
 

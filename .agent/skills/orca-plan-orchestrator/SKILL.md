@@ -36,8 +36,10 @@ Quando o comando `/orchestrate [plano]` for invocado:
 3. **Compilação e Apresentação do Plano de Voo:**
    - Gere e apresente o Plano de Voo em tabela Markdown exibindo: Número, Nome da Frente, Branch Efêmera, Worktree, Harness Executor atribuído e Comando correspondente.
 
-4. **Confirmação e Disparo:**
-   - Aguarde a confirmação explícita do usuário para disparar a execução determinística da orquestração.
+4. **Confirmação e Modo Interativo Sequencial:**
+   - ⛔ **PROIBIÇÃO TOTAL DE SUBAGENTES/BACKGROUND TASKS:** É terminantemente proibido ao assistente chamar as tools `task create`, `task start`, `invoke_subagent` ou disparar tarefas em background.
+   - O papel do assistente nesta skill encerra-se na compilação do Plano de Voo, na criação da worktree e na apresentação das instruções para o desenvolvedor executar a frente no terminal.
+   - Toda execução é estritamente **sequencial (uma frente por vez)** governada no terminal pelo desenvolvedor, eliminando saturação de contexto e loops de subprocessos.
 
 ## Uso via CLI
 

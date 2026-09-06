@@ -1,7 +1,7 @@
 {
   "version": 1,
   "created_at": 1788728053.5816507,
-  "updated_at": 1788728053.5816507,
+  "updated_at": 1788730000.0,
   "fronts": {
     "decisao-escopo-e-mvp": {
       "state": "MERGED",
@@ -25,11 +25,13 @@
       "updated_at": 1788728053.5816507
     },
     "ssh-runner-execucao-remota": {
-      "state": "PENDING",
-      "branch": null,
+      "state": "IN_PROGRESS",
+      "branch": "ephemeral/orca-f4-ssh-runner",
+      "worktree": ".orca/worktrees/f4-ssh-runner",
       "commit_sha": null,
+      "actor_id": "general-1",
       "pid": null,
-      "updated_at": 1788728053.5816507
+      "updated_at": 1788730000.0
     },
     "mcps-borda-cloudflare-docker": {
       "state": "PENDING",
@@ -39,11 +41,13 @@
       "updated_at": 1788728053.5816507
     },
     "gate-infra-compose": {
-      "state": "PENDING",
-      "branch": null,
+      "state": "IN_PROGRESS",
+      "branch": "ephemeral/orca-f6-gate-infra",
+      "worktree": ".orca/worktrees/f6-gate-infra",
       "commit_sha": null,
+      "actor_id": "general-2",
       "pid": null,
-      "updated_at": 1788728053.5816507
+      "updated_at": 1788730000.0
     },
     "gate-preflight-e2e": {
       "state": "PENDING",
@@ -53,11 +57,13 @@
       "updated_at": 1788728053.5816507
     },
     "templates-canonicos-e-generator-flag": {
-      "state": "PENDING",
-      "branch": null,
+      "state": "IN_PROGRESS",
+      "branch": "ephemeral/orca-f8-templates",
+      "worktree": ".orca/worktrees/f8-templates",
       "commit_sha": null,
+      "actor_id": "general-3",
       "pid": null,
-      "updated_at": 1788728053.5816507
+      "updated_at": 1788730000.0
     },
     "validacao-e2e-piloto-real": {
       "state": "PENDING",
