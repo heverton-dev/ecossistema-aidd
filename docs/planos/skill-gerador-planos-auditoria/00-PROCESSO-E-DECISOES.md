@@ -31,6 +31,6 @@ Diagnóstico rápido do que precisa ser formalizado → Definição de Pronto tr
 
 | # | Item | Status | Documento |
 |---|---|---|---|
-| 1 | Criar skill `planos-auditoria-runner` | ⏳ Prompt gerado, aguardando execução | `01-criar-skill-planos-auditoria-runner.md` |
+| 1 | Criar skill `planos-auditoria-runner` | ✅ Concluído | `01-criar-skill-planos-auditoria-runner.md` |
 
 Esta tabela é atualizada para ✅ Concluído só depois que a auditoria por reprodução real confirmar o resultado.

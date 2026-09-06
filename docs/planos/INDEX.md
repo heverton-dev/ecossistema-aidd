@@ -9,6 +9,7 @@
 | Evolucao Notas Auditoria | `evolucao-notas-auditoria/` |
 | Correcao Riscos Ecossistema Aidd | `PLANO-CORRECAO-RISCOS-ECOSSISTEMA-AIDD.md` |
 | Refinamento Notas Auditoria | `refinamento-notas-auditoria/` |
+| Skill Gerador Planos Auditoria | `skill-gerador-planos-auditoria/` |
 | Skill Orquestracao Orca Ade | `skill-orquestracao-orca-ade/` |
 
 ## 🔶 Em execução
@@ -25,7 +26,6 @@
 | Correcao Skills Agnosticas | `PLANO-CORRECAO-SKILLS-AGNOSTICAS.md` |
 | Evolucao Notas Auditoria | `PLANO-EVOLUCAO-NOTAS-AUDITORIA.md` |
 | Execucao Ecossistema Aidd | `PLANO-EXECUCAO-ECOSSISTEMA-AIDD.md` |
-| Skill Gerador Planos Auditoria | `skill-gerador-planos-auditoria/` |
 
 ---
 
