@@ -224,6 +224,7 @@ def cmd_audit(args):
         "G_SEGREDOS.py",
         "G_CLI_HELP_CONSISTENCIA.py",
         "G_COMPONENTE_AGNOSTICO.py",
+        "G_INFRA_COMPOSE.py",
     ]
     for gate in gates:
         gate_script = os.path.join(ROOT_DIR, "gates", gate)

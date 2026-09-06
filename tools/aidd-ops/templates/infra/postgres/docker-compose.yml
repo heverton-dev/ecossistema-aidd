@@ -14,7 +14,7 @@ services:
     environment:
       POSTGRES_USER: ${POSTGRES_ADMIN_USER:-postgres_admin}
       POSTGRES_PASSWORD: ${POSTGRES_ADMIN_PASSWORD:?Defina POSTGRES_ADMIN_PASSWORD no .env}
-      POSTGRES_MULTIPLE_DATABASES: ${POSTGRES_MULTIPLE_DATABASES:?Defina os bancos no .env (ex: authentik_db,twenty_db,chatwoot_db,calcom_db)}
+      POSTGRES_MULTIPLE_DATABASES: "${POSTGRES_MULTIPLE_DATABASES:?Defina os bancos no .env (ex: authentik_db,twenty_db,chatwoot_db,calcom_db)}"
       PGDATA: /var/lib/postgresql/data/pgdata
     volumes:
       - postgres_data:/var/lib/postgresql/data
