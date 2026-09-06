@@ -32,11 +32,11 @@ O ciclo de vida do AIDD Master Enterprise opera em **5 Fases Sequenciais**, comb
   2. Executa a auto-descoberta de frota (`FleetDiscovery`), mapeando executáveis disponíveis no `$PATH`: Claude Code, Antigravity (`agy`), Codex, Gemini CLI, OpenCode, MimoCode ou Ollama.
   3. Prepara diretórios de persistência SQLite WAL e chaves criptográficas JWT.
 
-### Fase 1: Concepção em Linguagem Natural (Cognição Zero-Friction)
+### Fase 1: Concepção em Linguagem Natural (Zero Token)
 * **Comando:** `/compose <módulos>` ou `python scripts/aidd.py plan "<descrição>"`
 * **Objetivo:** Traduzir a intenção de negócio do usuário em especificações de fatias verticais.
 * **Ações:**
-  1. O **Intent Router** (`src/core/intent_router.py`) analisa o pedido do usuário em PT-BR (ex: *"preciso de uma arquitetura para crm, erp e billing"*).
+  1. O texto em linguagem natural (ex: *"preciso de uma arquitetura para crm, erp e billing"*) é processado por **casamento de palavras-chave contra lista fixa de domínios, SEM uso de LLM/IA generativa** (`KNOWN_DOMAINS` em `scripts/aidd.py`, ~20 domínios como `crm`, `erp`, `faturamento`, `vendas`, etc.). O Intent Router (`src/core/intent_router.py`) aplica regex de correspondência para identificar domínios conhecidos; se nenhum for reconhecido, um fallback heurístico extrai palavras significativas ou usa módulos padrão fixos.
   2. Extrai os domínios de negócio e gera contratos prévios (`SPEC-<modulo>.md`) com teto estrito de ~1.200 tokens por fatia.
 
 ### Fase 2: Composição via Subagentes Efêmeros (Context-Purge Engine)
