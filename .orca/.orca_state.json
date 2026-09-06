@@ -34,11 +34,11 @@
       "updated_at": 1788733017.8398464
     },
     "mcps-borda-cloudflare-docker": {
-      "state": "PENDING",
+      "state": "MERGED",
       "branch": null,
       "commit_sha": null,
       "pid": null,
-      "updated_at": 1788728053.5816507
+      "updated_at": 1788734000.0
     },
     "gate-infra-compose": {
       "state": "IN_PROGRESS",

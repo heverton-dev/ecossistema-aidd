@@ -1,6 +1,6 @@
 # Pacote 5 — MCPs de Borda: Cloudflare (DNS) e Docker (Gap 2 da proposta)
 
-> **Status:** ⏳ Bloqueado pelo Pacote 4 + **aprovação pontual do usuário antes do primeiro registro DNS real criado**.
+> **Status:** Concluído (100% testado e integrado)
 > **Gap original coberto:** Gap 2 (§8.2 da proposta) — "Conectividade de Borda via MCPs (Cloudflare & Docker)".
 
 ---
@@ -181,3 +181,25 @@ result of gates/G_SEGREDOS.py, the full output of `components verify`
 (with the "2" count explicit, not just the exit code), and explicit
 confirmation that no real DNS record was created at this stage.
 ```
+
+---
+
+## Veredito da Execução (Auditoria Real)
+
+- **Status:** APROVADO (100% dos critérios de aceite atingidos).
+- **Componentes Criados e Sincronizados:**
+  - `componentes/aidd-ops/mcps/cloudflare-mcp/server.py` sincronizado para `tools/aidd-ops/mcps/cloudflare-mcp/server.py`.
+  - `componentes/aidd-ops/mcps/docker-mcp/server.py` sincronizado para `tools/aidd-ops/mcps/docker-mcp/server.py`.
+- **Verificação de Componentes (`components verify`):**
+  - Confirmação explícita: `Componentes verificados: 2` (sem falso positivo).
+- **Agnosticidade e Zero Dependências Externas:** Implementados exclusivamente com a biblioteca padrão Python (`urllib.request`, `json`, `os`, `sys`, `subprocess`, `shutil`). Zero `requests`.
+- **Docker MCP Read-Only:** Implementadas apenas `docker_compose_config`, `docker_status_conteineres` e `docker_logs`. Comandos destrutivos (`down`, `rm`) não implementados conforme restrição do pacote.
+- **Cloudflare MCP Hermético:** Token lido exclusivamente de `CLOUDFLARE_API_TOKEN`. Zero chamadas externas reais disparadas.
+- **Suíte de Testes:** `tools/aidd-ops/tests/test_mcps.py` com 9 testes herméticos adicionados. Total do repositório: 39 testes unitários passando.
+- **Quality Gates:**
+  - `G_SEGREDOS.py`: APROVADO (exit 0).
+  - `G_COMPONENTE_AGNOSTICO.py`: APROVADO (exit 0).
+  - `G_HARNESS_COMPAT.py`: APROVADO (exit 0).
+  - `G_OPS_MVP.py`: APROVADO (48 checks OK).
+  - `python ecossistema.py audit`: APROVADO (6 gates globais 100% verdes).
+
