@@ -1,4 +1,4 @@
-﻿# -*- coding: utf-8 -*-
+# -*- coding: utf-8 -*-
 """
 Bateria 1 — Orquestração Raiz (ecossistema.py + Meta-Quality Gates)
 Executa de forma determinística os 7 itens da Definição de Pronto, capturando
@@ -48,13 +48,15 @@ def main():
         "aidd-forge" in r1["stdout"] and "[OK] Instalado" in r1["stdout"] and
         "aidd-generator" in r1["stdout"] and
         "aidd-master" in r1["stdout"] and
-        "aidd-enterprise" in r1["stdout"]
+        "aidd-enterprise" in r1["stdout"] and
+        "aidd-ops" in r1["stdout"]
     )
     ok_skills = (
         "aidd-forge-runner" in r1["stdout"] and "[OK]" in r1["stdout"] and
         "aidd-generator-runner" in r1["stdout"] and
         "aidd-master-runner" in r1["stdout"] and
-        "aidd-enterprise-runner" in r1["stdout"]
+        "aidd-enterprise-runner" in r1["stdout"] and
+        "aidd-ops-runner" in r1["stdout"]
     )
     r1["passed"] = (r1["returncode"] == 0) and ok_tools and ok_skills
     results["item_1_status"] = r1
@@ -72,7 +74,7 @@ def main():
     results["item_2_status_testes"] = r2
     print(f"  -> Exit {r2['returncode']}, Plano atualizado: {plano_updated}, Passou: {r2['passed']}, Tempo: {r2['duration_sec']}s")
 
-    # 3. python ecossistema.py audit + 6 gates isolados
+    # 3. python ecossistema.py audit + 8 gates isolados
     print("[3/7] Testando: python ecossistema.py audit e cada gate isoladamente...")
     r3_audit = run_cmd([sys.executable, "ecossistema.py", "audit"])
     gates = [
@@ -82,6 +84,8 @@ def main():
         "G_SEGREDOS.py",
         "G_CLI_HELP_CONSISTENCIA.py",
         "G_COMPONENTE_AGNOSTICO.py",
+        "G_ZERO_HEADLESS.py",
+        "G_INFRA_COMPOSE.py",
     ]
     isolated_gates = {}
     all_isolated_passed = True

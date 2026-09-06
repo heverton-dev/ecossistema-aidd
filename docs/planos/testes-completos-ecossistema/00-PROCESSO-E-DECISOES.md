@@ -30,11 +30,12 @@ Cada Prompt de Execução instrui o executor a salvar cada tipo de artefato no l
 
 | # | Bateria | Ferramenta/Escopo | Documento |
 |---|---|---|---|
-| 1 | Orquestração raiz | `ecossistema.py` (status, audit, components sync/verify) + os 6 Meta-Quality Gates | `01-testes-ecossistema-raiz.md` |
+| 1 | Orquestração raiz | `ecossistema.py` (status, audit, components sync/verify) + os 8 Meta-Quality Gates | `01-testes-ecossistema-raiz.md` |
 | 2 | AIDD Master | `tools/aidd-master` — CLI completa (compose, add-module, inject com as 5 capacidades, plan/prompt, bench, heal, etc.) | `02-testes-aidd-master.md` |
 | 3 | AIDD Enterprise | `tools/aidd-enterprise` — mesma superfície de CLI que o Master, mais as diferenças reais (5 harnesses, hook `.json`, detecção de ambiguidade) | `03-testes-aidd-enterprise.md` |
 | 4 | AIDD Forge | `tools/aidd-forge` — `init`/`inject`, hook de pre-commit real, 7 gates instalados no projeto alvo | `04-testes-aidd-forge.md` |
 | 5 | AIDD Generator | `tools/aidd-generator` — pipeline completo de 8 fases, incluindo o Protocolo Delegado (fases 2/3/8) | `05-testes-aidd-generator.md` |
+| 6 | AIDD Ops | `tools/aidd-ops` — 5ª ferramenta (Intake, Curadoria, Sizing, SSH, MCPs, Gate Compose, Preflight e Deploy) | `06-testes-aidd-ops.md` |
 
 Cada documento segue a mesma estrutura interna: Contexto já investigado → Definição de Pronto → Prompt de Execução (autocontido, PT-BR) → Regras de escopo.
 
@@ -60,5 +61,6 @@ Cada documento segue a mesma estrutura interna: Contexto já investigado → Def
 | 3 | AIDD Enterprise | ✅ Concluído (executado 2026-09-06, PASSOU COM RESSALVAS — 1 achado grave, ver `docs/testes/relatorios/03_aidd_enterprise.md`) | `03-testes-aidd-enterprise.md` |
 | 4 | AIDD Forge | ✅ Concluído (executado 2026-09-06, APROVADO 11/11 — ver `docs/testes/relatorios/04_aidd_forge.md`) | `04-testes-aidd-forge.md` |
 | 5 | AIDD Generator | ✅ Concluído (executado 2026-09-06, PASSOU — score auto-crítica 88/100, ver `docs/testes/relatorios/05_aidd_generator.md`) | `05-testes-aidd-generator.md` |
+| 6 | AIDD Ops | ✅ Concluído (executado 2026-09-06, APROVADO 7/7 — ver `docs/testes/relatorios/06_aidd_ops.md`) | `06-testes-aidd-ops.md` |
 
 Esta tabela é atualizada para ✅ Concluído só depois que o relatório real da bateria existir em `docs/testes/relatorios/` com evidência de execução real.

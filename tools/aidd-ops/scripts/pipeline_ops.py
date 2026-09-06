@@ -220,9 +220,10 @@ def cmd_bootstrap(args_list):
     parser.add_argument("--port", type=int, default=22, help="Porta SSH (default: 22)")
     parser.add_argument("--key", default=None, help="Caminho da chave privada SSH (opcional)")
     parser.add_argument("--real", action="store_true", help="Executa contra o host real (padrão é --dry-run seguro)")
+    parser.add_argument("--dry-run", action="store_true", help="Executa em modo simulação seguro (padrão)")
     args = parser.parse_args(args_list)
 
-    dry_run = not args.real
+    dry_run = True if args.dry_run else (not args.real)
 
     print("=" * 72)
     print(" [AIDD-Ops] Bootstrapping Remoto via SSHRunner")
@@ -339,9 +340,10 @@ def cmd_deploy(args_list):
     parser.add_argument("--user", default="root", help="Usuário SSH (default: root)")
     parser.add_argument("--port", type=int, default=22, help="Porta SSH (default: 22)")
     parser.add_argument("--real", action="store_true", help="Executa contra infraestrutura real (padrão é --dry-run seguro)")
+    parser.add_argument("--dry-run", action="store_true", help="Executa em modo simulação seguro (padrão)")
     args = parser.parse_args(args_list)
 
-    dry_run = not args.real
+    dry_run = True if args.dry_run else (not args.real)
 
     orchestrator = DeployOrchestrator(
         ambiente=args.ambiente,
@@ -357,7 +359,44 @@ def cmd_deploy(args_list):
     return 0 if res.sucesso else 1
 
 
+def cmd_plan(argv: list) -> int:
+    parser = argparse.ArgumentParser(
+        prog="pipeline_ops plan",
+        description="Gera plano determinístico de infraestrutura (Intake, Curadoria e Sizing).",
+    )
+    parser.add_argument(
+        "texto",
+        nargs="?",
+        default=None,
+        help="Texto livre descrevendo o nicho de mercado (ex: 'Clínica com agendamento')",
+    )
+    parser.add_argument(
+        "--nicho",
+        default=None,
+        help="Slug explícito do nicho (clinicas, delivery, farmacias, b2b_industrial, energia_solar)",
+    )
+    parser.add_argument(
+        "--pasta",
+        default=None,
+        help="Diretório de destino para PLANO-INFRAESTRUTURA.json (default: temporário)",
+    )
+    args = parser.parse_args(argv)
+
+    if args.texto is None and args.nicho is None:
+        parser.error("Forneça um texto posicional ou use --nicho <slug>")
+
+    import tempfile
+    pasta = args.pasta
+    if not pasta:
+        pasta = tempfile.mkdtemp(prefix="aidd_ops_plan_")
+
+    os.makedirs(pasta, exist_ok=True)
+    return executar_pipeline(texto=args.texto or "", pasta_destino=pasta, nicho_explicito=args.nicho)
+
+
 def main():
+    if len(sys.argv) > 1 and sys.argv[1] == "plan":
+        sys.exit(cmd_plan(sys.argv[2:]))
     if len(sys.argv) > 1 and sys.argv[1] == "bootstrap":
         sys.exit(cmd_bootstrap(sys.argv[2:]))
     if len(sys.argv) > 1 and sys.argv[1] == "preflight":
@@ -367,41 +406,33 @@ def main():
 
     parser = argparse.ArgumentParser(
         prog="pipeline_ops",
-        description="AIDD-Ops MVP — Pipeline determinístico de 3 fases (Intake, Curadoria, Sizing)",
+        description="AIDD-Ops — Meta-Orquestrador Agêntico de Infraestrutura",
     )
+    subparsers = parser.add_subparsers(dest="subcomando", help="Subcomandos disponíveis")
+    subparsers.add_parser("plan", help="Gera plano de infraestrutura (Fases 1-3)")
+    subparsers.add_parser("bootstrap", help="Executa bootstrap de hardening e Docker em VPS via SSH")
+    subparsers.add_parser("preflight", help="Executa bateria E2E de preflight (Healthz, SSL, DNS, Webhook)")
+    subparsers.add_parser("deploy", help="Orquestra deploy E2E com Result monad e rollback")
+
     parser.add_argument(
         "texto",
         nargs="?",
         default=None,
-        help="Texto livre descrevendo o nicho de mercado (ex: 'Clínica odontológica com agendamento')",
+        help="Texto livre descrevendo o nicho (compatibilidade legada)",
     )
-    parser.add_argument(
-        "--nicho",
-        default=None,
-        help="Slug explícito do nicho (bypass do reconhecimento por texto). "
-             "Valores aceitos: clinicas, delivery, farmacias, b2b_industrial, energia_solar",
-    )
-    parser.add_argument(
-        "--pasta",
-        required=True,
-        help="Diretório de destino para PLANO-INFRAESTRUTURA.json (será criado se não existir)",
-    )
+    parser.add_argument("--nicho", default=None, help="Slug explícito do nicho")
+    parser.add_argument("--pasta", default=None, help="Diretório de destino")
+
     args = parser.parse_args()
 
-    # Validar: precisa ter texto OU --nicho
-    if args.texto is None and args.nicho is None:
-        parser.error("Forneça um texto posicional ou use --nicho <slug>")
+    if args.texto or args.nicho:
+        if not args.pasta:
+            parser.error("O uso legado requer a flag --pasta <diretorio>")
+        os.makedirs(args.pasta, exist_ok=True)
+        sys.exit(executar_pipeline(texto=args.texto or "", pasta_destino=args.pasta, nicho_explicito=args.nicho))
 
-    texto_entrada = args.texto or ""
-
-    os.makedirs(args.pasta, exist_ok=True)
-
-    exit_code = executar_pipeline(
-        texto=texto_entrada,
-        pasta_destino=args.pasta,
-        nicho_explicito=args.nicho,
-    )
-    sys.exit(exit_code)
+    parser.print_help()
+    sys.exit(0)
 
 
 if __name__ == "__main__":

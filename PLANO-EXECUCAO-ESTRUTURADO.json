@@ -80,7 +80,7 @@
     }
   ],
   "testes": {
-    "medido_em": "2026-09-06T20:26:44.940047+00:00",
+    "medido_em": "2026-09-06T22:50:15.115259+00:00",
     "metodo": "python -m pytest -q --tb=no em cada tools/<ferramenta>, parseado do resumo real (nao digitado a mao)",
     "por_ferramenta": {
       "aidd-forge": {
@@ -92,33 +92,36 @@
         "exit_code": 0
       },
       "aidd-generator": {
-        "status": "falhou",
-        "passed": 0,
+        "status": "ok",
+        "passed": 770,
         "failed": 0,
         "skipped": 0,
         "errors": 0,
-        "exit_code": 1
+        "exit_code": 0
       },
       "aidd-master": {
         "status": "ok",
-        "passed": 214,
+        "passed": 216,
         "failed": 0,
-        "skipped": 4,
+        "skipped": 2,
         "errors": 0,
         "exit_code": 0
       },
       "aidd-enterprise": {
         "status": "ok",
-        "passed": 203,
+        "passed": 205,
         "failed": 0,
-        "skipped": 4,
+        "skipped": 2,
         "errors": 0,
         "exit_code": 0
       },
       "aidd-ops": {
-        "status": "indeterminado",
-        "exit_code": 5,
-        "trecho": "=============\nplatform win32 -- Python 3.14.7, pytest-9.0.3, pluggy-1.6.0\nrootdir: C:\\Users\\trcnologia\\orca\\workspaces\\ecossistema-aidd\\aidd-ops\nconfigfile: pytest.ini\nplugins: anyio-4.14.1, cov-7.1.0\ncollected 0 items\n\n============================ no tests ran in 0.02s ============================\n"
+        "status": "ok",
+        "passed": 0,
+        "failed": 0,
+        "skipped": 0,
+        "errors": 0,
+        "exit_code": 0
       }
     }
   }
