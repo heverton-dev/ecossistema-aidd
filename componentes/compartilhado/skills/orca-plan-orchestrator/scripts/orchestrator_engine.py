@@ -10,7 +10,14 @@ Specs:
 Known limitation: a front caught mid-RUNNING by a crash/--resume is retried
 from scratch (stale worktree/branch purged, fresh dispatch) rather than
 resumed mid-process — exact process resume for arbitrary third-party CLI
-harnesses is not deterministically feasible.
+harnesses is not deterministically feasible, so partial in-progress work is
+discarded. Hardened against the sharpest edge of that gap: the front's
+agent pid is recorded while RUNNING, and a retry/resume kills that pid
+before purging (an orphaned child process — subprocess.Popen does not tie
+child lifetime to the parent — would otherwise hold file handles that make
+``git worktree remove`` fail silently). If the purge still fails, the front
+is marked FAILED with a clear reason instead of being silently re-dispatched
+into a confusing "worktree already exists" error.
 """
 
 from __future__ import annotations
@@ -121,13 +128,35 @@ def _touched_paths(worktree_path: Path, base_sha: str) -> list[str]:
     return [line for line in result.stdout.splitlines() if line.strip()]
 
 
-def _quarantine_purge_if_stale(front_name: str, repo_path: Path) -> None:
-    """Best-effort purge of a leftover worktree/branch before a retry."""
+def _quarantine_purge_if_stale(
+    front_name: str, repo_path: Path, pid: int | None = None,
+) -> tuple[bool, str]:
+    """Purge a leftover worktree/branch before a retry — hardened.
+
+    An orchestrator crash can leave the harness subprocess running as an
+    orphan (subprocess.Popen does not tie child lifetime to the parent on
+    its own), holding file handles inside the worktree that would make
+    ``git worktree remove`` fail silently. If a pid was recorded for this
+    front's last RUNNING attempt, it is killed first and given a brief
+    moment to release its handles.
+
+    Returns (ok, detail) — ok=False means the front must NOT be
+    re-dispatched this run (a confusing "worktree already exists" failure
+    downstream is worse than a clear, explicit FAILED here).
+    """
+    if pid:
+        interromper_processo(pid)
+        time.sleep(0.5)
+
     wt = repo_path / f"wt-{front_name}"
-    if wt.exists():
-        purgar_worktree(front_name, repo_path)
-    else:
+    if not wt.exists():
         _run_git(["branch", "-D", f"orca/{front_name}"], repo_path)
+        return True, "sem worktree residual"
+
+    result = purgar_worktree(front_name, repo_path)
+    if not result.ok:
+        return False, f"purga da worktree residual falhou: {result.stderr[:300]}"
+    return True, "worktree residual purgada"
 
 
 # ---------------------------------------------------------------------------
@@ -241,11 +270,11 @@ def _preservar_forensics(
 
 def _set_front_state(
     state_path: Path, state_lock: threading.Lock, front_name: str,
-    new_state: FrontState, commit_sha: str | None = None,
+    new_state: FrontState, commit_sha: str | None = None, pid: int | None = None,
 ) -> None:
     with state_lock:
         state = load_state(state_path)
-        state = update_front_state(state, front_name, new_state, commit_sha=commit_sha)
+        state = update_front_state(state, front_name, new_state, commit_sha=commit_sha, pid=pid)
         save_state(state, state_path)
         _write_atomic(state_path.parent / "memory.md", render_memory_md(state))
 
@@ -315,6 +344,9 @@ def _dispatch_front(
                 cwd=worktree_path,
                 stdout=log_fh,
                 stderr=subprocess.STDOUT,
+            )
+            _set_front_state(
+                state_path, state_lock, front_name, FrontState.RUNNING, pid=process.pid
             )
             agent_exit_code, health = _wait_with_circuit_breaker(
                 process, exec_log_path, breaker_config
@@ -422,6 +454,7 @@ def executar_orquestracao(
                     "state": FrontState.PENDING.value,
                     "branch": None,
                     "commit_sha": None,
+                    "pid": None,
                     "updated_at": time.time(),
                 }
         save_state(state, state_path)
@@ -461,7 +494,17 @@ def executar_orquestracao(
             continue
 
         if resume and action in (ResumeAction.RETRY, ResumeAction.RESUME_RUNNING):
-            _quarantine_purge_if_stale(name, resolved_repo)
+            stale_pid = state["fronts"][name].get("pid")
+            purge_ok, detail = _quarantine_purge_if_stale(name, resolved_repo, stale_pid)
+            if not purge_ok:
+                print(
+                    f"[ERRO] Frente '{name}': {detail}. Nao sera relancada nesta "
+                    "execucao — limpe a worktree residual manualmente e rode "
+                    "--resume novamente."
+                )
+                _set_front_state(state_path, state_lock, name, FrontState.FAILED)
+                results[name] = f"FAILED(stale_purge:{detail})"
+                continue
 
         threads.append(threading.Thread(
             target=_dispatch_front,

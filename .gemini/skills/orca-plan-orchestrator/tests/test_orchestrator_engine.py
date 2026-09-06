@@ -306,3 +306,95 @@ def test_confirmation_required_without_yes_aborts_cleanly(orca_repo: Path) -> No
     after = _run_git(["worktree", "list"], orca_repo).stdout
     assert before == after, "no worktree may be created when confirmation is refused"
     assert not (orca_repo / ".orca" / ".orca_state.json").exists()
+
+
+# ---------------------------------------------------------------------------
+# 7. Hardened resume: a real orphaned agent process is killed before the
+#    stale worktree is purged and the front is re-dispatched from scratch.
+# ---------------------------------------------------------------------------
+
+def test_resume_running_kills_orphan_pid_before_retry(orca_repo: Path) -> None:
+    profiles = _make_profile(orca_repo)
+    plan_dir = _make_plan(orca_repo, "demo", {
+        "front-orphan": "# Front orphan\n\nWrites deliverable normally.\n",
+    })
+
+    orca_dir = orca_repo / ".orca"
+    orca_dir.mkdir()
+    state_path = orca_dir / ".orca_state.json"
+    state = create_initial_state(["front-orphan"])
+    save_state(state, state_path)
+
+    wt_result = _run_git(
+        ["worktree", "add", str(orca_repo / "wt-front-orphan"), "-b", "orca/front-orphan"],
+        orca_repo,
+    )
+    assert wt_result.returncode == 0
+    wt = orca_repo / "wt-front-orphan"
+
+    # A REAL orphan process, as if the orchestrator had crashed while this
+    # front's harness subprocess kept running (Popen ties nothing to parent
+    # lifetime). Its pid is recorded in state exactly like _dispatch_front
+    # would have done right after spawning it.
+    orphan = subprocess.Popen([sys.executable, "-c", "import time; time.sleep(120)"], cwd=wt)
+
+    state = load_state(state_path)
+    state["fronts"]["front-orphan"]["state"] = FrontState.RUNNING.value
+    state["fronts"]["front-orphan"]["pid"] = orphan.pid
+    save_state(state, state_path)
+
+    try:
+        exit_code = _run(orca_repo, plan_dir, profiles, resume=True)
+
+        assert orphan.poll() is not None, "orphan process must be killed before retry, not left running"
+        assert exit_code == 0
+
+        final_state = load_state(state_path)
+        assert final_state["fronts"]["front-orphan"]["state"] == "MERGED"
+        assert not (orca_repo / "wt-front-orphan").exists()
+    finally:
+        if orphan.poll() is None:
+            orphan.kill()
+            orphan.wait(timeout=10)
+
+
+# ---------------------------------------------------------------------------
+# 8. Hardened resume: when the stale worktree genuinely can't be purged
+#    (still locked), the front is marked FAILED with a clear reason instead
+#    of being silently re-dispatched into a confusing worktree-exists error.
+# ---------------------------------------------------------------------------
+
+def test_stale_purge_failure_marks_failed_without_confusing_retry(orca_repo: Path) -> None:
+    profiles = _make_profile(orca_repo)
+    plan_dir = _make_plan(orca_repo, "demo", {
+        "front-locked": "# Front locked\n",
+    })
+
+    orca_dir = orca_repo / ".orca"
+    orca_dir.mkdir()
+    state_path = orca_dir / ".orca_state.json"
+    state = create_initial_state(["front-locked"])
+    state["fronts"]["front-locked"]["state"] = FrontState.FAILED.value
+    save_state(state, state_path)
+
+    wt_result = _run_git(
+        ["worktree", "add", str(orca_repo / "wt-front-locked"), "-b", "orca/front-locked"],
+        orca_repo,
+    )
+    assert wt_result.returncode == 0
+
+    # git's own mechanism for "this worktree must not be removed right now" —
+    # a single --force (what purgar_worktree issues) must not override a lock.
+    lock_result = _run_git(["worktree", "lock", str(orca_repo / "wt-front-locked")], orca_repo)
+    assert lock_result.returncode == 0
+
+    exit_code = _run(orca_repo, plan_dir, profiles, resume=True)
+
+    assert exit_code == 1
+    final_state = load_state(state_path)
+    assert final_state["fronts"]["front-locked"]["state"] == "FAILED"
+    # Left in place for manual inspection — not blindly re-created.
+    assert (orca_repo / "wt-front-locked").exists()
+
+    # Cleanup for a tidy tmp_path teardown.
+    _run_git(["worktree", "unlock", str(orca_repo / "wt-front-locked")], orca_repo)

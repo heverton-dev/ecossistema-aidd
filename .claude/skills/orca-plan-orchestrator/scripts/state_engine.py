@@ -93,6 +93,7 @@ def create_initial_state(front_names: list[str]) -> dict[str, Any]:
                 "state": FrontState.PENDING.value,
                 "branch": None,
                 "commit_sha": None,
+                "pid": None,
                 "updated_at": now,
             }
             for name in front_names
@@ -117,8 +118,14 @@ def update_front_state(
     new_state: FrontState,
     branch: str | None = None,
     commit_sha: str | None = None,
+    pid: int | None = None,
 ) -> dict[str, Any]:
-    """Update a single front's state in the state dict."""
+    """Update a single front's state in the state dict.
+
+    ``pid`` records the OS process id of the front's currently-running agent
+    (set when a front transitions to RUNNING) so a crashed orchestrator can
+    kill the orphaned process before retrying on --resume.
+    """
     if front_name not in state["fronts"]:
         raise KeyError(f"Front {front_name!r} not found in state")
     front = state["fronts"][front_name]
@@ -127,6 +134,8 @@ def update_front_state(
         front["branch"] = branch
     if commit_sha is not None:
         front["commit_sha"] = commit_sha
+    if pid is not None:
+        front["pid"] = pid
     front["updated_at"] = time.time()
     state["updated_at"] = time.time()
     return state
