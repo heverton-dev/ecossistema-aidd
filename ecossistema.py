@@ -138,6 +138,10 @@ def cmd_orchestrate(args):
     return 0
 
 
+def cmd_plan(args):
+    script = os.path.join(ROOT_DIR, "scripts", "gerenciador_planos.py")
+    return run_command([sys.executable, script] + args, cwd=ROOT_DIR)
+
 def cmd_audit(args):
     gates = [
         "G_ECOSSISTEMA_INTEGRIDADE.py",
@@ -175,7 +179,16 @@ def cmd_status(args):
         print(f"  - {name:<24} {status:<16} {desc}")
 
     print("\nSkills Universais:")
-    for skill in ["aidd-forge-runner", "aidd-generator-runner", "aidd-master-runner", "aidd-enterprise-runner"]:
+    skills_list = [
+        "aidd-forge-runner",
+        "aidd-generator-runner",
+        "aidd-master-runner",
+        "aidd-enterprise-runner",
+        "orca-plan-orchestrator",
+        "planos-auditoria-runner",
+        "componentes-runner"
+    ]
+    for skill in skills_list:
         path = os.path.join(ROOT_DIR, "skills", skill, "SKILL.md")
         status = "[OK]" if os.path.exists(path) else "[AUSENTE]"
         print(f"  - {skill:<26} {status}")
@@ -185,6 +198,8 @@ def cmd_status(args):
     print("  /generate <ideia>       -> Dispara aidd-generator")
     print("  /master <modulo>        -> Dispara aidd-master")
     print("  /enterprise <tipo> <nome> -> Dispara aidd-enterprise")
+    print("  /orchestrate [plano]    -> Dispara orca-plan-orchestrator")
+    print("  /plan <nome>            -> Dispara planos-auditoria-runner")
     print("-" * 72)
     return 0
 
@@ -206,6 +221,8 @@ Comandos disponíveis:
                       [--profiles <path>]
                       Gera Flight Plan a partir de um plano ORCA e opcionalmente
                       executa a orquestracao multi-agente.
+  plan init|check-fences <args>
+                      Gerenciador determinístico de iniciativas de planos em docs/planos/
   audit               Executa o Meta-Quality Gate de Integridade
   status              Exibe o status do ecossistema e ferramentas integradas
   status --testes     Roda pytest real em cada ferramenta e atualiza
@@ -228,6 +245,7 @@ def main():
         "enterprise": cmd_enterprise,
         "components": cmd_components,
         "orchestrate": cmd_orchestrate,
+        "plan": cmd_plan,
         "audit": cmd_audit,
         "status": cmd_status,
         "help": lambda a: print_help() or 0,

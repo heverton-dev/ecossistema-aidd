@@ -70,6 +70,10 @@ Cada comando possui contrato formal executável em qualquer harness (Antigravity
 - **Ação:** Orquestra a execução paralela e determinística de planos de software via ORCA ADE com git worktrees efêmeras e hooks reativos.
 - **CLI Equivalente:** python ecossistema.py orchestrate [plano]
 
+### /plan <nome>
+- **Skill:** skills/planos-auditoria-runner
+- **Ação:** Gera estruturação padronizada e rascunhos de planos de auditoria, evolução ou testes com checagem determinística de cercas markdown sem fabricar decisões ou aprovações.
+- **CLI Equivalente:** python ecossistema.py plan init <nome>
 
 ---
 
