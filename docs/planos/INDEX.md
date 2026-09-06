@@ -1,31 +1,32 @@
 # Índice — `docs/planos/`
 
-> Organização visual por status. Nenhum caminho físico muda — os links abaixo apontam para as pastas/arquivos reais, então nada quebra em referências já existentes. Atualizar esta tabela sempre que o status de uma iniciativa mudar.
+> Gerado automaticamente por `python scripts/atualizar_index_planos.py` a partir do status real de cada documento. Nenhum caminho físico muda — os links abaixo apontam para as pastas/arquivos reais. **Não editar manualmente**: rode o script de novo depois de qualquer mudança de status.
 
 ## ✅ Concluídos
 
 | Iniciativa | Local |
 |---|---|
-| Correção de riscos do ecossistema (8 riscos) | `PLANO-CORRECAO-RISCOS-ECOSSISTEMA-AIDD.md` |
-| Correção de skills agnósticas | `PLANO-CORRECAO-SKILLS-AGNOSTICAS.md` |
-| Execução do ecossistema AIDD (plano original) | `PLANO-EXECUCAO-ECOSSISTEMA-AIDD.md` |
-| Evolução das notas de auditoria — Rodada 1 (7,5→8,7) | `evolucao-notas-auditoria/` |
-| Refinamento das notas — Rodada 2 (5 itens + Item 6 residual) | `refinamento-notas-auditoria/` |
+| Evolucao Notas Auditoria | `evolucao-notas-auditoria/` |
+| Correcao Riscos Ecossistema Aidd | `PLANO-CORRECAO-RISCOS-ECOSSISTEMA-AIDD.md` |
+| Refinamento Notas Auditoria | `refinamento-notas-auditoria/` |
 
 ## 🔶 Em execução
 
-| Iniciativa | Local | Observação |
-|---|---|---|
-| Prova completa do ecossistema (5 baterias de teste) | `testes-completos-ecossistema/` | Bateria 1 (raiz) auditada e aprovada; Baterias 2-5 aguardando |
-| Análise/integração da feature AIDD-Ops | `integracao-aidd-ops/` | Fase de análise/planejamento |
+| Iniciativa | Local |
+|---|---|
+| Integracao Aidd Ops | `integracao-aidd-ops/` |
+| Testes Completos Ecossistema | `testes-completos-ecossistema/` |
 
-## ⏳ Aguardando execução (prompt pronto, ninguém rodou ainda)
+## ⏳ Aguardando execução
 
 | Iniciativa | Local |
 |---|---|
-| Skill geradora de planos de auditoria/evolução/testes | `skill-gerador-planos-auditoria/` |
-| Skill de orquestração ORCA ADE (`/orchestrate`) — Itens 1-3 prontos, 4-6 pendentes de redação | `skill-orquestracao-orca-ade/` |
+| Correcao Skills Agnosticas | `PLANO-CORRECAO-SKILLS-AGNOSTICAS.md` |
+| Evolucao Notas Auditoria | `PLANO-EVOLUCAO-NOTAS-AUDITORIA.md` |
+| Execucao Ecossistema Aidd | `PLANO-EXECUCAO-ECOSSISTEMA-AIDD.md` |
+| Skill Gerador Planos Auditoria | `skill-gerador-planos-auditoria/` |
+| Skill Orquestracao Orca Ade | `skill-orquestracao-orca-ade/` |
 
 ---
 
-**Convenção:** pastas com `00-PROCESSO-E-DECISOES.md` + `NN-<item>.md` são iniciativas multi-item; arquivos `PLANO-<NOME>.md` soltos são planos de item único.
+**Convenção:** pastas com `00-PROCESSO-E-DECISOES.md` + `NN-<item>.md` são iniciativas multi-item (status = agregado da tabela "Registro de progresso"); arquivos `PLANO-<NOME>.md` soltos são planos de item único (status = linha `**Status:**` do próprio arquivo).
