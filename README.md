@@ -4,160 +4,152 @@
 > **GitHub:** `https://github.com/heverton-dev/ecossistema-aidd`  
 > **Orquestração:** ORCA ADE (Lead: Antigravity | Governance: Claude Code | Integration: MimoCode)
 
-## 🏛️ Visão Geral
+---
 
-## 🌐 SUPREMACIA AGNÓSTICA — Manifesto de Universalidade Total
+## 💡 O que é o Ecossistema AIDD? (Entenda em 1 Minuto)
 
-Este ecossistema foi construído sob o princípio inegociável da **Supremacia Agnóstica** da Engenharia Agêntica Aplicada (AIDD).
+Imagine uma **fábrica inteligente de automóveis de alta precisão**:
+- Você não constrói um carro no improviso: primeiro monta a **linha de produção blindada** para ninguém se machucar, depois a **engenharia desenha e monta o motor**, os **módulos se encaixam como blocos de Lego**, uma **equipe de auditoria certifica cada parafuso** e, por fim, a **equipe de pista abastece e coloca o carro para rodar no asfalto**.
 
-NADA aqui é proprietário ou dependente de um único ecossistema:
-
-1. 💻 **Ambiente e SO Agnóstico:** Opera de forma 100% idêntica em Windows, Linux e macOS (Python puro sem scripts bash/cmd acoplados).
-2. 🤖 **Harness e ADE Agnóstico:** Suporte nativo e transparente a **OpenCode, Antigravity, Claude Code, MimoCode, Freebuff, Hermes, DeepSeek, Codex, Cursor e Gemini CLI**.
-3. 🧠 **LLM e Cognição Agnóstica:**
-   - *Modo Delegado:* Aproveita a sessão do agente já autenticado no host (Zero API Keys necessárias).
-   - *Modo Headless:* Fallback universal via LiteLLM para dezenas de provedores (Groq, NVIDIA NIM, OpenAI, Anthropic, Ollama local).
-4. 🔀 **Orquestração Adaptativa em 3 Níveis:**
-   - *Nível Fleet:* Git Worktrees concorrentes por agente (quando em ORCA ADE).
-   - *Nível Harness:* Subagentes nativos do assistente em uso.
-   - *Nível Local:* `ContextPurgeEngine` com fatiamento limpo e purga estrita de memória a cada fase (CLI puro e CI/CD).
-5. 📦 **Artefatos Universais:** Skills, MCPs, JSON Schemas Draft 2020-12, Slash Commands e `AGENTS.md` são escritos uma única vez e projetados deterministicamente para todos os harnesses ativos (Zero Duplicidade).
+O **Ecossistema AIDD** faz exatamente isso, só que para **Softwares Modernos construídos por Inteligência Artificial**:
+Ele transforma ideias em sistemas prontos, blindados, testados e colocados em produção na nuvem, garantindo que a IA nunca alucine, nunca invente código pela metade e nunca quebre o projeto.
 
 ---
 
-
-O **Ecossistema AIDD** reúne sob uma arquitetura unificada, modular e de altíssimo determinismo as 4 ferramentas canônicas da metodologia AIDD. Cada ferramenta desempenha um papel cirúrgico no ciclo de vida do software orientado por agentes de IA:
+## 🏛️ A Fábrica de Software AIDD: As 5 Ferramentas Integradas
 
 ```text
                                ┌─────────────────────────────┐
                                │   ECOSSISTEMA AIDD (Monorepo)│
                                └──────────────┬──────────────┘
                                               │
-         ┌──────────────────┬─────────────────┴────────────────┬───────────────────┐
-         ▼                  ▼                                  ▼                   ▼
-  [ tools/aidd-forge ] [ tools/aidd-generator ]     [ tools/aidd-master ]  [ tools/aidd-enterprise ]
-  Bootstrap, Fencing    Fábrica Autônoma             Monólito Modular       Missão Crítica Regulada
-  & Context-Purge       (Pipeline 8 Fases)           Vertical Slices & DB   Hashes SHA-256 & Zero-Trust
-       (/forge)            (/generate)                    (/master)                 (/enterprise)
+    ┌──────────────────┬──────────────────────┼─────────────────────┬───────────────────┐
+    ▼                  ▼                      ▼                     ▼                   ▼
+[ aidd-forge ]   [ aidd-generator ]     [ aidd-master ]     [ aidd-enterprise ]    [ aidd-ops ]
+ Linha de Montagem  Fábrica Autônoma      Blocos de Lego      Selo de Auditoria     Pista & Entrega
+  & Blindagem       (Ideia -> Código)     Modular & Banco     Zero-Trust & Hashes    Infra & Nuvem
+   (/forge)            (/generate)           (/master)           (/enterprise)           (/ops)
 ```
 
 ---
 
-## ⚡ As 4 Ferramentas Integradas
+## ⚡ As 5 Ferramentas: Do Leigo ao PhD
 
-| Ferramenta | Diretório | Slash Command | Objetivo Principal |
-| :--- | :--- | :--- | :--- |
-| **AIDD Forge** | `tools/aidd-forge` | `/forge [caminho]` | Bootstrap de governança agêntica, micro-ambientes isolados por fase (`.aidd/pipeline/`), context-purge e 7 Quality Gates determinísticos. |
-| **AIDD Generator** | `tools/aidd-generator` | `/generate <ideia>` | Fábrica autônoma que transforma uma descrição em linguagem natural em software completo através de 8 fases com contratos JSON Schema Draft 2020-12. |
-| **AIDD Master** | `tools/aidd-master` | `/master <modulo>` | Framework para monólitos modulares de alta performance com fatias verticais (`Vertical Slices`), SQLite concorrente em modo WAL, Result Monad e Swagger Studio. |
-| **AIDD Enterprise** | `tools/aidd-enterprise` | `/enterprise <tipo> <nome>` | Plataforma corporativa de missão crítica com injeção transacional de componentes (`skill`, `rule`, `mcp`), validação de hashes criptográficos SHA-256 e RLS. |
+| Ferramenta | Analogia do Dia a Dia (Leigo) | Rigor Arquitetural (PhD / Arquiteto) | Como usar no Chat | Comando no Terminal (CLI) |
+| :--- | :--- | :--- | :---: | :--- |
+| **AIDD Forge** | **A Fundação e o Chassi:** Prepara o terreno, coloca cercas de proteção e impede que a IA faça bagunça. | Bootstrap determinístico, fatiamento em micro-ambientes efêmeros (`.aidd/pipeline/`), context-purge estrito e 7 Quality Gates locais. | `/forge [pasta]` | `python ecossistema.py forge init [pasta]` |
+| **AIDD Generator** | **A Linha de Montagem Autônoma:** Você fala o que quer e a fábrica entrega o software pronto com testes. | Pipeline autônomo de 8 fases (Intake -> Pesquisa -> Análise -> Design -> Decisão -> Criação -> Docs -> Implementação) com JSON Schemas Draft 2020-12. | `/generate <ideia>` | `python ecossistema.py generate "<ideia>"` |
+| **AIDD Master** | **Os Blocos de Encaixe Perfeito (Lego):** Permite adicionar novas funções ao sistema sem quebrar nada do que já existia. | Clean Architecture em Fatias Verticais (`Vertical Slices`), SQLite concorrente em modo WAL, Result Monad funcional e auto-documentação OpenAPI. | `/master <modulo>` | `python ecossistema.py master add-module <modulo>` |
+| **AIDD Enterprise** | **A Blindagem e Selo de Qualidade:** Verifica a autenticidade de cada componente com selo de segurança nível bancário. | Plataforma de Missão Crítica com injeção criptográfica SHA-256 de componentes (`skill`, `mcp`, `hook`, `rule`), conformidade Zero-Trust e RLS estrito. | `/enterprise <tipo> <nome>` | `python ecossistema.py enterprise inject <tipo> <nome>` |
+| **AIDD Ops** | **A Pista de Corrida e Abastecimento:** Pega o software pronto, prepara os servidores na nuvem, ajusta o tráfego e põe para rodar. | Meta-Orquestrador de Infraestrutura: Sizing inteligente de VPS, Hardening SSH anti-injeção, MCPs de borda (Cloudflare/Docker), Compose e Preflight HTTP E2E. | `/ops plan <nicho>` | `python ecossistema.py ops plan "<nicho>"` |
 
 ---
 
-## 🚀 Como Usar
+## 🌐 SUPREMACIA AGNÓSTICA — Universalidade Total
 
-### 1. No Chat de Qualquer Harness (Slash Commands Universais)
+O ecossistema segue a **Regra de Ouro da Universalidade**: nada aqui pertence a uma marca, modelo ou fornecedor específico. Você é 100% livre:
 
-Basta clonar o repositório e abrir no seu assistente ou IDE preferido (Antigravity, Claude Code, Cursor, OpenCode, MimoCode):
+1. 💻 **Qualquer Sistema Operacional:** Roda igualzinho no Windows, Linux e macOS (100% Python puro).
+2. 🤖 **Qualquer Assistente de IA (Multi-Harness):** Funciona nativamente no **Antigravity (agy), Claude Code, OpenCode, MimoCode, Cursor, Gemini CLI, Hermes e DeepSeek**.
+3. 🧠 **Qualquer Modelo de IA:** Opera usando o próprio assistente da sua sessão (Zero custo adicional de token) ou via provedores externos locais/nuvem (Ollama, Groq, Anthropic, OpenAI).
+4. 📦 **Escreva Uma Vez, Rode em Todos:** Uma habilidade (skill) ou comando criado é automaticamente distribuído para todos os assistentes em suas respectivas pastas (`.agent/`, `.claude/`, `.gemini/`, `.agents/`).
 
-- **`/forge [caminho]`**: Inicializa e blinda qualquer repositório alvo.
-- **`/generate <ideia>`**: Constrói um novo sistema do zero com arquitetura e testes.
-- **`/master <modulo>`**: Adiciona uma nova fatia vertical de negócio (`src/modules/<modulo>/`).
-- **`/enterprise <tipo> <nome>`**: Injeta um componente homologado com verificação de integridade SHA-256.
-- **`/orchestrate [plano]`**: Orquestra a execução multi-agente de planos fatiados via ORCA ADE com git worktrees efêmeras.
-- **`/plan <nome>`**: Cria e valida deterministicamente novos planos estruturados em `docs/planos/`.
+---
 
-### 2. Via CLI Unificada (`ecossistema.py`)
+## 🚀 Como Usar na Prática
+
+Você pode usar o ecossistema de duas formas simples, dependendo de como prefere trabalhar:
+
+### Opção 1: Pelo Chat do seu Assistente (Modo Fácil / Sem Código)
+Basta digitar os comandos com barra no chat do seu assistente de IA (Claude, Antigravity, Mimo, Cursor):
 
 ```bash
-# Ver o status de todas as ferramentas e componentes
+# 1. Transformar uma ideia em código funcional
+/generate Sistema de delivery para farmácias com controle de entregas
+
+# 2. Blindar um projeto com regras de qualidade
+/forge .
+
+# 3. Adicionar uma nova função completa (rotas + banco de dados + tela)
+/master produtos
+
+# 4. Injetar segurança corporativa certificada
+/enterprise skill seguranca-cibernetica
+
+# 5. Dimensionar a infraestrutura de servidores e deploy
+/ops plan "Farmácias com alto volume de entrega"
+```
+
+### Opção 2: Pelo Terminal / Linha de Comando (Modo Engenheiro / CI/CD)
+Controle total com determinismo absoluto via `python ecossistema.py`:
+
+```bash
+# Ver a saúde e status de todo o ecossistema
 python ecossistema.py status
 
-# Rodar a auditoria e os 7 Meta-Quality Gates globais
+# Rodar a auditoria geral (Os 8 Portões de Segurança)
 python ecossistema.py audit
 
-# Orquestrar plano via ORCA ADE (Modo Interativo por padrão, controle do desenvolvedor)
-python ecossistema.py orchestrate docs/planos/<plano>
+# Planejar a infraestrutura de servidores para um nicho de negócio
+python ecossistema.py ops plan "Clínica médica com agendamento"
 
-# Criar e gerenciar planos
-python ecossistema.py plan init <nome>
-
-# Disparar o aidd-forge
-python ecossistema.py forge init meu-novo-projeto
-
-# Disparar o pipeline do aidd-generator
-python ecossistema.py generate "Sistema de gerenciamento de frotas com telemetria"
-
-# Criar nova fatia modular no aidd-master
-python ecossistema.py master add-module estoque
-
-# Injetar componente certificado no aidd-enterprise
-python ecossistema.py enterprise inject skill auth-oauth2
+# Testar o deploy de ponta a ponta em modo simulação seguro
+python ecossistema.py ops deploy staging --dry-run
 ```
 
 ---
 
-## 📁 Estrutura de Diretórios
+## 🛡️ Os 8 Portões de Segurança (Quality Gates Globais)
+
+Antes de qualquer código ser considerado "pronto", ele é obrigado a passar por **8 testes automáticos e rigorosos** (como o raio-x e a alfândega de um aeroporto):
+
+1. 🔍 **G_ECOSSISTEMA_INTEGRIDADE:** Garante que todas as pastas, arquivos essenciais e sintaxe Python estão 100% corretos.
+2. ⚖️ **G_DRIFT_NUCLEO_COMPARTILHADO:** Compara os códigos compartilhados entre o Master e o Enterprise para impedir divergências acidentais.
+3. 🔄 **G_HARNESS_COMPAT:** Confere se todos os assistentes de IA (Claude, Antigravity, Mimo) estão com as ferramentas sincronizadas.
+4. 🔐 **G_SEGREDOS:** Varre todo o código em busca de senhas ou chaves de API acidentalmente esquecidas.
+5. 💬 **G_CLI_HELP_CONSISTENCIA:** Valida via análise sintática (AST) se as opções explicadas nas mensagens batem exatamente com as flags reais da linha de comando.
+6. 🧩 **G_COMPONENTE_AGNOSTICO:** Audita se novos componentes funcionam de forma universal em qualquer ambiente.
+7. 🛑 **G_ZERO_HEADLESS:** Garante que o desenvolvedor humano esteja sempre no controle, bloqueando robôs ou subagentes ocultos que gastariam tokens em segundo plano.
+8. 🐳 **G_INFRA_COMPOSE:** Audita arquivos Docker Compose, garantindo que não existam portas duplicadas, variáveis faltando ou erros de banco de dados.
+
+> **Validação em um comando:** `python ecossistema.py audit` (Roda os 8 gates em sequência e retorna `exit 0` apenas com 100% de aprovação).
+
+---
+
+## 📁 Mapa do Repositório
 
 ```text
 ecossistema-aidd/
-├── AGENTS.md                               ──► Governança canônica unificada e fonte única de verdade
-├── MEMORY.md                               ──► Memória estruturada e contexto consolidado do ecossistema
-├── PLANO-EXECUCAO-ESTRUTURADO.json         ──► Telemetria e persistência estruturada do ecossistema
-├── README.md                               ──► Portal central do ecossistema
-├── ecossistema.py                          ──► CLI unificada de orquestração
+├── AGENTS.md                               ──► A Lei Fundamental e a governança canônica
+├── MEMORY.md                               ──► A memória viva e o histórico consolidado
+├── PLANO-EXECUCAO-ESTRUTURADO.json         ──► Telemetria e métricas reais de testes
+├── README.md                               ──► Este portal unificado
+├── ecossistema.py                          ──► A central de comando unificada (CLI)
 │
-├── componentes/                            ──► Fonte física canônica única de todos os componentes
-│   ├── compartilhado/                      ──► Skills, comandos e utilitários universais
-│   ├── aidd-master/                        ──► Componentes específicos do AIDD Master
-│   ├── aidd-enterprise/                    ──► Componentes específicos do AIDD Enterprise
-│   └── aidd-generator/                     ──► Componentes específicos do AIDD Generator
+├── componentes/                            ──► O cofre canônico de onde nascem todos os componentes
+│   ├── compartilhado/                      ──► Habilidades e comandos universais
+│   ├── aidd-ops/                           ──► MCPs, comandos e receitas de infraestrutura
+│   ├── aidd-master/                        ──► Componentes do AIDD Master
+│   ├── aidd-enterprise/                    ──► Componentes do AIDD Enterprise
+│   └── aidd-generator/                     ──► Componentes do AIDD Generator
 │
-├── .agent/                                 ──► Compatibilidade gerada (Antigravity, OpenCode, MimoCode)
-│   ├── commands/                           ──► Slash commands: forge, generate, master, enterprise, orchestrate, plan
-│   └── skills/                             ──► Skills espelhadas para o ambiente
+├── gates/                                  ──► Os 8 Portões de Segurança determinísticos
 │
-├── .claude/                                ──► Configurações para Claude Code
-│   ├── CLAUDE.md                           ──► Apontamento para ../AGENTS.md
-│   ├── commands/                           ──► Slash commands espelhados
-│   └── skills/                             ──► Skills espelhadas para Claude Code
+├── tools/                                  ──► As 5 Ferramentas Homologadas (100% funcionais)
+│   ├── aidd-forge/                         ──► Bootstrap e blindagem de governança
+│   ├── aidd-generator/                     ──► Fábrica autônoma de software (8 fases)
+│   ├── aidd-master/                        ──► Monólito modular e fatias verticais
+│   ├── aidd-enterprise/                    ──► Missão crítica e validação SHA-256
+│   └── aidd-ops/                           ──► Meta-orquestrador de infraestrutura e deploy
 │
-├── .cursor/                                ──► Regras de contexto para Cursor IDE
-│   └── rules/                              ──► Diretivas operacionais (aidd.md apontando para AGENTS.md)
-│
-├── gates/                                  ──► Os 7 Meta-Quality Gates determinísticos
-│   ├── G_ECOSSISTEMA_INTEGRIDADE.py        ──► Integridade física, sintática e estrutural
-│   ├── G_DRIFT_NUCLEO_COMPARTILHADO.py     ──► Drift entre aidd-master e aidd-enterprise
-│   ├── G_HARNESS_COMPAT.py                 ──► Sincronismo multi-harness universal
-│   ├── G_SEGREDOS.py                       ──► Varredura de credenciais hardcoded
-│   ├── G_CLI_HELP_CONSISTENCIA.py          ──► Consistência entre flags e help da CLI
-│   ├── G_COMPONENTE_AGNOSTICO.py           ──► Cobertura agnóstica de componentes
-│   └── G_ZERO_HEADLESS.py                  ──► Bloqueio de subagentes desassistidos
-│
-├── tools/                                  ──► Os 4 Projetos Homologados (100% intactos e autocontidos)
-│   ├── aidd-forge/                         ──► Repositório completo do AIDD Forge
-│   ├── aidd-generator/                     ──► Repositório completo do AIDD Generator
-│   ├── aidd-master/                        ──► Repositório completo do AIDD Master
-│   └── aidd-enterprise/                    ──► Repositório completo do AIDD Enterprise
-│
-└── docs/                                   ──► Documentação, planos, testes e relatórios
-    ├── planos/                             ──► Planos táticos e de orquestração
-    ├── protocolos/                         ──► Protocolos canônicos de governança
-    └── testes/                             ──► Baterias de testes e relatórios de auditoria
+└── docs/                                   ──► Toda a inteligência documentada
+    ├── planos/                             ──► Planos táticos e de auditoria
+    ├── protocolos/                         ──► Protocolos canônicos de agnosticidade
+    └── testes/                             ──► Baterias de testes E2E e relatórios formais
 ```
-
----
-
-## 🛡️ As 5 Camadas da Engenharia Agêntica
-
-1. **Camada 1: Contratos e Schemas:** Estruturas de dados regidas por JSON Schema (Draft 2020-12) antes de qualquer geração.
-2. **Camada 2: Determinismo Primeiro:** Mecânica em Python puro e scripts diretos (Zero Token Fallacy).
-3. **Camada 3: Gates Mecânicos:** Quality Gates binários com bloqueio estrito (`exit 0` / `exit 1`).
-4. **Camada 4: Persistência Estruturada:** Estado em arquivos JSON/SQLite auditáveis, nunca na memória volátil do chat.
-5. **Camada 5: Bundles Modulares:** Subprojetos e fatias de negócio autocontidas, desacopladas e 100% testadas.
 
 ---
 
 ## 📜 Licença
 
-Distribuído sob a licença MIT. Consulte os arquivos `LICENSE` em cada subferramenta para termos específicos.
+Distribuído sob a licença MIT. Construído para ser livre, universal e soberano.
