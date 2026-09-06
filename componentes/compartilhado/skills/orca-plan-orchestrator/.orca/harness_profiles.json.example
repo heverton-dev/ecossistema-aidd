@@ -28,7 +28,7 @@
       "prompt_mode": "positional",
       "prompt_flag": null,
       "model_flag": "--model",
-      "default_model": "claude-sonnet-4-20250514",
+      "default_model": "claude-sonnet-5",
       "extra_flags": ["-p"],
       "usage_note": "Usage: claude [options] [command] [prompt]. -p is a BOOLEAN flag enabling print/non-interactive mode. The prompt text is a POSITIONAL ARGUMENT at the END of the command, not the value of -p."
     },
