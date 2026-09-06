@@ -202,10 +202,28 @@ def _wait_with_circuit_breaker(
     process: subprocess.Popen,
     exec_log_path: Path,
     config: CircuitBreakerConfig,
+    front_name: str = "",
+    stream: bool = False,
 ) -> tuple[int, HealthStatus]:
     start = time.time()
+    last_pos = 0
     while True:
         ret = process.poll()
+
+        # Se stream estiver ativo, le novas linhas adicionadas ao log e exibe
+        if stream and exec_log_path.exists():
+            try:
+                with open(exec_log_path, "r", encoding="utf-8", errors="replace") as f:
+                    f.seek(last_pos)
+                    new_chunk = f.read()
+                    last_pos = f.tell()
+                    if new_chunk:
+                        for line in new_chunk.splitlines():
+                            if line.strip():
+                                print(f"[{front_name}] {line}")
+            except Exception:
+                pass
+
         if ret is not None:
             return ret, HealthStatus.OK
 
@@ -321,6 +339,7 @@ def _dispatch_front(
     merge_lock: threading.Lock,
     breaker_config: CircuitBreakerConfig,
     results: dict,
+    stream: bool = False,
 ) -> None:
     front_name = front["name"]
     worktree_path = repo_path / f"wt-{front_name}"
@@ -349,7 +368,7 @@ def _dispatch_front(
                 state_path, state_lock, front_name, FrontState.RUNNING, pid=process.pid
             )
             agent_exit_code, health = _wait_with_circuit_breaker(
-                process, exec_log_path, breaker_config
+                process, exec_log_path, breaker_config, front_name=front_name, stream=stream
             )
 
         _auto_commit_front(worktree_path, front_name)
@@ -421,6 +440,7 @@ def executar_orquestracao(
     repo_path: str | Path | None = None,
     resume: bool = False,
     yes: bool = False,
+    stream: bool = False,
     circuit_breaker_config: CircuitBreakerConfig | None = None,
 ) -> int:
     """Execute the real ORCA ADE multi-front orchestration.
@@ -508,7 +528,7 @@ def executar_orquestracao(
 
         threads.append(threading.Thread(
             target=_dispatch_front,
-            args=(front, resolved_repo, state_path, state_lock, base_sha, merge_lock, breaker_config, results),
+            args=(front, resolved_repo, state_path, state_lock, base_sha, merge_lock, breaker_config, results, stream),
         ))
 
     for t in threads:

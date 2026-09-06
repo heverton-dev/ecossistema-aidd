@@ -96,6 +96,7 @@ def cmd_orchestrate(args):
     parser.add_argument("--dry-run", action="store_true", help="Apenas gera e imprime o Flight Plan, sem tocar em git ou spawnar agentes.")
     parser.add_argument("--resume", action="store_true", help="Retoma um Flight Plan previamente iniciado (crash recovery).")
     parser.add_argument("--yes", action="store_true", help="Nao pede confirmacao interativa do Plano de Voo.")
+    parser.add_argument("--stream", action="store_true", help="Exibe a saida dos agentes em tempo real no console.")
     parser.add_argument(
         "--harness", default=None,
         choices=["mimo", "opencode", "claude", "agy"],
@@ -168,7 +169,7 @@ def cmd_orchestrate(args):
 
     try:
         return executar_orquestracao(
-            ns.plano, profiles_path, harness=harness_escolhido, resume=ns.resume, yes=ns.yes,
+            ns.plano, profiles_path, harness=harness_escolhido, resume=ns.resume, yes=ns.yes, stream=ns.stream,
         )
     except (FileNotFoundError, ValueError, KeyError, RuntimeError) as exc:
         print(f"Erro na orquestracao: {exc}")
