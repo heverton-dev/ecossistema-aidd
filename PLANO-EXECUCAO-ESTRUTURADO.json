@@ -71,6 +71,12 @@
       "caminho": "tools/aidd-enterprise",
       "skill": "skills/aidd-enterprise-runner",
       "slash_command": "/enterprise <tipo> <nome>"
+    },
+    {
+      "id": "aidd-ops",
+      "caminho": "tools/aidd-ops",
+      "skill": "skills/aidd-ops-runner",
+      "slash_command": "/ops [acao]"
     }
   ],
   "testes": {
