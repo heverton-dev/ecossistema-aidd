@@ -360,12 +360,27 @@ def _dispatch_front(
         exec_log_path = worktree_path / "exec.log"
         if interactive:
             print(f"\n{'='*70}\n[ORCA ADE] SESSAO INTERATIVA: {front_name} (Harness: {front.get('harness', '-')})\n{'='*70}")
+            cmd_preview = " ".join(front["command"])
+            if len(cmd_preview) > 120:
+                cmd_preview = cmd_preview[:117] + "..."
+            print(f"Comando : {cmd_preview}")
+            print(f"Worktree: {worktree_path.name}")
+            print(f"Controle: Desenvolvedor ativo (pressione Ctrl+C para abortar com seguranca)")
+            print(f"{'='*70}\n")
             _set_front_state(
                 state_path, state_lock, front_name, FrontState.RUNNING, pid=os.getpid()
             )
-            proc = subprocess.run(front["command"], cwd=worktree_path)
-            agent_exit_code = proc.returncode
-            health = HealthStatus.OK
+            try:
+                proc = subprocess.run(front["command"], cwd=worktree_path)
+                agent_exit_code = proc.returncode
+                health = HealthStatus.OK
+            except KeyboardInterrupt:
+                print(f"\n[ORCA ADE] Interrupcao detectada. Limpando worktree efemera '{front_name}'...")
+                _set_front_state(state_path, state_lock, front_name, FrontState.FAILED)
+                purgar_worktree(front_name, repo_path)
+                results[front_name] = "ABORTED_BY_USER"
+                return
+
             with open(exec_log_path, "w", encoding="utf-8") as log_fh:
                 log_fh.write(f"Interactive run exited with {agent_exit_code}\n")
         else:
@@ -454,7 +469,7 @@ def executar_orquestracao(
     resume: bool = False,
     yes: bool = False,
     stream: bool = False,
-    interactive: bool = False,
+    interactive: bool = True,
     circuit_breaker_config: CircuitBreakerConfig | None = None,
 ) -> int:
     """Execute the real ORCA ADE multi-front orchestration.

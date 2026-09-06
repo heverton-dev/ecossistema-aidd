@@ -97,7 +97,8 @@ def cmd_orchestrate(args):
     parser.add_argument("--resume", action="store_true", help="Retoma um Flight Plan previamente iniciado (crash recovery).")
     parser.add_argument("--yes", action="store_true", help="Nao pede confirmacao interativa do Plano de Voo.")
     parser.add_argument("--stream", action="store_true", help="Exibe a saida dos agentes em tempo real no console.")
-    parser.add_argument("--interactive", action="store_true", help="Executa as worktrees em modo interativo com terminal conectado ao usuario.")
+    parser.add_argument("--interactive", action="store_true", default=True, help="Executa as worktrees em modo interativo com terminal conectado ao usuario (padrao).")
+    parser.add_argument("--dangerously-force-headless", action="store_true", help="AVISO: Forca execucao headless desassistida (alto risco de consumo de tokens).")
     parser.add_argument("--harness-map", default=None, help="Mapeamento JSON ou string chave=valor de harnesses por frente.")
     parser.add_argument(
         "--harness", default=None,
@@ -137,7 +138,7 @@ def cmd_orchestrate(args):
         except json.JSONDecodeError:
             harness_map = dict(item.split("=") for item in ns.harness_map.split(",") if "=" in item)
 
-    is_interactive = ns.interactive
+    is_interactive = not ns.dangerously_force_headless
     harness_padrao = ns.harness
 
     if sys.stdin.isatty() and not ns.yes and not ns.dry_run:
@@ -145,23 +146,12 @@ def cmd_orchestrate(args):
         print("  ORCA ADE — CONFIGURAÇÃO DO PLANO DE VOO & HARNESSES")
         print("=" * 65)
 
-        # 1. Modo de Execucao (se nao foi passado via flag)
-        if not is_interactive:
-            print("\n[1/2] Modo de Operação das Worktrees:")
-            print("  1) Automatizado (Headless com streaming de logs)")
-            print("  2) Interativo (Você controla diretamente a sessão em cada worktree)")
-            try:
-                escolha_modo = input("Escolha o modo [1/2] (default: 1): ").strip()
-                if escolha_modo == "2":
-                    is_interactive = True
-                    print(">> Modo INTERATIVO ativado.")
-                else:
-                    print(">> Modo AUTOMATIZADO ativado.")
-            except (EOFError, KeyboardInterrupt):
-                print("\n[CANCELADO] Abortado pelo usuário.")
-                return 1
+        if ns.dangerously_force_headless:
+            print("\n[AVISO CRITICO] Modo headless forcado via flag --dangerously-force-headless!")
+        else:
+            print("\n[MODO OPERACAO] Sessao INTERATIVA ativada (Desenvolvedor no controle absoluto).")
 
-        # 2. Atribuicao de Harnesses
+        # Atribuicao de Harnesses
         if harness_map is None and harness_padrao is None:
             print("\n[2/2] Atribuição de Harnesses Executores:")
             print("  1) Único global (o mesmo harness para todas as frentes)")
@@ -248,6 +238,7 @@ def cmd_audit(args):
         "G_SEGREDOS.py",
         "G_CLI_HELP_CONSISTENCIA.py",
         "G_COMPONENTE_AGNOSTICO.py",
+        "G_ZERO_HEADLESS.py",
     ]
     for gate in gates:
         gate_script = os.path.join(ROOT_DIR, "gates", gate)
