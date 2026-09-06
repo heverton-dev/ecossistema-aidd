@@ -4,17 +4,19 @@
 ECOSSISTEMA AIDD — CLI UNIFICADA DO META-REPOSITÓRIO
 =============================================================================
 Ponto único de entrada e orquestração do ecossistema-aidd.
-Roteia comandos para as 4 ferramentas integradas:
+Roteia comandos para as 5 ferramentas integradas:
   - forge      -> tools/aidd-forge
   - generate   -> tools/aidd-generator
   - master     -> tools/aidd-master
   - enterprise -> tools/aidd-enterprise
+  - aidd-ops   -> tools/aidd-ops (MVP Fases 1-3: Intake, Curadoria, Sizing)
   - audit      -> gates/G_ECOSSISTEMA_INTEGRIDADE.py
   - status     -> Resumo do status do ecossistema
 """
 
 import argparse
 import os
+import shutil
 import sys
 import subprocess
 
@@ -59,6 +61,13 @@ def cmd_enterprise(args):
     env = {"PYTHONPATH": ent_dir}
     cmd = [sys.executable, aidd_script] + args
     return run_command(cmd, cwd=ent_dir, env=env)
+
+def cmd_ops(args):
+    ops_dir = os.path.join(TOOLS_DIR, "aidd-ops")
+    pipeline_script = os.path.join(ops_dir, "scripts", "pipeline_ops.py")
+    env = {"PYTHONPATH": ops_dir}
+    cmd = [sys.executable, pipeline_script] + args
+    return run_command(cmd, cwd=ops_dir, env=env)
 
 def cmd_components(args):
     sys.path.insert(0, os.path.join(ROOT_DIR, "scripts"))
@@ -106,6 +115,10 @@ def cmd_orchestrate(args):
         help="Harness padrao (se omitido, pergunta interativamente)",
     )
     parser.add_argument(
+        "--harness-map", default=None,
+        help="Mapeamento customizado por frente (ex: frente1=claude,frente2=agy)",
+    )
+    parser.add_argument(
         "--profiles", default=None,
         help="Caminho para harness_profiles.json (default: .orca/harness_profiles.json.example)",
     )
@@ -116,9 +129,11 @@ def cmd_orchestrate(args):
     )
     sys.path.insert(0, orchestrator_root)
 
+    from pathlib import Path
     from scripts.plan_parser import parse_plan
     from scripts.flight_plan import gerar_plano_de_voo, renderizar_plano_de_voo
     from scripts.orchestrator_engine import executar_orquestracao
+    from scripts.state_engine import load_state
 
     profiles_path = ns.profiles
     if profiles_path is None:
@@ -127,81 +142,81 @@ def cmd_orchestrate(args):
             "orca-plan-orchestrator", ".orca", "harness_profiles.json.example",
         )
 
-    import shutil
-    import json
     candidatos = ["claude", "agy", "mimo", "opencode"]
 
-    harness_map = None
+    harness_map = {}
     if ns.harness_map:
         try:
+            import json
             harness_map = json.loads(ns.harness_map)
-        except json.JSONDecodeError:
-            harness_map = dict(item.split("=") for item in ns.harness_map.split(",") if "=" in item)
+        except Exception:
+            for par in ns.harness_map.split(","):
+                if "=" in par:
+                    k, v = par.split("=", 1)
+                    harness_map[k.strip()] = v.strip()
 
     is_interactive = not ns.dangerously_force_headless
-    harness_padrao = ns.harness
+    harness_escolhido = ns.harness
 
-    if sys.stdin.isatty() and not ns.yes and not ns.dry_run:
-        print("\n" + "=" * 65)
-        print("  ORCA ADE — CONFIGURAÇÃO DO PLANO DE VOO & HARNESSES")
-        print("=" * 65)
+    if harness_escolhido is None and not harness_map:
+        if sys.stdin.isatty() and not ns.yes and not ns.dry_run:
+            print("\n" + "=" * 65)
+            print("  ORCA ADE — CONFIGURAÇÃO DO PLANO DE VOO & HARNESSES")
+            print("=" * 65)
 
-        if ns.dangerously_force_headless:
-            print("\n[AVISO CRITICO] Modo headless forcado via flag --dangerously-force-headless!")
-        else:
-            print("\n[MODO OPERACAO] Sessao INTERATIVA ativada (Desenvolvedor no controle absoluto).")
+            if ns.dangerously_force_headless:
+                print("\n[AVISO CRITICO] Modo headless forcado via flag --dangerously-force-headless!")
+            else:
+                print("\n[MODO OPERACAO] Sessao INTERATIVA ativada (Desenvolvedor no controle absoluto).")
 
-        # Atribuicao de Harnesses
-        if harness_map is None and harness_padrao is None:
-            print("\n[2/2] Atribuição de Harnesses Executores:")
-            print("  1) Único global (o mesmo harness para todas as frentes)")
-            print("  2) Personalizado (escolher harness específico por frente — Miscelânea)")
             try:
-                tipo_atrib = input("Escolha o tipo de atribuição [1/2] (default: 1): ").strip()
-            except (EOFError, KeyboardInterrupt):
-                print("\n[CANCELADO] Abortado pelo usuário.")
-                return 1
+                plan_obj = parse_plan(ns.plano)
+                state_file = Path(ROOT_DIR) / ".orca" / ".orca_state.json"
+                st = load_state(state_file) if state_file.exists() else {"fronts": {}}
 
-            if tipo_atrib == "2":
-                try:
-                    plan_parsed = parse_plan(ns.plano)
-                    harness_map = {}
-                    print(f"\nConfigurando harnesses para as {len(plan_parsed.fronts)} frentes:")
+                concluidas = [f.name for f in plan_obj.fronts if st.get("fronts", {}).get(f.name, {}).get("state") == "MERGED"]
+                pendentes = [f.name for f in plan_obj.fronts if f.name not in concluidas]
+
+                if concluidas:
+                    print(f"\n[ORCA ADE] Frentes já concluídas ({len(concluidas)}): {', '.join(concluidas)} (serão puladas)")
+                print(f"[ORCA ADE] Frentes pendentes ({len(pendentes)}): {', '.join(pendentes)}")
+
+                modo_sel = input("\nModo de Atribuição:\n  1) Multi-Harness por Frente (Recomendado - escolher para cada fase)\n  2) Global único para todas\nEscolha (default: 1): ").strip()
+
+                if modo_sel in ("2", "global"):
+                    print("\nEscolha o Harness Global:")
                     for idx, h in enumerate(candidatos, 1):
-                        tag = "[INSTALADO]" if shutil.which(h) else "[NÃO DETECTADO]"
-                        print(f"   {idx}) {h:<10} {tag}")
-
-                    for f in plan_parsed.fronts:
-                        resp = input(f" - Frente '{f.name}' [1:claude, 2:agy, 3:mimo, 4:opencode] (default 1): ").strip()
-                        mapa_num = {"1": "claude", "2": "agy", "3": "mimo", "4": "opencode"}
-                        h_front = mapa_num.get(resp, resp if resp in candidatos else "claude")
-                        harness_map[f.name] = h_front
-                    harness_padrao = "claude"
-                except Exception as exc:
-                    print(f"[AVISO] Falha ao ler frentes para personalizacao: {exc}. Usando modo global.")
-                    harness_map = None
-
-            if harness_map is None and harness_padrao is None:
-                print("\nEscolha o Harness Global:")
-                for idx, h in enumerate(candidatos, 1):
-                    caminho = shutil.which(h)
-                    tag = f"[INSTALADO: {caminho}]" if caminho else "[NÃO DETECTADO NO PATH]"
-                    print(f"  {idx}) {h:<10} {tag}")
-                try:
+                        caminho = shutil.which(h)
+                        tag = f"[INSTALADO: {caminho}]" if caminho else "[NÃO DETECTADO NO PATH]"
+                        print(f"  {idx}) {h:<10} {tag}")
                     escolha = input("\nEscolha o número do harness (default: 1 - claude): ").strip()
-                    mapa_num = {"1": "claude", "2": "agy", "3": "mimo", "4": "opencode"}
-                    harness_padrao = mapa_num.get(escolha, escolha if escolha in candidatos else "claude")
-                except (EOFError, KeyboardInterrupt):
-                    print("\n[CANCELADO] Seleção cancelada pelo usuário.")
-                    return 1
+                    map_num = {"1": "claude", "2": "agy", "3": "mimo", "4": "opencode", "": "claude"}
+                    harness_escolhido = map_num.get(escolha, "claude")
+                else:
+                    print("\n[ORCA ADE] Atribuição Individual por Frente (1: claude | 2: agy | 3: mimo | 4: opencode):")
+                    map_num = {"1": "claude", "2": "agy", "3": "mimo", "4": "opencode"}
+                    for f_name in pendentes:
+                        resp = input(f"  -> Frente '{f_name}' (default: 1 - claude): ").strip()
+                        harness_map[f_name] = map_num.get(resp, resp if resp in candidatos else "claude")
+                    harness_escolhido = "claude"
+            except (EOFError, KeyboardInterrupt):
+                print("\n[CANCELADO] Seleção cancelada pelo usuário.")
+                return 1
+        else:
+            harness_escolhido = "claude" if shutil.which("claude") else "mimo"
 
-    if harness_padrao is None:
-        harness_padrao = "claude" if shutil.which("claude") else "mimo"
+    if harness_escolhido is None:
+        harness_escolhido = "claude" if shutil.which("claude") else "mimo"
+
+    if harness_map:
+        print(f"[ORCA ADE] Multi-Harness mapeado para {len(harness_map)} frente(s): {harness_map}")
+    else:
+        print(f"[ORCA ADE] Harness Executor global: {harness_escolhido}")
 
     if ns.dry_run:
         try:
             data = gerar_plano_de_voo(
-                ns.plano, profiles_path, harness=harness_padrao, harness_map=harness_map, interactive=is_interactive
+                ns.plano, profiles_path, harness=harness_escolhido, harness_map=harness_map or None, interactive=is_interactive
             )
         except (FileNotFoundError, ValueError, KeyError) as exc:
             print(f"Erro ao gerar Flight Plan: {exc}")
@@ -214,8 +229,8 @@ def cmd_orchestrate(args):
         return executar_orquestracao(
             ns.plano,
             profiles_path,
-            harness=harness_padrao,
-            harness_map=harness_map,
+            harness=harness_escolhido,
+            harness_map=harness_map or None,
             resume=ns.resume,
             yes=ns.yes,
             stream=ns.stream or is_interactive,
@@ -239,6 +254,7 @@ def cmd_audit(args):
         "G_CLI_HELP_CONSISTENCIA.py",
         "G_COMPONENTE_AGNOSTICO.py",
         "G_ZERO_HEADLESS.py",
+        "G_INFRA_COMPOSE.py",
     ]
     for gate in gates:
         gate_script = os.path.join(ROOT_DIR, "gates", gate)
@@ -260,7 +276,8 @@ def cmd_status(args):
         ("aidd-forge", "Bootstrap, governança, fatiamento e context-purge"),
         ("aidd-generator", "Fábrica autônoma de software (Pipeline 8 fases)"),
         ("aidd-master", "Suíte Modular com Fatias Verticais e SQLite WAL"),
-        ("aidd-enterprise", "Missão crítica, conformidade SHA-256 e Zero-Trust")
+        ("aidd-enterprise", "Missão crítica, conformidade SHA-256 e Zero-Trust"),
+        ("aidd-ops", "Meta-Orquestrador Agêntico de Infraestrutura (Pacote 3)")
     ]
     for name, desc in tools:
         path = os.path.join(TOOLS_DIR, name)
@@ -273,6 +290,7 @@ def cmd_status(args):
         "aidd-generator-runner",
         "aidd-master-runner",
         "aidd-enterprise-runner",
+        "aidd-ops-runner",
         "orca-plan-orchestrator",
         "planos-auditoria-runner",
         "componentes-runner"
@@ -302,6 +320,7 @@ Comandos disponíveis:
   generate <args>     Executa o pipeline do aidd-generator (ex: generate "Minha Ideia")
   master <args>       Executa comandos do aidd-master (ex: master add-module faturamento)
   enterprise <args>   Executa comandos do aidd-enterprise (ex: enterprise inject skill auth)
+  ops <args>          Executa o pipeline do aidd-ops (ex: ops "<texto>" --pasta <dest>)
   components sync|verify --tipo <tipo|todos> [--ferramenta <nome>] [--dry-run]
                       Sincroniza/verifica distribuicao fisica multi-harness de
                       componentes (gates/manifesto_harnesses.json)
@@ -332,6 +351,7 @@ def main():
         "generate": cmd_generate,
         "master": cmd_master,
         "enterprise": cmd_enterprise,
+        "ops": cmd_ops,
         "components": cmd_components,
         "orchestrate": cmd_orchestrate,
         "plan": cmd_plan,

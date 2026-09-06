@@ -1,6 +1,6 @@
 # Pacote 6 — Gate `G_INFRA_COMPOSE.py` (Gap 3 da proposta)
 
-> **Status:** ⏳ Bloqueado pelo Pacote 3 (não depende dos Pacotes 4-5 — pode rodar em paralelo a eles).
+> **Status:** Concluído (100% testado e integrado)
 > **Gap original coberto:** Gap 3 (§8.2 da proposta) — "Quality Gate de Docker e Redes".
 > **Natureza:** gate 100% estático e offline — mesma classe dos 6 gates já existentes, sem efeito colateral em sistemas reais.
 
@@ -103,9 +103,21 @@ ENTREGÁVEL: código do gate, testes, output real de
 
 ---
 
-## Veredito
+## Veredito da Execução (Auditoria Real)
 
-*(Preencher após execução.)*
+- **Status:** APROVADO (100% dos critérios de aceite atingidos).
+- **Gate Implementado:** `gates/G_INFRA_COMPOSE.py` cobrindo 100% estático (sem subir contêineres):
+  - Pré-requisito de ambiente: `shutil.which("docker")` verificado no início, falhando limpo com mensagem estruturada (sem traceback) se ausente.
+  - Validação de 7 arquivos `docker-compose.yml` (`authentik`, `calcom`, `chatwoot`, `gateway`, `postgres`, `traefik`, `twenty`) via `docker compose config` com interpolação mock baseada nos arquivos `.env.example`.
+  - Correção de sintaxe YAML no template do `postgres` (adicionadas aspas na variável com dois-pontos embutido).
+  - Validação estrita de colisão de portas no host (bloco `ports:`).
+  - Validação de variáveis de ambiente: variáveis referenciadas devem constar no `.env.example` local.
+  - Validação de `init-multiple-databases.sh` via `bash -n` e conferência contra os 5 planos canônicos de nichos em `tools/aidd-ops/templates/infra/nichos/*.json`.
+- **Registro no Ecossistema:**
+  - Registrado em `ecossistema.py` (`cmd_audit`) como 7º gate raiz.
+  - Documentado formalmente em `AGENTS.md §4`.
+- **Suíte de Testes:** `gates/test_g_infra_compose.py` criado com 6 testes unitários verdes (incluindo teste com mock de Docker ausente, colisão de portas e variáveis faltantes).
+- **Validação Global:** `python ecossistema.py audit` rodou com 7 gates em sequência, todos 100% aprovados (exit 0). `pytest gates/` (27 testes) e `pytest tools/aidd-ops/tests/` (39 testes) todos verdes (66 testes no monorepo).
 
 ## Prompt de Execução — English version
 

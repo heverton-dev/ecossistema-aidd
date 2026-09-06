@@ -1,0 +1,2 @@
+# Dependencias de producao do AIDD-Ops
+paramiko>=3.4.0

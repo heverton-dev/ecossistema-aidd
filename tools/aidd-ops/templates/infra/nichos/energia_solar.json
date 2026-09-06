@@ -1,0 +1,78 @@
+{
+  "versao": "1.0.0",
+  "nicho": "energia_solar",
+  "nome_exibicao": "Energia Solar",
+  "descricao": "Plano de infraestrutura para o nicho de Energia Solar. Mapeia ferramentas do catálogo para blocos construtivos canônicos.",
+  "fonte": "tools/aidd-ops/data/catalogo_nichos.json → nicho 'energia_solar'",
+  "blocos": [
+    {
+      "slug": "traefik",
+      "caminho": "tools/aidd-ops/templates/infra/traefik/",
+      "obrigatorio": true,
+      "motivo": "Reverse proxy e terminação TLS para todos os serviços expostos publicamente"
+    },
+    {
+      "slug": "postgres",
+      "caminho": "tools/aidd-ops/templates/infra/postgres/",
+      "obrigatorio": true,
+      "motivo": "Banco centralizado para Twenty e Cal.com"
+    },
+    {
+      "slug": "authentik",
+      "caminho": "tools/aidd-ops/templates/infra/authentik/",
+      "obrigatorio": false,
+      "motivo": "SSO/OIDC centralizado (recomendado para equipes de vendas e instalação)"
+    },
+    {
+      "slug": "twenty",
+      "caminho": "tools/aidd-ops/templates/infra/twenty/",
+      "obrigatorio": true,
+      "motivo": "CRM Twenty — gestão de leads, propostas e projetos de instalação"
+    },
+    {
+      "slug": "calcom",
+      "caminho": "tools/aidd-ops/templates/infra/calcom/",
+      "obrigatorio": true,
+      "motivo": "Agendamento de visitas técnicas e reuniões comerciais"
+    }
+  ],
+  "bancos_logicos": [
+    {
+      "nome": "twenty_db",
+      "usuario": "twenty_user",
+      "bloco_consumer": "twenty",
+      "notas": "CRM — gestão de leads, propostas técnicas e projetos de instalação"
+    },
+    {
+      "nome": "calcom_db",
+      "usuario": "calcom_user",
+      "bloco_consumer": "calcom",
+      "notas": "Agendamento — visitas técnicas e reuniões comerciais"
+    }
+  ],
+  "ferramentas_sem_bloco": [
+    {
+      "nome": "Typebot",
+      "motivo": "Chatbot conversacional — requer composição customizada com Dockerfile próprio ou imagem community"
+    },
+    {
+      "nome": "Documenso",
+      "motivo": "Assinatura digital — propostas e contratos. Tem imagem oficial mas requer container dedicado."
+    }
+  ],
+  "portas_host": {
+    "80": "Traefik HTTP (redirect → HTTPS)",
+    "443": "Traefik HTTPS",
+    "9000": "Authentik (se habilitado)",
+    "9443": "Authentik HTTPS (se habilitado)",
+    "3000": "Twenty Server",
+    "3001": "Twenty Frontend",
+    "3002": "Cal.com (offset para evitar colisão com Twenty)"
+  },
+  "requisitos_recursos": {
+    "vcpu_minima": 3,
+    "ram_minima_gb": 5,
+    "disco_minimo_gb": 50,
+    "notas": "Soma dos requisitos: Twenty(2vCPU/2GB) + Cal.com(1vCPU/1GB) + overhead Traefik/PostgreSQL/Redis"
+  }
+}

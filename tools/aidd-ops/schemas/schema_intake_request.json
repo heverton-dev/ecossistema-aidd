@@ -1,0 +1,31 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "aidd-ops-intake-request",
+  "title": "AIDD-Ops Fase 1 — Intake Request",
+  "description": "Contrato de entrada da Fase 1 (Intake). Representa o nicho de mercado identificado a partir do texto livre ou da seleção explícita do usuário.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["nicho_slug", "nicho_nome_exibicao", "texto_original"],
+  "properties": {
+    "nicho_slug": {
+      "type": "string",
+      "description": "Slug do nicho reconhecido (ex: clinicas, delivery, farmacias, b2b_industrial, energia_solar)",
+      "minLength": 1
+    },
+    "nicho_nome_exibicao": {
+      "type": "string",
+      "description": "Nome de exibição do nicho em PT-BR",
+      "minLength": 1
+    },
+    "texto_original": {
+      "type": "string",
+      "description": "Texto original fornecido pelo usuário (pode ser vazio se --nicho foi usado diretamente)",
+      "minLength": 0
+    },
+    "palavras_chave_candidatas": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Palavras-chave do catálogo que bateram com o texto de entrada"
+    }
+  }
+}

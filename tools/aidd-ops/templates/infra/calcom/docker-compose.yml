@@ -1,0 +1,55 @@
+# =============================================================================
+# AIDD-Ops — Bloco: Cal.com
+# Camada de Agendamento (Booking/Scheduling)
+# =============================================================================
+# Imagem oficial: calcom/cal.com (Docker Hub — Cal.com Inc)
+# Nota: Cal.com conecta ao PostgreSQL centralizado (banco calcom_db).
+# Validação: docker compose config (syntaxe) + G_INFRA_COMPOSE.py (Pacote 6)
+# =============================================================================
+
+services:
+  calcom-server:
+    image: calcom/cal.com:latest
+    container_name: aidd_calcom_server
+    restart: unless-stopped
+    environment:
+      DATABASE_URL: postgresql://${CALCOM_DB_USER:-calcom_user}:${CALCOM_DB_PASSWORD:?Defina CALCOM_DB_PASSWORD no .env}@${POSTGRES_HOST:-postgres}:5432/${CALCOM_DB_NAME:-calcom_db}
+      NEXTAUTH_SECRET: ${CALCOM_NEXTAUTH_SECRET:?Defina CALCOM_NEXTAUTH_SECRET no .env}
+      NEXTAUTH_URL: ${CALCOM_NEXTAUTH_URL:-http://localhost:3000}
+      CALENDSO_ENCRYPTION_KEY: ${CALCOM_ENCRYPTION_KEY:?Defina CALCOM_ENCRYPTION_KEY no .env}
+      CALCOM_LICENSE_KEY: ${CALCOM_LICENSE_KEY:-}
+      PORT: "3000"
+    ports:
+      - "${CALCOM_PORT:-3000}:3000"
+    networks:
+      - aidd_internal
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:3000/api/health || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+    deploy:
+      resources:
+        limits:
+          memory: ${CALCOM_MAX_RAM:-1g}
+
+  calcom-redis:
+    image: redis:7-alpine
+    container_name: aidd_calcom_redis
+    restart: unless-stopped
+    networks:
+      - aidd_internal
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    deploy:
+      resources:
+        limits:
+          memory: ${CALCOM_REDIS_MAX_RAM:-128m}
+
+networks:
+  aidd_internal:
+    driver: bridge

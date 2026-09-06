@@ -1,0 +1,72 @@
+{
+  "version": 1,
+  "created_at": 1788728053.5816507,
+  "updated_at": 1788733017.8398468,
+  "fronts": {
+    "decisao-escopo-e-mvp": {
+      "state": "MERGED",
+      "branch": null,
+      "commit_sha": null,
+      "pid": null,
+      "updated_at": 1788728053.5816507
+    },
+    "fundamentos-governanca-gates": {
+      "state": "MERGED",
+      "branch": null,
+      "commit_sha": "3ebf29a",
+      "pid": null,
+      "updated_at": 1788728053.5816507
+    },
+    "mvp-tools-aidd-ops-fases-1-3": {
+      "state": "MERGED",
+      "branch": null,
+      "commit_sha": "e22b53a",
+      "pid": null,
+      "updated_at": 1788728053.5816507
+    },
+    "ssh-runner-execucao-remota": {
+      "state": "MERGED",
+      "branch": "ephemeral/orca-f4-ssh-runner",
+      "worktree": ".orca/worktrees/f4-ssh-runner",
+      "commit_sha": null,
+      "actor_id": "general-1",
+      "pid": null,
+      "updated_at": 1788733017.8398464
+    },
+    "mcps-borda-cloudflare-docker": {
+      "state": "MERGED",
+      "branch": null,
+      "commit_sha": null,
+      "pid": null,
+      "updated_at": 1788734000.0
+    },
+    "gate-infra-compose": {
+      "state": "MERGED",
+      "branch": null,
+      "commit_sha": null,
+      "pid": null,
+      "updated_at": 1788735000.0
+    },
+    "gate-preflight-e2e": {
+      "state": "MERGED",
+      "branch": null,
+      "commit_sha": null,
+      "pid": null,
+      "updated_at": 1788736000.0
+    },
+    "templates-canonicos-e-generator-flag": {
+      "state": "MERGED",
+      "branch": null,
+      "commit_sha": null,
+      "pid": null,
+      "updated_at": 1788737000.0
+    },
+    "validacao-e2e-piloto-real": {
+      "state": "MERGED",
+      "branch": null,
+      "commit_sha": null,
+      "pid": null,
+      "updated_at": 1788738000.0
+    }
+  }
+}

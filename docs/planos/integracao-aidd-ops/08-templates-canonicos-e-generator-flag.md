@@ -1,6 +1,6 @@
 # Pacote 8 — Templates Canônicos de Infraestrutura
 
-> **Status:** ⏳ Bloqueado pelo Pacote 3 (pode rodar em paralelo aos Pacotes 4-7).
+> **Status:** Concluído (100% dos blocos e planos canônicos validados via G_INFRA_COMPOSE)
 > **Ajuste original coberto:** Ajuste 3 (Catálogo de Templates Canônicos) — §8.3 da proposta.
 > **Decisão do usuário (06/09/2026):** a proposta original também incluía uma "Parte B" (flag `--type=infra-stack` no `aidd-generator`, acoplando-o ao `aidd-ops` via subprocess). O usuário **rejeitou esse acoplamento** explicitamente — contradizia a decisão já registrada de que cada ferramenta do ecossistema é standalone (Rodada 2). A Parte B **não faz parte deste pacote nem de nenhum outro** — quem quiser um plano de infraestrutura usa `ecossistema.py ops plan` diretamente. Este documento cobre só os templates canônicos (a parte que tinha valor real e não tinha problema de acoplamento).
 
@@ -164,3 +164,21 @@ per-niche static PLANO-INFRAESTRUTURA.json files, and real evidence
 (output) of docker compose config or G_INFRA_COMPOSE.py passing for
 every new compose.
 ```
+
+---
+
+## Veredito da Execução (Auditoria Real)
+
+- **Status:** APROVADO (100% dos critérios atingidos).
+- **Estrutura Canônica de Infraestrutura:** 7 blocos construtivos implementados e versionados em `tools/aidd-ops/templates/infra/<bloco>/`:
+  1. `traefik`: TLS automático Let's Encrypt, dashboard seguro, network `aidd_public`.
+  2. `postgres`: PostgreSQL 16 Alpine centralizado, `init-multiple-databases.sh` parametrizável via `POSTGRES_MULTIPLE_DATABASES`, isolamento em `aidd_internal`.
+  3. `authentik`: SSO/OIDC com Redis e PostgreSQL integrado, forward auth preparado para Traefik.
+  4. `twenty`: Twenty CRM (CRM open-source para pacientes/contatos).
+  5. `chatwoot`: Chatwoot Rails/Sidekiq/Redis para atendimento omnichannel.
+  6. `calcom`: Cal.com para agendamento online de consultas.
+  7. `gateway`: Micro-gateway FastAPI mínimo com endpoints para webhook e healthchecks.
+- **Planos Estáticos Canônicos por Nicho:** 5 planos de infraestrutura versionados em `tools/aidd-ops/templates/infra/nichos/<nicho>.json` (`clinicas`, `delivery`, `farmacias`, `b2b_industrial`, `energia_solar`), mapeando explicitamente os blocos e bancos lógicos necessários.
+- **Validação Estática Automatizada:** Todos os 7 arquivos `docker-compose.yml` e os 5 planos estáticos auditados por `gates/G_INFRA_COMPOSE.py` com 100% de aprovação (sem colisão de portas, sem valores sensíveis hardcoded, variáveis cobertas por `.env.example`).
+- **Desacoplamento Rigoroso (Decisão Mantida):** Nenhuma alteração invasiva em `aidd-generator`. O ecossistema mantém todas as 5 ferramentas operando como módulos standalone.
+

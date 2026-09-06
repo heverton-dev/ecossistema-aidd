@@ -8,7 +8,7 @@
 
 ## 1. VISÃO GERAL DO ECOSSISTEMA
 
-O **Ecossistema AIDD** unifica 4 ferramentas complementares de Engenharia Agêntica de Software em um monorepo modular e desacoplado:
+O **Ecossistema AIDD** unifica 5 ferramentas complementares de Engenharia Agêntica de Software em um monorepo modular e desacoplado:
 
 | Ferramenta | Diretório | Papel Principal | Slash Command |
 | :--- | :--- | :--- | :--- |
@@ -16,6 +16,7 @@ O **Ecossistema AIDD** unifica 4 ferramentas complementares de Engenharia Agênt
 | **AIDD Generator** | 	ools/aidd-generator | Fábrica autônoma de software (Pipeline 8 fases a partir de ideia natural) | /generate <ideia> |
 | **AIDD Master** | 	ools/aidd-master | Suíte modular com Clean Architecture, Fatias Verticais e SQLite WAL | /master <modulo> |
 | **AIDD Enterprise** | 	ools/aidd-enterprise | Plataforma de Missão Crítica com Injeção de Componentes SHA-256 e Zero-Trust | /enterprise <tipo> <nome> |
+| **AIDD Ops** | 	ools/aidd-ops | Meta-Orquestrador Agêntico de Infraestrutura — MVP em construção, ver docs/planos/integracao-aidd-ops/ | (em construção — Pacote 3) |
 
 ---
 
@@ -39,7 +40,7 @@ O **Ecossistema AIDD** unifica 4 ferramentas complementares de Engenharia Agênt
    - Nenhuma dependência proprietária ou vendor lock-in é permitida no ecossistema.
    - **Protocolo Permanente de Agnosticidade:** consulte e siga estritamente o checklist canônico em `docs/protocolos/PROTOCOLO-AGNOSTICIDADE-COMPONENTES.md`.
 7. **Desenvolvedor no Controle (Zero Subagentes Headless Paralelos):**
-   - É estritamente proibido ao assistente disparar subagentes paralelos invisíveis via tools (`invoke_subagent`) ou via subprocessos ocultos de CLI que concorram sem observabilidade.
+   - É estritamente proibido ao assistente disparar subagentes paralelos invisíveis via tools (`task create`, `task start`, `invoke_subagent`, `background_task`) ou via subprocessos ocultos de CLI que concorram sem observabilidade.
    - Toda execução de worktree opera em modo interativo sequencial governado pelo desenvolvedor no terminal, eliminando saturação de contexto, rate limits e timeouts silenciosos.
 
 ---
@@ -83,14 +84,15 @@ Cada comando possui contrato formal executável em qualquer harness (Antigravity
 ## 4. AUDITORIA E META-QUALITY GATES
 
 O ecossistema dispõe de Quality Gates globais em gates/:
-- gates/G_ECOSSISTEMA_INTEGRIDADE.py: Audita a integridade física, sintática e estrutural dos 4 subprojetos e das skills.
+- gates/G_ECOSSISTEMA_INTEGRIDADE.py: Audita a integridade física, sintática e estrutural dos 5 subprojetos e das skills.
 - gates/G_DRIFT_NUCLEO_COMPARTILHADO.py: Detecta divergência não documentada entre os arquivos de núcleo compartilhados por linhagem entre aidd-master e aidd-enterprise (baseline em gates/baseline_nucleo_compartilhado.json).
 - gates/G_HARNESS_COMPAT.py: Verifica que os artefatos multi-harness da raiz (comandos, skills, arquivos-ponteiro) permanecem sincronizados entre si.
 - gates/G_SEGREDOS.py: Escaneia todo o repositório rastreado pelo git em busca de credenciais hardcoded (allowlist auditada em gates/allowlist_segredos.json).
 - gates/G_CLI_HELP_CONSISTENCIA.py: Compara, via AST, flags citadas em print()/raise() contra flags realmente definidas via add_argument nos pontos de entrada argparse das 4 ferramentas (allowlist de flags de ferramenta externa em gates/allowlist_cli_help.json).
 - gates/G_COMPONENTE_AGNOSTICO.py: Audita a integridade e cobertura multi-harness de todo componente novo ou modificado contra o manifesto.
 - gates/G_ZERO_HEADLESS.py: Impede a execução de subagentes headless paralelos e assegura o modo interativo como rota primária e mandatória.
-- Execução unificada via CLI: python ecossistema.py audit (roda os 7 gates em sequência)
+- gates/G_INFRA_COMPOSE.py: Audita estaticamente a integridade e sintaxe de orquestrações Docker Compose e scripts de banco de dados do aidd-ops.
+- Execução unificada via CLI: python ecossistema.py audit (roda os 8 gates em sequência)
 
 ---
 

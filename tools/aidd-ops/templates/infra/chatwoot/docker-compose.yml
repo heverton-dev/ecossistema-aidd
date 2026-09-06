@@ -1,0 +1,85 @@
+# =============================================================================
+# AIDD-Ops — Bloco: Chatwoot
+# Camada de Atendimento ao Cliente (Chat/WhatsApp)
+# =============================================================================
+# Imagem oficial: chatwoot/chatwoot (Docker Hub — Chatwoot Inc)
+# Nota: Chatwoot conecta ao PostgreSQL centralizado (banco chatwoot_db).
+#       Para produção, considere usar pgvector para embeddings de IA.
+# Validação: docker compose config (syntaxe) + G_INFRA_COMPOSE.py (Pacote 6)
+# =============================================================================
+
+services:
+  chatwoot-rails:
+    image: chatwoot/chatwoot:latest
+    container_name: aidd_chatwoot_rails
+    restart: unless-stopped
+    environment:
+      RAILS_ENV: production
+      DATABASE_URL: postgresql://${CHATWOOT_DB_USER:-chatwoot_user}:${CHATWOOT_DB_PASSWORD:?Defina CHATWOOT_DB_PASSWORD no .env}@${POSTGRES_HOST:-postgres}:5432/${CHATWOOT_DB_NAME:-chatwoot_db}
+      REDIS_URL: redis://chatwoot-redis:6379
+      SECRET_KEY_BASE: ${CHATWOOT_SECRET_KEY_BASE:?Defina CHATWOOT_SECRET_KEY_BASE no .env}
+      FRONTEND_URL: ${CHATWOOT_FRONTEND_URL:-http://localhost:3000}
+      RAILS_LOG_TO_STDOUT: "true"
+    ports:
+      - "${CHATWOOT_RAILS_PORT:-3000}:3000"
+    networks:
+      - aidd_internal
+    depends_on:
+      chatwoot-redis:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:3000/health || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 120s
+    deploy:
+      resources:
+        limits:
+          memory: ${CHATWOOT_RAILS_MAX_RAM:-1g}
+
+  chatwoot-sidekiq:
+    image: chatwoot/chatwoot:latest
+    container_name: aidd_chatwoot_sidekiq
+    restart: unless-stopped
+    command: bundle exec sidekiq -C config/sidekiq.yml
+    environment:
+      RAILS_ENV: production
+      DATABASE_URL: postgresql://${CHATWOOT_DB_USER:-chatwoot_user}:${CHATWOOT_DB_PASSWORD:?Defina CHATWOOT_DB_PASSWORD no .env}@${POSTGRES_HOST:-postgres}:5432/${CHATWOOT_DB_NAME:-chatwoot_db}
+      REDIS_URL: redis://chatwoot-redis:6379
+      SECRET_KEY_BASE: ${CHATWOOT_SECRET_KEY_BASE:?Defina CHATWOOT_SECRET_KEY_BASE no .env}
+    networks:
+      - aidd_internal
+    depends_on:
+      chatwoot-redis:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "ps aux | grep -v grep | grep sidekiq || exit 1"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 60s
+    deploy:
+      resources:
+        limits:
+          memory: ${CHATWOOT_SIDEKIQ_MAX_RAM:-512m}
+
+  chatwoot-redis:
+    image: redis:7-alpine
+    container_name: aidd_chatwoot_redis
+    restart: unless-stopped
+    networks:
+      - aidd_internal
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    deploy:
+      resources:
+        limits:
+          memory: ${CHATWOOT_REDIS_MAX_RAM:-128m}
+
+networks:
+  aidd_internal:
+    driver: bridge

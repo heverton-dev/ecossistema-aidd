@@ -142,6 +142,10 @@
     "aidd-generator": {
       "root": "tools/aidd-generator",
       "tipos_aplicaveis": ["skill", "mcp", "spec", "hook", "config", "command", "sub-agent", "script"]
+    },
+    "aidd-ops": {
+      "root": "tools/aidd-ops",
+      "tipos_aplicaveis": ["skill", "mcp", "spec", "hook", "config", "command", "sub-agent", "script"]
     }
   }
 }

@@ -71,31 +71,37 @@
       "caminho": "tools/aidd-enterprise",
       "skill": "skills/aidd-enterprise-runner",
       "slash_command": "/enterprise <tipo> <nome>"
+    },
+    {
+      "id": "aidd-ops",
+      "caminho": "tools/aidd-ops",
+      "skill": "skills/aidd-ops-runner",
+      "slash_command": "/ops [acao]"
     }
   ],
   "testes": {
-    "medido_em": "2026-09-04T22:10:53.844262+00:00",
+    "medido_em": "2026-09-06T20:26:44.940047+00:00",
     "metodo": "python -m pytest -q --tb=no em cada tools/<ferramenta>, parseado do resumo real (nao digitado a mao)",
     "por_ferramenta": {
       "aidd-forge": {
         "status": "ok",
-        "passed": 191,
+        "passed": 197,
         "failed": 0,
         "skipped": 1,
         "errors": 0,
         "exit_code": 0
       },
       "aidd-generator": {
-        "status": "ok",
-        "passed": 756,
+        "status": "falhou",
+        "passed": 0,
         "failed": 0,
         "skipped": 0,
         "errors": 0,
-        "exit_code": 0
+        "exit_code": 1
       },
       "aidd-master": {
         "status": "ok",
-        "passed": 169,
+        "passed": 214,
         "failed": 0,
         "skipped": 4,
         "errors": 0,
@@ -103,11 +109,16 @@
       },
       "aidd-enterprise": {
         "status": "ok",
-        "passed": 174,
+        "passed": 203,
         "failed": 0,
         "skipped": 4,
         "errors": 0,
         "exit_code": 0
+      },
+      "aidd-ops": {
+        "status": "indeterminado",
+        "exit_code": 5,
+        "trecho": "=============\nplatform win32 -- Python 3.14.7, pytest-9.0.3, pluggy-1.6.0\nrootdir: C:\\Users\\trcnologia\\orca\\workspaces\\ecossistema-aidd\\aidd-ops\nconfigfile: pytest.ini\nplugins: anyio-4.14.1, cov-7.1.0\ncollected 0 items\n\n============================ no tests ran in 0.02s ============================\n"
       }
     }
   }

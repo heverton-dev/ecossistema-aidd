@@ -1,0 +1,84 @@
+# =============================================================================
+# AIDD-Ops — Bloco: Twenty CRM
+# Camada de CRM (Customer Relationship Management)
+# =============================================================================
+# Imagem oficial: ghcr.io/twentyhq/twenty (GHCR — Twenty PBC)
+# Nota: Twenty requer PostgreSQL centralizado (banco twenty_db) via rede aidd_internal.
+#       Não inclui Redis — o compose oficial do Twenty usa, mas para isolamento
+#       do template, a conexão é parametrizável via .env.
+# Validação: docker compose config (syntaxe) + G_INFRA_COMPOSE.py (Pacote 6)
+# =============================================================================
+
+services:
+  twenty-server:
+    image: ghcr.io/twentyhq/twenty:latest
+    container_name: aidd_twenty_server
+    restart: unless-stopped
+    environment:
+      PG_DATABASE_URL: postgresql://${TWENTY_DB_USER:-twenty_user}:${TWENTY_DB_PASSWORD:?Defina TWENTY_DB_PASSWORD no .env}@${POSTGRES_HOST:-postgres}:5432/${TWENTY_DB_NAME:-twenty_db}
+      REDIS_URL: redis://redis:6379
+      SERVER_URL: ${TWENTY_SERVER_URL:-http://localhost:3000}
+      FRONT_BASE_URL: ${TWENTY_FRONT_URL:-http://localhost:3001}
+      ACCESS_TOKEN_SECRET: ${TWENTY_ACCESS_TOKEN_SECRET:?Defina TWENTY_ACCESS_TOKEN_SECRET no .env}
+      LOGIN_TOKEN_SECRET: ${TWENTY_LOGIN_TOKEN_SECRET:?Defina TWENTY_LOGIN_TOKEN_SECRET no .env}
+      REFRESH_TOKEN_SECRET: ${TWENTY_REFRESH_TOKEN_SECRET:?Defina TWENTY_REFRESH_TOKEN_SECRET no .env}
+      FILE_TOKEN_SECRET: ${TWENTY_FILE_TOKEN_SECRET:?Defina TWENTY_FILE_TOKEN_SECRET no .env}
+    ports:
+      - "${TWENTY_SERVER_PORT:-3000}:3000"
+    networks:
+      - aidd_internal
+    depends_on:
+      twenty-redis:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:3000/healthz || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+    deploy:
+      resources:
+        limits:
+          memory: ${TWENTY_SERVER_MAX_RAM:-1g}
+
+  twenty-front:
+    image: ghcr.io/twentyhq/twenty:latest
+    container_name: aidd_twenty_front
+    restart: unless-stopped
+    command: npx serve build -s -l 3001
+    environment:
+      REACT_APP_SERVER_BASE_URL: ${TWENTY_SERVER_URL:-http://localhost:3000}
+    ports:
+      - "${TWENTY_FRONT_PORT:-3001}:3001"
+    networks:
+      - aidd_internal
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:3001 || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+    deploy:
+      resources:
+        limits:
+          memory: ${TWENTY_FRONT_MAX_RAM:-256m}
+
+  twenty-redis:
+    image: redis:7-alpine
+    container_name: aidd_twenty_redis
+    restart: unless-stopped
+    networks:
+      - aidd_internal
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    deploy:
+      resources:
+        limits:
+          memory: ${TWENTY_REDIS_MAX_RAM:-128m}
+
+networks:
+  aidd_internal:
+    driver: bridge

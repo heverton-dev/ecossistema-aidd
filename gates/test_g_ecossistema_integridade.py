@@ -22,21 +22,24 @@ TOOLS_REQUIRED = [
     "aidd-forge",
     "aidd-generator",
     "aidd-master",
-    "aidd-enterprise"
+    "aidd-enterprise",
+    "aidd-ops"
 ]
 
 SKILLS_REQUIRED = [
     "aidd-forge-runner",
     "aidd-generator-runner",
     "aidd-master-runner",
-    "aidd-enterprise-runner"
+    "aidd-enterprise-runner",
+    "aidd-ops-runner"
 ]
 
 COMMANDS_REQUIRED = [
     "forge.md",
     "generate.md",
     "master.md",
-    "enterprise.md"
+    "enterprise.md",
+    "ops.md"
 ]
 
 
@@ -137,3 +140,44 @@ def test_falha_se_agents_md_ausente(tmp_path):
     res = rodar_gate(gate_path, tmp_path)
     assert res.returncode == 1
     assert "Arquivo AGENTS.md não encontrado na raiz." in res.stdout
+
+
+def test_falha_se_tool_aidd_ops_ausente(tmp_path):
+    """Gate reprova quando tools/aidd-ops/ não existe."""
+    gate_path = _montar_arvore_valida(tmp_path)
+    os.remove(tmp_path / "tools" / "aidd-ops" / "README.md")
+    os.rmdir(tmp_path / "tools" / "aidd-ops")
+
+    res = rodar_gate(gate_path, tmp_path)
+    assert res.returncode == 1
+    assert "Diretório da ferramenta tools/aidd-ops não encontrado" in res.stdout
+
+
+def test_falha_se_skill_aidd_ops_runner_ausente(tmp_path):
+    """Gate reprova quando skills/aidd-ops-runner/SKILL.md não existe."""
+    gate_path = _montar_arvore_valida(tmp_path)
+    os.remove(tmp_path / "skills" / "aidd-ops-runner" / "SKILL.md")
+    os.rmdir(tmp_path / "skills" / "aidd-ops-runner")
+
+    res = rodar_gate(gate_path, tmp_path)
+    assert res.returncode == 1
+    assert "aidd-ops-runner" in res.stdout
+
+
+def test_falha_se_command_ops_md_ausente(tmp_path):
+    """Gate reprova quando .agent/commands/ops.md não existe."""
+    gate_path = _montar_arvore_valida(tmp_path)
+    os.remove(tmp_path / ".agent" / "commands" / "ops.md")
+
+    res = rodar_gate(gate_path, tmp_path)
+    assert res.returncode == 1
+    assert "ops.md não encontrado" in res.stdout
+
+
+def test_arvore_valida_incluindo_aidd_ops_aprova(tmp_path):
+    """Árvore completa com aidd-ops é aprovada (confirma integração da 5ª ferramenta)."""
+    gate_path = _montar_arvore_valida(tmp_path)
+    res = rodar_gate(gate_path, tmp_path)
+    assert res.returncode == 0
+    assert "aidd-ops" in res.stdout
+    assert "Quality Gate G_ECOSSISTEMA_INTEGRIDADE APROVADO (100% OK)!" in res.stdout

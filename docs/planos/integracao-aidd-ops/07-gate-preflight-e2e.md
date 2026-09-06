@@ -1,6 +1,6 @@
 # Pacote 7 — Comando `ops preflight` / Pre-Flight E2E (Gap 4 da proposta)
 
-> **Status:** ⏳ Bloqueado pelos Pacotes 4, 5 e 6 + **aprovação pontual do usuário antes de qualquer execução contra ambiente vivo**.
+> **Status:** Concluído (100% testado e integrado, execução viva pendente de autorização pontual no piloto)
 > **Gap original coberto:** Gap 4 (§8.2 da proposta) — "Bateria de Testes Pré-Produção (Pre-Flight E2E Tests)".
 > **Natureza:** diferente dos outros 6 gates — este é um teste de **integração contra infraestrutura viva** (VPS real, DNS real), não estático/offline. Precisa de tratamento e expectativa diferentes dos demais.
 > **Nota de nomenclatura (corrigida após auditoria):** este NÃO é um arquivo `gates/G_*.py` (ao contrário do que o nome "G_PRE_FLIGHT_E2E" no título antigo sugeria, e do que o `G_INFRA_COMPOSE.py` do Pacote 6 realmente é) — é um subcomando `ops preflight <ambiente>`, sob demanda, fora da bateria de `cmd_audit`. O nome de arquivo `G_PRE_FLIGHT_E2E` era usado só como codinome interno, o que já causou confusão numa auditoria independente — evite criar por engano um arquivo `gates/G_PRE_FLIGHT_E2E.py`.
@@ -101,9 +101,20 @@ Testes reais (servidor HTTP local, servidor TLS local com certificado self-signe
 
 ---
 
-## Veredito
+## Veredito da Execução (Auditoria Real)
 
-*(Preencher após execução — registrar explicitamente se houve execução contra ambiente real, qual ambiente, e o relatório obtido.)*
+- **Status:** APROVADO (100% dos critérios de código e testes herméticos atingidos).
+- **Subcomando Implementado:** `python ecossistema.py ops preflight <ambiente>` (integrado em `pipeline_ops.py` e `tools/aidd-ops/src/core/preflight.py`):
+  - 4 checagens canônicas: HTTP em `/healthz` por serviço, validação de certificado TLS/SSL, resolução DNS com resolver configurável, simulação de webhook com payload sintético.
+  - Parâmetros configuráveis: `--timeout`, `--retries`, `--retry-interval`, `--servicos`, `--subdominios`, `--webhook-url`, `--json`.
+  - Saída JSON estruturada com resumo (`total`, `passou`, `falhou`, `nao_aplicavel`) e detalhes de cada checagem.
+- **Isolamento de Auditoria:** Comando implementado sob demanda fora de `cmd_audit`, preservando a velocidade e o determinismo offline de `python ecossistema.py audit`.
+- **Suíte de Testes Herméticos:** `tools/aidd-ops/tests/test_preflight.py` com 12 testes unitários reais:
+  - Servidor HTTP local real (`http.server.HTTPServer` em `127.0.0.1:0`) simulando 200 OK, erro 500, endpoint ausente 404 e recebimento de webhook POST com payload JSON.
+  - Injeção de dependência para teste determinístico de DNS e SSL sem dependência de rede externa.
+  - Zero Stubs cumprido estritamente (100% de conformidade com `G_OPS_MVP.py`).
+- **Execução Real contra Rede Externa:** NÃO realizada nesta etapa (zero chamadas externas, respeitando a barreira estrita do §4 que exige autorização pontual do usuário com o alvo homologado no momento do deploy piloto).
+- **Quality Gates Globais:** 7 gates 100% aprovados em `python ecossistema.py audit`. Suíte de `aidd-ops` com 51 testes verdes. Total do monorepo: 78 testes unitários verdes.
 
 ## Prompt de Execução — English version
 
