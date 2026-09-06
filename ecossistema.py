@@ -97,9 +97,9 @@ def cmd_orchestrate(args):
     parser.add_argument("--resume", action="store_true", help="Retoma um Flight Plan previamente iniciado (crash recovery).")
     parser.add_argument("--yes", action="store_true", help="Nao pede confirmacao interativa do Plano de Voo.")
     parser.add_argument(
-        "--harness", default="mimo",
+        "--harness", default=None,
         choices=["mimo", "opencode", "claude", "agy"],
-        help="Harness de destino (default: mimo)",
+        help="Harness de destino (se omitido, pergunta interativamente)",
     )
     parser.add_argument(
         "--profiles", default=None,
@@ -122,9 +122,43 @@ def cmd_orchestrate(args):
             "orca-plan-orchestrator", ".orca", "harness_profiles.json.example",
         )
 
+    harness_escolhido = ns.harness
+    if harness_escolhido is None:
+        if sys.stdin.isatty():
+            import shutil
+            candidatos = ["claude", "agy", "mimo", "opencode"]
+            print("\n[ORCA ADE] Seleção Interativa de Harness:")
+            disponiveis = []
+            for idx, h in enumerate(candidatos, 1):
+                caminho = shutil.which(h)
+                tag = f"[INSTALADO: {caminho}]" if caminho else "[NÃO DETECTADO NO PATH]"
+                print(f"  {idx}) {h:<10} {tag}")
+                disponiveis.append(h)
+            try:
+                escolha = input("\nEscolha o número do harness executor (default: 1 - claude): ").strip()
+                if escolha in ("1", "claude", ""):
+                    harness_escolhido = "claude"
+                elif escolha in ("2", "agy"):
+                    harness_escolhido = "agy"
+                elif escolha in ("3", "mimo"):
+                    harness_escolhido = "mimo"
+                elif escolha in ("4", "opencode"):
+                    harness_escolhido = "opencode"
+                else:
+                    print(f"[ERRO] Escolha inválida '{escolha}'. Abortado.")
+                    return 1
+            except (EOFError, KeyboardInterrupt):
+                print("\n[CANCELADO] Seleção cancelada pelo usuário.")
+                return 1
+        else:
+            harness_escolhido = "claude" if shutil.which("claude") else "mimo"
+            print(f"[ORCA ADE] Stdin não interativo. Harness auto-selecionado: {harness_escolhido}")
+
+    print(f"[ORCA ADE] Harness Executor selecionado: {harness_escolhido}")
+
     if ns.dry_run:
         try:
-            data = gerar_plano_de_voo(ns.plano, profiles_path, harness=ns.harness)
+            data = gerar_plano_de_voo(ns.plano, profiles_path, harness=harness_escolhido)
         except (FileNotFoundError, ValueError, KeyError) as exc:
             print(f"Erro ao gerar Flight Plan: {exc}")
             return 1
@@ -134,7 +168,7 @@ def cmd_orchestrate(args):
 
     try:
         return executar_orquestracao(
-            ns.plano, profiles_path, harness=ns.harness, resume=ns.resume, yes=ns.yes,
+            ns.plano, profiles_path, harness=harness_escolhido, resume=ns.resume, yes=ns.yes,
         )
     except (FileNotFoundError, ValueError, KeyError, RuntimeError) as exc:
         print(f"Erro na orquestracao: {exc}")
