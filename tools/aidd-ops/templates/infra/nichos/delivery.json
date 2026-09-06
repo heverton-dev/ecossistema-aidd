@@ -1,0 +1,70 @@
+{
+  "versao": "1.0.0",
+  "nicho": "delivery",
+  "nome_exibicao": "Lanchonetes & Delivery",
+  "descricao": "Plano de infraestrutura para o nicho de Lanchonetes e Delivery. Mapeia ferramentas do catálogo para blocos construtivos canônicos.",
+  "fonte": "tools/aidd-ops/data/catalogo_nichos.json → nicho 'delivery'",
+  "blocos": [
+    {
+      "slug": "traefik",
+      "caminho": "tools/aidd-ops/templates/infra/traefik/",
+      "obrigatorio": true,
+      "motivo": "Reverse proxy e terminação TLS para todos os serviços expostos publicamente"
+    },
+    {
+      "slug": "postgres",
+      "caminho": "tools/aidd-ops/templates/infra/postgres/",
+      "obrigatorio": true,
+      "motivo": "Banco centralizado para Odoo e Listmonk"
+    },
+    {
+      "slug": "gateway",
+      "caminho": "tools/aidd-ops/templates/infra/gateway/",
+      "obrigatorio": false,
+      "motivo": "API Gateway para orquestrar integrações com marketplaces (iFood, Rappi)"
+    }
+  ],
+  "bancos_logicos": [
+    {
+      "nome": "odoo_db",
+      "usuario": "odoo_user",
+      "bloco_consumer": null,
+      "notas": "ERP — gestão de pedidos, estoque e fiscal. Odoo usa Dockerfile próprio com imagem oficial odoo:18. Requer container dedicado não incluído nos blocos canônicos."
+    },
+    {
+      "nome": "listmonk_db",
+      "usuario": "listmonk_user",
+      "bloco_consumer": null,
+      "notas": "E-mail marketing — campanhas e listas. Listmonk usa imagem oficial listmonk/listmonk. Requer container dedicado não incluído nos blocos canônicos."
+    }
+  ],
+  "ferramentas_sem_bloco": [
+    {
+      "nome": "Typebot",
+      "motivo": "Chatbot conversacional — requer composição customizada com Dockerfile próprio ou imagem community"
+    },
+    {
+      "nome": "Evolution API",
+      "motivo": "API WhatsApp — usa MongoDB internamente, não PostgreSQL. Requer bloco MongoDB separado."
+    },
+    {
+      "nome": "Odoo",
+      "motivo": "ERP completo — tem imagem oficial (odoo:18) mas requer configuração customizada de módulos. Pode ser adicionado como bloco futuro."
+    },
+    {
+      "nome": "Listmonk",
+      "motivo": "E-mail marketing — tem imagem oficial (listmonk/listmonk) mas configuração inicial via UI. Pode ser adicionado como bloco futuro."
+    }
+  ],
+  "portas_host": {
+    "80": "Traefik HTTP (redirect → HTTPS)",
+    "443": "Traefik HTTPS",
+    "8000": "Gateway FastAPI (se habilitado)"
+  },
+  "requisitos_recursos": {
+    "vcpu_minima": 4,
+    "ram_minima_gb": 6,
+    "disco_minimo_gb": 80,
+    "notas": "Odoo é pesado (2vCPU/4GB RAM mínimo oficial). Listmonk é leve (1vCPU/0.5GB). Soma: Odoo(2/4) + Listmonk(1/0.5) + overhead Traefik/PostgreSQL"
+  }
+}

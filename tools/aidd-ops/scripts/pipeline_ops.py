@@ -207,7 +207,58 @@ def executar_pipeline(texto: str, pasta_destino: str, nicho_explicito: Optional 
     return 0
 
 
+def cmd_bootstrap(args_list):
+    """Subcomando bootstrap: executa a sequencia fechada via SSHRunner."""
+    from core.ssh_runner import SSHRunner
+
+    parser = argparse.ArgumentParser(
+        prog="pipeline_ops bootstrap",
+        description="AIDD-Ops — Bootstrapping remoto determinístico de VPS via SSH (Gap 1)",
+    )
+    parser.add_argument("host", help="IP ou hostname do servidor VPS alvo")
+    parser.add_argument("--user", default="root", help="Usuário SSH (default: root)")
+    parser.add_argument("--port", type=int, default=22, help="Porta SSH (default: 22)")
+    parser.add_argument("--key", default=None, help="Caminho da chave privada SSH (opcional)")
+    parser.add_argument("--real", action="store_true", help="Executa contra o host real (padrão é --dry-run seguro)")
+    args = parser.parse_args(args_list)
+
+    dry_run = not args.real
+
+    print("=" * 72)
+    print(" [AIDD-Ops] Bootstrapping Remoto via SSHRunner")
+    print(f" Alvo: {args.user}@{args.host}:{args.port} | Modo: {'DRY-RUN (Simulação)' if dry_run else 'EXECUÇÃO REAL'}")
+    print("=" * 72)
+
+    try:
+        runner = SSHRunner(
+            host=args.host,
+            user=args.user,
+            port=args.port,
+            key_path=args.key,
+            dry_run=dry_run,
+        )
+        res = runner.executar_bootstrap_completo()
+        if res.sucesso:
+            print(f"\n[SUCESSO] Bootstrap concluído ({len(res.valor)} etapas homologadas):")
+            for item in res.valor:
+                print(f"  - {item['operacao']:<20} -> exit 0 ({item['comando'][:50]}...)")
+            print("=" * 72)
+            return 0
+        else:
+            print(f"\n[ERRO] {res.codigo}: {res.erro}")
+            if res.detalhes:
+                print(f"Detalhes: {res.detalhes}")
+            print("=" * 72)
+            return 1
+    except Exception as exc:
+        print(f"\n[ERRO INESPERADO]: {exc}")
+        return 1
+
+
 def main():
+    if len(sys.argv) > 1 and sys.argv[1] == "bootstrap":
+        sys.exit(cmd_bootstrap(sys.argv[2:]))
+
     parser = argparse.ArgumentParser(
         prog="pipeline_ops",
         description="AIDD-Ops MVP — Pipeline determinístico de 3 fases (Intake, Curadoria, Sizing)",
@@ -249,3 +300,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+

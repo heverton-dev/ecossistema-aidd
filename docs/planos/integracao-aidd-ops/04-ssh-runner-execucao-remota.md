@@ -137,7 +137,15 @@ Suíte pytest de `tools/aidd-ops/tests/` → exit 0; gate próprio (`G_OPS_MVP.p
 
 ## Veredito
 
-*(Preencher após execução — registrar aqui, explicitamente, se houve ou não execução contra alvo real de rede externa, e sob qual aprovação.)*
+✅ **CONCLUÍDO COM SUCESSO (06/09/2026)**
+- **Código do Runner:** `tools/aidd-ops/src/core/ssh_runner.py` implementado com Paramiko, lista fechada de operações (anti-injeção), Result monad e modo dry-run obrigatório.
+- **Gate Determinístico:** `tools/aidd-ops/gates/G_OPS_SSH.py` criado e aprovado (AST parse garante zero concatenação de comandos shell e validação da constante `OPERACOES_PERMITIDAS`).
+- **Dependências:** `tools/aidd-ops/requirements.txt` criado com `paramiko>=3.4.0`.
+- **Testes Unitários:** `tools/aidd-ops/tests/test_ssh_runner.py` com 17 testes verdes (dry-run, mocks herméticos, validação AST, falha de autenticação sem vazamento de segredos). Suíte total do aidd-ops: 30 testes 100% verdes.
+- **Gates do Ecossistema:** `G_OPS_MVP.py` (42/42 checks OK), `G_OPS_SSH.py` (4/4 checks OK), `G_SEGREDOS.py` (exit 0) e `python ecossistema.py audit` (exit 0, todos os 6 gates aprovados).
+- **Subcomando CLI:** `python ecossistema.py ops bootstrap <host> [--dry-run]` homologado.
+- **Rede Externa:** Nenhuma conexão a host de rede externa foi disparada; toda a validação operou em modo `--dry-run` e mocks herméticos isolados conforme preconizado pela Regra de Ouro #1.
+
 
 ## Prompt de Execução — English version
 

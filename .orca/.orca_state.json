@@ -1,7 +1,7 @@
 {
   "version": 1,
   "created_at": 1788728053.5816507,
-  "updated_at": 1788730000.0,
+  "updated_at": 1788733017.8398468,
   "fronts": {
     "decisao-escopo-e-mvp": {
       "state": "MERGED",
@@ -25,13 +25,13 @@
       "updated_at": 1788728053.5816507
     },
     "ssh-runner-execucao-remota": {
-      "state": "IN_PROGRESS",
+      "state": "MERGED",
       "branch": "ephemeral/orca-f4-ssh-runner",
       "worktree": ".orca/worktrees/f4-ssh-runner",
       "commit_sha": null,
       "actor_id": "general-1",
       "pid": null,
-      "updated_at": 1788730000.0
+      "updated_at": 1788733017.8398464
     },
     "mcps-borda-cloudflare-docker": {
       "state": "PENDING",

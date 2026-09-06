@@ -1,0 +1,60 @@
+{
+  "versao": "1.0.0",
+  "nicho": "farmacias",
+  "nome_exibicao": "Farmácias & Drogarias",
+  "descricao": "Plano de infraestrutura para o nicho de Farmácias e Drogarias. Mapeia ferramentas do catálogo para blocos construtivos canônicos.",
+  "fonte": "tools/aidd-ops/data/catalogo_nichos.json → nicho 'farmacias'",
+  "blocos": [
+    {
+      "slug": "traefik",
+      "caminho": "tools/aidd-ops/templates/infra/traefik/",
+      "obrigatorio": true,
+      "motivo": "Reverse proxy e terminação TLS para todos os serviços expostos publicamente"
+    },
+    {
+      "slug": "postgres",
+      "caminho": "tools/aidd-ops/templates/infra/postgres/",
+      "obrigatorio": true,
+      "motivo": "Banco centralizado para Chatwoot"
+    },
+    {
+      "slug": "authentik",
+      "caminho": "tools/aidd-ops/templates/infra/authentik/",
+      "obrigatorio": false,
+      "motivo": "SSO/OIDC centralizado (recomendado para multi-filiais)"
+    },
+    {
+      "slug": "chatwoot",
+      "caminho": "tools/aidd-ops/templates/infra/chatwoot/",
+      "obrigatorio": true,
+      "motivo": "Atendimento ao cliente — dúvidas sobre medicamentos, prescrições e entregas"
+    }
+  ],
+  "bancos_logicos": [
+    {
+      "nome": "chatwoot_db",
+      "usuario": "chatwoot_user",
+      "bloco_consumer": "chatwoot",
+      "notas": "Atendimento — mensagens, histórico de conversas e integração WhatsApp"
+    }
+  ],
+  "ferramentas_sem_bloco": [
+    {
+      "nome": "Typebot",
+      "motivo": "Chatbot conversacional — requer composição customizada com Dockerfile próprio ou imagem community"
+    }
+  ],
+  "portas_host": {
+    "80": "Traefik HTTP (redirect → HTTPS)",
+    "443": "Traefik HTTPS",
+    "9000": "Authentik (se habilitado)",
+    "9443": "Authentik HTTPS (se habilitado)",
+    "3000": "Chatwoot Rails"
+  },
+  "requisitos_recursos": {
+    "vcpu_minima": 3,
+    "ram_minima_gb": 4,
+    "disco_minimo_gb": 40,
+    "notas": "Nicho leve — apenas Chatwoot(2vCPU/2GB) + overhead Traefik/PostgreSQL. Chatwoot é o serviço principal."
+  }
+}
