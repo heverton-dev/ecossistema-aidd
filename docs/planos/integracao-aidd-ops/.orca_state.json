@@ -1,0 +1,70 @@
+{
+  "version": 1,
+  "created_at": 1788728003.1069593,
+  "updated_at": 1788728003.1069593,
+  "fronts": {
+    "decisao-escopo-e-mvp": {
+      "state": "MERGED",
+      "branch": null,
+      "commit_sha": null,
+      "pid": null,
+      "updated_at": 1788728003.1069593
+    },
+    "fundamentos-governanca-gates": {
+      "state": "MERGED",
+      "branch": null,
+      "commit_sha": "3ebf29a",
+      "pid": null,
+      "updated_at": 1788728003.1069593
+    },
+    "mvp-tools-aidd-ops-fases-1-3": {
+      "state": "MERGED",
+      "branch": null,
+      "commit_sha": "e22b53a",
+      "pid": null,
+      "updated_at": 1788728003.1069593
+    },
+    "ssh-runner-execucao-remota": {
+      "state": "PENDING",
+      "branch": null,
+      "commit_sha": null,
+      "pid": null,
+      "updated_at": 1788728003.1069593
+    },
+    "mcps-borda-cloudflare-docker": {
+      "state": "PENDING",
+      "branch": null,
+      "commit_sha": null,
+      "pid": null,
+      "updated_at": 1788728003.1069593
+    },
+    "gate-infra-compose": {
+      "state": "PENDING",
+      "branch": null,
+      "commit_sha": null,
+      "pid": null,
+      "updated_at": 1788728003.1069593
+    },
+    "gate-preflight-e2e": {
+      "state": "PENDING",
+      "branch": null,
+      "commit_sha": null,
+      "pid": null,
+      "updated_at": 1788728003.1069593
+    },
+    "templates-canonicos-e-generator-flag": {
+      "state": "PENDING",
+      "branch": null,
+      "commit_sha": null,
+      "pid": null,
+      "updated_at": 1788728003.1069593
+    },
+    "validacao-e2e-piloto-real": {
+      "state": "PENDING",
+      "branch": null,
+      "commit_sha": null,
+      "pid": null,
+      "updated_at": 1788728003.1069593
+    }
+  }
+}

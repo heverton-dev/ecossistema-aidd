@@ -109,7 +109,11 @@ def cmd_orchestrate(args):
     parser.add_argument(
         "--harness", default=None,
         choices=["mimo", "opencode", "claude", "agy"],
-        help="Harness de destino (se omitido, pergunta interativamente)",
+        help="Harness de destino global (se omitido, pergunta interativamente)",
+    )
+    parser.add_argument(
+        "--harness-map", default=None,
+        help="Mapeamento customizado por frente (ex: frente1=claude,frente2=agy)",
     )
     parser.add_argument(
         "--profiles", default=None,
@@ -124,6 +128,8 @@ def cmd_orchestrate(args):
 
     from scripts.flight_plan import gerar_plano_de_voo, renderizar_plano_de_voo
     from scripts.orchestrator_engine import executar_orquestracao
+    from scripts.plan_parser import parse_plan
+    from scripts.state_engine import load_state
 
     profiles_path = ns.profiles
     if profiles_path is None:
@@ -132,30 +138,49 @@ def cmd_orchestrate(args):
             "orca-plan-orchestrator", ".orca", "harness_profiles.json.example",
         )
 
+    # Parsear --harness-map se fornecido via flag
+    harness_map = {}
+    if ns.harness_map:
+        for par in ns.harness_map.split(","):
+            if "=" in par:
+                k, v = par.split("=", 1)
+                harness_map[k.strip()] = v.strip()
+
     harness_escolhido = ns.harness
-    if harness_escolhido is None:
+    if harness_escolhido is None and not harness_map:
         if sys.stdin.isatty():
             candidatos = ["claude", "agy", "mimo", "opencode"]
-            print("\n[ORCA ADE] Seleção Interativa de Harness:")
-            disponiveis = []
+            print("\n[ORCA ADE] Configuração de Harnesses:")
             for idx, h in enumerate(candidatos, 1):
                 caminho = shutil.which(h)
                 tag = f"[INSTALADO: {caminho}]" if caminho else "[NÃO DETECTADO NO PATH]"
                 print(f"  {idx}) {h:<10} {tag}")
-                disponiveis.append(h)
+
             try:
-                escolha = input("\nEscolha o número do harness executor (default: 1 - claude): ").strip()
-                if escolha in ("1", "claude", ""):
-                    harness_escolhido = "claude"
-                elif escolha in ("2", "agy"):
-                    harness_escolhido = "agy"
-                elif escolha in ("3", "mimo"):
-                    harness_escolhido = "mimo"
-                elif escolha in ("4", "opencode"):
-                    harness_escolhido = "opencode"
+                plan_obj = parse_plan(ns.plano)
+                state_file = Path(ROOT_DIR) / ".orca" / ".orca_state.json"
+                st = load_state(state_file) if state_file.exists() else {"fronts": {}}
+
+                concluidas = [f.name for f in plan_obj.fronts if st.get("fronts", {}).get(f.name, {}).get("state") == "MERGED"]
+                pendentes = [f.name for f in plan_obj.fronts if f.name not in concluidas]
+
+                if concluidas:
+                    print(f"\n[ORCA ADE] Frentes já concluídas ({len(concluidas)}): {', '.join(concluidas)} (serão puladas)")
+                print(f"[ORCA ADE] Frentes pendentes ({len(pendentes)}): {', '.join(pendentes)}")
+
+                modo_sel = input("\nModo de Atribuição:\n  1) Multi-Harness por Frente (Recomendado - escolher para cada fase)\n  2) Global único para todas\nEscolha (default: 1): ").strip()
+
+                if modo_sel in ("2", "global"):
+                    escolha = input("\nEscolha o número do harness global (default: 1 - claude): ").strip()
+                    map_num = {"1": "claude", "2": "agy", "3": "mimo", "4": "opencode", "": "claude"}
+                    harness_escolhido = map_num.get(escolha, "claude")
                 else:
-                    print(f"[ERRO] Escolha inválida '{escolha}'. Abortado.")
-                    return 1
+                    print("\n[ORCA ADE] Atribuição Individual por Frente (1: claude | 2: agy | 3: mimo | 4: opencode):")
+                    map_num = {"1": "claude", "2": "agy", "3": "mimo", "4": "opencode"}
+                    for f_name in pendentes:
+                        resp = input(f"  -> Frente '{f_name}' (default: 1 - claude): ").strip()
+                        harness_map[f_name] = map_num.get(resp, resp if resp in candidatos else "claude")
+                    harness_escolhido = "claude"
             except (EOFError, KeyboardInterrupt):
                 print("\n[CANCELADO] Seleção cancelada pelo usuário.")
                 return 1
@@ -163,11 +188,14 @@ def cmd_orchestrate(args):
             harness_escolhido = "claude" if shutil.which("claude") else "mimo"
             print(f"[ORCA ADE] Stdin não interativo. Harness auto-selecionado: {harness_escolhido}")
 
-    print(f"[ORCA ADE] Harness Executor selecionado: {harness_escolhido}")
+    if harness_map:
+        print(f"[ORCA ADE] Multi-Harness mapeado para {len(harness_map)} frente(s): {harness_map}")
+    else:
+        print(f"[ORCA ADE] Harness Executor global: {harness_escolhido}")
 
     if ns.dry_run:
         try:
-            data = gerar_plano_de_voo(ns.plano, profiles_path, harness=harness_escolhido)
+            data = gerar_plano_de_voo(ns.plano, profiles_path, harness=harness_escolhido or "claude", harness_map=harness_map)
         except (FileNotFoundError, ValueError, KeyError) as exc:
             print(f"Erro ao gerar Flight Plan: {exc}")
             return 1
@@ -177,7 +205,7 @@ def cmd_orchestrate(args):
 
     try:
         return executar_orquestracao(
-            ns.plano, profiles_path, harness=harness_escolhido, resume=ns.resume, yes=ns.yes, stream=ns.stream,
+            ns.plano, profiles_path, harness=harness_escolhido or "claude", harness_map=harness_map, resume=ns.resume, yes=ns.yes, stream=ns.stream,
         )
     except (FileNotFoundError, ValueError, KeyError, RuntimeError) as exc:
         print(f"Erro na orquestracao: {exc}")

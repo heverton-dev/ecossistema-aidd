@@ -20,16 +20,24 @@ Esta skill orquestra a execução automatizada de planos fatiados (`00-PROCESSO-
 
 Quando o comando `/orchestrate [plano]` for invocado:
 
-1. **Inspeção do Plano:**
-   Valide se o caminho informado possui `00-PROCESSO-E-DECISOES.md` e arquivos `NN-*.md`.
-2. **Seleção Interativa de Harnesses (Pergunta Explícita ao Usuário):**
-   Antes de disparar a execução, realize uma pergunta interativa estruturada ao usuário:
-   - **Harness Executor:** Qual harness executará as etapas de código? (`claude`, `agy`, `mimo`, `opencode`).
-   - **Harness Auditor:** Qual harness ou processo auditará os Quality Gates locais antes do merge? (Padrão determinístico: Quality Gates locais / auditoria do próprio agente coordenador).
+1. **Inspeção do Plano e Estado Existente:**
+   - Valide se o caminho possui `00-PROCESSO-E-DECISOES.md` e arquivos `NN-*.md`.
+   - Inspecione `.orca/.orca_state.json` (se existir) para identificar frentes já no estado `MERGED`.
+   - Apresente ao usuário as frentes já concluídas (que serão puladas automaticamente) e liste as frentes pendentes.
+
+2. **Atribuição Multi-Harness Nativa por Frente (Obrigatória):**
+   - NUNCA assuma um único harness global para todas as fases.
+   - O harness da sessão atual (orquestrador líder) é nativamente o **Auditor dos Quality Gates** antes de cada merge.
+   - Para CADA uma das frentes pendentes mapeadas, pergunte interativamente ao usuário qual harness (`claude`, `mimo`, `agy`, `opencode`) executará aquela fase específica:
+     - Exemplo: "Frente 4 (SSH Runner): qual harness?"
+     - Exemplo: "Frente 5 (MCPs Cloudflare/Docker): qual harness?"
+     - (E assim para todas as frentes pendentes do plano).
+
 3. **Compilação e Apresentação do Plano de Voo:**
-   Gere e apresente o Plano de Voo (`--dry-run`) exibindo frentes, branches efêmeras e comandos mapeados.
+   - Gere e apresente o Plano de Voo em tabela Markdown exibindo: Número, Nome da Frente, Branch Efêmera, Worktree, Harness Executor atribuído e Comando correspondente.
+
 4. **Confirmação e Disparo:**
-   Aguarde a aprovação explícita do usuário para iniciar o motor executivo.
+   - Aguarde a confirmação explícita do usuário para disparar a execução determinística da orquestração.
 
 ## Uso via CLI
 
