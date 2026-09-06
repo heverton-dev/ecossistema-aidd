@@ -22,24 +22,31 @@ Quando o comando `/orchestrate [plano]` for invocado:
 
 1. **Inspeção do Plano:**
    Valide se o caminho informado possui `00-PROCESSO-E-DECISOES.md` e arquivos `NN-*.md`.
-2. **Seleção Interativa de Harnesses (Pergunta Explícita ao Usuário):**
-   Antes de disparar a execução, realize uma pergunta interativa estruturada ao usuário:
-   - **Harness Executor:** Qual harness executará as etapas de código? (`claude`, `agy`, `mimo`, `opencode`).
-   - **Harness Auditor:** Qual harness ou processo auditará os Quality Gates locais antes do merge? (Padrão determinístico: Quality Gates locais / auditoria do próprio agente coordenador).
+2. **Configuração Interativa (Perguntas Estruturadas ao Usuário):**
+   Antes de disparar a execução, pergunte interativamente ao usuário:
+   - **Modo de Operação:**
+     - `1) Automatizado (Headless):` execução autônoma com streaming de logs em tempo real.
+     - `2) Interativo (Recomendado):` você assume o controle direto no terminal da worktree de cada frente.
+   - **Atribuição de Harnesses Executores:**
+     - `1) Global:` um único harness executor para todas as frentes (`claude`, `agy`, `mimo`, `opencode`).
+     - `2) Personalizado (Miscelânea Multi-Harness):` o usuário define qual harness executa cada frente específica do plano.
 3. **Compilação e Apresentação do Plano de Voo:**
-   Gere e apresente o Plano de Voo (`--dry-run`) exibindo frentes, branches efêmeras e comandos mapeados.
+   Gere e apresente o Plano de Voo (`--dry-run`) exibindo frentes, branches efêmeras, harness atribuído por frente e modo da sessão.
 4. **Confirmação e Disparo:**
-   Aguarde a aprovação explícita do usuário para iniciar o motor executivo.
+   Aguarde a aprovação explícita do usuário para iniciar o motor executivo via CLI.
 
 ## Uso via CLI
 
 ```bash
-# Modo Interativo Automático (detecta harnesses instalados no sistema e pergunta ao usuário)
+# Modo Interativo Automático (pergunta modo interativo/headless e harness por frente)
 python ecossistema.py orchestrate [plano]
+
+# Modo Interativo direto
+python ecossistema.py orchestrate [plano] --interactive
+
+# Miscelânea por frente via CLI
+python ecossistema.py orchestrate [plano] --interactive --harness-map frente1=claude,frente2=agy
 
 # Visualizar plano de voo sem executar (Zero LLM / Zero Token)
 python ecossistema.py orchestrate [plano] --dry-run
-
-# Executar direto com harness específico (modo não-interativo)
-python ecossistema.py orchestrate [plano] --harness claude --yes
 ```

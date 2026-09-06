@@ -24,38 +24,46 @@ def gerar_plano_de_voo(
     plan_dir: str | Path,
     profiles_path: str | Path,
     harness: str = "mimo",
+    harness_map: dict[str, str] | None = None,
+    interactive: bool = False,
 ) -> dict:
     """Generate a flight plan from a plan folder and a harness profile.
 
     Args:
         plan_dir: Path to the plan directory.
         profiles_path: Path to the harness_profiles.json file.
-        harness: Name of the harness profile to use.
+        harness: Default harness profile to use.
+        harness_map: Optional dict mapping front name to specific harness profile.
+        interactive: If True, compiles command for interactive execution.
 
     Returns:
-        Dict with keys: plan_dir, harness, profile, fronts (list of dicts).
-        Each front dict: name, branch, worktree, command (list[str]).
+        Dict with keys: plan_dir, harness, profile_binary, fronts (list of dicts).
+        Each front dict: name, branch, worktree, harness, command (list[str]).
     """
     plan = parse_plan(plan_dir)
-    profile = carregar_perfil(profiles_path, harness)
+    default_profile = carregar_perfil(profiles_path, harness)
 
     compiled_fronts = []
     for front in plan.fronts:
-        command = compilar_comando(profile, front.content)
+        front_harness = (harness_map or {}).get(front.name, harness)
+        profile = carregar_perfil(profiles_path, front_harness) if front_harness != harness else default_profile
+        command = compilar_comando(profile, front.content, interactive=interactive)
         branch = f"orca/{front.name}"
         worktree = f"wt-{front.name}"
         compiled_fronts.append({
             "name": front.name,
             "branch": branch,
             "worktree": worktree,
+            "harness": front_harness,
             "command": command,
         })
 
     return {
         "plan_dir": str(plan.folder),
         "harness": harness,
-        "profile_binary": profile["binary"],
+        "profile_binary": default_profile["binary"],
         "fronts": compiled_fronts,
+        "interactive": interactive,
     }
 
 
@@ -66,20 +74,22 @@ def renderizar_plano_de_voo(data: dict) -> str:
     Long commands are truncated for readability.
     """
     lines: list[str] = []
-    lines.append(f"# Flight Plan — {data['harness']}")
+    harness_label = data["harness"] if not any(f.get("harness") != data["harness"] for f in data["fronts"]) else "Multi-Harness"
+    lines.append(f"# Flight Plan — {harness_label}")
     lines.append(f"Plan dir: `{data['plan_dir']}`")
-    lines.append(f"Binary: `{data['profile_binary']}`")
     lines.append(f"Fronts: {len(data['fronts'])}")
+    if data.get("interactive"):
+        lines.append("Mode: `Interactive Worktrees (User Session)`")
     lines.append("")
-    lines.append("| # | Front | Branch | Worktree | Command (truncated) |")
-    lines.append("|---|-------|--------|----------|---------------------|")
+    lines.append("| # | Front | Branch | Worktree | Harness | Command (truncated) |")
+    lines.append("|---|-------|--------|----------|---------|---------------------|")
 
     for i, f in enumerate(data["fronts"], 1):
         cmd_str = " ".join(f["command"])
         if len(cmd_str) > COMMAND_TRUNCATE_LEN:
             cmd_str = cmd_str[: COMMAND_TRUNCATE_LEN - 3] + "..."
         lines.append(
-            f"| {i} | {f['name']} | `{f['branch']}` | `{f['worktree']}` | `{cmd_str}` |"
+            f"| {i} | {f['name']} | `{f['branch']}` | `{f['worktree']}` | {f.get('harness', data.get('harness', '-'))} | `{cmd_str}` |"
         )
 
     lines.append("")

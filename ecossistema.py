@@ -97,10 +97,12 @@ def cmd_orchestrate(args):
     parser.add_argument("--resume", action="store_true", help="Retoma um Flight Plan previamente iniciado (crash recovery).")
     parser.add_argument("--yes", action="store_true", help="Nao pede confirmacao interativa do Plano de Voo.")
     parser.add_argument("--stream", action="store_true", help="Exibe a saida dos agentes em tempo real no console.")
+    parser.add_argument("--interactive", action="store_true", help="Executa as worktrees em modo interativo com terminal conectado ao usuario.")
+    parser.add_argument("--harness-map", default=None, help="Mapeamento JSON ou string chave=valor de harnesses por frente.")
     parser.add_argument(
         "--harness", default=None,
         choices=["mimo", "opencode", "claude", "agy"],
-        help="Harness de destino (se omitido, pergunta interativamente)",
+        help="Harness padrao (se omitido, pergunta interativamente)",
     )
     parser.add_argument(
         "--profiles", default=None,
@@ -113,6 +115,7 @@ def cmd_orchestrate(args):
     )
     sys.path.insert(0, orchestrator_root)
 
+    from scripts.plan_parser import parse_plan
     from scripts.flight_plan import gerar_plano_de_voo, renderizar_plano_de_voo
     from scripts.orchestrator_engine import executar_orquestracao
 
@@ -123,43 +126,93 @@ def cmd_orchestrate(args):
             "orca-plan-orchestrator", ".orca", "harness_profiles.json.example",
         )
 
-    harness_escolhido = ns.harness
-    if harness_escolhido is None:
-        if sys.stdin.isatty():
-            import shutil
-            candidatos = ["claude", "agy", "mimo", "opencode"]
-            print("\n[ORCA ADE] Seleção Interativa de Harness:")
-            disponiveis = []
-            for idx, h in enumerate(candidatos, 1):
-                caminho = shutil.which(h)
-                tag = f"[INSTALADO: {caminho}]" if caminho else "[NÃO DETECTADO NO PATH]"
-                print(f"  {idx}) {h:<10} {tag}")
-                disponiveis.append(h)
-            try:
-                escolha = input("\nEscolha o número do harness executor (default: 1 - claude): ").strip()
-                if escolha in ("1", "claude", ""):
-                    harness_escolhido = "claude"
-                elif escolha in ("2", "agy"):
-                    harness_escolhido = "agy"
-                elif escolha in ("3", "mimo"):
-                    harness_escolhido = "mimo"
-                elif escolha in ("4", "opencode"):
-                    harness_escolhido = "opencode"
-                else:
-                    print(f"[ERRO] Escolha inválida '{escolha}'. Abortado.")
-                    return 1
-            except (EOFError, KeyboardInterrupt):
-                print("\n[CANCELADO] Seleção cancelada pelo usuário.")
-                return 1
-        else:
-            harness_escolhido = "claude" if shutil.which("claude") else "mimo"
-            print(f"[ORCA ADE] Stdin não interativo. Harness auto-selecionado: {harness_escolhido}")
+    import shutil
+    import json
+    candidatos = ["claude", "agy", "mimo", "opencode"]
 
-    print(f"[ORCA ADE] Harness Executor selecionado: {harness_escolhido}")
+    harness_map = None
+    if ns.harness_map:
+        try:
+            harness_map = json.loads(ns.harness_map)
+        except json.JSONDecodeError:
+            harness_map = dict(item.split("=") for item in ns.harness_map.split(",") if "=" in item)
+
+    is_interactive = ns.interactive
+    harness_padrao = ns.harness
+
+    if sys.stdin.isatty() and not ns.yes and not ns.dry_run:
+        print("\n" + "=" * 65)
+        print("  ORCA ADE — CONFIGURAÇÃO DO PLANO DE VOO & HARNESSES")
+        print("=" * 65)
+
+        # 1. Modo de Execucao (se nao foi passado via flag)
+        if not is_interactive:
+            print("\n[1/2] Modo de Operação das Worktrees:")
+            print("  1) Automatizado (Headless com streaming de logs)")
+            print("  2) Interativo (Você controla diretamente a sessão em cada worktree)")
+            try:
+                escolha_modo = input("Escolha o modo [1/2] (default: 1): ").strip()
+                if escolha_modo == "2":
+                    is_interactive = True
+                    print(">> Modo INTERATIVO ativado.")
+                else:
+                    print(">> Modo AUTOMATIZADO ativado.")
+            except (EOFError, KeyboardInterrupt):
+                print("\n[CANCELADO] Abortado pelo usuário.")
+                return 1
+
+        # 2. Atribuicao de Harnesses
+        if harness_map is None and harness_padrao is None:
+            print("\n[2/2] Atribuição de Harnesses Executores:")
+            print("  1) Único global (o mesmo harness para todas as frentes)")
+            print("  2) Personalizado (escolher harness específico por frente — Miscelânea)")
+            try:
+                tipo_atrib = input("Escolha o tipo de atribuição [1/2] (default: 1): ").strip()
+            except (EOFError, KeyboardInterrupt):
+                print("\n[CANCELADO] Abortado pelo usuário.")
+                return 1
+
+            if tipo_atrib == "2":
+                try:
+                    plan_parsed = parse_plan(ns.plano)
+                    harness_map = {}
+                    print(f"\nConfigurando harnesses para as {len(plan_parsed.fronts)} frentes:")
+                    for idx, h in enumerate(candidatos, 1):
+                        tag = "[INSTALADO]" if shutil.which(h) else "[NÃO DETECTADO]"
+                        print(f"   {idx}) {h:<10} {tag}")
+
+                    for f in plan_parsed.fronts:
+                        resp = input(f" - Frente '{f.name}' [1:claude, 2:agy, 3:mimo, 4:opencode] (default 1): ").strip()
+                        mapa_num = {"1": "claude", "2": "agy", "3": "mimo", "4": "opencode"}
+                        h_front = mapa_num.get(resp, resp if resp in candidatos else "claude")
+                        harness_map[f.name] = h_front
+                    harness_padrao = "claude"
+                except Exception as exc:
+                    print(f"[AVISO] Falha ao ler frentes para personalizacao: {exc}. Usando modo global.")
+                    harness_map = None
+
+            if harness_map is None and harness_padrao is None:
+                print("\nEscolha o Harness Global:")
+                for idx, h in enumerate(candidatos, 1):
+                    caminho = shutil.which(h)
+                    tag = f"[INSTALADO: {caminho}]" if caminho else "[NÃO DETECTADO NO PATH]"
+                    print(f"  {idx}) {h:<10} {tag}")
+                try:
+                    escolha = input("\nEscolha o número do harness (default: 1 - claude): ").strip()
+                    mapa_num = {"1": "claude", "2": "agy", "3": "mimo", "4": "opencode"}
+                    harness_padrao = mapa_num.get(escolha, escolha if escolha in candidatos else "claude")
+                except (EOFError, KeyboardInterrupt):
+                    print("\n[CANCELADO] Seleção cancelada pelo usuário.")
+                    return 1
+
+    if harness_padrao is None:
+        harness_padrao = "claude" if shutil.which("claude") else "mimo"
 
     if ns.dry_run:
         try:
-            data = gerar_plano_de_voo(ns.plano, profiles_path, harness=harness_escolhido)
+            data = gerar_plano_de_voo(
+                ns.plano, profiles_path, harness=harness_padrao, harness_map=harness_map, interactive=is_interactive
+            )
         except (FileNotFoundError, ValueError, KeyError) as exc:
             print(f"Erro ao gerar Flight Plan: {exc}")
             return 1
@@ -169,7 +222,14 @@ def cmd_orchestrate(args):
 
     try:
         return executar_orquestracao(
-            ns.plano, profiles_path, harness=harness_escolhido, resume=ns.resume, yes=ns.yes, stream=ns.stream,
+            ns.plano,
+            profiles_path,
+            harness=harness_padrao,
+            harness_map=harness_map,
+            resume=ns.resume,
+            yes=ns.yes,
+            stream=ns.stream or is_interactive,
+            interactive=is_interactive,
         )
     except (FileNotFoundError, ValueError, KeyError, RuntimeError) as exc:
         print(f"Erro na orquestracao: {exc}")

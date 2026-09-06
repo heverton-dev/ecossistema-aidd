@@ -56,9 +56,9 @@ Cada documento segue a mesma estrutura interna: Contexto já investigado → Def
 | # | Bateria | Status | Documento |
 |---|---|---|---|
 | 1 | Orquestração raiz | ✅ Concluído (auditado 2026-09-06, 100% aprovado) | `01-testes-ecossistema-raiz.md` |
-| 2 | AIDD Master | ⏳ Prompt gerado, aguardando execução | `02-testes-aidd-master.md` |
-| 3 | AIDD Enterprise | ⏳ Prompt gerado, aguardando execução | `03-testes-aidd-enterprise.md` |
-| 4 | AIDD Forge | ⏳ Prompt gerado, aguardando execução | `04-testes-aidd-forge.md` |
-| 5 | AIDD Generator | ⏳ Prompt gerado, aguardando execução | `05-testes-aidd-generator.md` |
+| 2 | AIDD Master | ✅ Concluído (executado 2026-09-06, PASSOU COM RESSALVAS — ver `docs/testes/relatorios/02_aidd_master.md`) | `02-testes-aidd-master.md` |
+| 3 | AIDD Enterprise | ✅ Concluído (executado 2026-09-06, PASSOU COM RESSALVAS — 1 achado grave, ver `docs/testes/relatorios/03_aidd_enterprise.md`) | `03-testes-aidd-enterprise.md` |
+| 4 | AIDD Forge | ✅ Concluído (executado 2026-09-06, APROVADO 11/11 — ver `docs/testes/relatorios/04_aidd_forge.md`) | `04-testes-aidd-forge.md` |
+| 5 | AIDD Generator | ✅ Concluído (executado 2026-09-06, PASSOU — score auto-crítica 88/100, ver `docs/testes/relatorios/05_aidd_generator.md`) | `05-testes-aidd-generator.md` |
 
 Esta tabela é atualizada para ✅ Concluído só depois que o relatório real da bateria existir em `docs/testes/relatorios/` com evidência de execução real.

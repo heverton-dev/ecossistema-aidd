@@ -138,11 +138,14 @@ def _copiar_diretorio(origem, destino, dry_run):
     if dry_run:
         return
     os.makedirs(destino, exist_ok=True)
-    for raiz, _dirs, arquivos in os.walk(origem):
+    for raiz, dirs, arquivos in os.walk(origem):
+        dirs[:] = [d for d in dirs if d != "__pycache__"]
         rel_raiz = os.path.relpath(raiz, origem)
         destino_raiz = destino if rel_raiz == "." else os.path.join(destino, rel_raiz)
         os.makedirs(destino_raiz, exist_ok=True)
         for arquivo in arquivos:
+            if arquivo.endswith(".pyc") or arquivo.endswith(".pyo"):
+                continue
             shutil.copy2(os.path.join(raiz, arquivo), os.path.join(destino_raiz, arquivo))
 
 
@@ -196,10 +199,13 @@ def _comparar_diretorio(origem, destino):
     if not os.path.isdir(destino):
         return [f"pasta ausente: {os.path.relpath(destino, ROOT_DIR)}"]
     problemas = []
-    for raiz, _dirs, arquivos in os.walk(origem):
+    for raiz, dirs, arquivos in os.walk(origem):
+        dirs[:] = [d for d in dirs if d != "__pycache__"]
         rel_raiz = os.path.relpath(raiz, origem)
         destino_raiz = destino if rel_raiz == "." else os.path.join(destino, rel_raiz)
         for arquivo in arquivos:
+            if arquivo.endswith(".pyc") or arquivo.endswith(".pyo"):
+                continue
             origem_arquivo = os.path.join(raiz, arquivo)
             destino_arquivo = os.path.join(destino_raiz, arquivo)
             if not os.path.isfile(destino_arquivo):

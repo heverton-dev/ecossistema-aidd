@@ -340,6 +340,7 @@ def _dispatch_front(
     breaker_config: CircuitBreakerConfig,
     results: dict,
     stream: bool = False,
+    interactive: bool = False,
 ) -> None:
     front_name = front["name"]
     worktree_path = repo_path / f"wt-{front_name}"
@@ -357,19 +358,30 @@ def _dispatch_front(
             executar_pre_hook(front_name, worktree_path, state_path)
 
         exec_log_path = worktree_path / "exec.log"
-        with open(exec_log_path, "w", encoding="utf-8") as log_fh:
-            process = subprocess.Popen(
-                front["command"],
-                cwd=worktree_path,
-                stdout=log_fh,
-                stderr=subprocess.STDOUT,
-            )
+        if interactive:
+            print(f"\n{'='*70}\n[ORCA ADE] SESSAO INTERATIVA: {front_name} (Harness: {front.get('harness', '-')})\n{'='*70}")
             _set_front_state(
-                state_path, state_lock, front_name, FrontState.RUNNING, pid=process.pid
+                state_path, state_lock, front_name, FrontState.RUNNING, pid=os.getpid()
             )
-            agent_exit_code, health = _wait_with_circuit_breaker(
-                process, exec_log_path, breaker_config, front_name=front_name, stream=stream
-            )
+            proc = subprocess.run(front["command"], cwd=worktree_path)
+            agent_exit_code = proc.returncode
+            health = HealthStatus.OK
+            with open(exec_log_path, "w", encoding="utf-8") as log_fh:
+                log_fh.write(f"Interactive run exited with {agent_exit_code}\n")
+        else:
+            with open(exec_log_path, "w", encoding="utf-8") as log_fh:
+                process = subprocess.Popen(
+                    front["command"],
+                    cwd=worktree_path,
+                    stdout=log_fh,
+                    stderr=subprocess.STDOUT,
+                )
+                _set_front_state(
+                    state_path, state_lock, front_name, FrontState.RUNNING, pid=process.pid
+                )
+                agent_exit_code, health = _wait_with_circuit_breaker(
+                    process, exec_log_path, breaker_config, front_name=front_name, stream=stream
+                )
 
         _auto_commit_front(worktree_path, front_name)
         touched = _touched_paths(worktree_path, base_sha)
@@ -437,10 +449,12 @@ def executar_orquestracao(
     profiles_path: str | Path,
     harness: str = "mimo",
     *,
+    harness_map: dict[str, str] | None = None,
     repo_path: str | Path | None = None,
     resume: bool = False,
     yes: bool = False,
     stream: bool = False,
+    interactive: bool = False,
     circuit_breaker_config: CircuitBreakerConfig | None = None,
 ) -> int:
     """Execute the real ORCA ADE multi-front orchestration.
@@ -453,7 +467,9 @@ def executar_orquestracao(
     plan_dir = Path(plan_dir)
     resolved_repo = Path(repo_path).resolve() if repo_path else _repo_root(plan_dir)
 
-    flight = gerar_plano_de_voo(plan_dir, profiles_path, harness=harness)
+    flight = gerar_plano_de_voo(
+        plan_dir, profiles_path, harness=harness, harness_map=harness_map, interactive=interactive
+    )
     flight_md = renderizar_plano_de_voo(flight)
 
     if not _confirm(flight_md, yes):
@@ -507,10 +523,13 @@ def executar_orquestracao(
             continue
 
         if resume and action == ResumeAction.READY_TO_MERGE:
-            threads.append(threading.Thread(
-                target=_merge_and_finalize,
-                args=(name, resolved_repo, state_path, merge_lock, state_lock, results),
-            ))
+            if interactive:
+                _merge_and_finalize(name, resolved_repo, state_path, merge_lock, state_lock, results)
+            else:
+                threads.append(threading.Thread(
+                    target=_merge_and_finalize,
+                    args=(name, resolved_repo, state_path, merge_lock, state_lock, results),
+                ))
             continue
 
         if resume and action in (ResumeAction.RETRY, ResumeAction.RESUME_RUNNING):
@@ -526,15 +545,22 @@ def executar_orquestracao(
                 results[name] = f"FAILED(stale_purge:{detail})"
                 continue
 
-        threads.append(threading.Thread(
-            target=_dispatch_front,
-            args=(front, resolved_repo, state_path, state_lock, base_sha, merge_lock, breaker_config, results, stream),
-        ))
+        if interactive:
+            # Em modo interativo, executa sequencialmente para controle direto do usuario no terminal
+            _dispatch_front(
+                front, resolved_repo, state_path, state_lock, base_sha, merge_lock, breaker_config, results, stream=True, interactive=True
+            )
+        else:
+            threads.append(threading.Thread(
+                target=_dispatch_front,
+                args=(front, resolved_repo, state_path, state_lock, base_sha, merge_lock, breaker_config, results, stream, False),
+            ))
 
-    for t in threads:
-        t.start()
-    for t in threads:
-        t.join()
+    if not interactive:
+        for t in threads:
+            t.start()
+        for t in threads:
+            t.join()
 
     all_merged = all(v == FrontState.MERGED.value for v in results.values())
     return 0 if all_merged else 1

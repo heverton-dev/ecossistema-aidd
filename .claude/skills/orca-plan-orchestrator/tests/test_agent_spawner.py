@@ -61,7 +61,7 @@ def test_claude_compiled_args(profiles):
         "claude",
         "--dangerously-skip-permissions",
         "-p",
-        "--model", "claude-sonnet-4-20250514",
+        "--model", "claude-sonnet-5",
         SAMPLE_PROMPT,
     ]
     assert args == expected

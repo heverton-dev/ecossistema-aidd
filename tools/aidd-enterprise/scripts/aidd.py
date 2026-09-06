@@ -642,6 +642,8 @@ def cmd_status(args):
 def cmd_plan(prompt: str, base_dir: str = ".", auto_apply: bool = False):
     """Fase 1.5: Gera especificação técnica (SPEC) e plano estruturado antes da criação."""
     ensure_environment()
+    if _tentar_injecao_por_linguagem_natural(prompt, base_dir=base_dir):
+        return
     prompt_lower = prompt.lower()
     
     KNOWN_DOMAINS = [

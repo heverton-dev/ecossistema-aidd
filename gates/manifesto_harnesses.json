@@ -43,7 +43,7 @@
       "status_evidencia": "confirmado por reprodução direta (docs/planos/PLANO-CORRECAO-SKILLS-AGNOSTICAS.md secao 2.1)",
       "harnesses_aplicaveis": ["claude-code", "antigravity", "opencode", "mimocode", "gemini-cli"],
       "dest_harness_template": "{prefixo_pasta}/skills/{nome}",
-      "extra_destinos_compartilhado": ["skills/{nome}"],
+      "extra_destinos_compartilhado": ["skills/{nome}", ".agents/skills/{nome}"],
       "extra_destinos_por_ferramenta": [".skills/{nome}", "skills/{nome}"],
       "nota_extra_destinos": "'.skills/{nome}' e 'skills/{nome}' (bare) são cópias adicionais sem harness específico, já em uso real e inconsistente por ferramenta antes desta migração (aidd-master/aidd-enterprise usavam '.skills/'; aidd-generator usava 'skills/' bare). O sync agora materializa AMBAS para todas as ferramentas, fechando a divergência sem escolher apenas uma."
     },

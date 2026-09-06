@@ -768,7 +768,7 @@ def cmd_verificar_drift(args):
         sys.exit(1)
 
 
-def _tentar_injecao_por_linguagem_natural(raw_prompt: str) -> bool:
+def _tentar_injecao_por_linguagem_natural(raw_prompt: str, base_dir: str = ".") -> bool:
     """Reconhece pedidos PT-BR de injeção de componente antes do fallback para 'plan'.
 
     Retorna True (e termina o processo) se o texto foi reconhecido como um
@@ -798,7 +798,7 @@ def _tentar_injecao_por_linguagem_natural(raw_prompt: str) -> bool:
             print("        Use o comando explícito: python scripts/aidd.py inject <tipo> <nome>")
         sys.exit(1)
 
-    sys.exit(_executar_injecao(payload_result.valor, "."))
+    sys.exit(_executar_injecao(payload_result.valor, base_dir))
 
 
 def cmd_status(args):
@@ -842,6 +842,8 @@ def cmd_status(args):
 def cmd_plan(prompt: str, base_dir: str = ".", auto_apply: bool = False):
     """Fase 1.5: Gera especificação técnica (SPEC) e plano estruturado antes da criação."""
     ensure_environment()
+    if _tentar_injecao_por_linguagem_natural(prompt, base_dir=base_dir):
+        return
     prompt_lower = prompt.lower()
     
     KNOWN_DOMAINS = [

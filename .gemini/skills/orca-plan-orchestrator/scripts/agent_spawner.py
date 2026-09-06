@@ -19,7 +19,12 @@ def carregar_perfil(profiles_path: str | Path, nome: str) -> dict[str, Any]:
     return data["profiles"][nome]
 
 
-def compilar_comando(profile: dict[str, Any], sliced_prompt: str) -> list[str]:
+def compilar_comando(
+    profile: dict[str, Any],
+    sliced_prompt: str,
+    *,
+    interactive: bool = False,
+) -> list[str]:
     """Compile a harness profile + prompt into a subprocess-ready argument list.
 
     Returns list[str] -- never a concatenated string.
@@ -27,13 +32,14 @@ def compilar_comando(profile: dict[str, Any], sliced_prompt: str) -> list[str]:
     """
     args: list[str] = [profile["binary"]]
 
-    # Auto-approve flag (always present)
+    # Auto-approve flag (present unless interactive mode preserves user control)
     if profile.get("auto_approve_flag"):
         args.append(profile["auto_approve_flag"])
 
-    # Extra static flags (e.g. --pure, -p, --print)
-    for flag in profile.get("extra_flags", []):
-        args.append(flag)
+    # Extra static flags (e.g. --pure, -p, --print) - skipped if interactive
+    if not interactive:
+        for flag in profile.get("extra_flags", []):
+            args.append(flag)
 
     # Model flag
     model = profile.get("default_model")
