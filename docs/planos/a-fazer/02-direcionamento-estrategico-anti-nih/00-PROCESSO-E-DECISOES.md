@@ -28,6 +28,7 @@ Diagnostico rapido → Definicao de Pronto checavel → Prompt de Execucao autoc
 | 4 | Fase 2 - Troca de motor sequenciada por risco (seguranca, scaffolding, infra do ops) | `04-fase-2---troca-de-motor-sequenciada-por-risco-seguranca-scaffolding-infra-do-ops.md` |
 | 5 | Fase 3 - Reauditoria sem maquiagem pos-troca de motor, prova antes e depois | `05-fase-3---reauditoria-sem-maquiagem-pos-troca-de-motor-prova-antes-e-depois.md` |
 | 6 | Fase 4 - Investimento no diferencial real (pipeline do generator, protocolo delegado, materializador multi-harness) | `06-fase-4---investimento-no-diferencial-real-pipeline-do-generator-protocolo-delegado-materializador-multi-harness.md` |
+| 7 | Bootstrap de dependências do produto gerado, por ferramenta (forge não é chamado por nenhuma das outras 4) | `07-bootstrap-de-dependencias-do-produto-gerado-por-ferramenta-forge-nao-eh-chamado-por-nenhuma-das-outras-4.md` |
 
 ## 4. Regras Fixas
 
@@ -46,5 +47,6 @@ Diagnostico rapido → Definicao de Pronto checavel → Prompt de Execucao autoc
 | 4 | Fase 2 - Troca de motor sequenciada por risco (seguranca, scaffolding, infra do ops) | ⏳ Rascunho gerado, aguardando aprovacao | `04-fase-2---troca-de-motor-sequenciada-por-risco-seguranca-scaffolding-infra-do-ops.md` |
 | 5 | Fase 3 - Reauditoria sem maquiagem pos-troca de motor, prova antes e depois | ⏳ Rascunho gerado, aguardando aprovacao | `05-fase-3---reauditoria-sem-maquiagem-pos-troca-de-motor-prova-antes-e-depois.md` |
 | 6 | Fase 4 - Investimento no diferencial real (pipeline do generator, protocolo delegado, materializador multi-harness) | ⏳ Rascunho gerado, aguardando aprovacao | `06-fase-4---investimento-no-diferencial-real-pipeline-do-generator-protocolo-delegado-materializador-multi-harness.md` |
+| 7 | Bootstrap de dependências do produto gerado, por ferramenta (forge não é chamado por nenhuma das outras 4) | ⏳ Rascunho gerado, aguardando aprovacao | `07-bootstrap-de-dependencias-do-produto-gerado-por-ferramenta-forge-nao-eh-chamado-por-nenhuma-das-outras-4.md` |
 
 Esta tabela so e atualizada para Concluido apos auditoria por reproducao real.
