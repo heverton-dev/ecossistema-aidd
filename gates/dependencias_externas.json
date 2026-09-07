@@ -12,6 +12,33 @@
         "*/commands/impeccable.md",
         "*/hooks/impeccable.json"
       ]
+    },
+    "code-review-graph": {
+      "pacote": "code-review-graph",
+      "instalar": "pip install code-review-graph && code-review-graph install -y",
+      "verificar": ".claude/skills/review-changes/SKILL.md",
+      "gitignore": [
+        "*/skills/debug-issue/",
+        "*/skills/explore-codebase/",
+        "*/skills/refactor-safely/",
+        "*/skills/review-changes/",
+        ".codebuddy/",
+        ".cursor/mcp.json",
+        ".cursor/hooks.json",
+        ".cursorrules",
+        ".windsurfrules",
+        "CLAUDE.md",
+        "GEMINI.md",
+        "CODEBUDDY.md",
+        "QODER.md",
+        ".kiro/",
+        ".qoder/",
+        ".vscode/mcp.json",
+        "opencode.jsonc",
+        ".gemini/settings.json",
+        ".gemini/hooks/",
+        ".github/code-review-graph.instruction.md"
+      ]
     }
   },
   "mcps": {
@@ -23,6 +50,36 @@
         "@playwright/mcp@latest"
       ],
       "env": [],
+      "harnesses_alvo": [
+        "claude-code"
+      ]
+    },
+    "context7": {
+      "pacote": "@upstash/context7-mcp",
+      "comando": "npx",
+      "args": [
+        "-y",
+        "@upstash/context7-mcp"
+      ],
+      "env": [],
+      "harnesses_alvo": [
+        "claude-code"
+      ]
+    },
+    "github": {
+      "pacote": "ghcr.io/github/github-mcp-server",
+      "comando": "docker",
+      "args": [
+        "run",
+        "-i",
+        "--rm",
+        "-e",
+        "GITHUB_PERSONAL_ACCESS_TOKEN",
+        "ghcr.io/github/github-mcp-server"
+      ],
+      "env": [
+        "GITHUB_PERSONAL_ACCESS_TOKEN"
+      ],
       "harnesses_alvo": [
         "claude-code"
       ]

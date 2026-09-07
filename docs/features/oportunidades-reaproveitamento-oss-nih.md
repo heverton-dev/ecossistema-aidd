@@ -3,7 +3,7 @@
 > **Origem:** levantamento feito em 2026-09-07, no mesmo dia da auditoria "sem maquiagem" (`docs/relatorios/relatorio-auditoria-ecossistema-aidd-sem-maquiagem.html`).
 > **Status:** RASCUNHO — levantamento técnico, não é decisão de escopo aprovada. Nenhum item aqui foi commitado ou vira trabalho sem aprovação humana.
 > **Método:** itens marcados **[confirmado]** foram verificados lendo código/config real nesta sessão (grep, leitura de arquivo). Itens marcados **[a verificar]** são hipóteses plausíveis a partir do que já foi lido, mas não confirmadas linha a linha — tratar como pista de investigação, não fato.
-> **Lista fechada em 2026-09-07 — 28 itens.** Nenhum item novo entra por brainstorming aberto ("existe ferramenta pra X?") depois deste ponto. A única forma de um item novo aparecer é descoberta orgânica durante a execução real de uma fase já aprovada de `docs/planos/a-fazer/02-direcionamento-estrategico-anti-nih/` — documentada com evidência no momento em que aparecer, não uma nova rodada de especulação.
+> **Lista fechada em 2026-09-07 — 33 itens** (28 do levantamento original + 5 achados no mesmo dia investigando o catálogo pessoal do usuário, itens 29-33, reabertura por descoberta orgânica real). Nenhum item novo entra por brainstorming aberto ("existe ferramenta pra X?") depois deste ponto. A única forma de um item novo aparecer é descoberta orgânica durante a execução real de uma fase já aprovada de `docs/planos/a-fazer/02-direcionamento-estrategico-anti-nih/` — documentada com evidência no momento em que aparecer, não uma nova rodada de especulação.
 
 ---
 
@@ -46,10 +46,11 @@ A auditoria de hoje encontrou vários bugs (CSP relaxado sem ninguém notar, Doc
 | 15 | Hardening de SSH manual (`ssh_runner`) | **Ansible** + coleção `dev-sec.hardening` | [a verificar] | Testada e mantida por gente que só faz isso |
 | 16 | **Traefik incluído no template mas SUBUTILIZADO** | Usar o Traefik que já está lá, direito | **[confirmado agora, 2026-09-07]** | `templates/infra/traefik/docker-compose.yml` existe e sobe um Traefik real — mas grep em `docker-compose.yml` do projeto gerado mostra que só o **dashboard do próprio Traefik** tem `traefik.enable=true`/labels de roteamento (linhas 30-34). Twenty, Chatwoot e Cal.com (os 3 que colidem na porta 3000) usam `ports:` diretos, sem nenhuma label de roteamento por host via Traefik. **O bug de porta duplicada existe porque a ferramenta que evitaria o problema está no compose mas não está fazendo o trabalho** — não é falta de ferramenta, é integração incompleta |
 | 17 | Healthcheck de serviço | ~~Docker healthcheck nativo~~ | **[confirmado, NÃO é NIH]** | Grep mostrou `healthcheck:` presente 13x no compose gerado — isso já está sendo usado corretamente, não precisa de substituto |
-| 18 | Cofre de credenciais (feature planejada, ainda não construída — `docs/planos/evolucao-aidd-ops-fase-completa/02-cofre-local...md`) | **sops** + **age** (padrão de mercado pra secrets em infra-as-code) | [planejado, não implementado ainda] | Melhor avaliar ANTES de construir do zero — evita nascer NIH |
+| 18 | Cofre de credenciais (feature planejada, ainda não construída — `docs/planos/a-fazer/03-evolucao-aidd-ops-fase-completa/02-cofre-local...md`, hoje 🔒 bloqueada) | **sops** + **age** (padrão de mercado pra secrets em infra-as-code) ou **Vaultwarden** (item 29 abaixo, self-hosted, compatível Bitwarden) | [planejado, não implementado ainda] | Melhor avaliar ANTES de construir do zero — evita nascer NIH |
 | 19 | Intake interativo web (feature planejada, item 01 do plano de evolução) | **Streamlit** ou **Gradio** pra formulário rápido interno | [planejado, não implementado ainda] | Ambos resolvem "formulário web sem fricção" sem frontend custom |
 | 20 | AppShell white-label + Studios (feature planejada, item 03) | **Backstage** (Spotify, developer portal open source, plugin-based) | [planejado, não implementado ainda] | Tem catálogo de API/docs pronto — avaliar antes de construir um appshell do zero |
 | 21 | Isolamento estrito em VPS compartilhada (feature planejada, item 04) | Resolvido nativamente por **Coolify/CapRover/Dokku** (multi-tenant em VPS compartilhada é o caso de uso principal deles) | [planejado, não implementado ainda] | **Ver seção 3 abaixo — este é o achado mais importante** |
+| 29 | Cofre de credenciais (mesma feature bloqueada do item 18) | **Vaultwarden** (self-hosted, compatível com protocolo Bitwarden) | [a verificar — achado em 2026-09-07 no catálogo pessoal do usuário, `forks-inventory/repositorios.txt`] | Alternativa a sops+age do item 18: se a feature sair do bloqueio, comparar as duas antes de escolher — Vaultwarden é cofre com UI/API completos, sops+age é cifra de arquivo estático (mais leve, sem servidor) |
 
 ### `aidd-generator`
 
@@ -62,6 +63,17 @@ A auditoria de hoje encontrou vários bugs (CSP relaxado sem ninguém notar, Doc
 | 26 | Orquestração de 8 fases com estado em JSON próprio | **Prefect** ou **Dagster** pra parte genérica (retries, checkpoints) | [a verificar] | O "protocolo delegado" (falar com o assistente sem API key) continua genuinamente custom — isso não tem equivalente pronto |
 
 ---
+
+### Transversal (não é núcleo de uma ferramenta específica)
+
+> Achados em 2026-09-07 investigando o catálogo pessoal do usuário (`forks-inventory/repositorios.txt`, 205 repos) a pedido dele — reabre a lista fechada da seção acima por descoberta orgânica real, não brainstorm aberto.
+
+| # | O que foi reinventado / poderia melhorar | Substituto maduro/grátis | Status | Observação |
+|---|---|---|---|---|
+| 30 | Medir consumo de token por estimativa/autodeclaração (item 13 do plano tático) em vez de telemetria real | **Langfuse** (observabilidade/tracing de LLM open source) | [a verificar] | Ataca direto o item 13 — número medido de verdade em vez de "informado pelo usuário, não medido". Checar primeiro `github.com/Heverton-web/token-economy-core` (projeto próprio do usuário no mesmo tema, achado no mesmo catálogo) antes de adotar Langfuse, para não duplicar esforço já seu |
+| 31 | Checagem estrutural via `ast` Python manual (`gates/G_CLI_HELP_CONSISTENCIA.py`) | **ast-grep** (busca/lint estrutural via tree-sitter) | [a verificar] | Mesma tecnologia de base do `code-review-graph` já instalado; poderia generalizar checagens estruturais futuras sem reescrever parser AST a cada gate novo |
+| 32 | Convenção própria de plano (`00-PROCESSO-E-DECISOES.md` + `NN-<item>.md`) nunca comparada com alternativa de mercado | **GitHub spec-kit** (kit de desenvolvimento orientado a spec, do próprio GitHub) | [a verificar — não avaliado a fundo] | Não é substituição óbvia (a convenção própria já é madura e testada nesta sessão), mas vale 1 comparação antes de evoluir mais a convenção própria — pode já existir solução pro mesmo problema |
+| 33 | Teste manual de API dos apps gerados via curl/requests durante auditoria | **Hoppscotch** (testador de API self-hosted, alternativa ao Postman) | [a verificar] | Teria facilitado os testes manuais desta própria auditoria (CRUD do generator/master, endpoints do enterprise) |
 
 ## 3. O achado mais importante: as 4 frentes planejadas do ops podem já estar resolvidas
 

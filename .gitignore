@@ -68,3 +68,27 @@ Thumbs.db
 */agents/impeccable-*.md
 */commands/impeccable.md
 */hooks/impeccable.json
+# Added by code-review-graph
+.code-review-graph/
+
+# Instalado por code-review-graph (footprint regeneravel via 'code-review-graph install' — ver gates/dependencias_externas.json)
+*/skills/debug-issue/
+*/skills/explore-codebase/
+*/skills/refactor-safely/
+*/skills/review-changes/
+.codebuddy/
+.cursor/mcp.json
+.cursor/hooks.json
+.cursorrules
+.windsurfrules
+CLAUDE.md
+GEMINI.md
+CODEBUDDY.md
+QODER.md
+.kiro/
+.qoder/
+.vscode/mcp.json
+opencode.jsonc
+.gemini/settings.json
+.gemini/hooks/
+.github/code-review-graph.instruction.md
