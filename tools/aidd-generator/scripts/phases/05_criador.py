@@ -408,13 +408,7 @@ class CriadorProjetoFase5:
         share_dir = self.pasta_projeto / 'static' / 'share'
         share_dir.mkdir(parents=True, exist_ok=True)
 
-        # Tenta localizar ui_dialogs.js canônico no monorepo
-        origem_ui = Path(__file__).resolve().parent.parent.parent.parent / 'componentes' / 'compartilhado' / 'ui' / 'ui_dialogs.js'
-        if origem_ui.exists():
-            conteudo_js = origem_ui.read_text(encoding='utf-8')
-        else:
-            # Fallback limpo incorporado caso executado isolado fora do monorepo
-            conteudo_js = """/**
+        conteudo_js = """/**
  * UI Dialogs & Alerts - Componentes Nativos Compartilhados (Share)
  * Ecossistema AIDD - Substitui completamente alerts, confirms e dialogs do SO/Browser.
  */

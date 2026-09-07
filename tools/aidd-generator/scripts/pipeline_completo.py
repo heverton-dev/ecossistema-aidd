@@ -168,16 +168,7 @@ def executar_pipeline(ideia: str, pasta_projeto: Path, nao_interativo: bool = Tr
     resultado = {'ideia': ideia, 'pasta': str(pasta_projeto), 'fases_completas': {}}
     t0 = time.time()
 
-    # Protocolo Delegado: thread sentinela/responder para atender requisições em tempo real
-    stop_auto_responder = None
-    try:
-        from auto_responder_delegado import monitorar_cache
-        import threading
-        stop_auto_responder = threading.Event()
-        t_responder = threading.Thread(target=monitorar_cache, args=(stop_auto_responder,), daemon=True)
-        t_responder.start()
-    except Exception:
-        stop_auto_responder = None
+    # Fleet Discovery: auto-detectar agentes instalados no host
     fleet = resolver_fleet()
     resultado['fleet'] = fleet.to_dict()
     print(f"\n🔍 Fleet Discovery:")
@@ -298,9 +289,6 @@ def executar_pipeline(ideia: str, pasta_projeto: Path, nao_interativo: bool = Tr
 
     # Descartar todas as fases da memória ao final
     _descarregar_todas_fases()
-
-    if stop_auto_responder:
-        stop_auto_responder.set()
 
     return resultado
 
