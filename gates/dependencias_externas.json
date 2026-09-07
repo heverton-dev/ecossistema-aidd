@@ -39,6 +39,14 @@
         ".gemini/hooks/",
         ".github/code-review-graph.instruction.md"
       ]
+    },
+    "sandeco-token-reduce": {
+      "pacote": "llmlingua",
+      "instalar": "python componentes/compartilhado/skills/sandeco-token-reduce/scripts/setup.py",
+      "verificar": "componentes/compartilhado/skills/sandeco-token-reduce/.venv",
+      "gitignore": [
+        "*/skills/sandeco-token-reduce/.venv/"
+      ]
     }
   },
   "mcps": {

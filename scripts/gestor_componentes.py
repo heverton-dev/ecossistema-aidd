@@ -139,7 +139,7 @@ def _copiar_diretorio(origem, destino, dry_run):
         return
     os.makedirs(destino, exist_ok=True)
     for raiz, dirs, arquivos in os.walk(origem):
-        dirs[:] = [d for d in dirs if d != "__pycache__"]
+        dirs[:] = [d for d in dirs if d not in ("__pycache__", ".venv", "venv", ".git", "node_modules")]
         arquivos = [a for a in arquivos if not a.endswith(".pyc")]
         rel_raiz = os.path.relpath(raiz, origem)
         destino_raiz = destino if rel_raiz == "." else os.path.join(destino, rel_raiz)
@@ -201,7 +201,7 @@ def _comparar_diretorio(origem, destino):
         return [f"pasta ausente: {os.path.relpath(destino, ROOT_DIR)}"]
     problemas = []
     for raiz, dirs, arquivos in os.walk(origem):
-        dirs[:] = [d for d in dirs if d != "__pycache__"]
+        dirs[:] = [d for d in dirs if d not in ("__pycache__", ".venv", "venv", ".git", "node_modules")]
         arquivos = [a for a in arquivos if not a.endswith(".pyc")]
         rel_raiz = os.path.relpath(raiz, origem)
         destino_raiz = destino if rel_raiz == "." else os.path.join(destino, rel_raiz)

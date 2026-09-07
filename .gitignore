@@ -92,3 +92,6 @@ opencode.jsonc
 .gemini/settings.json
 .gemini/hooks/
 .github/code-review-graph.instruction.md
+
+# sandeco-token-reduce: .venv por copia de skill nunca deve ser commitado
+*/skills/sandeco-token-reduce/.venv/

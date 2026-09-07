@@ -31,12 +31,13 @@ Calibração de partida (não é regra rígida): tarefas mecânicas/determiníst
 | 11 | Corrigir deploy Docker do módulo gerado | Moderada | Sonnet | Gemini 3.7 | mimo-v2.5-pro |
 | 12 | Prova real de integração multi-ferramenta | Arquitetural | Opus | Gemini 3.8 | mimo-v2.5-pro |
 | 13 | Reduzir custo de token no núcleo determinístico | Arquitetural | Opus | Gemini 3.8 | mimo-v2.5-pro |
+| 14 | Remover ou ligar código morto de resiliência no enterprise | Decisão de escopo | Opus | Gemini 3.8 | mimo-v2.5-pro |
 
 ## 1.1 Dependência com `docs/planos/a-fazer/direcionamento-estrategico-anti-nih/`
 
 Revisão feita em 2026-09-07, respondendo à pergunta direta do usuário ("com o estratégico completo, o tático continua útil?"): **sim, a maior parte continua necessária de qualquer forma** — o estratégico troca qual motor sustenta um subsistema (biblioteca madura em vez de código próprio), não corrige comportamento/governança que independe disso. Só alguns itens têm relação real com a Fase 2 (troca de motor) do estratégico:
 
-- **Item 14 removido** (`Sequenciar as 4 frentes de evolucao-aidd-ops-fase-completa`) — era 100% duplicado da própria Fase 2 do plano estratégico (que já decide "avaliar Coolify/CapRover antes de aprovar as 4 frentes"). Essa decisão vive lá agora, não aqui.
+- **Item 14 original removido** (`Sequenciar as 4 frentes de evolucao-aidd-ops-fase-completa`) — era 100% duplicado da própria Fase 2 do plano estratégico (que já decide "avaliar Coolify/CapRover antes de aprovar as 4 frentes"). Essa decisão vive lá agora, não aqui. **O número 14 foi reaproveitado em 2026-09-07** para um achado novo e não relacionado (código morto de resiliência no enterprise, achado rodando `code-review-graph dead-code` de verdade) — não é o mesmo item, só a mesma numeração livre.
 - **Itens 4, 5, 7, 9, 11 — prováveis subprodutos da Fase 2, não garantidos:** se a Fase 2 (segurança → scaffolding → infra do ops) for concluída ANTES destes itens, cada um deve primeiro ser **reproduzido** contra o estado pós-troca — se já estiver corrigido de verdade (não por acidente), o item fecha rápido como "verificado, sem trabalho adicional"; se a migração não cobriu o caso, o item continua sendo a rede de segurança e é implementado normalmente. Nunca marcar como concluído só porque "a Fase 2 deveria ter resolvido" sem reprodução real:
   - Item 4 (CSP): resolve se `secure.py` substituir `templates/core/security.py` com defaults seguros — verificar, não assumir.
   - Item 5 (seed de demo): só resolve se quem migrar pra Cookiecutter lembrar de não carregar o seed — não é automático.
@@ -67,6 +68,7 @@ Diagnostico rapido → Definicao de Pronto checavel → Prompt de Execucao autoc
 | 11 | Corrigir deploy Docker do modulo gerado (pip install ausente, nginx/ inexistente, secret em texto plano) | `11-corrigir-deploy-docker-do-modulo-gerado-pip-install-ausente-nginx-inexistente-secret-em-texto-plano.md` |
 | 12 | Prova real de integracao multi-ferramenta no teste integrado | `12-prova-real-de-integracao-multi-ferramenta-no-teste-integrado.md` |
 | 13 | Reduzir custo de token nas ferramentas de nucleo deterministico (master/enterprise/ops/CLI) | `13-reduzir-custo-de-token-nas-ferramentas-de-nucleo-deterministico-masterenterpriseopscli.md` |
+| 14 | Remover ou ligar codigo morto de resiliencia no enterprise | `14-remover-ou-ligar-codigo-morto-de-resiliencia-no-enterprise.md` |
 
 ## 4. Regras Fixas
 
@@ -92,5 +94,6 @@ Diagnostico rapido → Definicao de Pronto checavel → Prompt de Execucao autoc
 | 11 | Corrigir deploy Docker do modulo gerado (pip install ausente, nginx/ inexistente, secret em texto plano) | ⏳ Rascunho gerado, aguardando aprovacao | `11-corrigir-deploy-docker-do-modulo-gerado-pip-install-ausente-nginx-inexistente-secret-em-texto-plano.md` |
 | 12 | Prova real de integracao multi-ferramenta no teste integrado | ⏳ Rascunho gerado, aguardando aprovacao | `12-prova-real-de-integracao-multi-ferramenta-no-teste-integrado.md` |
 | 13 | Reduzir custo de token nas ferramentas de nucleo deterministico (master/enterprise/ops/CLI) | ⏳ Rascunho gerado, aguardando aprovacao | `13-reduzir-custo-de-token-nas-ferramentas-de-nucleo-deterministico-masterenterpriseopscli.md` |
+| 14 | Remover ou ligar codigo morto de resiliencia no enterprise | ⏳ Rascunho gerado, aguardando aprovacao | `14-remover-ou-ligar-codigo-morto-de-resiliencia-no-enterprise.md` |
 
 Esta tabela so e atualizada para Concluido apos auditoria por reproducao real. Item 14 removido em 2026-09-07 por duplicidade confirmada com a Fase 2 de `docs/planos/a-fazer/direcionamento-estrategico-anti-nih/` (ver §1.1).
