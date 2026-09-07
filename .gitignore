@@ -62,3 +62,9 @@ Thumbs.db
 *.sqlite3
 *.db-journal
 .cache/
+
+# Dependencias externas instaladas via 'python ecossistema.py dependencia bootstrap'
+*/skills/impeccable/
+*/agents/impeccable-*.md
+*/commands/impeccable.md
+*/hooks/impeccable.json

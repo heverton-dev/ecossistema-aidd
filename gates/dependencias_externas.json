@@ -1,0 +1,31 @@
+{
+  "versao": "1.0.0",
+  "descricao": "Manifesto único de dependências externas de terceiros usadas pelo AGENTE (skills e MCPs consumidos por quem desenvolve neste monorepo — nunca componentes de produtos gerados pelas ferramentas aidd-*, esses seguem componentes/<escopo>/mcps/ em gates/manifesto_harnesses.json). Consumido por scripts/gestor_dependencias.py (comandos 'python ecossistema.py dependencia bootstrap|add-skill|add-mcp|list|verify').",
+  "skills": {
+    "impeccable": {
+      "pacote": "impeccable",
+      "instalar": "npx impeccable install --providers=claude,cursor,gemini,agents,agent,github,opencode --scope=project -y",
+      "verificar": ".claude/skills/impeccable/SKILL.md",
+      "gitignore": [
+        "*/skills/impeccable/",
+        "*/agents/impeccable-*.md",
+        "*/commands/impeccable.md",
+        "*/hooks/impeccable.json"
+      ]
+    }
+  },
+  "mcps": {
+    "playwright": {
+      "pacote": "@playwright/mcp",
+      "comando": "npx",
+      "args": [
+        "-y",
+        "@playwright/mcp@latest"
+      ],
+      "env": [],
+      "harnesses_alvo": [
+        "claude-code"
+      ]
+    }
+  }
+}

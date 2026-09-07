@@ -96,6 +96,49 @@ def cmd_components(args):
         return 1
 
 
+def cmd_dependencia(args):
+    sys.path.insert(0, os.path.join(ROOT_DIR, "scripts"))
+    import gestor_dependencias
+
+    acoes = ("bootstrap", "add-skill", "add-mcp", "list", "verify")
+    if not args or args[0] not in acoes:
+        print("Erro: uso 'python ecossistema.py dependencia bootstrap|add-skill|add-mcp|list|verify ...'")
+        return 1
+
+    acao = args[0]
+    resto = args[1:]
+
+    parser = argparse.ArgumentParser(prog=f"ecossistema.py dependencia {acao}")
+    if acao == "bootstrap":
+        parser.add_argument("--tipo", choices=["skills", "mcps", "todos"], default="todos")
+        parser.add_argument("--dry-run", action="store_true")
+    elif acao == "add-skill":
+        parser.add_argument("--nome", required=True)
+        parser.add_argument("--pacote", required=True)
+        parser.add_argument("--instalar", required=True)
+        parser.add_argument("--verificar", required=True)
+        parser.add_argument("--gitignore", default="")
+    elif acao == "add-mcp":
+        parser.add_argument("--nome", required=True)
+        parser.add_argument("--pacote", required=True)
+        parser.add_argument("--comando", required=True)
+        parser.add_argument("--args", default="")
+        parser.add_argument("--env", default="")
+        parser.add_argument("--harnesses", default="claude-code")
+    args_ns = parser.parse_args(resto)
+    args_ns.acao = acao
+
+    if acao == "bootstrap":
+        return gestor_dependencias._cmd_bootstrap(args_ns)
+    if acao == "add-skill":
+        return gestor_dependencias._cmd_add_skill(args_ns)
+    if acao == "add-mcp":
+        return gestor_dependencias._cmd_add_mcp(args_ns)
+    if acao == "list":
+        return gestor_dependencias._cmd_list(args_ns)
+    return gestor_dependencias._cmd_verify(args_ns)
+
+
 def cmd_orchestrate(args):
     parser = argparse.ArgumentParser(
         prog="ecossistema.py orchestrate",
@@ -324,6 +367,12 @@ Comandos disponíveis:
   components sync|verify --tipo <tipo|todos> [--ferramenta <nome>] [--dry-run]
                       Sincroniza/verifica distribuicao fisica multi-harness de
                       componentes (gates/manifesto_harnesses.json)
+  dependencia bootstrap [--tipo skills|mcps|todos] [--dry-run]
+  dependencia add-skill --nome <n> --pacote <p> --instalar "<cmd>" --verificar <caminho> [--gitignore "a,b"]
+  dependencia add-mcp --nome <n> --pacote <p> --comando <cmd> [--args "a,b"] [--env V1,V2] [--harnesses claude-code]
+  dependencia list|verify
+                      Instala/registra skills e MCPs de terceiros usados pelo
+                      agente (gates/dependencias_externas.json)
   orchestrate <plano> [--dry-run] [--resume] [--yes]
                       [--harness {mimo,opencode,claude,agy}]
                       [--profiles <path>]
@@ -353,6 +402,7 @@ def main():
         "enterprise": cmd_enterprise,
         "ops": cmd_ops,
         "components": cmd_components,
+        "dependencia": cmd_dependencia,
         "orchestrate": cmd_orchestrate,
         "plan": cmd_plan,
         "audit": cmd_audit,
