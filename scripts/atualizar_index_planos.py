@@ -42,6 +42,9 @@ from pathlib import Path
 RAIZ = Path(__file__).resolve().parent.parent
 PLANOS_DIR = RAIZ / "docs" / "planos"
 INDEX_PATH = PLANOS_DIR / "INDEX.md"
+MEMORY_PATH = RAIZ / "MEMORY.md"
+MEMORIA_MARCADOR_INICIO = "<!-- AUTO:INICIATIVAS:START -->"
+MEMORIA_MARCADOR_FIM = "<!-- AUTO:INICIATIVAS:END -->"
 
 CONCLUIDO = "concluido"
 EM_EXECUCAO = "em_execucao"
@@ -191,6 +194,39 @@ def mover_se_necessario(iniciativa: dict, dry_run: bool) -> None:
     print(f"[OK] movido: {subpasta_alvo}/{item.name}")
 
 
+def atualizar_memoria(iniciativas: list[dict]) -> bool:
+    """Reescreve o bloco entre MEMORIA_MARCADOR_INICIO/FIM de MEMORY.md com as
+    iniciativas NÃO concluídas (fazendo/a-fazer). Não toca em mais nada do
+    arquivo. Retorna True se o conteúdo do bloco mudou."""
+    if not MEMORY_PATH.exists():
+        return False
+    texto = MEMORY_PATH.read_text(encoding="utf-8")
+    if MEMORIA_MARCADOR_INICIO not in texto or MEMORIA_MARCADOR_FIM not in texto:
+        return False
+
+    ativas = [i for i in iniciativas if i["status"] != CONCLUIDO]
+    if ativas:
+        linhas_bloco = [MEMORIA_MARCADOR_INICIO]
+        for ini in sorted(ativas, key=lambda i: i["item"].relative_to(PLANOS_DIR).as_posix()):
+            caminho_rel = ini["item"].relative_to(PLANOS_DIR).as_posix()
+            if ini["item"].is_dir():
+                caminho_rel += "/"
+            marcador = "🔶" if ini["status"] == EM_EXECUCAO else "⏳"
+            linhas_bloco.append(f"- {marcador} **{ini['titulo']}** — `docs/planos/{caminho_rel}`")
+        linhas_bloco.append(MEMORIA_MARCADOR_FIM)
+        bloco_novo = "\n".join(linhas_bloco)
+    else:
+        bloco_novo = f"{MEMORIA_MARCADOR_INICIO}\n- Nenhuma iniciativa ativa no momento.\n{MEMORIA_MARCADOR_FIM}"
+
+    inicio = texto.index(MEMORIA_MARCADOR_INICIO)
+    fim = texto.index(MEMORIA_MARCADOR_FIM) + len(MEMORIA_MARCADOR_FIM)
+    texto_novo = texto[:inicio] + bloco_novo + texto[fim:]
+    if texto_novo == texto:
+        return False
+    MEMORY_PATH.write_text(texto_novo, encoding="utf-8")
+    return True
+
+
 def montar_markdown(iniciativas: list[dict]) -> str:
     linhas = [
         "# Índice — `docs/planos/`",
@@ -258,6 +294,10 @@ def main() -> int:
 
     INDEX_PATH.write_text(conteudo, encoding="utf-8")
     print(f"[OK] {INDEX_PATH} atualizado com {len(iniciativas)} iniciativa(s).")
+
+    if atualizar_memoria(iniciativas):
+        print(f"[OK] {MEMORY_PATH} — bloco de iniciativas ativas atualizado.")
+
     return 0
 
 

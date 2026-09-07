@@ -88,3 +88,13 @@ O **Ecossistema AIDD** é um monorepo agnóstico que integra 4 ferramentas compl
   - Camada estratégica aberta (rascunho): `docs/planos/a-fazer/02-direcionamento-estrategico-anti-nih/` (6 itens — o que fica/troca, north star, sequenciamento da troca de motor, reauditoria, investimento em diferencial).
   - Levantamento NIH salvo em `docs/features/oportunidades-reaproveitamento-oss-nih.md` (26 itens de ferramenta OSS reaproveitável) e guia cross-projeto salvo fora do repo em `C:\Users\trcnologia\Desktop\CONSTRUA-SO-O-QUE-NINGUEM-CONSTRUIU.md`.
   - `docs/planos/` reorganizado em `feitos/`/`fazendo/`/`a-fazer/`, mantido automaticamente por `python scripts/atualizar_index_planos.py` (move a iniciativa de subpasta conforme o status real muda, nunca por alegação) — 3 planos soltos superados (`PLANO-CORRECAO-SKILLS-AGNOSTICAS.md`, `PLANO-EVOLUCAO-NOTAS-AUDITORIA.md`, `PLANO-EXECUCAO-ECOSSISTEMA-AIDD.md`) removidos por já estarem absorvidos e concluídos em iniciativas mais novas.
+
+## 7. INICIATIVAS ATIVAS (gerado automaticamente — não editar à mão)
+
+> Bloco reescrito por `python scripts/atualizar_index_planos.py` toda vez que `docs/planos/` muda (via `.githooks/pre-commit`). Reflete o mesmo cálculo de status de `docs/planos/INDEX.md` — nunca edite manualmente, o script sobrescreve.
+
+<!-- AUTO:INICIATIVAS:START -->
+- ⏳ **Correcao Pos Auditoria Sem Maquiagem** — `docs/planos/a-fazer/01-correcao-pos-auditoria-sem-maquiagem/`
+- ⏳ **Direcionamento Estrategico Anti Nih** — `docs/planos/a-fazer/02-direcionamento-estrategico-anti-nih/`
+- ⏳ **Evolucao Aidd Ops Fase Completa** — `docs/planos/a-fazer/03-evolucao-aidd-ops-fase-completa/`
+<!-- AUTO:INICIATIVAS:END -->

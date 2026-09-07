@@ -56,8 +56,8 @@ if echo "$STAGED" | grep -q '^docs/planos/'; then
     exit 1
   fi
 
-  git add -A -- docs/planos
-  echo "[pre-commit] docs/planos/ (subpastas + INDEX.md) incluido no commit."
+  git add -A -- docs/planos MEMORY.md
+  echo "[pre-commit] docs/planos/ (subpastas + INDEX.md) e MEMORY.md incluidos no commit."
 fi
 
 # --- 3. code-review-graph: mantem o grafo incremental atualizado ---
