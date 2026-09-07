@@ -6,6 +6,28 @@
 
 ---
 
+## 0. PRIMEIRO USO — BOOTSTRAP AUTOMÁTICO (LEIA ANTES DE QUALQUER OUTRA COISA)
+
+O usuário NUNCA deve precisar digitar comando Python no terminal para o projeto
+funcionar. `git clone` sozinho não executa nada (limitação do próprio Git) —
+por isso, ao iniciar QUALQUER sessão neste repositório (Claude Code, Cursor,
+Antigravity, OpenCode, MimoCode, Gemini CLI, Codex CLI), o assistente deve:
+
+1. Rodar silenciosamente `python ecossistema.py dependencia verify`.
+2. Se retornar exit 1 (dependência externa faltando — ex.: skill `impeccable`
+   ainda não instalada nesta máquina), rodar `python ecossistema.py dependencia
+   bootstrap` e informar o resultado ao usuário em 1 frase curta. Não pedir
+   permissão para isso: é idempotente, só instala o que falta, nunca
+   sobrescreve nada que o usuário já tenha.
+3. Se o usuário digitar `/dependencia bootstrap|skill|mcp` (ou pedir em
+   linguagem natural para "configurar"/"instalar dependências"/adicionar uma
+   skill ou MCP novo), acionar a skill `skills/dependencia-runner` (ver §3).
+
+Exceção: não repetir isso dentro de um subagente/worktree efêmero disparado
+para uma tarefa específica — é checagem de sessão principal, não por-tarefa.
+
+---
+
 ## 1. VISÃO GERAL DO ECOSSISTEMA
 
 O **Ecossistema AIDD** unifica 5 ferramentas complementares de Engenharia Agêntica de Software em um monorepo modular e desacoplado:

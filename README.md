@@ -16,6 +16,16 @@ Ele transforma ideias em sistemas prontos, blindados, testados e colocados em pr
 
 ---
 
+## 🚀 Primeiros Passos
+
+1. `git clone https://github.com/heverton-dev/ecossistema-aidd.git`
+2. Abra a pasta no seu assistente de IA (Claude Code, Cursor, Antigravity, OpenCode, MimoCode etc.) e comece a conversar normalmente.
+3. Pronto. As dependências externas (skills e MCPs de terceiros usados pelo agente) se instalam sozinhas na primeira mensagem da sessão — você não precisa digitar nenhum comando no terminal.
+
+Quer forçar manualmente ou adicionar uma dependência nova (skill ou MCP de terceiro)? Digite `/dependencia bootstrap` (ou `/dependencia skill <nome>`, `/dependencia mcp <nome>`) no chat. Só use o terminal (`python ecossistema.py dependencia bootstrap`) se preferir.
+
+---
+
 ## 🏛️ A Fábrica de Software AIDD: As 5 Ferramentas Integradas
 
 ```text
