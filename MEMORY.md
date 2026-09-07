@@ -1,7 +1,7 @@
 # 🧠 MEMORY.md — Memória Estruturada e Contexto Operacional Consolidado
 
 > **Repositório:** `https://github.com/heverton-dev/ecossistema-aidd`  
-> **Última Atualização:** 2026-09-06  
+> **Última Atualização:** 2026-09-07  
 > **Status:** PRODUÇÃO & ORQUESTRADO (ORCA ADE / ORC 3)  
 > **Finalidade:** Memória persistente de longo prazo para guiar desenvolvedores e agentes de IA em qualquer harness, evitando amnésia de contexto e retrabalho.
 
@@ -79,3 +79,12 @@ O **Ecossistema AIDD** é um monorepo agnóstico que integra 4 ferramentas compl
   - Implementação da seleção interativa de harness executor por frente no pré-voo da orquestração.
   - Implementação da Regra de Ouro #7 no `AGENTS.md` e criação do 7º Quality Gate (`G_ZERO_HEADLESS.py`).
   - Estabelecimento do padrão de trabalho com abort atômico e bloqueio completo de subagentes headless.
+- **2026-09-07 — Auditoria "sem maquiagem" (achado grave: gate verde ≠ software funcionando):**
+  - Rodando `pytest` ao vivo (não a telemetria do repo) e subindo de verdade os projetos gerados por cada ferramenta, a auditoria encontrou 12 testes reais falhando (2 aidd-master, 2 aidd-enterprise, 8 aidd-ops) no mesmo commit em que `python ecossistema.py audit` reportava 8/8 gates verdes — nenhum gate roda `pytest`.
+  - `PLANO-EXECUCAO-ESTRUTURADO.json` (raiz) estava desatualizado/errado em 3 das 5 ferramentas (aidd-ops alegava 0/0/0, tinha 48 passed/8 failed reais).
+  - Achados de execução real: CORS inseguro (`allow_origins=["*"]` + `allow_credentials=True`) no app gerado pelo generator; deploy Docker quebrado no módulo gerado pelo master (Dockerfile sem `pip install`, pasta `nginx/` inexistente, JWT secret em texto plano); gate "G_SEGURANCA" do enterprise majoritariamente grep/config vestido de "blindagem militar/homologação global" (~4 de 21 checks são funcionais de verdade); porta 3000 duplicada no docker-compose gerado pelo ops + dashboard cujo endpoint `/api/preflight` retorna JSON hardcoded fabricando "sem colisão"; "teste integrado" do ecossistema não comprova composição real entre ferramentas (orquestração nunca rodou, `harness_count: 0`).
+  - Relatório completo: `docs/relatorios/relatorio-auditoria-ecossistema-aidd-sem-maquiagem.html`.
+  - Plano de correção aberto (rascunho, aguardando aprovação item a item): `docs/planos/a-fazer/correcao-pos-auditoria-sem-maquiagem/` (14 itens, com sugestão de modelo/harness por item).
+  - Camada estratégica aberta (rascunho): `docs/planos/a-fazer/direcionamento-estrategico-anti-nih/` (6 itens — o que fica/troca, north star, sequenciamento da troca de motor, reauditoria, investimento em diferencial).
+  - Levantamento NIH salvo em `docs/features/oportunidades-reaproveitamento-oss-nih.md` (26 itens de ferramenta OSS reaproveitável) e guia cross-projeto salvo fora do repo em `C:\Users\trcnologia\Desktop\CONSTRUA-SO-O-QUE-NINGUEM-CONSTRUIU.md`.
+  - `docs/planos/` reorganizado em `feitos/`/`fazendo/`/`a-fazer/`, mantido automaticamente por `python scripts/atualizar_index_planos.py` (move a iniciativa de subpasta conforme o status real muda, nunca por alegação) — 3 planos soltos superados (`PLANO-CORRECAO-SKILLS-AGNOSTICAS.md`, `PLANO-EVOLUCAO-NOTAS-AUDITORIA.md`, `PLANO-EXECUCAO-ECOSSISTEMA-AIDD.md`) removidos por já estarem absorvidos e concluídos em iniciativas mais novas.

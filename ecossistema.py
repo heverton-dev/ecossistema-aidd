@@ -144,7 +144,7 @@ def cmd_orchestrate(args):
         prog="ecossistema.py orchestrate",
         description="Gera e (opcionalmente) executa um Flight Plan a partir de um plano ORCA.",
     )
-    parser.add_argument("plano", help="Diretorio do plano (ex: docs/planos/skill-gerador-planos-auditoria)")
+    parser.add_argument("plano", help="Diretorio do plano (ex: docs/planos/feitos/skill-gerador-planos-auditoria)")
     parser.add_argument("--dry-run", action="store_true", help="Apenas gera e imprime o Flight Plan, sem tocar em git ou spawnar agentes.")
     parser.add_argument("--resume", action="store_true", help="Retoma um Flight Plan previamente iniciado (crash recovery).")
     parser.add_argument("--yes", action="store_true", help="Nao pede confirmacao interativa do Plano de Voo.")

@@ -3,26 +3,39 @@
 =============================================================================
 ECOSSISTEMA AIDD — ATUALIZADOR DETERMINÍSTICO DE docs/planos/INDEX.md
 =============================================================================
-Varre docs/planos/ e reescreve INDEX.md agrupando cada iniciativa em
-Concluídos / Em execução / Aguardando execução, com base no status REAL
-lido de cada documento (nunca hardcoded) — nenhuma pasta é movida.
+Varre docs/planos/ (raiz + subpastas feitos/, fazendo/, a-fazer/), calcula o
+status REAL de cada iniciativa (nunca hardcoded), MOVE fisicamente a pasta/
+arquivo para a subpasta que corresponde a esse status quando ele mudou desde
+a última vez, e reescreve INDEX.md com os caminhos já atualizados.
 
-Duas formas de iniciativa reconhecidas:
-  1. Arquivo solto docs/planos/PLANO-<NOME>.md com uma linha
+Duas formas de iniciativa reconhecidas (iguais a antes, agora também
+buscadas dentro de feitos/, fazendo/ e a-fazer/, não só na raiz):
+  1. Arquivo solto docs/planos/[<subpasta>/]PLANO-<NOME>.md com uma linha
      "> **Status:** <texto livre>" perto do topo.
-  2. Pasta docs/planos/<nome>/00-PROCESSO-E-DECISOES.md com uma seção
-     "## N. Registro de progresso" contendo uma tabela Markdown cuja
-     coluna de status usa os marcadores já convencionados neste
-     monorepo: ✅ (concluído), 🔶 (em execução), ⏳ ou 🔒 (aguardando).
+  2. Pasta docs/planos/[<subpasta>/]<nome>/00-PROCESSO-E-DECISOES.md com uma
+     seção "## N. Registro de progresso" contendo uma tabela Markdown cuja
+     coluna de status usa os marcadores já convencionados neste monorepo:
+     ✅ (concluído), 🔶 (em execução), ⏳ ou 🔒 (aguardando).
+
+Mapeamento status -> subpasta:
+  concluido    -> docs/planos/feitos/<nome>
+  em_execucao  -> docs/planos/fazendo/<nome>
+  aguardando   -> docs/planos/a-fazer/<nome>
+  indeterminado -> não move (fica onde está, reportado como aviso)
+
+Uma iniciativa criada direto na raiz de docs/planos/ (ex.: por
+`python ecossistema.py plan init <nome>`) é normal e esperada: a primeira
+execução deste script depois disso já a move para a subpasta certa.
 
 Uso:
-    python scripts/atualizar_index_planos.py            # reescreve INDEX.md
-    python scripts/atualizar_index_planos.py --dry-run  # só mostra o que geraria
+    python scripts/atualizar_index_planos.py            # move + reescreve INDEX.md
+    python scripts/atualizar_index_planos.py --dry-run  # só mostra o que faria/geraria
 """
 from __future__ import annotations
 
 import argparse
 import re
+import shutil
 import sys
 from pathlib import Path
 
@@ -41,6 +54,13 @@ TITULOS = {
     AGUARDANDO: "⏳ Aguardando execução",
     INDETERMINADO: "⚠️ Status indeterminado (revisar manualmente)",
 }
+
+SUBPASTA_DO_STATUS = {
+    CONCLUIDO: "feitos",
+    EM_EXECUCAO: "fazendo",
+    AGUARDANDO: "a-fazer",
+}
+SUBPASTAS_CONHECIDAS = set(SUBPASTA_DO_STATUS.values())
 
 
 def status_de_arquivo_unico(caminho: Path) -> str:
@@ -104,49 +124,96 @@ def status_de_pasta(caminho_00: Path) -> str:
     return INDETERMINADO
 
 
-def descobrir_iniciativas() -> list[tuple[str, str, str]]:
-    """Retorna lista de (nome_exibicao, caminho_relativo, status)."""
+def _pastas_de_busca() -> list[Path]:
+    """Raiz de docs/planos/ + as 3 subpastas conhecidas (só as que existirem)."""
+    pastas = [PLANOS_DIR]
+    for nome in sorted(SUBPASTAS_CONHECIDAS):
+        candidata = PLANOS_DIR / nome
+        if candidata.is_dir():
+            pastas.append(candidata)
+    return pastas
+
+
+def descobrir_iniciativas() -> list[dict]:
+    """Retorna lista de dicts: nome_exibicao, item (Path real no disco), status."""
     resultado = []
-    for item in sorted(PLANOS_DIR.iterdir()):
-        if item.name == "INDEX.md":
-            continue
-        if item.is_file() and item.name.startswith("PLANO-") and item.suffix == ".md":
-            status = status_de_arquivo_unico(item)
-            titulo = item.stem.replace("PLANO-", "").replace("-", " ").title()
-            resultado.append((titulo, item.name, status))
-        elif item.is_dir():
-            arquivo_00 = item / "00-PROCESSO-E-DECISOES.md"
-            if arquivo_00.exists():
-                status = status_de_pasta(arquivo_00)
-                titulo = item.name.replace("-", " ").title()
-                resultado.append((titulo, f"{item.name}/", status))
+    vistos = set()
+    for pasta in _pastas_de_busca():
+        for item in sorted(pasta.iterdir()):
+            if item.resolve() in vistos:
+                continue
+            if item.name == "INDEX.md":
+                continue
+            if item.is_dir() and item.name in SUBPASTAS_CONHECIDAS and pasta == PLANOS_DIR:
+                continue  # a própria subpasta-contêiner, não uma iniciativa
+            if item.is_file() and item.name.startswith("PLANO-") and item.suffix == ".md":
+                status = status_de_arquivo_unico(item)
+                titulo = item.stem.replace("PLANO-", "").replace("-", " ").title()
+                resultado.append({"titulo": titulo, "item": item, "status": status})
+                vistos.add(item.resolve())
+            elif item.is_dir():
+                arquivo_00 = item / "00-PROCESSO-E-DECISOES.md"
+                if arquivo_00.exists():
+                    status = status_de_pasta(arquivo_00)
+                    titulo = item.name.replace("-", " ").title()
+                    resultado.append({"titulo": titulo, "item": item, "status": status})
+                    vistos.add(item.resolve())
     return resultado
 
 
-def montar_markdown(iniciativas: list[tuple[str, str, str]]) -> str:
+def mover_se_necessario(iniciativa: dict, dry_run: bool) -> None:
+    """Move fisicamente item para a subpasta correspondente ao status atual,
+    se ainda não estiver lá. Indeterminado nunca é movido automaticamente."""
+    status = iniciativa["status"]
+    if status not in SUBPASTA_DO_STATUS:
+        return
+    item: Path = iniciativa["item"]
+    subpasta_alvo = SUBPASTA_DO_STATUS[status]
+    if item.parent.name == subpasta_alvo:
+        return  # já está no lugar certo
+    destino_dir = PLANOS_DIR / subpasta_alvo
+    destino = destino_dir / item.name
+    if dry_run:
+        print(f"[dry-run] moveria: {item.relative_to(PLANOS_DIR)} -> {subpasta_alvo}/{item.name}")
+        return
+    destino_dir.mkdir(parents=True, exist_ok=True)
+    if destino.exists():
+        print(f"[ERRO] destino já existe, não movi: {destino}", file=sys.stderr)
+        return
+    shutil.move(str(item), str(destino))
+    iniciativa["item"] = destino
+    print(f"[OK] movido: {subpasta_alvo}/{item.name}")
+
+
+def montar_markdown(iniciativas: list[dict]) -> str:
     linhas = [
         "# Índice — `docs/planos/`",
         "",
-        "> Gerado automaticamente por `python scripts/atualizar_index_planos.py` a partir do status real de cada documento. Nenhum caminho físico muda — os links abaixo apontam para as pastas/arquivos reais. **Não editar manualmente**: rode o script de novo depois de qualquer mudança de status.",
+        "> Gerado automaticamente por `python scripts/atualizar_index_planos.py` a partir do status real de cada documento — inclusive a subpasta física (`feitos/`, `fazendo/`, `a-fazer/`), que este script também mantém sincronizada. **Não editar manualmente**: rode o script de novo depois de qualquer mudança de status.",
         "",
     ]
     for chave in (CONCLUIDO, EM_EXECUCAO, AGUARDANDO, INDETERMINADO):
-        do_grupo = [ini for ini in iniciativas if ini[2] == chave]
+        do_grupo = [ini for ini in iniciativas if ini["status"] == chave]
         if not do_grupo:
             continue
         linhas.append(f"## {TITULOS[chave]}")
         linhas.append("")
         linhas.append("| Iniciativa | Local |")
         linhas.append("|---|---|")
-        for titulo, caminho, _ in do_grupo:
-            linhas.append(f"| {titulo} | `{caminho}` |")
+        for ini in do_grupo:
+            caminho_rel = ini["item"].relative_to(PLANOS_DIR).as_posix()
+            if ini["item"].is_dir():
+                caminho_rel += "/"
+            linhas.append(f"| {ini['titulo']} | `{caminho_rel}` |")
         linhas.append("")
     linhas.append("---")
     linhas.append("")
     linhas.append(
         "**Convenção:** pastas com `00-PROCESSO-E-DECISOES.md` + `NN-<item>.md` são iniciativas "
         "multi-item (status = agregado da tabela \"Registro de progresso\"); arquivos `PLANO-<NOME>.md` "
-        "soltos são planos de item único (status = linha `**Status:**` do próprio arquivo)."
+        "soltos são planos de item único (status = linha `**Status:**` do próprio arquivo). Uma "
+        "iniciativa nova criada direto na raiz de `docs/planos/` (via `plan init`) é normal — a próxima "
+        "execução deste script já a move para `feitos/`, `fazendo/` ou `a-fazer/` conforme seu status real."
     )
     linhas.append("")
     return "\n".join(linhas)
@@ -160,7 +227,7 @@ def main() -> int:
             fluxo.reconfigure(encoding="utf-8")
 
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--dry-run", action="store_true", help="Só imprime o resultado, não escreve o arquivo")
+    parser.add_argument("--dry-run", action="store_true", help="Só imprime o resultado, não move nem escreve nada")
     args = parser.parse_args()
 
     iniciativas = descobrir_iniciativas()
@@ -168,13 +235,16 @@ def main() -> int:
         print("[ERRO] Nenhuma iniciativa encontrada em docs/planos/ — algo está errado.", file=sys.stderr)
         return 1
 
+    for ini in iniciativas:
+        mover_se_necessario(ini, dry_run=args.dry_run)
+
     conteudo = montar_markdown(iniciativas)
 
-    indeterminados = [i for i in iniciativas if i[2] == INDETERMINADO]
+    indeterminados = [i for i in iniciativas if i["status"] == INDETERMINADO]
     if indeterminados:
-        print("[AVISO] Status indeterminado (revisar manualmente):", file=sys.stderr)
-        for titulo, caminho, _ in indeterminados:
-            print(f"  - {titulo} ({caminho})", file=sys.stderr)
+        print("[AVISO] Status indeterminado (revisar manualmente, não movido automaticamente):", file=sys.stderr)
+        for ini in indeterminados:
+            print(f"  - {ini['titulo']} ({ini['item'].relative_to(PLANOS_DIR)})", file=sys.stderr)
 
     if args.dry_run:
         print(conteudo)

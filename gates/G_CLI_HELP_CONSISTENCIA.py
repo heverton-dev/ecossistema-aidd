@@ -5,7 +5,7 @@ ECOSSISTEMA AIDD — QUALITY GATE: G_CLI_HELP_CONSISTENCIA
 =============================================================================
 Detecta divergência entre flags de CLI realmente definidas via
 `argparse.add_argument(...)` e flags citadas em mensagens de erro/print
-dentro do mesmo arquivo (Pacote 1 — docs/planos/evolucao-notas-auditoria/
+dentro do mesmo arquivo (Pacote 1 — docs/planos/feitos/evolucao-notas-auditoria/
 01-transparencia-e-gates.md). Origem real: aidd-enterprise/scripts/aidd.py
 dizia "exige --command" numa mensagem de erro quando a flag de verdade,
 definida no argparse, era "--mcp-command" — usuário seguia a mensagem de

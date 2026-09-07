@@ -20,10 +20,20 @@ Esta skill formaliza e padroniza a criacao de iniciativas de plano em `docs/plan
 ## Referencias Canonicas no Repositorio
 
 Consulte a estrutura e tom dos 4 exemplos reais ja estabelecidos no ecossistema:
-- `docs/planos/evolucao-notas-auditoria/00-PROCESSO-E-DECISOES.md`
-- `docs/planos/refinamento-notas-auditoria/00-PROCESSO-E-DECISOES.md`
-- `docs/planos/testes-completos-ecossistema/00-PROCESSO-E-DECISOES.md`
-- `docs/planos/skill-gerador-planos-auditoria/00-PROCESSO-E-DECISOES.md`
+- `docs/planos/feitos/evolucao-notas-auditoria/00-PROCESSO-E-DECISOES.md`
+- `docs/planos/feitos/refinamento-notas-auditoria/00-PROCESSO-E-DECISOES.md`
+- `docs/planos/feitos/testes-completos-ecossistema/00-PROCESSO-E-DECISOES.md`
+- `docs/planos/feitos/skill-gerador-planos-auditoria/00-PROCESSO-E-DECISOES.md`
+
+## Onde a iniciativa nasce vs onde ela vive
+
+`python ecossistema.py plan init <nome>` sempre cria a pasta nova direto em
+`docs/planos/<nome>/` (raiz) — isso é esperado e correto. O ecossistema
+organiza `docs/planos/` em 3 subpastas por status real (`feitos/`,
+`fazendo/`, `a-fazer/`), mas quem move a iniciativa pra lá é
+`python scripts/atualizar_index_planos.py`, rodado depois (manualmente ou
+pelo hook de pre-commit) — nunca decida você mesmo em qual subpasta uma
+iniciativa nova deveria começar.
 
 ---
 

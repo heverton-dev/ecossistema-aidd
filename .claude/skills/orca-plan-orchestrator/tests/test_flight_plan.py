@@ -11,10 +11,10 @@ REPO_ROOT = Path(__file__).resolve().parent.parent.parent.parent.parent.parent
 PROFILES_PATH = REPO_ROOT / "componentes/compartilhado/skills/orca-plan-orchestrator/.orca/harness_profiles.json.example"
 
 FIXTURES = {
-    "evolucao-notas-auditoria": REPO_ROOT / "docs/planos/evolucao-notas-auditoria",
-    "refinamento-notas-auditoria": REPO_ROOT / "docs/planos/refinamento-notas-auditoria",
-    "testes-completos-ecossistema": REPO_ROOT / "docs/planos/testes-completos-ecossistema",
-    "skill-gerador-planos-auditoria": REPO_ROOT / "docs/planos/skill-gerador-planos-auditoria",
+    "evolucao-notas-auditoria": REPO_ROOT / "docs/planos/feitos/evolucao-notas-auditoria",
+    "refinamento-notas-auditoria": REPO_ROOT / "docs/planos/feitos/refinamento-notas-auditoria",
+    "testes-completos-ecossistema": REPO_ROOT / "docs/planos/feitos/testes-completos-ecossistema",
+    "skill-gerador-planos-auditoria": REPO_ROOT / "docs/planos/feitos/skill-gerador-planos-auditoria",
 }
 
 EXPECTED_FRONT_COUNTS = {

@@ -154,6 +154,10 @@ ecossistema-aidd/
 │
 └── docs/                                   ──► Toda a inteligência documentada
     ├── planos/                             ──► Planos táticos e de auditoria
+    │   ├── feitos/                         ──► Concluídos (status real, não alegado)
+    │   ├── fazendo/                        ──► Em execução
+    │   ├── a-fazer/                        ──► Aguardando execução
+    │   └── INDEX.md                        ──► Gerado por scripts/atualizar_index_planos.py — não editar à mão
     ├── protocolos/                         ──► Protocolos canônicos de agnosticidade
     └── testes/                             ──► Baterias de testes E2E e relatórios formais
 ```

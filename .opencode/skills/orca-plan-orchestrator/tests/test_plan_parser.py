@@ -13,10 +13,10 @@ from plan_parser import parse_plan, Plan, Front
 REPO_ROOT = Path(__file__).resolve().parent.parent.parent.parent.parent.parent
 
 FIXTURES = {
-    "evolucao-notas-auditoria": REPO_ROOT / "docs/planos/evolucao-notas-auditoria",
-    "refinamento-notas-auditoria": REPO_ROOT / "docs/planos/refinamento-notas-auditoria",
-    "testes-completos-ecossistema": REPO_ROOT / "docs/planos/testes-completos-ecossistema",
-    "skill-gerador-planos-auditoria": REPO_ROOT / "docs/planos/skill-gerador-planos-auditoria",
+    "evolucao-notas-auditoria": REPO_ROOT / "docs/planos/feitos/evolucao-notas-auditoria",
+    "refinamento-notas-auditoria": REPO_ROOT / "docs/planos/feitos/refinamento-notas-auditoria",
+    "testes-completos-ecossistema": REPO_ROOT / "docs/planos/feitos/testes-completos-ecossistema",
+    "skill-gerador-planos-auditoria": REPO_ROOT / "docs/planos/feitos/skill-gerador-planos-auditoria",
 }
 
 # Manually verified front counts (NN-*.md files, excluding 00-PROCESSO-E-DECISOES.md)

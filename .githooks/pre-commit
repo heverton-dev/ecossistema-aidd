@@ -1,45 +1,63 @@
 #!/bin/sh
-# Auto-espelha componentes/ para todos os harnesses antes de cada commit.
+# Dois auto-sincronizadores independentes, cada um só dispara se o commit
+# tocar a pasta correspondente. Um checa NÃO acionar o outro.
 #
 # Instalado via: git config core.hooksPath .githooks
 # (feito automaticamente por 'python ecossistema.py dependencia bootstrap',
 # ou manualmente com o comando acima).
-#
-# So dispara quando o commit inclui mudanca dentro de componentes/ - nesse
-# caso roda 'components sync --tipo todos' e reinclui no MESMO commit
-# qualquer copia que o sync tenha criado/atualizado, sem tocar em nenhum
-# outro arquivo que ja estivesse modificado por outro motivo.
 
 set -e
 
 REPO_ROOT="$(git rev-parse --show-toplevel)"
 cd "$REPO_ROOT"
 
-if ! git diff --cached --name-only | grep -q '^componentes/'; then
-  exit 0
-fi
+STAGED="$(git diff --cached --name-only)"
 
-echo "[pre-commit] Mudanca em componentes/ detectada - rodando 'components sync --tipo todos'..."
+# --- 1. Auto-espelha componentes/ para todos os harnesses ---
+# Roda 'components sync --tipo todos' e reinclui no MESMO commit qualquer
+# cópia que o sync tenha criado/atualizado, sem tocar em nenhum outro
+# arquivo que já estivesse modificado por outro motivo.
+if echo "$STAGED" | grep -q '^componentes/'; then
+  echo "[pre-commit] Mudanca em componentes/ detectada - rodando 'components sync --tipo todos'..."
 
-if ! python ecossistema.py components sync --tipo todos; then
-  echo "[pre-commit] ERRO: components sync falhou. Commit abortado - corrija e tente de novo."
-  exit 1
-fi
+  if ! python ecossistema.py components sync --tipo todos; then
+    echo "[pre-commit] ERRO: components sync falhou. Commit abortado - corrija e tente de novo."
+    exit 1
+  fi
 
-# Re-adiciona so as pastas-espelho conhecidas (nomes fixos de harness),
-# nunca um diretorio arbitrario que ja estivesse sujo por outro motivo.
-MIRROR_DIRS=".claude .agents .agent .opencode .mimocode .cursor .gemini .github .skills skills"
+  # Re-adiciona so as pastas-espelho conhecidas (nomes fixos de harness),
+  # nunca um diretorio arbitrario que ja estivesse sujo por outro motivo.
+  MIRROR_DIRS=".claude .agents .agent .opencode .mimocode .cursor .gemini .github .skills skills"
 
-for dir in $MIRROR_DIRS; do
-  [ -d "$dir" ] && git add -- "$dir" 2>/dev/null
-done
-
-for tool_dir in tools/*/; do
   for dir in $MIRROR_DIRS; do
-    alvo="${tool_dir}${dir}"
-    [ -d "$alvo" ] && git add -- "$alvo" 2>/dev/null
+    [ -d "$dir" ] && git add -- "$dir" 2>/dev/null
   done
-done
 
-echo "[pre-commit] Copias espelhadas incluidas no commit."
+  for tool_dir in tools/*/; do
+    for dir in $MIRROR_DIRS; do
+      alvo="${tool_dir}${dir}"
+      [ -d "$alvo" ] && git add -- "$alvo" 2>/dev/null
+    done
+  done
+
+  echo "[pre-commit] Copias espelhadas incluidas no commit."
+fi
+
+# --- 2. Mantem docs/planos/ (feitos/fazendo/a-fazer + INDEX.md) sincronizado ---
+# Roda o atualizador deterministico, que recalcula o status real de cada
+# iniciativa, MOVE fisicamente a pasta/arquivo para feitos/fazendo/a-fazer
+# se o status mudou, e reescreve INDEX.md. Qualquer movimentacao ou
+# reescrita e reincluida no MESMO commit, para nunca ficar desatualizado.
+if echo "$STAGED" | grep -q '^docs/planos/'; then
+  echo "[pre-commit] Mudanca em docs/planos/ detectada - rodando 'atualizar_index_planos.py'..."
+
+  if ! python scripts/atualizar_index_planos.py; then
+    echo "[pre-commit] ERRO: atualizar_index_planos.py falhou. Commit abortado - corrija e tente de novo."
+    exit 1
+  fi
+
+  git add -A -- docs/planos
+  echo "[pre-commit] docs/planos/ (subpastas + INDEX.md) incluido no commit."
+fi
+
 exit 0

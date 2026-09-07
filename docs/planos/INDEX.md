@@ -1,32 +1,28 @@
 # Índice — `docs/planos/`
 
-> Gerado automaticamente por `python scripts/atualizar_index_planos.py` a partir do status real de cada documento. Nenhum caminho físico muda — os links abaixo apontam para as pastas/arquivos reais. **Não editar manualmente**: rode o script de novo depois de qualquer mudança de status.
+> Gerado automaticamente por `python scripts/atualizar_index_planos.py` a partir do status real de cada documento — inclusive a subpasta física (`feitos/`, `fazendo/`, `a-fazer/`), que este script também mantém sincronizada. **Não editar manualmente**: rode o script de novo depois de qualquer mudança de status.
 
 ## ✅ Concluídos
 
 | Iniciativa | Local |
 |---|---|
-| Evolucao Notas Auditoria | `evolucao-notas-auditoria/` |
-| Correcao Riscos Ecossistema Aidd | `PLANO-CORRECAO-RISCOS-ECOSSISTEMA-AIDD.md` |
-| Refinamento Notas Auditoria | `refinamento-notas-auditoria/` |
-| Skill Gerador Planos Auditoria | `skill-gerador-planos-auditoria/` |
-| Skill Orquestracao Orca Ade | `skill-orquestracao-orca-ade/` |
-
-## 🔶 Em execução
-
-| Iniciativa | Local |
-|---|---|
-| Integracao Aidd Ops | `integracao-aidd-ops/` |
-| Testes Completos Ecossistema | `testes-completos-ecossistema/` |
+| Evolucao Notas Auditoria | `feitos/evolucao-notas-auditoria/` |
+| Integracao Aidd Ops | `feitos/integracao-aidd-ops/` |
+| Correcao Riscos Ecossistema Aidd | `feitos/PLANO-CORRECAO-RISCOS-ECOSSISTEMA-AIDD.md` |
+| Refinamento Notas Auditoria | `feitos/refinamento-notas-auditoria/` |
+| Skill Gerador Planos Auditoria | `feitos/skill-gerador-planos-auditoria/` |
+| Skill Orquestracao Orca Ade | `feitos/skill-orquestracao-orca-ade/` |
+| Testes Completos Ecossistema | `feitos/testes-completos-ecossistema/` |
+| Validacao Humana Testes Reais | `feitos/validacao-humana-testes-reais/` |
 
 ## ⏳ Aguardando execução
 
 | Iniciativa | Local |
 |---|---|
-| Correcao Skills Agnosticas | `PLANO-CORRECAO-SKILLS-AGNOSTICAS.md` |
-| Evolucao Notas Auditoria | `PLANO-EVOLUCAO-NOTAS-AUDITORIA.md` |
-| Execucao Ecossistema Aidd | `PLANO-EXECUCAO-ECOSSISTEMA-AIDD.md` |
+| Correcao Pos Auditoria Sem Maquiagem | `a-fazer/correcao-pos-auditoria-sem-maquiagem/` |
+| Direcionamento Estrategico Anti Nih | `a-fazer/direcionamento-estrategico-anti-nih/` |
+| Evolucao Aidd Ops Fase Completa | `a-fazer/evolucao-aidd-ops-fase-completa/` |
 
 ---
 
-**Convenção:** pastas com `00-PROCESSO-E-DECISOES.md` + `NN-<item>.md` são iniciativas multi-item (status = agregado da tabela "Registro de progresso"); arquivos `PLANO-<NOME>.md` soltos são planos de item único (status = linha `**Status:**` do próprio arquivo).
+**Convenção:** pastas com `00-PROCESSO-E-DECISOES.md` + `NN-<item>.md` são iniciativas multi-item (status = agregado da tabela "Registro de progresso"); arquivos `PLANO-<NOME>.md` soltos são planos de item único (status = linha `**Status:**` do próprio arquivo). Uma iniciativa nova criada direto na raiz de `docs/planos/` (via `plan init`) é normal — a próxima execução deste script já a move para `feitos/`, `fazendo/` ou `a-fazer/` conforme seu status real.
