@@ -31,7 +31,20 @@ Calibração de partida (não é regra rígida): tarefas mecânicas/determiníst
 | 11 | Corrigir deploy Docker do módulo gerado | Moderada | Sonnet | Gemini 3.7 | mimo-v2.5-pro |
 | 12 | Prova real de integração multi-ferramenta | Arquitetural | Opus | Gemini 3.8 | mimo-v2.5-pro |
 | 13 | Reduzir custo de token no núcleo determinístico | Arquitetural | Opus | Gemini 3.8 | mimo-v2.5-pro |
-| 14 | Sequenciar as 4 frentes de `evolucao-aidd-ops-fase-completa/` | Planejamento | Sonnet | Gemini 3.7 | mimo-v2.5-pro |
+
+## 1.1 Dependência com `docs/planos/a-fazer/direcionamento-estrategico-anti-nih/`
+
+Revisão feita em 2026-09-07, respondendo à pergunta direta do usuário ("com o estratégico completo, o tático continua útil?"): **sim, a maior parte continua necessária de qualquer forma** — o estratégico troca qual motor sustenta um subsistema (biblioteca madura em vez de código próprio), não corrige comportamento/governança que independe disso. Só alguns itens têm relação real com a Fase 2 (troca de motor) do estratégico:
+
+- **Item 14 removido** (`Sequenciar as 4 frentes de evolucao-aidd-ops-fase-completa`) — era 100% duplicado da própria Fase 2 do plano estratégico (que já decide "avaliar Coolify/CapRover antes de aprovar as 4 frentes"). Essa decisão vive lá agora, não aqui.
+- **Itens 4, 5, 7, 9, 11 — prováveis subprodutos da Fase 2, não garantidos:** se a Fase 2 (segurança → scaffolding → infra do ops) for concluída ANTES destes itens, cada um deve primeiro ser **reproduzido** contra o estado pós-troca — se já estiver corrigido de verdade (não por acidente), o item fecha rápido como "verificado, sem trabalho adicional"; se a migração não cobriu o caso, o item continua sendo a rede de segurança e é implementado normalmente. Nunca marcar como concluído só porque "a Fase 2 deveria ter resolvido" sem reprodução real:
+  - Item 4 (CSP): resolve se `secure.py` substituir `templates/core/security.py` com defaults seguros — verificar, não assumir.
+  - Item 5 (seed de demo): só resolve se quem migrar pra Cookiecutter lembrar de não carregar o seed — não é automático.
+  - Item 7 (gate "blindagem militar"): a Regra de Ouro anti-marketing (item 2 do estratégico) resolve a metade do rótulo; a decisão de aumentar cobertura funcional real do gate continua em aberto de qualquer forma.
+  - Item 9 (porta duplicada + dashboard): só resolve se a decisão do estratégico for "adotar Coolify/CapRover". Se for "manter infra própria", este item continua 100% necessário sem alteração.
+  - Item 11 (deploy Docker): mesmo caso do item 5 — resolve se a reescrita via Cookiecutter for cuidadosa, não é garantia automática.
+- **Item 13 (reduzir custo de token):** a parte de *implementar* pelo menos 2 trocas continua aqui; a parte de *medir antes/depois formalmente* é absorvida pela Fase 3 (reauditoria) do plano estratégico, que já remede tudo depois da troca de motor — não duplicar a remedição nos dois lugares.
+- **Itens 1, 2, 3, 6, 8, 10, 12 — sem sobreposição, seguem exatamente como estão.**
 
 ## 2. Processo Adotado
 
@@ -54,7 +67,6 @@ Diagnostico rapido → Definicao de Pronto checavel → Prompt de Execucao autoc
 | 11 | Corrigir deploy Docker do modulo gerado (pip install ausente, nginx/ inexistente, secret em texto plano) | `11-corrigir-deploy-docker-do-modulo-gerado-pip-install-ausente-nginx-inexistente-secret-em-texto-plano.md` |
 | 12 | Prova real de integracao multi-ferramenta no teste integrado | `12-prova-real-de-integracao-multi-ferramenta-no-teste-integrado.md` |
 | 13 | Reduzir custo de token nas ferramentas de nucleo deterministico (master/enterprise/ops/CLI) | `13-reduzir-custo-de-token-nas-ferramentas-de-nucleo-deterministico-masterenterpriseopscli.md` |
-| 14 | Herdar e sequenciar as 4 frentes de evolucao-aidd-ops-fase-completa dentro deste plano | `14-herdar-e-sequenciar-as-4-frentes-de-evolucao-aidd-ops-fase-completa-dentro-deste-plano.md` |
 
 ## 4. Regras Fixas
 
@@ -80,6 +92,5 @@ Diagnostico rapido → Definicao de Pronto checavel → Prompt de Execucao autoc
 | 11 | Corrigir deploy Docker do modulo gerado (pip install ausente, nginx/ inexistente, secret em texto plano) | ⏳ Rascunho gerado, aguardando aprovacao | `11-corrigir-deploy-docker-do-modulo-gerado-pip-install-ausente-nginx-inexistente-secret-em-texto-plano.md` |
 | 12 | Prova real de integracao multi-ferramenta no teste integrado | ⏳ Rascunho gerado, aguardando aprovacao | `12-prova-real-de-integracao-multi-ferramenta-no-teste-integrado.md` |
 | 13 | Reduzir custo de token nas ferramentas de nucleo deterministico (master/enterprise/ops/CLI) | ⏳ Rascunho gerado, aguardando aprovacao | `13-reduzir-custo-de-token-nas-ferramentas-de-nucleo-deterministico-masterenterpriseopscli.md` |
-| 14 | Herdar e sequenciar as 4 frentes de evolucao-aidd-ops-fase-completa dentro deste plano | ⏳ Rascunho gerado, aguardando aprovacao | `14-herdar-e-sequenciar-as-4-frentes-de-evolucao-aidd-ops-fase-completa-dentro-deste-plano.md` |
 
-Esta tabela so e atualizada para Concluido apos auditoria por reproducao real.
+Esta tabela so e atualizada para Concluido apos auditoria por reproducao real. Item 14 removido em 2026-09-07 por duplicidade confirmada com a Fase 2 de `docs/planos/a-fazer/direcionamento-estrategico-anti-nih/` (ver §1.1).

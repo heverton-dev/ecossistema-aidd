@@ -3,6 +3,7 @@
 > **Escopo:** Entra duas correções relacionadas: (a) o template/sizing do docker-compose gerado não deve mais atribuir a mesma porta host a dois serviços; (b) `dashboard_server.py` `/api/preflight` deixa de devolver JSON hardcoded e passa a computar de verdade, reaproveitando a mesma chamada a `docker compose config` que `preflight_check.py` já faz. Não entra: redesenhar o dashboard inteiro.
 > **Status:** [RASCUNHO — Aguardando Aprovacao Humana]
 > **Modelo sugerido:** Claude Sonnet · Antigravity Gemini 3.7 · MiMo mimo-v2.5-pro (lógica real de detecção de colisão + reuso de código existente)
+> **Dependência com o plano estratégico:** este item é **condicional à decisão Coolify/CapRover** da Fase 2 de `direcionamento-estrategico-anti-nih/`. Se a decisão for "adotar", o roteamento por host do Coolify elimina a colisão de porta por design e este item pode encolher para só corrigir o dashboard. Se a decisão for "manter infra própria", este item continua 100% necessário como está escrito abaixo. Não presuma qual caminho foi escolhido — confirme antes de começar.
 
 ---
 

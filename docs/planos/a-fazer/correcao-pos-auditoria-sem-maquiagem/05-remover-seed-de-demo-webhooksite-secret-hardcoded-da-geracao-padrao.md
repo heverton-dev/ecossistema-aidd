@@ -3,6 +3,7 @@
 > **Escopo:** Entra: `scripts/compose_suite.py` (master e enterprise) parar de inserir por padrão o webhook de demonstração no banco do projeto gerado. Não entra: remover a feature de webhook em si — o seed deve virar opt-in explícito e claramente rotulado, não desaparecer.
 > **Status:** [RASCUNHO — Aguardando Aprovacao Humana]
 > **Modelo sugerido:** Claude Haiku · Antigravity Gemini 3.1 pro · MiMo mimo-v2.5 (remover/condicionar um insert, tarefa mecânica)
+> **Dependência com o plano estratégico:** se a Fase 2 (troca de scaffolding pra Cookiecutter/Copier) já foi concluída, **reproduza primeiro** gerando um projeto novo e conferindo a tabela `webhooks` — a migração só remove este bug se quem migrou lembrou explicitamente de não carregar o seed; não assuma resolvido sem checar.
 
 ---
 

@@ -3,6 +3,7 @@
 > **Escopo:** Entra: decidir entre (a) aumentar cobertura funcional real de `scripts/gates/G_SEGURANCA.py` (enterprise) até o rótulo ser justo, ou (b) corrigir o rótulo/mensagem de saída para refletir o que de fato é testado. Não entra: reescrever `G_CONTRACTS` (achado relacionado, escopo próprio se vier a virar item).
 > **Status:** [RASCUNHO — Aguardando Aprovacao Humana — rota depende de decisão do usuário]
 > **Modelo sugerido:** Claude Opus · Antigravity Gemini 3.8 · MiMo mimo-v2.5-pro (decisão de escopo: quanto investir em cobertura real vs. só corrigir o rótulo)
+> **Dependência com o plano estratégico:** a Regra de Ouro nova "zero linguagem de marketing" (item 2 de `direcionamento-estrategico-anti-nih/`) resolve a METADE do rótulo ("blindagem militar"/"homologado pra produção global" desaparece). A decisão de aumentar cobertura funcional real do gate (rota A vs rota B abaixo) continua em aberto de qualquer forma — a Regra de Ouro não decide isso sozinha.
 
 ---
 

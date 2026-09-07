@@ -3,6 +3,7 @@
 > **Escopo:** Entra: template Dockerfile/docker-compose.yml do aidd-master (núcleo compartilhado com enterprise) — adicionar `pip install` de runtime, parar de referenciar `nginx/` inexistente (ou gerar a pasta), tirar `JWT_SECRET_KEY` de texto plano do compose. Não entra: mudar orquestração de containers em si (isso é aidd-ops).
 > **Status:** [RASCUNHO — Aguardando Aprovacao Humana]
 > **Modelo sugerido:** Claude Sonnet · Antigravity Gemini 3.7 · MiMo mimo-v2.5-pro (3 correções coordenadas em template compartilhado)
+> **Dependência com o plano estratégico:** se a Fase 2 (troca de scaffolding pra Cookiecutter/Copier) já foi concluída, **reproduza primeiro** (`docker compose build && up` num projeto novo) antes de implementar qualquer correção — só fecha sozinho se a reescrita do template tiver sido cuidadosa nos 3 pontos abaixo, não é garantia automática da troca de motor.
 
 ---
 

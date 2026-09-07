@@ -3,6 +3,7 @@
 > **Escopo:** Entra: medir de verdade (não estimar) o consumo de token de uma rodada de `/master`, `/enterprise`, `/ops` e `python ecossistema.py audit`, identificar onde o assistente gasta token em tarefas que o próprio script já resolve, e cortar. Não entra: mexer no núcleo do aidd-generator — lá o gasto é estruturalmente necessário (fases 2-8 dependem de LLM real).
 > **Status:** [RASCUNHO — Aguardando Aprovacao Humana]
 > **Modelo sugerido:** Claude Opus · Antigravity Gemini 3.8 · MiMo mimo-v2.5-pro (requer profiling real e redesenho de fluxo, não é troca mecânica)
+> **Dependência com o plano estratégico:** a Fase 3 (reauditoria) de `direcionamento-estrategico-anti-nih/` já remede o consumo de token de tudo depois da troca de motor — este item **não duplica** essa remedição formal antes/depois. Este item cobre só a linha de base inicial e a implementação de pelo menos 2 trocas (passo 3 da Definição de Pronto); a comparação final "antes/depois" definitiva fica a cargo da Fase 3.
 
 ---
 

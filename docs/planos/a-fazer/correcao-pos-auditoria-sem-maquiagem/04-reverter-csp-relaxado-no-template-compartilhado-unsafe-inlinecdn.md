@@ -3,6 +3,7 @@
 > **Escopo:** Entra: `templates/core/security.py` e `templates/v2/security.py` (tools/aidd-master e tools/aidd-enterprise, núcleo compartilhado) — reverter para CSP estrito ou trocar `unsafe-inline` por nonce/hash. Não entra: redesenhar toda a stack de segurança do enterprise (isso é item 7).
 > **Status:** [RASCUNHO — Aguardando Aprovacao Humana]
 > **Modelo sugerido:** Claude Sonnet · Antigravity Gemini 3.7 · MiMo mimo-v2.5-pro (requer entender a dependência real de CDN antes de decidir a forma de reverter)
+> **Dependência com o plano estratégico:** se a Fase 2 de `docs/planos/a-fazer/direcionamento-estrategico-anti-nih/` (troca de `templates/core/security.py` por `secure.py`) já foi concluída, comece por **reproduzir** o CSP gerado antes de implementar qualquer coisa — se já vier correto por causa da lib, feche este item como "verificado, sem trabalho adicional" em vez de reimplementar.
 
 ---
 
