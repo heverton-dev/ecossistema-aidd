@@ -10,28 +10,32 @@
       "confirmado": true
     },
     "antigravity": {
-      "prefixo_pasta": ".agent",
-      "confirmado": true
+      "prefixo_pasta": ".agents",
+      "confirmado": true,
+      "nota": "CORRIGIDO em 2026-09-07 após pesquisa em documentação oficial (antigravity.google/docs/skills/, antigravity.google/docs/rules-workflows/): o default atual do Antigravity é '.agents/' (plural) para skills e rules; '.agent/' (singular) só é mantido como fallback de compatibilidade retroativa (legado), não é mais o caminho recomendado. Migrado de '.agent/' para '.agents/'; ver [[correcao-harnesses-2026-09-07]]."
     },
     "opencode": {
-      "prefixo_pasta": ".agent",
-      "confirmado": true
+      "prefixo_pasta": ".opencode",
+      "confirmado": true,
+      "nota": "CORRIGIDO em 2026-09-07: '.agent/' nunca foi a convenção real do OpenCode. Documentação oficial (opencode.ai/docs/skills/, opencode.ai/docs/commands/, opencode.ai/docs/agents/) confirma pasta própria '.opencode/{skills,commands,agents}'. OpenCode também lê '.claude/skills/' e '.agents/skills/' como buscas extras, mas a pasta nativa de projeto é '.opencode/'."
     },
     "mimocode": {
-      "prefixo_pasta": ".agent",
+      "prefixo_pasta": ".mimocode",
       "confirmado": true,
-      "nota": "Decisão do usuário (2026-09-05): '.mimocode/' próprio é redundante - AGENTS.md §5 já afirmava que MimoCode lê '.agent/', mas o disco mantinha '.mimocode/skills/' como pasta separada em tools/aidd-master e tools/aidd-enterprise. Diff de segurança confirmou conteúdo idêntico a '.agent/skills/' antes da remoção (ver relatório desta execução). MimoCode passa a apontar só para '.agent/', sem pasta própria."
+      "nota": "REVERTIDO em 2026-09-07: a decisão de 2026-09-05 (abaixo, mantida para histórico) estava incorreta. MimoCode (github.com/XiaomiMiMo/MiMo-Code, fork oficial do OpenCode pela Xiaomi) documenta '.mimocode/skills/<nome>/SKILL.md' como a pasta nativa de projeto - não é redundante, é a única forma de descoberta de skill em nível de projeto (o fallback documentado é '~/.claude/skills' e '~/.opencode/skills', pastas GLOBAIS do usuário, nunca '.agent/'). A pasta '.mimocode/' também é o diretório de runtime próprio do MimoCode (config, node_modules) - escrever 'skills/' e 'commands/' dentro dela é o comportamento nativo esperado, não uma invasão.",
+      "nota_historica_2026-09-05_incorreta": "Decisão do usuário (2026-09-05): '.mimocode/' próprio é redundante - AGENTS.md §5 já afirmava que MimoCode lê '.agent/', mas o disco mantinha '.mimocode/skills/' como pasta separada em tools/aidd-master e tools/aidd-enterprise. Diff de segurança confirmou conteúdo idêntico a '.agent/skills/' antes da remoção (ver relatório desta execução). MimoCode passa a apontar só para '.agent/', sem pasta própria."
     },
     "gemini-cli": {
       "prefixo_pasta": ".gemini",
-      "confirmado": true,
-      "nota": "Nunca documentado em AGENTS.md antes desta migração, mas '.gemini/skills/' já estava em uso real (tools/aidd-master/.gemini/skills/seguranca-cibernetica). Tratado como convenção legítima, não redundante - AGENTS.md §5 foi atualizado para documentá-lo."
+      "confirmado": false,
+      "nota": "Nunca documentado em AGENTS.md antes da migração de 2026-09-05, mas '.gemini/skills/' já estava em uso real (tools/aidd-master/.gemini/skills/seguranca-cibernetica). ATUALIZAÇÃO 2026-09-07: pesquisa em documentação oficial (geminicli.com/docs/extensions/writing-extensions/, geminicli.com/docs/cli/custom-commands/) NÃO confirma que o Gemini CLI leia SKILL.md solto de uma pasta 'skills/'. O mecanismo real documentado é 'extensions' ('.gemini/extensions/<nome>/gemini-extension.json' + GEMINI.md opcional + comandos em '.toml', não '.md'). 'confirmado' rebaixado para false até alguém verificar na prática se o Gemini CLI de fato descobre '.gemini/skills/*/SKILL.md' por algum mecanismo genérico não documentado, ou até isso ser migrado para o formato de extension real. Não removido do sync (conteúdo inofensivo mesmo se não lido), só marcado como não confirmado - PARA REVISÃO EXPLÍCITA DO USUÁRIO."
     },
     "cursor": {
-      "mecanismo": "arquivo_unico_de_regra",
+      "prefixo_pasta": ".cursor",
+      "mecanismo": "arquivo_unico_de_regra + pastas nativas de skill/command/agent",
       "arquivo_regra": ".cursor/rules/aidd.md",
       "confirmado": true,
-      "nota": "Mecanismo diferente por decisão do usuário: 1 arquivo de regra apontando para AGENTS.md, não uma pasta física por componente. Por isso não aparece em nenhum 'harnesses_aplicaveis' abaixo - fica de fora do sync/verify por tipo de componente."
+      "nota": "ATUALIZADO 2026-09-07: documentação oficial (cursor.com/docs/rules, cursor.com/docs/subagents) confirma que o Cursor, além do arquivo único de regra (AGENTS.md/`.cursor/rules/*.mdc`), também tem pastas nativas reais: '.cursor/commands/<nome>.md' (slash-commands) e '.cursor/skills/<nome>/SKILL.md' e '.cursor/agents/<nome>.md' (subagentes) - mesmo padrão de nome/estrutura usado por Claude Code. Adicionado a 'harnesses_aplicaveis' de 'skill' e 'command' agora que a convenção real é conhecida; o arquivo único de regra continua existindo em paralelo, é complementar (instruções gerais de projeto), não concorrente com skills/commands."
     }
   },
 
@@ -41,21 +45,21 @@
       "distribuicao": "multi-harness",
       "unidade": "diretorio",
       "status_evidencia": "confirmado por reprodução direta (docs/planos/PLANO-CORRECAO-SKILLS-AGNOSTICAS.md secao 2.1)",
-      "harnesses_aplicaveis": ["claude-code", "antigravity", "opencode", "mimocode", "gemini-cli"],
+      "harnesses_aplicaveis": ["claude-code", "antigravity", "opencode", "mimocode", "gemini-cli", "cursor"],
       "dest_harness_template": "{prefixo_pasta}/skills/{nome}",
-      "extra_destinos_compartilhado": ["skills/{nome}", ".agents/skills/{nome}"],
+      "extra_destinos_compartilhado": ["skills/{nome}"],
       "extra_destinos_por_ferramenta": [".skills/{nome}", "skills/{nome}"],
-      "nota_extra_destinos": "'.skills/{nome}' e 'skills/{nome}' (bare) são cópias adicionais sem harness específico, já em uso real e inconsistente por ferramenta antes desta migração (aidd-master/aidd-enterprise usavam '.skills/'; aidd-generator usava 'skills/' bare). O sync agora materializa AMBAS para todas as ferramentas, fechando a divergência sem escolher apenas uma."
+      "nota_extra_destinos": "'.skills/{nome}' e 'skills/{nome}' (bare) são cópias adicionais sem harness específico, já em uso real e inconsistente por ferramenta antes desta migração (aidd-master/aidd-enterprise usavam '.skills/'; aidd-generator usava 'skills/' bare). O sync agora materializa AMBAS para todas as ferramentas, fechando a divergência sem escolher apenas uma. '.agents/skills/{nome}' foi REMOVIDO desta lista em 2026-09-07 por ter virado redundante: agora é coberto nativamente pelo próprio harness 'antigravity' (prefixo_pasta corrigido para '.agents') - mesma pasta, uma fonte só, sem duplicar a regra."
     },
     "command": {
       "pasta_fonte": "comandos",
       "distribuicao": "multi-harness",
       "unidade": "arquivo",
       "status_evidencia": "confirmado (gates/G_HARNESS_COMPAT.py já compara .agent/commands/*.md vs .claude/commands/*.md)",
-      "harnesses_aplicaveis": ["claude-code", "antigravity", "opencode", "mimocode"],
+      "harnesses_aplicaveis": ["claude-code", "antigravity", "opencode", "mimocode", "cursor"],
       "dest_harness_template": "{prefixo_pasta}/commands/{nome}",
       "escopos_aplicaveis": ["compartilhado"],
-      "nota": "gemini-cli excluído deste tipo: nenhuma evidência real de '.gemini/commands/' em uso (só '.gemini/skills/' está confirmado). Escopo hoje é só 'compartilhado' (raiz) - nenhuma ferramenta em tools/* tem slash-commands próprios; cada uma expõe equivalente via CLI ('python ecossistema.py <ferramenta> ...')."
+      "nota": "gemini-cli excluído deste tipo: confirmado em 2026-09-07 (geminicli.com/docs/cli/custom-commands/) que comandos do Gemini CLI usam arquivos '.toml', não '.md' - formato incompatível com os comandos deste manifesto, não é só falta de evidência. 'cursor' adicionado em 2026-09-07: documentação oficial confirma '.cursor/commands/<nome>.md', mesmo formato usado aqui. Escopo hoje é só 'compartilhado' (raiz) - nenhuma ferramenta em tools/* tem slash-commands próprios; cada uma expõe equivalente via CLI ('python ecossistema.py <ferramenta> ...')."
     },
     "mcp": {
       "pasta_fonte": "mcps",

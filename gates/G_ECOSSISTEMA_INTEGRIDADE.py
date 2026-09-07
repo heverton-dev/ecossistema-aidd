@@ -7,7 +7,7 @@ Validação determinística de integridade do meta-repositório ecossistema-aidd
 Audita:
 1. Existência e integridade estrutural das 5 ferramentas em tools/
 2. Existência e conformidade das 5 skills universais (YAML frontmatter)
-3. Presença dos Slash Commands para multi-harness (.agent/ e .claude/)
+3. Presença dos Slash Commands para multi-harness (.agents/ e .claude/)
 4. Validação sintática (ast.parse) dos scripts centrais
 5. Presença de governança canônica (AGENTS.md, .gitignore)
 
@@ -104,9 +104,9 @@ def audit():
         else:
             print(f"[OK] Skill {skill} válida com YAML frontmatter.")
 
-    # 4. Checagem de Slash Commands (.agent/ e .claude/)
+    # 4. Checagem de Slash Commands (.agents/ e .claude/)
     print("\n--- Verificando Slash Commands Multi-Harness ---")
-    for harness_dir in [".agent/commands", ".claude/commands"]:
+    for harness_dir in [".agents/commands", ".claude/commands"]:
         for cmd in COMMANDS_REQUIRED:
             cmd_path = os.path.join(ROOT_DIR, harness_dir, cmd)
             if not os.path.exists(cmd_path):
