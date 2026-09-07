@@ -80,7 +80,12 @@ def bootstrap_skills(apenas=None, dry_run=False):
         if dry_run:
             relatorio["instaladas"].append(f"[DRY-RUN] {nome}: {cfg['instalar']}")
             continue
-        codigo = subprocess.run(shlex.split(cfg["instalar"], posix=(os.name != "nt")), cwd=ROOT_DIR).returncode
+        if os.name == "nt":
+            # No Windows, 'npx' e outros instaladores costumam ser shims .cmd,
+            # que CreateProcess (subprocess sem shell=True) nao resolve sozinho.
+            codigo = subprocess.run(cfg["instalar"], cwd=ROOT_DIR, shell=True).returncode
+        else:
+            codigo = subprocess.run(shlex.split(cfg["instalar"]), cwd=ROOT_DIR).returncode
         if codigo == 0:
             relatorio["instaladas"].append(nome)
         else:
