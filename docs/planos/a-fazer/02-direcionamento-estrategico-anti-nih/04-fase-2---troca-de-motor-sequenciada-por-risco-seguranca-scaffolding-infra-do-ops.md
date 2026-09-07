@@ -10,8 +10,8 @@
 
 - Levantamento completo em `docs/features/oportunidades-reaproveitamento-oss-nih.md` (26 itens, marcados [confirmado] ou [a verificar]).
 - Ordem proposta por risco (a validar com o usuário):
-  1. **Segurança primeiro** (itens NIH #1, #9, #10): CSP/security.py → secure.py; secret scanning → detect-secrets/gitleaks; RLS via regex → sqlglot. Risco de regressão de segurança silenciosa é o mais caro (foi o que já aconteceu).
-  2. **Scaffolding** (itens #6, #7, #8): add_module.py/compose_suite.py → Cookiecutter/Copier; Result Monad → lib `returns`; DB adapter → SQLAlchemy/aiosqlite. Resolve de brinde a duplicação master/enterprise.
+  1. **Segurança primeiro** (itens NIH #1, #9, #10, #28): CSP/security.py → secure.py; secret scanning → detect-secrets/gitleaks; RLS via regex → sqlglot; Tailwind servido via CDN → Tailwind CLI/PostCSS auto-hospedado (resolve o CSP na raiz — sem CDN, não precisa mais relaxar `script-src`). Risco de regressão de segurança silenciosa é o mais caro (foi o que já aconteceu).
+  2. **Scaffolding** (itens #6, #7, #8, #27): add_module.py/compose_suite.py → Cookiecutter/Copier; Result Monad → lib `returns`; DB adapter → SQLAlchemy/aiosqlite; migração de schema sem ferramenta → Alembic. Resolve de brinde a duplicação master/enterprise.
   3. **Infra do ops** (itens #13-21): decisão prévia obrigatória — avaliar adoção de Coolify/CapRover/Dokku ANTES de aprovar qualquer uma das 4 frentes de `evolucao-aidd-ops-fase-completa/`, porque 3 das 4 podem ficar obsoletas.
   4. **Raiz/gates** (itens #2, #3, #4, #5): migrar runner de gates pra `pre-commit`; CLIs pra Typer/Click; adicionar hadolint/Checkov.
   5. **Generator** (itens #22-26): Repomix, instructor, Pandoc, SDK oficial MCP — menor risco, ganho direto de token, pode rodar em paralelo com o resto.

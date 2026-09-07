@@ -124,6 +124,12 @@ def status_de_pasta(caminho_00: Path) -> str:
     return INDETERMINADO
 
 
+def _sem_prefixo_numerico(nome: str) -> str:
+    """Remove um prefixo 'NN-' de prioridade de execucao (ex: '01-nome' -> 'nome'),
+    usado só para exibição do título — o prefixo continua no caminho físico."""
+    return re.sub(r"^\d+-", "", nome)
+
+
 def _pastas_de_busca() -> list[Path]:
     """Raiz de docs/planos/ + as 3 subpastas conhecidas (só as que existirem)."""
     pastas = [PLANOS_DIR]
@@ -155,7 +161,7 @@ def descobrir_iniciativas() -> list[dict]:
                 arquivo_00 = item / "00-PROCESSO-E-DECISOES.md"
                 if arquivo_00.exists():
                     status = status_de_pasta(arquivo_00)
-                    titulo = item.name.replace("-", " ").title()
+                    titulo = _sem_prefixo_numerico(item.name).replace("-", " ").title()
                     resultado.append({"titulo": titulo, "item": item, "status": status})
                     vistos.add(item.resolve())
     return resultado

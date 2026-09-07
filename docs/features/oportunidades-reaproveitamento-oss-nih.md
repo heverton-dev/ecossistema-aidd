@@ -3,6 +3,7 @@
 > **Origem:** levantamento feito em 2026-09-07, no mesmo dia da auditoria "sem maquiagem" (`docs/relatorios/relatorio-auditoria-ecossistema-aidd-sem-maquiagem.html`).
 > **Status:** RASCUNHO — levantamento técnico, não é decisão de escopo aprovada. Nenhum item aqui foi commitado ou vira trabalho sem aprovação humana.
 > **Método:** itens marcados **[confirmado]** foram verificados lendo código/config real nesta sessão (grep, leitura de arquivo). Itens marcados **[a verificar]** são hipóteses plausíveis a partir do que já foi lido, mas não confirmadas linha a linha — tratar como pista de investigação, não fato.
+> **Lista fechada em 2026-09-07 — 28 itens.** Nenhum item novo entra por brainstorming aberto ("existe ferramenta pra X?") depois deste ponto. A única forma de um item novo aparecer é descoberta orgânica durante a execução real de uma fase já aprovada de `docs/planos/a-fazer/02-direcionamento-estrategico-anti-nih/` — documentada com evidência no momento em que aparecer, não uma nova rodada de especulação.
 
 ---
 
@@ -33,6 +34,8 @@ A auditoria de hoje encontrou vários bugs (CSP relaxado sem ninguém notar, Doc
 | 10 | RLS via regex reescrevendo SQL (enterprise) — já documentado como "frágil por design" | **sqlglot** (parser real) ou Postgres nativo se saírem do SQLite | [confirmado, achado de auditoria anterior] | Regex "parseando" SQL é padrão conhecido de bypass |
 | 11 | Webhooks com cache CQRS + retry/DLQ hand-rolled (enterprise) | **huey** (fila de tarefas leve, backend SQLite) | [a verificar — retry/DLQ confirmado existir, biblioteca por trás não verificada] | Se for tudo próprio, huey resolve retry/backoff/DLQ pronto sem precisar de infra nova (roda sobre o mesmo SQLite) |
 | 12 | Documentação/portais (Swagger/Webhook/MCP/Super-App) via HTML estático próprio | **Swagger UI**/**ReDoc** (o FastAPI já gera de graça se usado) | [a verificar — confirmado que "4 Portais" hoje é checado via grep de string em `index.html`, não confirmado se a app usa o `/docs` nativo do FastAPI em paralelo] | Se o custom substituiu o que o framework já dá de graça, é NIH puro |
+| 27 | Migração de schema de banco sem ferramenta dedicada (master/enterprise) | **Alembic** | [a verificar] | Mesma dupla do SQLAlchemy (item 8) — evita migração manual/ad-hoc de schema |
+| 28 | Tailwind servido via CDN no template gerado (causa raiz do CSP relaxado, item 9) | **Tailwind CLI/PostCSS auto-hospedado** (build gera CSS estático, sem CDN) | [confirmado — CDN é a razão do `unsafe-inline`/CDN externo no CSP] | Resolve o CSP na raiz: sem dependência de CDN, não precisa mais relaxar `script-src` |
 
 ### `aidd-ops` (o caso mais forte de NIH)
 
