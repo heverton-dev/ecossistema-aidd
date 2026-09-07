@@ -4,7 +4,7 @@
 > **Status:** [RASCUNHO — Aguardando Aprovacao Humana]
 > **Modelo sugerido:** Claude Opus · Antigravity Gemini 3.8 · MiMo mimo-v2.5-pro (requer profiling real e redesenho de fluxo, não é troca mecânica)
 > **Dependência com o plano estratégico:** a Fase 3 (reauditoria) de `direcionamento-estrategico-anti-nih/` já remede o consumo de token de tudo depois da troca de motor — este item **não duplica** essa remedição formal antes/depois. Este item cobre só a linha de base inicial e a implementação de pelo menos 2 trocas (passo 3 da Definição de Pronto); a comparação final "antes/depois" definitiva fica a cargo da Fase 3.
-> **Ferramenta candidata (item 30 do levantamento NIH, achada em 2026-09-07):** **Langfuse** — mede consumo de LLM de verdade em vez de estimativa/autodeclaração. Checar primeiro `github.com/Heverton-web/token-economy-core` (projeto próprio do usuário no mesmo tema) antes de adotar, para não duplicar esforço já existente.
+> **Decisão tomada em 2026-09-07: sem Langfuse.** `utils_delegacao.py` já captura `usage.total_tokens` real via litellm no modo headless — estender esse mecanismo já existente pros outros pontos (master/enterprise/ops/CLI), não trazer servidor+banco novo pra medir uma rodada antes/depois. `token-economy-core` (item 30 do NIH) não existe — URL fabricada no catálogo do usuário, descartado.
 
 ---
 

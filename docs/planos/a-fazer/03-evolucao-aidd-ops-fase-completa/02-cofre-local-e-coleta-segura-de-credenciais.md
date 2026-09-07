@@ -2,7 +2,7 @@
 
 > **Escopo:** [Descrever o que entra e o que nao entra neste item]
 > **Status:** [RASCUNHO — Aguardando Aprovacao Humana]
-> **🔒 Bloqueado** junto com o resto desta iniciativa (ver `00-PROCESSO-E-DECISOES.md` §0). Candidatos já catalogados pra quando destravar: **sops+age** (item 18 do levantamento NIH) ou **Vaultwarden** (item 29, achado em 2026-09-07) — comparar os dois antes de escolher.
+> **🔒 Bloqueado** junto com o resto desta iniciativa (ver `00-PROCESSO-E-DECISOES.md` §0). **Decisão tomada em 2026-09-07: sops+age.** Vaultwarden descartado (traz serviço/banco pra um caso de uso que é pipeline automatizado, não humano compartilhando senha via UI).
 
 ---
 
