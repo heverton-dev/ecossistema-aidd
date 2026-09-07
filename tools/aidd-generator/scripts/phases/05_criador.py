@@ -391,7 +391,7 @@ class CriadorProjetoFase5:
         return index
 
     def _criar_estrutura(self):
-        """Cria diretórios base"""
+        """Cria diretórios base e componentes compartilhados"""
         for diretorio in ESTRUTURA_PADRAO.keys():
             (self.pasta_projeto / diretorio).mkdir(parents=True, exist_ok=True)
 
@@ -400,6 +400,89 @@ class CriadorProjetoFase5:
         (self.pasta_projeto / 'scripts/phases').mkdir(parents=True, exist_ok=True)
         (self.pasta_projeto / 'scripts/gates').mkdir(parents=True, exist_ok=True)
         (self.pasta_projeto / 'scripts/schemas').mkdir(parents=True, exist_ok=True)
+        (self.pasta_projeto / 'static/share').mkdir(parents=True, exist_ok=True)
+        self._injetar_share_ui()
+
+    def _injetar_share_ui(self):
+        """Injeta deterministamente componentes nativos de UI compartilhados (Zero Token)"""
+        share_dir = self.pasta_projeto / 'static' / 'share'
+        share_dir.mkdir(parents=True, exist_ok=True)
+
+        # Tenta localizar ui_dialogs.js canônico no monorepo
+        origem_ui = Path(__file__).resolve().parent.parent.parent.parent / 'componentes' / 'compartilhado' / 'ui' / 'ui_dialogs.js'
+        if origem_ui.exists():
+            conteudo_js = origem_ui.read_text(encoding='utf-8')
+        else:
+            # Fallback limpo incorporado caso executado isolado fora do monorepo
+            conteudo_js = """/**
+ * UI Dialogs & Alerts - Componentes Nativos Compartilhados (Share)
+ * Ecossistema AIDD - Substitui completamente alerts, confirms e dialogs do SO/Browser.
+ */
+(function () {
+  function ensureDOMContainers() {
+    if (!document.getElementById('aidd-toast-container')) {
+      const toastContainer = document.createElement('div');
+      toastContainer.id = 'aidd-toast-container';
+      toastContainer.style.cssText = 'position:fixed;top:20px;right:20px;z-index:99999;display:flex;flex-direction:column;gap:10px;pointer-events:none;max-width:380px;width:100%;';
+      document.body.appendChild(toastContainer);
+    }
+    if (!document.getElementById('aidd-modal-container')) {
+      const modalContainer = document.createElement('div');
+      modalContainer.id = 'aidd-modal-container';
+      modalContainer.style.cssText = 'position:fixed;inset:0;z-index:99998;display:none;align-items:center;justify-content:center;background:rgba(2,6,23,0.75);backdrop-filter:blur(8px);opacity:0;transition:opacity 0.2s;';
+      document.body.appendChild(modalContainer);
+    }
+  }
+
+  const UIDialogs = {
+    toast: function ({ message, type = 'info', duration = 3500 }) {
+      ensureDOMContainers();
+      const container = document.getElementById('aidd-toast-container');
+      const toast = document.createElement('div');
+      toast.style.cssText = 'pointer-events:auto;display:flex;align-items:center;gap:12px;padding:12px 16px;border-radius:10px;background:#18181b;color:#f4f4f5;border:1px solid #27272a;box-shadow:0 10px 15px -3px rgba(0,0,0,0.4);font-family:sans-serif;font-size:14px;';
+      toast.innerHTML = '<span>' + message + '</span>';
+      container.appendChild(toast);
+      setTimeout(() => toast.remove(), duration);
+    },
+    alert: function (message, title = 'Aviso') {
+      return new Promise((resolve) => {
+        ensureDOMContainers();
+        const container = document.getElementById('aidd-modal-container');
+        container.style.display = 'flex';
+        container.style.opacity = '1';
+        container.innerHTML = '<div style="background:#18181b;border:1px solid #27272a;padding:24px;border-radius:12px;max-width:400px;width:90%;color:#f4f4f5;font-family:sans-serif;"><h3 style="margin-top:0;font-size:18px;">' + title + '</h3><p style="color:#a1a1aa;font-size:14px;">' + message + '</p><div style="display:flex;justify-content:flex-end;margin-top:20px;"><button id="aidd-btn-ok" style="background:#2563eb;color:#fff;border:none;padding:8px 16px;border-radius:8px;cursor:pointer;font-weight:600;">OK</button></div></div>';
+        document.getElementById('aidd-btn-ok').onclick = () => { container.style.display = 'none'; resolve(); };
+      });
+    },
+    confirm: function (message, title = 'Confirmação', danger = false) {
+      return new Promise((resolve) => {
+        ensureDOMContainers();
+        const container = document.getElementById('aidd-modal-container');
+        container.style.display = 'flex';
+        container.style.opacity = '1';
+        container.innerHTML = '<div style="background:#18181b;border:1px solid #27272a;padding:24px;border-radius:12px;max-width:420px;width:90%;color:#f4f4f5;font-family:sans-serif;"><h3 style="margin-top:0;font-size:18px;">' + title + '</h3><p style="color:#a1a1aa;font-size:14px;">' + message + '</p><div style="display:flex;justify-content:flex-end;gap:12px;margin-top:20px;"><button id="aidd-btn-cancel" style="background:#27272a;color:#d4d4d8;border:none;padding:8px 16px;border-radius:8px;cursor:pointer;">Cancelar</button><button id="aidd-btn-confirm" style="background:' + (danger ? '#dc2626' : '#2563eb') + ';color:#fff;border:none;padding:8px 16px;border-radius:8px;cursor:pointer;font-weight:600;">Confirmar</button></div></div>';
+        document.getElementById('aidd-btn-cancel').onclick = () => { container.style.display = 'none'; resolve(false); };
+        document.getElementById('aidd-btn-confirm').onclick = () => { container.style.display = 'none'; resolve(true); };
+      });
+    }
+  };
+
+  window.UIDialogs = UIDialogs;
+  window.alert = (msg) => UIDialogs.alert(msg);
+  window.confirm = (msg) => UIDialogs.confirm(msg);
+})();
+"""
+        (share_dir / 'ui_dialogs.js').write_text(conteudo_js, encoding='utf-8')
+
+        # Folha de estilo Swagger Dark Mode nativa
+        swagger_css = """/* Swagger Dark Theme Impeccable - AIDD Generator */
+body { background: #09090b !important; color: #f4f4f5 !important; }
+.swagger-ui { filter: invert(88%) hue-rotate(180deg); }
+.swagger-ui .topbar { display: none; }
+.swagger-ui .info .title { color: #09090b !important; }
+"""
+        (share_dir / 'swagger_dark.css').write_text(swagger_css, encoding='utf-8')
+
 
     @staticmethod
     def _criar_symlink_ou_copia(link_path: Path, alvo: Path) -> bool:

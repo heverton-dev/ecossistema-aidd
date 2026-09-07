@@ -9,6 +9,11 @@ Geração de código funcional real com verificação via pytest + loop de corre
 - Validação AST mecânica (_validar_contrato_ast) antes de pytest real
 - Loop de correção: traceback real do pytest reenviado ao LLM (até 3 tentativas)
 - UTF-8 explícito na escrita de arquivos gerados
+- CRUD 100% Completo: rotas e repositories de entidades centrais DEVEM implementar Create, Read, Update (PUT/PATCH com edição total) e Delete.
+- Impeccable Design: frontend sem 'AI Slop' (paleta Zinc neutra profunda, tipografia tabular, microinterações 150ms). PROIBIDO usar `alert()`, `confirm()` ou `prompt()` do navegador — usar `static/share/ui_dialogs.js`.
+- Swagger Dark Mode: FastAPI docs com tema escuro nativo.
+- Studio MCP: disponibilizar endpoint JSON-RPC 2.0 (/mcp/rpc) com listagem e execução de tools para agentes de IA.
+- Studio Webhooks: engine assíncrona de eventos com HMAC SHA-256 (header X-AIDD-Signature) e histórico de entregas.
 
 ## Result Monad (Sprint 06)
 - Toda operação de implementação DEVE usar o padrão Result Monad:

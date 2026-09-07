@@ -23,6 +23,11 @@ Criação determinística do projeto: diretórios, configs, SQLite, git init, sy
 - E4: Permissões corretas
 - S1: Segurança (.gitignore, sem secrets hardcoded)
 
+## Componentes Nativos Compartilhados (Zero Token)
+- Todo projeto com UI/API Web recebe deterministamente em `static/share/`:
+  - `ui_dialogs.js`: biblioteca nativa de modais, toasts e confirms sem alertas do SO.
+  - `swagger_dark.css`: folha de estilo dark nativa para documentação OpenAPI/Swagger.
+
 ## Saída
 - `_phase_05_index.json` em `.aidd/cache/data/`
 

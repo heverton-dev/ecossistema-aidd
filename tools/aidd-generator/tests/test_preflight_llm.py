@@ -40,7 +40,7 @@ def test_sem_llm_model_falha(monkeypatch):
     # limpar isso, o teste falha quando rodado de dentro de um harness real
     # (ex.: CLAUDECODE=1 setado pelo proprio Claude Code que executa o pytest).
     for key in ('CLAUDECODE', 'MIMOCODE', 'MIMO_SESSION', 'MIMO_WORKSPACE',
-                'OPENCODE', 'OPENCODE_SESSION', 'ANTIGRAVITY_CLI', 'AGY_SESSION',
+                'OPENCODE', 'OPENCODE_SESSION', 'ANTIGRAVITY_CLI', 'ANTIGRAVITY_AGENT', 'AGY_SESSION',
                 'ORCA_WORKSPACE', 'AIDD_HARNESS_NAME'):
         monkeypatch.delenv(key, raising=False)
 
@@ -121,6 +121,10 @@ def test_pipeline_main_exit_code_1_sem_llm(monkeypatch):
     monkeypatch.delenv('LLM_MODEL', raising=False)
     for key in ('GROQ_API_KEY', 'NVIDIA_NIM_API_KEY', 'OPENROUTER_API_KEY',
                 'TOGETHERAI_API_KEY', 'OPENAI_API_KEY'):
+        monkeypatch.delenv(key, raising=False)
+    for key in ('CLAUDECODE', 'MIMOCODE', 'MIMO_SESSION', 'MIMO_WORKSPACE',
+                'OPENCODE', 'OPENCODE_SESSION', 'ANTIGRAVITY_CLI', 'ANTIGRAVITY_AGENT', 'AGY_SESSION',
+                'ORCA_WORKSPACE', 'AIDD_HARNESS_NAME'):
         monkeypatch.delenv(key, raising=False)
 
     # Carrega pipeline_completo via importlib (mantém isolamento)

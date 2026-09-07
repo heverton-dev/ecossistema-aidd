@@ -618,6 +618,7 @@ if __name__ == '__main__':
     parser.add_argument("nome", help="Nome do módulo (ex: faturamento, pedidos, crm)")
     parser.add_argument("--descricao", "-d", default="", help="Descrição da fatia vertical")
     parser.add_argument("--dir", default=".", help="Diretório raiz do projeto alvo")
+    parser.add_argument("--pasta", dest="dir", help="Alias para --dir (diretório raiz do projeto alvo)")
     args = parser.parse_args()
 
     criar_modulo(args.nome, args.descricao, args.dir)

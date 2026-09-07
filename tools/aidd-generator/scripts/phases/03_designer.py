@@ -45,10 +45,10 @@ PROMPTS_SUBAGENTES = {
 From the project idea analysis (previous phase), design the specific **5 AIDD Layers**:
 
 1. **Layer 1: Contracts and Schemas** — required JSON Schema Draft 2020-12
-2. **Layer 2: Determinism** — 100% deterministic Python scripts
+2. **Layer 2: Determinism** — 100% deterministic Python scripts (Full CRUD domain, no missing edit/update)
 3. **Layer 3: Gates** — mechanical validations (G0, G1, G2)
-4. **Layer 4: Persistence** — required SQLite schema
-5. **Layer 5: Bundles** — final artifact structure
+4. **Layer 4: Persistence** — required SQLite schema (WAL mode, transactions)
+5. **Layer 5: Bundles** — final artifact structure (Impeccable Design, zero browser alerts, Swagger Dark Mode, MCP Studio, Webhook Studio)
 
 For each layer, describe:
 - Layer name
@@ -57,7 +57,7 @@ For each layer, describe:
 - Validation pattern
 
 # COT: think in English Caveman (3-5 dense lines, no articles):
-# "check idea → map to 5 layers → define artifacts per layer → validate completeness → output JSON"
+# "check idea → map to 5 layers with full CRUD + MCP + webhooks → define artifacts per layer → validate completeness → output JSON"
 
 # SAIDA: Return JSON only. RESPOND IN BRAZILIAN PORTUGUESE (PT-BR).
 {{
@@ -76,10 +76,17 @@ For each Layer in the design, define the **required Python scripts**:
 - Determinism: % of code that is pure Python (vs LLM)
 - Validation: how to test
 
+Mandatory Rules for Web/API projects:
+- Full CRUD: never omit edit/update (PUT/PATCH) for core entities.
+- Impeccable Design: zero browser/OS alerts, use shared native dialogs, Zinc palette, tabular numbers.
+- Swagger Dark Mode: configure dark theme for FastAPI docs.
+- MCP Studio: include JSON-RPC 2.0 endpoint and tool definitions.
+- Webhook Studio: include asynchronous event dispatcher with HMAC SHA-256 and delivery logs.
+
 Focus: maximum determinism, minimum LLM.
 
 # COT: think in English Caveman (3-5 dense lines, no articles):
-# "scan layers → identify mechanical ops → write pseudocode → estimate determinism → output JSON"
+# "scan layers → enforce full CRUD + MCP + webhooks + impeccable UI → write pseudocode → estimate determinism → output JSON"
 
 # SAIDA: Return JSON only. RESPOND IN BRAZILIAN PORTUGUESE (PT-BR).
 {{

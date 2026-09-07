@@ -378,9 +378,13 @@ Rules:
 - JSON round-trip: if test saves and re-reads JSON, normalize types before comparing (tuple->list, None preserved). Use json.loads(json.dumps(x, default=str)) on expected data.
 - Streak: data_referencia optional, duplicate check-ins on same date must not duplicate streak.
 - No subprocess.run in tests. UTF-8 on console (sys.stdout.reconfigure if win32).
+- FULL CRUD: if script handles entity repository or API endpoints, MUST implement complete CRUD: Create (POST), Read/List (GET), Update/Edit (PUT/PATCH) and Delete (DELETE). NEVER omit edit/update.
+- IMPECCABLE DESIGN: if web UI is included, zero AI slop, deep neutral Zinc palette (#09090b, #18181b, #27272a), tabular numbers, 150ms transitions. FORBIDDEN to use browser alert()/confirm()/prompt() — use static/share/ui_dialogs.js.
+- SWAGGER DARK MODE: if FastAPI, configure dark Swagger UI theme.
+- MCP STUDIO & WEBHOOKS: if main server/app, expose /mcp/rpc (JSON-RPC 2.0) and webhook dispatcher with HMAC SHA-256 (X-AIDD-Signature).
 
 # COT: think in English Caveman (3-5 dense lines, no articles):
-# "read spec → implement functions → write tests → validate FK/dates → output JSON with code+test"
+# "read spec → implement full CRUD + impeccable UI + MCP/webhooks → write tests → validate FK/dates → output JSON with code+test"
 
 # SAIDA: Return ONLY the JSON below, nothing else, no markdown/code fence.
 # RESPOND IN BRAZILIAN PORTUGUESE (PT-BR) for descriptive fields.

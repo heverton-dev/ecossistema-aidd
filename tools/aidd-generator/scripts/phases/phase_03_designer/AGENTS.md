@@ -20,6 +20,14 @@ Design com 5 subagentes paralelos (arquitetura, scripts, testes, tokens, stack).
 - Cada script DEVE ter pseudocódigo e teste associado
 - Tipagem estática: Pydantic ou Dataclasses para validação em runtime
 
+## Requisitos de Arquitetura de Aplicação (Padrão Ouro AIDD)
+- Toda aplicação Web/API gerada DEVE incluir obrigatoriamente no design:
+  1. **CRUD Completo:** Ciclo fechado Create, Read, Update (PUT/PATCH) e Delete para as entidades centrais.
+  2. **Impeccable Design:** Frontend livre de "AI Slop" (paleta Zinc, tipografia tabular, microinterações 150ms e zero alerts de SO via `share/ui_dialogs.js`).
+  3. **Swagger Dark Mode:** Documentação OpenAPI/Swagger em tema escuro nativo.
+  4. **Studio MCP:** Endpoint e ferramentas JSON-RPC 2.0 para agentes de IA interagirem com a aplicação.
+  5. **Studio Webhooks:** Engine de eventos com HMAC SHA-256 assíncrono e auditoria de disparos.
+
 ## Gates
 - D1: Camadas AIDD completas (contratos, gates, persistência)
 - D2: Scripts com responsabilidade e pseudocódigo

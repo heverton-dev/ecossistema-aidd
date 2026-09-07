@@ -207,7 +207,7 @@ def detectar_via_ambiente() -> List[str]:
         detectados.append('opencode')
 
     # Antigravity / Gemini
-    if os.environ.get('ANTIGRAVITY_CLI') or os.environ.get('AGY_SESSION'):
+    if os.environ.get('ANTIGRAVITY_CLI') or os.environ.get('ANTIGRAVITY_AGENT') or os.environ.get('AGY_SESSION'):
         detectados.append('antigravity')
 
     # ORCA

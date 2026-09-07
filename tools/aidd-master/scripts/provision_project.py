@@ -9,14 +9,18 @@ def slugify(text):
     return re.sub(r'[\s_-]+', '-', text)[:40]
 
 def provision(project_desc, base_dir=None):
-    words = project_desc.split()
-    target_text = ' '.join(words[:3]) if len(words) >= 3 else project_desc
-    slug = slugify(target_text)
-    
-    if not base_dir:
-        base_dir = os.path.join(os.path.expanduser('~'), 'orca', 'workspaces', 'PROJETOS Criados com IA')
+    if os.path.isabs(project_desc) or os.sep in project_desc or (os.altsep and os.altsep in project_desc) or os.path.exists(project_desc):
+        project_dir = os.path.abspath(project_desc)
+        slug = slugify(os.path.basename(project_dir)) or "projeto-modular"
+    else:
+        words = project_desc.split()
+        target_text = ' '.join(words[:3]) if len(words) >= 3 else project_desc
+        slug = slugify(target_text)
         
-    project_dir = os.path.join(base_dir, f'proj_{slug}')
+        if not base_dir:
+            base_dir = os.path.join(os.path.expanduser('~'), 'orca', 'workspaces', 'PROJETOS Criados com IA')
+            
+        project_dir = os.path.join(base_dir, f'proj_{slug}')
     
     print(f"🚀 [AIDD MASTER] Provisionando ecossistema modular: {slug}")
     print(f"📁 Destino: {project_dir}")
@@ -42,7 +46,7 @@ def provision(project_desc, base_dir=None):
     gates_dir = os.path.join(repo_root, 'templates', 'gates')
 
     if os.path.exists(templates_dir):
-        for f in ['database.py', 'events.py', 'openapi.py', 'webhooks.py', 'security.py', 'mcp_server.py']:
+        for f in ['database.py', 'events.py', 'openapi.py', 'webhooks.py', 'security.py', 'mcp_server.py', 'cqrs.py']:
             src = os.path.join(templates_dir, f)
             if os.path.exists(src):
                 shutil.copyfile(src, os.path.join(project_dir, 'src', 'core', f))

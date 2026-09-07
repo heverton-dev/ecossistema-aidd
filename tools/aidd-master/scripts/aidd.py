@@ -1052,6 +1052,7 @@ def main():
     p_init = subparsers.add_parser("init", help="Provisiona novo projeto modular")
     p_init.add_argument("nome", help="Nome ou descrição do projeto")
     p_init.add_argument("--dir", default=".", help="Diretório base de destino")
+    p_init.add_argument("--pasta", dest="dir", help="Alias para --dir (diretório de destino)")
 
     # compose
     p_comp = subparsers.add_parser("compose", help="Compõe suíte empresarial completa")
@@ -1071,6 +1072,7 @@ def main():
     p_mod.add_argument("nome", help="Nome do módulo")
     p_mod.add_argument("--descricao", "-d", help="Descrição do módulo", default="")
     p_mod.add_argument("--dir", default=".", help="Diretório do projeto")
+    p_mod.add_argument("--pasta", dest="dir", help="Alias para --dir (diretório do projeto)")
 
     # test
     p_test = subparsers.add_parser("test", help="Executa suítes de testes unitários ou de carga")

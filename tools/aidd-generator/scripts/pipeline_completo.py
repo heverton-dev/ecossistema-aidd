@@ -168,7 +168,16 @@ def executar_pipeline(ideia: str, pasta_projeto: Path, nao_interativo: bool = Tr
     resultado = {'ideia': ideia, 'pasta': str(pasta_projeto), 'fases_completas': {}}
     t0 = time.time()
 
-    # Fleet Discovery: auto-detectar agentes instalados no host
+    # Protocolo Delegado: thread sentinela/responder para atender requisições em tempo real
+    stop_auto_responder = None
+    try:
+        from auto_responder_delegado import monitorar_cache
+        import threading
+        stop_auto_responder = threading.Event()
+        t_responder = threading.Thread(target=monitorar_cache, args=(stop_auto_responder,), daemon=True)
+        t_responder.start()
+    except Exception:
+        stop_auto_responder = None
     fleet = resolver_fleet()
     resultado['fleet'] = fleet.to_dict()
     print(f"\n🔍 Fleet Discovery:")
@@ -290,6 +299,9 @@ def executar_pipeline(ideia: str, pasta_projeto: Path, nao_interativo: bool = Tr
     # Descartar todas as fases da memória ao final
     _descarregar_todas_fases()
 
+    if stop_auto_responder:
+        stop_auto_responder.set()
+
     return resultado
 
 
@@ -298,7 +310,7 @@ def main():
         description='Pipeline completo aidd-project-generator (Fases 1-7, ou 1-8 com --implementar-codigo)'
     )
     parser.add_argument('ideia', help='Descrição da ideia do projeto a ser gerado')
-    parser.add_argument('--pasta', required=True, help='Pasta onde o projeto será criado')
+    parser.add_argument('--pasta', '--output', dest='pasta', required=True, help='Pasta onde o projeto será criado')
     parser.add_argument('--interativo', action='store_true',
                        help='Usar modal interativo (input()) na Fase 4 em vez da heurística automática')
     parser.add_argument('--implementar-codigo', action='store_true',

@@ -112,8 +112,10 @@ class TestDetectarViaAmbiente:
             assert 'antigravity' in detectados
 
     def test_nenhum(self):
-        env_limpo = {k: v for k, v in os.environ.items()
-                     if k not in ('CLAUDECODE', 'ORCA_WORKSPACE', 'AIDD_HARNESS_NAME')}
+        harness_keys = {'CLAUDECODE', 'MIMOCODE', 'MIMO_SESSION', 'MIMO_WORKSPACE',
+                        'OPENCODE', 'OPENCODE_SESSION', 'ANTIGRAVITY_CLI', 'ANTIGRAVITY_AGENT',
+                        'AGY_SESSION', 'ORCA_WORKSPACE', 'AIDD_HARNESS_NAME'}
+        env_limpo = {k: v for k, v in os.environ.items() if k not in harness_keys}
         with patch.dict(os.environ, env_limpo, clear=True):
             detectados = detectar_via_ambiente()
             assert len(detectados) == 0
