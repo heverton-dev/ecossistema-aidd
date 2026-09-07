@@ -1,0 +1,45 @@
+#!/bin/sh
+# Auto-espelha componentes/ para todos os harnesses antes de cada commit.
+#
+# Instalado via: git config core.hooksPath .githooks
+# (feito automaticamente por 'python ecossistema.py dependencia bootstrap',
+# ou manualmente com o comando acima).
+#
+# So dispara quando o commit inclui mudanca dentro de componentes/ - nesse
+# caso roda 'components sync --tipo todos' e reinclui no MESMO commit
+# qualquer copia que o sync tenha criado/atualizado, sem tocar em nenhum
+# outro arquivo que ja estivesse modificado por outro motivo.
+
+set -e
+
+REPO_ROOT="$(git rev-parse --show-toplevel)"
+cd "$REPO_ROOT"
+
+if ! git diff --cached --name-only | grep -q '^componentes/'; then
+  exit 0
+fi
+
+echo "[pre-commit] Mudanca em componentes/ detectada - rodando 'components sync --tipo todos'..."
+
+if ! python ecossistema.py components sync --tipo todos; then
+  echo "[pre-commit] ERRO: components sync falhou. Commit abortado - corrija e tente de novo."
+  exit 1
+fi
+
+# Re-adiciona so as pastas-espelho conhecidas (nomes fixos de harness),
+# nunca um diretorio arbitrario que ja estivesse sujo por outro motivo.
+MIRROR_DIRS=".claude .agents .agent .opencode .mimocode .cursor .gemini .github .skills skills"
+
+for dir in $MIRROR_DIRS; do
+  [ -d "$dir" ] && git add -- "$dir" 2>/dev/null
+done
+
+for tool_dir in tools/*/; do
+  for dir in $MIRROR_DIRS; do
+    alvo="${tool_dir}${dir}"
+    [ -d "$alvo" ] && git add -- "$alvo" 2>/dev/null
+  done
+done
+
+echo "[pre-commit] Copias espelhadas incluidas no commit."
+exit 0

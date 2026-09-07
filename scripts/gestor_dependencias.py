@@ -247,7 +247,23 @@ def verificar():
     return total, problemas
 
 
+def _ativar_git_hooks(dry_run=False):
+    """Aponta core.hooksPath para .githooks/ (pre-commit auto-sync de componentes/). Idempotente."""
+    atual = subprocess.run(
+        ["git", "config", "--get", "core.hooksPath"], cwd=ROOT_DIR, capture_output=True, text=True
+    ).stdout.strip()
+    if atual == ".githooks":
+        return "ja_ativo"
+    if dry_run:
+        return "[DRY-RUN] ativaria core.hooksPath=.githooks"
+    subprocess.run(["git", "config", "core.hooksPath", ".githooks"], cwd=ROOT_DIR, check=True)
+    return "ativado"
+
+
 def _cmd_bootstrap(args_ns):
+    resultado_hooks = _ativar_git_hooks(dry_run=args_ns.dry_run)
+    print(f"Git hooks (pre-commit auto-sync de componentes/): {resultado_hooks}")
+
     tipo = args_ns.tipo
     if tipo in ("skills", "todos"):
         rel_skills = bootstrap_skills(dry_run=args_ns.dry_run)
