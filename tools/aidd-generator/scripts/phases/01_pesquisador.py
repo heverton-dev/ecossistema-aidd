@@ -248,8 +248,7 @@ class PesquisadorHuggingFace:
             # HF tem busca via URL
             params = {
                 'search': busca_hf,
-                'sort': 'trending',
-                'direction': '-1'
+                'sort': 'trendingScore'
             }
 
             # Busca modelos
@@ -402,8 +401,8 @@ class ValidadorGates:
 
         for ref in referencias:
             try:
-                resp = requests.head(ref.url, timeout=TIMEOUT_SEGUNDOS)
-                if resp.status_code == 200:
+                resp = requests.head(ref.url, timeout=TIMEOUT_SEGUNDOS, allow_redirects=True, headers={'User-Agent': 'AIDD-Pesquisador/1.0'})
+                if resp.status_code in (200, 301, 302):
                     validas += 1
             except:
                 pass  # URL inválida
@@ -625,7 +624,17 @@ class PesquisadorFase1:
         # 1. Pesquisar em paralelo (3 fontes)
         print(f"\n📊 Buscando referências...")
         referencias = self._buscar_referencias_paralelo(ideia_projeto)
-        print(f"   ✓ Total encontrado: {len(referencias)} referências")
+        referencias_validas = []
+        for ref in referencias:
+            try:
+                resp = requests.head(ref.url, timeout=TIMEOUT_SEGUNDOS, allow_redirects=True, headers={'User-Agent': 'AIDD-Pesquisador/1.0'})
+                if resp.status_code in (200, 301, 302):
+                    referencias_validas.append(ref)
+            except:
+                pass
+        if len(referencias_validas) >= 5:
+            referencias = referencias_validas
+        print(f"   ✓ Total encontrado: {len(referencias)} referências válidas")
 
         # 2. Consolidar insights
         print(f"\n🔗 Consolidando insights...")

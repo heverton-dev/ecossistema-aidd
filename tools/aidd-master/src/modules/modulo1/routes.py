@@ -83,12 +83,15 @@ def registrar_rotas(service: Any = None):
         if not service:
             return {"sucesso": False, "erro": "Serviço indisponível"}
         try:
-            return service.criar(
+            res = service.criar(
                 titulo=data.get("titulo", ""),
                 dados=data.get("dados", {}),
                 descricao=data.get("descricao", ""),
                 status=data.get("status", "ativo")
             )
+            read_model.invalidate_prefix("modulo1_")
+            read_model.invalidate("modulo1_list")
+            return res
         except Exception as e:
             return {"sucesso": False, "erro": str(e)}
 
@@ -113,13 +116,16 @@ def registrar_rotas(service: Any = None):
         if not service:
             return {"sucesso": False, "erro": "Serviço indisponível"}
         item_id = int(data.get("id", 0))
-        return service.atualizar(
+        res = service.atualizar(
             item_id=item_id,
             titulo=data.get("titulo"),
             dados=data.get("dados"),
             descricao=data.get("descricao"),
             status=data.get("status")
         )
+        read_model.invalidate_prefix("modulo1_")
+        read_model.invalidate("modulo1_list")
+        return res
 
     @registry.post(
         "/api/modulo1/deletar",
@@ -138,4 +144,7 @@ def registrar_rotas(service: Any = None):
         if not service:
             return {"sucesso": False, "erro": "Serviço indisponível"}
         item_id = int(data.get("id", 0))
-        return service.deletar(item_id)
+        res = service.deletar(item_id)
+        read_model.invalidate_prefix("modulo1_")
+        read_model.invalidate("modulo1_list")
+        return res

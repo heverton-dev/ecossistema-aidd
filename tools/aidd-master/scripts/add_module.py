@@ -344,12 +344,15 @@ def registrar_rotas(service: Any = None):
         if not service:
             return {{"sucesso": False, "erro": "Serviço indisponível"}}
         try:
-            return service.criar(
+            res = service.criar(
                 titulo=data.get("titulo", ""),
                 dados=data.get("dados", {{}}),
                 descricao=data.get("descricao", ""),
                 status=data.get("status", "ativo")
             )
+            read_model.invalidate_prefix(f"{slug}_")
+            read_model.invalidate(f"{slug}_list")
+            return res
         except Exception as e:
             return {{"sucesso": False, "erro": str(e)}}
 
@@ -374,13 +377,16 @@ def registrar_rotas(service: Any = None):
         if not service:
             return {{"sucesso": False, "erro": "Serviço indisponível"}}
         item_id = int(data.get("id", 0))
-        return service.atualizar(
+        res = service.atualizar(
             item_id=item_id,
             titulo=data.get("titulo"),
             dados=data.get("dados"),
             descricao=data.get("descricao"),
             status=data.get("status")
         )
+        read_model.invalidate_prefix(f"{slug}_")
+        read_model.invalidate(f"{slug}_list")
+        return res
 
     @registry.post(
         "/api/{slug}/deletar",
@@ -399,7 +405,10 @@ def registrar_rotas(service: Any = None):
         if not service:
             return {{"sucesso": False, "erro": "Serviço indisponível"}}
         item_id = int(data.get("id", 0))
-        return service.deletar(item_id)
+        res = service.deletar(item_id)
+        read_model.invalidate_prefix(f"{slug}_")
+        read_model.invalidate(f"{slug}_list")
+        return res
 '''
     with open(os.path.join(module_dir, "routes.py"), "w", encoding="utf-8") as f:
         f.write(routes_code)

@@ -151,6 +151,35 @@ _oidc_pending_states = {}
 # evita SQLITE_BUSY transitório na primeira inicialização do WAL)
 with db.get_connection() as conn:
 __INIT_SCHEMAS__
+    conn.executescript('''
+        CREATE TABLE IF NOT EXISTS webhooks (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            url TEXT NOT NULL,
+            secret TEXT,
+            eventos TEXT DEFAULT '*',
+            ativo INTEGER DEFAULT 1,
+            criado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        );
+        CREATE TABLE IF NOT EXISTS webhook_logs (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            webhook_id INTEGER,
+            evento TEXT,
+            url TEXT,
+            payload_json TEXT,
+            status_code INTEGER,
+            resposta TEXT,
+            sucesso INTEGER,
+            criado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        );
+    ''')
+    cur = conn.cursor()
+    cur.execute("SELECT count(*) FROM webhooks")
+    if cur.fetchone()[0] == 0:
+        conn.execute("INSERT INTO webhooks (url, secret, eventos, ativo) VALUES ('https://webhook.site/demo-aidd-enterprise', 'sec_demo_2026', '*', 1)")
+    cur.execute("SELECT count(*) FROM webhook_logs")
+    if cur.fetchone()[0] == 0:
+        conn.execute("INSERT INTO webhook_logs (webhook_id, evento, url, payload_json, status_code, resposta, sucesso) VALUES (1, 'suite.criado', 'https://webhook.site/demo-aidd-enterprise', '{\\\"event\\\":\\\"suite.criado\\\",\\\"data\\\":{\\\"id\\\":1}}', 200, '{\\\"received\\\": true}', 1)")
+    conn.commit()
 
 # 1.2 Habilitar Row Level Security (RLS) para cada módulo
 with db.get_connection() as conn:
@@ -323,6 +352,54 @@ def post_webhooks(data):
         conn.commit()
         return {"sucesso": True, "id": cur.lastrowid}
 
+@registry.get(
+    "/api/webhooks/logs",
+    summary="Listar Logs de Webhooks",
+    tags=["6. Webhook Configuration Studio"],
+    description="Retorna o histórico de entregas de webhooks.",
+    responses={"200": {"description": "Lista de logs"}}
+)
+def get_webhook_logs(params):
+    with db.get_connection() as conn:
+        rows = conn.execute("SELECT id, webhook_id, evento, url, payload_json, status_code, resposta, sucesso, criado_em FROM webhook_logs ORDER BY id DESC LIMIT 50").fetchall()
+        return [dict(r) for r in rows]
+
+@registry.post(
+    "/api/webhooks/remover",
+    summary="Remover Webhook",
+    tags=["6. Webhook Configuration Studio"],
+    description="Exclui um endpoint de webhook por ID.",
+    body_schema=[{"name": "id", "type": "integer", "req": True, "desc": "ID do webhook"}],
+    responses={"200": {"description": "Webhook removido"}}
+)
+def post_remover_webhook(data):
+    wh_id = data.get("id")
+    with db.get_connection() as conn:
+        conn.execute("DELETE FROM webhooks WHERE id = ?", (wh_id,))
+        conn.commit()
+        return {"sucesso": True}
+
+@registry.post(
+    "/api/webhooks/logs/reenviar",
+    summary="Reenviar Log de Webhook",
+    tags=["6. Webhook Configuration Studio"],
+    description="Reenvia uma entrega anterior de webhook.",
+    body_schema=[{"name": "log_id", "type": "integer", "req": True, "desc": "ID do log"}],
+    responses={"200": {"description": "Resultado do reenvio"}}
+)
+def post_reenviar_webhook(data):
+    log_id = data.get("log_id")
+    with db.get_connection() as conn:
+        row = conn.execute("SELECT url, evento, payload_json FROM webhook_logs WHERE id = ?", (log_id,)).fetchone()
+        if not row:
+            return {"sucesso": False, "error": "Log não encontrado"}
+        row_dict = dict(row)
+        url = row_dict["url"]
+        evento = row_dict["evento"]
+        payload = json.loads(row_dict["payload_json"]).get("data", {})
+        res = webhook_dispatcher.testar_disparo(url, "", evento, payload)
+        return {"sucesso": res.get("sucesso", False)}
+
 # 6.5 Rotas de Background Jobs & Dead Letter Queue (DLQ)
 @registry.get(
     "/api/jobs",
@@ -438,6 +515,12 @@ class AppHandler(http.server.SimpleHTTPRequestHandler):
         finally:
             instrumentation.track_request("POST", path_only, self._last_status_code, time.time() - t0)
             logger.info(f"Finalizando requisição POST para {path_only} com status {self._last_status_code}")
+
+    def do_PUT(self):
+        self.do_POST()
+
+    def do_DELETE(self):
+        self.do_POST()
 
     def _handle_get(self):
         parsed = urllib.parse.urlparse(self.path)
@@ -669,6 +752,7 @@ def generate_superapp_index_html(suite_name: str, module_slugs: list) -> str:
     tabs_nav = []
     sections = []
     scripts = []
+    spotlight_items = []
 
     for i, mod in enumerate(module_slugs):
         slug = slugify(mod)
@@ -1376,10 +1460,10 @@ def generate_superapp_index_html(suite_name: str, module_slugs: list) -> str:
             confirmCallback = onConfirm;
             document.getElementById('modal-confirm').classList.add('open');
             document.getElementById('modal-confirm-btn').onclick = async () => {
+                const cb = confirmCallback;
                 fecharModalConfirmacao();
-                if (confirmCallback) {
-                    await confirmCallback();
-                    confirmCallback = null;
+                if (cb) {
+                    await cb();
                 }
             };
         }

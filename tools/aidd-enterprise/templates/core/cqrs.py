@@ -21,8 +21,13 @@ class ReadModelCache:
 
     def invalidate(self, key: str):
         with self._lock:
-            if key in self._store:
-                self._store[key]["stale"] = True
+            self._store.pop(key, None)
+
+    def invalidate_prefix(self, prefix: str):
+        with self._lock:
+            keys_to_del = [k for k in self._store if k.startswith(prefix)]
+            for k in keys_to_del:
+                self._store.pop(k, None)
 
     def get_or_revalidate(self, key: str, fetcher: Callable, ttl: int = 60):
         """Stale-While-Revalidate: retorna o cache imediatamente e revalida em background."""

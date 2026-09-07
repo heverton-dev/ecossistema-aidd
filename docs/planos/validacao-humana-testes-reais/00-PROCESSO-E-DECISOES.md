@@ -46,11 +46,11 @@ Nenhum teste roda em pasta temporária oculta. Tudo é criado em caminhos persis
 
 | Sessão | Status | Aval do Desenvolvedor | Documento |
 |---|---|:---:|---|
-| 1. AIDD Forge | ⏳ Aguardando Início da Sessão 1 | — | `01-teste-isolado-aidd-forge.md` |
-| 2. AIDD Generator | ⏳ Bloqueado pela Sessão 1 | — | `02-teste-isolado-aidd-generator.md` |
-| 3. AIDD Master | ⏳ Bloqueado pela Sessão 2 | — | `03-teste-isolado-aidd-master.md` |
-| 4. AIDD Enterprise | ⏳ Bloqueado pela Sessão 3 | — | `04-teste-isolado-aidd-enterprise.md` |
-| 5. AIDD Ops | ⏳ Bloqueado pela Sessão 4 | — | `05-teste-isolado-aidd-ops.md` |
-| 6. Integrado E2E | ⏳ Bloqueado pelas Sessões 1-5 | — | `06-teste-integrado-ciclo-completo.md` |
+| 1. AIDD Forge | ✅ Concluído & Aprovado | Aprovado | `01-teste-isolado-aidd-forge.md` |
+| 2. AIDD Generator | ✅ Concluído & Aprovado | Aprovado | `02-teste-isolado-aidd-generator.md` |
+| 3. AIDD Master | ✅ Concluído & Aprovado | Aprovado | `03-teste-isolado-aidd-master.md` |
+| 4. AIDD Enterprise | ✅ Concluído & Aprovado | Aprovado | `04-teste-isolado-aidd-enterprise.md` |
+| 5. AIDD Ops | ✅ Concluído & Aprovado | Aprovado | `05-teste-isolado-aidd-ops.md` |
+| 6. Integrado E2E | ✅ Concluído & Homologado | Aprovado (Nota 9.56) | `06-teste-integrado-ciclo-completo.md` |
 
 ---
