@@ -14,9 +14,20 @@
 - Conclusão: forge injeta infraestrutura de **como construir** (governança de IA); o que o usuário pediu é infraestrutura de **o que foi construído** (dependências reais do app gerado). São naturezas diferentes — acoplar os dois no mesmo mecanismo repete a confusão que a distinção dependencia-runner-vs-produto já resolveu para o agente.
 - Decisão de arquitetura em aberto: (a) cada ferramenta ganha seu próprio script de bootstrap de dependências do produto, isolado, sem depender do forge; ou (b) as 4 ferramentas passam a chamar o forge como fase 0 real (acoplamento novo, maior risco, toca os 4 pipelines).
 
+## Levantamento concreto por ferramenta (investigação real, 2026-09-07)
+
+> Item 1 da Definição de Pronto abaixo — concluído. Cada linha verificada em código real (arquivo:linha), não suposição.
+
+| Ferramenta | Gera produto pro usuário final? | Dependência de produto hoje | Achado |
+|---|---|---|---|
+| **aidd-forge** | Não — só infraestrutura de desenvolvimento-com-IA (gates stdlib puro, skills, hooks git, `AGENTS.md`). Nenhum `requirements.txt`/manifest gravado no alvo. | N/A | **Fora de escopo deste item.** Forge não gera produto — não há onde embarcar dependência de produto. |
+| **aidd-master / aidd-enterprise** | Sim | Zero declarada — `templates/core/security.py` e `templates/v2/security.py` (idênticos nos dois) são JWT hand-rolled via `hmac`/`hashlib`/`base64`, CSP como string literal; `database.py` usa `sqlite3` cru; RLS do enterprise reescreve SQL via regex (`_rewrite_insert`/`_rewrite_select`). Nenhum `requirements.txt` existe dentro de `templates/core/` ou `templates/v2/`. Dockerfile gerado (`templates/core/Dockerfile:9,25`) segue sem `RUN pip install`. `add_module.py`/`compose_suite.py` não usam Jinja2/Cookiecutter, só string/`.format`. | Maior espaço de ganho: qualquer dependência real adicionada (SQLAlchemy, secure.py, Cookiecutter) entra num produto que hoje não declara nenhuma. |
+| **aidd-generator** | Sim | `requirements.txt` gerado na Fase 5 (`05_criador.py:772-776`) grava só `requests>=2.31.0`, fixo, e nunca é atualizado pela Fase 8 mesmo quando o LLM gera código usando FastAPI/uvicorn/etc. MCP é JSON-RPC implementado na mão — docstring do próprio scaffold admite "sem SDK mcp, que não está em requirements.txt" (`scaffolds.py:139-145`). CORS inseguro do relatório de auditoria vem de código gerado pelo LLM (prompt), não de template fixo. | **Achado novo (fora do NIH doc):** o `requirements.txt` entregue está sistematicamente dessincronizado do código real gerado — bug de correção, candidato a item novo no plano tático, não decisão deste item estratégico. |
+| **aidd-ops** | Sim (infra rodando numa VPS) | Traefik só roteia o próprio dashboard (`templates/infra/traefik/docker-compose.yml:37-41`) — Twenty/Chatwoot/Cal.com usam `ports:` diretos, sem labels. Porta 3000 ainda colide entre os 3 (`twenty/docker-compose.yml:27`, `chatwoot/docker-compose.yml:24`, `calcom/docker-compose.yml:23`). SSH hardening manual via `paramiko` (`ssh_runner.py:29-35,114-118`), sem Ansible. Zero traço de Coolify/CapRover/Dokku no código. Cofre de credenciais 100% inexistente (só o plano em `docs/planos/a-fazer/03-evolucao-aidd-ops-fase-completa/`). | Os 2 bugs críticos do relatório de auditoria original (porta duplicada, Traefik subutilizado) **persistem sem correção** até hoje. |
+
 ## Definição de Pronto
 
-1. Levantamento concreto, por ferramenta, do que faria sentido embarcar no produto gerado (não no ambiente do agente) — cruzar com a Fase 2 (item 4, troca de motor) pra não duplicar decisão já em curso sobre Cookiecutter/scaffolding.
+1. ~~Levantamento concreto, por ferramenta, do que faria sentido embarcar no produto gerado~~ — feito, ver tabela acima. `aidd-forge` sai do escopo de execução deste item (nada a embarcar); o trabalho real recai sobre master/enterprise, generator e ops.
 2. Decisão registrada aqui: opção (a) ou (b) acima, com justificativa.
 3. Se (a): 1 protótipo real num só tool (candidato: master ou enterprise, que já têm Fase 2 endereçando scaffolding) antes de replicar nos outros 4.
 4. Critério de verificação real: projeto gerado pela ferramenta escolhida sobe com a dependência nova de fato instalada e funcional (não só arquivo copiado) — reproduzir, não assumir.

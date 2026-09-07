@@ -151,19 +151,38 @@ def cmd_orchestrate(args):
     parser.add_argument("--stream", action="store_true", help="Exibe a saida dos agentes em tempo real no console.")
     parser.add_argument("--interactive", action="store_true", default=True, help="Executa as worktrees em modo interativo com terminal conectado ao usuario (padrao).")
     parser.add_argument("--dangerously-force-headless", action="store_true", help="AVISO: Forca execucao headless desassistida (alto risco de consumo de tokens).")
-    parser.add_argument("--harness-map", default=None, help="Mapeamento JSON ou string chave=valor de harnesses por frente.")
+    parser.add_argument(
+        "--ambiente", default=None,
+        choices=["worktree", "subagent"],
+        help="Ambiente de execucao: 'worktree' (ORCA, isolamento de arquivo real, terminal separado) "
+             "ou 'subagent' (Agent tool da sessao atual, sem worktree, contexto compartilhado). "
+             "Se omitido, pergunta interativamente.",
+    )
     parser.add_argument(
         "--harness", default=None,
         choices=["mimo", "opencode", "claude", "agy"],
-        help="Harness padrao (se omitido, pergunta interativamente)",
+        help="Harness padrao para ambiente worktree (se omitido, pergunta interativamente)",
     )
     parser.add_argument(
         "--harness-map", default=None,
-        help="Mapeamento customizado por frente (ex: frente1=claude,frente2=agy)",
+        help="Mapeamento customizado por frente pra ambiente worktree (ex: frente1=claude,frente2=agy)",
     )
     parser.add_argument(
         "--profiles", default=None,
         help="Caminho para harness_profiles.json (default: .orca/harness_profiles.json.example)",
+    )
+    parser.add_argument(
+        "--subagent-type", default="general-purpose",
+        help="Subagent type padrao pra ambiente subagent (default: general-purpose)",
+    )
+    parser.add_argument(
+        "--model", default=None,
+        help="Override de modelo padrao pra ambiente subagent (se omitido, usa o default da sessao)",
+    )
+    parser.add_argument(
+        "--from-flight-plan", default=None,
+        help="Caminho pra um Flight Plan JSON ja compilado (possivelmente editado a mao) — "
+             "pula a recompilacao e usa esse arquivo como fonte da verdade antes de confirmar.",
     )
     ns = parser.parse_args(args)
 
@@ -175,8 +194,70 @@ def cmd_orchestrate(args):
     from pathlib import Path
     from scripts.plan_parser import parse_plan
     from scripts.flight_plan import gerar_plano_de_voo, renderizar_plano_de_voo
+    from scripts.subagent_plan import compilar_plano_subagentes, renderizar_plano_subagentes
+    from scripts.plan_io import salvar_plano_de_voo, carregar_plano_de_voo
     from scripts.orchestrator_engine import executar_orquestracao
     from scripts.state_engine import load_state
+
+    plano_dir = Path(ROOT_DIR) / ns.plano if not os.path.isabs(ns.plano) else Path(ns.plano)
+    flight_plan_path = plano_dir / ".orca-flight-plan.json"
+
+    ambiente = ns.ambiente
+    if ambiente is None:
+        if sys.stdin.isatty() and not ns.yes and not ns.dry_run and not ns.dangerously_force_headless:
+            print("\n" + "=" * 65)
+            print("  ORCA ADE — AMBIENTE DE EXECUÇÃO")
+            print("=" * 65)
+            print("""
+  1) ORCA (worktrees efêmeras + terminal separado por frente)
+     Isolamento de arquivo real. Execução mecânica, monitorada pelo
+     desenvolvedor no terminal. Recomendado quando frentes tocam os
+     mesmos arquivos ou exigem revisão humana passo a passo.
+
+  2) Subagentes (Agent tool desta sessão)
+     Sem worktree, sem terminal separado. Roda dentro do contexto da
+     conversa atual via subagente. SEM isolamento de arquivo — evite
+     se frentes distintas tocarem os mesmos arquivos.
+""")
+            try:
+                escolha_ambiente = input("Escolha o ambiente (default: 1 - ORCA worktree): ").strip()
+            except (EOFError, KeyboardInterrupt):
+                print("\n[CANCELADO] Seleção cancelada pelo usuário.")
+                return 1
+            ambiente = "subagent" if escolha_ambiente in ("2", "subagent", "subagentes") else "worktree"
+        else:
+            ambiente = "worktree"
+
+    if ambiente == "subagent":
+        subagent_map = {}
+        model_map = {}
+
+        if ns.from_flight_plan:
+            data = carregar_plano_de_voo(ns.from_flight_plan)
+        else:
+            try:
+                data = compilar_plano_subagentes(
+                    ns.plano,
+                    subagent_type=ns.subagent_type,
+                    model=ns.model,
+                    subagent_map=subagent_map or None,
+                    model_map=model_map or None,
+                )
+            except (FileNotFoundError, ValueError, KeyError) as exc:
+                print(f"Erro ao gerar Flight Plan de subagentes: {exc}")
+                return 1
+            salvar_plano_de_voo(data, flight_plan_path)
+
+        print(renderizar_plano_subagentes(data))
+        print(f"[FLIGHT PLAN] Salvo em: {flight_plan_path}")
+        print(
+            "[ORCA ADE] Ambiente 'subagent' nunca é executado por este CLI — "
+            "ecossistema.py é um compilador mecânico, sem acesso a modelo/Agent tool. "
+            "Revise/edite o JSON acima e peça ao assistente da sessão pra executar "
+            "cada frente via Agent tool seguindo o Plano de Voo confirmado "
+            "(protocolo completo em componentes/compartilhado/skills/orchestrate/SKILL.md)."
+        )
+        return 0
 
     profiles_path = ns.profiles
     if profiles_path is None:
@@ -264,8 +345,15 @@ def cmd_orchestrate(args):
         except (FileNotFoundError, ValueError, KeyError) as exc:
             print(f"Erro ao gerar Flight Plan: {exc}")
             return 1
+        salvar_plano_de_voo(data, flight_plan_path)
         print(renderizar_plano_de_voo(data))
-        print("[DRY-RUN] Flight Plan gerado com sucesso. Nenhuma acao executada.")
+        print(f"[FLIGHT PLAN] Salvo em: {flight_plan_path}")
+        print(
+            "[DRY-RUN] Flight Plan gerado com sucesso. Nenhuma acao executada. "
+            "Para ajustar harness/modelo por frente, edite --harness-map ou --profiles "
+            "e rode o dry-run de novo — o motor de worktree recompila deterministicamente "
+            "a partir desses parametros, nao le o JSON salvo acima."
+        )
         return 0
 
     try:
@@ -374,10 +462,15 @@ Comandos disponíveis:
                       Instala/registra skills e MCPs de terceiros usados pelo
                       agente (gates/dependencias_externas.json)
   orchestrate <plano> [--dry-run] [--resume] [--yes]
-                      [--harness {mimo,opencode,claude,agy}]
-                      [--profiles <path>]
-                      Gera Flight Plan a partir de um plano ORCA e opcionalmente
-                      executa a orquestracao multi-agente.
+                      [--ambiente {worktree,subagent}]
+                      [--harness {mimo,opencode,claude,agy}] [--harness-map ...]
+                      [--subagent-type <tipo>] [--model <modelo>]
+                      [--profiles <path>] [--from-flight-plan <path>]
+                      Gera Flight Plan a partir de um plano ORCA. Ambiente
+                      'worktree' executa a orquestracao multi-agente real
+                      (git worktrees); ambiente 'subagent' so compila o
+                      Plano de Voo em JSON (.orca-flight-plan.json) para o
+                      assistente da sessao executar via Agent tool.
   plan init|check-fences <args>
                       Gerenciador determinístico de iniciativas de planos em docs/planos/
   audit               Executa o Meta-Quality Gate de Integridade
@@ -388,6 +481,13 @@ Comandos disponíveis:
 """)
 
 def main():
+    # Windows abre stdout/stderr no codepage local (cp1252), que não
+    # representa emojis/travessões usados nas mensagens do CLI — força UTF-8
+    # (mesmo padrao de scripts/atualizar_index_planos.py).
+    for fluxo in (sys.stdout, sys.stderr):
+        if hasattr(fluxo, "reconfigure"):
+            fluxo.reconfigure(encoding="utf-8")
+
     if len(sys.argv) < 2:
         print_help()
         sys.exit(0)

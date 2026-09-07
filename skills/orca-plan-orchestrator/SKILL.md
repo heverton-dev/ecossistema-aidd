@@ -37,9 +37,10 @@ Quando o comando `/orchestrate [plano]` for invocado:
    - Gere e apresente o Plano de Voo em tabela Markdown exibindo: Número, Nome da Frente, Branch Efêmera, Worktree, Harness Executor atribuído e Comando correspondente.
 
 4. **Confirmação e Modo Interativo Sequencial:**
-   - ⛔ **PROIBIÇÃO TOTAL DE SUBAGENTES/BACKGROUND TASKS:** É terminantemente proibido ao assistente chamar as tools `task create`, `task start`, `invoke_subagent` ou disparar tarefas em background.
+   - ⛔ **PROIBIÇÃO TOTAL DE SUBAGENTES/BACKGROUND TASKS NESTA VIA (ambiente ORCA/worktree):** É terminantemente proibido ao assistente chamar as tools `task create`, `task start`, `invoke_subagent` ou disparar tarefas em background enquanto o ambiente escolhido for ORCA/worktree.
    - O papel do assistente nesta skill encerra-se na compilação do Plano de Voo, na criação da worktree e na apresentação das instruções para o desenvolvedor executar a frente no terminal.
    - Toda execução é estritamente **sequencial (uma frente por vez)** governada no terminal pelo desenvolvedor, eliminando saturação de contexto e loops de subprocessos.
+   - Existe um segundo ambiente de execução (Subagentes, via Agent tool desta sessão, sem worktree) — **não é responsabilidade desta skill**. O gate de escolha entre os dois ambientes e o protocolo do modo Subagentes vivem em `componentes/compartilhado/skills/orchestrate/SKILL.md`.
 
 ## Uso via CLI
 

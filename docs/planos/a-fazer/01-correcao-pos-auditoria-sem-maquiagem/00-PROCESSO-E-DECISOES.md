@@ -32,6 +32,7 @@ Calibração de partida (não é regra rígida): tarefas mecânicas/determiníst
 | 12 | Prova real de integração multi-ferramenta | Arquitetural | Opus | Gemini 3.8 | mimo-v2.5-pro |
 | 13 | Reduzir custo de token no núcleo determinístico | Arquitetural | Opus | Gemini 3.8 | mimo-v2.5-pro |
 | 14 | Remover ou ligar código morto de resiliência no enterprise | Decisão de escopo | Opus | Gemini 3.8 | mimo-v2.5-pro |
+| 15 | requirements.txt do app gerado pelo generator dessincronizado do código real | Mecânica | Haiku | Gemini 3.1 pro | mimo-v2.5 |
 
 ## 1.1 Dependência com `docs/planos/a-fazer/direcionamento-estrategico-anti-nih/`
 
@@ -69,6 +70,7 @@ Diagnostico rapido → Definicao de Pronto checavel → Prompt de Execucao autoc
 | 12 | Prova real de integracao multi-ferramenta no teste integrado | `12-prova-real-de-integracao-multi-ferramenta-no-teste-integrado.md` |
 | 13 | Reduzir custo de token nas ferramentas de nucleo deterministico (master/enterprise/ops/CLI) | `13-reduzir-custo-de-token-nas-ferramentas-de-nucleo-deterministico-masterenterpriseopscli.md` |
 | 14 | Remover ou ligar codigo morto de resiliencia no enterprise | `14-remover-ou-ligar-codigo-morto-de-resiliencia-no-enterprise.md` |
+| 15 | requirements.txt do app gerado pelo generator dessincronizado do codigo real | `15-requirementstxt-do-app-gerado-pelo-generator-dessincronizado-do-codigo-real.md` |
 
 ## 4. Regras Fixas
 
@@ -95,5 +97,6 @@ Diagnostico rapido → Definicao de Pronto checavel → Prompt de Execucao autoc
 | 12 | Prova real de integracao multi-ferramenta no teste integrado | ⏳ Rascunho gerado, aguardando aprovacao | `12-prova-real-de-integracao-multi-ferramenta-no-teste-integrado.md` |
 | 13 | Reduzir custo de token nas ferramentas de nucleo deterministico (master/enterprise/ops/CLI) | ⏳ Rascunho gerado, aguardando aprovacao | `13-reduzir-custo-de-token-nas-ferramentas-de-nucleo-deterministico-masterenterpriseopscli.md` |
 | 14 | Remover ou ligar codigo morto de resiliencia no enterprise | ⏳ Rascunho gerado, aguardando aprovacao | `14-remover-ou-ligar-codigo-morto-de-resiliencia-no-enterprise.md` |
+| 15 | requirements.txt do app gerado pelo generator dessincronizado do codigo real | ⏳ Rascunho gerado, aguardando aprovacao | `15-requirementstxt-do-app-gerado-pelo-generator-dessincronizado-do-codigo-real.md` |
 
-Esta tabela so e atualizada para Concluido apos auditoria por reproducao real. Item 14 removido em 2026-09-07 por duplicidade confirmada com a Fase 2 de `docs/planos/a-fazer/direcionamento-estrategico-anti-nih/` (ver §1.1).
+Esta tabela so e atualizada para Concluido apos auditoria por reproducao real. Item 14 removido em 2026-09-07 por duplicidade confirmada com a Fase 2 de `docs/planos/a-fazer/direcionamento-estrategico-anti-nih/` (ver §1.1). Item 15 adicionado em 2026-09-07, achado real investigando o item 7 do plano `direcionamento-estrategico-anti-nih`.
