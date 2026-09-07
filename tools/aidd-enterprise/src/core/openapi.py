@@ -632,6 +632,11 @@ class RouteRegistry:
             <span class="badge-ver">OpenAPI 3.1.0</span>
         </div>
         <div class="header-actions">
+            <button type="button" onclick="abrirSpotlight()" class="btn" style="border-color: rgba(56, 189, 248, 0.4); color: #38bdf8; display: inline-flex; align-items: center; gap: 0.4rem; cursor: pointer;" title="Comandos rápidos (Ctrl + K)">
+                <svg width="13" height="13" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+                <span>Buscar</span>
+                <kbd style="background: rgba(255,255,255,0.08); padding: 1px 5px; border-radius: 4px; font-size: 0.65rem; color: #94a3b8; border: 1px solid rgba(255,255,255,0.15);">Ctrl K</kbd>
+            </button>
             <a href="/" class="btn">Aplicação Web</a>
             <a href="/webhooks" class="btn" style="border-color: rgba(139, 92, 246, 0.4); color: #c4b5fd;">Webhook Studio</a>
             <a href="/mcp" class="btn" style="border-color: rgba(16,185,129,0.4); color: #34d399;">Portal MCP</a>
@@ -645,8 +650,8 @@ class RouteRegistry:
         <aside class="sidebar">
             <div class="search-box">
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-                <input type="text" id="filter-input" placeholder="Filtrar endpoints (Ctrl + K)..." oninput="filtrarSidebar(this.value)">
-                <kbd style="font-size: 0.65rem; background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.15); border-radius: 4px; padding: 0.15rem 0.35rem; color: var(--text-muted); font-family: monospace; flex-shrink: 0;">Ctrl K</kbd>
+                <input type="text" id="filter-input" placeholder="Filtrar endpoints (Ctrl + K)..." onclick="abrirSpotlight()" oninput="filtrarSidebar(this.value)">
+                <kbd style="font-size: 0.65rem; background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.15); border-radius: 4px; padding: 0.15rem 0.35rem; color: var(--text-muted); font-family: monospace; flex-shrink: 0; cursor: pointer;" onclick="abrirSpotlight()">Ctrl K</kbd>
             </div>
             <div id="sidebar-endpoints-tree"></div>
         </aside>

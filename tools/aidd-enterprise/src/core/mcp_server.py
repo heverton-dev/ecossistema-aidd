@@ -475,14 +475,46 @@ class MCPServer:
         textarea.form-control {{ font-family: ui-monospace, monospace; min-height: 120px; }}
         .console-output {{ background: #020617; border: 1px solid var(--border); border-radius: 6px; padding: 12px; min-height: 150px; max-height: 260px; overflow-y: auto; font-family: ui-monospace, monospace; font-size: 11px; color: var(--sky); white-space: pre-wrap; }}
         .config-box {{ background: var(--bg-card); border: 1px solid var(--border); border-radius: 6px; padding: 12px; font-family: ui-monospace, monospace; font-size: 11px; color: var(--text-muted); overflow-x: auto; }}
+
+        /* SPOTLIGHT COMMAND PALETTE */
+        .spotlight-overlay {{
+            position: fixed; inset: 0; background: rgba(0, 0, 0, 0.75); backdrop-filter: blur(4px);
+            z-index: 1000; display: none; align-items: flex-start; justify-content: center; padding-top: 80px; padding-left: 16px; padding-right: 16px;
+        }}
+        .spotlight-overlay.open {{ display: flex; }}
+        .spotlight-card {{
+            background: #09090b; border: 1px solid #27272a; border-radius: 12px; width: 100%; max-width: 580px;
+            overflow: hidden; box-shadow: 0 20px 40px rgba(0,0,0,0.6);
+        }}
+        .spotlight-header {{
+            display: flex; align-items: center; gap: 10px; padding: 14px 16px; border-bottom: 1px solid #27272a;
+        }}
+        .spotlight-input {{
+            flex: 1; background: transparent; border: none; outline: none; color: #f4f4f5; font-size: 14px; font-family: inherit;
+        }}
+        .spotlight-results {{ max-height: 340px; overflow-y: auto; padding: 8px; }}
+        .spotlight-item {{
+            display: flex; justify-content: space-between; align-items: center; padding: 10px 14px; border-radius: 6px; cursor: pointer;
+            margin-bottom: 2px; transition: all 0.1s;
+        }}
+        .spotlight-footer {{
+            display: flex; justify-content: space-between; align-items: center; padding: 8px 16px; background: #18181b; border-top: 1px solid #27272a;
+            font-size: 11px; color: #71717a;
+        }}
     </style>
 </head>
 <body>
     <header>
         <div class="brand"><span class="pulse-dot"></span> {title} <span class="badge badge-purple">v5.1</span></div>
         <div class="nav-links">
+            <button type="button" onclick="abrirSpotlight()" class="btn btn-outline btn-sm" style="display: inline-flex; align-items: center; gap: 0.4rem; cursor: pointer;" title="Comandos rápidos (Ctrl + K)">
+                <svg width="13" height="13" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+                <span>Buscar</span>
+                <kbd style="background: #27272a; padding: 1px 5px; border-radius: 4px; font-size: 0.65rem; color: #a1a1aa; border: 1px solid #3f3f46;">Ctrl K</kbd>
+            </button>
             <a href="/">App</a>
             <a href="/docs">Swagger</a>
+            <a href="/docs/guia">Guia Oficial</a>
             <a href="/webhooks">Webhooks</a>
             <a href="/mcp" class="active">MCP Studio</a>
             <a href="/metrics">Metrics</a>
@@ -521,7 +553,7 @@ class MCPServer:
                 <div class="panel-header">
                     <span class="panel-title">Catálogo de Ferramentas ({len(tools)})</span>
                 </div>
-                <input type="text" class="search-bar" placeholder="Filtrar ferramentas..." oninput="filtrarTools(this.value)">
+                <input type="text" class="search-bar" placeholder="Filtrar ferramentas ou buscar comandos (Ctrl + K)..." onclick="abrirSpotlight()" oninput="filtrarTools(this.value)">
                 <div class="tools-container" id="tools-list">
                     {cards_str}
                 </div>
@@ -548,10 +580,143 @@ class MCPServer:
                 </div>
             </div>
         </div>
+    <!-- SPOTLIGHT COMMAND PALETTE (CTRL + K) -->
+    <div id="spotlight-modal" class="spotlight-overlay" onclick="if(event.target === this) fecharSpotlight()">
+        <div class="spotlight-card">
+            <div class="spotlight-header">
+                <svg width="18" height="18" fill="none" stroke="#38bdf8" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+                <input type="text" id="spotlight-input" class="spotlight-input" placeholder="Digite uma ferramenta, ação ou navegação (Esc para fechar)..." oninput="filtrarSpotlight(this.value)">
+                <kbd style="background: #18181b; padding: 2px 6px; border-radius: 4px; font-size: 11px; color: #71717a; border: 1px solid #27272a;">ESC</kbd>
+            </div>
+            <div id="spotlight-results" class="spotlight-results"></div>
+            <div class="spotlight-footer">
+                <span>Navegue com <kbd style="color: #a1a1aa;">↑</kbd> <kbd style="color: #a1a1aa;">↓</kbd> e selecione com <kbd style="color: #a1a1aa;">Enter</kbd></span>
+                <span>{title} • MCP Studio</span>
+            </div>
+        </div>
+    </div>
     </main>
 
     <script>
     const TOOLS_LIST = {json.dumps(tools, ensure_ascii=False)};
+    
+    // SPOTLIGHT COMMAND PALETTE (ZERO EMOJIS, MESMA ABA)
+    let spotlightIndex = 0;
+    let comandosFiltrados = [];
+
+    function getSpotlightCommands() {{
+        const base = [
+            {{ cat: 'Navegação', titulo: 'Super-App Clínico (Home)', subtitulo: 'Dashboard principal da suíte', url: '/', atalho: 'G H' }},
+            {{ cat: 'Navegação', titulo: 'Swagger Studio (OpenAPI)', subtitulo: 'Documentação interativa REST', url: '/docs', atalho: 'G S' }},
+            {{ cat: 'Navegação', titulo: 'Guia Oficial & Design System', subtitulo: 'Manual enciclopédico de arquitetura', url: '/docs/guia', atalho: 'G D' }},
+            {{ cat: 'Navegação', titulo: 'Webhook Configuration Studio', subtitulo: 'Gestão de endpoints e simulador HMAC', url: '/webhooks', atalho: 'G W' }},
+            {{ cat: 'Navegação', titulo: 'Métricas de Performance', subtitulo: 'Telemetria do servidor e rotas', url: '/metrics', atalho: 'G M' }},
+            {{ cat: 'Ações MCP', titulo: 'Copiar Configuração Claude Desktop', subtitulo: 'JSON para claude_desktop_config.json', acao: () => copiarConfig(), atalho: 'C' }},
+            {{ cat: 'Ações MCP', titulo: 'Executar Ferramenta Selecionada (RPC)', subtitulo: 'Dispara chamada JSON-RPC 2.0', acao: () => executarToolRpc(), atalho: 'E' }}
+        ];
+
+        const toolCmds = TOOLS_LIST.map(t => ({{
+            cat: 'Ferramentas MCP',
+            titulo: 'Tool: ' + t.name,
+            subtitulo: t.description || 'Executar ferramenta via JSON-RPC',
+            acao: () => selectTool(t.name)
+        }}));
+
+        return [...base, ...toolCmds];
+    }}
+
+    function abrirSpotlight() {{
+        const modal = document.getElementById('spotlight-modal');
+        const input = document.getElementById('spotlight-input');
+        input.value = '';
+        comandosFiltrados = getSpotlightCommands();
+        spotlightIndex = 0;
+        renderizarItensSpotlight();
+        modal.classList.add('open');
+        setTimeout(() => input.focus(), 50);
+    }}
+
+    function fecharSpotlight() {{
+        const modal = document.getElementById('spotlight-modal');
+        if (modal) modal.classList.remove('open');
+    }}
+
+    function filtrarSpotlight(termo) {{
+        const q = (termo || '').toLowerCase().trim();
+        const all = getSpotlightCommands();
+        if (!q) {{
+            comandosFiltrados = all;
+        }} else {{
+            comandosFiltrados = all.filter(c => 
+                c.titulo.toLowerCase().includes(q) || 
+                c.subtitulo.toLowerCase().includes(q) ||
+                c.cat.toLowerCase().includes(q)
+            );
+        }}
+        spotlightIndex = 0;
+        renderizarItensSpotlight();
+    }}
+
+    function renderizarItensSpotlight() {{
+        const container = document.getElementById('spotlight-results');
+        if (comandosFiltrados.length === 0) {{
+            container.innerHTML = '<div style="padding: 16px; text-align: center; color: #71717a; font-size: 13px;">Nenhum comando ou ferramenta encontrada.</div>';
+            return;
+        }}
+        container.innerHTML = comandosFiltrados.map((c, idx) => `
+            <div class="spotlight-item" style="display: flex; justify-content: space-between; align-items: center; padding: 10px 14px; border-radius: 6px; cursor: pointer; background: ${{idx === spotlightIndex ? '#18181b' : 'transparent'}};" onclick="executarComandoSpotlight(${{idx}})">
+                <div>
+                    <div style="font-size: 13px; font-weight: 600; color: ${{idx === spotlightIndex ? '#38bdf8' : '#f4f4f5'}};">${{c.titulo}}</div>
+                    <div style="font-size: 11px; color: #71717a; margin-top: 2px;">${{c.subtitulo}}</div>
+                </div>
+                <div style="display: flex; align-items: center; gap: 8px;">
+                    <span style="font-size: 10px; color: #71717a; background: #18181b; padding: 2px 6px; border-radius: 4px; border: 1px solid #27272a;">${{c.cat}}</span>
+                    ${{c.atalho ? `<kbd style="background: #27272a; color: #a1a1aa; padding: 2px 6px; border-radius: 4px; font-size: 10px; border: 1px solid #3f3f46;">${{c.atalho}}</kbd>` : ''}}
+                </div>
+            </div>
+        `).join('');
+    }}
+
+    function executarComandoSpotlight(idx) {{
+        const cmd = comandosFiltrados[idx];
+        if (!cmd) return;
+        fecharSpotlight();
+        if (cmd.url) {{
+            window.location.href = cmd.url;
+        }} else if (cmd.acao) {{
+            cmd.acao();
+        }}
+    }}
+
+    window.addEventListener('keydown', (e) => {{
+        if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k') {{
+            e.preventDefault();
+            abrirSpotlight();
+            return;
+        }}
+
+        const modalSpotlight = document.getElementById('spotlight-modal');
+        if (modalSpotlight && modalSpotlight.classList.contains('open')) {{
+            if (e.key === 'Escape') {{
+                fecharSpotlight();
+            }} else if (e.key === 'ArrowDown') {{
+                e.preventDefault();
+                if (comandosFiltrados.length > 0) {{
+                    spotlightIndex = (spotlightIndex + 1) % comandosFiltrados.length;
+                    renderizarItensSpotlight();
+                }}
+            }} else if (e.key === 'ArrowUp') {{
+                e.preventDefault();
+                if (comandosFiltrados.length > 0) {{
+                    spotlightIndex = (spotlightIndex - 1 + comandosFiltrados.length) % comandosFiltrados.length;
+                    renderizarItensSpotlight();
+                }}
+            }} else if (e.key === 'Enter') {{
+                e.preventDefault();
+                executarComandoSpotlight(spotlightIndex);
+            }}
+        }}
+    }});
     
     function initSelect() {{
         const sel = document.getElementById('tool-select');
@@ -593,7 +758,14 @@ class MCPServer:
 
     function copiarConfig() {{
         const text = document.getElementById('claude-config-text').textContent;
-        navigator.clipboard.writeText(text).then(() => alert('Configuração copiada!'));
+        navigator.clipboard.writeText(text).then(() => {{
+            const btn = document.querySelector('button[onclick="copiarConfig()"]');
+            if (btn) {{
+                const original = btn.textContent;
+                btn.textContent = 'Copiado!';
+                setTimeout(() => {{ btn.textContent = original; }}, 2000);
+            }}
+        }});
     }}
 
     async function executarToolRpc() {{

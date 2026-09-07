@@ -488,13 +488,19 @@ class WebhookDispatcher:
         <!-- BUSCA RÁPIDA / Ctrl + K -->
         <div style="position: relative; display: flex; align-items: center; min-width: 260px;">
             <svg style="position: absolute; left: 0.65rem; color: var(--text-muted); pointer-events: none;" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-            <input type="text" id="wh-global-search" placeholder="Filtrar eventos e logs (Ctrl + K)..." oninput="filtrarWebhookStudio(this.value)" class="form-control" style="padding-left: 2rem; padding-right: 3.5rem; font-size: 0.75rem; height: 32px;">
-            <kbd style="position: absolute; right: 0.5rem; font-size: 0.65rem; background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.15); border-radius: 4px; padding: 0.1rem 0.35rem; color: var(--text-muted); font-family: monospace; pointer-events: none;">Ctrl K</kbd>
+            <input type="text" id="wh-global-search" placeholder="Filtrar eventos e logs (Ctrl + K)..." onclick="abrirSpotlight()" oninput="filtrarWebhookStudio(this.value)" class="form-control" style="padding-left: 2rem; padding-right: 3.5rem; font-size: 0.75rem; height: 32px; cursor: pointer;">
+            <kbd onclick="abrirSpotlight()" style="position: absolute; right: 0.5rem; font-size: 0.65rem; background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.15); border-radius: 4px; padding: 0.1rem 0.35rem; color: var(--text-muted); font-family: monospace; cursor: pointer;">Ctrl K</kbd>
         </div>
 
         <div style="display: flex; align-items: center; gap: 0.5rem;">
+            <button type="button" onclick="abrirSpotlight()" class="btn" style="border-color: rgba(245, 158, 11, 0.4); color: #f59e0b; display: inline-flex; align-items: center; gap: 0.4rem; cursor: pointer;" title="Comandos rápidos (Ctrl + K)">
+                <svg width="13" height="13" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+                <span>Buscar</span>
+                <kbd style="background: rgba(255,255,255,0.08); padding: 1px 5px; border-radius: 4px; font-size: 0.65rem; color: #94a3b8; border: 1px solid rgba(255,255,255,0.15);">Ctrl K</kbd>
+            </button>
             <a href="/" class="btn">Super-App</a>
             <a href="/docs" class="btn">Swagger Studio</a>
+            <a href="/docs/guia" class="btn">Guia Oficial</a>
             <a href="/mcp" class="btn">MCP Native</a>
         </div>
     </header>
@@ -948,7 +954,7 @@ class WebhookDispatcher:
                 {{ id: 'nav-wh', cat: 'Navegação', title: 'Webhook Studio', desc: 'Simulador de eventos e logs de webhook', iconType: 'webhooks', action: () => {{ window.location.href = '/webhooks'; }} }},
                 {{ id: 'nav-mcp', cat: 'Navegação', title: 'MCP Native Server Portal', desc: '16 Ferramentas JSON-RPC para Claude Desktop e LLMs', iconType: 'mcp', action: () => {{ window.location.href = '/mcp'; }} }},
                 {{ id: 'nav-guia', cat: 'Navegação', title: 'Manual Enciclopédico & Design System', desc: '11 Capítulos de arquitetura, segurança e UI', iconType: 'guia', action: () => {{ window.location.href = '/docs/guia'; }} }},
-                {{ id: 'act-new-ep', cat: 'Ações Webhook', title: 'Cadastrar Novo Endpoint Webhook', desc: 'Registrar URL de destino com secret HMAC', iconType: 'plus', action: () => {{ openModal(); }} }},
+                {{ id: 'act-new-ep', cat: 'Ações Webhook', title: 'Cadastrar Novo Endpoint Webhook', desc: 'Registrar URL de destino com secret HMAC', iconType: 'plus', action: () => {{ abrirModalCriar(); }} }},
                 {{ id: 'act-tab-sim', cat: 'Ações Webhook', title: 'Abrir Simulador de Disparos', desc: 'Testar emissão de eventos empresariais', iconType: 'rocket', action: () => {{ switchTab('playground'); }} }},
                 {{ id: 'act-tab-logs', cat: 'Ações Webhook', title: 'Ver Auditoria e Histórico de Logs', desc: 'Inspecionar status HTTP e payloads', iconType: 'logs', action: () => {{ switchTab('logs'); }} }},
                 {{ id: 'act-tab-cat', cat: 'Ações Webhook', title: 'Ver Catálogo Oficial de Eventos', desc: 'Catálogo de eventos transacionais das fatias verticais', iconType: 'catalog', action: () => {{ switchTab('catalog'); }} }}

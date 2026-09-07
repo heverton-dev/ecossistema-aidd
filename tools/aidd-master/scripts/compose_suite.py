@@ -676,6 +676,9 @@ def generate_superapp_index_html(suite_name: str, module_slugs: list) -> str:
         is_active = (i == 0)
         active_tab_class = "tab-btn active" if is_active else "tab-btn"
         active_sec_class = "tab-section active" if is_active else "tab-section"
+        
+        spotlight_items.append(f"""            {{ titulo: 'Novo Registro em {pascal}', subtitulo: 'Cadastrar nova entrada no módulo {pascal}', acao: () => {{ mudarAba('{slug}'); abrirModalNovo('{slug}'); }}, atalho: 'N' }},
+            {{ titulo: 'Recarregar Dados de {pascal}', subtitulo: 'Atualiza métricas e listagem da tabela {pascal}', acao: () => {{ mudarAba('{slug}'); carregar{pascal}(); }}, atalho: 'R' }},""")
 
         tabs_nav.append(f'''
             <button type="button" onclick="mudarAba('{slug}')" id="tab-btn-{slug}" class="{active_tab_class}" aria-label="Acessar módulo {pascal}">
@@ -762,7 +765,7 @@ def generate_superapp_index_html(suite_name: str, module_slugs: list) -> str:
                                 <th>Título</th>
                                 <th style="width: 120px;">Status</th>
                                 <th style="width: 170px;">Criado em</th>
-                                <th style="width: 100px; text-align: right;">Ações</th>
+                                <th style="width: 150px; text-align: right;">Ações</th>
                             </tr>
                         </thead>
                         <tbody id="tabela-{slug}-corpo">
@@ -793,6 +796,7 @@ def generate_superapp_index_html(suite_name: str, module_slugs: list) -> str:
                 // 2. Carregar Registros
                 const res = await fetch('/api/{slug}');
                 dados{pascal}Cache = await res.json();
+                window.dados{pascal}Cache = dados{pascal}Cache;
                 renderizarTabela{pascal}(dados{pascal}Cache);
             }} catch (e) {{
                 console.error('Erro ao carregar {slug}:', e);
@@ -815,7 +819,8 @@ def generate_superapp_index_html(suite_name: str, module_slugs: list) -> str:
                     </td>
                     <td><span class="badge badge-status">${{escapeHtml(item.status || 'ativo')}}</span></td>
                     <td class="col-date">${{escapeHtml(item.criado_em || '--')}}</td>
-                    <td class="col-actions">
+                    <td class="col-actions" style="text-align: right; white-space: nowrap;">
+                        <button type="button" onclick="abrirModalEditar('{slug}', ${{item.id}})" class="btn btn-secondary" style="padding: 4px 8px; font-size: 11px; margin-right: 4px;" title="Editar registro" aria-label="Editar registro">Editar</button>
                         <button type="button" onclick="deletarItem('{slug}', ${{item.id}})" class="btn btn-delete" title="Excluir" aria-label="Excluir registro">Excluir</button>
                     </td>
                 </tr>
@@ -838,6 +843,7 @@ def generate_superapp_index_html(suite_name: str, module_slugs: list) -> str:
     tabs_nav_str = "\n".join(tabs_nav)
     sections_str = "\n".join(sections)
     scripts_str = "\n".join(scripts)
+    spotlight_modules_str = "\n".join(spotlight_items)
     initial_loads = "\n".join([f"            carregar{pascal_case(m)}();" for m in module_slugs])
 
     html_template = """<!DOCTYPE html>
@@ -1175,9 +1181,15 @@ def generate_superapp_index_html(suite_name: str, module_slugs: list) -> str:
             <span class="badge-ver">v5.1 Enterprise</span>
         </div>
         <div class="topbar-links">
-            <a href="/docs" target="_blank" class="topbar-link">Swagger Studio</a>
-            <a href="/webhooks" target="_blank" class="topbar-link">Webhook Studio</a>
-            <a href="/mcp" target="_blank" class="topbar-link">MCP Native</a>
+            <button type="button" onclick="abrirSpotlight()" class="topbar-link" style="display: inline-flex; align-items: center; gap: 0.4rem; cursor: pointer; background: rgba(255,255,255,0.03);" title="Comandos rápidos (Ctrl + K)">
+                <svg width="13" height="13" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+                <span>Buscar</span>
+                <kbd style="background: #27272a; padding: 1px 5px; border-radius: 4px; font-size: 0.65rem; color: #a1a1aa; border: 1px solid #3f3f46;">Ctrl K</kbd>
+            </button>
+            <a href="/docs/guia" class="topbar-link" style="background: rgba(14, 165, 233, 0.15); color: #38bdf8; border: 1px solid rgba(56, 189, 248, 0.35); font-weight: 700;">Documentação Completa</a>
+            <a href="/docs" class="topbar-link">Swagger Studio</a>
+            <a href="/webhooks" class="topbar-link">Webhook Studio</a>
+            <a href="/mcp" class="topbar-link">MCP Native</a>
         </div>
     </header>
 
@@ -1193,7 +1205,7 @@ def generate_superapp_index_html(suite_name: str, module_slugs: list) -> str:
         __SECTIONS__
     </main>
 
-    <!-- MODAL DE CADASTRO -->
+    <!-- MODAL DE CADASTRO E EDIÇÃO (CRUD COMPLETO) -->
     <div id="modal-generic" class="modal-overlay" onclick="if(event.target === this) fecharModal()">
         <div class="modal-card">
             <div class="modal-header">
@@ -1202,6 +1214,7 @@ def generate_superapp_index_html(suite_name: str, module_slugs: list) -> str:
             </div>
             <form onsubmit="salvarItemGenerico(event)">
                 <input type="hidden" id="modal-slug">
+                <input type="hidden" id="modal-id">
                 <div class="form-group">
                     <label for="modal-input-titulo">Título *</label>
                     <input type="text" id="modal-input-titulo" required placeholder="Digite o título descritivo..." class="form-control">
@@ -1210,11 +1223,54 @@ def generate_superapp_index_html(suite_name: str, module_slugs: list) -> str:
                     <label for="modal-input-desc">Descrição Detalhada</label>
                     <textarea id="modal-input-desc" rows="3" placeholder="Informações adicionais..." class="form-control"></textarea>
                 </div>
+                <div class="form-group">
+                    <label for="modal-input-status">Status</label>
+                    <select id="modal-input-status" class="form-control">
+                        <option value="ativo">Ativo</option>
+                        <option value="concluido">Concluído</option>
+                        <option value="inativo">Inativo</option>
+                    </select>
+                </div>
                 <div class="modal-footer">
                     <button type="button" onclick="fecharModal()" class="btn btn-secondary">Cancelar</button>
-                    <button type="submit" class="btn btn-primary">Salvar Registro</button>
+                    <button type="submit" class="btn btn-primary" id="modal-btn-salvar">Salvar Registro</button>
                 </div>
             </form>
+        </div>
+    </div>
+
+    <!-- MODAL DE CONFIRMAÇÃO (ZERO OS ALERTS) -->
+    <div id="modal-confirm" class="modal-overlay" onclick="if(event.target === this) fecharModalConfirmacao()">
+        <div class="modal-card" style="max-width: 440px;">
+            <div class="modal-header">
+                <h3 id="modal-confirm-titulo" class="modal-title">Confirmar Ação</h3>
+                <button type="button" onclick="fecharModalConfirmacao()" class="modal-close" aria-label="Fechar modal">&times;</button>
+            </div>
+            <div style="padding: 1rem 0; color: var(--text-muted, #a1a1aa); font-size: 0.9rem;" id="modal-confirm-msg">
+                Tem certeza que deseja prosseguir com esta ação?
+            </div>
+            <div class="modal-footer">
+                <button type="button" onclick="fecharModalConfirmacao()" class="btn btn-secondary">Cancelar</button>
+                <button type="button" id="modal-confirm-btn" class="btn btn-delete" style="background: #ef4444; color: #fff;">Confirmar Exclusão</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- SPOTLIGHT COMMAND PALETTE (CTRL + K) -->
+    <div id="modal-spotlight" class="modal-overlay" onclick="if(event.target === this) fecharSpotlight()">
+        <div class="modal-card" style="max-width: 580px; padding: 0; overflow: hidden; background: #09090b; border: 1px solid #27272a;">
+            <div style="display: flex; align-items: center; gap: 10px; padding: 14px 16px; border-bottom: 1px solid #27272a;">
+                <svg width="18" height="18" fill="none" stroke="#38bdf8" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+                <input type="text" id="spotlight-input" placeholder="Digite um comando, módulo ou atalho (Esc para fechar)..." style="flex: 1; background: transparent; border: none; outline: none; color: #f4f4f5; font-size: 14px;" oninput="filtrarComandosSpotlight(this.value)">
+                <kbd style="background: #18181b; padding: 2px 6px; border-radius: 4px; font-size: 11px; color: #71717a; border: 1px solid #27272a;">ESC</kbd>
+            </div>
+            <div id="spotlight-results" style="max-height: 320px; overflow-y: auto; padding: 8px;">
+                <!-- Itens injetados via JS -->
+            </div>
+            <div style="display: flex; justify-content: space-between; align-items: center; padding: 8px 16px; background: #18181b; border-top: 1px solid #27272a; font-size: 11px; color: #71717a;">
+                <span>Navegue com <kbd style="color: #a1a1aa;">↑</kbd> <kbd style="color: #a1a1aa;">↓</kbd> e selecione com <kbd style="color: #a1a1aa;">Enter</kbd></span>
+                <span>__SUITE_NAME__</span>
+            </div>
         </div>
     </div>
 
@@ -1232,10 +1288,32 @@ def generate_superapp_index_html(suite_name: str, module_slugs: list) -> str:
         }
 
         function abrirModalNovo(slug) {
+            document.getElementById('modal-id').value = '';
             document.getElementById('modal-slug').value = slug;
             document.getElementById('modal-titulo').textContent = 'Novo Registro (' + slug.toUpperCase() + ')';
+            document.getElementById('modal-btn-salvar').textContent = 'Salvar Registro';
             document.getElementById('modal-input-titulo').value = '';
             document.getElementById('modal-input-desc').value = '';
+            document.getElementById('modal-input-status').value = 'ativo';
+            document.getElementById('modal-generic').classList.add('open');
+            setTimeout(() => document.getElementById('modal-input-titulo').focus(), 50);
+        }
+
+        function abrirModalEditar(slug, id) {
+            const pascal = slug.charAt(0).toUpperCase() + slug.slice(1);
+            const cache = window['dados' + pascal + 'Cache'] || [];
+            const item = cache.find(i => Number(i.id) === Number(id));
+            if (!item) {
+                mostrarToast('Registro não encontrado no cache', 'erro');
+                return;
+            }
+            document.getElementById('modal-id').value = item.id;
+            document.getElementById('modal-slug').value = slug;
+            document.getElementById('modal-titulo').textContent = 'Editar Registro #' + item.id + ' (' + slug.toUpperCase() + ')';
+            document.getElementById('modal-btn-salvar').textContent = 'Atualizar Registro';
+            document.getElementById('modal-input-titulo').value = item.titulo || '';
+            document.getElementById('modal-input-desc').value = item.descricao || '';
+            document.getElementById('modal-input-status').value = item.status || 'ativo';
             document.getElementById('modal-generic').classList.add('open');
             setTimeout(() => document.getElementById('modal-input-titulo').focus(), 50);
         }
@@ -1260,20 +1338,28 @@ def generate_superapp_index_html(suite_name: str, module_slugs: list) -> str:
 
         async function salvarItemGenerico(e) {
             e.preventDefault();
+            const id = document.getElementById('modal-id').value;
             const slug = document.getElementById('modal-slug').value;
             const titulo = document.getElementById('modal-input-titulo').value;
             const descricao = document.getElementById('modal-input-desc').value;
+            const status = document.getElementById('modal-input-status').value;
+
+            const isEdit = Boolean(id);
+            const endpoint = isEdit ? '/api/' + slug + '/atualizar' : '/api/' + slug + '/criar';
+            const payload = isEdit 
+                ? { id: Number(id), titulo, descricao, status }
+                : { titulo, descricao, status };
 
             try {
-                const res = await fetch('/api/' + slug + '/criar', {
+                const res = await fetch(endpoint, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ titulo, descricao, status: 'ativo' })
+                    body: JSON.stringify(payload)
                 });
                 const data = await res.json();
-                if (data.sucesso) {
+                if (data.sucesso || data.id) {
                     fecharModal();
-                    mostrarToast('Registro salvo com sucesso!');
+                    mostrarToast(isEdit ? 'Registro #' + id + ' atualizado com sucesso!' : 'Registro salvo com sucesso!');
                     const fnName = 'carregar' + slug.charAt(0).toUpperCase() + slug.slice(1);
                     if (window[fnName]) window[fnName]();
                 } else {
@@ -1284,27 +1370,151 @@ def generate_superapp_index_html(suite_name: str, module_slugs: list) -> str:
             }
         }
 
-        async function deletarItem(slug, id) {
-            if (!confirm('Deseja realmente remover o registro #' + id + '?')) return;
-            try {
-                const res = await fetch('/api/' + slug + '/deletar', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ id })
-                });
-                const data = await res.json();
-                if (data.sucesso) {
-                    mostrarToast('Registro #' + id + ' removido!');
-                    const fnName = 'carregar' + slug.charAt(0).toUpperCase() + slug.slice(1);
-                    if (window[fnName]) window[fnName]();
-                } else {
-                    mostrarToast('Erro ao remover: ' + (data.erro || 'Falha'), 'erro');
+        let confirmCallback = null;
+        function abrirConfirmacao(msg, onConfirm) {
+            document.getElementById('modal-confirm-msg').textContent = msg;
+            confirmCallback = onConfirm;
+            document.getElementById('modal-confirm').classList.add('open');
+            document.getElementById('modal-confirm-btn').onclick = async () => {
+                fecharModalConfirmacao();
+                if (confirmCallback) {
+                    await confirmCallback();
+                    confirmCallback = null;
                 }
-            } catch (e) {
-                console.error(e);
-                mostrarToast('Erro ao excluir registro', 'erro');
+            };
+        }
+
+        function fecharModalConfirmacao() {
+            document.getElementById('modal-confirm').classList.remove('open');
+            confirmCallback = null;
+        }
+
+        async function deletarItem(slug, id) {
+            abrirConfirmacao('Deseja realmente remover o registro #' + id + '?', async () => {
+                try {
+                    const res = await fetch('/api/' + slug + '/deletar', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ id })
+                    });
+                    const data = await res.json();
+                    if (data.sucesso) {
+                        mostrarToast('Registro #' + id + ' removido!');
+                        const fnName = 'carregar' + slug.charAt(0).toUpperCase() + slug.slice(1);
+                        if (window[fnName]) window[fnName]();
+                    } else {
+                        mostrarToast('Erro ao remover: ' + (data.erro || 'Falha'), 'erro');
+                    }
+                } catch (e) {
+                    console.error(e);
+                    mostrarToast('Erro ao excluir registro', 'erro');
+                }
+            });
+        }
+
+        // ==========================================
+        // SPOTLIGHT COMMAND PALETTE (CTRL + K)
+        // ==========================================
+        const COMANDOS_SPOTLIGHT = [
+            { titulo: 'Documentação Completa da Aplicação', subtitulo: 'Guia enciclopédico de arquitetura, tokens e operações', url: '/docs/guia', atalho: 'G D' },
+            { titulo: 'Swagger Studio (OpenAPI 3.1 Dark Mode)', subtitulo: 'Catálogo de rotas interativo e playground cURL', url: '/docs', atalho: 'G S' },
+            { titulo: 'Webhook Configuration Studio', subtitulo: 'Gestão de endpoints e simulador de assinaturas HMAC SHA-256', url: '/webhooks', atalho: 'G W' },
+            { titulo: 'MCP Native Studio (JSON-RPC 2.0)', subtitulo: 'Portal nativo de ferramentas para Claude Desktop e Cursor', url: '/mcp', atalho: 'G M' },
+__SPOTLIGHT_MODULES__
+            { titulo: 'Verificar Saúde da API (Healthcheck)', subtitulo: 'Consulta status e versão em /health', url: '/health', atalho: 'H' },
+            { titulo: 'Especificação OpenAPI JSON', subtitulo: 'Contrato canônico serializado em /openapi.json', url: '/openapi.json', atalho: 'O' }
+        ];
+
+        let spotlightIndex = 0;
+        let comandosFiltrados = [...COMANDOS_SPOTLIGHT];
+
+        function abrirSpotlight() {
+            const modal = document.getElementById('modal-spotlight');
+            const input = document.getElementById('spotlight-input');
+            input.value = '';
+            comandosFiltrados = [...COMANDOS_SPOTLIGHT];
+            spotlightIndex = 0;
+            renderizarItensSpotlight();
+            modal.classList.add('open');
+            setTimeout(() => input.focus(), 50);
+        }
+
+        function fecharSpotlight() {
+            document.getElementById('modal-spotlight').classList.remove('open');
+        }
+
+        function filtrarComandosSpotlight(termo) {
+            const q = (termo || '').toLowerCase().trim();
+            if (!q) {
+                comandosFiltrados = [...COMANDOS_SPOTLIGHT];
+            } else {
+                comandosFiltrados = COMANDOS_SPOTLIGHT.filter(c => 
+                    c.titulo.toLowerCase().includes(q) || 
+                    c.subtitulo.toLowerCase().includes(q)
+                );
+            }
+            spotlightIndex = 0;
+            renderizarItensSpotlight();
+        }
+
+        function renderizarItensSpotlight() {
+            const container = document.getElementById('spotlight-results');
+            if (comandosFiltrados.length === 0) {
+                container.innerHTML = '<div style="padding: 16px; text-align: center; color: #71717a; font-size: 13px;">Nenhum comando encontrado.</div>';
+                return;
+            }
+            container.innerHTML = comandosFiltrados.map((c, idx) => `
+                <div class="spotlight-item" style="display: flex; justify-content: space-between; align-items: center; padding: 10px 14px; border-radius: 6px; cursor: pointer; background: ${idx === spotlightIndex ? '#18181b' : 'transparent'}; margin-bottom: 2px;" onclick="executarComandoSpotlight(${idx})">
+                    <div>
+                        <div style="font-size: 13px; font-weight: 600; color: ${idx === spotlightIndex ? '#38bdf8' : '#f4f4f5'};">${escapeHtml(c.titulo)}</div>
+                        <div style="font-size: 11px; color: #71717a; margin-top: 2px;">${escapeHtml(c.subtitulo)}</div>
+                    </div>
+                    ${c.atalho ? `<kbd style="background: #27272a; color: #a1a1aa; padding: 2px 6px; border-radius: 4px; font-size: 10px; border: 1px solid #3f3f46;">${escapeHtml(c.atalho)}</kbd>` : ''}
+                </div>
+            `).join('');
+        }
+
+        function executarComandoSpotlight(idx) {
+            const cmd = comandosFiltrados[idx];
+            if (!cmd) return;
+            fecharSpotlight();
+            if (cmd.url) {
+                window.location.href = cmd.url;
+            } else if (cmd.acao) {
+                cmd.acao();
             }
         }
+
+        // Listener global de teclado (Ctrl + K e Navegação)
+        window.addEventListener('keydown', (e) => {
+            if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k') {
+                e.preventDefault();
+                abrirSpotlight();
+                return;
+            }
+
+            const modalSpotlight = document.getElementById('modal-spotlight');
+            if (modalSpotlight && modalSpotlight.classList.contains('open')) {
+                if (e.key === 'Escape') {
+                    fecharSpotlight();
+                } else if (e.key === 'ArrowDown') {
+                    e.preventDefault();
+                    if (comandosFiltrados.length > 0) {
+                        spotlightIndex = (spotlightIndex + 1) % comandosFiltrados.length;
+                        renderizarItensSpotlight();
+                    }
+                } else if (e.key === 'ArrowUp') {
+                    e.preventDefault();
+                    if (comandosFiltrados.length > 0) {
+                        spotlightIndex = (spotlightIndex - 1 + comandosFiltrados.length) % comandosFiltrados.length;
+                        renderizarItensSpotlight();
+                    }
+                } else if (e.key === 'Enter') {
+                    e.preventDefault();
+                    executarComandoSpotlight(spotlightIndex);
+                }
+            }
+        });
 
         __SCRIPTS__
 
@@ -1321,6 +1531,7 @@ __INITIAL_LOADS__
         .replace("__SUITE_NAME__", suite_name)
         .replace("__TABS_NAV__", tabs_nav_str)
         .replace("__SECTIONS__", sections_str)
+        .replace("__SPOTLIGHT_MODULES__", spotlight_modules_str)
         .replace("__SCRIPTS__", scripts_str)
         .replace("__INITIAL_LOADS__", initial_loads)
     )
