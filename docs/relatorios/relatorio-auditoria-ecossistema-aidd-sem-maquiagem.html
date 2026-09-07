@@ -1,0 +1,626 @@
+<title>Auditoria Ecossistema AIDD</title>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,500&family=Public+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+<style>
+  :root{
+    --bg:#f4f6f9;
+    --surface:#ffffff;
+    --surface-alt:#eef1f6;
+    --border:#d7dee7;
+    --text:#16212e;
+    --text-2:#566579;
+    --text-3:#5f6f82;
+    --accent:#1d5fae;
+    --accent-soft:#e4edf9;
+    --good:#0d8563;
+    --good-soft:#e2f2ec;
+    --warn:#b39400;
+    --warn-soft:#f7f0da;
+    --crit:#c23020;
+    --crit-soft:#faeae7;
+    --neutral:#5b6b7c;
+    --ramp-0:#eef3fb; --ramp-1:#e4edf9; --ramp-2:#d3e2f5; --ramp-3:#c1d7f0; --ramp-4:#a9c9ea;
+    --ramp-5:#8fb8e2; --ramp-6:#71a4d8; --ramp-7:#5590cf; --ramp-8:#3f7fc4; --ramp-9:#2a6cb4; --ramp-10:#1d5fae;
+    --ramp-text-lo:#16212e; --ramp-text-hi:#f4f6f9;
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --bg:#0d1420;
+      --surface:#131c2b;
+      --surface-alt:#1a2536;
+      --border:#263449;
+      --text:#e7edf5;
+      --text-2:#a7b6c9;
+      --text-3:#7c8ba0;
+      --accent:#6ea8f0;
+      --accent-soft:rgba(110,168,240,.14);
+      --good:#0b8562;
+      --good-soft:rgba(15,158,120,.14);
+      --neutral:#5b6b7c;
+      --warn:#ad8e00;
+      --warn-soft:rgba(173,142,0,.16);
+      --crit:#d1382a;
+      --crit-soft:rgba(209,56,42,.14);
+      --ramp-0:#10192b; --ramp-1:#142140; --ramp-2:#182a55; --ramp-3:#1c3469; --ramp-4:#223f7d;
+      --ramp-5:#2a4b91; --ramp-6:#3459a4; --ramp-7:#4169b8; --ramp-8:#5079c8; --ramp-9:#0d1420; --ramp-10:#0d1420;
+      --ramp-text-lo:#e7edf5; --ramp-text-hi:#0d1420;
+    }
+  }
+  :root[data-theme="dark"]{
+    --bg:#0d1420; --surface:#131c2b; --surface-alt:#1a2536; --border:#263449;
+    --text:#e7edf5; --text-2:#a7b6c9; --text-3:#7c8ba0;
+    --accent:#6ea8f0; --accent-soft:rgba(110,168,240,.14);
+    --good:#0b8562; --good-soft:rgba(15,158,120,.14);
+    --neutral:#5b6b7c;
+    --warn:#ad8e00; --warn-soft:rgba(173,142,0,.16);
+    --crit:#d1382a; --crit-soft:rgba(209,56,42,.14);
+    --ramp-0:#10192b; --ramp-1:#142140; --ramp-2:#182a55; --ramp-3:#1c3469; --ramp-4:#223f7d;
+    --ramp-5:#2a4b91; --ramp-6:#3459a4; --ramp-7:#4169b8; --ramp-8:#5079c8; --ramp-9:#0d1420; --ramp-10:#0d1420;
+    --ramp-text-lo:#e7edf5; --ramp-text-hi:#0d1420;
+  }
+
+  *{box-sizing:border-box;}
+  body{
+    background:var(--bg);
+    color:var(--text);
+    font-family:"Public Sans", ui-sans-serif, system-ui, sans-serif;
+    line-height:1.55;
+  }
+  ::selection{ background:var(--accent-soft); }
+
+  .wrap{ max-width:920px; margin:0 auto; padding:56px 24px 96px; }
+
+  h1,h2,h3{ font-family:"Newsreader", Georgia, serif; font-weight:600; text-wrap:balance; color:var(--text); }
+  .eyebrow{
+    font-family:"IBM Plex Mono", ui-monospace, monospace;
+    font-size:11.5px; letter-spacing:.11em; text-transform:uppercase;
+    color:var(--accent); font-weight:600; margin:0 0 10px;
+  }
+  .mono{ font-family:"IBM Plex Mono", ui-monospace, monospace; font-variant-numeric:tabular-nums; }
+
+  /* ---------- header ---------- */
+  header.top{ border-bottom:1px solid var(--border); padding-bottom:28px; margin-bottom:36px; }
+  h1{ font-size:clamp(30px,4vw,42px); line-height:1.08; margin:0 0 14px; letter-spacing:-.01em; }
+  .dek{ color:var(--text-2); font-size:16.5px; max-width:60ch; margin:0 0 20px; }
+  .meta-row{
+    display:flex; flex-wrap:wrap; gap:8px 22px;
+    font-size:12.5px; color:var(--text-3);
+  }
+  .meta-row .mono{ color:var(--text-2); }
+  .meta-row b{ color:var(--text); font-weight:600; }
+
+  /* ---------- status strip ---------- */
+  .status-strip{
+    display:grid; grid-template-columns:repeat(5,1fr); gap:10px;
+    margin:28px 0 0;
+  }
+  .status-chip{
+    background:var(--surface); border:1px solid var(--border); border-radius:8px;
+    padding:12px 12px 11px;
+  }
+  .status-chip .name{ font-weight:600; font-size:13.5px; margin-bottom:6px; display:flex; align-items:center; gap:7px; }
+  .status-chip .dot{ width:8px; height:8px; border-radius:50%; flex:none; }
+  .status-chip .verdict{ font-size:12px; color:var(--text-2); }
+  .dot.good{ background:var(--good); }
+  .dot.warn{ background:var(--warn); }
+  .dot.crit{ background:var(--crit); }
+
+  /* ---------- section shell ---------- */
+  section{ margin:52px 0; }
+  section > h2{ font-size:23px; margin:0 0 6px; }
+  .section-note{ color:var(--text-2); font-size:14px; margin:0 0 22px; max-width:68ch; }
+
+  /* ---------- callout ---------- */
+  .callout{
+    border:1px solid var(--crit); background:var(--crit-soft);
+    border-radius:10px; padding:20px 22px; display:flex; gap:16px; align-items:flex-start;
+  }
+  .callout .mark{
+    font-family:"IBM Plex Mono", monospace; font-weight:600; font-size:12px;
+    color:var(--crit); border:1px solid var(--crit); border-radius:5px;
+    padding:2px 7px; flex:none; margin-top:3px; letter-spacing:.04em;
+  }
+  .callout p{ margin:0 0 8px; font-size:15px; }
+  .callout p:last-child{ margin-bottom:0; }
+  .callout strong{ color:var(--text); }
+
+  /* ---------- test panel ---------- */
+  .test-panel{ display:flex; flex-direction:column; gap:20px; }
+  .test-row{
+    display:grid; grid-template-columns:112px 1fr; gap:18px; align-items:center;
+    background:var(--surface); border:1px solid var(--border); border-radius:10px;
+    padding:16px 18px;
+  }
+  .test-row .tool-name{ font-weight:600; font-size:14.5px; }
+  .test-row .tool-sub{ font-size:11.5px; color:var(--text-3); margin-top:2px; }
+  .bars{ display:flex; flex-direction:column; gap:9px; }
+  .bar-line{ display:grid; grid-template-columns:78px 1fr; gap:12px; align-items:center; }
+  .bar-label{ font-size:11px; color:var(--text-3); text-transform:uppercase; letter-spacing:.05em; }
+  .bar-track{
+    height:22px; border-radius:5px; background:var(--surface-alt);
+    display:flex; overflow:hidden; border:1px solid var(--border);
+  }
+  .bar-track.empty{
+    background:repeating-linear-gradient(135deg, var(--surface-alt), var(--surface-alt) 6px, var(--border) 6px, var(--border) 7px);
+    align-items:center; justify-content:flex-start;
+  }
+  .bar-track .empty-label{ font-size:11px; color:var(--text-3); padding-left:10px; font-family:"IBM Plex Mono",monospace; }
+  .seg{ display:flex; align-items:center; justify-content:center; font-size:11px; font-weight:600; color:#fff;
+        font-family:"IBM Plex Mono",monospace; min-width:0; white-space:nowrap; overflow:hidden; padding:0 4px; }
+  .seg.p{ background:var(--good); }
+  .seg.f{ background:var(--crit); }
+  .seg.s{ background:var(--neutral); }
+
+  /* ---------- heatmap ---------- */
+  .table-scroll{ overflow-x:auto; border-radius:10px; border:1px solid var(--border); }
+  table.heat{ border-collapse:collapse; width:100%; min-width:640px; background:var(--surface); }
+  table.heat th, table.heat td{ padding:11px 13px; text-align:center; font-size:13.5px; border-bottom:1px solid var(--border); }
+  table.heat thead th{
+    font-family:"IBM Plex Mono", monospace; font-size:12px; text-transform:uppercase; letter-spacing:.06em;
+    color:var(--text-2); font-weight:600; background:var(--surface-alt); border-bottom:1px solid var(--border);
+  }
+  table.heat tbody th{
+    text-align:left; font-weight:600; font-size:13.5px; color:var(--text); white-space:nowrap;
+    background:var(--surface); position:sticky; left:0;
+  }
+  table.heat td.score{ font-family:"IBM Plex Mono",monospace; font-weight:600; }
+  table.heat tr:last-child td, table.heat tr:last-child th{ border-bottom:none; }
+  table.heat tbody tr.avg th, table.heat tbody tr.avg td{ border-top:2px solid var(--border); font-weight:700; }
+  .legend-ramp{ display:flex; align-items:center; gap:10px; margin-top:12px; font-size:11.5px; color:var(--text-3); }
+  .legend-ramp .swatches{ display:flex; }
+  .legend-ramp .swatches span{ width:20px; height:10px; display:inline-block; }
+  .dims-key{ font-size:12px; color:var(--text-3); margin-top:10px; line-height:1.7; }
+  .dims-key b{ color:var(--text-2); font-weight:600; }
+
+  /* ---------- findings ---------- */
+  .findings{ display:flex; flex-direction:column; gap:14px; }
+  .finding{
+    display:grid; grid-template-columns:auto 1fr; gap:14px;
+    background:var(--surface); border:1px solid var(--border); border-radius:10px;
+    padding:16px 18px;
+  }
+  .sev{
+    font-family:"IBM Plex Mono",monospace; font-size:12px; font-weight:700; letter-spacing:.05em;
+    border-radius:5px; padding:4px 8px; height:fit-content; white-space:nowrap;
+  }
+  .sev.crit{ background:var(--crit-soft); color:var(--crit); border:1px solid color-mix(in srgb, var(--crit) 45%, transparent); }
+  .sev.warn{ background:var(--warn-soft); color:var(--warn); border:1px solid color-mix(in srgb, var(--warn) 45%, transparent); }
+  .sev.good{ background:var(--good-soft); color:var(--good); border:1px solid color-mix(in srgb, var(--good) 45%, transparent); }
+  .finding h3{ font-family:"Public Sans",sans-serif; font-size:15px; font-weight:700; margin:0 0 5px; }
+  .finding p{ margin:0 0 8px; font-size:14px; color:var(--text-2); }
+  .finding .loc{
+    font-family:"IBM Plex Mono",monospace; font-size:11.5px; color:var(--text-2);
+    background:var(--surface-alt); border:1px solid var(--border); border-radius:5px;
+    padding:2px 7px; display:inline-block;
+  }
+
+  /* ---------- token economy table ---------- */
+  .tok-table{ border-collapse:collapse; width:100%; min-width:640px; background:var(--surface); }
+  .tok-table th, .tok-table td{ padding:11px 13px; border-bottom:1px solid var(--border); font-size:13.5px; text-align:left; vertical-align:middle; }
+  .tok-table thead th{
+    font-family:"IBM Plex Mono",monospace; font-size:12px; text-transform:uppercase; letter-spacing:.06em;
+    color:var(--text-2); font-weight:600; background:var(--surface-alt);
+  }
+  .tok-table tr:last-child td{ border-bottom:none; }
+  .tok-table td.tool{ font-weight:600; white-space:nowrap; }
+  .tok-table td.num{ font-family:"IBM Plex Mono",monospace; font-variant-numeric:tabular-nums; white-space:nowrap; }
+  .tok-bar-cell{ display:flex; align-items:center; gap:10px; min-width:180px; }
+  .tok-bar-track{ flex:1; height:14px; background:var(--surface-alt); border:1px solid var(--border); border-radius:4px; overflow:hidden; min-width:80px; }
+  .tok-bar-fill{ height:100%; background:var(--accent); }
+  .tok-table td.core{ color:var(--text-2); font-size:13px; max-width:220px; }
+  .chip{
+    font-family:"IBM Plex Mono",monospace; font-size:12px; font-weight:700; letter-spacing:.03em;
+    border-radius:5px; padding:3px 8px; white-space:nowrap; display:inline-block;
+  }
+  .chip.good{ background:var(--good-soft); color:var(--good); }
+  .chip.warn{ background:var(--warn-soft); color:var(--warn); }
+  .chip.crit{ background:var(--crit-soft); color:var(--crit); }
+
+  /* ---------- good points (quiet) ---------- */
+  .good-list{ list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:10px; }
+  .good-list li{ display:flex; gap:10px; font-size:14px; color:var(--text-2); align-items:flex-start; }
+  .good-list li::before{ content:"✓"; color:var(--good); font-weight:700; flex:none; font-family:"IBM Plex Mono",monospace; }
+  .good-list b{ color:var(--text); font-weight:600; }
+
+  /* ---------- verdict ---------- */
+  .verdict{ border-left:3px solid var(--accent); padding-left:22px; }
+  .verdict p{ font-family:"Newsreader",serif; font-size:19px; font-style:italic; color:var(--text); margin:0 0 14px; line-height:1.5; }
+  .verdict footer{ font-family:"IBM Plex Mono",monospace; font-size:11.5px; color:var(--text-3); }
+
+  footer.page{
+    margin-top:64px; padding-top:20px; border-top:1px solid var(--border);
+    font-size:12px; color:var(--text-3); display:flex; justify-content:space-between; flex-wrap:wrap; gap:8px;
+  }
+
+  @media (max-width:720px){
+    .status-strip{ grid-template-columns:repeat(2,1fr); }
+    .test-row{ grid-template-columns:1fr; }
+    .test-row .tool-name{ margin-bottom:2px; }
+    .finding{ grid-template-columns:1fr; }
+  }
+</style>
+
+<div class="wrap">
+
+  <header class="top">
+    <p class="eyebrow">Auditoria técnica</p>
+    <h1>O ecossistema AIDD, sem maquiagem</h1>
+    <p class="dek">Notas objetivas para aidd-forge, aidd-generator, aidd-master, aidd-enterprise e aidd-ops — medidas rodando <b class="mono" style="color:var(--text)">pytest</b> ao vivo, lendo o código-fonte, e <b style="color:var(--text)">subindo de verdade os apps que cada ferramenta gerou</b>, não a telemetria que o repositório afirma sobre si mesmo.</p>
+    <div class="meta-row">
+      <span>Repositório: <span class="mono">ecossistema-aidd</span></span>
+      <span>Medido em: <span class="mono">2026-09-07</span></span>
+      <span>Método: <span class="mono">pytest -q por ferramenta + leitura de código + git diff + execução dos 6 projetos de saída</span></span>
+    </div>
+    <div class="status-strip">
+      <div class="status-chip"><div class="name"><span class="dot good"></span>Forge</div><div class="verdict">Estável, mais maduro</div></div>
+      <div class="status-chip"><div class="name"><span class="dot warn"></span>Generator</div><div class="verdict">Híbrido honesto</div></div>
+      <div class="status-chip"><div class="name"><span class="dot warn"></span>Master</div><div class="verdict">Regressão ativa</div></div>
+      <div class="status-chip"><div class="name"><span class="dot warn"></span>Enterprise</div><div class="verdict">Regressão ativa</div></div>
+      <div class="status-chip"><div class="name"><span class="dot crit"></span>Ops</div><div class="verdict">MVP quebrado</div></div>
+    </div>
+  </header>
+
+  <section>
+    <p class="eyebrow">Achado principal</p>
+    <div class="callout">
+      <span class="mark">CRÍTICO</span>
+      <div>
+        <p><strong>Gate verde não significa software funcionando.</strong> <span class="mono">python ecossistema.py audit</span> passa os 8 portões 100% verde no mesmo commit em que 12 testes reais estão vermelhos (2 em aidd-master, 2 em aidd-enterprise, 8 em aidd-ops) — porque nenhum dos 8 gates roda <span class="mono">pytest</span>.</p>
+        <p>E a telemetria que o próprio <span class="mono">AGENTS.md</span> descreve como "não digitada à mão" está desatualizada em 3 das 5 ferramentas. O painel abaixo mostra a distância entre o que o repositório alega e o que foi medido agora.</p>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Testes: o que o repositório alega vs. o que roda agora</h2>
+    <p class="section-note">Cada ferramenta tem duas barras: <b style="color:var(--text)">Alegado</b> é o número gravado em <span class="mono">PLANO-EXECUCAO-ESTRUTURADO.json</span>; <b style="color:var(--text)">Medido agora</b> é <span class="mono">pytest -q --tb=no</span> rodado ao vivo nesta auditoria.</p>
+
+    <div class="test-panel">
+
+      <div class="test-row">
+        <div><div class="tool-name">aidd-forge</div><div class="tool-sub mono">/forge</div></div>
+        <div class="bars">
+          <div class="bar-line"><span class="bar-label">Alegado</span>
+            <div class="bar-track"><div class="seg p" style="flex:197" title="197 passou">197</div><div class="seg s" style="flex:1" title="1 pulado">1</div></div>
+          </div>
+          <div class="bar-line"><span class="bar-label">Medido</span>
+            <div class="bar-track"><div class="seg p" style="flex:197" title="197 passou">197</div><div class="seg s" style="flex:1" title="1 pulado">1</div></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="test-row">
+        <div><div class="tool-name">aidd-generator</div><div class="tool-sub mono">/generate</div></div>
+        <div class="bars">
+          <div class="bar-line"><span class="bar-label">Alegado</span>
+            <div class="bar-track"><div class="seg p" style="flex:770" title="770 passou">770</div></div>
+          </div>
+          <div class="bar-line"><span class="bar-label">Medido</span>
+            <div class="bar-track"><div class="seg p" style="flex:770" title="770 passou">770</div></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="test-row">
+        <div><div class="tool-name">aidd-master</div><div class="tool-sub mono">/master</div></div>
+        <div class="bars">
+          <div class="bar-line"><span class="bar-label">Alegado</span>
+            <div class="bar-track"><div class="seg p" style="flex:216" title="216 passou">216</div><div class="seg s" style="flex:2" title="2 pulado">2</div></div>
+          </div>
+          <div class="bar-line"><span class="bar-label">Medido</span>
+            <div class="bar-track"><div class="seg p" style="flex:212" title="212 passou">212</div><div class="seg f" style="flex:2" title="2 falhou">2</div><div class="seg s" style="flex:4" title="4 pulado">4</div></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="test-row">
+        <div><div class="tool-name">aidd-enterprise</div><div class="tool-sub mono">/enterprise</div></div>
+        <div class="bars">
+          <div class="bar-line"><span class="bar-label">Alegado</span>
+            <div class="bar-track"><div class="seg p" style="flex:205" title="205 passou">205</div><div class="seg s" style="flex:2" title="2 pulado">2</div></div>
+          </div>
+          <div class="bar-line"><span class="bar-label">Medido</span>
+            <div class="bar-track"><div class="seg p" style="flex:201" title="201 passou">201</div><div class="seg f" style="flex:2" title="2 falhou">2</div><div class="seg s" style="flex:4" title="4 pulado">4</div></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="test-row">
+        <div><div class="tool-name">aidd-ops</div><div class="tool-sub mono">/ops</div></div>
+        <div class="bars">
+          <div class="bar-line"><span class="bar-label">Alegado</span>
+            <div class="bar-track empty"><span class="empty-label">0/0/0 — nenhum teste coletado na telemetria</span></div>
+          </div>
+          <div class="bar-line"><span class="bar-label">Medido</span>
+            <div class="bar-track"><div class="seg p" style="flex:48" title="48 passou">48</div><div class="seg f" style="flex:8" title="8 falhou">8</div></div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <section>
+    <h2>Notas por dimensão (0–10)</h2>
+    <p class="section-note">Cada nota vem de leitura direta do código-fonte de cada ferramenta, não da documentação dela.</p>
+    <div class="table-scroll">
+      <table class="heat">
+        <thead>
+          <tr>
+            <th style="text-align:left;">Ferramenta</th>
+            <th>Agêntica</th><th>Tokens</th><th>Uso</th><th>Univers.</th><th>Entrega</th><th>Determin.</th><th>Média</th>
+          </tr>
+        </thead>
+        <tbody id="heat-body"><!-- filled by script --></tbody>
+      </table>
+    </div>
+    <div class="legend-ramp">
+      <span>0</span>
+      <span class="swatches">
+        <span style="background:var(--ramp-0)"></span><span style="background:var(--ramp-2)"></span><span style="background:var(--ramp-4)"></span>
+        <span style="background:var(--ramp-6)"></span><span style="background:var(--ramp-8)"></span><span style="background:var(--ramp-10)"></span>
+      </span>
+      <span>10</span>
+    </div>
+    <p class="dims-key">
+      <b>Agêntica</b> = engenharia agêntica aplicada · <b>Tokens</b> = economia de tokens ·
+      <b>Uso</b> = facilidade de uso · <b>Univers.</b> = universalidade / anti-lock-in ·
+      <b>Entrega</b> = completude testada agora · <b>Determin.</b> = quanto do fluxo é determinístico de fato
+    </p>
+  </section>
+
+  <section>
+    <h2>Prova de entrega: rodando o que cada ferramenta gerou</h2>
+    <p class="section-note">Não bastou ler o código da ferramenta — subimos os servidores dos 5 projetos que ela produziu (mais o "teste integrado") numa porta local e testamos requisições reais.</p>
+    <div class="findings">
+
+      <div class="finding">
+        <span class="sev good">FUNCIONA</span>
+        <div>
+          <h3>aidd-generator — CRUD, MCP e webhook real, de ponta a ponta</h3>
+          <p>API FastAPI subiu e respondeu: <span class="mono">POST /api/tarefas</span> criou registro real, persistido em SQLite com histórico genuíno (7 tarefas, 32 logs de webhook HMAC). Achado: <span class="mono">CORSMiddleware(allow_origins=["*"], allow_credentials=True)</span> — combinação insegura.</p>
+          <span class="loc">teste-isolado-aidd-generator/src/app.py</span>
+        </div>
+      </div>
+
+      <div class="finding">
+        <span class="sev warn">FUNCIONA COM RESSALVA</span>
+        <div>
+          <h3>aidd-master — a aplicação roda, o deploy prometido não</h3>
+          <p><span class="mono">uvicorn</span> direto sobe e responde CRUD real de estoque (200/201, dados persistidos). Mas o <span class="mono">Dockerfile</span> nunca roda <span class="mono">pip install</span> (falta fastapi/uvicorn na imagem) e o compose monta uma pasta <span class="mono">nginx/</span> que não existe — o caminho de deploy documentado quebra na primeira tentativa.</p>
+          <span class="loc">teste-isolado-aidd-master/Dockerfile:22-35 · docker-compose.yml:32-33</span>
+        </div>
+      </div>
+
+      <div class="finding">
+        <span class="sev warn">FUNCIONA COM RESSALVA</span>
+        <div>
+          <h3>aidd-enterprise — servidor real, selo de segurança é majoritariamente teatro</h3>
+          <p>Servidor stdlib subiu e respondeu 200 em <span class="mono">/</span>, <span class="mono">/docs</span>, <span class="mono">/openapi.json</span>; tabelas de outbox/auditoria são reais. Mas o gate que emite "Score de Blindagem 100%, NOTA A+, HOMOLOGADA PARA PRODUÇÃO GLOBAL" testa de fato só ~4 dos 21 itens (JWT tamper, hash de senha) — o resto é grep de header/config estático vestido de "blindagem militar".</p>
+          <span class="loc">teste-isolado-aidd-enterprise/scripts/gates/G_SEGURANCA.py:67-300</span>
+        </div>
+      </div>
+
+      <div class="finding">
+        <span class="sev crit">FALHA REAL</span>
+        <div>
+          <h3>aidd-ops — porta duplicada no compose, e o dashboard inventa que está tudo bem</h3>
+          <p><span class="mono">docker-compose.yml</span> publica 3 serviços (Twenty, Chatwoot, Cal.com) todos na porta host <span class="mono">3000</span> — <span class="mono">docker compose up</span> quebraria no segundo serviço. O endpoint <span class="mono">/api/preflight</span> do dashboard, que deveria detectar exatamente isso, devolve um JSON <b>hardcoded no código do servidor</b> alegando "8 portas mapeadas, sem colisão" — números que nem existem no compose real.</p>
+          <span class="loc">teste-isolado-aidd-ops/dashboard_server.py:78-99 · docker-compose.yml</span>
+        </div>
+      </div>
+
+      <div class="finding">
+        <span class="sev crit">NÃO COMPROVADO</span>
+        <div>
+          <h3>"Teste integrado" não é integração — é o mesmo aidd-enterprise com um módulo a mais</h3>
+          <p><span class="mono">orca/02_routing_rules.json</span> mostra <span class="mono">harness_count: 0</span> e <span class="mono">mode: "unconfigured"</span> — a orquestração multi-harness nunca rodou. Generator (fase 1) e Ops rodaram de fato e deixaram evidência real (<span class="mono">insights_phase1.json</span>, <span class="mono">PLANO-INFRAESTRUTURA.json</span>), mas nenhum dos dois resultados foi aplicado ao projeto: o compose final continua sendo o template genérico do enterprise. As saídas coexistem na pasta, não se compõem.</p>
+          <span class="loc">teste-integrado-ecossistema-aidd/orca/ · pipeline_phases/</span>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <section>
+    <h2>Achados</h2>
+    <p class="section-note">Ordenados por gravidade, com o arquivo e a linha onde cada um foi verificado.</p>
+    <div class="findings">
+
+      <div class="finding">
+        <span class="sev crit">CRÍTICO</span>
+        <div>
+          <h3>Gate verde ≠ testes passando</h3>
+          <p>Os 8 quality gates auditam estrutura, sintaxe, drift e segredos — nenhum roda a suíte de testes de cada ferramenta. O selo binário do ecossistema pode estar 100% verde com 12 testes reais vermelhos, como agora.</p>
+          <span class="loc">gates/*.py — nenhum invoca pytest</span>
+        </div>
+      </div>
+
+      <div class="finding">
+        <span class="sev crit">CRÍTICO</span>
+        <div>
+          <h3>Telemetria "não digitada à mão" está errada em 3 de 5 ferramentas</h3>
+          <p>O arquivo se vende como gerado por script, não por afirmação humana. Hoje ele diz aidd-ops 0/0/0, aidd-master 216/0, aidd-enterprise 205/0 — a medição ao vivo desta auditoria deu 48/8, 212/2 e 201/2, respectivamente.</p>
+          <span class="loc">PLANO-EXECUCAO-ESTRUTURADO.json:94-125</span>
+        </div>
+      </div>
+
+      <div class="finding">
+        <span class="sev warn">ATENÇÃO</span>
+        <div>
+          <h3>CSP relaxado em template "Zero-Trust"</h3>
+          <p>O template de segurança compartilhado entre master e enterprise passou de <span class="mono">script-src 'self'</span> para incluir <span class="mono">'unsafe-inline'</span> e CDNs externos — anula boa parte do valor do CSP na mesma ferramenta que se apresenta como missão-crítica.</p>
+          <span class="loc">templates/core/security.py:73</span>
+        </div>
+      </div>
+
+      <div class="finding">
+        <span class="sev warn">ATENÇÃO</span>
+        <div>
+          <h3>Dado de demonstração semeado em banco de produção</h3>
+          <p>Todo projeto novo gerado por <span class="mono">compose_suite.py</span> grava um webhook apontando para <span class="mono">webhook.site/demo-aidd-*</span> com secret fixo (<span class="mono">sec_demo_2026</span>) por padrão — resíduo de exemplo indo para o banco real, contra a própria regra de "zero mock em produção".</p>
+          <span class="loc">scripts/compose_suite.py</span>
+        </div>
+      </div>
+
+      <div class="finding">
+        <span class="sev warn">ATENÇÃO</span>
+        <div>
+          <h3><span class="mono">enterprise inject</span> escreve direto no repositório do usuário</h3>
+          <p>Sem <span class="mono">--dry-run</span> explícito, o comando grava componentes direto no working tree sem confirmação — ação difícil de reverter, sem o gate de segurança que o resto do discurso do projeto exige para tudo mais.</p>
+          <span class="loc">tools/aidd-enterprise/scripts/aidd.py — comando inject</span>
+        </div>
+      </div>
+
+      <div class="finding">
+        <span class="sev warn">ATENÇÃO</span>
+        <div>
+          <h3>A regra "zero headless" não é aplicada, é um grep</h3>
+          <p>O gate mais citado como defesa contra execução probabilística descontrolada checa a presença literal de duas strings de texto em dois arquivos — não trava nenhum comportamento em runtime. Depende do assistente obedecer, exatamente o tipo de risco que o resto do projeto diz combater.</p>
+          <span class="loc">gates/G_ZERO_HEADLESS.py — 37 linhas, checagem textual</span>
+        </div>
+      </div>
+
+      <div class="finding">
+        <span class="sev warn">ATENÇÃO</span>
+        <div>
+          <h3>CLI do aidd-ops e README fora de sincronia</h3>
+          <p>A CLI foi refatorada para subcomandos obrigatórios (<span class="mono">plan/bootstrap/preflight/deploy</span>), mas os testes de nicho (farmácia, clínica, delivery...) ainda chamam a interface antiga — 8 falhas diretas, fluxo principal do README não roda como documentado hoje.</p>
+          <span class="loc">tools/aidd-ops/tests/test_pipeline_ops.py</span>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <section>
+    <h2>O que é genuinamente bom</h2>
+    <p class="section-note">Verificado no código, não na documentação.</p>
+    <ul class="good-list">
+      <li><b>Fleet discovery multi-provider é real:</b> claude, codex, openai, ollama e antigravity são tratados como pares intercambiáveis, não há favorecimento de um vendor no núcleo do generator.</li>
+      <li><b>Sync multi-harness validado ao vivo:</b> descoberta de skills confirmada contra binários reais instalados (<span class="mono">opencode debug skill</span>, <span class="mono">mimo debug skill</span>), não é suposição.</li>
+      <li><b>Geração de módulo é 100% determinística:</b> <span class="mono">add_module.py</span> e <span class="mono">compose_suite.py</span> são template + parâmetro, zero chamada a LLM.</li>
+      <li><b>Fase 1 do generator não fabrica dado:</b> quando uma fonte (Replit) não tem API, retorna lista vazia em vez de inventar resultado.</li>
+      <li><b>Hash SHA-256 do enterprise é comparado de verdade</b> contra baseline gravado — mecanismo real de detecção de drift, não decoração.</li>
+      <li><b>RLS documentado com honestidade:</b> o código admite a limitação do SQLite em vez de fingir suporte nativo, e implementa o enforcement na camada de aplicação.</li>
+      <li><b>O app do generator roda de ponta a ponta de verdade:</b> CRUD, MCP JSON-RPC e webhook com HMAC testados ao vivo, não é só o pipeline que gera arquivo — o resultado funciona.</li>
+      <li><b>Sizing de infraestrutura do Ops é honesto sobre o que não sabe:</b> quando não encontra requisito oficial de uma ferramenta (Typebot, Twenty, Cal.com...), grava <span class="mono">"requisitos_encontrados": false</span> em vez de fingir precisão.</li>
+    </ul>
+  </section>
+
+  <section>
+    <p class="eyebrow">Custo real</p>
+    <h2>Economia de tokens vs. determinismo real</h2>
+    <p class="section-note">Números de consumo por rodada informados pelo usuário — não medidos por esta auditoria via telemetria bruta. O que verificamos de forma independente é o quanto o núcleo de cada ferramenta é, de fato, determinístico (coluna já usada na matriz de notas acima); a coerência é o cruzamento dos dois.</p>
+    <div class="table-scroll">
+      <table class="tok-table">
+        <thead>
+          <tr><th>Ferramenta</th><th>Tokens p/ rodar</th><th>Núcleo de geração</th><th>Coerência</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="tool">aidd-forge</td>
+            <td class="num"><div class="tok-bar-cell">12k<div class="tok-bar-track"><div class="tok-bar-fill" style="width:6.7%"></div></div></div></td>
+            <td class="core">Bootstrap 100% script — nada aqui exige LLM</td>
+            <td><span class="chip good">Coerente</span></td>
+          </tr>
+          <tr>
+            <td class="tool">aidd-generator</td>
+            <td class="num"><div class="tok-bar-cell">178k<div class="tok-bar-track"><div class="tok-bar-fill" style="width:100%"></div></div></div></td>
+            <td class="core">Fases 2-8 dependem de LLM real (ideia → código)</td>
+            <td><span class="chip good">Coerente</span></td>
+          </tr>
+          <tr>
+            <td class="tool">aidd-master</td>
+            <td class="num"><div class="tok-bar-cell">69k<div class="tok-bar-track"><div class="tok-bar-fill" style="width:38.8%"></div></div></div></td>
+            <td class="core"><span class="mono">add_module.py</span>/<span class="mono">compose_suite.py</span>: zero chamada a LLM, confirmado</td>
+            <td><span class="chip warn">Incoerente</span></td>
+          </tr>
+          <tr>
+            <td class="tool">aidd-enterprise</td>
+            <td class="num"><div class="tok-bar-cell">52k<div class="tok-bar-track"><div class="tok-bar-fill" style="width:29.2%"></div></div></div></td>
+            <td class="core">Mesmo núcleo determinístico do master + injeção por hash</td>
+            <td><span class="chip warn">Incoerente</span></td>
+          </tr>
+          <tr>
+            <td class="tool">aidd-ops</td>
+            <td class="num"><div class="tok-bar-cell">30k<div class="tok-bar-track"><div class="tok-bar-fill" style="width:16.9%"></div></div></div></td>
+            <td class="core">Sizing é "aritmética pura" — o próprio código diz isso</td>
+            <td><span class="chip warn">Incoerente</span></td>
+          </tr>
+          <tr>
+            <td class="tool">ecossistema-aidd (CLI/audit)</td>
+            <td class="num"><div class="tok-bar-cell">43k<div class="tok-bar-track"><div class="tok-bar-fill" style="width:24.2%"></div></div></div></td>
+            <td class="core">8 gates são <span class="mono">subprocess</span>/AST/regex puro</td>
+            <td><span class="chip warn">Incoerente</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="dims-key">Quanto mais determinístico o núcleo é por desenho, maior devia ser a economia — na prática acontece o oposto em 4 das 6 linhas: o custo provavelmente está pagando a conversa em volta do script (decidir nomes, narrar saída de gate, escrever relatório de auto-avaliação) e não o script em si, que já roda de graça.</p>
+  </section>
+
+  <section>
+    <blockquote class="verdict">
+      <p>“A arquitetura é boa: gates determinísticos, fonte física única de componente, fleet discovery multi-provider — isso é engenharia real, não markdown bonito. O que não se sustenta é o discurso de ‘transparência total e determinismo estrito’ no mesmo ecossistema onde o pytest não bate com a telemetria, o selo de segurança mais divulgado é majoritariamente grep de config, e um dashboard chega a inventar o próprio resultado que deveria medir.”</p>
+      <footer>— síntese da auditoria, 2026-09-07</footer>
+    </blockquote>
+  </section>
+
+  <footer class="page">
+    <span>heverton-dev / ecossistema-aidd</span>
+    <span class="mono">5 ferramentas · 6 projetos de saída rodados · pytest ao vivo · sem leitura cruzada</span>
+  </footer>
+
+</div>
+
+<script>
+(function(){
+  var data = [
+    { name:"aidd-forge",      vals:[8,8,7,7,8,9] },
+    { name:"aidd-generator",  vals:[8,5,6,8,8,6] },
+    { name:"aidd-master",     vals:[7,8,6,7,5,8] },
+    { name:"aidd-enterprise", vals:[6,7,5,7,4,7] },
+    { name:"aidd-ops",        vals:[4,9,2,4,2,8] }
+  ];
+  var body = document.getElementById('heat-body');
+  var textLo = getComputedStyle(document.documentElement).getPropertyValue('--ramp-text-lo').trim();
+  var textHi = getComputedStyle(document.documentElement).getPropertyValue('--ramp-text-hi').trim();
+
+  function cell(score){
+    var idx = Math.max(0, Math.min(10, Math.round(score)));
+    var td = document.createElement('td');
+    td.className = 'score';
+    td.textContent = score.toFixed(1).replace(/\.0$/,'');
+    td.style.background = 'var(--ramp-' + idx + ')';
+    td.style.color = idx >= 7 ? textHi : textLo;
+    return td;
+  }
+
+  data.forEach(function(row){
+    var tr = document.createElement('tr');
+    var th = document.createElement('th');
+    th.textContent = row.name;
+    tr.appendChild(th);
+    row.vals.forEach(function(v){ tr.appendChild(cell(v)); });
+    var avg = row.vals.reduce(function(a,b){return a+b;},0) / row.vals.length;
+    tr.appendChild(cell(avg));
+    body.appendChild(tr);
+  });
+
+  // average row
+  var trAvg = document.createElement('tr');
+  trAvg.className = 'avg';
+  var thAvg = document.createElement('th');
+  thAvg.textContent = 'Média';
+  trAvg.appendChild(thAvg);
+  for (var c=0;c<6;c++){
+    var s=0; data.forEach(function(r){ s+=r.vals[c]; });
+    trAvg.appendChild(cell(s/data.length));
+  }
+  var overallSum=0, overallN=0;
+  data.forEach(function(r){ r.vals.forEach(function(v){ overallSum+=v; overallN++; }); });
+  trAvg.appendChild(cell(overallSum/overallN));
+  body.appendChild(trAvg);
+})();
+</script>
