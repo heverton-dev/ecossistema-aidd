@@ -1,7 +1,7 @@
 # Item 1 — Gates rodarem pytest de verdade (nao so estrutura)
 
 > **Escopo:** Entra: criar um gate (ou passo do CLI) que roda `pytest -q --tb=no` de verdade em cada `tools/<ferramenta>` dentro de `python ecossistema.py audit`, falhando (exit 1) se qualquer suíte tiver failed>0. Não entra: corrigir os testes que hoje falham (isso é responsabilidade dos itens 8, 10 e 11) nem reescrever os gates existentes.
-> **Status:** [RASCUNHO — Aguardando Aprovacao Humana]
+> **Status:** [CONCLUÍDO — Aprovado por Humano em 2026-09-07]
 > **Modelo sugerido:** Claude Haiku · Antigravity Gemini 3.1 pro · MiMo mimo-v2.5 (tarefa mecânica: `subprocess.run(pytest)` + parse de exit code, sem decisão de arquitetura)
 
 ---

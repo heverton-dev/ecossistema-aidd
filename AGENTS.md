@@ -114,7 +114,8 @@ O ecossistema dispõe de Quality Gates globais em gates/:
 - gates/G_COMPONENTE_AGNOSTICO.py: Audita a integridade e cobertura multi-harness de todo componente novo ou modificado contra o manifesto.
 - gates/G_ZERO_HEADLESS.py: Impede a execução de subagentes headless paralelos e assegura o modo interativo como rota primária e mandatória.
 - gates/G_INFRA_COMPOSE.py: Audita estaticamente a integridade e sintaxe de orquestrações Docker Compose e scripts de banco de dados do aidd-ops.
-- Execução unificada via CLI: python ecossistema.py audit (roda os 8 gates em sequência)
+- gates/G_TESTES_REAIS.py: Roda pytest de verdade em cada tools/<ferramenta> e falha (exit 1) se qualquer suíte tiver failed > 0.
+- Execução unificada via CLI: python ecossistema.py audit (roda os 9 gates em sequência)
 
 ---
 

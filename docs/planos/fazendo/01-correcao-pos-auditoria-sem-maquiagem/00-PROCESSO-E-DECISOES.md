@@ -83,7 +83,7 @@ Diagnostico rapido → Definicao de Pronto checavel → Prompt de Execucao autoc
 
 | # | Item | Status | Documento |
 |---|---|---|---|
-| 1 | Gates rodarem pytest de verdade (nao so estrutura) | ⏳ Rascunho gerado, aguardando aprovacao | `01-gates-rodarem-pytest-de-verdade-nao-so-estrutura.md` |
+| 1 | Gates rodarem pytest de verdade (nao so estrutura) | ✅ Concluído e auditado | `01-gates-rodarem-pytest-de-verdade-nao-so-estrutura.md` |
 | 2 | Telemetria de testes sempre remedida, nunca gravada estatica | ⏳ Rascunho gerado, aguardando aprovacao | `02-telemetria-de-testes-sempre-remedida-nunca-gravada-estatica.md` |
 | 3 | G_ZERO_HEADLESS: enforcement real, nao so grep de string | ⏳ Rascunho gerado, aguardando aprovacao | `03-g-zero-headless-enforcement-real-nao-so-grep-de-string.md` |
 | 4 | Reverter CSP relaxado no template compartilhado (unsafe-inline/CDN) | ⏳ Rascunho gerado, aguardando aprovacao | `04-reverter-csp-relaxado-no-template-compartilhado-unsafe-inlinecdn.md` |

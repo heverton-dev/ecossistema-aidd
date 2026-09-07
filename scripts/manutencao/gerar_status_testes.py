@@ -23,12 +23,10 @@ PLANO_PATH = os.path.join(ROOT_DIR, "PLANO-EXECUCAO-ESTRUTURADO.json")
 
 FERRAMENTAS = ["aidd-forge", "aidd-generator", "aidd-master", "aidd-enterprise", "aidd-ops"]
 
-_PADRAO_RESUMO = re.compile(
-    r"(?:(?P<passed>\d+) passed)?"
-    r"(?:, (?P<failed>\d+) failed)?"
-    r"(?:, (?P<skipped>\d+) skipped)?"
-    r"(?:, (?P<errors>\d+) error)?"
-)
+_PADRAO_PASSED = re.compile(r"(\d+) passed")
+_PADRAO_FAILED = re.compile(r"(\d+) failed")
+_PADRAO_SKIPPED = re.compile(r"(\d+) skipped")
+_PADRAO_ERRORS = re.compile(r"(\d+) error")
 
 
 def _rodar_pytest(ferramenta: str) -> dict:
@@ -47,13 +45,14 @@ def _rodar_pytest(ferramenta: str) -> dict:
     if not linhas_resumo:
         return {"status": "indeterminado", "exit_code": resultado.returncode, "trecho": saida[-300:]}
 
-    m = _PADRAO_RESUMO.search(linhas_resumo[-1])
+    linha = linhas_resumo[-1]
+    _extrair = lambda padrao: int(padrao.search(linha).group(1)) if padrao.search(linha) else 0
     return {
         "status": "ok" if resultado.returncode == 0 else "falhou",
-        "passed": int(m.group("passed") or 0) if m else 0,
-        "failed": int(m.group("failed") or 0) if m else 0,
-        "skipped": int(m.group("skipped") or 0) if m else 0,
-        "errors": int(m.group("errors") or 0) if m else 0,
+        "passed": _extrair(_PADRAO_PASSED),
+        "failed": _extrair(_PADRAO_FAILED),
+        "skipped": _extrair(_PADRAO_SKIPPED),
+        "errors": _extrair(_PADRAO_ERRORS),
         "exit_code": resultado.returncode,
     }
 

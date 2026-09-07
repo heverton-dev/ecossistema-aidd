@@ -386,6 +386,7 @@ def cmd_audit(args):
         "G_COMPONENTE_AGNOSTICO.py",
         "G_ZERO_HEADLESS.py",
         "G_INFRA_COMPOSE.py",
+        "G_TESTES_REAIS.py",
     ]
     for gate in gates:
         gate_script = os.path.join(ROOT_DIR, "gates", gate)
@@ -398,7 +399,8 @@ def cmd_status(args):
     if "--testes" in args:
         sys.path.insert(0, os.path.join(ROOT_DIR, "scripts", "manutencao"))
         from gerar_status_testes import gerar
-        gerar()
+        escrever = "--write" in args
+        gerar(escrever=escrever)
         return 0
 
     print_banner()

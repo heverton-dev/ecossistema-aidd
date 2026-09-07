@@ -60,7 +60,21 @@ if echo "$STAGED" | grep -q '^docs/planos/'; then
   echo "[pre-commit] docs/planos/ (subpastas + INDEX.md) e MEMORY.md incluidos no commit."
 fi
 
-# --- 3. code-review-graph: mantem o grafo incremental atualizado ---
+# --- 3. Regenera telemetria de testes se tools/ foi modificado ---
+# Garante que o bloco "testes" de PLANO-EXECUCAO-ESTRUTURADO.json reflita
+# pytest real, nunca JSON estático. (Item 2 do plano de correção pós-auditoria)
+if echo "$STAGED" | grep -q '^tools/'; then
+  echo "[pre-commit] Mudanca em tools/ detectada - regenerando telemetria de testes..."
+
+  if python ecossistema.py status --testes --write; then
+    git add -- PLANO-EXECUCAO-ESTRUTURADO.json
+    echo "[pre-commit] Telemetria de testes regenerada e incluida no commit."
+  else
+    echo "[pre-commit] AVISO: regeneracao de telemetria falhou (nao bloqueia commit)."
+  fi
+fi
+
+# --- 4. code-review-graph: mantem o grafo incremental atualizado ---
 # Instalado por 'code-review-graph install'. Remova este bloco para
 # desabilitar as checagens de grafo no pre-commit.
 if command -v code-review-graph >/dev/null 2>&1; then
