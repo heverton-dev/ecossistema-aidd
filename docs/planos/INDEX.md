@@ -19,10 +19,10 @@
 
 | Iniciativa | Local |
 |---|---|
-| Correcao Arquitetura Limpa | `fazendo/correcao-arquitetura-limpa/` |
 | Correcao Pos Auditoria Sem Maquiagem | `fazendo/01-correcao-pos-auditoria-sem-maquiagem/` |
 | Direcionamento Estrategico Anti Nih | `fazendo/02-direcionamento-estrategico-anti-nih/` |
 | Evolucao Aidd Ops Fase Completa | `fazendo/03-evolucao-aidd-ops-fase-completa/` |
+| Correcao Arquitetura Limpa | `fazendo/correcao-arquitetura-limpa/` |
 
 ---
 

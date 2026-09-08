@@ -38,7 +38,7 @@ Diagnostico rapido → Definicao de Pronto checavel → Prompt de Execucao autoc
 | # | Item | Status | Documento |
 |---|---|---|---|
 | 1 | Extrair HTML embutido gigante para arquivo proprio (get_swagger_html e get_studio_html) | ✅ Concluido (auditado por reproducao real em 2026-09-08) | `01-extrair-html-embutido-gigante-para-arquivo-proprio-get-swagger-html-e-get-studio-html.md` |
-| 2 | Ampliar G_DRIFT_NUCLEO_COMPARTILHADO para cobrir outros pares duplicados entre aidd-master e aidd-enterprise | ⏳ Rascunho gerado, aguardando aprovacao | `02-ampliar-g-drift-nucleo-compartilhado-para-cobrir-outros-pares-duplicados-entre-aidd-master-e-aidd-enterprise.md` |
+| 2 | Ampliar G_DRIFT_NUCLEO_COMPARTILHADO para cobrir outros pares duplicados entre aidd-master e aidd-enterprise | ✅ Concluido (auditado por reproducao real em 2026-09-08) | `02-ampliar-g-drift-nucleo-compartilhado-para-cobrir-outros-pares-duplicados-entre-aidd-master-e-aidd-enterprise.md` |
 | 3 | Registrar duplicacao de codigo real da skill orca-plan-orchestrator nas 7 pastas de harness (sem acao corretiva) | ⏳ Rascunho gerado, aguardando aprovacao | `03-registrar-duplicacao-de-codigo-real-da-skill-orca-plan-orchestrator-nas-7-pastas-de-harness-sem-acao-corretiva.md` |
 | 4 | Eliminar execucao redundante de suite de teste de skills materializadas 7x | ⏳ Rascunho gerado, aguardando aprovacao | `04-eliminar-execucao-redundante-de-suite-de-teste-de-skills-materializadas-7x.md` |
 
