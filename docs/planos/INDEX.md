@@ -23,6 +23,12 @@
 | Direcionamento Estrategico Anti Nih | `fazendo/02-direcionamento-estrategico-anti-nih/` |
 | Evolucao Aidd Ops Fase Completa | `fazendo/03-evolucao-aidd-ops-fase-completa/` |
 
+## ⏳ Aguardando execução
+
+| Iniciativa | Local |
+|---|---|
+| Correcao Arquitetura Limpa | `a-fazer/correcao-arquitetura-limpa/` |
+
 ---
 
 **Convenção:** pastas com `00-PROCESSO-E-DECISOES.md` + `NN-<item>.md` são iniciativas multi-item (status = agregado da tabela "Registro de progresso"); arquivos `PLANO-<NOME>.md` soltos são planos de item único (status = linha `**Status:**` do próprio arquivo). Uma iniciativa nova criada direto na raiz de `docs/planos/` (via `plan init`) é normal — a próxima execução deste script já a move para `feitos/`, `fazendo/` ou `a-fazer/` conforme seu status real.
