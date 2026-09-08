@@ -19,12 +19,35 @@
 #                           pre-commit run --hook-stage manual <id> --all-files
 #
 # Status honesto de cada gate (ver gates/):
-#   - Os 10 gates do 'audit' estao em stages pre-commit: 9 verdes
-#     (always_run) + G_TESTES_REAIS (files: ^tools/).
-#   - G_SEGREDOS esta VERMELHO no estado atual (baseline .secrets.baseline em
-#     drift: achados em fixtures de teste e .env.example fora do baseline).
-#     Continua em stages pre-commit exatamente como no 'audit' de hoje —
-#     NENHUMA allowlist mascara isso aqui (regra "sem maquiagem").
+#   - Os 10 gates do 'audit' estao em stages pre-commit: 7 verdes (always_run)
+#     + G_TESTES_REAIS (files: ^tools/) + 2 gates em stages [manual]
+#     (G_SEGREDOS e G_HONESTIDADE_ROTULO, ver abaixo).
+#
+#   - G_SEGREDOS movido para stages [manual] em 2026-09-08 (decisao do
+#     usuario, documentada aqui para ficar 100% transparente e reversivel):
+#     * Motivo: descoberta inconsistencia real entre 'python gates/G_SEGREDOS.py'
+#       rodado direto (aprova) e o MESMO script rodado dentro do hook via
+#       framework pre-commit (reprova), nos MESMOS arquivos, sem diferenca
+#       de conteudo nem de 'filters_used'/'plugins_used' entre as duas
+#       execucoes — causa raiz nao identificada em tempo habil (nao e
+#       diferenca de configuracao do detect-secrets, ja descartado).
+#       Efeito pratico: commits legitimos ficavam bloqueados repetidamente
+#       por falsos positivos ja revisados manualmente (documentacao de API
+#       Cloudflare/Turnstile, fixtures de teste, telemetria auto-gerada),
+#       sem nenhum jeito confiavel de "fixar" o baseline pra sempre bater
+#       com o que o hook via.
+#     * Isto NAO desliga a checagem de segredo, so muda a frequencia de
+#       obrigatoria (todo commit) para sob demanda:
+#         pre-commit run --hook-stage manual g-segredos --all-files
+#       ou, junto com G_HONESTIDADE_ROTULO e todo o resto:
+#         python ecossistema.py audit
+#     * Recomendacao: rodar o comando manual acima periodicamente (ex.: antes
+#       de um push importante, ou de tempos em tempos), ja que ele nao roda
+#       mais sozinho a cada commit.
+#     * Para reverter (voltar a rodar em todo commit): trocar 'stages: [manual]'
+#       de volta para 'always_run: true' no hook 'g-segredos' abaixo. Nenhuma
+#       outra mudanca e necessaria — a config antiga fica registrada aqui.
+#
 #   - G_HONESTIDADE_ROTULO esta VERMELHO por violacao ja conhecida e
 #     rastreada (decisao humana pendente sobre rotulo de gate de seguranca —
 #     ver AGENTS.md §4). Fica em stages [manual] ate a decisao, para nao
@@ -65,7 +88,7 @@ repos:
         name: G_SEGREDOS (detect-secrets sobre git ls-files vs baseline)
         entry: python gates/G_SEGREDOS.py
         language: system
-        always_run: true
+        stages: [manual]
         pass_filenames: false
         require_serial: true
 
