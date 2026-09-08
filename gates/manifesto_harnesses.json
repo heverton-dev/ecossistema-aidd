@@ -27,8 +27,8 @@
     },
     "gemini-cli": {
       "prefixo_pasta": ".gemini",
-      "confirmado": false,
-      "nota": "Nunca documentado em AGENTS.md antes da migração de 2026-09-05, mas '.gemini/skills/' já estava em uso real (tools/aidd-master/.gemini/skills/seguranca-cibernetica). ATUALIZAÇÃO 2026-09-07: pesquisa em documentação oficial (geminicli.com/docs/extensions/writing-extensions/, geminicli.com/docs/cli/custom-commands/) NÃO confirma que o Gemini CLI leia SKILL.md solto de uma pasta 'skills/'. O mecanismo real documentado é 'extensions' ('.gemini/extensions/<nome>/gemini-extension.json' + GEMINI.md opcional + comandos em '.toml', não '.md'). 'confirmado' rebaixado para false até alguém verificar na prática se o Gemini CLI de fato descobre '.gemini/skills/*/SKILL.md' por algum mecanismo genérico não documentado, ou até isso ser migrado para o formato de extension real. Não removido do sync (conteúdo inofensivo mesmo se não lido), só marcado como não confirmado - PARA REVISÃO EXPLÍCITA DO USUÁRIO."
+      "confirmado": true,
+      "nota": "CORRIGIDO em 2026-09-08 (item 6.2 da Fase 4): migrado do diretório não documentado '.gemini/skills/' para o formato oficial de extensions, confirmado em geminicli.com/docs/extensions/writing-extensions/ (schema real capturado nesta data: campos 'name'/'version' em gemini-extension.json; estrutura de diretório com subpasta 'skills/<nome>/SKILL.md' descoberta automaticamente pelo carregador de extensions — não exige 'contextFileName' explícito para isso). Cada skill vira sua própria extension em '.gemini/extensions/<nome>/', com 'gemini-extension.json' gerado deterministicamente (ver 'manifestos_extra_por_harness' em tipos_componente.skill) e o conteúdo da skill copiado para 'skills/<nome>/' dentro dela (ver 'dest_harness_template_overrides'). 'command' continua excluído (comandos do Gemini CLI usam '.toml', não há nenhum comando deste manifesto migrado para esse formato ainda — fora de escopo deste item, nada usa o destino hoje)."
     },
     "cursor": {
       "prefixo_pasta": ".cursor",
@@ -47,6 +47,16 @@
       "status_evidencia": "confirmado por reprodução direta (docs/planos/PLANO-CORRECAO-SKILLS-AGNOSTICAS.md secao 2.1)",
       "harnesses_aplicaveis": ["claude-code", "antigravity", "opencode", "mimocode", "gemini-cli", "cursor"],
       "dest_harness_template": "{prefixo_pasta}/skills/{nome}",
+      "dest_harness_template_overrides": {
+        "gemini-cli": "{prefixo_pasta}/extensions/{nome}/skills/{nome}"
+      },
+      "manifestos_extra_por_harness": {
+        "gemini-cli": {
+          "caminho_template": "{prefixo_pasta}/extensions/{nome}/gemini-extension.json",
+          "conteudo_template": {"name": "{nome}", "version": "1.0.0"}
+        }
+      },
+      "nota_gemini_extension": "Item 6.2 (Fase 4, 2026-09-08): Gemini CLI não lê SKILL.md solto — exige o formato de extensions (geminicli.com/docs/extensions/writing-extensions/). 'dest_harness_template_overrides' dá a esse harness uma pasta de destino aninhada ('extensions/<nome>/skills/<nome>/' em vez de 'skills/<nome>/' direto); 'manifestos_extra_por_harness' descreve um arquivo SEM fonte 1:1 em componentes/ (gerado deterministicamente a partir do nome do componente) que scripts/gestor_componentes.py materializa e verifica à parte do espelhamento genérico.",
       "extra_destinos_compartilhado": ["skills/{nome}"],
       "extra_destinos_por_ferramenta": [".skills/{nome}", "skills/{nome}"],
       "nota_extra_destinos": "'.skills/{nome}' e 'skills/{nome}' (bare) são cópias adicionais sem harness específico, já em uso real e inconsistente por ferramenta antes desta migração (aidd-master/aidd-enterprise usavam '.skills/'; aidd-generator usava 'skills/' bare). O sync agora materializa AMBAS para todas as ferramentas, fechando a divergência sem escolher apenas uma. '.agents/skills/{nome}' foi REMOVIDO desta lista em 2026-09-07 por ter virado redundante: agora é coberto nativamente pelo próprio harness 'antigravity' (prefixo_pasta corrigido para '.agents') - mesma pasta, uma fonte só, sem duplicar a regra."

@@ -55,6 +55,49 @@ def test_detectar_drift_modificado_e_force_sync():
         with open(dest_path, 'w', encoding='utf-8') as f:
             f.write(conteudo_original)
 
+def _achar_candidato_manifesto_extra():
+    manifesto = gestor_componentes.carregar_manifesto()
+    for nome, _origem, _eh_dir in gestor_componentes._listar_componentes_fonte(manifesto, 'skill', 'compartilhado'):
+        resolvidos = gestor_componentes._resolver_manifestos_extra(manifesto, 'skill', 'compartilhado', nome)
+        if resolvidos:
+            return manifesto, nome, resolvidos[0]
+    return None, None, None
+
+def test_gemini_extension_gerada_no_sync():
+    manifesto, nome, (caminho_abs, esperado) = _achar_candidato_manifesto_extra()
+    if not manifesto:
+        pytest.skip('Nenhum componente com manifesto extra (gemini-extension.json) configurado')
+    assert os.path.isfile(caminho_abs)
+    import json
+    with open(caminho_abs, 'r', encoding='utf-8') as f:
+        atual = json.load(f)
+    assert atual == esperado
+    assert atual['name'] == nome
+
+def test_gemini_extension_drift_detectado_e_force_sync():
+    manifesto, nome, (caminho_abs, esperado) = _achar_candidato_manifesto_extra()
+    if not manifesto:
+        pytest.skip('Nenhum componente com manifesto extra (gemini-extension.json) configurado')
+    import json
+    with open(caminho_abs, 'r', encoding='utf-8') as f:
+        conteudo_original = f.read()
+    try:
+        with open(caminho_abs, 'w', encoding='utf-8') as f:
+            json.dump({"name": "adulterado-teste", "version": "0.0.0"}, f)
+        relatorio = gestor_componentes.detectar_drift(tipo='skill')
+        caminho_rel = os.path.relpath(caminho_abs, ROOT_DIR).replace(os.sep, "/")
+        assert caminho_rel in [m.caminho for m in relatorio.modificados]
+        res = gestor_componentes.force_sync(tipo='skill')
+        assert caminho_abs in res['manifestos_extra_regerados']
+        with open(caminho_abs, 'r', encoding='utf-8') as f:
+            atual = json.load(f)
+        assert atual == esperado
+        relatorio_pos = gestor_componentes.detectar_drift(tipo='skill')
+        assert caminho_rel not in [m.caminho for m in relatorio_pos.modificados]
+    finally:
+        with open(caminho_abs, 'w', encoding='utf-8') as f:
+            f.write(conteudo_original)
+
 def test_detectar_drift_orfao_e_force_sync():
     destino_teste = os.path.join(ROOT_DIR, '.claude', 'commands', '__teste_orfao_drift.md')
     os.makedirs(os.path.dirname(destino_teste), exist_ok=True)

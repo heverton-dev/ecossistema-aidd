@@ -182,9 +182,11 @@ def _resolver_destinos(manifesto, tipo, nome_escopo, nome):
     destinos = []
 
     if tipo_cfg["distribuicao"] == "multi-harness":
-        template = tipo_cfg["dest_harness_template"]
+        template_padrao = tipo_cfg["dest_harness_template"]
+        overrides_template = tipo_cfg.get("dest_harness_template_overrides", {})
         for harness in tipo_cfg.get("harnesses_aplicaveis", []):
             prefixo = manifesto["harnesses_suportados"][harness]["prefixo_pasta"]
+            template = overrides_template.get(harness, template_padrao)
             rel = template.format(prefixo_pasta=prefixo, nome=nome)
             destinos.append(os.path.normpath(os.path.join(root_escopo, rel)))
 
@@ -209,6 +211,90 @@ def _resolver_destinos(manifesto, tipo, nome_escopo, nome):
             vistos.add(d)
             unicos.append(d)
     return unicos
+
+
+# ---------------------------------------------------------------------------
+# NOVO: manifestos extra por harness (ex: gemini-extension.json)
+# Alguns harnesses (Gemini CLI) exigem um arquivo de manifesto ao lado do
+# conteudo copiado, sem fonte 1:1 em componentes/ — o conteudo e derivado
+# deterministicamente do nome do componente via template no proprio
+# manifesto_harnesses.json (chave 'manifestos_extra_por_harness').
+# ---------------------------------------------------------------------------
+
+def _resolver_manifestos_extra(manifesto, tipo, nome_escopo, nome):
+    """Resolve (caminho_abs, conteudo_esperado_dict) para cada manifesto extra
+    aplicavel a este componente. Lista vazia se o tipo nao declarar nenhum."""
+    tipo_cfg = manifesto["tipos_componente"][tipo]
+    specs = tipo_cfg.get("manifestos_extra_por_harness", {})
+    if not specs:
+        return []
+    escopo_cfg = manifesto["escopos"][nome_escopo]
+    root_escopo = ROOT_DIR if escopo_cfg["root"] == "." else os.path.join(ROOT_DIR, escopo_cfg["root"])
+
+    resolvidos = []
+    for harness, spec in specs.items():
+        if harness not in tipo_cfg.get("harnesses_aplicaveis", []):
+            continue
+        prefixo = manifesto["harnesses_suportados"][harness]["prefixo_pasta"]
+        rel = spec["caminho_template"].format(prefixo_pasta=prefixo, nome=nome)
+        caminho_abs = os.path.normpath(os.path.join(root_escopo, rel))
+        conteudo = {
+            chave: (valor.format(nome=nome) if isinstance(valor, str) else valor)
+            for chave, valor in spec["conteudo_template"].items()
+        }
+        resolvidos.append((caminho_abs, conteudo))
+    return resolvidos
+
+
+def _gerar_manifestos_extra(manifesto, tipo, nome_escopo, nome, dry_run):
+    """Materializa (cria/sobrescreve) os manifestos extra deste componente."""
+    gerados = []
+    for caminho_abs, conteudo in _resolver_manifestos_extra(manifesto, tipo, nome_escopo, nome):
+        if not dry_run:
+            os.makedirs(os.path.dirname(caminho_abs), exist_ok=True)
+            with open(caminho_abs, "w", encoding="utf-8") as f:
+                json.dump(conteudo, f, indent=2, ensure_ascii=False)
+                f.write("\n")
+        gerados.append(caminho_abs)
+    return gerados
+
+
+def _verificar_manifestos_extra(manifesto, tipo=None, ferramenta=None):
+    """Compara manifestos extra em disco contra o conteudo esperado.
+    Retorna lista de ItemDrift (ausente ou com conteudo divergente)."""
+    problemas = []
+    for tipo_atual in _tipos_a_processar(manifesto, tipo):
+        tipo_cfg = manifesto["tipos_componente"][tipo_atual]
+        if not tipo_cfg.get("manifestos_extra_por_harness"):
+            continue
+        for nome_escopo in _escopos_do_tipo(manifesto, tipo_atual, ferramenta):
+            for nome, _origem, _eh_dir in _listar_componentes_fonte(manifesto, tipo_atual, nome_escopo):
+                for caminho_abs, esperado in _resolver_manifestos_extra(manifesto, tipo_atual, nome_escopo, nome):
+                    tag = f"{tipo_atual}/{nome_escopo}/{nome}"
+                    caminho_rel = os.path.relpath(caminho_abs, ROOT_DIR).replace("\\", "/")
+                    if not os.path.isfile(caminho_abs):
+                        problemas.append(ItemDrift(
+                            tipo_drift="modificado",
+                            componente=tag,
+                            caminho=caminho_rel,
+                            hash_fonte="(gerado a partir do nome — ausente)",
+                            hash_destino=None,
+                        ))
+                        continue
+                    try:
+                        with open(caminho_abs, "r", encoding="utf-8") as f:
+                            atual = json.load(f)
+                    except Exception:
+                        atual = None
+                    if atual != esperado:
+                        problemas.append(ItemDrift(
+                            tipo_drift="modificado",
+                            componente=tag,
+                            caminho=caminho_rel,
+                            hash_fonte="(gerado a partir do nome)",
+                            hash_destino="(conteudo em disco diverge do esperado)",
+                        ))
+    return problemas
 
 
 def _tipos_a_processar(manifesto, tipo):
@@ -466,6 +552,8 @@ def detectar_drift(tipo=None, ferramenta=None):
                     caminho=rel,
                 ))
 
+    relatorio.modificados.extend(_verificar_manifestos_extra(manifesto, tipo, ferramenta))
+
     return relatorio
 
 
@@ -519,7 +607,18 @@ def force_sync(tipo=None, ferramenta=None):
             os.remove(caminho_abs)
             orfaos_removidos.append(item.caminho)
 
+    # Regera manifestos extra (ex: gemini-extension.json) — idempotente, sempre
+    # recomputado a partir do nome do componente, nunca deletado como orfao.
+    manifestos_regerados = []
+    for tipo_atual in _tipos_a_processar(manifesto, tipo):
+        for nome_escopo in _escopos_do_tipo(manifesto, tipo_atual, ferramenta):
+            for nome, _origem, _eh_dir in _listar_componentes_fonte(manifesto, tipo_atual, nome_escopo):
+                manifestos_regerados.extend(
+                    _gerar_manifestos_extra(manifesto, tipo_atual, nome_escopo, nome, dry_run=False)
+                )
+
     return {
+        "manifestos_extra_regerados": manifestos_regerados,
         "restaurados": restaurados,
         "orfaos_removidos": orfaos_removidos,
         "relatorio_drift": relatorio_drift,
@@ -590,6 +689,8 @@ def sync(tipo, ferramenta=None, dry_run=False):
                         relatorio["pastas_criadas"].append(pasta_harness)
                     chave = "atualizados" if ja_existia else "criados"
                     relatorio[chave].append(f"[{tipo_atual}/{nome_escopo}] {nome} -> {os.path.relpath(destino, ROOT_DIR)}")
+
+                _gerar_manifestos_extra(manifesto, tipo_atual, nome_escopo, nome, dry_run)
 
     return relatorio
 

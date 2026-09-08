@@ -1,7 +1,7 @@
 # Item 6 — Fase 4 - Investimento no diferencial real (pipeline do generator, protocolo delegado, materializador multi-harness)
 
 > **Escopo:** Definir e priorizar melhorias concretas para os diferenciais do ecossistema sem equivalente de mercado: (1) Protocolo Delegado do Generator e (2) Materializador Multi-Harness (`componentes/` + fleet discovery).
-> **Status:** [DEFINIÇÃO CONCLUÍDA (2026-09-07) — EXECUÇÃO APROVADA EM 2026-09-08 para 6.1, 6.3, 6.4, 6.5 e 6.6 (ver §1.1); 6.2 segue sem aprovação e sem código implementado]
+> **Status:** [TODOS OS 6 SUB-ITENS CONCLUÍDOS EM 2026-09-08 — 6.1/6.3/6.4/6.5/6.6 via §1.1; 6.2 aprovado e implementado separadamente na mesma data]
 > **Modelo sugerido:** Claude Opus · Antigravity Gemini 3.8 · MiMo mimo-v2.5-pro
 
 ---
@@ -63,13 +63,15 @@ A ordem foi definida priorizando confiabilidade de comunicação entre processos
   4. [x] Suíte de testes do generator passando sem atrasos artificiais.
   - **Evidência de validação (reproduzida em 2026-09-08):** `pytest tools/aidd-generator/tests/test_utils_delegacao.py` → **42/42 passed em 0.91s** (sem sleeps artificiais na suíte). Nota: a DpP original citava `tests/test_delegacao.py`; o arquivo real é `test_utils_delegacao.py` — corrigido aqui para não deixar referência a um caminho que não existe.
 
-### Item 6.2 — Conformidade de Extensions Nativas no Gemini CLI (P1)
+### Item 6.2 — Conformidade de Extensions Nativas no Gemini CLI (P1) [CONCLUÍDO]
 - **Objetivo:** Migrar o suporte ao Gemini CLI no manifesto (`gates/manifesto_harnesses.json`) do diretório não documentado `.gemini/skills/` para o padrão oficial de extensions (`.gemini/extensions/<nome>/gemini-extension.json` e comandos `.toml`).
+- **Aprovação registrada (2026-09-08):** usuário aprovou explicitamente este item nesta sessão, após confirmar que o formato já estava mapeado (schema real obtido de `geminicli.com/docs/extensions/writing-extensions/` via WebFetch nesta mesma sessão) e que era só implementação, sem pesquisa em aberto.
 - **Definição de Pronto (DpP):**
-  1. Template de extension e comando TOML implementado no gerador de componentes (`scripts/gestor_componentes.py`).
-  2. Manifesto `gates/manifesto_harnesses.json` atualizado com `confirmado: true` para o Gemini CLI.
-  3. `python ecossistema.py components sync` materializa a estrutura de extensions sem quebrar os outros 6 harnesses.
-  4. Testes de regressão em `gates/G_HARNESS_COMPAT.py` e `gates/G_COMPONENTE_AGNOSTICO.py` aprovados (exit 0).
+  1. [x] Template de extension implementado no gerador de componentes (`scripts/gestor_componentes.py`): novo campo genérico `dest_harness_template_overrides` (destino aninhado `extensions/<nome>/skills/<nome>/` só para este harness, sem afetar os outros 6) e `manifestos_extra_por_harness` (gera `gemini-extension.json` deterministicamente a partir do nome do componente, sem fonte 1:1 em `componentes/`). Comando `.toml`: **não aplicável agora** — `command` já excluía `gemini-cli` antes desta correção (formato incompatível, `.toml` vs `.md`) e nenhum comando deste manifesto está migrado para lá; nada usa esse destino hoje, então não há o que testar sem fabricar um comando só pra isso.
+  2. [x] Manifesto `gates/manifesto_harnesses.json` atualizado com `confirmado: true` para o Gemini CLI.
+  3. [x] `python ecossistema.py components sync --tipo todos` materializa a estrutura de extensions (48/48 componentes) sem alterar os outros 6 harnesses (conferido: `.claude/skills/<nome>/` continua no formato antigo, inalterado).
+  4. [x] Testes de regressão em `gates/G_HARNESS_COMPAT.py` e `gates/G_COMPONENTE_AGNOSTICO.py` aprovados (exit 0).
+  - **Evidência de validação (reproduzida em 2026-09-08):** os 2 gates acima + `gates/G_SEGREDOS.py` aprovados; `gates/test_gestor_componentes_drift.py` com 2 testes novos cobrindo geração e drift do `gemini-extension.json` — **5/5 passed**; teste negativo manual (corromper `gemini-extension.json` de propósito → `components verify` detectou → `components sync --force` restaurou o conteúdo correto).
 
 ### Item 6.3 — Polling adaptativo e event-driven no Protocolo Delegado (P2)
 - **Objetivo:** Eliminar o busy wait com sleep rígido de 1s/5s em `aguardar_resposta()`, adotando backoff adaptativo e verificação assíncrona/watcher de sistema de arquivos quando disponível.
