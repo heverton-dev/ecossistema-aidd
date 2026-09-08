@@ -72,6 +72,11 @@ O **Ecossistema AIDD** unifica 5 ferramentas complementares de Engenharia Agênt
 9. **Honestidade de Rótulo:**
    - Nenhuma mensagem de saída de gate/CLI pode usar linguagem que sugira certificação/segurança maior do que a cobertura real testada (proibido: "blindagem militar", "homologado para produção global", "nota A+" sem rubrica auditável por trás).
    - Verificado mecanicamente por `gates/G_HONESTIDADE_ROTULO.py` (AST sobre `print()`/`raise()` dos scripts de `gates/` e `scripts/gates/` de cada ferramenta, contra a lista em `gates/termos_proibidos_marketing.json`).
+10. **Comunicação Direta, Sem Jargão e Sem Formalidade:**
+    - Toda resposta ao usuário deve ser concisa, direta e em linguagem simples — evitar jargão técnico não explicado (nomes internos de mecanismos, termos de infraestrutura) e preferir analogia do dia a dia quando ela ajudar a entender mais rápido que a explicação técnica crua.
+    - Simplicidade de forma nunca reduz a profundidade real nem justifica fabricar ou simplificar fatos — o conteúdo técnico continua completo e verdadeiro; só a forma de comunicar muda.
+    - Zero rodeio/formalidade desnecessária: ir direto ao que foi feito, encontrado ou decidido.
+    - Origem: feedback explícito do usuário em 2026-09-08 — uma explicação tecnicamente correta sobre consolidação de código (`fleet_discovery.py`) foi rejeitada por excesso de jargão antes de ser aceita na versão reescrita em linguagem simples.
 
 ---
 
