@@ -13,9 +13,19 @@ import os
 import urllib.error
 import urllib.parse
 import urllib.request
+from pathlib import Path
 from typing import Any, Dict, List, Optional
 
 from mcp.server.fastmcp import FastMCP
+
+try:
+    from dotenv import load_dotenv
+    # Este arquivo vive 4 niveis abaixo da raiz do ecossistema tanto na fonte
+    # (componentes/aidd-ops/mcps/cloudflare-mcp/) quanto no destino sincronizado
+    # (tools/aidd-ops/mcps/cloudflare-mcp/) — mesma profundidade nas duas copias.
+    load_dotenv(Path(__file__).resolve().parents[4] / ".env", override=False)
+except ImportError:
+    pass  # python-dotenv ausente no venv que sobe este MCP: segue só com o shell env.
 
 NOME_SERVIDOR = "cloudflare-mcp"
 DESCRICAO_SERVIDOR = "Servidor MCP para gerenciamento determinístico de registros DNS na Cloudflare via API REST oficial."

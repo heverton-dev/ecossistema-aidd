@@ -7,15 +7,6 @@
         "@playwright/mcp@latest"
       ]
     },
-    "code-review-graph": {
-      "command": "uvx",
-      "args": [
-        "code-review-graph",
-        "serve"
-      ],
-      "cwd": "C:\\Users\\trcnologia\\Desktop\\ecossistema-aidd",
-      "type": "stdio"
-    },
     "context7": {
       "command": "npx",
       "args": [
@@ -38,12 +29,10 @@
       }
     },
     "cloudflare": {
-      "type": "http",
-      "url": "https://mcp.cloudflare.com/mcp"
+      "serverUrl": "https://mcp.cloudflare.com/mcp"
     },
     "cloudflare-docs": {
-      "type": "http",
-      "url": "https://docs.mcp.cloudflare.com/mcp"
+      "serverUrl": "https://docs.mcp.cloudflare.com/mcp"
     }
   }
 }

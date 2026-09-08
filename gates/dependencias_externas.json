@@ -59,7 +59,12 @@
       ],
       "env": [],
       "harnesses_alvo": [
-        "claude-code"
+        "claude-code",
+        "opencode",
+        "cursor",
+        "gemini-cli",
+        "mimocode",
+        "antigravity"
       ]
     },
     "context7": {
@@ -71,7 +76,12 @@
       ],
       "env": [],
       "harnesses_alvo": [
-        "claude-code"
+        "claude-code",
+        "opencode",
+        "cursor",
+        "gemini-cli",
+        "mimocode",
+        "antigravity"
       ]
     },
     "github": {
@@ -89,7 +99,38 @@
         "GITHUB_PERSONAL_ACCESS_TOKEN"
       ],
       "harnesses_alvo": [
-        "claude-code"
+        "claude-code",
+        "opencode",
+        "cursor",
+        "gemini-cli",
+        "mimocode",
+        "antigravity"
+      ]
+    },
+    "cloudflare": {
+      "pacote": "Cloudflare MCP oficial (remoto)",
+      "tipo": "remote",
+      "url": "https://mcp.cloudflare.com/mcp",
+      "harnesses_alvo": [
+        "claude-code",
+        "opencode",
+        "cursor",
+        "gemini-cli",
+        "mimocode",
+        "antigravity"
+      ]
+    },
+    "cloudflare-docs": {
+      "pacote": "Cloudflare Docs MCP oficial (remoto)",
+      "tipo": "remote",
+      "url": "https://docs.mcp.cloudflare.com/mcp",
+      "harnesses_alvo": [
+        "claude-code",
+        "opencode",
+        "cursor",
+        "gemini-cli",
+        "mimocode",
+        "antigravity"
       ]
     }
   }

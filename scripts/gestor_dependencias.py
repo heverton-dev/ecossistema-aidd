@@ -14,8 +14,15 @@ Este trata dependências de TERCEIROS que já têm seu próprio instalador
 (ex.: `npx <pacote> install`) ou que só precisam de uma entrada de config
 (MCP servers, mesclada em `.mcp.json`, nunca sobrescrevendo o que já existe).
 
-Harnesses de MCP com schema confirmado nesta v1: "claude-code" (`.mcp.json`
--> {"mcpServers": {...}}) e "opencode" (`opencode.jsonc` -> {"mcp": {...}}).
+Harnesses de MCP com schema confirmado nesta v1 (via doc oficial de cada
+ferramenta, nunca por suposição):
+  - "claude-code"  -> `.mcp.json`              {"mcpServers": {...}}
+  - "opencode"     -> `opencode.jsonc`         {"mcp": {...}}
+  - "cursor"       -> `.cursor/mcp.json`       {"mcpServers": {...}}
+  - "gemini-cli"   -> `.gemini/settings.json`  {"mcpServers": {...}}
+  - "mimocode"     -> `mimocode.jsonc`         {"mcp": {...}} (arquivo PRÓPRIO,
+    distinto de opencode.jsonc mesmo sendo fork do OpenCode)
+  - "antigravity"  -> `.agents/mcp_config.json` {"mcpServers": {...}}
 Outros harnesses ficam como TODO explícito — não adivinhar schema sem
 confirmar.
 
@@ -48,9 +55,21 @@ MANIFESTO_PATH = os.path.join(ROOT_DIR, "gates", "dependencias_externas.json")
 GITIGNORE_PATH = os.path.join(ROOT_DIR, ".gitignore")
 
 # Harnesses com schema de MCP config confirmado nesta v1 (ver docstring acima).
+# "schema_inicial": chaves extras mescladas apenas na PRIMEIRA criação do arquivo
+# (nunca sobrescreve um arquivo já existente).
 DESTINOS_MCP = {
     "claude-code": {"caminho": os.path.join(ROOT_DIR, ".mcp.json"), "chave": "mcpServers"},
-    "opencode": {"caminho": os.path.join(ROOT_DIR, "opencode.jsonc"), "chave": "mcp"},
+    "opencode": {
+        "caminho": os.path.join(ROOT_DIR, "opencode.jsonc"), "chave": "mcp",
+        "schema_inicial": {"$schema": "https://opencode.ai/config.json"},
+    },
+    "cursor": {"caminho": os.path.join(ROOT_DIR, ".cursor", "mcp.json"), "chave": "mcpServers"},
+    "gemini-cli": {"caminho": os.path.join(ROOT_DIR, ".gemini", "settings.json"), "chave": "mcpServers"},
+    "mimocode": {
+        "caminho": os.path.join(ROOT_DIR, "mimocode.jsonc"), "chave": "mcp",
+        "schema_inicial": {"$schema": "https://mimo.xiaomi.com/mimocode/config.json"},
+    },
+    "antigravity": {"caminho": os.path.join(ROOT_DIR, ".agents", "mcp_config.json"), "chave": "mcpServers"},
 }
 
 
@@ -102,9 +121,11 @@ def bootstrap_skills(apenas=None, dry_run=False):
     return relatorio
 
 
-def _carregar_mcp_config(caminho, chave):
+def _carregar_mcp_config(caminho, chave, schema_inicial=None):
     if not os.path.exists(caminho):
-        return {chave: {}}
+        dados = dict(schema_inicial or {})
+        dados[chave] = {}
+        return dados
     with open(caminho, "r", encoding="utf-8") as f:
         dados = json.load(f)
     dados.setdefault(chave, {})
@@ -120,7 +141,8 @@ def _mcp_presente(nome, caminho, chave):
 
 def _construir_entrada_mcp(cfg, harness):
     """Adapta as chaves declarativas do manifesto (tipo/comando/args/env/url) para o
-    schema de config nativo de cada harness."""
+    schema de config nativo de cada harness (schemas confirmados via doc oficial de
+    cada ferramenta — ver docstring do módulo)."""
     tipo = cfg.get("tipo", "stdio")
 
     if tipo == "remote":
@@ -129,20 +151,49 @@ def _construir_entrada_mcp(cfg, harness):
             return {"type": "http", "url": url}
         if harness == "opencode":
             return {"type": "remote", "url": url, "enabled": True}
+        if harness == "cursor":
+            return {"url": url}
+        if harness == "gemini-cli":
+            return {"httpUrl": url}
+        if harness == "mimocode":
+            return {"type": "remote", "url": url, "enabled": True}
+        if harness == "antigravity":
+            return {"serverUrl": url}
         raise ValueError(f"harness '{harness}' sem schema de MCP remoto confirmado nesta v1")
 
+    entrada_env = {var: f"${{{var}}}" for var in cfg["env"]} if cfg.get("env") else None
     if harness == "claude-code":
         entrada = {"command": cfg["comando"], "args": cfg.get("args", [])}
-        if cfg.get("env"):
-            entrada["env"] = {var: f"${{{var}}}" for var in cfg["env"]}
+        if entrada_env:
+            entrada["env"] = entrada_env
         return entrada
     if harness == "opencode":
         return {"type": "local", "command": [cfg["comando"]] + list(cfg.get("args", []))}
+    if harness == "cursor":
+        entrada = {"command": cfg["comando"], "args": cfg.get("args", [])}
+        if entrada_env:
+            entrada["env"] = entrada_env
+        return entrada
+    if harness == "gemini-cli":
+        entrada = {"command": cfg["comando"], "args": cfg.get("args", [])}
+        if entrada_env:
+            entrada["env"] = entrada_env
+        return entrada
+    if harness == "mimocode":
+        entrada = {"type": "local", "command": [cfg["comando"]] + list(cfg.get("args", [])), "enabled": True}
+        if entrada_env:
+            entrada["environment"] = entrada_env
+        return entrada
+    if harness == "antigravity":
+        entrada = {"command": cfg["comando"], "args": cfg.get("args", [])}
+        if entrada_env:
+            entrada["env"] = entrada_env
+        return entrada
     raise ValueError(f"harness '{harness}' sem schema de MCP local confirmado nesta v1")
 
 
-def _mesclar_mcp(nome, cfg, harness, caminho, chave, dry_run):
-    dados = _carregar_mcp_config(caminho, chave)
+def _mesclar_mcp(nome, cfg, harness, caminho, chave, dry_run, schema_inicial=None):
+    dados = _carregar_mcp_config(caminho, chave, schema_inicial=schema_inicial)
     dados[chave][nome] = _construir_entrada_mcp(cfg, harness)
 
     if dry_run:
@@ -170,7 +221,10 @@ def bootstrap_mcps(apenas=None, dry_run=False):
             if _mcp_presente(nome, destino["caminho"], destino["chave"]):
                 relatorio["ja_registrados"].append(f"{nome} ({harness})")
                 continue
-            _mesclar_mcp(nome, cfg, harness, destino["caminho"], destino["chave"], dry_run)
+            _mesclar_mcp(
+                nome, cfg, harness, destino["caminho"], destino["chave"], dry_run,
+                schema_inicial=destino.get("schema_inicial"),
+            )
             relatorio["registrados"].append(f"{nome} ({harness})" + (" [DRY-RUN]" if dry_run else ""))
 
     return relatorio
