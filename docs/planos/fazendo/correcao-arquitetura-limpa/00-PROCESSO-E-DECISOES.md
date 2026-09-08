@@ -9,7 +9,7 @@
 ## 1. O que este esforco busca
 
 - **Origem:** análise arquitetural pedida pelo usuário em 2026-09-08, feita via `code-review-graph` (`get_architecture_overview`, `list_communities`, `get_hub_nodes`, `find_large_functions`, `get_surprising_connections`) sobre o crescimento do monorepo. Achados aprovados pelo usuário para virar plano formal.
-- **Objetivo Principal:** corrigir 4 achados concretos de organização de código (função gigante com HTML embutido, ponto cego no monitoramento de duplicação, um achado só de registro, e execução redundante de teste) — não é uma reescrita nem uma reestruturação de pastas.
+- **Objetivo Principal:** corrigir 5 achados concretos de organização de código (função gigante com HTML embutido, ponto cego no monitoramento de duplicação, um achado só de registro, execução redundante de teste, e um segundo ponto cego no monitoramento de duplicação — scripts/gates vs templates/gates dentro da mesma ferramenta) — não é uma reescrita nem uma reestruturação de pastas.
 - **Limites de Escopo:** não inclui decisões não aprovadas por humano; não inclui reescrever nenhuma ferramenta do zero; não inclui unificar `aidd-generator`'s fleet discovery com o schema de `aidd-master`/`aidd-enterprise` (decisão separada, já registrada em `docs/planos/feitos/.../06-fase-4...md`).
 
 ## 2. Processo Adotado
@@ -24,6 +24,7 @@ Diagnostico rapido → Definicao de Pronto checavel → Prompt de Execucao autoc
 | 2 | Ampliar G_DRIFT_NUCLEO_COMPARTILHADO para cobrir outros pares duplicados entre aidd-master e aidd-enterprise | `02-ampliar-g-drift-nucleo-compartilhado-para-cobrir-outros-pares-duplicados-entre-aidd-master-e-aidd-enterprise.md` |
 | 3 | Registrar duplicacao de codigo real da skill orca-plan-orchestrator nas 7 pastas de harness (sem acao corretiva) | `03-registrar-duplicacao-de-codigo-real-da-skill-orca-plan-orchestrator-nas-7-pastas-de-harness-sem-acao-corretiva.md` |
 | 4 | Eliminar execucao redundante de suite de teste de skills materializadas 7x | `04-eliminar-execucao-redundante-de-suite-de-teste-de-skills-materializadas-7x.md` |
+| 5 | Ampliar G_DRIFT_NUCLEO_COMPARTILHADO para comparar scripts/gates vs templates/gates dentro da mesma ferramenta | `05-ampliar-g-drift-nucleo-compartilhado-para-comparar-scripts-gates-vs-templates-gates-dentro-da-mesma-ferramenta.md` |
 
 ## 4. Regras Fixas
 
@@ -40,6 +41,7 @@ Diagnostico rapido → Definicao de Pronto checavel → Prompt de Execucao autoc
 | 1 | Extrair HTML embutido gigante para arquivo proprio (get_swagger_html e get_studio_html) | ✅ Concluido (auditado por reproducao real em 2026-09-08) | `01-extrair-html-embutido-gigante-para-arquivo-proprio-get-swagger-html-e-get-studio-html.md` |
 | 2 | Ampliar G_DRIFT_NUCLEO_COMPARTILHADO para cobrir outros pares duplicados entre aidd-master e aidd-enterprise | ✅ Concluido (auditado por reproducao real em 2026-09-08) | `02-ampliar-g-drift-nucleo-compartilhado-para-cobrir-outros-pares-duplicados-entre-aidd-master-e-aidd-enterprise.md` |
 | 3 | Registrar duplicacao de codigo real da skill orca-plan-orchestrator nas 7 (na verdade 8, corrigido por reproducao real) pastas de harness (sem acao corretiva) | ✅ Concluido (registro revisado e corrigido por reproducao real em 2026-09-08) | `03-registrar-duplicacao-de-codigo-real-da-skill-orca-plan-orchestrator-nas-7-pastas-de-harness-sem-acao-corretiva.md` |
-| 4 | Eliminar execucao redundante de suite de teste de skills materializadas 7x | ⏳ Rascunho gerado, aguardando aprovacao | `04-eliminar-execucao-redundante-de-suite-de-teste-de-skills-materializadas-7x.md` |
+| 4 | Eliminar execucao redundante de suite de teste de skills materializadas 7x (na verdade, achado nao reproduzido — nenhuma execucao automatica existe hoje) | ✅ Concluido (investigacao real em 2026-09-08 nao reproduziu o achado; fechado sem mudanca de codigo, por decisao do usuario) | `04-eliminar-execucao-redundante-de-suite-de-teste-de-skills-materializadas-7x.md` |
+| 5 | Ampliar G_DRIFT_NUCLEO_COMPARTILHADO para comparar scripts/gates vs templates/gates dentro da mesma ferramenta | ⏳ Rascunho gerado, aguardando aprovacao | `05-ampliar-g-drift-nucleo-compartilhado-para-comparar-scripts-gates-vs-templates-gates-dentro-da-mesma-ferramenta.md` |
 
 Esta tabela so e atualizada para Concluido apos auditoria por reproducao real.
