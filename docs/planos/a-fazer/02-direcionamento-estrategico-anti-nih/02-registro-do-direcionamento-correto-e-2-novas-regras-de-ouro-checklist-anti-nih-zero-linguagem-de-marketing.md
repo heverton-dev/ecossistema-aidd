@@ -1,7 +1,7 @@
 # Item 2 — Registro do direcionamento correto e 2 novas Regras de Ouro (checklist anti-NIH, zero linguagem de marketing)
 
 > **Escopo:** Entra: adicionar 2 Regras de Ouro novas ao `AGENTS.md` (checklist anti-NIH antes de escrever mecanismo novo; zero linguagem de marketing em mensagem de saída de ferramenta) e um gate/checklist que as torne verificáveis, não só texto. Não entra: reescrever as 7 Regras de Ouro existentes.
-> **Status:** [RASCUNHO — Aguardando Aprovacao Humana]
+> **Status:** ✅ Concluído (2026-09-07) — ver `00-PROCESSO-E-DECISOES.md` §5 (Registro de Progresso) para a evidência de reprodução real.
 > **Modelo sugerido:** Claude Opus · Antigravity Gemini 3.8 · MiMo mimo-v2.5-pro (decisão de governança, mesmo nível das outras Regras de Ouro)
 
 ---

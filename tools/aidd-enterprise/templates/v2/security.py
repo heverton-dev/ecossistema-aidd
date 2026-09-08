@@ -1,5 +1,12 @@
 import hmac, hashlib, base64, json, time, os, urllib.parse, urllib.request
 
+try:
+    import secure
+    _SECURE_AVAILABLE = True
+except ImportError:
+    secure = None
+    _SECURE_AVAILABLE = False
+
 _JWT_SECRET_RAW = os.environ.get("JWT_SECRET_KEY")
 if not _JWT_SECRET_RAW:
     _JWT_SECRET_RAW = "DEV_ONLY_INSECURE_SECRET_CHANGE_BEFORE_DEPLOY"
@@ -67,16 +74,66 @@ class JWTService:
 
 class SecurityService:
     @staticmethod
-    def get_security_headers() -> dict:
-        return {
-            "X-Content-Type-Options": "nosniff",
-            "X-Frame-Options": "DENY",
-            "X-XSS-Protection": "1; mode=block",
-            "Referrer-Policy": "strict-origin-when-cross-origin",
-            "Content-Security-Policy": "default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.tailwindcss.com https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdn.jsdelivr.net; font-src 'self' https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self' https://cdn.jsdelivr.net;",
-            "Permissions-Policy": "geolocation=(), microphone=(), camera=()",
-            "Strict-Transport-Security": "max-age=63072000; includeSubDomains; preload"
-        }
+    def build_csp(custom_directives: dict = None) -> "secure.ContentSecurityPolicy":
+        """
+        Constrói a Content-Security-Policy (CSP) via biblioteca 'secure' (secure.py)
+        em vez de string literal hand-rolled, garantindo validação tipada e
+        prevenindo regressões silenciosas.
+        """
+        if not _SECURE_AVAILABLE or secure is None:
+            raise RuntimeError(
+                "Biblioteca 'secure' não instalada. Para CSP e headers de segurança, "
+                "instale: pip install secure>=2.0.0"
+            )
+
+        csp = (
+            secure.ContentSecurityPolicy()
+            .default_src("'self'")
+            .script_src("'self'", "'unsafe-inline'", "https://cdn.jsdelivr.net")
+            .style_src("'self'", "'unsafe-inline'", "https://fonts.googleapis.com", "https://cdn.jsdelivr.net")
+            .font_src("'self'", "https://fonts.gstatic.com")
+            .img_src("'self'", "data:")
+            .connect_src("'self'", "https://cdn.jsdelivr.net")
+        )
+        if custom_directives:
+            for directive, values in custom_directives.items():
+                fn = getattr(csp, directive, None)
+                if callable(fn):
+                    if isinstance(values, (list, tuple)):
+                        fn(*values)
+                    else:
+                        fn(values)
+        return csp
+
+    @classmethod
+    def get_security_headers(cls) -> dict:
+        """
+        Retorna os headers de segurança OWASP montados via biblioteca 'secure' (secure.py).
+        """
+        if not _SECURE_AVAILABLE or secure is None:
+            return {
+                "X-Content-Type-Options": "nosniff",
+                "X-Frame-Options": "DENY",
+                "X-XSS-Protection": "1; mode=block",
+                "Referrer-Policy": "strict-origin-when-cross-origin",
+                "Content-Security-Policy": "default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdn.jsdelivr.net; font-src 'self' https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self' https://cdn.jsdelivr.net",
+                "Permissions-Policy": "geolocation=(), microphone=(), camera=()",
+                "Strict-Transport-Security": "max-age=63072000; includeSubDomains; preload"
+            }
+
+        csp = cls.build_csp()
+        sec = secure.Secure(
+            csp=csp,
+            xcto=secure.XContentTypeOptions().nosniff(),
+            xfo=secure.XFrameOptions().deny(),
+            referrer=secure.ReferrerPolicy().strict_origin_when_cross_origin(),
+            hsts=secure.StrictTransportSecurity().max_age(63072000).include_subdomains().preload(),
+            custom=[
+                secure.CustomHeader("X-XSS-Protection", "1; mode=block"),
+                secure.CustomHeader("Permissions-Policy", "geolocation=(), microphone=(), camera=()"),
+            ]
+        )
+        return dict(sec.headers)
 
     @staticmethod
     def hash_password(password: str, salt: str = None) -> str:

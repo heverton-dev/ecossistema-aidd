@@ -1,8 +1,9 @@
 # -*- coding: utf-8 -*-
 """
-Testes automatizados para o gate G_INFRA_COMPOSE.
-Valida detecção de erro sintático, colisão de portas, variáveis faltantes
-e reprovação estruturada quando Docker não estiver presente.
+Testes automatizados para o gate G_INFRA_COMPOSE (Anti-NIH #3).
+Valida integração com o scanner Checkov (scan real em compose file, detecção
+de segredos/violações, ausência de scanner), detecção de colisão de portas
+via PyYAML estruturado, variáveis faltantes no .env.example e pré-requisito Docker.
 """
 
 import importlib.util
@@ -21,12 +22,56 @@ _spec.loader.exec_module(gate)
 
 
 class TestGInfraCompose(unittest.TestCase):
-    def test_docker_ausente_reprova_com_mensagem_estruturada(self):
-        with patch.object(gate, "verificar_docker_disponivel", return_value=False):
-            with patch("sys.stdout") as mock_stdout:
+    def test_checkov_disponivel_detectado(self):
+        """Verifica se o scanner Checkov está instalado e é detectado no ambiente."""
+        self.assertTrue(gate.verificar_checkov_disponivel())
+
+    def test_checkov_ausente_reprova_com_mensagem_estruturada(self):
+        """Simula ausência do Checkov e garante reprovação com exit 1 e sem exceção."""
+        with patch.object(gate, "verificar_checkov_disponivel", return_value=False):
+            with patch("sys.stdout"):
                 codigo = gate.auditar()
                 self.assertEqual(codigo, 1)
-                # Confirma que não houve exceção não tratada
+
+    def test_docker_ausente_reprova_com_mensagem_estruturada(self):
+        """Simula ausência do binário docker e garante reprovação com exit 1."""
+        with patch.object(gate, "verificar_docker_disponivel", return_value=False):
+            with patch("sys.stdout"):
+                codigo = gate.auditar()
+                self.assertEqual(codigo, 1)
+
+    def test_checkov_scan_real_compose_valido(self):
+        """Executa scan real do Checkov sobre um arquivo docker-compose válido e limpo."""
+        with tempfile.TemporaryDirectory() as tmpdir:
+            compose_file = os.path.join(tmpdir, "docker-compose.yml")
+            with open(compose_file, "w", encoding="utf-8") as f:
+                f.write(
+                    "services:\n"
+                    "  web:\n"
+                    "    image: nginx:alpine\n"
+                    "    ports:\n"
+                    "      - '8080:80'\n"
+                )
+            sucesso, erros = gate.executar_scan_checkov([compose_file])
+            self.assertTrue(sucesso)
+            self.assertEqual(len(erros), 0)
+
+    def test_checkov_scan_real_compose_com_violacao(self):
+        """Executa scan real do Checkov sobre um compose contendo credencial hardcoded e valida detecção."""
+        with tempfile.TemporaryDirectory() as tmpdir:
+            compose_file = os.path.join(tmpdir, "docker-compose.yml")
+            with open(compose_file, "w", encoding="utf-8") as f:
+                f.write(
+                    "services:\n"
+                    "  app:\n"
+                    "    image: myapp:1.0\n"
+                    "    environment:\n"
+                    "      AWS_SECRET_KEY: 'wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY'\n"
+                )
+            sucesso, erros = gate.executar_scan_checkov([compose_file])
+            self.assertFalse(sucesso)
+            self.assertGreater(len(erros), 0)
+            self.assertTrue(any("Checkov" in e for e in erros))
 
     def test_extrair_variaveis_compose(self):
         conteudo = """
@@ -88,10 +133,11 @@ services:
             self.assertIn("SECRET_KEY", faltantes)
 
     def test_gate_real_executa_com_sucesso(self):
-        # Executa a auditoria completa real no ambiente atual
+        # Executa a auditoria completa real no ambiente atual com Checkov
         codigo = gate.auditar()
         self.assertEqual(codigo, 0)
 
 
 if __name__ == "__main__":
     unittest.main()
+

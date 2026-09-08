@@ -1,13 +1,18 @@
 # -*- coding: utf-8 -*-
 """
-Testes reais da Phase 6 (Documentador Tripartite) — Correção 5/5.
+Testes reais da Phase 6 (Documentador Tripartite) — NIH #25 (Pandoc).
 
 Cobre: gates F1-F3 (validam arquivos REAIS no disco), DocumentadorFase6
-(narrativas, renderização HTML/MD/PDF via ReportLab, fallback de emergência,
-branch Typst mockado, index) e main(). Gera arquivos reais em tmp_path.
+(narrativas, fonte única markdown, conversão HTML/PDF via Pandoc — ramos
+herméticos mockando subprocess + teste de integração real quando o pandoc
+está instalado, index) e main(). Gera arquivos reais em tmp_path.
+
+NIH #25: não há mais templates paralelos por formato. O markdown (documento.md)
+é a fonte única; HTML e PDF são derivados por conversão Pandoc.
 """
 
 import json
+import shutil
 import sys
 from pathlib import Path
 
@@ -193,75 +198,178 @@ def test_escrever_markdown(documentador_06, tmp_path):
     assert '## 5. Auditoria de Gates' in conteudo
 
 
-def test_escrever_html(documentador_06, tmp_path):
-    doc = documentador_06.DocumentadorFase6(Path('.'))
-    narrativas = doc._gerar_narrativas('proj-x', 'Título', {})
-    path_html = tmp_path / 'index.html'
-    doc._escrever_html(path_html, narrativas)
-
-    conteudo = path_html.read_text(encoding='utf-8')
-    assert '<!DOCTYPE html>' in conteudo
-    assert '<html lang="pt-BR">' in conteudo
-    assert '<body>' in conteudo and '</body>' in conteudo
-    assert 'AIDD Documentação' in conteudo
+def test_pandoc_disponivel_retorna_bool(documentador_06):
+    assert isinstance(documentador_06.DocumentadorFase6.pandoc_disponivel(), bool)
 
 
-def test_escrever_pdf_reportlab(documentador_06, tmp_path):
-    doc = documentador_06.DocumentadorFase6(Path('.'))
-    narrativas = doc._gerar_narrativas('proj-x', 'Título', {})
-    path_pdf = tmp_path / 'doc.pdf'
-    doc._escrever_pdf(path_pdf, tmp_path, narrativas)
-
-    assert path_pdf.exists()
-    assert path_pdf.stat().st_size > 500
-    with open(path_pdf, 'rb') as f:
-        assert f.read(5) == b'%PDF-'
-
-
-def test_escrever_pdf_fallback_emergencia(documentador_06, tmp_path, monkeypatch):
-    monkeypatch.setattr(documentador_06.shutil, 'which', lambda nome: None)
-    monkeypatch.setitem(sys.modules, 'reportlab', None)
-
-    doc = documentador_06.DocumentadorFase6(Path('.'))
-    narrativas = doc._gerar_narrativas('proj-x', 'Título', {})
-    path_pdf = tmp_path / 'doc.pdf'
-    doc._escrever_pdf(path_pdf, tmp_path, narrativas)
-
-    assert path_pdf.exists()
-    with open(path_pdf, 'rb') as f:
-        assert f.read(5) == b'%PDF-'
-
-
-def test_escrever_pdf_typst(documentador_06, tmp_path, monkeypatch):
+def test_converter_md_para_html_pandoc_ok(documentador_06, tmp_path, monkeypatch):
+    """Conversão HTML via Pandoc — ramo hermético com subprocess mockado."""
     def fake_run(cmd, capture_output=True, text=True):
-        # cmd = [typst, 'compile', typ_file, pdf_path]
-        Path(cmd[3]).write_bytes(b'%PDF-1.4\n' + b'0' * 700)
-        return type('Res', (), {'returncode': 0})()
+        # [pandoc, md, --standalone, --metadata, title=..., -o, html_path]
+        Path(cmd[-1]).write_text(
+            '<!DOCTYPE html><html><head><title>Meu Doc</title></head>'
+            '<body><h1>Meu Doc</h1></body></html>' + 'x' * 400, encoding='utf-8'
+        )
+        return type('Res', (), {'returncode': 0, 'stderr': ''})()
 
-    monkeypatch.setattr(documentador_06.shutil, 'which', lambda nome: '/fake/typst')
+    monkeypatch.setattr(documentador_06.shutil, 'which', lambda nome: '/fake/pandoc')
     monkeypatch.setattr(documentador_06.subprocess, 'run', fake_run)
 
     doc = documentador_06.DocumentadorFase6(Path('.'))
-    narrativas = doc._gerar_narrativas('proj-x', 'Título', {})
+    path_md = tmp_path / 'documento.md'
+    path_html = tmp_path / 'index.html'
+    path_md.write_text('# Título\n\n## 1. Visão Geral\nConteúdo', encoding='utf-8')
+
+    assert doc._converter_md_para_html(path_md, path_html, 'Meu Doc') is True
+    assert path_html.exists()
+    assert '<html' in path_html.read_text(encoding='utf-8')
+
+
+def test_converter_md_para_html_sem_pandoc(documentador_06, tmp_path, monkeypatch):
+    """Sem pandoc no PATH: conversão falha honestamente (não escreve stub)."""
+    monkeypatch.setattr(documentador_06.shutil, 'which', lambda nome: None)
+
+    doc = documentador_06.DocumentadorFase6(Path('.'))
+    path_md = tmp_path / 'documento.md'
+    path_html = tmp_path / 'index.html'
+    path_md.write_text('# Título', encoding='utf-8')
+
+    assert doc._converter_md_para_html(path_md, path_html, 'Título') is False
+    assert not path_html.exists()
+
+
+def test_converter_md_para_html_pandoc_falha(documentador_06, tmp_path, monkeypatch):
+    """Pandoc executa mas retorna fallha — conversão deve reprovar, sem arquivo."""
+    def fake_run(cmd, capture_output=True, text=True):
+        return type('Res', (), {'returncode': 1, 'stderr': 'boom'})()
+    monkeypatch.setattr(documentador_06.shutil, 'which', lambda nome: '/fake/pandoc')
+    monkeypatch.setattr(documentador_06.subprocess, 'run', fake_run)
+
+    doc = documentador_06.DocumentadorFase6(Path('.'))
+    path_md = tmp_path / 'documento.md'
+    path_html = tmp_path / 'index.html'
+    path_md.write_text('# Título', encoding='utf-8')
+
+    assert doc._converter_md_para_html(path_md, path_html, 'Título') is False
+    assert not path_html.exists()
+
+
+def test_converter_md_para_pdf_pandoc_ok(documentador_06, tmp_path, monkeypatch):
+    """Conversão PDF via Pandoc (engine typst) — ramo hermético mockado."""
+    def fake_run(cmd, capture_output=True, text=True):
+        Path(cmd[-1]).write_bytes(b'%PDF-1.4\n' + b'0' * 700)
+        return type('Res', (), {'returncode': 0, 'stderr': ''})()
+    monkeypatch.setattr(documentador_06.shutil, 'which', lambda nome: '/fake/pandoc')
+    monkeypatch.setattr(documentador_06.subprocess, 'run', fake_run)
+
+    doc = documentador_06.DocumentadorFase6(Path('.'))
+    path_md = tmp_path / 'documento.md'
     path_pdf = tmp_path / 'doc.pdf'
-    doc._escrever_pdf(path_pdf, tmp_path, narrativas)
+    path_md.write_text('# Título', encoding='utf-8')
 
+    assert doc._converter_md_para_pdf(path_md, path_pdf, 'Título') is True
     assert path_pdf.exists()
-    assert (tmp_path / 'documento.typ').exists()
-    assert path_pdf.stat().st_size > 500
+    with open(path_pdf, 'rb') as f:
+        assert f.read(5) == b'%PDF-'
 
 
-def test_renderizar_formatos(documentador_06, tmp_path):
+def test_converter_md_para_pdf_sem_pandoc(documentador_06, tmp_path, monkeypatch):
+    """Sem pandoc no PATH: PDF falha honestamente (não gera 'PDF' falso/oculto)."""
+    monkeypatch.setattr(documentador_06.shutil, 'which', lambda nome: None)
+
+    doc = documentador_06.DocumentadorFase6(Path('.'))
+    path_md = tmp_path / 'documento.md'
+    path_pdf = tmp_path / 'doc.pdf'
+    path_md.write_text('# Título', encoding='utf-8')
+
+    assert doc._converter_md_para_pdf(path_md, path_pdf, 'Título') is False
+    assert not path_pdf.exists()
+
+
+def test_converter_md_para_pdf_pandoc_falha(documentador_06, tmp_path, monkeypatch):
+    def fake_run(cmd, capture_output=True, text=True):
+        return type('Res', (), {'returncode': 1, 'stderr': 'no engine'})()
+    monkeypatch.setattr(documentador_06.shutil, 'which', lambda nome: '/fake/pandoc')
+    monkeypatch.setattr(documentador_06.subprocess, 'run', fake_run)
+
+    doc = documentador_06.DocumentadorFase6(Path('.'))
+    path_md = tmp_path / 'documento.md'
+    path_pdf = tmp_path / 'doc.pdf'
+    path_md.write_text('# Título', encoding='utf-8')
+
+    assert doc._converter_md_para_pdf(path_md, path_pdf, 'Título') is False
+    assert not path_pdf.exists()
+
+
+def test_renderizar_formatos_sem_pandoc_documento_md_ainda_gerado(documentador_06, tmp_path, monkeypatch):
+    """Sem pandoc: o markdown (fonte única) SEMPRE é gerado; html/pdf reprovam."""
+    monkeypatch.setattr(documentador_06.shutil, 'which', lambda nome: None)
+
     doc = documentador_06.DocumentadorFase6(tmp_path / 'cache', output_base=tmp_path / 'output')
     narrativas = doc._gerar_narrativas('proj-x', 'Título', {})
     docs = doc._renderizar_formatos('proj-x', 'Título', narrativas)
 
-    assert docs['html_valido'] is True
     assert docs['md_valido'] is True
+    assert docs['html_valido'] is False
+    assert docs['pdf_gerado'] is False
+    assert (tmp_path / 'output' / 'proj-x' / 'documentos' / 'documento.md').exists()
+    assert not (tmp_path / 'output' / 'proj-x' / 'documentos' / 'index.html').exists()
+    assert not (tmp_path / 'output' / 'proj-x' / 'documentos' / 'documento.pdf').exists()
+
+
+def test_renderizar_formatos_com_pandoc_hermetico(documentador_06, tmp_path, monkeypatch):
+    """Pipeline completo com pandoc mockado: escreve a fonte e deriva html/pdf."""
+    def fake_run(cmd, capture_output=True, text=True):
+        out = cmd[-1]
+        if out.endswith('.html'):
+            Path(out).write_text(
+                '<!DOCTYPE html><html><body><h1>Título</h1></body></html>'
+                + 'x' * 400, encoding='utf-8'
+            )
+        elif out.endswith('.pdf'):
+            Path(out).write_bytes(b'%PDF-1.4\n' + b'0' * 700)
+        return type('Res', (), {'returncode': 0, 'stderr': ''})()
+    monkeypatch.setattr(documentador_06.shutil, 'which', lambda nome: '/fake/pandoc')
+    monkeypatch.setattr(documentador_06.subprocess, 'run', fake_run)
+
+    doc = documentador_06.DocumentadorFase6(tmp_path / 'cache', output_base=tmp_path / 'output')
+    narrativas = doc._gerar_narrativas('proj-x', 'Título', {})
+    docs = doc._renderizar_formatos('proj-x', 'Título', narrativas)
+
+    assert docs['md_valido'] is True
+    assert docs['html_valido'] is True
     assert docs['pdf_gerado'] is True
     assert (tmp_path / 'output' / 'proj-x' / 'documentos' / 'index.html').exists()
     assert (tmp_path / 'output' / 'proj-x' / 'documentos' / 'documento.md').exists()
     assert (tmp_path / 'output' / 'proj-x' / 'documentos' / 'documento.pdf').exists()
+
+
+@pytest.mark.skipif(
+    not shutil.which('pandoc'), reason='pandoc não instalado no PATH'
+)
+def test_pandoc_conversao_real_qualidade_saida(documentador_06, tmp_path):
+    """INTEGRAÇÃO REAL: pandoc converte a fonte markdown em HTML e PDF válidos,
+    e os gates F1-F3 reprovam/aprovam sobre os arquivos reais no disco."""
+    doc = documentador_06.DocumentadorFase6(tmp_path / 'cache', output_base=tmp_path / 'output')
+    narrativas = doc._gerar_narrativas('proj-x', 'Título Real', {})
+    docs = doc._renderizar_formatos('proj-x', 'Título Real', narrativas)
+
+    assert docs['md_valido'] is True
+    assert docs['html_valido'] is True
+    assert docs['pdf_gerado'] is True
+
+    gates, ok = documentador_06.ValidadorGatesPhase6.executar_todos(docs)
+    assert ok is True
+    assert all(g.passou for g in gates)
+
+    # Qualidade: HTML validado pelo F1 exige DOM completo; PDF validado pelo
+    # F2 exige cabeçalho %PDF- real e (com pypdf) páginas > 0.
+    html_file = tmp_path / 'output' / 'proj-x' / 'documentos' / 'index.html'
+    pdf_file = tmp_path / 'output' / 'proj-x' / 'documentos' / 'documento.pdf'
+    assert html_file.stat().st_size > 200
+    assert pdf_file.stat().st_size > 500
+    with open(pdf_file, 'rb') as f:
+        assert f.read(5) == b'%PDF-'
 
 
 def test_gerar_index(documentador_06):

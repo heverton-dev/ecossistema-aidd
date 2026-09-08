@@ -3,69 +3,28 @@
 """
 MCP: Cloudflare MCP (Gestão de DNS de Borda)
 
-Servidor MCP mínimo (JSON-RPC 2.0 sobre stdio, biblioteca padrão apenas urllib.request).
-Expõe tools para criar registros A, CNAME e consultar status DNS na Cloudflare.
+Servidor MCP que usa o SDK oficial do Model Context Protocol
+(`modelcontextprotocol/python-sdk`). Expose tools para criar registros A,
+CNAME e consultar status DNS na Cloudflare.
 """
 
 import json
 import os
-import sys
 import urllib.error
+import urllib.parse
 import urllib.request
-from typing import Any, Dict, List
+from typing import Any, Dict, List, Optional
+
+from mcp.server.fastmcp import FastMCP
 
 NOME_SERVIDOR = "cloudflare-mcp"
 DESCRICAO_SERVIDOR = "Servidor MCP para gerenciamento determinístico de registros DNS na Cloudflare via API REST oficial."
 API_BASE = "https://api.cloudflare.com/client/v4"
 
-TOOLS: List[Dict[str, Any]] = [
-    {
-        "name": "cloudflare_criar_registro_a",
-        "description": "Cria um registro DNS do tipo A apontando um hostname para um IPv4.",
-        "inputSchema": {
-            "type": "object",
-            "properties": {
-                "zone_id": {"type": "string", "description": "ID da zona DNS na Cloudflare"},
-                "name": {"type": "string", "description": "Nome do registro DNS (ex: app.dominio.com ou @)"},
-                "content": {"type": "string", "description": "Endereço IPv4 de destino"},
-                "proxied": {"type": "boolean", "description": "Se o tráfego deve ser proxied pelo Cloudflare (default: true)", "default": True},
-                "ttl": {"type": "integer", "description": "TTL em segundos (1 para automático)", "default": 1}
-            },
-            "required": ["zone_id", "name", "content"]
-        }
-    },
-    {
-        "name": "cloudflare_criar_registro_cname",
-        "description": "Cria um registro DNS do tipo CNAME apontando um hostname para outro domínio.",
-        "inputSchema": {
-            "type": "object",
-            "properties": {
-                "zone_id": {"type": "string", "description": "ID da zona DNS na Cloudflare"},
-                "name": {"type": "string", "description": "Nome do registro DNS (ex: crm.dominio.com)"},
-                "content": {"type": "string", "description": "Hostname de destino de destino (ex: app.dominio.com)"},
-                "proxied": {"type": "boolean", "description": "Se o tráfego deve ser proxied pelo Cloudflare (default: true)", "default": True},
-                "ttl": {"type": "integer", "description": "TTL em segundos (1 para automático)", "default": 1}
-            },
-            "required": ["zone_id", "name", "content"]
-        }
-    },
-    {
-        "name": "cloudflare_consultar_dns",
-        "description": "Consulta registros DNS existentes em uma zona filtrando por nome e/ou tipo.",
-        "inputSchema": {
-            "type": "object",
-            "properties": {
-                "zone_id": {"type": "string", "description": "ID da zona DNS na Cloudflare"},
-                "name": {"type": "string", "description": "Nome do registro para filtrar (opcional)"},
-                "type": {"type": "string", "description": "Tipo do registro (ex: A, CNAME, TXT) (opcional)"}
-            },
-            "required": ["zone_id"]
-        }
-    }
-]
+mcp = FastMCP(NOME_SERVIDOR, instructions=DESCRICAO_SERVIDOR)
 
 
-def _requisicao_api(metodo: str, endpoint: str, payload: dict = None) -> dict:
+def _requisicao_api(metodo: str, endpoint: str, payload: Optional[dict] = None) -> dict:
     """Executa requisição HTTP autenticada à API da Cloudflare usando urllib."""
     token = os.environ.get("CLOUDFLARE_API_TOKEN")
     if not token or not token.strip():
@@ -126,9 +85,9 @@ def executar_tool(nome_tool: str, args: dict) -> dict:
     elif nome_tool == "cloudflare_consultar_dns":
         filtros = []
         if args.get("name"):
-            filtros.append(f"name={urllib.request.quote(args['name'])}")
+            filtros.append(f"name={urllib.parse.quote(args['name'])}")
         if args.get("type"):
-            filtros.append(f"type={urllib.request.quote(args['type'])}")
+            filtros.append(f"type={urllib.parse.quote(args['type'])}")
         query_str = f"?{'&'.join(filtros)}" if filtros else ""
         res = _requisicao_api("GET", f"/zones/{zone_id}/dns_records{query_str}")
         return {"sucesso": res.get("success", False), "registros": res.get("result", []), "erros": res.get("errors", [])}
@@ -136,44 +95,29 @@ def executar_tool(nome_tool: str, args: dict) -> dict:
     raise ValueError(f"Tool desconhecida: {nome_tool}")
 
 
-def processar_requisicao(req: dict) -> dict:
-    metodo = req.get("method")
-    req_id = req.get("id")
-
-    if metodo == "initialize":
-        resultado = {
-            "protocolVersion": "2024-11-05",
-            "serverInfo": {"name": NOME_SERVIDOR, "version": "1.0"},
-            "capabilities": {"tools": {}},
-        }
-    elif metodo == "tools/list":
-        resultado = {"tools": TOOLS}
-    elif metodo == "tools/call":
-        params = req.get("params", {})
-        resultado = executar_tool(params.get("name"), params.get("arguments", {}))
-    else:
-        return {
-            "jsonrpc": "2.0",
-            "id": req_id,
-            "error": {"code": -32601, "message": f"Método não suportado: {metodo}"},
-        }
-
-    return {"jsonrpc": "2.0", "id": req_id, "result": resultado}
+@mcp.tool()
+def cloudflare_criar_registro_a(zone_id: str, name: str, content: str, proxied: bool = True, ttl: int = 1) -> dict:
+    """Cria um registro DNS do tipo A apontando um hostname para um IPv4."""
+    return executar_tool("cloudflare_criar_registro_a", {
+        "zone_id": zone_id, "name": name, "content": content, "proxied": proxied, "ttl": ttl,
+    })
 
 
-def main():
-    for linha in sys.stdin:
-        linha = linha.strip()
-        if not linha:
-            continue
-        try:
-            req = json.loads(linha)
-            resp = processar_requisicao(req)
-        except Exception as exc:
-            resp = {"jsonrpc": "2.0", "id": None, "error": {"code": -32700, "message": str(exc)}}
-        sys.stdout.write(json.dumps(resp, ensure_ascii=False) + "\n")
-        sys.stdout.flush()
+@mcp.tool()
+def cloudflare_criar_registro_cname(zone_id: str, name: str, content: str, proxied: bool = True, ttl: int = 1) -> dict:
+    """Cria um registro DNS do tipo CNAME apontando um hostname para outro domínio."""
+    return executar_tool("cloudflare_criar_registro_cname", {
+        "zone_id": zone_id, "name": name, "content": content, "proxied": proxied, "ttl": ttl,
+    })
+
+
+@mcp.tool()
+def cloudflare_consultar_dns(zone_id: str, name: Optional[str] = None, type: Optional[str] = None) -> dict:
+    """Consulta registros DNS existentes em uma zona filtrando por nome e/ou tipo."""
+    return executar_tool("cloudflare_consultar_dns", {
+        "zone_id": zone_id, "name": name or "", "type": type or "",
+    })
 
 
 if __name__ == "__main__":
-    main()
+    mcp.run(transport="stdio")

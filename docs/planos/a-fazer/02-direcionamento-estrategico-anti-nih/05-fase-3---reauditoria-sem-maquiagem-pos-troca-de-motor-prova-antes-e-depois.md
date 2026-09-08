@@ -1,7 +1,7 @@
 # Item 5 — Fase 3 - Reauditoria sem maquiagem pos-troca de motor, prova antes e depois
 
 > **Escopo:** Entra: repetir, depois de concluída a Fase 2 (troca de motor), exatamente o mesmo método da auditoria de 2026-09-07 (pytest ao vivo + subir os projetos gerados) e publicar um segundo relatório mostrando a diferença real. Não entra: fazer a troca de motor em si (isso é o item 4/Fase 2).
-> **Status:** [RASCUNHO — Aguardando Aprovacao Humana — só pode rodar depois de pelo menos uma sub-troca da Fase 2 estar implementada]
+> **Status:** [EM ANDAMENTO — Baseline "antes" gerado em 2026-09-08, aguardando Fase 2 para comparativo "depois"]
 > **Modelo sugerido:** Claude Sonnet · Antigravity Gemini 3.7 · MiMo mimo-v2.5-pro (reexecução de método já definido, não decisão nova)
 
 ---

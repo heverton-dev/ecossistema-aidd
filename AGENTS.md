@@ -30,7 +30,9 @@ para uma tarefa específica — é checagem de sessão principal, não por-taref
 
 ## 1. VISÃO GERAL DO ECOSSISTEMA
 
-O **Ecossistema AIDD** unifica 5 ferramentas complementares de Engenharia Agêntica de Software em um monorepo modular e desacoplado:
+> **North Star:** Transformar uma ideia em software testado, e distribuir a mesma governança pra qualquer harness de IA.
+
+O **Ecossistema AIDD** unifica 5 ferramentas complementares de Engenharia Agêntica de Software em um monorepo modular e desacoplado, todas a serviço desse north star:
 
 | Ferramenta | Diretório | Papel Principal | Slash Command |
 | :--- | :--- | :--- | :--- |
@@ -64,6 +66,12 @@ O **Ecossistema AIDD** unifica 5 ferramentas complementares de Engenharia Agênt
 7. **Desenvolvedor no Controle (Zero Subagentes Headless Paralelos):**
    - É estritamente proibido ao assistente disparar subagentes paralelos invisíveis via tools (`task create`, `task start`, `invoke_subagent`, `background_task`) ou via subprocessos ocultos de CLI que concorram sem observabilidade.
    - Toda execução de worktree opera em modo interativo sequencial governado pelo desenvolvedor no terminal, eliminando saturação de contexto, rate limits e timeouts silenciosos.
+8. **Anti-NIH (Not Invented Here):**
+   - Antes de escrever mecanismo novo com mais de ~30-50 linhas para um problema genérico (scaffolding, parsing, scanner, fila, dashboard, hardening), documentar por escrito por que nenhuma ferramenta OSS madura resolve o problema.
+   - Origem: o levantamento NIH (`docs/features/oportunidades-reaproveitamento-oss-nih.md`) documentou 26 casos onde a Regra #1 foi lida como "escreva seu próprio script determinístico" em vez de "não gaste esforço reinventando o que já está resolvido".
+9. **Honestidade de Rótulo:**
+   - Nenhuma mensagem de saída de gate/CLI pode usar linguagem que sugira certificação/segurança maior do que a cobertura real testada (proibido: "blindagem militar", "homologado para produção global", "nota A+" sem rubrica auditável por trás).
+   - Verificado mecanicamente por `gates/G_HONESTIDADE_ROTULO.py` (AST sobre `print()`/`raise()` dos scripts de `gates/` e `scripts/gates/` de cada ferramenta, contra a lista em `gates/termos_proibidos_marketing.json`).
 
 ---
 
@@ -109,13 +117,16 @@ O ecossistema dispõe de Quality Gates globais em gates/:
 - gates/G_ECOSSISTEMA_INTEGRIDADE.py: Audita a integridade física, sintática e estrutural dos 5 subprojetos e das skills.
 - gates/G_DRIFT_NUCLEO_COMPARTILHADO.py: Detecta divergência não documentada entre os arquivos de núcleo compartilhados por linhagem entre aidd-master e aidd-enterprise (baseline em gates/baseline_nucleo_compartilhado.json).
 - gates/G_HARNESS_COMPAT.py: Verifica que os artefatos multi-harness da raiz (comandos, skills, arquivos-ponteiro) permanecem sincronizados entre si.
-- gates/G_SEGREDOS.py: Escaneia todo o repositório rastreado pelo git em busca de credenciais hardcoded (allowlist auditada em gates/allowlist_segredos.json).
+- gates/G_SEGREDOS.py: Escaneia todo o repositório rastreado pelo git em busca de credenciais hardcoded, delegando ao detect-secrets (Yelp); baseline auditado em .secrets.baseline na raiz.
 - gates/G_CLI_HELP_CONSISTENCIA.py: Compara, via AST, flags citadas em print()/raise() contra flags realmente definidas via add_argument nos pontos de entrada argparse das 4 ferramentas (allowlist de flags de ferramenta externa em gates/allowlist_cli_help.json).
 - gates/G_COMPONENTE_AGNOSTICO.py: Audita a integridade e cobertura multi-harness de todo componente novo ou modificado contra o manifesto.
 - gates/G_ZERO_HEADLESS.py: Impede a execução de subagentes headless paralelos e assegura o modo interativo como rota primária e mandatória.
-- gates/G_INFRA_COMPOSE.py: Audita estaticamente a integridade e sintaxe de orquestrações Docker Compose e scripts de banco de dados do aidd-ops.
+- gates/G_INFRA_COMPOSE.py: Audita estaticamente a integridade, sintaxe e segurança de orquestrações Docker Compose delegando ao Checkov e com parsing estruturado PyYAML, além de validar scripts de banco de dados do aidd-ops.
+- gates/G_HADOLINT.py: Audita estaticamente melhores práticas OCI, segurança e sintaxe de todos os Dockerfiles (existentes e gerados) via Hadolint (Haskell Dockerfile Linter).
 - gates/G_TESTES_REAIS.py: Roda pytest de verdade em cada tools/<ferramenta> e falha (exit 1) se qualquer suíte tiver failed > 0.
-- Execução unificada via CLI: python ecossistema.py audit (roda os 9 gates em sequência)
+- gates/G_HONESTIDADE_ROTULO.py: Verifica a Regra de Ouro #9 — escaneia (via AST) print()/raise() dos scripts de gates/ e scripts/gates/ de cada ferramenta contra a lista de termos de marketing proibidos em gates/termos_proibidos_marketing.json.
+- **Execução unificada:** os gates acima são hooks locais do framework **pre-commit** (`.pre-commit-config.yaml`, todos `repo: local`/`language: system`, herméticos e agnósticos). `python ecossistema.py audit` **delega** para `pre-commit run --all-files` (fallback ao runner legado se o pre-commit não estiver instalado). Roda também em **todo commit** via `.githooks/pre-commit` (gates → syncs). G_HONESTIDADE_ROTULO fica em `stages: [manual]` (ver nota abaixo) — nunca mascara um gate vermelho. (NIH #4 / Fase 2-Gates3)
+- **Nota:** G_HONESTIDADE_ROTULO.py ainda não está incluído no `audit` agregado acima — rodando-o hoje (`python -m pre_commit run g-honestidade-rotulo --all-files --hook-stage manual`) ele reprova de verdade contra uma violação já conhecida e rastreada (tools/aidd-master e tools/aidd-enterprise `scripts/gates/G_SEGURANCA.py`, `G_ARQUITETURA.py`, `G_PERFORMANCE.py`), cuja correção de rota (rótulo vs. cobertura real) é escopo do item `docs/planos/fazendo/01-correcao-pos-auditoria-sem-maquiagem/07-corrigir-gate-de-seguranca-rotulado-blindagem-militar-rotulo-ou-cobertura-real.md`, pendente de decisão humana. Adicioná-lo ao `audit` antes disso exigiria mascarar a violação numa allowlist — o que contradiz a própria regra que o gate existe pra fazer cumprir.
 
 ---
 

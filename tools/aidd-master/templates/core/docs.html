@@ -4,23 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Plataforma SaaS Suite v5.1 — Guia e Documentação Enciclopédica</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="/static/output.css">
     <script type="module">
         import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
         mermaid.initialize({ startOnLoad: true, theme: 'dark' });
-    </script>
-    <script>
-        tailwind.config = {
-            darkMode: 'class',
-            theme: {
-                extend: {
-                    colors: {
-                        brand: { 500: '#0ea5e9', 600: '#0284c7' },
-                        dark: { 800: '#0f172a', 900: '#020617', 700: '#1e293b' }
-                    }
-                }
-            }
-        };
     </script>
     <style>
         ::-webkit-scrollbar { width: 4px; height: 4px; }
@@ -67,14 +54,14 @@
         <!-- SIDEBAR DE NAVEGAÇÃO DOS 10 CAPÍTULOS -->
         <aside class="w-64 flex-shrink-0 sticky top-24 h-[calc(100vh-8rem)] overflow-y-auto space-y-1 text-xs pr-2">
             <div class="font-bold text-slate-400 uppercase tracking-wider mb-2 px-2">Capítulos do Guia</div>
-            __SIDEBAR_LINKS__
+            {{ sidebar_links }}
             <a href="#cap11" class="block px-3 py-2 rounded-lg text-sky-400 font-semibold bg-sky-500/10 border border-sky-500/20 hover:bg-sky-500/20 transition">11. Design System & Tokens Visuais</a>
         </aside>
 
         <!-- CONTEÚDO DOS 10 CAPÍTULOS -->
         <main class="flex-1 space-y-12 text-sm text-slate-300 leading-relaxed max-w-4xl pb-24">
 
-            __MODULE_DOCS__
+            {{ module_docs }}
 
             <!-- CAPÍTULO 11: DESIGN SYSTEM OFICIAL DA PLATAFORMA -->
             <section id="cap11" class="doc-section space-y-6">
@@ -274,7 +261,7 @@ button, .btn { white-space: nowrap !important; flex-shrink: 0 !important; displa
             return icons[type] || '<svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>';
         }
 
-        const SPOTLIGHT_COMMANDS = __SPOTLIGHT_COMMANDS__;
+        const SPOTLIGHT_COMMANDS = {{ spotlight_commands }};
 
         let spotlightSelectedIndex = 0;
         let spotlightFilteredCommands = [...SPOTLIGHT_COMMANDS];

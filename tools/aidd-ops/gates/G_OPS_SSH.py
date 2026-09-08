@@ -3,11 +3,15 @@
 =============================================================================
 AIDD-Ops — QUALITY GATE DETERMINÍSTICO SSH (G_OPS_SSH)
 =============================================================================
-Validação estrita via AST de tools/aidd-ops/src/core/ssh_runner.py:
-1. Zero injeção de comandos shell (nenhuma chamada a subprocess/os.system/os.popen
-   ou exec_command com concatenação/f-string dinâmica baseada em argumentos externos).
-2. Verificação de lista estrita e fechada de operações (OPERACOES_PERMITIDAS).
-3. Zero stubs / zero funções vazias.
+Validação estrita via AST de tools/aidd-ops/src/core/ssh_runner.py (NIH #15:
+hardening manual via paramiko substituído por Ansible + devsec.hardening):
+1. Zero injeção de comandos (nenhuma chamada a subprocess/os.system/os.popen
+   ou exec_command com concatenação/f-string dinâmica baseada em argumentos
+   externos — inclui a invocação de `ansible-playbook` via subprocess.run).
+2. Verificação de lista estrita e fechada de tags Ansible (TAGS_PERMITIDAS),
+   que substitui a antiga lista fechada de comandos shell.
+3. Existência real do playbook de hardening referenciado (sem stub de caminho).
+4. Zero stubs / zero funções vazias.
 """
 
 import ast
@@ -16,6 +20,7 @@ import sys
 
 TOOL_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SSH_RUNNER_PATH = os.path.join(TOOL_ROOT, "src", "core", "ssh_runner.py")
+PLAYBOOK_PATH = os.path.join(TOOL_ROOT, "ansible", "playbooks", "hardening.yml")
 
 
 class OpsSshGate:
@@ -52,20 +57,20 @@ class OpsSshGate:
 
         self.check(True, "Analise sintatica (AST Parse)", "")
 
-        # 1. Verificar presenca da constante fechada OPERACOES_PERMITIDAS
+        # 1. Verificar presenca da constante fechada TAGS_PERMITIDAS (tags Ansible)
         tem_operacoes = False
         operacoes_chaves = []
         for node in tree.body:
             if isinstance(node, ast.Assign):
                 for target in node.targets:
-                    if isinstance(target, ast.Name) and target.id == "OPERACOES_PERMITIDAS":
+                    if isinstance(target, ast.Name) and target.id == "TAGS_PERMITIDAS":
                         if isinstance(node.value, ast.Dict):
                             tem_operacoes = True
                             for k in node.value.keys:
                                 if isinstance(k, ast.Constant):
                                     operacoes_chaves.append(k.value)
             elif isinstance(node, ast.AnnAssign):
-                if isinstance(node.target, ast.Name) and node.target.id == "OPERACOES_PERMITIDAS":
+                if isinstance(node.target, ast.Name) and node.target.id == "TAGS_PERMITIDAS":
                     if isinstance(node.value, ast.Dict):
                         tem_operacoes = True
                         for k in node.value.keys:
@@ -74,8 +79,15 @@ class OpsSshGate:
 
         self.check(
             tem_operacoes and len(operacoes_chaves) >= 5,
-            "Lista fechada de operacoes (constante OPERACOES_PERMITIDAS no modulo)",
-            "OPERACOES_PERMITIDAS ausente ou incompleta",
+            "Lista fechada de tags Ansible (constante TAGS_PERMITIDAS no modulo)",
+            "TAGS_PERMITIDAS ausente ou incompleta",
+        )
+
+        # 1b. Playbook de hardening referenciado deve existir de verdade (sem stub)
+        self.check(
+            os.path.isfile(PLAYBOOK_PATH),
+            "Playbook de hardening Ansible presente em disco",
+            f"Nao encontrado: {PLAYBOOK_PATH}",
         )
 
         # 2. Varredura anti-injecao AST:

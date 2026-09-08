@@ -1,4 +1,4 @@
-﻿# Dependências de Desenvolvimento, Qualidade e Testes — Ecossistema AIDD
+# Dependências de Desenvolvimento, Qualidade e Testes — Ecossistema AIDD
 -r requirements.txt
 
 # Testes e Cobertura
@@ -12,6 +12,11 @@ flake8>=6.0.0
 black>=23.7.0
 mypy>=1.4.0
 
-# Ferramental de Segurança
+# Runner dos Quality Gates (NIH #4 — 'audit' delega para pre-commit)
+pre-commit>=4.0.0
+
+# Ferramental de Segurança e Auditoria IaC
 bandit>=1.7.5
 pip-audit>=2.6.0
+detect-secrets>=1.5.0
+checkov>=3.3.0

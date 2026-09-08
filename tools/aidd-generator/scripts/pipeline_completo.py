@@ -45,13 +45,16 @@ if sys.platform == 'win32':
     sys.stdout.reconfigure(encoding='utf-8')
 
 PHASES_DIR = Path(__file__).parent / 'phases'
+CORE_DIR = Path(__file__).parent / 'core'
 sys.path.insert(0, str(PHASES_DIR))
+sys.path.insert(0, str(CORE_DIR))
 
 # Pré-voo LLM (verifica LLM_MODEL + credencial antes de rodar o pipeline)
 from preflight_llm import verificar_llm_pronto  # noqa: E402
 from utils_delegacao import LLMNaoConfiguradoException
 from utils_fleet_discovery import resolver_fleet, fleet_status_para_log, persistir_fleet_status
 from utils_subagente_ephemero import ContextPurgeEngine
+from repomix_runner import empacotar_repositorio, repomix_disponivel
 
 
 # =============================================================================
@@ -287,6 +290,23 @@ def executar_pipeline(ideia: str, pasta_projeto: Path, nao_interativo: bool = Tr
     resultado['context_purge'] = purge_engine.metricas.to_dict()
     purge_engine.persistir_metricas()
 
+    # NIH #22: Empacotamento canônico do repositório via Repomix para LLMs
+    saida_contexto = cache_dir / 'contexto_repo.xml'
+    pkg_repo = empacotar_repositorio(
+        pasta_projeto,
+        saida_arquivo=saida_contexto,
+        formato='xml',
+        remove_comments=True,
+        remove_empty_lines=True,
+        no_file_summary=True
+    )
+    resultado['contexto_repo'] = {
+        'status': pkg_repo.get('status'),
+        'tokens_estimados': pkg_repo.get('tokens_estimados', 0),
+        'ferramenta': pkg_repo.get('ferramenta'),
+        'arquivo': str(saida_contexto) if saida_contexto.exists() else None
+    }
+
     # Descartar todas as fases da memória ao final
     _descarregar_todas_fases()
 
@@ -303,6 +323,10 @@ def main():
                        help='Usar modal interativo (input()) na Fase 4 em vez da heurística automática')
     parser.add_argument('--implementar-codigo', action='store_true',
                        help='Rodar também a Fase 8 (implementa código funcional real a partir do design, com testes e loop de correção)')
+    parser.add_argument('--orquestrador', choices=['legado', 'prefect'], default='legado',
+                       help='Motor de orquestração genérica (retries/checkpoints/estado). '
+                            'prefect: delega a parte genérica ao Prefect preservando o protocolo delegado. '
+                            'legado: orquestração sequencial custom (comportamento padrão).')
 
     args = parser.parse_args()
 
@@ -320,10 +344,27 @@ def main():
     # env vars), uma chave presente mas inválida só falha na chamada real —
     # captura aqui pra nunca vazar o stack trace cru do litellm.
     try:
-        resultado = executar_pipeline(
-            args.ideia, Path(args.pasta), nao_interativo=not args.interativo,
-            implementar_codigo=args.implementar_codigo
-        )
+        if args.orquestrador == 'prefect':
+            # Orquestração genérica via Prefect: retries automáticos por fase,
+            # checkpointing por (ideia, fase) e estado persistido em SQLite.
+            # O protocolo delegado (utils_delegacao) permanece intacto.
+            from pipeline_prefect import disponibilidade_prefect, executar_pipeline_prefect
+            prefect_ok, prefect_msg = disponibilidade_prefect()
+            if not prefect_ok:
+                print(f"\n❌ ORQUESTRADOR PREFECT INDISPONÍVEL — {prefect_msg}")
+                print("   Confirme a instalação com: pip install prefect")
+                sys.exit(1)
+            print(f"✓ {prefect_msg}")
+            resultado = executar_pipeline_prefect(
+                args.ideia, str(Path(args.pasta)),
+                nao_interativo=not args.interativo,
+                implementar_codigo=args.implementar_codigo
+            )
+        else:
+            resultado = executar_pipeline(
+                args.ideia, Path(args.pasta), nao_interativo=not args.interativo,
+                implementar_codigo=args.implementar_codigo
+            )
     except LLMNaoConfiguradoException as e:
         print(f"\n❌ {e.mensagem_usuario}")
         sys.exit(1)

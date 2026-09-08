@@ -38,20 +38,25 @@ docker compose logs chatwoot-rails | grep "listening"
 | `POSTGRES_HOST` | Não | Host do PostgreSQL (default: postgres) |
 | `CHATWOOT_DB_NAME` | Não | Nome do banco (default: chatwoot_db) |
 | `CHATWOOT_DB_USER` | Não | Usuário do banco (default: chatwoot_user) |
-| `CHATWOOT_FRONTEND_URL` | Não | URL do frontend (default: http://localhost:3000) |
-| `CHATWOOT_RAILS_PORT` | Não | Porta do Rails (default: 3000) |
+| `CHATWOOT_HOST` | Não | Host Traefik do Chatwoot (default: chat.localhost) |
 
 ## Integração com outros blocos
 
 - **PostgreSQL:** conecta via rede `aidd_internal` ao bloco `postgres/`.
-- **Traefik:** para expor publicamente, adicione labels Traefik ao container `chatwoot-rails`.
+- **Traefik (NIH #16):** Chatwoot já vem com labels de roteamento Traefik habilitados.
+  `chatwoot-rails:3000` é roteado em `CHATWOOT_HOST`. Não há porta de host
+  publicada — o acesso é exclusivamente via reverse proxy (sem colisão na porta 3000).
 - **Evolution API (nicho clínicas/farmácias):** integração via webhook para WhatsApp.
 
-## Portas expostas
+## Acesso via Traefik
 
-| Porta | Serviço | Nota |
-|---|---|---|
-| 3000 | Chatwoot Rails | API + Interface admin |
+Aponte o DNS/`/etc/hosts` para o IP do host onde o Traefik roda:
+
+```
+ip.do.host    chat.localhost
+```
+
+Acesso: `https://chat.localhost`.
 
 ## Imagens
 

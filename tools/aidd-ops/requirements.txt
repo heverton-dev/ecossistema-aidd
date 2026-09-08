@@ -1,2 +1,13 @@
 # Dependencias de producao do AIDD-Ops
 paramiko>=3.4.0
+returns>=0.23.0
+
+# MCP (NIH #24): SDK oficial do Model Context Protocol para os servidores
+# MCP em mcps/ (docker-mcp, cloudflare-mcp) — substitui JSON-RPC manual.
+mcp>=1.0
+
+# Hardening de VPS (NIH #15): Ansible + colecao devsec.hardening.
+# ansible-core exige control node POSIX (Linux/WSL/CI) — nao roda nativamente
+# no Windows. Instalar as colecoes com:
+#   ansible-galaxy collection install -r ansible/requirements.yml -p ansible/collections
+ansible-core>=2.16.0; sys_platform != "win32"

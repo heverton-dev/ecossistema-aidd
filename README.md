@@ -8,11 +8,13 @@
 
 ## 💡 O que é o Ecossistema AIDD? (Entenda em 1 Minuto)
 
+> **North Star:** Transformar uma ideia em software testado, e distribuir a mesma governança pra qualquer harness de IA.
+
 Imagine uma **fábrica inteligente de automóveis de alta precisão**:
 - Você não constrói um carro no improviso: primeiro monta a **linha de produção blindada** para ninguém se machucar, depois a **engenharia desenha e monta o motor**, os **módulos se encaixam como blocos de Lego**, uma **equipe de auditoria certifica cada parafuso** e, por fim, a **equipe de pista abastece e coloca o carro para rodar no asfalto**.
 
 O **Ecossistema AIDD** faz exatamente isso, só que para **Softwares Modernos construídos por Inteligência Artificial**:
-Ele transforma ideias em sistemas prontos, blindados, testados e colocados em produção na nuvem, garantindo que a IA nunca alucine, nunca invente código pela metade e nunca quebre o projeto.
+ele transforma uma ideia em software testado, aplicando os mesmos Quality Gates e a mesma governança independente de qual assistente de IA está no comando (Claude Code, Cursor, Antigravity, OpenCode, MimoCode etc.).
 
 ---
 
@@ -120,7 +122,7 @@ Antes de qualquer código ser considerado "pronto", ele é obrigado a passar por
 5. 💬 **G_CLI_HELP_CONSISTENCIA:** Valida via análise sintática (AST) se as opções explicadas nas mensagens batem exatamente com as flags reais da linha de comando.
 6. 🧩 **G_COMPONENTE_AGNOSTICO:** Audita se novos componentes funcionam de forma universal em qualquer ambiente.
 7. 🛑 **G_ZERO_HEADLESS:** Garante que o desenvolvedor humano esteja sempre no controle, bloqueando robôs ou subagentes ocultos que gastariam tokens em segundo plano.
-8. 🐳 **G_INFRA_COMPOSE:** Audita arquivos Docker Compose, garantindo que não existam portas duplicadas, variáveis faltando ou erros de banco de dados.
+8. 🐳 **G_INFRA_COMPOSE:** Audita arquivos Docker Compose delegando ao scanner Checkov e com parsing estruturado PyYAML, garantindo que não existam portas duplicadas, segredos, variáveis faltando ou erros de banco de dados.
 
 > **Validação em um comando:** `python ecossistema.py audit` (Roda os 8 gates em sequência e retorna `exit 0` apenas com 100% de aprovação).
 

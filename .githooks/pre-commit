@@ -1,15 +1,38 @@
 #!/bin/sh
-# Dois auto-sincronizadores independentes, cada um só dispara se o commit
-# tocar a pasta correspondente. Um checa NÃO acionar o outro.
+# Quality gates (framework pre-commit) + auto-syncs do repositorio.
+#
+# Migrado em NIH #4 (Fase 2-Gates3): o runner proprio dos quality gates
+# ('python ecossistema.py audit') foi substituido pelo framework pre-commit.
+# Este hook e o unico ponto de entrada do git; ele:
+#   1. Roda os quality gates (gates/G_*.py) definidos em
+#      .pre-commit-config.yaml como hooks locais hermeticos
+#      (repo: local, language: system).
+#   2. Depois dos gates passarem, continua os auto-syncs que sempre viveram
+#      aqui: components sync, planos index, telemetria e code-review-graph.
 #
 # Instalado via: git config core.hooksPath .githooks
 # (feito automaticamente por 'python ecossistema.py dependencia bootstrap',
-# ou manualmente com o comando acima).
+#  ou manualmente com o comando acima).
 
 set -e
 
 REPO_ROOT="$(git rev-parse --show-toplevel)"
 cd "$REPO_ROOT"
+
+# --- 0. Quality gates via pre-commit (NIH #4) ---
+# Roda SO SE o framework estiver instalado; senao, avisa e segue (bootstrap
+# agnostico — nunca trava commit numa maquina ainda sem pre-commit). O
+# equivalente manual continua em 'python ecossistema.py audit'.
+if python -m pre_commit --version >/dev/null 2>&1; then
+  echo "[pre-commit] Rodando quality gates (framework pre-commit)..."
+  if ! python -m pre_commit run --color never; then
+    echo "[pre-commit] ERRO: quality gates reprovaram. Corrija antes do commit."
+    echo "[pre-commit]       Diagnostico: rode 'python ecossistema.py audit' ou os hooks individualmente."
+    exit 1
+  fi
+else
+  echo "[pre-commit] AVISO: pre-commit nao instalado — pulando quality gates. Instale com: pip install pre-commit"
+fi
 
 STAGED="$(git diff --cached --name-only)"
 

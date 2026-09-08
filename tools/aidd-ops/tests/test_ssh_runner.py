@@ -1,11 +1,13 @@
 # -*- coding: utf-8 -*-
 """
-Testes unitários para o SSH Runner determinístico (Pacote 4).
-Cobertura de dry-run, lista fechada de operações, tratamento de erros e validação AST.
+Testes unitários para o Runner de Hardening via Ansible (NIH #15).
+Cobertura de dry-run, lista fechada de tags, pré-voo Paramiko, invocação de
+ansible-playbook via subprocess e validação AST do gate.
 """
 
 import os
 import socket
+import subprocess
 import sys
 import tempfile
 from unittest.mock import MagicMock, patch
@@ -16,7 +18,8 @@ TOOL_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 if TOOL_ROOT not in sys.path:
     sys.path.insert(0, TOOL_ROOT)
 
-from src.core.ssh_runner import SSHRunner, OPERACOES_PERMITIDAS
+from src.core.ssh_runner import SSHRunner, TAGS_PERMITIDAS, ORDEM_BOOTSTRAP
+from src.core.result import Result
 from gates.G_OPS_SSH import OpsSshGate
 
 
@@ -59,104 +62,82 @@ class TestSSHRunnerDryRun:
         assert res.sucesso
         assert res.valor["dry_run"] is True
         assert res.valor["operacao"] == "atualizar_pacotes"
-        assert "apt-get update" in res.valor["comando"]
+        assert res.valor["engine"] == "ansible"
 
     def test_instalar_docker_dry_run(self, runner):
         res = runner.instalar_docker()
         assert res.sucesso
         assert res.valor["dry_run"] is True
-        assert "get.docker.com" in res.valor["comando"]
+        assert res.valor["operacao"] == "docker"
 
     def test_configurar_ufw_dry_run(self, runner):
         res = runner.configurar_ufw()
         assert res.sucesso
         assert res.valor["dry_run"] is True
-        assert "ufw allow 22/tcp" in res.valor["comando"]
-        assert "ufw allow 80/tcp" in res.valor["comando"]
-        assert "ufw allow 443/tcp" in res.valor["comando"]
+        assert res.valor["operacao"] == "firewall"
 
     def test_instalar_fail2ban_dry_run(self, runner):
         res = runner.instalar_fail2ban()
         assert res.sucesso
         assert res.valor["dry_run"] is True
-        assert "fail2ban" in res.valor["comando"]
+        assert res.valor["operacao"] == "fail2ban"
+
+    def test_aplicar_os_hardening_dry_run(self, runner):
+        res = runner.aplicar_os_hardening()
+        assert res.sucesso
+        assert res.valor["dry_run"] is True
+        assert res.valor["operacao"] == "os_hardening"
+        assert "devsec.hardening" in res.valor["descricao"]
+
+    def test_aplicar_ssh_hardening_dry_run(self, runner):
+        res = runner.aplicar_ssh_hardening()
+        assert res.sucesso
+        assert res.valor["dry_run"] is True
+        assert res.valor["operacao"] == "ssh_hardening"
+        assert "devsec.hardening" in res.valor["descricao"]
 
     def test_criar_swap_dry_run(self, runner):
         res = runner.criar_swap()
         assert res.sucesso
         assert res.valor["dry_run"] is True
-        assert "mkswap" in res.valor["comando"]
+        assert res.valor["operacao"] == "swap"
 
     def test_executar_bootstrap_completo_dry_run(self, runner):
         res = runner.executar_bootstrap_completo()
         assert res.sucesso
         assert isinstance(res.valor, list)
-        assert len(res.valor) == 5
+        assert len(res.valor) == len(ORDEM_BOOTSTRAP) == 7
         operacoes = [item["operacao"] for item in res.valor]
-        assert operacoes == [
-            "atualizar_pacotes",
-            "instalar_docker",
-            "configurar_ufw",
-            "instalar_fail2ban",
-            "criar_swap",
-        ]
+        assert operacoes == ORDEM_BOOTSTRAP
 
 
-class TestSSHRunnerExecucaoComMock:
+class TestSSHRunnerPreVooParamiko:
+    """Paramiko so e usado agora para o pre-voo de conectividade (testar_conexao)."""
+
+    def test_pre_voo_dry_run_e_simulado(self):
+        runner = SSHRunner(host="test.local", dry_run=True)
+        res = runner.testar_conexao()
+        assert res.sucesso
+        assert res.valor["dry_run"] is True
+
     @patch("src.core.ssh_runner.paramiko")
-    def test_execucao_sucesso(self, mock_paramiko):
+    def test_pre_voo_sucesso(self, mock_paramiko):
         mock_client = MagicMock()
+        mock_transport = MagicMock()
+        mock_transport.is_active.return_value = True
+        mock_client.get_transport.return_value = mock_transport
         mock_paramiko.SSHClient.return_value = mock_client
         mock_paramiko.AutoAddPolicy.return_value = MagicMock()
 
-        mock_channel = MagicMock()
-        mock_channel.recv_exit_status.return_value = 0
-
-        mock_stdout = MagicMock()
-        mock_stdout.channel = mock_channel
-        mock_stdout.read.return_value = b"Docker installed successfully"
-
-        mock_stderr = MagicMock()
-        mock_stderr.read.return_value = b""
-
-        mock_client.exec_command.return_value = (MagicMock(), mock_stdout, mock_stderr)
-
         runner = SSHRunner(host="192.168.1.50", dry_run=False)
-        res = runner.instalar_docker()
+        res = runner.testar_conexao()
 
         assert res.sucesso
-        assert res.valor["dry_run"] is False
-        assert res.valor["exit_code"] == 0
-        assert "Docker installed" in res.valor["stdout"]
+        assert res.valor["conectividade"] == "ok"
         mock_client.close.assert_called_once()
 
     @patch("src.core.ssh_runner.paramiko")
-    def test_execucao_falha_exit_code(self, mock_paramiko):
-        mock_client = MagicMock()
-        mock_paramiko.SSHClient.return_value = mock_client
-        mock_paramiko.AutoAddPolicy.return_value = MagicMock()
-
-        mock_channel = MagicMock()
-        mock_channel.recv_exit_status.return_value = 1
-
-        mock_stdout = MagicMock()
-        mock_stdout.channel = mock_channel
-        mock_stdout.read.return_value = b""
-
-        mock_stderr = MagicMock()
-        mock_stderr.read.return_value = b"E: Package fail2ban not found"
-
-        mock_client.exec_command.return_value = (MagicMock(), mock_stdout, mock_stderr)
-
-        runner = SSHRunner(host="192.168.1.50", dry_run=False)
-        res = runner.instalar_fail2ban()
-
-        assert not res.sucesso
-        assert res.codigo == "FALHA_EXECUCAO_REMOTA"
-        assert res.detalhes["exit_code"] == 1
-
-    @patch("src.core.ssh_runner.paramiko")
-    def test_falha_autenticacao_sem_vazar_segredos(self, mock_paramiko):
+    def test_pre_voo_falha_autenticacao_sem_vazar_segredos(self, mock_paramiko):
         import paramiko as real_paramiko
         mock_client = MagicMock()
         mock_client.connect.side_effect = real_paramiko.AuthenticationException("Permission denied (publickey)")
@@ -164,21 +145,84 @@ class TestSSHRunnerExecucaoComMock:
         mock_paramiko.AutoAddPolicy.return_value = MagicMock()
 
         runner = SSHRunner(host="192.168.1.50", dry_run=False)
-        res = runner.atualizar_pacotes()
+        res = runner.testar_conexao()
 
         assert not res.sucesso
         assert res.codigo == "FALHA_AUTENTICACAO"
         assert "chave" in res.erro.lower()
 
     @patch("src.core.ssh_runner.paramiko")
-    def test_falha_timeout(self, mock_paramiko):
+    def test_pre_voo_falha_timeout(self, mock_paramiko):
         mock_client = MagicMock()
         mock_client.connect.side_effect = socket.timeout("timed out")
         mock_paramiko.SSHClient.return_value = mock_client
         mock_paramiko.AutoAddPolicy.return_value = MagicMock()
 
         runner = SSHRunner(host="192.168.1.50", dry_run=False)
-        res = runner.atualizar_pacotes()
+        res = runner.testar_conexao()
+
+        assert not res.sucesso
+        assert res.codigo == "TIMEOUT_CONEXAO"
+
+
+class TestSSHRunnerExecucaoAnsibleComMock:
+    """Execucao real delega ao ansible-playbook (subprocess), apos pre-voo Paramiko."""
+
+    def _mock_pre_voo_ok(self, monkeypatch, runner):
+        monkeypatch.setattr(runner, "testar_conexao", lambda: Result.ok({"conectividade": "ok"}))
+
+    @patch("src.core.ssh_runner.subprocess.run")
+    @patch("src.core.ssh_runner.shutil.which", return_value="/usr/bin/ansible-playbook")
+    def test_execucao_sucesso(self, mock_which, mock_run, monkeypatch):
+        runner = SSHRunner(host="192.168.1.50", dry_run=False)
+        self._mock_pre_voo_ok(monkeypatch, runner)
+
+        mock_run.return_value = MagicMock(returncode=0, stdout="PLAY RECAP ok", stderr="")
+
+        res = runner.instalar_docker()
+
+        assert res.sucesso
+        assert res.valor["dry_run"] is False
+        assert res.valor["exit_code"] == 0
+        assert res.valor["engine"] == "ansible"
+        assert mock_run.called
+        argv = mock_run.call_args.args[0]
+        assert argv[0] == "/usr/bin/ansible-playbook"
+        assert "--tags" in argv and "docker" in argv
+
+    @patch("src.core.ssh_runner.subprocess.run")
+    @patch("src.core.ssh_runner.shutil.which", return_value="/usr/bin/ansible-playbook")
+    def test_execucao_falha_exit_code(self, mock_which, mock_run, monkeypatch):
+        runner = SSHRunner(host="192.168.1.50", dry_run=False)
+        self._mock_pre_voo_ok(monkeypatch, runner)
+
+        mock_run.return_value = MagicMock(returncode=2, stdout="", stderr="fatal: [alvo]: FAILED!")
+
+        res = runner.instalar_fail2ban()
+
+        assert not res.sucesso
+        assert res.codigo == "FALHA_EXECUCAO_REMOTA"
+        assert res.detalhes["exit_code"] == 2
+
+    @patch("src.core.ssh_runner.shutil.which", return_value=None)
+    def test_ansible_nao_instalado(self, mock_which, monkeypatch):
+        runner = SSHRunner(host="192.168.1.50", dry_run=False)
+        self._mock_pre_voo_ok(monkeypatch, runner)
+
+        res = runner.instalar_docker()
+
+        assert not res.sucesso
+        assert res.codigo == "ANSIBLE_NAO_INSTALADO"
+
+    @patch("src.core.ssh_runner.paramiko")
+    def test_pre_voo_falha_bloqueia_execucao_ansible(self, mock_paramiko):
+        mock_client = MagicMock()
+        mock_client.connect.side_effect = socket.timeout("timed out")
+        mock_paramiko.SSHClient.return_value = mock_client
+        mock_paramiko.AutoAddPolicy.return_value = MagicMock()
+
+        runner = SSHRunner(host="192.168.1.50", dry_run=False)
+        res = runner.instalar_docker()
 
         assert not res.sucesso
         assert res.codigo == "TIMEOUT_CONEXAO"
@@ -193,7 +237,7 @@ class TestGateSshRunnerAST:
     def test_gate_reprova_concatenacao_insegura(self):
         codigo_inseguro = """
 import os
-OPERACOES_PERMITIDAS = {'a': '1', 'b': '2', 'c': '3', 'd': '4', 'e': '5'}
+TAGS_PERMITIDAS = {'a': '1', 'b': '2', 'c': '3', 'd': '4', 'e': '5'}
 def executar_malicioso(arg):
     os.system("echo " + arg)
 """

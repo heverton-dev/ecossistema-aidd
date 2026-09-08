@@ -6,6 +6,9 @@
 # Nota: Twenty requer PostgreSQL centralizado (banco twenty_db) via rede aidd_internal.
 #       Não inclui Redis — o compose oficial do Twenty usa, mas para isolamento
 #       do template, a conexão é parametrizável via .env.
+# Roteamento: NIH #16 — Twenty é exposto EXCLUSIVAMENTE via labels Traefik
+#       (sem porta de host publicada). O servidor e o frontend deixam de colidir
+#       na porta 3000/3001 do host quando a stack inteira sobe junta.
 # Validação: docker compose config (syntaxe) + G_INFRA_COMPOSE.py (Pacote 6)
 # =============================================================================
 
@@ -17,16 +20,21 @@ services:
     environment:
       PG_DATABASE_URL: postgresql://${TWENTY_DB_USER:-twenty_user}:${TWENTY_DB_PASSWORD:?Defina TWENTY_DB_PASSWORD no .env}@${POSTGRES_HOST:-postgres}:5432/${TWENTY_DB_NAME:-twenty_db}
       REDIS_URL: redis://redis:6379
-      SERVER_URL: ${TWENTY_SERVER_URL:-http://localhost:3000}
-      FRONT_BASE_URL: ${TWENTY_FRONT_URL:-http://localhost:3001}
+      SERVER_URL: https://${TWENTY_SERVER_HOST:-twenty.localhost}
+      FRONT_BASE_URL: https://${TWENTY_FRONT_HOST:-twenty-ui.localhost}
       ACCESS_TOKEN_SECRET: ${TWENTY_ACCESS_TOKEN_SECRET:?Defina TWENTY_ACCESS_TOKEN_SECRET no .env}
       LOGIN_TOKEN_SECRET: ${TWENTY_LOGIN_TOKEN_SECRET:?Defina TWENTY_LOGIN_TOKEN_SECRET no .env}
       REFRESH_TOKEN_SECRET: ${TWENTY_REFRESH_TOKEN_SECRET:?Defina TWENTY_REFRESH_TOKEN_SECRET no .env}
       FILE_TOKEN_SECRET: ${TWENTY_FILE_TOKEN_SECRET:?Defina TWENTY_FILE_TOKEN_SECRET no .env}
-    ports:
-      - "${TWENTY_SERVER_PORT:-3000}:3000"
     networks:
       - aidd_internal
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.twenty-api.rule=Host(`${TWENTY_SERVER_HOST:-twenty.localhost}`)"
+      - "traefik.http.routers.twenty-api.entrypoints=websecure"
+      - "traefik.http.routers.twenty-api.tls.certresolver=letsencrypt"
+      - "traefik.http.routers.twenty-api.service=twenty-api"
+      - "traefik.http.services.twenty-api.loadbalancer.server.port=3000"
     depends_on:
       twenty-redis:
         condition: service_healthy
@@ -47,11 +55,16 @@ services:
     restart: unless-stopped
     command: npx serve build -s -l 3001
     environment:
-      REACT_APP_SERVER_BASE_URL: ${TWENTY_SERVER_URL:-http://localhost:3000}
-    ports:
-      - "${TWENTY_FRONT_PORT:-3001}:3001"
+      REACT_APP_SERVER_BASE_URL: https://${TWENTY_SERVER_HOST:-twenty.localhost}
     networks:
       - aidd_internal
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.twenty.rule=Host(`${TWENTY_FRONT_HOST:-twenty-ui.localhost}`)"
+      - "traefik.http.routers.twenty.entrypoints=websecure"
+      - "traefik.http.routers.twenty.tls.certresolver=letsencrypt"
+      - "traefik.http.routers.twenty.service=twenty-ui"
+      - "traefik.http.services.twenty-ui.loadbalancer.server.port=3001"
     healthcheck:
       test: ["CMD-SHELL", "curl -f http://localhost:3001 || exit 1"]
       interval: 30s

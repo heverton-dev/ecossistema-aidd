@@ -14,6 +14,29 @@
 - Conclusão: forge injeta infraestrutura de **como construir** (governança de IA); o que o usuário pediu é infraestrutura de **o que foi construído** (dependências reais do app gerado). São naturezas diferentes — acoplar os dois no mesmo mecanismo repete a confusão que a distinção dependencia-runner-vs-produto já resolveu para o agente.
 - Decisão de arquitetura em aberto: (a) cada ferramenta ganha seu próprio script de bootstrap de dependências do produto, isolado, sem depender do forge; ou (b) as 4 ferramentas passam a chamar o forge como fase 0 real (acoplamento novo, maior risco, toca os 4 pipelines).
 
+## Decisão registrada (2026-09-07)
+
+**Opção escolhida: (a) — cada ferramenta mantém seu próprio bootstrap de dependências do produto, sem depender do forge.**
+
+Justificativa, ancorada no levantamento concreto acima:
+
+1. **Forge não tem o que contribuir aqui.** Confirmado por investigação real (não suposição): `aidd-forge` não gera produto para usuário final — não escreve `requirements.txt`/manifest em nenhum alvo, só injeta infraestrutura de desenvolvimento-com-IA (subagentes, gates, `AGENTS.md`). Chamá-lo como "fase 0" (opção b) forçaria o forge a aprender a inspecionar templates alheios (`templates/core/security.py`, `events.py`, etc.) de 4 ferramentas que ele nunca conheceu — inversão de responsabilidade, não reaproveitamento.
+2. **O ponto de geração do manifesto já existe e já é local a cada ferramenta.** `compose_suite.py:1833-1841` e `provision_project.py:84-86` (aidd-master/aidd-enterprise), e `05_criador.py:772-776` (aidd-generator) já são os únicos lugares que escrevem `requirements.txt` no produto. A correção real é fechar o gap ali — no ponto que já tem acesso direto aos templates/módulos que vão ser copiados — não introduzir uma chamada de rede/processo extra a uma ferramenta externa (forge) que teria que redescobrir essa mesma informação.
+3. **Risco e raio de explosão.** (b) tocaria os 4 pipelines simultaneamente para resolver um problema que, na prática, é uma lacuna pontual (`requirements.txt` hardcoded e incompleto) em cada motor. (a) permite corrigir e reproduzir uma ferramenta por vez, isolado, sem acoplar o sucesso de uma à disponibilidade/versão do forge.
+4. **Consistência com a distinção já estabelecida no ecossistema.** O próprio mecanismo `gates/dependencias_externas.json` + `dependencia-runner` já separa "dependência do agente que desenvolve este repo" de "dependência do produto gerado". Fazer o forge (ferramenta de desenvolvimento-com-IA) prover dependências de runtime do produto gerado reintroduziria a mesma confusão de camadas que aquela separação resolveu.
+
+## Protótipo real — aidd-master, motor `compose_suite.py` (2026-09-07)
+
+**Achado concreto que motivou o alvo do protótipo:** todo produto composto via `compose_suite.py` tem o `src/server.py` gerado com as rotas de SSO Corporativo (OAuth2/OIDC + PKCE) sempre registradas (`compose_suite.py`, bloco `SERVER_TEMPLATE`, rotas `/api/auth/oauth/login` e `/api/auth/oauth/callback`), que chamam `OIDCService.validate_id_token` (`templates/core/security.py:167-185`). Esse método faz `import jwt` (PyJWT) e usa `jwt.algorithms.RSAAlgorithm` (que depende de `cryptography`) para validar o `id_token` via JWKS/RS256. Porém o `requirements.txt` gerado em `compose_suite.py:1833-1838` **nunca** declarava `pyjwt`/`cryptography` — só `pytest`, `mutmut`, `requests`, e `psycopg2-binary` quando `--db postgres`. Resultado real: qualquer empresa que configure as variáveis `OIDC_*` (SSO já documentado como "Zero Fricção" no próprio server gerado) recebe `RuntimeError("PyJWT não instalado...")` em produção, porque a dependência nunca foi instalada — não é hipotético, é o comportamento do código hoje.
+
+**Correção aplicada:** `compose_suite.py` passa a incluir `pyjwt>=2.8.0` e `cryptography>=42.0.0` de forma incondicional no `requirements.txt` gerado (a rota SSO é sempre registrada em todo produto, então a dependência é sempre real, não condicional como `psycopg2-binary`).
+
+**Reprodução real (antes/depois), script em `docs/relatorios/`:**
+- **Antes:** gerado projeto de teste em pasta temporária isolada (`compose_suite.py <tmp> "TesteBootstrap" vendas --db sqlite`) com o código original; `requirements.txt` resultante **não** contém `pyjwt`/`cryptography`; instalando esse `requirements.txt` num venv limpo e chamando `OIDCService.validate_id_token(...)` com um `id_token` RS256 real (assinado on-the-fly com uma chave RSA gerada via `cryptography`) levanta `RuntimeError: PyJWT não instalado...` — falha real, reproduzida, não suposta.
+- **Depois:** mesmo fluxo com a correção aplicada; `requirements.txt` agora contém `pyjwt>=2.8.0` e `cryptography>=42.0.0`; `pip install -r requirements.txt` num venv limpo instala as duas dependências; chamar `OIDCService.validate_id_token(...)` com o mesmo `id_token`/JWKS forjados retorna as claims decodificadas corretamente — a dependência está de fato instalada e funcional, não só um arquivo copiado.
+
+Evidência completa (comandos, saídas de `pip install`, script de reprodução) em `docs/relatorios/item-7-prototipo-compose-suite-jwt.md`.
+
 ## Levantamento concreto por ferramenta (investigação real, 2026-09-07)
 
 > Item 1 da Definição de Pronto abaixo — concluído. Cada linha verificada em código real (arquivo:linha), não suposição.
@@ -28,16 +51,17 @@
 ## Definição de Pronto
 
 1. ~~Levantamento concreto, por ferramenta, do que faria sentido embarcar no produto gerado~~ — feito, ver tabela acima. `aidd-forge` sai do escopo de execução deste item (nada a embarcar); o trabalho real recai sobre master/enterprise, generator e ops.
-2. Decisão registrada aqui: opção (a) ou (b) acima, com justificativa.
-3. Se (a): 1 protótipo real num só tool (candidato: master ou enterprise, que já têm Fase 2 endereçando scaffolding) antes de replicar nos outros 4.
-4. Critério de verificação real: projeto gerado pela ferramenta escolhida sobe com a dependência nova de fato instalada e funcional (não só arquivo copiado) — reproduzir, não assumir.
-5. Só depois do protótipo validado, decidir se generaliza pras outras 3 ferramentas ou se cada uma segue caminho próprio.
+2. ~~Decisão registrada aqui: opção (a) ou (b) acima, com justificativa.~~ — feito, ver "Decisão registrada (2026-09-07)" acima: opção (a).
+3. ~~Se (a): 1 protótipo real num só tool~~ — feito em `aidd-master`/`compose_suite.py` (ver "Protótipo real" acima).
+4. ~~Critério de verificação real: projeto gerado pela ferramenta escolhida sobe com a dependência nova de fato instalada e funcional (não só arquivo copiado) — reproduzir, não assumir.~~ — feito: `pip install` real em venv limpo + validação de um `id_token` RS256 genuíno via `OIDCService.validate_id_token`, antes (falha real) e depois (sucesso real). Detalhes em `docs/relatorios/item-7-prototipo-compose-suite-jwt.md`.
+5. **Pendente:** generalizar para `aidd-enterprise` (mesmo template/`compose_suite.py`, correção idêntica esperada), `aidd-generator` (gap já documentado como item novo — `requirements.txt` dessincronizado, fora desta decisão) e `aidd-ops` (não gera manifesto de dependência de linguagem — infra via docker-compose; decisão de bootstrap ali é outra natureza). Depende de aprovação humana do protótipo antes de prosseguir.
 
 ## Critério de saída
 
-- Decisão de arquitetura ((a) ou (b)) registrada com justificativa.
-- Protótipo em 1 ferramenta reproduzido com sucesso real.
-- Gates de integridade aprovados.
+- ~~Decisão de arquitetura ((a) ou (b)) registrada com justificativa.~~ Feito — opção (a).
+- ~~Protótipo em 1 ferramenta reproduzido com sucesso real.~~ Feito — `aidd-master`/`compose_suite.py`, PyJWT/cryptography.
+- Gates de integridade aprovados — `tools/aidd-master`: 215 passed/4 skipped/0 failed (pytest) + `python scripts/aidd.py audit`, ver `docs/relatorios/item-7-prototipo-compose-suite-jwt.md` para o resultado completo. Gate global `python ecossistema.py audit` tem falhas pré-existentes e não relacionadas em `aidd-generator`/`aidd-ops` (fora do escopo deste item).
+- **Aguardando aprovação humana explícita** antes de generalizar a correção às outras ferramentas ou considerar o item concluído — nenhuma aprovação foi fabricada.
 
 ## Prompt de Execução (PT-BR)
 

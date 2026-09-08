@@ -1,0 +1,19 @@
+{
+  "_comentario": "Lista canonica de termos de marketing proibidos em mensagens de saida de gate/CLI (Regra de Ouro #9 'Honestidade de Rotulo', AGENTS.md §2). Comparacao e feita sem distincao de maiuscula/minuscula e sem acento (NFKD). Origem dos 3 primeiros termos: Definicao de Pronto do item 'docs/planos/a-fazer/02-direcionamento-estrategico-anti-nih/02-registro-...md'. Os demais sao instancias reais confirmadas na mesma familia de mensagem (tools/aidd-master/scripts/gates/G_SEGURANCA.py, tools/aidd-enterprise/scripts/gates/G_SEGURANCA.py), pendentes de correcao rastreada em docs/planos/fazendo/01-correcao-pos-auditoria-sem-maquiagem/07-corrigir-gate-de-seguranca-rotulado-blindagem-militar-rotulo-ou-cobertura-real.md.",
+  "termos": [
+    "blindagem militar",
+    "blindado militar",
+    "blindada militar",
+    "grau militar",
+    "nivel militar",
+    "military-grade",
+    "homologado para producao global",
+    "homologada para producao global",
+    "certificacao concedida",
+    "100% blindada",
+    "100% blindado",
+    "a prova de balas",
+    "bulletproof",
+    "nota a+"
+  ]
+}

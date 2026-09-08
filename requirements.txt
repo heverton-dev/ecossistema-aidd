@@ -1,4 +1,4 @@
-﻿# Dependências do Ecossistema AIDD Unificado
+# Dependências do Ecossistema AIDD Unificado
 pytest>=7.4.0
 pytest-cov>=4.1.0
 jsonschema>=4.20.0
@@ -10,3 +10,10 @@ python-dotenv>=1.0.0
 requests>=2.31.0
 click>=8.1.0
 colorama>=0.4.6
+secure>=2.0.0
+sqlglot>=24.0.0
+sqlalchemy>=2.0.0
+alembic>=1.13.0
+returns>=0.23.0
+cookiecutter>=2.6.0
+pyyaml>=6.0.0

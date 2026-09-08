@@ -1,8 +1,9 @@
 # Item 1 — Inventario do que fica vs o que troca por ferramenta (o trabalho que continua de pe)
 
 > **Escopo:** Entra: produzir e publicar a tabela definitiva "o que fica / o que troca" por ferramenta, respondendo formalmente "perdemos o trabalho?". Não entra: executar nenhuma troca em si (isso são os itens 3-6/Fases 1-4).
-> **Status:** [RASCUNHO — Aguardando Aprovacao Humana]
+> **Status:** [CONCLUÍDO — usuário confirmou a leitura em 2026-09-07; liberado para as Fases 1-4]
 > **Modelo sugerido:** Claude Sonnet · Antigravity Gemini 3.7 · MiMo mimo-v2.5-pro (síntese e redação, não decisão técnica nova)
+> **Doc de referência:** `docs/features/inventario-o-que-fica-vs-o-que-troca-por-ferramenta.md` — tabela definitiva com rastreabilidade item a item aos 33 achados de `docs/features/oportunidades-reaproveitamento-oss-nih.md` (nota: este item citava "26 itens"; o levantamento foi fechado em 33 depois da redação original — ver nota de numeração no doc de referência).
 
 ---
 

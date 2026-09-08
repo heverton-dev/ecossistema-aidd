@@ -5,7 +5,7 @@ AIDD-Ops — Orquestrador Principal de Deploy Ponta a Ponta (Pacote 9 / Fase 0)
 =============================================================================
 Encadeia as 10 fases do pipeline em sequência estritamente determinística:
 1. Validação de Plano e Parâmetros (Intake/Curadoria/Sizing)
-2. Hardening e Bootstrap de VPS via SSHRunner (Pacote 4)
+2. Hardening e Bootstrap de VPS via SSHRunner (Ansible + devsec.hardening, NIH #15)
 3. Apontamentos DNS via Cloudflare MCP (Pacote 5)
 4. Validação de Topologia Docker Compose via G_INFRA_COMPOSE (Pacote 6)
 5. Deploy e Inicialização dos Contêineres (Docker Compose)
@@ -33,6 +33,7 @@ sys.path.insert(0, os.path.join(_TOOL_ROOT, "src"))
 from core.result import Result
 from core.ssh_runner import SSHRunner
 from core.preflight import PreflightRunner
+from core.coolify import CoolifyManager
 
 
 class DeployOrchestrator:
@@ -47,6 +48,7 @@ class DeployOrchestrator:
         user_ssh: str = "root",
         port_ssh: int = 22,
         dry_run: bool = True,
+        motor: str = "coolify",
     ):
         self.ambiente = ambiente.strip()
         self.host = host.strip()
@@ -55,6 +57,7 @@ class DeployOrchestrator:
         self.user_ssh = user_ssh
         self.port_ssh = port_ssh
         self.dry_run = dry_run
+        self.motor = motor.lower().strip()
         self.historico_etapas: List[Dict[str, Any]] = []
 
     def _registrar_etapa(self, nome: str, status: str, detalhes: Any = None) -> None:
@@ -139,7 +142,52 @@ class DeployOrchestrator:
         return Result.ok({"status": "templates_validados", "templates_dir": templates_dir})
 
     def etapa_5_deploy_conteineres(self) -> Result[Dict[str, Any]]:
-        """Executa subida dos contêineres Docker Compose."""
+        """Executa orquestração e deploy dos contêineres via Coolify ou Docker Compose."""
+        if self.motor == "coolify":
+            manager = CoolifyManager(dry_run=self.dry_run)
+            servicos_stack = [
+                {"nome": "Twenty", "porta_interna": 3000, "cpus": "1.0", "memory": "1024M"},
+                {"nome": "Chatwoot", "porta_interna": 3000, "cpus": "1.5", "memory": "2048M"},
+                {"nome": "Calcom", "porta_interna": 3000, "cpus": "1.0", "memory": "1024M"},
+                {"nome": "Postgres", "porta_interna": 5432, "cpus": "2.0", "memory": "4096M"},
+                {"nome": "UptimeKuma", "porta_interna": 3001, "cpus": "0.5", "memory": "512M"}
+            ]
+
+            # 1. Orquestração no Coolify (todos os contêineres)
+            res_orq = manager.orquestrar_stack(
+                nome_projeto=f"AIDD-{self.ambiente.capitalize()}",
+                ambiente=self.ambiente,
+                servicos=servicos_stack,
+                dominio_base=self.dominio
+            )
+            if not res_orq.sucesso:
+                self._registrar_etapa("deploy_coolify", "falhou", res_orq.erro)
+                return res_orq
+
+            # 2. Verificação estrita de isolamento VPS (NIH #21)
+            res_iso = manager.verificar_isolamento_vps(res_orq.valor)
+            if not res_iso.sucesso:
+                self._registrar_etapa("isolamento_vps", "falhou", res_iso.erro)
+                return res_iso
+
+            # 3. Configuração do AppShell White-Label (NIH #20)
+            res_appshell = manager.configurar_appshell_whitelabel(
+                nome_instancia=f"AIDD Portal {self.ambiente.capitalize()}",
+                marca="AIDD Ecosystem",
+                logo_url=f"https://static.{self.dominio}/logo.svg",
+                dashboard_fqdn=f"painel.{self.dominio}"
+            )
+
+            detalhes_sucesso = {
+                "motor": "Coolify",
+                "dry_run": self.dry_run,
+                "plano_stack": res_orq.valor,
+                "isolamento": res_iso.valor,
+                "appshell": res_appshell.valor if res_appshell.sucesso else None
+            }
+            self._registrar_etapa("deploy_coolify", "passou", detalhes_sucesso)
+            return Result.ok(detalhes_sucesso)
+
         if self.dry_run:
             resultado = {
                 "dry_run": True,

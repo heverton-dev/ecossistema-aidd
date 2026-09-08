@@ -1,8 +1,8 @@
 # Relatório de Execução — Bateria 6: AIDD-Ops (Meta-Orquestrador de Infraestrutura)
 
-> **Data de Execução:** 2026-09-06 19:55:26  
+> **Data de Execução:** 2026-09-07 20:45:11  
 > **Status:** ✅ APROVADO (100% OK)  
-> **Tempo Total:** 4.32s  
+> **Tempo Total:** 6.63s  
 > **Ambiente:** Windows / Python 3.14.7  
 
 ---
@@ -17,13 +17,13 @@ A Bateria 6 avaliou o caminho de ponta a ponta da 5ª ferramenta oficial do ecos
 
 | # | Item Verificado | Comando Real | Exit Code | Duração | Resultado |
 |---|---|---|:---:|:---:|:---:|
-| 1 | Roteamento Raiz & Help | `python ecossistema.py ops --help` | 0 | 0.155s | ✅ Passou |
-| 2 | Geração de Plano de Nicho | `python ecossistema.py ops plan ...` | 0 | 0.155s | ✅ Passou |
-| 3 | Bootstrap SSH (Safe Dry-Run) | `python ecossistema.py ops bootstrap ...` | 0 | 0.347s | ✅ Passou |
-| 4 | MCPs de Borda (Docker/CF) | `tools/list (stdio)` | 0 | 0.155s | ✅ Passou |
-| 5 | Quality Gate G_INFRA_COMPOSE | `python gates/G_INFRA_COMPOSE.py` | 0 | 0.911s | ✅ Passou |
-| 6 | Preflight E2E Hermético | `python ecossistema.py ops preflight ...` | 0 | 0.201s | ✅ Passou |
-| 7 | Deploy E2E Fail-Fast & Rollback | `python ecossistema.py ops deploy staging --dry-run` | 0 | 2.392s | ✅ Passou |
+| 1 | Roteamento Raiz & Help | `python ecossistema.py ops --help` | 0 | 0.178s | ✅ Passou |
+| 2 | Geração de Plano de Nicho | `python ecossistema.py ops plan ...` | 0 | 0.184s | ✅ Passou |
+| 3 | Bootstrap SSH (Safe Dry-Run) | `python ecossistema.py ops bootstrap ...` | 0 | 0.41s | ✅ Passou |
+| 4 | MCPs de Borda (Docker/CF) | `tools/list (stdio)` | 0 | 0.164s | ✅ Passou |
+| 5 | Quality Gate G_INFRA_COMPOSE | `python gates/G_INFRA_COMPOSE.py` | 0 | 2.983s | ✅ Passou |
+| 6 | Preflight E2E Hermético | `python ecossistema.py ops preflight ...` | 0 | 0.242s | ✅ Passou |
+| 7 | Deploy E2E Fail-Fast & Rollback | `python ecossistema.py ops deploy staging --dry-run` | 0 | 2.467s | ✅ Passou |
 
 ---
 
@@ -32,18 +32,19 @@ A Bateria 6 avaliou o caminho de ponta a ponta da 5ª ferramenta oficial do ecos
 ### Item 1: Roteamento Raiz & Help
 ```text
 usage: pipeline_ops [-h] [--nicho NICHO] [--pasta PASTA]
-                    {plan,bootstrap,preflight,deploy} ... [texto]
+                    {plan,bootstrap,preflight,deploy,monitor} ... [texto]
 
 AIDD-Ops � Meta-Orquestrador Ag�ntico de Infraestrutura
 
 positional arguments:
-  {plan,bootstrap,preflight,deploy}
+  {plan,bootstrap,preflight,deploy,monitor}
                         Subcomandos dispon�veis
     plan                Gera plano de infraestrutura (Fases 1-3)
     bootstrap           Executa bootstrap de hardening e Docker em VPS via SSH
     preflight           Executa bateria E2E de preflight (Healthz, SSL, DNS,
                         Webhook)
     deploy              Orquestra deploy E2E com Result monad e rollback
+    monitor             Observabilidade e healthchecks reais via Uptime Kuma
   texto                 Texto livre descrevendo o nicho (compatibilidade
                         legada)
 
@@ -103,12 +104,14 @@ options:
  Alvo: root@192.0.2.1:22 | Modo: DRY-RUN (Simula��o)
 ========================================================================
 
-[SUCESSO] Bootstrap conclu�do (5 etapas homologadas):
-  - atualizar_pacotes    -> exit 0 (DEBIAN_FRONTEND=noninteractive apt-get update && D...)
-  - instalar_docker      -> exit 0 (curl -fsSL https://get.docker.com -o /tmp/get-dock...)
-  - configurar_ufw       -> exit 0 (ufw default deny incoming && ufw default allow out...)
-  - instalar_fail2ban    -> exit 0 (DEBIAN_FRONTEND=noninteractive apt-get install -y ...)
-  - criar_swap           -> exit 0 (fallocate -l 2G /swapfile && chmod 600 /swapfile &...)
+[SUCESSO] Bootstrap conclu�do (7 etapas homologadas):
+  - atualizar_pacotes    -> exit 0 ([DRY-RUN] tag 'atualizar_pacotes' simulada via ans...)
+  - docker               -> exit 0 ([DRY-RUN] tag 'docker' simulada via ansible-playbo...)
+  - firewall             -> exit 0 ([DRY-RUN] tag 'firewall' simulada via ansible-play...)
+  - fail2ban             -> exit 0 ([DRY-RUN] tag 'fail2ban' simulada via ansible-play...)
+  - os_hardening         -> exit 0 ([DRY-RUN] tag 'os_hardening' simulada via ansible-...)
+  - ssh_hardening        -> exit 0 ([DRY-RUN] tag 'ssh_hardening' simulada via ansible...)
+  - swap                 -> exit 0 ([DRY-RUN] tag 'swap' simulada via ansible-playbook...)
 ========================================================================
 ```
 
@@ -127,7 +130,7 @@ options:
  [GATE] G_INFRA_COMPOSE � Valida��o de Compose e Topologia de Infra
 ======================================================================
 [OK] Pr�-requisito de ambiente: bin�rio 'docker' detectado.
---- Validando 7 arquivo(s) Docker Compose ---
+--- Validando 8 arquivo(s) Docker Compose ---
 [OK] tools\aidd-ops\templates\infra\authentik\docker-compose.yml: sintaxe e interpola��o v�lidas
 [OK] tools\aidd-ops\templates\infra\calcom\docker-compose.yml: sintaxe e interpola��o v�lidas
 [OK] tools\aidd-ops\templates\infra\chatwoot\docker-compose.yml: sintaxe e interpola��o v�lidas
@@ -135,6 +138,7 @@ options:
 [OK] tools\aidd-ops\templates\infra\postgres\docker-compose.yml: sintaxe e interpola��o v�lidas
 [OK] tools\aidd-ops\templates\infra\traefik\docker-compose.yml: sintaxe e interpola��o v�lidas
 [OK] tools\aidd-ops\templates\infra\twenty\docker-compose.yml: sintaxe e interpola��o v�lidas
+[OK] tools\aidd-ops\templates\infra\uptime-kuma\docker-compose.yml: sintaxe e interpola��o v�lidas
 
 --- Validando Script de Banco (tools\aidd-ops\templates\infra\postgres\init-multiple-databases.sh) ---
 [OK] tools\aidd-ops\templates\infra\postgres\init-multiple-databases.sh: sintaxe bash v�lida (bash -n)
@@ -161,7 +165,7 @@ Resumo: 2 passou, 0 falhou, 2 N/A
   - healthz      [NAO_APLICAVEL] -> Nenhum servi�o com healthz especificado
   - ssl          [NAO_APLICAVEL] -> Host '127.0.0.1' opera em HTTP local/desenvolvimento
   - dns          [PASSOU]     -> {'resolvidos': {'127.0.0.1': ['127.0.0.1']}, 'falhas': {}}
-  - webhook      [PASSOU]     -> {'status_code': 200, 'url': 'http://127.0.0.1:63514/webhook'}
+  - webhook      [PASSOU]     -> {'status_code': 200, 'url': 'http://127.0.0.1:55106/webhook'}
 ========================================================================
 [SUCESSO] Todos os testes pr�-voo foram homologados.
 ```

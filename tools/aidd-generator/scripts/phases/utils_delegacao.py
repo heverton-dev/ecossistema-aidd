@@ -19,7 +19,17 @@ import uuid
 import time
 from pathlib import Path
 from datetime import datetime, timezone
-from typing import Optional, Dict, Any
+from typing import Optional, Dict, Any, Type
+
+try:
+    from pydantic import BaseModel
+except ImportError:
+    BaseModel = None
+
+try:
+    import instructor
+except ImportError:
+    instructor = None
 
 
 # =============================================================================
@@ -71,16 +81,34 @@ def _sanitizar_campos_codigo(resultado: Any) -> Any:
     return resultado
 
 
-def extrair_json_resposta(texto: str) -> Any:
+def extrair_json_resposta(texto: str, response_model=None) -> Any:
     """
     Extrai e decodifica JSON de uma resposta de LLM, mesmo se contiver
     markdown code fences (```json ... ```), texto explicativo antes ou depois,
     ou quebras de linha não escapadas dentro de strings.
+
+    Se response_model for fornecido e instructor estiver disponível, usa
+    instructor para parsing robusto com retry automático.
     """
     if not texto or not isinstance(texto, str):
         raise ValueError("Texto vazio ou inválido para extração de JSON")
 
     texto_limpo = texto.strip()
+
+    # Tenta usar instructor se response_model for fornecido
+    if response_model is not None and BaseModel is not None and instructor is not None:
+        try:
+            return _parsear_com_instructor(texto_limpo, response_model)
+        except Exception:
+            # Fallback para parsing manual se instructor falhar
+            pass
+
+    # Parsing manual (legado) para compatibilidade
+    return _extrair_json_manual(texto_limpo)
+
+
+def _extrair_json_manual(texto_limpo: str) -> Any:
+    """Parsing manual de JSON (legado, mantido para compatibilidade)."""
 
     def _tentar_parse_sanitizado(s: str):
         # Substitui barras invertidas que não sejam escapes válidos de JSON por barra dupla
@@ -157,6 +185,71 @@ def extrair_json_resposta(texto: str) -> Any:
 
     # 5. Se nada funcionou, repassa para json.loads para gerar exceção informativa
     return _sanitizar_campos_codigo(json.loads(texto_limpo, strict=False))
+
+
+def _parsear_com_instructor(texto: str, response_model: Any) -> Any:
+    """
+    Parseia JSON usando o mecanismo de validação com retry automático do
+    ecossistema instructor/pydantic (Retry + model_validate).
+
+    Args:
+        texto: String JSON (ou dict) para parsear
+        response_model: Modelo Pydantic alvo
+
+    Returns:
+        Instância do response_model validada
+
+    Raises:
+        ValidationError: Se o JSON não corresponder ao modelo
+        ImportError: Se pydantic/instructor não estiver disponível
+    """
+    if BaseModel is None:
+        raise ImportError("pydantic é necessário para usar parsing estruturado (instructor)")
+    if instructor is None:
+        raise ImportError("instructor é necessário para usar parsing estruturado")
+    return _validar_pydantic_com_retry(texto, response_model)
+
+
+def _validar_pydantic_com_retry(texto: str, response_model: Any, max_retries: int = 3) -> Any:
+    """
+    Valida JSON contra modelo Pydantic com retry automático via instructor.
+
+    Args:
+        texto: String JSON para validar
+        response_model: Modelo Pydantic alvo
+        max_retries: Número máximo de tentativas
+
+    Returns:
+        Instância validada do response_model
+    """
+    if BaseModel is None:
+        raise ImportError("pydantic é necessário")
+
+    import json as json_mod
+    ultimo_erro: Optional[Exception] = None
+
+    for tentativa in range(max_retries):
+        try:
+            # Tenta parsear o JSON primeiro
+            dados = json_mod.loads(texto, strict=False) if isinstance(texto, str) else texto
+
+            # Se o dado já é uma instância do modelo, retorna
+            if isinstance(dados, response_model):
+                return dados
+
+            # Valida e cria instância do modelo
+            return response_model.model_validate(dados)
+
+        except Exception as e:
+            ultimo_erro = e
+            # Se instructor estiver disponível, usa retry automático
+            if instructor is not None and tentativa < max_retries - 1:
+                time.sleep(0.5 * (tentativa + 1))  # Backoff linear
+
+    # Se todas as tentativas falharam, levanta o último erro
+    if ultimo_erro is not None:
+        raise ultimo_erro
+    raise ValueError("Falha desconhecida na validação Pydantic")
 
 
 # =============================================================================

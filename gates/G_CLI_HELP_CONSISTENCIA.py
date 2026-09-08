@@ -34,6 +34,13 @@ Uso:
                correspondente, em todos os arquivos auditados.
       exit 1 = alguma flag citada em texto não é definida no argparse do
                mesmo arquivo (arquivo, linha e trecho são impressos).
+
+Nota de Evolução (NIH #2):
+  As CLIs `ecossistema.py` e `tools/aidd-ops/scripts/pipeline_ops.py` foram
+  migradas de argparse para Click. O Click valida flags e tipos em tempo
+  de execução/parse e gera o help automaticamente a partir da assinatura,
+  tornando este gate obsoleto por construção para essas CLIs. O gate permanece
+  ativo e estrito para os demais scripts legados que ainda usam argparse.
 """
 
 import ast
@@ -65,7 +72,6 @@ ARQUIVOS_AUDITADOS = [
     "tools/aidd-generator/scripts/gates/G_CYBERSECURITY_OWASP.py",
     "tools/aidd-generator/scripts/gates/AUDITAR_COMPARATIVO_HARNESS.py",
     "tools/aidd-generator/scripts/gates/G_BLOQUEAR_SEGREDOS.py",
-    "tools/aidd-ops/scripts/pipeline_ops.py",
 ]
 
 # Flags que o próprio argparse injeta automaticamente ou que são universais

@@ -222,7 +222,8 @@ def _checar_bom_em_componentes():
     dir_componentes = os.path.join(ROOT_DIR, "componentes")
     if not os.path.isdir(dir_componentes):
         return boms
-    for raiz, _dirs, arquivos in os.walk(dir_componentes):
+    for raiz, dirs, arquivos in os.walk(dir_componentes):
+        dirs[:] = [d for d in dirs if d not in ("__pycache__", ".venv", "venv", ".git", "node_modules")]
         for arquivo in arquivos:
             caminho = os.path.join(raiz, arquivo)
             try:

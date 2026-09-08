@@ -1,0 +1,126 @@
+# ============================================================================
+# ECOSSISTEMA AIDD — QUALITY GATES via PRE-COMMIT (NIH #4 / Fase 2-Gates3)
+# ============================================================================
+# Substitui o runner proprio dos quality gates ('python ecossistema.py audit')
+# pelo framework pre-commit. Cada gate gates/G_*.py vira um hook abaixo.
+#
+# Todos os hooks sao LOCAIS (repo: local, language: system) => hermetico,
+# zero download de repos remotos, funciona offline e em qualquer harness/SO
+# (Regra de Ouro 6 — Supremacia Agnóstica).
+#
+# Regras de gatilho:
+#   * always_run: true   -> checagem de repo inteiro em TODO commit.
+#   * files: ^tools/     -> roda so quando um arquivo staged bate no padrao
+#                           (G_TESTES_REAIS roda pytest real -> so quando
+#                           tools/** muda; o 'audit' roda --all-files e
+#                           portanto sempre o executa).
+#   * stages: [manual]   -> NAO roda no commit nem no 'audit' padrao; roda
+#                           explicitamente via:
+#                           pre-commit run --hook-stage manual <id> --all-files
+#
+# Status honesto de cada gate (ver gates/):
+#   - Os 10 gates do 'audit' estao em stages pre-commit: 9 verdes
+#     (always_run) + G_TESTES_REAIS (files: ^tools/).
+#   - G_SEGREDOS esta VERMELHO no estado atual (baseline .secrets.baseline em
+#     drift: achados em fixtures de teste e .env.example fora do baseline).
+#     Continua em stages pre-commit exatamente como no 'audit' de hoje —
+#     NENHUMA allowlist mascara isso aqui (regra "sem maquiagem").
+#   - G_HONESTIDADE_ROTULO esta VERMELHO por violacao ja conhecida e
+#     rastreada (decisao humana pendente sobre rotulo de gate de seguranca —
+#     ver AGENTS.md §4). Fica em stages [manual] ate a decisao, para nao
+#     travar TODO commit do repo por motivo externo a este item.
+
+default_install_hook_types: [pre-commit]
+default_stages: [pre-commit]
+fail_fast: false
+
+repos:
+  - repo: local
+    hooks:
+      - id: g-ecossistema-integridade
+        name: G_ECOSSISTEMA_INTEGRIDADE (ferramentas/skills/commands/AST)
+        entry: python gates/G_ECOSSISTEMA_INTEGRIDADE.py
+        language: system
+        always_run: true
+        pass_filenames: false
+        require_serial: true
+
+      - id: g-drift-nucleo-compartilhado
+        name: G_DRIFT_NUCLEO_COMPARTILHADO (nucleo master vs enterprise)
+        entry: python gates/G_DRIFT_NUCLEO_COMPARTILHADO.py
+        language: system
+        always_run: true
+        pass_filenames: false
+        require_serial: true
+
+      - id: g-harness-compat
+        name: G_HARNESS_COMPAT (artefatos multi-harness sincronizados)
+        entry: python gates/G_HARNESS_COMPAT.py
+        language: system
+        always_run: true
+        pass_filenames: false
+        require_serial: true
+
+      - id: g-segredos
+        name: G_SEGREDOS (detect-secrets sobre git ls-files vs baseline)
+        entry: python gates/G_SEGREDOS.py
+        language: system
+        always_run: true
+        pass_filenames: false
+        require_serial: true
+
+      - id: g-cli-help-consistencia
+        name: G_CLI_HELP_CONSISTENCIA (flags citadas vs add_argument)
+        entry: python gates/G_CLI_HELP_CONSISTENCIA.py
+        language: system
+        always_run: true
+        pass_filenames: false
+        require_serial: true
+
+      - id: g-componente-agnostico
+        name: G_COMPONENTE_AGNOSTICO (componentes vs manifesto de harnesses)
+        entry: python gates/G_COMPONENTE_AGNOSTICO.py
+        language: system
+        always_run: true
+        pass_filenames: false
+        require_serial: true
+
+      - id: g-zero-headless
+        name: G_ZERO_HEADLESS (modo interativo obrigatorio / zero headless)
+        entry: python gates/G_ZERO_HEADLESS.py
+        language: system
+        always_run: true
+        pass_filenames: false
+        require_serial: true
+
+      - id: g-infra-compose
+        name: G_INFRA_COMPOSE (compose e init sql estaticos do aidd-ops)
+        entry: python gates/G_INFRA_COMPOSE.py
+        language: system
+        always_run: true
+        pass_filenames: false
+        require_serial: true
+
+      - id: g-hadolint
+        name: G_HADOLINT (melhores praticas OCI via Hadolint)
+        entry: python gates/G_HADOLINT.py
+        language: system
+        always_run: true
+        pass_filenames: false
+        require_serial: true
+
+      - id: g-testes-reais
+        name: G_TESTES_REAIS (pytest real por ferramenta em tools/)
+        entry: python gates/G_TESTES_REAIS.py
+        language: system
+        files: ^tools/
+        pass_filenames: false
+        require_serial: true
+
+      - id: g-honestidade-rotulo
+        name: G_HONESTIDADE_ROTULO (termos de marketing proibidos em gates)
+        entry: python gates/G_HONESTIDADE_ROTULO.py
+        language: system
+        stages: [manual]
+        pass_filenames: false
+        require_serial: true

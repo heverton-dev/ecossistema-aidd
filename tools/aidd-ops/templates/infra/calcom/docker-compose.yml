@@ -4,6 +4,9 @@
 # =============================================================================
 # Imagem oficial: calcom/cal.com (Docker Hub — Cal.com Inc)
 # Nota: Cal.com conecta ao PostgreSQL centralizado (banco calcom_db).
+# Roteamento: NIH #16 — Cal.com é exposto EXCLUSIVAMENTE via labels Traefik
+#       (sem porta de host publicada). Deixa de colidir na porta 3000 do host
+#       com Twenty/Chatwoot quando a stack inteira sobe junta.
 # Validação: docker compose config (syntaxe) + G_INFRA_COMPOSE.py (Pacote 6)
 # =============================================================================
 
@@ -15,14 +18,19 @@ services:
     environment:
       DATABASE_URL: postgresql://${CALCOM_DB_USER:-calcom_user}:${CALCOM_DB_PASSWORD:?Defina CALCOM_DB_PASSWORD no .env}@${POSTGRES_HOST:-postgres}:5432/${CALCOM_DB_NAME:-calcom_db}
       NEXTAUTH_SECRET: ${CALCOM_NEXTAUTH_SECRET:?Defina CALCOM_NEXTAUTH_SECRET no .env}
-      NEXTAUTH_URL: ${CALCOM_NEXTAUTH_URL:-http://localhost:3000}
+      NEXTAUTH_URL: https://${CALCOM_HOST:-cal.localhost}
       CALENDSO_ENCRYPTION_KEY: ${CALCOM_ENCRYPTION_KEY:?Defina CALCOM_ENCRYPTION_KEY no .env}
       CALCOM_LICENSE_KEY: ${CALCOM_LICENSE_KEY:-}
       PORT: "3000"
-    ports:
-      - "${CALCOM_PORT:-3000}:3000"
     networks:
       - aidd_internal
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.calcom.rule=Host(`${CALCOM_HOST:-cal.localhost}`)"
+      - "traefik.http.routers.calcom.entrypoints=websecure"
+      - "traefik.http.routers.calcom.tls.certresolver=letsencrypt"
+      - "traefik.http.routers.calcom.service=calcom"
+      - "traefik.http.services.calcom.loadbalancer.server.port=3000"
     healthcheck:
       test: ["CMD-SHELL", "curl -f http://localhost:3000/api/health || exit 1"]
       interval: 30s

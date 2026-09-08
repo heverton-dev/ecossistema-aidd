@@ -120,6 +120,16 @@ def test_database_copiado_tem_rls_connection(suite_composta):
     )
 
 
+def test_requirements_gerado_inclui_secure(suite_composta):
+    requirements_path = suite_composta / "requirements.txt"
+    assert requirements_path.exists()
+    conteudo = requirements_path.read_text(encoding="utf-8")
+    assert "secure" in conteudo.lower(), (
+        "requirements.txt gerado nao declara secure, exigido por "
+        "SecurityService.get_security_headers (ContentSecurityPolicy via secure.py)."
+    )
+
+
 # =============================================================================
 # 4. Teste de fogo: o servidor gerado PRECISA subir e responder de verdade.
 #    Sem isso, os 3 testes acima poderiam passar e o bug do logs.py ainda

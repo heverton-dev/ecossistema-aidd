@@ -26,12 +26,13 @@ from __future__ import annotations
 
 import os
 import re
-import sqlite3
 import threading
 import time
 from abc import ABC, abstractmethod
 from contextlib import contextmanager
 from typing import Any, Optional
+
+from sqlalchemy.orm import sessionmaker
 
 # ---------------------------------------------------------------------------
 # Import existing infrastructure from database.py
@@ -46,6 +47,8 @@ try:
         enable_rls_tenant,
         set_tenant,
         _translate_ddl_for_postgres,
+        _create_sqlite_engine,
+        EngineFacadeConnection,
     )
 except ImportError:
     from database import (
@@ -57,6 +60,8 @@ except ImportError:
         enable_rls_tenant,
         set_tenant,
         _translate_ddl_for_postgres,
+        _create_sqlite_engine,
+        EngineFacadeConnection,
     )
 
 
@@ -135,22 +140,63 @@ class _SQLiteResult:
 
 class SQLiteAdapter(DatabaseAdapter):
     """Local embedded engine.  WAL mode, foreign keys, RLSConnection when
-    RLS_TABLE_REGISTRY is populated.  Drop-in for the pre-v5.0 behaviour."""
+    RLS_TABLE_REGISTRY is populated.  Drop-in for the pre-v5.0 behaviour.
+
+    Since the NIH #8 engine swap, pooling and WAL are managed by SQLAlchemy
+    (``_create_sqlite_engine``): connections come from the Engine pool and the
+    PRAGMAs (journal_mode=WAL, synchronous, busy_timeout, foreign_keys) are
+    applied by the engine connect-listener.  ``connect()``/``get_connection()``
+    return the legacy facade (``RLSConnection`` over ``EngineFacadeConnection``)
+    so callers keep the sqlite3-compatible surface (sqlite3.Row rows,
+    ``lastrowid``, ``executescript``...)."""
 
     def __init__(self, db_path: str):
         self.db_path = db_path
+        self._engine = _create_sqlite_engine(db_path)
+        self._session_factory = sessionmaker(self._engine)
+        self._async_engine = None
+
+    @property
+    def engine(self):
+        """Engine SQLAlchemy síncrono (pysqlite) — WAL via event listener."""
+        return self._engine
+
+    @property
+    def session_factory(self):
+        """sessionmaker (ORM SQLAlchemy) ligado ao Engine desta adapter."""
+        return self._session_factory
+
+    @property
+    def async_engine(self):
+        """AsyncEngine SQLAlchemy sobre aiosqlite para o mesmo arquivo.
+
+        Criado sob demanda; WAL já está persistido no arquivo pelo Engine
+        síncrono. Use ``await adapter.init_async()`` uma vez para reafirmar os
+        PRAGMAs no fluxo assíncrono."""
+        if self._async_engine is None:
+            from sqlalchemy.ext.asyncio import create_async_engine
+            self._async_engine = create_async_engine(
+                f"sqlite+aiosqlite:///{self.db_path}",
+                connect_args={"timeout": 10.0},
+            )
+        return self._async_engine
+
+    async def init_async(self):
+        """Aplica WAL/PRAGMAs no AsyncEngine (aiosqlite). Idempotente.
+
+        journal_mode=WAL é persistente no arquivo; os demais PRAGMAs são
+        reafirmados na conexão de bootstrap deste engine assíncrono."""
+        async with self.async_engine.connect() as conn:
+            await conn.exec_driver_sql("PRAGMA journal_mode=WAL;")
+            await conn.exec_driver_sql("PRAGMA synchronous=NORMAL;")
+            await conn.exec_driver_sql("PRAGMA busy_timeout=5000;")
+            await conn.exec_driver_sql("PRAGMA foreign_keys=ON;")
 
     def connect(self) -> RLSConnection:
         return self.get_connection()
 
     def get_connection(self) -> RLSConnection:
-        conn = sqlite3.connect(self.db_path, timeout=10.0)
-        conn.execute("PRAGMA journal_mode=WAL;")
-        conn.execute("PRAGMA synchronous=NORMAL;")
-        conn.execute("PRAGMA busy_timeout=5000;")
-        conn.execute("PRAGMA foreign_keys=ON;")
-        conn.row_factory = sqlite3.Row
-        return RLSConnection(conn)
+        return RLSConnection(EngineFacadeConnection(self._engine.connect()))
 
     def execute(self, query: str, params: tuple = ()) -> Any:
         """Execute a single query with auto-commit.
@@ -161,29 +207,25 @@ class SQLiteAdapter(DatabaseAdapter):
 
         Use ``get_connection()`` / ``connection()`` for multi-statement
         transactions where you need the connection to stay open."""
-        conn = sqlite3.connect(self.db_path, timeout=10.0)
-        try:
-            conn.execute("PRAGMA journal_mode=WAL;")
-            conn.execute("PRAGMA synchronous=NORMAL;")
-            conn.execute("PRAGMA busy_timeout=5000;")
-            conn.execute("PRAGMA foreign_keys=ON;")
-            conn.row_factory = sqlite3.Row
-            rls_conn = RLSConnection(conn)
+        with self._engine.connect() as sqlalchemy_conn:
+            facade = EngineFacadeConnection(sqlalchemy_conn)
+            rls_conn = RLSConnection(facade)
             cur = rls_conn.execute(query, params)
+            rls_conn.commit()
             clean = query.strip().upper()
             is_select = clean.startswith("SELECT") or clean.startswith("PRAGMA")
             if is_select:
                 rows = cur.fetchall()
-                conn.commit()
                 return _SQLiteResult(rows, lastrowid=None, rowcount=len(rows))
-            else:
-                conn.commit()
-                return _SQLiteResult([], lastrowid=cur.lastrowid, rowcount=cur.rowcount)
-        finally:
-            conn.close()
+            return _SQLiteResult([], lastrowid=cur.lastrowid, rowcount=cur.rowcount)
 
     def close(self) -> None:
-        """SQLite is file-based; nothing persistent to tear down."""
+        """Dispose the engine pools (sync + async) and release all file handles."""
+        if self._engine is not None:
+            self._engine.dispose()
+        if self._async_engine is not None:
+            self._async_engine.sync_engine.dispose()
+            self._async_engine = None
 
 
 # =========================================================================

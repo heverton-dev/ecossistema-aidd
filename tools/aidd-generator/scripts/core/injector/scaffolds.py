@@ -138,11 +138,12 @@ def gerar_config(nome: str, descricao: str) -> str:
 
 def gerar_mcp(nome: str, descricao: str) -> str:
     """
-    Gera o conteudo de um servidor MCP minimo (`mcps/{nome}/server.py`).
+    Gera o conteudo de um servidor MCP (`mcps/{nome}/server.py`) usando o
+    SDK oficial do Model Context Protocol (`modelcontextprotocol/python-sdk`).
 
-    Implementa um loop JSON-RPC 2.0 sobre stdio em Python puro (sem SDK
-    `mcp`, que nao esta em requirements.txt), suportando os metodos
-    `initialize`, `tools/list` e `tools/call` — funcional, nao um stub.
+    Negociacao de protocolo, JSON-RPC 2.0, codigos de erro e o transporte
+    stdio sao tratados pelo SDK oficial — nenhuma implementacao manual de
+    JSON-RPC e gerada. Funcional, nao um stub.
     """
     titulo = _titulo(nome)
     nome_tool = nome.replace("-", "_")
@@ -153,42 +154,27 @@ MCP: {titulo}
 
 {descricao}
 
-Servidor MCP minimo (JSON-RPC 2.0 sobre stdio, biblioteca padrao apenas).
-Gerado pelo Injetor Universal de Componentes (aidd-generator).
+Servidor MCP que usa o SDK oficial do Model Context Protocol
+(`modelcontextprotocol/python-sdk`). Gerado pelo Injetor Universal de
+Componentes (aidd-generator).
 
 Uso:
     python server.py
-    (le requisicoes JSON-RPC, uma por linha, de stdin; escreve respostas
-    JSON-RPC, uma por linha, em stdout)
+    (transporte stdio; JSON-RPC 2.0, negociacao de protocolo e codigos de
+    erro tratados pelo SDK oficial)
 """
 
-import json
-import sys
+from mcp.server.fastmcp import FastMCP
 
 NOME_SERVIDOR = "{nome}"
 DESCRICAO_SERVIDOR = {descricao!r}
 
-TOOLS = [
-    {{
-        "name": "{nome_tool}",
-        "description": DESCRICAO_SERVIDOR,
-        "inputSchema": {{
-            "type": "object",
-            "properties": {{
-                "consulta": {{"type": "string", "description": "Entrada da consulta"}}
-            }},
-            "required": ["consulta"],
-        }},
-    }}
-]
+mcp = FastMCP(NOME_SERVIDOR, instructions=DESCRICAO_SERVIDOR)
 
 
-def executar_tool(nome_tool_chamada, argumentos):
-    """Executa a unica tool exposta por este servidor."""
-    if nome_tool_chamada != "{nome_tool}":
-        raise ValueError(f"tool desconhecida: {{nome_tool_chamada}}")
-
-    consulta = argumentos.get("consulta", "")
+@mcp.tool()
+def {nome_tool}(consulta: str) -> dict:
+    """{descricao}"""
     return {{
         "servidor": NOME_SERVIDOR,
         "consulta_recebida": consulta,
@@ -196,47 +182,6 @@ def executar_tool(nome_tool_chamada, argumentos):
     }}
 
 
-def processar_requisicao(req):
-    """Processa uma unica requisicao JSON-RPC 2.0 e devolve a resposta."""
-    metodo = req.get("method")
-    req_id = req.get("id")
-
-    if metodo == "initialize":
-        resultado = {{
-            "protocolVersion": "2024-11-05",
-            "serverInfo": {{"name": NOME_SERVIDOR, "version": "1.0"}},
-            "capabilities": {{"tools": {{}}}},
-        }}
-    elif metodo == "tools/list":
-        resultado = {{"tools": TOOLS}}
-    elif metodo == "tools/call":
-        params = req.get("params", {{}})
-        resultado = executar_tool(params.get("name"), params.get("arguments", {{}}))
-    else:
-        return {{
-            "jsonrpc": "2.0",
-            "id": req_id,
-            "error": {{"code": -32601, "message": f"metodo nao suportado: {{metodo}}"}},
-        }}
-
-    return {{"jsonrpc": "2.0", "id": req_id, "result": resultado}}
-
-
-def main():
-    """Loop principal: le requisicoes de stdin, escreve respostas em stdout."""
-    for linha in sys.stdin:
-        linha = linha.strip()
-        if not linha:
-            continue
-        try:
-            req = json.loads(linha)
-            resp = processar_requisicao(req)
-        except (json.JSONDecodeError, ValueError) as exc:
-            resp = {{"jsonrpc": "2.0", "id": None, "error": {{"code": -32700, "message": str(exc)}}}}
-        sys.stdout.write(json.dumps(resp, ensure_ascii=False) + "\\n")
-        sys.stdout.flush()
-
-
 if __name__ == "__main__":
-    main()
+    mcp.run(transport="stdio")
 '''

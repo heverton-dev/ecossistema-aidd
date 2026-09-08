@@ -51,3 +51,7 @@ htmlcov/
 # geradas em tempo de execução — nunca são código-fonte)
 scripts/.aidd/
 .aidd/cache/
+
+# Estado do motor genérico de orquestração (Prefect, NIH #26): bancos SQLite
+# de persistência de runs criados em tempo de execução sob PREFECT_HOME
+.aidd/prefect/

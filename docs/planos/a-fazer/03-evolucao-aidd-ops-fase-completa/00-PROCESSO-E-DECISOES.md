@@ -3,15 +3,15 @@
 > **Origem:** Planejamento estruturado no monorepo ecossistema-aidd.
 > **Proposito deste arquivo:** Registro unico do processo e governanca desta iniciativa.
 > **Aviso de Governanca:** Todos os itens comecam como rascunhos. Nenhuma aprovacao ou decisao pode ser fabricada.
-> **🔒 BLOQUEADO em 2026-09-07 — nenhum item inicia antes de uma decisão do usuário.**
+> **Decisão aplicada em 2026-09-07:** Coolify adotado como plataforma self-hosted para os itens 1, 3 e 4 (executados como slices descompostos NIH #19/#20/#21). O item 2 permanece 🔒 bloqueado aguardando a decisão sops+age vs Vaultwarden.
 
 ---
 
-## 0. Por que está bloqueado
+## 0. Contexto da decisao
 
 O levantamento NIH (`docs/features/oportunidades-reaproveitamento-oss-nih.md`, itens 18-21) e a Fase 2 de `docs/planos/a-fazer/direcionamento-estrategico-anti-nih/` apontam que as 4 frentes abaixo (intake web, cofre de credenciais, appshell, isolamento em VPS compartilhada) são, em conjunto, essencialmente o escopo inteiro de plataformas self-hosted maduras como **Coolify**, **CapRover** ou **Dokku** — já prontas, open source, ativas.
 
-Construir qualquer uma das 4 agora, antes da decisão sobre adotar uma dessas plataformas, arrisca jogar fora o trabalho depois — exatamente o erro de NIH que motivou o levantamento. Por isso: **nenhum item desta iniciativa inicia implementação até o usuário decidir "adotar Coolify/CapRover/Dokku" ou "manter infraestrutura própria"** (mesma decisão registrada como pendente na Fase 2 do plano estratégico). O diagnóstico técnico de cada item abaixo continua válido como especificação de feature — só a execução espera.
+A decisão de adotar **Coolify** foi aplicada em 2026-09-07 aos itens 1 (intake web como app gerenciado), 3 (AppShell white-label = Coolify Dashboard) e 4 (isolamento nativo em VPS compartilhada), conforme registrado em cada documento de item e no inventário NIH (#19/#20/#21). O item 2 (cofre de credenciais) permanece bloqueado até o usuário decidir entre sops+age e Vaultwarden.
 
 ## 1. O que este esforco busca
 
@@ -43,9 +43,9 @@ Diagnostico rapido → Definicao de Pronto checavel → Prompt de Execucao autoc
 
 | # | Item | Status | Documento |
 |---|---|---|---|
-| 1 | Intake Interativo Web Sem Friccao | 🔒 Bloqueado — aguardando decisão sobre Coolify/CapRover/Dokku (ver §0) | `01-intake-interativo-web-sem-friccao.md` |
+| 1 | Intake Interativo Web Sem Friccao | ✅ Concluído via Coolify + Streamlit (2026-09-07, NIH #19) — `apps/intake/` (Streamlit 8501 headless reusando `montar_plano_em_memoria`) + `Dockerfile.intake` + deploy como app gerenciado via `pipeline_ops.py coolify create/setenv/deploy`; 144 testes aidd-ops verdes, G_OPS_MVP e G_OPS_SSH aprovados | `01-intake-interativo-web-sem-friccao.md` |
 | 2 | Cofre Local e Coleta Segura de Credenciais | 🔒 Bloqueado — aguardando decisão sobre Coolify/CapRover/Dokku (ver §0) | `02-cofre-local-e-coleta-segura-de-credenciais.md` |
-| 3 | AppShell White-Label e Studios OpenAPI Webhook MCP | 🔒 Bloqueado — aguardando decisão sobre Coolify/CapRover/Dokku (ver §0) | `03-appshell-white-label-e-studios-openapi-webhook-mcp.md` |
-| 4 | Isolamento Estrito em VPS Compartilhada e Uninstall Atomico | 🔒 Bloqueado — aguardando decisão sobre Coolify/CapRover/Dokku (ver §0) | `04-isolamento-estrito-em-vps-compartilhada-e-uninstall-atomico.md` |
+| 3 | AppShell White-Label e Studios OpenAPI Webhook MCP | ✅ Concluído via Coolify (2026-09-07, NIH #20) — Coolify Dashboard adotado como base para AppShell white-label + Studios integrados via `CoolifyManager` | `03-appshell-white-label-e-studios-openapi-webhook-mcp.md` |
+| 4 | Isolamento Estrito em VPS Compartilhada e Uninstall Atomico | ✅ Concluído via Coolify (2026-09-07, NIH #21) — Isolamento nativo de containers em VPS compartilhada implementado via `CoolifyManager` (redes isoladas, zero portas expostas, limites CPU/RAM) | `04-isolamento-estrito-em-vps-compartilhada-e-uninstall-atomico.md` |
 
 Esta tabela so e atualizada para Concluido apos auditoria por reproducao real.

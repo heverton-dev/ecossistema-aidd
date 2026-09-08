@@ -1,13 +1,16 @@
 # -*- coding: utf-8 -*-
 """
-Testes do gate G_SEGREDOS — valida deteccao de credenciais hardcoded
-executando o gate contra repositorios git sinteticos isolados via subprocess.
+Testes do gate G_SEGREDOS — valida a delegação ao detect-secrets (Yelp)
+executando o gate real, via subprocess, contra repositórios git sintéticos
+isolados. O baseline usado em cada cenário é gerado pelo próprio
+detect-secrets (nunca fabricado à mão), reproduzindo o fluxo real de
+scan -> baseline -> gate.
 """
 
-import json
 import os
 import shutil
 import subprocess
+import sys
 
 from _gate_test_utils import rodar_gate
 
@@ -52,9 +55,24 @@ def _comitar_tudo(root_dir, msg="Commit teste"):
     )
 
 
+def _gerar_baseline_real(root_dir):
+    """Roda o detect-secrets de verdade contra o repositorio sintetico e grava o baseline."""
+    resultado = subprocess.run(
+        [sys.executable, "-m", "detect_secrets", "scan"],
+        cwd=root_dir,
+        check=True,
+        capture_output=True,
+        text=True,
+        encoding="utf-8",
+    )
+    baseline_path = os.path.join(root_dir, ".secrets.baseline")
+    with open(baseline_path, "w", encoding="utf-8") as f:
+        f.write(resultado.stdout)
+    return baseline_path
+
+
 def test_repo_limpo_aprova(tmp_path):
     gate_path = _init_repo_sintetico(tmp_path)
-    # Criar arquivo normal rastreado
     arquivo_ok = tmp_path / "README.md"
     arquivo_ok.write_text("# Repositorio Limpo\nNenhum segredo aqui.", encoding="utf-8")
     _comitar_tudo(tmp_path)
@@ -64,55 +82,52 @@ def test_repo_limpo_aprova(tmp_path):
     assert "Quality Gate G_SEGREDOS APROVADO (100% OK)!" in res.stdout
 
 
-def test_falha_com_dois_padroes_de_segredos_diferentes(tmp_path):
+def test_falha_com_segredo_novo_nao_catalogado(tmp_path):
     gate_path = _init_repo_sintetico(tmp_path)
 
-    # Padrao 1: AWS Access Key ID (AKIA...)
     aws_file = tmp_path / "aws_credentials.txt"
     aws_file.write_text("aws_key=AKIAIOSFODNN7EXAMPLE\n", encoding="utf-8")
-
-    # Padrao 2: GitHub Personal Access Token (ghp_...)
     gh_file = tmp_path / "github_token.txt"
     gh_file.write_text("ghp_1234567890abcdefghijklmnopqrstuvwxyz\n", encoding="utf-8")
-
     _comitar_tudo(tmp_path)
 
+    # Sem baseline: tolerancia zero, qualquer achado do detect-secrets reprova.
     res = rodar_gate(gate_path, tmp_path)
     assert res.returncode == 1
     assert "Quality Gate REPROVADO" in res.stdout
-    assert "aws_credentials.txt: AWS Access Key ID (AKIA...)" in res.stdout
-    assert "github_token.txt: GitHub Personal Access Token (ghp_...)" in res.stdout
+    assert "AWS Access Key" in res.stdout
 
 
-def test_allowlist_autoriza_segredos_conhecidos(tmp_path):
+def test_baseline_autoriza_segredo_ja_catalogado(tmp_path):
     gate_path = _init_repo_sintetico(tmp_path)
 
-    # Mesmos segredos do teste anterior
     aws_file = tmp_path / "aws_credentials.txt"
     aws_file.write_text("aws_key=AKIAIOSFODNN7EXAMPLE\n", encoding="utf-8")
-
-    gh_file = tmp_path / "github_token.txt"
-    gh_file.write_text("ghp_1234567890abcdefghijklmnopqrstuvwxyz\n", encoding="utf-8")
-
-    # Allowlist no repositorio sintetico catalogando os 2 arquivos
-    allowlist_content = {
-        "arquivos": {
-            "aws_credentials.txt": {
-                "motivo": "Fixture sintetico de teste",
-                "tipo": "AWS Key"
-            },
-            "github_token.txt": {
-                "motivo": "Fixture sintetico de teste",
-                "tipo": "GitHub Token"
-            }
-        }
-    }
-    allowlist_path = tmp_path / "gates" / "allowlist_segredos.json"
-    allowlist_path.write_text(json.dumps(allowlist_content, indent=2), encoding="utf-8")
-
     _comitar_tudo(tmp_path)
+
+    # Gera o baseline real (fluxo: scan -> baseline) catalogando o achado acima.
+    _gerar_baseline_real(tmp_path)
+    _comitar_tudo(tmp_path, msg="Adiciona baseline")
 
     res = rodar_gate(gate_path, tmp_path)
     assert res.returncode == 0
     assert "Quality Gate G_SEGREDOS APROVADO (100% OK)!" in res.stdout
-    assert "2 achado(s) já catalogado(s) em allowlist_segredos.json" in res.stdout
+
+
+def test_baseline_nao_esconde_segredo_novo_fora_do_baseline(tmp_path):
+    gate_path = _init_repo_sintetico(tmp_path)
+
+    aws_file = tmp_path / "aws_credentials.txt"
+    aws_file.write_text("aws_key=AKIAIOSFODNN7EXAMPLE\n", encoding="utf-8")
+    _comitar_tudo(tmp_path)
+    _gerar_baseline_real(tmp_path)
+    _comitar_tudo(tmp_path, msg="Adiciona baseline")
+
+    # Introduz um segredo novo, de tipo diferente, que o baseline nao cobre.
+    gh_file = tmp_path / "github_token.txt"
+    gh_file.write_text("ghp_1234567890abcdefghijklmnopqrstuvwxyz\n", encoding="utf-8")
+    _comitar_tudo(tmp_path, msg="Segredo novo nao catalogado")
+
+    res = rodar_gate(gate_path, tmp_path)
+    assert res.returncode == 1
+    assert "Quality Gate REPROVADO" in res.stdout

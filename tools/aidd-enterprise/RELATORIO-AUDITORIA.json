@@ -1,0 +1,74 @@
+{
+  "metadata": {
+    "timestamp": "2026-09-07T20:15:56.819054",
+    "target_dir": "C:\\Users\\trcnologia\\Desktop\\ecossistema-aidd\\tools\\aidd-enterprise",
+    "python_version": "3.14.7",
+    "sistema_operacional": "Windows-11-10.0.26200-SP0",
+    "framework": "AIDD Master Enterprise"
+  },
+  "gates": [
+    {
+      "gate": "G_ESTRUTURA",
+      "descricao": "Layout do Projeto, Clean Architecture e Manifestos",
+      "status": "FAIL",
+      "exit_code": 1,
+      "duracao_ms": 92.16,
+      "saida_resumida": "ite (Zero Connection Leak)\n\n================================================================================\nðŸ“Š RESUMO DO GATE G_ESTRUTURA:\n   - ValidaÃ§Ãµes Aprovadas: 22\n   - Falhas Estruturais:   1\n   - Alertas:              0\n================================================================================\nâ�Œ [BLOQUEADO]: Estrutura do projeto nÃ£o atende aos requisitos AIDD v5.1 Enterprise.\n"
+    },
+    {
+      "gate": "G_QUALIDADE",
+      "descricao": "Sintaxe Estática, Compilação e Anti-Stubs",
+      "status": "PASS",
+      "exit_code": 0,
+      "duracao_ms": 562488.95,
+      "saida_resumida": "      (Aviso: mutmut nÃ£o instalado, pulando mutaÃ§Ãµes. Instale via requirements.txt)\n    -> Executando Fuzzing ContÃ­nuo de APIs...\n    -> Executando Fuzzing ContÃ­nuo de APIs...\n       âš ï¸�  Fuzzing encontrou 71 crashes!\n       âš ï¸�  Aviso: 71 crashes encontrados no fuzzing (nÃ£o bloqueador)\n[OK] SUCESSO: Sintaxe, AST anti-stubs e Linter Impeccable UI validados com 100% de Ãªxito (exit 0)!\n"
+    },
+    {
+      "gate": "G_TESTES",
+      "descricao": "Execução Obrigatória da Suíte de Testes Unitários",
+      "status": "FAIL",
+      "exit_code": 1,
+      "duracao_ms": 49618.24,
+      "saida_resumida": "===========================================================================\n=========================== short test summary info ===========================\nFAILED tests/unit/test_compose_suite.py::test_servidor_gerado_sobe_e_responde\n================== 1 failed, 224 passed, 4 skipped in 48.79s ==================\n\n\n[FAIL] â�Œ BLOQUEIO DE QUALIDADE: Falhas detectadas na suÃ­te de testes unitÃ¡rios!\n"
+    },
+    {
+      "gate": "G_CONTRACTS",
+      "descricao": "Conformidade OpenAPI 3.1 e Model Context Protocol (MCP)",
+      "status": "PASS",
+      "exit_code": 0,
+      "duracao_ms": 181.99,
+      "saida_resumida": "[GATE G_CONTRACTS] Validando contratos de rotas, esquemas OpenAPI 3.1, MCP e 4 Portais...\n  [+] Snapshot SHA-256 de Contratos: 157e3e1f5895fb36 (1 mÃ³dulos ativos)\n[OK] SUCESSO: Todos os contratos OpenAPI, MCP e os 4 Portais Web foram validados com 100% de Ãªxito!\n"
+    },
+    {
+      "gate": "G_SEGREDOS",
+      "descricao": "Varredura de Entropia de Shannon e Credenciais Hardcoded",
+      "status": "FAIL",
+      "exit_code": 1,
+      "duracao_ms": 3395.06,
+      "saida_resumida": "detectada em .\\materiais-extras\\comparativo\\aidd-master-pack\\v5.0.0\\02-analise-tecnica.md:67\n[FAIL] Chave com prefixo conhecida detectada em .\\materiais-extras\\examples\\enterprise-suite-v4\\src\\core\\security.py:3\n[FAIL] Chave com prefixo conhecida detectada em .\\materiais-extras\\examples\\logistica-hub-v4\\src\\core\\security.py:3\n[FAIL] ðŸš« Bloqueado: 31 potenciais vazamentos de segredos detectados!\n"
+    },
+    {
+      "gate": "G_HARNESS_COMPAT",
+      "descricao": "Compatibilidade Multi-Harness e Portabilidade",
+      "status": "PASS",
+      "exit_code": 0,
+      "duracao_ms": 54.16,
+      "saida_resumida": "[GATE G_HARNESS_COMPAT v5.1] Verificando compatibilidade multi-harness...\n  [INFO] Modo de OrquestraÃ§Ã£o Detectado: ORCA ADE (Mesas Isoladas via Worktree)\n[OK] SUCESSO: Ambiente 100% compatÃ­vel (Zero API Key nativo).\n"
+    },
+    {
+      "gate": "G_SEGURANCA",
+      "descricao": "Auditoria OWASP, Criptografia JWT e Blindagem Militar",
+      "status": "PASS",
+      "exit_code": 0,
+      "duracao_ms": 21078.79,
+      "saida_resumida": "=====================\nðŸ“Š RESULTADO FINAL DO GATE DE SEGURANÃ‡A AIDD v5.1:\n   - Testes Executados: 18\n   - Aprovados (PASS):  16\n   - Falhas (FAIL):     0\n   - Alertas (WARN):    2\n   - Score de Blindagem: 88.9% (NOTA A+)\n================================================================================\nðŸ�† [CERTIFICAÃ‡ÃƒO CONCEDIDA]: APLICAÃ‡ÃƒO 100% BLINDADA E HOMOLOGADA PARA PRODUÃ‡ÃƒO GLOBAL!\n"
+    }
+  ],
+  "resumo": {
+    "total": 7,
+    "aprovados": 4,
+    "falhas": 3,
+    "duracao_total_ms": 636910.07,
+    "status_geral": "REPROVADO"
+  }
+}

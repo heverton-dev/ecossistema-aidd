@@ -1,0 +1,19 @@
+{
+    "suite_slug": "suite_gerada",
+    "suite_name": "Suite Exemplo",
+    "webhook_demo_url": "https://webhook.site/demo-aidd-enterprise",
+    "db_init": "",
+    "db_url_expr": "",
+    "imports": "",
+    "init_schemas": "",
+    "rls_init": "",
+    "service_inits": "",
+    "routes_regs": "",
+    "mcp_tool_regs": "",
+    "webhook_event_regs": "",
+    "tabs_nav": "",
+    "sections": "",
+    "scripts": "",
+    "spotlight_modules": "",
+    "initial_loads": ""
+}

@@ -344,8 +344,11 @@ def test_cli_inject_hook_ponta_a_ponta(tmp_path):
         for p in [
             repo_root / "componentes" / "aidd-master" / "hooks" / "ci-audit",
             repo_root / "tools" / "aidd-master" / ".agent" / "hooks" / "ci-audit",
+            repo_root / "tools" / "aidd-master" / ".agents" / "hooks" / "ci-audit",
             repo_root / "tools" / "aidd-master" / ".claude" / "hooks" / "ci-audit",
             repo_root / "tools" / "aidd-master" / ".gemini" / "hooks" / "ci-audit",
+            repo_root / "tools" / "aidd-master" / ".mimocode" / "hooks" / "ci-audit",
+            repo_root / "tools" / "aidd-master" / ".opencode" / "hooks" / "ci-audit",
         ]:
             if p.exists():
                 shutil.rmtree(p, ignore_errors=True)

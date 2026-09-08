@@ -4,48 +4,34 @@
 ECOSSISTEMA AIDD — QUALITY GATE: G_SEGREDOS
 =============================================================================
 Escaneia TODOS os arquivos rastreados pelo git (na raiz do ecossistema, não
-só um subprojeto) em busca de padrões de credenciais hardcoded. Materializa
-o gate G_SEGREDOS que o plano de execução original (docs/planos/
-PLANO-EXECUCAO-ECOSSISTEMA-AIDD.md) já declarava existir em gates/, mas
-nunca tinha sido implementado (R6 do PLANO-CORRECAO-RISCOS-ECOSSISTEMA-AIDD.md).
+só um subprojeto) em busca de credenciais hardcoded, delegando a varredura
+para o detect-secrets (Yelp) — ferramenta OSS madura com dezenas de
+detectores especializados (AWS, GCP, GitHub, Slack, Stripe, JWT, chaves
+privadas, alta entropia Shannon/Base64/Hex, etc). Substitui o scanner de
+entropia caseiro anterior (achado NIH #1 em
+docs/features/oportunidades-reaproveitamento-oss-nih.md).
 
-Reaproveita a mesma classe de padrões de
-tools/aidd-generator/scripts/gates/G_BLOQUEAR_SEGREDOS.py (git pre-commit
-hook local daquele subprojeto), mas em escopo de auditoria de todo o
-ecossistema via `git ls-files` em vez de só arquivos staged.
+Achados já revisados e catalogados no baseline .secrets.baseline (raiz do
+ecossistema) — fixtures de teste, placeholders de demonstração — não
+reprovam o gate; um achado novo, fora do baseline, reprova.
 
-Falsos positivos conhecidos (fixtures de teste, placeholders de demo) estão
-documentados em gates/allowlist_segredos.json com justificativa — nunca
-silenciados sem registro.
+Para atualizar o baseline depois de revisar manualmente um achado novo:
+  1. python -m detect_secrets scan --baseline .secrets.baseline
+  2. python -m detect_secrets audit .secrets.baseline   (marca real/falso positivo)
+  3. Commitar o .secrets.baseline atualizado.
 
 Uso:
   python gates/G_SEGREDOS.py
-      exit 0 = nenhum segredo novo encontrado. exit 1 = achado não
-      catalogado no allowlist.
+      exit 0 = nenhum segredo novo fora do baseline. exit 1 = achado novo
+      não catalogado (ou detect-secrets não instalado).
 """
 
-import json
 import os
-import re
 import subprocess
 import sys
 
 ROOT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-ALLOWLIST_PATH = os.path.join(ROOT_DIR, "gates", "allowlist_segredos.json")
-
-PADROES_SEGREDO = [
-    (r'sk-[A-Za-z0-9]{20,}', 'Chave estilo OpenAI/compatível (sk-...)'),
-    (r'AIzaSy[A-Za-z0-9_\-]{33}', 'Chave de API do Google (AIzaSy...)'),
-    (r'AKIA[0-9A-Z]{16}', 'AWS Access Key ID (AKIA...)'),
-    (r'ghp_[A-Za-z0-9]{36}', 'GitHub Personal Access Token (ghp_...)'),
-    (r'xox[baprs]-[A-Za-z0-9-]{10,}', 'Token do Slack (xox...)'),
-    (r'-----BEGIN (RSA |OPENSSH |EC |DSA )?PRIVATE KEY-----', 'Chave privada PEM'),
-    (
-        r'(?i)(api[_-]?key|secret|token|password|senha|credencial)\s*[:=]\s*'
-        r'["\'][A-Za-z0-9_\-./+=]{16,}["\']',
-        'Atribuição genérica de chave/segredo em texto puro',
-    ),
-]
+BASELINE_PATH = os.path.join(ROOT_DIR, ".secrets.baseline")
 
 
 def _arquivos_rastreados():
@@ -53,63 +39,61 @@ def _arquivos_rastreados():
         ["git", "ls-files"], cwd=ROOT_DIR,
         capture_output=True, text=True, encoding="utf-8", errors="replace"
     )
-    return [f for f in resultado.stdout.splitlines() if f.strip()]
-
-
-def _carregar_allowlist():
-    if not os.path.exists(ALLOWLIST_PATH):
-        return {}
-    with open(ALLOWLIST_PATH, "r", encoding="utf-8") as f:
-        return json.load(f).get("arquivos", {})
+    return [
+        f for f in resultado.stdout.splitlines()
+        # O proprio .secrets.baseline guarda hashes de achados conhecidos, que
+        # por definicao batem nos detectores de alta entropia/palavra-chave.
+        # Excluido do scan, nao do motivo de existir.
+        if f.strip() and f != ".secrets.baseline"
+        and os.path.isfile(os.path.join(ROOT_DIR, f))
+    ]
 
 
 def escanear():
     print("=" * 70)
-    print(" [GATE] G_SEGREDOS — Varredura de credenciais hardcoded")
+    print(" [GATE] G_SEGREDOS — Varredura de credenciais hardcoded (detect-secrets)")
     print("=" * 70)
 
-    allowlist = _carregar_allowlist()
-    achados_novos = []
-    achados_conhecidos = 0
+    try:
+        from detect_secrets import pre_commit_hook
+    except ImportError:
+        print("[FALHA] Pacote 'detect-secrets' não instalado.")
+        print("Instale com: pip install detect-secrets")
+        return 1
 
-    for caminho_rel in _arquivos_rastreados():
-        # O proprio allowlist cita os valores fake nas justificativas para
-        # documentar cada achado com precisao — isso bate nos padroes por
-        # definicao. Excluido do scan, nao do motivo de existir.
-        if caminho_rel == "gates/allowlist_segredos.json":
-            continue
-        caminho_abs = os.path.join(ROOT_DIR, caminho_rel)
-        if not os.path.isfile(caminho_abs):
-            continue
-        try:
-            with open(caminho_abs, "r", encoding="utf-8", errors="ignore") as f:
-                conteudo = f.read()
-        except Exception:
-            continue
+    tem_baseline = os.path.exists(BASELINE_PATH)
+    if tem_baseline:
+        print(f"[OK] Baseline carregado de {os.path.relpath(BASELINE_PATH, ROOT_DIR)}")
+        argv = ["--baseline", BASELINE_PATH]
+    else:
+        print("[AVISO] Nenhum .secrets.baseline encontrado — tolerância zero "
+              "(qualquer achado é tratado como novo).")
+        argv = []
+    argv += _arquivos_rastreados()
 
-        for padrao, nome in PADROES_SEGREDO:
-            m = re.search(padrao, conteudo)
-            if not m:
-                continue
-            if caminho_rel in allowlist:
-                achados_conhecidos += 1
-            else:
-                achados_novos.append((caminho_rel, nome, m.group(0)[:40]))
-            break  # 1 achado por arquivo já basta para classificar
-
-    print(f"[OK] {achados_conhecidos} achado(s) já catalogado(s) em allowlist_segredos.json (fixtures/placeholders auditados).")
+    cwd_original = os.getcwd()
+    os.chdir(ROOT_DIR)
+    try:
+        codigo = pre_commit_hook.main(argv)
+    finally:
+        os.chdir(cwd_original)
 
     print("\n" + "=" * 70)
-    if achados_novos:
-        print(f" [FALHA] Quality Gate REPROVADO com {len(achados_novos)} achado(s) não catalogado(s):")
-        for caminho_rel, nome, trecho in achados_novos:
-            print(f"  - {caminho_rel}: {nome} ({trecho}...)")
-        print("\nSe for um falso positivo real, adicione o arquivo a "
-              "gates/allowlist_segredos.json com justificativa. Se for um "
-              "segredo de verdade, remova-o do arquivo e rotacione a "
-              "credencial imediatamente.")
+    if codigo not in (0, 3):
+        print(" [FALHA] Quality Gate REPROVADO — achado(s) de credencial fora do baseline.")
+        print(
+            "\nSe for um falso positivo real, revise e adicione ao baseline com "
+            "`python -m detect_secrets scan --baseline .secrets.baseline`, audite "
+            "com `python -m detect_secrets audit .secrets.baseline` e comite o "
+            "baseline atualizado. Se for um segredo de verdade, remova-o do "
+            "arquivo e rotacione a credencial imediatamente."
+        )
         print("=" * 70)
         return 1
+
+    if codigo == 3:
+        print(" [ATENÇÃO] .secrets.baseline foi atualizado automaticamente "
+              "(números de linha desatualizados). Rode `git add .secrets.baseline`.")
 
     print(" [SUCESSO] Quality Gate G_SEGREDOS APROVADO (100% OK)!")
     print("=" * 70)

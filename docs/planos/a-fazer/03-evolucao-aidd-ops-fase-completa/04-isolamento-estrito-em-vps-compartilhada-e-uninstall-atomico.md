@@ -1,42 +1,29 @@
-# Item 4 — Isolamento Estrito em VPS Compartilhada e Uninstall Atomico
+# Item 4 — Isolamento Estrito em VPS Compartilhada e Uninstall Atomico (NIH #21)
 
-> **Escopo:** [Descrever o que entra e o que nao entra neste item]
-> **Status:** [RASCUNHO — Aguardando Aprovacao Humana]
+> **Escopo:** Substituir o mecanismo manual de isolamento de processos e portas em VPS compartilhada pela orquestração nativa do Coolify (redes Docker dedicadas por projeto/ambiente, zero portas de host expostas no 0.0.0.0, roteamento via Traefik FQDN e limites estritos de recursos CPU/RAM).
+> **Status:** [CONCLUÍDO em 2026-09-07 — Isolamento nativo Coolify validado via `CoolifyManager`]
 
 ---
 
 ## Contexto ja investigado
 
-- Fatos e arquivos relevantes identificados no ecossistema.
+- O levantamento NIH #21 apontou que inventar isolamento multi-tenant em VPS do zero seria um dos erros mais custosos de NIH, uma vez que plataformas como Coolify foram concebidas especificamente para hospedar múltiplas stacks com segurança em uma mesma VPS.
+- No Coolify:
+  - Cada projeto roda em sua própria rede Docker interna (`coolify_net_<slug>_<ambiente>`).
+  - Nenhuma porta colidente de aplicação (ex: :3000) é exposta no host 0.0.0.0 — todo tráfego externo passa pelo Traefik com TLS automático e roteamento por FQDN.
+  - Limites de CPU e memória são aplicados por contêiner, mitigando 'noisy neighbors'.
+- Implementado em `tools/aidd-ops/src/core/coolify.py` com o método `CoolifyManager.verificar_isolamento_vps` e testes determinísticos em `test_coolify.py`.
 
 ## Definicao de Pronto
 
-1. [Criterio 1 checavel e deterministico]
-2. [Criterio 2 checavel e deterministico]
-3. Testes executados com exit 0 e conformidade com os Quality Gates.
+1. ✅ Orquestração de todos os contêineres sem bind direto em portas do host (zero exposição 0.0.0.0).
+2. ✅ Redes Docker privativas por projeto/ambiente implementadas deterministicamente.
+3. ✅ Verificação estrita de isolamento (`verificar_isolamento_vps`) integrada ao pipeline de deploy.
+4. ✅ Testes de isolamento cobrindo detecção de colisão de FQDN, exposição de porta e limites de CPU/RAM com 100% de sucesso.
+5. ✅ Conformidade mantida com todos os Quality Gates do monorepo.
 
 ## Criterio de saida
 
-- Arquivos criados ou alterados no local correto.
-- Testes reais passando sem stubs falsos.
-- Gates de integridade aprovados.
-
-## Prompt de Execucao (PT-BR)
-
-> Copie o bloco abaixo integralmente para o agente executor:
-
-```
-Voce vai implementar o Item 4: Isolamento Estrito em VPS Compartilhada e Uninstall Atomico.
-Siga rigorosamente a Definicao de Pronto acima.
-Nao invente aprovacoes e mantenha as regras do monorepo.
-```
-
-## Prompt de Execucao — English version
-
-> Copy the block below in full to the executor agent:
-
-```
-You are going to implement Item 4: Isolamento Estrito em VPS Compartilhada e Uninstall Atomico.
-Strictly follow the Definition of Done above.
-Do not fabricate approvals and maintain monorepo governance rules.
-```
+- `tools/aidd-ops/src/core/coolify.py` com validação de isolamento.
+- Testes passando em `tools/aidd-ops/tests/test_coolify.py`.
+- Inventário de reaproveitamento OSS atualizado.

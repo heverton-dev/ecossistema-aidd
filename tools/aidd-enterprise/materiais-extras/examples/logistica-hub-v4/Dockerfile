@@ -24,12 +24,12 @@ COPY --chown=aidduser:aiddgroup src/ /app/src/
 # Cria o diretório de dados persistentes para SQLite WAL
 RUN mkdir -p /app/data && chown -R aidduser:aiddgroup /app/data
 
-USER aidduser
+USER 10001:10001
 
 EXPOSE 3000
 
 # Healthcheck nativo
 HEALTHCHECK --interval=15s --timeout=5s --start-period=5s --retries=3 \
-    CMD python -c "import urllib.request; urllib.request.urlopen('http://localhost:3000/openapi.json', timeout=2)" || exit 1
+    CMD ["python", "-c", "import urllib.request, sys; sys.exit(0 if urllib.request.urlopen('http://localhost:3000/openapi.json', timeout=2).status == 200 else 1)"]
 
 ENTRYPOINT ["python", "src/server.py"]

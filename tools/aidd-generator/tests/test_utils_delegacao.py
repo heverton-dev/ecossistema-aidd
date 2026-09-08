@@ -416,3 +416,106 @@ def test_modo_headless_rotula_indisponivel_quando_provider_sem_usage(monkeypatch
     assert resp['origem_medicao'] == 'indisponivel'
 
 
+
+
+# =============================================================================
+# TESTES DO PARSING ESTRUTURADO COM INSTRUCTOR (Fase2-Gen2, NIH #23)
+# =============================================================================
+
+import pydantic
+
+
+class ModeloCodegen(pydantic.BaseModel):
+    """Modelo Pydantic alvo do parsing estruturado (codegen)."""
+    codigo: str
+    teste: str
+    caminho_relativo: str
+    caminho_teste: str
+
+
+def test_instructor_instalado_e_importavel():
+    """Critério da fase: instructor instalado e disponível no ambiente de teste."""
+    import instructor
+    assert instructor is not None
+
+
+def test_extrair_json_com_response_model_valida_pydantic():
+    """Passar response_model usa validação Pydantic (com retry) via instructor."""
+    from utils_delegacao import extrair_json_resposta
+
+    payload = {
+        "codigo": "def f():\n    pass",
+        "teste": "def test_f():\n    pass",
+        "caminho_relativo": "x.py",
+        "caminho_teste": "test_x.py",
+    }
+    import json as _json
+    resultado = extrair_json_resposta(_json.dumps(payload), response_model=ModeloCodegen)
+
+    assert isinstance(resultado, ModeloCodegen)
+    assert resultado.codigo == "def f():\n    pass"
+    assert resultado.teste == "def test_f():\n    pass"
+    assert resultado.caminho_relativo == "x.py"
+
+
+def test_extrair_json_sem_response_model_retorna_dict_mantendo_compatibilidade():
+    """Sem response_model, o comportamento legado (dict) é preservado."""
+    from utils_delegacao import extrair_json_resposta
+
+    payload = {"codigo": "def f():\n    pass", "teste": "def test_f():\n    pass"}
+    import json as _json
+    resultado = extrair_json_resposta(_json.dumps(payload))
+
+    assert isinstance(resultado, dict)
+    assert resultado["codigo"] == "def f():\n    pass"
+
+
+def test_extrair_json_com_response_model_aceita_field_extra_ignorando():
+    """Pydantic por padrão ignora campos extras; parsing estruturado não quebra."""
+    from utils_delegacao import extrair_json_resposta
+
+    payload = {
+        "codigo": "def f():\n    pass",
+        "teste": "def test_f():\n    pass",
+        "caminho_relativo": "x.py",
+        "caminho_teste": "test_x.py",
+        "campo_extra_inesperado": 123,
+    }
+    import json as _json
+    resultado = extrair_json_resposta(_json.dumps(payload), response_model=ModeloCodegen)
+
+    assert isinstance(resultado, ModeloCodegen)
+
+
+def test_validar_pydantic_com_retry_sucesso_na_primeira():
+    """Validação Pydantic com retry: sucesso direto (sem retry)."""
+    from utils_delegacao import _validar_pydantic_com_retry
+    import json as _json
+
+    dados = {"codigo": "x", "teste": "y", "caminho_relativo": "a.py", "caminho_teste": "t_a.py"}
+    resultado = _validar_pydantic_com_retry(_json.dumps(dados), ModeloCodegen, max_retries=3)
+
+    assert isinstance(resultado, ModeloCodegen)
+
+
+def test_validar_pydantic_com_retry_aceita_dict_direto():
+    """_validar_pydantic_com_retry aceita dict já desserializado."""
+    from utils_delegacao import _validar_pydantic_com_retry
+
+    dados = {"codigo": "x", "teste": "y", "caminho_relativo": "a.py", "caminho_teste": "t_a.py"}
+    resultado = _validar_pydantic_com_retry(dados, ModeloCodegen, max_retries=3)
+
+    assert isinstance(resultado, ModeloCodegen)
+
+
+def test_validar_pydantic_com_retry_levanta_validation_error_apos_tentativas():
+    """Dados que nunca validam levantam erro Pydantic após esgotar as tentativas."""
+    from utils_delegacao import _validar_pydantic_com_retry
+    import pytest as _pytest
+    from pydantic import ValidationError
+
+    # Faltam campos obrigatórios — sempre inválido
+    dados_invalidos = {"codigo": "x"}
+
+    with _pytest.raises(ValidationError):
+        _validar_pydantic_com_retry(dados_invalidos, ModeloCodegen, max_retries=2)

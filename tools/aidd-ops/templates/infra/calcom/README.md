@@ -40,19 +40,25 @@ docker compose logs calcom-server | grep "ready"
 | `CALCOM_DB_NAME` | Não | Nome do banco (default: calcom_db) |
 | `CALCOM_DB_USER` | Não | Usuário do banco (default: calcom_user) |
 | `CALCOM_LICENSE_KEY` | Não | Chave de licença premium |
-| `CALCOM_PORT` | Não | Porta do servidor (default: 3000) |
+| `CALCOM_HOST` | Não | Host Traefik do Cal.com (default: cal.localhost) |
 
 ## Integração com outros blocos
 
 - **PostgreSQL:** conecta via rede `aidd_internal` ao bloco `postgres/`.
-- **Traefik:** para expor publicamente, adicione labels Traefik ao container `calcom-server`.
+- **Traefik (NIH #16):** Cal.com já vem com labels de roteamento Traefik habilitados.
+  `calcom-server:3000` é roteado em `CALCOM_HOST`. Não há porta de host publicada —
+  o acesso é exclusivamente via reverse proxy (sem colisão na porta 3000).
 - **Twenty CRM (nicho clínicas/energia solar):** integração bidirecional via API para sincronizar agendamentos com contatos.
 
-## Portas expostas
+## Acesso via Traefik
 
-| Porta | Serviço | Nota |
-|---|---|---|
-| 3000 | Cal.com | API + Interface de agendamento |
+Aponte o DNS/`/etc/hosts` para o IP do host onde o Traefik roda:
+
+```
+ip.do.host    cal.localhost
+```
+
+Acesso: `https://cal.localhost`.
 
 ## Imagens
 

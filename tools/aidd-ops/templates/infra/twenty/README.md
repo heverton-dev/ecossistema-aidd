@@ -38,18 +38,26 @@ docker compose logs twenty-server | grep "started"
 | `POSTGRES_HOST` | Não | Host do PostgreSQL (default: postgres) |
 | `TWENTY_DB_NAME` | Não | Nome do banco (default: twenty_db) |
 | `TWENTY_DB_USER` | Não | Usuário do banco (default: twenty_user) |
+| `TWENTY_SERVER_HOST` | Não | Host Traefik da API (default: twenty.localhost) |
+| `TWENTY_FRONT_HOST` | Não | Host Traefik do frontend (default: twenty-ui.localhost) |
 
 ## Integração com outros blocos
 
 - **PostgreSQL:** conecta via rede `aidd_internal` ao bloco `postgres/`.
-- **Traefik:** para expor publicamente, adicione labels Traefik ao container `twenty-front`.
+- **Traefik (NIH #16):** Twenty já vem com labels de roteamento Traefik habilitados.
+  Servidor (`twenty-server:3000`) roteado em `TWENTY_SERVER_HOST` e frontend
+  (`twenty-front:3001`) em `TWENTY_FRONT_HOST`. Não há porta de host publicada —
+  o acesso é exclusivamente via reverse proxy (sem colisão na porta 3000).
 
-## Portas expostas
+## Acesso via Traefik
 
-| Porta | Serviço | Nota |
-|---|---|---|
-| 3000 | Twenty Server | API backend |
-| 3001 | Twenty Frontend | Interface React |
+Aponte o DNS/`/etc/hosts` para o IP do host onde o Traefik roda:
+
+```
+ip.do.host    twenty.localhost twenty-ui.localhost
+```
+
+Acesso: `https://twenty-ui.localhost` (frontend) e `https://twenty.localhost` (API).
 
 ## Imagens
 

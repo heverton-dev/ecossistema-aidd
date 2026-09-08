@@ -82,7 +82,7 @@ def checar():
 
     print("\n--- Gates documentados em AGENTS.md vs gates/ em disco ---")
     agents_md = _ler("AGENTS.md") or ""
-    documentados = set(re.findall(r"gates/(G_[A-Z_]+\.py)", agents_md))
+    documentados = set(re.findall(r"(?<!/)gates/(G_[A-Z_]+\.py)", agents_md))
     em_disco = {
         f for f in os.listdir(os.path.join(ROOT_DIR, "gates"))
         if f.startswith("G_") and f.endswith(".py")

@@ -1,0 +1,12 @@
+# =============================================================================
+# AIDD-Ops — Colecoes Ansible requeridas (NIH #15)
+# =============================================================================
+# Instalar com:
+#   ansible-galaxy collection install -r tools/aidd-ops/ansible/requirements.yml \
+#     -p tools/aidd-ops/ansible/collections
+# =============================================================================
+collections:
+  - name: devsec.hardening
+    version: ">=8.7.0"
+  - name: community.general
+    version: ">=8.0.0"

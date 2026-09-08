@@ -7,8 +7,15 @@ Database é uma fachada fina que delega para um DatabaseAdapter (SQLite ou
 PostgreSQL) escolhido a partir de DATABASE_URL. A API pública usada pelo
 código gerado (get_connection, record_migration, enqueue_outbox_event)
 permanece idêntica independente do motor escolhido: os módulos gerados por
-add_module.py continuam usando `?` como placeholder e `cur.lastrowid` sem
-nenhuma alteração, mesmo rodando contra PostgreSQL.
+add_module.py continuam usando `?` como placeholder, `cur.lastrowid` e linhas
+sqlite3.Row (dict(row)) sem nenhuma alteração, mesmo rodando contra PostgreSQL.
+
+Desde a troca de motor NIH #8 (Fase 2), o motor SQLite é gerenciado pelo
+SQLAlchemy: o Engine cuida de pooling, ciclo de vida da conexão e de aplicar o
+modo WAL (journal_mode=WAL) e os demais PRAGMAs via event listener de
+"connect". O código gerado vê apenas a fachada legada (EngineFacadeConnection),
+que preserva a superfície de cursor do sqlite3 por cima da conexão gerenciada
+pelo SQLAlchemy.
 """
 
 import os
@@ -20,6 +27,11 @@ import datetime
 import hashlib
 import threading
 from abc import ABC, abstractmethod
+
+import sqlglot
+from sqlglot import exp
+from sqlalchemy import create_engine, event
+from sqlalchemy.orm import sessionmaker
 
 # ---------------------------------------------------------------------------
 # Row Level Security (RLS) — Application-Layer Enforcement for SQLite
@@ -41,6 +53,77 @@ def _get_current_tenant() -> str | None:
 def _strip_sql_comments(sql: str) -> str:
     """Remove SQL line comments (-- ...) for reliable keyword detection."""
     return re.sub(r'--[^\n]*', '', sql)
+
+
+def _parse_sql(sql: str):
+    """Parse SQL com sqlglot (dialeto SQLite). Retorna a AST ou None se ilegivel."""
+    try:
+        return sqlglot.parse_one(sql, read="sqlite")
+    except Exception:
+        return None
+
+
+def _create_sqlite_engine(db_path: str):
+    """Cria um Engine SQLAlchemy (pysqlite) com WAL e ajustes de concorrência
+    aplicados via event listener de conexão (NIH #8).
+
+    Substitui o gerenciamento manual de ``sqlite3.connect()`` + PRAGMAs soltos
+    que existia antes: o SQLAlchemy passa a ser o dono do pooling, do ciclo de
+    vida das conexões e da configuração WAL (journal_mode, synchronous,
+    busy_timeout, foreign_keys) — sempre que uma conexão nova do pool nasce,
+    o listener abaixo a configuram antes do primeiro uso.
+    """
+    engine = create_engine(
+        f"sqlite:///{db_path}",
+        connect_args={"timeout": 10.0, "check_same_thread": False},
+    )
+
+    @event.listens_for(engine, "connect")
+    def _set_sqlite_pragmas(dbapi_connection, connection_record):
+        cursor = dbapi_connection.cursor()
+        cursor.execute("PRAGMA journal_mode=WAL;")
+        cursor.execute("PRAGMA synchronous=NORMAL;")
+        cursor.execute("PRAGMA busy_timeout=5000;")
+        cursor.execute("PRAGMA foreign_keys=ON;")
+        cursor.close()
+
+    return engine
+
+
+class EngineFacadeConnection:
+    """Bridge entre a superfície legada do sqlite3 e uma conexão gerenciada
+    pelo SQLAlchemy Engine (NIH #8).
+
+    O código gerado (e ``RLSConnection``) espera uma conexão com
+    ``execute/executemany/executescript/cursor/commit/rollback`` e linhas
+    ``sqlite3.Row`` (acesso por nome e ``dict(row)``). Esta classe entrega essa
+    superfície executando contra a conexão DBAPI real que o SQLAlchemy já
+    configurou (WAL via listener de connect), mas ``close()`` apenas devolve a
+    conexão ao pool do Engine — nunca fecha o arquivo do banco.
+    """
+
+    def __init__(self, sqlalchemy_conn):
+        self._sqlalchemy_conn = sqlalchemy_conn
+        driver = sqlalchemy_conn.connection.driver_connection
+        driver.row_factory = sqlite3.Row
+        self._driver = driver
+
+    def __getattr__(self, name):
+        return getattr(self._driver, name)
+
+    def close(self):
+        self._sqlalchemy_conn.close()
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        if exc_type is not None:
+            self._driver.rollback()
+        else:
+            self._driver.commit()
+        self.close()
+        return False
 
 
 class RLSConnection:
@@ -97,57 +180,57 @@ class RLSConnection:
         return sql, params
 
     def _rewrite_insert(self, clean: str, original_sql: str, params: tuple, tenant_id: str) -> tuple:
-        # Regex to capture table, column list, and values placeholders
-        m = re.match(r"INSERT\s+(?:OR\s+\w+\s+)?INTO\s+(\w+)\s*\(([^)]+)\)\s*VALUES\s*\(([^)]+)\)", clean, re.IGNORECASE)
-        if not m:
+        """Reescreve INSERT via AST sqlglot (parser real), injetando tenant_id como
+        primeira coluna/valor. Preserva a ordem de parametros (tenant_id, *params)."""
+        ast = _parse_sql(original_sql)
+        if ast is None or not isinstance(ast, exp.Insert):
             return original_sql, params
-        table, cols_str, vals_str = m.groups()
+        schema = ast.this
+        if not isinstance(schema, exp.Schema):
+            return original_sql, params
+        table = schema.this.name
         if table not in RLS_TABLE_REGISTRY:
             return original_sql, params
-        cols = [c.strip().strip('"').strip('`') for c in cols_str.split(',')]
+        cols = [c.name for c in schema.expressions]
         if 'tenant_id' in cols:
             return original_sql, params
-        # Build new column and value lists with tenant_id
-        new_cols = 'tenant_id, ' + cols_str
-        new_vals = '?, ' + vals_str
-        new_sql = f"INSERT INTO {table} ({new_cols}) VALUES ({new_vals})"
-        # Preserve any trailing part of the original SQL (e.g., RETURNING clause)
-        trailing = original_sql[m.end():]
-        if trailing:
-            new_sql += trailing
-        return new_sql, (tenant_id,) + params
+        values = ast.find(exp.Values)
+        if values is None or not values.expressions:
+            return original_sql, params
+
+        # Intercala tenant_id na ordem correta dos placeholders (por linha de VALUES)
+        row_counts = [len(list(row.find_all(exp.Placeholder))) for row in values.expressions]
+        new_params = []
+        idx = 0
+        for row, n in zip(values.expressions, row_counts):
+            row.expressions.insert(0, exp.Placeholder())
+            new_params.append(tenant_id)
+            new_params.extend(params[idx:idx + n])
+            idx += n
+        new_params.extend(params[idx:])
+
+        schema.expressions.insert(0, exp.column('tenant_id'))
+        return ast.sql(dialect='sqlite'), tuple(new_params)
 
     def _rewrite_select(self, clean: str, original_sql: str, params: tuple, tenant_id: str) -> tuple:
-        # Find the "FROM <table>" that targets an RLS table
-        m = re.search(r'\bFROM\s+(\w+)', clean, re.IGNORECASE)
-        if not m:
+        """Reescreve SELECT via AST sqlglot (parser real), injetando WHERE tenant_id = ?
+        antes de qualquer condicao/ordenacao existente. Parametros: (tenant_id, *params)."""
+        ast = _parse_sql(original_sql)
+        if ast is None or not isinstance(ast, exp.Select):
             return original_sql, params
-        table = m.group(1)
-        if table not in RLS_TABLE_REGISTRY:
+        from_node = ast.find(exp.From)
+        if from_node is None or not isinstance(from_node.this, exp.Table):
+            return original_sql, params
+        if from_node.this.name not in RLS_TABLE_REGISTRY:
             return original_sql, params
 
-        # If there's already a WHERE, inject tenant_id right after it
-        if re.search(r'\bWHERE\b', clean, re.IGNORECASE):
-            new_sql = re.sub(
-                r'\bWHERE\b',
-                'WHERE tenant_id = ? AND',
-                original_sql,
-                count=1,
-                flags=re.IGNORECASE
-            )
+        cond = exp.column('tenant_id').eq(exp.Placeholder())
+        where = ast.args.get('where')
+        if where is not None:
+            ast.args['where'] = exp.Where(this=exp.and_(cond, where.this))
         else:
-            # Add WHERE clause before ORDER BY / LIMIT / ; / end
-            m_end = re.search(r'\b(ORDER\s+BY|LIMIT|GROUP\s+BY)\b', original_sql, re.IGNORECASE)
-            if m_end:
-                pos = m_end.start()
-                new_sql = original_sql[:pos] + 'WHERE tenant_id = ? ' + original_sql[pos:]
-            else:
-                stripped = original_sql.rstrip().rstrip(';')
-                new_sql = stripped + ' WHERE tenant_id = ?'
-                if original_sql.rstrip().endswith(';'):
-                    new_sql += ';'
-
-        return new_sql, (tenant_id,) + params
+            ast.args['where'] = exp.Where(this=cond)
+        return ast.sql(dialect='sqlite'), (tenant_id,) + params
 
     def _rewrite_update(self, clean: str, original_sql: str, params: tuple, tenant_id: str) -> tuple:
         m = re.match(r'UPDATE\s+(\w+)', clean, re.IGNORECASE)
@@ -215,16 +298,19 @@ class RLSConnection:
     def executemany(self, sql: str, seq_of_params):
         tenant_id = _get_current_tenant()
         if tenant_id and RLS_TABLE_REGISTRY:
-            clean = _strip_sql_comments(sql).strip()
-            first_word = clean.split()[0].upper() if clean else ''
-            if first_word == 'INSERT':
-                m = re.match(r'INSERT\s+(?:OR\s+\w+\s+)?INTO\s+(\w+)\s*\(([^)]+)\)\s*VALUES\s*\(([^)]+)\)', clean, re.IGNORECASE)
-                if m and m.group(1) in RLS_TABLE_REGISTRY:
-                    table, cols_str, vals_str = m.groups()
-                    new_cols = 'tenant_id, ' + cols_str
-                    new_vals = '?, ' + vals_str
-                    trailing = sql[m.end():]
-                    sql = f'INSERT INTO {table} ({new_cols}) VALUES ({new_vals})' + trailing
+            ast = _parse_sql(sql)
+            if (
+                isinstance(ast, exp.Insert)
+                and isinstance(ast.this, exp.Schema)
+                and ast.this.this.name in RLS_TABLE_REGISTRY
+                and 'tenant_id' not in [c.name for c in ast.this.expressions]
+            ):
+                values = ast.find(exp.Values)
+                if values is not None and values.expressions:
+                    ast.this.expressions.insert(0, exp.column('tenant_id'))
+                    for row in values.expressions:
+                        row.expressions.insert(0, exp.Placeholder())
+                    sql = ast.sql(dialect='sqlite')
                     seq_of_params = [(tenant_id,) + p for p in seq_of_params]
         return self._conn.executemany(sql, seq_of_params)
 
@@ -318,51 +404,89 @@ class DatabaseAdapter(ABC):
 class SQLiteAdapter(DatabaseAdapter):
     """Motor local embarcado (Zero Setup). Comportamento idêntico ao pré-v5.0.
     Quando RLS_TABLE_REGISTRY não está vazio, get_connection() retorna um
-    RLSConnection que intercepta queries e injeta filtros de tenant_id."""
+    RLSConnection que intercepta queries e injeta filtros de tenant_id.
+
+    Desde a troca NIH #8, o pooling e o modo WAL são operados pelo SQLAlchemy
+    (ver ``_create_sqlite_engine``); ``get_connection()`` entrega a fachada
+    legada (``EngineFacadeConnection``) por cima de uma conexão do Engine."""
 
     def __init__(self, db_url: str):
+        self.db_url = db_url
         self.db_path = db_url.replace("sqlite:///", "")
+        self._engine = _create_sqlite_engine(self.db_path)
+        self._session_factory = sessionmaker(self._engine)
+        self._async_engine = None
+
+    @property
+    def engine(self):
+        """Engine SQLAlchemy síncrono (pysqlite) — WAL por event listener."""
+        return self._engine
+
+    @property
+    def session_factory(self):
+        """sessionmaker (ORM SQLAlchemy) ligado ao Engine desta adapter."""
+        return self._session_factory
+
+    @property
+    def async_engine(self):
+        """AsyncEngine SQLAlchemy sobre aiosqlite para o mesmo arquivo.
+
+        Criado sob demanda; WAL já está persistido no arquivo pelo Engine
+        síncrono (journal_mode=WAL é persistente). Use ``await
+        adapter.init_async()`` uma vez para reafirmar os PRAGMAs no fluxo
+        assíncrono."""
+
+        if self._async_engine is None:
+            from sqlalchemy.ext.asyncio import create_async_engine
+            self._async_engine = create_async_engine(
+                f"sqlite+aiosqlite:///{self.db_path}",
+                connect_args={"timeout": 10.0},
+            )
+        return self._async_engine
+
+    async def init_async(self):
+        """Aplica WAL/PRAGMAs no AsyncEngine (aiosqlite). Idempotente.
+
+        journal_mode=WAL é persistente no arquivo; os demais PRAGMAs são
+        reafirmados na conexão de bootstrap deste engine assíncrono."""
+        async with self.async_engine.connect() as conn:
+            await conn.exec_driver_sql("PRAGMA journal_mode=WAL;")
+            await conn.exec_driver_sql("PRAGMA synchronous=NORMAL;")
+            await conn.exec_driver_sql("PRAGMA busy_timeout=5000;")
+            await conn.exec_driver_sql("PRAGMA foreign_keys=ON;")
 
     def get_connection(self):
-        conn = sqlite3.connect(self.db_path, timeout=10.0)
-        conn.execute("PRAGMA journal_mode=WAL;")
-        conn.execute("PRAGMA synchronous=NORMAL;")
-        conn.execute("PRAGMA busy_timeout=5000;")
-        conn.execute("PRAGMA foreign_keys=ON;")
-        conn.row_factory = sqlite3.Row
-        return RLSConnection(conn)
+        return RLSConnection(EngineFacadeConnection(self._engine.connect()))
 
     def init_system_tables(self):
-        conn = sqlite3.connect(self.db_path, timeout=10.0)
-        try:
-            conn.executescript("""
-                CREATE TABLE IF NOT EXISTS _schema_migrations (
-                    id INTEGER PRIMARY KEY AUTOINCREMENT,
-                    module_name TEXT NOT NULL UNIQUE,
-                    version INTEGER NOT NULL,
-                    applied_at DATETIME DEFAULT CURRENT_TIMESTAMP
-                );
-                CREATE TABLE IF NOT EXISTS _outbox_events (
-                    id TEXT PRIMARY KEY,
-                    event_name TEXT NOT NULL,
-                    payload TEXT NOT NULL,
-                    status TEXT NOT NULL DEFAULT 'pendente',
-                    criado_em TEXT NOT NULL,
-                    processado_em TEXT
-                );
-                CREATE INDEX IF NOT EXISTS idx_outbox_status ON _outbox_events(status);
-                CREATE TABLE IF NOT EXISTS _audit_log (
-                    id TEXT PRIMARY KEY,
-                    timestamp TEXT NOT NULL,
-                    action TEXT NOT NULL,
-                    payload TEXT NOT NULL,
-                    prev_hash TEXT NOT NULL,
-                    curr_hash TEXT NOT NULL
-                );
-            """)
-            conn.commit()
-        finally:
-            conn.close()
+        statements = [
+            "CREATE TABLE IF NOT EXISTS _schema_migrations ("
+            "id INTEGER PRIMARY KEY AUTOINCREMENT,"
+            "module_name TEXT NOT NULL UNIQUE,"
+            "version INTEGER NOT NULL,"
+            "applied_at DATETIME DEFAULT CURRENT_TIMESTAMP"
+            ");",
+            "CREATE TABLE IF NOT EXISTS _outbox_events ("
+            "id TEXT PRIMARY KEY,"
+            "event_name TEXT NOT NULL,"
+            "payload TEXT NOT NULL,"
+            "status TEXT NOT NULL DEFAULT 'pendente',"
+            "criado_em TEXT NOT NULL,"
+            "processado_em TEXT"
+            ");",
+            "CREATE INDEX IF NOT EXISTS idx_outbox_status ON _outbox_events(status);",
+            "CREATE TABLE IF NOT EXISTS _audit_log ("
+            "id TEXT PRIMARY KEY,"
+            "timestamp TEXT NOT NULL,"
+            "action TEXT NOT NULL,"
+            "payload TEXT NOT NULL,"
+            "prev_hash TEXT NOT NULL,"
+            "curr_hash TEXT NOT NULL"
+            ");",
+        ]
+        with self._engine.begin() as conn:
+            for stmt in statements:
+                conn.exec_driver_sql(stmt)
 
 
 class PostgresCursorProxy:

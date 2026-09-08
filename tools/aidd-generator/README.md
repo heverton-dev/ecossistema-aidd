@@ -52,6 +52,45 @@ cd aidd-generator
 pip install -r requirements-dev.txt
 ```
 
+### Dependência de sistema: Pandoc (Fase 6 — Documentador Tripartite)
+
+A Fase 6 (documentação final) gera os 3 formatos (HTML, Markdown, PDF) a
+partir de **uma única fonte Markdown** via [Pandoc](https://pandoc.org/)
+(NIH #25) — sem templates paralelos por formato e sem "PDF" falso.
+
+```bash
+# Linux/Mac
+sudo apt install pandoc      # ou: brew install pandoc
+# Windows (winget)
+winget install --id JohnMacFarlane.Pandoc
+```
+
+- HTML: `pandoc --standalone`
+- PDF: `pandoc --pdf-engine=typst` — requer o [Typst](https://typst.app/):
+
+  ```bash
+  sudo apt install typst     # ou: brew install typst / winget install Typst.Typst
+  ```
+
+Se o `pandoc` não estiver no `PATH`, a Fase 6 **reprova honestamente** os
+gates F1 (HTML) e F2 (PDF) — o `documento.md` (a fonte) ainda é gerado, mas
+não há conversão nem stub falso.
+
+### Dependência de sistema: Repomix (Empacotador de Contexto para LLM)
+
+O empacotamento de contexto do repositório (código e testes) para alimentar
+LLMs nas fases de teste de integração, auto-cura e auto-crítica delega ao
+[Repomix](https://repomix.com/) (NIH #22) em formato XML/Markdown canônico com
+remoção determinística de comentários e linhas vazias (economia direta de tokens):
+
+```bash
+# Instalação global via npm (ou npx automático)
+npm install -g repomix
+```
+
+Se o `repomix` não estiver no `PATH`, o runner ativa fallback determinístico
+estruturado honesto sem interromper o pipeline.
+
 ## Configuração de credenciais
 
 Copie o exemplo e preencha com suas chaves:

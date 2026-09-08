@@ -5,3 +5,13 @@ reportlab
 markdown
 pypdf
 flask
+instructor
+
+# MCP (NIH #24): SDK oficial do Model Context Protocol para os servidores
+# MCP gerados pelo Injetor Universal (mcps/*/server.py) — substitui JSON-RPC manual.
+mcp>=1.0
+
+# Prefect (NIH #26 / Fase2-Gen5): motor genérico de orquestração da pipeline
+# de 8 fases — retries automáticos, checkpointing por (ideia, fase) e estado
+# persistido em SQLite. O protocolo delegado (utils_delegacao) não depende dele.
+prefect>=3.8

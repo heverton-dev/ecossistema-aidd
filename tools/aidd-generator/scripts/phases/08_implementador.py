@@ -34,6 +34,17 @@ sys.path.insert(0, str(Path(__file__).parent))
 from utils_modelo import detectar_modelo_harness, obter_nome_amigavel_modelo
 from utils_delegacao import solicitar_llm, extrair_json_resposta, LLMNaoConfiguradoException
 
+# NIH #22: Empacotamento de contexto de repo para LLM delegando ao Repomix
+CORE_DIR = Path(__file__).parent.parent / 'core'
+if str(CORE_DIR) not in sys.path:
+    sys.path.insert(0, str(CORE_DIR))
+try:
+    from repomix_runner import empacotar_repositorio, repomix_disponivel, comparar_empacotamento_tokens
+except ImportError:
+    empacotar_repositorio = None
+    repomix_disponivel = lambda: False
+    comparar_empacotamento_tokens = None
+
 if sys.platform == 'win32':
     sys.stdout.reconfigure(encoding='utf-8')
 
@@ -620,6 +631,16 @@ class ImplementadorFase8:
             resultado_integracao=resultado_integracao
         )
 
+        # NIH #22: Gerar pacote de contexto consolidado do repositório para Fases 6/7 e LLMs
+        contexto_repo_meta = self.empacotar_contexto_repositorio()
+        if contexto_repo_meta:
+            index['contexto_repositorio'] = {
+                'status': contexto_repo_meta.get('status'),
+                'arquivo': contexto_repo_meta.get('arquivo'),
+                'tokens_estimados': contexto_repo_meta.get('tokens_estimados'),
+                'ferramenta': contexto_repo_meta.get('ferramenta'),
+            }
+
         path_index = self.pasta_cache / '_phase_08_index.json'
         path_index.parent.mkdir(parents=True, exist_ok=True)
         with open(path_index, 'w', encoding='utf-8') as f:
@@ -633,9 +654,29 @@ class ImplementadorFase8:
         print(f"✅ PHASE 8 COMPLETO — {len(scripts_implementados)} script(s) implementados e verificados")
         origem_agregada = self._obter_origem_medicao_agregada()
         print(f"   Tokens: {self._tokens_totais} (origem: {origem_agregada})")
+        if contexto_repo_meta and contexto_repo_meta.get('tokens_estimados'):
+            print(f"   Contexto Repomix: {contexto_repo_meta['tokens_estimados']} tokens estimados ({contexto_repo_meta.get('ferramenta')})")
         print(f"{'=' * 60}\n")
 
         return index
+
+    def empacotar_contexto_repositorio(self, formato: str = 'xml', otimizado: bool = True) -> Optional[Dict[str, Any]]:
+        """Empacota o código e testes do repositório em arquivo de contexto para LLMs via Repomix."""
+        if not empacotar_repositorio:
+            return None
+        self.pasta_cache.mkdir(parents=True, exist_ok=True)
+        ext = 'xml' if formato == 'xml' else 'md'
+        saida = self.pasta_cache / f"contexto_repo.{ext}"
+        res = empacotar_repositorio(
+            self.pasta_projeto,
+            saida_arquivo=saida,
+            formato=formato,
+            remove_comments=otimizado,
+            remove_empty_lines=otimizado,
+            no_file_summary=True,
+            includes=['src/**/*.py', 'tests/**/*.py']
+        )
+        return res
 
     def _precisa_schema_compartilhado(self, stack: Dict, scripts_design: List[Dict]) -> bool:
         """Detecta se o projeto envolve persistência SQLite ou banco de dados compartilhado"""
@@ -705,13 +746,30 @@ class ImplementadorFase8:
         self, ideia: str, stack: Dict, scripts_implementados: List[Dict]
     ) -> Tuple[bool, Optional[Dict]]:
         """Gera e escreve teste de integração que encadeia os scripts implementados.
+        Usa Repomix para empacotar contexto com remoção de comentários e economia de tokens.
         Usa Result Monad internamente — Zero exceções não tratadas."""
-        scripts_info_linhas = []
-        for s in scripts_implementados:
-            caminho = s.get('caminho_relativo', '')
-            cod = s.get('codigo', '')
-            scripts_info_linhas.append(f"MÓDULO: src/{caminho}\nCÓDIGO:\n{cod}\n")
-        scripts_info = "\n".join(scripts_info_linhas)
+        # NIH #22: Empacotamento de contexto estruturado via Repomix
+        scripts_info = ""
+        if empacotar_repositorio and self.pasta_projeto.exists() and (self.pasta_projeto / 'src').exists():
+            pkg = empacotar_repositorio(
+                self.pasta_projeto,
+                includes=['src/**/*.py'],
+                formato='xml',
+                remove_comments=True,
+                remove_empty_lines=True,
+                no_file_summary=True
+            )
+            if pkg.get('status') == 'SUCESSO' and pkg.get('conteudo'):
+                scripts_info = pkg['conteudo']
+
+        # Fallback para concatenação em memória se Repomix não gerou conteúdo
+        if not scripts_info:
+            scripts_info_linhas = []
+            for s in scripts_implementados:
+                caminho = s.get('caminho_relativo', '')
+                cod = s.get('codigo', '')
+                scripts_info_linhas.append(f"MÓDULO: src/{caminho}\nCÓDIGO:\n{cod}\n")
+            scripts_info = "\n".join(scripts_info_linhas)
 
         secao_schema = self._montar_secao_schema()
         prompt = PROMPT_GERAR_TESTE_INTEGRACAO.format(

@@ -2,12 +2,17 @@
 # -*- coding: utf-8 -*-
 """
 PHASE 6: Documentador Tripartite
-aidd-project-generator v2.1
+aidd-project-generator v2.2
 
-Gera documentação final em 3 formatos reais:
-- HTML: Interativo, responsivo com diagramas e navegação
-- Markdown: Versionável em Git, legível e padrão
-- PDF: Formal gerado via Typst (com fallback ReportLab)
+Gera documentação final em 3 formatos reais a partir de UMA FONTE ÚNICA:
+- Markdown: fonte única versionável em Git (escrita diretamente)
+- HTML:     convertido da fonte markdown via Pandoc (--standalone)
+- PDF:      convertido da fonte markdown via Pandoc (--pdf-engine=typst)
+
+NIH #25 (Fase2-Gen4): antigamente cada formato tinha um renderizador/template
+próprio (HTML hand-rolled + Typst/ReportLab/fallback manual). Hoje o markdown
+é a fonte de verdade e os outros 2 formatos são derivados por conversão Pandoc —
+elimina a manutenção de 3 templates paralelos.
 
 Salva em output/{video_id}/documentos/
 Executa 3 gates de validação reais (F1-F3)
@@ -312,7 +317,12 @@ class DocumentadorFase6:
         }
 
     def _renderizar_formatos(self, video_id: str, titulo: str, narrativas: Dict) -> Dict:
-        """Escreve os arquivos reais nos formatos HTML, Markdown e PDF no disco"""
+        """Escreve os arquivos reais nos formatos HTML, Markdown e PDF no disco.
+
+        NIH #25: o Markdown (documento.md) é a fonte única. HTML e PDF são
+        derivados dele por conversão Pandoc — não há mais templates paralelos
+        por formato. As conversões são reais e validadas pelos gates F1/F2.
+        """
         pasta_destino = self.output_base / video_id / 'documentos'
         pasta_destino.mkdir(parents=True, exist_ok=True)
 
@@ -320,25 +330,79 @@ class DocumentadorFase6:
         path_md = pasta_destino / 'documento.md'
         path_pdf = pasta_destino / 'documento.pdf'
 
-        # 1. Gerar Markdown
+        # 1. Fonte única: escrever Markdown (não depende de ferramenta externa)
         self._escrever_markdown(path_md, narrativas)
 
-        # 2. Gerar HTML
-        self._escrever_html(path_html, narrativas)
+        # 2. Converter HTML a partir da FONTE markdown (Pandoc)
+        html_ok = self._converter_md_para_html(path_md, path_html, titulo)
 
-        # 3. Gerar PDF (Typst com fallback ReportLab)
-        self._escrever_pdf(path_pdf, pasta_destino, narrativas)
+        # 3. Converter PDF a partir da FONTE markdown (Pandoc + engine typst)
+        pdf_ok = self._converter_md_para_pdf(path_md, path_pdf, titulo)
 
         return {
-            'html_valido': path_html.exists() and path_html.stat().st_size > 200,
+            'html_valido': html_ok and path_html.exists() and path_html.stat().st_size > 200,
             'md_valido': path_md.exists() and path_md.stat().st_size > 100,
-            'pdf_gerado': path_pdf.exists() and path_pdf.stat().st_size > 500,
+            'pdf_gerado': pdf_ok and path_pdf.exists() and path_pdf.stat().st_size > 500,
             'documentos': {
                 'html': str(path_html.resolve()),
                 'md': str(path_md.resolve()),
                 'pdf': str(path_pdf.resolve())
             }
         }
+
+    @staticmethod
+    def pandoc_disponivel() -> bool:
+        """True se o binário pandoc estiver acessível no PATH."""
+        return bool(shutil.which('pandoc'))
+
+    def _converter_md_para_html(self, path_md: Path, path_html: Path, titulo: Optional[str] = None) -> bool:
+        """Converte a fonte markdown em HTML standalone via Pandoc.
+
+        Retorna False (sem escrever stub) se o pandoc não estiver disponível
+        ou se a conversão falhar — o gate F1 deve reprovar honestamente.
+        """
+        if not self.pandoc_disponivel():
+            print("   ⚠️ Pandoc não encontrado no PATH — HTML não pode ser convertido.")
+            return False
+        try:
+            res = subprocess.run(
+                ['pandoc', str(path_md), '--standalone',
+                 '--metadata', f'title={titulo or path_md.stem}',
+                 '-o', str(path_html)],
+                capture_output=True, text=True
+            )
+            if res.returncode != 0 or not path_html.exists():
+                print(f"   ⚠️ Pandoc HTML falhou: {res.stderr.strip()[:200]}")
+                return False
+            return True
+        except Exception as e:
+            print(f"   ⚠️ Erro ao converter HTML via Pandoc: {e}")
+            return False
+
+    def _converter_md_para_pdf(self, path_md: Path, path_pdf: Path, titulo: Optional[str] = None) -> bool:
+        """Converte a fonte markdown em PDF via Pandoc com engine typst.
+
+        Retorna False (sem escrever stub) se o pandoc / engine não estiver
+        disponível ou se a conversão falhar — o gate F2 deve reprovar
+        honestamente (não há mais fallback para "PDF" falso/oculto).
+        """
+        if not self.pandoc_disponivel():
+            print("   ⚠️ Pandoc não encontrado no PATH — PDF não pode ser convertido.")
+            return False
+        try:
+            res = subprocess.run(
+                ['pandoc', str(path_md), '--pdf-engine=typst',
+                 '--metadata', f'title={titulo or path_md.stem}',
+                 '-o', str(path_pdf)],
+                capture_output=True, text=True
+            )
+            if res.returncode != 0 or not path_pdf.exists():
+                print(f"   ⚠️ Pandoc PDF falhou: {res.stderr.strip()[:200]}")
+                return False
+            return True
+        except Exception as e:
+            print(f"   ⚠️ Erro ao converter PDF via Pandoc: {e}")
+            return False
 
     def _escrever_markdown(self, path_md: Path, n: Dict):
         """Escreve documento Markdown versionável e limpo"""
@@ -380,295 +444,11 @@ class DocumentadorFase6:
 """
         path_md.write_text(conteudo, encoding='utf-8')
 
-    def _escrever_html(self, path_html: Path, n: Dict):
-        """Escreve HTML responsivo com estilos embutidos e navegação interativa"""
-        camadas_html = "".join([
-            f'<div class="card"><h3>{c["num"]}. {c["nome"]}</h3><p>{c["detalhe"]}</p></div>'
-            for c in n['camadas']
-        ])
-
-        html_conteudo = f"""<!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>{n['titulo']}</title>
-  <style>
-    :root {{
-      --primary: #2563eb;
-      --primary-dark: #1d4ed8;
-      --bg: #f8fafc;
-      --surface: #ffffff;
-      --text: #0f172a;
-      --text-muted: #64748b;
-      --border: #e2e8f0;
-      --success: #10b981;
-    }}
-    * {{ box-sizing: border-box; margin: 0; padding: 0; }}
-    body {{
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-      background: var(--bg);
-      color: var(--text);
-      line-height: 1.6;
-      display: flex;
-    }}
-    aside {{
-      width: 280px;
-      height: 100vh;
-      background: var(--surface);
-      border-right: 1px solid var(--border);
-      position: sticky;
-      top: 0;
-      padding: 24px;
-      display: flex;
-      flex-direction: column;
-      gap: 16px;
-    }}
-    aside h2 {{ font-size: 1.1rem; color: var(--primary); }}
-    aside nav a {{
-      display: block;
-      padding: 8px 12px;
-      color: var(--text-muted);
-      text-decoration: none;
-      border-radius: 6px;
-      margin-bottom: 4px;
-      font-size: 0.95rem;
-      transition: all 0.2s ease;
-    }}
-    aside nav a:hover {{
-      background: #eff6ff;
-      color: var(--primary);
-    }}
-    main {{
-      flex: 1;
-      max-width: 900px;
-      margin: 0 auto;
-      padding: 40px 32px;
-    }}
-    header {{
-      margin-bottom: 40px;
-      border-bottom: 2px solid var(--border);
-      padding-bottom: 20px;
-    }}
-    header h1 {{ font-size: 2.2rem; color: var(--text); margin-bottom: 8px; }}
-    header .meta {{ color: var(--text-muted); font-size: 0.9rem; }}
-    section {{
-      background: var(--surface);
-      border-radius: 12px;
-      border: 1px solid var(--border);
-      padding: 28px;
-      margin-bottom: 32px;
-      box-shadow: 0 1px 3px rgba(0,0,0,0.05);
-    }}
-    section h2 {{
-      color: var(--primary-dark);
-      font-size: 1.4rem;
-      margin-bottom: 16px;
-      border-bottom: 1px solid var(--border);
-      padding-bottom: 8px;
-    }}
-    .grid {{
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-      gap: 16px;
-      margin-top: 16px;
-    }}
-    .card {{
-      background: #f1f5f9;
-      border-radius: 8px;
-      padding: 16px;
-      border-left: 4px solid var(--primary);
-    }}
-    .card h3 {{ font-size: 1rem; margin-bottom: 6px; color: var(--text); }}
-    .card p {{ font-size: 0.88rem; color: var(--text-muted); }}
-    pre {{
-      background: #0f172a;
-      color: #f8fafc;
-      padding: 16px;
-      border-radius: 8px;
-      overflow-x: auto;
-      font-size: 0.9rem;
-    }}
-    .badge {{
-      display: inline-block;
-      padding: 4px 8px;
-      border-radius: 4px;
-      font-size: 0.8rem;
-      font-weight: 600;
-      background: #dcfce7;
-      color: #15803d;
-    }}
-    @media (max-width: 768px) {{
-      body {{ flex-direction: column; }}
-      aside {{ width: 100%; height: auto; position: static; border-right: none; border-bottom: 1px solid var(--border); }}
-    }}
-  </style>
-</head>
-<body>
-  <aside>
-    <h2>📖 AIDD Documentação</h2>
-    <p style="font-size: 0.85rem; color: var(--text-muted);">Projeto: <code>{n['video_id']}</code></p>
-    <nav>
-      <a href="#visao-geral">1. Visão Geral</a>
-      <a href="#arquitetura">2. Arquitetura AIDD</a>
-      <a href="#decisoes">3. Stack & Decisões</a>
-      <a href="#roadmap">4. Roadmap</a>
-      <a href="#gates">5. Gates de Validação</a>
-    </nav>
-  </aside>
-
-  <main>
-    <header>
-      <span class="badge">AIDD v2.1</span>
-      <h1>{n['titulo']}</h1>
-      <div class="meta">ID: <strong>{n['video_id']}</strong> • Gerado em: {n['data_geracao']}</div>
-    </header>
-
-    <section id="visao-geral">
-      <h2>1. Visão Geral</h2>
-      <p>{n['descricao']}</p>
-    </section>
-
-    <section id="arquitetura">
-      <h2>2. Arquitetura AIDD (5 Camadas)</h2>
-      <p>{n['arquitetura_aidd']}</p>
-      <div class="grid">
-        {camadas_html}
-      </div>
-    </section>
-
-    <section id="decisoes">
-      <h2>3. Stack Tecnológico & Decisões</h2>
-      <pre><code>{n['decisoes_stack']}</code></pre>
-    </section>
-
-    <section id="roadmap">
-      <h2>4. Roadmap de Execução</h2>
-      <pre><code>{n['roadmap']}</code></pre>
-    </section>
-
-    <section id="gates">
-      <h2>5. Gates de Qualidade</h2>
-      <p>Todos os 3 gates de validação tripartite foram auditados:</p>
-      <ul style="margin-left: 20px; margin-top: 10px;">
-        <li>✅ <strong>Gate F1:</strong> HTML Interativo com DOM válido e responsivo</li>
-        <li>✅ <strong>Gate F2:</strong> PDF Formal gerado via Typst / Engine de Renderização</li>
-        <li>✅ <strong>Gate F3:</strong> Markdown padronizado e versionável</li>
-      </ul>
-    </section>
-  </main>
-</body>
-</html>
-"""
-        path_html.write_text(html_conteudo, encoding='utf-8')
-
-    def _escrever_pdf(self, path_pdf: Path, pasta_destino: Path, n: Dict):
-        """Gera PDF formal via Typst CLI ou fallback ReportLab"""
-        # Tentativa 1: Typst
-        typst_exec = shutil.which('typst')
-        if typst_exec:
-            typ_file = pasta_destino / 'documento.typ'
-            camadas_typ = "\n".join([f"+ *{c['nome']}*: {c['detalhe']}" for c in n['camadas']])
-
-            typ_conteudo = f"""#set page(paper: "a4", margin: (x: 2cm, y: 2.5cm))
-#set text(font: ("Liberation Sans", "Arial", "Helvetica"), size: 11pt, lang: "pt")
-#set par(justify: true, leading: 0.65em)
-
-#align(center)[
-  #text(size: 20pt, weight: "bold", fill: rgb("#1d4ed8"))[{n['titulo']}]
-  
-  #v(0.3cm)
-  #text(size: 10pt, fill: rgb("#64748b"))[Projeto: #raw("{n['video_id']}") | Data: {n['data_geracao']}]
-]
-
-#v(0.5cm)
-#line(length: 100%, stroke: 0.5pt + rgb("#cbd5e1"))
-#v(0.5cm)
-
-== 1. Visão Geral
-{n['descricao']}
-
-== 2. Arquitetura AIDD (5 Camadas)
-{n['arquitetura_aidd']}
-
-=== As 5 Camadas de Engenharia:
-{camadas_typ}
-
-== 3. Decisões de Stack
-```
-{n['decisoes_stack']}
-```
-
-== 4. Roadmap de Execução
-```
-{n['roadmap']}
-```
-
-== 5. Auditoria de Gates
-- *Gate F1 (HTML)*: Renderização web aprovada.
-- *Gate F2 (PDF)*: Compilação formal via Typst aprovada.
-- *Gate F3 (Markdown)*: Estrutura parseável aprovada.
-"""
-            typ_file.write_text(typ_conteudo, encoding='utf-8')
-
-            try:
-                res = subprocess.run([typst_exec, 'compile', str(typ_file), str(path_pdf)], capture_output=True, text=True)
-                if res.returncode == 0 and path_pdf.exists() and path_pdf.stat().st_size > 500:
-                    return
-            except Exception as e:
-                print(f"   ⚠️ Aviso: Typst falhou ({e}), tentando ReportLab...")
-
-        # Tentativa 2: Fallback ReportLab
-        try:
-            from reportlab.lib.pagesizes import letter
-            from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer
-            from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
-            from reportlab.lib import colors
-
-            doc = SimpleDocTemplate(str(path_pdf), pagesize=letter)
-            styles = getSampleStyleSheet()
-            story = []
-
-            title_style = ParagraphStyle(
-                'DocTitle',
-                parent=styles['Heading1'],
-                fontSize=18,
-                textColor=colors.HexColor('#1d4ed8'),
-                spaceAfter=12
-            )
-
-            story.append(Paragraph(n['titulo'], title_style))
-            story.append(Paragraph(f"Projeto: {n['video_id']} | Data: {n['data_geracao']}", styles['Italic']))
-            story.append(Spacer(1, 12))
-            story.append(Paragraph("<b>1. Visão Geral</b>", styles['Heading2']))
-            story.append(Paragraph(n['descricao'], styles['Normal']))
-            story.append(Spacer(1, 10))
-            story.append(Paragraph("<b>2. Arquitetura AIDD</b>", styles['Heading2']))
-            story.append(Paragraph(n['arquitetura_aidd'], styles['Normal']))
-            story.append(Spacer(1, 10))
-            story.append(Paragraph("<b>3. Stack e Decisões</b>", styles['Heading2']))
-            story.append(Paragraph(n['decisoes_stack'].replace('\n', '<br/>'), styles['Normal']))
-            story.append(Spacer(1, 10))
-            story.append(Paragraph("<b>4. Roadmap</b>", styles['Heading2']))
-            story.append(Paragraph(n['roadmap'].replace('\n', '<br/>'), styles['Normal']))
-
-            doc.build(story)
-        except Exception as e:
-            # Fallback de emergência (PDF binário mínimo compatível)
-            pdf_bytes = (
-                b"%PDF-1.4\n1 0 obj<</Type/Catalog/Pages 2 0 R>>endobj\n"
-                b"2 0 obj<</Type/Pages/Kids[3 0 R]/Count 1>>endobj\n"
-                b"3 0 obj<</Type/Page/MediaBox[0 0 595 842]/Parent 2 0 R/Resources<<>>>>endobj\n"
-                b"xref\n0 4\n0000000000 65535 f \n0000000009 00000 n \n0000000052 00000 n \n0000000101 00000 n \n"
-                b"trailer<</Size 4/Root 1 0 R>>\nstartxref\n178\n%%EOF\n"
-            )
-            path_pdf.write_bytes(pdf_bytes)
-
     def _gerar_index(self, docs: Dict, gates: List[Gate], tempo_execucao: float) -> Dict:
         """Gera _phase_06_index.json"""
         return {
             'fase_id': 'phase_06_documentation',
-            'versao': '2.1',
+            'versao': '2.2',
             'status': 'COMPLETO' if all(g.passou for g in gates) else 'FALHOU',
 
             'timestamps': {

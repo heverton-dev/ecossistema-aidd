@@ -5,6 +5,9 @@
 # Imagem oficial: chatwoot/chatwoot (Docker Hub — Chatwoot Inc)
 # Nota: Chatwoot conecta ao PostgreSQL centralizado (banco chatwoot_db).
 #       Para produção, considere usar pgvector para embeddings de IA.
+# Roteamento: NIH #16 — Chatwoot é exposto EXCLUSIVAMENTE via labels Traefik
+#       (sem porta de host publicada). Deixa de colidir na porta 3000 do host
+#       com Twenty/Cal.com quando a stack inteira sobe junta.
 # Validação: docker compose config (syntaxe) + G_INFRA_COMPOSE.py (Pacote 6)
 # =============================================================================
 
@@ -18,12 +21,17 @@ services:
       DATABASE_URL: postgresql://${CHATWOOT_DB_USER:-chatwoot_user}:${CHATWOOT_DB_PASSWORD:?Defina CHATWOOT_DB_PASSWORD no .env}@${POSTGRES_HOST:-postgres}:5432/${CHATWOOT_DB_NAME:-chatwoot_db}
       REDIS_URL: redis://chatwoot-redis:6379
       SECRET_KEY_BASE: ${CHATWOOT_SECRET_KEY_BASE:?Defina CHATWOOT_SECRET_KEY_BASE no .env}
-      FRONTEND_URL: ${CHATWOOT_FRONTEND_URL:-http://localhost:3000}
+      FRONTEND_URL: https://${CHATWOOT_HOST:-chat.localhost}
       RAILS_LOG_TO_STDOUT: "true"
-    ports:
-      - "${CHATWOOT_RAILS_PORT:-3000}:3000"
     networks:
       - aidd_internal
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.chatwoot.rule=Host(`${CHATWOOT_HOST:-chat.localhost}`)"
+      - "traefik.http.routers.chatwoot.entrypoints=websecure"
+      - "traefik.http.routers.chatwoot.tls.certresolver=letsencrypt"
+      - "traefik.http.routers.chatwoot.service=chatwoot"
+      - "traefik.http.services.chatwoot.loadbalancer.server.port=3000"
     depends_on:
       chatwoot-redis:
         condition: service_healthy

@@ -83,7 +83,7 @@ def provision(project_desc, base_dir=None):
 
     # 6. Gerar requirements.txt
     with open(os.path.join(project_dir, 'requirements.txt'), 'w', encoding='utf-8') as f:
-        f.write("pytest>=7.0.0\nrequests>=2.28.0\nlocust>=2.15.0\n")
+        f.write("pytest>=7.0.0\nrequests>=2.28.0\nlocust>=2.15.0\nsecure>=2.0.0\nsqlalchemy>=2.0.0\naiosqlite>=0.20.0\n")
 
     # 7. Gerar PLANO-EXECUCAO-ESTRUTURADO.json
     plano = {

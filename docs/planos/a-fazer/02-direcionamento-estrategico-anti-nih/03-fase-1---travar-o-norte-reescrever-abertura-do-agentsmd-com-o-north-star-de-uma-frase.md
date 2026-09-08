@@ -1,7 +1,7 @@
 # Item 3 — Fase 1 - Travar o norte: reescrever abertura do AGENTS.md com o north star de uma frase
 
 > **Escopo:** Entra: escrever e aprovar com o usuário um "north star" de uma frase só pro ecossistema, e refletir isso na abertura do `AGENTS.md`/`README.md` (seção 1, "Visão Geral"). Não entra: mudar a lista de ferramentas ou slash commands existentes.
-> **Status:** [RASCUNHO — Aguardando Aprovacao Humana — a frase do north star precisa ser validada com o usuário antes de gravar]
+> **Status:** ✅ Concluído (2026-09-07) — north star aprovado explicitamente pelo usuário via `orca orchestration ask` antes de qualquer edição; AGENTS.md §1 e README.md citam a frase.
 > **Modelo sugerido:** Claude Opus · Antigravity Gemini 3.8 · MiMo mimo-v2.5-pro (decisão de posicionamento de produto, não é redação mecânica)
 
 ---
