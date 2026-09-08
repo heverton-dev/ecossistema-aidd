@@ -14,15 +14,22 @@ Este trata dependências de TERCEIROS que já têm seu próprio instalador
 (ex.: `npx <pacote> install`) ou que só precisam de uma entrada de config
 (MCP servers, mesclada em `.mcp.json`, nunca sobrescrevendo o que já existe).
 
-Escopo do MCP nesta v1: só resolve o harness "claude-code" (schema
-`.mcp.json` -> {"mcpServers": {...}} confirmado por precedente real no
-repo). Outros harnesses ficam como TODO explícito — não adivinhar schema
-sem confirmar.
+Harnesses de MCP com schema confirmado nesta v1: "claude-code" (`.mcp.json`
+-> {"mcpServers": {...}}) e "opencode" (`opencode.jsonc` -> {"mcp": {...}}).
+Outros harnesses ficam como TODO explícito — não adivinhar schema sem
+confirmar.
+
+Cada MCP declarado tem "tipo": "stdio" (padrão, comando local — chaves
+`comando`/`args`/`env`) ou "tipo": "remote" (servidor HTTP remoto — chave
+`url`, sem processo local). O schema de saída por harness é adaptado a
+partir dessas mesmas chaves (ex.: remoto vira {"type":"http","url":...} em
+`.mcp.json` e {"type":"remote","url":...,"enabled":true} em `opencode.jsonc`).
 
 Uso:
   python scripts/gestor_dependencias.py bootstrap [--tipo skills|mcps|todos] [--dry-run]
   python scripts/gestor_dependencias.py add-skill --nome <nome> --pacote <pacote> --instalar "<comando>" [--verificar <caminho>] [--gitignore "padrao1,padrao2"]
-  python scripts/gestor_dependencias.py add-mcp --nome <nome> --pacote <pacote> --comando <cmd> --args "a,b,c" [--env VAR1,VAR2] [--harnesses claude-code]
+  python scripts/gestor_dependencias.py add-mcp --nome <nome> --pacote <pacote> --comando <cmd> --args "a,b,c" [--env VAR1,VAR2] [--harnesses claude-code,opencode]
+  python scripts/gestor_dependencias.py add-mcp --nome <nome> --pacote <pacote> --tipo remote --url <url> [--harnesses claude-code,opencode]
   python scripts/gestor_dependencias.py list
   python scripts/gestor_dependencias.py verify
 """
@@ -40,9 +47,10 @@ ROOT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 MANIFESTO_PATH = os.path.join(ROOT_DIR, "gates", "dependencias_externas.json")
 GITIGNORE_PATH = os.path.join(ROOT_DIR, ".gitignore")
 
-# Único harness com schema de MCP config confirmado nesta v1 (ver docstring acima).
+# Harnesses com schema de MCP config confirmado nesta v1 (ver docstring acima).
 DESTINOS_MCP = {
     "claude-code": {"caminho": os.path.join(ROOT_DIR, ".mcp.json"), "chave": "mcpServers"},
+    "opencode": {"caminho": os.path.join(ROOT_DIR, "opencode.jsonc"), "chave": "mcp"},
 }
 
 
@@ -110,12 +118,32 @@ def _mcp_presente(nome, caminho, chave):
     return nome in dados[chave]
 
 
-def _mesclar_mcp(nome, cfg, caminho, chave, dry_run):
+def _construir_entrada_mcp(cfg, harness):
+    """Adapta as chaves declarativas do manifesto (tipo/comando/args/env/url) para o
+    schema de config nativo de cada harness."""
+    tipo = cfg.get("tipo", "stdio")
+
+    if tipo == "remote":
+        url = cfg["url"]
+        if harness == "claude-code":
+            return {"type": "http", "url": url}
+        if harness == "opencode":
+            return {"type": "remote", "url": url, "enabled": True}
+        raise ValueError(f"harness '{harness}' sem schema de MCP remoto confirmado nesta v1")
+
+    if harness == "claude-code":
+        entrada = {"command": cfg["comando"], "args": cfg.get("args", [])}
+        if cfg.get("env"):
+            entrada["env"] = {var: f"${{{var}}}" for var in cfg["env"]}
+        return entrada
+    if harness == "opencode":
+        return {"type": "local", "command": [cfg["comando"]] + list(cfg.get("args", []))}
+    raise ValueError(f"harness '{harness}' sem schema de MCP local confirmado nesta v1")
+
+
+def _mesclar_mcp(nome, cfg, harness, caminho, chave, dry_run):
     dados = _carregar_mcp_config(caminho, chave)
-    entrada = {"command": cfg["comando"], "args": cfg.get("args", [])}
-    if cfg.get("env"):
-        entrada["env"] = {var: f"${{{var}}}" for var in cfg["env"]}
-    dados[chave][nome] = entrada
+    dados[chave][nome] = _construir_entrada_mcp(cfg, harness)
 
     if dry_run:
         return
@@ -142,7 +170,7 @@ def bootstrap_mcps(apenas=None, dry_run=False):
             if _mcp_presente(nome, destino["caminho"], destino["chave"]):
                 relatorio["ja_registrados"].append(f"{nome} ({harness})")
                 continue
-            _mesclar_mcp(nome, cfg, destino["caminho"], destino["chave"], dry_run)
+            _mesclar_mcp(nome, cfg, harness, destino["caminho"], destino["chave"], dry_run)
             relatorio["registrados"].append(f"{nome} ({harness})" + (" [DRY-RUN]" if dry_run else ""))
 
     return relatorio
@@ -190,17 +218,21 @@ def adicionar_skill(nome, pacote, instalar, verificar, gitignore_patterns, dry_r
     return {"ja_existia_no_manifesto": ja_existia, "gitignore_adicionado": novos_ignore, "bootstrap": relatorio_bootstrap}
 
 
-def adicionar_mcp(nome, pacote, comando, args, env, harnesses, dry_run=False):
+def adicionar_mcp(nome, pacote, tipo, comando, args, env, url, harnesses, dry_run=False):
     manifesto = carregar_manifesto()
     manifesto.setdefault("mcps", {})
     ja_existia = nome in manifesto["mcps"]
-    manifesto["mcps"][nome] = {
-        "pacote": pacote,
-        "comando": comando,
-        "args": args,
-        "env": env,
-        "harnesses_alvo": harnesses,
-    }
+    if tipo == "remote":
+        entrada_manifesto = {"pacote": pacote, "tipo": "remote", "url": url, "harnesses_alvo": harnesses}
+    else:
+        entrada_manifesto = {
+            "pacote": pacote,
+            "comando": comando,
+            "args": args,
+            "env": env,
+            "harnesses_alvo": harnesses,
+        }
+    manifesto["mcps"][nome] = entrada_manifesto
     if not dry_run:
         _salvar_manifesto(manifesto)
 
@@ -311,10 +343,20 @@ def _cmd_add_skill(args_ns):
 
 
 def _cmd_add_mcp(args_ns):
+    if args_ns.tipo == "remote":
+        if not args_ns.url:
+            print("[FALHA] --url e obrigatorio quando --tipo remote.")
+            return 1
+    elif not args_ns.comando:
+        print("[FALHA] --comando e obrigatorio quando --tipo stdio (padrao).")
+        return 1
+
     args_lista = [a.strip() for a in (args_ns.args or "").split(",") if a.strip()]
     env_lista = [e.strip() for e in (args_ns.env or "").split(",") if e.strip()]
     harnesses_lista = [h.strip() for h in (args_ns.harnesses or "claude-code").split(",") if h.strip()]
-    resultado = adicionar_mcp(args_ns.nome, args_ns.pacote, args_ns.comando, args_lista, env_lista, harnesses_lista)
+    resultado = adicionar_mcp(
+        args_ns.nome, args_ns.pacote, args_ns.tipo, args_ns.comando, args_lista, env_lista, args_ns.url, harnesses_lista
+    )
     if resultado["ja_existia_no_manifesto"]:
         print(f"[ATUALIZADO] '{args_ns.nome}' ja existia no manifesto, entrada sobrescrita.")
     else:
@@ -366,9 +408,11 @@ def main(argv=None):
     p_add_mcp = sub.add_parser("add-mcp")
     p_add_mcp.add_argument("--nome", required=True)
     p_add_mcp.add_argument("--pacote", required=True)
-    p_add_mcp.add_argument("--comando", required=True)
+    p_add_mcp.add_argument("--tipo", choices=["stdio", "remote"], default="stdio")
+    p_add_mcp.add_argument("--comando", default=None)
     p_add_mcp.add_argument("--args", default="")
     p_add_mcp.add_argument("--env", default="")
+    p_add_mcp.add_argument("--url", default=None)
     p_add_mcp.add_argument("--harnesses", default="claude-code")
     p_add_mcp.set_defaults(func=_cmd_add_mcp)
 

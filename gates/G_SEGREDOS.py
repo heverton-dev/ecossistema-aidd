@@ -39,14 +39,31 @@ def _arquivos_rastreados():
         ["git", "ls-files"], cwd=ROOT_DIR,
         capture_output=True, text=True, encoding="utf-8", errors="replace"
     )
-    return [
-        f for f in resultado.stdout.splitlines()
-        # O proprio .secrets.baseline guarda hashes de achados conhecidos, que
-        # por definicao batem nos detectores de alta entropia/palavra-chave.
-        # Excluido do scan, nao do motivo de existir.
-        if f.strip() and f != ".secrets.baseline"
-        and os.path.isfile(os.path.join(ROOT_DIR, f))
-    ]
+    # Detecta se o baseline usa barras invertidas (gerado no Windows) ou barras normais
+    usa_backslash = False
+    if os.path.isfile(BASELINE_PATH):
+        try:
+            import json
+            with open(BASELINE_PATH, "r", encoding="utf-8") as bf:
+                base_data = json.load(bf)
+                keys = list(base_data.get("results", {}).keys())
+                if keys and "\\" in keys[0]:
+                    usa_backslash = True
+        except Exception:
+            pass
+
+    arquivos = []
+    for raw in resultado.stdout.splitlines():
+        f = raw.strip()
+        if not f or f == ".secrets.baseline":
+            continue
+        if usa_backslash:
+            f = os.path.normpath(f)
+        else:
+            f = f.replace("\\", "/")
+        if os.path.isfile(os.path.join(ROOT_DIR, f)):
+            arquivos.append(f)
+    return arquivos
 
 
 def escanear():
