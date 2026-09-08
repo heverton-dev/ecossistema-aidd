@@ -1,7 +1,7 @@
 # Item 7 — Bootstrap de dependências do produto gerado, por ferramenta (forge não é chamado por nenhuma das outras 4)
 
 > **Escopo:** Entra: decidir e sequenciar como cada ferramenta (`aidd-forge`, `aidd-generator`, `aidd-master`, `aidd-enterprise`, `aidd-ops`) passa a instalar/wire, no que ela **entrega ao usuário final**, as dependências reais que fazem sentido pro produto gerado (ex.: Cookiecutter real pra scaffolding do master/enterprise via Fase 2 já planejada, Alembic, detect-secrets, hadolint/Checkov onde couber). Não entra: reaproveitar o mecanismo de `gates/dependencias_externas.json` + `dependencia-runner` como está — aquele é exclusivamente para dependências do **agente que desenvolve este repo** (code-review-graph, LLMLingua-2, context7, GitHub MCP), nunca embarcadas no produto gerado.
-> **Status:** [RASCUNHO — Aguardando Aprovação Humana]
+> **Status:** [PROTÓTIPO GENERALIZADO PARA aidd-enterprise EM 2026-09-08 — aprovado pelo usuário; aidd-generator e aidd-ops seguem fora de escopo desta decisão]
 > **Modelo sugerido:** Claude Opus · Antigravity Gemini 3.8 · MiMo mimo-v2.5-pro (decisão de arquitetura entre 4 pipelines distintos)
 
 ---
@@ -54,14 +54,17 @@ Evidência completa (comandos, saídas de `pip install`, script de reprodução)
 2. ~~Decisão registrada aqui: opção (a) ou (b) acima, com justificativa.~~ — feito, ver "Decisão registrada (2026-09-07)" acima: opção (a).
 3. ~~Se (a): 1 protótipo real num só tool~~ — feito em `aidd-master`/`compose_suite.py` (ver "Protótipo real" acima).
 4. ~~Critério de verificação real: projeto gerado pela ferramenta escolhida sobe com a dependência nova de fato instalada e funcional (não só arquivo copiado) — reproduzir, não assumir.~~ — feito: `pip install` real em venv limpo + validação de um `id_token` RS256 genuíno via `OIDCService.validate_id_token`, antes (falha real) e depois (sucesso real). Detalhes em `docs/relatorios/item-7-prototipo-compose-suite-jwt.md`.
-5. **Pendente:** generalizar para `aidd-enterprise` (mesmo template/`compose_suite.py`, correção idêntica esperada), `aidd-generator` (gap já documentado como item novo — `requirements.txt` dessincronizado, fora desta decisão) e `aidd-ops` (não gera manifesto de dependência de linguagem — infra via docker-compose; decisão de bootstrap ali é outra natureza). Depende de aprovação humana do protótipo antes de prosseguir.
+5. **`aidd-enterprise` — CONCLUÍDO (2026-09-08):** aprovado pelo usuário e reproduzido. `tools/aidd-enterprise/scripts/compose_suite.py` já gerava `requirements.txt` com `pyjwt>=2.8.0` e `cryptography>=42.0.0` incondicionais (mesma dependência real, mesma rota `OIDCService.validate_id_token` em `templates/core/security.py` e `templates/v2/security.py`) — a correção já estava presente no código, faltava só a reprodução real que confirma que funciona. Reprodução: projeto gerado em pasta temporária isolada (`compose_suite.py <tmp> TesteJWT vendas --db sqlite`); `requirements.txt` resultante contém as duas dependências; `pip install -r requirements.txt` num venv limpo instala ambas; chamada real a `OIDCService.validate_id_token(...)` com um `id_token` RS256 genuíno (assinado on-the-fly com chave RSA gerada via `cryptography`, JWKS correspondente) decodifica as claims corretamente (`sub`, `aud`, `iss`, `email`) — sucesso real, não suposto.
+   - **Fora de escopo, mantido assim (sem mudança):** `aidd-generator` (gap já documentado como item novo — `requirements.txt` dessincronizado, problema diferente, não uma variação deste mesmo bug) e `aidd-ops` (não gera manifesto de dependência de linguagem — infra via docker-compose; decisão de bootstrap ali é de outra natureza). Generalizar a correção do PyJWT pra esses dois não faz sentido: não é o mesmo bug.
 
 ## Critério de saída
 
 - ~~Decisão de arquitetura ((a) ou (b)) registrada com justificativa.~~ Feito — opção (a).
 - ~~Protótipo em 1 ferramenta reproduzido com sucesso real.~~ Feito — `aidd-master`/`compose_suite.py`, PyJWT/cryptography.
 - Gates de integridade aprovados — `tools/aidd-master`: 215 passed/4 skipped/0 failed (pytest) + `python scripts/aidd.py audit`, ver `docs/relatorios/item-7-prototipo-compose-suite-jwt.md` para o resultado completo. Gate global `python ecossistema.py audit` tem falhas pré-existentes e não relacionadas em `aidd-generator`/`aidd-ops` (fora do escopo deste item).
-- **Aguardando aprovação humana explícita** antes de generalizar a correção às outras ferramentas ou considerar o item concluído — nenhuma aprovação foi fabricada.
+- ~~Aguardando aprovação humana explícita antes de generalizar a correção.~~ Aprovado pelo usuário em 2026-09-08 ("pode aprovar o item 5, pode seguir"), nesta sessão.
+- ~~Generalização para `aidd-enterprise` reproduzida com sucesso real.~~ Feito — ver item 5 acima.
+- **Concluído para o escopo aprovado.** `aidd-generator` e `aidd-ops` permanecem deliberadamente fora — não são o mesmo bug, exigem itens próprios se algum dia priorizados.
 
 ## Prompt de Execução (PT-BR)
 
