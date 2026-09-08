@@ -1,0 +1,41 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ecossistema-aidd.github.io/schemas/llm_request_v1.json",
+  "title": "Requisição LLM Delegada",
+  "description": "Payload de requisição escrito por utils_delegacao.py para o orquestrador ADE.",
+  "type": "object",
+  "required": ["id", "fase", "timestamp", "modelo_sugerido", "contexto", "prompt"],
+  "additionalProperties": false,
+  "properties": {
+    "id": {
+      "type": "string",
+      "minLength": 1,
+      "description": "UUID curto (8 chars) da requisição"
+    },
+    "fase": {
+      "type": "string",
+      "pattern": "^phase_\\d{2}$",
+      "description": "ID da fase do pipeline (ex: phase_02)"
+    },
+    "timestamp": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO 8601 com timezone (UTC)"
+    },
+    "modelo_sugerido": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Modelo LLM sugerido (ex: claude-opus-5)"
+    },
+    "contexto": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Contexto executivo da solicitação"
+    },
+    "prompt": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Texto do prompt a ser processado pelo LLM"
+    }
+  }
+}

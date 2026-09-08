@@ -416,6 +416,153 @@ def test_modo_headless_rotula_indisponivel_quando_provider_sem_usage(monkeypatch
     assert resp['origem_medicao'] == 'indisponivel'
 
 
+# =============================================================================
+# TESTES DA TELEMETRIA AUXILIAR LOCAL DE TOKENS (tiktoken, offline)
+# =============================================================================
+
+def _tokenizador_fake():
+    """Fake tokenizador: 1 token por palavra não-vazia (determinístico e stateless)."""
+    class _Enc:
+        def encode(self, texto):
+            return [w for w in texto.split(" ") if w]
+    return _Enc()
+
+
+def test_estimar_tokens_tiktoken_estrutura_dict(monkeypatch):
+    """estimar_tokens_tiktoken retorna dict estruturado (entrada/saida/total/tokenizer/metodo)."""
+    import utils_delegacao
+
+    tokenizador_fake = type("Enc", (), {"encode": lambda self, t: list(t.split(" "))})()
+    monkeypatch.setattr(utils_delegacao, "_obter_tokenizador_tiktoken", lambda: tokenizador_fake)
+
+    est = utils_delegacao.estimar_tokens_tiktoken(
+        prompt="primeira segunda", contexto="ctx", conteudo="um dois"
+    )
+
+    assert est is not None
+    assert set(est.keys()) == {"entrada", "saida", "total", "tokenizer", "metodo"}
+    assert est["tokenizer"] == "cl100k_base"
+    assert est["metodo"] == "tiktoken"
+    # entrada = contexto + prompt; saida = conteudo
+    assert est["entrada"] == 3   # "ctx primeira segunda" -> 3 tokens
+    assert est["saida"] == 2      # "um dois" -> 2 tokens
+    assert est["total"] == est["entrada"] + est["saida"]
+
+
+def test_estimar_tokens_tiktoken_sem_conteudo_saida_zero(monkeypatch):
+    """Conteudo vazio/None resulta em saida 0 (sem crash)."""
+    import utils_delegacao
+
+    tokenizador_fake = type("Enc", (), {"encode": lambda self, t: list(t.split(" "))})()
+    monkeypatch.setattr(utils_delegacao, "_obter_tokenizador_tiktoken", lambda: tokenizador_fake)
+
+    est = utils_delegacao.estimar_tokens_tiktoken(prompt="a b c", contexto="", conteudo="")
+
+    assert est is not None
+    assert est["saida"] == 0
+    assert est["total"] == est["entrada"]
+
+
+def test_estimar_tokens_tiktoken_retorna_none_quando_tokenizador_indisponivel(monkeypatch):
+    """Se tiktoken indisponível, telemetria auxiliar vira None (nunca quebra pipeline)."""
+    import utils_delegacao
+
+    monkeypatch.setattr(utils_delegacao, "_obter_tokenizador_tiktoken", lambda: None)
+
+    est = utils_delegacao.estimar_tokens_tiktoken(prompt="x", contexto="y", conteudo="z")
+
+    assert est is None
+
+
+def test_modo_delegado_inclui_tokens_estimativa_local(monkeypatch):
+    """Modo delegado adiciona tokens_estimativa_local mantendo origem autodeclarado."""
+    import utils_delegacao
+
+    resposta_ade = {
+        'id': 'req789',
+        'conteudo': 'resposta com tokens',
+        'tokens_consumidos': 600,
+        'modelo_usado': 'claude-sonnet-4-6',
+        'timestamp_resposta': '2026-09-05T12:00:00Z',
+    }
+    monkeypatch.setattr(utils_delegacao.RequisicaoLLMDelegada, 'aguardar_resposta', lambda *a, **kw: resposta_ade)
+
+    tokenizador_fake = type("Enc", (), {"encode": lambda self, t: list(t.split(" "))})()
+    monkeypatch.setattr(utils_delegacao, "_obter_tokenizador_tiktoken", lambda: tokenizador_fake)
+
+    resp = utils_delegacao.solicitar_llm_modo_delegado(
+        prompt="Analise", contexto="Fase 2", fase="phase_02", timeout=1
+    )
+
+    assert resp is not None
+    assert resp['origem_medicao'] == 'autodeclarado'
+    assert resp['tokens_consumidos'] == 600
+    assert 'tokens_estimativa_local' in resp
+    assert resp['tokens_estimativa_local']['total'] == resp['tokens_estimativa_local']['entrada'] + resp['tokens_estimativa_local']['saida']
+
+
+def test_modo_delegado_manipula_chave_autodeclarado_ignorando_valor_inventado(monkeypatch):
+    """Campo tokens_estimativa_local nunca contesta origem_medicao autodeclarado."""
+    import utils_delegacao
+
+    resposta_ade = {
+        'id': 'req999',
+        'conteudo': 'conteudo teste',
+        'tokens_consumidos': 10,
+        'origem_medicao': 'medido_api',  # tentativa de fingir medição real
+        'modelo_usado': 'gpt-4o',
+        'timestamp_resposta': '2026-09-05T12:00:00Z',
+    }
+    monkeypatch.setattr(utils_delegacao.RequisicaoLLMDelegada, 'aguardar_resposta', lambda *a, **kw: resposta_ade)
+    monkeypatch.setattr(utils_delegacao, "_obter_tokenizador_tiktoken", lambda: None)
+
+    resp = utils_delegacao.solicitar_llm_modo_delegado(
+        prompt="Analise", contexto="Fase 2", fase="phase_02", timeout=1
+    )
+
+    assert resp is not None
+    assert resp['origem_medicao'] == 'autodeclarado'
+    # sem tiktoken, a telemetria auxiliar é explicitamente None (não inventa valor)
+    assert resp['tokens_estimativa_local'] is None
+
+
+def test_modo_headless_inclui_tokens_estimativa_local(monkeypatch):
+    """Headless com usage do provider inclui tokens_estimativa_local e mantém medido_api."""
+    import utils_delegacao
+    import sys
+
+    class FakeUsage:
+        total_tokens = 500
+
+    class FakeMessage:
+        content = "conteudo da resposta"
+
+    class FakeChoice:
+        message = FakeMessage()
+
+    class FakeCompletionResponse:
+        choices = [FakeChoice()]
+        usage = FakeUsage()
+
+    fake_litellm = type(sys)('litellm')
+    fake_litellm.completion = lambda *a, **kw: FakeCompletionResponse()
+    monkeypatch.setitem(sys.modules, 'litellm', fake_litellm)
+    monkeypatch.setenv('LLM_MODEL', 'anthropic/claude-3-haiku')
+
+    tokenizador_fake = type("Enc", (), {"encode": lambda self, t: list(t.split(" "))})()
+    monkeypatch.setattr(utils_delegacao, "_obter_tokenizador_tiktoken", lambda: tokenizador_fake)
+
+    resp = utils_delegacao.solicitar_llm_modo_headless(
+        prompt="prompt", contexto="ctx", fase="phase_02"
+    )
+
+    assert resp is not None
+    assert resp['origem_medicao'] == 'medido_api'
+    assert resp['tokens_consumidos'] == 500
+    assert 'tokens_estimativa_local' in resp
+    assert resp['tokens_estimativa_local']['metodo'] == 'tiktoken'
+
+
 
 
 # =============================================================================
@@ -519,3 +666,183 @@ def test_validar_pydantic_com_retry_levanta_validation_error_apos_tentativas():
 
     with _pytest.raises(ValidationError):
         _validar_pydantic_com_retry(dados_invalidos, ModeloCodegen, max_retries=2)
+
+
+# =============================================================================
+# TESTES DO ITEM 6.3: POLLING ADAPTATIVO EVENT-DRIVEN E TIMEOUTS POR FASE
+# =============================================================================
+
+def test_obter_timeout_por_fase_defaults():
+    """Fases conhecidas retornam seus timeouts específicos; fase desconhecida usa padrão."""
+    from utils_delegacao import obter_timeout_por_fase, TIMEOUT_PADRAO_DELEGACAO
+
+    assert obter_timeout_por_fase("phase_01") == 30
+    assert obter_timeout_por_fase("phase_02") == 45
+    assert obter_timeout_por_fase("phase_04") == 60
+    assert obter_timeout_por_fase("phase_08") == 180
+    assert obter_timeout_por_fase("08_implementador") == 180
+    assert obter_timeout_por_fase("fase_inexistente") == TIMEOUT_PADRAO_DELEGACAO
+    assert obter_timeout_por_fase(None) == TIMEOUT_PADRAO_DELEGACAO
+
+
+def test_obter_timeout_por_fase_overrides(monkeypatch):
+    """Timeout explícito tem precedência sobre env vars e defaults de fase."""
+    from utils_delegacao import obter_timeout_por_fase
+
+    # 1. Override por parâmetro custom
+    assert obter_timeout_por_fase("phase_08", timeout_custom=15) == 15
+
+    # 2. Override por env global
+    monkeypatch.setenv("AIDD_TIMEOUT_DELEGACAO", "99")
+    assert obter_timeout_por_fase("phase_08") == 99
+
+    # 3. Override por env específico da fase (tem prioridade quando global ausente)
+    monkeypatch.delenv("AIDD_TIMEOUT_DELEGACAO", raising=False)
+    monkeypatch.setenv("AIDD_TIMEOUT_PHASE_08", "250")
+    assert obter_timeout_por_fase("phase_08") == 250
+
+
+def test_aguardar_resposta_retorno_imediato_quando_arquivo_existe(tmp_path, monkeypatch):
+    """Se o arquivo já existe no CACHE_DIR, retorna em 0ms sem atraso."""
+    import utils_delegacao
+    monkeypatch.setattr(utils_delegacao, "CACHE_DIR", tmp_path)
+
+    resposta_valida = {
+        "id": "req123",
+        "conteudo": "codigo gerado",
+        "tokens_consumidos": 50,
+        "origem_medicao": "autodeclarado",
+        "modelo_usado": "claude-3-5-sonnet",
+        "timestamp_resposta": "2026-09-08T12:00:00Z"
+    }
+    caminho = tmp_path / "_llm_response_req123.json"
+    caminho.write_text(json.dumps(resposta_valida), encoding="utf-8")
+
+    import time
+    t0 = time.time()
+    res = utils_delegacao.RequisicaoLLMDelegada.aguardar_resposta("req123", timeout=5)
+    duracao = time.time() - t0
+
+    assert res is not None
+    assert res["conteudo"] == "codigo gerado"
+    assert duracao < 0.2  # Instantâneo
+
+
+def test_aguardar_resposta_backoff_adaptativo_progressivo(tmp_path, monkeypatch):
+    """Testa que o polling adaptativo inicia em 100ms e cresce com backoff sem busy wait."""
+    import utils_delegacao
+    monkeypatch.setattr(utils_delegacao, "CACHE_DIR", tmp_path)
+    # Desativa watchdog no teste para inspecionar intervalos do sleep
+    monkeypatch.setattr(utils_delegacao, "_WATCHDOG_DISPONIVEL", False)
+
+    sleeps_registrados = []
+    def fake_sleep(duracao):
+        sleeps_registrados.append(duracao)
+
+    monkeypatch.setattr(utils_delegacao.time, "sleep", fake_sleep)
+
+    # Simula arquivo aparecendo na 3ª verificação
+    tentativas = {"count": 0}
+    caminho = tmp_path / "_llm_response_req_backoff.json"
+
+    original_exists = utils_delegacao.Path.exists
+    def fake_exists(self):
+        if self.name == "_llm_response_req_backoff.json":
+            tentativas["count"] += 1
+            if tentativas["count"] >= 3:
+                if not original_exists(caminho):
+                    caminho.write_text(json.dumps({
+                        "conteudo": "ok",
+                        "tokens_consumidos": 10
+                    }), encoding="utf-8")
+                return True
+            return False
+        return original_exists(self)
+
+    monkeypatch.setattr(utils_delegacao.Path, "exists", fake_exists)
+
+    res = utils_delegacao.RequisicaoLLMDelegada.aguardar_resposta(
+        "req_backoff",
+        timeout=5,
+        intervalo_inicial=0.1,
+        fator_backoff=2.0
+    )
+
+    assert res is not None
+    assert res["conteudo"] == "ok"
+    assert len(sleeps_registrados) == 2
+    # 1º sleep: 0.1s (100ms), 2º sleep: 0.2s (200ms)
+    assert abs(sleeps_registrados[0] - 0.1) < 0.01
+    assert abs(sleeps_registrados[1] - 0.2) < 0.01
+
+
+def test_aguardar_resposta_event_driven_com_criacao_assincrona(tmp_path, monkeypatch):
+    """Testa que criação assíncrona do arquivo acorda a espera rapidamente."""
+    import utils_delegacao
+    import threading
+    import time
+
+    monkeypatch.setattr(utils_delegacao, "CACHE_DIR", tmp_path)
+
+    id_req = "async_req_1"
+    caminho = tmp_path / f"_llm_response_{id_req}.json"
+
+    def escritor_tardio():
+        time.sleep(0.05)  # Escreve em 50ms
+        caminho.write_text(json.dumps({
+            "conteudo": "resposta assincrona recebida",
+            "tokens_consumidos": 15
+        }), encoding="utf-8")
+
+    t = threading.Thread(target=escritor_tardio)
+    t.start()
+
+    t0 = time.time()
+    res = utils_delegacao.RequisicaoLLMDelegada.aguardar_resposta(id_req, timeout=3)
+    duracao = time.time() - t0
+    t.join()
+
+    assert res is not None
+    assert res["conteudo"] == "resposta assincrona recebida"
+    assert duracao < 1.0  # Muito antes do timeout de 3s
+
+
+def test_solicitar_llm_modo_delegado_timeout_fallback_limpo_com_excecao(monkeypatch):
+    """Timeout com fallback headless que levanta LLMNaoConfiguradoException trata limpo sem crash."""
+    import utils_delegacao
+    from utils_delegacao import LLMNaoConfiguradoException
+
+    monkeypatch.setattr(utils_delegacao.RequisicaoLLMDelegada, 'aguardar_resposta', lambda *a, **kw: None)
+    monkeypatch.setenv('LLM_MODEL', 'modelo-invalido')
+
+    def falha_headless(*a, **kw):
+        raise LLMNaoConfiguradoException("Credenciais ausentes", "detalhes tecnicos")
+
+    monkeypatch.setattr(utils_delegacao, 'solicitar_llm_modo_headless', falha_headless)
+
+    res = utils_delegacao.solicitar_llm_modo_delegado(
+        prompt="Gerar teste", contexto="Phase 08", fase="phase_08", timeout=1
+    )
+
+    # Não deve crashar; retorna None limpamente
+    assert res is None
+
+
+def test_solicitar_llm_modo_delegado_timeout_fallback_limpo_com_erro_generico(monkeypatch):
+    """Timeout com fallback headless que levanta erro genérico não quebra a execução."""
+    import utils_delegacao
+
+    monkeypatch.setattr(utils_delegacao.RequisicaoLLMDelegada, 'aguardar_resposta', lambda *a, **kw: None)
+    monkeypatch.setenv('LLM_MODEL', 'modelo-invalido')
+
+    def erro_generico(*a, **kw):
+        raise RuntimeError("Conexão recusada pela API")
+
+    monkeypatch.setattr(utils_delegacao, 'solicitar_llm_modo_headless', erro_generico)
+
+    res = utils_delegacao.solicitar_llm_modo_delegado(
+        prompt="Gerar teste", contexto="Phase 08", fase="phase_08", timeout=1
+    )
+
+    assert res is None
+

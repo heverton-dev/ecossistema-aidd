@@ -21,8 +21,18 @@ import sys
 import subprocess
 import types
 
+from dotenv import load_dotenv
+
 ROOT_DIR = os.path.dirname(os.path.abspath(__file__))
 TOOLS_DIR = os.path.join(ROOT_DIR, "tools")
+
+# Carrega .env da raiz do ecossistema para os.environ (nunca sobrescreve variavel ja
+# exportada no shell — override=False). Cobre esta CLI e todo subprocesso disparado por
+# run_command() (forge/generate/master/enterprise/ops), que herda os.environ.copy().
+# NAO cobre MCP servers de terceiros lancados diretamente pelo harness (.mcp.json,
+# opencode.jsonc etc.) — esses expandem ${VAR} a partir do proprio ambiente do harness,
+# nao deste processo. Ver gates/dependencias_externas.json e .env.example.
+load_dotenv(os.path.join(ROOT_DIR, ".env"), override=False)
 
 def print_banner():
     print("=" * 72)
@@ -83,7 +93,12 @@ def cmd_components(args):
     @click.option("--tipo", required=True, help="Tipo de componente ou 'todos'")
     @click.option("--ferramenta", default=None, help="Nome da ferramenta alvo")
     @click.option("--dry-run", is_flag=True, default=False, help="Modo simulacao sem escrita")
-    def sync_cmd(tipo, ferramenta, dry_run):
+    @click.option("--force", is_flag=True, default=False,
+                  help="Restaura destinos divergentes e orfaos a partir da fonte")
+    def sync_cmd(tipo, ferramenta, dry_run, force):
+        if force:
+            ns = types.SimpleNamespace(tipo=tipo, ferramenta=ferramenta)
+            return gestor_componentes._cmd_force_sync(ns)
         ns = types.SimpleNamespace(tipo=tipo, ferramenta=ferramenta, dry_run=dry_run)
         return gestor_componentes._cmd_sync(ns)
 
@@ -136,12 +151,17 @@ def cmd_dependencia(args):
     @dep_cli.command("add-mcp")
     @click.option("--nome", required=True)
     @click.option("--pacote", required=True)
-    @click.option("--comando", required=True)
+    @click.option("--tipo", type=click.Choice(["stdio", "remote"]), default="stdio")
+    @click.option("--comando", default=None)
     @click.option("--args", default="")
     @click.option("--env", default="")
+    @click.option("--url", default=None)
     @click.option("--harnesses", default="claude-code")
-    def add_mcp_cmd(nome, pacote, comando, args, env, harnesses):
-        ns = types.SimpleNamespace(acao="add-mcp", nome=nome, pacote=pacote, comando=comando, args=args, env=env, harnesses=harnesses)
+    def add_mcp_cmd(nome, pacote, tipo, comando, args, env, url, harnesses):
+        ns = types.SimpleNamespace(
+            acao="add-mcp", nome=nome, pacote=pacote, tipo=tipo, comando=comando,
+            args=args, env=env, url=url, harnesses=harnesses,
+        )
         return gestor_dependencias._cmd_add_mcp(ns)
 
     @dep_cli.command("list")
@@ -516,7 +536,8 @@ Comandos disponíveis:
                       componentes (gates/manifesto_harnesses.json)
   dependencia bootstrap [--tipo skills|mcps|todos] [--dry-run]
   dependencia add-skill --nome <n> --pacote <p> --instalar "<cmd>" --verificar <caminho> [--gitignore "a,b"]
-  dependencia add-mcp --nome <n> --pacote <p> --comando <cmd> [--args "a,b"] [--env V1,V2] [--harnesses claude-code]
+  dependencia add-mcp --nome <n> --pacote <p> --comando <cmd> [--args "a,b"] [--env V1,V2] [--harnesses claude-code,opencode]
+  dependencia add-mcp --nome <n> --pacote <p> --tipo remote --url <url> [--harnesses claude-code,opencode]
   dependencia list|verify
                       Instala/registra skills e MCPs de terceiros usados pelo
                       agente (gates/dependencias_externas.json)

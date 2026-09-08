@@ -19,14 +19,9 @@
 
 | Iniciativa | Local |
 |---|---|
+| Direcionamento Estrategico Anti Nih | `fazendo/02-direcionamento-estrategico-anti-nih/` |
+| Evolucao Aidd Ops Fase Completa | `fazendo/03-evolucao-aidd-ops-fase-completa/` |
 | Correcao Pos Auditoria Sem Maquiagem | `fazendo/01-correcao-pos-auditoria-sem-maquiagem/` |
-
-## ⏳ Aguardando execução
-
-| Iniciativa | Local |
-|---|---|
-| Direcionamento Estrategico Anti Nih | `a-fazer/02-direcionamento-estrategico-anti-nih/` |
-| Evolucao Aidd Ops Fase Completa | `a-fazer/03-evolucao-aidd-ops-fase-completa/` |
 
 ---
 

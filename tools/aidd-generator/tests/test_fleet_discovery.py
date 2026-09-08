@@ -25,6 +25,7 @@ from utils_fleet_discovery import (
     fleet_status_para_log,
     persistir_fleet_status,
     AGENTES_CONHECIDOS,
+    _encontrar_executavel_windows,
 )
 
 
@@ -69,7 +70,8 @@ class TestFleetStatus:
 
 class TestDetectarAgentes:
     @patch('utils_fleet_discovery.shutil.which')
-    def test_detectar_com_claude(self, mock_which):
+    @patch('utils_fleet_discovery.platform.system', return_value='Linux')
+    def test_detectar_com_claude(self, mock_platform, mock_which):
         def which_side_effect(cmd):
             if cmd == 'claude':
                 return '/usr/local/bin/claude'
@@ -81,7 +83,8 @@ class TestDetectarAgentes:
         assert agentes[0].nome == 'claude'
 
     @patch('utils_fleet_discovery.shutil.which')
-    def test_detectar_multiplos(self, mock_which):
+    @patch('utils_fleet_discovery.platform.system', return_value='Linux')
+    def test_detectar_multiplos(self, mock_platform, mock_which):
         def which_side_effect(cmd):
             paths = {'claude': '/bin/claude', 'codex': '/bin/codex'}
             return paths.get(cmd)
@@ -94,10 +97,85 @@ class TestDetectarAgentes:
         assert agentes[1].nome == 'codex'
 
     @patch('utils_fleet_discovery.shutil.which')
-    def test_detectar_nenhum(self, mock_which):
+    @patch('utils_fleet_discovery.platform.system', return_value='Linux')
+    def test_detectar_nenhum(self, mock_platform, mock_which):
         mock_which.return_value = None
         agentes = detectar_agentes_instalados()
         assert len(agentes) == 0
+
+    @patch('utils_fleet_discovery.shutil.which')
+    @patch('utils_fleet_discovery.platform.system', return_value='Linux')
+    def test_detectar_kiro_e_cursor(self, mock_platform, mock_which):
+        paths = {'claude': '/bin/claude', 'kiro': '/bin/kiro', 'cursor': '/bin/cursor'}
+        mock_which.side_effect = lambda cmd: paths.get(cmd)
+
+        agentes = detectar_agentes_instalados()
+        nomes = [a.nome for a in agentes]
+        assert 'kiro' in nomes
+        assert 'cursor' in nomes
+
+    @patch('utils_fleet_discovery.shutil.which')
+    @patch('utils_fleet_discovery.platform.system', return_value='Linux')
+    def test_detectar_hermes(self, mock_platform, mock_which):
+        paths = {'claude': '/bin/claude', 'hermes': '/bin/hermes'}
+        mock_which.side_effect = lambda cmd: paths.get(cmd)
+
+        agentes = detectar_agentes_instalados()
+        nomes = [a.nome for a in agentes]
+        assert 'hermes' in nomes
+
+    def test_novos_runtimes_no_registro(self):
+        assert 'kiro' in AGENTES_CONHECIDOS
+        assert 'cursor' in AGENTES_CONHECIDOS
+        assert 'hermes' in AGENTES_CONHECIDOS
+
+
+class TestExecutavelWindows:
+    @patch('utils_fleet_discovery.shutil.which')
+    def test_which_encontra_direto(self, mock_which):
+        mock_which.return_value = '/usr/bin/ferramenta'
+        assert _encontrar_executavel_windows('ferramenta') == '/usr/bin/ferramenta'
+
+    @patch('utils_fleet_discovery.shutil.which')
+    @patch('utils_fleet_discovery.platform.system', return_value='Linux')
+    def test_nao_windows_retorna_none(self, mock_platform, mock_which):
+        mock_which.return_value = None
+        assert _encontrar_executavel_windows('ferramenta') is None
+
+    @patch('utils_fleet_discovery.shutil.which')
+    @patch('utils_fleet_discovery.platform.system', return_value='Windows')
+    def test_extensao_cmd_fallback(self, mock_platform, mock_which, tmp_path):
+        fake = tmp_path / 'kiro.cmd'
+        fake.write_text('fake', encoding='utf-8')
+        mock_which.return_value = None
+        with patch.dict(os.environ, {'PATH': str(tmp_path)}, clear=True):
+            assert _encontrar_executavel_windows('kiro') == str(fake)
+
+    @patch('utils_fleet_discovery.shutil.which')
+    @patch('utils_fleet_discovery.platform.system', return_value='Windows')
+    def test_extensao_bat_fallback(self, mock_platform, mock_which, tmp_path):
+        fake = tmp_path / 'cursor.bat'
+        fake.write_text('fake', encoding='utf-8')
+        mock_which.return_value = None
+        with patch.dict(os.environ, {'PATH': str(tmp_path)}, clear=True):
+            assert _encontrar_executavel_windows('cursor') == str(fake)
+
+    @patch('utils_fleet_discovery.shutil.which')
+    @patch('utils_fleet_discovery.platform.system', return_value='Windows')
+    def test_extensao_ps1_fallback(self, mock_platform, mock_which, tmp_path):
+        fake = tmp_path / 'delegador.ps1'
+        fake.write_text('fake', encoding='utf-8')
+        mock_which.return_value = None
+        with patch.dict(os.environ, {'PATH': '/nonexistent'}, clear=True):
+            with patch('utils_fleet_discovery.os.path.expandvars', return_value=str(tmp_path)):
+                assert _encontrar_executavel_windows('delegador') == str(fake)
+
+    @patch('utils_fleet_discovery.shutil.which')
+    @patch('utils_fleet_discovery.platform.system', return_value='Windows')
+    def test_sem_correspondencia_retorna_none(self, mock_platform, mock_which, tmp_path):
+        mock_which.return_value = None
+        with patch.dict(os.environ, {'PATH': str(tmp_path)}, clear=True):
+            assert _encontrar_executavel_windows('inexistente') is None
 
 
 class TestDetectarViaAmbiente:
@@ -152,6 +230,12 @@ class TestRoteamento:
     def test_rotear_lista_vazia(self):
         a = rotear_por_especialidade('codigo', [])
         assert a is None
+
+    def test_rotear_kiro_unico(self):
+        kiro = AgenteDetectado('kiro', 'kiro', '/bin/kiro',
+                               ['arquitetura', 'codigo', 'analise', 'testes', 'design'], 2, 'Kiro CLI')
+        a = rotear_por_especialidade('arquitetura', [kiro])
+        assert a.nome == 'kiro'
 
     def test_rotear_especialidade_desconhecida(self):
         agentes = self._make_agentes()

@@ -1,0 +1,9 @@
+{
+  "descricao": "Allowlist de arquivos fisicamente presentes em pastas de destino de componentes, mas que NÃO são gerados pelo materializador a partir de componentes/ (Regra de Ouro #3 - Transparência Total e #6 - Agnosticidade). Arquivos aqui sao instalados por terceiros (ex.: npx impeccable install, pip/uv, npm) e nao devem ser reportados como orfaos pelo components verify.",
+  "atualizado_em": "2026-09-08",
+  "arquivos": [
+    ".opencode/commands/impeccable.md",
+    ".opencode/skills/impeccable/SKILL.md"
+  ],
+  "nota": "O detector de drift classifica como ORFAO qualquer arquivo em pasta de destino de componente que nao corresponda a nenhuma fonte declarada em componentes/. Este arquivo documenta as excecoes legitimas. Adicione aqui qualquer arquivo instalado por ferramenta externa que viva dentro de .claude/, .opencode/, .mimocode/, .agents/, .cursor/, .gemini/, skills/ bare, .skills/, etc., sem fonte correspondente em componentes/."
+}

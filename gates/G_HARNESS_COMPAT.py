@@ -1,33 +1,29 @@
 # -*- coding: utf-8 -*-
 """
-=============================================================================
-ECOSSISTEMA AIDD — QUALITY GATE: G_HARNESS_COMPAT
-=============================================================================
-Materializa o gate G_HARNESS_COMPAT que o plano de execução original
-(docs/planos/PLANO-EXECUCAO-ECOSSISTEMA-AIDD.md) já declarava existir em
-gates/, mas nunca tinha sido implementado (R6 do
-PLANO-CORRECAO-RISCOS-ECOSSISTEMA-AIDD.md). Existiam apenas versões-template
-dentro de tools/*/scripts/gates/, feitas para serem copiadas para PROJETOS
-GERADOS pelas ferramentas — nada auditava a raiz do próprio ecossistema.
+ =============================================================================
+ ECOSSISTEMA AIDD — QUALITY GATE: G_HARNESS_COMPAT
+ =============================================================================
+ Materializa o gate G_HARNESS_COMPAT que o plano de execução original
+ (docs/planos/PLANO-EXECUCAO-ECOSSISTEMA-AIDD.md) já declarava existir em
+ gates/, mas nunca tinha sido implementado (R6 do
+ PLANO-CORRECAO-RISCOS-ECOSSISTEMA-AIDD.md). Existiam apenas versões-template
+ dentro de tools/*/scripts/gates/, feitas para serem copiadas para PROJETOS
+ GERADOS pelas ferramentas — nada auditava a raiz do próprio ecossistema.
 
-O que audita aqui (evidência real coletada na auditoria, não hipotético):
-1. .agent/commands/*.md e .claude/commands/*.md devem ser idênticos —
-   é o mesmo contrato de slash command exposto a dois harness diferentes
-   (AGENTS.md §3: "Cada comando possui contrato formal executável em
-   qualquer harness").
-2. skills/<runner>/SKILL.md e .agent/skills/<runner>/SKILL.md devem ser
-   idênticos — mesma skill exposta em dois locais que harness diferentes
-   carregam (Claude Code lê skills/, MimoCode/Antigravity/OpenCode lê
-   .agent/skills/ conforme AGENTS.md §5).
-3. Arquivos-ponteiro (.claude/CLAUDE.md, .cursor/rules/aidd.md) existem e
-   referenciam AGENTS.md como fonte única — não duplicam conteúdo, então
-   não têm o problema de drift dos itens 1 e 2, só precisam existir e
-   apontar certo.
+ O que audita aqui (evidência real coletada na auditoria, não hipotético):
+ 1. Detecção bidirecional de drift via SHA-256 entre fontes em componentes/
+    e destinos materializados nos harnesses (Fase 4-6.4 P2):
+    - MODIFICADO: fonte e destino existem mas SHA-256 difere
+    - DIVERGENTE: fonte existe mas destino está ausente
+    - ÓRFÃO: destino existe mas não corresponde a nenhuma fonte
+ 2. .claude/CLAUDE.md e .cursor/rules/aidd.md existem e referenciam
+    AGENTS.md como fonte única — não duplicam conteúdo.
+ 3. Gates documentados em AGENTS.md vs gates/ em disco.
 
-Uso:
-  python gates/G_HARNESS_COMPAT.py
-      exit 0 = todos os pares sincronizados e ponteiros corretos.
-      exit 1 = algum par divergiu ou ponteiro está ausente/quebrado.
+ Uso:
+   python gates/G_HARNESS_COMPAT.py
+       exit 0 = todos os pares sincronizados e ponteiros corretos.
+       exit 1 = algum par divergiu ou ponteiro está ausente/quebrado.
 """
 
 import os
@@ -60,15 +56,44 @@ def checar():
 
     erros = []
 
-    print("\n--- Verificacao Universal de Componentes (gates/manifesto_harnesses.json) ---")
-    total_verificados, problemas = gestor_componentes.verify("todos")
-    print(f"Componentes verificados: {total_verificados}")
-    if problemas:
-        for p in problemas:
-            erros.append(f"Componente divergente ou ausente em harness: {p}")
-            print(f"[ERRO] {p}")
-    else:
-        print("[OK] Todos os componentes sincronizados com a fonte canonica em todos os harnesses.")
+    print("\n--- Verificacao Bidirecional de Componentes (SHA-256) ---")
+    relatorio = gestor_componentes.verify_detallado()
+    print(f"Componentes verificados: {relatorio.total_componentes}")
+
+    if relatorio.modificados:
+        for item in relatorio.modificados:
+            hash_info = ""
+            if item.hash_fonte and item.hash_destino:
+                hash_info = f" (fonte={item.hash_fonte[:12]}... destino={item.hash_destino[:12]}...)"
+            erros.append(
+                f"Componente MODIFICADO em {item.caminho}: "
+                f"SHA-256 divergente da fonte em componentes/{hash_info}"
+            )
+            print(f"[MODIFICADO] [{item.componente}] {item.caminho}{hash_info}")
+
+    if relatorio.divergentes:
+        for item in relatorio.divergentes:
+            erros.append(
+                f"Componente DIVERGENTE: fonte '{item.componente}' existe mas "
+                f"destino ausente em {item.caminho}"
+            )
+            print(f"[DIVERGENTE] [{item.componente}] {item.caminho}")
+
+    if relatorio.orfaos:
+        for item in relatorio.orfaos:
+            erros.append(
+                f"Arquivo ORFÃO em {item.caminho}: não corresponde a "
+                f"nenhuma fonte declarada em componentes/"
+            )
+            print(f"[ORFAO] {item.caminho}")
+
+    if relatorio.boms:
+        for bom in relatorio.boms:
+            erros.append(f"Arquivo com UTF-8 BOM proibido (EF BB BF): {bom}")
+            print(f"[BOM] {bom}")
+
+    if not relatorio.modificados and not relatorio.divergentes and not relatorio.orfaos and not relatorio.boms:
+        print("[OK] Todos os componentes sincronizados com a fonte canonica (SHA-256 verificado).")
 
     print("\n--- Arquivos-ponteiro para AGENTS.md ---")
     for ponteiro, fonte in PONTEIROS:

@@ -19,6 +19,7 @@ Fallback em cascata:
 
 import sys
 import os
+import platform
 import shutil
 import json
 from pathlib import Path
@@ -33,6 +34,45 @@ if sys.platform == 'win32':
 # =============================================================================
 # CONSTANTES — Agentes conhecidos e suas especialidades
 # =============================================================================
+
+# Windows-aware executable resolution
+_WIN_EXTENSIONS = ['.cmd', '.bat', '.exe']
+_WIN_POWERSHELL_EXT = '.ps1'
+
+
+def _encontrar_executavel_windows(comando: str) -> str | None:
+    """Resolve executável com fallback de extensões Windows (.cmd/.bat/.ps1).
+
+    No Windows, shutil.which já encontra .exe e .cmd, mas ferramentas
+    instaladas via npm/pip podem expor apenas .cmd, enquanto scripts
+    PowerShell (.ps1) nunca são retornados por shutil.which.
+    """
+    caminho = shutil.which(comando)
+    if caminho:
+        return str(caminho)
+
+    if platform.system() != 'Windows':
+        return None
+
+    path_dirs = os.environ.get('PATH', '')
+    for dir_entry in path_dirs.split(os.pathsep):
+        for ext in _WIN_EXTENSIONS:
+            candidate = os.path.join(dir_entry, comando + ext)
+            if os.path.isfile(candidate):
+                return candidate
+
+    ps_dirs = [
+        os.path.expandvars(r'%SystemRoot%\System32\WindowsPowerShell\v1.0'),
+        os.path.expandvars(r'%SystemRoot%\SysWOW64\WindowsPowerShell\v1.0'),
+    ]
+    ps1_name = comando + _WIN_POWERSHELL_EXT
+    for ps_dir in ps_dirs:
+        candidate = os.path.join(ps_dir, ps1_name)
+        if os.path.isfile(candidate):
+            return candidate
+
+    return None
+
 
 AGENTES_CONHECIDOS = {
     'claude': {
@@ -82,6 +122,18 @@ AGENTES_CONHECIDOS = {
         'especialidades': ['codigo', 'analise'],
         'prioridade': 4,
         'descricao': 'Ollama (local)',
+    },
+    'kiro': {
+        'comandos': ['kiro'],
+        'especialidades': ['arquitetura', 'codigo', 'analise', 'testes', 'design'],
+        'prioridade': 2,
+        'descricao': 'Kiro CLI (AWS)',
+    },
+    'hermes': {
+        'comandos': ['hermes'],
+        'especialidades': ['codigo', 'analise', 'testes'],
+        'prioridade': 3,
+        'descricao': 'Hermes Agent',
     },
 }
 
@@ -151,8 +203,11 @@ class FleetStatus:
 # =============================================================================
 
 def _encontrar_executavel(comando: str) -> Optional[str]:
-    """Encontra o caminho completo de um executável no PATH."""
-    caminho = shutil.which(comando)
+    """Encontra o caminho completo de um executável no PATH.
+
+    Usa shutil.which e, em Windows, faz fallback para .cmd/.bat/.ps1.
+    """
+    caminho = _encontrar_executavel_windows(comando)
     return str(caminho) if caminho else None
 
 

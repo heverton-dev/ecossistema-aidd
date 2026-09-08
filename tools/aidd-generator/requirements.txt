@@ -6,6 +6,7 @@ markdown
 pypdf
 flask
 instructor
+tiktoken
 
 # MCP (NIH #24): SDK oficial do Model Context Protocol para os servidores
 # MCP gerados pelo Injetor Universal (mcps/*/server.py) — substitui JSON-RPC manual.

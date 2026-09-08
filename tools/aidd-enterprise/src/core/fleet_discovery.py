@@ -13,8 +13,53 @@ Classes:
 from __future__ import annotations
 
 import os
+import platform
 import shutil
 from typing import Any
+
+
+# ---------------------------------------------------------------------------
+# Windows-aware executable resolution
+# ---------------------------------------------------------------------------
+
+_WIN_EXTENSIONS: list[str] = [".cmd", ".bat", ".exe"]
+_WIN_POWERSHELL_EXT: str = ".ps1"
+
+
+def _resolve_executable(binary: str) -> str | None:
+    """Resolve *binary* on PATH with Windows extension fallbacks.
+
+    On Windows ``shutil.which`` already finds ``.exe`` and ``.cmd`` wrappers,
+    but tools installed via npm or pip may only expose a ``.cmd`` wrapper,
+    while PowerShell scripts (``.ps1``) are never returned by ``shutil.which``.
+    This helper tries the bare name first (POSIX-clean), then appends common
+    Windows extensions as a fallback.
+    """
+    found = shutil.which(binary)
+    if found is not None:
+        return str(found)
+
+    if platform.system() != "Windows":
+        return None
+
+    search_root = os.environ.get("PATH", "")
+    for dir_entry in search_root.split(os.pathsep):
+        for ext in _WIN_EXTENSIONS:
+            candidate = os.path.join(dir_entry, binary + ext)
+            if os.path.isfile(candidate):
+                return candidate
+
+    ps_dirs = [
+        os.path.expandvars(r"%SystemRoot%\System32\WindowsPowerShell\v1.0"),
+        os.path.expandvars(r"%SystemRoot%\SysWOW64\WindowsPowerShell\v1.0"),
+    ]
+    ps1_name = binary + _WIN_POWERSHELL_EXT
+    for ps_dir in ps_dirs:
+        candidate = os.path.join(ps_dir, ps1_name)
+        if os.path.isfile(candidate):
+            return candidate
+
+    return None
 
 
 # ---------------------------------------------------------------------------
@@ -52,18 +97,34 @@ KNOWN_AGENTS: dict[str, dict[str, Any]] = {
         "display": "OpenAI CLI",
         "default_specialty": "backend",
     },
+    "kiro": {
+        "binary": "kiro",
+        "display": "Kiro CLI",
+        "default_specialty": "fullstack",
+    },
+    "cursor": {
+        "binary": "cursor",
+        "display": "Cursor",
+        "default_specialty": "frontend",
+    },
+    "hermes": {
+        "binary": "hermes",
+        "display": "Hermes Agent",
+        "default_specialty": "backend",
+    },
 }
 
 # Specialty mapping: task_type -> preferred agent name
 _TASK_AGENT_PREFS: dict[str, list[str]] = {
-    "architect":  ["claude", "codex", "antigravity", "agy", "ollama", "openai"],
-    "database":   ["claude", "codex", "ollama", "openai", "antigravity", "agy"],
-    "frontend":   ["antigravity", "agy", "claude", "codex", "ollama", "openai"],
-    "backend":    ["codex", "claude", "ollama", "openai", "antigravity", "agy"],
-    "security":   ["claude", "codex", "ollama", "openai", "antigravity", "agy"],
-    "testing":    ["codex", "claude", "ollama", "openai", "antigravity", "agy"],
-    "devops":     ["claude", "codex", "ollama", "openai", "antigravity", "agy"],
-    "docs":       ["claude", "codex", "antigravity", "agy", "ollama", "openai"],
+    "architect":  ["claude", "codex", "antigravity", "agy", "ollama", "openai", "kiro", "cursor", "hermes"],
+    "database":   ["claude", "codex", "ollama", "openai", "antigravity", "agy", "kiro", "cursor", "hermes"],
+    "frontend":   ["antigravity", "agy", "cursor", "claude", "codex", "ollama", "openai", "kiro", "hermes"],
+    "backend":    ["codex", "claude", "ollama", "openai", "antigravity", "agy", "kiro", "cursor", "hermes"],
+    "fullstack":  ["kiro", "claude", "codex", "antigravity", "agy", "ollama", "openai", "cursor", "hermes"],
+    "security":   ["claude", "codex", "ollama", "openai", "antigravity", "agy", "kiro", "cursor", "hermes"],
+    "testing":    ["codex", "claude", "ollama", "openai", "antigravity", "agy", "kiro", "cursor", "hermes"],
+    "devops":     ["claude", "codex", "ollama", "openai", "antigravity", "agy", "kiro", "cursor", "hermes"],
+    "docs":       ["claude", "codex", "antigravity", "agy", "ollama", "openai", "kiro", "cursor", "hermes"],
 }
 
 
@@ -92,7 +153,7 @@ class FleetDiscovery:
         result: dict[str, dict[str, Any]] = {}
         for name, meta in self._agents.items():
             binary = meta.get("binary", name)
-            found = shutil.which(binary)
+            found = _resolve_executable(binary)
             result[name] = {
                 "path": found,
                 "available": found is not None,
@@ -119,6 +180,9 @@ class FleetDiscovery:
             "agy": "frontend",
             "ollama": "backend",
             "openai": "backend",
+            "kiro": "fullstack",
+            "cursor": "frontend",
+            "hermes": "backend",
         }
         return _specialty_map.get(agent_name, "backend")
 

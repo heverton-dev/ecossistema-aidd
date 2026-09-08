@@ -19,6 +19,7 @@ from core.fleet_discovery import (
     FleetDiscovery,
     AgentRouter,
     OrcaRunner,
+    _resolve_executable,
 )
 
 
@@ -72,6 +73,9 @@ class TestFleetDiscovery:
         assert FleetDiscovery.classify_specialty("agy") == "frontend"
         assert FleetDiscovery.classify_specialty("ollama") == "backend"
         assert FleetDiscovery.classify_specialty("openai") == "backend"
+        assert FleetDiscovery.classify_specialty("kiro") == "fullstack"
+        assert FleetDiscovery.classify_specialty("cursor") == "frontend"
+        assert FleetDiscovery.classify_specialty("hermes") == "backend"
 
     def test_classify_specialty_unknown_defaults_backend(self):
         assert FleetDiscovery.classify_specialty("unknown_agent") == "backend"
@@ -83,6 +87,20 @@ class TestFleetDiscovery:
         assert "myagent" in result
         assert result["myagent"]["display"] == "My Agent"
 
+    def test_new_runtimes_registered(self):
+        """Kiro CLI, Cursor and Hermes must be part of the known registry."""
+        assert "kiro" in KNOWN_AGENTS
+        assert "cursor" in KNOWN_AGENTS
+        assert "hermes" in KNOWN_AGENTS
+        fd = FleetDiscovery()
+        result = fd.discover_agents()
+        assert "kiro" in result
+        assert "cursor" in result
+        assert "hermes" in result
+        assert result["kiro"]["specialty"] == "fullstack"
+        assert result["cursor"]["specialty"] == "frontend"
+        assert result["hermes"]["specialty"] == "backend"
+
     @patch("core.fleet_discovery.shutil.which", return_value="/usr/bin/fake")
     def test_discover_agents_mock_available(self, mock_which):
         fd = FleetDiscovery(extra_agents={"fake": {"binary": "fake", "display": "Fake", "default_specialty": "backend"}})
@@ -91,12 +109,62 @@ class TestFleetDiscovery:
         assert result["fake"]["path"] == "/usr/bin/fake"
 
     @patch("core.fleet_discovery.shutil.which", return_value=None)
-    def test_discover_agents_mock_unavailable(self, mock_which):
+    @patch("core.fleet_discovery.platform.system", return_value="Linux")
+    def test_discover_agents_mock_unavailable(self, mock_platform, mock_which):
         fd = FleetDiscovery()
         result = fd.discover_agents()
         for info in result.values():
             assert info["available"] is False
             assert info["path"] is None
+
+
+# ===========================================================================
+# _resolve_executable (Windows extension fallback)
+# ===========================================================================
+
+
+class TestResolveExecutable:
+    def _make_fake_exe(self, tmp_path, name: str, ext: str) -> str:
+        f = tmp_path / (name + ext)
+        f.write_text("fake", encoding="utf-8")
+        return str(f)
+
+    @patch("core.fleet_discovery.shutil.which", return_value="/usr/bin/tool")
+    def test_native_binary_found_via_which(self, mock_which):
+        assert _resolve_executable("tool") == "/usr/bin/tool"
+
+    @patch("core.fleet_discovery.shutil.which", return_value=None)
+    @patch("core.fleet_discovery.platform.system", return_value="Linux")
+    def test_non_windows_returns_none(self, mock_platform, mock_which):
+        assert _resolve_executable("any-tool") is None
+
+    @patch("core.fleet_discovery.shutil.which", return_value=None)
+    @patch("core.fleet_discovery.platform.system", return_value="Windows")
+    def test_cmd_wrapper_fallback(self, mock_platform, mock_which, tmp_path):
+        fake = self._make_fake_exe(tmp_path, "kiro", ".cmd")
+        with patch.dict(os.environ, {"PATH": str(tmp_path)}, clear=True):
+            assert _resolve_executable("kiro") == fake
+
+    @patch("core.fleet_discovery.shutil.which", return_value=None)
+    @patch("core.fleet_discovery.platform.system", return_value="Windows")
+    def test_bat_wrapper_fallback(self, mock_platform, mock_which, tmp_path):
+        fake = self._make_fake_exe(tmp_path, "cursor", ".bat")
+        with patch.dict(os.environ, {"PATH": str(tmp_path)}, clear=True):
+            assert _resolve_executable("cursor") == fake
+
+    @patch("core.fleet_discovery.shutil.which", return_value=None)
+    @patch("core.fleet_discovery.platform.system", return_value="Windows")
+    def test_ps1_fallback(self, mock_platform, mock_which, tmp_path):
+        fake = self._make_fake_exe(tmp_path, "delegator", ".ps1")
+        with patch.dict(os.environ, {"PATH": "/nonexistent"}, clear=True):
+            with patch("core.fleet_discovery.os.path.expandvars", return_value=str(tmp_path)):
+                assert _resolve_executable("delegator") == fake
+
+    @patch("core.fleet_discovery.shutil.which", return_value=None)
+    @patch("core.fleet_discovery.platform.system", return_value="Windows")
+    def test_no_match_returns_none(self, mock_platform, mock_which, tmp_path):
+        with patch.dict(os.environ, {"PATH": str(tmp_path)}, clear=True):
+            assert _resolve_executable("missing-tool") is None
 
 
 # ===========================================================================
@@ -127,6 +195,21 @@ class TestAgentRouter:
         assert router.route("frontend") == "antigravity"
         assert router.route("backend") == "codex"
         assert router.route("architect") == "claude"
+
+    def test_route_prefers_cursor_for_frontend_when_agy_unavailable(self):
+        available = {"cursor": {"available": True}, "claude": {"available": True}}
+        router = self._make_router(available=available)
+        assert router.route("frontend") == "cursor"
+
+    def test_route_prefers_kiro_for_fullstack(self):
+        available = {"kiro": {"available": True}, "claude": {"available": True}}
+        router = self._make_router(available=available)
+        assert router.route("fullstack") == "kiro"
+
+    def test_route_kiro_falls_back_when_unavailable(self):
+        available = {"claude": {"available": True}}
+        router = self._make_router(available=available)
+        assert router.route("fullstack") == "claude"
 
     def test_route_fallback_to_default(self):
         # Only codex available, but task prefers claude first

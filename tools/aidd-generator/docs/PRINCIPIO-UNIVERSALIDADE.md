@@ -265,6 +265,27 @@ Isso é uma **limitação estrutural do próprio design** (um arquivo JSON desac
 
 ---
 
-**Última atualização:** 05/09/2026  
+**P: Como funciona a telemetria auxiliar offline de tokens via `tiktoken`?**
+
+R: Para fornecer uma estimativa local determinística de volume de texto sem depender de APIs ou de alegações externas, o sistema calcula localmente a contagem de tokens de entrada e saída via `tiktoken` (tokenizer `cl100k_base`), expondo o campo auxiliar `tokens_estimativa_local`:
+
+```json
+"tokens_estimativa_local": {
+  "entrada": 120,
+  "saida": 85,
+  "total": 205,
+  "tokenizer": "cl100k_base",
+  "metodo": "tiktoken"
+}
+```
+
+**Regras de integridade e honestidade:**
+1. O campo `tokens_estimativa_local` é estritamente uma estimativa offline local e **não substitui** nem altera a classificação de faturamento.
+2. O campo canônico de governança `origem_medicao: "autodeclarado"` é **rigorosamente mantido** para respostas de agentes remotos em modo delegado, evitando qualquer alegação enganosa de "medição de billing real".
+3. Se `tiktoken` não estiver disponível no ambiente, o campo assume valor `None` sem interromper a pipeline.
+
+---
+
+**Última atualização:** 08/09/2026  
 **Próxima revisão:** Em cada auditoria de transparência
 

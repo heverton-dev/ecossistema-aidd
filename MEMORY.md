@@ -94,7 +94,7 @@ O **Ecossistema AIDD** é um monorepo agnóstico que integra 4 ferramentas compl
 > Bloco reescrito por `python scripts/atualizar_index_planos.py` toda vez que `docs/planos/` muda (via `.githooks/pre-commit`). Reflete o mesmo cálculo de status de `docs/planos/INDEX.md` — nunca edite manualmente, o script sobrescreve.
 
 <!-- AUTO:INICIATIVAS:START -->
-- ⏳ **Direcionamento Estrategico Anti Nih** — `docs/planos/a-fazer/02-direcionamento-estrategico-anti-nih/`
-- ⏳ **Evolucao Aidd Ops Fase Completa** — `docs/planos/a-fazer/03-evolucao-aidd-ops-fase-completa/`
 - 🔶 **Correcao Pos Auditoria Sem Maquiagem** — `docs/planos/fazendo/01-correcao-pos-auditoria-sem-maquiagem/`
+- 🔶 **Direcionamento Estrategico Anti Nih** — `docs/planos/fazendo/02-direcionamento-estrategico-anti-nih/`
+- 🔶 **Evolucao Aidd Ops Fase Completa** — `docs/planos/fazendo/03-evolucao-aidd-ops-fase-completa/`
 <!-- AUTO:INICIATIVAS:END -->

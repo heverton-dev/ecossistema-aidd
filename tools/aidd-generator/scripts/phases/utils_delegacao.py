@@ -17,9 +17,33 @@ import re
 import json
 import uuid
 import time
+import threading
 from pathlib import Path
 from datetime import datetime, timezone
 from typing import Optional, Dict, Any, Type
+
+try:
+    from watchdog.observers import Observer
+    from watchdog.events import FileSystemEventHandler
+    _WATCHDOG_DISPONIVEL = True
+except ImportError:
+    _WATCHDOG_DISPONIVEL = False
+
+if _WATCHDOG_DISPONIVEL:
+    class _ArquivoRespostaHandler(FileSystemEventHandler):
+        """Handler leve para acordar o loop de espera assim que o arquivo é modificado/criado."""
+        def __init__(self, nome_alvo: str, evento_sinal: threading.Event):
+            super().__init__()
+            self.nome_alvo = nome_alvo
+            self.evento_sinal = evento_sinal
+
+        def on_created(self, event):
+            if not event.is_directory and Path(event.src_path).name == self.nome_alvo:
+                self.evento_sinal.set()
+
+        def on_modified(self, event):
+            if not event.is_directory and Path(event.src_path).name == self.nome_alvo:
+                self.evento_sinal.set()
 
 try:
     from pydantic import BaseModel
@@ -30,6 +54,17 @@ try:
     import instructor
 except ImportError:
     instructor = None
+
+try:
+    from schemas.registry import (
+        validar_request as _validar_request,
+        validar_response as _validar_response,
+        SchemaValidationError,
+    )
+except ImportError:
+    _validar_request = None
+    _validar_response = None
+    SchemaValidationError = None
 
 
 # =============================================================================
@@ -253,14 +288,66 @@ def _validar_pydantic_com_retry(texto: str, response_model: Any, max_retries: in
 
 
 # =============================================================================
-# CONSTANTES
+# CONSTANTES E CONFIGURAÇÃO DE TIMEOUTS POR FASE
 # =============================================================================
 
 CACHE_DIR = Path(__file__).parent.parent / '.aidd' / 'cache'
 CACHE_DIR.mkdir(parents=True, exist_ok=True)
 
-TIMEOUT_DELEGACAO = 30  # segundos, aguardando resposta da ADE
-INTERVALO_POLLING = 0.5  # segundos entre verificações
+TIMEOUT_DELEGACAO = 30  # segundos legado / fallback geral
+TIMEOUT_PADRAO_DELEGACAO = 30
+INTERVALO_POLLING = 0.1  # compatibilidade legado: agora 100ms
+INTERVALO_POLLING_INICIAL = 0.1  # 100ms inicial
+INTERVALO_POLLING_MAX = 1.0      # teto de 1s para reduzir I/O de disco
+FATOR_BACKOFF_POLLING = 1.5      # escalonamento progressivo
+
+TIMEOUTS_POR_FASE = {
+    # Fases de análise, design e especificação
+    "phase_01": 30,
+    "phase_02": 45,
+    "phase_03": 45,
+    "phase_04": 60,
+    "phase_05": 60,
+    "phase_06": 60,
+    # Fases de testes e implementação pesada de código
+    "phase_07": 120,
+    "phase_08": 180,
+    "01_analisador_ideia": 30,
+    "02_analisador": 45,
+    "03_designer": 45,
+    "04_especificador": 60,
+    "05_arquiteto": 60,
+    "06_planejador": 60,
+    "07_gerador_testes": 120,
+    "08_implementador": 180,
+}
+
+
+def obter_timeout_por_fase(fase: Optional[str] = None, timeout_custom: Optional[int] = None) -> int:
+    """Retorna timeout em segundos configurável por fase, suportando env vars e overrides."""
+    if timeout_custom is not None:
+        return timeout_custom
+
+    env_global = os.environ.get("AIDD_TIMEOUT_DELEGACAO")
+    if env_global:
+        try:
+            return int(env_global)
+        except ValueError:
+            pass
+
+    if fase:
+        env_fase_key = f"AIDD_TIMEOUT_{fase.upper().replace('-', '_')}"
+        env_fase = os.environ.get(env_fase_key)
+        if env_fase:
+            try:
+                return int(env_fase)
+            except ValueError:
+                pass
+        fase_norm = fase.lower().strip()
+        if fase_norm in TIMEOUTS_POR_FASE:
+            return TIMEOUTS_POR_FASE[fase_norm]
+
+    return TIMEOUT_PADRAO_DELEGACAO
 
 
 # =============================================================================
@@ -279,7 +366,11 @@ class RequisicaoLLMDelegada:
         self.timestamp_criado = datetime.now(timezone.utc).isoformat()
 
     def escrever_arquivo(self) -> Path:
-        """Escreve requisição em arquivo JSON no cache."""
+        """Escreve requisição em arquivo JSON no cache.
+
+        Valida o payload contra schemas/llm_request_v1.json antes de escrever
+        (quando schemas disponíveis).
+        """
         caminho = CACHE_DIR / f"_llm_request_{self.id}.json"
         dados = {
             "id": self.id,
@@ -289,34 +380,150 @@ class RequisicaoLLMDelegada:
             "contexto": self.contexto,
             "prompt": self.prompt,
         }
+        if _validar_request is not None:
+            _validar_request(dados)
         with open(caminho, 'w', encoding='utf-8') as f:
             json.dump(dados, f, indent=2, ensure_ascii=False)
         return caminho
 
     @staticmethod
-    def aguardar_resposta(id_requisicao: str, timeout: int = TIMEOUT_DELEGACAO) -> Optional[Dict[str, Any]]:
-        """Aguarda e lê resposta da ADE no arquivo JSON correspondente."""
+    def aguardar_resposta(
+        id_requisicao: str,
+        timeout: Optional[int] = None,
+        fase: Optional[str] = None,
+        intervalo_inicial: float = INTERVALO_POLLING_INICIAL,
+        intervalo_max: float = INTERVALO_POLLING_MAX,
+        fator_backoff: float = FATOR_BACKOFF_POLLING,
+    ) -> Optional[Dict[str, Any]]:
+        """Aguarda e lê resposta da ADE com polling adaptativo event-driven.
+
+        - Inicia em 100ms (0.1s) e escala progressivamente via backoff até intervalo_max.
+        - Se watchdog estiver disponível, usa file watcher event-driven para reação imediata.
+        - Valida o payload contra schemas/llm_response_v1.json quando disponível.
+        """
+        timeout_efetivo = timeout if timeout is not None else obter_timeout_por_fase(fase)
         caminho_resposta = CACHE_DIR / f"_llm_response_{id_requisicao}.json"
+        nome_alvo = caminho_resposta.name
+
+        evento_sinal = threading.Event()
+        observer = None
+
+        if _WATCHDOG_DISPONIVEL:
+            try:
+                observer = Observer()
+                handler = _ArquivoRespostaHandler(nome_alvo, evento_sinal)
+                observer.schedule(handler, str(CACHE_DIR), recursive=False)
+                observer.start()
+            except Exception:
+                observer = None
+
         inicio = time.time()
+        intervalo = intervalo_inicial
 
-        while time.time() - inicio < timeout:
-            if caminho_resposta.exists():
+        try:
+            while time.time() - inicio < timeout_efetivo:
+                if caminho_resposta.exists():
+                    try:
+                        with open(caminho_resposta, 'r', encoding='utf-8') as f:
+                            dados = json.load(f)
+
+                        # Validação básica (legado)
+                        if "conteudo" not in dados or "tokens_consumidos" not in dados:
+                            pass
+                        else:
+                            # Validação JSON Schema (quando disponível)
+                            if _validar_response is not None:
+                                try:
+                                    _validar_response(dados)
+                                except Exception:
+                                    pass
+                            return dados
+
+                    except (json.JSONDecodeError, IOError):
+                        # Arquivo ainda sendo gravado ou com lock temporário
+                        pass
+
+                tempo_restante = timeout_efetivo - (time.time() - inicio)
+                if tempo_restante <= 0:
+                    break
+
+                tempo_espera = min(intervalo, tempo_restante)
+
+                if observer is not None:
+                    # Event-driven: acorda instantaneamente se arquivo for criado/modificado
+                    evento_sinal.wait(timeout=tempo_espera)
+                    evento_sinal.clear()
+                else:
+                    time.sleep(tempo_espera)
+
+                intervalo = min(intervalo * fator_backoff, intervalo_max)
+
+            # Timeout
+            return None
+
+        finally:
+            if observer is not None:
                 try:
-                    with open(caminho_resposta, 'r', encoding='utf-8') as f:
-                        dados = json.load(f)
-
-                    # Validação básica
-                    if "conteudo" in dados and "tokens_consumidos" in dados:
-                        return dados
-
-                except (json.JSONDecodeError, IOError):
-                    # Arquivo não está pronto ainda, aguardar mais
+                    observer.stop()
+                    observer.join(timeout=0.2)
+                except Exception:
                     pass
 
-            time.sleep(INTERVALO_POLLING)
 
-        # Timeout
+# =============================================================================
+# TELEMETRIA AUXILIAR DE TOKENS (tiktoken, offline)
+# =============================================================================
+
+_TOKENIZADOR_TIKTOKEN = None
+
+
+def _obter_tokenizador_tiktoken():
+    """Carrega o tokenizador cl100k_base do tiktoken com cache (offline).
+
+    A telemetria é auxiliar: nunca pode derrubar a pipeline, então qualquer
+    falha de import/encoding vira retorno None permanente (flag False).
+    """
+    global _TOKENIZADOR_TIKTOKEN
+    if _TOKENIZADOR_TIKTOKEN is None:
+        try:
+            import tiktoken
+            _TOKENIZADOR_TIKTOKEN = tiktoken.get_encoding("cl100k_base")
+        except Exception:
+            _TOKENIZADOR_TIKTOKEN = False
+    return _TOKENIZADOR_TIKTOKEN or None
+
+
+def estimar_tokens_tiktoken(prompt: str, contexto: str, conteudo: Optional[str]) -> Optional[Dict[str, Any]]:
+    """Estima tokens de entrada (contexto+prompt) e saída (conteudo) via tiktoken.
+
+    Telemetria auxiliar, determinística e 100% offline. NÃO é medição de billing:
+    o rótulo canônico de origem de medição continua sendo o campo
+    `origem_medicao` (autodeclarado no modo delegado; medido_api/indisponivel
+    no headless conforme o provider reporte).
+
+    Returns:
+        {
+            "entrada": int,
+            "saida": int,
+            "total": int,
+            "tokenizer": "cl100k_base",
+            "metodo": "tiktoken"
+        }
+        ou None se tiktoken indisponível.
+    """
+    tokenizador = _obter_tokenizador_tiktoken()
+    if tokenizador is None:
         return None
+    entrada = f"{contexto} {prompt}".strip() if contexto else (prompt or "")
+    tokens_entrada = len(tokenizador.encode(entrada)) if entrada else 0
+    tokens_saida = len(tokenizador.encode(conteudo)) if conteudo else 0
+    return {
+        "entrada": tokens_entrada,
+        "saida": tokens_saida,
+        "total": tokens_entrada + tokens_saida,
+        "tokenizer": "cl100k_base",
+        "metodo": "tiktoken",
+    }
 
 
 # =============================================================================
@@ -327,19 +534,19 @@ def solicitar_llm_modo_delegado(
     prompt: str,
     contexto: str,
     fase: str,
-    timeout: int = TIMEOUT_DELEGACAO,
+    timeout: Optional[int] = None,
     modelo: Optional[str] = None
 ) -> Optional[Dict[str, Any]]:
     """
     Modo Delegado (default, universal):
     1. Escreve requisição em arquivo
-    2. Aguarda resposta da ADE (Claude Code, Codex, Gemini CLI, etc.)
+    2. Aguarda resposta da ADE (Claude Code, Codex, Gemini CLI, etc.) com polling adaptativo
     3. Retorna resposta estruturada
 
     Não requer nenhuma credencial nova — usa a ADE já ativa.
     Se ADE não responder em tempo:
-    - Se headless estiver configurado (LLM_MODEL no env), faz fallback automático.
-    - Se headless não estiver configurado, retorna None (timeout com falha honesta).
+    - Se headless estiver configurado (LLM_MODEL no env ou modelo explícito), faz fallback automático.
+    - Se headless não estiver configurado ou falhar, retorna None (timeout com falha honesta).
 
     Returns:
         {
@@ -348,10 +555,15 @@ def solicitar_llm_modo_delegado(
             "tokens_consumidos": 1234,
             "origem_medicao": "autodeclarado",
             "modelo_usado": "claude-opus-5",
-            "timestamp_resposta": "2026-08-30T10:30:00Z"
+            "timestamp_resposta": "2026-08-30T10:30:00Z",
+            "tokens_estimativa_local": {
+                "entrada": 100, "saida": 50, "total": 150,
+                "tokenizer": "cl100k_base", "metodo": "tiktoken"
+            }
         }
-        ou None se timeout sem headless configurado
+        ou None se timeout sem headless configurado.
     """
+    timeout_efetivo = obter_timeout_por_fase(fase, timeout)
     req = RequisicaoLLMDelegada(
         prompt=prompt,
         contexto=contexto,
@@ -363,25 +575,44 @@ def solicitar_llm_modo_delegado(
     caminho_req = req.escrever_arquivo()
     print(f"✓ Requisição delegada criada: {caminho_req.name}")
     print(f"  ID: {req.id}")
-    print(f"  Aguardando resposta da ADE... (timeout {timeout}s)")
+    print(f"  Aguardando resposta da ADE... (timeout {timeout_efetivo}s)")
 
     # Aguardar resposta
-    resposta = RequisicaoLLMDelegada.aguardar_resposta(req.id, timeout=timeout)
+    resposta = RequisicaoLLMDelegada.aguardar_resposta(req.id, timeout=timeout_efetivo, fase=fase)
 
     if resposta is None:
         print(f"✗ Timeout ao aguardar resposta delegada (ID: {req.id})")
         if modelo or os.environ.get('LLM_MODEL'):
             print("⚠️  Fallback automático: caindo para Modo Headless após timeout do modo delegado...")
-            return solicitar_llm_modo_headless(prompt, contexto, fase, modelo=modelo)
+            try:
+                return solicitar_llm_modo_headless(prompt, contexto, fase, modelo=modelo)
+            except LLMNaoConfiguradoException as e:
+                print(f"⚠️  Modo Headless não configurado para fallback: {e}")
+                return None
+            except Exception as e:
+                print(f"⚠️  Falha no Modo Headless durante fallback: {e}")
+                return None
         return None
 
     # Garantir que modo delegado sempre rotule como autodeclarado,
     # sobrescrevendo qualquer valor que o ADE externo tenha escrito
     resposta['origem_medicao'] = 'autodeclarado'
 
+    # Telemetria auxiliar offline (tiktoken): estimativa local de entrada/saída.
+    # Não substitui tokens_consumidos nem origem_medicao — é apenas referência
+    # local para o usuário estimar custo antes/depois, sem depender do ADE.
+    resposta['tokens_estimativa_local'] = estimar_tokens_tiktoken(
+        prompt, contexto, resposta.get('conteudo')
+    )
+
     print(f"✓ Resposta recebida:")
     print(f"  Modelo: {resposta.get('modelo_usado', 'desconhecido')}")
     print(f"  Tokens: {resposta.get('tokens_consumidos', '?')} (origem: {resposta['origem_medicao']})")
+    est_local = resposta.get('tokens_estimativa_local')
+    if est_local:
+        print(f"  Estimativa local: {est_local['entrada']} entrada + {est_local['saida']} saída = {est_local['total']} tokens (tiktoken, offline)")
+    else:
+        print(f"  Estimativa local: indisponível (tiktoken não instalado)")
 
     return resposta
 
@@ -414,9 +645,15 @@ def solicitar_llm_modo_headless(
             "tokens_consumidos": 1234,
             "origem_medicao": "medido_api",
             "modelo_usado": "claude-opus-5",
-            "timestamp_resposta": "2026-08-30T10:30:00Z"
+            "timestamp_resposta": "2026-08-30T10:30:00Z",
+            "tokens_estimativa_local": {
+                "entrada": 100, "saida": 50, "total": 150,
+                "tokenizer": "cl100k_base", "metodo": "tiktoken"
+            }
         }
-        ou None se erro
+        ou None se erro.
+        tokens_estimativa_local é telemetria auxiliar offline (tiktoken);
+        não substitui tokens_consumidos nem origem_medicao (medido_api/indisponivel).
     """
     try:
         import litellm
@@ -474,6 +711,7 @@ def solicitar_llm_modo_headless(
                 "origem_medicao": origem_medicao,
                 "modelo_usado": modelo,
                 "timestamp_resposta": datetime.now(timezone.utc).isoformat(),
+                "tokens_estimativa_local": estimar_tokens_tiktoken(prompt, contexto, conteudo),
             }
 
             print(f"✓ Resposta obtida via {modelo}")
@@ -481,6 +719,11 @@ def solicitar_llm_modo_headless(
                 print(f"  Tokens consumidos: {tokens} (origem: {origem_medicao})")
             else:
                 print(f"  Tokens: não disponível (origem: {origem_medicao})")
+            est_local = resultado.get('tokens_estimativa_local')
+            if est_local:
+                print(f"  Estimativa local: {est_local['entrada']} entrada + {est_local['saida']} saída = {est_local['total']} tokens (tiktoken, offline)")
+            else:
+                print(f"  Estimativa local: indisponível (tiktoken não instalado)")
 
             return resultado
 
@@ -617,7 +860,7 @@ def solicitar_llm(
     fase: str,
     modo: Optional[str] = None,
     modelo: Optional[str] = None,
-    timeout_delegacao: int = TIMEOUT_DELEGACAO
+    timeout_delegacao: Optional[int] = None
 ) -> Optional[Dict[str, Any]]:
     """
     Interface unificada — escolhe automaticamente entre Delegado e Headless.
