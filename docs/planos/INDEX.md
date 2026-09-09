@@ -6,6 +6,7 @@
 
 | Iniciativa | Local |
 |---|---|
+| Correcao Arquitetura Limpa | `feitos/correcao-arquitetura-limpa/` |
 | Evolucao Notas Auditoria | `feitos/evolucao-notas-auditoria/` |
 | Integracao Aidd Ops | `feitos/integracao-aidd-ops/` |
 | Correcao Riscos Ecossistema Aidd | `feitos/PLANO-CORRECAO-RISCOS-ECOSSISTEMA-AIDD.md` |
@@ -19,11 +20,10 @@
 
 | Iniciativa | Local |
 |---|---|
-| Correcao Codigo Limpo | `fazendo/correcao-codigo-limpo/` |
 | Correcao Pos Auditoria Sem Maquiagem | `fazendo/01-correcao-pos-auditoria-sem-maquiagem/` |
 | Direcionamento Estrategico Anti Nih | `fazendo/02-direcionamento-estrategico-anti-nih/` |
 | Evolucao Aidd Ops Fase Completa | `fazendo/03-evolucao-aidd-ops-fase-completa/` |
-| Correcao Arquitetura Limpa | `fazendo/correcao-arquitetura-limpa/` |
+| Correcao Codigo Limpo | `fazendo/correcao-codigo-limpo/` |
 
 ---
 

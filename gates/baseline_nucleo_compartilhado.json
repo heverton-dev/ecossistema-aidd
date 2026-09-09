@@ -1,5 +1,5 @@
 {
-  "descricao": "Baseline de sincronismo entre pares de diretorios de tools/aidd-master/ e tools/aidd-enterprise/ (R3 do PLANO-CORRECAO-RISCOS-ECOSSISTEMA-AIDD.md, ampliado pelo item 2 de docs/planos/fazendo/correcao-arquitetura-limpa/ para cobrir scripts/, scripts/gates/, templates/core/ e templates/v2/ alem de src/core/). Mantidas como copias independentes por decisao (sem acoplamento em runtime entre as duas ferramentas) - este arquivo documenta o que DEVE permanecer identico e o que diverge de proposito, por par de diretorios (ver PARES em gates/G_DRIFT_NUCLEO_COMPARTILHADO.py). G_DRIFT_NUCLEO_COMPARTILHADO.py falha se um par de arquivo marcado como esperado_identico=true divergir sem este baseline ser atualizado.",
+  "descricao": "Baseline de sincronismo entre pares de diretorios (R3 do PLANO-CORRECAO-RISCOS-ECOSSISTEMA-AIDD.md, ampliado pelo item 2 de docs/planos/fazendo/correcao-arquitetura-limpa/ para cobrir scripts/, scripts/gates/, templates/core/ e templates/v2/ alem de src/core/, e pelo item 5 para cobrir os pares intra-ferramenta scripts/gates/ vs templates/gates/ dentro de cada uma de aidd-enterprise e aidd-master). Mantidas como copias independentes por decisao (sem acoplamento em runtime entre ferramentas, nem entre scripts/ e templates/ de uma mesma ferramenta) - este arquivo documenta o que DEVE permanecer identico e o que diverge de proposito, por par de diretorios (ver PARES em gates/G_DRIFT_NUCLEO_COMPARTILHADO.py). G_DRIFT_NUCLEO_COMPARTILHADO.py falha se um par de arquivo marcado como esperado_identico=true divergir sem este baseline ser atualizado.",
   "gerado_em": "2026-09-08",
   "arquivos": {
     "src/core": {
@@ -344,6 +344,74 @@
         "motivo": null
       },
       "webhooks.py": {
+        "esperado_identico": true,
+        "motivo": null
+      }
+    },
+    "aidd-enterprise/scripts-gates-vs-templates-gates": {
+      "G_CHAOS.py": {
+        "esperado_identico": true,
+        "motivo": null
+      },
+      "G_CONTRACTS.py": {
+        "esperado_identico": true,
+        "motivo": null
+      },
+      "G_ESTRUTURA.py": {
+        "esperado_identico": true,
+        "motivo": null
+      },
+      "G_HARNESS_COMPAT.py": {
+        "esperado_identico": true,
+        "motivo": null
+      },
+      "G_QUALIDADE.py": {
+        "esperado_identico": false,
+        "motivo": "A versao viva (scripts/gates) roda Fuzzing Continuo de APIs (executar_fuzzing_continuo, via core.fuzzing.ContinuousAPIFuzzer) e Testes de Mutacao (AST) via mutmut, camadas ausentes por inteiro na versao entregue a projetos novos (templates/gates, 85 linhas vs 146 linhas) - confirmado por diff real em 2026-09-08."
+      },
+      "G_SEGREDOS.py": {
+        "esperado_identico": true,
+        "motivo": null
+      },
+      "G_SEGURANCA.py": {
+        "esperado_identico": false,
+        "motivo": "A versao viva (scripts/gates, 401 linhas, 8 camadas) tem a Camada 8: CVE Dependency Audit via pip-audit que a versao entregue a projetos novos (templates/gates, 322 linhas, 7 camadas) nao tem - confirmado por diff real em 2026-09-08. Decisao sobre portar essa camada para o template fica pendente, registrada em separado (nao decidida por este item)."
+      },
+      "G_TESTES.py": {
+        "esperado_identico": true,
+        "motivo": null
+      }
+    },
+    "aidd-master/scripts-gates-vs-templates-gates": {
+      "G_CHAOS.py": {
+        "esperado_identico": true,
+        "motivo": null
+      },
+      "G_CONTRACTS.py": {
+        "esperado_identico": true,
+        "motivo": null
+      },
+      "G_ESTRUTURA.py": {
+        "esperado_identico": true,
+        "motivo": null
+      },
+      "G_HARNESS_COMPAT.py": {
+        "esperado_identico": true,
+        "motivo": null
+      },
+      "G_QUALIDADE.py": {
+        "esperado_identico": false,
+        "motivo": "A versao viva (scripts/gates) roda Fuzzing Continuo de APIs (executar_fuzzing_continuo, via core.fuzzing.ContinuousAPIFuzzer) e Testes de Mutacao (AST) via mutmut, camadas ausentes por inteiro na versao entregue a projetos novos (templates/gates, 85 linhas vs 146 linhas) - confirmado por diff real em 2026-09-08. Mesma divergencia observada em aidd-enterprise (diff identico entre as duas ferramentas)."
+      },
+      "G_SEGREDOS.py": {
+        "esperado_identico": true,
+        "motivo": null
+      },
+      "G_SEGURANCA.py": {
+        "esperado_identico": false,
+        "motivo": "A versao viva (scripts/gates, 401 linhas, 8 camadas) tem a Camada 8: CVE Dependency Audit via pip-audit que a versao entregue a projetos novos (templates/gates, 322 linhas, 7 camadas) nao tem - confirmado por diff real em 2026-09-08 (diff identico ao observado em aidd-enterprise). Decisao sobre portar essa camada para o template fica pendente, registrada em separado (nao decidida por este item)."
+      },
+      "G_TESTES.py": {
         "esperado_identico": true,
         "motivo": null
       }

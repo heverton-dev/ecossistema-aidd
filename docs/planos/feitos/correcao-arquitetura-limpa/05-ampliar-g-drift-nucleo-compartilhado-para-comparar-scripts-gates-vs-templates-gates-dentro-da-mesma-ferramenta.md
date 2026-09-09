@@ -2,7 +2,7 @@
 
 > **Escopo:** Entra: registrar no baseline (`gates/baseline_nucleo_compartilhado.json`) um novo par **intra-ferramenta** — `scripts/gates/` (versão viva que protege este monorepo) comparada com `templates/gates/` (versão entregue a projetos novos), dentro de `aidd-enterprise` e dentro de `aidd-master`, separadamente — para que `G_DRIFT_NUCLEO_COMPARTILHADO.py` passe a monitorar essa divergência. Não entra: unificar fisicamente as duas cópias numa fonte só (violaria a Regra Fixa #5 do `00-PROCESSO-E-DECISOES.md` — sem acoplamento de runtime entre ferramentas); não entra comparar `templates/core` vs `templates/v2` (já decidido fora de escopo no item 2); não entra decidir se a camada 8 (CVE audit) deve ser portada para o template — isso é decisão de produto, não deste item.
 
-> **Status:** ⏳ Rascunho gerado, aguardando aprovação
+> **Status:** ✅ Concluído (auditado por reprodução real em 2026-09-08 — `python gates/G_DRIFT_NUCLEO_COMPARTILHADO.py` executado de fato, aprovado)
 
 ---
 
@@ -27,6 +27,24 @@
 - `python gates/G_DRIFT_NUCLEO_COMPARTILHADO.py` rodado de verdade e aprovado, refletindo divergências reais (não mascaradas).
 - Nenhuma correção de acoplamento de runtime entre ferramentas introduzida (Regra Fixa #5 mantida).
 - Nenhum par marcado como idêntico por suposição — todo veredito vem de hash/diff real.
+
+## Resultado da execução (2026-09-08)
+
+- **Diff real confirmado nas duas ferramentas** (não só `aidd-enterprise`, também `aidd-master` — item 1 da Definição de Pronto): comparando todos os arquivos `.py` comuns entre `scripts/gates/` e `templates/gates/`, dentro de cada ferramenta:
+  - Idênticos (8 arquivos, ambas as ferramentas): `G_CHAOS.py`, `G_CONTRACTS.py`, `G_ESTRUTURA.py`, `G_HARNESS_COMPAT.py`, `G_SEGREDOS.py`, `G_TESTES.py`.
+  - Divergentes (2 arquivos, ambas as ferramentas, com o mesmo diff exato em `aidd-enterprise` e `aidd-master`):
+    - `G_SEGURANCA.py`: versão viva (`scripts/gates`, 401 linhas, 8 camadas) tem a Camada 8 (CVE Dependency Audit via pip-audit) ausente na versão de template (`templates/gates`, 322 linhas, 7 camadas).
+    - `G_QUALIDADE.py`: versão viva (`scripts/gates`, 146 linhas) roda Fuzzing Contínuo de APIs e Testes de Mutação (AST) via mutmut, ausentes por inteiro na versão de template (`templates/gates`, 85 linhas).
+  - `G_ARQUITETURA.py`, `G_INJECT.py` e `G_PERFORMANCE.py` existem só em `scripts/gates/` (sem par em `templates/gates/`) nas duas ferramentas — não entram na comparação por não serem arquivo comum, mesma regra já aplicada aos demais pares do gate.
+- Dois pares intra-ferramenta novos adicionados a `PARES` em `gates/G_DRIFT_NUCLEO_COMPARTILHADO.py`: `aidd-enterprise/scripts-gates-vs-templates-gates` e `aidd-master/scripts-gates-vs-templates-gates`. Pares cross-tool existentes não foram alterados.
+- `gates/baseline_nucleo_compartilhado.json` atualizado via `--atualizar-baseline` e os motivos placeholder ("REVISAR: ...") substituídos pelos motivos reais descritos acima, para os 4 registros divergentes (`G_SEGURANCA.py` e `G_QUALIDADE.py`, em cada uma das duas ferramentas).
+- `python gates/G_DRIFT_NUCLEO_COMPARTILHADO.py` (sem flag) executado de verdade: **APROVADO (100% OK)**, com as 4 divergências reais listadas como `[INFO] ... divergencia conhecida e documentada`, nenhuma mascarada.
+- Teste unitário pré-existente (`tools/aidd-master/tests/unit/test_drift_gate_blind_spot.py`) rodado após a mudança: 5 passed, sem regressão.
+- Nenhum acoplamento de runtime introduzido entre `aidd-master`/`aidd-enterprise` nem entre `scripts/` e `templates/` de uma mesma ferramenta — apenas leitura de arquivos para hash, exatamente como os pares cross-tool já existentes fazem (Regra Fixa #5 mantida).
+
+### Pendência separada para decisão humana (fora de escopo deste item)
+
+A Camada 8 (CVE Dependency Audit via pip-audit) existe apenas na versão viva de `G_SEGURANCA.py`, nas duas ferramentas. Este item **não decide** se essa camada deve ser portada para `templates/gates/G_SEGURANCA.py` (para que projetos novos gerados a partir do template também tenham essa auditoria) ou se a divergência deve permanecer como está — essa decisão de produto fica pendente, para o usuário resolver separadamente. O mesmo vale, em menor grau, para o Fuzzing Contínuo e os Testes de Mutação ausentes em `G_QUALIDADE.py` do template.
 
 ## Prompt de Execucao (PT-BR)
 

@@ -3,16 +3,24 @@
 =============================================================================
 ECOSSISTEMA AIDD — QUALITY GATE: G_DRIFT_NUCLEO_COMPARTILHADO
 =============================================================================
-Detecta divergência silenciosa entre pares de diretórios de
-tools/aidd-master/ e tools/aidd-enterprise/ que nasceram da mesma linhagem
-e compartilham arquivos byte-a-byte idênticos (R3 do
-PLANO-CORRECAO-RISCOS-ECOSSISTEMA-AIDD.md, ampliado pelo item 2 de
-docs/planos/fazendo/correcao-arquitetura-limpa/).
+Detecta divergência silenciosa entre pares de diretórios que nasceram da
+mesma linhagem e compartilham arquivos byte-a-byte idênticos (R3 do
+PLANO-CORRECAO-RISCOS-ECOSSISTEMA-AIDD.md, ampliado pelo item 2 e pelo
+item 5 de docs/planos/fazendo/correcao-arquitetura-limpa/).
 
-Pares cobertos hoje (ver PARES abaixo): src/core, scripts, scripts/gates,
-templates/core e templates/v2 — mas são mantidas como cópias independentes
-por decisão explícita (nenhum acoplamento de runtime entre as duas
-ferramentas, preservando a independência de cada uma).
+Dois tipos de par sao cobertos hoje (ver PARES abaixo):
+- Cross-tool: src/core, scripts, scripts/gates, templates/core e
+  templates/v2 — mesma subpasta relativa comparada entre
+  tools/aidd-master/ e tools/aidd-enterprise/.
+- Intra-tool (item 5): scripts/gates/ vs templates/gates/ dentro da MESMA
+  ferramenta (aidd-enterprise e aidd-master, separadamente) — a versao
+  viva que protege este monorepo comparada com a versao entregue a
+  projetos novos gerados a partir do template.
+
+Em ambos os casos as pastas sao mantidas como copias independentes por
+decisao explicita (nenhum acoplamento de runtime entre ferramentas nem
+entre scripts/ e templates/ de uma mesma ferramenta, preservando a
+independencia de cada uma).
 
 Esse desenho tem um custo: se alguém corrige um bug em uma cópia e esquece
 a outra, nada acusava isso antes deste gate. A correção NÃO é criar uma
@@ -61,6 +69,20 @@ PARES = [
     ("scripts/gates", _tools("aidd-master", "scripts", "gates"), _tools("aidd-enterprise", "scripts", "gates")),
     ("templates/core", _tools("aidd-master", "templates", "core"), _tools("aidd-enterprise", "templates", "core")),
     ("templates/v2", _tools("aidd-master", "templates", "v2"), _tools("aidd-enterprise", "templates", "v2")),
+    # Pares intra-ferramenta (item 5): scripts/gates vs templates/gates DENTRO
+    # da mesma ferramenta — nao cruza aidd-master com aidd-enterprise, compara
+    # a versao viva (scripts/gates) com a versao entregue a projetos novos
+    # (templates/gates) de uma unica ferramenta por vez.
+    (
+        "aidd-enterprise/scripts-gates-vs-templates-gates",
+        _tools("aidd-enterprise", "scripts", "gates"),
+        _tools("aidd-enterprise", "templates", "gates"),
+    ),
+    (
+        "aidd-master/scripts-gates-vs-templates-gates",
+        _tools("aidd-master", "scripts", "gates"),
+        _tools("aidd-master", "templates", "gates"),
+    ),
 ]
 
 # Mantidos por compatibilidade: par historico (o unico que existia antes do item 2),
@@ -196,7 +218,7 @@ def _checar_par(nome_par, dir_a, dir_b, baseline_par):
         elif entrada.get("esperado_identico") is False:
             print(f"[INFO] {nome_par}/{nome}: divergencia conhecida e documentada — {entrada.get('motivo')}")
         elif entrada.get("esperado_identico") is True and identico_agora:
-            print(f"[OK] {nome_par}/{nome}: sincronizado com aidd-enterprise.")
+            print(f"[OK] {nome_par}/{nome}: sincronizado (par de diretorios idênticos).")
 
     for nome, identico_agora in nao_catalogados:
         status = "identico" if identico_agora else "DIVERGENTE"
@@ -211,7 +233,7 @@ def _checar_par(nome_par, dir_a, dir_b, baseline_par):
 
 def checar_drift():
     print("=" * 70)
-    print(" [GATE] G_DRIFT_NUCLEO_COMPARTILHADO — aidd-master vs aidd-enterprise")
+    print(" [GATE] G_DRIFT_NUCLEO_COMPARTILHADO — cross-tool e intra-tool")
     print("=" * 70)
 
     baseline = _carregar_baseline().get("arquivos", {})
