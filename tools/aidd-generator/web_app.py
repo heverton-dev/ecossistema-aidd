@@ -26,7 +26,7 @@ if __name__ == '__main__':
         time.sleep(1.2)
         try:
             webbrowser.open(url)
-        except Exception:
+        except webbrowser.Error:
             pass
 
     # Dispara abertura automática do navegador em background

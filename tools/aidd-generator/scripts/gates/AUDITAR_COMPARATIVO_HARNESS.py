@@ -60,7 +60,7 @@ def _git_timestamps(pasta: Path):
         ts_inicio = linhas[0]
         ts_fim = linhas[-1]
         return ts_inicio, ts_fim, len(linhas)
-    except Exception:
+    except (subprocess.SubprocessError, OSError):
         return None, None, 0
 
 
@@ -82,7 +82,7 @@ def _verificar_symlink_agents(pasta: Path):
     symlink_real = claude_md.is_symlink()
     try:
         consistente = agents.read_text(encoding='utf-8') == claude_md.read_text(encoding='utf-8')
-    except Exception:
+    except OSError:
         consistente = False
 
     return {'presente': True, 'symlink_real': symlink_real, 'conteudo_consistente': consistente}

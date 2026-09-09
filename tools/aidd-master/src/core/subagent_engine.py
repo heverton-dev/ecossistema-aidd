@@ -425,7 +425,7 @@ try:
         )
     files_created.append(test_path)
 
-except Exception as e:
+except OSError as e:
     errors.append(str(e))
 
 # Write result manifest
@@ -507,7 +507,7 @@ class SubagentEngine:
                     duration_ms=(time.time() - t0) * 1000,
                     exit_code=-1,
                 )
-            except Exception as e:
+            except (OSError, subprocess.SubprocessError) as e:
                 return SubagentResult(
                     module_name=module_name,
                     status="error",
@@ -538,7 +538,7 @@ class SubagentEngine:
                 files_created=data.get("files_created", []),
                 errors=data.get("errors", []),
             )
-        except Exception as e:
+        except (OSError, json.JSONDecodeError) as e:
             return SubagentResult(
                 module_name=module_name,
                 status="error",

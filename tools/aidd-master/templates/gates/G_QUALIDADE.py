@@ -52,7 +52,7 @@ def verificar(target_dir: str = "."):
                                         erros.append(f"Stub vazio 'pass' detectado em {os.path.relpath(f_path, target_dir)} -> {node.name}()")
                                     elif len(node.body) == 1 and isinstance(node.body[0], ast.Expr) and isinstance(node.body[0].value, ast.Constant) and node.body[0].value.value is Ellipsis:
                                         erros.append(f"Stub vazio '...' detectado em {os.path.relpath(f_path, target_dir)} -> {node.name}()")
-                    except Exception as e:
+                    except (SyntaxError, OSError) as e:
                         erros.append(f"Falha ao inspecionar AST em {f_path}: {e}")
 
     # 3. Linter de Impeccable UI & Acessibilidade WCAG 2.1

@@ -516,7 +516,7 @@ class ValidadorGatesPhase8:
             passou = resultado.returncode == 0
             return Gate('I4_cli_executa', 'Validar CLI executa smoke-test', passou,
                        f"main.py --help retornou exit code {resultado.returncode}")
-        except Exception as e:
+        except (subprocess.SubprocessError, OSError) as e:
             return Gate('I4_cli_executa', 'Validar CLI executa smoke-test', False, f"Erro ao rodar: {e}")
 
     @staticmethod
@@ -810,34 +810,32 @@ class ImplementadorFase8:
         resultado_integracao = self._rodar_pytest(caminho_relativo=nome_teste)
         return True, resultado_integracao
 
-    def _implementar_script_com_verificacao(self, ideia: str, stack: Dict, script_spec: Dict) -> Optional[Dict]:
-        """Implementa 1 script, roda o teste real, corrige até passar (ou esgota tentativas)"""
-        nome_raw = script_spec.get('nome', 'script.py')
-        nome_base = Path(str(nome_raw).replace('\\', '/')).name
-        if nome_base.endswith('.py'):
-            modulo = nome_base[:-3]
-            caminho_sugerido = nome_base
-        else:
-            modulo = nome_base
-            caminho_sugerido = f"{nome_base}.py"
-        caminho_teste_sugerido = f"test_{caminho_sugerido}"
-
-        # Retomada inteligente: se script e teste já existem em disco e passam no pytest
+    def _reaproveitar_implementacao_existente(self, caminho_sugerido: str, caminho_teste_sugerido: str) -> Optional[Dict]:
+        """Se script e teste já existem em disco e passam no pytest, reaproveita sem chamar LLM."""
         arq_codigo = self.pasta_projeto / 'src' / caminho_sugerido
         arq_teste = self.pasta_projeto / 'tests' / caminho_teste_sugerido
-        if arq_codigo.exists() and arq_teste.exists():
-            resultado_existente = self._rodar_pytest(caminho_relativo=caminho_teste_sugerido)
-            if resultado_existente['passaram'] > 0 and resultado_existente['falharam'] == 0 and resultado_existente['erros'] == 0 and not resultado_existente['erro_coleta']:
-                print(f"   ✓ {caminho_sugerido} já implementado e com testes passando ({resultado_existente['passaram']} testes)")
-                return {
-                    'codigo': arq_codigo.read_text(encoding='utf-8'),
-                    'teste': arq_teste.read_text(encoding='utf-8'),
-                    'caminho_relativo': caminho_sugerido,
-                    'caminho_teste': caminho_teste_sugerido,
-                    'tentativas': 1,
-                    'reutilizado_existente': True
-                }
+        if not (arq_codigo.exists() and arq_teste.exists()):
+            return None
 
+        resultado_existente = self._rodar_pytest(caminho_relativo=caminho_teste_sugerido)
+        if resultado_existente['passaram'] > 0 and resultado_existente['falharam'] == 0 and resultado_existente['erros'] == 0 and not resultado_existente['erro_coleta']:
+            print(f"   ✓ {caminho_sugerido} já implementado e com testes passando ({resultado_existente['passaram']} testes)")
+            return {
+                'codigo': arq_codigo.read_text(encoding='utf-8'),
+                'teste': arq_teste.read_text(encoding='utf-8'),
+                'caminho_relativo': caminho_sugerido,
+                'caminho_teste': caminho_teste_sugerido,
+                'tentativas': 1,
+                'reutilizado_existente': True
+            }
+        return None
+
+    def _gerar_implementacao_inicial(
+        self, ideia: str, stack: Dict, script_spec: Dict, nome_raw: str, modulo: str,
+        caminho_sugerido: str, caminho_teste_sugerido: str
+    ):
+        """Monta o prompt, chama o LLM e normaliza os caminhos da primeira tentativa.
+        Retorna (impl, secao_schema, contexto); impl é None se a geração falhar."""
         secao_schema = self._montar_secao_schema()
 
         prompt = PROMPT_IMPLEMENTAR_SCRIPT.format(
@@ -858,12 +856,12 @@ class ImplementadorFase8:
         )
         if result_llm.is_err():
             print(f"   ❌ {result_llm._error}")
-            return None
+            return None, secao_schema, contexto
 
         impl = result_llm.unwrap()
         if 'codigo' not in impl or 'teste' not in impl:
             print(f"   ⚠️ Resposta sem chaves 'codigo'/'teste'")
-            return None
+            return None, secao_schema, contexto
 
         # Normalização rigorosa de caminhos (fixados para este script em todas as tentativas)
         caminho_relativo = self._normalizar_caminho_codigo(
@@ -874,6 +872,31 @@ class ImplementadorFase8:
         )
         impl['caminho_relativo'] = caminho_relativo
         impl['caminho_teste'] = caminho_teste
+        return impl, secao_schema, contexto
+
+    def _implementar_script_com_verificacao(self, ideia: str, stack: Dict, script_spec: Dict) -> Optional[Dict]:
+        """Implementa 1 script, roda o teste real, corrige até passar (ou esgota tentativas)"""
+        nome_raw = script_spec.get('nome', 'script.py')
+        nome_base = Path(str(nome_raw).replace('\\', '/')).name
+        if nome_base.endswith('.py'):
+            modulo = nome_base[:-3]
+            caminho_sugerido = nome_base
+        else:
+            modulo = nome_base
+            caminho_sugerido = f"{nome_base}.py"
+        caminho_teste_sugerido = f"test_{caminho_sugerido}"
+
+        reaproveitado = self._reaproveitar_implementacao_existente(caminho_sugerido, caminho_teste_sugerido)
+        if reaproveitado is not None:
+            return reaproveitado
+
+        impl, secao_schema, contexto = self._gerar_implementacao_inicial(
+            ideia, stack, script_spec, nome_raw, modulo, caminho_sugerido, caminho_teste_sugerido
+        )
+        if impl is None:
+            return None
+        caminho_relativo = impl['caminho_relativo']
+        caminho_teste = impl['caminho_teste']
 
         for tentativa in range(1, MAX_TENTATIVAS_POR_SCRIPT + 1):
             # GAP 1: validação AST do contrato antes de rodar pytest
@@ -1014,18 +1037,24 @@ class ImplementadorFase8:
             return saida_completa[-800:]
         return resultado[:1500]  # Cap em 1500 chars (vs 3000 original)
 
-    @staticmethod
-    def _validar_contrato_ast(codigo: str, teste: str, modulo: str = '') -> Optional[str]:
-        """Valida mecanicamente que o teste só chama funções que o código define/exporta.
-        Retorna None se OK, ou string descrevendo o problema (para injeção no prompt de correção).
-        Usa AST parsing — não depende de rodar o código."""
-        try:
-            arvore_codigo = ast.parse(codigo)
-            arvore_teste = ast.parse(teste)
-        except SyntaxError:
-            return None  # SyntaxError será pego pelo pytest, não duplicar aqui
+    # Nomes built-in e do pytest que sempre existem
+    _BUILTINS_PERMITIDOS_CONTRATO = {
+        'print', 'len', 'range', 'int', 'str', 'float', 'list', 'dict',
+        'set', 'tuple', 'bool', 'type', 'isinstance', 'hasattr', 'getattr',
+        'setattr', 'enumerate', 'zip', 'map', 'filter', 'sorted', 'reversed',
+        'min', 'max', 'sum', 'abs', 'round', 'any', 'all', 'open', 'super',
+        'property', 'staticmethod', 'classmethod', 'Exception', 'ValueError',
+        'TypeError', 'KeyError', 'IndexError', 'AttributeError', 'RuntimeError',
+        'NotImplementedError', 'OSError', 'IOError', 'FileNotFoundError',
+        'datetime', 'date', 'timedelta', 'Path', 'os', 'sys', 'json',
+        'sqlite3', 're', 'math', 'time', 'uuid', 'copy', 'pytest',
+        'fixture', 'tmp_path', 'monkeypatch',
+        'TestClient', 'BaseModel', 'Field',
+    }
 
-        # Coletar nomes definidos no código: funções, classes, imports, e métodos por classe
+    @staticmethod
+    def _coletar_nomes_definidos_codigo(arvore_codigo, modulo: str = ''):
+        """Varre a AST do código e retorna (nomes_definidos, metodos_por_classe, autoimports_suspeitos)."""
         nomes_definidos = set()
         metodos_por_classe = {}  # nome_classe -> {metodo1, metodo2, ...}
         autoimports_suspeitos = set()  # nomes importados de um modulo com o MESMO nome (from X import X)
@@ -1059,29 +1088,11 @@ class ImplementadorFase8:
                         autoimports_suspeitos.add(nome_importado)
                         continue
                     nomes_definidos.add(nome_importado)
+        return nomes_definidos, metodos_por_classe, autoimports_suspeitos
 
-        # Nomes built-in e do pytest que sempre existem
-        builtins_permitidos = {
-            'print', 'len', 'range', 'int', 'str', 'float', 'list', 'dict',
-            'set', 'tuple', 'bool', 'type', 'isinstance', 'hasattr', 'getattr',
-            'setattr', 'enumerate', 'zip', 'map', 'filter', 'sorted', 'reversed',
-            'min', 'max', 'sum', 'abs', 'round', 'any', 'all', 'open', 'super',
-            'property', 'staticmethod', 'classmethod', 'Exception', 'ValueError',
-            'TypeError', 'KeyError', 'IndexError', 'AttributeError', 'RuntimeError',
-            'NotImplementedError', 'OSError', 'IOError', 'FileNotFoundError',
-            'datetime', 'date', 'timedelta', 'Path', 'os', 'sys', 'json',
-            'sqlite3', 're', 'math', 'time', 'uuid', 'copy', 'pytest',
-            'fixture', 'tmp_path', 'monkeypatch',
-            'TestClient', 'BaseModel', 'Field',
-        }
-
-        # Funções de teste pytest definidas no próprio teste
-        nomes_teste_pytest = set()
-        for node in ast.walk(arvore_teste):
-            if isinstance(node, ast.FunctionDef):
-                nomes_teste_pytest.add(node.name)
-
-        # Mapear variáveis do teste para classes (ex: repo = LivroRepo() → repo é LivroRepo)
+    @staticmethod
+    def _mapear_vars_com_classe(arvore_teste, metodos_por_classe):
+        """Mapeia variáveis do teste para classes (ex: repo = LivroRepo() → repo é LivroRepo)."""
         vars_com_classe = {}  # var_name -> class_name
         for node in ast.walk(arvore_teste):
             if isinstance(node, ast.Assign):
@@ -1089,8 +1100,12 @@ class ImplementadorFase8:
                     if isinstance(target, ast.Name) and isinstance(node.value, ast.Call):
                         if isinstance(node.value.func, ast.Name) and node.value.func.id in metodos_por_classe:
                             vars_com_classe[target.id] = node.value.func.id
+        return vars_com_classe
 
-        # Coletar nomes chamados no teste e verificar contrato
+    @classmethod
+    def _coletar_chamadas_faltando(cls, arvore_teste, nomes_definidos, nomes_teste_pytest,
+                                    vars_com_classe, metodos_por_classe):
+        """Percorre as chamadas do teste e reporta quais não têm definição correspondente no código."""
         nomes_faltando = []
         for node in ast.walk(arvore_teste):
             if not isinstance(node, ast.Call):
@@ -1098,7 +1113,7 @@ class ImplementadorFase8:
             if isinstance(node.func, ast.Name):
                 # Chamada direta: funcao()
                 nome = node.func.id
-                if nome not in builtins_permitidos and nome not in nomes_definidos and nome not in nomes_teste_pytest:
+                if nome not in cls._BUILTINS_PERMITIDOS_CONTRATO and nome not in nomes_definidos and nome not in nomes_teste_pytest:
                     if not nome.startswith('_') and nome not in ('conn', 'db_path', 'tmp_path'):
                         nomes_faltando.append(nome)
             elif isinstance(node.func, ast.Attribute):
@@ -1110,23 +1125,55 @@ class ImplementadorFase8:
                         classe = vars_com_classe[var_nome]
                         if classe in metodos_por_classe and metodo not in metodos_por_classe[classe]:
                             nomes_faltando.append(f"{var_nome}.{metodo}() (método de {classe})")
+        return nomes_faltando
+
+    @staticmethod
+    def _montar_mensagem_contrato_quebrado(nomes_faltando, autoimports_suspeitos, nomes_definidos) -> str:
+        """Monta a mensagem de erro (para injeção no prompt de correção) a partir das chamadas faltando."""
+        aviso_autoimport = ""
+        faltando_via_autoimport = set(nomes_faltando) & autoimports_suspeitos
+        if faltando_via_autoimport:
+            aviso_autoimport = (
+                f" ATENÇÃO: {', '.join(sorted(faltando_via_autoimport))} aparece(m) como "
+                f"'from <modulo> import {sorted(faltando_via_autoimport)[0]}' DENTRO DO PRÓPRIO "
+                f"módulo — isso é uma autoimportação inválida (o módulo não pode importar de si "
+                f"mesmo). A função/classe precisa ser DEFINIDA de verdade no código, não importada."
+            )
+        return (
+            f"CONTRATO QUEBRADO: o teste chama funções que o código NÃO define: "
+            f"{', '.join(sorted(set(nomes_faltando)))}.{aviso_autoimport} "
+            f"Defina essas funções no código OU remova as chamadas do teste. "
+            f"Funções disponíveis no código: {', '.join(sorted(nomes_definidos)[:20])}"
+        )
+
+    @classmethod
+    def _validar_contrato_ast(cls, codigo: str, teste: str, modulo: str = '') -> Optional[str]:
+        """Valida mecanicamente que o teste só chama funções que o código define/exporta.
+        Retorna None se OK, ou string descrevendo o problema (para injeção no prompt de correção).
+        Usa AST parsing — não depende de rodar o código."""
+        try:
+            arvore_codigo = ast.parse(codigo)
+            arvore_teste = ast.parse(teste)
+        except SyntaxError:
+            return None  # SyntaxError será pego pelo pytest, não duplicar aqui
+
+        nomes_definidos, metodos_por_classe, autoimports_suspeitos = cls._coletar_nomes_definidos_codigo(
+            arvore_codigo, modulo
+        )
+
+        # Funções de teste pytest definidas no próprio teste
+        nomes_teste_pytest = {
+            node.name for node in ast.walk(arvore_teste) if isinstance(node, ast.FunctionDef)
+        }
+
+        vars_com_classe = cls._mapear_vars_com_classe(arvore_teste, metodos_por_classe)
+
+        nomes_faltando = cls._coletar_chamadas_faltando(
+            arvore_teste, nomes_definidos, nomes_teste_pytest, vars_com_classe, metodos_por_classe
+        )
 
         if nomes_faltando:
-            aviso_autoimport = ""
-            faltando_via_autoimport = set(nomes_faltando) & autoimports_suspeitos
-            if faltando_via_autoimport:
-                aviso_autoimport = (
-                    f" ATENÇÃO: {', '.join(sorted(faltando_via_autoimport))} aparece(m) como "
-                    f"'from <modulo> import {sorted(faltando_via_autoimport)[0]}' DENTRO DO PRÓPRIO "
-                    f"módulo — isso é uma autoimportação inválida (o módulo não pode importar de si "
-                    f"mesmo). A função/classe precisa ser DEFINIDA de verdade no código, não importada."
-                )
-            return (
-                f"CONTRATO QUEBRADO: o teste chama funções que o código NÃO define: "
-                f"{', '.join(sorted(set(nomes_faltando)))}.{aviso_autoimport} "
-                f"Defina essas funções no código OU remova as chamadas do teste. "
-                f"Funções disponíveis no código: {', '.join(sorted(nomes_definidos)[:20])}"
-            )
+            return cls._montar_mensagem_contrato_quebrado(nomes_faltando, autoimports_suspeitos, nomes_definidos)
         return None
 
     # =========================================================================
@@ -1162,7 +1209,7 @@ class ImplementadorFase8:
             if not isinstance(dados, dict):
                 return Result.fail(f"Resposta LLM não é dict: {str(dados)[:100]}")
             return Result.ok(dados)
-        except Exception as e:
+        except ValueError as e:
             return Result.fail(f"Erro parse JSON: {e}")
 
     def _validar_e_escrever_result(self, impl: Dict, modulo: str) -> Result:
@@ -1375,7 +1422,7 @@ Rules:
                 'erro_coleta': erro_coleta, 'detalhes_coleta': saida[-2000:],
                 'saida': saida[-3000:], 'returncode': resultado.returncode,
             }
-        except Exception as e:
+        except (subprocess.SubprocessError, OSError) as e:
             return {
                 'passaram': 0, 'falharam': 0, 'erros': 1, 'total': 0, 'erro_coleta': True,
                 'detalhes_coleta': str(e), 'saida': str(e), 'returncode': -1,

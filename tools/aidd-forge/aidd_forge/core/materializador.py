@@ -102,7 +102,7 @@ class Materializador:
             for item in planned:
                 self._write(item.path, item.content)
                 written.append(item)
-        except Exception as exc:
+        except OSError as exc:
             self._rollback(written)
             raise MaterializacaoError(
                 f"falha ao materializar '{request.nome}' ({request.tipo}); rollback aplicado: {exc}"
@@ -113,7 +113,7 @@ class Materializador:
             try:
                 canonical_dest.parent.mkdir(parents=True, exist_ok=True)
                 canonical_dest.write_text(request.conteudo, encoding="utf-8")
-            except Exception:
+            except OSError:
                 pass
 
         if (self.target_root / "componentes").is_dir():
@@ -124,7 +124,7 @@ class Materializador:
                 try:
                     target_canonical.parent.mkdir(parents=True, exist_ok=True)
                     target_canonical.write_text(request.conteudo, encoding="utf-8")
-                except Exception:
+                except OSError:
                     pass
 
         sync_code = sincronizar_componente(request.tipo, ferramenta="aidd-forge")

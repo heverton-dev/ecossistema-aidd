@@ -173,13 +173,8 @@ class OpsMvpGate:
         else:
             self.check(False, "Arquivos .py encontrados", "Nenhum .py encontrado em tools/aidd-ops/")
 
-    def _validar_saida(self, dir_saida: str):
-        """Modo (b): valida PLANO-INFRAESTRUTURA.json em dir_saida."""
-        print("=" * 70)
-        print(" [GATE G_OPS_MVP] Validacao da Saida do Pipeline")
-        print(f" Diretorio: {dir_saida}")
-        print("=" * 70)
-
+    def _carregar_plano_saida(self, dir_saida: str):
+        """Confere que PLANO-INFRAESTRUTURA.json existe e e JSON valido; retorna o dict ou None."""
         caminho_plano = os.path.join(dir_saida, "PLANO-INFRAESTRUTURA.json")
         self.check(
             os.path.isfile(caminho_plano),
@@ -188,16 +183,16 @@ class OpsMvpGate:
         )
 
         if not os.path.isfile(caminho_plano):
-            return
+            return None
 
         try:
             with open(caminho_plano, "r", encoding="utf-8") as f:
-                plano = json.load(f)
+                return json.load(f)
         except (OSError, json.JSONDecodeError) as e:
             self.check(False, "PLANO-INFRAESTRUTURA.json e JSON valido", f"Corrompido: {e}")
-            return
+            return None
 
-        # Validar campos de topo
+    def _validar_campos_topo(self, plano: dict):
         self.check(
             plano.get("versao") == "1.0.0",
             "Campo 'versao' == '1.0.0'",
@@ -209,7 +204,7 @@ class OpsMvpGate:
             "Ausente",
         )
 
-        # Validar Fase 1
+    def _validar_fase1_intake(self, plano: dict):
         f1 = plano.get("fase_1_intake")
         self.check(
             f1 is not None and isinstance(f1, dict),
@@ -220,11 +215,11 @@ class OpsMvpGate:
             saida_f1 = f1["saida"]
             self.check(
                 "nicho_slug" in saida_f1 and "nicho_nome_exibicao" in saida_f1,
-            "Fase 1 saida tem campos obrigatorios",
+                "Fase 1 saida tem campos obrigatorios",
                 f"Campos ausentes. Encontrado: {list(saida_f1.keys())}",
             )
 
-        # Validar Fase 2
+    def _validar_fase2_curadoria(self, plano: dict):
         f2 = plano.get("fase_2_curadoria")
         self.check(
             f2 is not None and isinstance(f2, dict),
@@ -239,7 +234,7 @@ class OpsMvpGate:
                 f"Encontrado: {type(saida_f2.get('ferramentas'))}",
             )
 
-        # Validar Fase 3
+    def _validar_fase3_sizing(self, plano: dict):
         f3 = plano.get("fase_3_sizing")
         self.check(
             f3 is not None and isinstance(f3, dict),
@@ -274,7 +269,7 @@ class OpsMvpGate:
                 f"Encontrado: {type(saida_f3.get('fontes_consultadas'))}",
             )
 
-        # Validar que todas as fases produziram saída (saida != None)
+    def _validar_todas_fases_produziram_saida(self, plano: dict):
         for nome_fase, chave in [("fase_1_intake", "fase_1_intake"), ("fase_2_curadoria", "fase_2_curadoria"), ("fase_3_sizing", "fase_3_sizing")]:
             fase = plano.get(chave)
             if fase and isinstance(fase, dict):
@@ -285,6 +280,23 @@ class OpsMvpGate:
                     f"{nome_fase} produziu saida valida (saida != None)",
                     f"Campo 'saida' e None. " + (f"Erro registrado: {erro_fase.get('codigo')}" if erro_fase else "Nenhum erro registrado."),
                 )
+
+    def _validar_saida(self, dir_saida: str):
+        """Modo (b): valida PLANO-INFRAESTRUTURA.json em dir_saida."""
+        print("=" * 70)
+        print(" [GATE G_OPS_MVP] Validacao da Saida do Pipeline")
+        print(f" Diretorio: {dir_saida}")
+        print("=" * 70)
+
+        plano = self._carregar_plano_saida(dir_saida)
+        if plano is None:
+            return
+
+        self._validar_campos_topo(plano)
+        self._validar_fase1_intake(plano)
+        self._validar_fase2_curadoria(plano)
+        self._validar_fase3_sizing(plano)
+        self._validar_todas_fases_produziram_saida(plano)
 
     def run_estrutura(self) -> int:
         self._validar_estrutura()

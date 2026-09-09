@@ -172,7 +172,7 @@ class InjectGate:
             else:
                 verificados = res_sync.valor.get("verificados", 0)
                 self.check(True, f"Sincronização Multi-Harness e Drift ({verificados} verificados)", "")
-        except Exception as exc:
+        except (ImportError, AttributeError) as exc:
             self.check(False, "Sincronização Multi-Harness e Drift", f"Falha ao rodar verificar_sincronizacao: {exc}")
 
         reg_legado = os.path.join(self.root, "COMPONENT-REGISTRY.json")
@@ -184,7 +184,7 @@ class InjectGate:
                     self.check(False, "COMPONENT-REGISTRY.json estrutural", "Deve ser uma lista")
                 else:
                     self.check(True, "COMPONENT-REGISTRY.json estrutural", "")
-            except Exception as e:
+            except json.JSONDecodeError as e:
                 self.check(False, "COMPONENT-REGISTRY.json estrutural", f"JSON inválido: {e}")
 
     def run(self) -> int:

@@ -90,7 +90,7 @@ def verificar(target_dir: str = "."):
                                         erros.append(f"Stub vazio 'pass' detectado em {os.path.relpath(f_path, target_dir)} -> {node.name}()")
                                     elif len(node.body) == 1 and isinstance(node.body[0], ast.Expr) and isinstance(node.body[0].value, ast.Constant) and node.body[0].value.value is Ellipsis:
                                         erros.append(f"Stub vazio '...' detectado em {os.path.relpath(f_path, target_dir)} -> {node.name}()")
-                    except Exception as e:
+                    except (SyntaxError, OSError) as e:
                         erros.append(f"Falha ao inspecionar AST em {f_path}: {e}")
 
     # 2.5 Testes de Mutação (AST) via mutmut
@@ -104,7 +104,7 @@ def verificar(target_dir: str = "."):
                 erros.append("Falha nos Testes de Mutação (AST). Mutantes sobreviventes encontrados pelo mutmut.")
         else:
             print("       (Aviso: mutmut não instalado, pulando mutações. Instale via requirements.txt)")
-    except Exception as e:
+    except (OSError, subprocess.SubprocessError) as e:
         erros.append(f"Erro ao executar mutmut: {e}")
 
     # 2.7 Fuzzing Contínuo de APIs

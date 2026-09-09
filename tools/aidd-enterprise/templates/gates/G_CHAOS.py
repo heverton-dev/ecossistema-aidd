@@ -14,6 +14,7 @@ import subprocess
 import time
 import argparse
 import urllib.request
+import urllib.error
 from concurrent.futures import ThreadPoolExecutor
 
 if hasattr(sys.stdout, 'reconfigure'):
@@ -24,7 +25,7 @@ def check_health(url):
         req = urllib.request.Request(url, method='GET')
         with urllib.request.urlopen(req, timeout=2) as response:
             return response.status == 200
-    except Exception:
+    except urllib.error.URLError:
         return False
 
 def chaos_test(target_dir: str = "."):

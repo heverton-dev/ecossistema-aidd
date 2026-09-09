@@ -78,7 +78,7 @@ class WebhookDispatcher:
                     eventos_sub = []
                     try:
                         eventos_sub = json.loads(wh["eventos"]) if wh["eventos"].startswith("[") else [e.strip() for e in wh["eventos"].split(",")]
-                    except:
+                    except (json.JSONDecodeError, AttributeError):
                         eventos_sub = [wh["eventos"]]
 
                     # Match wildcard or topic

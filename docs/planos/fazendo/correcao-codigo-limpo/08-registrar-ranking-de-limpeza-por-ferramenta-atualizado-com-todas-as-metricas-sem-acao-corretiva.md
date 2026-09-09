@@ -2,7 +2,7 @@
 
 > **Escopo:** Entra: só registrar, num documento de referência, a régua objetiva de limpeza de código medida via grafo/grep em 2026-09-08 por ferramenta — sem nenhuma ação corretiva associada. Não entra: corrigir qualquer coisa a partir deste ranking (isso é o que os itens 1-7 já fazem, ou achados futuros).
 
-> **Status:** ⏳ Rascunho gerado, aguardando aprovação
+> **Status:** ✅ Concluído (2026-09-08 — tabela já registrada abaixo, ver nota pós-execução)
 
 ---
 
@@ -22,6 +22,17 @@ Ranking do mais limpo pro que mais precisa de atenção: aidd-forge → aidd-ops
 
 1. Tabela acima publicada em algum documento de referência do ecossistema (ex.: `docs/` ou anexado a este próprio arquivo como registro final).
 2. Nenhuma ação corretiva tomada como parte deste item — apenas registro.
+
+## Execução (2026-09-08)
+
+- Tabela já registrada acima no momento da criação deste documento — satisfaz a Definição de Pronto sem ação adicional.
+- Nota de atualização: a coluna `except: sem tipo` reflete a contagem **antes** do item 2 deste mesmo plano ser executado. Depois do item 2, essa coluna caiu para **0 em todas as 5 ferramentas** (aidd-enterprise, aidd-master e aidd-generator corrigidos; aidd-forge/aidd-ops já eram 0). As demais colunas (classe/método maior, `except Exception` genérico, linhas longas, % comentário) ainda refletem o estado real de 2026-09-08, pois os itens que as endereçam (1 e 3) ainda não haviam sido executados.
+- Nota de atualização 2 (recomputado via AST em sessão posterior, depois dos itens 3 e 4): a coluna "Maior método dentro dela" também mudou.
+  - `aidd-generator`: nenhum método passa de 100 linhas — `CriadorProjetoFase5._registrar_sync_manifest` (94L) é hoje o maior, contra os 198L de `_criar_arquivos_configuracao` registrados originalmente (item 3 dividiu esse e os outros métodos gigantes). A classe `ImplementadorFase8` cresceu de 894 para 942 linhas — efeito esperado de dividir um método em vários (mais assinaturas/docstrings), não uma regressão: nenhum método individual passa de 100 linhas.
+  - `aidd-ops`: `OpsMvpGate._validar_estrutura` (73L) é hoje o maior método, contra os 111L de `_validar_saida` registrados originalmente (item 3 dividiu esse método).
+  - `aidd-enterprise`/`aidd-master`: dentro de `SecurityGate` (`G_SEGURANCA.py`), o maior método hoje é `_camada8_cve_audit` (75L), contra os 345L de `run_all_checks` registrados originalmente (item 4 dividiu essa função). A coluna "Maior classe" da tabela original (817L) não foi recomputada nesta nota — pode se referir a outra classe do mesmo tool, não necessariamente `SecurityGate`; fica para quando o item 1 (ainda pendente) passar por essas ferramentas.
+  - As colunas `except Exception` genérico, linhas >150 chars e % comentário continuam refletindo o estado real de 2026-09-08 — o item 1 (que as afeta) ainda não foi executado.
+- **Veredito: Concluído.**
 
 ## Criterio de saida
 

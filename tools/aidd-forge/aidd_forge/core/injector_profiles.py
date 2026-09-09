@@ -11,6 +11,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 from pathlib import Path
 
+import json
 import os
 import subprocess
 import sys
@@ -150,7 +151,7 @@ def sincronizar_componente(
         try:
             res = subprocess.run(cmd, cwd=str(ecossistema_root), capture_output=True, text=True)
             return res.returncode
-        except Exception:
+        except (OSError, subprocess.SubprocessError):
             pass
 
     # Fallback: import direto de scripts/gestor_componentes.py
@@ -161,6 +162,6 @@ def sincronizar_componente(
         import gestor_componentes
         gestor_componentes.sync(tipo=tipo, ferramenta=ferramenta)
         return 0
-    except Exception:
+    except (ImportError, OSError, json.JSONDecodeError, KeyError):
         return 1
 

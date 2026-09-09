@@ -218,7 +218,7 @@ class UptimeKumaManager:
             with open(caminho_arquivo, "w", encoding="utf-8") as f:
                 json.dump(export_data, f, indent=2, ensure_ascii=False)
             return Result.ok(os.path.abspath(caminho_arquivo))
-        except Exception as exc:
+        except OSError as exc:
             return Result.fail(
                 erro=f"Falha ao salvar export do Uptime Kuma em {caminho_arquivo}: {exc}",
                 codigo="ERRO_GRAVACAO_ARQUIVO"
@@ -250,7 +250,7 @@ class UptimeKumaManager:
                     codigo="HTTP_STATUS_INVALIDO",
                     detalhes={"status_code": status_code, "body_preview": body[:200]}
                 )
-        except Exception as exc:
+        except urllib.error.URLError as exc:
             return Result.fail(
                 erro=f"Falha de conexão com o dashboard Uptime Kuma em {url}: {exc}",
                 codigo="CONEXAO_RECUSADA"

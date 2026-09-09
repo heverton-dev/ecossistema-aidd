@@ -209,7 +209,7 @@ def sincronizar_componente(
         try:
             res = subprocess.run(cmd, cwd=str(ecossistema_root), capture_output=True, text=True)
             return res.returncode
-        except Exception:
+        except (OSError, subprocess.SubprocessError):
             pass
 
     try:
@@ -219,7 +219,7 @@ def sincronizar_componente(
         import gestor_componentes
         gestor_componentes.sync(tipo=tipo, ferramenta=ferramenta)
         return 0
-    except Exception:
+    except (ImportError, OSError, json.JSONDecodeError, KeyError):
         return 1
 
 
@@ -427,7 +427,7 @@ def materializar(
                     f.write(cont)
                 criados.append(dest)
             return Result.ok({"arquivos_criados": criados, "conteudo": mapa_arquivos})
-        except Exception as e:
+        except OSError as e:
             _executar_rollback(criados, dirs_criados, snapshot)
             return Result.fail(
                 f"Falha na materialização, rollback executado: {e}",
@@ -458,7 +458,7 @@ def materializar(
                 dados = existente
                 if "mcpServers" not in dados or not isinstance(dados["mcpServers"], dict):
                     dados["mcpServers"] = {}
-            except Exception as exc:
+            except (OSError, json.JSONDecodeError) as exc:
                 return Result.fail(
                     f"mcp.json existente é inválido: {exc}",
                     codigo="MCP_JSON_INVALIDO",
@@ -539,7 +539,7 @@ def materializar(
             try:
                 canonical_dest.parent.mkdir(parents=True, exist_ok=True)
                 canonical_dest.write_text(conteudo, encoding="utf-8")
-            except Exception:
+            except OSError:
                 pass
 
         if (Path(root_dir) / "componentes").is_dir():
@@ -553,7 +553,7 @@ def materializar(
                 try:
                     target_canonical.parent.mkdir(parents=True, exist_ok=True)
                     target_canonical.write_text(conteudo, encoding="utf-8")
-                except Exception:
+                except OSError:
                     pass
 
         if payload["tipo"] in CANONICAL_TEMPLATES:
@@ -561,7 +561,7 @@ def materializar(
 
         return Result.ok({"arquivos_criados": criados, "conteudo": conteudo})
 
-    except Exception as e:
+    except OSError as e:
         _executar_rollback(criados, dirs_criados, snapshot)
         return Result.fail(
             f"Falha na materialização, rollback executado: {e}",

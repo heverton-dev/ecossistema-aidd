@@ -47,7 +47,7 @@ def ensure_environment(auto_install: bool = True):
         try:
             subprocess.run([sys.executable, "-m", "pip", "install"] + missing, check=True, capture_output=True)
             print("[OK] Dependências instaladas com sucesso.")
-        except Exception as e:
+        except (subprocess.CalledProcessError, OSError) as e:
             print(f"[WARN] Não foi possível auto-instalar dependências: {e}")
 
 
@@ -99,7 +99,7 @@ def cmd_setup(args):
             path_str = info["path"] if info["available"] else "não encontrado"
             specialty = info.get("specialty", "?")
             print(f"      {status} {info.get('display', name):<28s} [{path_str}]  ({specialty})")
-    except Exception as e:
+    except ImportError as e:
         print(f"  [WARN] Fleet Discovery indisponível: {e}")
 
     print("=" * 80)

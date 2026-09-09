@@ -218,14 +218,14 @@ class ContinuousAPIFuzzer:
                     resp_body = response.read().decode('utf-8', errors='replace')
                     try:
                         resp_json = json.loads(resp_body)
-                    except:
+                    except json.JSONDecodeError:
                         resp_json = resp_body
                     return response.status, resp_json, False, ""
             except urllib.error.HTTPError as e:
                 resp_body = e.read().decode('utf-8', errors='replace')
                 try:
                     resp_json = json.loads(resp_body)
-                except:
+                except json.JSONDecodeError:
                     resp_json = resp_body
                 # Status 5xx é considerado crash
                 is_crash = e.code >= 500

@@ -59,7 +59,7 @@ def _parse_sql(sql: str):
     """Parse SQL com sqlglot (dialeto SQLite). Retorna a AST ou None se ilegivel."""
     try:
         return sqlglot.parse_one(sql, read="sqlite")
-    except Exception:
+    except sqlglot.errors.SqlglotError:
         return None
 
 

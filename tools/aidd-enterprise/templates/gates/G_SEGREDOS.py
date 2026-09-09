@@ -50,7 +50,7 @@ def verificar():
                                 if calcular_entropia_shannon(p) > 4.6 and not p.isupper():
                                     print(f"[FAIL] String de alta entropia ({calcular_entropia_shannon(p):.2f}) detectada em {path}:{num}")
                                     vazamentos += 1
-                except:
+                except OSError:
                     pass
 
     if vazamentos > 0:

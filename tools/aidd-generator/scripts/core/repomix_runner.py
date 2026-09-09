@@ -14,7 +14,7 @@ from typing import Dict, Any, List, Optional, Union
 if sys.platform == 'win32':
     try:
         sys.stdout.reconfigure(encoding='utf-8')
-    except Exception:
+    except (AttributeError, ValueError):
         pass
 
 
@@ -79,7 +79,7 @@ def empacotar_metodo_antigo_caseiro(
                     conteudo = arq.read_text(encoding='utf-8', errors='replace')
                     blocos.append(f"MODULO: {rel}\nCODIGO:\n{conteudo}\n")
                     arquivos_lidos += 1
-                except Exception:
+                except OSError:
                     pass
 
     resultado_texto = "\n".join(blocos)
@@ -165,7 +165,7 @@ def empacotar_repositorio(
             shell=usar_shell,
             timeout=120
         )
-    except Exception as e:
+    except (subprocess.SubprocessError, OSError) as e:
         fallback = empacotar_metodo_antigo_caseiro(diretorio, includes=includes)
         fallback['ferramenta'] = 'fallback_erro_execucao'
         fallback['erro'] = str(e)
@@ -179,7 +179,7 @@ def empacotar_repositorio(
 
     try:
         conteudo = caminho_saida.read_text(encoding='utf-8', errors='replace')
-    except Exception as e:
+    except OSError as e:
         return {
             'status': 'FALHOU',
             'erro': f'Falha ao ler arquivo do repomix: {e}',

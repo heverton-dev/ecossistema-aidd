@@ -61,7 +61,7 @@ def _executar_cmd(cmd_list: list, cwd: Optional[str] = None) -> dict:
             "stdout": "",
             "stderr": "Comando excedeu 30 segundos"
         }
-    except Exception as exc:
+    except (OSError, subprocess.SubprocessError) as exc:
         return {
             "sucesso": False,
             "exit_code": 1,

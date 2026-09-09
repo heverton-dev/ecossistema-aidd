@@ -150,7 +150,7 @@ def _extrair_json_manual(texto_limpo: str) -> Any:
         s_sanitizado = re.sub(r'\\(?!["\\/bfnrtuU0-9])', r'\\\\', s)
         try:
             return json.loads(s_sanitizado, strict=False)
-        except Exception:
+        except json.JSONDecodeError:
             return None
 
     # 1. Tentar decodificar direto
@@ -275,7 +275,7 @@ def _validar_pydantic_com_retry(texto: str, response_model: Any, max_retries: in
             # Valida e cria instância do modelo
             return response_model.model_validate(dados)
 
-        except Exception as e:
+        except ValueError as e:
             ultimo_erro = e
             # Se instructor estiver disponível, usa retry automático
             if instructor is not None and tentativa < max_retries - 1:
@@ -414,7 +414,7 @@ class RequisicaoLLMDelegada:
                 handler = _ArquivoRespostaHandler(nome_alvo, evento_sinal)
                 observer.schedule(handler, str(CACHE_DIR), recursive=False)
                 observer.start()
-            except Exception:
+            except OSError:
                 observer = None
 
         inicio = time.time()
@@ -435,7 +435,7 @@ class RequisicaoLLMDelegada:
                             if _validar_response is not None:
                                 try:
                                     _validar_response(dados)
-                                except Exception:
+                                except SchemaValidationError:
                                     pass
                             return dados
 
@@ -466,7 +466,7 @@ class RequisicaoLLMDelegada:
                 try:
                     observer.stop()
                     observer.join(timeout=0.2)
-                except Exception:
+                except OSError:
                     pass
 
 
@@ -670,7 +670,7 @@ def solicitar_llm_modo_headless(
             h_model = detectar_modelo_harness()
             if h_model and h_model != 'desconhecido':
                 modelo = h_model
-        except Exception:
+        except ImportError:
             pass
 
     if not modelo or modelo == 'desconhecido':
@@ -838,7 +838,7 @@ def detectar_modo_execucao() -> str:
             nome_cap = o.capitalize()
             if nome_cap not in ade_detectados:
                 ade_detectados.append(nome_cap)
-    except Exception:
+    except ImportError:
         pass
 
     if ade_detectados:

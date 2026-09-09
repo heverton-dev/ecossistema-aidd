@@ -163,7 +163,7 @@ class PipelineRunner:
                     self.sucesso = False
                     self._processar_falha()
 
-        except Exception as e:
+        except (OSError, subprocess.SubprocessError) as e:
             self.t_fim = time.time()
             with self._lock:
                 self.em_execucao = False
@@ -241,7 +241,7 @@ class PipelineRunner:
                 self.erro_amigavel = "Pipeline cancelado pelo usuário."
                 self._adicionar_log("⚠️ Pipeline cancelado pelo usuário.")
                 return {'sucesso': True, 'mensagem': 'Pipeline cancelado com sucesso.'}
-            except Exception as e:
+            except OSError as e:
                 return {'sucesso': False, 'mensagem': f"Erro ao cancelar processo: {e}"}
 
     def obter_status(self) -> Dict[str, Any]:

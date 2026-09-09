@@ -226,7 +226,7 @@ def api_abrir_pasta():
             'sucesso': True,
             'mensagem': f"Pasta aberta com sucesso: {caminho}"
         })
-    except Exception as e:
+    except OSError as e:
         # Fallback via explorer no Windows
         try:
             subprocess.Popen(['explorer', str(caminho)])
@@ -234,7 +234,7 @@ def api_abrir_pasta():
                 'sucesso': True,
                 'mensagem': f"Pasta aberta com sucesso via Explorer: {caminho}"
             })
-        except Exception as e2:
+        except OSError as e2:
             return jsonify({
                 'sucesso': False,
                 'mensagem': f"Erro ao abrir pasta: {e2}"
@@ -261,7 +261,7 @@ def api_status_projeto_arbitrario():
     try:
         dados = analisar_status_pasta_projeto(pasta_path)
         return jsonify({'sucesso': True, 'status': dados})
-    except Exception as e:
+    except (ValueError, TypeError, KeyError) as e:
         return jsonify({'sucesso': False, 'mensagem': f'Erro ao analisar pasta: {str(e)}'}), 500
 
 
@@ -310,7 +310,7 @@ def api_status_workspace():
                 'etapas': etapas_simplificadas
             }
         })
-    except Exception as e:
+    except (OSError, json.JSONDecodeError) as e:
         return jsonify({'sucesso': False, 'mensagem': f'Erro ao ler plano: {str(e)}'}), 500
 
 

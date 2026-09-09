@@ -138,7 +138,7 @@ def _ler_modelo_de_arquivo(caminho_expandido: str, chaves: list) -> Optional[str
             val = _extrair_chave_composta(dados, k)
             if val:
                 return val
-    except Exception:
+    except (OSError, json.JSONDecodeError):
         pass
     return None
 

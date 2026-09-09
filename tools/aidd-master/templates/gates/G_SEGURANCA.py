@@ -22,6 +22,7 @@ import json
 import hmac
 import hashlib
 import argparse
+import sqlite3
 
 if hasattr(sys.stdout, 'reconfigure'):
     sys.stdout.reconfigure(encoding='utf-8', errors='replace')
@@ -51,19 +52,7 @@ class SecurityGate:
         print(msg)
         self.results.append({"status": status, "layer": layer, "test": test_name, "detail": detail})
 
-    def run_all_checks(self):
-        print("=" * 80)
-        print("🛡️  AIDD v5.1 — INICIANDO TESTE DE FOGO DE CIBERSEGURANÇA & AUDITORIA")
-        print(f"📁 Diretório Alvo: {self.root}")
-        print("=" * 80)
-
-        # Configura sys.path para importar core
-        if self.src_dir not in sys.path:
-            sys.path.insert(0, self.src_dir)
-
-        # ---------------------------------------------------------
-        # CAMADA 1: OWASP HEADERS NATIVOS
-        # ---------------------------------------------------------
+    def _camada1_owasp_headers(self):
         try:
             from core.security import SecurityService, JWTService
             headers = SecurityService.get_security_headers()
@@ -91,12 +80,10 @@ class SecurityGate:
             else:
                 self.log("FAIL", "Camada 1: OWASP", "Content-Security-Policy (CSP)", "Não encontrado")
 
-        except Exception as e:
+        except ImportError as e:
             self.log("FAIL", "Camada 1: OWASP", "Carregamento de SecurityService", str(e))
 
-        # ---------------------------------------------------------
-        # CAMADA 2: MOTOR CRIPTOGRÁFICO JWT HS256 & TIMING ATTACKS
-        # ---------------------------------------------------------
+    def _camada2_jwt_auth(self):
         try:
             from core.security import JWTService, SecurityService
             token = JWTService.encode({"sub": "pentest_admin@empresa.com", "role": "admin"})
@@ -127,12 +114,10 @@ class SecurityGate:
             else:
                 self.log("FAIL", "Camada 2: JWT Auth", "Hashing de Senhas PBKDF2", "Falha na verificação de hash")
 
-        except Exception as e:
+        except ImportError as e:
             self.log("FAIL", "Camada 2: JWT Auth", "Execução de testes JWT", str(e))
 
-        # ---------------------------------------------------------
-        # CAMADA 2.5: VARREDURA POR BACKDOORS DE DESENVOLVIMENTO
-        # ---------------------------------------------------------
+    def _camada2_5_anti_backdoor(self):
         backdoor_vulns = []
         if os.path.exists(self.src_dir):
             for root, _, files in os.walk(self.src_dir):
@@ -149,9 +134,7 @@ class SecurityGate:
             for bf, ln, code in backdoor_vulns:
                 self.log("FAIL", "Camada 2.5: Auth Integrity", f"Backdoor detectado em {os.path.basename(bf)}:{ln}", code)
 
-        # ---------------------------------------------------------
-        # CAMADA 3: VARREDURA ESTÁTICA CONTRA SQL INJECTION
-        # ---------------------------------------------------------
+    def _camada3_sql_injection(self):
         sql_vulns = []
         suspicious_patterns = [
             re.compile(r'execute\s*\(\s*f["\'].*?(?:SELECT|INSERT|UPDATE|DELETE)', re.IGNORECASE),
@@ -178,9 +161,7 @@ class SecurityGate:
             for vf, ln, code in sql_vulns:
                 self.log("FAIL", "Camada 3: SQL Safety", f"SQL Injection Potencial em {os.path.basename(vf)}:{ln}", code)
 
-        # ---------------------------------------------------------
-        # CAMADA 4: AUDITORIA DE CONFIGURAÇÃO NGINX & ANTI-DDOS
-        # ---------------------------------------------------------
+    def _camada4_nginx_hardening(self):
         nginx_conf_path = os.path.join(self.root, "nginx", "nginx.conf")
         if os.path.exists(nginx_conf_path):
             with open(nginx_conf_path, "r", encoding="utf-8") as f:
@@ -208,9 +189,7 @@ class SecurityGate:
         else:
             self.log("WARN", "Camada 4: Nginx Shield", "Arquivo nginx/nginx.conf", "Não localizado na raiz do projeto")
 
-        # ---------------------------------------------------------
-        # CAMADA 5: AUDITORIA DE CONTAINER DOCKER & MENOR PRIVILÉGIO
-        # ---------------------------------------------------------
+    def _camada5_docker_hardening(self):
         dockerfile_path = os.path.join(self.root, "Dockerfile")
         if os.path.exists(dockerfile_path):
             with open(dockerfile_path, "r", encoding="utf-8") as f:
@@ -229,9 +208,7 @@ class SecurityGate:
         else:
             self.log("WARN", "Camada 5: Docker Hardening", "Dockerfile", "Não localizado na raiz do projeto")
 
-        # ---------------------------------------------------------
-        # CAMADA 6: PERSISTÊNCIA WAL & TRILHA DE AUDITORIA
-        # ---------------------------------------------------------
+    def _camada6_sqlite_wal_audit(self):
         try:
             from core.database import Database
             db_file = os.path.join(self.root, "suite.db")
@@ -242,7 +219,7 @@ class SecurityGate:
                     self.log("PASS", "Camada 6: SQLite Safety", "Modo Concorrente SQLite WAL", "Alta concorrência com Write-Ahead Logging ativa")
                 else:
                     self.log("WARN", "Camada 6: SQLite Safety", "Modo SQLite WAL", f"Modo atual: {wal_mode}")
-        except Exception as e:
+        except (ImportError, sqlite3.Error, OSError) as e:
             self.log("WARN", "Camada 6: SQLite Safety", "Auditoria de Banco de Dados", str(e))
 
         db_py_path = os.path.join(self.src_dir, "core", "database.py")
@@ -284,10 +261,7 @@ class SecurityGate:
             else:
                 self.log("FAIL", "Camada 6: SQLite Safety", "WORM Audit Hash Chain", "Pilar de auditoria WORM ausente no database.py")
 
-
-        # ---------------------------------------------------------
-        # CAMADA 7: OPENAPI 3.1 & SWAGGER SECURITY SCHEMES
-        # ---------------------------------------------------------
+    def _camada7_openapi_security(self):
         try:
             from core.openapi import RouteRegistry
             reg = RouteRegistry()
@@ -296,12 +270,10 @@ class SecurityGate:
                 self.log("PASS", "Camada 7: API Compliance", "OpenAPI 3.1 Security Schemes (Bearer JWT)", "Swagger Studio 100% integrado com Bearer Auth")
             else:
                 self.log("FAIL", "Camada 7: API Compliance", "OpenAPI 3.1 Security Schemes", "bearerAuth ausente em components.securitySchemes")
-        except Exception as e:
+        except ImportError as e:
             self.log("FAIL", "Camada 7: API Compliance", "Auditoria OpenAPI", str(e))
 
-        # ---------------------------------------------------------
-        # RELATÓRIO FINAL DO TESTE DE FOGO
-        # ---------------------------------------------------------
+    def _relatorio_final(self):
         print("\n" + "=" * 80)
         total = self.passed + self.failed + self.warnings
         score = (self.passed / total) * 100 if total > 0 else 0
@@ -319,6 +291,27 @@ class SecurityGate:
         else:
             print("❌ [BLOQUEADO]: Existem vulnerabilidades que devem ser mitigadas antes da publicação.")
             return 1
+
+    def run_all_checks(self):
+        print("=" * 80)
+        print("🛡️  AIDD v5.1 — INICIANDO TESTE DE FOGO DE CIBERSEGURANÇA & AUDITORIA")
+        print(f"📁 Diretório Alvo: {self.root}")
+        print("=" * 80)
+
+        # Configura sys.path para importar core
+        if self.src_dir not in sys.path:
+            sys.path.insert(0, self.src_dir)
+
+        self._camada1_owasp_headers()
+        self._camada2_jwt_auth()
+        self._camada2_5_anti_backdoor()
+        self._camada3_sql_injection()
+        self._camada4_nginx_hardening()
+        self._camada5_docker_hardening()
+        self._camada6_sqlite_wal_audit()
+        self._camada7_openapi_security()
+
+        return self._relatorio_final()
 
 
 if __name__ == "__main__":

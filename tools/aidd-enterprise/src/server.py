@@ -420,7 +420,7 @@ class AppHandler(http.server.SimpleHTTPRequestHandler):
         body_bytes = self.rfile.read(length) if length > 0 else b'{}'
         try:
             body_data = json.loads(body_bytes.decode('utf-8')) if body_bytes else {}
-        except Exception:
+        except ValueError:
             body_data = {}
 
         if path == "/api/mcp/rpc":

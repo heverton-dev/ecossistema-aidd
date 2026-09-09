@@ -146,6 +146,11 @@ class SSHRunner:
                 codigo="TIMEOUT_CONEXAO",
             )
         except Exception as exc:
+            # Nao restringir o tipo aqui: os testes fazem @patch("...ssh_runner.paramiko")
+            # substituindo o modulo inteiro por MagicMock, entao "paramiko.SSHException"
+            # deixaria de ser uma classe real de excecao no momento da avaliacao do except
+            # (TypeError: catching classes that do not inherit from BaseException).
+            # A distincao real de causa ja e feita abaixo via type(exc).__name__.
             tipo = type(exc).__name__
             if "Authentication" in tipo:
                 return Result.fail(
@@ -161,6 +166,7 @@ class SSHRunner:
                 try:
                     client.close()
                 except Exception:
+                    # Mesmo motivo do except acima: paramiko pode estar mockado nos testes.
                     pass
 
     # ------------------------------------------------------------------

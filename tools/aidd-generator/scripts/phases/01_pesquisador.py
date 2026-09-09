@@ -196,7 +196,7 @@ class PesquisadorGitHub:
                             pushed_dt = datetime.fromisoformat(pushed_str.replace('Z', '+00:00'))
                             if pushed_dt >= dias_90_atras:
                                 is_ativo = True
-                        except:
+                        except ValueError:
                             pass
                     if is_ativo:
                         itens_ativos.append(item)
@@ -222,7 +222,9 @@ class PesquisadorGitHub:
                 )
                 referencias.append(ref)
 
-        except Exception as e:
+        except (OSError, KeyError) as e:
+            # OSError cobre requests.exceptions.RequestException (subclasse real)
+            # e tambem ConnectionError builtin (usado nos testes para simular rede indisponivel).
             print(f"⚠️  Erro buscando GitHub: {e}")
 
         return referencias
@@ -276,7 +278,9 @@ class PesquisadorHuggingFace:
                     )
                     referencias.append(ref)
 
-        except Exception as e:
+        except OSError as e:
+            # Cobre requests.exceptions.RequestException (subclasse real) e
+            # ConnectionError builtin (usado nos testes para simular rede indisponivel).
             print(f"⚠️  Erro buscando HuggingFace: {e}")
 
         return referencias
@@ -404,7 +408,7 @@ class ValidadorGates:
                 resp = requests.head(ref.url, timeout=TIMEOUT_SEGUNDOS, allow_redirects=True, headers={'User-Agent': 'AIDD-Pesquisador/1.0'})
                 if resp.status_code in (200, 301, 302):
                     validas += 1
-            except:
+            except requests.exceptions.RequestException:
                 pass  # URL inválida
 
         passou = validas == total
@@ -434,7 +438,7 @@ class ValidadorGates:
                     total_com_data += 1
                     if last_commit >= dias_90_atras:
                         ativos += 1
-                except:
+                except ValueError:
                     pass
 
         if total_com_data == 0:
@@ -461,7 +465,7 @@ class ValidadorGates:
                 # Tentar serializar metadata
                 json.dumps(ref.metadata)
                 validas += 1
-            except:
+            except TypeError:
                 pass
 
         passou = validas == total
@@ -630,7 +634,7 @@ class PesquisadorFase1:
                 resp = requests.head(ref.url, timeout=TIMEOUT_SEGUNDOS, allow_redirects=True, headers={'User-Agent': 'AIDD-Pesquisador/1.0'})
                 if resp.status_code in (200, 301, 302):
                     referencias_validas.append(ref)
-            except:
+            except requests.exceptions.RequestException:
                 pass
         if len(referencias_validas) >= 5:
             referencias = referencias_validas

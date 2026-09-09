@@ -136,26 +136,18 @@ class AnalisadorCriticoAutomatico:
 
         return dados
 
-    def _calcular_score(self, dados: Dict) -> Dict:
-        """Calcular score do projeto (1-100) a partir de métricas reais.
-
-        Quando phase_8 existe nos dados (pipeline com --implementar-codigo),
-        a completude considera 7 fases e os gates da fase 8 são incluídos
-        na avaliação de qualidade. Dimensões 3-7 permanecem baseadas em
-        fases 1-7 (determinismo, validações, docs, rastreabilidade).
-        """
-        dimensoes = {}
-        tem_fase8 = 'phase_8' in dados
-
-        # 1. Completion: quantas phases completaram (de 6, ou de 7 se phase_8 existe)
-        total_fases = 7 if tem_fase8 else 6
+    @staticmethod
+    def _dim_completude_pipeline(dados: Dict, tem_fase8: bool, total_fases: int) -> int:
+        """Dimensão 1: quantas phases completaram (de 6, ou de 7 se phase_8 existe)."""
         phases_completas = sum(
             1 for i in range(1, 8 if tem_fase8 else 7)
             if dados.get(f'phase_{i}', {}).get('status') == 'COMPLETO'
         )
-        dimensoes['completude_pipeline'] = int((phases_completas / total_fases) * 100)
+        return int((phases_completas / total_fases) * 100)
 
-        # 2. Gate pass rate: total que passou / total executado (inclui phase_8 se existir)
+    @staticmethod
+    def _dim_qualidade_gates(dados: Dict, tem_fase8: bool) -> int:
+        """Dimensão 2: gate pass rate — total que passou / total executado (inclui phase_8 se existir)."""
         total_gates = 0
         gates_passaram = 0
         for i in range(1, 9 if tem_fase8 else 7):
@@ -164,9 +156,11 @@ class AnalisadorCriticoAutomatico:
                 total_gates += 1
                 if gate.get('status') == 'PASSOU':
                     gates_passaram += 1
-        dimensoes['qualidade_gates'] = int((gates_passaram / max(total_gates, 1)) * 100)
+        return int((gates_passaram / max(total_gates, 1)) * 100)
 
-        # 3. Determinismo: média do percentual_determinismo das phases 1-7
+    @staticmethod
+    def _dim_determinismo(dados: Dict) -> int:
+        """Dimensão 3: média do percentual_determinismo das phases 1-6."""
         determinismos = []
         for i in range(1, 7):
             phase = dados.get(f'phase_{i}', {})
@@ -175,31 +169,73 @@ class AnalisadorCriticoAutomatico:
                 det = int(det.replace('%', ''))
             determinismos.append(det)
         avg_det = sum(determinismos) / max(len(determinismos), 1) if determinismos else 0
-        dimensoes['determinismo'] = int(min(avg_det, 100))
+        return int(min(avg_det, 100))
 
-        # 4. Validações: taxa de sucesso (de phase_01 se disponível)
+    @staticmethod
+    def _dim_validacoes(dados: Dict) -> int:
+        """Dimensão 4: taxa de sucesso das validações (de phase_1 se disponível)."""
         validacoes = dados.get('phase_1', {}).get('validacoes', {})
-        if validacoes:
-            passou = validacoes.get('passou', 0)
-            total = validacoes.get('total_checks', max(passou, 1))
-            dimensoes['validacoes'] = int(min((passou / max(total, 1)) * 100, 100))
-        else:
-            dimensoes['validacoes'] = 50  # sem dados → neutro
+        if not validacoes:
+            return 50  # sem dados → neutro
+        passou = validacoes.get('passou', 0)
+        total = validacoes.get('total_checks', max(passou, 1))
+        return int(min((passou / max(total, 1)) * 100, 100))
 
-        # 6. Documentação: phase_6 completa e com formatos
+    @staticmethod
+    def _dim_documentacao(dados: Dict) -> int:
+        """Dimensão 6: phase_6 completa e com formatos."""
         phase6 = dados.get('phase_6', {})
-        if phase6.get('status') == 'COMPLETO':
-            formatos = phase6.get('processamento', {}).get('formatos', [])
-            dimensoes['documentacao'] = min(60 + len(formatos) * 15, 100)
-        else:
-            dimensoes['documentacao'] = 0
+        if phase6.get('status') != 'COMPLETO':
+            return 0
+        formatos = phase6.get('processamento', {}).get('formatos', [])
+        return min(60 + len(formatos) * 15, 100)
 
-        # 7. Rastreabilidade: phases com gates definidos (1-7; inclui 8 se existir)
+    @staticmethod
+    def _dim_rastreabilidade(dados: Dict, tem_fase8: bool, total_fases: int) -> int:
+        """Dimensão 7: phases com gates definidos (1-7; inclui 8 se existir)."""
         phases_com_gates = sum(
             1 for i in range(1, 9 if tem_fase8 else 7)
             if dados.get(f'phase_{i}', {}).get('gates_executados')
         )
-        dimensoes['rastreabilidade'] = int(min((phases_com_gates / total_fases) * 100, 100))
+        return int(min((phases_com_gates / total_fases) * 100, 100))
+
+    @staticmethod
+    def _classificar_score(base_score: int) -> str:
+        """Traduz o score total (1-100) na classificação textual correspondente."""
+        classificacoes = {
+            10: "Começando",
+            25: "Básico",
+            50: "Prototipo",
+            60: "Funcional",
+            75: "Robusto",
+            85: "Profissional",
+            100: "TRANSCENDENTE",
+        }
+        classificacao = "Começando"
+        for threshold, label in sorted(classificacoes.items()):
+            if base_score >= threshold:
+                classificacao = label
+        return classificacao
+
+    def _calcular_score(self, dados: Dict) -> Dict:
+        """Calcular score do projeto (1-100) a partir de métricas reais.
+
+        Quando phase_8 existe nos dados (pipeline com --implementar-codigo),
+        a completude considera 7 fases e os gates da fase 8 são incluídos
+        na avaliação de qualidade. Dimensões 3-7 permanecem baseadas em
+        fases 1-7 (determinismo, validações, docs, rastreabilidade).
+        """
+        tem_fase8 = 'phase_8' in dados
+        total_fases = 7 if tem_fase8 else 6
+
+        dimensoes = {
+            'completude_pipeline': self._dim_completude_pipeline(dados, tem_fase8, total_fases),
+            'qualidade_gates': self._dim_qualidade_gates(dados, tem_fase8),
+            'determinismo': self._dim_determinismo(dados),
+            'validacoes': self._dim_validacoes(dados),
+            'documentacao': self._dim_documentacao(dados),
+            'rastreabilidade': self._dim_rastreabilidade(dados, tem_fase8, total_fases),
+        }
 
         # Score total: média ponderada
         # Nota: não há dimensão "economia de tokens vs abordagem ingênua" —
@@ -223,25 +259,10 @@ class AnalisadorCriticoAutomatico:
         # Garantir range 1-100
         base_score = max(1, min(base_score, 100))
 
-        classificacoes = {
-            10: "Começando",
-            25: "Básico",
-            50: "Prototipo",
-            60: "Funcional",
-            75: "Robusto",
-            85: "Profissional",
-            100: "TRANSCENDENTE",
-        }
-
-        classificacao = "Começando"
-        for threshold, label in sorted(classificacoes.items()):
-            if base_score >= threshold:
-                classificacao = label
-
         return {
             'total': base_score,
             'por_dimensao': dimensoes,
-            'classificacao': classificacao,
+            'classificacao': self._classificar_score(base_score),
         }
 
     def _identificar_pontos_fortes(self, dados: Dict) -> List[str]:
@@ -592,8 +613,8 @@ class AnalisadorCriticoAutomatico:
             'por_fase': por_fase,
         }
 
-    def _gerar_relatorio_markdown(self, resultado: Dict) -> str:
-        """Gerar relatório markdown completo"""
+    def _md_secao_score(self, resultado: Dict) -> str:
+        """Seção do relatório: cabeçalho + score atual por dimensão."""
         md = f"""# 📊 AUTO-CRÍTICA: Projeto {self.pasta_projeto.name}
 
 **Gerado em:** {datetime.now().strftime('%d/%m/%Y %H:%M')}
@@ -606,11 +627,14 @@ class AnalisadorCriticoAutomatico:
 
 | Dimensão | Score |
 |----------|-------|"""
-
         for dim, score in resultado['score']['por_dimensao'].items():
             md += f"\n| {dim.replace('_', ' ').title()} | {score}/100 |"
+        return md
 
-        md += f"""
+    @staticmethod
+    def _md_secao_pontos(resultado: Dict) -> str:
+        """Seção do relatório: pontos fortes e pontos a melhorar."""
+        md = """
 
 ## ✅ Pontos Fortes
 
@@ -618,25 +642,32 @@ class AnalisadorCriticoAutomatico:
         for ponto in resultado['pontos_fortes']:
             md += f"- {ponto}\n"
 
-        md += f"""
+        md += """
 
 ## ⚠️ Pontos a Melhorar
 
 """
         for ponto in resultado['pontos_fracos']:
             md += f"- {ponto}\n"
+        return md
 
-        md += f"""
+    @staticmethod
+    def _md_secao_requisitos(resultado: Dict) -> str:
+        """Seção do relatório: requisitos críticos dos próximos 12 meses."""
+        md = """
 
 ## 🔴 Requisitos Críticos (Próximos 12 meses)
 
 | Requisito | Horas | Impacto |
 |-----------|-------|---------|"""
-
         for req in resultado['requisitos'][:5]:
             md += f"\n| {req['nome']} | {req['horas']}h | {req['impacto']} |"
+        return md
 
-        md += f"""
+    @staticmethod
+    def _md_secao_roadmap(resultado: Dict) -> str:
+        """Seção do relatório: roadmap para 100/100."""
+        md = """
 
 ## 🚀 Roadmap para 100/100
 
@@ -648,8 +679,12 @@ class AnalisadorCriticoAutomatico:
 - **Horas:** {fase['horas']}h
 - **Timeline:** {fase['timeline']}
 """
+        return md
 
-        md += f"""
+    @staticmethod
+    def _md_secao_investimento(resultado: Dict) -> str:
+        """Seção do relatório: investimento necessário e consumo de tokens."""
+        md = f"""
 
 ## 💰 Investimento Necessário
 
@@ -659,7 +694,6 @@ class AnalisadorCriticoAutomatico:
 - **Timeline:** ~{resultado['investimento']['timeline_meses']} meses
 - **Premissas:** {resultado['investimento']['premissas']['custo_por_hora_usd']} USD/hora, {resultado['investimento']['premissas']['horas_por_semana']}h/semana ({resultado['investimento']['premissas']['nota']})
 """
-
         tok_info = resultado.get('tokens_consolidado')
         if tok_info:
             md += f"""
@@ -669,8 +703,12 @@ class AnalisadorCriticoAutomatico:
 - **Tokens Autodeclarados pela ADE (não-verificáveis):** {tok_info['total_autodeclarado']}
 - **Consolidação:** {tok_info['consolidado_texto']}
 """
+        return md
 
-        md += """
+    @staticmethod
+    def _md_secao_recomendacao(resultado: Dict) -> str:
+        """Seção do relatório: recomendação final e rodapé."""
+        md = """
 ## 📌 Recomendação
 """
         total_h = resultado['investimento']['total_horas']
@@ -693,8 +731,18 @@ Projeto com score máximo — foco em manutenção e evolução incremental.
 
 **Lei Fundamental:** Nada oculto. Análise honesta. Sempre.
 """
-
         return md
+
+    def _gerar_relatorio_markdown(self, resultado: Dict) -> str:
+        """Gerar relatório markdown completo"""
+        return (
+            self._md_secao_score(resultado)
+            + self._md_secao_pontos(resultado)
+            + self._md_secao_requisitos(resultado)
+            + self._md_secao_roadmap(resultado)
+            + self._md_secao_investimento(resultado)
+            + self._md_secao_recomendacao(resultado)
+        )
 
     def _salvar_artefatos(self, artefatos: Dict):
         """Salvar análise e roadmap"""

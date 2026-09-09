@@ -33,6 +33,7 @@ from scripts.core.injector.materializador import materializar
 from scripts.core.injector.sincronizador_harness import sincronizar
 from scripts.core.injector import scaffolds
 
+import json
 import subprocess
 
 _GERADORES = {
@@ -90,7 +91,7 @@ def sincronizar_componente(
         try:
             res = subprocess.run(cmd, cwd=str(ecossistema_root), capture_output=True, text=True)
             return res.returncode
-        except Exception:
+        except (OSError, subprocess.SubprocessError):
             pass
 
     try:
@@ -100,7 +101,7 @@ def sincronizar_componente(
         import gestor_componentes
         gestor_componentes.sync(tipo=tipo, ferramenta=ferramenta)
         return 0
-    except Exception:
+    except (ImportError, OSError, json.JSONDecodeError, KeyError):
         return 1
 
 
@@ -201,7 +202,7 @@ def injetar(
         try:
             dest_canonico.parent.mkdir(parents=True, exist_ok=True)
             dest_canonico.write_text(conteudo_principal, encoding="utf-8")
-        except Exception:
+        except OSError:
             pass
 
         if (root / "componentes").is_dir():
@@ -209,7 +210,7 @@ def injetar(
             try:
                 dest_root_canonico.parent.mkdir(parents=True, exist_ok=True)
                 dest_root_canonico.write_text(conteudo_principal, encoding="utf-8")
-            except Exception:
+            except OSError:
                 pass
 
     sync_code = sincronizar_componente(tipo, ferramenta="aidd-generator")

@@ -101,7 +101,7 @@ def ler_json_seguro(caminho: Path) -> Optional[Dict[str, Any]]:
         if not conteudo.strip():
             return None
         return json.loads(conteudo)
-    except Exception:
+    except (OSError, json.JSONDecodeError):
         return None
 
 

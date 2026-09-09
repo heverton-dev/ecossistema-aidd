@@ -113,7 +113,7 @@ class CoolifyClient:
             status, corpo = self._http(
                 metodo, url, body=body, headers=self._headers(autenticado), timeout=timeout
             )
-        except Exception as exc:
+        except urllib.error.URLError as exc:
             return Result.fail(f"Falha de conexão com Coolify em {url}: {exc}", codigo="CONEXAO_RECUSADA")
 
         if status >= 400:
@@ -130,7 +130,7 @@ class CoolifyClient:
 
         try:
             return Result.ok(json.loads(texto))
-        except Exception as exc:
+        except json.JSONDecodeError as exc:
             return Result.fail(f"Resposta inesperada (JSON inválido): {exc}", codigo="ERRO_JSON")
 
     # ── endpoints públicos de leitura ───────────────────────────────────

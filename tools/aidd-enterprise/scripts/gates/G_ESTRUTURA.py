@@ -104,7 +104,7 @@ class StructureGate:
                 has_proj = "projeto" in plano_data and "nome" in plano_data["projeto"]
                 has_mods = "modulos" in plano_data or "fases" in plano_data
                 self.check(has_proj and has_mods, "Manifesto 'PLANO-EXECUCAO-ESTRUTURADO.json'", "JSON sem campos 'projeto' e 'modulos'")
-            except Exception as e:
+            except (json.JSONDecodeError, TypeError) as e:
                 self.check(False, "Manifesto 'PLANO-EXECUCAO-ESTRUTURADO.json'", f"JSON corrompido: {e}")
         else:
             self.check(False, "Manifesto 'PLANO-EXECUCAO-ESTRUTURADO.json'", "Arquivo de plano estruturado ausente na raiz")
@@ -161,7 +161,7 @@ class StructureGate:
 
                                     if "sqlite3.connect(" in content and "with " not in content and "def " in content and "init_schema" not in content:
                                         connection_leaks.append(f"{m}/{f}")
-                            except Exception:
+                            except (SyntaxError, OSError):
                                 pass
 
         self.check(

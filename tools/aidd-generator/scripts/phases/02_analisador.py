@@ -145,7 +145,7 @@ class ValidadorGatesPhase2:
             tem_todos = all(campo in analise for campo in campos_obrigatorios)
             passou = tem_todos
             detalhes = f"Schema válido: {len([c for c in campos_obrigatorios if c in analise])}/4 campos"
-        except:
+        except TypeError:
             passou = False
             detalhes = "Schema inválido"
 
@@ -345,7 +345,7 @@ class AnalisadorFase2:
             print(f"   ❌ LLM respondeu, mas não retornou JSON válido: {e}")
             print(f"      Conteúdo recebido: {resposta.get('conteudo', '')[:200]}")
             return None
-        except Exception as e:
+        except (KeyError, ValueError, TypeError) as e:
             print(f"   ❌ Erro ao processar resposta: {e}")
             return None
 

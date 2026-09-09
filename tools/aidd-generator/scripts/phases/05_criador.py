@@ -144,7 +144,7 @@ class ValidadorGatesPhase5:
             passou = resultado.returncode == 0 and resultado.stdout.strip()
             detalhes = f"Último commit: {resultado.stdout.strip()[:50]}" if passou else "Git não inicializado ou sem commits"
 
-        except Exception as e:
+        except (subprocess.SubprocessError, OSError) as e:
             passou = False
             detalhes = f"Erro ao verificar git: {e}"
 
@@ -176,7 +176,7 @@ class ValidadorGatesPhase5:
             passou = len(tables) >= 1  # Mínimo 1 tabela
             detalhes = f"{len(tables)} tabelas criadas"
 
-        except Exception as e:
+        except sqlite3.Error as e:
             passou = False
             detalhes = f"Erro ao verificar SQLite: {e}"
 
@@ -205,7 +205,7 @@ class ValidadorGatesPhase5:
             passou = len(scripts) > 0
             detalhes = f"{len(scripts)} scripts encontrados (Windows: perms verificadas por existência)"
 
-        except Exception as e:
+        except OSError as e:
             passou = False
             detalhes = f"Erro ao verificar permissões: {e}"
 
@@ -244,7 +244,7 @@ class ValidadorGatesPhase5:
             )
             passou = resultado.returncode == 0
             detalhes = resultado.stdout.strip().splitlines()[-1] if resultado.stdout.strip() else resultado.stderr.strip()
-        except Exception as e:
+        except (subprocess.SubprocessError, OSError) as e:
             passou = False
             detalhes = f"Erro ao executar G_SYNC_HARNESS.py: {e}"
 
@@ -289,7 +289,7 @@ class ValidadorGatesPhase5:
                         if not conteudo.lower().startswith('#'):
                             problemas.append(f"⚠️  Possível credencial hard-coded em {arquivo_py.name}")
                             break
-            except:
+            except (UnicodeDecodeError, OSError):
                 pass  # Arquivo binário ou erro de leitura
 
         passou = len([p for p in problemas if '⚠️' in p]) == 0
@@ -651,10 +651,7 @@ if __name__ == '__main__':
                 print(f"   ✓ .claude/{alvo.name} ← cópia de {alvo} (symlink negado pelo SO)")
         return symlinks_reais
 
-    def _criar_arquivos_configuracao(self, ideia: str):
-        """Cria arquivos de configuração padrão"""
-
-        # Criar orquestrador.py placeholder
+    def _criar_orquestrador_placeholder(self):
         orquestrador_py = """#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 \"\"\"Orquestrador principal do projeto\"\"\"
@@ -674,8 +671,9 @@ if __name__ == '__main__':
             encoding='utf-8'
         )
 
-        # Criar settings.json — harness/modelo detectados de verdade
-        # (nunca fixo: essencial para testes comparativos entre harness)
+    def _criar_claude_settings_json(self):
+        # harness/modelo detectados de verdade (nunca fixo: essencial para
+        # testes comparativos entre harness)
         settings_json = {
             "harness": detectar_harness_nome(),
             "modelo": detectar_modelo_harness(),
@@ -686,6 +684,7 @@ if __name__ == '__main__':
             encoding='utf-8'
         )
 
+    def _criar_agents_md_e_sincronizar_harnesses(self, ideia: str):
         # AGENTS.md — fonte única (padrão Zero Duplicidade Desnecessária,
         # ver AGENTS.md do próprio aidd-generator). .claude/CLAUDE.md é
         # symlink para este arquivo, nunca uma cópia separada.
@@ -738,7 +737,7 @@ Este projeto foi gerado pela skill aidd-project-generator v2.1
         if copias_fallback:
             self._registrar_sync_manifest(agents_md_path, copias_fallback)
 
-        # config.json
+    def _criar_aidd_config_json(self, ideia: str):
         config = {
             'versao': '1.0',
             'data_criacao': datetime.now(timezone.utc).isoformat(),
@@ -753,7 +752,7 @@ Este projeto foi gerado pela skill aidd-project-generator v2.1
             encoding='utf-8'
         )
 
-        # rules.md (10 leis AIDD)
+    def _criar_aidd_rules_md(self):
         rules_md = """# 10 Leis Inegociáveis da AIDD
 
 1. **R-TOKEN** - Economia Severa: 90%+ determinismo em coleta/parsing
@@ -769,15 +768,16 @@ Este projeto foi gerado pela skill aidd-project-generator v2.1
 """
         (self.pasta_projeto / '.aidd/rules.md').write_text(rules_md, encoding='utf-8')
 
-        # requirements.txt
+    def _criar_requirements_txt(self):
         requirements_txt = """# Dependências do projeto AIDD
 requests>=2.31.0
 """
         (self.pasta_projeto / 'requirements.txt').write_text(requirements_txt, encoding='utf-8')
 
-        # pytest.ini — pythonpath=src garante que qualquer código futuro em
-        # src/<pacote>/ (ex: gerado pela Fase 8) seja importável pelo pytest
-        # sem exigir instalação editável ou config manual por quem implementa.
+    def _criar_pytest_ini(self):
+        # pythonpath=src garante que qualquer código futuro em src/<pacote>/
+        # (ex: gerado pela Fase 8) seja importável pelo pytest sem exigir
+        # instalação editável ou config manual por quem implementa.
         # Achado real (2026-08-30): um harness entregou testes reais que
         # nunca rodaram por falta exatamente disso (ModuleNotFoundError).
         pytest_ini = """[pytest]
@@ -787,7 +787,7 @@ addopts = -ra
 """
         (self.pasta_projeto / 'pytest.ini').write_text(pytest_ini, encoding='utf-8')
 
-        # README.md
+    def _criar_readme(self, ideia: str):
         readme = f"""# {ideia.title()}
 
 Projeto gerado com AIDD (AI-Driven Development).
@@ -816,7 +816,7 @@ python scripts/orquestrador.py --modo interativo
 """
         (self.pasta_projeto / 'README.md').write_text(readme, encoding='utf-8')
 
-        # .gitignore
+    def _criar_gitignore(self):
         gitignore = """# Ambiente
 .env
 .env.local
@@ -851,6 +851,18 @@ output/
 """
         (self.pasta_projeto / '.gitignore').write_text(gitignore, encoding='utf-8')
 
+    def _criar_arquivos_configuracao(self, ideia: str):
+        """Cria arquivos de configuração padrão"""
+        self._criar_orquestrador_placeholder()
+        self._criar_claude_settings_json()
+        self._criar_agents_md_e_sincronizar_harnesses(ideia)
+        self._criar_aidd_config_json(ideia)
+        self._criar_aidd_rules_md()
+        self._criar_requirements_txt()
+        self._criar_pytest_ini()
+        self._criar_readme(ideia)
+        self._criar_gitignore()
+
     def _criar_sqlite(self):
         """Inicializa banco SQLite com schema"""
         try:
@@ -878,7 +890,7 @@ output/
 
             conn.commit()
             conn.close()
-        except Exception as e:
+        except sqlite3.Error as e:
             print(f"⚠️  Erro ao criar SQLite: {e}")
 
     def _git_init_commit(self, ideia: str):
@@ -907,7 +919,7 @@ output/
                          capture_output=True,
                          timeout=5)
 
-        except Exception as e:
+        except (subprocess.SubprocessError, OSError) as e:
             print(f"⚠️  Erro ao inicializar git: {e}")
 
     def _gerar_index(self, gates: List[Gate], tempo_execucao: float) -> Dict[str, Any]:
@@ -926,7 +938,7 @@ output/
             )
             if resultado.returncode == 0:
                 git_commits = int(resultado.stdout.strip())
-        except Exception:
+        except (subprocess.SubprocessError, OSError, ValueError):
             pass
 
         index = {

@@ -16,7 +16,14 @@ from aidd_forge.core.camada_detector import detectar_camada
 from aidd_forge.core.harness_sync import HarnessSyncResult, sincronizar_skill
 from aidd_forge.core.injection_schema import validate_request
 from aidd_forge.core.injector_profiles import sincronizar_componente
-from aidd_forge.core.materializador import InjectionRequest, MaterializationResult, Materializador
+from aidd_forge.core.materializador import (
+    ConteudoStubError,
+    DestinoExistenteError,
+    InjectionRequest,
+    MaterializacaoError,
+    MaterializationResult,
+    Materializador,
+)
 
 TIPOS_COM_HARNESS_SYNC: frozenset[str] = frozenset({"skill"})
 
@@ -61,7 +68,7 @@ class UniversalInjector:
 
         try:
             materialization = Materializador(self.target_root).materializar(request, force=force)
-        except Exception as exc:
+        except (ConteudoStubError, DestinoExistenteError, MaterializacaoError) as exc:
             return UniversalInjectionResult(errors=[str(exc)], camada=camada)
 
         sync_code = sincronizar_componente(tipo, ferramenta="aidd-forge")

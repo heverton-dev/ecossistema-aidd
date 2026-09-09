@@ -21,6 +21,7 @@ Modo padrão seguro: --dry-run (simulação completa sem efeitos colaterais).
 import argparse
 import json
 import os
+import subprocess
 import sys
 from datetime import datetime, timezone
 from typing import Any, Dict, List, Optional
@@ -86,7 +87,7 @@ class DeployOrchestrator:
                 plano = json.load(f)
             self._registrar_etapa("validacao_plano", "passou", {"caminho": self.plano_path})
             return Result.ok(plano)
-        except Exception as exc:
+        except (OSError, json.JSONDecodeError) as exc:
             self._registrar_etapa("validacao_plano", "falhou", str(exc))
             return Result.fail(erro=f"Falha ao carregar {self.plano_path}: {exc}", codigo="PLANO_INVALIDO")
 
@@ -106,7 +107,7 @@ class DeployOrchestrator:
             else:
                 self._registrar_etapa("bootstrap_vps", "falhou", res.erro)
                 return res
-        except Exception as exc:
+        except (ValueError, OSError, subprocess.SubprocessError) as exc:
             self._registrar_etapa("bootstrap_vps", "falhou", str(exc))
             return Result.fail(erro=f"Erro no bootstrap da VPS: {exc}", codigo="BOOTSTRAP_FAILED")
 

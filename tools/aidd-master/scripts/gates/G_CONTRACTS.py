@@ -43,7 +43,7 @@ def verificar_contratos(target_dir: str = "."):
                         conteudo = f.read()
                         if "@registry." not in conteudo and "registrar_rotas" not in conteudo:
                             erros.append(f"Módulo '{m}' não registra rotas com decoradores RouteRegistry.")
-    except Exception as e:
+    except (ImportError, OSError) as e:
         erros.append(f"Falha ao validar RouteRegistry: {str(e)}")
 
     # 2. Validar MCP Server
@@ -54,7 +54,7 @@ def verificar_contratos(target_dir: str = "."):
                 code = f.read()
                 if "MCPServer" not in code or ("handle_json_rpc" not in code and "handle_request" not in code):
                     erros.append("Servidor MCP presente mas sem classe MCPServer ou método de processamento JSON-RPC.")
-        except Exception as e:
+        except OSError as e:
             erros.append(f"Erro ao inspecionar MCP server: {str(e)}")
 
     # 3. Snapshot SHA-256 de Integridade de Contratos
@@ -69,7 +69,10 @@ def verificar_contratos(target_dir: str = "."):
         
         snapshot_hash = hashlib.sha256(json.dumps(contract_manifest, sort_keys=True).encode()).hexdigest()[:16]
         print(f"  [+] Snapshot SHA-256 de Contratos: {snapshot_hash} ({len(contract_manifest)} módulos ativos)")
-    except Exception as e:
+    except (OSError, NameError) as e:
+        # NameError cobre o caso real de 'modules_dir'/'modulos' nao terem sido definidos
+        # porque a secao 1 (RouteRegistry) falhou antes de chegar la — mesmo comportamento
+        # de hoje (nao propaga, so registra erro), so com tipo explicito.
         erros.append(f"Erro ao gerar snapshot de contratos: {e}")
 
     # 4. Validar Integridade e Autossuficiência dos 4 Portais Front-End
@@ -84,7 +87,7 @@ def verificar_contratos(target_dir: str = "."):
                     erros.append("Super-App 'index.html' sem estrutura modal com display encapsulado.")
                 if "<svg" in h and 'width="' not in h:
                     erros.append("Super-App 'index.html' possui SVGs sem dimensões físicas travadas (width/height).")
-        except Exception as e:
+        except OSError as e:
             erros.append(f"Erro ao auditar front-end index.html: {e}")
 
     # Checar geradores de HTML dos estúdios integrados

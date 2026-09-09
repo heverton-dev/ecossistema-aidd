@@ -190,7 +190,7 @@ class ArchitectureGate:
                         self.log("PASS", "EventBus Integration", f"Módulo '{mod}' usa EventBus", "Comunicação desacoplada confirmada")
                     else:
                         self.log("WARN", "EventBus Integration", f"Módulo '{mod}' sem EventBus", "Recomenda-se usar EventBus para comunicação inter-módulo")
-                except Exception:
+                except OSError:
                     pass
 
         # 6. Resumo de arquivos escaneados

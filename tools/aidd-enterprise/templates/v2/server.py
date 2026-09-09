@@ -840,7 +840,7 @@ def post_reenviar_webhook_log(data):
             payload = json.loads(payload_json) if payload_json else {}
             if "data" in payload:
                 payload = payload["data"]
-        except:
+        except json.JSONDecodeError:
             payload = {}
         res = webhook_dispatcher.testar_disparo(url, secret, evento, payload)
         return {"sucesso": True, "detalhes": res}
@@ -974,7 +974,7 @@ class AIDD_EnterpriseAppHandler(http.server.SimpleHTTPRequestHandler):
         
         try:
             body = json.loads(body_bytes.decode("utf-8")) if body_bytes else {}
-        except:
+        except (json.JSONDecodeError, UnicodeDecodeError):
             body = {}
 
         if path == "/mcp":
@@ -1011,7 +1011,7 @@ class AIDD_EnterpriseAppHandler(http.server.SimpleHTTPRequestHandler):
         body_bytes = self.rfile.read(length) if length > 0 else b""
         try:
             body = json.loads(body_bytes.decode("utf-8")) if body_bytes else {}
-        except:
+        except (json.JSONDecodeError, UnicodeDecodeError):
             body = {}
 
         if path in registry.routes["PUT"]:
@@ -1038,7 +1038,7 @@ class AIDD_EnterpriseAppHandler(http.server.SimpleHTTPRequestHandler):
         body_bytes = self.rfile.read(length) if length > 0 else b""
         try:
             body = json.loads(body_bytes.decode("utf-8")) if body_bytes else {}
-        except:
+        except (json.JSONDecodeError, UnicodeDecodeError):
             body = {}
 
         if path in registry.routes["DELETE"]:

@@ -24,7 +24,7 @@ def check_harness():
         try:
             with open("PLANO-EXECUCAO-ESTRUTURADO.json", "r", encoding="utf-8") as f:
                 json.load(f)
-        except Exception as e:
+        except json.JSONDecodeError as e:
             erros.append(f"PLANO-EXECUCAO-ESTRUTURADO.json corrompido: {e}")
 
     if erros:

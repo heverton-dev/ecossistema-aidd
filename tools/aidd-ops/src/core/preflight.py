@@ -132,7 +132,7 @@ class PreflightRunner:
                     else:
                         ultimo_status = status_code
                         ultimo_erro = f"HTTP {status_code}"
-                except Exception as exc:
+                except OSError as exc:
                     ultimo_erro = str(exc)
 
                 if tentativa < self.retries - 1:
@@ -165,7 +165,7 @@ class PreflightRunner:
                     "status": "passou",
                     "detalhes": info_ssl,
                 }
-            except Exception as exc:
+            except OSError as exc:
                 if tentativa == self.retries - 1:
                     return {
                         "nome": "ssl",
@@ -194,7 +194,7 @@ class PreflightRunner:
                     else:
                         if tentativa == self.retries - 1:
                             falhas[host] = "Nenhum IP retornado"
-                except Exception as exc:
+                except OSError as exc:
                     if tentativa == self.retries - 1:
                         falhas[host] = str(exc)
                 if tentativa < self.retries - 1:
@@ -231,7 +231,7 @@ class PreflightRunner:
                         "status": "passou",
                         "detalhes": {"status_code": status_code, "url": webhook_url},
                     }
-            except Exception as exc:
+            except OSError as exc:
                 if tentativa == self.retries - 1:
                     return {
                         "nome": "webhook",

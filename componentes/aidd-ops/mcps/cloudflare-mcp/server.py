@@ -58,7 +58,7 @@ def _requisicao_api(metodo: str, endpoint: str, payload: Optional[dict] = None) 
         detalhes = e.read().decode("utf-8", errors="replace")
         try:
             return json.loads(detalhes)
-        except Exception:
+        except json.JSONDecodeError:
             return {"success": False, "errors": [{"code": e.code, "message": str(e), "detail": detalhes}]}
     except urllib.error.URLError as e:
         return {"success": False, "errors": [{"code": "NETWORK_ERROR", "message": str(e.reason)}]}

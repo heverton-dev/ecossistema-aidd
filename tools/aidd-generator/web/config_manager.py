@@ -96,7 +96,7 @@ def ler_env_dict(caminho_env: Path) -> Dict[str, str]:
                 if (v.startswith('"') and v.endswith('"')) or (v.startswith("'") and v.endswith("'")):
                     v = v[1:-1]
                 vars_env[k] = v
-    except Exception:
+    except OSError:
         pass
     return vars_env
 
@@ -213,7 +213,7 @@ def salvar_configuracao(
 
     try:
         env_file.write_text(conteudo, encoding='utf-8')
-    except Exception as e:
+    except OSError as e:
         return False, f"Erro ao escrever arquivo .env: {e}"
 
     # Atualizar variáveis de ambiente no processo atual
@@ -227,7 +227,7 @@ def salvar_configuracao(
     try:
         from dotenv import load_dotenv
         load_dotenv(env_file, override=True)
-    except Exception:
+    except (ImportError, OSError):
         pass
 
     return True, f"Configuração salva com sucesso para o provedor {provedor['nome']}!"

@@ -25,7 +25,7 @@ import hashlib
 from pathlib import Path
 from datetime import datetime, timezone
 from typing import Optional, Dict, List, Any
-from concurrent.futures import ThreadPoolExecutor, as_completed
+from concurrent.futures import ThreadPoolExecutor, TimeoutError as FutureTimeoutError, as_completed
 
 # Importar utils para detectar modelo e protocolo delegado
 sys.path.insert(0, str(Path(__file__).parent))
@@ -458,7 +458,7 @@ class DesignerFase3:
 
                 try:
                     return extrair_json_resposta(conteudo), tokens, origem
-                except Exception as e:
+                except ValueError as e:
                     if tentativa < max_tentativas:
                         time.sleep(2)
                         continue
@@ -483,7 +483,7 @@ class DesignerFase3:
                     else:
                         algum_tokens_indisponivel = True
                     print(f"   ✅ {nome.capitalize()} completo ({tokens or '?'} tokens, origem: {origem})")
-                except Exception as e:
+                except (RuntimeError, FutureTimeoutError) as e:
                     print(f"   ❌ {nome} falhou: {type(e).__name__}: {e}")
                     return None
 

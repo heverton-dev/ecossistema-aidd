@@ -174,7 +174,7 @@ class PerformanceGate:
                          "SLAHistogram registrado no projeto",
                          "SLAHistogram importado mas não instanciado")
 
-        except Exception as e:
+        except (ImportError, OSError) as e:
             self.log("FAIL", "Check 1: Response Time",
                      "Carregamento de MetricsRegistry", str(e))
 
@@ -258,7 +258,7 @@ class PerformanceGate:
                         self.log("WARN", "Check 2: Memory Usage",
                                  "Medição de memória",
                                  "Não foi possível obter informações de memória via Win32 API")
-                except Exception as e2:
+                except (AttributeError, OSError) as e2:
                     self.log("WARN", "Check 2: Memory Usage",
                              "Medição de memória",
                              f"Não disponível nesta plataforma: {e2}")
@@ -506,7 +506,7 @@ class PerformanceGate:
                              f"Muitos spans em {fpath}",
                              f"{count} spans — considere reduzir granularidade")
 
-        except Exception as e:
+        except (ImportError, OSError) as e:
             self.log("WARN", "Check 6: OTel Spans",
                      "Carregamento de OpenTelemetry", str(e))
 

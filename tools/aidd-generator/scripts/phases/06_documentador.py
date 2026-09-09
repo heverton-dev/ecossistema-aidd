@@ -30,10 +30,16 @@ from pathlib import Path
 from datetime import datetime, timezone
 from typing import Optional, Dict, List, Tuple
 
+try:
+    from pypdf.errors import PdfReadError
+except ImportError:
+    class PdfReadError(Exception):
+        """Placeholder inerte: pypdf nao instalado, nunca sera levantada de verdade."""
+
 if sys.platform == 'win32':
     try:
         sys.stdout.reconfigure(encoding='utf-8')
-    except Exception:
+    except (AttributeError, ValueError):
         pass
 
 
@@ -103,7 +109,7 @@ class ValidadorGatesPhase6:
                 return Gate('F1_html_renderiza', 'Validar HTML renderiza', True, f'HTML válido ({tam} bytes, DOM completo)')
             else:
                 return Gate('F1_html_renderiza', 'Validar HTML renderiza', False, f'HTML incompleto ou malformado ({tam} bytes)')
-        except Exception as e:
+        except OSError as e:
             return Gate('F1_html_renderiza', 'Validar HTML renderiza', False, f'Erro ao ler HTML: {str(e)}')
 
     @staticmethod
@@ -138,7 +144,7 @@ class ValidadorGatesPhase6:
                 return Gate('F2_pdf_gerado', 'Validar PDF gerado', True, f'PDF gerado com cabeçalho válido ({tam} bytes)')
 
             return Gate('F2_pdf_gerado', 'Validar PDF gerado', True, f'PDF gerado com sucesso ({tam} bytes)')
-        except Exception as e:
+        except (OSError, PdfReadError) as e:
             return Gate('F2_pdf_gerado', 'Validar PDF gerado', False, f'Erro ao validar PDF: {str(e)}')
 
     @staticmethod
@@ -170,7 +176,7 @@ class ValidadorGatesPhase6:
                 return Gate('F3_markdown_valido', 'Validar Markdown válido', True, f'Markdown válido e parseável ({tam} bytes)')
             else:
                 return Gate('F3_markdown_valido', 'Validar Markdown válido', False, f'Markdown sem cabeçalhos ou vazio ({tam} bytes)')
-        except Exception as e:
+        except OSError as e:
             return Gate('F3_markdown_valido', 'Validar Markdown válido', False, f'Erro ao validar Markdown: {str(e)}')
 
 
@@ -375,7 +381,7 @@ class DocumentadorFase6:
                 print(f"   ⚠️ Pandoc HTML falhou: {res.stderr.strip()[:200]}")
                 return False
             return True
-        except Exception as e:
+        except OSError as e:
             print(f"   ⚠️ Erro ao converter HTML via Pandoc: {e}")
             return False
 
@@ -400,7 +406,7 @@ class DocumentadorFase6:
                 print(f"   ⚠️ Pandoc PDF falhou: {res.stderr.strip()[:200]}")
                 return False
             return True
-        except Exception as e:
+        except OSError as e:
             print(f"   ⚠️ Erro ao converter PDF via Pandoc: {e}")
             return False
 
