@@ -216,7 +216,7 @@ class MCPServer:
                 cur.execute(sql, params)
                 rows = cur.fetchall()
                 return {"sucesso": True, "modulo": slug, "total": len(rows), "itens": [dict(r) for r in rows]}
-            except Exception as e:
+            except sqlite3.Error as e:
                 return {"sucesso": False, "modulo": slug, "erro": str(e)}
 
     def _generic_obter(self, slug: str, args: Dict[str, Any]) -> Dict[str, Any]:
@@ -231,7 +231,7 @@ class MCPServer:
                 if row:
                     return {"sucesso": True, "modulo": slug, "item": dict(row)}
                 return {"sucesso": False, "modulo": slug, "erro": "Registro não encontrado"}
-            except Exception as e:
+            except sqlite3.Error as e:
                 return {"sucesso": False, "modulo": slug, "erro": str(e)}
 
     def _generic_criar(self, slug: str, args: Dict[str, Any]) -> Dict[str, Any]:
@@ -247,7 +247,7 @@ class MCPServer:
                 cur.execute(sql, (titulo, descricao, dados, status))
                 conn.commit()
                 return {"sucesso": True, "modulo": slug, "id": cur.lastrowid, "titulo": titulo}
-            except Exception as e:
+            except sqlite3.Error as e:
                 return {"sucesso": False, "modulo": slug, "erro": str(e)}
 
     def _generic_atualizar(self, slug: str, args: Dict[str, Any]) -> Dict[str, Any]:
@@ -268,7 +268,7 @@ class MCPServer:
                 cur.execute(up_sql, (novo_titulo, nova_desc, novo_status, item_id))
                 conn.commit()
                 return {"sucesso": True, "modulo": slug, "id": item_id, "status": novo_status}
-            except Exception as e:
+            except sqlite3.Error as e:
                 return {"sucesso": False, "modulo": slug, "erro": str(e)}
 
     def _generic_deletar(self, slug: str, args: Dict[str, Any]) -> Dict[str, Any]:
@@ -281,7 +281,7 @@ class MCPServer:
                 cur.execute(sql, (item_id,))
                 conn.commit()
                 return {"sucesso": True, "modulo": slug, "id": item_id}
-            except Exception as e:
+            except sqlite3.Error as e:
                 return {"sucesso": False, "modulo": slug, "erro": str(e)}
 
     def get_tools_manifest(self) -> List[Dict[str, Any]]:

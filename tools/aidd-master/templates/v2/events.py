@@ -80,11 +80,13 @@ class RedisStreamsDriver(EventBusDriver):
         return f"aidd:events:{event_name}"
 
     def subscribe(self, event_name: str, handler: Callable[[Any], None]):
+        import redis
+
         self._listeners[event_name].append(handler)
         stream_key = self._stream_key(event_name)
         try:
             self._redis.xgroup_create(stream_key, self._group_name, id="0", mkstream=True)
-        except Exception as e:
+        except redis.exceptions.ResponseError as e:
             if "BUSYGROUP" not in str(e):
                 raise
 
@@ -101,6 +103,8 @@ class RedisStreamsDriver(EventBusDriver):
         self._redis.xadd(stream_key, {"payload": json.dumps(payload, ensure_ascii=False)})
 
     def _consume_loop(self, event_name: str):
+        import redis
+
         stream_key = self._stream_key(event_name)
         while self._running:
             try:
@@ -118,9 +122,9 @@ class RedisStreamsDriver(EventBusDriver):
                                 except Exception as e:
                                     print(f"[EVENT_ERROR] Falha ao processar evento '{event_name}': {e}")
                             self._redis.xack(stream_key, self._group_name, msg_id)
-                        except Exception as e:
+                        except (json.JSONDecodeError, KeyError, redis.exceptions.RedisError) as e:
                             print(f"[EVENT_ERROR] Falha ao decodificar mensagem {msg_id} de '{event_name}': {e}")
-            except Exception as e:
+            except redis.exceptions.RedisError as e:
                 print(f"[EVENTBUS_ERROR] Falha no consumo do stream '{stream_key}': {e}")
                 time.sleep(1)
 

@@ -6,6 +6,11 @@ import time
 import threading
 from typing import Dict
 
+try:
+    from core.database import DB_ERRORS
+except ImportError:
+    from database import DB_ERRORS
+
 class TokenRevocationList:
     """TRL híbrida (em memória + SQLite-backed). Revogação instantânea de JWTs pelo jti."""
     _store: Dict[str, float] = {}
@@ -27,7 +32,7 @@ class TokenRevocationList:
                     CREATE INDEX IF NOT EXISTS idx_revoked_exp ON _revoked_tokens(exp);
                 """)
                 conn.commit()
-        except Exception:
+        except DB_ERRORS:
             pass
 
     @classmethod
@@ -39,7 +44,7 @@ class TokenRevocationList:
                 with cls._db.get_connection() as conn:
                     conn.execute("INSERT OR REPLACE INTO _revoked_tokens (jti, exp) VALUES (?, ?)", (jti, exp))
                     conn.commit()
-            except Exception:
+            except DB_ERRORS:
                 pass
 
     @classmethod
@@ -54,7 +59,7 @@ class TokenRevocationList:
                     row = conn.execute("SELECT jti FROM _revoked_tokens WHERE jti = ? AND exp > ?", (jti, time.time())).fetchone()
                     if row:
                         return True
-            except Exception:
+            except DB_ERRORS:
                 pass
         return False
 
@@ -70,5 +75,5 @@ class TokenRevocationList:
                 with cls._db.get_connection() as conn:
                     conn.execute("DELETE FROM _revoked_tokens WHERE exp <= ?", (now,))
                     conn.commit()
-            except Exception:
+            except DB_ERRORS:
                 pass

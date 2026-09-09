@@ -101,8 +101,11 @@ fi
 # Instalado por 'code-review-graph install'. Remova este bloco para
 # desabilitar as checagens de grafo no pre-commit.
 if command -v code-review-graph >/dev/null 2>&1; then
-    code-review-graph update || true
-    code-review-graph detect-changes --brief || true
+    # PYTHONUTF8=1 evita UnicodeEncodeError no Windows: sem isso, o Python
+    # usa a codepage antiga do console (cp1252) pra imprimir os paineis do
+    # code-review-graph, que tem caracteres que ela nao suporta.
+    PYTHONUTF8=1 code-review-graph update || true
+    PYTHONUTF8=1 code-review-graph detect-changes --brief || true
 fi
 
 exit 0

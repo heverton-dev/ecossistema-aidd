@@ -97,5 +97,4 @@ O **Ecossistema AIDD** é um monorepo agnóstico que integra 4 ferramentas compl
 - 🔶 **Correcao Pos Auditoria Sem Maquiagem** — `docs/planos/fazendo/01-correcao-pos-auditoria-sem-maquiagem/`
 - 🔶 **Direcionamento Estrategico Anti Nih** — `docs/planos/fazendo/02-direcionamento-estrategico-anti-nih/`
 - 🔶 **Evolucao Aidd Ops Fase Completa** — `docs/planos/fazendo/03-evolucao-aidd-ops-fase-completa/`
-- 🔶 **Correcao Codigo Limpo** — `docs/planos/fazendo/correcao-codigo-limpo/`
 <!-- AUTO:INICIATIVAS:END -->

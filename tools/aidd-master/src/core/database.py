@@ -33,6 +33,18 @@ from sqlglot import exp
 from sqlalchemy import create_engine, event
 from sqlalchemy.orm import sessionmaker
 
+# psycopg2 é opcional: só é usado quando DATABASE_URL aponta para PostgreSQL
+# (ver PostgresAdapter._connect_raw abaixo, mesmo padrão de import condicional).
+# Carregado aqui também para expor DB_ERRORS — a tupla de exceções nativas de
+# banco que o resto do módulo (e outros arquivos de core/) usa para não
+# capturar erro genérico, sem arriscar quebrar instalações só-SQLite.
+try:
+    import psycopg2
+except ImportError:
+    psycopg2 = None
+
+DB_ERRORS = (sqlite3.Error, psycopg2.Error) if psycopg2 is not None else (sqlite3.Error,)
+
 # ---------------------------------------------------------------------------
 # Row Level Security (RLS) — Application-Layer Enforcement for SQLite
 # ---------------------------------------------------------------------------
@@ -512,7 +524,7 @@ class PostgresCursorProxy:
             try:
                 row = self._cursor.fetchone()
                 self._lastrowid = row["id"] if row else None
-            except Exception:
+            except psycopg2.ProgrammingError:
                 self._lastrowid = None
         return self
 

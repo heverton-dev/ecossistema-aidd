@@ -2,7 +2,7 @@
 
 > **Escopo:** Entra: apresentar ao usuário as opções reais de convenção de nomenclatura observadas hoje no código, colher a decisão explícita dele (não fabricar escolha), e documentar a convenção escolhida em `AGENTS.md`/`CLAUDE.md` (regra de estilo, não código executável). Não entra: renomear em massa qualquer identificador já existente no código — isso seria uma mudança grande, de alto risco e baixo valor imediato (quebra referências, testes, imports), e fica fora deste item; a convenção documentada vale para código **novo** escrito daqui pra frente.
 
-> **Status:** ⏳ Rascunho gerado, aguardando aprovação
+> **Status:** ✅ Concluído em 2026-09-09 — decisão colhida diretamente do usuário (formalizar o padrão já observado, sem renomear código existente) e documentada em `AGENTS.md`, seção "4.1 CONVENÇÃO DE NOMENCLATURA DE CÓDIGO (PT-BR / INGLÊS)".
 
 ---
 
@@ -13,9 +13,9 @@
 
 ## Definição de Pronto
 
-1. Opções apresentadas ao usuário (ex.: manter o padrão observado hoje formalizado como regra; ou definir outra regra) e decisão explícita registrada aqui com data.
-2. Regra documentada em `AGENTS.md` (seção de convenções de código), com 2-3 exemplos reais do próprio código como referência.
-3. Nenhum identificador existente renomeado como parte deste item.
+1. ✅ Opções apresentadas ao usuário (manter o padrão observado hoje formalizado como regra; tudo em inglês; tudo em português) e decisão explícita registrada aqui com data: usuário escolheu "Formalizar o padrão observado" em 2026-09-09.
+2. ✅ Regra documentada em `AGENTS.md`, seção nova "4.1 CONVENÇÃO DE NOMENCLATURA DE CÓDIGO (PT-BR / INGLÊS)", com exemplos reais do próprio código (`SecurityGate`, `JWTService`, `MCPServer`, `CircuitBreaker` para técnico/inglês; `materializar`, `dimensionar`, `reconhecer_nicho`, `sincronizar_componente` para domínio/português).
+3. ✅ Nenhum identificador existente foi renomeado como parte deste item.
 
 ## Criterio de saida
 

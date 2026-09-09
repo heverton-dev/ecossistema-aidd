@@ -1,6 +1,11 @@
 import urllib.request, urllib.error, json, threading, hmac, hashlib, time, uuid, os
 from pathlib import Path
 
+try:
+    from core.database import DB_ERRORS
+except ImportError:
+    from database import DB_ERRORS
+
 class WebhookDispatcher:
     BASE_CATALOG = [
         {
@@ -139,7 +144,7 @@ class WebhookDispatcher:
                         VALUES (?, ?, ?, ?, ?, ?, ?)
                     """, (wh["id"], evento, url, json.dumps(body_dict, ensure_ascii=False), status_code, resp_body, 1 if status == "sucesso" else 0))
                     conn.commit()
-            except Exception as db_err:
+            except DB_ERRORS as db_err:
                 print(f"[Webhook Log DB Error] {db_err}")
 
             if status == "sucesso":
@@ -198,7 +203,7 @@ class WebhookDispatcher:
                     VALUES (NULL, ?, ?, ?, ?, ?, ?)
                 """, (evento, url, json.dumps(body_dict, ensure_ascii=False), status_code, resp_body[:1000], 1 if status == "sucesso" else 0))
                 conn.commit()
-        except Exception:
+        except DB_ERRORS:
             pass
 
         return {

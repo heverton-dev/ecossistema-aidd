@@ -63,7 +63,7 @@ class JWTService:
 
         try:
             payload = json.loads(cls._base64url_decode(p_b64).decode("utf-8"))
-        except Exception as e:
+        except ValueError as e:
             return False, None, f"Payload corrompido: {e}"
 
         if "exp" in payload and payload["exp"] < int(time.time()):
@@ -148,7 +148,7 @@ class SecurityService:
             salt, key_b64 = hashed_str.split(":")
             new_key = hashlib.pbkdf2_hmac("sha256", password.encode("utf-8"), salt.encode("utf-8"), 100000)
             return hmac.compare_digest(key_b64, base64.b64encode(new_key).decode("utf-8"))
-        except Exception:
+        except ValueError:
             return False
 
     @staticmethod
