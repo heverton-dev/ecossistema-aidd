@@ -77,6 +77,7 @@ O **Ecossistema AIDD** unifica 5 ferramentas complementares de Engenharia Agênt
     - Simplicidade de forma nunca reduz a profundidade real nem justifica fabricar ou simplificar fatos — o conteúdo técnico continua completo e verdadeiro; só a forma de comunicar muda.
     - Zero rodeio/formalidade desnecessária: ir direto ao que foi feito, encontrado ou decidido.
     - Origem: feedback explícito do usuário em 2026-09-08 — uma explicação tecnicamente correta sobre consolidação de código (`fleet_discovery.py`) foi rejeitada por excesso de jargão antes de ser aceita na versão reescrita em linguagem simples.
+    - Organização visual da saída: usar títulos, negrito, listas e blocos de código para estruturar a resposta e aproveitar as cores do tema do terminal, facilitando a leitura — isso organiza a forma, nunca substitui a linguagem simples e direta exigida acima.
 
 ---
 
