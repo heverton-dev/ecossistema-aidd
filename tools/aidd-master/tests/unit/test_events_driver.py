@@ -128,7 +128,20 @@ def test_event_emitted_on_instance_a_is_processed_on_instance_b_via_redis():
 
         recebidos_b = []
         instancia_b.on("pedido_criado", lambda p: recebidos_b.append(p))
-        time.sleep(0.3)  # tempo para a thread consumidora registrar o consumer group
+        # Item 4: polling com deadline em vez de sleep fixo — espera a thread
+        # consumidora de B estar de fato registrada no Redis (stream existe).
+        deadline_registro = time.time() + 10
+        stream_ok = False
+        while time.time() < deadline_registro:
+            try:
+                grupos = driver_b._redis.xinfo_groups(driver_b._stream_key("pedido_criado"))
+                stream_ok = any(g["name"] == driver_b._group_name for g in grupos)
+                if stream_ok:
+                    break
+            except Exception:
+                pass
+            time.sleep(0.05)
+        assert stream_ok, "consumer group de B não foi registrado a tempo"
 
         instancia_a.emit("pedido_criado", {"id": 123, "origem": "instancia_a"})
 

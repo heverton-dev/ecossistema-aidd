@@ -1,5 +1,5 @@
+import threading
 import pytest
-import time
 import sys
 import os
 
@@ -11,6 +11,19 @@ from cqrs import ReadModelCache
 from local_first import CRDTSet
 from circuit_breaker import CircuitBreaker, CircuitState
 from saga import SagaOrchestrator, SagaStep
+
+
+def _aguardar_condicao(condicao, timeout=5.0, intervalo=0.01):
+    """Polling determinístico com deadline (Item 4): nunca dorme mais do que o
+    necessário e falha com mensagem clara se a condição não chegar a tempo."""
+    import time
+    prazo = time.monotonic() + timeout
+    while time.monotonic() < prazo:
+        if condicao():
+            return True
+        time.sleep(intervalo)
+    return False
+
 
 def test_read_model_cache_set_and_get():
     cache = ReadModelCache()
@@ -29,20 +42,91 @@ def test_read_model_cache_stale_after_ttl():
 def test_read_model_stale_while_revalidate_returns_stale_immediately():
     cache = ReadModelCache()
     cache.set("swr_key", "old_data", ttl=-1)
-    
+
+    revalidado = threading.Event()
+    set_original = cache.set
+
+    def set_observado(key, value, ttl=60):
+        set_original(key, value, ttl)
+        revalidado.set()
+
+    cache.set = set_observado
+
     def fetcher():
-        time.sleep(0.1)
         return "new_data"
-        
+
     # Should return 'old_data' immediately because it's in cache (though stale)
     res = cache.get_or_revalidate("swr_key", fetcher, ttl=10)
     assert res == "old_data"
-    
-    # Wait for background thread to update it
-    time.sleep(0.2)
+
+    # Espera a thread de revalidação gravar (polling com deadline, sem sleep fixo)
+    assert _aguardar_condicao(lambda: cache.get("swr_key") == ("new_data", False)), (
+        "revalidação em background não atualizou o cache a tempo"
+    )
     val, stale = cache.get("swr_key")
     assert val == "new_data"
     assert not stale
+
+
+# ---------------------------------------------------------------------------
+# Item 4 (clock injection): TTL via relógio virtual — zero time.sleep
+# ---------------------------------------------------------------------------
+
+class RelogioVirtual:
+    """Relógio fake determinístico: avança só quando o teste manda."""
+
+    def __init__(self, agora=1000.0):
+        self._agora = agora
+
+    def __call__(self) -> float:
+        return self._agora
+
+    def avancar(self, segundos: float):
+        self._agora += segundos
+
+
+def test_read_model_cache_ttl_expira_via_relogio_injetado():
+    """TTL respeitado usando relógio virtual: nada de dormir tempo real."""
+    relogio = RelogioVirtual()
+    cache = ReadModelCache(now_fn=relogio)
+
+    cache.set("k", "v1", ttl=60)
+    val, stale = cache.get("k")
+    assert (val, stale) == ("v1", False)
+
+    relogio.avancar(59)  # ainda dentro do TTL
+    assert cache.get("k") == ("v1", False)
+
+    relogio.avancar(2)  # 61s total — expirou
+    val, stale = cache.get("k")
+    assert val == "v1"
+    assert stale
+
+
+def test_read_model_cache_stale_while_revalidate_com_relogio_virtual():
+    """Stale-While-Revalidate com relógio virtual: expiração instantânea
+    sem manipular ttl negativo nem dormir."""
+    relogio = RelogioVirtual()
+    cache = ReadModelCache(now_fn=relogio)
+
+    cache.set("swr", "old_data", ttl=60)
+    relogio.avancar(120)  # cache ficou velho
+
+    res = cache.get_or_revalidate("swr", lambda: "new_data", ttl=60)
+    assert res == "old_data"  # retorna stale imediatamente
+
+    # Revalidação roda em background; espera com deadline (sem sleep fixo)
+    assert _aguardar_condicao(lambda: cache.get("swr") == ("new_data", False))
+    assert cache.get("swr") == ("new_data", False)
+
+
+def test_read_model_cache_agora_padrao_e_tempo_real():
+    """Compatibilidade: sem now_fn explícito, comporta-se como antes."""
+    cache = ReadModelCache()
+    cache.set("k", "v", ttl=-1)  # já expirou
+    _, stale = cache.get("k")
+    assert stale is True
+
 
 def test_crdt_add_is_idempotent():
     crdt = CRDTSet("node1")

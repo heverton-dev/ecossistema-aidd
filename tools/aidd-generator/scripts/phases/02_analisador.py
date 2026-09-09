@@ -30,6 +30,152 @@ if sys.platform == 'win32':
     sys.stdout.reconfigure(encoding='utf-8')
 
 # =============================================================================
+# ITEM 2 [TK-1]: ORÇADOR DE CONTEXTO — HANDOFF FASE 1 → FASE 2
+# =============================================================================
+# Teto de orçamento (tokens) para o handoff de referências da Fase 1.
+# Determinístico: poda por campos essenciais + seleção top-k por score de
+# relevância (estrelas/downloads/atividade) já medido pela Fase 1.
+# Medição por tiktoken (cl100k_base) com fallback determinístico de
+# contagem por palavras — nunca chamada de LLM.
+TETO_TOKENS_HANDOFF_FASE2 = 5000
+TETO_POR_REFERENCIA_TOKENS = 300
+TOP_K_REFERENCIAS = 12
+
+_CAMPOS_ESSENCIAIS = ('nome', 'titulo', 'url', 'fonte', 'descricao', 'resumo',
+                      'linguagens', 'stars', 'downloads', 'likes', 'licenca')
+
+
+def _contar_tokens_aprox(texto: str) -> int:
+    """Contagem determinística de tokens: tiktoken (cl100k_base) se disponível,
+    senão estimativa conservadora (palavras vs chars/4). Zero LLM."""
+    try:
+        import tiktoken
+        return len(tiktoken.get_encoding('cl100k_base').encode(texto))
+    except Exception:
+        return max(len(texto.split()), len(texto) // 4, 1)
+
+
+def _score_referencia(ref: Dict) -> float:
+    """Score determinístico de relevância (proxy local dos gates R1-R4):
+    atividade recente + popularidade. Maior score = entra primeiro no top-k."""
+    metadata = ref.get('metadata', {}) if isinstance(ref, dict) else {}
+    score = 0.0
+    score += min(float(metadata.get('stars', 0) or 0) / 1000.0, 50.0)
+    score += min(float(metadata.get('downloads', 0) or 0) / 100000.0, 50.0)
+    score += min(float(metadata.get('likes', 0) or 0) / 100.0, 25.0)
+    ultimo = metadata.get('ultimo_commit') or ''
+    if ultimo:
+        try:
+            from datetime import datetime as _dt, timezone as _tz
+            delta = _dt.now(_tz.utc) - _dt.fromisoformat(str(ultimo).replace('Z', '+00:00'))
+            score += max(0.0, 25.0 - delta.days / 4.0)  # commit < 90 dias pontua alto
+        except (ValueError, TypeError):
+            pass
+    return score
+
+
+def _podar_referencia(ref: Any) -> Dict:
+    """Mantém apenas campos essenciais (titulo/resumo/URL/dados-chave),
+    descartando metadados inflados. Trunca texto longo com elipse honesta."""
+    podada: Dict[str, Any] = {}
+    if isinstance(ref, dict):
+        fonte_metadata = ref.get('metadata') if isinstance(ref.get('metadata'), dict) else {}
+        for campo in _CAMPOS_ESSENCIAIS:
+            valor = ref.get(campo, fonte_metadata.get(campo))
+            if valor is None:
+                continue
+            if isinstance(valor, str) and len(valor) > 200:
+                valor = valor[:197] + '...'
+            podada[campo] = valor
+        # dependências-chave: tags no nível do metadata
+        if not podada.get('linguagens') and isinstance(fonte_metadata.get('tags'), list):
+            podada['linguagens'] = fonte_metadata['tags'][:5]
+    else:
+        podada['nome'] = str(ref)
+    return podada
+
+
+def _serializar_referencia_podada(ref: Dict) -> str:
+    return json.dumps(ref, ensure_ascii=False, separators=(',', ':'))
+
+
+def montar_handoff_referencias(referencias: Any,
+                               max_tokens: int = TETO_TOKENS_HANDOFF_FASE2) -> str:
+    """[TK-1] Item 2: substitui o dump bruto json.dumps(referencias) por handoff
+    podado: top-k referências com campos essenciais, respeitando teto de tokens.
+
+    Retorna string JSON pronta para embutir no prompt da Fase 2. Garantias:
+    - Cabeçalho informativo: total avaliado vs incluído (transparência total).
+    - Nunca excede max_tokens (corta por score, nunca aleatório).
+    - Ordem determinística: score desc, depois ordem original.
+    """
+    if isinstance(referencias, dict):
+        lista = referencias.get('referencias')
+        if not isinstance(lista, list):
+            # Payload legado (ex.: insights_phase1.json ou {'ref': 'x'}):
+            # serializa campos-chave do dict raiz, sem dump integral.
+            resumo_raiz = {k: referencias[k] for k in ('total_insights', 'insights', 'linguagens_comuns')
+                           if k in referencias}
+            candidatos = [{'nome': k, 'resumo': v} for k, v in list(referencias.items())[:TOP_K_REFERENCIAS]
+                          if k not in resumo_raiz and isinstance(v, (dict, list, str))]
+            corpo_ref = [_podar_referencia(c) for c in candidatos]
+            final_legado: Dict[str, Any] = dict(resumo_raiz)
+            if corpo_ref:
+                final_legado['referencias_podadas'] = corpo_ref
+            final = json.dumps(final_legado, ensure_ascii=False, separators=(',', ':'))
+            while _contar_tokens_aprox(final) > max_tokens and final_legado.get('referencias_podadas'):
+                final_legado['referencias_podadas'].pop()
+                final = json.dumps(final_legado, ensure_ascii=False, separators=(',', ':'))
+            return final
+        refs = lista
+    elif isinstance(referencias, list):
+        refs = referencias
+    else:
+        return '{}'
+
+    total_avaliadas = len(refs)
+    if total_avaliadas == 0:
+        return '{}'
+
+    # Poda por referência + score determinístico (ordem original como desempate)
+    podadas = [_podar_referencia(r) for r in refs if r is not None]
+    scored = list(enumerate(podadas))
+    scored.sort(key=lambda par: (-_score_referencia(refs[par[0]] if par[0] < len(refs) else {}), par[0]))
+
+    # Seleção top-k respeitando teto global e teto por referência
+    selecionadas: List[Dict] = []
+    tokens_corpo = 0
+    for _, ref_podada in scored:
+        if len(selecionadas) >= TOP_K_REFERENCIAS:
+            break
+        serial = _serializar_referencia_podada(ref_podada)
+        custo = _contar_tokens_aprox(serial)
+        if custo > TETO_POR_REFERENCIA_TOKENS:
+            ref_podada = {k: v for k, v in ref_podada.items() if k in ('nome', 'titulo', 'url', 'fonte')}
+            serial = _serializar_referencia_podada(ref_podada)
+            custo = _contar_tokens_aprox(serial)
+        if tokens_corpo + custo > max_tokens - 120:  # reserva para cabeçalho
+            continue
+        selecionadas.append(ref_podada)
+        tokens_corpo += custo
+
+    cabecalho = {'handoff_fase1_fase2': True, 'referencias_avaliadas': total_avaliadas,
+                 'referencias_incluidas': len(selecionadas),
+                 'orcamento_tokens': max_tokens,
+                 'poda_aplicada': len(selecionadas) < total_avaliadas}
+    final = json.dumps({'_handoff': cabecalho, 'referencias': selecionadas},
+                       ensure_ascii=False, separators=(',', ':'))
+    # Última linha de defesa: se ainda exceder o teto, corta a menor ref até caber
+    while _contar_tokens_aprox(final) > max_tokens and selecionadas:
+        selecionadas.pop()
+        cabecalho['referencias_incluidas'] = len(selecionadas)
+        final = json.dumps({'_handoff': cabecalho, 'referencias': selecionadas},
+                           ensure_ascii=False, separators=(',', ':'))
+    return final
+
+
+
+# =============================================================================
 # PROMPT PARA AGENT LLM
 # =============================================================================
 
@@ -291,7 +437,8 @@ class AnalisadorFase2:
         Sem fallback silencioso: se ambos falham, retorna None com erro real visível.
         """
 
-        referencias_json = json.dumps(referencias, indent=2, ensure_ascii=False) if referencias else "{}"
+        # Item 2 [TK-1]: handoff podado com teto de tokens (antes: dump bruto indent=2)
+        referencias_json = montar_handoff_referencias(referencias, TETO_TOKENS_HANDOFF_FASE2)
         # .replace() em vez de .format(): o template tem chaves literais nos
         # exemplos de JSON, que .format() tentaria interpretar como placeholders.
         prompt = PROMPT_ANALISADOR_IDEIA.replace('{ideia}', ideia).replace('{referencias_json}', referencias_json)

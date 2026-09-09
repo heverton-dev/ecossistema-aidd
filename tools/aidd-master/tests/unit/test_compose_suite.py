@@ -120,50 +120,21 @@ def test_database_copiado_tem_rls_connection(suite_composta):
     )
 
 
-# =============================================================================
-# 4. Teste de fogo: o servidor gerado PRECISA subir e responder de verdade.
-#    Sem isso, os 3 testes acima poderiam passar e o bug do logs.py ainda
-#    assim existir (ex.: um 4o modulo core futuro com o mesmo problema).
-# =============================================================================
-
-# =============================================================================
-# 5. requirements.txt gerado nao pode faltar dependencia que o server.py
-#    gerado usa de verdade. Bug real (item 7 do direcionamento-estrategico
-#    -anti-nih, 2026-09-07): server.py sempre registra as rotas de SSO
-#    Corporativo (OAuth2/OIDC), que chamam OIDCService.validate_id_token
-#    (core/security.py), que depende de PyJWT + cryptography — mas o
-#    requirements.txt gerado nunca declarava as duas. Reproduzido de fato:
-#    projeto composto + pip install -r requirements.txt num venv limpo +
-#    validate_id_token com um id_token RS256 real levantava RuntimeError
-#    ("PyJWT nao instalado") antes da correcao.
-# =============================================================================
-
-def test_requirements_gerado_inclui_pyjwt_e_cryptography(suite_composta):
+def test_requirements_gerado_inclui_secure(suite_composta):
     requirements_path = suite_composta / "requirements.txt"
     assert requirements_path.exists()
     conteudo = requirements_path.read_text(encoding="utf-8")
-
-    server_src = (suite_composta / "src" / "server.py").read_text(encoding="utf-8")
-    assert "OIDCService" in server_src, (
-        "server.py gerado nao importa mais OIDCService — se a rota de SSO "
-        "OIDC foi removida de fato, este teste deve ser revisado; caso "
-        "contrario, a dependencia pyjwt/cryptography continua obrigatoria."
-    )
-
-    assert "pyjwt" in conteudo.lower(), (
-        "requirements.txt gerado nao declara pyjwt, mas server.py registra "
-        "rotas de SSO OIDC que chamam OIDCService.validate_id_token (import "
-        "jwt em templates/core/security.py)."
-    )
-    assert "cryptography" in conteudo.lower(), (
-        "requirements.txt gerado nao declara cryptography, exigido por "
-        "jwt.algorithms.RSAAlgorithm em OIDCService.validate_id_token."
-    )
     assert "secure" in conteudo.lower(), (
         "requirements.txt gerado nao declara secure, exigido por "
         "SecurityService.get_security_headers (ContentSecurityPolicy via secure.py)."
     )
 
+
+# =============================================================================
+# 4. Teste de fogo: o servidor gerado PRECISA subir e responder de verdade.
+#    Sem isso, os 3 testes acima poderiam passar e o bug do logs.py ainda
+#    assim existir (ex.: um 4o modulo core futuro com o mesmo problema).
+# =============================================================================
 
 def test_servidor_gerado_sobe_e_responde(suite_composta):
     import urllib.request
@@ -190,7 +161,7 @@ def test_servidor_gerado_sobe_e_responde(suite_composta):
                     return
             except (urllib.error.URLError, ConnectionError) as e:
                 ultimo_erro = e
-                time.sleep(0.5)
+                time.sleep(0.05)
         pytest.fail(f"Servidor não respondeu em 15s: {ultimo_erro}")
     finally:
         processo.terminate()

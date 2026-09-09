@@ -484,7 +484,8 @@ class SQLiteAdapter(DatabaseAdapter):
             "payload TEXT NOT NULL,"
             "status TEXT NOT NULL DEFAULT 'pendente',"
             "criado_em TEXT NOT NULL,"
-            "processado_em TEXT"
+            "processado_em TEXT,"
+            "tentativas INTEGER NOT NULL DEFAULT 0"
             ");",
             "CREATE INDEX IF NOT EXISTS idx_outbox_status ON _outbox_events(status);",
             "CREATE TABLE IF NOT EXISTS _audit_log ("
@@ -499,6 +500,15 @@ class SQLiteAdapter(DatabaseAdapter):
         with self._engine.begin() as conn:
             for stmt in statements:
                 conn.exec_driver_sql(stmt)
+            # Migração idempotente: bancos criados antes da coluna 'tentativas'
+            # (dead-letter do OutboxWorker) recebem a coluna sem perder dados.
+            colunas = conn.exec_driver_sql(
+                "PRAGMA table_info(_outbox_events)"
+            ).fetchall()
+            if colunas and "tentativas" not in {row[1] for row in colunas}:
+                conn.exec_driver_sql(
+                    "ALTER TABLE _outbox_events ADD COLUMN tentativas INTEGER NOT NULL DEFAULT 0;"
+                )
 
 
 class PostgresCursorProxy:
@@ -622,10 +632,23 @@ class PostgresAdapter(DatabaseAdapter):
                     payload TEXT NOT NULL,
                     status TEXT NOT NULL DEFAULT 'pendente',
                     criado_em TEXT NOT NULL,
-                    processado_em TEXT
+                    processado_em TEXT,
+                    tentativas INTEGER NOT NULL DEFAULT 0
                 );
             """)
             cur.execute("CREATE INDEX IF NOT EXISTS idx_outbox_status ON _outbox_events(status);")
+            # Migração idempotente: bancos PostgreSQL criados antes da coluna
+            # 'tentativas' (dead-letter do OutboxWorker) recebem a coluna.
+            cur.execute("""
+                DO $$ BEGIN
+                    IF NOT EXISTS (
+                        SELECT 1 FROM information_schema.columns
+                        WHERE table_name = '_outbox_events' AND column_name = 'tentativas'
+                    ) THEN
+                        ALTER TABLE _outbox_events ADD COLUMN tentativas INTEGER NOT NULL DEFAULT 0;
+                    END IF;
+                END $$;
+            """)
             cur.execute("""
                 CREATE TABLE IF NOT EXISTS _audit_log (
                     id TEXT PRIMARY KEY,

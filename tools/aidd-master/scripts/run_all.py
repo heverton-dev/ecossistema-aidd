@@ -23,7 +23,7 @@ Gates na ordem de execução:
 import os
 import sys
 import subprocess
-import argparse
+import click
 import time
 
 if hasattr(sys.stdout, 'reconfigure'):
@@ -96,33 +96,35 @@ def run_autofix(root_dir: str, scripts_dir: str) -> bool:
         return False
 
 
-def main():
-    parser = argparse.ArgumentParser(
-        description="run_all.py — Gate Orchestrator AIDD v5.1 com Auto-Healing",
-        formatter_class=argparse.RawDescriptionHelpFormatter,
-        epilog="""
-Exemplos:
-  python scripts/run_all.py --dir .
-  python scripts/run_all.py --dir . --gates G_ESTRUTURA,G_SEGURANCA
-  python scripts/run_all.py --gates G_ARQUITETURA
-        """
-    )
-    parser.add_argument("--dir", default=".", help="Diretório raiz do projeto")
-    parser.add_argument(
-        "--gates",
-        default=None,
-        help="Lista de gates separados por vírgula (padrão: todos). "
-             f"Disponíveis: {', '.join(ALL_GATES)}"
-    )
-    args = parser.parse_args()
+@click.command(name="run_all", help="run_all.py — Gate Orchestrator AIDD v5.1 com Auto-Healing")
+@click.option("--dir", "dir", default=".", help="Diretório raiz do projeto")
+@click.option(
+    "--gates",
+    "gates",
+    default=None,
+    help="Lista de gates separados por vírgula (padrão: todos). Disponíveis: " + ", ".join(ALL_GATES),
+)
+def cli(dir: str, gates: str):
+    """Gate Orchestrator com Auto-Healing.
 
-    root_dir = os.path.abspath(args.dir)
+    \b
+    Exemplos:
+      python scripts/run_all.py --dir .
+      python scripts/run_all.py --dir . --gates G_ESTRUTURA,G_SEGURANCA
+      python scripts/run_all.py --gates G_ARQUITETURA
+    """
+    executar(dir, gates)
+
+
+def executar(dir_valor: str, gates: str):
+    """Corpo do orquestrador (mantido idêntico ao comportamento anterior)."""
+    root_dir = os.path.abspath(dir_valor)
     scripts_dir = os.path.dirname(os.path.abspath(__file__))
     gates_dir = os.path.join(scripts_dir, "gates")
 
     # Determinar quais gates executar
-    if args.gates:
-        selected = [g.strip() for g in args.gates.split(",")]
+    if gates:
+        selected = [g.strip() for g in gates.split(",")]
         invalid = [g for g in selected if g not in ALL_GATES]
         if invalid:
             print(f"❌ Gates inválidos: {', '.join(invalid)}")
@@ -222,4 +224,4 @@ Exemplos:
 
 
 if __name__ == "__main__":
-    main()
+    cli()

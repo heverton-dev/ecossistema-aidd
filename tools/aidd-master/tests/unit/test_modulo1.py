@@ -148,7 +148,7 @@ def _aguardar_servidor(processo, url, deadline_segundos=15):
             return e.code
         except (urllib.error.URLError, OSError) as e:
             ultimo_erro = e
-            time.sleep(0.5)
+            time.sleep(0.05)
     pytest.fail(f"Servidor não respondeu em {deadline_segundos}s para {url}: {ultimo_erro}")
 
 

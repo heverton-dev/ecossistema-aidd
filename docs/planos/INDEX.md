@@ -6,8 +6,9 @@
 
 | Iniciativa | Local |
 |---|---|
-| Correcao Codigo Limpo | `feitos/correcao-codigo-limpo/` |
+| Direcionamento Estrategico Anti Nih | `feitos/02-direcionamento-estrategico-anti-nih/` |
 | Correcao Arquitetura Limpa | `feitos/correcao-arquitetura-limpa/` |
+| Correcao Codigo Limpo | `feitos/correcao-codigo-limpo/` |
 | Evolucao Notas Auditoria | `feitos/evolucao-notas-auditoria/` |
 | Integracao Aidd Ops | `feitos/integracao-aidd-ops/` |
 | Correcao Riscos Ecossistema Aidd | `feitos/PLANO-CORRECAO-RISCOS-ECOSSISTEMA-AIDD.md` |
@@ -22,8 +23,20 @@
 | Iniciativa | Local |
 |---|---|
 | Correcao Pos Auditoria Sem Maquiagem | `fazendo/01-correcao-pos-auditoria-sem-maquiagem/` |
-| Direcionamento Estrategico Anti Nih | `fazendo/02-direcionamento-estrategico-anti-nih/` |
 | Evolucao Aidd Ops Fase Completa | `fazendo/03-evolucao-aidd-ops-fase-completa/` |
+| Codigo Limpo Profundo Ecossistema | `fazendo/codigo-limpo-profundo-ecossistema/` |
+
+## ⏳ Aguardando execução
+
+| Iniciativa | Local |
+|---|---|
+| Aidd Bridge | `a-fazer/aidd-bridge/` |
+| Reestruturacao Ddd Clean Architecture | `a-fazer/01-reestruturacao-ddd-clean-architecture/` |
+| Otimizacao Tokenomics Latencia | `a-fazer/02-otimizacao-tokenomics-latencia/` |
+| Qualidade Testes E Mutacao | `a-fazer/03-qualidade-testes-e-mutacao/` |
+| Resiliencia Concorrencia E Integridade | `a-fazer/04-resiliencia-concorrencia-e-integridade/` |
+| Seguranca Zero Trust E Supply Chain | `a-fazer/05-seguranca-zero-trust-e-supply-chain/` |
+| Bootstrap Ambiente E Preflight Host | `a-fazer/06-bootstrap-ambiente-e-preflight-host/` |
 
 ---
 

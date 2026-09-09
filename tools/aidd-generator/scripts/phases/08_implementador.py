@@ -34,6 +34,42 @@ sys.path.insert(0, str(Path(__file__).parent))
 from utils_modelo import detectar_modelo_harness, obter_nome_amigavel_modelo
 from utils_delegacao import solicitar_llm, extrair_json_resposta, LLMNaoConfiguradoException
 
+# Modelo Pydantic do contrato de codegen da Fase 8 (item NIH #23 / item 11 do
+# plano anti-NIH): quando pydantic+instructor estão disponíveis, o parsing da
+# resposta do LLM passa a usar validação estruturada com retry automático
+# (extrair_json_resposta(response_model=...)) em vez do dict livre legado.
+try:
+    from pydantic import BaseModel as _BaseModelCodegen
+
+    class ModeloCodegenFase8(_BaseModelCodegen):
+        """Contrato de saída da Fase 8: código + teste + caminhos relativos."""
+
+        codigo: str
+        teste: str
+        caminho_relativo: str = ''
+        caminho_teste: str = ''
+except ImportError:  # pragma: no cover - ambiente sem pydantic
+    ModeloCodegenFase8 = None  # type: ignore[assignment,misc]
+
+
+def _parsear_resposta_codegen(conteudo: str) -> Any:
+    """Parseia a resposta do LLM da Fase 8 com retry estruturado.
+
+    Com pydantic disponível, valida contra ModeloCodegenFase8 (caminho do
+    instructor: retry automático em saída malformada) e devolve dict —
+    mantendo o contrato consumido pelo resto da fase. Sem pydantic (ou
+    validação falha por campo ausente), cai no parsing legado.
+    """
+    if ModeloCodegenFase8 is not None:
+        try:
+            modelo = extrair_json_resposta(conteudo, response_model=ModeloCodegenFase8)
+            if isinstance(modelo, _BaseModelCodegen):
+                return modelo.model_dump()
+        except (ValueError, ImportError):
+            pass  # cai no parsing legado abaixo
+    return extrair_json_resposta(conteudo)
+
+
 # NIH #22: Empacotamento de contexto de repo para LLM delegando ao Repomix
 CORE_DIR = Path(__file__).parent.parent / 'core'
 if str(CORE_DIR) not in sys.path:
@@ -189,6 +225,52 @@ class PostMortemAnalyzer:
     """Investigação 5-Porquês quando pytest falha.
     Isola o traceback, identifica a causa raiz e gera relatório
     para regeneração cirúrgica (apenas a função com falha)."""
+
+    @staticmethod
+    def extrair_funcoes_sob_suspeita(saida: str, codigo_fonte: str) -> List[str]:
+        """Item 1 (fix-loop diff [TK-3]): dado o traceback e o código fonte,
+        devolve via AST os trechos de código das funções citados no traceback
+        (File "...", line N) ou nomes citados na mensagem de erro. Determinístico:
+        puro regex + AST, Zero LLM, Zero Token."""
+        suspeitas: List[str] = []
+        vistos = set()
+
+        try:
+            arvore = ast.parse(codigo_fonte)
+        except SyntaxError:
+            return []
+
+        # Mapa (nome_funcao -> no AST) das definições top-level
+        nos_por_nome = {
+            node.name: node for node in arvore.body
+            if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef, ast.ClassDef))
+        }
+
+        def _adicionar(nome: str, no: Optional[ast.AST] = None):
+            if nome in vistos:
+                return
+            vistos.add(nome)
+            trecho = ''
+            if no is not None:
+                trecho = ast.get_source_segment(codigo_fonte, no) or ''
+            suspeitas.append(f"{nome}():\n{trecho}" if trecho else f"{nome}():")
+
+        # Camada 1: pares (arquivo, linha) do traceback → função cujo intervalo contém N
+        for m in re.finditer(r'File "([^"]+)", line (\d+)', saida):
+            linha_erro = int(m.group(2))
+            for nome, no in nos_por_nome.items():
+                ini = getattr(no, 'lineno', 0)
+                fim = getattr(no, 'end_lineno', ini) or ini
+                if ini <= linha_erro <= fim:
+                    _adicionar(nome, no)
+                    break
+
+        # Camada 2: nomes citados na mensagem de erro que existem no AST
+        for nome, no in nos_por_nome.items():
+            if re.search(rf'\b{re.escape(nome)}\b', saida):
+                _adicionar(nome, no)
+
+        return suspeitas
 
     @staticmethod
     def analisar_falha(saida_pytest: str, codigo_fonte: str, nome_funcao: str = '') -> Dict:
@@ -382,38 +464,104 @@ PSEUDOCODE: {pseudocodigo}
 Rules:
 - Code: testable functions/classes. Test: pytest suite (test_*), direct import (from {modulo} import). src/ already in PYTHONPATH.
 - CONTRACT: test can only call functions that code actually defines or imports. NEVER assume auxiliary functions (e.g.: criar_autor, criar_item) without defining them in code.
-- SQLite: use schema above, function criar_tabela(conn) with DDL, conn=None optional, NEVER conn.close() if received.
-- FK: if schema has FOREIGN KEY, execute PRAGMA foreign_keys = ON right after creating/opening connection. Validate parent record existence before dependent INSERT (SELECT 1 FROM ... WHERE id = ?), return clear error (e.g.: ValueError) if not found — NEVER silence invalid FK or report false success.
-- Tests: fixture with DDL + PRAGMA foreign_keys=ON before INSERT/SELECT, :memory: or tmp_path (never os.remove). For scripts with FK: include at least 1 test for invalid reference/nonexistent ID and verify it returns error.
-- SQLite dates: stored as text ('YYYY-MM-DD'). On retrieval, convert explicitly to datetime.date (date.fromisoformat(val) if isinstance(val, str) else val) before date arithmetic.
-- JSON round-trip: if test saves and re-reads JSON, normalize types before comparing (tuple->list, None preserved). Use json.loads(json.dumps(x, default=str)) on expected data.
-- Streak: data_referencia optional, duplicate check-ins on same date must not duplicate streak.
 - No subprocess.run in tests. UTF-8 on console (sys.stdout.reconfigure if win32).
-- FULL CRUD: if script handles entity repository or API endpoints, MUST implement complete CRUD: Create (POST), Read/List (GET), Update/Edit (PUT/PATCH) and Delete (DELETE). NEVER omit edit/update.
-- IMPECCABLE DESIGN: if web UI is included, zero AI slop, deep neutral Zinc palette (#09090b, #18181b, #27272a), tabular numbers, 150ms transitions. FORBIDDEN to use browser alert()/confirm()/prompt() — use static/share/ui_dialogs.js.
-- SWAGGER DARK MODE: if FastAPI, configure dark Swagger UI theme.
-- MCP STUDIO & WEBHOOKS: if main server/app, expose /mcp/rpc (JSON-RPC 2.0) and webhook dispatcher with HMAC SHA-256 (X-AIDD-Signature).
-
+{blocos_condicionais}
 # COT: think in English Caveman (3-5 dense lines, no articles):
-# "read spec → implement full CRUD + impeccable UI + MCP/webhooks → write tests → validate FK/dates → output JSON with code+test"
+# "read spec → implement required rules → write tests → validate contract → output JSON with code+test"
 
 # SAIDA: Return ONLY the JSON below, nothing else, no markdown/code fence.
 # RESPOND IN BRAZILIAN PORTUGUESE (PT-BR) for descriptive fields.
 {{"codigo":"<complete Python code>","teste":"<complete pytest code>","caminho_relativo":"{caminho_sugerido}","caminho_teste":"{caminho_teste_sugerido}"}}
 """
 
+# Blocos modulares de regras — ativados por feature do script_spec [TK-4]
+BLOCO_REGRA_SQLITE = """- SQLite: use schema above, function criar_tabela(conn) with DDL, conn=None optional, NEVER conn.close() if received.
+- Tests: fixture with DDL + PRAGMA foreign_keys=ON before INSERT/SELECT, :memory: or tmp_path (never os.remove).
+"""
+
+BLOCO_REGRA_FK = """- FK: if schema has FOREIGN KEY, execute PRAGMA foreign_keys = ON right after creating/opening connection. Validate parent record existence before dependent INSERT (SELECT 1 FROM ... WHERE id = ?), return clear error (e.g.: ValueError) if not found — NEVER silence invalid FK or report false success.
+- For scripts with FK: include at least 1 test for invalid reference/nonexistent ID and verify it returns error.
+"""
+
+BLOCO_REGRA_DATAS = """- SQLite dates: stored as text ('YYYY-MM-DD'). On retrieval, convert explicitly to datetime.date (date.fromisoformat(val) if isinstance(val, str) else val) before date arithmetic.
+- Streak: data_referencia optional, duplicate check-ins on same date must not duplicate streak.
+"""
+
+BLOCO_REGRA_JSON_ROUNDTRIP = """- JSON round-trip: if test saves and re-reads JSON, normalize types before comparing (tuple->list, None preserved). Use json.loads(json.dumps(x, default=str)) on expected data.
+"""
+
+BLOCO_REGRA_CRUD = """- FULL CRUD: if script handles entity repository or API endpoints, MUST implement complete CRUD: Create (POST), Read/List (GET), Update/Edit (PUT/PATCH) and Delete (DELETE). NEVER omit edit/update.
+"""
+
+BLOCO_REGRA_UI = """- IMPECCABLE DESIGN: if web UI is included, zero AI slop, deep neutral Zinc palette (#09090b, #18181b, #27272a), tabular numbers, 150ms transitions. FORBIDDEN to use browser alert()/confirm()/prompt() — use static/share/ui_dialogs.js.
+"""
+
+BLOCO_REGRA_API = """- SWAGGER DARK MODE: if FastAPI, configure dark Swagger UI theme.
+- MCP STUDIO & WEBHOOKS: if main server/app, expose /mcp/rpc (JSON-RPC 2.0) and webhook dispatcher with HMAC SHA-256 (X-AIDD-Signature).
+"""
+
+# Keywords (determinístico, Zero Token) que ativam cada bloco de regras
+# quando presentes em nome/responsabilidade/pseudocódigo do script_spec.
+KEYWORDS_FEATURE = {
+    'sqlite': ('sqlite', 'tabela', 'table', 'banco de dados', 'database', 'create table', 'insert into', 'checkin', 'habito', 'persistencia'),
+    'fk': ('foreign key', 'fk', 'relacionamento', 'chave estrangeira', 'referencia', 'foreign_key'),
+    'datas': ('data', 'date', 'streak', 'checkin', 'diario', 'dia'),
+    'json_roundtrip': ('json', 'salvar arquivo', 'load', 'serializa'),
+    'crud': ('crud', 'repositorio', 'repository', 'endpoint', 'api', 'cadastrar', 'atualizar', 'remover', 'delete', 'update', 'editar'),
+    'ui': ('ui', 'interface', 'web', 'html', 'tela', 'frontend', 'dialog', 'visual'),
+    'api': ('fastapi', 'swagger', 'mcp', 'webhook', 'servidor', 'server', 'rota', 'route', 'http'),
+}
+
+
+def _extrair_features_script(script_spec: Dict) -> Dict[str, bool]:
+    """Detecta features requeridas pelo script_spec via keyword scan determinístico.
+    Zero LLM, Zero Token: puro texto sobre nome + responsabilidade + pseudocódigo."""
+    texto = ' '.join([
+        str(script_spec.get('nome', '')),
+        str(script_spec.get('responsabilidade', '')),
+        str(script_spec.get('pseudocodigo', '')),
+    ]).lower()
+    return {feature: any(kw in texto for kw in kws) for feature, kws in KEYWORDS_FEATURE.items()}
+
+
+def _montar_blocos_condicionais(features: Dict[str, bool]) -> str:
+    """Composição modular do prompt: inclui SOMENTE os blocos de regras das
+    features detectadas no script_spec. Economia típica de 30-50% do prompt
+    fixo por script [TK-4]. SQL herda FK/datas/json (persistência de dados
+    de data e round-trip de JSON são regras irmãs do bloco SQLite)."""
+    blocos = []
+    if features.get('sqlite'):
+        blocos.append(BLOCO_REGRA_SQLITE)
+        if features.get('fk'):
+            blocos.append(BLOCO_REGRA_FK)
+        if features.get('datas'):
+            blocos.append(BLOCO_REGRA_DATAS)
+        if features.get('json_roundtrip'):
+            blocos.append(BLOCO_REGRA_JSON_ROUNDTRIP)
+    else:
+        # Sem persistência SQL: JSON round-trip ainda é regra genérica de teste.
+        if features.get('json_roundtrip'):
+            blocos.append(BLOCO_REGRA_JSON_ROUNDTRIP)
+    if features.get('crud'):
+        blocos.append(BLOCO_REGRA_CRUD)
+    if features.get('ui'):
+        blocos.append(BLOCO_REGRA_UI)
+    if features.get('api'):
+        blocos.append(BLOCO_REGRA_API)
+    return ''.join(blocos)
+
 PROMPT_CORRIGIR_SCRIPT = """# ENTRADA: Code Fixer — correct code/test that failed in pytest. Minimal diff, fix root cause.
 
 {secao_schema}
 MODULE: {modulo}
 
-CODE:
+CODE (relevant excerpt — functions under suspicion):
 {codigo}
 
-TEST:
+TEST (relevant excerpt):
 {teste}
 
-ERRORS (failures only):
+ERRORS (isolated traceback + failures only):
 {erro}
 
 Rules: direct import (from {modulo} import), consistent names, schema DDL + PRAGMA foreign_keys = ON in fixture before INSERT/SELECT, conn=None optional, NEVER conn.close() if received, :memory: or tmp_path (never os.remove), data_referencia optional for streak. If FOREIGN KEY exists: validate parent record existence before dependent operation, return clear error if not found, ensure at least 1 test for invalid reference/nonexistent ID. If date error (str vs date): convert with date.fromisoformat before subtraction. If count assertion error: verify expected value is mathematically exact (N+1, not hardcoded).
@@ -830,6 +978,29 @@ class ImplementadorFase8:
             }
         return None
 
+    @staticmethod
+    def _montar_prompt_implementar_script(ideia: str, stack: Dict,
+                                          script_spec: Dict, nome_raw: str, modulo: str,
+                                          secao_schema: str,
+                                          caminho_sugerido: str, caminho_teste_sugerido: str) -> str:
+        """Item 1 [TK-4]: monta o prompt de implementação por COMPOSIÇÃO —
+        apenas os blocos de regras das features que o script_spec requer.
+        Composição determinística (keyword scan Zero Token)."""
+        features = _extrair_features_script(script_spec)
+        blocos = _montar_blocos_condicionais(features)
+        return PROMPT_IMPLEMENTAR_SCRIPT.format(
+            ideia=ideia,
+            stack=json.dumps(stack, ensure_ascii=False),
+            secao_schema=secao_schema,
+            nome=nome_raw,
+            responsabilidade=script_spec.get('responsabilidade', ''),
+            pseudocodigo=script_spec.get('pseudocodigo', ''),
+            modulo=modulo,
+            blocos_condicionais=blocos,
+            caminho_sugerido=caminho_sugerido,
+            caminho_teste_sugerido=caminho_teste_sugerido,
+        )
+
     def _gerar_implementacao_inicial(
         self, ideia: str, stack: Dict, script_spec: Dict, nome_raw: str, modulo: str,
         caminho_sugerido: str, caminho_teste_sugerido: str
@@ -838,16 +1009,9 @@ class ImplementadorFase8:
         Retorna (impl, secao_schema, contexto); impl é None se a geração falhar."""
         secao_schema = self._montar_secao_schema()
 
-        prompt = PROMPT_IMPLEMENTAR_SCRIPT.format(
-            ideia=ideia,
-            stack=json.dumps(stack, ensure_ascii=False),
-            secao_schema=secao_schema,
-            nome=nome_raw,
-            responsabilidade=script_spec.get('responsabilidade', ''),
-            pseudocodigo=script_spec.get('pseudocodigo', ''),
-            modulo=modulo,
-            caminho_sugerido=caminho_sugerido,
-            caminho_teste_sugerido=caminho_teste_sugerido,
+        prompt = self._montar_prompt_implementar_script(
+            ideia, stack, script_spec, nome_raw, modulo, secao_schema,
+            caminho_sugerido, caminho_teste_sugerido,
         )
         contexto = f"Phase 8: Implementador. Script: {script_spec.get('nome')}"
 
@@ -933,12 +1097,30 @@ class ImplementadorFase8:
                 # Economia de tokens: enviar apenas falhas do pytest, não saída completa
                 erro_compacto = self._extrair_falhas_pytest(resultado_teste.get('saida', ''))
 
-            # Sprint 06: Tentativa de correção via Result Monad
+            # Sprint 06: Tentativa de correção via Result Monad.
+            # Item 1 [TK-3]: fix-loop envia CONTEXTO CIRÚRGICO — traceback
+            # isolado (PostMortemAnalyzer._isolar_traceback) + funções sob
+            # suspeita via AST + trecho do código/teste — em vez de CODE+TEST
+            # integrais. Redução >= 50% comprovada por tiktoken em
+            # tests/test_phase_08_tokenomics.py.
+            traceback_isolado = PostMortemAnalyzer._isolar_traceback(erro_compacto)
+            suspeitas = PostMortemAnalyzer.extrair_funcoes_sob_suspeita(
+                erro_compacto, impl.get('codigo', '')
+            )
+            contexto_cirurgico = '\n\n'.join(suspeitas) if suspeitas else self._cortar_codigo_no_ponto_da_falha(
+                impl.get('codigo', ''), erro_compacto
+            )
+            teste_recortado = self._cortar_teste_no_ponto_da_falha(
+                impl.get('teste', ''), erro_compacto
+            )
+            erro_para_prompt = (
+                f"{traceback_isolado}\n\n{erro_compacto}" if suspeitas else erro_compacto
+            )
             prompt_fix = PROMPT_CORRIGIR_SCRIPT.format(
                 secao_schema=secao_schema,
-                codigo=impl.get('codigo', ''),
-                teste=impl.get('teste', ''),
-                erro=erro_compacto,
+                codigo=contexto_cirurgico,
+                teste=teste_recortado,
+                erro=erro_para_prompt,
                 modulo=modulo,
             )
             result_fix = self._chamar_llm_result(
@@ -959,6 +1141,48 @@ class ImplementadorFase8:
                 impl['tentativas'] = tentativa
                 impl['falhou_apos_tentativas'] = True
                 return impl
+
+    @staticmethod
+    def _cortar_codigo_no_ponto_da_falha(codigo: str, erro: str, janela: int = 40) -> str:
+        """Item 1 [TK-3]: corta o código na janela ao redor da linha citada no
+        traceback (regex 'File "...", line N'). Sem linha identificável,
+        devolve o código completo (comportamento seguro default)."""
+        m = re.search(r'File "[^"]+", line (\d+)', erro)
+        if not m:
+            return codigo
+        linha_erro = int(m.group(1))
+        linhas = codigo.split('\n')
+        if linha_erro < 1 or linha_erro > len(linhas):
+            return codigo
+        inicio = max(0, linha_erro - janela // 2)
+        fim = min(len(linhas), linha_erro + janela // 2)
+        trecho = '\n'.join(linhas[inicio:fim])
+        if inicio > 0:
+            trecho = f"... (linhas 1-{inicio} omitidas)\n{trecho}"
+        if fim < len(linhas):
+            trecho = f"{trecho}\n... (linhas {fim + 1}-{len(linhas)} omitidas)"
+        return trecho
+
+    @staticmethod
+    def _cortar_teste_no_ponto_da_falha(teste: str, erro: str, janela: int = 30) -> str:
+        """Item 1 [TK-3]: corta o teste na janela ao redor da linha do erro.
+        Sem linha identificável no traceback para o arquivo de teste, devolve
+        o teste completo (comportamento seguro default)."""
+        m = re.search(r'File "([^"]+test[^"]*)", line (\d+)', erro)
+        if not m:
+            return teste
+        linha_erro = int(m.group(2))
+        linhas = teste.split('\n')
+        if linha_erro < 1 or linha_erro > len(linhas):
+            return teste
+        inicio = max(0, linha_erro - janela // 2)
+        fim = min(len(linhas), linha_erro + janela // 2)
+        trecho = '\n'.join(linhas[inicio:fim])
+        if inicio > 0:
+            trecho = f"... (linhas 1-{inicio} omitidas)\n{trecho}"
+        if fim < len(linhas):
+            trecho = f"{trecho}\n... (linhas {fim + 1}-{len(linhas)} omitidas)"
+        return trecho
 
     @staticmethod
     def _normalizar_caminho_codigo(caminho: Optional[str], nome_padrao: str = "script.py") -> str:
@@ -1205,7 +1429,7 @@ class ImplementadorFase8:
         self._origens_medicao.append(origem)
 
         try:
-            dados = extrair_json_resposta(resposta['conteudo'])
+            dados = _parsear_resposta_codegen(resposta['conteudo'])
             if not isinstance(dados, dict):
                 return Result.fail(f"Resposta LLM não é dict: {str(dados)[:100]}")
             return Result.ok(dados)

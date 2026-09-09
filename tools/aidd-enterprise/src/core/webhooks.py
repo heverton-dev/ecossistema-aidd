@@ -1,4 +1,4 @@
-import urllib.request, urllib.error, json, threading, hmac, hashlib, time, uuid, os
+import html, urllib.request, urllib.error, json, threading, hmac, hashlib, time, uuid, os
 from pathlib import Path
 
 try:
@@ -219,19 +219,19 @@ class WebhookDispatcher:
     def get_studio_html(self, title: str = "Plataforma SaaS Suite — Webhook Studio") -> str:
         # Dynamic build of event options & templates
         event_options = "".join([
-            f'<option value="{ev["event"]}">{ev["event"]} ({ev["modulo"]})</option>'
+            f'<option value="{html.escape(str(ev["event"]))}">{html.escape(str(ev["event"]))} ({html.escape(str(ev["modulo"]))})</option>'
             for ev in self.EVENT_CATALOG if ev["event"] != "*"
         ])
 
         modal_checkboxes = "".join([
-            f'<label style="display:flex; align-items:center; gap:0.4rem;"><input type="checkbox" name="wh-ev" value="{ev["event"]}"> {ev["event"]} <span style="color:#94a3b8; font-size:0.75rem;">({ev["modulo"]})</span></label>'
+            f'<label style="display:flex; align-items:center; gap:0.4rem;"><input type="checkbox" name="wh-ev" value="{html.escape(str(ev["event"]))}"> {html.escape(str(ev["event"]))} <span style="color:#94a3b8; font-size:0.75rem;">({html.escape(str(ev["modulo"]))})</span></label>'
             for ev in self.EVENT_CATALOG
         ])
 
         catalog_rows = "".join([f'''<tr>
-            <td><span class="badge badge-event">{ev["event"]}</span></td>
-            <td><span class="code-pill">{ev["modulo"]}</span></td>
-            <td>{ev["descricao"]}</td>
+            <td><span class="badge badge-event">{html.escape(str(ev["event"]))}</span></td>
+            <td><span class="code-pill">{html.escape(str(ev["modulo"]))}</span></td>
+            <td>{html.escape(str(ev["descricao"]))}</td>
             <td><span class="code-pill">{json.dumps(ev["exemplo"], ensure_ascii=False)}</span></td>
         </tr>''' for ev in self.EVENT_CATALOG])
 
@@ -240,7 +240,7 @@ class WebhookDispatcher:
         initial_event = self.EVENT_CATALOG[1]["event"] if len(self.EVENT_CATALOG) > 1 else "*"
 
         _html = (Path(__file__).parent / "webhook_studio.html").read_text(encoding="utf-8")
-        _html = _html.replace("__TITLE__", str(title))
+        _html = _html.replace("__TITLE__", html.escape(str(title)))
         _html = _html.replace("__EVENT_OPTIONS__", str(event_options))
         _html = _html.replace("__CATALOG_ROWS__", str(catalog_rows))
         _html = _html.replace("__MODAL_CHECKBOXES__", str(modal_checkboxes))

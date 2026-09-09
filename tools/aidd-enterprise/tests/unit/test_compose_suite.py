@@ -161,7 +161,7 @@ def test_servidor_gerado_sobe_e_responde(suite_composta):
                     return
             except (urllib.error.URLError, ConnectionError) as e:
                 ultimo_erro = e
-                time.sleep(0.5)
+                time.sleep(0.05)
         pytest.fail(f"Servidor não respondeu em 15s: {ultimo_erro}")
     finally:
         processo.terminate()

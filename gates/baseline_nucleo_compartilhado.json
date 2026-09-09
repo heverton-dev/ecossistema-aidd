@@ -64,8 +64,8 @@
         "motivo": "aidd-enterprise gera hooks em formato JSON e limpa o destino canonico especifico componentes/aidd-enterprise/hooks/{nome}/{nome}.json, enquanto aidd-master gera hook.sh."
       },
       "mcp_server.py": {
-        "esperado_identico": false,
-        "motivo": "aidd-master tem register_injected_tools() (integracao com o Injetor Universal) que aidd-enterprise nao tem - divergencia de feature, nao bug."
+        "esperado_identico": true,
+        "motivo": null
       },
       "metrics.py": {
         "esperado_identico": true,
@@ -122,8 +122,8 @@
     },
     "scripts": {
       "add_module.py": {
-        "esperado_identico": false,
-        "motivo": "aidd-master tem um argumento extra no parser (--pasta como alias de --dir) que aidd-enterprise nao tem."
+        "esperado_identico": true,
+        "motivo": null
       },
       "aidd.py": {
         "esperado_identico": false,
@@ -349,6 +349,10 @@
       }
     },
     "aidd-enterprise/scripts-gates-vs-templates-gates": {
+      "G_ARQUITETURA.py": {
+        "esperado_identico": true,
+        "motivo": null
+      },
       "G_CHAOS.py": {
         "esperado_identico": true,
         "motivo": null
@@ -365,9 +369,13 @@
         "esperado_identico": true,
         "motivo": null
       },
+      "G_PERFORMANCE.py": {
+        "esperado_identico": true,
+        "motivo": null
+      },
       "G_QUALIDADE.py": {
-        "esperado_identico": false,
-        "motivo": "A versao viva (scripts/gates) roda Fuzzing Continuo de APIs (executar_fuzzing_continuo, via core.fuzzing.ContinuousAPIFuzzer) e Testes de Mutacao (AST) via mutmut, camadas ausentes por inteiro na versao entregue a projetos novos (templates/gates, 85 linhas vs 146 linhas) - confirmado por diff real em 2026-09-08."
+        "esperado_identico": true,
+        "motivo": null
       },
       "G_SEGREDOS.py": {
         "esperado_identico": true,
@@ -383,6 +391,10 @@
       }
     },
     "aidd-master/scripts-gates-vs-templates-gates": {
+      "G_ARQUITETURA.py": {
+        "esperado_identico": true,
+        "motivo": null
+      },
       "G_CHAOS.py": {
         "esperado_identico": true,
         "motivo": null
@@ -399,9 +411,13 @@
         "esperado_identico": true,
         "motivo": null
       },
+      "G_PERFORMANCE.py": {
+        "esperado_identico": true,
+        "motivo": null
+      },
       "G_QUALIDADE.py": {
-        "esperado_identico": false,
-        "motivo": "A versao viva (scripts/gates) roda Fuzzing Continuo de APIs (executar_fuzzing_continuo, via core.fuzzing.ContinuousAPIFuzzer) e Testes de Mutacao (AST) via mutmut, camadas ausentes por inteiro na versao entregue a projetos novos (templates/gates, 85 linhas vs 146 linhas) - confirmado por diff real em 2026-09-08. Mesma divergencia observada em aidd-enterprise (diff identico entre as duas ferramentas)."
+        "esperado_identico": true,
+        "motivo": null
       },
       "G_SEGREDOS.py": {
         "esperado_identico": true,

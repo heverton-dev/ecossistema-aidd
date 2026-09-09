@@ -1,0 +1,758 @@
+<title>Raio-X do Ecossistema AIDD</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,500;8..60,600;8..60,700&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    color-scheme: light;
+    --page:#f9f9f7; --surface:#fcfcfb; --surface-2:#f2f1ec; --surface-3:#eae8e1;
+    --ink:#0b0b0b; --ink-2:#52514e; --muted:#898781;
+    --grid:#e1e0d9; --border:rgba(11,11,11,0.10); --before-bar:#c3c2b7;
+    --accent:#256abf; --accent-strong:#184f95; --accent-soft:#cde2fb; --accent-soft-2:#9ec5f4;
+    --good:#0ca30c; --warning:#fab219; --serious:#ec835a; --critical:#d03b3b;
+    --good-bg:#e3f6e3; --warning-bg:#fff3d9; --serious-bg:#fbe4da; --critical-bg:#f9dcdc;
+    --font-display:'Source Serif 4', Georgia, 'Times New Roman', serif;
+    --font-body:'IBM Plex Sans', system-ui, -apple-system, 'Segoe UI', sans-serif;
+    --font-mono:'IBM Plex Mono', ui-monospace, 'SFMono-Regular', Consolas, monospace;
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      color-scheme: dark;
+      --page:#0d0d0d; --surface:#1a1a19; --surface-2:#141413; --surface-3:#201f1d;
+      --ink:#ffffff; --ink-2:#c3c2b7; --muted:#8f8d86;
+      --grid:#2c2c2a; --border:rgba(255,255,255,0.12); --before-bar:#3a3a37;
+      --accent:#5598e7; --accent-strong:#86b6ef; --accent-soft:#1c3a5c; --accent-soft-2:#204569;
+      --good-bg:#123318; --warning-bg:#3a2c0c; --serious-bg:#3a2015; --critical-bg:#3a1414;
+    }
+  }
+  :root[data-theme="dark"]{
+    color-scheme: dark;
+    --page:#0d0d0d; --surface:#1a1a19; --surface-2:#141413; --surface-3:#201f1d;
+    --ink:#ffffff; --ink-2:#c3c2b7; --muted:#8f8d86;
+    --grid:#2c2c2a; --border:rgba(255,255,255,0.12); --before-bar:#3a3a37;
+    --accent:#5598e7; --accent-strong:#86b6ef; --accent-soft:#1c3a5c; --accent-soft-2:#204569;
+    --good-bg:#123318; --warning-bg:#3a2c0c; --serious-bg:#3a2015; --critical-bg:#3a1414;
+  }
+
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0; background:var(--page); color:var(--ink);
+    font-family:var(--font-body); font-size:16px; line-height:1.55;
+    -webkit-font-smoothing:antialiased;
+  }
+  ::selection{ background:var(--accent-soft); }
+  a{ color:var(--accent-strong); }
+  .num{ font-variant-numeric:tabular-nums; }
+
+  .wrap{ max-width:920px; margin:0 auto; padding:0 24px; }
+  .wide{ max-width:1080px; margin:0 auto; padding:0 24px; }
+
+  /* ---------- top nav ---------- */
+  nav.toc{
+    position:sticky; top:0; z-index:50;
+    background:color-mix(in srgb, var(--page) 88%, transparent);
+    backdrop-filter:blur(10px); -webkit-backdrop-filter:blur(10px);
+    border-bottom:1px solid var(--border);
+  }
+  nav.toc .toc-inner{
+    max-width:1080px; margin:0 auto; padding:0 24px;
+    display:flex; align-items:center; gap:4px;
+    overflow-x:auto; scrollbar-width:none;
+  }
+  nav.toc .toc-inner::-webkit-scrollbar{ display:none; }
+  nav.toc .brand{
+    font-family:var(--font-mono); font-size:12px; font-weight:600;
+    letter-spacing:.04em; color:var(--muted); padding:14px 14px 14px 0;
+    white-space:nowrap; border-right:1px solid var(--border); margin-right:6px;
+  }
+  nav.toc a{
+    white-space:nowrap; font-size:13px; color:var(--ink-2); text-decoration:none;
+    padding:14px 12px; border-bottom:2px solid transparent;
+  }
+  nav.toc a:hover{ color:var(--ink); border-bottom-color:var(--accent); }
+
+  /* ---------- header ---------- */
+  header.hero{
+    max-width:920px; margin:0 auto; padding:56px 24px 40px;
+    border-bottom:1px solid var(--border);
+  }
+  .eyebrow{
+    font-family:var(--font-mono); font-size:12px; letter-spacing:.08em; text-transform:uppercase;
+    color:var(--accent-strong); margin:0 0 14px;
+  }
+  h1.title{
+    font-family:var(--font-display); font-weight:600; font-size:44px; line-height:1.08;
+    margin:0 0 16px; text-wrap:balance; letter-spacing:-0.01em;
+  }
+  .dek{
+    font-size:18px; color:var(--ink-2); max-width:640px; margin:0 0 24px; text-wrap:pretty;
+  }
+  .meta-row{
+    display:flex; flex-wrap:wrap; gap:10px 22px; font-family:var(--font-mono); font-size:12.5px;
+    color:var(--muted);
+  }
+  .meta-row b{ color:var(--ink-2); font-weight:600; }
+
+  section{ padding:56px 0; border-bottom:1px solid var(--border); scroll-margin-top:54px; }
+  section:last-of-type{ border-bottom:none; }
+  .kicker{
+    font-family:var(--font-mono); font-size:12px; letter-spacing:.08em; text-transform:uppercase;
+    color:var(--muted); margin:0 0 10px;
+  }
+  h2.h{
+    font-family:var(--font-display); font-weight:600; font-size:29px; line-height:1.2;
+    margin:0 0 14px; text-wrap:balance;
+  }
+  h3.h3{
+    font-family:var(--font-display); font-weight:600; font-size:20px; margin:0 0 10px;
+  }
+  p.lead{ font-size:17px; color:var(--ink-2); max-width:680px; margin:0 0 18px; }
+  p{ margin:0 0 14px; }
+
+  /* ---------- KPI strip ---------- */
+  .kpi-grid{
+    display:grid; grid-template-columns:repeat(4,1fr); gap:1px;
+    background:var(--border); border:1px solid var(--border); border-radius:10px; overflow:hidden;
+  }
+  .kpi-tile{ background:var(--surface); padding:20px 18px; }
+  .kpi-value{
+    font-family:var(--font-mono); font-size:28px; font-weight:600; line-height:1;
+    display:flex; align-items:baseline; gap:6px; color:var(--ink);
+  }
+  .kpi-value .arrow{ color:var(--muted); font-size:16px; }
+  .kpi-value .after{ color:var(--accent-strong); }
+  .kpi-label{ font-size:12.5px; color:var(--muted); margin-top:8px; line-height:1.4; }
+  @media (max-width:760px){ .kpi-grid{ grid-template-columns:repeat(2,1fr);} }
+
+  /* ---------- timeline ---------- */
+  .era{ margin-bottom:34px; }
+  .era-head{ display:flex; align-items:baseline; gap:10px; margin-bottom:14px; }
+  .era-tag{
+    font-family:var(--font-mono); font-size:11px; color:var(--muted); border:1px solid var(--border);
+    border-radius:99px; padding:2px 9px;
+  }
+  .era-name{ font-family:var(--font-display); font-weight:600; font-size:18px; }
+  .era-window{ font-family:var(--font-mono); font-size:12px; color:var(--muted); margin-left:auto; }
+  .init-list{ border-left:2px solid var(--grid); padding-left:20px; display:flex; flex-direction:column; gap:14px; }
+  .init-item{ position:relative; }
+  .init-item::before{
+    content:''; position:absolute; left:-25px; top:6px; width:9px; height:9px; border-radius:50%;
+    background:var(--surface); border:2px solid var(--muted);
+  }
+  .init-item.done::before{ border-color:var(--good); background:var(--good); }
+  .init-item.doing::before{ border-color:var(--warning); background:var(--warning); }
+  .init-item.todo::before{ border-color:var(--muted); background:var(--surface); }
+  .init-title{ display:flex; align-items:center; gap:10px; flex-wrap:wrap; font-weight:600; font-size:15px; }
+  .init-detail{ color:var(--ink-2); font-size:14px; margin-top:4px; max-width:680px; }
+  .pill{
+    font-family:var(--font-mono); font-size:10.5px; letter-spacing:.03em; text-transform:uppercase;
+    padding:2px 8px; border-radius:99px; font-weight:600; white-space:nowrap;
+  }
+  .pill.done{ background:var(--good-bg); color:var(--good); }
+  .pill.doing{ background:var(--warning-bg); color:#8a5a00; }
+  :root[data-theme="dark"] .pill.doing, @media (prefers-color-scheme:dark){ .pill.doing{ color:var(--warning); } }
+  .pill.todo{ background:var(--surface-3); color:var(--muted); }
+
+  /* ---------- before/after bars ---------- */
+  .barchart{ display:flex; flex-direction:column; gap:16px; }
+  .bar-row{ display:grid; grid-template-columns:170px 1fr; gap:16px; align-items:center; }
+  .bar-name{ font-size:13.5px; font-weight:600; }
+  .bar-tracks{ display:flex; flex-direction:column; gap:5px; }
+  .bar-track{ position:relative; height:16px; background:var(--surface-3); border-radius:3px; overflow:hidden; }
+  .bar-fill{ height:100%; border-radius:3px; display:flex; align-items:center; }
+  .bar-fill.before{ background:var(--before-bar); }
+  .bar-fill.after{ background:var(--accent); }
+  .bar-fill span{
+    font-family:var(--font-mono); font-size:10.5px; color:var(--ink); font-weight:600;
+    margin-left:8px; white-space:nowrap;
+  }
+  .bar-legend{ display:flex; gap:18px; font-size:12.5px; color:var(--ink-2); margin-top:4px; }
+  .bar-legend .sw{ display:inline-block; width:10px; height:10px; border-radius:2px; margin-right:6px; vertical-align:-1px; }
+  .callout{
+    margin-top:22px; padding:16px 18px; border:1px solid var(--border); border-left:3px solid var(--accent);
+    border-radius:6px; background:var(--surface-2); font-size:14.5px; color:var(--ink-2);
+  }
+  .callout b{ color:var(--ink); }
+
+  /* ---------- tables ---------- */
+  .table-scroll{ overflow-x:auto; border:1px solid var(--border); border-radius:10px; }
+  table{ border-collapse:collapse; width:100%; min-width:640px; font-size:13.5px; }
+  table.heat{ min-width:720px; }
+  th, td{ padding:10px 14px; text-align:left; border-bottom:1px solid var(--border); }
+  thead th{
+    font-family:var(--font-mono); font-size:11px; text-transform:uppercase; letter-spacing:.04em;
+    color:var(--muted); background:var(--surface-2); font-weight:600;
+  }
+  tbody tr:last-child td{ border-bottom:none; }
+  td.num, th.num{ text-align:center; font-variant-numeric:tabular-nums; }
+  td.tool{ font-weight:600; white-space:nowrap; }
+  .score{
+    display:inline-flex; align-items:center; justify-content:center; width:30px; height:24px;
+    border-radius:5px; font-family:var(--font-mono); font-weight:700; font-size:13px;
+  }
+  .score-1{ background:#cde2fb; color:#0d366b; }
+  .score-2{ background:#9ec5f4; color:#0d366b; }
+  .score-3{ background:#5598e7; color:#fff; }
+  .score-4{ background:#256abf; color:#fff; }
+  .score-5{ background:#104281; color:#fff; }
+  .legend-scale{ display:flex; gap:14px; align-items:center; font-size:12px; color:var(--muted); margin-top:10px; flex-wrap:wrap; }
+
+  /* ---------- debt cards ---------- */
+  .debt-grid{ display:flex; flex-direction:column; gap:14px; }
+  .debt-card{ border:1px solid var(--border); border-radius:10px; padding:20px 22px; background:var(--surface); }
+  .debt-top{ display:flex; align-items:center; justify-content:space-between; gap:12px; flex-wrap:wrap; margin-bottom:10px; }
+  .debt-name{ font-family:var(--font-display); font-weight:600; font-size:18px; }
+  .debt-meta{ font-family:var(--font-mono); font-size:11.5px; color:var(--muted); }
+  .sev{
+    display:inline-flex; align-items:center; gap:5px; font-family:var(--font-mono); font-size:11px;
+    font-weight:700; text-transform:uppercase; letter-spacing:.03em; padding:3px 9px; border-radius:99px;
+  }
+  .sev::before{ content:''; width:7px; height:7px; border-radius:50%; }
+  .sev.critical{ background:var(--critical-bg); color:var(--critical); }
+  .sev.critical::before{ background:var(--critical); }
+  .sev.serious{ background:var(--serious-bg); color:#a8471f; }
+  .sev.serious::before{ background:var(--serious); }
+  .sev.warning{ background:var(--warning-bg); color:#8a5a00; }
+  .sev.warning::before{ background:var(--warning); }
+  .sev.good{ background:var(--good-bg); color:var(--good); }
+  .sev.good::before{ background:var(--good); }
+  .debt-finding{ font-size:14.5px; color:var(--ink-2); margin-bottom:12px; }
+  .debt-finding code, p code, li code{
+    font-family:var(--font-mono); font-size:.88em; background:var(--surface-3); padding:1px 5px; border-radius:4px;
+  }
+  .debt-foot{ display:flex; gap:18px; flex-wrap:wrap; font-size:12.5px; color:var(--muted); border-top:1px dashed var(--grid); padding-top:12px; margin-top:4px; }
+  .debt-foot b{ color:var(--ink-2); font-family:var(--font-mono); }
+
+  /* ---------- graph section ---------- */
+  .graph-stats{ display:grid; grid-template-columns:repeat(4,1fr); gap:14px; margin-bottom:26px; }
+  .gstat{ text-align:center; padding:14px 8px; border:1px solid var(--border); border-radius:8px; }
+  .gstat .v{ font-family:var(--font-mono); font-size:22px; font-weight:600; }
+  .gstat .l{ font-size:11.5px; color:var(--muted); margin-top:4px; }
+  @media (max-width:640px){ .graph-stats{ grid-template-columns:repeat(2,1fr); } }
+
+  .comm-list{ display:flex; flex-direction:column; gap:8px; }
+  .comm-row{ display:grid; grid-template-columns:190px 1fr 60px; gap:12px; align-items:center; font-size:13px; }
+  .comm-row.flag .comm-name{ color:var(--accent-strong); font-weight:600; }
+  .comm-track{ height:14px; background:var(--surface-3); border-radius:3px; overflow:hidden; }
+  .comm-fill{ height:100%; background:var(--accent); border-radius:3px; }
+  .comm-row.flag .comm-fill{ background:var(--serious); }
+  .comm-size{ font-family:var(--font-mono); font-size:12px; text-align:right; color:var(--ink-2); }
+
+  /* ---------- projection ---------- */
+  .proj-grid{ display:flex; flex-direction:column; gap:0; border:1px solid var(--border); border-radius:10px; overflow:hidden; }
+  .proj-row{ display:grid; grid-template-columns:180px 1fr 24px 1fr; gap:14px; align-items:center; padding:16px 18px; border-bottom:1px solid var(--border); }
+  .proj-row:last-child{ border-bottom:none; }
+  .proj-dim{ font-weight:600; font-size:14px; }
+  .proj-before, .proj-after{ font-size:13.5px; color:var(--ink-2); }
+  .proj-after{ color:var(--ink); }
+  .proj-arrow{ color:var(--muted); text-align:center; }
+  @media (max-width:700px){ .proj-row{ grid-template-columns:1fr; gap:6px; } .proj-arrow{ display:none; } }
+
+  /* ---------- closing ---------- */
+  .close-grid{ display:grid; grid-template-columns:1fr 1fr; gap:24px; }
+  @media (max-width:700px){ .close-grid{ grid-template-columns:1fr; } }
+  .close-card{ padding:0; }
+  .close-card h4{ font-family:var(--font-display); font-size:16px; font-weight:600; margin:0 0 8px; }
+  .close-card p{ font-size:14.5px; color:var(--ink-2); }
+
+  footer{
+    max-width:1080px; margin:0 auto; padding:32px 24px 60px; font-size:12.5px; color:var(--muted);
+  }
+  footer .files{ font-family:var(--font-mono); font-size:11.5px; line-height:2; columns:2; }
+  @media (max-width:700px){ footer .files{ columns:1; } }
+</style>
+
+<nav class="toc" aria-label="Sumário">
+  <div class="toc-inner">
+    <span class="brand">RAIO-X · AIDD</span>
+    <a href="#resumo">Resumo</a>
+    <a href="#linha-do-tempo">Linha do tempo</a>
+    <a href="#maturidade">Maturidade</a>
+    <a href="#arquitetura">Arquitetura</a>
+    <a href="#debito">Débito atual</a>
+    <a href="#grafo">Grafo</a>
+    <a href="#projecao">Projeção</a>
+    <a href="#conclusao">Conclusão</a>
+  </div>
+</nav>
+
+<header class="hero">
+  <p class="eyebrow">Auditoria de maturidade · docs/planos + docs/relatorios</p>
+  <h1 class="title">Raio-X do Ecossistema AIDD</h1>
+  <p class="dek">O que já foi corrigido, o que está sendo corrigido agora, e o que a própria equipe já mapeou como próximo passo — com números tirados dos planos reais, não de impressão.</p>
+  <div class="meta-row">
+    <span><b>19</b> iniciativas · <b>2026-09-04</b> → <b>2026-09-09</b></span>
+    <span>commit <b>e59f2d2</b> · branch <b>main</b></span>
+    <span>grafo: <b class="num">10.558</b> nós / <b class="num">82.045</b> arestas / <b class="num">1.277</b> arquivos</span>
+  </div>
+</header>
+
+<section id="resumo">
+  <div class="wrap">
+    <p class="kicker">Resumo em linguagem direta</p>
+    <h2 class="h">Cinco dias, três camadas de auditoria</h2>
+    <p class="lead">O ecossistema AIDD junta 5 ferramentas (Forge, Generator, Master, Enterprise, Ops) sob uma única governança. Nos últimos 5 dias, o time passou por três momentos bem diferentes: primeiro <b>corrigiu bugs achados por auditoria</b> (riscos críticos de teste quebrado, gates ausentes). Depois <b>provou que tudo funciona de verdade</b> — rodando cada ferramenta isolada, com um humano testando a interface na tela. Agora está na fase mais madura: <b>uma auditoria preditiva profunda</b>, que já mapeou 45 problemas futuros (arquitetura, segurança, dinheiro gasto em tokens, corrupção de dados) antes que aconteçam — e ainda não corrigiu quase nenhum.</p>
+    <p>Ou seja: a <b>disciplina de descobrir problemas</b> está muito à frente da <b>disciplina de fechá-los</b>. Isso não é necessariamente ruim — auditoria antes da correção é o caminho certo — mas significa que, hoje, o ecossistema conhece seus próprios riscos com uma precisão rara e ainda carrega a maior parte deles.</p>
+    <div class="kpi-grid" style="margin-top:28px;">
+      <div class="kpi-tile">
+        <div class="kpi-value">19</div>
+        <div class="kpi-label">iniciativas mapeadas — 12 concluídas, 2 em execução, 5 no backlog formal</div>
+      </div>
+      <div class="kpi-tile">
+        <div class="kpi-value"><span class="num">1.278</span><span class="arrow">→</span><span class="num after">1.714+</span></div>
+        <div class="kpi-label">testes automatizados passando, 04→09/09 (soma das 5 ferramentas)</div>
+      </div>
+      <div class="kpi-tile">
+        <div class="kpi-value"><span class="num">4</span><span class="arrow">→</span><span class="num after">11</span></div>
+        <div class="kpi-label">Quality Gates determinísticos rodando na raiz do monorepo</div>
+      </div>
+      <div class="kpi-tile">
+        <div class="kpi-value num">45</div>
+        <div class="kpi-label">itens de débito técnico formalizados em 09/09 — 0 ainda iniciados</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="linha-do-tempo">
+  <div class="wide">
+    <p class="kicker">Trajetória</p>
+    <h2 class="h">De correção reativa a auditoria preditiva</h2>
+    <p class="lead">As 19 iniciativas de <code>docs/planos/</code>, na ordem em que aconteceram. Cada uma só vira "✅ concluída" depois de reprodução real do comando de verificação — nunca por o executor "achar que terminou".</p>
+
+    <div class="era">
+      <div class="era-head">
+        <span class="era-tag">Era 1</span><span class="era-name">Correção reativa</span>
+        <span class="era-window">04–05/09</span>
+      </div>
+      <div class="init-list">
+        <div class="init-item done">
+          <div class="init-title">Correção de Riscos do Ecossistema <span class="pill done">concluído</span></div>
+          <div class="init-detail">8 riscos críticos achados por execução real (suíte que não coletava, <code>pytest.ini</code> quebrado por BOM, 22 de 24 arquivos de núcleo duplicados) — os 8 resolvidos e validados: 1.278 testes / 0 falhas, 4 gates aprovados.</div>
+        </div>
+        <div class="init-item done">
+          <div class="init-title">Evolução das Notas de Auditoria — Rodada 1 <span class="pill done">concluído</span></div>
+          <div class="init-detail">7 pacotes fechados um a um (Transparência, Testabilidade, Modularização, Cobertura, Tokens, Universalidade, Distribuição). Nota composta do ecossistema: 7,5 → 8,7/10.</div>
+        </div>
+        <div class="init-item done">
+          <div class="init-title">Refinamento das Notas — Rodada 2 <span class="pill done">concluído</span></div>
+          <div class="init-detail">Aplicadas 4 perguntas de rigor ("é necessário? é possível? é real? traz ganho real?") a cada avanço possível. Testabilidade e Modularização chegam a 10/10; 2 itens reprovados nas 4 perguntas ficam registrados como teto honesto, não escondido.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="era">
+      <div class="era-head">
+        <span class="era-tag">Era 2</span><span class="era-name">Prova &amp; validação humana</span>
+        <span class="era-window">06/09</span>
+      </div>
+      <div class="init-list">
+        <div class="init-item done">
+          <div class="init-title">Testes Completos do Ecossistema <span class="pill done">concluído</span></div>
+          <div class="init-detail">6 baterias de teste ponta-a-ponta via CLI real (não só <code>pytest</code>) — orquestração raiz + as 5 ferramentas. Todas aprovadas, 2 "com ressalvas" documentadas em vez de maquiadas.</div>
+        </div>
+        <div class="init-item done">
+          <div class="init-title">Skill Geradora de Planos de Auditoria <span class="pill done">concluído</span></div>
+          <div class="init-detail">O processo manual usado 3× (pastas, convenções, checagem de cercas de código) virou skill reutilizável — a partir daqui, toda nova auditoria já nasce no formato estruturado.</div>
+        </div>
+        <div class="init-item done">
+          <div class="init-title">Skill de Orquestração ORCA ADE <span class="pill done">concluído</span></div>
+          <div class="init-detail">Motor real (parser, máquina de estados, worktree, spawn de 4 CLIs de harness) — núcleo mecânico 100% zero-LLM, validado end-to-end com stub antes de gastar qualquer chamada real.</div>
+        </div>
+        <div class="init-item done">
+          <div class="init-title">Validação Humana em Sessões Isoladas <span class="pill done">concluído</span></div>
+          <div class="init-detail">6 sessões limpas, uma por ferramenta, rodando no disco real com frontend no ar e o desenvolvedor testando na tela antes do aval. Nota final do teste integrado E2E: <b>9,56/10</b>.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="era">
+      <div class="era-head">
+        <span class="era-tag">Era 3</span><span class="era-name">Direção estratégica &amp; 5ª ferramenta</span>
+        <span class="era-window">06–07/09</span>
+      </div>
+      <div class="init-list">
+        <div class="init-item done">
+          <div class="init-title">Integração da AIDD-Ops <span class="pill done">concluído</span></div>
+          <div class="init-detail">9 pacotes sequenciados por risco (workspace local primeiro, SSH/DNS/deploy real por último, cada um com aprovação pontual). AIDD-Ops vira a 5ª ferramenta oficial: sizing 100% determinístico, SSH runner, MCPs de borda, gate de infraestrutura.</div>
+        </div>
+        <div class="init-item done">
+          <div class="init-title">Direcionamento Estratégico Anti-NIH <span class="pill done">concluído</span></div>
+          <div class="init-detail">Resposta formal a "o trabalho foi perdido?" — não: código próprio reinventado (fila, cache, scaffolding) foi trocado por OSS maduro (Cookiecutter, <code>returns</code>, SQLAlchemy, Coolify) sem perder a modelagem já construída. 2 novas Regras de Ouro: checklist anti-NIH e zero linguagem de marketing.</div>
+        </div>
+        <div class="init-item done">
+          <div class="init-title">Evolução AIDD-Ops — Fase Completa <span class="pill done">concluído</span></div>
+          <div class="init-detail">4 frentes (intake web, cofre de credenciais, appshell, isolamento em VPS) resolvidas adotando Coolify em vez de reconstruir uma PaaS própria — o próprio anti-NIH aplicado à ferramenta mais nova do ecossistema.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="era">
+      <div class="era-head">
+        <span class="era-tag">Era 4</span><span class="era-name">Qualidade &amp; arquitetura interna</span>
+        <span class="era-window">08–09/09</span>
+      </div>
+      <div class="init-list">
+        <div class="init-item done">
+          <div class="init-title">Correção de Código Limpo <span class="pill done">concluído</span></div>
+          <div class="init-detail">8 achados dentro de cada arquivo/função: ~197+65+19+7 ocorrências de <code>except Exception</code> genérico nas 5 ferramentas, classes de até 894 linhas no generator, convenção de nomenclatura PT-BR/EN formalizada.</div>
+        </div>
+        <div class="init-item done">
+          <div class="init-title">Correção de Arquitetura Limpa <span class="pill done">concluído</span></div>
+          <div class="init-detail">5 achados de organização entre arquivos (via <code>code-review-graph</code>): HTML gigante embutido extraído, gate de drift ampliado para novos pares duplicados, duplicação real da skill de orquestração em <b>8</b> pastas de harness registrada (contagem corrigida de 7 para 8 por reprodução — o grafo confirma isso adiante, ver §Grafo).</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="era">
+      <div class="era-head">
+        <span class="era-tag">Era 5 · agora</span><span class="era-name">Fechamento sem maquiagem</span>
+        <span class="era-window">em execução</span>
+      </div>
+      <div class="init-list">
+        <div class="init-item doing">
+          <div class="init-title">Correção Pós-Auditoria Sem Maquiagem <span class="pill doing">16 de 18 concluídos</span></div>
+          <div class="init-detail">CSP endurecido, seed de demo com secret hardcoded removida, XSS armazenado real corrigido em 6 cópias, CORS inseguro do código gerado bloqueado por gate, custo de token reduzido no núcleo determinístico. Restam 2 itens em rascunho: conversão <code>argparse→click</code> pela metade em 2 CLIs (achados de sessões concorrentes).</div>
+        </div>
+        <div class="init-item doing">
+          <div class="init-title">Código Limpo Profundo do Ecossistema <span class="pill doing">1 de 18 em execução</span></div>
+          <div class="init-detail">Extração do núcleo compartilhado (27 arquivos, 8.781 linhas duplicadas entre Master e Enterprise) em andamento — as 3 divergências silenciosas já diagnosticadas e com decisão registrada. Os outros 17 itens (Result monad unificado, God Class do gate de segurança, CLI monolítica) são rascunhos aguardando aprovação, ainda não iniciados.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="era" style="margin-bottom:0;">
+      <div class="era-head">
+        <span class="era-tag">Era 6 · fronteira</span><span class="era-name">Auditoria preditiva profunda</span>
+        <span class="era-window">formalizada em 09/09 — 0 itens iniciados</span>
+      </div>
+      <div class="init-list">
+        <div class="init-item todo">
+          <div class="init-title">Reestruturação DDD / Clean Architecture <span class="pill todo">10 itens · rascunho</span></div>
+          <div class="init-detail">Núcleo compartilhado + fatia vertical de referência com domínio real (hoje é <code>dict</code> de SQL cru).</div>
+        </div>
+        <div class="init-item todo">
+          <div class="init-title">Otimização de Tokenomics &amp; Latência <span class="pill todo">7 itens · rascunho</span></div>
+          <div class="init-detail">Prompt por composição, orçador de contexto entre fases, reparo de JSON zero-LLM na Fase 8 do Generator.</div>
+        </div>
+        <div class="init-item todo">
+          <div class="init-title">Qualidade de Testes &amp; Mutação <span class="pill todo">10 itens · rascunho</span></div>
+          <div class="init-detail">Fechar os mutantes de segurança e financeiros que hoje sobrevivem às suítes existentes.</div>
+        </div>
+        <div class="init-item todo">
+          <div class="init-title">Resiliência, Concorrência &amp; Integridade <span class="pill todo">8 itens · rascunho</span></div>
+          <div class="init-detail">Outbox atômico, escritor de arquivo atômico, máquina de estados no pipeline do Generator.</div>
+        </div>
+        <div class="init-item todo">
+          <div class="init-title">Segurança Zero-Trust &amp; Supply Chain <span class="pill todo">10 itens · rascunho</span></div>
+          <div class="init-detail">Sandbox para código gerado por LLM, manifesto assinado Ed25519, pin de dependências com hash.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="maturidade">
+  <div class="wrap">
+    <p class="kicker">Antes × depois — auditoria técnica</p>
+    <h2 class="h">Onde a nota subiu, e onde há um teto reconhecido</h2>
+    <p class="lead">As 8 dimensões da auditoria original (<code>relatorio-auditoria-ecossistema-aidd.html</code>, nota consolidada inicial <b>7,5/10</b>), medidas de novo depois de cada pacote fechar. Nenhuma nota sobe sem o comando de validação ter rodado de verdade na sessão.</p>
+
+    <div class="barchart">
+      <div class="bar-row">
+        <div class="bar-name">Testabilidade</div>
+        <div class="bar-tracks">
+          <div class="bar-track"><div class="bar-fill before" style="width:60%"><span>6,0 antes</span></div></div>
+          <div class="bar-track"><div class="bar-fill after" style="width:100%"><span>10,0 depois</span></div></div>
+        </div>
+      </div>
+      <div class="bar-row">
+        <div class="bar-name">Modularização</div>
+        <div class="bar-tracks">
+          <div class="bar-track"><div class="bar-fill before" style="width:70%"><span>7,0 antes</span></div></div>
+          <div class="bar-track"><div class="bar-fill after" style="width:100%"><span>10,0 depois</span></div></div>
+        </div>
+      </div>
+      <div class="bar-row">
+        <div class="bar-name">Gates Mecânicos</div>
+        <div class="bar-tracks">
+          <div class="bar-track"><div class="bar-fill before" style="width:70%"><span>7,0 antes</span></div></div>
+          <div class="bar-track"><div class="bar-fill after" style="width:90%"><span>9,0 depois</span></div></div>
+        </div>
+      </div>
+      <div class="bar-row">
+        <div class="bar-name">Transparência</div>
+        <div class="bar-tracks">
+          <div class="bar-track"><div class="bar-fill before" style="width:80%"><span>8,0 antes</span></div></div>
+          <div class="bar-track"><div class="bar-fill after" style="width:90%"><span>9,0 depois</span></div></div>
+        </div>
+      </div>
+      <div class="bar-row">
+        <div class="bar-name">Universalidade</div>
+        <div class="bar-tracks">
+          <div class="bar-track"><div class="bar-fill before" style="width:80%"><span>8,0 antes</span></div></div>
+          <div class="bar-track"><div class="bar-fill after" style="width:90%"><span>9,0 depois</span></div></div>
+        </div>
+      </div>
+      <div class="bar-row">
+        <div class="bar-name">Engenharia Agêntica</div>
+        <div class="bar-tracks">
+          <div class="bar-track"><div class="bar-fill before" style="width:80%"><span>8,0 antes</span></div></div>
+          <div class="bar-track"><div class="bar-fill after" style="width:85%"><span>8,5 depois</span></div></div>
+        </div>
+      </div>
+      <div class="bar-row">
+        <div class="bar-name">Determinismo</div>
+        <div class="bar-tracks">
+          <div class="bar-track"><div class="bar-fill before" style="width:90%"><span>9,0 antes</span></div></div>
+          <div class="bar-track"><div class="bar-fill after" style="width:95%"><span>9,5 depois</span></div></div>
+        </div>
+      </div>
+      <div class="bar-row">
+        <div class="bar-name">Economia de Tokens</div>
+        <div class="bar-tracks">
+          <div class="bar-track"><div class="bar-fill before" style="width:70%"><span>7,0 antes</span></div></div>
+          <div class="bar-track"><div class="bar-fill after" style="width:80%"><span>8,0 depois — teto estrutural</span></div></div>
+        </div>
+      </div>
+    </div>
+    <div class="bar-legend">
+      <span><span class="sw" style="background:var(--before-bar)"></span>Antes (auditoria 04-05/09)</span>
+      <span><span class="sw" style="background:var(--accent)"></span>Depois (pós Rodada 1+2)</span>
+    </div>
+
+    <div class="callout">
+      <b>Teto honesto, não escondido:</b> Economia de Tokens fica em 8/10 porque o consumo no Modo Delegado é autodeclarado por quem responde — não existe medição independente do lado de fora. Determinismo em 9,5/10 porque as Fases 2, 3 e 8 do Generator são LLM por natureza (é o próprio propósito da ferramenta gerar código a partir de linguagem natural). <b>Distribuição de Componentes</b> — um gap novo, fora das 8 dimensões originais, achado a pedido do usuário — foi de inexistente a <b>9 → 10/10</b> na Rodada 2, corrigindo a última divergência entre Master e Enterprise.
+    </div>
+  </div>
+</section>
+
+<section id="arquitetura">
+  <div class="wide">
+    <p class="kicker">Auditoria arquitetural bidimensional · 2026-09-09</p>
+    <h2 class="h">Forte onde é determinístico, fraco onde entrega domínio</h2>
+    <p class="lead">Escala 1–5 (1 = anti-padrão dominante, 3 = funcional com violações conhecidas, 5 = referência de mercado), medida por inspeção estática real — não estimativa. <b>Engine</b> é como a ferramenta é construída; <b>Deliverable</b> é o código que ela entrega ao usuário final.</p>
+
+    <div class="table-scroll">
+      <table class="heat">
+        <thead>
+          <tr><th>Ferramenta</th><th class="num">Engine<br>Clean Arch</th><th class="num">Engine<br>DDD</th><th class="num">Deliverable<br>Clean Arch</th><th class="num">Deliverable<br>DDD</th></tr>
+        </thead>
+        <tbody>
+          <tr><td class="tool">Orquestração raiz</td><td class="num"><span class="score score-4">4</span></td><td class="num"><span class="score score-3">3</span></td><td class="num"><span class="score score-3">3</span></td><td class="num"><span class="score score-3">3</span></td></tr>
+          <tr><td class="tool">AIDD Forge</td><td class="num"><span class="score score-4">4</span></td><td class="num"><span class="score score-3">3</span></td><td class="num"><span class="score score-3">3</span></td><td class="num"><span class="score score-2">2</span></td></tr>
+          <tr><td class="tool">AIDD Generator</td><td class="num"><span class="score score-3">3</span></td><td class="num"><span class="score score-2">2</span></td><td class="num"><span class="score score-2">2</span></td><td class="num"><span class="score score-2">2</span></td></tr>
+          <tr><td class="tool">AIDD Master</td><td class="num"><span class="score score-3">3</span></td><td class="num"><span class="score score-2">2</span></td><td class="num"><span class="score score-2">2</span></td><td class="num"><span class="score score-2">2</span></td></tr>
+          <tr><td class="tool">AIDD Enterprise</td><td class="num"><span class="score score-3">3</span></td><td class="num"><span class="score score-2">2</span></td><td class="num"><span class="score score-2">2</span></td><td class="num"><span class="score score-2">2</span></td></tr>
+          <tr><td class="tool">AIDD Ops</td><td class="num"><span class="score score-4">4</span></td><td class="num"><span class="score score-3">3</span></td><td class="num"><span class="score score-3">3</span></td><td class="num"><span class="score score-3">3</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="legend-scale">
+      <span><span class="score score-1" style="width:20px;height:18px;">1</span> ausente</span>
+      <span><span class="score score-2" style="width:20px;height:18px;">2</span> parcial</span>
+      <span><span class="score score-3" style="width:20px;height:18px;">3</span> funcional c/ violações</span>
+      <span><span class="score score-4" style="width:20px;height:18px;">4</span> sólido</span>
+      <span><span class="score score-5" style="width:20px;height:18px;">5</span> referência de mercado</span>
+    </div>
+
+    <p style="margin-top:24px;">O padrão é o mesmo nas 4 colunas: <b>quanto mais determinístico, melhor a nota</b>. AIDD Ops (sizing 100% aritmética pura, zero LLM) e a orquestração raiz (roteador puro, gates em AST) lideram. Master e Enterprise — as duas ferramentas que entregam mais código de negócio ao cliente final — empatam em <b>2/5</b> no Deliverable DDD: a fatia vertical padrão (<code>modulo1/models.py</code>) é <code>CREATE TABLE</code> + <code>dict(row)</code>, sem Entity, Value Object ou Repository. É um <b>CRUD funcional com mecanismos maduros por baixo</b> (outbox transacional, CQRS, audit WORM) — só que aplicados a um domínio anêmico.</p>
+  </div>
+</section>
+
+<section id="debito">
+  <div class="wide">
+    <p class="kicker">5 auditorias baseline · formalizadas em 09/09 · 45 itens, todos ⏳ rascunho</p>
+    <h2 class="h">O que o ecossistema já sabe sobre si mesmo — e ainda não corrigiu</h2>
+    <p class="lead">No mesmo dia, 5 auditorias técnicas profundas viraram planos formais em <code>docs/planos/a-fazer/</code>. Nenhum item começou a ser implementado — todos aguardam aprovação humana pontual, principalmente os que tocam runtime entregue ao cliente.</p>
+
+    <div class="debt-grid">
+      <div class="debt-card">
+        <div class="debt-top">
+          <span class="debt-name">Resiliência, Concorrência &amp; Integridade</span>
+          <span class="sev critical">2 ferramentas em risco crítico</span>
+        </div>
+        <p class="debt-finding">O Outbox promete "entrega garantida at-least-once" no docstring — na prática é <b>at-most-once</b>: se o listener falhar, o evento fica pendente para sempre, sem retry counter nem dead-letter. Dois processos concorrentes processam o mesmo evento duas vezes (sem claim atômico). Isso afeta <code>aidd-master</code> e <code>aidd-enterprise</code> — os dois runtimes que o ecossistema efetivamente entrega ao usuário final.</p>
+        <div class="debt-foot">
+          <span><b>8</b> itens no plano</span>
+          <span>P0: claim atômico + dead-letter no Outbox</span>
+          <span>Fonte: <code>RESILIENCIA-CONCORRENCIA-BASELINE.md</code></span>
+        </div>
+      </div>
+
+      <div class="debt-card">
+        <div class="debt-top">
+          <span class="debt-name">Segurança Zero-Trust &amp; Supply Chain</span>
+          <span class="sev critical">RCE real, sem sandbox</span>
+        </div>
+        <p class="debt-finding">A Fase 8 do Generator executa código escrito por LLM (a partir de referências web não confiáveis) <b>sem isolamento de processo em nenhum nível</b> — nem container, nem env restrito. O próprio "smoke-test" (<code>--help</code>) já executa o código de nível de módulo do Python, ou seja, roda o payload inteiro. O selo SHA-256 do Enterprise, hoje chamado de "Zero-Trust", guarda hash e dado no mesmo arquivo — detecta corrupção acidental, não resiste a adulteração deliberada.</p>
+        <div class="debt-foot">
+          <span><b>10</b> itens no plano</span>
+          <span>P0 (esta semana): sandbox nível 1 + gate OWASP sobre o código gerado</span>
+          <span>Fonte: <code>SEGURANCA-SUPPLY-CHAIN-BASELINE.md</code></span>
+        </div>
+      </div>
+
+      <div class="debt-card">
+        <div class="debt-top">
+          <span class="debt-name">Qualidade de Testes &amp; Mutação</span>
+          <span class="sev serious">Testes rodam, mas não travam a regra</span>
+        </div>
+        <p class="debt-finding">102 ocorrências de <code>assert X is not None</code> como única verificação. O teste do injetor SHA-256 confere que existem <b>5 hashes</b>, não que eles batem com o conteúdo — mutar o algoritmo de hash mantém o teste verde. O sizing financeiro do Ops só verifica piso (<code>&gt;= 2</code> vCPU), não o valor exato. 20+ ocorrências de <code>time.sleep</code> em vez de relógio injetado, deixando testes vulneráveis a máquina lenta ou rápida demais.</p>
+        <div class="debt-foot">
+          <span><b>10</b> itens no plano</span>
+          <span>P0: testes de conteúdo (hash) e de exatidão (sizing)</span>
+          <span>Fonte: <code>QUALIDADE-TESTES-MUTACAO-BASELINE.md</code></span>
+        </div>
+      </div>
+
+      <div class="debt-card">
+        <div class="debt-top">
+          <span class="debt-name">Reestruturação DDD / Clean Architecture</span>
+          <span class="sev warning">27 arquivos duplicados, 1/18 em migração</span>
+        </div>
+        <p class="debt-finding">8.781 linhas byte-idênticas entre Master e Enterprise (<code>database.py</code>, <code>openapi.py</code>, <code>jobs.py</code>, <code>security.py</code>), com 3 divergências silenciosas já em curso — corrigir um bug hoje significa editar a mão em até 6 cópias físicas (como aconteceu com o XSS do item 16). A CLI principal de cada ferramenta é um monólito de 1.162 linhas misturando parsing, orquestração e I/O.</p>
+        <div class="debt-foot">
+          <span><b>10</b> itens no plano · <b>1</b> em execução</span>
+          <span>Roadmap em 4 fases, ~8–11 semanas estimadas</span>
+          <span>Fonte: <code>ARQUITETURA-BASELINE-DDD-CLEAN.md</code></span>
+        </div>
+      </div>
+
+      <div class="debt-card">
+        <div class="debt-top">
+          <span class="debt-name">Otimização de Tokenomics &amp; Latência</span>
+          <span class="sev good">Mapeado, sem risco de dado — só de custo</span>
+        </div>
+        <p class="debt-finding">A Fase 8 do Generator (implementação via LLM) reenvia <b>código + teste + erros inteiros</b> a cada tentativa do fix-loop — um script grande com 3 tentativas pode custar 6–10× a geração original. O parser que já isola o traceback (<code>PostMortemAnalyzer</code>) existe no código, mas não é usado no prompt de correção. Estimativa de economia: <b>10–12 mil tokens por execução</b> de pipeline (15–25% do custo típico).</p>
+        <div class="debt-foot">
+          <span><b>7</b> itens no plano</span>
+          <span>P0: prompt por composição + diff no fix-loop</span>
+          <span>Fonte: <code>TOKENOMICS-LATENCIA-BASELINE.md</code></span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="grafo">
+  <div class="wrap">
+    <p class="kicker">Evidência independente · code-review-graph</p>
+    <h2 class="h">O grafo confirma o que a leitura manual achou</h2>
+    <p class="lead">O grafo de conhecimento do próprio monorepo — construído por Tree-sitter, não por leitura humana — foi consultado para checar se a estrutura real do código bate com os achados registrados nos planos.</p>
+
+    <div class="graph-stats">
+      <div class="gstat"><div class="v num">10.558</div><div class="l">nós no grafo</div></div>
+      <div class="gstat"><div class="v num">82.045</div><div class="l">arestas</div></div>
+      <div class="gstat"><div class="v num">2.647</div><div class="l">nós de teste</div></div>
+      <div class="gstat"><div class="v num">13</div><div class="l">comunidades detectadas</div></div>
+    </div>
+
+    <h3 class="h3">As 13 comunidades, por tamanho</h3>
+    <div class="comm-list">
+      <div class="comm-row"><span class="comm-name">core-post</span><div class="comm-track"><div class="comm-fill" style="width:100%"></div></div><span class="comm-size num">6.146</span></div>
+      <div class="comm-row flag"><span class="comm-name">scripts-front</span><div class="comm-track"><div class="comm-fill" style="width:3.8%"></div></div><span class="comm-size num">233</span></div>
+      <div class="comm-row flag"><span class="comm-name">scripts-front-state</span><div class="comm-track"><div class="comm-fill" style="width:3.3%"></div></div><span class="comm-size num">204</span></div>
+      <div class="comm-row flag"><span class="comm-name">scripts-front-git</span><div class="comm-track"><div class="comm-fill" style="width:3.3%"></div></div><span class="comm-size num">204</span></div>
+      <div class="comm-row flag"><span class="comm-name">scripts-front-worktree</span><div class="comm-track"><div class="comm-fill" style="width:3.3%"></div></div><span class="comm-size num">204</span></div>
+      <div class="comm-row flag"><span class="comm-name">scripts-front-repo</span><div class="comm-track"><div class="comm-fill" style="width:3.3%"></div></div><span class="comm-size num">204</span></div>
+      <div class="comm-row flag"><span class="comm-name">scripts-front-2</span><div class="comm-track"><div class="comm-fill" style="width:3.3%"></div></div><span class="comm-size num">204</span></div>
+      <div class="comm-row flag"><span class="comm-name">scripts-front-3</span><div class="comm-track"><div class="comm-fill" style="width:3.3%"></div></div><span class="comm-size num">204</span></div>
+      <div class="comm-row flag"><span class="comm-name">scripts-front-4</span><div class="comm-track"><div class="comm-fill" style="width:3.3%"></div></div><span class="comm-size num">204</span></div>
+      <div class="comm-row"><span class="comm-name">gates-auditar</span><div class="comm-track"><div class="comm-fill" style="width:1.0%"></div></div><span class="comm-size num">63</span></div>
+      <div class="comm-row"><span class="comm-name">scripts-cmd</span><div class="comm-track"><div class="comm-fill" style="width:0.9%"></div></div><span class="comm-size num">54</span></div>
+      <div class="comm-row"><span class="comm-name">testes-cmd</span><div class="comm-track"><div class="comm-fill" style="width:0.6%"></div></div><span class="comm-size num">39</span></div>
+      <div class="comm-row"><span class="comm-name">ecossistema-aidd-cmd</span><div class="comm-track"><div class="comm-fill" style="width:0.2%"></div></div><span class="comm-size num">15</span></div>
+    </div>
+
+    <div class="callout" style="margin-top:22px;">
+      <b>Duas confirmações independentes:</b> (1) <code>core-post</code> concentra 58% de todo o grafo com coesão baixa (0,22 em 1,0) — coerente com o achado de núcleo compartilhado duplicado e heterogêneo entre Master e Enterprise. (2) As <b>8 comunidades "scripts-front*"</b> destacadas acima têm tamanho quase idêntico (204–233 nós) — a mesma skill <code>orca-plan-orchestrator</code>, fisicamente copiada em 8 pastas de harness diferentes. É exatamente o achado do item 3 de <i>correção-arquitetura-limpa</i>, cuja contagem inicial de "7 pastas" foi corrigida para 8 por reprodução real — o grafo mostra, de forma independente e estrutural, as mesmas 8 cópias.
+    </div>
+  </div>
+</section>
+
+<section id="projecao">
+  <div class="wrap">
+    <p class="kicker">Se os 45 itens do backlog forem implementados</p>
+    <h2 class="h">O que muda, dimensão por dimensão</h2>
+    <p class="lead">Sem inventar números que os planos não têm — cada linha usa o critério de pronto real definido no próprio roadmap (P0) de cada auditoria.</p>
+
+    <div class="proj-grid">
+      <div class="proj-row">
+        <div class="proj-dim">Resiliência</div>
+        <div class="proj-before">Outbox perde evento silenciosamente se o listener falhar; 2 processos podem processar o mesmo evento 2×</div>
+        <div class="proj-arrow">→</div>
+        <div class="proj-after">Claim atômico + contador de tentativas + dead-letter — nenhum evento processado 2× nem perdido para sempre</div>
+      </div>
+      <div class="proj-row">
+        <div class="proj-dim">Segurança</div>
+        <div class="proj-before">Código gerado por LLM roda com env completo do host, sem isolamento de processo</div>
+        <div class="proj-arrow">→</div>
+        <div class="proj-after">Sandbox com allowlist de env + gate de segurança rodando sobre o código gerado, não só sobre o próprio ecossistema</div>
+      </div>
+      <div class="proj-row">
+        <div class="proj-dim">Qualidade de testes</div>
+        <div class="proj-before">Hash e sizing testados por contagem/piso — mutante crítico sobrevive sem ser detectado</div>
+        <div class="proj-arrow">→</div>
+        <div class="proj-after">Teste de conteúdo (hash computado vs. registrado) e de exatidão (valor exato, não piso) — mutante morre</div>
+      </div>
+      <div class="proj-row">
+        <div class="proj-dim">Tokenomics</div>
+        <div class="proj-before">Fix-loop da Fase 8 reenvia código+teste+erro inteiros a cada tentativa</div>
+        <div class="proj-arrow">→</div>
+        <div class="proj-after">Diff + traceback isolado no prompt de correção — 10–12 mil tokens a menos por execução (15–25%)</div>
+      </div>
+      <div class="proj-row">
+        <div class="proj-dim">Arquitetura</div>
+        <div class="proj-before">27 arquivos idênticos entre Master/Enterprise; fatia vertical padrão é <code>dict</code> de SQL cru</div>
+        <div class="proj-arrow">→</div>
+        <div class="proj-after">Fonte única sincronizada + molde de referência com Entity, Value Object e Repository de verdade</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="conclusao">
+  <div class="wrap">
+    <p class="kicker">Síntese</p>
+    <h2 class="h">Engenharia de agentes madura, produto entregue ainda não</h2>
+    <div class="close-grid">
+      <div class="close-card">
+        <h4>Engenharia agêntica</h4>
+        <p>Passou de "eu audito manualmente" para "o processo de auditar virou uma skill" (<code>planos-auditoria-runner</code>) e depois "existe um motor que orquestra múltiplos agentes com máquina de estados e circuit breaker" (<code>orca-plan-orchestrator</code>). O ecossistema hoje escreve os próprios planos de auditoria no formato certo, sozinho.</p>
+      </div>
+      <div class="close-card">
+        <h4>Economia de tokens</h4>
+        <p>Real nos pontos determinísticos: um subagente de LLM foi trocado por cálculo local, cortando chamadas desnecessárias. Mas o ponto mais caro do ecossistema — a Fase 8 do Generator — segue sem o corte de 15–25% já mapeado e pronto para implementar.</p>
+      </div>
+      <div class="close-card">
+        <h4>Entrega ao usuário final</h4>
+        <p>As 5 ferramentas passaram por validação humana com nota 9,56/10 no fluxo integrado. Mas o código que elas entregam (Master/Enterprise) ainda roda sobre um domínio anêmico e um Outbox que, sob falha, perde eventos de forma silenciosa — a camada de governança está mais madura que o produto que ela governa.</p>
+      </div>
+      <div class="close-card">
+        <h4>Facilidade &amp; usabilidade</h4>
+        <p>A adoção do Coolify no lugar de reconstruir uma PaaS própria (intake web, cofre de credenciais, appshell) é o anti-NIH funcionando como deveria: menos código próprio para manter, mais tempo no que é realmente diferencial do produto — o pipeline do Generator.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <p style="margin-bottom:10px;"><b style="color:var(--ink-2);">Fontes primárias desta análise</b> — lidas integralmente, sem leitura cruzada nem estimativa.</p>
+  <div class="files">
+    <div>docs/planos/INDEX.md</div>
+    <div>docs/planos/feitos/01…11/00-PROCESSO-E-DECISOES.md</div>
+    <div>docs/planos/feitos/PLANO-CORRECAO-RISCOS-ECOSSISTEMA-AIDD.md</div>
+    <div>docs/planos/fazendo/01-correcao-pos-auditoria-sem-maquiagem/</div>
+    <div>docs/planos/fazendo/codigo-limpo-profundo-ecossistema/</div>
+    <div>docs/planos/a-fazer/01…05/00-PROCESSO-E-DECISOES.md</div>
+    <div>docs/relatorios/ARQUITETURA-BASELINE-DDD-CLEAN.md</div>
+    <div>docs/relatorios/QUALIDADE-TESTES-MUTACAO-BASELINE.md</div>
+    <div>docs/relatorios/RESILIENCIA-CONCORRENCIA-BASELINE.md</div>
+    <div>docs/relatorios/SEGURANCA-SUPPLY-CHAIN-BASELINE.md</div>
+    <div>docs/relatorios/TOKENOMICS-LATENCIA-BASELINE.md</div>
+    <div>AGENTS.md · code-review-graph (10.558 nós / 82.045 arestas)</div>
+  </div>
+  <p style="margin-top:18px;">Gerado sem subagentes, direto na sessão principal, cruzando os planos com o grafo de conhecimento do repositório. Nenhuma nota ou percentual acima foi estimado — todos vêm de um documento fonte citado.</p>
+</footer>

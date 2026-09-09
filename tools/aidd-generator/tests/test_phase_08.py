@@ -580,16 +580,39 @@ def test_escrever_implementacao_preserva_utf8_sem_mojibake(implementador_08, tmp
 
 
 def test_prompts_contem_regras_foreign_key_e_integridade_referencial(implementador_08):
-    prompt_impl = implementador_08.PROMPT_IMPLEMENTAR_SCRIPT
+    # Item 1 [TK-4]: regras FK são BLOCOS CONDICIONAIS — ativados quando o
+    # script_spec declara SQL/FK. A base genérica não pode carregá-las
+    # sempre (economia de tokens), mas para script SQL elas PRECISAM estar.
+    spec_sql_fk = {
+        'nome': 'registrar.py',
+        'responsabilidade': 'crud sqlite com foreign key para habitos',
+        'pseudocodigo': 'INSERT INTO checkins (habito_id) SELECT id FROM habitos',
+    }
+    prompt_impl = implementador_08.ImplementadorFase8._montar_prompt_implementar_script(
+        ideia='rastreador', stack={'banco': 'SQLite'}, script_spec=spec_sql_fk,
+        nome_raw='registrar.py', modulo='registrar',
+        secao_schema='', caminho_sugerido='registrar.py',
+        caminho_teste_sugerido='test_registrar.py',
+    )
     prompt_corr = implementador_08.PROMPT_CORRIGIR_SCRIPT
 
-    # Verifica regras no prompt de implementação (prompts agora em EN — Caveman Ultra)
+    # Regras FK presentes no prompt de implementação composto (script SQL/FK)
     assert "PRAGMA foreign_keys = ON" in prompt_impl
     assert "FOREIGN KEY" in prompt_impl
     assert "parent record" in prompt_impl.lower()
     assert "invalid reference" in prompt_impl.lower() or "nonexistent id" in prompt_impl.lower()
 
-    # Verifica regras no prompt de correção
+    # Script SEM SQL/FK não recebe o bloco (composição determinística)
+    spec_puro = {'nome': 'p.py', 'responsabilidade': 'calcular media aritmetica',
+                 'pseudocodigo': 'somar e dividir'}
+    prompt_puro = implementador_08.ImplementadorFase8._montar_prompt_implementar_script(
+        ideia='calc', stack={}, script_spec=spec_puro,
+        nome_raw='p.py', modulo='p', secao_schema='',
+        caminho_sugerido='p.py', caminho_teste_sugerido='test_p.py',
+    )
+    assert "PRAGMA foreign_keys = ON" not in prompt_puro
+
+    # Regras no prompt de correção (fix-loop herda regras essenciais)
     assert "PRAGMA foreign_keys = ON" in prompt_corr
     assert "parent record" in prompt_corr.lower()
 

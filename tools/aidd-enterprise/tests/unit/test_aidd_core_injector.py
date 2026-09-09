@@ -600,3 +600,113 @@ def test_cli_natural_language_ambiguidade(tmp_path):
     assert res.returncode == 1
     assert "TIPO_AMBIGUO" in (res.stdout + res.stderr)
 
+
+# ---------------------------------------------------------------------------
+# 10. Conteúdo Real dos Hashes SHA-256 do Manifesto (mata mutantes de
+#     algoritmo sha256->sha1, de entrada trocada e de truncamento de leitura)
+# ---------------------------------------------------------------------------
+
+def _hash_arquivo(caminho: str) -> str:
+    with open(caminho, "rb") as f:
+        return hashlib.sha256(f.read()).hexdigest()
+
+
+def test_manifesto_hashes_sha256_batem_conteudo_real(tmp_path):
+    """Cada entrada de arquivos_hashes em CAPABILITIES.json deve ser o SHA-256
+    exato do conteúdo em disco — recalculado localmente, nunca aceito do manifesto."""
+    payload = {
+        "tipo": "rule",
+        "nome": "regra-hash-conteudo",
+        "descricao": "Regra para validar hashes do manifesto.",
+        "alvo_projeto": "aidd-enterprise",
+        "conteudo": "linha1 da regra\nlinha2 da regra\n",
+    }
+    resolucao = profiles_registry.resolver_destinos(payload, str(tmp_path)).valor
+    mat_res = materializador.materializar(payload, resolucao)
+    assert mat_res.sucesso is True
+    sync_res = sincronizador_harness.sincronizar(payload, resolucao, mat_res.valor["arquivos_criados"])
+    assert sync_res.sucesso is True
+
+    catalogo = json.loads((tmp_path / "CAPABILITIES.json").read_text(encoding="utf-8"))
+    componentes = [c for c in catalogo.get("rule", []) if c["nome"] == "regra-hash-conteudo"]
+    assert len(componentes) == 1
+    hashes_manifesto = componentes[0]["arquivos_hashes"]
+    assert hashes_manifesto, "manifesto precisa registrar arquivos_hashes"
+
+    # Igualdade estrita: hash do manifesto == hash recalculado do conteúdo real
+    for rel_path, esperado in hashes_manifesto.items():
+        full_path = os.path.join(str(tmp_path), rel_path)
+        assert os.path.isfile(full_path), f"arquivo do manifesto ausente: {rel_path}"
+        assert _hash_arquivo(full_path) == esperado
+
+    # Algoritmo obrigatoriamente SHA-256 (64 hex): sha1/md5/truncado não passa
+    import re as _re
+    for h in hashes_manifesto.values():
+        assert _re.fullmatch(r"[0-9a-f]{64}", h), f"hash não é SHA-256 de 64 hex: {h}"
+
+
+def test_adulteracao_1_byte_quebra_verificacao_sincronizacao(tmp_path):
+    """Editar 1 byte do conteúdo após a sincronização deve fazer
+    verificar_sincronizacao falhar — hash do manifesto não pode ser decorativo."""
+    payload = {
+        "tipo": "rule",
+        "nome": "regra-adulterada",
+        "descricao": "Regra para teste de adulteracao minima.",
+        "alvo_projeto": "aidd-enterprise",
+        "conteudo": "conteudo integro original da regra\n",
+    }
+    resolucao = profiles_registry.resolver_destinos(payload, str(tmp_path)).valor
+    mat_res = materializador.materializar(payload, resolucao)
+    assert mat_res.sucesso is True
+    sync_res = sincronizador_harness.sincronizar(payload, resolucao, mat_res.valor["arquivos_criados"])
+    assert sync_res.sucesso is True
+
+    # Sanity: íntegro antes da adulteração
+    pre = sincronizador_harness.verificar_sincronizacao(str(tmp_path))
+    assert pre.sucesso is True
+
+    # Adulteração de 1 byte (substituição do primeiro caractere do corpo)
+    regra_file = tmp_path / "templates" / "rules" / "regra-adulterada.md"
+    dados = bytearray(regra_file.read_bytes())
+    idx = dados.index(b"c")
+    dados[idx] = ord("C") if dados[idx] == ord("c") else ord("c")
+    assert bytes(dados) != regra_file.read_bytes()
+    regra_file.write_bytes(bytes(dados))
+
+    # Verificação deve detectar a divergência de hash
+    resultado = sincronizador_harness.verificar_sincronizacao(str(tmp_path))
+    assert resultado.sucesso is False
+    assert resultado.codigo == "SYNC_DIVERGENTE"
+    assert any("regra-adulterada" in p for p in resultado.detalhes["problemas"])
+    # E a divergência citada deve ser de hash, não de arquivo ausente
+    assert any("Hash divergente" in p for p in resultado.detalhes["problemas"])
+
+
+def test_sync_recusa_hash_nao_sha256_injetado_manualmente(tmp_path):
+    """Um hash não-SHA-256 (ex.: sha1 hex de 40) plantado no manifesto deve
+    ser detectado como divergência — mutante que troca o algoritmo morre."""
+    payload = {
+        "tipo": "rule",
+        "nome": "regra-algoritmo",
+        "descricao": "Regra para testar algoritmo de hash.",
+        "alvo_projeto": "aidd-enterprise",
+        "conteudo": "conteudo para algoritmo\n",
+    }
+    resolucao = profiles_registry.resolver_destinos(payload, str(tmp_path)).valor
+    mat_res = materializador.materializar(payload, resolucao)
+    assert mat_res.sucesso is True
+    sync_res = sincronizador_harness.sincronizar(payload, resolucao, mat_res.valor["arquivos_criados"])
+    assert sync_res.sucesso is True
+
+    catalogo_path = tmp_path / "CAPABILITIES.json"
+    catalogo = json.loads(catalogo_path.read_text(encoding="utf-8"))
+    for comp in catalogo["rule"]:
+        if comp["nome"] == "regra-algoritmo":
+            primeiro = next(iter(comp["arquivos_hashes"]))
+            comp["arquivos_hashes"][primeiro] = hashlib.sha1(b"conteudo para algoritmo\n").hexdigest()
+    catalogo_path.write_text(json.dumps(catalogo, ensure_ascii=False, indent=2), encoding="utf-8")
+
+    resultado = sincronizador_harness.verificar_sincronizacao(str(tmp_path))
+    assert resultado.sucesso is False
+    assert resultado.codigo == "SYNC_DIVERGENTE"
+

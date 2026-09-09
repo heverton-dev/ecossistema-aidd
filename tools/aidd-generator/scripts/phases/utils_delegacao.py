@@ -20,7 +20,7 @@ import time
 import threading
 from pathlib import Path
 from datetime import datetime, timezone
-from typing import Optional, Dict, Any, Type
+from typing import Callable, Optional, Dict, Any, Type
 
 try:
     from watchdog.observers import Observer
@@ -245,9 +245,161 @@ def _parsear_com_instructor(texto: str, response_model: Any) -> Any:
     return _validar_pydantic_com_retry(texto, response_model)
 
 
-def _validar_pydantic_com_retry(texto: str, response_model: Any, max_retries: int = 3) -> Any:
+# =============================================================================
+# ITEM 3 [TK-2]: ESCADA DE REPARO JSON DETERMINÍSTICA — ZERO LLM
+# =============================================================================
+# Reparo mecânico (regex/AST) das quebras de formatação mais comuns em
+# respostas de LLM, ANTES de qualquer retry caro de LLM. Cada degrau é
+# determinístico e auditável; a escada inteira roda sem rede e sem modelo.
+
+
+def _reparo_remover_virgulas_trailing(s: str) -> str:
+    """Degrau 1: remove vírgulas sobrando antes de } ou ] (regex determinístico)."""
+    return re.sub(r',\s*(?=[}\]])', '', s)
+
+
+def _reparo_fechar_estrutura(s: str) -> str:
+    """Degrau 2: fecha chaves/colchetes abertos (balanceamento por pilha,
+    respeitando strings). Nunca inventa conteúdo — só fecha o que ficou aberto."""
+    pilha = []
+    em_string = False
+    escape = False
+    for ch in s:
+        if em_string:
+            if escape:
+                escape = False
+            elif ch == '\\':
+                escape = True
+            elif ch == '"':
+                em_string = False
+            continue
+        if ch == '"':
+            em_string = True
+        elif ch in '{[':
+            pilha.append(ch)
+        elif ch in '}]':
+            if pilha and ((ch == '}' and pilha[-1] == '{') or (ch == ']' and pilha[-1] == '[')):
+                pilha.pop()
+    if not pilha and not em_string:
+        return s
+    fechamento = ''.join('}' if c == '{' else ']' for c in reversed(pilha))
+    if em_string:
+        fechamento = '"' + fechamento
+    return s + fechamento
+
+
+def _reparo_aspas_soltas_fim(s: str) -> str:
+    """Degrau 3: fecha string aberta no fim do payload (trailing quote)."""
+    pilha = []
+    em_string = False
+    escape = False
+    for ch in s:
+        if em_string:
+            if escape:
+                escape = False
+            elif ch == '\\':
+                escape = True
+            elif ch == '"':
+                em_string = False
+            continue
+        if ch == '"':
+            em_string = True
+        elif ch in '{[':
+            pilha.append(ch)
+        elif ch in '}]':
+            if pilha and ((ch == '}' and pilha[-1] == '{') or (ch == ']' and pilha[-1] == '[')):
+                pilha.pop()
+    return s + '"' if em_string else s
+
+
+def _reparo_quebras_em_strings(s: str) -> str:
+    """Degrau 4: sanitiza quebras de linha/tabs literais dentro de strings
+    (JSON estrito não aceita \n cru dentro de aspas)."""
+    def _sub(m):
+        corpo = m.group(1)
+        corpo = corpo.replace('\r\n', '\\n').replace('\r', '\\n').replace('\n', '\\n')
+        corpo = corpo.replace('\t', '\\t')
+        return '"' + corpo + '"'
+    return re.sub(r'"((?:[^"\\]|\\.)*)"', _sub, s, flags=re.S)
+
+
+def _reparo_chaves_sem_aspas(s: str) -> str:
+    """Degrau 5: envolve chaves JS-style sem aspas ({codigo: "x"}) em aspas."""
+    return re.sub(r'([{,]\s*)([A-Za-z_][A-Za-z0-9_]*)(\s*:)',
+                  lambda m: m.group(1) + '"' + m.group(2) + '"' + m.group(3), s)
+
+
+ESCADA_REPARO_JSON = (
+    _reparo_remover_virgulas_trailing,
+    _reparo_fechar_estrutura,
+    _reparo_aspas_soltas_fim,
+    _reparo_quebras_em_strings,
+    _reparo_chaves_sem_aspas,
+)
+
+
+def reparar_json_deterministico(texto: str, max_degraus: int = 6) -> Optional[Any]:
+    """[TK-2] Item 3: escada determinística de reparo de JSON quebrado.
+
+    Aplica degraus cumulativos (cada degrau soma o reparo anterior) e tenta
+    json.loads(strict=False) a cada passo. Zero LLM, zero rede, zero aleatório.
+
+    Returns:
+        Objeto Python desserializado, ou None se nenhum degrau recuperou.
+    """
+    if not isinstance(texto, str) or not texto.strip():
+        return None
+
+    s = texto.strip()
+    # Extração manual de fences markdown e substrings {..} / [..] primeiro
+    m = re.search(r'```(?:json)?\s*([\s\S]*?)\s*```', s)
+    if m:
+        s = m.group(1).strip()
+    else:
+        m_obj = re.search(r'[\s\S]*?(\{[\s\S]*\}|\[[\s\S]*\])', s)
+        if m_obj:
+            s = m_obj.group(1)
+
+    try:
+        return json.loads(s, strict=False)
+    except json.JSONDecodeError:
+        pass
+
+    reparo_acumulado = s
+    aplicados: list = []
+    for degrau in ESCADA_REPARO_JSON:
+        if len(aplicados) >= max_degraus:
+            break
+        novo = degrau(reparo_acumulado)
+        aplicados.append(degrau.__name__)
+        if novo == reparo_acumulado:
+            continue
+        reparo_acumulado = novo
+        try:
+            return json.loads(reparo_acumulado, strict=False)
+        except json.JSONDecodeError:
+            continue
+
+    # Combinação final: todos os degraus aplicados de uma vez (ordem da escada)
+    combinado = s
+    for degrau in ESCADA_REPARO_JSON:
+        combinado = degrau(combinado)
+    try:
+        return json.loads(combinado, strict=False)
+    except json.JSONDecodeError:
+        return None
+
+
+def _validar_pydantic_com_retry_com_loads(
+    texto: str,
+    response_model: Any,
+    max_retries: int = 3,
+    _loads: Optional[Callable[[str], Any]] = None,
+) -> Any:
     """
     Valida JSON contra modelo Pydantic com retry automático via instructor.
+    (Renomeado no Item 3 [TK-2]: versão SEM escada determinística — usada
+    como mecanismo puro de validação; o wrapper público aplica a escada antes.)
 
     Args:
         texto: String JSON para validar
@@ -266,7 +418,9 @@ def _validar_pydantic_com_retry(texto: str, response_model: Any, max_retries: in
     for tentativa in range(max_retries):
         try:
             # Tenta parsear o JSON primeiro
-            dados = json_mod.loads(texto, strict=False) if isinstance(texto, str) else texto
+            if _loads is None:
+                _loads = lambda s, strict=False: json_mod.loads(s, strict=False)
+            dados = _loads(texto) if isinstance(texto, str) else texto
 
             # Se o dado já é uma instância do modelo, retorna
             if isinstance(dados, response_model):
@@ -285,6 +439,58 @@ def _validar_pydantic_com_retry(texto: str, response_model: Any, max_retries: in
     if ultimo_erro is not None:
         raise ultimo_erro
     raise ValueError("Falha desconhecida na validação Pydantic")
+
+
+def _validar_pydantic_com_retry(
+    texto: str,
+    response_model: Any,
+    max_retries: int = 1,
+    _loads: Optional[Callable[[str], Any]] = None,
+) -> Any:
+    """[TK-2] Item 3: wrapper público com escada determinística ANTES do retry.
+
+    Ordem de resolução (economia de tokens, Zero Token Fallacy):
+    1. Parse/validação direta (caminho feliz).
+    2. Escada determinística de reparo (reparar_json_deterministico) — zero LLM.
+    3. No MÁXIMO 1 tentativa adicional via _validar_pydantic_com_retry_com_loads
+       (mecanismo instructor), só se a escada não recuperou.
+
+    Args:
+        texto: String JSON (ou dict) para validar
+        response_model: Modelo Pydantic alvo
+        max_retries: Tentativas adicionais pós-escada (default 1 — antes eram 3)
+
+    Returns:
+        Instância validada do response_model
+    """
+    if BaseModel is None:
+        raise ImportError("pydantic é necessário")
+
+    # Caminho feliz: dict direto ou string parseável
+    if isinstance(texto, response_model):
+        return texto
+
+    dados_escada: Any = None
+    if isinstance(texto, str):
+        try:
+            dados_direto = ( _loads(texto) if _loads is not None
+                            else json.loads(texto, strict=False) )
+            return response_model.model_validate(dados_direto)
+        except (ValueError, TypeError):
+            pass
+
+        # Degrau determinístico — nunca chama LLM
+        dados_escada = reparar_json_deterministico(texto)
+        if dados_escada is not None:
+            try:
+                return response_model.model_validate(dados_escada)
+            except Exception:
+                dados_escada = None  # escada recuperou JSON, mas não validou
+
+    # Último recurso: no máximo 1 tentativa pelo mecanismo instructor
+    return _validar_pydantic_com_retry_com_loads(
+        texto, response_model, max_retries=max(1, max_retries), _loads=_loads
+    )
 
 
 # =============================================================================
@@ -348,6 +554,83 @@ def obter_timeout_por_fase(fase: Optional[str] = None, timeout_custom: Optional[
             return TIMEOUTS_POR_FASE[fase_norm]
 
     return TIMEOUT_PADRAO_DELEGACAO
+
+
+# =============================================================================
+# ITEM 4 [TK-6]: HERMETICIDADE DE SESSÕES — ROTULAGEM DE TELEMETRIA
+# =============================================================================
+# Regra de honestidade de rótulo (#9): a telemetria de tokens informa
+# explicitamente se a medição ocorreu em sessão isolada (headless efêmero,
+# sem persistência de contexto) ou em sessão compartilhada delegada (ADE
+# ativa, contexto acumulado da conversa pode contaminar a medição).
+
+SESSAO_ISOLADA = 'sessao_isolada'
+SESSAO_COMPARTILHADA_DELEGADA = 'sessao_compartilhada_delegada'
+
+
+def rotular_tipo_sessao(modo: str) -> str:
+    """Retorna o rótulo canônico do tipo de sessão para a telemetria.
+
+    - 'headless'  -> SESSAO_ISOLADA (processo efêmero, sem persistência)
+    - 'delegado'  -> SESSAO_COMPARTILHADA_DELEGADA (ADE ativa na conversa)
+    """
+    if modo == 'headless':
+        return SESSAO_ISOLADA
+    return SESSAO_COMPARTILHADA_DELEGADA
+
+
+# Flags de hermeticidade obrigatórias por harness em comandos headless CLI.
+# Qualquer executor headless que monte comando de CLI externa DEVE incluir
+# flag de sessão efêmera do harness alvo (ver gates/G_SESSAO_HERMETICA.py).
+FLAGS_SESSAO_EFEMERA_POR_HARNESS = {
+    'claude': ['--no-session-persistence'],
+    'claude-code': ['--no-session-persistence'],
+    'codex': ['--ephemeral'],
+    'agy': ['--ephemeral-session'],
+    'opencode': ['--no-persist'],
+    'mimo': ['--no-persist'],
+    'gemini': ['--ephemeral'],
+    'hermes': ['--ephemeral'],
+}
+
+
+def validar_sessao_hermetica(comando: list, harness: Optional[str] = None) -> Dict[str, Any]:
+    """Valida (determinístico, zero token) que um comando headless CLI contém
+    flag de sessão efêmera/isolada.
+
+    Args:
+        comando: lista argv do processo a disparar
+        harness: nome do harness (opcional; inferido do argv[0] se ausente)
+
+    Returns:
+        {'hermetico': bool, 'harness': str, 'flag_exigida': str|None,
+         'flags_presentes': list}
+    """
+    if not comando:
+        return {'hermetico': False, 'harness': None, 'flag_exigida': None, 'flags_presentes': []}
+    nome_bin = Path(str(comando[0])).name.lower()
+    harness_norm = (harness or nome_bin).lower()
+    for chave, flags in FLAGS_SESSAO_EFEMERA_POR_HARNESS.items():
+        if harness_norm.startswith(chave):
+            presentes = [f for f in comando if f in flags]
+            return {
+                'hermetico': len(presentes) > 0,
+                'harness': chave,
+                'flag_exigida': flags[0],
+                'flags_presentes': presentes,
+            }
+    # Harness sem flag conhecida: exigência não aplicável — hermético por
+    # omissão documentada (nenhuma CLI externa disparada).
+    return {'hermetico': True, 'harness': harness_norm, 'flag_exigida': None, 'flags_presentes': []}
+
+
+def forcar_sessao_hermetica(comando: list, harness: Optional[str] = None) -> list:
+    """Garante que o comando receba a flag de sessão efêmera do harness
+    (idempotente: não duplica flag já presente)."""
+    relatorio = validar_sessao_hermetica(comando, harness)
+    if relatorio['hermetico'] or relatorio['flag_exigida'] is None:
+        return list(comando)
+    return [comando[0], relatorio['flag_exigida']] + list(comando[1:])
 
 
 # =============================================================================
@@ -598,6 +881,11 @@ def solicitar_llm_modo_delegado(
     # sobrescrevendo qualquer valor que o ADE externo tenha escrito
     resposta['origem_medicao'] = 'autodeclarado'
 
+    # Item 4 [TK-6]: rótulo honesto de tipo de sessão — no modo delegado o
+    # modelo roda DENTRO da sessão da ADE ativa; contexto acumulado da
+    # conversa pode contaminar a medição declarada.
+    resposta['tipo_sessao'] = rotular_tipo_sessao('delegado')
+
     # Telemetria auxiliar offline (tiktoken): estimativa local de entrada/saída.
     # Não substitui tokens_consumidos nem origem_medicao — é apenas referência
     # local para o usuário estimar custo antes/depois, sem depender do ADE.
@@ -631,6 +919,10 @@ def solicitar_llm_modo_headless(
     """
     Modo Headless (fallback, para CI/CD, scripts standalone, etc.):
     Chama LLM diretamente via litellm (requer credencial configurada).
+
+    Item 4 [TK-6]: sessão hermética por construção — litellm roda em
+    processo efêmero sem persistência de contexto (sem flags de sessão
+    persistente); telemetria rotulada como sessao_isolada.
 
     Args:
         prompt: Texto do prompt
@@ -712,6 +1004,9 @@ def solicitar_llm_modo_headless(
                 "modelo_usado": modelo,
                 "timestamp_resposta": datetime.now(timezone.utc).isoformat(),
                 "tokens_estimativa_local": estimar_tokens_tiktoken(prompt, contexto, conteudo),
+                # Item 4 [TK-6]: headless litellm é processo isolado, sem
+                # persistência de sessão — medição sem contaminação de contexto.
+                "tipo_sessao": rotular_tipo_sessao('headless'),
             }
 
             print(f"✓ Resposta obtida via {modelo}")

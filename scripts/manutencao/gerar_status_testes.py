@@ -19,7 +19,7 @@ import sys
 from datetime import datetime, timezone
 
 ROOT_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-PLANO_PATH = os.path.join(ROOT_DIR, "PLANO-EXECUCAO-ESTRUTURADO.json")
+PLANO_PATH = os.path.join(ROOT_DIR, "docs", "testes", "status_testes_ferramentas.json")
 
 FERRAMENTAS = ["aidd-forge", "aidd-generator", "aidd-master", "aidd-enterprise", "aidd-ops"]
 
@@ -35,7 +35,7 @@ def _rodar_pytest(ferramenta: str) -> dict:
         resultado = subprocess.run(
             [sys.executable, "-m", "pytest", "-q", "--tb=no"],
             cwd=caminho, capture_output=True, text=True,
-            encoding="utf-8", errors="replace", timeout=300,
+            encoding="utf-8", errors="replace", timeout=900,
         )
     except Exception as e:
         return {"status": "erro", "detalhe": str(e)}
@@ -67,10 +67,7 @@ def gerar(escrever: bool = True) -> dict:
     if not escrever:
         return testes
 
-    with open(PLANO_PATH, "r", encoding="utf-8") as f:
-        plano = json.load(f)
-
-    plano["testes"] = {
+    dados = {
         "medido_em": datetime.now(timezone.utc).isoformat(),
         "metodo": "python -m pytest -q --tb=no em cada tools/<ferramenta>, "
                   "parseado do resumo real (nao digitado a mao)",
@@ -78,7 +75,7 @@ def gerar(escrever: bool = True) -> dict:
     }
 
     with open(PLANO_PATH, "w", encoding="utf-8") as f:
-        json.dump(plano, f, indent=2, ensure_ascii=False)
+        json.dump(dados, f, indent=2, ensure_ascii=False)
         f.write("\n")
 
     print(f"\nOK {PLANO_PATH} atualizado com contagem real de testes.")

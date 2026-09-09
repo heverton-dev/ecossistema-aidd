@@ -16,7 +16,7 @@ import os
 import sys
 import shutil
 import subprocess
-import argparse
+import click
 
 if hasattr(sys.stdout, 'reconfigure'):
     sys.stdout.reconfigure(encoding='utf-8', errors='replace')
@@ -119,12 +119,15 @@ def clean_pycache(root_dir: str) -> tuple:
     return pyc_removed, dirs_removed
 
 
-def main():
-    parser = argparse.ArgumentParser(description="autofix.py — Auto-Fix Helper AIDD v5.1")
-    parser.add_argument("--dir", default=".", help="Diretório raiz do projeto")
-    args = parser.parse_args()
+@click.command(name="autofix", help="autofix.py — Auto-Fix Helper AIDD v5.1")
+@click.option("--dir", "dir", default=".", help="Diretório raiz do projeto")
+def cli(dir: str):
+    """Tenta corrigir automaticamente problemas comuns (black, isort, cache). Sempre exit 0."""
+    main(dir)
 
-    root_dir = os.path.abspath(args.dir)
+
+def main(dir_valor: str = "."):
+    root_dir = os.path.abspath(dir_valor)
 
     print("=" * 80)
     print("🔧  AIDD v5.1 — AUTO-FIX: Tentando corrigir problemas automaticamente")
@@ -167,4 +170,4 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    cli()

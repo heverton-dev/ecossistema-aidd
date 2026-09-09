@@ -585,3 +585,55 @@ class LogisticaMCPServer:
 </body>
 </html>
 """
+
+
+    # =====================================================================
+    # SDK oficial do MCP (modelcontextprotocol/python-sdk)
+    # Protocolo (JSON-RPC 2.0, stdio/HTTP) servido pelo SDK oficial; a
+    # logica de dominio continua sendo executada por handle_call_tool().
+    # =====================================================================
+    def build_fastmcp(self):
+        try:
+            from mcp.server.fastmcp import FastMCP
+            from mcp.types import TextContent
+        except ImportError:
+            raise ImportError("O SDK oficial do MCP não está instalado. Instale com: pip install mcp")
+        servidor = self
+
+        class _RegistryFastMCP(FastMCP):
+            async def list_tools(self):
+                from mcp.types import Tool as MCPTool
+                return [
+                    MCPTool(
+                        name=nome,
+                        description=meta.get("description", ""),
+                        inputSchema=meta.get("inputSchema", {"type": "object", "properties": {}}),
+                    )
+                    for nome, meta in servidor.tools.items()
+                ]
+
+            async def call_tool(self, name, arguments):
+                resultado = servidor.handle_call_tool(name, dict(arguments or {}))
+                texto = json.dumps(resultado, ensure_ascii=False, indent=2, default=str)
+                return [TextContent(type="text", text=texto)]
+
+        return _RegistryFastMCP(
+            "logistica-hub-mcp",
+            instructions="Servidor MCP da suíte de exemplo (SDK oficial do MCP).",
+        )
+
+
+def run_stdio_server(db_path: str):
+    """Executa o servidor MCP via STDIO sobre o SDK oficial do MCP.
+
+    O transporte stdio e o protocolo JSON-RPC 2.0 (initialize, ping,
+    tools/list, tools/call) são implementados pelo SDK; a lógica de domínio
+    permanece nesta classe (handle_call_tool).
+    """
+    servidor = LogisticaMCPServer(db_path)
+    servidor.build_fastmcp().run(transport="stdio")
+
+
+if __name__ == "__main__":
+    _db = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", "suite.db")
+    run_stdio_server(_db)

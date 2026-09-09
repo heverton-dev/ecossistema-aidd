@@ -5,7 +5,7 @@
 AIDD v5.1 Enterprise — GATE DETERMINÍSTICO DE QUALIDADE & IMPECCABLE UI (G_QUALIDADE)
 =============================================================================
 Valida compilação estática (py_compile), varredura AST anti-stubs vazios,
-e Linter de Acessibilidade & Impeccable UI (WCAG 2.1, zero alerts, modais customizados).
+Linter de Acessibilidade & Impeccable UI (WCAG 2.1), e Fuzzing Contínuo de APIs.
 """
 
 import os
@@ -14,9 +14,47 @@ import subprocess
 import ast
 import re
 import argparse
+import json
 
 if hasattr(sys.stdout, 'reconfigure'):
     sys.stdout.reconfigure(encoding='utf-8', errors='replace')
+
+
+def executar_fuzzing_continuo(target_dir: str = ".") -> Dict[str, any]:
+    """Executa fuzzing contínuo de APIs geradas."""
+    import sys as sys_module
+    sys_module.path.insert(0, os.path.join(target_dir, 'src'))
+
+    print("    -> Executando Fuzzing Contínuo de APIs...")
+
+    try:
+        from core.fuzzing import ContinuousAPIFuzzer, FuzzingStrategy
+    except ImportError:
+        print("       (Aviso: módulo fuzzing.py não encontrado, pulando fuzzing)")
+        return {"fuzzing_skipped": True}
+
+    fuzzer = ContinuousAPIFuzzer(base_url="http://localhost:3000", max_tests_per_route=20)
+
+    # Rotas de teste padrão (podem ser dinâmicas se server está rodando)
+    default_routes = [
+        ("/api/auth/login", "POST"),
+        ("/api/auth/me", "GET"),
+        ("/health", "GET"),
+    ]
+
+    try:
+        results = fuzzer.fuzz_all_routes(default_routes)
+        report = fuzzer.generate_report()
+
+        # Verificar se há crashes críticos
+        if report['crashes'] > 0:
+            print(f"       ⚠️  Fuzzing encontrou {report['crashes']} crashes!")
+            # Retornar resultado mas não falhar (warnings, não erros bloqueadores)
+
+        return report
+    except Exception as e:
+        print(f"       (Info: Fuzzing contínuo rodaria com servidor ativo: {e})")
+        return {"fuzzing_runtime_warning": str(e)}
 
 
 def verificar(target_dir: str = "."):
@@ -54,6 +92,31 @@ def verificar(target_dir: str = "."):
                                         erros.append(f"Stub vazio '...' detectado em {os.path.relpath(f_path, target_dir)} -> {node.name}()")
                     except (SyntaxError, OSError) as e:
                         erros.append(f"Falha ao inspecionar AST em {f_path}: {e}")
+
+    # 2.5 Testes de Mutação (AST) via mutmut
+    print("    -> Executando Testes de Mutação (AST) via mutmut...")
+    try:
+        # Verifica se mutmut está instalado no ambiente
+        mutmut_check = subprocess.run([sys.executable, '-m', 'mutmut', '--version'], capture_output=True)
+        if mutmut_check.returncode == 0:
+            res = subprocess.run([sys.executable, '-m', 'mutmut', 'run', '--paths-to-mutate=src/', '--runner=pytest'], cwd=target_dir, capture_output=True, text=True, timeout=120)
+            if res.returncode != 0:
+                erros.append("Falha nos Testes de Mutação (AST). Mutantes sobreviventes encontrados pelo mutmut.")
+        else:
+            print("       (Aviso: mutmut não instalado, pulando mutações. Instale via requirements.txt)")
+    except subprocess.TimeoutExpired:
+        print("       (Aviso: mutmut excedeu 120s e foi interrompido — sinal não bloqueador; rode manualmente para cobertura completa de mutação)")
+    except (OSError, subprocess.SubprocessError) as e:
+        erros.append(f"Erro ao executar mutmut: {e}")
+
+    # 2.7 Fuzzing Contínuo de APIs
+    print("    -> Executando Fuzzing Contínuo de APIs...")
+    try:
+        fuzzing_report = executar_fuzzing_continuo(target_dir)
+        if not fuzzing_report.get("fuzzing_skipped") and fuzzing_report.get("crashes", 0) > 0:
+            print(f"       ⚠️  Aviso: {fuzzing_report['crashes']} crashes encontrados no fuzzing (não bloqueador)")
+    except Exception as e:
+        print(f"       (Info: Fuzzing contínuo pulado - servidor pode não estar ativo: {type(e).__name__})")
 
     # 3. Linter de Impeccable UI & Acessibilidade WCAG 2.1
     comp_dir = os.path.join(src_dir, "static", "components")

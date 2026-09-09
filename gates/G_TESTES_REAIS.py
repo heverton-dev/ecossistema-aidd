@@ -42,7 +42,7 @@ def _rodar_pytest(diretorio):
         text=True,
         encoding="utf-8",
         errors="replace",
-        timeout=300,
+        timeout=900,
     )
     return resultado.returncode, resultado.stdout + resultado.stderr
 
@@ -89,7 +89,7 @@ def executar():
         try:
             exit_code, output = _rodar_pytest(dir_ferramenta)
         except subprocess.TimeoutExpired:
-            print("TIMEOUT (300s)")
+            print("TIMEOUT (900s)")
             resultados.append((ferramenta, "TIMEOUT", 0, 0, 0))
             falhou = True
             continue

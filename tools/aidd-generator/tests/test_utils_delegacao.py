@@ -846,3 +846,89 @@ def test_solicitar_llm_modo_delegado_timeout_fallback_limpo_com_erro_generico(mo
 
     assert res is None
 
+
+
+# =============================================================================
+# TESTES DO PARSING ESTRUTURADO NA FASE 8 (item 11 / NIH #23 — retry ao vivo)
+# =============================================================================
+
+def _carregar_fase08(nome_unico: str):
+    """Importa 08_implementador.py por path (nome nao e identificador valido)."""
+    import importlib.util
+    from pathlib import Path
+
+    caminho = Path(__file__).resolve().parent.parent / "scripts" / "phases" / "08_implementador.py"
+    spec = importlib.util.spec_from_file_location(nome_unico, str(caminho))
+    modulo = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(modulo)
+    return modulo
+
+
+def test_parsear_resposta_codegen_valida_e_devolve_dict():
+    """Fase 8 usa validação Pydantic (response_model) e devolve dict equivalente."""
+    import json as _json
+
+    modulo = _carregar_fase08("aidd_fase08_impl_test")
+    payload = {
+        "codigo": "def f():\n    pass",
+        "teste": "def test_f():\n    pass",
+        "caminho_relativo": "x.py",
+        "caminho_teste": "test_x.py",
+    }
+    dados = modulo._parsear_resposta_codegen(_json.dumps(payload))
+    assert dados == payload
+
+
+def test_parsear_resposta_codegen_sem_pydantic_cai_no_legado(monkeypatch):
+    """Sem pydantic (ModeloCodegenFase8=None), o parsing legado (dict livre) é usado."""
+    import json as _json
+
+    modulo = _carregar_fase08("aidd_fase08_impl_test_legado")
+    payload = {"codigo": "c", "teste": "t", "caminho_relativo": "a.py", "caminho_teste": "test_a.py"}
+
+    monkeypatch.setattr(modulo, "ModeloCodegenFase8", None)
+    dados = modulo._parsear_resposta_codegen(_json.dumps(payload))
+    assert dados == payload
+
+
+def test_parsear_resposta_codegen_payload_incompleto_cai_no_legado():
+    """Payload que não satisfaz o modelo (sem 'codigo') cai no parsing legado,
+    mantendo o comportamento de recuperação já esperado pela fase."""
+    import json as _json
+
+    modulo = _carregar_fase08("aidd_fase08_impl_test_incompleto")
+    payload = {"teste": "def test_x():\n    pass", "caminho_teste": "test_integracao.py"}
+    dados = modulo._parsear_resposta_codegen(_json.dumps(payload))
+    assert isinstance(dados, dict)
+    assert "teste" in dados
+
+
+def test_retry_estruturado_ativa_em_saida_malformada_e_recupera():
+    """Prova do mecanismo de retry (item 11): _validar_pydantic_com_retry tenta
+    novamente após saída malformada e retorna o modelo quando uma tentativa passa."""
+    import json as _json
+
+    import utils_delegacao as ud
+
+    chamadas = {"n": 0}
+
+    def _falso_loads(texto, strict=False):
+        idx = chamadas["n"]
+        chamadas["n"] += 1
+        if idx == 0:
+            raise ValueError("JSON malformado (simulado)")
+        return _json.loads(
+            '{"codigo": "c1", "teste": "t1", "caminho_relativo": "r.py", "caminho_teste": "test_r.py"}'
+        )
+
+    ud_time_orig = ud.time.sleep
+    ud.time.sleep = lambda s: None  # sem backoff real no teste
+    try:
+        resultado = ud._validar_pydantic_com_retry(
+            "tentativa-1-malformada", ModeloCodegen, max_retries=3, _loads=_falso_loads
+        )
+    finally:
+        ud.time.sleep = ud_time_orig
+
+    assert chamadas["n"] == 2
+    assert resultado.codigo == "c1"

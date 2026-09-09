@@ -17,7 +17,7 @@ import os
 import sys
 import re
 import json
-import argparse
+import click
 import shutil
 import tempfile
 
@@ -166,12 +166,15 @@ def criar_modulo(nome_modulo: str, descricao: str = "", target_dir: str = "."):
     print(f"✨ [OK] Módulo '{slug}' gerado com 100% de integridade e Clean Architecture!")
 
 
-if __name__ == '__main__':
-    parser = argparse.ArgumentParser(description="AIDD v5.1 — Gerador de Módulos Desacoplados")
-    parser.add_argument("nome", help="Nome do módulo (ex: faturamento, pedidos, crm)")
-    parser.add_argument("--descricao", "-d", default="", help="Descrição da fatia vertical")
-    parser.add_argument("--dir", default=".", help="Diretório raiz do projeto alvo")
-    parser.add_argument("--pasta", dest="dir", help="Alias para --dir (diretório raiz do projeto alvo)")
-    args = parser.parse_args()
+@click.command(name="add_module", help="AIDD v5.1 — Gerador de Módulos Desacoplados")
+@click.argument("nome", required=True)
+@click.option("--descricao", "-d", default="", help="Descrição da fatia vertical")
+@click.option("--dir", "dir", default=".", help="Diretório raiz do projeto alvo")
+@click.option("--pasta", "dir", help="Alias para --dir (diretório raiz do projeto alvo)")
+def cli(nome: str, descricao: str, dir: str):
+    """Gera fatia vertical completa: NOME do módulo (ex: faturamento, pedidos, crm)."""
+    criar_modulo(nome, descricao, dir)
 
-    criar_modulo(args.nome, args.descricao, args.dir)
+
+if __name__ == '__main__':
+    cli()

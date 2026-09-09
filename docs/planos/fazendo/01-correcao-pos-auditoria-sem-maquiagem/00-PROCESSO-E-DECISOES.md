@@ -71,6 +71,9 @@ Diagnostico rapido → Definicao de Pronto checavel → Prompt de Execucao autoc
 | 13 | Reduzir custo de token nas ferramentas de nucleo deterministico (master/enterprise/ops/CLI) | `13-reduzir-custo-de-token-nas-ferramentas-de-nucleo-deterministico-masterenterpriseopscli.md` |
 | 14 | Remover ou ligar codigo morto de resiliencia no enterprise | `14-remover-ou-ligar-codigo-morto-de-resiliencia-no-enterprise.md` |
 | 15 | requirements.txt do app gerado pelo generator dessincronizado do codigo real | `15-requirementstxt-do-app-gerado-pelo-generator-dessincronizado-do-codigo-real.md` |
+| 16 | XSS armazenado real em `get_studio_html` (núcleo compartilhado) | `16-xss-armazenado-real-em-get_studio_html-nucleo-compartilhado.md` |
+| 17 | CLI aidd_inject convertida de argparse para click pela metade | `17-cli-aidd-inject-convertida-argparse-para-click-pela-metade.md` |
+| 18 | CLI do aidd-forge convertida de argparse para click pela metade (suíte quebrada) | `18-cli-forge-argparse-para-click-pela-metade-suite-quebrada.md` |
 
 ## 4. Regras Fixas
 
@@ -98,5 +101,8 @@ Diagnostico rapido → Definicao de Pronto checavel → Prompt de Execucao autoc
 | 13 | Reduzir custo de token nas ferramentas de nucleo deterministico (master/enterprise/ops/CLI) | ⏳ Rascunho gerado, aguardando aprovacao | `13-reduzir-custo-de-token-nas-ferramentas-de-nucleo-deterministico-masterenterpriseopscli.md` |
 | 14 | Remover ou ligar codigo morto de resiliencia no enterprise | ⏳ Rascunho gerado, aguardando aprovacao | `14-remover-ou-ligar-codigo-morto-de-resiliencia-no-enterprise.md` |
 | 15 | requirements.txt do app gerado pelo generator dessincronizado do codigo real | ⏳ Rascunho gerado, aguardando aprovacao | `15-requirementstxt-do-app-gerado-pelo-generator-dessincronizado-do-codigo-real.md` |
+| 16 | XSS armazenado real em `get_studio_html` (núcleo compartilhado) | ✅ Concluído e auditado (2026-09-09) | `16-xss-armazenado-real-em-get_studio_html-nucleo-compartilhado.md` |
+| 17 | CLI aidd_inject convertida de argparse para click pela metade | ✅ Concluído — revertido ao argparse, suíte verde (2026-09-09) | `17-cli-aidd-inject-convertida-argparse-para-click-pela-metade.md` |
+| 18 | CLI do aidd-forge convertida de argparse para click pela metade (suíte quebrada) | ✅ Concluído — revertido ao argparse, suíte verde (2026-09-09) | `18-cli-forge-argparse-para-click-pela-metade-suite-quebrada.md` |
 
 Esta tabela so e atualizada para Concluido apos auditoria por reproducao real. Item 14 removido em 2026-09-07 por duplicidade confirmada com a Fase 2 de `docs/planos/a-fazer/direcionamento-estrategico-anti-nih/` (ver §1.1). Item 15 adicionado em 2026-09-07, achado real investigando o item 7 do plano `direcionamento-estrategico-anti-nih`.

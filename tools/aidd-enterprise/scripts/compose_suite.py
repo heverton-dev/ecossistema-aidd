@@ -548,7 +548,7 @@ def compose_suite(target_dir: str, suite_name: str, modules: list, db_engine: st
     req_content = (
         "pytest>=7.4.0\nmutmut>=2.4.0\nrequests>=2.31.0\n"
         "pyjwt>=2.8.0\ncryptography>=42.0.0\nsecure>=2.0.0\n"
-        "sqlalchemy>=2.0.0\naiosqlite>=0.20.0\n"
+        "sqlalchemy>=2.0.0\naiosqlite>=0.20.0\nmcp>=1.28.0\n"
     )
     if db_engine == "postgres":
         req_content += "psycopg2-binary>=2.9.9\n"

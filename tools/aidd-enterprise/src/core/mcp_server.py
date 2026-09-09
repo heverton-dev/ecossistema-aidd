@@ -1,12 +1,29 @@
-from pathlib import Path
 # -*- coding: utf-8 -*-
 """
 =============================================================================
 AIDD v5.1 Enterprise — Shared Kernel MCP Server (mcp_server.py)
 =============================================================================
-Servidor nativo Model Context Protocol (MCP) compatível com JSON-RPC 2.0.
-Permite integração direta com Claude Desktop, Cursor, Antigravity e agentes autônomos.
-Suporta registro dinâmico de ferramentas para módulos e fatias verticais.
+Servidor MCP nativo sobre o SDK oficial do Model Context Protocol
+(`modelcontextprotocol/python-sdk`): transporte, negociação de protocolo e
+códigos de erro JSON-RPC 2.0 ficam a cargo do SDK (`mcp.server.fastmcp`).
+
+A classe MCPServer mantém a mesma superfície pública usada por server.py,
+webhooks.py, compose_suite.py e pelos gates:
+  - register_tool(name, description, input_schema, handler)
+  - register_injected_tools(mcp_dir=None) -> int
+  - register_module_tools(module_slug, module_name)
+  - get_tools_manifest() -> List[dict]
+  - execute_tool(name, args) -> dict
+  - handle_json_rpc(request_data) -> dict  (camada de compat JSON-RPC 2.0)
+  - handle_request  (alias de handle_json_rpc)
+  - get_studio_html(title) -> str
+  - EnterpriseMCPServer / LogisticaMCPServer / AIDD_EnterpriseMCPServer
+
+Integração SDK oficial: `mcp` (FastMCP) expõe as ferramentas registradas via
+`list_tools()` / `call_tool()` assíncronos — protocolo JSON-RPC 2.0, stdio e
+HTTP tratados pelo SDK. A camada de compat `handle_json_rpc` permanece para
+os pontos de integração HTTP internos (server.py / webhooks.py) e para os
+gates que inspecionam o método.
 """
 
 import json
@@ -14,7 +31,20 @@ import sqlite3
 import sys
 import os
 import re
+from pathlib import Path
 from typing import Dict, List, Any, Optional, Callable
+
+# SDK oficial do MCP (modelcontextprotocol/python-sdk).
+# Import condicional: o núcleo compartilhado também roda em ambientes onde
+# o SDK ainda não foi instalado (ex.: projetos gerados com requirements
+# mínimos). Nesses casos o servidor continua 100% funcional via JSON-RPC
+# próprio (handle_json_rpc), e o acesso ao SDK fica indisponível (mcp = None).
+try:
+    from mcp.server.fastmcp import FastMCP
+    from mcp.types import TextContent
+except ImportError:  # pragma: no cover - ambiente sem o SDK oficial
+    FastMCP = None
+    TextContent = None
 
 
 def _sanitize_ident(ident: str) -> str:
@@ -26,7 +56,12 @@ def _sanitize_ident(ident: str) -> str:
 
 
 class MCPServer:
-    """Servidor Universal Model Context Protocol (MCP) para Monólitos Modulares."""
+    """Servidor Universal Model Context Protocol (MCP) para Monólitos Modulares.
+
+    Registro de ferramentas continua centralizado nesta classe (mesma API de
+    antes); o protocolo (list_tools/call_tool/stdio/HTTP) passa a ser served
+    pelo SDK oficial via `build_fastmcp()`/`run_stdio_server()`.
+    """
 
     TOOLS = [
         {
@@ -77,6 +112,47 @@ class MCPServer:
         self.tools.append(tool_def)
         if handler:
             self._handlers[name] = handler
+
+    def register_injected_tools(self, mcp_dir: Optional[str] = None) -> int:
+        """Carrega dinamicamente ferramentas MCP injetadas pelo Injetor Universal.
+
+        Escaneia 'src/core/mcp/*.py' (cada arquivo gerado por
+        'aidd inject mcp <nome>' expõe um dict 'TOOL_DEF' e uma função
+        'handler(params)') e registra cada uma via 'register_tool'.
+        Retorna a quantidade de ferramentas injetadas carregadas com sucesso.
+        """
+        import importlib.util
+
+        base_dir = mcp_dir or os.path.join(os.path.dirname(os.path.abspath(__file__)), "mcp")
+        if not os.path.isdir(base_dir):
+            return 0
+
+        carregadas = 0
+        for nome_arquivo in sorted(os.listdir(base_dir)):
+            if not nome_arquivo.endswith(".py") or nome_arquivo.startswith("__"):
+                continue
+            caminho = os.path.join(base_dir, nome_arquivo)
+            modulo_id = f"aidd_injected_mcp_{os.path.splitext(nome_arquivo)[0]}"
+            spec = importlib.util.spec_from_file_location(modulo_id, caminho)
+            if spec is None or spec.loader is None:
+                continue
+            modulo = importlib.util.module_from_spec(spec)
+            spec.loader.exec_module(modulo)
+
+            tool_def = getattr(modulo, "TOOL_DEF", None)
+            handler = getattr(modulo, "handler", None)
+            if not tool_def or not handler:
+                continue
+
+            self.register_tool(
+                name=tool_def["name"],
+                description=tool_def.get("description", ""),
+                input_schema=tool_def.get("input_schema", {"type": "object", "properties": {}}),
+                handler=handler,
+            )
+            carregadas += 1
+
+        return carregadas
 
     def register_module_tools(self, module_slug: str, module_name: str):
         """Registra automaticamente ferramentas CRUD para um módulo/fatia vertical."""
@@ -298,8 +374,63 @@ class MCPServer:
 
         return {"sucesso": False, "erro": f"Ferramenta '{name}' não encontrada no servidor MCP"}
 
+    # =========================================================================
+    # SDK oficial do MCP (modelcontextprotocol/python-sdk)
+    # =========================================================================
+
+    def build_fastmcp(self):
+        """Constrói um servidor FastMCP (SDK oficial) expondo as ferramentas
+        registradas nesta instância.
+
+        As ferramentas são expostas com o MESMO inputSchema declarado no
+        registro (JSON Schema original), e `call_tool` despacha para os
+        handlers existentes via `execute_tool`. Protocolo (JSON-RPC 2.0,
+        initialize/ping, stdio/streamable-http) fica a cargo do SDK.
+        """
+        if FastMCP is None:
+            raise ImportError(
+                "O SDK oficial do MCP não está instalado. Instale com: pip install mcp"
+            )
+        server = self
+
+        class _RegistryFastMCP(FastMCP):
+            """FastMCP cujo catálogo de ferramentas é o registro vivo do MCPServer."""
+
+            async def list_tools(self):
+                from mcp.types import Tool as MCPTool
+                return [
+                    MCPTool(
+                        name=t["name"],
+                        description=t.get("description", ""),
+                        inputSchema=t.get("inputSchema", {"type": "object", "properties": {}}),
+                    )
+                    for t in server.get_tools_manifest()
+                ]
+
+            async def call_tool(self, name, arguments):
+                resultado = server.execute_tool(name, dict(arguments or {}))
+                texto = json.dumps(resultado, ensure_ascii=False, indent=2, default=str)
+                if TextContent is not None:
+                    return [TextContent(type="text", text=texto)]
+                return [{"type": "text", "text": texto}]
+
+        return _RegistryFastMCP(
+            "aidd-suite",
+            instructions="Servidor MCP da suíte AIDD (núcleo compartilhado).",
+        )
+
+    # =========================================================================
+    # Camada de compatibilidade JSON-RPC 2.0 (HTTP interno e gates)
+    # =========================================================================
+
     def handle_json_rpc(self, request_data: Dict[str, Any]) -> Dict[str, Any]:
-        """Processa requisições JSON-RPC 2.0 (tools/list e tools/call)."""
+        """Processa requisições JSON-RPC 2.0 (tools/list e tools/call).
+
+        Mantida para os pontos de integração HTTP internos (server.py /
+        webhooks.py) que já falam JSON-RPC diretamente e para os gates que
+        inspecionam este método. O transporte oficial (stdio / streamable-http)
+        usa o SDK via build_fastmcp()/run_stdio_server().
+        """
         req_id = request_data.get("id", 1)
         method = request_data.get("method")
         params = request_data.get("params", {})
@@ -397,8 +528,20 @@ AIDD_EnterpriseMCPServer = MCPServer
 
 
 def run_stdio_server(db_path: str):
-    """Executa o servidor MCP via Standard I/O (STDIO) para Claude Desktop."""
+    """Executa o servidor MCP via Standard I/O (STDIO) sobre o SDK oficial.
+
+    Antes: loop JSON-RPC manual sobre sys.stdin. Agora: o próprio SDK oficial
+    (mcp.server.fastmcp) implementa o transporte stdio e o protocolo JSON-RPC
+    2.0 completo (initialize, ping, tools/list, tools/call, códigos de erro).
+    Se o SDK não estiver disponível, cai no loop JSON-RPC manual legado.
+    """
     server = MCPServer(db_path)
+    if FastMCP is not None:
+        fastmcp = server.build_fastmcp()
+        fastmcp.run(transport="stdio")
+        return
+
+    # Fallback legado (ambiente sem o SDK oficial instalado)
     for line in sys.stdin:
         if not line.strip():
             continue

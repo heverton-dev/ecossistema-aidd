@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Auditoria de Código Limpo (Clean Code) — Ecossistema AIDD</title>
+<style>
+  :root{
+    --bg:#f4f6f9; --surface:#ffffff; --surface-alt:#eef1f6; --border:#d7dee7;
+    --text:#16212e; --text-2:#566579; --text-3:#5f6f82; --accent:#1d5fae;
+    --accent-soft:#e4edf9; --good:#0d8563; --good-soft:#e2f2ec; --warn:#b39400;
+    --warn-soft:#f7f0da; --crit:#c23020; --crit-soft:#faeae7;
+  }
+  @media (prefers-color-scheme: dark){
+    :root{
+      --bg:#0d1420; --surface:#131c2b; --surface-alt:#1a2536; --border:#263449;
+      --text:#e7edf5; --text-2:#a7b6c9; --text-3:#7c8ba0; --accent:#6ea8f0;
+      --accent-soft:rgba(110,168,240,.14); --good:#0b8562; --good-soft:rgba(15,158,120,.14);
+      --warn:#ad8e00; --warn-soft:rgba(173,142,0,.14); --crit:#e05a4b; --crit-soft:rgba(224,90,75,.14);
+    }
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;font-size:15px;line-height:1.6}
+  .wrap{max-width:1100px;margin:0 auto;padding:32px 20px 80px}
+  h1{font-size:26px;line-height:1.25;margin:0 0 4px}
+  h2{font-size:20px;margin:44px 0 12px;padding-bottom:6px;border-bottom:2px solid var(--border)}
+  h3{font-size:16px;margin:26px 0 8px}
+  .sub{color:var(--text-2);font-size:14px;margin-bottom:22px}
+  .meta{background:var(--surface-alt);border:1px solid var(--border);border-radius:10px;padding:14px 18px;font-size:13px;color:var(--text-2);margin:18px 0}
+  .meta b{color:var(--text)}
+  table{width:100%;border-collapse:collapse;font-size:13.5px;margin:12px 0 20px;background:var(--surface);border:1px solid var(--border);border-radius:8px;overflow:hidden}
+  th{background:var(--surface-alt);text-align:left;padding:8px 10px;font-size:12.5px;text-transform:uppercase;letter-spacing:.03em;color:var(--text-2);border-bottom:1px solid var(--border)}
+  td{padding:8px 10px;vertical-align:top;border-bottom:1px solid var(--border)}
+  tr:last-child td{border-bottom:none}
+  code,pre{font-family:ui-monospace,"Cascadia Code",Consolas,monospace}
+  code{background:var(--surface-alt);border-radius:4px;padding:1px 5px;font-size:12.5px}
+  pre{background:var(--surface-alt);border:1px solid var(--border);border-radius:8px;padding:12px 14px;overflow-x:auto;font-size:12.5px;line-height:1.5;margin:8px 0 16px}
+  .tag{display:inline-block;font-size:11px;font-weight:700;padding:2px 9px;border-radius:999px;letter-spacing:.02em;white-space:nowrap}
+  .crit{background:var(--crit-soft);color:var(--crit)}
+  .alta{background:var(--warn-soft);color:var(--warn)}
+  .media{background:var(--accent-soft);color:var(--accent)}
+  .baixa{background:var(--surface-alt);color:var(--text-2)}
+  .info{background:var(--surface-alt);border-left:4px solid var(--accent);border-radius:0 8px 8px 0;padding:10px 16px;margin:14px 0;font-size:13.5px}
+  .boa-pratica{background:var(--good-soft);border-left:4px solid var(--good);border-radius:0 8px 8px 0;padding:10px 16px;margin:14px 0;font-size:13.5px}
+  .evidencia{font-size:12.5px;color:var(--text-2);margin:6px 0 10px}
+  .evidencia code{word-break:break-all}
+  ul{margin:6px 0 14px;padding-left:22px}
+  li{margin:3px 0}
+  a{color:var(--accent)}
+  .toc{columns:2;column-gap:36px;font-size:14px}
+  .toc li{margin:2px 0}
+  @media (max-width:720px){.toc{columns:1}}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<h1>Auditoria de Código Limpo (Clean Code) — Ecossistema AIDD</h1>
+<p class="sub">Auditoria de artesanato de código (Robert C. Martin, <i>Clean Code</i>) sobre o monorepo e as 5 ferramentas · Somente achados — sem plano de correção, sem decisão ou aprovação fabricada.</p>
+
+<div class="meta">
+  <b>Data:</b> 2026-09-09 · <b>Escopo:</b> núcleo raiz (<code>ecossistema.py</code>, <code>gates/</code>, <code>scripts/</code>) + <code>tools/aidd-forge</code>, <code>tools/aidd-generator</code>, <code>tools/aidd-master</code>, <code>tools/aidd-enterprise</code>, <code>tools/aidd-ops</code> ·
+  <b>Base do checklist:</b> capítulos 2–6, 7 e 17 do <i>Clean Code</i> (smells G1–G36, N1–N7, T1–T9).<br>
+  <b>Status dos planos congêneres na data (lidos antes de iniciar):</b> <code>docs/planos/fazendo/01-correcao-pos-auditoria-sem-maquiagem/</code> — 3/16 itens concluídos (1, 7, 16), 13 rascunhos; <code>docs/planos/fazendo/02-direcionamento-estrategico-anti-nih/</code> — Fase 2 (troca de motor) em andamento parcial, reconferida em 2026-09-09; <code>docs/planos/feitos/evolucao-aidd-ops-fase-completa/</code> — concluído. Itens já cobertos por esses planos foram <b>excluídos</b> (ver §1.2).
+</div>
+
+<h2 id="sumario">Sumário Executivo</h2>
+<p>O ecossistema apresenta <b>qualidade de teste genuinamente boa</b> — testes comportamentais reais (servidores HTTP de verdade, banco SQLite de verdade, payloads de ataque de verdade), zero <code>assert_called</code> em master/enterprise/forge, <code>except</code> estreito na maioria dos <code>try</code> — e <b>nomenclatura majoritariamente intencional</b>, com a convenção PT-BR (domínio) / inglês (infraestrutura) do AGENTS.md §4.1 já bem estabelecida em forge e ops.</p>
+<p>O problema central de artesanato não está em nenhum arquivo isolado: é <b>arquitetural e multiplicativo</b>. Medição por hash MD5 em 10 diretórios de núcleo/templates/gates de <code>aidd-master</code> e <code>aidd-enterprise</code> encontrou <b>39.163 linhas de código redundante</b> (toda cópia além da primeira), incluindo arquivos que existem em <b>6 cópias físicas idênticas</b> (<code>database.py</code>: 4.086 linhas somadas; <code>security.py</code>: 1.536; <code>openapi.py</code>: 1.764; <code>jobs.py</code>: 1.668). O item 16 do plano 01 — XSS em <code>get_studio_html</code> "corrigido nas 6 cópias", concluído em 2026-09-09 — é a prova empírica do custo: cada correção precisa ser aplicada e verificada manualmente em 6 lugares, e o gate de drift existente cobre apenas 1 dos pares de diretórios duplicados.</p>
+
+<div class="info"><b>Número-síntese 1 (medido):</b> <b>39.163 linhas redundantes</b> entre master e enterprise — 8.781 em <code>src/core/</code> (27 arquivos byte-idênticos), ~16.000 em templates (<code>core</code>≡<code>v2</code> dentro de cada ferramenta + clones entre ferramentas), ~3.000 em gates (scripts + templates). Apenas o par <code>src/core/</code> tem gate de drift; templates e gates <b>não têm nenhuma proteção</b>.</div>
+
+<div class="info"><b>Número-síntese 2 (medido):</b> as CLIs gêmeas <code>scripts/aidd.py</code> (master 1.162 / enterprise 1.171 linhas) têm <b>935 linhas idênticas</b> e já divergiram em capacidades reais: <code>register_injected_tools()</code> existe só no master (enterprise não carrega ferramentas MCP injetadas), o router do enterprise reconhece "hook"/"gancho" e o do master não, e o <code>materializador</code> trata hook como <code>hook.sh</code> bash no master e JSON no enterprise. <code>compose_suite.py</code>: 682 de ~685 linhas idênticas.</div>
+
+<div class="info"><b>Contraste notável:</b> <code>aidd-ops</code> e <code>aidd-forge</code> são as ferramentas mais limpas do repositório. <code>cofre_credenciais.py</code> (ops, 439 linhas) — injeção de <code>executor_fn</code> para testabilidade, códigos de erro específicos (<code>AGE_NAO_INSTALADO</code>, <code>CHAVE_JA_EXISTE</code>), <code>dry_run</code> real, docstrings que explicam o porquê — e o trio <code>materializador/universal_injector/injection_schema</code> (forge) seguem Result Pattern consistente, funções curtas e SRP exemplar. São o padrão de referência do repositório.</div>
+
+<h2 id="sumario-achados">Achados por Severidade (32)</h2>
+<table>
+<tr><th>#</th><th>Sev.</th><th>Ferramenta(s)</th><th>Achado</th><th>Local</th></tr>
+<tr><td>1</td><td><span class="tag crit">CRÍTICA</span></td><td>master ↔ enterprise</td><td><b>39.163 linhas redundantes em 10 diretórios</b> (MD5, contando cada cópia além da 1ª). <code>database.py</code> existe em 6 cópias idênticas (4.086 linhas somadas); <code>server.py</code> ×4 (4.320); <code>index.html</code> ×4 (5.504); <code>swagger.html</code> ×4+2 (3.796+1.908). Só <code>src/core/</code> tem gate de drift.</td><td><code>tools/aidd-{master,enterprise}/{src/core,templates/core,templates/v2,scripts/gates,templates/gates}/</code></td></tr>
+<tr><td>2</td><td><span class="tag crit">CRÍTICA</span></td><td>master ↔ enterprise (templates)</td><td><b>Templates duplicados sem nenhuma proteção</b>: <code>templates/core</code> ≡ <code>templates/v2</code> (master: 28 arquivos/8.087 linhas; enterprise: 29/8.130) e <code>templates/core</code> idêntico entre ferramentas (29/8.126). Nenhum gate monitora esses pares — divergência futura seria silenciosa.</td><td><code>templates/{core,v2}/</code> × 2 ferramentas</td></tr>
+<tr><td>3</td><td><span class="tag crit">CRÍTICA</span></td><td>master ↔ enterprise</td><td><b>Quality gates em 6 cópias sem proteção</b>: <code>scripts/gates/</code> idênticos entre ferramentas (10 arquivos/1.973 linhas), <code>templates/gates/</code> idem (8/1.083), e <code>scripts/gates ≡ templates/gates</code> dentro de cada ferramenta (6/575 em cada). Prova de custo: item 16 do plano 01 corrigido "nas 6 cópias" manualmente.</td><td><code>{scripts,templates}/gates/</code> × 2 ferramentas</td></tr>
+<tr><td>4</td><td><span class="tag alta">ALTA</span></td><td>master, enterprise</td><td><b>CLI de 1.162/1.171 linhas com funções de 3 responsabilidades</b> (parse + política + geração de artefatos): <code>cmd_plan</code> 135 linhas, <code>main</code> 146/140, <code>cmd_audit</code> 122, <code>cmd_compose_orca</code> 96, <code>cmd_bench</code> 83.</td><td><code>scripts/aidd.py:843, 1013, 329</code> (master) · <code>:643, 1028</code> (enterprise)</td></tr>
+<tr><td>5</td><td><span class="tag alta">ALTA</span></td><td>master, enterprise</td><td><code>compose_suite</code> <b>266 linhas / 4 responsabilidades</b> (scaffolding de diretórios + geração de HTML/CSS/JS inline + governança multi-IDE + manifestos); <code>generate_superapp_index_html</code> 192 linhas de HTML/JS em f-strings com chaves escapadas.</td><td><code>scripts/compose_suite.py</code> (<code>compose_suite</code> e <code>generate_superapp_index_html</code>)</td></tr>
+<tr><td>6</td><td><span class="tag alta">ALTA</span></td><td>master, enterprise</td><td><b>Dois vocabulários paralelos de reconhecimento de domínio</b>: lista fixa <code>KNOWN_DOMAINS</code> de 24 termos no <code>cmd_plan</code> + <code>IntentRouter</code> (330 linhas, 15 padrões) na mesma ferramenta — mesmo conceito, dois mecanismos, zero interseção comprovada (<code>grep helpdesk|faturamento</code> no router: vazio).</td><td><code>scripts/aidd.py:850</code> (master) / <code>:650</code> (enterprise) × <code>src/core/intent_router.py</code></td></tr>
+<tr><td>7</td><td><span class="tag alta">ALTA</span></td><td>forge, generator, master, enterprise</td><td><b>4 implementações paralelas do domínio "injetar componente"</b>, 4 APIs de Result incompatíveis, 1 conceito com 2 nomes (<code>InjectionRequest</code> vs <code>InjectorRequest</code>), mesmo algoritmo de rollback (staging → publicar → desfazer) reimplementado.</td><td>ver §8.3 (tabela comparativa)</td></tr>
+<tr><td>8</td><td><span class="tag alta">ALTA</span></td><td>master ↔ enterprise</td><td><b>Divergência silenciosa já em curso entre gêmeas</b>: <code>register_injected_tools()</code> só no master (40 linhas; enterprise não carrega tools MCP injetadas); <code>intent_router</code> reconhece "hook" só no enterprise; <code>materializador</code> gera <code>hook.sh</code> bash no master e JSON no enterprise.</td><td><code>src/core/{mcp_server,intent_router,materializador}.py</code> (diffs verificados)</td></tr>
+<tr><td>9</td><td><span class="tag alta">ALTA</span></td><td>master, enterprise</td><td><b>Terminação de linha inconsistente</b>: 23 arquivos CRLF no master vs 20 no enterprise (mesmo conjunto lógico de código), e <code>scripts/aidd.py</code> é CRLF no master e LF no enterprise — quebra diffs byte-a-byte, diffs falsos em revisão e comparação de gêmeas.</td><td>repo inteiro; <code>file tools/aidd-{m,e}/scripts/aidd.py</code></td></tr>
+<tr><td>10</td><td><span class="tag media">MÉDIA</span></td><td>generator</td><td><b>Monad Result caseira paralela</b> (<code>class Result</code> de 70 linhas com <code>ok/fail/unwrap/map/flat_map</code>) quando o ecossistema já padronizou <code>returns</code> (master/enterprise/ops). 4 APIs de Result convivem no repo.</td><td><code>scripts/phases/08_implementador.py:60</code></td></tr>
+<tr><td>11</td><td><span class="tag media">MÉDIA</span></td><td>generator</td><td><b>Mesmo nome de classe para conceitos diferentes</b> (N4): duas <code>ResultadoValidacao</code> com campos distintos (<code>check_id/descricao/passou</code> vs <code>valido/erros/request</code>).</td><td><code>scripts/gates/G_INTEGRACAO_CROSS_SCRIPT.py:140</code> × <code>scripts/core/injector/contrato.py:60</code></td></tr>
+<tr><td>12</td><td><span class="tag media">MÉDIA</span></td><td>generator</td><td><b>Parser JSON defensivo de 78 linhas</b> (<code>_extrair_json_manual</code>, 145–222) com cascata de 3 regexes de fallback aninhadas (campo <code>codigo</code>: 3 padrões alternativos) — mini-gramáticas sem nome, sem teste unitário próprio da gramática.</td><td><code>scripts/phases/utils_delegacao.py:145</code> (78 linhas) · <code>_extrair_campos_codegen:177</code> (39 linhas)</td></tr>
+<tr><td>13</td><td><span class="tag media">MÉDIA</span></td><td>generator</td><td><b>Fase 08 monolítica de 1.527 linhas</b>: classificador de falhas por substring hardcoded (<code>'assertionerror' in saida_lower</code>), acoplado ao formato de saída do pytest, e auto-cura aninhada 3 níveis (<code>_implementar_script_com_verificacao</code> 85L, <code>_auto_cura_microtasks</code> 70L).</td><td><code>scripts/phases/08_implementador.py</code></td></tr>
+<tr><td>14</td><td><span class="tag media">MÉDIA</span></td><td>generator</td><td><b>Tratamento de exceção por cópia-colagem</b>: 7 ocorrências do mesmo <code>except Exception as e: print(...)</code> na fase 08, sem abstração comum; contraste interno com <code>materializador.py:93</code>, que usa <code># noqa: BLE001</code> explicando o porquê — padrão inconsistente dentro da mesma ferramenta.</td><td><code>scripts/phases/08_implementador.py:98, 106, 1195</code> + 4 similares</td></tr>
+<tr><td>15</td><td><span class="tag media">MÉDIA</span></td><td>master, enterprise</td><td><b>Imports mortos nos gates</b> (AST, zero usos): <code>time</code> (linha 35), <code>hmac</code> (37), <code>hashlib</code> (38) no G_SEGURANCA; <code>json</code>/<code>re</code> e <code>FuzzingStrategy</code> no G_QUALIDADE. Remanescentes de verificações que migraram para <code>core/</code>.</td><td><code>scripts/gates/G_SEGURANCA.py:35,37,38</code> · <code>G_QUALIDADE.py:15,17,31</code> (idem enterprise)</td></tr>
+<tr><td>16</td><td><span class="tag media">MÉDIA</span></td><td>master, enterprise</td><td><b>Constante morta</b> <code>WEBHOOK_DEMO_URL</code> (definida, zero referências — <code>grep</code> exceto definição: 0 usos), herança do seed de demo removido no Item 5 do plano 01.</td><td><code>scripts/compose_suite.py:40</code> (ambas)</td></tr>
+<tr><td>17</td><td><span class="tag media">MÉDIA</span></td><td>root</td><td><b>13× <code>except Exception</code> nos gates da raiz</b> (G_INFRA_COMPOSE 6×, G_COMPONENTE_AGNOSTICO 2×, G_HADOLINT 2×, G_ECOSSISTEMA_INTEGRIDADE 1×, G_SEGREDOS 1×, G_TESTES_REAIS 1×) — em G_COMPONENTE_AGNOSTICO:54/73 converte erro de parsing em retorno default silencioso (gate aprova com config corrompida).</td><td><code>gates/*.py</code> (contagem por <code>grep -c</code>)</td></tr>
+<tr><td>18</td><td><span class="tag media">MÉDIA</span></td><td>master, enterprise</td><td><b>17 handlers <code>except: pass</code> silenciosos em <code>src/core/</code> de cada ferramenta</b> (AST) — inclui <code>saga.py:28</code>, onde a falha de uma compensação de saga é destruída sem log nem rethrow.</td><td><code>saga.py:28</code>, <code>fleet_discovery.py:256</code>, <code>materializador.py</code> (8 pontos), <code>opentelemetry.py:45</code>, <code>subagent_engine.py:554</code>, etc.</td></tr>
+<tr><td>19</td><td><span class="tag media">MÉDIA</span></td><td>root</td><td><b>Mensagem contraditória em fluxo interativo</b>: com <code>--dangerously-force-headless</code>, o bloco de configuração interativa imprime "[AVISO CRITICO] Modo headless forcado" e <i>continua</i> chamando <code>input()</code> na sequência — modo que se declara headless ainda interage. Plus: <code>import json</code> local (linha 318) para 1 uso, sem estar no topo.</td><td><code>ecossistema.py:333–338</code> e seguintes · <code>:318</code></td></tr>
+<tr><td>20</td><td><span class="tag media">MÉDIA</span></td><td>master, enterprise</td><td><b>Lei de Demeter violada no acesso ao driver</b>: <code>driver = sqlalchemy_conn.connection.driver_connection</code> (3 níveis) dentro de <code>EngineFacadeConnection.__init__</code>, que ainda muta <code>driver.row_factory</code> por baixo do SQLAlchemy. Contraste: <code>PostgresCursorProxy</code> encapsula sem violar.</td><td><code>src/core/database.py:119</code></td></tr>
+<tr><td>21</td><td><span class="tag media">MÉDIA</span></td><td>master, enterprise</td><td><b>God class no gate de segurança</b>: <code>SecurityGate</code> (502 linhas, 11 camadas) acumula varredura de código, execução comportamental (JWT, SQLi, XSS), leitura de configs e geração de relatório; <code>_camada3b</code> cria tabela <code>_sqli_probe</code> num banco temporário gerenciado à mão — responsabilidade de fixture de teste embutida em gate.</td><td><code>scripts/gates/G_SEGURANCA.py:49</code></td></tr>
+<tr><td>22</td><td><span class="tag media">MÉDIA</span></td><td>generator</td><td><b>Estado global mutável com sentinela dupla</b>: <code>_TOKENIZADOR_TIKTOKEN</code> pode valer <code>None</code> (não carregado) ou <code>False</code> (carregamento falhou) com semânticas diferentes, protegido por <code>except Exception</code> que engole a causa — mental mapping (N7).</td><td><code>scripts/phases/utils_delegacao.py:477–492</code></td></tr>
+<tr><td>23</td><td><span class="tag baixa">BAIXA</span></td><td>generator</td><td><b>Assinatura do materializador divergente das 3 outras ferramentas</b>: função solta <code>materializar(root, arquivos, force)</code> vs método de classe nas demais — mesma operação de domínio, 2 formas de chamar.</td><td><code>scripts/core/injector/materializador.py:47</code></td></tr>
+<tr><td>24</td><td><span class="tag baixa">BAIXA</span></td><td>generator, master, enterprise</td><td><b>Comentário de numeração mentiroso</b>: cascata de fallback numerada "1. 2. 4. 5." — o passo 3 foi removido e a numeração não acompanhou (comentário que mente sobre a estrutura do código).</td><td><code>utils_delegacao.py:176</code></td></tr>
+<tr><td>25</td><td><span class="tag baixa">BAIXA</span></td><td>root, master, enterprise</td><td><b>Banner ASCII e <code>"=" * 80</code> repetidos</b> em todos os fluxos de CLI (centenas de prints): mistura UI, log e dados no stdout, impossível redirecionar um sem o outro. master/enterprise têm 460+ chamadas <code>print(</code> cada.</td><td>ecossistema.py, aidd.py, compose_suite.py, pipeline_ops.py…</td></tr>
+<tr><td>26</td><td><span class="tag baixa">BAIXA</span></td><td>master, enterprise</td><td><b>Idioma try/except-import duplicado</b>: <code>try: from compose_suite import … except ImportError: from scripts.compose_suite import …</code> repetido em 5+ pontos da CLI — as duas rotas resolvem o mesmo arquivo na prática; o padrão carrega um falso pressuposto de dois layouts.</td><td><code>scripts/aidd.py</code> (cmd_init, cmd_compose, cmd_add_module, cmd_apply, cmd_export_frontend, cmd_scaffold_infra)</td></tr>
+<tr><td>27</td><td><span class="tag baixa">BAIXA</span></td><td>root</td><td><b>API de CLI abarrotada</b>: <code>cmd_orchestrate</code> com 239 linhas e 12 flags no subcomando — roteamento, política de segurança e UI interativa (4 menus <code>input()</code>) no mesmo corpo; difícil testar isolado.</td><td><code>ecossistema.py:189</code> (239 linhas)</td></tr>
+<tr><td>28</td><td><span class="tag baixa">BAIXA</span></td><td>ops</td><td><b>Manipulação frágil de <code>sys.path</code></b>: 4 <code>sys.path.insert</code> no topo de <code>pipeline_ops.py</code> + import dinâmico de fases por <code>import_module("01_intake")</code> — acopla a ferramenta ao layout físico de diretórios e a nomes de arquivo que começam com dígito.</td><td><code>scripts/pipeline_ops.py:20–34</code></td></tr>
+<tr><td>29</td><td><span class="tag baixa">BAIXA</span></td><td>generator, master, enterprise, ops</td><td><b><code>time.sleep</code> em 22 pontos de testes</b> (polling de servidor em <code>_aguardar_servidor</code> etc.) — I/O real (aceitável), mas espera condicional reduziria tempo de suíte e flakiness.</td><td><code>tools/*/tests/</code> (<code>grep -rn time.sleep</code>)</td></tr>
+<tr><td>30</td><td><span class="tag baixa">BAIXA</span></td><td>master, enterprise</td><td><b>Prefixo numérico em nome de método</b> (N1/N5): <code>_camada1_</code>, <code>_camada2_</code>, <code>_camada2_5_</code>, <code>_camada8_</code> — o número no nome ordena o que deveria ser uma lista ordenável de checks em <code>run_all_checks</code>; renomear exige reordenar chamadas espalhadas.</td><td><code>scripts/gates/G_SEGURANCA.py</code> (métodos <code>_camada*_</code>)</td></tr>
+<tr><td>31</td><td><span class="tag baixa">BAIXA</span></td><td>root</td><td><b>Nomes abreviados exigem tradução mental</b> (N7): <code>harness_map_pars</code> ("pairs" soletrado errado?), <code>st</code>, <code>map_num</code>, <code>plan_obj</code> dentro de função de 239 linhas.</td><td><code>ecossistema.py:189+ (cmd_orchestrate)</code></td></tr>
+<tr><td>32</td><td><span class="tag baixa">BAIXA</span></td><td>ops</td><td><b>Funções de parsing sem decomposição</b>: <code>extrair_monitores_de_compose_conteudo</code> (100 linhas: YAML → serviços → monitores em um corpo) e <code>_executar_playbook</code> (69 linhas: monta comando + executa + parseia saída + Result).</td><td><code>src/core/uptime_kuma.py:89</code> · <code>src/core/ssh_runner.py:190</code></td></tr>
+</table>
+
+<h2 id="metodo">1. Metodologia, Comandos e Reprodutibilidade</h2>
+
+<h3>1.1 Ferramentas disponíveis vs utilizadas</h3>
+<div class="info"><b>Nota de transparência:</b> os MCP tools <code>code-review-graph</code> (arquitetura, hubs/bridges, impacto, busca semântica cross-repo) <b>não estavam disponíveis nesta sessão</b> — nenhum resultado deles é citado aqui. Toda a análise estrutural foi feita com <b>AST parsing em Python</b> (tamanho de funções, imports sem uso, handlers <code>except: pass</code>), <b>hash MD5 byte-a-byte</b> (duplicação exata), <b><code>difflib.SequenceMatcher</code></b> (linhas comuns entre gêmeas), <b><code>diff --strip-trailing-cr</code></b> e <b><code>grep -c</code></b> quantificado. Cada achado foi verificado abrindo o arquivo real; nenhum é inferência de grau.</div>
+
+<h3>1.2 Escopo excluído (verificado na data)</h3>
+<p>Os dois <code>00-PROCESSO-E-DECISOES.md</code> dos planos em <code>fazendo/</code> foram lidos antes de iniciar; ambos <b>continuam em <code>fazendo/</code></b> (não migraram para <code>feitos/</code>). Exclusões aplicadas:</p>
+<ul>
+  <li><b>Plano 01 (16 itens):</b> gates pytest, telemetria, G_ZERO_HEADLESS, CSP, seed de demo (a constante morta do achado #16 é <i>resquício</i> do seed, não o seed), enterprise inject dry-run, gate "blindagem militar" (o rótulo/cobertura — aqui só se audita a estrutura de classe, achado #21), CLI/ops test sync, porta duplicada + dashboard, CORS, deploy Docker, integração multi-ferramenta, <b>dead resilience code no enterprise</b>, requirements drift, <b>XSS em get_studio_html</b>.</li>
+  <li><b>Plano 02:</b> engine swaps (Cookiecutter, returns, SQLAlchemy, Alembic, sqlglot, secure, Tailwind, Checkov, hadolint, pre-commit, Repomix, Pandoc, Prefect, MCP SDK, instructor), checklist anti-NIH, migração argparse→click das CLIs, orquestração ORCA. Nota: os achados #10 e #7 desta auditoria descrevem <b>inconsistência entre APIs paralelas existentes</b> (4 Results, 4 injectors), não propõem a troca de motor nem duplicam os itens 10/11 do plano 02 (migração de CLI e adoção de instructor).</li>
+</ul>
+
+<h3>1.3 Comandos exatos (reprodução)</h3>
+<pre>
+# 1. Duplicação byte-a-byte entre ferramentas (par a par)
+for f in $(ls tools/aidd-master/src/core/); do
+  a=$(md5sum "tools/aidd-master/src/core/$f" | cut -d' ' -f1)
+  b=$(md5sum "tools/aidd-enterprise/src/core/$f" | cut -d' ' -f1)
+  [ "$a" = "$b" ] && echo "IDENTICAL: $f" || echo "DIFFERS: $f"
+done
+
+# 2. Total de linhas redundantes (cada cópia além da 1ª) em 10 diretórios
+python - <<'PY'
+import os, hashlib
+dirs = ['tools/aidd-master/src/core','tools/aidd-enterprise/src/core',
+        'tools/aidd-master/templates/core','tools/aidd-master/templates/v2',
+        'tools/aidd-enterprise/templates/core','tools/aidd-enterprise/templates/v2',
+        'tools/aidd-master/scripts/gates','tools/aidd-enterprise/scripts/gates',
+        'tools/aidd-master/templates/gates','tools/aidd-enterprise/templates/gates']
+files = {}
+for d in dirs:
+    for f in os.listdir(d):
+        p = os.path.join(d, f)
+        if os.path.isfile(p) and f.endswith(('.py','.html','.md','.css','.yml','.sh')):
+            h = hashlib.md5(open(p,'rb').read()).hexdigest()
+            n = len(open(p,'rb').read().splitlines())
+            files.setdefault(h, []).append((p, n))
+redundant = sum(sum(n for _,n in copies[1:]) for copies in files.values() if len(copies)>1)
+print("Linhas redundantes (além da 1ª cópia):", redundant)   # -> 39163
+PY
+
+# 3. Linhas comuns entre CLIs gêmeas (difflib)
+python - <<'PY'
+import difflib
+a = open('tools/aidd-master/scripts/aidd.py', encoding='utf-8', errors='replace').read().splitlines()
+b = open('tools/aidd-enterprise/scripts/aidd.py', encoding='utf-8', errors='replace').read().splitlines()
+sm = difflib.SequenceMatcher(None, a, b, autojunk=False)
+print("linhas comuns aidd.py:", sum(bl.size for bl in sm.get_matching_blocks()))  # -> 935
+PY
+
+# 4. Funções mais longas (AST)
+python - <<'PY'
+import ast
+tree = ast.parse(open('tools/aidd-master/scripts/aidd.py', encoding='utf-8').read())
+funcs = sorted([(f.end_lineno-f.lineno+1, f.name, f.lineno) for f in ast.walk(tree)
+                if isinstance(f, ast.FunctionDef)], reverse=True)
+print(funcs[:5])   # main 146L:1013, cmd_plan 135L:843, cmd_audit 122L:329, ...
+PY
+
+# 5. Imports sem uso em gates (AST): imported - used
+# 6. Handlers except:pass silenciosos (AST): ExceptHandler com corpo = [Pass]
+# 7. Terminação de linha
+find tools -name "*.py" -not -path "*__pycache__*" -exec file {} \; | grep CRLF | wc -l
+file tools/aidd-master/scripts/aidd.py tools/aidd-enterprise/scripts/aidd.py
+
+# 8. Exceções genéricas remanescentes
+grep -rc "except Exception" gates/*.py          # total 13 (gates raiz)
+grep -rc "except Exception" tools/*/src/core/*.py
+
+# 9. Constante morta
+grep -rn "WEBHOOK_DEMO_URL" tools/ --include="*.py" | grep -v "WEBHOOK_DEMO_URL = "   # 0 usos
+
+# 10. Qualidade de teste
+grep -rn "assert_called" tools/*/tests --include="*.py" | wc -l   # 0 em m/e/f; 3 em ops
+grep -rn "time.sleep" tools/*/tests --include="*.py" | wc -l      # 22
+</pre>
+
+<h2 id="root">2. Núcleo Raiz — <code>ecossistema.py</code>, <code>gates/</code>, <code>scripts/</code></h2>
+
+<h3>2.1 Nomes</h3>
+<p><b>Bom:</b> <code>run_command</code>, <code>cmd_forge</code>, <code>print_help</code> — verbos diretos; <code>_GATES_AUDIT</code> como constante clara. <b>Ruim (N7):</b> abreviações no <code>cmd_orchestrate</code> — <code>harness_map_pars</code> (provável "pairs" mal soletrado), <code>st</code>, <code>map_num</code>, <code>plan_obj</code> — exigem tradução mental num corpo de 239 linhas (achado #31).</p>
+
+<h3>2.2 Funções</h3>
+<p><b>Função longa com 3 responsabilidades (G8):</b> <code>cmd_orchestrate</code> (239 linhas, achado #27) mistura roteamento de CLI (construção dinâmica de <code>click</code>), política de segurança (ambientes permitidos, flag <code>dangerously-force-headless</code>) e UI interativa (4 blocos <code>input()</code> com menus ASCII). A política fica intratável sem TTY. <code>cmd_components</code> (40L) e <code>cmd_dependencia</code> (60L) têm o mesmo padrão: constroem sub-CLI <code>click</code> <i>dentro da função</i> e fazem <code>types.SimpleNamespace</code> para chamar gestores que já possuem parsing próprio — adaptador escrito duas vezes com a mesma forma.</p>
+<p><b>Mensagem contraditória (achado #19):</b> com <code>--dangerously-force-headless</code>, o bloco interativo imprime o aviso crítico de modo headless e <i>segue</i> chamando <code>input()</code> para configuração — o fluxo contradiz o modo declarado. (Correção de registro: uma versão anterior deste relatório alegou "branch morto" aqui; a leitura das linhas 328–357 mostra que a guarda externa <b>não</b> exclui a flag, o ramo é alcançável — o achado correto é a contradição de UX, não inalcançabilidade.)</p>
+
+<h3>2.3 Gates da raiz</h3>
+<p><b>Boa prática:</b> mensagens honestas por categoria (comportamental/config/estático) — rastreabilidade direta da Regra de Ouro #9. <b>Achado (#17):</b> 13 <code>except Exception</code> — a maioria em <code>G_INFRA_COMPOSE.py</code> (6×) para falha de sub-ferramenta externa; em <code>G_COMPONENTE_AGNOSTICO.py:54,73</code>, erro de parsing vira retorno default silencioso, ou seja, config corrompida pode aprovar o gate. Dilui o sinal de severidade real (erro de programação tratado como WARN).</p>
+
+<h3>2.4 scripts/ da raiz</h3>
+<p><code>gestor_componentes.py</code> (808 linhas) e <code>gestor_dependencias.py</code> (484) têm cobertura indireta apenas (via CLI da raiz; <code>test_gestor_componentes_drift.py</code> cobre o drift). Não foi identificado comportamento testado por mock-only — os testes executam o gestor de verdade.</p>
+
+<h2 id="forge">3. <code>tools/aidd-forge</code></h2>
+<p class="boa-pratica"><b>Melhor arquitetura do repositório.</b> Pacote real (<code>aidd_forge/</code>), funções de 4–67 linhas, nomenclatura correta pela §4.1 (PT-BR de domínio: <code>detectar_camada</code>, <code>sincronizar_skill</code>; inglês de infra: <code>InjectionRequest</code>, <code>MaterializationResult</code>), testes com árvore de arquivos real (19 arquivos de teste, zero mock, zero <code>assert_called</code>), <code>Result</code> congelado (<code>@dataclass(frozen=True)</code>) com semântica <code>value/error</code> nítida, injeção de <code>spawn_fn</code> em <code>SubagentPurger</code> para testabilidade sem rede.</p>
+<p><b>Achados:</b></p>
+<ul>
+  <li><b>(#7) 4ª implementação do domínio Injector</b> — ver §8.3. A implementação do forge é a mais limpa das quatro, o que reforça o argumento de extração: a melhor versão poderia se tornar a fonte única.</li>
+  <li><b><code>cmd_init</code>/<code>cmd_inject</code> (cli.py:27,65)</b> — 36 linhas sequenciando 5–8 serviços com prints de resultado embutidos no fluxo (orquestração + formatação no mesmo corpo). Gravidade baixa.</li>
+  <li><b><code>agents_md_anchor.py:render_component_table</code> (47L)</b> — construção de tabela markdown com upsert manual e f-strings aninhadas; um builder reduziria o nível de abstração.</li>
+</ul>
+
+<h2 id="generator">4. <code>tools/aidd-generator</code></h2>
+<p>Maior ferramenta do repo (~15 mil linhas), com 33 arquivos de teste reais e nomenclatura de domínio forte (<code>reconhecer_nicho</code> é ops; aqui: <code>solicitar_llm</code>, <code>decompor_script_em_microtasks</code>, <code>curar_stack</code>). Achados concentrados em <b>funções-monstro nas fases</b> e <b>abstrações paralelas</b>.</p>
+
+<h3>4.1 Monad Result caseira (#10)</h3>
+<p class="evidencia"><code>scripts/phases/08_implementador.py:60</code> — <code>class Result</code> (70 linhas: <code>ok/fail/unwrap/unwrap_or/map/flat_map</code>). O ecossistema já tem <code>returns</code> adotado (master/enterprise/ops importam <code>from returns</code>) e <code>core/result.py</code> idêntico em 2 ferramentas. Total: <b>4 APIs de Result incompatíveis</b> — todo chamador aprende a API local.</p>
+
+<h3>4.2 <code>_extrair_json_manual</code> — parser defensivo (#12)</h3>
+<p class="evidencia"><code>scripts/phases/utils_delegacao.py:145</code> (78 linhas). Cinco estratégias em cascata (JSON direto → fences markdown → sanitização de escapes → extração de campos <code>codigo/teste</code> → <code>json.loads</code> final para lançar). Regex de gramática aninhada sem nome:</p>
+<pre>
+m_cod = re.search(r'"codigo"\s*:\s*"([\s\S]*?)(?:"\s*,\s*"(?:teste|caminho)|\s*"\s*\}\s*$)', s)
+</pre>
+<p>É um parser completo enterrado em util (G30); cada regex é uma mini-gramática sem teste unitário da gramática em si. E o comentário de numeração mente (#24): "1. 2. 4. 5." — passo 3 removido sem atualizar o texto (<code>:176</code>).</p>
+
+<h3>4.3 Fase 08 monolítica (#13, #14)</h3>
+<p class="evidencia"><code>scripts/phases/08_implementador.py</code> — 1.527 linhas. <code>PostMortemAnalyzer._classificar_falha</code> classifica por substring (<code>'assertionerror' in saida_lower</code>) — acoplado ao formato de saída do pytest, quebra silenciosamente se o formatter mudar. 7 handlers <code>except Exception as e: print(...)</code> idênticos (<code>:98, 106, 1195</code> + 4).</p>
+
+<h3>4.4 Nomes e estado global (#11, #22)</h3>
+<p><b>N4:</b> duas <code>ResultadoValidacao</code> com campos distintos (<code>G_INTEGRACAO_CROSS_SCRIPT.py:140</code> vs <code>contrato.py:60</code>). <b>N7:</b> <code>_TOKENIZADOR_TIKTOKEN</code> (<code>utils_delegacao.py:477–492</code>) — cache global onde <code>None</code> = "ainda não carregado" e <code>False</code> = "falhou o carregamento", com <code>except Exception</code> que engole a causa. <b>Contraste interno de padrão de exceção (#14):</b> <code>materializador.py:93</code> usa <code># noqa: BLE001</code> com justificativa; <code>utils_delegacao.py:137</code> usa <code>except Exception: pass</code> com comentário — dois estilos para o mesmo problema na mesma ferramenta.</p>
+
+<h2 id="master">5. <code>tools/aidd-master</code></h2>
+
+<h3>5.1 CLI monolítica (aidd.py, 1.162 linhas) (#4)</h3>
+<p><code>main</code> 146L (<code>:1013</code>), <code>cmd_plan</code> 135L (<code>:843</code>), <code>cmd_audit</code> 122L (<code>:329</code>), <code>cmd_compose_orca</code> 96L, <code>cmd_bench</code> 83L. Cada <code>cmd_*</code> mistura parse + política + execução + relatório. <code>main()</code> ainda mantém dois sistemas de roteamento: dicionário <code>cmds</code> + subparsers argparse + <b>fallback de linguagem natural</b> que intercepta qualquer subcomando desconhecido e chama <code>cmd_plan</code> — precedência implícita entre os dois sistemas.</p>
+
+<h3>5.2 <code>cmd_plan</code> — lista de domínios duplicando o IntentRouter (#6)</h3>
+<p class="evidencia"><code>scripts/aidd.py:843–978</code>. <code>KNOWN_DOMAINS</code> (<code>:850</code>) com 24 termos PT-BR + mapeamento manual de sinônimos (<code>slug = "crm" if d in ["lead", "leads"] else ...</code>). <code>grep helpdesk\|faturamento</code> no <code>src/core/intent_router.py</code> da mesma ferramenta: <b>zero resultados</b>. Dois mecanismos paralelos para a mesma tarefa, com vocabulários independentes que já divergem — a duplicação não é de código, é de <b>conhecimento</b> (a pior forma de DRY): adicionar um domínio novo exige tocar os dois lugares, e nada lembra o segundo.</p>
+
+<h3>5.3 <code>compose_suite.py</code> (#5, #16)</h3>
+<p><code>compose_suite</code> 266L; <code>generate_superapp_index_html</code> 192L de HTML/JS/CSS em f-strings com chaves escapadas — geração de UI, backend, deploy e governança multi-IDE no mesmo arquivo. <code>WEBHOOK_DEMO_URL</code> (<code>:40</code>) definida e nunca usada (verificado nas 2 ferramentas) — resquício do Item 5.</p>
+
+<h3>5.4 <code>src/core/database.py</code></h3>
+<p>Boa arquitetura de fachada (adapter por <code>DATABASE_URL</code>, RLS separado, tradução DDL), mas:</p>
+<ul>
+  <li><b>Lei de Demeter (#20):</b> <code>EngineFacadeConnection.__init__</code> (<code>:119</code>) faz <code>driver = sqlalchemy_conn.connection.driver_connection</code> e muta <code>driver.row_factory = sqlite3.Row</code> — a fachada entra no driver DBAPI por baixo do SQLAlchemy e o altera. Contraste interno: <code>PostgresCursorProxy</code> encapsula sem violar.</li>
+  <li><b>Duas técnicas de reescrita SQL no mesmo módulo:</b> INSERT/SELECT via AST sqlglot (<code>_rewrite_insert</code>/<code>_rewrite_select</code>), UPDATE/DELETE via regex (<code>_rewrite_update</code>/<code>_rewrite_delete</code>) — abordagem inconsistente para o mesmo problema, com regex re-derivando o nome da tabela que a AST já teria.</li>
+  <li><b>Vocabulário misto no mesmo DDL:</b> <code>criado_em</code>/<code>processado_em</code> (PT-BR) com <code>status TEXT NOT NULL DEFAULT 'pendente'</code> na mesma tabela — coerente com §4.1 para domínio, mas o valor default de status em PT-BR vira dado de API consumido por código que compara strings.</li>
+</ul>
+
+<h3>5.5 Código morto nos gates locais (#15)</h3>
+<p class="evidencia"><code>scripts/gates/G_SEGURANCA.py:35,37,38</code>: <code>import time</code>, <code>import hmac</code>, <code>import hashlib</code> — AST confirma zero usos (remanescente de camadas de hash/HMAC que migraram para <code>core/</code>). <code>G_QUALIDADE.py:15,17,31</code>: <code>re</code>, <code>json</code> e <code>FuzzingStrategy</code> sem uso direto. Idem enterprise.</p>
+
+<h3>5.6 Testes</h3>
+<p class="boa-pratica"><b>T1–T9 em dia:</b> 25 arquivos; integração HTTP real (<code>test_modulo1.py</code> sobe o servidor), RLS multi-tenant ponta-a-ponta, rollback transacional testado de verdade, zero <code>assert_called</code>. Débito menor: <code>time.sleep</code> em polling de servidor (#29).</p>
+
+<h2 id="enterprise">6. <code>tools/aidd-enterprise</code></h2>
+<p>Quase tudo do §5 vale aqui — <b>é o mesmo código</b> (1.171 linhas de CLI, mesmos imports mortos, mesma constante morta, mesmos gates). Especificidades:</p>
+<ul>
+  <li><b>Gêmea divergente (#8):</b> <code>src/core/mcp_server.py</code> <b>não tem</b> <code>register_injected_tools()</code> (40 linhas a menos que o master) — a capacidade de carregar ferramentas MCP injetadas não existe aqui. Quem conhece o master vai procurar o método e não encontrar (G14: entender exige olhar a outra ferramenta).</li>
+  <li><code>intent_router.py</code> reconhece "hook"/"gancho"; o master não. <code>materializador.py</code> trata hook como JSON; o master gera <code>hook.sh</code> bash. <b>Três arquivos gêmeos com lógica de hook incompatível.</b></li>
+  <li><b>#30:</b> métodos <code>_camada1_</code>…<code>_camada8_</code> com prefixo numérico ordenando o que deveria ser lista ordenável.</li>
+  <li><b>Boa prática:</b> relatório final do G_SEGURANCA por categoria (comportamental/config/estático) — rótulo honesto, correlato direto da Regra de Ouro #9.</li>
+</ul>
+
+<h2 id="ops">7. <code>tools/aidd-ops</code></h2>
+<p class="boa-pratica"><b>Segunda melhor ferramenta.</b> <code>Result</code> via <code>returns</code> com <code>from_returns</code> e códigos de erro específicos; nomenclatura de domínio PT-BR impecável (<code>reconhecer_nicho</code>, <code>curar_stack</code>, <code>dimensionar</code>, <code>cifrar_env</code>); <code>cofre_credenciais.py</code> (439L) é provavelmente o melhor arquivo Python do repo: injeção de <code>executor_fn</code>, códigos de erro específicos (<code>AGE_NAO_INSTALADO</code>, <code>CHAVE_JA_EXISTE</code>, <code>SOPS_CONFIG_NAO_ENCONTRADO</code>), <code>dry_run</code> real, docstrings que explicam o porquê (ex.: por que o <code>path_regex</code> do sops usa separador agnóstico).</p>
+<ul>
+  <li><b>(#28)</b> <code>sys.path.insert</code> ×4 no topo de <code>pipeline_ops.py</code> + fases importadas por nome de arquivo com dígito (<code>import_module("01_intake")</code>) — acoplamento ao layout físico.</li>
+  <li><b>(#32)</b> <code>extrair_monitores_de_compose_conteudo</code> (100L) e <code>_executar_playbook</code> (69L) sem decomposição.</li>
+  <li><b>Testes:</b> 11 arquivos, comportamentais; únicos <code>assert_called</code> do repo (3 ocorrências) e 9 arquivos com <code>MagicMock</code> — usados para isolar rede/daemon Docker (aceitável), não como asserção principal.</li>
+</ul>
+
+<h2 id="dup">8. Transversal — Duplicação e Extração de Núcleo Compartilhado</h2>
+
+<h3>8.1 Inventário quantificado (medido por MD5/difflib na data)</h3>
+<table>
+<tr><th>Par</th><th>Arquivos idênticos</th><th>Linhas</th><th>Proteção atual</th></tr>
+<tr><td><code>master/src/core/</code> ↔ <code>enterprise/src/core/</code></td><td>27</td><td><b>8.781</b></td><td><code>G_DRIFT_NUCLEO_COMPARTILHADO</code> (detecta, não previne)</td></tr>
+<tr><td><code>master/templates/core/</code> ↔ <code>master/templates/v2/</code></td><td>28</td><td><b>8.087</b></td><td><b>Nenhuma</b></td></tr>
+<tr><td><code>enterprise/templates/core/</code> ↔ <code>enterprise/templates/v2/</code></td><td>29</td><td><b>8.130</b></td><td><b>Nenhuma</b></td></tr>
+<tr><td><code>templates/core/</code> master ↔ enterprise</td><td>29</td><td><b>8.126</b></td><td><b>Nenhuma</b></td></tr>
+<tr><td><code>scripts/gates/</code> master ↔ enterprise</td><td>10</td><td><b>1.973</b></td><td><b>Nenhuma</b></td></tr>
+<tr><td><code>templates/gates/</code> master ↔ enterprise</td><td>8</td><td><b>1.083</b></td><td><b>Nenhuma</b></td></tr>
+<tr><td><code>scripts/gates/</code> ↔ <code>templates/gates/</code> (mesma ferramenta)</td><td>6</td><td><b>575</b> ×2</td><td><b>Nenhuma</b></td></tr>
+<tr><td><code>src/core/</code> ↔ <code>templates/core/</code> (mesma ferramenta)</td><td>14</td><td><b>2.424</b></td><td><b>Nenhuma</b></td></tr>
+<tr><td><code>scripts/aidd.py</code> master ↔ enterprise (difflib)</td><td>—</td><td><b>935</b> comuns de 1.162/1.171</td><td><b>Nenhuma</b></td></tr>
+<tr><td><code>scripts/compose_suite.py</code> master ↔ enterprise</td><td>—</td><td><b>682</b> comuns de 687/683</td><td><b>Nenhuma</b></td></tr>
+<tr><td><b>Total redundante (cada cópia além da 1ª, 10 diretórios)</b></td><td colspan="2"><b>39.163 linhas</b></td><td>Arquivos em até <b>6 cópias</b>: <code>database.py</code> (4.086 somadas), <code>openapi.py</code> (1.764), <code>jobs.py</code> (1.668), <code>security.py</code> (1.536)</td></tr>
+</table>
+<p><b>Nota metodológica:</b> os pares se sobrepõem (o mesmo arquivo participa de vários pares), então a soma de pares é maior que o total redundante; o total de 39.163 conta cada cópia física além da primeira exatamente uma vez.</p>
+
+<h3>8.2 O caso <code>get_studio_html</code> como prova de custo</h3>
+<p class="evidencia">O item 16 do plano 01 (concluído em 2026-09-09) registra: <i>"corrigido nas 6 cópias"</i>. O XSS existia em <code>get_studio_html</code>, presente em <code>src/core/webhooks.py</code> + <code>templates/core/webhooks.py</code> + <code>templates/v2/webhooks.py</code> × 2 ferramentas = 6 arquivos. O gate de drift <b>não cobre templates</b> — a correção em 6 lugares foi manual. Este é o argumento empírico mais forte para fonte única (código em um lugar + sincronização mecânica determinística para os destinos, na mesma lógica do <code>components sync</code> já existente para skills/MCPs).</p>
+
+<h3>8.3 Injector Universal × 4 (#7)</h3>
+<table>
+<tr><th>Ferramenta</th><th>Arquivos</th><th>API de resultado</th><th>Request</th></tr>
+<tr><td>forge</td><td><code>aidd_forge/core/{materializador,universal_injector,injection_schema,injector_profiles}.py</code></td><td><code>Result</code> frozen <code>value/error</code> + <code>MaterializationResult</code> + <code>UniversalInjectionResult</code></td><td><code>InjectionRequest</code></td></tr>
+<tr><td>generator</td><td><code>scripts/core/injector/{materializador,injetor,contrato,detector_camada,sincronizador_harness,profiles_registry}.py</code></td><td><code>ResultadoMaterializacao</code> (<code>sucesso/erro</code>)</td><td><code>InjectorRequest</code></td></tr>
+<tr><td>master</td><td><code>src/core/{materializador,profiles_registry,detector_camada,sincronizador_harness}.py</code></td><td><code>Result.ok/fail(codigo, erro, detalhes)</code></td><td><code>payload dict + construir_request</code></td></tr>
+<tr><td>enterprise</td><td>clone do master + perfis próprios</td><td>idem master</td><td>idem master</td></tr>
+</table>
+<p>Algoritmo de rollback idêntico (staging → publicar com <code>os.replace</code> → desfazer publicado) reimplementado; <code>_default_ecossistema_root()</code> com o mesmo corpo em 3 ferramentas; detecção de camada com assinaturas diferentes (<code>detectar_camada</code>/<code>detectar_tipo</code>). <b>N4 puro:</b> <code>InjectionRequest</code> (forge) vs <code>InjectorRequest</code> (generator).</p>
+
+<h3>8.4 Result Monad × 4 (#10)</h3>
+<p>Recapitulando §4.1 com o inventário: <code>class Result(Generic[T])</code> definido em master/enterprise/ops (via <code>returns</code>) + <code>Result</code> caseiro do generator (08_implementador) + <code>Result</code> frozen do forge (subagent_purger) + 6 classes <code>Resultado*</code> de formato próprio no generator. Quatro vocabulários para o mesmo conceito monádico.</p>
+
+<h3>8.5 Lei de Demeter entre ferramenta e layout físico</h3>
+<p>Cada ferramenta manipula <code>sys.path.insert</code> para importar módulos irmãos (master: <code>aidd.py</code> insere <code>src/core</code>; generator: <code>08_implementador.py:38</code> insere 2 diretórios; ops: 4 inserts em <code>pipeline_ops.py</code>). A intimidade inapropriada não é entre módulos — é entre <b>ferramenta e layout físico do próprio pacote</b>: renomear <code>scripts/core/</code> do generator quebra imports numa fase de 1.500 linhas. Empacotar cada tool (pyproject + namespace) eliminaria a classe inteira de problema.</p>
+
+<h3>8.6 HTML gerado em string</h3>
+<p>Geração de HTML/JS/CSS via f-string aparece em master/enterprise (<code>compose_suite</code>: <code>generate_superapp_index_html</code> 192L) e em <code>webhooks.get_studio_html</code> — o histórico de XSS do item 16 mostra o custo recorrente: escapamento manual é esquecido quando o bloco é copiado.</p>
+
+<h2 id="ch17">9. Checklist Cap. 17 — Smells por Ferramenta</h2>
+<p>Legenda: ✅ = checado, não encontrado · ⚠️ = encontrado (referência ao achado) · — = não aplicável.</p>
+<table>
+<tr><th>Smell</th><th>Root</th><th>Forge</th><th>Generator</th><th>Master</th><th>Enterprise</th><th>Ops</th><th>Ref.</th></tr>
+<tr><td>G1/G2/G3/G5 Comentários (redundante/obsoleto/mortos)</td><td>✅</td><td>✅</td><td>⚠️</td><td>✅</td><td>✅</td><td>✅</td><td>#24</td></tr>
+<tr><td>G6/G19 O código deveria dizer o que faz</td><td>⚠️</td><td>✅</td><td>⚠️</td><td>⚠️</td><td>⚠️</td><td>✅</td><td>#4, #13, #19</td></tr>
+<tr><td>G7 Regex posicionais longas sem nome</td><td>✅</td><td>✅</td><td>⚠️</td><td>⚠️</td><td>⚠️</td><td>✅</td><td>#12, §5.4</td></tr>
+<tr><td>G8 Muitas coisas numa função só</td><td>⚠️</td><td>⚠️</td><td>⚠️</td><td>⚠️</td><td>⚠️</td><td>⚠️</td><td>#4, #5, #13, #27, #32</td></tr>
+<tr><td>G10 Feature Envy</td><td>✅</td><td>✅</td><td>✅</td><td>✅</td><td>✅</td><td>✅</td><td>—</td></tr>
+<tr><td>G11 Argumentos-seleção (flags)</td><td>⚠️</td><td>✅</td><td>⚠️</td><td>✅</td><td>✅</td><td>⚠️</td><td>#27, #22 (dry_run ok)</td></tr>
+<tr><td>G14 Entender exige olhar outro módulo</td><td>✅</td><td>✅</td><td>⚠️</td><td>⚠️</td><td>⚠️</td><td>✅</td><td>#6, #8</td></tr>
+<tr><td>G15 Nível de abstração errado</td><td>✅</td><td>✅</td><td>⚠️</td><td>⚠️</td><td>⚠️</td><td>✅</td><td>#5, #12, #21</td></tr>
+<tr><td>G17 Inconsistência</td><td>⚠️</td><td>✅</td><td>⚠️</td><td>⚠️</td><td>⚠️</td><td>✅</td><td>#9, #14, §5.4</td></tr>
+<tr><td>G32 Lei de Demeter</td><td>✅</td><td>✅</td><td>✅</td><td>⚠️</td><td>⚠️</td><td>✅</td><td>#20, §8.5</td></tr>
+<tr><td>N1/N5 Nomes com encodings/numeração</td><td>✅</td><td>✅</td><td>✅</td><td>⚠️</td><td>⚠️</td><td>✅</td><td>#30</td></tr>
+<tr><td>N2/N4 Vocabulário redundante/ambíguo</td><td>✅</td><td>✅</td><td>⚠️</td><td>⚠️</td><td>⚠️</td><td>✅</td><td>#6, #7, #11, §8.3</td></tr>
+<tr><td>N6 Hungarian / encodings de tipo</td><td>✅</td><td>✅</td><td>✅</td><td>✅</td><td>✅</td><td>✅</td><td>—</td></tr>
+<tr><td>N7 Mental Mapping</td><td>⚠️</td><td>✅</td><td>⚠️</td><td>✅</td><td>✅</td><td>✅</td><td>#31, #22</td></tr>
+<tr><td>T1–T5 Testes limpos, um conceito por teste</td><td>✅</td><td>✅</td><td>✅</td><td>✅</td><td>✅</td><td>✅</td><td>—</td></tr>
+<tr><td>T6 Testes insuficientes</td><td>⚠️</td><td>✅</td><td>✅</td><td>✅</td><td>✅</td><td>⚠️</td><td>§2.4 (gestores raiz), §7</td></tr>
+<tr><td>T7–T9 Mock-only / cobertura / config</td><td>✅</td><td>✅</td><td>✅</td><td>✅</td><td>✅</td><td>✅</td><td>#29 (time.sleep)</td></tr>
+</table>
+<p><b>Smells G1–G36 explicitamente verificados e NÃO encontrados em nenhuma ferramenta:</b> G5 (código comentado), G9 (estático inapropriado), G10 (feature envy intra-módulo), G12 (funções diádicas em excesso), G13 (comprehension-if), G16 (cadeias if/else por string — exceto #13, já listado), G18 (acoplamento por adjacência de arquivo), G36 (política embutida em baixo nível — respeitada nos gates por categoria). Smells G20–G35 (Java/nomes específicos) mapeados para os equivalentes Python acima quando aplicável.</p>
+
+<h2 id="tabela">10. Ranking por Impacto</h2>
+<p>Os 32 achados já estão ordenados por severidade no sumário. O ranking por <i>blast radius</i> é direto: os 3 críticos (#1–3, duplicação estrutural) multiplicam o custo de <b>toda</b> correção futura em master/enterprise — prova empírica no item 16 do plano 01 (correção manual em 6 cópias); os 6 altos (#4–9) afetam a capacidade de evoluir as duas ferramentas maiores e a confiabilidade das comparações entre elas (#8, #9); os 13 médios (#10–22) afetam legibilidade, sinal de gates e consistência interna; os 10 baixos (#23–32) são polimento.</p>
+
+<h2 id="encerramento">11. Encerramento</h2>
+<div class="info">
+<b>Este relatório não contém plano de correção, decisão ou aprovação.</b> Os achados são descrições factuais de código lido nesta data, cada um com caminho, linha e evidência reproduzível (comandos na §1.3). Números entre ferramentas foram medidos por hash/AST/difflib — nenhum é estimativa. A priorização, a decisão de rota (extração de núcleo compartilhado, refatorações) e a aprovação são etapas humanas subsequentes, nos termos da governança do repositório (AGENTS.md §4 e Regras Fixas dos planos). Uma correção de registro relevante: uma versão de rascunho deste relatório alegava "branch morto" em <code>cmd_orchestrate</code>; a verificação das linhas 328–357 desmentiu a alegação e o achado foi substituído pelo correto (#19).
+</div>
+
+</div>
+</body>
+</html>
