@@ -40,8 +40,12 @@ from typing import Optional, Dict, Any, Callable, List
 if sys.platform == 'win32':
     sys.stdout.reconfigure(encoding='utf-8')
 
-sys.path.insert(0, str(Path(__file__).parent))
-from utils_delegacao import solicitar_llm, extrair_json_resposta
+# Import relativo (modo pacote) com fallback bare (execução direta),
+# preservando os dois modos sem mutação de sys.path.
+try:
+    from .utils_delegacao import solicitar_llm, extrair_json_resposta
+except ImportError:  # pragma: no cover — execução direta
+    from utils_delegacao import solicitar_llm, extrair_json_resposta
 
 
 # =============================================================================
