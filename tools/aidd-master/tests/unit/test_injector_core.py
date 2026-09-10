@@ -91,7 +91,7 @@ def test_gate_aceita_payload_hook():
     ("spec", os.path.join("docs", "specs", "meu-componente.md")),
     ("config", os.path.join("templates", "core", "config", "meu-componente.json")),
     ("agent", os.path.join("templates", "agents", "meu-componente.md")),
-    ("hook", os.path.join(".agent", "hooks", "meu-componente", "hook.sh")),
+    ("hook", os.path.join(".agent", "hooks", "meu-componente", "meu-componente.json")),
 ])
 def test_perfis_resolvem_destino_exato_por_tipo(tmp_path, tipo, sufixo_esperado):
     payload = {"tipo": tipo, "nome": "meu-componente", "descricao": "abc", "alvo_projeto": "aidd-master"}
@@ -319,12 +319,12 @@ def test_materializador_hook_escreve_alvo_espelhos_e_canonico(tmp_path):
 
     resultado = materializador.materializar(payload, resolucao)
     assert resultado.sucesso is True
-    assert (tmp_path / ".agent" / "hooks" / "pre-commit-hook" / "hook.sh").is_file()
-    assert (tmp_path / ".claude" / "hooks" / "pre-commit-hook" / "hook.sh").is_file()
-    assert (tmp_path / ".gemini" / "hooks" / "pre-commit-hook" / "hook.sh").is_file()
+    assert (tmp_path / ".agent" / "hooks" / "pre-commit-hook" / "pre-commit-hook.json").is_file()
+    assert (tmp_path / ".claude" / "hooks" / "pre-commit-hook" / "pre-commit-hook.json").is_file()
+    assert (tmp_path / ".gemini" / "hooks" / "pre-commit-hook" / "pre-commit-hook.json").is_file()
 
     # Cópia na raiz canônica isolada via fixture
-    canon_dest = fake_eco / "componentes" / "aidd-master" / "hooks" / "pre-commit-hook" / "hook.sh"
+    canon_dest = fake_eco / "componentes" / "aidd-master" / "hooks" / "pre-commit-hook" / "pre-commit-hook.json"
     assert canon_dest.is_file()
 
 
@@ -336,8 +336,8 @@ def test_cli_inject_hook_ponta_a_ponta(tmp_path):
             capture_output=True, text=True, encoding="utf-8", errors="replace",
         )
         assert res.returncode == 0, res.stdout + res.stderr
-        assert (tmp_path / ".agent" / "hooks" / "ci-audit" / "hook.sh").is_file()
-        assert (tmp_path / ".claude" / "hooks" / "ci-audit" / "hook.sh").is_file()
+        assert (tmp_path / ".agent" / "hooks" / "ci-audit" / "ci-audit.json").is_file()
+        assert (tmp_path / ".claude" / "hooks" / "ci-audit" / "ci-audit.json").is_file()
     finally:
         repo_root = Path(_ROOT).parents[1]
         import shutil
@@ -549,7 +549,7 @@ def test_remover_componente_e_limpar_diretorios_vazios(tmp_path):
 
 def test_remover_componente_hook_limpa_tambem_destino_canonico(tmp_path):
     """remover_componente() de um 'hook' também apaga a cópia canônica
-    (componentes/{alvo_projeto}/hooks/{nome}/hook.sh) escrita por materializar()
+    (componentes/{alvo_projeto}/hooks/{nome}/{nome}.json) escrita por materializar()
     fora da lista 'arquivos_criados' — sem isso, remover deixava esse arquivo órfão."""
     payload = {
         "tipo": "hook",
