@@ -3,42 +3,13 @@
 {%- set desc = cookiecutter.desc -%}
 # -*- coding: utf-8 -*-
 """
-Schema e inicialização de banco de dados para o módulo '{{ slug }}'.
+Facade de Schema da fatia vertical {{ slug }} (compatibilidade com server.py).
+
+A definição real do DDL agora vive em ``infrastructure/schema.py``; este
+módulo apenas re-exporta ``init_schema`` para preservar o contrato público
+``modules.{{ slug }}.models.init_schema(conn)`` usado pelo servidor e testes.
 """
 
-import sqlite3
-import json
+from .infrastructure.schema import init_schema
 
-
-def init_schema(conn: sqlite3.Connection):
-    """Cria a tabela, índices e insere seed data do módulo {{ slug }} se não existirem."""
-    conn.executescript("""
-        CREATE TABLE IF NOT EXISTS mod_{{ slug }} (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            titulo TEXT NOT NULL,
-            descricao TEXT,
-            dados_json TEXT,
-            status TEXT DEFAULT 'ativo',
-            ativo INTEGER DEFAULT 1,
-            criado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-            atualizado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-            deletado_em TIMESTAMP DEFAULT NULL
-        );
-        CREATE INDEX IF NOT EXISTS idx_{{ slug }}_ativo ON mod_{{ slug }}(ativo);
-        CREATE INDEX IF NOT EXISTS idx_{{ slug }}_status ON mod_{{ slug }}(status);
-        CREATE INDEX IF NOT EXISTS idx_{{ slug }}_deletado ON mod_{{ slug }}(deletado_em);
-    """)
-    conn.commit()
-
-    # Seed Fixtures Determinísticas (se a tabela estiver vazia)
-    cur = conn.cursor()
-    cur.execute("SELECT count(*) FROM mod_{{ slug }} WHERE deletado_em IS NULL")
-    if cur.fetchone()[0] == 0:
-        conn.executemany("""
-            INSERT INTO mod_{{ slug }} (titulo, descricao, dados_json, status, ativo)
-            VALUES (?, ?, ?, 'ativo', 1);
-        """, [
-            (f"Registro Exemplo 01 - {{ slug|upper }}", f"Primeiro registro semeado para o módulo {{ slug }}", json.dumps({"origem": "seed", "tag": "demo"})),
-            (f"Registro Exemplo 02 - {{ slug|upper }}", f"Segundo registro semeado para validação de KPIs", json.dumps({"origem": "seed", "tag": "producao"}))
-        ])
-        conn.commit()
+__all__ = ["init_schema"]
