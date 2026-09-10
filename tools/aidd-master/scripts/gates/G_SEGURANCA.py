@@ -360,7 +360,7 @@ class SecurityGate:
                 for m_dir in os.listdir(modules_dir):
                     # Novo layout Clean Architecture: a chamada de audit vive no
                     # composition root (services.py) ou nos adapters de infra
-                    # (infrastructure/). Ambos são contra com o contrato do gate.
+                    # (infrastructure/). Ambos são compatíveis com o contrato.
                     alvos = [
                         os.path.join(modules_dir, m_dir, "services.py"),
                         os.path.join(modules_dir, m_dir, "infrastructure"),
