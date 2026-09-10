@@ -358,12 +358,35 @@ class SecurityGate:
             total_modules = 0
             if os.path.exists(modules_dir):
                 for m_dir in os.listdir(modules_dir):
-                    srv_f = os.path.join(modules_dir, m_dir, "services.py")
-                    if os.path.isfile(srv_f):
+                    # Novo layout Clean Architecture: a chamada de audit vive no
+                    # composition root (services.py) ou nos adapters de infra
+                    # (infrastructure/). Ambos são contra com o contrato do gate.
+                    alvos = [
+                        os.path.join(modules_dir, m_dir, "services.py"),
+                        os.path.join(modules_dir, m_dir, "infrastructure"),
+                    ]
+                    flag_audit = False
+                    for alvo in alvos:
+                        if os.path.isfile(alvo):
+                            with open(alvo, "r", encoding="utf-8", errors="ignore") as fp:
+                                if "append_audit_log" in fp.read():
+                                    flag_audit = True
+                        elif os.path.isdir(alvo):
+                            for nome_arquivo in os.listdir(alvo):
+                                if not nome_arquivo.endswith(".py"):
+                                    continue
+                                caminho_arquivo = os.path.join(alvo, nome_arquivo)
+                                with open(caminho_arquivo, "r", encoding="utf-8", errors="ignore") as fp:
+                                    if "append_audit_log" in fp.read():
+                                        flag_audit = True
+                                        break
+                    # Só conta como módulo de negócio se houver superfície real
+                    if os.path.isfile(os.path.join(modules_dir, m_dir, "services.py")) or os.path.isdir(
+                        os.path.join(modules_dir, m_dir, "infrastructure")
+                    ):
                         total_modules += 1
-                        with open(srv_f, "r", encoding="utf-8", errors="ignore") as fp:
-                            if "append_audit_log" in fp.read():
-                                audit_active_count += 1
+                        if flag_audit:
+                            audit_active_count += 1
 
             if "_audit_log" in db_content and "curr_hash" in db_content and (total_modules == 0 or audit_active_count == total_modules):
                 self.log("PASS", "Camada 6: SQLite Safety", "WORM Audit Hash Chain", f"Tabela _audit_log ativa com {audit_active_count}/{total_modules} módulos auditados")
