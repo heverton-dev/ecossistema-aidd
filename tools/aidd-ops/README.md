@@ -85,3 +85,9 @@ Cofre local de segredos sem serviço externo — credenciais saem do `docker-com
 - A cifragem é explicitamente amarrada a uma config (`--config`), eliminando a dependência do cwd na descoberta de regras do sops.
 - Cobertura real (17 testes em `tests/test_cofre_credenciais.py`, com os binários reais `sops`/`age-keygen`), incluindo a regressão do smoke CLI: `no matching creation rules found` em Windows + `.sops.yaml` não correspondente.
 
+## Helm Chart e Testes de Integração (Item 10)
+
+- **Chart canônico:** `charts/aidd-ops/` — instala infraestrutura base (PostgreSQL centralizado + Traefik) e serviços de aplicação (`services.apps.<slug>`), com resources por serviço injetáveis via `values.yaml`.
+- **Testes de validação binária real:** `tests/test_helm_integration.py` executa `helm lint` e `helm template -f <values>` sobre o chart e afirma que os resources calculados pelo sizing real (Fase 3, `scripts/phases/03_sizing.py`) aparecem exatamente nos manifests renderizados (Deployments e PVCs).
+- **Dependência externa:** requer o binário `helm` (>= v3) no PATH ou em `HELM_BIN`. Se ausente, a suíte pula honestamente (skip) — não simula aprovação.
+

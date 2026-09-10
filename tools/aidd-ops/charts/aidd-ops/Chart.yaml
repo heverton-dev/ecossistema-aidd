@@ -1,0 +1,13 @@
+apiVersion: v2
+name: aidd-ops
+description: Helm chart for AIDD-Ops infrastructure services (PostgreSQL, Traefik, and configurable app stacks)
+type: application
+version: 0.1.0
+appVersion: "1.0.0"
+keywords:
+  - aidd-ops
+  - infrastructure
+  - postgresql
+  - traefik
+maintainers:
+  - name: AIDD Team

@@ -1,0 +1,71 @@
+{{- range $name, $svc := .Values.services.apps }}
+{{- if $svc }}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ $name }}
+  namespace: {{ include "aidd-ops.namespace" $ }}
+  labels:
+    {{- include "aidd-ops.labels" $ | nindent 4 }}
+    app.kubernetes.io/component: {{ $name }}
+spec:
+  replicas: {{ $svc.replicas | default 1 }}
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: {{ $name }}
+      app.kubernetes.io/instance: {{ $.Release.Name }}
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: {{ $name }}
+        app.kubernetes.io/instance: {{ $.Release.Name }}
+    spec:
+      containers:
+        - name: {{ $name }}
+          image: "{{ $svc.image.repository }}:{{ $svc.image.tag }}"
+          imagePullPolicy: {{ $svc.image.pullPolicy | default "IfNotPresent" }}
+          {{- if $svc.ports }}
+          ports:
+            {{- range $portName, $portVal := $svc.ports }}
+            - name: {{ $portName }}
+              containerPort: {{ $portVal }}
+              protocol: TCP
+            {{- end }}
+          {{- end }}
+          {{- if $svc.resources }}
+          resources:
+            {{- toYaml $svc.resources | nindent 12 }}
+          {{- end }}
+          {{- if $svc.env }}
+          env:
+            {{- range $key, $val := $svc.env }}
+            - name: {{ $key }}
+              value: {{ $val | quote }}
+            {{- end }}
+          {{- end }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ $name }}
+  namespace: {{ include "aidd-ops.namespace" $ }}
+  labels:
+    {{- include "aidd-ops.labels" $ | nindent 4 }}
+    app.kubernetes.io/component: {{ $name }}
+spec:
+  type: ClusterIP
+  selector:
+    app.kubernetes.io/name: {{ $name }}
+    app.kubernetes.io/instance: {{ $.Release.Name }}
+  {{- if $svc.ports }}
+  ports:
+    {{- range $portName, $portVal := $svc.ports }}
+    - name: {{ $portName }}
+      port: {{ $portVal }}
+      targetPort: {{ $portName }}
+      protocol: TCP
+    {{- end }}
+  {{- end }}
+{{- end }}
+{{- end }}
