@@ -1,0 +1,160 @@
+{%- set slug = cookiecutter.slug -%}
+{%- set pascal = cookiecutter.pascal -%}
+{%- set desc = cookiecutter.desc -%}
+# -*- coding: utf-8 -*-
+"""
+Casos de uso (Use Cases) da fatia vertical {{ slug }}.
+
+Orquestram regras de aplicação    sem SQL e sem HTTP: montam o agregado a
+partir do DTO, chamam o repositório (porta), coletam os Domain Events do
+agregado e os publicam no barramento após o commit. Todo retorno é um
+``Result[T, E]`` do Shared Kernel — nunca exceção crua para cima.
+"""
+
+from __future__ import annotations
+
+from typing import Iterable, List, Optional
+
+from core.result import Result
+
+from ..domain.entities import {{ pascal }}Item
+from ..domain.events import DomainEvent
+from ..domain.repositories import {{ pascal }}Repositorio, PublicadorEventos
+from .dtos import (
+    Atualizar{{ pascal }}DTO,
+    Criar{{ pascal }}DTO,
+    Listar{{ pascal }}DTO,
+    Metricas{{ pascal }}DTO,
+    {{ pascal }}DTO,
+)
+
+
+class Criar{{ pascal }}UseCase:
+    """Cria um novo item do módulo {{ slug }}."""
+
+    def __init__(self, repositorio: {{ pascal }}Repositorio, publicador: Optional[PublicadorEventos] = None):
+        self._repositorio = repositorio
+        self._publicador = publicador
+
+    def executar(self, dto: Criar{{ pascal }}DTO) -> Result[{{ pascal }}DTO]:
+        try:
+            item = {{ pascal }}Item.novo(
+                titulo=dto.titulo,
+                descricao=dto.descricao,
+                dados=dto.dados,
+                status=dto.status,
+            )
+        except ValueError as exc:
+            return Result.fail(str(exc), codigo="TITULO_OBRIGATORIO")
+        item = self._repositorio.adicionar(item)
+        self._publicar_eventos(item.domain_events)
+        item.clear_domain_events()
+        return Result.ok({{ pascal }}DTO.from_entity(item))
+
+    def _publicar_eventos(self, eventos: Iterable[DomainEvent]) -> None:
+        if self._publicador is None:
+            return
+        for evento in eventos:
+            self._publicador.publicar(evento.event_name, evento.to_payload())
+
+
+class Obter{{ pascal }}UseCase:
+    """Obtém um item existente pelo ID."""
+
+    def __init__(self, repositorio: {{ pascal }}Repositorio):
+        self._repositorio = repositorio
+
+    def executar(self, item_id: int) -> Result[{{ pascal }}DTO]:
+        item = self._repositorio.buscar_por_id(item_id)
+        if item is None:
+            return Result.fail("Item não encontrado", codigo="NAO_ENCONTRADO")
+        return Result.ok({{ pascal }}DTO.from_entity(item))
+
+
+class Listar{{ pascal }}UseCase:
+    """Lista itens com filtros e paginação."""
+
+    def __init__(self, repositorio: {{ pascal }}Repositorio):
+        self._repositorio = repositorio
+
+    def executar(self, dto: Listar{{ pascal }}DTO) -> Result[List[{{ pascal }}DTO]]:
+        itens = self._repositorio.listar(
+            apenas_ativos=dto.apenas_ativos,
+            status=dto.status,
+            busca=dto.busca,
+            pagina=dto.pagina,
+            limite=dto.limite,
+        )
+        return Result.ok([{{ pascal }}DTO.from_entity(item) for item in itens])
+
+
+class Atualizar{{ pascal }}UseCase:
+    """Atualiza (merge) um item existente."""
+
+    def __init__(self, repositorio: {{ pascal }}Repositorio, publicador: Optional[PublicadorEventos] = None):
+        self._repositorio = repositorio
+        self._publicador = publicador
+
+    def executar(self, dto: Atualizar{{ pascal }}DTO) -> Result[{{ pascal }}DTO]:
+        item = self._repositorio.buscar_por_id(dto.item_id)
+        if item is None:
+            return Result.fail("Item não encontrado", codigo="NAO_ENCONTRADO")
+        try:
+            item.aplicar_atualizacao(
+                titulo=dto.titulo,
+                descricao=dto.descricao,
+                dados=dto.dados,
+                status=dto.status,
+            )
+        except ValueError as exc:
+            return Result.fail(str(exc), codigo="INVARIANTE_VIOLADO")
+        persistido = self._repositorio.atualizar(item)
+        if persistido is None:
+            return Result.fail("Item não encontrado", codigo="NAO_ENCONTRADO")
+        self._publicar_eventos(item.domain_events)
+        item.clear_domain_events()
+        return Result.ok({{ pascal }}DTO.from_entity(item))
+
+    def _publicar_eventos(self, eventos: Iterable[DomainEvent]) -> None:
+        if self._publicador is None:
+            return
+        for evento in eventos:
+            self._publicador.publicar(evento.event_name, evento.to_payload())
+
+
+class Deletar{{ pascal }}UseCase:
+    """Remove logicamente um item existente."""
+
+    def __init__(self, repositorio: {{ pascal }}Repositorio, publicador: Optional[PublicadorEventos] = None):
+        self._repositorio = repositorio
+        self._publicador = publicador
+
+    def executar(self, item_id: int) -> Result[int]:
+        item = self._repositorio.buscar_por_id(item_id)
+        if item is None:
+            return Result.fail("Item não encontrado", codigo="NAO_ENCONTRADO")
+        item.deletar()
+        persistido = self._repositorio.deletar(item)
+        if persistido is None:
+            return Result.fail("Item não encontrado", codigo="NAO_ENCONTRADO")
+        for evento in item.domain_events:
+            if self._publicador is not None:
+                self._publicador.publicar(evento.event_name, evento.to_payload())
+        item.clear_domain_events()
+        return Result.ok(item_id)
+
+
+class ObterMetricas{{ pascal }}UseCase:
+    """Obtém os KPIs agregados do módulo."""
+
+    def __init__(self, repositorio: {{ pascal }}Repositorio):
+        self._repositorio = repositorio
+
+    def executar(self) -> Result[Metricas{{ pascal }}DTO]:
+        metricas = self._repositorio.obter_metricas()
+        dto = Metricas{{ pascal }}DTO(
+            total=int(metricas.get("total", 0)),
+            ativos=int(metricas.get("ativos", 0)),
+            concluidos=int(metricas.get("concluidos", 0)),
+        )
+        return Result.ok(dto)

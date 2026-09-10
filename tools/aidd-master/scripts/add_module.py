@@ -54,6 +54,31 @@ def pascal_case(text: str) -> str:
     return ''.join(word.capitalize() for word in slug.split('_'))
 
 
+CAMADAS_DDD = ("domain", "application", "infrastructure", "interfaces")
+
+
+def _mover_camadas_ddd(gerado_dir: str, module_dir: str) -> None:
+    """Copia as 4 camadas DDD (domain/application/infrastructure/interfaces)
+    do template renderizado para o módulo, renomeando os arquivos gerados com
+    sufixo ``.j2`` para ``.py`` (mesma regra dos arquivos models/services/routes
+    de raiz). Em branch DDD (Item 08), é a origem das camadas da fatia."""
+    for camada in CAMADAS_DDD:
+        origem = os.path.join(gerado_dir, camada)
+        if not os.path.isdir(origem):
+            continue
+        destino = os.path.join(module_dir, camada)
+        for raiz, _, arquivos in os.walk(origem):
+            rel = os.path.relpath(raiz, origem)
+            pasta_destino = destino if rel == "." else os.path.join(destino, rel)
+            os.makedirs(pasta_destino, exist_ok=True)
+            for arquivo in arquivos:
+                nome_final = arquivo[:-3] if arquivo.endswith(".j2") else arquivo
+                shutil.move(
+                    os.path.join(raiz, arquivo),
+                    os.path.join(pasta_destino, nome_final),
+                )
+
+
 def criar_modulo(nome_modulo: str, descricao: str = "", target_dir: str = "."):
     """Gera atomicamente todos os artefatos de uma fatia vertical desacoplada."""
     slug = slugify(nome_modulo)
@@ -96,6 +121,10 @@ def criar_modulo(nome_modulo: str, descricao: str = "", target_dir: str = "."):
         shutil.move(os.path.join(gerado_dir, "__init__.py"), os.path.join(module_dir, "__init__.py"))
         for fname in ("models.py", "services.py", "routes.py"):
             shutil.move(os.path.join(gerado_dir, f"{fname}.j2"), os.path.join(module_dir, fname))
+
+        # Camadas Clean Architecture / DDD (domain, application, infrastructure,
+        # interfaces) da fatia vertical.
+        _mover_camadas_ddd(gerado_dir, module_dir)
 
         shutil.move(
             os.path.join(gerado_dir, "static", "components", f"{slug}.html"),
