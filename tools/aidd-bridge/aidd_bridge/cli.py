@@ -12,6 +12,7 @@ from .data_bridge import DataBridge
 from .unifier import MultiAppUnifier
 from .devops import DevOpsPackager
 from .teardown import BridgeTeardown
+from .auth_migrator import AuthMigrator
 
 def cmd_scan(args):
     scanner = LovableScanner(args.project_dir)
@@ -29,7 +30,7 @@ def cmd_convert_db(args):
     scanner = LovableScanner(args.project_dir)
     manifest = scanner.scan()
     db = DataBridge(manifest["database"]["migrations"])
-    sql = db.generate_consolidated_init_sql()
+    sql = db.generate_consolidated_init_sql(with_real_auth=args.with_gotrue)
     out_file = args.output or os.path.join(args.project_dir, "init-db.sql")
     with open(out_file, "w", encoding="utf-8") as f:
         f.write(sql)
@@ -47,12 +48,23 @@ def cmd_pack(args):
         args.project_dir,
         domain=args.domain,
         traefik_network=args.traefik_network,
-        cert_resolver=args.certresolver
+        cert_resolver=args.certresolver,
+        stack=args.stack
     )
     files = packager.export_all()
-    print(f"[SUCESSO] Pacote VPS gerado com sucesso em: {args.project_dir}")
+    print(f"[SUCESSO] Pacote VPS gerado com sucesso em: {args.project_dir} (stack={args.stack})")
     for name in files.keys():
         print(f"  - {name}")
+    if args.stack == "full":
+        print("[LEMBRETE] Use tambem 'convert-db --with-gotrue' para o init-db.sql combinar com este stack.")
+    return 0
+
+def cmd_migrate_auth(args):
+    migrator = AuthMigrator(args.source, args.target)
+    report = migrator.migrate(dry_run=not args.apply)
+    modo = "APLICADO" if args.apply else "PREVIEW (use --apply para gravar de verdade)"
+    print(f"[{modo}]")
+    print(json.dumps(report, indent=2, ensure_ascii=False, default=str))
     return 0
 
 def cmd_destroy(args):
@@ -105,6 +117,7 @@ def main():
     p_db = subparsers.add_parser("convert-db", help="Converte migracoes do Supabase em PostgreSQL consolidado")
     p_db.add_argument("project_dir", help="Diretorio do projeto")
     p_db.add_argument("--output", "-o", help="Caminho de saida para init-db.sql")
+    p_db.add_argument("--with-gotrue", action="store_true", help="Pacote de deploy usara GoTrue real (docker-compose.swarm.yml) em vez da emulacao de auth.users")
 
     # merge
     p_merge = subparsers.add_parser("merge", help="Unifica multiplos apps em um unico projeto")
@@ -117,6 +130,13 @@ def main():
     p_pack.add_argument("--domain", "-d", default="localhost", help="Dominio ou IP da VPS (ex: meusite.com)")
     p_pack.add_argument("--traefik-network", default="network_conexao", help="Nome da rede overlay do Traefik")
     p_pack.add_argument("--certresolver", default="letsencryptresolver", help="Nome do certresolver no Traefik")
+    p_pack.add_argument("--stack", choices=["lite", "full"], default="lite", help="lite (padrao): PostgREST+GoTrue minimos, poucos containers. full: stack oficial self-hosted da Supabase (Kong+GoTrue+PostgREST na mesma versao testada pela Supabase), mais pesado porem mais compativel")
+
+    # migrate-auth
+    p_authmig = subparsers.add_parser("migrate-auth", help="Migra contas reais (auth.users/auth.identities) de um Postgres de origem (ex: Supabase Cloud) para o destino self-hosted, preservando o hash de senha")
+    p_authmig.add_argument("--source", required=True, help="DSN Postgres de origem (ex: postgres://postgres:senha@db.xxx.supabase.co:5432/postgres)")
+    p_authmig.add_argument("--target", required=True, help="DSN Postgres de destino self-hosted (ex via tunel SSH: postgres://postgres:senha@127.0.0.1:5432/app_db)")
+    p_authmig.add_argument("--apply", action="store_true", help="Aplica de verdade. Sem essa flag roda em modo preview (nao grava nada)")
 
     # destroy
     p_destroy = subparsers.add_parser("destroy", help="Remove aplicacao da VPS: stack, volumes, DNS e diretorio")
@@ -140,6 +160,7 @@ def main():
         "convert-db": cmd_convert_db,
         "merge": cmd_merge,
         "pack": cmd_pack,
+        "migrate-auth": cmd_migrate_auth,
         "destroy": cmd_destroy
     }
 

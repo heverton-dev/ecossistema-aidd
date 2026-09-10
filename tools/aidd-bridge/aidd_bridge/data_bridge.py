@@ -30,13 +30,31 @@ class DataBridge:
 
         return sanitized
 
-    def generate_consolidated_init_sql(self) -> str:
+    def generate_consolidated_init_sql(self, with_real_auth: bool = False) -> str:
         """
         Gera um script init-db.sql consolidado com os schemas básicos,
         papéis de acesso do PostgREST (anon, authenticated, authenticator),
         emulação do schema auth (auth.users, auth.uid(), auth.role()) e tabelas.
+
+        with_real_auth: quando True, o pacote de deploy inclui um GoTrue real
+        (docker-compose.swarm.yml gerado pelo DevOpsPackager). Nesse caso a tabela
+        auth.users NÃO é criada aqui — GoTrue cria a sua própria (com colunas como
+        instance_id) na primeira subida. Criar a tabela emulada antes disso faz o
+        "CREATE TABLE IF NOT EXISTS" do GoTrue virar no-op sobre um schema incompatível,
+        e a migração dele falha com "column instance_id does not exist".
+        Quando False (padrão, modo simples sem GoTrue), a tabela emulada é criada
+        normalmente para permitir FKs/RLS via PostgREST puro.
         """
-        header = """-- =============================================================================
+        auth_table_block = "" if with_real_auth else """
+CREATE TABLE IF NOT EXISTS auth.users (
+    id uuid NOT NULL PRIMARY KEY DEFAULT gen_random_uuid(),
+    email text,
+    created_at timestamptz DEFAULT now()
+);
+"""
+        auth_grant_line = "" if with_real_auth else "GRANT SELECT ON auth.users TO anon, authenticated, service_role;\n"
+
+        header = f"""-- =============================================================================
 -- AIDD-BRIDGE: CONSOLIDATED POSTGRESQL INITIALIZATION
 -- Gerado determinísticamente para execução em PostgreSQL Puro / Self-Hosted VPS
 -- =============================================================================
@@ -49,23 +67,32 @@ CREATE EXTENSION IF NOT EXISTS "pgcrypto";
 -- Permite que Foreign Keys (REFERENCES auth.users) e RLS (auth.uid()) funcionem nativamente
 -- =============================================================================
 CREATE SCHEMA IF NOT EXISTS auth;
-
-CREATE TABLE IF NOT EXISTS auth.users (
-    id uuid NOT NULL PRIMARY KEY DEFAULT gen_random_uuid(),
-    email text,
-    created_at timestamptz DEFAULT now()
-);
-
+{auth_table_block}
+-- Lê o claim tanto do estilo antigo do PostgREST (uma GUC por claim,
+-- "request.jwt.claim.<nome>") quanto do estilo atual (PostgREST >= 11,
+-- uma única GUC JSON "request.jwt.claims"). PGRST_DB_USE_LEGACY_GUCS foi
+-- removido nas versões recentes, então depender só da GUC antiga faz
+-- auth.uid() sempre retornar NULL e todo RLS baseado nela travar o
+-- acesso do próprio usuário autenticado.
 CREATE OR REPLACE FUNCTION auth.uid() RETURNS uuid AS $$
-  SELECT NULLIF(current_setting('request.jwt.claim.sub', true), '')::uuid;
+  SELECT COALESCE(
+    NULLIF(current_setting('request.jwt.claim.sub', true), ''),
+    (NULLIF(current_setting('request.jwt.claims', true), '')::jsonb ->> 'sub')
+  )::uuid;
 $$ LANGUAGE sql STABLE;
 
 CREATE OR REPLACE FUNCTION auth.role() RETURNS text AS $$
-  SELECT NULLIF(current_setting('request.jwt.claim.role', true), '')::text;
+  SELECT COALESCE(
+    NULLIF(current_setting('request.jwt.claim.role', true), ''),
+    (NULLIF(current_setting('request.jwt.claims', true), '')::jsonb ->> 'role')
+  )::text;
 $$ LANGUAGE sql STABLE;
 
 CREATE OR REPLACE FUNCTION auth.email() RETURNS text AS $$
-  SELECT NULLIF(current_setting('request.jwt.claim.email', true), '')::text;
+  SELECT COALESCE(
+    NULLIF(current_setting('request.jwt.claim.email', true), ''),
+    (NULLIF(current_setting('request.jwt.claims', true), '')::jsonb ->> 'email')
+  )::text;
 $$ LANGUAGE sql STABLE;
 
 -- Roles para PostgREST (emulação Supabase REST API)
@@ -93,8 +120,7 @@ GRANT service_role TO authenticator;
 -- Grants nos schemas
 GRANT USAGE ON SCHEMA public TO anon, authenticated, service_role;
 GRANT USAGE ON SCHEMA auth TO anon, authenticated, service_role;
-GRANT SELECT ON auth.users TO anon, authenticated, service_role;
-
+{auth_grant_line}
 ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT ALL ON TABLES TO anon, authenticated, service_role;
 ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT ALL ON SEQUENCES TO anon, authenticated, service_role;
 

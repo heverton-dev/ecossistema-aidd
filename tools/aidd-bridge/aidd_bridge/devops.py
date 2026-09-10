@@ -9,6 +9,15 @@ from typing import Dict, Any, Optional
 from .jwt_generator import JWTGenerator
 
 class DevOpsPackager:
+    # Versões testadas manualmente (docker pull real) em 2026-09-10 — nunca usar
+    # ":latest" nas imagens do stack completo, senão uma atualização upstream
+    # pode quebrar a compatibilidade de um dia para o outro sem aviso.
+    FULL_STACK_IMAGES = {
+        "db": "supabase/postgres:15.14.1.170",
+        "auth": "supabase/gotrue:v2.197.0",
+        "kong": "kong:3.8.0",
+    }
+
     def __init__(
         self,
         target_dir: str,
@@ -17,13 +26,17 @@ class DevOpsPackager:
         cert_resolver: str = "letsencryptresolver",
         jwt_secret: Optional[str] = None,
         db_password: Optional[str] = None,
+        stack: str = "lite",
     ):
+        if stack not in ("lite", "full"):
+            raise ValueError(f'stack deve ser "lite" ou "full", recebido: {stack!r}')
         self.target_dir = os.path.abspath(target_dir)
         self.domain = domain or "localhost"
         self.traefik_network = traefik_network
         self.cert_resolver = cert_resolver
         self.db_password = db_password or "aidd_secure_vps_pwd_2026"
         self.jwt = JWTGenerator(jwt_secret=jwt_secret) if jwt_secret else JWTGenerator.novo()
+        self.stack = stack
 
     def generate_dockerfile(self) -> str:
         return """# Multi-stage build para SPA Lovable/Vite
@@ -125,6 +138,7 @@ services:
       PGRST_DB_SCHEMAS: "public"
       PGRST_DB_ANON_ROLE: "anon"
       PGRST_JWT_SECRET: "super-secret-jwt-token-with-at-least-32-chars-long"
+      PGRST_DB_USE_LEGACY_GUCS: "true"
     depends_on:
       - "db"
     expose:
@@ -138,6 +152,18 @@ volumes:
 """
 
     def generate_docker_compose_swarm(self) -> str:
+        """
+        Gera o docker-compose.swarm.yml. Modo "lite" (padrão): PostgREST puro
+        + GoTrue com Traefik roteando cada serviço direto (stripprefix manual
+        por rota). Modo "full": stack oficial self-hosted da Supabase (Kong
+        na frente, imagens supabase/*), mais fiel ao Supabase Cloud e sem essa
+        reimplementação manual do roteamento — ao custo de mais contêineres.
+        """
+        if self.stack == "full":
+            return self._generate_swarm_full()
+        return self._generate_swarm_lite()
+
+    def _generate_swarm_lite(self) -> str:
         app_slug = self.domain.replace(".", "-").replace(":", "-")
         jwt_secret = self.jwt.jwt_secret
         anon_key = self.jwt.anon_key()
@@ -214,6 +240,7 @@ services:
       PGRST_DB_SCHEMAS: "public"
       PGRST_DB_ANON_ROLE: "anon"
       PGRST_JWT_SECRET: "{jwt_secret}"
+      PGRST_DB_USE_LEGACY_GUCS: "true"
     networks:
       - "{self.traefik_network}"
       - "default"
@@ -233,6 +260,8 @@ services:
         - "traefik.http.routers.{app_slug}-api.service={app_slug}-api"
         - "traefik.http.services.{app_slug}-api.loadbalancer.server.port=3000"
         - "traefik.http.services.{app_slug}-api.loadbalancer.passHostHeader=true"
+        - "traefik.http.middlewares.{app_slug}-api-strip.stripprefix.prefixes=/rest/v1"
+        - "traefik.http.routers.{app_slug}-api.middlewares={app_slug}-api-strip"
 
   db:
     image: "postgres:16-alpine"
@@ -261,6 +290,226 @@ volumes:
   {app_slug}_postgres_data:
 """
 
+    @staticmethod
+    def _kong_entrypoint_yaml() -> str:
+        """
+        Valor YAML (já escapado) do entrypoint que injeta
+        ${SUPABASE_ANON_KEY}/${SUPABASE_SERVICE_KEY} no kong.yml antes de
+        subir o Kong. Construído por código (não digitado à mão dentro do
+        template) porque tem 3 camadas de escaping (YAML > bash > eval) —
+        verificado com um deploy real e descartável em 2026-09-10.
+        Usa /tmp em vez de ~ (home do usuário "kong") porque a home não
+        existe por padrão nessa imagem e não é gravável pelo uid não-root.
+        """
+        raw = (
+            "bash -c "
+            + chr(39)
+            + 'eval "echo \\"$$(cat /tmp/temp.yml)\\"" > /tmp/kong.yml '
+            + "&& /docker-entrypoint.sh kong docker-start"
+            + chr(39)
+        )
+        return chr(39) + raw.replace(chr(39), chr(39) * 2) + chr(39)
+
+    def generate_kong_config(self) -> str:
+        """
+        Config declarativa (DB-less) do Kong para o stack "full". As chaves
+        anon/service_role são injetadas via variável de ambiente pelo próprio
+        entrypoint do serviço kong (ver _generate_swarm_full) — aqui ficam só
+        os placeholders ${SUPABASE_ANON_KEY} / ${SUPABASE_SERVICE_KEY}.
+        """
+        return """_format_version: "2.1"
+_transform: true
+
+services:
+  - name: auth-v1
+    url: http://auth:9999/
+    routes:
+      - name: auth-v1-all
+        strip_path: true
+        paths:
+          - /auth/v1/
+    plugins:
+      - name: cors
+
+  - name: rest-v1
+    url: http://rest:3000/
+    routes:
+      - name: rest-v1-all
+        strip_path: true
+        paths:
+          - /rest/v1/
+    plugins:
+      - name: cors
+      - name: key-auth
+        config:
+          hide_credentials: true
+      - name: acl
+        config:
+          hide_groups_header: true
+
+consumers:
+  - username: anon
+    keyauth_credentials:
+      - key: ${SUPABASE_ANON_KEY}
+  - username: service_role
+    keyauth_credentials:
+      - key: ${SUPABASE_SERVICE_KEY}
+
+acls:
+  - consumer: anon
+    group: anon
+  - consumer: service_role
+    group: admin
+"""
+
+    def _generate_swarm_full(self) -> str:
+        """
+        Stack oficial self-hosted da Supabase: Postgres já vem com os schemas
+        auth/storage/realtime prontos de fábrica (sem a emulação manual de
+        auth.users), GoTrue e PostgREST nas mesmas versões que a Supabase testa
+        junto, e o Kong na frente cuidando do roteamento /auth/v1 e /rest/v1 —
+        elimina a categoria inteira de bug encontrada no modo "lite" (rota sem
+        stripprefix, auth.uid() incompatível com a versão do PostgREST etc.),
+        ao custo de mais 1 contêiner (kong) e imagens mais pesadas.
+
+        Escopo desta v1: db + auth + rest + kong. Realtime/Storage/Studio
+        ficam de fora por ora (cada um exige bootstrap próprio bem mais
+        elaborado) — podem ser adicionados depois se o projeto precisar.
+        """
+        app_slug = self.domain.replace(".", "-").replace(":", "-")
+        jwt_secret = self.jwt.jwt_secret
+        anon_key = self.jwt.anon_key()
+        service_key = self.jwt.service_role_key()
+        db_password = self.db_password
+        protocol = "http" if self.domain == "localhost" else "https"
+        images = self.FULL_STACK_IMAGES
+
+        return f"""version: '3.8'
+
+services:
+  web:
+    image: "{app_slug}-web:latest"
+    networks:
+      - "{self.traefik_network}"
+      - "default"
+    deploy:
+      mode: replicated
+      replicas: 1
+      placement:
+        constraints:
+          - "node.role == manager"
+      labels:
+        - "traefik.enable=1"
+        - "traefik.docker.network={self.traefik_network}"
+        - "traefik.http.routers.{app_slug}-web.rule=Host(`{self.domain}`)"
+        - "traefik.http.routers.{app_slug}-web.entrypoints=websecure"
+        - "traefik.http.routers.{app_slug}-web.priority=1"
+        - "traefik.http.routers.{app_slug}-web.tls.certresolver={self.cert_resolver}"
+        - "traefik.http.routers.{app_slug}-web.service={app_slug}-web"
+        - "traefik.http.services.{app_slug}-web.loadbalancer.server.port=80"
+        - "traefik.http.services.{app_slug}-web.loadbalancer.passHostHeader=true"
+
+  kong:
+    image: "{images['kong']}"
+    entrypoint: {self._kong_entrypoint_yaml()}
+    environment:
+      KONG_DATABASE: "off"
+      KONG_DECLARATIVE_CONFIG: "/tmp/kong.yml"
+      KONG_DNS_ORDER: "LAST,A,CNAME"
+      KONG_PLUGINS: "request-transformer,cors,key-auth,acl"
+      KONG_NGINX_PROXY_PROXY_BUFFER_SIZE: "160k"
+      KONG_NGINX_PROXY_PROXY_BUFFERS: "64 160k"
+      SUPABASE_ANON_KEY: "{anon_key}"
+      SUPABASE_SERVICE_KEY: "{service_key}"
+    volumes:
+      - "./kong.yml:/tmp/temp.yml:ro"
+    networks:
+      - "{self.traefik_network}"
+      - "default"
+    deploy:
+      mode: replicated
+      replicas: 1
+      placement:
+        constraints:
+          - "node.role == manager"
+      labels:
+        - "traefik.enable=1"
+        - "traefik.docker.network={self.traefik_network}"
+        - "traefik.http.routers.{app_slug}-api.rule=Host(`{self.domain}`) && (PathPrefix(`/auth/v1`) || PathPrefix(`/rest/v1`))"
+        - "traefik.http.routers.{app_slug}-api.entrypoints=websecure"
+        - "traefik.http.routers.{app_slug}-api.priority=2"
+        - "traefik.http.routers.{app_slug}-api.tls.certresolver={self.cert_resolver}"
+        - "traefik.http.routers.{app_slug}-api.service={app_slug}-api"
+        - "traefik.http.services.{app_slug}-api.loadbalancer.server.port=8000"
+        - "traefik.http.services.{app_slug}-api.loadbalancer.passHostHeader=true"
+
+  auth:
+    image: "{images['auth']}"
+    environment:
+      GOTRUE_API_HOST: "0.0.0.0"
+      GOTRUE_API_PORT: "9999"
+      API_EXTERNAL_URL: "{protocol}://{self.domain}/auth/v1"
+      GOTRUE_SITE_URL: "{protocol}://{self.domain}"
+      GOTRUE_DB_DRIVER: "postgres"
+      GOTRUE_DB_DATABASE_URL: "postgres://supabase_auth_admin:{db_password}@db:5432/postgres?search_path=auth"
+      GOTRUE_JWT_SECRET: "{jwt_secret}"
+      GOTRUE_JWT_EXP: "3600"
+      GOTRUE_JWT_DEFAULT_GROUP_NAME: "authenticated"
+      GOTRUE_DISABLE_SIGNUP: "false"
+      GOTRUE_MAILER_AUTOCONFIRM: "true"
+      GOTRUE_SMS_AUTOCONFIRM: "true"
+      GOTRUE_OPERATOR_TOKEN: "{service_key}"
+    networks:
+      - "default"
+    deploy:
+      mode: replicated
+      replicas: 1
+      placement:
+        constraints:
+          - "node.role == manager"
+
+  rest:
+    image: "postgrest/postgrest:latest"
+    environment:
+      PGRST_DB_URI: "postgres://authenticator:{db_password}@db:5432/postgres"
+      PGRST_DB_SCHEMAS: "public"
+      PGRST_DB_ANON_ROLE: "anon"
+      PGRST_JWT_SECRET: "{jwt_secret}"
+    networks:
+      - "default"
+    deploy:
+      mode: replicated
+      replicas: 1
+      placement:
+        constraints:
+          - "node.role == manager"
+
+  db:
+    image: "{images['db']}"
+    environment:
+      POSTGRES_PASSWORD: "{db_password}"
+      JWT_SECRET: "{jwt_secret}"
+      JWT_EXP: "3600"
+    volumes:
+      - "{app_slug}_postgres_data:/var/lib/postgresql/data"
+    networks:
+      - "default"
+    deploy:
+      mode: replicated
+      replicas: 1
+      placement:
+        constraints:
+          - "node.role == manager"
+
+networks:
+  {self.traefik_network}:
+    external: true
+  default:
+    driver: overlay
+
+volumes:
+  {app_slug}_postgres_data:
+"""
 
     def generate_caddyfile(self) -> str:
         if self.domain == "localhost":
@@ -366,6 +615,9 @@ coverage
             "Caddyfile": self.generate_caddyfile(),
             ".env.production": self.generate_env_production()
         }
+
+        if self.stack == "full":
+            targets["kong.yml"] = self.generate_kong_config()
 
         for filename, content in targets.items():
             dest = os.path.join(self.target_dir, filename)
