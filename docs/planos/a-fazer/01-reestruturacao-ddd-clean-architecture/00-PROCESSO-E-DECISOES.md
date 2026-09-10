@@ -48,11 +48,11 @@ Diagnostico rapido → Definicao de Pronto checavel → Prompt de Execucao autoc
 | 1 | fechar-nucleo-compartilhado-e-honestidade-rotulos | ✅ Concluido — mesclado em main (6c8a427), auditado por reproducao real | `01-fechar-nucleo-compartilhado-e-honestidade-rotulos.md` |
 | 2 | unificar-orquestradores-generator-e-ops | ✅ Concluido — mesclado em main (6c8a427), auditado por reproducao real | `02-unificar-orquestradores-generator-e-ops.md` |
 | 3 | extrair-camada-aplicacao-dos-clis-master-enterprise | ✅ Concluido — mesclado em main (6c8a427), auditado por reproducao real | `03-extrair-camada-aplicacao-dos-clis-master-enterprise.md` |
-| 4 | remover-hacks-syspath-no-generator | ⏳ Rascunho gerado, aguardando aprovacao (Onda 2) | `04-remover-hacks-syspath-no-generator.md` |
+| 4 | remover-hacks-syspath-no-generator | ✅ Concluido (escopo reduzido, aprovado pelo usuario) — mesclado em main (710a8bc), auditado por reproducao real | `04-remover-hacks-syspath-no-generator.md` |
 | 5 | contrato-formal-schema-ops-para-master-enterprise | ✅ Concluido — mesclado em main (6c8a427), auditado por reproducao real | `05-contrato-formal-schema-ops-para-master-enterprise.md` |
 | 6 | novo-molde-fatia-vertical-ddd-clean-master | ✅ Concluido — corrigido, mesclado em main (6c8a427), auditado por reproducao real | `06-novo-molde-fatia-vertical-ddd-clean-master.md` |
 | 7 | gate-g-arquitetura-deliverable | ✅ Concluido — mesclado em main (6c8a427), auditado por reproducao real | `07-gate-g-arquitetura-deliverable.md` |
-| 8 | atualizar-scaffolders-master-enterprise-cookiecutter | ⏳ Rascunho gerado, aguardando aprovacao (Onda 2) | `08-atualizar-scaffolders-master-enterprise-cookiecutter.md` |
+| 8 | atualizar-scaffolders-master-enterprise-cookiecutter | ✅ Concluido — mesclado em main (710a8bc), auditado por reproducao real | `08-atualizar-scaffolders-master-enterprise-cookiecutter.md` |
 | 9 | trazer-deliverables-generator-perimetro-gates | ⏳ Rascunho gerado, aguardando aprovacao (Onda 3) | `09-trazer-deliverables-generator-perimetro-gates.md` |
 | 10 | teste-integracao-helm-aidd-ops | ✅ Concluido — mesclado em main (6c8a427), auditado por reproducao real | `10-teste-integracao-helm-aidd-ops.md` |
 
@@ -129,3 +129,22 @@ pos-merge: G_DRIFT_NUCLEO_COMPARTILHADO, G_HONESTIDADE_ROTULO, G_HARNESS_COMPAT,
 G_CLI_HELP_CONSISTENCIA — todos APROVADO. G_ARQUITETURA_DELIVERABLE reprova o codigo legado como esperado
 (stages: [manual], correcao e Fase 2 do proprio plano). Onda 2 (Itens 4 e 8) liberada para comecar a partir da
 `main` atualizada.
+
+### Item 4 — decisao de escopo (usuario) — 2026-09-10
+
+O executor mapeou 16 pontos de `sys.path.insert` em producao no aidd-generator, nao so o carregamento de
+fases citado no contexto original do item. Zerar os 16 exigiria mudar a forma de invocacao de scripts/gates
+externos (ex.: `G_INJECT.py`), tocando documentacao e `ecossistema.py` — mudanca bem mais larga que o item
+pedia. Perguntado, o usuario pediu recomendacao tecnica; recomendei resolver so o alvo real do item (pipeline
+de fases) e abrir os 6 pontos restantes (`aidd_inject.py`, `slash_gen.py`, `detector_camada.py`, `injetor.py`,
+`G_INJECT.py`, `web_app.py`) como follow-up separado, para nao inflar o raio de mudanca deste item. Usuario
+aprovou. Registrado aqui para rastreabilidade — criterio literal de saida ("zero sys.path.insert") nao foi
+100% atendido de proposito, com follow-up explicito pendente.
+
+### Merge da Onda 2 concluido — 2026-09-10
+
+Itens 4 e 8 mesclados em `main` e enviados ao GitHub (commit `710a8bc`). Gates estaticos reauditados pos-merge
+(G_DRIFT_NUCLEO_COMPARTILHADO, G_HARNESS_COMPAT, G_COMPONENTE_AGNOSTICO, G_CLI_HELP_CONSISTENCIA,
+G_HONESTIDADE_ROTULO) — todos APROVADO. pytest aidd-generator (929 passed) e aidd-master (286 passed, 3
+skipped, 0 falhas) reconferidos no resultado final do merge. Falta apenas o Item 9 (Onda 3), que depende do
+gate do Item 7 (ja em main) e do generator consolidado (Itens 2 e 4, ja em main) — liberado para comecar.
