@@ -8,6 +8,7 @@
 |---|---|
 | Direcionamento Estrategico Anti Nih | `feitos/02-direcionamento-estrategico-anti-nih/` |
 | Evolucao Aidd Ops Fase Completa | `feitos/03-evolucao-aidd-ops-fase-completa/` |
+| Aidd Bridge | `feitos/aidd-bridge/` |
 | Correcao Arquitetura Limpa | `feitos/correcao-arquitetura-limpa/` |
 | Correcao Codigo Limpo | `feitos/correcao-codigo-limpo/` |
 | Evolucao Notas Auditoria | `feitos/evolucao-notas-auditoria/` |
@@ -36,12 +37,6 @@
 | Resiliencia Concorrencia E Integridade | `a-fazer/04-resiliencia-concorrencia-e-integridade/` |
 | Seguranca Zero Trust E Supply Chain | `a-fazer/05-seguranca-zero-trust-e-supply-chain/` |
 | Bootstrap Ambiente E Preflight Host | `a-fazer/06-bootstrap-ambiente-e-preflight-host/` |
-
-## ⚠️ Status indeterminado (revisar manualmente)
-
-| Iniciativa | Local |
-|---|---|
-| Aidd Bridge | `a-fazer/aidd-bridge/` |
 
 ---
 

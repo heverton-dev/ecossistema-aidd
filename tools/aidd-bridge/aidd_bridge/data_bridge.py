@@ -95,6 +95,15 @@ CREATE OR REPLACE FUNCTION auth.email() RETURNS text AS $$
   )::text;
 $$ LANGUAGE sql STABLE;
 
+-- auth.jwt() — devolve o crachá (token) inteiro como JSON, igual a Supabase
+-- real. Muitas políticas de RLS geradas pela Lovable usam isso pra ler dado
+-- extra do usuário (ex: auth.jwt() -> 'app_metadata' ->> 'empresa_id'), não
+-- só uid/role/email. Sem essa função, qualquer política que a use trava com
+-- "function auth.jwt() does not exist" assim que alguém tenta acessar.
+CREATE OR REPLACE FUNCTION auth.jwt() RETURNS jsonb AS $$
+  SELECT COALESCE(NULLIF(current_setting('request.jwt.claims', true), ''), '{{}}')::jsonb;
+$$ LANGUAGE sql STABLE;
+
 -- Roles para PostgREST (emulação Supabase REST API)
 DO $$
 BEGIN
@@ -105,13 +114,21 @@ BEGIN
         CREATE ROLE authenticated NOLOGIN;
     END IF;
     IF NOT EXISTS (SELECT FROM pg_catalog.pg_roles WHERE rolname = 'service_role') THEN
-        CREATE ROLE service_role NOLOGIN;
+        CREATE ROLE service_role NOLOGIN BYPASSRLS;
     END IF;
     IF NOT EXISTS (SELECT FROM pg_catalog.pg_roles WHERE rolname = 'authenticator') THEN
         CREATE ROLE authenticator NOINHERIT LOGIN PASSWORD 'aidd_authenticator_pwd';
     END IF;
 END
 $$;
+
+-- Garante BYPASSRLS mesmo se service_role já existia de uma execução anterior
+-- sem essa flag. Sem isso, a "chave mestra" fica presa pelas mesmas travas de
+-- RLS de um usuário comum — descoberto testando upload real no Storage: toda
+-- criação de bucket/objeto é feita como service_role e trava com "new row
+-- violates row-level security policy" até essa role poder ignorar RLS, igual
+-- ao Supabase de verdade.
+ALTER ROLE service_role BYPASSRLS;
 
 GRANT anon TO authenticator;
 GRANT authenticated TO authenticator;

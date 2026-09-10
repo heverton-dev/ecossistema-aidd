@@ -30,9 +30,29 @@ class LovableScanner:
             "components": self._scan_components(),
             "styles": self._scan_styles(),
             "database": self._scan_database(),
-            "env_vars": self._scan_env_vars()
+            "env_vars": self._scan_env_vars(),
+            "edge_functions": self._scan_edge_functions()
         }
         return manifest
+
+    def _scan_edge_functions(self) -> List[str]:
+        """
+        Lista as Supabase Edge Functions reais do projeto (pastas com
+        index.ts dentro de supabase/functions/), ignorando "main" e
+        "_shared" — "main" é o roteador que o próprio aidd-bridge gera,
+        "_shared" é convenção de código compartilhado entre funções, não
+        uma função em si.
+        """
+        functions_dir = os.path.join(self.project_dir, "supabase", "functions")
+        functions = []
+        if os.path.exists(functions_dir):
+            for name in sorted(os.listdir(functions_dir)):
+                if name in ("main", "_shared") or name.startswith("."):
+                    continue
+                full = os.path.join(functions_dir, name)
+                if os.path.isdir(full) and os.path.exists(os.path.join(full, "index.ts")):
+                    functions.append(name)
+        return functions
 
     def _scan_package_json(self) -> Dict[str, Any]:
         pkg_path = os.path.join(self.project_dir, "package.json")

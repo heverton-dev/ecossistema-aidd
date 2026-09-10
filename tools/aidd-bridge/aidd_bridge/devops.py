@@ -16,6 +16,8 @@ class DevOpsPackager:
         "db": "supabase/postgres:15.14.1.170",
         "auth": "supabase/gotrue:v2.197.0",
         "kong": "kong:3.8.0",
+        "storage": "supabase/storage-api:v1.75.0",
+        "functions": "supabase/edge-runtime:v1.76.2",
     }
 
     def __init__(
@@ -37,6 +39,25 @@ class DevOpsPackager:
         self.db_password = db_password or "aidd_secure_vps_pwd_2026"
         self.jwt = JWTGenerator(jwt_secret=jwt_secret) if jwt_secret else JWTGenerator.novo()
         self.stack = stack
+        self.functions = self._detect_edge_functions()
+
+    def _detect_edge_functions(self) -> "list[str]":
+        """
+        Detecta automaticamente Supabase Edge Functions reais do projeto
+        (supabase/functions/<nome>/index.ts, exceto "main"/"_shared") para
+        decidir sozinho se o serviço de funções entra no pacote — sem
+        precisar de uma flag manual do usuário.
+        """
+        functions_dir = os.path.join(self.target_dir, "supabase", "functions")
+        functions = []
+        if os.path.isdir(functions_dir):
+            for name in sorted(os.listdir(functions_dir)):
+                if name in ("main", "_shared") or name.startswith("."):
+                    continue
+                full = os.path.join(functions_dir, name)
+                if os.path.isdir(full) and os.path.exists(os.path.join(full, "index.ts")):
+                    functions.append(name)
+        return functions
 
     def generate_dockerfile(self) -> str:
         return """# Multi-stage build para SPA Lovable/Vite
@@ -87,6 +108,39 @@ CMD ["nginx", "-g", "daemon off;"]
 """
 
     def generate_docker_compose(self, db_password: str = "aidd_secure_vps_pwd_2026") -> str:
+        # Mesmo segredo/senha usados no resto do pacote (.env.production,
+        # docker-compose.swarm.yml) — antes este arquivo usava um JWT secret
+        # fixo diferente do gerado por self.jwt, então nenhum token emitido
+        # pela ferramenta validava contra este PostgREST. Corrigido junto
+        # com a adição do Storage em 2026-09-10.
+        jwt_secret = self.jwt.jwt_secret
+        anon_key = self.jwt.anon_key()
+        service_key = self.jwt.service_role_key()
+        functions_block = ""
+        functions_depends = ""
+        if self.functions:
+            functions_depends = '\n      - "functions"'
+            functions_block = f"""
+  functions:
+    image: "{self.FULL_STACK_IMAGES['functions']}"
+    container_name: "aidd_edge_functions"
+    restart: "unless-stopped"
+    command:
+      - "start"
+      - "--main-service"
+      - "/home/deno/functions/main"
+    environment:
+      SUPABASE_URL: "http://caddy:80"
+      SUPABASE_ANON_KEY: "{anon_key}"
+      SUPABASE_SERVICE_ROLE_KEY: "{service_key}"
+      SUPABASE_DB_URL: "postgres://postgres:{db_password}@db:5432/app_db"
+    volumes:
+      - "./supabase/functions:/home/deno/functions:ro"
+    depends_on:
+      - "db"
+    expose:
+      - "9000"
+"""
         domain_block = f"""
   caddy:
     image: "caddy:2-alpine"
@@ -102,6 +156,7 @@ CMD ["nginx", "-g", "daemon off;"]
     depends_on:
       - "web"
       - "postgrest"
+      - "storage"{functions_depends}
 """
         return f"""version: '3.8'
 
@@ -137,16 +192,41 @@ services:
       PGRST_DB_URI: "postgres://postgres:{db_password}@db:5432/app_db"
       PGRST_DB_SCHEMAS: "public"
       PGRST_DB_ANON_ROLE: "anon"
-      PGRST_JWT_SECRET: "super-secret-jwt-token-with-at-least-32-chars-long"
+      PGRST_JWT_SECRET: "{jwt_secret}"
       PGRST_DB_USE_LEGACY_GUCS: "true"
     depends_on:
       - "db"
     expose:
       - "3000"
-{domain_block}
+
+  storage:
+    image: "{self.FULL_STACK_IMAGES['storage']}"
+    container_name: "aidd_storage_api"
+    restart: "unless-stopped"
+    environment:
+      ANON_KEY: "{anon_key}"
+      SERVICE_KEY: "{service_key}"
+      POSTGREST_URL: "http://postgrest:3000"
+      PGRST_JWT_SECRET: "{jwt_secret}"
+      DATABASE_URL: "postgres://postgres:{db_password}@db:5432/app_db"
+      FILE_SIZE_LIMIT: "52428800"
+      STORAGE_BACKEND: "file"
+      FILE_STORAGE_BACKEND_PATH: "/var/lib/storage"
+      TENANT_ID: "stub"
+      REGION: "stub"
+      GLOBAL_S3_BUCKET: "stub"
+      ENABLE_IMAGE_TRANSFORMATION: "false"
+    volumes:
+      - "storage_data:/var/lib/storage"
+    depends_on:
+      - "db"
+    expose:
+      - "5000"
+{functions_block}{domain_block}
 
 volumes:
   postgres_data:
+  storage_data:
   caddy_data:
   caddy_config:
 """
@@ -170,6 +250,43 @@ volumes:
         service_key = self.jwt.service_role_key()
         db_password = self.db_password
         protocol = "http" if self.domain == "localhost" else "https"
+        functions_service = ""
+        if self.functions:
+            functions_service = f"""
+  functions:
+    image: "{self.FULL_STACK_IMAGES['functions']}"
+    command:
+      - "start"
+      - "--main-service"
+      - "/home/deno/functions/main"
+    environment:
+      SUPABASE_URL: "{protocol}://{self.domain}"
+      SUPABASE_ANON_KEY: "{anon_key}"
+      SUPABASE_SERVICE_ROLE_KEY: "{service_key}"
+      SUPABASE_DB_URL: "postgres://postgres:{db_password}@db:5432/app_db"
+    volumes:
+      - "./supabase/functions:/home/deno/functions:ro"
+    networks:
+      - "{self.traefik_network}"
+      - "default"
+    deploy:
+      mode: replicated
+      replicas: 1
+      placement:
+        constraints:
+          - "node.role == manager"
+      labels:
+        - "traefik.enable=1"
+        - "traefik.docker.network={self.traefik_network}"
+        - "traefik.http.routers.{app_slug}-functions.rule=Host(`{self.domain}`) && PathPrefix(`/functions/v1`)"
+        - "traefik.http.routers.{app_slug}-functions.entrypoints=websecure"
+        - "traefik.http.routers.{app_slug}-functions.priority=5"
+        - "traefik.http.routers.{app_slug}-functions.tls.certresolver={self.cert_resolver}"
+        - "traefik.http.routers.{app_slug}-functions.service={app_slug}-functions"
+        - "traefik.http.services.{app_slug}-functions.loadbalancer.server.port=9000"
+        - "traefik.http.middlewares.{app_slug}-functions-strip.stripprefix.prefixes=/functions/v1"
+        - "traefik.http.routers.{app_slug}-functions.middlewares={app_slug}-functions-strip"
+"""
 
         return f"""version: '3.8'
 
@@ -263,6 +380,44 @@ services:
         - "traefik.http.middlewares.{app_slug}-api-strip.stripprefix.prefixes=/rest/v1"
         - "traefik.http.routers.{app_slug}-api.middlewares={app_slug}-api-strip"
 
+  storage:
+    image: "{self.FULL_STACK_IMAGES['storage']}"
+    environment:
+      ANON_KEY: "{anon_key}"
+      SERVICE_KEY: "{service_key}"
+      POSTGREST_URL: "http://postgrest:3000"
+      PGRST_JWT_SECRET: "{jwt_secret}"
+      DATABASE_URL: "postgres://postgres:{db_password}@db:5432/app_db"
+      FILE_SIZE_LIMIT: "52428800"
+      STORAGE_BACKEND: "file"
+      FILE_STORAGE_BACKEND_PATH: "/var/lib/storage"
+      TENANT_ID: "{app_slug}"
+      REGION: "stub"
+      GLOBAL_S3_BUCKET: "stub"
+      ENABLE_IMAGE_TRANSFORMATION: "false"
+    volumes:
+      - "{app_slug}_storage_data:/var/lib/storage"
+    networks:
+      - "{self.traefik_network}"
+      - "default"
+    deploy:
+      mode: replicated
+      replicas: 1
+      placement:
+        constraints:
+          - "node.role == manager"
+      labels:
+        - "traefik.enable=1"
+        - "traefik.docker.network={self.traefik_network}"
+        - "traefik.http.routers.{app_slug}-storage.rule=Host(`{self.domain}`) && PathPrefix(`/storage/v1`)"
+        - "traefik.http.routers.{app_slug}-storage.entrypoints=websecure"
+        - "traefik.http.routers.{app_slug}-storage.priority=4"
+        - "traefik.http.routers.{app_slug}-storage.tls.certresolver={self.cert_resolver}"
+        - "traefik.http.routers.{app_slug}-storage.service={app_slug}-storage"
+        - "traefik.http.services.{app_slug}-storage.loadbalancer.server.port=5000"
+        - "traefik.http.middlewares.{app_slug}-storage-strip.stripprefix.prefixes=/storage/v1"
+        - "traefik.http.routers.{app_slug}-storage.middlewares={app_slug}-storage-strip"
+{functions_service}
   db:
     image: "postgres:16-alpine"
     environment:
@@ -288,6 +443,7 @@ networks:
 
 volumes:
   {app_slug}_postgres_data:
+  {app_slug}_storage_data:
 """
 
     @staticmethod
@@ -310,6 +466,65 @@ volumes:
         )
         return chr(39) + raw.replace(chr(39), chr(39) * 2) + chr(39)
 
+    def generate_functions_main_router(self) -> str:
+        """
+        Roteador "main" que o supabase/edge-runtime usa para despachar
+        /functions/v1/<nome> para a pasta supabase/functions/<nome>/index.ts
+        certa dentro do próprio projeto. Boilerplate padrão da Supabase para
+        self-host — verificado com uma função real rodando de verdade em
+        2026-09-10 (chamou a função, leu variável de ambiente, respondeu).
+        """
+        return """import { serve } from "https://deno.land/std@0.131.0/http/server.ts";
+
+console.log("main function started");
+
+serve(async (req: Request) => {
+  const url = new URL(req.url);
+  const { pathname } = url;
+  const path_parts = pathname.split("/");
+  const service_name = path_parts[1];
+
+  if (!service_name || service_name === "") {
+    return new Response(JSON.stringify({ error: "missing function name" }), {
+      status: 400,
+      headers: { "Content-Type": "application/json" },
+    });
+  }
+
+  const servicePath = `/home/deno/functions/${service_name}`;
+  console.error(`serving the request with ${servicePath}`);
+
+  const createWorker = async () => {
+    const memoryLimitMb = 150;
+    const workerTimeoutMs = 5 * 60 * 1000;
+    const noModuleCache = false;
+    const importMapPath = null;
+    const envVarsObj = Deno.env.toObject();
+    const envVars = Object.keys(envVarsObj).map((k) => [k, envVarsObj[k]]);
+
+    return await EdgeRuntime.userWorkers.create({
+      servicePath,
+      memoryLimitMb,
+      workerTimeoutMs,
+      noModuleCache,
+      importMapPath,
+      envVars,
+    });
+  };
+
+  try {
+    const worker = await createWorker();
+    return await worker.fetch(req);
+  } catch (e) {
+    const error = { msg: String(e) };
+    return new Response(JSON.stringify(error), {
+      status: 500,
+      headers: { "Content-Type": "application/json" },
+    });
+  }
+});
+"""
+
     def generate_kong_config(self) -> str:
         """
         Config declarativa (DB-less) do Kong para o stack "full". As chaves
@@ -317,7 +532,20 @@ volumes:
         entrypoint do serviço kong (ver _generate_swarm_full) — aqui ficam só
         os placeholders ${SUPABASE_ANON_KEY} / ${SUPABASE_SERVICE_KEY}.
         """
-        return """_format_version: "2.1"
+        functions_block = ""
+        if self.functions:
+            functions_block = """
+  - name: functions-v1
+    url: http://functions:9000/
+    routes:
+      - name: functions-v1-all
+        strip_path: true
+        paths:
+          - /functions/v1/
+    plugins:
+      - name: cors
+"""
+        return f"""_format_version: '2.1'
 _transform: true
 
 services:
@@ -346,20 +574,54 @@ services:
       - name: acl
         config:
           hide_groups_header: true
+          allow:
+            - anon
+            - admin
 
+  - name: storage-v1
+    url: http://storage:5000/
+    routes:
+      - name: storage-v1-all
+        strip_path: true
+        paths:
+          - /storage/v1/
+    plugins:
+      - name: cors
+{functions_block}
 consumers:
   - username: anon
     keyauth_credentials:
-      - key: ${SUPABASE_ANON_KEY}
+      - key: ${{SUPABASE_ANON_KEY}}
   - username: service_role
     keyauth_credentials:
-      - key: ${SUPABASE_SERVICE_KEY}
+      - key: ${{SUPABASE_SERVICE_KEY}}
 
 acls:
   - consumer: anon
     group: anon
   - consumer: service_role
     group: admin
+"""
+
+    def generate_db_passwords_sql(self) -> str:
+        """
+        Só para o stack "full" (imagem supabase/postgres). auth/rest/storage
+        se conectam como supabase_auth_admin / authenticator /
+        supabase_storage_admin — mas essas contas nascem SEM senha na imagem
+        oficial (verificado com um deploy real e descartável em 2026-09-10:
+        toda conexão vinda de outro contêiner falhava com "password
+        authentication failed" / "has no password assigned"). E elas são
+        "reserved roles" — só supabase_admin (não "postgres", que aqui não é
+        superuser de verdade) pode alterá-las, por isso o \\connect explícito.
+        Precisa rodar DEPOIS do migrate.sh interno da imagem (que cria essas
+        roles), então o nome do arquivo em /docker-entrypoint-initdb.d/ tem
+        que ordenar alfabeticamente depois de "migrate.sh" — daí o "zzzz".
+        """
+        db_password = self.db_password
+        return f"""\\connect postgres supabase_admin
+ALTER ROLE supabase_auth_admin WITH PASSWORD '{db_password}';
+ALTER ROLE supabase_storage_admin WITH PASSWORD '{db_password}';
+ALTER ROLE authenticator WITH PASSWORD '{db_password}';
 """
 
     def _generate_swarm_full(self) -> str:
@@ -372,9 +634,10 @@ acls:
         stripprefix, auth.uid() incompatível com a versão do PostgREST etc.),
         ao custo de mais 1 contêiner (kong) e imagens mais pesadas.
 
-        Escopo desta v1: db + auth + rest + kong. Realtime/Storage/Studio
-        ficam de fora por ora (cada um exige bootstrap próprio bem mais
-        elaborado) — podem ser adicionados depois se o projeto precisar.
+        Escopo desta v1: db + auth + rest + storage + kong. Realtime/Studio
+        ficam de fora por ora (exigem bootstrap próprio bem mais elaborado —
+        Realtime precisa registrar um "tenant" via API antes de funcionar) —
+        podem ser adicionados depois se o projeto precisar.
         """
         app_slug = self.domain.replace(".", "-").replace(":", "-")
         jwt_secret = self.jwt.jwt_secret
@@ -383,6 +646,32 @@ acls:
         db_password = self.db_password
         protocol = "http" if self.domain == "localhost" else "https"
         images = self.FULL_STACK_IMAGES
+        functions_prefix = " || PathPrefix(`/functions/v1`)" if self.functions else ""
+        functions_service = ""
+        if self.functions:
+            functions_service = f"""
+  functions:
+    image: "{images['functions']}"
+    command:
+      - "start"
+      - "--main-service"
+      - "/home/deno/functions/main"
+    environment:
+      SUPABASE_URL: "http://kong:8000"
+      SUPABASE_ANON_KEY: "{anon_key}"
+      SUPABASE_SERVICE_ROLE_KEY: "{service_key}"
+      SUPABASE_DB_URL: "postgres://postgres:{db_password}@db:5432/postgres"
+    volumes:
+      - "./supabase/functions:/home/deno/functions:ro"
+    networks:
+      - "default"
+    deploy:
+      mode: replicated
+      replicas: 1
+      placement:
+        constraints:
+          - "node.role == manager"
+"""
 
         return f"""version: '3.8'
 
@@ -435,7 +724,7 @@ services:
       labels:
         - "traefik.enable=1"
         - "traefik.docker.network={self.traefik_network}"
-        - "traefik.http.routers.{app_slug}-api.rule=Host(`{self.domain}`) && (PathPrefix(`/auth/v1`) || PathPrefix(`/rest/v1`))"
+        - "traefik.http.routers.{app_slug}-api.rule=Host(`{self.domain}`) && (PathPrefix(`/auth/v1`) || PathPrefix(`/rest/v1`) || PathPrefix(`/storage/v1`){functions_prefix})"
         - "traefik.http.routers.{app_slug}-api.entrypoints=websecure"
         - "traefik.http.routers.{app_slug}-api.priority=2"
         - "traefik.http.routers.{app_slug}-api.tls.certresolver={self.cert_resolver}"
@@ -484,6 +773,32 @@ services:
         constraints:
           - "node.role == manager"
 
+  storage:
+    image: "{images['storage']}"
+    environment:
+      ANON_KEY: "{anon_key}"
+      SERVICE_KEY: "{service_key}"
+      POSTGREST_URL: "http://rest:3000"
+      PGRST_JWT_SECRET: "{jwt_secret}"
+      DATABASE_URL: "postgres://supabase_storage_admin:{db_password}@db:5432/postgres"
+      FILE_SIZE_LIMIT: "52428800"
+      STORAGE_BACKEND: "file"
+      FILE_STORAGE_BACKEND_PATH: "/var/lib/storage"
+      TENANT_ID: "{app_slug}"
+      REGION: "stub"
+      GLOBAL_S3_BUCKET: "stub"
+      ENABLE_IMAGE_TRANSFORMATION: "false"
+    volumes:
+      - "{app_slug}_storage_data:/var/lib/storage"
+    networks:
+      - "default"
+    deploy:
+      mode: replicated
+      replicas: 1
+      placement:
+        constraints:
+          - "node.role == manager"
+{functions_service}
   db:
     image: "{images['db']}"
     environment:
@@ -492,6 +807,7 @@ services:
       JWT_EXP: "3600"
     volumes:
       - "{app_slug}_postgres_data:/var/lib/postgresql/data"
+      - "./db-passwords.sql:/docker-entrypoint-initdb.d/zzzz-aidd-bridge-passwords.sql:ro"
     networks:
       - "default"
     deploy:
@@ -509,14 +825,25 @@ networks:
 
 volumes:
   {app_slug}_postgres_data:
+  {app_slug}_storage_data:
 """
 
     def generate_caddyfile(self) -> str:
+        functions_line = "\n    reverse_proxy /functions/v1/* functions:9000" if self.functions else ""
+        functions_handle = ""
+        if self.functions:
+            functions_handle = """
+    # EmulaÃ§Ã£o do endpoint Supabase Edge Functions /functions/v1/
+    handle_path /functions/v1/* {
+        reverse_proxy functions:9000
+    }
+"""
         if self.domain == "localhost":
-            return """localhost {
+            return f"""localhost {{
     reverse_proxy /rest/v1/* postgrest:3000
+    reverse_proxy /storage/v1/* storage:5000{functions_line}
     reverse_proxy /* web:80
-}
+}}
 """
         return f"""{self.domain} {{
     # EmulaÃ§Ã£o do endpoint Supabase REST /rest/v1/
@@ -524,6 +851,11 @@ volumes:
         reverse_proxy postgrest:3000
     }}
 
+    # EmulaÃ§Ã£o do endpoint Supabase Storage /storage/v1/
+    handle_path /storage/v1/* {{
+        reverse_proxy storage:5000
+    }}
+{functions_handle}
     # Frontend SPA
     handle {{
         reverse_proxy web:80
@@ -618,9 +950,14 @@ coverage
 
         if self.stack == "full":
             targets["kong.yml"] = self.generate_kong_config()
+            targets["db-passwords.sql"] = self.generate_db_passwords_sql()
+
+        if self.functions:
+            targets[os.path.join("supabase", "functions", "main", "index.ts")] = self.generate_functions_main_router()
 
         for filename, content in targets.items():
             dest = os.path.join(self.target_dir, filename)
+            os.makedirs(os.path.dirname(dest), exist_ok=True)
             with open(dest, "w", encoding="utf-8") as f:
                 f.write(content)
             files_created[filename] = dest

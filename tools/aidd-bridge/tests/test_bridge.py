@@ -1,4 +1,4 @@
-﻿# -*- coding: utf-8 -*-
+# -*- coding: utf-8 -*-
 import os
 import json
 import tempfile
@@ -56,6 +56,21 @@ def test_scanner(mock_lovable_project):
     assert len(manifest["routes"]) == 2
     assert manifest["database"]["has_supabase"] is True
     assert len(manifest["database"]["migrations"]) == 1
+    assert manifest["edge_functions"] == []
+
+def test_scanner_detects_real_edge_functions(tmp_path):
+    proj = tmp_path / "proj-com-funcao"
+    (proj / "supabase" / "functions" / "enviar_email").mkdir(parents=True)
+    (proj / "supabase" / "functions" / "enviar_email" / "index.ts").write_text("export {}", encoding="utf-8")
+    # "main" (gerado pelo aidd-bridge) e "_shared" nao sao funcoes de verdade
+    (proj / "supabase" / "functions" / "main").mkdir(parents=True)
+    (proj / "supabase" / "functions" / "main" / "index.ts").write_text("export {}", encoding="utf-8")
+    (proj / "supabase" / "functions" / "_shared").mkdir(parents=True)
+    (proj / "package.json").write_text('{"name":"x"}', encoding="utf-8")
+
+    scanner = LovableScanner(str(proj))
+    manifest = scanner.scan()
+    assert manifest["edge_functions"] == ["enviar_email"]
 
 def test_data_bridge(mock_lovable_project):
     scanner = LovableScanner(mock_lovable_project)
@@ -71,6 +86,15 @@ def test_data_bridge(mock_lovable_project):
     # depender só da antiga faz auth.uid() sempre voltar NULL e travar todo RLS.
     assert "request.jwt.claim.sub" in sql
     assert "request.jwt.claims" in sql
+    # auth.jwt() — muitas RLS da Lovable leem dado extra do token (ex:
+    # auth.jwt()->'app_metadata'->>'empresa_id'), nao so uid/role/email
+    assert "CREATE OR REPLACE FUNCTION auth.jwt()" in sql
+    # service_role precisa ignorar RLS (igual Supabase real) — sem isso toda
+    # operacao administrativa/backend (ex: Storage criando bucket) trava com
+    # "new row violates row-level security policy". Confirmado com upload
+    # real de arquivo num banco descartavel em 2026-09-10.
+    assert "CREATE ROLE service_role NOLOGIN BYPASSRLS" in sql
+    assert "ALTER ROLE service_role BYPASSRLS" in sql
 
 def test_data_bridge_with_real_auth_skips_fake_users_table(mock_lovable_project):
     scanner = LovableScanner(mock_lovable_project)
@@ -88,10 +112,18 @@ def test_devops_packager(tmp_path):
     assert "docker-compose.yml" in files
     assert "Caddyfile" in files
     assert os.path.exists(files["docker-compose.yml"])
-    
+
     compose_content = open(files["docker-compose.yml"], encoding="utf-8").read()
     assert "postgrest" in compose_content
     assert "postgres:16-alpine" in compose_content
+    # o PGRST_JWT_SECRET tinha um valor fixo diferente do gerado por
+    # self.jwt — nenhum token emitido pela ferramenta (.env.production)
+    # validava contra esse PostgREST. Corrigido em 2026-09-10.
+    assert packager.jwt.jwt_secret in compose_content
+    assert "super-secret-jwt-token-with-at-least-32-chars-long" not in compose_content
+    # Storage tambem no modo standalone (Caddy), nao so no Swarm
+    assert "storage" in compose_content
+    assert "reverse_proxy storage:5000" in open(files["Caddyfile"], encoding="utf-8").read()
 
 def test_unifier(mock_lovable_project, tmp_path):
     out = tmp_path / "unified-app"
@@ -117,7 +149,7 @@ def test_devops_full_stack_kong_routes_and_entrypoint_are_valid_yaml(tmp_path):
     compose = yaml.safe_load(packager.generate_docker_compose_swarm())
     kong_conf = yaml.safe_load(packager.generate_kong_config())
 
-    assert set(compose["services"].keys()) == {"web", "kong", "auth", "rest", "db"}
+    assert set(compose["services"].keys()) == {"web", "kong", "auth", "rest", "storage", "db"}
     # entrypoint precisa sobreviver ao parse do YAML igual ao comando real
     # (verificado com um deploy descartavel real em 2026-09-10 — home do
     # usuario "kong" nao existe/nao e gravavel, por isso usa /tmp)
@@ -130,6 +162,96 @@ def test_devops_full_stack_kong_routes_and_entrypoint_are_valid_yaml(tmp_path):
     route_names = [s["name"] for s in kong_conf["services"]]
     assert "auth-v1" in route_names
     assert "rest-v1" in route_names
+    assert "storage-v1" in route_names
+
+    # _format_version tem que sobreviver ao truque de shell (eval/echo) que
+    # injeta as chaves anon/service no kong.yml em tempo de execucao — aspas
+    # DUPLAS nesse texto viram delimitador do bash e são engolidas, deixando
+    # "_format_version: 2.1" (numero) em vez de string, e o Kong recusa subir
+    # com "expected a string". Aspas simples atravessam ilesas. Confirmado
+    # com um deploy real e descartavel em 2026-09-10.
+    kong_text = packager.generate_kong_config()
+    assert "_format_version: '2.1'" in kong_text
+    assert '_format_version: "2.1"' not in kong_text
+
+    # o plugin ACL do Kong exige "allow" ou "deny" explicito — sem isso o
+    # Kong nem sobe (erro de config na inicializacao, confirmado com deploy
+    # real). Precisa liberar os dois grupos (anon e admin/service_role).
+    rest_route = next(s for s in kong_conf["services"] if s["name"] == "rest-v1")
+    acl_plugin = next(p for p in rest_route["plugins"] if p["name"] == "acl")
+    assert set(acl_plugin["config"]["allow"]) == {"anon", "admin"}
+
+def test_devops_full_stack_includes_storage_with_persistent_volume(tmp_path):
+    packager = DevOpsPackager(str(tmp_path), domain="app.meusite.com", stack="full")
+    swarm_yaml = packager.generate_docker_compose_swarm()
+    assert "supabase/storage-api:v1.75.0" in swarm_yaml
+    assert "supabase_storage_admin" in swarm_yaml
+    assert "app-meusite-com_storage_data:/var/lib/storage" in swarm_yaml
+
+def test_devops_full_stack_sets_passwords_for_reserved_roles(tmp_path):
+    """
+    supabase_auth_admin/supabase_storage_admin/authenticator nascem SEM
+    senha na imagem supabase/postgres, e sao "reserved roles" que só
+    supabase_admin pode alterar (nao "postgres", que ali nao e superuser de
+    verdade) — sem isso auth/rest/storage nunca conseguem conectar no banco.
+    Confirmado com um deploy real e descartavel em 2026-09-10.
+    """
+    packager = DevOpsPackager(str(tmp_path), domain="app.meusite.com", stack="full", db_password="minhaSenha123")
+    sql = packager.generate_db_passwords_sql()
+    assert "\\connect postgres supabase_admin" in sql
+    assert "ALTER ROLE supabase_auth_admin WITH PASSWORD 'minhaSenha123'" in sql
+    assert "ALTER ROLE supabase_storage_admin WITH PASSWORD 'minhaSenha123'" in sql
+    assert "ALTER ROLE authenticator WITH PASSWORD 'minhaSenha123'" in sql
+
+    swarm_yaml = packager.generate_docker_compose_swarm()
+    assert "./db-passwords.sql:/docker-entrypoint-initdb.d/zzzz-aidd-bridge-passwords.sql:ro" in swarm_yaml
+
+def _make_project_with_function(tmp_path):
+    fn_dir = tmp_path / "supabase" / "functions" / "notificar"
+    fn_dir.mkdir(parents=True)
+    (fn_dir / "index.ts").write_text("export {}", encoding="utf-8")
+    return tmp_path
+
+def test_devops_auto_detects_functions_and_skips_when_absent(tmp_path):
+    sem_funcao = DevOpsPackager(str(tmp_path), domain="app.meusite.com")
+    assert sem_funcao.functions == []
+    assert "functions:" not in sem_funcao.generate_docker_compose_swarm()
+
+    com_funcao_dir = tmp_path / "com-funcao"
+    com_funcao_dir.mkdir()
+    _make_project_with_function(com_funcao_dir)
+    com_funcao = DevOpsPackager(str(com_funcao_dir), domain="app.meusite.com")
+    assert com_funcao.functions == ["notificar"]
+    assert "functions:" in com_funcao.generate_docker_compose_swarm()
+
+def test_devops_full_stack_functions_route_through_kong(tmp_path):
+    import yaml
+    proj = _make_project_with_function(tmp_path)
+    packager = DevOpsPackager(str(proj), domain="app.meusite.com", stack="full")
+    swarm_yaml = packager.generate_docker_compose_swarm()
+    kong_conf = yaml.safe_load(packager.generate_kong_config())
+
+    assert "supabase/edge-runtime:v1.76.2" in swarm_yaml
+    assert "functions/v1" in swarm_yaml  # traefik->kong precisa incluir esse prefixo
+    route_names = [s["name"] for s in kong_conf["services"]]
+    assert "functions-v1" in route_names
+
+def test_devops_export_all_writes_functions_main_router(tmp_path):
+    proj = _make_project_with_function(tmp_path)
+    packager = DevOpsPackager(str(proj), domain="app.meusite.com", stack="full")
+    files = packager.export_all()
+    router_key = os.path.join("supabase", "functions", "main", "index.ts")
+    assert router_key in files
+    assert os.path.exists(files[router_key])
+    content = open(files[router_key], encoding="utf-8").read()
+    assert "EdgeRuntime.userWorkers.create" in content
+
+def test_devops_lite_stack_includes_storage(tmp_path):
+    packager = DevOpsPackager(str(tmp_path), domain="app.meusite.com")
+    swarm_yaml = packager.generate_docker_compose_swarm()
+    assert "supabase/storage-api:v1.75.0" in swarm_yaml
+    assert "traefik.http.routers.app-meusite-com-storage.rule=Host" in swarm_yaml
+    assert "middlewares.app-meusite-com-storage-strip.stripprefix.prefixes=/storage/v1" in swarm_yaml
 
 def test_devops_lite_vs_full_stack_selection(tmp_path):
     lite = DevOpsPackager(str(tmp_path), domain="app.meusite.com").generate_docker_compose_swarm()

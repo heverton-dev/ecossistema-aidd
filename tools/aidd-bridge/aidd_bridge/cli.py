@@ -145,8 +145,8 @@ def main():
     p_destroy.add_argument("--vps-host", default=None, help="IP/host da VPS (usa VPS_HOST do .env se omitido)")
     p_destroy.add_argument("--vps-user", default="root", help="Usuario SSH da VPS (default: root)")
     p_destroy.add_argument("--vps-password", default=None, help="Senha SSH da VPS (usa VPS_PASSWORD do .env se omitido)")
-    p_destroy.add_argument("--cf-token", default=None, help="Token da API do Cloudflare (usa CF_API_TOKEN do .env se omitido)")
-    p_destroy.add_argument("--cf-zone-id", default=None, help="Zone ID do Cloudflare (usa CF_ZONE_ID do .env se omitido)")
+    p_destroy.add_argument("--cf-token", default=None, help="Token da API do Cloudflare (usa CLOUDFLARE_API_TOKEN do .env se omitido)")
+    p_destroy.add_argument("--cf-zone-id", default=None, help="Zone ID do Cloudflare (usa CLOUDFLARE_ZONE_ID do .env se omitido)")
     p_destroy.add_argument("--yes", "-y", action="store_true", help="Confirmar automaticamente sem interacao")
 
     args = parser.parse_args()

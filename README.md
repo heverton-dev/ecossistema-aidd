@@ -28,24 +28,24 @@ Quer forçar manualmente ou adicionar uma dependência nova (skill ou MCP de ter
 
 ---
 
-## 🏛️ A Fábrica de Software AIDD: As 5 Ferramentas Integradas
+## 🏛️ A Fábrica de Software AIDD: As 6 Ferramentas Integradas
 
 ```text
                                ┌─────────────────────────────┐
                                │   ECOSSISTEMA AIDD (Monorepo)│
                                └──────────────┬──────────────┘
                                               │
-    ┌──────────────────┬──────────────────────┼─────────────────────┬───────────────────┐
-    ▼                  ▼                      ▼                     ▼                   ▼
-[ aidd-forge ]   [ aidd-generator ]     [ aidd-master ]     [ aidd-enterprise ]    [ aidd-ops ]
- Linha de Montagem  Fábrica Autônoma      Blocos de Lego      Selo de Auditoria     Pista & Entrega
-  & Blindagem       (Ideia -> Código)     Modular & Banco     Zero-Trust & Hashes    Infra & Nuvem
-   (/forge)            (/generate)           (/master)           (/enterprise)           (/ops)
+    ┌──────────────┬──────────────────┼─────────────────┬──────────────┬──────────────┐
+    ▼              ▼                  ▼                 ▼              ▼              ▼
+[ aidd-forge ] [ aidd-generator ] [ aidd-master ] [ aidd-enterprise ] [ aidd-ops ] [ aidd-bridge ]
+ Linha de Montagem Fábrica Autônoma   Blocos de Lego   Selo de Auditoria Pista & Entrega  Ponte Low-Code
+  & Blindagem    (Ideia -> Código)    Modular & Banco  Zero-Trust & Hashes Infra & Nuvem  -> VPS Nativa
+   (/forge)         (/generate)          (/master)        (/enterprise)     (/ops)         (/bridge)
 ```
 
 ---
 
-## ⚡ As 5 Ferramentas: Do Leigo ao PhD
+## ⚡ As 6 Ferramentas: Do Leigo ao PhD
 
 | Ferramenta | Analogia do Dia a Dia (Leigo) | Rigor Arquitetural (PhD / Arquiteto) | Como usar no Chat | Comando no Terminal (CLI) |
 | :--- | :--- | :--- | :---: | :--- |
@@ -54,6 +54,7 @@ Quer forçar manualmente ou adicionar uma dependência nova (skill ou MCP de ter
 | **AIDD Master** | **Os Blocos de Encaixe Perfeito (Lego):** Permite adicionar novas funções ao sistema sem quebrar nada do que já existia. | Clean Architecture em Fatias Verticais (`Vertical Slices`), SQLite concorrente em modo WAL, Result Monad funcional e auto-documentação OpenAPI. | `/master <modulo>` | `python ecossistema.py master add-module <modulo>` |
 | **AIDD Enterprise** | **A Blindagem e Selo de Qualidade:** Verifica a autenticidade de cada componente com selo de segurança nível bancário. | Plataforma de Missão Crítica com injeção criptográfica SHA-256 de componentes (`skill`, `mcp`, `hook`, `rule`), conformidade Zero-Trust e RLS estrito. | `/enterprise <tipo> <nome>` | `python ecossistema.py enterprise inject <tipo> <nome>` |
 | **AIDD Ops** | **A Pista de Corrida e Abastecimento:** Pega o software pronto, prepara os servidores na nuvem, ajusta o tráfego e põe para rodar. | Meta-Orquestrador de Infraestrutura: Sizing inteligente de VPS, Hardening SSH anti-injeção, MCPs de borda (Cloudflare/Docker), Compose e Preflight HTTP E2E. | `/ops plan <nicho>` | `python ecossistema.py ops plan "<nicho>"` |
+| **AIDD Bridge** | **O Tradutor e Libertador de Código:** Pega apps de plataformas no-code/low-code e coloca para rodar em servidor próprio sem mensalidades extras. | Extrator, unificador e empacotador de projetos Lovable/Supabase para VPS própria: migração SQL para Postgres nativo/PostgREST, unificação de rotas/telas e Docker Compose Swarm com Traefik/Kong. | `/bridge [comando]` | `python ecossistema.py bridge [scan\|convert-db\|merge\|pack]` |
 
 ---
 

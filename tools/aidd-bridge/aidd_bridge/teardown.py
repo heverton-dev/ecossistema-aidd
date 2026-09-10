@@ -35,8 +35,8 @@ class BridgeTeardown:
         self.vps_host = vps_host or os.getenv("VPS_HOST")
         self.vps_user = vps_user or os.getenv("VPS_USER", "root")
         self.vps_password = vps_password or os.getenv("VPS_PASSWORD")
-        self.cf_api_token = cf_api_token or os.getenv("CF_API_TOKEN")
-        self.cf_zone_id = cf_zone_id or os.getenv("CF_ZONE_ID")
+        self.cf_api_token = cf_api_token or os.getenv("CLOUDFLARE_API_TOKEN")
+        self.cf_zone_id = cf_zone_id or os.getenv("CLOUDFLARE_ZONE_ID")
 
     def delete_cloudflare_dns(self) -> Dict[str, Any]:
         """Localiza e deleta o registro DNS (CNAME ou A) do subdomínio no Cloudflare."""
@@ -87,13 +87,19 @@ class BridgeTeardown:
                 stdout.channel.recv_exit_status()
                 results["volumes"] = "Volumes isolados removidos"
 
-            # 3. Remover diretório na VPS se solicitado
+            # 3. Remover diretório na VPS se solicitado (convenção /root/{app_name})
+            #    e também os arquivos de staging com prefixo do app dentro da
+            #    pasta compartilhada /root/aidd-bridge-deploy/ (usada quando o
+            #    pacote é enviado manualmente via SFTP em vez de um passo de
+            #    deploy automatizado — evita deixar init-db.sql/compose.yml
+            #    velhos esquecidos lá).
             if remove_dir:
                 safe_dir = f"/root/{self.app_name}"
-                cmd_rm_dir = f"rm -rf {safe_dir}"
+                shared_glob = f"/root/aidd-bridge-deploy/{self.app_name}*"
+                cmd_rm_dir = f"rm -rf {safe_dir} && rm -f {shared_glob}"
                 stdin, stdout, stderr = ssh.exec_command(cmd_rm_dir)
                 stdout.channel.recv_exit_status()
-                results["directory"] = f"Diretório {safe_dir} removido"
+                results["directory"] = f"Diretório {safe_dir} e staging {shared_glob} removidos"
 
             ssh.close()
             return {"status": "success", "details": results}

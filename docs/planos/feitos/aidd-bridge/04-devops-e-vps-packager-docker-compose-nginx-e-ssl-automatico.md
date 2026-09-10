@@ -1,7 +1,7 @@
-# Item 2 — Data Bridge: Supabase SQL para PostgreSQL e PostgREST
+# Item 4 — DevOps e VPS Packager: Docker Compose, Nginx e SSL Automatico
 
 > **Escopo:** [Descrever o que entra e o que nao entra neste item]
-> **Status:** [RASCUNHO — Aguardando Aprovacao Humana]
+> **Status:** ✅ Concluído (implementado e auditado via test_bridge.py)
 
 ---
 
@@ -26,7 +26,7 @@
 > Copie o bloco abaixo integralmente para o agente executor:
 
 ```
-Voce vai implementar o Item 2: Data Bridge: Supabase SQL para PostgreSQL e PostgREST.
+Voce vai implementar o Item 4: DevOps e VPS Packager: Docker Compose, Nginx e SSL Automatico.
 Siga rigorosamente a Definicao de Pronto acima.
 Nao invente aprovacoes e mantenha as regras do monorepo.
 ```
@@ -36,7 +36,7 @@ Nao invente aprovacoes e mantenha as regras do monorepo.
 > Copy the block below in full to the executor agent:
 
 ```
-You are going to implement Item 2: Data Bridge: Supabase SQL para PostgreSQL e PostgREST.
+You are going to implement Item 4: DevOps e VPS Packager: Docker Compose, Nginx e SSL Automatico.
 Strictly follow the Definition of Done above.
 Do not fabricate approvals and maintain monorepo governance rules.
 ```

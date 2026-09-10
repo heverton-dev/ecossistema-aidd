@@ -25,8 +25,8 @@ class CloudflareDNS:
         api_token: Optional[str] = None,
         root_domain: Optional[str] = None
     ):
-        self.zone_id = zone_id or os.getenv("CF_ZONE_ID")
-        self.api_token = api_token or os.getenv("CF_API_TOKEN")
+        self.zone_id = zone_id or os.getenv("CLOUDFLARE_ZONE_ID")
+        self.api_token = api_token or os.getenv("CLOUDFLARE_API_TOKEN")
         # Domínio raiz para o qual o CNAME vai apontar (ex: "vpsconexao.org")
         # Se não informado, extrai do CF_ROOT_DOMAIN ou deduz do subdomínio
         self.root_domain = root_domain or os.getenv("CF_ROOT_DOMAIN", "")

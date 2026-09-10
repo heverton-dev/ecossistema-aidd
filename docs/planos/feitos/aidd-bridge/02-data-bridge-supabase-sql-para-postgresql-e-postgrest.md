@@ -1,7 +1,7 @@
-# Item 1 — Scanner e Ingestor de Projetos Lovable
+# Item 2 — Data Bridge: Supabase SQL para PostgreSQL e PostgREST
 
 > **Escopo:** [Descrever o que entra e o que nao entra neste item]
-> **Status:** [RASCUNHO — Aguardando Aprovacao Humana]
+> **Status:** ✅ Concluído (implementado e auditado via test_bridge.py)
 
 ---
 
@@ -26,7 +26,7 @@
 > Copie o bloco abaixo integralmente para o agente executor:
 
 ```
-Voce vai implementar o Item 1: Scanner e Ingestor de Projetos Lovable.
+Voce vai implementar o Item 2: Data Bridge: Supabase SQL para PostgreSQL e PostgREST.
 Siga rigorosamente a Definicao de Pronto acima.
 Nao invente aprovacoes e mantenha as regras do monorepo.
 ```
@@ -36,7 +36,7 @@ Nao invente aprovacoes e mantenha as regras do monorepo.
 > Copy the block below in full to the executor agent:
 
 ```
-You are going to implement Item 1: Scanner e Ingestor de Projetos Lovable.
+You are going to implement Item 2: Data Bridge: Supabase SQL para PostgreSQL e PostgREST.
 Strictly follow the Definition of Done above.
 Do not fabricate approvals and maintain monorepo governance rules.
 ```
