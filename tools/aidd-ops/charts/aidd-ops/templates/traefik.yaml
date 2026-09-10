@@ -1,0 +1,88 @@
+{{- if .Values.services.traefik.enabled }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: traefik
+  namespace: {{ include "aidd-ops.namespace" . }}
+  labels:
+    {{- include "aidd-ops.labels" . | nindent 4 }}
+    app.kubernetes.io/component: traefik
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: traefik
+      app.kubernetes.io/instance: {{ .Release.Name }}
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: traefik
+        app.kubernetes.io/instance: {{ .Release.Name }}
+    spec:
+      containers:
+        - name: traefik
+          image: "{{ .Values.services.traefik.image.repository }}:{{ .Values.services.traefik.image.tag }}"
+          imagePullPolicy: {{ .Values.services.traefik.image.pullPolicy }}
+          ports:
+            - name: http
+              containerPort: {{ .Values.services.traefik.ports.http }}
+              protocol: TCP
+            - name: https
+              containerPort: {{ .Values.services.traefik.ports.https }}
+              protocol: TCP
+          {{- if .Values.services.traefik.resources }}
+          resources:
+            {{- toYaml .Values.services.traefik.resources | nindent 12 }}
+          {{- end }}
+          {{- if .Values.services.traefik.persistence.enabled }}
+          volumeMounts:
+            - name: traefik-certs
+              mountPath: {{ .Values.services.traefik.persistence.mountPath }}
+          {{- end }}
+      {{- if .Values.services.traefik.persistence.enabled }}
+      volumes:
+        - name: traefik-certs
+          persistentVolumeClaim:
+            claimName: traefik-pvc
+      {{- end }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: traefik
+  namespace: {{ include "aidd-ops.namespace" . }}
+  labels:
+    {{- include "aidd-ops.labels" . | nindent 4 }}
+    app.kubernetes.io/component: traefik
+spec:
+  type: ClusterIP
+  selector:
+    app.kubernetes.io/name: traefik
+    app.kubernetes.io/instance: {{ .Release.Name }}
+  ports:
+    - name: http
+      port: {{ .Values.services.traefik.ports.http }}
+      targetPort: http
+      protocol: TCP
+    - name: https
+      port: {{ .Values.services.traefik.ports.https }}
+      targetPort: https
+      protocol: TCP
+---
+{{- if .Values.services.traefik.persistence.enabled }}
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: traefik-pvc
+  namespace: {{ include "aidd-ops.namespace" . }}
+  labels:
+    {{- include "aidd-ops.labels" . | nindent 4 }}
+    app.kubernetes.io/component: traefik
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: {{ .Values.services.traefik.persistence.size }}
+{{- end }}
+{{- end }}
