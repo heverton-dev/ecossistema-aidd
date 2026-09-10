@@ -8,6 +8,10 @@ flask
 instructor
 tiktoken
 
+# CLI (Onda 4 / item 10 do plano anti-NIH): aidd_inject.py e pipeline_completo.py
+# usam click como padrão único de CLI (mesmo padrão do ecossistema.py).
+click>=8.0
+
 # MCP (NIH #24): SDK oficial do Model Context Protocol para os servidores
 # MCP gerados pelo Injetor Universal (mcps/*/server.py) — substitui JSON-RPC manual.
 mcp>=1.0

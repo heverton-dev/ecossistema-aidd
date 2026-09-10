@@ -213,7 +213,7 @@ class ArchitectureGate:
         print("=" * 80)
 
         if self.failed == 0:
-            print("🏆 [CERTIFICAÇÃO CONCEDIDA]: Arquitetura de Bounded Context 100% conforme!")
+            print("[OK] Arquitetura de Bounded Context 100% conforme (varredura estática de imports).")
         else:
             print("❌ [BLOQUEADO]: Violações de Bounded Context detectadas — módulos acoplados diretamente.")
             print("   Corrija os imports para usar core.* ou EventBus como intermediário.")

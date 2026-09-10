@@ -86,11 +86,11 @@ def audit():
         else:
             print(f"[OK] tools/{tool} presente e documentado.")
 
-    # 3. Checagem das 4 Skills Universais
-    print("\n--- Verificando Skills Universais (skills/) ---")
+    # 3. Checagem das Skills Universais
+    print("\n--- Verificando Skills Universais (componentes/compartilhado/skills/) ---")
     frontmatter_re = re.compile(r"^---\s*\n(.*?)\n---\s*\n", re.DOTALL)
     for skill in SKILLS_REQUIRED:
-        skill_file = os.path.join(ROOT_DIR, "skills", skill, "SKILL.md")
+        skill_file = os.path.join(ROOT_DIR, "componentes", "compartilhado", "skills", skill, "SKILL.md")
         if not os.path.exists(skill_file):
             erros.append(f"Skill {skill_file} não encontrada.")
             continue

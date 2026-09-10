@@ -1,31 +1,23 @@
 from pathlib import Path
 
-import pytest
+from click.testing import CliRunner
 
-from aidd_forge.cli import build_parser, main
-
-
-def test_build_parser_exposes_init_subcommand() -> None:
-    parser = build_parser()
-    args = parser.parse_args(["init", "some/path"])
-
-    assert args.command == "init"
-    assert args.path == "some/path"
-    assert args.force is False
+from aidd_forge.cli import cli, main
 
 
-def test_init_default_path_is_current_dir() -> None:
-    parser = build_parser()
-    args = parser.parse_args(["init"])
+def test_init_default_path_is_current_dir(tmp_path: Path) -> None:
+    runner = CliRunner()
+    with runner.isolated_filesystem(temp_dir=tmp_path):
+        result = runner.invoke(cli, ["init"])
 
-    assert args.path == "."
+    assert result.exit_code == 0
+    assert "projeto alvo:" in result.output
 
 
-def test_init_force_flag() -> None:
-    parser = build_parser()
-    args = parser.parse_args(["init", "--force"])
+def test_init_force_flag(tmp_path: Path) -> None:
+    exit_code = main(["init", str(tmp_path), "--force"])
 
-    assert args.force is True
+    assert exit_code == 0
 
 
 def test_main_init_creates_governance_files(tmp_path: Path) -> None:
@@ -47,32 +39,40 @@ def test_main_init_is_idempotent_without_force(tmp_path: Path, capsys) -> None:
     assert "arquivos criados: 0" in output
 
 
-def test_build_parser_exposes_inject_subcommand() -> None:
-    parser = build_parser()
-    args = parser.parse_args(
-        ["inject", "spec", "demo-spec", "--descricao", "Uma spec", "--conteudo", "Conteudo real."]
+def test_build_parser_exposes_inject_subcommand(tmp_path: Path, capsys) -> None:
+    exit_code = main(
+        [
+            "inject",
+            "spec",
+            "demo-spec",
+            "--descricao",
+            "Uma spec",
+            "--conteudo",
+            "Conteudo real.",
+            "--path",
+            str(tmp_path),
+        ]
     )
+    output = capsys.readouterr().out
 
-    assert args.command == "inject"
-    assert args.tipo == "spec"
-    assert args.nome == "demo-spec"
-    assert args.descricao == "Uma spec"
-    assert args.conteudo == "Conteudo real."
-    assert args.force is False
+    assert exit_code == 0
+    assert "componente injetado: spec/demo-spec" in output
 
 
 def test_inject_requires_conteudo_or_conteudo_file() -> None:
-    parser = build_parser()
+    runner = CliRunner()
+    result = runner.invoke(cli, ["inject", "spec", "demo-spec", "--descricao", "Uma spec"])
 
-    with pytest.raises(SystemExit):
-        parser.parse_args(["inject", "spec", "demo-spec", "--descricao", "Uma spec"])
+    assert result.exit_code == 2
 
 
 def test_inject_rejects_unknown_tipo() -> None:
-    parser = build_parser()
+    runner = CliRunner()
+    result = runner.invoke(
+        cli, ["inject", "agent", "demo", "--descricao", "x", "--conteudo", "y"]
+    )
 
-    with pytest.raises(SystemExit):
-        parser.parse_args(["inject", "agent", "demo", "--descricao", "x", "--conteudo", "y"])
+    assert result.exit_code == 2
 
 
 def test_main_inject_materializes_spec_file(tmp_path: Path, capsys) -> None:

@@ -102,6 +102,5 @@ O **Ecossistema AIDD** é um monorepo agnóstico que integra 4 ferramentas compl
 - ⏳ **Bootstrap Ambiente E Preflight Host** — `docs/planos/a-fazer/06-bootstrap-ambiente-e-preflight-host/`
 - ⏳ **Aidd Bridge** — `docs/planos/a-fazer/aidd-bridge/`
 - 🔶 **Correcao Pos Auditoria Sem Maquiagem** — `docs/planos/fazendo/01-correcao-pos-auditoria-sem-maquiagem/`
-- 🔶 **Evolucao Aidd Ops Fase Completa** — `docs/planos/fazendo/03-evolucao-aidd-ops-fase-completa/`
 - 🔶 **Codigo Limpo Profundo Ecossistema** — `docs/planos/fazendo/codigo-limpo-profundo-ecossistema/`
 <!-- AUTO:INICIATIVAS:END -->

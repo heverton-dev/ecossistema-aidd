@@ -1,0 +1,27 @@
+{
+  "descricao": "Orcamento estrito de skipped tests para G_TESTES_REAIS v2. Cada entrada lista test-ids no formato emitido pelo gate ('tests/unit/<teste>') que a ferramenta pode pular; qualquer skip fora desta lista reprova o gate. Arquivo ausente ou lista vazia = orcamento zero.",
+  "_justificativas": {
+    "tests/unit/test_postgres_adapter_real_integration_via_docker": "Integracao real com Postgres via Docker; skip automatico quando o binario docker nao esta disponivel na maquina (teste condicional de ambiente, nao de unidade).",
+    "tests/unit/test_event_emitted_on_instance_a_is_processed_on_instance_b_via_redis": "Integracao real com Redis; skip automatico quando o binario redis-server nao esta disponivel na maquina.",
+    "tests/unit/test_terraform_validate_real_binary": "Valida com o binario real do terraform; skip automatico quando o binario nao esta instalado.",
+    "tests/unit/test_helm_lint_real_binary": "Valida com o binario real do helm; skip automatico quando o binario nao esta instalado.",
+    "tests/unit/test_harness_gate_fails_on_broken_symlink": "Requer criacao de symlink quebrado, privilegio indisponivel no Windows sem modo administrador (skip condicional de plataforma)."
+  },
+  "aidd-forge": [
+    "tests/unit/test_harness_gate_fails_on_broken_symlink"
+  ],
+  "aidd-generator": [],
+  "aidd-master": [
+    "tests/unit/test_postgres_adapter_real_integration_via_docker",
+    "tests/unit/test_event_emitted_on_instance_a_is_processed_on_instance_b_via_redis",
+    "tests/unit/test_terraform_validate_real_binary",
+    "tests/unit/test_helm_lint_real_binary"
+  ],
+  "aidd-enterprise": [
+    "tests/unit/test_postgres_adapter_real_integration_via_docker",
+    "tests/unit/test_event_emitted_on_instance_a_is_processed_on_instance_b_via_redis",
+    "tests/unit/test_terraform_validate_real_binary",
+    "tests/unit/test_helm_lint_real_binary"
+  ],
+  "aidd-ops": []
+}

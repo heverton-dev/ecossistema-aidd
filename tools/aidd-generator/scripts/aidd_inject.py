@@ -14,10 +14,11 @@ Uso:
     python scripts/aidd_inject.py "crie uma skill de auditoria de dependências"
 """
 
-import argparse
 import sys
 from pathlib import Path
 from typing import List, Optional
+
+import click
 
 if sys.platform == 'win32':
     sys.stdout.reconfigure(encoding='utf-8')
@@ -35,22 +36,42 @@ from scripts.core.injector.profiles_registry import PROJETOS_SUPORTADOS
 from utils_intent_router import detectar_injecao, slug_a_partir_da_ideia
 
 
-def _build_parser() -> argparse.ArgumentParser:
-    parser = argparse.ArgumentParser(
-        prog='aidd_inject.py',
-        description='Injetor Universal de Componentes (skills, MCPs, rules, specs, configs)',
+@click.command(name='inject', help='Injeta um componente explicitamente')
+@click.argument('tipo', type=click.Choice(['skill', 'mcp', 'rule', 'spec', 'config']))
+@click.argument('nome')
+@click.option('--descricao', required=True, help='Descrição em linguagem natural')
+@click.option('--alvo-projeto', default='aidd-generator', type=click.Choice(list(PROJETOS_SUPORTADOS)))
+@click.option('--forcar', is_flag=True, default=False, help='Sobrescreve destinos já existentes')
+@click.option('--root', default=None, help='Raiz do projeto (default: diretório atual)')
+def _inject_command(tipo: str, nome: str, descricao: str, alvo_projeto: str, forcar: bool, root: Optional[str]) -> int:
+    root_path = Path(root) if root else None
+    resultado = injetar(
+        nome=nome,
+        descricao=descricao,
+        tipo=tipo,
+        alvo_projeto=alvo_projeto,
+        root=root_path,
+        force=forcar,
     )
-    sub = parser.add_subparsers(dest='comando')
+    return _relatar(resultado)
 
-    p_inject = sub.add_parser('inject', help='Injeta um componente explicitamente')
-    p_inject.add_argument('tipo', choices=['skill', 'mcp', 'rule', 'spec', 'config'])
-    p_inject.add_argument('nome', help='Slug do componente (kebab-case)')
-    p_inject.add_argument('--descricao', required=True, help='Descrição em linguagem natural')
-    p_inject.add_argument('--alvo-projeto', default='aidd-generator', choices=list(PROJETOS_SUPORTADOS))
-    p_inject.add_argument('--forcar', action='store_true', help='Sobrescreve destinos já existentes')
-    p_inject.add_argument('--root', default=None, help='Raiz do projeto (default: diretório atual)')
 
-    return parser
+def _build_cli() -> click.Group:
+    @click.group(
+        name='aidd_inject.py',
+        help='Injetor Universal de Componentes (skills, MCPs, rules, specs, configs)',
+    )
+    def cli() -> None:
+        pass
+
+    cli.add_command(_inject_command, name='inject')
+    return cli
+
+
+def _print_help() -> None:
+    cli = _build_cli()
+    ctx = click.Context(cli, info_name='aidd_inject.py')
+    click.echo(cli.get_help(ctx))
 
 
 def _relatar(resultado: ResultadoInjecao) -> int:
@@ -71,17 +92,14 @@ def _relatar(resultado: ResultadoInjecao) -> int:
     return 1
 
 
-def _cmd_inject(args: argparse.Namespace) -> int:
-    root = Path(args.root) if args.root else None
-    resultado = injetar(
-        nome=args.nome,
-        descricao=args.descricao,
-        tipo=args.tipo,
-        alvo_projeto=args.alvo_projeto,
-        root=root,
-        force=args.forcar,
-    )
-    return _relatar(resultado)
+def _cmd_inject(argv_rest: List[str]) -> int:
+    try:
+        ctx = _inject_command.make_context('aidd_inject.py inject', list(argv_rest))
+    except click.exceptions.UsageError as exc:
+        exc.show()
+        raise SystemExit(exc.exit_code)
+    with ctx:
+        return ctx.invoke(_inject_command.callback, **ctx.params)
 
 
 def _extrair_flag(argv: List[str], nome_flag: str) -> 'tuple[Optional[str], List[str]]':
@@ -118,16 +136,14 @@ def main(argv: Optional[List[str]] = None) -> int:
     argv = list(argv) if argv is not None else sys.argv[1:]
 
     if not argv:
-        _build_parser().print_help()
+        _print_help()
         return 1
 
     if argv[0] == 'inject':
-        parser = _build_parser()
-        args = parser.parse_args(argv)
-        return _cmd_inject(args)
+        return _cmd_inject(argv[1:])
 
     if argv[0] in ('-h', '--help'):
-        _build_parser().print_help()
+        _print_help()
         return 0
 
     # Linguagem natural — extrai flags reconhecidas antes de tratar o resto como texto.

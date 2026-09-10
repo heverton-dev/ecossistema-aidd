@@ -57,7 +57,7 @@
         }
       },
       "nota_gemini_extension": "Item 6.2 (Fase 4, 2026-09-08): Gemini CLI não lê SKILL.md solto — exige o formato de extensions (geminicli.com/docs/extensions/writing-extensions/). 'dest_harness_template_overrides' dá a esse harness uma pasta de destino aninhada ('extensions/<nome>/skills/<nome>/' em vez de 'skills/<nome>/' direto); 'manifestos_extra_por_harness' descreve um arquivo SEM fonte 1:1 em componentes/ (gerado deterministicamente a partir do nome do componente) que scripts/gestor_componentes.py materializa e verifica à parte do espelhamento genérico.",
-      "extra_destinos_compartilhado": ["skills/{nome}"],
+      "extra_destinos_compartilhado": [],
       "extra_destinos_por_ferramenta": [".skills/{nome}", "skills/{nome}"],
       "nota_extra_destinos": "'.skills/{nome}' e 'skills/{nome}' (bare) são cópias adicionais sem harness específico, já em uso real e inconsistente por ferramenta antes desta migração (aidd-master/aidd-enterprise usavam '.skills/'; aidd-generator usava 'skills/' bare). O sync agora materializa AMBAS para todas as ferramentas, fechando a divergência sem escolher apenas uma. '.agents/skills/{nome}' foi REMOVIDO desta lista em 2026-09-07 por ter virado redundante: agora é coberto nativamente pelo próprio harness 'antigravity' (prefixo_pasta corrigido para '.agents') - mesma pasta, uma fonte só, sem duplicar a regra."
     },

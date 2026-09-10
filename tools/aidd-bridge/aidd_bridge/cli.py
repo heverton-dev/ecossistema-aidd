@@ -1,4 +1,4 @@
-﻿# -*- coding: utf-8 -*-
+# -*- coding: utf-8 -*-
 """
 Ponto de entrada CLI da ferramenta aidd-bridge.
 """
@@ -11,6 +11,7 @@ from .scanner import LovableScanner
 from .data_bridge import DataBridge
 from .unifier import MultiAppUnifier
 from .devops import DevOpsPackager
+from .teardown import BridgeTeardown
 
 def cmd_scan(args):
     scanner = LovableScanner(args.project_dir)
@@ -42,35 +43,91 @@ def cmd_merge(args):
     return 0
 
 def cmd_pack(args):
-    packager = DevOpsPackager(args.project_dir, domain=args.domain)
+    packager = DevOpsPackager(
+        args.project_dir,
+        domain=args.domain,
+        traefik_network=args.traefik_network,
+        cert_resolver=args.certresolver
+    )
     files = packager.export_all()
     print(f"[SUCESSO] Pacote VPS gerado com sucesso em: {args.project_dir}")
-    for name, path in files.items():
+    for name in files.keys():
         print(f"  - {name}")
     return 0
 
+def cmd_destroy(args):
+    """Remove stack, volumes, DNS Cloudflare e diretório VPS de forma segura e isolada."""
+    print(f"\n[BRIDGE DESTROY] Removendo aplicacao: {args.app_name}")
+    print(f"  Dominio  : {args.domain or '(nao especificado)'}")
+    print(f"  VPS      : {args.vps_host or os.getenv('VPS_HOST', '?')}")
+    print()
+
+    if not args.yes:
+        confirm = input(f"Confirmar exclusao de '{args.app_name}'? Isso e IRREVERSIVEL. [s/N] ").strip().lower()
+        if confirm not in ("s", "sim", "y", "yes"):
+            print("[CANCELADO] Operacao cancelada pelo usuario.")
+            return 0
+
+    teardown = BridgeTeardown(
+        app_name=args.app_name,
+        domain=args.domain,
+        vps_host=args.vps_host,
+        vps_user=args.vps_user,
+        vps_password=args.vps_password,
+        cf_api_token=args.cf_token,
+        cf_zone_id=args.cf_zone_id
+    )
+
+    result = teardown.execute_teardown()
+
+    print(f"\n[DNS CLOUDFLARE] {result['dns']}")
+    vps = result["vps"]
+    if vps.get("status") == "success":
+        d = vps["details"]
+        print(f"[STACK SWARM]    Removida — {d.get('stack', '')}")
+        print(f"[VOLUMES]        {d.get('volumes', 'nao removidos')}")
+        print(f"[DIRETORIO VPS]  {d.get('directory', 'nao removido')}")
+        print("\n[SUCESSO] Aplicacao removida com total isolamento dos outros servicos.")
+    else:
+        print(f"[ERRO VPS] {vps.get('error')}")
+        return 1
+    return 0
+
 def main():
-    parser = argparse.ArgumentParser(description="aidd-bridge: Extrator e unificador de apps Low-Code para VPS própria")
+    parser = argparse.ArgumentParser(description="aidd-bridge: Extrator e unificador de apps Low-Code para VPS propria")
     subparsers = parser.add_subparsers(dest="subcommand", help="Comando a executar")
 
     # scan
     p_scan = subparsers.add_parser("scan", help="Analisa um projeto Lovable e gera manifesto")
-    p_scan.add_argument("project_dir", help="Diretório do projeto")
+    p_scan.add_argument("project_dir", help="Diretorio do projeto")
 
     # convert-db
-    p_db = subparsers.add_parser("convert-db", help="Converte migrações do Supabase em PostgreSQL consolidado")
-    p_db.add_argument("project_dir", help="Diretório do projeto")
-    p_db.add_argument("--output", "-o", help="Caminho de saída para init-db.sql")
+    p_db = subparsers.add_parser("convert-db", help="Converte migracoes do Supabase em PostgreSQL consolidado")
+    p_db.add_argument("project_dir", help="Diretorio do projeto")
+    p_db.add_argument("--output", "-o", help="Caminho de saida para init-db.sql")
 
     # merge
-    p_merge = subparsers.add_parser("merge", help="Unifica múltiplos apps em um único projeto")
-    p_merge.add_argument("apps", nargs="+", help="Diretórios dos apps a unir")
-    p_merge.add_argument("--output", "-o", required=True, help="Diretório destino")
+    p_merge = subparsers.add_parser("merge", help="Unifica multiplos apps em um unico projeto")
+    p_merge.add_argument("apps", nargs="+", help="Diretorios dos apps a unir")
+    p_merge.add_argument("--output", "-o", required=True, help="Diretorio destino")
 
     # pack
-    p_pack = subparsers.add_parser("pack", help="Gera Dockerfile, Docker Compose e Proxy SSL para VPS")
-    p_pack.add_argument("project_dir", help="Diretório do projeto")
-    p_pack.add_argument("--domain", "-d", default="localhost", help="Domínio ou IP da VPS (ex: meusite.com)")
+    p_pack = subparsers.add_parser("pack", help="Gera Dockerfile, Docker Compose e Swarm para VPS")
+    p_pack.add_argument("project_dir", help="Diretorio do projeto")
+    p_pack.add_argument("--domain", "-d", default="localhost", help="Dominio ou IP da VPS (ex: meusite.com)")
+    p_pack.add_argument("--traefik-network", default="network_conexao", help="Nome da rede overlay do Traefik")
+    p_pack.add_argument("--certresolver", default="letsencryptresolver", help="Nome do certresolver no Traefik")
+
+    # destroy
+    p_destroy = subparsers.add_parser("destroy", help="Remove aplicacao da VPS: stack, volumes, DNS e diretorio")
+    p_destroy.add_argument("app_name", help="Nome da stack Docker Swarm (ex: hub-teste)")
+    p_destroy.add_argument("--domain", "-d", help="Dominio completo para remover DNS no Cloudflare (ex: hub-teste.vpsconexao.org)")
+    p_destroy.add_argument("--vps-host", default=None, help="IP/host da VPS (usa VPS_HOST do .env se omitido)")
+    p_destroy.add_argument("--vps-user", default="root", help="Usuario SSH da VPS (default: root)")
+    p_destroy.add_argument("--vps-password", default=None, help="Senha SSH da VPS (usa VPS_PASSWORD do .env se omitido)")
+    p_destroy.add_argument("--cf-token", default=None, help="Token da API do Cloudflare (usa CF_API_TOKEN do .env se omitido)")
+    p_destroy.add_argument("--cf-zone-id", default=None, help="Zone ID do Cloudflare (usa CF_ZONE_ID do .env se omitido)")
+    p_destroy.add_argument("--yes", "-y", action="store_true", help="Confirmar automaticamente sem interacao")
 
     args = parser.parse_args()
 
@@ -82,7 +139,8 @@ def main():
         "scan": cmd_scan,
         "convert-db": cmd_convert_db,
         "merge": cmd_merge,
-        "pack": cmd_pack
+        "pack": cmd_pack,
+        "destroy": cmd_destroy
     }
 
     sys.exit(dispatch[args.subcommand](args) or 0)

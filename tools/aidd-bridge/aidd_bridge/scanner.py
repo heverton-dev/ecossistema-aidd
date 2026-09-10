@@ -1,8 +1,8 @@
-﻿# -*- coding: utf-8 -*-
+# -*- coding: utf-8 -*-
 """
 Scanner determinístico de projetos Lovable / Vite / React / Supabase.
-Inspeciona a estrutura de arquivos, extrai rotas, páginas, dependências,
-tokens de design e migrações de banco de dados.
+Inspeciona a estrutura de arquivos, extrai rotas (React Router e TanStack Router),
+páginas, dependências, tokens de design e migrações de banco de dados.
 """
 
 import os
@@ -50,24 +50,57 @@ class LovableScanner:
             return {"error": str(e)}
 
     def _scan_pages(self) -> List[str]:
-        pages_dir = os.path.join(self.project_dir, "src", "pages")
         pages = []
-        if os.path.exists(pages_dir):
-            for root, _, files in os.walk(pages_dir):
-                for file in files:
-                    if file.endswith((".tsx", ".jsx", ".js", ".ts")):
-                        rel = os.path.relpath(os.path.join(root, file), self.project_dir)
-                        pages.append(rel.replace("\\", "/"))
+        for candidate_dir in ["src/pages", "src/routes"]:
+            full_dir = os.path.join(self.project_dir, candidate_dir)
+            if os.path.exists(full_dir):
+                for root, _, files in os.walk(full_dir):
+                    for file in files:
+                        if file.endswith((".tsx", ".jsx", ".js", ".ts")) and not file.startswith("__"):
+                            rel = os.path.relpath(os.path.join(root, file), self.project_dir)
+                            pages.append(rel.replace("\\", "/"))
         return sorted(pages)
 
     def _scan_routes(self) -> List[Dict[str, str]]:
         routes = []
+
+        # 1. TanStack Router (File-based Routing em src/routes)
+        routes_dir = os.path.join(self.project_dir, "src", "routes")
+        if os.path.exists(routes_dir):
+            for root, _, files in os.walk(routes_dir):
+                for file in sorted(files):
+                    if file.endswith((".tsx", ".jsx")) and not file.startswith("__"):
+                        rel_to_routes = os.path.relpath(os.path.join(root, file), routes_dir).replace("\\", "/")
+                        # Converte nome de arquivo TanStack em caminho de rota
+                        clean_name = rel_to_routes.replace(".tsx", "").replace(".jsx", "")
+                        if clean_name == "index":
+                            path = "/"
+                        else:
+                            parts = clean_name.split("/")
+                            formatted_parts = []
+                            for p in parts:
+                                if p == "index":
+                                    continue
+                                if p.startswith("$"):
+                                    formatted_parts.append(f":{p[1:]}")
+                                else:
+                                    formatted_parts.append(p)
+                            path = "/" + "/".join(formatted_parts)
+                        routes.append({
+                            "path": path,
+                            "component": file,
+                            "source_file": rel_to_routes,
+                            "type": "tanstack-file-route"
+                        })
+            if routes:
+                return routes
+
+        # 2. React Router DOM clássico em App.tsx / main.tsx
         app_candidates = [
             os.path.join(self.project_dir, "src", "App.tsx"),
             os.path.join(self.project_dir, "src", "App.jsx"),
             os.path.join(self.project_dir, "src", "main.tsx")
         ]
-        
         route_pattern = re.compile(r'<Route\s+[^>]*path=["\']([^"\']+)["\'][^>]*element=\{<([^/>\s]+)', re.MULTILINE)
 
         for candidate in app_candidates:
@@ -76,7 +109,12 @@ class LovableScanner:
                     content = f.read()
                     matches = route_pattern.findall(content)
                     for path, component in matches:
-                        routes.append({"path": path, "component": component, "source_file": os.path.basename(candidate)})
+                        routes.append({
+                            "path": path,
+                            "component": component,
+                            "source_file": os.path.basename(candidate),
+                            "type": "react-router"
+                        })
                 if routes:
                     break
         return routes
@@ -109,7 +147,7 @@ class LovableScanner:
                 styles["tailwind_config"] = cfg
                 break
 
-        for css in ["src/index.css", "src/App.css", "src/globals.css"]:
+        for css in ["src/styles.css", "src/index.css", "src/App.css", "src/globals.css"]:
             p = os.path.join(self.project_dir, css)
             if os.path.exists(p):
                 styles["global_css"] = css

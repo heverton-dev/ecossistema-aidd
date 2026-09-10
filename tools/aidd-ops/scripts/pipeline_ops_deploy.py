@@ -18,7 +18,6 @@ Modo padrão seguro: --dry-run (simulação completa sem efeitos colaterais).
 =============================================================================
 """
 
-import argparse
 import json
 import os
 import subprocess

@@ -80,6 +80,12 @@ def cmd_ops(args):
     cmd = [sys.executable, pipeline_script] + args
     return run_command(cmd, cwd=ops_dir, env=env)
 
+def cmd_bridge(args):
+    bridge_dir = os.path.join(TOOLS_DIR, "aidd-bridge")
+    env = {"PYTHONPATH": bridge_dir}
+    cmd = [sys.executable, "-m", "aidd_bridge.cli"] + args
+    return run_command(cmd, cwd=os.getcwd(), env=env)
+
 def cmd_components(args):
     sys.path.insert(0, os.path.join(ROOT_DIR, "scripts"))
     import gestor_componentes
@@ -487,7 +493,8 @@ def cmd_status(args):
         ("aidd-generator", "Fábrica autônoma de software (Pipeline 8 fases)"),
         ("aidd-master", "Suíte Modular com Fatias Verticais e SQLite WAL"),
         ("aidd-enterprise", "Missão crítica, conformidade SHA-256 e Zero-Trust"),
-        ("aidd-ops", "Meta-Orquestrador Agêntico de Infraestrutura (Pacote 3)")
+        ("aidd-ops", "Meta-Orquestrador Agêntico de Infraestrutura (Pacote 3)"),
+        ("aidd-bridge", "Extrator, unificador e empacotador Lovable/VPS")
     ]
     for name, desc in tools:
         path = os.path.join(TOOLS_DIR, name)
@@ -501,6 +508,7 @@ def cmd_status(args):
         "aidd-master-runner",
         "aidd-enterprise-runner",
         "aidd-ops-runner",
+        "aidd-bridge-runner",
         "orca-plan-orchestrator",
         "planos-auditoria-runner",
         "componentes-runner"
@@ -517,6 +525,7 @@ def cmd_status(args):
     print("  /enterprise <tipo> <nome> -> Dispara aidd-enterprise")
     print("  /orchestrate [plano]    -> Dispara orca-plan-orchestrator")
     print("  /plan <nome>            -> Dispara planos-auditoria-runner")
+    print("  /bridge [comando]       -> Dispara aidd-bridge-runner")
     print("-" * 72)
     return 0
 
@@ -531,6 +540,7 @@ Comandos disponíveis:
   master <args>       Executa comandos do aidd-master (ex: master add-module faturamento)
   enterprise <args>   Executa comandos do aidd-enterprise (ex: enterprise inject skill auth)
   ops <args>          Executa o pipeline do aidd-ops (ex: ops "<texto>" --pasta <dest>)
+  bridge <args>       Executa comandos do aidd-bridge (scan, convert-db, merge, pack)
   components sync|verify --tipo <tipo|todos> [--ferramenta <nome>] [--dry-run]
                       Sincroniza/verifica distribuicao fisica multi-harness de
                       componentes (gates/manifesto_harnesses.json)
@@ -581,6 +591,7 @@ def main():
         "master": cmd_master,
         "enterprise": cmd_enterprise,
         "ops": cmd_ops,
+        "bridge": cmd_bridge,
         "components": cmd_components,
         "dependencia": cmd_dependencia,
         "orchestrate": cmd_orchestrate,

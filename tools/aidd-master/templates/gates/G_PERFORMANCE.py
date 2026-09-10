@@ -106,7 +106,7 @@ class PerformanceGate:
         print("=" * 80)
 
         if self.failed == 0:
-            print("🏆 [CERTIFICAÇÃO CONCEDIDA]: PERFORMANCE HOMOLOGADA PARA PRODUÇÃO!")
+            print("[OK] Nenhuma regressão de performance detectada pelos checks executados nesta bateria.")
             return 0
         else:
             print("❌ [BLOQUEADO]: Existem problemas de performance que devem ser resolvidos.")

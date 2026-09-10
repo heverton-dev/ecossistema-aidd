@@ -6,9 +6,10 @@ Uso:
 
 from __future__ import annotations
 
-import argparse
 import sys
 from pathlib import Path
+
+import click
 
 from aidd_forge.commands.slash_router import SlashRouter
 from aidd_forge.core.git_hooks import GitHooksInstaller
@@ -24,23 +25,23 @@ IDE_RULE_ALIASES = {
 }
 
 
-def cmd_init(args: argparse.Namespace) -> int:
-    target = Path(args.path).resolve()
+def cmd_init(path: str, force: bool) -> int:
+    target = Path(path).resolve()
     target.mkdir(parents=True, exist_ok=True)
 
-    injector = Injector(TEMPLATES_ROOT, target, force=args.force)
+    injector = Injector(TEMPLATES_ROOT, target, force=force)
     files_result = injector.run()
     links_result = injector.link_ide_rules(IDE_RULE_ALIASES)
     skills_result = injector.link_skills()
     mirror_skills_result = injector.mirror_skills_all_harnesses()
 
-    fencer = PhaseFencer(TEMPLATES_ROOT, target, force=args.force)
+    fencer = PhaseFencer(TEMPLATES_ROOT, target, force=force)
     fence_result = fencer.run()
 
-    router = SlashRouter(target, force=args.force)
+    router = SlashRouter(target, force=force)
     router_result = router.run()
 
-    hooks = GitHooksInstaller(TEMPLATES_ROOT, target, force=args.force)
+    hooks = GitHooksInstaller(TEMPLATES_ROOT, target, force=force)
     hooks_result = hooks.run()
 
     print(f"[aidd-forge] projeto alvo: {target}")
@@ -62,31 +63,39 @@ def cmd_init(args: argparse.Namespace) -> int:
     return 0
 
 
-def cmd_inject(args: argparse.Namespace) -> int:
-    target = Path(args.path).resolve()
+def cmd_inject(
+    tipo: str,
+    nome: str,
+    descricao: str,
+    conteudo: str | None,
+    conteudo_file: str | None,
+    path: str,
+    force: bool,
+) -> int:
+    target = Path(path).resolve()
 
-    if args.conteudo_file:
-        conteudo = Path(args.conteudo_file).read_text(encoding="utf-8")
+    if conteudo_file:
+        conteudo_final = Path(conteudo_file).read_text(encoding="utf-8")
     else:
-        conteudo = args.conteudo or ""
+        conteudo_final = conteudo or ""
 
     payload = {
-        "tipo": args.tipo,
-        "nome": args.nome,
-        "descricao": args.descricao,
-        "conteudo": conteudo,
+        "tipo": tipo,
+        "nome": nome,
+        "descricao": descricao,
+        "conteudo": conteudo_final,
     }
 
-    resultado = UniversalInjector(target).injetar(payload, force=args.force)
+    resultado = UniversalInjector(target).injetar(payload, force=force)
 
     if not resultado.ok:
-        print(f"[aidd-forge] injecao de '{args.nome}' ({args.tipo}) falhou:")
+        print(f"[aidd-forge] injecao de '{nome}' ({tipo}) falhou:")
         for erro in resultado.errors:
             print(f"  - {erro}")
         return 1
 
     materializacao = resultado.materialization
-    print(f"[aidd-forge] componente injetado: {args.tipo}/{args.nome} (camada {resultado.camada})")
+    print(f"[aidd-forge] componente injetado: {tipo}/{nome} (camada {resultado.camada})")
     print(f"[aidd-forge] arquivo materializado: {materializacao.dest}")
     if materializacao.registry_updated:
         print(f"[aidd-forge] registry atualizado: {materializacao.registry_updated}")
@@ -97,48 +106,53 @@ def cmd_inject(args: argparse.Namespace) -> int:
     return 0
 
 
-def build_parser() -> argparse.ArgumentParser:
-    parser = argparse.ArgumentParser(
-        prog="forge",
-        description="AIDD Forge - motor de governanca agentica e economia de tokens",
-    )
-    subparsers = parser.add_subparsers(dest="command", required=True)
+@click.group(name="forge", help="AIDD Forge - motor de governanca agentica e economia de tokens")
+def cli() -> None:
+    pass
 
-    init_parser = subparsers.add_parser(
-        "init", help="Injeta a infraestrutura AIDD no projeto alvo"
-    )
-    init_parser.add_argument(
-        "path", nargs="?", default=".", help="Caminho do projeto alvo (padrao: diretorio atual)"
-    )
-    init_parser.add_argument(
-        "--force", action="store_true", help="Sobrescreve arquivos ja existentes no alvo"
-    )
-    init_parser.set_defaults(func=cmd_init)
 
-    inject_parser = subparsers.add_parser(
-        "inject", help="Injeta um novo componente (skill, mcp, rule, spec, roteiro) no projeto alvo"
-    )
-    inject_parser.add_argument("tipo", choices=TIPOS_SUPORTADOS, help="Tipo do componente")
-    inject_parser.add_argument("nome", help="Nome do componente (kebab-case)")
-    inject_parser.add_argument("--descricao", required=True, help="Descricao curta do componente")
-    conteudo_group = inject_parser.add_mutually_exclusive_group(required=True)
-    conteudo_group.add_argument("--conteudo", help="Conteudo do arquivo a materializar")
-    conteudo_group.add_argument("--conteudo-file", help="Caminho de um arquivo com o conteudo")
-    inject_parser.add_argument(
-        "--path", default=".", help="Caminho do projeto alvo (padrao: diretorio atual)"
-    )
-    inject_parser.add_argument(
-        "--force", action="store_true", help="Sobrescreve o destino caso ja exista"
-    )
-    inject_parser.set_defaults(func=cmd_inject)
+@cli.command("init", help="Injeta a infraestrutura AIDD no projeto alvo")
+@click.argument("path", required=False, default=".")
+@click.option("--force", is_flag=True, default=False, help="Sobrescreve arquivos ja existentes no alvo")
+def init_command(path: str, force: bool) -> None:
+    sys.exit(cmd_init(path, force))
 
-    return parser
+
+@cli.command(
+    "inject", help="Injeta um novo componente (skill, mcp, rule, spec, roteiro) no projeto alvo"
+)
+@click.argument("tipo", type=click.Choice(TIPOS_SUPORTADOS))
+@click.argument("nome")
+@click.option("--descricao", required=True, help="Descricao curta do componente")
+@click.option("--conteudo", default=None, help="Conteudo do arquivo a materializar")
+@click.option("--conteudo-file", default=None, help="Caminho de um arquivo com o conteudo")
+@click.option("--path", default=".", help="Caminho do projeto alvo (padrao: diretorio atual)")
+@click.option("--force", is_flag=True, default=False, help="Sobrescreve o destino caso ja exista")
+def inject_command(
+    tipo: str,
+    nome: str,
+    descricao: str,
+    conteudo: str | None,
+    conteudo_file: str | None,
+    path: str,
+    force: bool,
+) -> None:
+    if bool(conteudo) == bool(conteudo_file):
+        raise click.UsageError(
+            "informe exatamente um entre --conteudo e --conteudo-file (mutuamente exclusivos, um deles e obrigatorio)"
+        )
+    sys.exit(cmd_inject(tipo, nome, descricao, conteudo, conteudo_file, path, force))
 
 
 def main(argv: list[str] | None = None) -> int:
-    parser = build_parser()
-    args = parser.parse_args(argv)
-    return args.func(args)
+    try:
+        cli.main(args=argv, prog_name="forge")
+    except SystemExit as exc:
+        code = exc.code
+        if code is None:
+            return 0
+        return code if isinstance(code, int) else 1
+    return 0
 
 
 if __name__ == "__main__":

@@ -39,8 +39,9 @@ O **Ecossistema AIDD** unifica 5 ferramentas complementares de Engenharia Agênt
 | **AIDD Forge** | 	ools/aidd-forge | Bootstrap, micro-ambientes isolados, fatiamento de fases e purge de contexto | /forge [caminho] |
 | **AIDD Generator** | 	ools/aidd-generator | Fábrica autônoma de software (Pipeline 8 fases a partir de ideia natural) | /generate <ideia> |
 | **AIDD Master** | 	ools/aidd-master | Suíte modular com Clean Architecture, Fatias Verticais e SQLite WAL | /master <modulo> |
-| **AIDD Enterprise** | 	ools/aidd-enterprise | Plataforma de Missão Crítica com Injeção de Componentes SHA-256 e Zero-Trust | /enterprise <tipo> <nome> |
-| **AIDD Ops** | 	ools/aidd-ops | Meta-Orquestrador Agêntico de Infraestrutura — MVP em construção, ver docs/planos/feitos/integracao-aidd-ops/ | (em construção — Pacote 3) |
+| **AIDD Enterprise** | tools/aidd-enterprise | Plataforma de Missão Crítica com Injeção de Componentes SHA-256 e Zero-Trust | /enterprise <tipo> <nome> |
+| **AIDD Ops** | tools/aidd-ops | Meta-Orquestrador Agêntico de Infraestrutura — MVP em construção, ver docs/planos/feitos/integracao-aidd-ops/ | (em construção — Pacote 3) |
+| **AIDD Bridge** | tools/aidd-bridge | Extrator, Unificador e Empacotador de Projetos Low-Code (Lovable/Supabase) para VPS | /bridge [comando] |
 
 ---
 
@@ -115,6 +116,11 @@ Cada comando possui contrato formal executável em qualquer harness (Antigravity
 - **Skill:** skills/planos-auditoria-runner
 - **Ação:** Gera estruturação padronizada e rascunhos de planos de auditoria, evolução ou testes com checagem determinística de cercas markdown sem fabricar decisões ou aprovações.
 - **CLI Equivalente:** python ecossistema.py plan init <nome>
+
+### /bridge [comando]
+- **Skill:** skills/aidd-bridge-runner
+- **Ação:** Extrai, unifica e empacota aplicações Low-Code (Lovable, v0, Bolt) para VPS própria com PostgreSQL puro, PostgREST e Docker Compose.
+- **CLI Equivalente:** python ecossistema.py bridge [scan|convert-db|merge|pack]
 
 ---
 

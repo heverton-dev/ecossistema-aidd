@@ -86,8 +86,10 @@ def eh_prosa_compressivel(texto: str) -> bool:
 
 def _comprimir_fallback(texto: str) -> str:
     """Fallback determinístico (zero ML, zero rede): colapsa espaços,
-    remove linhas de repetição e corta parágrafos redundantes.
-    Preserva o início de cada parágrafo (informação de maior densidade)."""
+    remove linhas e sentenças repetidas e corta parágrafos redundantes.
+    Preserva a primeira ocorrência de cada sentença (informação de maior
+    densidade). A dedup de sentenças cobre prosa repetitiva que chega como
+    um único parágrafo (sem newlines), caso que a dedup por linha não pega."""
     linhas = [ln.strip() for ln in texto.splitlines()]
     # Remove linhas duplicadas consecutivas e vazias extras
     dedup = []
@@ -98,8 +100,24 @@ def _comprimir_fallback(texto: str) -> str:
     texto = '\n'.join(dedup)
     # Colapsa espaços múltiplos
     texto = re.sub(r'[ \t]{2,}', ' ', texto)
-    # Corta parágrafos além do 3º de cada bloco (estrutura preservada)
-    paragrafos = [p.strip() for p in re.split(r'\n\s*\n', texto) if p.strip()]
+    # Dedup de sentenças dentro de cada parágrafo (mantém a 1ª ocorrência)
+    paragrafos = []
+    for bloco in re.split(r'\n\s*\n', texto):
+        bloco = bloco.strip()
+        if not bloco:
+            continue
+        sentencas = re.split(r'(?<=[.!?])\s+', bloco)
+        vistas = set()
+        unicas = []
+        for s in sentencas:
+            chave = s.strip().lower()
+            if chave and chave in vistas:
+                continue
+            if chave:
+                vistas.add(chave)
+            unicas.append(s.strip())
+        paragrafos.append(' '.join(s for s in unicas if s))
+    # Corta parágrafos além da fração alvo (estrutura preservada)
     return '\n\n'.join(paragrafos[:max(1, int(len(paragrafos) * (1 - TAXA_COMPRESSAO_PADRAO)))])
 
 

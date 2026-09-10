@@ -1,7 +1,7 @@
 # Item 18 — CLI do aidd-forge convertida de argparse para click pela metade (suíte inteira quebrada na coleta)
 
 > **Escopo:** Entra: finalizar ou reverter a conversão em andamento de `tools/aidd-forge/aidd_forge/cli.py de argparse para click (modificação não comitada achada na árvore em 2026-09-09), e adaptar `tests/unit/test_cli.py (que importa `build_parser, símbolo removido pela conversão). Não entra: mudanças de comportamento dos comandos do forge em si nem outros módulos do forge.
-> **Status:** [✅ CONCLUÍDO em 2026-09-09 — decisão registrada: REVERTER ao argparse. `aidd_forge/cli.py` atual é idêntico ao HEAD (`import argparse`, `build_parser()` restaurado, zero `import click`); suíte do aidd-forge coleta e roda 100% verde: 197 passed, 1 skipped. Nenhuma dependência nova (click não entrou no manifest do forge).]
+> **Status:** [✅ CONCLUÍDO em 2026-09-09 — DECISÃO REVISTA (mesmo dia, sessão posterior): a reversão para argparse registrada abaixo foi correta NO MOMENTO em que foi tomada (conversão pela metade, suíte inteira quebrada na coleta). Horas depois, o item 10 do plano estratégico `docs/planos/feitos/02-direcionamento-estrategico-anti-nih/` (Onda 4 — zero argparse nos pontos de entrada de CLI) exigiu migrar `aidd_forge/cli.py` para click de novo, desta vez de forma completa: `build_parser()`/`main()` reescritos com click preservando 100% o comportamento externo, `tests/unit/test_cli.py` adaptado ao contrato click (não revertido), e `click>=8.0` declarado em `install_requires` de `tools/aidd-forge/setup.py`. Resultado: suíte completa do forge 196 passed, 1 skipped, 0 failed. **A decisão final e vigente é MANTER CLICK** (aprovada pelo usuário em 2026-09-09), não reverter — a seção "Execução real e evidências" abaixo documenta a reversão como um passo intermediário do histórico, superado pela migração completa registrada no item 10 do plano estratégico.]
 > **Modelo sugerido:** Claude Haiku · Antigravity Gemini 3.1 pro · MiMo mimo-v2.5 (finalizar 1 conversão de CLI + 1 arquivo de teste)
 
 ---
@@ -71,3 +71,30 @@ concorrente já havia revertido o arquivo antes desta sessão retomar:
 - Decisão (finalizar vs reverter) registrada aqui com justificativa. ✅
 - Nenhuma dependência implícita de terceiro (click permanece fora do manifest
   do forge, e o código não o usa). ✅
+
+---
+
+## Atualização final (2026-09-09, sessão posterior) — decisão revertida de novo: MANTER CLICK
+
+O item 10 do plano estratégico anti-NIH (`docs/planos/feitos/02-direcionamento-estrategico-anti-nih/10-migrar-cli-de-cada-ferramenta-de-argparse-para-o-padrao-do-ecossistemapy-onda-4-remanescente.md`)
+exige zero `argparse` em pontos de entrada de CLI de ferramenta — `aidd_forge/cli.py` é um deles.
+Nesta sessão o arquivo foi migrado para click **de forma completa**:
+
+- `build_parser()`/`main()` reescritos com um `click.Group` (`init`, `inject`), preservando
+  100% o comportamento externo: mesmos flags, mesma validação de grupo mutuamente exclusivo
+  (`--conteudo`/`--conteudo-file`), mesmos códigos de saída.
+- `tests/unit/test_cli.py` (que importava `build_parser`, removido pela conversão) foi
+  **reescrito para usar `click.testing.CliRunner`** (não revertido) — continua verificando
+  os mesmos comportamentos externos.
+- `click>=8.0` foi declarado em `install_requires` de `tools/aidd-forge/setup.py`, fechando
+  o gap que esta sessão tinha identificado.
+
+**Prova:** `cd tools/aidd-forge && python -m pytest -q` → **196 passed, 1 skipped, 0 failed**
+(suíte inteira do forge). `gates/G_CLI_HELP_CONSISTENCIA.py` e `python ecossistema.py audit`
+aprovados.
+
+**Decisão final e vigente, aprovada pelo usuário em 2026-09-09: MANTER CLICK.** A reversão
+para argparse registrada acima nas seções 1–2 foi correta para o estado em que a conversão
+se encontrava naquele momento (pela metade, suíte quebrada na coleta) — não foi um erro,
+foi superada por uma migração completa e intencional horas depois, pedida por um item de
+outro plano (estratégico), não por uma sessão concorrente acidental.

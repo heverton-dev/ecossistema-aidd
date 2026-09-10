@@ -458,6 +458,17 @@ def compose_suite(target_dir: str, suite_name: str, modules: list, db_engine: st
             shutil.copyfile(src, dst)
             print(f"  [+] Core Kernel: {cf}")
 
+    # Assets HTML dos Studios referenciados pelo core: webhook_studio.html é
+    # lido por core/webhooks.py (get_studio_html) e mcp_studio.html por
+    # core/mcp_server.py (get_studio_html). Sem eles, o check comportamental
+    # de XSS do G_SEGURANCA e a rota /webhooks do server.py gerado quebram.
+    for asset in ("webhook_studio.html", "mcp_studio.html"):
+        src = os.path.join(templates_v2, asset)
+        dst = os.path.join(core_dir, asset)
+        if os.path.isfile(src):
+            shutil.copyfile(src, dst)
+            print(f"  [+] Core Kernel: {asset}")
+
     # Copiar Shared UI
     shared_ui_src = os.path.join(templates_v2, "shared", "ui")
     if os.path.isdir(shared_ui_src):

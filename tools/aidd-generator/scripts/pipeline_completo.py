@@ -37,9 +37,10 @@ import sys
 import os
 import json
 import time
-import argparse
 import importlib.util
 from pathlib import Path
+
+import click
 
 if sys.platform == 'win32':
     sys.stdout.reconfigure(encoding='utf-8')
@@ -313,23 +314,21 @@ def executar_pipeline(ideia: str, pasta_projeto: Path, nao_interativo: bool = Tr
     return resultado
 
 
-def main():
-    parser = argparse.ArgumentParser(
-        description='Pipeline completo aidd-project-generator (Fases 1-7, ou 1-8 com --implementar-codigo)'
-    )
-    parser.add_argument('ideia', help='Descrição da ideia do projeto a ser gerado')
-    parser.add_argument('--pasta', '--output', dest='pasta', required=True, help='Pasta onde o projeto será criado')
-    parser.add_argument('--interativo', action='store_true',
-                       help='Usar modal interativo (input()) na Fase 4 em vez da heurística automática')
-    parser.add_argument('--implementar-codigo', action='store_true',
-                       help='Rodar também a Fase 8 (implementa código funcional real a partir do design, com testes e loop de correção)')
-    parser.add_argument('--orquestrador', choices=['legado', 'prefect'], default='legado',
-                       help='Motor de orquestração genérica (retries/checkpoints/estado). '
-                            'prefect: delega a parte genérica ao Prefect preservando o protocolo delegado. '
-                            'legado: orquestração sequencial custom (comportamento padrão).')
-
-    args = parser.parse_args()
-
+@click.command(
+    context_settings={'help_option_names': ['-h', '--help']},
+    help='Pipeline completo aidd-project-generator (Fases 1-7, ou 1-8 com --implementar-codigo)',
+)
+@click.argument('ideia')
+@click.option('--pasta', '--output', 'pasta', required=True, help='Pasta onde o projeto será criado')
+@click.option('--interativo', is_flag=True, default=False,
+              help='Usar modal interativo (input()) na Fase 4 em vez da heurística automática')
+@click.option('--implementar-codigo', is_flag=True, default=False,
+              help='Rodar também a Fase 8 (implementa código funcional real a partir do design, com testes e loop de correção)')
+@click.option('--orquestrador', type=click.Choice(['legado', 'prefect']), default='legado',
+              help='Motor de orquestração genérica (retries/checkpoints/estado). '
+                   'prefect: delega a parte genérica ao Prefect preservando o protocolo delegado. '
+                   'legado: orquestração sequencial custom (comportamento padrão).')
+def cli(ideia, pasta, interativo, implementar_codigo, orquestrador):
     # --- Pré-voo: verificar LLM antes de gastar tempo com Fase 1 ---
     ok, msg = verificar_llm_pronto()
     if not ok:
@@ -344,7 +343,7 @@ def main():
     # env vars), uma chave presente mas inválida só falha na chamada real —
     # captura aqui pra nunca vazar o stack trace cru do litellm.
     try:
-        if args.orquestrador == 'prefect':
+        if orquestrador == 'prefect':
             # Orquestração genérica via Prefect: retries automáticos por fase,
             # checkpointing por (ideia, fase) e estado persistido em SQLite.
             # O protocolo delegado (utils_delegacao) permanece intacto.
@@ -356,14 +355,14 @@ def main():
                 sys.exit(1)
             print(f"✓ {prefect_msg}")
             resultado = executar_pipeline_prefect(
-                args.ideia, str(Path(args.pasta)),
-                nao_interativo=not args.interativo,
-                implementar_codigo=args.implementar_codigo
+                ideia, str(Path(pasta)),
+                nao_interativo=not interativo,
+                implementar_codigo=implementar_codigo
             )
         else:
             resultado = executar_pipeline(
-                args.ideia, Path(args.pasta), nao_interativo=not args.interativo,
-                implementar_codigo=args.implementar_codigo
+                ideia, Path(pasta), nao_interativo=not interativo,
+                implementar_codigo=implementar_codigo
             )
     except LLMNaoConfiguradoException as e:
         print(f"\n❌ {e.mensagem_usuario}")
@@ -387,6 +386,10 @@ def main():
     print("=" * 70 + "\n")
 
     sys.exit(0 if resultado['status'] == 'COMPLETO' else 1)
+
+
+def main():
+    cli()
 
 
 if __name__ == '__main__':

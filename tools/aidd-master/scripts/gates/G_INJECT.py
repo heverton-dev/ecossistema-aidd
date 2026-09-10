@@ -109,8 +109,10 @@ class InjectGate:
         if os.path.isfile(aidd_py):
             with open(aidd_py, "r", encoding="utf-8") as f:
                 conteudo = f.read()
+            wired_argparse = '"inject": cmd_inject' in conteudo
+            wired_click = '@cli.command("inject"' in conteudo and "cmd_inject(types.SimpleNamespace(" in conteudo
             self.check(
-                "def cmd_inject(" in conteudo and '"inject": cmd_inject' in conteudo,
+                "def cmd_inject(" in conteudo and (wired_argparse or wired_click),
                 "Subcomando CLI 'aidd inject <tipo> <nome>'",
                 "cmd_inject não encontrado ou não registrado no dispatcher de comandos",
             )

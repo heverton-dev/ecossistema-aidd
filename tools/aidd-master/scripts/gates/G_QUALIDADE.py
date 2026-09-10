@@ -23,9 +23,24 @@ if hasattr(sys.stdout, 'reconfigure'):
 def executar_fuzzing_continuo(target_dir: str = ".") -> Dict[str, any]:
     """Executa fuzzing contínuo de APIs geradas."""
     import sys as sys_module
+    import urllib.request
     sys_module.path.insert(0, os.path.join(target_dir, 'src'))
 
     print("    -> Executando Fuzzing Contínuo de APIs...")
+
+    # Preflight honesto: o fuzzer dispara centenas de requisições contra o
+    # servidor da suíte. Sem servidor ativo em localhost:3000, cada request
+    # só acumula falha de conexão (minutos desperdiçados, zero sinal).
+    # Se não há nada escutando, pula o fuzzing com registro honesto.
+    servidor_ativo = False
+    try:
+        with urllib.request.urlopen("http://localhost:3000/health", timeout=2):
+            servidor_ativo = True
+    except Exception:
+        servidor_ativo = False
+    if not servidor_ativo:
+        print("       (Aviso: servidor não está ativo em localhost:3000 — fuzzing de runtime pulado; rode 'python src/server.py' para cobertura completa)")
+        return {"fuzzing_skipped": True, "motivo": "servidor_inativo"}
 
     try:
         from core.fuzzing import ContinuousAPIFuzzer, FuzzingStrategy

@@ -1,0 +1,114 @@
+# -*- coding: utf-8 -*-
+"""
+BridgeTeardown — Remoção isolada e determinística de aplicações implantadas via aidd-bridge.
+Remove a stack no Swarm, volumes dedicados, registro DNS no Cloudflare e diretório na VPS,
+assegurando 100% de integridade dos outros serviços em produção (Traefik, Evolution API, N8N, etc.).
+"""
+
+import os
+import sys
+import time
+import requests
+from typing import Dict, Any, Optional
+from .cloudflare_dns import CloudflareDNS
+
+try:
+    import paramiko
+except ImportError:
+    paramiko = None
+
+
+
+class BridgeTeardown:
+    def __init__(
+        self,
+        app_name: str,
+        domain: Optional[str] = None,
+        vps_host: Optional[str] = None,
+        vps_user: Optional[str] = None,
+        vps_password: Optional[str] = None,
+        cf_api_token: Optional[str] = None,
+        cf_zone_id: Optional[str] = None
+    ):
+        self.app_name = app_name.strip()
+        self.domain = domain.strip() if domain else None
+        self.vps_host = vps_host or os.getenv("VPS_HOST")
+        self.vps_user = vps_user or os.getenv("VPS_USER", "root")
+        self.vps_password = vps_password or os.getenv("VPS_PASSWORD")
+        self.cf_api_token = cf_api_token or os.getenv("CF_API_TOKEN")
+        self.cf_zone_id = cf_zone_id or os.getenv("CF_ZONE_ID")
+
+    def delete_cloudflare_dns(self) -> Dict[str, Any]:
+        """Localiza e deleta o registro DNS (CNAME ou A) do subdomínio no Cloudflare."""
+        if not self.domain or not self.cf_api_token or not self.cf_zone_id:
+            return {"status": "skipped", "reason": "Credenciais Cloudflare ou domínio ausentes"}
+
+        cf = CloudflareDNS(
+            zone_id=self.cf_zone_id,
+            api_token=self.cf_api_token
+        )
+        return cf.deletar_registro(self.domain)
+
+
+    def destroy_vps_stack(self, remove_volumes: bool = True, remove_dir: bool = True) -> Dict[str, Any]:
+        """Remove a stack Docker Swarm, seus volumes e seu diretório na VPS com total isolamento."""
+        if not paramiko:
+            return {"status": "error", "error": "paramiko não instalado"}
+
+        if not self.vps_host or not self.vps_password:
+            return {"status": "error", "error": "Credenciais da VPS não configuradas"}
+
+        results = {"stack": None, "volumes": None, "directory": None}
+
+        ssh = paramiko.SSHClient()
+        ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+        try:
+            ssh.connect(
+                self.vps_host,
+                username=self.vps_user,
+                password=self.vps_password,
+                timeout=15
+            )
+
+            # 1. Remover Docker Swarm stack
+            cmd_stack = f"docker stack rm {self.app_name}"
+            stdin, stdout, stderr = ssh.exec_command(cmd_stack)
+            stdout.channel.recv_exit_status()
+            results["stack"] = stdout.read().decode("utf-8").strip()
+
+            # Aguardar drenagem dos containers da stack (máximo 15s)
+            time.sleep(5)
+
+            # 2. Remover volumes isolados da stack se solicitado
+            if remove_volumes:
+                app_slug = self.domain.replace(".", "-").replace(":", "-") if self.domain else self.app_name
+                cmd_vols = f"docker volume ls -q | grep -E '^({self.app_name}|{app_slug})' | xargs -r docker volume rm"
+                stdin, stdout, stderr = ssh.exec_command(cmd_vols)
+                stdout.channel.recv_exit_status()
+                results["volumes"] = "Volumes isolados removidos"
+
+            # 3. Remover diretório na VPS se solicitado
+            if remove_dir:
+                safe_dir = f"/root/{self.app_name}"
+                cmd_rm_dir = f"rm -rf {safe_dir}"
+                stdin, stdout, stderr = ssh.exec_command(cmd_rm_dir)
+                stdout.channel.recv_exit_status()
+                results["directory"] = f"Diretório {safe_dir} removido"
+
+            ssh.close()
+            return {"status": "success", "details": results}
+        except Exception as e:
+            if ssh:
+                ssh.close()
+            return {"status": "error", "error": str(e)}
+
+    def execute_teardown(self) -> Dict[str, Any]:
+        """Executa a rotina completa de desinstalação segura."""
+        dns_res = self.delete_cloudflare_dns()
+        vps_res = self.destroy_vps_stack()
+        return {
+            "app_name": self.app_name,
+            "domain": self.domain,
+            "dns": dns_res,
+            "vps": vps_res
+        }

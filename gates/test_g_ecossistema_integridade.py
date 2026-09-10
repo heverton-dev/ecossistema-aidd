@@ -60,7 +60,7 @@ def _montar_arvore_valida(root_dir):
 
     # 3. Skills com frontmatter YAML valido
     for skill in SKILLS_REQUIRED:
-        sdir = os.path.join(root_dir, "skills", skill)
+        sdir = os.path.join(root_dir, "componentes", "compartilhado", "skills", skill)
         os.makedirs(sdir, exist_ok=True)
         with open(os.path.join(sdir, "SKILL.md"), "w", encoding="utf-8") as f:
             f.write(f"---\nname: {skill}\ndescription: Test skill\n---\n# Content\n")
@@ -116,7 +116,7 @@ def test_falha_se_git_acidental_dentro_de_tool(tmp_path):
 
 def test_falha_se_skill_sem_yaml_frontmatter(tmp_path):
     gate_path = _montar_arvore_valida(tmp_path)
-    skill_file = tmp_path / "skills" / "aidd-forge-runner" / "SKILL.md"
+    skill_file = tmp_path / "componentes" / "compartilhado" / "skills" / "aidd-forge-runner" / "SKILL.md"
     skill_file.write_text("# Sem frontmatter\nApenas markdown normal.", encoding="utf-8")
 
     res = rodar_gate(gate_path, tmp_path)
@@ -154,10 +154,10 @@ def test_falha_se_tool_aidd_ops_ausente(tmp_path):
 
 
 def test_falha_se_skill_aidd_ops_runner_ausente(tmp_path):
-    """Gate reprova quando skills/aidd-ops-runner/SKILL.md não existe."""
+    """Gate reprova quando componentes/compartilhado/skills/aidd-ops-runner/SKILL.md não existe."""
     gate_path = _montar_arvore_valida(tmp_path)
-    os.remove(tmp_path / "skills" / "aidd-ops-runner" / "SKILL.md")
-    os.rmdir(tmp_path / "skills" / "aidd-ops-runner")
+    os.remove(tmp_path / "componentes" / "compartilhado" / "skills" / "aidd-ops-runner" / "SKILL.md")
+    os.rmdir(tmp_path / "componentes" / "compartilhado" / "skills" / "aidd-ops-runner")
 
     res = rodar_gate(gate_path, tmp_path)
     assert res.returncode == 1

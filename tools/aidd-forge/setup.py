@@ -8,6 +8,7 @@ setup(
     include_package_data=True,
     package_data={"aidd_forge": ["templates/**/*"]},
     python_requires=">=3.10",
+    install_requires=["click>=8.0"],
     entry_points={
         "console_scripts": [
             "forge=aidd_forge.cli:main",

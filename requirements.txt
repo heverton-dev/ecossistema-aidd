@@ -18,3 +18,10 @@ alembic>=1.13.0
 returns>=0.23.0
 cookiecutter>=2.6.0
 pyyaml>=6.0.0
+
+# aidd-bridge: deploy e teardown em VPS via SSH/SFTP
+paramiko>=3.4.0
+
+# aidd-bridge: geração de JWT assinado para GoTrue/PostgREST (anon + service_role)
+PyJWT>=2.8.0
+cryptography>=42.0.0

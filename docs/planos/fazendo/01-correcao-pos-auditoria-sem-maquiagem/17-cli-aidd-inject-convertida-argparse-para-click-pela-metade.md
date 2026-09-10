@@ -1,7 +1,7 @@
 # Item 17 — CLI aidd_inject convertida de argparse para click pela metade (6 testes quebrados + dependência não declarada)
 
 > **Escopo:** Entra: finalizar ou reverter a conversão em andamento de `tools/aidd-generator/scripts/aidd_inject.py` de argparse para click (modificação não comitada encontrada na árvore em 2026-09-09), reverter/adapter os 6 testes de `tests/test_aidd_inject_cli.py` que quebraram com ela, e declarar (ou remover) a dependência `click` em `tools/aidd-generator/requirements.txt`. Não entra: mudanças de comportamento da injeção em si (`injetar()`, injector core), outros scripts CLI do generator, nem o restante do pipeline de 8 fases.
-> **Status:** [✅ CONCLUÍDO em 2026-09-09 — decisão registrada: REVERTER ao argparse. A sessão concorrente já havia revertido `aidd_inject.py` ao argparse (arquivo atual idêntico ao HEAD, `_build_parser`/`_cmd_inject` restaurados); a suíte do generator estava 100% verde (863 passed, 0 failed) e `tests/test_aidd_inject_cli.py` 9/9. Ação desta sessão: remover a dependência `click` órfã de `requirements.txt` (nenhum `import click` restante no generator — grep confirmou 0 ocorrências), fechando o critério de "nenhuma dependência implícita".
+> **Status:** [✅ CONCLUÍDO em 2026-09-09 — DECISÃO REVISTA (mesmo dia, sessão posterior): a reversão para argparse registrada abaixo foi a decisão correta NO MOMENTO em que foi tomada (conversão pela metade, 6 testes quebrados, dependência não declarada). Horas depois, o item 10 do plano estratégico `docs/planos/feitos/02-direcionamento-estrategico-anti-nih/` (Onda 4 — zero argparse nos pontos de entrada de CLI) exigiu migrar `aidd_inject.py` para click de novo, desta vez de forma completa: os 6 testes que quebraram na tentativa anterior foram adaptados ao contrato click (não revertidos), `pipeline_completo.py` também migrado, e `click>=8.0` devidamente declarado em `tools/aidd-generator/requirements.txt` — fechando exatamente o gap que esta sessão tinha identificado. Resultado: suíte completa do generator 929 passed, 0 failed; `tests/test_aidd_inject_cli.py` 9/9. **A decisão final e vigente é MANTER CLICK** (aprovada pelo usuário em 2026-09-09), não reverter — a seção "Execução real e evidências" abaixo documenta a reversão como um passo intermediário do histórico, superado pela migração completa registrada no item 10 do plano estratégico.
 > **Modelo sugerido:** Claude Haiku · Antigravity Gemini 3.1 pro · MiMo mimo-v2.5 (correção pontual: terminar 1 conversão de CLI + 6 testes + 1 linha de requirements)
 
 ---
@@ -102,3 +102,31 @@ o Item 15 combate (dependência no manifest sem uso real no código). Ação:
 - Nenhuma dependência implícita: nenhum import de terceiro sem entrada no
   manifest (o único risco — `click` órfão — foi eliminado). ✅
 - Decisão (finalizar vs reverter) registrada neste documento com justificativa. ✅
+
+---
+
+## Atualização final (2026-09-09, sessão posterior) — decisão revertida de novo: MANTER CLICK
+
+O item 10 do plano estratégico anti-NIH (`docs/planos/feitos/02-direcionamento-estrategico-anti-nih/10-migrar-cli-de-cada-ferramenta-de-argparse-para-o-padrao-do-ecossistemapy-onda-4-remanescente.md`)
+exige zero `argparse` em pontos de entrada de CLI de ferramenta — `aidd_inject.py` é um deles.
+Nesta sessão o arquivo foi migrado para click **de forma completa** (não pela metade):
+
+- `_build_parser()`/`_cmd_inject(args)` substituídos por um comando click (`_inject_command`)
+  mais um roteador manual em `main()` que preserva 100% o comportamento externo antigo:
+  sem argumentos → ajuda + exit 1; `-h`/`--help` → ajuda + exit 0; `inject <tipo> <nome> ...`
+  → parseado via click; qualquer outro texto → fallback de linguagem natural (inalterado).
+- Os 6 testes que quebraram na tentativa anterior (`tests/test_aidd_inject_cli.py`) foram
+  **adaptados ao contrato click** (não revertidos) — continuam verificando os mesmos
+  comportamentos externos (exit code, texto "usage", recusa sem `--forcar`).
+- `click>=8.0` foi declarado em `tools/aidd-generator/requirements.txt`, fechando o gap
+  que esta sessão tinha identificado.
+
+**Prova:** `cd tools/aidd-generator && python -m pytest -q` → **929 passed, 0 failed**
+(suíte inteira do generator, incluindo os 9 testes de `test_aidd_inject_cli.py`).
+`gates/G_CLI_HELP_CONSISTENCIA.py` e `python ecossistema.py audit` aprovados.
+
+**Decisão final e vigente, aprovada pelo usuário em 2026-09-09: MANTER CLICK.** A reversão
+para argparse registrada acima nas seções 1–3 foi correta para o estado em que a conversão
+se encontrava naquele momento (pela metade, testes quebrados, dependência não declarada) —
+não foi um erro, foi superada por uma migração completa e intencional horas depois, pedida
+por um item de outro plano (estratégico), não por uma sessão concorrente acidental.

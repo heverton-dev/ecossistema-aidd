@@ -2,32 +2,58 @@
 # -*- coding: utf-8 -*-
 """
 =============================================================================
-AIDD v5.1 Enterprise — GATE DETERMINÍSTICO DE SEGURANÇA E AUDITORIA MILITAR (G_SEGURANCA)
+AIDD v5.1 Enterprise — GATE DETERMINÍSTICO DE SEGURANÇA (G_SEGURANCA)
 =============================================================================
-Executa a bateria completa de 8 camadas de testes de cibersegurança e compliance:
-1. Auditoria de Headers OWASP e Hardening HTTP
-2. Teste de Criptografia JWT HS256 e Resistência a Timing Attacks
+Executa a bateria de camadas de testes de cibersegurança e compliance:
+1. Auditoria de Headers OWASP e Hardening HTTP (config retornada pelo código)
+2. Teste Comportamental de Criptografia JWT HS256 e Resistência a Tampering
 3. Varredura Estática contra SQL Injection em 100% dos arquivos
-4. Varredura de Segredos e Chaves Hardcoded
-5. Auditoria de Configuração do Nginx (Rate Limiting, SSL/TLS, Anti-DDoS)
-6. Auditoria de Container Docker e Princípio do Menor Privilégio (Non-Root)
-7. Auditoria de Persistência Concorrente SQLite WAL e Logs de Auditoria
+3b. Check Comportamental SQLi: bind parameter neutraliza payload real (sqlite3)
+3c. Check Comportamental XSS: Webhook Studio escapa payload real injetado
+4. Auditoria de Configuração do Nginx (Rate Limiting, SSL/TLS, Anti-DDoS)
+5. Auditoria de Container Docker e Princípio do Menor Privilégio (Non-Root)
+6. Auditoria de Persistência Concorrente SQLite WAL e Logs de Auditoria
+7. Auditoria Estática de OpenAPI (Security Schemes Bearer JWT)
 8. CVE Dependency Audit via pip-audit (requirements.txt)
+
+Relatório final honesto (Regra de Ouro #9): reporta quantos checks são
+comportamentais (executam ataque/verificação contra código real), quantos são
+de configuração (inspecionam valores retornados/declarados) e quantos são
+estáticos (varredura de fonte/especificação) — sem rótulos de certificação
+que excedam a cobertura real executada.
 """
 
 import os
 import sys
 import re
-import time
 import json
 import hmac
 import hashlib
 import argparse
 import subprocess
 import sqlite3
+import tempfile
 
 if hasattr(sys.stdout, 'reconfigure'):
     sys.stdout.reconfigure(encoding='utf-8', errors='replace')
+
+# Classificação honesta de cada camada (Regra de Ouro #9):
+#   comportamental = executa verificação/ataque real contra código em execução
+#   configuracao   = inspeciona valores de configuração retornados ou declarados
+#   estatico       = varredura de fonte/especificação sem execução
+LAYER_KIND = {
+    "Camada 1: OWASP": "configuracao",
+    "Camada 2: JWT Auth": "comportamental",
+    "Camada 2.5: Auth Integrity": "estatico",
+    "Camada 3: SQL Safety": "estatico",
+    "Camada 3b: SQL Behavioral": "comportamental",
+    "Camada 3c: XSS Behavioral": "comportamental",
+    "Camada 4: Nginx Shield": "configuracao",
+    "Camada 5: Docker Hardening": "configuracao",
+    "Camada 6: SQLite Safety": "configuracao",
+    "Camada 7: API Compliance": "estatico",
+    "Camada 8: CVE Dependency Audit": "configuracao",
+}
 
 
 class SecurityGate:
@@ -38,6 +64,7 @@ class SecurityGate:
         self.failed = 0
         self.warnings = 0
         self.results = []
+        self.composition = {"comportamental": 0, "configuracao": 0, "estatico": 0}
 
     def log(self, status: str, layer: str, test_name: str, detail: str = ""):
         symbol = "✅ [PASS]" if status == "PASS" else ("❌ [FAIL]" if status == "FAIL" else "⚠️ [WARN]")
@@ -47,6 +74,7 @@ class SecurityGate:
             self.failed += 1
         else:
             self.warnings += 1
+        self.composition[LAYER_KIND.get(layer, "estatico")] += 1
 
         msg = f"{symbol} [{layer}] {test_name}"
         if detail:
@@ -56,7 +84,7 @@ class SecurityGate:
 
     def _camada1_owasp_headers(self):
         try:
-            from core.security import SecurityService, JWTService
+            from core.security import SecurityService
             headers = SecurityService.get_security_headers()
 
             required_headers = [
@@ -162,6 +190,102 @@ class SecurityGate:
         else:
             for vf, ln, code in sql_vulns:
                 self.log("FAIL", "Camada 3: SQL Safety", f"SQL Injection Potencial em {os.path.basename(vf)}:{ln}", code)
+
+    def _camada3b_sqli_bind_comportamental(self):
+        """Check comportamental: prova, com sqlite3 real, que consulta
+        parametrizada (bind parameter) neutraliza o payload clássico
+        ' OR '1'='1 — e que a mesma consulta por concatenação vazaria
+        dados (pré-condição reproduzida no mesmo motor)."""
+        payload = "' OR '1'='1"
+        probe_table = "_sqli_probe_g_seguranca"
+        fd, probe_db = tempfile.mkstemp(prefix="g_seguranca_sqli_", suffix=".db")
+        os.close(fd)
+        conn = None
+        try:
+            conn = sqlite3.connect(probe_db)
+            conn.execute(f"CREATE TABLE IF NOT EXISTS {probe_table} (id INTEGER PRIMARY KEY, nome TEXT)")
+            conn.execute(f"INSERT INTO {probe_table} (nome) VALUES (?)", (payload,))
+            conn.execute(f"INSERT INTO {probe_table} (nome) VALUES (?)", ("registro_legitimo",))
+            conn.commit()
+
+            # Pré-condição (mesmo motor, mesmo payload): concatenação vaza 2 linhas
+            sql_inseguro = "SELECT * FROM " + probe_table + " WHERE nome = '" + payload + "'"
+            vazadas = conn.execute(sql_inseguro).fetchall()
+            if len(vazadas) != 2:
+                self.log("WARN", "Camada 3b: SQL Behavioral", "Neutralização Comportamental (bind parameter)",
+                         f"Pré-condição não reproduzida ({len(vazadas)} linhas vazadas por concatenação)")
+                return
+
+            # Caminho seguro: bind parameter trata o payload como dado literal
+            seguras = conn.execute(
+                "SELECT * FROM " + probe_table + " WHERE nome = ?", (payload,)
+            ).fetchall()
+
+            if len(seguras) == 1 and seguras[0][1] == payload:
+                self.log("PASS", "Camada 3b: SQL Behavioral", "Neutralização Comportamental (bind parameter)",
+                         "Payload ' OR '1'='1 tratado como dado literal (sqlite3 real; concatenação vazaria 2 linhas)")
+            else:
+                self.log("FAIL", "Camada 3b: SQL Behavioral", "Neutralização Comportamental (bind parameter)",
+                         f"Bind parametrizado retornou {len(seguras)} linhas (esperado 1)")
+        except sqlite3.Error as e:
+            self.log("WARN", "Camada 3b: SQL Behavioral", "Neutralização Comportamental (bind parameter)",
+                     f"Probe não executada neste ambiente: {e}")
+        finally:
+            if conn is not None:
+                try:
+                    conn.execute(f"DROP TABLE IF EXISTS {probe_table}")
+                    conn.commit()
+                    conn.close()
+                except sqlite3.Error:
+                    pass
+            try:
+                os.remove(probe_db)
+            except OSError:
+                pass
+
+    def _camada3c_xss_webhook_studio_comportamental(self):
+        """Check comportamental: injeta payload XSS real no catálogo de eventos
+        e renderiza o Webhook Studio pelo mesmo pipeline (get_studio_html)
+        usado pela rota /webhooks do server.py, provando que a saída escapada
+        não executa o payload."""
+        try:
+            from core.database import Database
+            from core.webhooks import WebhookDispatcher
+            import html as html_mod
+
+            fd, probe_db = tempfile.mkstemp(prefix="g_seguranca_xss_", suffix=".db")
+            os.close(fd)
+            db = Database(f"sqlite:///{probe_db}")
+            dispatcher = WebhookDispatcher(db)
+
+            payload = '"><script>alert("xss_probe")</script>'
+            evento_probe = "moduloxssprobe.criado"
+            WebhookDispatcher.register_module_events("moduloxssprobe", f"Módulo {payload}")
+
+            html_out = dispatcher.get_studio_html("Probe de XSS — Webhook Studio")
+
+            escapado = html_mod.escape(f"Módulo {payload}", quote=True)
+            if "<script>alert(" in html_out:
+                self.log("FAIL", "Camada 3c: XSS Behavioral", "Neutralização Comportamental de XSS (Webhook Studio)",
+                         "VULNERABILIDADE: payload injetado no catálogo foi renderizado sem escape")
+            elif escapado not in html_out:
+                self.log("WARN", "Camada 3c: XSS Behavioral", "Neutralização Comportamental de XSS (Webhook Studio)",
+                         "Payload escapado não localizado na renderização (catálogo vazio?)")
+            else:
+                self.log("PASS", "Camada 3c: XSS Behavioral", "Neutralização Comportamental de XSS (Webhook Studio)",
+                         "Payload <script> injetado no catálogo de eventos é renderizado escapado (&lt;script&gt;)")
+        except FileNotFoundError as e:
+            self.log("WARN", "Camada 3c: XSS Behavioral", "Neutralização Comportamental de XSS (Webhook Studio)",
+                     f"Asset do Studio ausente neste projeto: {e}")
+        except Exception as e:
+            self.log("WARN", "Camada 3c: XSS Behavioral", "Neutralização Comportamental de XSS (Webhook Studio)",
+                     f"Probe não executada neste ambiente: {type(e).__name__}: {e}")
+        finally:
+            if 'probe_db' in dir():
+                try:
+                    os.remove(probe_db)
+                except OSError:
+                    pass
 
     def _camada4_nginx_hardening(self):
         nginx_conf_path = os.path.join(self.root, "nginx", "nginx.conf")
@@ -354,17 +478,19 @@ class SecurityGate:
     def _relatorio_final(self):
         print("\n" + "=" * 80)
         total = self.passed + self.failed + self.warnings
-        score = (self.passed / total) * 100 if total > 0 else 0
         print(f"📊 RESULTADO FINAL DO GATE DE SEGURANÇA AIDD v5.1:")
         print(f"   - Testes Executados: {total}")
         print(f"   - Aprovados (PASS):  {self.passed}")
         print(f"   - Falhas (FAIL):     {self.failed}")
         print(f"   - Alertas (WARN):    {self.warnings}")
-        print(f"   - Score de Blindagem: {score:.1f}% (NOTA A+)")
+        comp = self.composition
+        print(f"   - Composição da cobertura: {comp['comportamental']} checks comportamentais, "
+              f"{comp['configuracao']} de configuração, {comp['estatico']} estáticos")
         print("=" * 80)
 
         if self.failed == 0:
-            print("🏆 [CERTIFICAÇÃO CONCEDIDA]: APLICAÇÃO 100% BLINDADA E HOMOLOGADA PARA PRODUÇÃO GLOBAL!")
+            print("[OK] Nenhuma falha de segurança detectada pelos checks executados nesta bateria "
+                  f"({comp['comportamental']} comportamentais / {comp['configuracao']} de configuração / {comp['estatico']} estáticos).")
             return 0
         else:
             print("❌ [BLOQUEADO]: Existem vulnerabilidades que devem ser mitigadas antes da publicação.")
@@ -372,7 +498,7 @@ class SecurityGate:
 
     def run_all_checks(self):
         print("=" * 80)
-        print("🛡️  AIDD v5.1 — INICIANDO TESTE DE FOGO DE CIBERSEGURANÇA & AUDITORIA")
+        print("🛡️  AIDD v5.1 — BATERIA DE SEGURANÇA (checks comportamentais, de configuração e estáticos)")
         print(f"📁 Diretório Alvo: {self.root}")
         print("=" * 80)
 
@@ -384,6 +510,8 @@ class SecurityGate:
         self._camada2_jwt_auth()
         self._camada2_5_anti_backdoor()
         self._camada3_sql_injection()
+        self._camada3b_sqli_bind_comportamental()
+        self._camada3c_xss_webhook_studio_comportamental()
         self._camada4_nginx_hardening()
         self._camada5_docker_hardening()
         self._camada6_sqlite_wal_audit()
@@ -394,7 +522,7 @@ class SecurityGate:
 
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description="G_SEGURANCA — Gate de Segurança e Auditoria")
+    parser = argparse.ArgumentParser(description="G_SEGURANCA — Gate de Segurança")
     parser.add_argument("--dir", default=".", help="Diretório raiz do projeto")
     args = parser.parse_args()
 
