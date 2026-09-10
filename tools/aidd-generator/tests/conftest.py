@@ -235,6 +235,7 @@ def projeto_bom_com_fase8(tmp_path):
             {'gate_id': 'I3_testes_passam', 'descricao': '100% testes passam', 'status': 'PASSOU', 'detalhes': '37/37'},
             {'gate_id': 'I4_cli_executa', 'descricao': 'CLI smoke-test', 'status': 'PASSOU', 'detalhes': 'exit code 0'},
             {'gate_id': 'I5_teste_integracao', 'descricao': 'Teste de integração entre scripts', 'status': 'PASSOU', 'detalhes': '1/1 teste(s) de integração passando'},
+            {'gate_id': 'I6_arquitetura_deliverable', 'descricao': 'Validar Clean Architecture/DDD nos deliverables', 'status': 'PASSOU', 'detalhes': '0 arquivo(s) auditado(s), 0 violação de Clean Architecture/DDD'},
         ],
     )
     return tmp_path

@@ -53,6 +53,15 @@ Geração de código funcional real com verificação via pytest + loop de corre
 - I3: 100% dos testes passando (nunca estimado)
 - I4: CLI smoke-test (--help exit code 0)
 - I5: Teste de integração cross-script gerado e passando
+- I6: Clean Architecture/DDD — deliverables em conformidade com G_ARQUITETURA_DELIVERABLE
+
+## Clean Architecture + DDD (Item 9)
+- Prompt inclui regras de organização em camadas quando script requer persistência/API.
+- Feature 'arquitetura' derivada de sqlite|crud|api — ativa BLOCO_REGRA_ARQUITETURA no prompt.
+- Auditoria por arquivo (G_ARQUITETURA_DELIVERABLE) roda após microtasks OK.
+- Violações alimentam o loop de correção via PROMPT_CORRIGIR_ARQUITETURA (fase phase_08_fix_arquitetura).
+- Se violações persistem em 3 tentativas, script é marcado como falho.
+- Reutilização existente (cache) também verifica arquitetura antes de reaproveitar.
 
 ## Saída
 - `_phase_08_index.json` em `.aidd/cache/data/`

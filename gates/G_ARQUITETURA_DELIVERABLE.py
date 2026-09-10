@@ -405,5 +405,48 @@ def checar(root_dir=None):
     return 0
 
 
+# ---------------------------------------------------------------------------
+# API pública para reuso programático (ex.: Fase 8 do aidd-generator)
+# ---------------------------------------------------------------------------
+def auditar_arquivos(diretorios, root_dir=None):
+    """Audita uma lista de diretorios e/ou arquivos .py (caminhos relativos a
+    root_dir) contra as regras Clean Architecture/DDD.
+
+    Args:
+        diretorios: lista de strings — paths relativos a root_dir. Cada item
+            pode ser um diretorio (sera percorrido recursivamente buscando
+            *.py) ou um arquivo .py individual.
+        root_dir: raiz absoluta do monorepo (default: ROOT_DIR).
+
+    Returns:
+        (violacoes, total_arquivos) onde violacoes eh lista de dicts com
+        chaves regra/arquivo/linha/detalhe, e total_arquivos eh int.
+
+    Sem saida em stdout — propria para reuso em pipelines.
+    """
+    if root_dir is None:
+        root_dir = ROOT_DIR
+
+    violacoes = []
+    total = 0
+
+    for alvo_rel in diretorios:
+        alvo_abs = os.path.join(root_dir, alvo_rel)
+        if os.path.isdir(alvo_abs):
+            for root, _, files in os.walk(alvo_abs):
+                for fname in sorted(files):
+                    if not fname.endswith(".py"):
+                        continue
+                    fpath = os.path.join(root, fname)
+                    rel_path = os.path.relpath(fpath, root_dir).replace("\\", "/")
+                    total += 1
+                    violacoes.extend(_audit_file(rel_path, root_dir))
+        elif os.path.isfile(alvo_abs) and alvo_rel.endswith(".py"):
+            total += 1
+            violacoes.extend(_audit_file(alvo_rel, root_dir))
+
+    return violacoes, total
+
+
 if __name__ == "__main__":
     sys.exit(checar())
