@@ -1,0 +1,587 @@
+<title>Ecossistema AIDD</title>
+<style>
+  :root{
+    --bg:#F6F2E9;
+    --surface:#FFFEFB;
+    --surface-2:#FBF6EA;
+    --ink:#221D16;
+    --ink-soft:#5C5346;
+    --ink-faint:#6B6152;
+    --line:#E4DAC5;
+    --line-strong:#D4C6A8;
+    --accent:#B75A24;
+    --accent-ink:#8A4013;
+    --accent-soft:#F1DFC9;
+    --accent-2:#2E5C60;
+    --accent-2-ink:#1F4144;
+    --accent-2-soft:#DCE9E7;
+    --on-accent:#FFFFFF;
+    --serif: 'Fraunces', 'Iowan Old Style', 'Palatino Linotype', serif;
+    --sans: 'Source Sans 3', 'Segoe UI', system-ui, sans-serif;
+    --mono: 'IBM Plex Mono', ui-monospace, 'Cascadia Code', monospace;
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --bg:#18140E;
+      --surface:#201A12;
+      --surface-2:#251F16;
+      --ink:#F2EBDC;
+      --ink-soft:#C7BAA0;
+      --ink-faint:#93876E;
+      --line:#3B3222;
+      --line-strong:#4C4128;
+      --accent:#E38A4C;
+      --accent-ink:#F3B587;
+      --accent-soft:#3A2A19;
+      --accent-2:#6FB0AE;
+      --accent-2-ink:#A6D6D2;
+      --accent-2-soft:#20302E;
+      --on-accent:#2A1608;
+    }
+  }
+  :root[data-theme="dark"]{
+    --bg:#18140E;
+    --surface:#201A12;
+    --surface-2:#251F16;
+    --ink:#F2EBDC;
+    --ink-soft:#C7BAA0;
+    --ink-faint:#93876E;
+    --line:#3B3222;
+    --line-strong:#4C4128;
+    --accent:#E38A4C;
+    --accent-ink:#F3B587;
+    --accent-soft:#3A2A19;
+    --accent-2:#6FB0AE;
+    --accent-2-ink:#A6D6D2;
+    --accent-2-soft:#20302E;
+    --on-accent:#2A1608;
+  }
+
+  *{box-sizing:border-box;}
+  body{
+    background:var(--bg);
+    color:var(--ink);
+    font-family:var(--sans);
+    line-height:1.6;
+  }
+  h1,h2,h3{
+    font-family:var(--serif);
+    font-weight:600;
+    text-wrap:balance;
+    color:var(--ink);
+  }
+  code, .cmd{
+    font-family:var(--mono);
+  }
+  .wrap{
+    max-width:920px;
+    margin:0 auto;
+    padding-inline:20px;
+    padding-block:56px 72px;
+  }
+
+  /* ---------- Hero ---------- */
+  .hero{
+    display:flex;
+    flex-direction:column;
+    gap:16px;
+    padding-bottom:40px;
+    border-bottom:1px solid var(--line);
+    margin-bottom:48px;
+  }
+  .eyebrow{
+    font-family:var(--mono);
+    font-size:.78rem;
+    letter-spacing:.03em;
+    color:var(--accent-ink);
+    margin:0;
+  }
+  .hero h1{
+    font-size:clamp(2rem, 4.4vw, 2.85rem);
+    line-height:1.12;
+    margin:0;
+    max-width:16ch;
+  }
+  .lede{
+    font-size:1.08rem;
+    color:var(--ink-soft);
+    max-width:62ch;
+    margin:0;
+  }
+  .lede strong{ color:var(--ink); font-weight:600; }
+
+  /* ---------- Hub diagram ---------- */
+  .hub-section{
+    margin-bottom:56px;
+  }
+  .hub-caption{
+    text-align:center;
+    color:var(--ink-faint);
+    font-size:.85rem;
+    margin-top:10px;
+  }
+  .hub-svg-wrap{
+    background:var(--surface);
+    border:1px solid var(--line-strong);
+    border-radius:14px;
+    padding:12px;
+    overflow-x:auto;
+  }
+  .hub-svg-wrap svg{ display:block; margin:0 auto; width:100%; max-width:640px; height:auto; }
+  .hub-node-label{ font-family:var(--sans); font-weight:600; font-size:14.5px; fill:var(--ink); }
+  .hub-node-cmd{ font-family:var(--mono); font-size:11.5px; fill:var(--accent-2-ink); }
+  .hub-center-label{ font-family:var(--serif); font-weight:600; font-size:16.5px; fill:var(--ink); }
+  .hub-center-sub{ font-family:var(--sans); font-size:11px; fill:var(--ink-soft); }
+  .hub-line{ stroke:var(--line-strong); stroke-width:1.5; fill:none; }
+  .hub-node-circle{ fill:var(--surface-2); stroke:var(--line-strong); stroke-width:1.5; }
+  .hub-center-circle{ fill:var(--accent-soft); stroke:var(--accent); stroke-width:2; }
+
+  /* ---------- Section headings ---------- */
+  section > h2{
+    font-size:1.5rem;
+    margin:0 0 8px;
+  }
+  .section-intro{
+    color:var(--ink-soft);
+    max-width:66ch;
+    margin:0 0 28px;
+  }
+
+  /* ---------- Tool cards ---------- */
+  .tools{
+    display:flex;
+    flex-direction:column;
+    gap:20px;
+    margin-bottom:56px;
+  }
+  .tool{
+    background:var(--surface);
+    border:1px solid var(--line-strong);
+    border-radius:14px;
+    padding:24px 26px;
+    display:grid;
+    grid-template-columns:44px 1fr;
+    gap:6px 18px;
+  }
+  .tool-index{
+    font-family:var(--serif);
+    font-weight:600;
+    font-size:1.5rem;
+    color:var(--accent);
+    line-height:1;
+  }
+  .tool-head{
+    display:flex;
+    flex-wrap:wrap;
+    align-items:baseline;
+    gap:10px 14px;
+  }
+  .tool-head h3{
+    font-size:1.2rem;
+    margin:0;
+  }
+  .tool-cmd{
+    font-family:var(--mono);
+    font-size:.82rem;
+    color:var(--accent-2-ink);
+    background:var(--accent-2-soft);
+    padding:3px 9px;
+    border-radius:6px;
+    white-space:nowrap;
+  }
+  .tool-status{
+    font-size:.72rem;
+    text-transform:uppercase;
+    letter-spacing:.06em;
+    color:var(--ink-faint);
+    border:1px solid var(--line-strong);
+    border-radius:999px;
+    padding:2px 9px;
+  }
+  .tool-body{
+    grid-column:2;
+    display:flex;
+    flex-direction:column;
+    gap:12px;
+  }
+  .tool-analogy{
+    font-style:italic;
+    color:var(--ink-soft);
+    margin:0;
+    font-size:.98rem;
+  }
+  .tool-body ul{
+    margin:0;
+    padding-left:1.1em;
+    display:flex;
+    flex-direction:column;
+    gap:6px;
+  }
+  .tool-body li{ font-size:.96rem; }
+  .example{
+    background:var(--surface-2);
+    border:1px solid var(--line-strong);
+    border-radius:10px;
+    padding:12px 16px;
+    font-size:.95rem;
+  }
+  .example b{ color:var(--accent-ink); }
+
+  @media (max-width:560px){
+    .tool{ grid-template-columns:1fr; }
+    .tool-index{ font-size:1.1rem; }
+    .tool-body{ grid-column:1; }
+  }
+
+  /* ---------- Pillars ---------- */
+  .pillars{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:16px;
+    margin:24px 0 8px;
+  }
+  .pillar{
+    background:var(--surface);
+    border:1px solid var(--line);
+    border-radius:12px;
+    padding:18px 20px;
+  }
+  .pillar-num{
+    font-family:var(--mono);
+    font-size:.75rem;
+    color:var(--accent-2-ink);
+    letter-spacing:.06em;
+  }
+  .pillar h4{
+    font-family:var(--sans);
+    font-size:1rem;
+    font-weight:700;
+    margin:6px 0 6px;
+  }
+  .pillar p{ margin:0; font-size:.92rem; color:var(--ink-soft); }
+  @media (max-width:700px){ .pillars{ grid-template-columns:1fr; } }
+
+  /* ---------- Case study timeline ---------- */
+  .together{ margin-bottom:56px; }
+  .case-study{ margin-bottom:8px; }
+  .scenario{
+    background:var(--accent-soft);
+    border-radius:12px;
+    padding:16px 20px;
+    color:var(--ink);
+    font-size:.98rem;
+    margin-bottom:26px;
+  }
+  .timeline{
+    list-style:none;
+    margin:0;
+    padding:0;
+    display:flex;
+    flex-direction:column;
+  }
+  .timeline li{
+    display:grid;
+    grid-template-columns:32px 1fr;
+    gap:0 18px;
+  }
+  .timeline .node{
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+  }
+  .timeline .dot{
+    width:32px;height:32px;
+    border-radius:50%;
+    background:var(--accent);
+    color:var(--on-accent);
+    display:flex;align-items:center;justify-content:center;
+    font-family:var(--mono);
+    font-weight:600;
+    font-size:.85rem;
+    flex-shrink:0;
+  }
+  .timeline .stem{
+    width:2px;
+    flex:1;
+    background:var(--line-strong);
+    margin:2px 0;
+  }
+  .timeline li:last-child .stem{ display:none; }
+  .timeline .content{
+    padding-bottom:26px;
+  }
+  .timeline .content h4{
+    font-family:var(--sans);
+    font-size:1.02rem;
+    margin:2px 0 6px;
+  }
+  .timeline .content p{
+    margin:0;
+    color:var(--ink-soft);
+    font-size:.95rem;
+  }
+  .timeline .tool-cmd{ margin-right:6px; }
+  .closing{
+    background:var(--surface);
+    border:1px solid var(--line);
+    border-radius:12px;
+    padding:18px 20px;
+    font-size:.98rem;
+    color:var(--ink-soft);
+  }
+  .closing strong{ color:var(--ink); }
+
+  footer{
+    margin-top:56px;
+    padding-top:20px;
+    border-top:1px solid var(--line);
+    color:var(--ink-faint);
+    font-size:.8rem;
+    display:flex;
+    justify-content:space-between;
+    flex-wrap:wrap;
+    gap:8px;
+  }
+</style>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Source+Sans+3:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+
+<div class="wrap">
+
+  <header class="hero">
+    <p class="eyebrow">Documento de referência · Ecossistema AIDD</p>
+    <h1>Seis ferramentas, uma linha de produção</h1>
+    <p class="lede">O Ecossistema AIDD reúne <strong>6 ferramentas independentes</strong>, cada uma acionada por um slash command simples, todas reportando ao mesmo conjunto de regras de qualidade. Esta página explica como cada uma funciona, dá um exemplo real de uso do dia a dia para cada uma, e fecha com um caso de uso completo usando as 6 juntas.</p>
+  </header>
+
+  <section class="hub-section">
+    <svg viewBox="0 0 640 620" role="img" aria-label="Diagrama: seis ferramentas ao redor do núcleo comum ecossistema.py e Quality Gates">
+      <g>
+        <!-- connecting lines: computed points, center (320,300), r=215, angles -90,-30,30,90,150,210 -->
+        <line class="hub-line" x1="320" y1="300" x2="320" y2="85"/>
+        <line class="hub-line" x1="320" y1="300" x2="506.2" y2="192.5"/>
+        <line class="hub-line" x1="320" y1="300" x2="506.2" y2="407.5"/>
+        <line class="hub-line" x1="320" y1="300" x2="320" y2="515"/>
+        <line class="hub-line" x1="320" y1="300" x2="133.8" y2="407.5"/>
+        <line class="hub-line" x1="320" y1="300" x2="133.8" y2="192.5"/>
+      </g>
+
+      <!-- center hub -->
+      <circle class="hub-center-circle" cx="320" cy="300" r="72"/>
+      <text x="320" y="292" text-anchor="middle" class="hub-center-label">ecossistema.py</text>
+      <text x="320" y="312" text-anchor="middle" class="hub-center-sub">+ Quality Gates</text>
+      <text x="320" y="328" text-anchor="middle" class="hub-center-sub">(fiscal comum)</text>
+
+      <!-- node: top -> Forge -->
+      <circle class="hub-node-circle" cx="320" cy="85" r="58"/>
+      <text x="320" y="78" text-anchor="middle" class="hub-node-label">Forge</text>
+      <text x="320" y="96" text-anchor="middle" class="hub-node-cmd">/forge</text>
+
+      <!-- node: upper right -> Generator -->
+      <circle class="hub-node-circle" cx="506.2" cy="192.5" r="58"/>
+      <text x="506.2" y="185.5" text-anchor="middle" class="hub-node-label">Generator</text>
+      <text x="506.2" y="203.5" text-anchor="middle" class="hub-node-cmd">/generate</text>
+
+      <!-- node: lower right -> Master -->
+      <circle class="hub-node-circle" cx="506.2" cy="407.5" r="58"/>
+      <text x="506.2" y="400.5" text-anchor="middle" class="hub-node-label">Master</text>
+      <text x="506.2" y="418.5" text-anchor="middle" class="hub-node-cmd">/master</text>
+
+      <!-- node: bottom -> Enterprise -->
+      <circle class="hub-node-circle" cx="320" cy="515" r="58"/>
+      <text x="320" y="508" text-anchor="middle" class="hub-node-label">Enterprise</text>
+      <text x="320" y="526" text-anchor="middle" class="hub-node-cmd">/enterprise</text>
+
+      <!-- node: lower left -> Ops -->
+      <circle class="hub-node-circle" cx="133.8" cy="407.5" r="58"/>
+      <text x="133.8" y="400.5" text-anchor="middle" class="hub-node-label">Ops</text>
+      <text x="133.8" y="418.5" text-anchor="middle" class="hub-node-cmd">/orchestrate</text>
+
+      <!-- node: upper left -> Bridge -->
+      <circle class="hub-node-circle" cx="133.8" cy="192.5" r="58"/>
+      <text x="133.8" y="185.5" text-anchor="middle" class="hub-node-label">Bridge</text>
+      <text x="133.8" y="203.5" text-anchor="middle" class="hub-node-cmd">/bridge</text>
+    </svg>
+    <p class="hub-caption">As 6 ferramentas resolvem etapas diferentes do ciclo de vida do software, mas todas prestam contas ao mesmo núcleo: a CLI unificada e os Quality Gates.</p>
+  </section>
+
+  <section class="tools">
+
+    <article class="tool">
+      <div class="tool-index">1</div>
+      <div class="tool-head">
+        <h3>AIDD Forge</h3>
+        <span class="tool-cmd">/forge [caminho]</span>
+      </div>
+      <div class="tool-body">
+        <p class="tool-analogy">O eletricista que instala o quadro de disjuntores num prédio — novo ou antigo, não importa.</p>
+        <ul>
+          <li>Injeta em qualquer projeto (AIDD ou não) a governança completa: Quality Gates, otimizadores de token e convenções que funcionam do mesmo jeito em qualquer harness de IA.</li>
+          <li>Cria micro-ambientes isolados por fase de trabalho, para um subagente só ver o pedaço do projeto que precisa.</li>
+          <li>100% script determinístico — não chama IA para decidir nada disso.</li>
+        </ul>
+        <p class="example"><b>Dia a dia:</b> você herdou um projeto legado sem padrão de qualidade. Roda <code class="cmd">/forge .</code> na raiz — em segundos ele ganha os gates automáticos, e entregas malfeitas passam a ser barradas antes do commit, mesmo sem revisão linha a linha.</p>
+      </div>
+    </article>
+
+    <article class="tool">
+      <div class="tool-index">2</div>
+      <div class="tool-head">
+        <h3>AIDD Generator</h3>
+        <span class="tool-cmd">/generate &lt;ideia&gt;</span>
+      </div>
+      <div class="tool-body">
+        <p class="tool-analogy">A fábrica que recebe um desenho no guardanapo e devolve o produto pronto.</p>
+        <ul>
+          <li>Pipeline de 7 a 8 fases que transforma uma frase em linguagem natural num projeto completo: schemas, scripts, testes e documentação.</li>
+          <li>Pode gerar código funcional via IA (modo delegado, sem chave de API extra) ou rodar sozinho no modo determinístico para as partes mecânicas.</li>
+          <li>Cada fase purga o contexto da anterior — custo de token baixo mesmo em projetos grandes.</li>
+        </ul>
+        <p class="example"><b>Dia a dia:</b> um cliente pede "controle de estoque com alerta de produto acabando". Você digita <code class="cmd">/generate sistema de estoque com alerta de estoque baixo</code> — em minutos o pipeline entrega modelos, regras, testes e documentação prontos para revisão.</p>
+      </div>
+    </article>
+
+    <article class="tool">
+      <div class="tool-index">3</div>
+      <div class="tool-head">
+        <h3>AIDD Master</h3>
+        <span class="tool-cmd">/master &lt;modulo&gt;</span>
+      </div>
+      <div class="tool-body">
+        <p class="tool-analogy">O time que constrói um cômodo novo dentro de um prédio já existente, respeitando a mesma fundação.</p>
+        <ul>
+          <li>Cria uma fatia vertical de negócio nova (<code>src/modules/&lt;modulo&gt;/</code>) com rotas, modelos, serviços, interface e testes.</li>
+          <li>Suporta SQLite (modo WAL), PostgreSQL ou Supabase por baixo do capô, sem o módulo precisar saber qual.</li>
+          <li>Já nasce com documentação de API (Swagger/OpenAPI) e observabilidade de performance.</li>
+        </ul>
+        <p class="example"><b>Dia a dia:</b> o sistema de estoque já roda, mas falta um módulo de relatórios financeiros. Você roda <code class="cmd">/master relatorios-financeiros</code> — o módulo inteiro nasce plugado e coerente, sem duplicar código nem quebrar os outros.</p>
+      </div>
+    </article>
+
+    <article class="tool">
+      <div class="tool-index">4</div>
+      <div class="tool-head">
+        <h3>AIDD Enterprise</h3>
+        <span class="tool-cmd">/enterprise &lt;tipo&gt; &lt;nome&gt;</span>
+      </div>
+      <div class="tool-body">
+        <p class="tool-analogy">O fornecedor de peças com laudo técnico anexado — em vez de fabricar de novo, você usa uma peça já certificada e lacrada.</p>
+        <ul>
+          <li>Injeta componentes prontos e certificados (autenticação JWT, camadas de segurança, integrações) validando um hash SHA-256 — se algo foi alterado, o hash não bate e a injeção é bloqueada.</li>
+          <li>Aplica Zero-Trust: nada é confiado só por estar no repositório.</li>
+          <li>Usa a mesma base do Master, com a camada extra de auditoria/certificação para missão crítica.</li>
+        </ul>
+        <p class="example"><b>Dia a dia:</b> o sistema vai processar dados sensíveis de clientes. Você roda <code class="cmd">/enterprise auth jwt-service</code> — o componente certificado é injetado com hash conferido, em vez de uma autenticação caseira e vulnerável.</p>
+      </div>
+    </article>
+
+    <article class="tool">
+      <div class="tool-index">5</div>
+      <div class="tool-head">
+        <h3>AIDD Bridge</h3>
+        <span class="tool-cmd">/bridge [comando]</span>
+      </div>
+      <div class="tool-body">
+        <p class="tool-analogy">O despachante que tira seu carro do leasing de letras miúdas e transfere o documento pro seu nome.</p>
+        <ul>
+          <li><code>scan</code> — inspeciona um projeto Lovable/v0/Bolt e mapeia páginas, componentes e banco num manifesto.</li>
+          <li><code>convert-db</code> — converte o banco Supabase para PostgreSQL puro, sem reescrever o código que fala com o banco.</li>
+          <li><code>merge</code> — funde 2+ apps soltos num monorepo único.</li>
+          <li><code>pack</code> — empacota tudo em Docker, com HTTPS automático, pronto pra VPS própria.</li>
+        </ul>
+        <p class="example"><b>Dia a dia:</b> seu app foi prototipado no Lovable e a mensalidade está pesando. Você roda <code class="cmd">bridge scan</code> → <code class="cmd">convert-db</code> → <code class="cmd">pack</code> — o mesmo app passa a rodar 100% na sua VPS, sem mensalidade de plataforma.</p>
+      </div>
+    </article>
+
+    <article class="tool">
+      <div class="tool-index">6</div>
+      <div class="tool-head">
+        <h3>AIDD Ops</h3>
+        <span class="tool-cmd">/orchestrate</span>
+        <span class="tool-status">MVP em construção</span>
+      </div>
+      <div class="tool-body">
+        <p class="tool-analogy">O gerente de obra que liga água, luz e monitoramento depois que a casa já está pronta.</p>
+        <ul>
+          <li>Recebe um requisito de negócio em linguagem natural e orquestra o provisionamento de uma stack self-hosted: Traefik, Authentik, Next.js, PostgreSQL, microsserviços Docker.</li>
+          <li>Pensado como alternativa própria e white-label a plataformas de terceiros — sem limite artificial de contatos nem sobretaxa de envio.</li>
+          <li>Já traz monitoramento real (Uptime Kuma, não dashboard fake) e hardening de servidor via Ansible.</li>
+        </ul>
+        <p class="example"><b>Dia a dia (o que já funciona hoje):</b> o sistema de agendamentos precisa ir ao ar com domínio, HTTPS, login e um painel que avisa se o servidor cair. O Ops recebe o pedido e provisiona a stack — hoje cobrindo o levantamento do requisito e o dimensionamento; o restante do pipeline ainda está sendo construído.</p>
+      </div>
+    </article>
+
+  </section>
+
+  <section class="together">
+    <h2>Como o ecossistema funciona como um todo</h2>
+    <p class="section-intro">As 6 ferramentas não são silos separados. Elas compartilham três coisas, e é isso que faz o conjunto se comportar como um sistema único em vez de 6 scripts soltos.</p>
+    <div class="pillars">
+      <div class="pillar">
+        <span class="pillar-num">01</span>
+        <h4>Uma porta de entrada só</h4>
+        <p><code class="cmd" style="background:none;padding:0;">python ecossistema.py &lt;ferramenta&gt; &lt;ação&gt;</code>, ou o slash command equivalente. Você nunca precisa saber qual script interno cada ferramenta usa.</p>
+      </div>
+      <div class="pillar">
+        <span class="pillar-num">02</span>
+        <h4>Os mesmos Quality Gates</h4>
+        <p>Antes de qualquer commit, testes reais, segurança e consistência são auditados automaticamente. Gate reprovado (exit 1) bloqueia a entrega — não existe "quase aprovado".</p>
+      </div>
+      <div class="pillar">
+        <span class="pillar-num">03</span>
+        <h4>Estado em arquivo, contexto purgado</h4>
+        <p>Nada fica só na memória da conversa — tudo vive em JSON/SQLite auditável. Cada subagente isolado limpa o contexto ao terminar, mantendo o custo de token baixo.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="case-study">
+    <h2>Exemplo completo: as 6 ferramentas em um único caso</h2>
+    <p class="scenario"><b>Cenário:</b> uma dona de salão de beleza testou um app de agendamentos feito no Lovable, gostou, mas quer parar de pagar a mensalidade da plataforma e ainda adicionar funções novas com segurança de verdade.</p>
+
+    <ol class="timeline">
+      <li>
+        <div class="node"><div class="dot">1</div><div class="stem"></div></div>
+        <div class="content">
+          <h4><span class="tool-cmd">bridge scan → convert-db → pack</span></h4>
+          <p>O app do Lovable é extraído, o banco Supabase vira PostgreSQL puro, e tudo é empacotado em Docker com HTTPS. Ela já não depende mais da plataforma original.</p>
+        </div>
+      </li>
+      <li>
+        <div class="node"><div class="dot">2</div><div class="stem"></div></div>
+        <div class="content">
+          <h4><span class="tool-cmd">/forge .</span></h4>
+          <p>Na raiz do projeto libertado, instala-se a governança e os Quality Gates. A partir daqui, toda mudança futura é auditada automaticamente.</p>
+        </div>
+      </li>
+      <li>
+        <div class="node"><div class="dot">3</div><div class="stem"></div></div>
+        <div class="content">
+          <h4><span class="tool-cmd">/master fidelidade</span></h4>
+          <p>Um módulo novo de pontos de fidelidade para clientes recorrentes é criado — modelo, regras, tela e testes — plugado ao resto do sistema sem quebrar o que já existia.</p>
+        </div>
+      </li>
+      <li>
+        <div class="node"><div class="dot">4</div><div class="stem"></div></div>
+        <div class="content">
+          <h4><span class="tool-cmd">/enterprise auth jwt-service</span></h4>
+          <p>Como o sistema agora guarda dados sensíveis de clientes, um componente de autenticação certificado é injetado (hash conferido), em vez de uma implementação caseira.</p>
+        </div>
+      </li>
+      <li>
+        <div class="node"><div class="dot">5</div></div>
+        <div class="content">
+          <h4><span class="tool-cmd">/orchestrate</span> (Ops)</h4>
+          <p>A stack real é provisionada: domínio próprio, HTTPS automático, login via Authentik e um painel de monitoramento avisando se o servidor cair.</p>
+        </div>
+      </li>
+    </ol>
+
+    <p class="closing">No fim, o mesmo app que nasceu como protótipo numa plataforma de terceiros termina rodando <strong>100% sob controle dela</strong>, com segurança certificada, um módulo de negócio novo e infraestrutura própria — e cada etapa desse caminho foi auditada pelos mesmos gates de qualidade, sem depender de revisão manual linha a linha.</p>
+  </section>
+
+  <footer>
+    <span>Fonte: <code>AGENTS.md</code> §1/§3 e os <code>README.md</code> de cada <code>tools/&lt;ferramenta&gt;</code></span>
+    <span>Gerado em 2026-09-10</span>
+  </footer>
+
+</div>

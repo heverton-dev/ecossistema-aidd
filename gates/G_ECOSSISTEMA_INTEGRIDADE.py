@@ -10,6 +10,7 @@ Audita:
 3. Presença dos Slash Commands para multi-harness (.agents/ e .claude/)
 4. Validação sintática (ast.parse) dos scripts centrais
 5. Presença de governança canônica (AGENTS.md, .gitignore)
+6. Anti-regressão: ausência de skills plain-named duplicadas (stub + runner)
 
 Saída: exit 0 (Aprovado) ou exit 1 (Bloqueado).
 """
@@ -131,6 +132,34 @@ def audit():
             print(f"[OK] Sintaxe Python verificada: {os.path.basename(py_file)}")
         except Exception as e:
             erros.append(f"Erro de sintaxe em {py_file}: {e}")
+
+    # 6. Anti-regressão: Skills duplicadas (stub plain-named + aidd-*-runner)
+    print("\n--- Verificação de Duplicidade de Skills ---")
+    skills_dir = os.path.join(ROOT_DIR, "componentes", "compartilhado", "skills")
+    if os.path.isdir(skills_dir):
+        skill_names = [
+            d for d in os.listdir(skills_dir)
+            if os.path.isdir(os.path.join(skills_dir, d))
+        ]
+        runner_skills = {s for s in skill_names if s.startswith("aidd-") and s.endswith("-runner")}
+        plain_short = {
+            s.replace("aidd-", "").replace("-runner", "")
+            for s in runner_skills
+        }
+        duplicatas = []
+        for s in skill_names:
+            if s in plain_short:
+                duplicatas.append(s)
+        if duplicatas:
+            duplicatas_str = ", ".join(sorted(duplicatas))
+            erros.append(
+                f"Skills plain-named duplicadas: {duplicatas_str}. "
+                "Cada ferramenta deve ter UM skill canônico (aidd-*-runner), "
+                "não um par plain-named + runner."
+            )
+            print(f"[FALHA] Duplicatas encontradas: {duplicatas_str}")
+        else:
+            print("[OK] Nenhuma skill plain-named duplicada.")
 
     # Conclusão e veredito
     print("\n" + "=" * 70)

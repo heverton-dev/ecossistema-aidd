@@ -1,13 +1,13 @@
 ---
 name: mcp-creator-runner
-description: Cria um novo servidor MCP para uma ferramenta deste ecossistema (ou compartilhado), garantindo que o resultado seja materializado em componentes/ e sincronizado em todos os harnesses — usa o mcp-builder nativo da Anthropic quando disponível, ou o padrão FastMCP/mcp já usado no projeto quando não.
+description: Cria um novo servidor MCP para uma ferramenta deste ecossistema (ou compartilhado), garantindo que o resultado seja materializado em componentes/ e sincronizado em todos os harnesses — usa ferramenta/função nativa de autoria MCP quando disponível no harness, ou o padrão FastMCP/mcp já usado no projeto quando não.
 ---
 
 # MCP Creator Runner
 
-Coordenador fino. **Não reimplementa** protocolo MCP do zero — delega pro
-`mcp-builder` nativo (Claude Code) quando disponível, e garante que o
-resultado siga a convenção física deste projeto: fonte única em
+Coordenador fino. **Não reimplementa** protocolo MCP do zero — delega para
+ferramenta nativa de autoria MCP quando o harness atual dispuser dela, e garante
+que o resultado siga a convenção física deste projeto: fonte única em
 `componentes/<ferramenta ou compartilhado>/mcps/<nome>/`, nunca escrito
 direto num `.mcp.json`/pasta de harness.
 
@@ -21,18 +21,19 @@ pro `dependencia-runner`.
 
 ## Protocolo ao ser acionada
 
-1. **Descubra o harness ativo.** Se for Claude Code, o `mcp-builder` nativo
-   está disponível — invoque-o pra decidir estrutura de tools/resources,
-   schema de entrada/saída e tratamento de erro do servidor novo. Não decida
-   essas questões sozinho quando o `mcp-builder` puder decidir.
+1. **Descubra o harness ativo e suas capacidades.** Se o harness dispuser de
+   ferramenta/função nativa de criação/geração de MCP servers, invoque-a para
+   decidir estrutura de tools/resources, schema de entrada/saída e tratamento
+   de erro do servidor novo. Não decida essas questões sozinho quando a
+   ferramenta nativa puder decidir.
 
-2. **Se o harness não tiver `mcp-builder` nativo**, construa sobre as libs
+2. **Se o harness não tiver ferramenta nativa de autoria MCP**, construa sobre as libs
    Python já usadas neste ecossistema (`mcp`/`fastmcp` — já são dependência
    real via `code-review-graph`, confira `pip show fastmcp` antes de assumir
    que precisa instalar de novo) em vez de implementar JSON-RPC 2.0 na mão.
    Use como referência estrutural real um MCP já existente no ecossistema
-   (`componentes/aidd-ops/mcps/cloudflare-mcp/server.py` ou
-   `componentes/aidd-generator/mcps/mcp-verificador-cve/`) — leia um antes de
+   (`tools/aidd-ops/mcps/cloudflare-mcp/server.py` ou
+   `tools/aidd-generator/mcps/mcp-verificador-cve/`) — leia um antes de
    escrever o novo.
 
 3. **Sempre grave a fonte em `componentes/<ferramenta ou compartilhado>/mcps/<nome>/server.py`**

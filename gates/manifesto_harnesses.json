@@ -36,6 +36,11 @@
       "arquivo_regra": ".cursor/rules/aidd.md",
       "confirmado": true,
       "nota": "ATUALIZADO 2026-09-07: documentação oficial (cursor.com/docs/rules, cursor.com/docs/subagents) confirma que o Cursor, além do arquivo único de regra (AGENTS.md/`.cursor/rules/*.mdc`), também tem pastas nativas reais: '.cursor/commands/<nome>.md' (slash-commands) e '.cursor/skills/<nome>/SKILL.md' e '.cursor/agents/<nome>.md' (subagentes) - mesmo padrão de nome/estrutura usado por Claude Code. Adicionado a 'harnesses_aplicaveis' de 'skill' e 'command' agora que a convenção real é conhecida; o arquivo único de regra continua existindo em paralelo, é complementar (instruções gerais de projeto), não concorrente com skills/commands."
+    },
+    "codebuddy": {
+      "prefixo_pasta": ".codebuddy",
+      "confirmado": true,
+      "nota": "Adicionado em 2026-09-10: harness não documentado mas presente no repo com settings.json ( formato similar ao Claude Code) e 4 skills code-review-graph. Hooks já usam git rev-parse (agnósticos)."
     }
   },
 
@@ -45,7 +50,7 @@
       "distribuicao": "multi-harness",
       "unidade": "diretorio",
       "status_evidencia": "confirmado por reprodução direta (docs/planos/PLANO-CORRECAO-SKILLS-AGNOSTICAS.md secao 2.1)",
-      "harnesses_aplicaveis": ["claude-code", "antigravity", "opencode", "mimocode", "gemini-cli", "cursor"],
+      "harnesses_aplicaveis": ["claude-code", "antigravity", "opencode", "mimocode", "gemini-cli", "cursor", "codebuddy"],
       "dest_harness_template": "{prefixo_pasta}/skills/{nome}",
       "dest_harness_template_overrides": {
         "gemini-cli": "{prefixo_pasta}/extensions/{nome}/skills/{nome}"
@@ -66,7 +71,7 @@
       "distribuicao": "multi-harness",
       "unidade": "arquivo",
       "status_evidencia": "confirmado (gates/G_HARNESS_COMPAT.py já compara .agent/commands/*.md vs .claude/commands/*.md)",
-      "harnesses_aplicaveis": ["claude-code", "antigravity", "opencode", "mimocode", "cursor"],
+      "harnesses_aplicaveis": ["claude-code", "antigravity", "opencode", "mimocode", "cursor", "codebuddy"],
       "dest_harness_template": "{prefixo_pasta}/commands/{nome}",
       "escopos_aplicaveis": ["compartilhado"],
       "nota": "gemini-cli excluído deste tipo: confirmado em 2026-09-07 (geminicli.com/docs/cli/custom-commands/) que comandos do Gemini CLI usam arquivos '.toml', não '.md' - formato incompatível com os comandos deste manifesto, não é só falta de evidência. 'cursor' adicionado em 2026-09-07: documentação oficial confirma '.cursor/commands/<nome>.md', mesmo formato usado aqui. Escopo hoje é só 'compartilhado' (raiz) - nenhuma ferramenta em tools/* tem slash-commands próprios; cada uma expõe equivalente via CLI ('python ecossistema.py <ferramenta> ...')."
@@ -113,9 +118,9 @@
       "distribuicao": "multi-harness",
       "unidade": "diretorio",
       "status_evidencia": "SEM PRECEDENTE FÍSICO NO REPOSITÓRIO - nenhum '.claude/settings.json' encontrado em nenhuma ferramenta, nenhuma pasta 'hooks/' de componente (só '.git/hooks/*.sample', irrelevante ao ecossistema AIDD). PROPOSTO NESTA MIGRAÇÃO por simetria com 'skill', PARA REVISÃO EXPLÍCITA DO USUÁRIO.",
-      "harnesses_aplicaveis": ["claude-code", "antigravity", "opencode", "mimocode", "gemini-cli"],
+      "harnesses_aplicaveis": ["claude-code", "antigravity", "opencode", "mimocode", "gemini-cli", "codebuddy"],
       "dest_harness_template": "{prefixo_pasta}/hooks/{nome}",
-      "nota_revisao": "Claude Code, na prática, registra hooks via chave 'hooks' de '.claude/settings.json' referenciando um script - a pasta '{prefixo}/hooks/' aqui só garante presença física do script; o wiring em settings.json (ou equivalente) de cada harness fica para Prompt B."
+      "nota_revisao": "Claude Code registra hooks via '.claude/settings.json'; CodeBuddy via '.codebuddy/settings.json'; Gemini CLI via '.gemini/hooks/'. A pasta '{prefixo}/hooks/' garante presença física do script; o wiring em settings.json de cada harness fica para o integrador."
     },
     "sub-agent": {
       "pasta_fonte": "subagentes",
@@ -139,27 +144,7 @@
     "compartilhado": {
       "root": ".",
       "tipos_aplicaveis": ["skill", "command"],
-      "nota": "componentes/compartilhado/{skills,comandos}/ só cobre os 2 tipos com componentes reais ecosystem-wide hoje (as 4 skills-runner e os 4 slash commands). Os demais tipos não têm hoje nenhum componente que não seja amarrado a 1 ferramenta específica."
-    },
-    "aidd-forge": {
-      "root": "tools/aidd-forge",
-      "tipos_aplicaveis": ["skill", "mcp", "spec", "hook", "config", "command", "sub-agent", "script"]
-    },
-    "aidd-master": {
-      "root": "tools/aidd-master",
-      "tipos_aplicaveis": ["skill", "mcp", "spec", "hook", "config", "command", "sub-agent", "script"]
-    },
-    "aidd-enterprise": {
-      "root": "tools/aidd-enterprise",
-      "tipos_aplicaveis": ["skill", "mcp", "spec", "hook", "config", "command", "sub-agent", "script"]
-    },
-    "aidd-generator": {
-      "root": "tools/aidd-generator",
-      "tipos_aplicaveis": ["skill", "mcp", "spec", "hook", "config", "command", "sub-agent", "script"]
-    },
-    "aidd-ops": {
-      "root": "tools/aidd-ops",
-      "tipos_aplicaveis": ["skill", "mcp", "spec", "hook", "config", "command", "sub-agent", "script"]
+      "nota": "componentes/compartilhado/{skills,comandos}/ cobre os 2 tipos com componentes reais ecosystem-wide hoje (as skills-runner, slash commands e skills compartilhadas). Componentes específicos de cada ferramenta vivem em tools/<ferramenta>/ e são sincronizados por mecanismos internos de cada tool — não por este manifesto."
     }
   }
 }

@@ -107,9 +107,14 @@ Cada comando possui contrato formal executável em qualquer harness (Antigravity
 - **Ação:** Injeta e valida componentes certificados com hashes SHA-256 e conformidade Zero-Trust.
 - **CLI Equivalente:** python ecossistema.py enterprise inject <tipo> <nome>
 
+### /ops [requisito]
+- **Skill:** skills/aidd-ops-runner
+- **Ação:** Meta-Orquestrador Agêntico de Infraestrutura — orquestra stacks self-hosted a partir de requisitos em linguagem natural (sizing VPS, hardening SSH, Docker, deploy).
+- **CLI Equivalente:** python ecossistema.py ops [requisito]
+
 ### /orchestrate [plano]
 - **Skill:** skills/orca-plan-orchestrator
-- **Ação:** Orquestra a execução paralela e determinística de planos de software via ORCA ADE com git worktrees efêmeras e hooks reativos.
+- **Ação:** ORCA ADE — orquestra a execução paralela e determinística de planos de **desenvolvimento de software** via git worktrees efêmeras e hooks reativos. **Não é o comando do AIDD Ops** (que é `/ops`).
 - **CLI Equivalente:** python ecossistema.py orchestrate [plano]
 
 ### /plan <nome>

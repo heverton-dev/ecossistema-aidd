@@ -28,7 +28,7 @@ Quando o comando `/orchestrate [plano]` for invocado:
 2. **Atribuição Multi-Harness Nativa por Frente (Obrigatória):**
    - NUNCA assuma um único harness global para todas as fases.
    - O harness da sessão atual (orquestrador líder) é nativamente o **Auditor dos Quality Gates** antes de cada merge.
-   - Para CADA uma das frentes pendentes mapeadas, pergunte interativamente ao usuário qual harness (`claude`, `mimo`, `agy`, `opencode`) executará aquela fase específica:
+   - Para CADA uma das frentes pendentes mapeadas, pergunte interativamente ao usuário qual harness (um dos suportados: `claude`, `agy`, `mimo`, `opencode`, `gemini`, `cursor`, `codebuddy`) executará aquela fase específica:
      - Exemplo: "Frente 4 (SSH Runner): qual harness?"
      - Exemplo: "Frente 5 (MCPs Cloudflare/Docker): qual harness?"
      - (E assim para todas as frentes pendentes do plano).
