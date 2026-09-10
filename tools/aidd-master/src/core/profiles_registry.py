@@ -84,10 +84,10 @@ PROFILES: Dict[str, Dict[str, Dict[str, Any]]] = {
             "camada_alvo": "interface_orquestracao",
         },
         "hook": {
-            "dest": ".agent/hooks/{nome}/hook.sh",
+            "dest": ".agent/hooks/{nome}/{nome}.json",
             "mirrors": [
-                ".claude/hooks/{nome}/hook.sh",
-                ".gemini/hooks/{nome}/hook.sh",
+                ".claude/hooks/{nome}/{nome}.json",
+                ".gemini/hooks/{nome}/{nome}.json",
             ],
             "registry": "CAPABILITIES.json",
             "camada_alvo": "harness_multiplataforma",

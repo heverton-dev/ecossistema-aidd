@@ -1,0 +1,37 @@
+{
+    "descricao": "Fonte única byte-idêntica do núcleo compartilhado entre aidd-master e aidd-enterprise.",
+    "origem": "componentes/compartilhado/src-core",
+    "destinos": [
+        "tools/aidd-master/src/core",
+        "tools/aidd-enterprise/src/core"
+    ],
+    "arquivos": [
+        "__init__.py",
+        "caveman_protocol.py",
+        "circuit_breaker.py",
+        "cqrs.py",
+        "database.py",
+        "database_adapter.py",
+        "events.py",
+        "fleet_discovery.py",
+        "fuzzing.py",
+        "intent_router.py",
+        "jobs.py",
+        "local_first.py",
+        "logs.py",
+        "materializador.py",
+        "mcp_server.py",
+        "metrics.py",
+        "nextjs_exporter.py",
+        "openapi.py",
+        "opentelemetry.py",
+        "outbox_worker.py",
+        "result.py",
+        "saga.py",
+        "security.py",
+        "sincronizador_harness.py",
+        "subagent_engine.py",
+        "token_revocation.py",
+        "webhooks.py"
+    ]
+}

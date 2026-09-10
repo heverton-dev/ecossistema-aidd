@@ -6,6 +6,13 @@ AIDD v5.1 Enterprise — Injetor Universal: Motor de Materialização Transacion
 Escreve o artefato principal e seus espelhos multi-harness em um buffer
 atômico: ou todos os arquivos da operação são criados com sucesso, ou
 nenhum arquivo órfão permanece em disco (rollback automático em falha de I/O).
+
+Fonte única: componentes/compartilhado/src-core/materializador.py — este
+arquivo é byte-idêntico em tools/aidd-master/src/core/ e
+tools/aidd-enterprise/src/core/ (sincronizado por
+componentes/compartilhado/src-core/sync.py). O nome do projeto padrão é
+derivado da localização física do módulo (nunca hardcoded), para que o
+mesmo arquivo sirva as duas ferramentas sem drift silencioso.
 """
 
 from __future__ import annotations
@@ -28,16 +35,21 @@ def _timestamp() -> str:
     return datetime.datetime.now().isoformat()
 
 
+def _projeto_padrao() -> str:
+    """Deriva o projeto atual da localização física do módulo (aidd-master | aidd-enterprise).
+
+    Mantém o comportamento correto de cada ferramenta mesmo quando este
+    arquivo é uma cópia byte-idêntica vinda da fonte única em
+    componentes/compartilhado/src-core/.
+    """
+    caminho = str(Path(__file__).resolve())
+    if "aidd-enterprise" in caminho:
+        return "aidd-enterprise"
+    return "aidd-master"
+
+
 def gerar_conteudo_hook(nome: str, descricao: str) -> str:
-    return (
-        "#!/usr/bin/env bash\n"
-        f"# Hook: {nome}\n"
-        f"# Descrição: {descricao}\n"
-        f"# Gerado em: {_timestamp()}\n"
-        "set -euo pipefail\n\n"
-        f'echo "[HOOK] Executando hook \'{nome}\'..."\n'
-        "exit 0\n"
-    )
+    return json.dumps({"name": nome, "description": descricao, "trigger": "manual"}, indent=2, ensure_ascii=False) + "\n"
 
 
 def gerar_conteudo_skill(nome: str, descricao: str) -> str:
@@ -159,25 +171,34 @@ _GERADORES = {
 }
 
 CANONICAL_TEMPLATES: Dict[str, str] = {
-    "hook": "componentes/{alvo_projeto}/hooks/{nome}/hook.sh",
+    "hook": "componentes/{alvo_projeto}/hooks/{nome}/{nome}.json",
 }
 
 
 def _default_ecossistema_root() -> Path:
     """Raiz real do monorepo ecossistema-aidd.
 
-    Isolada para monkeypatch em testes (mesmo padrão do aidd-forge).
+    Descoberta por marcação (presença de ecossistema.py no diretório) para
+    funcionar igualmente a partir da fonte única em
+    componentes/compartilhado/src-core/ e das cópias sincronizadas em
+    tools/<ferramenta>/src/core/. Isolada para monkeypatch em testes.
     """
-    return Path(__file__).resolve().parents[4]
+    atual = Path(__file__).resolve().parent
+    for candidato in atual.parents:
+        if (candidato / "ecossistema.py").is_file():
+            return candidato
+    return atual.parents[3]
 
 
 def resolve_canonical_destination(
     tipo: str,
     nome: str,
-    alvo_projeto: str = "aidd-master",
+    alvo_projeto: Optional[str] = None,
     ecossistema_root: Optional[Path] = None,
 ) -> Optional[Path]:
     """Resolve o caminho canônico do componente no monorepo."""
+    if alvo_projeto is None:
+        alvo_projeto = _projeto_padrao()
     if tipo not in CANONICAL_TEMPLATES:
         return None
     if ecossistema_root is None:
@@ -187,10 +208,12 @@ def resolve_canonical_destination(
 
 def sincronizar_componente(
     tipo: str,
-    ferramenta: str = "aidd-master",
+    ferramenta: Optional[str] = None,
     ecossistema_root: Optional[Path] = None,
 ) -> int:
     """Dispara a sincronização multi-harness via ecossistema.py ou fallback."""
+    if ferramenta is None:
+        ferramenta = _projeto_padrao()
     if ecossistema_root is None:
         ecossistema_root = _default_ecossistema_root()
 
@@ -288,12 +311,12 @@ def remover_componente(tipo: str, nome: str, root_dir: str = ".") -> Result:
             for p in componente["arquivos"]
         ]
 
-    # Destino canônico (ex.: componentes/{alvo_projeto}/hooks/{nome}/hook.sh) é escrito
+    # Destino canônico (ex.: componentes/{alvo_projeto}/hooks/{nome}/{nome}.json) é escrito
     # por materializar() fora da lista "arquivos_criados"/"arquivos_hashes" (melhor
     # esforço, não falha a operação) — sem isso aqui, remover_componente() deixaria
     # esse arquivo órfão. Testa as duas raízes possíveis (ecossistema real e root_dir
     # do teste/projeto) porque materializar() também escreve nas duas quando aplicável.
-    alvo_projeto = componente.get("alvo_projeto", "aidd-master")
+    alvo_projeto = componente.get("alvo_projeto") or _projeto_padrao()
     for candidato_root in (_default_ecossistema_root(), Path(root_dir)):
         try:
             canonical = resolve_canonical_destination(
@@ -531,7 +554,7 @@ def materializar(
             criados.append(destino)
 
         # Integração canônica Package 7 (ex.: hook)
-        alvo_projeto = payload.get("alvo_projeto", "aidd-master")
+        alvo_projeto = payload.get("alvo_projeto") or _projeto_padrao()
         canonical_dest = resolve_canonical_destination(
             payload["tipo"], payload["nome"], alvo_projeto=alvo_projeto
         )
