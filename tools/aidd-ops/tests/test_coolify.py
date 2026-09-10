@@ -352,7 +352,7 @@ def test_cli_deploy_dry_run(coolify_local):
     assert len(coolify_local["requisicoes"]) == antes
 
 
-# ── CoolifyManager (contrato de pipeline_ops_deploy) ──
+# ── CoolifyManager (contrato de pipeline_ops — DeployOrchestrator) ──
 
 _SERVICOS_STACK = [
     {"nome": "Twenty", "porta_interna": 3000, "cpus": "1.0", "memory": "1024M"},

@@ -17,7 +17,7 @@ if os.path.join(TOOL_ROOT, "scripts") not in sys.path:
 if os.path.join(TOOL_ROOT, "src") not in sys.path:
     sys.path.insert(0, os.path.join(TOOL_ROOT, "src"))
 
-from scripts.pipeline_ops_deploy import DeployOrchestrator
+from scripts.pipeline_ops import DeployOrchestrator
 from core.result import Result
 
 

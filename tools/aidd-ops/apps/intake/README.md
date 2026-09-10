@@ -69,6 +69,6 @@ python -m pytest tools/aidd-ops/tests/test_intake_app.py tools/aidd-ops/tests/te
 
 O contrato HTTP do Coolify em `test_coolify.py` é validado contra um servidor HTTP real
 local que implementa o contrato da API v1 (nada de mocks). O `CoolifyManager` (contrato
-de `scripts/pipeline_ops_deploy.py`) também é coberto: orquestração de stack,
+de `scripts/pipeline_ops.py` (DeployOrchestrator) também é coberto: orquestração de stack,
 isolamento VPS (portas internas ≥ 1024) e AppShell white-label seguem em dry-run
 determinístico por padrão.
