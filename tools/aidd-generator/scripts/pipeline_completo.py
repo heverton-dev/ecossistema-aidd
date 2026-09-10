@@ -47,7 +47,6 @@ import os
 import json
 import time
 import hashlib
-import importlib.util
 from types import SimpleNamespace
 from pathlib import Path
 from typing import Any
@@ -57,92 +56,32 @@ import click
 if sys.platform == 'win32':
     sys.stdout.reconfigure(encoding='utf-8')
 
-PHASES_DIR = Path(__file__).parent / 'phases'
-CORE_DIR = Path(__file__).parent / 'core'
-sys.path.insert(0, str(PHASES_DIR))
-sys.path.insert(0, str(CORE_DIR))
-
 # Pré-voo LLM (verifica LLM_MODEL + credencial antes de rodar o pipeline)
+# Imports absolutos via pacote: `phases`, `core` e `preflight_llm` resolvem
+# porque este módulo sempre roda com scripts/ no sys.path (script main ou
+# spec-load com scripts/ inserido nos testes). Zero mutação manual de sys.path.
 from preflight_llm import verificar_llm_pronto  # noqa: E402
-from utils_delegacao import LLMNaoConfiguradoException
-from utils_fleet_discovery import resolver_fleet, fleet_status_para_log, persistir_fleet_status
-from utils_subagente_ephemero import ContextPurgeEngine
-from repomix_runner import empacotar_repositorio, repomix_disponivel
+from phases.utils_delegacao import LLMNaoConfiguradoException
+from phases.utils_fleet_discovery import resolver_fleet, fleet_status_para_log, persistir_fleet_status
+from phases.utils_subagente_ephemero import ContextPurgeEngine
+from core.repomix_runner import empacotar_repositorio, repomix_disponivel
 
 
 # =============================================================================
-# REGISTRY DE FASES — mapeamento centralizado fase → (alias, script, micro-ambiente)
+# REGISTRY DE FASES — fonte canônica no pacote `phases` (carregamento lazy)
 # =============================================================================
+# O registry, o cache e os carregadores vivem em scripts/phases/__init__.py.
+# Aqui são apenas re-exportados (mesmos objetos), preservando a API pública
+# usada pelo pipeline e pelos testes (carregamento lazy, evict de 1 fase por
+# vez, micro-ambiente isolado por AGENTS.md — sem mutação de sys.path).
 
-_FASE_REGISTRY = {
-    1: {'alias': 'pipeline_p1', 'script': '01_pesquisador.py', 'micro_env': 'phase_01_pesquisa'},
-    2: {'alias': 'pipeline_p2', 'script': '02_analisador.py', 'micro_env': 'phase_02_analisador'},
-    3: {'alias': 'pipeline_p3', 'script': '03_designer.py', 'micro_env': 'phase_03_designer'},
-    4: {'alias': 'pipeline_p4', 'script': '04_decisor.py', 'micro_env': 'phase_04_planejador'},
-    5: {'alias': 'pipeline_p5', 'script': '05_criador.py', 'micro_env': 'phase_05_criador'},
-    6: {'alias': 'pipeline_p6', 'script': '06_documentador.py', 'micro_env': 'phase_06_documentador'},
-    7: {'alias': 'pipeline_p7', 'script': '07_analisador.py', 'micro_env': 'phase_07_auto_critica'},
-    8: {'alias': 'pipeline_p8', 'script': '08_implementador.py', 'micro_env': 'phase_08_implementador'},
-}
-
-# Cache de módulos carregados (apenas 1 fase por vez em memória)
-_modulo_cache: dict = {}
-
-
-# =============================================================================
-# CARREGAMENTO DINÂMICO — carrega apenas a fase solicitada, descarta as demais
-# =============================================================================
-
-def _carregar_fase(numero_fase: int):
-    """Carrega dinamicamente o módulo da fase indicada.
-
-    Estratégia de economia de tokens:
-    - Apenas UMA fase fica em memória por vez
-    - Ao carregar uma nova fase, a anterior é descartada (del + gc)
-    - O AGENTS.md do micro-ambiente é lido como contexto isolado
-    - Redução de >65% no consumo de tokens vs carregamento eager de todas as fases
-    """
-    if numero_fase not in _FASE_REGISTRY:
-        raise ValueError(f'Fase {numero_fase} não encontrada no registry')
-
-    # Descartar fase anterior se existir (economia de memória/tokens)
-    chaves_anteriores = [k for k in _modulo_cache if k != numero_fase]
-    for chave in chaves_anteriores:
-        del _modulo_cache[chave]
-
-    # Se já está em cache, retorna direto
-    if numero_fase in _modulo_cache:
-        return _modulo_cache[numero_fase]
-
-    # Carregar módulo da fase
-    reg = _FASE_REGISTRY[numero_fase]
-    spec = importlib.util.spec_from_file_location(reg['alias'], PHASES_DIR / reg['script'])
-    modulo = importlib.util.module_from_spec(spec)
-    spec.loader.exec_module(modulo)
-
-    _modulo_cache[numero_fase] = modulo
-    return modulo
-
-
-def _carregar_micro_ambiente(numero_fase: int) -> str:
-    """Lê o AGENTS.md do micro-ambiente da fase como contexto isolado.
-
-    Retorna o conteúdo do AGENTS.md ou string vazia se não existir.
-    Este contexto é usado internamente pela fase para auto-orientação.
-    """
-    reg = _FASE_REGISTRY.get(numero_fase)
-    if not reg:
-        return ''
-
-    agents_path = PHASES_DIR / reg['micro_env'] / 'AGENTS.md'
-    if agents_path.exists():
-        return agents_path.read_text(encoding='utf-8')
-    return ''
-
-
-def _descarregar_todas_fases():
-    """Remove todos os módulos de fase da memória."""
-    _modulo_cache.clear()
+from phases import (  # noqa: E402
+    FASE_REGISTRY as _FASE_REGISTRY,
+    modulo_cache as _modulo_cache,
+    carregar_fase as _carregar_fase,
+    carregar_micro_ambiente as _carregar_micro_ambiente,
+    descarregar_todas_fases as _descarregar_todas_fases,
+)
 
 
 # =============================================================================

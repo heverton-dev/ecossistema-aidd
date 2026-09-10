@@ -24,9 +24,13 @@ import subprocess
 import shutil
 from pathlib import Path
 
-# Importar utils para detectar harness/modelo real (nunca fabricar)
-sys.path.insert(0, str(Path(__file__).parent))
-from utils_modelo import detectar_harness_nome, detectar_modelo_harness
+# Importar utils para detectar harness/modelo real (nunca fabricar).
+# Import relativo (modo pacote) com fallback bare (execução direta da fase),
+# preservando os dois modos sem mutação de sys.path.
+try:
+    from .utils_modelo import detectar_harness_nome, detectar_modelo_harness
+except ImportError:  # pragma: no cover — execução direta (python scripts/phases/05_criador.py)
+    from utils_modelo import detectar_harness_nome, detectar_modelo_harness
 from datetime import datetime, timezone
 from typing import Optional, Dict, List, Any
 

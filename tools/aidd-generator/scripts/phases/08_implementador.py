@@ -30,9 +30,15 @@ from datetime import datetime, timezone
 from dataclasses import dataclass, field
 from typing import Optional, Dict, List, Any, Tuple, Callable
 
-sys.path.insert(0, str(Path(__file__).parent))
-from utils_modelo import detectar_modelo_harness, obter_nome_amigavel_modelo
-from utils_delegacao import solicitar_llm, extrair_json_resposta, LLMNaoConfiguradoException
+# Importar utils para detectar modelo e protocolo delegado.
+# Import relativo (modo pacote) com fallback bare (execução direta da fase),
+# preservando os dois modos sem mutação de sys.path.
+try:
+    from .utils_modelo import detectar_modelo_harness, obter_nome_amigavel_modelo
+    from .utils_delegacao import solicitar_llm, extrair_json_resposta, LLMNaoConfiguradoException
+except ImportError:  # pragma: no cover — execução direta (python scripts/phases/08_implementador.py)
+    from utils_modelo import detectar_modelo_harness, obter_nome_amigavel_modelo
+    from utils_delegacao import solicitar_llm, extrair_json_resposta, LLMNaoConfiguradoException
 
 # Modelo Pydantic do contrato de codegen da Fase 8 (item NIH #23 / item 11 do
 # plano anti-NIH): quando pydantic+instructor estão disponíveis, o parsing da
@@ -71,15 +77,17 @@ def _parsear_resposta_codegen(conteudo: str) -> Any:
 
 
 # NIH #22: Empacotamento de contexto de repo para LLM delegando ao Repomix
-CORE_DIR = Path(__file__).parent.parent / 'core'
-if str(CORE_DIR) not in sys.path:
-    sys.path.insert(0, str(CORE_DIR))
+# Import do core via pacote (modo serviço/pipeline) com fallback bare
+# (execução direta da fase) e sentinel quando o repomix não está disponível.
 try:
-    from repomix_runner import empacotar_repositorio, repomix_disponivel, comparar_empacotamento_tokens
+    from core.repomix_runner import empacotar_repositorio, repomix_disponivel, comparar_empacotamento_tokens
 except ImportError:
-    empacotar_repositorio = None
-    repomix_disponivel = lambda: False
-    comparar_empacotamento_tokens = None
+    try:
+        from repomix_runner import empacotar_repositorio, repomix_disponivel, comparar_empacotamento_tokens
+    except ImportError:
+        empacotar_repositorio = None
+        repomix_disponivel = lambda: False
+        comparar_empacotamento_tokens = None
 
 if sys.platform == 'win32':
     sys.stdout.reconfigure(encoding='utf-8')

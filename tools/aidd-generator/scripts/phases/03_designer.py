@@ -27,10 +27,15 @@ from datetime import datetime, timezone
 from typing import Optional, Dict, List, Any
 from concurrent.futures import ThreadPoolExecutor, TimeoutError as FutureTimeoutError, as_completed
 
-# Importar utils para detectar modelo e protocolo delegado
-sys.path.insert(0, str(Path(__file__).parent))
-from utils_modelo import detectar_modelo_harness, obter_nome_amigavel_modelo, log_modelo_detectado
-from utils_delegacao import solicitar_llm, extrair_json_resposta, LLMNaoConfiguradoException
+# Importar utils para detectar modelo e protocolo delegado.
+# Import relativo (modo pacote) com fallback bare (execução direta da fase),
+# preservando os dois modos sem mutação de sys.path.
+try:
+    from .utils_modelo import detectar_modelo_harness, obter_nome_amigavel_modelo, log_modelo_detectado
+    from .utils_delegacao import solicitar_llm, extrair_json_resposta, LLMNaoConfiguradoException
+except ImportError:  # pragma: no cover — execução direta (python scripts/phases/03_designer.py)
+    from utils_modelo import detectar_modelo_harness, obter_nome_amigavel_modelo, log_modelo_detectado
+    from utils_delegacao import solicitar_llm, extrair_json_resposta, LLMNaoConfiguradoException
 
 if sys.platform == 'win32':
     sys.stdout.reconfigure(encoding='utf-8')
