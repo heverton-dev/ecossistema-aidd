@@ -34,6 +34,8 @@ from phases import __init__ as _phases_init  # noqa: F401
 sys.path.insert(0, os.path.join(_SCRIPTS_DIR, "phases"))
 from importlib import import_module as _imod
 
+from contrato_plano import validar_plano_contrato  # noqa: E402
+
 _mod_intake = _imod("01_intake")
 _mod_curadoria = _imod("02_curadoria")
 _mod_sizing = _imod("03_sizing")
@@ -190,6 +192,16 @@ def executar_pipeline(texto: str, pasta_destino: str, nicho_explicito: Optional 
 
     resultado = montar_plano_em_memoria(texto, nicho_explicito=nicho_explicito)
     plano = resultado.valor
+
+    # Contrato do Item 5: o plano (sucesso OU falha estruturada de fase) DEVE
+    # aderir ao schema canônico antes de ser gravado em disco. Gate determinístico.
+    res_contrato = validar_plano_contrato(plano)
+    if not res_contrato.sucesso:
+        print(f"  [ERRO] {res_contrato.codigo}: {res_contrato.erro}")
+        if res_contrato.detalhes:
+            print(f"  Detalhes: {json.dumps(res_contrato.detalhes, ensure_ascii=False)}")
+        return 1
+
     _gravar_plano(caminho_plano, plano)
 
     erro = _primeiro_erro_pipeline(plano)
