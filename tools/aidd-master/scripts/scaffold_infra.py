@@ -10,9 +10,11 @@ pelo nome da suíte. Os arquivos são gerados de forma determinística e estáti
 — nenhum comando terraform/helm é executado por este script.
 """
 
+import json
 import os
 import re
 import sys
+from typing import Optional
 
 
 def _slugify(text: str) -> str:
@@ -313,9 +315,83 @@ spec:
 """
 
 
-def scaffold_infra(target_dir: str, suite_name: str = "AIDD Suite"):
+_RAIZ_ECOSSISTEMA = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", ".."))
+_SCHEMA_CONTRATO = os.path.join(
+    _RAIZ_ECOSSISTEMA,
+    "componentes",
+    "compartilhado",
+    "specs",
+    "plano-infraestrutura.schema.json",
+)
+
+
+def validar_plano_infraestrutura(plano_path: str) -> dict:
+    """Valida um PLANO-INFRAESTRUTURA.json (aidd-ops) contra o schema canônico
+    do Item 5 antes de aplicar os resources no Helm/Terraform.
+
+    Args:
+        plano_path: Caminho do PLANO-INFRAESTRUTURA.json produzido pelo aidd-ops.
+
+    Returns:
+        Dict validado do plano, 100% aderente ao contrato.
+
+    Raises:
+        SystemExit(1): em qualquer etapa de falha (arquivo/schema ausente,
+            JSON inválido, dependência jsonschema ausente, plano fora do
+            contrato) — mensagem estruturada é impressa antes.
+    """
+    if not os.path.isfile(plano_path):
+        print(f"[ERRO] PLANO_NAO_ENCONTRADO: arquivo não existe: {plano_path}")
+        sys.exit(1)
+
+    try:
+        with open(plano_path, "r", encoding="utf-8") as f:
+            plano = json.load(f)
+    except json.JSONDecodeError as exc:
+        print(f"[ERRO] PLANO_JSON_INVALIDO: {plano_path} não é JSON válido: {exc}")
+        sys.exit(1)
+
+    if not os.path.isfile(_SCHEMA_CONTRATO):
+        print(f"[ERRO] SCHEMA_CONTRATO_AUSENTE: schema canônico não existe em: {_SCHEMA_CONTRATO}")
+        sys.exit(1)
+
+    try:
+        with open(_SCHEMA_CONTRATO, "r", encoding="utf-8") as f:
+            schema = json.load(f)
+    except json.JSONDecodeError as exc:
+        print(f"[ERRO] SCHEMA_CONTRATO_CORROMPIDO: schema canônico inválido: {exc}")
+        sys.exit(1)
+
+    try:
+        from jsonschema import ValidationError, validate
+    except ImportError:
+        print("[ERRO] DEPENDENCIA_AUSENTE: pacote 'jsonschema' não está instalado "
+              "(Item 5 — adicione jsonschema>=4.20.0 ao requirements.txt).")
+        sys.exit(1)
+
+    try:
+        validate(instance=plano, schema=schema)
+    except ValidationError as exc:
+        print(f"[ERRO] PLANO_INVALIDO_CONTRATO: plano fora do contrato: {exc.message}")
+        sys.exit(1)
+
+    return plano
+
+
+def scaffold_infra(target_dir: str, suite_name: str = "AIDD Suite", plano_path: Optional[str] = None):
     target_dir = os.path.abspath(target_dir)
     slug = _slugify(suite_name)
+
+    # Contrato do Item 5: valida o PLANO-INFRAESTRUTURA.json do aidd-ops ANTES
+    # de aplicar os resources no Helm/Terraform. Plano inválido bloqueia a
+    # geração de forma determinística (exit 1).
+    if plano_path:
+        plano = validar_plano_infraestrutura(plano_path)
+        dados_f3 = plano.get("fase_3_sizing", {}).get("saida") or {}
+        vps = dados_f3.get("vps", {})
+        print(f"  [CONTRATO] Plano validado: {plano.get('pipeline', '?')} v{plano.get('versao', '?')} | "
+              f"VPS: {vps.get('vcpu', '?')} vCPU / {vps.get('ram_gb', '?')} GB RAM / "
+              f"{vps.get('disco_gb', '?')} GB Disco")
 
     terraform_dir = os.path.join(target_dir, "infra", "terraform")
     helm_dir = os.path.join(target_dir, "infra", "helm")
@@ -353,7 +429,20 @@ def scaffold_infra(target_dir: str, suite_name: str = "AIDD Suite"):
 
 
 if __name__ == "__main__":
-    if len(sys.argv) < 2:
-        print("Uso: python scaffold_infra.py <target_dir> [suite_name]")
+    plano_arg = None
+    args_posicionais = []
+    fila = list(sys.argv[1:])
+    while fila:
+        arg = fila.pop(0)
+        if arg == "--plano" and fila:
+            plano_arg = fila.pop(0)
+        else:
+            args_posicionais.append(arg)
+    if len(args_posicionais) < 1:
+        print("Uso: python scaffold_infra.py <target_dir> [suite_name] [--plano <PLANO-INFRAESTRUTURA.json>]")
         sys.exit(1)
-    scaffold_infra(sys.argv[1], sys.argv[2] if len(sys.argv) > 2 else "AIDD Suite")
+    scaffold_infra(
+        args_posicionais[0],
+        args_posicionais[1] if len(args_posicionais) > 1 else "AIDD Suite",
+        plano_path=plano_arg,
+    )

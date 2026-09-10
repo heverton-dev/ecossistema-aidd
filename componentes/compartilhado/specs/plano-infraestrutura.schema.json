@@ -1,0 +1,292 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/heverton-dev/ecossistema-aidd/componentes/compartilhado/specs/plano-infraestrutura.schema.json",
+  "title": "Contrato do PLANO-INFRAESTRUTURA.json (aidd-ops → aidd-master/aidd-enterprise)",
+  "description": "Contrato formal versionado do artefato PLANO-INFRAESTRUTURA.json produzido pelo aidd-ops (Fases 1-3: Intake → Curadoria → Sizing) e consumido pelo scaffold_infra.py do aidd-master e do aidd-enterprise. O schema descreve tanto planos bem-sucedidos quanto planos com falha de fase: uma fase que falha carrega erro estruturado (to_dict do Result) no slot `erro` e deixa `saida` nula, e as fases seguintes simplesmente deixam de existir (early-exit do pipeline). Fonte única do contrato — os validadores de ops (produtor), master e enterprise (consumidores) apontam para este arquivo.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["versao", "gerado_em", "pipeline"],
+  "properties": {
+    "versao": {
+      "const": "1.0.0",
+      "description": "Versão do contrato — mudanças incompatíveis exigem bump e novo schema."
+    },
+    "gerado_em": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Timestamp ISO 8601 UTC de geração do plano (ex.: 2026-09-10T12:34:56Z)."
+    },
+    "pipeline": {
+      "const": "aidd-ops-mvp-fases-1-3",
+      "description": "Identificação do pipeline produtor."
+    },
+    "fase_1_intake": {
+      "$ref": "#/$defs/fase_intake",
+      "description": "Fase 1 — Reconhecimento de Nicho. Sempre presente (é a primeira fase)."
+    },
+    "fase_2_curadoria": {
+      "$ref": "#/$defs/fase_curadoria",
+      "description": "Fase 2 — Curadoria da Stack. Presente somente se a Fase 1 teve sucesso."
+    },
+    "fase_3_sizing": {
+      "$ref": "#/$defs/fase_sizing",
+      "description": "Fase 3 — Sizing de VPS e bancos. Presente somente se a Fase 2 teve sucesso."
+    }
+  },
+  "dependentRequired": {
+    "fase_2_curadoria": ["fase_1_intake"],
+    "fase_3_sizing": ["fase_1_intake", "fase_2_curadoria"]
+  },
+  "$defs": {
+    "erro_fase": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["sucesso", "codigo", "erro"],
+      "properties": {
+        "sucesso": {
+          "const": false,
+          "description": "Um slot de erro só existe em fase com resultado de falha."
+        },
+        "codigo": {
+          "type": "string",
+          "description": "Código estruturado do erro (ex.: NICHO_AMBIGUO, NICHO_NAO_RECONHECIDO, NICHO_SEM_STACK, FERRAMENTAS_VAZIAS)."
+        },
+        "erro": {
+          "type": "string",
+          "description": "Mensagem legível do motivo da falha."
+        },
+        "detalhes": {
+          "type": ["object", "array", "null"],
+          "description": "Contexto estruturado opcional (ex.: candidatos de nicho ambíguo, slugs disponíveis)."
+        }
+      },
+      "description": "to_dict() do Result de falha da fase — o mesmo payload que o ops grava no slot `erro`."
+    },
+    "fase_base": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["entrada", "saida", "erro", "timestamp"],
+      "properties": {
+        "entrada": {
+          "type": "object",
+          "description": "Entrada determinística da fase (escopo da fase)."
+        },
+        "saida": {
+          "type": ["object", "null"],
+          "description": "Saída da fase, ou null quando a fase falhou."
+        },
+        "erro": {
+          "type": ["object", "null"],
+          "description": "Erro estruturado da fase, ou null quando teve sucesso."
+        },
+        "timestamp": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Timestamp ISO 8601 UTC da fase."
+        }
+      }
+    },
+    "fase_intake": {
+      "allOf": [
+        { "$ref": "#/$defs/fase_base" },
+        {
+          "properties": {
+            "entrada": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["texto", "nicho_explicito"],
+              "properties": {
+                "texto": { "type": "string" },
+                "nicho_explicito": {
+                  "type": ["string", "null"],
+                  "description": "Slug explícito do nicho quando há bypass (--nicho), senão null."
+                }
+              }
+            }
+          }
+        },
+        {
+          "oneOf": [
+            {
+              "properties": {
+                "saida": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": ["nicho_slug", "nicho_nome_exibicao", "texto_original", "palavras_chave_candidatas"],
+                  "properties": {
+                    "nicho_slug": { "type": "string" },
+                    "nicho_nome_exibicao": { "type": "string" },
+                    "texto_original": { "type": "string" },
+                    "palavras_chave_candidatas": {
+                      "type": "array",
+                      "items": { "type": "string" }
+                    }
+                  }
+                },
+                "erro": { "type": "null" }
+              },
+              "required": ["saida", "erro"]
+            },
+            {
+              "properties": {
+                "saida": { "type": "null" },
+                "erro": { "$ref": "#/$defs/erro_fase" }
+              },
+              "required": ["saida", "erro"]
+            }
+          ]
+        }
+      ]
+    },
+    "fase_curadoria": {
+      "allOf": [
+        { "$ref": "#/$defs/fase_base" },
+        {
+          "properties": {
+            "entrada": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["nicho_slug", "nicho_nome_exibicao"],
+              "properties": {
+                "nicho_slug": { "type": "string" },
+                "nicho_nome_exibicao": { "type": "string" }
+              }
+            }
+          }
+        },
+        {
+          "oneOf": [
+            {
+              "properties": {
+                "saida": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": ["nicho_slug", "nicho_nome_exibicao", "ferramentas"],
+                  "properties": {
+                    "nicho_slug": { "type": "string" },
+                    "nicho_nome_exibicao": { "type": "string" },
+                    "ferramentas": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "additionalProperties": false,
+                        "required": ["nome"],
+                        "properties": {
+                          "nome": { "type": "string" }
+                        }
+                      }
+                    }
+                  }
+                },
+                "erro": { "type": "null" }
+              },
+              "required": ["saida", "erro"]
+            },
+            {
+              "properties": {
+                "saida": { "type": "null" },
+                "erro": { "$ref": "#/$defs/erro_fase" }
+              },
+              "required": ["saida", "erro"]
+            }
+          ]
+        }
+      ]
+    },
+    "fase_sizing": {
+      "allOf": [
+        { "$ref": "#/$defs/fase_base" },
+        {
+          "properties": {
+            "entrada": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["ferramentas"],
+              "properties": {
+                "ferramentas": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "required": ["nome"],
+                    "properties": {
+                      "nome": { "type": "string" }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "oneOf": [
+            {
+              "properties": {
+                "saida": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": ["vps", "bancos_logicos", "ferramentas_com_banco", "ferramentas_sem_banco", "fontes_consultadas"],
+                  "properties": {
+                    "vps": {
+                      "type": "object",
+                      "additionalProperties": false,
+                      "required": ["vcpu", "ram_gb", "disco_gb"],
+                      "properties": {
+                        "vcpu": { "type": "number", "minimum": 1 },
+                        "ram_gb": { "type": "number", "minimum": 0.5 },
+                        "disco_gb": { "type": "number", "minimum": 10 }
+                      }
+                    },
+                    "bancos_logicos": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "additionalProperties": false,
+                        "required": ["ferramenta", "nome_banco"],
+                        "properties": {
+                          "ferramenta": { "type": "string" },
+                          "nome_banco": { "type": "string" }
+                        }
+                      }
+                    },
+                    "ferramentas_com_banco": {
+                      "type": "array",
+                      "items": { "type": "string" }
+                    },
+                    "ferramentas_sem_banco": {
+                      "type": "array",
+                      "items": { "type": "string" }
+                    },
+                    "fontes_consultadas": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "additionalProperties": false,
+                        "required": ["ferramenta", "url", "requisitos_encontrados"],
+                        "properties": {
+                          "ferramenta": { "type": "string" },
+                          "url": { "type": "string", "format": "uri" },
+                          "requisitos_encontrados": { "type": "boolean" },
+                          "notas": { "type": "string" }
+                        }
+                      }
+                    }
+                  }
+                },
+                "erro": { "type": "null" }
+              },
+              "required": ["saida", "erro"]
+            },
+            {
+              "properties": {
+                "saida": { "type": "null" },
+                "erro": { "$ref": "#/$defs/erro_fase" }
+              },
+              "required": ["saida", "erro"]
+            }
+          ]
+        }
+      ]
+    }
+  }
+}

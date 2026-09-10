@@ -5,6 +5,9 @@ redis>=5.0.0
 secure>=2.0.0
 sqlglot>=24.0.0
 returns>=0.23.0
+# Contrato PLANO-INFRAESTRUTURA.json (Item 5) — validação via jsonschema no
+# leitor scaffold_infra.py contra o schema canônico compartilhado.
+jsonschema>=4.20.0
 cookiecutter>=2.6.0
 sqlalchemy>=2.0.0
 aiosqlite>=0.20.0
