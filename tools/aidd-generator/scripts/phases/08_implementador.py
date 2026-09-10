@@ -25,6 +25,7 @@ import json
 import ast
 import subprocess
 import traceback as _traceback_mod
+import importlib.util
 from pathlib import Path
 from datetime import datetime, timezone
 from dataclasses import dataclass, field
@@ -95,6 +96,78 @@ if sys.platform == 'win32':
 MAX_TENTATIVAS_POR_SCRIPT = 3
 MAX_TENTATIVAS_MICROTASK = 3
 TIMEOUT_PYTEST_SEGUNDOS = 60
+
+
+# =============================================================================
+# ITEM 9: G_ARQUITETURA_DELIVERABLE — load via importlib (no sys.path mutation)
+# =============================================================================
+
+_GATE_ARQUITETURA = None
+_GATE_ARQUITETURA_TENTOU = False
+
+
+def _obter_gate_arquitetura():
+    """Carrega (com cache) o G_ARQUITETURA_DELIVERABLE do monorepo.
+    Caminhos relativos resolvidos por busca ascendente — funciona igualmente
+    em execução como pacote (pipeline) e execução direta da fase."""
+    global _GATE_ARQUITETURA, _GATE_ARQUITETURA_TENTOU
+    if _GATE_ARQUITETURA_TENTOU:
+        return _GATE_ARQUITETURA
+    _GATE_ARQUITETURA_TENTOU = True
+    raiz = Path(__file__).resolve()
+    for pai in raiz.parents:
+        gate_py = pai / 'gates' / 'G_ARQUITETURA_DELIVERABLE.py'
+        if gate_py.exists():
+            try:
+                spec = importlib.util.spec_from_file_location(
+                    'gate_arquitetura_deliverable', str(gate_py)
+                )
+                modulo = importlib.util.module_from_spec(spec)
+                spec.loader.exec_module(modulo)
+                _GATE_ARQUITETURA = modulo
+                return _GATE_ARQUITETURA
+            except Exception:
+                return None
+    return None
+
+
+def auditar_arquivo_arquitetura(pasta_projeto, caminho_relativo):
+    """Audita um único arquivo .py gerado contra G_ARQUITETURA_DELIVERABLE.
+    Retorna lista de violações (vazio = limpo). Gate indisponível = []."""
+    gate_mod = _obter_gate_arquitetura()
+    if gate_mod is None or not str(caminho_relativo or '').endswith('.py'):
+        return []
+    violacoes, _ = gate_mod.auditar_arquivos(
+        [caminho_relativo], root_dir=str(Path(pasta_projeto) / 'src')
+    )
+    return violacoes
+
+
+def auditar_projeto_arquitetura(pasta_projeto):
+    """Audita todo o src/ do projeto gerado.
+    Retorna (violacoes, total_arquivos).
+    Gate indisponível => (None, 0) sinalizando ausência de cobertura."""
+    gate_mod = _obter_gate_arquitetura()
+    if gate_mod is None:
+        return None, 0
+    src = Path(pasta_projeto) / 'src'
+    if not src.exists():
+        return [], 0
+    violacoes, total = gate_mod.auditar_arquivos(['.'], root_dir=str(src))
+    return violacoes, total
+
+
+def formatar_violacoes_arquitetura(violacoes):
+    """Formata lista de violações arquiteturais em texto compacto para LLM."""
+    regras = {}
+    for v in violacoes:
+        regras[v['regra']] = regras.get(v['regra'], 0) + 1
+    linhas = [f"  {r}: {c} ocorrência(s)" for r, c in sorted(regras.items())]
+    for v in violacoes[:5]:
+        linhas.append(f"  - {v['arquivo']}:L{v['linha']} [{v['regra']}] {v['detalhe']}")
+    if len(violacoes) > 5:
+        linhas.append(f"  ... e mais {len(violacoes) - 5} violação(ões)")
+    return '\n'.join(linhas)
 
 
 # =============================================================================
@@ -508,6 +581,12 @@ BLOCO_REGRA_API = """- SWAGGER DARK MODE: if FastAPI, configure dark Swagger UI 
 - MCP STUDIO & WEBHOOKS: if main server/app, expose /mcp/rpc (JSON-RPC 2.0) and webhook dispatcher with HMAC SHA-256 (X-AIDD-Signature).
 """
 
+_BLOCO_REGRA_ARQUITETURA = """- CLEAN ARCH + DDD: persistence scripts use layered folders under src/.
+- DB (sqlite3, .execute/.executemany/.executescript) ONLY inside infrastructure/ folder.
+- domain/ and application/ MUST NOT import sqlite3 or infrastructure.*.
+- routes/api/views call use cases; NEVER direct SQL or cache invalidate.
+"""
+
 # Keywords (determinístico, Zero Token) que ativam cada bloco de regras
 # quando presentes em nome/responsabilidade/pseudocódigo do script_spec.
 KEYWORDS_FEATURE = {
@@ -518,18 +597,23 @@ KEYWORDS_FEATURE = {
     'crud': ('crud', 'repositorio', 'repository', 'endpoint', 'api', 'cadastrar', 'atualizar', 'remover', 'delete', 'update', 'editar'),
     'ui': ('ui', 'interface', 'web', 'html', 'tela', 'frontend', 'dialog', 'visual'),
     'api': ('fastapi', 'swagger', 'mcp', 'webhook', 'servidor', 'server', 'rota', 'route', 'http'),
+    'arquitetura': (),  # derived — activated when sqlite or crud or api
 }
 
 
 def _extrair_features_script(script_spec: Dict) -> Dict[str, bool]:
     """Detecta features requeridas pelo script_spec via keyword scan determinístico.
-    Zero LLM, Zero Token: puro texto sobre nome + responsabilidade + pseudocódigo."""
+    Zero LLM, Zero Token: puro texto sobre nome + responsabilidade + pseudocódigo.
+    Feature 'arquitetura' derivada de sqlite|crud|api (determinístico)."""
     texto = ' '.join([
         str(script_spec.get('nome', '')),
         str(script_spec.get('responsabilidade', '')),
         str(script_spec.get('pseudocodigo', '')),
     ]).lower()
-    return {feature: any(kw in texto for kw in kws) for feature, kws in KEYWORDS_FEATURE.items()}
+    features = {feature: any(kw in texto for kw in kws)
+                for feature, kws in KEYWORDS_FEATURE.items()}
+    features['arquitetura'] = features['sqlite'] or features['crud'] or features['api']
+    return features
 
 
 def _montar_blocos_condicionais(features: Dict[str, bool]) -> str:
@@ -556,6 +640,8 @@ def _montar_blocos_condicionais(features: Dict[str, bool]) -> str:
         blocos.append(BLOCO_REGRA_UI)
     if features.get('api'):
         blocos.append(BLOCO_REGRA_API)
+    if features.get('arquitetura'):
+        blocos.append(_BLOCO_REGRA_ARQUITETURA)
     return ''.join(blocos)
 
 PROMPT_CORRIGIR_SCRIPT = """# ENTRADA: Code Fixer — correct code/test that failed in pytest. Minimal diff, fix root cause.
@@ -582,9 +668,36 @@ Rules: direct import (from {modulo} import), consistent names, schema DDL + PRAG
 {{"codigo":"<fixed code>","teste":"<fixed test>","caminho_relativo":"...","caminho_teste":"..."}}
 """
 
+PROMPT_CORRIGIR_ARQUITETURA = """# ENTRADA: Clean Architecture Fixer — correct the module to comply with Clean Architecture + DDD rules (G_ARQUITETURA_DELIVERABLE). Minimal diff, preserve behavior and tests.
+
+{secao_schema}
+MODULE: {modulo}
+
+CODE:
+{codigo}
+
+TEST:
+{teste}
+
+VIOLAÇÕES DE ARQUITETURA:
+{violacoes}
+
+Rules:
+- Persistência/banco (sqlite3, .execute/.executemany/.executescript) SOMENTE em módulos dentro de infrastructure/.
+- domain/ e application/ (use cases) NÃO importam banco nem infrastructure.* — só regra de negócio pura.
+- interfaces/rotas (routes.py, api.py, views.py) chamam use cases; proibido SQL e cache/invalidate direto.
+- Ao corrigir, mova a camada de persistência para um módulo repository em infrastructure/ quando necessário.
+- Manter 100% dos testes passando e o contrato (from {modulo} import) intacto.
+
+# COT: think in English Caveman (3-5 dense lines, no articles)
+# SAIDA: Return ONLY the JSON below, nothing else, no markdown/code fence.
+# RESPOND IN BRAZILIAN PORTUGUESE (PT-BR) for descriptive fields.
+{{"codigo":"<fixed code>","teste":"<fixed test>","caminho_relativo":"...","caminho_teste":"..."}}
+"""
+
 
 # =============================================================================
-# GATES DE VALIDAÇÃO (I1-I5)
+# GATES DE VALIDAÇÃO (I1-I6)
 # =============================================================================
 
 class Gate:
@@ -618,6 +731,7 @@ class ValidadorGatesPhase8:
             ValidadorGatesPhase8._gate_i3_testes_passam(resultado_pytest),
             ValidadorGatesPhase8._gate_i4_cli_executa(pasta_projeto),
             ValidadorGatesPhase8._gate_i5_teste_integracao(resultado_integracao, teste_integracao_gerado),
+            ValidadorGatesPhase8._gate_i6_arquitetura_deliverable(pasta_projeto),
         ]
         return gates, all(g.passou for g in gates)
 
@@ -695,6 +809,27 @@ class ValidadorGatesPhase8:
         return Gate('I5_teste_integracao',
                    'Validar teste de integração entre scripts',
                    passou, f"{passaram}/{total} teste(s) de integração passando{detalhes_falha}")
+
+    @staticmethod
+    def _gate_i6_arquitetura_deliverable(pasta_projeto: Path) -> Gate:
+        """I6: Clean Architecture/DDD — audita src/ do projeto via G_ARQUITETURA_DELIVERABLE"""
+        violacoes, total = auditar_projeto_arquitetura(pasta_projeto)
+        if total is None:
+            return Gate('I6_arquitetura_deliverable',
+                       'Validar Clean Architecture/DDD nos deliverables',
+                       False, 'G_ARQUITETURA_DELIVERABLE indisponível no ambiente')
+        passou = total == 0 or len(violacoes) == 0
+        if not violacoes:
+            detalhes = f"{total} arquivo(s) auditado(s), 0 violação de Clean Architecture/DDD"
+        else:
+            regras = {}
+            for v in violacoes:
+                regras[v['regra']] = regras.get(v['regra'], 0) + 1
+            detalhes = (f"{len(violacoes)} violação(ões) em {total} arquivo(s): "
+                       + ', '.join(f"{r}: {c}" for r, c in sorted(regras.items())))
+        return Gate('I6_arquitetura_deliverable',
+                   'Validar Clean Architecture/DDD nos deliverables',
+                   passou, detalhes)
 
 
 # =============================================================================
@@ -967,7 +1102,8 @@ class ImplementadorFase8:
         return True, resultado_integracao
 
     def _reaproveitar_implementacao_existente(self, caminho_sugerido: str, caminho_teste_sugerido: str) -> Optional[Dict]:
-        """Se script e teste já existem em disco e passam no pytest, reaproveita sem chamar LLM."""
+        """Se script e teste já existem em disco e passam no pytest, reaproveita sem chamar LLM.
+        Item 9: também valida Clean Architecture/DDD — se violar, não reaproveita."""
         arq_codigo = self.pasta_projeto / 'src' / caminho_sugerido
         arq_teste = self.pasta_projeto / 'tests' / caminho_teste_sugerido
         if not (arq_codigo.exists() and arq_teste.exists()):
@@ -975,6 +1111,10 @@ class ImplementadorFase8:
 
         resultado_existente = self._rodar_pytest(caminho_relativo=caminho_teste_sugerido)
         if resultado_existente['passaram'] > 0 and resultado_existente['falharam'] == 0 and resultado_existente['erros'] == 0 and not resultado_existente['erro_coleta']:
+            # Item 9: verificar arquitetura antes de reaproveitar
+            violacoes = auditar_arquivo_arquitetura(self.pasta_projeto, caminho_sugerido)
+            if violacoes:
+                return None  # rejeitar — o LLM regenerará com regras de arquitetura
             print(f"   ✓ {caminho_sugerido} já implementado e com testes passando ({resultado_existente['passaram']} testes)")
             return {
                 'codigo': arq_codigo.read_text(encoding='utf-8'),
@@ -1071,6 +1211,7 @@ class ImplementadorFase8:
         caminho_teste = impl['caminho_teste']
 
         for tentativa in range(1, MAX_TENTATIVAS_POR_SCRIPT + 1):
+            em_correcao_arquitetura = False
             # GAP 1: validação AST do contrato antes de rodar pytest
             problema_contrato = self._validar_contrato_ast(impl.get('codigo', ''), impl.get('teste', ''), modulo)
             if problema_contrato:
@@ -1093,9 +1234,22 @@ class ImplementadorFase8:
                         ideia, stack, script_spec, impl
                     )
                     if result_mt.is_ok():
-                        return impl
-                    # Se micro-tasks falhou, cai no loop de auto-cura
-                    impl['post_mortem'] = result_mt._error
+                        # Item 9: auditoria Clean Architecture / DDD (G_ARQUITETURA_DELIVERABLE)
+                        violacoes_arq = auditar_arquivo_arquitetura(
+                            self.pasta_projeto, impl.get('caminho_relativo', '')
+                        )
+                        if not violacoes_arq:
+                            return impl
+                        impl['violacoes_arquitetura'] = violacoes_arq
+                        if tentativa == MAX_TENTATIVAS_POR_SCRIPT:
+                            impl['tentativas'] = tentativa
+                            impl['falhou_apos_tentativas'] = True
+                            return impl
+                        erro_compacto = formatar_violacoes_arquitetura(violacoes_arq)
+                        em_correcao_arquitetura = True
+                    else:
+                        # Se micro-tasks falhou, cai no loop de auto-cura
+                        impl['post_mortem'] = result_mt._error
 
                 if tentativa == MAX_TENTATIVAS_POR_SCRIPT:
                     impl['tentativas'] = tentativa
@@ -1124,15 +1278,26 @@ class ImplementadorFase8:
             erro_para_prompt = (
                 f"{traceback_isolado}\n\n{erro_compacto}" if suspeitas else erro_compacto
             )
-            prompt_fix = PROMPT_CORRIGIR_SCRIPT.format(
-                secao_schema=secao_schema,
-                codigo=contexto_cirurgico,
-                teste=teste_recortado,
-                erro=erro_para_prompt,
-                modulo=modulo,
-            )
+            if em_correcao_arquitetura:
+                prompt_fix = PROMPT_CORRIGIR_ARQUITETURA.format(
+                    secao_schema=secao_schema,
+                    codigo=contexto_cirurgico,
+                    teste=teste_recortado,
+                    violacoes=erro_para_prompt,
+                    modulo=modulo,
+                )
+                fase_fix = "phase_08_fix_arquitetura"
+            else:
+                prompt_fix = PROMPT_CORRIGIR_SCRIPT.format(
+                    secao_schema=secao_schema,
+                    codigo=contexto_cirurgico,
+                    teste=teste_recortado,
+                    erro=erro_para_prompt,
+                    modulo=modulo,
+                )
+                fase_fix = "phase_08_fix"
             result_fix = self._chamar_llm_result(
-                prompt=prompt_fix, contexto=contexto, fase="phase_08_fix"
+                prompt=prompt_fix, contexto=contexto, fase=fase_fix
             )
             if result_fix.is_err():
                 print(f"   ❌ {result_fix._error}")
@@ -1142,6 +1307,17 @@ class ImplementadorFase8:
 
             impl_corrigido = result_fix.unwrap()
             if isinstance(impl_corrigido, dict) and 'codigo' in impl_corrigido and 'teste' in impl_corrigido:
+                if em_correcao_arquitetura:
+                    # Item 9: permitir que o LLM mude o caminho (ex.: infrastructure/repo.py)
+                    novo_relativo = self._normalizar_caminho_codigo(
+                        impl_corrigido.get('caminho_relativo'), caminho_relativo
+                    )
+                    novo_teste = self._normalizar_caminho_teste(
+                        impl_corrigido.get('caminho_teste'), novo_relativo
+                    )
+                    if novo_relativo != caminho_relativo:
+                        pass  # arquivo antigo será sobrescrito ou ficará como órfão inofensivo
+                    caminho_relativo, caminho_teste = novo_relativo, novo_teste
                 impl_corrigido['caminho_relativo'] = caminho_relativo
                 impl_corrigido['caminho_teste'] = caminho_teste
                 impl = impl_corrigido
@@ -1709,6 +1885,9 @@ Rules:
                 'testes_falharam': resultado_pytest.get('falharam', 0) if resultado_pytest else 0,
                 'testes_erros': resultado_pytest.get('erros', 0) if resultado_pytest else 0,
                 'testes_total': resultado_pytest.get('total', 0) if resultado_pytest else 0,
+                'violacoes_arquitetura': sum(
+                    len(s.get('violacoes_arquitetura', [])) for s in scripts_implementados
+                ),
             },
 
             'gates_executados': [g.to_dict() for g in gates],

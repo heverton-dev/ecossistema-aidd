@@ -154,7 +154,7 @@ def test_executar_todos_gates(implementador_08, tmp_path):
     gates, todos_passaram = implementador_08.ValidadorGatesPhase8.executar_todos(
         tmp_path, scripts, resultado_pytest, resultado_integracao=resultado_integracao, teste_integracao_gerado=True
     )
-    assert len(gates) == 5
+    assert len(gates) == 6
     assert todos_passaram is True
 
 
@@ -649,4 +649,134 @@ def test_validar_contrato_ast_detecta_autoimportacao_multipla(implementador_08):
     assert resultado is not None
     assert "coletar_habitos" in resultado
     assert "autoimporta" in resultado.lower()
+
+
+# =============================================================================
+# ITEM 9: Testes de Clean Architecture / DDD (G_ARQUITETURA_DELIVERABLE)
+# =============================================================================
+
+def test_gate_i6_passa_para_projeto_limpo(implementador_08, tmp_path):
+    """I6 passa quando src/ não tem violações de Clean Architecture."""
+    (tmp_path / 'src' / 'pacote').mkdir(parents=True)
+    (tmp_path / 'src' / 'pacote' / '__init__.py').write_text('', encoding='utf-8')
+    (tmp_path / 'src' / 'pacote' / 'somar.py').write_text(
+        'def somar(a, b):\n    return a + b\n', encoding='utf-8'
+    )
+    gate = implementador_08.ValidadorGatesPhase8._gate_i6_arquitetura_deliverable(tmp_path)
+    assert gate.passou
+    assert '0 violação' in gate.detalhes
+
+
+def test_gate_i6_falha_para_violacao_sql(implementador_08, tmp_path):
+    """I6 falha quando src/ tem import sqlite3 fora de infrastructure/."""
+    (tmp_path / 'src' / 'pacote').mkdir(parents=True)
+    (tmp_path / 'src' / 'pacote' / '__init__.py').write_text('', encoding='utf-8')
+    (tmp_path / 'src' / 'pacote' / 'violador.py').write_text(
+        'import sqlite3\ndef x(): return\n', encoding='utf-8'
+    )
+    gate = implementador_08.ValidadorGatesPhase8._gate_i6_arquitetura_deliverable(tmp_path)
+    assert not gate.passou
+    assert 'violação' in gate.detalhes.lower()
+
+
+def test_gate_i6_passa_para_infra_valida(implementador_08, tmp_path):
+    """I6 passa quando sqlite3 está dentro de infrastructure/."""
+    (tmp_path / 'src' / 'pacote' / 'infrastructure').mkdir(parents=True)
+    (tmp_path / 'src' / 'pacote' / '__init__.py').write_text('', encoding='utf-8')
+    (tmp_path / 'src' / 'pacote' / 'infrastructure' / '__init__.py').write_text('', encoding='utf-8')
+    (tmp_path / 'src' / 'pacote' / 'infrastructure' / 'repo.py').write_text(
+        'import sqlite3\ndef x(): return\n', encoding='utf-8'
+    )
+    gate = implementador_08.ValidadorGatesPhase8._gate_i6_arquitetura_deliverable(tmp_path)
+    assert gate.passou
+
+
+def test_gate_i6_sem_src_passa(implementador_08, tmp_path):
+    """I6 passa quando não existe src/ (nada a auditar)."""
+    gate = implementador_08.ValidadorGatesPhase8._gate_i6_arquitetura_deliverable(tmp_path)
+    assert gate.passou
+
+
+def test_auditar_arquivo_retorna_violacoes(implementador_08, tmp_path):
+    """auditar_arquivo_arquitetura detecta import sqlite3 fora de infrastructure/."""
+    (tmp_path / 'src' / 'foo').mkdir(parents=True)
+    (tmp_path / 'src' / 'foo' / 'bar.py').write_text(
+        'import sqlite3\ndef x(): return\n', encoding='utf-8'
+    )
+    violacoes = implementador_08.auditar_arquivo_arquitetura(tmp_path, 'foo/bar.py')
+    assert len(violacoes) > 0
+    assert any('sqlite3' in v['detalhe'] for v in violacoes)
+
+
+def test_auditar_arquivo_limpo_retorna_vazio(implementador_08, tmp_path):
+    """auditar_arquivo_arquitetura retorna [] para código sem violações."""
+    (tmp_path / 'src' / 'foo').mkdir(parents=True)
+    (tmp_path / 'src' / 'foo' / 'bar.py').write_text(
+        'def somar(a, b):\n    return a + b\n', encoding='utf-8'
+    )
+    violacoes = implementador_08.auditar_arquivo_arquitetura(tmp_path, 'foo/bar.py')
+    assert violacoes == []
+
+
+def test_auditar_projeto_completo(implementador_08, tmp_path):
+    """auditar_projeto_arquitetura audita todos os .py em src/."""
+    (tmp_path / 'src' / 'foo').mkdir(parents=True)
+    (tmp_path / 'src' / 'foo' / '__init__.py').write_text('', encoding='utf-8')
+    (tmp_path / 'src' / 'foo' / 'ok.py').write_text('def x(): pass\n', encoding='utf-8')
+    (tmp_path / 'src' / 'foo' / 'bad.py').write_text(
+        'import sqlite3\ndef y(): pass\n', encoding='utf-8'
+    )
+    violacoes, total = implementador_08.auditar_projeto_arquitetura(tmp_path)
+    assert total == 3  # __init__.py + ok.py + bad.py
+    assert len(violacoes) > 0
+
+
+def test_extrair_features_arquitetura_derived(implementador_08):
+    """Feature 'arquitetura' é derivada de sqlite|crud|api."""
+    spec_sql = {'nome': 'repo.py', 'responsabilidade': 'banco de dados', 'pseudocodigo': 'create table'}
+    spec_puro = {'nome': 'calc.py', 'responsabilidade': 'calcular media', 'pseudocodigo': 'somar'}
+    features_sql = implementador_08._extrair_features_script(spec_sql)
+    features_puro = implementador_08._extrair_features_script(spec_puro)
+    assert features_sql['arquitetura'] is True
+    assert features_puro['arquitetura'] is False
+
+
+def test_bloco_arquitetura_presente_para_script_sql(implementador_08):
+    """_BLOCO_REGRA_ARQUITETURA aparece no prompt para script com sqlite."""
+    spec = {'nome': 'repo.py', 'responsabilidade': 'banco de dados', 'pseudocodigo': 'create table'}
+    prompt = implementador_08.ImplementadorFase8._montar_prompt_implementar_script(
+        ideia='test', stack={}, script_spec=spec, nome_raw='repo.py', modulo='repo',
+        secao_schema='', caminho_sugerido='repo.py', caminho_teste_sugerido='test_repo.py',
+    )
+    assert 'CLEAN ARCH' in prompt
+    assert 'infrastructure/' in prompt
+
+
+def test_bloco_arquitetura_ausente_para_script_puro(implementador_08):
+    """BLOCO_REGRA_ARQUITETURA NÃO aparece no prompt para script puro."""
+    spec = {'nome': 'calc.py', 'responsabilidade': 'calcular media', 'pseudocodigo': 'somar e dividir'}
+    prompt = implementador_08.ImplementadorFase8._montar_prompt_implementar_script(
+        ideia='test', stack={}, script_spec=spec, nome_raw='calc.py', modulo='calc',
+        secao_schema='', caminho_sugerido='calc.py', caminho_teste_sugerido='test_calc.py',
+    )
+    assert 'CLEAN ARCHITECTURE' not in prompt
+
+
+def test_prompt_corrigir_arquitetura_existe(implementador_08):
+    """PROMPT_CORRIGIR_ARQUITETURA contém regras de Clean Architecture."""
+    assert 'Clean Architecture' in implementador_08.PROMPT_CORRIGIR_ARQUITETURA
+    assert 'infrastructure/' in implementador_08.PROMPT_CORRIGIR_ARQUITETURA
+    assert '{violacoes}' in implementador_08.PROMPT_CORRIGIR_ARQUITETURA
+
+
+def test_formatar_violacoes_arquitetura(implementador_08):
+    """formatar_violacoes_arquitetura produz texto legível."""
+    violacoes = [
+        {'regra': 'SQL-fora-infra', 'arquivo': 'foo.py', 'linha': 1, 'detalhe': 'import sqlite3 fora de infrastructure/'},
+        {'regra': 'SQL-fora-infra', 'arquivo': 'bar.py', 'linha': 3, 'detalhe': 'chamada .execute() fora de infrastructure/'},
+    ]
+    texto = implementador_08.formatar_violacoes_arquitetura(violacoes)
+    assert 'SQL-fora-infra' in texto
+    assert '2 ocorrência' in texto
+    assert 'foo.py' in texto
 
