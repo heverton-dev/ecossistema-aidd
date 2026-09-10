@@ -17,7 +17,8 @@ Web desta ferramenta como app gerenciado ("managed app") no Coolify:
       - POST   /api/v1/applications/{uuid}/envs      (Bearer) — criar variável de env
       - POST   /api/v1/deploy?uuid=..&force=..            (Bearer) — disparar deploy
 
-Fornace também o CoolifyManager (contrato de scripts/pipeline_ops_deploy.py):
+Fornace também o CoolifyManager (contrato de scripts/pipeline_ops.py —
+DeployOrchestrator, fonte única desde o Item 2 unificar-orquestradores):
 orquestração de stack, verificação de isolamento VPS (NIH #21) e configuração
 de AppShell white-label — em dry-run determinístico por padrão.
 
@@ -251,7 +252,7 @@ class CoolifyClient:
 
 
 class CoolifyManager:
-    """Orquestrador de stack no Coolify (contrato de scripts/pipeline_ops_deploy.py).
+    """Orquestrador de stack no Coolify (contrato de scripts/pipeline_ops.py).
 
     Interfaces usadas pelo pipeline de deploy ponta a ponta:
       orquestrar_stack(...)            → monta/valida o plano da stack (dry-run) e,
@@ -289,7 +290,7 @@ class CoolifyManager:
                     f"Serviço '{svc.get('nome')}' sem porta_interna válida.", codigo="PARAM_INVALIDO")
         return None
 
-    # ── contrato usado por pipeline_ops_deploy ───────────────────────────
+    # ── contrato usado por pipeline_ops (DeployOrchestrator) ─────────────
 
     def orquestrar_stack(self, nome_projeto: str, ambiente: str,
                          servicos: List[Dict[str, Any]], dominio_base: str) -> Result:

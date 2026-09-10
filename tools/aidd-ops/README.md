@@ -54,7 +54,7 @@ Adotado como motor de infraestrutura nativo para substituição de esforço dupl
   - Coolify Dashboard atua como portal administrativo centralizado white-label com personalização de marca e cores.
   - Studios integrados mapeados para documentação de API (OpenAPI/Swagger), eventos (Webhooks), agentes (MCP Studio) e saúde da infraestrutura (Uptime Kuma).
   - Configuração determinística via `CoolifyManager.configurar_appshell_whitelabel()`.
-- **Pipeline de Deploy:** Integrado em `scripts/pipeline_ops_deploy.py` como motor primário (`DeployOrchestrator(motor="coolify")`).
+- **Pipeline de Deploy:** Orquestrador consolidado (`DeployOrchestrator(motor="coolify")`) integrado no fonte única `scripts/pipeline_ops.py` (Item 2 — unificar-orquestradores).
 
 ## Cofre de Credenciais (NIH #18/#29: sops + age)
 
