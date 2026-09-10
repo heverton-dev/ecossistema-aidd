@@ -147,3 +147,11 @@ repos:
         stages: [manual]
         pass_filenames: false
         require_serial: true
+
+      - id: g-arquitetura-deliverable
+        name: G_ARQUITETURA_DELIVERABLE (Clean Arch / DDD nos deliverables)
+        entry: python gates/G_ARQUITETURA_DELIVERABLE.py
+        language: system
+        stages: [manual]
+        pass_filenames: false
+        require_serial: true
