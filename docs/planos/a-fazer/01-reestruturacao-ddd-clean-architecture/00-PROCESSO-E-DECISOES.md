@@ -53,7 +53,7 @@ Diagnostico rapido → Definicao de Pronto checavel → Prompt de Execucao autoc
 | 6 | novo-molde-fatia-vertical-ddd-clean-master | ✅ Concluido — corrigido, mesclado em main (6c8a427), auditado por reproducao real | `06-novo-molde-fatia-vertical-ddd-clean-master.md` |
 | 7 | gate-g-arquitetura-deliverable | ✅ Concluido — mesclado em main (6c8a427), auditado por reproducao real | `07-gate-g-arquitetura-deliverable.md` |
 | 8 | atualizar-scaffolders-master-enterprise-cookiecutter | ✅ Concluido — mesclado em main (710a8bc), auditado por reproducao real | `08-atualizar-scaffolders-master-enterprise-cookiecutter.md` |
-| 9 | trazer-deliverables-generator-perimetro-gates | ⏳ Rascunho gerado, aguardando aprovacao (Onda 3) | `09-trazer-deliverables-generator-perimetro-gates.md` |
+| 9 | trazer-deliverables-generator-perimetro-gates | ✅ Concluido — mesclado em main (4cb3f88), auditado por reproducao real | `09-trazer-deliverables-generator-perimetro-gates.md` |
 | 10 | teste-integracao-helm-aidd-ops | ✅ Concluido — mesclado em main (6c8a427), auditado por reproducao real | `10-teste-integracao-helm-aidd-ops.md` |
 
 Esta tabela so e atualizada para Concluido apos auditoria por reproducao real.
@@ -148,3 +148,23 @@ Itens 4 e 8 mesclados em `main` e enviados ao GitHub (commit `710a8bc`). Gates e
 G_HONESTIDADE_ROTULO) — todos APROVADO. pytest aidd-generator (929 passed) e aidd-master (286 passed, 3
 skipped, 0 falhas) reconferidos no resultado final do merge. Falta apenas o Item 9 (Onda 3), que depende do
 gate do Item 7 (ja em main) e do generator consolidado (Itens 2 e 4, ja em main) — liberado para comecar.
+
+### Merge da Onda 3 concluido — Item 9, ultimo item do plano — 2026-09-10
+
+Item 9 mesclado em `main` e enviado ao GitHub (commit `4cb3f88`). `gates/G_ARQUITETURA_DELIVERABLE.py` ganhou
+`auditar_arquivos()` (API programatica) e a Fase 08 do aidd-generator passou a rodar essa auditoria por
+arquivo e por projeto completo (Gate I6), injetando regras de Clean Architecture/DDD no prompt quando a
+feature exige e alimentando o loop de autocorrecao com um prompt dedicado quando ha violacao. Gates estaticos
+reauditados pos-merge — todos APROVADO. pytest aidd-generator: 941 passed, exit 0, reconferido no resultado
+final do merge (nao so no relato do agente).
+
+## 7. Status final da iniciativa
+
+Os 10 itens do plano de reestruturacao DDD/Clean Architecture estao concluidos e mesclados em `main`:
+Itens 1, 2, 3, 5, 6, 7, 10 (Onda 1, commit `6c8a427`/`13f9896`), Itens 4 e 8 (Onda 2, commit `710a8bc`/
+`fc6f2db`), Item 9 (Onda 3, commit `4cb3f88`). Todos auditados por reproducao real (nao apenas relato dos
+agentes executores), com 2 bugs pre-existentes descobertos e documentados nesta secao (contaminacao de
+worktree por teste nao-hermetico do aidd-generator; flakiness do gate G_TESTES_REAIS) e 1 decisao de escopo
+registrada (Item 4). Pendencias explicitas para uma proxima iniciativa: tornar aidd-generator hermetico,
+investigar G_TESTES_REAIS, e resolver os 6 pontos de sys.path.insert fora do escopo do Item 4 (aidd_inject.py,
+slash_gen.py, detector_camada.py, injetor.py, G_INJECT.py, web_app.py).
