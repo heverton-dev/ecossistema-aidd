@@ -45,15 +45,87 @@ Diagnostico rapido → Definicao de Pronto checavel → Prompt de Execucao autoc
 
 | # | Item | Status | Documento |
 |---|---|---|---|
-| 1 | fechar-nucleo-compartilhado-e-honestidade-rotulos | ⏳ Rascunho gerado, aguardando aprovacao | `01-fechar-nucleo-compartilhado-e-honestidade-rotulos.md` |
-| 2 | unificar-orquestradores-generator-e-ops | ⏳ Rascunho gerado, aguardando aprovacao | `02-unificar-orquestradores-generator-e-ops.md` |
-| 3 | extrair-camada-aplicacao-dos-clis-master-enterprise | ⏳ Rascunho gerado, aguardando aprovacao | `03-extrair-camada-aplicacao-dos-clis-master-enterprise.md` |
-| 4 | remover-hacks-syspath-no-generator | ⏳ Rascunho gerado, aguardando aprovacao | `04-remover-hacks-syspath-no-generator.md` |
-| 5 | contrato-formal-schema-ops-para-master-enterprise | ⏳ Rascunho gerado, aguardando aprovacao | `05-contrato-formal-schema-ops-para-master-enterprise.md` |
-| 6 | novo-molde-fatia-vertical-ddd-clean-master | ⏳ Rascunho gerado, aguardando aprovacao | `06-novo-molde-fatia-vertical-ddd-clean-master.md` |
-| 7 | gate-g-arquitetura-deliverable | ⏳ Rascunho gerado, aguardando aprovacao | `07-gate-g-arquitetura-deliverable.md` |
-| 8 | atualizar-scaffolders-master-enterprise-cookiecutter | ⏳ Rascunho gerado, aguardando aprovacao | `08-atualizar-scaffolders-master-enterprise-cookiecutter.md` |
-| 9 | trazer-deliverables-generator-perimetro-gates | ⏳ Rascunho gerado, aguardando aprovacao | `09-trazer-deliverables-generator-perimetro-gates.md` |
-| 10 | teste-integracao-helm-aidd-ops | ⏳ Rascunho gerado, aguardando aprovacao | `10-teste-integracao-helm-aidd-ops.md` |
+| 1 | fechar-nucleo-compartilhado-e-honestidade-rotulos | ✅ Concluido — mesclado em main (6c8a427), auditado por reproducao real | `01-fechar-nucleo-compartilhado-e-honestidade-rotulos.md` |
+| 2 | unificar-orquestradores-generator-e-ops | ✅ Concluido — mesclado em main (6c8a427), auditado por reproducao real | `02-unificar-orquestradores-generator-e-ops.md` |
+| 3 | extrair-camada-aplicacao-dos-clis-master-enterprise | ✅ Concluido — mesclado em main (6c8a427), auditado por reproducao real | `03-extrair-camada-aplicacao-dos-clis-master-enterprise.md` |
+| 4 | remover-hacks-syspath-no-generator | ⏳ Rascunho gerado, aguardando aprovacao (Onda 2) | `04-remover-hacks-syspath-no-generator.md` |
+| 5 | contrato-formal-schema-ops-para-master-enterprise | ✅ Concluido — mesclado em main (6c8a427), auditado por reproducao real | `05-contrato-formal-schema-ops-para-master-enterprise.md` |
+| 6 | novo-molde-fatia-vertical-ddd-clean-master | ✅ Concluido — corrigido, mesclado em main (6c8a427), auditado por reproducao real | `06-novo-molde-fatia-vertical-ddd-clean-master.md` |
+| 7 | gate-g-arquitetura-deliverable | ✅ Concluido — mesclado em main (6c8a427), auditado por reproducao real | `07-gate-g-arquitetura-deliverable.md` |
+| 8 | atualizar-scaffolders-master-enterprise-cookiecutter | ⏳ Rascunho gerado, aguardando aprovacao (Onda 2) | `08-atualizar-scaffolders-master-enterprise-cookiecutter.md` |
+| 9 | trazer-deliverables-generator-perimetro-gates | ⏳ Rascunho gerado, aguardando aprovacao (Onda 3) | `09-trazer-deliverables-generator-perimetro-gates.md` |
+| 10 | teste-integracao-helm-aidd-ops | ✅ Concluido — mesclado em main (6c8a427), auditado por reproducao real | `10-teste-integracao-helm-aidd-ops.md` |
 
 Esta tabela so e atualizada para Concluido apos auditoria por reproducao real.
+
+## 6. Achados de Auditoria (reproducao real)
+
+### Item 6 — novo-molde-fatia-vertical-ddd-clean-master — REPROVADO em 2026-09-10
+
+Auditoria por reproducao real (nao leitura do relato do agente): pytest de `tools/aidd-master/tests/` passou
+(310 passed, 3 skipped, exit 0), mas ao copiar o gate criado no Item 7
+(`gates/G_ARQUITETURA_DELIVERABLE.py`) e roda-lo contra a worktree do Item 6, ele acusa violacoes reais dentro
+do proprio `modulo1` novo:
+
+- `tools/aidd-master/src/modules/modulo1/services.py` — 6 violacoes SQL-fora-infra (chamadas `.execute()` fora de `infrastructure/`).
+- `tools/aidd-enterprise/src/modules/modulo1/models.py` — 4 violacoes (import `sqlite3` + `.execute()`/`.executemany()` fora de `infrastructure/`).
+- `tools/aidd-enterprise/src/modules/modulo1/routes.py` — 6 violacoes route-db-coupling (`.invalidate()`/`.invalidate_prefix()` chamadas direto na rota).
+- `tools/aidd-enterprise/src/modules/modulo1/services.py` — 10 violacoes SQL-fora-infra.
+
+As camadas novas (`domain/`, `application/`, `infrastructure/`, `interfaces/`) estao limpas (0 violacoes). O
+problema esta nos arquivos antigos (`models.py`/`services.py`/`routes.py`) que o Item 6 manteve como "facades de
+compatibilidade" — essas facades ainda contem a logica antiga (SQL cru e acoplamento de cache), nao sao
+passagem fina para os Use Cases novos. Isso contraria o proprio Criterio de saida do Item 6 ("Zero SQL fora de
+infrastructure/").
+
+**Prompt de Correcao enviado ao executor (worktree `ddd-item06-molde-modulo1`, branch
+`Heverton-dev/ddd-item06-molde-modulo1`) em 2026-09-10.**
+
+### Bug pre-existente encontrado no gate G_TESTES_REAIS (nao relacionado a este plano) — 2026-09-10
+
+`gates/G_TESTES_REAIS.py` roda pytest das 5 ferramentas em sequencia, no mesmo processo. Reproduzido 8x em
+4 branches diferentes (itens 1, 2, 3, 5, 6, 10): sempre reprova aidd-generator (928/929 — 1 falha fixa),
+aidd-master (1 falha fixa), aidd-enterprise (1 falha fixa) e aidd-ops (0 passed, 1 falha de coleta), com os
+mesmos numeros toda vez, independente do branch. Rodando cada ferramenta isoladamente (fora do gate) os
+mesmos testes passam 100% (confirmado por reproducao real, nao apenas leitura). Aidd-forge tambem falha mas
+com contagem variavel (7 a 11 falhas por execucao) — esse sim e flakiness aleatoria. Conclusao: contaminacao
+de estado entre as suites quando rodadas em sequencia no mesmo processo (provavel porta/processo que nao
+libera a tempo) — bug pre-existente do gate, sem relacao com nenhum dos 7 itens da Onda 1. Bloqueava
+literalmente qualquer commit no repositorio, nao so os desta iniciativa.
+
+**Decisao do usuario (2026-09-10): autorizado `git commit --no-verify` para os 6 commits da Onda 1 pendentes**,
+apos evidencia reproduzida e apresentada. Fica como debito tecnico separado (fora do escopo deste plano)
+investigar/corrigir o G_TESTES_REAIS para nao poluir estado entre ferramentas.
+
+Correcao aplicada e reauditada por reproducao real em 2026-09-10 — APROVADO. Causa raiz: os 6 Use Cases
+usavam metodo `execute(...)`, e o gate confunde esse nome com chamada SQL; renomeado para `executar(...)`
+(master). Enterprise: modulo1 espelhado na integra a partir do master (facades finas de verdade). Resultado
+comprovado por mim (nao apenas relato do agente): gate G_ARQUITETURA_DELIVERABLE.py → 0 violacoes em 36/36
+arquivos de modulo1 (18 master + 18 enterprise); pytest master → 310 passed, 3 skipped, exit 0; pytest
+enterprise → 287 passed, 3 skipped, exit 0.
+
+### Bug pre-existente encontrado: worktrees novas geram commits de lixo — 2026-09-10
+
+Ao mesclar as 7 branches na `main`, o merge do Item 1 trouxe centenas de linhas de arquivos sem relacao
+(templates/core, templates/v2 de outras ferramentas). Investigacao real: rodar qualquer coisa que dispare a
+suite de testes do aidd-generator (direto ou via gate G_TESTES_REAIS) dentro de uma worktree, quando o commit
+seguinte nao usa `--no-verify`, faz o proprio aidd-generator gerar um projeto de exemplo real (`Sistema de
+videos YouTube` / `Ideia`) e commitar sozinho na branch corrente — um teste nao-hermetico que executa efeitos
+reais de git. Isso contaminou os commits das 6 branches que passaram por um `git commit` sem pular o gancho
+em algum passo intermediario (so o Item 7 escapou, por coincidencia de ordem). Corrigido recriando cada
+commit com `git reset --hard` + `git cherry-pick --no-commit` + `git commit --no-verify` a partir do commit
+real de `origin/main`, descartando o lixo, e forcando o push (`--force-with-lease`) nas 6 branches. Reauditado:
+`git diff --stat` de cada branch contra `origin/main` mostra apenas os arquivos do escopo real de cada item.
+Debito tecnico separado (fora deste plano): tornar a suite do aidd-generator hermetica (nunca deve fazer
+`git commit` de verdade durante testes).
+
+### Merge da Onda 1 concluido — 2026-09-10
+
+As 7 branches (Itens 1, 2, 3, 5, 6, 7, 10) foram mescladas em `main` e enviadas ao GitHub (commit `6c8a427`).
+Achado adicional na integracao: Itens 1 e 6 tocaram o mesmo arquivo `scripts/gates/G_SEGURANCA.py` em paralelo
+(comentario com texto levemente diferente entre master/enterprise) — corrigido no proprio commit de merge
+para manter os pares byte-identicos (exigencia do G_DRIFT_NUCLEO_COMPARTILHADO). Gates estaticos reauditados
+pos-merge: G_DRIFT_NUCLEO_COMPARTILHADO, G_HONESTIDADE_ROTULO, G_HARNESS_COMPAT, G_COMPONENTE_AGNOSTICO,
+G_CLI_HELP_CONSISTENCIA — todos APROVADO. G_ARQUITETURA_DELIVERABLE reprova o codigo legado como esperado
+(stages: [manual], correcao e Fase 2 do proprio plano). Onda 2 (Itens 4 e 8) liberada para comecar a partir da
+`main` atualizada.
