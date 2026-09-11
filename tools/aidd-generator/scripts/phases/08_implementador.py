@@ -41,6 +41,21 @@ except ImportError:  # pragma: no cover — execução direta (python scripts/ph
     from utils_modelo import detectar_modelo_harness, obter_nome_amigavel_modelo
     from utils_delegacao import solicitar_llm, extrair_json_resposta, LLMNaoConfiguradoException
 
+# SANDBOX NÍVEL 1 (item PLAN-0018 sandbox-nivel-1-subprocess-env-minimo-fase-08):
+# execução de código gerado com ambiente mínimo (allowlist estrita) + cwd
+# isolado em tempdir + auditoria AST de subprocessos. Mesmo padrão de import
+# relativo com fallback bare dos utils acima.
+try:
+    from .sandbox_nivel_1 import (
+        SandboxNivel1,
+        auditar_subprocess_env_ast, formatar_violacoes_auditoria,
+    )
+except ImportError:  # pragma: no cover — execução direta da fase
+    from sandbox_nivel_1 import (
+        SandboxNivel1,
+        auditar_subprocess_env_ast, formatar_violacoes_auditoria,
+    )
+
 # Modelo Pydantic do contrato de codegen da Fase 8 (item NIH #23 / item 11 do
 # plano anti-NIH): quando pydantic+instructor estão disponíveis, o parsing da
 # resposta do LLM passa a usar validação estruturada com retry automático
@@ -779,10 +794,11 @@ class ValidadorGatesPhase8:
             return Gate('I4_cli_executa', 'Validar CLI executa smoke-test', True,
                        'Sem main.py — gate não aplicável, não bloqueia')
         try:
-            resultado = subprocess.run(
-                [sys.executable, str(main_py), '--help'],
-                cwd=str(pasta_projeto), capture_output=True, timeout=10
-            )
+            with SandboxNivel1(pythonpath=pasta_projeto / 'src') as sandbox:
+                resultado = subprocess.run(
+                    [sys.executable, str(main_py), '--help'],
+                    cwd=str(sandbox.cwd), capture_output=True, timeout=10, env=sandbox.env
+                )
             passou = resultado.returncode == 0
             return Gate('I4_cli_executa', 'Validar CLI executa smoke-test', passou,
                        f"main.py --help retornou exit code {resultado.returncode}")
@@ -1582,6 +1598,15 @@ class ImplementadorFase8:
 
         if nomes_faltando:
             return cls._montar_mensagem_contrato_quebrado(nomes_faltando, autoimports_suspeitos, nomes_definidos)
+
+        # SANDBOX NÍVEL 1 (item PLAN-0018): subprocessos do código/teste gerado
+        # nunca podem herdar os.environ completo do host. A auditoria AST roda
+        # aqui (antes de escrever/rodar) para o fix-loop corrigir o código gerado.
+        violacoes_sandbox = (
+            auditar_subprocess_env_ast(codigo) + auditar_subprocess_env_ast(teste)
+        )
+        if violacoes_sandbox:
+            return formatar_violacoes_auditoria(violacoes_sandbox)
         return None
 
     # =========================================================================
@@ -1790,22 +1815,23 @@ Rules:
 """
 
     def _rodar_pytest(self, caminho_relativo: Optional[str]) -> Dict:
-        """Roda pytest de verdade via subprocess com UTF-8 estrito — nunca estima resultado"""
+        """Roda pytest de verdade via subprocess com UTF-8 estrito — nunca estima resultado.
+
+        SANDBOX NÍVEL 1: executa o pytest do projeto gerado com ambiente MÍNIMO
+        (apenas PATH, PYTHONPATH=src, PYTHONUTF8, TMPDIR) e cwd isolado em
+        tempdir restrito — o teste do código gerado nunca herda segredos do host."""
         alvo = f'tests/{Path(caminho_relativo).name}' if caminho_relativo else 'tests/'
-        env = {
-            **os.environ,
-            'PYTHONIOENCODING': 'utf-8',
-            'PYTHONUTF8': '1',
-            'PYTHONPATH': str(self.pasta_projeto / 'src') + os.pathsep + os.environ.get('PYTHONPATH', '')
-        }
+        alvo_absoluto = str(self.pasta_projeto / alvo)
 
         try:
-            resultado = subprocess.run(
-                [sys.executable, '-m', 'pytest', alvo, '-v'],
-                cwd=str(self.pasta_projeto), capture_output=True, text=True,
-                encoding='utf-8', errors='replace', timeout=TIMEOUT_PYTEST_SEGUNDOS,
-                env=env
-            )
+            with SandboxNivel1(pythonpath=self.pasta_projeto / 'src') as sandbox:
+                resultado = subprocess.run(
+                    [sys.executable, '-m', 'pytest', alvo_absoluto, '-v',
+                     f'--rootdir={self.pasta_projeto}'],
+                    cwd=str(sandbox.cwd), capture_output=True, text=True,
+                    encoding='utf-8', errors='replace', timeout=TIMEOUT_PYTEST_SEGUNDOS,
+                    env=sandbox.env
+                )
             saida = resultado.stdout + resultado.stderr
             erro_coleta = 'error' in saida.lower() and (
                 'modulenotfounderror' in saida.lower() or 'error collecting' in saida.lower()

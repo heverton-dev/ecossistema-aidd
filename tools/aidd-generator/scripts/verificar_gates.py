@@ -111,6 +111,12 @@ def _gate_inject(pasta: Path) -> int:
     return mod.executar_gate(pasta)
 
 
+def _gate_sandbox_nivel_1(pasta: Path) -> int:
+    """G_SANDBOX_NIVEL_1: auditoria AST — subprocessos do código gerado nunca herdam os.environ."""
+    mod = _carregar_modulo('G_SANDBOX_NIVEL_1', GATES_DIR / 'G_SANDBOX_NIVEL_1.py')
+    return mod.executar_gate(pasta)
+
+
 # Mapa de gates disponíveis: (nome, aliases, função, obrigatório)
 GATES_DISPONIVEIS: List[Tuple[str, List[str], Callable, bool]] = [
     ('G_BLOQUEAR_SEGREDOS', ['segredos', 'secrets'], _gate_bloquear_segredos, True),
@@ -119,6 +125,7 @@ GATES_DISPONIVEIS: List[Tuple[str, List[str], Callable, bool]] = [
     ('G_INTEGRACAO_CROSS_SCRIPT', ['I3', 'integracao', 'cross-script'], _gate_integracao_cross_script, True),
     ('G_CYBERSECURITY_OWASP', ['OWASP', 'owasp', 'cybersecurity', 'ciberseguranca'], _gate_cybersecurity_owasp, True),
     ('G_INJECT', ['inject', 'injecao', 'injetor'], _gate_inject, False),
+    ('G_SANDBOX_NIVEL_1', ['sandbox', 'sandbox-nivel-1', 'nivel-1'], _gate_sandbox_nivel_1, True),
 ]
 
 
