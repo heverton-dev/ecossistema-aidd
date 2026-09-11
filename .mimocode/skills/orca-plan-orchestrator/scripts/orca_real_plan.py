@@ -87,7 +87,7 @@ def compilar_plano_orca(
             "worktree_name": rotulo,
             "branch": f"orca/{rotulo}",
             "harness": front_harness,
-            "launch_command": compilar_comando_bare(profile),
+            "launch_command": compilar_comando_bare(profile, include_extra_flags=True),
             "prompt": front.prompt,
         })
 

@@ -73,21 +73,34 @@ def compilar_comando(
     return args
 
 
-def compilar_comando_bare(profile: dict[str, Any]) -> list[str]:
+def compilar_comando_bare(
+    profile: dict[str, Any], *, include_extra_flags: bool = False
+) -> list[str]:
     """Bare interactive launch command for a harness -- binary + auto-approve
-    + model flags, but NEVER the prompt.
+    + model/agent flags, but NEVER the prompt.
 
-    Used by the real ORCA app integration: `orca terminal create --command`
-    only launches the harness inside the real terminal; the task prompt is
-    sent afterwards as a separate message via `orca terminal send --text`.
-    Baking the prompt into the launch command (like compilar_comando does for
-    our own native git-worktree engine) does not apply here -- the real Orca
-    app's terminal is already interactive, so `extra_flags` (headless/no-TTY
-    switches like --pure/-p/--print) are intentionally never added.
+    Used by:
+    - The real ORCA app integration (`include_extra_flags=False`, the
+      default): `orca terminal create --command` only launches the harness
+      inside the real terminal; the task prompt is sent afterwards as a
+      separate message via `orca terminal send --text`.
+    - Confirmed against docs/harness-models-padrao.md (2026-09-11): the
+      canonical default commands for opencode, mimo and claude all include
+      their extra static flags (--pure, --chrome) in the bare launch line,
+      so `include_extra_flags=True` is passed for the ORCA real path too.
     """
     args: list[str] = [profile["binary"]]
     if profile.get("auto_approve_flag"):
         args.append(profile["auto_approve_flag"])
+    if include_extra_flags:
+        for flag in profile.get("extra_flags", []):
+            args.append(flag)
+    agent_flag = profile.get("agent_flag")
+    if agent_flag:
+        args.append(agent_flag)
+        agent = profile.get("agent")
+        if agent:
+            args.append(agent)
     model = profile.get("default_model")
     if model and profile.get("model_flag"):
         args.append(profile["model_flag"])

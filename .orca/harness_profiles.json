@@ -1,30 +1,34 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "_comment": "Harness profiles for the ORCA multi-agent orchestrator. Verified against real --help output on 2026-09-06.",
+  "_comment": "Harness profiles for the ORCA multi-agent orchestrator. Verified against real --help output on 2026-09-11, and against docs/harness-models-padrao.md (fonte canonica dos comandos padrao por harness).",
   "profiles": {
     "mimo": {
       "binary": "mimo",
-      "auto_approve_flag": "--yolo",
+      "auto_approve_flag": null,
       "prompt_mode": "flag_value",
       "prompt_flag": "--prompt",
-      "model_flag": "--model",
-      "default_model": "mimo/mimo-v2.5-pro",
+      "model_flag": "-m",
+      "default_model": "xiaomi-token-plan/mimo-v2.5",
       "extra_flags": [
         "--pure"
       ],
-      "usage_note": "Root-level --prompt <text> takes a string value directly. --yolo is alias for --dangerously-skip-permissions."
+      "startup_wait_seconds": 10,
+      "usage_note": "Comando padrao fixado em docs/harness-models-padrao.md: 'mimo --pure -m xiaomi-token-plan/mimo-v2.5' -- sem flag de auto-aprovacao, por decisao explicita registrada nesse documento (mimo tambem aceita --yolo/--dangerously-skip-permissions na raiz caso isso mude no futuro)."
     },
     "opencode": {
       "binary": "opencode",
       "auto_approve_flag": "--auto",
       "prompt_mode": "flag_value",
       "prompt_flag": "--prompt",
-      "model_flag": "--model",
+      "model_flag": "-m",
       "default_model": "opencode/big-pickle",
+      "agent_flag": "--agent",
+      "agent": "",
       "extra_flags": [
         "--pure"
       ],
-      "usage_note": "Same underlying binary as mimo. --auto for permissions. --prompt <text> at root level."
+      "startup_wait_seconds": 10,
+      "usage_note": "Comando padrao fixado em docs/harness-models-padrao.md: 'opencode --pure --auto --agent -m opencode/big-pickle'. Verificado via --help real (2026-09-11): opencode NAO tem --auto/--model/--prompt na raiz -- so existem sob o subcomando 'opencode run', que tambem nao tem --prompt (mensagem e posicional). Para a via ORCA real (bare launch + terminal send), isso nao importa: lanca a TUI padrao (comando raiz, sem subcomando) e o prompt e enviado depois via 'orca terminal send'. --agent e passado sem valor (bare), por decisao explicita do usuario."
     },
     "claude": {
       "binary": "claude",
@@ -32,11 +36,12 @@
       "prompt_mode": "positional",
       "prompt_flag": null,
       "model_flag": "--model",
-      "default_model": "claude-sonnet-5",
+      "default_model": "sonnet-5",
       "extra_flags": [
-        "-p"
+        "--chrome"
       ],
-      "usage_note": "Usage: claude [options] [command] [prompt]. -p is a BOOLEAN flag enabling print/non-interactive mode. The prompt text is a POSITIONAL ARGUMENT at the END of the command, not the value of -p."
+      "startup_wait_seconds": 10,
+      "usage_note": "Comando padrao fixado em docs/harness-models-padrao.md: 'claude --dangerously-skip-permissions --chrome --model sonnet-5'. Usage: claude [options] [command] [prompt] -- prompt e um ARGUMENTO POSICIONAL no final. --chrome (Claude in Chrome) confirmado via --help real."
     },
     "agy": {
       "binary": "agy",
@@ -44,11 +49,10 @@
       "prompt_mode": "positional",
       "prompt_flag": null,
       "model_flag": "--model",
-      "default_model": null,
-      "extra_flags": [
-        "--print"
-      ],
-      "usage_note": "--print/-p/--prompt are BOOLEAN aliases enabling non-interactive mode. The prompt text is a POSITIONAL ARGUMENT. This was inferred from real --help but NOT confirmed by real invocation -- remains open for validation in Item 6."
+      "default_model": "gemini-3.8-flash-low",
+      "extra_flags": [],
+      "startup_wait_seconds": 10,
+      "usage_note": "Comando padrao fixado em docs/harness-models-padrao.md: 'agy --model gemini-3.8-flash-low --dangerously-skip-permissions'. Verificado via --help real (2026-09-11): --model e --dangerously-skip-permissions confirmados na raiz. --print/--prompt sao apenas aliases booleanos pro modo nao-interativo, NAO o valor do prompt -- o prompt e um argumento posicional."
     }
   }
 }
