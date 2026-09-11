@@ -67,6 +67,30 @@ def init_all_schemas(conn):
             chave TEXT PRIMARY KEY,
             valor TEXT
         );
+
+        CREATE TABLE IF NOT EXISTS webhooks (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            nome TEXT NOT NULL,
+            url TEXT NOT NULL,
+            secret TEXT,
+            eventos TEXT DEFAULT '["*"]',
+            ativo INTEGER DEFAULT 1,
+            retry_count INTEGER DEFAULT 3,
+            criado_em DATETIME DEFAULT CURRENT_TIMESTAMP,
+            atualizado_em DATETIME DEFAULT CURRENT_TIMESTAMP
+        );
+
+        CREATE TABLE IF NOT EXISTS webhook_logs (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            webhook_id INTEGER,
+            evento TEXT NOT NULL,
+            url TEXT NOT NULL,
+            payload_json TEXT,
+            status_code INTEGER,
+            duracao_ms REAL,
+            status TEXT DEFAULT 'pendente',
+            criado_em DATETIME DEFAULT CURRENT_TIMESTAMP
+        );
     """)
 
     # Seeds Iniciais Corporativos
