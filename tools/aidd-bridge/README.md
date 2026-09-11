@@ -28,6 +28,14 @@ O **AIDD Bridge** liberta aplicações geradas em plataformas No-Code/Low-Code d
    - Gera `docker-compose.yml` com Web, PostgreSQL, PostgREST e Caddy/Traefik.
    - Emite certificados SSL HTTPS automáticos com Let's Encrypt para o seu domínio.
 
+5. **Migração Real de Contas (`migrate-auth`):**
+   - Migra contas de verdade (`auth.users`/`auth.identities`) de um Postgres de origem (ex.: Supabase Cloud) para o destino self-hosted, preservando o hash de senha — ninguém precisa trocar senha depois da migração.
+   - Roda em modo preview por padrão (não grava nada); só aplica de verdade com `--apply`.
+
+6. **Desinstalação Atômica (`destroy`):**
+   - Remove a aplicação da VPS de ponta a ponta: stack Docker Swarm, volumes e registro DNS no Cloudflare.
+   - Pede confirmação antes de agir, a menos que `--yes` seja passado.
+
 ---
 
 ## 💻 Uso via CLI do Ecossistema
@@ -44,4 +52,10 @@ python ecossistema.py bridge merge ./app1 ./app2 ./app3 --output ./app-unificado
 
 # 4. Gerar pacote de deploy para VPS com SSL
 python ecossistema.py bridge pack ./app-unificado --domain app.meudominio.com
+
+# 5. Migrar contas reais (senhas preservadas) do Supabase Cloud para o Postgres self-hosted
+python ecossistema.py bridge migrate-auth --source postgres://... --target postgres://... --apply
+
+# 6. Remover a aplicação da VPS (stack, volumes e DNS)
+python ecossistema.py bridge destroy hub-teste --domain hub-teste.meudominio.com
 ```

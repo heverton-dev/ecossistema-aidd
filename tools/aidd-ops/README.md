@@ -55,6 +55,7 @@ Adotado como motor de infraestrutura nativo para substituição de esforço dupl
   - Studios integrados mapeados para documentação de API (OpenAPI/Swagger), eventos (Webhooks), agentes (MCP Studio) e saúde da infraestrutura (Uptime Kuma).
   - Configuração determinística via `CoolifyManager.configurar_appshell_whitelabel()`.
 - **Pipeline de Deploy:** Orquestrador consolidado (`DeployOrchestrator(motor="coolify")`) integrado no fonte única `scripts/pipeline_ops.py` (Item 2 — unificar-orquestradores).
+- **Comandos reais** (`python scripts/pipeline_ops.py coolify <subcomando>`): `health` (checa se a instância responde), `status <app>` (detalhe de um app gerenciado), `create` (cria o Intake Web como app gerenciado), `setenv` (grava variáveis de ambiente no app) e `deploy` (dispara o deploy no app gerenciado).
 
 ## Cofre de Credenciais (NIH #18/#29: sops + age)
 
