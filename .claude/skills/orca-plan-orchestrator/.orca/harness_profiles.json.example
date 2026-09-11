@@ -1,26 +1,34 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "_comment": "Harness profiles for the ORCA multi-agent orchestrator. Verified against real --help output on 2026-09-06.",
+  "_comment": "Harness profiles for the ORCA multi-agent orchestrator. Fonte unica de verdade: docs/harness-models-padrao.md (atualizado 2026-09-11).",
   "profiles": {
     "mimo": {
       "binary": "mimo",
-      "auto_approve_flag": "--yolo",
+      "auto_approve_flag": null,
       "prompt_mode": "flag_value",
       "prompt_flag": "--prompt",
-      "model_flag": "--model",
-      "default_model": "mimo/mimo-v2.5-pro",
-      "extra_flags": ["--pure"],
-      "usage_note": "Root-level --prompt <text> takes a string value directly. --yolo is alias for --dangerously-skip-permissions."
+      "model_flag": "-m",
+      "default_model": "xiaomi-token-plan/mimo-v2.5",
+      "extra_flags": [
+        "--pure"
+      ],
+      "startup_wait_seconds": 10,
+      "usage_note": "Comando padrao fixado em docs/harness-models-padrao.md: 'mimo --pure -m xiaomi-token-plan/mimo-v2.5' -- sem flag de auto-aprovacao, por decisao explicita registrada nesse documento (mimo tambem aceita --yolo/--dangerously-skip-permissions na raiz caso isso mude no futuro). Lancado pelado (sem --prompt) e o prompt e enviado ao stdin apos startup_wait_seconds."
     },
     "opencode": {
       "binary": "opencode",
       "auto_approve_flag": "--auto",
       "prompt_mode": "flag_value",
       "prompt_flag": "--prompt",
-      "model_flag": "--model",
-      "default_model": "opencode/default",
-      "extra_flags": ["--pure"],
-      "usage_note": "Same underlying binary as mimo. --auto for permissions. --prompt <text> at root level."
+      "model_flag": "-m",
+      "default_model": "opencode/big-pickle",
+      "agent_flag": "--agent",
+      "agent": "",
+      "extra_flags": [
+        "--pure"
+      ],
+      "startup_wait_seconds": 10,
+      "usage_note": "Comando padrao fixado em docs/harness-models-padrao.md: 'opencode --pure --auto --agent -m opencode/big-pickle'. opencode has NO root-level --prompt (only exists under the 'opencode run' subcommand). For the native git-worktree engine, launched bare into its default interactive TUI (root command, no subcommand) with --pure/--auto/--agent/-m, then the prompt is sent to stdin after startup_wait_seconds once the TUI has finished loading. --agent e passado sem valor (bare), imediatamente seguido de -m <modelo>. prompt_mode/prompt_flag above are unused by the native engine's interactive path (kept for the non-interactive/headless code path and for reference). NOTA (11-09-2026): o binario opencode/mimo instalado nesta maquina crasha (bug do runtime Bun) em qualquer invocacao, ate --help -- falha de ambiente do host, nao deste profile; ver preflight-host."
     },
     "claude": {
       "binary": "claude",
@@ -28,9 +36,12 @@
       "prompt_mode": "positional",
       "prompt_flag": null,
       "model_flag": "--model",
-      "default_model": "claude-sonnet-5",
-      "extra_flags": ["-p"],
-      "usage_note": "Usage: claude [options] [command] [prompt]. -p is a BOOLEAN flag enabling print/non-interactive mode. The prompt text is a POSITIONAL ARGUMENT at the END of the command, not the value of -p."
+      "default_model": "sonnet-5",
+      "extra_flags": [
+        "--chrome"
+      ],
+      "startup_wait_seconds": 10,
+      "usage_note": "Comando padrao fixado em docs/harness-models-padrao.md: 'claude --dangerously-skip-permissions --chrome --model sonnet-5'. --chrome ativa a integracao Claude in Chrome. Usage: claude [options] [command] [prompt] -- prompt is a POSITIONAL ARGUMENT at the END. For the native git-worktree engine, launched bare (no prompt) and the prompt is sent to stdin after startup_wait_seconds, since claude's interactive session also needs a moment to finish loading."
     },
     "agy": {
       "binary": "agy",
@@ -38,9 +49,10 @@
       "prompt_mode": "positional",
       "prompt_flag": null,
       "model_flag": "--model",
-      "default_model": null,
-      "extra_flags": ["--print"],
-      "usage_note": "--print/-p/--prompt are BOOLEAN aliases enabling non-interactive mode. The prompt text is a POSITIONAL ARGUMENT. This was inferred from real --help but NOT confirmed by real invocation -- remains open for validation in Item 6."
+      "default_model": "gemini-3.8-flash-low",
+      "extra_flags": [],
+      "startup_wait_seconds": 10,
+      "usage_note": "Comando padrao fixado em docs/harness-models-padrao.md: 'agy --model gemini-3.8-flash-low --dangerously-skip-permissions'. --print/-p/--prompt are boolean aliases for non-interactive print mode, NOT the prompt text itself -- the prompt is a positional argument. For the native git-worktree engine, launched bare and the prompt is sent to stdin after startup_wait_seconds."
     }
   }
 }
