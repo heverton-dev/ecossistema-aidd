@@ -1,0 +1,50 @@
+# Default model configuration
+model: claude-sonnet-4-20250514
+
+# Provider-specific settings
+providers:
+  anthropic:
+    api_key: ${ANTHROPIC_API_KEY}
+    default_model: claude-sonnet-4-20250514
+
+  openai:
+    api_key: ${OPENAI_API_KEY}
+    default_model: gpt-4o
+
+  google:
+    api_key: ${GOOGLE_API_KEY}
+    default_model: gemini-2.0-flash
+
+# Model aliases for quick switching
+aliases:
+  fast: claude-3-5-haiku
+  smart: claude-opus-4-20250514
+  large: gemini-1.5-pro
+
+agent:
+  # Enable/disable agent mode
+  enabled: true
+
+  # Require confirmation for file modifications
+  require_confirmation: false
+
+  # Require confirmation for shell commands
+  require_shell_confirmation: true
+
+  # Maximum steps per task
+  max_steps: 50
+
+  # Timeout per step (seconds)
+  step_timeout: 60
+
+  # Allowed directories (relative to project root)
+  allowed_paths:
+    - src/
+    - tests/
+    - config/
+
+  # Blocked commands
+  blocked_commands:
+    - rm -rf /
+    - sudo
+    - shutdown

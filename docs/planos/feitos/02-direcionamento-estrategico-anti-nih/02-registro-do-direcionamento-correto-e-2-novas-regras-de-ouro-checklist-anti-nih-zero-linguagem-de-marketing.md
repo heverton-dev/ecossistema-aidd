@@ -8,7 +8,7 @@
 
 ## Contexto ja investigado
 
-- A Regra de Ouro #1 atual ("Determinismo Primeiro / Zero Token Fallacy") já apontava na direção certa, mas foi lida como "escreva seu próprio script determinístico" em vez de "não gaste esforço — seu ou de agente — reinventando o que já está resolvido". O levantamento NIH (`docs/features/oportunidades-reaproveitamento-oss-nih.md`) documenta 26 casos onde essa leitura errada gerou reinvenção de ferramenta madura.
+- A Regra de Ouro #1 atual ("Determinismo Primeiro / Zero Token Fallacy") já apontava na direção certa, mas foi lida como "escreva seu próprio script determinístico" em vez de "não gaste esforço — seu ou de agente — reinventando o que já está resolvido". O levantamento NIH (`docs/features/08-09-2026_feature-oportunidades-reaproveitamento-nih.md`) documenta 26 casos onde essa leitura errada gerou reinvenção de ferramenta madura.
 - O achado "gate de segurança rotulado blindagem militar/homologado pra produção global" (item 7 do plano tático) é sintoma de uma causa mais ampla: nada no `AGENTS.md` hoje proíbe linguagem de marketing em mensagem de saída de ferramenta.
 - Guia de referência já escrito e salvo fora do repo (não é fonte canônica do monorepo, é referência pessoal): `C:\Users\trcnologia\Desktop\CONSTRUA-SO-O-QUE-NINGUEM-CONSTRUIU.md` — o checklist de 5 perguntas e a tabela de ferramentas padrão de lá servem de base pra formalizar a regra aqui dentro do `AGENTS.md`.
 

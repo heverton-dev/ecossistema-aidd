@@ -37,7 +37,7 @@ O gap real, mais estreito do que a proposta descreve: **não existe nenhum MCP d
 
 ```
 Você vai criar dois MCPs de borda para tools/aidd-ops/, cobrindo o Gap 2
-identificado em "docs/features/PLANO ARQUITETURAL NOVA FEATURE AIDD-OPS.md
+identificado em "docs/features/06-09-2026_feature-arquitetura-aidd-ops.md
 §8.2": cloudflare-mcp (gestão de DNS) e docker-mcp (controle de
 contêineres). O padrão de MCP JÁ EXISTE no repositório — leia
 componentes/aidd-generator/mcps/mcp-verificador-cve/server.py primeiro e

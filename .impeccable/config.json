@@ -7,7 +7,7 @@
         "rule": "low-contrast",
         "value": "*",
         "files": [
-          "docs/explicacoes/ecossistema-aidd-6-ferramentas.html"
+          "docs/explicacoes/10-09-2026_explica-ecossistema-ferramentas.html"
         ],
         "createdAt": "2026-09-10T10:29:15.132Z",
         "reason": "Agent: verified by hand — all 22 remaining pairs are checker artifacts, not real rendered contrast. Two causes: (1) dark-mode-only CSS custom-property values (#f2ebdc/#c7baa0/#f3b587/#93876e) checked against a literal #ffffff background that only exists in the light-mode branch of the same tokens — these values never co-occur at runtime since :root/:root[data-theme=dark]/prefers-color-scheme scoping switches bg and text together; hand-computed real dark-mode pairs (e.g. ink-faint #93876e on bg #18140e) give ~5.2:1, well above 4.5:1. (2) SVG <text> elements styled via class-based fill:var(--token) (hub-node-label etc.) are read by the checker as default black text against the container's flat background color, since it does not resolve fill through CSS custom properties or account for the actual shape underneath the text; those labels render with proper theme-matched fill colors, not black. The one real finding this run caught (white dot text at 2.6:1 on the lighter dark-mode accent) was fixed directly via a new --on-accent token, not suppressed."

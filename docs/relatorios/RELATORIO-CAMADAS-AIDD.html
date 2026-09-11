@@ -1,5 +1,27 @@
 <title>Linha de Montagem AIDD</title>
 <style>
+  /* ==========================================================================
+     REGRA CANONICA DE SCROLLBARS — MAX 4PX NA COR PREDOMINANTE DO DOCUMENTO
+     ========================================================================== */
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: var(--copper, #388bfd) var(--bg, #0b111a);
+  }
+  ::-webkit-scrollbar {
+    width: 4px;
+    height: 4px;
+  }
+  ::-webkit-scrollbar-track {
+    background: var(--bg, #0b111a);
+  }
+  ::-webkit-scrollbar-thumb {
+    background: var(--copper, #388bfd);
+    border-radius: 4px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: color-mix(in srgb, var(--copper, #388bfd) 80%, white);
+  }
+
   :root{
     --chalk: #EDE9DD;
     --chalk-2: #E2DDCC;

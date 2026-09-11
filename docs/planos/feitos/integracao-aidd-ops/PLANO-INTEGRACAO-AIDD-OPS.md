@@ -1,6 +1,6 @@
 # PLANO DE INTEGRAÇÃO — Feature AIDD-Ops no Ecossistema AIDD
 
-> **Origem:** `docs/features/PLANO ARQUITETURAL NOVA FEATURE AIDD-OPS.md` (proposta v2.1, Setembro/2026) — Meta-Orquestrador Agêntico de Infraestrutura e Stacks Open Source (alternativa white-label ao GoHighLevel).
+> **Origem:** `docs/features/06-09-2026_feature-arquitetura-aidd-ops.md` (proposta v2.1, Setembro/2026) — Meta-Orquestrador Agêntico de Infraestrutura e Stacks Open Source (alternativa white-label ao GoHighLevel).
 > **Status:** PARECER TÉCNICO CONCLUÍDO — Pacote 1 (decisão de escopo/MVP) já decidido pelo usuário em 06/09/2026 (ver `integracao-aidd-ops/01-decisao-escopo-e-mvp.md`). Pacotes 2-9 seguem bloqueados por dependência sequencial e, nos casos 4/5/7/9, por aprovação pontual adicional antes de tocar infraestrutura real (ver `integracao-aidd-ops/00-PROCESSO-E-DECISOES.md §4`).
 > **Documentos-irmãos:** `integracao-aidd-ops/00-PROCESSO-E-DECISOES.md` (processo) + `integracao-aidd-ops/01..09-*.md` (pacotes técnicos individuais).
 

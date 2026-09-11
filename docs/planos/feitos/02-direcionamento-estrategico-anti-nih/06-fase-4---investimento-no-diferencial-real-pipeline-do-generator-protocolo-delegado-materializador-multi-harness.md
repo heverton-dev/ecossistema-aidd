@@ -21,7 +21,7 @@
 
 ## 2. Diferenciais Reais Identificados (Sem Equivalente OSS)
 
-Conforme a Seção 5 de `docs/features/oportunidades-reaproveitamento-oss-nih.md`:
+Conforme a Seção 5 de `docs/features/08-09-2026_feature-oportunidades-reaproveitamento-nih.md`:
 1. **Protocolo Delegado do Generator:** Mecanismo autônomo em que o pipeline solicita e consome raciocínio do assistente/ADE ativo na sessão via arquivos JSON no disco, sem exigir chave de API externa nem dependência de SDK de terceiros.
 2. **Materializador Multi-Harness:** Sincronizador determinístico com fonte física única (`componentes/`) que projeta skills, comandos, specs e regras nos formatos e árvores nativas de 7 harnesses (Claude Code, Antigravity, OpenCode, MimoCode, Gemini CLI, Cursor, Hermes).
 3. **Fleet Discovery (Mecanismo Auxiliar):** Detecção estática e dinâmica de binários de agentes de IA instalados no host (`tools/aidd-generator/scripts/phases/utils_fleet_discovery.py`).

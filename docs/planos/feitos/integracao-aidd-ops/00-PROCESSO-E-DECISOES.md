@@ -1,6 +1,6 @@
 # PROCESSO E DECISÕES — Integração da Feature AIDD-Ops
 
-> **Origem:** `docs/features/PLANO ARQUITETURAL NOVA FEATURE AIDD-OPS.md` (proposta original) e `docs/planos/integracao-aidd-ops/PLANO-INTEGRACAO-AIDD-OPS.md` (parecer técnico e visão geral dos 9 pacotes).
+> **Origem:** `docs/features/06-09-2026_feature-arquitetura-aidd-ops.md` (proposta original) e `docs/planos/integracao-aidd-ops/PLANO-INTEGRACAO-AIDD-OPS.md` (parecer técnico e visão geral dos 9 pacotes).
 > **Decisão registrada em:** 06/09/2026.
 > **Propósito deste arquivo:** registro único e consultável do *processo* que será seguido — não do conteúdo técnico de cada pacote (isso vive em documento próprio, ver §3). Mesmo formato usado em `docs/planos/evolucao-notas-auditoria/00-PROCESSO-E-DECISOES.md`.
 
@@ -68,7 +68,7 @@ A aprovação do plano geral (`PLANO-INTEGRACAO-AIDD-OPS.md`) autoriza o **diagn
 
 - **Custo real de infraestrutura de teste (VPS, domínio, Cloudflare):** os pacotes 4, 5, 7 e 9 pressupõem a existência de um ambiente descartável para validação. Se não existir, provisioná-lo tem custo financeiro real, decidido no Pacote 1 — este processo não decide isso sozinho.
 - **Cobertura LGPD/jurídica plena:** a proposta original (§7) cita soberania de dados como requisito. Este processo garante a implementação técnica (credenciais isoladas, backup criptografado, hardening de rede) — não substitui uma revisão jurídica formal se a AIDD-Ops for usada com dados reais de clientes finais de terceiros.
-- **Suporte multi-harness da nova ferramenta:** seguindo a Regra de Ouro #6 do `AGENTS.md` (Supremacia Agnóstica), qualquer skill/comando/gate novo criado para `tools/aidd-ops/` precisa passar por `python ecossistema.py components verify` como qualquer outro componente — isso é herdado do protocolo já existente (`docs/protocolos/PROTOCOLO-AGNOSTICIDADE-COMPONENTES.md`), não reinventado aqui.
+- **Suporte multi-harness da nova ferramenta:** seguindo a Regra de Ouro #6 do `AGENTS.md` (Supremacia Agnóstica), qualquer skill/comando/gate novo criado para `tools/aidd-ops/` precisa passar por `python ecossistema.py components verify` como qualquer outro componente — isso é herdado do protocolo já existente (`docs/protocolos/05-09-2026_protocolo-agnosticidade-componentes.md`), não reinventado aqui.
 
 ---
 

@@ -36,7 +36,7 @@ Nenhum dos artefatos novos precisa (nem deve) descrever um CLI funcional que ain
 2.2. `ecossistema.py`: `cmd_status`'s lista `tools` ganha `("aidd-ops", "<descrição curta e honesta>")`; lista de skills ganha `"aidd-ops-runner"`. Docstring do topo do arquivo atualizada para mencionar as 5 ferramentas (sem adicionar `ops` ao `dispatch`/`known_cmds` — ver Diagnóstico acima).
 2.3. `scripts/manutencao/gerar_status_testes.py`: adicionar `aidd-ops` à lista de ferramentas que `status --testes` tenta rodar pytest — confirmar que o script já trata graciosamente uma ferramenta sem `tests/` ainda (ex.: 0 testes encontrados, não erro fatal); se não tratar, ajustar para tratar (ainda dentro do escopo deste pacote, já que sem isso `status --testes` quebraria).
 2.4. `gates/G_ECOSSISTEMA_INTEGRIDADE.py`: adicionar `"aidd-ops"` a `TOOLS_REQUIRED`, `"aidd-ops-runner"` a `SKILLS_REQUIRED`, `"ops.md"` a `COMMANDS_REQUIRED`.
-2.5. Criar `tools/aidd-ops/README.md` real (conteúdo honesto: propósito da ferramenta, status atual "governança reconhecida, MVP no Pacote 3", link para `docs/features/PLANO ARQUITETURAL NOVA FEATURE AIDD-OPS.md` e `docs/planos/integracao-aidd-ops/00-PROCESSO-E-DECISOES.md`).
+2.5. Criar `tools/aidd-ops/README.md` real (conteúdo honesto: propósito da ferramenta, status atual "governança reconhecida, MVP no Pacote 3", link para `docs/features/06-09-2026_feature-arquitetura-aidd-ops.md` e `docs/planos/integracao-aidd-ops/00-PROCESSO-E-DECISOES.md`).
 2.6. Registrar `"aidd-ops"` em `gates/manifesto_harnesses.json["escopos"]` (mesmo formato de `"aidd-forge"`: `root: "tools/aidd-ops"`, os mesmos 8 `tipos_aplicaveis`).
 2.7. Criar a fonte canônica `componentes/compartilhado/skills/aidd-ops-runner/SKILL.md` (frontmatter YAML válido — `name`/`description` — seguindo o formato exato de `componentes/compartilhado/skills/aidd-forge-runner/SKILL.md`), conteúdo honesto sobre o status atual (não descrever um `/ops` funcional que ainda não existe).
 2.8. Criar a fonte canônica `componentes/compartilhado/comandos/ops.md` (mesmo formato de `componentes/compartilhado/comandos/forge.md`), honesto sobre o status atual.
@@ -126,7 +126,7 @@ DEFINIÇÃO DE PRONTO — nesta ordem:
    escopo deste pacote).
 4. Crie tools/aidd-ops/README.md (real, honesto): propósito da
    ferramenta (resumo de 1 parágrafo baseado em
-   docs/features/PLANO ARQUITETURAL NOVA FEATURE AIDD-OPS.md §1),
+   docs/features/06-09-2026_feature-arquitetura-aidd-ops.md §1),
    status atual explícito ("governança reconhecida desde o Pacote 2 da
    integração; implementação funcional do MVP — Fases 1-3 do pipeline —
    chega no Pacote 3"), link para
@@ -285,7 +285,7 @@ DEFINITION OF DONE — in this order:
    package's scope).
 4. Create tools/aidd-ops/README.md (real, honest): the tool's purpose
    (1-paragraph summary based on
-   docs/features/PLANO ARQUITETURAL NOVA FEATURE AIDD-OPS.md §1),
+   docs/features/06-09-2026_feature-arquitetura-aidd-ops.md §1),
    explicit current status ("governance-recognized since Package 2 of
    the integration; the functional MVP — pipeline Phases 1-3 — arrives
    in Package 3"), a link to

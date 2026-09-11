@@ -5,7 +5,7 @@
 **Status atual:** Governança reconhecida desde o Pacote 2 da integração; implementação funcional do MVP (Fases 1-3 do pipeline — Intake, Curadoria, Sizing) chega no Pacote 3.
 
 **Documentos de referência:**
-- Plano arquitetural original: `docs/features/PLANO ARQUITETURAL NOVA FEATURE AIDD-OPS.md`
+- Plano arquitetural original: `docs/features/06-09-2026_feature-arquitetura-aidd-ops.md`
 - Processo de integração: `docs/planos/integracao-aidd-ops/00-PROCESSO-E-DECISOES.md`
 - Plano geral de integração: `docs/planos/integracao-aidd-ops/PLANO-INTEGRACAO-AIDD-OPS.md`
 

@@ -80,15 +80,19 @@ def cmd_destroy(args):
             print("[CANCELADO] Operacao cancelada pelo usuario.")
             return 0
 
-    teardown = BridgeTeardown(
-        app_name=args.app_name,
-        domain=args.domain,
-        vps_host=args.vps_host,
-        vps_user=args.vps_user,
-        vps_password=args.vps_password,
-        cf_api_token=args.cf_token,
-        cf_zone_id=args.cf_zone_id
-    )
+    try:
+        teardown = BridgeTeardown(
+            app_name=args.app_name,
+            domain=args.domain,
+            vps_host=args.vps_host,
+            vps_user=args.vps_user,
+            vps_password=args.vps_password,
+            cf_api_token=args.cf_token,
+            cf_zone_id=args.cf_zone_id
+        )
+    except ValueError as e:
+        print(f"[ERRO] {e}")
+        return 1
 
     result = teardown.execute_teardown()
 

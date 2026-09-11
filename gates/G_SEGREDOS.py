@@ -9,7 +9,7 @@ para o detect-secrets (Yelp) — ferramenta OSS madura com dezenas de
 detectores especializados (AWS, GCP, GitHub, Slack, Stripe, JWT, chaves
 privadas, alta entropia Shannon/Base64/Hex, etc). Substitui o scanner de
 entropia caseiro anterior (achado NIH #1 em
-docs/features/oportunidades-reaproveitamento-oss-nih.md).
+docs/features/08-09-2026_feature-oportunidades-reaproveitamento-nih.md).
 
 Achados já revisados e catalogados no baseline .secrets.baseline (raiz do
 ecossistema) — fixtures de teste, placeholders de demonstração — não

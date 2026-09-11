@@ -1,0 +1,672 @@
+<title>Ecossistema AIDD — Apresentação</title>
+<style>
+  /* ==========================================================================
+     REGRA CANONICA DE SCROLLBARS — MAX 4PX NA COR PREDOMINANTE DO DOCUMENTO
+     ========================================================================== */
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: var(--accent, #388bfd) var(--bg, #0b111a);
+  }
+  ::-webkit-scrollbar {
+    width: 4px;
+    height: 4px;
+  }
+  ::-webkit-scrollbar-track {
+    background: var(--bg, #0b111a);
+  }
+  ::-webkit-scrollbar-thumb {
+    background: var(--accent, #388bfd);
+    border-radius: 4px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: color-mix(in srgb, var(--accent, #388bfd) 80%, white);
+  }
+
+  :root{
+    --bg:#F6F2E9;
+    --surface:#FFFEFB;
+    --surface-2:#FBF6EA;
+    --ink:#221D16;
+    --ink-soft:#5C5346;
+    --ink-faint:#6B6152;
+    --line:#E4DAC5;
+    --line-strong:#D4C6A8;
+    --accent:#B75A24;
+    --accent-ink:#8A4013;
+    --accent-soft:#F1DFC9;
+    --accent-2:#2E5C60;
+    --accent-2-ink:#1F4144;
+    --accent-2-soft:#DCE9E7;
+    --on-accent:#FFFFFF;
+    --serif: 'Fraunces', 'Iowan Old Style', 'Palatino Linotype', serif;
+    --sans: 'Source Sans 3', 'Segoe UI', system-ui, sans-serif;
+    --mono: 'IBM Plex Mono', ui-monospace, 'Cascadia Code', monospace;
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --bg:#18140E; --surface:#201A12; --surface-2:#251F16;
+      --ink:#F2EBDC; --ink-soft:#C7BAA0; --ink-faint:#93876E;
+      --line:#3B3222; --line-strong:#4C4128;
+      --accent:#E38A4C; --accent-ink:#F3B587; --accent-soft:#3A2A19;
+      --accent-2:#6FB0AE; --accent-2-ink:#A6D6D2; --accent-2-soft:#20302E;
+      --on-accent:#2A1608;
+    }
+  }
+  :root[data-theme="dark"]{
+    --bg:#18140E; --surface:#201A12; --surface-2:#251F16;
+    --ink:#F2EBDC; --ink-soft:#C7BAA0; --ink-faint:#93876E;
+    --line:#3B3222; --line-strong:#4C4128;
+    --accent:#E38A4C; --accent-ink:#F3B587; --accent-soft:#3A2A19;
+    --accent-2:#6FB0AE; --accent-2-ink:#A6D6D2; --accent-2-soft:#20302E;
+    --on-accent:#2A1608;
+  }
+
+  *{ box-sizing:border-box; }
+  html,body{ height:100%; margin:0; overflow:hidden; }
+  body{
+    background:var(--bg);
+    color:var(--ink);
+    font-family:var(--sans);
+    line-height:1.55;
+  }
+  h1,h2,h3,h4{ font-family:var(--serif); font-weight:600; text-wrap:balance; color:var(--ink); margin:0; }
+  code{ font-family:var(--mono); }
+
+  @media (prefers-reduced-motion: reduce){
+    *{ animation-duration:.01ms !important; animation-iteration-count:1 !important; transition-duration:.01ms !important; }
+  }
+
+  /* ---------- Deck shell ---------- */
+  .deck{ position:relative; width:100vw; height:100vh; }
+  .progress{ position:fixed; top:0; left:0; width:100%; height:3px; background:var(--line); z-index:10; }
+  .progress-bar{ height:100%; background:var(--accent); transition:width .4s ease; }
+
+  .brand{
+    position:fixed; top:16px; left:20px; z-index:10;
+    font-family:var(--mono); font-size:.75rem; letter-spacing:.03em;
+    color:var(--ink-faint);
+  }
+
+  .nav-btn{
+    position:fixed; top:50%; transform:translateY(-50%);
+    width:44px; height:44px; border-radius:50%;
+    background:var(--surface); border:1px solid var(--line-strong);
+    color:var(--ink-soft); display:flex; align-items:center; justify-content:center;
+    cursor:pointer; z-index:10; transition:background .2s ease, color .2s ease, border-color .2s ease;
+  }
+  .nav-btn:hover{ background:var(--accent-soft); color:var(--accent-ink); border-color:var(--accent); }
+  .nav-btn svg{ width:20px; height:20px; }
+  .nav-prev{ left:16px; }
+  .nav-next{ right:16px; }
+  @media (max-width:640px){ .nav-btn{ width:36px; height:36px; } .nav-btn svg{ width:16px; height:16px; } }
+
+  .deck-footer{
+    position:fixed; bottom:14px; left:0; width:100%; z-index:10;
+    display:flex; flex-direction:column; align-items:center; gap:8px;
+  }
+  .counter{ font-family:var(--mono); font-size:.72rem; color:var(--ink-faint); }
+  .dots{ display:flex; gap:6px; }
+  .dot{ width:6px; height:6px; border-radius:50%; background:var(--line-strong); border:none; padding:0; cursor:pointer; }
+  .dot.is-active{ background:var(--accent); width:16px; border-radius:3px; transition:width .25s ease, background .25s ease; }
+
+  /* ---------- Slides ---------- */
+  .slides{ position:relative; width:100%; height:100%; }
+  .slide{
+    display:none;
+    width:100%; height:100%;
+    flex-direction:column; align-items:center; justify-content:center;
+    padding:88px 48px 96px;
+    overflow-y:auto;
+  }
+  .slide.active{ display:flex; }
+  .slide.active.dir-next{ animation:slideInRight .5s ease both; }
+  .slide.active.dir-prev{ animation:slideInLeft .5s ease both; }
+  @keyframes slideInRight{ from{ opacity:0; transform:translateX(32px); } to{ opacity:1; transform:translateX(0); } }
+  @keyframes slideInLeft{ from{ opacity:0; transform:translateX(-32px); } to{ opacity:1; transform:translateX(0); } }
+
+  .reveal{ opacity:0; animation:fadeUp .55s ease both; animation-delay:calc(var(--d,0)*100ms + 100ms); }
+  @keyframes fadeUp{ from{ opacity:0; transform:translateY(16px); } to{ opacity:1; transform:translateY(0); } }
+
+  .slide-inner{ width:100%; max-width:980px; margin:0 auto; text-align:center; }
+  @media (max-width:640px){ .slide{ padding:72px 22px 88px; } }
+
+  /* ---------- Cover ---------- */
+  .eyebrow{ font-family:var(--mono); font-size:.8rem; letter-spacing:.04em; color:var(--accent-ink); margin-bottom:18px; }
+  .cover h1{ font-size:clamp(2.1rem, 5.4vw, 3.4rem); line-height:1.1; max-width:18ch; margin:0 auto 22px; }
+  .cover .lede{ font-size:clamp(1rem, 1.6vw, 1.2rem); color:var(--ink-soft); max-width:56ch; margin:0 auto 40px; }
+  .cover .lede strong{ color:var(--ink); font-weight:600; }
+  .hint{ display:flex; align-items:center; justify-content:center; gap:8px; font-family:var(--mono); font-size:.78rem; color:var(--ink-faint); margin-bottom:36px; }
+  .hint svg{ width:14px; height:14px; }
+  .icon-strip{ display:flex; gap:14px; justify-content:center; flex-wrap:wrap; }
+  .icon-strip .mini-badge{ width:40px; height:40px; border-radius:11px; background:var(--accent-soft); color:var(--accent-ink); display:flex; align-items:center; justify-content:center; }
+  .icon-strip .mini-badge svg{ width:20px; height:20px; }
+
+  /* ---------- Hub slide ---------- */
+  .hub-title{ font-size:clamp(1.6rem, 3.2vw, 2.2rem); margin-bottom:6px; }
+  .hub-slide .section-eyebrow{ margin-bottom:10px; }
+  .hub-svg-wrap{ background:var(--surface); border:1px solid var(--line-strong); border-radius:16px; padding:14px; margin:22px auto 0; max-width:520px; }
+  .hub-svg-wrap svg{ display:block; width:100%; height:auto; }
+  .hub-node-label{ font-family:var(--sans); font-weight:600; font-size:14.5px; fill:var(--ink); }
+  .hub-node-cmd{ font-family:var(--mono); font-size:11.5px; fill:var(--accent-2-ink); }
+  .hub-center-label{ font-family:var(--serif); font-weight:600; font-size:16.5px; fill:var(--ink); }
+  .hub-center-sub{ font-family:var(--sans); font-size:11px; fill:var(--ink-soft); }
+  .hub-line{ stroke:var(--line-strong); stroke-width:1.5; fill:none; }
+  .hub-node-circle{ fill:var(--surface-2); stroke:var(--line-strong); stroke-width:1.5; }
+  .hub-center-circle{ fill:var(--accent-soft); stroke:var(--accent); stroke-width:2; }
+  .hub-node-icon{ color:var(--accent-2-ink); }
+  .hub-center-icon{ color:var(--accent-ink); }
+  .hub-caption{ color:var(--ink-faint); font-size:.85rem; margin-top:14px; max-width:52ch; margin-inline:auto; }
+
+  /* ---------- Section eyebrow (reused) ---------- */
+  .section-eyebrow{ font-family:var(--mono); font-size:.75rem; letter-spacing:.06em; text-transform:uppercase; color:var(--ink-faint); }
+
+  /* ---------- Tool slide ---------- */
+  .tool-slide .slide-inner{ text-align:left; display:grid; grid-template-columns:220px 1fr; gap:8px 48px; align-items:start; }
+  .tool-meta{ display:flex; flex-direction:column; align-items:flex-start; gap:14px; }
+  .icon-badge-lg{ width:84px; height:84px; border-radius:20px; background:var(--accent-soft); color:var(--accent-ink); display:flex; align-items:center; justify-content:center; }
+  .icon-badge-lg svg{ width:42px; height:42px; }
+  .tool-num-lg{ font-family:var(--mono); font-size:.78rem; letter-spacing:.05em; color:var(--ink-faint); }
+  .tool-meta h2{ font-size:clamp(1.5rem, 2.6vw, 2rem); }
+  .tool-cmd-chip{ font-family:var(--mono); font-size:.86rem; color:var(--accent-2-ink); background:var(--accent-2-soft); padding:5px 12px; border-radius:7px; display:inline-block; }
+  .tool-content{ display:flex; flex-direction:column; gap:16px; }
+  .tool-analogy{ font-style:italic; font-size:1.12rem; color:var(--ink-soft); margin:0; }
+  .tool-content ul{ margin:0; padding-left:1.2em; display:flex; flex-direction:column; gap:8px; }
+  .tool-content li{ font-size:1rem; }
+  .example{ background:var(--surface-2); border:1px solid var(--line-strong); border-radius:12px; padding:16px 20px; font-size:.96rem; }
+  .example b{ color:var(--accent-ink); }
+  @media (max-width:760px){
+    .tool-slide .slide-inner{ grid-template-columns:1fr; }
+    .tool-meta{ flex-direction:row; align-items:center; }
+  }
+
+  /* ---------- Pillars slide ---------- */
+  .pillars-slide h2{ font-size:clamp(1.6rem,3.2vw,2.2rem); margin-bottom:10px; }
+  .pillars-slide .section-intro{ color:var(--ink-soft); max-width:64ch; margin:0 auto 30px; }
+  .pillars{ display:grid; grid-template-columns:repeat(3,1fr); gap:18px; text-align:left; }
+  .pillar{ background:var(--surface); border:1px solid var(--line); border-radius:14px; padding:20px 22px; }
+  .pillar-num{ font-family:var(--mono); font-size:.75rem; color:var(--accent-2-ink); letter-spacing:.06em; }
+  .pillar h4{ font-family:var(--sans); font-size:1.05rem; font-weight:700; margin:8px 0 8px; }
+  .pillar p{ margin:0; font-size:.93rem; color:var(--ink-soft); }
+  @media (max-width:760px){ .pillars{ grid-template-columns:1fr; } }
+
+  /* ---------- Scenario slide ---------- */
+  .scenario-slide h2{ font-size:clamp(1.6rem,3.2vw,2.2rem); margin-bottom:22px; }
+  .scenario-box{ background:var(--accent-soft); border-radius:16px; padding:28px 32px; font-size:1.1rem; color:var(--ink); max-width:66ch; margin:0 auto; }
+  .scenario-box b{ display:block; font-family:var(--mono); font-size:.75rem; letter-spacing:.06em; text-transform:uppercase; color:var(--accent-ink); margin-bottom:10px; }
+
+  /* ---------- Step slides ---------- */
+  .stepper{ display:flex; align-items:center; justify-content:center; margin-bottom:34px; }
+  .step{ width:30px; height:30px; border-radius:50%; border:1.5px solid var(--line-strong); background:var(--surface); color:var(--ink-faint); font-family:var(--mono); font-size:.78rem; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+  .step.is-done{ background:var(--accent-2-soft); border-color:var(--accent-2); color:var(--accent-2-ink); }
+  .step.is-active{ background:var(--accent); border-color:var(--accent); color:var(--on-accent); font-weight:700; }
+  .step-line{ width:34px; height:2px; background:var(--line-strong); flex-shrink:0; }
+  .step-line.is-done{ background:var(--accent-2); }
+  .step-slide .tool-cmd-chip{ font-size:1.05rem; padding:8px 18px; margin-bottom:18px; }
+  .step-slide p{ font-size:1.08rem; color:var(--ink-soft); max-width:58ch; margin:0 auto; }
+  .step-slide h3{ font-size:.8rem; letter-spacing:.06em; text-transform:uppercase; color:var(--ink-faint); font-family:var(--mono); font-weight:500; margin-bottom:14px; }
+
+  /* ---------- Closing slide ---------- */
+  .closing-slide h2{ font-size:clamp(1.6rem,3.2vw,2.2rem); margin-bottom:22px; }
+  .closing-box{ background:var(--surface); border:1px solid var(--line); border-radius:16px; padding:26px 30px; font-size:1.08rem; color:var(--ink-soft); max-width:66ch; margin:0 auto 28px; }
+  .closing-box strong{ color:var(--ink); }
+  .footer-meta{ color:var(--ink-faint); font-size:.8rem; display:flex; flex-direction:column; gap:4px; margin-bottom:26px; }
+  .restart-btn{ font-family:var(--mono); font-size:.8rem; color:var(--accent-ink); background:var(--accent-soft); border:1px solid var(--accent); border-radius:999px; padding:9px 20px; cursor:pointer; display:inline-flex; align-items:center; gap:8px; }
+  .restart-btn svg{ width:14px; height:14px; }
+</style>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Source+Sans+3:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+
+<svg aria-hidden="true" style="position:absolute;width:0;height:0;overflow:hidden">
+  <defs>
+    <symbol id="icon-target" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1.4" fill="currentColor" stroke="none"/>
+    </symbol>
+    <symbol id="icon-wrench" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94z"/>
+    </symbol>
+    <symbol id="icon-package" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4a2 2 0 0 0 1-1.73Z"/>
+      <path d="M3.3 7 12 12l8.7-5"/><path d="M12 22V12"/>
+    </symbol>
+    <symbol id="icon-layers" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="m12 2 9 5-9 5-9-5 9-5Z"/><path d="m3 12 9 5 9-5"/><path d="m3 17 9 5 9-5"/>
+    </symbol>
+    <symbol id="icon-shield-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M12 2 4 5v6c0 5 3.5 9 8 11 4.5-2 8-6 8-11V5Z"/><path d="m9 12 2 2 4-4"/>
+    </symbol>
+    <symbol id="icon-arrow-swap" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M8 3 4 7l4 4"/><path d="M4 7h16"/><path d="m16 21 4-4-4-4"/><path d="M20 17H4"/>
+    </symbol>
+    <symbol id="icon-server" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <rect x="2" y="3" width="20" height="8" rx="2"/><rect x="2" y="13" width="20" height="8" rx="2"/>
+      <circle cx="6" cy="7" r="1" fill="currentColor" stroke="none"/><circle cx="6" cy="17" r="1" fill="currentColor" stroke="none"/>
+    </symbol>
+    <symbol id="icon-chevron-left" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="m15 18-6-6 6-6"/>
+    </symbol>
+    <symbol id="icon-chevron-right" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="m9 18 6-6-6-6"/>
+    </symbol>
+    <symbol id="icon-rotate" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M3 12a9 9 0 1 1 3 6.7"/><path d="M3 21v-6h6"/>
+    </symbol>
+  </defs>
+</svg>
+
+<div class="deck">
+  <div class="progress"><div class="progress-bar" id="progressBar"></div></div>
+  <span class="brand">Ecossistema AIDD · Apresentação</span>
+
+  <button class="nav-btn nav-prev" id="prevBtn" aria-label="Slide anterior"><svg><use href="#icon-chevron-left"/></svg></button>
+  <button class="nav-btn nav-next" id="nextBtn" aria-label="Próximo slide"><svg><use href="#icon-chevron-right"/></svg></button>
+
+  <div class="slides" id="slides">
+
+    <!-- 0: Cover -->
+    <section class="slide active dir-next">
+      <div class="slide-inner cover">
+        <p class="eyebrow reveal" style="--d:0">Documento de referência · Ecossistema AIDD</p>
+        <h1 class="reveal" style="--d:1">Seis ferramentas, uma linha de produção</h1>
+        <p class="lede reveal" style="--d:2">O Ecossistema AIDD reúne <strong>6 ferramentas independentes</strong>, cada uma acionada por um slash command simples, todas reportando ao mesmo conjunto de regras de qualidade.</p>
+        <p class="hint reveal" style="--d:3"><svg><use href="#icon-chevron-left"/></svg> use as setas do teclado ou deslize para navegar <svg><use href="#icon-chevron-right"/></svg></p>
+        <div class="icon-strip reveal" style="--d:4">
+          <div class="mini-badge"><svg viewBox="0 0 24 24"><use href="#icon-wrench"/></svg></div>
+          <div class="mini-badge"><svg viewBox="0 0 24 24"><use href="#icon-package"/></svg></div>
+          <div class="mini-badge"><svg viewBox="0 0 24 24"><use href="#icon-layers"/></svg></div>
+          <div class="mini-badge"><svg viewBox="0 0 24 24"><use href="#icon-shield-check"/></svg></div>
+          <div class="mini-badge"><svg viewBox="0 0 24 24"><use href="#icon-arrow-swap"/></svg></div>
+          <div class="mini-badge"><svg viewBox="0 0 24 24"><use href="#icon-server"/></svg></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 1: Hub -->
+    <section class="slide hub-slide">
+      <div class="slide-inner">
+        <p class="section-eyebrow reveal" style="--d:0">O núcleo comum</p>
+        <h2 class="hub-title reveal" style="--d:1">Um núcleo, seis ferramentas</h2>
+        <div class="hub-svg-wrap reveal" style="--d:2">
+          <svg viewBox="0 0 640 620" role="img" aria-label="Diagrama: seis ferramentas ao redor do núcleo comum ecossistema.py e Quality Gates">
+            <g>
+              <line class="hub-line" x1="320" y1="300" x2="320" y2="85"/>
+              <line class="hub-line" x1="320" y1="300" x2="506.2" y2="192.5"/>
+              <line class="hub-line" x1="320" y1="300" x2="506.2" y2="407.5"/>
+              <line class="hub-line" x1="320" y1="300" x2="320" y2="515"/>
+              <line class="hub-line" x1="320" y1="300" x2="133.8" y2="407.5"/>
+              <line class="hub-line" x1="320" y1="300" x2="133.8" y2="192.5"/>
+            </g>
+            <circle class="hub-center-circle" cx="320" cy="300" r="72"/>
+            <use href="#icon-target" class="hub-center-icon" x="309" y="259" width="22" height="22"/>
+            <text x="320" y="302" text-anchor="middle" class="hub-center-label">ecossistema.py</text>
+            <text x="320" y="320" text-anchor="middle" class="hub-center-sub">+ Quality Gates</text>
+            <text x="320" y="336" text-anchor="middle" class="hub-center-sub">(fiscal comum)</text>
+
+            <circle class="hub-node-circle" cx="320" cy="85" r="58"/>
+            <use href="#icon-wrench" class="hub-node-icon" x="309" y="41" width="22" height="22"/>
+            <text x="320" y="87" text-anchor="middle" class="hub-node-label">Forge</text>
+            <text x="320" y="105" text-anchor="middle" class="hub-node-cmd">/forge</text>
+
+            <circle class="hub-node-circle" cx="506.2" cy="192.5" r="58"/>
+            <use href="#icon-package" class="hub-node-icon" x="495.2" y="148.5" width="22" height="22"/>
+            <text x="506.2" y="194.5" text-anchor="middle" class="hub-node-label">Generator</text>
+            <text x="506.2" y="212.5" text-anchor="middle" class="hub-node-cmd">/generate</text>
+
+            <circle class="hub-node-circle" cx="506.2" cy="407.5" r="58"/>
+            <use href="#icon-layers" class="hub-node-icon" x="495.2" y="363.5" width="22" height="22"/>
+            <text x="506.2" y="409.5" text-anchor="middle" class="hub-node-label">Master</text>
+            <text x="506.2" y="427.5" text-anchor="middle" class="hub-node-cmd">/master</text>
+
+            <circle class="hub-node-circle" cx="320" cy="515" r="58"/>
+            <use href="#icon-shield-check" class="hub-node-icon" x="309" y="471" width="22" height="22"/>
+            <text x="320" y="517" text-anchor="middle" class="hub-node-label">Enterprise</text>
+            <text x="320" y="535" text-anchor="middle" class="hub-node-cmd">/enterprise</text>
+
+            <circle class="hub-node-circle" cx="133.8" cy="407.5" r="58"/>
+            <use href="#icon-server" class="hub-node-icon" x="122.8" y="363.5" width="22" height="22"/>
+            <text x="133.8" y="409.5" text-anchor="middle" class="hub-node-label">Ops</text>
+            <text x="133.8" y="427.5" text-anchor="middle" class="hub-node-cmd">/ops</text>
+
+            <circle class="hub-node-circle" cx="133.8" cy="192.5" r="58"/>
+            <use href="#icon-arrow-swap" class="hub-node-icon" x="122.8" y="148.5" width="22" height="22"/>
+            <text x="133.8" y="194.5" text-anchor="middle" class="hub-node-label">Bridge</text>
+            <text x="133.8" y="212.5" text-anchor="middle" class="hub-node-cmd">/bridge</text>
+          </svg>
+        </div>
+        <p class="hub-caption reveal" style="--d:3">As 6 ferramentas resolvem etapas diferentes do ciclo de vida do software, mas todas prestam contas ao mesmo núcleo: a CLI unificada e os Quality Gates.</p>
+      </div>
+    </section>
+
+    <!-- 2: Forge -->
+    <section class="slide tool-slide">
+      <div class="slide-inner">
+        <div class="tool-meta reveal" style="--d:0">
+          <div class="icon-badge-lg"><svg viewBox="0 0 24 24"><use href="#icon-wrench"/></svg></div>
+          <span class="tool-num-lg">01 / 06</span>
+          <h2>AIDD Forge</h2>
+          <span class="tool-cmd-chip">/forge [caminho]</span>
+        </div>
+        <div class="tool-content">
+          <p class="tool-analogy reveal" style="--d:1">O eletricista que instala o quadro de disjuntores num prédio — novo ou antigo, não importa.</p>
+          <ul class="reveal" style="--d:2">
+            <li>Injeta em qualquer projeto (AIDD ou não) a governança completa: Quality Gates, otimizadores de token e convenções que funcionam do mesmo jeito em qualquer harness de IA.</li>
+            <li>Cria micro-ambientes isolados por fase de trabalho, para um subagente só ver o pedaço do projeto que precisa.</li>
+            <li>100% script determinístico — não chama IA para decidir nada disso.</li>
+          </ul>
+          <p class="example reveal" style="--d:3"><b>Dia a dia:</b> você herdou um projeto legado sem padrão de qualidade. Roda <code>/forge .</code> na raiz — em segundos ele ganha os gates automáticos, e entregas malfeitas passam a ser barradas antes do commit, mesmo sem revisão linha a linha.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 3: Generator -->
+    <section class="slide tool-slide">
+      <div class="slide-inner">
+        <div class="tool-meta reveal" style="--d:0">
+          <div class="icon-badge-lg"><svg viewBox="0 0 24 24"><use href="#icon-package"/></svg></div>
+          <span class="tool-num-lg">02 / 06</span>
+          <h2>AIDD Generator</h2>
+          <span class="tool-cmd-chip">/generate &lt;ideia&gt;</span>
+        </div>
+        <div class="tool-content">
+          <p class="tool-analogy reveal" style="--d:1">A fábrica que recebe um desenho no guardanapo e devolve o produto pronto.</p>
+          <ul class="reveal" style="--d:2">
+            <li>Pipeline de 7 a 8 fases que transforma uma frase em linguagem natural num projeto completo: schemas, scripts, testes e documentação.</li>
+            <li>Pode gerar código funcional via IA (modo delegado, sem chave de API extra) ou rodar sozinho no modo determinístico para as partes mecânicas.</li>
+            <li>Cada fase purga o contexto da anterior — custo de token baixo mesmo em projetos grandes.</li>
+          </ul>
+          <p class="example reveal" style="--d:3"><b>Dia a dia:</b> um cliente pede "controle de estoque com alerta de produto acabando". Você digita <code>/generate sistema de estoque com alerta de estoque baixo</code> — em minutos o pipeline entrega modelos, regras, testes e documentação prontos para revisão.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 4: Master -->
+    <section class="slide tool-slide">
+      <div class="slide-inner">
+        <div class="tool-meta reveal" style="--d:0">
+          <div class="icon-badge-lg"><svg viewBox="0 0 24 24"><use href="#icon-layers"/></svg></div>
+          <span class="tool-num-lg">03 / 06</span>
+          <h2>AIDD Master</h2>
+          <span class="tool-cmd-chip">/master &lt;modulo&gt;</span>
+        </div>
+        <div class="tool-content">
+          <p class="tool-analogy reveal" style="--d:1">O time que constrói um cômodo novo dentro de um prédio já existente, respeitando a mesma fundação.</p>
+          <ul class="reveal" style="--d:2">
+            <li>Cria uma fatia vertical de negócio nova (<code>src/modules/&lt;modulo&gt;/</code>) com rotas, modelos, serviços, interface e testes.</li>
+            <li>Suporta SQLite (modo WAL), PostgreSQL ou Supabase por baixo do capô, sem o módulo precisar saber qual.</li>
+            <li>Já nasce com documentação de API (Swagger/OpenAPI) e observabilidade de performance.</li>
+          </ul>
+          <p class="example reveal" style="--d:3"><b>Dia a dia:</b> o sistema de estoque já roda, mas falta um módulo de relatórios financeiros. Você roda <code>/master relatorios-financeiros</code> — o módulo inteiro nasce plugado e coerente, sem duplicar código nem quebrar os outros.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 5: Enterprise -->
+    <section class="slide tool-slide">
+      <div class="slide-inner">
+        <div class="tool-meta reveal" style="--d:0">
+          <div class="icon-badge-lg"><svg viewBox="0 0 24 24"><use href="#icon-shield-check"/></svg></div>
+          <span class="tool-num-lg">04 / 06</span>
+          <h2>AIDD Enterprise</h2>
+          <span class="tool-cmd-chip">/enterprise &lt;tipo&gt; &lt;nome&gt;</span>
+        </div>
+        <div class="tool-content">
+          <p class="tool-analogy reveal" style="--d:1">O funcionário que carimba e distribui a mesma circular oficial para todos os departamentos ao mesmo tempo — e confere depois que nenhuma cópia foi adulterada.</p>
+          <ul class="reveal" style="--d:2">
+            <li>Injeta um artefato de governança (<code>skill</code>, <code>rule</code>, <code>spec</code>, <code>agent</code>, <code>hook</code>, <code>config</code> ou <code>mcp</code>) e o replica, na mesma versão, em todos os harnesses de IA detectados no host.</li>
+            <li>Cada cópia distribuída passa por verificação de hash SHA-256 contra a original — garante que nenhum harness ficou com uma versão desatualizada ou alterada.</li>
+            <li>Usa a mesma base do Master, com a camada extra de conformidade Zero-Trust para times que trabalham com vários assistentes de IA ao mesmo tempo.</li>
+          </ul>
+          <p class="example reveal" style="--d:3"><b>Dia a dia:</b> a equipe decide que toda IA que mexer no projeto precisa seguir uma regra nova de segurança. Você roda <code>/enterprise rule dados-sensiveis</code> — a regra nasce uma vez e é replicada, com hash conferido, em todos os harnesses ativos.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 6: Bridge -->
+    <section class="slide tool-slide">
+      <div class="slide-inner">
+        <div class="tool-meta reveal" style="--d:0">
+          <div class="icon-badge-lg"><svg viewBox="0 0 24 24"><use href="#icon-arrow-swap"/></svg></div>
+          <span class="tool-num-lg">05 / 06</span>
+          <h2>AIDD Bridge</h2>
+          <span class="tool-cmd-chip">/bridge [comando]</span>
+        </div>
+        <div class="tool-content">
+          <p class="tool-analogy reveal" style="--d:1">O despachante que tira seu carro do leasing de letras miúdas e transfere o documento pro seu nome.</p>
+          <ul class="reveal" style="--d:2">
+            <li><code>scan</code> — inspeciona um projeto Lovable/v0/Bolt e mapeia páginas, componentes e banco num manifesto.</li>
+            <li><code>convert-db</code> — converte o banco Supabase para PostgreSQL puro, sem reescrever o código que fala com o banco.</li>
+            <li><code>merge</code> — funde 2+ apps soltos num monorepo único.</li>
+            <li><code>pack</code> — empacota tudo em Docker, com HTTPS automático, já levando junto Storage e Edge Functions detectadas automaticamente.</li>
+          </ul>
+          <p class="example reveal" style="--d:3"><b>Dia a dia:</b> seu app do Lovable tem upload de foto de perfil e uma função de notificação, e a mensalidade está pesando. Você roda <code>bridge scan → convert-db → pack</code> — o mesmo app passa a rodar 100% na sua VPS, sem mensalidade de plataforma.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 7: Ops -->
+    <section class="slide tool-slide">
+      <div class="slide-inner">
+        <div class="tool-meta reveal" style="--d:0">
+          <div class="icon-badge-lg"><svg viewBox="0 0 24 24"><use href="#icon-server"/></svg></div>
+          <span class="tool-num-lg">06 / 06</span>
+          <h2>AIDD Ops</h2>
+          <span class="tool-cmd-chip">/ops &lt;requisito&gt;</span>
+        </div>
+        <div class="tool-content">
+          <p class="tool-analogy reveal" style="--d:1">O gerente de obra que liga água, luz e monitoramento depois que a casa já está pronta.</p>
+          <ul class="reveal" style="--d:2">
+            <li>Recebe um requisito de negócio em linguagem natural e orquestra o provisionamento de uma stack self-hosted: Traefik, Authentik, Next.js, PostgreSQL, microsserviços Docker.</li>
+            <li>Executa o provisionamento de ponta a ponta na VPS real via SSH (hardening com Ansible/devsec.hardening) e integrações MCP de Docker e Cloudflare (DNS, certificados).</li>
+            <li>Já traz monitoramento real (Uptime Kuma, não dashboard fake) e hardening de servidor via Ansible.</li>
+          </ul>
+          <p class="example reveal" style="--d:3"><b>Dia a dia:</b> o sistema de agendamentos precisa ir ao ar com domínio, HTTPS, login e um painel que avisa se o servidor cair. Você roda <code>/ops preciso subir meu app de agendamentos com domínio e monitoramento</code> — o pipeline dimensiona a VPS, faz o hardening, sobe os serviços e configura o DNS, de ponta a ponta.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 8: Pillars -->
+    <section class="slide pillars-slide">
+      <div class="slide-inner">
+        <p class="section-eyebrow reveal" style="--d:0">Como o conjunto funciona</p>
+        <h2 class="reveal" style="--d:1">Um sistema, não seis scripts soltos</h2>
+        <p class="section-intro reveal" style="--d:2">As 6 ferramentas compartilham três coisas, e é isso que faz o conjunto se comportar como um sistema único.</p>
+        <div class="pillars reveal" style="--d:3">
+          <div class="pillar">
+            <span class="pillar-num">01</span>
+            <h4>Uma porta de entrada só</h4>
+            <p><code>python ecossistema.py &lt;ferramenta&gt; &lt;ação&gt;</code>, ou o slash command equivalente.</p>
+          </div>
+          <div class="pillar">
+            <span class="pillar-num">02</span>
+            <h4>Os mesmos Quality Gates</h4>
+            <p>Gate reprovado (exit 1) bloqueia a entrega — não existe "quase aprovado".</p>
+          </div>
+          <div class="pillar">
+            <span class="pillar-num">03</span>
+            <h4>Estado em arquivo, contexto purgado</h4>
+            <p>Tudo vive em JSON/SQLite auditável, mantendo o custo de token baixo.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 9: Scenario -->
+    <section class="slide scenario-slide">
+      <div class="slide-inner">
+        <p class="section-eyebrow reveal" style="--d:0">Caso completo</p>
+        <h2 class="reveal" style="--d:1">As 6 ferramentas em um único caso</h2>
+        <div class="scenario-box reveal" style="--d:2">
+          <b>Cenário</b>
+          uma dona de salão de beleza testou um app de agendamentos feito no Lovable, gostou, mas quer parar de pagar a mensalidade da plataforma e ainda adicionar funções novas com segurança de verdade.
+        </div>
+      </div>
+    </section>
+
+    <!-- 10: Step 1 -->
+    <section class="slide step-slide">
+      <div class="slide-inner">
+        <div class="stepper reveal" style="--d:0">
+          <div class="step is-active">1</div><div class="step-line"></div>
+          <div class="step">2</div><div class="step-line"></div>
+          <div class="step">3</div><div class="step-line"></div>
+          <div class="step">4</div><div class="step-line"></div>
+          <div class="step">5</div>
+        </div>
+        <h3 class="reveal" style="--d:1">Passo 1 de 5</h3>
+        <span class="tool-cmd-chip reveal" style="--d:2">bridge scan → convert-db → pack</span>
+        <p class="reveal" style="--d:3">O app do Lovable é extraído, o banco Supabase vira PostgreSQL puro, e tudo é empacotado em Docker com HTTPS. Ela já não depende mais da plataforma original.</p>
+      </div>
+    </section>
+
+    <!-- 11: Step 2 -->
+    <section class="slide step-slide">
+      <div class="slide-inner">
+        <div class="stepper reveal" style="--d:0">
+          <div class="step is-done">1</div><div class="step-line is-done"></div>
+          <div class="step is-active">2</div><div class="step-line"></div>
+          <div class="step">3</div><div class="step-line"></div>
+          <div class="step">4</div><div class="step-line"></div>
+          <div class="step">5</div>
+        </div>
+        <h3 class="reveal" style="--d:1">Passo 2 de 5</h3>
+        <span class="tool-cmd-chip reveal" style="--d:2">/forge .</span>
+        <p class="reveal" style="--d:3">Na raiz do projeto libertado, instala-se a governança e os Quality Gates. A partir daqui, toda mudança futura é auditada automaticamente.</p>
+      </div>
+    </section>
+
+    <!-- 12: Step 3 -->
+    <section class="slide step-slide">
+      <div class="slide-inner">
+        <div class="stepper reveal" style="--d:0">
+          <div class="step is-done">1</div><div class="step-line is-done"></div>
+          <div class="step is-done">2</div><div class="step-line is-done"></div>
+          <div class="step is-active">3</div><div class="step-line"></div>
+          <div class="step">4</div><div class="step-line"></div>
+          <div class="step">5</div>
+        </div>
+        <h3 class="reveal" style="--d:1">Passo 3 de 5</h3>
+        <span class="tool-cmd-chip reveal" style="--d:2">/master fidelidade</span>
+        <p class="reveal" style="--d:3">Um módulo novo de pontos de fidelidade para clientes recorrentes é criado — modelo, regras, tela e testes — plugado ao resto do sistema sem quebrar o que já existia.</p>
+      </div>
+    </section>
+
+    <!-- 13: Step 4 -->
+    <section class="slide step-slide">
+      <div class="slide-inner">
+        <div class="stepper reveal" style="--d:0">
+          <div class="step is-done">1</div><div class="step-line is-done"></div>
+          <div class="step is-done">2</div><div class="step-line is-done"></div>
+          <div class="step is-done">3</div><div class="step-line is-done"></div>
+          <div class="step is-active">4</div><div class="step-line"></div>
+          <div class="step">5</div>
+        </div>
+        <h3 class="reveal" style="--d:1">Passo 4 de 5</h3>
+        <span class="tool-cmd-chip reveal" style="--d:2">/enterprise rule dados-sensiveis</span>
+        <p class="reveal" style="--d:3">Como o sistema agora guarda dados sensíveis de clientes, uma regra de segurança é escrita uma vez e replicada — com hash conferido — em todos os assistentes de IA que vão mexer no projeto daqui pra frente.</p>
+      </div>
+    </section>
+
+    <!-- 14: Step 5 -->
+    <section class="slide step-slide">
+      <div class="slide-inner">
+        <div class="stepper reveal" style="--d:0">
+          <div class="step is-done">1</div><div class="step-line is-done"></div>
+          <div class="step is-done">2</div><div class="step-line is-done"></div>
+          <div class="step is-done">3</div><div class="step-line is-done"></div>
+          <div class="step is-done">4</div><div class="step-line is-done"></div>
+          <div class="step is-active">5</div>
+        </div>
+        <h3 class="reveal" style="--d:1">Passo 5 de 5</h3>
+        <span class="tool-cmd-chip reveal" style="--d:2">/ops</span>
+        <p class="reveal" style="--d:3">A stack real é provisionada: domínio próprio, HTTPS automático, login via Authentik e um painel de monitoramento avisando se o servidor cair.</p>
+      </div>
+    </section>
+
+    <!-- 15: Closing -->
+    <section class="slide closing-slide">
+      <div class="slide-inner">
+        <p class="section-eyebrow reveal" style="--d:0">Resultado final</p>
+        <h2 class="reveal" style="--d:1">De protótipo a sistema próprio</h2>
+        <div class="closing-box reveal" style="--d:2">No fim, o mesmo app que nasceu como protótipo numa plataforma de terceiros termina rodando <strong>100% sob controle dela</strong>, com regras de segurança propagadas pra qualquer IA que toque no código, um módulo de negócio novo e infraestrutura própria — e cada etapa desse caminho foi auditada pelos mesmos gates de qualidade.</div>
+        <div class="footer-meta reveal" style="--d:3">
+          <span>Fonte: AGENTS.md §1/§3 e os README.md de cada tools/&lt;ferramenta&gt;</span>
+          <span>Gerado em 2026-09-10</span>
+        </div>
+        <button class="restart-btn reveal" id="restartBtn" style="--d:4"><svg><use href="#icon-rotate"/></svg> Ver de novo desde o início</button>
+      </div>
+    </section>
+
+  </div>
+
+  <div class="deck-footer">
+    <div class="dots" id="dots"></div>
+    <span class="counter"><span id="counterCurrent">01</span> / <span id="counterTotal">16</span></span>
+  </div>
+</div>
+
+<script>
+(function(){
+  var slides = Array.prototype.slice.call(document.querySelectorAll('.slide'));
+  var total = slides.length;
+  var current = 0;
+
+  var progressBar = document.getElementById('progressBar');
+  var counterCurrent = document.getElementById('counterCurrent');
+  var counterTotal = document.getElementById('counterTotal');
+  var dotsWrap = document.getElementById('dots');
+  counterTotal.textContent = String(total).padStart(2,'0');
+
+  var dots = [];
+  slides.forEach(function(_, i){
+    var b = document.createElement('button');
+    b.className = 'dot';
+    b.setAttribute('aria-label', 'Ir para o slide ' + (i+1));
+    b.addEventListener('click', function(){ goTo(i, i > current ? 'next' : 'prev'); });
+    dotsWrap.appendChild(b);
+    dots.push(b);
+  });
+
+  function updateUI(){
+    progressBar.style.width = ((current+1)/total*100) + '%';
+    counterCurrent.textContent = String(current+1).padStart(2,'0');
+    dots.forEach(function(d, i){ d.classList.toggle('is-active', i === current); });
+  }
+
+  function goTo(index, dir){
+    if(index < 0) index = total - 1;
+    if(index >= total) index = 0;
+    if(index === current && slides[current].classList.contains('active')) return;
+    slides[current].classList.remove('active', 'dir-next', 'dir-prev');
+    current = index;
+    var el = slides[current];
+    el.classList.remove('dir-next', 'dir-prev');
+    el.classList.add(dir === 'prev' ? 'dir-prev' : 'dir-next');
+    el.classList.add('active');
+    updateUI();
+  }
+
+  function next(){ goTo(current + 1, 'next'); }
+  function prev(){ goTo(current - 1, 'prev'); }
+
+  document.getElementById('nextBtn').addEventListener('click', next);
+  document.getElementById('prevBtn').addEventListener('click', prev);
+  var restartBtn = document.getElementById('restartBtn');
+  if(restartBtn){ restartBtn.addEventListener('click', function(){ goTo(0, 'prev'); }); }
+
+  document.addEventListener('keydown', function(e){
+    if(['ArrowRight','ArrowDown','PageDown',' '].indexOf(e.key) !== -1){ e.preventDefault(); next(); }
+    else if(['ArrowLeft','ArrowUp','PageUp'].indexOf(e.key) !== -1){ e.preventDefault(); prev(); }
+    else if(e.key === 'Home'){ goTo(0, 'prev'); }
+    else if(e.key === 'End'){ goTo(total - 1, 'next'); }
+  });
+
+  var touchStartX = null;
+  document.addEventListener('touchstart', function(e){ touchStartX = e.changedTouches[0].clientX; }, {passive:true});
+  document.addEventListener('touchend', function(e){
+    if(touchStartX === null) return;
+    var dx = e.changedTouches[0].clientX - touchStartX;
+    if(Math.abs(dx) > 50){ dx < 0 ? next() : prev(); }
+    touchStartX = null;
+  }, {passive:true});
+
+  updateUI();
+})();
+</script>

@@ -63,13 +63,13 @@ O **Ecossistema AIDD** unifica 5 ferramentas complementares de Engenharia Agênt
 6. **Supremacia Agnóstica (Universalidade Total):**
    - Absolutamente TUDO (skills, mcps, specs, hooks, slash commands, fluxos, configurações) deve operar de forma 100% agnóstica a ambiente de execução, sistema operacional, harness (OpenCode, Antigravity, Claude, Mimo, Freebuff, Hermes, DeepSeek, etc.) e provedor de LLM.
    - Nenhuma dependência proprietária ou vendor lock-in é permitida no ecossistema.
-   - **Protocolo Permanente de Agnosticidade:** consulte e siga estritamente o checklist canônico em `docs/protocolos/PROTOCOLO-AGNOSTICIDADE-COMPONENTES.md`.
+   - **Protocolo Permanente de Agnosticidade:** consulte e siga estritamente o checklist canônico em `docs/protocolos/05-09-2026_protocolo-agnosticidade-componentes.md`.
 7. **Desenvolvedor no Controle (Zero Subagentes Headless Paralelos):**
    - É estritamente proibido ao assistente disparar subagentes paralelos invisíveis via tools (`task create`, `task start`, `invoke_subagent`, `background_task`) ou via subprocessos ocultos de CLI que concorram sem observabilidade.
    - Toda execução de worktree opera em modo interativo sequencial governado pelo desenvolvedor no terminal, eliminando saturação de contexto, rate limits e timeouts silenciosos.
 8. **Anti-NIH (Not Invented Here):**
    - Antes de escrever mecanismo novo com mais de ~30-50 linhas para um problema genérico (scaffolding, parsing, scanner, fila, dashboard, hardening), documentar por escrito por que nenhuma ferramenta OSS madura resolve o problema.
-   - Origem: o levantamento NIH (`docs/features/oportunidades-reaproveitamento-oss-nih.md`) documentou 26 casos onde a Regra #1 foi lida como "escreva seu próprio script determinístico" em vez de "não gaste esforço reinventando o que já está resolvido".
+   - Origem: o levantamento NIH (`docs/features/08-09-2026_feature-oportunidades-reaproveitamento-nih.md`) documentou 26 casos onde a Regra #1 foi lida como "escreva seu próprio script determinístico" em vez de "não gaste esforço reinventando o que já está resolvido".
 9. **Honestidade de Rótulo:**
    - Nenhuma mensagem de saída de gate/CLI pode usar linguagem que sugira certificação/segurança maior do que a cobertura real testada (proibido: "blindagem militar", "homologado para produção global", "nota A+" sem rubrica auditável por trás).
    - Verificado mecanicamente por `gates/G_HONESTIDADE_ROTULO.py` (AST sobre `print()`/`raise()` dos scripts de `gates/` e `scripts/gates/` de cada ferramenta, contra a lista em `gates/termos_proibidos_marketing.json`).
@@ -158,6 +158,17 @@ Regra de estilo para código **novo** escrito daqui pra frente nas 5 ferramentas
 - **Nomes de domínio de negócio → português.** Tudo que representa um conceito ou uma ação do negócio que o AIDD gera para o usuário final (módulos, funções de regra, entidades). Exemplos reais já no código: `materializar`, `dimensionar`, `reconhecer_nicho`, `sincronizar_componente`.
 - **Critério prático quando a fronteira não for óbvia:** se o nome ainda faz sentido reaproveitado num projeto genérico qualquer (não-AIDD), é técnico → inglês. Se o nome só faz sentido no contexto do negócio que está sendo gerado, é domínio → português.
 - **Decisão:** aprovada pelo usuário em 2026-09-09, formalizando o padrão observado (opção única apresentada foi aceita sem alteração).
+
+---
+
+## 4.2 DIRETRIZES DE DESIGN E GOVERNANÇA PARA RELATÓRIOS HTML
+
+Para qualquer relatório gerado em `.html` salvo em `docs/relatorios/`:
+- **Scrollbars Elegantes (Máx 4px):** Toda barra de rolagem (vertical ou horizontal) deve ter no máximo 4px de espessura (`width: 4px; height: 4px;`), trilho integrado ao fundo (`var(--bg)`) e indicador móvel (*thumb*) na cor predominante de destaque do documento (`var(--accent)`). Compatibilidade obrigatória com W3C (`scrollbar-width: thin; scrollbar-color: ...`) e WebKit (`::-webkit-scrollbar*`).
+- **Nomenclatura & Pareamento Obrigatório (`.html` + `.json`):** Salvar sempre `<dd-mm-aaaa>_<nome>.html` pareado com `<dd-mm-aaaa>_<nome>.json` contendo os dados estruturados brutos, permitindo reauditorias e comparações históricas futuras com custo mínimo de tokens (Regra #1).
+- **Geração Determinística por Script:** O modelo nunca cospe milhares de linhas de HTML no chat; executa script gerador Python determinístico e responde apenas o link clicável e o veredito conciso (Regra #10).
+- **Tríade Canônica de Skills:** `impeccable` (polimento visual e microinterações), `dataviz` (gráficos e paleta semântica) e `artifact-design` (arquitetura de informação).
+- **Guia Canônico Completo:** Especificação detalhada registrada em `docs/relatorios/DIRETRIZES-DESIGN-RELATORIOS.md`.
 
 ---
 

@@ -9,7 +9,7 @@
 #   3. Concede privilégios restritos ao usuário do banco
 #   4. Suporta senhas individuais via POSTGRES_PASSWORD_<banco>
 #
-# Referência: PLANO ARQUITETURAL NOVA FEATURE AIDD-OPS.md §5.4 e §5.5
+# Referência: 06-09-2026_feature-arquitetura-aidd-ops.md §5.4 e §5.5
 # Montagem: /docker-entrypoint-initdb.d/01-init-multiple-databases.sh
 
 #!/bin/bash

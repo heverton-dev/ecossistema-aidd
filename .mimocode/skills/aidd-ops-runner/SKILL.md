@@ -23,4 +23,4 @@ python ecossistema.py ops "<requisito>"
 
 ## Referências
 - Plano de integração: `docs/planos/feitos/integracao-aidd-ops/00-PROCESSO-E-DECISOES.md`
-- Plano arquitetural: `docs/features/PLANO ARQUITETURAL NOVA FEATURE AIDD-OPS.md`
+- Plano arquitetural: `docs/features/06-09-2026_feature-arquitetura-aidd-ops.md`

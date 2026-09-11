@@ -27,7 +27,7 @@
 ## 🏛️ Resumo Executivo da Sessão
 
 ### 1. O Que Foi Realizado
-Execução ponta a ponta da **Sessão 4: Teste Real Isolado do AIDD Enterprise (Missão Crítica & SHA-256)** conforme o PROTOCOLO-VALIDACAO-HUMANA-TESTES-REAIS.md:
+Execução ponta a ponta da **Sessão 4: Teste Real Isolado do AIDD Enterprise (Missão Crítica & SHA-256)** conforme o 06-09-2026_protocolo-validacao-testes-reais.md:
 1. Inicialização e composição isolada da suíte modular AuditoriaEnterprise na pasta C:\Users\trcnologia\Desktop\teste-isolado-aidd-enterprise via comando canônico python ecossistema.py enterprise compose.
 2. Verificação determinística de integridade com SHA-256 dos componentes, Zero-Trust, Clean Architecture com Fatias Verticais (src/modules/auditoria), SQLite WAL com WORM Audit Hash Chain.
 3. Subida do servidor HTTP em porta dedicada (8001) expondo os 5 serviços da suíte corporativa:

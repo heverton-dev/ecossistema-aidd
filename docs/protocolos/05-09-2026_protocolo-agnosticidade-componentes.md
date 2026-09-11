@@ -1,6 +1,6 @@
 ﻿# PROTOCOLO PERMANENTE DE AGNOSTICIDADE DE COMPONENTES
 
-> **Documento Canônico de Governança:** `docs/protocolos/PROTOCOLO-AGNOSTICIDADE-COMPONENTES.md`  
+> **Documento Canônico de Governança:** `docs/protocolos/05-09-2026_protocolo-agnosticidade-componentes.md`  
 > **Origem:** Seção 5 de `docs/planos/PLANO-CORRECAO-SKILLS-AGNOSTICAS.md`  
 > **Vínculo Normativo:** Regra de Ouro #6 de `AGENTS.md` (Supremacia Agnóstica)  
 > **Status:** PRODUÇÃO & AUDITADO DETERMINISTICAMENTE (`gates/G_COMPONENTE_AGNOSTICO.py`)  

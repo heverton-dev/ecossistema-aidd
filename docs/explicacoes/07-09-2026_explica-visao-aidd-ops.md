@@ -1,6 +1,6 @@
 # Guia Enciclopedico e Arquitetura Tecnica Real do AIDD-Ops
 
-> **Documento:** `docs/explicacoes/01-arquitetura-e-visao-aidd-ops.md`  
+> **Documento:** `docs/explicacoes/07-09-2026_explica-visao-aidd-ops.md`  
 > **Status:** Referencia Arquitetural Oficial e Matriz de Decisoes Canonicas  
 > **Origem:** Dialogo de Alinhamento Tecnico da Sessao 5 (Validacao Real Isolada)  
 > **Classificacao:** Engenharia de Infraestrutura, Orquestracao Soberana e Zero-Lockin  

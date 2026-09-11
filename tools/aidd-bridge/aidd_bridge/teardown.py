@@ -6,6 +6,7 @@ assegurando 100% de integridade dos outros serviços em produção (Traefik, Evo
 """
 
 import os
+import re
 import sys
 import time
 import requests
@@ -17,6 +18,12 @@ try:
 except ImportError:
     paramiko = None
 
+# app_name vira literal dentro de comandos shell remotos (docker stack rm,
+# rm -rf) em destroy_vps_stack — precisa ser só letras/números/hífen para não
+# permitir injetar comando extra via um nome malicioso.
+_APP_NAME_PATTERN = re.compile(r"^[a-z0-9][a-z0-9-]*$")
+# domain também é interpolado (via app_slug) num grep de nome de volume.
+_DOMAIN_PATTERN = re.compile(r"^[a-zA-Z0-9.-]+$")
 
 
 class BridgeTeardown:
@@ -31,7 +38,19 @@ class BridgeTeardown:
         cf_zone_id: Optional[str] = None
     ):
         self.app_name = app_name.strip()
+        if not _APP_NAME_PATTERN.match(self.app_name):
+            raise ValueError(
+                f"app_name invalido: '{self.app_name}'. "
+                "Use apenas letras minusculas, numeros e hifen (ex: hub-teste)."
+            )
+
         self.domain = domain.strip() if domain else None
+        if self.domain and not _DOMAIN_PATTERN.match(self.domain):
+            raise ValueError(
+                f"domain invalido: '{self.domain}'. "
+                "Use apenas letras, numeros, ponto e hifen (ex: hub-teste.vpsconexao.org)."
+            )
+
         self.vps_host = vps_host or os.getenv("VPS_HOST")
         self.vps_user = vps_user or os.getenv("VPS_USER", "root")
         self.vps_password = vps_password or os.getenv("VPS_PASSWORD")

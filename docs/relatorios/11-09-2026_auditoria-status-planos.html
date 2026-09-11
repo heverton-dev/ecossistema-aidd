@@ -1,0 +1,1143 @@
+<!DOCTYPE html>
+<html lang="pt-BR" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Auditoria de Planos e Progresso — Ecossistema AIDD</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+  /* ==========================================================================
+     REGRA CANONICA DE SCROLLBARS — MAX 4PX NA COR PREDOMINANTE DO DOCUMENTO
+     ========================================================================== */
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: var(--accent, #388bfd) var(--bg, #0b111a);
+  }
+  ::-webkit-scrollbar {
+    width: 4px;
+    height: 4px;
+  }
+  ::-webkit-scrollbar-track {
+    background: var(--bg, #0b111a);
+  }
+  ::-webkit-scrollbar-thumb {
+    background: var(--accent, #388bfd);
+    border-radius: 4px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: color-mix(in srgb, var(--accent, #388bfd) 80%, white);
+  }
+
+    :root {
+      --bg: #0b111a;
+      --surface: #111b27;
+      --surface-alt: #172433;
+      --border: #223447;
+      --border-subtle: #192837;
+      --text: #e6edf3;
+      --text-muted: #8b9bb0;
+      --accent: #388bfd;
+      --accent-soft: rgba(56, 139, 253, 0.15);
+      --good: #238636;
+      --good-bright: #2ea043;
+      --good-soft: rgba(46, 160, 67, 0.15);
+      --warn: #d29922;
+      --warn-soft: rgba(210, 153, 34, 0.15);
+      --crit: #f85149;
+      --crit-soft: rgba(248, 81, 73, 0.15);
+      --neutral: #6e7681;
+      --radius-sm: 6px;
+      --radius-md: 10px;
+      --radius-lg: 14px;
+      --shadow: 0 4px 20px rgba(0, 0, 0, 0.35);
+    }
+
+    * { 
+      box-sizing: border-box; 
+      margin: 0; 
+      padding: 0; 
+      scrollbar-width: thin;
+      scrollbar-color: var(--accent) var(--bg);
+    }
+
+    /* Scrollbars customizadas elegantes — Regra Canônica de Design (máx 4px, cor predominante) */
+    ::-webkit-scrollbar {
+      width: 4px;
+      height: 4px;
+    }
+    ::-webkit-scrollbar-track {
+      background: var(--bg);
+    }
+    ::-webkit-scrollbar-thumb {
+      background: var(--accent);
+      border-radius: 4px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #58a6ff;
+    }
+
+    body {
+      font-family: 'Public Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background-color: var(--bg);
+      color: var(--text);
+      line-height: 1.5;
+      padding: 32px 24px;
+    }
+
+    .container {
+      max-width: 1280px;
+      margin: 0 auto;
+    }
+
+    header {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 20px;
+      margin-bottom: 32px;
+      padding-bottom: 24px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .header-title h1 {
+      font-size: 26px;
+      font-weight: 700;
+      letter-spacing: -0.5px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .header-title p {
+      color: var(--text-muted);
+      margin-top: 6px;
+      font-size: 14px;
+    }
+
+    .header-meta {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+    }
+
+    .meta-chip {
+      background: var(--surface-alt);
+      border: 1px solid var(--border);
+      padding: 6px 14px;
+      border-radius: 20px;
+      font-size: 13px;
+      font-family: 'IBM Plex Mono', monospace;
+      color: var(--text-muted);
+    }
+
+    .meta-chip strong {
+      color: var(--text);
+    }
+
+    /* Q&A Executive Answers Box */
+    .executive-answers {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+      gap: 18px;
+      margin-bottom: 32px;
+    }
+
+    .answer-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 20px;
+      box-shadow: var(--shadow);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .answer-card::before {
+      content: "";
+      position: absolute;
+      top: 0; left: 0; bottom: 0;
+      width: 4px;
+    }
+
+    .answer-card.q1::before { background: var(--good-bright); }
+    .answer-card.q2::before { background: var(--accent); }
+    .answer-card.q3::before { background: var(--warn); }
+
+    .answer-card h3 {
+      font-size: 15px;
+      font-weight: 600;
+      margin-bottom: 10px;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .answer-card .verdict {
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 8px;
+    }
+
+    .answer-card p {
+      font-size: 13.5px;
+      color: var(--text-muted);
+      line-height: 1.5;
+    }
+
+    /* KPIs Grid */
+    .kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 16px;
+      margin-bottom: 32px;
+    }
+
+    .kpi-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 16px 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .kpi-label {
+      font-size: 12px;
+      font-weight: 600;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      letter-spacing: 0.5px;
+    }
+
+    .kpi-value {
+      font-size: 28px;
+      font-weight: 700;
+      font-family: 'IBM Plex Mono', monospace;
+      color: var(--text);
+    }
+
+    .kpi-sub {
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    .kpi-good { color: var(--good-bright); }
+    .kpi-accent { color: var(--accent); }
+    .kpi-warn { color: var(--warn); }
+
+    /* Charts Section */
+    .charts-row {
+      display: grid;
+      grid-template-columns: 1fr 2fr;
+      gap: 20px;
+      margin-bottom: 32px;
+    }
+
+    @media (max-width: 992px) {
+      .charts-row {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .chart-box {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 22px;
+      box-shadow: var(--shadow);
+    }
+
+    .chart-box h2 {
+      font-size: 16px;
+      font-weight: 600;
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .chart-container {
+      position: relative;
+      height: 280px;
+      width: 100%;
+    }
+
+    /* Filter & Controls */
+    .table-section {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 24px;
+      box-shadow: var(--shadow);
+    }
+
+    .table-header-row {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 20px;
+    }
+
+    .table-header-row h2 {
+      font-size: 18px;
+      font-weight: 600;
+    }
+
+    .filter-group {
+      display: flex;
+      gap: 8px;
+    }
+
+    .filter-btn {
+      background: var(--surface-alt);
+      border: 1px solid var(--border);
+      color: var(--text-muted);
+      padding: 6px 14px;
+      border-radius: var(--radius-sm);
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .filter-btn:hover, .filter-btn.active {
+      background: var(--accent-soft);
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+
+    /* Table Styling */
+    .table-wrapper {
+      overflow-x: auto;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13.5px;
+      text-align: left;
+    }
+
+    th {
+      background: var(--surface-alt);
+      color: var(--text-muted);
+      font-weight: 600;
+      padding: 12px 14px;
+      border-bottom: 1px solid var(--border);
+      text-transform: uppercase;
+      font-size: 11.5px;
+      letter-spacing: 0.5px;
+    }
+
+    td {
+      padding: 14px;
+      border-bottom: 1px solid var(--border-subtle);
+      vertical-align: middle;
+    }
+
+    tr:hover td {
+      background: rgba(255, 255, 255, 0.02);
+    }
+
+    .initiative-title {
+      font-weight: 600;
+      color: var(--text);
+      margin-bottom: 4px;
+    }
+
+    .initiative-path code {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 11.5px;
+      color: var(--text-muted);
+      background: var(--surface-alt);
+      padding: 2px 6px;
+      border-radius: 4px;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      padding: 4px 10px;
+      border-radius: 12px;
+      font-size: 12px;
+      font-weight: 600;
+      white-space: nowrap;
+    }
+
+    .badge-done {
+      background: var(--good-soft);
+      color: var(--good-bright);
+      border: 1px solid rgba(46, 160, 67, 0.3);
+    }
+
+    .badge-wip {
+      background: var(--warn-soft);
+      color: var(--warn);
+      border: 1px solid rgba(210, 153, 34, 0.3);
+    }
+
+    .badge-todo {
+      background: rgba(110, 118, 129, 0.15);
+      color: var(--text-muted);
+      border: 1px solid rgba(110, 118, 129, 0.3);
+    }
+
+    .progress-cell {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      min-width: 140px;
+    }
+
+    .progress-bar-bg {
+      flex: 1;
+      height: 8px;
+      background: var(--surface-alt);
+      border-radius: 4px;
+      overflow: hidden;
+      border: 1px solid var(--border-subtle);
+    }
+
+    .progress-bar-fill {
+      height: 100%;
+      border-radius: 3px;
+      transition: width 0.3s ease;
+    }
+
+    .progress-text {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 12px;
+      font-weight: 600;
+      width: 42px;
+      text-align: right;
+    }
+
+    .text-center { text-align: center; }
+    .text-mono { font-family: 'IBM Plex Mono', monospace; font-size: 12px; }
+    .text-muted { color: var(--text-muted); font-size: 12px; }
+
+    .task-details {
+      font-size: 12px;
+      cursor: pointer;
+    }
+
+    .task-details summary {
+      color: var(--accent);
+      outline: none;
+      user-select: none;
+    }
+
+    .task-list {
+      list-style: none;
+      margin-top: 8px;
+      padding-left: 4px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .task-list li {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      color: var(--text);
+    }
+
+    .task-list .status-tag {
+      margin-left: auto;
+      font-size: 10.5px;
+      color: var(--text-muted);
+      background: var(--surface-alt);
+      padding: 1px 6px;
+      border-radius: 4px;
+    }
+
+    /* Governance Alert Box */
+    .gov-banner {
+      margin-top: 32px;
+      background: rgba(56, 139, 253, 0.08);
+      border: 1px solid rgba(56, 139, 253, 0.25);
+      border-radius: var(--radius-md);
+      padding: 20px;
+      display: flex;
+      gap: 16px;
+      align-items: flex-start;
+    }
+
+    .gov-icon {
+      font-size: 24px;
+      line-height: 1;
+    }
+
+    .gov-content h4 {
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--accent);
+      margin-bottom: 6px;
+    }
+
+    .gov-content p {
+      font-size: 13.5px;
+      color: var(--text-muted);
+      line-height: 1.5;
+    }
+
+    footer {
+      margin-top: 40px;
+      text-align: center;
+      font-size: 12px;
+      color: var(--text-muted);
+      font-family: 'IBM Plex Mono', monospace;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div class="header-title">
+        <h1>📊 Auditoria de Planos & Progresso</h1>
+        <p>Ecossistema AIDD • Governança Canônica ORCA ADE • docs/planos/</p>
+      </div>
+      <div class="header-meta">
+        <div class="meta-chip">Data: <strong>11/09/2026</strong></div>
+        <div class="meta-chip">Total de Planos: <strong>21</strong></div>
+        <div class="meta-chip">Auditoria: <strong>Determinística (Exit 0)</strong></div>
+      </div>
+    </header>
+
+    <!-- Respostas Diretas às 3 Perguntas do Usuário -->
+    <div class="executive-answers">
+      <div class="answer-card q1">
+        <h3>1. Os planos estão atualizados?</h3>
+        <div class="verdict">✅ Sim, 100% Sincronizados</div>
+        <p>
+          O arquivo <code>INDEX.md</code>, a memória estruturada <code>MEMORY.md</code> e todos os 21 registros estão rigorosamente sincronizados com os commits reais (últimos merges DDD em 10/09/2026). Os itens pendentes em <em>fazendo</em> aguardam aprovação explícita conforme a Regra de Ouro da Governança (zero aprovação fabricada).
+        </p>
+      </div>
+
+      <div class="answer-card q2">
+        <h3>2. Precisam ser movidos?</h3>
+        <div class="verdict">🛡️ Não, Nenhuma Movimentação</div>
+        <p>
+          O script canônico <code>scripts/atualizar_index_planos.py --dry-run</code> confirmou <strong>0 pendências de movimentação</strong>. Todos os 14 planos concluídos estão em <code>feitos/</code>, os 2 com itens em andamento estão em <code>fazendo/</code> e os 5 planejados estão em <code>a-fazer/</code>.
+        </p>
+      </div>
+
+      <div class="answer-card q3">
+        <h3>3. Qual o progresso de cada um?</h3>
+        <div class="verdict">📈 54.0% das Tarefas (88/163)</div>
+        <p>
+          <strong>66.7% das iniciativas</strong> já estão 100% concluídas (14/21). Entre as ativas, <em>Correção Pós-Auditoria</em> está em <strong>22.2%</strong> e <em>Código Limpo Profundo</em> está em <strong>5.6%</strong>. Os 5 planos em <em>a-fazer</em> têm escopos já detalhados e aguardam execução sequencial.
+        </p>
+      </div>
+    </div>
+
+    <!-- KPIs -->
+    <div class="kpi-grid">
+      <div class="kpi-card">
+        <div class="kpi-label">Iniciativas Feitas</div>
+        <div class="kpi-value kpi-good">14 <span style="font-size:14px;color:var(--text-muted)">/ 21</span></div>
+        <div class="kpi-sub">66.7% do total</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">Iniciativas em Andamento</div>
+        <div class="kpi-value kpi-warn">2</div>
+        <div class="kpi-sub">correcao-pos-auditoria & codigo-limpo</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">Iniciativas a Fazer</div>
+        <div class="kpi-value kpi-accent">5</div>
+        <div class="kpi-sub">Fila priorizada</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">Tarefas Concluídas</div>
+        <div class="kpi-value kpi-good">88 <span style="font-size:14px;color:var(--text-muted)">/ 163</span></div>
+        <div class="kpi-sub">54.0% do backlog total</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">Tarefas Pendentes</div>
+        <div class="kpi-value" style="color:var(--neutral)">75</div>
+        <div class="kpi-sub">31 em fazendo + 44 a-fazer</div>
+      </div>
+    </div>
+
+    <!-- Charts Row -->
+    <div class="charts-row">
+      <div class="chart-box">
+        <h2>🥧 Distribuição de Iniciativas</h2>
+        <div class="chart-container">
+          <canvas id="donutIniciativas"></canvas>
+        </div>
+      </div>
+      <div class="chart-box">
+        <h2>📊 Progresso Geral de Tarefas por Categoria</h2>
+        <div class="chart-container">
+          <canvas id="barCategorias"></canvas>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tabela Detalhada com Filtros -->
+    <div class="table-section">
+      <div class="table-header-row">
+        <h2>📑 Mapeamento Individual de Iniciativas (21)</h2>
+        <div class="filter-group">
+          <button class="filter-btn active" onclick="filtrar('todos', this)">Todos (21)</button>
+          <button class="filter-btn" onclick="filtrar('feitos', this)">Feitos (14)</button>
+          <button class="filter-btn" onclick="filtrar('fazendo', this)">Fazendo (2)</button>
+          <button class="filter-btn" onclick="filtrar('a-fazer', this)">A Fazer (5)</button>
+        </div>
+      </div>
+
+      <div class="table-wrapper">
+        <table id="tabelaPlanos">
+          <thead>
+            <tr>
+              <th style="min-width: 260px;">Iniciativa / Localização</th>
+              <th>Status</th>
+              <th>Progresso</th>
+              <th class="text-center">Tarefas</th>
+              <th style="min-width: 320px;">Detalhes do Escopo</th>
+              <th class="text-center">Último Commit</th>
+            </tr>
+          </thead>
+          <tbody>
+            
+    <tr data-cat="feitos">
+      <td>
+        <div class="initiative-title">01-reestruturacao-ddd-clean-architecture</div>
+        <div class="initiative-path"><code>docs/planos/docs/planos/feitos/01-reestruturacao-ddd-clean-architecture</code></div>
+      </td>
+      <td><span class="badge badge-done">Concluído</span></td>
+      <td>
+        <div class="progress-cell">
+          <div class="progress-bar-bg">
+            <div class="progress-bar-fill" style="width: 100.0%; background-color: var(--good);"></div>
+          </div>
+          <span class="progress-text">100.0%</span>
+        </div>
+      </td>
+      <td class="text-center"><strong>10</strong> / 10</td>
+      <td><details class='task-details'><summary>10 tarefas mapeadas (clique para ver)</summary><ul class='task-list'><li><span class='icon'>✅</span> <span class='title'>fechar-nucleo-compartilhado-e-honestidade-rotulos</span> <span class='status-tag'>Concluído</span></li><li><span class='icon'>✅</span> <span class='title'>unificar-orquestradores-generator-e-ops</span> <span class='status-tag'>Concluído</span></li><li><span class='icon'>✅</span> <span class='title'>extrair-camada-aplicacao-dos-clis-master-enterprise</span> <span class='status-tag'>Concluído</span></li><li><span class='icon'>✅</span> <span class='title'>remover-hacks-syspath-no-generator</span> <span class='status-tag'>Concluído</span></li><li><span class='icon'>✅</span> <span class='title'>contrato-formal-schema-ops-para-master-enterprise</span> <span class='status-tag'>Concluído</span></li><li><span class='icon'>✅</span> <span class='title'>novo-molde-fatia-vertical-ddd-clean-master</span> <span class='status-tag'>Concluído</span></li><li><span class='icon'>✅</span> <span class='title'>gate-g-arquitetura-deliverable</span> <span class='status-tag'>Concluído</span></li><li><span class='icon'>✅</span> <span class='title'>atualizar-scaffolders-master-enterprise-cookiecutter</span> <span class='status-tag'>Concluído</span></li><li><span class='icon'>✅</span> <span class='title'>trazer-deliverables-generator-perimetro-gates</span> <span class='status-tag'>Concluído</span></li><li><span class='icon'>✅</span> <span class='title'>teste-integracao-helm-aidd-ops</span> <span class='status-tag'>Concluído</span></li></ul></details></td>
+      <td class="text-mono text-center">09/2026</td>
+    </tr>
+    
+
+    <tr data-cat="feitos">
+      <td>
+        <div class="initiative-title">02-direcionamento-estrategico-anti-nih</div>
+        <div class="initiative-path"><code>docs/planos/docs/planos/feitos/02-direcionamento-estrategico-anti-nih</code></div>
+      </td>
+      <td><span class="badge badge-done">Concluído</span></td>
+      <td>
+        <div class="progress-cell">
+          <div class="progress-bar-bg">
+            <div class="progress-bar-fill" style="width: 100.0%; background-color: var(--good);"></div>
+          </div>
+          <span class="progress-text">100.0%</span>
+        </div>
+      </td>
+      <td class="text-center"><strong>3</strong> / 3</td>
+      <td><details class='task-details'><summary>3 tarefas mapeadas (clique para ver)</summary><ul class='task-list'><li><span class='icon'>✅</span> <span class='title'>Inventario do que fica vs o que troca por ferramenta (o trabalho que continua de pe)</span> <span class='status-tag'>Concluído</span></li><li><span class='icon'>✅</span> <span class='title'>Registro do direcionamento correto e 2 novas Regras de Ouro (checklist anti-NIH, zero linguagem de marketing)</span> <span class='status-tag'>Concluído</span></li><li><span class='icon'>✅</span> <span class='title'>Bootstrap de dependências do produto gerado, por ferramenta (forge não é chamado por nenhuma das outras 4)</span> <span class='status-tag'>Concluído</span></li></ul></details></td>
+      <td class="text-mono text-center">09/2026</td>
+    </tr>
+    
+
+    <tr data-cat="feitos">
+      <td>
+        <div class="initiative-title">03-evolucao-aidd-ops-fase-completa</div>
+        <div class="initiative-path"><code>docs/planos/docs/planos/feitos/03-evolucao-aidd-ops-fase-completa</code></div>
+      </td>
+      <td><span class="badge badge-done">Concluído</span></td>
+      <td>
+        <div class="progress-cell">
+          <div class="progress-bar-bg">
+            <div class="progress-bar-fill" style="width: 100.0%; background-color: var(--good);"></div>
+          </div>
+          <span class="progress-text">100.0%</span>
+        </div>
+      </td>
+      <td class="text-center"><strong>4</strong> / 4</td>
+      <td><details class='task-details'><summary>4 tarefas mapeadas (clique para ver)</summary><ul class='task-list'><li><span class='icon'>✅</span> <span class='title'>Intake Interativo Web Sem Friccao</span> <span class='status-tag'>Concluído</span></li><li><span class='icon'>✅</span> <span class='title'>Cofre Local e Coleta Segura de Credenciais</span> <span class='status-tag'>Concluído</span></li><li><span class='icon'>✅</span> <span class='title'>AppShell White-Label e Studios OpenAPI Webhook MCP</span> <span class='status-tag'>Concluído</span></li><li><span class='icon'>✅</span> <span class='title'>Isolamento Estrito em VPS Compartilhada e Uninstall Atomico</span> <span class='status-tag'>Concluído</span></li></ul></details></td>
+      <td class="text-mono text-center">09/2026</td>
+    </tr>
+    
+
+    <tr data-cat="feitos">
+      <td>
+        <div class="initiative-title">aidd-bridge</div>
+        <div class="initiative-path"><code>docs/planos/docs/planos/feitos/aidd-bridge</code></div>
+      </td>
+      <td><span class="badge badge-done">Concluído</span></td>
+      <td>
+        <div class="progress-cell">
+          <div class="progress-bar-bg">
+            <div class="progress-bar-fill" style="width: 100.0%; background-color: var(--good);"></div>
+          </div>
+          <span class="progress-text">100.0%</span>
+        </div>
+      </td>
+      <td class="text-center"><strong>4</strong> / 4</td>
+      <td><details class='task-details'><summary>4 tarefas mapeadas (clique para ver)</summary><ul class='task-list'><li><span class='icon'>✅</span> <span class='title'>Scanner e Ingestor de Projetos Lovable</span> <span class='status-tag'>Concluído</span></li><li><span class='icon'>✅</span> <span class='title'>Data Bridge: Supabase SQL para PostgreSQL e PostgREST</span> <span class='status-tag'>Concluído</span></li><li><span class='icon'>✅</span> <span class='title'>Multi-App Unifier: Fusao de Telas, Rotas e Tailwind</span> <span class='status-tag'>Concluído</span></li><li><span class='icon'>✅</span> <span class='title'>DevOps e VPS Packager: Docker Compose, Nginx e SSL Automatico</span> <span class='status-tag'>Concluído</span></li></ul></details></td>
+      <td class="text-mono text-center">09/2026</td>
+    </tr>
+    
+
+    <tr data-cat="feitos">
+      <td>
+        <div class="initiative-title">correcao-arquitetura-limpa</div>
+        <div class="initiative-path"><code>docs/planos/docs/planos/feitos/correcao-arquitetura-limpa</code></div>
+      </td>
+      <td><span class="badge badge-done">Concluído</span></td>
+      <td>
+        <div class="progress-cell">
+          <div class="progress-bar-bg">
+            <div class="progress-bar-fill" style="width: 100.0%; background-color: var(--good);"></div>
+          </div>
+          <span class="progress-text">100.0%</span>
+        </div>
+      </td>
+      <td class="text-center"><strong>5</strong> / 5</td>
+      <td><details class='task-details'><summary>5 tarefas mapeadas (clique para ver)</summary><ul class='task-list'><li><span class='icon'>✅</span> <span class='title'>Extrair HTML embutido gigante para arquivo proprio (get_swagger_html e get_studio_html)</span> <span class='status-tag'>Concluído</span></li><li><span class='icon'>✅</span> <span class='title'>Ampliar G_DRIFT_NUCLEO_COMPARTILHADO para cobrir outros pares duplicados entre aidd-master e aidd-enterprise</span> <span class='status-tag'>Concluído</span></li><li><span class='icon'>✅</span> <span class='title'>Registrar duplicacao de codigo real da skill orca-plan-orchestrator nas 7 (na verdade 8, corrigido por reproducao real) pastas de harness (sem acao corretiva)</span> <span class='status-tag'>Concluído</span></li><li><span class='icon'>✅</span> <span class='title'>Eliminar execucao redundante de suite de teste de skills materializadas 7x (na verdade, achado nao reproduzido — nenhuma execucao automatica existe hoje)</span> <span class='status-tag'>Concluído</span></li><li><span class='icon'>✅</span> <span class='title'>Ampliar G_DRIFT_NUCLEO_COMPARTILHADO para comparar scripts/gates vs templates/gates dentro da mesma ferramenta</span> <span class='status-tag'>Concluído</span></li></ul></details></td>
+      <td class="text-mono text-center">09/2026</td>
+    </tr>
+    
+
+    <tr data-cat="feitos">
+      <td>
+        <div class="initiative-title">correcao-codigo-limpo</div>
+        <div class="initiative-path"><code>docs/planos/docs/planos/feitos/correcao-codigo-limpo</code></div>
+      </td>
+      <td><span class="badge badge-done">Concluído</span></td>
+      <td>
+        <div class="progress-cell">
+          <div class="progress-bar-bg">
+            <div class="progress-bar-fill" style="width: 100.0%; background-color: var(--good);"></div>
+          </div>
+          <span class="progress-text">100.0%</span>
+        </div>
+      </td>
+      <td class="text-center"><strong>8</strong> / 8</td>
+      <td><details class='task-details'><summary>8 tarefas mapeadas (clique para ver)</summary><ul class='task-list'><li><span class='icon'>✅</span> <span class='title'>Trocar except Exception generico por excecoes especificas nas 5 ferramentas</span> <span class='status-tag'>Concluído</span></li><li><span class='icon'>✅</span> <span class='title'>Eliminar except sem tipo (bare except) em aidd-enterprise, aidd-master e aidd-generator</span> <span class='status-tag'>Concluído</span></li><li><span class='icon'>✅</span> <span class='title'>Dividir metodos com mais de 100 linhas nas classes grandes do aidd-generator e aidd-ops</span> <span class='status-tag'>Concluído</span></li><li><span class='icon'>✅</span> <span class='title'>Dividir run_all_checks (G_SEGURANCA.py) em funcoes menores por camada de responsabilidade</span> <span class='status-tag'>Concluído</span></li><li><span class='icon'>✅</span> <span class='title'>Remover import duplicado (import subprocess repetido) em G_SEGURANCA.py</span> <span class='status-tag'>Concluído</span></li><li><span class='icon'>✅</span> <span class='title'>Substituir comentarios-divisorios de secao por decomposicao real em funcao onde o mesmo padrao se repete</span> <span class='status-tag'>Concluído</span></li><li><span class='icon'>✅</span> <span class='title'>Definir e documentar convencao unica de nomenclatura PT-BR e ingles entre as ferramentas</span> <span class='status-tag'>Concluído</span></li><li><span class='icon'>✅</span> <span class='title'>Registrar ranking de limpeza por ferramenta atualizado com todas as metricas (sem acao corretiva)</span> <span class='status-tag'>Concluído</span></li></ul></details></td>
+      <td class="text-mono text-center">09/2026</td>
+    </tr>
+    
+
+    <tr data-cat="feitos">
+      <td>
+        <div class="initiative-title">evolucao-notas-auditoria</div>
+        <div class="initiative-path"><code>docs/planos/docs/planos/feitos/evolucao-notas-auditoria</code></div>
+      </td>
+      <td><span class="badge badge-done">Concluído</span></td>
+      <td>
+        <div class="progress-cell">
+          <div class="progress-bar-bg">
+            <div class="progress-bar-fill" style="width: 100.0%; background-color: var(--good);"></div>
+          </div>
+          <span class="progress-text">100.0%</span>
+        </div>
+      </td>
+      <td class="text-center"><strong>7</strong> / 7</td>
+      <td><details class='task-details'><summary>7 tarefas mapeadas (clique para ver)</summary><ul class='task-list'><li><span class='icon'>✅</span> <span class='title'>✅ Concluído</span> <span class='status-tag'>Concluído</span></li><li><span class='icon'>✅</span> <span class='title'>✅ Concluído (implementado por agente externo, auditado e confirmado por mim)</span> <span class='status-tag'>Concluído</span></li><li><span class='icon'>✅</span> <span class='title'>✅ Concluído</span> <span class='status-tag'>Concluído</span></li><li><span class='icon'>✅</span> <span class='title'>✅ Concluído</span> <span class='status-tag'>Concluído</span></li><li><span class='icon'>✅</span> <span class='title'>✅ Concluído</span> <span class='status-tag'>Concluído</span></li><li><span class='icon'>✅</span> <span class='title'>✅ Concluído</span> <span class='status-tag'>Concluído</span></li><li><span class='icon'>✅</span> <span class='title'>✅ Concluído</span> <span class='status-tag'>Concluído</span></li></ul></details></td>
+      <td class="text-mono text-center">09/2026</td>
+    </tr>
+    
+
+    <tr data-cat="feitos">
+      <td>
+        <div class="initiative-title">integracao-aidd-ops</div>
+        <div class="initiative-path"><code>docs/planos/docs/planos/feitos/integracao-aidd-ops</code></div>
+      </td>
+      <td><span class="badge badge-done">Concluído</span></td>
+      <td>
+        <div class="progress-cell">
+          <div class="progress-bar-bg">
+            <div class="progress-bar-fill" style="width: 100.0%; background-color: var(--good);"></div>
+          </div>
+          <span class="progress-text">100.0%</span>
+        </div>
+      </td>
+      <td class="text-center"><strong>9</strong> / 9</td>
+      <td><details class='task-details'><summary>9 tarefas mapeadas (clique para ver)</summary><ul class='task-list'><li><span class='icon'>✅</span> <span class='title'>✅ Concluído em 06/09/2026 — 5ª ferramenta oficial (implementação restrita a Fases 1-3 no Pacote 3), MVP primeiro, VPS descartável já disponível (detalhes só no Pacote 4), piloto = Clínicas</span> <span class='status-tag'>Concluído</span></li><li><span class='icon'>✅</span> <span class='title'>✅ Concluído em 06/09/2026 — Reconhecimento da 5ª ferramenta em AGENTS.md, gates G_ECOSSISTEMA_INTEGRIDADE e G_CLI_HELP_CONSISTENCIA atualizados, escopo aidd-ops no manifesto, fontes canônicas em componentes/compartilhado/ e componentes/aidd-ops/, sync multi-harness validado (commit 3ebf29a / e22b53a)</span> <span class='status-tag'>Concluído</span></li><li><span class='icon'>✅</span> <span class='title'>✅ Concluído em 06/09/2026 — Fases 1 (Intake), 2 (Curadoria) e 3 (Sizing) implementadas de forma 100% determinística (zero LLM), Result monad, 3 JSON Schemas, catálogos em data/, orquestrador pipeline_ops.py, gate próprio G_OPS_MVP aprovado, 21 testes verdes (commit 3ebf29a / e22b53a)</span> <span class='status-tag'>Concluído</span></li><li><span class='icon'>✅</span> <span class='title'>✅ Concluído em 06/09/2026 — Runner determinístico implementado (tools/aidd-ops/src/core/ssh_runner.py) com Paramiko, Result monad, lista fechada de 5 operações (anti-injeção), gate AST G_OPS_SSH aprovado, 17 novos testes unitários verdes (30 testes no total), subcomando `ops bootstrap` validado via CLI</span> <span class='status-tag'>Concluído</span></li><li><span class='icon'>✅</span> <span class='title'>✅ Concluído em 06/09/2026 — MCPs cloudflare-mcp e docker-mcp criados na fonte canônica componentes/aidd-ops/mcps/ e sincronizados via gestor_componentes (2 componentes verificados), stdlib apenas (urllib.request, sem requests), docker-mcp read-only estrito, 9 novos testes unitários herméticos com mocks, 39 testes unitários verdes no total, gates G_SEGREDOS, G_COMPONENTE_AGNOSTICO, G_HARNESS_COMPAT e G_OPS_MVP 100% aprovados</span> <span class='status-tag'>Concluído</span></li><li><span class='icon'>✅</span> <span class='title'>✅ Concluído em 06/09/2026 — Quality Gate estático implementado (gates/G_INFRA_COMPOSE.py), validação de 7 docker-compose.yml sob aidd-ops, validação de init-multiple-databases.sh e conformidade com os 5 nichos, detecção de colisão de portas e cobertura de .env.example, registrado em ecossistema.py como 7º gate raiz e documentado em AGENTS.md §4, 6 testes unitários em gates/test_g_infra_compose.py, 7 gates globais 100% aprovados</span> <span class='status-tag'>Concluído</span></li><li><span class='icon'>✅</span> <span class='title'>✅ Concluído em 06/09/2026 — Subcomando `ops preflight <ambiente>` implementado em pipeline_ops.py e tools/aidd-ops/src/core/preflight.py com 4 checagens (healthz, SSL, DNS, webhook), retries configuráveis, saída JSON estruturada, 12 testes unitários herméticos com servidores locais reais (http.server.HTTPServer), zero stubs, 51 testes verdes em aidd-ops</span> <span class='status-tag'>Concluído</span></li><li><span class='icon'>✅</span> <span class='title'>✅ Concluído em 06/09/2026 — 7 blocos construtivos canônicos (traefik, postgres, authentik, twenty, chatwoot, calcom, gateway) versionados em tools/aidd-ops/templates/infra/, 5 planos estáticos por nicho em nichos/*.json, 100% auditados e aprovados via gates/G_INFRA_COMPOSE.py, desacoplamento preservado (sem tocar em aidd-generator)</span> <span class='status-tag'>Concluído</span></li><li><span class='icon'>✅</span> <span class='title'>✅ Concluído em 06/09/2026 — Orquestrador `pipeline_ops_deploy.py` implementado com Result monad e fail-fast, integrado em `ops deploy <ambiente>`, 5 testes unitários cobrindo fluxo determinístico e rollback seguro, 56 testes totais verdes em aidd-ops, gates globais aprovados</span> <span class='status-tag'>Concluído</span></li></ul></details></td>
+      <td class="text-mono text-center">09/2026</td>
+    </tr>
+    
+
+    <tr data-cat="feitos">
+      <td>
+        <div class="initiative-title">PLANO-CORRECAO-RISCOS-ECOSSISTEMA-AIDD.md</div>
+        <div class="initiative-path"><code>docs/planos/docs/planos/feitos/PLANO-CORRECAO-RISCOS-ECOSSISTEMA-AIDD.md</code></div>
+      </td>
+      <td><span class="badge badge-done">Concluído</span></td>
+      <td>
+        <div class="progress-cell">
+          <div class="progress-bar-bg">
+            <div class="progress-bar-fill" style="width: 100.0%; background-color: var(--good);"></div>
+          </div>
+          <span class="progress-text">100.0%</span>
+        </div>
+      </td>
+      <td class="text-center"><strong>8</strong> / 8</td>
+      <td><span class='text-muted'>Item único ou checklist direto (CONCLUÍDO — todos os 8 riscos corrigidos e validados em 04/09/2026)</span></td>
+      <td class="text-mono text-center">09/2026</td>
+    </tr>
+    
+
+    <tr data-cat="feitos">
+      <td>
+        <div class="initiative-title">refinamento-notas-auditoria</div>
+        <div class="initiative-path"><code>docs/planos/docs/planos/feitos/refinamento-notas-auditoria</code></div>
+      </td>
+      <td><span class="badge badge-done">Concluído</span></td>
+      <td>
+        <div class="progress-cell">
+          <div class="progress-bar-bg">
+            <div class="progress-bar-fill" style="width: 100.0%; background-color: var(--good);"></div>
+          </div>
+          <span class="progress-text">100.0%</span>
+        </div>
+      </td>
+      <td class="text-center"><strong>6</strong> / 6</td>
+      <td><details class='task-details'><summary>6 tarefas mapeadas (clique para ver)</summary><ul class='task-list'><li><span class='icon'>✅</span> <span class='title'>Cobertura de comandos — aidd-forge/aidd-generator</span> <span class='status-tag'>Concluído</span></li><li><span class='icon'>✅</span> <span class='title'>Disclosure plan/prompt</span> <span class='status-tag'>Concluído</span></li><li><span class='icon'>✅</span> <span class='title'>Prova adversarial dos gates originais</span> <span class='status-tag'>Concluído</span></li><li><span class='icon'>✅</span> <span class='title'>Unificação do injetor aidd-enterprise</span> <span class='status-tag'>Concluído</span></li><li><span class='icon'>✅</span> <span class='title'>Investigação do mecanismo do agy</span> <span class='status-tag'>Concluído</span></li><li><span class='icon'>✅</span> <span class='title'>Correção de documentação desatualizada (residual dos Itens 2 e 4)</span> <span class='status-tag'>Concluído</span></li></ul></details></td>
+      <td class="text-mono text-center">09/2026</td>
+    </tr>
+    
+
+    <tr data-cat="feitos">
+      <td>
+        <div class="initiative-title">skill-gerador-planos-auditoria</div>
+        <div class="initiative-path"><code>docs/planos/docs/planos/feitos/skill-gerador-planos-auditoria</code></div>
+      </td>
+      <td><span class="badge badge-done">Concluído</span></td>
+      <td>
+        <div class="progress-cell">
+          <div class="progress-bar-bg">
+            <div class="progress-bar-fill" style="width: 100.0%; background-color: var(--good);"></div>
+          </div>
+          <span class="progress-text">100.0%</span>
+        </div>
+      </td>
+      <td class="text-center"><strong>1</strong> / 1</td>
+      <td><details class='task-details'><summary>1 tarefas mapeadas (clique para ver)</summary><ul class='task-list'><li><span class='icon'>✅</span> <span class='title'>Criar skill `planos-auditoria-runner`</span> <span class='status-tag'>Concluído</span></li></ul></details></td>
+      <td class="text-mono text-center">09/2026</td>
+    </tr>
+    
+
+    <tr data-cat="feitos">
+      <td>
+        <div class="initiative-title">skill-orquestracao-orca-ade</div>
+        <div class="initiative-path"><code>docs/planos/docs/planos/feitos/skill-orquestracao-orca-ade</code></div>
+      </td>
+      <td><span class="badge badge-done">Concluído</span></td>
+      <td>
+        <div class="progress-cell">
+          <div class="progress-bar-bg">
+            <div class="progress-bar-fill" style="width: 100.0%; background-color: var(--good);"></div>
+          </div>
+          <span class="progress-text">100.0%</span>
+        </div>
+      </td>
+      <td class="text-center"><strong>6</strong> / 6</td>
+      <td><details class='task-details'><summary>6 tarefas mapeadas (clique para ver)</summary><ul class='task-list'><li><span class='icon'>✅</span> <span class='title'>Núcleo mecânico (parser/state/worktree)</span> <span class='status-tag'>Concluído</span></li><li><span class='icon'>✅</span> <span class='title'>Gate auditor integrado</span> <span class='status-tag'>Concluído</span></li><li><span class='icon'>✅</span> <span class='title'>Harness profiles + agent spawner (sem disparo real)</span> <span class='status-tag'>Concluído</span></li><li><span class='icon'>✅</span> <span class='title'>Hooks + circuit breaker</span> <span class='status-tag'>Concluído</span></li><li><span class='icon'>✅</span> <span class='title'>CLI orchestrate + Plano de Voo</span> <span class='status-tag'>Concluído</span></li><li><span class='icon'>✅</span> <span class='title'>Validação end-to-end com agentes reais</span> <span class='status-tag'>Concluído</span></li></ul></details></td>
+      <td class="text-mono text-center">09/2026</td>
+    </tr>
+    
+
+    <tr data-cat="feitos">
+      <td>
+        <div class="initiative-title">testes-completos-ecossistema</div>
+        <div class="initiative-path"><code>docs/planos/docs/planos/feitos/testes-completos-ecossistema</code></div>
+      </td>
+      <td><span class="badge badge-done">Concluído</span></td>
+      <td>
+        <div class="progress-cell">
+          <div class="progress-bar-bg">
+            <div class="progress-bar-fill" style="width: 100.0%; background-color: var(--good);"></div>
+          </div>
+          <span class="progress-text">100.0%</span>
+        </div>
+      </td>
+      <td class="text-center"><strong>6</strong> / 6</td>
+      <td><details class='task-details'><summary>6 tarefas mapeadas (clique para ver)</summary><ul class='task-list'><li><span class='icon'>✅</span> <span class='title'>Orquestração raiz</span> <span class='status-tag'>Concluído</span></li><li><span class='icon'>✅</span> <span class='title'>AIDD Master</span> <span class='status-tag'>Concluído</span></li><li><span class='icon'>✅</span> <span class='title'>AIDD Enterprise</span> <span class='status-tag'>Concluído</span></li><li><span class='icon'>✅</span> <span class='title'>AIDD Forge</span> <span class='status-tag'>Concluído</span></li><li><span class='icon'>✅</span> <span class='title'>AIDD Generator</span> <span class='status-tag'>Concluído</span></li><li><span class='icon'>✅</span> <span class='title'>AIDD Ops</span> <span class='status-tag'>Concluído</span></li></ul></details></td>
+      <td class="text-mono text-center">09/2026</td>
+    </tr>
+    
+
+    <tr data-cat="feitos">
+      <td>
+        <div class="initiative-title">validacao-humana-testes-reais</div>
+        <div class="initiative-path"><code>docs/planos/docs/planos/feitos/validacao-humana-testes-reais</code></div>
+      </td>
+      <td><span class="badge badge-done">Concluído</span></td>
+      <td>
+        <div class="progress-cell">
+          <div class="progress-bar-bg">
+            <div class="progress-bar-fill" style="width: 100.0%; background-color: var(--good);"></div>
+          </div>
+          <span class="progress-text">100.0%</span>
+        </div>
+      </td>
+      <td class="text-center"><strong>6</strong> / 6</td>
+      <td><details class='task-details'><summary>6 tarefas mapeadas (clique para ver)</summary><ul class='task-list'><li><span class='icon'>✅</span> <span class='title'>✅ Concluído & Aprovado</span> <span class='status-tag'>Concluído</span></li><li><span class='icon'>✅</span> <span class='title'>✅ Concluído & Aprovado</span> <span class='status-tag'>Concluído</span></li><li><span class='icon'>✅</span> <span class='title'>✅ Concluído & Aprovado</span> <span class='status-tag'>Concluído</span></li><li><span class='icon'>✅</span> <span class='title'>✅ Concluído & Aprovado</span> <span class='status-tag'>Concluído</span></li><li><span class='icon'>✅</span> <span class='title'>✅ Concluído & Aprovado</span> <span class='status-tag'>Concluído</span></li><li><span class='icon'>✅</span> <span class='title'>✅ Concluído & Homologado</span> <span class='status-tag'>Concluído</span></li></ul></details></td>
+      <td class="text-mono text-center">09/2026</td>
+    </tr>
+    
+
+    <tr data-cat="fazendo">
+      <td>
+        <div class="initiative-title">01-correcao-pos-auditoria-sem-maquiagem</div>
+        <div class="initiative-path"><code>docs/planos/docs/planos/fazendo/01-correcao-pos-auditoria-sem-maquiagem</code></div>
+      </td>
+      <td><span class="badge badge-wip">Em Execução</span></td>
+      <td>
+        <div class="progress-cell">
+          <div class="progress-bar-bg">
+            <div class="progress-bar-fill" style="width: 22.2%; background-color: var(--accent);"></div>
+          </div>
+          <span class="progress-text">22.2%</span>
+        </div>
+      </td>
+      <td class="text-center"><strong>4</strong> / 18</td>
+      <td><details class='task-details'><summary>18 tarefas mapeadas (clique para ver)</summary><ul class='task-list'><li><span class='icon'>✅</span> <span class='title'>Gates rodarem pytest de verdade (nao so estrutura)</span> <span class='status-tag'>Concluído</span></li><li><span class='icon'>⏳</span> <span class='title'>Telemetria de testes sempre remedida, nunca gravada estatica</span> <span class='status-tag'>Pendente</span></li><li><span class='icon'>⏳</span> <span class='title'>G_ZERO_HEADLESS: enforcement real, nao so grep de string</span> <span class='status-tag'>Pendente</span></li><li><span class='icon'>⏳</span> <span class='title'>Reverter CSP relaxado no template compartilhado (unsafe-inline/CDN)</span> <span class='status-tag'>Pendente</span></li><li><span class='icon'>⏳</span> <span class='title'>Remover seed de demo (webhook.site + secret hardcoded) da geracao padrao</span> <span class='status-tag'>Pendente</span></li><li><span class='icon'>⏳</span> <span class='title'>enterprise inject: dry-run real por padrao antes de gravar no working tree</span> <span class='status-tag'>Pendente</span></li><li><span class='icon'>⏳</span> <span class='title'>Corrigir gate de seguranca rotulado blindagem militar (rotulo ou cobertura real)</span> <span class='status-tag'>Pendente</span></li><li><span class='icon'>⏳</span> <span class='title'>Sincronizar CLI do aidd-ops com a suite de testes</span> <span class='status-tag'>Pendente</span></li><li><span class='icon'>⏳</span> <span class='title'>Corrigir porta duplicada no compose gerado e parar dashboard de fabricar resultado de preflight</span> <span class='status-tag'>Pendente</span></li><li><span class='icon'>⏳</span> <span class='title'>Corrigir CORS inseguro (allow_origins=* + allow_credentials=True) no app gerado pelo generator</span> <span class='status-tag'>Pendente</span></li><li><span class='icon'>⏳</span> <span class='title'>Corrigir deploy Docker do modulo gerado (pip install ausente, nginx/ inexistente, secret em texto plano)</span> <span class='status-tag'>Pendente</span></li><li><span class='icon'>⏳</span> <span class='title'>Prova real de integracao multi-ferramenta no teste integrado</span> <span class='status-tag'>Pendente</span></li><li><span class='icon'>⏳</span> <span class='title'>Reduzir custo de token nas ferramentas de nucleo deterministico (master/enterprise/ops/CLI)</span> <span class='status-tag'>Pendente</span></li><li><span class='icon'>⏳</span> <span class='title'>Remover ou ligar codigo morto de resiliencia no enterprise</span> <span class='status-tag'>Pendente</span></li><li><span class='icon'>⏳</span> <span class='title'>requirements.txt do app gerado pelo generator dessincronizado do codigo real</span> <span class='status-tag'>Pendente</span></li><li><span class='icon'>✅</span> <span class='title'>XSS armazenado real em `get_studio_html` (núcleo compartilhado)</span> <span class='status-tag'>Concluído</span></li><li><span class='icon'>✅</span> <span class='title'>CLI aidd_inject convertida de argparse para click pela metade</span> <span class='status-tag'>Concluído</span></li><li><span class='icon'>✅</span> <span class='title'>CLI do aidd-forge convertida de argparse para click pela metade (suíte quebrada)</span> <span class='status-tag'>Concluído</span></li></ul></details></td>
+      <td class="text-mono text-center">09/2026</td>
+    </tr>
+    
+
+    <tr data-cat="fazendo">
+      <td>
+        <div class="initiative-title">codigo-limpo-profundo-ecossistema</div>
+        <div class="initiative-path"><code>docs/planos/docs/planos/fazendo/codigo-limpo-profundo-ecossistema</code></div>
+      </td>
+      <td><span class="badge badge-wip">Em Execução</span></td>
+      <td>
+        <div class="progress-cell">
+          <div class="progress-bar-bg">
+            <div class="progress-bar-fill" style="width: 5.6%; background-color: var(--accent);"></div>
+          </div>
+          <span class="progress-text">5.6%</span>
+        </div>
+      </td>
+      <td class="text-center"><strong>1</strong> / 18</td>
+      <td><details class='task-details'><summary>18 tarefas mapeadas (clique para ver)</summary><ul class='task-list'><li><span class='icon'>✅</span> <span class='title'>Extrair nucleo compartilhado src-core entre master e enterprise (27 arquivos idênticos e divergência silenciosa)</span> <span class='status-tag'>Concluído</span></li><li><span class='icon'>⏳</span> <span class='title'>Extrair e proteger templates duplicados (core vs v2 e entre ferramentas)</span> <span class='status-tag'>Pendente</span></li><li><span class='icon'>⏳</span> <span class='title'>Extrair e proteger scripts-gates e templates-gates duplicados entre master e enterprise</span> <span class='status-tag'>Pendente</span></li><li><span class='icon'>⏳</span> <span class='title'>Refatorar CLI monolitica aidd.py de master-enterprise (funcoes com multiplas responsabilidades e roteamento duplo)</span> <span class='status-tag'>Pendente</span></li><li><span class='icon'>⏳</span> <span class='title'>Unificar reconhecimento de dominio (KNOWN_DOMAINS vs IntentRouter)</span> <span class='status-tag'>Pendente</span></li><li><span class='icon'>⏳</span> <span class='title'>Unificar as 4 implementacoes paralelas do dominio Injector (forge-generator-master-enterprise)</span> <span class='status-tag'>Pendente</span></li><li><span class='icon'>⏳</span> <span class='title'>Consolidar Result monad (4 APIs incompativeis) em torno de returns</span> <span class='status-tag'>Pendente</span></li><li><span class='icon'>⏳</span> <span class='title'>Refatorar compose_suite.py (multiplas responsabilidades e HTML em f-string) e remover constante morta WEBHOOK_DEMO_URL</span> <span class='status-tag'>Pendente</span></li><li><span class='icon'>⏳</span> <span class='title'>Corrigir terminacao de linha inconsistente CRLF-LF entre gemeas master-enterprise</span> <span class='status-tag'>Pendente</span></li><li><span class='icon'>⏳</span> <span class='title'>Simplificar parser defensivo extrair_json_manual e corrigir comentario de numeracao mentiroso</span> <span class='status-tag'>Pendente</span></li><li><span class='icon'>⏳</span> <span class='title'>Refatorar Fase 08 do generator (monolito, classificador por substring, excecoes copy-paste, estado global com sentinela dupla)</span> <span class='status-tag'>Pendente</span></li><li><span class='icon'>⏳</span> <span class='title'>Remover imports mortos nos gates locais de master-enterprise</span> <span class='status-tag'>Pendente</span></li><li><span class='icon'>⏳</span> <span class='title'>Estreitar except Exception e except pass remanescentes em gates da raiz e src-core</span> <span class='status-tag'>Pendente</span></li><li><span class='icon'>⏳</span> <span class='title'>Corrigir contradicao headless-interativa em cmd_orchestrate e decompor a funcao</span> <span class='status-tag'>Pendente</span></li><li><span class='icon'>⏳</span> <span class='title'>Corrigir violacao de Lei de Demeter em database.py e unificar reescrita SQL (AST vs regex)</span> <span class='status-tag'>Pendente</span></li><li><span class='icon'>⏳</span> <span class='title'>Decompor God class SecurityGate (G_SEGURANCA) e renomear metodos camada-N</span> <span class='status-tag'>Pendente</span></li><li><span class='icon'>⏳</span> <span class='title'>Polimento estrutural: materializador do generator, idioma try-except-import duplicado, sys.path fragil no ops, funcoes sem decomposicao no ops</span> <span class='status-tag'>Pendente</span></li><li><span class='icon'>⏳</span> <span class='title'>Polimento de testes e UX: time.sleep em testes e banners-prints misturando UI e log</span> <span class='status-tag'>Pendente</span></li></ul></details></td>
+      <td class="text-mono text-center">09/2026</td>
+    </tr>
+    
+
+    <tr data-cat="a-fazer">
+      <td>
+        <div class="initiative-title">02-otimizacao-tokenomics-latencia</div>
+        <div class="initiative-path"><code>docs/planos/docs/planos/a-fazer/02-otimizacao-tokenomics-latencia</code></div>
+      </td>
+      <td><span class="badge badge-todo">Aguardando</span></td>
+      <td>
+        <div class="progress-cell">
+          <div class="progress-bar-bg">
+            <div class="progress-bar-fill" style="width: 0.0%; background-color: var(--neutral);"></div>
+          </div>
+          <span class="progress-text">0.0%</span>
+        </div>
+      </td>
+      <td class="text-center"><strong>0</strong> / 7</td>
+      <td><details class='task-details'><summary>7 tarefas mapeadas (clique para ver)</summary><ul class='task-list'><li><span class='icon'>⏳</span> <span class='title'>prompt-por-composicao-e-fixloop-diff-fase-08</span> <span class='status-tag'>Pendente</span></li><li><span class='icon'>⏳</span> <span class='title'>orcador-de-contexto-handoff-fase-01-para-02</span> <span class='status-tag'>Pendente</span></li><li><span class='icon'>⏳</span> <span class='title'>reparo-json-deterministico-zero-llm</span> <span class='status-tag'>Pendente</span></li><li><span class='icon'>⏳</span> <span class='title'>hermeticidade-verificavel-sessoes-e-rotulagem-telemetria</span> <span class='status-tag'>Pendente</span></li><li><span class='icon'>⏳</span> <span class='title'>middleware-compressao-sandeco-token-reduce</span> <span class='status-tag'>Pendente</span></li><li><span class='icon'>⏳</span> <span class='title'>orcador-handoff-fase-06-para-07-mapa-secoes</span> <span class='status-tag'>Pendente</span></li><li><span class='icon'>⏳</span> <span class='title'>orcamento-fases-pipeline-e-alerta-desvio</span> <span class='status-tag'>Pendente</span></li></ul></details></td>
+      <td class="text-mono text-center">09/2026</td>
+    </tr>
+    
+
+    <tr data-cat="a-fazer">
+      <td>
+        <div class="initiative-title">03-qualidade-testes-e-mutacao</div>
+        <div class="initiative-path"><code>docs/planos/docs/planos/a-fazer/03-qualidade-testes-e-mutacao</code></div>
+      </td>
+      <td><span class="badge badge-todo">Aguardando</span></td>
+      <td>
+        <div class="progress-cell">
+          <div class="progress-bar-bg">
+            <div class="progress-bar-fill" style="width: 0.0%; background-color: var(--neutral);"></div>
+          </div>
+          <span class="progress-text">0.0%</span>
+        </div>
+      </td>
+      <td class="text-center"><strong>0</strong> / 10</td>
+      <td><details class='task-details'><summary>10 tarefas mapeadas (clique para ver)</summary><ul class='task-list'><li><span class='icon'>⏳</span> <span class='title'>testes-conteudo-sha256-injector-enterprise</span> <span class='status-tag'>Pendente</span></li><li><span class='icon'>⏳</span> <span class='title'>testes-exatidao-sizing-ops-fixtures-ouro</span> <span class='status-tag'>Pendente</span></li><li><span class='icon'>⏳</span> <span class='title'>testes-resiliencia-outbox-crash-pos-emit-dead-letter</span> <span class='status-tag'>Pendente</span></li><li><span class='icon'>⏳</span> <span class='title'>eliminar-timesleep-injetar-relogio-cqrs-polling-deadline</span> <span class='status-tag'>Pendente</span></li><li><span class='icon'>⏳</span> <span class='title'>portas-efemeras-testes-integracao-servidor</span> <span class='status-tag'>Pendente</span></li><li><span class='icon'>⏳</span> <span class='title'>g-testes-reais-v2-junitxml-orcamento-skipped</span> <span class='status-tag'>Pendente</span></li><li><span class='icon'>⏳</span> <span class='title'>testes-contrato-rls-e-wal-pragmas</span> <span class='status-tag'>Pendente</span></li><li><span class='icon'>⏳</span> <span class='title'>teste-contrato-sizing-para-helm-values</span> <span class='status-tag'>Pendente</span></li><li><span class='icon'>⏳</span> <span class='title'>gate-g-mutacao-mutmut-regras-exatas</span> <span class='status-tag'>Pendente</span></li><li><span class='icon'>⏳</span> <span class='title'>politica-warnings-pytest-deprecations</span> <span class='status-tag'>Pendente</span></li></ul></details></td>
+      <td class="text-mono text-center">09/2026</td>
+    </tr>
+    
+
+    <tr data-cat="a-fazer">
+      <td>
+        <div class="initiative-title">04-resiliencia-concorrencia-e-integridade</div>
+        <div class="initiative-path"><code>docs/planos/docs/planos/a-fazer/04-resiliencia-concorrencia-e-integridade</code></div>
+      </td>
+      <td><span class="badge badge-todo">Aguardando</span></td>
+      <td>
+        <div class="progress-cell">
+          <div class="progress-bar-bg">
+            <div class="progress-bar-fill" style="width: 0.0%; background-color: var(--neutral);"></div>
+          </div>
+          <span class="progress-text">0.0%</span>
+        </div>
+      </td>
+      <td class="text-center"><strong>0</strong> / 8</td>
+      <td><details class='task-details'><summary>8 tarefas mapeadas (clique para ver)</summary><ul class='task-list'><li><span class='icon'>⏳</span> <span class='title'>outbox-claim-atomico-retry-e-dead-letter</span> <span class='status-tag'>Pendente</span></li><li><span class='icon'>⏳</span> <span class='title'>escritor-atomico-compartilhado-e-migracao-fs</span> <span class='status-tag'>Pendente</span></li><li><span class='icon'>⏳</span> <span class='title'>maquina-estados-pipeline-generator-e-resume</span> <span class='status-tag'>Pendente</span></li><li><span class='icon'>⏳</span> <span class='title'>retry-backoff-sqlite-busy-e-pool-explicito</span> <span class='status-tag'>Pendente</span></li><li><span class='icon'>⏳</span> <span class='title'>fila-unica-revalidacao-read-model-cache</span> <span class='status-tag'>Pendente</span></li><li><span class='icon'>⏳</span> <span class='title'>registry-writers-com-lock-e-rename-atomico</span> <span class='status-tag'>Pendente</span></li><li><span class='icon'>⏳</span> <span class='title'>checkpoint-persistencia-result-ops-deploy</span> <span class='status-tag'>Pendente</span></li><li><span class='icon'>⏳</span> <span class='title'>journal-recuperacao-pos-crash-multi-arquivo</span> <span class='status-tag'>Pendente</span></li></ul></details></td>
+      <td class="text-mono text-center">09/2026</td>
+    </tr>
+    
+
+    <tr data-cat="a-fazer">
+      <td>
+        <div class="initiative-title">05-seguranca-zero-trust-e-supply-chain</div>
+        <div class="initiative-path"><code>docs/planos/docs/planos/a-fazer/05-seguranca-zero-trust-e-supply-chain</code></div>
+      </td>
+      <td><span class="badge badge-todo">Aguardando</span></td>
+      <td>
+        <div class="progress-cell">
+          <div class="progress-bar-bg">
+            <div class="progress-bar-fill" style="width: 0.0%; background-color: var(--neutral);"></div>
+          </div>
+          <span class="progress-text">0.0%</span>
+        </div>
+      </td>
+      <td class="text-center"><strong>0</strong> / 10</td>
+      <td><details class='task-details'><summary>10 tarefas mapeadas (clique para ver)</summary><ul class='task-list'><li><span class='icon'>⏳</span> <span class='title'>sandbox-nivel-1-subprocess-env-minimo-fase-08</span> <span class='status-tag'>Pendente</span></li><li><span class='icon'>⏳</span> <span class='title'>gate-owasp-sobre-output-fase-08</span> <span class='status-tag'>Pendente</span></li><li><span class='icon'>⏳</span> <span class='title'>corrigir-interpolacao-sql-set-tenant-pg</span> <span class='status-tag'>Pendente</span></li><li><span class='icon'>⏳</span> <span class='title'>pin-exato-e-hashes-requirements-lockfile</span> <span class='status-tag'>Pendente</span></li><li><span class='icon'>⏳</span> <span class='title'>manifest-assinado-ed25519-componentes-enterprise</span> <span class='status-tag'>Pendente</span></li><li><span class='icon'>⏳</span> <span class='title'>jwt-hardening-segredo-prod-exp-obrigatorio</span> <span class='status-tag'>Pendente</span></li><li><span class='icon'>⏳</span> <span class='title'>hash-artefatos-skills-mcps-dependencias-externas</span> <span class='status-tag'>Pendente</span></li><li><span class='icon'>⏳</span> <span class='title'>mcp-defensivo-cap-limite-e-env-denylist</span> <span class='status-tag'>Pendente</span></li><li><span class='icon'>⏳</span> <span class='title'>rls-fail-closed-auditoria-tabelas-desprotegidas</span> <span class='status-tag'>Pendente</span></li><li><span class='icon'>⏳</span> <span class='title'>sandbox-nivel-2-container-modo-isolado</span> <span class='status-tag'>Pendente</span></li></ul></details></td>
+      <td class="text-mono text-center">09/2026</td>
+    </tr>
+    
+
+    <tr data-cat="a-fazer">
+      <td>
+        <div class="initiative-title">06-bootstrap-ambiente-e-preflight-host</div>
+        <div class="initiative-path"><code>docs/planos/docs/planos/a-fazer/06-bootstrap-ambiente-e-preflight-host</code></div>
+      </td>
+      <td><span class="badge badge-todo">Aguardando</span></td>
+      <td>
+        <div class="progress-cell">
+          <div class="progress-bar-bg">
+            <div class="progress-bar-fill" style="width: 0.0%; background-color: var(--neutral);"></div>
+          </div>
+          <span class="progress-text">0.0%</span>
+        </div>
+      </td>
+      <td class="text-center"><strong>0</strong> / 9</td>
+      <td><details class='task-details'><summary>9 tarefas mapeadas (clique para ver)</summary><ul class='task-list'><li><span class='icon'>⏳</span> <span class='title'>self-healing-imports-python-ecossistema</span> <span class='status-tag'>Pendente</span></li><li><span class='icon'>⏳</span> <span class='title'>preflight-host-diagnostico-binarios-sistema</span> <span class='status-tag'>Pendente</span></li><li><span class='icon'>⏳</span> <span class='title'>tratamento-falhas-npx-bootstrap-skills</span> <span class='status-tag'>Pendente</span></li><li><span class='icon'>⏳</span> <span class='title'>bootstrapper-assistido-multi-os-fix</span> <span class='status-tag'>Pendente</span></li><li><span class='icon'>⏳</span> <span class='title'>campo-preflight-manifesto-dependencias-externas</span> <span class='status-tag'>Pendente</span></li><li><span class='icon'>⏳</span> <span class='title'>unificar-detectores-binarios-nos-gates</span> <span class='status-tag'>Pendente</span></li><li><span class='icon'>⏳</span> <span class='title'>preflight-ops-antecipado-ansible-sops-docker</span> <span class='status-tag'>Pendente</span></li><li><span class='icon'>⏳</span> <span class='title'>atualizar-agents-md-bootstrap-preflight-sessao</span> <span class='status-tag'>Pendente</span></li><li><span class='icon'>⏳</span> <span class='title'>sincronizacao-textual-quickstart-readme</span> <span class='status-tag'>Pendente</span></li></ul></details></td>
+      <td class="text-mono text-center">09/2026</td>
+    </tr>
+    
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Governance Note -->
+    <div class="gov-banner">
+      <div class="gov-icon">🏛️</div>
+      <div class="gov-content">
+        <h4>Regra de Ouro #3 &amp; #7: Persistência Estruturada e Desenvolvedor no Controle</h4>
+        <p>
+          Nenhum plano é promovido para <code>feitos/</code> de forma prematura. Cada avanço exige aprovação explícita e execução determinística. O mecanismo <code>scripts/atualizar_index_planos.py</code> atua como guardião de integridade física entre a tabela de progresso dos arquivos <code>00-PROCESSO-E-DECISOES.md</code> e as pastas no sistema de arquivos.
+        </p>
+      </div>
+    </div>
+
+    <footer>
+      Ecossistema AIDD • Relatório de Auditoria e Dataviz de Planos • Gerado em 11/09/2026
+    </footer>
+  </div>
+
+  <script>
+    // Gráfico de Rosca - Iniciativas
+    const ctxDonut = document.getElementById('donutIniciativas').getContext('2d');
+    new Chart(ctxDonut, {
+      type: 'doughnut',
+      data: {
+        labels: ['Concluídos (feitos)', 'Em Execução (fazendo)', 'Aguardando (a-fazer)'],
+        datasets: [{
+          data: [14, 2, 5],
+          backgroundColor: ['#2ea043', '#d29922', '#6e7681'],
+          borderWidth: 2,
+          borderColor: '#111b27'
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: {
+            position: 'bottom',
+            labels: { color: '#8b9bb0', font: { size: 11, family: "'Public Sans', sans-serif" } }
+          }
+        },
+        cutout: '70%'
+      }
+    });
+
+    // Gráfico de Barras - Tarefas por Categoria
+    const ctxBar = document.getElementById('barCategorias').getContext('2d');
+    new Chart(ctxBar, {
+      type: 'bar',
+      data: {
+        labels: ['Feitos (14 planos)', 'Fazendo (2 planos)', 'A Fazer (5 planos)'],
+        datasets: [
+          {
+            label: 'Tarefas Concluídas',
+            data: [83, 5, 0],
+            backgroundColor: '#2ea043'
+          },
+          {
+            label: 'Tarefas Pendentes / Rascunhos',
+            data: [0, 31, 44],
+            backgroundColor: '#223447'
+          }
+        ]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        scales: {
+          x: {
+            stacked: true,
+            ticks: { color: '#8b9bb0', font: { family: "'Public Sans', sans-serif" } },
+            grid: { display: false }
+          },
+          y: {
+            stacked: true,
+            ticks: { color: '#8b9bb0' },
+            grid: { color: '#1c2936' }
+          }
+        },
+        plugins: {
+          legend: {
+            position: 'bottom',
+            labels: { color: '#8b9bb0', font: { size: 11 } }
+          }
+        }
+      }
+    });
+
+    // Filtro da tabela
+    function filtrar(categoria, btn) {
+      document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+
+      const linhas = document.querySelectorAll('#tabelaPlanos tbody tr');
+      linhas.forEach(linha => {
+        if (categoria === 'todos' || linha.getAttribute('data-cat') === categoria) {
+          linha.style.display = '';
+        } else {
+          linha.style.display = 'none';
+        }
+      });
+    }
+  </script>
+</body>
+</html>

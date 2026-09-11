@@ -136,7 +136,7 @@ Auditado o slice canônico `modulo1` (models/services/routes) — é o molde de 
 ### Restrição transversal: Zero Stubs ✅ / Anti-NIH ⚠️
 
 - **Zero Stubs:** pipelines falham explicitamente (generator: "nunca segue adiante com dado fabricado"); slices geram seed determinístico + testes; `G_TESTES_REAIS` roda pytest real por tool. Conforme a regra #5.
-- **Anti-NIH:** cadastro formal de 26 casos (`docs/features/oportunidades-reaproveitamento-oss-nih.md`) e delegação real (detect-secrets, Checkov, Hadolint, cookiecutter, Prefect). Ponto de atenção: `ReadModelCache` e `CRDTSet` em `src/core` reimplementam mecanismos com OSS maduro (dogpile/redis, automerge/yjs) — candidatos a item no cadastro NIH.
+- **Anti-NIH:** cadastro formal de 26 casos (`docs/features/08-09-2026_feature-oportunidades-reaproveitamento-nih.md`) e delegação real (detect-secrets, Checkov, Hadolint, cookiecutter, Prefect). Ponto de atenção: `ReadModelCache` e `CRDTSet` em `src/core` reimplementam mecanismos com OSS maduro (dogpile/redis, automerge/yjs) — candidatos a item no cadastro NIH.
 
 ---
 

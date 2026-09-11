@@ -10,7 +10,7 @@
 
 ### Por que 100% determinístico é possível (e correto) para este MVP
 
-A proposta original (`docs/features/PLANO ARQUITETURAL NOVA FEATURE AIDD-OPS.md §6`) já define uma matriz fechada de 5 nichos → stack de ferramentas (Clínicas, Delivery, Farmácias, B2B Industrial, Energia Solar). Isso torna as 3 fases do MVP um problema de **lookup + aritmética**, não de síntese criativa — categoria completamente diferente do `aidd-generator` (que sintetiza uma arquitetura nova a partir de uma ideia livre, por isso precisa de LLM em 3 das 8 fases). Mapeamento de decisão:
+A proposta original (`docs/features/06-09-2026_feature-arquitetura-aidd-ops.md §6`) já define uma matriz fechada de 5 nichos → stack de ferramentas (Clínicas, Delivery, Farmácias, B2B Industrial, Energia Solar). Isso torna as 3 fases do MVP um problema de **lookup + aritmética**, não de síntese criativa — categoria completamente diferente do `aidd-generator` (que sintetiza uma arquitetura nova a partir de uma ideia livre, por isso precisa de LLM em 3 das 8 fases). Mapeamento de decisão:
 
 | Fase | Natureza | Decisão de design |
 |---|---|---|

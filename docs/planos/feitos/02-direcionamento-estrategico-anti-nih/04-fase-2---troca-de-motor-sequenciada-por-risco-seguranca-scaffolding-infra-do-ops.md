@@ -8,7 +8,7 @@
 
 ## Contexto ja investigado
 
-- Levantamento completo em `docs/features/oportunidades-reaproveitamento-oss-nih.md` (33 itens no total: 28 originais + 5 transversais #29-33; esta fila cobre 26 dos 28 originais — ver nota abaixo sobre #11/#12 e os transversais).
+- Levantamento completo em `docs/features/08-09-2026_feature-oportunidades-reaproveitamento-nih.md` (33 itens no total: 28 originais + 5 transversais #29-33; esta fila cobre 26 dos 28 originais — ver nota abaixo sobre #11/#12 e os transversais).
 - Ordem aprovada por risco:
   1. **Segurança primeiro** (itens NIH #1, #9, #10, #28): CSP/security.py → secure.py; secret scanning → detect-secrets/gitleaks; RLS via regex → sqlglot; Tailwind servido via CDN → Tailwind CLI/PostCSS auto-hospedado (resolve o CSP na raiz — sem CDN, não precisa mais relaxar `script-src`). Risco de regressão de segurança silenciosa é o mais caro (foi o que já aconteceu).
   2. **Scaffolding** (itens #6, #7, #8, #27): add_module.py/compose_suite.py → Cookiecutter/Copier; Result Monad → lib `returns`; DB adapter → SQLAlchemy/aiosqlite; migração de schema sem ferramenta → Alembic. Resolve de brinde a duplicação master/enterprise.
@@ -17,7 +17,7 @@
   5. **Generator** (itens #22-26): Repomix, instructor, Pandoc, SDK oficial MCP — menor risco, ganho direto de token, pode rodar em paralelo com o resto.
 
 - **Itens fora do escopo desta fila (decisão explícita do usuário em 2026-09-07):** #11 (webhooks retry/DLQ hand-rolled → `huey`) e #12 (documentação custom → Swagger UI/ReDoc) ficam de fora desta iniciativa — ambos marcados `[a verificar]` no levantamento original, sem confirmação linha a linha. Podem ser retomados em outro ciclo, com seu próprio diagnóstico, se e quando forem priorizados.
-- A soma 26 = 28 itens originais do levantamento (`docs/features/oportunidades-reaproveitamento-oss-nih.md`) menos #11 e #12. Os 5 itens transversais (#29-33) do mesmo levantamento não fazem parte desta fila de sequenciamento — são achados cross-cutting sem dono de ferramenta único.
+- A soma 26 = 28 itens originais do levantamento (`docs/features/08-09-2026_feature-oportunidades-reaproveitamento-nih.md`) menos #11 e #12. Os 5 itens transversais (#29-33) do mesmo levantamento não fazem parte desta fila de sequenciamento — são achados cross-cutting sem dono de ferramenta único.
 - Item #17 (healthcheck) está dentro do range #13-21 da Fase 3 só por proximidade de área (infra do ops), mas já é `[confirmado, NÃO é NIH]` — não precisa de troca, não gera sub-item de execução.
 
 ## Decisão de sequenciamento

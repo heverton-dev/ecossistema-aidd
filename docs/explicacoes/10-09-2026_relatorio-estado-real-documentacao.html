@@ -2,6 +2,28 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;0,6..72,700;1,6..72,500&family=Public+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
 <style>
+  /* ==========================================================================
+     REGRA CANONICA DE SCROLLBARS — MAX 4PX NA COR PREDOMINANTE DO DOCUMENTO
+     ========================================================================== */
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: var(--accent, #388bfd) var(--bg, #0b111a);
+  }
+  ::-webkit-scrollbar {
+    width: 4px;
+    height: 4px;
+  }
+  ::-webkit-scrollbar-track {
+    background: var(--bg, #0b111a);
+  }
+  ::-webkit-scrollbar-thumb {
+    background: var(--accent, #388bfd);
+    border-radius: 4px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: color-mix(in srgb, var(--accent, #388bfd) 80%, white);
+  }
+
   :root{
     --bg:#f4f6f9;
     --surface:#ffffff;
@@ -557,7 +579,7 @@
 </section>
 
 <footer>
-  Gerado por auditoria de reprodução real em 2026-09-10, contra o commit <span class="mono-inline">07fb306</span> de <span class="mono-inline">github.com/heverton-dev/ecossistema-aidd</span>. Versão em Markdown: <span class="mono-inline">docs/explicacoes/relatorio-estado-real-e-documentacao-2026-09-10.md</span>.
+  Gerado por auditoria de reprodução real em 2026-09-10, contra o commit <span class="mono-inline">07fb306</span> de <span class="mono-inline">github.com/heverton-dev/ecossistema-aidd</span>. Versão em Markdown: <span class="mono-inline">docs/explicacoes/10-09-2026_relatorio-estado-real-documentacao.md</span>.
 </footer>
 
 </div>

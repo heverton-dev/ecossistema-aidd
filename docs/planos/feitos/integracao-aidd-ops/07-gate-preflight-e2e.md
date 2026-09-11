@@ -38,7 +38,7 @@ Os 6 gates atuais e o `G_INFRA_COMPOSE` (Pacote 6) rodam em segundos, sem custo 
 ```
 Você vai implementar o comando `python ecossistema.py ops preflight
 <ambiente>`, cobrindo o Gap 4 identificado em
-"docs/features/PLANO ARQUITETURAL NOVA FEATURE AIDD-OPS.md §8.2": bateria
+"docs/features/06-09-2026_feature-arquitetura-aidd-ops.md §8.2": bateria
 de testes pré-produção contra um deploy JÁ REALIZADO (não é um gate
 estático — depende de infraestrutura viva).
 
@@ -121,7 +121,7 @@ Testes reais (servidor HTTP local, servidor TLS local com certificado self-signe
 ```
 You are going to implement the `python ecossistema.py ops preflight
 <environment>` command, covering Gap 4 identified in
-"docs/features/PLANO ARQUITETURAL NOVA FEATURE AIDD-OPS.md §8.2": a
+"docs/features/06-09-2026_feature-arquitetura-aidd-ops.md §8.2": a
 pre-production test battery against an ALREADY-DEPLOYED environment
 (this is not a static gate — it depends on live infrastructure).
 

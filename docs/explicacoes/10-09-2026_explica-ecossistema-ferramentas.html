@@ -6,6 +6,28 @@
 <title>Ecossistema AIDD — 6 Ferramentas e Linha de Produção</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Source+Sans+3:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
 <style>
+  /* ==========================================================================
+     REGRA CANONICA DE SCROLLBARS — MAX 4PX NA COR PREDOMINANTE DO DOCUMENTO
+     ========================================================================== */
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: var(--accent, #388bfd) var(--bg, #0b111a);
+  }
+  ::-webkit-scrollbar {
+    width: 4px;
+    height: 4px;
+  }
+  ::-webkit-scrollbar-track {
+    background: var(--bg, #0b111a);
+  }
+  ::-webkit-scrollbar-thumb {
+    background: var(--accent, #388bfd);
+    border-radius: 4px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: color-mix(in srgb, var(--accent, #388bfd) 80%, white);
+  }
+
   :root{
     --bg:#F6F2E9;
     --surface:#FFFEFB;

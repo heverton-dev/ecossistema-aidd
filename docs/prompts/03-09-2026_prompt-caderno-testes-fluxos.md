@@ -1,6 +1,6 @@
 ﻿# CADERNO DE PROMPTS OPERACIONAIS — ECOSSISTEMA AIDD UNIFICADO
 > **Repositório:** `https://github.com/heverton-dev/ecossistema-aidd`  
-> **Destino:** `docs/prompts/CADERNO-PROMPTS-TESTE-FLUXOS.md`  
+> **Destino:** `docs/prompts/03-09-2026_prompt-caderno-testes-fluxos.md`  
 > **Data:** 03/09/2026  
 > **Instruções de Uso:** Este documento contém os 4 prompts mestres prontos para copiar e colar diretamente no chat de qualquer agente ou harness (Claude Code, MimoCode, OpenCode, Antigravity ou Cursor) para disparar e validar o fluxo de cada uma das ferramentas do ecossistema.
 

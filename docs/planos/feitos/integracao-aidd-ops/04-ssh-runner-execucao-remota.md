@@ -33,7 +33,7 @@ O ecossistema-aidd hoje opera 100% no workspace local. Este pacote é o primeiro
 ```
 Você vai implementar um SSH Runner determinístico para tools/aidd-ops/,
 cobrindo o Gap 1 identificado em
-"docs/features/PLANO ARQUITETURAL NOVA FEATURE AIDD-OPS.md §8.2":
+"docs/features/06-09-2026_feature-arquitetura-aidd-ops.md §8.2":
 bootstrapping remoto de VPS (atualização de pacotes de segurança,
 instalação do Docker Engine oficial, UFW firewall, fail2ban, memória
 swap) via SSH autenticado por chave pública.
@@ -152,7 +152,7 @@ Suíte pytest de `tools/aidd-ops/tests/` → exit 0; gate próprio (`G_OPS_MVP.p
 ```
 You are going to implement a deterministic SSH Runner for
 tools/aidd-ops/, covering Gap 1 identified in
-"docs/features/PLANO ARQUITETURAL NOVA FEATURE AIDD-OPS.md §8.2": remote
+"docs/features/06-09-2026_feature-arquitetura-aidd-ops.md §8.2": remote
 VPS bootstrapping (security package updates, official Docker Engine
 install, UFW firewall, fail2ban, swap memory) via public-key
 authenticated SSH.

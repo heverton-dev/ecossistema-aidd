@@ -1,0 +1,1091 @@
+[
+  {
+    "nome": "01-reestruturacao-ddd-clean-architecture",
+    "categoria": "feitos",
+    "tipo": "pasta",
+    "caminho": "docs/planos/feitos/01-reestruturacao-ddd-clean-architecture",
+    "total_itens": 10,
+    "concluidos": 10,
+    "em_andamento": 0,
+    "pendentes": 0,
+    "status_label": "",
+    "itens_detalhes": [
+      {
+        "item": "fechar-nucleo-compartilhado-e-honestidade-rotulos",
+        "status": "Concluído",
+        "linha": "| 1 | fechar-nucleo-compartilhado-e-honestidade-rotulos | ✅ Concluido — mesclado em main (6c8a427), auditado por reproducao real | `01-fechar-nucleo-compartilhado-e-honestidade-rotulos.md` |"
+      },
+      {
+        "item": "unificar-orquestradores-generator-e-ops",
+        "status": "Concluído",
+        "linha": "| 2 | unificar-orquestradores-generator-e-ops | ✅ Concluido — mesclado em main (6c8a427), auditado por reproducao real | `02-unificar-orquestradores-generator-e-ops.md` |"
+      },
+      {
+        "item": "extrair-camada-aplicacao-dos-clis-master-enterprise",
+        "status": "Concluído",
+        "linha": "| 3 | extrair-camada-aplicacao-dos-clis-master-enterprise | ✅ Concluido — mesclado em main (6c8a427), auditado por reproducao real | `03-extrair-camada-aplicacao-dos-clis-master-enterprise.md` |"
+      },
+      {
+        "item": "remover-hacks-syspath-no-generator",
+        "status": "Concluído",
+        "linha": "| 4 | remover-hacks-syspath-no-generator | ✅ Concluido (escopo reduzido, aprovado pelo usuario) — mesclado em main (710a8bc), auditado por reproducao real | `04-remover-hacks-syspath-no-generator.md` |"
+      },
+      {
+        "item": "contrato-formal-schema-ops-para-master-enterprise",
+        "status": "Concluído",
+        "linha": "| 5 | contrato-formal-schema-ops-para-master-enterprise | ✅ Concluido — mesclado em main (6c8a427), auditado por reproducao real | `05-contrato-formal-schema-ops-para-master-enterprise.md` |"
+      },
+      {
+        "item": "novo-molde-fatia-vertical-ddd-clean-master",
+        "status": "Concluído",
+        "linha": "| 6 | novo-molde-fatia-vertical-ddd-clean-master | ✅ Concluido — corrigido, mesclado em main (6c8a427), auditado por reproducao real | `06-novo-molde-fatia-vertical-ddd-clean-master.md` |"
+      },
+      {
+        "item": "gate-g-arquitetura-deliverable",
+        "status": "Concluído",
+        "linha": "| 7 | gate-g-arquitetura-deliverable | ✅ Concluido — mesclado em main (6c8a427), auditado por reproducao real | `07-gate-g-arquitetura-deliverable.md` |"
+      },
+      {
+        "item": "atualizar-scaffolders-master-enterprise-cookiecutter",
+        "status": "Concluído",
+        "linha": "| 8 | atualizar-scaffolders-master-enterprise-cookiecutter | ✅ Concluido — mesclado em main (710a8bc), auditado por reproducao real | `08-atualizar-scaffolders-master-enterprise-cookiecutter.md` |"
+      },
+      {
+        "item": "trazer-deliverables-generator-perimetro-gates",
+        "status": "Concluído",
+        "linha": "| 9 | trazer-deliverables-generator-perimetro-gates | ✅ Concluido — mesclado em main (4cb3f88), auditado por reproducao real | `09-trazer-deliverables-generator-perimetro-gates.md` |"
+      },
+      {
+        "item": "teste-integracao-helm-aidd-ops",
+        "status": "Concluído",
+        "linha": "| 10 | teste-integracao-helm-aidd-ops | ✅ Concluido — mesclado em main (6c8a427), auditado por reproducao real | `10-teste-integracao-helm-aidd-ops.md` |"
+      }
+    ],
+    "ultima_modificacao_git": "",
+    "progresso_pct": 100.0
+  },
+  {
+    "nome": "02-direcionamento-estrategico-anti-nih",
+    "categoria": "feitos",
+    "tipo": "pasta",
+    "caminho": "docs/planos/feitos/02-direcionamento-estrategico-anti-nih",
+    "total_itens": 3,
+    "concluidos": 3,
+    "em_andamento": 0,
+    "pendentes": 0,
+    "status_label": "",
+    "itens_detalhes": [
+      {
+        "item": "Inventario do que fica vs o que troca por ferramenta (o trabalho que continua de pe)",
+        "status": "Concluído",
+        "linha": "| 1 | Inventario do que fica vs o que troca por ferramenta (o trabalho que continua de pe) | ✅ **Verificado em 2026-09-09** — tabela publicada em `docs/features/inventario-o-que-fica-vs-o-que-troca-por-ferramenta.md`, rastreabilidade mantida. Nenhuma mudança necessária. | `01-inventario-do-que-fica-vs-o-que-troca-por-ferramenta-o-trabalho-que-continua-de-pe.md` |"
+      },
+      {
+        "item": "Registro do direcionamento correto e 2 novas Regras de Ouro (checklist anti-NIH, zero linguagem de marketing)",
+        "status": "Concluído",
+        "linha": "| 2 | Registro do direcionamento correto e 2 novas Regras de Ouro (checklist anti-NIH, zero linguagem de marketing) | ✅ **Verificado em 2026-09-09** — AGENTS.md §2 com Regras #8/#9 presentes; gate `gates/G_HONESTIDADE_ROTULO.py` + testes em `gates/test_g_honestidade_rotulo.py` mantidos. Nenhuma mudança necessária. | `02-registro-do-direcionamento-correto-e-2-novas-regras-de-ouro-checklist-anti-nih-zero-linguagem-de-marketing.md` |"
+      },
+      {
+        "item": "Bootstrap de dependências do produto gerado, por ferramenta (forge não é chamado por nenhuma das outras 4)",
+        "status": "Concluído",
+        "linha": "| 7 | Bootstrap de dependências do produto gerado, por ferramenta (forge não é chamado por nenhuma das outras 4) | ✅ **Verificado em 2026-09-09** — aidd-master + aidd-enterprise concluídos conforme o próprio item registra; aidd-generator/aidd-ops fora de escopo por decisão. Nenhuma mudança necessária. | `07-bootstrap-de-dependencias-do-produto-gerado-por-ferramenta-forge-nao-eh-chamado-por-nenhuma-das-outras-4.md` |"
+      }
+    ],
+    "ultima_modificacao_git": "",
+    "progresso_pct": 100.0
+  },
+  {
+    "nome": "03-evolucao-aidd-ops-fase-completa",
+    "categoria": "feitos",
+    "tipo": "pasta",
+    "caminho": "docs/planos/feitos/03-evolucao-aidd-ops-fase-completa",
+    "total_itens": 4,
+    "concluidos": 4,
+    "em_andamento": 0,
+    "pendentes": 0,
+    "status_label": "",
+    "itens_detalhes": [
+      {
+        "item": "Intake Interativo Web Sem Friccao",
+        "status": "Concluído",
+        "linha": "| 1 | Intake Interativo Web Sem Friccao | ✅ Concluído via Coolify + Streamlit (2026-09-07, NIH #19) — `apps/intake/` (Streamlit 8501 headless reusando `montar_plano_em_memoria`) + `Dockerfile.intake` + deploy como app gerenciado via `pipeline_ops.py coolify create/setenv/deploy`; 144 testes aidd-ops verdes, G_OPS_MVP e G_OPS_SSH aprovados | `01-intake-interativo-web-sem-friccao.md` |"
+      },
+      {
+        "item": "Cofre Local e Coleta Segura de Credenciais",
+        "status": "Concluído",
+        "linha": "| 2 | Cofre Local e Coleta Segura de Credenciais | ✅ Concluído via sops+age (2026-09-07, NIH #18/#29) — `CofreCredenciais` (`src/core/cofre_credenciais.py`) + CLI `pipeline_ops.py cofre init/encrypt/decrypt/up`; 17/17 testes reais com binários `sops`/`age-keygen` (`tests/test_cofre_credenciais.py`), reverificados em 2026-09-09. Linha corrigida — estava desatualizada, o item já constava concluído em seu próprio documento desde 2026-09-07 | `02-cofre-local-e-coleta-segura-de-credenciais.md` |"
+      },
+      {
+        "item": "AppShell White-Label e Studios OpenAPI Webhook MCP",
+        "status": "Concluído",
+        "linha": "| 3 | AppShell White-Label e Studios OpenAPI Webhook MCP | ✅ Concluído via Coolify (2026-09-07, NIH #20) — Coolify Dashboard adotado como base para AppShell white-label + Studios integrados via `CoolifyManager` | `03-appshell-white-label-e-studios-openapi-webhook-mcp.md` |"
+      },
+      {
+        "item": "Isolamento Estrito em VPS Compartilhada e Uninstall Atomico",
+        "status": "Concluído",
+        "linha": "| 4 | Isolamento Estrito em VPS Compartilhada e Uninstall Atomico | ✅ Concluído via Coolify (2026-09-07, NIH #21) — Isolamento nativo de containers em VPS compartilhada implementado via `CoolifyManager` (redes isoladas, zero portas expostas, limites CPU/RAM) | `04-isolamento-estrito-em-vps-compartilhada-e-uninstall-atomico.md` |"
+      }
+    ],
+    "ultima_modificacao_git": "",
+    "progresso_pct": 100.0
+  },
+  {
+    "nome": "aidd-bridge",
+    "categoria": "feitos",
+    "tipo": "pasta",
+    "caminho": "docs/planos/feitos/aidd-bridge",
+    "total_itens": 4,
+    "concluidos": 4,
+    "em_andamento": 0,
+    "pendentes": 0,
+    "status_label": "",
+    "itens_detalhes": [
+      {
+        "item": "Scanner e Ingestor de Projetos Lovable",
+        "status": "Concluído",
+        "linha": "| 1 | Scanner e Ingestor de Projetos Lovable | ✅ Concluído (implementado e auditado via test_bridge.py) | `01-scanner-e-ingestor-de-projetos-lovable.md` |"
+      },
+      {
+        "item": "Data Bridge: Supabase SQL para PostgreSQL e PostgREST",
+        "status": "Concluído",
+        "linha": "| 2 | Data Bridge: Supabase SQL para PostgreSQL e PostgREST | ✅ Concluído (implementado e auditado via test_bridge.py) | `02-data-bridge-supabase-sql-para-postgresql-e-postgrest.md` |"
+      },
+      {
+        "item": "Multi-App Unifier: Fusao de Telas, Rotas e Tailwind",
+        "status": "Concluído",
+        "linha": "| 3 | Multi-App Unifier: Fusao de Telas, Rotas e Tailwind | ✅ Concluído (implementado e auditado via test_bridge.py) | `03-multi-app-unifier-fusao-de-telas-rotas-e-tailwind.md` |"
+      },
+      {
+        "item": "DevOps e VPS Packager: Docker Compose, Nginx e SSL Automatico",
+        "status": "Concluído",
+        "linha": "| 4 | DevOps e VPS Packager: Docker Compose, Nginx e SSL Automatico | ✅ Concluído (implementado e auditado via test_bridge.py) | `04-devops-e-vps-packager-docker-compose-nginx-e-ssl-automatico.md` |"
+      }
+    ],
+    "ultima_modificacao_git": "",
+    "progresso_pct": 100.0
+  },
+  {
+    "nome": "correcao-arquitetura-limpa",
+    "categoria": "feitos",
+    "tipo": "pasta",
+    "caminho": "docs/planos/feitos/correcao-arquitetura-limpa",
+    "total_itens": 5,
+    "concluidos": 5,
+    "em_andamento": 0,
+    "pendentes": 0,
+    "status_label": "",
+    "itens_detalhes": [
+      {
+        "item": "Extrair HTML embutido gigante para arquivo proprio (get_swagger_html e get_studio_html)",
+        "status": "Concluído",
+        "linha": "| 1 | Extrair HTML embutido gigante para arquivo proprio (get_swagger_html e get_studio_html) | ✅ Concluido (auditado por reproducao real em 2026-09-08) | `01-extrair-html-embutido-gigante-para-arquivo-proprio-get-swagger-html-e-get-studio-html.md` |"
+      },
+      {
+        "item": "Ampliar G_DRIFT_NUCLEO_COMPARTILHADO para cobrir outros pares duplicados entre aidd-master e aidd-enterprise",
+        "status": "Concluído",
+        "linha": "| 2 | Ampliar G_DRIFT_NUCLEO_COMPARTILHADO para cobrir outros pares duplicados entre aidd-master e aidd-enterprise | ✅ Concluido (auditado por reproducao real em 2026-09-08) | `02-ampliar-g-drift-nucleo-compartilhado-para-cobrir-outros-pares-duplicados-entre-aidd-master-e-aidd-enterprise.md` |"
+      },
+      {
+        "item": "Registrar duplicacao de codigo real da skill orca-plan-orchestrator nas 7 (na verdade 8, corrigido por reproducao real) pastas de harness (sem acao corretiva)",
+        "status": "Concluído",
+        "linha": "| 3 | Registrar duplicacao de codigo real da skill orca-plan-orchestrator nas 7 (na verdade 8, corrigido por reproducao real) pastas de harness (sem acao corretiva) | ✅ Concluido (registro revisado e corrigido por reproducao real em 2026-09-08) | `03-registrar-duplicacao-de-codigo-real-da-skill-orca-plan-orchestrator-nas-7-pastas-de-harness-sem-acao-corretiva.md` |"
+      },
+      {
+        "item": "Eliminar execucao redundante de suite de teste de skills materializadas 7x (na verdade, achado nao reproduzido — nenhuma execucao automatica existe hoje)",
+        "status": "Concluído",
+        "linha": "| 4 | Eliminar execucao redundante de suite de teste de skills materializadas 7x (na verdade, achado nao reproduzido — nenhuma execucao automatica existe hoje) | ✅ Concluido (investigacao real em 2026-09-08 nao reproduziu o achado; fechado sem mudanca de codigo, por decisao do usuario) | `04-eliminar-execucao-redundante-de-suite-de-teste-de-skills-materializadas-7x.md` |"
+      },
+      {
+        "item": "Ampliar G_DRIFT_NUCLEO_COMPARTILHADO para comparar scripts/gates vs templates/gates dentro da mesma ferramenta",
+        "status": "Concluído",
+        "linha": "| 5 | Ampliar G_DRIFT_NUCLEO_COMPARTILHADO para comparar scripts/gates vs templates/gates dentro da mesma ferramenta | ✅ Concluido (auditado por reproducao real em 2026-09-08) | `05-ampliar-g-drift-nucleo-compartilhado-para-comparar-scripts-gates-vs-templates-gates-dentro-da-mesma-ferramenta.md` |"
+      }
+    ],
+    "ultima_modificacao_git": "",
+    "progresso_pct": 100.0
+  },
+  {
+    "nome": "correcao-codigo-limpo",
+    "categoria": "feitos",
+    "tipo": "pasta",
+    "caminho": "docs/planos/feitos/correcao-codigo-limpo",
+    "total_itens": 8,
+    "concluidos": 8,
+    "em_andamento": 0,
+    "pendentes": 0,
+    "status_label": "",
+    "itens_detalhes": [
+      {
+        "item": "Trocar except Exception generico por excecoes especificas nas 5 ferramentas",
+        "status": "Concluído",
+        "linha": "| 1 | Trocar except Exception generico por excecoes especificas nas 5 ferramentas | ✅ Concluido (auditado por reproducao real em 2026-09-09) — aidd-generator/aidd-ops/aidd-forge 100% revisados; aidd-enterprise/aidd-master com src/core, templates/core e templates/v2 100% revisados (toda ocorrencia restante e deliberadamente ampla, com razao documentada); decisao de arquitetura sobre excecao de banco multi-motor (SQLite/Postgres) tomada e aplicada; pendencia menor fora de escopo: src/modules/ e tests/ das 5 ferramentas nunca auditados | `01-trocar-except-exception-generico-por-excecoes-especificas-nas-5-ferramentas.md` |"
+      },
+      {
+        "item": "Eliminar except sem tipo (bare except) em aidd-enterprise, aidd-master e aidd-generator",
+        "status": "Concluído",
+        "linha": "| 2 | Eliminar except sem tipo (bare except) em aidd-enterprise, aidd-master e aidd-generator | ✅ Concluido (auditado por reproducao real em 2026-09-08) | `02-eliminar-except-sem-tipo-bare-except-em-aidd-enterprise-aidd-master-e-aidd-generator.md` |"
+      },
+      {
+        "item": "Dividir metodos com mais de 100 linhas nas classes grandes do aidd-generator e aidd-ops",
+        "status": "Concluído",
+        "linha": "| 3 | Dividir metodos com mais de 100 linhas nas classes grandes do aidd-generator e aidd-ops | ✅ Concluido (6 de 6 metodos, auditado por reproducao real em 2026-09-08) | `03-dividir-metodos-com-mais-de-100-linhas-nas-classes-grandes-do-aidd-generator-e-aidd-ops.md` |"
+      },
+      {
+        "item": "Dividir run_all_checks (G_SEGURANCA.py) em funcoes menores por camada de responsabilidade",
+        "status": "Concluído",
+        "linha": "| 4 | Dividir run_all_checks (G_SEGURANCA.py) em funcoes menores por camada de responsabilidade | ✅ Concluido (auditado por reproducao real em 2026-09-08 — saida e exit code identicos antes/depois, nas 4 copias) | `04-dividir-run-all-checks-g-segurancapy-em-funcoes-menores-por-camada-de-responsabilidade.md` |"
+      },
+      {
+        "item": "Remover import duplicado (import subprocess repetido) em G_SEGURANCA.py",
+        "status": "Concluído",
+        "linha": "| 5 | Remover import duplicado (import subprocess repetido) em G_SEGURANCA.py | ✅ Concluido (auditado por reproducao real em 2026-09-08) | `05-remover-import-duplicado-import-subprocess-repetido-em-g-segurancapy.md` |"
+      },
+      {
+        "item": "Substituir comentarios-divisorios de secao por decomposicao real em funcao onde o mesmo padrao se repete",
+        "status": "Concluído",
+        "linha": "| 6 | Substituir comentarios-divisorios de secao por decomposicao real em funcao onde o mesmo padrao se repete | ✅ Concluido (censo real confirma zero ocorrencias remanescentes, 2026-09-08) | `06-substituir-comentarios-divisorios-de-secao-por-decomposicao-real-em-funcao-onde-o-mesmo-padrao-se-repete.md` |"
+      },
+      {
+        "item": "Definir e documentar convencao unica de nomenclatura PT-BR e ingles entre as ferramentas",
+        "status": "Concluído",
+        "linha": "| 7 | Definir e documentar convencao unica de nomenclatura PT-BR e ingles entre as ferramentas | ✅ Concluido em 2026-09-09 — decisao colhida do usuario (formalizar padrao observado) e documentada em AGENTS.md secao 4.1 | `07-definir-e-documentar-convencao-unica-de-nomenclatura-pt-br-e-ingles-entre-as-ferramentas.md` |"
+      },
+      {
+        "item": "Registrar ranking de limpeza por ferramenta atualizado com todas as metricas (sem acao corretiva)",
+        "status": "Concluído",
+        "linha": "| 8 | Registrar ranking de limpeza por ferramenta atualizado com todas as metricas (sem acao corretiva) | ✅ Concluido (tabela registrada em 2026-09-08; nota de atualizacao pos-itens 3/4 adicionada em sessao posterior) | `08-registrar-ranking-de-limpeza-por-ferramenta-atualizado-com-todas-as-metricas-sem-acao-corretiva.md` |"
+      }
+    ],
+    "ultima_modificacao_git": "",
+    "progresso_pct": 100.0
+  },
+  {
+    "nome": "evolucao-notas-auditoria",
+    "categoria": "feitos",
+    "tipo": "pasta",
+    "caminho": "docs/planos/feitos/evolucao-notas-auditoria",
+    "total_itens": 7,
+    "concluidos": 7,
+    "em_andamento": 0,
+    "pendentes": 0,
+    "status_label": "",
+    "itens_detalhes": [
+      {
+        "item": "✅ Concluído",
+        "status": "Concluído",
+        "linha": "| 1. Transparência + Gates | ✅ Concluído | Gates Mecânicos 7/10 → **8/10 (alvo atingido)**. Transparência 8/10 → **8.5/10** (alvo 9/10 só fecha quando Pacotes 4 e 5 também resolverem suas partes desta dimensão — ver §3 do documento do pacote) | `01-transparencia-e-gates.md` |"
+      },
+      {
+        "item": "✅ Concluído (implementado por agente externo, auditado e confirmado por mim)",
+        "status": "Concluído",
+        "linha": "| 2. Testabilidade + Determinismo | ✅ Concluído (implementado por agente externo, auditado e confirmado por mim) | Testabilidade 6→**9/10**; Determinismo 9→**9.5/10** (ambos alvo atingido) | `02-testabilidade-e-determinismo.md` |"
+      },
+      {
+        "item": "✅ Concluído",
+        "status": "Concluído",
+        "linha": "| 3. Modularização | ✅ Concluído | Modularização 7→**9/10** (alvo atingido). Residual (migrar `aidd-enterprise` para o núcleo canônico) fechado na Rodada 2, Item 4 → **10/10** | `03-modularizacao-injector.md` |"
+      },
+      {
+        "item": "✅ Concluído",
+        "status": "Concluído",
+        "linha": "| 4. Cobertura restante | ✅ Concluído | Testabilidade/Cobertura Real permanece **9/10** (alvo já perseguido pelo Pacote 2, agora com evidência completa dos 7 comandos restantes, não parcial) | `04-cobertura-comandos-restantes.md` |"
+      },
+      {
+        "item": "✅ Concluído",
+        "status": "Concluído",
+        "linha": "| 5. Tokens + Agêntico | ✅ Concluído | Economia de Tokens 7→**8/10**; Engenharia Agêntica 8→**8.5/10** (ambos alvo atingido) | `05-economia-tokens-e-agentico.md` |"
+      },
+      {
+        "item": "✅ Concluído",
+        "status": "Concluído",
+        "linha": "| 6. Universalidade | ✅ Concluído | Universalidade/Agnosticismo 8→**9/10** (alvo atingido) | `06-universalidade.md` |"
+      },
+      {
+        "item": "✅ Concluído",
+        "status": "Concluído",
+        "linha": "| 7. Agnosticismo de Distribuição | ✅ Concluído | Gap novo, fora da tabela original de 8 dimensões — nota final **9/10** (limitação residual documentada: `aidd-master`/`aidd-enterprise` seguem com injetores antigos fora do mecanismo unificado). Residual do tipo `hook` fechado na Rodada 2, Item 4 (ambos ganharam sincronização canônica `componentes/`) | `07-agnosticismo-distribuicao-componentes.md` |"
+      }
+    ],
+    "ultima_modificacao_git": "",
+    "progresso_pct": 100.0
+  },
+  {
+    "nome": "integracao-aidd-ops",
+    "categoria": "feitos",
+    "tipo": "pasta",
+    "caminho": "docs/planos/feitos/integracao-aidd-ops",
+    "total_itens": 9,
+    "concluidos": 9,
+    "em_andamento": 0,
+    "pendentes": 0,
+    "status_label": "",
+    "itens_detalhes": [
+      {
+        "item": "✅ Concluído em 06/09/2026 — 5ª ferramenta oficial (implementação restrita a Fases 1-3 no Pacote 3), MVP primeiro, VPS descartável já disponível (detalhes só no Pacote 4), piloto = Clínicas",
+        "status": "Concluído",
+        "linha": "| 1. Decisão de escopo e MVP | ✅ Concluído em 06/09/2026 — 5ª ferramenta oficial (implementação restrita a Fases 1-3 no Pacote 3), MVP primeiro, VPS descartável já disponível (detalhes só no Pacote 4), piloto = Clínicas | `01-decisao-escopo-e-mvp.md` |"
+      },
+      {
+        "item": "✅ Concluído em 06/09/2026 — Reconhecimento da 5ª ferramenta em AGENTS.md, gates G_ECOSSISTEMA_INTEGRIDADE e G_CLI_HELP_CONSISTENCIA atualizados, escopo aidd-ops no manifesto, fontes canônicas em componentes/compartilhado/ e componentes/aidd-ops/, sync multi-harness validado (commit 3ebf29a / e22b53a)",
+        "status": "Concluído",
+        "linha": "| 2. Fundamentos de governança | ✅ Concluído em 06/09/2026 — Reconhecimento da 5ª ferramenta em AGENTS.md, gates G_ECOSSISTEMA_INTEGRIDADE e G_CLI_HELP_CONSISTENCIA atualizados, escopo aidd-ops no manifesto, fontes canônicas em componentes/compartilhado/ e componentes/aidd-ops/, sync multi-harness validado (commit 3ebf29a / e22b53a) | `02-fundamentos-governanca-gates.md` |"
+      },
+      {
+        "item": "✅ Concluído em 06/09/2026 — Fases 1 (Intake), 2 (Curadoria) e 3 (Sizing) implementadas de forma 100% determinística (zero LLM), Result monad, 3 JSON Schemas, catálogos em data/, orquestrador pipeline_ops.py, gate próprio G_OPS_MVP aprovado, 21 testes verdes (commit 3ebf29a / e22b53a)",
+        "status": "Concluído",
+        "linha": "| 3. MVP `tools/aidd-ops/` (Fases 1-3) | ✅ Concluído em 06/09/2026 — Fases 1 (Intake), 2 (Curadoria) e 3 (Sizing) implementadas de forma 100% determinística (zero LLM), Result monad, 3 JSON Schemas, catálogos em data/, orquestrador pipeline_ops.py, gate próprio G_OPS_MVP aprovado, 21 testes verdes (commit 3ebf29a / e22b53a) | `03-mvp-tools-aidd-ops-fases-1-3.md` |"
+      },
+      {
+        "item": "✅ Concluído em 06/09/2026 — Runner determinístico implementado (tools/aidd-ops/src/core/ssh_runner.py) com Paramiko, Result monad, lista fechada de 5 operações (anti-injeção), gate AST G_OPS_SSH aprovado, 17 novos testes unitários verdes (30 testes no total), subcomando `ops bootstrap` validado via CLI",
+        "status": "Concluído",
+        "linha": "| 4. SSH Runner | ✅ Concluído em 06/09/2026 — Runner determinístico implementado (tools/aidd-ops/src/core/ssh_runner.py) com Paramiko, Result monad, lista fechada de 5 operações (anti-injeção), gate AST G_OPS_SSH aprovado, 17 novos testes unitários verdes (30 testes no total), subcomando `ops bootstrap` validado via CLI | `04-ssh-runner-execucao-remota.md` |"
+      },
+      {
+        "item": "✅ Concluído em 06/09/2026 — MCPs cloudflare-mcp e docker-mcp criados na fonte canônica componentes/aidd-ops/mcps/ e sincronizados via gestor_componentes (2 componentes verificados), stdlib apenas (urllib.request, sem requests), docker-mcp read-only estrito, 9 novos testes unitários herméticos com mocks, 39 testes unitários verdes no total, gates G_SEGREDOS, G_COMPONENTE_AGNOSTICO, G_HARNESS_COMPAT e G_OPS_MVP 100% aprovados",
+        "status": "Concluído",
+        "linha": "| 5. MCPs de borda (Cloudflare/Docker) | ✅ Concluído em 06/09/2026 — MCPs cloudflare-mcp e docker-mcp criados na fonte canônica componentes/aidd-ops/mcps/ e sincronizados via gestor_componentes (2 componentes verificados), stdlib apenas (urllib.request, sem requests), docker-mcp read-only estrito, 9 novos testes unitários herméticos com mocks, 39 testes unitários verdes no total, gates G_SEGREDOS, G_COMPONENTE_AGNOSTICO, G_HARNESS_COMPAT e G_OPS_MVP 100% aprovados | `05-mcps-borda-cloudflare-docker.md` |"
+      },
+      {
+        "item": "✅ Concluído em 06/09/2026 — Quality Gate estático implementado (gates/G_INFRA_COMPOSE.py), validação de 7 docker-compose.yml sob aidd-ops, validação de init-multiple-databases.sh e conformidade com os 5 nichos, detecção de colisão de portas e cobertura de .env.example, registrado em ecossistema.py como 7º gate raiz e documentado em AGENTS.md §4, 6 testes unitários em gates/test_g_infra_compose.py, 7 gates globais 100% aprovados",
+        "status": "Concluído",
+        "linha": "| 6. Gate `G_INFRA_COMPOSE` | ✅ Concluído em 06/09/2026 — Quality Gate estático implementado (gates/G_INFRA_COMPOSE.py), validação de 7 docker-compose.yml sob aidd-ops, validação de init-multiple-databases.sh e conformidade com os 5 nichos, detecção de colisão de portas e cobertura de .env.example, registrado em ecossistema.py como 7º gate raiz e documentado em AGENTS.md §4, 6 testes unitários em gates/test_g_infra_compose.py, 7 gates globais 100% aprovados | `06-gate-infra-compose.md` |"
+      },
+      {
+        "item": "✅ Concluído em 06/09/2026 — Subcomando `ops preflight <ambiente>` implementado em pipeline_ops.py e tools/aidd-ops/src/core/preflight.py com 4 checagens (healthz, SSL, DNS, webhook), retries configuráveis, saída JSON estruturada, 12 testes unitários herméticos com servidores locais reais (http.server.HTTPServer), zero stubs, 51 testes verdes em aidd-ops",
+        "status": "Concluído",
+        "linha": "| 7. Comando `ops preflight` (Pre-Flight E2E) | ✅ Concluído em 06/09/2026 — Subcomando `ops preflight <ambiente>` implementado em pipeline_ops.py e tools/aidd-ops/src/core/preflight.py com 4 checagens (healthz, SSL, DNS, webhook), retries configuráveis, saída JSON estruturada, 12 testes unitários herméticos com servidores locais reais (http.server.HTTPServer), zero stubs, 51 testes verdes em aidd-ops | `07-gate-preflight-e2e.md` |"
+      },
+      {
+        "item": "✅ Concluído em 06/09/2026 — 7 blocos construtivos canônicos (traefik, postgres, authentik, twenty, chatwoot, calcom, gateway) versionados em tools/aidd-ops/templates/infra/, 5 planos estáticos por nicho em nichos/*.json, 100% auditados e aprovados via gates/G_INFRA_COMPOSE.py, desacoplamento preservado (sem tocar em aidd-generator)",
+        "status": "Concluído",
+        "linha": "| 8. Templates canônicos de infraestrutura | ✅ Concluído em 06/09/2026 — 7 blocos construtivos canônicos (traefik, postgres, authentik, twenty, chatwoot, calcom, gateway) versionados em tools/aidd-ops/templates/infra/, 5 planos estáticos por nicho em nichos/*.json, 100% auditados e aprovados via gates/G_INFRA_COMPOSE.py, desacoplamento preservado (sem tocar em aidd-generator) | `08-templates-canonicos-e-generator-flag.md` |"
+      },
+      {
+        "item": "✅ Concluído em 06/09/2026 — Orquestrador `pipeline_ops_deploy.py` implementado com Result monad e fail-fast, integrado em `ops deploy <ambiente>`, 5 testes unitários cobrindo fluxo determinístico e rollback seguro, 56 testes totais verdes em aidd-ops, gates globais aprovados",
+        "status": "Concluído",
+        "linha": "| 9. Validação E2E com piloto real | ✅ Concluído em 06/09/2026 — Orquestrador `pipeline_ops_deploy.py` implementado com Result monad e fail-fast, integrado em `ops deploy <ambiente>`, 5 testes unitários cobrindo fluxo determinístico e rollback seguro, 56 testes totais verdes em aidd-ops, gates globais aprovados | `09-validacao-e2e-piloto-real.md` |"
+      }
+    ],
+    "ultima_modificacao_git": "",
+    "progresso_pct": 100.0
+  },
+  {
+    "nome": "PLANO-CORRECAO-RISCOS-ECOSSISTEMA-AIDD.md",
+    "categoria": "feitos",
+    "tipo": "arquivo",
+    "caminho": "docs/planos/feitos/PLANO-CORRECAO-RISCOS-ECOSSISTEMA-AIDD.md",
+    "total_itens": 8,
+    "concluidos": 8,
+    "em_andamento": 0,
+    "pendentes": 0,
+    "status_label": "CONCLUÍDO — todos os 8 riscos corrigidos e validados em 04/09/2026",
+    "itens_detalhes": [],
+    "ultima_modificacao_git": "",
+    "progresso_pct": 100.0
+  },
+  {
+    "nome": "refinamento-notas-auditoria",
+    "categoria": "feitos",
+    "tipo": "pasta",
+    "caminho": "docs/planos/feitos/refinamento-notas-auditoria",
+    "total_itens": 6,
+    "concluidos": 6,
+    "em_andamento": 0,
+    "pendentes": 0,
+    "status_label": "",
+    "itens_detalhes": [
+      {
+        "item": "Cobertura de comandos — aidd-forge/aidd-generator",
+        "status": "Concluído",
+        "linha": "| 1 | Cobertura de comandos — aidd-forge/aidd-generator | Testabilidade (9→10) | ✅ CONCLUÍDO em 05/09/2026 — nota do item 10/10, dimensão Testabilidade sobe para 10/10. Auditado por reprodução independente dos 5 casos (770 testes passando, zero regressão, zero chamada real de LLM confirmada empiricamente, escopo 100% respeitado) | `01-cobertura-comandos-forge-generator.md` |"
+      },
+      {
+        "item": "Disclosure plan/prompt",
+        "status": "Concluído",
+        "linha": "| 2 | Disclosure plan/prompt | Transparência (8,5→9) | ✅ CONCLUÍDO em 05/09/2026 — nota do item 10/10, dimensão Transparência sobe para 9/10. Auditado por reprodução independente via subprocess real (10 combinações + 2 cenários extras próprios), byte-identidade confirmada entre as 2 ferramentas, zero regressão | `03-transparencia-disclosure-plan-prompt.md` |"
+      },
+      {
+        "item": "Prova adversarial dos gates originais",
+        "status": "Concluído",
+        "linha": "| 3 | Prova adversarial dos gates originais | Gates Mecânicos (8→9) | ✅ CONCLUÍDO em 05/09/2026 — nota do item 10/10, dimensão Gates Mecânicos sobe para 9/10. Auditado por reprodução independente com cenários próprios diferentes dos do executor (17 testes passando, zero regressão, zero arquivo órfão) | `02-prova-adversarial-gates-originais.md` |"
+      },
+      {
+        "item": "Unificação do injetor aidd-enterprise",
+        "status": "Concluído",
+        "linha": "| 4 | Unificação do injetor aidd-enterprise | Modularização (9→10) + Distribuição (9→10) | ✅ CONCLUÍDO em 05/09/2026 — nota do item 10/10, dimensões Modularização e Distribuição sobem para 10/10. Opção A (migração completa com enriquecimento do canônico), 2 fases sequenciais, cada uma auditada por reprodução independente antes da próxima: Fase 1 enriqueceu o núcleo de aidd-master com as 5 capacidades que só aidd-enterprise tinha (drift SHA-256, remoção, rollback com snapshot completo, dry_run, config com mapa arbitrário de arquivos + path traversal), zero capacidade perdida; Fase 2 migrou aidd-enterprise para consumir esse núcleo, preservando 100% da topologia física própria (5 harnesses incluindo MimoCode, hook em `.json`) e ganhando detecção de ambiguidade de tipo. Suítes de aidd-master (238 passed) e aidd-enterprise (227 passed, cobertura real subiu de 29 para 38 cenários) e `ecossistema.py audit` (exit 0) confirmados por execução real, zero regressão | `04-unificacao-injetor-aidd-enterprise.md` |"
+      },
+      {
+        "item": "Investigação do mecanismo do agy",
+        "status": "Concluído",
+        "linha": "| 5 | Investigação do mecanismo do agy | Universalidade (9→10?) | ✅ CONCLUÍDO em 05/09/2026 — resposta parcial honesta, decidida pelo usuário (Opção A: fechar sem gastar chamada real). Mecanismo real identificado por investigação estática de custo zero (binário `agy` v1.1.27 + documentação oficial): descobre skills em `.agents/skills/` (plural) ou `~/.gemini/config/skills/`, nunca em `.agent/skills/` (singular, o que o ecossistema gera hoje). Uma contradição real permanece registrada (a doc oficial alega suporte retroativo a `.agent/skills` que o teste comportamental da Rodada 1 contradisse, 0/5) — não resolvida por decisão explícita de não gastar chamada de LLM adicional. `AGENTS.md §5` atualizado. Nota do item não sobe para 10/10 (documentação honesta de uma lacuna real, não uma confirmação completa) | `05-investigacao-mecanismo-agy.md` |"
+      },
+      {
+        "item": "Correção de documentação desatualizada (residual dos Itens 2 e 4)",
+        "status": "Concluído",
+        "linha": "| 6 | Correção de documentação desatualizada (residual dos Itens 2 e 4) | Transparência + Modularização (sem nota nova — correção documental, não achado de auditoria de código) | ✅ CONCLUÍDO em 06/09/2026 — auditado por grep real contra os arquivos e contra o `--help` já confirmado antes: disclosure zero-LLM presente e byte-idêntico em master/enterprise; doc de injeção do enterprise agora `IMPLEMENTADO` com as flags/arquitetura reais, flags/scripts falsos removidos. Executor também alterou 1 arquivo fora de escopo (`PLANO-CORRECAO-RISCOS-ECOSSISTEMA-AIDD.md`, reformatação não pedida com bug de Markdown introduzido) — revertido antes do commit | `06-correcao-documentacao-pos-auditoria.md` |"
+      }
+    ],
+    "ultima_modificacao_git": "",
+    "progresso_pct": 100.0
+  },
+  {
+    "nome": "skill-gerador-planos-auditoria",
+    "categoria": "feitos",
+    "tipo": "pasta",
+    "caminho": "docs/planos/feitos/skill-gerador-planos-auditoria",
+    "total_itens": 1,
+    "concluidos": 1,
+    "em_andamento": 0,
+    "pendentes": 0,
+    "status_label": "",
+    "itens_detalhes": [
+      {
+        "item": "Criar skill `planos-auditoria-runner`",
+        "status": "Concluído",
+        "linha": "| 1 | Criar skill `planos-auditoria-runner` | ✅ Concluído | `01-criar-skill-planos-auditoria-runner.md` |"
+      }
+    ],
+    "ultima_modificacao_git": "",
+    "progresso_pct": 100.0
+  },
+  {
+    "nome": "skill-orquestracao-orca-ade",
+    "categoria": "feitos",
+    "tipo": "pasta",
+    "caminho": "docs/planos/feitos/skill-orquestracao-orca-ade",
+    "total_itens": 6,
+    "concluidos": 6,
+    "em_andamento": 0,
+    "pendentes": 0,
+    "status_label": "",
+    "itens_detalhes": [
+      {
+        "item": "Núcleo mecânico (parser/state/worktree)",
+        "status": "Concluído",
+        "linha": "| 1 | Núcleo mecânico (parser/state/worktree) | ✅ Concluído (Auditado) | `01-nucleo-mecanico-parser-state-worktree.md` |"
+      },
+      {
+        "item": "Gate auditor integrado",
+        "status": "Concluído",
+        "linha": "| 2 | Gate auditor integrado | ✅ Concluído (Auditado) | `02-gate-auditor-integracao.md` |"
+      },
+      {
+        "item": "Harness profiles + agent spawner (sem disparo real)",
+        "status": "Concluído",
+        "linha": "| 3 | Harness profiles + agent spawner (sem disparo real) | ✅ Concluído (Auditado) | `03-harness-profiles-agent-spawner.md` |"
+      },
+      {
+        "item": "Hooks + circuit breaker",
+        "status": "Concluído",
+        "linha": "| 4 | Hooks + circuit breaker | ✅ Concluído (Auditado) | `04-hooks-circuit-breaker.md` |"
+      },
+      {
+        "item": "CLI orchestrate + Plano de Voo",
+        "status": "Concluído",
+        "linha": "| 5 | CLI orchestrate + Plano de Voo | ✅ Concluído (Auditado) | `05-cli-orchestrate-plano-de-voo.md` |"
+      },
+      {
+        "item": "Validação end-to-end com agentes reais",
+        "status": "Concluído",
+        "linha": "| 6 | Validação end-to-end com agentes reais | ✅ Concluído (Auditado E2E com Stub / Zero Token) | `06-validacao-end-to-end-agentes-reais.md` |"
+      }
+    ],
+    "ultima_modificacao_git": "",
+    "progresso_pct": 100.0
+  },
+  {
+    "nome": "testes-completos-ecossistema",
+    "categoria": "feitos",
+    "tipo": "pasta",
+    "caminho": "docs/planos/feitos/testes-completos-ecossistema",
+    "total_itens": 6,
+    "concluidos": 6,
+    "em_andamento": 0,
+    "pendentes": 0,
+    "status_label": "",
+    "itens_detalhes": [
+      {
+        "item": "Orquestração raiz",
+        "status": "Concluído",
+        "linha": "| 1 | Orquestração raiz | ✅ Concluído (auditado 2026-09-06, 100% aprovado) | `01-testes-ecossistema-raiz.md` |"
+      },
+      {
+        "item": "AIDD Master",
+        "status": "Concluído",
+        "linha": "| 2 | AIDD Master | ✅ Concluído (executado 2026-09-06, PASSOU COM RESSALVAS — ver `docs/testes/relatorios/02_aidd_master.md`) | `02-testes-aidd-master.md` |"
+      },
+      {
+        "item": "AIDD Enterprise",
+        "status": "Concluído",
+        "linha": "| 3 | AIDD Enterprise | ✅ Concluído (executado 2026-09-06, PASSOU COM RESSALVAS — 1 achado grave, ver `docs/testes/relatorios/03_aidd_enterprise.md`) | `03-testes-aidd-enterprise.md` |"
+      },
+      {
+        "item": "AIDD Forge",
+        "status": "Concluído",
+        "linha": "| 4 | AIDD Forge | ✅ Concluído (executado 2026-09-06, APROVADO 11/11 — ver `docs/testes/relatorios/04_aidd_forge.md`) | `04-testes-aidd-forge.md` |"
+      },
+      {
+        "item": "AIDD Generator",
+        "status": "Concluído",
+        "linha": "| 5 | AIDD Generator | ✅ Concluído (executado 2026-09-06, PASSOU — score auto-crítica 88/100, ver `docs/testes/relatorios/05_aidd_generator.md`) | `05-testes-aidd-generator.md` |"
+      },
+      {
+        "item": "AIDD Ops",
+        "status": "Concluído",
+        "linha": "| 6 | AIDD Ops | ✅ Concluído (executado 2026-09-06, APROVADO 7/7 — ver `docs/testes/relatorios/06_aidd_ops.md`) | `06-testes-aidd-ops.md` |"
+      }
+    ],
+    "ultima_modificacao_git": "",
+    "progresso_pct": 100.0
+  },
+  {
+    "nome": "validacao-humana-testes-reais",
+    "categoria": "feitos",
+    "tipo": "pasta",
+    "caminho": "docs/planos/feitos/validacao-humana-testes-reais",
+    "total_itens": 6,
+    "concluidos": 6,
+    "em_andamento": 0,
+    "pendentes": 0,
+    "status_label": "",
+    "itens_detalhes": [
+      {
+        "item": "✅ Concluído & Aprovado",
+        "status": "Concluído",
+        "linha": "| 1. AIDD Forge | ✅ Concluído & Aprovado | Aprovado | `01-teste-isolado-aidd-forge.md` |"
+      },
+      {
+        "item": "✅ Concluído & Aprovado",
+        "status": "Concluído",
+        "linha": "| 2. AIDD Generator | ✅ Concluído & Aprovado | Aprovado | `02-teste-isolado-aidd-generator.md` |"
+      },
+      {
+        "item": "✅ Concluído & Aprovado",
+        "status": "Concluído",
+        "linha": "| 3. AIDD Master | ✅ Concluído & Aprovado | Aprovado | `03-teste-isolado-aidd-master.md` |"
+      },
+      {
+        "item": "✅ Concluído & Aprovado",
+        "status": "Concluído",
+        "linha": "| 4. AIDD Enterprise | ✅ Concluído & Aprovado | Aprovado | `04-teste-isolado-aidd-enterprise.md` |"
+      },
+      {
+        "item": "✅ Concluído & Aprovado",
+        "status": "Concluído",
+        "linha": "| 5. AIDD Ops | ✅ Concluído & Aprovado | Aprovado | `05-teste-isolado-aidd-ops.md` |"
+      },
+      {
+        "item": "✅ Concluído & Homologado",
+        "status": "Concluído",
+        "linha": "| 6. Integrado E2E | ✅ Concluído & Homologado | Aprovado (Nota 9.56) | `06-teste-integrado-ciclo-completo.md` |"
+      }
+    ],
+    "ultima_modificacao_git": "",
+    "progresso_pct": 100.0
+  },
+  {
+    "nome": "01-correcao-pos-auditoria-sem-maquiagem",
+    "categoria": "fazendo",
+    "tipo": "pasta",
+    "caminho": "docs/planos/fazendo/01-correcao-pos-auditoria-sem-maquiagem",
+    "total_itens": 18,
+    "concluidos": 4,
+    "em_andamento": 0,
+    "pendentes": 14,
+    "status_label": "",
+    "itens_detalhes": [
+      {
+        "item": "Gates rodarem pytest de verdade (nao so estrutura)",
+        "status": "Concluído",
+        "linha": "| 1 | Gates rodarem pytest de verdade (nao so estrutura) | ✅ Concluído e auditado | `01-gates-rodarem-pytest-de-verdade-nao-so-estrutura.md` |"
+      },
+      {
+        "item": "Telemetria de testes sempre remedida, nunca gravada estatica",
+        "status": "Pendente",
+        "linha": "| 2 | Telemetria de testes sempre remedida, nunca gravada estatica | ⏳ Rascunho gerado, aguardando aprovacao | `02-telemetria-de-testes-sempre-remedida-nunca-gravada-estatica.md` |"
+      },
+      {
+        "item": "G_ZERO_HEADLESS: enforcement real, nao so grep de string",
+        "status": "Pendente",
+        "linha": "| 3 | G_ZERO_HEADLESS: enforcement real, nao so grep de string | ⏳ Rascunho gerado, aguardando aprovacao | `03-g-zero-headless-enforcement-real-nao-so-grep-de-string.md` |"
+      },
+      {
+        "item": "Reverter CSP relaxado no template compartilhado (unsafe-inline/CDN)",
+        "status": "Pendente",
+        "linha": "| 4 | Reverter CSP relaxado no template compartilhado (unsafe-inline/CDN) | ⏳ Rascunho gerado, aguardando aprovacao | `04-reverter-csp-relaxado-no-template-compartilhado-unsafe-inlinecdn.md` |"
+      },
+      {
+        "item": "Remover seed de demo (webhook.site + secret hardcoded) da geracao padrao",
+        "status": "Pendente",
+        "linha": "| 5 | Remover seed de demo (webhook.site + secret hardcoded) da geracao padrao | ⏳ Rascunho gerado, aguardando aprovacao | `05-remover-seed-de-demo-webhooksite-secret-hardcoded-da-geracao-padrao.md` |"
+      },
+      {
+        "item": "enterprise inject: dry-run real por padrao antes de gravar no working tree",
+        "status": "Pendente",
+        "linha": "| 6 | enterprise inject: dry-run real por padrao antes de gravar no working tree | ⏳ Rascunho gerado, aguardando aprovacao | `06-enterprise-inject-dry-run-real-por-padrao-antes-de-gravar-no-working-tree.md` |"
+      },
+      {
+        "item": "Corrigir gate de seguranca rotulado blindagem militar (rotulo ou cobertura real)",
+        "status": "Pendente",
+        "linha": "| 7 | Corrigir gate de seguranca rotulado blindagem militar (rotulo ou cobertura real) | ⏳ Rascunho gerado, aguardando aprovacao | `07-corrigir-gate-de-seguranca-rotulado-blindagem-militar-rotulo-ou-cobertura-real.md` |"
+      },
+      {
+        "item": "Sincronizar CLI do aidd-ops com a suite de testes",
+        "status": "Pendente",
+        "linha": "| 8 | Sincronizar CLI do aidd-ops com a suite de testes | ⏳ Rascunho gerado, aguardando aprovacao | `08-sincronizar-cli-do-aidd-ops-com-a-suite-de-testes.md` |"
+      },
+      {
+        "item": "Corrigir porta duplicada no compose gerado e parar dashboard de fabricar resultado de preflight",
+        "status": "Pendente",
+        "linha": "| 9 | Corrigir porta duplicada no compose gerado e parar dashboard de fabricar resultado de preflight | ⏳ Rascunho gerado, aguardando aprovacao | `09-corrigir-porta-duplicada-no-compose-gerado-e-parar-dashboard-de-fabricar-resultado-de-preflight.md` |"
+      },
+      {
+        "item": "Corrigir CORS inseguro (allow_origins=* + allow_credentials=True) no app gerado pelo generator",
+        "status": "Pendente",
+        "linha": "| 10 | Corrigir CORS inseguro (allow_origins=* + allow_credentials=True) no app gerado pelo generator | ⏳ Rascunho gerado, aguardando aprovacao | `10-corrigir-cors-inseguro-allow-origins-allow-credentialstrue-no-app-gerado-pelo-generator.md` |"
+      },
+      {
+        "item": "Corrigir deploy Docker do modulo gerado (pip install ausente, nginx/ inexistente, secret em texto plano)",
+        "status": "Pendente",
+        "linha": "| 11 | Corrigir deploy Docker do modulo gerado (pip install ausente, nginx/ inexistente, secret em texto plano) | ⏳ Rascunho gerado, aguardando aprovacao | `11-corrigir-deploy-docker-do-modulo-gerado-pip-install-ausente-nginx-inexistente-secret-em-texto-plano.md` |"
+      },
+      {
+        "item": "Prova real de integracao multi-ferramenta no teste integrado",
+        "status": "Pendente",
+        "linha": "| 12 | Prova real de integracao multi-ferramenta no teste integrado | ⏳ Rascunho gerado, aguardando aprovacao | `12-prova-real-de-integracao-multi-ferramenta-no-teste-integrado.md` |"
+      },
+      {
+        "item": "Reduzir custo de token nas ferramentas de nucleo deterministico (master/enterprise/ops/CLI)",
+        "status": "Pendente",
+        "linha": "| 13 | Reduzir custo de token nas ferramentas de nucleo deterministico (master/enterprise/ops/CLI) | ⏳ Rascunho gerado, aguardando aprovacao | `13-reduzir-custo-de-token-nas-ferramentas-de-nucleo-deterministico-masterenterpriseopscli.md` |"
+      },
+      {
+        "item": "Remover ou ligar codigo morto de resiliencia no enterprise",
+        "status": "Pendente",
+        "linha": "| 14 | Remover ou ligar codigo morto de resiliencia no enterprise | ⏳ Rascunho gerado, aguardando aprovacao | `14-remover-ou-ligar-codigo-morto-de-resiliencia-no-enterprise.md` |"
+      },
+      {
+        "item": "requirements.txt do app gerado pelo generator dessincronizado do codigo real",
+        "status": "Pendente",
+        "linha": "| 15 | requirements.txt do app gerado pelo generator dessincronizado do codigo real | ⏳ Rascunho gerado, aguardando aprovacao | `15-requirementstxt-do-app-gerado-pelo-generator-dessincronizado-do-codigo-real.md` |"
+      },
+      {
+        "item": "XSS armazenado real em `get_studio_html` (núcleo compartilhado)",
+        "status": "Concluído",
+        "linha": "| 16 | XSS armazenado real em `get_studio_html` (núcleo compartilhado) | ✅ Concluído e auditado (2026-09-09) | `16-xss-armazenado-real-em-get_studio_html-nucleo-compartilhado.md` |"
+      },
+      {
+        "item": "CLI aidd_inject convertida de argparse para click pela metade",
+        "status": "Concluído",
+        "linha": "| 17 | CLI aidd_inject convertida de argparse para click pela metade | ✅ Concluído — decisão revista na mesma data: MANTER CLICK (migração completa pelo item 10 do plano estratégico anti-NIH, 929 testes verdes, `click` declarado em requirements.txt) (2026-09-09) | `17-cli-aidd-inject-convertida-argparse-para-click-pela-metade.md` |"
+      },
+      {
+        "item": "CLI do aidd-forge convertida de argparse para click pela metade (suíte quebrada)",
+        "status": "Concluído",
+        "linha": "| 18 | CLI do aidd-forge convertida de argparse para click pela metade (suíte quebrada) | ✅ Concluído — decisão revista na mesma data: MANTER CLICK (migração completa pelo item 10 do plano estratégico anti-NIH, 196 testes verdes, `click` declarado em setup.py) (2026-09-09) | `18-cli-forge-argparse-para-click-pela-metade-suite-quebrada.md` |"
+      }
+    ],
+    "ultima_modificacao_git": "",
+    "progresso_pct": 22.2
+  },
+  {
+    "nome": "codigo-limpo-profundo-ecossistema",
+    "categoria": "fazendo",
+    "tipo": "pasta",
+    "caminho": "docs/planos/fazendo/codigo-limpo-profundo-ecossistema",
+    "total_itens": 18,
+    "concluidos": 1,
+    "em_andamento": 0,
+    "pendentes": 17,
+    "status_label": "",
+    "itens_detalhes": [
+      {
+        "item": "Extrair nucleo compartilhado src-core entre master e enterprise (27 arquivos idênticos e divergência silenciosa)",
+        "status": "Concluído",
+        "linha": "| 1 | Extrair nucleo compartilhado src-core entre master e enterprise (27 arquivos idênticos e divergência silenciosa) | ✅ Concluído | `01-extrair-nucleo-compartilhado-src-core-entre-master-e-enterprise-27-arquivos-idênticos-e-divergência-silenciosa.md` |"
+      },
+      {
+        "item": "Extrair e proteger templates duplicados (core vs v2 e entre ferramentas)",
+        "status": "Pendente",
+        "linha": "| 2 | Extrair e proteger templates duplicados (core vs v2 e entre ferramentas) | ⏳ Rascunho gerado, aguardando aprovacao | `02-extrair-e-proteger-templates-duplicados-core-vs-v2-e-entre-ferramentas.md` |"
+      },
+      {
+        "item": "Extrair e proteger scripts-gates e templates-gates duplicados entre master e enterprise",
+        "status": "Pendente",
+        "linha": "| 3 | Extrair e proteger scripts-gates e templates-gates duplicados entre master e enterprise | ⏳ Rascunho gerado, aguardando aprovacao | `03-extrair-e-proteger-scripts-gates-e-templates-gates-duplicados-entre-master-e-enterprise.md` |"
+      },
+      {
+        "item": "Refatorar CLI monolitica aidd.py de master-enterprise (funcoes com multiplas responsabilidades e roteamento duplo)",
+        "status": "Pendente",
+        "linha": "| 4 | Refatorar CLI monolitica aidd.py de master-enterprise (funcoes com multiplas responsabilidades e roteamento duplo) | ⏳ Rascunho gerado, aguardando aprovacao | `04-refatorar-cli-monolitica-aiddpy-de-master-enterprise-funcoes-com-multiplas-responsabilidades-e-roteamento-duplo.md` |"
+      },
+      {
+        "item": "Unificar reconhecimento de dominio (KNOWN_DOMAINS vs IntentRouter)",
+        "status": "Pendente",
+        "linha": "| 5 | Unificar reconhecimento de dominio (KNOWN_DOMAINS vs IntentRouter) | ⏳ Rascunho gerado, aguardando aprovacao | `05-unificar-reconhecimento-de-dominio-known-domains-vs-intentrouter.md` |"
+      },
+      {
+        "item": "Unificar as 4 implementacoes paralelas do dominio Injector (forge-generator-master-enterprise)",
+        "status": "Pendente",
+        "linha": "| 6 | Unificar as 4 implementacoes paralelas do dominio Injector (forge-generator-master-enterprise) | ⏳ Rascunho gerado, aguardando aprovacao | `06-unificar-as-4-implementacoes-paralelas-do-dominio-injector-forge-generator-master-enterprise.md` |"
+      },
+      {
+        "item": "Consolidar Result monad (4 APIs incompativeis) em torno de returns",
+        "status": "Pendente",
+        "linha": "| 7 | Consolidar Result monad (4 APIs incompativeis) em torno de returns | ⏳ Rascunho gerado, aguardando aprovacao | `07-consolidar-result-monad-4-apis-incompativeis-em-torno-de-returns.md` |"
+      },
+      {
+        "item": "Refatorar compose_suite.py (multiplas responsabilidades e HTML em f-string) e remover constante morta WEBHOOK_DEMO_URL",
+        "status": "Pendente",
+        "linha": "| 8 | Refatorar compose_suite.py (multiplas responsabilidades e HTML em f-string) e remover constante morta WEBHOOK_DEMO_URL | ⏳ Rascunho gerado, aguardando aprovacao | `08-refatorar-compose-suitepy-multiplas-responsabilidades-e-html-em-f-string-e-remover-constante-morta-webhook-demo-url.md` |"
+      },
+      {
+        "item": "Corrigir terminacao de linha inconsistente CRLF-LF entre gemeas master-enterprise",
+        "status": "Pendente",
+        "linha": "| 9 | Corrigir terminacao de linha inconsistente CRLF-LF entre gemeas master-enterprise | ⏳ Rascunho gerado, aguardando aprovacao | `09-corrigir-terminacao-de-linha-inconsistente-crlf-lf-entre-gemeas-master-enterprise.md` |"
+      },
+      {
+        "item": "Simplificar parser defensivo extrair_json_manual e corrigir comentario de numeracao mentiroso",
+        "status": "Pendente",
+        "linha": "| 10 | Simplificar parser defensivo extrair_json_manual e corrigir comentario de numeracao mentiroso | ⏳ Rascunho gerado, aguardando aprovacao | `10-simplificar-parser-defensivo-extrair-json-manual-e-corrigir-comentario-de-numeracao-mentiroso.md` |"
+      },
+      {
+        "item": "Refatorar Fase 08 do generator (monolito, classificador por substring, excecoes copy-paste, estado global com sentinela dupla)",
+        "status": "Pendente",
+        "linha": "| 11 | Refatorar Fase 08 do generator (monolito, classificador por substring, excecoes copy-paste, estado global com sentinela dupla) | ⏳ Rascunho gerado, aguardando aprovacao | `11-refatorar-fase-08-do-generator-monolito-classificador-por-substring-excecoes-copy-paste-estado-global-com-sentinela-dupla.md` |"
+      },
+      {
+        "item": "Remover imports mortos nos gates locais de master-enterprise",
+        "status": "Pendente",
+        "linha": "| 12 | Remover imports mortos nos gates locais de master-enterprise | ⏳ Rascunho gerado, aguardando aprovacao | `12-remover-imports-mortos-nos-gates-locais-de-master-enterprise.md` |"
+      },
+      {
+        "item": "Estreitar except Exception e except pass remanescentes em gates da raiz e src-core",
+        "status": "Pendente",
+        "linha": "| 13 | Estreitar except Exception e except pass remanescentes em gates da raiz e src-core | ⏳ Rascunho gerado, aguardando aprovacao | `13-estreitar-except-exception-e-except-pass-remanescentes-em-gates-da-raiz-e-src-core.md` |"
+      },
+      {
+        "item": "Corrigir contradicao headless-interativa em cmd_orchestrate e decompor a funcao",
+        "status": "Pendente",
+        "linha": "| 14 | Corrigir contradicao headless-interativa em cmd_orchestrate e decompor a funcao | ⏳ Rascunho gerado, aguardando aprovacao | `14-corrigir-contradicao-headless-interativa-em-cmd-orchestrate-e-decompor-a-funcao.md` |"
+      },
+      {
+        "item": "Corrigir violacao de Lei de Demeter em database.py e unificar reescrita SQL (AST vs regex)",
+        "status": "Pendente",
+        "linha": "| 15 | Corrigir violacao de Lei de Demeter em database.py e unificar reescrita SQL (AST vs regex) | ⏳ Rascunho gerado, aguardando aprovacao | `15-corrigir-violacao-de-lei-de-demeter-em-databasepy-e-unificar-reescrita-sql-ast-vs-regex.md` |"
+      },
+      {
+        "item": "Decompor God class SecurityGate (G_SEGURANCA) e renomear metodos camada-N",
+        "status": "Pendente",
+        "linha": "| 16 | Decompor God class SecurityGate (G_SEGURANCA) e renomear metodos camada-N | ⏳ Rascunho gerado, aguardando aprovacao | `16-decompor-god-class-securitygate-g-seguranca-e-renomear-metodos-camada-n.md` |"
+      },
+      {
+        "item": "Polimento estrutural: materializador do generator, idioma try-except-import duplicado, sys.path fragil no ops, funcoes sem decomposicao no ops",
+        "status": "Pendente",
+        "linha": "| 17 | Polimento estrutural: materializador do generator, idioma try-except-import duplicado, sys.path fragil no ops, funcoes sem decomposicao no ops | ⏳ Rascunho gerado, aguardando aprovacao | `17-polimento-estrutural-materializador-do-generator-idioma-try-except-import-duplicado-syspath-fragil-no-ops-funcoes-sem-decomposicao-no-ops.md` |"
+      },
+      {
+        "item": "Polimento de testes e UX: time.sleep em testes e banners-prints misturando UI e log",
+        "status": "Pendente",
+        "linha": "| 18 | Polimento de testes e UX: time.sleep em testes e banners-prints misturando UI e log | ⏳ Rascunho gerado, aguardando aprovacao | `18-polimento-de-testes-e-ux-timesleep-em-testes-e-banners-prints-misturando-ui-e-log.md` |"
+      }
+    ],
+    "ultima_modificacao_git": "",
+    "progresso_pct": 5.6
+  },
+  {
+    "nome": "02-otimizacao-tokenomics-latencia",
+    "categoria": "a-fazer",
+    "tipo": "pasta",
+    "caminho": "docs/planos/a-fazer/02-otimizacao-tokenomics-latencia",
+    "total_itens": 7,
+    "concluidos": 0,
+    "em_andamento": 0,
+    "pendentes": 7,
+    "status_label": "",
+    "itens_detalhes": [
+      {
+        "item": "prompt-por-composicao-e-fixloop-diff-fase-08",
+        "status": "Pendente",
+        "linha": "| 1 | prompt-por-composicao-e-fixloop-diff-fase-08 | ⏳ Rascunho gerado, aguardando aprovacao | `01-prompt-por-composicao-e-fixloop-diff-fase-08.md` |"
+      },
+      {
+        "item": "orcador-de-contexto-handoff-fase-01-para-02",
+        "status": "Pendente",
+        "linha": "| 2 | orcador-de-contexto-handoff-fase-01-para-02 | ⏳ Rascunho gerado, aguardando aprovacao | `02-orcador-de-contexto-handoff-fase-01-para-02.md` |"
+      },
+      {
+        "item": "reparo-json-deterministico-zero-llm",
+        "status": "Pendente",
+        "linha": "| 3 | reparo-json-deterministico-zero-llm | ⏳ Rascunho gerado, aguardando aprovacao | `03-reparo-json-deterministico-zero-llm.md` |"
+      },
+      {
+        "item": "hermeticidade-verificavel-sessoes-e-rotulagem-telemetria",
+        "status": "Pendente",
+        "linha": "| 4 | hermeticidade-verificavel-sessoes-e-rotulagem-telemetria | ⏳ Rascunho gerado, aguardando aprovacao | `04-hermeticidade-verificavel-sessoes-e-rotulagem-telemetria.md` |"
+      },
+      {
+        "item": "middleware-compressao-sandeco-token-reduce",
+        "status": "Pendente",
+        "linha": "| 5 | middleware-compressao-sandeco-token-reduce | ⏳ Rascunho gerado, aguardando aprovacao | `05-middleware-compressao-sandeco-token-reduce.md` |"
+      },
+      {
+        "item": "orcador-handoff-fase-06-para-07-mapa-secoes",
+        "status": "Pendente",
+        "linha": "| 6 | orcador-handoff-fase-06-para-07-mapa-secoes | ⏳ Rascunho gerado, aguardando aprovacao | `06-orcador-handoff-fase-06-para-07-mapa-secoes.md` |"
+      },
+      {
+        "item": "orcamento-fases-pipeline-e-alerta-desvio",
+        "status": "Pendente",
+        "linha": "| 7 | orcamento-fases-pipeline-e-alerta-desvio | ⏳ Rascunho gerado, aguardando aprovacao | `07-orcamento-fases-pipeline-e-alerta-desvio.md` |"
+      }
+    ],
+    "ultima_modificacao_git": "",
+    "progresso_pct": 0.0
+  },
+  {
+    "nome": "03-qualidade-testes-e-mutacao",
+    "categoria": "a-fazer",
+    "tipo": "pasta",
+    "caminho": "docs/planos/a-fazer/03-qualidade-testes-e-mutacao",
+    "total_itens": 10,
+    "concluidos": 0,
+    "em_andamento": 0,
+    "pendentes": 10,
+    "status_label": "",
+    "itens_detalhes": [
+      {
+        "item": "testes-conteudo-sha256-injector-enterprise",
+        "status": "Pendente",
+        "linha": "| 1 | testes-conteudo-sha256-injector-enterprise | ⏳ Rascunho gerado, aguardando aprovacao | `01-testes-conteudo-sha256-injector-enterprise.md` |"
+      },
+      {
+        "item": "testes-exatidao-sizing-ops-fixtures-ouro",
+        "status": "Pendente",
+        "linha": "| 2 | testes-exatidao-sizing-ops-fixtures-ouro | ⏳ Rascunho gerado, aguardando aprovacao | `02-testes-exatidao-sizing-ops-fixtures-ouro.md` |"
+      },
+      {
+        "item": "testes-resiliencia-outbox-crash-pos-emit-dead-letter",
+        "status": "Pendente",
+        "linha": "| 3 | testes-resiliencia-outbox-crash-pos-emit-dead-letter | ⏳ Rascunho gerado, aguardando aprovacao | `03-testes-resiliencia-outbox-crash-pos-emit-dead-letter.md` |"
+      },
+      {
+        "item": "eliminar-timesleep-injetar-relogio-cqrs-polling-deadline",
+        "status": "Pendente",
+        "linha": "| 4 | eliminar-timesleep-injetar-relogio-cqrs-polling-deadline | ⏳ Rascunho gerado, aguardando aprovacao | `04-eliminar-timesleep-injetar-relogio-cqrs-polling-deadline.md` |"
+      },
+      {
+        "item": "portas-efemeras-testes-integracao-servidor",
+        "status": "Pendente",
+        "linha": "| 5 | portas-efemeras-testes-integracao-servidor | ⏳ Rascunho gerado, aguardando aprovacao | `05-portas-efemeras-testes-integracao-servidor.md` |"
+      },
+      {
+        "item": "g-testes-reais-v2-junitxml-orcamento-skipped",
+        "status": "Pendente",
+        "linha": "| 6 | g-testes-reais-v2-junitxml-orcamento-skipped | ⏳ Rascunho gerado, aguardando aprovacao | `06-g-testes-reais-v2-junitxml-orcamento-skipped.md` |"
+      },
+      {
+        "item": "testes-contrato-rls-e-wal-pragmas",
+        "status": "Pendente",
+        "linha": "| 7 | testes-contrato-rls-e-wal-pragmas | ⏳ Rascunho gerado, aguardando aprovacao | `07-testes-contrato-rls-e-wal-pragmas.md` |"
+      },
+      {
+        "item": "teste-contrato-sizing-para-helm-values",
+        "status": "Pendente",
+        "linha": "| 8 | teste-contrato-sizing-para-helm-values | ⏳ Rascunho gerado, aguardando aprovacao | `08-teste-contrato-sizing-para-helm-values.md` |"
+      },
+      {
+        "item": "gate-g-mutacao-mutmut-regras-exatas",
+        "status": "Pendente",
+        "linha": "| 9 | gate-g-mutacao-mutmut-regras-exatas | ⏳ Rascunho gerado, aguardando aprovacao | `09-gate-g-mutacao-mutmut-regras-exatas.md` |"
+      },
+      {
+        "item": "politica-warnings-pytest-deprecations",
+        "status": "Pendente",
+        "linha": "| 10 | politica-warnings-pytest-deprecations | ⏳ Rascunho gerado, aguardando aprovacao | `10-politica-warnings-pytest-deprecations.md` |"
+      }
+    ],
+    "ultima_modificacao_git": "",
+    "progresso_pct": 0.0
+  },
+  {
+    "nome": "04-resiliencia-concorrencia-e-integridade",
+    "categoria": "a-fazer",
+    "tipo": "pasta",
+    "caminho": "docs/planos/a-fazer/04-resiliencia-concorrencia-e-integridade",
+    "total_itens": 8,
+    "concluidos": 0,
+    "em_andamento": 0,
+    "pendentes": 8,
+    "status_label": "",
+    "itens_detalhes": [
+      {
+        "item": "outbox-claim-atomico-retry-e-dead-letter",
+        "status": "Pendente",
+        "linha": "| 1 | outbox-claim-atomico-retry-e-dead-letter | ⏳ Rascunho gerado, aguardando aprovacao | `01-outbox-claim-atomico-retry-e-dead-letter.md` |"
+      },
+      {
+        "item": "escritor-atomico-compartilhado-e-migracao-fs",
+        "status": "Pendente",
+        "linha": "| 2 | escritor-atomico-compartilhado-e-migracao-fs | ⏳ Rascunho gerado, aguardando aprovacao | `02-escritor-atomico-compartilhado-e-migracao-fs.md` |"
+      },
+      {
+        "item": "maquina-estados-pipeline-generator-e-resume",
+        "status": "Pendente",
+        "linha": "| 3 | maquina-estados-pipeline-generator-e-resume | ⏳ Rascunho gerado, aguardando aprovacao | `03-maquina-estados-pipeline-generator-e-resume.md` |"
+      },
+      {
+        "item": "retry-backoff-sqlite-busy-e-pool-explicito",
+        "status": "Pendente",
+        "linha": "| 4 | retry-backoff-sqlite-busy-e-pool-explicito | ⏳ Rascunho gerado, aguardando aprovacao | `04-retry-backoff-sqlite-busy-e-pool-explicito.md` |"
+      },
+      {
+        "item": "fila-unica-revalidacao-read-model-cache",
+        "status": "Pendente",
+        "linha": "| 5 | fila-unica-revalidacao-read-model-cache | ⏳ Rascunho gerado, aguardando aprovacao | `05-fila-unica-revalidacao-read-model-cache.md` |"
+      },
+      {
+        "item": "registry-writers-com-lock-e-rename-atomico",
+        "status": "Pendente",
+        "linha": "| 6 | registry-writers-com-lock-e-rename-atomico | ⏳ Rascunho gerado, aguardando aprovacao | `06-registry-writers-com-lock-e-rename-atomico.md` |"
+      },
+      {
+        "item": "checkpoint-persistencia-result-ops-deploy",
+        "status": "Pendente",
+        "linha": "| 7 | checkpoint-persistencia-result-ops-deploy | ⏳ Rascunho gerado, aguardando aprovacao | `07-checkpoint-persistencia-result-ops-deploy.md` |"
+      },
+      {
+        "item": "journal-recuperacao-pos-crash-multi-arquivo",
+        "status": "Pendente",
+        "linha": "| 8 | journal-recuperacao-pos-crash-multi-arquivo | ⏳ Rascunho gerado, aguardando aprovacao | `08-journal-recuperacao-pos-crash-multi-arquivo.md` |"
+      }
+    ],
+    "ultima_modificacao_git": "",
+    "progresso_pct": 0.0
+  },
+  {
+    "nome": "05-seguranca-zero-trust-e-supply-chain",
+    "categoria": "a-fazer",
+    "tipo": "pasta",
+    "caminho": "docs/planos/a-fazer/05-seguranca-zero-trust-e-supply-chain",
+    "total_itens": 10,
+    "concluidos": 0,
+    "em_andamento": 0,
+    "pendentes": 10,
+    "status_label": "",
+    "itens_detalhes": [
+      {
+        "item": "sandbox-nivel-1-subprocess-env-minimo-fase-08",
+        "status": "Pendente",
+        "linha": "| 1 | sandbox-nivel-1-subprocess-env-minimo-fase-08 | ⏳ Rascunho gerado, aguardando aprovacao | `01-sandbox-nivel-1-subprocess-env-minimo-fase-08.md` |"
+      },
+      {
+        "item": "gate-owasp-sobre-output-fase-08",
+        "status": "Pendente",
+        "linha": "| 2 | gate-owasp-sobre-output-fase-08 | ⏳ Rascunho gerado, aguardando aprovacao | `02-gate-owasp-sobre-output-fase-08.md` |"
+      },
+      {
+        "item": "corrigir-interpolacao-sql-set-tenant-pg",
+        "status": "Pendente",
+        "linha": "| 3 | corrigir-interpolacao-sql-set-tenant-pg | ⏳ Rascunho gerado, aguardando aprovacao | `03-corrigir-interpolacao-sql-set-tenant-pg.md` |"
+      },
+      {
+        "item": "pin-exato-e-hashes-requirements-lockfile",
+        "status": "Pendente",
+        "linha": "| 4 | pin-exato-e-hashes-requirements-lockfile | ⏳ Rascunho gerado, aguardando aprovacao | `04-pin-exato-e-hashes-requirements-lockfile.md` |"
+      },
+      {
+        "item": "manifest-assinado-ed25519-componentes-enterprise",
+        "status": "Pendente",
+        "linha": "| 5 | manifest-assinado-ed25519-componentes-enterprise | ⏳ Rascunho gerado, aguardando aprovacao | `05-manifest-assinado-ed25519-componentes-enterprise.md` |"
+      },
+      {
+        "item": "jwt-hardening-segredo-prod-exp-obrigatorio",
+        "status": "Pendente",
+        "linha": "| 6 | jwt-hardening-segredo-prod-exp-obrigatorio | ⏳ Rascunho gerado, aguardando aprovacao | `06-jwt-hardening-segredo-prod-exp-obrigatorio.md` |"
+      },
+      {
+        "item": "hash-artefatos-skills-mcps-dependencias-externas",
+        "status": "Pendente",
+        "linha": "| 7 | hash-artefatos-skills-mcps-dependencias-externas | ⏳ Rascunho gerado, aguardando aprovacao | `07-hash-artefatos-skills-mcps-dependencias-externas.md` |"
+      },
+      {
+        "item": "mcp-defensivo-cap-limite-e-env-denylist",
+        "status": "Pendente",
+        "linha": "| 8 | mcp-defensivo-cap-limite-e-env-denylist | ⏳ Rascunho gerado, aguardando aprovacao | `08-mcp-defensivo-cap-limite-e-env-denylist.md` |"
+      },
+      {
+        "item": "rls-fail-closed-auditoria-tabelas-desprotegidas",
+        "status": "Pendente",
+        "linha": "| 9 | rls-fail-closed-auditoria-tabelas-desprotegidas | ⏳ Rascunho gerado, aguardando aprovacao | `09-rls-fail-closed-auditoria-tabelas-desprotegidas.md` |"
+      },
+      {
+        "item": "sandbox-nivel-2-container-modo-isolado",
+        "status": "Pendente",
+        "linha": "| 10 | sandbox-nivel-2-container-modo-isolado | ⏳ Rascunho gerado, aguardando aprovacao | `10-sandbox-nivel-2-container-modo-isolado.md` |"
+      }
+    ],
+    "ultima_modificacao_git": "",
+    "progresso_pct": 0.0
+  },
+  {
+    "nome": "06-bootstrap-ambiente-e-preflight-host",
+    "categoria": "a-fazer",
+    "tipo": "pasta",
+    "caminho": "docs/planos/a-fazer/06-bootstrap-ambiente-e-preflight-host",
+    "total_itens": 9,
+    "concluidos": 0,
+    "em_andamento": 0,
+    "pendentes": 9,
+    "status_label": "",
+    "itens_detalhes": [
+      {
+        "item": "self-healing-imports-python-ecossistema",
+        "status": "Pendente",
+        "linha": "| 1 | self-healing-imports-python-ecossistema | ⏳ Rascunho gerado, aguardando aprovacao | `01-self-healing-imports-python-ecossistema.md` |"
+      },
+      {
+        "item": "preflight-host-diagnostico-binarios-sistema",
+        "status": "Pendente",
+        "linha": "| 2 | preflight-host-diagnostico-binarios-sistema | ⏳ Rascunho gerado, aguardando aprovacao | `02-preflight-host-diagnostico-binarios-sistema.md` |"
+      },
+      {
+        "item": "tratamento-falhas-npx-bootstrap-skills",
+        "status": "Pendente",
+        "linha": "| 3 | tratamento-falhas-npx-bootstrap-skills | ⏳ Rascunho gerado, aguardando aprovacao | `03-tratamento-falhas-npx-bootstrap-skills.md` |"
+      },
+      {
+        "item": "bootstrapper-assistido-multi-os-fix",
+        "status": "Pendente",
+        "linha": "| 4 | bootstrapper-assistido-multi-os-fix | ⏳ Rascunho gerado, aguardando aprovacao | `04-bootstrapper-assistido-multi-os-fix.md` |"
+      },
+      {
+        "item": "campo-preflight-manifesto-dependencias-externas",
+        "status": "Pendente",
+        "linha": "| 5 | campo-preflight-manifesto-dependencias-externas | ⏳ Rascunho gerado, aguardando aprovacao | `05-campo-preflight-manifesto-dependencias-externas.md` |"
+      },
+      {
+        "item": "unificar-detectores-binarios-nos-gates",
+        "status": "Pendente",
+        "linha": "| 6 | unificar-detectores-binarios-nos-gates | ⏳ Rascunho gerado, aguardando aprovacao | `06-unificar-detectores-binarios-nos-gates.md` |"
+      },
+      {
+        "item": "preflight-ops-antecipado-ansible-sops-docker",
+        "status": "Pendente",
+        "linha": "| 7 | preflight-ops-antecipado-ansible-sops-docker | ⏳ Rascunho gerado, aguardando aprovacao | `07-preflight-ops-antecipado-ansible-sops-docker.md` |"
+      },
+      {
+        "item": "atualizar-agents-md-bootstrap-preflight-sessao",
+        "status": "Pendente",
+        "linha": "| 8 | atualizar-agents-md-bootstrap-preflight-sessao | ⏳ Rascunho gerado, aguardando aprovacao | `08-atualizar-agents-md-bootstrap-preflight-sessao.md` |"
+      },
+      {
+        "item": "sincronizacao-textual-quickstart-readme",
+        "status": "Pendente",
+        "linha": "| 9 | sincronizacao-textual-quickstart-readme | ⏳ Rascunho gerado, aguardando aprovacao | `09-sincronizacao-textual-quickstart-readme.md` |"
+      }
+    ],
+    "ultima_modificacao_git": "",
+    "progresso_pct": 0.0
+  }
+]

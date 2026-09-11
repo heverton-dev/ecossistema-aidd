@@ -97,7 +97,7 @@ O **Ecossistema AIDD** é um monorepo agnóstico que integra 6 ferramentas compl
   - Relatório completo: `docs/relatorios/relatorio-auditoria-ecossistema-aidd-sem-maquiagem.html`.
   - Plano de correção aberto (rascunho, aguardando aprovação item a item): `docs/planos/a-fazer/01-correcao-pos-auditoria-sem-maquiagem/` (14 itens, com sugestão de modelo/harness por item).
   - Camada estratégica aberta (rascunho): `docs/planos/a-fazer/02-direcionamento-estrategico-anti-nih/` (6 itens — o que fica/troca, north star, sequenciamento da troca de motor, reauditoria, investimento em diferencial).
-  - Levantamento NIH salvo em `docs/features/oportunidades-reaproveitamento-oss-nih.md` (26 itens de ferramenta OSS reaproveitável) e guia cross-projeto salvo fora do repo em `C:\Users\trcnologia\Desktop\CONSTRUA-SO-O-QUE-NINGUEM-CONSTRUIU.md`.
+  - Levantamento NIH salvo em `docs/features/08-09-2026_feature-oportunidades-reaproveitamento-nih.md` (26 itens de ferramenta OSS reaproveitável) e guia cross-projeto salvo fora do repo em `C:\Users\trcnologia\Desktop\CONSTRUA-SO-O-QUE-NINGUEM-CONSTRUIU.md`.
   - `docs/planos/` reorganizado em `feitos/`/`fazendo/`/`a-fazer/`, mantido automaticamente por `python scripts/atualizar_index_planos.py` (move a iniciativa de subpasta conforme o status real muda, nunca por alegação) — 3 planos soltos superados (`PLANO-CORRECAO-SKILLS-AGNOSTICAS.md`, `PLANO-EVOLUCAO-NOTAS-AUDITORIA.md`, `PLANO-EXECUCAO-ECOSSISTEMA-AIDD.md`) removidos por já estarem absorvidos e concluídos em iniciativas mais novas.
 - **2026-09-08 / 2026-09-09 — Qualidade, Pre-commit e Anti-NIH:**
   - Migração para o framework `pre-commit` unificado (`.pre-commit-config.yaml`).

@@ -1,6 +1,6 @@
 {
   "versao": "1.0.0",
-  "descricao": "Catálogo de nichos de mercado do AIDD-Ops MVP. Fonte: PLANO ARQUITETURAL NOVA FEATURE AIDD-OPS.md §6.",
+  "descricao": "Catálogo de nichos de mercado do AIDD-Ops MVP. Fonte: 06-09-2026_feature-arquitetura-aidd-ops.md §6.",
   "nichos": [
     {
       "slug": "clinicas",

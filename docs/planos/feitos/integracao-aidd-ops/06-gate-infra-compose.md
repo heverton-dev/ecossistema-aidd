@@ -38,7 +38,7 @@ Os 6 gates atuais (`gates/G_*.py`) auditam código Python, segredos, compatibili
 ```
 Você vai criar um gate determinístico novo, gates/G_INFRA_COMPOSE.py,
 cobrindo o Gap 3 identificado em
-"docs/features/PLANO ARQUITETURAL NOVA FEATURE AIDD-OPS.md §8.2":
+"docs/features/06-09-2026_feature-arquitetura-aidd-ops.md §8.2":
 validação estática de arquivos docker-compose.yml e do script de
 inicialização do PostgreSQL centralizado. Este gate é 100% estático e
 offline — não sobe nenhum contêiner real, só valida sintaxe/estrutura.
@@ -124,7 +124,7 @@ ENTREGÁVEL: código do gate, testes, output real de
 ```
 You are going to create a new deterministic gate,
 gates/G_INFRA_COMPOSE.py, covering Gap 3 identified in
-"docs/features/PLANO ARQUITETURAL NOVA FEATURE AIDD-OPS.md §8.2": static
+"docs/features/06-09-2026_feature-arquitetura-aidd-ops.md §8.2": static
 validation of docker-compose.yml files and of the centralized PostgreSQL
 initialization script. This gate is 100% static and offline — it never
 spins up a real container, it only validates syntax/structure.

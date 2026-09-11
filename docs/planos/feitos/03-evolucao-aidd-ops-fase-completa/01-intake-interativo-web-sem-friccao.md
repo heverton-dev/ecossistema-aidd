@@ -7,7 +7,7 @@
 
 ## Contexto ja investigado
 
-- NIH #19 (`docs/features/oportunidades-reaproveitamento-oss-nih.md`): intake web planejado era NIH — resolvido com **Streamlit** (app gerenciado pelo Coolify), sem frontend custom.
+- NIH #19 (`docs/features/08-09-2026_feature-oportunidades-reaproveitamento-nih.md`): intake web planejado era NIH — resolvido com **Streamlit** (app gerenciado pelo Coolify), sem frontend custom.
 - `scripts/pipeline_ops.py` já concentrava o intake autônomo (Fase 1-3: nicho → stack → sizing) no CLI; o intake web reusa a MESMA lógica (`montar_plano_em_memoria`) — sem duplicação de regra de negócio.
 - Decisão registrada nos itens 03/04 da iniciativa: Coolify adotado como plataforma self-hosted para VPS compartilhada; app gerenciado é o mecanismo de deploy.
 

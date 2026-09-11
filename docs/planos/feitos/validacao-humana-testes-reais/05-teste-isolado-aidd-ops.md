@@ -22,7 +22,7 @@ Esta sessão validou de forma 100% isolada e real a ferramenta **AIDD Ops (Infra
 4. [x] Servidor ativo em porta local (8080) com dashboard visual padrão ouro AIDD (Zinc/Dark, Spotlight Ctrl+K, Zero Emojis, Zero Popups OS).
 5. [x] Execução dos Quality Gates (8/8 PASS com G_INFRA_COMPOSE homologado).
 6. [x] Coleta da avaliação crítica e apontamentos do desenvolvedor humano.
-7. [x] Formalização do Guia Enciclopédico de Arquitetura em `docs/explicacoes/01-arquitetura-e-visao-aidd-ops.md`.
+7. [x] Formalização do Guia Enciclopédico de Arquitetura em `docs/explicacoes/07-09-2026_explica-visao-aidd-ops.md`.
 8. [x] Criação da iniciativa canônica de plano estruturado em `docs/planos/evolucao-aidd-ops-fase-completa/` via `planos-auditoria-runner`.
 9. [x] Encerramento seguro do processo do servidor em background e emissão do relatório final com notas sinceras.
 
@@ -47,7 +47,7 @@ Esta sessão validou de forma 100% isolada e real a ferramenta **AIDD Ops (Infra
 | **Materialização de Artefatos** | O comando `plan` gerava apenas um arquivo JSON isolado | Geração completa da topologia `docker-compose.yml`, `init-multiple-databases.sh`, `.env`, `.env.example`, `preflight_check.py` e pasta `services/` | Suite pronta para execução e validação determinística sem arquivos faltantes |
 | **Validação Estática e Docker** | Apenas checagem teórica de templates | Validação real via `docker compose config --quiet` (exit 0) e gate `G_INFRA_COMPOSE` 100% PASS | Zero erros de sintaxe ou colisão de portas em ambiente de produção |
 | **Interface Visual de Topologia** | Inexistente (apenas CLI) | Dashboard web Zinc/Dark com Spotlight `Ctrl + K`, diagramas de topologia, inspeção de código e API de pré-voo | Visibilidade executiva e técnica da infraestrutura sem comandos áridos |
-| **Documentação da Arquitetura Real** | Fragmentada em propostas conceituais | Guia enciclopédico canônico em `docs/explicacoes/01-arquitetura-e-visao-aidd-ops.md` detalhando os 6 pilares | Definição clara do papel do AIDD-Ops e resposta aos 6 gaps críticos |
+| **Documentação da Arquitetura Real** | Fragmentada em propostas conceituais | Guia enciclopédico canônico em `docs/explicacoes/07-09-2026_explica-visao-aidd-ops.md` detalhando os 6 pilares | Definição clara do papel do AIDD-Ops e resposta aos 6 gaps críticos |
 | **Plano Formal de Evolução** | Inexistente para a fase completa | Iniciativa formal em `docs/planos/evolucao-aidd-ops-fase-completa/` estruturada via `planos-auditoria-runner` | Roadmap acionável e determinístico para implementação profunda |
 
 ---

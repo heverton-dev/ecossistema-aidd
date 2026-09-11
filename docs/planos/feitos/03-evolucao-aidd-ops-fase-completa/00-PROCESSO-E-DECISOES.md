@@ -9,7 +9,7 @@
 
 ## 0. Contexto da decisao
 
-O levantamento NIH (`docs/features/oportunidades-reaproveitamento-oss-nih.md`, itens 18-21) e a Fase 2 de `docs/planos/a-fazer/direcionamento-estrategico-anti-nih/` apontam que as 4 frentes abaixo (intake web, cofre de credenciais, appshell, isolamento em VPS compartilhada) são, em conjunto, essencialmente o escopo inteiro de plataformas self-hosted maduras como **Coolify**, **CapRover** ou **Dokku** — já prontas, open source, ativas.
+O levantamento NIH (`docs/features/08-09-2026_feature-oportunidades-reaproveitamento-nih.md`, itens 18-21) e a Fase 2 de `docs/planos/a-fazer/direcionamento-estrategico-anti-nih/` apontam que as 4 frentes abaixo (intake web, cofre de credenciais, appshell, isolamento em VPS compartilhada) são, em conjunto, essencialmente o escopo inteiro de plataformas self-hosted maduras como **Coolify**, **CapRover** ou **Dokku** — já prontas, open source, ativas.
 
 A decisão de adotar **Coolify** foi aplicada em 2026-09-07 aos itens 1 (intake web como app gerenciado), 3 (AppShell white-label = Coolify Dashboard) e 4 (isolamento nativo em VPS compartilhada), conforme registrado em cada documento de item e no inventário NIH (#19/#20/#21). O item 2 (cofre de credenciais) permanece bloqueado até o usuário decidir entre sops+age e Vaultwarden.
 

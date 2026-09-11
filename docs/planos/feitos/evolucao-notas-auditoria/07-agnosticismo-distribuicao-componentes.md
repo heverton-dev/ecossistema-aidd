@@ -91,7 +91,7 @@ Por proposta do usuário + reflexão conjunta registrada nesta conversa:
 **Fase 7 — Gate novo, protocolo permanente**
 7.1. Criar `gates/G_COMPONENTE_AGNOSTICO.py`: via `git diff --name-only` contra a base, identifica componentes tocados no commit e falha (exit 1) se algum não tiver a cobertura de harness exigida pelo manifesto.
 7.2. Registrar em `ecossistema.py audit` (6º gate raiz).
-7.3. Extrair o protocolo permanente (Seção 5 de `PLANO-CORRECAO-SKILLS-AGNOSTICAS.md`) para `docs/protocolos/PROTOCOLO-AGNOSTICIDADE-COMPONENTES.md`, referenciado a partir de `AGENTS.md` (Regra de Ouro #6).
+7.3. Extrair o protocolo permanente (Seção 5 de `PLANO-CORRECAO-SKILLS-AGNOSTICAS.md`) para `docs/protocolos/05-09-2026_protocolo-agnosticidade-componentes.md`, referenciado a partir de `AGENTS.md` (Regra de Ouro #6).
 
 **Validação final (todas as fases)**
 - `python ecossistema.py audit` (com `G_HARNESS_COMPAT` estendido + `G_COMPONENTE_AGNOSTICO` novo) → exit 0.
@@ -514,7 +514,7 @@ FASE 7 — Gate novo, protocolo permanente
      pastas de harness exigidas pelo manifesto.
 7.2. Registre em `ecossistema.py audit` como o 6º gate raiz da bateria.
 7.3. Extraia o checklist da Seção 5 de `docs/planos/PLANO-CORRECAO-SKILLS-AGNOSTICAS.md`
-     para `docs/protocolos/PROTOCOLO-AGNOSTICIDADE-COMPONENTES.md`, e
+     para `docs/protocolos/05-09-2026_protocolo-agnosticidade-componentes.md`, e
      referencie esse documento a partir de `AGENTS.md`, na própria Regra
      de Ouro #6.
 7.4. Escreva um teste que prove a Fase 7 funciona de verdade: crie um
@@ -636,7 +636,7 @@ PHASE 7 — New gate, permanent protocol
      battery.
 7.3. Extract the checklist from Section 5 of
      `docs/planos/PLANO-CORRECAO-SKILLS-AGNOSTICAS.md` into
-     `docs/protocolos/PROTOCOLO-AGNOSTICIDADE-COMPONENTES.md`, and
+     `docs/protocolos/05-09-2026_protocolo-agnosticidade-componentes.md`, and
      reference that document from `AGENTS.md`, right under Golden Rule #6.
 7.4. Write a test that proves Phase 7 genuinely works: create a test
      component in only 1 harness folder (deliberate violation), confirm

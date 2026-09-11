@@ -1,16 +1,16 @@
 # Inventário definitivo: o que fica vs o que troca, por ferramenta
 
 > **Origem:** Item 1 de `docs/planos/a-fazer/02-direcionamento-estrategico-anti-nih/01-inventario-do-que-fica-vs-o-que-troca-por-ferramenta-o-trabalho-que-continua-de-pe.md`.
-> **Fonte dos achados:** `docs/features/oportunidades-reaproveitamento-oss-nih.md` (levantamento NIH).
+> **Fonte dos achados:** `docs/features/08-09-2026_feature-oportunidades-reaproveitamento-nih.md` (levantamento NIH).
 > **Status:** publicado para revisão do usuário — decisão de execução das Fases 1-4 depende de confirmação explícita (ver seção 6).
 
 ## Nota sobre numeração
 
-O pedido original deste item referenciava "26 itens" do levantamento NIH. Na data desta publicação, o levantamento já está **fechado em 33 itens** (1-28 do levantamento original + 5 achados adicionais no mesmo dia, itens 29-33, por descoberta orgânica no catálogo pessoal do usuário — ver cabeçalho de `oportunidades-reaproveitamento-oss-nih.md`). Esta tabela usa a numeração atual (1-33) para manter rastreabilidade exata; nenhum item ficou de fora.
+O pedido original deste item referenciava "26 itens" do levantamento NIH. Na data desta publicação, o levantamento já está **fechado em 33 itens** (1-28 do levantamento original + 5 achados adicionais no mesmo dia, itens 29-33, por descoberta orgânica no catálogo pessoal do usuário — ver cabeçalho de `08-09-2026_feature-oportunidades-reaproveitamento-nih.md`). Esta tabela usa a numeração atual (1-33) para manter rastreabilidade exata; nenhum item ficou de fora.
 
 ## 1. Resposta formal: "perdemos o trabalho?"
 
-**Não.** Nenhum item do levantamento NIH pede para descartar modelagem de domínio, decisões de arquitetura vertical, ou os três diferenciais sem equivalente de mercado (materializador multi-harness, protocolo delegado, fleet discovery — seção 5 de `oportunidades-reaproveitamento-oss-nih.md`). O que troca, item por item, é o **motor por baixo** de mecanismos genéricos (parsing, templating, scanner de segredo, adapter de banco, orquestração de infra) — trabalho mecânico já resolvido por ferramenta madura, que hoje é mantido à mão e paga dívida técnica em token cada vez que quebra (CSP relaxado, Dockerfile sem `pip install`, porta duplicada). Trocar o motor não invalida a decisão de produto; states de domínio e a lógica específica de cada fatia continuam de pé.
+**Não.** Nenhum item do levantamento NIH pede para descartar modelagem de domínio, decisões de arquitetura vertical, ou os três diferenciais sem equivalente de mercado (materializador multi-harness, protocolo delegado, fleet discovery — seção 5 de `08-09-2026_feature-oportunidades-reaproveitamento-nih.md`). O que troca, item por item, é o **motor por baixo** de mecanismos genéricos (parsing, templating, scanner de segredo, adapter de banco, orquestração de infra) — trabalho mecânico já resolvido por ferramenta madura, que hoje é mantido à mão e paga dívida técnica em token cada vez que quebra (CSP relaxado, Dockerfile sem `pip install`, porta duplicada). Trocar o motor não invalida a decisão de produto; states de domínio e a lógica específica de cada fatia continuam de pé.
 
 ## 2. Tabela por ferramenta
 
@@ -25,7 +25,7 @@ O pedido original deste item referenciava "26 itens" do levantamento NIH. Na dat
 | Fica | Troca | # NIH |
 |---|---|---|
 | Pipeline de 8 fases (lógica de domínio de cada fase) | — | não mapeado a item NIH (não é reinvenção, é lógica própria) |
-| Protocolo delegado (conversar com assistente ativo sem API key) | — | não mapeado — diferencial confirmado, ver `oportunidades-reaproveitamento-oss-nih.md` §5 |
+| Protocolo delegado (conversar com assistente ativo sem API key) | — | não mapeado — diferencial confirmado, ver `08-09-2026_feature-oportunidades-reaproveitamento-nih.md` §5 |
 | Fleet discovery (detectar CLIs de agente instaladas) | — | não mapeado — diferencial confirmado, ver §5 |
 | — | Empacotamento de contexto de repo pra LLM → **Repomix** (**[CORRIGIDO — Fase2-Gen1]**) | #22 |
 | — | Parsing/retry de saída estruturada de LLM na mão → **instructor** | #23 |
@@ -63,7 +63,7 @@ O pedido original deste item referenciava "26 itens" do levantamento NIH. Na dat
 | — | AppShell white-label + Studios (planejado) → **Coolify Dashboard** (base para AppShell white-label + Studios integrados via CoolifyManager) | #20 |
 | — | Isolamento estrito em VPS compartilhada (planejado) → resolvido nativamente por **Coolify** (redes dedicadas, zero portas host, limites CPU/RAM) | #21 |
 
-> Achado mais importante desta ferramenta (ver `oportunidades-reaproveitamento-oss-nih.md` §3): 3 das 4 frentes planejadas em `evolucao-aidd-ops-fase-completa/` (itens #18/#29, #19, #20, #21) podem já estar resolvidas adotando Coolify/CapRover/Dokku como motor — restando só o trabalho de integração via API, não construção do zero. Decisão formal de qual adotar fica para a Fase 2 (item 4 deste plano).
+> Achado mais importante desta ferramenta (ver `08-09-2026_feature-oportunidades-reaproveitamento-nih.md` §3): 3 das 4 frentes planejadas em `evolucao-aidd-ops-fase-completa/` (itens #18/#29, #19, #20, #21) podem já estar resolvidas adotando Coolify/CapRover/Dokku como motor — restando só o trabalho de integração via API, não construção do zero. Decisão formal de qual adotar fica para a Fase 2 (item 4 deste plano).
 
 ### Camada raiz (`gates/`, `ecossistema.py`)
 
@@ -108,7 +108,7 @@ Todos os 33 itens do levantamento NIH aparecem na tabela acima exatamente uma ve
 
 ## 5. Itens com status "[a verificar]" no levantamento original
 
-Os itens #11, #12, #15, #18 (feature planejada), #19 (planejada), #20 (planejada), #21 (planejada), #23, #29–#33 permanecem com status `[a verificar]` ou `[planejado]` na fonte (`oportunidades-reaproveitamento-oss-nih.md`). Esta tabela herda esse status — não eleva nenhum deles a "confirmado" por conta própria. A confirmação linha a linha é trabalho das Fases 1-4, não deste inventário.
+Os itens #11, #12, #15, #18 (feature planejada), #19 (planejada), #20 (planejada), #21 (planejada), #23, #29–#33 permanecem com status `[a verificar]` ou `[planejado]` na fonte (`08-09-2026_feature-oportunidades-reaproveitamento-nih.md`). Esta tabela herda esse status — não eleva nenhum deles a "confirmado" por conta própria. A confirmação linha a linha é trabalho das Fases 1-4, não deste inventário.
 
 > Atualização 2026-09-07: **#26 foi CORRIGIDO pela Fase2-Gen5** (Prefect 3.8.5 como motor genérico de orquestração — retries, checkpoints, persistência SQLite; protocolo delegado preservado), ver evidência na fonte. Os demais itens desta lista permanecem `[a verificar]`/`[planejado]`.
 

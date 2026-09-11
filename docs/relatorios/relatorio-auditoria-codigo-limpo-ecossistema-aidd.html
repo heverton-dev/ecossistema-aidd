@@ -5,6 +5,28 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Auditoria de Código Limpo (Clean Code) — Ecossistema AIDD</title>
 <style>
+  /* ==========================================================================
+     REGRA CANONICA DE SCROLLBARS — MAX 4PX NA COR PREDOMINANTE DO DOCUMENTO
+     ========================================================================== */
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: var(--accent, #388bfd) var(--bg, #0b111a);
+  }
+  ::-webkit-scrollbar {
+    width: 4px;
+    height: 4px;
+  }
+  ::-webkit-scrollbar-track {
+    background: var(--bg, #0b111a);
+  }
+  ::-webkit-scrollbar-thumb {
+    background: var(--accent, #388bfd);
+    border-radius: 4px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: color-mix(in srgb, var(--accent, #388bfd) 80%, white);
+  }
+
   :root{
     --bg:#f4f6f9; --surface:#ffffff; --surface-alt:#eef1f6; --border:#d7dee7;
     --text:#16212e; --text-2:#566579; --text-3:#5f6f82; --accent:#1d5fae;

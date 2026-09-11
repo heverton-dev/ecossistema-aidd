@@ -16,7 +16,7 @@ AGENTS.md §3 listava `/orchestrate` como comando do AIDD Ops, mas na verdade `/
 - `AGENTS.md` §3: Adicionada entrada `/ops [requisito]` com skill `aidd-ops-runner`; `/orchestrate` agora declara "Não é o comando do AIDD Ops"
 - `ecossistema.py` banner: adicionada linha `/ops [requisito]` antes de `/orchestrate`
 - `MEMORY.md` §4: adicionada entrada `/ops` na matriz de slash commands
-- `docs/explicacoes/02-ecossistema-aidd-6-ferramentas-e-fluxo-completo.md`: 3 referências `/orchestrate (Ops)` → `/ops`
+- `docs/explicacoes/10-09-2026_explica-ecossistema-fluxo-completo.md`: 3 referências `/orchestrate (Ops)` → `/ops`
 
 ### 1.2 Duplicidade de Componentes em `componentes/<tool>/`
 

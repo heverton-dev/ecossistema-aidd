@@ -3,7 +3,7 @@
 > **Escopo:** Entra: produzir e publicar a tabela definitiva "o que fica / o que troca" por ferramenta, respondendo formalmente "perdemos o trabalho?". Não entra: executar nenhuma troca em si (isso são os itens 3-6/Fases 1-4).
 > **Status:** [CONCLUÍDO — usuário confirmou a leitura em 2026-09-07; liberado para as Fases 1-4]
 > **Modelo sugerido:** Claude Sonnet · Antigravity Gemini 3.7 · MiMo mimo-v2.5-pro (síntese e redação, não decisão técnica nova)
-> **Doc de referência:** `docs/features/inventario-o-que-fica-vs-o-que-troca-por-ferramenta.md` — tabela definitiva com rastreabilidade item a item aos 33 achados de `docs/features/oportunidades-reaproveitamento-oss-nih.md` (nota: este item citava "26 itens"; o levantamento foi fechado em 33 depois da redação original — ver nota de numeração no doc de referência).
+> **Doc de referência:** `docs/features/08-09-2026_feature-inventario-troca-ferramentas.md` — tabela definitiva com rastreabilidade item a item aos 33 achados de `docs/features/08-09-2026_feature-oportunidades-reaproveitamento-nih.md` (nota: este item citava "26 itens"; o levantamento foi fechado em 33 depois da redação original — ver nota de numeração no doc de referência).
 
 ---
 
@@ -11,7 +11,7 @@
 
 Resposta já esboçada em conversa com o usuário em 2026-09-07 — este item formaliza por escrito:
 
-- **aidd-forge:** quase tudo fica — é a ferramenta mais madura, menos NIH do levantamento (`docs/features/oportunidades-reaproveitamento-oss-nih.md`).
+- **aidd-forge:** quase tudo fica — é a ferramenta mais madura, menos NIH do levantamento (`docs/features/08-09-2026_feature-oportunidades-reaproveitamento-nih.md`).
 - **aidd-generator:** fica o pipeline de 8 fases, o protocolo delegado, o fleet discovery, a lógica de domínio de cada fase. Troca: empacotamento de contexto (item NIH #22 → Repomix), parsing de saída de LLM (#23 → instructor), formato de doc (#25 → Pandoc), MCP (#24 → SDK oficial).
 - **aidd-master/aidd-enterprise:** fica a modelagem (fatias verticais, CQRS, consciência de RLS, WAL) — é decisão de arquitetura de domínio, não código descartável. Troca: motor de templating (#6 → Cookiecutter/Copier), adapter de banco (#8 → SQLAlchemy/aiosqlite), CSP (#9 → secure.py), Result Monad (#7 → lib `returns`), RLS via regex (#10 → sqlglot).
 - **aidd-ops:** fica a inteligência de sizing/classificação de nicho. Troca: 3 das 4 features planejadas em `evolucao-aidd-ops-fase-completa/` (itens 18-21 do levantamento NIH) provavelmente viram integração via API de Coolify/CapRover em vez de construção do zero — decisão formal fica pra Fase 2 (item 4 deste plano).
@@ -20,7 +20,7 @@ Resposta já esboçada em conversa com o usuário em 2026-09-07 — este item fo
 
 ## Definicao de Pronto
 
-1. Tabela "o que fica / o que troca" publicada como documento de referência (pode viver neste próprio item ou linkar pra `docs/features/oportunidades-reaproveitamento-oss-nih.md` seção 2, que já cobre o detalhe por ferramenta).
+1. Tabela "o que fica / o que troca" publicada como documento de referência (pode viver neste próprio item ou linkar pra `docs/features/08-09-2026_feature-oportunidades-reaproveitamento-nih.md` seção 2, que já cobre o detalhe por ferramenta).
 2. Cada linha da tabela cita o número do achado correspondente no levantamento NIH (rastreabilidade, não afirmação solta).
 3. Usuário confirma que a leitura "o trabalho não foi perdido, o motor por baixo troca" está correta antes de qualquer execução das Fases 1-4.
 
