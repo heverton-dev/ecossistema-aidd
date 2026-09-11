@@ -1,7 +1,7 @@
 # Item 6 — orcador-handoff-fase-06-para-07-mapa-secoes
 
 > **Escopo:** Substituir o envio integral de documentos HTML/Markdown gerados pela Fase 6 para a Fase 7 (Auto-critica) por um mapa estruturado de secoes e resumos, reduzindo a sobrecarga da fase critica.
-> **Status:** [RASCUNHO — Aguardando Aprovacao Humana]
+> **Status:** [EM EXECUCAO]
 
 ---
 

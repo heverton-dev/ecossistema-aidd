@@ -1,7 +1,7 @@
 # Item 1 — prompt-por-composicao-e-fixloop-diff-fase-08
 
 > **Escopo:** Substituir o prompt monolitico de geracao da Fase 8 por composicao modular condicional por features do script, e refatorar o fix-loop de autocorrecao para enviar diff pontual e traceback isolado em vez de arquivos inteiros.
-> **Status:** [RASCUNHO — Aguardando Aprovacao Humana]
+> **Status:** [EM EXECUCAO]
 
 ---
 

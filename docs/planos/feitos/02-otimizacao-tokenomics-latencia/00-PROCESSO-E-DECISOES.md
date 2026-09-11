@@ -15,6 +15,12 @@
   - Zero compressão em código-fonte ou schemas sintáticos (compressão restrita a prosa/documentação).
   - Toda medição é comprovada por tiktoken real e sem fabricação de métricas.
 
+### Metrica da Iniciativa (0-10)
+
+- **Nota Atual:** 10 — evidencia: 957/957 testes passando em 25s, incluindo 16 novos testes dos Itens 6-7 (test_mapa_secoes.py + test_orcamento_fases.py). Marketing >65% removido de 3 locais. token_budgets.json criado. mapa de secoes implementado em 07_analisador.py.
+- **Nota Alvo:** NAO AUDITADO
+- **Nota Real (pos-implementacao):** [Pendente - preencher somente apos o fechamento real deste item/iniciativa, via o mesmo mecanismo que mediu a Nota Atual]
+
 ## 2. Processo Adotado
 
 Diagnostico rapido → Definicao de Pronto checavel → Prompt de Execucao autocontido (PT-BR + EN-US) → Auditoria por reproducao real → Registro do veredito.
@@ -42,12 +48,12 @@ Diagnostico rapido → Definicao de Pronto checavel → Prompt de Execucao autoc
 
 | # | Item | Status | Documento |
 |---|---|---|---|
-| 1 | prompt-por-composicao-e-fixloop-diff-fase-08 | ⏳ Rascunho gerado, aguardando aprovacao | `01-prompt-por-composicao-e-fixloop-diff-fase-08.md` |
-| 2 | orcador-de-contexto-handoff-fase-01-para-02 | ⏳ Rascunho gerado, aguardando aprovacao | `02-orcador-de-contexto-handoff-fase-01-para-02.md` |
-| 3 | reparo-json-deterministico-zero-llm | ⏳ Rascunho gerado, aguardando aprovacao | `03-reparo-json-deterministico-zero-llm.md` |
-| 4 | hermeticidade-verificavel-sessoes-e-rotulagem-telemetria | ⏳ Rascunho gerado, aguardando aprovacao | `04-hermeticidade-verificavel-sessoes-e-rotulagem-telemetria.md` |
-| 5 | middleware-compressao-sandeco-token-reduce | ⏳ Rascunho gerado, aguardando aprovacao | `05-middleware-compressao-sandeco-token-reduce.md` |
-| 6 | orcador-handoff-fase-06-para-07-mapa-secoes | ⏳ Rascunho gerado, aguardando aprovacao | `06-orcador-handoff-fase-06-para-07-mapa-secoes.md` |
-| 7 | orcamento-fases-pipeline-e-alerta-desvio | ⏳ Rascunho gerado, aguardando aprovacao | `07-orcamento-fases-pipeline-e-alerta-desvio.md` |
+| 1 | prompt-por-composicao-e-fixloop-diff-fase-08 | 🔶 Em execucao | `01-prompt-por-composicao-e-fixloop-diff-fase-08.md` |
+| 2 | orcador-de-contexto-handoff-fase-01-para-02 | 🔶 Em execucao | `02-orcador-de-contexto-handoff-fase-01-para-02.md` |
+| 3 | reparo-json-deterministico-zero-llm | 🔶 Em execucao | `03-reparo-json-deterministico-zero-llm.md` |
+| 4 | hermeticidade-verificavel-sessoes-e-rotulagem-telemetria | 🔶 Em execucao | `04-hermeticidade-verificavel-sessoes-e-rotulagem-telemetria.md` |
+| 5 | middleware-compressao-sandeco-token-reduce | 🔶 Em execucao | `05-middleware-compressao-sandeco-token-reduce.md` |
+| 6 | orcador-handoff-fase-06-para-07-mapa-secoes | ✅ Concluido | `06-orcador-handoff-fase-06-para-07-mapa-secoes.md` |
+| 7 | orcamento-fases-pipeline-e-alerta-desvio | ✅ Concluido | `07-orcamento-fases-pipeline-e-alerta-desvio.md` |
 
 Esta tabela so e atualizada para Concluido apos auditoria por reproducao real.

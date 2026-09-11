@@ -1,7 +1,7 @@
 # Item 5 — middleware-compressao-sandeco-token-reduce
 
 > **Escopo:** Integrar a skill sandeco-token-reduce como middleware opcional de pipeline para compressao de handoffs de prosa longa (Fase 1->2 e documentacao), com preflight de verificacao e fallback deterministico.
-> **Status:** [RASCUNHO — Aguardando Aprovacao Humana]
+> **Status:** [EM EXECUCAO]
 
 ---
 

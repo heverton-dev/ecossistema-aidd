@@ -1,0 +1,47 @@
+{
+  "versao": "1.0",
+  "descricao": "Limites formais de orcamento de tokens por fase do pipeline aidd-generator (Fases 1-8)",
+  "limiar_alerta_desvio": 1.2,
+  "fases": {
+    "fase_1": {
+      "nome": "Pesquisador",
+      "orcamento_tokens": 15000,
+      "descricao": "Pesquisa de mercado e referencias arquiteturais via LLM"
+    },
+    "fase_2": {
+      "nome": "Analisador",
+      "orcamento_tokens": 25000,
+      "descricao": "Analise critica de requisitos e riscos via LLM"
+    },
+    "fase_3": {
+      "nome": "Designer",
+      "orcamento_tokens": 20000,
+      "descricao": "Design arquitetural de dados e componentes"
+    },
+    "fase_4": {
+      "nome": "Planejador",
+      "orcamento_tokens": 5000,
+      "descricao": "Decisao de escopo e planejamento deterministico"
+    },
+    "fase_5": {
+      "nome": "Criador",
+      "orcamento_tokens": 5000,
+      "descricao": "Scaffold e materializacao deterministica de arquivos"
+    },
+    "fase_6": {
+      "nome": "Documentador",
+      "orcamento_tokens": 5000,
+      "descricao": "Geracao deterministica tripartite de documentacao"
+    },
+    "fase_7": {
+      "nome": "Auto-critica",
+      "orcamento_tokens": 5000,
+      "descricao": "Analise critica deterministica e calculo de score"
+    },
+    "fase_8": {
+      "nome": "Implementador",
+      "orcamento_tokens": 50000,
+      "descricao": "Implementacao funcional de codigo e testes com loop de correcao"
+    }
+  }
+}

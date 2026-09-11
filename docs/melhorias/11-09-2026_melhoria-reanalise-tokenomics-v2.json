@@ -1,0 +1,63 @@
+{
+  "pedido_original": "Reanalise v2 do plano 02-otimizacao-tokenomics-latencia com evidencia de codigo real e 62 testes passando",
+  "data": "11-09-2026",
+  "nota_atual": "7",
+  "evidencia": "5/7 itens implementados com 62/62 testes. Itens 6 e 7 nao implementados. Marketing >65% persiste.",
+  "plano_existente": "docs/planos/a-fazer/02-otimizacao-tokenomics-latencia",
+  "item_relacionado": null,
+  "nota_anterior": "NAO AUDITADO",
+  "evidencia_anterior": "(plano criado antes desta metrica existir, ou item sem nota registrada)",
+  "itens_avaliados": [
+    {
+      "item": "01",
+      "status": "feito",
+      "justificativa": "Prompt modular + fix-loop cirurgico. 15 testes."
+    },
+    {
+      "item": "02",
+      "status": "feito",
+      "justificativa": "montar_handoff_referencias top-k. 10 testes."
+    },
+    {
+      "item": "03",
+      "status": "feito",
+      "justificativa": "ESCADA_REPARO_JSON >=8/10. 10 testes."
+    },
+    {
+      "item": "04",
+      "status": "feito",
+      "justificativa": "Flags efemeras + rotulagem + gate. 16 testes."
+    },
+    {
+      "item": "05",
+      "status": "feito",
+      "justificativa": "compressor_middleware + fallback. 14 testes."
+    },
+    {
+      "item": "06",
+      "status": "nao-feito",
+      "justificativa": "07_analisador.py sem mapa de secoes."
+    },
+    {
+      "item": "07",
+      "status": "nao-feito",
+      "justificativa": "token_budgets.json inexistente. Marketing >65% persiste."
+    }
+  ],
+  "resumo": "Plano de otimizacao tokenomics: 5/7 itens feitos (Itens 1-5), Itens 6 e 7 pendentes.",
+  "achados": [
+    "Item 1 feito: prompt modular + fix-loop cirurgico",
+    "Item 2 feito: orcador top-k handoff",
+    "Item 3 feito: escada reparo JSON zero-LLM",
+    "Item 4 feito: hermeticidade + rotulagem telemetria",
+    "Item 5 feito: middleware compressao",
+    "Item 6 NAO FEITO: mapa secoes fase 6-7",
+    "Item 7 NAO FEITO: token budgets + correcao marketing"
+  ],
+  "riscos": [
+    "Item 6: Fase 7 continua recebendo HTML bruto",
+    "Item 7: alegacao marketing >65% viola Regra #9"
+  ],
+  "recomendacao": "Priorizar Item 7 (correcao trivial) e depois Item 6",
+  "status": "RASCUNHO - aguardando decisao humana sobre proximo passo (ex: iniciar /plan, ou atualizar a nota do plano existente)"
+}

@@ -1,7 +1,7 @@
 # Item 3 — reparo-json-deterministico-zero-llm
 
 > **Escopo:** Construir uma escada de reparo JSON deterministica sem uso de LLM em utils_delegacao.py, eliminando retries caros de LLM quando respostas contem pequenas quebras de formatacao JSON.
-> **Status:** [RASCUNHO — Aguardando Aprovacao Humana]
+> **Status:** [EM EXECUCAO]
 
 ---
 

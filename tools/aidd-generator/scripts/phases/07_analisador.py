@@ -14,13 +14,144 @@ Determinismo: 100% (sem LLM, apenas análise)
 """
 
 import sys
+import os
+import re
 import json
 from pathlib import Path
 from datetime import datetime, timezone
-from typing import Optional, Dict, List
+from typing import Optional, Dict, List, Any
 
 if sys.platform == 'win32':
     sys.stdout.reconfigure(encoding='utf-8')
+
+# =============================================================================
+# MAPA ESTRUTURAL DE SEÇÕES (HANDOFF FASE 6 -> FASE 7)
+# =============================================================================
+
+TOPICOS_CHAVE_MAPA = {
+    'requisitos': [r'\brequisitos?\b', r'\brequirements?\b'],
+    'arquitetura': [r'\barquiteturas?\b', r'\barchitectures?\b', r'\barquitetural\b'],
+    'testes': [r'\btestes?\b', r'\btests?\b', r'\btestagem\b', r'\btesting\b'],
+}
+
+
+def _extrair_resumo_executivo(texto: str, max_frases: int = 3) -> str:
+    """Extrai 2-3 frases semânticas do documento para compor o resumo executivo."""
+    texto_limpo = re.sub(r'```[\s\S]*?```', ' ', texto)
+    texto_limpo = re.sub(r'<style[\s\S]*?</style>', ' ', texto_limpo, flags=re.IGNORECASE)
+    texto_limpo = re.sub(r'<script[\s\S]*?</script>', ' ', texto_limpo, flags=re.IGNORECASE)
+    texto_limpo = re.sub(r'<[^>]+>', ' ', texto_limpo)
+
+    linhas_validas = []
+    for linha in texto_limpo.splitlines():
+        l = linha.strip()
+        if not l or l.startswith(('#', '*', '-', '|', '>', '=', '~')):
+            continue
+        linhas_validas.append(l)
+
+    texto_corrido = ' '.join(linhas_validas)
+    if not texto_corrido:
+        return "Documento sem conteúdo textual descritivo suficiente para resumo."
+
+    candidatos = [
+        f.strip() for f in re.split(r'(?<=[.!?])\s+', texto_corrido)
+        if len(f.strip()) >= 15
+    ]
+    frases = candidatos[:max_frases]
+    if not frases:
+        frases = [texto_corrido[:150].strip() + '...']
+    return ' '.join(frases)
+
+
+def _detectar_topicos_chave(texto: str) -> List[str]:
+    """Detecta presença dos tópicos-chave (requisitos, arquitetura, testes)."""
+    encontrados = []
+    for topico, regexes in TOPICOS_CHAVE_MAPA.items():
+        if any(re.search(rx, texto, re.IGNORECASE) for rx in regexes):
+            encontrados.append(topico)
+    return encontrados
+
+
+def montar_mapa_secoes(artefatos: Dict) -> str:
+    """Extrai título da seção, número de linhas, tópicos-chave e resumo executivo de 2-3 frases por documento.
+
+    Substitui o repasse e carregamento de HTML/MD integral pelo mapa de seções resumido,
+    garantindo redução de >= 50% dos tokens de handoff da Fase 6 para a Fase 7.
+    """
+    if not artefatos:
+        return ""
+
+    linhas_mapa = [
+        "# MAPA ESTRUTURAL DE SEÇÕES (HANDOFF FASE 6 -> FASE 7)",
+        "",
+    ]
+
+    for nome_doc, dado in sorted(artefatos.items(), key=lambda x: str(x[0])):
+        if isinstance(dado, Path):
+            conteudo = dado.read_text(encoding='utf-8', errors='ignore') if dado.exists() else ""
+        elif isinstance(dado, dict):
+            conteudo = dado.get('conteudo') or dado.get('content') or ""
+            if not conteudo and 'path' in dado:
+                p = Path(dado['path'])
+                conteudo = p.read_text(encoding='utf-8', errors='ignore') if p.exists() else ""
+        elif isinstance(dado, str):
+            p = Path(dado)
+            if p.exists() and p.is_file():
+                try:
+                    conteudo = p.read_text(encoding='utf-8', errors='ignore')
+                except Exception:
+                    conteudo = dado
+            else:
+                conteudo = dado
+        else:
+            conteudo = str(dado)
+
+        linhas_doc = conteudo.splitlines()
+        total_linhas = len(linhas_doc)
+
+        topicos = _detectar_topicos_chave(conteudo)
+        resumo = _extrair_resumo_executivo(conteudo, max_frases=3)
+
+        secoes = []
+        secao_atual = "Início"
+        linhas_secao = 0
+
+        for linha in linhas_doc:
+            match_md = re.match(r'^(#{1,6})\s+(.+)$', linha.strip())
+            match_html = re.search(r'<h[1-6][^>]*>(.*?)</h[1-6]>', linha, re.IGNORECASE)
+
+            novo_titulo = None
+            if match_md:
+                novo_titulo = match_md.group(2).strip()
+            elif match_html:
+                novo_titulo = re.sub(r'<[^>]+>', '', match_html.group(1)).strip()
+
+            if novo_titulo:
+                if linhas_secao > 0 or secao_atual != "Início":
+                    secoes.append((secao_atual, linhas_secao))
+                secao_atual = novo_titulo
+                linhas_secao = 1
+            else:
+                linhas_secao += 1
+
+        if linhas_secao > 0:
+            secoes.append((secao_atual, linhas_secao))
+
+        linhas_mapa.append(f"## Documento: {nome_doc}")
+        linhas_mapa.append(f"- **Total de Linhas:** {total_linhas}")
+        linhas_mapa.append(f"- **Tópicos-Chave:** {', '.join(topicos) if topicos else 'nenhum'}")
+        linhas_mapa.append(f"- **Resumo Executivo:** {resumo}")
+        linhas_mapa.append("- **Seções:**")
+        for tit, n_lin in secoes[:25]:
+            topicos_sec = _detectar_topicos_chave(tit)
+            sufixo = f" (tópicos: {', '.join(topicos_sec)})" if topicos_sec else ""
+            linhas_mapa.append(f"  - `{tit}`: ~{n_lin} linhas{sufixo}")
+        if len(secoes) > 25:
+            linhas_mapa.append(f"  - ... ({len(secoes) - 25} seções adicionais condensadas)")
+        linhas_mapa.append("")
+
+    return "\n".join(linhas_mapa).strip()
+
 
 # =============================================================================
 # ANALISADOR CRÍTICO
@@ -32,8 +163,9 @@ class AnalisadorCriticoAutomatico:
     def __init__(self, pasta_projeto: Path):
         self.pasta_projeto = Path(pasta_projeto)
         self.cache_path = self.pasta_projeto / '.aidd' / 'cache'
+        self.mapa_secoes = ""
 
-    def executar(self) -> Dict:
+    def executar(self, artefatos: Optional[Dict] = None) -> Dict:
         """Executar análise crítica completa"""
         print(f"\n📊 PHASE 7: Analisador Crítico Automático")
         print(f"   Projeto: {self.pasta_projeto.name}")
@@ -41,10 +173,13 @@ class AnalisadorCriticoAutomatico:
 
         tempo_inicio = datetime.now()
 
-        # 1. Coletar dados de todas as phases
-        print(f"\n🔍 Coletando dados das 6 phases...")
+        # 1. Coletar dados de todas as phases e estruturar mapa de seções (substitui dump HTML/MD integral)
+        print(f"\n🔍 Coletando dados das phases e montando mapa de seções...")
         dados = self._coletar_dados_phases()
-        print(f"   ✓ Dados coletados")
+        artefatos_alvo = artefatos if artefatos is not None else self._coletar_artefatos_fase6(dados)
+        mapa_secoes = montar_mapa_secoes(artefatos_alvo) if artefatos_alvo else ""
+        self.mapa_secoes = mapa_secoes
+        print(f"   ✓ Dados coletados (mapa estruturado: {len(mapa_secoes.splitlines())} linhas)")
 
         # 2. Calcular score
         print(f"\n📈 Calculando score do projeto...")
@@ -89,6 +224,7 @@ class AnalisadorCriticoAutomatico:
             'roadmap': roadmap,
             'investimento': investimento,
             'tokens_consolidado': tokens_consolidado,
+            'mapa_secoes': mapa_secoes,
         })
 
         # 10. Salvar artefatos
@@ -100,6 +236,7 @@ class AnalisadorCriticoAutomatico:
             'pontos_fortes': pontos_fortes,
             'pontos_fracos': pontos_fracos,
             'tokens_consolidado': tokens_consolidado,
+            'mapa_secoes': mapa_secoes,
         })
         print(f"   ✓ AVALIACAO-AUTO-CRITICA.md")
         print(f"   ✓ .aidd/ROADMAP-EVOLUCAO.md")
@@ -121,8 +258,36 @@ class AnalisadorCriticoAutomatico:
             'score': score['total'],
             'tempo_execucao': tempo_execucao,
             'tokens_consolidado': tokens_consolidado,
+            'mapa_secoes': mapa_secoes,
             'artefatos': ['AVALIACAO-AUTO-CRITICA.md', '.aidd/ROADMAP-EVOLUCAO.md']
         }
+
+    def _coletar_artefatos_fase6(self, dados: Dict) -> Dict[str, str]:
+        """Localiza artefatos gerados pela Fase 6 (HTML/MD) para montagem do mapa de seções."""
+        artefatos = {}
+        phase6 = dados.get('phase_6', {})
+        arquivos = phase6.get('processamento', {}).get('arquivos', {})
+        for formato, caminho in arquivos.items():
+            if formato in ('html', 'md'):
+                p = Path(caminho)
+                if not p.is_absolute():
+                    p = self.pasta_projeto / p
+                if p.exists() and p.is_file():
+                    try:
+                        artefatos[p.name] = p.read_text(encoding='utf-8', errors='ignore')
+                    except Exception:
+                        pass
+        if not artefatos:
+            output_dir = self.pasta_projeto / 'output'
+            if output_dir.exists():
+                for ext in ('*.md', '*.html'):
+                    for f in output_dir.rglob(ext):
+                        if f.is_file():
+                            try:
+                                artefatos[f.name] = f.read_text(encoding='utf-8', errors='ignore')
+                            except Exception:
+                                pass
+        return artefatos
 
     def _coletar_dados_phases(self) -> Dict:
         """Coletar dados de _phase_*.json (fases 1-7, e 8 se existir)"""
@@ -782,6 +947,7 @@ Projeto com score máximo — foco em manutenção e evolução incremental.
                 'pontos_fortes': len(artefatos['pontos_fortes']),
                 'pontos_fracos': len(artefatos['pontos_fracos']),
                 'requisitos_criticos': len(artefatos['roadmap']['fases']),
+                'mapa_secoes_gerado': bool(artefatos.get('mapa_secoes')),
             },
             'resume_info': {
                 'proxima_fase': 'Nenhuma (projeto gerado completo)',

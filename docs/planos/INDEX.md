@@ -25,6 +25,7 @@
 
 | Iniciativa | Local |
 |---|---|
+| Otimizacao Tokenomics Latencia | `fazendo/02-otimizacao-tokenomics-latencia/` |
 | Correcao Pos Auditoria Sem Maquiagem | `fazendo/01-correcao-pos-auditoria-sem-maquiagem/` |
 | Codigo Limpo Profundo Ecossistema | `fazendo/codigo-limpo-profundo-ecossistema/` |
 | Evolucao Engenharia Software Ecossistema | `fazendo/evolucao-engenharia-software-ecossistema/` |
@@ -33,7 +34,6 @@
 
 | Iniciativa | Local |
 |---|---|
-| Otimizacao Tokenomics Latencia | `a-fazer/02-otimizacao-tokenomics-latencia/` |
 | Qualidade Testes E Mutacao | `a-fazer/03-qualidade-testes-e-mutacao/` |
 | Resiliencia Concorrencia E Integridade | `a-fazer/04-resiliencia-concorrencia-e-integridade/` |
 | Seguranca Zero Trust E Supply Chain | `a-fazer/05-seguranca-zero-trust-e-supply-chain/` |

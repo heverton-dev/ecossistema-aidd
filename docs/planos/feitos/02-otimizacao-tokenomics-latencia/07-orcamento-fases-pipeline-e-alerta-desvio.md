@@ -1,7 +1,7 @@
 # Item 7 — orcamento-fases-pipeline-e-alerta-desvio
 
 > **Escopo:** Estabelecer tabela formal de orcamento de tokens por fase no _pipeline_state.json com alerta explicito de desvio superior a 20% e correcao da alegacao de marketing em pipeline_completo.py.
-> **Status:** [RASCUNHO — Aguardando Aprovacao Humana]
+> **Status:** [EM EXECUCAO]
 
 ---
 

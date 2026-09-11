@@ -1,7 +1,7 @@
 # Item 2 — orcador-de-contexto-handoff-fase-01-para-02
 
 > **Escopo:** Implementar poda deterministica e selecao top-k com campos seletos no handoff de referencias entre a Fase 1 (Pesquisador) e a Fase 2 (Analisador), eliminando o dump bruto de JSON.
-> **Status:** [RASCUNHO — Aguardando Aprovacao Humana]
+> **Status:** [EM EXECUCAO]
 
 ---
 

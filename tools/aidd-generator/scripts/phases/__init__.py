@@ -54,7 +54,7 @@ def carregar_fase(numero_fase: int):
     - Apenas UMA fase fica em memória por vez
     - Ao carregar uma nova fase, a anterior é descartada (del + gc)
     - O AGENTS.md do micro-ambiente é lido como contexto isolado
-    - Redução de >65% no consumo de tokens vs carregamento eager de todas as fases
+    - Evita manter todas as fases em memória simultaneamente (carregamento sob demanda)
     """
     if numero_fase not in FASE_REGISTRY:
         raise ValueError(f'Fase {numero_fase} não encontrada no registry')

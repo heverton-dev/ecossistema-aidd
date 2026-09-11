@@ -30,7 +30,7 @@ Inovações v2.2:
 - Intent Router: detecção de intenção para /generate e linguagem natural
 - Micro-ambientes: cada fase tem AGENTS.md com regras isoladas
 - Carregamento dinâmico: apenas o micro-ambiente da fase em execução é
-  carregado em memória, reduzindo consumo de tokens em >65%
+  carregado em memória (evita manter todas as fases simultaneamente)
 
 Consolidação v2.4 (Item 2 — unificar-orquestradores-generator-e-ops):
 - Este arquivo é o ÚNICO orquestrador canônico do pipeline. A orquestração
@@ -82,6 +82,82 @@ from phases import (  # noqa: E402
     carregar_micro_ambiente as _carregar_micro_ambiente,
     descarregar_todas_fases as _descarregar_todas_fases,
 )
+
+
+# =============================================================================
+# ORÇAMENTO DE TOKENS POR FASE (Item 7 — 02-otimizacao-tokenomics-latencia)
+# =============================================================================
+
+_CONFIG_DIR = Path(__file__).resolve().parent.parent / 'config'
+_TOKEN_BUDGETS_PATH = _CONFIG_DIR / 'token_budgets.json'
+
+
+def _carregar_orcamento_fases() -> dict:
+    """Carrega token_budgets.json. Retorna dict vazio se arquivo não existir."""
+    if not _TOKEN_BUDGETS_PATH.exists():
+        return {}
+    try:
+        dados = json.loads(_TOKEN_BUDGETS_PATH.read_text(encoding='utf-8'))
+        return dados.get('fases', {})
+    except (json.JSONDecodeError, OSError):
+        return {}
+
+
+def _registrar_e_verificar_orcamento(
+    resultado_fase: dict, nome_fase: str, num_fase: int,
+    orcamentos: dict, estado_path: Path
+) -> None:
+    """Registra tokens utilizados vs orçamento e emite alerta se desvio > 20%."""
+    if not orcamentos:
+        return
+    chave = f'fase_{num_fase}'
+    if chave not in orcamentos:
+        return
+    budget = orcamentos[chave]
+    orcamento_tokens = budget.get('orcamento_tokens', 0)
+    if orcamento_tokens <= 0:
+        return
+
+    # Extrair tokens consumidos da fase (se disponível)
+    tokens_utilizados = 0
+    if isinstance(resultado_fase, dict):
+        tokens_utilizados = resultado_fase.get('tokens_consumidos', 0)
+    elif isinstance(resultado_fase, str):
+        # Índice JSON — tentar extrair de campo específico
+        try:
+            dados = json.loads(resultado_fase)
+            tokens_utilizados = dados.get('tokens_consumidos', 0)
+        except (json.JSONDecodeError, TypeError):
+            pass
+
+    if tokens_utilizados <= 0:
+        return
+
+    registro = {
+        'fase': nome_fase,
+        'num_fase': num_fase,
+        'orcamento_tokens': orcamento_tokens,
+        'tokens_utilizados': tokens_utilizados,
+        'desvio_pct': round((tokens_utilizados / orcamento_tokens - 1) * 100, 1),
+    }
+
+    # Alerta se desvio > 20%
+    limiar = 1.2
+    if tokens_utilizados > orcamento_tokens * limiar:
+        print(f"   ⚠️  ORÇAMENTO: Fase {num_fase} ({nome_fase}) usou {tokens_utilizados} tokens "
+              f"(orcamento: {orcamento_tokens}, desvio: +{registro['desvio_pct']:.1f}%)")
+
+    # Salvar no _pipeline_state.json
+    estado = {}
+    if estado_path.exists():
+        try:
+            estado = json.loads(estado_path.read_text(encoding='utf-8'))
+        except (json.JSONDecodeError, OSError):
+            estado = {}
+    if 'orcamento_fases' not in estado:
+        estado['orcamento_fases'] = {}
+    estado['orcamento_fases'][chave] = registro
+    estado_path.write_text(json.dumps(estado, indent=2, ensure_ascii=False), encoding='utf-8')
 
 
 # =============================================================================
@@ -419,12 +495,16 @@ def executar_pipeline(ideia: str, pasta_projeto: Path, nao_interativo: bool = Tr
     apenas a intenção de design.
 
     Carregamento dinâmico: cada fase é carregada sob demanda e descartada
-    após execução, reduzindo o consumo de tokens em >65%.
+    após execução (evita manter todas as fases simultaneamente em memória).
     """
     pasta_projeto = Path(pasta_projeto)
     cache_dir = pasta_projeto / '.aidd' / 'cache'
     data_dir = cache_dir / 'data'
     total_fases = 8 if implementar_codigo else 7
+
+    # Orçamento de tokens por fase (Item 7)
+    orcamentos = _carregar_orcamento_fases()
+    pipeline_state_path = cache_dir / '_pipeline_state.json'
 
     resultado = {'ideia': ideia, 'pasta': str(pasta_projeto), 'fases_completas': {}}
     t0 = time.time()
@@ -447,6 +527,7 @@ def executar_pipeline(ideia: str, pasta_projeto: Path, nao_interativo: bool = Tr
     p1 = _carregar_fase(1)
     idx1 = p1.PesquisadorFase1(cache_dir).executar(ideia)
     resultado['fases_completas']['fase_1'] = idx1 is not None
+    _registrar_e_verificar_orcamento(idx1 or {}, 'Pesquisador', 1, orcamentos, pipeline_state_path)
     if idx1 is None:
         return _falhar(resultado, 'fase_1_pesquisador', t0)
 
@@ -461,6 +542,7 @@ def executar_pipeline(ideia: str, pasta_projeto: Path, nao_interativo: bool = Tr
     p2 = _carregar_fase(2)
     idx2 = p2.AnalisadorFase2(cache_dir).executar(ideia, referencias)
     resultado['fases_completas']['fase_2'] = idx2 is not None
+    _registrar_e_verificar_orcamento(idx2 or {}, 'Analisador', 2, orcamentos, pipeline_state_path)
     if idx2 is None:
         return _falhar(resultado, 'fase_2_analisador', t0)
 
@@ -474,6 +556,7 @@ def executar_pipeline(ideia: str, pasta_projeto: Path, nao_interativo: bool = Tr
     p3 = _carregar_fase(3)
     idx3 = p3.DesignerFase3(cache_dir).executar(ideia, analise)
     resultado['fases_completas']['fase_3'] = idx3 is not None
+    _registrar_e_verificar_orcamento(idx3 or {}, 'Designer', 3, orcamentos, pipeline_state_path)
     if idx3 is None:
         return _falhar(resultado, 'fase_3_designer', t0)
 
@@ -487,6 +570,7 @@ def executar_pipeline(ideia: str, pasta_projeto: Path, nao_interativo: bool = Tr
     p4 = _carregar_fase(4)
     idx4 = p4.DecisorFase4(cache_dir).executar(design, nao_interativo=nao_interativo)
     resultado['fases_completas']['fase_4'] = idx4 is not None
+    _registrar_e_verificar_orcamento(idx4 or {}, 'Planejador', 4, orcamentos, pipeline_state_path)
     if idx4 is None:
         return _falhar(resultado, 'fase_4_planejador', t0)
 
@@ -500,6 +584,7 @@ def executar_pipeline(ideia: str, pasta_projeto: Path, nao_interativo: bool = Tr
     p5 = _carregar_fase(5)
     idx5 = p5.CriadorProjetoFase5(pasta_projeto).executar(ideia, config_fase4)
     resultado['fases_completas']['fase_5'] = idx5 is not None
+    _registrar_e_verificar_orcamento(idx5 or {}, 'Criador', 5, orcamentos, pipeline_state_path)
     if idx5 is None:
         return _falhar(resultado, 'fase_5_criador', t0)
 
@@ -514,6 +599,7 @@ def executar_pipeline(ideia: str, pasta_projeto: Path, nao_interativo: bool = Tr
         p8 = _carregar_fase(8)
         idx8 = p8.ImplementadorFase8(pasta_projeto).executar(ideia, analise, design)
         resultado['fases_completas']['fase_8'] = idx8 is not None and idx8.get('status') == 'COMPLETO'
+        _registrar_e_verificar_orcamento(idx8 or {}, 'Implementador', 8, orcamentos, pipeline_state_path)
         if not resultado['fases_completas']['fase_8']:
             return _falhar(resultado, 'fase_8_implementador', t0)
 
@@ -528,6 +614,7 @@ def executar_pipeline(ideia: str, pasta_projeto: Path, nao_interativo: bool = Tr
         pasta_cache=cache_dir, output_base=pasta_projeto / 'output'
     ).executar(pasta_projeto.name, contexto_doc, titulo=ideia)
     resultado['fases_completas']['fase_6'] = idx6 is not None and idx6.get('status') == 'COMPLETO'
+    _registrar_e_verificar_orcamento(idx6 or {}, 'Documentador', 6, orcamentos, pipeline_state_path)
     if not resultado['fases_completas']['fase_6']:
         return _falhar(resultado, 'fase_6_documentador', t0)
 
@@ -539,6 +626,7 @@ def executar_pipeline(ideia: str, pasta_projeto: Path, nao_interativo: bool = Tr
     p7 = _carregar_fase(7)
     idx7 = p7.AnalisadorCriticoAutomatico(pasta_projeto).executar()
     resultado['fases_completas']['fase_7'] = idx7.get('status') == 'COMPLETO'
+    _registrar_e_verificar_orcamento(idx7, 'Auto-critica', 7, orcamentos, pipeline_state_path)
     resultado['score_final'] = idx7.get('score')
 
     resultado['status'] = 'COMPLETO'
