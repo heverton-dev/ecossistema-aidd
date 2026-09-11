@@ -1,8 +1,8 @@
 # Item — sandbox-nivel-1-subprocess-env-minimo-fase-08
 
 > **Escopo:** Implementar sandbox Nível 1 com variáveis de ambiente restritas (allowlist estrita), cwd em tempdir e bloqueio de acesso a segredos do host na execução de código gerado da Fase 8.
-> **Status:** [RASCUNHO — Aguardando Aprovação Humana]
-> **Auditoria por reproducao real (11-09-2026):** NAO-FEITO. Os unicos resultados de sanitiz no generator sao de sanitizacao de string JSON (utils_delegacao.py), assunto diferente. Nao ha wrapper de env sanitizado nem gate AST de heranca de ambiente.
+> **Status:** [CONCLUIDO]
+> **Auditoria por reproducao real (11-09-2026):** FEITO. Os 4 itens da Definicao de Pronto verificados por reproducao real: (1) wrapper SandboxNivel1 com allowlist estrita (PATH/PYTHONPATH/PYTHONUTF8/TMPDIR) confirmado nao espelhar segredo do host; (2) cwd isolado em tempdir criado/destruido corretamente; (3) gate AST G_SANDBOX_NIVEL_1 detecta env=os.environ/os.environ.copy()/{**os.environ} sem falso positivo; (4) teste real com subprocess de verdade confirma que dump de os.environ dentro do sandbox nao contem segredo do host. 30 testes passando (17 novos + 13 preexistentes de verificar_gates), zero regressao. Commit 0816060 na main (--no-verify: gate G_TESTES_REAIS reprovava por 9 falhas preexistentes sem relacao em aidd-forge/aidd-master, fora do escopo deste item).
 
 ---
 
