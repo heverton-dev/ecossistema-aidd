@@ -100,7 +100,7 @@ Controle total com determinismo absoluto via `python ecossistema.py`:
 # Ver a saúde e status de todo o ecossistema
 python ecossistema.py status
 
-# Rodar a auditoria geral (Os 8 Portões de Segurança)
+# Rodar a auditoria geral (Os 12 Portões de Segurança)
 python ecossistema.py audit
 
 # Planejar a infraestrutura de servidores para um nicho de negócio
