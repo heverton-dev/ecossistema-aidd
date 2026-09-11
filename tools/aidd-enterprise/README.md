@@ -8,7 +8,9 @@
 
 O **AIDD Master Enterprise** eleva o ecossistema de desenvolvimento assistido por IA ao nível máximo de robustez, determinismo e alta performance. Ele resolve definitivamente falhas e alucinações de geração ao impor regras mecânicas inegociáveis:
 
-- **Isolamento de Domínios (Vertical Slices):** Cada domínio de negócio reside em seu próprio pacote (`src/modules/<dominio>/`) com `models.py`, `services.py`, `routes.py`, testes `pytest` e componente UI.
+- **Isolamento de Domínios (Vertical Slices):** Cada domínio de negócio reside em seu próprio pacote (`src/modules/<dominio>/`), estruturado em Clean Architecture — `domain/` (entidades e regras puras), `application/` (casos de uso), `infrastructure/` (SQL isolado) e `interfaces/` (rotas finas) — com `models.py`/`services.py`/`routes.py` mantidos como fachadas finas de compatibilidade, testes `pytest` e componente UI.
+- **CLI Fina + Camada de Aplicação:** `scripts/aidd.py` é uma casca fina de parsing (Click); toda a lógica de comando vive em `application/commands/` como Use Cases testáveis isoladamente.
+- **Núcleo Compartilhado Único:** `src/core/` é sincronizado a partir da fonte única `componentes/compartilhado/src-core/` — zero duplicação silenciosa com o AIDD Master.
 - **Banco de Dados Poliglota & Resiliente:** Suporte nativo a SQLite em modo WAL concorrente, PostgreSQL e Supabase via `DatabaseAdapter` e isolamento multi-tenant por Row-Level Security (RLS).
 - **Subagentes Efêmeros com Context-Purge:** Composição de módulos via subagentes isolados que consomem apenas suas fatias específicas (~1.200 tokens) e têm o contexto purgado imediatamente após o build.
 - **Auto-Descoberta de Frota (ORCA ADE):** Detecção dinâmica de ferramentas de IA no host com fallback em cascata e roteamento por especialidade (Arquiteto, Backend, Database, Frontend).
@@ -16,7 +18,7 @@ O **AIDD Master Enterprise** eleva o ecossistema de desenvolvimento assistido po
 - **Swagger Studio OpenAPI 3.1 (`/docs`):** Registro dinâmico de contratos de API com testador interativo ao vivo.
 - **Model Context Protocol (`/mcp`):** Servidor JSON-RPC 2.0 nativo pronto para integração com Claude, Cursor, Antigravity e OpenHands.
 - **Design System Corporativo Impeccable:** CSS padronizado com variáveis `:root`, dark mode, cards studio e scrollbars sutis de 4px.
-- **Suíte de 10 Gates Rígidos:** `G_ESTRUTURA`, `G_ARQUITETURA` (AST de Bounded Context), `G_QUALIDADE`, `G_TESTES`, `G_CONTRACTS`, `G_PERFORMANCE` (SLOs e OTel), `G_SEGREDOS`, `G_SEGURANCA` (OWASP e CVE pip-audit), `G_CHAOS` e `G_HARNESS_COMPAT`.
+- **Suíte de 10 Gates Rígidos:** `G_ESTRUTURA`, `G_ARQUITETURA` (AST de Bounded Context), `G_QUALIDADE`, `G_TESTES`, `G_CONTRACTS`, `G_PERFORMANCE` (SLOs e OTel), `G_SEGREDOS`, `G_SEGURANCA` (OWASP e CVE pip-audit), `G_CHAOS` e `G_HARNESS_COMPAT`. Na raiz do ecossistema, o gate cross-cutting `gates/G_ARQUITETURA_DELIVERABLE.py` audita se todo módulo (novo ou existente) respeita as 4 camadas de Clean Architecture.
 
 ---
 
@@ -37,9 +39,9 @@ O **AIDD Master Enterprise** opera sob a Supremacia Agnóstica como pilar de seg
 ```
 aidd-master-enterprise/
 ├── scripts/
-│   ├── aidd.py               # CLI unificada (setup, init, compose, compose-orca, test, audit, deploy)
+│   ├── aidd.py               # CLI fina (parsing Click) — delega tudo para application/commands/
 │   ├── compose_suite.py      # Motor de Composição Enterprise Modular
-│   ├── add_module.py         # Gerador atômico de Fatias Verticais
+│   ├── add_module.py         # Gerador atômico de Fatias Verticais (já no molde Clean Architecture)
 │   ├── provision_project.py  # Provisionador de projetos modulares
 │   ├── run_all.py            # Orquestrador com Auto-Healing
 │   ├── autofix.py            # Mecanismo de auto-correção automática
@@ -54,9 +56,11 @@ aidd-master-enterprise/
 │       ├── G_SEGURANCA.py
 │       ├── G_CHAOS.py
 │       └── G_HARNESS_COMPAT.py
+├── application/
+│   └── commands/             # Use Cases da CLI — um arquivo por comando, testável isoladamente
 ├── src/                      # Código-fonte operacional do framework
-│   ├── core/                 # Shared Kernel, Banco Poliglota, OTel, Métricas, Subagentes
-│   ├── modules/              # Fatias verticais de negócio
+│   ├── core/                 # Shared Kernel (sincronizado de componentes/compartilhado/src-core/)
+│   ├── modules/              # Fatias verticais — cada uma em domain/application/infrastructure/interfaces
 │   └── shared/               # Componentes UI e utilitários de suporte
 ├── templates/
 │   ├── core/                 # Shared Kernel, MCP Server, OpenAPI & UI Components

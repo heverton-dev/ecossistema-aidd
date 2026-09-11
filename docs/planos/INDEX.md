@@ -6,6 +6,7 @@
 
 | Iniciativa | Local |
 |---|---|
+| Reestruturacao Ddd Clean Architecture | `feitos/01-reestruturacao-ddd-clean-architecture/` |
 | Direcionamento Estrategico Anti Nih | `feitos/02-direcionamento-estrategico-anti-nih/` |
 | Evolucao Aidd Ops Fase Completa | `feitos/03-evolucao-aidd-ops-fase-completa/` |
 | Aidd Bridge | `feitos/aidd-bridge/` |
@@ -31,7 +32,6 @@
 
 | Iniciativa | Local |
 |---|---|
-| Reestruturacao Ddd Clean Architecture | `a-fazer/01-reestruturacao-ddd-clean-architecture/` |
 | Otimizacao Tokenomics Latencia | `a-fazer/02-otimizacao-tokenomics-latencia/` |
 | Qualidade Testes E Mutacao | `a-fazer/03-qualidade-testes-e-mutacao/` |
 | Resiliencia Concorrencia E Integridade | `a-fazer/04-resiliencia-concorrencia-e-integridade/` |

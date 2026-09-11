@@ -112,9 +112,9 @@ python ecossistema.py ops deploy staging --dry-run
 
 ---
 
-## 🛡️ Os 8 Portões de Segurança (Quality Gates Globais)
+## 🛡️ Os 12 Portões de Segurança (Quality Gates Globais)
 
-Antes de qualquer código ser considerado "pronto", ele é obrigado a passar por **8 testes automáticos e rigorosos** (como o raio-x e a alfândega de um aeroporto):
+Antes de qualquer código ser considerado "pronto", ele é obrigado a passar por **12 testes automáticos e rigorosos** (como o raio-x e a alfândega de um aeroporto):
 
 1. 🔍 **G_ECOSSISTEMA_INTEGRIDADE:** Garante que todas as pastas, arquivos essenciais e sintaxe Python estão 100% corretos.
 2. ⚖️ **G_DRIFT_NUCLEO_COMPARTILHADO:** Compara os códigos compartilhados entre o Master e o Enterprise para impedir divergências acidentais.
@@ -124,8 +124,12 @@ Antes de qualquer código ser considerado "pronto", ele é obrigado a passar por
 6. 🧩 **G_COMPONENTE_AGNOSTICO:** Audita se novos componentes funcionam de forma universal em qualquer ambiente.
 7. 🛑 **G_ZERO_HEADLESS:** Garante que o desenvolvedor humano esteja sempre no controle, bloqueando robôs ou subagentes ocultos que gastariam tokens em segundo plano.
 8. 🐳 **G_INFRA_COMPOSE:** Audita arquivos Docker Compose delegando ao scanner Checkov e com parsing estruturado PyYAML, garantindo que não existam portas duplicadas, segredos, variáveis faltando ou erros de banco de dados.
+9. 🐋 **G_HADOLINT:** Audita todos os Dockerfiles (existentes e gerados) contra as melhores práticas de segurança e sintaxe OCI, via Hadolint.
+10. 🧪 **G_TESTES_REAIS:** Roda a suíte de testes de verdade (pytest) de cada ferramenta e reprova se qualquer teste falhar — nunca aceita "confia em mim".
+11. 🏷️ **G_HONESTIDADE_ROTULO:** Impede que os próprios gates usem termos de marketing exagerados ("blindagem militar" e afins) em vez de descrever a cobertura real comprovada.
+12. 🏛️ **G_ARQUITETURA_DELIVERABLE:** Audita, via análise sintática, se o código gerado e os módulos das ferramentas respeitam Clean Architecture/DDD — bloqueia banco de dados fora do lugar certo, dependências erradas e acoplamento direto entre camadas.
 
-> **Validação em um comando:** `python ecossistema.py audit` (Roda os 8 gates em sequência e retorna `exit 0` apenas com 100% de aprovação).
+> **Validação em um comando:** `python ecossistema.py audit` (Roda os gates em sequência e retorna `exit 0` apenas com 100% de aprovação).
 
 ---
 
@@ -141,19 +145,21 @@ ecossistema-aidd/
 │
 ├── componentes/                            ──► O cofre canônico de onde nascem todos os componentes
 │   ├── compartilhado/                      ──► Habilidades e comandos universais
+│   │   └── src-core/                       ──► Núcleo único compartilhado entre Master e Enterprise
 │   ├── aidd-ops/                           ──► MCPs, comandos e receitas de infraestrutura
 │   ├── aidd-master/                        ──► Componentes do AIDD Master
 │   ├── aidd-enterprise/                    ──► Componentes do AIDD Enterprise
 │   └── aidd-generator/                     ──► Componentes do AIDD Generator
 │
-├── gates/                                  ──► Os 8 Portões de Segurança determinísticos
+├── gates/                                  ──► Os 12 Portões de Segurança determinísticos
 │
-├── tools/                                  ──► As 5 Ferramentas Homologadas (100% funcionais)
+├── tools/                                  ──► As 6 Ferramentas Homologadas (100% funcionais)
 │   ├── aidd-forge/                         ──► Bootstrap e blindagem de governança
 │   ├── aidd-generator/                     ──► Fábrica autônoma de software (8 fases)
-│   ├── aidd-master/                        ──► Monólito modular e fatias verticais
+│   ├── aidd-master/                        ──► Monólito modular e fatias verticais (Clean Architecture)
 │   ├── aidd-enterprise/                    ──► Missão crítica e validação SHA-256
-│   └── aidd-ops/                           ──► Meta-orquestrador de infraestrutura e deploy
+│   ├── aidd-ops/                           ──► Meta-orquestrador de infraestrutura e deploy
+│   └── aidd-bridge/                        ──► Extrator e empacotador de apps low-code para VPS própria
 │
 └── docs/                                   ──► Toda a inteligência documentada
     ├── planos/                             ──► Planos táticos e de auditoria

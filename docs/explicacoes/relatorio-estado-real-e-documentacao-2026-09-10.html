@@ -1,0 +1,563 @@
+<title>Estado Real do Ecossistema AIDD</title>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;0,6..72,700;1,6..72,500&family=Public+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+<style>
+  :root{
+    --bg:#f4f6f9;
+    --surface:#ffffff;
+    --surface-alt:#eef1f6;
+    --border:#d7dee7;
+    --text:#16212e;
+    --text-2:#566579;
+    --text-3:#5f6f82;
+    --accent:#1d5fae;
+    --accent-soft:#e4edf9;
+    --good:#0d8563;
+    --good-soft:#e2f2ec;
+    --warn:#8a6a08;
+    --warn-soft:#f7f0da;
+    --crit:#c23020;
+    --crit-soft:#faeae7;
+    --neutral:#5b6b7c;
+    --neutral-soft:#e8ecf1;
+    --shadow: 0 1px 2px rgba(22,33,46,.05), 0 6px 20px -8px rgba(22,33,46,.12);
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --bg:#0d1420;
+      --surface:#131c2b;
+      --surface-alt:#1a2536;
+      --border:#263449;
+      --text:#e7edf5;
+      --text-2:#a7b6c9;
+      --text-3:#7c8ba0;
+      --accent:#6ea8f0;
+      --accent-soft:rgba(110,168,240,.14);
+      --good:#3fbf95;
+      --good-soft:rgba(15,158,120,.16);
+      --warn:#e0bb3d;
+      --warn-soft:rgba(173,142,0,.18);
+      --crit:#e8695c;
+      --crit-soft:rgba(209,56,42,.16);
+      --neutral:#8695a8;
+      --neutral-soft:rgba(134,149,168,.14);
+      --shadow: 0 1px 2px rgba(0,0,0,.3), 0 8px 24px -10px rgba(0,0,0,.5);
+    }
+  }
+  :root[data-theme="dark"]{
+    --bg:#0d1420; --surface:#131c2b; --surface-alt:#1a2536; --border:#263449;
+    --text:#e7edf5; --text-2:#a7b6c9; --text-3:#7c8ba0;
+    --accent:#6ea8f0; --accent-soft:rgba(110,168,240,.14);
+    --good:#3fbf95; --good-soft:rgba(15,158,120,.16);
+    --warn:#e0bb3d; --warn-soft:rgba(173,142,0,.18);
+    --crit:#e8695c; --crit-soft:rgba(209,56,42,.16);
+    --neutral:#8695a8; --neutral-soft:rgba(134,149,168,.14);
+    --shadow: 0 1px 2px rgba(0,0,0,.3), 0 8px 24px -10px rgba(0,0,0,.5);
+  }
+
+  *{box-sizing:border-box;}
+  body{
+    background:var(--bg);
+    color:var(--text);
+    font-family:'Public Sans', system-ui, -apple-system, sans-serif;
+    padding-inline:20px;
+    padding-block:40px 64px;
+    line-height:1.55;
+  }
+  .page{max-width:880px; margin-inline:auto;}
+  .wide{max-width:1040px; margin-inline:auto;}
+
+  h1,h2,h3{
+    font-family:'Newsreader', Georgia, serif;
+    font-weight:600;
+    text-wrap:balance;
+    color:var(--text);
+  }
+  h1{font-size:clamp(1.9rem, 4vw, 2.6rem); margin:0 0 6px; letter-spacing:-.01em;}
+  h2{font-size:1.5rem; margin:0 0 4px;}
+  h3{font-size:1.05rem; margin:0 0 2px; font-weight:600;}
+  p{margin:0 0 1em; max-width:66ch;}
+  .lede{color:var(--text-2); font-size:1.05rem; max-width:60ch;}
+
+  .mono{font-family:'IBM Plex Mono', ui-monospace, monospace; font-variant-numeric:tabular-nums;}
+  code, .mono-inline{
+    font-family:'IBM Plex Mono', ui-monospace, monospace;
+    background:var(--surface-alt);
+    border:1px solid var(--border);
+    border-radius:4px;
+    padding:.05em .4em;
+    font-size:.88em;
+    color:var(--text);
+    white-space:nowrap;
+  }
+
+  .eyebrow{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:.72rem;
+    letter-spacing:.09em;
+    text-transform:uppercase;
+    color:var(--text-3);
+    display:flex; gap:10px; flex-wrap:wrap; align-items:center;
+    margin-bottom:14px;
+  }
+  .eyebrow .dot{color:var(--border);}
+
+  header.masthead{
+    border-bottom:1px solid var(--border);
+    padding-bottom:28px;
+    margin-bottom:32px;
+  }
+
+  section{margin-block:48px;}
+  section > .eyebrow{margin-top:0;}
+
+  /* summary callout */
+  .callout{
+    background:var(--surface);
+    border:1px solid var(--border);
+    border-left:3px solid var(--accent);
+    border-radius:10px;
+    padding:22px 24px;
+    box-shadow:var(--shadow);
+  }
+  .callout p:last-child{margin-bottom:0;}
+
+  /* stat strip */
+  .stats{
+    display:grid;
+    grid-template-columns:repeat(auto-fit, minmax(150px,1fr));
+    gap:1px;
+    background:var(--border);
+    border:1px solid var(--border);
+    border-radius:10px;
+    overflow:hidden;
+    margin-top:20px;
+  }
+  .stat{
+    background:var(--surface);
+    padding:16px 18px;
+    display:flex; flex-direction:column; gap:2px;
+  }
+  .stat b{
+    font-family:'Newsreader', serif;
+    font-size:1.7rem;
+    font-weight:600;
+    line-height:1.1;
+  }
+  .stat span{font-size:.78rem; color:var(--text-2);}
+
+  /* status pill */
+  .pill{
+    display:inline-flex; align-items:center; gap:6px;
+    padding:3px 10px 3px 7px;
+    border-radius:999px;
+    font-size:.78rem;
+    font-weight:600;
+    white-space:nowrap;
+    line-height:1.5;
+  }
+  .pill svg{width:13px; height:13px; flex:none;}
+  .pill.good{background:var(--good-soft); color:var(--good);}
+  .pill.warn{background:var(--warn-soft); color:var(--warn);}
+  .pill.crit{background:var(--crit-soft); color:var(--crit);}
+  .pill.neutral{background:var(--neutral-soft); color:var(--neutral);}
+
+  /* generic table */
+  .tbl-wrap{overflow-x:auto; border:1px solid var(--border); border-radius:10px; background:var(--surface);}
+  table{width:100%; border-collapse:collapse; font-size:.92rem;}
+  thead th{
+    text-align:left; font-family:'IBM Plex Mono',monospace; font-weight:600;
+    font-size:.72rem; letter-spacing:.06em; text-transform:uppercase;
+    color:var(--text-3); background:var(--surface-alt);
+    padding:10px 16px; border-bottom:1px solid var(--border);
+  }
+  tbody td{padding:12px 16px; border-bottom:1px solid var(--border); vertical-align:top; color:var(--text-2);}
+  tbody tr:last-child td{border-bottom:none;}
+  tbody td.name{color:var(--text); font-weight:500;}
+  tbody td.name .mono-inline{font-weight:400;}
+
+  /* tool cards */
+  .tools{
+    display:grid;
+    grid-template-columns:repeat(auto-fit, minmax(240px,1fr));
+    gap:14px;
+    margin-top:20px;
+  }
+  .tool{
+    background:var(--surface);
+    border:1px solid var(--border);
+    border-radius:10px;
+    padding:18px 18px 16px;
+    box-shadow:var(--shadow);
+    display:flex; flex-direction:column; gap:8px;
+  }
+  .tool .tool-head{display:flex; justify-content:space-between; align-items:baseline; gap:8px;}
+  .tool .tool-head h3{font-family:'IBM Plex Mono',monospace; font-size:.95rem; font-weight:600;}
+  .tool p{font-size:.85rem; color:var(--text-2); margin:0; max-width:none;}
+  .tool .tool-tests{
+    margin-top:auto; padding-top:10px; border-top:1px dashed var(--border);
+    display:flex; align-items:baseline; gap:8px;
+  }
+  .tool .tool-tests b{font-family:'Newsreader',serif; font-size:1.3rem;}
+  .tool .tool-tests span{font-size:.76rem; color:var(--text-3);}
+
+  /* chart panels */
+  .charts{
+    display:grid;
+    grid-template-columns:repeat(auto-fit, minmax(240px,1fr));
+    gap:16px;
+    margin-top:22px;
+  }
+  .chart-panel{
+    background:var(--surface);
+    border:1px solid var(--border);
+    border-radius:10px;
+    padding:18px 18px 14px;
+    box-shadow:var(--shadow);
+  }
+  .chart-panel h3{font-size:.92rem; margin-bottom:2px;}
+  .chart-panel .chart-note{font-size:.76rem; color:var(--text-3); margin-bottom:10px;}
+  .chart-panel svg text{font-family:'IBM Plex Mono',monospace;}
+  .bar-value{font-size:12px; font-weight:600; fill:var(--text);}
+  .bar-label{font-size:11px; fill:var(--text-2);}
+  .axis-line{stroke:var(--border); stroke-width:1;}
+
+  /* horizontal bar chart (per-tool tests) */
+  .hbar-row .hbar-label{font-family:'IBM Plex Mono',monospace; font-size:12.5px; fill:var(--text);}
+  .hbar-row .hbar-value{font-family:'IBM Plex Mono',monospace; font-size:12.5px; font-weight:600; fill:var(--text);}
+
+  ol.priority{
+    counter-reset:pr;
+    padding:0; margin:20px 0 0; list-style:none;
+    display:flex; flex-direction:column; gap:14px;
+  }
+  ol.priority li{
+    counter-increment:pr;
+    display:grid; grid-template-columns:34px 1fr; gap:14px;
+    background:var(--surface); border:1px solid var(--border); border-radius:10px;
+    padding:14px 16px;
+  }
+  ol.priority li::before{
+    content:counter(pr);
+    font-family:'IBM Plex Mono',monospace; font-weight:600; font-size:1.05rem;
+    color:var(--accent); background:var(--accent-soft);
+    width:34px; height:34px; border-radius:8px;
+    display:flex; align-items:center; justify-content:center;
+  }
+  ol.priority li p{margin:0; max-width:none;}
+  ol.priority li h4{margin:0 0 3px; font-size:.95rem; font-family:'Public Sans',sans-serif; font-weight:600;}
+
+  ol.changes{padding:0; margin:20px 0 0; list-style:none; counter-reset:ch; display:flex; flex-direction:column; gap:12px;}
+  ol.changes li{counter-increment:ch; display:grid; grid-template-columns:28px 1fr; gap:12px; align-items:baseline;}
+  ol.changes li::before{
+    content:counter(ch);
+    font-family:'IBM Plex Mono',monospace; font-size:.78rem; font-weight:600;
+    color:var(--text-3); background:var(--surface-alt); border:1px solid var(--border);
+    width:22px; height:22px; border-radius:6px; display:flex; align-items:center; justify-content:center;
+    align-self:flex-start; margin-top:2px;
+  }
+  ol.changes p{margin:0; max-width:none; font-size:.94rem;}
+  ol.changes b{color:var(--text);}
+
+  .issues{display:flex; flex-direction:column; gap:10px; margin-top:18px;}
+  .issue{
+    background:var(--warn-soft); border:1px solid var(--border); border-left:3px solid var(--warn);
+    border-radius:8px; padding:12px 14px; font-size:.9rem; color:var(--text);
+    display:flex; gap:10px;
+  }
+  .issue svg{width:16px; height:16px; flex:none; margin-top:2px; color:var(--warn);}
+  .issue p{margin:0; max-width:none;}
+
+  footer{
+    margin-top:56px; padding-top:20px; border-top:1px solid var(--border);
+    font-size:.8rem; color:var(--text-3);
+  }
+
+  @media (max-width:640px){
+    .eyebrow{font-size:.68rem;}
+    .stat b{font-size:1.4rem;}
+    ol.priority li{grid-template-columns:28px 1fr;}
+    ol.priority li::before{width:28px; height:28px; font-size:.9rem;}
+  }
+</style>
+
+<svg width="0" height="0" style="position:absolute">
+  <symbol id="ic-check" viewBox="0 0 20 20" fill="none"><circle cx="10" cy="10" r="8.5" stroke="currentColor" stroke-width="1.6"/><path d="M6.5 10.2l2.3 2.3 4.7-5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+  <symbol id="ic-x" viewBox="0 0 20 20" fill="none"><circle cx="10" cy="10" r="8.5" stroke="currentColor" stroke-width="1.6"/><path d="M7.3 7.3l5.4 5.4M12.7 7.3l-5.4 5.4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></symbol>
+  <symbol id="ic-alert" viewBox="0 0 20 20" fill="none"><path d="M10 2.6l8 14.3H2z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/><path d="M10 8v3.6" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><circle cx="10" cy="14.2" r=".9" fill="currentColor"/></symbol>
+  <symbol id="ic-minus" viewBox="0 0 20 20" fill="none"><circle cx="10" cy="10" r="8.5" stroke="currentColor" stroke-width="1.6"/><path d="M6.7 10h6.6" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></symbol>
+</svg>
+
+<div class="page">
+
+<header class="masthead">
+  <div class="eyebrow">RELATÓRIO INTERNO <span class="dot">·</span> ECOSSISTEMA AIDD <span class="dot">·</span> <span class="mono">2026-09-10</span> <span class="dot">·</span> commit <span class="mono-inline">07fb306</span></div>
+  <h1>Estado Real do Ecossistema AIDD</h1>
+  <p class="lede">O que o código faz hoje, de verdade. Todo número aqui vem de rodar o teste ou o verificador na hora, não de ler o relato de um agente.</p>
+</header>
+
+<section id="resumo">
+  <div class="eyebrow">01 <span class="dot">·</span> Resumo</div>
+  <div class="callout">
+    <p><strong>Atualização do mesmo dia:</strong> este relatório nasceu como diagnóstico puro. Depois, dois achados foram corrigidos de verdade, na mesma sessão: o verificador de arquitetura tinha falso-positivo (corrigido) e os 5 documentos desatualizados foram atualizados. O texto abaixo já reflete o estado final.</p>
+    <p>O ecossistema passou hoje por uma reestruturação de arquitetura — 10 itens, todos concluídos — que eliminou duplicação de código entre <code>aidd-master</code> e <code>aidd-enterprise</code>, emagreceu suas linhas de comando e trouxe Clean Architecture de verdade para o módulo usado como modelo de todo módulo novo. As 6 ferramentas somam <strong>1.864 testes passando, zero falhas</strong>. O verificador de arquitetura reprovava com 524 problemas — auditando arquivo por arquivo, boa parte era falso-positivo do próprio verificador (corrigido); o número real e atual é <strong>212</strong>.</p>
+  </div>
+  <div class="stats">
+    <div class="stat"><b>1.864</b><span>testes passando · 0 falhas</span></div>
+    <div class="stat"><b>10 / 10</b><span>itens da reestruturação concluídos</span></div>
+    <div class="stat"><b>212</b><span>violações reais de arquitetura (era 564 → 524 → 212)</span></div>
+    <div class="stat"><b>5 de 5</b><span>documentos desatualizados já corrigidos</span></div>
+  </div>
+</section>
+
+<section id="ecossistema">
+  <div class="eyebrow">02 <span class="dot">·</span> Estado do ecossistema</div>
+  <h2>Os verificadores gerais</h2>
+  <p class="lede">Rodam sobre o repositório inteiro, não sobre uma ferramenta específica.</p>
+  <div class="tbl-wrap">
+    <table>
+      <thead><tr><th>Verificador</th><th>Audita</th><th>Resultado</th></tr></thead>
+      <tbody>
+        <tr><td class="name mono-inline">G_ECOSSISTEMA_INTEGRIDADE</td><td>Integridade física e sintática das 6 ferramentas</td><td><span class="pill good"><svg><use href="#ic-check"/></svg>Aprovado</span></td></tr>
+        <tr><td class="name mono-inline">G_DRIFT_NUCLEO_COMPARTILHADO</td><td>Divergência escondida entre o núcleo de master e enterprise</td><td><span class="pill good"><svg><use href="#ic-check"/></svg>Aprovado</span></td></tr>
+        <tr><td class="name mono-inline">G_HARNESS_COMPAT</td><td>Sincronização entre os assistentes de IA suportados</td><td><span class="pill good"><svg><use href="#ic-check"/></svg>Aprovado</span></td></tr>
+        <tr><td class="name mono-inline">G_COMPONENTE_AGNOSTICO</td><td>Todo componente novo funciona em qualquer assistente</td><td><span class="pill good"><svg><use href="#ic-check"/></svg>Aprovado</span></td></tr>
+        <tr><td class="name mono-inline">G_CLI_HELP_CONSISTENCIA</td><td>Texto de ajuda da linha de comando bate com as opções reais</td><td><span class="pill good"><svg><use href="#ic-check"/></svg>Aprovado</span></td></tr>
+        <tr><td class="name mono-inline">G_HONESTIDADE_ROTULO</td><td>Nenhum texto de gate exagera o que foi comprovado (51 arquivos)</td><td><span class="pill good"><svg><use href="#ic-check"/></svg>Aprovado</span></td></tr>
+        <tr><td class="name mono-inline">G_ARQUITETURA_DELIVERABLE</td><td>Código sem banco de dados direto fora do lugar certo</td><td><span class="pill crit"><svg><use href="#ic-x"/></svg>212 violações reais</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h2 style="margin-top:40px">Cada ferramenta, por dentro</h2>
+  <p class="lede">O que cada uma faz e quantos testes reais passam hoje.</p>
+  <div class="tools">
+    <div class="tool">
+      <div class="tool-head"><h3>aidd-forge</h3></div>
+      <p>Prepara qualquer projeto novo com a governança e os verificadores de qualidade do ecossistema.</p>
+      <div class="tool-tests"><b>196</b><span>passando · 1 pulado</span></div>
+    </div>
+    <div class="tool">
+      <div class="tool-head"><h3>aidd-generator</h3></div>
+      <p>Transforma uma ideia em texto num projeto de software completo, em 8 etapas automáticas.</p>
+      <div class="tool-tests"><b>941</b><span>passando</span></div>
+    </div>
+    <div class="tool">
+      <div class="tool-head"><h3>aidd-master</h3></div>
+      <p>Framework modular onde se adicionam funções novas — os "blocos de Lego" do ecossistema.</p>
+      <div class="tool-tests"><b>286</b><span>passando · 3 pulados</span></div>
+    </div>
+    <div class="tool">
+      <div class="tool-head"><h3>aidd-enterprise</h3></div>
+      <p>Mesma base do master, com validação criptográfica e política de segurança mais rígida.</p>
+      <div class="tool-tests"><b>263</b><span>passando · 3 pulados</span></div>
+    </div>
+    <div class="tool">
+      <div class="tool-head"><h3>aidd-ops</h3></div>
+      <p>Pega o software pronto e prepara a infraestrutura: servidores, containers, deploy.</p>
+      <div class="tool-tests"><b>159</b><span>passando</span></div>
+    </div>
+    <div class="tool">
+      <div class="tool-head"><h3>aidd-bridge</h3></div>
+      <p>Tira aplicativos de plataformas sem código e os coloca rodando em servidor próprio.</p>
+      <div class="tool-tests"><b>19</b><span>passando</span></div>
+    </div>
+  </div>
+
+  <div style="margin-top:22px" class="chart-panel">
+    <h3>Testes reais por ferramenta</h3>
+    <div class="chart-note">Eixo linear a partir de zero — a diferença de escala é real, não um efeito de gráfico.</div>
+    <svg viewBox="0 0 600 220" width="100%" role="img" aria-label="Gráfico de barras horizontais com o número de testes passando por ferramenta">
+      <!-- scale: 0..941 mapped to 0..430px, bars start at x=170 -->
+      <g class="hbar-row" font-family="IBM Plex Mono, monospace">
+        <!-- generator 941 -->
+        <text x="0" y="20" class="hbar-label" dominant-baseline="middle">aidd-generator</text>
+        <rect x="170" y="10" width="430" height="18" rx="3" fill="var(--accent)"/>
+        <text x="608" y="20" class="hbar-value" dominant-baseline="middle" text-anchor="start">941</text>
+        <!-- master 286 -->
+        <text x="0" y="58" class="hbar-label" dominant-baseline="middle">aidd-master</text>
+        <rect x="170" y="48" width="130.7" height="18" rx="3" fill="var(--accent)"/>
+        <text x="309" y="58" class="hbar-value" dominant-baseline="middle" text-anchor="start">286</text>
+        <!-- enterprise 263 -->
+        <text x="0" y="96" class="hbar-label" dominant-baseline="middle">aidd-enterprise</text>
+        <rect x="170" y="86" width="120.1" height="18" rx="3" fill="var(--accent)"/>
+        <text x="298" y="96" class="hbar-value" dominant-baseline="middle" text-anchor="start">263</text>
+        <!-- forge 196 -->
+        <text x="0" y="134" class="hbar-label" dominant-baseline="middle">aidd-forge</text>
+        <rect x="170" y="124" width="89.5" height="18" rx="3" fill="var(--accent)"/>
+        <text x="267" y="134" class="hbar-value" dominant-baseline="middle" text-anchor="start">196</text>
+        <!-- ops 159 -->
+        <text x="0" y="172" class="hbar-label" dominant-baseline="middle">aidd-ops</text>
+        <rect x="170" y="162" width="72.6" height="18" rx="3" fill="var(--accent)"/>
+        <text x="250" y="172" class="hbar-value" dominant-baseline="middle" text-anchor="start">159</text>
+        <!-- bridge 19 -->
+        <text x="0" y="210" class="hbar-label" dominant-baseline="middle">aidd-bridge</text>
+        <rect x="170" y="200" width="8.7" height="18" rx="3" fill="var(--accent)"/>
+        <text x="187" y="210" class="hbar-value" dominant-baseline="middle" text-anchor="start">19</text>
+      </g>
+    </svg>
+  </div>
+
+  <h2 style="margin-top:40px">O que mudou hoje</h2>
+  <p class="lede">10 itens da reestruturação DDD/Clean Architecture — a numeração é a mesma usada no plano original.</p>
+  <ol class="changes">
+    <li><p><b>Núcleo compartilhado unificado.</b> Os 27 arquivos que master e enterprise mantinham duplicados manualmente agora vêm de uma única fonte real, sincronizada automaticamente.</p></li>
+    <li><p><b>Orquestradores duplicados unificados</b> no generator e no ops — cada um tinha dois caminhos de código fazendo a mesma coisa.</p></li>
+    <li><p><b>CLIs emagrecidas.</b> O arquivo de comando de master e enterprise caiu de ~1.160 para ~260 linhas cada; a lógica de negócio foi extraída para um lugar testável separado.</p></li>
+    <li><p><b>Carregamento das fases do generator sem atalhos frágeis</b> de import — virou um pacote formal.</p></li>
+    <li><p><b>Contrato formal entre ferramentas.</b> O arquivo que o ops produz e master/enterprise consomem agora tem formato validado.</p></li>
+    <li><p><b>Módulo de referência reescrito</b> em camadas separadas (regras de negócio / casos de uso / banco de dados / rotas) — Clean Architecture de verdade.</p></li>
+    <li><p><b>Checagem automática de arquitetura criada</b> (<code>G_ARQUITETURA_DELIVERABLE</code>) para auditar essas camadas.</p></li>
+    <li><p><b>Geradores de módulo atualizados</b> — todo módulo novo em master/enterprise já nasce no formato certo.</p></li>
+    <li><p><b>Autocorreção na geração automática.</b> Quando o generator cria um projeto do zero, audita a própria arquitetura e tenta se corrigir sozinho.</p></li>
+    <li><p><b>Teste de infraestrutura real</b> — o ops ganhou um teste que sobe de verdade o pacote de instalação (Helm).</p></li>
+  </ol>
+
+  <h2 style="margin-top:40px">2 problemas encontrados no caminho</h2>
+  <p class="lede">Não foram causados pela reestruturação, mas descobertos durante ela — ficam registrados como pendência, fora do escopo do que foi pedido.</p>
+  <div class="issues">
+    <div class="issue"><svg><use href="#ic-alert"/></svg><p>Um teste do <span class="mono-inline">aidd-generator</span>, em certas condições, gera e grava sozinho um projeto de exemplo real no controle de versão — efeito colateral que não deveria acontecer.</p></div>
+    <div class="issue"><svg><use href="#ic-alert"/></svg><p>O verificador <span class="mono-inline">G_TESTES_REAIS</span> (roda as 5 ferramentas em sequência) tem instabilidade: sujeira de uma ferramenta atrapalha o resultado da próxima.</p></div>
+  </div>
+</section>
+
+<section id="documentacao">
+  <div class="eyebrow">03 <span class="dot">·</span> Saúde da documentação</div>
+  <h2>Antes → depois da correção</h2>
+  <p class="lede">Três números que a documentação carregava do estado anterior ao código — já corrigidos.</p>
+  <div class="charts">
+    <div class="chart-panel">
+      <h3>aidd-forge — testes citados no README</h3>
+      <div class="chart-note">passed · corrigido</div>
+      <svg viewBox="0 0 220 160" width="100%" role="img" aria-label="aidd-forge: README dizia 126 testes, corrigido para o número real de 196">
+        <line x1="30" y1="130" x2="200" y2="130" class="axis-line"/>
+        <rect x="45" y="54" width="46" height="76" rx="3" fill="var(--neutral)"/>
+        <text x="68" y="46" text-anchor="middle" class="bar-value">126</text>
+        <text x="68" y="146" text-anchor="middle" class="bar-label">antes</text>
+        <rect x="129" y="12" width="46" height="118" rx="3" fill="var(--good)"/>
+        <text x="152" y="4" text-anchor="middle" class="bar-value">196</text>
+        <text x="152" y="146" text-anchor="middle" class="bar-label">corrigido</text>
+      </svg>
+    </div>
+    <div class="chart-panel">
+      <h3>aidd-generator — testes citados no README</h3>
+      <div class="chart-note">passed · corrigido</div>
+      <svg viewBox="0 0 220 160" width="100%" role="img" aria-label="aidd-generator: README dizia 215 testes, corrigido para o número real de 941">
+        <line x1="30" y1="130" x2="200" y2="130" class="axis-line"/>
+        <rect x="45" y="103" width="46" height="27" rx="3" fill="var(--neutral)"/>
+        <text x="68" y="94" text-anchor="middle" class="bar-value">215</text>
+        <text x="68" y="146" text-anchor="middle" class="bar-label">antes</text>
+        <rect x="129" y="12" width="46" height="118" rx="3" fill="var(--good)"/>
+        <text x="152" y="4" text-anchor="middle" class="bar-value">941</text>
+        <text x="152" y="146" text-anchor="middle" class="bar-label">corrigido</text>
+      </svg>
+    </div>
+    <div class="chart-panel">
+      <h3>Verificadores gerais no README raiz</h3>
+      <div class="chart-note">quantidade · corrigido</div>
+      <svg viewBox="0 0 220 160" width="100%" role="img" aria-label="README raiz citava 8 verificadores, corrigido para os 12 reais documentados no AGENTS.md">
+        <line x1="30" y1="130" x2="200" y2="130" class="axis-line"/>
+        <rect x="45" y="51" width="46" height="79" rx="3" fill="var(--neutral)"/>
+        <text x="68" y="43" text-anchor="middle" class="bar-value">8</text>
+        <text x="68" y="146" text-anchor="middle" class="bar-label">antes</text>
+        <rect x="129" y="12" width="46" height="118" rx="3" fill="var(--good)"/>
+        <text x="152" y="4" text-anchor="middle" class="bar-value">12</text>
+        <text x="152" y="146" text-anchor="middle" class="bar-label">corrigido</text>
+      </svg>
+    </div>
+  </div>
+
+  <div class="chart-panel" style="margin-top:16px; max-width:340px">
+    <h3>Violações de arquitetura no dia</h3>
+    <div class="chart-note">quantidade — dois passos: código corrigido, depois o próprio verificador corrigido</div>
+    <svg viewBox="0 0 220 160" width="100%" role="img" aria-label="Violações de arquitetura caíram de 564 no início do dia para 212 depois de corrigir o código e o próprio verificador">
+      <line x1="30" y1="130" x2="200" y2="130" class="axis-line"/>
+      <rect x="45" y="12" width="46" height="118" rx="3" fill="var(--neutral)"/>
+      <text x="68" y="4" text-anchor="middle" class="bar-value">564</text>
+      <text x="68" y="146" text-anchor="middle" class="bar-label">início do dia</text>
+      <rect x="129" y="88" width="46" height="42" rx="3" fill="var(--good)"/>
+      <text x="152" y="80" text-anchor="middle" class="bar-value">212</text>
+      <text x="152" y="146" text-anchor="middle" class="bar-label">agora (real)</text>
+    </svg>
+  </div>
+
+  <h2 style="margin-top:40px">Achados por arquivo</h2>
+  <div class="tbl-wrap">
+    <table>
+      <thead><tr><th>Arquivo</th><th>Situação</th><th>Achado</th></tr></thead>
+      <tbody>
+        <tr>
+          <td class="name mono-inline">README.md</td>
+          <td><span class="pill good"><svg><use href="#ic-check"/></svg>Corrigido</span></td>
+          <td>Chamava a si mesmo de "6 ferramentas" no topo e de "5 ferramentas" no mapa do repositório, esquecendo o <span class="mono-inline">aidd-bridge</span>; listava 8 verificadores gerais, quando hoje existem 12. Mapa e lista atualizados.</td>
+        </tr>
+        <tr>
+          <td class="name">tools/aidd-master<br><span class="mono-inline">README.md</span></td>
+          <td><span class="pill good"><svg><use href="#ic-check"/></svg>Corrigido</span></td>
+          <td>Não mencionava <span class="mono-inline">application/commands/</span> nem a estrutura em camadas do módulo de referência. Estrutura do projeto atualizada.</td>
+        </tr>
+        <tr>
+          <td class="name">tools/aidd-enterprise<br><span class="mono-inline">README.md</span></td>
+          <td><span class="pill good"><svg><use href="#ic-check"/></svg>Corrigido</span></td>
+          <td>Mesmos dois problemas do master — os arquivos são espelhados. Corrigido igual.</td>
+        </tr>
+        <tr>
+          <td class="name">tools/aidd-generator<br><span class="mono-inline">README.md</span></td>
+          <td><span class="pill good"><svg><use href="#ic-check"/></svg>Corrigido</span></td>
+          <td>Dizia "215 testes" (real: 941); não mencionava a autocorreção de arquitetura na Fase 8. Número e comportamento novo documentados.</td>
+        </tr>
+        <tr>
+          <td class="name">tools/aidd-forge<br><span class="mono-inline">README.md</span></td>
+          <td><span class="pill good"><svg><use href="#ic-check"/></svg>Corrigido</span></td>
+          <td>Dizia "126 passed" (real: 196). Corrigido.</td>
+        </tr>
+        <tr>
+          <td class="name">tools/aidd-ops<br><span class="mono-inline">README.md</span></td>
+          <td><span class="pill good"><svg><use href="#ic-check"/></svg>Já em dia</span></td>
+          <td>Já citava corretamente os itens da reestruturação que o afetaram.</td>
+        </tr>
+        <tr>
+          <td class="name">tools/aidd-bridge<br><span class="mono-inline">README.md</span></td>
+          <td><span class="pill neutral"><svg><use href="#ic-minus"/></svg>Não afetado</span></td>
+          <td>Não fez parte da reestruturação; nenhuma inconsistência gerada.</td>
+        </tr>
+        <tr>
+          <td class="name mono-inline">AGENTS.md</td>
+          <td><span class="pill good"><svg><use href="#ic-check"/></svg>Já em dia</span></td>
+          <td>Lista corretamente os 12 verificadores, incluindo o novo.</td>
+        </tr>
+        <tr>
+          <td class="name">Pasta do plano<br>da reestruturação</td>
+          <td><span class="pill good"><svg><use href="#ic-check"/></svg>Corrigido</span></td>
+          <td>Os 10 itens estavam marcados concluídos no próprio documento, mas a pasta vivia em <span class="mono-inline">docs/planos/a-fazer/</span>. Movida para <span class="mono-inline">feitos/</span>, índice regenerado.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<section id="recomendacoes">
+  <div class="eyebrow">04 <span class="dot">·</span> O que ficou pendente (por decisão deliberada)</div>
+  <h2>Não é urgente, mas fica anotado</h2>
+  <ol class="priority">
+    <li>
+      <h4>212 violações reais de arquitetura</h4>
+      <p>Concentradas nos modelos de projeto (<span class="mono-inline">templates/</span>) de master e enterprise — rotas HTTP que mexem direto no banco de dados sem passar por camada nenhuma. Mesmo tipo de correção já feita no módulo de referência hoje, só que ainda não chegou nesses modelos.</p>
+    </li>
+    <li>
+      <h4>Efeito colateral de teste no aidd-generator</h4>
+      <p>Em certas condições, um teste grava sozinho um projeto de exemplo real no controle de versão — não deveria acontecer.</p>
+    </li>
+    <li>
+      <h4>Instabilidade no verificador G_TESTES_REAIS</h4>
+      <p>Ao rodar as 5 ferramentas em sequência no mesmo processo, sujeira de uma atrapalha o resultado da próxima.</p>
+    </li>
+  </ol>
+  <p style="margin-top:18px; font-size:.88rem; color:var(--text-3)">Nenhum dos três trava o dia a dia — ficam anotados para quando fizer sentido abrir uma frente de trabalho dedicada.</p>
+</section>
+
+<footer>
+  Gerado por auditoria de reprodução real em 2026-09-10, contra o commit <span class="mono-inline">07fb306</span> de <span class="mono-inline">github.com/heverton-dev/ecossistema-aidd</span>. Versão em Markdown: <span class="mono-inline">docs/explicacoes/relatorio-estado-real-e-documentacao-2026-09-10.md</span>.
+</footer>
+
+</div>

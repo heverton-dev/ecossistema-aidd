@@ -115,7 +115,6 @@ O **Ecossistema AIDD** é um monorepo agnóstico que integra 6 ferramentas compl
 > Bloco reescrito por `python scripts/atualizar_index_planos.py` toda vez que `docs/planos/` muda (via `.githooks/pre-commit`). Reflete o mesmo cálculo de status de `docs/planos/INDEX.md` — nunca edite manualmente, o script sobrescreve.
 
 <!-- AUTO:INICIATIVAS:START -->
-- ⏳ **Reestruturacao Ddd Clean Architecture** — `docs/planos/a-fazer/01-reestruturacao-ddd-clean-architecture/`
 - ⏳ **Otimizacao Tokenomics Latencia** — `docs/planos/a-fazer/02-otimizacao-tokenomics-latencia/`
 - ⏳ **Qualidade Testes E Mutacao** — `docs/planos/a-fazer/03-qualidade-testes-e-mutacao/`
 - ⏳ **Resiliencia Concorrencia E Integridade** — `docs/planos/a-fazer/04-resiliencia-concorrencia-e-integridade/`

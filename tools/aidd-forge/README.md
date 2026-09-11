@@ -65,7 +65,7 @@ Para rodar a suíte completa de testes (unitários + integração):
 ```bash
 pytest -v
 ```
-*Resultado homologado:* **126 passed, 1 skipped (100% Exit 0)**.
+*Resultado homologado:* **196 passed, 1 skipped (100% Exit 0)**.
 
 ---
 
