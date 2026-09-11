@@ -1,0 +1,49 @@
+{
+  "version": 1,
+  "created_at": 1789129058.6354291,
+  "updated_at": 1789129076.7624002,
+  "fronts": {
+    "reativar-g-arquitetura-deliverable-corrigindo-212-violacoes-sql-fora-infra-nos-templates": {
+      "state": "FAILED",
+      "branch": null,
+      "commit_sha": null,
+      "pid": null,
+      "updated_at": 1789129061.5910134
+    },
+    "adicionar-testes-reais-as-2-entregas-sem-cobertura-enterprise-suite-v4-logistica-hub-v4": {
+      "state": "FAILED",
+      "branch": null,
+      "commit_sha": null,
+      "pid": null,
+      "updated_at": 1789129064.559491
+    },
+    "quebrar-funcoes-gigantes-get-swagger-html-736-linhas-e-compose-suite-277273": {
+      "state": "FAILED",
+      "branch": null,
+      "commit_sha": null,
+      "pid": null,
+      "updated_at": 1789129067.585669
+    },
+    "documentar-e-eliminar-divergencia-master-enterprise-3-srccore-6-scripts-mcp": {
+      "state": "FAILED",
+      "branch": null,
+      "commit_sha": null,
+      "pid": null,
+      "updated_at": 1789129070.4302692
+    },
+    "corrigir-drift-de-documentacao-do-g-honestidade-rotulo-agentsmd-termos-proibidos-marketingjson": {
+      "state": "FAILED",
+      "branch": null,
+      "commit_sha": null,
+      "pid": null,
+      "updated_at": 1789129073.6512017
+    },
+    "reduzir-timeout-do-g-testes-reais-no-audit-completo": {
+      "state": "FAILED",
+      "branch": null,
+      "commit_sha": null,
+      "pid": null,
+      "updated_at": 1789129076.7623994
+    }
+  }
+}

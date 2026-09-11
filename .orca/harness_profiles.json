@@ -1,0 +1,54 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "_comment": "Harness profiles for the ORCA multi-agent orchestrator. Verified against real --help output on 2026-09-06.",
+  "profiles": {
+    "mimo": {
+      "binary": "mimo",
+      "auto_approve_flag": "--yolo",
+      "prompt_mode": "flag_value",
+      "prompt_flag": "--prompt",
+      "model_flag": "--model",
+      "default_model": "mimo/mimo-v2.5-pro",
+      "extra_flags": [
+        "--pure"
+      ],
+      "usage_note": "Root-level --prompt <text> takes a string value directly. --yolo is alias for --dangerously-skip-permissions."
+    },
+    "opencode": {
+      "binary": "opencode",
+      "auto_approve_flag": "--auto",
+      "prompt_mode": "flag_value",
+      "prompt_flag": "--prompt",
+      "model_flag": "--model",
+      "default_model": "opencode/big-pickle",
+      "extra_flags": [
+        "--pure"
+      ],
+      "usage_note": "Same underlying binary as mimo. --auto for permissions. --prompt <text> at root level."
+    },
+    "claude": {
+      "binary": "claude",
+      "auto_approve_flag": "--dangerously-skip-permissions",
+      "prompt_mode": "positional",
+      "prompt_flag": null,
+      "model_flag": "--model",
+      "default_model": "claude-sonnet-5",
+      "extra_flags": [
+        "-p"
+      ],
+      "usage_note": "Usage: claude [options] [command] [prompt]. -p is a BOOLEAN flag enabling print/non-interactive mode. The prompt text is a POSITIONAL ARGUMENT at the END of the command, not the value of -p."
+    },
+    "agy": {
+      "binary": "agy",
+      "auto_approve_flag": "--dangerously-skip-permissions",
+      "prompt_mode": "positional",
+      "prompt_flag": null,
+      "model_flag": "--model",
+      "default_model": null,
+      "extra_flags": [
+        "--print"
+      ],
+      "usage_note": "--print/-p/--prompt are BOOLEAN aliases enabling non-interactive mode. The prompt text is a POSITIONAL ARGUMENT. This was inferred from real --help but NOT confirmed by real invocation -- remains open for validation in Item 6."
+    }
+  }
+}

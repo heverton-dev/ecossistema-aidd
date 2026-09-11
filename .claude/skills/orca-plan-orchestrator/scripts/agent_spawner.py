@@ -64,3 +64,25 @@ def compilar_comando(
         raise ValueError(f"prompt_mode desconhecido: {prompt_mode}")
 
     return args
+
+
+def compilar_comando_bare(profile: dict[str, Any]) -> list[str]:
+    """Bare interactive launch command for a harness -- binary + auto-approve
+    + model flags, but NEVER the prompt.
+
+    Used by the real ORCA app integration: `orca terminal create --command`
+    only launches the harness inside the real terminal; the task prompt is
+    sent afterwards as a separate message via `orca terminal send --text`.
+    Baking the prompt into the launch command (like compilar_comando does for
+    our own native git-worktree engine) does not apply here -- the real Orca
+    app's terminal is already interactive, so `extra_flags` (headless/no-TTY
+    switches like --pure/-p/--print) are intentionally never added.
+    """
+    args: list[str] = [profile["binary"]]
+    if profile.get("auto_approve_flag"):
+        args.append(profile["auto_approve_flag"])
+    model = profile.get("default_model")
+    if model and profile.get("model_flag"):
+        args.append(profile["model_flag"])
+        args.append(model)
+    return args

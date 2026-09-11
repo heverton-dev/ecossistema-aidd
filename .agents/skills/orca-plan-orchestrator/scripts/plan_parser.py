@@ -22,6 +22,7 @@ class Front:
     file_path: Path
     content: str
     index: int
+    prompt: str = ""
 
 
 @dataclass
@@ -40,6 +41,54 @@ class Plan:
 
 _FRONT_PATTERN = re.compile(r"^(\d{2})-(.+)\.md$")
 _MASTER_FILENAME = "00-PROCESSO-E-DECISOES.md"
+
+# Section headers vary across plans generated at different times (with/without
+# Portuguese accents - e.g. "Definicao"/"Definição"). Patterns below tolerate
+# both so extraction works on every existing plan, not just new ones.
+_RE_ESCOPO = re.compile(r"^> \*\*Escopo:\*\*.*$", re.MULTILINE)
+_RE_DEFINICAO_PRONTO = re.compile(
+    r"^## Defini[cç][aã]o de Pronto\s*$(.*?)(?=^## |\Z)", re.MULTILINE | re.DOTALL
+)
+_RE_CRITERIO_SAIDA = re.compile(
+    r"^## Crit[eé]rio de sa[ií]da\s*$(.*?)(?=^## |\Z)", re.MULTILINE | re.DOTALL
+)
+_RE_PROMPT_INGLES = re.compile(
+    r"^## Prompt de Execu[cç][aã]o.*English version\s*$.*?^(`{1,3})[a-zA-Z]*\s*$\n(.*?)\n^\1\s*$",
+    re.MULTILINE | re.DOTALL,
+)
+
+
+def extrair_prompt_executor(conteudo: str) -> str:
+    """Builds the actual prompt sent to the executor: Scope + Definition of
+    Done + Exit Criteria (the minimum context the English block may refer to
+    as "above") + the English execution block itself - never the whole raw
+    file, which today duplicates the same instruction in Portuguese and adds
+    narrative context the executor doesn't need (real token waste).
+
+    Falls back to the full raw content when the file doesn't have the
+    expected sections (older/non-standard format) - this must never break
+    orchestration, only optimize it when the shape is recognized.
+    """
+    m_dod = _RE_DEFINICAO_PRONTO.search(conteudo)
+    m_prompt = _RE_PROMPT_INGLES.search(conteudo)
+    if not (m_dod and m_prompt):
+        return conteudo
+
+    partes = []
+    m_escopo = _RE_ESCOPO.search(conteudo)
+    if m_escopo:
+        partes.append(m_escopo.group(0).replace("> **Escopo:**", "Scope:").strip())
+
+    partes.append("Definition of Done:")
+    partes.append(m_dod.group(1).strip())
+
+    m_exit = _RE_CRITERIO_SAIDA.search(conteudo)
+    if m_exit:
+        partes.append("Exit Criteria:")
+        partes.append(m_exit.group(1).strip())
+
+    partes.append(m_prompt.group(2).strip())
+    return "\n\n".join(partes)
 
 
 def _is_front_file(filename: str) -> tuple[bool, int, str]:
@@ -90,7 +139,10 @@ def parse_plan(folder: str | Path) -> Plan:
         if is_match:
             content = entry.read_text(encoding="utf-8")
             fronts.append(
-                Front(name=name, file_path=entry, content=content, index=index)
+                Front(
+                    name=name, file_path=entry, content=content, index=index,
+                    prompt=extrair_prompt_executor(content),
+                )
             )
 
     if not fronts:

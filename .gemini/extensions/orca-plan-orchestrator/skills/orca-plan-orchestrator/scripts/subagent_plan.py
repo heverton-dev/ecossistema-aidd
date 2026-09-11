@@ -56,7 +56,7 @@ def compilar_plano_subagentes(
             "name": front.name,
             "subagent_type": (subagent_map or {}).get(front.name, subagent_type),
             "model": (model_map or {}).get(front.name, model),
-            "prompt": front.content,
+            "prompt": front.prompt,
         })
 
     return {

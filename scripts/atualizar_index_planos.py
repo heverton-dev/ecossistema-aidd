@@ -15,13 +15,25 @@ buscadas dentro de feitos/, fazendo/ e a-fazer/, não só na raiz):
   2. Pasta docs/planos/[<subpasta>/]<nome>/00-PROCESSO-E-DECISOES.md com uma
      seção "## N. Registro de progresso" contendo uma tabela Markdown cuja
      coluna de status usa os marcadores já convencionados neste monorepo:
-     ✅ (concluído), 🔶 (em execução), ⏳ ou 🔒 (aguardando).
+     ✅ (concluído), 🔶 (em execução), 🔒 (aprovado, aguardando execução) ou
+     ⏳ (rascunho, ainda NÃO aprovado por humano).
 
 Mapeamento status -> subpasta:
   concluido    -> docs/planos/feitos/<nome>
   em_execucao  -> docs/planos/fazendo/<nome>
   aguardando   -> docs/planos/a-fazer/<nome>
+  rascunho     -> não move (fica na raiz de docs/planos/ até ser aprovado
+                  via `python ecossistema.py plan aprovar <caminho>`)
   indeterminado -> não move (fica onde está, reportado como aviso)
+
+Nota de evolução (item "movimentacao de pasta por aprovacao/execucao real"):
+  ⏳ e 🔒 costumavam ser sinônimos (ambos "aguardando"). Passaram a ter
+  significado distinto: ⏳ é rascunho recém-gerado, nunca aprovado por um
+  humano de verdade (não é movido — fica em docs/planos/<nome>/, na raiz,
+  exatamente onde `plan init` o criou); 🔒 é aprovado, aguardando a
+  orquestração começar de fato (aí sim move para a-fazer/). A transição
+  ⏳ -> 🔒 é feita por `python ecossistema.py plan aprovar <caminho>` -
+  nunca por edição manual direta ou por decisão silenciosa de um agente.
 
 Uma iniciativa criada direto na raiz de docs/planos/ (ex.: por
 `python ecossistema.py plan init <nome>`) é normal e esperada: a primeira
@@ -49,12 +61,14 @@ MEMORIA_MARCADOR_FIM = "<!-- AUTO:INICIATIVAS:END -->"
 CONCLUIDO = "concluido"
 EM_EXECUCAO = "em_execucao"
 AGUARDANDO = "aguardando"
+RASCUNHO = "rascunho"
 INDETERMINADO = "indeterminado"
 
 TITULOS = {
     CONCLUIDO: "✅ Concluídos",
     EM_EXECUCAO: "🔶 Em execução",
-    AGUARDANDO: "⏳ Aguardando execução",
+    AGUARDANDO: "🔒 Aprovados, aguardando execução",
+    RASCUNHO: "⏳ Rascunho (aguardando aprovação humana)",
     INDETERMINADO: "⚠️ Status indeterminado (revisar manualmente)",
 }
 
@@ -77,6 +91,8 @@ def status_de_arquivo_unico(caminho: Path) -> str:
         return CONCLUIDO
     if "EM ANDAMENTO" in valor or "EM EXECU" in valor or "EXECUTANDO" in valor:
         return EM_EXECUCAO
+    if "RASCUNHO" in valor:
+        return RASCUNHO
     return AGUARDANDO
 
 
@@ -112,18 +128,28 @@ def status_de_pasta(caminho_00: Path) -> str:
             marcadores.append(CONCLUIDO)
         elif "🔶" in linha:
             marcadores.append(EM_EXECUCAO)
-        elif "⏳" in linha or "🔒" in linha:
+        elif "🔒" in linha:
             marcadores.append(AGUARDANDO)
+        elif "⏳" in linha:
+            marcadores.append(RASCUNHO)
         else:
             marcadores.append(INDETERMINADO)
     if all(m == CONCLUIDO for m in marcadores):
         return CONCLUIDO
     if any(m == EM_EXECUCAO for m in marcadores) or (
-        any(m == CONCLUIDO for m in marcadores) and any(m == AGUARDANDO for m in marcadores)
+        any(m == CONCLUIDO for m in marcadores) and any(m in (AGUARDANDO, RASCUNHO) for m in marcadores)
     ):
         return EM_EXECUCAO
     if all(m == AGUARDANDO for m in marcadores):
         return AGUARDANDO
+    if all(m == RASCUNHO for m in marcadores):
+        return RASCUNHO
+    if all(m in (RASCUNHO, AGUARDANDO) for m in marcadores):
+        # Aprovacao parcial (alguns itens ja aprovados, outros ainda
+        # rascunho) - trata como rascunho: so move quando TODOS os itens
+        # tiverem sido aprovados via `plan aprovar`, nunca por decisao
+        # silenciosa deste script.
+        return RASCUNHO
     return INDETERMINADO
 
 
@@ -211,7 +237,7 @@ def atualizar_memoria(iniciativas: list[dict]) -> bool:
             caminho_rel = ini["item"].relative_to(PLANOS_DIR).as_posix()
             if ini["item"].is_dir():
                 caminho_rel += "/"
-            marcador = "🔶" if ini["status"] == EM_EXECUCAO else "⏳"
+            marcador = {EM_EXECUCAO: "🔶", AGUARDANDO: "🔒"}.get(ini["status"], "⏳")
             linhas_bloco.append(f"- {marcador} **{ini['titulo']}** — `docs/planos/{caminho_rel}`")
         linhas_bloco.append(MEMORIA_MARCADOR_FIM)
         bloco_novo = "\n".join(linhas_bloco)
@@ -234,7 +260,7 @@ def montar_markdown(iniciativas: list[dict]) -> str:
         "> Gerado automaticamente por `python scripts/atualizar_index_planos.py` a partir do status real de cada documento — inclusive a subpasta física (`feitos/`, `fazendo/`, `a-fazer/`), que este script também mantém sincronizada. **Não editar manualmente**: rode o script de novo depois de qualquer mudança de status.",
         "",
     ]
-    for chave in (CONCLUIDO, EM_EXECUCAO, AGUARDANDO, INDETERMINADO):
+    for chave in (CONCLUIDO, EM_EXECUCAO, AGUARDANDO, RASCUNHO, INDETERMINADO):
         do_grupo = [ini for ini in iniciativas if ini["status"] == chave]
         if not do_grupo:
             continue

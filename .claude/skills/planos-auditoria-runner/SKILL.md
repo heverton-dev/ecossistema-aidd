@@ -93,9 +93,18 @@ Garante que todas as cercas ocorram em pares isolados (abertura e fechamento), s
 - Apresente ao usuario os caminhos dos arquivos criados.
 - Devolva o controle imediatamente para que o usuario revise, ajuste ou aprove a Definicao de Pronto antes de qualquer implementacao.
 - **NUNCA** marque tarefas como aprovadas ou concluidas sem veredito real do usuario.
-- Depois que o usuario aprovar o plano (nunca antes disso), pergunte explicitamente
-  se ele quer que o `/orchestrate` seja iniciado a partir desta iniciativa. **Nunca
-  dispare o `/orchestrate` sozinho** — ele tem seu proprio gate (ORCA vs Subagentes)
+- **Quando o usuario der aprovacao explicita do plano** (ex: "aprovado", "pode
+  seguir com esse plano") — nunca antes disso, nunca por inferencia — rode:
+  ```bash
+  python ecossistema.py plan aprovar <caminho-da-pasta-do-plano>
+  ```
+  Isso reescreve o status de RASCUNHO para APROVADO em todos os itens e move
+  fisicamente a pasta de `docs/planos/<nome>/` para `docs/planos/a-fazer/<nome>/`
+  (a movimentacao e sempre feita por `atualizar_index_planos.py`, nunca decidida
+  a mao por este agente).
+- Depois disso, pergunte explicitamente se o usuario quer que o `/orchestrate`
+  seja iniciado a partir desta iniciativa. **Nunca dispare o `/orchestrate`
+  sozinho** — ele tem seu proprio gate (ORCA / Subagentes / Git Worktree nativo)
   que exige decisao humana explicita antes de qualquer execucao.
 
 ---

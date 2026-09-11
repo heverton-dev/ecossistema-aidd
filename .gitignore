@@ -95,3 +95,9 @@ opencode.jsonc
 
 # sandeco-token-reduce: .venv por copia de skill nunca deve ser commitado
 */skills/sandeco-token-reduce/.venv/
+
+# orca-plan-orchestrator: mesas de trabalho (git worktree) criadas na raiz do
+# repo pelo motor nativo (orchestrator_engine.py). Sao sempre temporarias -
+# apagadas automaticamente apos merge bem sucedido - mas ficam aqui como
+# rede de seguranca caso a limpeza automatica falhe ou o processo trave.
+wt-*/

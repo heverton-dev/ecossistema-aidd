@@ -206,19 +206,21 @@ def cmd_orchestrate(args):
     @click.option("--dangerously-force-headless", is_flag=True, default=False, help="AVISO: Forca execucao headless desassistida (alto risco de consumo de tokens).")
     @click.option(
         "--ambiente", default=None,
-        type=click.Choice(["worktree", "subagent"]),
-        help="Ambiente de execucao: 'worktree' (ORCA, isolamento de arquivo real, terminal separado) "
-             "ou 'subagent' (Agent tool da sessao atual, sem worktree, contexto compartilhado). "
+        type=click.Choice(["orca", "subagent", "gitworktree"]),
+        help="Ambiente de execucao: 'orca' (aplicativo ORCA real, via orca-cli — worktree/terminal "
+             "de verdade), 'subagent' (Agent tool da sessao atual, sem worktree, contexto "
+             "compartilhado) ou 'gitworktree' (motor nativo deste projeto — git worktree + "
+             "harness spawnado direto, sem precisar do app ORCA instalado). "
              "Se omitido, pergunta interativamente.",
     )
     @click.option(
         "--harness", default=None,
         type=click.Choice(["mimo", "opencode", "claude", "agy"]),
-        help="Harness padrao para ambiente worktree (se omitido, pergunta interativamente)",
+        help="Harness padrao para ambiente orca/gitworktree (se omitido, pergunta interativamente)",
     )
     @click.option(
         "--harness-map", default=None,
-        help="Mapeamento customizado por frente pra ambiente worktree (ex: frente1=claude,frente2=agy)",
+        help="Mapeamento customizado por frente pra ambiente orca/gitworktree (ex: frente1=claude,frente2=agy)",
     )
     @click.option(
         "--profiles", default=None,
@@ -233,11 +235,20 @@ def cmd_orchestrate(args):
         help="Override de modelo padrao pra ambiente subagent (se omitido, usa o default da sessao)",
     )
     @click.option(
+        "--repo-path", default=None,
+        help="Caminho do repositorio real para ambiente orca (default: raiz do monorepo)",
+    )
+    @click.option(
+        "--parent-worktree", default=None,
+        help="Selector --parent-worktree do app ORCA real (default: 'active') — mesa SEMPRE filha, "
+             "nunca solta ('--no-parent' nao e suportado por design).",
+    )
+    @click.option(
         "--from-flight-plan", default=None,
         help="Caminho pra um Flight Plan JSON ja compilado (possivelmente editado a mao) — "
              "pula a recompilacao e usa esse arquivo como fonte da verdade antes de confirmar.",
     )
-    def orchestrate_cli(plano, dry_run, resume, yes, stream, interactive, dangerously_force_headless, ambiente, harness, harness_map, profiles, subagent_type, model, from_flight_plan):
+    def orchestrate_cli(plano, dry_run, resume, yes, stream, interactive, dangerously_force_headless, ambiente, harness, harness_map, profiles, subagent_type, model, repo_path, parent_worktree, from_flight_plan):
         orchestrator_root = os.path.join(
             ROOT_DIR, "componentes", "compartilhado", "skills", "orca-plan-orchestrator"
         )
@@ -247,6 +258,7 @@ def cmd_orchestrate(args):
         from scripts.plan_parser import parse_plan
         from scripts.flight_plan import gerar_plano_de_voo, renderizar_plano_de_voo
         from scripts.subagent_plan import compilar_plano_subagentes, renderizar_plano_subagentes
+        from scripts.orca_real_plan import compilar_plano_orca, renderizar_plano_orca, PARENT_WORKTREE_PADRAO
         from scripts.plan_io import salvar_plano_de_voo, carregar_plano_de_voo
         from scripts.orchestrator_engine import executar_orquestracao
         from scripts.state_engine import load_state
@@ -260,24 +272,79 @@ def cmd_orchestrate(args):
                 print("  ORCA ADE — AMBIENTE DE EXECUÇÃO")
                 print("=" * 65)
                 print("""
-  1) ORCA (worktrees efêmeras + terminal separado por frente)
-     Isolamento de arquivo real. Execução mecânica, monitorada pelo
-     desenvolvedor no terminal. Recomendado quando frentes tocam os
-     mesmos arquivos ou exigem revisão humana passo a passo.
+  1) ORCA (aplicativo real, via orca-cli)
+     Worktree e terminal de verdade dentro do app ORCA instalado.
+     Mesa sempre criada como filha da mesa ativa (nunca solta).
+     Recomendado quando o app ORCA esta instalado e voce quer
+     acompanhar/monitorar cada frente pela interface do ORCA.
 
   2) Subagentes (Agent tool desta sessão)
      Sem worktree, sem terminal separado. Roda dentro do contexto da
      conversa atual via subagente. SEM isolamento de arquivo — evite
      se frentes distintas tocarem os mesmos arquivos.
+
+  3) Git Worktree nativo (motor deste projeto, sem o app ORCA)
+     Isolamento de arquivo real via git worktree puro + harness
+     spawnado direto por este CLI. Recomendado quando o app ORCA nao
+     esta instalado e Subagentes gastaria tokens demais/contexto
+     compartilhado nao serve.
 """)
                 try:
-                    escolha_ambiente = input("Escolha o ambiente (default: 1 - ORCA worktree): ").strip()
+                    escolha_ambiente = input("Escolha o ambiente (default: 1 - ORCA): ").strip()
                 except (EOFError, KeyboardInterrupt):
                     print("\n[CANCELADO] Seleção cancelada pelo usuário.")
                     return 1
-                ambiente = "subagent" if escolha_ambiente in ("2", "subagent", "subagentes") else "worktree"
+                if escolha_ambiente in ("2", "subagent", "subagentes"):
+                    ambiente = "subagent"
+                elif escolha_ambiente in ("3", "gitworktree", "git-worktree"):
+                    ambiente = "gitworktree"
+                else:
+                    ambiente = "orca"
             else:
-                ambiente = "worktree"
+                ambiente = "gitworktree"
+
+        if ambiente == "orca":
+            if profiles is None:
+                profiles = os.path.join(
+                    ROOT_DIR, "componentes", "compartilhado", "skills",
+                    "orca-plan-orchestrator", ".orca", "harness_profiles.json.example",
+                )
+            harness_map_pars = {}
+            if harness_map:
+                import json
+                try:
+                    harness_map_pars = json.loads(harness_map)
+                except Exception:
+                    for par in harness_map.split(","):
+                        if "=" in par:
+                            k, v = par.split("=", 1)
+                            harness_map_pars[k.strip()] = v.strip()
+
+            if from_flight_plan:
+                data = carregar_plano_de_voo(from_flight_plan)
+            else:
+                try:
+                    data = compilar_plano_orca(
+                        plano, profiles, repo_path or ROOT_DIR,
+                        harness=harness or "claude",
+                        harness_map=harness_map_pars or None,
+                        parent_worktree=parent_worktree or PARENT_WORKTREE_PADRAO,
+                    )
+                except (FileNotFoundError, ValueError, KeyError) as exc:
+                    print(f"Erro ao gerar Flight Plan para o ORCA real: {exc}")
+                    return 1
+                salvar_plano_de_voo(data, flight_plan_path)
+
+            print(renderizar_plano_orca(data))
+            print(f"[FLIGHT PLAN] Salvo em: {flight_plan_path}")
+            print(
+                "[ORCA ADE] Ambiente 'orca' nunca e executado por este CLI — ecossistema.py e um "
+                "compilador mecanico, sem acesso ao orca-cli. Revise/edite o JSON acima e peca ao "
+                "assistente da sessao pra executar cada frente via orca-cli (worktree create "
+                f"--parent-worktree {data['parent_worktree']} -> terminal create -> terminal send), "
+                "seguindo o protocolo completo em componentes/compartilhado/skills/orchestrate/SKILL.md."
+            )
+            return 0
 
         if ambiente == "subagent":
             subagent_map = {}
@@ -405,6 +472,12 @@ def cmd_orchestrate(args):
                 "a partir desses parametros, nao le o JSON salvo acima."
             )
             return 0
+
+        # Marca o plano como EM EXECUCAO de verdade e move para docs/planos/fazendo/
+        # AQUI - exatamente no instante em que a orquestracao real comeca, nunca
+        # antes (dry-run/compilacao nao chega a este ponto do codigo).
+        gerenciador_planos = os.path.join(ROOT_DIR, "scripts", "gerenciador_planos.py")
+        run_command([sys.executable, gerenciador_planos, "iniciar-execucao", plano], cwd=ROOT_DIR)
 
         try:
             return executar_orquestracao(
@@ -558,22 +631,42 @@ Comandos disponíveis:
                       Instala/registra skills e MCPs de terceiros usados pelo
                       agente (gates/dependencias_externas.json)
   orchestrate <plano> [--dry-run] [--resume] [--yes]
-                      [--ambiente {worktree,subagent}]
+                      [--ambiente {orca,subagent,gitworktree}]
                       [--harness {mimo,opencode,claude,agy}] [--harness-map ...]
                       [--subagent-type <tipo>] [--model <modelo>]
+                      [--repo-path <path>] [--parent-worktree <selector>]
                       [--profiles <path>] [--from-flight-plan <path>]
-                      Gera Flight Plan a partir de um plano ORCA. Ambiente
-                      'worktree' executa a orquestracao multi-agente real
-                      (git worktrees); ambiente 'subagent' so compila o
-                      Plano de Voo em JSON (.orca-flight-plan.json) para o
-                      assistente da sessao executar via Agent tool.
+                      Gera Flight Plan a partir de um plano ORCA. Cada ambiente
+                      compila um JSON no formato certo pra ele, nenhum e
+                      executado por este CLI (sempre revisado e disparado pelo
+                      assistente da sessao): 'orca' monta o plano pro app ORCA
+                      real via orca-cli (worktree create --parent-worktree
+                      ativo -> terminal create -> terminal send); 'subagent'
+                      compila pra execucao via Agent tool da sessao; 'gitworktree'
+                      executa de verdade a orquestracao multi-agente nativa
+                      deste projeto (git worktrees + harness spawnado direto,
+                      sem precisar do app ORCA).
   melhoria init --pedido "<texto>" [--nome ...] [--nota-atual ...] [--evidencia ...]
+                      [--plano-existente <caminho> [--item <NN>]]
+                      [--itens-avaliados "<item>::<feito|parcial|nao-feito>::<justificativa>" ...]
                       Gerenciador determinístico de relatórios de análise profunda
-                      em docs/melhorias/ (etapa anterior ao 'plan')
-  plan init|check-fences <args>
+                      em docs/melhorias/ (etapa anterior ao 'plan'). Com
+                      --plano-existente, reanalisa o código real e compara com a
+                      Nota Atual já registrada naquele plano/item (Nota Anterior ->
+                      Nota Nova, e tabela previsto-vs-implementado por item).
+  plan init|check-fences|ler-nota|atualizar-nota|aprovar|iniciar-execucao <args>
                       Gerenciador determinístico de iniciativas de planos em docs/planos/
                       (--notas-atuais/--notas-alvo/--evidencias por item e
-                      --nota-atual-geral/--nota-alvo-geral/--evidencia-geral)
+                      --nota-atual-geral/--nota-alvo-geral/--evidencia-geral no init).
+                      'ler-nota <caminho> [--item <NN>]' le a Nota Atual/evidencia
+                      registrada (JSON; NAO AUDITADO se o plano for anterior a esta
+                      métrica). 'atualizar-nota <caminho> [--item <NN>] --nota-atual
+                      <n> --evidencia <texto>' grava uma nota nova por cima da
+                      existente (nunca mexe em Nota Alvo/Real; evidência obrigatória).
+                      'aprovar <caminho>' aprova TODOS os itens de uma vez e move
+                      docs/planos/<nome>/ -> docs/planos/a-fazer/<nome>/. 'iniciar-execucao
+                      <caminho>' marca EM EXECUCAO de verdade e move -> docs/planos/fazendo/
+                      (chamado automaticamente pelo 'orchestrate' no instante real do início).
   audit               Executa o Meta-Quality Gate de Integridade
   status              Exibe o status do ecossistema e ferramentas integradas
   status --testes     Roda pytest real em cada ferramenta e atualiza

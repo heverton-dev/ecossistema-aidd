@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="pt-br">
+<head>
+<meta charset="utf-8">
+<title>11-09-2026_melhoria-engenharia-software-ecossistema</title>
+<style>
+  :root { color-scheme: light dark; --bg:#0b111a; --fg:#e6edf3; --accent:#388bfd; }
+  * { scrollbar-width: thin; scrollbar-color: var(--accent) var(--bg); box-sizing: border-box; }
+  ::-webkit-scrollbar { width:4px; height:4px; }
+  ::-webkit-scrollbar-track { background: var(--bg); }
+  ::-webkit-scrollbar-thumb { background: var(--accent); border-radius:4px; }
+  body { background:var(--bg); color:var(--fg); font-family: system-ui, sans-serif; margin:0; padding:24px; max-width: 900px; }
+  h1 { font-size: 1.4rem; }
+  .nota { font-size:2rem; font-weight:700; color:var(--accent); }
+  section { margin-bottom: 24px; }
+  table, th, td { border: 1px solid color-mix(in srgb, var(--fg) 25%, transparent); padding: 6px 10px; }
+</style>
+</head>
+<body>
+<h1>Relatorio de Analise Profunda — 11-09-2026_melhoria-engenharia-software-ecossistema</h1>
+<section>
+  <strong>Pedido original:</strong> engenharia de software do ecossistema e de cada ferramenta bem como das entregas feitas pelo ecossistema e por cada uma das ferramentas
+</section>
+<section>
+  <strong>Nota Atual (0-10):</strong> <span class="nota">8.0</span><br>
+  <strong>Evidencia:</strong> Testes reais: gates raiz 47 passed; forge 196 passed/1 skip; master 286 passed/3 skip; enterprise 263 passed/3 skip; generator 941 passed; bridge 40 passed; ops 168 passed (~1894 no total). G_DRIFT_NUCLEO_COMPARTILHADO aprovado (baseline nucleo compartilhado OK). G_HONESTIDADE_ROTULO aprovado (52 arquivos, 0 termos proibidos; termos 'blindagem militar' removidos de G_SEGURANCA.py). G_ARQUITETURA_DELIVERABLE REPROVADO: 212 violacoes SQL-fora-infra em 15 arquivos (templates/core/server.py 46, templates/v2/server.py 46, templates/gates/G_SEGURANCA.py 6, mcp_server.py 2, src/server.py 2 e equivalentes enterprise) - gate em stages manual, violacoes legadas conhecidas. G_TESTES_REAIS estoura timeout &gt;300s no passo aidd-ops do audit completo (aidd-ops passa isolado: 168 em ~30s). 13 entregas em tools/aidd-enterprise/materiais-extras/examples; 2 SEM tests/ (enterprise-suite-v4, logistica-hub-v4); testes dos exemplos finos (test_catalogo.py 55 linhas, test_platform.py 48 linhas). Funcoes grandes: get_swagger_html 736 linhas (enterprise-suite-v4 e logistica-hub-v4 src/core/openapi.py:284), compose_suite 277/273 linhas (master/enterprise scripts/compose_suite.py:407), cmd_orchestrate 239 linhas (ecossistema.py:195), orchestrate_cli 183 linhas (ecossistema.py:240). Divergencia master vs enterprise: src/core diverge detector_camada.py, profiles_registry.py, schema_injector_request.json; mcp/ so no master; scripts divergem aidd.py, compose_suite.py, G_INJECT.py, openapi_to_ts.py, provision_project.py, run_all.py; injector/ so no enterprise. LOC: forge 6083, master 34633, enterprise 34133, generator 33326, bridge 2892, ops 7405, gates 3619, ecossistema.py 626. Graph: 13 comunidades, 1036 flows, 50 nos isolados, 20 hotspots sem teste. Planos ativos: 01-correcao-pos-auditoria-sem-maquiagem (18 itens: XSS armazenado get_studio_html, CORS inseguro generator, CSP relaxado, seed secret hardcoded, deploy Docker, requirements.txt dessincronizado, CLIs click pela metade) e codigo-limpo-profundo-ecossistema (18 itens: nucleo compartilhado 27 arquivos identicos, templates/scripts-gates duplicados, CLI monolitica aidd.py, 4 Injector, 4 Result monads, god class SecurityGate). Auditoria anterior: nota original 7.5, composto calculado 9.13 (11-09-2026_relatorio-evolucao-plano-acao.json).
+</section>
+
+<section>
+  <h2>Resumo</h2>
+  <p>Ecossistema maduro e testado: ~1894 testes reais passando nas 6 ferramentas, gates mecanicos majoritariamente verdes e drift do nucleo compartilhado controlado por baseline. Pontos fracos reais: 212 violacoes de arquitetura legadas (SQL fora de infrastructure em templates), 2 das 13 entregas sem testes, testes de exemplo finos, funcoes gigantes (get_swagger_html 736 linhas), divergencia nao documentada master/enterprise e 36 itens abertos em 2 planos de correcao. Nota atual 8.0 reflete base solida com divida tecnica conhecida e rastreada.</p>
+</section>
+<section>
+  <h2>Achados</h2>
+  <ul><li>1894 testes reais passando nas 6 ferramentas + 47 gates raiz</li><li>G_ARQUITETURA_DELIVERABLE reprovado com 212 violacoes SQL-fora-infra em 15 arquivos (legado, gate manual)</li><li>2 das 13 entregas sem tests/ (enterprise-suite-v4, logistica-hub-v4) e testes de exemplo finos</li><li>get_swagger_html com 736 linhas em 2 entregas; compose_suite 277/273; cmd_orchestrate 239</li><li>Divergencia master/enterprise em 3 arquivos src/core + 6 scripts + mcp/ so no master</li><li>G_HONESTIDADE_ROTULO agora passa mas AGENTS.md e termos_proibidos_marketing.json ainda citam violacao pendente (drift de doc)</li><li>G_TESTES_REAIS estoura timeout &gt;300s no audit completo (aidd-ops passa isolado em ~30s)</li><li>36 itens abertos nos planos fazendo (18 correcao pos-auditoria + 18 codigo limpo)</li></ul>
+</section>
+<section>
+  <h2>Riscos / Limitacoes</h2>
+  <ul><li>Gate G_ARQUITETURA_DELIVERABLE em manual mascara 212 violacoes de arquitetura que voltam a bloquear quando reativado</li><li>Entregas sem testes (enterprise-suite-v4, logistica-hub-v4) nao tem cobertura de regressao</li><li>Timeout do G_TESTES_REAIS no audit completo impede verificacao unica de ponta a ponta</li><li>Divergencia master/enterprise sem baseline documentado pode virar drift silencioso</li><li>Funcoes gigantes concentram risco de manutencao e dificultam revisao</li></ul>
+</section>
+<section>
+  <h2>Recomendacao</h2>
+  <p>Iniciar /plan para atacar em ordem: (1) reativar G_ARQUITETURA_DELIVERABLE corrigindo as 212 violacoes nos templates, (2) adicionar testes reais as 2 entregas sem cobertura, (3) quebrar get_swagger_html e compose_suite, (4) documentar/eliminar divergencia master-enterprise, (5) corrigir drift de doc do G_HONESTIDADE_ROTULO e (6) reduzir timeout do G_TESTES_REAIS.</p>
+</section>
+<section>
+  <strong>Status:</strong> RASCUNHO - aguardando decisao humana sobre proximo passo (ex: iniciar /plan, ou atualizar a nota do plano existente)
+</section>
+</body>
+</html>

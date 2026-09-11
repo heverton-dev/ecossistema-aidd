@@ -28,7 +28,13 @@
 | Correcao Pos Auditoria Sem Maquiagem | `fazendo/01-correcao-pos-auditoria-sem-maquiagem/` |
 | Codigo Limpo Profundo Ecossistema | `fazendo/codigo-limpo-profundo-ecossistema/` |
 
-## ⏳ Aguardando execução
+## 🔒 Aprovados, aguardando execução
+
+| Iniciativa | Local |
+|---|---|
+| Evolucao Engenharia Software Ecossistema | `a-fazer/evolucao-engenharia-software-ecossistema/` |
+
+## ⏳ Rascunho (aguardando aprovação humana)
 
 | Iniciativa | Local |
 |---|---|

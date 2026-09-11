@@ -1,0 +1,55 @@
+{
+  "pedido_original": "Reanalisar o plano docs/planos/a-fazer/02-otimizacao-tokenomics-latencia comparando o que foi previsto com o que existe hoje no codigo real do aidd-generator",
+  "data": "11-09-2026",
+  "nota_atual": "6",
+  "evidencia": "pytest real: test_phase_08_tokenomics.py (15 passou), test_phase_02_tokenomics.py (10 passou), test_reparo_json.py (9 passou), test_hermeticidade_sessoes.py (14 passou), test_compressor_middleware.py (14 passou), gate G_SESSAO_HERMETICA.py aprovado, suite completa tools/aidd-generator/tests (941 passou); grep real confirmando ausencia de wiring do compressor_middleware e ausencia de token_budgets.json",
+  "plano_existente": "docs/planos/a-fazer/02-otimizacao-tokenomics-latencia",
+  "item_relacionado": null,
+  "nota_anterior": "NAO AUDITADO",
+  "evidencia_anterior": "(plano criado antes desta metrica existir, ou item sem nota registrada)",
+  "itens_avaliados": [
+    {
+      "item": "01",
+      "status": "feito",
+      "justificativa": "PROMPT_IMPLEMENTAR_SCRIPT ja compoe blocos condicionais (_extrair_features_script + _montar_blocos_condicionais) e o fix-loop usa PostMortemAnalyzer._isolar_traceback + funcoes sob suspeita via AST no PROMPT_CORRIGIR_SCRIPT (08_implementador.py, linhas 1130-1298); 15 testes reais em test_phase_08_tokenomics.py passaram agora."
+    },
+    {
+      "item": "02",
+      "status": "feito",
+      "justificativa": "montar_handoff_referencias existe e esta em uso real na linha 446 de 02_analisador.py, com poda top-k, campos essenciais e teto de tokens; 10 testes reais em test_phase_02_tokenomics.py passaram agora."
+    },
+    {
+      "item": "03",
+      "status": "feito",
+      "justificativa": "_validar_pydantic_com_retry usa max_retries=1 por padrao (era 3), com escada deterministica de reparo antes de qualquer chamada LLM; 9 testes reais em test_reparo_json.py passaram agora."
+    },
+    {
+      "item": "04",
+      "status": "feito",
+      "justificativa": "Gate G_SESSAO_HERMETICA.py aprovado ao rodar agora; utils_delegacao.py rotula sessao_isolada/sessao_compartilhada_delegada e injeta --no-session-persistence por harness; 14 testes reais em test_hermeticidade_sessoes.py passaram."
+    },
+    {
+      "item": "05",
+      "status": "parcial",
+      "justificativa": "compressor_middleware.py existe com preflight, politica prosa-only e fallback deterministico, com 14 testes proprios passando - mas grep real confirma que nenhum arquivo de scripts/phases importa compressor_middleware: nao esta ligado ao handoff real da Fase 1-2 nem a Fase 6, entao a economia prometida ainda nao acontece em producao."
+    },
+    {
+      "item": "06",
+      "status": "parcial",
+      "justificativa": "Nao existe mapa_secoes/indice_secoes em 07_analisador.py como o item pedia - mas a Fase 7 real hoje ja nao envia HTML/MD bruto a nenhum LLM: ela le apenas _phase_NN_index.json (cache pequeno) e roda 100% deterministica (comentario do proprio arquivo: Tokens 0k). O problema descrito parece resolvido por uma arquitetura diferente da prevista, nao pelo mecanismo que o item pedia."
+    },
+    {
+      "item": "07",
+      "status": "nao-feito",
+      "justificativa": "token_budgets.json nao existe em tools/aidd-generator/config/; grep real confirma que nao ha campo de orcamento nem alerta de desvio no pipeline; a alegacao 'reduzindo consumo de tokens em >65%' continua em pipeline_completo.py (linhas 33 e 422) sem baseline medido, exatamente como o item diagnosticou."
+    }
+  ],
+  "resumo": "4 dos 7 itens estao implementados e comprovados por teste real (1,2,3,4). Item 5 foi construido e testado mas nao esta ligado ao pipeline real. Item 6 nao foi implementado como pedido, mas o problema que ele visava resolver parece ja nao existir por uma mudanca arquitetural diferente na Fase 7. Item 7 nao foi implementado e mantem uma alegacao de marketing nao verificada (violacao de honestidade ja diagnosticada, ainda presente).",
+  "achados": [],
+  "riscos": [
+    "Item 7 mantem uma alegacao de marketing nao verificada, violando a Regra #9 de honestidade de rotulo - risco ja diagnosticado e ainda nao corrigido.",
+    "Item 5 esta pronto e testado mas nao gera economia real ate ser ligado ao pipeline."
+  ],
+  "recomendacao": "Priorizar o Item 7 (remover a alegacao falsa e criar o orcamento formal), por ser violacao de honestidade ja diagnosticada; em seguida ligar compressor_middleware (Item 5) aos pontos reais de handoff; revisar o Item 6 para decidir se o risco original ainda se aplica antes de investir nele.",
+  "status": "RASCUNHO - aguardando decisao humana sobre proximo passo (ex: iniciar /plan, ou atualizar a nota do plano existente)"
+}

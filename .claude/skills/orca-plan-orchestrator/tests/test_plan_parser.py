@@ -7,7 +7,7 @@ from pathlib import Path
 import sys
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "scripts"))
 
-from plan_parser import parse_plan, Plan, Front
+from plan_parser import parse_plan, Plan, Front, extrair_prompt_executor
 
 
 REPO_ROOT = Path(__file__).resolve().parent.parent.parent.parent.parent.parent
@@ -103,3 +103,56 @@ class TestParseFrontContent:
         # Content should be read from disk
         disk_content = front.file_path.read_text(encoding="utf-8")
         assert front.content == disk_content
+
+
+class TestExtrairPromptExecutor:
+    """extrair_prompt_executor deve sempre incluir o texto de instrucao em
+    ingles real (nao so a cerca de codigo) - regressao de um bug real onde
+    o grupo errado da regex era capturado e o corpo do prompt sumia."""
+
+    ITEM_COM_CERCA_TRIPLA = """## Escopo
+> **Escopo:** Texto de escopo.
+
+## Definicao de Pronto
+
+1. Criterio um.
+2. Criterio dois.
+
+## Criterio de saida
+
+- Saida um.
+
+## Prompt de Execucao (PT-BR)
+
+```
+Prompt em portugues.
+```
+
+## Prompt de Execucao — English version
+
+```
+You are going to implement this. Follow the Definition of Done above.
+```
+"""
+
+    ITEM_COM_CERCA_SIMPLES = ITEM_COM_CERCA_TRIPLA.replace("```", "`")
+
+    def test_extrai_corpo_real_do_prompt_ingles_cerca_tripla(self) -> None:
+        resultado = extrair_prompt_executor(self.ITEM_COM_CERCA_TRIPLA)
+        assert "You are going to implement this." in resultado
+        assert "Follow the Definition of Done above." in resultado
+        assert "Criterio um." in resultado
+
+    def test_extrai_corpo_real_do_prompt_ingles_cerca_simples(self) -> None:
+        resultado = extrair_prompt_executor(self.ITEM_COM_CERCA_SIMPLES)
+        assert "You are going to implement this." in resultado
+
+    def test_fallback_para_conteudo_integral_quando_formato_nao_reconhecido(self) -> None:
+        texto = "# Item sem estrutura nenhuma\nsó um paragrafo qualquer.\n"
+        assert extrair_prompt_executor(texto) == texto
+
+    def test_nunca_inclui_apenas_a_cerca_de_codigo_vazia(self) -> None:
+        """Trava especifica do bug: group(1) era a cerca ('```' ou '`'),
+        nao o conteudo - garante que isso nunca mais escapa em silencio."""
+        resultado = extrair_prompt_executor(self.ITEM_COM_CERCA_TRIPLA)
+        assert resultado.strip() not in ("```", "`", "")

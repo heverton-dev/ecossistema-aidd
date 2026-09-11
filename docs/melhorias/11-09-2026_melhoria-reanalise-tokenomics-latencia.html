@@ -1,0 +1,173 @@
+<!doctype html>
+<html lang="pt-br">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>11-09-2026_melhoria-reanalise-tokenomics-latencia</title>
+<style>
+  :root {
+    color-scheme: light dark;
+    --bg:#f6f7f9; --bg-card:#ffffff; --border:#e2e5ea;
+    --fg:#1b1f26; --fg-muted:#5b6472;
+    --accent:#2563eb; --accent-fg:#ffffff;
+    --good:#1a7f4e; --good-bg:#e4f6ec;
+    --warn:#9a6400; --warn-bg:#fdf1d9;
+    --bad:#b3261e; --bad-bg:#fbe7e6;
+    --neutra:#6b7280; --neutra-bg:#eceef1;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg:#0b111a; --bg-card:#131b26; --border:#232d3b;
+      --fg:#e6edf3; --fg-muted:#94a3b8;
+      --accent:#4c8dff; --accent-fg:#08111f;
+      --good:#3ddc84; --good-bg:#0f2c1d;
+      --warn:#f2b84b; --warn-bg:#2c2410;
+      --bad:#ff6b6b; --bad-bg:#2c1414;
+      --neutra:#9aa4b2; --neutra-bg:#1b232f;
+    }
+  }
+  * { box-sizing: border-box; scrollbar-width: thin; scrollbar-color: var(--accent) var(--bg); }
+  ::-webkit-scrollbar { width:4px; height:4px; }
+  ::-webkit-scrollbar-track { background: var(--bg); }
+  ::-webkit-scrollbar-thumb { background: var(--accent); border-radius:4px; }
+  body {
+    background:var(--bg); color:var(--fg);
+    font-family: -apple-system, "Segoe UI", system-ui, sans-serif;
+    line-height: 1.5; margin:0; padding: 32px 16px;
+  }
+  .pagina { max-width: 760px; margin: 0 auto; }
+  h1 { font-size: 1.375rem; font-weight: 700; margin: 0 0 4px; letter-spacing: -0.01em; }
+  .subtitulo { color: var(--fg-muted); font-size: 0.875rem; margin: 0 0 24px; }
+  .eyebrow {
+    font-size: 0.75rem; font-weight: 700; text-transform: uppercase;
+    letter-spacing: 0.05em; color: var(--fg-muted); margin: 0 0 16px;
+  }
+  .card {
+    background: var(--bg-card); border: 1px solid var(--border);
+    border-radius: 12px; padding: 24px; margin-bottom: 16px;
+  }
+  .pedido { font-size: 0.9375rem; color: var(--fg-muted); margin-bottom: 16px; }
+  .pedido strong { color: var(--fg); }
+  .evidencia { font-size: 0.8125rem; color: var(--fg-muted); margin: 8px 0 0; }
+  .plano-caminho { font-size: 0.8125rem; color: var(--fg-muted); margin: 0 0 16px; word-break: break-all; }
+
+  .gauge { display:flex; align-items:center; gap:12px; margin-bottom: 8px; }
+  .gauge-rotulo { flex: 0 0 140px; font-size: 0.8125rem; color: var(--fg-muted); }
+  .gauge-trilho { flex: 1; height: 10px; background: var(--border); border-radius: 6px; overflow: hidden; }
+  .gauge-fill { height: 100%; border-radius: 6px; }
+  .gauge-fill-neutra {
+    background-image: repeating-linear-gradient(45deg, currentColor 0 6px, transparent 6px 12px);
+  }
+  .gauge-good { background: var(--good); color: var(--good); }
+  .gauge-warn { background: var(--warn); color: var(--warn); }
+  .gauge-bad { background: var(--bad); color: var(--bad); }
+  .gauge-neutra { background: var(--neutra); color: var(--neutra); }
+  .gauge-valor { flex: 0 0 auto; font-weight: 700; font-size: 0.9375rem; min-width: 64px; text-align: right; }
+  .gauge-texto-good { color: var(--good); }
+  .gauge-texto-warn { color: var(--warn); }
+  .gauge-texto-bad { color: var(--bad); }
+  .gauge-texto-neutra { color: var(--neutra); }
+  .comparativo-notas { margin: 8px 0 4px; }
+
+  .badge {
+    display: inline-block; padding: 2px 10px; border-radius: 999px;
+    font-size: 0.8125rem; font-weight: 600; white-space: nowrap;
+  }
+  .badge-good { background: var(--good-bg); color: var(--good); }
+  .badge-warn { background: var(--warn-bg); color: var(--warn); }
+  .badge-bad { background: var(--bad-bg); color: var(--bad); }
+  .badge-neutra { background: var(--neutra-bg); color: var(--neutra); }
+
+  .dist-bar { display:flex; height: 10px; border-radius: 6px; overflow: hidden; margin-bottom: 8px; background: var(--border); }
+  .dist-seg { height: 100%; }
+  .dist-feito { background: var(--good); }
+  .dist-parcial { background: var(--warn); }
+  .dist-nao-feito { background: var(--bad); }
+  .dist-legenda { display:flex; flex-wrap: wrap; gap: 16px; margin-bottom: 20px; }
+  .dist-legenda-item { font-size: 0.8125rem; color: var(--fg-muted); display:flex; align-items:center; gap:6px; }
+  .dist-dot { width:8px; height:8px; border-radius:50%; display:inline-block; }
+  .dist-dot.dist-feito { background: var(--good); }
+  .dist-dot.dist-parcial { background: var(--warn); }
+  .dist-dot.dist-nao-feito { background: var(--bad); }
+
+  .tabela-scroll { overflow-x: auto; }
+  table { width: 100%; border-collapse: collapse; font-size: 0.875rem; }
+  th { text-align: left; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.04em;
+       color: var(--fg-muted); font-weight: 600; padding: 8px 12px; border-bottom: 1px solid var(--border); }
+  td { padding: 10px 12px; border-bottom: 1px solid var(--border); vertical-align: top; }
+  tr:last-child td { border-bottom: none; }
+  .col-item { white-space: nowrap; font-variant-numeric: tabular-nums; color: var(--fg-muted); }
+
+  h2.titulo-secao { font-size: 1rem; font-weight: 700; margin: 0 0 12px; }
+  ul { margin: 0; padding-left: 20px; }
+  li { margin-bottom: 6px; }
+  .status-rodape { font-size: 0.8125rem; color: var(--fg-muted); }
+</style>
+</head>
+<body>
+<div class="pagina">
+  <h1>Relatorio de Analise Profunda</h1>
+  <p class="subtitulo">11-09-2026_melhoria-reanalise-tokenomics-latencia</p>
+
+  <section class="card">
+    <p class="pedido"><strong>Pedido original:</strong> Reanalisar o plano docs/planos/a-fazer/02-otimizacao-tokenomics-latencia comparando o que foi previsto com o que existe hoje no codigo real do aidd-generator</p>
+  </section>
+
+  <section class="card">
+  <h2 class="eyebrow">Reanalise de Plano Existente (nota geral da iniciativa)</h2>
+  <p class="plano-caminho"><strong>Plano:</strong> docs/planos/a-fazer/02-otimizacao-tokenomics-latencia</p>
+  <div class="comparativo-notas">
+    <div class="gauge">
+  <div class="gauge-rotulo">Nota Anterior</div>
+  <div class="gauge-trilho" role="img" aria-label="Nota Anterior: NAO AUDITADO">
+    <div class="gauge-fill gauge-neutra gauge-fill-neutra" style="width:100%;"></div>
+  </div>
+  <div class="gauge-valor gauge-texto-neutra">NAO AUDITADO</div>
+</div>
+    <div class="gauge">
+  <div class="gauge-rotulo">Nota Nova</div>
+  <div class="gauge-trilho" role="img" aria-label="Nota Nova: 6/10">
+    <div class="gauge-fill gauge-warn" style="width:60%;"></div>
+  </div>
+  <div class="gauge-valor gauge-texto-warn">6/10</div>
+</div>
+  </div>
+  <p class="evidencia"><strong>Evidencia (anterior):</strong> (plano criado antes desta metrica existir, ou item sem nota registrada)</p>
+  <p class="evidencia"><strong>Evidencia (nova):</strong> pytest real: test_phase_08_tokenomics.py (15 passou), test_phase_02_tokenomics.py (10 passou), test_reparo_json.py (9 passou), test_hermeticidade_sessoes.py (14 passou), test_compressor_middleware.py (14 passou), gate G_SESSAO_HERMETICA.py aprovado, suite completa tools/aidd-generator/tests (941 passou); grep real confirmando ausencia de wiring do compressor_middleware e ausencia de token_budgets.json</p>
+</section>
+  <section class="card">
+  <h2 class="eyebrow">Previsto no plano vs. implementado hoje</h2>
+  <div class="dist-bar" role="img" aria-label="Distribuicao de status dos itens avaliados"><div class="dist-seg dist-feito" style="width:57.1%" title="✅ Feito: 4"></div><div class="dist-seg dist-parcial" style="width:28.6%" title="🟡 Parcial: 2"></div><div class="dist-seg dist-nao-feito" style="width:14.3%" title="❌ Nao feito: 1"></div></div>
+<div class="dist-legenda"><span class="dist-legenda-item"><span class="dist-dot dist-feito"></span>✅ Feito: 4</span><span class="dist-legenda-item"><span class="dist-dot dist-parcial"></span>🟡 Parcial: 2</span><span class="dist-legenda-item"><span class="dist-dot dist-nao-feito"></span>❌ Nao feito: 1</span></div>
+  <div class="tabela-scroll">
+  <table>
+    <thead><tr><th class="col-item">Item</th><th>Status</th><th>Justificativa</th></tr></thead>
+    <tbody><tr><td class="col-item">01</td><td><span class="badge badge-good">✅ Feito</span></td><td>PROMPT_IMPLEMENTAR_SCRIPT ja compoe blocos condicionais (_extrair_features_script + _montar_blocos_condicionais) e o fix-loop usa PostMortemAnalyzer._isolar_traceback + funcoes sob suspeita via AST no PROMPT_CORRIGIR_SCRIPT (08_implementador.py, linhas 1130-1298); 15 testes reais em test_phase_08_tokenomics.py passaram agora.</td></tr><tr><td class="col-item">02</td><td><span class="badge badge-good">✅ Feito</span></td><td>montar_handoff_referencias existe e esta em uso real na linha 446 de 02_analisador.py, com poda top-k, campos essenciais e teto de tokens; 10 testes reais em test_phase_02_tokenomics.py passaram agora.</td></tr><tr><td class="col-item">03</td><td><span class="badge badge-good">✅ Feito</span></td><td>_validar_pydantic_com_retry usa max_retries=1 por padrao (era 3), com escada deterministica de reparo antes de qualquer chamada LLM; 9 testes reais em test_reparo_json.py passaram agora.</td></tr><tr><td class="col-item">04</td><td><span class="badge badge-good">✅ Feito</span></td><td>Gate G_SESSAO_HERMETICA.py aprovado ao rodar agora; utils_delegacao.py rotula sessao_isolada/sessao_compartilhada_delegada e injeta --no-session-persistence por harness; 14 testes reais em test_hermeticidade_sessoes.py passaram.</td></tr><tr><td class="col-item">05</td><td><span class="badge badge-warn">🟡 Parcial</span></td><td>compressor_middleware.py existe com preflight, politica prosa-only e fallback deterministico, com 14 testes proprios passando - mas grep real confirma que nenhum arquivo de scripts/phases importa compressor_middleware: nao esta ligado ao handoff real da Fase 1-2 nem a Fase 6, entao a economia prometida ainda nao acontece em producao.</td></tr><tr><td class="col-item">06</td><td><span class="badge badge-warn">🟡 Parcial</span></td><td>Nao existe mapa_secoes/indice_secoes em 07_analisador.py como o item pedia - mas a Fase 7 real hoje ja nao envia HTML/MD bruto a nenhum LLM: ela le apenas _phase_NN_index.json (cache pequeno) e roda 100% deterministica (comentario do proprio arquivo: Tokens 0k). O problema descrito parece resolvido por uma arquitetura diferente da prevista, nao pelo mecanismo que o item pedia.</td></tr><tr><td class="col-item">07</td><td><span class="badge badge-bad">❌ Nao feito</span></td><td>token_budgets.json nao existe em tools/aidd-generator/config/; grep real confirma que nao ha campo de orcamento nem alerta de desvio no pipeline; a alegacao 'reduzindo consumo de tokens em &gt;65%' continua em pipeline_completo.py (linhas 33 e 422) sem baseline medido, exatamente como o item diagnosticou.</td></tr></tbody>
+  </table>
+  </div>
+</section>
+
+  <section class="card">
+    <h2 class="titulo-secao">Resumo</h2>
+    <p>4 dos 7 itens estao implementados e comprovados por teste real (1,2,3,4). Item 5 foi construido e testado mas nao esta ligado ao pipeline real. Item 6 nao foi implementado como pedido, mas o problema que ele visava resolver parece ja nao existir por uma mudanca arquitetural diferente na Fase 7. Item 7 nao foi implementado e mantem uma alegacao de marketing nao verificada (violacao de honestidade ja diagnosticada, ainda presente).</p>
+  </section>
+
+  <section class="card">
+    <h2 class="titulo-secao">Achados</h2>
+    <ul><li>(nenhum achado registrado)</li></ul>
+  </section>
+
+  <section class="card">
+    <h2 class="titulo-secao">Riscos / Limitacoes</h2>
+    <ul><li>Item 7 mantem uma alegacao de marketing nao verificada, violando a Regra #9 de honestidade de rotulo - risco ja diagnosticado e ainda nao corrigido.</li><li>Item 5 esta pronto e testado mas nao gera economia real ate ser ligado ao pipeline.</li></ul>
+  </section>
+
+  <section class="card">
+    <h2 class="titulo-secao">Recomendacao</h2>
+    <p>Priorizar o Item 7 (remover a alegacao falsa e criar o orcamento formal), por ser violacao de honestidade ja diagnosticada; em seguida ligar compressor_middleware (Item 5) aos pontos reais de handoff; revisar o Item 6 para decidir se o risco original ainda se aplica antes de investir nele.</p>
+  </section>
+
+  <p class="status-rodape"><strong>Status:</strong> RASCUNHO - aguardando decisao humana sobre proximo passo (ex: iniciar /plan, ou atualizar a nota do plano existente)</p>
+</div>
+</body>
+</html>

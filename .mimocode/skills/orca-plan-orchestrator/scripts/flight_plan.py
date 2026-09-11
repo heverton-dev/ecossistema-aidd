@@ -47,7 +47,7 @@ def gerar_plano_de_voo(
     for front in plan.fronts:
         front_harness = (harness_map or {}).get(front.name, harness)
         profile = carregar_perfil(profiles_path, front_harness) if front_harness != harness else default_profile
-        command = compilar_comando(profile, front.content, interactive=interactive)
+        command = compilar_comando(profile, front.prompt, interactive=interactive)
         branch = f"orca/{front.name}"
         worktree = f"wt-{front.name}"
         compiled_fronts.append({
