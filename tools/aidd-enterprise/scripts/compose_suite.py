@@ -404,24 +404,8 @@ def generate_documentation_html(suite_name: str, module_slugs: list, src_dir: st
         spotlight_commands=spotlight_str,
     )
 
-def compose_suite(target_dir: str, suite_name: str, modules: list, db_engine: str = "sqlite"):
-    """Motor principal de composição cross-project."""
-    target_dir = os.path.abspath(target_dir)
-    db_engine = (db_engine or "sqlite").lower()
-    print("=" * 80)
-    print(f"🚀 [AIDD v5.0 Enterprise] Composição de Suíte Modular Cross-Project: {suite_name}")
-    print(f"📁 Diretório de Destino: {target_dir}")
-    print(f"📦 Fatias Verticais:     {', '.join(modules)}")
-    print(f"🗄️  Motor de Persistência: {db_engine}")
-    print("=" * 80)
-
-    SKILL_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-    templates_core = os.path.join(SKILL_ROOT, "templates", "core")
-    templates_v2 = templates_core if os.path.isdir(templates_core) else os.path.join(SKILL_ROOT, "templates", "v2")
-    gates_dir = os.path.join(SKILL_ROOT, "templates", "gates")
-    scripts_dir = os.path.join(SKILL_ROOT, "scripts")
-
-    # 1. Estrutura de Diretórios
+def _setup_directories(target_dir: str) -> dict[str, str]:
+    """Cria e inicializa a estrutura de diretórios e pacotes da suíte."""
     src_dir = os.path.join(target_dir, "src")
     core_dir = os.path.join(src_dir, "core")
     shared_ui_dir = os.path.join(src_dir, "shared", "ui")
@@ -433,24 +417,40 @@ def compose_suite(target_dir: str, suite_name: str, modules: list, db_engine: st
     target_gates_dir = os.path.join(target_dir, "scripts", "gates")
     target_scripts_dir = os.path.join(target_dir, "scripts")
 
-    os.makedirs(core_dir, exist_ok=True)
-    os.makedirs(shared_ui_dir, exist_ok=True)
-    os.makedirs(shared_utils_dir, exist_ok=True)
-    os.makedirs(modules_dir, exist_ok=True)
-    os.makedirs(static_comp_dir, exist_ok=True)
-    os.makedirs(tests_unit_dir, exist_ok=True)
-    os.makedirs(target_gates_dir, exist_ok=True)
-    os.makedirs(target_scripts_dir, exist_ok=True)
+    for d in (core_dir, shared_ui_dir, shared_utils_dir, modules_dir, static_comp_dir, tests_unit_dir, target_gates_dir, target_scripts_dir):
+        os.makedirs(d, exist_ok=True)
 
-    open(os.path.join(src_dir, "__init__.py"), "w", encoding="utf-8").close()
-    open(os.path.join(core_dir, "__init__.py"), "w", encoding="utf-8").close()
-    open(os.path.join(modules_dir, "__init__.py"), "w", encoding="utf-8").close()
-    open(os.path.join(src_dir, "shared", "__init__.py"), "w", encoding="utf-8").close()
-    open(os.path.join(shared_ui_dir, "__init__.py"), "w", encoding="utf-8").close()
-    open(os.path.join(shared_utils_dir, "__init__.py"), "w", encoding="utf-8").close()
+    for init_path in (
+        os.path.join(src_dir, "__init__.py"),
+        os.path.join(core_dir, "__init__.py"),
+        os.path.join(modules_dir, "__init__.py"),
+        os.path.join(src_dir, "shared", "__init__.py"),
+        os.path.join(shared_ui_dir, "__init__.py"),
+        os.path.join(shared_utils_dir, "__init__.py"),
+    ):
+        open(init_path, "w", encoding="utf-8").close()
 
-    # 2. Copiar Shared Kernel Core
-    core_files = ["database.py", "events.py", "outbox_worker.py", "openapi.py", "security.py", "webhooks.py", "mcp_server.py", "mcp_repository.py", "result.py", "jobs.py", "metrics.py", "cqrs.py", "saga.py", "circuit_breaker.py", "token_revocation.py", "local_first.py", "logs.py"]
+    return {
+        "src": src_dir,
+        "core": core_dir,
+        "shared_ui": shared_ui_dir,
+        "shared_utils": shared_utils_dir,
+        "modules": modules_dir,
+        "static": static_dir,
+        "tests_unit": tests_unit_dir,
+        "gates": target_gates_dir,
+        "scripts": target_scripts_dir,
+    }
+
+
+def _copy_shared_kernel(templates_v2: str, core_dir: str, shared_ui_dir: str, shared_utils_dir: str) -> None:
+    """Copia componentes do kernel compartilhado e utilitários transversais."""
+    core_files = [
+        "database.py", "events.py", "outbox_worker.py", "openapi.py", "security.py",
+        "webhooks.py", "mcp_server.py", "mcp_repository.py", "result.py", "jobs.py",
+        "metrics.py", "cqrs.py", "saga.py", "circuit_breaker.py", "token_revocation.py",
+        "local_first.py", "logs.py",
+    ]
     for cf in core_files:
         src = os.path.join(templates_v2, cf)
         dst = os.path.join(core_dir, cf)
@@ -487,7 +487,9 @@ def compose_suite(target_dir: str, suite_name: str, modules: list, db_engine: st
                 shutil.copyfile(src, os.path.join(shared_utils_dir, f))
                 print(f"  [+] Shared Utils: {f}")
 
-    # 3. Gerar Manifesto Estruturado PLANO-EXECUCAO-ESTRUTURADO.json
+
+def _generate_structured_plan(suite_name: str, db_engine: str, target_dir: str) -> None:
+    """Gerar Manifesto Estruturado PLANO-EXECUCAO-ESTRUTURADO.json."""
     plano_dict = {
         "projeto": {
             "nome": suite_name,
@@ -495,7 +497,8 @@ def compose_suite(target_dir: str, suite_name: str, modules: list, db_engine: st
             "versao": "4.1.0",
             "framework": "AIDD Master Enterprise",
             "status": "em_desenvolvimento",
-            "criado_em": datetime.datetime.now().isoformat()
+            "criado_em": datetime.datetime.now().isoformat(),
+            "db_engine": db_engine,
         },
         "arquitetura": {
             "padrao": "Monólito Modular com Clean Architecture",
@@ -504,7 +507,7 @@ def compose_suite(target_dir: str, suite_name: str, modules: list, db_engine: st
             "webhooks": "Webhook Configuration Studio com Assinatura HMAC SHA-256 (/webhooks)",
             "mcp": "Model Context Protocol Native Server (/mcp & JSON-RPC 2.0)",
             "persistencia": "SQLite Concorrente WAL Mode (Write-Ahead Logging)",
-            "design_system": "Impeccable Super-App UI com 4px scrollbar e Single-Line Header"
+            "design_system": "Impeccable Super-App UI com 4px scrollbar e Single-Line Header",
         },
         "modulos": [],
         "gates_qualidade": [
@@ -514,32 +517,37 @@ def compose_suite(target_dir: str, suite_name: str, modules: list, db_engine: st
             {"gate": "G_CONTRACTS", "descricao": "Validação de esquemas OpenAPI 3.1 e contratos MCP"},
             {"gate": "G_SEGREDOS", "descricao": "Varredura de entropia de Shannon contra vazamento de chaves"},
             {"gate": "G_HARNESS_COMPAT", "descricao": "Conformidade multi-harness (Antigravity, Cline, OpenHands, Cursor)"},
-            {"gate": "G_CHAOS", "descricao": "Simulação de Quedas (Chaos) e resiliência do sistema"}
-        ]
+            {"gate": "G_CHAOS", "descricao": "Simulação de Quedas (Chaos) e resiliência do sistema"},
+        ],
     }
-    plano_dict["projeto"]["db_engine"] = db_engine
 
     with open(os.path.join(target_dir, "PLANO-EXECUCAO-ESTRUTURADO.json"), "w", encoding="utf-8") as f:
         json.dump(plano_dict, f, ensure_ascii=False, indent=2)
 
-    # 4. Gerar Fatias Verticais para cada Módulo
+
+def _generate_modules(modules: list, target_dir: str) -> list[str]:
+    """Gerar Fatias Verticais para cada Módulo."""
     clean_modules = [slugify(m) for m in modules if m.strip()]
     for mod in clean_modules:
         criar_modulo(mod, target_dir=target_dir)
+    return clean_modules
 
-    # 5. Gerar Servidor Monolítico Modular src/server.py
+
+def _generate_server_and_ui(
+    suite_name: str, clean_modules: list[str], db_engine: str,
+    src_dir: str, static_dir: str, templates_v2: str
+) -> None:
+    """Gerar Servidor Monolítico Modular src/server.py e Front-ends."""
     server_code = generate_modular_server_code(suite_name, clean_modules, db_engine=db_engine)
     with open(os.path.join(src_dir, "server.py"), "w", encoding="utf-8") as f:
         f.write(server_code)
     print("  [+] Servidor dinâmico 'src/server.py' gerado com sucesso!")
 
-    # 6. Gerar Front-end Super-App src/static/index.html
     index_html = generate_superapp_index_html(suite_name, clean_modules)
     with open(os.path.join(static_dir, "index.html"), "w", encoding="utf-8") as f:
         f.write(index_html)
     print("  [+] Front-end Super-App 'src/static/index.html' gerado!")
 
-    # Gerar docs.html dinâmico via AST
     docs_template_path = os.path.join(templates_v2, "docs.html")
     if os.path.isfile(docs_template_path):
         with open(docs_template_path, "r", encoding="utf-8") as tmpf:
@@ -549,13 +557,14 @@ def compose_suite(target_dir: str, suite_name: str, modules: list, db_engine: st
             outf.write(final_docs_html)
         print("  [+] Front-end Docs 'src/static/docs.html' gerado dinamicamente via AST!")
 
-    # 6.5 Copiar CSS estático do Tailwind buildado localmente (substitui CDN)
     output_css_src = os.path.join(templates_v2, "output.css")
     if os.path.isfile(output_css_src):
         shutil.copyfile(output_css_src, os.path.join(static_dir, "output.css"))
         print("  [+] Tailwind CSS estático: src/static/output.css")
 
-    # 7. Gerar requirements.txt e config do mutmut
+
+def _generate_manifests(target_dir: str, db_engine: str) -> None:
+    """Gerar requirements.txt e config do mutmut."""
     req_content = (
         "pytest>=7.4.0\nmutmut>=2.4.0\nrequests>=2.31.0\n"
         "pyjwt>=2.8.0\ncryptography>=42.0.0\nsecure>=2.0.0\n"
@@ -569,31 +578,30 @@ def compose_suite(target_dir: str, suite_name: str, modules: list, db_engine: st
         f.write("[mutmut]\npaths_to_mutate=src/\nbackup=False\nrunner=pytest\ntests_dir=tests/\n")
     print("  [+] Manifesto 'requirements.txt' e 'setup.cfg' gerados!")
 
-    # 8. Copiar Quality Gates
+
+def _copy_gates_and_automation(
+    skill_root: str, templates_v2: str, gates_dir: str, scripts_dir: str,
+    target_dir: str, core_dir: str, target_gates_dir: str, target_scripts_dir: str
+) -> None:
+    """Copiar Quality Gates, Fuzzing, scripts e templates Cookiecutter/Jinja2."""
     if os.path.isdir(gates_dir):
         for g in os.listdir(gates_dir):
             if g.endswith(".py"):
                 shutil.copyfile(os.path.join(gates_dir, g), os.path.join(target_gates_dir, g))
                 print(f"  [+] Quality Gate: {g}")
 
-    # 8.5 Copiar módulo de Fuzzing Contínuo
     fuzzing_src = os.path.join(templates_v2, "..", "..", "src", "core", "fuzzing.py")
     if os.path.isfile(fuzzing_src):
         shutil.copyfile(fuzzing_src, os.path.join(core_dir, "fuzzing.py"))
         print(f"  [+] Fuzzing Contínuo: fuzzing.py")
 
-    # 9. Copiar Scripts de Automação
     for s in ["aidd.py", "add_module.py", "compose_suite.py", "openapi_to_ts.py", "scaffold_infra.py"]:
         src = os.path.join(scripts_dir, s)
         if os.path.isfile(src):
             shutil.copyfile(src, os.path.join(target_scripts_dir, s))
             print(f"  [+] Script: {s}")
 
-    # 9.5 Copiar templates Cookiecutter/Jinja2 — add_module.py e compose_suite.py,
-    # quando copiados para dentro da suíte gerada (passo anterior), continuam
-    # resolvendo o caminho do template de forma relativa a si mesmos, então o
-    # template precisa existir também dentro da suíte composta.
-    cookiecutter_templates_src = os.path.join(SKILL_ROOT, "templates", "cookiecutter-scaffold")
+    cookiecutter_templates_src = os.path.join(skill_root, "templates", "cookiecutter-scaffold")
     cookiecutter_templates_dst = os.path.join(target_dir, "templates", "cookiecutter-scaffold")
     if os.path.isdir(cookiecutter_templates_src):
         if os.path.isdir(cookiecutter_templates_dst):
@@ -601,14 +609,17 @@ def compose_suite(target_dir: str, suite_name: str, modules: list, db_engine: st
         shutil.copytree(cookiecutter_templates_src, cookiecutter_templates_dst)
         print("  [+] Templates Cookiecutter/Jinja2 copiados (scaffolding de módulos)")
 
-    # 10. Copiar Arquivos de Produção, Deploy, Nginx & Governança ORCA ADE
+
+def _copy_governance_and_rules(
+    suite_name: str, clean_modules: list[str], templates_v2: str, target_dir: str
+) -> None:
+    """Copiar arquivos de produção, Nginx e regras multi-IDE."""
     for prod_f in ["Dockerfile", "docker-compose.yml", "deploy.sh", "AGENTS.md", "CLAUDE.md", "GEMINI.md"]:
         src = os.path.join(templates_v2, prod_f)
         if os.path.isfile(src):
             shutil.copyfile(src, os.path.join(target_dir, prod_f))
             print(f"  [+] Governança & Deploy: {prod_f}")
 
-    # Nginx Shield & SSL
     nginx_src = os.path.join(templates_v2, "nginx")
     nginx_dst = os.path.join(target_dir, "nginx")
     if os.path.isdir(nginx_src):
@@ -621,7 +632,6 @@ def compose_suite(target_dir: str, suite_name: str, modules: list, db_engine: st
                 shutil.copyfile(os.path.join(root, f), os.path.join(d_dir, f))
         print("  [+] Nginx Shield & Configurações copiadas!")
 
-    # 11. Gerar Sincronização Multi-IDE de Rules (.cursor, .claude, .agent)
     cursor_rules_dir = os.path.join(target_dir, ".cursor", "rules")
     claude_dir = os.path.join(target_dir, ".claude")
     agent_rules_dir = os.path.join(target_dir, ".agent", "rules")
@@ -645,7 +655,6 @@ def compose_suite(target_dir: str, suite_name: str, modules: list, db_engine: st
         f.write(rules_content)
     print("  [+] Multi-IDE Rules (.cursor, .claude, .agent) sincronizadas!")
 
-    # 12. Gerar Grafo de Memória do Projeto CONTEXTO-PROJETO.md
     contexto_md = f"""# Grafo de Contexto e Memória do Projeto: {suite_name}
 
 ## 1. Visão Geral
@@ -670,6 +679,36 @@ def compose_suite(target_dir: str, suite_name: str, modules: list, db_engine: st
     with open(os.path.join(target_dir, "CONTEXTO-PROJETO.md"), "w", encoding="utf-8") as f:
         f.write(contexto_md)
     print("  [+] Grafo de Memória 'CONTEXTO-PROJETO.md' gerado!")
+
+
+def compose_suite(target_dir: str, suite_name: str, modules: list, db_engine: str = "sqlite"):
+    """Motor principal de composição cross-project."""
+    target_dir = os.path.abspath(target_dir)
+    db_engine = (db_engine or "sqlite").lower()
+    print("=" * 80)
+    print(f"🚀 [AIDD v5.0 Enterprise] Composição de Suíte Modular Cross-Project: {suite_name}")
+    print(f"📁 Diretório de Destino: {target_dir}")
+    print(f"📦 Fatias Verticais:     {', '.join(modules)}")
+    print(f"🗄️  Motor de Persistência: {db_engine}")
+    print("=" * 80)
+
+    skill_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    templates_core = os.path.join(skill_root, "templates", "core")
+    templates_v2 = templates_core if os.path.isdir(templates_core) else os.path.join(skill_root, "templates", "v2")
+    gates_dir = os.path.join(skill_root, "templates", "gates")
+    scripts_dir = os.path.join(skill_root, "scripts")
+
+    dirs = _setup_directories(target_dir)
+    _copy_shared_kernel(templates_v2, dirs["core"], dirs["shared_ui"], dirs["shared_utils"])
+    _generate_structured_plan(suite_name, db_engine, target_dir)
+    clean_modules = _generate_modules(modules, target_dir)
+    _generate_server_and_ui(suite_name, clean_modules, db_engine, dirs["src"], dirs["static"], templates_v2)
+    _generate_manifests(target_dir, db_engine)
+    _copy_gates_and_automation(
+        skill_root, templates_v2, gates_dir, scripts_dir,
+        target_dir, dirs["core"], dirs["gates"], dirs["scripts"]
+    )
+    _copy_governance_and_rules(suite_name, clean_modules, templates_v2, target_dir)
 
     print("\n" + "=" * 80)
     print(f"🏆 [SUCESSO]: Suíte Enterprise '{suite_name}' 100% Composta!")

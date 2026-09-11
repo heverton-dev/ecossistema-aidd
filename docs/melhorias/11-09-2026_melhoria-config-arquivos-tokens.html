@@ -1,0 +1,152 @@
+<!doctype html>
+<html lang="pt-br">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>11-09-2026_melhoria-config-arquivos-tokens</title>
+<style>
+  :root {
+    color-scheme: light dark;
+    --bg:#f6f7f9; --bg-card:#ffffff; --border:#e2e5ea;
+    --fg:#1b1f26; --fg-muted:#5b6472;
+    --accent:#2563eb; --accent-fg:#ffffff;
+    --good:#1a7f4e; --good-bg:#e4f6ec;
+    --warn:#9a6400; --warn-bg:#fdf1d9;
+    --bad:#b3261e; --bad-bg:#fbe7e6;
+    --neutra:#6b7280; --neutra-bg:#eceef1;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg:#0b111a; --bg-card:#131b26; --border:#232d3b;
+      --fg:#e6edf3; --fg-muted:#94a3b8;
+      --accent:#4c8dff; --accent-fg:#08111f;
+      --good:#3ddc84; --good-bg:#0f2c1d;
+      --warn:#f2b84b; --warn-bg:#2c2410;
+      --bad:#ff6b6b; --bad-bg:#2c1414;
+      --neutra:#9aa4b2; --neutra-bg:#1b232f;
+    }
+  }
+  * { box-sizing: border-box; scrollbar-width: thin; scrollbar-color: var(--accent) var(--bg); }
+  ::-webkit-scrollbar { width:4px; height:4px; }
+  ::-webkit-scrollbar-track { background: var(--bg); }
+  ::-webkit-scrollbar-thumb { background: var(--accent); border-radius:4px; }
+  body {
+    background:var(--bg); color:var(--fg);
+    font-family: -apple-system, "Segoe UI", system-ui, sans-serif;
+    line-height: 1.5; margin:0; padding: 32px 16px;
+  }
+  .pagina { max-width: 760px; margin: 0 auto; }
+  h1 { font-size: 1.375rem; font-weight: 700; margin: 0 0 4px; letter-spacing: -0.01em; }
+  .subtitulo { color: var(--fg-muted); font-size: 0.875rem; margin: 0 0 24px; }
+  .eyebrow {
+    font-size: 0.75rem; font-weight: 700; text-transform: uppercase;
+    letter-spacing: 0.05em; color: var(--fg-muted); margin: 0 0 16px;
+  }
+  .card {
+    background: var(--bg-card); border: 1px solid var(--border);
+    border-radius: 12px; padding: 24px; margin-bottom: 16px;
+  }
+  .pedido { font-size: 0.9375rem; color: var(--fg-muted); margin-bottom: 16px; }
+  .pedido strong { color: var(--fg); }
+  .evidencia { font-size: 0.8125rem; color: var(--fg-muted); margin: 8px 0 0; }
+  .plano-caminho { font-size: 0.8125rem; color: var(--fg-muted); margin: 0 0 16px; word-break: break-all; }
+
+  .gauge { display:flex; align-items:center; gap:12px; margin-bottom: 8px; }
+  .gauge-rotulo { flex: 0 0 140px; font-size: 0.8125rem; color: var(--fg-muted); }
+  .gauge-trilho { flex: 1; height: 10px; background: var(--border); border-radius: 6px; overflow: hidden; }
+  .gauge-fill { height: 100%; border-radius: 6px; }
+  .gauge-fill-neutra {
+    background-image: repeating-linear-gradient(45deg, currentColor 0 6px, transparent 6px 12px);
+  }
+  .gauge-good { background: var(--good); color: var(--good); }
+  .gauge-warn { background: var(--warn); color: var(--warn); }
+  .gauge-bad { background: var(--bad); color: var(--bad); }
+  .gauge-neutra { background: var(--neutra); color: var(--neutra); }
+  .gauge-valor { flex: 0 0 auto; font-weight: 700; font-size: 0.9375rem; min-width: 64px; text-align: right; }
+  .gauge-texto-good { color: var(--good); }
+  .gauge-texto-warn { color: var(--warn); }
+  .gauge-texto-bad { color: var(--bad); }
+  .gauge-texto-neutra { color: var(--neutra); }
+  .comparativo-notas { margin: 8px 0 4px; }
+
+  .badge {
+    display: inline-block; padding: 2px 10px; border-radius: 999px;
+    font-size: 0.8125rem; font-weight: 600; white-space: nowrap;
+  }
+  .badge-good { background: var(--good-bg); color: var(--good); }
+  .badge-warn { background: var(--warn-bg); color: var(--warn); }
+  .badge-bad { background: var(--bad-bg); color: var(--bad); }
+  .badge-neutra { background: var(--neutra-bg); color: var(--neutra); }
+
+  .dist-bar { display:flex; height: 10px; border-radius: 6px; overflow: hidden; margin-bottom: 8px; background: var(--border); }
+  .dist-seg { height: 100%; }
+  .dist-feito { background: var(--good); }
+  .dist-parcial { background: var(--warn); }
+  .dist-nao-feito { background: var(--bad); }
+  .dist-legenda { display:flex; flex-wrap: wrap; gap: 16px; margin-bottom: 20px; }
+  .dist-legenda-item { font-size: 0.8125rem; color: var(--fg-muted); display:flex; align-items:center; gap:6px; }
+  .dist-dot { width:8px; height:8px; border-radius:50%; display:inline-block; }
+  .dist-dot.dist-feito { background: var(--good); }
+  .dist-dot.dist-parcial { background: var(--warn); }
+  .dist-dot.dist-nao-feito { background: var(--bad); }
+
+  .tabela-scroll { overflow-x: auto; }
+  table { width: 100%; border-collapse: collapse; font-size: 0.875rem; }
+  th { text-align: left; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.04em;
+       color: var(--fg-muted); font-weight: 600; padding: 8px 12px; border-bottom: 1px solid var(--border); }
+  td { padding: 10px 12px; border-bottom: 1px solid var(--border); vertical-align: top; }
+  tr:last-child td { border-bottom: none; }
+  .col-item { white-space: nowrap; font-variant-numeric: tabular-nums; color: var(--fg-muted); }
+
+  h2.titulo-secao { font-size: 1rem; font-weight: 700; margin: 0 0 12px; }
+  ul { margin: 0; padding-left: 20px; }
+  li { margin-bottom: 6px; }
+  .status-rodape { font-size: 0.8125rem; color: var(--fg-muted); }
+</style>
+</head>
+<body>
+<div class="pagina">
+  <h1>Relatorio de Analise Profunda</h1>
+  <p class="subtitulo">11-09-2026_melhoria-config-arquivos-tokens</p>
+
+  <section class="card">
+    <p class="pedido"><strong>Pedido original:</strong> engenharia agentica aplicada - configuracoes, arquivos, economia de tokens etc</p>
+  </section>
+
+  <section class="card">
+  <h2 class="eyebrow">Nota Atual</h2>
+  <div class="gauge">
+  <div class="gauge-rotulo">Nota Atual (0-10)</div>
+  <div class="gauge-trilho" role="img" aria-label="Nota Atual (0-10): 7/10">
+    <div class="gauge-fill gauge-good" style="width:70%;"></div>
+  </div>
+  <div class="gauge-valor gauge-texto-good">7/10</div>
+</div>
+  <p class="evidencia"><strong>Evidencia:</strong> 957/957 testes passando. token_budgets.json e mapa secoes implementados (itens 6-7). Falso negativo no status (ecossistema.py procura skills em skills/ em vez de componentes/compartilhado/skills/). AGENTS.md=253L/25.5KB e MEMORY.md=126L/13.2KB carregados em cada sessao. CLAUDE.md contém só ponteiro code-review-graph (1.8KB). 2189KB de SKILL.md duplicados em ~7 harnesses por skill. MCP stack: playwright+code-review-graph+context7+github+cloudflare. PLANO-EXECUCAO-ESTRUTURADO.json vazio (campos em branco). Plano tokenomics 02: Nota 10 no 00-PROCESSO mas JSON melhoria anterior dizia 7 com itens 6-7 nao-feito - divergencia resolvida: itens implementados depois do JSON.</p>
+</section>
+  
+
+  <section class="card">
+    <h2 class="titulo-secao">Resumo</h2>
+    <p>O ecossistema tem maturidade real em economia de tokens (957 testes, token_budgets.json, mapa de secoes, middleware de compressao), mas carrega dois problemas estruturais: (1) ecossistema.py status reporta 9 skills como AUSENTE por apontar para caminho obsoleto skills/ em vez de componentes/compartilhado/skills/ — falso negativo que erode a confianca no comando de saude; (2) AGENTS.md (25.5KB) e MEMORY.md (13.2KB) sao carregados integrais em toda sessao de qualquer harness, inflando o contexto de entrada antes de qualquer prompt do usuario.</p>
+  </section>
+
+  <section class="card">
+    <h2 class="titulo-secao">Achados</h2>
+    <ul><li>token_budgets.json criado com limites por fase; mapa de secoes em 07_analisador.py reduz handoff 6-&gt;7 em &gt;=50%; middleware compressao sandeco operacional</li></ul>
+  </section>
+
+  <section class="card">
+    <h2 class="titulo-secao">Riscos / Limitacoes</h2>
+    <ul><li>AGENTS.md + MEMORY.md gordo = ~2500-3000 tokens de overhead de contexto em todo novo turno de qualquer harness, antes de qualquer pergunta</li></ul>
+  </section>
+
+  <section class="card">
+    <h2 class="titulo-secao">Recomendacao</h2>
+    <p>Corrigir path no ecossistema.py (trivial, 1 linha) e avaliar dividir AGENTS.md em secoes carregaveis sob demanda vs nucleo obrigatorio</p>
+  </section>
+
+  <p class="status-rodape"><strong>Status:</strong> RASCUNHO - aguardando decisao humana sobre proximo passo (ex: iniciar /plan, ou atualizar a nota do plano existente)</p>
+</div>
+</body>
+</html>

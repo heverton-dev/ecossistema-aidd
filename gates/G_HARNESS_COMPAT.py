@@ -106,8 +106,17 @@ def checar():
             print(f"[OK] {ponteiro} referencia {fonte} corretamente.")
 
     print("\n--- Gates documentados em AGENTS.md vs gates/ em disco ---")
+    # AGENTS.md pode delegar o detalhe para documentos de referencia (ex.:
+    # docs/protocolos/AGENTS-REFERENCIA-COMPLETA.md). O contrato e "todo gate
+    # esta documentado num lugar canonico alcancavel a partir do AGENTS.md" —
+    # entao o texto verificado e o do AGENTS.md MAIS o dos .md que ele aponta.
     agents_md = _ler("AGENTS.md") or ""
-    documentados = set(re.findall(r"(?<!/)gates/(G_[A-Z_]+\.py)", agents_md))
+    texto_documentacao = agents_md
+    for referenciado in sorted(set(re.findall(r"`(docs/[\w./-]+\.md)`", agents_md))):
+        conteudo_referenciado = _ler(referenciado)
+        if conteudo_referenciado:
+            texto_documentacao += "\n" + conteudo_referenciado
+    documentados = set(re.findall(r"(?<!/)gates/(G_[A-Z_]+\.py)", texto_documentacao))
     em_disco = {
         f for f in os.listdir(os.path.join(ROOT_DIR, "gates"))
         if f.startswith("G_") and f.endswith(".py")
@@ -115,11 +124,11 @@ def checar():
     faltando_no_agents = em_disco - documentados
     faltando_em_disco = documentados - em_disco
     if faltando_no_agents:
-        erros.append(f"Gate(s) em disco mas não documentado(s) em AGENTS.md: {', '.join(sorted(faltando_no_agents))}")
+        erros.append(f"Gate(s) em disco mas não documentado(s) em AGENTS.md nem nos documentos de referência apontados por ele: {', '.join(sorted(faltando_no_agents))}")
     if faltando_em_disco:
         erros.append(f"Gate(s) documentado(s) em AGENTS.md mas ausente(s) em disco: {', '.join(sorted(faltando_em_disco))}")
     if not faltando_no_agents and not faltando_em_disco:
-        print(f"[OK] {len(em_disco)} gate(s) em disco, todos documentados em AGENTS.md.")
+        print(f"[OK] {len(em_disco)} gate(s) em disco, todos documentados em AGENTS.md (ou nos documentos de referência apontados por ele).")
 
     print("\n" + "=" * 70)
     if erros:

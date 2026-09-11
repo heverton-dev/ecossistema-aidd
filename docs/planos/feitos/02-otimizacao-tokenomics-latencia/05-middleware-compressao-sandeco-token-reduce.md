@@ -1,7 +1,8 @@
 # Item 5 — middleware-compressao-sandeco-token-reduce
 
 > **Escopo:** Integrar a skill sandeco-token-reduce como middleware opcional de pipeline para compressao de handoffs de prosa longa (Fase 1->2 e documentacao), com preflight de verificacao e fallback deterministico.
-> **Status:** [EM EXECUCAO]
+> **Status:** [CONCLUIDO]
+> **Auditoria por reproducao real (11-09-2026):** `python -m pytest tests/test_compressor_middleware.py -q` executado em `tools/aidd-generator/`, exit code 0. Prova: tests/test_compressor_middleware.py + tests/test_preflight_llm.py
 
 ---
 

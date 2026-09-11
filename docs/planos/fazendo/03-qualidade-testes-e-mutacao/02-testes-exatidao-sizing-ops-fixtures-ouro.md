@@ -1,7 +1,8 @@
 # Item — testes-exatidao-sizing-ops-fixtures-ouro
 
 > **Escopo:** Substituir asserções de piso (>= 2) no dimensionamento de infraestrutura do aidd-ops por fixtures de ouro com soma aritmética exata e arredondamento por nicho.
-> **Status:** [RASCUNHO — Aguardando Aprovação Humana]
+> **Status:** [CONCLUIDO — verificado por reproducao real]
+> **Auditoria por reproducao real (11-09-2026):** FEITO. tools/aidd-ops/tests/test_pipeline_ops.py::test_sizing_valores_exatos_por_nicho usa fixture de ouro por nicho com igualdade estrita (==), nao piso (>=).
 
 ---
 

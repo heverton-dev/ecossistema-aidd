@@ -1,9 +1,18 @@
 ---
 name: orca-plan-orchestrator
-description: Orquestrador multi-agente determinístico ORCA ADE para execução paralela de planos fatiados com git worktrees efêmeras, hooks reativos e gates locais.
+description: Motor de execucao da via Git Worktree nativo (git worktree puro + gates locais + circuit breaker). Acionada pela skill orchestrate, nunca direto por slash command.
 ---
 
-# ORCA ADE — Plan Orchestrator
+# ORCA ADE — Plan Orchestrator (motor da via Git Worktree nativo)
+
+> **Esta skill NAO tem slash command proprio.** O comando `/orchestrate` tem
+> um dono unico: a skill `orchestrate` (roteador de ambiente). Ela aciona
+> esta skill **somente** quando o usuario escolhe o ambiente **Git Worktree
+> nativo**. Nos ambientes ORCA e Subagentes esta skill nao participa.
+>
+> Ter duas skills respondendo ao mesmo `/orchestrate`, com regras opostas
+> (uma mandando criar mesa filha da mesa ativa, outra proibindo disparo de
+> agente), foi a causa direta das arvores de mesa dentro de mesa no app ORCA.
 
 Esta skill orquestra a execução automatizada de planos fatiados (`00-PROCESSO-E-DECISOES.md` + `NN-*.md`) em qualquer projeto ou repositório.
 
@@ -16,9 +25,9 @@ Esta skill orquestra a execução automatizada de planos fatiados (`00-PROCESSO-
 - **Circuit Breaker Anti-Loop:** proteção ativa contra travamento ou excesso de tempo/inatividade.
 - **CLI e Plano de Voo Interativo:** compilação de comandos de harness, detecção de binários instalados e seleção interativa.
 
-## Protocolo Interativo do Agente (/orchestrate)
+## Protocolo desta Via (acionado pela skill `orchestrate`)
 
-Quando o comando `/orchestrate [plano]` for invocado:
+Quando a skill `orchestrate` rotear um plano para o ambiente Git Worktree nativo:
 
 1. **Inspeção do Plano e Estado Existente:**
    - Valide se o caminho possui `00-PROCESSO-E-DECISOES.md` e arquivos `NN-*.md`.

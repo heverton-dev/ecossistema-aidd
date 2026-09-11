@@ -1,7 +1,8 @@
 # Item 1 — prompt-por-composicao-e-fixloop-diff-fase-08
 
 > **Escopo:** Substituir o prompt monolitico de geracao da Fase 8 por composicao modular condicional por features do script, e refatorar o fix-loop de autocorrecao para enviar diff pontual e traceback isolado em vez de arquivos inteiros.
-> **Status:** [EM EXECUCAO]
+> **Status:** [CONCLUIDO]
+> **Auditoria por reproducao real (11-09-2026):** `python -m pytest tests/test_phase_08_tokenomics.py -q` executado em `tools/aidd-generator/`, exit code 0. Prova: tests/test_phase_08_tokenomics.py (fix-loop 2a tentativa < 50% dos tokens da 1a, tiktoken real)
 
 ---
 

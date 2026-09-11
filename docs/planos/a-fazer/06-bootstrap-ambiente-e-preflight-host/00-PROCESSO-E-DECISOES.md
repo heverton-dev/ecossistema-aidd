@@ -46,7 +46,7 @@ Diagnostico rapido → Definicao de Pronto checavel → Prompt de Execucao autoc
 |---|---|---|---|
 | 1 | self-healing-imports-python-ecossistema | ⏳ Rascunho gerado, aguardando aprovacao | `01-self-healing-imports-python-ecossistema.md` |
 | 2 | preflight-host-diagnostico-binarios-sistema | ⏳ Rascunho gerado, aguardando aprovacao | `02-preflight-host-diagnostico-binarios-sistema.md` |
-| 3 | tratamento-falhas-npx-bootstrap-skills | ⏳ Rascunho gerado, aguardando aprovacao | `03-tratamento-falhas-npx-bootstrap-skills.md` |
+| 3 | tratamento-falhas-npx-bootstrap-skills | ⏳ Rascunho — parte ja implementada (ver auditoria) | `03-tratamento-falhas-npx-bootstrap-skills.md` |
 | 4 | bootstrapper-assistido-multi-os-fix | ⏳ Rascunho gerado, aguardando aprovacao | `04-bootstrapper-assistido-multi-os-fix.md` |
 | 5 | campo-preflight-manifesto-dependencias-externas | ⏳ Rascunho gerado, aguardando aprovacao | `05-campo-preflight-manifesto-dependencias-externas.md` |
 | 6 | unificar-detectores-binarios-nos-gates | ⏳ Rascunho gerado, aguardando aprovacao | `06-unificar-detectores-binarios-nos-gates.md` |

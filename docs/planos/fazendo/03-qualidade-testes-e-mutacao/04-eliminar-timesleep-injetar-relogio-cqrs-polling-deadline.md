@@ -1,7 +1,8 @@
 # Item — eliminar-timesleep-injetar-relogio-cqrs-polling-deadline
 
 > **Escopo:** Eliminar 20+ ocorrências de time.sleep em testes unitários e de integração, substituindo por injeção de relógio virtual em CQRS e polling determinístico com deadline.
-> **Status:** [RASCUNHO — Aguardando Aprovação Humana]
+> **Status:** [PARCIAL — parte ja implementada, ver auditoria abaixo]
+> **Auditoria por reproducao real (11-09-2026):** PARCIAL. Criterio 1 (now_fn em ReadModelCache) FEITO em componentes/compartilhado/src-core/cqrs.py. Criterio 2 (helper de polling com deadline) FEITO mas duplicado: _aguardar_condicao foi copiado dentro de cada arquivo de teste, em vez de um helper compartilhado. Criterio 3 (remover time.sleep) NAO FEITO: grep -rn time.sleep tools/*/tests/unit/ ainda acha esperas fixas, incluindo dois sleep(1) em test_database_adapter.py e test_events_driver.py.
 
 ---
 

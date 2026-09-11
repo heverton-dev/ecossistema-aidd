@@ -1,0 +1,31 @@
+{
+  "pedido_original": "Reanalise do plano 03-qualidade-testes-e-mutacao — investigar codigo real de todos os 10 itens e comparar com o que o plano previa",
+  "data": "11-09-2026",
+  "nota_atual": "5",
+  "evidencia": "5 de 10 itens feitos (01,02,03,06,08), 2 parciais (04 time.sleep residual, 07 busy_timeout ausente), 3 nao-feitos (05 porta fixa 3000, 09 mutmut ausente, 10 warnings ignorados)",
+  "plano_existente": null,
+  "item_relacionado": null,
+  "nota_anterior": null,
+  "evidencia_anterior": null,
+  "itens_avaliados": [],
+  "resumo": "Plano com 10 itens para blindagem de testes e mutacao. 5 itens totalmente implementados (SHA-256, fixtures ouro, outbox resiliencia, G_TESTES_REAIS v2 JUnitXML, contrato sizing-helm). 2 parciais: clock injection feito mas time.sleep residual em testes unitarios, RLS+WAL journal_mode feito mas busy_timeout nao testado. 3 nao-feitos: portas efemeras (porta 3000 hardcodada), mutmut (zero configuracao), warnings pytest (DeprecationWarning ainda ignorado globalmente).",
+  "achados": [
+    "Item 01 FEITO: test_aidd_core_injector.py tem 3 testes de conteudo SHA-256 (hash local, adulteracao 1 byte, sha1->sha256 mutant)",
+    "Item 02 FEITO: test_pipeline_ops.py tem FIXTURES_OURO_SIZING com valores exatos == por nicho, substituindo os antigos >=",
+    "Item 03 FEITO: test_outbox_worker.py tem crash pos-emit idempotente e dead-letter apos max_tentativas",
+    "Item 04 PARCIAL: RelogioVirtual + now_fn implementados em CQRS, mas time.sleep persiste em 12+ arquivos de teste (events_driver, compose_suite, modulo1, database_adapter, jobs_queue)",
+    "Item 05 NAO FEITO: porta 3000 hardcoded em test_add_module_server_wiring.py:100, test_compose_suite.py:159, test_modulo1.py:183 — zero porta efemera",
+    "Item 06 FEITO: G_TESTES_REAIS.py v2 usa --junitxml, parse XML, allowlist de skipped, budget enforcement",
+    "Item 07 PARCIAL: RLS end-to-end 2 tenants (test_rls.py:445) e PRAGMA journal_mode=wal (test_database_adapter_sqlalchemy.py:50) feitos, mas busy_timeout=5000 nao testado em nenhum lugar",
+    "Item 08 FEITO: test_helm_integration.py testa sizing -> values.yaml -> helm template com resources exatos",
+    "Item 09 NAO FEITO: zero arquivos mutmut encontrados, nenhum gate G_MUTACAO.py criado",
+    "Item 10 NAO FEITO: pytest.ini raiz ainda tem filterwarnings = ignore::DeprecationWarning"
+  ],
+  "riscos": [
+    "Porta fixa 3000 causa colisao com servicos locais e impede execucao paralela de testes",
+    "Ausencia de mutmut permite testes fracos sobreviverem silenciosamente",
+    "Ignorar DeprecationWarning mascara quebras iminentes de API de terceiros"
+  ],
+  "recomendacao": "Iniciar /plan para executar os 3 itens nao-feitos (05, 09, 10) e completar os 2 parciais (04, 07), totalizando 5 itens de implementacao",
+  "status": "RASCUNHO - aguardando decisao humana sobre proximo passo (ex: iniciar /plan, ou atualizar a nota do plano existente)"
+}

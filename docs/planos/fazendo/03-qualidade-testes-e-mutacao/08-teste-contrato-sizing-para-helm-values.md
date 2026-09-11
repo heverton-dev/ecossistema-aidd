@@ -1,7 +1,8 @@
 # Item — teste-contrato-sizing-para-helm-values
 
 > **Escopo:** Criar teste de contrato automatizado para o elo comprovado ops -> master/enterprise, verificando que o sizing de PLANO-INFRAESTRUTURA.json é refletido com exatidão no values.yaml do Helm.
-> **Status:** [RASCUNHO — Aguardando Aprovação Humana]
+> **Status:** [CONCLUIDO — verificado por reproducao real]
+> **Auditoria por reproducao real (11-09-2026):** FEITO. pytest tests/test_helm_integration.py -q em tools/aidd-ops/, 4 testes, exit 0. Os asserts comparam resources.requests/limits do values.yaml com o sizing por igualdade estrita.
 
 ---
 

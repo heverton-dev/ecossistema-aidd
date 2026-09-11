@@ -7,6 +7,22 @@ description: Roteador de ambiente e Plano de Voo para execução de planos ORCA 
 
 Contrato executável universal do slash command `/orchestrate [plano]`.
 
+## Posicao no Fluxo (leia antes de agir)
+
+O ecossistema tem **um unico fluxo de trabalho de 3 etapas**, e cada etapa
+termina com uma **parada obrigatoria** onde quem decide e o usuario:
+
+| Etapa | Comando | Entra | Sai | Parada obrigatoria no fim |
+|---|---|---|---|---|
+| 1 | `/melhoria <pedido em linguagem natural>` | pedido do usuario, ou um plano existente pra reanalisar | relatorio em `docs/melhorias/` com Nota Atual e evidencia | "quer que eu gere o plano a partir disto?" |
+| 2 | `/plan <nome>` | o relatorio da etapa 1 (ou o pedido direto) | pasta em `docs/planos/<nome>/` com todos os itens em rascunho | "aprova este plano?" |
+| 3 | `/orchestrate <plano>` | plano aprovado | execucao real das frentes | escolha de ambiente + aprovacao do Plano de Voo |
+
+**Nenhuma etapa dispara a seguinte sozinha** (Regra de Ouro #7 do `AGENTS.md`).
+Cada comando tem **um dono unico**: `melhoria`, `plan` e `orchestrate`. As
+skills-motor (`planos-auditoria-runner`, `orca-plan-orchestrator`) nao tem
+slash command proprio e sao acionadas por elas.
+
 ## Regra Fixa: Cada Ambiente Tem Seu Proprio Formato de Plano de Voo
 
 Nunca existiu (e nunca deve existir) um unico formato de `.orca-flight-plan.json`
@@ -29,10 +45,13 @@ Pergunte explicitamente ao usuario, nunca assuma:
 
 - **1) ORCA (aplicativo real, via orca-cli)** — worktree e terminal de verdade
   dentro do app ORCA instalado. Use quando o app esta instalado e voce quer
-  acompanhar cada frente pela interface do ORCA. A mesa criada e **sempre
-  filha** da mesa ativa (`--parent-worktree active` por padrao) — **nunca
-  solta** (`--no-parent` nao e usado por este fluxo, salvo pedido explicito
-  do usuario justificando uma tarefa 100% desacoplada).
+  acompanhar cada frente pela interface do ORCA. Cada frente nasce em uma mesa
+  **independente (`--no-parent`, sem `--base-branch`)** — que e o padrao do
+  manual oficial do `orca-cli` pra trabalho paralelo. **So crie mesa filha
+  (`--parent-worktree`) quando o usuario pedir trabalho empilhado explicito**
+  ("parte do branch atual", "em cima da frente anterior"). Encadear mesa filha
+  por padrao foi o que gerou arvore de mesa dentro de mesa, cada nivel abrindo
+  outro harness.
 - **2) Subagentes** — Agent tool desta propria sessao, sem worktree, sem
   terminal separado. Contexto compartilhado, **sem isolamento de arquivo**.
   Avise o usuario desse risco se o plano tiver frentes que tocam os mesmos
@@ -66,17 +85,68 @@ python ecossistema.py plan iniciar-execucao <caminho-do-plano>
 
 - **Subagentes:** rode `plan iniciar-execucao` (acima), depois releia `.orca-flight-plan.json` (possivelmente editado pelo usuário) e, para CADA frente em ordem, chame a tool Agent com `subagent_type`/`model`/`prompt` exatamente como gravado no JSON. Nunca invente aprovação intermediária — se uma frente falhar ou o subagente reportar bloqueio, pare e informe o usuário antes de seguir pra próxima frente. Não há isolamento de arquivo neste modo.
 
-- **ORCA (aplicativo real):** rode `plan iniciar-execucao` (acima). Este CLI nunca executa nada aqui — quem dirige o app ORCA de verdade é o assistente da sessão, via `orca-cli` (skill global, fora deste repo). Releia `.orca-flight-plan.json` e, para CADA frente em ordem:
-  1. **Garanta o repositorio registrado** no ORCA (liste os repositorios existentes; registre este repositorio apenas se ainda não estiver lá).
-  2. **Crie a mesa (worktree) da frente** usando o `branch` e o `base_branch` do JSON, **sempre com `--parent-worktree` igual ao `parent_worktree` do plano** (nunca `--no-parent` — regra fixa, mesa sempre filha, nunca solta).
-  3. **Ligue o terminal da mesa** usando o `launch_command` do JSON **exatamente como está — nunca acrescente o prompt aqui**. Trate as pegadinhas de primeira execução de cada harness (ex.: prompt de confiança de pasta, diálogo de bypass de permissões) exatamente como documentado no manual de referência do `orca-cli`.
-  4. **Só depois de a IA estar rodando na mesa**, envie o `prompt` do JSON como mensagem separada pro terminal daquela mesa. Se não houver atividade após o envio, mande um envio vazio de reforço (pegadinha documentada de envio incompleto).
-  5. **Monitore periodicamente** (não só ao final) o painel de todas as mesas, pra detectar cedo qualquer IA travada ou esquecida.
-  6. **Nunca invente aprovação intermediária** — se uma frente falhar ou travar, pare e informe o usuário antes de seguir pra próxima.
-  7. **Auditoria real antes de integrar**: rode `python ecossistema.py audit` (ou `pre-commit run --all-files`) dentro da mesa — os gates são herdados do repo principal —, além de testes de verdade, `git status`/`git diff`, leitura dos arquivos modificados e execução real do app. Nunca confie só na palavra da IA da mesa.
-  8. **Integração**: traga o commit aprovado daquela mesa para o branch principal (ex.: `cherry-pick` do commit), resolvendo qualquer conflito real preservando as mudanças de ambas as frentes quando fizer sentido.
-  9. **Limpeza**: remova a mesa temporária depois de integrada.
-  Para a sintaxe exata de cada comando (`repo add/list`, `worktree create/set/rm`, `terminal create/send/wait`, seletores `active`/`branch:`/`id:`), **sempre consulte a skill/documentação oficial do `orca-cli`** — este protocolo descreve a sequência e as regras fixas (mesa sempre filha, prompt separado do lançamento, auditoria real antes de integrar), não duplica flags que podem mudar de versão pra versão do app real.
+- **ORCA (aplicativo real):** rode `plan iniciar-execucao` (acima). Este CLI nunca executa nada aqui — quem dirige o app ORCA de verdade e o assistente da sessao, via `orca-cli`.
+
+  **Passo 0 obrigatorio — carregue o manual da versao instalada:**
+  ```bash
+  orca skills get orca-cli
+  ```
+  Esse comando imprime o guia oficial casado com o binario que vai rodar os
+  comandos. Flags mudam de versao pra versao — **nunca chute subcomando ou flag
+  de memoria**. As regras abaixo descrevem a sequencia e as travas fixas; a
+  sintaxe exata vem sempre do guia impresso agora.
+
+  Para CADA frente do `.orca-flight-plan.json`, em ordem:
+
+  1. **Garanta o repositorio registrado** no ORCA (liste primeiro; registre so
+     se faltar).
+  2. **Crie a mesa da frente em um unico comando**, ja com o agente e o prompt:
+     `worktree create --name <frente> --no-parent --agent <harness> --prompt "<texto da frente>" --json`.
+     Essa e a forma preferida do manual: cria a mesa, sobe o agente no primeiro
+     terminal e entrega o prompt sem passo manual. Use `--parent-worktree` so
+     se o usuario pediu trabalho empilhado.
+  3. **⛔ Nunca lance o harness com `--resume <id-de-sessao>`.** Cada frente e
+     uma sessao nova. Religar uma sessao antiga so funciona enquanto o
+     transcript existir; quando ele nao existe, o harness morre na hora com
+     `No conversation found with session ID` e a mesa fica sendo um terminal
+     vazio — que parece "aberta e trabalhando" no painel, mas nao tem IA nenhuma
+     dentro. Foi exatamente assim que 4 de 5 mesas ficaram penduradas sem fazer
+     nada.
+  4. **Se (e so se) precisar de argv custom** (modelo/effort especifico que o
+     `--agent` nao cobre), va pelo caminho de dois passos — e ai a trava e
+     obrigatoria:
+     - `terminal create --worktree id:<repoId>::<caminho> --command '<harness ...>' --json`
+     - `terminal wait --terminal <handle> --for tui-idle --timeout-ms 60000 --json`
+     - **So envie o prompt se o resultado do wait trouxer `satisfied: true`.**
+       Um wait que estourou o tempo tambem imprime resultado normal — leia o
+       campo, nao o fato de ter impresso algo. Se vier `false`, repita o wait
+       uma vez com timeout maior; se continuar `false`, **reporte a frente como
+       nao iniciada e nao envie nada**. Prompt digitado numa TUI que ainda esta
+       subindo se perde, e a frente morre em silencio.
+     - `terminal send --terminal <handle> --text "<texto da frente>" --enter --wait-submit 10 --json`
+  5. **⛔ Nunca reenvie no silencio.** `accepted: true` prova que a entrada foi
+     aceita, nao que o turno comecou — quem prova isso e o estagio
+     `turn_started` do recibo (`--wait-submit`). Se houve falha de transporte
+     ambigua, repita o MESMO comando com o `--retry-request <id>` que o recibo
+     devolveu. O antigo "mande um envio vazio de reforco" esta proibido: ele
+     duplica prompt e e uma das fontes do efeito de loop.
+  6. **Monitore periodicamente** (nao so no fim): `terminal read` com cursor pra
+     ver o que cada mesa esta fazendo, e o painel de mesas pra achar cedo a IA
+     travada ou esquecida.
+  7. **Nunca invente aprovacao intermediaria** — se uma frente falhar ou travar,
+     pare e informe o usuario antes de seguir pra proxima.
+  8. **Auditoria real antes de integrar**: rode `python ecossistema.py audit`
+     (ou `pre-commit run --all-files`) dentro da mesa — os gates sao herdados do
+     repo principal —, alem de testes de verdade, `git status`/`git diff`,
+     leitura dos arquivos modificados e execucao real do app. Nunca confie so na
+     palavra da IA da mesa.
+  9. **Integracao**: traga o commit aprovado daquela mesa pro branch principal
+     (ex.: `cherry-pick`), resolvendo conflito real preservando as mudancas de
+     ambas as frentes quando fizer sentido.
+  10. **Limpeza (sempre, mesmo se a frente falhou)**: feche os terminais da mesa
+      e remova a mesa. Mesa orfa com terminal vivo e o que enche a tela de
+      arvore inutil e consome token de fundo. Se a frente vai continuar depois,
+      use Sleep do workspace em vez de fechar.
 
 ## Quando NÃO usar esta skill
 

@@ -43,9 +43,9 @@ Diagnostico rapido → Definicao de Pronto checavel → Prompt de Execucao autoc
 
 | # | Item | Status | Documento |
 |---|---|---|---|
-| 1 | outbox-claim-atomico-retry-e-dead-letter | ⏳ Rascunho gerado, aguardando aprovacao | `01-outbox-claim-atomico-retry-e-dead-letter.md` |
+| 1 | outbox-claim-atomico-retry-e-dead-letter | ⏳ Rascunho — parte ja implementada (ver auditoria) | `01-outbox-claim-atomico-retry-e-dead-letter.md` |
 | 2 | escritor-atomico-compartilhado-e-migracao-fs | ⏳ Rascunho gerado, aguardando aprovacao | `02-escritor-atomico-compartilhado-e-migracao-fs.md` |
-| 3 | maquina-estados-pipeline-generator-e-resume | ⏳ Rascunho gerado, aguardando aprovacao | `03-maquina-estados-pipeline-generator-e-resume.md` |
+| 3 | maquina-estados-pipeline-generator-e-resume | ⏳ Rascunho — parte ja implementada (ver auditoria) | `03-maquina-estados-pipeline-generator-e-resume.md` |
 | 4 | retry-backoff-sqlite-busy-e-pool-explicito | ⏳ Rascunho gerado, aguardando aprovacao | `04-retry-backoff-sqlite-busy-e-pool-explicito.md` |
 | 5 | fila-unica-revalidacao-read-model-cache | ⏳ Rascunho gerado, aguardando aprovacao | `05-fila-unica-revalidacao-read-model-cache.md` |
 | 6 | registry-writers-com-lock-e-rename-atomico | ⏳ Rascunho gerado, aguardando aprovacao | `06-registry-writers-com-lock-e-rename-atomico.md` |

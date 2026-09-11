@@ -1,7 +1,8 @@
 # Item 6 — orcador-handoff-fase-06-para-07-mapa-secoes
 
 > **Escopo:** Substituir o envio integral de documentos HTML/Markdown gerados pela Fase 6 para a Fase 7 (Auto-critica) por um mapa estruturado de secoes e resumos, reduzindo a sobrecarga da fase critica.
-> **Status:** [EM EXECUCAO]
+> **Status:** [CONCLUIDO]
+> **Auditoria por reproducao real (11-09-2026):** `python -m pytest tests/test_mapa_secoes.py -q` executado em `tools/aidd-generator/`, exit code 0. Prova: tests/test_mapa_secoes.py (assert tokens_mapa <= tokens_bruto * 0.5, 5 docs >500 linhas)
 
 ---
 

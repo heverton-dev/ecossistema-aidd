@@ -2,6 +2,7 @@
 
 > **Escopo:** Criar utilitário compartilhado escritor_atomico (staging -> os.replace -> fsync) e migrar os 8 pontos críticos de gravação de filesystem para eliminar risco de arquivos truncados.
 > **Status:** [RASCUNHO — Aguardando Aprovação Humana]
+> **Auditoria por reproducao real (11-09-2026):** NAO-FEITO. componentes/compartilhado/src-core/escritor_atomico.py nao existe.
 
 ---
 

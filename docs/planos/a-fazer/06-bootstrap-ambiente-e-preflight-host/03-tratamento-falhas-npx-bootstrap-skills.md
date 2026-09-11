@@ -1,7 +1,8 @@
 # Item — tratamento-falhas-npx-bootstrap-skills
 
 > **Escopo:** Tratar FileNotFoundError em POSIX e traduzir mensagens de erro do cmd.exe no Windows durante a execução de npx em `gestor_dependencias.py`, preservando o relatório de bootstrap.
-> **Status:** [RASCUNHO — Aguardando Aprovação Humana]
+> **Status:** [PARCIAL — parte ja implementada, ver auditoria abaixo]
+> **Auditoria por reproducao real (11-09-2026):** PARCIAL. repomix_runner.py ja checa shutil.which('npx') antes do subprocess. Faltam o fallback de npx.cmd no Windows e a mensagem orientativa de erro exigida pelo criterio.
 
 ---
 

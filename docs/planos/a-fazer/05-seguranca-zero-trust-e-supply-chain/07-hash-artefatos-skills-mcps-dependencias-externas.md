@@ -2,6 +2,7 @@
 
 > **Escopo:** Adicionar verificação de hash SHA-256 para artefatos de skills e MCPs externos registrados em gates/dependencias_externas.json.
 > **Status:** [RASCUNHO — Aguardando Aprovação Humana]
+> **Auditoria por reproducao real (11-09-2026):** NAO-FEITO. dependencias_externas.json nao tem campo de sha256; dependencia verify nao confere checksum.
 
 ---
 

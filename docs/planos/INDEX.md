@@ -8,6 +8,7 @@
 |---|---|
 | Reestruturacao Ddd Clean Architecture | `feitos/01-reestruturacao-ddd-clean-architecture/` |
 | Direcionamento Estrategico Anti Nih | `feitos/02-direcionamento-estrategico-anti-nih/` |
+| Otimizacao Tokenomics Latencia | `feitos/02-otimizacao-tokenomics-latencia/` |
 | Evolucao Aidd Ops Fase Completa | `feitos/03-evolucao-aidd-ops-fase-completa/` |
 | Aidd Bridge | `feitos/aidd-bridge/` |
 | Correcao Arquitetura Limpa | `feitos/correcao-arquitetura-limpa/` |
@@ -25,8 +26,9 @@
 
 | Iniciativa | Local |
 |---|---|
-| Otimizacao Tokenomics Latencia | `fazendo/02-otimizacao-tokenomics-latencia/` |
 | Correcao Pos Auditoria Sem Maquiagem | `fazendo/01-correcao-pos-auditoria-sem-maquiagem/` |
+| Config Arquivos Tokens Agentes | `fazendo/03-config-arquivos-tokens-agentes/` |
+| Qualidade Testes E Mutacao | `fazendo/03-qualidade-testes-e-mutacao/` |
 | Codigo Limpo Profundo Ecossistema | `fazendo/codigo-limpo-profundo-ecossistema/` |
 | Evolucao Engenharia Software Ecossistema | `fazendo/evolucao-engenharia-software-ecossistema/` |
 
@@ -34,7 +36,6 @@
 
 | Iniciativa | Local |
 |---|---|
-| Qualidade Testes E Mutacao | `a-fazer/03-qualidade-testes-e-mutacao/` |
 | Resiliencia Concorrencia E Integridade | `a-fazer/04-resiliencia-concorrencia-e-integridade/` |
 | Seguranca Zero Trust E Supply Chain | `a-fazer/05-seguranca-zero-trust-e-supply-chain/` |
 | Bootstrap Ambiente E Preflight Host | `a-fazer/06-bootstrap-ambiente-e-preflight-host/` |

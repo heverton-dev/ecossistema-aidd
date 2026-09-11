@@ -175,8 +175,36 @@ def audit_all():
     return report
 
 
+def relatar_sem_alterar(quiet=False):
+    """Modo SOMENTE LEITURA: mede e avisa, nunca apaga, move ou arquiva nada.
+
+    E o unico modo que o pre-commit pode chamar. A faxina de verdade
+    (`clean`) apaga sessoes antigas e chega a arquivar bancos inteiros —
+    fazer isso automatico a cada commit ja custou historico de harness e
+    quebrou o religamento de sessao do ORCA (`--resume <id>` apontando pra
+    sessao que a faxina levou).
+    """
+    alertas = []
+    for nome, caminho, tamanho, limite in audit_all():
+        if tamanho > limite:
+            alertas.append(
+                f"{nome}: {tamanho:.1f} MB (limite {limite} MB) - "
+                f"rode 'python scripts/harness_hygiene.py clean' quando o harness estiver fechado."
+            )
+    if alertas and not quiet:
+        print("[higiene] Atencao (nada foi apagado):")
+        for a in alertas:
+            print(f"[higiene]   - {a}")
+    elif alertas:
+        for a in alertas:
+            print(f"[higiene] {a}")
+    return alertas
+
+
 def run_hygiene(quiet=False):
-    """Executa manutenção em todos os harnesses que excederem limites."""
+    """DESTRUTIVO e MANUAL: apaga sessoes antigas, limpa caches e pode arquivar
+    bancos inteiros. Nunca deve ser chamado por hook automatico — so por
+    `python scripts/harness_hygiene.py clean`, com o harness fechado."""
     home = os.path.expanduser("~")
     results = []
 
@@ -214,9 +242,14 @@ if __name__ == "__main__":
         for name, path, size, limit in audit_all():
             status = "CRITICO" if size > limit * 2 else ("ALTO" if size > limit else "NORMAL")
             print(f"{name:<20} {size:>8.2f} MB   {limit:>8} MB   {status}")
+    elif action in ("check", "check-silent"):
+        # Somente leitura. Nunca apaga nada. Exit 0 sempre: e aviso, nao gate.
+        relatar_sem_alterar(quiet=(action == "check-silent"))
     elif action == "clean":
         run_hygiene(quiet=False)
-    elif action == "check-silent":
-        run_hygiene(quiet=True)
     else:
-        print("Uso: python harness_hygiene.py [status|clean|check-silent]")
+        print("Uso: python harness_hygiene.py [status|check|check-silent|clean]")
+        print("  status       - tabela de tamanhos (nao altera nada)")
+        print("  check        - avisa o que passou do limite (nao altera nada)")
+        print("  check-silent - igual ao check, so imprime se houver alerta")
+        print("  clean        - DESTRUTIVO: faxina de verdade, manual, harness fechado")

@@ -2,6 +2,7 @@
 
 > **Escopo:** Migrar dependências Python para versões exatas fixadas com hashes criptográficos (lockfile via uv/pip-tools) e impor instalação segura com --require-hashes no CI.
 > **Status:** [RASCUNHO — Aguardando Aprovação Humana]
+> **Auditoria por reproducao real (11-09-2026):** NAO-FEITO. Nao existe uv.lock nem requirements.lock; nada instala com --require-hashes.
 
 ---
 

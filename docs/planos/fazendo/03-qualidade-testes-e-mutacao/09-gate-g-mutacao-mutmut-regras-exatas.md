@@ -2,6 +2,7 @@
 
 > **Escopo:** Configurar o framework de testes de mutação mutmut nos 4 módulos de regras exatas (sizing, injector SHA-256, outbox e RLS) e criar o gate G_MUTACAO com baseline versionado.
 > **Status:** [RASCUNHO — Aguardando Aprovação Humana]
+> **Auditoria por reproducao real (11-09-2026):** NAO-FEITO. gates/G_MUTACAO.py nao existe e nao ha configuracao de mutmut no repositorio.
 
 ---
 

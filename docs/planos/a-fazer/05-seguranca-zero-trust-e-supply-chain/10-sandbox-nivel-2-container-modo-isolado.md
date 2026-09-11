@@ -2,6 +2,7 @@
 
 > **Escopo:** Adicionar suporte a Sandbox Nível 2 via container efêmero (--network none, read-only, memória restrita) para execução isolada em ambientes Linux/CI.
 > **Status:** [RASCUNHO — Aguardando Aprovação Humana]
+> **Auditoria por reproducao real (11-09-2026):** NAO-FEITO. Nao ha runner de container efemero (--network none, --cap-drop ALL, --read-only) nem flag --isolate.
 
 ---
 

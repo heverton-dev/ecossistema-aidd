@@ -1,7 +1,8 @@
 # Item — outbox-claim-atomico-retry-e-dead-letter
 
 > **Escopo:** Implementar claim atômico com exclusão mútua entre workers, contador de tentativas, transição para dead-letter queue após N falhas e deduplicação via seq monotônico no Outbox pattern.
-> **Status:** [RASCUNHO — Aguardando Aprovação Humana]
+> **Status:** [PARCIAL — parte ja implementada, ver auditoria abaixo]
+> **Auditoria por reproducao real (11-09-2026):** PARCIAL. A coluna tentativas existe em _outbox_events (com migracao idempotente) e o dead-letter funciona, provado por test_dead_letter_apos_max_tentativas. Faltam claimed_at, claimed_by e seq monotonico: grep -rn claimed_at componentes tools nao retorna nada, logo nao existe claim atomico.
 
 ---
 

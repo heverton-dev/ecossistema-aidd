@@ -1,0 +1,152 @@
+<!doctype html>
+<html lang="pt-br">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>11-09-2026_melhoria-qualidade-testes-mutacao</title>
+<style>
+  :root {
+    color-scheme: light dark;
+    --bg:#f6f7f9; --bg-card:#ffffff; --border:#e2e5ea;
+    --fg:#1b1f26; --fg-muted:#5b6472;
+    --accent:#2563eb; --accent-fg:#ffffff;
+    --good:#1a7f4e; --good-bg:#e4f6ec;
+    --warn:#9a6400; --warn-bg:#fdf1d9;
+    --bad:#b3261e; --bad-bg:#fbe7e6;
+    --neutra:#6b7280; --neutra-bg:#eceef1;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg:#0b111a; --bg-card:#131b26; --border:#232d3b;
+      --fg:#e6edf3; --fg-muted:#94a3b8;
+      --accent:#4c8dff; --accent-fg:#08111f;
+      --good:#3ddc84; --good-bg:#0f2c1d;
+      --warn:#f2b84b; --warn-bg:#2c2410;
+      --bad:#ff6b6b; --bad-bg:#2c1414;
+      --neutra:#9aa4b2; --neutra-bg:#1b232f;
+    }
+  }
+  * { box-sizing: border-box; scrollbar-width: thin; scrollbar-color: var(--accent) var(--bg); }
+  ::-webkit-scrollbar { width:4px; height:4px; }
+  ::-webkit-scrollbar-track { background: var(--bg); }
+  ::-webkit-scrollbar-thumb { background: var(--accent); border-radius:4px; }
+  body {
+    background:var(--bg); color:var(--fg);
+    font-family: -apple-system, "Segoe UI", system-ui, sans-serif;
+    line-height: 1.5; margin:0; padding: 32px 16px;
+  }
+  .pagina { max-width: 760px; margin: 0 auto; }
+  h1 { font-size: 1.375rem; font-weight: 700; margin: 0 0 4px; letter-spacing: -0.01em; }
+  .subtitulo { color: var(--fg-muted); font-size: 0.875rem; margin: 0 0 24px; }
+  .eyebrow {
+    font-size: 0.75rem; font-weight: 700; text-transform: uppercase;
+    letter-spacing: 0.05em; color: var(--fg-muted); margin: 0 0 16px;
+  }
+  .card {
+    background: var(--bg-card); border: 1px solid var(--border);
+    border-radius: 12px; padding: 24px; margin-bottom: 16px;
+  }
+  .pedido { font-size: 0.9375rem; color: var(--fg-muted); margin-bottom: 16px; }
+  .pedido strong { color: var(--fg); }
+  .evidencia { font-size: 0.8125rem; color: var(--fg-muted); margin: 8px 0 0; }
+  .plano-caminho { font-size: 0.8125rem; color: var(--fg-muted); margin: 0 0 16px; word-break: break-all; }
+
+  .gauge { display:flex; align-items:center; gap:12px; margin-bottom: 8px; }
+  .gauge-rotulo { flex: 0 0 140px; font-size: 0.8125rem; color: var(--fg-muted); }
+  .gauge-trilho { flex: 1; height: 10px; background: var(--border); border-radius: 6px; overflow: hidden; }
+  .gauge-fill { height: 100%; border-radius: 6px; }
+  .gauge-fill-neutra {
+    background-image: repeating-linear-gradient(45deg, currentColor 0 6px, transparent 6px 12px);
+  }
+  .gauge-good { background: var(--good); color: var(--good); }
+  .gauge-warn { background: var(--warn); color: var(--warn); }
+  .gauge-bad { background: var(--bad); color: var(--bad); }
+  .gauge-neutra { background: var(--neutra); color: var(--neutra); }
+  .gauge-valor { flex: 0 0 auto; font-weight: 700; font-size: 0.9375rem; min-width: 64px; text-align: right; }
+  .gauge-texto-good { color: var(--good); }
+  .gauge-texto-warn { color: var(--warn); }
+  .gauge-texto-bad { color: var(--bad); }
+  .gauge-texto-neutra { color: var(--neutra); }
+  .comparativo-notas { margin: 8px 0 4px; }
+
+  .badge {
+    display: inline-block; padding: 2px 10px; border-radius: 999px;
+    font-size: 0.8125rem; font-weight: 600; white-space: nowrap;
+  }
+  .badge-good { background: var(--good-bg); color: var(--good); }
+  .badge-warn { background: var(--warn-bg); color: var(--warn); }
+  .badge-bad { background: var(--bad-bg); color: var(--bad); }
+  .badge-neutra { background: var(--neutra-bg); color: var(--neutra); }
+
+  .dist-bar { display:flex; height: 10px; border-radius: 6px; overflow: hidden; margin-bottom: 8px; background: var(--border); }
+  .dist-seg { height: 100%; }
+  .dist-feito { background: var(--good); }
+  .dist-parcial { background: var(--warn); }
+  .dist-nao-feito { background: var(--bad); }
+  .dist-legenda { display:flex; flex-wrap: wrap; gap: 16px; margin-bottom: 20px; }
+  .dist-legenda-item { font-size: 0.8125rem; color: var(--fg-muted); display:flex; align-items:center; gap:6px; }
+  .dist-dot { width:8px; height:8px; border-radius:50%; display:inline-block; }
+  .dist-dot.dist-feito { background: var(--good); }
+  .dist-dot.dist-parcial { background: var(--warn); }
+  .dist-dot.dist-nao-feito { background: var(--bad); }
+
+  .tabela-scroll { overflow-x: auto; }
+  table { width: 100%; border-collapse: collapse; font-size: 0.875rem; }
+  th { text-align: left; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.04em;
+       color: var(--fg-muted); font-weight: 600; padding: 8px 12px; border-bottom: 1px solid var(--border); }
+  td { padding: 10px 12px; border-bottom: 1px solid var(--border); vertical-align: top; }
+  tr:last-child td { border-bottom: none; }
+  .col-item { white-space: nowrap; font-variant-numeric: tabular-nums; color: var(--fg-muted); }
+
+  h2.titulo-secao { font-size: 1rem; font-weight: 700; margin: 0 0 12px; }
+  ul { margin: 0; padding-left: 20px; }
+  li { margin-bottom: 6px; }
+  .status-rodape { font-size: 0.8125rem; color: var(--fg-muted); }
+</style>
+</head>
+<body>
+<div class="pagina">
+  <h1>Relatorio de Analise Profunda</h1>
+  <p class="subtitulo">11-09-2026_melhoria-qualidade-testes-mutacao</p>
+
+  <section class="card">
+    <p class="pedido"><strong>Pedido original:</strong> Reanalise do plano 03-qualidade-testes-e-mutacao — investigar codigo real de todos os 10 itens e comparar com o que o plano previa</p>
+  </section>
+
+  <section class="card">
+  <h2 class="eyebrow">Nota Atual</h2>
+  <div class="gauge">
+  <div class="gauge-rotulo">Nota Atual (0-10)</div>
+  <div class="gauge-trilho" role="img" aria-label="Nota Atual (0-10): 5/10">
+    <div class="gauge-fill gauge-warn" style="width:50%;"></div>
+  </div>
+  <div class="gauge-valor gauge-texto-warn">5/10</div>
+</div>
+  <p class="evidencia"><strong>Evidencia:</strong> 5 de 10 itens feitos (01,02,03,06,08), 2 parciais (04 time.sleep residual, 07 busy_timeout ausente), 3 nao-feitos (05 porta fixa 3000, 09 mutmut ausente, 10 warnings ignorados)</p>
+</section>
+  
+
+  <section class="card">
+    <h2 class="titulo-secao">Resumo</h2>
+    <p>Plano com 10 itens para blindagem de testes e mutacao. 5 itens totalmente implementados (SHA-256, fixtures ouro, outbox resiliencia, G_TESTES_REAIS v2 JUnitXML, contrato sizing-helm). 2 parciais: clock injection feito mas time.sleep residual em testes unitarios, RLS+WAL journal_mode feito mas busy_timeout nao testado. 3 nao-feitos: portas efemeras (porta 3000 hardcodada), mutmut (zero configuracao), warnings pytest (DeprecationWarning ainda ignorado globalmente).</p>
+  </section>
+
+  <section class="card">
+    <h2 class="titulo-secao">Achados</h2>
+    <ul><li>Item 01 FEITO: test_aidd_core_injector.py tem 3 testes de conteudo SHA-256 (hash local, adulteracao 1 byte, sha1-&gt;sha256 mutant)</li><li>Item 02 FEITO: test_pipeline_ops.py tem FIXTURES_OURO_SIZING com valores exatos == por nicho, substituindo os antigos &gt;=</li><li>Item 03 FEITO: test_outbox_worker.py tem crash pos-emit idempotente e dead-letter apos max_tentativas</li><li>Item 04 PARCIAL: RelogioVirtual + now_fn implementados em CQRS, mas time.sleep persiste em 12+ arquivos de teste (events_driver, compose_suite, modulo1, database_adapter, jobs_queue)</li><li>Item 05 NAO FEITO: porta 3000 hardcoded em test_add_module_server_wiring.py:100, test_compose_suite.py:159, test_modulo1.py:183 — zero porta efemera</li><li>Item 06 FEITO: G_TESTES_REAIS.py v2 usa --junitxml, parse XML, allowlist de skipped, budget enforcement</li><li>Item 07 PARCIAL: RLS end-to-end 2 tenants (test_rls.py:445) e PRAGMA journal_mode=wal (test_database_adapter_sqlalchemy.py:50) feitos, mas busy_timeout=5000 nao testado em nenhum lugar</li><li>Item 08 FEITO: test_helm_integration.py testa sizing -&gt; values.yaml -&gt; helm template com resources exatos</li><li>Item 09 NAO FEITO: zero arquivos mutmut encontrados, nenhum gate G_MUTACAO.py criado</li><li>Item 10 NAO FEITO: pytest.ini raiz ainda tem filterwarnings = ignore::DeprecationWarning</li></ul>
+  </section>
+
+  <section class="card">
+    <h2 class="titulo-secao">Riscos / Limitacoes</h2>
+    <ul><li>Porta fixa 3000 causa colisao com servicos locais e impede execucao paralela de testes</li><li>Ausencia de mutmut permite testes fracos sobreviverem silenciosamente</li><li>Ignorar DeprecationWarning mascara quebras iminentes de API de terceiros</li></ul>
+  </section>
+
+  <section class="card">
+    <h2 class="titulo-secao">Recomendacao</h2>
+    <p>Iniciar /plan para executar os 3 itens nao-feitos (05, 09, 10) e completar os 2 parciais (04, 07), totalizando 5 itens de implementacao</p>
+  </section>
+
+  <p class="status-rodape"><strong>Status:</strong> RASCUNHO - aguardando decisao humana sobre proximo passo (ex: iniciar /plan, ou atualizar a nota do plano existente)</p>
+</div>
+</body>
+</html>

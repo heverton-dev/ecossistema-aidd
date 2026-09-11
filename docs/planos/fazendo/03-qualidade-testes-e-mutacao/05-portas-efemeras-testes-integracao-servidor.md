@@ -1,7 +1,8 @@
 # Item — portas-efemeras-testes-integracao-servidor
 
 > **Escopo:** Substituir a porta fixa 3000 nos testes de integração de servidor por alocação dinâmica de porta efêmera (bind 0).
-> **Status:** [RASCUNHO — Aguardando Aprovação Humana]
+> **Status:** [CONCLUIDO — verificado por reproducao real]
+> **Auditoria por reproducao real (11-09-2026):** FEITO. _find_free_port() com bind em porta 0 nos testes de test_database_adapter.py e test_events_driver.py, com a porta obtida repassada a servidor e cliente.
 
 ---
 

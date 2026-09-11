@@ -1,7 +1,8 @@
 # Item — gate-owasp-sobre-output-fase-08
 
 > **Escopo:** Conectar o scanner de segurança estático G_CYBERSECURITY_OWASP para inspecionar o código gerado pela Fase 8 antes de permitir a execução do gate I4.
-> **Status:** [RASCUNHO — Aguardando Aprovação Humana]
+> **Status:** [PARCIAL — parte ja implementada, ver auditoria abaixo]
+> **Auditoria por reproducao real (11-09-2026):** PARCIAL. O gate tools/aidd-generator/scripts/gates/G_CYBERSECURITY_OWASP.py existe, mas nao esta plugado: grep -n G_CYBERSECURITY_OWASP scripts/phases/verificar_gates.py nao retorna nada. Ou seja, ele nao bloqueia a Fase 08.
 
 ---
 

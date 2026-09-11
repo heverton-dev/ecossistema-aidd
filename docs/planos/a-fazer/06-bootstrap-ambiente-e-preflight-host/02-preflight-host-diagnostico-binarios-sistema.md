@@ -2,6 +2,7 @@
 
 > **Escopo:** Criar o comando determinístico `python ecossistema.py preflight-host [--json] [--fix]` para diagnóstico instantâneo (< 2s) de binários do sistema (Git, Node, Docker, Hadolint, Checkov).
 > **Status:** [RASCUNHO — Aguardando Aprovação Humana]
+> **Auditoria por reproducao real (11-09-2026):** NAO-FEITO. scripts/preflight_host.py nao existe e nao ha subcomando preflight-host.
 
 ---
 

@@ -1,7 +1,8 @@
 # Item 4 — hermeticidade-verificavel-sessoes-e-rotulagem-telemetria
 
 > **Escopo:** Garantir hermeticidade real na invocacao headless de harnesses CLI e adicionar rotulagem transparente de telemetria no modo delegado (Regra #9 de honestidade de rotulo).
-> **Status:** [EM EXECUCAO]
+> **Status:** [CONCLUIDO]
+> **Auditoria por reproducao real (11-09-2026):** `python -m pytest tests/test_hermeticidade_sessoes.py -q` executado em `tools/aidd-generator/`, exit code 0. Prova: tests/test_hermeticidade_sessoes.py + scripts/gates/G_SESSAO_HERMETICA.py
 
 ---
 

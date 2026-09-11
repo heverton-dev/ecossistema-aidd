@@ -46,7 +46,7 @@ Diagnostico rapido → Definicao de Pronto checavel → Prompt de Execucao autoc
 | # | Item | Status | Documento |
 |---|---|---|---|
 | 1 | sandbox-nivel-1-subprocess-env-minimo-fase-08 | ⏳ Rascunho gerado, aguardando aprovacao | `01-sandbox-nivel-1-subprocess-env-minimo-fase-08.md` |
-| 2 | gate-owasp-sobre-output-fase-08 | ⏳ Rascunho gerado, aguardando aprovacao | `02-gate-owasp-sobre-output-fase-08.md` |
+| 2 | gate-owasp-sobre-output-fase-08 | ⏳ Rascunho — parte ja implementada (ver auditoria) | `02-gate-owasp-sobre-output-fase-08.md` |
 | 3 | corrigir-interpolacao-sql-set-tenant-pg | ⏳ Rascunho gerado, aguardando aprovacao | `03-corrigir-interpolacao-sql-set-tenant-pg.md` |
 | 4 | pin-exato-e-hashes-requirements-lockfile | ⏳ Rascunho gerado, aguardando aprovacao | `04-pin-exato-e-hashes-requirements-lockfile.md` |
 | 5 | manifest-assinado-ed25519-componentes-enterprise | ⏳ Rascunho gerado, aguardando aprovacao | `05-manifest-assinado-ed25519-componentes-enterprise.md` |

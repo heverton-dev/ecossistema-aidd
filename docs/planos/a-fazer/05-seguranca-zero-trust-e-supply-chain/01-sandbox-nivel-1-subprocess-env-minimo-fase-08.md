@@ -2,6 +2,7 @@
 
 > **Escopo:** Implementar sandbox Nível 1 com variáveis de ambiente restritas (allowlist estrita), cwd em tempdir e bloqueio de acesso a segredos do host na execução de código gerado da Fase 8.
 > **Status:** [RASCUNHO — Aguardando Aprovação Humana]
+> **Auditoria por reproducao real (11-09-2026):** NAO-FEITO. Os unicos resultados de sanitiz no generator sao de sanitizacao de string JSON (utils_delegacao.py), assunto diferente. Nao ha wrapper de env sanitizado nem gate AST de heranca de ambiente.
 
 ---
 

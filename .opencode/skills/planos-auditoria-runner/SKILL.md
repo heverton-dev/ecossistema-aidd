@@ -5,6 +5,10 @@ description: Gera a estrutura padrao e rascunhos de planos de auditoria, evoluca
 
 # Planos Auditoria Runner — Gerador Estrutural de Planos
 
+> **Esta skill NAO tem slash command proprio.** Ela e o motor da etapa 2 do
+> fluxo `/melhoria` -> `/plan` -> `/orchestrate`, e quem a aciona e a skill
+> `plan` (porta de entrada do comando `/plan`). Um comando, um dono.
+
 Esta skill formaliza e padroniza a criacao de iniciativas de plano em `docs/planos/<nome-da-iniciativa>/` seguindo a arquitetura documental canonica do monorepo ecossistema-aidd.
 
 ## Principio Fundamental e Regras Inegociaveis (Guarda de Seguranca)
@@ -39,7 +43,7 @@ iniciativa nova deveria começar.
 
 ## Protocolo Obrigatorio do Agente
 
-Quando esta skill for acionada (ou via `/plan`):
+Quando esta skill for acionada pela skill `plan` (comando `/plan`):
 
 ### Passo 1: Nao Iniciar Sozinha
 Apenas atue sob demanda expressa do usuario para iniciar ou estruturar uma nova iniciativa de plano.

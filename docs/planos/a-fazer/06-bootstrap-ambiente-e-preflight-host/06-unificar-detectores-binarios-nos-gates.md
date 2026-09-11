@@ -2,6 +2,7 @@
 
 > **Escopo:** Refatorar G_HADOLINT, G_INFRA_COMPOSE e G_ECOSSISTEMA_INTEGRIDADE para consumirem os detectores centralizados de preflight_host, eliminando código duplicado de shutil.which.
 > **Status:** [RASCUNHO — Aguardando Aprovação Humana]
+> **Auditoria por reproducao real (11-09-2026):** NAO-FEITO. gates/utils_preflight.py nao existe; cada gate segue com sua propria deteccao.
 
 ---
 

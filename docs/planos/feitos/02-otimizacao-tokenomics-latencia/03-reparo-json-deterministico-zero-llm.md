@@ -1,7 +1,8 @@
 # Item 3 — reparo-json-deterministico-zero-llm
 
 > **Escopo:** Construir uma escada de reparo JSON deterministica sem uso de LLM em utils_delegacao.py, eliminando retries caros de LLM quando respostas contem pequenas quebras de formatacao JSON.
-> **Status:** [EM EXECUCAO]
+> **Status:** [CONCLUIDO]
+> **Auditoria por reproducao real (11-09-2026):** `python -m pytest tests/test_reparo_json.py -q` executado em `tools/aidd-generator/`, exit code 0. Prova: tests/test_reparo_json.py (10 payloads malformados, assert recuperados >= 8 sem LLM)
 
 ---
 

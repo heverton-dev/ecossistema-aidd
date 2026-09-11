@@ -2,6 +2,7 @@
 
 > **Escopo:** Substituir o disparo descontrolado de threads daemon no ReadModelCache por uma fila única de revalidação com 1 worker coordenado.
 > **Status:** [RASCUNHO — Aguardando Aprovação Humana]
+> **Auditoria por reproducao real (11-09-2026):** NAO-FEITO. ReadModelCache.get_or_revalidate abre uma threading.Thread solta por chave stale. Nao ha fila com 1 worker, nem descarte de revalidacao duplicada, nem telemetria.
 
 ---
 

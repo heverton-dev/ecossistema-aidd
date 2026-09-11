@@ -1,7 +1,8 @@
 # Item — g-testes-reais-v2-junitxml-orcamento-skipped
 
 > **Escopo:** Aprimorar o gate G_TESTES_REAIS para consumir métricas estruturadas via JUnitXML em vez de regex em stdout, e impor orçamento estrito para skipped tests.
-> **Status:** [RASCUNHO — Aguardando Aprovação Humana]
+> **Status:** [CONCLUIDO — verificado por reproducao real]
+> **Auditoria por reproducao real (11-09-2026):** FEITO. gates/G_TESTES_REAIS.py ja e a v2: gera --junitxml, faz parsing estruturado do XML e trava com exit 1 em skipped fora de gates/allowlist_skipped_testes.json (arquivo ausente = orcamento zero). Execucao real: 1870 passed, 0 failed, 7 skipped, as 5 suites aprovadas.
 
 ---
 

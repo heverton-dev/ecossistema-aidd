@@ -1,4 +1,6 @@
-# Comando /melhoria
+# Comando /melhoria (etapa 1 de 3)
+
+> **Fluxo unico (3 etapas, cada uma para pra decisao do usuario):** `/melhoria` -> `/plan` -> `/orchestrate`. Nenhuma dispara a seguinte sozinha.
 
 Recebe um pedido de melhoria em linguagem natural, investiga o codigo real de forma profunda e gera um relatorio com nota (0-10) em `docs/melhorias/` — etapa anterior ao `/plan`.
 

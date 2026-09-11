@@ -2,6 +2,7 @@
 
 > **Escopo:** Implementar a funcionalidade `--fix` no preflight-host com detecção automática do gerenciador de pacotes do SO (winget/choco no Windows, brew no macOS, apt/dnf no Linux) e fallback em espaço de usuário.
 > **Status:** [RASCUNHO — Aguardando Aprovação Humana]
+> **Auditoria por reproducao real (11-09-2026):** NAO-FEITO. Nao ha deteccao de gerenciador de pacotes do host (winget/choco/brew/apt/dnf).
 
 ---
 

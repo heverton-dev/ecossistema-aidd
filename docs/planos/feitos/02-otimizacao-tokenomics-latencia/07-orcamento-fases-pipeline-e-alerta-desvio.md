@@ -1,7 +1,8 @@
 # Item 7 — orcamento-fases-pipeline-e-alerta-desvio
 
 > **Escopo:** Estabelecer tabela formal de orcamento de tokens por fase no _pipeline_state.json com alerta explicito de desvio superior a 20% e correcao da alegacao de marketing em pipeline_completo.py.
-> **Status:** [EM EXECUCAO]
+> **Status:** [CONCLUIDO]
+> **Auditoria por reproducao real (11-09-2026):** `python -m pytest tests/test_orcamento_fases.py -q` executado em `tools/aidd-generator/`, exit code 0. Prova: tests/test_orcamento_fases.py (limiar_alerta_desvio e desvio_pct por fase)
 
 ---
 

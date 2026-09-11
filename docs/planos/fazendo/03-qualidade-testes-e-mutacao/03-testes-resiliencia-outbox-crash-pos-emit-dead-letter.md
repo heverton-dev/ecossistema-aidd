@@ -1,7 +1,8 @@
 # Item — testes-resiliencia-outbox-crash-pos-emit-dead-letter
 
 > **Escopo:** Adicionar testes de resiliência ao Outbox worker cobrindo crash pós-emit (antes de marcar como processado) e listener que falha sistematicamente (dead-letter queue).
-> **Status:** [RASCUNHO — Aguardando Aprovação Humana]
+> **Status:** [CONCLUIDO — verificado por reproducao real]
+> **Auditoria por reproducao real (11-09-2026):** FEITO. pytest tests/unit/test_outbox_worker.py -q em tools/aidd-enterprise/, 8 testes, exit 0. Inclui test_crash_pos_emit_redespacha_idempotente e test_dead_letter_apos_max_tentativas.
 
 ---
 

@@ -2,6 +2,7 @@
 
 > **Escopo:** Implementar guarda de auto-recuperação (self-healing) no topo de ecossistema.py antes dos imports de click e dotenv, verificando versão mínima do Python (>=3.10) e oferecendo instalação automática de requirements.txt.
 > **Status:** [RASCUNHO — Aguardando Aprovação Humana]
+> **Auditoria por reproducao real (11-09-2026):** NAO-FEITO. ecossistema.py nao checa sys.version_info e nao protege os imports de click/dotenv com try/except.
 
 ---
 

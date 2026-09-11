@@ -45,14 +45,14 @@ Diagnostico rapido → Definicao de Pronto checavel → Prompt de Execucao autoc
 
 | # | Item | Status | Documento |
 |---|---|---|---|
-| 1 | testes-conteudo-sha256-injector-enterprise | ⏳ Rascunho gerado, aguardando aprovacao | `01-testes-conteudo-sha256-injector-enterprise.md` |
-| 2 | testes-exatidao-sizing-ops-fixtures-ouro | ⏳ Rascunho gerado, aguardando aprovacao | `02-testes-exatidao-sizing-ops-fixtures-ouro.md` |
-| 3 | testes-resiliencia-outbox-crash-pos-emit-dead-letter | ⏳ Rascunho gerado, aguardando aprovacao | `03-testes-resiliencia-outbox-crash-pos-emit-dead-letter.md` |
-| 4 | eliminar-timesleep-injetar-relogio-cqrs-polling-deadline | ⏳ Rascunho gerado, aguardando aprovacao | `04-eliminar-timesleep-injetar-relogio-cqrs-polling-deadline.md` |
-| 5 | portas-efemeras-testes-integracao-servidor | ⏳ Rascunho gerado, aguardando aprovacao | `05-portas-efemeras-testes-integracao-servidor.md` |
-| 6 | g-testes-reais-v2-junitxml-orcamento-skipped | ⏳ Rascunho gerado, aguardando aprovacao | `06-g-testes-reais-v2-junitxml-orcamento-skipped.md` |
+| 1 | testes-conteudo-sha256-injector-enterprise | ✅ Concluido | `01-testes-conteudo-sha256-injector-enterprise.md` |
+| 2 | testes-exatidao-sizing-ops-fixtures-ouro | ✅ Concluido | `02-testes-exatidao-sizing-ops-fixtures-ouro.md` |
+| 3 | testes-resiliencia-outbox-crash-pos-emit-dead-letter | ✅ Concluido | `03-testes-resiliencia-outbox-crash-pos-emit-dead-letter.md` |
+| 4 | eliminar-timesleep-injetar-relogio-cqrs-polling-deadline | ⏳ Rascunho — parte ja implementada (ver auditoria) | `04-eliminar-timesleep-injetar-relogio-cqrs-polling-deadline.md` |
+| 5 | portas-efemeras-testes-integracao-servidor | ✅ Concluido | `05-portas-efemeras-testes-integracao-servidor.md` |
+| 6 | g-testes-reais-v2-junitxml-orcamento-skipped | ✅ Concluido | `06-g-testes-reais-v2-junitxml-orcamento-skipped.md` |
 | 7 | testes-contrato-rls-e-wal-pragmas | ⏳ Rascunho gerado, aguardando aprovacao | `07-testes-contrato-rls-e-wal-pragmas.md` |
-| 8 | teste-contrato-sizing-para-helm-values | ⏳ Rascunho gerado, aguardando aprovacao | `08-teste-contrato-sizing-para-helm-values.md` |
+| 8 | teste-contrato-sizing-para-helm-values | ✅ Concluido | `08-teste-contrato-sizing-para-helm-values.md` |
 | 9 | gate-g-mutacao-mutmut-regras-exatas | ⏳ Rascunho gerado, aguardando aprovacao | `09-gate-g-mutacao-mutmut-regras-exatas.md` |
 | 10 | politica-warnings-pytest-deprecations | ⏳ Rascunho gerado, aguardando aprovacao | `10-politica-warnings-pytest-deprecations.md` |
 

@@ -1,7 +1,8 @@
 # Item 2 — orcador-de-contexto-handoff-fase-01-para-02
 
 > **Escopo:** Implementar poda deterministica e selecao top-k com campos seletos no handoff de referencias entre a Fase 1 (Pesquisador) e a Fase 2 (Analisador), eliminando o dump bruto de JSON.
-> **Status:** [EM EXECUCAO]
+> **Status:** [CONCLUIDO]
+> **Auditoria por reproducao real (11-09-2026):** `python -m pytest tests/test_phase_02_tokenomics.py -q` executado em `tools/aidd-generator/`, exit code 0. Prova: tests/test_phase_02_tokenomics.py (poda e orcamento de montar_handoff_referencias)
 
 ---
 

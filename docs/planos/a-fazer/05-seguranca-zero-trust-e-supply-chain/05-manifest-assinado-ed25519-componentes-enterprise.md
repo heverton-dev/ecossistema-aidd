@@ -2,6 +2,7 @@
 
 > **Escopo:** Implementar assinatura digital Ed25519 para manifestos de componentes no aidd-enterprise, conectando a verificação de assinatura ao carregador register_injected_tools.
 > **Status:** [RASCUNHO — Aguardando Aprovação Humana]
+> **Auditoria por reproducao real (11-09-2026):** NAO-FEITO. Nenhuma referencia a Ed25519 no codigo; o manifesto nao e assinado.
 
 ---
 

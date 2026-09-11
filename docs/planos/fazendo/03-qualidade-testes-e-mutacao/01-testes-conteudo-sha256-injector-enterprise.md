@@ -1,7 +1,8 @@
 # Item — testes-conteudo-sha256-injector-enterprise
 
 > **Escopo:** Substituir asserções de contagem no injector do aidd-enterprise por verificação de conteúdo real dos hashes SHA-256 gerados, matando mutantes de algoritmo e de entrada trocada.
-> **Status:** [RASCUNHO — Aguardando Aprovação Humana]
+> **Status:** [CONCLUIDO — verificado por reproducao real]
+> **Auditoria por reproducao real (11-09-2026):** FEITO. pytest tests/unit/test_aidd_core_injector.py -k 'sha256 or manifesto' em tools/aidd-enterprise/, exit 0. Existem os 3 testes exigidos: hash bate o conteudo real, adulteracao de 1 byte quebra a verificacao, e hash fora de sha256 e recusado.
 
 ---
 

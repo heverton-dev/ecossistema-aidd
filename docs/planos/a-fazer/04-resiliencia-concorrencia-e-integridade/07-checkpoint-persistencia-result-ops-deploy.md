@@ -2,6 +2,7 @@
 
 > **Escopo:** Adicionar persistência de checkpoint por etapa no pipeline de deploy do aidd-ops, permitindo reexecução incremental apenas de tarefas pendentes.
 > **Status:** [RASCUNHO — Aguardando Aprovação Humana]
+> **Auditoria por reproducao real (11-09-2026):** NAO-FEITO. .aidd/ops_deploy_state.json nao aparece em lugar nenhum do codigo.
 
 ---
 

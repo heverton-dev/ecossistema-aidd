@@ -2,6 +2,7 @@
 
 > **Escopo:** Criar testes de contrato para RLS (afirmando isolamento entre múltiplos tenants) e para configuração obrigatória de WAL/PRAGMAs na conexão SQLite.
 > **Status:** [RASCUNHO — Aguardando Aprovação Humana]
+> **Auditoria por reproducao real (11-09-2026):** NAO-FEITO. grep -rn busy_timeout tools/*/tests nao retorna nada. Nao ha teste de RLS com 2 tenants nem de PRAGMA journal_mode=wal / busy_timeout.
 
 ---
 

@@ -2,6 +2,7 @@
 
 > **Escopo:** Revogar o silenciamento global de DeprecationWarning no pytest.ini da raiz e definir política explícita de tratamento de warnings por categoria.
 > **Status:** [RASCUNHO — Aguardando Aprovação Humana]
+> **Auditoria por reproducao real (11-09-2026):** NAO-FEITO. grep -rn error::UserWarning em pytest.ini / pyproject.toml / setup.cfg nao retorna nada. O filtro generico de deprecations continua.
 
 ---
 

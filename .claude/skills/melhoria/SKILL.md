@@ -7,6 +7,22 @@ description: Recebe um pedido de melhoria em linguagem natural, investiga o codi
 
 Contrato executavel universal do slash command `/melhoria <descricao em linguagem natural>`.
 
+## Posicao no Fluxo (leia antes de agir)
+
+O ecossistema tem **um unico fluxo de trabalho de 3 etapas**, e cada etapa
+termina com uma **parada obrigatoria** onde quem decide e o usuario:
+
+| Etapa | Comando | Entra | Sai | Parada obrigatoria no fim |
+|---|---|---|---|---|
+| 1 | `/melhoria <pedido em linguagem natural>` | pedido do usuario, ou um plano existente pra reanalisar | relatorio em `docs/melhorias/` com Nota Atual e evidencia | "quer que eu gere o plano a partir disto?" |
+| 2 | `/plan <nome>` | o relatorio da etapa 1 (ou o pedido direto) | pasta em `docs/planos/<nome>/` com todos os itens em rascunho | "aprova este plano?" |
+| 3 | `/orchestrate <plano>` | plano aprovado | execucao real das frentes | escolha de ambiente + aprovacao do Plano de Voo |
+
+**Nenhuma etapa dispara a seguinte sozinha** (Regra de Ouro #7 do `AGENTS.md`).
+Cada comando tem **um dono unico**: `melhoria`, `plan` e `orchestrate`. As
+skills-motor (`planos-auditoria-runner`, `orca-plan-orchestrator`) nao tem
+slash command proprio e sao acionadas por elas.
+
 ## Regra Imutavel: Universalidade e Agnosticismo
 
 Esta skill (e todo o fluxo `/melhoria` → `/plan` → `/orchestrate`) **precisa funcionar

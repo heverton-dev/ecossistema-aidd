@@ -48,12 +48,20 @@ Diagnostico rapido → Definicao de Pronto checavel → Prompt de Execucao autoc
 
 | # | Item | Status | Documento |
 |---|---|---|---|
-| 1 | prompt-por-composicao-e-fixloop-diff-fase-08 | 🔶 Em execucao | `01-prompt-por-composicao-e-fixloop-diff-fase-08.md` |
-| 2 | orcador-de-contexto-handoff-fase-01-para-02 | 🔶 Em execucao | `02-orcador-de-contexto-handoff-fase-01-para-02.md` |
-| 3 | reparo-json-deterministico-zero-llm | 🔶 Em execucao | `03-reparo-json-deterministico-zero-llm.md` |
-| 4 | hermeticidade-verificavel-sessoes-e-rotulagem-telemetria | 🔶 Em execucao | `04-hermeticidade-verificavel-sessoes-e-rotulagem-telemetria.md` |
-| 5 | middleware-compressao-sandeco-token-reduce | 🔶 Em execucao | `05-middleware-compressao-sandeco-token-reduce.md` |
+| 1 | prompt-por-composicao-e-fixloop-diff-fase-08 | ✅ Concluido | `01-prompt-por-composicao-e-fixloop-diff-fase-08.md` |
+| 2 | orcador-de-contexto-handoff-fase-01-para-02 | ✅ Concluido | `02-orcador-de-contexto-handoff-fase-01-para-02.md` |
+| 3 | reparo-json-deterministico-zero-llm | ✅ Concluido | `03-reparo-json-deterministico-zero-llm.md` |
+| 4 | hermeticidade-verificavel-sessoes-e-rotulagem-telemetria | ✅ Concluido | `04-hermeticidade-verificavel-sessoes-e-rotulagem-telemetria.md` |
+| 5 | middleware-compressao-sandeco-token-reduce | ✅ Concluido | `05-middleware-compressao-sandeco-token-reduce.md` |
 | 6 | orcador-handoff-fase-06-para-07-mapa-secoes | ✅ Concluido | `06-orcador-handoff-fase-06-para-07-mapa-secoes.md` |
 | 7 | orcamento-fases-pipeline-e-alerta-desvio | ✅ Concluido | `07-orcamento-fases-pipeline-e-alerta-desvio.md` |
 
 Esta tabela so e atualizada para Concluido apos auditoria por reproducao real.
+
+**Auditoria de fechamento (11-09-2026):** os 7 itens foram verificados rodando os
+testes reais em `tools/aidd-generator/` (91 testes, exit code 0), e cada teste
+afere o criterio numerico exato do proprio plano (>= 40% de reducao no fix-loop —
+o teste exige > 50%; >= 8 de 10 JSONs recuperados sem LLM; mapa de secoes <= 50%
+dos tokens do dump bruto; alerta de desvio por fase). Comando reprodutivel:
+`cd tools/aidd-generator && python -m pytest tests/test_phase_08_tokenomics.py tests/test_phase_02_tokenomics.py tests/test_reparo_json.py tests/test_hermeticidade_sessoes.py tests/test_compressor_middleware.py tests/test_mapa_secoes.py tests/test_orcamento_fases.py tests/test_preflight_llm.py -q`
+

@@ -601,7 +601,7 @@ def cmd_status(args):
         "componentes-runner"
     ]
     for skill in skills_list:
-        path = os.path.join(ROOT_DIR, "skills", skill, "SKILL.md")
+        path = os.path.join(ROOT_DIR, "componentes", "compartilhado", "skills", skill, "SKILL.md")
         status = "[OK]" if os.path.exists(path) else "[AUSENTE]"
         print(f"  - {skill:<26} {status}")
 

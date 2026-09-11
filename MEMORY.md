@@ -115,12 +115,12 @@ O **Ecossistema AIDD** é um monorepo agnóstico que integra 6 ferramentas compl
 > Bloco reescrito por `python scripts/atualizar_index_planos.py` toda vez que `docs/planos/` muda (via `.githooks/pre-commit`). Reflete o mesmo cálculo de status de `docs/planos/INDEX.md` — nunca edite manualmente, o script sobrescreve.
 
 <!-- AUTO:INICIATIVAS:START -->
-- ⏳ **Qualidade Testes E Mutacao** — `docs/planos/a-fazer/03-qualidade-testes-e-mutacao/`
 - ⏳ **Resiliencia Concorrencia E Integridade** — `docs/planos/a-fazer/04-resiliencia-concorrencia-e-integridade/`
 - ⏳ **Seguranca Zero Trust E Supply Chain** — `docs/planos/a-fazer/05-seguranca-zero-trust-e-supply-chain/`
 - ⏳ **Bootstrap Ambiente E Preflight Host** — `docs/planos/a-fazer/06-bootstrap-ambiente-e-preflight-host/`
 - 🔶 **Correcao Pos Auditoria Sem Maquiagem** — `docs/planos/fazendo/01-correcao-pos-auditoria-sem-maquiagem/`
-- 🔶 **Otimizacao Tokenomics Latencia** — `docs/planos/fazendo/02-otimizacao-tokenomics-latencia/`
+- 🔶 **Config Arquivos Tokens Agentes** — `docs/planos/fazendo/03-config-arquivos-tokens-agentes/`
+- 🔶 **Qualidade Testes E Mutacao** — `docs/planos/fazendo/03-qualidade-testes-e-mutacao/`
 - 🔶 **Codigo Limpo Profundo Ecossistema** — `docs/planos/fazendo/codigo-limpo-profundo-ecossistema/`
 - 🔶 **Evolucao Engenharia Software Ecossistema** — `docs/planos/fazendo/evolucao-engenharia-software-ecossistema/`
 <!-- AUTO:INICIATIVAS:END -->
