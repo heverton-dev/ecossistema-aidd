@@ -14,6 +14,20 @@
    3. Routes limpos: proibe `execute()`/`import sqlite3`/`invalidate` em
       routes.py (interfaces).
 
+ Duas correcoes aplicadas em 2026-09-10 apos auditoria por reproducao real
+ (achado: 524 violacoes reportadas, a maioria falso-positivo):
+   a. `_extract_execute_calls` so conta `.execute()/.executemany()/
+      .executescript()` como SQL quando o 1o argumento e uma string literal
+      (ou f-string) — trade-off deliberado (perde deteccao de query montada
+      em variavel antes de passar pro execute) para eliminar falso positivo
+      de metodos de negocio homonimos (ex.: `SagaStep.execute(context)`,
+      que recebe um dict, nao uma query).
+   b. Arquivos do nucleo compartilhado que legitimamente SAO a camada de
+      infraestrutura (persistencia, fila, webhooks, revogacao de token) mas
+      vivem em `core/`/`v2/` em vez de `infrastructure/` — ver
+      NUCLEO_COMPARTILHADO_INFRA — sao tratados como infrastructure/ pela
+      Regra 1. Isso NAO exime routes.py/server.py nem arquivos de dominio.
+
  Diretorios auditados (deliverables e templates):
    - tools/*/src/
    - tools/*/templates/
@@ -61,6 +75,20 @@ DB_IMPORT_MODULES = {"sqlite3", "sqlalchemy", "psycopg2"}
 INFRA_KEYWORDS = {"infrastructure"}
 CACHE_KEYWORDS = {"invalidate", "invalidate_prefix", "read_model", "cache"}
 
+# Arquivos do nucleo compartilhado (tools/*/src/core/, templates/core/,
+# templates/v2/) que implementam persistencia/fila/webhooks/revogacao de
+# token — sao a infraestrutura de fato do framework, so nao vivem numa
+# pasta chamada infrastructure/. Auditado manualmente linha a linha em
+# 2026-09-10 antes de entrar nesta lista (ver commit de correcao do gate).
+NUCLEO_COMPARTILHADO_INFRA = {
+    "database.py",
+    "database_adapter.py",
+    "outbox_worker.py",
+    "jobs.py",
+    "webhooks.py",
+    "token_revocation.py",
+}
+
 # Mapeamento camada -> arquivos proibidos/permitidos
 LAYER_RULES = {
     "infrastructure": {
@@ -83,8 +111,18 @@ def _is_in_layer(filepath, layer):
     return layer in parts
 
 
+def _is_shared_kernel_infra(filepath):
+    """Arquivo do nucleo compartilhado (core/ ou v2/) que ja e infra de fato
+    (ver NUCLEO_COMPARTILHADO_INFRA) — tratado como infrastructure/ na Regra 1."""
+    parts = filepath.replace("\\", "/").split("/")
+    basename = parts[-1] if parts else ""
+    if basename not in NUCLEO_COMPARTILHADO_INFRA:
+        return False
+    return "core" in parts or "v2" in parts
+
+
 def _is_infrastructure(filepath):
-    return _is_in_layer(filepath, "infrastructure")
+    return _is_in_layer(filepath, "infrastructure") or _is_shared_kernel_infra(filepath)
 
 
 def _is_domain(filepath):
@@ -113,6 +151,22 @@ def _extract_imports(tree):
     return imports
 
 
+def _parece_query_sql(node):
+    """True se o 1o argumento da chamada e string literal ou f-string —
+    o formato universal de uma query SQL inline. Um metodo de negocio
+    homonimo (ex.: SagaStep.execute(context)) recebe um objeto, nao uma
+    string, e cai fora daqui. Trade-off deliberado: nao detecta query
+    montada numa variavel antes do execute(); ver docstring do modulo."""
+    if not node.args:
+        return False
+    primeiro = node.args[0]
+    if isinstance(primeiro, ast.Constant) and isinstance(primeiro.value, str):
+        return True
+    if isinstance(primeiro, ast.JoinedStr):
+        return True
+    return False
+
+
 def _extract_execute_calls(tree):
     calls = []
     for node in ast.walk(tree):
@@ -124,7 +178,7 @@ def _extract_execute_calls(tree):
             name = func.attr
         elif isinstance(func, ast.Name):
             name = func.id
-        if name in SQL_CALL_NAMES:
+        if name in SQL_CALL_NAMES and _parece_query_sql(node):
             calls.append((name, getattr(node, "lineno", 0)))
     return calls
 
