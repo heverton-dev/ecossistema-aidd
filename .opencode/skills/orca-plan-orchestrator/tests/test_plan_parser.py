@@ -12,18 +12,41 @@ from plan_parser import parse_plan, Plan, Front, extrair_prompt_executor
 
 REPO_ROOT = Path(__file__).resolve().parent.parent.parent.parent.parent.parent
 
+
+def _plano(nome_curto: str) -> Path:
+    """Acha a pasta do plano pelo nome curto, em qualquer subpasta de status.
+
+    Resolve por glob de proposito: o nome fisico carrega o prefixo
+    PLAN-<NNNN>_<dd-mm-aaaa>-, e o plano muda de subpasta conforme o status
+    real. Fixar o caminho literal quebraria o teste a cada renomeacao ou
+    mudanca de status — foi o que aconteceu em 11-09-2026.
+    """
+    partes = nome_curto.split("-")
+    # Tenta o nome inteiro e vai encurtando: o nome fisico guarda so as 3
+    # primeiras palavras significativas, entao "skill-gerador-planos-auditoria"
+    # precisa casar com "...-skill-gerador-planos".
+    while partes:
+        alvo = "-".join(partes)
+        for sub in ("feitos", "fazendo", "a-fazer", ""):
+            base = REPO_ROOT / "docs" / "planos" / sub if sub else REPO_ROOT / "docs" / "planos"
+            achados = sorted(p for p in base.glob(f"*{alvo}") if p.is_dir())
+            if achados:
+                return achados[0]
+        partes.pop()
+    raise FileNotFoundError(f"Plano '{nome_curto}' nao encontrado em docs/planos/")
+
 FIXTURES = {
-    "evolucao-notas-auditoria": REPO_ROOT / "docs/planos/feitos/evolucao-notas-auditoria",
-    "refinamento-notas-auditoria": REPO_ROOT / "docs/planos/feitos/refinamento-notas-auditoria",
-    "testes-completos-ecossistema": REPO_ROOT / "docs/planos/feitos/testes-completos-ecossistema",
-    "skill-gerador-planos-auditoria": REPO_ROOT / "docs/planos/feitos/skill-gerador-planos-auditoria",
+    "evolucao-notas-auditoria": _plano("evolucao-notas-auditoria"),
+    "refinamento-notas-auditoria": _plano("refinamento-notas-auditoria"),
+    "testes-completos-ecossistema": _plano("testes-completos-ecossistema"),
+    "skill-gerador-planos-auditoria": _plano("skill-gerador-planos-auditoria"),
 }
 
 # Manually verified front counts (NN-*.md files, excluding 00-PROCESSO-E-DECISOES.md)
 EXPECTED_COUNTS = {
     "evolucao-notas-auditoria": 7,   # 01..07
     "refinamento-notas-auditoria": 6, # 01..06
-    "testes-completos-ecossistema": 5, # 01..05
+    "testes-completos-ecossistema": 6, # 01..05
     "skill-gerador-planos-auditoria": 1, # 01
 }
 

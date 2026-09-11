@@ -24,15 +24,37 @@ Esta skill formaliza e padroniza a criacao de iniciativas de plano em `docs/plan
 ## Referencias Canonicas no Repositorio
 
 Consulte a estrutura e tom dos 4 exemplos reais ja estabelecidos no ecossistema:
-- `docs/planos/feitos/evolucao-notas-auditoria/00-PROCESSO-E-DECISOES.md`
-- `docs/planos/feitos/refinamento-notas-auditoria/00-PROCESSO-E-DECISOES.md`
-- `docs/planos/feitos/testes-completos-ecossistema/00-PROCESSO-E-DECISOES.md`
-- `docs/planos/feitos/skill-gerador-planos-auditoria/00-PROCESSO-E-DECISOES.md`
+- `docs/planos/feitos/PLAN-0001_04-09-2026-evolucao-notas-auditoria/00-PROCESSO-E-DECISOES.md`
+- `docs/planos/feitos/PLAN-0003_05-09-2026-refinamento-notas-auditoria/00-PROCESSO-E-DECISOES.md`
+- `docs/planos/feitos/PLAN-0007_06-09-2026-testes-completos-ecossistema/00-PROCESSO-E-DECISOES.md`
+- `docs/planos/feitos/PLAN-0005_06-09-2026-skill-gerador-planos-auditoria/00-PROCESSO-E-DECISOES.md`
+
+## Convencao de Nome das Iniciativas (obrigatoria)
+
+Toda iniciativa de plano vive numa pasta nomeada assim:
+
+```
+PLAN-<NNNN>_<dd-mm-aaaa>-<nome-curto-3-palavras>
+```
+
+Exemplo real: `PLAN-0016_09-09-2026-qualidade-testes-mutacao`.
+
+- **`NNNN` e um identificador global e permanente.** Nao reinicia em cada
+  subpasta (`a-fazer/`, `fazendo/`, `feitos/`) e nunca e reaproveitado, mesmo
+  quando o plano muda de pasta ou some. Antes disso as tres subpastas tinham,
+  cada uma, um "01, 02, 03" diferente — falar de "plano 03" era ambiguo.
+- **A data e a de criacao da iniciativa**, nao a de hoje nem a da ultima edicao.
+- **O nome curto tem 3 palavras significativas** (artigos e preposicoes fora).
+- **Nunca monte esse nome a mao:** `python ecossistema.py plan init <nome>` ja
+  gera o numero, a data e o nome curto sozinho. Numerar a mao e como escrever
+  seu proprio numero de senha na fila do banco — cedo ou tarde dois planos
+  recebem o mesmo.
+- O prefixo aparece no caminho fisico; o `INDEX.md` exibe so o titulo limpo.
 
 ## Onde a iniciativa nasce vs onde ela vive
 
 `python ecossistema.py plan init <nome>` sempre cria a pasta nova direto em
-`docs/planos/<nome>/` (raiz) — isso é esperado e correto. O ecossistema
+`docs/planos/PLAN-<NNNN>_<dd-mm-aaaa>-<nome-curto>/` (raiz) — isso é esperado e correto. O ecossistema
 organiza `docs/planos/` em 3 subpastas por status real (`feitos/`,
 `fazendo/`, `a-fazer/`), mas quem move a iniciativa pra lá é
 `python scripts/atualizar_index_planos.py`, rodado depois (manualmente ou

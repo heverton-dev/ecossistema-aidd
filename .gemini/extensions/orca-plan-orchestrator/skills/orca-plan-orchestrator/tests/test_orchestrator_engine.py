@@ -97,7 +97,7 @@ def _make_profile(repo: Path) -> Path:
                 "prompt_flag": None,
                 "model_flag": None,
                 "default_model": None,
-                "extra_flags": ["_stub_agent.py"],
+                "base_args": ["_stub_agent.py"],
             }
         }
     }

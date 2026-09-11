@@ -14,8 +14,31 @@ import pytest
 from scripts.orca_real_plan import compilar_plano_orca, renderizar_plano_orca, PARENT_WORKTREE_PADRAO
 
 REPO_ROOT = Path(__file__).resolve().parent.parent.parent.parent.parent.parent
+
+
+def _plano(nome_curto: str) -> Path:
+    """Acha a pasta do plano pelo nome curto, em qualquer subpasta de status.
+
+    Resolve por glob de proposito: o nome fisico carrega o prefixo
+    PLAN-<NNNN>_<dd-mm-aaaa>-, e o plano muda de subpasta conforme o status
+    real. Fixar o caminho literal quebraria o teste a cada renomeacao ou
+    mudanca de status — foi o que aconteceu em 11-09-2026.
+    """
+    partes = nome_curto.split("-")
+    # Tenta o nome inteiro e vai encurtando: o nome fisico guarda so as 3
+    # primeiras palavras significativas, entao "skill-gerador-planos-auditoria"
+    # precisa casar com "...-skill-gerador-planos".
+    while partes:
+        alvo = "-".join(partes)
+        for sub in ("feitos", "fazendo", "a-fazer", ""):
+            base = REPO_ROOT / "docs" / "planos" / sub if sub else REPO_ROOT / "docs" / "planos"
+            achados = sorted(p for p in base.glob(f"*{alvo}") if p.is_dir())
+            if achados:
+                return achados[0]
+        partes.pop()
+    raise FileNotFoundError(f"Plano '{nome_curto}' nao encontrado em docs/planos/")
 PROFILES_PATH = REPO_ROOT / "componentes/compartilhado/skills/orca-plan-orchestrator/.orca/harness_profiles.json.example"
-FIXTURE = REPO_ROOT / "docs/planos/feitos/skill-gerador-planos-auditoria"
+FIXTURE = _plano("skill-gerador-planos-auditoria")
 
 
 @pytest.fixture

@@ -8,19 +8,42 @@ import pytest
 from scripts.flight_plan import gerar_plano_de_voo, renderizar_plano_de_voo
 
 REPO_ROOT = Path(__file__).resolve().parent.parent.parent.parent.parent.parent
+
+
+def _plano(nome_curto: str) -> Path:
+    """Acha a pasta do plano pelo nome curto, em qualquer subpasta de status.
+
+    Resolve por glob de proposito: o nome fisico carrega o prefixo
+    PLAN-<NNNN>_<dd-mm-aaaa>-, e o plano muda de subpasta conforme o status
+    real. Fixar o caminho literal quebraria o teste a cada renomeacao ou
+    mudanca de status — foi o que aconteceu em 11-09-2026.
+    """
+    partes = nome_curto.split("-")
+    # Tenta o nome inteiro e vai encurtando: o nome fisico guarda so as 3
+    # primeiras palavras significativas, entao "skill-gerador-planos-auditoria"
+    # precisa casar com "...-skill-gerador-planos".
+    while partes:
+        alvo = "-".join(partes)
+        for sub in ("feitos", "fazendo", "a-fazer", ""):
+            base = REPO_ROOT / "docs" / "planos" / sub if sub else REPO_ROOT / "docs" / "planos"
+            achados = sorted(p for p in base.glob(f"*{alvo}") if p.is_dir())
+            if achados:
+                return achados[0]
+        partes.pop()
+    raise FileNotFoundError(f"Plano '{nome_curto}' nao encontrado em docs/planos/")
 PROFILES_PATH = REPO_ROOT / "componentes/compartilhado/skills/orca-plan-orchestrator/.orca/harness_profiles.json.example"
 
 FIXTURES = {
-    "evolucao-notas-auditoria": REPO_ROOT / "docs/planos/feitos/evolucao-notas-auditoria",
-    "refinamento-notas-auditoria": REPO_ROOT / "docs/planos/feitos/refinamento-notas-auditoria",
-    "testes-completos-ecossistema": REPO_ROOT / "docs/planos/feitos/testes-completos-ecossistema",
-    "skill-gerador-planos-auditoria": REPO_ROOT / "docs/planos/feitos/skill-gerador-planos-auditoria",
+    "evolucao-notas-auditoria": _plano("evolucao-notas-auditoria"),
+    "refinamento-notas-auditoria": _plano("refinamento-notas-auditoria"),
+    "testes-completos-ecossistema": _plano("testes-completos-ecossistema"),
+    "skill-gerador-planos-auditoria": _plano("skill-gerador-planos-auditoria"),
 }
 
 EXPECTED_FRONT_COUNTS = {
     "evolucao-notas-auditoria": 7,
     "refinamento-notas-auditoria": 6,
-    "testes-completos-ecossistema": 5,
+    "testes-completos-ecossistema": 6,
     "skill-gerador-planos-auditoria": 1,
 }
 

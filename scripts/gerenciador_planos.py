@@ -7,6 +7,7 @@ Cria a estrutura padrao (00-PROCESSO-E-DECISOES.md e NN-<item>.md) e checa integ
 import argparse
 import json
 import re
+from datetime import date
 import subprocess
 import sys
 from pathlib import Path
@@ -314,6 +315,54 @@ def cmd_check_fences(caminho_alvo: str) -> int:
     return 1 if erros > 0 else 0
 
 
+SUBPASTAS_STATUS = ("a-fazer", "fazendo", "feitos")
+
+# Fragmentos que sozinhos nao significam nada (anti-nih, clean-architecture):
+# se o nome curto terminar num deles, leva o termo seguinte junto.
+_FRAGMENTOS_COLADOS = {"anti", "pre", "multi", "sub", "clean", "zero", "read", "dead"}
+_PALAVRAS_IGNORADAS = {
+    "e", "de", "da", "do", "das", "dos", "para", "com", "sem", "a", "o", "as",
+    "os", "em", "no", "na", "nos", "nas", "ao", "aos", "por", "pos", "the",
+}
+
+
+def proximo_numero_plano(base: Path) -> int:
+    """Maior PLAN-<NNNN> ja usado em docs/planos (raiz + as 3 subpastas) + 1.
+
+    O numero e um identificador global e permanente da iniciativa: ele nao
+    reinicia em cada subpasta e nao e reaproveitado quando um plano muda de
+    pasta ou e removido — e o que permite falar de 'PLAN-0016' sem ambiguidade.
+    """
+    maior = 0
+    pastas = [base] + [base / sub for sub in SUBPASTAS_STATUS]
+    for pasta in pastas:
+        if not pasta.is_dir():
+            continue
+        for item in pasta.iterdir():
+            achado = re.match(r"^PLAN-(\d{4})_", item.name)
+            if achado:
+                maior = max(maior, int(achado.group(1)))
+    return maior + 1
+
+
+def nome_curto_iniciativa(nome: str, palavras: int = 3) -> str:
+    """3 palavras significativas do nome, para caber no nome da pasta."""
+    partes = [p for p in slugify(nome).split("-") if p and p not in _PALAVRAS_IGNORADAS]
+    escolhidas = partes[:palavras]
+    if escolhidas and escolhidas[-1] in _FRAGMENTOS_COLADOS and len(partes) > palavras:
+        escolhidas.append(partes[palavras])
+    return "-".join(escolhidas) or "plano"
+
+
+def montar_nome_pasta_plano(nome: str, base: Path, hoje: date | None = None) -> str:
+    """PLAN-<NNNN>_<dd-mm-aaaa>-<nome-curto>. O numero e a data ficam no nome
+    fisico (identificador estavel); o titulo exibido no INDEX.md tira o prefixo."""
+    hoje = hoje or date.today()
+    return "PLAN-{:04d}_{}-{}".format(
+        proximo_numero_plano(base), hoje.strftime("%d-%m-%Y"), nome_curto_iniciativa(nome)
+    )
+
+
 def cmd_init(
     nome: str,
     itens: list[str],
@@ -329,8 +378,8 @@ def cmd_init(
         print("[ERRO] Nome da iniciativa e obrigatorio.")
         return 1
 
-    pasta_nome = slugify(nome)
     base = destino_base or DOCS_PLANOS
+    pasta_nome = montar_nome_pasta_plano(nome, base)
     pasta_destino = base / pasta_nome
 
     if pasta_destino.exists():

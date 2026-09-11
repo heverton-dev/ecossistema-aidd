@@ -115,12 +115,12 @@ O **Ecossistema AIDD** é um monorepo agnóstico que integra 6 ferramentas compl
 > Bloco reescrito por `python scripts/atualizar_index_planos.py` toda vez que `docs/planos/` muda (via `.githooks/pre-commit`). Reflete o mesmo cálculo de status de `docs/planos/INDEX.md` — nunca edite manualmente, o script sobrescreve.
 
 <!-- AUTO:INICIATIVAS:START -->
-- ⏳ **Resiliencia Concorrencia E Integridade** — `docs/planos/a-fazer/04-resiliencia-concorrencia-e-integridade/`
-- ⏳ **Seguranca Zero Trust E Supply Chain** — `docs/planos/a-fazer/05-seguranca-zero-trust-e-supply-chain/`
-- ⏳ **Bootstrap Ambiente E Preflight Host** — `docs/planos/a-fazer/06-bootstrap-ambiente-e-preflight-host/`
-- 🔶 **Correcao Pos Auditoria Sem Maquiagem** — `docs/planos/fazendo/01-correcao-pos-auditoria-sem-maquiagem/`
-- 🔶 **Config Arquivos Tokens Agentes** — `docs/planos/fazendo/03-config-arquivos-tokens-agentes/`
-- 🔶 **Qualidade Testes E Mutacao** — `docs/planos/fazendo/03-qualidade-testes-e-mutacao/`
-- 🔶 **Codigo Limpo Profundo Ecossistema** — `docs/planos/fazendo/codigo-limpo-profundo-ecossistema/`
-- 🔶 **Evolucao Engenharia Software Ecossistema** — `docs/planos/fazendo/evolucao-engenharia-software-ecossistema/`
+- ⏳ **Resiliencia Concorrencia Integridade** — `docs/planos/a-fazer/PLAN-0017_09-09-2026-resiliencia-concorrencia-integridade/`
+- ⏳ **Seguranca Zero Trust** — `docs/planos/a-fazer/PLAN-0018_09-09-2026-seguranca-zero-trust/`
+- ⏳ **Bootstrap Ambiente Preflight** — `docs/planos/a-fazer/PLAN-0019_09-09-2026-bootstrap-ambiente-preflight/`
+- 🔶 **Correcao Auditoria Maquiagem** — `docs/planos/fazendo/PLAN-0009_07-09-2026-correcao-auditoria-maquiagem/`
+- 🔶 **Qualidade Testes Mutacao** — `docs/planos/fazendo/PLAN-0016_09-09-2026-qualidade-testes-mutacao/`
+- 🔶 **Codigo Limpo Profundo** — `docs/planos/fazendo/PLAN-0021_09-09-2026-codigo-limpo-profundo/`
+- 🔶 **Config Arquivos Tokens** — `docs/planos/fazendo/PLAN-0022_11-09-2026-config-arquivos-tokens/`
+- 🔶 **Evolucao Engenharia Software** — `docs/planos/fazendo/PLAN-0023_11-09-2026-evolucao-engenharia-software/`
 <!-- AUTO:INICIATIVAS:END -->

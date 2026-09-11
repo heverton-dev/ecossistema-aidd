@@ -154,8 +154,14 @@ def status_de_pasta(caminho_00: Path) -> str:
 
 
 def _sem_prefixo_numerico(nome: str) -> str:
-    """Remove um prefixo 'NN-' de prioridade de execucao (ex: '01-nome' -> 'nome'),
-    usado só para exibição do título — o prefixo continua no caminho físico."""
+    """Remove o prefixo de identificação do título exibido — o prefixo continua
+    no caminho físico, que é o identificador estável da iniciativa.
+
+    Cobre os dois formatos que existem no repositório:
+      - `PLAN-0007_06-09-2026-testes-completos` -> `testes-completos`  (atual)
+      - `01-nome`                               -> `nome`              (legado)
+    """
+    nome = re.sub(r"^PLAN-\d{4}_\d{2}-\d{2}-\d{4}-", "", nome)
     return re.sub(r"^\d+-", "", nome)
 
 
@@ -181,9 +187,11 @@ def descobrir_iniciativas() -> list[dict]:
                 continue
             if item.is_dir() and item.name in SUBPASTAS_CONHECIDAS and pasta == PLANOS_DIR:
                 continue  # a própria subpasta-contêiner, não uma iniciativa
-            if item.is_file() and item.name.startswith("PLANO-") and item.suffix == ".md":
+            if item.is_file() and item.suffix == ".md" and (
+                item.name.startswith("PLANO-") or item.name.startswith("PLAN-")
+            ):
                 status = status_de_arquivo_unico(item)
-                titulo = item.stem.replace("PLANO-", "").replace("-", " ").title()
+                titulo = _sem_prefixo_numerico(item.stem).replace("PLANO-", "").replace("-", " ").title()
                 resultado.append({"titulo": titulo, "item": item, "status": status})
                 vistos.add(item.resolve())
             elif item.is_dir():

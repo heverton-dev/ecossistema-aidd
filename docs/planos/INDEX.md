@@ -6,39 +6,39 @@
 
 | Iniciativa | Local |
 |---|---|
-| Reestruturacao Ddd Clean Architecture | `feitos/01-reestruturacao-ddd-clean-architecture/` |
-| Direcionamento Estrategico Anti Nih | `feitos/02-direcionamento-estrategico-anti-nih/` |
-| Otimizacao Tokenomics Latencia | `feitos/02-otimizacao-tokenomics-latencia/` |
-| Evolucao Aidd Ops Fase Completa | `feitos/03-evolucao-aidd-ops-fase-completa/` |
-| Aidd Bridge | `feitos/aidd-bridge/` |
-| Correcao Arquitetura Limpa | `feitos/correcao-arquitetura-limpa/` |
-| Correcao Codigo Limpo | `feitos/correcao-codigo-limpo/` |
-| Evolucao Notas Auditoria | `feitos/evolucao-notas-auditoria/` |
-| Integracao Aidd Ops | `feitos/integracao-aidd-ops/` |
-| Correcao Riscos Ecossistema Aidd | `feitos/PLANO-CORRECAO-RISCOS-ECOSSISTEMA-AIDD.md` |
-| Refinamento Notas Auditoria | `feitos/refinamento-notas-auditoria/` |
-| Skill Gerador Planos Auditoria | `feitos/skill-gerador-planos-auditoria/` |
-| Skill Orquestracao Orca Ade | `feitos/skill-orquestracao-orca-ade/` |
-| Testes Completos Ecossistema | `feitos/testes-completos-ecossistema/` |
-| Validacao Humana Testes Reais | `feitos/validacao-humana-testes-reais/` |
+| Evolucao Notas Auditoria | `feitos/PLAN-0001_04-09-2026-evolucao-notas-auditoria/` |
+| Correcao Riscos Ecossistema | `feitos/PLAN-0002_04-09-2026-correcao-riscos-ecossistema.md` |
+| Refinamento Notas Auditoria | `feitos/PLAN-0003_05-09-2026-refinamento-notas-auditoria/` |
+| Integracao Aidd Ops | `feitos/PLAN-0004_06-09-2026-integracao-aidd-ops/` |
+| Skill Gerador Planos | `feitos/PLAN-0005_06-09-2026-skill-gerador-planos/` |
+| Skill Orquestracao Orca | `feitos/PLAN-0006_06-09-2026-skill-orquestracao-orca/` |
+| Testes Completos Ecossistema | `feitos/PLAN-0007_06-09-2026-testes-completos-ecossistema/` |
+| Validacao Humana Testes | `feitos/PLAN-0008_06-09-2026-validacao-humana-testes/` |
+| Direcionamento Estrategico Anti Nih | `feitos/PLAN-0010_07-09-2026-direcionamento-estrategico-anti-nih/` |
+| Evolucao Aidd Ops | `feitos/PLAN-0011_07-09-2026-evolucao-aidd-ops/` |
+| Correcao Arquitetura Limpa | `feitos/PLAN-0012_08-09-2026-correcao-arquitetura-limpa/` |
+| Correcao Codigo Limpo | `feitos/PLAN-0013_08-09-2026-correcao-codigo-limpo/` |
+| Reestruturacao Ddd Clean Architecture | `feitos/PLAN-0014_09-09-2026-reestruturacao-ddd-clean-architecture/` |
+| Otimizacao Tokenomics Latencia | `feitos/PLAN-0015_09-09-2026-otimizacao-tokenomics-latencia/` |
+| Aidd Bridge | `feitos/PLAN-0020_09-09-2026-aidd-bridge/` |
 
 ## 🔶 Em execução
 
 | Iniciativa | Local |
 |---|---|
-| Correcao Pos Auditoria Sem Maquiagem | `fazendo/01-correcao-pos-auditoria-sem-maquiagem/` |
-| Config Arquivos Tokens Agentes | `fazendo/03-config-arquivos-tokens-agentes/` |
-| Qualidade Testes E Mutacao | `fazendo/03-qualidade-testes-e-mutacao/` |
-| Codigo Limpo Profundo Ecossistema | `fazendo/codigo-limpo-profundo-ecossistema/` |
-| Evolucao Engenharia Software Ecossistema | `fazendo/evolucao-engenharia-software-ecossistema/` |
+| Correcao Auditoria Maquiagem | `fazendo/PLAN-0009_07-09-2026-correcao-auditoria-maquiagem/` |
+| Qualidade Testes Mutacao | `fazendo/PLAN-0016_09-09-2026-qualidade-testes-mutacao/` |
+| Codigo Limpo Profundo | `fazendo/PLAN-0021_09-09-2026-codigo-limpo-profundo/` |
+| Config Arquivos Tokens | `fazendo/PLAN-0022_11-09-2026-config-arquivos-tokens/` |
+| Evolucao Engenharia Software | `fazendo/PLAN-0023_11-09-2026-evolucao-engenharia-software/` |
 
 ## ⏳ Rascunho (aguardando aprovação humana)
 
 | Iniciativa | Local |
 |---|---|
-| Resiliencia Concorrencia E Integridade | `a-fazer/04-resiliencia-concorrencia-e-integridade/` |
-| Seguranca Zero Trust E Supply Chain | `a-fazer/05-seguranca-zero-trust-e-supply-chain/` |
-| Bootstrap Ambiente E Preflight Host | `a-fazer/06-bootstrap-ambiente-e-preflight-host/` |
+| Resiliencia Concorrencia Integridade | `a-fazer/PLAN-0017_09-09-2026-resiliencia-concorrencia-integridade/` |
+| Seguranca Zero Trust | `a-fazer/PLAN-0018_09-09-2026-seguranca-zero-trust/` |
+| Bootstrap Ambiente Preflight | `a-fazer/PLAN-0019_09-09-2026-bootstrap-ambiente-preflight/` |
 
 ---
 

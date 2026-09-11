@@ -27,6 +27,28 @@ Se o usuario chegou aqui sem passar pela etapa 1, isso e valido — so confirme
 de onde vem a evidencia das notas (ver Passo 2). Sem evidencia real, a nota e
 `NAO AUDITADO`, nunca um numero estimado pelo agente.
 
+## Convencao de Nome das Iniciativas (obrigatoria)
+
+Toda iniciativa de plano vive numa pasta nomeada assim:
+
+```
+PLAN-<NNNN>_<dd-mm-aaaa>-<nome-curto-3-palavras>
+```
+
+Exemplo real: `PLAN-0016_09-09-2026-qualidade-testes-mutacao`.
+
+- **`NNNN` e um identificador global e permanente.** Nao reinicia em cada
+  subpasta (`a-fazer/`, `fazendo/`, `feitos/`) e nunca e reaproveitado, mesmo
+  quando o plano muda de pasta ou some. Antes disso as tres subpastas tinham,
+  cada uma, um "01, 02, 03" diferente — falar de "plano 03" era ambiguo.
+- **A data e a de criacao da iniciativa**, nao a de hoje nem a da ultima edicao.
+- **O nome curto tem 3 palavras significativas** (artigos e preposicoes fora).
+- **Nunca monte esse nome a mao:** `python ecossistema.py plan init <nome>` ja
+  gera o numero, a data e o nome curto sozinho. Numerar a mao e como escrever
+  seu proprio numero de senha na fila do banco — cedo ou tarde dois planos
+  recebem o mesmo.
+- O prefixo aparece no caminho fisico; o `INDEX.md` exibe so o titulo limpo.
+
 ## Protocolo
 
 O protocolo detalhado desta etapa (passos, flags do CLI, checagem de cercas

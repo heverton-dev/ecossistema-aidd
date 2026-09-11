@@ -65,6 +65,8 @@ Exceção: não repetir dentro de subagente/worktree efêmero — é checagem de
 | `/orchestrate [plano]` | orchestrate → orca-plan-orchestrator | `python ecossistema.py orchestrate [plano]` |
 | `/bridge [comando]` | aidd-bridge-runner | `python ecossistema.py bridge [scan\|convert-db\|merge\|pack]` |
 
+Nome das iniciativas: `PLAN-<NNNN>_<dd-mm-aaaa>-<nome-curto>` — `NNNN` é identificador global único, gerado por `plan init`, nunca escrito à mão.
+
 Fluxo obrigatório: `/melhoria` → `/plan` → `/orchestrate` (3 etapas, parada humana entre cada uma — Regra #7).
 Detalhes de cada comando: `docs/protocolos/AGENTS-REFERENCIA-COMPLETA.md#§3`.
 

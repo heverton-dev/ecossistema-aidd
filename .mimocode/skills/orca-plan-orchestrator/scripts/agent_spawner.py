@@ -36,6 +36,13 @@ def compilar_comando(
     if profile.get("auto_approve_flag"):
         args.append(profile["auto_approve_flag"])
 
+    # Base args: always part of the command, in BOTH modes. For harnesses whose
+    # binary is only a launcher and needs a fixed argument to exist at all
+    # (`npx repomix`, `python agent.py`, `dotnet run`). Dropping these in
+    # interactive mode would build an invalid command.
+    for base_arg in profile.get("base_args", []):
+        args.append(base_arg)
+
     # Extra static flags (e.g. --pure, -p, --print) - skipped if interactive
     if not interactive:
         for flag in profile.get("extra_flags", []):
