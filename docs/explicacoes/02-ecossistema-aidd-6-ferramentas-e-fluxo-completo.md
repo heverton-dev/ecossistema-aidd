@@ -110,7 +110,7 @@ O Ecossistema AIDD é uma linha de produção de software: cada ferramenta é um
 As 6 ferramentas não são silos separados — elas compartilham 3 coisas:
 
 1. **Uma única porta de entrada:** `python ecossistema.py <ferramenta> <ação>` (ou o slash command equivalente). Você nunca precisa saber qual script Python interno cada ferramenta usa por baixo.
-2. **Os mesmos Quality Gates:** antes de qualquer commit, um conjunto de verificações automáticas (gates em `gates/`) audita o resultado de qualquer ferramenta — segurança, testes reais rodando (não simulados), ausência de credenciais vazadas, consistência entre as 5-6 ferramentas, honestidade nas mensagens de aprovação. Se um gate reprova (exit 1), a entrega é bloqueada — não existe "quase aprovado".
+2. **Os mesmos Quality Gates:** antes de qualquer commit, um conjunto de verificações automáticas (gates em `gates/`) audita o resultado de qualquer ferramenta — segurança, testes reais rodando (não simulados), ausência de credenciais vazadas, consistência entre as 6 ferramentas, honestidade nas mensagens de aprovação. Se um gate reprova (exit 1), a entrega é bloqueada — não existe "quase aprovado".
 3. **A mesma regra de economia de token e transparência:** todo estado fica em arquivo (JSON/SQLite), nunca só na memória da conversa, e cada execução isolada (subagente) purga o contexto ao terminar.
 
 Ou seja: cada ferramenta resolve uma etapa diferente do ciclo de vida de um software, mas todas prestam contas ao mesmo "fiscal de qualidade".
