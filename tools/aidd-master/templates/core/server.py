@@ -11,6 +11,10 @@ from core.webhooks import WebhookDispatcher
 from core.models import init_all_schemas
 from core.mcp_server import AIDD_EnterpriseMCPServer
 from core.security import SecurityService, JWTService
+from core.repositories import (
+    TriagemRepository, PepRepository, CirurgicoRepository,
+    FarmaciaRepository, FaturamentoRepository, AuditoriaRepository
+)
 
 PORT = 3000
 STATIC_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "static")
@@ -19,6 +23,12 @@ db = Database(f"sqlite:///{DB_PATH}")
 events = EventBus()
 webhook_dispatcher = WebhookDispatcher(db)
 mcp_engine = AIDD_EnterpriseMCPServer(DB_PATH)
+triagem_repo = TriagemRepository(db)
+pep_repo = PepRepository(db)
+cirurgico_repo = CirurgicoRepository(db)
+farmacia_repo = FarmaciaRepository(db)
+faturamento_repo = FaturamentoRepository(db)
+auditoria_repo = AuditoriaRepository(db)
 
 with db.get_connection() as conn:
     init_all_schemas(conn)
@@ -27,16 +37,8 @@ with db.get_connection() as conn:
 def on_triagem_critica(dados):
     if dados.get("classificacao") in ["vermelho", "laranja"]:
         leito_emergencia = "UTI Emergência 01" if dados.get("classificacao") == "vermelho" else "Box Observação Rápida"
-        with db.get_connection() as conn:
-            conn.execute(
-                "UPDATE triagens SET leito_alocado = ?, status = 'em_atendimento' WHERE protocolo = ?",
-                (leito_emergencia, dados.get("protocolo"))
-            )
-            conn.execute(
-                "INSERT INTO logs_auditoria (evento, modulo, payload_json) VALUES ('triagem_critica_leito_alocado', 'pronto_socorro', ?)",
-                (json.dumps(dados, ensure_ascii=False),)
-            )
-            conn.commit()
+        triagem_repo.alocar_leito_por_protocolo(dados.get("protocolo"), leito_emergencia)
+        auditoria_repo.registrar("triagem_critica_leito_alocado", "pronto_socorro", json.dumps(dados, ensure_ascii=False))
         webhook_dispatcher.disparar("cross_domain.triagem_critica_to_leito", {
             "protocolo": dados.get("protocolo"),
             "paciente": dados.get("paciente_nome"),
@@ -45,27 +47,16 @@ def on_triagem_critica(dados):
         })
 
 def on_prescricao_emitida(dados):
-    with db.get_connection() as conn:
-        conn.execute(
-            "INSERT INTO logs_auditoria (evento, modulo, payload_json) VALUES ('prescricao_emitida_automacao', 'pep_clinico', ?)",
-            (json.dumps(dados, ensure_ascii=False),)
-        )
-        conn.commit()
+    auditoria_repo.registrar("prescricao_emitida_automacao", "pep_clinico", json.dumps(dados, ensure_ascii=False))
     webhook_dispatcher.disparar("cross_domain.prescricao_to_farmacia", dados)
 
 def on_cirurgia_concluida(dados):
-    with db.get_connection() as conn:
-        num_guia = f"TISS-{uuid.uuid4().hex[:4].upper()}"
-        valor = 12500.00 if dados.get("necessita_opme") else 7800.00
-        conn.execute("""
-            INSERT INTO faturamento_guias (numero_guia, paciente_nome, convenio, codigo_tuss, descricao_procedimento, valor_total, status_guia)
-            VALUES (?, ?, 'Bradesco Saúde / Cirúrgico', '31003443', ?, ?, 'gerada')
-        """, (num_guia, dados.get("paciente_nome"), f"Procedimento Cirúrgico: {dados.get('procedimento')}", valor))
-        conn.execute(
-            "INSERT INTO logs_auditoria (evento, modulo, payload_json) VALUES ('cirurgia_faturada_cross_domain', 'centro_cirurgico', ?)",
-            (json.dumps(dados, ensure_ascii=False),)
-        )
-        conn.commit()
+    num_guia = f"TISS-{uuid.uuid4().hex[:4].upper()}"
+    valor = 12500.00 if dados.get("necessita_opme") else 7800.00
+    faturamento_repo.criar_guia_cirurgia(
+        num_guia, dados.get("paciente_nome"), f"Procedimento Cirúrgico: {dados.get('procedimento')}", valor
+    )
+    auditoria_repo.registrar("cirurgia_faturada_cross_domain", "centro_cirurgico", json.dumps(dados, ensure_ascii=False))
     webhook_dispatcher.disparar("cross_domain.cirurgia_to_faturamento", {
         "numero_guia": num_guia,
         "paciente": dados.get("paciente_nome"),
@@ -134,10 +125,7 @@ def get_auth_me(params):
     responses={"200": {"description": "Lista de triagens", "content": {"application/json": {"example": [{"id": 1, "protocolo": "TRI-9081", "paciente_nome": "Carlos Alberto", "classificacao": "vermelho", "tempo_espera_max_min": 0}]}}}}
 )
 def get_triagens(params):
-    with db.get_connection() as conn:
-        cursor = conn.cursor()
-        rows = cursor.execute("SELECT * FROM triagens ORDER BY tempo_espera_max_min ASC, criado_em ASC").fetchall()
-        return [dict(r) for r in rows]
+    return triagem_repo.listar()
 
 @registry.post(
     "/api/triagem/novo",
@@ -160,12 +148,10 @@ def post_triagem_novo(data):
     sla = slas.get(cls, 120)
     proto = f"TRI-{uuid.uuid4().hex[:4].upper()}"
 
-    with db.get_connection() as conn:
-        conn.execute("""
-            INSERT INTO triagens (protocolo, paciente_nome, idade, sinais_vitais, queixa_principal, classificacao, tempo_espera_max_min, status)
-            VALUES (?, ?, ?, ?, ?, ?, ?, 'aguardando')
-        """, (proto, data["paciente_nome"], int(data.get("idade", 30)), data.get("sinais_vitais", "Estável"), data.get("queixa_principal", "Dor leve"), cls, sla))
-        conn.commit()
+    triagem_repo.criar(
+        proto, data["paciente_nome"], int(data.get("idade", 30)),
+        data.get("sinais_vitais", "Estável"), data.get("queixa_principal", "Dor leve"), cls, sla
+    )
 
     payload = {"protocolo": proto, "paciente_nome": data["paciente_nome"], "classificacao": cls, "sla_min": sla}
     events.emit("triagem_urgencia", payload)
@@ -188,16 +174,14 @@ def post_triagem_novo(data):
 )
 def put_triagem_atualizar(data):
     tid = int(data.get("id", 0))
-    with db.get_connection() as conn:
-        row = conn.execute("SELECT * FROM triagens WHERE id = ?", (tid,)).fetchone()
-        if not row:
-            return {"sucesso": False, "error": "Triagem não encontrada"}
-        
-        sinais = data.get("sinais_vitais", row["sinais_vitais"])
-        st = data.get("status", row["status"])
-        cls = data.get("classificacao", row["classificacao"])
-        conn.execute("UPDATE triagens SET sinais_vitais = ?, status = ?, classificacao = ? WHERE id = ?", (sinais, st, cls, tid))
-        conn.commit()
+    row = triagem_repo.obter(tid)
+    if not row:
+        return {"sucesso": False, "error": "Triagem não encontrada"}
+
+    sinais = data.get("sinais_vitais", row["sinais_vitais"])
+    st = data.get("status", row["status"])
+    cls = data.get("classificacao", row["classificacao"])
+    triagem_repo.atualizar(tid, sinais, st, cls)
     return {"sucesso": True, "id": tid}
 
 @registry.delete(
@@ -211,9 +195,7 @@ def put_triagem_atualizar(data):
 )
 def delete_triagem(data):
     tid = int(data.get("id", 0))
-    with db.get_connection() as conn:
-        conn.execute("DELETE FROM triagens WHERE id = ?", (tid,))
-        conn.commit()
+    triagem_repo.remover(tid)
     return {"sucesso": True}
 
 @registry.post(
@@ -231,9 +213,7 @@ def delete_triagem(data):
 def post_triagem_chamar(data):
     tid = int(data.get("id", 0))
     leito = data.get("leito", "Box Geral")
-    with db.get_connection() as conn:
-        conn.execute("UPDATE triagens SET leito_alocado = ?, status = 'em_atendimento' WHERE id = ?", (leito, tid))
-        conn.commit()
+    triagem_repo.alocar_leito(tid, leito)
     return {"sucesso": True, "id": tid, "leito": leito}
 
 # =========================================================================
@@ -247,10 +227,7 @@ def post_triagem_chamar(data):
     responses={"200": {"description": "Lista de prontuários", "content": {"application/json": {"example": [{"id": 1, "numero_prontuario": "PEP-1044", "paciente_nome": "Carlos Alberto", "diagnostico_cid10": "I21.9"}]}}}}
 )
 def get_pep_prontuarios(params):
-    with db.get_connection() as conn:
-        cursor = conn.cursor()
-        rows = cursor.execute("SELECT * FROM prontuarios ORDER BY atualizado_em DESC").fetchall()
-        return [dict(r) for r in rows]
+    return pep_repo.listar_prontuarios()
 
 @registry.post(
     "/api/pep/prontuarios",
@@ -270,12 +247,10 @@ def get_pep_prontuarios(params):
 )
 def post_pep_prontuario(data):
     num = f"PEP-{uuid.uuid4().hex[:4].upper()}"
-    with db.get_connection() as conn:
-        conn.execute("""
-            INSERT INTO prontuarios (numero_prontuario, paciente_nome, medico_responsavel, crm, diagnostico_cid10, evolucao_clinica, alergias, status)
-            VALUES (?, ?, ?, ?, ?, ?, ?, 'ativo')
-        """, (num, data["paciente_nome"], data["medico_responsavel"], data["crm"], data["diagnostico_cid10"], data["evolucao_clinica"], data.get("alergias", "Nega alergias")))
-        conn.commit()
+    pep_repo.criar_prontuario(
+        num, data["paciente_nome"], data["medico_responsavel"], data["crm"],
+        data["diagnostico_cid10"], data["evolucao_clinica"], data.get("alergias", "Nega alergias")
+    )
     webhook_dispatcher.disparar("pep.prontuario_atualizado", {"numero_prontuario": num, "paciente": data["paciente_nome"]})
     return {"sucesso": True, "numero_prontuario": num}
 
@@ -294,14 +269,12 @@ def post_pep_prontuario(data):
 )
 def put_pep_prontuario(data):
     pid = int(data.get("id", 0))
-    with db.get_connection() as conn:
-        row = conn.execute("SELECT * FROM prontuarios WHERE id = ?", (pid,)).fetchone()
-        if not row:
-            return {"sucesso": False, "error": "Prontuário não encontrado"}
-        evol = data.get("evolucao_clinica", row["evolucao_clinica"])
-        cid = data.get("diagnostico_cid10", row["diagnostico_cid10"])
-        conn.execute("UPDATE prontuarios SET evolucao_clinica = ?, diagnostico_cid10 = ?, atualizado_em = CURRENT_TIMESTAMP WHERE id = ?", (evol, cid, pid))
-        conn.commit()
+    row = pep_repo.obter_prontuario(pid)
+    if not row:
+        return {"sucesso": False, "error": "Prontuário não encontrado"}
+    evol = data.get("evolucao_clinica", row["evolucao_clinica"])
+    cid = data.get("diagnostico_cid10", row["diagnostico_cid10"])
+    pep_repo.atualizar_prontuario(pid, evol, cid)
     return {"sucesso": True, "id": pid}
 
 @registry.delete(
@@ -315,9 +288,7 @@ def put_pep_prontuario(data):
 )
 def delete_pep_prontuario(data):
     pid = int(data.get("id", 0))
-    with db.get_connection() as conn:
-        conn.execute("DELETE FROM prontuarios WHERE id = ?", (pid,))
-        conn.commit()
+    pep_repo.remover_prontuario(pid)
     return {"sucesso": True}
 
 @registry.get(
@@ -328,10 +299,7 @@ def delete_pep_prontuario(data):
     responses={"200": {"description": "Lista de prescrições", "content": {"application/json": {"example": [{"id": 1, "medicamento": "Nitroglicerina", "status": "pendente"}]}}}}
 )
 def get_pep_prescricoes(params):
-    with db.get_connection() as conn:
-        cursor = conn.cursor()
-        rows = cursor.execute("SELECT * FROM prescricoes ORDER BY criado_em DESC").fetchall()
-        return [dict(r) for r in rows]
+    return pep_repo.listar_prescricoes()
 
 @registry.post(
     "/api/pep/prescricoes",
@@ -350,16 +318,10 @@ def get_pep_prescricoes(params):
 )
 def post_pep_prescricao(data):
     pid = int(data.get("prontuario_id", 1))
-    with db.get_connection() as conn:
-        p_row = conn.execute("SELECT paciente_nome FROM prontuarios WHERE id = ?", (pid,)).fetchone()
-        p_nome = p_row["paciente_nome"] if p_row else "Paciente Geral"
-        cursor = conn.cursor()
-        cursor.execute("""
-            INSERT INTO prescricoes (prontuario_id, paciente_nome, medicamento, dosagem, frequencia, via_administracao, status)
-            VALUES (?, ?, ?, ?, ?, ?, 'pendente')
-        """, (pid, p_nome, data["medicamento"], data["dosagem"], data["frequencia"], data["via_administracao"]))
-        conn.commit()
-        new_id = cursor.lastrowid
+    p_nome = pep_repo.obter_paciente_nome(pid) or "Paciente Geral"
+    new_id = pep_repo.criar_prescricao(
+        pid, p_nome, data["medicamento"], data["dosagem"], data["frequencia"], data["via_administracao"]
+    )
 
     payload = {"prescricao_id": new_id, "prontuario_id": pid, "paciente": p_nome, "medicamento": data["medicamento"]}
     events.emit("prescricao_nova", payload)
@@ -381,9 +343,7 @@ def post_pep_prescricao(data):
 def put_pep_prescricao_status(data):
     pid = int(data.get("id", 0))
     st = data.get("status", "dispensada")
-    with db.get_connection() as conn:
-        conn.execute("UPDATE prescricoes SET status = ? WHERE id = ?", (st, pid))
-        conn.commit()
+    pep_repo.atualizar_status_prescricao(pid, st)
     return {"sucesso": True, "id": pid, "status": st}
 
 # =========================================================================
@@ -397,10 +357,7 @@ def put_pep_prescricao_status(data):
     responses={"200": {"description": "Lista de cirurgias", "content": {"application/json": {"example": [{"id": 1, "codigo_agendamento": "CC-501", "paciente_nome": "Roberto Kenji", "sala_bloco": "Sala 02", "status": "pre_op"}]}}}}
 )
 def get_cirurgias(params):
-    with db.get_connection() as conn:
-        cursor = conn.cursor()
-        rows = cursor.execute("SELECT * FROM cirurgias ORDER BY data_hora_cirurgia ASC").fetchall()
-        return [dict(r) for r in rows]
+    return cirurgico_repo.listar()
 
 @registry.post(
     "/api/cirurgico/novo",
@@ -423,12 +380,10 @@ def get_cirurgias(params):
 def post_cirurgico_novo(data):
     cod = f"CC-{uuid.uuid4().hex[:4].upper()}"
     opme = 1 if data.get("necessita_opme") else 0
-    with db.get_connection() as conn:
-        conn.execute("""
-            INSERT INTO cirurgias (codigo_agendamento, paciente_nome, procedimento, sala_bloco, cirurgiao_principal, anestesista, tipo_anestesia, data_hora_cirurgia, status, necessita_opme)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'agendada', ?)
-        """, (cod, data["paciente_nome"], data["procedimento"], data["sala_bloco"], data["cirurgiao_principal"], data["anestesista"], data["tipo_anestesia"], data["data_hora_cirurgia"], opme))
-        conn.commit()
+    cirurgico_repo.criar(
+        cod, data["paciente_nome"], data["procedimento"], data["sala_bloco"], data["cirurgiao_principal"],
+        data["anestesista"], data["tipo_anestesia"], data["data_hora_cirurgia"], opme
+    )
 
     webhook_dispatcher.disparar("cirurgico.cirurgia_agendada", {"codigo_agendamento": cod, "procedimento": data["procedimento"], "sala": data["sala_bloco"]})
     return {"sucesso": True, "codigo_agendamento": cod}
@@ -448,14 +403,12 @@ def post_cirurgico_novo(data):
 )
 def put_cirurgico_atualizar(data):
     cid = int(data.get("id", 0))
-    with db.get_connection() as conn:
-        row = conn.execute("SELECT * FROM cirurgias WHERE id = ?", (cid,)).fetchone()
-        if not row:
-            return {"sucesso": False, "error": "Cirurgia não encontrada"}
-        sala = data.get("sala_bloco", row["sala_bloco"])
-        st = data.get("status", row["status"])
-        conn.execute("UPDATE cirurgias SET sala_bloco = ?, status = ? WHERE id = ?", (sala, st, cid))
-        conn.commit()
+    row = cirurgico_repo.obter(cid)
+    if not row:
+        return {"sucesso": False, "error": "Cirurgia não encontrada"}
+    sala = data.get("sala_bloco", row["sala_bloco"])
+    st = data.get("status", row["status"])
+    cirurgico_repo.atualizar(cid, sala, st)
     return {"sucesso": True, "id": cid}
 
 @registry.delete(
@@ -469,9 +422,7 @@ def put_cirurgico_atualizar(data):
 )
 def delete_cirurgico_cancelar(data):
     cid = int(data.get("id", 0))
-    with db.get_connection() as conn:
-        conn.execute("UPDATE cirurgias SET status = 'cancelada' WHERE id = ?", (cid,))
-        conn.commit()
+    cirurgico_repo.cancelar(cid)
     return {"sucesso": True}
 
 @registry.post(
@@ -489,13 +440,11 @@ def delete_cirurgico_cancelar(data):
 def post_cirurgico_avancar(data):
     cid = int(data.get("id", 0))
     st = data.get("novo_status", "concluida")
-    with db.get_connection() as conn:
-        row = conn.execute("SELECT * FROM cirurgias WHERE id = ?", (cid,)).fetchone()
-        if not row:
-            return {"sucesso": False, "error": "Cirurgia não encontrada"}
-        conn.execute("UPDATE cirurgias SET status = ? WHERE id = ?", (st, cid))
-        conn.commit()
-        c_dict = dict(row)
+    row = cirurgico_repo.obter(cid)
+    if not row:
+        return {"sucesso": False, "error": "Cirurgia não encontrada"}
+    cirurgico_repo.atualizar_status(cid, st)
+    c_dict = row
 
     webhook_dispatcher.disparar("cirurgico.fase_alterada", {"cirurgia_id": cid, "novo_status": st})
     if st == "concluida":
@@ -513,10 +462,7 @@ def post_cirurgico_avancar(data):
     responses={"200": {"description": "Estoque de medicamentos", "content": {"application/json": {"example": [{"id": 1, "codigo_item": "MED-001", "medicamento": "Nitroglicerina", "quantidade_disponivel": 48}]}}}}
 )
 def get_farmacia_estoque(params):
-    with db.get_connection() as conn:
-        cursor = conn.cursor()
-        rows = cursor.execute("SELECT * FROM farmacia_estoque ORDER BY status_estoque DESC, medicamento ASC").fetchall()
-        return [dict(r) for r in rows]
+    return farmacia_repo.listar_estoque()
 
 @registry.post(
     "/api/farmacia/medicamento",
@@ -540,12 +486,10 @@ def post_farmacia_medicamento(data):
     qtd = int(data.get("quantidade_disponivel", 10))
     min_qtd = int(data.get("quantidade_minima", 5))
     st = "critico" if qtd <= min_qtd else "normal"
-    with db.get_connection() as conn:
-        conn.execute("""
-            INSERT INTO farmacia_estoque (codigo_item, medicamento, lote, categoria, quantidade_disponivel, quantidade_minima, temperatura_armazenamento, validade, status_estoque)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
-        """, (cod, data["medicamento"], data["lote"], data["categoria"], qtd, min_qtd, data.get("temperatura_armazenamento", "Ambiente"), data["validade"], st))
-        conn.commit()
+    farmacia_repo.criar_item(
+        cod, data["medicamento"], data["lote"], data["categoria"], qtd, min_qtd,
+        data.get("temperatura_armazenamento", "Ambiente"), data["validade"], st
+    )
     return {"sucesso": True, "codigo_item": cod}
 
 @registry.put(
@@ -563,16 +507,13 @@ def post_farmacia_medicamento(data):
 def put_farmacia_atualizar(data):
     iid = int(data.get("id", 0))
     qtd = int(data.get("quantidade_disponivel", 0))
-    with db.get_connection() as conn:
-        row = conn.execute("SELECT quantidade_minima FROM farmacia_estoque WHERE id = ?", (iid,)).fetchone()
-        if not row:
-            return {"sucesso": False, "error": "Item não encontrado"}
-        min_qtd = row["quantidade_minima"]
-        st = "critico" if qtd <= min_qtd else "normal"
-        if qtd == 0:
-            st = "zerado"
-        conn.execute("UPDATE farmacia_estoque SET quantidade_disponivel = ?, status_estoque = ? WHERE id = ?", (qtd, st, iid))
-        conn.commit()
+    min_qtd = farmacia_repo.obter_quantidade_minima(iid)
+    if min_qtd is None:
+        return {"sucesso": False, "error": "Item não encontrado"}
+    st = "critico" if qtd <= min_qtd else "normal"
+    if qtd == 0:
+        st = "zerado"
+    farmacia_repo.atualizar_saldo(iid, qtd, st)
     return {"sucesso": True, "id": iid, "quantidade_disponivel": qtd, "status_estoque": st}
 
 @registry.delete(
@@ -586,9 +527,7 @@ def put_farmacia_atualizar(data):
 )
 def delete_farmacia_item(data):
     iid = int(data.get("id", 0))
-    with db.get_connection() as conn:
-        conn.execute("DELETE FROM farmacia_estoque WHERE id = ?", (iid,))
-        conn.commit()
+    farmacia_repo.remover_item(iid)
     return {"sucesso": True}
 
 @registry.post(
@@ -619,10 +558,7 @@ def post_farmacia_dispensar(data):
     responses={"200": {"description": "Lista de dispensações", "content": {"application/json": {"example": [{"id": 1, "medicamento": "AAS", "quantidade": 3}]}}}}
 )
 def get_farmacia_dispensacoes(params):
-    with db.get_connection() as conn:
-        cursor = conn.cursor()
-        rows = cursor.execute("SELECT * FROM dispensacoes ORDER BY data_dispensacao DESC").fetchall()
-        return [dict(r) for r in rows]
+    return farmacia_repo.listar_dispensacoes()
 
 # =========================================================================
 # 5. VERTICAL: FATURAMENTO HOSPITALAR TISS/TUSS & CONVÊNIOS (FULL CRUD)
@@ -635,10 +571,7 @@ def get_farmacia_dispensacoes(params):
     responses={"200": {"description": "Lista de guias", "content": {"application/json": {"example": [{"id": 1, "numero_guia": "TISS-8801", "paciente_nome": "Carlos Alberto", "valor_total": 14850.0}]}}}}
 )
 def get_faturamento_guias(params):
-    with db.get_connection() as conn:
-        cursor = conn.cursor()
-        rows = cursor.execute("SELECT * FROM faturamento_guias ORDER BY id DESC").fetchall()
-        return [dict(r) for r in rows]
+    return faturamento_repo.listar_guias()
 
 @registry.post(
     "/api/faturamento/nova-guia",
@@ -657,12 +590,10 @@ def get_faturamento_guias(params):
 )
 def post_faturamento_nova_guia(data):
     num = f"TISS-{uuid.uuid4().hex[:4].upper()}"
-    with db.get_connection() as conn:
-        conn.execute("""
-            INSERT INTO faturamento_guias (numero_guia, paciente_nome, convenio, codigo_tuss, descricao_procedimento, valor_total, status_guia)
-            VALUES (?, ?, ?, ?, ?, ?, 'gerada')
-        """, (num, data["paciente_nome"], data["convenio"], data["codigo_tuss"], data["descricao_procedimento"], float(data["valor_total"])))
-        conn.commit()
+    faturamento_repo.criar_guia(
+        num, data["paciente_nome"], data["convenio"], data["codigo_tuss"],
+        data["descricao_procedimento"], float(data["valor_total"])
+    )
 
     webhook_dispatcher.disparar("faturamento.guia_gerada", {"numero_guia": num, "valor_total": float(data["valor_total"]), "convenio": data["convenio"]})
     return {"sucesso": True, "numero_guia": num}
@@ -682,10 +613,7 @@ def post_faturamento_nova_guia(data):
 def put_faturamento_status(data):
     gid = int(data.get("id", 0))
     st = data.get("status_guia", "liquidada")
-    with db.get_connection() as conn:
-        liq = "datetime('now')" if st == "liquidada" else "NULL"
-        conn.execute(f"UPDATE faturamento_guias SET status_guia = ?, data_liquidacao = {liq} WHERE id = ?", (st, gid))
-        conn.commit()
+    faturamento_repo.atualizar_status(gid, st)
     if st == "liquidada":
         webhook_dispatcher.disparar("faturamento.guia_liquidada", {"guia_id": gid, "status": "liquidada"})
     return {"sucesso": True, "id": gid, "status_guia": st}
@@ -701,9 +629,7 @@ def put_faturamento_status(data):
 )
 def delete_faturamento_guia(data):
     gid = int(data.get("id", 0))
-    with db.get_connection() as conn:
-        conn.execute("DELETE FROM faturamento_guias WHERE id = ?", (gid,))
-        conn.commit()
+    faturamento_repo.remover_guia(gid)
     return {"sucesso": True}
 
 @registry.get(
@@ -714,15 +640,13 @@ def delete_faturamento_guia(data):
     responses={"200": {"description": "Consolidado DRE", "content": {"application/json": {"example": {"total_faturado": 39450.0, "total_liquidado": 8900.0, "pendente": 30550.0}}}}}
 )
 def get_faturamento_dre(params):
-    with db.get_connection() as conn:
-        total = conn.execute("SELECT COALESCE(SUM(valor_total), 0) FROM faturamento_guias").fetchone()[0]
-        liquidado = conn.execute("SELECT COALESCE(SUM(valor_total), 0) FROM faturamento_guias WHERE status_guia = 'liquidada'").fetchone()[0]
-        pendente = total - liquidado
-        return {
-            "total_faturado_brl": round(total, 2),
-            "total_liquidado_brl": round(liquidado, 2),
-            "pendente_recebimento_brl": round(pendente, 2)
-        }
+    total, liquidado = faturamento_repo.dre()
+    pendente = total - liquidado
+    return {
+        "total_faturado_brl": round(total, 2),
+        "total_liquidado_brl": round(liquidado, 2),
+        "pendente_recebimento_brl": round(pendente, 2)
+    }
 
 # =========================================================================
 # 6. WEBHOOK STUDIO & AUDITORIA
@@ -735,10 +659,7 @@ def get_faturamento_dre(params):
     responses={"200": {"description": "Lista de webhooks", "content": {"application/json": {"example": [{"id": 1, "url": "https://webhook.site/mock", "ativo": 1}]}}}}
 )
 def get_webhooks(params):
-    with db.get_connection() as conn:
-        cursor = conn.cursor()
-        rows = cursor.execute("SELECT id, url, secret, eventos, ativo, criado_em FROM webhooks").fetchall()
-        return [dict(r) for r in rows]
+    return webhook_dispatcher.listar_webhooks()
 
 @registry.post(
     "/api/webhooks",
@@ -759,11 +680,8 @@ def post_webhooks(data):
         return {"sucesso": False, "error": "URL é obrigatória"}
     secret = data.get("secret", "")
     eventos = data.get("eventos", "*")
-    with db.get_connection() as conn:
-        cursor = conn.cursor()
-        cursor.execute("INSERT INTO webhooks (url, secret, eventos, ativo) VALUES (?, ?, ?, 1)", (url, secret, eventos))
-        conn.commit()
-        return {"sucesso": True, "id": cursor.lastrowid}
+    new_id = webhook_dispatcher.cadastrar_webhook(url, secret, eventos)
+    return {"sucesso": True, "id": new_id}
 
 @registry.delete(
     "/api/webhooks/remover",
@@ -776,10 +694,8 @@ def post_webhooks(data):
 )
 def delete_webhooks(data):
     wid = int(data.get("id", 0))
-    with db.get_connection() as conn:
-        conn.execute("DELETE FROM webhooks WHERE id = ?", (wid,))
-        conn.commit()
-        return {"sucesso": True}
+    webhook_dispatcher.remover_webhook(wid)
+    return {"sucesso": True}
 
 @registry.post(
     "/api/webhooks/testar",
@@ -810,10 +726,7 @@ def post_testar_webhook(data):
     responses={"200": {"description": "Logs de webhook", "content": {"application/json": {"example": [{"id": 1, "evento": "triagem.urgencia_critica", "sucesso": 1}]}}}}
 )
 def get_webhook_logs(params):
-    with db.get_connection() as conn:
-        cursor = conn.cursor()
-        rows = cursor.execute("SELECT * FROM webhook_logs ORDER BY id DESC LIMIT 50").fetchall()
-        return [dict(r) for r in rows]
+    return webhook_dispatcher.listar_logs(limite=50)
 
 @registry.post(
     "/api/webhooks/logs/reenviar",
@@ -826,24 +739,23 @@ def get_webhook_logs(params):
 )
 def post_reenviar_webhook_log(data):
     log_id = int(data.get("log_id", 0))
-    with db.get_connection() as conn:
-        row = conn.execute("SELECT evento, url, payload_json, webhook_id FROM webhook_logs WHERE id = ?", (log_id,)).fetchone()
-        if not row:
-            return {"sucesso": False, "error": "Log não encontrado"}
-        evento, url, payload_json, wid = row[0], row[1], row[2], row[3]
-        secret = ""
-        if wid:
-            w_row = conn.execute("SELECT secret FROM webhooks WHERE id = ?", (wid,)).fetchone()
-            if w_row:
-                secret = w_row[0]
-        try:
-            payload = json.loads(payload_json) if payload_json else {}
-            if "data" in payload:
-                payload = payload["data"]
-        except json.JSONDecodeError:
-            payload = {}
-        res = webhook_dispatcher.testar_disparo(url, secret, evento, payload)
-        return {"sucesso": True, "detalhes": res}
+    row = webhook_dispatcher.obter_log(log_id)
+    if not row:
+        return {"sucesso": False, "error": "Log não encontrado"}
+    evento, url, payload_json, wid = row[0], row[1], row[2], row[3]
+    secret = ""
+    if wid:
+        found_secret = webhook_dispatcher.obter_secret_webhook(wid)
+        if found_secret:
+            secret = found_secret
+    try:
+        payload = json.loads(payload_json) if payload_json else {}
+        if "data" in payload:
+            payload = payload["data"]
+    except json.JSONDecodeError:
+        payload = {}
+    res = webhook_dispatcher.testar_disparo(url, secret, evento, payload)
+    return {"sucesso": True, "detalhes": res}
 
 @registry.get(
     "/api/webhooks/eventos",
@@ -876,10 +788,7 @@ def get_dashboard_kpis(params):
     responses={"200": {"description": "Logs de auditoria", "content": {"application/json": {"example": [{"id": 1, "evento": "triagem_critica_leito_alocado", "modulo": "pronto_socorro"}]}}}}
 )
 def get_logs_auditoria(params):
-    with db.get_connection() as conn:
-        cursor = conn.cursor()
-        rows = cursor.execute("SELECT * FROM logs_auditoria ORDER BY id DESC LIMIT 50").fetchall()
-        return [dict(r) for r in rows]
+    return auditoria_repo.listar(limite=50)
 
 # =========================================================================
 # HTTP HANDLER COM OWASP SECURITY HEADERS

@@ -33,7 +33,16 @@
    - tools/*/templates/
    Fora do escopo (deliberado, mesma convencao de G_HONESTIDADE_ROTULO):
    tools/*/materiais-extras/examples/** (material de documentacao/exemplo,
-   nao script vivo).
+   nao script vivo); tools/*/templates/gates/** e tools/*/src/gates/**
+   (ferramentas de auditoria do proprio framework — ex.: G_SEGURANCA.py usa
+   sqlite3 real para provar comportamento de neutralizacao de SQL Injection
+   contra um banco descartavel; nao e SQL do deliverable de negocio).
+
+ Correcao de 2026-09-11 (achado: 212 violacoes SQL-fora-de-infra reais nos
+ templates de servidor/MCP): SQL inline extraido para repositorios de
+ infraestrutura (core/repositories.py, core/mcp_repository.py, metodos de
+ persistencia agregados a core/webhooks.py) — server.py/mcp_server.py
+ passam a chamar apenas esses repositorios.
 
  Uso:
    python gates/G_ARQUITETURA_DELIVERABLE.py
@@ -87,7 +96,34 @@ NUCLEO_COMPARTILHADO_INFRA = {
     "jobs.py",
     "webhooks.py",
     "token_revocation.py",
+    # mcp_repository.py: extraido em 2026-09-11 (correcao das 212 violacoes
+    # SQL-fora-de-infra) de dentro de mcp_server.py — concentra o unico
+    # acesso sqlite3 bruto usado pelas ferramentas MCP genericas de CRUD e
+    # introspeccao de schema. Auditado linha a linha antes de entrar aqui:
+    # e persistencia pura (sem regra de negocio), mesmo criterio das demais
+    # entradas desta lista.
+    "mcp_repository.py",
+    # repositories.py: extraido em 2026-09-11 do SQL que vivia inline em
+    # server.py (verticais Triagem/PEP/Cirurgico/Farmacia/Faturamento/
+    # Auditoria do monolito de demonstracao). Persistencia pura por tabela,
+    # sem regra de negocio — mesmo criterio das demais entradas desta lista.
+    "repositories.py",
 }
+
+# ---------------------------------------------------------------------------
+# Gates/testes do proprio framework (tools/*/templates/gates/,
+# tools/*/src/gates/) nao sao o deliverable de negocio: sao ferramentas de
+# auditoria que, para provar comportamento (ex.: neutralizacao de SQL
+# Injection via bind parameter em G_SEGURANCA.py), precisam executar SQL
+# real contra um banco descartavel/temporario. Isso e papel de teste, nao
+# acoplamento de camada de aplicacao a banco — mesma logica de excluir
+# tools/*/materiais-extras/examples/** (ver docstring do modulo).
+GATE_TOOLING_DIRS = {"gates"}
+
+
+def _is_gate_tooling(filepath):
+    parts = filepath.replace("\\", "/").split("/")
+    return any(p in GATE_TOOLING_DIRS for p in parts)
 
 # Mapeamento camada -> arquivos proibidos/permitidos
 LAYER_RULES = {
@@ -204,7 +240,7 @@ def _extract_cache_calls(tree):
 # ---------------------------------------------------------------------------
 def _check_sql_outside_infra(tree, rel_path):
     violations = []
-    if _is_infrastructure(rel_path):
+    if _is_infrastructure(rel_path) or _is_gate_tooling(rel_path):
         return violations
 
     # Checagem via AST: chamadas .execute/.executemany/.executescript

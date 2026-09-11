@@ -63,6 +63,10 @@
         "esperado_identico": true,
         "motivo": "Divergencia hook.sh vs hook JSON resolvida em 2026-09-10: formato JSON adotado; default de projeto derivado de _projeto_padrao(); fonte unica em componentes/compartilhado/src-core/."
       },
+      "mcp_repository.py": {
+        "esperado_identico": true,
+        "motivo": null
+      },
       "mcp_server.py": {
         "esperado_identico": true,
         "motivo": null
@@ -237,6 +241,10 @@
         "esperado_identico": true,
         "motivo": null
       },
+      "mcp_repository.py": {
+        "esperado_identico": true,
+        "motivo": null
+      },
       "mcp_server.py": {
         "esperado_identico": true,
         "motivo": null
@@ -250,6 +258,10 @@
         "motivo": null
       },
       "outbox_worker.py": {
+        "esperado_identico": true,
+        "motivo": null
+      },
+      "repositories.py": {
         "esperado_identico": true,
         "motivo": null
       },
@@ -307,6 +319,10 @@
         "esperado_identico": true,
         "motivo": null
       },
+      "mcp_repository.py": {
+        "esperado_identico": true,
+        "motivo": null
+      },
       "mcp_server.py": {
         "esperado_identico": true,
         "motivo": null
@@ -320,6 +336,10 @@
         "motivo": null
       },
       "outbox_worker.py": {
+        "esperado_identico": true,
+        "motivo": null
+      },
+      "repositories.py": {
         "esperado_identico": true,
         "motivo": null
       },

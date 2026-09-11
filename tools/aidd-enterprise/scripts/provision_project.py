@@ -42,7 +42,7 @@ def provision(project_desc, base_dir=None):
     gates_dir = os.path.join(repo_root, 'templates', 'gates')
 
     if os.path.exists(templates_dir):
-        for f in ['database.py', 'events.py', 'openapi.py', 'webhooks.py', 'security.py', 'mcp_server.py']:
+        for f in ['database.py', 'events.py', 'openapi.py', 'webhooks.py', 'security.py', 'mcp_server.py', 'mcp_repository.py']:
             src = os.path.join(templates_dir, f)
             if os.path.exists(src):
                 shutil.copyfile(src, os.path.join(project_dir, 'src', 'core', f))

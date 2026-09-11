@@ -211,9 +211,7 @@ def get_oauth_callback(params):
     responses={"200": {"description": "Lista de webhooks"}}
 )
 def get_webhooks(params):
-    with db.get_connection() as conn:
-        rows = conn.execute("SELECT id, url, secret, eventos, ativo, criado_em FROM webhooks").fetchall()
-        return [dict(r) for r in rows]
+    return webhook_dispatcher.listar_webhooks()
 
 @registry.post(
     "/api/webhooks",
@@ -234,10 +232,8 @@ def post_webhooks(data):
         return {"sucesso": False, "error": "URL é obrigatória"}
     secret = data.get("secret", "")
     evs = data.get("eventos", "*")
-    with db.get_connection() as conn:
-        cur = conn.execute("INSERT INTO webhooks (url, secret, eventos, ativo) VALUES (?, ?, ?, 1)", (url, secret, evs))
-        conn.commit()
-        return {"sucesso": True, "id": cur.lastrowid}
+    new_id = webhook_dispatcher.cadastrar_webhook(url, secret, evs)
+    return {"sucesso": True, "id": new_id}
 
 # 6.5 Rotas de Background Jobs & Dead Letter Queue (DLQ)
 @registry.get(

@@ -27,12 +27,23 @@ gates que inspecionam o método.
 """
 
 import json
-import sqlite3
 import sys
 import os
 import re
 from pathlib import Path
 from typing import Dict, List, Any, Optional, Callable
+
+try:
+    from core.mcp_repository import MCPRepository
+except ImportError:
+    try:
+        from mcp_repository import MCPRepository
+    except ImportError:
+        # Modulo carregado por caminho de arquivo direto (ex.: testes que usam
+        # importlib.util.spec_from_file_location) sem que o chamador tenha
+        # preparado sys.path — resolve pelo diretorio deste proprio arquivo.
+        sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+        from mcp_repository import MCPRepository
 
 # SDK oficial do MCP (modelcontextprotocol/python-sdk).
 # Import condicional: o núcleo compartilhado também roda em ambientes onde
@@ -90,16 +101,12 @@ class MCPServer:
 
     def __init__(self, db_path: Optional[str] = None):
         self.db_path = db_path or os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", "suite.db")
+        self._repo = MCPRepository(self.db_path)
         self._handlers: Dict[str, Callable[[Dict[str, Any]], Dict[str, Any]]] = {}
         self.tools: List[Dict[str, Any]] = [t.copy() for t in self.TOOLS]
 
         self._handlers["sistema_saude_status"] = self._handle_saude_status
         self._handlers["sistema_executar_consulta"] = self._handle_executar_consulta
-
-    def _get_conn(self) -> sqlite3.Connection:
-        conn = sqlite3.connect(self.db_path)
-        conn.row_factory = sqlite3.Row
-        return conn
 
     def register_tool(self, name: str, description: str, input_schema: Dict[str, Any], handler: Optional[Callable] = None):
         """Registra uma nova ferramenta no servidor MCP."""
@@ -232,28 +239,21 @@ class MCPServer:
 
     def _handle_saude_status(self, args: Dict[str, Any]) -> Dict[str, Any]:
         detalhado = args.get("detalhado", False)
-        with self._get_conn() as conn:
-            cur = conn.cursor()
-            cur.execute("SELECT name FROM sqlite_master WHERE type='table' AND name NOT LIKE 'sqlite_%'")
-            tabelas_raw = cur.fetchall()
-            tabelas = [r[0] for r in tabelas_raw]
-            info_tabelas = {}
-            if detalhado:
-                for t in tabelas:
-                    clean_t = _sanitize_ident(t)
-                    count_sql = "SELECT COUNT(*) FROM " + clean_t
-                    cur.execute(count_sql)
-                    res = cur.fetchone()
-                    info_tabelas[t] = res[0] if res else 0
+        tabelas = self._repo.listar_tabelas()
+        info_tabelas = {}
+        if detalhado:
+            for t in tabelas:
+                clean_t = _sanitize_ident(t)
+                info_tabelas[t] = self._repo.contar_registros(clean_t)
 
-            return {
-                "sucesso": True,
-                "status": "online",
-                "versao": "4.1.0 Enterprise",
-                "total_ferramentas_mcp": len(self.tools),
-                "tabelas_ativas": tabelas,
-                "detalhes": info_tabelas if detalhado else None
-            }
+        return {
+            "sucesso": True,
+            "status": "online",
+            "versao": "4.1.0 Enterprise",
+            "total_ferramentas_mcp": len(self.tools),
+            "tabelas_ativas": tabelas,
+            "detalhes": info_tabelas if detalhado else None
+        }
 
     def _handle_executar_consulta(self, args: Dict[str, Any]) -> Dict[str, Any]:
         tabela = _sanitize_ident(args.get("tabela", ""))
@@ -261,54 +261,33 @@ class MCPServer:
         if not tabela:
             return {"sucesso": False, "erro": "Nome da tabela é obrigatório"}
 
-        with self._get_conn() as conn:
-            cur = conn.cursor()
-            query_sql = "SELECT * FROM " + tabela + " LIMIT ?"
-            cur.execute(query_sql, (limite,))
-            rows = cur.fetchall()
-            return {
-                "sucesso": True,
-                "total": len(rows),
-                "registros": [dict(r) for r in rows]
-            }
+        rows = self._repo.consultar(tabela, limite)
+        return {
+            "sucesso": True,
+            "total": len(rows),
+            "registros": [dict(r) for r in rows]
+        }
 
     def _generic_listar(self, slug: str, args: Dict[str, Any]) -> Dict[str, Any]:
         table = "mod_" + _sanitize_ident(slug)
         status = args.get("status")
         apenas_ativos = args.get("apenas_ativos", True)
-        with self._get_conn() as conn:
-            cur = conn.cursor()
-            conditions = ["1=1"]
-            params = []
-            if apenas_ativos:
-                conditions.append("ativo = 1")
-            if status:
-                conditions.append("status = ?")
-                params.append(status)
-
-            where_clause = " AND ".join(conditions)
-            sql = "SELECT * FROM " + table + " WHERE " + where_clause + " ORDER BY id DESC"
-            try:
-                cur.execute(sql, params)
-                rows = cur.fetchall()
-                return {"sucesso": True, "modulo": slug, "total": len(rows), "itens": [dict(r) for r in rows]}
-            except sqlite3.Error as e:
-                return {"sucesso": False, "modulo": slug, "erro": str(e)}
+        try:
+            rows = self._repo.listar_modulo(table, apenas_ativos, status)
+            return {"sucesso": True, "modulo": slug, "total": len(rows), "itens": [dict(r) for r in rows]}
+        except Exception as e:
+            return {"sucesso": False, "modulo": slug, "erro": str(e)}
 
     def _generic_obter(self, slug: str, args: Dict[str, Any]) -> Dict[str, Any]:
         table = "mod_" + _sanitize_ident(slug)
         item_id = int(args.get("id", 0))
-        with self._get_conn() as conn:
-            cur = conn.cursor()
-            sql = "SELECT * FROM " + table + " WHERE id = ?"
-            try:
-                cur.execute(sql, (item_id,))
-                row = cur.fetchone()
-                if row:
-                    return {"sucesso": True, "modulo": slug, "item": dict(row)}
-                return {"sucesso": False, "modulo": slug, "erro": "Registro não encontrado"}
-            except sqlite3.Error as e:
-                return {"sucesso": False, "modulo": slug, "erro": str(e)}
+        try:
+            row = self._repo.obter_modulo(table, item_id)
+            if row:
+                return {"sucesso": True, "modulo": slug, "item": dict(row)}
+            return {"sucesso": False, "modulo": slug, "erro": "Registro não encontrado"}
+        except Exception as e:
+            return {"sucesso": False, "modulo": slug, "erro": str(e)}
 
     def _generic_criar(self, slug: str, args: Dict[str, Any]) -> Dict[str, Any]:
         table = "mod_" + _sanitize_ident(slug)
@@ -316,49 +295,35 @@ class MCPServer:
         descricao = args.get("descricao", "")
         status = args.get("status", "ativo")
         dados = json.dumps(args.get("dados", {}), ensure_ascii=False)
-        with self._get_conn() as conn:
-            cur = conn.cursor()
-            sql = "INSERT INTO " + table + " (titulo, descricao, dados_json, status, ativo) VALUES (?, ?, ?, ?, 1)"
-            try:
-                cur.execute(sql, (titulo, descricao, dados, status))
-                conn.commit()
-                return {"sucesso": True, "modulo": slug, "id": cur.lastrowid, "titulo": titulo}
-            except sqlite3.Error as e:
-                return {"sucesso": False, "modulo": slug, "erro": str(e)}
+        try:
+            novo_id = self._repo.criar_modulo(table, titulo, descricao, dados, status)
+            return {"sucesso": True, "modulo": slug, "id": novo_id, "titulo": titulo}
+        except Exception as e:
+            return {"sucesso": False, "modulo": slug, "erro": str(e)}
 
     def _generic_atualizar(self, slug: str, args: Dict[str, Any]) -> Dict[str, Any]:
         table = "mod_" + _sanitize_ident(slug)
         item_id = int(args.get("id", 0))
-        with self._get_conn() as conn:
-            cur = conn.cursor()
-            sel_sql = "SELECT * FROM " + table + " WHERE id = ?"
-            try:
-                cur.execute(sel_sql, (item_id,))
-                row = cur.fetchone()
-                if not row:
-                    return {"sucesso": False, "erro": "Registro não encontrado"}
-                novo_titulo = args.get("titulo", row["titulo"])
-                nova_desc = args.get("descricao", row["descricao"])
-                novo_status = args.get("status", row["status"])
-                up_sql = "UPDATE " + table + " SET titulo = ?, descricao = ?, status = ?, atualizado_em = CURRENT_TIMESTAMP WHERE id = ?"
-                cur.execute(up_sql, (novo_titulo, nova_desc, novo_status, item_id))
-                conn.commit()
-                return {"sucesso": True, "modulo": slug, "id": item_id, "status": novo_status}
-            except sqlite3.Error as e:
-                return {"sucesso": False, "modulo": slug, "erro": str(e)}
+        try:
+            row = self._repo.obter_modulo(table, item_id)
+            if not row:
+                return {"sucesso": False, "erro": "Registro não encontrado"}
+            novo_titulo = args.get("titulo", row["titulo"])
+            nova_desc = args.get("descricao", row["descricao"])
+            novo_status = args.get("status", row["status"])
+            self._repo.atualizar_modulo(table, item_id, novo_titulo, nova_desc, novo_status)
+            return {"sucesso": True, "modulo": slug, "id": item_id, "status": novo_status}
+        except Exception as e:
+            return {"sucesso": False, "modulo": slug, "erro": str(e)}
 
     def _generic_deletar(self, slug: str, args: Dict[str, Any]) -> Dict[str, Any]:
         table = "mod_" + _sanitize_ident(slug)
         item_id = int(args.get("id", 0))
-        with self._get_conn() as conn:
-            cur = conn.cursor()
-            sql = "DELETE FROM " + table + " WHERE id = ?"
-            try:
-                cur.execute(sql, (item_id,))
-                conn.commit()
-                return {"sucesso": True, "modulo": slug, "id": item_id}
-            except sqlite3.Error as e:
-                return {"sucesso": False, "modulo": slug, "erro": str(e)}
+        try:
+            self._repo.deletar_modulo(table, item_id)
+            return {"sucesso": True, "modulo": slug, "id": item_id}
+        except Exception as e:
+            return {"sucesso": False, "modulo": slug, "erro": str(e)}
 
     def get_tools_manifest(self) -> List[Dict[str, Any]]:
         """Retorna o manifesto de ferramentas no formato padrão MCP."""
