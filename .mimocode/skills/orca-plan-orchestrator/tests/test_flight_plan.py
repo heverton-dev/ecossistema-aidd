@@ -73,9 +73,10 @@ class TestGerarPlanoDeVoo:
             FIXTURES["skill-gerador-planos-auditoria"], PROFILES_PATH, harness="mimo"
         )
         front = result["fronts"][0]
-        assert front["name"] == "criar-skill-planos-auditoria-runner"
-        assert front["branch"] == "orca/criar-skill-planos-auditoria-runner"
-        assert front["worktree"] == "wt-criar-skill-planos-auditoria-runner"
+        assert front["name"] == "criar-skill-planos"
+        assert front["branch"] == f"orca/{front['rotulo']}"
+        assert front["worktree"] == front["rotulo"]
+        assert "-fase-01-" in front["rotulo"]
 
     def test_skill_fixture_command_is_mimo(self) -> None:
         result = gerar_plano_de_voo(
@@ -128,15 +129,15 @@ class TestNamingConvention:
             FIXTURES["evolucao-notas-auditoria"], PROFILES_PATH, harness="mimo"
         )
         for front in result["fronts"]:
-            assert front["worktree"].startswith("wt-")
+            assert "-fase-" in front["worktree"]
 
     def test_branch_and_worktree_match_front_name(self) -> None:
         result = gerar_plano_de_voo(
             FIXTURES["evolucao-notas-auditoria"], PROFILES_PATH, harness="claude"
         )
         for front in result["fronts"]:
-            assert front["branch"] == f"orca/{front['name']}"
-            assert front["worktree"] == f"wt-{front['name']}"
+            assert front["branch"] == f"orca/{front['rotulo']}"
+            assert front["worktree"] == front["rotulo"]
 
 
 # ---------------------------------------------------------------------------
@@ -167,7 +168,7 @@ class TestRenderizarPlanoDeVoo:
             FIXTURES["skill-gerador-planos-auditoria"], PROFILES_PATH, harness="mimo"
         )
         rendered = renderizar_plano_de_voo(result)
-        assert "criar-skill-planos-auditoria-runner" in rendered
+        assert "criar-skill-planos" in rendered
 
     def test_render_truncates_long_commands(self) -> None:
         """The real front content is long enough to trigger truncation."""

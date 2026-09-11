@@ -26,7 +26,7 @@ Esta skill formaliza e padroniza a criacao de iniciativas de plano em `docs/plan
 Consulte a estrutura e tom dos 4 exemplos reais ja estabelecidos no ecossistema:
 - `docs/planos/feitos/PLAN-0001_04-09-2026-evolucao-notas-auditoria/00-PROCESSO-E-DECISOES.md`
 - `docs/planos/feitos/PLAN-0003_05-09-2026-refinamento-notas-auditoria/00-PROCESSO-E-DECISOES.md`
-- `docs/planos/feitos/PLAN-0007_06-09-2026-testes-completos-ecossistema/00-PROCESSO-E-DECISOES.md`
+- `docs/planos/feitos/PLAN-0007-testes-completos-ecossistema/00-PROCESSO-E-DECISOES.md`
 - `docs/planos/feitos/PLAN-0005_06-09-2026-skill-gerador-planos-auditoria/00-PROCESSO-E-DECISOES.md`
 
 ## Convencao de Nome das Iniciativas (obrigatoria)
@@ -34,17 +34,24 @@ Consulte a estrutura e tom dos 4 exemplos reais ja estabelecidos no ecossistema:
 Toda iniciativa de plano vive numa pasta nomeada assim:
 
 ```
-PLAN-<NNNN>_<dd-mm-aaaa>-<nome-curto-3-palavras>
+PLAN-<NNNN>-<nome-curto-3-palavras>
 ```
 
-Exemplo real: `PLAN-0016_09-09-2026-qualidade-testes-mutacao`.
+Exemplo real: `PLAN-0016-qualidade-testes-mutacao`.
 
 - **`NNNN` e um identificador global e permanente.** Nao reinicia em cada
   subpasta (`a-fazer/`, `fazendo/`, `feitos/`) e nunca e reaproveitado, mesmo
   quando o plano muda de pasta ou some. Antes disso as tres subpastas tinham,
   cada uma, um "01, 02, 03" diferente — falar de "plano 03" era ambiguo.
-- **A data e a de criacao da iniciativa**, nao a de hoje nem a da ultima edicao.
+- **Sem data no nome.** O numero ja da a ordem cronologica (0001 e mais antigo
+  que 0023) e o git guarda a data real de criacao. Data em nome de pasta so
+  alongava o caminho e envelhecia errado quando um plano era refeito.
 - **O nome curto tem 3 palavras significativas** (artigos e preposicoes fora).
+- **Os arquivos de item seguem o mesmo limite de 3 palavras**
+  (`04-eliminar-timesleep-injetar.md`). O nome do item vira arquivo, entra no
+  rotulo da mesa e no branch — titulo inteiro gerava caminho de 70+ caracteres,
+  ilegivel no painel e arriscado no Windows. Excecao unica: o arquivo mestre
+  `00-PROCESSO-E-DECISOES.md`, cujo nome e fixo no codigo.
 - **Nunca monte esse nome a mao:** `python ecossistema.py plan init <nome>` ja
   gera o numero, a data e o nome curto sozinho. Numerar a mao e como escrever
   seu proprio numero de senha na fila do banco — cedo ou tarde dois planos
@@ -54,7 +61,7 @@ Exemplo real: `PLAN-0016_09-09-2026-qualidade-testes-mutacao`.
 ## Onde a iniciativa nasce vs onde ela vive
 
 `python ecossistema.py plan init <nome>` sempre cria a pasta nova direto em
-`docs/planos/PLAN-<NNNN>_<dd-mm-aaaa>-<nome-curto>/` (raiz) — isso é esperado e correto. O ecossistema
+`docs/planos/PLAN-<NNNN>-<nome-curto>/` (raiz) — isso é esperado e correto. O ecossistema
 organiza `docs/planos/` em 3 subpastas por status real (`feitos/`,
 `fazendo/`, `a-fazer/`), mas quem move a iniciativa pra lá é
 `python scripts/atualizar_index_planos.py`, rodado depois (manualmente ou

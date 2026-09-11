@@ -1,0 +1,62 @@
+# PROCESSO E DECISOES — direcionamento-estrategico-anti-nih
+
+> **Origem:** Planejamento estruturado no monorepo ecossistema-aidd.
+> **Proposito deste arquivo:** Registro unico do processo e governanca desta iniciativa.
+> **Aviso de Governanca:** Todos os itens comecam como rascunhos. Nenhuma aprovacao ou decisao pode ser fabricada.
+
+---
+
+## 1. O que este esforco busca
+
+- **Origem:** conversa estratégica de 2026-09-07, depois da auditoria "sem maquiagem" e do levantamento NIH (`docs/features/08-09-2026_feature-oportunidades-reaproveitamento-nih.md`), respondendo a 3 perguntas do usuário: (1) o trabalho já feito foi perdido? (2) qual era o direcionamento correto desde o início? (3) qual o plano profundo, sensato e coeso pra frente?
+- **Objetivo Principal:** Registrar essas 3 respostas como decisão formal e sequenciar a execução — não é o plano tático de correção de bugs (esse já existe em `docs/planos/correcao-pos-auditoria-sem-maquiagem/`), é a camada estratégica **acima** dele: definir o norte do produto, trocar o motor de infraestrutura reinventada por OSS maduro sem perder a modelagem de domínio já construída, e só depois investir esforço no que é diferencial real.
+- **Relação com o plano tático:** o plano tático (`correcao-pos-auditoria-sem-maquiagem/`) é a Fase 0 implícita desta iniciativa — corrige bugs e rótulos enganosos que existem HOJE. Esta iniciativa não duplica aqueles 14 itens; ela define o que vem depois.
+- **Regra inegociável:** nenhuma migração de motor pode ser declarada concluída sem reprodução real (rodar a suíte de testes + subir o app gerado de novo) — "trocamos pra Cookiecutter" só é fato depois de reproduzido, não quando o código foi escrito.
+- **Limites de Escopo:** Não inclui decisões não aprovadas por humano; não inclui reescrever nenhuma ferramenta do zero — é redirecionamento e substituição de peças, não relançamento do produto.
+
+## 2. Processo Adotado
+
+Diagnostico rapido → Definicao de Pronto checavel → Prompt de Execucao autocontido (PT-BR + EN-US) → Auditoria por reproducao real → Registro do veredito.
+
+## 3. Onde vive o conteudo tecnico
+
+| # | Item | Documento |
+|---|---|---|
+| 1 | Inventario do que fica vs o que troca por ferramenta (o trabalho que continua de pe) | `01-inventario-fica-vs.md` |
+| 2 | Registro do direcionamento correto e 2 novas Regras de Ouro (checklist anti-NIH, zero linguagem de marketing) | `02-registro-direcionamento-correto.md` |
+| 3 | Fase 1 - Travar o norte: reescrever abertura do AGENTS.md com o north star de uma frase | `03-fase-1-travar.md` |
+| 4 | Fase 2 - Troca de motor sequenciada por risco (seguranca, scaffolding, infra do ops) | `04-fase-2-troca.md` |
+| 5 | Fase 3 - Reauditoria sem maquiagem pos-troca de motor, prova antes e depois | `05-fase-3-reauditoria.md` |
+| 6 | Fase 4 - Investimento no diferencial real (pipeline do generator, protocolo delegado, materializador multi-harness) | `06-fase-4-investimento.md` |
+| 7 | Bootstrap de dependências do produto gerado, por ferramenta (forge não é chamado por nenhuma das outras 4) | `07-bootstrap-dependencias-produto.md` |
+| 8 | Apertar CSP e destravar G_SEGREDOS do modo manual (Onda 1 remanescente) | 🔄 **Parcial (2026-09-09).** Item 8(b) G_SEGREDOS: CONCLUÍDO — causa raiz identificada (baseline com backslash vs. git ls-files com forward slash + verificação de baseline unstaged no pre_commit_hook.main()), baseline normalizado para forward slash e gate reescrito para comparar por `secret_hash` em vez de depender de `pre_commit_hook.main()`. Rodado direto e via pre-commit framework: ambos aprovados (exit 0). Item 8(a) CSP: DELEGADO ao plano tático `docs/planos/fazendo/01-correcao-pos-auditoria-sem-maquiagem/04-reverter-csp-relaxado-no-template-compartilhado-unsafe-inlinecdn.md` (Item 4 desse plano). | `08-apertar-csp-e-destravar-g_segredos-do-modo-manual-onda-1-remanescente.md` |
+| 9 | Confirmar Onda 2 (Scaffolding) 100% migrada, sem código novo esperado | ✅ **FEITO em 2026-09-09** — 4 trocas confirmadas por reprodução real: Cookiecutter (add_module.py + compose_suite.py em ambas as ferramentas), returns (src/core/result.py wrapper em ambas), SQLAlchemy com fronteira deliberada vs driver nativo em database.py, Alembic (14 testes passando). Nenhum código não-migrado encontrado. | `09-confirmar-onda-2-scaffolding-100-migrada-sem-codigo-novo.md` |
+| 10 | Migrar CLI de cada ferramenta de argparse para o padrão do ecossistema.py (Onda 4 remanescente) | ✅ **CORRIGIDO E CONCLUÍDO em 2026-09-09 (por Claude).** O fechamento anterior (Buffy) estava incompleto e continha uma afirmação falsa (dizia que `aidd.py`, `aidd_inject.py` e `pipeline_completo.py` "já estavam em click" — não estavam). Auditoria encontrou o problema por reprodução real (leitura de código + testes), e a migração completa foi feita nesta sessão: `aidd.py` (master, 1160 linhas, 19 subcomandos), `aidd.py` (enterprise, 1146 linhas, 18 subcomandos), `aidd_inject.py` e `pipeline_completo.py` (generator), `aidd_forge/cli.py` (forge) — todos migrados de argparse para click, comportamento externo preservado (flags/help/exit codes). `pipeline_ops_deploy.py` (ops): import morto de argparse removido (nunca teve CLI própria). Zero `import argparse` restante em pontos de entrada de CLI (só resta em gates, uso interno documentado como fora de escopo). Provas: pytest real 100% verde em todas as 5 ferramentas (forge 196, generator 929, ops 150, master 285, enterprise 262), `G_CLI_HELP_CONSISTENCIA` e `G_DRIFT_NUCLEO_COMPARTILHADO` aprovados, `python ecossistema.py audit` aprovado. Detalhes em `10-migrar-cli-cada.md`. | `10-migrar-cli-cada.md` |
+| 11 | Adotar instructor e terminar migração MCP SDK no núcleo compartilhado (Onda 5 remanescente) | ✅ **FEITO em 2026-09-09** — implementação por Buffy: (11a) Fase 8 do generator parseia a resposta do LLM com `response_model` (instructor) no caminho real de produção, com testes de retry; (11b) `mcp_server.py` do núcleo compartilhado (src/core, templates/core, templates/v2 — ×2 ferramentas) sobre o SDK oficial do MCP (`FastMCP`), 11+11 testes SDK novos passando, drift gate APROVADO, `requirements.txt` gerado inclui `mcp>=1.28.0`. Verificado por reprodução real nesta sessão (Claude): testes e drift gate reconfirmados verdes. Único erro encontrado no relatório original — referência a um espelho físico em `componentes/aidd-compartilhado/src_core/mcp_server.py` que não existe no repositório — removido da documentação (o usuário confirmou ter excluído esse arquivo). Detalhes e prova em `11-adotar-instructor-terminar.md`. | `11-adotar-instructor-terminar.md` |
+
+## 4. Regras Fixas
+
+1. **A skill/agente nunca decide ou aprova sozinho.** Rascunhos aguardam aprovacao explicita de pessoa real.
+2. **Sem disparos autonomos:** Prompts de execucao nao devem ser enviados a subagentes sem consentimento.
+3. **Sem commit/push automatico:** Commits dependem de aprovacao do usuario.
+4. **Isolamento:** Testes devem ocorrer sem poluir arquivos de producao.
+
+## 5. Registro de Progresso
+
+| # | Item | Status | Documento |
+|---|---|---|---|
+| 1 | Inventario do que fica vs o que troca por ferramenta (o trabalho que continua de pe) | ✅ **Verificado em 2026-09-09** — tabela publicada em `docs/features/08-09-2026_feature-inventario-troca-ferramentas.md`, rastreabilidade mantida. Nenhuma mudança necessária. | `01-inventario-fica-vs.md` |
+| 2 | Registro do direcionamento correto e 2 novas Regras de Ouro (checklist anti-NIH, zero linguagem de marketing) | ✅ **Verificado em 2026-09-09** — AGENTS.md §2 com Regras #8/#9 presentes; gate `gates/G_HONESTIDADE_ROTULO.py` + testes em `gates/test_g_honestidade_rotulo.py` mantidos. Nenhuma mudança necessária. | `02-registro-direcionamento-correto.md` |
+| 3 | Fase 1 - Travar o norte: reescrever abertura do AGENTS.md com o north star de uma frase | ✅ **Verificado em 2026-09-09** — north star presente em AGENTS.md §1 e README.md. Nenhuma mudança necessária. | `03-fase-1-travar.md` |
+| 4 | Fase 2 - Troca de motor sequenciada por risco (seguranca, scaffolding, infra do ops) | 🔄 **Reconferido e parcialmente fechado em 2026-09-09 — executor: Buffy (sessão de fechamento de itens 9–11).** Status atualizado por onda: **Onda 1 (Segurança):** 3/4 trocado (secure.py, sqlglot, tailwind self-hosted); item 8(a) CSP delegado ao plano tático (`docs/planos/fazendo/01-correcao-pos-auditoria-sem-maquiagem/04-reverter-csp-relaxado-no-template-compartilhado-unsafe-inlinecdn.md`, Item 4 desse plano); item 8(b) G_SEGREDOS **CONCLUÍDO** — causa raiz (baseline com backslash vs forward slash + verificação de baseline unstaged) identificada, baseline normalizado e gate reescrito para comparar por `secret_hash`; rodado direto e via pre-commit framework: ambos aprovados (exit 0). **Onda 2 (Scaffolding):** 4/4 **CONCLUÍDO** — confirmado por reprodução real (item 9): Cookiecutter, returns, SQLAlchemy com fronteira deliberada, Alembic (14 testes passando). **Onda 3 (Infra do ops):** 100% concluída via Coolify (ver `docs/planos/feitos/evolucao-aidd-ops-fase-completa/`). **Onda 4 (Raiz/gates):** `ecossistema.py` já em click, Checkov e hadolint já integrados, pre-commit framework já adotado; CLI de cada ferramenta individual migrado → **item 10 CONCLUÍDO (2026-09-09)** — ⚠️ correção: essa afirmação estava errada quando escrita por Buffy (só 3 scripts secundários tinham sido migrados; `aidd.py` de master/enterprise e mais 2 arquivos do generator ainda usavam argparse); corrigida e efetivamente concluída por Claude no mesmo dia, ver item 10. **Onda 5 (Generator):** 4/5 concluído (Repomix, Pandoc, Prefect); instructor com `response_model` no caminho real + MCP SDK no núcleo compartilhado → **item 11 CONCLUÍDO (2026-09-09)**. | `04-fase-2-troca.md` |
+| 5 | Fase 3 - Reauditoria sem maquiagem pos-troca de motor, prova antes e depois | ✅ **Verificado em 2026-09-09** — relatório publicado em `docs/relatorios/relatorio-reauditoria-fase3-antes-depois.html`. Nenhuma mudança necessária. | `05-fase-3-reauditoria.md` |
+| 6 | Fase 4 - Investimento no diferencial real (pipeline do generator, protocolo delegado, materializador multi-harness) | ✅ **Verificado em 2026-09-09** — 6.1-6.6 todos implementados conforme o próprio item registra. Nenhuma mudança necessária. | `06-fase-4-investimento.md` |
+| 7 | Bootstrap de dependências do produto gerado, por ferramenta (forge não é chamado por nenhuma das outras 4) | ✅ **Verificado em 2026-09-09** — aidd-master + aidd-enterprise concluídos conforme o próprio item registra; aidd-generator/aidd-ops fora de escopo por decisão. Nenhuma mudança necessária. | `07-bootstrap-dependencias-produto.md` |
+
+Esta tabela so e atualizada para Concluido apos auditoria por reproducao real.
+
+## 6. Debitos Tecnicos Registrados (nao escondidos, nao resolvidos)
+
+| # | Achado | Origem | Status |
+|---|---|---|---|
+| 1 | `fleet_discovery.py` e byte-identico entre `tools/aidd-enterprise/src/core/` e `tools/aidd-master/src/core/`. **Correcao (2026-09-08): isso NAO e um debito sem solucao** — `gates/G_DRIFT_NUCLEO_COMPARTILHADO.py` ja monitora esse par especifico (entre ~22 arquivos de nucleo compartilhado master/enterprise) via `gates/baseline_nucleo_compartilhado.json`, com `fleet_discovery.py` ja catalogado (`esperado_identico: true`) e o gate rodando **verde** apos a correcao do item 6.5. E uma decisao de arquitetura ja tomada e ja automatizada (sem acoplamento de runtime entre as 2 ferramentas, alarme automatico se divergirem sem documentar o motivo) — nao precisa de nova decisao do usuario. Ressalva menor registrada, nao critica: rodar os arquivos de teste de `aidd-enterprise` e `aidd-master` juntos num unico `pytest` manual a partir da raiz colide por nome de modulo — mitigado com `--import-mode=importlib` nos `pytest.ini` de cada ferramenta (2026-09-08); nao afeta a execucao real (`G_TESTES_REAIS` sempre roda cada ferramenta em processo separado). `aidd-generator` segue fora deste par (schema proprio, decisao separada). | Auditoria da Fase 4 (2026-09-08), achado 6 — corrigido no mesmo dia | ✅ Resolvido (mecanismo ja existia, so precisava ser observado) |

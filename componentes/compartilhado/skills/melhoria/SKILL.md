@@ -23,7 +23,7 @@ Cada comando tem **um dono unico**: `melhoria`, `plan` e `orchestrate`. As
 skills-motor (`planos-auditoria-runner`, `orca-plan-orchestrator`) nao tem
 slash command proprio e sao acionadas por elas.
 
-> **Nome das iniciativas:** toda pasta de plano segue `PLAN-<NNNN>_<dd-mm-aaaa>-<nome-curto>` (ex.: `PLAN-0016_09-09-2026-qualidade-testes-mutacao`). O `NNNN` e um identificador global unico — use ele pra falar do plano sem ambiguidade, em vez de "plano 03", que existia em tres subpastas ao mesmo tempo. Quem gera o nome e o `plan init`; nunca monte a mao.
+> **Nome das iniciativas:** toda pasta de plano segue `PLAN-<NNNN>-<nome-curto>` (ex.: `PLAN-0016-qualidade-testes-mutacao`). O `NNNN` e um identificador global unico — use ele pra falar do plano sem ambiguidade, em vez de "plano 03", que existia em tres subpastas ao mesmo tempo. Quem gera o nome e o `plan init`; nunca monte a mao.
 
 ## Regra Imutavel: Universalidade e Agnosticismo
 

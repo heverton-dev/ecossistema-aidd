@@ -80,9 +80,12 @@ def compilar_plano_orca(
             carregar_perfil(profiles_path, front_harness)
             if front_harness != harness else default_profile
         )
+        rotulo = plan.rotulo(front)
         fronts.append({
             "name": front.name,
-            "branch": f"orca/{front.name}",
+            "rotulo": rotulo,
+            "worktree_name": rotulo,
+            "branch": f"orca/{rotulo}",
             "harness": front_harness,
             "launch_command": compilar_comando_bare(profile),
             "prompt": front.prompt,

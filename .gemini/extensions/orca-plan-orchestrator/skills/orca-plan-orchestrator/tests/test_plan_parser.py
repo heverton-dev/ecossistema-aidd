@@ -70,11 +70,11 @@ class TestParseRealFixtures:
         plan = parse_plan(FIXTURES["evolucao-notas-auditoria"])
         names = [f.name for f in plan.fronts]
         assert names == [
-            "transparencia-e-gates",
-            "testabilidade-e-determinismo",
+            "transparencia-gates",
+            "testabilidade-determinismo",
             "modularizacao-injector",
             "cobertura-comandos-restantes",
-            "economia-tokens-e-agentico",
+            "economia-tokens-agentico",
             "universalidade",
             "agnosticismo-distribuicao-componentes",
         ]
@@ -122,7 +122,7 @@ class TestParseFrontContent:
         plan = parse_plan(FIXTURES["skill-gerador-planos-auditoria"])
         assert plan.front_count == 1
         front = plan.fronts[0]
-        assert front.name == "criar-skill-planos-auditoria-runner"
+        assert front.name == "criar-skill-planos"
         # Content should be read from disk
         disk_content = front.file_path.read_text(encoding="utf-8")
         assert front.content == disk_content

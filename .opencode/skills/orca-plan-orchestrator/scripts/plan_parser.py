@@ -38,8 +38,52 @@ class Plan:
     def front_count(self) -> int:
         return len(self.fronts)
 
+    @property
+    def identificador(self) -> str:
+        """`PLAN-0016` — identificador global da iniciativa."""
+        return identificador_do_plano(self.folder)
+
+    def rotulo(self, front: "Front") -> str:
+        """`PLAN-0016-fase-04-eliminar-timesleep` — nome da mesa desta frente."""
+        return rotulo_da_frente(self.identificador, front.index, front.name)
+
 
 _FRONT_PATTERN = re.compile(r"^(\d{2})-(.+)\.md$")
+
+_ID_PLANO_PATTERN = re.compile(r"^(PLAN-\d{4})[-_]")
+
+
+def identificador_do_plano(pasta: Path) -> str:
+    """`PLAN-0016` a partir de `PLAN-0016-qualidade-testes-mutacao`.
+
+    Planos legados (sem o prefixo) e pastas de teste caem no nome da pasta
+    mesmo — o rotulo continua util, so nao fica numerado.
+    """
+    achado = _ID_PLANO_PATTERN.match(pasta.name)
+    return achado.group(1) if achado else pasta.name
+
+
+_PALAVRAS_IGNORADAS_ROTULO = {
+    "e", "de", "da", "do", "das", "dos", "para", "com", "sem", "a", "o", "as",
+    "os", "em", "no", "na", "nos", "nas", "ao", "aos", "por", "pos", "the",
+}
+
+
+def rotulo_da_frente(identificador: str, indice: int, nome: str, palavras: int = 3) -> str:
+    """`PLAN-0016-fase-04-eliminar-timesleep-injetar`.
+
+    A fase leva dois digitos de proposito: com um so, `fase-10` apareceria
+    antes de `fase-2` em qualquer lista ordenada por nome.
+
+    O nome do item entra cortado em 3 palavras significativas — mesmo limite
+    das pastas de plano. Sem o corte o rotulo chega a 70 caracteres, e ele vira
+    nome de pasta de worktree e de branch: caminho longo demais quebra no
+    Windows e fica ilegivel no painel de mesas.
+    """
+    partes = [p for p in nome.split("-") if p and p not in _PALAVRAS_IGNORADAS_ROTULO]
+    curto = "-".join(partes[:palavras]) or nome
+    return f"{identificador}-fase-{indice:02d}-{curto}"
+
 _MASTER_FILENAME = "00-PROCESSO-E-DECISOES.md"
 
 # Section headers vary across plans generated at different times (with/without

@@ -104,12 +104,15 @@ class TestCompilarPlanoOrca:
     def test_front_branch_uses_orca_prefix(self, repo_git_real):
         result = compilar_plano_orca(FIXTURE, PROFILES_PATH, repo_git_real, harness="claude")
         for front in result["fronts"]:
-            assert front["branch"] == f"orca/{front['name']}"
+            assert front["branch"] == f"orca/{front['rotulo']}"
+            # o rotulo diz plano e fase: PLAN-0016-fase-04-...
+            assert front["rotulo"].startswith("PLAN-")
+            assert "-fase-" in front["rotulo"]
 
     def test_harness_map_overrides_per_front(self, repo_git_real):
         result = compilar_plano_orca(
             FIXTURE, PROFILES_PATH, repo_git_real, harness="claude",
-            harness_map={"criar-skill-planos-auditoria-runner": "opencode"},
+            harness_map={"criar-skill-planos": "opencode"},
         )
         front = result["fronts"][0]
         assert front["harness"] == "opencode"

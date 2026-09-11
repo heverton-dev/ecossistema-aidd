@@ -54,6 +54,7 @@ def compilar_plano_subagentes(
     for front in plan.fronts:
         fronts.append({
             "name": front.name,
+            "rotulo": plan.rotulo(front),
             "subagent_type": (subagent_map or {}).get(front.name, subagent_type),
             "model": (model_map or {}).get(front.name, model),
             "prompt": front.prompt,

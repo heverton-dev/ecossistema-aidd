@@ -6,39 +6,45 @@
 
 | Iniciativa | Local |
 |---|---|
-| Evolucao Notas Auditoria | `feitos/PLAN-0001_04-09-2026-evolucao-notas-auditoria/` |
-| Correcao Riscos Ecossistema | `feitos/PLAN-0002_04-09-2026-correcao-riscos-ecossistema.md` |
-| Refinamento Notas Auditoria | `feitos/PLAN-0003_05-09-2026-refinamento-notas-auditoria/` |
-| Integracao Aidd Ops | `feitos/PLAN-0004_06-09-2026-integracao-aidd-ops/` |
-| Skill Gerador Planos | `feitos/PLAN-0005_06-09-2026-skill-gerador-planos/` |
-| Skill Orquestracao Orca | `feitos/PLAN-0006_06-09-2026-skill-orquestracao-orca/` |
-| Testes Completos Ecossistema | `feitos/PLAN-0007_06-09-2026-testes-completos-ecossistema/` |
-| Validacao Humana Testes | `feitos/PLAN-0008_06-09-2026-validacao-humana-testes/` |
-| Direcionamento Estrategico Anti Nih | `feitos/PLAN-0010_07-09-2026-direcionamento-estrategico-anti-nih/` |
-| Evolucao Aidd Ops | `feitos/PLAN-0011_07-09-2026-evolucao-aidd-ops/` |
-| Correcao Arquitetura Limpa | `feitos/PLAN-0012_08-09-2026-correcao-arquitetura-limpa/` |
-| Correcao Codigo Limpo | `feitos/PLAN-0013_08-09-2026-correcao-codigo-limpo/` |
-| Reestruturacao Ddd Clean Architecture | `feitos/PLAN-0014_09-09-2026-reestruturacao-ddd-clean-architecture/` |
-| Otimizacao Tokenomics Latencia | `feitos/PLAN-0015_09-09-2026-otimizacao-tokenomics-latencia/` |
-| Aidd Bridge | `feitos/PLAN-0020_09-09-2026-aidd-bridge/` |
+| Evolucao Notas Auditoria | `feitos/PLAN-0001-evolucao-notas-auditoria/` |
+| Correcao Riscos Ecossistema | `feitos/PLAN-0002-correcao-riscos-ecossistema.md` |
+| Refinamento Notas Auditoria | `feitos/PLAN-0003-refinamento-notas-auditoria/` |
+| Integracao Aidd Ops | `feitos/PLAN-0004-integracao-aidd-ops/` |
+| Skill Gerador Planos | `feitos/PLAN-0005-skill-gerador-planos/` |
+| Skill Orquestracao Orca | `feitos/PLAN-0006-skill-orquestracao-orca/` |
+| Testes Completos Ecossistema | `feitos/PLAN-0007-testes-completos-ecossistema/` |
+| Validacao Humana Testes | `feitos/PLAN-0008-validacao-humana-testes/` |
+| Evolucao Aidd Ops | `feitos/PLAN-0011-evolucao-aidd-ops/` |
+| Correcao Arquitetura Limpa | `feitos/PLAN-0012-correcao-arquitetura-limpa/` |
+| Correcao Codigo Limpo | `feitos/PLAN-0013-correcao-codigo-limpo/` |
+| Reestruturacao Ddd Clean Architecture | `feitos/PLAN-0014-reestruturacao-ddd-clean-architecture/` |
+| Otimizacao Tokenomics Latencia | `feitos/PLAN-0015-otimizacao-tokenomics-latencia/` |
+| Aidd Bridge | `feitos/PLAN-0020-aidd-bridge/` |
 
 ## 🔶 Em execução
 
 | Iniciativa | Local |
 |---|---|
-| Correcao Auditoria Maquiagem | `fazendo/PLAN-0009_07-09-2026-correcao-auditoria-maquiagem/` |
-| Qualidade Testes Mutacao | `fazendo/PLAN-0016_09-09-2026-qualidade-testes-mutacao/` |
-| Codigo Limpo Profundo | `fazendo/PLAN-0021_09-09-2026-codigo-limpo-profundo/` |
-| Config Arquivos Tokens | `fazendo/PLAN-0022_11-09-2026-config-arquivos-tokens/` |
-| Evolucao Engenharia Software | `fazendo/PLAN-0023_11-09-2026-evolucao-engenharia-software/` |
+| Correcao Auditoria Maquiagem | `fazendo/PLAN-0009-correcao-auditoria-maquiagem/` |
+| Qualidade Testes Mutacao | `fazendo/PLAN-0016-qualidade-testes-mutacao/` |
+| Codigo Limpo Profundo | `fazendo/PLAN-0021-codigo-limpo-profundo/` |
+| Config Arquivos Tokens | `fazendo/PLAN-0022-config-arquivos-tokens/` |
+| Evolucao Engenharia Software | `fazendo/PLAN-0023-evolucao-engenharia-software/` |
 
 ## ⏳ Rascunho (aguardando aprovação humana)
 
 | Iniciativa | Local |
 |---|---|
-| Resiliencia Concorrencia Integridade | `a-fazer/PLAN-0017_09-09-2026-resiliencia-concorrencia-integridade/` |
-| Seguranca Zero Trust | `a-fazer/PLAN-0018_09-09-2026-seguranca-zero-trust/` |
-| Bootstrap Ambiente Preflight | `a-fazer/PLAN-0019_09-09-2026-bootstrap-ambiente-preflight/` |
+| Testes Motor Orquestrador | `PLAN-0024-testes-motor-orquestrador/` |
+| Resiliencia Concorrencia Integridade | `a-fazer/PLAN-0017-resiliencia-concorrencia-integridade/` |
+| Seguranca Zero Trust | `a-fazer/PLAN-0018-seguranca-zero-trust/` |
+| Bootstrap Ambiente Preflight | `a-fazer/PLAN-0019-bootstrap-ambiente-preflight/` |
+
+## ⚠️ Status indeterminado (revisar manualmente)
+
+| Iniciativa | Local |
+|---|---|
+| Direcionamento Estrategico Anti Nih | `feitos/PLAN-0010-direcionamento-estrategico-anti-nih/` |
 
 ---
 

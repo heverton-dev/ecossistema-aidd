@@ -115,12 +115,14 @@ O **Ecossistema AIDD** é um monorepo agnóstico que integra 6 ferramentas compl
 > Bloco reescrito por `python scripts/atualizar_index_planos.py` toda vez que `docs/planos/` muda (via `.githooks/pre-commit`). Reflete o mesmo cálculo de status de `docs/planos/INDEX.md` — nunca edite manualmente, o script sobrescreve.
 
 <!-- AUTO:INICIATIVAS:START -->
-- ⏳ **Resiliencia Concorrencia Integridade** — `docs/planos/a-fazer/PLAN-0017_09-09-2026-resiliencia-concorrencia-integridade/`
-- ⏳ **Seguranca Zero Trust** — `docs/planos/a-fazer/PLAN-0018_09-09-2026-seguranca-zero-trust/`
-- ⏳ **Bootstrap Ambiente Preflight** — `docs/planos/a-fazer/PLAN-0019_09-09-2026-bootstrap-ambiente-preflight/`
-- 🔶 **Correcao Auditoria Maquiagem** — `docs/planos/fazendo/PLAN-0009_07-09-2026-correcao-auditoria-maquiagem/`
-- 🔶 **Qualidade Testes Mutacao** — `docs/planos/fazendo/PLAN-0016_09-09-2026-qualidade-testes-mutacao/`
-- 🔶 **Codigo Limpo Profundo** — `docs/planos/fazendo/PLAN-0021_09-09-2026-codigo-limpo-profundo/`
-- 🔶 **Config Arquivos Tokens** — `docs/planos/fazendo/PLAN-0022_11-09-2026-config-arquivos-tokens/`
-- 🔶 **Evolucao Engenharia Software** — `docs/planos/fazendo/PLAN-0023_11-09-2026-evolucao-engenharia-software/`
+- ⏳ **Testes Motor Orquestrador** — `docs/planos/PLAN-0024-testes-motor-orquestrador/`
+- ⏳ **Resiliencia Concorrencia Integridade** — `docs/planos/a-fazer/PLAN-0017-resiliencia-concorrencia-integridade/`
+- ⏳ **Seguranca Zero Trust** — `docs/planos/a-fazer/PLAN-0018-seguranca-zero-trust/`
+- ⏳ **Bootstrap Ambiente Preflight** — `docs/planos/a-fazer/PLAN-0019-bootstrap-ambiente-preflight/`
+- 🔶 **Correcao Auditoria Maquiagem** — `docs/planos/fazendo/PLAN-0009-correcao-auditoria-maquiagem/`
+- 🔶 **Qualidade Testes Mutacao** — `docs/planos/fazendo/PLAN-0016-qualidade-testes-mutacao/`
+- 🔶 **Codigo Limpo Profundo** — `docs/planos/fazendo/PLAN-0021-codigo-limpo-profundo/`
+- 🔶 **Config Arquivos Tokens** — `docs/planos/fazendo/PLAN-0022-config-arquivos-tokens/`
+- 🔶 **Evolucao Engenharia Software** — `docs/planos/fazendo/PLAN-0023-evolucao-engenharia-software/`
+- ⏳ **Direcionamento Estrategico Anti Nih** — `docs/planos/feitos/PLAN-0010-direcionamento-estrategico-anti-nih/`
 <!-- AUTO:INICIATIVAS:END -->

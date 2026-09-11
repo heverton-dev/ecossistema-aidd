@@ -23,7 +23,7 @@ Cada comando tem **um dono unico**: `melhoria`, `plan` e `orchestrate`. As
 skills-motor (`planos-auditoria-runner`, `orca-plan-orchestrator`) nao tem
 slash command proprio e sao acionadas por elas.
 
-> **Nome das iniciativas:** toda pasta de plano segue `PLAN-<NNNN>_<dd-mm-aaaa>-<nome-curto>` (ex.: `PLAN-0016_09-09-2026-qualidade-testes-mutacao`). O `NNNN` e um identificador global unico — use ele pra falar do plano sem ambiguidade, em vez de "plano 03", que existia em tres subpastas ao mesmo tempo. Quem gera o nome e o `plan init`; nunca monte a mao.
+> **Nome das iniciativas:** toda pasta de plano segue `PLAN-<NNNN>-<nome-curto>` (ex.: `PLAN-0016-qualidade-testes-mutacao`). O `NNNN` e um identificador global unico — use ele pra falar do plano sem ambiguidade, em vez de "plano 03", que existia em tres subpastas ao mesmo tempo. Quem gera o nome e o `plan init`; nunca monte a mao.
 
 ## Regra Fixa: Cada Ambiente Tem Seu Proprio Formato de Plano de Voo
 
@@ -37,6 +37,33 @@ inexecutaveis no app ORCA real:
 | **ORCA** | O aplicativo ORCA real, via `orca-cli` (worktree/terminal de verdade) | `orca_real_plan.compilar_plano_orca` — separa comando de lancamento (sem prompt) do texto da tarefa (enviado depois) |
 | **Subagentes** | Agent tool desta sessao (contexto compartilhado, sem worktree) | `subagent_plan.compilar_plano_subagentes` — `subagent_type`/`model`/`prompt` por frente |
 | **Git Worktree nativo** | Motor deste projeto (`orchestrator_engine.py`) — git worktree puro + harness spawnado direto, sem precisar do app ORCA | `flight_plan.gerar_plano_de_voo` — comando completo (harness + prompt embutido) pronto pra `subprocess.run` |
+
+## Nome da Mesa: `PLAN-<NNNN>-fase-<NN>-<nome-curto>`
+
+Cada frente vira uma mesa (worktree) com este nome, **nos tres ambientes**:
+
+```
+PLAN-0016-fase-04-eliminar-timesleep-injetar
+```
+
+- `PLAN-0016` e o identificador global do plano (o mesmo da pasta em
+  `docs/planos/`), e `fase-04` e o item `04-*.md` daquele plano.
+- **A fase leva dois digitos sempre.** Com um so, `fase-10` apareceria antes
+  de `fase-2` em qualquer lista ordenada por nome — e o painel de mesas e
+  ordenado por nome.
+- O branch e `orca/<mesma-coisa>`.
+- O nome curto do item entra cortado em 3 palavras: sem o corte o rotulo passa
+  de 70 caracteres, e ele vira caminho de pasta e nome de branch.
+
+**Por que isso importa:** varios planos podem estar rodando ao mesmo tempo.
+Sem o identificador no nome, uma mesa chamada `orca-portas-efemeras` nao diz de
+qual plano ela e, e o painel vira uma gaveta de chaves sem etiqueta — da pra
+ver quantas tem, nao da pra saber qual abre o que. Com o rotulo, olhar a lista
+ja responde o que esta rodando, o que ja rodou e o que falta.
+
+**Nunca invente o nome da mesa.** Ele vem pronto no campo `rotulo` de cada
+frente do `.orca-flight-plan.json`, gerado por `plan_parser.rotulo_da_frente`.
+Use o valor exato — inclusive no `--name` do `worktree create`.
 
 ## Protocolo Interativo do Agente (/orchestrate)
 
@@ -103,7 +130,8 @@ python ecossistema.py plan iniciar-execucao <caminho-do-plano>
   1. **Garanta o repositorio registrado** no ORCA (liste primeiro; registre so
      se faltar).
   2. **Crie a mesa da frente em um unico comando**, ja com o agente e o prompt:
-     `worktree create --name <frente> --no-parent --agent <harness> --prompt "<texto da frente>" --json`.
+     `worktree create --name <rotulo-da-frente> --no-parent --agent <harness> --prompt "<texto da frente>" --json`
+     (o `<rotulo-da-frente>` e o campo `rotulo` do JSON, ex.: `PLAN-0016-fase-04-eliminar-timesleep-injetar`).
      Essa e a forma preferida do manual: cria a mesa, sobe o agente no primeiro
      terminal e entrega o prompt sem passo manual. Use `--parent-worktree` so
      se o usuario pediu trabalho empilhado.

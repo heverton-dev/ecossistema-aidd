@@ -7,7 +7,6 @@ Cria a estrutura padrao (00-PROCESSO-E-DECISOES.md e NN-<item>.md) e checa integ
 import argparse
 import json
 import re
-from datetime import date
 import subprocess
 import sys
 from pathlib import Path
@@ -339,7 +338,10 @@ def proximo_numero_plano(base: Path) -> int:
         if not pasta.is_dir():
             continue
         for item in pasta.iterdir():
-            achado = re.match(r"^PLAN-(\d{4})_", item.name)
+            # Aceita os dois formatos: "PLAN-0024-nome" (atual) e
+            # "PLAN-0007_06-09-2026-nome" (legado, com data). Exigir so um
+            # faria a contagem ignorar planos existentes e REUSAR numero.
+            achado = re.match(r"^PLAN-(\d{4})[-_]", item.name)
             if achado:
                 maior = max(maior, int(achado.group(1)))
     return maior + 1
@@ -354,13 +356,14 @@ def nome_curto_iniciativa(nome: str, palavras: int = 3) -> str:
     return "-".join(escolhidas) or "plano"
 
 
-def montar_nome_pasta_plano(nome: str, base: Path, hoje: date | None = None) -> str:
-    """PLAN-<NNNN>_<dd-mm-aaaa>-<nome-curto>. O numero e a data ficam no nome
-    fisico (identificador estavel); o titulo exibido no INDEX.md tira o prefixo."""
-    hoje = hoje or date.today()
-    return "PLAN-{:04d}_{}-{}".format(
-        proximo_numero_plano(base), hoje.strftime("%d-%m-%Y"), nome_curto_iniciativa(nome)
-    )
+def montar_nome_pasta_plano(nome: str, base: Path) -> str:
+    """`PLAN-<NNNN>-<nome-curto>` — ex.: `PLAN-0024-testes-motor-orquestrador`.
+
+    Sem data de proposito: o proprio numero ja da a ordem cronologica (0001 e
+    mais antigo que 0023) e o git guarda a data real de criacao. Data no nome
+    so alongava o caminho e envelhecia errado quando um plano era refeito.
+    """
+    return "PLAN-{:04d}-{}".format(proximo_numero_plano(base), nome_curto_iniciativa(nome))
 
 
 def cmd_init(
@@ -405,7 +408,10 @@ def cmd_init(
 
     for idx0, item_titulo in enumerate(itens):
         idx = idx0 + 1
-        item_slug = slugify(item_titulo)
+        # Mesmo limite de 3 palavras do nome da iniciativa: o nome do item
+        # vira arquivo, entra no rotulo da mesa e no branch — titulo inteiro
+        # gerava caminho de 70+ caracteres.
+        item_slug = nome_curto_iniciativa(item_titulo)
         item_arquivo = f"{idx:02d}-{item_slug}.md"
         nota_atual_item = _valor_por_indice(notas_atuais, idx0, NOTA_NAO_AUDITADA)
         nota_alvo_item = _valor_por_indice(notas_alvo, idx0, NOTA_NAO_AUDITADA)

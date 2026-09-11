@@ -158,10 +158,11 @@ def _sem_prefixo_numerico(nome: str) -> str:
     no caminho físico, que é o identificador estável da iniciativa.
 
     Cobre os dois formatos que existem no repositório:
-      - `PLAN-0007_06-09-2026-testes-completos` -> `testes-completos`  (atual)
+      - `PLAN-0007-testes-completos`             -> `testes-completos`  (atual)
+      - `PLAN-0007_06-09-2026-testes-completos`  -> `testes-completos`  (com data, legado)
       - `01-nome`                               -> `nome`              (legado)
     """
-    nome = re.sub(r"^PLAN-\d{4}_\d{2}-\d{2}-\d{4}-", "", nome)
+    nome = re.sub(r"^PLAN-\d{4}(?:_\d{2}-\d{2}-\d{4})?-", "", nome)
     return re.sub(r"^\d+-", "", nome)
 
 
