@@ -357,10 +357,22 @@ def _dispatch_front(
         with state_lock:
             executar_pre_hook(front_name, worktree_path, state_path)
 
+        # Resolve o binario do harness pro caminho absoluto (com extensao)
+        # antes de invocar. No Windows, um shim instalado via npm (ex.:
+        # opencode) e um .cmd, e subprocess.run/Popen com uma lista de argv
+        # (shell=False) so acha o arquivo se o nome ja vier com extensao —
+        # "opencode" puro falha com WinError 2 mesmo estando no PATH, porque
+        # CreateProcess nao aplica a busca por PATHEXT que o shell faria.
+        command = list(front["command"])
+        if command:
+            resolved_bin = shutil.which(command[0])
+            if resolved_bin:
+                command[0] = resolved_bin
+
         exec_log_path = worktree_path / "exec.log"
         if interactive:
             print(f"\n{'='*70}\n[ORCA ADE] SESSAO INTERATIVA: {front_name} (Harness: {front.get('harness', '-')})\n{'='*70}")
-            cmd_preview = " ".join(front["command"])
+            cmd_preview = " ".join(command)
             if len(cmd_preview) > 120:
                 cmd_preview = cmd_preview[:117] + "..."
             print(f"Comando : {cmd_preview}")
@@ -371,7 +383,7 @@ def _dispatch_front(
                 state_path, state_lock, front_name, FrontState.RUNNING, pid=os.getpid()
             )
             try:
-                proc = subprocess.run(front["command"], cwd=worktree_path)
+                proc = subprocess.run(command, cwd=worktree_path)
                 agent_exit_code = proc.returncode
                 health = HealthStatus.OK
             except KeyboardInterrupt:
@@ -386,7 +398,7 @@ def _dispatch_front(
         else:
             with open(exec_log_path, "w", encoding="utf-8") as log_fh:
                 process = subprocess.Popen(
-                    front["command"],
+                    command,
                     cwd=worktree_path,
                     stdout=log_fh,
                     stderr=subprocess.STDOUT,

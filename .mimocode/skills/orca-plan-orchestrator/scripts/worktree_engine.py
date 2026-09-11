@@ -10,6 +10,7 @@ Zero LLM cost — pure deterministic git operations.
 from __future__ import annotations
 
 import subprocess
+import time
 from dataclasses import dataclass
 from pathlib import Path
 
@@ -112,11 +113,24 @@ def purgar_worktree(front_name: str, repo_path: Path) -> GitResult:
     worktree_dir = repo_path / f"wt-{front_name}"
     branch_name = f"orca/{front_name}"
 
-    # Remove worktree
+    # Remove worktree. No Windows, um antivirus/OneDrive sincronizando a pasta
+    # pode segurar um handle no diretorio por uma fracao de segundo bem depois
+    # que o `git worktree remove` ja apagou o conteudo - a remocao do diretorio
+    # em si falha com "Permission denied"/"Device or resource busy" de forma
+    # transitoria. Poucas tentativas com um pequeno intervalo resolvem sem
+    # precisar de limpeza manual a cada corrida.
     remove_result = _run_git(
         ["worktree", "remove", str(worktree_dir), "--force"],
         cwd=repo_path,
     )
+    tentativas = 1
+    while not remove_result.ok and tentativas < 4 and worktree_dir.exists():
+        time.sleep(1.5 * tentativas)
+        remove_result = _run_git(
+            ["worktree", "remove", str(worktree_dir), "--force"],
+            cwd=repo_path,
+        )
+        tentativas += 1
     if not remove_result.ok:
         return remove_result
 

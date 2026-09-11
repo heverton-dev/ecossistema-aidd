@@ -473,15 +473,27 @@ def cmd_orchestrate(args):
             )
             return 0
 
-        # Marca o plano como EM EXECUCAO de verdade e move para docs/planos/fazendo/
-        # AQUI - exatamente no instante em que a orquestracao real comeca, nunca
-        # antes (dry-run/compilacao nao chega a este ponto do codigo).
-        gerenciador_planos = os.path.join(ROOT_DIR, "scripts", "gerenciador_planos.py")
-        run_command([sys.executable, gerenciador_planos, "iniciar-execucao", plano], cwd=ROOT_DIR)
+        plano_path_original = Path(ROOT_DIR) / plano if not os.path.isabs(plano) else Path(plano)
+        plano_fazendo = Path(ROOT_DIR) / "docs" / "planos" / "fazendo" / plano_path_original.name
+
+        if plano_path_original.is_dir():
+            # Marca o plano como EM EXECUCAO de verdade e move para docs/planos/fazendo/
+            # AQUI - exatamente no instante em que a orquestracao real comeca, nunca
+            # antes (dry-run/compilacao nao chega a este ponto do codigo).
+            gerenciador_planos = os.path.join(ROOT_DIR, "scripts", "gerenciador_planos.py")
+            run_command([sys.executable, gerenciador_planos, "iniciar-execucao", plano], cwd=ROOT_DIR)
+
+        # A pasta pode ter sido movida fisicamente pro passo acima (ou por uma
+        # tentativa anterior que ja tinha movido e falhou depois) - usa o
+        # caminho novo (docs/planos/fazendo/<nome>) se ele existir, senao
+        # mantem o original. Reusar o caminho antigo aqui e o que gerava
+        # NotADirectoryError (WinError 267) dentro de _repo_root, porque a
+        # pasta antiga ja nao existe mais no disco apos o move.
+        plano_efetivo = str(plano_fazendo) if plano_fazendo.is_dir() else plano
 
         try:
             return executar_orquestracao(
-                plano,
+                plano_efetivo,
                 profiles,
                 harness=harness_escolhido,
                 harness_map=harness_map_pars or None,
