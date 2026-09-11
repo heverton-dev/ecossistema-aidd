@@ -1,0 +1,492 @@
+{
+  "gerado_em": "2026-09-11",
+  "summary": {
+    "nota_original": 7.5,
+    "composto_calculado": 9.13,
+    "iniciativas_concluidas": 14,
+    "iniciativas_total": 21,
+    "tarefas_concluidas": 88,
+    "tarefas_total": 163
+  },
+  "dims": [
+    {
+      "name": "Testabilidade / Cobertura Real",
+      "vals": [
+        6.0,
+        9.0,
+        10.0
+      ],
+      "state": "good"
+    },
+    {
+      "name": "Modularização",
+      "vals": [
+        7.0,
+        9.0,
+        10.0
+      ],
+      "state": "good"
+    },
+    {
+      "name": "Gates Mecânicos",
+      "vals": [
+        7.0,
+        8.0,
+        9.0
+      ],
+      "state": "good"
+    },
+    {
+      "name": "Transparência / Zero Alucinação",
+      "vals": [
+        8.0,
+        8.5,
+        9.0
+      ],
+      "state": "good"
+    },
+    {
+      "name": "Universalidade / Agnosticismo",
+      "vals": [
+        8.0,
+        9.0,
+        9.0
+      ],
+      "state": "flat"
+    },
+    {
+      "name": "Engenharia Agêntica Aplicada",
+      "vals": [
+        8.0,
+        8.5,
+        8.5
+      ],
+      "state": "flat"
+    },
+    {
+      "name": "Determinismo Primeiro",
+      "vals": [
+        9.0,
+        9.5,
+        9.5
+      ],
+      "state": "warning"
+    },
+    {
+      "name": "Economia Severa de Tokens",
+      "vals": [
+        7.0,
+        8.0,
+        8.0
+      ],
+      "state": "warning"
+    },
+    {
+      "name": "Distribuição de Componentes (bônus, fora do composto)",
+      "vals": [
+        null,
+        9.0,
+        10.0
+      ],
+      "state": "good"
+    }
+  ],
+  "sistB": [
+    {
+      "tool": "forge",
+      "old": 7.8,
+      "now": 8.58
+    },
+    {
+      "tool": "master",
+      "old": 6.8,
+      "now": 8.58
+    },
+    {
+      "tool": "ops",
+      "old": 4.8,
+      "now": 8.33
+    },
+    {
+      "tool": "enterprise",
+      "old": 6.0,
+      "now": 8.25
+    },
+    {
+      "tool": "generator",
+      "old": 6.8,
+      "now": 8.0
+    }
+  ],
+  "sistD": [
+    {
+      "tool": "generator",
+      "val": 9.94
+    },
+    {
+      "tool": "enterprise",
+      "val": 9.9
+    },
+    {
+      "tool": "forge",
+      "val": 9.7
+    },
+    {
+      "tool": "integrated",
+      "val": 9.56
+    },
+    {
+      "tool": "ops",
+      "val": 8.8
+    },
+    {
+      "tool": "master",
+      "val": null
+    }
+  ],
+  "matrix": [
+    {
+      "tool": "Orquestração raiz",
+      "vals": [
+        4,
+        3,
+        3,
+        3
+      ]
+    },
+    {
+      "tool": "AIDD Forge",
+      "vals": [
+        4,
+        3,
+        3,
+        2
+      ]
+    },
+    {
+      "tool": "AIDD Ops",
+      "vals": [
+        4,
+        3,
+        3,
+        3
+      ]
+    },
+    {
+      "tool": "AIDD Generator",
+      "vals": [
+        3,
+        2,
+        2,
+        2
+      ]
+    },
+    {
+      "tool": "AIDD Master",
+      "vals": [
+        3,
+        2,
+        2,
+        2
+      ]
+    },
+    {
+      "tool": "AIDD Enterprise",
+      "vals": [
+        3,
+        2,
+        2,
+        2
+      ]
+    }
+  ],
+  "tests": [
+    {
+      "tool": "generator",
+      "passed": 929,
+      "skipped": 0
+    },
+    {
+      "tool": "forge",
+      "passed": 196,
+      "skipped": 1
+    },
+    {
+      "tool": "master",
+      "passed": 285,
+      "skipped": 4
+    },
+    {
+      "tool": "enterprise",
+      "passed": 262,
+      "skipped": 4
+    },
+    {
+      "tool": "ops",
+      "passed": 150,
+      "skipped": 0
+    },
+    {
+      "tool": "bridge",
+      "passed": null,
+      "skipped": null
+    }
+  ],
+  "timeline": [
+    [
+      "04/09/2026",
+      "Auditoria original (Sistema A)",
+      "Nota consolidada 7,5/10 — 8 dimensões definidas."
+    ],
+    [
+      "05/09/2026",
+      "Rodada 1 de evolução de notas (7 pacotes)",
+      "Composto sobe para 8,7/10."
+    ],
+    [
+      "05–06/09/2026",
+      "Rodada 2 de refinamento (5 itens + 1 residual)",
+      "Testabilidade e Modularização chegam a 10/10; 2 tetos honestos reafirmados (Determinismo, Tokens)."
+    ],
+    [
+      "06/09/2026",
+      "Testes completos do ecossistema (6 baterias reais)",
+      "Todas aprovadas — 2 delas “com ressalvas”."
+    ],
+    [
+      "06/09/2026",
+      "Validação Humana em sessões isoladas",
+      "Integrado E2E 9,56/10 (Sistema D)."
+    ],
+    [
+      "06–07/09/2026",
+      "Integração AIDD-Ops (9 pacotes)",
+      "AIDD-Ops vira a 5ª ferramenta oficial do ecossistema."
+    ],
+    [
+      "06–09/09/2026",
+      "Direcionamento Estratégico Anti-NIH",
+      "Código reinventado trocado por OSS maduro (Cookiecutter, <span class=\"mono\">returns</span>, SQLAlchemy, Coolify)."
+    ],
+    [
+      "08/09/2026",
+      "Reauditoria “Fase 3” (Sistema B, harness Antigravity)",
+      "1.627 testes / 0 falhas (partindo de 1.427 / 13 falhas); heatmap por ferramenta."
+    ],
+    [
+      "08–09/09/2026",
+      "Correção de Código Limpo + Correção de Arquitetura Limpa",
+      "13 achados fechados."
+    ],
+    [
+      "09/09/2026",
+      "5 auditorias-baseline formalizadas",
+      "Viraram os planos de <span class=\"mono\">a-fazer/</span> — 45 itens de débito técnico, 0 iniciados."
+    ],
+    [
+      "09/09/2026",
+      "Relatório Raio-X de Maturidade (Sistema C)",
+      "Síntese cruzando planos + grafo de conhecimento."
+    ],
+    [
+      "09–11/09/2026",
+      "Em andamento: Correção Pós-Auditoria Sem Maquiagem (18 itens) e Código Limpo Profundo (18 itens)",
+      "22,2% e 5,6% concluídos, respectivamente."
+    ],
+    [
+      "11/09/2026 (hoje)",
+      "Status consolidado de planos",
+      "21 iniciativas, 14 concluídas (66,7%); 88/163 tarefas (54,0%)."
+    ]
+  ],
+  "plans": [
+    {
+      "num": "02",
+      "name": "Otimização de Tokenomics & Latência",
+      "items": 7,
+      "solves": "Vazamento de contexto na Fase 8 do <b>aidd-generator</b>: o fix-loop reenvia código + teste + erro inteiro a cada tentativa.",
+      "tools": [
+        "generator"
+      ],
+      "badge": {
+        "cls": "muted",
+        "label": "estimativa de eficiência"
+      },
+      "est": "Prompt por composição + diff no fix-loop — <b>estimativa de 10–12 mil tokens a menos por execução (15–25%)</b>."
+    },
+    {
+      "num": "03",
+      "name": "Qualidade de Testes & Mutação",
+      "items": 10,
+      "solves": "Asserções fracas (<span class=\"mono\">assert X is not None</span>), sizing testado só pelo piso, <span class=\"mono\">time.sleep</span> em vez de relógio injetado, gate de mutação (<span class=\"mono\">mutmut</span>) inexistente.",
+      "tools": [
+        "master",
+        "enterprise",
+        "forge",
+        "generator",
+        "ops"
+      ],
+      "badge": {
+        "cls": "warn",
+        "label": "cobertura real"
+      },
+      "est": "Foco em <b>aidd-enterprise</b> (verificação de hash de integridade) e <b>aidd-ops</b> (exatidão de sizing). Sem estimativa numérica de nota."
+    },
+    {
+      "num": "04",
+      "name": "Resiliência, Concorrência & Integridade",
+      "items": 8,
+      "solves": "Outbox documentado como “at-least-once” mas <b>at-most-once na prática</b> — evento perdido se o listener falhar, sem retry/dead-letter. SQLite sem retry em <span class=\"mono\">SQLITE_BUSY</span>.",
+      "tools": [
+        "master",
+        "enterprise"
+      ],
+      "badge": {
+        "cls": "crit",
+        "label": "risco crítico"
+      },
+      "est": "Claim atômico + dead-letter no Outbox. Classificado como risco crítico nos próprios documentos."
+    },
+    {
+      "num": "05",
+      "name": "Segurança Zero-Trust & Supply Chain",
+      "items": 10,
+      "solves": "Fase 8 do <b>aidd-generator</b> roda código de LLM <b>sem nenhum isolamento de processo</b> (RCE real). SQL injection na policy RLS. Selo de integridade do enterprise não resiste a adulteração deliberada.",
+      "tools": [
+        "generator",
+        "enterprise"
+      ],
+      "badge": {
+        "cls": "crit",
+        "label": "crítico — \"ainda esta semana\""
+      },
+      "est": "Sandbox nível 1 + gate OWASP sobre código gerado. A prioridade mais alta das 5, por classificação própria dos documentos."
+    },
+    {
+      "num": "06",
+      "name": "Bootstrap de Ambiente & Preflight de Host",
+      "items": 9,
+      "solves": "Crashes crus em máquina virgem (<span class=\"mono\">ImportError</span>, ausência de Docker/Node/Git); 4 detectores de binário duplicados espalhados pelo código.",
+      "tools": [
+        "ecosystem"
+      ],
+      "badge": {
+        "cls": "muted",
+        "label": "experiência de instalação"
+      },
+      "est": "Comando <span class=\"mono\">preflight-host</span> com diagnóstico em menos de 2 segundos."
+    }
+  ],
+  "in_progress": [
+    {
+      "name": "Correção Pós-Auditoria Sem Maquiagem",
+      "items": 18,
+      "done": 4
+    },
+    {
+      "name": "Código Limpo Profundo do Ecossistema",
+      "items": 18,
+      "done": 1
+    }
+  ],
+  "findings": [
+    {
+      "tool": "aidd-master + aidd-enterprise",
+      "sev": "crit",
+      "txt": "Outbox perde evento <b>silenciosamente</b> se o listener falhar (sem retry/dead-letter) — plano 04 (a-fazer), ainda não iniciado."
+    },
+    {
+      "tool": "aidd-generator",
+      "sev": "crit",
+      "txt": "Fase 8 roda código de LLM <b>sem sandbox nem ambiente restrito</b> — RCE real, inclusive no smoke-test (<span class=\"mono\">--help</span>) — plano 05 (a-fazer), ainda não iniciado."
+    },
+    {
+      "tool": "aidd-master + aidd-enterprise",
+      "sev": "warn",
+      "txt": "27 arquivos / 8.781 linhas byte-idênticas entre as duas ferramentas, com 3 divergências silenciosas já em curso — corrigir 1 bug hoje significa editar até 6 cópias físicas à mão."
+    },
+    {
+      "tool": "aidd-forge + aidd-master + aidd-enterprise",
+      "sev": "warn",
+      "txt": "<span class=\"mono\">inject</span> de qualquer tipo grava sempre uma cópia no monorepo real, ignorando <span class=\"mono\">--dir</span>/<span class=\"mono\">--path</span> informado — recomendado documentar no <span class=\"mono\">--help</span>, ainda não corrigido."
+    },
+    {
+      "tool": "aidd-master",
+      "sev": "warn",
+      "txt": "Boletim de nota da Sessão 3 da Validação Humana nunca foi preenchido, apesar de o índice marcar essa sessão como “Concluído & Aprovado” — inconsistência de documentação, não um dado ausente por acaso."
+    },
+    {
+      "tool": "aidd-generator",
+      "sev": "warn",
+      "txt": "Fallback de <span class=\"mono\">referencias_utilizadas</span> na Fase 2 é estruturalmente inalcançável (lê a chave errada do JSON da Fase 1) — recomendado corrigir, ainda não corrigido."
+    },
+    {
+      "tool": "aidd-master",
+      "sev": "muted",
+      "txt": "<span class=\"mono\">inject --remover</span> limpa o canônico mas deixa órfãos os espelhos multi-harness — gap real, não bloqueante."
+    },
+    {
+      "tool": "aidd-bridge",
+      "sev": "muted",
+      "txt": "Não está integrada a nenhum dos 4 sistemas de nota — fica fora de toda comparação histórica até a próxima rodada de auditoria."
+    }
+  ],
+  "action_plan": [
+    {
+      "order": 1,
+      "priority": "crit",
+      "title": "Plano 05 — Segurança Zero-Trust & Supply Chain",
+      "status": "Rascunho aguardando aprovação",
+      "why": "Os próprios documentos classificam este item como crítico, “ainda esta semana”: a Fase 8 do aidd-generator roda código de LLM sem nenhum isolamento de processo (RCE real).",
+      "next": "Aprovar a Definição de Pronto e liberar o Prompt de Execução para o agente executor."
+    },
+    {
+      "order": 2,
+      "priority": "crit",
+      "title": "Plano 04 — Resiliência, Concorrência & Integridade",
+      "status": "Rascunho aguardando aprovação",
+      "why": "Risco crítico documentado: o Outbox perde evento silenciosamente se o listener falhar, sem retry nem dead-letter — afeta master e enterprise, os dois runtimes entregues ao cliente final.",
+      "next": "Aprovar a Definição de Pronto e liberar o Prompt de Execução."
+    },
+    {
+      "order": 3,
+      "priority": "good",
+      "title": "Continuar as 2 iniciativas já em execução",
+      "status": "Em andamento — 22,2% e 5,6%",
+      "why": "Correção Pós-Auditoria Sem Maquiagem e Código Limpo Profundo já começaram e não estão bloqueadas por nenhum outro item desta fila.",
+      "next": "Seguir executando os 31 itens restantes (14 + 17) no ritmo já estabelecido, em paralelo aos planos abaixo."
+    },
+    {
+      "order": 4,
+      "priority": "muted",
+      "title": "Plano 03 — Qualidade de Testes & Mutação",
+      "status": "Rascunho aguardando aprovação",
+      "why": "Fundamenta a confiança nos planos 04 e 05: sem teste de conteúdo (hash) e de exatidão (sizing), fica difícil provar que as correções de segurança e resiliência realmente pegaram.",
+      "next": "Aprovar a Definição de Pronto — vale considerar priorizá-lo antes dos planos 04/05 se a cobertura de teste for tratada como pré-requisito, e não em paralelo."
+    },
+    {
+      "order": 5,
+      "priority": "muted",
+      "title": "Plano 02 — Otimização de Tokenomics & Latência",
+      "status": "Rascunho aguardando aprovação",
+      "why": "Ganho de eficiência estimado (15–25% menos tokens por execução do generator), sem caráter bloqueante para as demais frentes.",
+      "next": "Aprovar a Definição de Pronto quando a fila de itens críticos estiver liberada."
+    },
+    {
+      "order": 6,
+      "priority": "muted",
+      "title": "Plano 06 — Bootstrap de Ambiente & Preflight de Host",
+      "status": "Rascunho aguardando aprovação",
+      "why": "Melhora a experiência de instalação em máquina virgem — não bloqueia nenhuma outra frente do ecossistema.",
+      "next": "Aprovar a Definição de Pronto quando houver janela disponível."
+    },
+    {
+      "order": 7,
+      "priority": "muted",
+      "title": "Correções pontuais sem plano formal (quick wins)",
+      "status": "Não iniciado",
+      "why": "4 achados pequenos e independentes, já diagnosticados, que não precisam de um plano de 7–10 itens: o boletim da Sessão 3 do aidd-master, a falta de aviso no --help sobre o comportamento real do inject, a chave errada em referencias_utilizadas na Fase 2 do generator, e a integração do aidd-bridge à próxima rodada de auditoria.",
+      "next": "Podem ser feitos em paralelo a qualquer um dos planos acima, sem precisar de Definição de Pronto formal."
+    }
+  ]
+}
