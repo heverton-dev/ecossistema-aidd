@@ -120,7 +120,7 @@ O **Ecossistema AIDD** é um monorepo agnóstico que integra 6 ferramentas compl
 - ⏳ **Resiliencia Concorrencia E Integridade** — `docs/planos/a-fazer/04-resiliencia-concorrencia-e-integridade/`
 - ⏳ **Seguranca Zero Trust E Supply Chain** — `docs/planos/a-fazer/05-seguranca-zero-trust-e-supply-chain/`
 - ⏳ **Bootstrap Ambiente E Preflight Host** — `docs/planos/a-fazer/06-bootstrap-ambiente-e-preflight-host/`
-- 🔒 **Evolucao Engenharia Software Ecossistema** — `docs/planos/a-fazer/evolucao-engenharia-software-ecossistema/`
 - 🔶 **Correcao Pos Auditoria Sem Maquiagem** — `docs/planos/fazendo/01-correcao-pos-auditoria-sem-maquiagem/`
 - 🔶 **Codigo Limpo Profundo Ecossistema** — `docs/planos/fazendo/codigo-limpo-profundo-ecossistema/`
+- 🔶 **Evolucao Engenharia Software Ecossistema** — `docs/planos/fazendo/evolucao-engenharia-software-ecossistema/`
 <!-- AUTO:INICIATIVAS:END -->

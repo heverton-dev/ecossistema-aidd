@@ -1,7 +1,7 @@
 # Item 1 — Reativar G_ARQUITETURA_DELIVERABLE corrigindo 212 violacoes SQL-fora-infra nos templates
 
 > **Escopo:** Corrigir as 212 violacoes de arquitetura (SQL fora de `infrastructure/`) ja detectadas pelo gate `G_ARQUITETURA_DELIVERABLE.py` nos 15 arquivos listados, e mover esse gate de "stage manual" para a bateria agregada de `python ecossistema.py audit`. Nao inclui reescrever a arquitetura Clean/DDD alem do necessario pra zerar essas violacoes.
-> **Status:** [APROVADO — Aguardando Execucao]
+> **Status:** [EM EXECUCAO]
 > **Nota Atual (0-10):** 3.0 — evidencia: gates/G_ARQUITETURA_DELIVERABLE.py rodado: 212 violacoes em 15 arquivos (templates/core/server.py 46, templates/v2/server.py 46, templates/gates/G_SEGURANCA.py 6, mcp_server.py 2, src/server.py 2 e equivalentes enterprise)
 > **Nota Alvo (0-10):** 10.0
 > **Nota Real (pos-implementacao):** [Pendente - preencher somente apos o fechamento real deste item/iniciativa, via o mesmo mecanismo que mediu a Nota Atual]

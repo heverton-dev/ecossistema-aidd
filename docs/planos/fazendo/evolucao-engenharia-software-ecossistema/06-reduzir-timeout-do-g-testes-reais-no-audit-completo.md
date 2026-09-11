@@ -1,7 +1,7 @@
 # Item 6 — Reduzir timeout do G_TESTES_REAIS no audit completo
 
 > **Escopo:** Resolver o estouro de timeout (>300s) que ocorre especificamente no passo `aidd-ops` durante `python ecossistema.py audit` completo — sabendo que `aidd-ops` sozinho roda em ~30s (168 testes). Ajustar o timeout/paralelismo/escopo desse passo dentro do audit agregado, sem reduzir a cobertura real de testes.
-> **Status:** [APROVADO — Aguardando Execucao]
+> **Status:** [EM EXECUCAO]
 > **Nota Atual (0-10):** 5.0 — evidencia: python ecossistema.py audit estoura timeout >300s no passo aidd-ops; aidd-ops passa isolado (168 testes em ~30s)
 > **Nota Alvo (0-10):** 9.0
 > **Nota Real (pos-implementacao):** [Pendente - preencher somente apos o fechamento real deste item/iniciativa, via o mesmo mecanismo que mediu a Nota Atual]

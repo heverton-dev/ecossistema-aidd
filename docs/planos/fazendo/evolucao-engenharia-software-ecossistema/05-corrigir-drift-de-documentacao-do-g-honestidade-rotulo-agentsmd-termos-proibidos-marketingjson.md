@@ -1,7 +1,7 @@
 # Item 5 — Corrigir drift de documentacao do G_HONESTIDADE_ROTULO (AGENTS.md + termos_proibidos_marketing.json)
 
 > **Escopo:** Atualizar AGENTS.md (secao 4) e gates/termos_proibidos_marketing.json pra refletir que o G_HONESTIDADE_ROTULO ja passa (52 arquivos, 0 termos proibidos, "blindagem militar" ja removido de G_SEGURANCA.py) — hoje a documentacao ainda cita uma violacao pendente que nao existe mais.
-> **Status:** [APROVADO — Aguardando Execucao]
+> **Status:** [EM EXECUCAO]
 > **Nota Atual (0-10):** 6.0 — evidencia: G_HONESTIDADE_ROTULO passa (52 arquivos, 0 termos) mas AGENTS.md secao 4 e gates/termos_proibidos_marketing.json ainda citam violacao pendente em G_SEGURANCA.py
 > **Nota Alvo (0-10):** 10.0
 > **Nota Real (pos-implementacao):** [Pendente - preencher somente apos o fechamento real deste item/iniciativa, via o mesmo mecanismo que mediu a Nota Atual]

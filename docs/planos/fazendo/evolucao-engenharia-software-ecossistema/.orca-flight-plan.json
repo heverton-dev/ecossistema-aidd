@@ -1,0 +1,81 @@
+{
+  "plan_dir": "C:\\Users\\trcnologia\\Desktop\\ecossistema-aidd\\docs\\planos\\a-fazer\\evolucao-engenharia-software-ecossistema",
+  "mode": "orca",
+  "repo_path": "C:\\Users\\trcnologia\\Desktop\\ecossistema-aidd",
+  "parent_worktree": "active",
+  "base_branch": "main",
+  "fronts": [
+    {
+      "name": "reativar-g-arquitetura-deliverable-corrigindo-212-violacoes-sql-fora-infra-nos-templates",
+      "branch": "orca/reativar-g-arquitetura-deliverable-corrigindo-212-violacoes-sql-fora-infra-nos-templates",
+      "harness": "claude",
+      "launch_command": [
+        "claude",
+        "--dangerously-skip-permissions",
+        "--model",
+        "claude-sonnet-5"
+      ],
+      "prompt": "Scope: Corrigir as 212 violacoes de arquitetura (SQL fora de `infrastructure/`) ja detectadas pelo gate `G_ARQUITETURA_DELIVERABLE.py` nos 15 arquivos listados, e mover esse gate de \"stage manual\" para a bateria agregada de `python ecossistema.py audit`. Nao inclui reescrever a arquitetura Clean/DDD alem do necessario pra zerar essas violacoes.\n\nDefinition of Done:\n\n1. As 212 violacoes SQL-fora-de-infrastructure detectadas em templates/core/server.py, templates/v2/server.py, templates/gates/G_SEGURANCA.py, mcp_server.py, src/server.py (e equivalentes enterprise) foram corrigidas — SQL movido para a camada de infrastructure correta.\n2. `python gates/G_ARQUITETURA_DELIVERABLE.py` roda com exit 0 (zero violacoes).\n3. O gate sai do \"stage manual\" e passa a fazer parte da bateria agregada de `python ecossistema.py audit`.\n4. Testes executados com exit 0.\n\nExit Criteria:\n\n- `python gates/G_ARQUITETURA_DELIVERABLE.py` aprovado (exit 0), rodado de verdade.\n- `python ecossistema.py audit` inclui esse gate e continua passando.\n- Nenhuma regressao nos testes reais ja existentes.\n\nYou are going to implement Item 1: Reativar G_ARQUITETURA_DELIVERABLE corrigindo 212 violacoes SQL-fora-infra nos templates.\nStrictly follow the Definition of Done above.\nDo not fabricate approvals and maintain monorepo governance rules."
+    },
+    {
+      "name": "adicionar-testes-reais-as-2-entregas-sem-cobertura-enterprise-suite-v4-logistica-hub-v4",
+      "branch": "orca/adicionar-testes-reais-as-2-entregas-sem-cobertura-enterprise-suite-v4-logistica-hub-v4",
+      "harness": "claude",
+      "launch_command": [
+        "claude",
+        "--dangerously-skip-permissions",
+        "--model",
+        "claude-sonnet-5"
+      ],
+      "prompt": "Scope: Criar suite de testes real (nao superficial) para as duas entregas em `tools/aidd-enterprise/materiais-extras/examples/` que hoje nao tem pasta `tests/`: `enterprise-suite-v4` e `logistica-hub-v4`. Nao inclui as outras 11 entregas do catalogo, que ja tem testes (ainda que finos).\n\nDefinition of Done:\n\n1. `tools/aidd-enterprise/materiais-extras/examples/enterprise-suite-v4/tests/` criado com testes reais cobrindo os fluxos principais da entrega.\n2. `tools/aidd-enterprise/materiais-extras/examples/logistica-hub-v4/tests/` criado com testes reais cobrindo os fluxos principais da entrega.\n3. `pytest` roda com exit 0 nas duas pastas novas, sem stubs/mocks disfarcados de teste.\n\nExit Criteria:\n\n- As duas entregas passam a ter `tests/` com pelo menos a mesma cobertura de fluxo que as outras 11 entregas do catalogo.\n- Testes rodados de verdade (pytest real, exit 0), nao apenas criados.\n\nYou are going to implement Item 2: Adicionar testes reais as 2 entregas sem cobertura (enterprise-suite-v4, logistica-hub-v4).\nStrictly follow the Definition of Done above.\nDo not fabricate approvals and maintain monorepo governance rules."
+    },
+    {
+      "name": "quebrar-funcoes-gigantes-get-swagger-html-736-linhas-e-compose-suite-277273",
+      "branch": "orca/quebrar-funcoes-gigantes-get-swagger-html-736-linhas-e-compose-suite-277273",
+      "harness": "claude",
+      "launch_command": [
+        "claude",
+        "--dangerously-skip-permissions",
+        "--model",
+        "claude-sonnet-5"
+      ],
+      "prompt": "Scope: Decompor as duas funcoes identificadas pelo `code-review-graph` como as maiores do ecossistema: `get_swagger_html` (736 linhas, presente em `enterprise-suite-v4` e `logistica-hub-v4`, `src/core/openapi.py:284`) e `compose_suite` (277/273 linhas, `master`/`enterprise` `scripts/compose_suite.py:407`). Nao inclui `cmd_orchestrate`/`orchestrate_cli` em `ecossistema.py` (239/183 linhas) — identificadas na mesma varredura, mas fora do escopo original deste item; ficam registradas aqui como candidatas a um item futuro.\n\nDefinition of Done:\n\n1. `get_swagger_html` decomposta em funcoes menores por responsabilidade (ex.: montagem de schema, montagem de paths, serializacao final), nas duas entregas onde existe.\n2. `compose_suite` decomposta em funcoes menores por responsabilidade, no master e no enterprise.\n3. Testes reais existentes continuam passando apos a decomposicao (nenhuma mudanca de comportamento).\n\nExit Criteria:\n\n- Nenhuma das duas funcoes excede um tamanho razoavel (ex.: sem funcao unica acima de ~100-150 linhas) apos a decomposicao.\n- Suite de testes de master/enterprise e das duas entregas passa com exit 0.\n\nYou are going to implement Item 3: Quebrar funcoes gigantes get_swagger_html (736 linhas) e compose_suite (277/273).\nStrictly follow the Definition of Done above.\nDo not fabricate approvals and maintain monorepo governance rules."
+    },
+    {
+      "name": "documentar-e-eliminar-divergencia-master-enterprise-3-srccore-6-scripts-mcp",
+      "branch": "orca/documentar-e-eliminar-divergencia-master-enterprise-3-srccore-6-scripts-mcp",
+      "harness": "claude",
+      "launch_command": [
+        "claude",
+        "--dangerously-skip-permissions",
+        "--model",
+        "claude-sonnet-5"
+      ],
+      "prompt": "Scope: Resolver a divergencia ja mapeada entre `aidd-master` e `aidd-enterprise` em: 3 arquivos de `src/core` (detector_camada.py, profiles_registry.py, schema_injector_request.json), 6 arquivos de `scripts` (aidd.py, compose_suite.py, G_INJECT.py, openapi_to_ts.py, provision_project.py, run_all.py), a pasta `mcp/` (so existe no master) e a pasta `injector/` (so existe no enterprise). Por item: ou os dois lados convergem pro mesmo conteudo, ou a diferenca e documentada como intencional.\n\nDefinition of Done:\n\n1. Cada uma das 3 divergencias em src/core foi resolvida (convergida) ou documentada como intencional, com justificativa.\n2. Cada uma das 6 divergencias em scripts foi resolvida ou documentada como intencional.\n3. mcp/ (so master) e injector/ (so enterprise) foram documentados explicitamente como exclusivos de cada lado (ou unificados, se fizer sentido tecnico).\n4. Documento de decisao registrado (ex.: secao em AGENTS.md ou arquivo proprio) explicando o resultado de cada divergencia.\n\nExit Criteria:\n\n- Novo diff master vs enterprise rodado de verdade confirma que so restam divergencias documentadas como intencionais.\n- Testes de master e enterprise continuam passando com exit 0.\n\nYou are going to implement Item 4: Documentar e eliminar divergencia master-enterprise (3 src/core + 6 scripts + mcp/).\nStrictly follow the Definition of Done above.\nDo not fabricate approvals and maintain monorepo governance rules."
+    },
+    {
+      "name": "corrigir-drift-de-documentacao-do-g-honestidade-rotulo-agentsmd-termos-proibidos-marketingjson",
+      "branch": "orca/corrigir-drift-de-documentacao-do-g-honestidade-rotulo-agentsmd-termos-proibidos-marketingjson",
+      "harness": "claude",
+      "launch_command": [
+        "claude",
+        "--dangerously-skip-permissions",
+        "--model",
+        "claude-sonnet-5"
+      ],
+      "prompt": "Scope: Atualizar AGENTS.md (secao 4) e gates/termos_proibidos_marketing.json pra refletir que o G_HONESTIDADE_ROTULO ja passa (52 arquivos, 0 termos proibidos, \"blindagem militar\" ja removido de G_SEGURANCA.py) — hoje a documentacao ainda cita uma violacao pendente que nao existe mais.\n\nDefinition of Done:\n\n1. AGENTS.md secao 4 atualizada pra refletir o estado real (gate aprovado, sem violacao pendente).\n2. gates/termos_proibidos_marketing.json revisado/atualizado pra nao citar mais a violacao ja corrigida como pendente.\n3. `python gates/G_HONESTIDADE_ROTULO.py` (ou equivalente) rodado de novo confirma aprovado.\n\nExit Criteria:\n\n- Documentacao e gate concordam entre si (nenhuma mencao a violacao que nao existe mais).\n- Gate rodado de verdade, aprovado.\n\nYou are going to implement Item 5: Corrigir drift de documentacao do G_HONESTIDADE_ROTULO (AGENTS.md + termos_proibidos_marketing.json).\nStrictly follow the Definition of Done above.\nDo not fabricate approvals and maintain monorepo governance rules."
+    },
+    {
+      "name": "reduzir-timeout-do-g-testes-reais-no-audit-completo",
+      "branch": "orca/reduzir-timeout-do-g-testes-reais-no-audit-completo",
+      "harness": "claude",
+      "launch_command": [
+        "claude",
+        "--dangerously-skip-permissions",
+        "--model",
+        "claude-sonnet-5"
+      ],
+      "prompt": "Scope: Resolver o estouro de timeout (>300s) que ocorre especificamente no passo `aidd-ops` durante `python ecossistema.py audit` completo — sabendo que `aidd-ops` sozinho roda em ~30s (168 testes). Ajustar o timeout/paralelismo/escopo desse passo dentro do audit agregado, sem reduzir a cobertura real de testes.\n\nDefinition of Done:\n\n1. Causa raiz do estouro de timeout no passo aidd-ops dentro do audit agregado identificada (ex.: contencao de recursos, configuracao de timeout desalinhada, execucao serial desnecessaria).\n2. Correcao aplicada (ajuste de timeout, paralelismo, ou isolamento do passo) sem reduzir a cobertura real de testes.\n3. `python ecossistema.py audit` completo roda ate o fim sem estourar timeout no passo aidd-ops.\n\nExit Criteria:\n\n- `python ecossistema.py audit` completo rodado de verdade, do inicio ao fim, sem timeout no passo aidd-ops.\n- Os mesmos ~168 testes de aidd-ops continuam sendo executados (nao removidos/pulados pra \"resolver\" o timeout).\n\nYou are going to implement Item 6: Reduzir timeout do G_TESTES_REAIS no audit completo.\nStrictly follow the Definition of Done above.\nDo not fabricate approvals and maintain monorepo governance rules."
+    }
+  ]
+}

@@ -1,7 +1,7 @@
 # Item 3 — Quebrar funcoes gigantes get_swagger_html (736 linhas) e compose_suite (277/273)
 
 > **Escopo:** Decompor as duas funcoes identificadas pelo `code-review-graph` como as maiores do ecossistema: `get_swagger_html` (736 linhas, presente em `enterprise-suite-v4` e `logistica-hub-v4`, `src/core/openapi.py:284`) e `compose_suite` (277/273 linhas, `master`/`enterprise` `scripts/compose_suite.py:407`). Nao inclui `cmd_orchestrate`/`orchestrate_cli` em `ecossistema.py` (239/183 linhas) — identificadas na mesma varredura, mas fora do escopo original deste item; ficam registradas aqui como candidatas a um item futuro.
-> **Status:** [APROVADO — Aguardando Execucao]
+> **Status:** [EM EXECUCAO]
 > **Nota Atual (0-10):** 4.0 — evidencia: code-review-graph find_large_functions: get_swagger_html 736 linhas (enterprise-suite-v4 e logistica-hub-v4 src/core/openapi.py:284), compose_suite 277/273 (master/enterprise scripts/compose_suite.py:407)
 > **Nota Alvo (0-10):** 8.0
 > **Nota Real (pos-implementacao):** [Pendente - preencher somente apos o fechamento real deste item/iniciativa, via o mesmo mecanismo que mediu a Nota Atual]

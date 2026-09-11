@@ -108,4 +108,10 @@ if command -v code-review-graph >/dev/null 2>&1; then
     PYTHONUTF8=1 code-review-graph detect-changes --brief || true
 fi
 
+# --- 5. Higiene preventiva e monitoramento de harnesses ---
+# Previne estouro de memoria (OOM) no OpenCode/MiMoCode por bancos SQLite gigantes
+if [ -f "scripts/harness_hygiene.py" ]; then
+    python scripts/harness_hygiene.py check-silent || true
+fi
+
 exit 0

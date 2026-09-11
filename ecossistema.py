@@ -555,6 +555,16 @@ def cmd_audit(args):
         [sys.executable, "-m", "pre_commit", "run", "--all-files"], cwd=ROOT_DIR
     )
 
+def cmd_harness(args):
+    """Executa auditoria ou limpeza preventiva de armazenamento dos harnesses."""
+    action = args[0] if args else "status"
+    script = os.path.join(ROOT_DIR, "scripts", "harness_hygiene.py")
+    if not os.path.exists(script):
+        print(f"Erro: script '{script}' não encontrado.")
+        return 1
+    return run_command([sys.executable, script, action], cwd=ROOT_DIR)
+
+
 def cmd_status(args):
     if "--testes" in args:
         sys.path.insert(0, os.path.join(ROOT_DIR, "scripts", "manutencao"))
@@ -668,6 +678,10 @@ Comandos disponíveis:
                       <caminho>' marca EM EXECUCAO de verdade e move -> docs/planos/fazendo/
                       (chamado automaticamente pelo 'orchestrate' no instante real do início).
   audit               Executa o Meta-Quality Gate de Integridade
+  harness status|clean
+                      Monitora e executa higiene preventiva contra estouro de memória
+                      e disco nos bancos de dados e caches dos harnesses (OpenCode,
+                      MiMoCode, Claude, Cursor, Antigravity)
   status              Exibe o status do ecossistema e ferramentas integradas
   status --testes     Roda pytest real em cada ferramenta e atualiza
                       PLANO-EXECUCAO-ESTRUTURADO.json com a contagem medida
@@ -702,6 +716,7 @@ def main():
         "plan": cmd_plan,
         "melhoria": cmd_melhoria,
         "audit": cmd_audit,
+        "harness": cmd_harness,
         "status": cmd_status,
         "help": lambda a: print_help() or 0,
         "--help": lambda a: print_help() or 0,

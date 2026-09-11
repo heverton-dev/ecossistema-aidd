@@ -1,7 +1,7 @@
 # Item 2 — Adicionar testes reais as 2 entregas sem cobertura (enterprise-suite-v4, logistica-hub-v4)
 
 > **Escopo:** Criar suite de testes real (nao superficial) para as duas entregas em `tools/aidd-enterprise/materiais-extras/examples/` que hoje nao tem pasta `tests/`: `enterprise-suite-v4` e `logistica-hub-v4`. Nao inclui as outras 11 entregas do catalogo, que ja tem testes (ainda que finos).
-> **Status:** [APROVADO — Aguardando Execucao]
+> **Status:** [EM EXECUCAO]
 > **Nota Atual (0-10):** 2.0 — evidencia: ls tests/ ausente em tools/aidd-enterprise/materiais-extras/examples/enterprise-suite-v4 e logistica-hub-v4; testes de exemplo finos (test_catalogo.py 55 linhas, test_platform.py 48 linhas)
 > **Nota Alvo (0-10):** 9.0
 > **Nota Real (pos-implementacao):** [Pendente - preencher somente apos o fechamento real deste item/iniciativa, via o mesmo mecanismo que mediu a Nota Atual]
