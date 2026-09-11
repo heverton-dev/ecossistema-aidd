@@ -13,6 +13,19 @@ from pathlib import Path
 ROOT_DIR = Path(__file__).resolve().parent.parent
 DOCS_PLANOS = ROOT_DIR / "docs" / "planos"
 
+NOTA_NAO_AUDITADA = "NAO AUDITADO"
+EVIDENCIA_PENDENTE = "(nota pendente de medicao real - nao preencher com estimativa)"
+NOTA_REAL_PENDENTE = "[Pendente - preencher somente apos o fechamento real deste item/iniciativa, via o mesmo mecanismo que mediu a Nota Atual]"
+
+
+def _valor_por_indice(lista: list[str] | None, idx: int, placeholder: str) -> str:
+    """Retorna o valor na posicao idx de uma lista opcional, ou o placeholder
+    se a lista for None, mais curta que idx, ou tiver string vazia ali.
+    Nunca inventa um numero - a ausencia de dado vira rotulo explicito."""
+    if lista and idx < len(lista) and lista[idx]:
+        return lista[idx]
+    return placeholder
+
 
 def slugify(text: str) -> str:
     text = text.lower().strip()
@@ -70,7 +83,17 @@ def cmd_check_fences(caminho_alvo: str) -> int:
     return 1 if erros > 0 else 0
 
 
-def cmd_init(nome: str, itens: list[str], destino_base: Path | None = None) -> int:
+def cmd_init(
+    nome: str,
+    itens: list[str],
+    destino_base: Path | None = None,
+    notas_atuais: list[str] | None = None,
+    notas_alvo: list[str] | None = None,
+    evidencias: list[str] | None = None,
+    nota_atual_geral: str | None = None,
+    nota_alvo_geral: str | None = None,
+    evidencia_geral: str | None = None,
+) -> int:
     if not nome:
         print("[ERRO] Nome da iniciativa e obrigatorio.")
         return 1
@@ -88,16 +111,34 @@ def cmd_init(nome: str, itens: list[str], destino_base: Path | None = None) -> i
     if not itens:
         itens = ["Estruturacao Inicial e Diagnostico"]
 
+    nota_atual_geral_str = nota_atual_geral or NOTA_NAO_AUDITADA
+    nota_alvo_geral_str = nota_alvo_geral or NOTA_NAO_AUDITADA
+    evidencia_geral_str = evidencia_geral or EVIDENCIA_PENDENTE
+    if evidencia_geral_str == EVIDENCIA_PENDENTE:
+        # Sem evidencia real, a nota geral nunca vira um numero (mesmo que
+        # tenha sido passada) - evita nota "chutada" disfarcada de medida.
+        nota_atual_geral_str = NOTA_NAO_AUDITADA
+
     linhas_tabela_conteudo = []
     linhas_tabela_progresso = []
     arquivos_itens = []
 
-    for idx, item_titulo in enumerate(itens, start=1):
+    for idx0, item_titulo in enumerate(itens):
+        idx = idx0 + 1
         item_slug = slugify(item_titulo)
         item_arquivo = f"{idx:02d}-{item_slug}.md"
+        nota_atual_item = _valor_por_indice(notas_atuais, idx0, NOTA_NAO_AUDITADA)
+        nota_alvo_item = _valor_por_indice(notas_alvo, idx0, NOTA_NAO_AUDITADA)
+        evidencia_item = _valor_por_indice(evidencias, idx0, EVIDENCIA_PENDENTE)
+        if evidencia_item == EVIDENCIA_PENDENTE:
+            # Mesma regra da nota geral: sem evidencia real, nunca vira numero.
+            nota_atual_item = NOTA_NAO_AUDITADA
         linhas_tabela_conteudo.append(f"| {idx} | {item_titulo} | `{item_arquivo}` |")
-        linhas_tabela_progresso.append(f"| {idx} | {item_titulo} | ⏳ Rascunho gerado, aguardando aprovacao | `{item_arquivo}` |")
-        arquivos_itens.append((idx, item_titulo, item_arquivo))
+        linhas_tabela_progresso.append(
+            f"| {idx} | {item_titulo} | ⏳ Rascunho gerado, aguardando aprovacao | "
+            f"{nota_atual_item} | {nota_alvo_item} | {NOTA_REAL_PENDENTE} | `{item_arquivo}` |"
+        )
+        arquivos_itens.append((idx, item_titulo, item_arquivo, nota_atual_item, nota_alvo_item, evidencia_item))
 
     tabela_conteudo_str = "\n".join(linhas_tabela_conteudo)
     tabela_progresso_str = "\n".join(linhas_tabela_progresso)
@@ -115,6 +156,15 @@ def cmd_init(nome: str, itens: list[str], destino_base: Path | None = None) -> i
 Defina aqui os objetivos claros, escopo e limites desta iniciativa.
 - **Objetivo Principal:** [Descrever objetivo]
 - **Limites de Escopo:** Nao inclui decisoes nao aprovadas por humano.
+
+### Metrica da Iniciativa (0-10)
+
+- **Nota Atual:** {nota_atual_geral_str} — evidencia: {evidencia_geral_str}
+- **Nota Alvo:** {nota_alvo_geral_str}
+- **Nota Real (pos-implementacao):** {NOTA_REAL_PENDENTE}
+
+Nunca preencher Nota Atual sem evidencia real (relatorio de auditoria, comando ou
+teste efetivamente rodado). Sem evidencia, o campo permanece `{NOTA_NAO_AUDITADA}`.
 
 ## 2. Processo Adotado
 
@@ -135,20 +185,25 @@ Diagnostico rapido → Definicao de Pronto checavel → Prompt de Execucao autoc
 
 ## 5. Registro de Progresso
 
-| # | Item | Status | Documento |
-|---|---|---|---|
+| # | Item | Status | Nota Atual | Nota Alvo | Nota Real | Documento |
+|---|---|---|---|---|---|---|
 {tabela_progresso_str}
 
 Esta tabela so e atualizada para Concluido apos auditoria por reproducao real.
+A coluna Nota Real so e preenchida no fechamento de cada item, rodando o MESMO
+mecanismo real que mediu a Nota Atual (nunca um comando "parecido").
 """
 
     (pasta_destino / "00-PROCESSO-E-DECISOES.md").write_text(processo_md, encoding="utf-8")
 
-    for idx, item_titulo, item_arquivo in arquivos_itens:
+    for idx, item_titulo, item_arquivo, nota_atual_item, nota_alvo_item, evidencia_item in arquivos_itens:
         item_md = f"""# Item {idx} — {item_titulo}
 
 > **Escopo:** [Descrever o que entra e o que nao entra neste item]
 > **Status:** [RASCUNHO — Aguardando Aprovacao Humana]
+> **Nota Atual (0-10):** {nota_atual_item} — evidencia: {evidencia_item}
+> **Nota Alvo (0-10):** {nota_alvo_item}
+> **Nota Real (pos-implementacao):** {NOTA_REAL_PENDENTE}
 
 ---
 
@@ -204,7 +259,7 @@ Do not fabricate approvals and maintain monorepo governance rules.
     print(f"[SUCESSO] Iniciativa '{pasta_nome}' criada com sucesso em:")
     print(f"  {pasta_destino}")
     print(f"  - 00-PROCESSO-E-DECISOES.md")
-    for _, _, item_arquivo in arquivos_itens:
+    for _, _, item_arquivo, *_resto in arquivos_itens:
         print(f"  - {item_arquivo}")
 
     if base == DOCS_PLANOS:
@@ -222,6 +277,20 @@ def main():
     parser_init = subparsers.add_parser("init", help="Cria o esqueleto de uma nova iniciativa de plano")
     parser_init.add_argument("nome", help="Nome da iniciativa (ex: refatoracao-auth)")
     parser_init.add_argument("--itens", nargs="+", default=[], help="Lista de titulos de itens para a iniciativa")
+    parser_init.add_argument("--notas-atuais", nargs="+", default=[],
+                              help="Nota atual (0-10) de cada item, na mesma ordem de --itens. "
+                                   "Exige evidencia real em --evidencias na mesma posicao.")
+    parser_init.add_argument("--notas-alvo", nargs="+", default=[],
+                              help="Nota alvo (0-10) de cada item, na mesma ordem de --itens")
+    parser_init.add_argument("--evidencias", nargs="+", default=[],
+                              help="Evidencia real (relatorio, comando ou teste rodado) que sustenta "
+                                   "a nota atual de cada item, na mesma ordem de --itens")
+    parser_init.add_argument("--nota-atual-geral", default=None,
+                              help="Nota atual (0-10) da iniciativa como um todo")
+    parser_init.add_argument("--nota-alvo-geral", default=None,
+                              help="Nota alvo (0-10) da iniciativa como um todo")
+    parser_init.add_argument("--evidencia-geral", default=None,
+                              help="Evidencia real que sustenta a nota atual geral da iniciativa")
 
     parser_check = subparsers.add_parser("check-fences", help="Valida se cercas de codigo markdown estao balanceadas")
     parser_check.add_argument("caminho", help="Arquivo ou pasta markdown a verificar")
@@ -229,7 +298,16 @@ def main():
     args = parser.parse_args()
 
     if args.subcomando == "init":
-        sys.exit(cmd_init(args.nome, args.itens))
+        sys.exit(cmd_init(
+            args.nome,
+            args.itens,
+            notas_atuais=args.notas_atuais,
+            notas_alvo=args.notas_alvo,
+            evidencias=args.evidencias,
+            nota_atual_geral=args.nota_atual_geral,
+            nota_alvo_geral=args.nota_alvo_geral,
+            evidencia_geral=args.evidencia_geral,
+        ))
     elif args.subcomando == "check-fences":
         sys.exit(cmd_check_fences(args.caminho))
 

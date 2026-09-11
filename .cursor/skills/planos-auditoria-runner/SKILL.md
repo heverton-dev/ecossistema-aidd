@@ -49,22 +49,38 @@ Antes de criar ou gravar qualquer arquivo em disco, pergunte e confirme explicit
 - Nome identificador da iniciativa (ex: `refatoracao-modulo-auth`), que se tornara a pasta `docs/planos/<nome-da-iniciativa>/`.
 - Objetivo e motivacao central da iniciativa.
 - Lista preliminar de itens/tarefas que comporao as frentes de trabalho.
+- **Nota Atual, Nota Alvo (0-10) e evidencia real** — para a iniciativa como um todo E para cada item. A evidencia e um relatorio ja existente (ex: um relatorio gerado pela skill `melhoria`), um comando ou teste rodado agora. **Nunca aceite ou invente um numero sem evidencia real** — se o usuario nao tiver evidencia ainda, o campo fica `NAO AUDITADO`, nunca uma estimativa do agente.
 *Nota:* Jamais assuma nomes ou liste itens por inferencia silenciosa sem validacao interativa.
 
 ### Passo 3: Geracao Deterministica Estruturada dos Arquivos
 Apos confirmacao do escopo pelo usuario, utilize o CLI deterministico:
 ```bash
-python ecossistema.py plan init <nome-da-iniciativa> --itens "Item 1" "Item 2"
+python ecossistema.py plan init <nome-da-iniciativa> --itens "Item 1" "Item 2" \
+  --notas-atuais "6" "5" --notas-alvo "9" "8" --evidencias "docs/melhorias/<relatorio>.html" "" \
+  --nota-atual-geral "6" --nota-alvo-geral "9" --evidencia-geral "docs/melhorias/<relatorio>.html"
 ```
+As flags de nota sao opcionais e posicionais (mesma ordem de `--itens`). Se
+`--evidencias` vier vazio para um item, a nota atual daquele item e forcada
+para `NAO AUDITADO` automaticamente pelo proprio gerador — o script nunca
+grava um numero sem evidencia, mesmo que um seja passado por engano.
 
 O comando criara automaticamente com integridade garantida:
 1. **`00-PROCESSO-E-DECISOES.md`:**
    - Origem, proposito e aviso de governanca.
-   - Secoes canonicas: O que este esforco busca, Processo Adotado, Onde vive o conteudo tecnico, Regras Fixas e Registro de Progresso (marcando os itens como `⏳ Rascunho gerado, aguardando aprovacao`).
+   - Secoes canonicas: O que este esforco busca (com a Metrica da Iniciativa —
+     Nota Atual/Alvo/Real), Processo Adotado, Onde vive o conteudo tecnico,
+     Regras Fixas e Registro de Progresso (itens marcados como
+     `⏳ Rascunho gerado, aguardando aprovacao`, com colunas de Nota Atual,
+     Nota Alvo e Nota Real por item).
 2. **`NN-<nome-do-item>.md`** (um para cada item acordado):
-   - Escopo e Status `[RASCUNHO — Aguardando Aprovacao Humana]`.
+   - Escopo, Status `[RASCUNHO — Aguardando Aprovacao Humana]` e o bloco de
+     Nota Atual/Alvo/Real (com evidencia) daquele item.
    - Contexto investigado, Definicao de Pronto checavel, Criterio de saida.
    - Prompt de Execucao (PT-BR) e versao em ingles autocontidos.
+3. **Nota Real:** so e preenchida no fechamento de cada item/iniciativa, e
+   somente rodando o MESMO mecanismo real que mediu a Nota Atual (nunca um
+   comando "parecido") — mesma regra que ja vale para os planos de auditoria
+   de notas existentes em `docs/planos/feitos/`.
 
 ### Passo 4: Verificacao Deterministica de Cercas de Codigo (Anti-Nesting)
 Valide a integridade sintatica de todas as cercas de codigo markdown atraves do comando CLI:

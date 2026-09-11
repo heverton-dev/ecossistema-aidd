@@ -23,6 +23,7 @@
 | pdocs/features/` | `feature-` | `08-09-2026_feature-inventario-troca-ferramentas.md` |
 | `docs/explicacoes/` | pexplica-` | `10-09-2026_explica-ecossistema-fluxo-completo.md` |
 | `docs/relatorios/` | `relatorio-` ou `auditoria-` | p11-09-2026_auditoria-status-planos.html` |
+| `docs/melhorias/` | `melhoria-` | `11-09-2026_melhoria-busca-de-skills.html` (gerado por `python ecossistema.py melhoria init`) |
 
 ### Regras Complementares de Nomenclatura:
 1. **Até 3 Palavras Descritivas:** Após o prefixo, usar no máximo 3 palavras conectadas por hífen para sintetizar o conteúdo (ex: `explica-visao-aidd-ops.md`).

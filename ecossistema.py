@@ -437,6 +437,10 @@ def cmd_plan(args):
     script = os.path.join(ROOT_DIR, "scripts", "gerenciador_planos.py")
     return run_command([sys.executable, script] + args, cwd=ROOT_DIR)
 
+def cmd_melhoria(args):
+    script = os.path.join(ROOT_DIR, "scripts", "gerenciador_melhorias.py")
+    return run_command([sys.executable, script] + args, cwd=ROOT_DIR)
+
 # Gates realmente materializados em gates/ e executados pelo 'audit'.
 # Ordem identica a AGENTS.md §4 (inclui G_HADOLINT, que jah existe em gates/).
 _GATES_AUDIT = [
@@ -525,6 +529,7 @@ def cmd_status(args):
     print("  /enterprise <tipo> <nome> -> Dispara aidd-enterprise")
     print("  /ops [requisito]        -> Dispara aidd-ops (infraestrutura)")
     print("  /orchestrate [plano]    -> Dispara orca-plan-orchestrator (ORCA ADE)")
+    print("  /melhoria <pedido>      -> Dispara analise profunda pre-planejamento (docs/melhorias/)")
     print("  /plan <nome>            -> Dispara planos-auditoria-runner")
     print("  /bridge [comando]       -> Dispara aidd-bridge-runner")
     print("-" * 72)
@@ -562,8 +567,13 @@ Comandos disponíveis:
                       (git worktrees); ambiente 'subagent' so compila o
                       Plano de Voo em JSON (.orca-flight-plan.json) para o
                       assistente da sessao executar via Agent tool.
+  melhoria init --pedido "<texto>" [--nome ...] [--nota-atual ...] [--evidencia ...]
+                      Gerenciador determinístico de relatórios de análise profunda
+                      em docs/melhorias/ (etapa anterior ao 'plan')
   plan init|check-fences <args>
                       Gerenciador determinístico de iniciativas de planos em docs/planos/
+                      (--notas-atuais/--notas-alvo/--evidencias por item e
+                      --nota-atual-geral/--nota-alvo-geral/--evidencia-geral)
   audit               Executa o Meta-Quality Gate de Integridade
   status              Exibe o status do ecossistema e ferramentas integradas
   status --testes     Roda pytest real em cada ferramenta e atualiza
@@ -597,6 +607,7 @@ def main():
         "dependencia": cmd_dependencia,
         "orchestrate": cmd_orchestrate,
         "plan": cmd_plan,
+        "melhoria": cmd_melhoria,
         "audit": cmd_audit,
         "status": cmd_status,
         "help": lambda a: print_help() or 0,
