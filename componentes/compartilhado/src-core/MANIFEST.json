@@ -32,6 +32,7 @@
         "sincronizador_harness.py",
         "subagent_engine.py",
         "token_revocation.py",
+        "transaction_log.py",
         "webhooks.py"
     ]
 }
