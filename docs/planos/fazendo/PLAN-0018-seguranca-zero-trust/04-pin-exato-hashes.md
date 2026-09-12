@@ -1,8 +1,8 @@
 # Item — pin-exato-e-hashes-requirements-lockfile
 
 > **Escopo:** Migrar dependências Python para versões exatas fixadas com hashes criptográficos (lockfile via uv/pip-tools) e impor instalação segura com --require-hashes no CI.
-> **Status:** [EM EXECUCAO]
-> **Auditoria por reproducao real (11-09-2026):** NAO-FEITO. Nao existe uv.lock nem requirements.lock; nada instala com --require-hashes.
+> **Status:** [FEITO]
+> **Auditoria por reproducao real (12-09-2026):** FEITO. requirements.txt e requirements-dev.txt migrados para pin exato (`==`); requirements.lock e requirements-dev.lock gerados via `uv pip compile --generate-hashes` (todo pacote com >=1 --hash=sha256); `.github/workflows/audit.yml` instala com `pip install --require-hashes -r requirements-dev.lock`; gate novo `gates/G_DEPENDENCIAS_PIN_HASH.py` (10/10 no `audit`) rejeita qualquer regressao (especificador solto, lockfile sem hash, CI sem --require-hashes). Instalação real validada em venv limpo (pip padrão e uv) com exit 0. 88/88 testes de gates passando; `python ecossistema.py audit` 10/10 gates aprovados.
 
 ---
 

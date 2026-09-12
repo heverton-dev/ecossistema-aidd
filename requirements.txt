@@ -1,31 +1,39 @@
 # Dependências do Ecossistema AIDD Unificado
-pytest>=7.4.0
-pytest-cov>=4.1.0
-jsonschema>=4.20.0
-litellm>=1.20.0
-fastapi>=0.100.0
-uvicorn>=0.23.0
-pydantic>=2.0.0
-python-dotenv>=1.0.0
-requests>=2.31.0
-tiktoken>=0.5.0
-click>=8.1.0
-colorama>=0.4.6
-secure>=2.0.0
-sqlglot>=24.0.0
-sqlalchemy>=2.0.0
-alembic>=1.13.0
-returns>=0.23.0
-cookiecutter>=2.6.0
-pyyaml>=6.0.0
+#
+# PLAN-0018 fase 04 (pin-exato-e-hashes): pins exatos (==), sem faixas soltas
+# (>=, ~=, <). A instalação real e verificada em CI/pre-commit usa o
+# lockfile com hashes criptográficos gerado a partir deste arquivo:
+#   uv pip compile requirements.txt --generate-hashes -o requirements.lock
+# Para atualizar uma versão: edite o pin abaixo e regenere requirements.lock.
+pytest==9.1.1
+pytest-cov==7.1.0
+jsonschema==4.26.0
+# litellm preso em 1.83.0 (nao a ultima) pois checkov (requirements-dev.txt)
+# exige importlib-metadata<8, incompativel com litellm>=1.84 (importlib-metadata>=8)
+litellm==1.83.0
+fastapi==0.141.1
+uvicorn==0.52.4
+pydantic==2.13.5
+python-dotenv==1.2.3
+requests==2.34.2
+tiktoken==0.14.0
+click==8.5.0
+colorama==0.4.6
+secure==2.0.1
+sqlglot==30.18.0
+sqlalchemy==2.0.52
+alembic==1.20.0
+returns==0.29.0
+cookiecutter==2.7.1
+pyyaml==6.0.3
 
 # aidd-bridge: deploy e teardown em VPS via SSH/SFTP
-paramiko>=3.4.0
+paramiko==5.0.0
 
 # aidd-bridge: geração de JWT assinado para GoTrue/PostgREST (anon + service_role)
-PyJWT>=2.8.0
-cryptography>=42.0.0
+PyJWT==2.14.0
+cryptography==50.0.1
 
 # aidd-bridge: migração de contas reais (auth.users/auth.identities) de um
 # Supabase Cloud de origem para o Postgres self-hosted de destino
-psycopg2-binary>=2.9.9
+psycopg2-binary==2.9.13

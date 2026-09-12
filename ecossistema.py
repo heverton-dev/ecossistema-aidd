@@ -627,6 +627,7 @@ _GATES_AUDIT = [
     "G_INFRA_COMPOSE.py",
     "G_HADOLINT.py",
     "G_TESTES_REAIS.py",
+    "G_DEPENDENCIAS_PIN_HASH.py",
 ]
 
 def _audit_gates_legado(args):

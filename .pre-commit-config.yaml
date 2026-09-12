@@ -8,6 +8,14 @@
 # zero download de repos remotos, funciona offline e em qualquer harness/SO
 # (Regra de Ouro 6 — Supremacia Agnóstica).
 #
+# PLAN-0018 fase 04 (pin-exato-e-hashes): como os hooks sao 'language: system',
+# eles rodam no Python ambiente que voce ja tem — o pre-commit em si (e as
+# libs usadas pelos gates, ex.: pyyaml/checkov) precisam vir do
+# requirements-dev.lock, instalado com verificacao de hash obrigatoria:
+#   pip install --require-hashes -r requirements-dev.lock
+# Nunca instale a partir de requirements-dev.txt direto (sem hash) para rodar
+# estes hooks. Auditado por gates/G_DEPENDENCIAS_PIN_HASH.py.
+#
 # Regras de gatilho:
 #   * always_run: true   -> checagem de repo inteiro em TODO commit.
 #   * files: ^tools/     -> roda so quando um arquivo staged bate no padrao
@@ -137,6 +145,14 @@ repos:
         entry: python gates/G_TESTES_REAIS.py
         language: system
         files: ^tools/
+        pass_filenames: false
+        require_serial: true
+
+      - id: g-dependencias-pin-hash
+        name: G_DEPENDENCIAS_PIN_HASH (pin exato + hash criptografico em requirements)
+        entry: python gates/G_DEPENDENCIAS_PIN_HASH.py
+        language: system
+        always_run: true
         pass_filenames: false
         require_serial: true
 

@@ -86,6 +86,7 @@ O ecossistema dispõe de Quality Gates globais em gates/:
 - gates/G_INFRA_COMPOSE.py: Audita estaticamente a integridade, sintaxe e segurança de orquestrações Docker Compose (Checkov + PyYAML).
 - gates/G_HADOLINT.py: Audita estaticamente melhores práticas OCI, segurança e sintaxe de todos os Dockerfiles via Hadolint.
 - gates/G_TESTES_REAIS.py: Roda pytest de verdade em cada tools/<ferramenta> e falha (exit 1) se qualquer suíte tiver failed > 0.
+- gates/G_DEPENDENCIAS_PIN_HASH.py: Reprova requirements.txt/requirements-dev.txt sem pin exato (`==`), lockfiles (requirements.lock/requirements-dev.lock) sem hash sha256 completo por pacote, ou CI sem `pip install --require-hashes`.
 - gates/G_HONESTIDADE_ROTULO.py: Verifica Regra #9 — escaneia print()/raise() dos scripts de gates/ contra termos de marketing proibidos em gates/termos_proibidos_marketing.json.
 - gates/G_ARQUITETURA_DELIVERABLE.py: Audita conformidade com Clean Architecture/DDD via AST. Em `stages: [manual]` (violações legadas conhecidas).
 - gates/G_ESCRITOR_ATOMICO.py: Audita o uso de gravação atômica em arquivos críticos do ecossistema.
