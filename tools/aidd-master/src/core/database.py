@@ -485,11 +485,16 @@ def enable_rls_tenant(cursor, table_name: str):
         RLS_TABLE_REGISTRY.add(table_name)
 
 
+_UUID_RE = re.compile(r"^[0-9a-fA-F-]{36}$")
+
+
 def set_tenant(cursor, tenant_id: str):
     """Set the active tenant context.  On PostgreSQL uses SET; on SQLite
     stores it in thread-local storage for RLSConnection to pick up."""
     if hasattr(cursor, '_cursor') or type(cursor).__name__ == 'PostgresCursorProxy':
-        cursor.execute(f"SET app.current_tenant_id = '{tenant_id}';")
+        if not _UUID_RE.match(tenant_id):
+            raise ValueError(f"Invalid tenant_id format: {tenant_id}. Must be a valid UUID.")
+        cursor.execute("SET app.current_tenant_id = %s;", (tenant_id,))
     else:
         _RLS_TENANT_CONTEXT.tenant_id = tenant_id
 

@@ -10,7 +10,13 @@
   "aidd-forge": [
     "tests/unit/test_harness_gate_fails_on_broken_symlink"
   ],
-  "aidd-generator": [],
+  "aidd-generator": [
+    "tests/test_todas_tasks_sao_registradas_como_task_prefect",
+    "tests/test_retries_plural_aplicados_em_tasks",
+    "tests/test_persistencia_estado_sqlite",
+    "tests/test_fluxo_e_do_tipo_flow_quando_prefect_disponivel",
+    "tests/test_fluxo_aceita_mesmos_argumentos_do_pipeline_legado"
+  ],
   "aidd-master": [
     "tests/unit/test_postgres_adapter_real_integration_via_docker",
     "tests/unit/test_event_emitted_on_instance_a_is_processed_on_instance_b_via_redis",
