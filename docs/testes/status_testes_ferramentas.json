@@ -1,5 +1,5 @@
 {
-  "medido_em": "2026-09-11T16:43:56.318676+00:00",
+  "medido_em": "2026-09-12T11:36:02.360993+00:00",
   "metodo": "python -m pytest -q --tb=no em cada tools/<ferramenta>, parseado do resumo real (nao digitado a mao)",
   "por_ferramenta": {
     "aidd-forge": {
@@ -11,28 +11,25 @@
       "exit_code": 0
     },
     "aidd-generator": {
-      "status": "ok",
-      "passed": 957,
-      "failed": 0,
-      "skipped": 0,
+      "status": "falhou",
+      "passed": 1000,
+      "failed": 1,
+      "skipped": 5,
       "errors": 0,
-      "exit_code": 0
+      "exit_code": 1
     },
     "aidd-master": {
-      "status": "ok",
-      "passed": 286,
-      "failed": 0,
-      "skipped": 3,
-      "errors": 0,
-      "exit_code": 0
+      "status": "indeterminado",
+      "exit_code": 4,
+      "trecho": "se-01-telemetria-testes-remedida\\tools\\aidd-master\\tests\\conftest.py'.\ntests\\conftest.py:19: in <module>\n    import materializador\nsrc\\core\\materializador.py:36: in <module>\n    from core.escritor_atomico import escrever_atomico, escrever_json_atomico\nE   ModuleNotFoundError: No module named 'core'\n"
     },
     "aidd-enterprise": {
-      "status": "ok",
-      "passed": 263,
+      "status": "falhou",
+      "passed": 0,
       "failed": 0,
-      "skipped": 3,
-      "errors": 0,
-      "exit_code": 0
+      "skipped": 0,
+      "errors": 1,
+      "exit_code": 2
     },
     "aidd-ops": {
       "status": "ok",
