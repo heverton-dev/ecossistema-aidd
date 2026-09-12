@@ -11,5 +11,5 @@
 **COMANDO:** agy --model gemini-3.8-flash-low  --dangerously-skip-permissions  
   
 **HARNESS:** claude  
-**MODELO PADRAO:**   sonnet-5  
-**COMANDO:** claude --dangerously-skip-permissions --chrome --model sonnet-5
+**MODELO PADRAO:**   sonnet  
+**COMANDO:** claude --dangerously-skip-permissions --chrome --model sonnet

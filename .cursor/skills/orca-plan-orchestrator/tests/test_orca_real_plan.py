@@ -93,7 +93,7 @@ class TestCompilarPlanoOrca:
         assert front["prompt"] not in " ".join(front["launch_command"])
         # Claude profile: bare launch = binary + auto_approve + model flag/value (no -p, no prompt)
         assert front["launch_command"] == [
-            "claude", "--dangerously-skip-permissions", "--model", "claude-sonnet-5",
+            "claude", "--dangerously-skip-permissions", "--chrome", "--model", "sonnet",
         ]
 
     def test_front_prompt_is_populated_separately(self, repo_git_real):

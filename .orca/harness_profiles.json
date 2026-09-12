@@ -36,12 +36,12 @@
       "prompt_mode": "positional",
       "prompt_flag": null,
       "model_flag": "--model",
-      "default_model": "sonnet-5",
+      "default_model": "sonnet",
       "extra_flags": [
         "--chrome"
       ],
       "startup_wait_seconds": 10,
-      "usage_note": "Comando padrao fixado em docs/harness-models-padrao.md: 'claude --dangerously-skip-permissions --chrome --model sonnet-5'. Usage: claude [options] [command] [prompt] -- prompt e um ARGUMENTO POSICIONAL no final. --chrome (Claude in Chrome) confirmado via --help real."
+      "usage_note": "Comando padrao fixado em docs/harness-models-padrao.md: 'claude --dangerously-skip-permissions --chrome --model sonnet'. Usage: claude [options] [command] [prompt] -- prompt e um ARGUMENTO POSICIONAL no final. --chrome (Claude in Chrome) confirmado via --help real."
     },
     "agy": {
       "binary": "agy",

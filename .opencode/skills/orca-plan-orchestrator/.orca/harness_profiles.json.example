@@ -36,12 +36,12 @@
       "prompt_mode": "positional",
       "prompt_flag": null,
       "model_flag": "--model",
-      "default_model": "sonnet-5",
+      "default_model": "sonnet",
       "extra_flags": [
         "--chrome"
       ],
       "startup_wait_seconds": 10,
-      "usage_note": "Comando padrao fixado em docs/harness-models-padrao.md: 'claude --dangerously-skip-permissions --chrome --model sonnet-5'. --chrome ativa a integracao Claude in Chrome. Usage: claude [options] [command] [prompt] -- prompt is a POSITIONAL ARGUMENT at the END. For the native git-worktree engine, launched bare (no prompt) and the prompt is sent to stdin after startup_wait_seconds, since claude's interactive session also needs a moment to finish loading."
+      "usage_note": "Comando padrao fixado em docs/harness-models-padrao.md: 'claude --dangerously-skip-permissions --chrome --model sonnet'. --chrome ativa a integracao Claude in Chrome. Usage: claude [options] [command] [prompt] -- prompt is a POSITIONAL ARGUMENT at the END. For the native git-worktree engine, launched bare (no prompt) and the prompt is sent to stdin after startup_wait_seconds, since claude's interactive session also needs a moment to finish loading."
     },
     "agy": {
       "binary": "agy",
