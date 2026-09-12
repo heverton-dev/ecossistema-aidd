@@ -1,8 +1,8 @@
 # Item — jwt-hardening-segredo-prod-exp-obrigatorio
 
 > **Escopo:** Blindar o serviço JWT: proibir segredo padrão hardcoded em ambiente de produção (fail-fast), exigir campo exp obrigatório e integrar verificação de revogação.
-> **Status:** [EM EXECUCAO]
-> **Auditoria por reproducao real (11-09-2026):** NAO-FEITO. componentes/compartilhado/src-core/security.py faz o oposto do exigido: quando JWT_SECRET_KEY esta vazia, ele cai num default embutido (DEV_ONLY_INSECURE_SECRET_CHANGE_BEFORE_DEPLOY) em vez de abortar o boot.
+> **Status:** [FEITO]
+> **Auditoria por reproducao real (12-09-2026):** FEITO. As 3 exigencias confirmadas com reproducao independente nesta sessao (script proprio, sem depender so dos testes ja existentes): (1) processo Python novo com `ENVIRONMENT=production` e sem `JWT_SECRET_KEY` (ou com o valor padrao) aborta o boot com `RuntimeError`, `exit != 0`; com chave forte, `exit 0`; (2) token montado a mao sem a claim `exp` e rejeitado no decode; (3) token valido para de ser aceito apos `JWTService.revoke(token)`. As 6 copias espelhadas de `security.py` (`componentes/compartilhado/src-core` + 3 em `tools/aidd-master` + 3 em `tools/aidd-enterprise`, os `templates/core` e `templates/v2` inclusos) sao byte-a-byte identicas ao arquivo canonico (`diff` real, sem drift). `tests/unit/test_jwt_hardening.py` (8 testes, identico nos dois projetos): 8/8 passando nos dois. Suite completa: aidd-master 334 passed/3 skipped/0 failed; aidd-enterprise 311 passed/3 skipped/0 failed — sem a instabilidade registrada na sessao anterior. Gate `G_SEGURANCA` (20 checks): 18 aprovados/0 falha/2 alertas (nginx/Dockerfile ausentes na raiz, fora de escopo) nos dois projetos. `python ecossistema.py audit`: todos os gates aprovados, incluindo `G_TESTES_REAIS` (suite completa das 5 ferramentas de `tools/`, que na sessao anterior tinha dado instavel — desta vez passou limpo).
 
 ---
 

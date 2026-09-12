@@ -50,7 +50,7 @@ Diagnostico rapido → Definicao de Pronto checavel → Prompt de Execucao autoc
 | 3 | corrigir-interpolacao-sql-set-tenant-pg | 🔶 Em execucao | `03-corrigir-interpolacao-sql.md` |
 | 4 | pin-exato-e-hashes-requirements-lockfile | ✅ Concluido (12-09-2026) | `04-pin-exato-hashes.md` |
 | 5 | manifest-assinado-ed25519-componentes-enterprise | ⏳ Implementado (12-09-2026) — aguarda auditoria por reproducao real (commit `a949228`) | `05-manifest-assinado-ed25519.md` |
-| 6 | jwt-hardening-segredo-prod-exp-obrigatorio | ⏳ Implementado (12-09-2026) — aguarda auditoria por reproducao real | `06-jwt-hardening-segredo.md` |
+| 6 | jwt-hardening-segredo-prod-exp-obrigatorio | ✅ Concluido (12-09-2026) | `06-jwt-hardening-segredo.md` |
 | 7 | hash-artefatos-skills-mcps-dependencias-externas | ✅ Concluido (12-09-2026) | `07-hash-artefatos-skills.md` |
 | 8 | mcp-defensivo-cap-limite-e-env-denylist | 🔶 Em execucao | `08-mcp-defensivo-cap.md` |
 | 9 | rls-fail-closed-auditoria-tabelas-desprotegidas | 🔶 Em execucao | `09-rls-fail-closed.md` |
@@ -213,6 +213,20 @@ mesmo em caso de erro), nao das mudancas deste item. Registrado aqui, sem
 correcao aplicada (fora do escopo deste item), para virar um item de
 investigacao separado — mesmo padrao de transparencia usado no incidente
 do item 5 acima.
+
+**Auditoria por reproducao real, confirmada numa sessao separada
+(12-09-2026):** refiz a checagem do zero, sem reaproveitar leitura de
+codigo nem os testes ja existentes como unica prova — rodei comandos
+proprios reproduzindo os 3 pontos na mao (processo novo abortando o boot em
+producao com segredo ausente/padrao; token sem prazo de validade
+rejeitado; token deixando de ser aceito apos revogado). Resultado: os 3
+pontos se confirmam de verdade. As 6 copias espelhadas de `security.py`
+continuam identicas (`diff` real). `tests/unit/test_jwt_hardening.py`:
+8/8 nos dois projetos. Suites completas: aidd-master 334 passed/3
+skipped/0 failed; aidd-enterprise 311 passed/3 skipped/0 failed — desta
+vez sem repetir a instabilidade acima. `python ecossistema.py audit`
+completo (todos os gates, incluindo `G_TESTES_REAIS`): aprovado. Item
+promovido de "Implementado" para "Concluido" na tabela da secao 5.
 
 ## 9. Item 7 — hash-artefatos-skills-mcps-dependencias-externas (concluido 12-09-2026)
 
