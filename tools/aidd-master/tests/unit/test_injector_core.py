@@ -590,20 +590,19 @@ def test_rollback_full_snapshot_restaura_conteudo_previo(tmp_path, monkeypatch):
     with open(dest_principal, "w", encoding="utf-8") as f:
         f.write(conteudo_original)
 
-    # Interceptar open() em materializador para falhar na segunda escrita (quando destino != dest_principal)
-    real_open = open
+    # Interceptar escrever_atomico em materializador para falhar na segunda escrita (quando destino != dest_principal)
+    real_escrever = materializador.escrever_atomico
     escritas = []
     falhou = [False]
 
-    def mock_open(file, mode="r", *args, **kwargs):
-        if "w" in mode and "b" not in mode:
-            escritas.append(str(file))
-            if len(escritas) >= 2 and not falhou[0]:
-                falhou[0] = True
-                raise OSError("Falha simulada na segunda escrita para forçar rollback")
-        return real_open(file, mode, *args, **kwargs)
+    def mock_escrever(destino, conteudo, *args, **kwargs):
+        escritas.append(str(destino))
+        if len(escritas) >= 2 and not falhou[0]:
+            falhou[0] = True
+            raise OSError("Falha simulada na segunda escrita para forçar rollback")
+        return real_escrever(destino, conteudo, *args, **kwargs)
 
-    monkeypatch.setattr("builtins.open", mock_open)
+    monkeypatch.setattr(materializador, "escrever_atomico", mock_escrever)
 
     res = materializador.materializar(payload, resolucao, sobrescrever=True)
     assert res.sucesso is False

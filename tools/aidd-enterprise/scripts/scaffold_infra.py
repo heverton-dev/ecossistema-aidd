@@ -16,6 +16,18 @@ import re
 import sys
 from typing import Optional
 
+# Escritor atômico: staging → fsync → os.replace
+try:
+    from escritor_atomico import escrever_atomico
+except ImportError:
+    import importlib.util
+    _comp_dir = os.path.join(
+        os.path.dirname(__file__), "..", "..", "..", "componentes", "compartilhado", "src-core"
+    )
+    if os.path.isdir(_comp_dir) and _comp_dir not in sys.path:
+        sys.path.insert(0, _comp_dir)
+    from escritor_atomico import escrever_atomico
+
 
 def _slugify(text: str) -> str:
     text = text.lower().strip()
@@ -417,8 +429,7 @@ def scaffold_infra(target_dir: str, suite_name: str = "AIDD Suite", plano_path: 
     }
 
     for path, content in files.items():
-        with open(path, "w", encoding="utf-8") as f:
-            f.write(content)
+        escrever_atomico(path, content)
         print(f"  [+] {os.path.relpath(path, target_dir)}")
 
     print("\n" + "=" * 80)

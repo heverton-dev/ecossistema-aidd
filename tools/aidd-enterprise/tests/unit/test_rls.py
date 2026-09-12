@@ -19,6 +19,7 @@ if SRC_DIR not in sys.path:
 
 from core.database import (
     Database,
+    PostgresCursorProxy,
     RLSConnection,
     RLS_TABLE_REGISTRY,
     _RLS_TENANT_CONTEXT,
@@ -106,6 +107,78 @@ def test_set_tenant_is_thread_isolated():
 
     assert results["tenant-1"] == "tenant-1"
     assert results["tenant-2"] == "tenant-2"
+
+
+def test_set_tenant_postgres_parameterized_query():
+    """set_tenant no PostgreSQL deve usar parametrização segura e aceitar UUID válido."""
+    class FakeCursor:
+        def __init__(self):
+            self.executed = []
+
+        def execute(self, query, params=None):
+            self.executed.append((query, params))
+
+    fake = FakeCursor()
+    proxy = PostgresCursorProxy(fake)
+    valid_uuid = "12345678-1234-5678-1234-567812345678"
+
+    set_tenant(proxy, valid_uuid)
+
+    assert len(fake.executed) == 1
+    query, params = fake.executed[0]
+    assert query == "SET app.current_tenant_id = %s;"
+    assert params == (valid_uuid,)
+
+
+def test_set_tenant_postgres_sql_injection_rejected():
+    """set_tenant no PostgreSQL deve rejeitar payload de injeção SQL e formatos inválidos."""
+    class FakeCursor:
+        def __init__(self):
+            self.executed = []
+
+        def execute(self, query, params=None):
+            self.executed.append((query, params))
+
+    fake = FakeCursor()
+    proxy = PostgresCursorProxy(fake)
+
+    # 1. Payload de injeção SQL clássico especificado no DoD
+    injection_payload = "x'; DROP TABLE"
+    with pytest.raises(ValueError, match="Invalid tenant_id format"):
+        set_tenant(proxy, injection_payload)
+    assert len(fake.executed) == 0
+
+    # 2. Injeção SQL tentando escapar com UUID parcial
+    with pytest.raises(ValueError, match="Invalid tenant_id format"):
+        set_tenant(proxy, "12345678-1234-5678-1234-567812345678'; DROP TABLE users; --")
+    assert len(fake.executed) == 0
+
+    # 3. Formatos fora da regex estrita de 36 caracteres hex+hífen
+    invalid_tenants = [
+        "",
+        "abc",
+        "12345678-1234-5678-1234-56781234567",    # 35 chars
+        "12345678-1234-5678-1234-5678123456789",  # 37 chars
+        "12345678-1234-5678-1234-56781234567g",  # 'g' não é hexadecimal
+    ]
+    for inv in invalid_tenants:
+        with pytest.raises(ValueError, match="Invalid tenant_id format"):
+            set_tenant(proxy, inv)
+    assert len(fake.executed) == 0
+
+    # 4. Objeto com atributo _cursor (cursor nativo encapsulado)
+    class FakeCursorWithInner:
+        def __init__(self):
+            self._cursor = True
+            self.executed = []
+
+        def execute(self, query, params=None):
+            self.executed.append((query, params))
+
+    fake_inner = FakeCursorWithInner()
+    with pytest.raises(ValueError, match="Invalid tenant_id format"):
+        set_tenant(fake_inner, injection_payload)
+    assert len(fake_inner.executed) == 0
 
 
 # ---------------------------------------------------------------------------

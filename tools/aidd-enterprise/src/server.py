@@ -25,7 +25,8 @@ CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))
 if CURRENT_DIR not in sys.path:
     sys.path.insert(0, CURRENT_DIR)
 
-from core.database import Database
+from core.database import Database, is_db_locked
+from core.result import Result
 from core.events import EventBus
 from core.outbox_worker import OutboxWorker
 from core.jobs import JobQueue
@@ -43,6 +44,12 @@ from modules.modulo1.routes import registrar_rotas as reg_modulo1_routes
 PORT = int(os.environ.get("PORT", 3000))
 STATIC_DIR = os.path.join(CURRENT_DIR, "static")
 DB_PATH = os.path.join(CURRENT_DIR, "..", "suite.db")
+
+# ---------------------------------------------------------------------------
+# SQLITE_BUSY — resposta HTTP padronizada quando o retry do EngineFacadeConnection
+# esgota: 503 + Retry-After para o cliente reagendar (nunca retry cego).
+# ---------------------------------------------------------------------------
+RETRY_AFTER_DB_LOCKED_S = 2
 
 db = Database(f"sqlite:///{DB_PATH}")
 from core.token_revocation import TokenRevocationList
@@ -280,6 +287,37 @@ class AppHandler(http.server.SimpleHTTPRequestHandler):
             self.send_header(header, value)
         super().end_headers()
 
+    def _responder_db_travado(self):
+        """SQLITE_BUSY não-resolvido pelos retries: HTTP 503 com Retry-After e
+        corpo Result estruturado (codigo='DB_LOCKED') — o cliente reagenda a
+        requisição sem risco de retry cego duplicar efeito colateral."""
+        body = Result.fail(
+            "Banco de dados temporariamente bloqueado por outra conexão (SQLITE_BUSY). Tente novamente.",
+            codigo="DB_LOCKED",
+            detalhes={"retry_after_segundos": RETRY_AFTER_DB_LOCKED_S},
+        ).to_dict()
+        self.send_response(503)
+        self.send_header("Retry-After", str(RETRY_AFTER_DB_LOCKED_S))
+        self.send_header("Content-Type", "application/json; charset=utf-8")
+        self.end_headers()
+        self.wfile.write(json.dumps(body, ensure_ascii=False).encode("utf-8"))
+
+    def _escrever_resultado_rota(self, result):
+        """Serializa o resultado de uma rota. Se for um Result monádico,
+        converte via ``to_dict()`` e mapeia ``codigo='DB_LOCKED'`` -> HTTP 503
+        + Retry-After. Caso contrário, serializa como o body JSON legado."""
+        if isinstance(result, Result):
+            if result.codigo == "DB_LOCKED":
+                self._responder_db_travado()
+                return
+            body = result.to_dict()
+        else:
+            body = result
+        self.send_response(200)
+        self.send_header("Content-Type", "application/json; charset=utf-8")
+        self.end_headers()
+        self.wfile.write(json.dumps(body, ensure_ascii=False).encode("utf-8"))
+
     def do_OPTIONS(self):
         self.send_response(204)
         self.send_header("Access-Control-Allow-Origin", "*")
@@ -395,15 +433,16 @@ class AppHandler(http.server.SimpleHTTPRequestHandler):
             handler = registry.routes["GET"][path]
             try:
                 result = handler(query)
-                self.send_response(200)
-                self.send_header("Content-Type", "application/json; charset=utf-8")
-                self.end_headers()
-                self.wfile.write(json.dumps(result, ensure_ascii=False).encode("utf-8"))
             except Exception as e:
+                if is_db_locked(e):
+                    self._responder_db_travado()
+                    return
                 self.send_response(500)
                 self.send_header("Content-Type", "application/json; charset=utf-8")
                 self.end_headers()
                 self.wfile.write(json.dumps({"error": str(e)}).encode("utf-8"))
+                return
+            self._escrever_resultado_rota(result)
             return
 
         super().do_GET()
@@ -444,15 +483,16 @@ class AppHandler(http.server.SimpleHTTPRequestHandler):
             handler = registry.routes["POST"][path]
             try:
                 result = handler(body_data)
-                self.send_response(200)
-                self.send_header("Content-Type", "application/json; charset=utf-8")
-                self.end_headers()
-                self.wfile.write(json.dumps(result, ensure_ascii=False).encode("utf-8"))
             except Exception as e:
+                if is_db_locked(e):
+                    self._responder_db_travado()
+                    return
                 self.send_response(500)
                 self.send_header("Content-Type", "application/json; charset=utf-8")
                 self.end_headers()
                 self.wfile.write(json.dumps({"error": str(e)}).encode("utf-8"))
+                return
+            self._escrever_resultado_rota(result)
             return
 
         self.send_response(404)

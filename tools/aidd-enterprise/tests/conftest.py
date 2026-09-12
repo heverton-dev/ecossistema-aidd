@@ -10,11 +10,15 @@ if _CORE not in sys.path:
     sys.path.insert(0, _CORE)
 
 import pytest
-import materializador
+try:
+    import materializador
+except ImportError:
+    materializador = None
 
 @pytest.fixture(autouse=True)
 def isola_raiz_canonica_do_ecossistema(request, tmp_path, monkeypatch):
     if request.node.get_closest_marker('raiz_real'):
         return
-    raiz_fake = tmp_path / '_ecossistema_fake_root'
-    monkeypatch.setattr(materializador, '_default_ecossistema_root', lambda: raiz_fake)
+    if materializador and hasattr(materializador, '_default_ecossistema_root'):
+        raiz_fake = tmp_path / '_ecossistema_fake_root'
+        monkeypatch.setattr(materializador, '_default_ecossistema_root', lambda: raiz_fake)

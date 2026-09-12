@@ -61,7 +61,7 @@ def enable_rls_tenant(cursor, table_name: str):
 
 # Injetar tenant_id na conexao
 def set_tenant(cursor, tenant_id: str):
-    cursor.execute(f"SET app.current_tenant_id = '{tenant_id}';")
+    cursor.execute("SET app.current_tenant_id = %s;", (tenant_id,))
 ```
 
 - SQLite: RLS enforced na camada de aplicacao (filtro WHERE `tenant_id = ?`).

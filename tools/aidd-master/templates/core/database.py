@@ -26,12 +26,14 @@ import sqlite3
 import datetime
 import hashlib
 import threading
+import time
 from abc import ABC, abstractmethod
 
 import sqlglot
 from sqlglot import exp
 from sqlalchemy import create_engine, event
 from sqlalchemy.orm import sessionmaker
+from sqlalchemy.pool import QueuePool
 
 # psycopg2 é opcional: só é usado quando DATABASE_URL aponta para PostgreSQL
 # (ver PostgresAdapter._connect_raw abaixo, mesmo padrão de import condicional).
@@ -44,6 +46,46 @@ except ImportError:
     psycopg2 = None
 
 DB_ERRORS = (sqlite3.Error, psycopg2.Error) if psycopg2 is not None else (sqlite3.Error,)
+
+# ---------------------------------------------------------------------------
+# SQLITE_BUSY — Retry com Backoff Exponencial (PLAN-0017, item retry-backoff-sqlite)
+# ---------------------------------------------------------------------------
+# SQLite (WAL) tem um único escritor por vez. Sob concorrência real — migração
+# de schema no boot, worktrees paralelos, gravações simultâneas — o
+# busy_timeout do driver pode estourar e subir
+# `sqlite3.OperationalError: database is locked`. Em vez de falhar a
+# requisição, `EngineFacadeConnection` reexecuta apenas ESSA exceção com
+# espera exponencial (50ms -> 2s, 5 tentativas). Qualquer outro
+# OperationalError (ex.: "no such table") continua subindo cru, sem retry.
+
+SQLITE_BUSY_MAX_ATTEMPTS = 5
+SQLITE_BUSY_DELAY_S = 0.05          # 50ms — espera da primeira tentativa
+SQLITE_BUSY_MAX_DELAY_S = 2.0       # teto de 2s por espera individual
+SQLITE_BUSY_CONNECT_TIMEOUT_S = 10.0  # timeout de checkout/connect do pool
+SQLITE_BUSY_PRAGMA_TIMEOUT_MS = 5000  # busy_timeout aplicado no listener
+
+
+def is_db_locked(exc: BaseException) -> bool:
+    """True apenas para SQLITE_BUSY real: ``sqlite3.OperationalError`` com a
+    mensagem canônica "database is locked" (ou a variante antiga "database
+    table is locked"). Também reconhece o erro EMbrulhado por SQLAlchemy
+    (``exc.orig``), para a mesma decisão ser tomada na fronteira HTTP."""
+    candidatos = [exc]
+    orig = getattr(exc, "orig", None)
+    if orig is not None:
+        candidatos.append(orig)
+    for cand in candidatos:
+        if isinstance(cand, sqlite3.OperationalError):
+            msg = str(cand).lower()
+            if "database is locked" in msg or "database table is locked" in msg:
+                return True
+    return False
+
+
+def _sqlite_busy_backoff(tentativa: int) -> float:
+    """Espera exponencial para a tentativa N (0-based): 50ms, 100ms, 200ms,
+    400ms, 800ms... com teto de 2s."""
+    return min(SQLITE_BUSY_DELAY_S * (2 ** tentativa), SQLITE_BUSY_MAX_DELAY_S)
 
 # ---------------------------------------------------------------------------
 # Row Level Security (RLS) — Application-Layer Enforcement for SQLite
@@ -79,15 +121,30 @@ def _create_sqlite_engine(db_path: str):
     """Cria um Engine SQLAlchemy (pysqlite) com WAL e ajustes de concorrência
     aplicados via event listener de conexão (NIH #8).
 
-    Substitui o gerenciamento manual de ``sqlite3.connect()`` + PRAGMAs soltos
+Substitui o gerenciamento manual de ``sqlite3.connect()`` + PRAGMAs soltos
     que existia antes: o SQLAlchemy passa a ser o dono do pooling, do ciclo de
     vida das conexões e da configuração WAL (journal_mode, synchronous,
     busy_timeout, foreign_keys) — sempre que uma conexão nova do pool nasce,
-    o listener abaixo a configuram antes do primeiro uso.
+    o listener abaixo a configura antes do primeiro uso.
+
+    Pool explícito (PLAN-0017): file-based SQLite já usa QueuePool por padrão,
+    mas agora ele é explícito (pool_size=5, max_overflow=10) com
+    ``pool_pre_ping=True`` — conexões mortas/esgotadas do keep-alive são
+    descartadas antes do checkout em vez de propagar erro. O timeout de
+    connect (busy ao abrir o arquivo) e de checkout do pool é controlado por
+    ``SQLITE_BUSY_CONNECT_TIMEOUT_S``.
     """
     engine = create_engine(
         f"sqlite:///{db_path}",
-        connect_args={"timeout": 10.0, "check_same_thread": False},
+        connect_args={
+            "timeout": SQLITE_BUSY_CONNECT_TIMEOUT_S,
+            "check_same_thread": False,
+        },
+        pool_pre_ping=True,
+        poolclass=QueuePool,
+        pool_size=5,
+        max_overflow=10,
+        pool_timeout=SQLITE_BUSY_CONNECT_TIMEOUT_S,
     )
 
     @event.listens_for(engine, "connect")
@@ -95,7 +152,7 @@ def _create_sqlite_engine(db_path: str):
         cursor = dbapi_connection.cursor()
         cursor.execute("PRAGMA journal_mode=WAL;")
         cursor.execute("PRAGMA synchronous=NORMAL;")
-        cursor.execute("PRAGMA busy_timeout=5000;")
+        cursor.execute(f"PRAGMA busy_timeout={SQLITE_BUSY_PRAGMA_TIMEOUT_MS};")
         cursor.execute("PRAGMA foreign_keys=ON;")
         cursor.close()
 
@@ -112,6 +169,14 @@ class EngineFacadeConnection:
     superfície executando contra a conexão DBAPI real que o SQLAlchemy já
     configurou (WAL via listener de connect), mas ``close()`` apenas devolve a
     conexão ao pool do Engine — nunca fecha o arquivo do banco.
+
+    Retry SQLITE_BUSY (PLAN-0017): os métodos de escrita/commit/rollback são
+    definidos de forma EXPLÍCITA — e não passando por ``__getattr__`` — para
+    que todo acesso ao driver (``execute``, ``executemany``, ``executescript``,
+    ``commit``, ``rollback``) passe pelo retry exponencial de
+    ``sqlite3.OperationalError: database is locked`` antes de entregar o erro
+    para a camada de rota. ``_lock_retries`` expõe o contador observável de
+    retries executados (usado pelos testes reais, sem mock).
     """
 
     def __init__(self, sqlalchemy_conn):
@@ -119,9 +184,46 @@ class EngineFacadeConnection:
         driver = sqlalchemy_conn.connection.driver_connection
         driver.row_factory = sqlite3.Row
         self._driver = driver
+        self._lock_retries = 0
 
     def __getattr__(self, name):
         return getattr(self._driver, name)
+
+    def _run_com_retry(self, fn, *args, **kwargs):
+        """Executa ``fn`` reexecutando-o com backoff exponencial enquanto a
+        exceção for SQLITE_BUSY real. Esgota ``SQLITE_BUSY_MAX_ATTEMPTS``
+        tentativas e então re-sobe o último ``sqlite3.OperationalError`` cru —
+        a fronteira HTTP reconhece (``is_db_locked``) e responde 503."""
+        ultimo_erro = None
+        for tentativa in range(SQLITE_BUSY_MAX_ATTEMPTS):
+            try:
+                return fn(*args, **kwargs)
+            except sqlite3.OperationalError as exc:
+                if not is_db_locked(exc):
+                    raise
+                self._lock_retries += 1
+                ultimo_erro = exc
+                if tentativa >= SQLITE_BUSY_MAX_ATTEMPTS - 1:
+                    break
+                time.sleep(_sqlite_busy_backoff(tentativa))
+        if ultimo_erro is not None:
+            raise ultimo_erro
+        return None  # pragma: no cover — inalcançável, guarda de tipo
+
+    def execute(self, sql, params=None):
+        return self._run_com_retry(self._driver.execute, sql, () if params is None else params)
+
+    def executemany(self, sql, seq_of_params):
+        return self._run_com_retry(self._driver.executemany, sql, seq_of_params)
+
+    def executescript(self, sql):
+        return self._run_com_retry(self._driver.executescript, sql)
+
+    def commit(self):
+        return self._run_com_retry(self._driver.commit)
+
+    def rollback(self):
+        return self._run_com_retry(self._driver.rollback)
 
     def close(self):
         self._sqlalchemy_conn.close()
@@ -131,9 +233,9 @@ class EngineFacadeConnection:
 
     def __exit__(self, exc_type, exc_val, exc_tb):
         if exc_type is not None:
-            self._driver.rollback()
+            self.rollback()
         else:
-            self._driver.commit()
+            self.commit()
         self.close()
         return False
 
@@ -484,9 +586,21 @@ class SQLiteAdapter(DatabaseAdapter):
             "payload TEXT NOT NULL,"
             "status TEXT NOT NULL DEFAULT 'pendente',"
             "criado_em TEXT NOT NULL,"
-            "processado_em TEXT"
+            "processado_em TEXT,"
+            "claimed_at TEXT,"
+            "claimed_by TEXT,"
+            "tentativas INTEGER NOT NULL DEFAULT 0,"
+            "seq INTEGER NOT NULL DEFAULT 0"
             ");",
             "CREATE INDEX IF NOT EXISTS idx_outbox_status ON _outbox_events(status);",
+            "CREATE TABLE IF NOT EXISTS _eventos_processados ("
+            "event_id TEXT PRIMARY KEY,"
+            "seq INTEGER NOT NULL,"
+            "event_name TEXT NOT NULL,"
+            "consumer_id TEXT NOT NULL DEFAULT 'default',"
+            "processado_em TEXT NOT NULL"
+            ");",
+            "CREATE INDEX IF NOT EXISTS idx_eventos_processados_seq ON _eventos_processados(seq, consumer_id);",
             "CREATE TABLE IF NOT EXISTS _audit_log ("
             "id TEXT PRIMARY KEY,"
             "timestamp TEXT NOT NULL,"
@@ -499,6 +613,24 @@ class SQLiteAdapter(DatabaseAdapter):
         with self._engine.begin() as conn:
             for stmt in statements:
                 conn.exec_driver_sql(stmt)
+            # Migração idempotente: bancos criados antes das colunas de claim
+            # atômico / retry (tentativas, claimed_at, claimed_by, seq) do
+            # OutboxWorker recebem as colunas sem perder dados.
+            colunas = conn.exec_driver_sql(
+                "PRAGMA table_info(_outbox_events)"
+            ).fetchall()
+            presentes = {row[1] for row in colunas}
+            for nome_coluna, ddl in (
+                ("tentativas", "ALTER TABLE _outbox_events ADD COLUMN tentativas INTEGER NOT NULL DEFAULT 0;"),
+                ("claimed_at", "ALTER TABLE _outbox_events ADD COLUMN claimed_at TEXT;"),
+                ("claimed_by", "ALTER TABLE _outbox_events ADD COLUMN claimed_by TEXT;"),
+                ("seq", "ALTER TABLE _outbox_events ADD COLUMN seq INTEGER NOT NULL DEFAULT 0;"),
+            ):
+                if nome_coluna not in presentes:
+                    conn.exec_driver_sql(ddl)
+            conn.exec_driver_sql(
+                "CREATE INDEX IF NOT EXISTS idx_outbox_claim ON _outbox_events(status, claimed_at);"
+            )
 
 
 class PostgresCursorProxy:
@@ -622,10 +754,67 @@ class PostgresAdapter(DatabaseAdapter):
                     payload TEXT NOT NULL,
                     status TEXT NOT NULL DEFAULT 'pendente',
                     criado_em TEXT NOT NULL,
-                    processado_em TEXT
+                    processado_em TEXT,
+                    claimed_at TEXT,
+                    claimed_by TEXT,
+                    tentativas INTEGER NOT NULL DEFAULT 0,
+                    seq INTEGER NOT NULL DEFAULT 0
                 );
             """)
             cur.execute("CREATE INDEX IF NOT EXISTS idx_outbox_status ON _outbox_events(status);")
+            cur.execute("CREATE INDEX IF NOT EXISTS idx_outbox_claim ON _outbox_events(status, claimed_at);")
+            # Migração idempotente: bancos PostgreSQL criados antes das colunas
+            # de claim atômico / retry do OutboxWorker recebem as colunas.
+            cur.execute("""
+                DO $$ BEGIN
+                    IF NOT EXISTS (
+                        SELECT 1 FROM information_schema.columns
+                        WHERE table_name = '_outbox_events' AND column_name = 'tentativas'
+                    ) THEN
+                        ALTER TABLE _outbox_events ADD COLUMN tentativas INTEGER NOT NULL DEFAULT 0;
+                    END IF;
+                END $$;
+            """)
+            cur.execute("""
+                DO $$ BEGIN
+                    IF NOT EXISTS (
+                        SELECT 1 FROM information_schema.columns
+                        WHERE table_name = '_outbox_events' AND column_name = 'claimed_at'
+                    ) THEN
+                        ALTER TABLE _outbox_events ADD COLUMN claimed_at TEXT;
+                    END IF;
+                END $$;
+            """)
+            cur.execute("""
+                DO $$ BEGIN
+                    IF NOT EXISTS (
+                        SELECT 1 FROM information_schema.columns
+                        WHERE table_name = '_outbox_events' AND column_name = 'claimed_by'
+                    ) THEN
+                        ALTER TABLE _outbox_events ADD COLUMN claimed_by TEXT;
+                    END IF;
+                END $$;
+            """)
+            cur.execute("""
+                DO $$ BEGIN
+                    IF NOT EXISTS (
+                        SELECT 1 FROM information_schema.columns
+                        WHERE table_name = '_outbox_events' AND column_name = 'seq'
+                    ) THEN
+                        ALTER TABLE _outbox_events ADD COLUMN seq INTEGER NOT NULL DEFAULT 0;
+                    END IF;
+                END $$;
+            """)
+            cur.execute("""
+                CREATE TABLE IF NOT EXISTS _eventos_processados (
+                    event_id TEXT PRIMARY KEY,
+                    seq INTEGER NOT NULL,
+                    event_name TEXT NOT NULL,
+                    consumer_id TEXT NOT NULL DEFAULT 'default',
+                    processado_em TEXT NOT NULL
+                );
+            """)
+            cur.execute("CREATE INDEX IF NOT EXISTS idx_eventos_processados_seq ON _eventos_processados(seq, consumer_id);")
             cur.execute("""
                 CREATE TABLE IF NOT EXISTS _audit_log (
                     id TEXT PRIMARY KEY,
@@ -668,14 +857,61 @@ class Database:
     def enqueue_outbox_event(self, conn, event_name: str, payload: dict) -> str:
         """Transactional Outbox Pattern: grava o evento na MESMA transação/conexão da
         mutação de negócio, garantindo entrega at-least-once mesmo se o processo cair
-        antes do EventBus.emit() em memória ser disparado."""
+        antes do EventBus.emit() em memória ser disparado.
+
+        O campo `seq` é monotônico por transação (MAX(seq)+1): serve de high-water
+        mark para deduplicação idempotente do consumidor (_eventos_processados)."""
         event_id = uuid.uuid4().hex
         criado_em = datetime.datetime.now(datetime.timezone.utc).isoformat()
+        prox_seq = int(conn.execute(
+            "SELECT COALESCE(MAX(seq), 0) + 1 FROM _outbox_events"
+        ).fetchone()[0])
         conn.execute(
             """
-            INSERT INTO _outbox_events (id, event_name, payload, status, criado_em)
-            VALUES (?, ?, ?, 'pendente', ?)
+            INSERT INTO _outbox_events (id, event_name, payload, status, criado_em, seq)
+            VALUES (?, ?, ?, 'pendente', ?, ?)
             """,
-            (event_id, event_name, json.dumps(payload, ensure_ascii=False), criado_em)
+            (event_id, event_name, json.dumps(payload, ensure_ascii=False), criado_em, prox_seq)
         )
         return event_id
+
+    def registrar_evento_processado(
+        self,
+        conn,
+        event_id: str,
+        seq: int,
+        event_name: str,
+        consumer_id: str = "default",
+        processado_em: str | None = None,
+    ) -> bool:
+        """Idempotência do consumidor: registra um evento como já processado por um
+        consumer. Retorna True quando o registro é novo (primeira vez) e False quando
+        o evento já havia sido processado pelo mesmo consumer (entrega duplicada)."""
+        if processado_em is None:
+            processado_em = datetime.datetime.now(datetime.timezone.utc).isoformat()
+        cur = conn.execute(
+            "INSERT INTO _eventos_processados (event_id, seq, event_name, consumer_id, processado_em) "
+            "VALUES (?, ?, ?, ?, ?) "
+            "ON CONFLICT (event_id) DO NOTHING",
+            (event_id, seq, event_name, consumer_id, processado_em)
+        )
+        return bool(cur.rowcount == 1)
+
+    def evento_ja_processado(self, conn, event_id: str) -> bool:
+        """Retorna True se o evento já foi registrado como processado (em qualquer
+        consumer). Ponto de checagem do consumidor antes de aplicar efeito colateral."""
+        row = conn.execute(
+            "SELECT 1 FROM _eventos_processados WHERE event_id = ? LIMIT 1",
+            (event_id,)
+        ).fetchone()
+        return row is not None
+
+    def ultimo_seq_processado(self, conn, consumer_id: str = "default"):
+        """Retorna o maior `seq` já processado pelo consumer (high-water mark) ou
+        None se o consumer ainda não processou evento nenhum."""
+        row = conn.execute(
+            "SELECT MAX(seq) FROM _eventos_processados WHERE consumer_id = ?",
+            (consumer_id,)
+        ).fetchone()
+        valor = row[0] if row is not None else None
+        return int(valor) if valor is not None else None
