@@ -59,7 +59,7 @@ try:
 except ImportError:
     import importlib.util
     _comp_dir = os.path.join(
-        os.path.dirname(__file__), "..", "..", "componentes", "compartilhado", "src-core"
+        os.path.dirname(__file__), "..", "..", "..", "componentes", "compartilhado", "src-core"
     )
     if os.path.isdir(_comp_dir) and _comp_dir not in sys.path:
         sys.path.insert(0, _comp_dir)
@@ -77,6 +77,11 @@ from phases.utils_delegacao import LLMNaoConfiguradoException
 from phases.utils_fleet_discovery import resolver_fleet, fleet_status_para_log, persistir_fleet_status
 from phases.utils_subagente_ephemero import ContextPurgeEngine
 from core.repomix_runner import empacotar_repositorio, repomix_disponivel
+from core.pipeline_state import (
+    PipelineStateManager,
+    ler_cache_com_validacao,
+    PipelineCorrompidoError,
+)
 
 
 # =============================================================================
@@ -176,10 +181,14 @@ def _registrar_e_verificar_orcamento(
 # FALHA
 # =============================================================================
 
-def _falhar(resultado: dict, fase: str, t0: float) -> dict:
+def _falhar(resultado: dict, fase: str, t0: float, erro: str = None, detalhe: str = None) -> dict:
     resultado['status'] = 'FALHOU'
     resultado['fase_que_falhou'] = fase
     resultado['duracao_segundos'] = time.time() - t0
+    if erro:
+        resultado['erro'] = erro
+    if detalhe:
+        resultado['detalhe'] = detalhe
     _descarregar_todas_fases()
     return resultado
 
@@ -385,7 +394,8 @@ def _task_fase_7(ideia: str, pasta_projeto: str):
 @flow(name='aidd-generator-pipeline', version='2.3', log_prints=True)
 def executar_pipeline_prefect(ideia: str, pasta_projeto: str,
                               nao_interativo: bool = True,
-                              implementar_codigo: bool = False) -> dict:
+                              implementar_codigo: bool = False,
+                              resume: bool = False) -> dict:
     """Flow Prefect que orquestra as fases 1-8 com retries + checkpointing.
 
     Mantém o contrato de dados por arquivo JSON idêntico ao pipeline legado,
@@ -400,78 +410,212 @@ def executar_pipeline_prefect(ideia: str, pasta_projeto: str,
     resultado = {'ideia': ideia, 'pasta': str(proj_dir), 'fases_completas': {}}
     t0 = time.time()
 
-    def _falhar(fase: str) -> dict:
-        resultado['status'] = 'FALHOU'
-        resultado['fase_que_falhou'] = fase
-        resultado['duracao_segundos'] = time.time() - t0
-        return resultado
+    state_mgr = PipelineStateManager(proj_dir, ideia, total_fases=total_fases)
+    try:
+        state_mgr.inicializar(resume=resume)
+    except PipelineCorrompidoError as e:
+        logger.error('ERRO NA MÁQUINA DE ESTADOS: %s', e.mensagem)
+        return _falhar(resultado, 'inicializacao', t0, erro=e.mensagem, detalhe=e.detalhe)
 
     # --- FASE 1 ---
     logger.info('FASE 1/%s — Pesquisador', total_fases)
-    idx1 = _task_fase_1(ideia, cache_dir)
-    resultado['fases_completas']['fase_1'] = idx1 is not None
-    if idx1 is None:
-        return _falhar('fase_1_pesquisador')
+    pode_pular_f1, _ = state_mgr.pode_retomar_fase(
+        'fase_1_pesquisador', ['_phase_01_index.json', 'data/insights_phase1.json'],
+        schema_tipo='cache_insights_phase1'
+    ) if resume else (False, None)
+
+    if pode_pular_f1:
+        logger.info('⏭️  Fase 1 (Pesquisador) já concluída com sucesso (--resume). Pulando...')
+        state_mgr.registrar_fase_concluida('fase_1_pesquisador', ['_phase_01_index.json', 'data/insights_phase1.json'], pulado=True)
+        resultado['fases_completas']['fase_1'] = True
+    else:
+        state_mgr.registrar_fase_iniciada('fase_1_pesquisador', 'Pesquisador', 1)
+        idx1 = _task_fase_1(ideia, cache_dir)
+        resultado['fases_completas']['fase_1'] = idx1 is not None
+        if idx1 is None:
+            state_mgr.registrar_fase_falhou('fase_1_pesquisador', 'Fase 1 retornou None')
+            return _falhar(resultado, 'fase_1_pesquisador', t0, erro='Fase 1 retornou None')
+        tokens_p1 = idx1.get('tokens', {}).get('consumidos', 0) if isinstance(idx1, dict) else 0
+        state_mgr.registrar_fase_concluida('fase_1_pesquisador', ['_phase_01_index.json', 'data/insights_phase1.json'], tokens_consumidos=tokens_p1)
 
     insights_path = data_dir / 'insights_phase1.json'
-    referencias = json.loads(insights_path.read_text(encoding='utf-8')) if insights_path.exists() else {}
+    ok_p1, referencias, err_p1 = ler_cache_com_validacao(insights_path, 'cache_insights_phase1', 'fase_1_pesquisador', 'fase_2_analisador')
+    if not ok_p1:
+        state_mgr.registrar_fase_falhou('fase_1_pesquisador', err_p1)
+        return _falhar(resultado, 'fase_1_pesquisador', t0, erro=err_p1)
 
     # --- FASE 2 ---
     logger.info('FASE 2/%s — Analisador', total_fases)
-    idx2 = _task_fase_2(ideia, cache_dir, referencias)
-    resultado['fases_completas']['fase_2'] = idx2 is not None
-    if idx2 is None:
-        return _falhar('fase_2_analisador')
-    analise = json.loads((data_dir / 'analise_phase2.json').read_text(encoding='utf-8'))
+    pode_pular_f2, _ = state_mgr.pode_retomar_fase(
+        'fase_2_analisador', ['_phase_02_index.json', 'data/analise_phase2.json'],
+        schema_tipo='cache_analise_phase2'
+    ) if resume else (False, None)
+
+    if pode_pular_f2:
+        logger.info('⏭️  Fase 2 (Analisador) já concluída com sucesso (--resume). Pulando...')
+        state_mgr.registrar_fase_concluida('fase_2_analisador', ['_phase_02_index.json', 'data/analise_phase2.json'], pulado=True)
+        resultado['fases_completas']['fase_2'] = True
+    else:
+        state_mgr.registrar_fase_iniciada('fase_2_analisador', 'Analisador', 2)
+        idx2 = _task_fase_2(ideia, cache_dir, referencias)
+        resultado['fases_completas']['fase_2'] = idx2 is not None
+        if idx2 is None:
+            state_mgr.registrar_fase_falhou('fase_2_analisador', 'Fase 2 retornou None')
+            return _falhar(resultado, 'fase_2_analisador', t0, erro='Fase 2 retornou None')
+        tokens_p2 = idx2.get('tokens', {}).get('consumidos', 0) if isinstance(idx2, dict) else 0
+        state_mgr.registrar_fase_concluida('fase_2_analisador', ['_phase_02_index.json', 'data/analise_phase2.json'], tokens_consumidos=tokens_p2)
+
+    analise_path = data_dir / 'analise_phase2.json'
+    ok_p2, analise, err_p2 = ler_cache_com_validacao(analise_path, 'cache_analise_phase2', 'fase_2_analisador', 'fase_3_designer')
+    if not ok_p2:
+        state_mgr.registrar_fase_falhou('fase_2_analisador', err_p2)
+        return _falhar(resultado, 'fase_2_analisador', t0, erro=err_p2)
 
     # --- FASE 3 ---
     logger.info('FASE 3/%s — Designer', total_fases)
-    idx3 = _task_fase_3(ideia, cache_dir, analise)
-    resultado['fases_completas']['fase_3'] = idx3 is not None
-    if idx3 is None:
-        return _falhar('fase_3_designer')
-    design = json.loads((data_dir / 'design_aidd_phase3.json').read_text(encoding='utf-8'))
+    pode_pular_f3, _ = state_mgr.pode_retomar_fase(
+        'fase_3_designer', ['_phase_03_index.json', 'data/design_aidd_phase3.json'],
+        schema_tipo='cache_design_phase3'
+    ) if resume else (False, None)
+
+    if pode_pular_f3:
+        logger.info('⏭️  Fase 3 (Designer) já concluída com sucesso (--resume). Pulando...')
+        state_mgr.registrar_fase_concluida('fase_3_designer', ['_phase_03_index.json', 'data/design_aidd_phase3.json'], pulado=True)
+        resultado['fases_completas']['fase_3'] = True
+    else:
+        state_mgr.registrar_fase_iniciada('fase_3_designer', 'Designer', 3)
+        idx3 = _task_fase_3(ideia, cache_dir, analise)
+        resultado['fases_completas']['fase_3'] = idx3 is not None
+        if idx3 is None:
+            state_mgr.registrar_fase_falhou('fase_3_designer', 'Fase 3 retornou None')
+            return _falhar(resultado, 'fase_3_designer', t0, erro='Fase 3 retornou None')
+        tokens_p3 = idx3.get('tokens', {}).get('consumidos', 0) if isinstance(idx3, dict) else 0
+        state_mgr.registrar_fase_concluida('fase_3_designer', ['_phase_03_index.json', 'data/design_aidd_phase3.json'], tokens_consumidos=tokens_p3)
+
+    design_path = data_dir / 'design_aidd_phase3.json'
+    ok_p3, design, err_p3 = ler_cache_com_validacao(design_path, 'cache_design_phase3', 'fase_3_designer', 'fase_4_planejador')
+    if not ok_p3:
+        state_mgr.registrar_fase_falhou('fase_3_designer', err_p3)
+        return _falhar(resultado, 'fase_3_designer', t0, erro=err_p3)
 
     # --- FASE 4 ---
     logger.info('FASE 4/%s — Planejador', total_fases)
-    idx4 = _task_fase_4(ideia, cache_dir, design, nao_interativo)
-    resultado['fases_completas']['fase_4'] = idx4 is not None
-    if idx4 is None:
-        return _falhar('fase_4_planejador')
-    config_fase4 = json.loads((data_dir / 'config_global_local_phase4.json').read_text(encoding='utf-8'))
+    pode_pular_f4, _ = state_mgr.pode_retomar_fase(
+        'fase_4_planejador', ['_phase_04_index.json', 'data/config_global_local_phase4.json'],
+        schema_tipo='cache_config_phase4'
+    ) if resume else (False, None)
+
+    if pode_pular_f4:
+        logger.info('⏭️  Fase 4 (Planejador) já concluída com sucesso (--resume). Pulando...')
+        state_mgr.registrar_fase_concluida('fase_4_planejador', ['_phase_04_index.json', 'data/config_global_local_phase4.json'], pulado=True)
+        resultado['fases_completas']['fase_4'] = True
+    else:
+        state_mgr.registrar_fase_iniciada('fase_4_planejador', 'Planejador', 4)
+        idx4 = _task_fase_4(ideia, cache_dir, design, nao_interativo)
+        resultado['fases_completas']['fase_4'] = idx4 is not None
+        if idx4 is None:
+            state_mgr.registrar_fase_falhou('fase_4_planejador', 'Fase 4 retornou None')
+            return _falhar(resultado, 'fase_4_planejador', t0, erro='Fase 4 retornou None')
+        tokens_p4 = idx4.get('tokens', {}).get('consumidos', 0) if isinstance(idx4, dict) else 0
+        state_mgr.registrar_fase_concluida('fase_4_planejador', ['_phase_04_index.json', 'data/config_global_local_phase4.json'], tokens_consumidos=tokens_p4)
+
+    config_path = data_dir / 'config_global_local_phase4.json'
+    ok_p4, config_fase4, err_p4 = ler_cache_com_validacao(config_path, 'cache_config_phase4', 'fase_4_planejador', 'fase_5_criador')
+    if not ok_p4:
+        state_mgr.registrar_fase_falhou('fase_4_planejador', err_p4)
+        return _falhar(resultado, 'fase_4_planejador', t0, erro=err_p4)
 
     # --- FASE 5 ---
     logger.info('FASE 5/%s — Criador', total_fases)
-    idx5 = _task_fase_5(ideia, str(proj_dir), config_fase4)
-    resultado['fases_completas']['fase_5'] = idx5 is not None
-    if idx5 is None:
-        return _falhar('fase_5_criador')
+    pode_pular_f5, _ = state_mgr.pode_retomar_fase(
+        'fase_5_criador', ['_phase_05_index.json']
+    ) if resume else (False, None)
+
+    if pode_pular_f5:
+        logger.info('⏭️  Fase 5 (Criador) já concluída com sucesso (--resume). Pulando...')
+        state_mgr.registrar_fase_concluida('fase_5_criador', ['_phase_05_index.json'], pulado=True)
+        resultado['fases_completas']['fase_5'] = True
+    else:
+        state_mgr.registrar_fase_iniciada('fase_5_criador', 'Criador', 5)
+        idx5 = _task_fase_5(ideia, str(proj_dir), config_fase4)
+        resultado['fases_completas']['fase_5'] = idx5 is not None
+        if idx5 is None:
+            state_mgr.registrar_fase_falhou('fase_5_criador', 'Fase 5 retornou None')
+            return _falhar(resultado, 'fase_5_criador', t0, erro='Fase 5 retornou None')
+        tokens_p5 = idx5.get('tokens', {}).get('consumidos', 0) if isinstance(idx5, dict) else 0
+        state_mgr.registrar_fase_concluida('fase_5_criador', ['_phase_05_index.json'], tokens_consumidos=tokens_p5)
 
     # --- FASE 8 (condicional, antes de 6/7 quando --implementar-codigo) ---
     if implementar_codigo:
         logger.info('FASE 8/%s — Implementador', total_fases)
-        idx8 = _task_fase_8(ideia, str(proj_dir), analise, design)
-        resultado['fases_completas']['fase_8'] = idx8 is not None and idx8.get('status') == 'COMPLETO'
-        if not resultado['fases_completas']['fase_8']:
-            return _falhar('fase_8_implementador')
+        pode_pular_f8, _ = state_mgr.pode_retomar_fase(
+            'fase_8_implementador', ['_phase_08_index.json']
+        ) if resume else (False, None)
+
+        if pode_pular_f8:
+            logger.info('⏭️  Fase 8 (Implementador) já concluída com sucesso (--resume). Pulando...')
+            state_mgr.registrar_fase_concluida('fase_8_implementador', ['_phase_08_index.json'], pulado=True)
+            resultado['fases_completas']['fase_8'] = True
+        else:
+            state_mgr.registrar_fase_iniciada('fase_8_implementador', 'Implementador', 8)
+            idx8 = _task_fase_8(ideia, str(proj_dir), analise, design)
+            resultado['fases_completas']['fase_8'] = idx8 is not None and idx8.get('status') == 'COMPLETO'
+            if not resultado['fases_completas']['fase_8']:
+                state_mgr.registrar_fase_falhou('fase_8_implementador', 'Fase 8 não completou')
+                return _falhar(resultado, 'fase_8_implementador', t0, erro='Fase 8 não completou')
+            tokens_p8 = idx8.get('tokens', {}).get('consumidos', 0) if isinstance(idx8, dict) else 0
+            state_mgr.registrar_fase_concluida('fase_8_implementador', ['_phase_08_index.json'], tokens_consumidos=tokens_p8)
 
     # --- FASE 6 ---
     logger.info('FASE 6/%s — Documentador', total_fases)
-    contexto_doc = {**analise, **design}
-    idx6 = _task_fase_6(cache_dir, str(proj_dir / 'output'),
-                        proj_dir.name, contexto_doc, ideia)
-    resultado['fases_completas']['fase_6'] = idx6 is not None and idx6.get('status') == 'COMPLETO'
-    if not resultado['fases_completas']['fase_6']:
-        return _falhar('fase_6_documentador')
+    pode_pular_f6, _ = state_mgr.pode_retomar_fase(
+        'fase_6_documentador', ['_phase_06_index.json']
+    ) if resume else (False, None)
+
+    if pode_pular_f6:
+        logger.info('⏭️  Fase 6 (Documentador) já concluída com sucesso (--resume). Pulando...')
+        state_mgr.registrar_fase_concluida('fase_6_documentador', ['_phase_06_index.json'], pulado=True)
+        resultado['fases_completas']['fase_6'] = True
+    else:
+        state_mgr.registrar_fase_iniciada('fase_6_documentador', 'Documentador', 6)
+        contexto_doc = {**analise, **design}
+        idx6 = _task_fase_6(cache_dir, str(proj_dir / 'output'),
+                            proj_dir.name, contexto_doc, ideia)
+        resultado['fases_completas']['fase_6'] = idx6 is not None and idx6.get('status') == 'COMPLETO'
+        if not resultado['fases_completas']['fase_6']:
+            state_mgr.registrar_fase_falhou('fase_6_documentador', 'Fase 6 não completou')
+            return _falhar(resultado, 'fase_6_documentador', t0, erro='Fase 6 não completou')
+        tokens_p6 = idx6.get('tokens', {}).get('consumidos', 0) if isinstance(idx6, dict) else 0
+        state_mgr.registrar_fase_concluida('fase_6_documentador', ['_phase_06_index.json'], tokens_consumidos=tokens_p6)
 
     # --- FASE 7 ---
     logger.info('FASE 7/%s — Auto-crítica', total_fases)
-    idx7 = _task_fase_7(ideia, str(proj_dir))
-    resultado['fases_completas']['fase_7'] = idx7.get('status') == 'COMPLETO'
-    resultado['score_final'] = idx7.get('score')
+    pode_pular_f7, _ = state_mgr.pode_retomar_fase(
+        'fase_7_auto_critica', ['_phase_07_index.json']
+    ) if resume else (False, None)
+
+    if pode_pular_f7:
+        logger.info('⏭️  Fase 7 (Auto-crítica) já concluída com sucesso (--resume). Pulando...')
+        state_mgr.registrar_fase_concluida('fase_7_auto_critica', ['_phase_07_index.json'], pulado=True)
+        resultado['fases_completas']['fase_7'] = True
+        idx7_path = Path(cache_dir) / '_phase_07_index.json'
+        if idx7_path.exists():
+            try:
+                idx7_dados = json.loads(idx7_path.read_text(encoding='utf-8'))
+                resultado['score_final'] = idx7_dados.get('score')
+            except Exception:
+                pass
+    else:
+        state_mgr.registrar_fase_iniciada('fase_7_auto_critica', 'Auto-critica', 7)
+        idx7 = _task_fase_7(ideia, str(proj_dir))
+        resultado['fases_completas']['fase_7'] = idx7.get('status') == 'COMPLETO'
+        resultado['score_final'] = idx7.get('score')
+        tokens_p7 = idx7.get('tokens', {}).get('consumidos', 0) if isinstance(idx7, dict) else 0
+        state_mgr.registrar_fase_concluida('fase_7_auto_critica', ['_phase_07_index.json'], tokens_consumidos=tokens_p7)
 
     resultado['status'] = 'COMPLETO'
     resultado['duracao_segundos'] = time.time() - t0
+    state_mgr.registrar_pipeline_completo(score_final=resultado.get('score_final'))
     return resultado
 
 
@@ -495,7 +639,7 @@ def disponibilidade_prefect() -> tuple:
 # =============================================================================
 
 def executar_pipeline(ideia: str, pasta_projeto: Path, nao_interativo: bool = True,
-                       implementar_codigo: bool = False) -> dict:
+                       implementar_codigo: bool = False, resume: bool = False) -> dict:
     """Executa as fases em sequência, real, sem mock, sem fallback silencioso.
 
     Ordem padrão (sem --implementar-codigo): 1→2→3→4→5→6→7
@@ -521,6 +665,14 @@ def executar_pipeline(ideia: str, pasta_projeto: Path, nao_interativo: bool = Tr
     resultado = {'ideia': ideia, 'pasta': str(pasta_projeto), 'fases_completas': {}}
     t0 = time.time()
 
+    # Inicializar máquina de estados formal (.aidd/cache/_pipeline_state.json)
+    state_mgr = PipelineStateManager(pasta_projeto, ideia, total_fases=total_fases)
+    try:
+        state_mgr.inicializar(resume=resume)
+    except PipelineCorrompidoError as e:
+        print(f"\n❌ ERRO NA MÁQUINA DE ESTADOS: {e.mensagem}")
+        return _falhar(resultado, 'inicializacao', t0, erro=e.mensagem, detalhe=e.detalhe)
+
     # Fleet Discovery: auto-detectar agentes instalados no host
     fleet = resolver_fleet()
     resultado['fleet'] = fleet.to_dict()
@@ -535,114 +687,248 @@ def executar_pipeline(ideia: str, pasta_projeto: Path, nao_interativo: bool = Tr
     print("\n" + "=" * 70)
     print(f"PIPELINE COMPLETO: FASE 1/{total_fases} — Pesquisador")
     print("=" * 70)
-    ctx1 = _carregar_micro_ambiente(1)
-    p1 = _carregar_fase(1)
-    idx1 = p1.PesquisadorFase1(cache_dir).executar(ideia)
-    resultado['fases_completas']['fase_1'] = idx1 is not None
-    _registrar_e_verificar_orcamento(idx1 or {}, 'Pesquisador', 1, orcamentos, pipeline_state_path)
-    if idx1 is None:
-        return _falhar(resultado, 'fase_1_pesquisador', t0)
+    pode_pular_f1, _ = state_mgr.pode_retomar_fase(
+        'fase_1_pesquisador', ['_phase_01_index.json', 'data/insights_phase1.json'],
+        schema_tipo='cache_insights_phase1'
+    ) if resume else (False, None)
 
+    if pode_pular_f1:
+        print("⏭️  Fase 1 (Pesquisador) já concluída com sucesso (--resume). Pulando...")
+        state_mgr.registrar_fase_concluida('fase_1_pesquisador', ['_phase_01_index.json', 'data/insights_phase1.json'], pulado=True)
+        resultado['fases_completas']['fase_1'] = True
+    else:
+        state_mgr.registrar_fase_iniciada('fase_1_pesquisador', 'Pesquisador', 1)
+        ctx1 = _carregar_micro_ambiente(1)
+        p1 = _carregar_fase(1)
+        idx1 = p1.PesquisadorFase1(cache_dir).executar(ideia)
+        resultado['fases_completas']['fase_1'] = idx1 is not None
+        _registrar_e_verificar_orcamento(idx1 or {}, 'Pesquisador', 1, orcamentos, pipeline_state_path)
+        if idx1 is None:
+            state_mgr.registrar_fase_falhou('fase_1_pesquisador', 'Execução da Fase 1 retornou None.')
+            return _falhar(resultado, 'fase_1_pesquisador', t0, erro='Execução da Fase 1 retornou None.')
+        tokens_p1 = idx1.get('tokens', {}).get('consumidos', 0) if isinstance(idx1, dict) else 0
+        state_mgr.registrar_fase_concluida('fase_1_pesquisador', ['_phase_01_index.json', 'data/insights_phase1.json'], tokens_consumidos=tokens_p1)
+
+    # Fronteira de leitura Fase 1 -> Fase 2: validação de cache estrita
     insights_path = data_dir / 'insights_phase1.json'
-    referencias = json.loads(insights_path.read_text(encoding='utf-8')) if insights_path.exists() else {}
+    ok_p1, referencias, err_p1 = ler_cache_com_validacao(insights_path, 'cache_insights_phase1', 'fase_1_pesquisador', 'fase_2_analisador')
+    if not ok_p1:
+        state_mgr.registrar_fase_falhou('fase_1_pesquisador', err_p1)
+        return _falhar(resultado, 'fase_1_pesquisador', t0, erro=err_p1)
 
     # --- FASE 2: Analisador (carregamento dinâmico) ---
     print("\n" + "=" * 70)
     print(f"PIPELINE COMPLETO: FASE 2/{total_fases} — Analisador")
     print("=" * 70)
-    ctx2 = _carregar_micro_ambiente(2)
-    p2 = _carregar_fase(2)
-    idx2 = p2.AnalisadorFase2(cache_dir).executar(ideia, referencias)
-    resultado['fases_completas']['fase_2'] = idx2 is not None
-    _registrar_e_verificar_orcamento(idx2 or {}, 'Analisador', 2, orcamentos, pipeline_state_path)
-    if idx2 is None:
-        return _falhar(resultado, 'fase_2_analisador', t0)
+    pode_pular_f2, _ = state_mgr.pode_retomar_fase(
+        'fase_2_analisador', ['_phase_02_index.json', 'data/analise_phase2.json'],
+        schema_tipo='cache_analise_phase2'
+    ) if resume else (False, None)
 
-    analise = json.loads((data_dir / 'analise_phase2.json').read_text(encoding='utf-8'))
+    if pode_pular_f2:
+        print("⏭️  Fase 2 (Analisador) já concluída com sucesso (--resume). Pulando...")
+        state_mgr.registrar_fase_concluida('fase_2_analisador', ['_phase_02_index.json', 'data/analise_phase2.json'], pulado=True)
+        resultado['fases_completas']['fase_2'] = True
+    else:
+        state_mgr.registrar_fase_iniciada('fase_2_analisador', 'Analisador', 2)
+        ctx2 = _carregar_micro_ambiente(2)
+        p2 = _carregar_fase(2)
+        idx2 = p2.AnalisadorFase2(cache_dir).executar(ideia, referencias)
+        resultado['fases_completas']['fase_2'] = idx2 is not None
+        _registrar_e_verificar_orcamento(idx2 or {}, 'Analisador', 2, orcamentos, pipeline_state_path)
+        if idx2 is None:
+            state_mgr.registrar_fase_falhou('fase_2_analisador', 'Execução da Fase 2 retornou None.')
+            return _falhar(resultado, 'fase_2_analisador', t0, erro='Execução da Fase 2 retornou None.')
+        tokens_p2 = idx2.get('tokens', {}).get('consumidos', 0) if isinstance(idx2, dict) else 0
+        state_mgr.registrar_fase_concluida('fase_2_analisador', ['_phase_02_index.json', 'data/analise_phase2.json'], tokens_consumidos=tokens_p2)
+
+    # Fronteira de leitura Fase 2 -> Fase 3: validação de cache estrita
+    analise_path = data_dir / 'analise_phase2.json'
+    ok_p2, analise, err_p2 = ler_cache_com_validacao(analise_path, 'cache_analise_phase2', 'fase_2_analisador', 'fase_3_designer')
+    if not ok_p2:
+        state_mgr.registrar_fase_falhou('fase_2_analisador', err_p2)
+        return _falhar(resultado, 'fase_2_analisador', t0, erro=err_p2)
 
     # --- FASE 3: Designer (carregamento dinâmico) ---
     print("\n" + "=" * 70)
     print(f"PIPELINE COMPLETO: FASE 3/{total_fases} — Designer")
     print("=" * 70)
-    ctx3 = _carregar_micro_ambiente(3)
-    p3 = _carregar_fase(3)
-    idx3 = p3.DesignerFase3(cache_dir).executar(ideia, analise)
-    resultado['fases_completas']['fase_3'] = idx3 is not None
-    _registrar_e_verificar_orcamento(idx3 or {}, 'Designer', 3, orcamentos, pipeline_state_path)
-    if idx3 is None:
-        return _falhar(resultado, 'fase_3_designer', t0)
+    pode_pular_f3, _ = state_mgr.pode_retomar_fase(
+        'fase_3_designer', ['_phase_03_index.json', 'data/design_aidd_phase3.json'],
+        schema_tipo='cache_design_phase3'
+    ) if resume else (False, None)
 
-    design = json.loads((data_dir / 'design_aidd_phase3.json').read_text(encoding='utf-8'))
+    if pode_pular_f3:
+        print("⏭️  Fase 3 (Designer) já concluída com sucesso (--resume). Pulando...")
+        state_mgr.registrar_fase_concluida('fase_3_designer', ['_phase_03_index.json', 'data/design_aidd_phase3.json'], pulado=True)
+        resultado['fases_completas']['fase_3'] = True
+    else:
+        state_mgr.registrar_fase_iniciada('fase_3_designer', 'Designer', 3)
+        ctx3 = _carregar_micro_ambiente(3)
+        p3 = _carregar_fase(3)
+        idx3 = p3.DesignerFase3(cache_dir).executar(ideia, analise)
+        resultado['fases_completas']['fase_3'] = idx3 is not None
+        _registrar_e_verificar_orcamento(idx3 or {}, 'Designer', 3, orcamentos, pipeline_state_path)
+        if idx3 is None:
+            state_mgr.registrar_fase_falhou('fase_3_designer', 'Execução da Fase 3 retornou None.')
+            return _falhar(resultado, 'fase_3_designer', t0, erro='Execução da Fase 3 retornou None.')
+        tokens_p3 = idx3.get('tokens', {}).get('consumidos', 0) if isinstance(idx3, dict) else 0
+        state_mgr.registrar_fase_concluida('fase_3_designer', ['_phase_03_index.json', 'data/design_aidd_phase3.json'], tokens_consumidos=tokens_p3)
+
+    # Fronteira de leitura Fase 3 -> Fase 4: validação de cache estrita
+    design_path = data_dir / 'design_aidd_phase3.json'
+    ok_p3, design, err_p3 = ler_cache_com_validacao(design_path, 'cache_design_phase3', 'fase_3_designer', 'fase_4_planejador')
+    if not ok_p3:
+        state_mgr.registrar_fase_falhou('fase_3_designer', err_p3)
+        return _falhar(resultado, 'fase_3_designer', t0, erro=err_p3)
 
     # --- FASE 4: Planejador (carregamento dinâmico) ---
     print("\n" + "=" * 70)
     print(f"PIPELINE COMPLETO: FASE 4/{total_fases} — Planejador")
     print("=" * 70)
-    ctx4 = _carregar_micro_ambiente(4)
-    p4 = _carregar_fase(4)
-    idx4 = p4.DecisorFase4(cache_dir).executar(design, nao_interativo=nao_interativo)
-    resultado['fases_completas']['fase_4'] = idx4 is not None
-    _registrar_e_verificar_orcamento(idx4 or {}, 'Planejador', 4, orcamentos, pipeline_state_path)
-    if idx4 is None:
-        return _falhar(resultado, 'fase_4_planejador', t0)
+    pode_pular_f4, _ = state_mgr.pode_retomar_fase(
+        'fase_4_planejador', ['_phase_04_index.json', 'data/config_global_local_phase4.json'],
+        schema_tipo='cache_config_phase4'
+    ) if resume else (False, None)
 
-    config_fase4 = json.loads((data_dir / 'config_global_local_phase4.json').read_text(encoding='utf-8'))
+    if pode_pular_f4:
+        print("⏭️  Fase 4 (Planejador) já concluída com sucesso (--resume). Pulando...")
+        state_mgr.registrar_fase_concluida('fase_4_planejador', ['_phase_04_index.json', 'data/config_global_local_phase4.json'], pulado=True)
+        resultado['fases_completas']['fase_4'] = True
+    else:
+        state_mgr.registrar_fase_iniciada('fase_4_planejador', 'Planejador', 4)
+        ctx4 = _carregar_micro_ambiente(4)
+        p4 = _carregar_fase(4)
+        idx4 = p4.DecisorFase4(cache_dir).executar(design, nao_interativo=nao_interativo)
+        resultado['fases_completas']['fase_4'] = idx4 is not None
+        _registrar_e_verificar_orcamento(idx4 or {}, 'Planejador', 4, orcamentos, pipeline_state_path)
+        if idx4 is None:
+            state_mgr.registrar_fase_falhou('fase_4_planejador', 'Execução da Fase 4 retornou None.')
+            return _falhar(resultado, 'fase_4_planejador', t0, erro='Execução da Fase 4 retornou None.')
+        tokens_p4 = idx4.get('tokens', {}).get('consumidos', 0) if isinstance(idx4, dict) else 0
+        state_mgr.registrar_fase_concluida('fase_4_planejador', ['_phase_04_index.json', 'data/config_global_local_phase4.json'], tokens_consumidos=tokens_p4)
+
+    # Fronteira de leitura Fase 4 -> Fase 5: validação de cache estrita
+    config_path = data_dir / 'config_global_local_phase4.json'
+    ok_p4, config_fase4, err_p4 = ler_cache_com_validacao(config_path, 'cache_config_phase4', 'fase_4_planejador', 'fase_5_criador')
+    if not ok_p4:
+        state_mgr.registrar_fase_falhou('fase_4_planejador', err_p4)
+        return _falhar(resultado, 'fase_4_planejador', t0, erro=err_p4)
 
     # --- FASE 5: Criador (carregamento dinâmico) ---
     print("\n" + "=" * 70)
     print(f"PIPELINE COMPLETO: FASE 5/{total_fases} — Criador")
     print("=" * 70)
-    ctx5 = _carregar_micro_ambiente(5)
-    p5 = _carregar_fase(5)
-    idx5 = p5.CriadorProjetoFase5(pasta_projeto).executar(ideia, config_fase4)
-    resultado['fases_completas']['fase_5'] = idx5 is not None
-    _registrar_e_verificar_orcamento(idx5 or {}, 'Criador', 5, orcamentos, pipeline_state_path)
-    if idx5 is None:
-        return _falhar(resultado, 'fase_5_criador', t0)
+    pode_pular_f5, _ = state_mgr.pode_retomar_fase(
+        'fase_5_criador', ['_phase_05_index.json']
+    ) if resume else (False, None)
+
+    if pode_pular_f5:
+        print("⏭️  Fase 5 (Criador) já concluída com sucesso (--resume). Pulando...")
+        state_mgr.registrar_fase_concluida('fase_5_criador', ['_phase_05_index.json'], pulado=True)
+        resultado['fases_completas']['fase_5'] = True
+    else:
+        state_mgr.registrar_fase_iniciada('fase_5_criador', 'Criador', 5)
+        ctx5 = _carregar_micro_ambiente(5)
+        p5 = _carregar_fase(5)
+        idx5 = p5.CriadorProjetoFase5(pasta_projeto).executar(ideia, config_fase4)
+        resultado['fases_completas']['fase_5'] = idx5 is not None
+        _registrar_e_verificar_orcamento(idx5 or {}, 'Criador', 5, orcamentos, pipeline_state_path)
+        if idx5 is None:
+            state_mgr.registrar_fase_falhou('fase_5_criador', 'Execução da Fase 5 retornou None.')
+            return _falhar(resultado, 'fase_5_criador', t0, erro='Execução da Fase 5 retornou None.')
+        tokens_p5 = idx5.get('tokens', {}).get('consumidos', 0) if isinstance(idx5, dict) else 0
+        state_mgr.registrar_fase_concluida('fase_5_criador', ['_phase_05_index.json'], tokens_consumidos=tokens_p5)
 
     # --- FASE 8: Implementador (condicional, carregamento dinâmico) ---
     # Fase 8 roda ANTES de Fase 6/7 quando --implementar-codigo é usado,
-    # para que documentação e auto-crícia reflitam o código real.
+    # para que documentação e auto-crítica reflitam o código real.
     if implementar_codigo:
         print("\n" + "=" * 70)
         print(f"PIPELINE COMPLETO: FASE 8/{total_fases} — Implementador com Verificação")
         print("=" * 70)
-        ctx8 = _carregar_micro_ambiente(8)
-        p8 = _carregar_fase(8)
-        idx8 = p8.ImplementadorFase8(pasta_projeto).executar(ideia, analise, design)
-        resultado['fases_completas']['fase_8'] = idx8 is not None and idx8.get('status') == 'COMPLETO'
-        _registrar_e_verificar_orcamento(idx8 or {}, 'Implementador', 8, orcamentos, pipeline_state_path)
-        if not resultado['fases_completas']['fase_8']:
-            return _falhar(resultado, 'fase_8_implementador', t0)
+        pode_pular_f8, _ = state_mgr.pode_retomar_fase(
+            'fase_8_implementador', ['_phase_08_index.json']
+        ) if resume else (False, None)
+
+        if pode_pular_f8:
+            print("⏭️  Fase 8 (Implementador) já concluída com sucesso (--resume). Pulando...")
+            state_mgr.registrar_fase_concluida('fase_8_implementador', ['_phase_08_index.json'], pulado=True)
+            resultado['fases_completas']['fase_8'] = True
+        else:
+            state_mgr.registrar_fase_iniciada('fase_8_implementador', 'Implementador', 8)
+            ctx8 = _carregar_micro_ambiente(8)
+            p8 = _carregar_fase(8)
+            idx8 = p8.ImplementadorFase8(pasta_projeto).executar(ideia, analise, design)
+            resultado['fases_completas']['fase_8'] = idx8 is not None and idx8.get('status') == 'COMPLETO'
+            _registrar_e_verificar_orcamento(idx8 or {}, 'Implementador', 8, orcamentos, pipeline_state_path)
+            if not resultado['fases_completas']['fase_8']:
+                state_mgr.registrar_fase_falhou('fase_8_implementador', 'Execução da Fase 8 retornou status diferente de COMPLETO.')
+                return _falhar(resultado, 'fase_8_implementador', t0, erro='Execução da Fase 8 retornou status diferente de COMPLETO.')
+            tokens_p8 = idx8.get('tokens', {}).get('consumidos', 0) if isinstance(idx8, dict) else 0
+            state_mgr.registrar_fase_concluida('fase_8_implementador', ['_phase_08_index.json'], tokens_consumidos=tokens_p8)
 
     # --- FASE 6: Documentador (carregamento dinâmico) ---
     print("\n" + "=" * 70)
     print(f"PIPELINE COMPLETO: FASE 6/{total_fases} — Documentador")
     print("=" * 70)
-    ctx6 = _carregar_micro_ambiente(6)
-    p6 = _carregar_fase(6)
-    contexto_doc = {**analise, **design}
-    idx6 = p6.DocumentadorFase6(
-        pasta_cache=cache_dir, output_base=pasta_projeto / 'output'
-    ).executar(pasta_projeto.name, contexto_doc, titulo=ideia)
-    resultado['fases_completas']['fase_6'] = idx6 is not None and idx6.get('status') == 'COMPLETO'
-    _registrar_e_verificar_orcamento(idx6 or {}, 'Documentador', 6, orcamentos, pipeline_state_path)
-    if not resultado['fases_completas']['fase_6']:
-        return _falhar(resultado, 'fase_6_documentador', t0)
+    pode_pular_f6, _ = state_mgr.pode_retomar_fase(
+        'fase_6_documentador', ['_phase_06_index.json']
+    ) if resume else (False, None)
+
+    if pode_pular_f6:
+        print("⏭️  Fase 6 (Documentador) já concluída com sucesso (--resume). Pulando...")
+        state_mgr.registrar_fase_concluida('fase_6_documentador', ['_phase_06_index.json'], pulado=True)
+        resultado['fases_completas']['fase_6'] = True
+    else:
+        state_mgr.registrar_fase_iniciada('fase_6_documentador', 'Documentador', 6)
+        ctx6 = _carregar_micro_ambiente(6)
+        p6 = _carregar_fase(6)
+        contexto_doc = {**analise, **design}
+        idx6 = p6.DocumentadorFase6(
+            pasta_cache=cache_dir, output_base=pasta_projeto / 'output'
+        ).executar(pasta_projeto.name, contexto_doc, titulo=ideia)
+        resultado['fases_completas']['fase_6'] = idx6 is not None and idx6.get('status') == 'COMPLETO'
+        _registrar_e_verificar_orcamento(idx6 or {}, 'Documentador', 6, orcamentos, pipeline_state_path)
+        if not resultado['fases_completas']['fase_6']:
+            state_mgr.registrar_fase_falhou('fase_6_documentador', 'Execução da Fase 6 retornou status diferente de COMPLETO.')
+            return _falhar(resultado, 'fase_6_documentador', t0, erro='Execução da Fase 6 retornou status diferente de COMPLETO.')
+        tokens_p6 = idx6.get('tokens', {}).get('consumidos', 0) if isinstance(idx6, dict) else 0
+        state_mgr.registrar_fase_concluida('fase_6_documentador', ['_phase_06_index.json'], tokens_consumidos=tokens_p6)
 
     # --- FASE 7: Auto-crítica (carregamento dinâmico) ---
     print("\n" + "=" * 70)
     print(f"PIPELINE COMPLETO: FASE 7/{total_fases} — Auto-crítica")
     print("=" * 70)
-    ctx7 = _carregar_micro_ambiente(7)
-    p7 = _carregar_fase(7)
-    idx7 = p7.AnalisadorCriticoAutomatico(pasta_projeto).executar()
-    resultado['fases_completas']['fase_7'] = idx7.get('status') == 'COMPLETO'
-    _registrar_e_verificar_orcamento(idx7, 'Auto-critica', 7, orcamentos, pipeline_state_path)
-    resultado['score_final'] = idx7.get('score')
+    pode_pular_f7, _ = state_mgr.pode_retomar_fase(
+        'fase_7_auto_critica', ['_phase_07_index.json']
+    ) if resume else (False, None)
+
+    if pode_pular_f7:
+        print("⏭️  Fase 7 (Auto-crítica) já concluída com sucesso (--resume). Pulando...")
+        state_mgr.registrar_fase_concluida('fase_7_auto_critica', ['_phase_07_index.json'], pulado=True)
+        resultado['fases_completas']['fase_7'] = True
+        idx7_path = cache_dir / '_phase_07_index.json'
+        if idx7_path.exists():
+            try:
+                idx7_dados = json.loads(idx7_path.read_text(encoding='utf-8'))
+                resultado['score_final'] = idx7_dados.get('score')
+            except Exception:
+                pass
+    else:
+        state_mgr.registrar_fase_iniciada('fase_7_auto_critica', 'Auto-critica', 7)
+        ctx7 = _carregar_micro_ambiente(7)
+        p7 = _carregar_fase(7)
+        idx7 = p7.AnalisadorCriticoAutomatico(pasta_projeto).executar()
+        resultado['fases_completas']['fase_7'] = idx7.get('status') == 'COMPLETO'
+        _registrar_e_verificar_orcamento(idx7, 'Auto-critica', 7, orcamentos, pipeline_state_path)
+        resultado['score_final'] = idx7.get('score')
+        tokens_p7 = idx7.get('tokens', {}).get('consumidos', 0) if isinstance(idx7, dict) else 0
+        state_mgr.registrar_fase_concluida('fase_7_auto_critica', ['_phase_07_index.json'], tokens_consumidos=tokens_p7)
 
     resultado['status'] = 'COMPLETO'
     resultado['duracao_segundos'] = time.time() - t0
+    state_mgr.registrar_pipeline_completo(score_final=resultado.get('score_final'))
 
     # Persistir métricas do Context-Purge Engine
     resultado['context_purge'] = purge_engine.metricas.to_dict()
@@ -681,11 +967,13 @@ def executar_pipeline(ideia: str, pasta_projeto: Path, nao_interativo: bool = Tr
               help='Usar modal interativo (input()) na Fase 4 em vez da heurística automática')
 @click.option('--implementar-codigo', is_flag=True, default=False,
               help='Rodar também a Fase 8 (implementa código funcional real a partir do design, com testes e loop de correção)')
+@click.option('--resume', is_flag=True, default=False,
+              help='Retomar a execução a partir da última fase bem-sucedida, pulando fases com status COMPLETO e artefatos válidos')
 @click.option('--orquestrador', type=click.Choice(['legado', 'prefect']), default='legado',
               help='Motor de orquestração genérica (retries/checkpoints/estado). '
                    'prefect: delega a parte genérica ao Prefect preservando o protocolo delegado. '
                    'legado: orquestração sequencial custom (comportamento padrão).')
-def cli(ideia, pasta, interativo, implementar_codigo, orquestrador):
+def cli(ideia, pasta, interativo, implementar_codigo, resume, orquestrador):
     # --- Pré-voo: verificar LLM antes de gastar tempo com Fase 1 ---
     ok, msg = verificar_llm_pronto()
     if not ok:
@@ -715,12 +1003,14 @@ def cli(ideia, pasta, interativo, implementar_codigo, orquestrador):
             resultado = executar_pipeline_prefect(
                 ideia, str(Path(pasta)),
                 nao_interativo=not interativo,
-                implementar_codigo=implementar_codigo
+                implementar_codigo=implementar_codigo,
+                resume=resume
             )
         else:
             resultado = executar_pipeline(
                 ideia, Path(pasta), nao_interativo=not interativo,
-                implementar_codigo=implementar_codigo
+                implementar_codigo=implementar_codigo,
+                resume=resume
             )
     except LLMNaoConfiguradoException as e:
         print(f"\n❌ {e.mensagem_usuario}")
@@ -740,6 +1030,10 @@ def cli(ideia, pasta, interativo, implementar_codigo, orquestrador):
                   f"{purge_info.get('taxa_sucesso', 0)}% sucesso")
     else:
         print(f"❌ PIPELINE FALHOU na {resultado['fase_que_falhou']}")
+        if resultado.get('erro'):
+            print(f"   Erro: {resultado['erro']}")
+        if resultado.get('detalhe'):
+            print(f"   Detalhe: {resultado['detalhe']}")
     print(f"   Duração: {resultado['duracao_segundos']:.1f}s")
     print("=" * 70 + "\n")
 

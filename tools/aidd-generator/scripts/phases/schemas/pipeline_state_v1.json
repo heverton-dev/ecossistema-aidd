@@ -1,0 +1,104 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "PipelineStateV1",
+  "description": "Estado estruturado versionado da máquina de estados do pipeline aidd-generator",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "ideia",
+    "pasta",
+    "status_global",
+    "fases",
+    "fases_completas"
+  ],
+  "properties": {
+    "schema_version": {
+      "type": "string",
+      "enum": ["1.0"]
+    },
+    "pipeline_id": {
+      "type": "string"
+    },
+    "ideia": {
+      "type": "string"
+    },
+    "pasta": {
+      "type": "string"
+    },
+    "status_global": {
+      "type": "string",
+      "enum": ["PENDENTE", "EM_ANDAMENTO", "COMPLETO", "FALHOU"]
+    },
+    "fase_atual": {
+      "type": ["string", "null"]
+    },
+    "total_fases": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "timestamp_inicio": {
+      "type": "number"
+    },
+    "timestamp_atualizacao": {
+      "type": "number"
+    },
+    "fases": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "object",
+        "required": ["status"],
+        "properties": {
+          "nome": { "type": "string" },
+          "numero": { "type": "integer" },
+          "status": {
+            "type": "string",
+            "enum": ["PENDENTE", "EM_ANDAMENTO", "COMPLETO", "FALHOU", "PULADO"]
+          },
+          "artefatos": {
+            "type": "array",
+            "items": { "type": "string" }
+          },
+          "timestamp_inicio": { "type": ["number", "null"] },
+          "timestamp_fim": { "type": ["number", "null"] },
+          "duracao_segundos": { "type": ["number", "null"] },
+          "tokens_consumidos": { "type": "number" },
+          "pulado": { "type": "boolean" },
+          "erro": { "type": ["string", "null"] }
+        }
+      }
+    },
+    "fases_completas": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "boolean"
+      }
+    },
+    "score_final": {
+      "type": ["number", "null"]
+    },
+    "fase_que_falhou": {
+      "type": ["string", "null"]
+    },
+    "erro": {
+      "type": ["string", "null"]
+    },
+    "detalhe": {
+      "type": ["string", "null"]
+    },
+    "duracao_segundos": {
+      "type": "number"
+    },
+    "orcamento_fases": {
+      "type": "object"
+    },
+    "fleet": {
+      "type": "object"
+    },
+    "context_purge": {
+      "type": "object"
+    },
+    "contexto_repo": {
+      "type": "object"
+    }
+  }
+}

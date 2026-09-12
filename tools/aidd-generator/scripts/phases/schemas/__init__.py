@@ -12,6 +12,8 @@ from .registry import (
     carregar_schema,
     validar_request,
     validar_response,
+    validar_pipeline_state,
+    validar_cache,
     validar_payload,
 )
 
@@ -21,5 +23,7 @@ __all__ = [
     "carregar_schema",
     "validar_request",
     "validar_response",
+    "validar_pipeline_state",
+    "validar_cache",
     "validar_payload",
 ]

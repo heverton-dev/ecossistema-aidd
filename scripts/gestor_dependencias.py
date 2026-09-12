@@ -47,6 +47,7 @@ import argparse
 import json
 import os
 import shlex
+import shutil
 import subprocess
 import sys
 
@@ -88,6 +89,24 @@ def _salvar_manifesto(manifesto):
     os.replace(tmp_path, MANIFESTO_PATH)
 
 
+MSG_ERRO_NPX_AUSENTE = "Node.js/npx ausente. Instale Node.js LTS ou execute preflight-host --fix"
+
+
+def _npx_disponivel() -> bool:
+    """Verifica se npx ou npx.cmd está disponível no PATH do host."""
+    if shutil.which("npx"):
+        return True
+    if os.name == "nt" and shutil.which("npx.cmd"):
+        return True
+    return False
+
+
+def _comando_requer_npx(comando: str) -> bool:
+    """Verifica se o comando invoca npx."""
+    partes = comando.replace("&&", " ").replace("||", " ").replace(";", " ").split()
+    return any(p == "npx" or p.endswith("/npx") or p.endswith("\\npx") or p == "npx.cmd" for p in partes)
+
+
 def _skill_instalada(cfg):
     caminho = os.path.join(ROOT_DIR, cfg["verificar"])
     return os.path.exists(caminho)
@@ -107,16 +126,57 @@ def bootstrap_skills(apenas=None, dry_run=False):
         if dry_run:
             relatorio["instaladas"].append(f"[DRY-RUN] {nome}: {cfg['instalar']}")
             continue
-        if os.name == "nt":
-            # No Windows, 'npx' e outros instaladores costumam ser shims .cmd,
-            # que CreateProcess (subprocess sem shell=True) nao resolve sozinho.
-            codigo = subprocess.run(cfg["instalar"], cwd=ROOT_DIR, shell=True).returncode
-        else:
-            codigo = subprocess.run(shlex.split(cfg["instalar"]), cwd=ROOT_DIR).returncode
+
+        comando = cfg["instalar"]
+        if _comando_requer_npx(comando) and not _npx_disponivel():
+            relatorio["falhas"].append(f"{nome} ({MSG_ERRO_NPX_AUSENTE})")
+            continue
+
+        try:
+            if os.name == "nt":
+                # No Windows, 'npx' e outros instaladores costumam ser shims .cmd,
+                # que CreateProcess (subprocess sem shell=True) nao resolve sozinho.
+                proc = subprocess.run(
+                    comando,
+                    cwd=ROOT_DIR,
+                    shell=True,
+                    capture_output=True,
+                    text=True,
+                )
+                codigo = proc.returncode
+                if codigo != 0:
+                    saida_erro = (proc.stderr or "") + (proc.stdout or "")
+                    if (
+                        "not recognized" in saida_erro.lower()
+                        or "não é reconhecido" in saida_erro.lower()
+                    ) and _comando_requer_npx(comando):
+                        relatorio["falhas"].append(f"{nome} ({MSG_ERRO_NPX_AUSENTE})")
+                        continue
+                    relatorio["falhas"].append(f"{nome} (exit {codigo})")
+                    continue
+            else:
+                proc = subprocess.run(
+                    shlex.split(comando),
+                    cwd=ROOT_DIR,
+                    capture_output=True,
+                    text=True,
+                )
+                codigo = proc.returncode
+                if codigo != 0:
+                    relatorio["falhas"].append(f"{nome} (exit {codigo})")
+                    continue
+        except FileNotFoundError:
+            if _comando_requer_npx(comando):
+                relatorio["falhas"].append(f"{nome} ({MSG_ERRO_NPX_AUSENTE})")
+            else:
+                relatorio["falhas"].append(f"{nome} (comando nao encontrado)")
+            continue
+        except OSError as e:
+            relatorio["falhas"].append(f"{nome} (erro de sistema: {e})")
+            continue
+
         if codigo == 0:
             relatorio["instaladas"].append(nome)
-        else:
-            relatorio["falhas"].append(f"{nome} (exit {codigo})")
 
     return relatorio
 

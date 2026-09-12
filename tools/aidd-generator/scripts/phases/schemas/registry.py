@@ -20,7 +20,7 @@ SCHEMA_DIR = Path(__file__).parent
 
 
 class SchemaVersion:
-    """Versionamento semântico dos schemas do Protocolo Delegado."""
+    """Versionamento semântico dos schemas do Protocolo Delegado e Pipeline."""
 
     LATEST = "v1"
 
@@ -28,12 +28,17 @@ class SchemaVersion:
         "v1": {
             "request": "llm_request_v1.json",
             "response": "llm_response_v1.json",
+            "pipeline_state": "pipeline_state_v1.json",
+            "cache_insights_phase1": "cache_insights_phase1_v1.json",
+            "cache_analise_phase2": "cache_analise_phase2_v1.json",
+            "cache_design_phase3": "cache_design_phase3_v1.json",
+            "cache_config_phase4": "cache_config_phase4_v1.json",
         },
     }
 
 
 class SchemaValidationError(Exception):
-    """Payload não corresponde ao JSON Schema do Protocolo Delegado."""
+    """Payload não corresponde ao JSON Schema especificado."""
 
     def __init__(self, schema_name: str, errors: list):
         self.schema_name = schema_name
@@ -50,7 +55,7 @@ def carregar_schema(tipo: str, version: Optional[str] = None) -> Dict[str, Any]:
     """Carrega JSON Schema do disco.
 
     Args:
-        tipo: 'request' ou 'response'
+        tipo: Identificador do schema (ex: 'request', 'response', 'pipeline_state', etc.)
         version: Versão do schema (default: LATEST)
 
     Returns:
@@ -58,7 +63,7 @@ def carregar_schema(tipo: str, version: Optional[str] = None) -> Dict[str, Any]:
 
     Raises:
         FileNotFoundError: Se o arquivo de schema não existir
-        ValueError: Se a versão não for suportada
+        ValueError: Se a versão ou o tipo não forem suportados
     """
     version = version or SchemaVersion.LATEST
 
@@ -68,10 +73,14 @@ def carregar_schema(tipo: str, version: Optional[str] = None) -> Dict[str, Any]:
             f"Versões disponíveis: {list(SchemaVersion.SUPPORTED.keys())}"
         )
 
-    if tipo not in ("request", "response"):
-        raise ValueError(f"Tipo '{tipo}' inválido. Use 'request' ou 'response'.")
+    versoes_disponiveis = SchemaVersion.SUPPORTED[version]
+    if tipo not in versoes_disponiveis:
+        raise ValueError(
+            f"Tipo '{tipo}' inválido para versão '{version}'. "
+            f"Tipos suportados: {list(versoes_disponiveis.keys())}"
+        )
 
-    arquivo = SCHEMA_DIR / SchemaVersion.SUPPORTED[version][tipo]
+    arquivo = SCHEMA_DIR / versoes_disponiveis[tipo]
 
     if not arquivo.exists():
         raise FileNotFoundError(f"Schema não encontrado: {arquivo}")
@@ -85,14 +94,14 @@ def validar_payload(dados: Dict[str, Any], tipo: str, version: Optional[str] = N
 
     Args:
         dados: Dict com os dados a validar
-        tipo: 'request' ou 'response'
+        tipo: Identificador do schema (ex: 'request', 'pipeline_state', etc.)
         version: Versão do schema (default: LATEST)
 
     Raises:
         SchemaValidationError: Se o payload não passar na validação
     """
     schema = carregar_schema(tipo, version)
-    schema_name = f"llm_{tipo}_{version or SchemaVersion.LATEST}"
+    schema_name = f"{tipo}_{version or SchemaVersion.LATEST}"
 
     erros = []
     try:
@@ -112,3 +121,14 @@ def validar_request(dados: Dict[str, Any], version: Optional[str] = None) -> Non
 def validar_response(dados: Dict[str, Any], version: Optional[str] = None) -> None:
     """Valida payload de resposta LLM delegada."""
     validar_payload(dados, "response", version)
+
+
+def validar_pipeline_state(dados: Dict[str, Any], version: Optional[str] = None) -> None:
+    """Valida payload de estado versionado do pipeline (_pipeline_state.json)."""
+    validar_payload(dados, "pipeline_state", version)
+
+
+def validar_cache(dados: Dict[str, Any], tipo: str, version: Optional[str] = None) -> None:
+    """Valida payload de arquivo de cache inter-fases contra o schema correspondente."""
+    validar_payload(dados, tipo, version)
+

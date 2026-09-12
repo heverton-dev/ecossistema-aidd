@@ -122,3 +122,55 @@ def test_cli_falha_fase_especifica(pipeline_mod, monkeypatch, capsys, tmp_path):
     captured = capsys.readouterr()
     saida = captured.out + captured.err
     assert "PIPELINE FALHOU na phase_02_analysis" in saida
+
+
+def test_cli_flag_resume_repassa_parametro(pipeline_mod, monkeypatch, tmp_path):
+    """1.6: Flag --resume é aceita pela CLI e repassada como True para executar_pipeline."""
+    monkeypatch.setattr(pipeline_mod, 'verificar_llm_pronto', lambda: (True, "ok"))
+
+    chamado_com = {}
+
+    def fake_executar(*args, **kwargs):
+        chamado_com.update(kwargs)
+        return {
+            'status': 'COMPLETO',
+            'score_final': 95,
+            'fleet': {},
+            'context_purge': {},
+            'duracao_segundos': 0.5,
+        }
+
+    monkeypatch.setattr(pipeline_mod, 'executar_pipeline', fake_executar)
+    monkeypatch.setattr(sys, 'argv', ['pipeline_completo.py', 'Ideia Teste', '--pasta', str(tmp_path), '--resume'])
+
+    with pytest.raises(SystemExit) as exc_info:
+        pipeline_mod.main()
+
+    assert exc_info.value.code == 0
+    assert chamado_com.get('resume') is True
+
+
+def test_cli_falha_exibe_erro_e_detalhes(pipeline_mod, monkeypatch, capsys, tmp_path):
+    """1.7: Falha estruturada com erro e detalhe exibe mensagens orientativas no console."""
+    monkeypatch.setattr(pipeline_mod, 'verificar_llm_pronto', lambda: (True, "ok"))
+
+    resultado_mock = {
+        'status': 'FALHOU',
+        'fase_que_falhou': 'fase_1_pesquisador',
+        'erro': 'Cache corrompido em insights_phase1.json',
+        'detalhe': 'Remova o arquivo ou reexecute a fase',
+        'duracao_segundos': 0.2,
+    }
+    monkeypatch.setattr(pipeline_mod, 'executar_pipeline', lambda *args, **kwargs: resultado_mock)
+    monkeypatch.setattr(sys, 'argv', ['pipeline_completo.py', 'Ideia Teste', '--pasta', str(tmp_path)])
+
+    with pytest.raises(SystemExit) as exc_info:
+        pipeline_mod.main()
+
+    assert exc_info.value.code == 1
+    captured = capsys.readouterr()
+    saida = captured.out + captured.err
+    assert "PIPELINE FALHOU na fase_1_pesquisador" in saida
+    assert "Erro: Cache corrompido em insights_phase1.json" in saida
+    assert "Detalhe: Remova o arquivo ou reexecute a fase" in saida
+

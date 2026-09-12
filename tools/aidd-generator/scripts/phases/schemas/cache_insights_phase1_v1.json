@@ -1,0 +1,18 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "CacheInsightsPhase1V1",
+  "description": "Schema de validação para cache de insights da Fase 1 (insights_phase1.json)",
+  "type": "object",
+  "properties": {
+    "total_insights": {
+      "type": "integer"
+    },
+    "insights": {
+      "type": "array"
+    },
+    "linguagens_comuns": {
+      "type": "object"
+    }
+  },
+  "additionalProperties": true
+}
