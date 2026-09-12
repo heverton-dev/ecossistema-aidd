@@ -1,7 +1,7 @@
 # Item 9 — Corrigir terminacao de linha inconsistente CRLF-LF entre gemeas master-enterprise
 
 > **Escopo:** Padronizar a terminação de linha (CRLF vs LF) entre os arquivos de master e enterprise, e configurar `.gitattributes` (ou equivalente) para impedir que a inconsistência volte a acontecer. Este item é puramente mecânico e não envolve decisão de arquitetura.
-> **Status:** [RASCUNHO — Aguardando Aprovacao Humana]
+> **Status:** [EM EXECUCAO]
 
 ---
 

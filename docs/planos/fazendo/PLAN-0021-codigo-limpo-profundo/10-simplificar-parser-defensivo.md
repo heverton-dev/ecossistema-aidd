@@ -1,7 +1,7 @@
 # Item 10 — Simplificar parser defensivo extrair_json_manual e corrigir comentario de numeracao mentiroso
 
 > **Escopo:** Simplificar `_extrair_json_manual` (`scripts/phases/utils_delegacao.py`), que hoje é uma cascata de regexes de fallback sem teste unitário próprio, e corrigir o comentário de numeração de passos que não bate mais com o código. Não entra: a Fase 08 do generator como um todo (Item 11) — este item é específico do parser de `utils_delegacao.py`.
-> **Status:** [RASCUNHO — Aguardando Aprovacao Humana]
+> **Status:** [EM EXECUCAO]
 
 ---
 

@@ -1,7 +1,7 @@
 # Item 8 — Refatorar compose_suite.py (multiplas responsabilidades e HTML em f-string) e remover constante morta WEBHOOK_DEMO_URL
 
 > **Escopo:** Decompor `compose_suite()` e `generate_superapp_index_html()` em `scripts/compose_suite.py` (master e enterprise), que hoje misturam scaffolding de diretórios, geração de HTML/CSS/JS inline, governança multi-IDE e manifestos. Remover a constante morta `WEBHOOK_DEMO_URL`. Não entra: a unificação da CLI `aidd.py` que chama essas funções (Item 4).
-> **Status:** [RASCUNHO — Aguardando Aprovacao Humana]
+> **Status:** [EM EXECUCAO]
 
 ---
 

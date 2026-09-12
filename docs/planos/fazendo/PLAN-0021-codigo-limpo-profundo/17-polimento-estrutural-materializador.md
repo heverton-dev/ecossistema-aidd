@@ -1,7 +1,7 @@
 # Item 17 — Polimento estrutural: materializador do generator, idioma try-except-import duplicado, sys.path fragil no ops, funcoes sem decomposicao no ops
 
 > **Escopo:** 4 achados menores, de ferramentas diferentes, agrupados por serem polimento estrutural de baixo risco: (a) assinatura divergente do materializador do generator; (b) idioma `try/except ImportError` duplicado em `aidd.py`; (c) `sys.path.insert` frágil no `pipeline_ops.py`; (d) funções sem decomposição no `ops`.
-> **Status:** [RASCUNHO — Aguardando Aprovacao Humana]
+> **Status:** [EM EXECUCAO]
 
 ---
 

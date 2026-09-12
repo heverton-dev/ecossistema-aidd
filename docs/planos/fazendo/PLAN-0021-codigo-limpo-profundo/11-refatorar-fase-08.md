@@ -1,7 +1,7 @@
 # Item 11 — Refatorar Fase 08 do generator (monolito, classificador por substring, excecoes copy-paste, estado global com sentinela dupla)
 
 > **Escopo:** Decompor `scripts/phases/08_implementador.py` (1.527 linhas), corrigir o classificador de falhas por substring acoplado ao formato de saída do pytest, unificar os 7 handlers de exceção idênticos, e corrigir o estado global `_TOKENIZADOR_TIKTOKEN` com sentinela dupla confusa. Não entra: o parser `_extrair_json_manual` (Item 10, já tratado separadamente) nem a consolidação de Result monad genérica (Item 7).
-> **Status:** [RASCUNHO — Aguardando Aprovacao Humana]
+> **Status:** [EM EXECUCAO]
 
 ---
 

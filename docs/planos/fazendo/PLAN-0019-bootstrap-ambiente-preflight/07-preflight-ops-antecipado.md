@@ -1,7 +1,7 @@
 # Item — preflight-ops-antecipado-ansible-sops-docker
 
 > **Escopo:** Antecipar a verificação de ferramentas de infraestrutura (ansible, sops, docker) no pipeline do aidd-ops para antes do pre-voo SSH e da geração de inventários efêmeros.
-> **Status:** [RASCUNHO — Aguardando Aprovação Humana]
+> **Status:** [EM EXECUCAO]
 > **Auditoria por reproducao real (11-09-2026):** NAO-FEITO. pipeline_ops_deploy.py nao valida ansible-playbook nem sops no inicio.
 
 ---

@@ -1,7 +1,7 @@
 # Item — mcp-defensivo-cap-limite-e-env-denylist
 
 > **Escopo:** Implementar teto máximo no parâmetro limite das queries MCP e deny-list de variáveis de ambiente no launcher de servidores MCP.
-> **Status:** [RASCUNHO — Aguardando Aprovação Humana]
+> **Status:** [EM EXECUCAO]
 > **Auditoria por reproducao real (11-09-2026):** NAO-FEITO. Nao ha deny-list de segredos no launcher de MCP nem teto de 500 registros em sistema_executar_consulta.
 
 ---

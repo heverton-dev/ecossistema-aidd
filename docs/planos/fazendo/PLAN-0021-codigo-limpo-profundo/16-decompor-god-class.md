@@ -1,7 +1,7 @@
 # Item 16 — Decompor God class SecurityGate (G_SEGURANCA) e renomear metodos camada-N
 
 > **Escopo:** Decompor `SecurityGate` (`scripts/gates/G_SEGURANCA.py`, 502 linhas) que acumula varredura de código, execução comportamental, leitura de configs e geração de relatório, e renomear os métodos `_camada1_`...`_camada8_` (prefixo numérico usado só para ordenar). Afeta master e enterprise (arquivo duplicado — ver Itens 1 e 3).
-> **Status:** [RASCUNHO — Aguardando Aprovacao Humana]
+> **Status:** [EM EXECUCAO]
 
 ---
 

@@ -31,6 +31,10 @@
         "esperado_identico": false,
         "motivo": "Configuracao de _PROJETO_PADRAO aponta para o projeto local ('aidd-enterprise' vs 'aidd-master')."
       },
+      "escritor_atomico.py": {
+        "esperado_identico": true,
+        "motivo": null
+      },
       "events.py": {
         "esperado_identico": true,
         "motivo": null
@@ -45,7 +49,7 @@
       },
       "intent_router.py": {
         "esperado_identico": true,
-        "motivo": "Divergencia de hooks/ganchos resolvida em 2026-09-10: unificado adotando a versao do aidd-enterprise (reconhece 'hooks?'/'ganchos?'); fonte unica em componentes/compartilhado/src-core/."
+        "motivo": null
       },
       "jobs.py": {
         "esperado_identico": true,
@@ -61,7 +65,7 @@
       },
       "materializador.py": {
         "esperado_identico": true,
-        "motivo": "Divergencia hook.sh vs hook JSON resolvida em 2026-09-10: formato JSON adotado; default de projeto derivado de _projeto_padrao(); fonte unica em componentes/compartilhado/src-core/."
+        "motivo": null
       },
       "mcp_repository.py": {
         "esperado_identico": true,
@@ -402,8 +406,8 @@
         "motivo": null
       },
       "G_SEGURANCA.py": {
-        "esperado_identico": false,
-        "motivo": "A versao viva (scripts/gates, 401 linhas, 8 camadas) tem a Camada 8: CVE Dependency Audit via pip-audit que a versao entregue a projetos novos (templates/gates, 322 linhas, 7 camadas) nao tem - confirmado por diff real em 2026-09-08. Decisao sobre portar essa camada para o template fica pendente, registrada em separado (nao decidida por este item)."
+        "esperado_identico": true,
+        "motivo": null
       },
       "G_TESTES.py": {
         "esperado_identico": true,
@@ -444,8 +448,8 @@
         "motivo": null
       },
       "G_SEGURANCA.py": {
-        "esperado_identico": false,
-        "motivo": "A versao viva (scripts/gates, 401 linhas, 8 camadas) tem a Camada 8: CVE Dependency Audit via pip-audit que a versao entregue a projetos novos (templates/gates, 322 linhas, 7 camadas) nao tem - confirmado por diff real em 2026-09-08 (diff identico ao observado em aidd-enterprise). Decisao sobre portar essa camada para o template fica pendente, registrada em separado (nao decidida por este item)."
+        "esperado_identico": true,
+        "motivo": null
       },
       "G_TESTES.py": {
         "esperado_identico": true,

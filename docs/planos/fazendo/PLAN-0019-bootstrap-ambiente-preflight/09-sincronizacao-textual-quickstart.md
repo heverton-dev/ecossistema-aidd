@@ -1,7 +1,7 @@
 # Item — sincronizacao-textual-quickstart-readme
 
 > **Escopo:** Sincronizar a seção Quickstart do README.md com as mensagens exatas de instrução emitidas pela guarda de self-healing e pelo preflight-host.
-> **Status:** [RASCUNHO — Aguardando Aprovação Humana]
+> **Status:** [EM EXECUCAO]
 > **Auditoria por reproducao real (11-09-2026):** NAO-FEITO. README.md nao menciona preflight-host.
 
 ---

@@ -1,7 +1,7 @@
 # Item 4 — Refatorar CLI monolitica aidd.py de master-enterprise (funcoes com multiplas responsabilidades e roteamento duplo)
 
 > **Escopo:** Decompor as funções de comando (`cmd_*`) e `main()` de `scripts/aidd.py` em master e enterprise, que hoje misturam parse de argumentos + política + geração de artefato + relatório no mesmo corpo. Resolver o duplo sistema de roteamento (dicionário de comandos + subparsers argparse + fallback de linguagem natural). Não entra: o conteúdo de `compose_suite.py` chamado por essas funções (Item 8) nem a unificação de vocabulário de domínio do `cmd_plan` (Item 5) — este item é sobre a estrutura da CLI em si.
-> **Status:** [RASCUNHO — Aguardando Aprovacao Humana]
+> **Status:** [EM EXECUCAO]
 
 ---
 

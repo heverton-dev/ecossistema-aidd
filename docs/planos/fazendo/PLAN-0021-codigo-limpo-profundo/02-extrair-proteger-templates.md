@@ -1,7 +1,7 @@
 # Item 2 — Extrair e proteger templates duplicados (core vs v2 e entre ferramentas)
 
 > **Escopo:** Resolver a duplicação sem nenhuma proteção entre `templates/core` e `templates/v2` dentro de cada ferramenta (master e enterprise), e entre `templates/core` das duas ferramentas. Definir uma fonte única (ou gate de drift novo, se a extração completa não for viável agora) para essas 3 relações. Não entra: `src/core` (Item 1) nem `scripts/gates`/`templates/gates` (Item 3).
-> **Status:** [RASCUNHO — Aguardando Aprovacao Humana]
+> **Status:** [EM EXECUCAO]
 
 ---
 

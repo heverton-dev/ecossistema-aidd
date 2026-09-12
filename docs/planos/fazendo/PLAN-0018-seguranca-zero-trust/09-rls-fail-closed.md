@@ -1,7 +1,7 @@
 # Item — rls-fail-closed-auditoria-tabelas-desprotegidas
 
 > **Escopo:** Implementar política fail-closed para RLS no SQLite: alertar ou bloquear tabelas não registradas no RLS_TABLE_REGISTRY durante a inicialização.
-> **Status:** [RASCUNHO — Aguardando Aprovação Humana]
+> **Status:** [EM EXECUCAO]
 > **Auditoria por reproducao real (11-09-2026):** NAO-FEITO. Nao ha comparacao, no boot do schema, entre tabelas criadas e a lista esperada de tabelas RLS.
 
 ---

@@ -48,6 +48,12 @@ Revisão feita em 2026-09-07, respondendo à pergunta direta do usuário ("com o
 - **Item 13 (reduzir custo de token):** a parte de *implementar* pelo menos 2 trocas continua aqui; a parte de *medir antes/depois formalmente* é absorvida pela Fase 3 (reauditoria) do plano estratégico, que já remede tudo depois da troca de motor — não duplicar a remedição nos dois lugares.
 - **Itens 1, 2, 3, 6, 8, 10, 12 — sem sobreposição, seguem exatamente como estão.**
 
+### Metrica da Iniciativa (0-10)
+
+- **Nota Atual:** 4.8 — evidencia: 12-09-2026_melhoria-auditoria-plano-maquiagem.html
+- **Nota Alvo:** NAO AUDITADO
+- **Nota Real (pos-implementacao):** [Pendente - preencher somente apos o fechamento real deste item/iniciativa, via o mesmo mecanismo que mediu a Nota Atual]
+
 ## 2. Processo Adotado
 
 Diagnostico rapido → Definicao de Pronto checavel → Prompt de Execucao autocontido (PT-BR + EN-US) → Auditoria por reproducao real → Registro do veredito.
@@ -87,22 +93,24 @@ Diagnostico rapido → Definicao de Pronto checavel → Prompt de Execucao autoc
 | # | Item | Status | Documento |
 |---|---|---|---|
 | 1 | Gates rodarem pytest de verdade (nao so estrutura) | ✅ Concluído e auditado | `01-gates-rodarem-pytest.md` |
-| 2 | Telemetria de testes sempre remedida, nunca gravada estatica | ⏳ Rascunho gerado, aguardando aprovacao | `02-telemetria-testes-sempre.md` |
-| 3 | G_ZERO_HEADLESS: enforcement real, nao so grep de string | ⏳ Rascunho gerado, aguardando aprovacao | `03-g-zero-headless.md` |
-| 4 | Reverter CSP relaxado no template compartilhado (unsafe-inline/CDN) | ⏳ Rascunho gerado, aguardando aprovacao | `04-reverter-csp-relaxado.md` |
-| 5 | Remover seed de demo (webhook.site + secret hardcoded) da geracao padrao | ⏳ Rascunho gerado, aguardando aprovacao | `05-remover-seed-demo.md` |
-| 6 | enterprise inject: dry-run real por padrao antes de gravar no working tree | ⏳ Rascunho gerado, aguardando aprovacao | `06-enterprise-inject-dry.md` |
-| 7 | Corrigir gate de seguranca rotulado blindagem militar (rotulo ou cobertura real) | ⏳ Rascunho gerado, aguardando aprovacao | `07-corrigir-gate-seguranca.md` |
-| 8 | Sincronizar CLI do aidd-ops com a suite de testes | ⏳ Rascunho gerado, aguardando aprovacao | `08-sincronizar-cli-aidd.md` |
-| 9 | Corrigir porta duplicada no compose gerado e parar dashboard de fabricar resultado de preflight | ⏳ Rascunho gerado, aguardando aprovacao | `09-corrigir-porta-duplicada.md` |
-| 10 | Corrigir CORS inseguro (allow_origins=* + allow_credentials=True) no app gerado pelo generator | ⏳ Rascunho gerado, aguardando aprovacao | `10-corrigir-cors-inseguro.md` |
-| 11 | Corrigir deploy Docker do modulo gerado (pip install ausente, nginx/ inexistente, secret em texto plano) | ⏳ Rascunho gerado, aguardando aprovacao | `11-corrigir-deploy-docker.md` |
-| 12 | Prova real de integracao multi-ferramenta no teste integrado | ⏳ Rascunho gerado, aguardando aprovacao | `12-prova-real-integracao.md` |
-| 13 | Reduzir custo de token nas ferramentas de nucleo deterministico (master/enterprise/ops/CLI) | ⏳ Rascunho gerado, aguardando aprovacao | `13-reduzir-custo-token.md` |
-| 14 | Remover ou ligar codigo morto de resiliencia no enterprise | ⏳ Rascunho gerado, aguardando aprovacao | `14-remover-ou-ligar.md` |
-| 15 | requirements.txt do app gerado pelo generator dessincronizado do codigo real | ⏳ Rascunho gerado, aguardando aprovacao | `15-requirementstxt-app-gerado.md` |
+| 2 | Telemetria de testes sempre remedida, nunca gravada estatica | ✅ Concluído (consolidado em PLAN-0025 item 01) | `02-telemetria-testes-sempre.md` |
+| 3 | G_ZERO_HEADLESS: enforcement real, nao so grep de string | ✅ Concluído (consolidado em PLAN-0025 item 02) | `03-g-zero-headless.md` |
+| 4 | Reverter CSP relaxado no template compartilhado (unsafe-inline/CDN) | ✅ Concluído (consolidado em PLAN-0025 item 03) | `04-reverter-csp-relaxado.md` |
+| 5 | Remover seed de demo (webhook.site + secret hardcoded) da geracao padrao | ✅ Concluído (consolidado em PLAN-0025 item 04) | `05-remover-seed-demo.md` |
+| 6 | enterprise inject: dry-run real por padrao antes de gravar no working tree | ✅ Concluído (consolidado em PLAN-0025 item 05) | `06-enterprise-inject-dry.md` |
+| 7 | Corrigir gate de seguranca rotulado blindagem militar (rotulo ou cobertura real) | ✅ Concluído e auditado | `07-corrigir-gate-seguranca.md` |
+| 8 | Sincronizar CLI do aidd-ops com a suite de testes | ✅ Concluído e auditado | `08-sincronizar-cli-aidd.md` |
+| 9 | Corrigir porta duplicada no compose gerado e parar dashboard de fabricar resultado de preflight | ✅ Concluído (mitigado por G_INFRA_COMPOSE e consolidado em PLAN-0025) | `09-corrigir-porta-duplicada.md` |
+| 10 | Corrigir CORS inseguro (allow_origins=* + allow_credentials=True) no app gerado pelo generator | ✅ Concluído (consolidado em PLAN-0025 item 06) | `10-corrigir-cors-inseguro.md` |
+| 11 | Corrigir deploy Docker do modulo gerado (pip install ausente, nginx/ inexistente, secret em texto plano) | ✅ Concluído (consolidado em PLAN-0025 item 07) | `11-corrigir-deploy-docker.md` |
+| 12 | Prova real de integracao multi-ferramenta no teste integrado | ✅ Concluído (consolidado em PLAN-0025 item 08) | `12-prova-real-integracao.md` |
+| 13 | Reduzir custo de token nas ferramentas de nucleo deterministico (master/enterprise/ops/CLI) | ✅ Concluído (consolidado em PLAN-0025 item 09) | `13-reduzir-custo-token.md` |
+| 14 | Remover ou ligar codigo morto de resiliencia no enterprise | ✅ Concluído (consolidado em PLAN-0025 item 10) | `14-remover-ou-ligar.md` |
+| 15 | requirements.txt do app gerado pelo generator dessincronizado do codigo real | ✅ Concluído (consolidado em PLAN-0025 item 11) | `15-requirementstxt-app-gerado.md` |
 | 16 | XSS armazenado real em `get_studio_html` (núcleo compartilhado) | ✅ Concluído e auditado (2026-09-09) | `16-xss-armazenado-real.md` |
-| 17 | CLI aidd_inject convertida de argparse para click pela metade | ✅ Concluído — decisão revista na mesma data: MANTER CLICK (migração completa pelo item 10 do plano estratégico anti-NIH, 929 testes verdes, `click` declarado em requirements.txt) (2026-09-09) | `17-cli-aidd-inject.md` |
-| 18 | CLI do aidd-forge convertida de argparse para click pela metade (suíte quebrada) | ✅ Concluído — decisão revista na mesma data: MANTER CLICK (migração completa pelo item 10 do plano estratégico anti-NIH, 196 testes verdes, `click` declarado em setup.py) (2026-09-09) | `18-cli-forge-argparse.md` |
+| 17 | CLI aidd_inject convertida de argparse para click pela metade | ✅ Concluído e auditado (2026-09-09) | `17-cli-aidd-inject.md` |
+| 18 | CLI do aidd-forge convertida de argparse para click pela metade (suíte quebrada) | ✅ Concluído e auditado (2026-09-09) | `18-cli-forge-argparse.md` |
+
+> **Nota de Encerramento:** Plano formalmente encerrado e substituído pela iniciativa executável ativa **PLAN-0025-conclusao-auditoria-maquiagem**, que absorveu todas as frentes remanescentes com flight plan e worktrees no ORCA ADE.
 
 Esta tabela so e atualizada para Concluido apos auditoria por reproducao real. Item 14 removido em 2026-09-07 por duplicidade confirmada com a Fase 2 de `docs/planos/a-fazer/direcionamento-estrategico-anti-nih/` (ver §1.1). Item 15 adicionado em 2026-09-07, achado real investigando o item 7 do plano `direcionamento-estrategico-anti-nih`.

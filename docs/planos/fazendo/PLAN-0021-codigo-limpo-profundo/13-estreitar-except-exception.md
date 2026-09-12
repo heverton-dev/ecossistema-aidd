@@ -1,7 +1,7 @@
 # Item 13 — Estreitar except Exception e except pass remanescentes em gates da raiz e src-core
 
 > **Escopo:** Estreitar os `except Exception` genéricos remanescentes em `gates/*.py` (raiz) e os handlers `except: pass` silenciosos em `src/core/` de master/enterprise. Não entra: o narrowing já feito nos commits recentes (`fix(exceptions)` já concluídos) — este item cobre especificamente o que sobrou, verificado de novo nesta auditoria.
-> **Status:** [RASCUNHO — Aguardando Aprovacao Humana]
+> **Status:** [EM EXECUCAO]
 
 ---
 

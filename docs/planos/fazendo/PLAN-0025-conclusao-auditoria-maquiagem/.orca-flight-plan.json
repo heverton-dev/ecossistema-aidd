@@ -1,0 +1,177 @@
+{
+  "plan_dir": "C:\\Users\\trcnologia\\Desktop\\ecossistema-aidd\\docs\\planos\\a-fazer\\PLAN-0025-conclusao-auditoria-maquiagem",
+  "mode": "orca",
+  "repo_path": "C:\\Users\\trcnologia\\Desktop\\ecossistema-aidd",
+  "parent_worktree": "active",
+  "base_branch": "main",
+  "fronts": [
+    {
+      "name": "telemetria-testes-remedida",
+      "rotulo": "PLAN-0025-fase-01-telemetria-testes-remedida",
+      "worktree_name": "PLAN-0025-fase-01-telemetria-testes-remedida",
+      "branch": "orca/PLAN-0025-fase-01-telemetria-testes-remedida",
+      "harness": "mimo",
+      "launch_command": [
+        "mimo",
+        "--pure",
+        "-m",
+        "xiaomi-token-plan/mimo-v2.5"
+      ],
+      "prompt": "Scope: Entra: garantir que o bloco \"testes\" de `PLANO-EXECUCAO-ESTRUTURADO.json` seja sempre regenerado por script antes de ser lido/citado, nunca editado à mão. Não entra: mudar o formato do JSON ou os números de outros blocos (fases, ferramentas).\n\nDefinition of Done:\n\n1. Existe um comando (`python ecossistema.py status --testes --write`) que sobrescreve o bloco \"testes\" do JSON com números medidos na hora da chamada.\n2. Esse comando roda automaticamente antes de qualquer commit que toque `tools/**` — via hook do gate criado no item 1, ou via `.githooks/` já existente no repo — de forma que um JSON desatualizado bloqueie o commit ou seja corrigido nele.\n3. Rodar o comando agora e confirmar que os 5 números batem exatamente com `pytest -q` ao vivo em cada ferramenta no momento da execução.\n\nExit Criteria:\n\n- Arquivos criados ou alterados no local correto.\n- Testes reais passando sem stubs falsos.\n- Gates de integridade aprovados.\n\nYou are going to implement Item 1: Telemetria de testes remedida.\nStrictly follow the Definition of Done above.\nDo not fabricate approvals and maintain monorepo governance rules."
+    },
+    {
+      "name": "enforcement-real-g",
+      "rotulo": "PLAN-0025-fase-02-enforcement-real-g",
+      "worktree_name": "PLAN-0025-fase-02-enforcement-real-g",
+      "branch": "orca/PLAN-0025-fase-02-enforcement-real-g",
+      "harness": "opencode",
+      "launch_command": [
+        "opencode",
+        "--auto",
+        "--pure",
+        "--agent",
+        "-m",
+        "opencode/big-pickle"
+      ],
+      "prompt": "Scope: Entra: escolher e implementar UMA das duas rotas abaixo para a Regra de Ouro #7 (Zero Subagentes Headless). Não entra: reescrever `orchestrator_engine.py` inteiro ou mexer no protocolo ORCA ADE em geral.\n\nDefinition of Done:\n\n**Rota A — enforcement real:** implementar um hook de harness (ex.: Claude Code hook em `settings.json` que intercepta/bloqueia chamadas concorrentes de `Task`/`Agent` sem confirmação) e reproduzir tentando disparar 2 subagentes em paralelo — o hook deve bloquear ou exigir confirmação de verdade.\n\n**Rota B — honestidade de escopo:** reescrever `AGENTS.md`/`MEMORY.md`/a mensagem de saída do próprio gate para deixar explícito que ele é um lint estrutural de *presença de configuração*, não um enforcement de runtime — e mover a responsabilidade real de bloqueio para instrução de prompt/CLAUDE.md, documentada como tal (sem alegar proteção que não existe).\n\n1. Rota escolhida com o usuário, registrada aqui com justificativa antes de codar.\n2. Gate e documentação (AGENTS.md, MEMORY.md) ficam coerentes entre si após a mudança — nenhum texto alega mais proteção do que o mecanismo real entrega.\n3. Reprodução real documentada (tentativa de burlar e resultado observado), não suposição.\n\nExit Criteria:\n\n- Arquivos criados ou alterados no local correto.\n- Testes reais passando sem stubs falsos.\n- Gates de integridade aprovados.\n\nYou are going to implement Item 2: Enforcement real em G_ZERO_HEADLESS.\nStrictly follow the Definition of Done above.\nDo not fabricate approvals and maintain monorepo governance rules."
+    },
+    {
+      "name": "reversao-csp-relaxado",
+      "rotulo": "PLAN-0025-fase-03-reversao-csp-relaxado",
+      "worktree_name": "PLAN-0025-fase-03-reversao-csp-relaxado",
+      "branch": "orca/PLAN-0025-fase-03-reversao-csp-relaxado",
+      "harness": "opencode",
+      "launch_command": [
+        "opencode",
+        "--auto",
+        "--pure",
+        "--agent",
+        "-m",
+        "opencode/big-pickle"
+      ],
+      "prompt": "Scope: Entra: `templates/core/security.py` e `templates/v2/security.py` (tools/aidd-master e tools/aidd-enterprise, núcleo compartilhado) — reverter para CSP estrito ou trocar `unsafe-inline` por nonce/hash. Não entra: redesenhar toda a stack de segurança do enterprise (isso é item 7).\n\nDefinition of Done:\n\n1. CSP gerado por padrão não contém `unsafe-inline` em `script-src` (inspecionar o HTML/header gerado por um projeto novo).\n2. Se o CDN externo (Tailwind/jsdelivr) for mantido, a página usa nonce ou hash de subresource — verificável abrindo o HTML e conferindo que o script tag correspondente tem o nonce/hash batendo com o header CSP.\n3. `python -m pytest -q` em tools/aidd-master e tools/aidd-enterprise continuam 100% verde após a mudança (reexecutar as duas suítes completas).\n4. `python -c \"from gates.G_DRIFT_NUCLEO_COMPARTILHADO import ...\"` (ou `python ecossistema.py audit`) continua aprovando — master e enterprise seguem sincronizados no novo baseline.\n\nExit Criteria:\n\n- Arquivos criados ou alterados no local correto.\n- Testes reais passando sem stubs falsos.\n- Gates de integridade aprovados.\n\nYou are going to implement Item 3: Reversao de CSP relaxado.\nStrictly follow the Definition of Done above.\nDo not fabricate approvals and maintain monorepo governance rules."
+    },
+    {
+      "name": "remocao-seed-demo",
+      "rotulo": "PLAN-0025-fase-04-remocao-seed-demo",
+      "worktree_name": "PLAN-0025-fase-04-remocao-seed-demo",
+      "branch": "orca/PLAN-0025-fase-04-remocao-seed-demo",
+      "harness": "mimo",
+      "launch_command": [
+        "mimo",
+        "--pure",
+        "-m",
+        "xiaomi-token-plan/mimo-v2.5"
+      ],
+      "prompt": "Scope: Entra: `scripts/compose_suite.py` (master e enterprise) parar de inserir por padrão o webhook de demonstração no banco do projeto gerado. Não entra: remover a feature de webhook em si — o seed deve virar opt-in explícito e claramente rotulado, não desaparecer.\n\nDefinition of Done:\n\n1. Gerar um projeto novo (`python ecossistema.py master add-module <x>` ou fluxo equivalente do enterprise) e confirmar via consulta SQL na tabela `webhooks` que nenhum registro `webhook.site`/secret fixo aparece por padrão.\n2. Se uma flag opt-in for criada (ex.: `--com-exemplo-webhook`), confirmar que rodar com ela produz o seed claramente rotulado como exemplo (nome/descrição distinguível de dado real, não indistinguível).\n3. A suíte de testes de `compose_suite` (master e enterprise) continua 100% verde após a mudança, e ganha um teste novo que falha se o seed voltar a aparecer sem a flag.\n\nExit Criteria:\n\n- Arquivos criados ou alterados no local correto.\n- Testes reais passando sem stubs falsos.\n- Gates de integridade aprovados.\n\nYou are going to implement Item 4: Remocao de seed de demo.\nStrictly follow the Definition of Done above.\nDo not fabricate approvals and maintain monorepo governance rules."
+    },
+    {
+      "name": "dry-run-padrao",
+      "rotulo": "PLAN-0025-fase-05-dry-run-padrao",
+      "worktree_name": "PLAN-0025-fase-05-dry-run-padrao",
+      "branch": "orca/PLAN-0025-fase-05-dry-run-padrao",
+      "harness": "opencode",
+      "launch_command": [
+        "opencode",
+        "--auto",
+        "--pure",
+        "--agent",
+        "-m",
+        "opencode/big-pickle"
+      ],
+      "prompt": "Scope: Entra: mudar o comportamento padrão do comando `inject` de `tools/aidd-enterprise/scripts/aidd.py` para não gravar no working tree sem confirmação explícita. Não entra: mudar a lógica de materialização/hash SHA-256 em si (isso segue igual).\n\nDefinition of Done:\n\n1. Rodar `enterprise inject <tipo> <nome>` sem nenhuma flag adicional NÃO grava arquivo nenhum — mostra o diff/preview do que seria escrito e pede confirmação, ou recusa com mensagem clara exigindo uma flag explícita (`--aplicar`/`--yes`).\n2. Existe um modo não interativo explícito e documentado para CI/scripts (`--yes`/`--sim`) que aplica sem prompt, para não quebrar automação legítima.\n3. Testes de integração cobrindo os dois caminhos (confirmado vs recusado/sem flag) passam — reproduzir manualmente uma vez cada um.\n\nExit Criteria:\n\n- Arquivos criados ou alterados no local correto.\n- Testes reais passando sem stubs falsos.\n- Gates de integridade aprovados.\n\nYou are going to implement Item 5: Dry-run padrao aidd inject.\nStrictly follow the Definition of Done above.\nDo not fabricate approvals and maintain monorepo governance rules."
+    },
+    {
+      "name": "guardrail-ast-cors",
+      "rotulo": "PLAN-0025-fase-06-guardrail-ast-cors",
+      "worktree_name": "PLAN-0025-fase-06-guardrail-ast-cors",
+      "branch": "orca/PLAN-0025-fase-06-guardrail-ast-cors",
+      "harness": "mimo",
+      "launch_command": [
+        "mimo",
+        "--pure",
+        "-m",
+        "xiaomi-token-plan/mimo-v2.5"
+      ],
+      "prompt": "Scope: Entra: o template/fase do aidd-generator que produz `src/app.py` com `CORSMiddleware` — corrigir para não combinar `allow_origins=[\"*\"]` com `allow_credentials=True`. Não entra: mudar outras partes do pipeline de 8 fases.\n\nDefinition of Done:\n\n1. Gerar um novo projeto via `/generate` e confirmar no `src/app.py` gerado que a combinação insegura não aparece mais (origins explícito e/ou credentials condicionado).\n2. Existe um teste automatizado (unit ou lint AST) que falha se `allow_origins=[\"*\"]` aparecer junto de `allow_credentials=True` em qualquer app gerado pelo generator, prevenindo regressão.\n3. A suíte de testes do generator (770 testes) continua 100% verde após a mudança.\n\nExit Criteria:\n\n- Arquivos criados ou alterados no local correto.\n- Testes reais passando sem stubs falsos.\n- Gates de integridade aprovados.\n\nYou are going to implement Item 6: Guardrail AST para CORS.\nStrictly follow the Definition of Done above.\nDo not fabricate approvals and maintain monorepo governance rules."
+    },
+    {
+      "name": "deploy-docker-templates",
+      "rotulo": "PLAN-0025-fase-07-deploy-docker-templates",
+      "worktree_name": "PLAN-0025-fase-07-deploy-docker-templates",
+      "branch": "orca/PLAN-0025-fase-07-deploy-docker-templates",
+      "harness": "opencode",
+      "launch_command": [
+        "opencode",
+        "--auto",
+        "--pure",
+        "--agent",
+        "-m",
+        "opencode/big-pickle"
+      ],
+      "prompt": "Scope: Entra: template Dockerfile/docker-compose.yml do aidd-master (núcleo compartilhado com enterprise) — adicionar `pip install` de runtime, parar de referenciar `nginx/` inexistente (ou gerar a pasta), tirar `JWT_SECRET_KEY` de texto plano do compose. Não entra: mudar orquestração de containers em si (isso é aidd-ops).\n\nDefinition of Done:\n\n1. Gerar um novo módulo, rodar `docker compose build && docker compose up` (ou equivalente) de ponta a ponta sem editar nada manualmente — o serviço da aplicação sobe sem erro de dependência faltando.\n2. Nenhum volume do compose referencia pasta inexistente no projeto gerado (ou a pasta passa a ser gerada junto).\n3. Nenhum secret aparece em texto plano no `docker-compose.yml` gerado — vem de `.env`/gerado por instância no momento da criação do projeto.\n\nExit Criteria:\n\n- Arquivos criados ou alterados no local correto.\n- Testes reais passando sem stubs falsos.\n- Gates de integridade aprovados.\n\nYou are going to implement Item 7: Deploy Docker nos templates.\nStrictly follow the Definition of Done above.\nDo not fabricate approvals and maintain monorepo governance rules."
+    },
+    {
+      "name": "integracao-comprovada-multi-ferramenta",
+      "rotulo": "PLAN-0025-fase-08-integracao-comprovada-multi",
+      "worktree_name": "PLAN-0025-fase-08-integracao-comprovada-multi",
+      "branch": "orca/PLAN-0025-fase-08-integracao-comprovada-multi",
+      "harness": "opencode",
+      "launch_command": [
+        "opencode",
+        "--auto",
+        "--pure",
+        "--agent",
+        "-m",
+        "opencode/big-pickle"
+      ],
+      "prompt": "Scope: Entra: implementar e provar UM elo real de composição entre duas ferramentas (ex.: ops→enterprise), onde a saída de uma é de fato consumida pela outra, com evidência verificável. Não entra: implementar orquestração completa das 5 ferramentas — isso fica documentado como trabalho futuro, não fabricado como pronto.\n\nDefinition of Done:\n\n1. Escolher com o usuário qual elo de composição é o alvo mínimo viável (ex.: o compose final do projeto gerado reflete o sizing real do `PLANO-INFRAESTRUTURA.json` do ops).\n2. Rodar o fluxo escolhido do zero e mostrar via diff que a saída da ferramenta B mudou por causa da saída real da ferramenta A (não é coincidência de template).\n3. Documentar esse elo como \"integração comprovada nº1\" no README/AGENTS.md, deixando claro que os demais elos (forge→generator→master etc.) permanecem trabalho futuro não implementado — sem alegar mais do que foi provado.\n\nExit Criteria:\n\n- Arquivos criados ou alterados no local correto.\n- Testes reais passando sem stubs falsos.\n- Gates de integridade aprovados.\n\nYou are going to implement Item 8: Integracao comprovada multi-ferramenta.\nStrictly follow the Definition of Done above.\nDo not fabricate approvals and maintain monorepo governance rules."
+    },
+    {
+      "name": "otimizacao-custo-tokens",
+      "rotulo": "PLAN-0025-fase-09-otimizacao-custo-tokens",
+      "worktree_name": "PLAN-0025-fase-09-otimizacao-custo-tokens",
+      "branch": "orca/PLAN-0025-fase-09-otimizacao-custo-tokens",
+      "harness": "opencode",
+      "launch_command": [
+        "opencode",
+        "--auto",
+        "--pure",
+        "--agent",
+        "-m",
+        "opencode/big-pickle"
+      ],
+      "prompt": "Scope: Entra: medir de verdade (não estimar) o consumo de token de uma rodada de `/master`, `/enterprise`, `/ops` e `python ecossistema.py audit`, identificar onde o assistente gasta token em tarefas que o próprio script já resolve, e cortar. Não entra: mexer no núcleo do aidd-generator — lá o gasto é estruturalmente necessário (fases 2-8 dependem de LLM real).\n\nDefinition of Done:\n\n1. Medir com telemetria real (não estimativa) o consumo de uma rodada de cada um dos 4 fluxos antes de qualquer mudança — linha de base registrada.\n2. Listar, com exemplo concreto de arquivo/prompt, quais passos de cada fluxo hoje pedem geração de texto por LLM que poderia ser template puro.\n3. Implementar a troca para pelo menos 2 desses passos e remedir o consumo da mesma rodada — reportar redução real (número antes/depois), não estimada, sem perda de informação no relatório/telemetria gerada.\n\nExit Criteria:\n\n- Arquivos criados ou alterados no local correto.\n- Testes reais passando sem stubs falsos.\n- Gates de integridade aprovados.\n\nYou are going to implement Item 9: Otimizacao de custo tokens.\nStrictly follow the Definition of Done above.\nDo not fabricate approvals and maintain monorepo governance rules."
+    },
+    {
+      "name": "resolucao-codigo-morto",
+      "rotulo": "PLAN-0025-fase-10-resolucao-codigo-morto",
+      "worktree_name": "PLAN-0025-fase-10-resolucao-codigo-morto",
+      "branch": "orca/PLAN-0025-fase-10-resolucao-codigo-morto",
+      "harness": "opencode",
+      "launch_command": [
+        "opencode",
+        "--auto",
+        "--pure",
+        "--agent",
+        "-m",
+        "opencode/big-pickle"
+      ],
+      "prompt": "Scope: Entra: decidir, pra cada classe achada sem chamador (`CircuitBreaker`, `SagaOrchestrator`, `TraceContextMiddleware` em `tools/aidd-enterprise/src/core/` e espelhos em `templates/`), entre (a) remover — se é scaffolding nunca finalizado, ou (b) ligar de verdade — se é feature real que só não foi conectada ainda. Não entra: os outros 737 símbolos mortos do levantamento (a maioria é cópia esperada de exemplo/template — este item cobre só os 3 de `core/`, que são o caso mais grave por serem \"missão crítica\").\n\nDefinition of Done:\n\n1. Pra cada um dos 3 símbolos, reproduzir a checagem (`code-review-graph query --pattern callers_of --target <símbolo>` ou equivalente) confirmando de novo que não há chamador — não confiar cegamente no scan anterior sem reproduzir.\n2. Decisão registrada aqui (remover vs. ligar) com justificativa, antes de qualquer código ser tocado.\n3. Se remover: também remover dos 3 espelhos em `templates/`. Se ligar: pelo menos 1 teste real cobrindo o caminho que agora chama o símbolo.\n4. Rodar `code-review-graph update` + `dead-code` de novo depois da mudança e confirmar que os 3 não aparecem mais na lista (removidos) ou aparecem com chamador real (ligados).\n5. Suíte de testes do `aidd-enterprise` continua verde.\n\nExit Criteria:\n\n- Arquivos criados ou alterados no local correto.\n- Testes reais passando sem stubs falsos.\n- Gates de integridade aprovados.\n\nYou are going to implement Item 10: Resolucao de codigo morto.\nStrictly follow the Definition of Done above.\nDo not fabricate approvals and maintain monorepo governance rules."
+    },
+    {
+      "name": "sincronizacao-requirements-generator",
+      "rotulo": "PLAN-0025-fase-11-sincronizacao-requirements-generator",
+      "worktree_name": "PLAN-0025-fase-11-sincronizacao-requirements-generator",
+      "branch": "orca/PLAN-0025-fase-11-sincronizacao-requirements-generator",
+      "harness": "mimo",
+      "launch_command": [
+        "mimo",
+        "--pure",
+        "-m",
+        "xiaomi-token-plan/mimo-v2.5"
+      ],
+      "prompt": "Scope: Entra: a Fase 5 (`05_criador.py`) do pipeline do aidd-generator, que grava `requirements.txt` fixo (`requests>=2.31.0`) no projeto gerado sem nunca revisitar esse arquivo depois que a Fase 8 (`08_implementador.py`) gera código real via LLM (FastAPI/uvicorn/etc., conforme o caso). Não entra: mudar o mecanismo de MCP hand-rolled (já coberto por outro achado do levantamento NIH, fora deste item) nem o restante do pipeline de 8 fases.\n\nDefinition of Done:\n\n1. Reproduzir o bug: gerar um projeto novo via `/generate`, inspecionar os imports reais do código produzido pela Fase 8 e confirmar que `requirements.txt` gerado não cobre todos eles.\n2. Implementar extração real dos imports de terceiros usados no código gerado (ex.: AST parsing do(s) arquivo(s) produzidos na Fase 8, ou pedir ao LLM que declare suas próprias dependências como parte do contrato de saída da Fase 8) e sincronizar com `requirements.txt` antes da Fase 5 finalizar ou como pós-processamento da Fase 8.\n3. Teste automatizado que gera um projeto de ponta a ponta e confirma que `pip install -r requirements.txt` seguido de start do app não falha por `ModuleNotFoundError` de dependência de terceiro usada no código.\n4. Suíte de testes do generator (770 testes) continua 100% verde após a mudança.\n\nExit Criteria:\n\n- Arquivos criados ou alterados no local correto.\n- Testes reais passando sem stubs falsos.\n- Gates de integridade aprovados.\n\nYou are going to implement Item 11: Sincronizacao requirements generator.\nStrictly follow the Definition of Done above.\nDo not fabricate approvals and maintain monorepo governance rules."
+    }
+  ]
+}

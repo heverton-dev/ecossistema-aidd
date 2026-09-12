@@ -1,7 +1,7 @@
 # Item — corrigir-interpolacao-sql-set-tenant-pg
 
 > **Escopo:** Corrigir a interpolação direta com f-string em SET app.current_tenant_id na policy de PostgreSQL, eliminando vulnerabilidade de SQL Injection.
-> **Status:** [RASCUNHO — Aguardando Aprovação Humana]
+> **Status:** [EM EXECUCAO]
 > **Auditoria por reproducao real (11-09-2026):** NAO-FEITO. Nao ha validacao de UUID por regex no codigo (grep do padrao de 36 caracteres nao retorna nada).
 
 ---

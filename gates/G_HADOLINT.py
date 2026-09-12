@@ -47,6 +47,7 @@ def encontrar_binario_hadolint() -> Optional[str]:
         if local_app_data:
             candidatos_win = [
                 os.path.join(local_app_data, "Microsoft", "WindowsApps", "hadolint.exe"),
+                os.path.join(os.path.expanduser("~"), ".aidd", "bin", "hadolint.exe"),
             ]
             winget_pkgs = os.path.join(local_app_data, "Microsoft", "WinGet", "Packages")
             if os.path.isdir(winget_pkgs):
@@ -58,7 +59,7 @@ def encontrar_binario_hadolint() -> Optional[str]:
                     return cand
 
     # Busca em diretórios típicos POSIX
-    for cand in ["/usr/local/bin/hadolint", "/usr/bin/hadolint", os.path.expanduser("~/.local/bin/hadolint")]:
+    for cand in ["/usr/local/bin/hadolint", "/usr/bin/hadolint", os.path.expanduser("~/.local/bin/hadolint"), os.path.expanduser("~/.aidd/bin/hadolint")]:
         if os.path.isfile(cand) and os.access(cand, os.X_OK):
             return cand
 

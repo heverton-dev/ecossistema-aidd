@@ -116,7 +116,6 @@ O **Ecossistema AIDD** é um monorepo agnóstico que integra 6 ferramentas compl
 
 <!-- AUTO:INICIATIVAS:START -->
 - ⏳ **Testes Motor Orquestrador** — `docs/planos/PLAN-0024-testes-motor-orquestrador/`
-- 🔶 **Correcao Auditoria Maquiagem** — `docs/planos/fazendo/PLAN-0009-correcao-auditoria-maquiagem/`
 - 🔶 **Qualidade Testes Mutacao** — `docs/planos/fazendo/PLAN-0016-qualidade-testes-mutacao/`
 - 🔶 **Resiliencia Concorrencia Integridade** — `docs/planos/fazendo/PLAN-0017-resiliencia-concorrencia-integridade/`
 - 🔶 **Seguranca Zero Trust** — `docs/planos/fazendo/PLAN-0018-seguranca-zero-trust/`
@@ -124,5 +123,6 @@ O **Ecossistema AIDD** é um monorepo agnóstico que integra 6 ferramentas compl
 - 🔶 **Codigo Limpo Profundo** — `docs/planos/fazendo/PLAN-0021-codigo-limpo-profundo/`
 - 🔶 **Config Arquivos Tokens** — `docs/planos/fazendo/PLAN-0022-config-arquivos-tokens/`
 - 🔶 **Evolucao Engenharia Software** — `docs/planos/fazendo/PLAN-0023-evolucao-engenharia-software/`
+- 🔶 **Conclusao Auditoria Maquiagem** — `docs/planos/fazendo/PLAN-0025-conclusao-auditoria-maquiagem/`
 - ⏳ **Direcionamento Estrategico Anti Nih** — `docs/planos/feitos/PLAN-0010-direcionamento-estrategico-anti-nih/`
 <!-- AUTO:INICIATIVAS:END -->

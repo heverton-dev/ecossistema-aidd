@@ -1,7 +1,7 @@
 # Item 12 — Remover imports mortos nos gates locais de master-enterprise
 
 > **Escopo:** Remover importações confirmadamente sem uso em `scripts/gates/G_SEGURANCA.py` e `scripts/gates/G_QUALIDADE.py`, em master e enterprise. Item puramente mecânico, sem decisão de arquitetura.
-> **Status:** [RASCUNHO — Aguardando Aprovacao Humana]
+> **Status:** [EM EXECUCAO]
 
 ---
 

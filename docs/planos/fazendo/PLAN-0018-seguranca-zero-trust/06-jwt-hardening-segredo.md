@@ -1,7 +1,7 @@
 # Item — jwt-hardening-segredo-prod-exp-obrigatorio
 
 > **Escopo:** Blindar o serviço JWT: proibir segredo padrão hardcoded em ambiente de produção (fail-fast), exigir campo exp obrigatório e integrar verificação de revogação.
-> **Status:** [RASCUNHO — Aguardando Aprovação Humana]
+> **Status:** [EM EXECUCAO]
 > **Auditoria por reproducao real (11-09-2026):** NAO-FEITO. componentes/compartilhado/src-core/security.py faz o oposto do exigido: quando JWT_SECRET_KEY esta vazia, ele cai num default embutido (DEV_ONLY_INSECURE_SECRET_CHANGE_BEFORE_DEPLOY) em vez de abortar o boot.
 
 ---

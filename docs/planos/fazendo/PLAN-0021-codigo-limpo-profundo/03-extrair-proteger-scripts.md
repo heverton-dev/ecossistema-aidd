@@ -1,7 +1,7 @@
 # Item 3 — Extrair e proteger scripts-gates e templates-gates duplicados entre master e enterprise
 
 > **Escopo:** Resolver a duplicação sem proteção em `scripts/gates/` e `templates/gates/`, entre master e enterprise, e entre `scripts/gates`/`templates/gates` dentro de cada ferramenta. Não entra: `src/core` (Item 1) nem `templates/core`/`v2` de produto (Item 2) — este item é especificamente sobre os gates de qualidade/segurança.
-> **Status:** [RASCUNHO — Aguardando Aprovacao Humana]
+> **Status:** [EM EXECUCAO]
 
 ---
 

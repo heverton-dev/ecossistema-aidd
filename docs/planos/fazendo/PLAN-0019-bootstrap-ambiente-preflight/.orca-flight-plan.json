@@ -1,0 +1,141 @@
+{
+  "plan_dir": "C:\\Users\\trcnologia\\Desktop\\ecossistema-aidd\\docs\\planos\\fazendo\\PLAN-0019-bootstrap-ambiente-preflight",
+  "mode": "orca",
+  "repo_path": "C:\\Users\\trcnologia\\Desktop\\ecossistema-aidd",
+  "parent_worktree": "active",
+  "base_branch": "main",
+  "fronts": [
+    {
+      "name": "self-healing-imports",
+      "rotulo": "PLAN-0019-fase-01-self-healing-imports",
+      "worktree_name": "PLAN-0019-fase-01-self-healing-imports",
+      "branch": "orca/PLAN-0019-fase-01-self-healing-imports",
+      "harness": "opencode",
+      "launch_command": [
+        "opencode",
+        "--auto",
+        "--pure",
+        "--agent",
+        "-m",
+        "opencode/big-pickle"
+      ],
+      "prompt": "Scope: Implementar guarda de auto-recuperação (self-healing) no topo de ecossistema.py antes dos imports de click e dotenv, verificando versão mínima do Python (>=3.10) e oferecendo instalação automática de requirements.txt.\n\nDefinition of Done:\n\n1. Adicionar checagem de sys.version_info >= (3, 10) no início do arquivo.\n2. Proteger imports de click e dotenv com bloco try/except.\n3. Em caso de ausência, exibir banner amigável orientando rodar `python -m pip install -r requirements.txt`.\n4. Se executado com `--auto-bootstrap`, disparar a instalação de pip automaticamente.\n\nExit Criteria:\n\n- Execução em Python virgem exibe banner educativo e instrução de correção em vez de traceback cru.\n- Testes reais passando sem stubs falsos.\n- Gates de integridade aprovados.\n\nYou are going to implement Item: self-healing-imports-python-ecossistema.\nStrictly follow the Definition of Done above:\n1. Adicionar checagem de sys.version_info >= (3, 10) no início do arquivo.\n2. Proteger imports de click e dotenv com bloco try/except.\n3. Em caso de ausência, exibir banner amigável orientando rodar `python -m pip install -r requirements.txt`.\n4. Se executado com `--auto-bootstrap`, disparar a instalação de pip automaticamente.\nEnsure exit code 0 across relevant tests and gates."
+    },
+    {
+      "name": "preflight-host-diagnostico",
+      "rotulo": "PLAN-0019-fase-02-preflight-host-diagnostico",
+      "worktree_name": "PLAN-0019-fase-02-preflight-host-diagnostico",
+      "branch": "orca/PLAN-0019-fase-02-preflight-host-diagnostico",
+      "harness": "mimo",
+      "launch_command": [
+        "mimo",
+        "--pure",
+        "-m",
+        "xiaomi-token-plan/mimo-v2.5"
+      ],
+      "prompt": "Scope: Criar o comando determinístico `python ecossistema.py preflight-host [--json] [--fix]` para diagnóstico instantâneo (< 2s) de binários do sistema (Git, Node, Docker, Hadolint, Checkov).\n\nDefinition of Done:\n\n1. Criar módulo `scripts/preflight_host.py` com rotinas únicas de detecção por binário (caminho, versão encontrada, versão mínima requerida).\n2. Adicionar subcomando `preflight-host` no `ecossistema.py` com saída em tabela e flag `--json`.\n3. Reutilizar detectores existentes de Hadolint e Checkov como fonte única de verdade.\n4. Validar tempo de execução < 2 segundos sem dependência de rede.\n\nExit Criteria:\n\n- Comando preflight-host funcional com diagnóstico completo e saída estruturada.\n- Testes reais passando sem stubs falsos.\n- Gates de integridade aprovados.\n\nYou are going to implement Item: preflight-host-diagnostico-binarios-sistema.\nStrictly follow the Definition of Done above:\n1. Criar módulo `scripts/preflight_host.py` com rotinas únicas de detecção por binário (caminho, versão encontrada, versão mínima requerida).\n2. Adicionar subcomando `preflight-host` no `ecossistema.py` com saída em tabela e flag `--json`.\n3. Reutilizar detectores existentes de Hadolint e Checkov como fonte única de verdade.\n4. Validar tempo de execução < 2 segundos sem dependência de rede.\nEnsure exit code 0 across relevant tests and gates."
+    },
+    {
+      "name": "tratamento-falhas-npx",
+      "rotulo": "PLAN-0019-fase-03-tratamento-falhas-npx",
+      "worktree_name": "PLAN-0019-fase-03-tratamento-falhas-npx",
+      "branch": "orca/PLAN-0019-fase-03-tratamento-falhas-npx",
+      "harness": "agy",
+      "launch_command": [
+        "agy",
+        "--dangerously-skip-permissions",
+        "--model",
+        "gemini-3.8-flash-low"
+      ],
+      "prompt": "Scope: Tratar FileNotFoundError em POSIX e traduzir mensagens de erro do cmd.exe no Windows durante a execução de npx em `gestor_dependencias.py`, preservando o relatório de bootstrap.\n\nDefinition of Done:\n\n1. Checar previamente `shutil.which('npx')` (e `npx.cmd` no Windows) antes de disparar o subprocess.\n2. Se ausente, registrar erro amigável orientando: 'Node.js/npx ausente. Instale Node.js LTS ou execute preflight-host --fix'.\n3. Preservar o relatório estruturado de skills já instaladas sem abortar o script com traceback.\n\nExit Criteria:\n\n- Bootstrap sem Node.js emite diagnóstico claro e mantém integridade do relatório de dependências.\n- Testes reais passando sem stubs falsos.\n- Gates de integridade aprovados.\n\nYou are going to implement Item: tratamento-falhas-npx-bootstrap-skills.\nStrictly follow the Definition of Done above:\n1. Checar previamente `shutil.which('npx')` (e `npx.cmd` no Windows) antes de disparar o subprocess.\n2. Se ausente, registrar erro amigável orientando: 'Node.js/npx ausente. Instale Node.js LTS ou execute preflight-host --fix'.\n3. Preservar o relatório estruturado de skills já instaladas sem abortar o script com traceback.\nEnsure exit code 0 across relevant tests and gates."
+    },
+    {
+      "name": "bootstrapper-assistido-multi-fix",
+      "rotulo": "PLAN-0019-fase-04-bootstrapper-assistido-multi",
+      "worktree_name": "PLAN-0019-fase-04-bootstrapper-assistido-multi",
+      "branch": "orca/PLAN-0019-fase-04-bootstrapper-assistido-multi",
+      "harness": "opencode",
+      "launch_command": [
+        "opencode",
+        "--auto",
+        "--pure",
+        "--agent",
+        "-m",
+        "opencode/big-pickle"
+      ],
+      "prompt": "Scope: Implementar a funcionalidade `--fix` no preflight-host com detecção automática do gerenciador de pacotes do SO (winget/choco no Windows, brew no macOS, apt/dnf no Linux) e fallback em espaço de usuário.\n\nDefinition of Done:\n\n1. Detectar package manager ativo no host (winget > choco no Win, brew no Mac, apt > dnf no Linux).\n2. Montar comandos oficiais de instalação e solicitar confirmação explícita do usuário.\n3. Suportar fallback user-space (`~/.aidd/bin`) para ferramentas portáteis (Node standalone, Hadolint) sem exigir privilégios de administrador.\n4. Adicionar flag `--dry-run` para exibição dos comandos sem execução.\n\nExit Criteria:\n\n- Modo `--fix` orienta ou instala ferramentas faltantes com consentimento do usuário.\n- Testes reais passando sem stubs falsos.\n- Gates de integridade aprovados.\n\nYou are going to implement Item: bootstrapper-assistido-multi-os-fix.\nStrictly follow the Definition of Done above:\n1. Detectar package manager ativo no host (winget > choco no Win, brew no Mac, apt > dnf no Linux).\n2. Montar comandos oficiais de instalação e solicitar confirmação explícita do usuário.\n3. Suportar fallback user-space (`~/.aidd/bin`) para ferramentas portáteis (Node standalone, Hadolint) sem exigir privilégios de administrador.\n4. Adicionar flag `--dry-run` para exibição dos comandos sem execução.\nEnsure exit code 0 across relevant tests and gates."
+    },
+    {
+      "name": "campo-preflight-manifesto",
+      "rotulo": "PLAN-0019-fase-05-campo-preflight-manifesto",
+      "worktree_name": "PLAN-0019-fase-05-campo-preflight-manifesto",
+      "branch": "orca/PLAN-0019-fase-05-campo-preflight-manifesto",
+      "harness": "mimo",
+      "launch_command": [
+        "mimo",
+        "--pure",
+        "-m",
+        "xiaomi-token-plan/mimo-v2.5"
+      ],
+      "prompt": "Scope: Expandir o manifesto `gates/dependencias_externas.json` com o campo `preflight` declarando binários de sistema e versões mínimas exigidas por cada skill ou MCP.\n\nDefinition of Done:\n\n1. Adicionar chave `preflight: {binario, versao_minima}` para cada skill/MCP que depende de ferramentas externas (ex: npx para impeccable, docker para cofre).\n2. Integrar a checagem no `python ecossistema.py dependencia verify`.\n3. Bloquear status como AUSENTE se o binário de sistema associado não estiver presente.\n\nExit Criteria:\n\n- Manifesto único agora governa tanto artefatos quanto pré-requisitos de sistema.\n- Testes reais passando sem stubs falsos.\n- Gates de integridade aprovados.\n\nYou are going to implement Item: campo-preflight-manifesto-dependencias-externas.\nStrictly follow the Definition of Done above:\n1. Adicionar chave `preflight: {binario, versao_minima}` para cada skill/MCP que depende de ferramentas externas (ex: npx para impeccable, docker para cofre).\n2. Integrar a checagem no `python ecossistema.py dependencia verify`.\n3. Bloquear status como AUSENTE se o binário de sistema associado não estiver presente.\nEnsure exit code 0 across relevant tests and gates."
+    },
+    {
+      "name": "unificar-detectores-binarios",
+      "rotulo": "PLAN-0019-fase-06-unificar-detectores-binarios",
+      "worktree_name": "PLAN-0019-fase-06-unificar-detectores-binarios",
+      "branch": "orca/PLAN-0019-fase-06-unificar-detectores-binarios",
+      "harness": "agy",
+      "launch_command": [
+        "agy",
+        "--dangerously-skip-permissions",
+        "--model",
+        "gemini-3.8-flash-low"
+      ],
+      "prompt": "Scope: Refatorar G_HADOLINT, G_INFRA_COMPOSE e G_ECOSSISTEMA_INTEGRIDADE para consumirem os detectores centralizados de preflight_host, eliminando código duplicado de shutil.which.\n\nDefinition of Done:\n\n1. Extrair detectores de binários para `gates/utils_preflight.py` ou `scripts/preflight_host.py`.\n2. Atualizar G_HADOLINT e G_INFRA_COMPOSE para importar a rotina única.\n3. Padronizar a mensagem de falha em caso de ausência do binário, indicando `preflight-host --fix`.\n\nExit Criteria:\n\n- Zero duplicação de rotinas shutil.which nos gates.\n- Testes reais passando sem stubs falsos.\n- Gates de integridade aprovados.\n\nYou are going to implement Item: unificar-detectores-binarios-nos-gates.\nStrictly follow the Definition of Done above:\n1. Extrair detectores de binários para `gates/utils_preflight.py` ou `scripts/preflight_host.py`.\n2. Atualizar G_HADOLINT e G_INFRA_COMPOSE para importar a rotina única.\n3. Padronizar a mensagem de falha em caso de ausência do binário, indicando `preflight-host --fix`.\nEnsure exit code 0 across relevant tests and gates."
+    },
+    {
+      "name": "preflight-ops-antecipado",
+      "rotulo": "PLAN-0019-fase-07-preflight-ops-antecipado",
+      "worktree_name": "PLAN-0019-fase-07-preflight-ops-antecipado",
+      "branch": "orca/PLAN-0019-fase-07-preflight-ops-antecipado",
+      "harness": "opencode",
+      "launch_command": [
+        "opencode",
+        "--auto",
+        "--pure",
+        "--agent",
+        "-m",
+        "opencode/big-pickle"
+      ],
+      "prompt": "Scope: Antecipar a verificação de ferramentas de infraestrutura (ansible, sops, docker) no pipeline do aidd-ops para antes do pre-voo SSH e da geração de inventários efêmeros.\n\nDefinition of Done:\n\n1. No início de `pipeline_ops_deploy.py`, validar presença de `ansible-playbook` e `sops`.\n2. Abortar imediatamente com mensagem instrutiva em < 1s se faltar algum binário essencial.\n3. Evitar criação de arquivos de inventário ou tentativas de rede quando o host não estiver apto.\n\nExit Criteria:\n\n- Falha rápida (fast-fail) determinística em deploys com binários ausentes.\n- Testes reais passando sem stubs falsos.\n- Gates de integridade aprovados.\n\nYou are going to implement Item: preflight-ops-antecipado-ansible-sops-docker.\nStrictly follow the Definition of Done above:\n1. No início de `pipeline_ops_deploy.py`, validar presença de `ansible-playbook` e `sops`.\n2. Abortar imediatamente com mensagem instrutiva em < 1s se faltar algum binário essencial.\n3. Evitar criação de arquivos de inventário ou tentativas de rede quando o host não estiver apto.\nEnsure exit code 0 across relevant tests and gates."
+    },
+    {
+      "name": "atualizar-agents-md",
+      "rotulo": "PLAN-0019-fase-08-atualizar-agents-md",
+      "worktree_name": "PLAN-0019-fase-08-atualizar-agents-md",
+      "branch": "orca/PLAN-0019-fase-08-atualizar-agents-md",
+      "harness": "mimo",
+      "launch_command": [
+        "mimo",
+        "--pure",
+        "-m",
+        "xiaomi-token-plan/mimo-v2.5"
+      ],
+      "prompt": "Scope: Atualizar a Seção 0 de AGENTS.md para incluir a verificação de preflight do host na rotina de bootstrap automático de início de sessão dos assistentes.\n\nDefinition of Done:\n\n1. Atualizar a instrução do AGENTS.md §0 para executar `python ecossistema.py preflight-host --json`.\n2. Se houver dependência de sistema crítica ausente, instruir o assistente a alertar o usuário em uma frase objetiva.\n3. Preservar o caráter silencioso e não invasivo quando tudo estiver em conformidade.\n\nExit Criteria:\n\n- Assistentes de IA realizam verificação completa de host e skills no primeiro contato.\n- Testes reais passando sem stubs falsos.\n- Gates de integridade aprovados.\n\nYou are going to implement Item: atualizar-agents-md-bootstrap-preflight-sessao.\nStrictly follow the Definition of Done above:\n1. Atualizar a instrução do AGENTS.md §0 para executar `python ecossistema.py preflight-host --json`.\n2. Se houver dependência de sistema crítica ausente, instruir o assistente a alertar o usuário em uma frase objetiva.\n3. Preservar o caráter silencioso e não invasivo quando tudo estiver em conformidade.\nEnsure exit code 0 across relevant tests and gates."
+    },
+    {
+      "name": "sincronizacao-textual-quickstart",
+      "rotulo": "PLAN-0019-fase-09-sincronizacao-textual-quickstart",
+      "worktree_name": "PLAN-0019-fase-09-sincronizacao-textual-quickstart",
+      "branch": "orca/PLAN-0019-fase-09-sincronizacao-textual-quickstart",
+      "harness": "agy",
+      "launch_command": [
+        "agy",
+        "--dangerously-skip-permissions",
+        "--model",
+        "gemini-3.8-flash-low"
+      ],
+      "prompt": "Scope: Sincronizar a seção Quickstart do README.md com as mensagens exatas de instrução emitidas pela guarda de self-healing e pelo preflight-host.\n\nDefinition of Done:\n\n1. Atualizar README.md com instruções passo a passo para Windows, macOS e Linux.\n2. Alinhar comandos de criação de `.venv` e instalação de requirements.\n3. Adicionar exemplo de uso de `python ecossistema.py preflight-host`.\n\nExit Criteria:\n\n- Documentação de inicialização 100% fiel ao comportamento real do código.\n- Testes reais passando sem stubs falsos.\n- Gates de integridade aprovados.\n\nYou are going to implement Item: sincronizacao-textual-quickstart-readme.\nStrictly follow the Definition of Done above:\n1. Atualizar README.md com instruções passo a passo para Windows, macOS e Linux.\n2. Alinhar comandos de criação de `.venv` e instalação de requirements.\n3. Adicionar exemplo de uso de `python ecossistema.py preflight-host`.\nEnsure exit code 0 across relevant tests and gates."
+    }
+  ]
+}

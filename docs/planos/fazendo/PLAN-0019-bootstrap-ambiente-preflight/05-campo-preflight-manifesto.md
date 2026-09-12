@@ -1,7 +1,7 @@
 # Item — campo-preflight-manifesto-dependencias-externas
 
 > **Escopo:** Expandir o manifesto `gates/dependencias_externas.json` com o campo `preflight` declarando binários de sistema e versões mínimas exigidas por cada skill ou MCP.
-> **Status:** [RASCUNHO — Aguardando Aprovação Humana]
+> **Status:** [EM EXECUCAO]
 > **Auditoria por reproducao real (11-09-2026):** NAO-FEITO. dependencias_externas.json nao tem a chave preflight.
 
 ---

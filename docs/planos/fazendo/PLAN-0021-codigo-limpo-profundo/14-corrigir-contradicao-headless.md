@@ -1,7 +1,7 @@
 # Item 14 — Corrigir contradicao headless-interativa em cmd_orchestrate e decompor a funcao
 
 > **Escopo:** Corrigir a contradição em `ecossistema.py` onde o modo `--dangerously-force-headless` avisa que está em modo automático mas continua chamando `input()`, e decompor `cmd_orchestrate` (239 linhas) em partes menores com nomes claros. Não entra: `cmd_orchestrate` de outras ferramentas — este item é sobre `ecossistema.py` na raiz.
-> **Status:** [RASCUNHO — Aguardando Aprovacao Humana]
+> **Status:** [EM EXECUCAO]
 
 ---
 

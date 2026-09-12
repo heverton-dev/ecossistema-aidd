@@ -14,6 +14,7 @@
 | Skill Orquestracao Orca | `feitos/PLAN-0006-skill-orquestracao-orca/` |
 | Testes Completos Ecossistema | `feitos/PLAN-0007-testes-completos-ecossistema/` |
 | Validacao Humana Testes | `feitos/PLAN-0008-validacao-humana-testes/` |
+| Correcao Auditoria Maquiagem | `feitos/PLAN-0009-correcao-auditoria-maquiagem/` |
 | Evolucao Aidd Ops | `feitos/PLAN-0011-evolucao-aidd-ops/` |
 | Correcao Arquitetura Limpa | `feitos/PLAN-0012-correcao-arquitetura-limpa/` |
 | Correcao Codigo Limpo | `feitos/PLAN-0013-correcao-codigo-limpo/` |
@@ -25,14 +26,14 @@
 
 | Iniciativa | Local |
 |---|---|
-| Bootstrap Ambiente Preflight | `fazendo/PLAN-0019-bootstrap-ambiente-preflight/` |
-| Correcao Auditoria Maquiagem | `fazendo/PLAN-0009-correcao-auditoria-maquiagem/` |
 | Qualidade Testes Mutacao | `fazendo/PLAN-0016-qualidade-testes-mutacao/` |
 | Resiliencia Concorrencia Integridade | `fazendo/PLAN-0017-resiliencia-concorrencia-integridade/` |
 | Seguranca Zero Trust | `fazendo/PLAN-0018-seguranca-zero-trust/` |
+| Bootstrap Ambiente Preflight | `fazendo/PLAN-0019-bootstrap-ambiente-preflight/` |
 | Codigo Limpo Profundo | `fazendo/PLAN-0021-codigo-limpo-profundo/` |
 | Config Arquivos Tokens | `fazendo/PLAN-0022-config-arquivos-tokens/` |
 | Evolucao Engenharia Software | `fazendo/PLAN-0023-evolucao-engenharia-software/` |
+| Conclusao Auditoria Maquiagem | `fazendo/PLAN-0025-conclusao-auditoria-maquiagem/` |
 
 ## ⏳ Rascunho (aguardando aprovação humana)
 

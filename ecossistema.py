@@ -790,10 +790,13 @@ Comandos disponíveis:
                       Monitora e executa higiene preventiva contra estouro de memória
                       e disco nos bancos de dados e caches dos harnesses (OpenCode,
                       MiMoCode, Claude, Cursor, Antigravity)
-  preflight-host [--json] [--fix]
+  preflight-host [--json] [--fix] [--dry-run]
                       Diagnostico instantaneo (< 2s) de binarios do sistema
                       (Git, Node, Docker, Hadolint, Checkov). --json para saida
-                      estruturada, --fix para instrucoes de correcao.
+                      estruturada, --fix para bootstrapper assistido multi-OS
+                      (detecta o package manager e instala com confirmacao
+                      explicita; ferramentas portateis usam ~/.aidd/bin),
+                      --dry-run para exibir os comandos sem executar nada.
   status              Exibe o status do ecossistema e ferramentas integradas
   status --testes     Roda pytest real em cada ferramenta e atualiza
                       PLANO-EXECUCAO-ESTRUTURADO.json com a contagem medida

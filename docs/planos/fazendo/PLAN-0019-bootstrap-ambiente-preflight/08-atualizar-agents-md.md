@@ -1,7 +1,7 @@
 # Item — atualizar-agents-md-bootstrap-preflight-sessao
 
 > **Escopo:** Atualizar a Seção 0 de AGENTS.md para incluir a verificação de preflight do host na rotina de bootstrap automático de início de sessão dos assistentes.
-> **Status:** [RASCUNHO — Aguardando Aprovação Humana]
+> **Status:** [EM EXECUCAO]
 > **Auditoria por reproducao real (11-09-2026):** NAO-FEITO. AGENTS.md secao 0 nao menciona preflight-host.
 
 ---

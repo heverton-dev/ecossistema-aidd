@@ -45,15 +45,15 @@ Diagnostico rapido → Definicao de Pronto checavel → Prompt de Execucao autoc
 
 | # | Item | Status | Documento |
 |---|---|---|---|
-| 1 | sandbox-nivel-1-subprocess-env-minimo-fase-08 | ⏳ Rascunho gerado, aguardando aprovacao | `01-sandbox-nivel-1.md` |
+| 1 | sandbox-nivel-1-subprocess-env-minimo-fase-08 | 🔶 Em execucao | `01-sandbox-nivel-1.md` |
 | 2 | gate-owasp-sobre-output-fase-08 | ⏳ Rascunho — parte ja implementada (ver auditoria) | `02-gate-owasp-sobre.md` |
-| 3 | corrigir-interpolacao-sql-set-tenant-pg | ⏳ Rascunho gerado, aguardando aprovacao | `03-corrigir-interpolacao-sql.md` |
-| 4 | pin-exato-e-hashes-requirements-lockfile | ⏳ Rascunho gerado, aguardando aprovacao | `04-pin-exato-hashes.md` |
-| 5 | manifest-assinado-ed25519-componentes-enterprise | ⏳ Rascunho gerado, aguardando aprovacao | `05-manifest-assinado-ed25519.md` |
-| 6 | jwt-hardening-segredo-prod-exp-obrigatorio | ⏳ Rascunho gerado, aguardando aprovacao | `06-jwt-hardening-segredo.md` |
-| 7 | hash-artefatos-skills-mcps-dependencias-externas | ⏳ Rascunho gerado, aguardando aprovacao | `07-hash-artefatos-skills.md` |
-| 8 | mcp-defensivo-cap-limite-e-env-denylist | ⏳ Rascunho gerado, aguardando aprovacao | `08-mcp-defensivo-cap.md` |
-| 9 | rls-fail-closed-auditoria-tabelas-desprotegidas | ⏳ Rascunho gerado, aguardando aprovacao | `09-rls-fail-closed.md` |
-| 10 | sandbox-nivel-2-container-modo-isolado | ⏳ Rascunho gerado, aguardando aprovacao | `10-sandbox-nivel-2.md` |
+| 3 | corrigir-interpolacao-sql-set-tenant-pg | 🔶 Em execucao | `03-corrigir-interpolacao-sql.md` |
+| 4 | pin-exato-e-hashes-requirements-lockfile | 🔶 Em execucao | `04-pin-exato-hashes.md` |
+| 5 | manifest-assinado-ed25519-componentes-enterprise | 🔶 Em execucao | `05-manifest-assinado-ed25519.md` |
+| 6 | jwt-hardening-segredo-prod-exp-obrigatorio | 🔶 Em execucao | `06-jwt-hardening-segredo.md` |
+| 7 | hash-artefatos-skills-mcps-dependencias-externas | 🔶 Em execucao | `07-hash-artefatos-skills.md` |
+| 8 | mcp-defensivo-cap-limite-e-env-denylist | 🔶 Em execucao | `08-mcp-defensivo-cap.md` |
+| 9 | rls-fail-closed-auditoria-tabelas-desprotegidas | 🔶 Em execucao | `09-rls-fail-closed.md` |
+| 10 | sandbox-nivel-2-container-modo-isolado | 🔶 Em execucao | `10-sandbox-nivel-2.md` |
 
 Esta tabela so e atualizada para Concluido apos auditoria por reproducao real.

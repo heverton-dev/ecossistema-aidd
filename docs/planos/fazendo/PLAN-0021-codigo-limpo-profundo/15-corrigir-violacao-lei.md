@@ -1,7 +1,7 @@
 # Item 15 — Corrigir violacao de Lei de Demeter em database.py e unificar reescrita SQL (AST vs regex)
 
 > **Escopo:** Corrigir o acesso "por baixo do pano" ao driver de banco em `src/core/database.py` (`EngineFacadeConnection`) e unificar as duas técnicas diferentes de reescrita de SQL (AST via `sqlglot` para INSERT/SELECT, regex para UPDATE/DELETE) no mesmo módulo. Este item afeta master e enterprise (arquivo duplicado — ver Item 1).
-> **Status:** [RASCUNHO — Aguardando Aprovacao Humana]
+> **Status:** [EM EXECUCAO]
 
 ---
 

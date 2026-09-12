@@ -1,7 +1,7 @@
 # Item 5 — Unificar reconhecimento de dominio (KNOWN_DOMAINS vs IntentRouter)
 
 > **Escopo:** Unificar os dois mecanismos paralelos de reconhecimento de domínio dentro de master/enterprise: a lista fixa `KNOWN_DOMAINS` usada em `cmd_plan` e o `IntentRouter` (`src/core/intent_router.py`). Não entra: a decomposição estrutural de `cmd_plan` em si (Item 4) — este item é sobre o vocabulário duplicado, não sobre o tamanho da função.
-> **Status:** [RASCUNHO — Aguardando Aprovacao Humana]
+> **Status:** [EM EXECUCAO]
 
 ---
 

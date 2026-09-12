@@ -44,14 +44,14 @@ Diagnostico rapido → Definicao de Pronto checavel → Prompt de Execucao autoc
 
 | # | Item | Status | Documento |
 |---|---|---|---|
-| 1 | self-healing-imports-python-ecossistema | ⏳ Rascunho gerado, aguardando aprovacao | `01-self-healing-imports.md` |
-| 2 | preflight-host-diagnostico-binarios-sistema | ⏳ Rascunho gerado, aguardando aprovacao | `02-preflight-host-diagnostico.md` |
+| 1 | self-healing-imports-python-ecossistema | 🔶 Em execucao | `01-self-healing-imports.md` |
+| 2 | preflight-host-diagnostico-binarios-sistema | 🔶 Em execucao | `02-preflight-host-diagnostico.md` |
 | 3 | tratamento-falhas-npx-bootstrap-skills | ⏳ Rascunho — parte ja implementada (ver auditoria) | `03-tratamento-falhas-npx.md` |
-| 4 | bootstrapper-assistido-multi-os-fix | ⏳ Rascunho gerado, aguardando aprovacao | `04-bootstrapper-assistido-multi-fix.md` |
-| 5 | campo-preflight-manifesto-dependencias-externas | ⏳ Rascunho gerado, aguardando aprovacao | `05-campo-preflight-manifesto.md` |
-| 6 | unificar-detectores-binarios-nos-gates | ⏳ Rascunho gerado, aguardando aprovacao | `06-unificar-detectores-binarios.md` |
-| 7 | preflight-ops-antecipado-ansible-sops-docker | ⏳ Rascunho gerado, aguardando aprovacao | `07-preflight-ops-antecipado.md` |
-| 8 | atualizar-agents-md-bootstrap-preflight-sessao | ⏳ Rascunho gerado, aguardando aprovacao | `08-atualizar-agents-md.md` |
-| 9 | sincronizacao-textual-quickstart-readme | ⏳ Rascunho gerado, aguardando aprovacao | `09-sincronizacao-textual-quickstart.md` |
+| 4 | bootstrapper-assistido-multi-os-fix | 🔶 Em execucao | `04-bootstrapper-assistido-multi-fix.md` |
+| 5 | campo-preflight-manifesto-dependencias-externas | 🔶 Em execucao | `05-campo-preflight-manifesto.md` |
+| 6 | unificar-detectores-binarios-nos-gates | 🔶 Em execucao | `06-unificar-detectores-binarios.md` |
+| 7 | preflight-ops-antecipado-ansible-sops-docker | 🔶 Em execucao | `07-preflight-ops-antecipado.md` |
+| 8 | atualizar-agents-md-bootstrap-preflight-sessao | 🔶 Em execucao | `08-atualizar-agents-md.md` |
+| 9 | sincronizacao-textual-quickstart-readme | 🔶 Em execucao | `09-sincronizacao-textual-quickstart.md` |
 
 Esta tabela so e atualizada para Concluido apos auditoria por reproducao real.

@@ -1,0 +1,157 @@
+{
+  "plan_dir": "C:\\Users\\trcnologia\\Desktop\\ecossistema-aidd\\docs\\planos\\a-fazer\\PLAN-0018-seguranca-zero-trust",
+  "mode": "orca",
+  "repo_path": "C:\\Users\\trcnologia\\Desktop\\ecossistema-aidd",
+  "parent_worktree": "active",
+  "base_branch": "main",
+  "fronts": [
+    {
+      "name": "sandbox-nivel-1",
+      "rotulo": "PLAN-0018-fase-01-sandbox-nivel-1",
+      "worktree_name": "PLAN-0018-fase-01-sandbox-nivel-1",
+      "branch": "orca/PLAN-0018-fase-01-sandbox-nivel-1",
+      "harness": "opencode",
+      "launch_command": [
+        "opencode",
+        "--auto",
+        "--pure",
+        "--agent",
+        "-m",
+        "opencode/big-pickle"
+      ],
+      "prompt": "Scope: Implementar sandbox Nível 1 com variáveis de ambiente restritas (allowlist estrita), cwd em tempdir e bloqueio de acesso a segredos do host na execução de código gerado da Fase 8.\n\nDefinition of Done:\n\n1. Criar wrapper de execução com env sanitizado (apenas PATH, PYTHONPATH do projeto, PYTHONUTF8, TMPDIR).\n2. Isolar cwd em diretório temporário restrito.\n3. Criar gate AST verificando que subprocessos de código gerado nunca herdam os.environ completo.\n4. Testar que código gerado com dump de variáveis não enxerga chaves de API.\n\nExit Criteria:\n\n- Subprocessos de teste rodam com env mínimo e zero vazamento de credenciais.\n- Testes reais passando sem stubs falsos.\n- Gates de integridade aprovados.\n\nYou are going to implement Item: sandbox-nivel-1-subprocess-env-minimo-fase-08.\nStrictly follow the Definition of Done above:\n1. Criar wrapper de execução com env sanitizado (apenas PATH, PYTHONPATH do projeto, PYTHONUTF8, TMPDIR).\n2. Isolar cwd em diretório temporário restrito.\n3. Criar gate AST verificando que subprocessos de código gerado nunca herdam os.environ completo.\n4. Testar que código gerado com dump de variáveis não enxerga chaves de API.\nEnsure exit code 0 across relevant tests and gates."
+    },
+    {
+      "name": "gate-owasp-sobre",
+      "rotulo": "PLAN-0018-fase-02-gate-owasp-sobre",
+      "worktree_name": "PLAN-0018-fase-02-gate-owasp-sobre",
+      "branch": "orca/PLAN-0018-fase-02-gate-owasp-sobre",
+      "harness": "mimo",
+      "launch_command": [
+        "mimo",
+        "--pure",
+        "-m",
+        "xiaomi-token-plan/mimo-v2.5"
+      ],
+      "prompt": "Scope: Conectar o scanner de segurança estático G_CYBERSECURITY_OWASP para inspecionar o código gerado pela Fase 8 antes de permitir a execução do gate I4.\n\nDefinition of Done:\n\n1. Integrar G_CYBERSECURITY_OWASP no pipeline da Fase 08 (`verificar_gates.py`).\n2. Bloquear a execução se o código gerado contiver chamadas de alto risco (`os.system`, `eval`, `subprocess` sem shell=False).\n3. Adicionar relatório de conformidade no index da Fase 08.\n\nExit Criteria:\n\n- Código gerado com chamadas perigosas é bloqueado antes da execução.\n- Testes reais passando sem stubs falsos.\n- Gates de integridade aprovados.\n\nYou are going to implement Item: gate-owasp-sobre-output-fase-08.\nStrictly follow the Definition of Done above:\n1. Integrar G_CYBERSECURITY_OWASP no pipeline da Fase 08 (`verificar_gates.py`).\n2. Bloquear a execução se o código gerado contiver chamadas de alto risco (`os.system`, `eval`, `subprocess` sem shell=False).\n3. Adicionar relatório de conformidade no index da Fase 08.\nEnsure exit code 0 across relevant tests and gates."
+    },
+    {
+      "name": "corrigir-interpolacao-sql",
+      "rotulo": "PLAN-0018-fase-03-corrigir-interpolacao-sql",
+      "worktree_name": "PLAN-0018-fase-03-corrigir-interpolacao-sql",
+      "branch": "orca/PLAN-0018-fase-03-corrigir-interpolacao-sql",
+      "harness": "agy",
+      "launch_command": [
+        "agy",
+        "--dangerously-skip-permissions",
+        "--model",
+        "gemini-3.8-flash-low"
+      ],
+      "prompt": "Scope: Corrigir a interpolação direta com f-string em SET app.current_tenant_id na policy de PostgreSQL, eliminando vulnerabilidade de SQL Injection.\n\nDefinition of Done:\n\n1. Substituir a f-string por validação estrita de UUID via regex (`^[0-9a-fA-F-]{36}$`).\n2. Aplicar parametrização segura na query de sessão PostgreSQL.\n3. Adicionar teste automatizado com payload de injeção (`x'; DROP TABLE`) garantindo rejeição.\n\nExit Criteria:\n\n- Injeção SQL em tenant_id bloqueada com validação e parametrização.\n- Testes reais passando sem stubs falsos.\n- Gates de integridade aprovados.\n\nYou are going to implement Item: corrigir-interpolacao-sql-set-tenant-pg.\nStrictly follow the Definition of Done above:\n1. Substituir a f-string por validação estrita de UUID via regex (`^[0-9a-fA-F-]{36}$`).\n2. Aplicar parametrização segura na query de sessão PostgreSQL.\n3. Adicionar teste automatizado com payload de injeção (`x'; DROP TABLE`) garantindo rejeição.\nEnsure exit code 0 across relevant tests and gates."
+    },
+    {
+      "name": "pin-exato-hashes",
+      "rotulo": "PLAN-0018-fase-04-pin-exato-hashes",
+      "worktree_name": "PLAN-0018-fase-04-pin-exato-hashes",
+      "branch": "orca/PLAN-0018-fase-04-pin-exato-hashes",
+      "harness": "claude",
+      "launch_command": [
+        "claude",
+        "--dangerously-skip-permissions",
+        "--chrome",
+        "--model",
+        "sonnet-5"
+      ],
+      "prompt": "Scope: Migrar dependências Python para versões exatas fixadas com hashes criptográficos (lockfile via uv/pip-tools) e impor instalação segura com --require-hashes no CI.\n\nDefinition of Done:\n\n1. Gerar lockfile determinístico (`uv.lock` ou `requirements.lock` com `--generate-hashes`).\n2. Atualizar pre-commit e CI para instalar com `--require-hashes`.\n3. Criar gate determinístico que rejeita arquivos de dependência sem pins exatos.\n\nExit Criteria:\n\n- Dependências instaladas exclusivamente com verificação de hash criptográfico.\n- Testes reais passando sem stubs falsos.\n- Gates de integridade aprovados.\n\nYou are going to implement Item: pin-exato-e-hashes-requirements-lockfile.\nStrictly follow the Definition of Done above:\n1. Gerar lockfile determinístico (`uv.lock` ou `requirements.lock` com `--generate-hashes`).\n2. Atualizar pre-commit e CI para instalar com `--require-hashes`.\n3. Criar gate determinístico que rejeita arquivos de dependência sem pins exatos.\nEnsure exit code 0 across relevant tests and gates."
+    },
+    {
+      "name": "manifest-assinado-ed25519",
+      "rotulo": "PLAN-0018-fase-05-manifest-assinado-ed25519",
+      "worktree_name": "PLAN-0018-fase-05-manifest-assinado-ed25519",
+      "branch": "orca/PLAN-0018-fase-05-manifest-assinado-ed25519",
+      "harness": "opencode",
+      "launch_command": [
+        "opencode",
+        "--auto",
+        "--pure",
+        "--agent",
+        "-m",
+        "opencode/big-pickle"
+      ],
+      "prompt": "Scope: Implementar assinatura digital Ed25519 para manifestos de componentes no aidd-enterprise, conectando a verificação de assinatura ao carregador register_injected_tools.\n\nDefinition of Done:\n\n1. Gerar par de chaves Ed25519 com chave pública versionada no repositório.\n2. Assinar o manifesto canônico no materializador.\n3. Bloquear o carregamento em `register_injected_tools` caso a assinatura do arquivo não confira.\n\nExit Criteria:\n\n- Componentes adulterados não são carregados em tempo de execução.\n- Testes reais passando sem stubs falsos.\n- Gates de integridade aprovados.\n\nYou are going to implement Item: manifest-assinado-ed25519-componentes-enterprise.\nStrictly follow the Definition of Done above:\n1. Gerar par de chaves Ed25519 com chave pública versionada no repositório.\n2. Assinar o manifesto canônico no materializador.\n3. Bloquear o carregamento em `register_injected_tools` caso a assinatura do arquivo não confira.\nEnsure exit code 0 across relevant tests and gates."
+    },
+    {
+      "name": "jwt-hardening-segredo",
+      "rotulo": "PLAN-0018-fase-06-jwt-hardening-segredo",
+      "worktree_name": "PLAN-0018-fase-06-jwt-hardening-segredo",
+      "branch": "orca/PLAN-0018-fase-06-jwt-hardening-segredo",
+      "harness": "mimo",
+      "launch_command": [
+        "mimo",
+        "--pure",
+        "-m",
+        "xiaomi-token-plan/mimo-v2.5"
+      ],
+      "prompt": "Scope: Blindar o serviço JWT: proibir segredo padrão hardcoded em ambiente de produção (fail-fast), exigir campo exp obrigatório e integrar verificação de revogação.\n\nDefinition of Done:\n\n1. Lançar erro fatal no boot em ambiente de produção se JWT_SECRET_KEY for o default ou estiver vazio.\n2. Rejeitar tokens sem claim `exp` explícito no decode.\n3. Ligar o mecanismo de revogação de token na verificação padrão.\n\nExit Criteria:\n\n- Zero risco de tokens forjados com segredo de desenvolvimento em produção.\n- Testes reais passando sem stubs falsos.\n- Gates de integridade aprovados.\n\nYou are going to implement Item: jwt-hardening-segredo-prod-exp-obrigatorio.\nStrictly follow the Definition of Done above:\n1. Lançar erro fatal no boot em ambiente de produção se JWT_SECRET_KEY for o default ou estiver vazio.\n2. Rejeitar tokens sem claim `exp` explícito no decode.\n3. Ligar o mecanismo de revogação de token na verificação padrão.\nEnsure exit code 0 across relevant tests and gates."
+    },
+    {
+      "name": "hash-artefatos-skills",
+      "rotulo": "PLAN-0018-fase-07-hash-artefatos-skills",
+      "worktree_name": "PLAN-0018-fase-07-hash-artefatos-skills",
+      "branch": "orca/PLAN-0018-fase-07-hash-artefatos-skills",
+      "harness": "agy",
+      "launch_command": [
+        "agy",
+        "--dangerously-skip-permissions",
+        "--model",
+        "gemini-3.8-flash-low"
+      ],
+      "prompt": "Scope: Adicionar verificação de hash SHA-256 para artefatos de skills e MCPs externos registrados em gates/dependencias_externas.json.\n\nDefinition of Done:\n\n1. Registrar hashes SHA-256 esperados dos bundles e scripts instalados em `dependencias_externas.json`.\n2. Atualizar `python ecossistema.py dependencia verify` para verificar o checksum dos arquivos instalados.\n3. Bloquear bootstrap se houver divergência de hash.\n\nExit Criteria:\n\n- Integridade criptográfica de ferramentas externas verificada pelo CLI.\n- Testes reais passando sem stubs falsos.\n- Gates de integridade aprovados.\n\nYou are going to implement Item: hash-artefatos-skills-mcps-dependencias-externas.\nStrictly follow the Definition of Done above:\n1. Registrar hashes SHA-256 esperados dos bundles e scripts instalados em `dependencias_externas.json`.\n2. Atualizar `python ecossistema.py dependencia verify` para verificar o checksum dos arquivos instalados.\n3. Bloquear bootstrap se houver divergência de hash.\nEnsure exit code 0 across relevant tests and gates."
+    },
+    {
+      "name": "mcp-defensivo-cap",
+      "rotulo": "PLAN-0018-fase-08-mcp-defensivo-cap",
+      "worktree_name": "PLAN-0018-fase-08-mcp-defensivo-cap",
+      "branch": "orca/PLAN-0018-fase-08-mcp-defensivo-cap",
+      "harness": "claude",
+      "launch_command": [
+        "claude",
+        "--dangerously-skip-permissions",
+        "--chrome",
+        "--model",
+        "sonnet-5"
+      ],
+      "prompt": "Scope: Implementar teto máximo no parâmetro limite das queries MCP e deny-list de variáveis de ambiente no launcher de servidores MCP.\n\nDefinition of Done:\n\n1. Limitar o parâmetro `limite` a no máximo 500 registros em `sistema_executar_consulta`.\n2. Adicionar deny-list de segredos (`JWT_SECRET_KEY`, `SSH_KEY_PATH`, `*_API_KEY`) no launcher de servidores MCP.\n3. Bloquear chamadas `executescript` em conexões com RLS ativo.\n\nExit Criteria:\n\n- Servidores MCP blindados contra DoS e vazamento de segredos.\n- Testes reais passando sem stubs falsos.\n- Gates de integridade aprovados.\n\nYou are going to implement Item: mcp-defensivo-cap-limite-e-env-denylist.\nStrictly follow the Definition of Done above:\n1. Limitar o parâmetro `limite` a no máximo 500 registros em `sistema_executar_consulta`.\n2. Adicionar deny-list de segredos (`JWT_SECRET_KEY`, `SSH_KEY_PATH`, `*_API_KEY`) no launcher de servidores MCP.\n3. Bloquear chamadas `executescript` em conexões com RLS ativo.\nEnsure exit code 0 across relevant tests and gates."
+    },
+    {
+      "name": "rls-fail-closed",
+      "rotulo": "PLAN-0018-fase-09-rls-fail-closed",
+      "worktree_name": "PLAN-0018-fase-09-rls-fail-closed",
+      "branch": "orca/PLAN-0018-fase-09-rls-fail-closed",
+      "harness": "opencode",
+      "launch_command": [
+        "opencode",
+        "--auto",
+        "--pure",
+        "--agent",
+        "-m",
+        "opencode/big-pickle"
+      ],
+      "prompt": "Scope: Implementar política fail-closed para RLS no SQLite: alertar ou bloquear tabelas não registradas no RLS_TABLE_REGISTRY durante a inicialização.\n\nDefinition of Done:\n\n1. No boot do schema, comparar todas as tabelas criadas contra a lista esperada de tabelas RLS.\n2. Emitir erro estruturado ou warning crítico se houver tabela de tenant não registrada.\n3. Adicionar teste automatizado de fail-closed.\n\nExit Criteria:\n\n- Tabelas de dados multi-tenant protegidas por padrão.\n- Testes reais passando sem stubs falsos.\n- Gates de integridade aprovados.\n\nYou are going to implement Item: rls-fail-closed-auditoria-tabelas-desprotegidas.\nStrictly follow the Definition of Done above:\n1. No boot do schema, comparar todas as tabelas criadas contra a lista esperada de tabelas RLS.\n2. Emitir erro estruturado ou warning crítico se houver tabela de tenant não registrada.\n3. Adicionar teste automatizado de fail-closed.\nEnsure exit code 0 across relevant tests and gates."
+    },
+    {
+      "name": "sandbox-nivel-2",
+      "rotulo": "PLAN-0018-fase-10-sandbox-nivel-2",
+      "worktree_name": "PLAN-0018-fase-10-sandbox-nivel-2",
+      "branch": "orca/PLAN-0018-fase-10-sandbox-nivel-2",
+      "harness": "agy",
+      "launch_command": [
+        "agy",
+        "--dangerously-skip-permissions",
+        "--model",
+        "gemini-3.8-flash-low"
+      ],
+      "prompt": "Scope: Adicionar suporte a Sandbox Nível 2 via container efêmero (--network none, read-only, memória restrita) para execução isolada em ambientes Linux/CI.\n\nDefinition of Done:\n\n1. Criar runner de container efêmero com Docker (`--network none`, `--cap-drop ALL`, `--read-only`).\n2. Habilitar via flag `--isolate` no pipeline do generator.\n3. Manter fallback seguro para o Sandbox Nível 1 quando o Docker não estiver disponível.\n\nExit Criteria:\n\n- Suporte a execução hermética em container no pipeline autônomo.\n- Testes reais passando sem stubs falsos.\n- Gates de integridade aprovados.\n\nYou are going to implement Item: sandbox-nivel-2-container-modo-isolado.\nStrictly follow the Definition of Done above:\n1. Criar runner de container efêmero com Docker (`--network none`, `--cap-drop ALL`, `--read-only`).\n2. Habilitar via flag `--isolate` no pipeline do generator.\n3. Manter fallback seguro para o Sandbox Nível 1 quando o Docker não estiver disponível.\nEnsure exit code 0 across relevant tests and gates."
+    }
+  ]
+}

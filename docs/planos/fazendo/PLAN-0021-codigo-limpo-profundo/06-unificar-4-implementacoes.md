@@ -1,7 +1,7 @@
 # Item 6 — Unificar as 4 implementacoes paralelas do dominio Injector (forge-generator-master-enterprise)
 
 > **Escopo:** Unificar as 4 implementações independentes do domínio "injetar componente" — uma em cada ferramenta (forge, generator, master, enterprise) — que hoje têm 4 APIs de resultado incompatíveis, nomes de conceito diferentes para a mesma coisa, e reimplementam o mesmo algoritmo de rollback. Não entra: a unificação genérica de Result monad fora do escopo do Injector (Item 7, tratado separadamente por atravessar mais código que só o injector).
-> **Status:** [RASCUNHO — Aguardando Aprovacao Humana]
+> **Status:** [EM EXECUCAO]
 
 ---
 

@@ -1,7 +1,7 @@
 # Item 18 — Polimento de testes e UX: time.sleep em testes e banners-prints misturando UI e log
 
 > **Escopo:** 2 achados de polimento de baixo risco: pausas fixas (`time.sleep`) em testes que fazem polling de servidor, e banners/prints decorativos misturados com mensagens de log real nas CLIs. Cobre generator, master, enterprise e ops (testes) e ecossistema.py/aidd.py/compose_suite.py/pipeline_ops.py (prints).
-> **Status:** [RASCUNHO — Aguardando Aprovacao Humana]
+> **Status:** [EM EXECUCAO]
 
 ---
 
