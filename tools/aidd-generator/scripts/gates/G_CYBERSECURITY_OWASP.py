@@ -203,6 +203,37 @@ PADROES_INJECTION = [
     ),
 ]
 
+# A03:2021 — Chamadas de Alto Risco (bloqueio pré-execução I4)
+# Padrões que detectam chamadas perigosas INDEPENDENTEMENTE de input do usuário.
+# Bloqueiam: os.system, eval, exec, subprocess sem shell=False explícito.
+# Critica: chamada encontrada = código rejeitado antes do gate I4.
+PADROES_ALTO_RISCO = [
+    (
+        r'''os\.system\s*\(''',
+        'Critica',
+        'os.system() — execução de comando do sistema via shell (alto risco)',
+        'Use subprocess.run([...], shell=False) com lista de argumentos',
+    ),
+    (
+        r'''eval\s*\(''',
+        'Critica',
+        'eval() — execução dinâmica de código Python (alto risco)',
+        'Use ast.literal_eval() para parsing seguro, ou reavalie a necessidade',
+    ),
+    (
+        r'''exec\s*\(''',
+        'Critica',
+        'exec() — execução dinâmica de código Python (alto risco)',
+        'Reavalie a necessidade; evite exec() em código de produção',
+    ),
+    (
+        r'''subprocess\.(?:call|run|Popen)\s*\((?!.*shell\s*=\s*False)''',
+        'Critica',
+        'subprocess sem shell=False explícito — pode herdar shell do sistema',
+        'Use subprocess.run([...], shell=False) com lista de argumentos',
+    ),
+]
+
 # A08:2021 — Software and Data Integrity Failures
 PADROES_DESERIALIZACAO = [
     (
@@ -236,6 +267,7 @@ class ScannerOWASP:
             ('A03_XSS', 'A03:2021 — XSS', PADROES_XSS),
             ('A03_INJECTION', 'A03:2021 — Code/Command Injection', PADROES_INJECTION),
             ('A08_DESERIALIZACAO', 'A08:2021 — Data Integrity', PADROES_DESERIALIZACAO),
+            ('A03_ALTO_RISCO', 'A03:2021 — Chamadas de Alto Risco (pré-I4)', PADROES_ALTO_RISCO),
         ]
 
     def escanear_arquivo(self, caminho: Path, conteudo: str) -> List[Vulnerabilidade]:
@@ -377,6 +409,143 @@ def executar_gate(pasta_projeto: Path) -> int:
         return 0
 
 
+def escanear_alto_risco(pasta_projeto: Path) -> List[Vulnerabilidade]:
+    """Escaneia código apenas para chamadas de alto risco (pré-I4).
+    Retorna lista de vulnerabilidades bloqueantes encontradas.
+    Para subprocess, verifica se shell=False aparece nos 300 chars seguintes
+    (cobre chamadas multiline)."""
+    scanner = ScannerOWASP()
+    alto_risco_patterns = PADROES_ALTO_RISCO
+    vulnerabilidades = []
+    excluidos = {'__pycache__', '.git', 'node_modules', '.venv', 'venv', '.aidd', 'tests', 'gates'}
+
+    for py_file in sorted(pasta_projeto.rglob('*.py')):
+        partes = py_file.relative_to(pasta_projeto).parts
+        if any(p in excluidos for p in partes):
+            continue
+
+        try:
+            with open(py_file, 'r', encoding='utf-8', errors='replace') as f:
+                conteudo = f.read()
+        except OSError:
+            continue
+
+        caminho_relativo = str(py_file.relative_to(pasta_projeto))
+        linhas = conteudo.split('\n')
+
+        for idx, (padrao, severidade, descricao, recomendacao) in enumerate(alto_risco_patterns):
+            for linha_num, linha in enumerate(linhas, 1):
+                stripped = linha.strip()
+                if stripped.startswith('#') or stripped.startswith('"""') or stripped.startswith("'''"):
+                    continue
+                if 'test' in str(caminho_relativo).lower() and 'assert' in stripped.lower():
+                    continue
+
+                matches = list(re.finditer(padrao, linha))
+                for match in matches:
+                    # Para padrões de subprocess, verificar se shell=False está
+                    # na chamada completa (próximas 300 chars cobrem multiline)
+                    if 'subprocess' in padrao:
+                        pos_inicio = match.start()
+                        janela = conteudo[pos_inicio:pos_inicio + 300]
+                        if re.search(r'shell\s*=\s*False', janela):
+                            continue  # shell=False presente = seguro
+
+                    trecho = match.group(0)
+                    if len(trecho) > 100:
+                        trecho = trecho[:100] + '...'
+                    vulnerabilidades.append(Vulnerabilidade(
+                        vuln_id=f'A03_ALTO_RISCO_{idx + 1}',
+                        owasp_categoria='A03:2021 — Chamadas de Alto Risco (pré-I4)',
+                        severidade=severidade,
+                        descricao=descricao,
+                        arquivo=caminho_relativo,
+                        linha=linha_num,
+                        trecho=trecho,
+                        recomendacao=recomendacao,
+                    ))
+
+    # Deduplicar
+    vistos = set()
+    unicas = []
+    for v in vulnerabilidades:
+        chave = (v.vuln_id, v.arquivo, v.linha)
+        if chave not in vistos:
+            vistos.add(chave)
+            unicas.append(v)
+    return unicas
+
+
+def gerar_relatorio_conformidade(pasta_projeto: Path) -> Dict[str, Any]:
+    """Gera relatório de conformidade OWASP para inclusão no index da Fase 8.
+    Retorna dict com status, total de vulnerabilidades e lista de achados."""
+    vulnerabilidades = escanear_alto_risco(pasta_projeto)
+    criticas = [v for v in vulnerabilidades if v.severidade == 'Critica']
+    altas = [v for v in vulnerabilidades if v.severidade == 'Alta']
+
+    return {
+        'gate': 'G_CYBERSECURITY_OWASP',
+        'status': 'BLOQUEADO' if criticas or altas else 'APROVADO',
+        'vulnerabilidades_total': len(vulnerabilidades),
+        'criticas': len(criticas),
+        'altas': len(altas),
+        'achados': [v.to_dict() for v in vulnerabilidades],
+    }
+
+
+def executar_gate_pre_i4(pasta_projeto: Path) -> int:
+    """Gate pré-I4: bloqueia código com chamadas de alto risco antes da execução do I4.
+    Retorna 0 (aprovado) ou 1 (bloqueado)."""
+    print("\n" + "=" * 70)
+    print("GATE: G_CYBERSECURITY_OWASP (pré-I4) — Chamadas de Alto Risco")
+    print("=" * 70 + "\n")
+
+    if not pasta_projeto.exists():
+        print(f"❌ Pasta do projeto não encontrada: {pasta_projeto}")
+        print("=" * 70)
+        print("❌ GATE FALHOU")
+        print("=" * 70)
+        return 1
+
+    vulnerabilidades = escanear_alto_risco(pasta_projeto)
+
+    criticas = [v for v in vulnerabilidades if v.severidade == 'Critica']
+    altas = [v for v in vulnerabilidades if v.severidade == 'Alta']
+
+    print(f"🔍 Varredura de alto risco (pré-I4) concluída\n")
+    print(f"📊 Resumo:")
+    print(f"   🔴 Críticas:  {len(criticas)}")
+    print(f"   🟠 Altas:     {len(altas)}")
+    print(f"   📋 Total:     {len(vulnerabilidades)}")
+    print()
+
+    if vulnerabilidades:
+        print("-" * 70)
+        print("DETALHAMENTO (chamadas bloqueantes):")
+        print("-" * 70)
+        for v in sorted(vulnerabilidades, key=lambda x: ['Critica', 'Alta', 'Media', 'Baixa'].index(x.severidade)):
+            icon = {'Critica': '🔴', 'Alta': '🟠', 'Media': '🟡', 'Baixa': '🟢'}[v.severidade]
+            print(f"\n  {icon} [{v.severidade}] {v.owasp_categoria}")
+            print(f"     Arquivo: {v.arquivo}:{v.linha}")
+            print(f"     Problema: {v.descricao}")
+            print(f"     Trecho: {v.trecho}")
+            print(f"     Fix: {v.recomendacao}")
+
+    vulns_bloqueantes = criticas + altas
+
+    print("\n" + "=" * 70)
+    if vulns_bloqueantes:
+        print(f"❌ GATE FALHOU — {len(vulns_bloqueantes)} chamada(s) de alto risco bloqueante(s)")
+        for v in vulns_bloqueantes:
+            print(f"   • [{v.severidade}] {v.descricao} ({v.arquivo}:{v.linha})")
+        print("=" * 70 + "\n")
+        return 1
+    else:
+        print("✅ GATE PASSOU — nenhuma chamada de alto risco encontrada")
+        print("=" * 70 + "\n")
+        return 0
+
+
 def main():
     import argparse
 
@@ -393,6 +562,11 @@ def main():
         '--cache-dir',
         help='Pasta de cache do projeto (alternativa a pasta_projeto)',
     )
+    parser.add_argument(
+        '--pre-i4',
+        action='store_true',
+        help='Executa apenas a varredura de alto risco (pré-I4)',
+    )
     args = parser.parse_args()
 
     if args.cache_dir:
@@ -400,6 +574,8 @@ def main():
     else:
         pasta = Path(args.pasta_projeto)
 
+    if args.pre_i4:
+        return executar_gate_pre_i4(pasta)
     return executar_gate(pasta)
 
 

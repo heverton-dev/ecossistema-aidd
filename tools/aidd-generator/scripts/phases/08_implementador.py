@@ -56,6 +56,28 @@ except ImportError:  # pragma: no cover — execução direta da fase
         auditar_subprocess_env_ast, formatar_violacoes_auditoria,
     )
 
+# G_CYBERSECURITY_OWASP pré-I4 (item PLAN-0018 gate-owasp-sobre-output-fase-08):
+# Varredura de chamadas de alto risco (os.system, eval, subprocess) antes do
+# gate I4 — impede execução de código com vulnerabilidades bloqueantes.
+try:
+    from ..gates.G_CYBERSECURITY_OWASP import (
+        executar_gate_pre_i4, gerar_relatorio_conformidade,
+    )
+except ImportError:  # pragma: no cover — execução direta da fase
+    try:
+        import importlib.util
+        _owasp_spec = importlib.util.spec_from_file_location(
+            'G_CYBERSECURITY_OWASP',
+            str(Path(__file__).resolve().parent.parent / 'gates' / 'G_CYBERSECURITY_OWASP.py'),
+        )
+        _owasp_mod = importlib.util.module_from_spec(_owasp_spec)
+        _owasp_spec.loader.exec_module(_owasp_mod)
+        executar_gate_pre_i4 = _owasp_mod.executar_gate_pre_i4
+        gerar_relatorio_conformidade = _owasp_mod.gerar_relatorio_conformidade
+    except Exception:
+        executar_gate_pre_i4 = None
+        gerar_relatorio_conformidade = None
+
 # Modelo Pydantic do contrato de codegen da Fase 8 (item NIH #23 / item 11 do
 # plano anti-NIH): quando pydantic+instructor estão disponíveis, o parsing da
 # resposta do LLM passa a usar validação estruturada com retry automático
@@ -740,15 +762,40 @@ class ValidadorGatesPhase8:
                         resultado_pytest: Optional[Dict],
                         resultado_integracao: Optional[Dict] = None,
                         teste_integracao_gerado: bool = False) -> Tuple[List[Gate], bool]:
+        # OWASP pré-I4: bloqueia chamadas de alto risco ANTES do gate I4
+        gate_owasp_pre_i4 = ValidadorGatesPhase8._gate_owasp_pre_i4(pasta_projeto)
         gates = [
             ValidadorGatesPhase8._gate_i1_scripts_implementados(pasta_projeto, scripts_implementados),
             ValidadorGatesPhase8._gate_i2_testes_coletam(resultado_pytest),
             ValidadorGatesPhase8._gate_i3_testes_passam(resultado_pytest),
+            gate_owasp_pre_i4,
             ValidadorGatesPhase8._gate_i4_cli_executa(pasta_projeto),
             ValidadorGatesPhase8._gate_i5_teste_integracao(resultado_integracao, teste_integracao_gerado),
             ValidadorGatesPhase8._gate_i6_arquitetura_deliverable(pasta_projeto),
         ]
         return gates, all(g.passou for g in gates)
+
+    @staticmethod
+    def _gate_owasp_pre_i4(pasta_projeto: Path) -> Gate:
+        """OWASP pré-I4: bloqueia chamadas de alto risco (os.system, eval, subprocess) antes de I4."""
+        if executar_gate_pre_i4 is None or gerar_relatorio_conformidade is None:
+            return Gate('OWASP_pre_I4',
+                       'Varredura OWASP pré-I4 — chamadas de alto risco',
+                       False, 'G_CYBERSECURITY_OWASP indisponível no ambiente')
+        try:
+            relatorio = gerar_relatorio_conformidade(pasta_projeto)
+            passou = relatorio['status'] == 'APROVADO'
+            detalhes = (
+                f"{relatorio['vulnerabilidades_total']} vulnerabilidade(s) encontrada(s) "
+                f"({relatorio['criticas']} crítica(s), {relatorio['altas']} alta(s))"
+            )
+            return Gate('OWASP_pre_I4',
+                       'Varredura OWASP pré-I4 — chamadas de alto risco',
+                       passou, detalhes)
+        except Exception as e:
+            return Gate('OWASP_pre_I4',
+                       'Varredura OWASP pré-I4 — chamadas de alto risco',
+                       False, f"Erro na varredura OWASP: {e}")
 
     @staticmethod
     def _gate_i1_scripts_implementados(pasta_projeto: Path, scripts_implementados: List[Dict]) -> Gate:
@@ -932,10 +979,21 @@ class ImplementadorFase8:
             print(f"   {icon} {gate.gate_id}: {gate.detalhes}")
 
         tempo_execucao = (datetime.now() - tempo_inicio).total_seconds()
+
+        # Relatório de conformidade OWASP pré-I4 para o index
+        relatorio_owasp = None
+        if gerar_relatorio_conformidade is not None:
+            try:
+                relatorio_owasp = gerar_relatorio_conformidade(self.pasta_projeto)
+            except Exception:
+                relatorio_owasp = {'gate': 'G_CYBERSECURITY_OWASP', 'status': 'ERRO',
+                                   'vulnerabilidades_total': 0, 'criticas': 0, 'altas': 0, 'achados': []}
+
         index = self._gerar_index(
             scripts_implementados, resultado_pytest, gates, tempo_execucao,
             teste_integracao_gerado=teste_integracao_gerado,
-            resultado_integracao=resultado_integracao
+            resultado_integracao=resultado_integracao,
+            relatorio_owasp=relatorio_owasp,
         )
 
         # NIH #22: Gerar pacote de contexto consolidado do repositório para Fases 6/7 e LLMs
@@ -1865,7 +1923,8 @@ Rules:
     def _gerar_index(self, scripts_implementados: List[Dict], resultado_pytest: Optional[Dict],
                      gates: List[Gate], tempo_execucao: float,
                      teste_integracao_gerado: bool = False,
-                     resultado_integracao: Optional[Dict] = None) -> Dict:
+                     resultado_integracao: Optional[Dict] = None,
+                     relatorio_owasp: Optional[Dict] = None) -> Dict:
         origem_agregada = self._obter_origem_medicao_agregada()
         if origem_agregada == 'medido_api':
             desc_medicao = 'medido_api (soma de todas as chamadas LLM, incluindo correções)'
@@ -1917,6 +1976,11 @@ Rules:
             },
 
             'gates_executados': [g.to_dict() for g in gates],
+
+            'conformidade_owasp_pre_i4': relatorio_owasp or {
+                'gate': 'G_CYBERSECURITY_OWASP', 'status': 'NAO_EXECUTADO',
+                'vulnerabilidades_total': 0, 'criticas': 0, 'altas': 0, 'achados': []
+            },
 
             'resume_info': {
                 'proxima_fase': 'Nenhuma (projeto funcional completo)',

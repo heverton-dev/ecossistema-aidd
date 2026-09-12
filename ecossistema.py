@@ -655,6 +655,14 @@ def cmd_audit(args):
         [sys.executable, "-m", "pre_commit", "run", "--all-files"], cwd=ROOT_DIR
     )
 
+def cmd_preflight_host(args):
+    """Diagnostico instantaneo (< 2s) de binarios do sistema."""
+    script = os.path.join(ROOT_DIR, "scripts", "preflight_host.py")
+    if not os.path.exists(script):
+        print(f"Erro: script '{script}' nao encontrado.")
+        return 1
+    return run_command([sys.executable, script] + args, cwd=ROOT_DIR)
+
 def cmd_harness(args):
     """Executa auditoria ou limpeza preventiva de armazenamento dos harnesses."""
     action = args[0] if args else "status"
@@ -782,6 +790,10 @@ Comandos disponíveis:
                       Monitora e executa higiene preventiva contra estouro de memória
                       e disco nos bancos de dados e caches dos harnesses (OpenCode,
                       MiMoCode, Claude, Cursor, Antigravity)
+  preflight-host [--json] [--fix]
+                      Diagnostico instantaneo (< 2s) de binarios do sistema
+                      (Git, Node, Docker, Hadolint, Checkov). --json para saida
+                      estruturada, --fix para instrucoes de correcao.
   status              Exibe o status do ecossistema e ferramentas integradas
   status --testes     Roda pytest real em cada ferramenta e atualiza
                       PLANO-EXECUCAO-ESTRUTURADO.json com a contagem medida
@@ -821,6 +833,7 @@ def main():
         "melhoria": cmd_melhoria,
         "audit": cmd_audit,
         "harness": cmd_harness,
+        "preflight-host": cmd_preflight_host,
         "status": cmd_status,
         "help": lambda a: print_help() or 0,
         "--help": lambda a: print_help() or 0,

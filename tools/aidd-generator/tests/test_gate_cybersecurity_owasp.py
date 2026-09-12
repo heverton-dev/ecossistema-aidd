@@ -17,6 +17,13 @@ Cenários cobertos:
   12. Comentários são ignorados
   13. Testes são ignorados
   14. Gate completo com múltiplas vulnerabilidades
+  15. os.system() isolado → bloqueado (Crítica) [pré-I4]
+  16. eval() sem input externo → bloqueado (Crítica) [pré-I4]
+  17. subprocess.run() sem shell=False → bloqueado (Crítica) [pré-I4]
+  18. subprocess.run(shell=False) → passa [pré-I4]
+  19. Relatório de conformidade gera dict correto
+  20. Gate pré-I4 com projeto limpo passa
+  21. Gate pré-I4 com chamada perigosa falha
 """
 
 import sys
@@ -296,3 +303,256 @@ class TestVulnerabilidade:
         assert d['vuln_id'] == 'TEST_1'
         assert d['severidade'] == 'Alta'
         assert d['linha'] == 10
+
+
+# =============================================================================
+# FIXTURES: ALTO RISCO (pré-I4)
+# =============================================================================
+
+@pytest.fixture
+def projeto_os_system(tmp_path):
+    """Projeto com os.system() isolado (sem input externo)."""
+    (tmp_path / 'runner.py').write_text(
+        'import os\n'
+        '\n'
+        'def listar():\n'
+        '    os.system("ls -la")\n',
+        encoding='utf-8',
+    )
+    return tmp_path
+
+
+@pytest.fixture
+def projeto_eval_isolado(tmp_path):
+    """Projeto com eval() sem input externo."""
+    (tmp_path / 'calc.py').write_text(
+        'def calcular(expressao):\n'
+        '    return eval(expressao)\n',
+        encoding='utf-8',
+    )
+    return tmp_path
+
+
+@pytest.fixture
+def projeto_exec_isolado(tmp_path):
+    """Projeto com exec() sem input externo."""
+    (tmp_path / 'loader.py').write_text(
+        'def carregar_codigo(codigo_str):\n'
+        '    exec(codigo_str)\n',
+        encoding='utf-8',
+    )
+    return tmp_path
+
+
+@pytest.fixture
+def projeto_subprocess_sem_shell_false(tmp_path):
+    """Projeto com subprocess.run() sem shell=False explícito."""
+    (tmp_path / 'runner.py').write_text(
+        'import subprocess\n'
+        '\n'
+        'def executar():\n'
+        '    subprocess.run(["ls", "-la"])\n',
+        encoding='utf-8',
+    )
+    return tmp_path
+
+
+@pytest.fixture
+def projeto_subprocess_com_shell_false(tmp_path):
+    """Projeto com subprocess.run(shell=False) — seguro."""
+    (tmp_path / 'runner.py').write_text(
+        'import subprocess\n'
+        '\n'
+        'def executar():\n'
+        '    subprocess.run(["ls", "-la"], shell=False)\n',
+        encoding='utf-8',
+    )
+    return tmp_path
+
+
+@pytest.fixture
+def projeto_subprocess_multiline_shell_false(tmp_path):
+    """Projeto com subprocess.run() multiline com shell=False na linha seguinte."""
+    (tmp_path / 'runner.py').write_text(
+        'import subprocess\n'
+        '\n'
+        'def executar():\n'
+        '    subprocess.run(\n'
+        '        ["ls", "-la"],\n'
+        '        shell=False,\n'
+        '    )\n',
+        encoding='utf-8',
+    )
+    return tmp_path
+
+
+@pytest.fixture
+def projeto_subprocess_popen(tmp_path):
+    """Projeto com subprocess.Popen sem shell=False."""
+    (tmp_path / 'runner.py').write_text(
+        'import subprocess\n'
+        '\n'
+        'def executar():\n'
+        '    subprocess.Popen(["ls"])\n',
+        encoding='utf-8',
+    )
+    return tmp_path
+
+
+@pytest.fixture
+def projeto_subprocess_call(tmp_path):
+    """Projeto com subprocess.call sem shell=False."""
+    (tmp_path / 'runner.py').write_text(
+        'import subprocess\n'
+        '\n'
+        'def executar():\n'
+        '    subprocess.call(["ls"])\n',
+        encoding='utf-8',
+    )
+    return tmp_path
+
+
+# =============================================================================
+# TESTES: ALTO RISCO — escanear_alto_risco()
+# =============================================================================
+
+class TestEscanearAltoRisco:
+    def test_projeto_limpo(self, projeto_limpo):
+        vulns = gate.escanear_alto_risco(projeto_limpo)
+        assert len(vulns) == 0
+
+    def test_os_system_bloqueado(self, projeto_os_system):
+        vulns = gate.escanear_alto_risco(projeto_os_system)
+        assert len(vulns) > 0
+        assert any('os.system' in v.descricao for v in vulns)
+        assert all(v.severidade == 'Critica' for v in vulns)
+
+    def test_eval_isolado_bloqueado(self, projeto_eval_isolado):
+        vulns = gate.escanear_alto_risco(projeto_eval_isolado)
+        assert len(vulns) > 0
+        assert any('eval()' in v.descricao for v in vulns)
+
+    def test_exec_isolado_bloqueado(self, projeto_exec_isolado):
+        vulns = gate.escanear_alto_risco(projeto_exec_isolado)
+        assert len(vulns) > 0
+        assert any('exec()' in v.descricao for v in vulns)
+
+    def test_subprocess_sem_shell_false_bloqueado(self, projeto_subprocess_sem_shell_false):
+        vulns = gate.escanear_alto_risco(projeto_subprocess_sem_shell_false)
+        assert len(vulns) > 0
+        assert any('subprocess' in v.descricao.lower() for v in vulns)
+
+    def test_subprocess_com_shell_false_passa(self, projeto_subprocess_com_shell_false):
+        """subprocess com shell=False NÃO deve ser flagrado como alto risco."""
+        vulns = gate.escanear_alto_risco(projeto_subprocess_com_shell_false)
+        # shell=False = seguro, não deve ter vulnerabilidades bloqueantes
+        alto_risco = [v for v in vulns if v.severidade == 'Critica']
+        assert len(alto_risco) == 0
+
+    def test_subprocess_multiline_shell_false_passa(self, projeto_subprocess_multiline_shell_false):
+        """subprocess multiline com shell=False na linha seguinte NÃO deve ser flagrado."""
+        vulns = gate.escanear_alto_risco(projeto_subprocess_multiline_shell_false)
+        alto_risco = [v for v in vulns if v.severidade == 'Critica']
+        assert len(alto_risco) == 0
+
+    def test_subprocess_popen_bloqueado(self, projeto_subprocess_popen):
+        vulns = gate.escanear_alto_risco(projeto_subprocess_popen)
+        assert len(vulns) > 0
+
+    def test_subprocess_call_bloqueado(self, projeto_subprocess_call):
+        vulns = gate.escanear_alto_risco(projeto_subprocess_call)
+        assert len(vulns) > 0
+
+    def test_comentarios_ignorados(self, tmp_path):
+        """Comentários com eval/os.system devem ser ignorados."""
+        (tmp_path / 'safe.py').write_text(
+            '# os.system("rm -rf /")\n'
+            '# eval("dangerous")\n'
+            'def safe():\n'
+            '    return True\n',
+            encoding='utf-8',
+        )
+        vulns = gate.escanear_alto_risco(tmp_path)
+        assert len(vulns) == 0
+
+    def test_diretorio_tests_ignorado(self, tmp_path):
+        """Arquivos em tests/ devem ser ignorados."""
+        (tmp_path / 'tests').mkdir()
+        (tmp_path / 'tests' / 'test_runner.py').write_text(
+            'import os\n'
+            'os.system("ls")\n',
+            encoding='utf-8',
+        )
+        vulns = gate.escanear_alto_risco(tmp_path)
+        assert len(vulns) == 0
+
+    def test_diretorio_inexistente(self, tmp_path):
+        """Pasta inexistente retorna lista vazia."""
+        vulns = gate.escanear_alto_risco(tmp_path / 'nao_existe')
+        assert len(vulns) == 0
+
+
+# =============================================================================
+# TESTES: RELATÓRIO DE CONFORMIDADE
+# =============================================================================
+
+class TestRelatorioConformidade:
+    def test_projeto_limpo(self, projeto_limpo):
+        rel = gate.gerar_relatorio_conformidade(projeto_limpo)
+        assert rel['status'] == 'APROVADO'
+        assert rel['vulnerabilidades_total'] == 0
+        assert rel['criticas'] == 0
+        assert rel['altas'] == 0
+        assert rel['achados'] == []
+
+    def test_projeto_com_vulnerabilidade(self, projeto_os_system):
+        rel = gate.gerar_relatorio_conformidade(projeto_os_system)
+        assert rel['status'] == 'BLOQUEADO'
+        assert rel['vulnerabilidades_total'] > 0
+        assert rel['criticas'] > 0
+        assert len(rel['achados']) > 0
+
+    def test_estrutura_relatorio(self, projeto_limpo):
+        rel = gate.gerar_relatorio_conformidade(projeto_limpo)
+        assert 'gate' in rel
+        assert 'status' in rel
+        assert 'vulnerabilidades_total' in rel
+        assert 'criticas' in rel
+        assert 'altas' in rel
+        assert 'achados' in rel
+        assert rel['gate'] == 'G_CYBERSECURITY_OWASP'
+
+
+# =============================================================================
+# TESTES: GATE PRÉ-I4 (EXIT CODE)
+# =============================================================================
+
+class TestGatePreI4:
+    def test_projeto_limpo_passa(self, projeto_limpo):
+        resultado = gate.executar_gate_pre_i4(projeto_limpo)
+        assert resultado == 0
+
+    def test_os_system_falha(self, projeto_os_system):
+        resultado = gate.executar_gate_pre_i4(projeto_os_system)
+        assert resultado == 1
+
+    def test_eval_isolado_falha(self, projeto_eval_isolado):
+        resultado = gate.executar_gate_pre_i4(projeto_eval_isolado)
+        assert resultado == 1
+
+    def test_subprocess_sem_shell_false_falha(self, projeto_subprocess_sem_shell_false):
+        resultado = gate.executar_gate_pre_i4(projeto_subprocess_sem_shell_false)
+        assert resultado == 1
+
+    def test_subprocess_com_shell_false_passa(self, projeto_subprocess_com_shell_false):
+        resultado = gate.executar_gate_pre_i4(projeto_subprocess_com_shell_false)
+        assert resultado == 0
+
+    def test_projeto_inexistente_falha(self, tmp_path):
+        resultado = gate.executar_gate_pre_i4(tmp_path / 'nao_existe')
+        assert resultado == 1
+
+    def test_main_com_pre_i4_flag(self, projeto_limpo, monkeypatch):
+        monkeypatch.setattr(sys, 'argv', ['G_CYBERSECURITY_OWASP.py', '--pre-i4', str(projeto_limpo)])
+        resultado = gate.main()
+        assert resultado == 0

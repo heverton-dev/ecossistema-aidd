@@ -154,7 +154,7 @@ def test_executar_todos_gates(implementador_08, tmp_path):
     gates, todos_passaram = implementador_08.ValidadorGatesPhase8.executar_todos(
         tmp_path, scripts, resultado_pytest, resultado_integracao=resultado_integracao, teste_integracao_gerado=True
     )
-    assert len(gates) == 6
+    assert len(gates) == 7
     assert todos_passaram is True
 
 
