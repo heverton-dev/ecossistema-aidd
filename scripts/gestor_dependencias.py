@@ -34,7 +34,7 @@ partir dessas mesmas chaves (ex.: remoto vira {"type":"http","url":...} em
 
 Uso:
   python scripts/gestor_dependencias.py bootstrap [--tipo skills|mcps|todos] [--dry-run]
-  python scripts/gestor_dependencias.py add-skill --nome <nome> --pacote <pacote> --instalar "<comando>" [--verificar <caminho>] [--gitignore "padrao1,padrao2"]
+  python scripts/gestor_dependencias.py add-skill --nome <nome> --pacote <pacote> --instalar "<comando>" [--verificar <caminho>] [--sha256 <hash>] [--gitignore "padrao1,padrao2"]
   python scripts/gestor_dependencias.py add-mcp --nome <nome> --pacote <pacote> --comando <cmd> --args "a,b,c" [--env VAR1,VAR2] [--harnesses claude-code,opencode]
   python scripts/gestor_dependencias.py add-mcp --nome <nome> --pacote <pacote> --tipo remote --url <url> [--harnesses claude-code,opencode]
   python scripts/gestor_dependencias.py list
@@ -44,6 +44,7 @@ Uso:
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
 import os
 import shlex
@@ -112,6 +113,34 @@ def _skill_instalada(cfg):
     return os.path.exists(caminho)
 
 
+def _calcular_sha256(caminho, tamanho_bloco=65536):
+    """SHA-256 real do conteudo do arquivo, lido em blocos (arquivos grandes nao
+    estouram memoria). Nao usar em diretorios: chamador deve checar isfile antes."""
+    hasher = hashlib.sha256()
+    with open(caminho, "rb") as f:
+        for bloco in iter(lambda: f.read(tamanho_bloco), b""):
+            hasher.update(bloco)
+    return hasher.hexdigest()
+
+
+def _checar_hash_skill(cfg):
+    """Compara o SHA-256 real do artefato instalado (cfg['verificar']) contra o
+    esperado em cfg['sha256']. Retorna None quando nao ha divergencia (inclui os
+    casos em que hash nao esta configurado ou 'verificar' aponta pra diretorio —
+    ver 'sha256_nota' no manifesto sobre por que diretorio fica de fora), ou uma
+    string descrevendo a divergencia para bloquear bootstrap/verify."""
+    esperado = cfg.get("sha256")
+    if not esperado:
+        return None
+    caminho = os.path.join(ROOT_DIR, cfg["verificar"])
+    if not os.path.isfile(caminho):
+        return None
+    obtido = _calcular_sha256(caminho)
+    if obtido != esperado:
+        return f"esperado sha256={esperado} obtido sha256={obtido}"
+    return None
+
+
 def bootstrap_skills(apenas=None, dry_run=False):
     """Roda o instalador de cada skill declarada ainda não verificada. Nunca reinstala à toa."""
     manifesto = carregar_manifesto()
@@ -121,6 +150,10 @@ def bootstrap_skills(apenas=None, dry_run=False):
         if apenas and nome != apenas:
             continue
         if _skill_instalada(cfg):
+            divergencia = _checar_hash_skill(cfg)
+            if divergencia:
+                relatorio["falhas"].append(f"{nome} (hash SHA-256 divergente: {divergencia})")
+                continue
             relatorio["ja_instaladas"].append(nome)
             continue
         if dry_run:
@@ -176,6 +209,10 @@ def bootstrap_skills(apenas=None, dry_run=False):
             continue
 
         if codigo == 0:
+            divergencia = _checar_hash_skill(cfg)
+            if divergencia:
+                relatorio["falhas"].append(f"{nome} (hash SHA-256 divergente apos instalacao: {divergencia})")
+                continue
             relatorio["instaladas"].append(nome)
 
     return relatorio
@@ -312,7 +349,7 @@ def _adicionar_padroes_gitignore(padroes):
     return novos
 
 
-def adicionar_skill(nome, pacote, instalar, verificar, gitignore_patterns, dry_run=False):
+def adicionar_skill(nome, pacote, instalar, verificar, gitignore_patterns, sha256=None, dry_run=False):
     manifesto = carregar_manifesto()
     manifesto.setdefault("skills", {})
     ja_existia = nome in manifesto["skills"]
@@ -320,6 +357,7 @@ def adicionar_skill(nome, pacote, instalar, verificar, gitignore_patterns, dry_r
         "pacote": pacote,
         "instalar": instalar,
         "verificar": verificar,
+        "sha256": sha256,
         "gitignore": gitignore_patterns,
     }
     if not dry_run:
@@ -359,7 +397,12 @@ def listar():
     linhas = []
     linhas.append("Skills externas:")
     for nome, cfg in manifesto.get("skills", {}).items():
-        status = "[OK] instalada" if _skill_instalada(cfg) else "[FALTA] nao instalada"
+        if not _skill_instalada(cfg):
+            status = "[FALTA] nao instalada"
+        elif _checar_hash_skill(cfg):
+            status = "[FALHA] hash SHA-256 divergente"
+        else:
+            status = "[OK] instalada"
         linhas.append(f"  - {nome:<24} {status}  ({cfg['pacote']})")
 
     linhas.append("MCPs externos:")
@@ -384,6 +427,10 @@ def verificar():
         total += 1
         if not _skill_instalada(cfg):
             problemas.append(f"[skill/{nome}] nao instalada (esperado em {cfg['verificar']})")
+            continue
+        divergencia = _checar_hash_skill(cfg)
+        if divergencia:
+            problemas.append(f"[skill/{nome}] hash SHA-256 divergente ({divergencia}) — artefato pode ter sido adulterado")
 
     for nome, cfg in manifesto.get("mcps", {}).items():
         for harness in cfg.get("harnesses_alvo", []):
@@ -415,6 +462,7 @@ def _cmd_bootstrap(args_ns):
     resultado_hooks = _ativar_git_hooks(dry_run=args_ns.dry_run)
     print(f"Git hooks (pre-commit auto-sync de componentes/): {resultado_hooks}")
 
+    houve_falha = False
     tipo = args_ns.tipo
     if tipo in ("skills", "todos"):
         rel_skills = bootstrap_skills(dry_run=args_ns.dry_run)
@@ -424,6 +472,8 @@ def _cmd_bootstrap(args_ns):
             print(f"  [INSTALADA] {item}")
         for item in rel_skills["falhas"]:
             print(f"  [FALHA] {item}")
+        if rel_skills["falhas"]:
+            houve_falha = True
     if tipo in ("mcps", "todos"):
         rel_mcps = bootstrap_mcps(dry_run=args_ns.dry_run)
         print(f"MCPs ja registrados: {len(rel_mcps['ja_registrados'])} ({', '.join(rel_mcps['ja_registrados']) or '-'})")
@@ -432,13 +482,18 @@ def _cmd_bootstrap(args_ns):
             print(f"  [REGISTRADO] {item}")
         for item in rel_mcps["harnesses_sem_suporte"]:
             print(f"  [SEM SUPORTE] {item}")
+
+    if houve_falha:
+        print("\n[BLOQUEADO] bootstrap encontrou pendencia(s) acima (inclui possivel divergencia de hash SHA-256) — corrija antes de prosseguir.")
+        return 1
     return 0
 
 
 def _cmd_add_skill(args_ns):
     gitignore_patterns = [p.strip() for p in (args_ns.gitignore or "").split(",") if p.strip()]
     resultado = adicionar_skill(
-        args_ns.nome, args_ns.pacote, args_ns.instalar, args_ns.verificar, gitignore_patterns
+        args_ns.nome, args_ns.pacote, args_ns.instalar, args_ns.verificar, gitignore_patterns,
+        sha256=args_ns.sha256,
     )
     if resultado["ja_existia_no_manifesto"]:
         print(f"[ATUALIZADA] '{args_ns.nome}' ja existia no manifesto, entrada sobrescrita.")
@@ -516,6 +571,10 @@ def main(argv=None):
     p_add_skill.add_argument("--pacote", required=True)
     p_add_skill.add_argument("--instalar", required=True)
     p_add_skill.add_argument("--verificar", required=True)
+    p_add_skill.add_argument(
+        "--sha256", default=None,
+        help="Hash SHA-256 esperado do arquivo em --verificar (so faz sentido quando --verificar aponta pra um arquivo, nao diretorio).",
+    )
     p_add_skill.add_argument("--gitignore", default="")
     p_add_skill.set_defaults(func=_cmd_add_skill)
 

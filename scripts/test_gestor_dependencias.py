@@ -6,8 +6,12 @@ Foco:
 - Tratamento de FileNotFoundError em POSIX
 - Tradução de erro do cmd.exe no Windows
 - Preservação do relatório estruturado (ja_instaladas, instaladas, falhas)
+- Verificação real de hash SHA-256 dos artefatos de skill instalados (Item
+  hash-artefatos-skills-mcps-dependencias-externas)
 """
 
+import argparse
+import hashlib
 import os
 import subprocess
 import pytest
@@ -139,3 +143,191 @@ class TestBootstrapSkillsTratamentoNpx:
         relatorio = gestor_dependencias.bootstrap_skills(dry_run=True)
         assert len(relatorio["falhas"]) == 0
         assert any("[DRY-RUN]" in s for s in relatorio["instaladas"])
+
+
+class TestVerificacaoHashSkill:
+    """DoD do item hash-artefatos-skills-mcps-dependencias-externas: hash SHA-256
+    real dos arquivos instalados, com bloqueio de bootstrap em divergencia."""
+
+    def test_calcular_sha256_bate_com_hashlib_direto(self, tmp_path):
+        arquivo = tmp_path / "SKILL.md"
+        arquivo.write_bytes(b"conteudo de teste do artefato")
+        esperado = hashlib.sha256(arquivo.read_bytes()).hexdigest()
+        assert gestor_dependencias._calcular_sha256(str(arquivo)) == esperado
+
+    def test_checar_hash_sem_campo_sha256_e_ok(self, tmp_path, monkeypatch):
+        monkeypatch.setattr(gestor_dependencias, "ROOT_DIR", str(tmp_path))
+        (tmp_path / "SKILL.md").write_bytes(b"qualquer coisa")
+        cfg = {"verificar": "SKILL.md"}
+        assert gestor_dependencias._checar_hash_skill(cfg) is None
+
+    def test_checar_hash_diretorio_e_ok_mesmo_com_sha256_configurado(self, tmp_path, monkeypatch):
+        """'verificar' apontando pra diretorio (ex.: .venv) fica fora do escopo de
+        hash de arquivo unico — ver 'sha256_nota' em dependencias_externas.json."""
+        monkeypatch.setattr(gestor_dependencias, "ROOT_DIR", str(tmp_path))
+        (tmp_path / "pasta").mkdir()
+        cfg = {"verificar": "pasta", "sha256": "hash-que-nunca-vai-bater"}
+        assert gestor_dependencias._checar_hash_skill(cfg) is None
+
+    def test_checar_hash_bate_quando_conteudo_intacto(self, tmp_path, monkeypatch):
+        monkeypatch.setattr(gestor_dependencias, "ROOT_DIR", str(tmp_path))
+        arquivo = tmp_path / "SKILL.md"
+        arquivo.write_bytes(b"conteudo original assinado")
+        cfg = {"verificar": "SKILL.md", "sha256": hashlib.sha256(arquivo.read_bytes()).hexdigest()}
+        assert gestor_dependencias._checar_hash_skill(cfg) is None
+
+    def test_checar_hash_diverge_quando_arquivo_adulterado(self, tmp_path, monkeypatch):
+        monkeypatch.setattr(gestor_dependencias, "ROOT_DIR", str(tmp_path))
+        arquivo = tmp_path / "SKILL.md"
+        arquivo.write_bytes(b"conteudo original")
+        hash_original = hashlib.sha256(arquivo.read_bytes()).hexdigest()
+        arquivo.write_bytes(b"conteudo adulterado por um ataque de supply chain")
+
+        cfg = {"verificar": "SKILL.md", "sha256": hash_original}
+        divergencia = gestor_dependencias._checar_hash_skill(cfg)
+        assert divergencia is not None
+        assert hash_original in divergencia
+
+    def test_bootstrap_bloqueia_skill_ja_instalada_com_hash_divergente(self, tmp_path, monkeypatch):
+        """DoD 3: bootstrap deve bloquear (reportar falha) quando o artefato ja
+        instalado nao bate com o hash esperado, em vez de aceitar em silencio."""
+        monkeypatch.setattr(gestor_dependencias, "ROOT_DIR", str(tmp_path))
+        arquivo = tmp_path / "SKILL.md"
+        arquivo.write_bytes(b"conteudo legitimo")
+        hash_legitimo = hashlib.sha256(arquivo.read_bytes()).hexdigest()
+        arquivo.write_bytes(b"conteudo trocado sem passar pelo instalador")
+
+        manifesto_fake = {
+            "skills": {
+                "skill-comprometida": {
+                    "pacote": "skill-comprometida",
+                    "instalar": "echo nao deveria rodar",
+                    "verificar": "SKILL.md",
+                    "sha256": hash_legitimo,
+                }
+            }
+        }
+        monkeypatch.setattr(gestor_dependencias, "carregar_manifesto", lambda: manifesto_fake)
+
+        relatorio = gestor_dependencias.bootstrap_skills()
+
+        assert relatorio["ja_instaladas"] == []
+        assert len(relatorio["falhas"]) == 1
+        assert "skill-comprometida" in relatorio["falhas"][0]
+        assert "hash SHA-256 divergente" in relatorio["falhas"][0]
+
+    def test_bootstrap_aceita_skill_ja_instalada_com_hash_intacto(self, tmp_path, monkeypatch):
+        monkeypatch.setattr(gestor_dependencias, "ROOT_DIR", str(tmp_path))
+        arquivo = tmp_path / "SKILL.md"
+        arquivo.write_bytes(b"conteudo legitimo e intacto")
+
+        manifesto_fake = {
+            "skills": {
+                "skill-ok": {
+                    "pacote": "skill-ok",
+                    "instalar": "echo nao deveria rodar",
+                    "verificar": "SKILL.md",
+                    "sha256": hashlib.sha256(arquivo.read_bytes()).hexdigest(),
+                }
+            }
+        }
+        monkeypatch.setattr(gestor_dependencias, "carregar_manifesto", lambda: manifesto_fake)
+
+        relatorio = gestor_dependencias.bootstrap_skills()
+
+        assert relatorio["ja_instaladas"] == ["skill-ok"]
+        assert relatorio["falhas"] == []
+
+    def test_verificar_reporta_divergencia_de_hash(self, tmp_path, monkeypatch):
+        monkeypatch.setattr(gestor_dependencias, "ROOT_DIR", str(tmp_path))
+        arquivo = tmp_path / "SKILL.md"
+        arquivo.write_bytes(b"original")
+        hash_original = hashlib.sha256(arquivo.read_bytes()).hexdigest()
+        arquivo.write_bytes(b"adulterado")
+
+        manifesto_fake = {
+            "skills": {
+                "skill-x": {"pacote": "skill-x", "verificar": "SKILL.md", "sha256": hash_original},
+            },
+            "mcps": {},
+        }
+        monkeypatch.setattr(gestor_dependencias, "carregar_manifesto", lambda: manifesto_fake)
+
+        total, problemas = gestor_dependencias.verificar()
+
+        assert total == 1
+        assert len(problemas) == 1
+        assert "hash SHA-256 divergente" in problemas[0]
+
+    def test_listar_mostra_falha_de_hash(self, tmp_path, monkeypatch):
+        monkeypatch.setattr(gestor_dependencias, "ROOT_DIR", str(tmp_path))
+        arquivo = tmp_path / "SKILL.md"
+        arquivo.write_bytes(b"original")
+        hash_original = hashlib.sha256(arquivo.read_bytes()).hexdigest()
+        arquivo.write_bytes(b"adulterado")
+
+        manifesto_fake = {
+            "skills": {
+                "skill-x": {"pacote": "skill-x", "verificar": "SKILL.md", "sha256": hash_original},
+            },
+            "mcps": {},
+        }
+        monkeypatch.setattr(gestor_dependencias, "carregar_manifesto", lambda: manifesto_fake)
+
+        linhas = gestor_dependencias.listar()
+
+        assert any("[FALHA] hash SHA-256 divergente" in linha for linha in linhas)
+
+    def test_cmd_bootstrap_retorna_exit_1_em_divergencia_de_hash(self, tmp_path, monkeypatch):
+        """DoD 3 no nivel de CLI: 'ecossistema.py dependencia bootstrap' deve sair
+        com codigo != 0 quando ha divergencia, nao so imprimir e seguir com exit 0."""
+        monkeypatch.setattr(gestor_dependencias, "ROOT_DIR", str(tmp_path))
+        monkeypatch.setattr(gestor_dependencias, "_ativar_git_hooks", lambda dry_run=False: "ja_ativo")
+
+        arquivo = tmp_path / "SKILL.md"
+        arquivo.write_bytes(b"conteudo legitimo")
+        hash_legitimo = hashlib.sha256(arquivo.read_bytes()).hexdigest()
+        arquivo.write_bytes(b"conteudo adulterado")
+
+        manifesto_fake = {
+            "skills": {
+                "skill-comprometida": {
+                    "pacote": "skill-comprometida",
+                    "instalar": "echo nao deveria rodar",
+                    "verificar": "SKILL.md",
+                    "sha256": hash_legitimo,
+                }
+            },
+            "mcps": {},
+        }
+        monkeypatch.setattr(gestor_dependencias, "carregar_manifesto", lambda: manifesto_fake)
+
+        args_ns = argparse.Namespace(tipo="skills", dry_run=False)
+        codigo = gestor_dependencias._cmd_bootstrap(args_ns)
+
+        assert codigo == 1
+
+    def test_cmd_bootstrap_retorna_exit_0_quando_tudo_intacto(self, tmp_path, monkeypatch):
+        monkeypatch.setattr(gestor_dependencias, "ROOT_DIR", str(tmp_path))
+        monkeypatch.setattr(gestor_dependencias, "_ativar_git_hooks", lambda dry_run=False: "ja_ativo")
+
+        arquivo = tmp_path / "SKILL.md"
+        arquivo.write_bytes(b"conteudo legitimo e intacto")
+
+        manifesto_fake = {
+            "skills": {
+                "skill-ok": {
+                    "pacote": "skill-ok",
+                    "instalar": "echo nao deveria rodar",
+                    "verificar": "SKILL.md",
+                    "sha256": hashlib.sha256(arquivo.read_bytes()).hexdigest(),
+                }
+            },
+            "mcps": {},
+        }
+        monkeypatch.setattr(gestor_dependencias, "carregar_manifesto", lambda: manifesto_fake)
+
+        args_ns = argparse.Namespace(tipo="skills", dry_run=False)
+        codigo = gestor_dependencias._cmd_bootstrap(args_ns)
+
+        assert codigo == 0
