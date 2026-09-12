@@ -14,11 +14,20 @@ try:
     import materializador
 except ImportError:
     materializador = None
+try:
+    import assinatura_manifesto
+except ImportError:
+    assinatura_manifesto = None
 
 @pytest.fixture(autouse=True)
 def isola_raiz_canonica_do_ecossistema(request, tmp_path, monkeypatch):
     if request.node.get_closest_marker('raiz_real'):
         return
+    raiz_fake = tmp_path / '_ecossistema_fake_root'
     if materializador and hasattr(materializador, '_default_ecossistema_root'):
-        raiz_fake = tmp_path / '_ecossistema_fake_root'
         monkeypatch.setattr(materializador, '_default_ecossistema_root', lambda: raiz_fake)
+    if assinatura_manifesto and hasattr(assinatura_manifesto, '_default_ecossistema_root'):
+        # Isola também a descoberta de chaves Ed25519 do manifesto: sem isto,
+        # os testes usariam a chave privada/pública REAIS do repositório
+        # (fora do tmp_path), vazando estado entre testes.
+        monkeypatch.setattr(assinatura_manifesto, '_default_ecossistema_root', lambda: raiz_fake)

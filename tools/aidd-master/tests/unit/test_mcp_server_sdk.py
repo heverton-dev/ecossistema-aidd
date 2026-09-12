@@ -13,6 +13,7 @@ Nenhum mock da lógica de domínio: banco SQLite real em tmp_path.
 """
 
 import asyncio
+import hashlib
 import importlib.util
 import json
 import os
@@ -172,6 +173,143 @@ class TestSuperficieSincronica(_DBFixture):
     def test_register_injected_tools_sem_diretorio_retorna_zero(self):
         server = MCPServer(self.db_path)
         self.assertEqual(server.register_injected_tools(mcp_dir=os.path.join(self.tmp.name, "inexistente")), 0)
+
+
+class TestRegisterInjectedToolsAssinaturaEd25519(_DBFixture):
+    """Zero-Trust: register_injected_tools() só executa (exec_module) um
+    arquivo de src/core/mcp/ quando o manifesto canônico CAPABILITIES.json
+    está assinado com Ed25519 (chave pública versionada) E o SHA-256 real do
+    arquivo bate com o valor declarado nesse manifesto assinado — item
+    'manifest-assinado-ed25519-componentes-enterprise' (PLAN-0018 fase 05)."""
+
+    def _mcp_dir(self) -> str:
+        caminho = os.path.join(self.tmp.name, "src", "core", "mcp")
+        os.makedirs(caminho, exist_ok=True)
+        return caminho
+
+    def _escrever_ferramenta(self, mcp_dir: str, nome: str, extra: str = "") -> str:
+        caminho = os.path.join(mcp_dir, f"{nome}.py")
+        conteudo = (
+            "TOOL_DEF = {\n"
+            f"    'name': '{nome}',\n"
+            "    'description': 'Ferramenta de teste.',\n"
+            "    'input_schema': {'type': 'object', 'properties': {}},\n"
+            "}\n\n"
+            "def handler(params):\n"
+            "    return {'ok': True}\n"
+            f"{extra}"
+        )
+        with open(caminho, "w", encoding="utf-8") as f:
+            f.write(conteudo)
+        return caminho
+
+    def _escrever_manifesto(self, hashes_por_arquivo: dict) -> str:
+        catalogo = {"mcp": [{"nome": "grupo-teste", "arquivos_hashes": hashes_por_arquivo}]}
+        caminho = os.path.join(self.tmp.name, "CAPABILITIES.json")
+        with open(caminho, "w", encoding="utf-8", newline="\n") as f:
+            json.dump(catalogo, f, ensure_ascii=False, indent=2)
+            f.write("\n")
+        return caminho
+
+    def test_bloqueia_quando_nao_ha_manifesto_algum(self):
+        mcp_dir = self._mcp_dir()
+        self._escrever_ferramenta(mcp_dir, "ferramenta_sem_manifesto")
+        server = MCPServer(self.db_path)
+        self.assertEqual(server.register_injected_tools(mcp_dir=mcp_dir), 0)
+
+    def test_bloqueia_manifesto_com_hash_correto_porem_sem_assinatura(self):
+        mcp_dir = self._mcp_dir()
+        caminho_tool = self._escrever_ferramenta(mcp_dir, "ferramenta_sem_assinatura")
+        rel = os.path.relpath(caminho_tool, self.tmp.name).replace("\\", "/")
+        h = hashlib.sha256(open(caminho_tool, "rb").read()).hexdigest()
+        self._escrever_manifesto({rel: h})
+
+        server = MCPServer(self.db_path)
+        # Manifesto existe e o hash bate, mas não há '.ed25519.sig' — fail-closed.
+        self.assertEqual(server.register_injected_tools(mcp_dir=mcp_dir), 0)
+
+    def test_carrega_quando_manifesto_assinado_e_hash_confere(self):
+        import assinatura_manifesto
+        assinatura_manifesto.salvar_par_chaves()
+
+        mcp_dir = self._mcp_dir()
+        caminho_tool = self._escrever_ferramenta(mcp_dir, "ferramenta_ok")
+        rel = os.path.relpath(caminho_tool, self.tmp.name).replace("\\", "/")
+        h = hashlib.sha256(open(caminho_tool, "rb").read()).hexdigest()
+        manifesto = self._escrever_manifesto({rel: h})
+        self.assertTrue(assinatura_manifesto.assinar_manifesto(manifesto).sucesso)
+
+        server = MCPServer(self.db_path)
+        carregadas = server.register_injected_tools(mcp_dir=mcp_dir)
+        self.assertEqual(carregadas, 1)
+        self.assertIn("ferramenta_ok", [t["name"] for t in server.get_tools_manifest()])
+
+    def test_bloqueia_arquivo_adulterado_apos_assinatura_do_manifesto(self):
+        import assinatura_manifesto
+        assinatura_manifesto.salvar_par_chaves()
+
+        mcp_dir = self._mcp_dir()
+        caminho_tool = self._escrever_ferramenta(mcp_dir, "ferramenta_adulterada")
+        rel = os.path.relpath(caminho_tool, self.tmp.name).replace("\\", "/")
+        h = hashlib.sha256(open(caminho_tool, "rb").read()).hexdigest()
+        manifesto = self._escrever_manifesto({rel: h})
+        self.assertTrue(assinatura_manifesto.assinar_manifesto(manifesto).sucesso)
+
+        # Adulteração DEPOIS da assinatura: manifesto e assinatura continuam
+        # íntegros, mas o conteúdo real diverge do hash confiável.
+        with open(caminho_tool, "a", encoding="utf-8") as f:
+            f.write("\n# linha maliciosa injetada apos a assinatura\n")
+
+        server = MCPServer(self.db_path)
+        self.assertEqual(server.register_injected_tools(mcp_dir=mcp_dir), 0)
+
+    def test_bloqueia_ataque_que_reescreve_arquivo_e_hash_no_manifesto(self):
+        """O caso central do item: um atacante com acesso de escrita ao
+        repositório adultera o arquivo E recalcula/reescreve o hash SHA-256
+        correspondente no manifesto para bater — sem a chave privada Ed25519,
+        ele não consegue re-assinar, e a verificação recusa o manifesto
+        inteiro (nenhuma ferramenta injetada é carregada)."""
+        import assinatura_manifesto
+        assinatura_manifesto.salvar_par_chaves()
+
+        mcp_dir = self._mcp_dir()
+        caminho_tool = self._escrever_ferramenta(mcp_dir, "ferramenta_forjada")
+        rel = os.path.relpath(caminho_tool, self.tmp.name).replace("\\", "/")
+        h_original = hashlib.sha256(open(caminho_tool, "rb").read()).hexdigest()
+        manifesto = self._escrever_manifesto({rel: h_original})
+        assinatura_manifesto.assinar_manifesto(manifesto)
+
+        with open(caminho_tool, "a", encoding="utf-8") as f:
+            f.write("\n# payload malicioso\n")
+        h_novo = hashlib.sha256(open(caminho_tool, "rb").read()).hexdigest()
+
+        with open(manifesto, "r", encoding="utf-8") as f:
+            catalogo = json.load(f)
+        catalogo["mcp"][0]["arquivos_hashes"][rel] = h_novo
+        with open(manifesto, "w", encoding="utf-8", newline="\n") as f:
+            json.dump(catalogo, f, ensure_ascii=False, indent=2)
+
+        server = MCPServer(self.db_path)
+        self.assertEqual(server.register_injected_tools(mcp_dir=mcp_dir), 0)
+
+    def test_ignora_arquivo_nao_registrado_no_manifesto_mas_carrega_os_demais(self):
+        import assinatura_manifesto
+        assinatura_manifesto.salvar_par_chaves()
+
+        mcp_dir = self._mcp_dir()
+        caminho_registrado = self._escrever_ferramenta(mcp_dir, "ferramenta_registrada")
+        self._escrever_ferramenta(mcp_dir, "ferramenta_intrusa")
+        rel = os.path.relpath(caminho_registrado, self.tmp.name).replace("\\", "/")
+        h = hashlib.sha256(open(caminho_registrado, "rb").read()).hexdigest()
+        manifesto = self._escrever_manifesto({rel: h})
+        self.assertTrue(assinatura_manifesto.assinar_manifesto(manifesto).sucesso)
+
+        server = MCPServer(self.db_path)
+        carregadas = server.register_injected_tools(mcp_dir=mcp_dir)
+        nomes = [t["name"] for t in server.get_tools_manifest()]
+        self.assertEqual(carregadas, 1)
+        self.assertIn("ferramenta_registrada", nomes)
+        self.assertNotIn("ferramenta_intrusa", nomes)
 
 
 class TestIntegracaoSDKOpcional(unittest.TestCase):

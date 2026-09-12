@@ -35,6 +35,11 @@ try:
 except ImportError:
     from core.escritor_atomico import escrever_atomico, escrever_json_atomico
 
+try:
+    from assinatura_manifesto import assinar_manifesto
+except ImportError:
+    from core.assinatura_manifesto import assinar_manifesto
+
 
 def _timestamp() -> str:
     return datetime.datetime.now().isoformat()
@@ -364,6 +369,23 @@ def remover_componente(tipo: str, nome: str, root_dir: str = ".") -> Result:
         )
 
     return Result.ok({"removidos": removidos, "nome": nome, "tipo": tipo})
+
+
+def assinar_manifesto_canonico(registry_path: str) -> Result:
+    """Assina o manifesto canônico (CAPABILITIES.json) com a chave privada
+    Ed25519 do ecossistema, logo após 'sincronizador_harness' persistir o
+    registro com os hashes SHA-256 recalculados.
+
+    Item 2 da Definição de Pronto (manifest-assinado-ed25519-componentes-enterprise):
+    eleva o mecanismo de hash SHA-256 (auto-referenciado no mesmo arquivo que
+    descreve os dados) para um manifesto assinado — a assinatura só é válida
+    para quem possui a chave privada, nunca versionada no repositório.
+
+    Falha de assinatura (ex.: chave privada ausente em ambiente de
+    desenvolvimento) não é fatal para a operação de injeção: apenas deixa o
+    manifesto sem assinatura, e 'register_injected_tools' passará a recusar
+    carregar componentes com base nele (fail-closed)."""
+    return assinar_manifesto(registry_path)
 
 
 def _executar_rollback(

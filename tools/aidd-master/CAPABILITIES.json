@@ -22,9 +22,12 @@
       "camada_alvo": "kernel_core",
       "alvo_projeto": "aidd-master",
       "arquivos": [
-        "C:\\Users\\trcnologia\\orca\\workspaces\\aidd-master\\feat-add-skills-mcps-rules-specs\\src\\core\\mcp\\auditoria-seguranca.py"
+        "src/core/mcp/auditoria-seguranca.py"
       ],
-      "atualizado_em": "2026-09-03T16:02:11.627681"
+      "atualizado_em": "2026-09-03T16:02:11.627681",
+      "arquivos_hashes": {
+        "src/core/mcp/auditoria-seguranca.py": "d178180ebf65ba22feeded78ce64cf03228710309d48fcfae7ac995957a1e9e8"
+      }
     }
   ]
 }

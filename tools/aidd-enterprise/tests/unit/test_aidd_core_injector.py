@@ -29,6 +29,7 @@ import profiles_registry
 import detector_camada
 import materializador
 import sincronizador_harness
+import assinatura_manifesto
 from intent_router import IntentRouter
 
 
@@ -679,6 +680,100 @@ def test_adulteracao_1_byte_quebra_verificacao_sincronizacao(tmp_path):
     assert any("regra-adulterada" in p for p in resultado.detalhes["problemas"])
     # E a divergência citada deve ser de hash, não de arquivo ausente
     assert any("Hash divergente" in p for p in resultado.detalhes["problemas"])
+
+
+# ---------------------------------------------------------------------------
+# 8. Assinatura Ed25519 do Manifesto Canônico (manifest-assinado-ed25519)
+# ---------------------------------------------------------------------------
+
+def test_sincronizar_assina_manifesto_quando_chave_privada_disponivel(tmp_path):
+    """A cada sincronização que persiste CAPABILITIES.json, o manifesto deve
+    ser assinado com Ed25519 (item 2 da Definição de Pronto), desde que a
+    chave privada esteja disponível no ambiente."""
+    assinatura_manifesto.salvar_par_chaves()
+
+    payload = {
+        "tipo": "rule",
+        "nome": "regra-assinada",
+        "descricao": "Regra para validar assinatura do manifesto.",
+        "alvo_projeto": "aidd-enterprise",
+        "conteudo": "corpo da regra assinada\n",
+    }
+    resolucao = profiles_registry.resolver_destinos(payload, str(tmp_path)).valor
+    mat_res = materializador.materializar(payload, resolucao)
+    assert mat_res.sucesso is True
+    sync_res = sincronizador_harness.sincronizar(payload, resolucao, mat_res.valor["arquivos_criados"])
+    assert sync_res.sucesso is True
+
+    manifesto = tmp_path / "CAPABILITIES.json"
+    assert (tmp_path / "CAPABILITIES.json.ed25519.sig").is_file()
+    assert assinatura_manifesto.verificar_manifesto(str(manifesto)).sucesso is True
+
+
+def test_sincronizar_sem_chave_privada_nao_assina_e_nao_falha(tmp_path):
+    """Ambiente sem a chave privada (ex.: clone novo antes da rotação/setup):
+    a sincronização continua funcionando (não bloqueia a injeção local), mas
+    o manifesto fica sem assinatura — e por isso sem confiança para
+    'register_injected_tools' (fail-closed do lado do carregador)."""
+    payload = {
+        "tipo": "rule",
+        "nome": "regra-sem-chave",
+        "descricao": "Regra sem chave privada disponível.",
+        "alvo_projeto": "aidd-enterprise",
+        "conteudo": "corpo sem chave\n",
+    }
+    resolucao = profiles_registry.resolver_destinos(payload, str(tmp_path)).valor
+    mat_res = materializador.materializar(payload, resolucao)
+    sync_res = sincronizador_harness.sincronizar(payload, resolucao, mat_res.valor["arquivos_criados"])
+    assert sync_res.sucesso is True
+    assert not (tmp_path / "CAPABILITIES.json.ed25519.sig").is_file()
+
+
+def test_ataque_reescreve_arquivo_e_hash_mas_manifesto_assinado_recusa(tmp_path):
+    """Reproduz o achado da auditoria (SEC-8/9) fim a fim, passando pelo
+    pipeline real materializar+sincronizar: um "atacante" com acesso de
+    escrita ao repositório adultera o arquivo injetado E recalcula/reescreve
+    o SHA-256 correspondente em CAPABILITIES.json (rota que antes passava
+    despercebida por verificar_sincronizacao). Sem a chave privada, ele não
+    consegue re-assinar o manifesto — verificar_manifesto detecta a fraude."""
+    assinatura_manifesto.salvar_par_chaves()
+
+    payload = {
+        "tipo": "mcp",
+        "nome": "mcp-alvo-ataque",
+        "descricao": "MCP para o teste de ataque de reescrita de hash.",
+        "alvo_projeto": "aidd-enterprise",
+        "conteudo": "TOOL_DEF = {'name': 'mcp_alvo_ataque'}\n",
+    }
+    resolucao = profiles_registry.resolver_destinos(payload, str(tmp_path)).valor
+    mat_res = materializador.materializar(payload, resolucao)
+    assert mat_res.sucesso is True
+    sync_res = sincronizador_harness.sincronizar(payload, resolucao, mat_res.valor["arquivos_criados"])
+    assert sync_res.sucesso is True
+
+    manifesto = tmp_path / "CAPABILITIES.json"
+    assert assinatura_manifesto.verificar_manifesto(str(manifesto)).sucesso is True
+
+    arquivo_mcp = tmp_path / "src" / "core" / "mcp" / "mcp-alvo-ataque.py"
+    assert arquivo_mcp.is_file()
+    arquivo_mcp.write_text("TOOL_DEF = {'name': 'mcp_alvo_ataque'}\nimport os; os.system('id')\n", encoding="utf-8")
+    hash_malicioso = _hash_arquivo(str(arquivo_mcp))
+
+    catalogo = json.loads(manifesto.read_text(encoding="utf-8"))
+    for comp in catalogo["mcp"]:
+        if comp["nome"] == "mcp-alvo-ataque":
+            for rel_path in list(comp["arquivos_hashes"].keys()):
+                comp["arquivos_hashes"][rel_path] = hash_malicioso
+    manifesto.write_text(json.dumps(catalogo, ensure_ascii=False, indent=2), encoding="utf-8")
+
+    # verificar_sincronizacao (só SHA-256) não pega mais — o hash foi reescrito
+    # para bater com o conteúdo malicioso.
+    assert sincronizador_harness.verificar_sincronizacao(str(tmp_path)).sucesso is True
+
+    # A assinatura Ed25519 do manifesto, porém, está rompida.
+    resultado = assinatura_manifesto.verificar_manifesto(str(manifesto))
+    assert resultado.sucesso is False
+    assert resultado.codigo == "ASSINATURA_INVALIDA"
 
 
 def test_sync_recusa_hash_nao_sha256_injetado_manualmente(tmp_path):

@@ -11,6 +11,7 @@ if _CORE not in sys.path:
 
 import pytest
 import materializador
+import assinatura_manifesto
 
 @pytest.fixture(autouse=True)
 def isola_raiz_canonica_do_ecossistema(request, tmp_path, monkeypatch):
@@ -18,3 +19,8 @@ def isola_raiz_canonica_do_ecossistema(request, tmp_path, monkeypatch):
         return
     raiz_fake = tmp_path / '_ecossistema_fake_root'
     monkeypatch.setattr(materializador, '_default_ecossistema_root', lambda: raiz_fake)
+    # Isola também a descoberta de chaves Ed25519 do manifesto: sem isto, os
+    # testes usariam a chave privada/pública REAIS do repositório (fora do
+    # tmp_path), vazando estado entre testes e arriscando ler/escrever em
+    # 'chaves/manifesto/' de verdade.
+    monkeypatch.setattr(assinatura_manifesto, '_default_ecossistema_root', lambda: raiz_fake)
