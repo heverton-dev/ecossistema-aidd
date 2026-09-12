@@ -17,6 +17,7 @@ Tokens: 0 (100% Python determinístico)
 """
 
 import sys
+import os
 import json
 import hashlib
 from pathlib import Path
@@ -24,6 +25,18 @@ from datetime import datetime, timezone
 from typing import Optional, Dict, List, Any
 import requests
 from concurrent.futures import ThreadPoolExecutor, as_completed
+
+# Escritor atômico: staging → fsync → os.replace
+try:
+    from escritor_atomico import escrever_atomico, escrever_json_atomico
+except ImportError:
+    import importlib.util
+    _comp_dir = os.path.join(
+        os.path.dirname(__file__), "..", "..", "..", "..", "componentes", "compartilhado", "src-core"
+    )
+    if os.path.isdir(_comp_dir) and _comp_dir not in sys.path:
+        sys.path.insert(0, _comp_dir)
+    from escritor_atomico import escrever_atomico, escrever_json_atomico
 
 if sys.platform == 'win32':
     sys.stdout.reconfigure(encoding='utf-8')
@@ -676,8 +689,7 @@ class PesquisadorFase1:
 
         # 6. Salvar index
         path_index = self.pasta_cache / '_phase_01_index.json'
-        with open(path_index, 'w', encoding='utf-8') as f:
-            json.dump(index, f, indent=2, ensure_ascii=False)
+        escrever_json_atomico(path_index, index)
         print(f"   ✓ {path_index}")
 
         print(f"\n{'=' * 60}")
@@ -730,22 +742,10 @@ class PesquisadorFase1:
         refs_hf = [r.to_dict() for r in referencias if r.fonte == 'huggingface']
 
         # Salvar JSONs
-        (self.pasta_data / 'referencias_github.json').write_text(
-            json.dumps(refs_github, indent=2, ensure_ascii=False),
-            encoding='utf-8'
-        )
-        (self.pasta_data / 'referencias_hf.json').write_text(
-            json.dumps(refs_hf, indent=2, ensure_ascii=False),
-            encoding='utf-8'
-        )
-        (self.pasta_data / 'insights_phase1.json').write_text(
-            json.dumps(insights, indent=2, ensure_ascii=False),
-            encoding='utf-8'
-        )
-        (self.pasta_data / 'matriz_stacks.json').write_text(
-            json.dumps(matriz_stacks, indent=2, ensure_ascii=False),
-            encoding='utf-8'
-        )
+        escrever_json_atomico(self.pasta_data / 'referencias_github.json', refs_github)
+        escrever_json_atomico(self.pasta_data / 'referencias_hf.json', refs_hf)
+        escrever_json_atomico(self.pasta_data / 'insights_phase1.json', insights)
+        escrever_json_atomico(self.pasta_data / 'matriz_stacks.json', matriz_stacks)
 
 
 # =============================================================================

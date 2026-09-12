@@ -23,6 +23,18 @@ import tempfile
 
 from cookiecutter.main import cookiecutter
 
+# Escritor atômico: staging → fsync → os.replace
+try:
+    from escritor_atomico import escrever_atomico, escrever_json_atomico
+except ImportError:
+    import importlib.util
+    _comp_dir = os.path.join(
+        os.path.dirname(__file__), "..", "..", "..", "componentes", "compartilhado", "src-core"
+    )
+    if os.path.isdir(_comp_dir) and _comp_dir not in sys.path:
+        sys.path.insert(0, _comp_dir)
+    from escritor_atomico import escrever_atomico, escrever_json_atomico
+
 if hasattr(sys.stdout, 'reconfigure'):
     sys.stdout.reconfigure(encoding='utf-8', errors='replace')
 
@@ -428,7 +440,7 @@ def _setup_directories(target_dir: str) -> dict[str, str]:
         os.path.join(shared_ui_dir, "__init__.py"),
         os.path.join(shared_utils_dir, "__init__.py"),
     ):
-        open(init_path, "w", encoding="utf-8").close()
+        escrever_atomico(init_path, "")
 
     return {
         "src": src_dir,
@@ -521,8 +533,7 @@ def _generate_structured_plan(suite_name: str, db_engine: str, target_dir: str) 
         ],
     }
 
-    with open(os.path.join(target_dir, "PLANO-EXECUCAO-ESTRUTURADO.json"), "w", encoding="utf-8") as f:
-        json.dump(plano_dict, f, ensure_ascii=False, indent=2)
+    escrever_json_atomico(os.path.join(target_dir, "PLANO-EXECUCAO-ESTRUTURADO.json"), plano_dict)
 
 
 def _generate_modules(modules: list, target_dir: str) -> list[str]:
@@ -539,13 +550,11 @@ def _generate_server_and_ui(
 ) -> None:
     """Gerar Servidor Monolítico Modular src/server.py e Front-ends."""
     server_code = generate_modular_server_code(suite_name, clean_modules, db_engine=db_engine)
-    with open(os.path.join(src_dir, "server.py"), "w", encoding="utf-8") as f:
-        f.write(server_code)
+    escrever_atomico(os.path.join(src_dir, "server.py"), server_code)
     print("  [+] Servidor dinâmico 'src/server.py' gerado com sucesso!")
 
     index_html = generate_superapp_index_html(suite_name, clean_modules)
-    with open(os.path.join(static_dir, "index.html"), "w", encoding="utf-8") as f:
-        f.write(index_html)
+    escrever_atomico(os.path.join(static_dir, "index.html"), index_html)
     print("  [+] Front-end Super-App 'src/static/index.html' gerado!")
 
     docs_template_path = os.path.join(templates_v2, "docs.html")
@@ -553,8 +562,7 @@ def _generate_server_and_ui(
         with open(docs_template_path, "r", encoding="utf-8") as tmpf:
             raw_docs_html = tmpf.read()
         final_docs_html = generate_documentation_html(suite_name, clean_modules, src_dir, raw_docs_html)
-        with open(os.path.join(static_dir, "docs.html"), "w", encoding="utf-8") as outf:
-            outf.write(final_docs_html)
+        escrever_atomico(os.path.join(static_dir, "docs.html"), final_docs_html)
         print("  [+] Front-end Docs 'src/static/docs.html' gerado dinamicamente via AST!")
 
     output_css_src = os.path.join(templates_v2, "output.css")
@@ -576,10 +584,8 @@ def _generate_manifests(target_dir: str, db_engine: str) -> None:
     )
     if db_engine == "postgres":
         req_content += "psycopg2-binary>=2.9.9\n"
-    with open(os.path.join(target_dir, "requirements.txt"), "w", encoding="utf-8") as f:
-        f.write(req_content)
-    with open(os.path.join(target_dir, "setup.cfg"), "w", encoding="utf-8") as f:
-        f.write("[mutmut]\npaths_to_mutate=src/\nbackup=False\nrunner=pytest\ntests_dir=tests/\n")
+    escrever_atomico(os.path.join(target_dir, "requirements.txt"), req_content)
+    escrever_atomico(os.path.join(target_dir, "setup.cfg"), "[mutmut]\npaths_to_mutate=src/\nbackup=False\nrunner=pytest\ntests_dir=tests/\n")
     print("  [+] Manifesto 'requirements.txt' e 'setup.cfg' gerados!")
 
 
@@ -651,12 +657,9 @@ def _copy_governance_and_rules(
 4. **Impeccable UI:** SVGs Lucide, modais customizados, toasts assíncronos e conformidade WCAG 2.1.
 5. **Quality Gates:** Homologação obrigatória (exit 0) em todos os 7 gates mecânicos (`python scripts/aidd.py audit --report`).
 """
-    with open(os.path.join(cursor_rules_dir, "aidd_rules.mdc"), "w", encoding="utf-8") as f:
-        f.write(rules_content)
-    with open(os.path.join(claude_dir, "CLAUDE.md"), "w", encoding="utf-8") as f:
-        f.write(rules_content)
-    with open(os.path.join(agent_rules_dir, "rules.md"), "w", encoding="utf-8") as f:
-        f.write(rules_content)
+    escrever_atomico(os.path.join(cursor_rules_dir, "aidd_rules.mdc"), rules_content)
+    escrever_atomico(os.path.join(claude_dir, "CLAUDE.md"), rules_content)
+    escrever_atomico(os.path.join(agent_rules_dir, "rules.md"), rules_content)
     print("  [+] Multi-IDE Rules (.cursor, .claude, .agent) sincronizadas!")
 
     contexto_md = f"""# Grafo de Contexto e Memória do Projeto: {suite_name}
@@ -680,8 +683,7 @@ def _copy_governance_and_rules(
 - `jobs.py`: Fila de tarefas em background (`JobQueue`).
 - `security.py` & `openapi.py`: Criptografia JWT HS256, RBAC e OpenAPI 3.1.
 """
-    with open(os.path.join(target_dir, "CONTEXTO-PROJETO.md"), "w", encoding="utf-8") as f:
-        f.write(contexto_md)
+    escrever_atomico(os.path.join(target_dir, "CONTEXTO-PROJETO.md"), contexto_md)
     print("  [+] Grafo de Memória 'CONTEXTO-PROJETO.md' gerado!")
 
 

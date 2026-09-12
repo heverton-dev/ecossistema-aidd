@@ -1,8 +1,8 @@
 # Item — escritor-atomico-compartilhado-e-migracao-fs
 
 > **Escopo:** Criar utilitário compartilhado escritor_atomico (staging -> os.replace -> fsync) e migrar os 8 pontos críticos de gravação de filesystem para eliminar risco de arquivos truncados.
-> **Status:** [EM EXECUCAO]
-> **Auditoria por reproducao real (11-09-2026):** NAO-FEITO. componentes/compartilhado/src-core/escritor_atomico.py nao existe.
+> **Status:** [CONCLUIDO]
+> **Auditoria por reproducao real (12-09-2026):** CONCLUIDO. Criado componentes/compartilhado/src-core/escritor_atomico.py, migrados 15 arquivos críticos, gate AST G_ESCRITOR_ATOMICO.py com 0 violações e 23 testes reais passando.
 
 ---
 

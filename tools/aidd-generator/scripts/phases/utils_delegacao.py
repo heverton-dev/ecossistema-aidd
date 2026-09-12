@@ -29,6 +29,18 @@ try:
 except ImportError:
     _WATCHDOG_DISPONIVEL = False
 
+# Escritor atômico: staging → fsync → os.replace
+try:
+    from escritor_atomico import escrever_json_atomico
+except ImportError:
+    import importlib.util
+    _comp_dir = os.path.join(
+        os.path.dirname(__file__), "..", "..", "..", "..", "componentes", "compartilhado", "src-core"
+    )
+    if os.path.isdir(_comp_dir) and _comp_dir not in sys.path:
+        sys.path.insert(0, _comp_dir)
+    from escritor_atomico import escrever_json_atomico
+
 if _WATCHDOG_DISPONIVEL:
     class _ArquivoRespostaHandler(FileSystemEventHandler):
         """Handler leve para acordar o loop de espera assim que o arquivo é modificado/criado."""
@@ -665,8 +677,7 @@ class RequisicaoLLMDelegada:
         }
         if _validar_request is not None:
             _validar_request(dados)
-        with open(caminho, 'w', encoding='utf-8') as f:
-            json.dump(dados, f, indent=2, ensure_ascii=False)
+        escrever_json_atomico(caminho, dados)
         return caminho
 
     @staticmethod

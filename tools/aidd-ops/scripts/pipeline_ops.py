@@ -27,6 +27,13 @@ _SCRIPTS_DIR = os.path.dirname(os.path.abspath(__file__))
 _TOOL_ROOT = os.path.dirname(_SCRIPTS_DIR)
 sys.path.insert(0, os.path.join(_TOOL_ROOT, "src"))
 
+# Escritor atômico: staging → fsync → os.replace
+_ECOSISTEMA_ROOT = os.path.join(_TOOL_ROOT, "..", "..")
+_COMP_DIR = os.path.join(_ECOSISTEMA_ROOT, "componentes", "compartilhado", "src-core")
+if os.path.isdir(_COMP_DIR) and _COMP_DIR not in sys.path:
+    sys.path.insert(0, _COMP_DIR)
+from escritor_atomico import escrever_json_atomico
+
 from core.result import Result
 
 # Importar as 3 fases
@@ -47,10 +54,9 @@ def _timestamp_iso() -> str:
 
 
 def _gravar_plano(caminho_plano: str, plano: dict) -> None:
-    """Grava o plano de infraestrutura em disco como JSON."""
+    """Grava o plano de infraestrutura em disco como JSON (atômico)."""
     os.makedirs(os.path.dirname(caminho_plano) or ".", exist_ok=True)
-    with open(caminho_plano, "w", encoding="utf-8") as f:
-        json.dump(plano, f, indent=2, ensure_ascii=False)
+    escrever_json_atomico(caminho_plano, plano)
 
 
 def _imprimir_resumo(plano: dict) -> None:

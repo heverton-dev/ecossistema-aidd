@@ -21,6 +21,18 @@ from pathlib import Path
 from datetime import datetime, timezone
 from typing import Optional, Dict, List, Any
 
+# Escritor atômico: staging → fsync → os.replace
+try:
+    from escritor_atomico import escrever_atomico, escrever_json_atomico
+except ImportError:
+    import importlib.util
+    _comp_dir = os.path.join(
+        os.path.dirname(__file__), "..", "..", "..", "..", "componentes", "compartilhado", "src-core"
+    )
+    if os.path.isdir(_comp_dir) and _comp_dir not in sys.path:
+        sys.path.insert(0, _comp_dir)
+    from escritor_atomico import escrever_atomico, escrever_json_atomico
+
 if sys.platform == 'win32':
     sys.stdout.reconfigure(encoding='utf-8')
 
@@ -913,15 +925,13 @@ Projeto com score máximo — foco em manutenção e evolução incremental.
         """Salvar análise e roadmap"""
         # Salvar AVALIACAO-AUTO-CRITICA.md na raiz do projeto
         path_relatorio = self.pasta_projeto / 'AVALIACAO-AUTO-CRITICA.md'
-        with open(path_relatorio, 'w', encoding='utf-8') as f:
-            f.write(artefatos['relatorio'])
+        escrever_atomico(path_relatorio, artefatos['relatorio'])
 
         # Salvar ROADMAP-EVOLUCAO.md em .aidd/
         path_roadmap = self.pasta_projeto / '.aidd' / 'ROADMAP-EVOLUCAO.md'
         path_roadmap.parent.mkdir(parents=True, exist_ok=True)
-        with open(path_roadmap, 'w', encoding='utf-8') as f:
-            f.write("# 🚀 Roadmap de Evolução\n\n")
-            f.write(artefatos['relatorio'])
+        conteudo_roadmap = "# 🚀 Roadmap de Evolução\n\n" + artefatos['relatorio']
+        escrever_atomico(path_roadmap, conteudo_roadmap)
 
         tok_info = artefatos.get('tokens_consolidado', {})
 
@@ -957,8 +967,7 @@ Projeto com score máximo — foco em manutenção e evolução incremental.
         }
 
         path_index = self.cache_path / '_phase_07_index.json'
-        with open(path_index, 'w', encoding='utf-8') as f:
-            json.dump(index, f, indent=2, ensure_ascii=False)
+        escrever_json_atomico(path_index, index)
 
 
 # =============================================================================

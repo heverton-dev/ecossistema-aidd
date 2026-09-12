@@ -27,6 +27,18 @@ from datetime import datetime, timezone
 from typing import Optional, Dict, List, Any
 from concurrent.futures import ThreadPoolExecutor, TimeoutError as FutureTimeoutError, as_completed
 
+# Escritor atômico: staging → fsync → os.replace
+try:
+    from escritor_atomico import escrever_atomico, escrever_json_atomico
+except ImportError:
+    import importlib.util
+    _comp_dir = os.path.join(
+        os.path.dirname(__file__), "..", "..", "..", "..", "componentes", "compartilhado", "src-core"
+    )
+    if os.path.isdir(_comp_dir) and _comp_dir not in sys.path:
+        sys.path.insert(0, _comp_dir)
+    from escritor_atomico import escrever_atomico, escrever_json_atomico
+
 # Importar utils para detectar modelo e protocolo delegado.
 # Import relativo (modo pacote) com fallback bare (execução direta da fase),
 # preservando os dois modos sem mutação de sys.path.
@@ -386,11 +398,9 @@ class DesignerFase3:
 
         path_design.parent.mkdir(parents=True, exist_ok=True)
 
-        with open(path_index, 'w', encoding='utf-8') as f:
-            json.dump(index, f, indent=2, ensure_ascii=False)
+        escrever_json_atomico(path_index, index)
 
-        with open(path_design, 'w', encoding='utf-8') as f:
-            json.dump(design_consolidado, f, indent=2, ensure_ascii=False)
+        escrever_json_atomico(path_design, design_consolidado)
 
         print(f"   ✓ {path_index}")
         print(f"   ✓ {path_design}")

@@ -30,6 +30,11 @@ try:
 except ImportError:
     from core.result import Result
 
+try:
+    from escritor_atomico import escrever_atomico, escrever_json_atomico
+except ImportError:
+    from core.escritor_atomico import escrever_atomico, escrever_json_atomico
+
 
 def _timestamp() -> str:
     return datetime.datetime.now().isoformat()
@@ -351,9 +356,7 @@ def remover_componente(tipo: str, nome: str, root_dir: str = ".") -> Result:
 
     catalogo[tipo] = [c for c in lista if c.get("nome") != nome]
     try:
-        with open(registry_path, "w", encoding="utf-8", newline="\n") as f:
-            json.dump(catalogo, f, ensure_ascii=False, indent=2)
-            f.write("\n")
+        escrever_json_atomico(registry_path, catalogo, ensure_ascii=False)
     except OSError as exc:
         return Result.fail(
             f"Falha ao persistir registry atualizado: {exc}",
@@ -446,8 +449,7 @@ def materializar(
                 if parent and not os.path.isdir(parent):
                     os.makedirs(parent, exist_ok=True)
                     dirs_criados.append(parent)
-                with open(dest, "w", encoding="utf-8", newline="\n") as f:
-                    f.write(cont)
+                escrever_atomico(dest, cont)
                 criados.append(dest)
             return Result.ok({"arquivos_criados": criados, "conteudo": mapa_arquivos})
         except OSError as e:
@@ -495,14 +497,12 @@ def materializar(
 
         novo_conteudo = json.dumps(dados, indent=2, ensure_ascii=False) + "\n"
         try:
-            with open(mcp_path, "w", encoding="utf-8", newline="\n") as f:
-                f.write(novo_conteudo)
+            escrever_atomico(mcp_path, novo_conteudo)
             return Result.ok({"arquivos_criados": [mcp_path], "conteudo": novo_conteudo})
         except OSError as exc:
             if existia_antes and conteudo_antigo is not None:
                 try:
-                    with open(mcp_path, "w", encoding="utf-8", newline="\n") as f:
-                        f.write(conteudo_antigo)
+                    escrever_atomico(mcp_path, conteudo_antigo)
                 except OSError:
                     pass
             elif not existia_antes and os.path.exists(mcp_path):
@@ -549,8 +549,7 @@ def materializar(
             if parent and not os.path.isdir(parent):
                 os.makedirs(parent, exist_ok=True)
                 dirs_criados.append(parent)
-            with open(destino, "w", encoding="utf-8", newline="\n") as f:
-                f.write(conteudo)
+            escrever_atomico(destino, conteudo)
             criados.append(destino)
 
         # Integração canônica Package 7 (ex.: hook)
@@ -561,7 +560,7 @@ def materializar(
         if canonical_dest is not None and str(canonical_dest) not in destinos:
             try:
                 canonical_dest.parent.mkdir(parents=True, exist_ok=True)
-                canonical_dest.write_text(conteudo, encoding="utf-8")
+                escrever_atomico(canonical_dest, conteudo)
             except OSError:
                 pass
 
@@ -575,7 +574,7 @@ def materializar(
             if target_canonical is not None and str(target_canonical) not in destinos:
                 try:
                     target_canonical.parent.mkdir(parents=True, exist_ok=True)
-                    target_canonical.write_text(conteudo, encoding="utf-8")
+                    escrever_atomico(target_canonical, conteudo)
                 except OSError:
                     pass
 

@@ -53,6 +53,18 @@ from typing import Any
 
 import click
 
+# Escritor atômico: staging → fsync → os.replace
+try:
+    from escritor_atomico import escrever_json_atomico
+except ImportError:
+    import importlib.util
+    _comp_dir = os.path.join(
+        os.path.dirname(__file__), "..", "..", "componentes", "compartilhado", "src-core"
+    )
+    if os.path.isdir(_comp_dir) and _comp_dir not in sys.path:
+        sys.path.insert(0, _comp_dir)
+    from escritor_atomico import escrever_json_atomico
+
 if sys.platform == 'win32':
     sys.stdout.reconfigure(encoding='utf-8')
 
@@ -157,7 +169,7 @@ def _registrar_e_verificar_orcamento(
     if 'orcamento_fases' not in estado:
         estado['orcamento_fases'] = {}
     estado['orcamento_fases'][chave] = registro
-    estado_path.write_text(json.dumps(estado, indent=2, ensure_ascii=False), encoding='utf-8')
+    escrever_json_atomico(estado_path, estado)
 
 
 # =============================================================================

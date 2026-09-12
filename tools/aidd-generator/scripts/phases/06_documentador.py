@@ -30,6 +30,18 @@ from pathlib import Path
 from datetime import datetime, timezone
 from typing import Optional, Dict, List, Tuple
 
+# Escritor atômico: staging → fsync → os.replace
+try:
+    from escritor_atomico import escrever_atomico, escrever_json_atomico
+except ImportError:
+    import importlib.util
+    _comp_dir = os.path.join(
+        os.path.dirname(__file__), "..", "..", "..", "..", "componentes", "compartilhado", "src-core"
+    )
+    if os.path.isdir(_comp_dir) and _comp_dir not in sys.path:
+        sys.path.insert(0, _comp_dir)
+    from escritor_atomico import escrever_atomico, escrever_json_atomico
+
 try:
     from pypdf.errors import PdfReadError
 except ImportError:
@@ -241,11 +253,9 @@ class DocumentadorFase6:
 
         path_docs.parent.mkdir(parents=True, exist_ok=True)
 
-        with open(path_index, 'w', encoding='utf-8') as f:
-            json.dump(index, f, indent=2, ensure_ascii=False)
+        escrever_json_atomico(path_index, index)
 
-        with open(path_docs, 'w', encoding='utf-8') as f:
-            json.dump(docs, f, indent=2, ensure_ascii=False)
+        escrever_json_atomico(path_docs, docs)
 
         print(f"   ✓ {path_index}")
         print(f"   ✓ {path_docs}")
@@ -448,7 +458,7 @@ class DocumentadorFase6:
 - **Gate F2 (PDF)**: Documento formal estruturado e imprimível.
 - **Gate F3 (Markdown)**: Especificação versionável no repositório.
 """
-        path_md.write_text(conteudo, encoding='utf-8')
+        escrever_atomico(path_md, conteudo)
 
     def _gerar_index(self, docs: Dict, gates: List[Gate], tempo_execucao: float) -> Dict:
         """Gera _phase_06_index.json"""

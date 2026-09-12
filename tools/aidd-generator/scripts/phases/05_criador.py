@@ -18,6 +18,7 @@ Tokens: 0 (100% Python determinístico)
 """
 
 import sys
+import os
 import json
 import hashlib
 import subprocess
@@ -33,6 +34,18 @@ except ImportError:  # pragma: no cover — execução direta (python scripts/ph
     from utils_modelo import detectar_harness_nome, detectar_modelo_harness
 from datetime import datetime, timezone
 from typing import Optional, Dict, List, Any
+
+# Escritor atômico: staging → fsync → os.replace
+try:
+    from escritor_atomico import escrever_atomico, escrever_json_atomico
+except ImportError:
+    import importlib.util
+    _comp_dir = os.path.join(
+        os.path.dirname(__file__), "..", "..", "..", "..", "componentes", "compartilhado", "src-core"
+    )
+    if os.path.isdir(_comp_dir) and _comp_dir not in sys.path:
+        sys.path.insert(0, _comp_dir)
+    from escritor_atomico import escrever_atomico, escrever_json_atomico
 
 if sys.platform == 'win32':
     sys.stdout.reconfigure(encoding='utf-8')
@@ -381,8 +394,7 @@ class CriadorProjetoFase5:
         # 7. Salvar index
         path_index = self.pasta_projeto / '.aidd/cache/_phase_05_index.json'
         path_index.parent.mkdir(parents=True, exist_ok=True)
-        with open(path_index, 'w', encoding='utf-8') as f:
-            json.dump(index, f, indent=2, ensure_ascii=False)
+        escrever_json_atomico(path_index, index)
         print(f"   ✓ {path_index}")
 
         print(f"\n{'=' * 60}")
@@ -470,7 +482,7 @@ class CriadorProjetoFase5:
   window.confirm = (msg) => UIDialogs.confirm(msg);
 })();
 """
-        (share_dir / 'ui_dialogs.js').write_text(conteudo_js, encoding='utf-8')
+        escrever_atomico(share_dir / 'ui_dialogs.js', conteudo_js)
 
         # Folha de estilo Swagger Dark Mode nativa
         swagger_css = """/* Swagger Dark Theme Impeccable - AIDD Generator */
@@ -479,7 +491,7 @@ body { background: #09090b !important; color: #f4f4f5 !important; }
 .swagger-ui .topbar { display: none; }
 .swagger-ui .info .title { color: #09090b !important; }
 """
-        (share_dir / 'swagger_dark.css').write_text(swagger_css, encoding='utf-8')
+        escrever_atomico(share_dir / 'swagger_dark.css', swagger_css)
 
 
     @staticmethod
@@ -504,7 +516,7 @@ body { background: #09090b !important; color: #f4f4f5 !important; }
             return True
         except OSError as e:
             print(f"   ⚠️  Não foi possível criar symlink {link_path} → {alvo} ({e}). Copiando conteúdo em vez de symlink.")
-            link_path.write_text(alvo.read_text(encoding='utf-8'), encoding='utf-8')
+            escrever_atomico(link_path, alvo.read_text(encoding='utf-8'))
             return False
 
     def _registrar_sync_manifest(self, fonte: Path, copias_relativas: List[str]):
@@ -525,10 +537,7 @@ body { background: #09090b !important; color: #f4f4f5 !important; }
             'motivo': 'SO negou permissao de symlink no momento da geracao '
                       '(ex.: Windows sem Modo Desenvolvedor/privilegio).',
         }
-        (self.pasta_projeto / '.aidd/sync_manifest.json').write_text(
-            json.dumps(manifest, indent=2, ensure_ascii=False),
-            encoding='utf-8'
-        )
+        escrever_json_atomico(self.pasta_projeto / '.aidd/sync_manifest.json', manifest)
 
         gate_script = '''#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
@@ -600,7 +609,7 @@ if __name__ == '__main__':
 '''
         gate_path = self.pasta_projeto / 'scripts/gates/G_SYNC_HARNESS.py'
         gate_path.parent.mkdir(parents=True, exist_ok=True)
-        gate_path.write_text(gate_script, encoding='utf-8')
+        escrever_atomico(gate_path, gate_script)
 
     @staticmethod
     def _criar_symlink_dir_ou_copia(link_path: Path, alvo: Path) -> bool:
@@ -670,10 +679,7 @@ def main():
 if __name__ == '__main__':
     main()
 """
-        (self.pasta_projeto / 'scripts/orquestrador.py').write_text(
-            orquestrador_py,
-            encoding='utf-8'
-        )
+        escrever_atomico(self.pasta_projeto / 'scripts/orquestrador.py', orquestrador_py)
 
     def _criar_claude_settings_json(self):
         # harness/modelo detectados de verdade (nunca fixo: essencial para
@@ -683,10 +689,7 @@ if __name__ == '__main__':
             "modelo": detectar_modelo_harness(),
             "auto_update": True
         }
-        (self.pasta_projeto / '.claude/settings.json').write_text(
-            json.dumps(settings_json, indent=2, ensure_ascii=False),
-            encoding='utf-8'
-        )
+        escrever_json_atomico(self.pasta_projeto / '.claude/settings.json', settings_json)
 
     def _criar_agents_md_e_sincronizar_harnesses(self, ideia: str):
         # AGENTS.md — fonte única (padrão Zero Duplicidade Desnecessária,
@@ -715,7 +718,7 @@ Este projeto foi gerado pela skill aidd-project-generator v2.1
 2. Implementar Phase 3 (Design AIDD)
 3. Implementar Phase 6 (Documentação)
 """
-        (self.pasta_projeto / 'AGENTS.md').write_text(agents_md, encoding='utf-8')
+        escrever_atomico(self.pasta_projeto / 'AGENTS.md', agents_md)
 
         # Sincronização multi-harness (Universalidade — Zero Duplicidade)
         harnesses_alvos = [
@@ -751,10 +754,7 @@ Este projeto foi gerado pela skill aidd-project-generator v2.1
             'harness': detectar_harness_nome(),
             'estado': 'criado'
         }
-        (self.pasta_projeto / '.aidd/config.json').write_text(
-            json.dumps(config, indent=2, ensure_ascii=False),
-            encoding='utf-8'
-        )
+        escrever_json_atomico(self.pasta_projeto / '.aidd/config.json', config)
 
     def _criar_aidd_rules_md(self):
         rules_md = """# 10 Leis Inegociáveis da AIDD
@@ -770,13 +770,13 @@ Este projeto foi gerado pela skill aidd-project-generator v2.1
 9. **R-TELEMETRIA** - Transparência: relatório completo
 10. **R-PERSISTENCIA** - SQLite: estado do projeto em banco relacional
 """
-        (self.pasta_projeto / '.aidd/rules.md').write_text(rules_md, encoding='utf-8')
+        escrever_atomico(self.pasta_projeto / '.aidd/rules.md', rules_md)
 
     def _criar_requirements_txt(self):
         requirements_txt = """# Dependências do projeto AIDD
 requests>=2.31.0
 """
-        (self.pasta_projeto / 'requirements.txt').write_text(requirements_txt, encoding='utf-8')
+        escrever_atomico(self.pasta_projeto / 'requirements.txt', requirements_txt)
 
     def _criar_pytest_ini(self):
         # pythonpath=src garante que qualquer código futuro em src/<pacote>/
@@ -789,7 +789,7 @@ testpaths = tests
 pythonpath = src
 addopts = -ra
 """
-        (self.pasta_projeto / 'pytest.ini').write_text(pytest_ini, encoding='utf-8')
+        escrever_atomico(self.pasta_projeto / 'pytest.ini', pytest_ini)
 
     def _criar_readme(self, ideia: str):
         readme = f"""# {ideia.title()}
@@ -818,7 +818,7 @@ cd {self.pasta_projeto}
 python scripts/orquestrador.py --modo interativo
 ```
 """
-        (self.pasta_projeto / 'README.md').write_text(readme, encoding='utf-8')
+        escrever_atomico(self.pasta_projeto / 'README.md', readme)
 
     def _criar_gitignore(self):
         gitignore = """# Ambiente
@@ -853,7 +853,7 @@ estado_projeto.db
 planejamentos/
 output/
 """
-        (self.pasta_projeto / '.gitignore').write_text(gitignore, encoding='utf-8')
+        escrever_atomico(self.pasta_projeto / '.gitignore', gitignore)
 
     def _criar_arquivos_configuracao(self, ideia: str):
         """Cria arquivos de configuração padrão"""
