@@ -14,17 +14,105 @@ Roteia comandos para as 5 ferramentas integradas:
   - status     -> Resumo do status do ecossistema
 """
 
-import click
+import importlib
 import os
 import shutil
-import sys
 import subprocess
+import sys
 import types
-
-from dotenv import load_dotenv
 
 ROOT_DIR = os.path.dirname(os.path.abspath(__file__))
 TOOLS_DIR = os.path.join(ROOT_DIR, "tools")
+
+PYTHON_MINIMO = (3, 10)
+REQUIREMENTS_PATH = os.path.join(ROOT_DIR, "requirements.txt")
+FLAG_AUTO_BOOTSTRAP = "--auto-bootstrap"
+
+
+# ============================================================================
+# GUARDA DE AUTO-RECUPERACAO (self-healing) — roda ANTES de qualquer import de
+# terceiros (click/dotenv). Em maquina virgem, exibe banner educativo com a
+# instrucao de correcao em vez do traceback cru de ModuleNotFoundError.
+# ============================================================================
+
+def _verificar_minimo_python():
+    """True se a versao do interpretador atende o minimo exigido (>= 3.10)."""
+    return sys.version_info[:2] >= PYTHON_MINIMO
+
+
+def _exibir_banner_python_antigo():
+    versao_atual = ".".join(str(p) for p in sys.version_info[:3])
+    print("=" * 72)
+    print(" [ECOSSISTEMA AIDD] PYTHON INCOMPATIVEL")
+    print("=" * 72)
+    print()
+    print(f" Versao minima exigida:  Python {PYTHON_MINIMO[0]}.{PYTHON_MINIMO[1]} ou superior")
+    print(f" Versao detectada:       Python {versao_atual}")
+    print()
+    print(" A CLI unificada do ecossistema exige Python >= 3.10.")
+    print(" Instale um interpretador compativel e tente de novo.")
+    print("=" * 72)
+
+
+def _exibir_banner_dependencias(faltando):
+    print("=" * 72)
+    print(" [ECOSSISTEMA AIDD] DEPENDENCIAS AUSENTES")
+    print("=" * 72)
+    print()
+    print(f" Os pacotes ({', '.join(faltando)}) nao estao instalados neste Python.")
+    print()
+    print(" Para instalar, execute:")
+    print()
+    print("   python -m pip install -r requirements.txt")
+    print()
+    print(" Para instalacao automatica sob demanda, execute:")
+    print()
+    print(f"   python ecossistema.py {FLAG_AUTO_BOOTSTRAP}")
+    print("=" * 72)
+
+
+def _instalar_requirements():
+    """Instala requirements.txt via pip. Retorna True se o pip sair com exit 0."""
+    print(f"[{FLAG_AUTO_BOOTSTRAP}] Instalando dependencias de {REQUIREMENTS_PATH} ...")
+    res = subprocess.run([sys.executable, "-m", "pip", "install", "-r", REQUIREMENTS_PATH])
+    if res.returncode != 0:
+        print(f"[{FLAG_AUTO_BOOTSTRAP}] Instalacao falhou (exit {res.returncode}).")
+        return False
+    print(f"[{FLAG_AUTO_BOOTSTRAP}] Instalacao concluida com sucesso.")
+    return True
+
+
+def _importar_dependencia(nome_modulo):
+    """Importa modulo de terceiros protegido por auto-recuperacao.
+
+    Em caso de ImportError, exibe banner educativo; se a CLI foi acionada com
+    FLAG_AUTO_BOOTSTRAP, instala requirements.txt e tenta uma unica vez de novo.
+    Se continuar faltando, encerra com exit 1 (nunca traceback cru).
+    """
+    try:
+        return importlib.import_module(nome_modulo)
+    except ImportError:
+        _exibir_banner_dependencias([nome_modulo])
+        if FLAG_AUTO_BOOTSTRAP not in sys.argv:
+            sys.exit(1)
+        if not _instalar_requirements():
+            sys.exit(1)
+        try:
+            return importlib.import_module(nome_modulo)
+        except ImportError:
+            print(f"[{FLAG_AUTO_BOOTSTRAP}] FALHA: dependencia ainda ausente apos a instalacao.")
+            sys.exit(1)
+
+
+# Guarda 1: versao minima do Python (antes de qualquer import de terceiros).
+if not _verificar_minimo_python():
+    _exibir_banner_python_antigo()
+    sys.exit(1)
+
+# Guarda 2: imports de terceiros com auto-recuperacao.
+click = _importar_dependencia("click")
+dotenv = _importar_dependencia("dotenv")
+load_dotenv = dotenv.load_dotenv
 
 # Carrega .env da raiz do ecossistema para os.environ (nunca sobrescreve variavel ja
 # exportada no shell — override=False). Cobre esta CLI e todo subprocesso disparado por
@@ -708,12 +796,16 @@ def main():
         if hasattr(fluxo, "reconfigure"):
             fluxo.reconfigure(encoding="utf-8")
 
-    if len(sys.argv) < 2:
+    # --auto-bootstrap e flag de auto-recuperacao de ambiente, nao um comando:
+    # sai de sys.argv antes do dispatch para nunca chegar ao roteador de comandos.
+    argv = [a for a in sys.argv if a != FLAG_AUTO_BOOTSTRAP]
+
+    if len(argv) < 2:
         print_help()
         sys.exit(0)
 
-    cmd = sys.argv[1].lower()
-    args = sys.argv[2:]
+    cmd = argv[1].lower()
+    args = argv[2:]
 
     dispatch = {
         "forge": cmd_forge,

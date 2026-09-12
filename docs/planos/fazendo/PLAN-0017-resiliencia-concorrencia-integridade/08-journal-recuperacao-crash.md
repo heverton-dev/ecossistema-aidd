@@ -1,7 +1,7 @@
 # Item — journal-recuperacao-pos-crash-multi-arquivo
 
 > **Escopo:** Implementar journal de recuperação pós-crash para operações de injeção multi-arquivo, permitindo concluir ou descartar publicações parciais no boot.
-> **Status:** [RASCUNHO — Aguardando Aprovação Humana]
+> **Status:** [EM EXECUCAO]
 > **Auditoria por reproducao real (11-09-2026):** NAO-FEITO. _journal.json nao aparece em lugar nenhum do codigo.
 
 ---

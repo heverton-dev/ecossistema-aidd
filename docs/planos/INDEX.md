@@ -25,8 +25,11 @@
 
 | Iniciativa | Local |
 |---|---|
+| Bootstrap Ambiente Preflight | `fazendo/PLAN-0019-bootstrap-ambiente-preflight/` |
 | Correcao Auditoria Maquiagem | `fazendo/PLAN-0009-correcao-auditoria-maquiagem/` |
 | Qualidade Testes Mutacao | `fazendo/PLAN-0016-qualidade-testes-mutacao/` |
+| Resiliencia Concorrencia Integridade | `fazendo/PLAN-0017-resiliencia-concorrencia-integridade/` |
+| Seguranca Zero Trust | `fazendo/PLAN-0018-seguranca-zero-trust/` |
 | Codigo Limpo Profundo | `fazendo/PLAN-0021-codigo-limpo-profundo/` |
 | Config Arquivos Tokens | `fazendo/PLAN-0022-config-arquivos-tokens/` |
 | Evolucao Engenharia Software | `fazendo/PLAN-0023-evolucao-engenharia-software/` |
@@ -36,9 +39,6 @@
 | Iniciativa | Local |
 |---|---|
 | Testes Motor Orquestrador | `PLAN-0024-testes-motor-orquestrador/` |
-| Resiliencia Concorrencia Integridade | `a-fazer/PLAN-0017-resiliencia-concorrencia-integridade/` |
-| Seguranca Zero Trust | `a-fazer/PLAN-0018-seguranca-zero-trust/` |
-| Bootstrap Ambiente Preflight | `a-fazer/PLAN-0019-bootstrap-ambiente-preflight/` |
 
 ## ⚠️ Status indeterminado (revisar manualmente)
 

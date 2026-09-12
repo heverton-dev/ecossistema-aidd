@@ -1,7 +1,7 @@
 # Item — registry-writers-com-lock-e-rename-atomico
 
 > **Escopo:** Implementar lock de arquivo cooperativo e atomic rename na atualização de registries (CAPABILITIES.json e mcp.json) para evitar lost updates em injeções simultâneas.
-> **Status:** [RASCUNHO — Aguardando Aprovação Humana]
+> **Status:** [EM EXECUCAO]
 > **Auditoria por reproducao real (11-09-2026):** NAO-FEITO. Nenhuma biblioteca de lock cooperativo em uso: grep -rln fcntl/msvcrt/filelock/fasteners nao retorna nada.
 
 ---

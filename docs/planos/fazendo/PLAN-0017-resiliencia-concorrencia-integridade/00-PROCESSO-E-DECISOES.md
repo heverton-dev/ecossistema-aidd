@@ -44,12 +44,12 @@ Diagnostico rapido → Definicao de Pronto checavel → Prompt de Execucao autoc
 | # | Item | Status | Documento |
 |---|---|---|---|
 | 1 | outbox-claim-atomico-retry-e-dead-letter | ⏳ Rascunho — parte ja implementada (ver auditoria) | `01-outbox-claim-atomico.md` |
-| 2 | escritor-atomico-compartilhado-e-migracao-fs | ⏳ Rascunho gerado, aguardando aprovacao | `02-escritor-atomico-compartilhado.md` |
+| 2 | escritor-atomico-compartilhado-e-migracao-fs | 🔶 Em execucao | `02-escritor-atomico-compartilhado.md` |
 | 3 | maquina-estados-pipeline-generator-e-resume | ⏳ Rascunho — parte ja implementada (ver auditoria) | `03-maquina-estados-pipeline.md` |
-| 4 | retry-backoff-sqlite-busy-e-pool-explicito | ⏳ Rascunho gerado, aguardando aprovacao | `04-retry-backoff-sqlite.md` |
-| 5 | fila-unica-revalidacao-read-model-cache | ⏳ Rascunho gerado, aguardando aprovacao | `05-fila-unica-revalidacao.md` |
-| 6 | registry-writers-com-lock-e-rename-atomico | ⏳ Rascunho gerado, aguardando aprovacao | `06-registry-writers-lock.md` |
-| 7 | checkpoint-persistencia-result-ops-deploy | ⏳ Rascunho gerado, aguardando aprovacao | `07-checkpoint-persistencia-result.md` |
-| 8 | journal-recuperacao-pos-crash-multi-arquivo | ⏳ Rascunho gerado, aguardando aprovacao | `08-journal-recuperacao-crash.md` |
+| 4 | retry-backoff-sqlite-busy-e-pool-explicito | 🔶 Em execucao | `04-retry-backoff-sqlite.md` |
+| 5 | fila-unica-revalidacao-read-model-cache | 🔶 Em execucao | `05-fila-unica-revalidacao.md` |
+| 6 | registry-writers-com-lock-e-rename-atomico | 🔶 Em execucao | `06-registry-writers-lock.md` |
+| 7 | checkpoint-persistencia-result-ops-deploy | 🔶 Em execucao | `07-checkpoint-persistencia-result.md` |
+| 8 | journal-recuperacao-pos-crash-multi-arquivo | 🔶 Em execucao | `08-journal-recuperacao-crash.md` |
 
 Esta tabela so e atualizada para Concluido apos auditoria por reproducao real.

@@ -62,44 +62,6 @@ class WebhookDispatcher:
         sig = hmac.new(secret.encode("utf-8"), payload_bytes, hashlib.sha256).hexdigest()
         return f"sha256={sig}"
 
-    # -------------------------------------------------------------------
-    # Persistencia do Webhook Studio (config CRUD + consulta de logs).
-    # Concentrado aqui (infra de fato) para manter server.py livre de SQL.
-    # -------------------------------------------------------------------
-    def listar_webhooks(self):
-        with self.db.get_connection() as conn:
-            rows = conn.execute("SELECT id, url, secret, eventos, ativo, criado_em FROM webhooks").fetchall()
-            return [dict(r) for r in rows]
-
-    def cadastrar_webhook(self, url: str, secret: str, eventos: str) -> int:
-        with self.db.get_connection() as conn:
-            cursor = conn.cursor()
-            cursor.execute("INSERT INTO webhooks (url, secret, eventos, ativo) VALUES (?, ?, ?, 1)", (url, secret, eventos))
-            conn.commit()
-            return cursor.lastrowid
-
-    def remover_webhook(self, webhook_id: int) -> None:
-        with self.db.get_connection() as conn:
-            conn.execute("DELETE FROM webhooks WHERE id = ?", (webhook_id,))
-            conn.commit()
-
-    def listar_logs(self, limite: int = 50):
-        with self.db.get_connection() as conn:
-            rows = conn.execute("SELECT * FROM webhook_logs ORDER BY id DESC LIMIT ?", (limite,)).fetchall()
-            return [dict(r) for r in rows]
-
-    def obter_log(self, log_id: int):
-        with self.db.get_connection() as conn:
-            row = conn.execute(
-                "SELECT evento, url, payload_json, webhook_id FROM webhook_logs WHERE id = ?", (log_id,)
-            ).fetchone()
-            return tuple(row) if row else None
-
-    def obter_secret_webhook(self, webhook_id: int):
-        with self.db.get_connection() as conn:
-            row = conn.execute("SELECT secret FROM webhooks WHERE id = ?", (webhook_id,)).fetchone()
-            return row[0] if row else None
-
     def disparar(self, evento: str, payload: dict):
         def _exec():
             try:

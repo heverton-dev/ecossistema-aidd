@@ -1,0 +1,127 @@
+{
+  "plan_dir": "C:\\Users\\trcnologia\\Desktop\\ecossistema-aidd\\docs\\planos\\a-fazer\\PLAN-0017-resiliencia-concorrencia-integridade",
+  "mode": "orca",
+  "repo_path": "C:\\Users\\trcnologia\\Desktop\\ecossistema-aidd",
+  "parent_worktree": "active",
+  "base_branch": "main",
+  "fronts": [
+    {
+      "name": "outbox-claim-atomico",
+      "rotulo": "PLAN-0017-fase-01-outbox-claim-atomico",
+      "worktree_name": "PLAN-0017-fase-01-outbox-claim-atomico",
+      "branch": "orca/PLAN-0017-fase-01-outbox-claim-atomico",
+      "harness": "opencode",
+      "launch_command": [
+        "opencode",
+        "--auto",
+        "--pure",
+        "--agent",
+        "-m",
+        "opencode/big-pickle"
+      ],
+      "prompt": "Scope: Implementar claim atômico com exclusão mútua entre workers, contador de tentativas, transição para dead-letter queue após N falhas e deduplicação via seq monotônico no Outbox pattern.\n\nDefinition of Done:\n\n1. Adicionar colunas tentativas, claimed_at, claimed_by e seq monotônico na tabela _outbox_events.\n2. Implementar claim atômico via UPDATE ... WHERE status='pendente' AND claimed_at IS NULL.\n3. Encaminhar para status='dead_letter' após N (ex: 5) tentativas consecutivas de falha no listener.\n4. Criar tabela de deduplicação _eventos_processados para idempotência do consumidor.\n\nExit Criteria:\n\n- Teste com 2 workers concorrentes processa cada evento exatamente 1 vez. Teste com listener falho move para dead-letter sem loop infinito.\n- Testes reais passando sem stubs falsos.\n- Gates de integridade aprovados.\n\nYou are going to implement Item: outbox-claim-atomico-retry-e-dead-letter.\nStrictly follow the Definition of Done above:\n1. Adicionar colunas tentativas, claimed_at, claimed_by e seq monotônico na tabela _outbox_events.\n2. Implementar claim atômico via UPDATE ... WHERE status='pendente' AND claimed_at IS NULL.\n3. Encaminhar para status='dead_letter' após N (ex: 5) tentativas consecutivas de falha no listener.\n4. Criar tabela de deduplicação _eventos_processados para idempotência do consumidor.\nEnsure exit code 0 across relevant tests and gates."
+    },
+    {
+      "name": "escritor-atomico-compartilhado",
+      "rotulo": "PLAN-0017-fase-02-escritor-atomico-compartilhado",
+      "worktree_name": "PLAN-0017-fase-02-escritor-atomico-compartilhado",
+      "branch": "orca/PLAN-0017-fase-02-escritor-atomico-compartilhado",
+      "harness": "mimo",
+      "launch_command": [
+        "mimo",
+        "--pure",
+        "-m",
+        "xiaomi-token-plan/mimo-v2.5"
+      ],
+      "prompt": "Scope: Criar utilitário compartilhado escritor_atomico (staging -> os.replace -> fsync) e migrar os 8 pontos críticos de gravação de filesystem para eliminar risco de arquivos truncados.\n\nDefinition of Done:\n\n1. Criar `componentes/compartilhado/src-core/escritor_atomico.py` com escrita em tmp e atomic rename via os.replace.\n2. Migrar gravações de materializador, scaffold_infra, compose_suite, fases 1-8 e _gravar_plano.\n3. Criar gate AST verificando ausência de open(w) direto nos pontos críticos.\n\nExit Criteria:\n\n- Zero gravações diretas sem staging nos pontos críticos. Teste de injeção de falha no meio da escrita mantém arquivo anterior intacto.\n- Testes reais passando sem stubs falsos.\n- Gates de integridade aprovados.\n\nYou are going to implement Item: escritor-atomico-compartilhado-e-migracao-fs.\nStrictly follow the Definition of Done above:\n1. Criar `componentes/compartilhado/src-core/escritor_atomico.py` com escrita em tmp e atomic rename via os.replace.\n2. Migrar gravações de materializador, scaffold_infra, compose_suite, fases 1-8 e _gravar_plano.\n3. Criar gate AST verificando ausência de open(w) direto nos pontos críticos.\nEnsure exit code 0 across relevant tests and gates."
+    },
+    {
+      "name": "maquina-estados-pipeline",
+      "rotulo": "PLAN-0017-fase-03-maquina-estados-pipeline",
+      "worktree_name": "PLAN-0017-fase-03-maquina-estados-pipeline",
+      "branch": "orca/PLAN-0017-fase-03-maquina-estados-pipeline",
+      "harness": "agy",
+      "launch_command": [
+        "agy",
+        "--dangerously-skip-permissions",
+        "--model",
+        "gemini-3.8-flash-low"
+      ],
+      "prompt": "Scope: Implementar máquina de estados formal e retomada inteligente (--resume) no pipeline do aidd-generator, com validação jsonschema estrita na leitura inter-fases.\n\nDefinition of Done:\n\n1. Criar estado estruturado versionado `.aidd/cache/_pipeline_state.json` gravado atomicamente.\n2. Implementar flag `--resume` que pula fases com status COMPLETO e artefatos válidos.\n3. Validar entradas de cache com jsonschema na fronteira de leitura de cada fase.\n4. Tratar JSON corrompido com `_falhar` estruturado e orientativo.\n\nExit Criteria:\n\n- Pipeline retoma a partir da fase falha sem gastar tokens nas fases anteriores. Teste com cache corrompido falha de forma limpa.\n- Testes reais passando sem stubs falsos.\n- Gates de integridade aprovados.\n\nYou are going to implement Item: maquina-estados-pipeline-generator-e-resume.\nStrictly follow the Definition of Done above:\n1. Criar estado estruturado versionado `.aidd/cache/_pipeline_state.json` gravado atomicamente.\n2. Implementar flag `--resume` que pula fases com status COMPLETO e artefatos válidos.\n3. Validar entradas de cache com jsonschema na fronteira de leitura de cada fase.\n4. Tratar JSON corrompido com `_falhar` estruturado e orientativo.\nEnsure exit code 0 across relevant tests and gates."
+    },
+    {
+      "name": "retry-backoff-sqlite",
+      "rotulo": "PLAN-0017-fase-04-retry-backoff-sqlite",
+      "worktree_name": "PLAN-0017-fase-04-retry-backoff-sqlite",
+      "branch": "orca/PLAN-0017-fase-04-retry-backoff-sqlite",
+      "harness": "opencode",
+      "launch_command": [
+        "opencode",
+        "--auto",
+        "--pure",
+        "--agent",
+        "-m",
+        "opencode/big-pickle"
+      ],
+      "prompt": "Scope: Implementar retry com backoff exponencial para erros SQLITE_BUSY e tradução para Result.fail(DB_LOCKED) na fronteira de API HTTP.\n\nDefinition of Done:\n\n1. Envolver execuções em `EngineFacadeConnection` com retry exponencial (50ms a 2s, 5 tentativas) para `sqlite3.OperationalError: database is locked`.\n2. Configurar pool explícito com pool_pre_ping=True e timeout controlado.\n3. Mapear SQLITE_BUSY na camada de rotas para `Result.fail(codigo='DB_LOCKED')` com HTTP 503/Retry-After.\n\nExit Criteria:\n\n- Teste com conexão travada externamente recebe Result estruturado com retries automáticos sem crash.\n- Testes reais passando sem stubs falsos.\n- Gates de integridade aprovados.\n\nYou are going to implement Item: retry-backoff-sqlite-busy-e-pool-explicito.\nStrictly follow the Definition of Done above:\n1. Envolver execuções em `EngineFacadeConnection` com retry exponencial (50ms a 2s, 5 tentativas) para `sqlite3.OperationalError: database is locked`.\n2. Configurar pool explícito com pool_pre_ping=True e timeout controlado.\n3. Mapear SQLITE_BUSY na camada de rotas para `Result.fail(codigo='DB_LOCKED')` com HTTP 503/Retry-After.\nEnsure exit code 0 across relevant tests and gates."
+    },
+    {
+      "name": "fila-unica-revalidacao",
+      "rotulo": "PLAN-0017-fase-05-fila-unica-revalidacao",
+      "worktree_name": "PLAN-0017-fase-05-fila-unica-revalidacao",
+      "branch": "orca/PLAN-0017-fase-05-fila-unica-revalidacao",
+      "harness": "mimo",
+      "launch_command": [
+        "mimo",
+        "--pure",
+        "-m",
+        "xiaomi-token-plan/mimo-v2.5"
+      ],
+      "prompt": "Scope: Substituir o disparo descontrolado de threads daemon no ReadModelCache por uma fila única de revalidação com 1 worker coordenado.\n\nDefinition of Done:\n\n1. Criar fila interna com 1 worker thread para revalidações assíncronas do read-model.\n2. Descartar revalidações duplicadas para a mesma chave se já houver uma em processamento.\n3. Instrumentar métricas de telemetria para tempo máximo de stale.\n\nExit Criteria:\n\n- Teste com 100 misses simultâneos mantém pool SQLite estável e fila única processando ordenadamente.\n- Testes reais passando sem stubs falsos.\n- Gates de integridade aprovados.\n\nYou are going to implement Item: fila-unica-revalidacao-read-model-cache.\nStrictly follow the Definition of Done above:\n1. Criar fila interna com 1 worker thread para revalidações assíncronas do read-model.\n2. Descartar revalidações duplicadas para a mesma chave se já houver uma em processamento.\n3. Instrumentar métricas de telemetria para tempo máximo de stale.\nEnsure exit code 0 across relevant tests and gates."
+    },
+    {
+      "name": "registry-writers-lock",
+      "rotulo": "PLAN-0017-fase-06-registry-writers-lock",
+      "worktree_name": "PLAN-0017-fase-06-registry-writers-lock",
+      "branch": "orca/PLAN-0017-fase-06-registry-writers-lock",
+      "harness": "agy",
+      "launch_command": [
+        "agy",
+        "--dangerously-skip-permissions",
+        "--model",
+        "gemini-3.8-flash-low"
+      ],
+      "prompt": "Scope: Implementar lock de arquivo cooperativo e atomic rename na atualização de registries (CAPABILITIES.json e mcp.json) para evitar lost updates em injeções simultâneas.\n\nDefinition of Done:\n\n1. Utilizar lockfile cooperativo (ex: fcntl/msvcrt via fastener ou context manager atômico) para leitura e escrita dos registries.\n2. Gravar o novo JSON em arquivo temporário e aplicar via `os.replace`.\n3. Garantir limpeza de lockfiles residuais em caso de falha.\n\nExit Criteria:\n\n- Teste com 2 injeções concorrentes preserva as entradas de ambos os componentes nos manifestos.\n- Testes reais passando sem stubs falsos.\n- Gates de integridade aprovados.\n\nYou are going to implement Item: registry-writers-com-lock-e-rename-atomico.\nStrictly follow the Definition of Done above:\n1. Utilizar lockfile cooperativo (ex: fcntl/msvcrt via fastener ou context manager atômico) para leitura e escrita dos registries.\n2. Gravar o novo JSON em arquivo temporário e aplicar via `os.replace`.\n3. Garantir limpeza de lockfiles residuais em caso de falha.\nEnsure exit code 0 across relevant tests and gates."
+    },
+    {
+      "name": "checkpoint-persistencia-result",
+      "rotulo": "PLAN-0017-fase-07-checkpoint-persistencia-result",
+      "worktree_name": "PLAN-0017-fase-07-checkpoint-persistencia-result",
+      "branch": "orca/PLAN-0017-fase-07-checkpoint-persistencia-result",
+      "harness": "opencode",
+      "launch_command": [
+        "opencode",
+        "--auto",
+        "--pure",
+        "--agent",
+        "-m",
+        "opencode/big-pickle"
+      ],
+      "prompt": "Scope: Adicionar persistência de checkpoint por etapa no pipeline de deploy do aidd-ops, permitindo reexecução incremental apenas de tarefas pendentes.\n\nDefinition of Done:\n\n1. Persistir o `Result` de cada etapa de bootstrap em `.aidd/ops_deploy_state.json`.\n2. No início de cada etapa, verificar se o checkpoint já foi atingido com sucesso antes de redisparar SSH.\n3. Adicionar flag `--force-redeploy` para ignorar checkpoints quando desejado.\n\nExit Criteria:\n\n- Re-run de deploy pós-falha executa apenas as etapas pendentes a partir do último checkpoint.\n- Testes reais passando sem stubs falsos.\n- Gates de integridade aprovados.\n\nYou are going to implement Item: checkpoint-persistencia-result-ops-deploy.\nStrictly follow the Definition of Done above:\n1. Persistir o `Result` de cada etapa de bootstrap em `.aidd/ops_deploy_state.json`.\n2. No início de cada etapa, verificar se o checkpoint já foi atingido com sucesso antes de redisparar SSH.\n3. Adicionar flag `--force-redeploy` para ignorar checkpoints quando desejado.\nEnsure exit code 0 across relevant tests and gates."
+    },
+    {
+      "name": "journal-recuperacao-crash",
+      "rotulo": "PLAN-0017-fase-08-journal-recuperacao-crash",
+      "worktree_name": "PLAN-0017-fase-08-journal-recuperacao-crash",
+      "branch": "orca/PLAN-0017-fase-08-journal-recuperacao-crash",
+      "harness": "mimo",
+      "launch_command": [
+        "mimo",
+        "--pure",
+        "-m",
+        "xiaomi-token-plan/mimo-v2.5"
+      ],
+      "prompt": "Scope: Implementar journal de recuperação pós-crash para operações de injeção multi-arquivo, permitindo concluir ou descartar publicações parciais no boot.\n\nDefinition of Done:\n\n1. Gravar `_journal.json` no staging listando a sequência ordenada de substituições atômicas pendentes.\n2. Criar rotina de recuperação no boot do materializador que inspeciona staging e conclui ou descarta journals órfãos.\n3. Registrar log estruturado de recuperação pós-crash.\n\nExit Criteria:\n\n- Teste simulando kill durante publicação multi-arquivo é recuperado com integridade total no próximo boot.\n- Testes reais passando sem stubs falsos.\n- Gates de integridade aprovados.\n\nYou are going to implement Item: journal-recuperacao-pos-crash-multi-arquivo.\nStrictly follow the Definition of Done above:\n1. Gravar `_journal.json` no staging listando a sequência ordenada de substituições atômicas pendentes.\n2. Criar rotina de recuperação no boot do materializador que inspeciona staging e conclui ou descarta journals órfãos.\n3. Registrar log estruturado de recuperação pós-crash.\nEnsure exit code 0 across relevant tests and gates."
+    }
+  ]
+}

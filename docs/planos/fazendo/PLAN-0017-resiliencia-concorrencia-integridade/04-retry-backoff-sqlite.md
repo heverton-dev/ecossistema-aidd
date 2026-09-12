@@ -1,7 +1,7 @@
 # Item — retry-backoff-sqlite-busy-e-pool-explicito
 
 > **Escopo:** Implementar retry com backoff exponencial para erros SQLITE_BUSY e tradução para Result.fail(DB_LOCKED) na fronteira de API HTTP.
-> **Status:** [RASCUNHO — Aguardando Aprovação Humana]
+> **Status:** [EM EXECUCAO]
 > **Auditoria por reproducao real (11-09-2026):** NAO-FEITO. grep -rn pool_pre_ping componentes tools nao retorna nada. Nao ha retry exponencial para database is locked.
 
 ---

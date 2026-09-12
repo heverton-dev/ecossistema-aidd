@@ -485,9 +485,21 @@ class SQLiteAdapter(DatabaseAdapter):
             "status TEXT NOT NULL DEFAULT 'pendente',"
             "criado_em TEXT NOT NULL,"
             "processado_em TEXT,"
-            "tentativas INTEGER NOT NULL DEFAULT 0"
+            "claimed_at TEXT,"
+            "claimed_by TEXT,"
+            "tentativas INTEGER NOT NULL DEFAULT 0,"
+            "seq INTEGER NOT NULL DEFAULT 0"
             ");",
             "CREATE INDEX IF NOT EXISTS idx_outbox_status ON _outbox_events(status);",
+            "CREATE INDEX IF NOT EXISTS idx_outbox_claim ON _outbox_events(status, claimed_at);",
+            "CREATE TABLE IF NOT EXISTS _eventos_processados ("
+            "event_id TEXT PRIMARY KEY,"
+            "seq INTEGER NOT NULL,"
+            "event_name TEXT NOT NULL,"
+            "consumer_id TEXT NOT NULL DEFAULT 'default',"
+            "processado_em TEXT NOT NULL"
+            ");",
+            "CREATE INDEX IF NOT EXISTS idx_eventos_processados_seq ON _eventos_processados(seq, consumer_id);",
             "CREATE TABLE IF NOT EXISTS _audit_log ("
             "id TEXT PRIMARY KEY,"
             "timestamp TEXT NOT NULL,"
@@ -500,15 +512,21 @@ class SQLiteAdapter(DatabaseAdapter):
         with self._engine.begin() as conn:
             for stmt in statements:
                 conn.exec_driver_sql(stmt)
-            # Migração idempotente: bancos criados antes da coluna 'tentativas'
-            # (dead-letter do OutboxWorker) recebem a coluna sem perder dados.
+            # Migração idempotente: bancos criados antes das colunas de claim
+            # atômico / retry (tentativas, claimed_at, claimed_by, seq) do
+            # OutboxWorker recebem as colunas sem perder dados.
             colunas = conn.exec_driver_sql(
                 "PRAGMA table_info(_outbox_events)"
             ).fetchall()
-            if colunas and "tentativas" not in {row[1] for row in colunas}:
-                conn.exec_driver_sql(
-                    "ALTER TABLE _outbox_events ADD COLUMN tentativas INTEGER NOT NULL DEFAULT 0;"
-                )
+            presentes = {row[1] for row in colunas}
+            for nome_coluna, ddl in (
+                ("tentativas", "ALTER TABLE _outbox_events ADD COLUMN tentativas INTEGER NOT NULL DEFAULT 0;"),
+                ("claimed_at", "ALTER TABLE _outbox_events ADD COLUMN claimed_at TEXT;"),
+                ("claimed_by", "ALTER TABLE _outbox_events ADD COLUMN claimed_by TEXT;"),
+                ("seq", "ALTER TABLE _outbox_events ADD COLUMN seq INTEGER NOT NULL DEFAULT 0;"),
+            ):
+                if nome_coluna not in presentes:
+                    conn.exec_driver_sql(ddl)
 
 
 class PostgresCursorProxy:
@@ -633,12 +651,16 @@ class PostgresAdapter(DatabaseAdapter):
                     status TEXT NOT NULL DEFAULT 'pendente',
                     criado_em TEXT NOT NULL,
                     processado_em TEXT,
-                    tentativas INTEGER NOT NULL DEFAULT 0
+                    claimed_at TEXT,
+                    claimed_by TEXT,
+                    tentativas INTEGER NOT NULL DEFAULT 0,
+                    seq INTEGER NOT NULL DEFAULT 0
                 );
             """)
             cur.execute("CREATE INDEX IF NOT EXISTS idx_outbox_status ON _outbox_events(status);")
-            # Migração idempotente: bancos PostgreSQL criados antes da coluna
-            # 'tentativas' (dead-letter do OutboxWorker) recebem a coluna.
+            cur.execute("CREATE INDEX IF NOT EXISTS idx_outbox_claim ON _outbox_events(status, claimed_at);")
+            # Migração idempotente: bancos PostgreSQL criados antes das colunas
+            # de claim atômico / retry do OutboxWorker recebem as colunas.
             cur.execute("""
                 DO $$ BEGIN
                     IF NOT EXISTS (
@@ -649,6 +671,46 @@ class PostgresAdapter(DatabaseAdapter):
                     END IF;
                 END $$;
             """)
+            cur.execute("""
+                DO $$ BEGIN
+                    IF NOT EXISTS (
+                        SELECT 1 FROM information_schema.columns
+                        WHERE table_name = '_outbox_events' AND column_name = 'claimed_at'
+                    ) THEN
+                        ALTER TABLE _outbox_events ADD COLUMN claimed_at TEXT;
+                    END IF;
+                END $$;
+            """)
+            cur.execute("""
+                DO $$ BEGIN
+                    IF NOT EXISTS (
+                        SELECT 1 FROM information_schema.columns
+                        WHERE table_name = '_outbox_events' AND column_name = 'claimed_by'
+                    ) THEN
+                        ALTER TABLE _outbox_events ADD COLUMN claimed_by TEXT;
+                    END IF;
+                END $$;
+            """)
+            cur.execute("""
+                DO $$ BEGIN
+                    IF NOT EXISTS (
+                        SELECT 1 FROM information_schema.columns
+                        WHERE table_name = '_outbox_events' AND column_name = 'seq'
+                    ) THEN
+                        ALTER TABLE _outbox_events ADD COLUMN seq INTEGER NOT NULL DEFAULT 0;
+                    END IF;
+                END $$;
+            """)
+            cur.execute("""
+                CREATE TABLE IF NOT EXISTS _eventos_processados (
+                    event_id TEXT PRIMARY KEY,
+                    seq INTEGER NOT NULL,
+                    event_name TEXT NOT NULL,
+                    consumer_id TEXT NOT NULL DEFAULT 'default',
+                    processado_em TEXT NOT NULL
+                );
+            """)
+            cur.execute("CREATE INDEX IF NOT EXISTS idx_eventos_processados_seq ON _eventos_processados(seq, consumer_id);")
             cur.execute("""
                 CREATE TABLE IF NOT EXISTS _audit_log (
                     id TEXT PRIMARY KEY,
@@ -691,14 +753,61 @@ class Database:
     def enqueue_outbox_event(self, conn, event_name: str, payload: dict) -> str:
         """Transactional Outbox Pattern: grava o evento na MESMA transação/conexão da
         mutação de negócio, garantindo entrega at-least-once mesmo se o processo cair
-        antes do EventBus.emit() em memória ser disparado."""
+        antes do EventBus.emit() em memória ser disparado.
+
+        O campo `seq` é monotônico por transação (MAX(seq)+1): serve de high-water
+        mark para deduplicação idempotente do consumidor (_eventos_processados)."""
         event_id = uuid.uuid4().hex
         criado_em = datetime.datetime.now(datetime.timezone.utc).isoformat()
+        prox_seq = int(conn.execute(
+            "SELECT COALESCE(MAX(seq), 0) + 1 FROM _outbox_events"
+        ).fetchone()[0])
         conn.execute(
             """
-            INSERT INTO _outbox_events (id, event_name, payload, status, criado_em)
-            VALUES (?, ?, ?, 'pendente', ?)
+            INSERT INTO _outbox_events (id, event_name, payload, status, criado_em, seq)
+            VALUES (?, ?, ?, 'pendente', ?, ?)
             """,
-            (event_id, event_name, json.dumps(payload, ensure_ascii=False), criado_em)
+            (event_id, event_name, json.dumps(payload, ensure_ascii=False), criado_em, prox_seq)
         )
         return event_id
+
+    def registrar_evento_processado(
+        self,
+        conn,
+        event_id: str,
+        seq: int,
+        event_name: str,
+        consumer_id: str = "default",
+        processado_em: str | None = None,
+    ) -> bool:
+        """Idempotência do consumidor: registra um evento como já processado por um
+        consumer. Retorna True quando o registro é novo (primeira vez) e False quando
+        o evento já havia sido processado pelo mesmo consumer (entrega duplicada)."""
+        if processado_em is None:
+            processado_em = datetime.datetime.now(datetime.timezone.utc).isoformat()
+        cur = conn.execute(
+            "INSERT INTO _eventos_processados (event_id, seq, event_name, consumer_id, processado_em) "
+            "VALUES (?, ?, ?, ?, ?) "
+            "ON CONFLICT (event_id) DO NOTHING",
+            (event_id, seq, event_name, consumer_id, processado_em)
+        )
+        return bool(cur.rowcount == 1)
+
+    def evento_ja_processado(self, conn, event_id: str) -> bool:
+        """Retorna True se o evento já foi registrado como processado (em qualquer
+        consumer). Ponto de checagem do consumidor antes de aplicar efeito colateral."""
+        row = conn.execute(
+            "SELECT 1 FROM _eventos_processados WHERE event_id = ? LIMIT 1",
+            (event_id,)
+        ).fetchone()
+        return row is not None
+
+    def ultimo_seq_processado(self, conn, consumer_id: str = "default"):
+        """Retorna o maior `seq` já processado pelo consumer (high-water mark) ou
+        None se o consumer ainda não processou evento nenhum."""
+        row = conn.execute(
+            "SELECT MAX(seq) FROM _eventos_processados WHERE consumer_id = ?",
+            (consumer_id,)
+        ).fetchone()
+        valor = row[0] if row is not None else None
+        return int(valor) if valor is not None else None
