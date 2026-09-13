@@ -116,9 +116,9 @@
     "hook": {
       "pasta_fonte": "hooks",
       "distribuicao": "multi-harness",
-      "unidade": "diretorio",
+      "unidade": "arquivo",
       "status_evidencia": "SEM PRECEDENTE FÍSICO NO REPOSITÓRIO - nenhum '.claude/settings.json' encontrado em nenhuma ferramenta, nenhuma pasta 'hooks/' de componente (só '.git/hooks/*.sample', irrelevante ao ecossistema AIDD). PROPOSTO NESTA MIGRAÇÃO por simetria com 'skill', PARA REVISÃO EXPLÍCITA DO USUÁRIO.",
-      "harnesses_aplicaveis": ["claude-code", "antigravity", "opencode", "mimocode", "gemini-cli", "codebuddy"],
+      "harnesses_aplicaveis": ["claude-code", "antigravity", "opencode", "mimocode", "gemini-cli", "cursor", "codebuddy"],
       "dest_harness_template": "{prefixo_pasta}/hooks/{nome}",
       "nota_revisao": "Claude Code registra hooks via '.claude/settings.json'; CodeBuddy via '.codebuddy/settings.json'; Gemini CLI via '.gemini/hooks/'. A pasta '{prefixo}/hooks/' garante presença física do script; o wiring em settings.json de cada harness fica para o integrador."
     },
@@ -143,8 +143,8 @@
   "escopos": {
     "compartilhado": {
       "root": ".",
-      "tipos_aplicaveis": ["skill", "command"],
-      "nota": "componentes/compartilhado/{skills,comandos}/ cobre os 2 tipos com componentes reais ecosystem-wide hoje (as skills-runner, slash commands e skills compartilhadas). Componentes específicos de cada ferramenta vivem em tools/<ferramenta>/ e são sincronizados por mecanismos internos de cada tool — não por este manifesto."
+      "tipos_aplicaveis": ["skill", "command", "hook"],
+      "nota": "componentes/compartilhado/{skills,comandos,hooks}/ cobre os tipos com componentes reais ecosystem-wide hoje (as skills-runner, slash commands, hooks agnósticos e skills compartilhadas). Componentes específicos de cada ferramenta vivem em tools/<ferramenta>/ e são sincronizados por mecanismos internos de cada tool — não por este manifesto."
     }
   }
 }

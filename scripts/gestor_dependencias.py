@@ -72,6 +72,7 @@ DESTINOS_MCP = {
         "schema_inicial": {"$schema": "https://mimo.xiaomi.com/mimocode/config.json"},
     },
     "antigravity": {"caminho": os.path.join(ROOT_DIR, ".agents", "mcp_config.json"), "chave": "mcpServers"},
+    "vscode": {"caminho": os.path.join(ROOT_DIR, ".vscode", "mcp.json"), "chave": "mcpServers"},
 }
 
 
@@ -236,7 +237,7 @@ def _mcp_presente(nome, caminho, chave):
     return nome in dados[chave]
 
 
-def _construir_entrada_mcp(cfg, harness):
+def _construir_entrada_mcp(nome, cfg, harness):
     """Adapta as chaves declarativas do manifesto (tipo/comando/args/env/url) para o
     schema de config nativo de cada harness (schemas confirmados via doc oficial de
     cada ferramenta — ver docstring do módulo)."""
@@ -244,12 +245,10 @@ def _construir_entrada_mcp(cfg, harness):
 
     if tipo == "remote":
         url = cfg["url"]
-        if harness == "claude-code":
+        if harness in ("claude-code", "cursor", "vscode"):
             return {"type": "http", "url": url}
         if harness == "opencode":
             return {"type": "remote", "url": url, "enabled": True}
-        if harness == "cursor":
-            return {"url": url}
         if harness == "gemini-cli":
             return {"httpUrl": url}
         if harness == "mimocode":
@@ -259,39 +258,40 @@ def _construir_entrada_mcp(cfg, harness):
         raise ValueError(f"harness '{harness}' sem schema de MCP remoto confirmado nesta v1")
 
     entrada_env = {var: f"${{{var}}}" for var in cfg["env"]} if cfg.get("env") else None
-    if harness == "claude-code":
-        entrada = {"command": cfg["comando"], "args": cfg.get("args", [])}
+
+    # Resolução de CWD para repositório do workspace
+    cwd_val = None
+    if cfg.get("cwd"):
+        cwd_val = ROOT_DIR if cfg["cwd"] in ("${WORKSPACE_ROOT}", ".") else cfg["cwd"]
+    elif nome == "code-review-graph":
+        cwd_val = ROOT_DIR
+
+    if harness in ("claude-code", "cursor", "gemini-cli", "antigravity", "vscode"):
+        entrada = {"command": cfg["comando"], "args": list(cfg.get("args", []))}
         if entrada_env:
             entrada["env"] = entrada_env
+        if cwd_val:
+            entrada["cwd"] = cwd_val
         return entrada
     if harness == "opencode":
-        return {"type": "local", "command": [cfg["comando"]] + list(cfg.get("args", []))}
-    if harness == "cursor":
-        entrada = {"command": cfg["comando"], "args": cfg.get("args", [])}
-        if entrada_env:
-            entrada["env"] = entrada_env
-        return entrada
-    if harness == "gemini-cli":
-        entrada = {"command": cfg["comando"], "args": cfg.get("args", [])}
-        if entrada_env:
-            entrada["env"] = entrada_env
+        entrada = {"type": "local", "command": [cfg["comando"]] + list(cfg.get("args", []))}
+        if cwd_val:
+            entrada["cwd"] = cwd_val
         return entrada
     if harness == "mimocode":
         entrada = {"type": "local", "command": [cfg["comando"]] + list(cfg.get("args", [])), "enabled": True}
         if entrada_env:
             entrada["environment"] = entrada_env
-        return entrada
-    if harness == "antigravity":
-        entrada = {"command": cfg["comando"], "args": cfg.get("args", [])}
-        if entrada_env:
-            entrada["env"] = entrada_env
+        if cwd_val:
+            entrada["cwd"] = cwd_val
         return entrada
     raise ValueError(f"harness '{harness}' sem schema de MCP local confirmado nesta v1")
 
 
 def _mesclar_mcp(nome, cfg, harness, caminho, chave, dry_run, schema_inicial=None):
+    os.makedirs(os.path.dirname(caminho), exist_ok=True)
     dados = _carregar_mcp_config(caminho, chave, schema_inicial=schema_inicial)
-    dados[chave][nome] = _construir_entrada_mcp(cfg, harness)
+    dados[chave][nome] = _construir_entrada_mcp(nome, cfg, harness)
 
     if dry_run:
         return
@@ -315,16 +315,80 @@ def bootstrap_mcps(apenas=None, dry_run=False):
                 relatorio["harnesses_sem_suporte"].append(f"{nome} -> {harness} (schema nao confirmado, TODO)")
                 continue
             destino = DESTINOS_MCP[harness]
-            if _mcp_presente(nome, destino["caminho"], destino["chave"]):
-                relatorio["ja_registrados"].append(f"{nome} ({harness})")
-                continue
+            ja_existe = _mcp_presente(nome, destino["caminho"], destino["chave"])
             _mesclar_mcp(
                 nome, cfg, harness, destino["caminho"], destino["chave"], dry_run,
                 schema_inicial=destino.get("schema_inicial"),
             )
-            relatorio["registrados"].append(f"{nome} ({harness})" + (" [DRY-RUN]" if dry_run else ""))
+            if ja_existe:
+                relatorio["ja_registrados"].append(f"{nome} ({harness})")
+            else:
+                relatorio["registrados"].append(f"{nome} ({harness})" + (" [DRY-RUN]" if dry_run else ""))
+
+    # Sincronização global do Antigravity CLI / Gemini (se diretório ~/.gemini existir)
+    gemini_home = os.path.expanduser("~/.gemini")
+    if os.path.isdir(gemini_home):
+        destinos_globais = [
+            os.path.join(gemini_home, "antigravity", "mcp_config.json"),
+            os.path.join(gemini_home, "config", "mcp_config.json"),
+        ]
+        for dest_global in destinos_globais:
+            if os.path.isdir(os.path.dirname(dest_global)):
+                try:
+                    for nome, cfg in manifesto.get("mcps", {}).items():
+                        if apenas and nome != apenas:
+                            continue
+                        if "antigravity" in cfg.get("harnesses_alvo", []):
+                            _mesclar_mcp(nome, cfg, "antigravity", dest_global, "mcpServers", dry_run)
+                except Exception:
+                    pass
 
     return relatorio
+
+
+def auto_ingest_mcps() -> list[str]:
+    """Descobre MCPs configurados manualmente em arquivos de harness e os ingere
+    na fonte declarativa única gates/dependencias_externas.json, propagando para todos."""
+    manifesto = carregar_manifesto()
+    mcps_declarados = manifesto.setdefault("mcps", {})
+    novos_mcps = []
+
+    for harness, destino in DESTINOS_MCP.items():
+        caminho = destino["caminho"]
+        chave = destino["chave"]
+        if not os.path.exists(caminho):
+            continue
+        try:
+            with open(caminho, "r", encoding="utf-8") as f:
+                dados = json.load(f)
+            servidores = dados.get(chave, {})
+            for nome, cfg in servidores.items():
+                if nome in mcps_declarados:
+                    continue
+                nova_cfg = {"pacote": nome, "harnesses_alvo": list(DESTINOS_MCP.keys())}
+                if "url" in cfg or cfg.get("type") == "remote" or cfg.get("serverUrl"):
+                    nova_cfg["tipo"] = "remote"
+                    nova_cfg["url"] = cfg.get("url") or cfg.get("serverUrl") or ""
+                else:
+                    nova_cfg["tipo"] = "stdio"
+                    nova_cfg["comando"] = cfg.get("command") or (cfg.get("command", [""])[0] if isinstance(cfg.get("command"), list) else "")
+                    if isinstance(cfg.get("command"), list) and len(cfg.get("command")) > 1:
+                        nova_cfg["args"] = cfg["command"][1:]
+                    else:
+                        nova_cfg["args"] = cfg.get("args", [])
+                    nova_cfg["env"] = list(cfg.get("env", {}).keys()) if isinstance(cfg.get("env"), dict) else []
+                    if cfg.get("cwd"):
+                        nova_cfg["cwd"] = cfg["cwd"]
+                mcps_declarados[nome] = nova_cfg
+                novos_mcps.append(f"{nome} (ingerido de {harness})")
+        except Exception:
+            continue
+
+    if novos_mcps:
+        _salvar_manifesto(manifesto)
+        bootstrap_mcps()
+
+    return novos_mcps
 
 
 def _adicionar_padroes_gitignore(padroes):

@@ -44,6 +44,15 @@
       "type": "remote",
       "url": "https://docs.mcp.cloudflare.com/mcp",
       "enabled": true
+    },
+    "code-review-graph": {
+      "type": "local",
+      "command": [
+        "code-review-graph",
+        "serve"
+      ],
+      "enabled": true,
+      "cwd": "C:\\Users\\trcnologia\\Desktop\\ecossistema-aidd"
     }
   }
 }

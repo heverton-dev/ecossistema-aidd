@@ -33,6 +33,13 @@
     },
     "cloudflare-docs": {
       "serverUrl": "https://docs.mcp.cloudflare.com/mcp"
+    },
+    "code-review-graph": {
+      "command": "code-review-graph",
+      "args": [
+        "serve"
+      ],
+      "cwd": "C:\\Users\\trcnologia\\Desktop\\ecossistema-aidd"
     }
   }
 }

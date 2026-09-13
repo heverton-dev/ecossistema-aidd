@@ -18,7 +18,7 @@
       "pacote": "code-review-graph",
       "instalar": "pip install code-review-graph && code-review-graph install -y",
       "verificar": ".claude/skills/review-changes/SKILL.md",
-      "sha256": "d5cb59df67ac4f52f304cf291cfeb9c106e952eb8d42e7d705a1b32eb4e6ef9c",
+      "sha256": "ead883c2ff2ff76e239f208afaca2a7a7fa79db1a012ce7411d28772019e964b",
       "gitignore": [
         "*/skills/debug-issue/",
         "*/skills/explore-codebase/",
@@ -135,6 +135,23 @@
         "gemini-cli",
         "mimocode",
         "antigravity"
+      ]
+    },
+    "code-review-graph": {
+      "pacote": "code-review-graph",
+      "comando": "code-review-graph",
+      "args": [
+        "serve"
+      ],
+      "env": [],
+      "harnesses_alvo": [
+        "claude-code",
+        "opencode",
+        "cursor",
+        "gemini-cli",
+        "mimocode",
+        "antigravity",
+        "vscode"
       ]
     }
   }

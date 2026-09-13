@@ -8,13 +8,11 @@
       ]
     },
     "code-review-graph": {
-      "command": "uvx",
+      "command": "code-review-graph",
       "args": [
-        "code-review-graph",
         "serve"
       ],
-      "cwd": "C:\\Users\\trcnologia\\Desktop\\ecossistema-aidd",
-      "type": "stdio"
+      "cwd": "C:\\Users\\trcnologia\\Desktop\\ecossistema-aidd"
     },
     "context7": {
       "command": "npx",

@@ -91,6 +91,7 @@ O ecossistema dispõe de Quality Gates globais em gates/:
 - gates/G_ARQUITETURA_DELIVERABLE.py: Audita conformidade com Clean Architecture/DDD via AST. Em `stages: [manual]` (violações legadas conhecidas).
 - gates/G_ESCRITOR_ATOMICO.py: Audita o uso de gravação atômica em arquivos críticos do ecossistema.
 - gates/G_TRANSACTION_LOG_LRU.py: Audita deterministicamente (AST + SHA-256) a entrega do transaction log com cache LRU — fonte única, destinos byte-idênticos, declarações em MANIFEST/baseline, símbolos críticos e testes espelhados.
+- gates/G_UNIVERSAL_HARNESS.py: Audita a garantia SINE QUA NON de paridade e wiring de skills, MCPs e hooks agnósticos em todos os harnesses.
 - **Execução unificada:** `python ecossistema.py audit` delega para `pre-commit run --all-files`.
 
 **Nota (G_SEGREDOS):** movido para `stages: [manual]` em 2026-09-08, decisão explícita do usuário. Causa: inconsistência reproduzida entre `python gates/G_SEGREDOS.py` direto (aprovava) e o mesmo via hook pre-commit (reprovava), causa raiz não encontrada. Roda sob demanda: `pre-commit run --hook-stage manual g-segredos --all-files`.

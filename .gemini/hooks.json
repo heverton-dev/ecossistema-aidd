@@ -1,0 +1,18 @@
+{
+  "code-review-graph": {
+    "PreInvocation": [
+      {
+        "type": "command",
+        "command": "python .gemini/hooks/crg_session_start.py",
+        "timeout": 10
+      }
+    ],
+    "PostInvocation": [
+      {
+        "type": "command",
+        "command": "python .gemini/hooks/crg_update.py",
+        "timeout": 15
+      }
+    ]
+  }
+}

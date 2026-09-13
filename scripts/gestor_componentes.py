@@ -667,8 +667,62 @@ def verify_detallado(tipo=None, ferramenta=None):
 # sync (existente — mantida)
 # ---------------------------------------------------------------------------
 
+def auto_ingest_skills(dry_run=False) -> list[str]:
+    """Varre as pastas de skills de todos os harnesses suportados.
+    Se encontrar uma skill que possui SKILL.md mas não existe em componentes/compartilhado/skills/,
+    ingere-a automaticamente para a fonte canônica, permitindo propagação universal."""
+    manifesto = carregar_manifesto()
+    fonte_skills = os.path.join(COMPONENTES_DIR, "compartilhado", "skills")
+    os.makedirs(fonte_skills, exist_ok=True)
+    skills_canonica = set(os.listdir(fonte_skills))
+
+    pastas_busca = []
+    # Harnesses normais
+    for _, info in manifesto.get("harnesses_suportados", {}).items():
+        prefixo = info.get("prefixo_pasta", "")
+        if prefixo:
+            pastas_busca.append(os.path.join(ROOT_DIR, prefixo, "skills"))
+    # Pastas extras
+    pastas_busca.extend([
+        os.path.join(ROOT_DIR, ".skills"),
+        os.path.join(ROOT_DIR, "skills"),
+    ])
+
+    ingeridas = []
+    for pasta in pastas_busca:
+        if not os.path.isdir(pasta):
+            continue
+        try:
+            itens = os.listdir(pasta)
+        except OSError:
+            continue
+        for item in itens:
+            caminho_item = os.path.join(pasta, item)
+            if not os.path.isdir(caminho_item) or item in IGNORAR_DIRS:
+                continue
+            if not os.path.isfile(os.path.join(caminho_item, "SKILL.md")):
+                continue
+            if item in skills_canonica:
+                continue
+
+            destino_canonico = os.path.join(fonte_skills, item)
+            if not dry_run:
+                shutil.copytree(caminho_item, destino_canonico, dirs_exist_ok=True)
+            skills_canonica.add(item)
+            ingeridas.append(f"{item} (ingerido de {os.path.relpath(pasta, ROOT_DIR)})")
+
+    return ingeridas
+
+
 def sync(tipo, ferramenta=None, dry_run=False):
     """Materializa componentes ausentes/divergentes a partir da fonte canônica. Nunca deleta."""
+    if not ferramenta:
+        skills_ingeridas = auto_ingest_skills(dry_run=dry_run)
+        if skills_ingeridas:
+            print(f"[AUTO-INGEST] {len(skills_ingeridas)} nova(s) skill(s) ingerida(s) para a fonte canônica:")
+            for s in skills_ingeridas:
+                print(f"  + {s}")
+
     manifesto = carregar_manifesto()
     relatorio = {"pastas_criadas": [], "criados": [], "atualizados": []}
 

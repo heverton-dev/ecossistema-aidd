@@ -21,6 +21,7 @@
 | Reestruturacao Ddd Clean Architecture | `feitos/PLAN-0014-reestruturacao-ddd-clean-architecture/` |
 | Otimizacao Tokenomics Latencia | `feitos/PLAN-0015-otimizacao-tokenomics-latencia/` |
 | Aidd Bridge | `feitos/PLAN-0020-aidd-bridge/` |
+| Universalidade Harnesses Mcp Hooks | `feitos/PLAN-0026-universalidade-harnesses-mcp-hooks/` |
 
 ## 🔶 Em execução
 
