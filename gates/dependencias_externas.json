@@ -1,11 +1,12 @@
 {
   "versao": "1.0.0",
-  "descricao": "Manifesto único de dependências externas de terceiros usadas pelo AGENTE (skills e MCPs consumidos por quem desenvolve neste monorepo — nunca componentes de produtos gerados pelas ferramentas aidd-*, esses seguem componentes/<escopo>/mcps/ em gates/manifesto_harnesses.json). Consumido por scripts/gestor_dependencias.py (comandos 'python ecossistema.py dependencia bootstrap|add-skill|add-mcp|list|verify').",
+  "descricao": "Manifesto único de dependências externas de terceiros usadas pelo AGENTE (skills e MCPs consumidos por quem desenvolve neste monorepo — nunca componentes de produtos gerados pelas ferramentas aidd-*, esses seguem componentes/<escopo>/mcps/ em gates/manifesto_harnesses.json). Consumido por scripts/gestor_dependencias.py (comandos 'python ecossistema.py dependencia bootstrap|add-skill|add-mcp|list|verify'). Skills com 'verificar' apontando para um ARQUIVO único podem declarar 'sha256' com o hash esperado do artefato instalado — 'dependencia verify'/'bootstrap' bloqueiam ao detectar divergência. MCPs (npx/docker/remoto) não têm artefato local sob controle deste repositório para hashear: o pacote é buscado em tempo de execução pelo próprio harness fora do boundary de instalação deste manifesto, então nenhum campo 'sha256' é declarado para eles (evita checagem fabricada).",
   "skills": {
     "impeccable": {
       "pacote": "impeccable",
       "instalar": "npx impeccable install --providers=claude,cursor,gemini,agents,agent,github,opencode --scope=project -y",
       "verificar": ".claude/skills/impeccable/SKILL.md",
+      "sha256": "3895765e9434400dfc1b30e364be002cf499c1718fb2431e65b907c14ae2cb27",
       "gitignore": [
         "*/skills/impeccable/",
         "*/agents/impeccable-*.md",
@@ -17,6 +18,7 @@
       "pacote": "code-review-graph",
       "instalar": "pip install code-review-graph && code-review-graph install -y",
       "verificar": ".claude/skills/review-changes/SKILL.md",
+      "sha256": "d5cb59df67ac4f52f304cf291cfeb9c106e952eb8d42e7d705a1b32eb4e6ef9c",
       "gitignore": [
         "*/skills/debug-issue/",
         "*/skills/explore-codebase/",
@@ -44,6 +46,8 @@
       "pacote": "llmlingua",
       "instalar": "python componentes/compartilhado/skills/sandeco-token-reduce/scripts/setup.py",
       "verificar": "componentes/compartilhado/skills/sandeco-token-reduce/.venv",
+      "sha256": null,
+      "sha256_nota": "N/A: 'verificar' aponta para um diretorio (.venv), nao um arquivo unico. Um .venv contem caminhos absolutos do host e binarios especificos de plataforma, entao um hash fixo de diretorio diverge em toda maquina mesmo sem adulteracao — nao seria uma verificacao real. Para travar de verdade os pacotes pip instalados aqui (llmlingua, anthropic), o caminho correto e o mesmo padrao de lockfile com --generate-hashes usado em requirements.lock (ver 04-pin-exato-hashes.md), aplicado a esta skill em um item futuro.",
       "gitignore": [
         "*/skills/sandeco-token-reduce/.venv/"
       ]

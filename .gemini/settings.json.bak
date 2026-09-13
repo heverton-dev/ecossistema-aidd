@@ -1,0 +1,12 @@
+{
+  "mcpServers": {
+    "code-review-graph": {
+      "command": "uvx",
+      "args": [
+        "code-review-graph",
+        "serve"
+      ],
+      "cwd": "C:\\Users\\trcnologia\\orca\\workspaces\\ecossistema-aidd\\PLAN-0018-fase-04-pin-exato-hashes"
+    }
+  }
+}

@@ -120,18 +120,56 @@ class MCPServer:
         'aidd inject mcp <nome>' expõe um dict 'TOOL_DEF' e uma função
         'handler(params)') e registra cada uma via 'register_tool'.
         Retorna a quantidade de ferramentas injetadas carregadas com sucesso.
+
+        Zero-Trust: nenhum arquivo é executado (exec_module) sem que seu
+        SHA-256 bata com o valor declarado no manifesto canônico
+        (CAPABILITIES.json) E o manifesto esteja assinado com a chave privada
+        Ed25519 correspondente à chave pública versionada em
+        'chaves/manifesto/'. Fail-closed em dois níveis:
+          1. Manifesto ausente/sem assinatura/assinatura inválida ➔ NENHUMA
+             ferramenta injetada é carregada (retorna 0).
+          2. Arquivo presente no diretório mas ausente do manifesto, ou cujo
+             SHA-256 real diverge do declarado (adulteração pós-assinatura)
+             ➔ aquele arquivo específico é ignorado, os demais continuam.
         """
+        import hashlib
         import importlib.util
+
+        try:
+            from assinatura_manifesto import obter_hashes_confiaveis
+        except ImportError:
+            from core.assinatura_manifesto import obter_hashes_confiaveis
 
         base_dir = mcp_dir or os.path.join(os.path.dirname(os.path.abspath(__file__)), "mcp")
         if not os.path.isdir(base_dir):
             return 0
+
+        root_dir = os.path.abspath(os.path.join(base_dir, os.pardir, os.pardir, os.pardir))
+        hashes_result = obter_hashes_confiaveis(root_dir, tipo="mcp")
+        if not hashes_result.sucesso:
+            # Manifesto não assinado, assinatura inválida ou chave pública
+            # ausente: nenhum hash é confiável, logo nenhum componente é
+            # carregado (fail-closed no nível do manifesto).
+            return 0
+        hashes_confiaveis: Dict[str, str] = hashes_result.valor
 
         carregadas = 0
         for nome_arquivo in sorted(os.listdir(base_dir)):
             if not nome_arquivo.endswith(".py") or nome_arquivo.startswith("__"):
                 continue
             caminho = os.path.join(base_dir, nome_arquivo)
+            rel_path = os.path.relpath(caminho, root_dir).replace("\\", "/")
+
+            hash_esperado = hashes_confiaveis.get(rel_path)
+            if hash_esperado is None:
+                # Arquivo não registrado no manifesto assinado — ignorado.
+                continue
+            with open(caminho, "rb") as f_hash:
+                hash_real = hashlib.sha256(f_hash.read()).hexdigest()
+            if hash_real != hash_esperado:
+                # Conteúdo adulterado após a assinatura do manifesto — bloqueado.
+                continue
+
             modulo_id = f"aidd_injected_mcp_{os.path.splitext(nome_arquivo)[0]}"
             spec = importlib.util.spec_from_file_location(modulo_id, caminho)
             if spec is None or spec.loader is None:

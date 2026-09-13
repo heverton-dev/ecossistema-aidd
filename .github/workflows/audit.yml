@@ -18,9 +18,14 @@ jobs:
           python-version: '3.12'
 
       - name: Instalar dependências da raiz
+        # PLAN-0018 fase 04 (pin-exato-e-hashes): requirements-dev.lock e
+        # requirements.lock (gerados via `uv pip compile --generate-hashes`)
+        # sao os arquivos REALMENTE instalados, com verificacao criptografica
+        # de hash obrigatoria (--require-hashes). requirements*.txt seguem
+        # como fonte legivel com pin exato (==), nunca instalados direto.
         run: |
           python -m pip install --upgrade pip
-          pip install -r requirements-dev.txt
+          pip install --require-hashes -r requirements-dev.lock
 
       - name: Coleta de testes da raiz (pytest.ini nao deve quebrar)
         # exit 5 = "no tests collected" (esperado: gates/*.py nao tem

@@ -1,0 +1,6 @@
+{
+  "algoritmo": "ed25519",
+  "chave_publica_base64": "1Uqbaty3W1vXfSAJBudarsbAfCUJZbZ0TWW8uOYOJQs=",
+  "gerado_em": "2026-09-12T09:31:15.092649",
+  "uso": "Verificação da assinatura do manifesto canônico CAPABILITIES.json (sincronizador_harness / MCPServer.register_injected_tools)."
+}

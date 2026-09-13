@@ -26,6 +26,11 @@ try:
 except ImportError:
     from core.result import Result
 
+try:
+    from materializador import assinar_manifesto_canonico
+except ImportError:
+    from core.materializador import assinar_manifesto_canonico
+
 
 _MARCADOR_TABELA_INICIO = "<!-- AIDD_INJECTOR:COMPONENTES_INICIO -->"
 _MARCADOR_TABELA_FIM = "<!-- AIDD_INJECTOR:COMPONENTES_FIM -->"
@@ -74,7 +79,21 @@ def _atualizar_registry(registry_path: str, payload: Dict[str, Any], arquivos_cr
             json.dump(catalogo, f, ensure_ascii=False, indent=2)
             f.write("\n")
 
-        return Result.ok({"registry": registry_path, "tipo": tipo})
+        # Eleva o mecanismo SHA-256 acima (auto-referenciado no mesmo arquivo)
+        # para um manifesto assinado com Ed25519: sem a chave privada (nunca
+        # versionada), ninguém que só tenha acesso de escrita ao repositório
+        # consegue produzir uma assinatura válida para um manifesto adulterado.
+        # Melhor esforço: ausência de chave privada não falha a injeção, mas
+        # deixa o manifesto sem assinatura — register_injected_tools recusará
+        # confiar nele (fail-closed).
+        assinatura = assinar_manifesto_canonico(registry_path)
+
+        return Result.ok({
+            "registry": registry_path,
+            "tipo": tipo,
+            "assinatura": assinatura.valor if assinatura.sucesso else None,
+            "assinatura_erro": None if assinatura.sucesso else assinatura.codigo,
+        })
     except (OSError, json.JSONDecodeError) as e:
         return Result.fail(f"Falha ao atualizar registry {registry_path}: {e}", codigo="REGISTRY_FALHOU")
 

@@ -7,6 +7,10 @@
         "esperado_identico": true,
         "motivo": null
       },
+      "assinatura_manifesto.py": {
+        "esperado_identico": true,
+        "motivo": null
+      },
       "caveman_protocol.py": {
         "esperado_identico": true,
         "motivo": null

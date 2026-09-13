@@ -1,4 +1,4 @@
-import hmac, hashlib, base64, json, time, os, urllib.parse, urllib.request
+import hmac, hashlib, base64, json, time, os, uuid, urllib.parse, urllib.request
 
 try:
     import secure
@@ -7,9 +7,35 @@ except ImportError:
     secure = None
     _SECURE_AVAILABLE = False
 
+try:
+    from core.token_revocation import TokenRevocationList
+except ImportError:
+    from token_revocation import TokenRevocationList
+
+_JWT_SECRET_DEFAULT = "DEV_ONLY_INSECURE_SECRET_CHANGE_BEFORE_DEPLOY"
+_PRODUCTION_ENV_VALUES = {"production", "prod", "producao", "produção"}
+
+
+def _ambiente_e_producao() -> bool:
+    ambiente = (
+        os.environ.get("ENVIRONMENT")
+        or os.environ.get("APP_ENV")
+        or os.environ.get("ENV")
+        or ""
+    )
+    return ambiente.strip().lower() in _PRODUCTION_ENV_VALUES
+
+
 _JWT_SECRET_RAW = os.environ.get("JWT_SECRET_KEY")
+if _ambiente_e_producao() and (not _JWT_SECRET_RAW or _JWT_SECRET_RAW == _JWT_SECRET_DEFAULT):
+    raise RuntimeError(
+        "JWT_SECRET_KEY ausente ou usando o valor padrao de desenvolvimento "
+        "(DEV_ONLY_INSECURE_SECRET_CHANGE_BEFORE_DEPLOY) em ambiente de producao "
+        "(ENVIRONMENT/APP_ENV/ENV=production). Defina uma chave secreta forte e "
+        "unica antes de iniciar a aplicacao."
+    )
 if not _JWT_SECRET_RAW:
-    _JWT_SECRET_RAW = "DEV_ONLY_INSECURE_SECRET_CHANGE_BEFORE_DEPLOY"
+    _JWT_SECRET_RAW = _JWT_SECRET_DEFAULT
 JWT_SECRET_KEY = _JWT_SECRET_RAW
 
 class JWTService:
@@ -30,6 +56,7 @@ class JWTService:
         p = payload.copy()
         p["exp"] = int(time.time()) + exp_seconds
         p["iat"] = int(time.time())
+        p.setdefault("jti", uuid.uuid4().hex)
 
         h_b64 = cls._base64url_encode(json.dumps(header, separators=(",", ":")).encode("utf-8"))
         p_b64 = cls._base64url_encode(json.dumps(p, separators=(",", ":")).encode("utf-8"))
@@ -66,10 +93,30 @@ class JWTService:
         except ValueError as e:
             return False, None, f"Payload corrompido: {e}"
 
-        if "exp" in payload and payload["exp"] < int(time.time()):
+        if "exp" not in payload:
+            return False, None, "Token sem claim de expiracao (exp) obrigatoria"
+        if payload["exp"] < int(time.time()):
             return False, None, "Token expirado"
 
+        jti = payload.get("jti")
+        if jti and TokenRevocationList.is_revoked(jti):
+            return False, None, "Token revogado"
+
         return True, payload, "OK"
+
+    @classmethod
+    def revoke(cls, token: str) -> bool:
+        """Revoga um token JWT emitido por esta classe, registrando seu jti
+        na Token Revocation List ate a expiracao natural do token."""
+        ok, payload, _ = cls.decode(token)
+        if not ok or not payload:
+            return False
+        jti = payload.get("jti")
+        exp = payload.get("exp")
+        if not jti or exp is None:
+            return False
+        TokenRevocationList.revoke(jti, float(exp))
+        return True
 
 
 class SecurityService:
