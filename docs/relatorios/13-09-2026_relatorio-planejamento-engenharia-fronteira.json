@@ -1,0 +1,74 @@
+{
+  "metadata": {
+    "titulo": "Plano Estratégico: Engenharia Agêntica de Fronteira no Todo e nas Peças",
+    "data": "2026-09-13",
+    "autor": "Antigravity Agent (AIDD)",
+    "versao": "1.0.0",
+    "status": "APROVADO_PARA_EXECUCAO",
+    "total_iniciativas": 9
+  },
+  "iniciativas_todo": [
+    {
+      "id": "TODO-01",
+      "nome": "Cognitive Session Ledger (SQLite-WAL)",
+      "modulo": "core/cognitive_ledger.py",
+      "descricao": "Persistência imutável de estado, hashes de arquivos alterados e vereditos de gates em SQLite WAL para recuperação instantânea em 5ms sem histórico volátil."
+    },
+    {
+      "id": "TODO-02",
+      "nome": "Dynamic Context Slicer via AST & Knowledge Graph",
+      "modulo": "core/context_slicer.py",
+      "descricao": "Pré-voo determinístico que fatiará e entregará apenas o subgrafo de nós e símbolos afetados (<150 tokens) eliminando exploração via Grep cego."
+    },
+    {
+      "id": "TODO-03",
+      "nome": "MCP Dynamic Router & Schema Unloader",
+      "modulo": "core/mcp_dynamic_router.py",
+      "descricao": "Fachada única de MCP com injeção sob demanda de schemas para manter o bootstrap de system prompt abaixo de 1.200 tokens."
+    }
+  ],
+  "iniciativas_partes": [
+    {
+      "id": "PARTE-01",
+      "ferramenta": "aidd-forge",
+      "nome": "Worktree Sandboxing & Auto-Rollback Engine",
+      "modulo": "tools/aidd-forge/aidd_forge/core/sandbox_worktree.py",
+      "descricao": "Isolamento de injeção em Git Worktree efêmero com execução de 7 gates determinísticos e merge atômico apenas em exit 0."
+    },
+    {
+      "id": "PARTE-02",
+      "ferramenta": "aidd-generator",
+      "nome": "Schema-Driven Finite State Machine (FSM)",
+      "modulo": "tools/aidd-generator/scripts/fsm_engine.py",
+      "descricao": "Orquestrador de máquina de estados finitos que valida artefatos com JSON Schema Draft 2020-12 antes de liberar a próxima fase."
+    },
+    {
+      "id": "PARTE-03",
+      "ferramenta": "aidd-master",
+      "nome": "AST Import Guard (Bounded Context Isolator)",
+      "modulo": "tools/aidd-master/scripts/gates/G_AST_BOUNDED_CONTEXT.py",
+      "descricao": "Verificador sintático AST que proíbe fisicamente importações cruzadas entre módulos de negócio, exigindo EventBus."
+    },
+    {
+      "id": "PARTE-04",
+      "ferramenta": "aidd-enterprise",
+      "nome": "Ed25519 Cryptographic Signer & Verifier",
+      "modulo": "tools/aidd-enterprise/src/core/crypto_signer.py",
+      "descricao": "Assinatura assimétrica de componentes corporativos injetados para prevenir ataques de supply-chain e adulteração."
+    },
+    {
+      "id": "PARTE-05",
+      "ferramenta": "aidd-ops",
+      "nome": "OCI Linting & Compose Pre-flight Engine",
+      "modulo": "tools/aidd-ops/src/core/compose_preflight.py",
+      "descricao": "Validador sintático e semântico prévio de manifests Docker Compose e Hadolint antes de emissão de produção."
+    },
+    {
+      "id": "PARTE-06",
+      "ferramenta": "aidd-bridge",
+      "nome": "Deterministic SQL Transpiler (sqlglot)",
+      "modulo": "tools/aidd-bridge/bridge/sql_transpiler.py",
+      "descricao": "Transpilador de dialeto Supabase para PostgreSQL 16 ANSI puro com conversão determinística de triggers e RLS."
+    }
+  ]
+}

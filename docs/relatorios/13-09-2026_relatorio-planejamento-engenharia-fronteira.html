@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Plano Estratégico: Engenharia Agêntica de Fronteira</title>
+  <style>
+    :root {
+      --bg: #0b111a;
+      --surface: #161f2e;
+      --border: #233247;
+      --text: #e6edf3;
+      --text-muted: #8b949e;
+      --accent: #388bfd;
+      --success: #2ea043;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; scrollbar-width: thin; scrollbar-color: var(--accent) var(--bg); }
+    ::-webkit-scrollbar { width: 4px; height: 4px; }
+    ::-webkit-scrollbar-track { background: var(--bg); }
+    ::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 4px; }
+    body { background: var(--bg); color: var(--text); font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; line-height: 1.5; padding: 32px 24px; max-width: 1200px; margin: 0 auto; }
+    header { border-bottom: 1px solid var(--border); padding-bottom: 24px; margin-bottom: 32px; }
+    h1 { font-size: 26px; color: #fff; margin-top: 10px; margin-bottom: 6px; }
+    .badge { display: inline-block; padding: 4px 10px; border-radius: 999px; font-size: 11px; font-weight: 600; text-transform: uppercase; }
+    .badge-success { background: rgba(46, 160, 67, 0.2); color: var(--success); border: 1px solid var(--success); }
+    section { margin-bottom: 36px; }
+    h2 { font-size: 18px; margin-bottom: 16px; border-left: 3px solid var(--accent); padding-left: 10px; color: #fff; }
+    table { width: 100%; border-collapse: collapse; background: var(--surface); border: 1px solid var(--border); border-radius: 8px; overflow: hidden; font-size: 14px; margin-bottom: 24px; }
+    th, td { padding: 12px 14px; text-align: left; border-bottom: 1px solid var(--border); vertical-align: top; }
+    th { background: rgba(255, 255, 255, 0.03); color: var(--text-muted); font-size: 11px; text-transform: uppercase; }
+    .col-id { width: 100px; font-weight: 600; color: var(--accent); }
+    .col-name { width: 260px; font-weight: 600; color: #fff; }
+  </style>
+</head>
+<body>
+  <header>
+    <span class="badge badge-success">FASE 1: ESPECIFICAÇÃO CANÔNICA DE ENGENHARIA DE FRONTEIRA</span>
+    <h1>Plano Estratégico: Engenharia Agêntica de Fronteira no Todo e nas Peças</h1>
+    <p style="color: var(--text-muted); font-size: 14px;">Data: 13/09/2026 • Auditor: Antigravity Agent (AIDD) • Protocolo Pareado Canônico</p>
+  </header>
+
+  <section>
+    <h2>1. Inovações no Todo (Ecossistema Global)</h2>
+    <table>
+      <thead>
+        <tr>
+          <th class="col-id">Código</th>
+          <th class="col-name">Iniciativa</th>
+          <th>Módulo Técnico Alvo</th>
+          <th>Impacto Arquitetural e Tokenomics</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="col-id">TODO-01</td>
+          <td class="col-name">Cognitive Session Ledger (SQLite-WAL)</td>
+          <td><code>core/cognitive_ledger.py</code></td>
+          <td style="color: var(--text-muted);">Persistência imutável de estado, hashes de arquivos alterados e vereditos de gates em SQLite WAL para recuperação instantânea em 5ms sem histórico volátil.</td>
+        </tr>
+        <tr>
+          <td class="col-id">TODO-02</td>
+          <td class="col-name">Dynamic Context Slicer via AST & Knowledge Graph</td>
+          <td><code>core/context_slicer.py</code></td>
+          <td style="color: var(--text-muted);">Pré-voo determinístico que fatiará e entregará apenas o subgrafo de nós e símbolos afetados (<150 tokens) eliminando exploração via Grep cego.</td>
+        </tr>
+        <tr>
+          <td class="col-id">TODO-03</td>
+          <td class="col-name">MCP Dynamic Router & Schema Unloader</td>
+          <td><code>core/mcp_dynamic_router.py</code></td>
+          <td style="color: var(--text-muted);">Fachada única de MCP com injeção sob demanda de schemas para manter o bootstrap de system prompt abaixo de 1.200 tokens.</td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
+  <section>
+    <h2>2. Inovações nas Peças (Ferramentas Autocontidas)</h2>
+    <table>
+      <thead>
+        <tr>
+          <th class="col-id">Código</th>
+          <th style="width: 140px;">Ferramenta</th>
+          <th class="col-name">Iniciativa</th>
+          <th>Módulo Técnico Alvo</th>
+          <th>Impacto Arquitetural e Tokenomics</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="col-id">PARTE-01</td>
+          <td><strong>aidd-forge</strong></td>
+          <td class="col-name">Worktree Sandboxing & Auto-Rollback Engine</td>
+          <td><code>tools/aidd-forge/aidd_forge/core/sandbox_worktree.py</code></td>
+          <td style="color: var(--text-muted);">Isolamento de injeção em Git Worktree efêmero com execução de 7 gates determinísticos e merge atômico apenas em exit 0.</td>
+        </tr>
+        <tr>
+          <td class="col-id">PARTE-02</td>
+          <td><strong>aidd-generator</strong></td>
+          <td class="col-name">Schema-Driven Finite State Machine (FSM)</td>
+          <td><code>tools/aidd-generator/scripts/fsm_engine.py</code></td>
+          <td style="color: var(--text-muted);">Orquestrador de máquina de estados finitos que valida artefatos com JSON Schema Draft 2020-12 antes de liberar a próxima fase.</td>
+        </tr>
+        <tr>
+          <td class="col-id">PARTE-03</td>
+          <td><strong>aidd-master</strong></td>
+          <td class="col-name">AST Import Guard (Bounded Context Isolator)</td>
+          <td><code>tools/aidd-master/scripts/gates/G_AST_BOUNDED_CONTEXT.py</code></td>
+          <td style="color: var(--text-muted);">Verificador sintático AST que proíbe fisicamente importações cruzadas entre módulos de negócio, exigindo EventBus.</td>
+        </tr>
+        <tr>
+          <td class="col-id">PARTE-04</td>
+          <td><strong>aidd-enterprise</strong></td>
+          <td class="col-name">Ed25519 Cryptographic Signer & Verifier</td>
+          <td><code>tools/aidd-enterprise/src/core/crypto_signer.py</code></td>
+          <td style="color: var(--text-muted);">Assinatura assimétrica de componentes corporativos injetados para prevenir ataques de supply-chain e adulteração.</td>
+        </tr>
+        <tr>
+          <td class="col-id">PARTE-05</td>
+          <td><strong>aidd-ops</strong></td>
+          <td class="col-name">OCI Linting & Compose Pre-flight Engine</td>
+          <td><code>tools/aidd-ops/src/core/compose_preflight.py</code></td>
+          <td style="color: var(--text-muted);">Validador sintático e semântico prévio de manifests Docker Compose e Hadolint antes de emissão de produção.</td>
+        </tr>
+        <tr>
+          <td class="col-id">PARTE-06</td>
+          <td><strong>aidd-bridge</strong></td>
+          <td class="col-name">Deterministic SQL Transpiler (sqlglot)</td>
+          <td><code>tools/aidd-bridge/bridge/sql_transpiler.py</code></td>
+          <td style="color: var(--text-muted);">Transpilador de dialeto Supabase para PostgreSQL 16 ANSI puro com conversão determinística de triggers e RLS.</td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+</body>
+</html>
