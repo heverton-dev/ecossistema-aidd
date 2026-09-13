@@ -123,6 +123,10 @@
         "esperado_identico": true,
         "motivo": null
       },
+      "transaction_log.py": {
+        "esperado_identico": true,
+        "motivo": null
+      },
       "webhooks.py": {
         "esperado_identico": true,
         "motivo": null
