@@ -1,0 +1,78 @@
+{
+  "metadata": {
+    "titulo": "Auditoria de Assimetria e Governança Contextual nas Ferramentas (tools/*)",
+    "data": "2026-09-13",
+    "autor": "Antigravity Agent (AIDD)",
+    "status": "GAPS_IDENTIFICADOS",
+    "total_ferramentas": 6
+  },
+  "ferramentas": [
+    {
+      "nome": "aidd-forge",
+      "agents_md_presente": true,
+      "linhas_atuais": 46,
+      "idioma": "PT-BR",
+      "gaps": [
+        "Arquivo em PT-BR",
+        "Ausência de Silent executor e Bash rule explícitas"
+      ],
+      "meta_linhas": "< 40 linhas em Inglês"
+    },
+    {
+      "nome": "aidd-generator",
+      "agents_md_presente": true,
+      "linhas_atuais": 357,
+      "idioma": "PT-BR",
+      "gaps": [
+        "Arquivo monolítico prolixo (357 linhas)",
+        "Prosa narrativa em PT-BR",
+        "Falta de diretivas modernas de execução"
+      ],
+      "meta_linhas": "< 50 linhas em Inglês"
+    },
+    {
+      "nome": "aidd-master",
+      "agents_md_presente": true,
+      "linhas_atuais": 66,
+      "idioma": "PT-BR",
+      "gaps": [
+        "Arquivo em PT-BR",
+        "Falta das diretrizes Thinking constraint e Bash rule padronizadas"
+      ],
+      "meta_linhas": "< 45 linhas em Inglês"
+    },
+    {
+      "nome": "aidd-enterprise",
+      "agents_md_presente": true,
+      "linhas_atuais": 65,
+      "idioma": "PT-BR",
+      "gaps": [
+        "Arquivo em PT-BR",
+        "Falta das diretrizes Thinking constraint e Bash rule padronizadas"
+      ],
+      "meta_linhas": "< 45 linhas em Inglês"
+    },
+    {
+      "nome": "aidd-ops",
+      "agents_md_presente": false,
+      "linhas_atuais": 0,
+      "idioma": "Ausente",
+      "gaps": [
+        "AGENTS.md inexistente",
+        "Sem isolamento de contexto de infra/docker"
+      ],
+      "meta_linhas": "Criar AGENTS.md conciso em Inglês (< 45 linhas)"
+    },
+    {
+      "nome": "aidd-bridge",
+      "agents_md_presente": false,
+      "linhas_atuais": 0,
+      "idioma": "Ausente",
+      "gaps": [
+        "AGENTS.md inexistente",
+        "Sem isolamento de contexto de extração/VPS"
+      ],
+      "meta_linhas": "Criar AGENTS.md conciso em Inglês (< 45 linhas)"
+    }
+  ]
+}

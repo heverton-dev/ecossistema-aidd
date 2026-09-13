@@ -1,46 +1,32 @@
-﻿# AGENTS.md — Regras de Operação no Repositório AIDD Forge
+# AIDD Forge — Canonical Agent Directives & Operational Rules
 
-> **Projeto:** `AIDD Forge`  
-> **Papel do Arquivo:** Governança Canônica e Instruções Primárias para qualquer Agente de IA operando nesta base.
-
----
-
-## 1. Tríade Caveman Ultra (Mandatória)
-
-Para máxima economia de tokens e precisão técnica:
-1. **ENTRADA (Rules/System Prompts):** Arquivos de regras e comandos em Inglês enxuto.
-2. **PROCESSAMENTO (Internal CoT / Thinking):** Estilo English Caveman telegráfico (3 a 5 linhas, sem artigos e sem preposições desnecessárias).
-3. **SAÍDA (Comunicação e Código):** Respostas, relatórios, commits e código estritamente em **Português do Brasil (PT-BR)** de alta densidade técnica.
+> **Tool:** `aidd-forge`  
+> **Role:** Deterministic Environment Bootstrapping, Micro-Environment Isolation, Phase Slicing & Context Purging.  
+> **Governance Standard:** Zero Stubs, Result Monad, Deterministic Injection, Cross-Harness Sync.
 
 ---
 
-## 2. Padrões Arquiteturais Rígidos
+## 1. Core Execution Constraints
 
-- **Zero Stubs:** É proibido commitar métodos vazios (`pass`), retornos fictícios ou mocks de fachada em código de produção.
-- **Result Monad:** Todo serviço ou rotina suscetível a erro operacional deve retornar `Result.ok(valor)` ou `Result.fail(erro)`.
-- **Descarte de Contexto (Context-Purge):** Subagentes cognitivos devem receber apenas a especificação atômica da tarefa e ser finalizados imediatamente após salvar o artefato e validar via AST.
-- **7 Quality Gates:** Toda alteração deve passar pelos 7 gates determinísticos presentes em `aidd_forge/templates/gates/`.
-
----
-
-## 3. Disparo por Linguagem Natural e Comandos
-
-- `/forge` ou `/aidd-init`: Executa o bootstrap determinístico via `python -m aidd_forge.cli init`.
-- Linguagem Natural: Intenções como *"prepare o ambiente"*, *"configure com aidd"* ou *"blinde as regras"* disparam a rotina de injeção automática.
-- **Injetor Universal de Componentes:** `forge inject <tipo> <nome> --descricao "..." (--conteudo "..." | --conteudo-file PATH) [--path PATH] [--force]`
-  materializa deterministicamente um novo componente no projeto alvo. Tipos suportados: `skill`, `mcp`,
-  `rule`, `spec`, `roteiro` (ver `aidd_forge/core/injector_profiles.py` para os destinos exatos). A
-  transação é atômica com rollback automático (`aidd_forge/core/materializador.py`), o `AGENTS.md` do
-  alvo e o catálogo `aidd_forge/mcps/registry.json` (quando aplicável) são atualizados, e o Quality Gate
-  `G_INJECT.py` valida que nenhum componente registrado seja órfão ou stub.
-  Linguagem Natural: *"crie uma skill de X"*, *"adicione um mcp de X"*, *"nova regra sobre X"*,
-  *"crie uma spec para X"* ou *"escreva um roteiro de X"* disparam o `forge inject` equivalente.
+- **Thinking constraint:** Think strictly in compact English. Focus on injection invariants, schema consistency, and rollback transactions. Under 150 words.
+- **Execution limit:** Resolve tasks in 3 to 5 discrete steps. Stop and request user confirmation if more steps are required.
+- **Output format:** Silent executor. Return code edits and 1-line execution status only. Do not repeat generated files in chat.
+- **Bash rule:** Always pipe verbose commands to tail/grep. E.g., `pytest tests/ 2>&1 | tail -n 25`. Never dump raw file trees or lockfiles.
+- **Editing rule:** Use exact search/replace block edits (`replace_file_content`).
 
 ---
 
-## 4. Agnosticismo de Harness
+## 2. Architectural Invariants & Laws
 
-Este repositório suporta e reconhece qualquer harness ativo:
-- **Antigravity / Open Code / MimoCode:** Leem `.agent/` e as diretivas deste `AGENTS.md`.
-- **Claude Code:** Lê `CLAUDE.md` (vinculado a este arquivo) e `.claude/commands/`.
-- **Cursor:** Lê `.cursor/rules/`.
+1. **Zero Stubs:** Forbidden to commit empty methods (`pass`), simulated returns, or mock facades in production code.
+2. **Result Monad:** All operational routines and service boundaries must return `Result.ok(value)` or `Result.fail(error)`.
+3. **Context-Purge Isolation:** Cognitive subagents receive only atomic task specs and terminate immediately after AST validation.
+4. **Universal Injector:** `python -m aidd_forge.cli inject <type> <name>` materializes deterministic components (`skill`, `mcp`, `rule`, `spec`, `roteiro`) with atomic rollback via `materializador.py`.
+5. **Deterministic Gates:** All code modifications must pass the 7 deterministic gates in `aidd_forge/templates/gates/`.
+
+---
+
+## 3. Command Dispatch
+
+- `/forge [path]` or `/aidd-init`: Executes deterministic bootstrap via `python -m aidd_forge.cli init`.
+- Natural Language: Intentions like *"prepare environment"*, *"harden rules"*, *"create skill X"* route directly to `forge inject` or `forge init`.

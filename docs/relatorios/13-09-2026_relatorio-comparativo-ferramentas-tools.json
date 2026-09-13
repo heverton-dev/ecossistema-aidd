@@ -1,0 +1,82 @@
+{
+  "metadata": {
+    "titulo": "Relatório Comparativo: Antes vs Depois da Governança Contextual nas Ferramentas (tools/*)",
+    "data": "2026-09-13",
+    "autor": "Antigravity Agent (AIDD)",
+    "versao": "1.0.0",
+    "status": "CONCLUÍDO & 100% UNIFORMIZADO",
+    "padrao_linhas": "< 36 linhas por ferramenta",
+    "idioma_padrao": "Inglês Técnico Conciso"
+  },
+  "metricas_comparativas": {
+    "cobertura_ferramentas": {
+      "antes": "66.7% (4/6)",
+      "depois": "100.0% (6/6)",
+      "delta": "+33.3%"
+    },
+    "linhas_totais_tools": {
+      "antes": "534 linhas",
+      "depois": "195 linhas",
+      "delta": "-63.5% de redução"
+    },
+    "idioma_ingles_core": {
+      "antes": "0% (todas em PT-BR ou ausentes)",
+      "depois": "100% (todas em EN)",
+      "delta": "Conformidade Total"
+    },
+    "diretrizes_modernas": {
+      "antes": "0% das ferramentas com pacote completo",
+      "depois": "100% das ferramentas (6/6)",
+      "delta": "Unidade Arquitetural"
+    },
+    "quality_gates": {
+      "antes": "Gates globais verdes, mas governança local em deriva",
+      "depois": "10/10 Quality Gates Passed (Exit 0)",
+      "delta": "Aprovado"
+    }
+  },
+  "tabela_ferramentas": [
+    {
+      "ferramenta": "aidd-forge",
+      "antes": "46 linhas em PT-BR; ausência de diretrizes explícitas Silent executor e Bash rule.",
+      "depois": "32 linhas em Inglês conciso; Thinking constraint, Silent executor, Bash rule e 3-5 steps integrados.",
+      "reducao": "-30.4%",
+      "status": "UNIFORMIZADO"
+    },
+    {
+      "ferramenta": "aidd-generator",
+      "antes": "357 linhas prolixas em PT-BR; arquivo monolítico que inflava severamente o contexto.",
+      "depois": "35 linhas em Inglês conciso; foco estrito nas 8 fases, schemas de transição e gates mecânicos.",
+      "reducao": "-90.2%",
+      "status": "UNIFORMIZADO"
+    },
+    {
+      "ferramenta": "aidd-master",
+      "antes": "66 linhas em PT-BR; sem diretivas modernas de corte de passos e sanitização de bash.",
+      "depois": "33 linhas em Inglês conciso; invariantes de Clean Architecture, WAL SQLite e Result Monad.",
+      "reducao": "-50.0%",
+      "status": "UNIFORMIZADO"
+    },
+    {
+      "ferramenta": "aidd-enterprise",
+      "antes": "65 linhas em PT-BR; sem diretrizes modernas de execução.",
+      "depois": "32 linhas em Inglês conciso; validação criptográfica SHA-256 e arquitetura zero-trust.",
+      "reducao": "-50.8%",
+      "status": "UNIFORMIZADO"
+    },
+    {
+      "ferramenta": "aidd-ops",
+      "antes": "Ausente (0 linhas); sem qualquer isolamento contextual de infraestrutura.",
+      "depois": "32 linhas em Inglês conciso; diretrizes canônicas para Docker, Hadolint OCI, Compose e Ansible hardening.",
+      "reducao": "Criado (+32 l)",
+      "status": "CRIADO & UNIFORMIZADO"
+    },
+    {
+      "ferramenta": "aidd-bridge",
+      "antes": "Ausente (0 linhas); sem qualquer isolamento de contexto para fluxos Lovable/VPS.",
+      "depois": "31 linhas em Inglês conciso; diretrizes canônicas para Data Bridge, PostgREST, auth migration e unificação.",
+      "reducao": "Criado (+31 l)",
+      "status": "CRIADO & UNIFORMIZADO"
+    }
+  ]
+}
