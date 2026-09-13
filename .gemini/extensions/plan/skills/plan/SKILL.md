@@ -1,6 +1,6 @@
 ---
 name: plan
-description: Etapa 2 do fluxo /melhoria -> /plan -> /orchestrate. Transforma um relatorio de analise (ou um pedido direto do usuario) na estrutura de plano em docs/planos/, sempre como rascunho, e para para aprovacao humana.
+description: Transforms analysis reports into structured audit/evolution plans in docs/planos/.
 ---
 
 # /plan — Gerador de Planos (Etapa 2 de 3)

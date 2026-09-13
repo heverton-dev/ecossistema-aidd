@@ -1,6 +1,6 @@
 ---
 name: aidd-enterprise-runner
-description: Injeta e audita componentes regulados de missão crítica com validação SHA-256 no aidd-enterprise.
+description: Injects and audits mission-critical enterprise components with SHA-256 validation.
 ---
 
 # AIDD Enterprise Runner

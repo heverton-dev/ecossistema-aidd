@@ -1,6 +1,6 @@
 ---
 name: skill-creator-runner
-description: Cria, melhora ou avalia skills deste ecossistema (qualquer ferramenta ou compartilhado), garantindo que o resultado seja materializado em componentes/ e sincronizado em todos os harnesses — usa skill/ferramenta nativa de autoria quando disponível no harness, ou o checklist próprio abaixo quando não.
+description: Creates, optimizes, and evaluates agent skills across all ecosystem harnesses.
 ---
 
 # Skill Creator Runner

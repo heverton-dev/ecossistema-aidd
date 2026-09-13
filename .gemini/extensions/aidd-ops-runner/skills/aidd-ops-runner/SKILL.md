@@ -1,6 +1,6 @@
 ---
 name: aidd-ops-runner
-description: Meta-Orquestrador Agêntico de Infraestrutura — governança reconhecida, MVP funcional.
+description: Agentic infrastructure meta-orchestrator for cloud and container deployments.
 ---
 
 # AIDD-Ops Runner

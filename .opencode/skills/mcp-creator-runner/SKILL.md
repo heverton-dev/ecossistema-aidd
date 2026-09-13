@@ -1,6 +1,6 @@
 ---
 name: mcp-creator-runner
-description: Cria um novo servidor MCP para uma ferramenta deste ecossistema (ou compartilhado), garantindo que o resultado seja materializado em componentes/ e sincronizado em todos os harnesses — usa ferramenta/função nativa de autoria MCP quando disponível no harness, ou o padrão FastMCP/mcp já usado no projeto quando não.
+description: Scaffolds and exposes new Model Context Protocol (MCP) servers across harnesses.
 ---
 
 # MCP Creator Runner

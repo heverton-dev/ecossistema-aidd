@@ -1,6 +1,6 @@
 ---
 name: melhoria
-description: Recebe um pedido de melhoria em linguagem natural, investiga o codigo real de forma profunda e estruturada, e gera um relatorio com nota (0-10) em docs/melhorias/ — etapa anterior ao /plan.
+description: Deeply analyzes code improvements from natural language and produces structured evaluation reports.
 ---
 
 # /melhoria — Analise Profunda Pre-Planejamento

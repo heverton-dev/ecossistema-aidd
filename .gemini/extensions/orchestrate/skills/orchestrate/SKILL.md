@@ -1,6 +1,6 @@
 ---
 name: orchestrate
-description: Roteador de ambiente e Plano de Voo para execução de planos ORCA — pergunta ORCA (app real), Subagentes (Agent tool desta sessão) ou Git Worktree nativo antes de tudo; cada ambiente compila um JSON no formato certo pra ele, e só depois executa.
+description: Routes plan execution between ORCA app, agent worktrees, and native execution engines.
 ---
 
 # /orchestrate — Roteador de Ambiente e Plano de Voo

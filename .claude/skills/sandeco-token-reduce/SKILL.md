@@ -1,12 +1,6 @@
 ---
 name: sandeco-token-reduce
-description: >
-  Comprime tokens de prompts usando LLMLingua-2 da Microsoft para reduzir custo e latencia.
-  Use esta skill sempre que o usuario pedir para comprimir um prompt, reduzir tokens, economizar
-  tokens, usar LLMLingua, ou quando um texto for longo demais para enviar a um LLM. Tambem use
-  quando o usuario quiser pre-processar contexto antes de enviar ao Claude. Triggers: "comprimir",
-  "reduzir tokens", "economizar tokens", "LLMLingua", "texto muito longo", "compressao de prompt",
-  "token compression", "compress tokens", "inicializar compressao", "init token-reduce".
+description: Compresses prompts and context tokens using Microsoft LLMLingua-2.
 ---
 
 # sandeco-token-reduce

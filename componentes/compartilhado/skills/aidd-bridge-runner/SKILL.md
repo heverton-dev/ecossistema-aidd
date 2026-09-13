@@ -1,6 +1,6 @@
 ---
 name: aidd-bridge-runner
-description: Extrai, unifica e empacota projetos Low-Code (Lovable, v0, Bolt) para VPS própria com PostgreSQL nativo, PostgREST e Docker Compose.
+description: Extracts, unifies, and packages low-code projects (Lovable, v0, Bolt) for VPS deployment with PostgreSQL.
 ---
 
 # AIDD Bridge Runner

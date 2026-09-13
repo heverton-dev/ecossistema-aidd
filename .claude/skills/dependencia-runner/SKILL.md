@@ -1,6 +1,6 @@
 ---
 name: dependencia-runner
-description: Adiciona e instala skills e MCPs de terceiros usados pelo agente que desenvolve neste monorepo, mantendo gates/dependencias_externas.json como fonte única.
+description: Installs and verifies third-party skills and MCPs against dependencias_externas.json.
 ---
 
 # Dependência Runner

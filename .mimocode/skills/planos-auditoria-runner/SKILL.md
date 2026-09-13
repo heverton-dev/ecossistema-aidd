@@ -1,6 +1,6 @@
 ---
 name: planos-auditoria-runner
-description: Gera a estrutura padrao e rascunhos de planos de auditoria, evolucao ou testes (00-PROCESSO-E-DECISOES.md e NN-<item>.md) sem fabricar decisoes ou aprovacoes.
+description: Generates standard templates and drafts for audit, evolution, or test plans.
 ---
 
 # Planos Auditoria Runner — Gerador Estrutural de Planos

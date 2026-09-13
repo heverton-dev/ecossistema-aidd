@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Auditoria de Conformidade: Refatoração Core e Governança AIDD</title>
+  <style>
+    :root {
+      --bg: #0b111a;
+      --surface: #161f2e;
+      --border: #233247;
+      --text: #e6edf3;
+      --text-muted: #8b949e;
+      --accent: #388bfd;
+      --success: #2ea043;
+      --warning: #d29922;
+      --danger: #f85149;
+    }
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      scrollbar-width: thin;
+      scrollbar-color: var(--accent) var(--bg);
+    }
+    ::-webkit-scrollbar {
+      width: 4px;
+      height: 4px;
+    }
+    ::-webkit-scrollbar-track {
+      background: var(--bg);
+    }
+    ::-webkit-scrollbar-thumb {
+      background: var(--accent);
+      border-radius: 4px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: color-mix(in srgb, var(--accent) 80%, white);
+    }
+    body {
+      background-color: var(--bg);
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+      line-height: 1.5;
+      padding: 32px 24px;
+      max-width: 1250px;
+      margin: 0 auto;
+    }
+    header {
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 24px;
+      margin-bottom: 32px;
+    }
+    .badge {
+      display: inline-block;
+      padding: 4px 10px;
+      border-radius: 999px;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+    }
+    .badge-warn { background: rgba(210, 153, 34, 0.2); color: var(--warning); border: 1px solid var(--warning); }
+    .badge-danger { background: rgba(248, 81, 73, 0.2); color: var(--danger); border: 1px solid var(--danger); }
+    .badge-success { background: rgba(46, 160, 67, 0.2); color: var(--success); border: 1px solid var(--success); }
+    .tag-category {
+      background: rgba(56, 139, 253, 0.1);
+      color: var(--accent);
+      border: 1px solid rgba(56, 139, 253, 0.3);
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-size: 11px;
+      font-weight: 500;
+    }
+    h1 { font-size: 26px; font-weight: 700; margin-top: 12px; margin-bottom: 8px; color: #fff; }
+    p.meta { color: var(--text-muted); font-size: 14px; }
+    
+    .grid-kpis {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 16px;
+      margin-bottom: 32px;
+    }
+    .kpi-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 20px;
+    }
+    .kpi-title { font-size: 12px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; }
+    .kpi-value { font-size: 30px; font-weight: 700; margin-top: 8px; }
+    .val-danger { color: var(--danger); }
+    .val-warn { color: var(--warning); }
+    .val-success { color: var(--success); }
+
+    .banner-highlight {
+      background: rgba(248, 81, 73, 0.08);
+      border: 1px solid rgba(248, 81, 73, 0.3);
+      border-radius: 8px;
+      padding: 16px 20px;
+      margin-bottom: 32px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .banner-highlight strong { color: #fff; }
+
+    section { margin-bottom: 40px; }
+    h2 { font-size: 18px; margin-bottom: 16px; border-left: 3px solid var(--accent); padding-left: 10px; color: #fff; }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      overflow: hidden;
+      font-size: 14px;
+    }
+    th, td {
+      padding: 12px 14px;
+      text-align: left;
+      border-bottom: 1px solid var(--border);
+    }
+    th {
+      background: rgba(255, 255, 255, 0.03);
+      color: var(--text-muted);
+      font-weight: 600;
+      text-transform: uppercase;
+      font-size: 11px;
+    }
+    tr:last-child td { border-bottom: none; }
+    tr:hover td { background: rgba(255, 255, 255, 0.02); }
+
+    .plan-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 18px 20px;
+      margin-bottom: 14px;
+    }
+    .plan-card h3 { font-size: 15px; color: var(--accent); margin-bottom: 8px; }
+    .plan-card ul { padding-left: 20px; color: var(--text); }
+    .plan-card li { margin-bottom: 4px; font-size: 14px; }
+  </style>
+</head>
+<body>
+
+  <header>
+    <span class="badge badge-warn">STATUS: PARCIALMENTE IMPLEMENTADO</span>
+    <h1>Auditoria de Conformidade: Refatoração Core, Governança & Caching</h1>
+    <p class="meta">Data: 13/09/2026 • Auditor: Antigravity Agent (AIDD) • Protocolo: Diretrizes Canônicas de Design</p>
+  </header>
+
+  <div class="banner-highlight">
+    <div>
+      <strong>Diagnóstico de Contexto:</strong> O System Prompt atual consome <strong>~25.000 a 40.000 tokens</strong> no bootstrap.
+    </div>
+    <div>
+      <span class="badge badge-danger">META: &lt; 2.000 TOKENS</span>
+    </div>
+  </div>
+
+  <div class="grid-kpis">
+    <div class="kpi-card">
+      <div class="kpi-title">Taxa de Conformidade</div>
+      <div class="kpi-value val-danger">15.0%</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-title">Total de Requisitos</div>
+      <div class="kpi-value">20</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-title">Não Conformes</div>
+      <div class="kpi-value val-danger">14</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-title">Parciais</div>
+      <div class="kpi-value val-warn">3</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-title">Conformes</div>
+      <div class="kpi-value val-success">3</div>
+    </div>
+  </div>
+
+  <section>
+    <h2>1. Matriz de Auditoria Expandida (20 Itens)</h2>
+    <table>
+      <thead>
+        <tr>
+          <th style="width: 30px;">#</th>
+          <th style="width: 130px;">Categoria</th>
+          <th>Requisito da Refatoração</th>
+          <th style="width: 100px;">Status</th>
+          <th>Diagnóstico / Fato no Código</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>1</td>
+          <td><span class="tag-category">Governança Core</span></td>
+          <td><strong>AGENTS.md como fonte única e ponteiros (@AGENTS.md)</strong></td>
+          <td><span class="badge badge-warn">PARCIAL</span></td>
+          <td style="color: var(--text-muted);">CLAUDE.md e GEMINI.md apontam para AGENTS.md, mas estão no .gitignore (linhas 84-85). Existem CLAUDE.md residuais em templates.</td>
+        </tr>
+        <tr>
+          <td>2</td>
+          <td><span class="tag-category">Idioma & Tokenização</span></td>
+          <td><strong>Sempre utilizar Inglês nos arquivos core (AGENTS.md, SKILL.md)</strong></td>
+          <td><span class="badge badge-danger">NÃO</span></td>
+          <td style="color: var(--text-muted);">AGENTS.md raiz e mais de 10 skills core (.agents/skills/ e componentes/skills/) continuam em PT-BR, aumentando custo de tokens em 30-50%.</td>
+        </tr>
+        <tr>
+          <td>3</td>
+          <td><span class="tag-category">MCP & Ferramentas</span></td>
+          <td><strong>Nunca manter servidores MCP ativos por garantia</strong></td>
+          <td><span class="badge badge-danger">NÃO</span></td>
+          <td style="color: var(--text-muted);">Diversos servidores não essenciais carregados no harness (playwright, devtools, supabase, plugins de ciência) inflando schemas.</td>
+        </tr>
+        <tr>
+          <td>4</td>
+          <td><span class="tag-category">Governança Core</span></td>
+          <td><strong>Manter o AGENTS.md limpo, fixo e versionado no Git</strong></td>
+          <td><span class="badge badge-success">SIM</span></td>
+          <td style="color: var(--text-muted);">AGENTS.md está rastreado pelo Git na raiz do repositório.</td>
+        </tr>
+        <tr>
+          <td>5</td>
+          <td><span class="tag-category">Economia de Tokens</span></td>
+          <td><strong>Cortar parágrafos explicativos no AGENTS.md (-60% a -80%)</strong></td>
+          <td><span class="badge badge-danger">NÃO</span></td>
+          <td style="color: var(--text-muted);">AGENTS.md possui 121 linhas densas (~7.600 caracteres) com tabelas descritivas em vez de tópicos concisos.</td>
+        </tr>
+        <tr>
+          <td>6</td>
+          <td><span class="tag-category">Arquitetura de Contexto</span></td>
+          <td><strong>Manter AGENTS.md da raiz estritamente genérico</strong></td>
+          <td><span class="badge badge-danger">NÃO</span></td>
+          <td style="color: var(--text-muted);">O arquivo raiz contém especificações operacionais de ferramentas (Forge, Generator, Enterprise, Ops, Bridge).</td>
+        </tr>
+        <tr>
+          <td>7</td>
+          <td><span class="tag-category">Arquitetura de Contexto</span></td>
+          <td><strong>Regras específicas em pastas de contexto (tools/**)</strong></td>
+          <td><span class="badge badge-warn">PARCIAL</span></td>
+          <td style="color: var(--text-muted);">Existem AGENTS.md em subpastas de ferramentas, mas muitos são templates herdados e não módulos de regras isoladas modernas.</td>
+        </tr>
+        <tr>
+          <td>8</td>
+          <td><span class="tag-category">Higiene de Repositório</span></td>
+          <td><strong>node_modules/, lockfiles gigantes e dist/ no .gitignore</strong></td>
+          <td><span class="badge badge-danger">NÃO</span></td>
+          <td style="color: var(--text-muted);">node_modules/, package-lock.json e pnpm-lock.yaml NÃO constam no .gitignore da raiz.</td>
+        </tr>
+        <tr>
+          <td>9</td>
+          <td><span class="tag-category">Diretrizes de Execução</span></td>
+          <td><strong>Thinking constraint (Compact English, <150 words)</strong></td>
+          <td><span class="badge badge-danger">NÃO</span></td>
+          <td style="color: var(--text-muted);">Diretiva 'Thinking constraint: Think strictly in compact English...' ausente no AGENTS.md.</td>
+        </tr>
+        <tr>
+          <td>10</td>
+          <td><span class="tag-category">Diretrizes de Execução</span></td>
+          <td><strong>Limite de resolução em 3 a 5 passos com parada explícita</strong></td>
+          <td><span class="badge badge-danger">NÃO</span></td>
+          <td style="color: var(--text-muted);">Regra limitando a execução de tarefas em 3-5 passos não está declarada no AGENTS.md.</td>
+        </tr>
+        <tr>
+          <td>11</td>
+          <td><span class="tag-category">Economia de Tokens</span></td>
+          <td><strong>Truncar Saída Bash (Output Sanitization via tail/grep)</strong></td>
+          <td><span class="badge badge-danger">NÃO</span></td>
+          <td style="color: var(--text-muted);">Diretiva 'Bash rule: Always pipe verbose commands to tail/grep...' ausente no AGENTS.md.</td>
+        </tr>
+        <tr>
+          <td>12</td>
+          <td><span class="tag-category">Arquitetura de Contexto</span></td>
+          <td><strong>Sempre utilizar grafos antes de grep ou read</strong></td>
+          <td><span class="badge badge-success">SIM</span></td>
+          <td style="color: var(--text-muted);">Diretriz prioritária code-review-graph em vigor no AGENTS.md.</td>
+        </tr>
+        <tr>
+          <td>13</td>
+          <td><span class="tag-category">Diretrizes de Execução</span></td>
+          <td><strong>Substituição por bloco exato (SEARCH/REPLACE diff)</strong></td>
+          <td><span class="badge badge-success">SIM</span></td>
+          <td style="color: var(--text-muted);">Harness Antigravity já utiliza replace_file_content estrito por bloco exato.</td>
+        </tr>
+        <tr>
+          <td>14</td>
+          <td><span class="tag-category">Diretrizes de Execução</span></td>
+          <td><strong>Regra 10 expandida: Output format: Silent executor</strong></td>
+          <td><span class="badge badge-danger">NÃO</span></td>
+          <td style="color: var(--text-muted);">Regra 10 foca em 'Comunicação Direta' sem a diretiva Silent executor.</td>
+        </tr>
+        <tr>
+          <td>15</td>
+          <td><span class="tag-category">Otimização de Skills</span></td>
+          <td><strong>Skills com description no frontmatter em 1 linha estrita</strong></td>
+          <td><span class="badge badge-danger">NÃO</span></td>
+          <td style="color: var(--text-muted);">Skills como sandeco-token-reduce e master-skill utilizam descrições multi-linha no frontmatter, inflando o catálogo do system prompt.</td>
+        </tr>
+        <tr>
+          <td>16</td>
+          <td><span class="tag-category">Higiene de Repositório</span></td>
+          <td><strong>Zero duplicidade de arquivos e deriva de templates</strong></td>
+          <td><span class="badge badge-warn">PARCIAL</span></td>
+          <td style="color: var(--text-muted);">Há arquivos duplicados e espelhados entre componentes/ e .agents/, além de templates redundantes em aidd-forge e aidd-enterprise.</td>
+        </tr>
+        <tr>
+          <td>17</td>
+          <td><span class="tag-category">Prompt Caching</span></td>
+          <td><strong>Garantia de Cache Hit (Prefix Invariance byte a byte)</strong></td>
+          <td><span class="badge badge-danger">NÃO</span></td>
+          <td style="color: var(--text-muted);">Timestamps voláteis, caminhos absolutos de SO e ausência de normalização impedem cache hit consistente do system prompt.</td>
+        </tr>
+        <tr>
+          <td>18</td>
+          <td><span class="tag-category">Prompt Caching</span></td>
+          <td><strong>Normalização de quebras de linha (.gitattributes LF)</strong></td>
+          <td><span class="badge badge-danger">NÃO</span></td>
+          <td style="color: var(--text-muted);">Ausência de .gitattributes forçando LF (* text=auto eol=lf), causando variação de bytes no Windows (CRLF vs LF).</td>
+        </tr>
+        <tr>
+          <td>19</td>
+          <td><span class="tag-category">Economia de Tokens</span></td>
+          <td><strong>Meta de System Prompt < 2000 tokens</strong></td>
+          <td><span class="badge badge-danger">NÃO</span></td>
+          <td style="color: var(--text-muted);">Contexto base inicial consome entre 25k e 40k tokens devido ao somatório de AGENTS.md, catálogo completo de 40+ skills e dezenas de schemas MCP.</td>
+        </tr>
+        <tr>
+          <td>20</td>
+          <td><span class="tag-category">Economia de Tokens</span></td>
+          <td><strong>Prevenção de Context Bleed por saídas volumosas</strong></td>
+          <td><span class="badge badge-danger">NÃO</span></td>
+          <td style="color: var(--text-muted);">Não há política declarada de redirecionamento de logs de build/testes para arquivos em disco lendo apenas sumários.</td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
+  <section>
+    <h2>2. Plano de Ação Estruturado (5 Fases)</h2>
+    <div class="plan-card">
+      <h3>Fase 1: Higienização do Repositório e Normalização Git</h3>
+      <ul>
+        <li>Atualizar .gitignore incluindo node_modules/, package-lock.json, pnpm-lock.yaml, yarn.lock e bun.lockb.</li>
+        <li>Remover CLAUDE.md e GEMINI.md do .gitignore mantendo-os versionados na raiz.</li>
+        <li>Criar .gitattributes na raiz com '* text=auto eol=lf' para garantir estabilidade de bytes cross-platform.</li>
+      </ul>
+    </div>
+    <div class="plan-card">
+      <h3>Fase 2: Reestruturação e Compactação do AGENTS.md (< 35 Linhas em Inglês)</h3>
+      <ul>
+        <li>Reduzir o AGENTS.md para < 250 tokens em tópicos objetivos em inglês.</li>
+        <li>Adicionar 'Thinking constraint: Think strictly in compact English. Under 150 words of reasoning.'</li>
+        <li>Adicionar 'Bash rule: Always pipe verbose commands to tail/grep. Never dump raw bundle outputs.'</li>
+        <li>Adicionar 'Execution limit: Resolve tasks in 3 to 5 discrete steps.'</li>
+        <li>Expandir Regra 10 com 'Output format: Silent executor. Return code edits and 1-line execution status only.'</li>
+        <li>Mover regras operacionais de ferramentas para tools/<ferramenta>/AGENTS.md.</li>
+      </ul>
+    </div>
+    <div class="plan-card">
+      <h3>Fase 3: Otimização Extrema de Skills e Redução do System Prompt</h3>
+      <ul>
+        <li>Refatorar todas as skills em componentes/skills/ para Inglês.</li>
+        <li>Forçar estritamente 1 linha curta (máx. 15-20 palavras) na 'description' do frontmatter de todas as skills.</li>
+        <li>Remover duplicatas e garantir que componentes/ seja a única fonte editável (propagando via sync).</li>
+      </ul>
+    </div>
+    <div class="plan-card">
+      <h3>Fase 4: Saneamento de MCPs e Garantia de Cache Hit</h3>
+      <ul>
+        <li>Remover servidores MCP secundários do harness no escopo deste monorepo (manter apenas code-review-graph).</li>
+        <li>Estabilizar o prefixo do prompt para assegurar 100% de Cache Hit nas requisições da LLM.</li>
+      </ul>
+    </div>
+    <div class="plan-card">
+      <h3>Fase 5: Validação e Sincronização</h3>
+      <ul>
+        <li>Executar 'python ecossistema.py components sync'.</li>
+        <li>Executar 'python ecossistema.py audit' e verificar conformidade total dos Quality Gates.</li>
+      </ul>
+    </div>
+  </section>
+</body>
+</html>

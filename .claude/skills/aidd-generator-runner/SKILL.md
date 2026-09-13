@@ -1,6 +1,6 @@
 ---
 name: aidd-generator-runner
-description: Dispara a fábrica autônoma de software do aidd-generator através do pipeline de 8 fases.
+description: Triggers autonomous software generation via 8-phase pipeline using aidd-generator.
 ---
 
 # AIDD Generator Runner

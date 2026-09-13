@@ -1,6 +1,6 @@
 ---
 name: aidd-master-runner
-description: Cria e integra novas fatias verticais modulares (Vertical Slices) no aidd-master.
+description: Scaffolds and integrates clean vertical slices in aidd-master architecture.
 ---
 
 # AIDD Master Runner

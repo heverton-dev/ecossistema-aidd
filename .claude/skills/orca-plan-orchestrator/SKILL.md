@@ -1,6 +1,6 @@
 ---
 name: orca-plan-orchestrator
-description: Motor de execucao da via Git Worktree nativo (git worktree puro + gates locais + circuit breaker). Acionada pela skill orchestrate, nunca direto por slash command.
+description: Executes multi-phase ORCA plans using isolated Git worktrees and quality gates.
 ---
 
 # ORCA ADE — Plan Orchestrator (motor da via Git Worktree nativo)

@@ -1,6 +1,6 @@
 ---
 name: aidd-forge-runner
-description: Executa o bootstrap e blindagem de governança AIDD em qualquer projeto alvo usando o aidd-forge.
+description: Executes bootstrap and governance hardening on target repositories using aidd-forge.
 ---
 
 # AIDD Forge Runner

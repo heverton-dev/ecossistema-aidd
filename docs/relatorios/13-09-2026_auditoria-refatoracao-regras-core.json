@@ -1,0 +1,223 @@
+{
+  "metadata": {
+    "titulo": "Auditoria de Conformidade: Refatoração Core, Governança e Otimização Extrema de Contexto",
+    "data": "2026-09-13",
+    "autor": "Antigravity Agent (AIDD)",
+    "versao": "2.0.0",
+    "status_geral": "PARCIALMENTE_IMPLEMENTADO",
+    "taxa_conformidade": "15.0%",
+    "meta_system_prompt": "< 2000 tokens",
+    "estimativa_atual_prompt": "25.000 - 40.000 tokens"
+  },
+  "kpis": {
+    "total_itens": 20,
+    "conformes": 3,
+    "parciais": 3,
+    "nao_conformes": 14
+  },
+  "itens": [
+    {
+      "id": 1,
+      "categoria": "Governança Core",
+      "requisito": "AGENTS.md como fonte única e ponteiros (@AGENTS.md)",
+      "status": "PARCIAL",
+      "detalhes": "CLAUDE.md e GEMINI.md apontam para AGENTS.md, mas estão no .gitignore (linhas 84-85). Existem CLAUDE.md residuais em templates.",
+      "impacto": "Médio"
+    },
+    {
+      "id": 2,
+      "categoria": "Idioma & Tokenização",
+      "requisito": "Sempre utilizar Inglês nos arquivos core (AGENTS.md, SKILL.md)",
+      "status": "NÃO",
+      "detalhes": "AGENTS.md raiz e mais de 10 skills core (.agents/skills/ e componentes/skills/) continuam em PT-BR, aumentando custo de tokens em 30-50%.",
+      "impacto": "Alto"
+    },
+    {
+      "id": 3,
+      "categoria": "MCP & Ferramentas",
+      "requisito": "Nunca manter servidores MCP ativos por garantia",
+      "status": "NÃO",
+      "detalhes": "Diversos servidores não essenciais carregados no harness (playwright, devtools, supabase, plugins de ciência) inflando schemas.",
+      "impacto": "Crítico"
+    },
+    {
+      "id": 4,
+      "categoria": "Governança Core",
+      "requisito": "Manter o AGENTS.md limpo, fixo e versionado no Git",
+      "status": "SIM",
+      "detalhes": "AGENTS.md está rastreado pelo Git na raiz do repositório.",
+      "impacto": "Baixo"
+    },
+    {
+      "id": 5,
+      "categoria": "Economia de Tokens",
+      "requisito": "Cortar parágrafos explicativos no AGENTS.md (-60% a -80%)",
+      "status": "NÃO",
+      "detalhes": "AGENTS.md possui 121 linhas densas (~7.600 caracteres) com tabelas descritivas em vez de tópicos concisos.",
+      "impacto": "Alto"
+    },
+    {
+      "id": 6,
+      "categoria": "Arquitetura de Contexto",
+      "requisito": "Manter AGENTS.md da raiz estritamente genérico",
+      "status": "NÃO",
+      "detalhes": "O arquivo raiz contém especificações operacionais de ferramentas (Forge, Generator, Enterprise, Ops, Bridge).",
+      "impacto": "Médio"
+    },
+    {
+      "id": 7,
+      "categoria": "Arquitetura de Contexto",
+      "requisito": "Regras específicas em pastas de contexto (tools/**)",
+      "status": "PARCIAL",
+      "detalhes": "Existem AGENTS.md em subpastas de ferramentas, mas muitos são templates herdados e não módulos de regras isoladas modernas.",
+      "impacto": "Médio"
+    },
+    {
+      "id": 8,
+      "categoria": "Higiene de Repositório",
+      "requisito": "node_modules/, lockfiles gigantes e dist/ no .gitignore",
+      "status": "NÃO",
+      "detalhes": "node_modules/, package-lock.json e pnpm-lock.yaml NÃO constam no .gitignore da raiz.",
+      "impacto": "Crítico"
+    },
+    {
+      "id": 9,
+      "categoria": "Diretrizes de Execução",
+      "requisito": "Thinking constraint (Compact English, <150 words)",
+      "status": "NÃO",
+      "detalhes": "Diretiva 'Thinking constraint: Think strictly in compact English...' ausente no AGENTS.md.",
+      "impacto": "Alto"
+    },
+    {
+      "id": 10,
+      "categoria": "Diretrizes de Execução",
+      "requisito": "Limite de resolução em 3 a 5 passos com parada explícita",
+      "status": "NÃO",
+      "detalhes": "Regra limitando a execução de tarefas em 3-5 passos não está declarada no AGENTS.md.",
+      "impacto": "Médio"
+    },
+    {
+      "id": 11,
+      "categoria": "Economia de Tokens",
+      "requisito": "Truncar Saída Bash (Output Sanitization via tail/grep)",
+      "status": "NÃO",
+      "detalhes": "Diretiva 'Bash rule: Always pipe verbose commands to tail/grep...' ausente no AGENTS.md.",
+      "impacto": "Médio"
+    },
+    {
+      "id": 12,
+      "categoria": "Arquitetura de Contexto",
+      "requisito": "Sempre utilizar grafos antes de grep ou read",
+      "status": "SIM",
+      "detalhes": "Diretriz prioritária code-review-graph em vigor no AGENTS.md.",
+      "impacto": "Baixo"
+    },
+    {
+      "id": 13,
+      "categoria": "Diretrizes de Execução",
+      "requisito": "Substituição por bloco exato (SEARCH/REPLACE diff)",
+      "status": "SIM",
+      "detalhes": "Harness Antigravity já utiliza replace_file_content estrito por bloco exato.",
+      "impacto": "Baixo"
+    },
+    {
+      "id": 14,
+      "categoria": "Diretrizes de Execução",
+      "requisito": "Regra 10 expandida: Output format: Silent executor",
+      "status": "NÃO",
+      "detalhes": "Regra 10 foca em 'Comunicação Direta' sem a diretiva Silent executor.",
+      "impacto": "Alto"
+    },
+    {
+      "id": 15,
+      "categoria": "Otimização de Skills",
+      "requisito": "Skills com description no frontmatter em 1 linha estrita",
+      "status": "NÃO",
+      "detalhes": "Skills como sandeco-token-reduce e master-skill utilizam descrições multi-linha no frontmatter, inflando o catálogo do system prompt.",
+      "impacto": "Alto"
+    },
+    {
+      "id": 16,
+      "categoria": "Higiene de Repositório",
+      "requisito": "Zero duplicidade de arquivos e deriva de templates",
+      "status": "PARCIAL",
+      "detalhes": "Há arquivos duplicados e espelhados entre componentes/ e .agents/, além de templates redundantes em aidd-forge e aidd-enterprise.",
+      "impacto": "Médio"
+    },
+    {
+      "id": 17,
+      "categoria": "Prompt Caching",
+      "requisito": "Garantia de Cache Hit (Prefix Invariance byte a byte)",
+      "status": "NÃO",
+      "detalhes": "Timestamps voláteis, caminhos absolutos de SO e ausência de normalização impedem cache hit consistente do system prompt.",
+      "impacto": "Crítico"
+    },
+    {
+      "id": 18,
+      "categoria": "Prompt Caching",
+      "requisito": "Normalização de quebras de linha (.gitattributes LF)",
+      "status": "NÃO",
+      "detalhes": "Ausência de .gitattributes forçando LF (* text=auto eol=lf), causando variação de bytes no Windows (CRLF vs LF).",
+      "impacto": "Médio"
+    },
+    {
+      "id": 19,
+      "categoria": "Economia de Tokens",
+      "requisito": "Meta de System Prompt < 2000 tokens",
+      "status": "NÃO",
+      "detalhes": "Contexto base inicial consome entre 25k e 40k tokens devido ao somatório de AGENTS.md, catálogo completo de 40+ skills e dezenas de schemas MCP.",
+      "impacto": "Crítico"
+    },
+    {
+      "id": 20,
+      "categoria": "Economia de Tokens",
+      "requisito": "Prevenção de Context Bleed por saídas volumosas",
+      "status": "NÃO",
+      "detalhes": "Não há política declarada de redirecionamento de logs de build/testes para arquivos em disco lendo apenas sumários.",
+      "impacto": "Alto"
+    }
+  ],
+  "plano_acao": [
+    {
+      "fase": "Fase 1: Higienização do Repositório e Normalização Git",
+      "tarefas": [
+        "Atualizar .gitignore incluindo node_modules/, package-lock.json, pnpm-lock.yaml, yarn.lock e bun.lockb.",
+        "Remover CLAUDE.md e GEMINI.md do .gitignore mantendo-os versionados na raiz.",
+        "Criar .gitattributes na raiz com '* text=auto eol=lf' para garantir estabilidade de bytes cross-platform."
+      ]
+    },
+    {
+      "fase": "Fase 2: Reestruturação e Compactação do AGENTS.md (< 35 Linhas em Inglês)",
+      "tarefas": [
+        "Reduzir o AGENTS.md para < 250 tokens em tópicos objetivos em inglês.",
+        "Adicionar 'Thinking constraint: Think strictly in compact English. Under 150 words of reasoning.'",
+        "Adicionar 'Bash rule: Always pipe verbose commands to tail/grep. Never dump raw bundle outputs.'",
+        "Adicionar 'Execution limit: Resolve tasks in 3 to 5 discrete steps.'",
+        "Expandir Regra 10 com 'Output format: Silent executor. Return code edits and 1-line execution status only.'",
+        "Mover regras operacionais de ferramentas para tools/<ferramenta>/AGENTS.md."
+      ]
+    },
+    {
+      "fase": "Fase 3: Otimização Extrema de Skills e Redução do System Prompt",
+      "tarefas": [
+        "Refatorar todas as skills em componentes/skills/ para Inglês.",
+        "Forçar estritamente 1 linha curta (máx. 15-20 palavras) na 'description' do frontmatter de todas as skills.",
+        "Remover duplicatas e garantir que componentes/ seja a única fonte editável (propagando via sync)."
+      ]
+    },
+    {
+      "fase": "Fase 4: Saneamento de MCPs e Garantia de Cache Hit",
+      "tarefas": [
+        "Remover servidores MCP secundários do harness no escopo deste monorepo (manter apenas code-review-graph).",
+        "Estabilizar o prefixo do prompt para assegurar 100% de Cache Hit nas requisições da LLM."
+      ]
+    },
+    {
+      "fase": "Fase 5: Validação e Sincronização",
+      "tarefas": [
+        "Executar 'python ecossistema.py components sync'.",
+        "Executar 'python ecossistema.py audit' e verificar conformidade total dos Quality Gates."
+      ]
+    }
+  ]
+}

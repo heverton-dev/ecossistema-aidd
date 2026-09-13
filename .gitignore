@@ -1,4 +1,4 @@
-﻿# Python
+# Python
 __pycache__/
 *.py[cod]
 *.class
@@ -27,12 +27,17 @@ htmlcov/
 .nox/
 .hypothesis/
 
-# Ambientes Virtuais
+# Ambientes Virtuais & Dependências
 .venv/
 venv/
 ENV/
 env.bak/
 venv.bak/
+node_modules/
+package-lock.json
+pnpm-lock.yaml
+yarn.lock
+bun.lockb
 
 # Logs e Telemetria
 *.log
@@ -81,8 +86,6 @@ Thumbs.db
 .cursor/hooks.json
 .cursorrules
 .windsurfrules
-CLAUDE.md
-GEMINI.md
 CODEBUDDY.md
 QODER.md
 .kiro/
