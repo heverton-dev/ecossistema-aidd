@@ -1,6 +1,6 @@
 # aidd-generator
 
-Gerador de projetos de software usando a metodologia **AIDD** (AI-Driven Development). Dada uma ideia em linguagem natural, o pipeline percorre 7-8 fases e produz um projeto completo: schemas, scripts, testes, documentação e — opcionalmente — código funcional gerado por LLM.
+Gerador de projetos de software usando a metodologia **AIDD** (AI-Driven Development). Dada uma ideia em linguagem natural, o pipeline percorre 8 fases e produz um projeto completo: schemas, scripts, testes, documentação e — opcionalmente — código funcional gerado por LLM.
 
 ## 🌐 SUPREMACIA AGNÓSTICA — Princípio da Universalidade Total
 
@@ -36,7 +36,7 @@ O aidd-generator automatiza a criação de projetos seguindo 5 camadas:
 | 1 | Pesquisa e coleta de requisitos |
 | 2 | Análise e decomposição |
 | 3 | Design e arquitetura |
-| 4 | Decisões técnicas |
+| 4 | Planejamento e definições técnicas |
 | 5 | Criação de artefatos |
 | 6 | Documentação |
 | 7 | Autocrítica e auditoria |

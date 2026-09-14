@@ -50,7 +50,7 @@ Quer forçar manualmente ou adicionar uma dependência nova (skill ou MCP de ter
 | Ferramenta | Analogia do Dia a Dia (Leigo) | Rigor Arquitetural (PhD / Arquiteto) | Como usar no Chat | Comando no Terminal (CLI) |
 | :--- | :--- | :--- | :---: | :--- |
 | **AIDD Forge** | **A Fundação e o Chassi:** Prepara o terreno, coloca cercas de proteção e impede que a IA faça bagunça. | Bootstrap determinístico, fatiamento em micro-ambientes efêmeros (`.aidd/pipeline/`), context-purge estrito e 7 Quality Gates locais. | `/forge [pasta]` | `python ecossistema.py forge init [pasta]` |
-| **AIDD Generator** | **A Linha de Montagem Autônoma:** Você fala o que quer e a fábrica entrega o software pronto com testes. | Pipeline autônomo de 8 fases (Intake -> Pesquisa -> Análise -> Design -> Decisão -> Criação -> Docs -> Implementação) com JSON Schemas Draft 2020-12. | `/generate <ideia>` | `python ecossistema.py generate "<ideia>"` |
+| **AIDD Generator** | **A Linha de Montagem Autônoma:** Você fala o que quer e a fábrica entrega o software pronto com testes. | Pipeline autônomo de 8 fases (Pesquisa -> Análise -> Design -> Planejamento -> Criação -> Documentação -> Auto-crítica -> Implementação) com JSON Schemas Draft 2020-12. | `/generate <ideia>` | `python ecossistema.py generate "<ideia>"` |
 | **AIDD Master** | **Os Blocos de Encaixe Perfeito (Lego):** Permite adicionar novas funções ao sistema sem quebrar nada do que já existia. | Clean Architecture em Fatias Verticais (`Vertical Slices`), SQLite concorrente em modo WAL, Result Monad funcional e auto-documentação OpenAPI. | `/master <modulo>` | `python ecossistema.py master add-module <modulo>` |
 | **AIDD Enterprise** | **A Blindagem e Selo de Qualidade:** Verifica a autenticidade de cada componente com selo de segurança nível bancário. | Plataforma de Missão Crítica com injeção criptográfica SHA-256 de componentes (`skill`, `mcp`, `hook`, `rule`), conformidade Zero-Trust e RLS estrito. | `/enterprise <tipo> <nome>` | `python ecossistema.py enterprise inject <tipo> <nome>` |
 | **AIDD Ops** | **A Pista de Corrida e Abastecimento:** Pega o software pronto, prepara os servidores na nuvem, ajusta o tráfego e põe para rodar. | Meta-Orquestrador de Infraestrutura: Sizing inteligente de VPS, Hardening SSH anti-injeção, MCPs de borda (Cloudflare/Docker), Compose e Preflight HTTP E2E. | `/ops plan <nicho>` | `python ecossistema.py ops plan "<nicho>"` |
@@ -100,7 +100,7 @@ Controle total com determinismo absoluto via `python ecossistema.py`:
 # Ver a saúde e status de todo o ecossistema
 python ecossistema.py status
 
-# Rodar a auditoria geral (Os 12 Portões de Segurança)
+# Rodar a auditoria geral (Os 16 Portões de Segurança)
 python ecossistema.py audit
 
 # Planejar a infraestrutura de servidores para um nicho de negócio
@@ -112,13 +112,13 @@ python ecossistema.py ops deploy staging --dry-run
 
 ---
 
-## 🛡️ Os 12 Portões de Segurança (Quality Gates Globais)
+## 🛡️ Os 16 Portões de Segurança (Quality Gates Globais)
 
-Antes de qualquer código ser considerado "pronto", ele é obrigado a passar por **12 testes automáticos e rigorosos** (como o raio-x e a alfândega de um aeroporto):
+Antes de qualquer código ser considerado "pronto", ele é obrigado a passar por **16 testes automáticos e rigorosos** (como o raio-x e a alfândega de um aeroporto):
 
 1. 🔍 **G_ECOSSISTEMA_INTEGRIDADE:** Garante que todas as pastas, arquivos essenciais e sintaxe Python estão 100% corretos.
 2. ⚖️ **G_DRIFT_NUCLEO_COMPARTILHADO:** Compara os códigos compartilhados entre o Master e o Enterprise para impedir divergências acidentais.
-3. 🔄 **G_HARNESS_COMPAT:** Confere se todos os assistentes de IA (Claude, Antigravity, Mimo) estão com as ferramentas sincronizadas.
+3. 🔄 **G_HARNESS_COMPAT:** Confere se todos os assistentes de IA estão com as ferramentas sincronizadas.
 4. 🔐 **G_SEGREDOS:** Varre todo o código em busca de senhas ou chaves de API acidentalmente esquecidas.
 5. 💬 **G_CLI_HELP_CONSISTENCIA:** Valida via análise sintática (AST) se as opções explicadas nas mensagens batem exatamente com as flags reais da linha de comando.
 6. 🧩 **G_COMPONENTE_AGNOSTICO:** Audita se novos componentes funcionam de forma universal em qualquer ambiente.
@@ -128,6 +128,10 @@ Antes de qualquer código ser considerado "pronto", ele é obrigado a passar por
 10. 🧪 **G_TESTES_REAIS:** Roda a suíte de testes de verdade (pytest) de cada ferramenta e reprova se qualquer teste falhar — nunca aceita "confia em mim".
 11. 🏷️ **G_HONESTIDADE_ROTULO:** Impede que os próprios gates usem termos de marketing exagerados ("blindagem militar" e afins) em vez de descrever a cobertura real comprovada.
 12. 🏛️ **G_ARQUITETURA_DELIVERABLE:** Audita, via análise sintática, se o código gerado e os módulos das ferramentas respeitam Clean Architecture/DDD — bloqueia banco de dados fora do lugar certo, dependências erradas e acoplamento direto entre camadas.
+13. 📌 **G_DEPENDENCIAS_PIN_HASH:** Garante que dependências de terceiros estejam amarradas com hash (pinned) para evitar substituições maliciosas.
+14. ✍️ **G_ESCRITOR_ATOMICO:** Verifica que arquivos são escritos de forma atômica (temporário + rename) para evitar corrupção em caso de falha.
+15. 📋 **G_TRANSACTION_LOG_LRU:** Valida que logs de transações estão íntegros e não corrompidos, usando estratégias LRU.
+16. 🌐 **G_UNIVERSAL_HARNESS:** Confere compatibilidade real com todos os harnesses de IA suportados.
 
 > **Validação em um comando:** `python ecossistema.py audit` (Roda os gates em sequência e retorna `exit 0` apenas com 100% de aprovação).
 
@@ -145,13 +149,9 @@ ecossistema-aidd/
 │
 ├── componentes/                            ──► O cofre canônico de onde nascem todos os componentes
 │   ├── compartilhado/                      ──► Habilidades e comandos universais
-│   │   └── src-core/                       ──► Núcleo único compartilhado entre Master e Enterprise
-│   ├── aidd-ops/                           ──► MCPs, comandos e receitas de infraestrutura
-│   ├── aidd-master/                        ──► Componentes do AIDD Master
-│   ├── aidd-enterprise/                    ──► Componentes do AIDD Enterprise
-│   └── aidd-generator/                     ──► Componentes do AIDD Generator
+│   └── aidd-master/                        ──► Componentes do AIDD Master
 │
-├── gates/                                  ──► Os 12 Portões de Segurança determinísticos
+├── gates/                                  ──► Os 16 Portões de Segurança determinísticos
 │
 ├── tools/                                  ──► As 6 Ferramentas Homologadas (100% funcionais)
 │   ├── aidd-forge/                         ──► Bootstrap e blindagem de governança
@@ -168,6 +168,11 @@ ecossistema-aidd/
     │   ├── a-fazer/                        ──► Aguardando execução
     │   └── INDEX.md                        ──► Gerado por scripts/atualizar_index_planos.py — não editar à mão
     ├── protocolos/                         ──► Protocolos canônicos de agnosticidade
+    ├── relatorios/                         ──► Relatórios formais e auditorias
+    ├── prompts/                            ──► Biblioteca de prompts
+    ├── features/                           ──► Documentação de features
+    ├── explicacoes/                         ──► Explicações detalhadas
+    ├── melhorias/                          ──► Registro de melhorias
     └── testes/                             ──► Baterias de testes E2E e relatórios formais
 ```
 

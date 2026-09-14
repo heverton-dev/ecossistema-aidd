@@ -440,15 +440,16 @@ python ecossistema.py generate "sistema de agendamento para clínica médica com
 
 **O que vai acontecer:**
 
-O Generator vai executar 7 etapas automáticas:
+O Generator vai executar 8 etapas automáticas:
 
-1. **Pesquisar** sobre sistemas de agendamento médicos
-2. **Analisar** o que é necessário (cadastros, regras de agendamento, etc.)
+1. **Pesquisar** sobre o assunto do projeto
+2. **Analisar** o que é necessário (cadastros, regras, etc.)
 3. **Projetar** a arquitetura (que partes o sistema vai ter)
-4. **Planejar** as tecnologias (Python, SQLite, etc.)
-5. **Criar** os schemas e estrutura
+4. **Planejar** as tecnologias e estrutura
+5. **Criar** os schemas e artefatos
 6. **Gerar** documentação completa
 7. **Auto-crítica** — verificar se tudo está correto
+8. **Implementar** — *(opcional)* gerar código funcional via IA
 
 **Resultado esperado:**
 
@@ -705,11 +706,10 @@ PRODUÇÃO (app rodando com HTTPS, monitoramento e segurança)
 ecossistema-aidd/
 ├── AGENTS.md                 ← Regras fundamentais
 ├── ecossistema.py            ← CLI unificada
-├── core/                     ← Módulos cibernéticos
 ├── gates/                    ← 16 Quality Gates
 ├── componentes/              ← Código compartilhado
 │   ├── compartilhado/        ← Núcleo (Database, Result, EventBus)
-│   └── aidd-master/          ← Templates do Master
+│   └── aidd-master/          ← Componentes do Master
 ├── tools/                    ← As 6 ferramentas
 │   ├── aidd-forge/           ← Governança
 │   ├── aidd-generator/       ← Fábrica
@@ -718,10 +718,19 @@ ecossistema-aidd/
 │   ├── aidd-ops/             ← Infraestrutura
 │   └── aidd-bridge/          ← Low-code → VPS
 └── docs/                     ← Documentação
+    ├── MANUAL-COMPLETO.md    ← Este manual
     ├── ARQUITETURA-ECOSSISTEMA.md
     ├── CLI-REFERENCIA.md
     ├── MIGRACAO-PROJETO-EXISTENTE.md
-    └── CONTRIBUICAO.md
+    ├── CONTRIBUICAO.md
+    ├── planos/               ← Planos táticos e de auditoria
+    ├── protocolos/           ← Protocolos canônicos
+    ├── relatorios/           ← Relatórios formais
+    ├── prompts/              ← Biblioteca de prompts
+    ├── features/             ← Documentação de features
+    ├── explicacoes/          ← Explicações detalhadas
+    ├── melhorias/            ← Registro de melhorias
+    └── testes/               ← Baterias de testes E2E
 ```
 
 ---
