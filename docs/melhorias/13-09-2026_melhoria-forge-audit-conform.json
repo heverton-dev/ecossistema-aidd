@@ -1,0 +1,26 @@
+{
+  "pedido_original": "automatizar a auditoria de conformidade de governanca agentica em projetos existentes via 'forge audit' e 'forge conform', eliminando o trabalho manual documentado nos relatorios de 13-09-2026",
+  "data": "13-09-2026",
+  "nota_atual": "8",
+  "evidencia": "Forge atual tem apenas 'init' (projetos novos) e 'inject' (componentes individuais). Nao existe comando de auditoria retroativa. Relatorios manuais mostraram 15% -> 95% de conformidade apos fix manual de 20 itens. Trabalho repetivel automatizavel.",
+  "plano_existente": null,
+  "item_relacionado": null,
+  "nota_anterior": null,
+  "evidencia_anterior": null,
+  "itens_avaliados": [],
+  "resumo": "O aidd-forge cobre bootstrap de projetos novos (init) e injecao de componentes (inject), mas nao possui capacidade de auditar projetos existentes nem de aplicar correcoes cirurgicas de governanca. Os relatorios de 13-09-2026 documentaram um processo manual de 20 itens de conformidade que resultou em melhoria de 15% para 95%. Este processo e candidato ideal a automacao deterministica (zero LLM).",
+  "achados": [
+    "15 checks de conformidade mapeados: governance core (4), execution directives (5), token economy (2), repository hygiene (3), cache invariance (1)",
+    "8 dos 15 checks sao auto-fixaveis por 'forge conform' (injecao de diretrizes, .gitignore, .gitattributes, ponteiros IDE)",
+    "5 checks requerem revisao humana (idioma, budget de tokens, cache prefix) e serao marcados como SKIP no conform",
+    "Padrao de gate existente (scan() -> GateResult) e reutilizavel para audit_checks (scan() -> AuditItem)",
+    "Padrao de injecao por marcador (token_optimizer.py) e reutilizavel para injecao de diretrizes no AGENTS.md"
+  ],
+  "riscos": [
+    "Heuristica de deteccao de idioma (PT-BR vs EN) via regex e falsos positivos em conteudo misto",
+    "Fixers de AGENTS.md podem produzir arquivos com secoes duplicadas se o marcador nao for detectado corretamente",
+    "Compatibilidade Windows: symlinks podem falhar, precisa de fallback copytree (ja implementado no Injector)"
+  ],
+  "recomendacao": "Implementar 'forge audit' e 'forge conform' como novos subcomandos do CLI, seguindo o padrao de gate existente. audit_checks como funcoes puras testaveis, conform_fixers com backup+rollback. Comecar pelos checks mais impactantes (G01, G12, G13, G05-G09) e expandir gradualmente.",
+  "status": "APROVADO - plano aprovado, implementacao iniciada"
+}

@@ -1,0 +1,156 @@
+<!doctype html>
+<html lang="pt-br">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>13-09-2026_melhoria-forge-audit-conform</title>
+<style>
+  :root {
+    color-scheme: light dark;
+    --bg:#f6f7f9; --bg-card:#ffffff; --border:#e2e5ea;
+    --fg:#1b1f26; --fg-muted:#5b6472;
+    --accent:#2563eb; --accent-fg:#ffffff;
+    --good:#1a7f4e; --good-bg:#e4f6ec;
+    --warn:#9a6400; --warn-bg:#fdf1d9;
+    --bad:#b3261e; --bad-bg:#fbe7e6;
+    --neutra:#6b7280; --neutra-bg:#eceef1;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg:#0b111a; --bg-card:#131b26; --border:#232d3b;
+      --fg:#e6edf3; --fg-muted:#94a3b8;
+      --accent:#4c8dff; --accent-fg:#08111f;
+      --good:#3ddc84; --good-bg:#0f2c1d;
+      --warn:#f2b84b; --warn-bg:#2c2410;
+      --bad:#ff6b6b; --bad-bg:#2c1414;
+      --neutra:#9aa4b2; --neutra-bg:#1b232f;
+    }
+  }
+  * { box-sizing: border-box; scrollbar-width: thin; scrollbar-color: var(--accent) var(--bg); }
+  body {
+    background:var(--bg); color:var(--fg);
+    font-family: -apple-system, "Segoe UI", system-ui, sans-serif;
+    line-height: 1.5; margin:0; padding: 32px 16px;
+  }
+  .pagina { max-width: 760px; margin: 0 auto; }
+  h1 { font-size: 1.375rem; font-weight: 700; margin: 0 0 4px; letter-spacing: -0.01em; }
+  .subtitulo { color: var(--fg-muted); font-size: 0.875rem; margin: 0 0 24px; }
+  .eyebrow {
+    font-size: 0.75rem; font-weight: 700; text-transform: uppercase;
+    letter-spacing: 0.05em; color: var(--fg-muted); margin: 0 0 16px;
+  }
+  .card {
+    background: var(--bg-card); border: 1px solid var(--border);
+    border-radius: 12px; padding: 24px; margin-bottom: 16px;
+  }
+  .pedido { font-size: 0.9375rem; color: var(--fg-muted); margin-bottom: 16px; }
+  .pedido strong { color: var(--fg); }
+  .evidencia { font-size: 0.8125rem; color: var(--fg-muted); margin: 8px 0 0; }
+  .gauge { display:flex; align-items:center; gap:12px; margin-bottom: 8px; }
+  .gauge-rotulo { flex: 0 0 140px; font-size: 0.8125rem; color: var(--fg-muted); }
+  .gauge-trilho { flex: 1; height: 10px; background: var(--border); border-radius: 6px; overflow: hidden; }
+  .gauge-fill { height: 100%; border-radius: 6px; }
+  .gauge-good { background: var(--good); color: var(--good); }
+  .gauge-valor { flex: 0 0 auto; font-weight: 700; font-size: 0.9375rem; min-width: 64px; text-align: right; }
+  .gauge-texto-good { color: var(--good); }
+  .badge {
+    display: inline-block; padding: 2px 10px; border-radius: 999px;
+    font-size: 0.8125rem; font-weight: 600; white-space: nowrap;
+  }
+  .badge-good { background: var(--good-bg); color: var(--good); }
+  .badge-neutra { background: var(--neutra-bg); color: var(--neutra); }
+  .tabela-scroll { overflow-x: auto; }
+  table { width: 100%; border-collapse: collapse; font-size: 0.875rem; }
+  th { text-align: left; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.04em;
+       color: var(--fg-muted); font-weight: 600; padding: 8px 12px; border-bottom: 1px solid var(--border); }
+  td { padding: 10px 12px; border-bottom: 1px solid var(--border); vertical-align: top; }
+  tr:last-child td { border-bottom: none; }
+  h2.titulo-secao { font-size: 1rem; font-weight: 700; margin: 0 0 12px; }
+  ul { margin: 0; padding-left: 20px; }
+  li { margin-bottom: 6px; }
+  .status-rodape { font-size: 0.8125rem; color: var(--fg-muted); }
+</style>
+</head>
+<body>
+<div class="pagina">
+  <h1>Melhoria: forge audit &amp; forge conform</h1>
+  <p class="subtitulo">13-09-2026_melhoria-forge-audit-conform</p>
+
+  <section class="card">
+    <p class="pedido"><strong>Pedido original:</strong> automatizar a auditoria de conformidade de governanca agentica em projetos existentes via 'forge audit' e 'forge conform', eliminando o trabalho manual documentado nos relatorios de 13-09-2026</p>
+  </section>
+
+  <section class="card">
+    <h2 class="eyebrow">Nota Atual</h2>
+    <div class="gauge">
+      <div class="gauge-rotulo">Nota Atual (0-10)</div>
+      <div class="gauge-trilho" role="img" aria-label="Nota Atual (0-10): 8/10">
+        <div class="gauge-fill gauge-good" style="width:80%;"></div>
+      </div>
+      <div class="gauge-valor gauge-texto-good">8/10</div>
+    </div>
+    <p class="evidencia"><strong>Evidencia:</strong> Forge atual tem apenas 'init' (projetos novos) e 'inject' (componentes individuais). Nao existe comando de auditoria retroativa. Relatorios manuais mostraram 15% -&gt; 95% de conformidade apos fix manual de 20 itens. Trabalho repetivel automatizavel.</p>
+  </section>
+
+  <section class="card">
+    <h2 class="titulo-secao">Resumo</h2>
+    <p>O aidd-forge cobre bootstrap de projetos novos (init) e injecao de componentes (inject), mas nao possui capacidade de auditar projetos existentes nem de aplicar correcoes cirurgicas de governanca. Os relatorios de 13-09-2026 documentaram um processo manual de 20 itens de conformidade que resultou em melhoria de 15% para 95%. Este processo e candidato ideal a automacao deterministica (zero LLM).</p>
+  </section>
+
+  <section class="card">
+    <h2 class="titulo-secao">Achados</h2>
+    <ul>
+      <li>15 checks de conformidade mapeados: governance core (4), execution directives (5), token economy (2), repository hygiene (3), cache invariance (1)</li>
+      <li>8 dos 15 checks sao auto-fixaveis por 'forge conform' (injecao de diretrizes, .gitignore, .gitattributes, ponteiros IDE)</li>
+      <li>5 checks requerem revisao humana (idioma, budget de tokens, cache prefix) e serao marcados como SKIP no conform</li>
+      <li>Padrao de gate existente (scan() -&gt; GateResult) e reutilizavel para audit_checks (scan() -&gt; AuditItem)</li>
+      <li>Padrao de injecao por marcador (token_optimizer.py) e reutilizavel para injecao de diretrizes no AGENTS.md</li>
+    </ul>
+  </section>
+
+  <section class="card">
+    <h2 class="titulo-secao">Riscos / Limitacoes</h2>
+    <ul>
+      <li>Heuristica de deteccao de idioma (PT-BR vs EN) via regex e falsos positivos em conteudo misto</li>
+      <li>Fixers de AGENTS.md podem produzir arquivos com secoes duplicadas se o marcador nao for detectado corretamente</li>
+      <li>Compatibilidade Windows: symlinks podem falhar, precisa de fallback copytree (ja implementado no Injector)</li>
+    </ul>
+  </section>
+
+  <section class="card">
+    <h2 class="titulo-secao">Itens de Conformidade (15 checks)</h2>
+    <div class="tabela-scroll">
+      <table>
+        <thead>
+          <tr><th>ID</th><th>Categoria</th><th>Check</th><th>Auto-fix</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>G01</td><td>Governance</td><td>AGENTS.md existe</td><td><span class="badge badge-good">Sim</span></td></tr>
+          <tr><td>G02</td><td>Governance</td><td>AGENTS.md em Ingles</td><td><span class="badge badge-neutra">Nao</span></td></tr>
+          <tr><td>G03</td><td>Governance</td><td>IDE pointers (CLAUDE.md etc)</td><td><span class="badge badge-good">Sim</span></td></tr>
+          <tr><td>G04</td><td>Governance</td><td>AGENTS.md generico (sem specs)</td><td><span class="badge badge-neutra">Nao</span></td></tr>
+          <tr><td>G05</td><td>Execucao</td><td>Thinking constraint</td><td><span class="badge badge-good">Sim</span></td></tr>
+          <tr><td>G06</td><td>Execucao</td><td>Execution limit (3-5 passos)</td><td><span class="badge badge-good">Sim</span></td></tr>
+          <tr><td>G07</td><td>Execucao</td><td>Silent executor</td><td><span class="badge badge-good">Sim</span></td></tr>
+          <tr><td>G08</td><td>Execucao</td><td>Bash rule (tail/grep)</td><td><span class="badge badge-good">Sim</span></td></tr>
+          <tr><td>G09</td><td>Execucao</td><td>Graph-first priority</td><td><span class="badge badge-good">Sim</span></td></tr>
+          <tr><td>G10</td><td>Tokens</td><td>Context budget (&lt;1500 tok)</td><td><span class="badge badge-neutra">Nao</span></td></tr>
+          <tr><td>G11</td><td>Tokens</td><td>Skills frontmatter 1 linha</td><td><span class="badge badge-neutra">Nao</span></td></tr>
+          <tr><td>G12</td><td>Higiene</td><td>.gitignore completo</td><td><span class="badge badge-good">Sim</span></td></tr>
+          <tr><td>G13</td><td>Higiene</td><td>.gitattributes LF</td><td><span class="badge badge-good">Sim</span></td></tr>
+          <tr><td>G14</td><td>Higiene</td><td>Sem duplicatas</td><td><span class="badge badge-neutra">Nao</span></td></tr>
+          <tr><td>G15</td><td>Cache</td><td>Cache prefix estavel</td><td><span class="badge badge-neutra">Nao</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2 class="titulo-secao">Recomendacao</h2>
+    <p>Implementar 'forge audit' e 'forge conform' como novos subcomandos do CLI, seguindo o padrao de gate existente. audit_checks como funcoes puras testaveis, conform_fixers com backup+rollback. Comecar pelos checks mais impactantes (G01, G12, G13, G05-G09) e expandir gradualmente.</p>
+  </section>
+
+  <p class="status-rodape"><strong>Status:</strong> <span class="badge badge-good">APROVADO</span> - plano aprovado, implementacao iniciada</p>
+</div>
+</body>
+</html>

@@ -144,6 +144,57 @@ def inject_command(
     sys.exit(cmd_inject(tipo, nome, descricao, conteudo, conteudo_file, path, force))
 
 
+@cli.command("audit", help="Audita a conformidade de governanca do projeto alvo")
+@click.argument("path", required=False, default=".")
+@click.option("--format", "fmt", type=click.Choice(["json", "md", "html"]), default="md", help="Formato do relatorio")
+@click.option("--output", type=click.Path(), default=None, help="Arquivo de saida (padrao: stdout)")
+def audit_command(path: str, fmt: str, output: str | None) -> None:
+    sys.exit(cmd_audit(path, fmt, output))
+
+
+@cli.command("conform", help="Aplica correcoes automaticas de conformidade")
+@click.argument("path", required=False, default=".")
+@click.option("--dry-run", is_flag=True, default=False, help="Apenas mostra o que seria feito")
+@click.option("--item", "items", multiple=True, type=int, help="Corrige apenas o item especifico (repetivel)")
+def conform_command(path: str, dry_run: bool, items: tuple[int, ...]) -> None:
+    sys.exit(cmd_conform(path, dry_run, items))
+
+
+def cmd_audit(path: str, fmt: str, output: str | None) -> int:
+    from aidd_forge.core.audit_engine import AuditEngine
+    from aidd_forge.core.audit_report import to_html, to_json, to_markdown
+
+    target = Path(path).resolve()
+    engine = AuditEngine(target)
+    report = engine.run()
+
+    formatters = {"json": to_json, "md": to_markdown, "html": to_html}
+    formatted = formatters[fmt](report)
+
+    if output:
+        out_path = Path(output)
+        out_path.parent.mkdir(parents=True, exist_ok=True)
+        out_path.write_text(formatted, encoding="utf-8")
+        print(f"[forge audit] report written to: {out_path}")
+    else:
+        print(formatted)
+
+    print(f"\n[forge audit] compliance: {report.compliance_rate:.1f}% ({report.passed}/{report.total} PASS)")
+    return 0 if report.compliance_rate >= 80 else 1
+
+
+def cmd_conform(path: str, dry_run: bool, items: tuple[int, ...]) -> int:
+    from aidd_forge.core.conform_engine import ConformEngine
+
+    target = Path(path).resolve()
+    engine = ConformEngine(target)
+    item_filter = list(items) if items else None
+    report = engine.run(dry_run=dry_run, item_filter=item_filter)
+
+    print(report.summary())
+    return 0 if report.failed_fixes == 0 else 1
+
+
 def main(argv: list[str] | None = None) -> int:
     try:
         cli.main(args=argv, prog_name="forge")
