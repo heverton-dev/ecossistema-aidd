@@ -611,6 +611,15 @@ def _copy_gates_and_automation(
             shutil.copyfile(src, os.path.join(target_scripts_dir, s))
             print(f"  [+] Script: {s}")
 
+    # Copiar escritor_atomico.py (dependência de compose_suite) para scripts/
+    escritor_src = os.path.join(scripts_dir, "..", "src", "core", "escritor_atomico.py")
+    if not os.path.isfile(escritor_src):
+        # Fallback: componentes compartilhados
+        escritor_src = os.path.join(scripts_dir, "..", "..", "..", "componentes", "compartilhado", "src-core", "escritor_atomico.py")
+    if os.path.isfile(escritor_src):
+        shutil.copyfile(escritor_src, os.path.join(target_scripts_dir, "escritor_atomico.py"))
+        print(f"  [+] Script: escritor_atomico.py")
+
     cookiecutter_templates_src = os.path.join(skill_root, "templates", "cookiecutter-scaffold")
     cookiecutter_templates_dst = os.path.join(target_dir, "templates", "cookiecutter-scaffold")
     if os.path.isdir(cookiecutter_templates_src):

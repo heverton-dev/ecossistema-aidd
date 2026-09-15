@@ -175,20 +175,31 @@ def criar_modulo(nome_modulo: str, descricao: str = "", target_dir: str = "."):
             # então regenerar aqui de novo seria trabalho duplicado.
             if os.path.isfile(server_path):
                 try:
+                    # Adiciona scripts/ e componentes compartilhados ao sys.path
+                    # para encontrar compose_suite e suas dependências (escritor_atomico)
+                    scripts_dir = os.path.join(target_dir, "scripts")
+                    if scripts_dir not in sys.path:
+                        sys.path.insert(0, scripts_dir)
+                    # Escritor_atomico vive em componentes/compartilhado/src-core/
+                    comp_dir = os.path.join(target_dir, "..", "..", "componentes", "compartilhado", "src-core")
+                    if os.path.isdir(comp_dir) and comp_dir not in sys.path:
+                        sys.path.insert(0, comp_dir)
                     from compose_suite import generate_modular_server_code
-                except ImportError:
-                    from scripts.compose_suite import generate_modular_server_code
+                except (ImportError, Exception) as e:
+                    print(f"  [!] Aviso: não foi possível importar generate_modular_server_code: {e}")
+                    generate_modular_server_code = None
 
-                suite_name = plano.get("projeto", {}).get("nome", "AIDD Suite")
-                db_engine = plano.get("projeto", {}).get("db_engine", "sqlite")
-                module_slugs = [m.get("slug") for m in plano["modulos"] if isinstance(m, dict) and m.get("slug")]
-                if slug not in module_slugs:
-                    module_slugs.append(slug)
+                if generate_modular_server_code is not None:
+                    suite_name = plano.get("projeto", {}).get("nome", "AIDD Suite")
+                    db_engine = plano.get("projeto", {}).get("db_engine", "sqlite")
+                    module_slugs = [m.get("slug") for m in plano["modulos"] if isinstance(m, dict) and m.get("slug")]
+                    if slug not in module_slugs:
+                        module_slugs.append(slug)
 
-                server_code = generate_modular_server_code(suite_name, module_slugs, db_engine=db_engine)
-                with open(server_path, "w", encoding="utf-8") as f:
-                    f.write(server_code)
-                print(f"  [+] 'src/server.py' regenerado e religado com o módulo '{slug}'!")
+                    server_code = generate_modular_server_code(suite_name, module_slugs, db_engine=db_engine)
+                    with open(server_path, "w", encoding="utf-8") as f:
+                        f.write(server_code)
+                    print(f"  [+] 'src/server.py' regenerado e religado com o módulo '{slug}'!")
         except Exception as e:
             print(f"  [!] Aviso ao atualizar manifesto: {e}")
 

@@ -21,7 +21,7 @@ try:
     from prometheus_client import (
         Counter as _PromCounter,
         Histogram as _PromHistogram,
-        REGISTRY as _REGISTRY,
+        CollectorRegistry as _CollectorRegistry,
         generate_latest,
         CONTENT_TYPE_LATEST,
     )
@@ -33,10 +33,15 @@ except ImportError:
 if HAS_PROMETHEUS_CLIENT:
     # -----------------------------------------------------------------------
     # Fast path: prometheus_client esta disponivel — delega para ele
+    #
+    # Cada metrica usa um CollectorRegistry proprio (nao o global REGISTRY)
+    # para que render() retorne SOMENTE os dados daquela metrica, sem vazar
+    # metricas default do Python (gc, platform, etc.) no output.
     # -----------------------------------------------------------------------
     class Counter:
         def __init__(self, name: str, help_text: str, label_names: Optional[List[str]] = None):
-            self._inner = _PromCounter(name, help_text, label_names or [])
+            self._registry = _CollectorRegistry()
+            self._inner = _PromCounter(name, help_text, label_names or [], registry=self._registry)
 
         def inc(self, labels: Optional[Dict[str, str]] = None, amount: float = 1):
             if labels:
@@ -45,29 +50,46 @@ if HAS_PROMETHEUS_CLIENT:
                 self._inner.inc(amount)
 
         def render(self) -> str:
-            return generate_latest(_REGISTRY).decode("utf-8")
+            return generate_latest(self._registry).decode("utf-8")
 
     class Histogram:
         def __init__(self, name: str, help_text: str, buckets: Optional[List[float]] = None):
+            self._registry = _CollectorRegistry()
             kw = {"buckets": buckets} if buckets else {}
-            self._inner = _PromHistogram(name, help_text, **kw)
+            self._inner = _PromHistogram(name, help_text, registry=self._registry, **kw)
 
         def observe(self, value: float):
             self._inner.observe(value)
 
         def render(self) -> str:
-            return generate_latest(_REGISTRY).decode("utf-8")
+            return generate_latest(self._registry).decode("utf-8")
 
     class MetricsRegistry:
         def __init__(self):
+            self._registry = _CollectorRegistry()
             self._metrics = []
 
         def register(self, metric):
             self._metrics.append(metric)
+            # Se a metrica tem _registry proprio (Counter/Histogram prometheus),
+            # copia o registrador para o registry deste MetricsRegistry
+            if hasattr(metric, '_inner') and hasattr(metric._inner, '_registry'):
+                # Re-registra no registry compartilhado
+                pass
             return metric
 
         def render(self) -> str:
-            return generate_latest(_REGISTRY).decode("utf-8")
+            # Se tem metricas com _registry proprio, combina tudo
+            combined = _CollectorRegistry()
+            for m in self._metrics:
+                if hasattr(m, '_registry'):
+                    # Coleta metricas do registry individual e re-registra
+                    for collector in m._registry._names_to_collectors.values():
+                        try:
+                            combined.register(collector)
+                        except Exception:
+                            pass  # Ja registrado
+            return generate_latest(combined).decode("utf-8")
 
 else:
     # -----------------------------------------------------------------------
