@@ -45,6 +45,11 @@ try:
 except ImportError:
     psycopg2 = None
 
+try:
+    import asyncpg
+except ImportError:
+    asyncpg = None
+
 DB_ERRORS = (sqlite3.Error, psycopg2.Error) if psycopg2 is not None else (sqlite3.Error,)
 
 # ---------------------------------------------------------------------------
@@ -636,6 +641,22 @@ class SQLiteAdapter(DatabaseAdapter):
             conn.exec_driver_sql(
                 "CREATE INDEX IF NOT EXISTS idx_outbox_claim ON _outbox_events(status, claimed_at);"
             )
+            # Tabela de dead-letter: eventos que esgotaram retentativas são
+            # movidos aqui com metadata completa para inspeção/reprocesso manual.
+            conn.exec_driver_sql(
+                "CREATE TABLE IF NOT EXISTS _dead_letter_events ("
+                "id TEXT PRIMARY KEY,"
+                "event_name TEXT NOT NULL,"
+                "payload TEXT NOT NULL,"
+                "tentativas INTEGER NOT NULL DEFAULT 0,"
+                "last_error TEXT,"
+                "dead_at TEXT NOT NULL"
+                ");"
+            )
+            conn.exec_driver_sql(
+                "CREATE INDEX IF NOT EXISTS idx_dead_letter_event_name "
+                "ON _dead_letter_events(event_name);"
+            )
 
 
 class PostgresCursorProxy:
@@ -830,9 +851,232 @@ class PostgresAdapter(DatabaseAdapter):
                     curr_hash TEXT NOT NULL
                 );
             """)
+            # Tabela de dead-letter: eventos que esgotaram retentativas são
+            # movidos aqui com metadata completa para inspeção/reprocesso manual.
+            cur.execute("""
+                CREATE TABLE IF NOT EXISTS _dead_letter_events (
+                    id TEXT PRIMARY KEY,
+                    event_name TEXT NOT NULL,
+                    payload TEXT NOT NULL,
+                    tentativas INTEGER NOT NULL DEFAULT 0,
+                    last_error TEXT,
+                    dead_at TEXT NOT NULL
+                );
+            """)
+            cur.execute(
+                "CREATE INDEX IF NOT EXISTS idx_dead_letter_event_name "
+                "ON _dead_letter_events(event_name);"
+            )
             conn.commit()
         finally:
             conn.close()
+
+
+# ---------------------------------------------------------------------------
+# Async PostgreSQL Adapter — asyncpg high-performance driver
+# ---------------------------------------------------------------------------
+# Uses sqlalchemy.ext.asyncio.create_async_engine with postgresql+asyncpg:// URL.
+# Falls back to sync PostgresAdapter when asyncpg is not installed.
+
+
+class AsyncPostgresCursorProxy:
+    """Async equivalent of PostgresCursorProxy: emulates sqlite3 cursor surface
+    (fetchone/fetchall/lastrowid) over asyncpg results."""
+
+    def __init__(self, async_conn, cursor_result=None):
+        self._conn = async_conn
+        self._result = cursor_result
+        self._lastrowid = None
+
+    async def execute(self, query: str, params=None):
+        params = params or ()
+        translated = _PLACEHOLDER_RE.sub("$1", query)
+
+        stripped = translated.strip().upper()
+        is_insert = stripped.startswith("INSERT")
+        already_has_returning = "RETURNING" in stripped
+        if is_insert and not already_has_returning:
+            translated = translated.rstrip().rstrip(";") + " RETURNING id"
+
+        self._result = await self._conn.fetch(translated, *params)
+
+        if is_insert and self._result:
+            self._lastrowid = self._result[0]["id"]
+        return self
+
+    async def fetchone(self):
+        if self._result:
+            row = self._result[0] if self._result else None
+            self._result = self._result[1:] if len(self._result) > 1 else None
+            return row
+        return None
+
+    async def fetchall(self):
+        return list(self._result) if self._result else []
+
+    @property
+    def lastrowid(self):
+        return self._lastrowid
+
+    @property
+    def rowcount(self):
+        return len(self._result) if self._result else 0
+
+
+class AsyncPostgresConnectionProxy:
+    """Async emulation of the sqlite3 connection surface (execute/executemany
+   /executescript) over asyncpg, allowing code written for SQLite to run
+    unchanged in async mode."""
+
+    def __init__(self, async_conn):
+        self._conn = async_conn
+
+    async def execute(self, query: str, params=None):
+        proxy = AsyncPostgresCursorProxy(self._conn)
+        await proxy.execute(query, params)
+        return proxy
+
+    async def executemany(self, query: str, seq_of_params):
+        translated = _PLACEHOLDER_RE.sub("$1", query)
+        await self._conn.executemany(translated, seq_of_params)
+
+    async def executescript(self, sql: str):
+        translated = _translate_ddl_for_postgres(sql)
+        await self._conn.execute(translated)
+
+    async def commit(self):
+        # asyncpg uses implicit transaction management; explicit commit is a no-op
+        # at the connection level — use transaction objects for explicit control.
+        pass
+
+    async def rollback(self):
+        pass
+
+    async def close(self):
+        await self._conn.close()
+
+    async def __aenter__(self):
+        return self
+
+    async def __aexit__(self, exc_type, exc_val, exc_tb):
+        if exc_type is not None:
+            await self.rollback()
+        else:
+            await self.commit()
+        await self.close()
+        return False
+
+
+class AsyncPostgresAdapter(DatabaseAdapter):
+    """Async PostgreSQL adapter using asyncpg. Activated when DATABASE_URL starts
+    with postgres(ql):// AND asyncpg is installed. Falls back to sync PostgresAdapter."""
+
+    def __init__(self, db_url: str):
+        self.db_url = db_url
+        # Convert postgresql:// → postgresql+asyncpg:// for SQLAlchemy async engine
+        if db_url.startswith("postgresql://"):
+            self._async_url = db_url.replace("postgresql://", "postgresql+asyncpg://", 1)
+        elif db_url.startswith("postgres://"):
+            self._async_url = db_url.replace("postgres://", "postgresql+asyncpg://", 1)
+        else:
+            self._async_url = db_url
+        self._engine = None
+
+    @property
+    def engine(self):
+        """Lazy-create async SQLAlchemy engine with asyncpg backend."""
+        if self._engine is None:
+            from sqlalchemy.ext.asyncio import create_async_engine
+            self._engine = create_async_engine(
+                self._async_url,
+                pool_pre_ping=True,
+                pool_size=5,
+                max_overflow=10,
+            )
+        return self._engine
+
+    async def _connect_raw(self):
+        """Create a raw asyncpg connection."""
+        return await asyncpg.connect(self.db_url)
+
+    async def get_async_connection(self):
+        """Return an AsyncPostgresConnectionProxy wrapping an asyncpg pool connection."""
+        pool = await asyncpg.create_pool(self.db_url)
+        conn = await pool.acquire()
+        return AsyncPostgresConnectionProxy(conn), pool
+
+    def get_connection(self):
+        """Sync fallback — delegates to PostgresAdapter for backward compat."""
+        return PostgresAdapter(self.db_url).get_connection()
+
+    async def init_system_tables_async(self):
+        """Async version of init_system_tables using asyncpg directly."""
+        conn = await asyncpg.connect(self.db_url)
+        try:
+            await conn.execute("""
+                CREATE TABLE IF NOT EXISTS _schema_migrations (
+                    id SERIAL PRIMARY KEY,
+                    module_name TEXT NOT NULL UNIQUE,
+                    version INTEGER NOT NULL,
+                    applied_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+                );
+            """)
+            await conn.execute("""
+                CREATE TABLE IF NOT EXISTS _outbox_events (
+                    id TEXT PRIMARY KEY,
+                    event_name TEXT NOT NULL,
+                    payload TEXT NOT NULL,
+                    status TEXT NOT NULL DEFAULT 'pendente',
+                    criado_em TEXT NOT NULL,
+                    processado_em TEXT,
+                    claimed_at TEXT,
+                    claimed_by TEXT,
+                    tentativas INTEGER NOT NULL DEFAULT 0,
+                    seq INTEGER NOT NULL DEFAULT 0
+                );
+            """)
+            await conn.execute("CREATE INDEX IF NOT EXISTS idx_outbox_status ON _outbox_events(status);")
+            await conn.execute("CREATE INDEX IF NOT EXISTS idx_outbox_claim ON _outbox_events(status, claimed_at);")
+            # Idempotent column migration
+            for col_name, ddl in (
+                ("tentativas", "ALTER TABLE _outbox_events ADD COLUMN tentativas INTEGER NOT NULL DEFAULT 0;"),
+                ("claimed_at", "ALTER TABLE _outbox_events ADD COLUMN claimed_at TEXT;"),
+                ("claimed_by", "ALTER TABLE _outbox_events ADD COLUMN claimed_by TEXT;"),
+                ("seq", "ALTER TABLE _outbox_events ADD COLUMN seq INTEGER NOT NULL DEFAULT 0;"),
+            ):
+                exists = await conn.fetchval(
+                    "SELECT EXISTS(SELECT 1 FROM information_schema.columns "
+                    "WHERE table_name = '_outbox_events' AND column_name = $1)",
+                    col_name,
+                )
+                if not exists:
+                    await conn.execute(ddl)
+            await conn.execute("""
+                CREATE TABLE IF NOT EXISTS _eventos_processados (
+                    event_id TEXT PRIMARY KEY,
+                    seq INTEGER NOT NULL,
+                    event_name TEXT NOT NULL,
+                    consumer_id TEXT NOT NULL DEFAULT 'default',
+                    processado_em TEXT NOT NULL
+                );
+            """)
+            await conn.execute("CREATE INDEX IF NOT EXISTS idx_eventos_processados_seq ON _eventos_processados(seq, consumer_id);")
+            await conn.execute("""
+                CREATE TABLE IF NOT EXISTS _audit_log (
+                    id TEXT PRIMARY KEY,
+                    timestamp TEXT NOT NULL,
+                    action TEXT NOT NULL,
+                    payload TEXT NOT NULL,
+                    prev_hash TEXT NOT NULL,
+                    curr_hash TEXT NOT NULL
+                );
+            """)
+        finally:
+            await conn.close()
+
+    def init_system_tables(self):
+        """Sync entry point — uses sync PostgresAdapter for init at startup."""
+        PostgresAdapter(self.db_url).init_system_tables()
 
 
 class Database:
@@ -848,6 +1092,25 @@ class Database:
 
     def get_connection(self):
         return self._adapter.get_connection()
+
+    async def get_async_connection(self):
+        """Return an async connection via asyncpg when available.
+
+        Returns an (AsyncPostgresConnectionProxy, pool) tuple for PostgreSQL
+        databases when asyncpg is installed. Falls back to the sync adapter's
+        get_connection() if asyncpg is not available or the database is SQLite.
+
+        Usage:
+            async with Database() as db:
+                conn, pool = await db.get_async_connection()
+                await conn.execute("SELECT 1")
+                await pool.release(conn._conn)
+        """
+        if self.is_postgres and asyncpg is not None:
+            adapter = AsyncPostgresAdapter(self.db_url)
+            return await adapter.get_async_connection()
+        # Fallback: wrap sync connection for compatibility
+        return self._adapter.get_connection(), None
 
     def record_migration(self, module_name: str, version: int = 1):
         """Registra a aplicação idempotente de schema para um módulo."""

@@ -1,0 +1,54 @@
+# {{ nicho_nome_exibicao }} — Stack Completa
+
+Gerado automaticamente pelo **AIDD-Factory**.
+
+## Servicos
+
+{% for servico in servicos %}
+- **{{ servico.nome }}** — {{ servico.descricao }}
+{% endfor %}
+
+## Inicializacao
+
+```bash
+# Copiar variaveis de ambiente
+cp .env.example .env
+
+# Gerar senhas (ja feito pelo factory)
+# Editar .env com valores reais se necessario
+
+# Subir stack completa
+docker compose up -d
+
+# Verificar saude
+curl http://localhost:8000/healthz
+```
+
+## URLs por Servico
+
+| Servico | URL |
+|---------|-----|
+| Gateway | http://localhost:8000 |
+{% for servico in servicos %}
+| {{ servico.nome }} | http://localhost:{{ servico.porta | default(8000) }} |
+{% endfor %}
+
+## Documentacao da API
+
+- Swagger UI: http://localhost:8000/docs
+- OpenAPI JSON: http://localhost:8000/openapi.json
+
+## Webhooks
+
+Os webhooks estao configurados no gateway. Veja `webhooks/` para contratos.
+
+## Backup
+
+```bash
+# Dump do PostgreSQL centralizado
+docker exec postgres pg_dumpall -U postgres > backup_$(date +%Y%m%d).sql
+```
+
+## Monitoramento
+
+Uptime Kuma esta configurado em http://localhost:3001 (se habilitado).

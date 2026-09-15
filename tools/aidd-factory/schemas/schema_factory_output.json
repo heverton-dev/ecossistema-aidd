@@ -1,0 +1,49 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ecossistema-aidd.local/schemas/factory-output-v1.json",
+  "title": "AIDD-Factory Output Contract",
+  "description": "Validates the FACTORY_OUTPUT.json produced by the factory pipeline.",
+  "type": "object",
+  "required": ["versao", "gerado_em", "nicho", "artefatos", "resumo"],
+  "additionalProperties": false,
+  "properties": {
+    "versao": { "const": "1.0.0" },
+    "gerado_em": { "type": "string" },
+    "nicho": {
+      "type": "object",
+      "required": ["slug", "nome_exibicao"],
+      "properties": {
+        "slug": { "type": "string" },
+        "nome_exibicao": { "type": "string" }
+      }
+    },
+    "artefatos": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["tipo", "caminho", "status"],
+        "properties": {
+          "tipo": {
+            "type": "string",
+            "enum": ["compose", "init_db", "env", "env_enc", "analysis", "factory_output"]
+          },
+          "caminho": { "type": "string" },
+          "status": {
+            "type": "string",
+            "enum": ["gerado", "erro", "pulado"]
+          },
+          "detalhes": { "type": ["string", "null"] }
+        }
+      }
+    },
+    "resumo": {
+      "type": "object",
+      "required": ["total_artefatos", "gerados", "erros"],
+      "properties": {
+        "total_artefatos": { "type": "integer", "minimum": 0 },
+        "gerados": { "type": "integer", "minimum": 0 },
+        "erros": { "type": "integer", "minimum": 0 }
+      }
+    }
+  }
+}

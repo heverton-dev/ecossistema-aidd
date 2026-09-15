@@ -1,0 +1,33 @@
+# -*- coding: utf-8 -*-
+"""
+AIDD-Factory — Modelos Pydantic do Gateway
+Nicho: {{ nicho_nome_exibicao }}
+"""
+from pydantic import BaseModel, Field
+from typing import Optional, List
+from datetime import datetime
+
+
+class HealthResponse(BaseModel):
+    status: str = Field(..., description="Status do servico: ok, degraded, down")
+
+
+class GatewayHealthResponse(BaseModel):
+    status: str = Field(..., description="Status geral: healthy, degraded")
+    services: dict = Field(..., description="Status por servico")
+
+{% for servico in servicos %}
+class {{ servico.nome_camel }}ProxyRequest(BaseModel):
+    """Proxy request para {{ servico.nome }}."""
+    path: str = Field(..., description="Caminho a ser proxyado")
+    method: str = Field("GET", description="HTTP method")
+    body: Optional[dict] = Field(None, description="Corpo da requisicao")
+
+
+class {{ servico.nome_camel }}ProxyResponse(BaseModel):
+    """Response do proxy {{ servico.nome }}."""
+    status_code: int
+    data: Optional[dict] = None
+    error: Optional[str] = None
+
+{% endfor %}

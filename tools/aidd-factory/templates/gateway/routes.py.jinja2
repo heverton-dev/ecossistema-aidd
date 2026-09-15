@@ -1,0 +1,51 @@
+# -*- coding: utf-8 -*-
+"""
+AIDD-Factory — Rotas do Gateway
+Nicho: {{ nicho_nome_exibicao }}
+"""
+from fastapi import APIRouter, Request, HTTPException
+from fastapi.responses import JSONResponse
+import httpx
+from typing import Optional
+
+router = APIRouter()
+
+SERVICES = {
+{% for servico in servicos %}
+    "{{ servico.nome_slug }}": "{{ servico.url_default }}",
+{% endfor %}
+}
+
+{% for servico in servicos %}
+@router.get("/{{ servico.nome_slug }}")
+async def list_{{ servico.nome_slug }}():
+    """Lista todos os registros de {{ servico.nome }}."""
+    async with httpx.AsyncClient(timeout=30.0) as client:
+        try:
+            resp = await client.get(f"{SERVICES['{{ servico.nome_slug }}']}/api/v1/items")
+            return resp.json()
+        except httpx.RequestError:
+            raise HTTPException(status_code=502, detail="Servico indisponivel")
+
+@router.get("/{{ servico.nome_slug }}/{item_id}")
+async def get_{{ servico.nome_slug }}(item_id: str):
+    """Busca registro por ID em {{ servico.nome }}."""
+    async with httpx.AsyncClient(timeout=30.0) as client:
+        try:
+            resp = await client.get(f"{SERVICES['{{ servico.nome_slug }}']}/api/v1/items/{item_id}")
+            return resp.json()
+        except httpx.RequestError:
+            raise HTTPException(status_code=502, detail="Servico indisponivel")
+
+@router.post("/{{ servico.nome_slug }}")
+async def create_{{ servico.nome_slug }}(request: Request):
+    """Cria registro em {{ servico.nome }}."""
+    body = await request.json()
+    async with httpx.AsyncClient(timeout=30.0) as client:
+        try:
+            resp = await client.post(f"{SERVICES['{{ servico.nome_slug }}']}/api/v1/items", json=body)
+            return JSONResponse(status_code=resp.status_code, content=resp.json())
+        except httpx.RequestError:
+            raise HTTPException(status_code=502, detail="Servico indisponivel")
+
+{% endfor %}

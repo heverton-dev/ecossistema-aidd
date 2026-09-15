@@ -331,6 +331,10 @@
         "esperado_identico": true,
         "motivo": null
       },
+      "logging_config.py": {
+        "esperado_identico": true,
+        "motivo": null
+      },
       "mcp_repository.py": {
         "esperado_identico": true,
         "motivo": null
@@ -368,6 +372,10 @@
         "motivo": null
       },
       "server.py": {
+        "esperado_identico": true,
+        "motivo": null
+      },
+      "server_fastapi.py": {
         "esperado_identico": true,
         "motivo": null
       },

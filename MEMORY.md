@@ -130,6 +130,15 @@ O **Ecossistema AIDD** é um monorepo agnóstico que integra 6 ferramentas compl
     - prometheus_client já está instalado — fallback nunca será used em produção
     - Elimina ~100 linhas de código NIH em runtime
   - **Notas pós-implementação:** Backend 5→8 (+3), Monitoramento 6→7 (+1)
+- **2025-07-19 — PLAN-0028 Executado (6/6 itens concluídos):**
+  - **Frontend:** React 19+Vite+shadcn/ui SPA (4→8). 32 arquivos, 6 pages, 9 UI components, 5 hooks. Build 130KB gzipped.
+  - **Auth:** JWT migrado para PyJWT + Argon2id (7→8). 8 testes de integração passando.
+  - **Testes:** 16 property-based tests com Hypothesis (7→9). 37/37 testes verdes.
+  - **Observabilidade:** logging_config.py (structlog + OpenTelemetry) + server_fastapi.py v6.1 (7→9).
+  - **Database:** AsyncPostgresAdapter + asyncpg para PostgreSQL async (8→9).
+  - **Eventos:** RedisBLPOPWorker já existente confirmado (outbox_worker.py v5.2, 431 linhas).
+  - **Nota média final: 8.5/10** (vs. 6.5/10 pré-plano = +2.0 pontos).
+  - Plano movido para `docs/planos/feitos/PLAN-0028-upgrade-stack-camadas/`.
 
 ## 7. INICIATIVAS ATIVAS (gerado automaticamente — não editar à mão)
 

@@ -1,0 +1,108 @@
+# -*- coding: utf-8 -*-
+"""
+AIDD-Factory — Gateway FastAPI Gerado
+Nicho: {{ nicho_nome_exibicao }} ({{ nicho_slug }})
+Gerado automaticamente pelo pipeline factory.
+"""
+from fastapi import FastAPI, Request, HTTPException
+from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import JSONResponse
+import httpx
+import os
+import time
+from typing import Optional
+
+app = FastAPI(
+    title="AIDD Gateway — {{ nicho_nome_exibicao }}",
+    description="Micro-Servico Gateway para integracao entre servicos",
+    version="1.0.0",
+)
+
+# CORS
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+# ── Rate Limiting ──
+_request_counts: dict = {}
+RATE_LIMIT = int(os.getenv("GATEWAY_RATE_LIMIT", "100"))
+RATE_WINDOW = int(os.getenv("GATEWAY_RATE_WINDOW", "60"))
+
+@app.middleware("http")
+async def rate_limit_middleware(request: Request, call_next):
+    client_ip = request.client.host if request.client else "unknown"
+    now = time.time()
+    if client_ip not in _request_counts:
+        _request_counts[client_ip] = []
+    _request_counts[client_ip] = [
+        t for t in _request_counts[client_ip] if now - t < RATE_WINDOW
+    ]
+    if len(_request_counts[client_ip]) >= RATE_LIMIT:
+        return JSONResponse(status_code=429, content={"error": "Rate limit exceeded"})
+    _request_counts[client_ip].append(now)
+    return await call_next(request)
+
+# ── Service Registry ──
+SERVICES = {
+{% for servico in servicos %}
+    "{{ servico.nome_slug }}": {
+        "url": os.getenv("{{ servico.nome_slug | upper }}_URL", "{{ servico.url_default }}"),
+        "health": os.getenv("{{ servico.nome_slug | upper }}_HEALTH", "{{ servico.url_default }}/healthz"),
+    },
+{% endfor %}
+}
+
+# ── Health Endpoints ──
+@app.get("/healthz")
+async def health_global():
+    """Healthcheck global do gateway."""
+    status = {}
+    async with httpx.AsyncClient(timeout=5.0) as client:
+        for nome, cfg in SERVICES.items():
+            try:
+                resp = await client.get(cfg["health"])
+                status[nome] = "ok" if resp.status_code == 200 else "degraded"
+            except Exception:
+                status[nome] = "down"
+    all_ok = all(v == "ok" for v in status.values())
+    return {"status": "healthy" if all_ok else "degraded", "services": status}
+
+{% for servico in servicos %}
+@app.get("/{{ servico.nome_slug }}/healthz")
+async def health_{{ servico.nome_slug }}():
+    """Healthcheck do servico {{ servico.nome }}."""
+    try:
+        async with httpx.AsyncClient(timeout=5.0) as client:
+            resp = await client.get(SERVICES["{{ servico.nome_slug }}"]["health"])
+            return {"status": "ok" if resp.status_code == 200 else "degraded"}
+    except Exception:
+        return {"status": "down"}
+
+@app.api_route("/{{ servico.nome_slug }}/{path:path}", methods=["GET", "POST", "PUT", "DELETE", "PATCH"])
+async def proxy_{{ servico.nome_slug }}(path: str, request: Request):
+    """Proxy reverso para {{ servico.nome }}."""
+    url = f"{SERVICES['{{ servico.nome_slug }}']['url']}/{path}"
+    body = await request.body()
+    headers = dict(request.headers)
+    headers.pop("host", None)
+    async with httpx.AsyncClient(timeout=30.0) as client:
+        try:
+            resp = await client.request(
+                method=request.method,
+                url=url,
+                content=body,
+                headers=headers,
+                params=dict(request.query_params),
+            )
+            return JSONResponse(
+                status_code=resp.status_code,
+                content=resp.json() if "json" in resp.headers.get("content-type", "") else resp.text,
+            )
+        except httpx.RequestError:
+            raise HTTPException(status_code=502, detail=f"Servico {{ servico.nome }} indisponivel")
+
+{% endfor %}

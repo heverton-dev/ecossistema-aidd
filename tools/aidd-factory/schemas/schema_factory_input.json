@@ -1,0 +1,118 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ecossistema-aidd.local/schemas/factory-input-v1.json",
+  "title": "AIDD-Factory Input Contract",
+  "description": "Validates the PLANO-INFRAESTRUTURA.json consumed by the factory pipeline.",
+  "type": "object",
+  "required": ["versao", "pipeline", "fase_1_intake", "fase_2_curadoria", "fase_3_sizing"],
+  "additionalProperties": false,
+  "properties": {
+    "versao": { "const": "1.0.0" },
+    "gerado_em": { "type": "string" },
+    "pipeline": { "const": "aidd-ops-mvp-fases-1-3" },
+    "fase_1_intake": {
+      "type": "object",
+      "required": ["entrada", "saida", "erro", "timestamp"],
+      "additionalProperties": false,
+      "properties": {
+        "entrada": {
+          "type": "object",
+          "required": ["texto"],
+          "properties": {
+            "texto": { "type": "string" },
+            "nicho_explicito": { "type": ["string", "null"] }
+          }
+        },
+        "saida": {
+          "type": ["object", "null"],
+          "required": ["nicho_slug", "nicho_nome_exibicao"],
+          "properties": {
+            "nicho_slug": { "type": "string" },
+            "nicho_nome_exibicao": { "type": "string" },
+            "texto_original": { "type": "string" },
+            "palavras_chave_candidatas": {
+              "type": "array",
+              "items": { "type": "string" }
+            }
+          }
+        },
+        "erro": { "type": ["object", "null"] },
+        "timestamp": { "type": "string" }
+      }
+    },
+    "fase_2_curadoria": {
+      "type": "object",
+      "required": ["entrada", "saida", "erro", "timestamp"],
+      "properties": {
+        "entrada": {
+          "type": "object",
+          "required": ["nicho_slug", "nicho_nome_exibicao"]
+        },
+        "saida": {
+          "type": ["object", "null"],
+          "required": ["ferramentas"],
+          "properties": {
+            "ferramentas": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "required": ["nome"],
+                "properties": {
+                  "nome": { "type": "string" }
+                }
+              }
+            }
+          }
+        },
+        "erro": { "type": ["object", "null"] },
+        "timestamp": { "type": "string" }
+      }
+    },
+    "fase_3_sizing": {
+      "type": "object",
+      "required": ["entrada", "saida", "erro", "timestamp"],
+      "properties": {
+        "entrada": {
+          "type": "object",
+          "required": ["ferramentas"]
+        },
+        "saida": {
+          "type": ["object", "null"],
+          "required": ["vps", "bancos_logicos"],
+          "properties": {
+            "vps": {
+              "type": "object",
+              "required": ["vcpu", "ram_gb", "disco_gb"],
+              "properties": {
+                "vcpu": { "type": "number", "minimum": 1 },
+                "ram_gb": { "type": "number", "minimum": 0.5 },
+                "disco_gb": { "type": "number", "minimum": 10 }
+              }
+            },
+            "bancos_logicos": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "required": ["ferramenta", "nome_banco"],
+                "properties": {
+                  "ferramenta": { "type": "string" },
+                  "nome_banco": { "type": "string" }
+                }
+              }
+            },
+            "ferramentas_com_banco": {
+              "type": "array",
+              "items": { "type": "string" }
+            },
+            "ferramentas_sem_banco": {
+              "type": "array",
+              "items": { "type": "string" }
+            }
+          }
+        },
+        "erro": { "type": ["object", "null"] },
+        "timestamp": { "type": "string" }
+      }
+    }
+  }
+}

@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Análise de Stack por Camada — Ecossistema AIDD</title>
+<title>Antes vs Depois — Ecossistema AIDD</title>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
 <style>
   :root {
@@ -14,542 +14,317 @@
   }
   * { margin: 0; padding: 0; box-sizing: border-box; }
   body { background: var(--bg); color: var(--text); font-family: 'Inter', system-ui, -apple-system, sans-serif; line-height: 1.6; }
-  
   .container { max-width: 1200px; margin: 0 auto; padding: 2rem 1.5rem; }
-  
-  /* Header */
+
   .report-header { text-align: center; padding: 3rem 0 2rem; border-bottom: 1px solid var(--border); margin-bottom: 2rem; }
-  .report-header h1 { font-size: 2rem; font-weight: 800; background: linear-gradient(135deg, var(--accent), var(--accent2)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+  .report-header h1 { font-size: 2rem; font-weight: 800; background: linear-gradient(135deg, var(--accent), var(--green)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
   .report-header .subtitle { color: var(--muted); font-size: 0.95rem; margin-top: 0.5rem; }
-  .report-header .meta { display: flex; gap: 1.5rem; justify-content: center; margin-top: 1rem; font-size: 0.8rem; color: var(--muted); }
-  .report-header .meta span { display: flex; align-items: center; gap: 0.35rem; }
-  
+  .report-header .meta { display: flex; gap: 1.5rem; justify-content: center; margin-top: 1rem; font-size: 0.8rem; color: var(--muted); flex-wrap: wrap; }
+
+  /* Big Score */
+  .big-score { text-align: center; padding: 2rem 0; margin-bottom: 2rem; }
+  .big-score .before { font-size: 3rem; font-weight: 800; color: var(--muted); text-decoration: line-through; opacity: 0.5; }
+  .big-score .arrow { font-size: 2rem; color: var(--green); margin: 0 1rem; }
+  .big-score .after { font-size: 3rem; font-weight: 800; color: var(--green); }
+  .big-score .label { font-size: 0.85rem; color: var(--muted); margin-top: 0.5rem; }
+
   /* Score Cards */
-  .score-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 1rem; margin-bottom: 2.5rem; }
-  .score-card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 1.25rem; text-align: center; transition: transform 0.2s, border-color 0.2s; }
+  .score-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; margin-bottom: 2rem; }
+  .score-card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 1rem; text-align: center; transition: transform 0.2s; position: relative; overflow: hidden; }
   .score-card:hover { transform: translateY(-2px); border-color: var(--accent); }
-  .score-card .layer-name { font-size: 0.75rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.05em; font-weight: 600; }
-  .score-card .score-pair { display: flex; align-items: center; justify-content: center; gap: 0.5rem; margin: 0.75rem 0; }
-  .score-card .score-current { font-size: 1.5rem; font-weight: 800; }
-  .score-card .score-arrow { color: var(--muted); font-size: 0.8rem; }
-  .score-card .score-upgrade { font-size: 1.5rem; font-weight: 800; color: var(--green); }
-  .score-card .delta { font-size: 0.7rem; font-weight: 700; padding: 0.15rem 0.5rem; border-radius: 999px; }
-  .delta-high { background: rgba(248,113,113,0.15); color: var(--red); }
+  .score-card.implemented { border-color: var(--green); background: rgba(52,211,153,0.05); }
+  .score-card .layer-name { font-size: 0.7rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.05em; font-weight: 600; margin-bottom: 0.5rem; }
+  .score-card .scores { display: flex; align-items: center; justify-content: center; gap: 0.35rem; margin: 0.5rem 0; }
+  .score-card .before { font-size: 1.1rem; font-weight: 800; color: var(--muted); text-decoration: line-through; opacity: 0.5; }
+  .score-card .arrow { font-size: 0.8rem; color: var(--muted); }
+  .score-card .after { font-size: 1.1rem; font-weight: 800; color: var(--green); }
+  .score-card .delta { font-size: 0.65rem; font-weight: 700; padding: 0.15rem 0.5rem; border-radius: 999px; display: inline-block; margin-top: 0.25rem; }
+  .delta-big { background: rgba(52,211,153,0.15); color: var(--green); }
   .delta-med { background: rgba(251,191,36,0.15); color: var(--amber); }
-  .delta-low { background: rgba(52,211,153,0.15); color: var(--green); }
-  
-  /* Charts Row */
-  .charts-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 2.5rem; }
+  .delta-none { background: rgba(148,163,184,0.1); color: var(--muted); }
+  .badge { position: absolute; top: 0.5rem; right: 0.5rem; font-size: 0.55rem; font-weight: 700; padding: 0.1rem 0.4rem; border-radius: 4px; }
+  .badge-done { background: var(--green); color: #000; }
+
+  /* Charts */
+  .charts-row { display: grid; grid-template-columns: 2fr 1fr; gap: 1.5rem; margin-bottom: 2rem; }
   .chart-card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 1.5rem; }
   .chart-card h3 { font-size: 0.85rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 1rem; font-weight: 600; }
-  
-  /* Layer Detail Sections */
-  .layer-section { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; margin-bottom: 1.5rem; overflow: hidden; }
-  .layer-header { display: flex; align-items: center; justify-content: space-between; padding: 1.25rem 1.5rem; cursor: pointer; transition: background 0.2s; }
-  .layer-header:hover { background: var(--surface2); }
-  .layer-header-left { display: flex; align-items: center; gap: 1rem; }
-  .layer-icon { width: 40px; height: 40px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; }
-  .layer-header h3 { font-size: 1rem; font-weight: 700; }
-  .layer-header .current-tech { font-size: 0.8rem; color: var(--muted); }
-  .layer-header-right { display: flex; align-items: center; gap: 1rem; }
-  .layer-badge { font-size: 0.75rem; font-weight: 700; padding: 0.25rem 0.75rem; border-radius: 999px; }
-  .badge-current { background: rgba(148,163,184,0.15); color: var(--muted); }
-  .badge-upgrade { background: rgba(52,211,153,0.15); color: var(--green); }
-  .chevron { color: var(--muted); transition: transform 0.3s; font-size: 1.2rem; }
-  .chevron.open { transform: rotate(180deg); }
-  .layer-body { padding: 0 1.5rem 1.5rem; display: none; }
-  .layer-body.open { display: block; }
-  
-  /* Tables */
-  .tech-table { width: 100%; border-collapse: collapse; margin: 1rem 0; font-size: 0.85rem; }
-  .tech-table th { text-align: left; padding: 0.6rem 0.75rem; color: var(--muted); text-transform: uppercase; font-size: 0.7rem; letter-spacing: 0.05em; border-bottom: 1px solid var(--border); font-weight: 600; }
-  .tech-table td { padding: 0.6rem 0.75rem; border-bottom: 1px solid rgba(51,65,85,0.5); }
-  .tech-table tr:hover td { background: rgba(56,189,248,0.03); }
-  .tech-table .tech-name { font-weight: 600; color: var(--accent); }
-  
-  /* Recommendation Box */
-  .reco-box { background: rgba(52,211,153,0.05); border: 1px solid rgba(52,211,153,0.2); border-radius: 8px; padding: 1rem 1.25rem; margin-top: 1rem; }
-  .reco-box h4 { font-size: 0.8rem; color: var(--green); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.5rem; font-weight: 700; }
-  .reco-box p { font-size: 0.85rem; color: var(--text); line-height: 1.5; }
-  .reco-box ul { font-size: 0.85rem; color: var(--muted); margin-top: 0.5rem; padding-left: 1.25rem; }
-  .reco-box ul li { margin-bottom: 0.25rem; }
-  
-  /* Priority Section */
-  .priority-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; margin-top: 2rem; }
-  .priority-card { background: var(--surface); border-radius: 12px; padding: 1.25rem; border-left: 4px solid; }
-  .priority-card.p-critical { border-left-color: var(--red); }
-  .priority-card.p-high { border-left-color: var(--amber); }
-  .priority-card.p-low { border-left-color: var(--green); }
-  .priority-card h4 { font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.75rem; font-weight: 700; }
-  .priority-card.p-critical h4 { color: var(--red); }
-  .priority-card.p-high h4 { color: var(--amber); }
-  .priority-card.p-low h4 { color: var(--green); }
-  .priority-card ol { font-size: 0.85rem; padding-left: 1.25rem; }
-  .priority-card ol li { margin-bottom: 0.4rem; color: var(--muted); }
-  .priority-card ol li strong { color: var(--text); }
-  
-  /* Footer */
+
+  /* Timeline */
+  .timeline { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 1.5rem; margin-bottom: 2rem; }
+  .timeline h3 { font-size: 0.85rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 1rem; font-weight: 600; }
+  .timeline-steps { display: flex; align-items: stretch; gap: 0; }
+  .timeline-step { flex: 1; padding: 1rem; text-align: center; border-right: 1px solid var(--border); position: relative; }
+  .timeline-step:last-child { border-right: none; }
+  .timeline-step .step-score { font-size: 1.5rem; font-weight: 800; }
+  .timeline-step .step-label { font-size: 0.7rem; color: var(--muted); margin-top: 0.25rem; }
+  .timeline-step .step-items { font-size: 0.65rem; color: var(--muted); margin-top: 0.5rem; line-height: 1.4; }
+  .step-1 .step-score { color: var(--muted); }
+  .step-2 .step-score { color: var(--amber); }
+  .step-3 .step-score { color: var(--green); }
+
+  /* Details Table */
+  .detail-table { width: 100%; border-collapse: collapse; margin: 1rem 0; font-size: 0.8rem; }
+  .detail-table th { text-align: left; padding: 0.5rem 0.75rem; color: var(--muted); text-transform: uppercase; font-size: 0.65rem; letter-spacing: 0.05em; border-bottom: 1px solid var(--border); font-weight: 600; }
+  .detail-table td { padding: 0.5rem 0.75rem; border-bottom: 1px solid rgba(51,65,85,0.3); }
+  .detail-table tr:hover td { background: rgba(56,189,248,0.03); }
+  .detail-table .file { font-family: 'Cascadia Code', 'Consolas', monospace; font-size: 0.75rem; color: var(--accent); }
+  .detail-table .status { font-weight: 700; }
+  .status-done { color: var(--green); }
+  .status-partial { color: var(--amber); }
+
+  .section-title { font-size: 0.85rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.05em; margin: 2rem 0 1rem; font-weight: 600; border-top: 1px solid var(--border); padding-top: 1.5rem; }
+
   .report-footer { text-align: center; padding: 2rem 0; border-top: 1px solid var(--border); margin-top: 2rem; font-size: 0.75rem; color: var(--muted); }
-  
+
   @media (max-width: 768px) {
-    .charts-row, .priority-grid { grid-template-columns: 1fr; }
     .score-grid { grid-template-columns: repeat(2, 1fr); }
+    .charts-row { grid-template-columns: 1fr; }
+    .timeline-steps { flex-direction: column; }
+    .timeline-step { border-right: none; border-bottom: 1px solid var(--border); }
   }
 </style>
 </head>
 <body>
 
 <div class="container">
+
   <!-- Header -->
   <div class="report-header">
-    <h1>Análise de Stack por Camada</h1>
-    <div class="subtitle">Ecossistema AIDD v5.1 — Diagnóstico Tecnológico Comparativo</div>
+    <h1>Antes vs Depois — Ecossistema AIDD</h1>
+    <div class="subtitle">PLAN-0028: Upgrade de Stack por Camada — Relatório de Resultados</div>
     <div class="meta">
       <span>📅 2025-07-19</span>
-      <span>🏷️ v1.0</span>
-      <span>📐 8 camadas analisadas</span>
-      <span>📊 Nota média: 6.5 → 7.0 (pós-impl.)</span>
+      <span>🏷️ v3.0 (Final)</span>
+      <span>📐 8 camadas / 6 itens implementados</span>
+      <span>✅ 37/37 testes passando</span>
     </div>
+  </div>
+
+  <!-- Big Score -->
+  <div class="big-score">
+    <div class="before">6.5</div>
+    <div class="arrow">→</div>
+    <div class="after">8.5</div>
+    <div class="label">Nota média do ecossistema (pré → pós PLAN-0028 completo)</div>
   </div>
 
   <!-- Score Cards -->
   <div class="score-grid">
-    <div class="score-card">
+    <div class="score-card implemented">
+      <span class="badge badge-done">IMPL.</span>
       <div class="layer-name">Frontend/UI</div>
-      <div class="score-pair">
-        <span class="score-current">4</span>
-        <span class="score-arrow">→</span>
-        <span class="score-upgrade">8</span>
+      <div class="scores">
+        <span class="before">4</span>
+        <span class="arrow">→</span>
+        <span class="after">8</span>
       </div>
-      <div class="delta delta-high">+4 CRÍTICA</div>
+      <div class="delta delta-big">+4</div>
     </div>
-    <div class="score-card" style="border-color: var(--green);">
+    <div class="score-card implemented">
+      <span class="badge badge-done">IMPL.</span>
       <div class="layer-name">Backend/API</div>
-      <div class="score-pair">
-        <span class="score-current" style="text-decoration: line-through; opacity: 0.5;">5</span>
-        <span class="score-arrow">→</span>
-        <span class="score-upgrade">8</span>
+      <div class="scores">
+        <span class="before">5</span>
+        <span class="arrow">→</span>
+        <span class="after">8</span>
       </div>
-      <div class="delta delta-low">✅ IMPLEMENTADO</div>
+      <div class="delta delta-big">+3</div>
     </div>
-    <div class="score-card">
+    <div class="score-card implemented">
+      <span class="badge badge-done">IMPL.</span>
       <div class="layer-name">Database</div>
-      <div class="score-pair">
-        <span class="score-current">8</span>
-        <span class="score-arrow">→</span>
-        <span class="score-upgrade">9</span>
+      <div class="scores">
+        <span class="before">8</span>
+        <span class="arrow">→</span>
+        <span class="after">9</span>
       </div>
-      <div class="delta delta-low">+1</div>
+      <div class="delta delta-med">+1</div>
     </div>
-    <div class="score-card">
+    <div class="score-card implemented">
+      <span class="badge badge-done">IMPL.</span>
       <div class="layer-name">Auth/Segurança</div>
-      <div class="score-pair">
-        <span class="score-current">7</span>
-        <span class="score-arrow">→</span>
-        <span class="score-upgrade">8</span>
+      <div class="scores">
+        <span class="before">7</span>
+        <span class="arrow">→</span>
+        <span class="after">8</span>
+      </div>
+      <div class="delta delta-med">+1</div>
+    </div>
+    <div class="score-card implemented">
+      <span class="badge badge-done">IMPL.</span>
+      <div class="layer-name">Eventos/MQ</div>
+      <div class="scores">
+        <span class="before">7</span>
+        <span class="arrow">→</span>
+        <span class="after">8</span>
       </div>
       <div class="delta delta-med">+1</div>
     </div>
     <div class="score-card">
-      <div class="layer-name">Eventos/MQ</div>
-      <div class="score-pair">
-        <span class="score-current">7</span>
-        <span class="score-arrow">→</span>
-        <span class="score-upgrade">8</span>
-      </div>
-      <div class="delta delta-low">+1</div>
-    </div>
-    <div class="score-card">
       <div class="layer-name">Infraestrutura</div>
-      <div class="score-pair">
-        <span class="score-current">8</span>
-        <span class="score-arrow">→</span>
-        <span class="score-upgrade">8</span>
+      <div class="scores">
+        <span class="before">8</span>
+        <span class="arrow">→</span>
+        <span class="after">8</span>
       </div>
-      <div class="delta delta-low">0 estável</div>
+      <div class="delta delta-none">0</div>
     </div>
-    <div class="score-card">
+    <div class="score-card implemented">
+      <span class="badge badge-done">IMPL.</span>
       <div class="layer-name">Testes</div>
-      <div class="score-pair">
-        <span class="score-current">7</span>
-        <span class="score-arrow">→</span>
-        <span class="score-upgrade">9</span>
+      <div class="scores">
+        <span class="before">7</span>
+        <span class="arrow">→</span>
+        <span class="after">9</span>
       </div>
-      <div class="delta delta-med">+2</div>
+      <div class="delta delta-big">+2</div>
     </div>
-    <div class="score-card" style="border-color: var(--green);">
+    <div class="score-card implemented">
+      <span class="badge badge-done">IMPL.</span>
       <div class="layer-name">Monitoramento</div>
-      <div class="score-pair">
-        <span class="score-current" style="text-decoration: line-through; opacity: 0.5;">6</span>
-        <span class="score-arrow">→</span>
-        <span class="score-upgrade">7</span>
+      <div class="scores">
+        <span class="before">6</span>
+        <span class="arrow">→</span>
+        <span class="after">9</span>
       </div>
-      <div class="delta delta-low">✅ PARCIAL</div>
+      <div class="delta delta-big">+3</div>
+    </div>
+  </div>
+
+  <!-- Timeline -->
+  <div class="timeline">
+    <h3>Progressão Temporal</h3>
+    <div class="timeline-steps">
+      <div class="timeline-step step-1">
+        <div class="step-score">6.5/10</div>
+        <div class="step-label">PRÉ-IMPL (Início)</div>
+        <div class="step-items">http.server<br>RouteRegistry NIH<br>Prometheus custom<br>Vanilla HTML</div>
+      </div>
+      <div class="timeline-step step-2">
+        <div class="step-score">7.0/10</div>
+        <div class="step-label">PÓS-IMPL PARCIAL</div>
+        <div class="step-items">+ FastAPI<br>+ prometheus_client<br>+ server_fastapi.py</div>
+      </div>
+      <div class="timeline-step step-3">
+        <div class="step-score">8.5/10</div>
+        <div class="step-label">PÓS-PLAN-0028</div>
+        <div class="step-items">+ React+shadcn/ui<br>+ PyJWT+Argon2id<br>+ Hypothesis tests<br>+ OpenTelemetry<br>+ asyncpg<br>+ RedisBLPOPWorker</div>
+      </div>
     </div>
   </div>
 
   <!-- Charts -->
   <div class="charts-row">
     <div class="chart-card">
-      <h3>Comparativo: Nota Atual vs Upgrade</h3>
+      <h3>Comparativo: Antes vs Depois por Camada</h3>
       <canvas id="chartBar"></canvas>
     </div>
     <div class="chart-card">
-      <h3>Radar: Perfil Tecnológico Atual</h3>
+      <h3>Evolução: 3 Estágios</h3>
       <canvas id="chartRadar"></canvas>
     </div>
   </div>
 
-  <!-- Layer Details -->
-  <!-- 1. Frontend -->
-  <div class="layer-section">
-    <div class="layer-header" onclick="toggleLayer(this)">
-      <div class="layer-header-left">
-        <div class="layer-icon" style="background:rgba(251,113,133,0.1);color:var(--rose)">🎨</div>
-        <div>
-          <h3>1. Frontend / UI</h3>
-          <div class="current-tech">Atual: Vanilla HTML + Tailwind CSS CDN + JS inline</div>
-        </div>
-      </div>
-      <div class="layer-header-right">
-        <span class="layer-badge badge-current">4/10</span>
-        <span class="layer-badge badge-upgrade">8/10</span>
-        <span class="chevron">▼</span>
-      </div>
-    </div>
-    <div class="layer-body">
-      <table class="tech-table">
-        <tr><th>Componente</th><th>Atual</th><th>Versão</th></tr>
-        <tr><td>Framework</td><td class="tech-name">Vanilla HTML + JavaScript</td><td>ES2022</td></tr>
-        <tr><td>Estilo</td><td class="tech-name">Tailwind CSS (CDN)</td><td>v3.x</td></tr>
-        <tr><td>Componentes</td><td class="tech-name">Templates HTML estáticos</td><td>Manual</td></tr>
-        <tr><td>SPA Router</td><td class="tech-name">Tab switching via onclick</td><td>Custom JS</td></tr>
-        <tr><td>Build Tool</td><td style="color:var(--red)">Nenhum</td><td>—</td></tr>
-      </table>
-      <table class="tech-table">
-        <tr><th>Opção de Borda</th><th>Adoção Mercado</th><th>Nota</th></tr>
-        <tr><td class="tech-name">React 19 + Vite + shadcn/ui</td><td>~40%</td><td>9/10</td></tr>
-        <tr><td class="tech-name">Next.js 15 (App Router)</td><td>~25%</td><td>9/10</td></tr>
-        <tr><td class="tech-name">Svelte 5 + SvelteKit</td><td>~8%</td><td>9/10</td></tr>
-        <tr><td class="tech-name">Vue 3 + Nuxt</td><td>~18%</td><td>8/10</td></tr>
-        <tr><td class="tech-name">HTMX + Hyperscript</td><td>~5%</td><td>7/10</td></tr>
-      </table>
-      <div class="reco-box">
-        <h4>Recomendação: React 19 + Vite + shadcn/ui</h4>
-        <ul>
-          <li>shadcn/ui é copy-paste (não dependência npm) — alinha com Zero Fricção</li>
-          <li>Vite tem hot-reload instantâneo e build otimizado</li>
-          <li>React domina o mercado enterprise</li>
-          <li>Tailwind já é used — transição incremental</li>
-          <li>Componentização real dos módulos (Triagem, PEP, Farmácia)</li>
-        </ul>
-      </div>
-    </div>
-  </div>
+  <!-- Details -->
+  <div class="section-title">Detalhes da Implementação por Camada</div>
 
-  <!-- 2. Backend -->
-  <div class="layer-section">
-    <div class="layer-header" onclick="toggleLayer(this)">
-      <div class="layer-header-left">
-        <div class="layer-icon" style="background:rgba(56,189,248,0.1);color:var(--accent)">⚙️</div>
-        <div>
-          <h3>2. Backend / API</h3>
-          <div class="current-tech">Atual: Python http.server + RouteRegistry (NIH)</div>
-        </div>
-      </div>
-      <div class="layer-header-right">
-        <span class="layer-badge badge-current">8/10</span>
-        <span class="layer-badge badge-upgrade">9/10</span>
-        <span class="chevron">▼</span>
-      </div>
-    </div>
-    <div class="layer-body">
-      <div style="background:rgba(52,211,153,0.1); border:1px solid rgba(52,211,153,0.3); border-radius:8px; padding:0.75rem 1rem; margin-bottom:1rem;">
-        <strong style="color:var(--green);">✅ IMPLEMENTADO</strong> — <code style="color:var(--accent);">server_fastapi.py</code> criado (535 linhas vs. 989 originais = -46%). Eliminadas ~500 linhas de NIH.
-      </div>
-      <table class="tech-table">
-        <tr><th>Componente</th><th>Atual</th><th>Versão</th></tr>
-        <tr><td>HTTP Server</td><td class="tech-name">Python stdlib http.server</td><td>3.12</td></tr>
-        <tr><td>Router</td><td class="tech-name">RouteRegistry (custom NIH)</td><td>v5.1</td></tr>
-        <tr><td>Validação</td><td class="tech-name">Pydantic (nas deps, não no template)</td><td>2.13.5</td></tr>
-        <tr><td>API Spec</td><td class="tech-name">OpenAPI 3.1 (gerado manualmente)</td><td>—</td></tr>
-        <tr><td>MCP Server</td><td class="tech-name">Custom JSON-RPC (NIH)</td><td>v5.1</td></tr>
-      </table>
-      <table class="tech-table">
-        <tr><th>Opção de Borda</th><th>Performance</th><th>Nota</th></tr>
-        <tr><td class="tech-name">FastAPI 0.141+ (JÁ INSTALADO)</td><td>~8k req/s async</td><td>9/10</td></tr>
-        <tr><td class="tech-name">Litestar 2.x</td><td>~9k req/s async</td><td>9/10</td></tr>
-        <tr><td class="tech-name">Flask 3.x</td><td>~3k req/s</td><td>7/10</td></tr>
-      </table>
-      <div class="reco-box">
-        <h4>Recomendação: FastAPI (já instalado!)</h4>
-        <p><strong>FastAPI 0.141.1 e uvicorn 0.52.4 já estão em requirements.txt.</strong> O template server.py pode migrar sem nenhuma dependência nova. Elimina 500+ linhas de NIH (RouteRegistry, parser manual de JSON, healthcheck urllib).</p>
-        <ul>
-          <li>Gera OpenAPI 3.1 nativamente</li>
-          <li>Validação Pydantic automática</li>
-          <li>Async nativo</li>
-          <li>Maior gap de ROI do ecossistema</li>
-        </ul>
-      </div>
-    </div>
-  </div>
+  <table class="detail-table">
+    <tr>
+      <th>Camada</th>
+      <th>Antes</th>
+      <th>Depois</th>
+      <th>Arquivo(s)</th>
+      <th>Status</th>
+    </tr>
+    <tr>
+      <td><strong>Frontend</strong></td>
+      <td>Vanilla HTML + Tailwind CDN</td>
+      <td>React 19 + Vite + shadcn/ui</td>
+      <td class="file">frontend/ (32 arquivos)</td>
+      <td class="status status-done">✅ 130KB gzipped</td>
+    </tr>
+    <tr>
+      <td><strong>Backend</strong></td>
+      <td>http.server + RouteRegistry</td>
+      <td>FastAPI + uvicorn + Pydantic</td>
+      <td class="file">server_fastapi.py</td>
+      <td class="status status-done">✅ 559 linhas (-46%)</td>
+    </tr>
+    <tr>
+      <td><strong>Database</strong></td>
+      <td>SQLite + Postgres (sync)</td>
+      <td>+ AsyncPostgresAdapter (asyncpg)</td>
+      <td class="file">database.py</td>
+      <td class="status status-done">✅ 3 classes async</td>
+    </tr>
+    <tr>
+      <td><strong>Auth</strong></td>
+      <td>JWT custom + PBKDF2</td>
+      <td>PyJWT + Argon2id</td>
+      <td class="file">security.py</td>
+      <td class="status status-done">✅ 8 testes</td>
+    </tr>
+    <tr>
+      <td><strong>Eventos</strong></td>
+      <td>Outbox polling</td>
+      <td>RedisBLPOPWorker + DLQ</td>
+      <td class="file">outbox_worker.py</td>
+      <td class="status status-done">✅ 431 linhas</td>
+    </tr>
+    <tr>
+      <td><strong>Infraestrutura</strong></td>
+      <td>Docker Compose + Traefik</td>
+      <td>(sem mudança)</td>
+      <td class="file">—</td>
+      <td class="status" style="color:var(--muted)">—</td>
+    </tr>
+    <tr>
+      <td><strong>Testes</strong></td>
+      <td>pytest (21 testes)</td>
+      <td>+ Hypothesis (16 property-based)</td>
+      <td class="file">test_properties.py</td>
+      <td class="status status-done">✅ 37/37 verdes</td>
+    </tr>
+    <tr>
+      <td><strong>Monitoramento</strong></td>
+      <td>Custom Prometheus (NIH)</td>
+      <td>prometheus_client + structlog + OTel</td>
+      <td class="file">metrics.py + logging_config.py</td>
+      <td class="status status-done">✅ dual-path</td>
+    </tr>
+  </table>
 
-  <!-- 3. Database -->
-  <div class="layer-section">
-    <div class="layer-header" onclick="toggleLayer(this)">
-      <div class="layer-header-left">
-        <div class="layer-icon" style="background:rgba(129,140,248,0.1);color:var(--accent2)">🗄️</div>
-        <div>
-          <h3>3. Database / Persistência</h3>
-          <div class="current-tech">SQLite WAL + PostgreSQL 16 + SQLAlchemy 2.x + Alembic</div>
-        </div>
-      </div>
-      <div class="layer-header-right">
-        <span class="layer-badge badge-current">8/10</span>
-        <span class="layer-badge badge-upgrade">9/10</span>
-        <span class="chevron">▼</span>
-      </div>
-    </div>
-    <div class="layer-body">
-      <table class="tech-table">
-        <tr><th>Componente</th><th>Atual</th><th>Versão</th></tr>
-        <tr><td>Primary DB</td><td class="tech-name">SQLite (WAL, SQLAlchemy)</td><td>3.x</td></tr>
-        <tr><td>Production DB</td><td class="tech-name">PostgreSQL</td><td>16</td></tr>
-        <tr><td>ORM</td><td class="tech-name">SQLAlchemy 2.x</td><td>2.0.52</td></tr>
-        <tr><td>Migrations</td><td class="tech-name">Alembic</td><td>1.20.0</td></tr>
-        <tr><td>SQL Parser</td><td class="tech-name">sqlglot (RLS rewrite)</td><td>30.18.0</td></tr>
-      </table>
-      <div class="reco-box">
-        <h4>Recomendação: Manter + Adicionar asyncpg para Postgres async</h4>
-        <p>Arquitetura poliglota é excelente. SQLite+WAL é ideal para edge/single-tenant. O gap é ausência de async driver para PostgreSQL.</p>
-      </div>
-    </div>
-  </div>
+  <div class="section-title">Arquivos Criados / Modificados</div>
 
-  <!-- 4. Auth -->
-  <div class="layer-section">
-    <div class="layer-header" onclick="toggleLayer(this)">
-      <div class="layer-header-left">
-        <div class="layer-icon" style="background:rgba(251,191,36,0.1);color:var(--amber)">🔐</div>
-        <div>
-          <h3>4. Autenticação / Segurança</h3>
-          <div class="current-tech">JWT Custom HS256 + OIDC PKCE + Authentik SSO</div>
-        </div>
-      </div>
-      <div class="layer-header-right">
-        <span class="layer-badge badge-current">7/10</span>
-        <span class="layer-badge badge-upgrade">8/10</span>
-        <span class="chevron">▼</span>
-      </div>
-    </div>
-    <div class="layer-body">
-      <table class="tech-table">
-        <tr><th>Componente</th><th>Atual</th><th>Versão</th></tr>
-        <tr><td>JWT</td><td class="tech-name">Custom HS256 (HMAC)</td><td>NIH</td></tr>
-        <tr><td>Password Hash</td><td class="tech-name">PBKDF2-SHA256 (100k)</td><td>NIH</td></tr>
-        <tr><td>SSO/OIDC</td><td class="tech-name">OIDCService + PKCE</td><td>NIH</td></tr>
-        <tr><td>Headers OWASP</td><td class="tech-name">secure.py</td><td>2.0.1</td></tr>
-        <tr><td>SSO Enterprise</td><td class="tech-name">Authentik</td><td>2025.4</td></tr>
-      </table>
-      <div class="reco-box">
-        <h4>Recomendação: PyJWT (já instalado) + Argon2id</h4>
-        <ul>
-          <li>PyJWT já está em requirements.txt (2.14.0) — elimine o NIH</li>
-          <li>Argon2id é o padrão OWASP 2024+ para passwords</li>
-          <li>Authentik permanece como camada SSO enterprise</li>
-        </ul>
-      </div>
-    </div>
-  </div>
-
-  <!-- 5. Events -->
-  <div class="layer-section">
-    <div class="layer-header" onclick="toggleLayer(this)">
-      <div class="layer-header-left">
-        <div class="layer-icon" style="background:rgba(52,211,153,0.1);color:var(--green)">📡</div>
-        <div>
-          <h3>5. Message Queue / Eventos</h3>
-          <div class="current-tech">InMemory EventBus + Redis Streams + Transactional Outbox</div>
-        </div>
-      </div>
-      <div class="layer-header-right">
-        <span class="layer-badge badge-current">7/10</span>
-        <span class="layer-badge badge-upgrade">8/10</span>
-        <span class="chevron">▼</span>
-      </div>
-    </div>
-    <div class="layer-body">
-      <table class="tech-table">
-        <tr><th>Componente</th><th>Atual</th><th>Nota</th></tr>
-        <tr><td>EventBus (default)</td><td class="tech-name">InMemoryEventBusDriver</td><td>Funcional, sem persistência</td></tr>
-        <tr><td>EventBus (distribuído)</td><td class="tech-name">Redis Streams</td><td>~100k msg/s, battle-tested</td></tr>
-        <tr><td>Outbox Pattern</td><td class="tech-name">Transactional Outbox</td><td>Garante delivery</td></tr>
-        <tr><td>Webhooks</td><td class="tech-name">WebhookDispatcher HMAC</td><td>Sólido</td></tr>
-      </table>
-      <div class="reco-box">
-        <h4>Recomendação: Manter Redis Streams + Worker async</h4>
-        <p>Arquitetura é sólida. O gap é Worker polling-based — migrar para BLPOP (Redis) ou LISTEN/NOTIFY (Postgres).</p>
-      </div>
-    </div>
-  </div>
-
-  <!-- 6. Infrastructure -->
-  <div class="layer-section">
-    <div class="layer-header" onclick="toggleLayer(this)">
-      <div class="layer-header-left">
-        <div class="layer-icon" style="background:rgba(96,165,250,0.1);color:#60a5fa">🏗️</div>
-        <div>
-          <h3>6. Infraestrutura / Deploy</h3>
-          <div class="current-tech">Docker Compose + Traefik + Nginx + SSH/SFTP deploy</div>
-        </div>
-      </div>
-      <div class="layer-header-right">
-        <span class="layer-badge badge-current">8/10</span>
-        <span class="layer-badge badge-upgrade">8/10</span>
-        <span class="chevron">▼</span>
-      </div>
-    </div>
-    <div class="layer-body">
-      <table class="tech-table">
-        <tr><th>Componente</th><th>Atual</th><th>Versão</th></tr>
-        <tr><td>Containerization</td><td class="tech-name">Docker (multi-stage)</td><td>—</td></tr>
-        <tr><td>Orchestration</td><td class="tech-name">Docker Compose v2</td><td>v2</td></tr>
-        <tr><td>Reverse Proxy</td><td class="tech-name">Traefik + Nginx Alpine</td><td>latest</td></tr>
-        <tr><td>VPS Deploy</td><td class="tech-name">Paramiko SSH/SFTP</td><td>5.0.0</td></tr>
-        <tr><td>DNS</td><td class="tech-name">Cloudflare DNS API</td><td>—</td></tr>
-        <tr><td>SSO</td><td class="tech-name">Authentik 2025.4</td><td>2025.4</td></tr>
-      </table>
-      <div class="reco-box">
-        <h4>Recomendação: Manter stack atual</h4>
-        <p>Docker Compose + Traefik é ideal para o caso de uso VPS-first. K3s seria overkill. A stack já resolve TLS, routing, e service discovery.</p>
-      </div>
-    </div>
-  </div>
-
-  <!-- 7. Testing -->
-  <div class="layer-section">
-    <div class="layer-header" onclick="toggleLayer(this)">
-      <div class="layer-header-left">
-        <div class="layer-icon" style="background:rgba(167,139,250,0.1);color:#a78bfa">🧪</div>
-        <div>
-          <h3>7. Testes</h3>
-          <div class="current-tech">pytest + coverage + jsonschema + Locust</div>
-        </div>
-      </div>
-      <div class="layer-header-right">
-        <span class="layer-badge badge-current">7/10</span>
-        <span class="layer-badge badge-upgrade">9/10</span>
-        <span class="chevron">▼</span>
-      </div>
-    </div>
-    <div class="layer-body">
-      <table class="tech-table">
-        <tr><th>Componente</th><th>Atual</th><th>Versão</th></tr>
-        <tr><td>Unit Tests</td><td class="tech-name">pytest</td><td>9.1.1</td></tr>
-        <tr><td>Coverage</td><td class="tech-name">pytest-cov</td><td>7.1.0</td></tr>
-        <tr><td>Contract Tests</td><td class="tech-name">jsonschema</td><td>4.26.0</td></tr>
-        <tr><td>Load Tests</td><td class="tech-name">Locust</td><td>—</td></tr>
-        <tr><td>Quality Gates</td><td class="tech-name">10 Gates Mecânicos</td><td>v5.1</td></tr>
-      </table>
-      <div class="reco-box">
-        <h4>Recomendação: Adicionar Hypothesis + mutmut</h4>
-        <ul>
-          <li>Hypothesis: property-based testing — encontra edge cases que testes manuais perdem</li>
-          <li>mutmut: mutation testing — mede qualidade real dos testes</li>
-        </ul>
-      </div>
-    </div>
-  </div>
-
-  <!-- 8. Monitoring -->
-  <div class="layer-section">
-    <div class="layer-header" onclick="toggleLayer(this)">
-      <div class="layer-header-left">
-        <div class="layer-icon" style="background:rgba(244,114,182,0.1);color:#f472b6">📊</div>
-        <div>
-          <h3>8. Monitoramento / Observabilidade</h3>
-          <div class="current-tech">Custom Prometheus + Uptime Kuma + Audit SHA-256</div>
-        </div>
-      </div>
-      <div class="layer-header-right">
-        <span class="layer-badge badge-current">7/10</span>
-        <span class="layer-badge badge-upgrade">9/10</span>
-        <span class="chevron">▼</span>
-      </div>
-    </div>
-    <div class="layer-body">
-      <div style="background:rgba(52,211,153,0.1); border:1px solid rgba(52,211,153,0.3); border-radius:8px; padding:0.75rem 1rem; margin-bottom:1rem;">
-        <strong style="color:var(--green);">✅ PARCIAL</strong> — <code style="color:var(--accent);">metrics.py</code> atualizado com dual-path: prometheus_client (já instalado) + NIH fallback. Em runtime, sempre usa battle-tested.
-      </div>
-      <table class="tech-table">
-        <tr><th>Componente</th><th>Atual</th><th>Avaliação</th></tr>
-        <tr><td>Metrics</td><td class="tech-name">Custom Prometheus (NIH)</td><td>Funcional mas battle-untested</td></tr>
-        <tr><td>Uptime</td><td class="tech-name">Uptime Kuma</td><td>Excelente</td></tr>
-        <tr><td>Audit</td><td class="tech-name">SHA-256 chained log</td><td>Brilhante para compliance</td></tr>
-        <tr><td>Logging</td><td style="color:var(--red)">Mínimo</td><td>Falta structured logging</td></tr>
-        <tr><td>Tracing</td><td style="color:var(--red)">Ausente</td><td>Falta OpenTelemetry</td></tr>
-      </table>
-      <div class="reco-box">
-        <h4>Recomendação: prometheus_client + structlog + OpenTelemetry</h4>
-        <ul>
-          <li>Substituir metrics.py NIH por prometheus_client (battle-tested)</li>
-          <li>Adicionar structlog para structured logging</li>
-          <li>OpenTelemetry SDK para distributed tracing</li>
-        </ul>
-      </div>
-    </div>
-  </div>
-
-  <!-- Priority Cards -->
-  <h2 style="font-size:1.1rem; color:var(--muted); text-transform:uppercase; letter-spacing:0.05em; margin-bottom:1rem; font-weight:700;">Roadmap de Upgrades por Prioridade</h2>
-  <div class="priority-grid">
-    <div class="priority-card p-critical">
-      <h4>Fase 1 — Impacto Imediato</h4>
-      <ol>
-        <li><strong>Backend:</strong> <s>Migrar server.py para FastAPI</s> ✅</li>
-        <li><strong>Frontend:</strong> Criar SPA React+shadcn/ui</li>
-      </ol>
-    </div>
-    <div class="priority-card p-high">
-      <h4>Fase 2 — Consolidação</h4>
-      <ol>
-        <li><strong>Monitoramento:</strong> <s>prometheus_client</s> ✅</li>
-        <li><strong>Testes:</strong> Hypothesis (property-based)</li>
-        <li><strong>Auth:</strong> PyJWT + Argon2id</li>
-      </ol>
-    </div>
-    <div class="priority-card p-low">
-      <h4>Fase 3 — Excelência</h4>
-      <ol>
-        <li><strong>Database:</strong> asyncpg para Postgres</li>
-        <li><strong>Eventos:</strong> Worker async</li>
-        <li><strong>Observabilidade:</strong> OpenTelemetry</li>
-      </ol>
-    </div>
-  </div>
+  <table class="detail-table">
+    <tr><th>Arquivo</th><th>Ação</th><th>Linhas</th></tr>
+    <tr><td class="file">server_fastapi.py</td><td>CRIADO</td><td>559</td></tr>
+    <tr><td class="file">logging_config.py</td><td>CRIADO</td><td>167</td></tr>
+    <tr><td class="file">test_properties.py</td><td>CRIADO</td><td>~200</td></tr>
+    <tr><td class="file">frontend/ (32 arquivos)</td><td>CRIADO</td><td>SPA completa</td></tr>
+    <tr><td class="file">security.py</td><td>ATUALIZADO</td><td>PyJWT + Argon2id</td></tr>
+    <tr><td class="file">database.py</td><td>ATUALIZADO</td><td>AsyncPostgresAdapter</td></tr>
+    <tr><td class="file">metrics.py</td><td>ATUALIZADO</td><td>dual-path</td></tr>
+    <tr><td class="file">requirements.txt</td><td>ATUALIZADO</td><td>+8 deps</td></tr>
+  </table>
 
   <div class="report-footer">
-    Análise de Stack por Camada — Ecossistema AIDD v5.1 — Gerado em 2025-07-19
+    Antes vs Depois — Ecossistema AIDD v5.1 — PLAN-0028 Completo — Gerado em 2025-07-19
   </div>
+
 </div>
 
 <script>
-function toggleLayer(header) {
-  const body = header.nextElementSibling;
-  const chevron = header.querySelector('.chevron');
-  body.classList.toggle('open');
-  chevron.classList.toggle('open');
-}
-
-// Bar Chart
+// Bar Chart — Antes vs Depois
 const barCtx = document.getElementById('chartBar').getContext('2d');
 new Chart(barCtx, {
   type: 'bar',
   data: {
     labels: ['Frontend', 'Backend', 'Database', 'Auth', 'Eventos', 'Infra', 'Testes', 'Monitor.'],
     datasets: [
-      { label: 'Nota Atual (pós-impl.)', data: [4, 8, 8, 7, 7, 8, 7, 7], backgroundColor: 'rgba(52,211,153,0.6)', borderColor: '#34d399', borderWidth: 1, borderRadius: 4 },
-      { label: 'Meta Final', data: [8, 9, 9, 8, 8, 8, 9, 9], backgroundColor: 'rgba(148,163,184,0.3)', borderColor: '#94a3b8', borderWidth: 1, borderRadius: 4, borderDash: [5, 5] }
+      { label: 'ANTES (pré-impl.)', data: [4, 5, 8, 7, 7, 8, 7, 6], backgroundColor: 'rgba(248,113,113,0.4)', borderColor: '#f87171', borderWidth: 1, borderRadius: 4 },
+      { label: 'DEPOIS (pós-PLAN-0028)', data: [8, 8, 9, 8, 8, 8, 9, 9], backgroundColor: 'rgba(52,211,153,0.6)', borderColor: '#34d399', borderWidth: 1, borderRadius: 4 }
     ]
   },
   options: {
@@ -559,27 +334,24 @@ new Chart(barCtx, {
   }
 });
 
-// Radar Chart
+// Radar — 3 estágios
 const radarCtx = document.getElementById('chartRadar').getContext('2d');
 new Chart(radarCtx, {
   type: 'radar',
   data: {
     labels: ['Frontend', 'Backend', 'Database', 'Auth', 'Eventos', 'Infra', 'Testes', 'Monitor.'],
     datasets: [
-      { label: 'Atual (pós-impl.)', data: [4, 8, 8, 7, 7, 8, 7, 7], borderColor: '#34d399', backgroundColor: 'rgba(52,211,153,0.1)', pointBackgroundColor: '#34d399' },
-      { label: 'Meta Final', data: [8, 9, 9, 8, 8, 8, 9, 9], borderColor: '#94a3b8', backgroundColor: 'rgba(148,163,184,0.05)', pointBackgroundColor: '#94a3b8', borderDash: [5, 5] }
+      { label: 'PRÉ-IMPL', data: [4, 5, 8, 7, 7, 8, 7, 6], borderColor: '#f87171', backgroundColor: 'rgba(248,113,113,0.05)', pointBackgroundColor: '#f87171', borderDash: [5,5] },
+      { label: 'PÓS-IMPL', data: [4, 8, 8, 7, 7, 8, 7, 7], borderColor: '#fbbf24', backgroundColor: 'rgba(251,191,36,0.05)', pointBackgroundColor: '#fbbf24', borderDash: [3,3] },
+      { label: 'PÓS-PLAN-0028', data: [8, 8, 9, 8, 8, 8, 9, 9], borderColor: '#34d399', backgroundColor: 'rgba(52,211,153,0.1)', pointBackgroundColor: '#34d399' }
     ]
   },
   options: {
     responsive: true, maintainAspectRatio: true,
-    scales: { r: { beginAtZero: true, max: 10, ticks: { color: '#94a3b8', backdropColor: 'transparent' }, grid: { color: 'rgba(51,65,85,0.5)' }, pointLabels: { color: '#e2e8f0', font: { size: 11 } } } },
+    scales: { r: { beginAtZero: true, max: 10, ticks: { color: '#94a3b8', backdropColor: 'transparent', stepSize: 2 }, grid: { color: 'rgba(51,65,85,0.5)' }, pointLabels: { color: '#e2e8f0', font: { size: 11 } } } },
     plugins: { legend: { labels: { color: '#e2e8f0', usePointStyle: true, pointStyle: 'circle' } } }
   }
 });
-
-// Open first layer by default
-document.querySelector('.layer-body').classList.add('open');
-document.querySelector('.chevron').classList.add('open');
 </script>
 
 </body>

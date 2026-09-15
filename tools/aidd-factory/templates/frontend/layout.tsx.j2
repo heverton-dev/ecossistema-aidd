@@ -1,0 +1,32 @@
+import type { Metadata } from "next";
+import "./globals.css";
+
+export const metadata: Metadata = {
+  title: "{{ nicho_nome_exibicao }} — Painel",
+  description: "Painel unificado para {{ nicho_nome_exibicao }}",
+};
+
+export default function RootLayout({ children }: { children: React.ReactNode }) {
+  return (
+    <html lang="pt-BR">
+      <body>
+        <div className="flex min-h-screen">
+          <aside className="w-64 bg-gray-900 text-white p-4">
+            <h1 className="text-lg font-bold mb-6">{{ nicho_nome_exibicao }}</h1>
+            <nav className="space-y-2">
+              {% for servico in servicos %}
+              <a
+                href="/{{ servico.nome_slug }}"
+                className="block px-3 py-2 rounded hover:bg-gray-700"
+              >
+                {{ servico.nome }}
+              </a>
+              {% endfor %}
+            </nav>
+          </aside>
+          <main className="flex-1 p-6">{children}</main>
+        </div>
+      </body>
+    </html>
+  );
+}

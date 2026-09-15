@@ -174,6 +174,13 @@ def cmd_bridge(args):
     cmd = [sys.executable, "-m", "aidd_bridge.cli"] + args
     return run_command(cmd, cwd=os.getcwd(), env=env)
 
+def cmd_factory(args):
+    factory_dir = os.path.join(TOOLS_DIR, "aidd-factory")
+    pipeline_script = os.path.join(factory_dir, "scripts", "pipeline_factory.py")
+    env = {"PYTHONPATH": factory_dir}
+    cmd = [sys.executable, pipeline_script] + args
+    return run_command(cmd, cwd=os.getcwd(), env=env)
+
 def cmd_components(args):
     sys.path.insert(0, os.path.join(ROOT_DIR, "scripts"))
     import gestor_componentes
@@ -690,7 +697,8 @@ def cmd_status(args):
         ("aidd-master", "Suíte Modular com Fatias Verticais e SQLite WAL"),
         ("aidd-enterprise", "Missão crítica, conformidade SHA-256 e Zero-Trust"),
         ("aidd-ops", "Meta-Orquestrador Agêntico de Infraestrutura (Pacote 3)"),
-        ("aidd-bridge", "Extrator, unificador e empacotador Lovable/VPS")
+        ("aidd-bridge", "Extrator, unificador e empacotador Lovable/VPS"),
+        ("aidd-factory", "Gerador de Aplicacao e Integracao (Pipeline Factory)")
     ]
     for name, desc in tools:
         path = os.path.join(TOOLS_DIR, name)
@@ -724,6 +732,7 @@ def cmd_status(args):
     print("  /melhoria <pedido>      -> Dispara analise profunda pre-planejamento (docs/melhorias/)")
     print("  /plan <nome>            -> Dispara planos-auditoria-runner")
     print("  /bridge [comando]       -> Dispara aidd-bridge-runner")
+    print("  /factory --plano <arq> --pasta <dest> -> Dispara aidd-factory (geracao de stack)")
     print("-" * 72)
     return 0
 
@@ -739,6 +748,7 @@ Comandos disponíveis:
   enterprise <args>   Executa comandos do aidd-enterprise (ex: enterprise inject skill auth)
   ops <args>          Executa o pipeline do aidd-ops (ex: ops "<texto>" --pasta <dest>)
   bridge <args>       Executa comandos do aidd-bridge (scan, convert-db, merge, pack)
+  factory <args>      Executa o pipeline do aidd-factory (ex: factory --plano <arq> --pasta <dest>)
   components sync|verify --tipo <tipo|todos> [--ferramenta <nome>] [--dry-run]
                       Sincroniza/verifica distribuicao fisica multi-harness de
                       componentes (gates/manifesto_harnesses.json)
@@ -830,6 +840,7 @@ def main():
         "enterprise": cmd_enterprise,
         "ops": cmd_ops,
         "bridge": cmd_bridge,
+        "factory": cmd_factory,
         "components": cmd_components,
         "dependencia": cmd_dependencia,
         "orchestrate": cmd_orchestrate,

@@ -11,6 +11,11 @@ jsonschema>=4.20.0
 cookiecutter>=2.6.0
 sqlalchemy>=2.0.0
 aiosqlite>=0.20.0
+# asyncpg: driver assíncrono de alto desempenho para PostgreSQL
+asyncpg>=0.29.0
 # Assinatura/verificação Ed25519 do manifesto canônico CAPABILITIES.json
 # (PLAN-0018 fase 05 — manifest-assinado-ed25519-componentes-enterprise).
 cryptography>=41.0.0
+# Auth upgrade: PyJWT para JWT HS256/RS256 e argon2-cffi para password hashing OWASP.
+pyjwt>=2.8.0
+argon2-cffi>=23.1.0
