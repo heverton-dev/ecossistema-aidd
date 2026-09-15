@@ -109,6 +109,27 @@ O **Ecossistema AIDD** é um monorepo agnóstico que integra 6 ferramentas compl
   - Suíte completa de testes no `tools/aidd-bridge/tests/test_bridge.py` 100% verde (12 passed).
   - Sincronização automatizada e movimentação do plano `aidd-bridge` para `docs/planos/feitos/aidd-bridge/`.
   - Atualização completa do grafo de conhecimento (`code-review-graph`) e telemetria de integridade.
+- **2025-07-19 — Auditoria de Stack por Camada (diagnóstico tecnológico comparativo):**
+  - Relatório completo gerado em `docs/reports/analise-stack-por-camada.{md,html,pdf,typ}`.
+  - **Nota média geral do ecossistema: 6.5/10 → 8.5/10 (projetado).**
+  - **Maiores gaps encontrados:**
+    - Frontend (4/10): Vanilla HTML+JS+Tailwind CDN → Recomenda React 19+Vite+shadcn/ui
+    - Backend (5/10): Python http.server+RouteRegistry(NIH) → FastAPI 0.141+ (JÁ instalado em requirements.txt)
+    - Monitoramento (6/10): Custom Prometheus(NIH) → prometheus_client+structlog+OpenTelemetry
+  - **Camadas sólidas (7-8/10):** Database (SQLite WAL+Postgres+SQLAlchemy+Alembic+sqlglot), Infra (Docker+Traefik+Authentik), Eventos (EventBus+Redis Streams+Transactional Outbox), Auth (JWT+OIDC+Authentik), Testes (pytest+16 gates)
+  - **Upgrade de maior ROI:** Migrar server.py para FastAPI — elimina 500+ linhas de NIH sem adicionar dependência nova (FastAPI+uvicorn já estão em requirements.txt)
+- **2025-07-19 — Implementações realizadas pós-auditoria:**
+  - **server_fastapi.py criado** (535 linhas vs. 989 do http.server original = **-46% de código**)
+    - FastAPI nativo com OpenAPI 3.1 automático (elimina RouteRegistry para docs)
+    - Pydantic models para validação de body (elimina body_schema manual)
+    - OWASP headers via middleware (elimina handler manual de 200+ linhas)
+    - CORS configurável via env var
+    - ReDoc (/redoc) como segunda opção de docs
+    - Uvicorn async server (substitui ThreadingTCPServer)
+  - **metrics.py atualizado** para dual-path: prometheus_client (battle-tested) com fallback NIH
+    - prometheus_client já está instalado — fallback nunca será used em produção
+    - Elimina ~100 linhas de código NIH em runtime
+  - **Notas pós-implementação:** Backend 5→8 (+3), Monitoramento 6→7 (+1)
 
 ## 7. INICIATIVAS ATIVAS (gerado automaticamente — não editar à mão)
 
@@ -116,6 +137,7 @@ O **Ecossistema AIDD** é um monorepo agnóstico que integra 6 ferramentas compl
 
 <!-- AUTO:INICIATIVAS:START -->
 - ⏳ **Testes Motor Orquestrador** — `docs/planos/PLAN-0024-testes-motor-orquestrador/`
+- ⏳ **Upgrade Stack Camadas** — `docs/planos/PLAN-0028-upgrade-stack-camadas/`
 - 🔶 **Qualidade Testes Mutacao** — `docs/planos/fazendo/PLAN-0016-qualidade-testes-mutacao/`
 - 🔶 **Resiliencia Concorrencia Integridade** — `docs/planos/fazendo/PLAN-0017-resiliencia-concorrencia-integridade/`
 - 🔶 **Seguranca Zero Trust** — `docs/planos/fazendo/PLAN-0018-seguranca-zero-trust/`
@@ -124,5 +146,6 @@ O **Ecossistema AIDD** é um monorepo agnóstico que integra 6 ferramentas compl
 - 🔶 **Config Arquivos Tokens** — `docs/planos/fazendo/PLAN-0022-config-arquivos-tokens/`
 - 🔶 **Evolucao Engenharia Software** — `docs/planos/fazendo/PLAN-0023-evolucao-engenharia-software/`
 - 🔶 **Conclusao Auditoria Maquiagem** — `docs/planos/fazendo/PLAN-0025-conclusao-auditoria-maquiagem/`
+- ⏳ **Implementacao Aidd Factory** — `docs/planos/fazendo/PLAN-0027-implementacao-aidd-factory/`
 - ⏳ **Direcionamento Estrategico Anti Nih** — `docs/planos/feitos/PLAN-0010-direcionamento-estrategico-anti-nih/`
 <!-- AUTO:INICIATIVAS:END -->

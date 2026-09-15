@@ -41,11 +41,13 @@
 | Iniciativa | Local |
 |---|---|
 | Testes Motor Orquestrador | `PLAN-0024-testes-motor-orquestrador/` |
+| Implementacao Aidd Factory | `fazendo/PLAN-0027-implementacao-aidd-factory/` |
 
 ## ⚠️ Status indeterminado (revisar manualmente)
 
 | Iniciativa | Local |
 |---|---|
+| Upgrade Stack Camadas | `PLAN-0028-upgrade-stack-camadas/` |
 | Direcionamento Estrategico Anti Nih | `feitos/PLAN-0010-direcionamento-estrategico-anti-nih/` |
 
 ---

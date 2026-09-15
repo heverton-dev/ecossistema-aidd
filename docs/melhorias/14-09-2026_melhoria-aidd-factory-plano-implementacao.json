@@ -1,0 +1,483 @@
+{
+  "pedido_original": "Gerar o plano de implementacao completo em fases do AIDD-Factory, conforme v2_arquitetura-aidd-ops-factory.md. Incluir todas as 9 fases do factory, estrutura de arquivos, contratos, gates, testes, e integracao cross-tool.",
+  "data": "14-09-2026",
+  "nota_atual": "1",
+  "evidencia": "tools/aidd-factory/ existe como skeleton vazio: AGENTS.md (32 linhas), schemas/schema_factory_input.json (118 linhas), data/ vazio, gates/ vazio, scripts/phases/ vazio, src/core/ vazio. aidd-ops tem 8.500 linhas em producao com padroes claros (Result monad, Click CLI, numbered phases, gates AST). componentes/compartilhado tem 28 modulos src-core reutilizaveis. ecossistema.py tem 16 comandos dispatch, mas NENHUM 'factory'.",
+  "plano_existente": null,
+  "item_relacionado": "v2_arquitetura-aidd-ops-factory.md",
+  "nota_anterior": null,
+  "evidencia_anterior": null,
+  "itens_avaliados": [
+    "v2_arquitetura-aidd-ops-factory.md (544 linhas - documento base da feature)",
+    "tools/aidd-factory/ (skeleton vazio - 5 arquivos existentes)",
+    "tools/aidd-ops/scripts/pipeline_ops.py (1092 linhas - padrao de orquestracao)",
+    "tools/aidd-ops/scripts/phases/01_intake.py (137 linhas - padrao de fase)",
+    "tools/aidd-ops/scripts/phases/02_curadoria.py (98 linhas)",
+    "tools/aidd-ops/scripts/phases/03_sizing.py (130 linhas)",
+    "tools/aidd-ops/src/core/result.py (163 linhas - Result monad compartilhada)",
+    "tools/aidd-ops/gates/G_OPS_MVP.py (13697 bytes - padrao de gate)",
+    "tools/aidd-ops/templates/infra/ (9 diretorios de compose templates)",
+    "tools/aidd-ops/templates/infra/nichos/ (5 JSONs de nicho)",
+    "componentes/compartilhado/src-core/ (28 modulos compartilhados)",
+    "componentes/compartilhado/specs/plano-infraestrutura.schema.json (292 linhas)",
+    "ecossistema.py (855 linhas - CLI dispatcher com 16 comandos)",
+    "gates/ (16 gate scripts com padroes AST/SHA-256)",
+    "tools/aidd-generator/scripts/phases/ (8 fases com FSM engine)"
+  ],
+  "resumo": "Plano de implementacao completo do AIDD-Factory em 6 fases de desenvolvimento (9 semanas), cobrindo: (0) Fundacao e estrutura base, (1) Analisador deterministico, (2) Geradores LLM (gateway+frontend), (3) Docker Compose+InitDB+Env, (4) Webhooks+Docs+Validacao, (5) Gates de qualidade+testes, (6) Integracao cross-tool. Total: ~58 arquivos a criar, 3 gates novos, 9 fases de pipeline, integracao com aidd-ops via PLANO-INFRAESTRUTURA.json.",
+  "achados": [
+    "tools/aidd-factory/ ja existe como skeleton com AGENTS.md + schema_factory_input.json",
+    "aidd-ops tem padroes maduros: Result monad, Click CLI, numbered phases, gates AST, escritor_atomico",
+    "PLANO-INFRAESTRUTURA.json schema ja existe (Draft 2020-12, additionalProperties:false) e e o contrato canônico",
+    "5 nichos catalogados (clinicas, delivery, farmacias, b2b_industrial, energia_solar) com compose templates",
+    "9 compose templates infra existentes: traefik, postgres, twenty, chatwoot, calcom, authentik, gateway, uptime-kuma",
+    "componentes/compartilhado/src-core tem 28 modulos reutilizaveis (result.py, escritor_atomico.py, openapi.py)",
+    "ecossistema.py NAO tem comando 'factory' - precisa ser adicionado ao dispatch table",
+    "ecossistema.py NAO referencia aidd-factory em nenhum lugar",
+    "aidd-generator tem 8 fases com FSM engine e lazy-loading - padrao reutilizavel",
+    "init-multiple-databases.sh ja existe em templates/infra/postgres/ (82 linhas) - template base",
+    "NENHUM template Jinja2 para gateway FastAPI existe (apenas compose minimal de 44 linhas)",
+    "NENHUM template Next.js frontend existe no repo",
+    "OpenAPI generator ja existe em aidd-master/enterprise (RouteRegistry) mas nao integrado ao factory",
+    "Gates do ecossistema: 16 scripts com padroes AST+SHA-256, executar()/checar() -> int"
+  ],
+  "plano_implementacao": {
+    "total_fases": 6,
+    "total_semanas": 9,
+    "total_arquivos": 58,
+    "fases": [
+      {
+        "numero": 0,
+        "nome": "Fundacao e Estrutura Base",
+        "semana": "1-2",
+        "objetivo": "Estabelecer esqueleto funcional completo, contratos de entrada/saida, e CLI orquestradora",
+        "arquivos_a_criar": [
+          "tools/aidd-factory/README.md",
+          "tools/aidd-factory/requirements.txt",
+          "tools/aidd-factory/scripts/pipeline_factory.py",
+          "tools/aidd-factory/scripts/contrato_factory.py",
+          "tools/aidd-factory/scripts/phases/01_analisador.py",
+          "tools/aidd-factory/scripts/phases/02_gateway.py",
+          "tools/aidd-factory/scripts/phases/03_frontend.py",
+          "tools/aidd-factory/scripts/phases/04_docker.py",
+          "tools/aidd-factory/scripts/phases/05_init_db.py",
+          "tools/aidd-factory/scripts/phases/06_env.py",
+          "tools/aidd-factory/scripts/phases/07_webhooks.py",
+          "tools/aidd-factory/scripts/phases/08_docs.py",
+          "tools/aidd-factory/scripts/phases/09_integracao.py",
+          "tools/aidd-factory/src/core/result.py",
+          "tools/aidd-factory/src/core/gateway_generator.py",
+          "tools/aidd-factory/src/core/frontend_generator.py",
+          "tools/aidd-factory/src/core/docker_composer.py",
+          "tools/aidd-factory/src/core/swagger_generator.py",
+          "tools/aidd-factory/templates/gateway/main.py.jinja2",
+          "tools/aidd-factory/templates/gateway/routes.py.jinja2",
+          "tools/aidd-factory/templates/gateway/models.py.jinja2",
+          "tools/aidd-factory/templates/frontend/next.config.js.j2",
+          "tools/aidd-factory/templates/frontend/layout.tsx.j2",
+          "tools/aidd-factory/templates/frontend/page.tsx.j2",
+          "tools/aidd-factory/templates/frontend/tenant.config.json.j2",
+          "tools/aidd-factory/templates/docker/compose.unified.j2",
+          "tools/aidd-factory/templates/docker/Dockerfile.app.j2",
+          "tools/aidd-factory/templates/docs/openapi.json.j2",
+          "tools/aidd-factory/templates/docs/README.md.j2",
+          "tools/aidd-factory/data/integracoes.json",
+          "tools/aidd-factory/data/schemas/schema_gateway_output.json",
+          "tools/aidd-factory/data/schemas/schema_compose_output.json",
+          "tools/aidd-factory/data/schemas/schema_initdb_output.json",
+          "tools/aidd-factory/schemas/schema_factory_output.json",
+          "tools/aidd-factory/gates/__init__.py",
+          "tools/aidd-factory/gates/G_FACTORY_INPUT.py",
+          "tools/aidd-factory/gates/G_FACTORY_COMPOSE.py",
+          "tools/aidd-factory/gates/G_FACTORY_INTEGRATION.py",
+          "tools/aidd-factory/tests/test_pipeline_factory.py",
+          "tools/aidd-factory/tests/test_analisador.py",
+          "tools/aidd-factory/tests/test_gateway_generator.py",
+          "tools/aidd-factory/tests/test_docker_composer.py",
+          "tools/aidd-factory/tests/test_integracao.py",
+          "tools/aidd-factory/tests/test_contrato_factory.py",
+          "tools/aidd-factory/tests/test_gates.py"
+        ],
+        "tarefas": [
+          {
+            "id": "0.1",
+            "nome": "pipeline_factory.py - CLI Click orquestradora",
+            "descricao": "Seguir padrao exato de pipeline_ops.py (PipeGroup, lazy imports, _sair(0/1)). Subcomandos: run, phase, validate, status. Run executa pipeline completo (fases 1-9). Phase <N> executa fase especifica. Validate roda gates sem gerar artefatos.",
+            "padrao_referencia": "tools/aidd-ops/scripts/pipeline_ops.py"
+          },
+          {
+            "id": "0.2",
+            "nome": "contrato_factory.py - Validador de contratos",
+            "descricao": "validar_input(plano) -> Result contra schema_factory_input.json. validar_output(factory_output) -> Result contra schema_factory_output.json. gerar_manifesto(artefatos) -> dict para FACTORY_OUTPUT.json.",
+            "padrao_referencia": "tools/aidd-ops/scripts/contrato_plano.py"
+          },
+          {
+            "id": "0.3",
+            "nome": "schema_factory_output.json - Contrato de saida",
+            "descricao": "Fields: versao, gerado_em, plano_hash, fases[], artefatos[]. Cada artefato: tipo, caminho, hash_sha256, status.",
+            "padrao_referencia": "tools/aidd-ops/schemas/schema_sizing_output.json"
+          },
+          {
+            "id": "0.4",
+            "nome": "data/integracoes.json - Mapeamento de integracoes por nicho",
+            "descricao": "Para cada nicho: lista de pares de integracao (webhook, polling, shared-db), payload schema, eventos. Baseado nos nichos existentes.",
+            "padrao_referencia": "tools/aidd-ops/data/catalogo_nichos.json"
+          },
+          {
+            "id": "0.5",
+            "nome": "result.py - Copia byte-identica de compartilhado",
+            "descricao": "Copiar componentes/compartilhado/src-core/result.py para tools/aidd-factory/src/core/result.py. Manter byte-identity para G_DRIFT_NUCLEO_COMPARTILHADO.",
+            "padrao_referencia": "componentes/compartilhado/src-core/result.py"
+          }
+        ],
+        "criterios_validacao": [
+          "pytest tests/test_pipeline_factory.py passa",
+          "python scripts/pipeline_factory.py --help retorna ajuda",
+          "python scripts/pipeline_factory.py validate --plano <sample> retorna Result.ok",
+          "Gate G_FACTORY_INPUT passa contra PLANO-INFRAESTRUTURA.json de exemplo"
+        ]
+      },
+      {
+        "numero": 1,
+        "nome": "Analisador Deterministico",
+        "semana": "2-3",
+        "objetivo": "Implementar Fase 1 do factory - analise do plano de infraestrutura sem LLM",
+        "arquivos_a_criar": [
+          "tools/aidd-factory/scripts/phases/01_analisador.py"
+        ],
+        "tarefas": [
+          {
+            "id": "1.1",
+            "nome": "scripts/phases/01_analisador.py",
+            "descricao": "Extrai do PLANO-INFRAESTRUTURA.json: nicho_slug, nicho_nome_exibicao, ferramentas[], bancos_logicos[], vps_spec, portas_host[], blocos_disponiveis[]. Valida contra schema_factory_input.json. Mapeia ferramentas para templates de integracao disponiveis.",
+            "padrao_referencia": "tools/aidd-ops/scripts/phases/01_intake.py"
+          },
+          {
+            "id": "1.2",
+            "nome": "Mapeamento de ferramentas para templates",
+            "descricao": "Cada ferramenta do catalogo -> template disponivel em templates/infra/. Detecta quais servicos tem compose template vs quais precisam geracao customizada. Gera lista de blocos_com_template e blocos_sem_template.",
+            "padrao_referencia": "tools/aidd-ops/templates/infra/nichos/*.json"
+          },
+          {
+            "id": "1.3",
+            "nome": "Validacao de portas",
+            "descricao": "Le portas_host do nicho JSON (via plano). Valida que nao ha conflitos. Reserva portas para gateway (8000) e frontend (3000).",
+            "padrao_referencia": "tools/aidd-ops/scripts/phases/03_sizing.py"
+          }
+        ],
+        "criterios_validacao": [
+          "pytest tests/test_analisador.py passa",
+          "Fase 1 retorna Result.ok(factory_analysis) com todos os campos obrigatorios",
+          "Gate G_FACTORY_INPUT passa",
+          "Teste com cada um dos 5 nichos existentes"
+        ]
+      },
+      {
+        "numero": 2,
+        "nome": "Gerador de Gateway FastAPI + Frontend Next.js",
+        "semana": "3-5",
+        "objetivo": "Implementar Fases 2+3 do factory - geracao de gateway e frontend com LLM",
+        "arquivos_a_criar": [
+          "tools/aidd-factory/templates/gateway/main.py.jinja2",
+          "tools/aidd-factory/templates/gateway/routes.py.jinja2",
+          "tools/aidd-factory/templates/gateway/models.py.jinja2",
+          "tools/aidd-factory/templates/frontend/next.config.js.j2",
+          "tools/aidd-factory/templates/frontend/layout.tsx.j2",
+          "tools/aidd-factory/templates/frontend/page.tsx.j2",
+          "tools/aidd-factory/templates/frontend/tenant.config.json.j2",
+          "tools/aidd-factory/src/core/gateway_generator.py",
+          "tools/aidd-factory/src/core/frontend_generator.py"
+        ],
+        "tarefas": [
+          {
+            "id": "2.1",
+            "nome": "templates/gateway/ - 3 templates Jinja2",
+            "descricao": "main.py.jinja2: FastAPI app com middleware JWT, rate limiting, healthcheck /healthz/{servico}. routes.py.jinja2: rotas por servico CRUD proxy + webhook receivers. models.py.jinja2: Pydantic models gerados dos bancos_logicos.",
+            "padrao_referencia": "tools/aidd-ops/templates/infra/gateway/"
+          },
+          {
+            "id": "2.2",
+            "nome": "src/core/gateway_generator.py",
+            "descricao": "Class GatewayGenerator com metodos: gerar_main(), gerar_routes(), gerar_models(), gerar_requirements(). Cada metodo renderiza template Jinja2 com dados do factory_analysis. Retorno: Result.ok(lista_artefatos).",
+            "padrao_referencia": "tools/aidd-generator/scripts/phases/05_criador.py"
+          },
+          {
+            "id": "2.3",
+            "nome": "src/core/frontend_generator.py",
+            "descricao": "Class FrontendGenerator com metodos: scaffold_nextjs(), gerar_layout(), gerar_paginas(), gerar_bff_routes(), gerar_tenant_config(). Scaffold: package.json, next.config.js, tsconfig.json, layout whitelabel, pages por modulo.",
+            "padrao_referencia": "tools/aidd-generator/scripts/phases/05_criador.py"
+          },
+          {
+            "id": "2.4",
+            "nome": "templates/frontend/ - 4 templates Jinja2",
+            "descricao": "next.config.js.j2: rewrites proxy para gateway. layout.tsx.j2: sidebar + header whitelabel. page.tsx.j2: dashboard com metrics do nicho. tenant.config.json.j2: cores, logo, nome do tenant.",
+            "padrao_referencia": "Nenhum existente - criar do zero"
+          }
+        ],
+        "criterios_validacao": [
+          "pytest tests/test_gateway_generator.py passa",
+          "Codigo gerado compila sem erros (py_compile / tsc --noEmit)",
+          "Template renderiza sem erros Jinja2 para cada nicho",
+          "Gateway gerado tem endpoints documentados"
+        ]
+      },
+      {
+        "numero": 3,
+        "nome": "Gerador Docker Compose + InitDB + Env",
+        "semana": "5-6",
+        "objetivo": "Implementar Fases 4, 5, 6 do factory - componentes deterministicos de infraestrutura",
+        "arquivos_a_criar": [
+          "tools/aidd-factory/templates/docker/compose.unified.j2",
+          "tools/aidd-factory/templates/docker/Dockerfile.app.j2",
+          "tools/aidd-factory/src/core/docker_composer.py",
+          "tools/aidd-factory/scripts/phases/05_init_db.py",
+          "tools/aidd-factory/scripts/phases/06_env.py",
+          "tools/aidd-factory/data/schemas/schema_compose_output.json",
+          "tools/aidd-factory/data/schemas/schema_initdb_output.json"
+        ],
+        "tarefas": [
+          {
+            "id": "3.1",
+            "nome": "templates/docker/compose.unified.j2",
+            "descricao": "Merge dos compose templates existentes em tools/aidd-ops/templates/infra/. Rede unificada aidd_internal. Healthchecks encadeados via depends_on: condition: service_healthy. Resource limits do sizing. Port mapping sem colisoes.",
+            "padrao_referencia": "tools/aidd-ops/templates/infra/*/docker-compose.yml"
+          },
+          {
+            "id": "3.2",
+            "nome": "templates/docker/Dockerfile.app.j2",
+            "descricao": "Multi-stage build para gateway FastAPI. Base: python:3.12-slim. Copia requirements.txt + instala dependencias. Copia codigo do gateway. User non-root, healthcheck configurado.",
+            "padrao_referencia": "tools/aidd-ops/Dockerfile.intake"
+          },
+          {
+            "id": "3.3",
+            "nome": "src/core/docker_composer.py",
+            "descricao": "Class DockerComposer com metodos: gerar_compose_unificado() e gerar_dockerfile(). Merge de compose templates por bloco obrigatorio do nicho. Validacao de portas sem conflito. Geracao do docker-compose.yml final.",
+            "padrao_referencia": "tools/aidd-ops/src/core/compose_preflight.py"
+          },
+          {
+            "id": "3.4",
+            "nome": "scripts/phases/05_init_db.py",
+            "descricao": "Gera init-multiple-databases.sh baseado nos bancos_logicos do plano. Segue padrao exato de templates/infra/postgres/init-multiple-databases.sh. Para cada banco: CREATE DATABASE + CREATE USER + GRANT.",
+            "padrao_referencia": "tools/aidd-ops/templates/infra/postgres/init-multiple-databases.sh"
+          },
+          {
+            "id": "3.5",
+            "nome": "scripts/phases/06_env.py",
+            "descricao": "Para cada servico do compose: ler .env.example do template, gerar senhas de alta entropia (OpenSSL rand), substituir placeholders, gerar .env por servico (plain) + .env.enc (encrypted via cofre de credenciais).",
+            "padrao_referencia": "tools/aidd-ops/src/core/cofre_credenciais.py"
+          }
+        ],
+        "criterios_validacao": [
+          "docker compose config passa no compose gerado",
+          "init-multiple-databases.sh e executavel e bash-compativel",
+          ".env gerado contem todas as variaveis obrigatorias dos templates",
+          "Portas validadas sem conflito (G_FACTORY_COMPOSE passa)",
+          "Teste com nicho clinicas (5 servicos) e delivery (3 servicos)"
+        ]
+      },
+      {
+        "numero": 4,
+        "nome": "Webhooks, Docs e Validacao Cross-Service",
+        "semana": "6-7",
+        "objetivo": "Implementar Fases 7, 8, 9 do factory - integracoes e validacao final",
+        "arquivos_a_criar": [
+          "tools/aidd-factory/scripts/phases/07_webhooks.py",
+          "tools/aidd-factory/scripts/phases/08_docs.py",
+          "tools/aidd-factory/scripts/phases/09_integracao.py",
+          "tools/aidd-factory/templates/docs/openapi.json.j2",
+          "tools/aidd-factory/templates/docs/README.md.j2"
+        ],
+        "tarefas": [
+          {
+            "id": "4.1",
+            "nome": "scripts/phases/07_webhooks.py - Gerador de webhooks",
+            "descricao": "Para cada par de servicos que se comunicam: definir payload schema (JSON), gerar webhook receiver no gateway, gerar webhook sender configuration, criar contratos de validacao, atualizar routes.py do gateway com novos endpoints.",
+            "padrao_referencia": "componentes/compartilhado/src-core/webhooks.py"
+          },
+          {
+            "id": "4.2",
+            "nome": "scripts/phases/08_docs.py - Gerador de documentacao",
+            "descricao": "Extrair rotas do gateway FastAPI (AST parse). Gerar openapi.json via fastapi.utils.get_openapi(). Gerar README.md com instrucoes de deploy. Validar spec contra OpenAPI 3.1.",
+            "padrao_referencia": "componentes/compartilhado/src-core/openapi.py"
+          },
+          {
+            "id": "4.3",
+            "nome": "scripts/phases/09_integracao.py - Validacao cross-service",
+            "descricao": "docker compose config (syntaxe YAML). Validacao de portas sem colisao. Verificacao de .env completeness. Healthcheck chain validation. Swagger spec validation. Cross-reference: gateway routes vs compose services.",
+            "padrao_referencia": "tools/aidd-ops/src/core/preflight.py"
+          },
+          {
+            "id": "4.4",
+            "nome": "templates/docs/openapi.json.j2 + README.md.j2",
+            "descricao": "openapi.json.j2: Template Swagger baseado na spec do gateway gerado, servers: internal (gateway:8000) + external (traefik), tags por servico. README.md.j2: pre-requisitos, comandos de deploy, variaveis de ambiente, endpoints, troubleshooting.",
+            "padrao_referencia": "Nenhum existente - criar do zero"
+          }
+        ],
+        "criterios_validacao": [
+          "pytest tests/test_integracao.py passa",
+          "openapi.json e valid OpenAPI 3.1",
+          "README.md contem instrucoes completas para cada nicho",
+          "Todos os webhooks tem contratos validados por JSON Schema"
+        ]
+      },
+      {
+        "numero": 5,
+        "nome": "Gates de Qualidade e Testes E2E",
+        "semana": "7-8",
+        "objetivo": "Implementar gates de qualidade e testes end-to-end completos",
+        "arquivos_a_criar": [
+          "tools/aidd-factory/gates/G_FACTORY_INPUT.py",
+          "tools/aidd-factory/gates/G_FACTORY_COMPOSE.py",
+          "tools/aidd-factory/gates/G_FACTORY_INTEGRATION.py",
+          "tools/aidd-factory/tests/test_contrato_factory.py",
+          "tools/aidd-factory/tests/test_gates.py"
+        ],
+        "arquivos_a_modificar": [
+          "ecossistema.py (adicionar comando factory ao dispatch table)",
+          ".pre-commit-config.yaml (adicionar hooks dos gates factory)"
+        ],
+        "tarefas": [
+          {
+            "id": "5.1",
+            "nome": "gates/G_FACTORY_INPUT.py",
+            "descricao": "Valida PLANO-INFRAESTRUTURA.json: schema validation (Draft 2020-12), todas as fases 1-3 tem saida nao-nula, VPS spec tem campos obrigatorios, bancos_logicos tem nome + usuario, ferramentas sao conhecidas.",
+            "padrao_referencia": "gates/G_OPS_MVP.py (padrao executar() -> int)"
+          },
+          {
+            "id": "5.2",
+            "nome": "gates/G_FACTORY_COMPOSE.py",
+            "descricao": "Valida docker-compose.yml gerado: YAML syntax valida, todos os servicos tem healthcheck, rede aidd_internal existe, portas sem conflito, resource limits definidos, depends_on com condition: service_healthy, nenhum stub/TODO.",
+            "padrao_referencia": "gates/G_INFRA_COMPOSE.py"
+          },
+          {
+            "id": "5.3",
+            "nome": "gates/G_FACTORY_INTEGRATION.py",
+            "descricao": "Valida integracao cross-service: gateway routes vs compose services, .env completeness, init-multiple-databases.sh lista todos os bancos_logicos, healthcheck chain aciclica, openapi.json valida, nenhum stub/TODO.",
+            "padrao_referencia": "gates/G_ARQUITETURA_DELIVERABLE.py"
+          },
+          {
+            "id": "5.4",
+            "nome": "Atualizar ecossistema.py",
+            "descricao": "Adicionar cmd_factory ao dispatch table. cmd_factory -> tools/aidd-factory/scripts/pipeline_factory.py. Subcomandos: run, phase, validate, status.",
+            "padrao_referencia": "ecossistema.py cmd_ops (linhas 200-230)"
+          },
+          {
+            "id": "5.5",
+            "nome": "Atualizar .pre-commit-config.yaml",
+            "descricao": "Adicionar hook para G_FACTORY_INPUT, G_FACTORY_COMPOSE, G_FACTORY_INTEGRATION. Seguir padrao dos hooks existentes.",
+            "padrao_referencia": ".pre-commit-config.yaml (13 hooks existentes)"
+          }
+        ],
+        "criterios_validacao": [
+          "pytest tests/ passa 100% (zero stubs)",
+          "ecossistema.py factory validate --plano <sample> passa",
+          "ecossistema.py factory run --plano <sample> --output /tmp/test gera artefatos completos",
+          "Todos os 3 gates passam contra output real",
+          "ecossistema.py audit inclui novos gates"
+        ]
+      },
+      {
+        "numero": 6,
+        "nome": "Integracao Cross-Tool e Documentacao",
+        "semana": "8-9",
+        "objetivo": "Integrar aidd-factory no pipeline de 15 fases e documentar",
+        "arquivos_a_criar": [
+          "componentes/compartilhado/skills/aidd-factory-runner/SKILL.md"
+        ],
+        "arquivos_a_modificar": [
+          "tools/aidd-factory/AGENTS.md (atualizar com fases detalhadas)",
+          "componentes/compartilhado/src-core/MANIFEST.json (adicionar aidd-factory como destino)"
+        ],
+        "tarefas": [
+          {
+            "id": "6.1",
+            "nome": "Atualizar AGENTS.md do factory",
+            "descricao": "Adicionar tabela completa das 9 fases. Documentar contratos de entrada/saida. Exemplos de uso por nicho.",
+            "padrao_referencia": "tools/aidd-ops/AGENTS.md"
+          },
+          {
+            "id": "6.2",
+            "nome": "Adicionar skill aidd-factory-runner",
+            "descricao": "componentes/compartilhado/skills/aidd-factory-runner/SKILL.md com instrucoes para agentes como usar o factory.",
+            "padrao_referencia": "componentes/compartilhado/skills/aidd-ops-runner/"
+          },
+          {
+            "id": "6.3",
+            "nome": "Atualizar MANIFEST.json",
+            "descricao": "Adicionar tools/aidd-factory/src/core como destino de src-core. Sincronizar result.py e escritor_atomico.py. Garantir byte-identity.",
+            "padrao_referencia": "componentes/compartilhado/src-core/MANIFEST.json"
+          },
+          {
+            "id": "6.4",
+            "nome": "Testes de integracao E2E",
+            "descricao": "Pipeline completo: texto -> aidd-ops (fases 1-3) -> PLANO-INFRAESTRUTURA.json -> aidd-factory (fases 4-12) -> FACTORY_OUTPUT.json -> aidd-ops deploy (fases 13-15). Validar com nicho clinicas (o mais completo).",
+            "padrao_referencia": "tests/test_pipeline_ops.py"
+          }
+        ],
+        "criterios_validacao": [
+          "ecossistema.py factory run --plano <clinicas> --output /tmp/factory-test gera stack completa",
+          "docker compose -f /tmp/factory-test/docker-compose.yml config passa",
+          "Documentacao publicada e acessivel",
+          "Skill aidd-factory-runner instalavel"
+        ]
+      }
+    ]
+  },
+  "matriz_decisoes": {
+    "engine_templates": {"escolha": "Jinja2", "justificativa": "Mesmo usado por aidd-generator, padrao do ecossistema"},
+    "cli_framework": {"escolha": "Click", "justificativa": "Consistente com aidd-ops e ecossistema.py"},
+    "result_monad": {"escolha": "Copia compartilhado", "justificativa": "Byte-identica, sincronizada via gestor_componentes"},
+    "gateway_framework": {"escolha": "FastAPI", "justificativa": "30-80MB RAM, nativo Python, OpenAPI automatico"},
+    "frontend_framework": {"escolha": "Next.js", "justificativa": "SSR/SSG, BFF integrado, shadcn/ui nativo"},
+    "validacao_json": {"escolha": "jsonschema (Draft 2020-12)", "justificativa": "Padrao do ecossistema, ja usado em aidd-ops"},
+    "secret_generation": {"escolha": "OpenSSL rand", "justificativa": "Deterministico, auditavel, sem dependencia LLM"},
+    "gates": {"escolha": "AST + py_compile", "justificativa": "Padrao comprovado em G_OPS_MVP e G_OPS_SSH"}
+  },
+  "riscos": [
+    {
+      "risco": "LLM gera codigo inseguro no gateway",
+      "probabilidade": "Media",
+      "impacto": "Alto",
+      "mitigacao": "Gate AST + bandit scan + testes E2E"
+    },
+    {
+      "risco": "Compose gerado tem conflito de portas",
+      "probabilidade": "Baixa",
+      "impacto": "Alto",
+      "mitigacao": "compose_preflight.py + G_FACTORY_COMPOSE"
+    },
+    {
+      "risco": "Frontend whitelabel nao compila",
+      "probabilidade": "Media",
+      "impacto": "Medio",
+      "mitigacao": "Template testado + CI gate"
+    },
+    {
+      "risco": "Webhook contracts inconsistentes",
+      "probabilidade": "Media",
+      "impacto": "Medio",
+      "mitigacao": "JSON Schema validation + cross-service test"
+    },
+    {
+      "risco": "Custo tokens LLM alto",
+      "probabilidade": "Baixa",
+      "impacto": "Medio",
+      "mitigacao": "Budget por fase + fallback deterministico"
+    }
+  ],
+  "metricas_sucesso": {
+    "zero_stubs": "Todos os arquivos gerados sao funcionais, sem TODOs",
+    "zero_llm_fases_deterministicas": "Fases 1, 4, 5, 6, 8, 9 sem LLM",
+    "gates_passam": "G_FACTORY_INPUT, G_FACTORY_COMPOSE, G_FACTORY_INTEGRATION",
+    "testes_passam": "100% pytest, zero skips nao-autorizados",
+    "pipeline_e2e": "texto 'clinica odontologica' -> stack completa docker-compose+gateway+frontend",
+    "token_budget": "Fases LLM usam < 10k tokens total (3 chamadas: gateway ~3k, frontend ~4k, webhooks ~2k)"
+  },
+  "dependencias": {
+    "externas": ["jinja2", "pydantic", "httpx", "fastapi", "uvicorn"],
+    "internas": ["componentes/compartilhado/src-core/result.py", "componentes/compartilhado/src-core/escritor_atomico.py", "tools/aidd-ops/templates/infra/*", "componentes/compartilhado/specs/plano-infraestrutura.schema.json"],
+    "ordem_dependencias": "FASE 0 -> FASE 1 -> FASE 2/3 (paralelizavel) -> FASE 4 -> FASE 5 -> FASE 6"
+  },
+  "recomendacao": "Iniciar pela FASE 0 (fundacao) com foco em: (1) pipeline_factory.py com CLI Click, (2) contrato_factory.py com validacao de schema, (3) result.py copiado de compartilhado, (4) schema_factory_output.json. Isso estabelece a base para todas as fases seguintes. FASE 1 (analisador) e rapida e valida o contrato de entrada. FASES 2 e 3 podem ser paralelizadas. FASE 5 (gates) e critica para garantir qualidade antes da integracao final.",
+  "status": "COMPLETO - plano de implementacao detalhado com 6 fases, 58 arquivos, 3 gates, e integracao cross-tool"
+}

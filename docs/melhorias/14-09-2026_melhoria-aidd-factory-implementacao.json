@@ -1,0 +1,38 @@
+{
+  "pedido_original": "Implementar o aidd-factory como 7a ferramenta do ecossistema, conforme v2_arquitetura-aidd-ops-factory.md. Gap: tools/aidd-factory/ nao existe (0 linhas de codigo). Nenhum 'aidd-factory' referenciado no repo. OpenAPI ja existe em aidd-master/enterprise (RouteRegistry). Gateway template minimal (44 linhas docker-compose). Nenhum template Next.js frontend. Nenhum gerador FastAPI gateway. Integracao aidd-ops->factory nao existe.",
+  "data": "14-09-2026",
+  "nota_atual": "1",
+  "evidencia": "tools/aidd-factory/ nao existe. grep 'aidd-factory' retorna 0 resultados em .py. Gateway template tem apenas docker-compose.yml (44 linhas). OpenAPI/Swagger existe em aidd-master/enterprise (RouteRegistry.generate_openapi_json) mas nao esta integrado ao pipeline de infra. Nenhum template Jinja2 para frontend Next.js encontrado. PLANO-INFRAESTRUTURA.json schema existe em componentes/compartilhado/specs/ mas nao tem consumidor factory.",
+  "plano_existente": null,
+  "item_relacionado": null,
+  "nota_anterior": null,
+  "evidencia_anterior": null,
+  "itens_avaliados": [],
+  "resumo": "O documento v2 propoe aidd-factory como 7a ferramenta para gerar gateway, frontend whitelabel, docker-compose unificado, webhooks e swagger. Nenhuma dessas partes existe: diretorio vazio, zero codigo, zero templates, zero integracao. A OpenAPI ja funciona em aidd-master/enterprise mas nao esta conectada ao pipeline de infra. O unico ponto de conexao e o schema PLANO-INFRAESTRUTURA.json que o factory consumiria.",
+  "achados": [
+    "tools/aidd-factory/ nao existe (diretorio ausente)",
+    "Nenhuma referencia a 'aidd-factory' em codigo Python (grep 0 resultados)",
+    "Gateway template: apenas docker-compose.yml (44 linhas), sem codigo FastAPI",
+    "Nenhum template Jinja2 para frontend Next.js/Tailwind/shadcn",
+    "OpenAPI/RouteRegistry existe em aidd-master e aidd-enterprise (reutilizavel)",
+    "PLANO-INFRAESTRUTURA.json schema existe mas nao tem consumidor factory",
+    "aidd-ops tem 8 templates infra (traefik, postgres, twenty, chatwoot, calcom, authentik, gateway, uptime-kuma)",
+    "5 nichos catalogados com bancos logicos definidos",
+    "INTEGRACAO: PLANO-INFRAESTRUTURA.json e o contrato canônico (schema Draft 2020-12, additionalProperties:false). Producer: montar_plano_em_memoria(). Consumer existente: scaffold_infra.py (aidd-master/enterprise) gera Terraform/Helm. Factory seria o consumer Docker Compose.",
+    "INTEGRACAO: scaffold_infra.py ja consome PLANO-INFRAESTRUTURA.json via --plano. Fork point: scaffold_infra -> Kubernetes/Helm, factory -> Docker Compose. Ambos validam o mesmo schema.",
+    "INTEGRACAO: montar_plano_em_memoria() e compartilhada por CLI + web intake. Factory poderia chamar diretamente para acesso programatico.",
+    "INTEGRACAO: nichos/*.json tem 'blocos[]' com 'caminho' apontando para templates infra. Factory usaria para merge deterministico do compose unificado.",
+    "INTEGRACAO: requisitos_recursos.json tem 'banco_detectado' por ferramenta (PostgreSQL/MySQL/MongoDB). Factory precisaria para gerar init-multiple-databases.sh correto.",
+    "INTEGRACAO: CoolifyManager.orquestrar_stack() e o deploy backend. Factory output dir seria input do DeployOrchestrator etapa_5.",
+    "INTEGRACAO: Cloudflare MCP tools (criar_registro_a, criar_registro_cname) ja funcionam. Factory determinaria FQDNs (gateway.domain, app.domain) para aidd-ops criar via MCP.",
+    "INTEGRACAO: intake web (Streamlit) ja gera PLANO-INFRAESTRUTURA.json com download. Extensao futura: intake -> plan -> factory -> deploy encadeado."
+  ],
+  "riscos": [
+    "Complexidade de integrar 3 ferramentas (ops->factory->generator) sem quebrar contratos existentes",
+    "Geracao de codigo via LLM exige gates de seguranca robustos (bandit, AST)",
+    "Frontend whitelabel requer templates testados para nao gerar quebra no build",
+    "Multi-tenant isolation e critico para seguranca de dados"
+  ],
+  "recomendacao": "Iniciar /plan com escopo focado: (1) scaffold tools/aidd-factory/ com estrutura base, (2) Fase 1+4 do pipeline (analisador deterministico + compose unificado), (3) integracao minima com aidd-ops via PLANO-INFRAESTRUTURA.json. Deixar Fases 2-3 (gateway LLM + frontend) para iteracao posterior.",
+  "status": "RASCUNHO - aguardando decisao humana sobre proximo passo (ex: iniciar /plan, ou atualizar a nota do plano existente)"
+}
