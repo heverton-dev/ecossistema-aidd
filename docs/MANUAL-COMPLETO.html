@@ -1,0 +1,1619 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manual Completo do Ecossistema AIDD</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #0056b3; /* Azul profundo */
+            --secondary-color: #e0a800; /* Dourado envelhecido */
+            --text-color: #333;
+            --heading-color: #1a1a1a;
+            --background-color: #f8f9fa;
+            --card-background: #ffffff;
+            --border-color: #e2e8f0;
+            --code-background: #f4f6f8;
+            --blockquote-border: #ced4da;
+        }
+
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --text-color: #e0e0e0;
+                --heading-color: #f8f9fa;
+                --background-color: #1a1a1a;
+                --card-background: #2a2a2a;
+                --border-color: #3a3a3a;
+                --code-background: #232323;
+                --blockquote-border: #6c757d;
+            }
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            line-height: 1.6;
+            color: var(--text-color);
+            background-color: var(--background-color);
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 900px;
+            padding: 40px 20px;
+            box-sizing: border-box;
+        }
+
+        h1, h2, h3, h4, h5, h6 {
+            color: var(--heading-color);
+            line-height: 1.2;
+            margin-top: 1.5em;
+            margin-bottom: 0.8em;
+        }
+
+        h1 {
+            font-size: 2.8em;
+            text-align: center;
+            color: var(--primary-color);
+            margin-bottom: 0.5em;
+            letter-spacing: -0.02em;
+        }
+
+        h2 {
+            font-size: 2.2em;
+            border-bottom: 2px solid var(--border-color);
+            padding-bottom: 0.5em;
+            margin-top: 2em;
+        }
+
+        h3 {
+            font-size: 1.8em;
+        }
+
+        p {
+            margin-bottom: 1em;
+        }
+
+        strong {
+            font-weight: 600;
+            color: var(--primary-color);
+        }
+
+        em {
+            font-style: italic;
+            color: var(--secondary-color);
+        }
+
+        blockquote {
+            border-left: 4px solid var(--blockquote-border);
+            margin: 1.5em 0;
+            padding: 0.5em 1.2em;
+            color: var(--text-color);
+            background-color: var(--code-background);
+            border-radius: 4px;
+        }
+
+        blockquote p {
+            margin: 0.5em 0;
+        }
+
+        code {
+            font-family: 'Fira Code', 'Cascadia Code', 'Consolas', monospace;
+            background-color: var(--code-background);
+            padding: 0.2em 0.4em;
+            border-radius: 3px;
+            font-size: 0.9em;
+        }
+
+        pre {
+            background-color: var(--code-background);
+            padding: 1em;
+            border-radius: 8px;
+            overflow-x: auto;
+            margin: 1.5em 0;
+            font-size: 0.9em;
+            line-height: 1.4;
+            border: 1px solid var(--border-color);
+        }
+
+        pre code {
+            background-color: transparent;
+            padding: 0;
+            border-radius: 0;
+            font-size: 1em;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1.5em 0;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            background-color: var(--card-background);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        th, td {
+            border: 1px solid var(--border-color);
+            padding: 12px 15px;
+            text-align: left;
+        }
+
+        th {
+            background-color: var(--primary-color);
+            color: #ffffff;
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 0.9em;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f2f2f2; /* Cor mais clara para linhas pares */
+        }
+
+        @media (prefers-color-scheme: dark) {
+            tr:nth-child(even) {
+                background-color: #333; /* Darker for dark mode */
+            }
+        }
+
+        ul, ol {
+            margin-bottom: 1em;
+            padding-left: 25px;
+        }
+
+        li {
+            margin-bottom: 0.5em;
+        }
+
+        hr {
+            border: none;
+            border-top: 1px solid var(--border-color);
+            margin: 3em 0;
+        }
+
+        .header-meta {
+            text-align: center;
+            font-size: 0.9em;
+            color: #6c757d;
+            margin-bottom: 2em;
+        }
+        .header-meta h1 {
+            margin-bottom: 0.2em;
+        }
+        .header-meta p {
+            margin: 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header-meta">
+            <h1>Manual Completo do Ecossistema AIDD</h1>
+            <p>Guia Prático End-to-End: Da Instalação ao Produção</p>
+            <p>Por: Ecossistema AIDD | Setembro 2026</p>
+        </div>
+
+        <h1 id="seção-1-visão-geral">Seção 1 — Visão Geral</h1>
+
+        <h2 id="o-que-é-o-ecossistema-aidd">O que é o Ecossistema AIDD?</h2>
+        <p>O Ecossistema AIDD (AI-Driven Development) é um conjunto de 6 ferramentas integradas que transformam uma ideia em software testado e pronto para produção. Funciona como uma <strong>fábrica de software completa</strong>: cada ferramenta é uma estação de trabalho especializada, e todas seguem as mesmas regras de qualidade automáticas.</p>
+        <p><strong>O que significa AIDD?</strong> Desenvolvimento Impulsionado por Inteligência Artificial. Na prática, significa que as ferramentas usam IA para acelerar o trabalho, mas sempre com verificações automáticas que garantem que o resultado está correto.</p>
+        <p><strong>A grande diferença:</strong> O ecossistema funciona de forma idêntica independente de como você o usa — pelo terminal (CLI) ou conversando com um assistente de IA. A mesma governança, os mesmos testes, o mesmo resultado.</p>
+        <blockquote>
+            <p><strong>Novidades desta versão (15/09/2026):</strong> a stack de código gerado na Fase 8 foi atualizada (React 19 + FastAPI + PostgreSQL assíncrono, autenticação PyJWT + Argon2id, testes por propriedades, observabilidade com OpenTelemetry) e o Generator ganhou uma auditoria de <strong>Tokenomics</strong> que comprova em números reais a economia de tokens de IA. Detalhes na Seção 4.</p>
+        </blockquote>
+
+        <h2 id="as-6-ferramentas">As 6 Ferramentas</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th style="text-align: center;">#</th>
+                    <th>Ferramenta</th>
+                    <th>O que faz</th>
+                    <th>Comando</th>
+                    <th>Quando usar</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td style="text-align: center;">1</td>
+                    <td><strong>Forge</strong></td>
+                    <td>Instala regras de qualidade num projeto</td>
+                    <td><code>forge init</code></td>
+                    <td>Todo projeto novo ou existente</td>
+                </tr>
+                <tr>
+                    <td style="text-align: center;">2</td>
+                    <td><strong>Generator</strong></td>
+                    <td>Cria um projeto completo a partir de uma ideia</td>
+                    <td><code>generate</code></td>
+                    <td>Quando você tem uma ideia e quer ver ela funcionando</td>
+                </tr>
+                <tr>
+                    <td style="text-align: center;">3</td>
+                    <td><strong>Master</strong></td>
+                    <td>Adiciona novas funcionalidades a um projeto</td>
+                    <td><code>master add-module</code></td>
+                    <td>Quando seu projeto já existe e precisa crescer</td>
+                </tr>
+                <tr>
+                    <td style="text-align: center;">4</td>
+                    <td><strong>Enterprise</strong></td>
+                    <td>Injeta componentes de segurança certificados</td>
+                    <td><code>enterprise inject</code></td>
+                    <td>Quando precisa de peças auditadas (auth, criptografia)</td>
+                </tr>
+                <tr>
+                    <td style="text-align: center;">5</td>
+                    <td><strong>Ops</strong></td>
+                    <td>Configura servidores e faz deploy</td>
+                    <td><code>ops plan</code> / <code>ops deploy</code></td>
+                    <td>Quando o software está pronto para produção</td>
+                </tr>
+                <tr>
+                    <td style="text-align: center;">6</td>
+                    <td><strong>Bridge</strong></td>
+                    <td>Migra apps de plataformas low-code para servidor próprio</td>
+                    <td><code>bridge scan</code></td>
+                    <td>Quando quer sair de Lovable/v0/Bolt</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <h2 id="os-16-portões-de-segurança-quality-gates">Os 16 Portões de Segurança (Quality Gates)</h2>
+        <p>Todo código passa por 16 verificações automáticas antes de ser considerado "pronto". São como seguranças num aeroporto — nada passa sem ser verificado.</p>
+        <table>
+            <thead>
+                <tr>
+                    <th style="text-align: center;">#</th>
+                    <th>Nome</th>
+                    <th>O que verifica</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td style="text-align: center;">1</td>
+                    <td><code>G_ECOSSISTEMA_INTEGRIDADE</code></td>
+                    <td>Estrutura do projeto está correta</td>
+                </tr>
+                <tr>
+                    <td style="text-align: center;">2</td>
+                    <td><code>G_DRIFT_NUCLEO_COMPARTILHADO</code></td>
+                    <td>Master e Enterprise não divergiram</td>
+                </tr>
+                <tr>
+                    <td style="text-align: center;">3</td>
+                    <td><code>G_HARNESS_COMPAT</code></td>
+                    <td>Todos os assistentes de IA estão sincronizados</td>
+                </tr>
+                <tr>
+                    <td style="text-align: center;">4</td>
+                    <td><code>G_SEGREDOS</code></td>
+                    <td>Não há senhas no código</td>
+                </tr>
+                <tr>
+                    <td style="text-align: center;">5</td>
+                    <td><code>G_CLI_HELP_CONSISTENCIA</code></td>
+                    <td>Ajuda da CLI bate com as flags reais</td>
+                </tr>
+                <tr>
+                    <td style="text-align: center;">6</td>
+                    <td><code>G_COMPONENTE_AGNOSTICO</code></td>
+                    <td>Componentes funcionam em qualquer lugar</td>
+                </tr>
+                <tr>
+                    <td style="text-align: center;">7</td>
+                    <td><code>G_ZERO_HEADLESS</code></td>
+                    <td>Nenhum subagente invisível rodando</td>
+                </tr>
+                <tr>
+                    <td style="text-align: center;">8</td>
+                    <td><code>G_INFRA_COMPOSE</code></td>
+                    <td>Docker Compose está correto</td>
+                </tr>
+                <tr>
+                    <td style="text-align: center;">9</td>
+                    <td><code>G_HADOLINT</code></td>
+                    <td>Dockerfiles seguem boas práticas</td>
+                </tr>
+                <tr>
+                    <td style="text-align: center;">10</td>
+                    <td><code>G_TESTES_REAIS</code></td>
+                    <td>Testes passam de verdade (sem simulação)</td>
+                </tr>
+                <tr>
+                    <td style="text-align: center;">11</td>
+                    <td><code>G_HONESTIDADE_ROTULO</code></td>
+                    <td>Não há marketing exagerado nos gates</td>
+                </tr>
+                <tr>
+                    <td style="text-align: center;">12</td>
+                    <td><code>G_ARQUITETURA_DELIVERABLE</code></td>
+                    <td>Código respeita Clean Architecture</td>
+                </tr>
+                <tr>
+                    <td style="text-align: center;">13</td>
+                    <td><code>G_DEPENDENCIAS_PIN_HASH</code></td>
+                    <td>Dependências estão amarradas com hash</td>
+                </tr>
+                <tr>
+                    <td style="text-align: center;">14</td>
+                    <td><code>G_ESCRITOR_ATOMICO</code></td>
+                    <td>Arquivos são escritos de forma atômica</td>
+                </tr>
+                <tr>
+                    <td style="text-align: center;">15</td>
+                    <td><code>G_TRANSACTION_LOG_LRU</code></td>
+                    <td>Log de transações não está corrompido</td>
+                </tr>
+                <tr>
+                    <td style="text-align: center;">16</td>
+                    <td><code>G_UNIVERSAL_HARNESS</code></td>
+                    <td>Compatibilidade com todos os harnesses</td>
+                </tr>
+            </tbody>
+        </table>
+        <p><strong>Validação em um comando:</strong> <code>python ecossistema.py audit</code> (exit 0 = tudo aprovado).</p>
+        <p><strong>Gates extras por ferramenta:</strong> além destes 16 gates centrais, algumas ferramentas têm gates próprios — por exemplo, o Generator tem o <code>G_TOKENOMICS</code>, que audita se a economia de tokens de uma execução real bateu a meta (padrão: 30% mínimo). Esses gates extras somam uma camada de verificação específica da ferramenta; não substituem os 16 centrais (veja a Seção 4).</p>
+
+        <hr>
+
+        <h1 id="seção-2-pré-requisitos-e-instalação">Seção 2 — Pré-requisitos e Instalação</h1>
+
+        <h2 id="o-que-você-precisa-ter-instalado">O que você precisa ter instalado</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Requisito</th>
+                    <th>Versão mínima</th>
+                    <th>Como verificar</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Python</td>
+                    <td>3.10+</td>
+                    <td><code>python --version</code></td>
+                </tr>
+                <tr>
+                    <td>Git</td>
+                    <td>Qualquer</td>
+                    <td><code>git --version</code></td>
+                </tr>
+                <tr>
+                    <td>Terminal</td>
+                    <td>Qualquer</td>
+                    <td>PowerShell, CMD, Bash ou Zsh</td>
+                </tr>
+            </tbody>
+        </table>
+        <p><strong>Opcional mas recomendado:</strong></p>
+        <ul>
+            <li>Um assistente de IA (Claude Code, Cursor, Antigravity, OpenCode, MimoCode etc.)</li>
+            <li>Docker (para deploy em produção)</li>
+        </ul>
+
+        <h2 id="instalação">Instalação</h2>
+
+        <h3 id="via-terminal-para-todos">Via terminal (Para todos)</h3>
+        <pre><code class="language-bash"># 1. Clonar o repositório
+git clone https://github.com/heverton-dev/ecossistema-aidd.git
+
+# 2. Entrar na pasta
+cd ecossistema-aidd
+
+# 3. Verificar se tudo está funcionando
+python ecossistema.py status</code></pre>
+        <p>Pronto. As dependências se instalam automaticamente na primeira execução (auto-bootstrap).</p>
+        <p>Se quiser forçar a instalação manualmente:</p>
+        <pre><code class="language-bash">python ecossistema.py dependencia bootstrap</code></pre>
+
+        <h3 id="via-agente-de-ia-para-não-técnicos">Via agente de IA (Para não-técnicos)</h3>
+        <ol>
+            <li>Abra o Claude Code, Cursor, Antigravity ou qualquer assistente de IA</li>
+            <li>Navegue até a pasta <code>ecossistema-aidd</code></li>
+            <li>Digite no chat: <code>/dependencia bootstrap</code></li>
+            <li>Pronto. O agente instala tudo automaticamente.</li>
+        </ol>
+        <p><strong>Como adicionar uma dependência nova depois:</strong></p>
+        <pre><code class="language-bash"># Pelo terminal:
+python ecossistema.py dependencia bootstrap
+
+python ecossistema.py dependencia add-skill \
+  --nome minhas-skill --pacote pacote-python \
+  --instalar "pip install x" \
+  --verificar "python -c &#39;import x&#39;"
+
+python ecossistema.py dependencia add-mcp \
+  --nome meu-mcp --pacote pacote-python \
+  --tipo stdio --comando "python mcp_server.py"
+
+# Pelo chat do agente:
+/dependencia bootstrap
+/dependencia skill minhas-skill
+/dependencia mcp meu-mcp</code></pre>
+
+        <h2 id="multi-harness-funciona-em-qualquer-assistente">Multi-Harness: Funciona em Qualquer Assistente</h2>
+        <p>O ecossistema funciona com todos estes assistentes:</p>
+        <ul>
+            <li><strong>Claude Code</strong> (Anthropic)</li>
+            <li><strong>Cursor</strong> (IDE com IA)</li>
+            <li><strong>Antigravity</strong> (agy)</li>
+            <li><strong>MimoCode</strong></li>
+            <li><strong>OpenCode</strong></li>
+            <li><strong>Gemini CLI</strong> (Google)</li>
+            <li><strong>Hermes</strong></li>
+            <li><strong>DeepSeek</strong></li>
+        </ul>
+        <p>Quando você cria uma skill ou regra, ela é distribuída automaticamente para a pasta de cada assistente:</p>
+        <pre><code class="language-text">ecossistema-aidd/
+├── .claude/        ← Regras para Claude Code
+├── .cursor/        ← Regras para Cursor
+├── .agent/         ← Regras para Antigravity
+├── .mimocode/      ← Regras para MimoCode
+├── .opencode/      ← Regras para OpenCode
+├── .gemini/        ← Regras para Gemini CLI
+└── .agents/        ← Regras para Hermes</code></pre>
+
+        <hr>
+
+        <h1 id="seção-3-o-projeto-prático">Seção 3 — O Projeto Prático</h1>
+
+        <h2 id="o-que-vamos-construir">O que vamos construir</h2>
+        <p>Ao longo deste manual, vamos construir o <strong>iTask</strong> — uma plataforma SaaS de gestão de tarefas para equipes, do zero até produção.</p>
+
+        <h3 id="funcionalidades-do-itask">Funcionalidades do iTask</h3>
+        <ul>
+            <li>Cadastro de usuários com autenticação segura (login/logout)</li>
+            <li>CRUD completo de projetos (criar, listar, editar, excluir)</li>
+            <li>Gerenciamento de tarefas com status (pendente, em andamento, concluída)</li>
+            <li>Atribuição de tarefas entre membros da equipe</li>
+            <li>Dashboard com visão geral dos projetos</li>
+            <li>API REST documentada (OpenAPI/Swagger)</li>
+            <li>Deploy em produção com HTTPS e monitoramento</li>
+        </ul>
+
+        <h3 id="o-que-cada-ferramenta-vai-fazer-no-itask">O que cada ferramenta vai fazer no iTask</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th>Etapa</th>
+                    <th>Ferramenta</th>
+                    <th>O que acontece</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>1</td>
+                    <td><strong>Generator</strong></td>
+                    <td>Cria o projeto completo (estrutura, schemas, docs)</td>
+                </tr>
+                <tr>
+                    <td>2</td>
+                    <td><strong>Forge</strong></td>
+                    <td>Instala regras de qualidade e gates</td>
+                </tr>
+                <tr>
+                    <td>3</td>
+                    <td><strong>Audit</strong></td>
+                    <td>Verifica se tudo está correto (16 gates)</td>
+                </tr>
+                <tr>
+                    <td>4</td>
+                    <td><strong>Master</strong></td>
+                    <td>Adiciona módulos: auth, projetos, tarefas, dashboard</td>
+                </tr>
+                <tr>
+                    <td>5</td>
+                    <td><strong>Enterprise</strong></td>
+                    <td>Injeta componente de autenticação JWT certificado</td>
+                </tr>
+                <tr>
+                    <td>6</td>
+                    <td><strong>Ops</strong></td>
+                    <td>Configura servidor, Docker, HTTPS e monitoramento</td>
+                </tr>
+                <tr>
+                    <td>7</td>
+                    <td><strong>Bridge</strong></td>
+                    <td><em>(Alternativa)</em> Migra um app existente do Lovable</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <h3 id="fluxo-resumido">Fluxo resumido</h3>
+        <pre><code class="language-text">IDEIA ("Plataforma de tarefas para equipes")
+  │
+  ▼
+/generate ou python ecossistema.py generate   ← Cria projeto completo
+  │
+  ▼
+/forge . ou python ecossistema.py forge init   ← Instala regras de qualidade
+  │
+  ▼
+python ecossistema.py audit                   ← Verifica tudo (16 gates)
+  │
+  ▼
+/master auth ou python ecossistema.py master  ← Adiciona funcionalidades
+  │
+  ▼
+/enterprise skill auth-jwt                    ← Protege com login seguro
+  │
+  ▼
+/ops plan e /ops deploy                       ← Sobe na nuvem com HTTPS
+  │
+  ▼
+PRODUÇÃO (app rodando com HTTPS, monitoramento e segurança)</code></pre>
+
+        <h3 id="resultado-esperado-do-projeto">Resultado esperado do projeto</h3>
+        <pre><code class="language-text">itask/
+├── src/
+│   └── modules/
+│       ├── auth/          ← Autenticação (login, registro, JWT)
+│       │   ├── domain/
+│       │   ├── application/
+│       │   ├── infrastructure/
+│       │   └── interfaces/
+│       ├── projetos/      ← Gerenciamento de projetos
+│       │   ├── domain/
+│       │   ├── application/
+│       │   ├── infrastructure/
+│       │   └── interfaces/
+│       └── tarefas/       ← Gerenciamento de tarefas
+│           ├── domain/
+│           ├── application/
+│           ├── infrastructure/
+│           └── interfaces/
+├── tests/                 ← Testes automatizados
+├── docs/                  ← Documentação (HTML, Markdown, PDF)
+├── schemas/               ← Contratos JSON Schema
+├── docker-compose.yml     ← Configuração Docker
+├── Dockerfile             ← Image do container
+├── requirements.txt       ← Dependências Python
+├── AGENTS.md              ← Regras de governança
+└── PLANO-EXECUCAO-ESTRUTURADO.json  ← Estado do projeto</code></pre>
+
+        <hr>
+
+        <h1 id="seção-4-caminho-1-via-terminal-cli">Seção 4 — Caminho 1: Via Terminal (CLI)</h1>
+        <blockquote>
+            <p><strong>Para quem:</strong> Desenvolvedores, engenheiros de software, técnicos de TI.<br><strong>O que você vai fazer:</strong> Digitar comandos no terminal para cada etapa.</p>
+        </blockquote>
+
+        <h2 id="etapa-1-criar-o-projeto-com-o-generator">Etapa 1: Criar o Projeto com o Generator</h2>
+        <p><strong>Objetivo:</strong> Transformar a ideia "plataforma de tarefas para equipes" numa estrutura de projeto completa com schemas, scripts, testes e documentação.</p>
+        <pre><code class="language-bash"># Criar o projeto (fases 1-7: estrutura + docs)
+python ecossistema.py generate \
+  "plataforma SaaS de gestão de tarefas para equipes\n   com autenticação, CRUD de projetos, tarefas com\n   status e atribuição, dashboard e API REST" \
+  --pasta ./itask
+
+# Criar com código funcional (fase 8: gera código via IA)
+python ecossistema.py generate \
+  "plataforma SaaS de gestão de tarefas para equipes\n   com autenticação, CRUD de projetos, tarefas com\n   status e atribuição, dashboard e API REST" \
+  --pasta ./itask --implementar-codigo</code></pre>
+        <p><strong>O que acontece:</strong> O Generator executa 8 fases automáticas:</p>
+        <table>
+            <thead>
+                <tr>
+                    <th style="text-align: center;">Fase</th>
+                    <th>Nome</th>
+                    <th>O que faz</th>
+                    <th style="text-align: center;">Depende de IA?</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td style="text-align: center;">1</td>
+                    <td>Pesquisa</td>
+                    <td>Coleta informações sobre o domínio</td>
+                    <td style="text-align: center;">Não</td>
+                </tr>
+                <tr>
+                    <td style="text-align: center;">2</td>
+                    <td>Análise</td>
+                    <td>Decompõe o projeto em partes menores</td>
+                    <td style="text-align: center;">Sim</td>
+                </tr>
+                <tr>
+                    <td style="text-align: center;">3</td>
+                    <td>Design</td>
+                    <td>Decide a arquitetura (como as peças se encaixam)</td>
+                    <td style="text-align: center;">Sim</td>
+                </tr>
+                <tr>
+                    <td style="text-align: center;">4</td>
+                    <td>Planejamento</td>
+                    <td>Define tecnologias e estrutura</td>
+                    <td style="text-align: center;">Não</td>
+                </tr>
+                <tr>
+                    <td style="text-align: center;">5</td>
+                    <td>Criação</td>
+                    <td>Gera schemas, scripts e artefatos</td>
+                    <td style="text-align: center;">Não</td>
+                </tr>
+                <tr>
+                    <td style="text-align: center;">6</td>
+                    <td>Documentação</td>
+                    <td>Cria documentação completa (HTML, Markdown, PDF)</td>
+                    <td style="text-align: center;">Não</td>
+                </tr>
+                <tr>
+                    <td style="text-align: center;">7</td>
+                    <td>Auto-crítica</td>
+                    <td>Verifica se tudo está correto</td>
+                    <td style="text-align: center;">Não</td>
+                </tr>
+                <tr>
+                    <td style="text-align: center;">8</td>
+                    <td>Implementação</td>
+                    <td><em>(opcional)</em> Gera código funcional via IA</td>
+                    <td style="text-align: center;">Sim</td>
+                </tr>
+            </tbody>
+        </table>
+        <p><strong>Importante:</strong> As fases 1-7 são determinísticas — sempre funcionam igual. A fase 8 usa IA e pode gerar código que precisa de ajustes (taxa de sucesso de 55% a 91%).</p>
+
+        <h3 id="stack-gerada-pela-fase-8-código-funcional">Stack gerada pela Fase 8 (código funcional)</h3>
+        <p>Desde a atualização de setembro/2026 (PLAN-0028), o código funcional da Fase 8 sai de fábrica com uma stack mais robusta, camada por camada:</p>
+        <table>
+            <thead>
+                <tr>
+                    <th>Camada</th>
+                    <th style="text-align: center;">Antes</th>
+                    <th style="text-align: center;">Agora</th>
+                    <th>Tecnologia</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Frontend</td>
+                    <td style="text-align: center;">4/10</td>
+                    <td style="text-align: center;"><strong>8/10</strong></td>
+                    <td>React 19 + Vite + shadcn/ui (SPA completa)</td>
+                </tr>
+                <tr>
+                    <td>Backend</td>
+                    <td style="text-align: center;">5/10</td>
+                    <td style="text-align: center;"><strong>8/10</strong></td>
+                    <td>FastAPI (OpenAPI 3.1 nativo, -46% código vs. versão anterior)</td>
+                </tr>
+                <tr>
+                    <td>Autenticação</td>
+                    <td style="text-align: center;">7/10</td>
+                    <td style="text-align: center;"><strong>8/10</strong></td>
+                    <td>PyJWT + Argon2id, com fallback automático</td>
+                </tr>
+                <tr>
+                    <td>Testes</td>
+                    <td style="text-align: center;">7/10</td>
+                    <td style="text-align: center;"><strong>9/10</strong></td>
+                    <td>Testes por propriedades com Hypothesis, além dos testes tradicionais</td>
+                </tr>
+                <tr>
+                    <td>Observabilidade</td>
+                    <td style="text-align: center;">7/10</td>
+                    <td style="text-align: center;"><strong>9/10</strong></td>
+                    <td>structlog + OpenTelemetry</td>
+                </tr>
+                <tr>
+                    <td>Banco de Dados</td>
+                    <td style="text-align: center;">8/10</td>
+                    <td style="text-align: center;"><strong>9/10</strong></td>
+                    <td>PostgreSQL assíncrono via asyncpg</td>
+                </tr>
+                <tr>
+                    <td>Monitoramento</td>
+                    <td style="text-align: center;">6/10</td>
+                    <td style="text-align: center;"><strong>9/10</strong></td>
+                    <td>prometheus_client, com fallback próprio</td>
+                </tr>
+                <tr>
+                    <td>Eventos</td>
+                    <td style="text-align: center;">7/10</td>
+                    <td style="text-align: center;"><strong>8/10</strong></td>
+                    <td>Worker assíncrono via Redis (BLPOP)</td>
+                </tr>
+                <tr>
+                    <td><strong>Nota média</strong></td>
+                    <td style="text-align: center;"><strong>6.5/10</strong></td>
+                    <td style="text-align: center;"><strong>8.5/10</strong></td>
+                    <td>—</td>
+                </tr>
+            </tbody>
+        </table>
+        <p><strong>Importante:</strong> cada peça "moderna" (PyJWT, Argon2id, asyncpg, prometheus_client) tem um caminho de fallback interno — se a dependência não estiver instalada, o sistema continua funcionando com uma implementação própria mais simples, sem travar por falta de lib externa. Isso segue o princípio de Universalidade do ecossistema.</p>
+        <p><strong>Resultado esperado:</strong></p>
+        <pre><code class="language-text">itask/
+├── schemas/         ← Estruturas de dados (JSON Schema)
+├── scripts/         ← Scripts Python
+├── tests/           ← Testes automatizados
+├── docs/            ← Documentação completa
+└── PLANO-EXECUCAO-ESTRUTURADO.json  ← Estado do projeto</code></pre>
+
+        <h2 id="etapa-2-instalar-governança-com-o-forge">Etapa 2: Instalar Governança com o Forge</h2>
+        <p><strong>Objetivo:</strong> Garantir que o projeto siga padrões de qualidade automáticos.</p>
+        <pre><code class="language-bash"># Entrar na pasta do projeto
+cd itask
+
+# Instalar governança
+python ecossistema.py forge init .</code></pre>
+        <p><strong>O que acontece:</strong></p>
+        <ol>
+            <li><code>AGENTS.md</code> será criado na raiz — regras que qualquer assistente de IA entende</li>
+            <li>Verificações automáticas (gates) serão instaladas</li>
+            <li>O Git será configurado para manter consistência</li>
+        </ol>
+
+        <h2 id="etapa-3-rodar-os-gates-de-qualidade">Etapa 3: Rodar os Gates de Qualidade</h2>
+        <p><strong>Objetivo:</strong> Verificar se tudo está funcionando antes de continuar.</p>
+        <pre><code class="language-bash">python ecossistema.py audit</code></pre>
+        <p><strong>Resultado esperado:</strong> Todos os 16 gates passam (<code>exit 0</code>).</p>
+        <p>Se algum gate falhar, o sistema diz exatamente o que está errado. Corrija e rode novamente.</p>
+
+        <h2 id="etapa-4-verificar-o-status-do-ecossistema">Etapa 4: Verificar o Status do Ecossistema</h2>
+        <pre><code class="language-bash"># Ver status geral
+python ecossistema.py status
+
+# Rodar testes reais em cada ferramenta
+python ecossistema.py status --testes
+
+# Verificar binários do sistema (Git, Docker, Hadolint etc.)
+python ecossistema.py preflight-host</code></pre>
+
+        <h2 id="extra-comprovando-a-economia-de-tokens-tokenomics">Extra: Comprovando a Economia de Tokens (Tokenomics)</h2>
+        <p><strong>Para quem:</strong> mantenedores do <code>aidd-generator</code> que precisam provar, com números reais, que a estratégia de handoff entre fases economiza tokens de IA. Não faz parte do fluxo padrão de uso do ecossistema — é uma ferramenta de auditoria interna, sem comando equivalente em <code>ecossistema.py</code> ou slash command.</p>
+        <pre><code class="language-bash">cd tools/aidd-generator
+
+# Mede tokens reais (via tiktoken) do fluxo legado vs. otimizado
+python scripts/benchmark_tokenomics.py --salvar benchmarks/benchmark.json
+
+# Gera um dashboard HTML autocontido (gráfico de barras, custo em US$, assinatura SHA-256)
+python scripts/gerar_relatorio_tokenomics.py --gerar-e-abrir
+
+# Audita uma execução real do pipeline contra o orçamento de tokens (padrão: economia mínima de 30%)
+python scripts/gates/G_TOKENOMICS.py</code></pre>
+        <p><strong>Resultado de uma execução real</strong> (rodada durante a escrita deste manual, ideia "app de hábitos"):</p>
+        <table>
+            <thead>
+                <tr>
+                    <th>Fase</th>
+                    <th style="text-align: right;">Tokens legado</th>
+                    <th style="text-align: right;">Tokens otimizado</th>
+                    <th style="text-align: right;">Economia</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Handoff Fase 1→2</td>
+                    <td style="text-align: right;">50.556</td>
+                    <td style="text-align: right;">980</td>
+                    <td style="text-align: right;"><strong>98,06%</strong></td>
+                </tr>
+                <tr>
+                    <td>Fase 8 (prompt + fix-loop)</td>
+                    <td style="text-align: right;">12.235</td>
+                    <td style="text-align: right;">2.214</td>
+                    <td style="text-align: right;"><strong>81,90%</strong></td>
+                </tr>
+                <tr>
+                    <td><strong>Total</strong></td>
+                    <td style="text-align: right;"><strong>62.791</strong></td>
+                    <td style="text-align: right;"><strong>3.194</strong></td>
+                    <td style="text-align: right;"><strong>94,91%</strong></td>
+                </tr>
+            </tbody>
+        </table>
+        <p>Isso equivale a <strong>US$ 0,2384 economizados</strong> por execução (US$ 0,2512 → US$ 0,0128), com a medição assinada em SHA-256 para auditoria. O gate <code>G_TOKENOMICS</code> bloqueia (<code>exit 1</code>) execuções abaixo de 30% de economia ou que rotulem uma medição autodeclarada como "medição real".</p>
+
+        <h2 id="etapa-5-adicionar-módulos-com-o-master">Etapa 5: Adicionar Módulos com o Master</h2>
+        <p><strong>Objetivo:</strong> Construir as funcionalidades do iTask módulo por módulo.</p>
+
+        <h3 id="módulo-de-autenticação">5.1 — Módulo de Autenticação</h3>
+        <pre><code class="language-bash">python ecossistema.py master add-module auth</code></pre>
+        <p>O Master cria uma "fatia vertical" completa:</p>
+        <pre><code class="language-text">src/modules/auth/
+├── domain/          ← Regras de negócio (ex: "senha deve ter 8+ caracteres")
+├── application/     ← Casos de uso (ex: "registrar usuário", "fazer login")
+├── infrastructure/  ← Banco de dados (ex: tabela de usuários)
+├── interfaces/      ← Rotas HTTP (ex: POST /auth/register, POST /auth/login)
+├── models.py        ← Modelos de dados
+├── services.py      ← Serviços (lógica principal)
+└── routes.py        ← Rotas da API</code></pre>
+
+        <h3 id="módulo-de-projetos">5.2 — Módulo de Projetos</h3>
+        <pre><code class="language-bash">python ecossistema.py master add-module projetos</code></pre>
+
+        <h3 id="módulo-de-tarefas">5.3 — Módulo de Tarefas</h3>
+        <pre><code class="language-bash">python ecossistema.py master add-module tarefas</code></pre>
+
+        <h3 id="módulo-de-dashboard">5.4 — Módulo de Dashboard</h3>
+        <pre><code class="language-bash">python ecossistema.py master add-module dashboard</code></pre>
+        <p>Cada módulo é independente — não quebra os outros. Comunicação entre módulos via EventBus, nunca import direto.</p>
+
+        <h2 id="etapa-6-injetar-autenticação-com-o-enterprise">Etapa 6: Injetar Autenticação com o Enterprise</h2>
+        <p><strong>Objetivo:</strong> Proteger o sistema com login seguro usando componente certificado.</p>
+        <pre><code class="language-bash">python ecossistema.py enterprise inject skill auth-jwt-service</code></pre>
+        <p><strong>O que isso faz:</strong></p>
+        <ol>
+            <li>O componente é verificado contra uma assinatura SHA-256 (impressão digital criptográfica)</li>
+            <li>Se o hash não bater (alguém alterou o componente), a injeção é bloqueada</li>
+            <li>Se bater, o componente é copiado para o seu projeto</li>
+        </ol>
+
+        <h2 id="etapa-7-sincronizar-componentes">Etapa 7: Sincronizar Componentes</h2>
+        <p><strong>Objetivo:</strong> Garantir que todos os assistentes de IA estejam com as mesmas regras.</p>
+        <pre><code class="language-bash"># Sincronizar todos os componentes
+python ecossistema.py components sync --tipo todos
+
+# Verificar se está tudo sincronizado
+python ecossistema.py components verify --tipo todos</code></pre>
+
+        <h2 id="etapa-8-configurar-infraestrutura-com-o-ops">Etapa 8: Configurar Infraestrutura com o Ops</h2>
+        <p><strong>Objetivo:</strong> Preparar o servidor para rodar o iTask em produção.</p>
+
+        <h3 id="planejar-a-infraestrutura">8.1 — Planejar a infraestrutura</h3>
+        <pre><code class="language-bash">python ecossistema.py ops plan \
+  "plataforma SaaS de tarefas para equipes\n   com autenticação, PostgreSQL, Docker,\n   HTTPS e monitoramento"</code></pre>
+
+        <h3 id="testar-o-deploy-simulação-segura">8.2 — Testar o deploy (simulação segura)</h3>
+        <pre><code class="language-bash">python ecossistema.py ops deploy staging --dry-run</code></pre>
+
+        <h3 id="fazer-o-deploy-real">8.3 — Fazer o deploy real</h3>
+        <pre><code class="language-bash">python ecossistema.py ops deploy production</code></pre>
+
+        <p><strong>O que o Ops provisiona:</strong></p>
+        <ul>
+            <li><strong>VPS</strong> na nuvem (servidor virtual privado)</li>
+            <li><strong>Docker</strong> com cada parte do sistema num container isolado</li>
+            <li><strong>Traefik</strong> para roteamento (apontar domínio para o sistema certo)</li>
+            <li><strong>PostgreSQL</strong> para o banco de dados</li>
+            <li><strong>HTTPS automático</strong> (cadeado no navegador)</li>
+            <li><strong>Uptime Kuma</strong> para monitoramento (aviso se o servidor cair)</li>
+            <li><strong>Hardening Ansible</strong> (blindagem contra ataques)</li>
+        </ul>
+
+        <h3 id="verificar-a-infraestrutura-do-host">8.4 — Verificar a infraestrutura do host</h3>
+        <pre><code class="language-bash"># Diagnóstico rápido dos binários do sistema
+python ecossistema.py preflight-host
+
+# Com JSON estruturado
+python ecossistema.py preflight-host --json
+
+# Auto-corrigir binários faltantes
+python ecossistema.py preflight-host --fix</code></pre>
+
+        <h2 id="etapa-9-auditoria-final">Etapa 9: Auditoria Final</h2>
+        <p><strong>Objetivo:</strong> Última verificação antes de considerar o projeto pronto.</p>
+        <pre><code class="language-bash"># Rodar todos os 16 gates
+python ecossistema.py audit
+
+# Ver status completo com contagem de testes
+python ecossistema.py status --testes</code></pre>
+
+        <h2 id="resumo-dos-comandos-usados-cli">Resumo dos Comandos Usados (CLI)</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Etapa</th>
+                    <th>Comando</th>
+                    <th>O que faz</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>1</td>
+                    <td><code>python ecossistema.py generate "ideia" --pasta ./x</code></td>
+                    <td>Cria projeto</td>
+                </tr>
+                <tr>
+                    <td>2</td>
+                    <td><code>python ecossistema.py forge init .</code></td>
+                    <td>Instala governança</td>
+                </tr>
+                <tr>
+                    <td>3</td>
+                    <td><code>python ecossistema.py audit</code></td>
+                    <td>Roda 16 gates</td>
+                </tr>
+                <tr>
+                    <td>4</td>
+                    <td><code>python ecossistema.py status</code></td>
+                    <td>Ver status</td>
+                </tr>
+                <tr>
+                    <td>5</td>
+                    <td><code>python ecossistema.py master add-module x</code></td>
+                    <td>Adiciona módulo</td>
+                </tr>
+                <tr>
+                    <td>6</td>
+                    <td><code>python ecossistema.py enterprise inject skill x</code></td>
+                    <td>Injeta componente</td>
+                </tr>
+                <tr>
+                    <td>7</td>
+                    <td><code>python ecossistema.py components sync --tipo todos</code></td>
+                    <td>Sincroniza</td>
+                </tr>
+                <tr>
+                    <td>8</td>
+                    <td><code>python ecossistema.py ops plan "desc"</code></td>
+                    <td>Planeja infra</td>
+                </tr>
+                <tr>
+                    <td>8</td>
+                    <td><code>python ecossistema.py ops deploy staging --dry-run</code></td>
+                    <td>Testa deploy</td>
+                </tr>
+                <tr>
+                    <td>8</td>
+                    <td><code>python ecossistema.py ops deploy production</code></td>
+                    <td>Deploy real</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <hr>
+
+        <h1 id="seção-5-caminho-2-via-agentes-de-ia-linguagem-natural">Seção 5 — Caminho 2: Via Agentes de IA (Linguagem Natural)</h1>
+        <blockquote>
+            <p><strong>Para quem:</strong> Não-técnicos, empreendedores, gestores, produtores de conteúdo.<br><strong>O que você vai fazer:</strong> Digitar comandos em linguagem natural no chat de um assistente de IA.</p>
+        </blockquote>
+
+        <h2 id="como-funciona-este-caminho">Como funciona este caminho</h2>
+        <p>Em vez de digitar comandos técnicos no terminal, você conversa com um assistente de IA (Claude Code, Cursor, Antigravity etc.) e descreve o que quer em linguagem normal. O assistente traduz suas palavras nos comandos corretos do ecossistema.</p>
+        <p><strong>Exemplo:</strong></p>
+        <ul>
+            <li>Você digita: <code>/generate plataforma de tarefas para equipes</code></li>
+            <li>O agente executa: <code>python ecossistema.py generate "plataforma de tarefas..." --pasta ./itask</code></li>
+        </ul>
+
+        <h2 id="etapa-1-criar-o-projeto-com-o-generator-1">Etapa 1: Criar o Projeto com o Generator</h2>
+        <p>No chat do seu assistente de IA, digite:</p>
+        <pre><code class="language-text">/generate plataforma SaaS de gestão de tarefas para equipes
+com autenticação, CRUD de projetos, tarefas com status
+e atribuição, dashboard e API REST</code></pre>
+        <p><strong>O que acontece:</strong> O agente executa o Generator com suas instruções e cria o projeto completo — schemas, estrutura, testes e documentação — sem que você precise digitar nenhum comando técnico.</p>
+
+        <h2 id="etapa-2-instalar-governança-com-o-forge-1">Etapa 2: Instalar Governança com o Forge</h2>
+        <pre><code class="language-text">/forge .</code></pre>
+        <p>O agente instala as regras de qualidade no seu projeto. É como contratar um inspetor de qualidade que verifica tudo automaticamente.</p>
+
+        <h2 id="etapa-3-verificar-se-tudo-está-correto">Etapa 3: Verificar se Tudo Está Correto</h2>
+        <pre><code class="language-text">Verifique se o projeto está passando em todos os gates de qualidade</code></pre>
+        <p>O agente roda <code>python ecossistema.py audit</code> e te mostra o resultado. Se algo falhar, ele te explica o que precisa corrigir.</p>
+
+        <h2 id="etapa-4-adicionar-funcionalidades-com-o-master">Etapa 4: Adicionar Funcionalidades com o Master</h2>
+        <p>Adicione cada funcionalidade do iTask uma por vez:</p>
+        <pre><code class="language-text">/master auth</code></pre>
+        <pre><code class="language-text">/master projetos</code></pre>
+        <pre><code class="language-text">/master tarefas</code></pre>
+        <pre><code class="language-text">/master dashboard</code></pre>
+        <p>Cada comando cria uma parte completa do sistema — regras, banco de dados, API e tudo mais.</p>
+
+        <h2 id="etapa-5-proteger-com-segurança-enterprise">Etapa 5: Proteger com Segurança (Enterprise)</h2>
+        <pre><code class="language-text">/enterprise skill auth-jwt-service</code></pre>
+        <p>O agente injeta um componente de autenticação JWT que foi testado e certificado com assinatura digital SHA-256.</p>
+
+        <h2 id="etapa-6-colocar-no-ar-ops">Etapa 6: Colocar no Ar (Ops)</h2>
+        <pre><code class="language-text">/ops plan "plataforma SaaS de tarefas para equipes\ncom autenticação, PostgreSQL, Docker, HTTPS e monitoramento"</code></pre>
+        <p>Depois de revisar o plano que o Ops gerou:</p>
+        <pre><code class="language-text">Faça o deploy em staging primeiro para testar</code></pre>
+        <p>E quando estiver tudo certo:</p>
+        <pre><code class="language-text">Faça o deploy em produção</code></pre>
+
+        <h2 id="etapa-7-se-o-app-veio-do-lovable-bridge-alternativa">Etapa 7: Se o App Veio do Lovable (Bridge — Alternativa)</h2>
+        <p>Se em vez de criar do zero, você já tem um app no Lovable:</p>
+        <pre><code class="language-text">/bridge scan ./meu-app-lovable</code></pre>
+        <pre><code class="language-text">/bridge convert-db ./meu-app-lovable</code></pre>
+        <pre><code class="language-text">/bridge pack ./meu-app-lovable --domain tarefas.meudominio.com</code></pre>
+        <p>Depois, siga a partir da Etapa 2 (Forge) em diante.</p>
+
+        <h2 id="resumo-dos-comandos-usados-agentes">Resumo dos Comandos Usados (Agentes)</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Etapa</th>
+                    <th>Comando no Chat</th>
+                    <th>O que faz</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>1</td>
+                    <td><code>/generate &lt;descrição&gt;</code></td>
+                    <td>Cria projeto</td>
+                </tr>
+                <tr>
+                    <td>2</td>
+                    <td><code>/forge .</code></td>
+                    <td>Instala governança</td>
+                </tr>
+                <tr>
+                    <td>3</td>
+                    <td><code>/audit</code> ou "verifique os gates"</td>
+                    <td>Roda 16 gates</td>
+                </tr>
+                <tr>
+                    <td>4</td>
+                    <td><code>/master &lt;nome-do-módulo&gt;</code></td>
+                    <td>Adiciona funcionalidade</td>
+                </tr>
+                <tr>
+                    <td>5</td>
+                    <td><code>/enterprise skill auth-jwt</code></td>
+                    <td>Injeta segurança</td>
+                </tr>
+                <tr>
+                    <td>6</td>
+                    <td><code>/ops plan "descrição"</code></td>
+                    <td>Planeja infraestrutura</td>
+                </tr>
+                <tr>
+                    <td>6</td>
+                    <td><code>/ops deploy</code></td>
+                    <td>Coloca no ar</td>
+                </tr>
+                <tr>
+                    <td>7</td>
+                    <td><code>/bridge scan ./app</code></td>
+                    <td>Migra app low-code</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <hr>
+
+        <h1 id="seção-6-guia-completo-do-bridge-migração-de-apps-low-code">Seção 6 — Guia Completo do Bridge (Migração de Apps Low-Code)</h1>
+        <blockquote>
+            <p><strong>Para quem:</strong> Usuários que já têm um app no Lovable, v0 ou Bolt e querem sair da dependência da plataforma.</p>
+        </blockquote>
+
+        <h2 id="quando-usar-o-bridge">Quando usar o Bridge</h2>
+        <ul>
+            <li>Você criou um app no Lovable e quer parar de pagar mensalidade</li>
+            <li>Seu app está pronto e funcional, mas está "preso" na plataforma</li>
+            <li>Você quer rodar o app no seu próprio servidor</li>
+        </ul>
+
+        <h2 id="como-usar-cli">Como usar (CLI)</h2>
+        <pre><code class="language-bash"># 1. Escanear o projeto (mapeia páginas, componentes, banco)
+python ecossistema.py bridge scan ./meu-app-lovable
+
+# 2. Converter o banco de dados (Supabase → PostgreSQL puro)
+python ecossistema.py bridge convert-db ./meu-app-lovable
+
+# 3. Migrar contas de usuários (senhas preservadas)
+python ecossistema.py bridge migrate-auth \
+  --source postgres://supabase-host:5432/postgres \
+  --target postgres://minha-vps:5432/postgres
+
+# 4. Empacotar com Docker + SSL
+python ecossistema.py bridge pack \
+  ./meu-app-lovable --domain tarefas.meudominio.com
+
+# 5. (Opcional) Juntar múltiplos apps num só
+python ecossistema.py bridge merge ./app1 ./app2 --output ./app-unificado
+
+# 6. (Se precisar) Remover tudo da VPS
+python ecossistema.py bridge destroy nome-do-app --domain tarefas.meudominio.com</code></pre>
+
+        <h2 id="como-usar-agentes-de-ia">Como usar (Agentes de IA)</h2>
+        <pre><code class="language-text">/bridge scan ./meu-app-lovable
+/bridge convert-db ./meu-app-lovable
+/bridge pack ./meu-app-lovable --domain tarefas.meudominio.com</code></pre>
+
+        <h2 id="as-6-etapas-do-bridge">As 6 etapas do Bridge</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Comando</th>
+                    <th>O que faz</th>
+                    <th>Quando usar</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><code>scan</code></td>
+                    <td>Mapeia o projeto (páginas, componentes, banco)</td>
+                    <td>Sempre, primeiro passo</td>
+                </tr>
+                <tr>
+                    <td><code>convert-db</code></td>
+                    <td>Converte banco Supabase para PostgreSQL puro</td>
+                    <td>Quando usa Supabase</td>
+                </tr>
+                <tr>
+                    <td><code>merge</code></td>
+                    <td>Junta múltiplos apps num só</td>
+                    <td>Quando tem vários apps</td>
+                </tr>
+                <tr>
+                    <td><code>pack</code></td>
+                    <td>Gera Docker + SSL pronto para deploy</td>
+                    <td>Sempre, para empacotar</td>
+                </tr>
+                <tr>
+                    <td><code>migrate-auth</code></td>
+                    <td>Migra contas de usuários (senhas preservadas)</td>
+                    <td>Quando tem login</td>
+                </tr>
+                <tr>
+                    <td><code>destroy</code></td>
+                    <td>Remove tudo da VPS (limpeza completa)</td>
+                    <td>Quando quer recomeçar</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <hr>
+
+        <h1 id="seção-7-referência-rápida">Seção 7 — Referência Rápida</h1>
+
+        <h2 id="todos-os-comandos-do-terminal">Todos os Comandos do Terminal</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Comando</th>
+                    <th>O que faz</th>
+                    <th>Exemplo</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><code>status</code></td>
+                    <td>Mostra estado do ecossistema</td>
+                    <td><code>python ecossistema.py status</code></td>
+                </tr>
+                <tr>
+                    <td><code>status --testes</code></td>
+                    <td>Roda pytest em cada ferramenta</td>
+                    <td><code>python ecossistema.py status --testes</code></td>
+                </tr>
+                <tr>
+                    <td><code>audit</code></td>
+                    <td>Roda os 16 gates</td>
+                    <td><code>python ecossistema.py audit</code></td>
+                </tr>
+                <tr>
+                    <td><code>preflight-host</code></td>
+                    <td>Verifica binários do sistema</td>
+                    <td><code>python ecossistema.py preflight-host</code></td>
+                </tr>
+                <tr>
+                    <td><code>forge init</code></td>
+                    <td>Instala governança</td>
+                    <td><code>python ecossistema.py forge init .</code></td>
+                </tr>
+                <tr>
+                    <td><code>forge inject</code></td>
+                    <td>Injeta componente</td>
+                    <td><code>python ecossistema.py forge inject skill x</code></td>
+                </tr>
+                <tr>
+                    <td><code>generate</code></td>
+                    <td>Cria projeto</td>
+                    <td><code>python ecossistema.py generate "ideia" --pasta ./x</code></td>
+                </tr>
+                <tr>
+                    <td><code>generate --impl-codigo</code></td>
+                    <td>Cria projeto + código via IA</td>
+                    <td><code>ecossistema.py generate "ideia" --pasta ./x</code></td>
+                </tr>
+                <tr>
+                    <td><code>master add-module</code></td>
+                    <td>Adiciona módulo</td>
+                    <td><code>python ecossistema.py master add-module x</code></td>
+                </tr>
+                <tr>
+                    <td><code>enterprise inject</code></td>
+                    <td>Injeta componente certificado</td>
+                    <td><code>python ecossistema.py enterprise inject skill x</code></td>
+                </tr>
+                <tr>
+                    <td><code>ops plan</code></td>
+                    <td>Planeja infraestrutura</td>
+                    <td><code>python ecossistema.py ops plan "descrição"</code></td>
+                </tr>
+                <tr>
+                    <td><code>ops deploy</code></td>
+                    <td>Faz deploy</td>
+                    <td><code>python ecossistema.py ops deploy staging --dry-run</code></td>
+                </tr>
+                <tr>
+                    <td><code>bridge scan</code></td>
+                    <td>Escaneia app low-code</td>
+                    <td><code>python ecossistema.py bridge scan ./app</code></td>
+                </tr>
+                <tr>
+                    <td><code>bridge convert-db</code></td>
+                    <td>Converte banco</td>
+                    <td><code>python ecossistema.py bridge convert-db ./app</code></td>
+                </tr>
+                <tr>
+                    <td><code>bridge pack</code></td>
+                    <td>Empacota Docker</td>
+                    <td><code>python ecossistema.py bridge pack ./app --domain x</code></td>
+                </tr>
+                <tr>
+                    <td><code>bridge merge</code></td>
+                    <td>Junta apps</td>
+                    <td><code>python ecossistema.py bridge merge ./a ./b --output ./c</code></td>
+                </tr>
+                <tr>
+                    <td><code>bridge migrate-auth</code></td>
+                    <td>Migra contas</td>
+                    <td><code>python ecossistema.py bridge migrate-auth --source x --target y</code></td>
+                </tr>
+                <tr>
+                    <td><code>bridge destroy</code></td>
+                    <td>Remove da VPS</td>
+                    <td><code>python ecossistema.py bridge destroy nome --domain x</code></td>
+                </tr>
+                <tr>
+                    <td><code>components sync</code></td>
+                    <td>Sincroniza componentes</td>
+                    <td><code>python ecossistema.py components sync --tipo todos</code></td>
+                </tr>
+                <tr>
+                    <td><code>components verify</code></td>
+                    <td>Verifica sincronização</td>
+                    <td><code>python ecossistema.py components verify --tipo todos</code></td>
+                </tr>
+                <tr>
+                    <td><code>dependencia bootstrap</code></td>
+                    <td>Instala dependências</td>
+                    <td><code>python ecossistema.py dependencia bootstrap</code></td>
+                </tr>
+                <tr>
+                    <td><code>dependencia add-skill</code></td>
+                    <td>Adiciona skill</td>
+                    <td><code>python ecossistema.py dependencia add-skill --nome x --pacote y --instalar z --verificar w</code></td>
+                </tr>
+                <tr>
+                    <td><code>dependencia add-mcp</code></td>
+                    <td>Adiciona MCP</td>
+                    <td><code>python ecossistema.py dependencia add-mcp --nome x --pacote y --tipo stdio</code></td>
+                </tr>
+                <tr>
+                    <td><code>dependencia list</code></td>
+                    <td>Lista dependências</td>
+                    <td><code>python ecossistema.py dependencia list</code></td>
+                </tr>
+                <tr>
+                    <td><code>dependencia verify</code></td>
+                    <td>Verifica dependências</td>
+                    <td><code>python ecossistema.py dependencia verify</code></td>
+                </tr>
+                <tr>
+                    <td><code>orchestrate</code></td>
+                    <td>Orquestra multi-frente</td>
+                    <td><code>python ecossistema.py orchestrate ./plano</code></td>
+                </tr>
+                <tr>
+                    <td><code>harness status</code></td>
+                    <td>Monitora harnesses</td>
+                    <td><code>python ecossistema.py harness status</code></td>
+                </tr>
+                <tr>
+                    <td><code>harness clean</code></td>
+                    <td>Limpa caches dos harnesses</td>
+                    <td><code>python ecossistema.py harness clean</code></td>
+                </tr>
+            </tbody>
+        </table>
+
+        <h2 id="todos-os-slash-commands-agentes-de-ia">Todos os Slash Commands (Agentes de IA)</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Comando</th>
+                    <th>O que faz</th>
+                    <th>Exemplo</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><code>/generate &lt;descrição&gt;</code></td>
+                    <td>Cria projeto completo</td>
+                    <td><code>/generate plataforma de tarefas</code></td>
+                </tr>
+                <tr>
+                    <td><code>/forge .</code></td>
+                    <td>Instala governança</td>
+                    <td><code>/forge .</code></td>
+                </tr>
+                <tr>
+                    <td><code>/master &lt;módulo&gt;</code></td>
+                    <td>Adiciona funcionalidade</td>
+                    <td><code>/master auth</code></td>
+                </tr>
+                <tr>
+                    <td><code>/enterprise skill &lt;nome&gt;</code></td>
+                    <td>Injeta componente</td>
+                    <td><code>/enterprise skill auth-jwt</code></td>
+                </tr>
+                <tr>
+                    <td><code>/ops plan "descrição"</code></td>
+                    <td>Planeja infraestrutura</td>
+                    <td><code>/ops plan "app com HTTPS"</code></td>
+                </tr>
+                <tr>
+                    <td><code>/ops deploy</code></td>
+                    <td>Faz deploy</td>
+                    <td><code>/ops deploy</code></td>
+                </tr>
+                <tr>
+                    <td><code>/bridge scan ./app</code></td>
+                    <td>Escaneia app</td>
+                    <td><code>/bridge scan ./meu-app</code></td>
+                </tr>
+                <tr>
+                    <td><code>/bridge convert-db ./app</code></td>
+                    <td>Converte banco</td>
+                    <td><code>/bridge convert-db ./meu-app</code></td>
+                </tr>
+                <tr>
+                    <td><code>/bridge pack ./app --domain x</code></td>
+                    <td>Empacota Docker</td>
+                    <td><code>/bridge pack ./app --domain x</code></td>
+                </tr>
+                <tr>
+                    <td><code>/dependencia bootstrap</code></td>
+                    <td>Instala dependências</td>
+                    <td><code>/dependencia bootstrap</code></td>
+                </tr>
+                <tr>
+                    <td><code>/dependencia skill &lt;nome&gt;</code></td>
+                    <td>Adiciona skill</td>
+                    <td><code>/dependencia skill minhas-skill</code></td>
+                </tr>
+                <tr>
+                    <td><code>/dependencia mcp &lt;nome&gt;</code></td>
+                    <td>Adiciona MCP</td>
+                    <td><code>/dependencia mcp meu-mcp</code></td>
+                </tr>
+            </tbody>
+        </table>
+
+        <hr>
+
+        <h1 id="seção-8-glossário">Seção 8 — Glossário</h1>
+        <table>
+            <thead>
+                <tr>
+                    <th>Termo</th>
+                    <th>Significado</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><strong>CLI</strong></td>
+                    <td>Interface de linha de comando — usar o terminal em vez de botões</td>
+                </tr>
+                <tr>
+                    <td><strong>Slash Command</strong></td>
+                    <td>Comando no chat do assistente de IA (começa com <code>/</code>)</td>
+                </tr>
+                <tr>
+                    <td><strong>Quality Gate</strong></td>
+                    <td>Verificação automática que bloqueia código não-conforme</td>
+                </tr>
+                <tr>
+                    <td><strong>Vendor Lock-in</strong></td>
+                    <td>Ficar preso a uma plataforma difícil de sair</td>
+                </tr>
+                <tr>
+                    <td><strong>Clean Architecture</strong></td>
+                    <td>Organizar código em camadas (regras, dados, interface)</td>
+                </tr>
+                <tr>
+                    <td><strong>Fatia Vertical</strong></td>
+                    <td>Módulo completo e independente do sistema</td>
+                </tr>
+                <tr>
+                    <td><strong>Mock</strong></td>
+                    <td>Simulação falsa (proibido no ecossistema)</td>
+                </tr>
+                <tr>
+                    <td><strong>Result Monad</strong></td>
+                    <td>Padrão de "sucesso ou falha" em vez de quebrar o programa</td>
+                </tr>
+                <tr>
+                    <td><strong>SHA-256</strong></td>
+                    <td>Impressão digital criptográfica para verificar integridade</td>
+                </tr>
+                <tr>
+                    <td><strong>Zero-Trust</strong></td>
+                    <td>Não confiar em nada sem verificar primeiro</td>
+                </tr>
+                <tr>
+                    <td><strong>WAL</strong></td>
+                    <td>Write-Ahead Logging — modo seguro de escrever no banco SQLite</td>
+                </tr>
+                <tr>
+                    <td><strong>PostgreSQL</strong></td>
+                    <td>Banco de dados robusto e gratuito</td>
+                </tr>
+                <tr>
+                    <td><strong>Docker</strong></td>
+                    <td>Tecnologia de "containers" — isolar cada parte do sistema</td>
+                </tr>
+                <tr>
+                    <td><strong>HTTPS</strong></td>
+                    <td>Comunicação segura (o cadeado no navegador)</td>
+                </tr>
+                <tr>
+                    <td><strong>Traefik</strong></td>
+                    <td>Proxy reverso — roteia o tráfego para o serviço certo</td>
+                </tr>
+                <tr>
+                    <td><strong>VPS</strong></td>
+                    <td>Virtual Private Server — servidor seu na nuvem</td>
+                </tr>
+                <tr>
+                    <td><strong>Harness</strong></td>
+                    <td>Assistente de IA (Claude, Cursor, etc.)</td>
+                </tr>
+                <tr>
+                    <td><strong>Subagente</strong></td>
+                    <td>IA que trabalha em segundo plano numa tarefa específica</td>
+                </tr>
+                <tr>
+                    <td><strong>Context-Purge</strong></td>
+                    <td>Limpar o contexto da IA entre etapas (economizar tokens)</td>
+                </tr>
+                <tr>
+                    <td><strong>Tokens</strong></td>
+                    <td>Unidade de medida de texto para IAs (1 token ≈ 4 caracteres)</td>
+                </tr>
+                <tr>
+                    <td><strong>EventBus</strong></td>
+                    <td>Sistema de comunicação entre módulos (sem imports diretos)</td>
+                </tr>
+                <tr>
+                    <td><strong>JSON Schema</strong></td>
+                    <td>Contrato que define a estrutura dos dados</td>
+                </tr>
+                <tr>
+                    <td><strong>Tokenomics</strong></td>
+                    <td>Medição e comprovação de quanto uma estratégia economiza em tokens de IA</td>
+                </tr>
+                <tr>
+                    <td><strong>Argon2id</strong></td>
+                    <td>Algoritmo de hash de senha mais resistente que PBKDF2/bcrypt</td>
+                </tr>
+                <tr>
+                    <td><strong>OpenTelemetry</strong></td>
+                    <td>Padrão aberto para rastrear e observar sistemas distribuídos</td>
+                </tr>
+                <tr>
+                    <td><strong>Property-Based Testing</strong></td>
+                    <td>Testes que geram centenas de entradas aleatórias para validar uma regra geral (via Hypothesis), em vez de casos fixos</td>
+                </tr>
+                <tr>
+                    <td><strong>shadcn/ui</strong></td>
+                    <td>Componentes de interface prontos que você copia para o projeto (não é uma dependência de pacote)</td>
+                </tr>
+                <tr>
+                    <td><strong>AsyncPG</strong></td>
+                    <td>Driver assíncrono de PostgreSQL, usado para acessar o banco sem bloquear o servidor</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <hr>
+
+        <h1 id="seção-9-solução-de-problemas">Seção 9 — Solução de Problemas</h1>
+        <table>
+            <thead>
+                <tr>
+                    <th>Problema</th>
+                    <th>Causa</th>
+                    <th>Solução</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><code>ModuleNotFoundError</code></td>
+                    <td>Dependências não instaladas</td>
+                    <td><code>python ecossistema.py --auto-bootstrap status</code> ou <code>python ecossistema.py dependencia bootstrap</code></td>
+                </tr>
+                <tr>
+                    <td><code>exit 1</code> no audit</td>
+                    <td>Gates falhando</td>
+                    <td>Ler a mensagem de erro e corrigir o que o gate aponta</td>
+                </tr>
+                <tr>
+                    <td>Generator cria estrutura vazia</td>
+                    <td>Ideia muito vaga</td>
+                    <td>Ser mais específico na descrição (ex: incluir funcionalidades, tipo de banco, etc.)</td>
+                </tr>
+                <tr>
+                    <td>Master cria imports cruzados</td>
+                    <td>Módulos acoplados</td>
+                    <td>Comunicar via EventBus, nunca import direto</td>
+                </tr>
+                <tr>
+                    <td>Bridge não encontra SQL</td>
+                    <td>Estrutura diferente</td>
+                    <td>Verificar se o projeto tem <code>supabase/migrations/</code></td>
+                </tr>
+                <tr>
+                    <td>Ops precisa de Linux</td>
+                    <td>Ansible não roda no Windows</td>
+                    <td>Usar WSL2 ou um container Docker</td>
+                </tr>
+                <tr>
+                    <td>Tokens esgotando rápido</td>
+                    <td>Contexto grande demais</td>
+                    <td>Usar context-purge (o ecossistema faz isso automaticamente)</td>
+                </tr>
+                <tr>
+                    <td><code>preflight-host</code> falha</td>
+                    <td>Binários faltando</td>
+                    <td><code>python ecossistema.py preflight-host --fix</code> para auto-corrigir</td>
+                </tr>
+                <tr>
+                    <td>Harness com muitos dados</td>
+                    <td>Cache crescendo</td>
+                    <td><code>python ecossistema.py harness clean</code></td>
+                </tr>
+                <tr>
+                    <td>Deploy não conecta na VPS</td>
+                    <td>SSH não configurado</td>
+                    <td>Verificar chave SSH e permissões no servidor</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <hr>
+
+        <h1 id="estrutura-do-repositório">Estrutura do Repositório</h1>
+        <pre><code class="language-text">ecossistema-aidd/
+├── AGENTS.md                 ← Regras fundamentais
+├── ecossistema.py            ← CLI unificada
+├── gates/                    ← 16 Quality Gates
+├── componentes/              ← Código compartilhado
+│   ├── compartilhado/        ← Núcleo (Database, Result, EventBus)
+│   └── aidd-master/          ← Componentes do Master
+├── tools/                    ← As 6 ferramentas
+│   ├── aidd-forge/           ← Governança
+│   ├── aidd-generator/       ← Fábrica
+│   ├── aidd-master/          ← Módulos
+│   ├── aidd-enterprise/      ← Segurança
+│   ├── aidd-ops/             ← Infraestrutura
+│   └── aidd-bridge/          ← Low-code → VPS
+└── docs/                     ← Documentação
+    ├── MANUAL-COMPLETO.md    ← Este manual
+    ├── ARQUITETURA-ECOSSISTEMA.md
+    ├── CLI-REFERENCIA.md
+    ├── MIGRACAO-PROJETO-EXISTENTE.md
+    ├── CONTRIBUICAO.md
+    ├── planos/               ← Planos táticos e de auditoria
+    ├── protocolos/           ← Protocolos canônicos
+    ├── relatorios/           ← Relatórios formais
+    ├── prompts/              ← Biblioteca de prompts
+    ├── features/             ← Documentação de features
+    ├── explicacoes/          ← Explicações detalhadas
+    ├── melhorias/            ← Registro de melhorias
+    └── testes/               ← Baterias de testes E2E
+</code></pre>
+
+        <hr>
+
+        <p class="header-meta">
+            <em>Manual gerado em Setembro de 2026 pelo Ecossistema AIDD.</em><br>
+            <em>Última atualização: 15 de setembro de 2026 (stack pós-PLAN-0028 + auditoria de Tokenomics).</em><br>
+            <em>Distribuído sob a licença MIT.</em>
+        </p>
+    </div>
+</body>
+</html>

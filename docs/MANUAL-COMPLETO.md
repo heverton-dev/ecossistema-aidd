@@ -16,6 +16,8 @@ O Ecossistema AIDD (AI-Driven Development) é um conjunto de 6 ferramentas integ
 
 **A grande diferença:** O ecossistema funciona de forma idêntica independente de como você o usa — pelo terminal (CLI) ou conversando com um assistente de IA. A mesma governança, os mesmos testes, o mesmo resultado.
 
+> **Novidades desta versão (15/09/2026):** a stack de código gerado na Fase 8 foi atualizada (React 19 + FastAPI + PostgreSQL assíncrono, autenticação PyJWT + Argon2id, testes por propriedades, observabilidade com OpenTelemetry) e o Generator ganhou uma auditoria de **Tokenomics** que comprova em números reais a economia de tokens de IA. Detalhes na Seção 4.
+
 ## As 6 Ferramentas
 
 | # | Ferramenta | O que faz | Comando | Quando usar |
@@ -51,6 +53,8 @@ Todo código passa por 16 verificações automáticas antes de ser considerado "
 | 16 | `G_UNIVERSAL_HARNESS` | Compatibilidade com todos os harnesses |
 
 **Validação em um comando:** `python ecossistema.py audit` (exit 0 = tudo aprovado).
+
+**Gates extras por ferramenta:** além destes 16 gates centrais, algumas ferramentas têm gates próprios — por exemplo, o Generator tem o `G_TOKENOMICS`, que audita se a economia de tokens de uma execução real bateu a meta (padrão: 30% mínimo). Esses gates extras somam uma camada de verificação específica da ferramenta; não substituem os 16 centrais (veja a Seção 4).
 
 ---
 
@@ -275,6 +279,24 @@ python ecossistema.py generate \
 
 **Importante:** As fases 1-7 são determinísticas — sempre funcionam igual. A fase 8 usa IA e pode gerar código que precisa de ajustes (taxa de sucesso de 55% a 91%).
 
+### Stack gerada pela Fase 8 (código funcional)
+
+Desde a atualização de setembro/2026 (PLAN-0028), o código funcional da Fase 8 sai de fábrica com uma stack mais robusta, camada por camada:
+
+| Camada | Antes | Agora | Tecnologia |
+|:-------|:-----:|:-----:|:-----------|
+| Frontend | 4/10 | **8/10** | React 19 + Vite + shadcn/ui (SPA completa) |
+| Backend | 5/10 | **8/10** | FastAPI (OpenAPI 3.1 nativo, -46% código vs. versão anterior) |
+| Autenticação | 7/10 | **8/10** | PyJWT + Argon2id, com fallback automático |
+| Testes | 7/10 | **9/10** | Testes por propriedades com Hypothesis, além dos testes tradicionais |
+| Observabilidade | 7/10 | **9/10** | structlog + OpenTelemetry |
+| Banco de Dados | 8/10 | **9/10** | PostgreSQL assíncrono via asyncpg |
+| Monitoramento | 6/10 | **9/10** | prometheus_client, com fallback próprio |
+| Eventos | 7/10 | **8/10** | Worker assíncrono via Redis (BLPOP) |
+| **Nota média** | **6.5/10** | **8.5/10** | — |
+
+**Importante:** cada peça "moderna" (PyJWT, Argon2id, asyncpg, prometheus_client) tem um caminho de fallback interno — se a dependência não estiver instalada, o sistema continua funcionando com uma implementação própria mais simples, sem travar por falta de lib externa. Isso segue o princípio de Universalidade do ecossistema.
+
 **Resultado esperado:**
 
 ```text
@@ -328,6 +350,33 @@ python ecossistema.py status --testes
 # Verificar binários do sistema (Git, Docker, Hadolint etc.)
 python ecossistema.py preflight-host
 ```
+
+## Extra: Comprovando a Economia de Tokens (Tokenomics)
+
+**Para quem:** mantenedores do `aidd-generator` que precisam provar, com números reais, que a estratégia de handoff entre fases economiza tokens de IA. Não faz parte do fluxo padrão de uso do ecossistema — é uma ferramenta de auditoria interna, sem comando equivalente em `ecossistema.py` ou slash command.
+
+```bash
+cd tools/aidd-generator
+
+# Mede tokens reais (via tiktoken) do fluxo legado vs. otimizado
+python scripts/benchmark_tokenomics.py --salvar benchmarks/benchmark.json
+
+# Gera um dashboard HTML autocontido (gráfico de barras, custo em US$, assinatura SHA-256)
+python scripts/gerar_relatorio_tokenomics.py --gerar-e-abrir
+
+# Audita uma execução real do pipeline contra o orçamento de tokens (padrão: economia mínima de 30%)
+python scripts/gates/G_TOKENOMICS.py
+```
+
+**Resultado de uma execução real** (rodada durante a escrita deste manual, ideia "app de hábitos"):
+
+| Fase | Tokens legado | Tokens otimizado | Economia |
+|:-----|--------------:|------------------:|---------:|
+| Handoff Fase 1→2 | 50.556 | 980 | **98,06%** |
+| Fase 8 (prompt + fix-loop) | 12.235 | 2.214 | **81,90%** |
+| **Total** | **62.791** | **3.194** | **94,91%** |
+
+Isso equivale a **US$ 0,2384 economizados** por execução (US$ 0,2512 → US$ 0,0128), com a medição assinada em SHA-256 para auditoria. O gate `G_TOKENOMICS` bloqueia (`exit 1`) execuções abaixo de 30% de economia ou que rotulem uma medição autodeclarada como "medição real".
 
 ## Etapa 5: Adicionar Módulos com o Master
 
@@ -734,6 +783,12 @@ python ecossistema.py bridge destroy nome-do-app --domain tarefas.meudominio.com
 | **Tokens** | Unidade de medida de texto para IAs (1 token ≈ 4 caracteres) |
 | **EventBus** | Sistema de comunicação entre módulos (sem imports diretos) |
 | **JSON Schema** | Contrato que define a estrutura dos dados |
+| **Tokenomics** | Medição e comprovação de quanto uma estratégia economiza em tokens de IA |
+| **Argon2id** | Algoritmo de hash de senha mais resistente que PBKDF2/bcrypt |
+| **OpenTelemetry** | Padrão aberto para rastrear e observar sistemas distribuídos |
+| **Property-Based Testing** | Testes que geram centenas de entradas aleatórias para validar uma regra geral (via Hypothesis), em vez de casos fixos |
+| **shadcn/ui** | Componentes de interface prontos que você copia para o projeto (não é uma dependência de pacote) |
+| **AsyncPG** | Driver assíncrono de PostgreSQL, usado para acessar o banco sem bloquear o servidor |
 
 ---
 
@@ -790,4 +845,5 @@ ecossistema-aidd/
 ---
 
 *Manual gerado em Setembro de 2026 pelo Ecossistema AIDD.*
+*Última atualização: 15 de setembro de 2026 (stack pós-PLAN-0028 + auditoria de Tokenomics).*
 *Distribuído sob a licença MIT.*
