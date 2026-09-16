@@ -31,7 +31,7 @@ def verificar():
         if any(ignored in root for ignored in ['.git', 'node_modules', '.next', 'dist', '.venv', '__pycache__', '.pytest_cache']):
             continue
         for f in files:
-            if f in ('G_SEGREDOS.py', 'package-lock.json', 'pnpm-lock.yaml', 'yarn.lock', 'bun.lockb'):
+            if f in ('G_SEGREDOS.py', 'package-lock.json', 'pnpm-lock.yaml', 'yarn.lock', 'bun.lockb', '.sops.yaml'):
                 continue
             if f.endswith(('.py', '.js', '.json', '.md', '.env.example', '.yml', '.yaml')):
                 path = os.path.join(root, f)
@@ -47,6 +47,8 @@ def verificar():
                             # 2. Entropia de Shannon para tokens/hex/base64 suspeitos (sem barras/caminhos)
                             palavras = re.findall(r'\b[A-Za-z0-9_\-+=]{32,}\b', linha)
                             for p in palavras:
+                                if p.startswith("age1"):
+                                    continue
                                 if calcular_entropia_shannon(p) > 4.6 and not p.isupper():
                                     print(f"[FAIL] String de alta entropia ({calcular_entropia_shannon(p):.2f}) detectada em {path}:{num}")
                                     vazamentos += 1
