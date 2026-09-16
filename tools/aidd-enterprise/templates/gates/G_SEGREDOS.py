@@ -1,4 +1,4 @@
-﻿import os, sys, re, math
+import os, sys, re, math
 
 if hasattr(sys.stdout, 'reconfigure'):
     sys.stdout.reconfigure(encoding='utf-8', errors='replace')
@@ -31,7 +31,7 @@ def verificar():
         if any(ignored in root for ignored in ['.git', 'node_modules', '.venv', '__pycache__', '.pytest_cache']):
             continue
         for f in files:
-            if f == 'G_SEGREDOS.py':
+            if f in ('G_SEGREDOS.py', 'package-lock.json', 'pnpm-lock.yaml', 'yarn.lock', 'bun.lockb'):
                 continue
             if f.endswith(('.py', '.js', '.json', '.md', '.env.example', '.yml', '.yaml')):
                 path = os.path.join(root, f)
