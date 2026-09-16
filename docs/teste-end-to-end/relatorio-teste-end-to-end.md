@@ -12,7 +12,7 @@
 - **Pasta Foco:** [`C:\Users\trcnologia\Desktop\proj_ctt\planos-ctt-app`](file:///C:/Users/trcnologia/Desktop/proj_ctt/planos-ctt-app)
 - **O que executou:**
   1. Preparação do repositório alvo com Git (`git init -b main`) para suporte nativo a pre-commit hooks.
-  2. Inicialização da governança agêntica e injeção do ecossistema de contexto e regras.
+  2. Inicialização da governança agêntica e injeção do ecossistema de contexto e regras com `AGENTS.md` canônico na raiz.
   3. Vinculação multi-harness (Claude Code, Gemini CLI, Cursor, OpenCode, MiMoCode, CodeBuddy).
   4. Auditoria de conformidade de governança via `forge audit`.
 - **Como executou:**
@@ -27,9 +27,10 @@
   python ecossistema.py forge audit "C:\Users\trcnologia\Desktop\proj_ctt\planos-ctt-app"
   ```
 - **O que entregou:**
-  - **38 arquivos criados** e 2 vínculos de regras de IDE, mantendo os 11 arquivos originais 100% intactos:
-    - [governance/AGENTS.md](file:///C:/Users/trcnologia/Desktop/proj_ctt/planos-ctt-app/governance/AGENTS.md): Governança canônica de agentes em conformidade com as diretivas AIDD.
-    - [CLAUDE.md](file:///C:/Users/trcnologia/Desktop/proj_ctt/planos-ctt-app/CLAUDE.md) e [GEMINI.md](file:///C:/Users/trcnologia/Desktop/proj_ctt/planos-ctt-app/GEMINI.md): Ponteiros universais para a governança central.
+  - **38 arquivos criados** e 3 vínculos de regras de IDE, mantendo os 11 arquivos originais 100% intactos:
+    - [AGENTS.md](file:///C:/Users/trcnologia/Desktop/proj_ctt/planos-ctt-app/AGENTS.md): Governança canônica de agentes diretamente na raiz do projeto.
+    - [governance/AGENTS.md](file:///C:/Users/trcnologia/Desktop/proj_ctt/planos-ctt-app/governance/AGENTS.md): Backup da governança central.
+    - [CLAUDE.md](file:///C:/Users/trcnologia/Desktop/proj_ctt/planos-ctt-app/CLAUDE.md) e [GEMINI.md](file:///C:/Users/trcnologia/Desktop/proj_ctt/planos-ctt-app/GEMINI.md): Ponteiros universais vinculados.
     - [.gitignore](file:///C:/Users/trcnologia/Desktop/proj_ctt/planos-ctt-app/.gitignore) e [.gitattributes](file:///C:/Users/trcnologia/Desktop/proj_ctt/planos-ctt-app/.gitattributes): Higiene de repositório e padronização de line endings (LF).
     - `.git/hooks/pre-commit`: Hook automático para execução do Quality Gate antes de commits.
     - Diretórios de harnesses (`.agent/`, `.agents/`, `.claude/`, `.cursor/`, `.opencode/`, `.mimocode/`, `.codebuddy/`).
@@ -81,10 +82,18 @@
   1. Refatorar a seção `INTENT_ROUTER_SECTION` em [`tools/aidd-forge/aidd_forge/commands/slash_router.py`](file:///C:/Users/trcnologia/Desktop/ecossistema-aidd/tools/aidd-forge/aidd_forge/commands/slash_router.py) para utilizar terminologia genérica de injeção de componentes, desacoplando o AGENTS.md da sintaxe interna de CLI.
 - **Status:** **RESOLVIDO**.
 
+#### Inconsistência 5: Ausência de `AGENTS.md` na Raiz do Projeto Alvo
+- **Nome:** Falta de materialização do arquivo primário `AGENTS.md` na raiz do projeto alvo.
+- **Motivo:** O dicionário `IDE_RULE_ALIASES` no `cli.py` apenas criava links para `CLAUDE.md` e `GEMINI.md`, deixando o arquivo principal encapsulado em `governance/AGENTS.md`.
+- **O que ocasionou:** Usuários e agentes não encontravam o `AGENTS.md` na raiz do repositório.
+- **Plano de Correção:**
+  1. Adicionar `"AGENTS.md": "governance/AGENTS.md"` ao dicionário `IDE_RULE_ALIASES` em [`tools/aidd-forge/aidd_forge/cli.py`](file:///C:/Users/trcnologia/Desktop/ecossistema-aidd/tools/aidd-forge/aidd_forge/cli.py).
+- **Status:** **RESOLVIDO**.
+
 ---
 
 ### Resultado Final da Auditoria de Governança
 
 - **Taxa de Conformidade:** **100.0%** (15 de 15 verificadores aprovados - **PASS**)
-- **Testes Unitários da Ferramenta:** **294 passed**, 1 skipped em 27s.
+- **Testes Unitários da Ferramenta:** **294 passed**, 1 skipped em 26s.
 - **Status do Projeto Alvo:** **CONFORME & BLINDADO**.
