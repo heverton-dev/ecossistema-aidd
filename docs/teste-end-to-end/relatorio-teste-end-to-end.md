@@ -8,13 +8,15 @@
 
 ## 1. Ferramenta: `aidd-forge`
 
-- **Objetivo da Ferramenta:** Injetar a infraestrutura canônica de governança agêntica, isolamento de contexto, economia severa de tokens, comandos de atalho (`slash commands`), skills e quality gates de integridade no projeto alvo.
+- **Objetivo da Ferramenta:** Injetar a infraestrutura canônica de governança agêntica, isolamento de contexto, economia severa de tokens, comandos de atalho (`slash commands`), skills e quality gates de integridade no projeto alvo com arquitetura limpa em `componentes/`.
 - **Pasta Foco:** [`C:\Users\trcnologia\Desktop\proj_ctt\planos-ctt-app`](file:///C:/Users/trcnologia/Desktop/proj_ctt/planos-ctt-app)
 - **O que executou:**
   1. Preparação do repositório alvo com Git (`git init -b main`) para suporte nativo a pre-commit hooks.
-  2. Inicialização da governança agêntica e injeção do ecossistema de contexto e regras com `AGENTS.md` canônico na raiz.
-  3. Vinculação multi-harness (Claude Code, Gemini CLI, Cursor, OpenCode, MiMoCode, CodeBuddy).
-  4. Auditoria de conformidade de governança via `forge audit`.
+  2. Inicialização da governança agêntica e injeção do ecossistema com **`AGENTS.md` canônico na raiz**.
+  3. **Centralização da fonte única** em [`componentes/`](file:///C:/Users/trcnologia/Desktop/proj_ctt/planos-ctt-app/componentes) (`governance/`, `skills/`, `gates/`, `pipeline_phases/`, `orca/`), eliminando poluição de pastas soltas na raiz.
+  4. **Eliminação da pasta legada `.agent` (singular)**, padronizando no oficial `.agents/` (Antigravity) conforme o `manifesto_harnesses.json`.
+  5. Vinculação de ponteiros universais limpos de 1 linha (`@AGENTS.md`) para [CLAUDE.md](file:///C:/Users/trcnologia/Desktop/proj_ctt/planos-ctt-app/CLAUDE.md) e [GEMINI.md](file:///C:/Users/trcnologia/Desktop/proj_ctt/planos-ctt-app/GEMINI.md).
+  6. Auditoria de conformidade de governança via `forge audit`.
 - **Como executou:**
   ```powershell
   # 1. Preparação do repositório alvo
@@ -27,17 +29,18 @@
   python ecossistema.py forge audit "C:\Users\trcnologia\Desktop\proj_ctt\planos-ctt-app"
   ```
 - **O que entregou:**
-  - **38 arquivos criados** e 3 vínculos de regras de IDE, mantendo os 11 arquivos originais 100% intactos:
+  - **Raiz 100% limpa**, preservando todos os 11 arquivos originais de logística da CTT intactos:
     - [AGENTS.md](file:///C:/Users/trcnologia/Desktop/proj_ctt/planos-ctt-app/AGENTS.md): Governança canônica de agentes diretamente na raiz do projeto.
-    - [governance/AGENTS.md](file:///C:/Users/trcnologia/Desktop/proj_ctt/planos-ctt-app/governance/AGENTS.md): Backup da governança central.
-    - [CLAUDE.md](file:///C:/Users/trcnologia/Desktop/proj_ctt/planos-ctt-app/CLAUDE.md) e [GEMINI.md](file:///C:/Users/trcnologia/Desktop/proj_ctt/planos-ctt-app/GEMINI.md): Ponteiros universais vinculados.
+    - [CLAUDE.md](file:///C:/Users/trcnologia/Desktop/proj_ctt/planos-ctt-app/CLAUDE.md) e [GEMINI.md](file:///C:/Users/trcnologia/Desktop/proj_ctt/planos-ctt-app/GEMINI.md): Ponteiros universais `@AGENTS.md`.
     - [.gitignore](file:///C:/Users/trcnologia/Desktop/proj_ctt/planos-ctt-app/.gitignore) e [.gitattributes](file:///C:/Users/trcnologia/Desktop/proj_ctt/planos-ctt-app/.gitattributes): Higiene de repositório e padronização de line endings (LF).
     - `.git/hooks/pre-commit`: Hook automático para execução do Quality Gate antes de commits.
-    - Diretórios de harnesses (`.agent/`, `.agents/`, `.claude/`, `.cursor/`, `.opencode/`, `.mimocode/`, `.codebuddy/`).
-    - 6 skills canônicas injetadas e espelhadas (ex: `caveman-ultra`).
-    - 12 slash commands pré-configurados.
-    - 8 scripts determinísticos de Quality Gate em `gates/`.
-    - 5 fases de ciclo de vida agêntico em `pipeline_phases/`.
+    - [componentes/](file:///C:/Users/trcnologia/Desktop/proj_ctt/planos-ctt-app/componentes): **Fonte única de verdade** organizada:
+      - `componentes/governance/`: Matriz canônica de regras.
+      - `componentes/skills/`: Skills canônicas (ex: `caveman-ultra`).
+      - `componentes/gates/`: 8 scripts determinísticos de Quality Gate.
+      - `componentes/pipeline_phases/`: 5 micro-ambientes isolados por fase.
+      - `componentes/orca/`: Inventário e regras de roteamento ORCA.
+    - Pastas nativas de harnesses oficiais (`.agents/`, `.claude/`, `.cursor/`, `.opencode/`, `.mimocode/`, `.codebuddy/`).
 
 ---
 
@@ -45,49 +48,34 @@
 
 #### Inconsistência 1: Violação da Regra de Zero Fricção & Falta de Repositório Git
 - **Nome:** Ausência de inicialização de Git prévia e execução direta de terminal sem abstração de fricção.
-- **Motivo:** O projeto alvo era uma pasta solta com relatórios no Desktop, sem repositório Git inicializado. Ao rodar a ferramenta diretamente sem preparar o repositório, o hook de pre-commit e a infraestrutura de versionamento falharam.
-- **O que ocasionou:** Falha na instalação do pre-commit hook e falha nos checks `G12` (.gitignore) e `G13` (.gitattributes).
-- **Plano de Correção:**
-  1. Inicializar o repositório git alvo com branch padrão `main` (`git init -b main`).
-  2. Adicionar templates canônicos de [.gitignore](file:///C:/Users/trcnologia/Desktop/ecossistema-aidd/tools/aidd-forge/aidd_forge/templates/.gitignore) e [.gitattributes](file:///C:/Users/trcnologia/Desktop/ecossistema-aidd/tools/aidd-forge/aidd_forge/templates/.gitattributes) no motor `aidd-forge` para injeção automática sem fricção em novos projetos.
+- **Motivo:** O projeto alvo era uma pasta solta com relatórios no Desktop, sem repositório Git inicializado.
 - **Status:** **RESOLVIDO**.
 
 #### Inconsistência 2: Descrição da Skill `caveman-ultra` Excedendo Limite de 20 Palavras
 - **Nome:** Violação da Regra `G11` (Token Economy - Skill description <= 20 words).
-- **Motivo:** O campo `description` no frontmatter de `caveman-ultra/SKILL.md` continha 24 palavras.
-- **O que ocasionou:** Falha em 9 instâncias espelhadas no `forge audit`.
-- **Plano de Correção:**
-  1. Alterar a descrição no template original [`tools/aidd-forge/aidd_forge/templates/skills/caveman-ultra/SKILL.md`](file:///C:/Users/trcnologia/Desktop/ecossistema-aidd/tools/aidd-forge/aidd_forge/templates/skills/caveman-ultra/SKILL.md) para 16 palavras:
-     > `description: Economia severa de tokens com raciocinio telegrafico em English Caveman e resposta em PT-BR sem stubs.`
-- **Status:** **RESOLVIDO** (todos os 54 SKILL.md compliant).
+- **Motivo:** O campo `description` no frontmatter continha 24 palavras.
+- **Status:** **RESOLVIDO** (ajustado para 16 palavras em todo o ecossistema).
 
 #### Inconsistência 3: Template de `governance/AGENTS.md` sem Diretivas Canônicas
 - **Nome:** Falha nas Regras `G02`, `G05`, `G06`, `G07`, `G08`, `G09`.
-- **Motivo:** O template de `AGENTS.md` em `aidd_forge/templates/governance/` estava em português e não continha os blocos compactos obrigatórios de diretrizes de execução.
-- **O que ocasionou:** Falha em múltiplos checks críticos do `forge audit`.
-- **Plano de Correção:**
-  1. Atualizar o template canônico [`tools/aidd-forge/aidd_forge/templates/governance/AGENTS.md`](file:///C:/Users/trcnologia/Desktop/ecossistema-aidd/tools/aidd-forge/aidd_forge/templates/governance/AGENTS.md) com as 5 diretivas em inglês conciso:
-     - Thinking constraint
-     - Execution limit (3 to 5 steps)
-     - Output format (Silent executor)
-     - Bash rule (tail/grep pipe)
-     - Graph-first (code-review-graph)
-- **Status:** **RESOLVIDO**.
+- **Status:** **RESOLVIDO** (template reconstruído com as 5 diretivas em inglês).
 
 #### Inconsistência 4: Proibição de Tool Operational Specs no AGENTS.md Raiz (`G04`)
 - **Nome:** Falha na Regra `G04` (Root AGENTS.md is generic).
-- **Motivo:** O módulo `slash_router.py` injetava a sintaxe exata `forge inject <tipo> <nome>` dentro de `governance/AGENTS.md`, acionando o regex de verificação de especificações operacionais de ferramentas na raiz.
-- **O que ocasionou:** Falha no check `G04`.
-- **Plano de Correção:**
-  1. Refatorar a seção `INTENT_ROUTER_SECTION` em [`tools/aidd-forge/aidd_forge/commands/slash_router.py`](file:///C:/Users/trcnologia/Desktop/ecossistema-aidd/tools/aidd-forge/aidd_forge/commands/slash_router.py) para utilizar terminologia genérica de injeção de componentes, desacoplando o AGENTS.md da sintaxe interna de CLI.
-- **Status:** **RESOLVIDO**.
+- **Status:** **RESOLVIDO** (desacoplado do CLI em `slash_router.py`).
 
 #### Inconsistência 5: Ausência de `AGENTS.md` na Raiz do Projeto Alvo
 - **Nome:** Falta de materialização do arquivo primário `AGENTS.md` na raiz do projeto alvo.
-- **Motivo:** O dicionário `IDE_RULE_ALIASES` no `cli.py` apenas criava links para `CLAUDE.md` e `GEMINI.md`, deixando o arquivo principal encapsulado em `governance/AGENTS.md`.
-- **O que ocasionou:** Usuários e agentes não encontravam o `AGENTS.md` na raiz do repositório.
+- **Status:** **RESOLVIDO** (`AGENTS.md` gerado na raiz com ponteiros limpos em `CLAUDE.md` e `GEMINI.md`).
+
+#### Inconsistência 6: Poluição da Raiz e Pasta Incorreta `.agent` (singular)
+- **Nome:** Criação da pasta legada `.agent/` e dispersão das pastas `gates/`, `governance/`, `orca/`, `pipeline_phases/`, `skills/` diretamente na raiz.
+- **Motivo:** Estrutura legada anterior à migração agnóstica do `manifesto_harnesses.json`.
+- **O que ocasionou:** Poluição visual da raiz do projeto alvo e duplicação de componentes.
 - **Plano de Correção:**
-  1. Adicionar `"AGENTS.md": "governance/AGENTS.md"` ao dicionário `IDE_RULE_ALIASES` em [`tools/aidd-forge/aidd_forge/cli.py`](file:///C:/Users/trcnologia/Desktop/ecossistema-aidd/tools/aidd-forge/aidd_forge/cli.py).
+  1. Mover todas as fontes para dentro de `componentes/` (`componentes/governance/`, `componentes/skills/`, `componentes/gates/`, `componentes/pipeline_phases/`, `componentes/orca/`).
+  2. Eliminar definitivamente a pasta `.agent/` (singular), mantendo exclusivamente a pasta oficial `.agents/` (Antigravity) e as pastas dos demais harnesses.
+  3. Remover `audit_report.html` da raiz.
 - **Status:** **RESOLVIDO**.
 
 ---
@@ -95,5 +83,5 @@
 ### Resultado Final da Auditoria de Governança
 
 - **Taxa de Conformidade:** **100.0%** (15 de 15 verificadores aprovados - **PASS**)
-- **Testes Unitários da Ferramenta:** **294 passed**, 1 skipped em 26s.
-- **Status do Projeto Alvo:** **CONFORME & BLINDADO**.
+- **Testes Unitários da Ferramenta:** **294 passed**, 1 skipped.
+- **Status do Projeto Alvo:** **CONFORME, BLINDADO & 100% ORGANIZADO EM COMPONENTES/**.
