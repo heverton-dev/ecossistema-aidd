@@ -34,6 +34,8 @@ FERRAMENTAS = [
     "aidd-master",
     "aidd-enterprise",
     "aidd-ops",
+    "aidd-bridge",
+    "aidd-factory",
 ]
 
 
