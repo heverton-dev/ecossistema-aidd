@@ -44,7 +44,7 @@
 
 ---
 
-### Registro de Inconsistências, Violações e Correções
+### Registro de Inconsistências, Violações e Correções (`aidd-forge`)
 
 #### Inconsistência 1: Violação da Regra de Zero Fricção & Falta de Repositório Git
 - **Nome:** Ausência de inicialização de Git prévia e execução direta de terminal sem abstração de fricção.
@@ -70,18 +70,73 @@
 
 #### Inconsistência 6: Poluição da Raiz e Pasta Incorreta `.agent` (singular)
 - **Nome:** Criação da pasta legada `.agent/` e dispersão das pastas `gates/`, `governance/`, `orca/`, `pipeline_phases/`, `skills/` diretamente na raiz.
-- **Motivo:** Estrutura legada anterior à migração agnóstica do `manifesto_harnesses.json`.
-- **O que ocasionou:** Poluição visual da raiz do projeto alvo e duplicação de componentes.
-- **Plano de Correção:**
-  1. Mover todas as fontes para dentro de `componentes/` (`componentes/governance/`, `componentes/skills/`, `componentes/gates/`, `componentes/pipeline_phases/`, `componentes/orca/`).
-  2. Eliminar definitivamente a pasta `.agent/` (singular), mantendo exclusivamente a pasta oficial `.agents/` (Antigravity) e as pastas dos demais harnesses.
-  3. Remover `audit_report.html` da raiz.
-- **Status:** **RESOLVIDO**.
+- **Status:** **RESOLVIDO** (centralizado em `componentes/`, `.agent` removido).
+
+- **Taxa de Conformidade:** **100.0%** (15 de 15 verificadores aprovados - **PASS**)
+- **Testes Unitários:** **294 passed**, 1 skipped.
 
 ---
 
-### Resultado Final da Auditoria de Governança
+## 2. Ferramenta: `aidd-master`
 
-- **Taxa de Conformidade:** **100.0%** (15 de 15 verificadores aprovados - **PASS**)
-- **Testes Unitários da Ferramenta:** **294 passed**, 1 skipped.
-- **Status do Projeto Alvo:** **CONFORME, BLINDADO & 100% ORGANIZADO EM COMPONENTES/**.
+- **Objetivo da Ferramenta:** Estruturar a arquitetura em Vertical Slices (Fatias Verticais desacopladas) com Clean Architecture / DDD, Shared Kernel centralizado (`src/core/`), persistência SQLite WAL com índices e timestamps, EventBus pub/sub assíncrono e suíte de testes unitários isolada por módulo.
+- **Pasta Foco:** [`C:\Users\trcnologia\Desktop\proj_ctt\planos-ctt-app`](file:///C:/Users/trcnologia/Desktop/proj_ctt/planos-ctt-app)
+- **O que executou:**
+  1. Provisão do Shared Kernel modular e banco de dados via `master init`.
+  2. Geração da fatia vertical de **`frotas`** (gestão de condutores, veículos, limites de carga, telemetria).
+  3. Geração da fatia vertical de **`roteirizacao`** (motor VRP/VRPTW com janelas horárias de atendimento).
+  4. Geração da fatia vertical de **`encomendas_ctt`** (picking e rastreamento CTT Portugal).
+  5. Execução e aprovação da suíte completa de testes unitários pytest das fatias verticais geradas.
+- **Como executou:**
+  ```powershell
+  # 1. Provisão inicial do shared kernel
+  python ecossistema.py master init "C:\Users\trcnologia\Desktop\proj_ctt\planos-ctt-app"
+
+  # 2. Adição das fatias de domínio
+  python ecossistema.py master add-module frotas --pasta "C:\Users\trcnologia\Desktop\proj_ctt\planos-ctt-app"
+  python ecossistema.py master add-module roteirizacao --pasta "C:\Users\trcnologia\Desktop\proj_ctt\planos-ctt-app"
+  python ecossistema.py master add-module encomendas_ctt --pasta "C:\Users\trcnologia\Desktop\proj_ctt\planos-ctt-app"
+
+  # 3. Validação dos testes unitários das fatias
+  python -c "import sys; sys.path.insert(0, r'C:\Users\trcnologia\Desktop\proj_ctt\planos-ctt-app\src'); import pytest; sys.exit(pytest.main([r'C:\Users\trcnologia\Desktop\proj_ctt\planos-ctt-app\tests\unit', '-q']))"
+  ```
+- **O que entregou:**
+  - **Shared Kernel (`src/core/`):**
+    - [database.py](file:///C:/Users/trcnologia/Desktop/proj_ctt/planos-ctt-app/src/core/database.py): Pool de conexões SQLite WAL concorrente.
+    - [events.py](file:///C:/Users/trcnologia/Desktop/proj_ctt/planos-ctt-app/src/core/events.py): EventBus desacoplado pub/sub.
+    - [result.py](file:///C:/Users/trcnologia/Desktop/proj_ctt/planos-ctt-app/src/core/result.py): Result Monad para operações sem exceções descontroladas.
+    - [openapi.py](file:///C:/Users/trcnologia/Desktop/proj_ctt/planos-ctt-app/src/core/openapi.py), [security.py](file:///C:/Users/trcnologia/Desktop/proj_ctt/planos-ctt-app/src/core/security.py), [webhooks.py](file:///C:/Users/trcnologia/Desktop/proj_ctt/planos-ctt-app/src/core/webhooks.py), [cqrs.py](file:///C:/Users/trcnologia/Desktop/proj_ctt/planos-ctt-app/src/core/cqrs.py).
+  - **Fatias Verticais de Domínio (`src/modules/`):**
+    - [`src/modules/frotas/`](file:///C:/Users/trcnologia/Desktop/proj_ctt/planos-ctt-app/src/modules/frotas): `domain/`, `application/`, `infrastructure/`, `interfaces/`, `models.py`, `services.py`, `routes.py`.
+    - [`src/modules/roteirizacao/`](file:///C:/Users/trcnologia/Desktop/proj_ctt/planos-ctt-app/src/modules/roteirizacao): `domain/`, `application/`, `infrastructure/`, `interfaces/`, `models.py`, `services.py`, `routes.py`.
+    - [`src/modules/encomendas_ctt/`](file:///C:/Users/trcnologia/Desktop/proj_ctt/planos-ctt-app/src/modules/encomendas_ctt): `domain/`, `application/`, `infrastructure/`, `interfaces/`, `models.py`, `services.py`, `routes.py`.
+    - [`src/modules/principal/`](file:///C:/Users/trcnologia/Desktop/proj_ctt/planos-ctt-app/src/modules/principal): Fatia de orquestração geral.
+  - **Suíte de Testes Unitários (`tests/unit/`):**
+    - `test_frotas.py`, `test_roteirizacao.py`, `test_encomendas_ctt.py`, `test_principal.py`.
+  - **Manifesto Arquitetural:**
+    - [PLANO-EXECUCAO-ESTRUTURADO.json](file:///C:/Users/trcnologia/Desktop/proj_ctt/planos-ctt-app/PLANO-EXECUCAO-ESTRUTURADO.json) atualizado com todos os 4 módulos.
+  - **Preservação de Dados:**
+    - Todos os 11 arquivos originais da CTT permanecem 100% intactos.
+
+---
+
+### Registro de Inconsistências e Auto-Correção (`aidd-master`)
+
+#### Inconsistência 7: Falta de Cópia de `result.py` no Shared Kernel
+- **Nome:** `ModuleNotFoundError: No module named 'core.result'` durante execução dos testes unitários das fatias.
+- **Motivo:** O script [`provision_project.py`](file:///C:/Users/trcnologia/Desktop/ecossistema-aidd/tools/aidd-master/scripts/provision_project.py#L49) continha uma lista restrita de arquivos core a serem copiados, omitindo `result.py` (usado por `use_cases.py` das fatias verticais geradas com Cookiecutter).
+- **O que ocasionou:** Falha na importação dos casos de uso ao executar os testes das fatias verticais.
+- **Plano de Correção:**
+  1. Atualizar [`tools/aidd-master/scripts/provision_project.py`](file:///C:/Users/trcnologia/Desktop/ecossistema-aidd/tools/aidd-master/scripts/provision_project.py) para incluir `result.py`, `repositories.py`, `circuit_breaker.py` e `saga.py` na lista obrigatória de provisão do Shared Kernel.
+  2. Rodar a suíte completa de testes de `aidd-master` (**379 passed**, 3 skipped).
+  3. Realizar commit e push da correção no repositório (`0fefb37`).
+  4. Limpar e reexecutar a provisão e criação dos módulos no alvo.
+- **Status:** **RESOLVIDO** (todos os 8 testes unitários das fatias executados e aprovados com 100% de sucesso).
+
+---
+
+### Resultado Final da Arquitetura Modular
+
+- **Testes Unitários das Fatias Verticais do Alvo:** **8 passed** (100% de sucesso).
+- **Testes Unitários da Ferramenta (`aidd-master`):** **379 passed**, 3 skipped.
+- **Status do Projeto Alvo:** **ARQUITETURA MODULAR VERTICAL SLICE 100% OPERACIONAL E TESTADA**.
