@@ -12,6 +12,7 @@ from dataclasses import dataclass
 from pathlib import Path
 
 from aidd_forge.core.context_linter import CHARS_PER_TOKEN, estimate_tokens
+from aidd_forge.core.harness_manifest import carregar_todos_prefixos_harness
 
 # Heuristica de deteccao de PT-BR: padroes comuns que indicam texto em portugues.
 PT_BR_PATTERNS = re.compile(
@@ -461,7 +462,8 @@ def check_g13_gitattributes(project_path: Path) -> AuditItem:
 
 
 def check_g14_no_duplicates(project_path: Path) -> AuditItem:
-    """G14: Verifica duplicatas entre componentes/ e .agents/.claude/."""
+    """G14: Verifica duplicatas entre componentes/ e QUALQUER pasta de harness
+    confirmada em `gates/manifesto_harnesses.json` (via `harness_manifest`)."""
     comp_dir = project_path / "componentes"
     if not comp_dir.exists():
         return AuditItem(
@@ -471,7 +473,10 @@ def check_g14_no_duplicates(project_path: Path) -> AuditItem:
             impact=IMPACT_MAP["G14"], fixable=False,
         )
 
-    harness_dirs = [".agent", ".claude", ".cursor", ".gemini", ".mimocode"]
+    # ".agent" e a pasta canonica-fonte (nao um harness em si); os demais vem do
+    # manifesto (achado real 2026-09-15: a lista fixa antiga faltava Antigravity,
+    # OpenCode e CodeBuddy — duplicatas nessas pastas passavam batido).
+    harness_dirs = [".agent", *carregar_todos_prefixos_harness()]
     duplicates: list[str] = []
 
     for harness_name in harness_dirs:

@@ -20,6 +20,16 @@ from aidd_forge.core.universal_injector import UniversalInjector
 
 TEMPLATES_ROOT = Path(__file__).parent / "templates"
 
+# Raiz do toolbox ecossistema-aidd (4 niveis acima deste arquivo:
+# aidd_forge/ -> tools/aidd-forge/ -> tools/ -> ecossistema-aidd/), quando
+# o aidd-forge estiver rodando dentro do monorepo. Usado para gravar slash
+# commands auto-contidos (sem depender de instalacao pip do aidd-forge, que
+# pode ficar orfa se o clone do toolbox for movido ou apagado). Ausente
+# (None) quando o aidd-forge roda standalone, fora do monorepo.
+_TOOLBOX_ROOT = Path(__file__).resolve().parents[3]
+_ECOSSISTEMA_SCRIPT = _TOOLBOX_ROOT / "ecossistema.py"
+ECOSSISTEMA_SCRIPT = _ECOSSISTEMA_SCRIPT if _ECOSSISTEMA_SCRIPT.is_file() else None
+
 IDE_RULE_ALIASES = {
     "CLAUDE.md": "governance/AGENTS.md",
 }
@@ -38,7 +48,7 @@ def cmd_init(path: str, force: bool) -> int:
     fencer = PhaseFencer(TEMPLATES_ROOT, target, force=force)
     fence_result = fencer.run()
 
-    router = SlashRouter(target, force=force)
+    router = SlashRouter(target, force=force, ecossistema_script=ECOSSISTEMA_SCRIPT)
     router_result = router.run()
 
     hooks = GitHooksInstaller(TEMPLATES_ROOT, target, force=force)

@@ -134,39 +134,84 @@ def run_command(cmd, cwd, env=None):
     res = subprocess.run(cmd, cwd=cwd, env=merged_env)
     return res.returncode
 
+def _instalacao_editable_aidd_forge_correta(forge_dir):
+    """True se `pip show aidd-forge` aponta pra ESTE clone (nao pra um worktree antigo/morto).
+
+    So le (`pip show`), nunca reinstala aqui — quem decide reparar e
+    `_reparar_instalacao_editable_aidd_forge`.
+    """
+    esperado = os.path.normcase(os.path.abspath(forge_dir))
+    try:
+        saida = subprocess.run(
+            [sys.executable, "-m", "pip", "show", "aidd-forge"],
+            capture_output=True, text=True, timeout=15,
+        ).stdout
+    except Exception:
+        return False
+    for linha in saida.splitlines():
+        if linha.startswith("Editable project location:"):
+            atual = os.path.normcase(os.path.abspath(linha.split(":", 1)[1].strip()))
+            return atual == esperado
+    return False
+
+
+def _reparar_instalacao_editable_aidd_forge(forge_dir):
+    """Self-healing, idempotente: silenciosamente corrige `pip -e aidd-forge` se estiver
+    ausente ou apontando pra um caminho que nao existe mais (ex: worktree Orca deletado).
+
+    Nao e usado por `python ecossistema.py forge ...` (que ja roda 100% isolado via
+    PYTHONPATH, sem depender disso) — existe para que chamadas diretas de
+    `python -m aidd_forge.cli` (fora deste wrapper) e os testes do proprio aidd-forge
+    continuem funcionando depois de um clone novo, um `git worktree` ou uma pasta
+    renomeada/movida.
+    """
+    if _instalacao_editable_aidd_forge_correta(forge_dir):
+        return
+    resultado = subprocess.run(
+        [sys.executable, "-m", "pip", "install", "--no-deps", "-e", forge_dir],
+        capture_output=True, text=True, timeout=120,
+    )
+    if resultado.returncode == 0:
+        print("[aidd-forge] instalacao local (pip -e) reparada automaticamente para este clone.", flush=True)
+    else:
+        print("[aidd-forge] aviso: nao foi possivel auto-reparar a instalacao pip -e local "
+              "(nao bloqueia 'ecossistema.py forge', so chamadas diretas de 'python -m aidd_forge.cli').", flush=True)
+
+
 def cmd_forge(args):
     forge_dir = os.path.join(TOOLS_DIR, "aidd-forge")
+    _reparar_instalacao_editable_aidd_forge(forge_dir)
     env = {"PYTHONPATH": forge_dir}
     cmd = [sys.executable, "-m", "aidd_forge.cli"] + args
-    return run_command(cmd, cwd=forge_dir, env=env)
+    return run_command(cmd, cwd=os.getcwd(), env=env)
 
 def cmd_generate(args):
     gen_dir = os.path.join(TOOLS_DIR, "aidd-generator")
     pipeline_script = os.path.join(gen_dir, "scripts", "pipeline_completo.py")
     env = {"PYTHONPATH": gen_dir}
     cmd = [sys.executable, pipeline_script] + args
-    return run_command(cmd, cwd=gen_dir, env=env)
+    return run_command(cmd, cwd=os.getcwd(), env=env)
 
 def cmd_master(args):
     master_dir = os.path.join(TOOLS_DIR, "aidd-master")
     aidd_script = os.path.join(master_dir, "scripts", "aidd.py")
     env = {"PYTHONPATH": master_dir}
     cmd = [sys.executable, aidd_script] + args
-    return run_command(cmd, cwd=master_dir, env=env)
+    return run_command(cmd, cwd=os.getcwd(), env=env)
 
 def cmd_enterprise(args):
     ent_dir = os.path.join(TOOLS_DIR, "aidd-enterprise")
     aidd_script = os.path.join(ent_dir, "scripts", "aidd.py")
     env = {"PYTHONPATH": ent_dir}
     cmd = [sys.executable, aidd_script] + args
-    return run_command(cmd, cwd=ent_dir, env=env)
+    return run_command(cmd, cwd=os.getcwd(), env=env)
 
 def cmd_ops(args):
     ops_dir = os.path.join(TOOLS_DIR, "aidd-ops")
     pipeline_script = os.path.join(ops_dir, "scripts", "pipeline_ops.py")
     env = {"PYTHONPATH": ops_dir}
     cmd = [sys.executable, pipeline_script] + args
-    return run_command(cmd, cwd=ops_dir, env=env)
+    return run_command(cmd, cwd=os.getcwd(), env=env)
 
 def cmd_bridge(args):
     bridge_dir = os.path.join(TOOLS_DIR, "aidd-bridge")

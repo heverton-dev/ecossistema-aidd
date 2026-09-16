@@ -35,9 +35,14 @@ ls -la
 
 ### Passo 2 — Instalar Governança (`/forge`)
 
+> ⚠️ **Testado de verdade em 2026-09-15:** `ecossistema.py` só existe dentro da pasta
+> clonada do toolbox. Rodar `python ecossistema.py ...` de dentro do SEU projeto (se ele
+> mora em outra pasta) falha com `can't open file`. Fique na pasta `ecossistema-aidd/`
+> e passe o caminho do seu projeto como argumento (relativo ou absoluto):
+
 ```bash
-# Na raiz do projeto
-python ecossistema.py forge init .
+# de dentro da pasta ecossistema-aidd/ clonada, apontando pro seu projeto:
+python ecossistema.py forge init "C:\caminho\completo\para\seu-projeto"
 ```
 
 O que acontece:
@@ -50,12 +55,17 @@ O que acontece:
 
 ### Passo 3 — Validar
 
-```bash
-# Rodar gates locais
-python ecossistema.py audit
+> ⚠️ Não confundir dois comandos de auditoria diferentes:
+> - `python ecossistema.py audit` (sem argumento, rodado dentro de `ecossistema-aidd/`) audita
+>   o TOOLBOX inteiro — é pesado (passou de 120s num teste real) e não serve pra validar seu projeto.
+> - Para validar SEU projeto depois do `forge init`, use o audit do próprio forge, apontando
+>   pro caminho do seu projeto:
 
-# Verificar se os gates passam
-# exit 0 = OK, exit 1 = corrigir antes de prosseguir
+```bash
+# de dentro de ecossistema-aidd/, apontando pro seu projeto:
+python ecossistema.py forge audit "C:\caminho\completo\para\seu-projeto" --format md --output relatorio-audit.md
+
+# exit 0 = OK, exit 1 = corrigir antes de prosseguir (leia relatorio-audit.md, não suponha)
 ```
 
 ### Passo 4 — Adicionar Módulos (`/master`)
@@ -189,6 +199,8 @@ python ecossistema.py audit
 | Problema | Solução |
 |:---|:---|
 | `ModuleNotFoundError` ao rodar `ecossistema.py` | `python ecossistema.py --auto-bootstrap status` |
+| `can't open file 'ecossistema.py'` | Você rodou o comando de dentro do SEU projeto. Volte pra pasta `ecossistema-aidd/` clonada e passe o caminho do seu projeto como argumento. |
+| `/forge` no meu projeto dá `ModuleNotFoundError: No module named 'aidd_forge'` (**bug real confirmado em 2026-09-15**) | O slash command reinjetado roda `python -m aidd_forge.cli init` sem preparar o ambiente, e depende de uma instalação `pip -e` de `aidd-forge` que pode estar apontando pra uma pasta antiga/inexistente. Enquanto isso não é corrigido, não use o `/forge` reinjetado pra re-rodar — volte sempre pro toolbox e rode `python ecossistema.py forge init "<caminho>" --force` de lá. |
 | Gates falhando após forge init | Verificar se `.gitattributes` existe com `eol=lf` |
 | Bridge não encontra Supabase SQL | Verificar se `supabase/migrations/` existe no projeto |
 | Master cria módulo com imports cruzados | Verificar `G_ARQUITETURA` — módulos devem se comunicar via EventBus |

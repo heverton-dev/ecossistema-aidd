@@ -3,6 +3,11 @@ from pathlib import Path
 
 import pytest
 
+from aidd_forge.core.harness_manifest import (
+    carregar_command_dirs_canonicos,
+    carregar_skill_dirs_canonicos,
+    carregar_skill_overrides_canonicos,
+)
 from aidd_forge.core.universal_injector import UniversalInjector
 
 
@@ -35,14 +40,32 @@ def test_injetar_cada_tipo_com_sucesso(tmp_path: Path, tipo, conteudo):
     assert resultado.materialization.dest.exists()
 
 
-def test_injetar_skill_sincroniza_harness_existente(tmp_path: Path):
-    (tmp_path / ".claude").mkdir()
-
+def test_injetar_skill_sincroniza_todos_harnesses_mesmo_sem_pre_existir(tmp_path: Path):
     resultado = UniversalInjector(tmp_path).injetar(_payload())
 
     assert resultado.ok is True
     assert resultado.harness_sync is not None
-    assert resultado.harness_sync.mirrored
+
+    for harness_dir in carregar_skill_dirs_canonicos():
+        assert (tmp_path / harness_dir / "demo-skill" / "SKILL.md").exists()
+
+    override = carregar_skill_overrides_canonicos()["gemini-cli"]
+    gemini_mirror = tmp_path / override.dest_dir_template.replace("{nome}", "demo-skill")
+    assert (gemini_mirror / "SKILL.md").exists()
+
+
+def test_injetar_command_sincroniza_todos_harnesses_mesmo_sem_pre_existir(tmp_path: Path):
+    resultado = UniversalInjector(tmp_path).injetar(
+        _payload(tipo="command", nome="demo-command", conteudo="# /demo-command\n\nComando de demo.\n")
+    )
+
+    assert resultado.ok is True
+    assert resultado.harness_sync is not None
+
+    dirs_canonicos = carregar_command_dirs_canonicos()
+    assert len(resultado.harness_sync.mirrored) == len(dirs_canonicos)
+    for harness_dir in dirs_canonicos:
+        assert (tmp_path / harness_dir / "demo-command.md").exists()
 
 
 def test_injetar_mcp_atualiza_registry(tmp_path: Path):

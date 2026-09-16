@@ -1,8 +1,23 @@
 # Referência Completa da CLI
 
-> **Versão:** 1.0  
-> **Última atualização:** 2026-09-14  
+> **Versão:** 1.1
+> **Última atualização:** 2026-09-15
 > **Ponto de entrada:** `python ecossistema.py <comando> [args]`
+
+> ⚠️ **Onde rodar isto, de verdade (achado real, testado em 2026-09-15):**
+> `ecossistema.py` é um ARQUIVO dentro da pasta clonada do toolbox (`ecossistema-aidd/`).
+> Ele **não** é um comando global — rodar `python ecossistema.py ...` de dentro do SEU
+> projeto (fora do clone) falha com `can't open file 'ecossistema.py'`.
+> Regra fixa: fique sempre dentro da pasta `ecossistema-aidd/` clonada e passe o
+> **caminho absoluto do seu projeto** como argumento:
+> ```bash
+> cd ecossistema-aidd
+> python ecossistema.py forge init "C:\caminho\completo\para\seu-projeto"
+> ```
+> Só depois que `forge init` rodar uma vez apontando pro seu projeto é que os slash
+> commands `/forge` e `/aidd-init` aparecem DENTRO dele (numa sessão nova do Claude
+> Code aberta com esse projeto como pasta raiz). Antes disso, `/forge` simplesmente
+> não existe lá — não é bug, é a ordem certa das coisas.
 
 ---
 

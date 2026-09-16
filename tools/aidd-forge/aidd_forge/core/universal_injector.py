@@ -10,10 +10,10 @@ from __future__ import annotations
 
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Any
+from typing import Any, Callable
 
 from aidd_forge.core.camada_detector import detectar_camada
-from aidd_forge.core.harness_sync import HarnessSyncResult, sincronizar_skill
+from aidd_forge.core.harness_sync import HarnessSyncResult, sincronizar_command, sincronizar_skill
 from aidd_forge.core.injection_schema import validate_request
 from aidd_forge.core.injector_profiles import sincronizar_componente
 from aidd_forge.core.materializador import (
@@ -25,7 +25,16 @@ from aidd_forge.core.materializador import (
     Materializador,
 )
 
-TIPOS_COM_HARNESS_SYNC: frozenset[str] = frozenset({"skill"})
+# Cada tipo aqui ganha espelhamento multi-harness dentro do PROJETO ALVO
+# (distinto de `sincronizar_componente`, que sincroniza a copia canonica
+# dentro do MONOREPO ecossistema-aidd). "command" foi adicionado em
+# 2026-09-15: antes disso `forge inject command` so gravava um unico
+# arquivo em `.agent/commands/`, invisivel pra qualquer harness real.
+HARNESS_SYNCERS: dict[str, Callable[..., HarnessSyncResult]] = {
+    "skill": sincronizar_skill,
+    "command": sincronizar_command,
+}
+TIPOS_COM_HARNESS_SYNC: frozenset[str] = frozenset(HARNESS_SYNCERS)
 
 
 @dataclass
@@ -77,8 +86,9 @@ class UniversalInjector:
             sync_warning = f"sincronizacao multi-harness retornou codigo {sync_code}"
 
         harness_result = None
-        if tipo in TIPOS_COM_HARNESS_SYNC:
-            harness_result = sincronizar_skill(nome, self.target_root, force=force)
+        syncer = HARNESS_SYNCERS.get(tipo)
+        if syncer is not None:
+            harness_result = syncer(nome, self.target_root, force=force)
 
         return UniversalInjectionResult(
             materialization=materialization,

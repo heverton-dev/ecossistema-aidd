@@ -259,6 +259,15 @@ def test_g14_warns_on_duplicates(tmp_path: Path) -> None:
     assert result.status == "WARN"
 
 
+def test_g14_detecta_duplicata_em_harness_que_faltava_na_lista_antiga(tmp_path: Path) -> None:
+    # Achado real 2026-09-15: a lista hardcoded antiga so cobria .agent/.claude/
+    # .cursor/.gemini/.mimocode — uma duplicata em .opencode/ passava batido.
+    _write(tmp_path / "componentes" / "skill" / "SKILL.md", "# Skill\n")
+    _write(tmp_path / ".opencode" / "skill" / "SKILL.md", "# Skill\n")
+    result = check_g14_no_duplicates(tmp_path)
+    assert result.status == "WARN"
+
+
 # --- G15: Cache prefix -------------------------------------------------------
 
 

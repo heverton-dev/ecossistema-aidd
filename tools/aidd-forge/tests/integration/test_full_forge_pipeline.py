@@ -16,6 +16,7 @@ from pathlib import Path
 import pytest
 
 from aidd_forge.cli import main
+from aidd_forge.commands.slash_router import IDE_COMMAND_DIRS
 
 pytestmark = pytest.mark.skipif(shutil.which("git") is None, reason="git nao disponivel no PATH")
 
@@ -73,7 +74,7 @@ def test_forge_init_provisions_the_entire_governance_tree(tmp_path: Path) -> Non
     for skill in EXPECTED_SKILLS:
         assert (target / ".agent" / "skills" / skill / "SKILL.md").exists()
 
-    for ide_dir in (".cursor/rules", ".claude/commands", ".agent/commands"):
+    for ide_dir in IDE_COMMAND_DIRS:
         assert (target / ide_dir / "forge.md").exists()
         assert (target / ide_dir / "aidd-init.md").exists()
 

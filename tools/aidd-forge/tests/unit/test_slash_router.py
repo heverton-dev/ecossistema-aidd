@@ -27,8 +27,18 @@ def test_run_writes_forge_and_aidd_init_in_every_ide_dir(tmp_path: Path) -> None
     assert len(result.created) == len(IDE_COMMAND_DIRS) * len(SLASH_COMMANDS)
 
 
-def test_known_ide_dirs_include_cursor_claude_and_generic_agent() -> None:
-    assert IDE_COMMAND_DIRS == (".cursor/rules", ".claude/commands", ".agent/commands")
+def test_known_ide_dirs_come_from_canonical_harness_manifest() -> None:
+    # Derivado de gates/manifesto_harnesses.json (tipos_componente.command) —
+    # nao mais uma lista hardcoded. Cursor usa "commands" (nao "rules"), e
+    # gemini-cli fica de fora de proposito (usa .toml, nao .md).
+    assert IDE_COMMAND_DIRS == (
+        ".claude/commands",
+        ".agents/commands",
+        ".opencode/commands",
+        ".mimocode/commands",
+        ".cursor/commands",
+        ".codebuddy/commands",
+    )
 
 
 def test_forge_command_content_mentions_cli_entrypoint(tmp_path: Path) -> None:
@@ -41,7 +51,7 @@ def test_forge_command_content_mentions_cli_entrypoint(tmp_path: Path) -> None:
 def test_aidd_init_command_is_alias_of_forge(tmp_path: Path) -> None:
     SlashRouter(tmp_path).run()
 
-    content = (tmp_path / ".cursor" / "rules" / "aidd-init.md").read_text(encoding="utf-8")
+    content = (tmp_path / ".cursor" / "commands" / "aidd-init.md").read_text(encoding="utf-8")
     assert "/forge" in content
 
 
