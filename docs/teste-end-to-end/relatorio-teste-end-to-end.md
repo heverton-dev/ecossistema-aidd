@@ -214,18 +214,59 @@
   2. Garantir CSS offline-first e modais encapsulados no [index.html](file:///C:/Users/trcnologia/Desktop/proj_ctt/planos-ctt-app/src/static/index.html).
 - **Status:** **RESOLVIDO**.
 
+#### Inconsistência 11: Falso Positivo no Scanner de Entropia `G_SEGREDOS` para Lockfiles npm
+- **Nome:** `String de alta entropia detectada em frontend/package-lock.json` pelo gate `G_SEGREDOS`.
+- **Motivo:** O gerador de pacotes npm produz hashes de integridade criptográfica SHA-512 (ex: `sha512-...`) para cada biblioteca. A fórmula de Shannon Entropy classificava essas assinaturas como credenciais vazadas.
+- **O que ocasionou:** Reprovação do gate `G_SEGREDOS` após a instalação de dependências do frontend Next.js.
+- **Plano de Correção:**
+  1. Atualizar a regra de exclusão do scan de entropia em [`tools/aidd-enterprise/scripts/gates/G_SEGREDOS.py`](file:///C:/Users/trcnologia/Desktop/ecossistema-aidd/tools/aidd-enterprise/scripts/gates/G_SEGREDOS.py), nos templates de master/enterprise e no projeto alvo para ignorar explicitamente lockfiles de pacotes (`package-lock.json`, `pnpm-lock.yaml`, `yarn.lock`, `bun.lockb`).
+  2. Adicionar `.next/` ao `.gitignore` do projeto alvo e padrões do ecossistema.
+- **Status:** **RESOLVIDO** (commit `535049e` no ecossistema e `5e378b0` no alvo).
+
+#### Inconsistência 12: Omissão de Estúdios HTML no Shared Kernel durante Provisão
+- **Nome:** `FileNotFoundError: swagger.html / webhook_studio.html / mcp_studio.html` no provisionamento de novos projetos.
+- **Motivo:** O script [`provision_project.py`](file:///C:/Users/trcnologia/Desktop/ecossistema-aidd/tools/aidd-enterprise/scripts/provision_project.py) não incluía os arquivos dos estúdios web na lista de arquivos copiados para `src/core/`.
+- **O que ocasionou:** Ausência das interfaces ricas do Swagger Studio, Webhook Studio e MCP Studio quando instanciadas pelo dispatcher `src/server.py`.
+- **Plano de Correção:**
+  1. Incluir `swagger.html`, `webhook_studio.html` e `mcp_studio.html` na lista de provisão em `tools/aidd-enterprise/scripts/provision_project.py` e `tools/aidd-master/scripts/provision_project.py`.
+  2. Adicionar os 3 arquivos aos componentes compartilhados do ecossistema (`componentes/compartilhado/src-core/`).
+  3. Sincronizar nos harnesses e enviar ao repositório central.
+- **Status:** **RESOLVIDO** (commit `535049e`).
+
+#### Inconsistência 13: Falta de Cabeçalhos CORS e Verbos PUT/DELETE no `src/server.py`
+- **Nome:** Bloqueio de CORS ao consumir a API Python a partir do front-end Next.js (`localhost:3001` -> `localhost:3000`).
+- **Motivo:** O servidor nativo Python não enviava cabeçalhos `Access-Control-Allow-Origin: *`, `Access-Control-Allow-Methods` e não tratava preflight `OPTIONS` nem verbos `PUT` e `DELETE`.
+- **O que ocasionou:** Falhas de requisições assíncronas do frontend Next.js para o backend Python.
+- **Plano de Correção:**
+  1. Adicionar interceptor de CORS em [`src/server.py`](file:///C:/Users/trcnologia/Desktop/proj_ctt\planos-ctt-app\src\server.py) respondendo `OPTIONS` com 200 e injetando headers CORS em todas as respostas HTTP.
+  2. Implementar handlers assíncronos para `PUT` (edição de registros) e `DELETE` (remoção).
+- **Status:** **RESOLVIDO** (commit `5e378b0` no alvo).
+
 ---
 
-### Resultado Final da Auditoria Enterprise
+### Resultado Final da Auditoria Enterprise & Validação de Execução
 
 - **Total de Quality Gates:** 7
 - **Aprovados (PASS):** **7 (100%)**
   - `G_ESTRUTURA`: PASS (35 validações aprovadas, 0 falhas)
   - `G_QUALIDADE`: PASS (AST anti-stubs e compilação estática 100%)
-  - `G_TESTES`: PASS (8/8 testes unitários aprovados em 0.76s)
+  - `G_TESTES`: PASS (8/8 testes unitários aprovados em 0.80s)
   - `G_CONTRACTS`: PASS (Snapshot SHA-256: 1574676a167e7dcb)
-  - `G_SEGREDOS`: PASS (Entropia de Shannon aprovada)
+  - `G_SEGREDOS`: PASS (Entropia de Shannon aprovada, zero vazamentos)
   - `G_HARNESS_COMPAT`: PASS (Compatibilidade multi-harness 100%)
   - `G_SEGURANCA`: PASS (21 checks executados, 0 falhas)
-- **Status do Projeto Alvo:** **HOMOLOGAÇÃO ENTERPRISE 100% APROVADA**.
+- **Validação de Execução do Backend Python (`src/server.py`):**
+  - Endpoint `/`: HTTP 200 OK (71.346 bytes - Super-App Web Corporativo)
+  - Endpoint `/health`: HTTP 200 OK (`{"status":"ok","versao":"5.1.0"}`)
+  - Endpoint `/docs`: HTTP 200 OK (Swagger Studio OpenAPI 3.1)
+  - Endpoint `/webhooks`: HTTP 200 OK (Webhook Studio Interativo)
+  - Endpoint `/mcp`: HTTP 200 OK (Model Context Protocol Studio)
+  - Endpoint `/api/frotas`: HTTP 200 OK (Listagem da frota de carrinhas e camiões CTT)
+  - Endpoint `/api/encomendas_ctt`: HTTP 200 OK (Rastreio de encomendas Express CTT)
+  - Endpoint `/api/roteirizacao`: HTTP 200 OK (Otimização de rotas Lisboa/Porto VRP)
+- **Validação de Execução do Front-end Next.js (`frontend/`):**
+  - `npm run build`: **Compilado com 100% de sucesso sem erros de TypeScript**
+  - Rotas geradas: `/`, `/encomendas_ctt`, `/frotas`, `/roteirizacao`, `/principal`
+  - Design System: Tailwind CSS corporativo CTT Portugal (Vermelho #DA291C), KPIs em tempo real, modais reativos e fallback inteligente offline-first.
+- **Status da Etapa 3:** **100% CONCLUÍDA, AUDITADA E APROVADA**.
 
