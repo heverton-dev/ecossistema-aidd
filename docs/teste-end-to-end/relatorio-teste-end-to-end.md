@@ -140,3 +140,92 @@
 - **Testes Unitários das Fatias Verticais do Alvo:** **8 passed** (100% de sucesso).
 - **Testes Unitários da Ferramenta (`aidd-master`):** **379 passed**, 3 skipped.
 - **Status do Projeto Alvo:** **ARQUITETURA MODULAR VERTICAL SLICE 100% OPERACIONAL E TESTADA**.
+
+---
+
+## 3. Ferramenta: `aidd-enterprise`
+
+- **Objetivo da Ferramenta:** Auditar e consolidar componentes de missão crítica, contratos OpenAPI/MCP, segurança OWASP, autenticação JWT, integridade criptográfica SHA-256 e blindagem militar com 100% de gates aprovados.
+- **Pasta Foco:** [`C:\Users\trcnologia\Desktop\proj_ctt\planos-ctt-app`](file:///C:/Users/trcnologia/Desktop/proj_ctt/planos-ctt-app)
+- **O que executou:**
+  1. Verificação prévia da suíte completa de testes da ferramenta `aidd-enterprise` (**354 passed**, 3 skipped).
+  2. Execução da bateria de testes unitários do projeto alvo via comando corporativo (`python ecossistema.py enterprise test unit`).
+  3. Execução da bateria completa de Quality Gates corporativos determinísticos (`python ecossistema.py enterprise audit --report`).
+  4. Diagnóstico de 3 inconsistências nos templates e scripts de provisão (import de `token_revocation.py`, concatenação em query SQL em `repositories.py` e geração de `src/server.py` e `src/static/index.html` dinâmicos).
+  5. Auto-correção nos templates do ecossistema e propagação canônica.
+  6. Reexecução da auditoria completa com **100% de aprovação (7/7 gates PASS)** e geração do relatório factual [RELATORIO-AUDITORIA.json](file:///C:/Users/trcnologia/Desktop/proj_ctt/planos-ctt-app/RELATORIO-AUDITORIA.json).
+- **Como executou:**
+  ```powershell
+  # 1. Testes unitários do alvo
+  python ecossistema.py enterprise test unit --dir "C:\Users\trcnologia\Desktop\proj_ctt\planos-ctt-app"
+
+  # 2. Geração canônica de server.py e super-app index.html dinâmicos para os 4 módulos
+  python -c "import sys; sys.path.insert(0, 'tools/aidd-enterprise'); from scripts.compose_suite import _generate_server_and_ui; _generate_server_and_ui('Planos CTT App', ['encomendas_ctt', 'frotas', 'principal', 'roteirizacao'], 'sqlite', r'C:\Users\trcnologia\Desktop\proj_ctt\planos-ctt-app\src', r'C:\Users\trcnologia\Desktop\proj_ctt\planos-ctt-app\src\static', r'tools\aidd-enterprise\templates\v2')"
+
+  # 3. Execução da bateria de gates corporativos
+  python ecossistema.py enterprise audit --report --dir "C:\Users\trcnologia\Desktop\proj_ctt\planos-ctt-app"
+  ```
+- **O que entregou:**
+  - **Servidor Monolítico Modular Dinâmico:**
+    - [`src/server.py`](file:///C:/Users/trcnologia/Desktop/proj_ctt/planos-ctt-app/src/server.py): Servidor HTTP assíncrono conectando os 4 módulos de logística CTT, endpoints de healthcheck, Swagger Studio OpenAPI 3.1, MCP Server e autenticação JWT.
+  - **Front-end Super-App Offline-First:**
+    - [`src/static/index.html`](file:///C:/Users/trcnologia/Desktop/proj_ctt/planos-ctt-app/src/static/index.html): Interface com CSS embutido, sistema de abas dinâmicas para os módulos CTT, modais encapsulados e conformidade com Impeccable Design.
+    - [`src/static/docs.html`](file:///C:/Users/trcnologia/Desktop/proj_ctt/planos-ctt-app/src/static/docs.html) e [`src/static/output.css`](file:///C:/Users/trcnologia/Desktop/proj_ctt/planos-ctt-app/src/static/output.css): Documentação viva de APIs gerada via AST.
+  - **Shared Kernel Completo e Blindado:**
+    - [`src/core/token_revocation.py`](file:///C:/Users/trcnologia/Desktop/proj_ctt/planos-ctt-app/src/core/token_revocation.py): Token Revocation List (TRL) com persistência SQLite e validação de `jti`.
+    - [`src/core/repositories.py`](file:///C:/Users/trcnologia/Desktop/proj_ctt/planos-ctt-app/src/core/repositories.py): 100% blindado contra SQL Injection (consultas parametrizadas sem interpolação).
+  - **Relatório Factual de Auditoria:**
+    - [RELATORIO-AUDITORIA.json](file:///C:/Users/trcnologia/Desktop/proj_ctt/planos-ctt-app/RELATORIO-AUDITORIA.json): Registro comprobatório de 7/7 gates aprovados em 29.36s.
+  - **Preservação de Dados:**
+    - Todos os 11 arquivos originais da CTT permanecem 100% intactos.
+
+---
+
+### Registro de Inconsistências e Auto-Correção (`aidd-enterprise`)
+
+#### Inconsistência 8: Omissão de `token_revocation.py` no Script de Provisão
+- **Nome:** `ModuleNotFoundError: No module named 'token_revocation'` durante a camada OWASP do `G_SEGURANCA`.
+- **Motivo:** [`provision_project.py`](file:///C:/Users/trcnologia/Desktop/ecossistema-aidd/tools/aidd-enterprise/scripts/provision_project.py) tanto no enterprise quanto no master não copiava `token_revocation.py` para `src/core/`.
+- **O que ocasionou:** Falha na inicialização do `SecurityService` e quebra da Camada 1 e Camada 2 do Quality Gate de Segurança.
+- **Plano de Correção:**
+  1. Atualizar a lista de arquivos provisionados em [`tools/aidd-enterprise/scripts/provision_project.py`](file:///C:/Users/trcnologia/Desktop/ecossistema-aidd/tools/aidd-enterprise/scripts/provision_project.py) e [`tools/aidd-master/scripts/provision_project.py`](file:///C:/Users/trcnologia/Desktop/ecossistema-aidd/tools/aidd-master/scripts/provision_project.py).
+  2. Copiar o arquivo canônico [`token_revocation.py`](file:///C:/Users/trcnologia/Desktop/proj_ctt/planos-ctt-app/src/core/token_revocation.py) para o projeto alvo.
+- **Status:** **RESOLVIDO**.
+
+#### Inconsistência 9: Interpolação de f-string em Query SQL em `repositories.py`
+- **Nome:** `SQL Injection Potencial em repositories.py:229` detectado pelo AST Linter do `G_SEGURANCA`.
+- **Motivo:** Linha 229 de `repositories.py` utilizava interpolação `f"... data_liquidacao = {liq} WHERE id = ?"` em vez de comandos SQL estáticos parametrizados.
+- **O que ocasionou:** Bloqueio da Camada 3 do Quality Gate de Segurança.
+- **Plano de Correção:**
+  1. Substituir a f-string por branches condicionais com queries 100% estáticas parametrizadas em:
+     - `tools/aidd-enterprise/templates/core/repositories.py`
+     - `tools/aidd-enterprise/templates/v2/repositories.py`
+     - `tools/aidd-master/templates/core/repositories.py`
+     - `tools/aidd-master/templates/v2/repositories.py`
+     - `src/core/repositories.py` do projeto alvo.
+- **Status:** **RESOLVIDO**.
+
+#### Inconsistência 10: Ausência de `server.py` e Front-end Dinâmico Modular
+- **Nome:** `[FAIL] Servidor Monolítico Modular 'src/server.py'` (G_ESTRUTURA) e `Super-App 'index.html' sem CSS offline-first` (G_CONTRACTS).
+- **Motivo:** Os módulos gerados pelo `add-module` necessitavam da conexão canônica com o dispatcher do servidor assíncrono e montagem das rotas dos 4 módulos ativos.
+- **O que ocasionou:** Reprovação nos gates de Estrutura e Contratos.
+- **Plano de Correção:**
+  1. Executar o gerador canônico de servidor e interface modular (`compose_suite._generate_server_and_ui`), registrando as 4 fatias verticais (`encomendas_ctt`, `frotas`, `principal`, `roteirizacao`).
+  2. Garantir CSS offline-first e modais encapsulados no [index.html](file:///C:/Users/trcnologia/Desktop/proj_ctt/planos-ctt-app/src/static/index.html).
+- **Status:** **RESOLVIDO**.
+
+---
+
+### Resultado Final da Auditoria Enterprise
+
+- **Total de Quality Gates:** 7
+- **Aprovados (PASS):** **7 (100%)**
+  - `G_ESTRUTURA`: PASS (35 validações aprovadas, 0 falhas)
+  - `G_QUALIDADE`: PASS (AST anti-stubs e compilação estática 100%)
+  - `G_TESTES`: PASS (8/8 testes unitários aprovados em 0.76s)
+  - `G_CONTRACTS`: PASS (Snapshot SHA-256: 1574676a167e7dcb)
+  - `G_SEGREDOS`: PASS (Entropia de Shannon aprovada)
+  - `G_HARNESS_COMPAT`: PASS (Compatibilidade multi-harness 100%)
+  - `G_SEGURANCA`: PASS (21 checks executados, 0 falhas)
+- **Status do Projeto Alvo:** **HOMOLOGAÇÃO ENTERPRISE 100% APROVADA**.
+

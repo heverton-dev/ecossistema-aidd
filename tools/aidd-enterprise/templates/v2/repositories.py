@@ -225,8 +225,10 @@ class FaturamentoRepository:
 
     def atualizar_status(self, gid, status_guia):
         with self.db.get_connection() as conn:
-            liq = "datetime('now')" if status_guia == "liquidada" else "NULL"
-            conn.execute(f"UPDATE faturamento_guias SET status_guia = ?, data_liquidacao = {liq} WHERE id = ?", (status_guia, gid))
+            if status_guia == "liquidada":
+                conn.execute("UPDATE faturamento_guias SET status_guia = ?, data_liquidacao = datetime('now') WHERE id = ?", (status_guia, gid))
+            else:
+                conn.execute("UPDATE faturamento_guias SET status_guia = ?, data_liquidacao = NULL WHERE id = ?", (status_guia, gid))
             conn.commit()
 
     def remover_guia(self, gid):
