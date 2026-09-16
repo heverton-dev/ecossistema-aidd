@@ -49,6 +49,7 @@
 | Iniciativa | Local |
 |---|---|
 | Testes Motor Orquestrador | `PLAN-0024-testes-motor-orquestrador/` |
+| Implementacao Arquitetural Vsa | `PLAN-0033-implementacao-arquitetural-vsa/` |
 | Implementacao Aidd Factory | `fazendo/PLAN-0027-implementacao-aidd-factory/` |
 | Completude Factory V2 | `fazendo/PLAN-0028-completude-factory-v2/` |
 

@@ -18,12 +18,13 @@
 
 ## 2. Architectural Invariants & Quality Gates
 
-1. **Bounded Context Isolation (G_ARQUITETURA):** Direct imports between business modules are strictly forbidden (e.g. `import modules.erp` within `modules.crm`). Communication occurs via `EventBus` or `src/core/`.
-2. **Result Monad (G_QUALIDADE):** All service methods in `services.py` must return `Result[T, E]` (`Result.ok()` or `Result.fail()`). Never leak raw exceptions to presentation layers.
-3. **Safe Persistence (G_SEGURANCA):** SQLite databases must always operate in WAL mode (`PRAGMA journal_mode=WAL;`). All SQL queries must use placeholders (`?`). Zero string concatenation. Soft-delete only (`deletado_em IS NULL`).
-4. **Zero Stubs:** Forbidden empty functions (`pass`) or placeholder `TODO`s in production modules.
-5. **Observability (G_PERFORMANCE):** Service routines must be decorated with `@trace_span(name)` and respect SLA ceilings (`p99 < 200ms`).
-6. **Engineering Skills Alignment:** Slices must be decomposed via `/aidd-tickets` (tracer bullets) and implemented under strict `/aidd-tdd` (Red-Green-Refactor) before module graduation.
+1. **Bounded Context Isolation & Vertical Slices (G_ARQUITETURA):** Direct imports between business modules are strictly forbidden (e.g. `import modules.erp` within `modules.crm`). Every module must be an autonomous vertical slice containing `router.py`, `service.py`, `repository.py`, `dtos.py`, and `events.py`. Frontends mirror this structure (`hooks/`, `components/`, `types.ts`, `page.tsx`).
+2. **Dedicated Repositories & Data Isolation:** Cross-module SQL JOINs or hard foreign keys between bounded contexts are prohibited. Data access is strictly encapsulated in the module's `repository.py`. Cross-slice communication occurs exclusively via `EventBus` or public service interfaces.
+3. **Result Monad (G_QUALIDADE):** All service methods in `services.py` must return `Result[T, E]` (`Result.ok()` or `Result.fail()`). Never leak raw exceptions to presentation layers.
+4. **Safe Persistence (G_SEGURANCA):** SQLite databases must always operate in WAL mode (`PRAGMA journal_mode=WAL;`). All SQL queries must use placeholders (`?`). Zero string concatenation. Soft-delete only (`deletado_em IS NULL`).
+5. **Zero Stubs:** Forbidden empty functions (`pass`) or placeholder `TODO`s in production modules.
+6. **Observability (G_PERFORMANCE):** Service routines must be decorated with `@trace_span(name)` and respect SLA ceilings (`p99 < 200ms`).
+7. **Engineering Skills Alignment:** Slices must be decomposed via `/aidd-tickets` (tracer bullets) and implemented under strict `/aidd-tdd` (Red-Green-Refactor) before module graduation.
 
 ---
 
