@@ -1,0 +1,110 @@
+- generic [active] [ref=f12e1]:
+  - banner [ref=f12e2]:
+    - generic [ref=f12e4]:
+      - link "CTT Planos CTT App SISTEMA OPERACIONAL LOGÍSTICO" [ref=f12e5] [cursor=pointer]:
+        - /url: /
+        - generic [ref=f12e6]: CTT
+        - generic [ref=f12e7]:
+          - generic [ref=f12e8]: Planos CTT App
+          - generic [ref=f12e9]: SISTEMA OPERACIONAL LOGÍSTICO
+      - navigation [ref=f12e10]:
+        - link "Dashboard" [ref=f12e11] [cursor=pointer]:
+          - /url: /
+        - link "Frotas" [ref=f12e17] [cursor=pointer]:
+          - /url: /frotas
+        - link "Encomendas" [ref=f12e24] [cursor=pointer]:
+          - /url: /encomendas_ctt
+        - link "Roteirização" [ref=f12e30] [cursor=pointer]:
+          - /url: /roteirizacao
+        - link "Swagger Studio" [ref=f12e36] [cursor=pointer]:
+          - /url: /swagger
+        - link "Webhooks" [ref=f12e41] [cursor=pointer]:
+          - /url: /webhooks
+        - link "MCP Studio" [ref=f12e47] [cursor=pointer]:
+          - /url: /mcp
+        - link "Documentação" [ref=f12e52] [cursor=pointer]:
+          - /url: /docs
+      - generic [ref=f12e57]:
+        - button "Alternar tema claro/escuro" [ref=f12e58] [cursor=pointer]
+        - generic [ref=f12e61]: ONLINE
+  - main [ref=f12e64]:
+    - generic [ref=f12e65]:
+      - generic [ref=f12e66]:
+        - generic [ref=f12e67]:
+          - heading "Gestão de Frota CTT Portugal" [level=1] [ref=f12e74]
+          - paragraph [ref=f12e75]: Monitorização operacional, capacidade de carga e estado técnico dos veículos de distribuição.
+        - generic [ref=f12e76]:
+          - button "Atualizar" [ref=f12e77] [cursor=pointer]
+          - button "Novo Veículo" [ref=f12e83] [cursor=pointer]
+      - generic [ref=f12e86]:
+        - generic [ref=f12e87]:
+          - generic [ref=f12e88]: Veículos Registados (5)
+          - generic [ref=f12e89]: Operação Total · Full CRUD Ativo
+        - table [ref=f12e91]:
+          - rowgroup [ref=f12e92]:
+            - row [ref=f12e93]:
+              - columnheader "ID" [ref=f12e94]
+              - columnheader "Matrícula" [ref=f12e95]
+              - columnheader "Tipo de Veículo" [ref=f12e96]
+              - columnheader "Capacidade" [ref=f12e97]
+              - columnheader "Depósito Base" [ref=f12e98]
+              - columnheader "Estado" [ref=f12e99]
+              - columnheader "Ações" [ref=f12e100]
+          - rowgroup [ref=f12e103]:
+            - row [ref=f12e104]:
+              - cell "5" [ref=f12e105]
+              - cell "63-VK-21" [ref=f12e106]
+              - cell "Carrinha Distribuição" [ref=f12e107]
+              - cell "1500 kg" [ref=f12e108]
+              - cell "Depósito CTT Braga Centro" [ref=f12e109]
+              - cell "Disponível" [ref=f12e110]
+              - cell [ref=f12e113]:
+                - generic [ref=f12e114]:
+                  - button "Editar Veículo" [ref=f12e115] [cursor=pointer]
+                  - button "Remover Veículo" [ref=f12e119] [cursor=pointer]
+            - row [ref=f12e122]:
+              - cell "4" [ref=f12e123]
+              - cell "88-KP-31" [ref=f12e124]
+              - cell "Camião Pesado Longo Curso" [ref=f12e125]
+              - cell "14000 kg" [ref=f12e126]
+              - cell "Terminal de Cargas CTT Évora" [ref=f12e127]
+              - cell "Manutenção" [ref=f12e128]
+              - cell [ref=f12e131]:
+                - generic [ref=f12e132]:
+                  - button "Editar Veículo" [ref=f12e133] [cursor=pointer]
+                  - button "Remover Veículo" [ref=f12e137] [cursor=pointer]
+            - row [ref=f12e140]:
+              - cell "3" [ref=f12e141]
+              - cell "42-AB-98" [ref=f12e142]
+              - cell "Carrinha Elétrica" [ref=f12e143]
+              - cell "1200 kg" [ref=f12e144]
+              - cell "Centro de Tratamento Lisboa Norte" [ref=f12e145]
+              - cell "Disponível" [ref=f12e146]
+              - cell [ref=f12e149]:
+                - generic [ref=f12e150]:
+                  - button "Editar Veículo" [ref=f12e151] [cursor=pointer]
+                  - button "Remover Veículo" [ref=f12e155] [cursor=pointer]
+            - row [ref=f12e158]:
+              - cell "2" [ref=f12e159]
+              - cell "77-ZZ-12" [ref=f12e160]
+              - cell "Camião Distribuição" [ref=f12e161]
+              - cell "5000 kg" [ref=f12e162]
+              - cell "Hub Logístico CTT Porto Sul" [ref=f12e163]
+              - cell "Em Rota" [ref=f12e164]
+              - cell [ref=f12e167]:
+                - generic [ref=f12e168]:
+                  - button "Editar Veículo" [ref=f12e169] [cursor=pointer]
+                  - button "Remover Veículo" [ref=f12e173] [cursor=pointer]
+            - row [ref=f12e176]:
+              - cell "1" [ref=f12e177]
+              - cell "15-TX-44" [ref=f12e178]
+              - cell "Furgão Médio" [ref=f12e179]
+              - cell "1800 kg" [ref=f12e180]
+              - cell "Centro Operacional CTT Coimbra" [ref=f12e181]
+              - cell "Disponível" [ref=f12e182]
+              - cell [ref=f12e185]:
+                - generic [ref=f12e186]:
+                  - button "Editar Veículo" [ref=f12e187] [cursor=pointer]
+                  - button "Remover Veículo" [ref=f12e191] [cursor=pointer]
+  - contentinfo [ref=f12e101]: CTT Portugal Logística · AIDD Enterprise Framework · Clean Architecture Modular
+  - alert [ref=f12e102]

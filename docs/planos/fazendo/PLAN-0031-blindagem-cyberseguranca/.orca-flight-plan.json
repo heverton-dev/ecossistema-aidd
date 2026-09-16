@@ -1,0 +1,34 @@
+{
+  "plan_dir": "C:\\Users\\trcnologia\\Desktop\\ecossistema-aidd\\docs\\planos\\a-fazer\\PLAN-0031-blindagem-cyberseguranca",
+  "mode": "subagent",
+  "fronts": [
+    {
+      "name": "gate-g-supply",
+      "rotulo": "PLAN-0031-fase-01-gate-g-supply",
+      "subagent_type": "general-purpose",
+      "model": null,
+      "prompt": "Scope: [Descrever o que entra e o que nao entra neste item]\n\nDefinition of Done:\n\n1. [Criterio 1 checavel e deterministico]\n2. [Criterio 2 checavel e deterministico]\n3. Testes executados com exit 0 e conformidade com os Quality Gates.\n\nExit Criteria:\n\n- Arquivos criados ou alterados no local correto.\n- Testes reais passando sem stubs falsos.\n- Gates de integridade aprovados.\n\nYou are going to implement Item 1: Gate G_SUPPLY_CHAIN com pip-audit e scanner.\nStrictly follow the Definition of Done above.\nDo not fabricate approvals and maintain monorepo governance rules."
+    },
+    {
+      "name": "validador-reputacao-contra",
+      "rotulo": "PLAN-0031-fase-02-validador-reputacao-contra",
+      "subagent_type": "general-purpose",
+      "model": null,
+      "prompt": "Scope: [Descrever o que entra e o que nao entra neste item]\n\nDefinition of Done:\n\n1. [Criterio 1 checavel e deterministico]\n2. [Criterio 2 checavel e deterministico]\n3. Testes executados com exit 0 e conformidade com os Quality Gates.\n\nExit Criteria:\n\n- Arquivos criados ou alterados no local correto.\n- Testes reais passando sem stubs falsos.\n- Gates de integridade aprovados.\n\nYou are going to implement Item 2: Validador reputacao contra alucinacao pacotes.\nStrictly follow the Definition of Done above.\nDo not fabricate approvals and maintain monorepo governance rules."
+    },
+    {
+      "name": "regras-semgrep-codigo",
+      "rotulo": "PLAN-0031-fase-03-regras-semgrep-codigo",
+      "subagent_type": "general-purpose",
+      "model": null,
+      "prompt": "Scope: [Descrever o que entra e o que nao entra neste item]\n\nDefinition of Done:\n\n1. [Criterio 1 checavel e deterministico]\n2. [Criterio 2 checavel e deterministico]\n3. Testes executados com exit 0 e conformidade com os Quality Gates.\n\nExit Criteria:\n\n- Arquivos criados ou alterados no local correto.\n- Testes reais passando sem stubs falsos.\n- Gates de integridade aprovados.\n\nYou are going to implement Item 3: Regras Semgrep para codigo gerado.\nStrictly follow the Definition of Done above.\nDo not fabricate approvals and maintain monorepo governance rules."
+    },
+    {
+      "name": "sandboxing-efemero-testes",
+      "rotulo": "PLAN-0031-fase-04-sandboxing-efemero-testes",
+      "subagent_type": "general-purpose",
+      "model": null,
+      "prompt": "Scope: [Descrever o que entra e o que nao entra neste item]\n\nDefinition of Done:\n\n1. [Criterio 1 checavel e deterministico]\n2. [Criterio 2 checavel e deterministico]\n3. Testes executados com exit 0 e conformidade com os Quality Gates.\n\nExit Criteria:\n\n- Arquivos criados ou alterados no local correto.\n- Testes reais passando sem stubs falsos.\n- Gates de integridade aprovados.\n\nYou are going to implement Item 4: Sandboxing efemero para testes subagentes.\nStrictly follow the Definition of Done above.\nDo not fabricate approvals and maintain monorepo governance rules."
+    }
+  ]
+}

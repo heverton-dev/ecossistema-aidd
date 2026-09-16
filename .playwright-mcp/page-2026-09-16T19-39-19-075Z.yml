@@ -1,0 +1,58 @@
+- generic [active] [ref=f2e1]:
+  - banner [ref=f2e2]:
+    - generic [ref=f2e4]:
+      - link "CTT Planos CTT App SISTEMA OPERACIONAL LOGÍSTICO" [ref=f2e5] [cursor=pointer]:
+        - /url: /
+        - generic [ref=f2e6]: CTT
+        - generic [ref=f2e7]:
+          - generic [ref=f2e8]: Planos CTT App
+          - generic [ref=f2e9]: SISTEMA OPERACIONAL LOGÍSTICO
+      - navigation [ref=f2e10]:
+        - link "Dashboard" [ref=f2e11] [cursor=pointer]:
+          - /url: /
+        - link "Frotas" [ref=f2e17] [cursor=pointer]:
+          - /url: /frotas
+        - link "Encomendas" [ref=f2e24] [cursor=pointer]:
+          - /url: /encomendas_ctt
+        - link "Roteirização" [ref=f2e30] [cursor=pointer]:
+          - /url: /roteirizacao
+        - link "Swagger Studio" [ref=f2e36] [cursor=pointer]:
+          - /url: /swagger
+        - link "Webhooks" [ref=f2e41] [cursor=pointer]:
+          - /url: /webhooks
+        - link "MCP Studio" [ref=f2e47] [cursor=pointer]:
+          - /url: /mcp
+        - link "Documentação" [ref=f2e52] [cursor=pointer]:
+          - /url: /docs
+      - generic [ref=f2e57]:
+        - button "Alternar tema claro/escuro" [ref=f2e58] [cursor=pointer]
+        - generic [ref=f2e61]: CONECTANDO
+  - main [ref=f2e64]:
+    - generic [ref=f2e65]:
+      - generic [ref=f2e66]:
+        - generic [ref=f2e67]:
+          - heading "Otimização de Roteirização (VROOM / ORS)" [level=1] [ref=f2e73]
+          - paragraph [ref=f2e74]: Cálculo de itinerários eficientes, agrupamento por código postal e minimização de pegada de carbono.
+        - generic [ref=f2e75]:
+          - button "Atualizar" [ref=f2e76] [cursor=pointer]
+          - button "Criar Rota" [ref=f2e82] [cursor=pointer]
+      - generic [ref=f2e85]:
+        - generic [ref=f2e86]:
+          - generic [ref=f2e87]: Rotas Geradas (0)
+          - generic [ref=f2e88]: "Motor: VROOM 1.14 + OpenRouteService"
+        - table [ref=f2e90]:
+          - rowgroup [ref=f2e91]:
+            - row [ref=f2e92]:
+              - columnheader "ID Rota" [ref=f2e93]
+              - columnheader "Veículo" [ref=f2e94]
+              - columnheader "Motorista" [ref=f2e95]
+              - columnheader "Distrito" [ref=f2e96]
+              - columnheader "Paragens" [ref=f2e97]
+              - columnheader "Distância" [ref=f2e98]
+              - columnheader "Tempo Est." [ref=f2e99]
+              - columnheader "Algoritmo" [ref=f2e100]
+              - columnheader "Estado" [ref=f2e101]
+              - columnheader "Ações" [ref=f2e102]
+          - rowgroup
+  - contentinfo [ref=f2e103]: CTT Portugal Logística · AIDD Enterprise Framework · Clean Architecture Modular
+  - alert [ref=f2e104]

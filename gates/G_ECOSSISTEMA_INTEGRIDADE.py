@@ -27,7 +27,9 @@ TOOLS_REQUIRED = [
     "aidd-generator",
     "aidd-master",
     "aidd-enterprise",
-    "aidd-ops"
+    "aidd-ops",
+    "aidd-bridge",
+    "aidd-factory"
 ]
 
 SKILLS_REQUIRED = [
@@ -35,7 +37,9 @@ SKILLS_REQUIRED = [
     "aidd-generator-runner",
     "aidd-master-runner",
     "aidd-enterprise-runner",
-    "aidd-ops-runner"
+    "aidd-ops-runner",
+    "aidd-bridge-runner",
+    "aidd-factory-runner"
 ]
 
 COMMANDS_REQUIRED = [
@@ -43,7 +47,9 @@ COMMANDS_REQUIRED = [
     "generate.md",
     "master.md",
     "enterprise.md",
-    "ops.md"
+    "ops.md",
+    "bridge.md",
+    "factory.md"
 ]
 
 def audit():

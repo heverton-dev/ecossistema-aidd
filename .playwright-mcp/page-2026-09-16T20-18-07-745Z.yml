@@ -1,0 +1,116 @@
+- generic [active] [ref=f13e1]:
+  - banner [ref=f13e2]:
+    - generic [ref=f13e4]:
+      - link "CTT Planos CTT App SISTEMA OPERACIONAL LOGÍSTICO" [ref=f13e5] [cursor=pointer]:
+        - /url: /
+        - generic [ref=f13e6]: CTT
+        - generic [ref=f13e7]:
+          - generic [ref=f13e8]: Planos CTT App
+          - generic [ref=f13e9]: SISTEMA OPERACIONAL LOGÍSTICO
+      - navigation [ref=f13e10]:
+        - link "Dashboard" [ref=f13e11] [cursor=pointer]:
+          - /url: /
+        - link "Frotas" [ref=f13e17] [cursor=pointer]:
+          - /url: /frotas
+        - link "Encomendas" [ref=f13e24] [cursor=pointer]:
+          - /url: /encomendas_ctt
+        - link "Roteirização" [ref=f13e30] [cursor=pointer]:
+          - /url: /roteirizacao
+        - link "Swagger Studio" [ref=f13e36] [cursor=pointer]:
+          - /url: /swagger
+        - link "Webhooks" [ref=f13e41] [cursor=pointer]:
+          - /url: /webhooks
+        - link "MCP Studio" [ref=f13e47] [cursor=pointer]:
+          - /url: /mcp
+        - link "Documentação" [ref=f13e52] [cursor=pointer]:
+          - /url: /docs
+      - generic [ref=f13e57]:
+        - button "Alternar tema claro/escuro" [ref=f13e58] [cursor=pointer]
+        - generic [ref=f13e61]: ONLINE
+  - main [ref=f13e64]:
+    - generic [ref=f13e65]:
+      - generic [ref=f13e66]:
+        - generic [ref=f13e67]:
+          - heading "Rastreamento & Encomendas CTT Express" [level=1] [ref=f13e73]
+          - paragraph [ref=f13e74]: Registo transacional, verificação de moradas e controlo de expedições em território nacional.
+        - generic [ref=f13e75]:
+          - button "Atualizar" [ref=f13e76] [cursor=pointer]
+          - button "Nova Encomenda" [ref=f13e82] [cursor=pointer]
+      - generic [ref=f13e85]:
+        - generic [ref=f13e86]:
+          - generic [ref=f13e87]: Remessas Registadas (5)
+          - generic [ref=f13e88]: Full CRUD Ativo · API CTT Express
+        - table [ref=f13e90]:
+          - rowgroup [ref=f13e91]:
+            - row [ref=f13e92]:
+              - columnheader "Tracking ID" [ref=f13e93]
+              - columnheader "Destinatário" [ref=f13e94]
+              - columnheader "Morada de Destino" [ref=f13e95]
+              - columnheader "Código Postal" [ref=f13e96]
+              - columnheader "Peso" [ref=f13e97]
+              - columnheader "Serviço" [ref=f13e98]
+              - columnheader "Estado" [ref=f13e99]
+              - columnheader "Ações" [ref=f13e100]
+          - rowgroup [ref=f13e103]:
+            - row [ref=f13e104]:
+              - cell "HA998877665PT" [ref=f13e105]
+              - cell "HUC - Farmácia Hospitalar" [ref=f13e106]
+              - cell "Praceta Prof. Mota Pinto" [ref=f13e107]
+              - cell "3000-075" [ref=f13e108]
+              - cell "3.8 kg" [ref=f13e109]
+              - cell "CTT Expresso 24h" [ref=f13e110]
+              - cell "Em Distribuição" [ref=f13e111]
+              - cell [ref=f13e114]:
+                - generic [ref=f13e115]:
+                  - button "Editar Encomenda" [ref=f13e116] [cursor=pointer]
+                  - button "Remover Encomenda" [ref=f13e120] [cursor=pointer]
+            - row [ref=f13e123]:
+              - cell "GA112233445PT" [ref=f13e124]
+              - cell "TechSolutions Braga Lda" [ref=f13e125]
+              - cell "Parque Industrial de Celeirós Pav. 4" [ref=f13e126]
+              - cell "4705-414" [ref=f13e127]
+              - cell "14.2 kg" [ref=f13e128]
+              - cell "CTT Expresso 48h" [ref=f13e129]
+              - cell "Incidência" [ref=f13e130]
+              - cell [ref=f13e133]:
+                - generic [ref=f13e134]:
+                  - button "Editar Encomenda" [ref=f13e135] [cursor=pointer]
+                  - button "Remover Encomenda" [ref=f13e139] [cursor=pointer]
+            - row [ref=f13e142]:
+              - cell "FA554433221PT" [ref=f13e143]
+              - cell "Farmácia Central Faro" [ref=f13e144]
+              - cell "Praça Dom Francisco Gomes 12" [ref=f13e145]
+              - cell "8000-168" [ref=f13e146]
+              - cell "6.5 kg" [ref=f13e147]
+              - cell "Carga Urgente Hospitalar" [ref=f13e148]
+              - cell "Entregue" [ref=f13e149]
+              - cell [ref=f13e152]:
+                - generic [ref=f13e153]:
+                  - button "Editar Encomenda" [ref=f13e154] [cursor=pointer]
+                  - button "Remover Encomenda" [ref=f13e158] [cursor=pointer]
+            - row [ref=f13e161]:
+              - cell "DA123456789PT" [ref=f13e162]
+              - cell "Maria Santos Silva" [ref=f13e163]
+              - cell "Av. da Liberdade 120, 3º Dto" [ref=f13e164]
+              - cell "1250-142" [ref=f13e165]
+              - cell "2.4 kg" [ref=f13e166]
+              - cell "CTT Expresso 24h" [ref=f13e167]
+              - cell "Em Distribuição" [ref=f13e168]
+              - cell [ref=f13e171]:
+                - generic [ref=f13e172]:
+                  - button "Editar Encomenda" [ref=f13e173] [cursor=pointer]
+                  - button "Remover Encomenda" [ref=f13e177] [cursor=pointer]
+            - row [ref=f13e180]:
+              - cell "EA987654321PT" [ref=f13e181]
+              - cell "Manuel Ferreira Oliveira" [ref=f13e182]
+              - cell "Rua de Santa Catarina 45" [ref=f13e183]
+              - cell "4000-442" [ref=f13e184]
+              - cell "0.8 kg" [ref=f13e185]
+              - cell "CTT Expresso 24h" [ref=f13e186]
+              - cell "Registada" [ref=f13e187]
+              - cell [ref=f13e190]:
+                - generic [ref=f13e191]:
+                  - button "Editar Encomenda" [ref=f13e192] [cursor=pointer]
+                  - button "Remover Encomenda" [ref=f13e196] [cursor=pointer]
+  - contentinfo [ref=f13e101]: CTT Portugal Logística · AIDD Enterprise Framework · Clean Architecture Modular
+  - alert [ref=f13e102]

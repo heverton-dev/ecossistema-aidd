@@ -1,0 +1,55 @@
+- generic [active] [ref=f1e1]:
+  - banner [ref=f1e2]:
+    - generic [ref=f1e4]:
+      - link "CTT Planos CTT App SISTEMA OPERACIONAL LOGÍSTICO" [ref=f1e5] [cursor=pointer]:
+        - /url: /
+        - generic [ref=f1e6]: CTT
+        - generic [ref=f1e7]:
+          - generic [ref=f1e8]: Planos CTT App
+          - generic [ref=f1e9]: SISTEMA OPERACIONAL LOGÍSTICO
+      - navigation [ref=f1e10]:
+        - link "Dashboard" [ref=f1e11] [cursor=pointer]:
+          - /url: /
+        - link "Frotas" [ref=f1e17] [cursor=pointer]:
+          - /url: /frotas
+        - link "Encomendas" [ref=f1e24] [cursor=pointer]:
+          - /url: /encomendas_ctt
+        - link "Roteirização" [ref=f1e30] [cursor=pointer]:
+          - /url: /roteirizacao
+        - link "Swagger Studio" [ref=f1e36] [cursor=pointer]:
+          - /url: /swagger
+        - link "Webhooks" [ref=f1e41] [cursor=pointer]:
+          - /url: /webhooks
+        - link "MCP Studio" [ref=f1e47] [cursor=pointer]:
+          - /url: /mcp
+        - link "Documentação" [ref=f1e52] [cursor=pointer]:
+          - /url: /docs
+      - generic [ref=f1e57]:
+        - button "Alternar tema claro/escuro" [ref=f1e58] [cursor=pointer]
+        - generic [ref=f1e61]: CONECTANDO
+  - main [ref=f1e64]:
+    - generic [ref=f1e65]:
+      - generic [ref=f1e66]:
+        - generic [ref=f1e67]:
+          - heading "Gestão de Frota CTT Portugal" [level=1] [ref=f1e74]
+          - paragraph [ref=f1e75]: Monitorização operacional, capacidade de carga e estado técnico dos veículos de distribuição.
+        - generic [ref=f1e76]:
+          - button "Atualizar" [ref=f1e77] [cursor=pointer]
+          - button "Novo Veículo" [ref=f1e83] [cursor=pointer]
+      - generic [ref=f1e86]:
+        - generic [ref=f1e87]:
+          - generic [ref=f1e88]: Veículos Registados (0)
+          - generic [ref=f1e89]: Operação Total · Full CRUD Ativo
+        - table [ref=f1e91]:
+          - rowgroup [ref=f1e92]:
+            - row [ref=f1e93]:
+              - columnheader "ID" [ref=f1e94]
+              - columnheader "Matrícula" [ref=f1e95]
+              - columnheader "Tipo de Veículo" [ref=f1e96]
+              - columnheader "Capacidade" [ref=f1e97]
+              - columnheader "Depósito Base" [ref=f1e98]
+              - columnheader "Estado" [ref=f1e99]
+              - columnheader "Ações" [ref=f1e100]
+          - rowgroup
+  - contentinfo [ref=f1e101]: CTT Portugal Logística · AIDD Enterprise Framework · Clean Architecture Modular
+  - alert [ref=f1e102]

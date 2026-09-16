@@ -868,9 +868,13 @@ class Database:
         mark para deduplicação idempotente do consumidor (_eventos_processados)."""
         event_id = uuid.uuid4().hex
         criado_em = datetime.datetime.now(datetime.timezone.utc).isoformat()
-        prox_seq = int(conn.execute(
+        _seq_row = conn.execute(
             "SELECT COALESCE(MAX(seq), 0) + 1 FROM _outbox_events"
-        ).fetchone()[0])
+        ).fetchone()
+        try:
+            prox_seq = int(_seq_row[0])
+        except (KeyError, TypeError, IndexError):
+            prox_seq = int(list(_seq_row.values())[0]) if hasattr(_seq_row, "values") else 1
         conn.execute(
             """
             INSERT INTO _outbox_events (id, event_name, payload, status, criado_em, seq)

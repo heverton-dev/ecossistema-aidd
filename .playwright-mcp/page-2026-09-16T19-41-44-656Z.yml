@@ -1,0 +1,123 @@
+- generic [ref=f4e1]:
+  - banner [ref=f4e2]:
+    - generic [ref=f4e4]:
+      - link "CTT Planos CTT App SISTEMA OPERACIONAL LOGÍSTICO" [ref=f4e5] [cursor=pointer]:
+        - /url: /
+        - generic [ref=f4e6]: CTT
+        - generic [ref=f4e7]:
+          - generic [ref=f4e8]: Planos CTT App
+          - generic [ref=f4e9]: SISTEMA OPERACIONAL LOGÍSTICO
+      - navigation [ref=f4e10]:
+        - link "Dashboard" [ref=f4e11] [cursor=pointer]:
+          - /url: /
+        - link "Frotas" [ref=f4e17] [cursor=pointer]:
+          - /url: /frotas
+        - link "Encomendas" [ref=f4e24] [cursor=pointer]:
+          - /url: /encomendas_ctt
+        - link "Roteirização" [ref=f4e30] [cursor=pointer]:
+          - /url: /roteirizacao
+        - link "Swagger Studio" [ref=f4e36] [cursor=pointer]:
+          - /url: /swagger
+        - link "Webhooks" [ref=f4e41] [cursor=pointer]:
+          - /url: /webhooks
+        - link "MCP Studio" [ref=f4e47] [cursor=pointer]:
+          - /url: /mcp
+        - link "Documentação" [ref=f4e52] [cursor=pointer]:
+          - /url: /docs
+      - generic [ref=f4e57]:
+        - button "Alternar tema claro/escuro" [ref=f4e58] [cursor=pointer]
+        - generic [ref=f4e61]: ONLINE
+  - main [ref=f4e64]:
+    - generic [ref=f4e65]:
+      - generic [ref=f4e66]:
+        - generic [ref=f4e67]:
+          - heading "Gestão de Frota CTT Portugal" [level=1] [ref=f4e74]
+          - paragraph [ref=f4e75]: Monitorização operacional, capacidade de carga e estado técnico dos veículos de distribuição.
+        - generic [ref=f4e76]:
+          - button "Atualizar" [ref=f4e77] [cursor=pointer]
+          - button "Novo Veículo" [active] [ref=f4e83] [cursor=pointer]
+      - generic [ref=f4e86]:
+        - generic [ref=f4e87]:
+          - generic [ref=f4e88]: Veículos Registados (3)
+          - generic [ref=f4e89]: Operação Total · Full CRUD Ativo
+        - table [ref=f4e91]:
+          - rowgroup [ref=f4e92]:
+            - row [ref=f4e93]:
+              - columnheader "ID" [ref=f4e94]
+              - columnheader "Matrícula" [ref=f4e95]
+              - columnheader "Tipo de Veículo" [ref=f4e96]
+              - columnheader "Capacidade" [ref=f4e97]
+              - columnheader "Depósito Base" [ref=f4e98]
+              - columnheader "Estado" [ref=f4e99]
+              - columnheader "Ações" [ref=f4e100]
+          - rowgroup [ref=f4e103]:
+            - row [ref=f4e104]:
+              - cell "3" [ref=f4e105]
+              - cell "Carrinha CTT Lisboa 01" [ref=f4e106]
+              - cell "Carrinha Distribuição" [ref=f4e107]
+              - cell "1200 kg" [ref=f4e108]
+              - cell "Hub Logístico CTT" [ref=f4e109]
+              - cell "Disponível" [ref=f4e110]
+              - cell [ref=f4e113]:
+                - generic [ref=f4e114]:
+                  - button "Editar Veículo" [ref=f4e115] [cursor=pointer]
+                  - button "Remover Veículo" [ref=f4e119] [cursor=pointer]
+            - row [ref=f4e122]:
+              - cell "2" [ref=f4e123]
+              - cell "Registro Exemplo 02 - FROTAS" [ref=f4e124]
+              - cell "Carrinha Distribuição" [ref=f4e125]
+              - cell "1200 kg" [ref=f4e126]
+              - cell "Segundo registro semeado para validação de KPIs" [ref=f4e127]
+              - cell "Disponível" [ref=f4e128]
+              - cell [ref=f4e131]:
+                - generic [ref=f4e132]:
+                  - button "Editar Veículo" [ref=f4e133] [cursor=pointer]
+                  - button "Remover Veículo" [ref=f4e137] [cursor=pointer]
+            - row [ref=f4e140]:
+              - cell "1" [ref=f4e141]
+              - cell "Registro Exemplo 01 - FROTAS" [ref=f4e142]
+              - cell "Carrinha Distribuição" [ref=f4e143]
+              - cell "1200 kg" [ref=f4e144]
+              - cell "Primeiro registro semeado para o módulo frotas" [ref=f4e145]
+              - cell "Disponível" [ref=f4e146]
+              - cell [ref=f4e149]:
+                - generic [ref=f4e150]:
+                  - button "Editar Veículo" [ref=f4e151] [cursor=pointer]
+                  - button "Remover Veículo" [ref=f4e155] [cursor=pointer]
+      - generic [ref=f4e159]:
+        - generic [ref=f4e160]:
+          - heading "Registar Novo Veículo na Frota" [level=2] [ref=f4e161]
+          - button "Fechar modal" [ref=f4e162] [cursor=pointer]
+        - generic [ref=f4e166]:
+          - generic [ref=f4e167]:
+            - generic [ref=f4e168]: "Matrícula (Ex: 00-AA-00)"
+            - textbox "55-XY-99" [ref=f4e169]
+          - generic [ref=f4e170]:
+            - generic [ref=f4e171]: Tipo de Veículo
+            - combobox [ref=f4e172]:
+              - option "Carrinha Elétrica (Distribuição Urbana)" [selected]
+              - option "Furgão Médio (Até 1800kg)"
+              - option "Camião Distribuição (Até 5000kg)"
+              - option "Camião Pesado Longo Curso (14t)"
+          - generic [ref=f4e173]:
+            - generic [ref=f4e174]:
+              - generic [ref=f4e175]: Capacidade (kg)
+              - spinbutton [ref=f4e176]: "1200"
+            - generic [ref=f4e177]:
+              - generic [ref=f4e178]: Estado Inicial
+              - combobox [ref=f4e179]:
+                - option "Disponível" [selected]
+                - option "Em Rota"
+                - option "Manutenção"
+          - generic [ref=f4e180]:
+            - generic [ref=f4e181]: Depósito Base de Alocação
+            - combobox [ref=f4e182]:
+              - option "Centro de Tratamento Lisboa Norte" [selected]
+              - option "Hub Logístico CTT Porto Sul"
+              - option "Centro Operacional Coimbra"
+              - option "Terminal de Cargas CTT Évora"
+          - generic [ref=f4e183]:
+            - button "Cancelar" [ref=f4e184] [cursor=pointer]
+            - button "Registar Veículo" [ref=f4e185] [cursor=pointer]
+  - contentinfo [ref=f4e101]: CTT Portugal Logística · AIDD Enterprise Framework · Clean Architecture Modular
+  - alert [ref=f4e102]

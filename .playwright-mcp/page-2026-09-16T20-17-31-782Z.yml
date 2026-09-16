@@ -1,0 +1,56 @@
+- generic [active] [ref=f13e1]:
+  - banner [ref=f13e2]:
+    - generic [ref=f13e4]:
+      - link "CTT Planos CTT App SISTEMA OPERACIONAL LOGÍSTICO" [ref=f13e5] [cursor=pointer]:
+        - /url: /
+        - generic [ref=f13e6]: CTT
+        - generic [ref=f13e7]:
+          - generic [ref=f13e8]: Planos CTT App
+          - generic [ref=f13e9]: SISTEMA OPERACIONAL LOGÍSTICO
+      - navigation [ref=f13e10]:
+        - link "Dashboard" [ref=f13e11] [cursor=pointer]:
+          - /url: /
+        - link "Frotas" [ref=f13e17] [cursor=pointer]:
+          - /url: /frotas
+        - link "Encomendas" [ref=f13e24] [cursor=pointer]:
+          - /url: /encomendas_ctt
+        - link "Roteirização" [ref=f13e30] [cursor=pointer]:
+          - /url: /roteirizacao
+        - link "Swagger Studio" [ref=f13e36] [cursor=pointer]:
+          - /url: /swagger
+        - link "Webhooks" [ref=f13e41] [cursor=pointer]:
+          - /url: /webhooks
+        - link "MCP Studio" [ref=f13e47] [cursor=pointer]:
+          - /url: /mcp
+        - link "Documentação" [ref=f13e52] [cursor=pointer]:
+          - /url: /docs
+      - generic [ref=f13e57]:
+        - button "Alternar tema claro/escuro" [ref=f13e58] [cursor=pointer]
+        - generic [ref=f13e61]: CONECTANDO
+  - main [ref=f13e64]:
+    - generic [ref=f13e65]:
+      - generic [ref=f13e66]:
+        - generic [ref=f13e67]:
+          - heading "Rastreamento & Encomendas CTT Express" [level=1] [ref=f13e73]
+          - paragraph [ref=f13e74]: Registo transacional, verificação de moradas e controlo de expedições em território nacional.
+        - generic [ref=f13e75]:
+          - button "Atualizar" [ref=f13e76] [cursor=pointer]
+          - button "Nova Encomenda" [ref=f13e82] [cursor=pointer]
+      - generic [ref=f13e85]:
+        - generic [ref=f13e86]:
+          - generic [ref=f13e87]: Remessas Registadas (0)
+          - generic [ref=f13e88]: Full CRUD Ativo · API CTT Express
+        - table [ref=f13e90]:
+          - rowgroup [ref=f13e91]:
+            - row [ref=f13e92]:
+              - columnheader "Tracking ID" [ref=f13e93]
+              - columnheader "Destinatário" [ref=f13e94]
+              - columnheader "Morada de Destino" [ref=f13e95]
+              - columnheader "Código Postal" [ref=f13e96]
+              - columnheader "Peso" [ref=f13e97]
+              - columnheader "Serviço" [ref=f13e98]
+              - columnheader "Estado" [ref=f13e99]
+              - columnheader "Ações" [ref=f13e100]
+          - rowgroup
+  - contentinfo [ref=f13e101]: CTT Portugal Logística · AIDD Enterprise Framework · Clean Architecture Modular
+  - alert [ref=f13e102]

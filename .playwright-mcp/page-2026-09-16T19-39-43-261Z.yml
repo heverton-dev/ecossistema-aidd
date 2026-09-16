@@ -1,0 +1,191 @@
+- generic [active] [ref=f3e1]:
+  - banner [ref=f3e2]:
+    - generic [ref=f3e4]:
+      - link "CTT Planos CTT App SISTEMA OPERACIONAL LOGÍSTICO" [ref=f3e5] [cursor=pointer]:
+        - /url: /
+        - generic [ref=f3e6]: CTT
+        - generic [ref=f3e7]:
+          - generic [ref=f3e8]: Planos CTT App
+          - generic [ref=f3e9]: SISTEMA OPERACIONAL LOGÍSTICO
+      - navigation [ref=f3e10]:
+        - link "Dashboard" [ref=f3e11] [cursor=pointer]:
+          - /url: /
+        - link "Frotas" [ref=f3e17] [cursor=pointer]:
+          - /url: /frotas
+        - link "Encomendas" [ref=f3e24] [cursor=pointer]:
+          - /url: /encomendas_ctt
+        - link "Roteirização" [ref=f3e30] [cursor=pointer]:
+          - /url: /roteirizacao
+        - link "Swagger Studio" [ref=f3e36] [cursor=pointer]:
+          - /url: /swagger
+        - link "Webhooks" [ref=f3e41] [cursor=pointer]:
+          - /url: /webhooks
+        - link "MCP Studio" [ref=f3e47] [cursor=pointer]:
+          - /url: /mcp
+        - link "Documentação" [ref=f3e52] [cursor=pointer]:
+          - /url: /docs
+      - generic [ref=f3e57]:
+        - button "Alternar tema claro/escuro" [ref=f3e58] [cursor=pointer]
+        - generic [ref=f3e61]: CONECTANDO
+  - main [ref=f3e64]:
+    - generic [ref=f3e65]:
+      - generic [ref=f3e66]:
+        - heading "Swagger Studio · CTT Portugal API 3.1" [level=1] [ref=f3e71]
+        - paragraph [ref=f3e72]: Catálogo interativo de contratos REST, esquemas de dados tipados e testador integrado de endpoints em tempo real.
+      - generic [ref=f3e73]:
+        - generic [ref=f3e74]:
+          - generic [ref=f3e75]: Autenticação & Segurança
+          - paragraph [ref=f3e80]: Suporte a cabeçalho Bearer JWT HS256, RBAC por perfil e política de preflight CORS segura.
+        - generic [ref=f3e81]:
+          - generic [ref=f3e82]: Esquemas JSON Schema 3.1
+          - paragraph [ref=f3e83]: Contratos estritos com tipagem de payloads, códigos HTTP semânticos (200, 400, 404, 500) e validação Pydantic.
+        - generic [ref=f3e84]:
+          - generic [ref=f3e85]: Conexão Direta ao Backend
+          - paragraph [ref=f3e86]: Comunicação sem intermediários entre a casca Next.js e o orquestrador Python/VROOM em produção.
+      - generic [ref=f3e87]:
+        - generic [ref=f3e88]:
+          - button "Todos" [ref=f3e89] [cursor=pointer]
+          - button "Frotas" [ref=f3e90] [cursor=pointer]
+          - button "Encomendas" [ref=f3e91] [cursor=pointer]
+          - button "Roteirização" [ref=f3e92] [cursor=pointer]
+          - button "Infraestrutura" [ref=f3e93] [cursor=pointer]
+        - textbox "Filtrar rotas ou termos..." [ref=f3e95]
+      - generic [ref=f3e96]:
+        - generic [ref=f3e98] [cursor=pointer]:
+          - generic [ref=f3e99]:
+            - generic [ref=f3e100]: GET
+            - generic [ref=f3e101]: /api/frotas
+            - generic [ref=f3e102]: • Listar veículos da frota
+          - generic [ref=f3e103]:
+            - generic [ref=f3e104]: Frotas
+            - generic [ref=f3e105]: ▼ Detalhes
+        - generic [ref=f3e107] [cursor=pointer]:
+          - generic [ref=f3e108]:
+            - generic [ref=f3e109]: GET
+            - generic [ref=f3e110]: /api/frotas/metricas
+            - generic [ref=f3e111]: • Obter KPIs e métricas da frota
+          - generic [ref=f3e112]:
+            - generic [ref=f3e113]: Frotas
+            - generic [ref=f3e114]: ▼ Detalhes
+        - generic [ref=f3e116] [cursor=pointer]:
+          - generic [ref=f3e117]:
+            - generic [ref=f3e118]: POST
+            - generic [ref=f3e119]: /api/frotas/criar
+            - generic [ref=f3e120]: • Criar novo veículo
+          - generic [ref=f3e121]:
+            - generic [ref=f3e122]: Frotas
+            - generic [ref=f3e123]: ▼ Detalhes
+        - generic [ref=f3e125] [cursor=pointer]:
+          - generic [ref=f3e126]:
+            - generic [ref=f3e127]: POST
+            - generic [ref=f3e128]: /api/frotas/atualizar
+            - generic [ref=f3e129]: • Atualizar veículo existente
+          - generic [ref=f3e130]:
+            - generic [ref=f3e131]: Frotas
+            - generic [ref=f3e132]: ▼ Detalhes
+        - generic [ref=f3e134] [cursor=pointer]:
+          - generic [ref=f3e135]:
+            - generic [ref=f3e136]: POST
+            - generic [ref=f3e137]: /api/frotas/deletar
+            - generic [ref=f3e138]: • Remover veículo (Soft-delete)
+          - generic [ref=f3e139]:
+            - generic [ref=f3e140]: Frotas
+            - generic [ref=f3e141]: ▼ Detalhes
+        - generic [ref=f3e143] [cursor=pointer]:
+          - generic [ref=f3e144]:
+            - generic [ref=f3e145]: GET
+            - generic [ref=f3e146]: /api/encomendas_ctt
+            - generic [ref=f3e147]: • Listar remessas CTT Express
+          - generic [ref=f3e148]:
+            - generic [ref=f3e149]: Encomendas
+            - generic [ref=f3e150]: ▼ Detalhes
+        - generic [ref=f3e152] [cursor=pointer]:
+          - generic [ref=f3e153]:
+            - generic [ref=f3e154]: GET
+            - generic [ref=f3e155]: /api/encomendas_ctt/metricas
+            - generic [ref=f3e156]: • KPIs de entregas CTT
+          - generic [ref=f3e157]:
+            - generic [ref=f3e158]: Encomendas
+            - generic [ref=f3e159]: ▼ Detalhes
+        - generic [ref=f3e161] [cursor=pointer]:
+          - generic [ref=f3e162]:
+            - generic [ref=f3e163]: POST
+            - generic [ref=f3e164]: /api/encomendas_ctt/criar
+            - generic [ref=f3e165]: • Registar nova remessa CTT
+          - generic [ref=f3e166]:
+            - generic [ref=f3e167]: Encomendas
+            - generic [ref=f3e168]: ▼ Detalhes
+        - generic [ref=f3e170] [cursor=pointer]:
+          - generic [ref=f3e171]:
+            - generic [ref=f3e172]: POST
+            - generic [ref=f3e173]: /api/encomendas_ctt/atualizar
+            - generic [ref=f3e174]: • Atualizar remessa CTT
+          - generic [ref=f3e175]:
+            - generic [ref=f3e176]: Encomendas
+            - generic [ref=f3e177]: ▼ Detalhes
+        - generic [ref=f3e179] [cursor=pointer]:
+          - generic [ref=f3e180]:
+            - generic [ref=f3e181]: POST
+            - generic [ref=f3e182]: /api/encomendas_ctt/deletar
+            - generic [ref=f3e183]: • Remover remessa
+          - generic [ref=f3e184]:
+            - generic [ref=f3e185]: Encomendas
+            - generic [ref=f3e186]: ▼ Detalhes
+        - generic [ref=f3e188] [cursor=pointer]:
+          - generic [ref=f3e189]:
+            - generic [ref=f3e190]: GET
+            - generic [ref=f3e191]: /api/roteirizacao
+            - generic [ref=f3e192]: • Listar rotas otimizadas
+          - generic [ref=f3e193]:
+            - generic [ref=f3e194]: Roteirização
+            - generic [ref=f3e195]: ▼ Detalhes
+        - generic [ref=f3e197] [cursor=pointer]:
+          - generic [ref=f3e198]:
+            - generic [ref=f3e199]: GET
+            - generic [ref=f3e200]: /api/roteirizacao/metricas
+            - generic [ref=f3e201]: • Métricas de eficiência de rotas
+          - generic [ref=f3e202]:
+            - generic [ref=f3e203]: Roteirização
+            - generic [ref=f3e204]: ▼ Detalhes
+        - generic [ref=f3e206] [cursor=pointer]:
+          - generic [ref=f3e207]:
+            - generic [ref=f3e208]: POST
+            - generic [ref=f3e209]: /api/roteirizacao/criar
+            - generic [ref=f3e210]: • Criar novo plano de rota
+          - generic [ref=f3e211]:
+            - generic [ref=f3e212]: Roteirização
+            - generic [ref=f3e213]: ▼ Detalhes
+        - generic [ref=f3e215] [cursor=pointer]:
+          - generic [ref=f3e216]:
+            - generic [ref=f3e217]: POST
+            - generic [ref=f3e218]: /api/roteirizacao/atualizar
+            - generic [ref=f3e219]: • Atualizar plano de rota
+          - generic [ref=f3e220]:
+            - generic [ref=f3e221]: Roteirização
+            - generic [ref=f3e222]: ▼ Detalhes
+        - generic [ref=f3e224] [cursor=pointer]:
+          - generic [ref=f3e225]:
+            - generic [ref=f3e226]: POST
+            - generic [ref=f3e227]: /api/roteirizacao/deletar
+            - generic [ref=f3e228]: • Remover plano de rota
+          - generic [ref=f3e229]:
+            - generic [ref=f3e230]: Roteirização
+            - generic [ref=f3e231]: ▼ Detalhes
+        - generic [ref=f3e233] [cursor=pointer]:
+          - generic [ref=f3e234]:
+            - generic [ref=f3e235]: GET
+            - generic [ref=f3e236]: /health
+            - generic [ref=f3e237]: • Healthcheck da API
+          - generic [ref=f3e238]:
+            - generic [ref=f3e239]: Infraestrutura
+            - generic [ref=f3e240]: ▼ Detalhes
+        - generic [ref=f3e242] [cursor=pointer]:
+          - generic [ref=f3e243]:
+            - generic [ref=f3e244]: GET
+            - generic [ref=f3e245]: /openapi.json
+            - generic [ref=f3e246]: • Especificação OpenAPI 3.1
+          - generic [ref=f3e247]:
+            - generic [ref=f3e248]: Infraestrutura
+            - generic [ref=f3e249]: ▼ Detalhes
+  - contentinfo [ref=f3e250]: CTT Portugal Logística · AIDD Enterprise Framework · Clean Architecture Modular
+  - alert [ref=f3e251]

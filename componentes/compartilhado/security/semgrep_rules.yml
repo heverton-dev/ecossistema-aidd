@@ -1,0 +1,38 @@
+rules:
+  - id: aidd-sqli-fstring
+    patterns:
+      - pattern-either:
+          - pattern: $CURSOR.execute(f"...")
+          - pattern: $SESSION.execute(text(f"..."))
+          - pattern: $CONN.execute(f"...")
+    message: "Possível injeção de SQL detectada: query construída com f-string. Use parâmetros vinculados (:param ou %s)."
+    languages: [python]
+    severity: ERROR
+
+  - id: aidd-command-injection-shell-true
+    patterns:
+      - pattern-either:
+          - pattern: subprocess.$METHOD(..., shell=True, ...)
+          - pattern: os.system($CMD)
+    message: "Injeção de comando no SO: execução com shell=True ou os.system. Utilize subprocess.run com lista de argumentos e shell=False."
+    languages: [python]
+    severity: ERROR
+
+  - id: aidd-insecure-deserialization
+    patterns:
+      - pattern-either:
+          - pattern: pickle.loads(...)
+          - pattern: pickle.load(...)
+          - pattern: yaml.load(..., Loader=yaml.Loader)
+    message: "Desserialização insegura detectada. Utilize formatos seguros como json.loads() ou yaml.safe_load()."
+    languages: [python]
+    severity: ERROR
+
+  - id: aidd-weak-hashing
+    patterns:
+      - pattern-either:
+          - pattern: hashlib.md5(...)
+          - pattern: hashlib.sha1(...)
+    message: "Função de hash criptograficamente fraca (MD5/SHA1). Para senhas use Argon2id / bcrypt; para integridade use SHA-256."
+    languages: [python]
+    severity: WARNING

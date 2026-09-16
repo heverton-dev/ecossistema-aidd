@@ -4,12 +4,14 @@
 ECOSSISTEMA AIDD — CLI UNIFICADA DO META-REPOSITÓRIO
 =============================================================================
 Ponto único de entrada e orquestração do ecossistema-aidd.
-Roteia comandos para as 5 ferramentas integradas:
+Roteia comandos para as 7 ferramentas integradas:
   - forge      -> tools/aidd-forge
   - generate   -> tools/aidd-generator
   - master     -> tools/aidd-master
   - enterprise -> tools/aidd-enterprise
-  - aidd-ops   -> tools/aidd-ops (MVP Fases 1-3: Intake, Curadoria, Sizing)
+  - ops        -> tools/aidd-ops
+  - bridge     -> tools/aidd-bridge
+  - factory    -> tools/aidd-factory
   - audit      -> gates/G_ECOSSISTEMA_INTEGRIDADE.py
   - status     -> Resumo do status do ecossistema
 """
@@ -680,6 +682,7 @@ _GATES_AUDIT = [
     "G_HADOLINT.py",
     "G_TESTES_REAIS.py",
     "G_DEPENDENCIAS_PIN_HASH.py",
+    "G_FRONTEND_LAYERS.py",
 ]
 
 def _audit_gates_legado(args):

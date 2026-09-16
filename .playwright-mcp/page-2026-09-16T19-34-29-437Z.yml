@@ -1,0 +1,76 @@
+- generic [active] [ref=e1]:
+  - banner [ref=e2]:
+    - generic [ref=e4]:
+      - link "CTT Planos CTT App SISTEMA OPERACIONAL LOGÍSTICO" [ref=e5] [cursor=pointer]:
+        - /url: /
+        - generic [ref=e6]: CTT
+        - generic [ref=e7]:
+          - generic [ref=e8]: Planos CTT App
+          - generic [ref=e9]: SISTEMA OPERACIONAL LOGÍSTICO
+      - generic [ref=e10]:
+        - button "Alternar tema claro/escuro" [ref=e11] [cursor=pointer]
+        - generic [ref=e14]: CONECTANDO
+  - main [ref=e17]:
+    - generic [ref=e18]:
+      - generic [ref=e19]:
+        - heading "Painel de Controlo Logístico CTT" [level=1] [ref=e20]
+        - paragraph [ref=e21]: Supervisão em tempo real das operações de transporte, distribuição postal e otimização de itinerários em Portugal.
+      - generic [ref=e22]:
+        - generic [ref=e23]:
+          - generic [ref=e24]: Frota Operacional
+          - generic [ref=e31]:
+            - text: "0"
+            - generic [ref=e32]: / 0 veiculos
+          - generic [ref=e33]: 94% disponibilidade técnica
+        - generic [ref=e34]:
+          - generic [ref=e35]: Encomendas CTT
+          - generic [ref=e41]: "0"
+          - generic [ref=e42]: 0 em trânsito postal
+        - generic [ref=e43]:
+          - generic [ref=e44]: Rotas Otimizadas
+          - generic [ref=e50]: "0"
+          - generic [ref=e51]: Motor VROOM + ORS ativo
+        - generic [ref=e52]:
+          - generic [ref=e53]: Segurança & Gates
+          - generic [ref=e58]: 7 / 7
+          - generic [ref=e59]: 100% Homologação PASS
+      - generic [ref=e60]:
+        - generic [ref=e61]:
+          - generic [ref=e62]:
+            - heading "Gestão de Frota CTT" [level=3] [ref=e69]
+            - paragraph [ref=e70]: Registo de carrinhas elétricas, furgões médios e camiões de carga pesada, monitorização de capacidade e depósitos de origem.
+          - link "Aceder ao módulo de frotas" [ref=e71] [cursor=pointer]:
+            - /url: /frotas
+        - generic [ref=e75]:
+          - generic [ref=e76]:
+            - heading "Encomendas Expresso CTT" [level=3] [ref=e82]
+            - paragraph [ref=e83]: Rastreamento rigoroso de encomendas 24h e 48h, validação de códigos postais portugueses e gestão de incidências.
+          - link "Aceder às encomendas" [ref=e84] [cursor=pointer]:
+            - /url: /encomendas_ctt
+        - generic [ref=e88]:
+          - generic [ref=e89]:
+            - heading "Roteirização Inteligente" [level=3] [ref=e95]
+            - paragraph [ref=e96]: Algoritmos de Vehicle Routing Problem (VROOM) integrados com OpenRouteService para minimização de tempos de trânsito.
+          - link "Aceder à roteirização" [ref=e97] [cursor=pointer]:
+            - /url: /roteirizacao
+      - generic [ref=e101]:
+        - heading "Portais Técnicos e Estúdios de Integração" [level=2] [ref=e102]
+        - generic [ref=e103]:
+          - link "Swagger Studio Contratos de dados OpenAPI 3.1 e especificação de rotas REST." [ref=e104] [cursor=pointer]:
+            - /url: /swagger
+            - generic [ref=e105]: Swagger Studio
+            - paragraph [ref=e110]: Contratos de dados OpenAPI 3.1 e especificação de rotas REST.
+          - link "Webhook Studio Catálogo de eventos assíncronos e testes de assinatura HMAC-SHA256." [ref=e111] [cursor=pointer]:
+            - /url: /webhooks
+            - generic [ref=e112]: Webhook Studio
+            - paragraph [ref=e118]: Catálogo de eventos assíncronos e testes de assinatura HMAC-SHA256.
+          - link "MCP Studio Exposição de ferramentas Model Context Protocol para agentes IA." [ref=e119] [cursor=pointer]:
+            - /url: /mcp
+            - generic [ref=e120]: MCP Studio
+            - paragraph [ref=e125]: Exposição de ferramentas Model Context Protocol para agentes IA.
+          - link "Documentação Topologia da arquitetura monolítica modular e mapeamento de endpoints." [ref=e126] [cursor=pointer]:
+            - /url: /docs
+            - generic [ref=e127]: Documentação
+            - paragraph [ref=e132]: Topologia da arquitetura monolítica modular e mapeamento de endpoints.
+  - contentinfo [ref=e133]: CTT Portugal Logística · AIDD Enterprise Framework · Clean Architecture Modular
+  - alert [ref=e134]

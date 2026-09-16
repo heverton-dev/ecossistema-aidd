@@ -6,6 +6,7 @@
 
 | Iniciativa | Local |
 |---|---|
+| Remediar Gaps Auditoria | `feitos/PLAN-0032-remediar-gaps-auditoria/` |
 | Evolucao Notas Auditoria | `feitos/PLAN-0001-evolucao-notas-auditoria/` |
 | Correcao Riscos Ecossistema | `feitos/PLAN-0002-correcao-riscos-ecossistema.md` |
 | Refinamento Notas Auditoria | `feitos/PLAN-0003-refinamento-notas-auditoria/` |
@@ -35,6 +36,7 @@
 | Config Arquivos Tokens | `fazendo/PLAN-0022-config-arquivos-tokens/` |
 | Evolucao Engenharia Software | `fazendo/PLAN-0023-evolucao-engenharia-software/` |
 | Conclusao Auditoria Maquiagem | `fazendo/PLAN-0025-conclusao-auditoria-maquiagem/` |
+| Blindagem Cyberseguranca | `fazendo/PLAN-0031-blindagem-cyberseguranca/` |
 
 ## 🔒 Aprovados, aguardando execução
 

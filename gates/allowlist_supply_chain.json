@@ -1,0 +1,78 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "descricao": "Allowlist de vulnerabilidades/advisories conhecidos e auditados para o gate G_SUPPLY_CHAIN",
+  "advisories_aceitos": [
+    {
+      "id": "CVE-2026-12773",
+      "pacote": "litellm",
+      "versao": "1.83.0",
+      "motivo": "Vulnerabilidade no servidor proxy LiteLLM (não utilizado pelo ecossistema, que consome apenas o client SDK isolado). Retido em 1.83.0 para compatibilidade com checkov (importlib-metadata<8)."
+    },
+    {
+      "id": "PYSEC-2026-2602",
+      "pacote": "litellm",
+      "versao": "1.83.0",
+      "motivo": "Endpoint de proxy POST /prompts/test não é exposto nem executado pelo ecossistema."
+    },
+    {
+      "id": "PYSEC-2026-391",
+      "pacote": "litellm",
+      "versao": "1.83.0",
+      "motivo": "Endpoint de proxy não executado."
+    },
+    {
+      "id": "PYSEC-2026-2599",
+      "pacote": "litellm",
+      "versao": "1.83.0",
+      "motivo": "Endpoint de proxy não executado."
+    },
+    {
+      "id": "PYSEC-2026-2601",
+      "pacote": "litellm",
+      "versao": "1.83.0",
+      "motivo": "Endpoint de proxy guardrails não executado."
+    },
+    {
+      "id": "PYSEC-2026-388",
+      "pacote": "litellm",
+      "versao": "1.83.0",
+      "motivo": "Host-header parsing no proxy não executado."
+    },
+    {
+      "id": "PYSEC-2026-2600",
+      "pacote": "litellm",
+      "versao": "1.83.0",
+      "motivo": "Proxy endpoint /user não executado."
+    },
+    {
+      "id": "PYSEC-2026-2598",
+      "pacote": "litellm",
+      "versao": "1.83.0",
+      "motivo": "Proxy API key endpoint não executado."
+    },
+    {
+      "id": "PYSEC-2026-3477",
+      "pacote": "litellm",
+      "versao": "1.83.0",
+      "motivo": "Skills archive extraction do proxy não executado."
+    },
+    {
+      "id": "PYSEC-2026-3479",
+      "pacote": "litellm",
+      "versao": "1.83.0",
+      "motivo": "MCP Streamable HTTP proxy endpoint não executado."
+    },
+    {
+      "id": "PYSEC-2026-3476",
+      "pacote": "litellm",
+      "versao": "1.83.0",
+      "motivo": "Endpoint de proxy /health/test_connection não executado."
+    },
+    {
+      "id": "PYSEC-2026-3861",
+      "pacote": "litellm",
+      "versao": "1.83.0",
+      "motivo": "Template injection em proxy do litellm não executado."
+    }
+  ]
+}

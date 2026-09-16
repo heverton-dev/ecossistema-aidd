@@ -119,7 +119,7 @@ def generate_modular_server_code(suite_name: str, module_slugs: list, db_engine:
         )
         db_url_expr_str = "os.environ.get(\"DATABASE_URL\", DATABASE_URL_EXEMPLO)"
     else:
-        db_init_str = "DB_PATH = os.path.join(CURRENT_DIR, \"..\", \"suite.db\")"
+        db_init_str = "DB_PATH = os.environ.get(\"DB_PATH\", os.path.join(CURRENT_DIR, \"..\", \"suite.db\"))\nos.makedirs(os.path.dirname(os.path.abspath(DB_PATH)), exist_ok=True)"
         db_url_expr_str = "f\"sqlite:///{DB_PATH}\""
 
     server_code, _ = _render_suite_template({

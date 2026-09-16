@@ -1,0 +1,100 @@
+- generic [active] [ref=f14e1]:
+  - banner [ref=f14e2]:
+    - generic [ref=f14e4]:
+      - link "CTT Planos CTT App SISTEMA OPERACIONAL LOGÍSTICO" [ref=f14e5] [cursor=pointer]:
+        - /url: /
+        - generic [ref=f14e6]: CTT
+        - generic [ref=f14e7]:
+          - generic [ref=f14e8]: Planos CTT App
+          - generic [ref=f14e9]: SISTEMA OPERACIONAL LOGÍSTICO
+      - navigation [ref=f14e10]:
+        - link "Dashboard" [ref=f14e11] [cursor=pointer]:
+          - /url: /
+        - link "Frotas" [ref=f14e17] [cursor=pointer]:
+          - /url: /frotas
+        - link "Encomendas" [ref=f14e24] [cursor=pointer]:
+          - /url: /encomendas_ctt
+        - link "Roteirização" [ref=f14e30] [cursor=pointer]:
+          - /url: /roteirizacao
+        - link "Swagger Studio" [ref=f14e36] [cursor=pointer]:
+          - /url: /swagger
+        - link "Webhooks" [ref=f14e41] [cursor=pointer]:
+          - /url: /webhooks
+        - link "MCP Studio" [ref=f14e47] [cursor=pointer]:
+          - /url: /mcp
+        - link "Documentação" [ref=f14e52] [cursor=pointer]:
+          - /url: /docs
+      - generic [ref=f14e57]:
+        - button "Alternar tema claro/escuro" [ref=f14e58] [cursor=pointer]
+        - generic [ref=f14e61]: ONLINE
+  - main [ref=f14e64]:
+    - generic [ref=f14e65]:
+      - generic [ref=f14e66]:
+        - generic [ref=f14e67]:
+          - heading "Otimização de Roteirização (VROOM / ORS)" [level=1] [ref=f14e73]
+          - paragraph [ref=f14e74]: Cálculo de itinerários eficientes, agrupamento por código postal e minimização de pegada de carbono.
+        - generic [ref=f14e75]:
+          - button "Atualizar" [ref=f14e76] [cursor=pointer]
+          - button "Criar Rota" [ref=f14e82] [cursor=pointer]
+      - generic [ref=f14e85]:
+        - generic [ref=f14e86]:
+          - generic [ref=f14e87]: Rotas Geradas (3)
+          - generic [ref=f14e88]: "Motor: VROOM 1.14 + OpenRouteService"
+        - table [ref=f14e90]:
+          - rowgroup [ref=f14e91]:
+            - row [ref=f14e92]:
+              - columnheader "ID Rota" [ref=f14e93]
+              - columnheader "Veículo" [ref=f14e94]
+              - columnheader "Motorista" [ref=f14e95]
+              - columnheader "Distrito" [ref=f14e96]
+              - columnheader "Paragens" [ref=f14e97]
+              - columnheader "Distância" [ref=f14e98]
+              - columnheader "Tempo Est." [ref=f14e99]
+              - columnheader "Algoritmo" [ref=f14e100]
+              - columnheader "Estado" [ref=f14e101]
+              - columnheader "Ações" [ref=f14e102]
+          - rowgroup [ref=f14e105]:
+            - row [ref=f14e106]:
+              - cell "ROTA-COIMBRA-VALE-02" [ref=f14e107]
+              - cell "15-TX-44" [ref=f14e108]
+              - cell "Carlos Mendonça" [ref=f14e109]
+              - cell "Coimbra" [ref=f14e110]
+              - cell "28 pts" [ref=f14e111]
+              - cell "110.5 km" [ref=f14e112]
+              - cell "280 min" [ref=f14e113]
+              - cell "VROOM + ORS" [ref=f14e114]
+              - cell "Concluída" [ref=f14e115]
+              - cell [ref=f14e118]:
+                - generic [ref=f14e119]:
+                  - button "Editar Rota" [ref=f14e120] [cursor=pointer]
+                  - button "Remover Rota" [ref=f14e124] [cursor=pointer]
+            - row [ref=f14e127]:
+              - cell "ROTA-LIS-NORTE-01" [ref=f14e128]
+              - cell "42-AB-98" [ref=f14e129]
+              - cell "António Henriques" [ref=f14e130]
+              - cell "Lisboa" [ref=f14e131]
+              - cell "34 pts" [ref=f14e132]
+              - cell "78.4 km" [ref=f14e133]
+              - cell "240 min" [ref=f14e134]
+              - cell "VROOM + ORS" [ref=f14e135]
+              - cell "Em Execução" [ref=f14e136]
+              - cell [ref=f14e139]:
+                - generic [ref=f14e140]:
+                  - button "Editar Rota" [ref=f14e141] [cursor=pointer]
+                  - button "Remover Rota" [ref=f14e145] [cursor=pointer]
+            - row [ref=f14e148]:
+              - cell "ROTA-PORTO-CENTRO-04" [ref=f14e149]
+              - cell "77-ZZ-12" [ref=f14e150]
+              - cell "Beatriz Nogueira" [ref=f14e151]
+              - cell "Porto" [ref=f14e152]
+              - cell "42 pts" [ref=f14e153]
+              - cell "62.1 km" [ref=f14e154]
+              - cell "195 min" [ref=f14e155]
+              - cell "VROOM + ORS" [ref=f14e156]
+              - cell "Planeada" [ref=f14e157]
+              - cell [ref=f14e160]:
+                - generic [ref=f14e161]:
+                  - button "Editar Rota" [ref=f14e162] [cursor=pointer]
+                  - button "Remover Rota" [ref=f14e166] [cursor=pointer]
+  - contentinfo [ref=f14e103]: CTT Portugal Logística · AIDD Enterprise Framework · Clean Architecture Modular
+  - alert [ref=f14e104]
