@@ -31,6 +31,7 @@ _ECOSSISTEMA_SCRIPT = _TOOLBOX_ROOT / "ecossistema.py"
 ECOSSISTEMA_SCRIPT = _ECOSSISTEMA_SCRIPT if _ECOSSISTEMA_SCRIPT.is_file() else None
 
 IDE_RULE_ALIASES = {
+    "AGENTS.md": "governance/AGENTS.md",
     "CLAUDE.md": "governance/AGENTS.md",
     "GEMINI.md": "governance/AGENTS.md",
 }
