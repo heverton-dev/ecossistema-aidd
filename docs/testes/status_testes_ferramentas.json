@@ -1,10 +1,10 @@
 {
-  "medido_em": "2026-09-14T22:56:29.484628+00:00",
+  "medido_em": "2026-09-16T00:49:41.531110+00:00",
   "metodo": "python -m pytest -q --tb=no em cada tools/<ferramenta>, parseado do resumo real (nao digitado a mao)",
   "por_ferramenta": {
     "aidd-forge": {
       "status": "ok",
-      "passed": 284,
+      "passed": 294,
       "failed": 0,
       "skipped": 1,
       "errors": 0,
@@ -12,7 +12,7 @@
     },
     "aidd-generator": {
       "status": "ok",
-      "passed": 1001,
+      "passed": 1015,
       "failed": 0,
       "skipped": 5,
       "errors": 0,

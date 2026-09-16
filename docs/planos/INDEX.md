@@ -36,19 +36,26 @@
 | Evolucao Engenharia Software | `fazendo/PLAN-0023-evolucao-engenharia-software/` |
 | Conclusao Auditoria Maquiagem | `fazendo/PLAN-0025-conclusao-auditoria-maquiagem/` |
 
+## 🔒 Aprovados, aguardando execução
+
+| Iniciativa | Local |
+|---|---|
+| Teste E2E Ferramentas | `a-fazer/PLAN-0029-teste-e2e-ferramentas/` |
+
 ## ⏳ Rascunho (aguardando aprovação humana)
 
 | Iniciativa | Local |
 |---|---|
 | Testes Motor Orquestrador | `PLAN-0024-testes-motor-orquestrador/` |
 | Implementacao Aidd Factory | `fazendo/PLAN-0027-implementacao-aidd-factory/` |
+| Completude Factory V2 | `fazendo/PLAN-0028-completude-factory-v2/` |
 
 ## ⚠️ Status indeterminado (revisar manualmente)
 
 | Iniciativa | Local |
 |---|---|
-| Upgrade Stack Camadas | `PLAN-0028-upgrade-stack-camadas/` |
 | Direcionamento Estrategico Anti Nih | `feitos/PLAN-0010-direcionamento-estrategico-anti-nih/` |
+| Upgrade Stack Camadas | `feitos/PLAN-0028-upgrade-stack-camadas/` |
 
 ---
 

@@ -146,7 +146,7 @@ O **Ecossistema AIDD** é um monorepo agnóstico que integra 6 ferramentas compl
 
 <!-- AUTO:INICIATIVAS:START -->
 - ⏳ **Testes Motor Orquestrador** — `docs/planos/PLAN-0024-testes-motor-orquestrador/`
-- ⏳ **Upgrade Stack Camadas** — `docs/planos/PLAN-0028-upgrade-stack-camadas/`
+- 🔒 **Teste E2E Ferramentas** — `docs/planos/a-fazer/PLAN-0029-teste-e2e-ferramentas/`
 - 🔶 **Qualidade Testes Mutacao** — `docs/planos/fazendo/PLAN-0016-qualidade-testes-mutacao/`
 - 🔶 **Resiliencia Concorrencia Integridade** — `docs/planos/fazendo/PLAN-0017-resiliencia-concorrencia-integridade/`
 - 🔶 **Seguranca Zero Trust** — `docs/planos/fazendo/PLAN-0018-seguranca-zero-trust/`
@@ -156,5 +156,7 @@ O **Ecossistema AIDD** é um monorepo agnóstico que integra 6 ferramentas compl
 - 🔶 **Evolucao Engenharia Software** — `docs/planos/fazendo/PLAN-0023-evolucao-engenharia-software/`
 - 🔶 **Conclusao Auditoria Maquiagem** — `docs/planos/fazendo/PLAN-0025-conclusao-auditoria-maquiagem/`
 - ⏳ **Implementacao Aidd Factory** — `docs/planos/fazendo/PLAN-0027-implementacao-aidd-factory/`
+- ⏳ **Completude Factory V2** — `docs/planos/fazendo/PLAN-0028-completude-factory-v2/`
 - ⏳ **Direcionamento Estrategico Anti Nih** — `docs/planos/feitos/PLAN-0010-direcionamento-estrategico-anti-nih/`
+- ⏳ **Upgrade Stack Camadas** — `docs/planos/feitos/PLAN-0028-upgrade-stack-camadas/`
 <!-- AUTO:INICIATIVAS:END -->
