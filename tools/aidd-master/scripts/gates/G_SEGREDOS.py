@@ -28,7 +28,7 @@ def verificar():
     vazamentos = 0
     
     for root, dirs, files in os.walk('.'):
-        if any(ignored in root for ignored in ['.git', 'node_modules', '.venv', '__pycache__', '.pytest_cache']):
+        if any(ignored in root for ignored in ['.git', 'node_modules', '.next', 'dist', '.venv', '__pycache__', '.pytest_cache']):
             continue
         for f in files:
             if f in ('G_SEGREDOS.py', 'package-lock.json', 'pnpm-lock.yaml', 'yarn.lock', 'bun.lockb'):
