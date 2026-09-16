@@ -1,0 +1,154 @@
+- generic [active] [ref=f6e1]:
+  - banner [ref=f6e2]:
+    - generic [ref=f6e4]:
+      - link "CTT Planos CTT App SISTEMA OPERACIONAL LOGÍSTICO" [ref=f6e5] [cursor=pointer]:
+        - /url: /
+        - generic [ref=f6e6]: CTT
+        - generic [ref=f6e7]:
+          - generic [ref=f6e8]: Planos CTT App
+          - generic [ref=f6e9]: SISTEMA OPERACIONAL LOGÍSTICO
+      - navigation [ref=f6e10]:
+        - link "Dashboard" [ref=f6e11] [cursor=pointer]:
+          - /url: /
+        - link "Frotas" [ref=f6e17] [cursor=pointer]:
+          - /url: /frotas
+        - link "Encomendas" [ref=f6e24] [cursor=pointer]:
+          - /url: /encomendas_ctt
+        - link "Roteirização" [ref=f6e30] [cursor=pointer]:
+          - /url: /roteirizacao
+        - link "Swagger Studio" [ref=f6e36] [cursor=pointer]:
+          - /url: /swagger
+        - link "Webhooks" [ref=f6e41] [cursor=pointer]:
+          - /url: /webhooks
+        - link "MCP Studio" [ref=f6e47] [cursor=pointer]:
+          - /url: /mcp
+        - link "Documentação" [ref=f6e52] [cursor=pointer]:
+          - /url: /docs
+      - generic [ref=f6e57]:
+        - button "Alternar tema claro/escuro" [ref=f6e58] [cursor=pointer]
+        - generic [ref=f6e65]: CONECTANDO
+  - main [ref=f6e68]:
+    - generic [ref=f6e69]:
+      - generic [ref=f6e70]:
+        - heading "Documentação Técnica & Arquitetura do Sistema" [level=1] [ref=f6e75]
+        - paragraph [ref=f6e76]: Visão holística da integração entre o Monolito Modular Python e o Frontend Next.js.
+      - generic [ref=f6e77]:
+        - 'heading "Topologia de Camadas: Backend Python vs Frontend Next.js" [level=2] [ref=f6e83]'
+        - paragraph [ref=f6e84]: "O ecossistema divide as responsabilidades em dois subsistemas complementares e desacoplados:"
+        - generic [ref=f6e85]:
+          - generic [ref=f6e86]:
+            - heading "1. Backend Monolítico Modular (Python / src/)" [level=3] [ref=f6e87]
+            - list [ref=f6e88]:
+              - listitem [ref=f6e89]:
+                - text: •
+                - strong [ref=f6e90]: src/core/
+                - text: ": Shared Kernel, CQRS, Eventos, Criptografia PBKDF2/JWT, Transações SQLite WAL e WORM Audit Chain."
+              - listitem [ref=f6e91]:
+                - text: •
+                - strong [ref=f6e92]: src/modules/
+                - text: ": Fatias verticais de negócio isoladas ("
+                - code [ref=f6e93]: frotas
+                - text: ","
+                - code [ref=f6e94]: encomendas_ctt
+                - text: ","
+                - code [ref=f6e95]: roteirizacao
+                - text: ","
+                - code [ref=f6e96]: principal
+                - text: ).
+              - listitem [ref=f6e97]:
+                - text: •
+                - strong [ref=f6e98]: src/server.py
+                - text: ": Servidor HTTP assíncrono com roteamento determinístico, preflight CORS e endpoints REST."
+              - listitem [ref=f6e99]:
+                - text: •
+                - strong [ref=f6e100]: src/static/
+                - text: ": Estúdios HTML nativos offline-first (Swagger, Webhook, MCP)."
+          - generic [ref=f6e101]:
+            - heading "2. Frontend Moderno (Next.js 14 / frontend/)" [level=3] [ref=f6e102]
+            - list [ref=f6e103]:
+              - listitem [ref=f6e104]:
+                - text: •
+                - strong [ref=f6e105]: frontend/core/
+                - text: ": Configurações de conexão, timeout e cliente HTTP resiliente."
+              - listitem [ref=f6e106]:
+                - text: •
+                - strong [ref=f6e107]: frontend/controllers/
+                - text: ": Controladores de dados tipados com fallback offline-first."
+              - listitem [ref=f6e108]:
+                - text: •
+                - strong [ref=f6e109]: frontend/hooks/
+                - text: ": Hooks reativos React ("
+                - code [ref=f6e110]: useFrotas
+                - text: ","
+                - code [ref=f6e111]: useEncomendas
+                - text: ","
+                - code [ref=f6e112]: useRoteirizacao
+                - text: ).
+              - listitem [ref=f6e113]:
+                - text: •
+                - strong [ref=f6e114]: frontend/components/
+                - text: ": Navbar corporativa CTT com Light/Dark mode e biblioteca de ícones SVG."
+              - listitem [ref=f6e115]:
+                - text: •
+                - strong [ref=f6e116]: frontend/types/
+                - text: ": Tipagens TypeScript estritas de negócio logístico."
+      - generic [ref=f6e117]:
+        - heading "Mapeamento de Endpoints e Consumo" [level=2] [ref=f6e122]
+        - table [ref=f6e124]:
+          - rowgroup [ref=f6e125]:
+            - row [ref=f6e126]:
+              - columnheader "Método" [ref=f6e127]
+              - columnheader "Rota Python" [ref=f6e128]
+              - columnheader "Consumido Por (Next.js)" [ref=f6e129]
+              - columnheader "Finalidade" [ref=f6e130]
+          - rowgroup [ref=f6e131]:
+            - row [ref=f6e132]:
+              - cell "GET" [ref=f6e133]
+              - cell "/health" [ref=f6e134]
+              - cell "Navbar.tsx" [ref=f6e135]
+              - cell "Healthcheck em tempo real" [ref=f6e136]
+            - row [ref=f6e137]:
+              - cell "GET/POST" [ref=f6e138]
+              - cell "/api/frotas" [ref=f6e139]
+              - cell "app/frotas/page.tsx" [ref=f6e140]
+              - cell "Gestão e alocação de veículos CTT" [ref=f6e141]
+            - row [ref=f6e142]:
+              - cell "GET/POST" [ref=f6e143]
+              - cell "/api/encomendas_ctt" [ref=f6e144]
+              - cell "app/encomendas_ctt/page.tsx" [ref=f6e145]
+              - cell "Rastreio e cadastro de encomendas" [ref=f6e146]
+            - row [ref=f6e147]:
+              - cell "GET/POST" [ref=f6e148]
+              - cell "/api/roteirizacao" [ref=f6e149]
+              - cell "app/roteirizacao/page.tsx" [ref=f6e150]
+              - cell "Otimização de rotas VROOM/ORS" [ref=f6e151]
+            - row [ref=f6e152]:
+              - cell "GET" [ref=f6e153]
+              - cell "/openapi.json" [ref=f6e154]
+              - cell "app/swagger/page.tsx" [ref=f6e155]
+              - cell "Contratos de dados OpenAPI 3.1" [ref=f6e156]
+            - row [ref=f6e157]:
+              - cell "POST" [ref=f6e158]
+              - cell "/mcp" [ref=f6e159]
+              - cell "app/mcp/page.tsx" [ref=f6e160]
+              - cell "Execução de ferramentas IA via JSON-RPC" [ref=f6e161]
+      - generic [ref=f6e162]:
+        - heading "Conformidade com os 7 Quality Gates AIDD" [level=2] [ref=f6e167]
+        - paragraph [ref=f6e168]:
+          - text: Ambas as implementações (Python e Next.js) são regidas pela Lei da Qualidade Binária. Todos os gates corporativos (
+          - code [ref=f6e169]: G_ESTRUTURA
+          - text: ","
+          - code [ref=f6e170]: G_QUALIDADE
+          - text: ","
+          - code [ref=f6e171]: G_TESTES
+          - text: ","
+          - code [ref=f6e172]: G_CONTRACTS
+          - text: ","
+          - code [ref=f6e173]: G_SEGREDOS
+          - text: ","
+          - code [ref=f6e174]: G_HARNESS_COMPAT
+          - text: ","
+          - code [ref=f6e175]: G_SEGURANCA
+          - text: ) estão com 100% de aprovação comprovada.
+  - contentinfo [ref=f6e176]: CTT Portugal Logística · AIDD Enterprise Framework · Clean Architecture Modular
+  - alert [ref=f6e177]

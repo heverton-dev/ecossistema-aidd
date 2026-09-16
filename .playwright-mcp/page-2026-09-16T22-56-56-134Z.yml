@@ -1,0 +1,59 @@
+- generic [active] [ref=f5e1]:
+  - banner [ref=f5e2]:
+    - generic [ref=f5e4]:
+      - link "CTT Planos CTT App SISTEMA OPERACIONAL LOGÍSTICO" [ref=f5e5] [cursor=pointer]:
+        - /url: /
+        - generic [ref=f5e6]: CTT
+        - generic [ref=f5e7]:
+          - generic [ref=f5e8]: Planos CTT App
+          - generic [ref=f5e9]: SISTEMA OPERACIONAL LOGÍSTICO
+      - navigation [ref=f5e10]:
+        - link "Dashboard" [ref=f5e11] [cursor=pointer]:
+          - /url: /
+        - link "Frotas" [ref=f5e17] [cursor=pointer]:
+          - /url: /frotas
+        - link "Encomendas" [ref=f5e24] [cursor=pointer]:
+          - /url: /encomendas_ctt
+        - link "Roteirização" [ref=f5e30] [cursor=pointer]:
+          - /url: /roteirizacao
+        - link "Swagger Studio" [ref=f5e36] [cursor=pointer]:
+          - /url: /swagger
+        - link "Webhooks" [ref=f5e41] [cursor=pointer]:
+          - /url: /webhooks
+        - link "MCP Studio" [ref=f5e47] [cursor=pointer]:
+          - /url: /mcp
+        - link "Documentação" [ref=f5e52] [cursor=pointer]:
+          - /url: /docs
+      - generic [ref=f5e57]:
+        - button "Alternar tema claro/escuro" [ref=f5e58] [cursor=pointer]
+        - generic [ref=f5e65]: CONECTANDO
+  - main [ref=f5e68]:
+    - generic [ref=f5e69]:
+      - generic [ref=f5e70]:
+        - generic [ref=f5e71]:
+          - heading "Model Context Protocol (MCP) Studio" [level=1] [ref=f5e76]
+          - paragraph [ref=f5e77]: Interface para integração direta de agentes de inteligência artificial com os dados operacionais da CTT Portugal.
+        - generic [ref=f5e78]: MCP SERVER ONLINE (JSON-RPC 2.0)
+      - generic [ref=f5e82]:
+        - generic [ref=f5e83]:
+          - generic [ref=f5e84]: Ferramentas Expostas (3)
+          - generic [ref=f5e86]:
+            - button "consultar_encomenda Obtém histórico factual e geolocalização de encomenda CTT por código de rastreio." [ref=f5e87] [cursor=pointer]:
+              - generic [ref=f5e88]: consultar_encomenda
+              - generic [ref=f5e89]: Obtém histórico factual e geolocalização de encomenda CTT por código de rastreio.
+            - button "alocar_veiculo_rota Atribui uma carrinha disponível a um itinerário com base na capacidade e autonomia." [ref=f5e90] [cursor=pointer]:
+              - generic [ref=f5e91]: alocar_veiculo_rota
+              - generic [ref=f5e92]: Atribui uma carrinha disponível a um itinerário com base na capacidade e autonomia.
+            - button "otimizar_itinerario_vroom Executa otimização multi-ponto de entrega considerando janelas horárias e restrições de tráfego." [ref=f5e93] [cursor=pointer]:
+              - generic [ref=f5e94]: otimizar_itinerario_vroom
+              - generic [ref=f5e95]: Executa otimização multi-ponto de entrega considerando janelas horárias e restrições de tráfego.
+        - generic [ref=f5e96]:
+          - generic [ref=f5e97]:
+            - heading "consultar_encomenda" [level=2] [ref=f5e98]
+            - paragraph [ref=f5e99]: Obtém histórico factual e geolocalização de encomenda CTT por código de rastreio.
+          - generic [ref=f5e100]:
+            - generic [ref=f5e101]: SCHEMA DE ENTRADA (JSON SCHEMA)
+            - generic [ref=f5e102]: "{ \"type\": \"object\", \"properties\": { \"codigo_rastreio\": { \"type\": \"string\" } }, \"required\": [ \"codigo_rastreio\" ] }"
+          - button "Testar Invocação MCP" [ref=f5e104] [cursor=pointer]
+  - contentinfo [ref=f5e109]: CTT Portugal Logística · AIDD Enterprise Framework · Clean Architecture Modular
+  - alert [ref=f5e110]

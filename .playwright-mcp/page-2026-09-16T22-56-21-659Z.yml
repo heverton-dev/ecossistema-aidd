@@ -1,0 +1,93 @@
+- generic [active] [ref=e1]:
+  - banner [ref=e2]:
+    - generic [ref=e4]:
+      - link "CTT Planos CTT App SISTEMA OPERACIONAL LOGÍSTICO" [ref=e5] [cursor=pointer]:
+        - /url: /
+        - generic [ref=e6]: CTT
+        - generic [ref=e7]:
+          - generic [ref=e8]: Planos CTT App
+          - generic [ref=e9]: SISTEMA OPERACIONAL LOGÍSTICO
+      - navigation [ref=e10]:
+        - link "Dashboard" [ref=e11] [cursor=pointer]:
+          - /url: /
+        - link "Frotas" [ref=e17] [cursor=pointer]:
+          - /url: /frotas
+        - link "Encomendas" [ref=e24] [cursor=pointer]:
+          - /url: /encomendas_ctt
+        - link "Roteirização" [ref=e30] [cursor=pointer]:
+          - /url: /roteirizacao
+        - link "Swagger Studio" [ref=e36] [cursor=pointer]:
+          - /url: /swagger
+        - link "Webhooks" [ref=e41] [cursor=pointer]:
+          - /url: /webhooks
+        - link "MCP Studio" [ref=e47] [cursor=pointer]:
+          - /url: /mcp
+        - link "Documentação" [ref=e52] [cursor=pointer]:
+          - /url: /docs
+      - generic [ref=e57]:
+        - button "Alternar tema claro/escuro" [ref=e58] [cursor=pointer]
+        - generic [ref=e65]: CONECTANDO
+  - main [ref=e68]:
+    - generic [ref=e69]:
+      - generic [ref=e70]:
+        - heading "Painel de Controlo Logístico CTT" [level=1] [ref=e71]
+        - paragraph [ref=e72]: Supervisão em tempo real das operações de transporte, distribuição postal e otimização de itinerários em Portugal.
+      - generic [ref=e73]:
+        - generic [ref=e74]:
+          - generic [ref=e75]: Frota Operacional
+          - generic [ref=e82]:
+            - text: "0"
+            - generic [ref=e83]: / 0 veiculos
+          - generic [ref=e84]: 94% disponibilidade técnica
+        - generic [ref=e85]:
+          - generic [ref=e86]: Encomendas CTT
+          - generic [ref=e92]: "0"
+          - generic [ref=e93]: 0 em trânsito postal
+        - generic [ref=e94]:
+          - generic [ref=e95]: Rotas Otimizadas
+          - generic [ref=e101]: "0"
+          - generic [ref=e102]: Motor VROOM + ORS ativo
+        - generic [ref=e103]:
+          - generic [ref=e104]: Segurança & Gates
+          - generic [ref=e109]: 7 / 7
+          - generic [ref=e110]: 100% Homologação PASS
+      - generic [ref=e111]:
+        - generic [ref=e112]:
+          - generic [ref=e113]:
+            - heading "Gestão de Frota CTT" [level=3] [ref=e120]
+            - paragraph [ref=e121]: Registo de carrinhas elétricas, furgões médios e camiões de carga pesada, monitorização de capacidade e depósitos de origem.
+          - link "Aceder ao módulo de frotas" [ref=e122] [cursor=pointer]:
+            - /url: /frotas
+        - generic [ref=e126]:
+          - generic [ref=e127]:
+            - heading "Encomendas Expresso CTT" [level=3] [ref=e133]
+            - paragraph [ref=e134]: Rastreamento rigoroso de encomendas 24h e 48h, validação de códigos postais portugueses e gestão de incidências.
+          - link "Aceder às encomendas" [ref=e135] [cursor=pointer]:
+            - /url: /encomendas_ctt
+        - generic [ref=e139]:
+          - generic [ref=e140]:
+            - heading "Roteirização Inteligente" [level=3] [ref=e146]
+            - paragraph [ref=e147]: Algoritmos de Vehicle Routing Problem (VROOM) integrados com OpenRouteService para minimização de tempos de trânsito.
+          - link "Aceder à roteirização" [ref=e148] [cursor=pointer]:
+            - /url: /roteirizacao
+      - generic [ref=e152]:
+        - heading "Portais Técnicos e Estúdios de Integração" [level=2] [ref=e153]
+        - generic [ref=e154]:
+          - link "Swagger Studio Contratos de dados OpenAPI 3.1 e especificação de rotas REST." [ref=e155] [cursor=pointer]:
+            - /url: /swagger
+            - generic [ref=e156]: Swagger Studio
+            - paragraph [ref=e161]: Contratos de dados OpenAPI 3.1 e especificação de rotas REST.
+          - link "Webhook Studio Catálogo de eventos assíncronos e testes de assinatura HMAC-SHA256." [ref=e162] [cursor=pointer]:
+            - /url: /webhooks
+            - generic [ref=e163]: Webhook Studio
+            - paragraph [ref=e169]: Catálogo de eventos assíncronos e testes de assinatura HMAC-SHA256.
+          - link "MCP Studio Exposição de ferramentas Model Context Protocol para agentes IA." [ref=e170] [cursor=pointer]:
+            - /url: /mcp
+            - generic [ref=e171]: MCP Studio
+            - paragraph [ref=e176]: Exposição de ferramentas Model Context Protocol para agentes IA.
+          - link "Documentação Topologia da arquitetura monolítica modular e mapeamento de endpoints." [ref=e177] [cursor=pointer]:
+            - /url: /docs
+            - generic [ref=e178]: Documentação
+            - paragraph [ref=e183]: Topologia da arquitetura monolítica modular e mapeamento de endpoints.
+  - contentinfo [ref=e184]: CTT Portugal Logística · AIDD Enterprise Framework · Clean Architecture Modular
+  - alert [ref=e185]
