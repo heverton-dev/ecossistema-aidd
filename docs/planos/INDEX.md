@@ -6,6 +6,7 @@
 
 | Iniciativa | Local |
 |---|---|
+| Implementacao Arquitetural Vsa | `feitos/PLAN-0033-implementacao-arquitetural-vsa/` |
 | Evolucao Notas Auditoria | `feitos/PLAN-0001-evolucao-notas-auditoria/` |
 | Correcao Riscos Ecossistema | `feitos/PLAN-0002-correcao-riscos-ecossistema.md` |
 | Refinamento Notas Auditoria | `feitos/PLAN-0003-refinamento-notas-auditoria/` |
@@ -49,7 +50,6 @@
 | Iniciativa | Local |
 |---|---|
 | Testes Motor Orquestrador | `PLAN-0024-testes-motor-orquestrador/` |
-| Implementacao Arquitetural Vsa | `PLAN-0033-implementacao-arquitetural-vsa/` |
 | Implementacao Aidd Factory | `fazendo/PLAN-0027-implementacao-aidd-factory/` |
 | Completude Factory V2 | `fazendo/PLAN-0028-completude-factory-v2/` |
 

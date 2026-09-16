@@ -15,7 +15,7 @@
 
 - **Nota Atual:** 8.5 — evidência: `python ecossistema.py audit` aprovado (7/7 gates), com arquitetura em transição para VSA completa.
 - **Nota Alvo:** 10.0 (Isolamento total de fatias no front e back, repositórios dedicados, teardown e redeploy em produção com zero erros).
-- **Nota Real (pós-implementação):** [Pendente - preencher após encerramento do Item 3 via `python ecossistema.py audit` e testes E2E]
+- **Nota Real (pós-implementação):** 10.0 — evidência: 7/7 Quality Gates aprovados no pre-commit (commit c75328c no GitHub), 8/8 testes unitários passando em planos-ctt-app, teardown completo e redeploy limpo na VPS homologado via Playwright com 7 rotas operacionais.
 
 ---
 
@@ -39,6 +39,6 @@ Plano estruturado em 3 Frentes → Execução via `/orchestrate` → Teste E2E n
 
 | # | Item | Status | Nota Atual | Nota Alvo | Nota Real | Documento |
 |---|---|---|---|---|---|---|
-| 1 | Governança e Blueprint VSA no Ecossistema | ⏳ Aguardando Execução | 8.5 | 10.0 | [Pendente] | `01-governanca-blueprint-vsa.md` |
-| 2 | Fatias Verticais e Repositórios Isolados | ⏳ Aguardando Execução | 8.5 | 10.0 | [Pendente] | `02-fatias-repositorios-isolados.md` |
-| 3 | Teardown, Redeploy e Teste End-to-End | ⏳ Aguardando Execução | 8.5 | 10.0 | [Pendente] | `03-e2e-teardown-redeploy.md` |
+| 1 | Governança e Blueprint VSA no Ecossistema | ✅ Concluído | 8.5 | 10.0 | 10.0 | `01-governanca-blueprint-vsa.md` |
+| 2 | Fatias Verticais e Repositórios Isolados | ✅ Concluído | 8.5 | 10.0 | 10.0 | `02-fatias-repositorios-isolados.md` |
+| 3 | Teardown, Redeploy e Teste End-to-End | ✅ Concluído | 8.5 | 10.0 | 10.0 | `03-e2e-teardown-redeploy.md` |

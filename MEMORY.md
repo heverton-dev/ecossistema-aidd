@@ -163,7 +163,6 @@ O **Ecossistema AIDD** é um monorepo agnóstico que integra 7 ferramentas compl
 
 <!-- AUTO:INICIATIVAS:START -->
 - ⏳ **Testes Motor Orquestrador** — `docs/planos/PLAN-0024-testes-motor-orquestrador/`
-- ⏳ **Implementacao Arquitetural Vsa** — `docs/planos/PLAN-0033-implementacao-arquitetural-vsa/`
 - 🔒 **Teste E2E Ferramentas** — `docs/planos/a-fazer/PLAN-0029-teste-e2e-ferramentas/`
 - 🔶 **Qualidade Testes Mutacao** — `docs/planos/fazendo/PLAN-0016-qualidade-testes-mutacao/`
 - 🔶 **Resiliencia Concorrencia Integridade** — `docs/planos/fazendo/PLAN-0017-resiliencia-concorrencia-integridade/`

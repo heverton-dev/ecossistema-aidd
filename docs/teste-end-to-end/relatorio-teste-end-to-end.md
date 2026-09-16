@@ -425,5 +425,34 @@
   3. **Comprovação Visual E2E (Playwright):** Navegação real ao vivo em produção, verificação de tempos de resposta e validação com 7/7 Quality Gates 100% aprovados.
 - **Status:** **100% RESOLVIDO E HOMOLOGADO**.
 
+---
 
+### Consolidação Arquitetural: Vertical Slice Architecture (VSA), Repositórios Isolados e Teardown/Redeploy Limpo
 
+#### Inconsistência 19: Acoplamento Potencial de Camadas de Dados e Ausência de Fachadas Canônicas de Repositório por Fatia
+- **Nome:** Falta de formalização canônica da Vertical Slice Architecture (VSA) e isolamento estrito de repositórios por módulo no ecossistema e na aplicação.
+- **Motivo:** Embora a aplicação possuísse isolamento em `infrastructure/`, a governança em `tools/aidd-master/` não impunha a exigência estrita de cada fatia vertical expor seu próprio `repository.py`, garantindo ausência de queries SQL cruzadas ou chaves estrangeiras rígidas entre módulos.
+- **Correções Executadas (Plano PLAN-0033 / /orchestrate):**
+  1. **Atualização da Governança Canônica (`tools/aidd-master/AGENTS.md`):**
+     - Formalização da regra de Fatias Verticais: cada módulo de negócio DEVE possuir obrigatoriamente `router.py`, `service.py`, `repository.py`, `dtos.py` e `events.py`.
+     - Proibição estrita de queries SQL cruzadas ou hard foreign keys entre bounded contexts.
+  2. **Isolamento de Fachadas de Dados na Aplicação (`proj_ctt/planos-ctt-app`):**
+     - Implementação e exportação de fachadas de repositório dedicadas:
+       - [`src/modules/frotas/repository.py`](file:///C:/Users/trcnologia/Desktop/proj_ctt/planos-ctt-app/src/modules/frotas/repository.py): Encapsula queries e outbox transacional de `mod_frotas`.
+       - [`src/modules/encomendas_ctt/repository.py`](file:///C:/Users/trcnologia/Desktop/proj_ctt/planos-ctt-app/src/modules/encomendas_ctt/repository.py): Encapsula queries e outbox de `mod_encomendas_ctt`.
+       - [`src/modules/roteirizacao/repository.py`](file:///C:/Users/trcnologia/Desktop/proj_ctt/planos-ctt-app/src/modules/roteirizacao/repository.py): Encapsula queries de rotas e histórico do VROOM.
+     - 100% dos testes unitários da aplicação aprovados (`pytest tests/`).
+  3. **Teardown Completo e Redeploy Limpo na VPS (`167.86.69.79`):**
+     - Remoção total da stack anterior (`docker stack rm ctt`).
+     - Sincronização limpa das fatias verticais VSA.
+     - Rebuild completo das imagens Docker (`planos-ctt-app:latest` e `planos-ctt-web:latest`).
+     - Subida limpa no Docker Swarm com Traefik Proxy.
+  4. **Validação Visual E2E ao Vivo via Playwright:**
+     - `https://ctt.vpsconexao.org/` — Home/Dashboard CTT (HTTP 200, Next.js 14).
+     - `https://ctt.vpsconexao.org/frotas` — Gestão de Frota CTT (HTTP 200, 6 veículos reais, Full CRUD).
+     - `https://ctt.vpsconexao.org/encomendas_ctt` — Encomendas CTT (HTTP 200, encomendas reais de Portugal).
+     - `https://ctt.vpsconexao.org/roteirizacao` — Roteirização CTT (HTTP 200, rotas integradas ao VROOM).
+     - `https://ctt.vpsconexao.org/webhooks` — Webhook Studio (HTTP 200, simulador HMAC-SHA256).
+     - `https://ctt.vpsconexao.org/mcp` — MCP Studio (HTTP 200, JSON-RPC 2.0).
+     - `https://ctt.vpsconexao.org/docs` — Documentação Técnica (HTTP 200, arquitetura Next.js).
+- **Status:** **100% HOMOLOGADO E AUDITADO EM PRODUÇÃO**.
