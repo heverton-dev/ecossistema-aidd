@@ -1,6 +1,6 @@
 ---
 name: caveman-ultra
-description: Economia severa de tokens com raciocinio interno telegrafico (English Caveman) e saida em PT-BR de alta qualidade. Use em toda tarefa do pipeline AIDD.
+description: Economia severa de tokens com raciocinio telegrafico em English Caveman e resposta em PT-BR sem stubs.
 ---
 
 # Caveman Ultra — Economia Severa de Tokens

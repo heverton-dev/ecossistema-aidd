@@ -27,6 +27,7 @@
 6. **Agnostic Supremacy:** Zero vendor lock-in across OS, harness, and LLM providers.
 7. **Developer in Control:** Strictly sequential, interactive executions. Zero invisible headless background subagents.
 8. **Label Honesty:** Never claim certification or test coverage beyond real automated test results.
+9. **Tool Testing Discipline:** Follow the 5-step cycle (`docs/protocolos/PROTOCOLO-TESTES-FERRAMENTAS.md`): 1. Auto-fix bugs until 100% conformant (zero inconsistencies), 2. Git commit & push, 3. Clean target project, 4. Execute cleanly, 5. Update `docs/teste-end-to-end/` report.
 
 ---
 

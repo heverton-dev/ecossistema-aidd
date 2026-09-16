@@ -32,6 +32,7 @@ ECOSSISTEMA_SCRIPT = _ECOSSISTEMA_SCRIPT if _ECOSSISTEMA_SCRIPT.is_file() else N
 
 IDE_RULE_ALIASES = {
     "CLAUDE.md": "governance/AGENTS.md",
+    "GEMINI.md": "governance/AGENTS.md",
 }
 
 
