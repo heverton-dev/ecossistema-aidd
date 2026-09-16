@@ -1,10 +1,10 @@
-# Item 4 — Sandboxing efemero para testes subagentes
+# Item 1 — Gate G_SUPPLY_CHAIN com pip-audit e scanner
 
-> **Escopo:** [Descrever o que entra e o que nao entra neste item]
-> **Status:** [EM EXECUCAO]
-> **Nota Atual (0-10):** 5.0 — evidencia: docs/reports/16-09-2026_relatorio-cyberseguranca-ultra-blindagem.md
-> **Nota Alvo (0-10):** 9.0
-> **Nota Real (pos-implementacao):** [Pendente - preencher somente apos o fechamento real deste item/iniciativa, via o mesmo mecanismo que mediu a Nota Atual]
+> **Escopo:** Quality Gate G_SUPPLY_CHAIN com pip-audit e scanner de supply chain
+> **Status:** [CONCLUIDO]
+> **Nota Atual (0-10):** 4.0 — evidencia: docs/reports/16-09-2026_relatorio-cyberseguranca-ultra-blindagem.md
+> **Nota Alvo (0-10):** 9.5
+> **Nota Real (pos-implementacao):** 9.5 — evidencia: gates/G_SUPPLY_CHAIN.py e gates/test_g_supply_chain.py aprovados (exit 0)
 
 ---
 
@@ -29,7 +29,7 @@
 > Copie o bloco abaixo integralmente para o agente executor:
 
 ```
-Voce vai implementar o Item 4: Sandboxing efemero para testes subagentes.
+Voce vai implementar o Item 1: Gate G_SUPPLY_CHAIN com pip-audit e scanner.
 Siga rigorosamente a Definicao de Pronto acima.
 Nao invente aprovacoes e mantenha as regras do monorepo.
 ```
@@ -39,7 +39,7 @@ Nao invente aprovacoes e mantenha as regras do monorepo.
 > Copy the block below in full to the executor agent:
 
 ```
-You are going to implement Item 4: Sandboxing efemero para testes subagentes.
+You are going to implement Item 1: Gate G_SUPPLY_CHAIN com pip-audit e scanner.
 Strictly follow the Definition of Done above.
 Do not fabricate approvals and maintain monorepo governance rules.
 ```

@@ -1,0 +1,98 @@
+- generic [active] [ref=e1]:
+  - banner [ref=e2]:
+    - generic [ref=e4]:
+      - link "CTT Planos CTT App SISTEMA OPERACIONAL LOGÍSTICO" [ref=e5] [cursor=pointer]:
+        - /url: /
+        - generic [ref=e6]: CTT
+        - generic [ref=e7]:
+          - generic [ref=e8]: Planos CTT App
+          - generic [ref=e9]: SISTEMA OPERACIONAL LOGÍSTICO
+      - navigation [ref=e10]:
+        - link "Dashboard" [ref=e11] [cursor=pointer]:
+          - /url: /
+        - link "Frotas" [ref=e17] [cursor=pointer]:
+          - /url: /frotas
+        - link "Encomendas" [ref=e24] [cursor=pointer]:
+          - /url: /encomendas_ctt
+        - link "Roteirização" [ref=e30] [cursor=pointer]:
+          - /url: /roteirizacao
+        - link "Swagger Studio" [ref=e36] [cursor=pointer]:
+          - /url: /swagger
+        - link "Webhooks" [ref=e41] [cursor=pointer]:
+          - /url: /webhooks
+        - link "MCP Studio" [ref=e47] [cursor=pointer]:
+          - /url: /mcp
+        - link "Documentação" [ref=e52] [cursor=pointer]:
+          - /url: /docs
+      - generic [ref=e57]:
+        - button "Alternar tema claro/escuro" [ref=e58] [cursor=pointer]
+        - generic [ref=e61]: CONECTANDO
+  - main [ref=e64]:
+    - generic [ref=e65]:
+      - generic [ref=e66]:
+        - generic [ref=e67]:
+          - heading "Webhook Studio · Event-Driven Architecture" [level=1] [ref=e73]
+          - paragraph [ref=e74]: Catálogo de eventos assíncronos, disparo transacional e verificação de assinatura criptográfica.
+        - generic [ref=e75]:
+          - generic [ref=e76]: HMAC-SHA256 ATIVO
+          - generic [ref=e79]: OUTBOX SINC
+      - generic [ref=e80]:
+        - generic [ref=e81]:
+          - heading "Simulador de Disparo de Evento" [level=2] [ref=e82]
+          - generic [ref=e83]:
+            - generic [ref=e84]: Tipo de Evento CTT
+            - combobox [ref=e85]:
+              - option "encomenda.registada" [selected]
+              - option "encomenda.em_distribuicao"
+              - option "encomenda.entregue"
+              - option "frota.telemetria_alerta"
+              - option "rota.otimizada"
+          - generic [ref=e86]:
+            - generic [ref=e87]: Payload JSON
+            - textbox [ref=e88]: "{ \"codigo_rastreio\": \"DA123456789PT\", \"status\": \"registada\", \"peso_kg\": 2.5 }"
+          - button "Disparar Evento de Teste" [ref=e90] [cursor=pointer]
+        - generic [ref=e96]:
+          - heading "Blindagem Criptográfica de Webhooks" [level=2] [ref=e97]
+          - generic [ref=e98]:
+            - generic [ref=e99]:
+              - generic [ref=e100]: "Assinatura HMAC-SHA256:"
+              - text: Cada requisição de saída inclui o cabeçalho
+              - code [ref=e101]: X-Hub-Signature-256
+              - text: contendo o hash calculado a partir do segredo compartilhado.
+            - generic [ref=e102]:
+              - generic [ref=e103]: "Padrão Outbox Transacional:"
+              - text: Eventos são persistidos atomicamente no SQLite com garantia
+              - emphasis [ref=e104]: at-least-once
+              - text: antes da entrega HTTP assíncrona.
+            - generic [ref=e105]:
+              - generic [ref=e106]: "Políticas de Retentativa:"
+              - text: Backoff exponencial com jitter (3 tentativas automáticas) antes de encaminhar para Dead Letter Queue.
+      - generic [ref=e107]:
+        - generic [ref=e108]: Histórico Recente de Entregas
+        - generic [ref=e109]:
+          - generic [ref=e110]:
+            - generic [ref=e111]:
+              - generic [ref=e112]: evt_ctt_001
+              - generic [ref=e113]: encomenda.registada
+              - generic [ref=e114]: 2026-09-16T21:41:17.057Z
+            - generic [ref=e115]:
+              - generic [ref=e116]: "{\"codigo_rastreio\":\"DA123456789PT\",\"destinatario\":\"Inês Silveira\",\"peso_kg\":2.4}"
+              - generic [ref=e117]: entregue
+          - generic [ref=e118]:
+            - generic [ref=e119]:
+              - generic [ref=e120]: evt_ctt_002
+              - generic [ref=e121]: encomenda.em_distribuicao
+              - generic [ref=e122]: 2026-09-16T20:41:17.058Z
+            - generic [ref=e123]:
+              - generic [ref=e124]: "{\"codigo_rastreio\":\"DA123456789PT\",\"veiculo\":\"42-AB-98\",\"motorista\":\"António Henriques\"}"
+              - generic [ref=e125]: entregue
+          - generic [ref=e126]:
+            - generic [ref=e127]:
+              - generic [ref=e128]: evt_ctt_003
+              - generic [ref=e129]: frota.telemetria_alerta
+              - generic [ref=e130]: 2026-09-16T19:41:17.058Z
+            - generic [ref=e131]:
+              - generic [ref=e132]: "{\"matricula\":\"88-KP-31\",\"codigo_erro\":\"PRESSAO_PNEU_BAIXA\",\"severidade\":\"media\"}"
+              - generic [ref=e133]: pendente
+  - contentinfo [ref=e134]: CTT Portugal Logística · AIDD Enterprise Framework · Clean Architecture Modular
+  - alert [ref=e135]

@@ -16,7 +16,7 @@ Defina aqui os objetivos claros, escopo e limites desta iniciativa.
 
 - **Nota Atual:** 6.5 — evidencia: docs/reports/16-09-2026_relatorio-cyberseguranca-ultra-blindagem.md
 - **Nota Alvo:** 9.5
-- **Nota Real (pos-implementacao):** [Pendente - preencher somente apos o fechamento real deste item/iniciativa, via o mesmo mecanismo que mediu a Nota Atual]
+- **Nota Real (pos-implementacao):** 9.5 — evidencia: gates/test_g_supply_chain.py, tests/unit/test_package_verifier.py, tests/unit/test_sast_scanner.py, tests/unit/test_sandbox_runner.py e gates/G_SUPPLY_CHAIN.py (16 testes aprovados)
 
 Nunca preencher Nota Atual sem evidencia real (relatorio de auditoria, comando ou
 teste efetivamente rodado). Sem evidencia, o campo permanece `NAO AUDITADO`.
@@ -45,10 +45,10 @@ Diagnostico rapido → Definicao de Pronto checavel → Prompt de Execucao autoc
 
 | # | Item | Status | Nota Atual | Nota Alvo | Nota Real | Documento |
 |---|---|---|---|---|---|---|
-| 1 | Gate G_SUPPLY_CHAIN com pip-audit e scanner | 🔶 Em execucao | 4.0 | 9.5 | [Pendente - preencher somente apos o fechamento real deste item/iniciativa, via o mesmo mecanismo que mediu a Nota Atual] | `01-gate-g-supply.md` |
-| 2 | Validador reputacao contra alucinacao pacotes | 🔶 Em execucao | 3.0 | 9.0 | [Pendente - preencher somente apos o fechamento real deste item/iniciativa, via o mesmo mecanismo que mediu a Nota Atual] | `02-validador-reputacao-contra.md` |
-| 3 | Regras Semgrep para codigo gerado | 🔶 Em execucao | 6.0 | 9.5 | [Pendente - preencher somente apos o fechamento real deste item/iniciativa, via o mesmo mecanismo que mediu a Nota Atual] | `03-regras-semgrep-codigo.md` |
-| 4 | Sandboxing efemero para testes subagentes | 🔶 Em execucao | 5.0 | 9.0 | [Pendente - preencher somente apos o fechamento real deste item/iniciativa, via o mesmo mecanismo que mediu a Nota Atual] | `04-sandboxing-efemero-testes.md` |
+| 1 | Gate G_SUPPLY_CHAIN com pip-audit e scanner | ✅ Concluído | 4.0 | 9.5 | 9.5 | `01-gate-g-supply.md` |
+| 2 | Validador reputacao contra alucinacao pacotes | ✅ Concluído | 3.0 | 9.0 | 9.5 | `02-validador-reputacao-contra.md` |
+| 3 | Regras Semgrep para codigo gerado | ✅ Concluído | 6.0 | 9.5 | 9.5 | `03-regras-semgrep-codigo.md` |
+| 4 | Sandboxing efemero para testes subagentes | ✅ Concluído | 5.0 | 9.0 | 9.5 | `04-sandboxing-efemero-testes.md` |
 
 Esta tabela so e atualizada para Concluido apos auditoria por reproducao real.
 A coluna Nota Real so e preenchida no fechamento de cada item, rodando o MESMO

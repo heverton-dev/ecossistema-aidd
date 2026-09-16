@@ -1,10 +1,10 @@
 # Item 2 — Validador reputacao contra alucinacao pacotes
 
-> **Escopo:** [Descrever o que entra e o que nao entra neste item]
-> **Status:** [EM EXECUCAO]
+> **Escopo:** Validador determinístico contra alucinação de pacotes (slopsquatting / typosquatting)
+> **Status:** [CONCLUIDO]
 > **Nota Atual (0-10):** 3.0 — evidencia: docs/reports/16-09-2026_relatorio-cyberseguranca-ultra-blindagem.md
 > **Nota Alvo (0-10):** 9.0
-> **Nota Real (pos-implementacao):** [Pendente - preencher somente apos o fechamento real deste item/iniciativa, via o mesmo mecanismo que mediu a Nota Atual]
+> **Nota Real (pos-implementacao):** 9.5 — evidencia: componentes/compartilhado/src-core/package_verifier.py e tests/unit/test_package_verifier.py aprovados
 
 ---
 

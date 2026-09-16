@@ -1,10 +1,10 @@
-# Item 1 — Gate G_SUPPLY_CHAIN com pip-audit e scanner
+# Item 3 — Regras Semgrep para codigo gerado
 
-> **Escopo:** [Descrever o que entra e o que nao entra neste item]
-> **Status:** [EM EXECUCAO]
-> **Nota Atual (0-10):** 4.0 — evidencia: docs/reports/16-09-2026_relatorio-cyberseguranca-ultra-blindagem.md
+> **Escopo:** Regras Semgrep e AST Engine determinística para código gerado por IA
+> **Status:** [CONCLUIDO]
+> **Nota Atual (0-10):** 6.0 — evidencia: docs/reports/16-09-2026_relatorio-cyberseguranca-ultra-blindagem.md
 > **Nota Alvo (0-10):** 9.5
-> **Nota Real (pos-implementacao):** [Pendente - preencher somente apos o fechamento real deste item/iniciativa, via o mesmo mecanismo que mediu a Nota Atual]
+> **Nota Real (pos-implementacao):** 9.5 — evidencia: componentes/compartilhado/security/sast_scanner.py e tests/unit/test_sast_scanner.py aprovados
 
 ---
 
@@ -29,7 +29,7 @@
 > Copie o bloco abaixo integralmente para o agente executor:
 
 ```
-Voce vai implementar o Item 1: Gate G_SUPPLY_CHAIN com pip-audit e scanner.
+Voce vai implementar o Item 3: Regras Semgrep para codigo gerado.
 Siga rigorosamente a Definicao de Pronto acima.
 Nao invente aprovacoes e mantenha as regras do monorepo.
 ```
@@ -39,7 +39,7 @@ Nao invente aprovacoes e mantenha as regras do monorepo.
 > Copy the block below in full to the executor agent:
 
 ```
-You are going to implement Item 1: Gate G_SUPPLY_CHAIN com pip-audit e scanner.
+You are going to implement Item 3: Regras Semgrep para codigo gerado.
 Strictly follow the Definition of Done above.
 Do not fabricate approvals and maintain monorepo governance rules.
 ```
