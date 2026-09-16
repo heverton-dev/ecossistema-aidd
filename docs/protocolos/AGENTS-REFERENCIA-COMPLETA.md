@@ -71,6 +71,18 @@ skills respondendo ao mesmo comando, com regras opostas, foi a causa direta das
 - **Ação:** Extrai, unifica e empacota aplicações Low-Code (Lovable, v0, Bolt) para VPS própria com PostgreSQL puro, PostgREST e Docker Compose.
 - **CLI Equivalente:** python ecossistema.py bridge [scan|convert-db|merge|pack]
 
+### Skills Procedimentais de Engenharia (Anti-Vibe Coding)
+
+Conjunto de skills universais inspiradas nas práticas de Matt Pocock, adaptadas para serem 100% poliglotas, concisas e com tolerância zero a stubs:
+
+- **/aidd-grill:** Entrevista socrática pré-código para mapear premissas, invariantes e edge cases antes de qualquer modificação. Possui fallback não-bloqueante para pipelines autônomos.
+- **/aidd-grill-docs:** Entrevista socrática ancorada no `MEMORY.md`, arquitetura e regras locais do repositório.
+- **/aidd-spec:** Transforma ideação e alinhamento em especificação técnica formal determinística com não-escopos claros e critérios binários de aceite.
+- **/aidd-tickets:** Decompõe a especificação técnica em tickets atômicos tracer-bullet com blast radius restrito e ordem estrita de dependência.
+- **/aidd-tdd:** Ciclo estrito Red-Green-Refactor (Red real -> Minimal Green -> Refactor) poliglota (pytest, vitest, cargo test, go test) com regra Zero Stubs.
+- **/aidd-diagnose:** Triage científica de falhas em 5 fases (reprodução determinística, análise de grafo via `code-review-graph`, hipótese única, prova e teste de regressão).
+- **/aidd-handoff:** Serialização compacta do estado da sessão diretamente em `secoes/sessao-<data>-<slug>.md` para rotação de contexto ou troca de agentes.
+
 ---
 
 ## §4 — AUDITORIA E META-QUALITY GATES (detalhado)

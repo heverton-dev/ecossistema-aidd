@@ -95,6 +95,13 @@ Basta digitar os comandos com barra no chat do seu assistente de IA (Claude, Ant
 
 # 6. Gerar aplicação completa, BFF e integrações a partir do plano
 /factory --plano PLANO-INFRAESTRUTURA.json --pasta ./delivery-farmacia
+
+# 7. Engenharia Procedimental Anti-Vibe Coding (Skills Universais)
+/aidd-grill "Alinhar premissas e invariantes antes de codificar"
+/aidd-spec "Gerar especificação técnica formal determinística"
+/aidd-tdd "Ciclo Red-Green-Refactor com Zero Stubs"
+/aidd-diagnose "Triage científica de falhas via grafo de impacto"
+/aidd-handoff "Serializar contexto de sessão para troca de agentes"
 ```
 
 ### Opção 2: Pelo Terminal / Linha de Comando (Modo Engenheiro / CI/CD)

@@ -23,6 +23,7 @@
 3. **Strict Bounded Contexts (G_ARQUITETURA):** Zero cross-module direct imports. Decoupled integration exclusively via `EventBus` and `core.*`.
 4. **Resilient Persistence (G_SEGURANCA):** SQLite WAL mode enforced (`PRAGMA journal_mode=WAL;`). Strict query parameterization. Zero raw SQL formatting. Soft-delete enforced.
 5. **Zero Stubs:** All committed code must be 100% complete, strongly typed, and accompanied by automated tests.
+6. **Engineering Skills Alignment:** Components must pass a strict `/aidd-tdd` cycle with 100% real assertion coverage before receiving SHA-256 cryptographic signatures.
 
 ---
 

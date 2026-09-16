@@ -134,17 +134,28 @@ def verificar(target_dir: str = "."):
         print(f"       (Info: Fuzzing contínuo pulado - servidor pode não estar ativo: {type(e).__name__})")
 
     # 3. Linter de Impeccable UI & Acessibilidade WCAG 2.1
-    comp_dir = os.path.join(src_dir, "static", "components")
-    if os.path.isdir(comp_dir):
-        for f in os.listdir(comp_dir):
-            if f.endswith('.html'):
-                f_path = os.path.join(comp_dir, f)
-                with open(f_path, 'r', encoding='utf-8', errors='ignore') as hf:
-                    html = hf.read()
-                    if 'alert(' in html or 'confirm(' in html or 'prompt(' in html:
-                        erros.append(f"Diálogo nativo de SO detectado em {f} (Use Toasts e Modais Impeccable).")
-                    if '<button' in html and 'type=' not in html:
-                        erros.append(f"Tag <button> sem atributo 'type' em {f} (WCAG 2.1).")
+    ui_dirs = [os.path.join(src_dir, "static"), os.path.join(target_dir, "frontend")]
+    emoji_regex = re.compile(r'[\U0001F300-\U0001F9FF\U00002600-\U000026FF\U00002700-\U000027BF]')
+    for udir in ui_dirs:
+        if os.path.isdir(udir):
+            for root, _, files in os.walk(udir):
+                if any(ign in root for ign in ['node_modules', '.next', 'dist', '.git']):
+                    continue
+                for f in files:
+                    if f.endswith(('.html', '.tsx', '.jsx')):
+                        f_path = os.path.join(root, f)
+                        try:
+                            with open(f_path, 'r', encoding='utf-8', errors='ignore') as hf:
+                                content = hf.read()
+                                rel_p = os.path.relpath(f_path, target_dir)
+                                if 'alert(' in content or 'confirm(' in content or 'prompt(' in content:
+                                    erros.append(f"Diálogo nativo de SO detectado em {rel_p} (Use Toasts e Modais Impeccable).")
+                                if emoji_regex.search(content):
+                                    erros.append(f"Emoji detectado em {rel_p} (Regra Impeccable: use ícones SVG desenhados).")
+                                if f.endswith('.html') and '<button' in content and 'type=' not in content:
+                                    erros.append(f"Tag <button> sem atributo 'type' em {rel_p} (WCAG 2.1).")
+                        except OSError:
+                            pass
 
     if erros:
         print("\n[FAIL] ❌ BLOQUEIO DE QUALIDADE: Falhas de qualidade detectadas:")

@@ -26,6 +26,7 @@
    - Phase 7: Self-Critique (`auto_critica`) -> Phase 8: Implementer (`implementador`)
 3. **Mechanical Gates:** Every phase transition requires `exit 0` from validation gates (`python scripts/validar_fase.py --fase N`). Exit 1 strictly blocks progression.
 4. **Zero Stubs:** Code produced in Phase 8 must be fully typed, production-ready, and accompanied by executable tests.
+5. **Engineering Skills Alignment:** Phases 1 and 2 strictly leverage `/aidd-spec` (formal deterministic specs) and `/aidd-tickets` (atomic task decomposition) to prevent vibe coding.
 
 ---
 

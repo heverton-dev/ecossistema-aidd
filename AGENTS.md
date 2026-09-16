@@ -51,3 +51,16 @@ Query the graph BEFORE file scanning:
 - `get_review_context_tool`: Token-efficient code snippets.
 - `get_impact_radius_tool` / `get_affected_flows_tool`: Trace affected paths.
 - `query_graph_tool`: Trace callers, callees, imports, tests.
+
+---
+
+## 5. Procedural Engineering Skills (`componentes/compartilhado/skills/`)
+
+Canonical workflow skills available across all harnesses to eliminate vibe coding and ensure rigorous pre-code alignment:
+- `/aidd-grill`: Socratic interview protocol to resolve edge cases and invariants before code modification.
+- `/aidd-grill-docs`: Architecture-grounded questioning anchored in `MEMORY.md` and repository laws.
+- `/aidd-spec`: Deterministic technical specification generator with binary acceptance criteria.
+- `/aidd-tickets`: Atomic tracer-bullet task decomposition with bounded blast radius.
+- `/aidd-tdd`: Strict Red-Green-Refactor cycle with zero stubs invariant across all language runtimes.
+- `/aidd-diagnose`: 5-phase scientific fault triage integrated with `code-review-graph`.
+- `/aidd-handoff`: Compact session context serialization directly into `secoes/`.

@@ -23,6 +23,7 @@
 3. **Safe Persistence (G_SEGURANCA):** SQLite databases must always operate in WAL mode (`PRAGMA journal_mode=WAL;`). All SQL queries must use placeholders (`?`). Zero string concatenation. Soft-delete only (`deletado_em IS NULL`).
 4. **Zero Stubs:** Forbidden empty functions (`pass`) or placeholder `TODO`s in production modules.
 5. **Observability (G_PERFORMANCE):** Service routines must be decorated with `@trace_span(name)` and respect SLA ceilings (`p99 < 200ms`).
+6. **Engineering Skills Alignment:** Slices must be decomposed via `/aidd-tickets` (tracer bullets) and implemented under strict `/aidd-tdd` (Red-Green-Refactor) before module graduation.
 
 ---
 

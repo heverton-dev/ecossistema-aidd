@@ -23,6 +23,7 @@
 3. **Active Observability (Anti-NIH #14):** Uptime Kuma official templates only (`templates/infra/uptime-kuma/docker-compose.yml`). Zero fake/mock monitoring dashboards.
 4. **Idempotent Hardening (Anti-NIH #15):** VPS configuration uses Ansible collection `devsec.hardening` via `ansible/playbooks/hardening.yml`. Zero ad-hoc shell scripts.
 5. **Zero Stubs:** All infrastructure definitions and Python managers must be fully functional and tested.
+6. **Engineering Skills Alignment:** Production incidents, container failures, or pipeline regressions must follow the `/aidd-diagnose` protocol (scientific triage & regression test) before applying hotfixes.
 
 ---
 

@@ -238,9 +238,31 @@
 - **Motivo:** O servidor nativo Python não enviava cabeçalhos `Access-Control-Allow-Origin: *`, `Access-Control-Allow-Methods` e não tratava preflight `OPTIONS` nem verbos `PUT` e `DELETE`.
 - **O que ocasionou:** Falhas de requisições assíncronas do frontend Next.js para o backend Python.
 - **Plano de Correção:**
-  1. Adicionar interceptor de CORS em [`src/server.py`](file:///C:/Users/trcnologia/Desktop/proj_ctt\planos-ctt-app\src\server.py) respondendo `OPTIONS` com 200 e injetando headers CORS em todas as respostas HTTP.
+  1. Adicionar interceptor de CORS em `src/server.py` respondendo `OPTIONS` com 200 e injetando headers CORS em todas as respostas HTTP.
   2. Implementar handlers assíncronos para `PUT` (edição de registros) e `DELETE` (remoção).
 - **Status:** **RESOLVIDO** (commit `5e378b0` no alvo).
+
+#### Inconsistência 14: Quebras de Linha e Poluição de Versão no Cabeçalho
+- **Nome:** Violação de regras de UX/UI (quebra de linha em labels de botões/badges e subtítulo do brand com "v5.1").
+- **Motivo:** Ausência de classes `whitespace-nowrap` nos botões do header e inclusão de "v5.1" no branding da barra de navegação ("SISTEMA OPERACIONAL LOGÍSTICO v5.1").
+- **O que ocasionou:** Quebra de linha antiestética em viewports intermediárias e layout visual poluído.
+- **Plano de Correção:**
+  1. Aplicar `whitespace-nowrap shrink-0` estrito em todos os botões, links de navegação e badges de status.
+  2. Ajustar o brand para "SISTEMA OPERACIONAL LOGÍSTICO" em linha única sem número de versão.
+  3. Implementar alternância de tema Light/Dark com botão SVG (Sol/Lua), script anti-flicker e persistência no `localStorage`.
+  4. Sincronizar o design system entre o frontend Next.js (`frontend/`) e a versão nativa Python ([`src/static/index.html`](file:///C:/Users/trcnologia/Desktop/proj_ctt/planos-ctt-app/src/static/index.html)).
+- **Status:** **RESOLVIDO** (commit `02766e7` no alvo).
+
+#### Inconsistência 15: Caracteres de Texto Unicode (✕) em Modais Detectados pelo Linter Impeccable UI
+- **Nome:** Uso de caractere textual unicode `✕` (U+2715) em botões de fechar modal em vez de ícones SVG vetoriais.
+- **Motivo:** Páginas de fatias verticais do Next.js continham `✕` inline nos botões de fechar modal.
+- **O que ocasionou:** Bloqueio do Quality Gate `G_QUALIDADE` pelo Linter Impeccable UI (proibição de emojis/símbolos semânticos como elementos de UI).
+- **Plano de Correção:**
+  1. Adicionar componente SVG vetorial `XIcon` em [`frontend/components/icons.tsx`](file:///C:/Users/trcnologia/Desktop/proj_ctt/planos-ctt-app/frontend/components/icons.tsx).
+  2. Substituir todas as ocorrências de `✕` por `<XIcon />` nos modais de `encomendas_ctt`, `frotas` e `roteirizacao`.
+  3. Recompilar o Next.js com `npm run build` (12/12 rotas estáticas 100% aprovadas).
+  4. Reexecutar os 7 Quality Gates com 100% de aprovação (7/7 PASS).
+- **Status:** **RESOLVIDO** (commit `02766e7` no alvo).
 
 ---
 
@@ -249,14 +271,14 @@
 - **Total de Quality Gates:** 7
 - **Aprovados (PASS):** **7 (100%)**
   - `G_ESTRUTURA`: PASS (35 validações aprovadas, 0 falhas)
-  - `G_QUALIDADE`: PASS (AST anti-stubs e compilação estática 100%)
-  - `G_TESTES`: PASS (8/8 testes unitários aprovados em 0.80s)
+  - `G_QUALIDADE`: PASS (AST anti-stubs, compilação estática e Linter Impeccable UI 100% aprovados)
+  - `G_TESTES`: PASS (8/8 testes unitários aprovados em 0.78s)
   - `G_CONTRACTS`: PASS (Snapshot SHA-256: 1574676a167e7dcb)
   - `G_SEGREDOS`: PASS (Entropia de Shannon aprovada, zero vazamentos)
   - `G_HARNESS_COMPAT`: PASS (Compatibilidade multi-harness 100%)
   - `G_SEGURANCA`: PASS (21 checks executados, 0 falhas)
 - **Validação de Execução do Backend Python (`src/server.py`):**
-  - Endpoint `/`: HTTP 200 OK (71.346 bytes - Super-App Web Corporativo)
+  - Endpoint `/`: HTTP 200 OK (Super-App Web Corporativo com suporte a modo Dark/Light e zero emojis)
   - Endpoint `/health`: HTTP 200 OK (`{"status":"ok","versao":"5.1.0"}`)
   - Endpoint `/docs`: HTTP 200 OK (Swagger Studio OpenAPI 3.1)
   - Endpoint `/webhooks`: HTTP 200 OK (Webhook Studio Interativo)
@@ -265,8 +287,8 @@
   - Endpoint `/api/encomendas_ctt`: HTTP 200 OK (Rastreio de encomendas Express CTT)
   - Endpoint `/api/roteirizacao`: HTTP 200 OK (Otimização de rotas Lisboa/Porto VRP)
 - **Validação de Execução do Front-end Next.js (`frontend/`):**
-  - `npm run build`: **Compilado com 100% de sucesso sem erros de TypeScript**
-  - Rotas geradas: `/`, `/encomendas_ctt`, `/frotas`, `/roteirizacao`, `/principal`
-  - Design System: Tailwind CSS corporativo CTT Portugal (Vermelho #DA291C), KPIs em tempo real, modais reativos e fallback inteligente offline-first.
-- **Status da Etapa 3:** **100% CONCLUÍDA, AUDITADA E APROVADA**.
+  - `npm run build`: **Compilado com 100% de sucesso (12/12 rotas estáticas) sem erros de TypeScript**
+  - Rotas geradas: `/`, `/encomendas_ctt`, `/frotas`, `/roteirizacao`, `/principal`, `/swagger`, `/webhooks`, `/mcp`, `/docs`
+  - Design System: Tailwind CSS corporativo CTT Portugal, alternância de tema Dark/Light integrada, KPIs em tempo real, modais com ícones SVG puros e zero quebras de linha em botões e badges.
+- **Status da Etapa 3:** **100% CONCLUÍDA, HOMOLOGADA E AUDITADA**.
 

@@ -68,6 +68,13 @@ O **Ecossistema AIDD** é um monorepo agnóstico que integra 7 ferramentas compl
 | `/orchestrate [plano]` | `orca-plan-orchestrator` | `python ecossistema.py orchestrate [plano]` | ORCA ADE — orquestração de planos de desenvolvimento via worktrees efêmeras. |
 | `/plan <nome>` | `planos-auditoria-runner` | `python ecossistema.py plan init <nome>` | Estruturação determinística de planos de auditoria e evolução. |
 | `/bridge [comando]` | `aidd-bridge-runner` | `python ecossistema.py bridge [scan\|convert-db\|merge\|pack]` | Extrai, unifica e empacota apps Lovable/Supabase para VPS com PostgREST e Docker. |
+| `/aidd-grill` | `aidd-grill` | N/A (Chat Interativo / Headless Fallback) | Entrevista socrática pré-código para alinhamento de invariantes e edge cases. |
+| `/aidd-grill-docs` | `aidd-grill-docs` | N/A (Chat Interativo) | Questionamento socrático ancorado em MEMORY.md e governança local. |
+| `/aidd-spec` | `aidd-spec` | N/A (Chat / Plan Generator) | Especificação técnica determinística com não-escopos e critérios binários. |
+| `/aidd-tickets` | `aidd-tickets` | N/A (Chat / Vertical Slicing) | Decomposição em tickets atômicos tracer-bullet com blast radius restrito. |
+| `/aidd-tdd` | `aidd-tdd` | N/A (Protocolo de Execução) | Ciclo Red-Green-Refactor estrito com regra Zero Stubs e suporte poliglota. |
+| `/aidd-diagnose` | `aidd-diagnose` | N/A (Triage Científica) | Método de 5 fases para triage de incidentes integrado ao code-review-graph. |
+| `/aidd-handoff` | `aidd-handoff` | N/A (Preservação de Sessão) | Serialização de contexto em secoes/ para rotação e continuidade entre agentes. |
 
 ---
 
@@ -138,8 +145,17 @@ O **Ecossistema AIDD** é um monorepo agnóstico que integra 7 ferramentas compl
   - **Observabilidade:** logging_config.py (structlog + OpenTelemetry) + server_fastapi.py v6.1 (7→9).
   - **Database:** AsyncPostgresAdapter + asyncpg para PostgreSQL async (8→9).
   - **Eventos:** RedisBLPOPWorker já existente confirmado (outbox_worker.py v5.2, 431 linhas).
-  - **Nota média final: 8.5/10** (vs. 6.5/10 pré-plano = +2.0 pontos).
-  - Plano movido para `docs/planos/feitos/PLAN-0028-upgrade-stack-camadas/`.
+- **2026-09-16 — Integração Canônica de Skills Procedimentais de Engenharia (PLAN-0030):**
+  - Integração das 7 skills procedimentais de engenharia inspiradas nas práticas de Matt Pocock, adaptadas para serem 100% poliglotas e concisas:
+    - `/aidd-grill` e `/aidd-grill-docs`: entrevista socrática e alinhamento pré-código (com fallback não-bloqueante para pipelines autônomos).
+    - `/aidd-spec` e `/aidd-tickets`: especificação formal determinística e decomposição atômica tracer-bullet.
+    - `/aidd-tdd`: ciclo Red-Green-Refactor poliglota com tolerância zero a stubs.
+    - `/aidd-diagnose`: método científico de 5 fases para triage de bugs integrado ao `code-review-graph`.
+    - `/aidd-handoff`: serialização compacta de sessão salva diretamente em `secoes/`.
+  - Todas as 7 skills criadas estritamente em **Compact English** na fonte canônica `componentes/compartilhado/skills/` (padrão Core para economia de tokens BPE).
+  - Sincronização e verificação física multi-harness em 7 ambientes (.agents, .claude, .cursor, .gemini, .opencode, .mimocode, .codebuddy) com 100% de hashes SHA-256 validados via `python ecossistema.py components verify --tipo skill`.
+  - Vinculação formal nos `AGENTS.md` das ferramentas `aidd-generator` (Fases 1 e 2), `aidd-master` (Vertical Slices), `aidd-enterprise` (Selo TDD) e `aidd-ops` (Diagnose).
+  - Plano oficial arquivado em `docs/planos/feitos/PLAN-0030-integracao-skills-matt-pocock/plano.md`.
 
 ## 7. INICIATIVAS ATIVAS (gerado automaticamente — não editar à mão)
 
