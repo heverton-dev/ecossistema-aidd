@@ -28,24 +28,24 @@ Quer forçar manualmente ou adicionar uma dependência nova (skill ou MCP de ter
 
 ---
 
-## 🏛️ A Fábrica de Software AIDD: As 6 Ferramentas Integradas
+## 🏛️ A Fábrica de Software AIDD: As 7 Ferramentas Integradas
 
 ```text
-                               ┌─────────────────────────────┐
-                               │   ECOSSISTEMA AIDD (Monorepo)│
-                               └──────────────┬──────────────┘
-                                              │
-    ┌──────────────┬──────────────────┼─────────────────┬──────────────┬──────────────┐
-    ▼              ▼                  ▼                 ▼              ▼              ▼
-[ aidd-forge ] [ aidd-generator ] [ aidd-master ] [ aidd-enterprise ] [ aidd-ops ] [ aidd-bridge ]
- Linha de Montagem Fábrica Autônoma   Blocos de Lego   Selo de Auditoria Pista & Entrega  Ponte Low-Code
-  & Blindagem    (Ideia -> Código)    Modular & Banco  Zero-Trust & Hashes Infra & Nuvem  -> VPS Nativa
-   (/forge)         (/generate)          (/master)        (/enterprise)     (/ops)         (/bridge)
+                                       ┌─────────────────────────────┐
+                                       │   ECOSSISTEMA AIDD (Monorepo)│
+                                       └──────────────┬──────────────┘
+                                                      │
+    ┌──────────────┬──────────────────┼─────────────────┬──────────────┬────────────────┬──────────────┬──────────────┐
+    ▼              ▼                  ▼                 ▼              ▼                ▼              ▼              ▼
+[ aidd-forge ] [ aidd-generator ] [ aidd-master ] [ aidd-enterprise ] [ aidd-ops ] [ aidd-factory ] [ aidd-bridge ]
+ Linha de Montagem Fábrica Autônoma   Blocos de Lego   Selo de Auditoria Pista & Infra  Integração/BFF  Ponte Low-Code
+  & Blindagem    (Ideia -> Código)    Modular & Banco  Zero-Trust & Hashes Nuvem/Deploy Multi-Serviço   -> VPS Nativa
+   (/forge)         (/generate)          (/master)        (/enterprise)    (/ops)          (/factory)      (/bridge)
 ```
 
 ---
 
-## ⚡ As 6 Ferramentas: Do Leigo ao PhD
+## ⚡ As 7 Ferramentas: Do Leigo ao PhD
 
 | Ferramenta | Analogia do Dia a Dia (Leigo) | Rigor Arquitetural (PhD / Arquiteto) | Como usar no Chat | Comando no Terminal (CLI) |
 | :--- | :--- | :--- | :---: | :--- |
@@ -53,7 +53,8 @@ Quer forçar manualmente ou adicionar uma dependência nova (skill ou MCP de ter
 | **AIDD Generator** | **A Linha de Montagem Autônoma:** Você fala o que quer e a fábrica entrega o software pronto com testes. | Pipeline autônomo de 8 fases (Pesquisa -> Análise -> Design -> Planejamento -> Criação -> Documentação -> Auto-crítica -> Implementação) com JSON Schemas Draft 2020-12. | `/generate <ideia>` | `python ecossistema.py generate "<ideia>"` |
 | **AIDD Master** | **Os Blocos de Encaixe Perfeito (Lego):** Permite adicionar novas funções ao sistema sem quebrar nada do que já existia. | Clean Architecture em Fatias Verticais (`Vertical Slices`), SQLite concorrente em modo WAL, Result Monad funcional e auto-documentação OpenAPI. | `/master <modulo>` | `python ecossistema.py master add-module <modulo>` |
 | **AIDD Enterprise** | **A Blindagem e Selo de Qualidade:** Verifica a autenticidade de cada componente com selo de segurança nível bancário. | Plataforma de Missão Crítica com injeção criptográfica SHA-256 de componentes (`skill`, `mcp`, `hook`, `rule`), conformidade Zero-Trust e RLS estrito. | `/enterprise <tipo> <nome>` | `python ecossistema.py enterprise inject <tipo> <nome>` |
-| **AIDD Ops** | **A Pista de Corrida e Abastecimento:** Pega o software pronto, prepara os servidores na nuvem, ajusta o tráfego e põe para rodar. | Meta-Orquestrador de Infraestrutura: Sizing inteligente de VPS, Hardening SSH anti-injeção, MCPs de borda (Cloudflare/Docker), Compose e Preflight HTTP E2E. | `/ops plan <nicho>` | `python ecossistema.py ops plan "<nicho>"` |
+| **AIDD Ops** | **A Pista de Corrida e Abastecimento:** Prepara os servidores na nuvem, ajusta tráfego, sizing e deploy em produção. | Meta-Orquestrador de Infraestrutura: Sizing inteligente de VPS, Hardening SSH anti-injeção, MCPs de borda (Cloudflare/Docker), Compose e Preflight HTTP E2E. | `/ops plan <nicho>` | `python ecossistema.py ops plan "<nicho>"` |
+| **AIDD Factory** | **A Central de Montagem & Fiação:** Cria o Gateway/BFF unificado, frontend e conecta todos os serviços entre si. | Gerador de aplicação e integração multi-serviço: Gateway FastAPI, Next.js whitelabel, webhooks, compose unificado, .env e banco sob plano Ops. | `/factory --plano <arq> --pasta <dest>` | `python ecossistema.py factory --plano <arq> --pasta <dest>` |
 | **AIDD Bridge** | **O Tradutor e Libertador de Código:** Pega apps de plataformas no-code/low-code e coloca para rodar em servidor próprio sem mensalidades extras. | Extrator, unificador e empacotador de projetos Lovable/Supabase para VPS própria: migração SQL para Postgres nativo/PostgREST, unificação de rotas/telas e Docker Compose Swarm com Traefik/Kong. | `/bridge [comando]` | `python ecossistema.py bridge [scan\|convert-db\|merge\|pack]` |
 
 ---
@@ -91,6 +92,9 @@ Basta digitar os comandos com barra no chat do seu assistente de IA (Claude, Ant
 
 # 5. Dimensionar a infraestrutura de servidores e deploy
 /ops plan "Farmácias com alto volume de entrega"
+
+# 6. Gerar aplicação completa, BFF e integrações a partir do plano
+/factory --plano PLANO-INFRAESTRUTURA.json --pasta ./delivery-farmacia
 ```
 
 ### Opção 2: Pelo Terminal / Linha de Comando (Modo Engenheiro / CI/CD)
@@ -105,6 +109,9 @@ python ecossistema.py audit
 
 # Planejar a infraestrutura de servidores para um nicho de negócio
 python ecossistema.py ops plan "Clínica médica com agendamento"
+
+# Gerar o stack integrado (Gateway FastAPI, Next.js, docker-compose unificado)
+python ecossistema.py factory --plano PLANO-INFRAESTRUTURA.json --pasta ./clinica
 
 # Testar o deploy de ponta a ponta em modo simulação seguro
 python ecossistema.py ops deploy staging --dry-run
@@ -153,12 +160,13 @@ ecossistema-aidd/
 │
 ├── gates/                                  ──► Os 16 Portões de Segurança determinísticos
 │
-├── tools/                                  ──► As 6 Ferramentas Homologadas (100% funcionais)
+├── tools/                                  ──► As 7 Ferramentas Homologadas (100% funcionais)
 │   ├── aidd-forge/                         ──► Bootstrap e blindagem de governança
 │   ├── aidd-generator/                     ──► Fábrica autônoma de software (8 fases)
 │   ├── aidd-master/                        ──► Monólito modular e fatias verticais (Clean Architecture)
 │   ├── aidd-enterprise/                    ──► Missão crítica e validação SHA-256
 │   ├── aidd-ops/                           ──► Meta-orquestrador de infraestrutura e deploy
+│   ├── aidd-factory/                       ──► Gerador de aplicação, BFF e integração multi-serviço
 │   └── aidd-bridge/                        ──► Extrator e empacotador de apps low-code para VPS própria
 │
 └── docs/                                   ──► Toda a inteligência documentada

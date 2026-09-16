@@ -9,13 +9,14 @@
 
 ## 1. IDENTIDADE E ARQUITETURA DO ECOSSISTEMA
 
-O **Ecossistema AIDD** é um monorepo agnóstico que integra 6 ferramentas complementares de Engenharia Agêntica de Software:
+O **Ecossistema AIDD** é um monorepo agnóstico que integra 7 ferramentas complementares de Engenharia Agêntica de Software:
 
 - **AIDD Forge (`tools/aidd-forge`):** Bootstrap de governança, isolamento de fases e purge de contexto (`/forge`).
 - **AIDD Generator (`tools/aidd-generator`):** Fábrica autônoma com pipeline de 8 fases e contratos JSON Schema (`/generate`).
 - **AIDD Master (`tools/aidd-master`):** Monólito modular com fatias verticais, SQLite WAL e Result Monad (`/master`).
 - **AIDD Enterprise (`tools/aidd-enterprise`):** Missão crítica com injeção de componentes SHA-256 e Zero-Trust (`/enterprise`).
-- **AIDD Ops (`tools/aidd-ops`):** Meta-Orquestrador Agêntico de Infraestrutura (IaC, sizing de hardware, Helm, Ansible, Docker Swarm).
+- **AIDD Ops (`tools/aidd-ops`):** Meta-Orquestrador Agêntico de Infraestrutura (IaC, sizing de hardware, Helm, Ansible, Docker Swarm, `/ops`).
+- **AIDD Factory (`tools/aidd-factory`):** Gerador de código de aplicação e integração para stacks multi-serviço (Gateway FastAPI BFF, Frontend Next.js, webhooks, compose unificado, `/factory`).
 - **AIDD Bridge (`tools/aidd-bridge`):** Extrator, unificador e empacotador de projetos Low-Code (Lovable/Supabase) para VPS própria com PostgreSQL puro, PostgREST, Traefik/Kong e Docker Compose (`/bridge`).
 
 **Fonte Física Canônica Única:** Todo componente (`skill`, `command`, `mcp`, `hook`, `spec`) reside estritamente em `componentes/<escopo>/<tipo>/`. As pastas `.agent/`, `.claude/`, `.gemini/`, `.agents/`, `skills/` são alvos de materialização gerados pelo script `scripts/gestor_componentes.py` (`python ecossistema.py components sync`).
