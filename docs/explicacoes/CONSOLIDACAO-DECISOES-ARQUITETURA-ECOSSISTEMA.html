@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Tratado Canônico & Carta Magna do Ecossistema AIDD</title>
+  <title>Tratado Canônico e Carta Magna do Ecossistema AIDD</title>
   <!-- Google Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -29,6 +29,7 @@
               bg: '#080B13',
               card: '#0E1526',
               border: '#1E293B',
+              muted: '#94A3B8'
             }
           }
         }
@@ -40,14 +41,35 @@
       background-color: #080B13;
       color: #F8FAFC;
     }
-    .pillar-box {
+
+    /* Scrollbars com exatamente 4px e integradas a paleta */
+    * {
+      scrollbar-width: thin;
+      scrollbar-color: #4F46E5 #0E1526;
+    }
+    ::-webkit-scrollbar {
+      width: 4px;
+      height: 4px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #0E1526;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #4F46E5;
+      border-radius: 2px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #6366F1;
+    }
+
+    .layer-card {
       border: 1px solid #1E293B;
       transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
     }
-    .pillar-box:hover {
-      border-color: #6366f1;
-      transform: translateY(-3px);
-      box-shadow: 0 10px 25px -5px rgba(99, 102, 241, 0.15);
+    .layer-card:hover {
+      border-color: #6366F1;
+      transform: translateY(-2px);
+      box-shadow: 0 10px 25px -5px rgba(99, 102, 241, 0.12);
     }
     .hero-glow {
       background: linear-gradient(135deg, #FFFFFF 0%, #E2E8F0 40%, #818CF8 100%);
@@ -62,18 +84,18 @@
   <header class="sticky top-0 z-50 bg-[#080B13]/90 backdrop-blur-md border-b border-gray-800">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
       <div class="flex items-center space-x-3">
-        <div class="w-8 h-8 rounded-lg bg-indigo-600 flex items-center justify-center font-black text-white shadow-lg shadow-indigo-500/20">
-          Ω
+        <div class="w-8 h-8 rounded-lg bg-indigo-600 flex items-center justify-center font-bold text-white shadow-lg shadow-indigo-500/20 font-mono text-sm">
+          AIDD
         </div>
         <div>
-          <span class="font-black tracking-tight text-white text-base">AIDD<span class="text-indigo-400 font-light">.tratado</span></span>
-          <span class="ml-2 text-[10px] font-mono px-2 py-0.5 rounded-full bg-indigo-950 text-indigo-300 border border-indigo-800/40">Versão 3.0 Holística</span>
+          <span class="font-bold tracking-tight text-white text-base">Ecossistema<span class="text-indigo-400 font-normal">.tratado</span></span>
+          <span class="ml-2 text-[10px] font-mono px-2 py-0.5 rounded-full bg-indigo-950 text-indigo-300 border border-indigo-800/40">Versão 3.1 Canônica</span>
         </div>
       </div>
       <div class="flex items-center space-x-3">
         <span class="px-2.5 py-1 rounded-full text-xs font-mono bg-emerald-950 text-emerald-400 border border-emerald-800/50 flex items-center gap-1.5">
-          <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
-          Conformidade 100% Auditada
+          <span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
+          Conformidade 100% Homologada
         </span>
       </div>
     </div>
@@ -82,336 +104,380 @@
   <!-- Hero Section -->
   <section class="py-16 border-b border-gray-800 relative overflow-hidden">
     <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">
-      <span class="text-xs font-mono font-bold uppercase tracking-widest text-indigo-400 mb-3 inline-block">Tratado Canônico Soberano</span>
+      <span class="text-xs font-mono font-bold uppercase tracking-widest text-indigo-400 mb-3 inline-block">Tratado Técnico Soberano</span>
       <h1 class="text-4xl sm:text-6xl font-black text-white tracking-tight mb-6 leading-tight">
-        A Carta Magna de <br><span class="hero-glow">Arquitetura, Segurança & Agnosticismo</span>
+        A Carta Magna de Engenharia, <br><span class="hero-glow">Arquitetura e Cibersegurança</span>
       </h1>
       <p class="text-base sm:text-lg text-gray-400 max-w-3xl mx-auto leading-relaxed mb-6">
-        O resgate completo e definitivo de todas as leis de engenharia, contratos inquebráveis, mitigação de vulnerabilidades OWASP, padrões de monólito modular e a soberania do desenvolvedor no ecossistema AIDD.
+        Estruturação completa das camadas fundacionais do ecossistema. Cada camada detalha o conceito, os componentes internos, os Quality Gates determinísticos associados e as entregas concretas geradas tanto na governança do meta-repositório quanto nas aplicações corporativas finais.
       </p>
       <div class="flex flex-wrap justify-center gap-3 text-xs font-mono text-gray-400">
-        <span class="px-3 py-1 bg-gray-900/80 rounded-md border border-gray-800">Zero Vendor Lock-in</span>
         <span class="px-3 py-1 bg-gray-900/80 rounded-md border border-gray-800">Defesa em Profundidade</span>
+        <span class="px-3 py-1 bg-gray-900/80 rounded-md border border-gray-800">Agnosticismo Total</span>
         <span class="px-3 py-1 bg-gray-900/80 rounded-md border border-gray-800">Monólito Modular VSA</span>
-        <span class="px-3 py-1 bg-gray-900/80 rounded-md border border-gray-800">Padrão CTT Homologado</span>
+        <span class="px-3 py-1 bg-gray-900/80 rounded-md border border-gray-800">Engenharia Zero Stubs</span>
+        <span class="px-3 py-1 bg-gray-900/80 rounded-md border border-gray-800">Quarteto Sine Qua Non</span>
       </div>
     </div>
   </section>
 
   <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 space-y-24">
 
-    <!-- 1. O Decálogo das 10 Leis Invioláveis -->
-    <section class="space-y-6">
-      <div class="border-l-4 border-indigo-500 pl-4">
-        <h2 class="text-2xl font-bold text-white tracking-tight">1. As 10 Leis Invioláveis do Ecossistema</h2>
-        <p class="text-gray-400 text-sm">Diretrizes universais que subordinam cada linha de código, teste ou comando.</p>
-      </div>
-
-      <div class="grid sm:grid-cols-2 lg:grid-cols-5 gap-3">
-        <div class="pillar-box bg-dark-card p-4 rounded-xl">
-          <div class="text-[10px] font-mono text-indigo-400 font-bold mb-1">LEI 01</div>
-          <h3 class="text-xs font-bold text-white mb-1">Determinismo Estrito</h3>
-          <p class="text-[11px] text-gray-400">AST, regex e scripts mecânicos; zero alucinações ("vibe coding").</p>
-        </div>
-        <div class="pillar-box bg-dark-card p-4 rounded-xl">
-          <div class="text-[10px] font-mono text-emerald-400 font-bold mb-1">LEI 02</div>
-          <h3 class="text-xs font-bold text-white mb-1">Zero Stubs / Mocks</h3>
-          <p class="text-[11px] text-gray-400">100% de código real em produção com testes automatizados executados.</p>
-        </div>
-        <div class="pillar-box bg-dark-card p-4 rounded-xl">
-          <div class="text-[10px] font-mono text-cyan-400 font-bold mb-1">LEI 03</div>
-          <h3 class="text-xs font-bold text-white mb-1">Monólito Modular</h3>
-          <p class="text-[11px] text-gray-400">Fatias verticais VSA de domínio + Camada horizontal compartilhada.</p>
-        </div>
-        <div class="pillar-box bg-dark-card p-4 rounded-xl">
-          <div class="text-[10px] font-mono text-amber-400 font-bold mb-1">LEI 04</div>
-          <h3 class="text-xs font-bold text-white mb-1">Cibersegurança Nativa</h3>
-          <p class="text-[11px] text-gray-400">Anti-SQL Injection, HMAC SHA-256, cofre sops+age e SHA anti-tampering.</p>
-        </div>
-        <div class="pillar-box bg-dark-card p-4 rounded-xl">
-          <div class="text-[10px] font-mono text-purple-400 font-bold mb-1">LEI 05</div>
-          <h3 class="text-xs font-bold text-white mb-1">Agnosticismo Supremo</h3>
-          <p class="text-[11px] text-gray-400">Zero vendor lock-in em nuvem, sistema operacional, harness ou LLMs.</p>
-        </div>
-        <div class="pillar-box bg-dark-card p-4 rounded-xl">
-          <div class="text-[10px] font-mono text-blue-400 font-bold mb-1">LEI 06</div>
-          <h3 class="text-xs font-bold text-white mb-1">Quarteto Sine Qua Non</h3>
-          <p class="text-[11px] text-gray-400">/swagger, /webhooks, /mcp e /docs ativos cobrindo 100% dos módulos.</p>
-        </div>
-        <div class="pillar-box bg-dark-card p-4 rounded-xl">
-          <div class="text-[10px] font-mono text-pink-400 font-bold mb-1">LEI 07</div>
-          <h3 class="text-xs font-bold text-white mb-1">Missão Crítica</h3>
-          <p class="text-[11px] text-gray-400">Circuit Breakers, Rate Limiters, Retries e auditoria ponta a ponta trace_id.</p>
-        </div>
-        <div class="pillar-box bg-dark-card p-4 rounded-xl">
-          <div class="text-[10px] font-mono text-rose-400 font-bold mb-1">LEI 08</div>
-          <h3 class="text-xs font-bold text-white mb-1">Desenvolvedor no Controle</h3>
-          <p class="text-[11px] text-gray-400">Zero subagentes headless ocultos; execução sequencial e transparente.</p>
-        </div>
-        <div class="pillar-box bg-dark-card p-4 rounded-xl">
-          <div class="text-[10px] font-mono text-teal-400 font-bold mb-1">LEI 09</div>
-          <h3 class="text-xs font-bold text-white mb-1">Economia de Tokens</h3>
-          <p class="text-[11px] text-gray-400">Caveman thinking, saídas concisas e navegação prévia via grafo.</p>
-        </div>
-        <div class="pillar-box bg-dark-card p-4 rounded-xl">
-          <div class="text-[10px] font-mono text-orange-400 font-bold mb-1">LEI 10</div>
-          <h3 class="text-xs font-bold text-white mb-1">A Tríade Canônica</h3>
-          <p class="text-[11px] text-gray-400">Forge -> Pré-Plano derivando em Generator, Factory ou Bridge.</p>
-        </div>
-      </div>
-    </section>
-
-    <!-- 2. Tratado de Cibersegurança & Defesa em Profundidade -->
+    <!-- CAMADA 01: Cibersegurança & Defesa em Profundidade -->
     <section class="space-y-6">
       <div class="border-l-4 border-amber-500 pl-4">
-        <h2 class="text-2xl font-bold text-white tracking-tight">2. Cibersegurança & Defesa em Profundidade</h2>
-        <p class="text-gray-400 text-sm">Padrão bancário e corporativo contra as ameaças do OWASP Top 10.</p>
+        <span class="text-xs font-mono text-amber-400 font-bold uppercase tracking-wider">Camada 01</span>
+        <h2 class="text-2xl font-bold text-white tracking-tight">Cibersegurança e Defesa em Profundidade</h2>
+        <p class="text-gray-400 text-sm">Proteção contra ameaças do OWASP Top 10, cofres criptográficos e integridade de dados.</p>
       </div>
 
-      <div class="grid md:grid-cols-3 gap-6">
-        <!-- Anti-Injeção e Validação -->
-        <div class="bg-dark-card p-6 rounded-2xl border border-dark-border space-y-3">
-          <div class="text-xs font-mono text-amber-400 font-bold">OWASP A03 / A07</div>
-          <h3 class="text-base font-bold text-white">Queries Parametrizadas & Auth</h3>
-          <p class="text-xs text-gray-300 leading-relaxed">
-            Proibição absoluta de interpolação de strings em SQL. Todas as consultas utilizam prepared statements parametrizados. Senhas cifradas com <strong>Argon2id/bcrypt</strong> e salt individual.
-          </p>
-          <div class="text-[11px] font-mono text-amber-300/80 bg-amber-950/30 p-2 rounded border border-amber-900/40">
-            ✓ Zero SQL Injection garantido em repositórios
+      <div class="layer-card bg-dark-card p-6 sm:p-8 rounded-2xl space-y-6">
+        <div class="grid md:grid-cols-4 gap-6">
+          <div>
+            <h3 class="text-xs font-mono text-indigo-400 font-bold uppercase mb-2">1. O Que É</h3>
+            <p class="text-xs text-gray-300 leading-relaxed">
+              Estrutura multicamada de segurança proativa que impede vulnerabilidades desde o design do código até a execução em containers, tratando segurança como requisito funcional inegociável.
+            </p>
           </div>
-        </div>
-
-        <!-- HMAC e Criptografia -->
-        <div class="bg-dark-card p-6 rounded-2xl border border-dark-border space-y-3">
-          <div class="text-xs font-mono text-indigo-400 font-bold">ANTI-TIMING ATTACKS</div>
-          <h3 class="text-base font-bold text-white">HMAC SHA-256 em Tempo Constante</h3>
-          <p class="text-xs text-gray-300 leading-relaxed">
-            Webhooks e tokens validados estritamente com <code class="text-indigo-300">hmac.compare_digest</code> para anular vulnerabilidades de canal lateral (side-channel timing attacks).
-          </p>
-          <div class="text-[11px] font-mono text-indigo-300/80 bg-indigo-950/30 p-2 rounded border border-indigo-900/40">
-            ✓ Assinaturas criptográficas invioláveis
+          <div>
+            <h3 class="text-xs font-mono text-emerald-400 font-bold uppercase mb-2">2. O Que Tem Dentro</h3>
+            <ul class="text-xs text-gray-400 space-y-1 font-mono">
+              <li>• Queries parametrizadas com prepared statements (Anti-SQLi)</li>
+              <li>• Hashes de senhas via Argon2id e bcrypt com salt individual</li>
+              <li>• Assinaturas HMAC SHA-256 com verificação em tempo constante (compare_digest)</li>
+              <li>• Cofre assimétrico sops + age (X25519) sem segredos em plain-text</li>
+              <li>• Hashes SHA-256 anti-tampering em templates críticos</li>
+              <li>• Headers HTTP de proteção: CSP, HSTS, X-Frame-Options, X-Content-Type-Options</li>
+            </ul>
           </div>
-        </div>
-
-        <!-- Segredos com sops + age -->
-        <div class="bg-dark-card p-6 rounded-2xl border border-dark-border space-y-3">
-          <div class="text-xs font-mono text-cyan-400 font-bold">ZERO PLAIN-TEXT SECRETS</div>
-          <h3 class="text-base font-bold text-white">Cofre Assimétrico `sops + age`</h3>
-          <p class="text-xs text-gray-300 leading-relaxed">
-            Nenhuma variável de ambiente sensível reside em texto claro. Criptografia assimétrica de curva elíptica X25519; chaves privadas isoladas e deciframento estritamente em memória.
-          </p>
-          <div class="text-[11px] font-mono text-cyan-300/80 bg-cyan-950/30 p-2 rounded border border-cyan-900/40">
-            ✓ Repositório seguro contra vazamento de chaves
+          <div>
+            <h3 class="text-xs font-mono text-cyan-400 font-bold uppercase mb-2">3. Quality Gates</h3>
+            <ul class="text-xs text-gray-400 space-y-1 font-mono">
+              <li>• <strong class="text-gray-200">G_ENTERPRISE_SHA:</strong> Bloqueia templates adulterados</li>
+              <li>• <strong class="text-gray-200">G_HADOLINT:</strong> Bloqueia containers sem usuário não-root</li>
+              <li>• <strong class="text-gray-200">G_BRIDGE_VENDOR_LOCKIN:</strong> Bloqueia credenciais hardcoded</li>
+              <li>• <strong class="text-gray-200">G_BRIDGE_DOCKER_OCI:</strong> Valida headers OWASP no Nginx</li>
+            </ul>
           </div>
-        </div>
-
-        <!-- Anti-Tampering SHA-256 -->
-        <div class="bg-dark-card p-6 rounded-2xl border border-dark-border space-y-3">
-          <div class="text-xs font-mono text-emerald-400 font-bold">INTEGRIDADE ESTRITA</div>
-          <h3 class="text-base font-bold text-white">Blindagem SHA-256 Anti-Tampering</h3>
-          <p class="text-xs text-gray-300 leading-relaxed">
-            Componentes e templates de segurança enterprise possuem manifestos de checksum SHA-256. Se um único byte for adulterado, o gate bloqueia a esteira com Exit 1 imediato.
-          </p>
-          <div class="text-[11px] font-mono text-emerald-300/80 bg-emerald-950/30 p-2 rounded border border-emerald-900/40">
-            ✓ Código imutável contra adulterações
-          </div>
-        </div>
-
-        <!-- Trilha de Auditoria e PII -->
-        <div class="bg-dark-card p-6 rounded-2xl border border-dark-border space-y-3">
-          <div class="text-xs font-mono text-purple-400 font-bold">LGPD & GDPR COMPLIANT</div>
-          <h3 class="text-base font-bold text-white">Trilha de Auditoria com `trace_id`</h3>
-          <p class="text-xs text-gray-300 leading-relaxed">
-            Identificador universal <code class="text-purple-300">X-Trace-Id</code> em todas as requisições. Logs estruturados com ofuscação automática de PII (dados pessoais mascarados).
-          </p>
-          <div class="text-[11px] font-mono text-purple-300/80 bg-purple-950/30 p-2 rounded border border-purple-900/40">
-            ✓ Rastreabilidade total e respeito à privacidade
-          </div>
-        </div>
-
-        <!-- Hadolint e OCI -->
-        <div class="bg-dark-card p-6 rounded-2xl border border-dark-border space-y-3">
-          <div class="text-xs font-mono text-rose-400 font-bold">CONTAINER SECURITY</div>
-          <h3 class="text-base font-bold text-white">Hadolint & Usuário Não-Root</h3>
-          <p class="text-xs text-gray-300 leading-relaxed">
-            Gate <code class="text-rose-300">G_HADOLINT</code> audita todos os Dockerfiles. Execução mandatória como <code class="text-rose-300">USER appuser</code>, imagens Alpine minimalistas e pinning estrito de versões.
-          </p>
-          <div class="text-[11px] font-mono text-rose-300/80 bg-rose-950/30 p-2 rounded border border-rose-900/40">
-            ✓ Superfície de ataque de container minimizada
+          <div>
+            <h3 class="text-xs font-mono text-purple-400 font-bold uppercase mb-2">4. O Que Entrega</h3>
+            <p class="text-xs text-gray-300 leading-relaxed">
+              No ecossistema: repositório imune a vazamentos acidentais. Na aplicação final: software com conformidade bancária, blindado contra invasões e aderente às exigências legais da LGPD e GDPR.
+            </p>
           </div>
         </div>
       </div>
     </section>
 
-    <!-- 3. Tratado de Universalidade & Agnosticismo Supremo -->
+    <!-- CAMADA 02: Arquitetura de Software — Monólito Modular -->
     <section class="space-y-6">
-      <div class="border-l-4 border-cyan-500 pl-4">
-        <h2 class="text-2xl font-bold text-white tracking-tight">3. Universalidade & Agnosticismo Supremo (Zero Lock-in)</h2>
-        <p class="text-gray-400 text-sm">Liberdade irrestrita: nenhuma empresa de nuvem, OS ou IA aprisiona a solução.</p>
-      </div>
-
-      <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-5">
-        <div class="bg-dark-card p-5 rounded-xl border border-dark-border">
-          <div class="text-xs font-mono text-cyan-400 font-bold mb-2">☁️ NUVEM</div>
-          <h3 class="text-sm font-bold text-white mb-2">Qualquer VPS / Bare-Metal</h3>
-          <p class="text-xs text-gray-400 leading-relaxed">
-            Hetzner, AWS, GCP, DigitalOcean ou servidor local. Baseado em Linux, Docker Compose e Nginx. Migração entre provedores em menos de 10 minutos.
-          </p>
-        </div>
-
-        <div class="bg-dark-card p-5 rounded-xl border border-dark-border">
-          <div class="text-xs font-mono text-emerald-400 font-bold mb-2">💻 SISTEMA OPERACIONAL</div>
-          <h3 class="text-sm font-bold text-white mb-2">Windows, Linux & macOS</h3>
-          <p class="text-xs text-gray-400 leading-relaxed">
-            Caminhos normalizados com <code class="text-emerald-300">pathlib</code>, fins de linha LF forçados em git e scripts polimórficos determinísticos.
-          </p>
-        </div>
-
-        <div class="bg-dark-card p-5 rounded-xl border border-dark-border">
-          <div class="text-xs font-mono text-indigo-400 font-bold mb-2">🤖 HARNESS DE IA</div>
-          <h3 class="text-sm font-bold text-white mb-2">Multi-Harness Sincronizado</h3>
-          <p class="text-xs text-gray-400 leading-relaxed">
-            Paridade total entre Claude Desktop, Cursor, Gemini Antigravity, Roo Code e Windsurf auditada pelo gate <code class="text-indigo-300">G_HARNESS_COMPAT</code>.
-          </p>
-        </div>
-
-        <div class="bg-dark-card p-5 rounded-xl border border-dark-border">
-          <div class="text-xs font-mono text-purple-400 font-bold mb-2">🧠 MODELO LLM</div>
-          <h3 class="text-sm font-bold text-white mb-2">Protocolo Aberto MCP</h3>
-          <p class="text-xs text-gray-400 leading-relaxed">
-            Ferramentas expostas via Model Context Protocol. Compatível com Claude, GPT, Gemini, DeepSeek ou modelos locais de código aberto.
-          </p>
-        </div>
-      </div>
-    </section>
-
-    <!-- 4. Padrão Arquitetural: Monólito Modular Canônico -->
-    <section class="space-y-6">
-      <div class="border-l-4 border-emerald-500 pl-4">
-        <h2 class="text-2xl font-bold text-white tracking-tight">4. O Monólito Modular Canônico</h2>
+      <div class="border-l-4 border-indigo-500 pl-4">
+        <span class="text-xs font-mono text-indigo-400 font-bold uppercase tracking-wider">Camada 02</span>
+        <h2 class="text-2xl font-bold text-white tracking-tight">Arquitetura de Software: Monólito Modular Canônico</h2>
         <p class="text-gray-400 text-sm">Fatias Verticais de Domínio (VSA) apoiadas em uma Camada Horizontal Compartilhada.</p>
       </div>
 
-      <div class="grid md:grid-cols-2 gap-6">
-        <div class="bg-dark-card p-6 rounded-2xl border border-dark-border">
-          <div class="flex items-center space-x-3 mb-4">
-            <span class="w-9 h-9 rounded-lg bg-indigo-500/20 text-indigo-400 flex items-center justify-center font-bold text-lg">↕</span>
-            <div>
-              <span class="text-xs font-mono text-indigo-400 font-bold uppercase">Eixo Vertical de Domínio</span>
-              <h3 class="text-base font-bold text-white">Vertical Slice Architecture (VSA)</h3>
-            </div>
+      <div class="layer-card bg-dark-card p-6 sm:p-8 rounded-2xl space-y-6">
+        <div class="grid md:grid-cols-4 gap-6">
+          <div>
+            <h3 class="text-xs font-mono text-indigo-400 font-bold uppercase mb-2">1. O Que É</h3>
+            <p class="text-xs text-gray-300 leading-relaxed">
+              Modelo arquitetural que elimina o acoplamento espaguete de camadas horizontais tradicionais e o overhead desnecessário de microsserviços prematuros, organizando o código em fatias verticais coesas.
+            </p>
           </div>
-          <p class="text-xs text-gray-300 leading-relaxed mb-4">
-            Cada regra de negócio é isolada em seu próprio diretório em <code class="text-indigo-300">features/</code> (ex: encomendas, frotas, entregas):
-          </p>
-          <ul class="text-xs font-mono text-gray-400 space-y-1.5">
-            <li>• <strong class="text-gray-200">routes.py:</strong> Endpoints FastAPI tipados com Pydantic</li>
-            <li>• <strong class="text-gray-200">services.py:</strong> Lógica de negócio pura sem acoplamento externo</li>
-            <li>• <strong class="text-gray-200">repositories.py:</strong> Queries parametrizadas anti-SQL injection</li>
-            <li>• <strong class="text-gray-200">models.py:</strong> Entidades e schemas específicos da fatia</li>
-            <li>• <strong class="text-gray-200">tests/:</strong> Testes de integração isolados da feature</li>
-          </ul>
-        </div>
-
-        <div class="bg-dark-card p-6 rounded-2xl border border-dark-border">
-          <div class="flex items-center space-x-3 mb-4">
-            <span class="w-9 h-9 rounded-lg bg-emerald-500/20 text-emerald-400 flex items-center justify-center font-bold text-lg">↔</span>
-            <div>
-              <span class="text-xs font-mono text-emerald-400 font-bold uppercase">Eixo Horizontal Compartilhado</span>
-              <h3 class="text-base font-bold text-white">Cross-Cutting Concerns (`core/` / `shared/`)</h3>
-            </div>
+          <div>
+            <h3 class="text-xs font-mono text-emerald-400 font-bold uppercase mb-2">2. O Que Tem Dentro</h3>
+            <ul class="text-xs text-gray-400 space-y-1 font-mono">
+              <li>• <strong class="text-gray-200">Eixo Vertical (features/):</strong> Cada fatia possui routes, services, repositories, models e testes isolados</li>
+              <li>• <strong class="text-gray-200">Eixo Horizontal (core/ / shared/):</strong> Pool async de banco, cofre, telemetry, circuit breakers e gateway de eventos</li>
+              <li>• Roteador unificado com injeção determinística de rotas</li>
+              <li>• Comunicação inter-fatias via contratos formais ou eventos assíncronos</li>
+            </ul>
           </div>
-          <p class="text-xs text-gray-300 leading-relaxed mb-4">
-            Infraestrutura centralizada e segura consumida por todas as fatias:
-          </p>
-          <ul class="text-xs font-mono text-gray-400 space-y-1.5">
-            <li>• <strong class="text-gray-200">Database Engine:</strong> Pool de conexão assíncrono e transações</li>
-            <li>• <strong class="text-gray-200">Security Vault:</strong> Gestão de segredos e sanitização de dados</li>
-            <li>• <strong class="text-gray-200">Telemetry:</strong> Logs estruturados e rastreabilidade via trace_id</li>
-            <li>• <strong class="text-gray-200">Resilience:</strong> Circuit Breakers, Retries e Rate Limiters globais</li>
-            <li>• <strong class="text-gray-200">Event Gateway:</strong> Mensageria interna para eventos assíncronos</li>
-          </ul>
+          <div>
+            <h3 class="text-xs font-mono text-cyan-400 font-bold uppercase mb-2">3. Quality Gates</h3>
+            <ul class="text-xs text-gray-400 space-y-1 font-mono">
+              <li>• <strong class="text-gray-200">G_DRIFT_NUCLEO_COMPARTILHADO:</strong> Impede divergência entre master e enterprise</li>
+              <li>• <strong class="text-gray-200">G_FACTORY_VSA:</strong> Valida que toda integração nasce como fatia VSA</li>
+              <li>• <strong class="text-gray-200">G_BRIDGE_VSA_COMPAT:</strong> Valida exportação VSA de low-code</li>
+            </ul>
+          </div>
+          <div>
+            <h3 class="text-xs font-mono text-purple-400 font-bold uppercase mb-2">4. O Que Entrega</h3>
+            <p class="text-xs text-gray-300 leading-relaxed">
+              No ecossistema: governança de modularidade estrita. Na aplicação final: arquitetura sustentável onde fatias podem ser modificadas, testadas ou até extraídas para microsserviços no futuro sem tocar no restante do sistema.
+            </p>
+          </div>
         </div>
       </div>
     </section>
 
-    <!-- 5. O Quarteto Sine Qua Non Dinâmico -->
+    <!-- CAMADA 03: Engenharia de Software & Qualidade -->
+    <section class="space-y-6">
+      <div class="border-l-4 border-emerald-500 pl-4">
+        <span class="text-xs font-mono text-emerald-400 font-bold uppercase tracking-wider">Camada 03</span>
+        <h2 class="text-2xl font-bold text-white tracking-tight">Engenharia de Software e Qualidade Industrial</h2>
+        <p class="text-gray-400 text-sm">Determinismo estrito, Zero Stubs, TDD Red-Green e testes reais automatizados.</p>
+      </div>
+
+      <div class="layer-card bg-dark-card p-6 sm:p-8 rounded-2xl space-y-6">
+        <div class="grid md:grid-cols-4 gap-6">
+          <div>
+            <h3 class="text-xs font-mono text-indigo-400 font-bold uppercase mb-2">1. O Que É</h3>
+            <p class="text-xs text-gray-300 leading-relaxed">
+              Disciplina rigorosa de engenharia que substitui o código especulativo por implementação determinística baseada em AST, testes de integração reais e validação binária de qualidade (Pass ou Block).
+            </p>
+          </div>
+          <div>
+            <h3 class="text-xs font-mono text-emerald-400 font-bold uppercase mb-2">2. O Que Tem Dentro</h3>
+            <ul class="text-xs text-gray-400 space-y-1 font-mono">
+              <li>• Zero Mocks e Zero Stubs em código de produção</li>
+              <li>• Tipagem estática rigorosa (Python type hints, Pydantic, TypeScript)</li>
+              <li>• TDD Red-Green: testes de integração escritos antes do código de negócio</li>
+              <li>• Tratamento determinístico de erros via Result Monad (Ok / Err)</li>
+              <li>• Linters mecânicos e fixação estrita de dependências (hash pinning)</li>
+            </ul>
+          </div>
+          <div>
+            <h3 class="text-xs font-mono text-cyan-400 font-bold uppercase mb-2">3. Quality Gates</h3>
+            <ul class="text-xs text-gray-400 space-y-1 font-mono">
+              <li>• <strong class="text-gray-200">G_TESTES_REAIS:</strong> Executa mais de 2.200 testes reais em todas as 7 ferramentas</li>
+              <li>• <strong class="text-gray-200">G_ECOSSISTEMA_INTEGRIDADE:</strong> Varre integridade sintática e AST de comandos e skills</li>
+              <li>• <strong class="text-gray-200">G_DEPENDENCIAS_PIN_HASH:</strong> Impede dependências sem hash criptográfico exato</li>
+            </ul>
+          </div>
+          <div>
+            <h3 class="text-xs font-mono text-purple-400 font-bold uppercase mb-2">4. O Que Entrega</h3>
+            <p class="text-xs text-gray-300 leading-relaxed">
+              No ecossistema: confiabilidade absoluta entre versões. Na aplicação final: zero surpresas em produção, cobertura de testes de 100% das rotas de negócio e ausência de bugs de regressão.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- CAMADA 04: Universalidade & Agnosticismo Supremo -->
+    <section class="space-y-6">
+      <div class="border-l-4 border-cyan-500 pl-4">
+        <span class="text-xs font-mono text-cyan-400 font-bold uppercase tracking-wider">Camada 04</span>
+        <h2 class="text-2xl font-bold text-white tracking-tight">Universalidade e Agnosticismo Supremo</h2>
+        <p class="text-gray-400 text-sm">Zero vendor lock-in em infraestrutura de nuvem, sistema operacional, harness e LLMs.</p>
+      </div>
+
+      <div class="layer-card bg-dark-card p-6 sm:p-8 rounded-2xl space-y-6">
+        <div class="grid md:grid-cols-4 gap-6">
+          <div>
+            <h3 class="text-xs font-mono text-indigo-400 font-bold uppercase mb-2">1. O Que É</h3>
+            <p class="text-xs text-gray-300 leading-relaxed">
+              Garantia de soberania tecnológica que assegura que o software pertence exclusivamente ao desenvolvedor, podendo ser executado em qualquer ambiente sem taxas ou amarras proprietárias.
+            </p>
+          </div>
+          <div>
+            <h3 class="text-xs font-mono text-emerald-400 font-bold uppercase mb-2">2. O Que Tem Dentro</h3>
+            <ul class="text-xs text-gray-400 space-y-1 font-mono">
+              <li>• Cloud-Agnostic: Roda em qualquer VPS Linux (Hetzner, AWS, GCP, bare-metal)</li>
+              <li>• OS-Agnostic: Execução compatível em Windows, Linux e macOS via pathlib e scripts determinísticos</li>
+              <li>• Harness-Agnostic: Sincronização multi-agente (Claude, Cursor, Gemini, Roo Code, Windsurf)</li>
+              <li>• Model-Agnostic: Ferramentas abertas via Model Context Protocol (MCP)</li>
+            </ul>
+          </div>
+          <div>
+            <h3 class="text-xs font-mono text-cyan-400 font-bold uppercase mb-2">3. Quality Gates</h3>
+            <ul class="text-xs text-gray-400 space-y-1 font-mono">
+              <li>• <strong class="text-gray-200">G_HARNESS_COMPAT:</strong> Audita paridade de instruções entre harness</li>
+              <li>• <strong class="text-gray-200">G_COMPONENTE_AGNOSTICO:</strong> Valida integridade de componentes multi-plataforma</li>
+              <li>• <strong class="text-gray-200">G_BRIDGE_VENDOR_LOCKIN:</strong> Impede dependências de nuvens fechadas</li>
+            </ul>
+          </div>
+          <div>
+            <h3 class="text-xs font-mono text-purple-400 font-bold uppercase mb-2">4. O Que Entrega</h3>
+            <p class="text-xs text-gray-300 leading-relaxed">
+              No ecossistema: liberdade para a equipe usar o harness e SO que preferir. Na aplicação final: custo operacional mínimo (VPS acessível) e portabilidade completa entre provedores de infraestrutura em minutos.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- CAMADA 05: O Quarteto Sine Qua Non Dinâmico -->
     <section class="space-y-6">
       <div class="border-l-4 border-purple-500 pl-4">
-        <h2 class="text-2xl font-bold text-white tracking-tight">5. O Quarteto Sine Qua Non Dinâmico</h2>
+        <span class="text-xs font-mono text-purple-400 font-bold uppercase tracking-wider">Camada 05</span>
+        <h2 class="text-2xl font-bold text-white tracking-tight">O Quarteto Sine Qua Non Dinâmico</h2>
         <p class="text-gray-400 text-sm">Os 4 estúdios que devem nascer ativos cobrindo 100% dos módulos do sistema.</p>
       </div>
 
-      <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <div class="bg-dark-card p-5 rounded-xl border border-dark-border">
-          <div class="text-xs font-mono text-cyan-400 font-bold mb-1">CONTRATOS REST</div>
-          <h3 class="text-sm font-bold text-white mb-2">Swagger Studio (`/swagger`)</h3>
-          <p class="text-xs text-gray-400">Documentação interativa OpenAPI 3.0 para teste imediato de rotas e schemas tipados.</p>
-        </div>
-        <div class="bg-dark-card p-5 rounded-xl border border-dark-border">
-          <div class="text-xs font-mono text-emerald-400 font-bold mb-1">EVENTOS HMAC</div>
-          <h3 class="text-sm font-bold text-white mb-2">Webhook Studio (`/webhooks`)</h3>
-          <p class="text-xs text-gray-400">Simulação, disparo e validação de assinaturas HMAC SHA-256 em tempo constante.</p>
-        </div>
-        <div class="bg-dark-card p-5 rounded-xl border border-dark-border">
-          <div class="text-xs font-mono text-purple-400 font-bold mb-1">ORQUESTRAÇÃO IA</div>
-          <h3 class="text-sm font-bold text-white mb-2">MCP Studio (`/mcp`)</h3>
-          <p class="text-xs text-gray-400">Exposição de ferramentas nativas via Model Context Protocol para agentes e LLMs.</p>
-        </div>
-        <div class="bg-dark-card p-5 rounded-xl border border-dark-border">
-          <div class="text-xs font-mono text-amber-400 font-bold mb-1">MANUAL VIVO</div>
-          <h3 class="text-sm font-bold text-white mb-2">Guia do Usuário (`/docs`)</h3>
-          <p class="text-xs text-gray-400">Manuais com fluxos de onboarding, catálogo de endpoints e guias para desenvolvedores.</p>
+      <div class="layer-card bg-dark-card p-6 sm:p-8 rounded-2xl space-y-6">
+        <div class="grid md:grid-cols-4 gap-6">
+          <div>
+            <h3 class="text-xs font-mono text-indigo-400 font-bold uppercase mb-2">1. O Que É</h3>
+            <p class="text-xs text-gray-300 leading-relaxed">
+              Contrato universal que estabelece que nenhuma aplicação no ecossistema é entregue como uma caixa-preta; toda solução expõe quatro estúdios vivos de interação, documentação e consumo agêntico.
+            </p>
+          </div>
+          <div>
+            <h3 class="text-xs font-mono text-emerald-400 font-bold uppercase mb-2">2. O Que Tem Dentro</h3>
+            <ul class="text-xs text-gray-400 space-y-1 font-mono">
+              <li>• <strong class="text-gray-200">Swagger Studio (/swagger):</strong> Contratos OpenAPI 3.0 dinâmicos e tipados</li>
+              <li>• <strong class="text-gray-200">Webhook Studio (/webhooks):</strong> Gestão e testes de eventos com assinatura HMAC SHA-256</li>
+              <li>• <strong class="text-gray-200">MCP Studio (/mcp):</strong> Servidor nativo Model Context Protocol para agentes de IA</li>
+              <li>• <strong class="text-gray-200">Guia do Utilizador (/docs):</strong> Manuais vivos de onboarding e integração</li>
+            </ul>
+          </div>
+          <div>
+            <h3 class="text-xs font-mono text-cyan-400 font-bold uppercase mb-2">3. Quality Gates</h3>
+            <ul class="text-xs text-gray-400 space-y-1 font-mono">
+              <li>• <strong class="text-gray-200">G_FACTORY_VSA:</strong> Audita a presença dos 4 estúdios em novas fatias</li>
+              <li>• <strong class="text-gray-200">G_BRIDGE_VSA_COMPAT:</strong> Valida integridade dos 4 contratos exportados</li>
+            </ul>
+          </div>
+          <div>
+            <h3 class="text-xs font-mono text-purple-400 font-bold uppercase mb-2">4. O Que Entrega</h3>
+            <p class="text-xs text-gray-300 leading-relaxed">
+              No ecossistema: padronização contratual imediata. Na aplicação final: documentação viva que se auto-atualiza a cada nova fatia vertical, permitindo consumo simultâneo por desenvolvedores humanos e agentes de IA.
+            </p>
+          </div>
         </div>
       </div>
     </section>
 
-    <!-- 6. A Tríade Canônica de Criação -->
+    <!-- CAMADA 06: Infraestrutura, DevOps & Observabilidade -->
     <section class="space-y-6">
       <div class="border-l-4 border-blue-500 pl-4">
-        <h2 class="text-2xl font-bold text-white tracking-tight">6. A Tríade Canônica de Criação & Entrega</h2>
-        <p class="text-gray-400 text-sm">Forge dita as regras, o Pré-Plano alinha a intenção, e o desenvolvedor escolhe o motor de construção.</p>
+        <span class="text-xs font-mono text-blue-400 font-bold uppercase tracking-wider">Camada 06</span>
+        <h2 class="text-2xl font-bold text-white tracking-tight">Infraestrutura, DevOps e Observabilidade</h2>
+        <p class="text-gray-400 text-sm">Provisionamento determinístico via SSH, Docker Compose de produção e Uptime Kuma.</p>
       </div>
 
-      <div class="grid lg:grid-cols-3 gap-6">
-        <div class="bg-gray-900/60 p-6 rounded-2xl border border-blue-900/40">
-          <div class="text-xs font-mono text-blue-400 font-bold mb-1">FLUXO 01 • DO ZERO PURO</div>
-          <h3 class="text-lg font-bold text-white mb-2">aidd-generator</h3>
-          <p class="text-xs text-gray-300 leading-relaxed mb-4">
-            Pipeline determinístico em 8 fases guiado por TDD Red-Green. Constrói código 100% proprietário sem motores pré-existentes.
-          </p>
-          <span class="text-[11px] font-mono text-blue-300 bg-blue-950/60 px-2 py-1 rounded border border-blue-800/50">Ideal para negócios sob medida</span>
+      <div class="layer-card bg-dark-card p-6 sm:p-8 rounded-2xl space-y-6">
+        <div class="grid md:grid-cols-4 gap-6">
+          <div>
+            <h3 class="text-xs font-mono text-indigo-400 font-bold uppercase mb-2">1. O Que É</h3>
+            <p class="text-xs text-gray-300 leading-relaxed">
+              Camada de automação de infraestrutura como código (IaC) e monitoramento que conduz a aplicação do código local até o servidor de produção com segurança e previsibilidade.
+            </p>
+          </div>
+          <div>
+            <h3 class="text-xs font-mono text-emerald-400 font-bold uppercase mb-2">2. O Que Tem Dentro</h3>
+            <ul class="text-xs text-gray-400 space-y-1 font-mono">
+              <li>• Deploy via SSH determinístico orquestrado por Result Monad</li>
+              <li>• Manifestos docker-compose.yml com redes isoladas e volumes persistentes</li>
+              <li>• Proxy reverso Traefik/Nginx com emissão automática de SSL/TLS</li>
+              <li>• Observabilidade ativa via Uptime Kuma com alertas em tempo real</li>
+              <li>• Healthchecks contínuos de banco de dados e containers de serviços</li>
+            </ul>
+          </div>
+          <div>
+            <h3 class="text-xs font-mono text-cyan-400 font-bold uppercase mb-2">3. Quality Gates</h3>
+            <ul class="text-xs text-gray-400 space-y-1 font-mono">
+              <li>• <strong class="text-gray-200">G_OPS_SSH:</strong> Valida autenticação e idempotência de comandos remotos</li>
+              <li>• <strong class="text-gray-200">G_INFRA_COMPOSE:</strong> Valida sintaxe de compose e init SQL</li>
+              <li>• <strong class="text-gray-200">G_HADOLINT:</strong> Valida conformidade de containers OCI</li>
+            </ul>
+          </div>
+          <div>
+            <h3 class="text-xs font-mono text-purple-400 font-bold uppercase mb-2">4. O Que Entrega</h3>
+            <p class="text-xs text-gray-300 leading-relaxed">
+              No ecossistema: comandos de deploy padronizados. Na aplicação final: ambiente estável em produção, monitorado 24/7, com recuperação facilitada e telemetria de uptime transparente.
+            </p>
+          </div>
         </div>
-
-        <div class="bg-gray-900/60 p-6 rounded-2xl border border-amber-900/40">
-          <div class="text-xs font-mono text-amber-400 font-bold mb-1">FLUXO 02 • MOTORES OPEN-SOURCE</div>
-          <h3 class="text-lg font-bold text-white mb-2">aidd-factory</h3>
-          <p class="text-xs text-gray-300 leading-relaxed mb-4">
-            Alavancagem sobre software livre consolidado (filas, bots, mensageria). Gera as fatias VSA de integração e orquestra containers.
-          </p>
-          <span class="text-[11px] font-mono text-amber-300 bg-amber-950/60 px-2 py-1 rounded border border-amber-800/50">Ideal para velocidade com Open-Source</span>
-        </div>
-
-        <div class="bg-gray-900/60 p-6 rounded-2xl border border-pink-900/40">
-          <div class="text-xs font-mono text-pink-400 font-bold mb-1">FLUXO 03 • LOW-CODE DESATADO</div>
-          <h3 class="text-lg font-bold text-white mb-2">aidd-bridge</h3>
-          <p class="text-xs text-gray-300 leading-relaxed mb-4">
-            Resgate de interfaces e protótipos de Lovable, v0 ou Bolt. Extirpação de vendor lock-in, conexão ao PostgreSQL e conteinerização.
-          </p>
-          <span class="text-[11px] font-mono text-pink-300 bg-pink-950/60 px-2 py-1 rounded border border-pink-800/50">Ideal para resgate e unificação de telas</span>
-        </div>
-      </div>
-
-      <div class="p-4 rounded-xl bg-gray-900/80 border border-gray-800 text-center text-xs font-mono text-gray-300">
-        Todos os 3 fluxos convergem obrigatoriamente para: <strong class="text-indigo-400">aidd-master</strong> (VSA + Horizontal) ➔ <strong class="text-emerald-400">aidd-enterprise</strong> (SHA-256 + Resiliência) ➔ <strong class="text-cyan-400">aidd-ops</strong> (VPS SSH + sops/age + Kuma).
       </div>
     </section>
 
-    <!-- 7. Tabela das 7 Ferramentas -->
+    <!-- CAMADA 07: Governança Agêntica & Economia de Tokens -->
     <section class="space-y-6">
-      <div class="border-l-4 border-brand-500 pl-4">
-        <h2 class="text-2xl font-bold text-white tracking-tight">7. Matriz Canônica das 7 Ferramentas</h2>
-        <p class="text-gray-400 text-sm">Quadro de competências e status de homologação.</p>
+      <div class="border-l-4 border-pink-500 pl-4">
+        <span class="text-xs font-mono text-pink-400 font-bold uppercase tracking-wider">Camada 07</span>
+        <h2 class="text-2xl font-bold text-white tracking-tight">Governança Agêntica e Economia Extrema de Tokens</h2>
+        <p class="text-gray-400 text-sm">Controle total pelo desenvolvedor, Caveman thinking e navegação prévia por grafo.</p>
+      </div>
+
+      <div class="layer-card bg-dark-card p-6 sm:p-8 rounded-2xl space-y-6">
+        <div class="grid md:grid-cols-4 gap-6">
+          <div>
+            <h3 class="text-xs font-mono text-indigo-400 font-bold uppercase mb-2">1. O Que É</h3>
+            <p class="text-xs text-gray-300 leading-relaxed">
+              Regras invioláveis de conduta do assistente de inteligência artificial que eliminam o consumo descontrolado de tokens de contexto e impedem ações autônomas ocultas.
+            </p>
+          </div>
+          <div>
+            <h3 class="text-xs font-mono text-emerald-400 font-bold uppercase mb-2">2. O Que Tem Dentro</h3>
+            <ul class="text-xs text-gray-400 space-y-1 font-mono">
+              <li>• Desenvolvedor no Controle: Execução sequencial e interativa (Zero Headless)</li>
+              <li>• Caveman Thinking: Raciocínio interno estritamente telegráfico e conciso</li>
+              <li>• Saídas diretas ao usuário sem re-resumo de artefatos ou repetição de código</li>
+              <li>• Graph-First: Uso do code-review-graph para análise de impacto antes de grep</li>
+              <li>• Contexto restrito mantido abaixo de 2.000 tokens de diretivas</li>
+            </ul>
+          </div>
+          <div>
+            <h3 class="text-xs font-mono text-cyan-400 font-bold uppercase mb-2">3. Quality Gates</h3>
+            <ul class="text-xs text-gray-400 space-y-1 font-mono">
+              <li>• <strong class="text-gray-200">G_ZERO_HEADLESS:</strong> Bloqueia chamadas em background sem interação</li>
+              <li>• <strong class="text-gray-200">G_CLI_HELP_CONSISTENCIA:</strong> Valida consistência de flags e argumentos da CLI</li>
+            </ul>
+          </div>
+          <div>
+            <h3 class="text-xs font-mono text-purple-400 font-bold uppercase mb-2">4. O Que Entrega</h3>
+            <p class="text-xs text-gray-300 leading-relaxed">
+              No ecossistema: sessões de desenvolvimento com velocidade máxima e economia severa de custos de API. Na aplicação final: código gerado com precisão cirúrgica sem dispersão ou alucinação do modelo.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- CAMADA 08: A Tríade Canônica de Criação -->
+    <section class="space-y-6">
+      <div class="border-l-4 border-orange-500 pl-4">
+        <span class="text-xs font-mono text-orange-400 font-bold uppercase tracking-wider">Camada 08</span>
+        <h2 class="text-2xl font-bold text-white tracking-tight">A Tríade Canônica de Criação e Entrega</h2>
+        <p class="text-gray-400 text-sm">Forge estabelece a lei, o Pré-Plano guia a intenção, e o desenvolvedor escolhe o motor de construção.</p>
+      </div>
+
+      <div class="layer-card bg-dark-card p-6 sm:p-8 rounded-2xl space-y-6">
+        <div class="grid md:grid-cols-4 gap-6">
+          <div>
+            <h3 class="text-xs font-mono text-indigo-400 font-bold uppercase mb-2">1. O Que É</h3>
+            <p class="text-xs text-gray-300 leading-relaxed">
+              Taxonomia canônica que resolve o ponto de partida do software, permitindo derivar a mesma ideia de negócio em 3 estratégias especializadas que convergem para o mesmo funil de qualidade.
+            </p>
+          </div>
+          <div>
+            <h3 class="text-xs font-mono text-emerald-400 font-bold uppercase mb-2">2. O Que Tem Dentro</h3>
+            <ul class="text-xs text-gray-400 space-y-1 font-mono">
+              <li>• <strong class="text-gray-200">aidd-forge:</strong> Ditador supremo de governança no Dia Zero</li>
+              <li>• <strong class="text-gray-200">PRÉ-PLANO:</strong> Intake interativo gerador do PLANO-MESTRE.json</li>
+              <li>• <strong class="text-gray-200">FLUXO 01 (Do Zero):</strong> aidd-generator (8 fases / TDD Red-Green)</li>
+              <li>• <strong class="text-gray-200">FLUXO 02 (Open-Source):</strong> aidd-factory (motores livres + VSA)</li>
+              <li>• <strong class="text-gray-200">FLUXO 03 (Low-Code):</strong> aidd-bridge (libertação de protótipos)</li>
+            </ul>
+          </div>
+          <div>
+            <h3 class="text-xs font-mono text-cyan-400 font-bold uppercase mb-2">3. Quality Gates</h3>
+            <ul class="text-xs text-gray-400 space-y-1 font-mono">
+              <li>• <strong class="text-gray-200">G_FORGE_*:</strong> Valida governança e pre-commit de fundação</li>
+              <li>• <strong class="text-gray-200">G_GENERATOR_*:</strong> Valida as 8 fases da fábrica autônoma</li>
+              <li>• <strong class="text-gray-200">G_FACTORY_*:</strong> Valida integração com motores open-source</li>
+              <li>• <strong class="text-gray-200">G_BRIDGE_*:</strong> Valida desacoplamento de low-code</li>
+            </ul>
+          </div>
+          <div>
+            <h3 class="text-xs font-mono text-purple-400 font-bold uppercase mb-2">4. O Que Entrega</h3>
+            <p class="text-xs text-gray-300 leading-relaxed">
+              No ecossistema: clareza imediata sobre qual ferramenta usar para cada objetivo. Na aplicação final: entrega consistente no Padrão CTT através da convergência em master, enterprise e ops.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Quadro Final de Status das 7 Ferramentas -->
+    <section class="space-y-6">
+      <div class="border-l-4 border-gray-600 pl-4">
+        <h2 class="text-2xl font-bold text-white tracking-tight">Status de Homologação das 7 Ferramentas</h2>
+        <p class="text-gray-400 text-sm">Quadro consolidado de todas as engrenagens ativas do ecossistema AIDD.</p>
       </div>
 
       <div class="overflow-x-auto rounded-2xl border border-dark-border bg-dark-card">
@@ -426,44 +492,44 @@
           </thead>
           <tbody class="divide-y divide-dark-border font-normal">
             <tr class="hover:bg-gray-800/30">
-              <td class="p-4 font-bold text-white">🛠️ aidd-forge</td>
-              <td class="p-4 text-emerald-400 font-bold">✓ Homologado</td>
+              <td class="p-4 font-bold text-white">aidd-forge</td>
+              <td class="p-4 text-emerald-400 font-bold">Homologado</td>
               <td class="p-4 text-gray-300">Ditador de Governança e Regras</td>
               <td class="p-4 text-indigo-300">Repositório canônico blindado, linters e AGENTS.md</td>
             </tr>
             <tr class="hover:bg-gray-800/30">
-              <td class="p-4 font-bold text-white">🏭 aidd-generator</td>
-              <td class="p-4 text-emerald-400 font-bold">✓ Homologado</td>
+              <td class="p-4 font-bold text-white">aidd-generator</td>
+              <td class="p-4 text-emerald-400 font-bold">Homologado</td>
               <td class="p-4 text-gray-300">Fábrica Autônoma de Software</td>
               <td class="p-4 text-blue-300">Aplicação funcional em 8 fases (1.015 testes passando)</td>
             </tr>
             <tr class="hover:bg-gray-800/30">
-              <td class="p-4 font-bold text-white">📐 aidd-master</td>
-              <td class="p-4 text-emerald-400 font-bold">✓ Homologado</td>
+              <td class="p-4 font-bold text-white">aidd-master</td>
+              <td class="p-4 text-emerald-400 font-bold">Homologado</td>
               <td class="p-4 text-gray-300">Arquiteto de Monólito Modular</td>
               <td class="p-4 text-purple-300">Fatias VSA de domínio + Camada Horizontal compartilhada</td>
             </tr>
             <tr class="hover:bg-gray-800/30">
-              <td class="p-4 font-bold text-white">🛡️ aidd-enterprise</td>
-              <td class="p-4 text-emerald-400 font-bold">✓ Homologado</td>
+              <td class="p-4 font-bold text-white">aidd-enterprise</td>
+              <td class="p-4 text-emerald-400 font-bold">Homologado</td>
               <td class="p-4 text-gray-300">Guardião de Missão Crítica</td>
               <td class="p-4 text-emerald-300">Cofre SHA-256, Circuit Breakers e trilha trace_id</td>
             </tr>
             <tr class="hover:bg-gray-800/30">
-              <td class="p-4 font-bold text-white">☁️ aidd-ops</td>
-              <td class="p-4 text-emerald-400 font-bold">✓ Homologado</td>
+              <td class="p-4 font-bold text-white">aidd-ops</td>
+              <td class="p-4 text-emerald-400 font-bold">Homologado</td>
               <td class="p-4 text-gray-300">Orquestrador de Infra & VPS</td>
               <td class="p-4 text-cyan-300">Deploy SSH determinístico, sops+age e Uptime Kuma</td>
             </tr>
             <tr class="hover:bg-gray-800/30">
-              <td class="p-4 font-bold text-white">⚙️ aidd-factory</td>
-              <td class="p-4 text-emerald-400 font-bold">✓ Homologado</td>
+              <td class="p-4 font-bold text-white">aidd-factory</td>
+              <td class="p-4 text-emerald-400 font-bold">Homologado</td>
               <td class="p-4 text-gray-300">Integrador de Motores Open-Source</td>
               <td class="p-4 text-amber-300">Fatias VSA de conexão, webhooks seguros e compose</td>
             </tr>
             <tr class="hover:bg-gray-800/30">
-              <td class="p-4 font-bold text-white">🌉 aidd-bridge</td>
-              <td class="p-4 text-emerald-400 font-bold">✓ Homologado</td>
+              <td class="p-4 font-bold text-white">aidd-bridge</td>
+              <td class="p-4 text-emerald-400 font-bold">Homologado</td>
               <td class="p-4 text-gray-300">Desacoplador de Low-Code (Lovable/v0/Bolt)</td>
               <td class="p-4 text-pink-300">Frontend limpo sem vendor lock-in para PostgreSQL VPS (45 testes)</td>
             </tr>
@@ -475,7 +541,7 @@
   </main>
 
   <footer class="border-t border-gray-800 py-8 text-center text-xs text-gray-500 font-mono">
-    Tratado Canônico Soberano do Ecossistema AIDD • 2026 • Versão 3.0 Holística
+    Tratado Canônico Soberano do Ecossistema AIDD • Versão 3.1 Canônica • Sem Emojis • Scrollbars 4px
   </footer>
 
 </body>
