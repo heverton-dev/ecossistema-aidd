@@ -1,0 +1,49 @@
+services:
+  # 1. Back-end AIDD Monolith Modular Engine
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    restart: always
+    environment:
+      - PORT=3000
+      - ALLOW_ANONYMOUS=0
+      - JWT_SECRET_KEY=aidd_enterprise_production_jwt_secret_scale_2026_super_secure
+      - PYTHONUNBUFFERED=1
+    volumes:
+      - app_data:/app/data
+    networks:
+      - aidd_network
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:3000/openapi.json', timeout=2)"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 5s
+
+  # 2. Nginx Reverse Proxy com SSL, Rate Limiting & Anti-DDoS
+  nginx:
+    image: nginx:alpine
+    restart: always
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./nginx/ssl:/etc/nginx/ssl:ro
+      - nginx_logs:/var/log/nginx
+    depends_on:
+      app:
+        condition: service_healthy
+    networks:
+      - aidd_network
+
+volumes:
+  app_data:
+    driver: local
+  nginx_logs:
+    driver: local
+
+networks:
+  aidd_network:
+    driver: bridge

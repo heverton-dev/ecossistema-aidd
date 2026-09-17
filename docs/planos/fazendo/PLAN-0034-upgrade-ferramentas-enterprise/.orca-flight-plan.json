@@ -1,0 +1,50 @@
+{
+  "plan_dir": "C:\\Users\\trcnologia\\Desktop\\ecossistema-aidd\\docs\\planos\\PLAN-0034-upgrade-ferramentas-enterprise",
+  "harness": "claude",
+  "profile_binary": "claude",
+  "fronts": [
+    {
+      "name": "bridge-robustez",
+      "rotulo": "PLAN-0034-fase-01-bridge-robustez",
+      "branch": "orca/PLAN-0034-fase-01-bridge-robustez",
+      "worktree": "PLAN-0034-fase-01-bridge-robustez",
+      "harness": "claude",
+      "command": [
+        "claude",
+        "--dangerously-skip-permissions",
+        "--model",
+        "sonnet",
+        "Scope: [Descrever o que entra e o que nao entra neste item]\n\nDefinition of Done:\n\n1. [Criterio 1 checavel e deterministico]\n2. [Criterio 2 checavel e deterministico]\n3. Testes executados com exit 0 e conformidade com os Quality Gates.\n\nExit Criteria:\n\n- Arquivos criados ou alterados no local correto.\n- Testes reais passando sem stubs falsos.\n- Gates de integridade aprovados.\n\nYou are going to implement Item 1: Bridge-Robustez.\nStrictly follow the Definition of Done above.\nDo not fabricate approvals and maintain monorepo governance rules."
+      ]
+    },
+    {
+      "name": "factory-blueprints",
+      "rotulo": "PLAN-0034-fase-02-factory-blueprints",
+      "branch": "orca/PLAN-0034-fase-02-factory-blueprints",
+      "worktree": "PLAN-0034-fase-02-factory-blueprints",
+      "harness": "claude",
+      "command": [
+        "claude",
+        "--dangerously-skip-permissions",
+        "--model",
+        "sonnet",
+        "Scope: [Descrever o que entra e o que nao entra neste item]\n\nDefinition of Done:\n\n1. [Criterio 1 checavel e deterministico]\n2. [Criterio 2 checavel e deterministico]\n3. Testes executados com exit 0 e conformidade com os Quality Gates.\n\nExit Criteria:\n\n- Arquivos criados ou alterados no local correto.\n- Testes reais passando sem stubs falsos.\n- Gates de integridade aprovados.\n\nYou are going to implement Item 2: Factory-Blueprints.\nStrictly follow the Definition of Done above.\nDo not fabricate approvals and maintain monorepo governance rules."
+      ]
+    },
+    {
+      "name": "forge-selfhealing",
+      "rotulo": "PLAN-0034-fase-03-forge-selfhealing",
+      "branch": "orca/PLAN-0034-fase-03-forge-selfhealing",
+      "worktree": "PLAN-0034-fase-03-forge-selfhealing",
+      "harness": "claude",
+      "command": [
+        "claude",
+        "--dangerously-skip-permissions",
+        "--model",
+        "sonnet",
+        "Scope: [Descrever o que entra e o que nao entra neste item]\n\nDefinition of Done:\n\n1. [Criterio 1 checavel e deterministico]\n2. [Criterio 2 checavel e deterministico]\n3. Testes executados com exit 0 e conformidade com os Quality Gates.\n\nExit Criteria:\n\n- Arquivos criados ou alterados no local correto.\n- Testes reais passando sem stubs falsos.\n- Gates de integridade aprovados.\n\nYou are going to implement Item 3: Forge-SelfHealing.\nStrictly follow the Definition of Done above.\nDo not fabricate approvals and maintain monorepo governance rules."
+      ]
+    }
+  ],
+  "interactive": true
+}

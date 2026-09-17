@@ -56,6 +56,28 @@ def _validar_integracao(diretorio: str) -> list:
         except json.JSONDecodeError:
             problemas.append("FACTORY_OUTPUT.json invalido")
 
+    # VSA e Quarteto Sine Qua Non (se gerado modo VSA)
+    server_path = os.path.join(diretorio, "src", "server.py")
+    if os.path.isfile(server_path):
+        # Checar fatias verticais
+        modules_dir = os.path.join(diretorio, "src", "modules")
+        if not os.path.isdir(modules_dir):
+            problemas.append("Estrutura VSA sem pasta src/modules")
+        else:
+            mods = [d for d in os.listdir(modules_dir) if os.path.isdir(os.path.join(modules_dir, d))]
+            if not mods:
+                problemas.append("src/modules sem fatias verticais")
+            for m in mods:
+                for req in ["models.py", "repositories.py", "services.py", "routes.py"]:
+                    if not os.path.isfile(os.path.join(modules_dir, m, req)):
+                        problemas.append(f"Fatia {m} sem {req}")
+
+        # Checar Quarteto Sine Qua Non
+        static_dir = os.path.join(diretorio, "src", "static")
+        for st in ["swagger.html", "webhook_studio.html", "mcp_studio.html", "docs.html", "index.html"]:
+            if not os.path.isfile(os.path.join(static_dir, st)):
+                problemas.append(f"Quarteto Sine Qua Non ausente: {st}")
+
     return problemas
 
 

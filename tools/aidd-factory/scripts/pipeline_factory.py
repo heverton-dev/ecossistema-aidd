@@ -133,23 +133,30 @@ def executar_pipeline(plano_path: str, pasta_destino: str, incluir_llm: bool = T
         print(f"  [ERRO] {res_analysis.codigo}: {res_analysis.erro}")
         erros += 1
 
-    # Fase 2: Gateway (LLM)
+    # Fase 2: Aplicacao Modular VSA & Quarteto Sine Qua Non
     if incluir_llm and res_analysis.sucesso:
         fase_num += 1
-        print(f"\n[{fase_num}/{total_fases}] Fase 2 - Gateway FastAPI (LLM)...")
+        print(f"\n[{fase_num}/{total_fases}] Fase 2 - Aplicacao Modular VSA & Quarteto Sine Qua Non...")
         try:
+            from core.vsa_generator import gerar_aplicacao_vsa
+            res_vsa = gerar_aplicacao_vsa(res_analysis.valor, pasta_destino)
+            if res_vsa.sucesso:
+                artefatos.append({"tipo": "vsa_app", "caminho": os.path.join(pasta_destino, "src"), "status": "gerado"})
+                print(f"  [OK] Aplicacao VSA + Quarteto Sine Qua Non gerados ({len(res_vsa.valor)} arquivos)")
+            else:
+                artefatos.append({"tipo": "vsa_app", "caminho": "", "status": "erro", "detalhes": res_vsa.erro})
+                print(f"  [ERRO] {res_vsa.codigo}: {res_vsa.erro}")
+                erros += 1
+
+            # Gateway FastAPI complementar
             from core.gateway_generator import gerar_gateway
             res_gw = gerar_gateway(res_analysis.valor, pasta_destino)
             if res_gw.sucesso:
                 artefatos.append({"tipo": "gateway", "caminho": os.path.join(pasta_destino, "src", "gateway"), "status": "gerado"})
-                print(f"  [OK] Gateway FastAPI gerado ({len(res_gw.valor)} arquivos)")
-            else:
-                artefatos.append({"tipo": "gateway", "caminho": "", "status": "erro", "detalhes": res_gw.erro})
-                print(f"  [ERRO] {res_gw.codigo}: {res_gw.erro}")
-                erros += 1
+                print(f"  [OK] Gateway FastAPI complementar gerado ({len(res_gw.valor)} arquivos)")
         except Exception as exc:
-            artefatos.append({"tipo": "gateway", "caminho": "", "status": "erro", "detalhes": str(exc)})
-            print(f"  [ERRO] Gateway: {exc}")
+            artefatos.append({"tipo": "vsa_app", "caminho": "", "status": "erro", "detalhes": str(exc)})
+            print(f"  [ERRO] VSA App: {exc}")
             erros += 1
 
     # Fase 3: Frontend (LLM)
@@ -227,16 +234,26 @@ def executar_pipeline(plano_path: str, pasta_destino: str, incluir_llm: bool = T
             # Webhook generation — stub deterministico por enquanto
             webhook_dir = os.path.join(pasta_destino, "webhooks")
             os.makedirs(webhook_dir, exist_ok=True)
+            servicos_webhook = []
+            for f in res_analysis.valor.get("ferramentas", []):
+                slug_f = f["nome"].lower().replace(" ", "_").replace("-", "_").replace(".", "").strip("_")
+                servicos_webhook.append({
+                    "nome": f["nome"],
+                    "slug": slug_f,
+                    "eventos": [f"{slug_f}.criado", f"{slug_f}.atualizado", f"{slug_f}.removido"]
+                })
             webhook_contrato = {
-                "servicos": [
-                    {"nome": f["nome"], "slug": f["nome"].lower().replace(" ", "-")}
-                    for f in res_analysis.valor.get("ferramentas", [])
-                ],
-                "eventos": ["created", "updated", "deleted"],
+                "versao": "1.0.0",
+                "nicho": res_analysis.valor.get("nicho_slug"),
+                "servicos": servicos_webhook,
+                "endpoints": {
+                    "dispatcher": "/webhooks",
+                    "studio_ui": "/webhooks"
+                }
             }
             _salvar_artefato(webhook_dir, "webhook_contrato.json", webhook_contrato)
             artefatos.append({"tipo": "webhooks", "caminho": webhook_dir, "status": "gerado"})
-            print(f"  [OK] Webhook contrato gerado")
+            print(f"  [OK] Webhook contrato gerado com eventos de fatias VSA")
         except Exception as exc:
             artefatos.append({"tipo": "webhooks", "caminho": "", "status": "erro", "detalhes": str(exc)})
             print(f"  [ERRO] Webhooks: {exc}")

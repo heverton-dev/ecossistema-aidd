@@ -685,20 +685,35 @@
 - **Plano de Correção:**
   1. Ajustar o carregamento do plano para `[Pre-flight]` sem incrementar `fase_num` em [`tools/aidd-factory/scripts/pipeline_factory.py`](file:///C:/Users/trcnologia/Desktop/ecossistema-aidd/tools/aidd-factory/scripts/pipeline_factory.py).
   2. Corrigir o cálculo para `total_fases = 9 if incluir_llm else 6`, garantindo correspondência exata de `[1/9]` a `[9/9]` no modo completo e `[1/6]` a `[6/6]` no modo determinístico.
-  3. Adicionar teste E2E `test_pipeline_completo_delivery_e2e` validando o pipeline completo com código de saída 0.
+- **Status:** **RESOLVIDO**.
+
+#### Inconsistência 26: Dissonância Arquitetural do Factory frente ao Padrão VSA e Violação da Lei Inviolável 10 (Quarteto Sine Qua Non)
+- **Nome:** Dissonância estrutural entre o output da fábrica e os pilares canônicos de engenharia do ecossistema (`aidd-master` e `aidd-enterprise`).
+- **Motivo:** O gerador original produzia apenas um proxy reverso ralo e um scaffold genérico de microsserviços sem modelos de domínio reais, sem repositórios seguros tipados e desprovido do Quarteto *Sine Qua Non* dinâmico (`/swagger`, `/webhooks`, `/mcp`, `/docs`).
+- **O que ocasionou:** Risco de drift arquitetural nos projetos nascidos via fábrica e quebra de harmonia com o restante do ecossistema.
+- **Plano de Correção:**
+  1. Criação do motor canônico [`tools/aidd-factory/src/core/vsa_generator.py`](file:///C:/Users/trcnologia/Desktop/ecossistema-aidd/tools/aidd-factory/src/core/vsa_generator.py), que materializa:
+     - Shared Kernel completo (`database.py`, `events.py`, `openapi.py`, `webhooks.py`, `mcp_server.py`, `security.py`, `token_revocation.py`).
+     - Fatias Verticais dedicadas por ferramenta (`src/modules/<slug>/` com `models.py`, `repositories.py` anti-SQL injection, `services.py` e `routes.py`).
+     - Servidor Monolítico Modular (`src/server.py`) expondo nativamente o Quarteto *Sine Qua Non* (`/swagger`, `/webhooks`, `/mcp`, `/docs`) e `/healthz`.
+     - Super-App UI offline-first (`src/static/index.html` com abas dinâmicas, KPIs e modais) e Manual do Utilizador (`src/static/docs.html`).
+  2. Atualização da Fase 2 e Fase 7 no [`pipeline_factory.py`](file:///C:/Users/trcnologia/Desktop/ecossistema-aidd/tools/aidd-factory/scripts/pipeline_factory.py) e validação cruzada no [`09_integracao.py`](file:///C:/Users/trcnologia/Desktop/ecossistema-aidd/tools/aidd-factory/scripts/phases/09_integracao.py).
+  3. Atualização dos Quality Gates `G_FACTORY_INTEGRATION.py` e `G_FACTORY_MVP.py` para auditar a conformidade de VSA e Quarteto Sine Qua Non.
+  4. Criação dos testes unitários e de integração `test_vsa_generator_fatias_e_quarteto` e `test_pipeline_completo_delivery_e2e` (**16 passed**, 0 falhas).
+  5. Teste factual no projeto alvo CTT gerando a pasta temporária para conferência humana [`factory-vsa-test`](file:///C:/Users/trcnologia/Desktop/proj_ctt/planos-ctt-app/factory-vsa-test) com 12 de 12 artefatos gerados e 6/6 gates PASS.
 - **Status:** **RESOLVIDO**.
 
 ---
 
 ### Resultado Final da Geração de Aplicações e Integração (`aidd-factory`)
 
-- **Testes Unitários da Ferramenta:** **15 passed**, 0 falhas (100% de aprovação).
+- **Testes Unitários da Ferramenta:** **16 passed**, 0 falhas (100% de aprovação).
 - **Quality Gates de Fábrica:**
   - `G_FACTORY_ANALYSIS.py`: **PASS** (Esquema, ferramentas, blocos e VPS validados)
   - `G_FACTORY_COMPOSE.py`: **PASS** (Sintaxe YAML, rede `aidd_internal`, zero colisão de portas)
   - `G_FACTORY_ENV.py`: **PASS** (Todas as variáveis presentes, zero senha padrão)
   - `G_FACTORY_INIT_DB.py`: **PASS** (Shebang, `set -euo pipefail`, CREATE DATABASE e GRANTs válidos)
-  - `G_FACTORY_INTEGRATION.py`: **PASS** (Todos os 11 artefatos gerados e registrados no manifesto)
+  - `G_FACTORY_INTEGRATION.py`: **PASS** (Validação completa de VSA, fatias verticais, Quarteto Sine Qua Non e manifesto)
   - `G_FACTORY_MVP.py`: **PASS** (Estrutura, schemas, anti-stubs AST e compilação Python)
 - **Quality Gates Globais do Ecossistema:** **11 de 11 Gates Aprovados (100% PASS)**.
 - **Status da Etapa 6:** **100% CONCLUÍDA, HOMOLOGADA E AUDITADA**.

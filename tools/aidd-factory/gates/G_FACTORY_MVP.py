@@ -18,6 +18,7 @@ _ESPERADOS = [
     "src/core/__init__.py",
     "src/core/result.py",
     "src/core/escritor_atomico.py",
+    "src/core/vsa_generator.py",
     "scripts/__init__.py",
     "scripts/pipeline_factory.py",
     "scripts/contrato_factory.py",

@@ -332,3 +332,50 @@ class TestPipelineE2E:
             assert os.path.isfile(os.path.join(dest, "factory_analysis.json"))
             assert os.path.isfile(os.path.join(dest, "docker-compose.yml"))
             assert os.path.isfile(os.path.join(dest, "init-multiple-databases.sh"))
+            # Validar VSA e Quarteto
+            assert os.path.isfile(os.path.join(dest, "src", "server.py"))
+            assert os.path.isfile(os.path.join(dest, "src", "static", "index.html"))
+            assert os.path.isfile(os.path.join(dest, "src", "static", "swagger.html"))
+            assert os.path.isfile(os.path.join(dest, "src", "static", "webhook_studio.html"))
+            assert os.path.isfile(os.path.join(dest, "src", "static", "mcp_studio.html"))
+            assert os.path.isfile(os.path.join(dest, "src", "static", "docs.html"))
+
+    def test_vsa_generator_fatias_e_quarteto(self):
+        """Valida que vsa_generator gera Shared Kernel, fatias com repositorios e estúdios."""
+        from core.vsa_generator import gerar_aplicacao_vsa
+        import py_compile
+
+        analysis = {
+            "nicho_slug": "clinicas",
+            "nicho_nome_exibicao": "Clínicas & Consultórios",
+            "ferramentas": [
+                {"nome": "Typebot"},
+                {"nome": "Twenty CRM"},
+            ],
+        }
+        with tempfile.TemporaryDirectory() as tmp:
+            res = gerar_aplicacao_vsa(analysis, tmp)
+            assert res.sucesso, f"Geracao VSA falhou: {res.erro}"
+            
+            # 1. Shared Kernel
+            assert os.path.isfile(os.path.join(tmp, "src", "core", "database.py"))
+            assert os.path.isfile(os.path.join(tmp, "src", "core", "events.py"))
+            assert os.path.isfile(os.path.join(tmp, "src", "core", "mcp_server.py"))
+            
+            # 2. Fatias Verticais
+            for mod in ["typebot", "twenty_crm"]:
+                mod_dir = os.path.join(tmp, "src", "modules", mod)
+                assert os.path.isdir(mod_dir)
+                for f in ["models.py", "repositories.py", "services.py", "routes.py"]:
+                    f_path = os.path.join(mod_dir, f)
+                    assert os.path.isfile(f_path), f"Arquivo {f} ausente na fatia {mod}"
+                    py_compile.compile(f_path, doraise=True)
+
+            # 3. Server e Quarteto Sine Qua Non
+            server_path = os.path.join(tmp, "src", "server.py")
+            assert os.path.isfile(server_path)
+            py_compile.compile(server_path, doraise=True)
+
+            static_dir = os.path.join(tmp, "src", "static")
+            for studio in ["index.html", "swagger.html", "webhook_studio.html", "mcp_studio.html", "docs.html"]:
+                assert os.path.isfile(os.path.join(static_dir, studio)), f"Studio {studio} ausente"

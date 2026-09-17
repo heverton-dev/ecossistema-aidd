@@ -127,6 +127,55 @@ def _validar_openapi(diretorio: str) -> list:
     return problemas
 
 
+def _validar_vsa(diretorio: str) -> list:
+    """Valida a conformidade Vertical Slice Architecture (VSA) e Quarteto Sine Qua Non."""
+    import py_compile
+    problemas = []
+    server_path = os.path.join(diretorio, "src", "server.py")
+    if not os.path.isfile(server_path):
+        return []  # Modo sem VSA gerado
+
+    # 1. Compilar src/server.py
+    try:
+        py_compile.compile(server_path, doraise=True)
+    except py_compile.PyCompileError as exc:
+        problemas.append(f"src/server.py invalido: {exc}")
+
+    # 2. Validar fatias verticais em src/modules/
+    modules_dir = os.path.join(diretorio, "src", "modules")
+    if os.path.isdir(modules_dir):
+        modulos = [d for d in os.listdir(modules_dir) if os.path.isdir(os.path.join(modules_dir, d)) and not d.startswith("_")]
+        if not modulos:
+            problemas.append("src/modules sem nenhuma fatia vertical")
+        for mod in modulos:
+            mod_path = os.path.join(modules_dir, mod)
+            for arquivo in ["models.py", "repositories.py", "services.py", "routes.py"]:
+                f_path = os.path.join(mod_path, arquivo)
+                if not os.path.isfile(f_path):
+                    problemas.append(f"Fatia {mod} sem {arquivo}")
+                else:
+                    try:
+                        py_compile.compile(f_path, doraise=True)
+                    except py_compile.PyCompileError as exc:
+                        problemas.append(f"Fatia {mod}/{arquivo} com erro de sintaxe: {exc}")
+
+    # 3. Validar Quarteto Sine Qua Non em src/static/
+    static_dir = os.path.join(diretorio, "src", "static")
+    if os.path.isdir(static_dir):
+        quarteto = {
+            "index.html": "Super-App Frontend",
+            "swagger.html": "Swagger Studio (/swagger)",
+            "webhook_studio.html": "Webhook Studio (/webhooks)",
+            "mcp_studio.html": "MCP Studio (/mcp)",
+            "docs.html": "Manual do Utilizador (/docs)"
+        }
+        for arq, desc in quarteto.items():
+            if not os.path.isfile(os.path.join(static_dir, arq)):
+                problemas.append(f"Quarteto Sine Qua Non ausente: {desc} ({arq})")
+
+    return problemas
+
+
 def _validar_gateway(diretorio: str) -> list:
     """Valida gateway (py_compile). Pula se nao existe (modo --sem-llm)."""
     import py_compile
@@ -165,6 +214,7 @@ def validar_tudo(diretorio: str) -> Result:
         ("env", _validar_envs),
         ("openapi", _validar_openapi),
         ("gateway", _validar_gateway),
+        ("vsa", _validar_vsa),
     ]:
         problemas = fn(diretorio)
         relatorio[nome] = {
