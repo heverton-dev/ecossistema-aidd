@@ -51,7 +51,11 @@ def provision(project_desc, base_dir=None):
             if os.path.exists(src):
                 shutil.copyfile(src, os.path.join(project_dir, 'src', 'core', f))
         
-        for sf in ['index.html', 'docs.html']:
+        # index.html NÃO é copiado daqui: templates/core/index.html é uma cópia
+        # estática desatualizada (sem as variáveis CSS/modal que G_CONTRACTS
+        # exige) — é gerado dinamicamente no passo 5.1 com o mesmo gerador que
+        # compose_suite() usa (generate_superapp_index_html), sempre em dia.
+        for sf in ['docs.html']:
             src = os.path.join(templates_dir, sf)
             if os.path.exists(src):
                 shutil.copyfile(src, os.path.join(project_dir, 'src', 'static', sf))
@@ -80,6 +84,28 @@ def provision(project_desc, base_dir=None):
     # 5. Criar modulo padrão inicial
     from add_module import criar_modulo
     criar_modulo("principal", "Módulo principal", project_dir)
+
+    # 5.1. Gerar o Servidor Monolítico Modular (src/server.py) e o front-end
+    # Super-App (src/static/index.html). criar_modulo() só RELIGA o
+    # server.py num módulo novo se ele já existir (ver comentário em
+    # add_module.py) — na primeira composição do projeto ele nunca existiu,
+    # então precisa ser gerado aqui, do mesmo jeito que compose_suite() faz.
+    try:
+        from compose_suite import (
+            generate_modular_server_code,
+            generate_superapp_index_html,
+        )
+        server_code = generate_modular_server_code(slug, ["principal"], db_engine="sqlite")
+        with open(os.path.join(project_dir, 'src', 'server.py'), 'w', encoding='utf-8') as f:
+            f.write(server_code)
+        print("  [+] Servidor dinâmico 'src/server.py' gerado com sucesso!")
+
+        index_html = generate_superapp_index_html(slug, ["principal"])
+        with open(os.path.join(project_dir, 'src', 'static', 'index.html'), 'w', encoding='utf-8') as f:
+            f.write(index_html)
+        print("  [+] Front-end Super-App 'src/static/index.html' gerado com sucesso!")
+    except ImportError as e:
+        print(f"  [!] Aviso: não foi possível gerar server.py/index.html: {e}")
 
     # 6. Gerar requirements.txt
     with open(os.path.join(project_dir, 'requirements.txt'), 'w', encoding='utf-8') as f:

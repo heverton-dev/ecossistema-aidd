@@ -49,13 +49,13 @@ Cada fluxo representa um caminho industrial especializado alimentado pelo **`aid
 - **Esteira:** `FORGE` → `PLANNER` → `GENERATOR` → `MASTER` → `ENTERPRISE` → `OPS`
 - **Motor Primário:** `aidd-generator` (Pipeline de 8 fases, TDD Red-Green estrito)
 - **Diretório Alvo do Teste:** `testes/fluxo-01-pure/`
-- **Status do Fluxo:** **Etapas 1-3 CONCLUÍDAS (score 88/100 na Fase 7); Etapas 4-7 pendentes**
+- **Status do Fluxo:** **Etapas 1-4 CONCLUÍDAS; Etapas 5-7 pendentes**
 
 ### Checklist de Execução por Ferramenta:
 - [x] **Etapa 1 (`aidd-forge`):** Injeção de governança, Git, pre-commit hooks e regras de isolamento.
 - [x] **Etapa 2 (`aidd-planner`):** Intake BDD/SDD, geração e auditoria do `PLANNER.json` (Fluxo 1).
 - [x] **Etapa 3 (`aidd-generator`):** Execução do pipeline TDD de 8 fases (Spec -> Arquitetura -> Testes Red -> Implementação Green -> Quarteto). 4 bugs reais achados e corrigidos, score final 88/100.
-- [ ] **Etapa 4 (`aidd-master`):** Harmonização da fatia gerada no Monólito Modular com shared kernel.
+- [x] **Etapa 4 (`aidd-master`):** Harmonização em Monólito Modular (`init` + `add-module`). 2 bugs reais achados e corrigidos, auditoria final APROVADA (7/7 gates).
 - [ ] **Etapa 5 (`aidd-enterprise`):** Injeção de componentes resilientes e validação de hashes SHA-256.
 - [ ] **Etapa 6 (`aidd-ops`):** Provisionamento do docker-compose unificado e envs de produção.
 - [ ] **Etapa 7 (Auditoria Final):** Aprovação com exit code 0 em todos os Quality Gates.
@@ -124,6 +124,28 @@ Comando real: `python ecossistema.py generate "<ideia>" --pasta testes/fluxo-01-
 - **Correção aplicada:** nova função `_run_matando_arvore_em_timeout()` em `G_SEGURANCA.py` — usa `subprocess.Popen` + `taskkill /F /T /PID` no Windows (mata a árvore inteira de processos) em vez de `subprocess.run(timeout=...)`. Teste de regressão novo, sem rede real e sem mock: `test_run_matando_arvore_em_timeout_mata_processo_neto` (simula um processo pai que gera um filho de longa duração, confirma que o filho morre junto quando o timeout do pai dispara).
 - **Validação real:** teste de regressão comprovadamente pega a regressão (travou de propósito ao simular a versão antiga, sem kill de árvore). Suite completa do `aidd-master`: `python -m pytest -q` → **352 passed, 3 skipped** (164s, sem travamentos).
 - **Nota:** este bug é anterior a esta sessão e afeta qualquer commit no monorepo, não só os do Fluxo 01. Corrigido durante esta sessão porque bloqueava o commit das correções do `aidd-generator`.
+
+**Etapa 4 (`aidd-master`) — 2 bugs achados e corrigidos, auditoria final APROVADA:**
+
+Mecanismo real: `python ecossistema.py master init <nome> --pasta <dest>` (cria o monólito com um módulo "principal" padrão) seguido de `python ecossistema.py master add-module <modulo> --pasta <dest>` (adiciona a fatia vertical "tarefas"). Não há handoff automático do código gerado pelo `aidd-generator` na Etapa 3 — mesma lacuna de integração observada entre `aidd-planner` e `aidd-generator`; `add-module` gera um scaffold CRUD genérico (Clean Architecture completa: domain/application/infrastructure/interfaces) parametrizado pelo nome do módulo, não importa a lógica de negócio já escrita.
+
+**1) BUG corrigido — `master init` nunca gera `src/server.py`:**
+- `master audit` reprovava sempre com `G_ESTRUTURA FAIL`: "Servidor Monolítico Modular 'src/server.py' ➔ Servidor ausente ou vazio".
+- **Causa raiz:** `scripts/provision_project.py::provision()` (implementação real de `master init`) cria o módulo "principal" via `add_module.criar_modulo()`, mas essa função só RE-liga/regenera `src/server.py` quando ele **já existe** (comportamento documentado no próprio código: a primeira geração é responsabilidade de quem chama `criar_modulo()` a primeira vez). Como era a primeira vez, o arquivo nunca nascia. `compose_suite.py` (usado por outro fluxo) já fazia isso certo, gerando o server.py antes de criar o primeiro módulo.
+- **Por que nenhum teste pegou:** `provision_project.py` não tinha nenhum teste — nenhum teste jamais chamava `provision()` e verificava os arquivos gerados (mesma classe de lacuna documentada em `test_compose_suite.py` para outro bug anterior).
+- **Correção aplicada:** `provision()` agora chama `generate_modular_server_code()` (a mesma função que `compose_suite.py` usa) e escreve `src/server.py` logo após criar o módulo inicial.
+
+**2) BUG corrigido — `src/static/index.html` copiado de um template desatualizado, sem CSS/modal exigidos por `G_CONTRACTS`:**
+- `master audit` reprovava com `G_CONTRACTS FAIL`: "Super-App 'index.html' sem CSS offline-first embutido" e "sem estrutura modal com display encapsulado".
+- **Causa raiz:** `provision()` copiava estaticamente `templates/core/index.html` — um arquivo desatualizado, sem a variável CSS `--bg-base` nem `modal-overlay`/`modal-generic`, que o próprio gate `G_CONTRACTS` exige. O template real e atualizado (`templates/cookiecutter-scaffold/.../index.html.j2`, usado por `compose_suite.py` via `generate_superapp_index_html()`) já tinha essas partes.
+- **Correção aplicada:** `provision()` não copia mais `index.html` estaticamente — gera via `generate_superapp_index_html()`, igual a `compose_suite.py`.
+- **Novo arquivo de teste:** `tests/unit/test_provision_project.py` (4 testes, nenhum existia antes) — cobre os 2 bugs acima com reprodução real (chama `provision()` de verdade, roda os gates `G_ESTRUTURA`/`G_CONTRACTS` reais contra o projeto gerado, sem mock). Confirmado que cada teste detecta a regressão correspondente ao reverter o fix.
+- **Validação real:** `python -m pytest tests/unit/test_provision_project.py -v` → 4 passed. Suite completa do `aidd-master`: `python -m pytest -q` → **356 passed, 3 skipped**.
+
+**RESULTADO FINAL DA ETAPA 4 (projeto recriado do zero com os 2 fixes):**
+- `master init` + `master add-module tarefas` → estrutura completa gerada (2 módulos: `principal` + `tarefas`).
+- `master test`: 4/4 testes unitários passando.
+- `master audit --report`: **APROVADO — 7/7 gates PASS** (`G_ESTRUTURA`, `G_QUALIDADE`, `G_TESTES`, `G_CONTRACTS`, `G_SEGREDOS`, `G_HARNESS_COMPAT`, `G_SEGURANCA`).
 
 ---
 
