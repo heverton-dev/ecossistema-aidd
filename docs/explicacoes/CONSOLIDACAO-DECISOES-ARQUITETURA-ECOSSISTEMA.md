@@ -3,13 +3,13 @@
 
 > **Localização:** `docs/explicacoes/CONSOLIDACAO-DECISOES-ARQUITETURA-ECOSSISTEMA.md`  
 > **Status:** Tratado Canônico Soberano e Imutável  
-> **Versão:** 3.1.0 (Consolidação Holística por Camadas de Engenharia)  
+> **Versão:** 3.2.0 (Consolidação Holística com Detalhamento por Módulos e Cards)  
 > **Data de Homologação:** 17/09/2026  
 > **Padrão de Referência:** Monólito Modular (VSA + Camada Horizontal), Padrão Enterprise CTT, Zero Vendor Lock-in  
 
 ---
 
-## 1. O Decálogo das Leis Invioláveis do Ecossistema
+## 1. As 10 Leis Invioláveis do Ecossistema (Preservado no Topo)
 
 Toda linha de código, manifesto de infraestrutura, contrato de API ou diretiva agêntica dentro do ecossistema AIDD é rigorosamente subordinada a 10 leis universais:
 
@@ -38,199 +38,207 @@ Toda linha de código, manifesto de infraestrutura, contrato de API ou diretiva 
 
 ## 2. Camada 01: Cibersegurança & Defesa em Profundidade
 
-### 2.1. O Que É
-Uma estrutura proativa de proteção multicamada que neutraliza ameaças desde a modelagem de entidades até o tráfego de rede e a execução em containers, tratando a segurança como requisito funcional inegociável de nível bancário.
+### Módulo 1.1: Queries Parametrizadas & Hash Argon2id (OWASP A03 / A07)
+* **O Que É / O Que Faz:** Proibição de interpolação de strings em consultas SQL. Todas as queries usam prepared statements parametrizados. Senhas cifradas com Argon2id/bcrypt com salt individual resistente a ataques por GPU.
+* **Gate Verificador:** `G_ECOSSISTEMA_INTEGRIDADE`
+* **O Que Entrega:** Zero SQL Injection e proteção contra ataques de dicionário e quebra de hashes vazados.
 
-### 2.2. O Que Tem Dentro
-* **Mitigação do OWASP Top 10:**
-  * Queries parametrizadas obrigatórias (*prepared statements*) em 100% dos repositórios (`repositories.py`), blindando a aplicação contra SQL Injection (A03:2021).
-  * Autenticação com hash Argon2id / bcrypt resistente a força bruta com salt individual.
-  * Validação estrita de assinaturas de Webhooks com HMAC SHA-256 via `hmac.compare_digest` para anular ataques de temporização (*timing attacks*).
-* **Cofre de Segredos `sops + age`:**
-  * Criptografia assimétrica de curva elíptica X25519 para variáveis sensíveis (`secrets.enc.yaml`).
-  * Zero credenciais em texto claro no repositório git e deciframento estritamente em memória.
-* **Integridade SHA-256 Anti-Tampering:**
-  * Manifestos de checksums para templates e módulos enterprise que barram adulterações indevidas.
-* **Proteção de Headers HTTP:**
-  * Injeção forçada de `Content-Security-Policy`, `Strict-Transport-Security (HSTS)`, `X-Content-Type-Options: nosniff`, `X-Frame-Options: DENY` e CORS restritivo por whitelist.
-* **Segurança de Containers (Hadolint):**
-  * Execução em usuário não-privilegiado (`USER appuser`), imagens base Alpine/Distroless e portas acima de 1024.
+### Módulo 1.2: HMAC SHA-256 em Tempo Constante (Anti-Timing Attacks)
+* **O Que É / O Que Faz:** Validação estrita de assinaturas criptográficas de webhooks e tokens usando a função `hmac.compare_digest`, eliminando vulnerabilidades de temporização side-channel.
+* **Gate Verificador:** `G_FACTORY_VSA` e `G_BRIDGE_VSA_COMPAT`
+* **O Que Entrega:** Comunicação assíncrona entre sistemas matematicamente inviolável.
 
-### 2.3. Quality Gates Associados
-* `G_ENTERPRISE_SHA`: Audita hashes SHA-256 e bloqueia templates alterados sem autorização.
-* `G_HADOLINT`: Bloqueia Dockerfiles com violações de boas práticas OCI ou execução como root.
-* `G_BRIDGE_VENDOR_LOCKIN`: Detecta e bloqueia credenciais ou URLs proprietárias expostas.
-* `G_BRIDGE_DOCKER_OCI`: Audita cabeçalhos OWASP no Nginx e multi-stage no Dockerfile.
+### Módulo 1.3: Cofre Assimétrico sops + age (Zero Plain-Text Secrets)
+* **O Que É / O Que Faz:** Criptografia de variáveis de ambiente com curva elíptica X25519. Nenhuma chave de API ou senha trafega em texto claro no git. Chaves privadas isoladas e deciframento em memória.
+* **Gate Verificador:** `G_OPS_SSH` e `G_BRIDGE_VENDOR_LOCKIN`
+* **O Que Entrega:** Repositório seguro contra vazamento involuntário de credenciais de produção.
 
-### 2.4. O Que Entrega na Prática
-* **No Ecossistema:** Repositório protegido contra vazamento acidental de chaves e blindado contra sabotagem de código.
-* **Nas Aplicações Corporativas:** Aplicação em conformidade com normas bancárias e exigências de privacidade da LGPD e GDPR, tolerante a tentativas de injeção e ataques de canal lateral.
+### Módulo 1.4: Blindagem SHA-256 Anti-Tampering
+* **O Que É / O Que Faz:** Checksums estritos de todos os templates e arquivos de segurança enterprise. Se um único byte for adulterado sem autorização, a esteira é bloqueada com Exit 1 imediato.
+* **Gate Verificador:** `G_ENTERPRISE_SHA`
+* **O Que Entrega:** Integridade verificável do código contra injeção maliciosa em tempo de build.
+
+### Módulo 1.5: Trilha de Auditoria com trace_id & Ofuscação (LGPD/GDPR)
+* **O Que É / O Que Faz:** Propagação universal do header `X-Trace-Id` em requisições, logs e eventos assíncronos. Mascaramento automático de dados pessoais identificáveis (PII) antes da gravação de logs.
+* **Gate Verificador:** `G_ENTERPRISE_TESTS`
+* **O Que Entrega:** Rastreabilidade completa de auditoria em conformidade com as leis de proteção de dados.
+
+### Módulo 1.6: Hadolint, Headers OWASP & Usuário Non-Root
+* **O Que É / O Que Faz:** Auditoria determinística de Dockerfiles via Hadolint, execução obrigatória como `USER appuser` e injeção de headers defensivos no Nginx (CSP, HSTS, X-Frame-Options DENY).
+* **Gate Verificador:** `G_HADOLINT` e `G_BRIDGE_DOCKER_OCI`
+* **O Que Entrega:** Containers OCI minimalistas com superfície de ataque reduzida.
 
 ---
 
 ## 3. Camada 02: Arquitetura de Software — Monólito Modular Canônico
 
-### 3.1. O Que É
-Um modelo de arquitetura de alta coesão e baixo acoplamento que elimina o código espaguete das camadas horizontais dispersas e o custo operacional prematuro de microsserviços, estruturando a aplicação em Fatias Verticais de Domínio (VSA) combinadas a uma Camada Horizontal Compartilhada.
+### Módulo 2.1: Fatias Verticais de Domínio (VSA Eixo Vertical)
+* **O Que É / O Que Faz:** Isolamento de cada regra de negócio em `features/<dominio>/`, contendo rotas, serviços puros, repositórios parametrizados, schemas Pydantic e testes de integração próprios.
+* **Gate Verificador:** `G_FACTORY_VSA`
+* **O Que Entrega:** Coesão máxima por domínio sem acoplamento espaguete entre módulos.
 
-### 3.2. O Que Tem Dentro
-* **Eixo Vertical — Fatias de Domínio (VSA):**
-  * Diretórios autônomos em `features/<dominio>/` contendo `routes.py`, `services.py`, `repositories.py` (parametrizados), `models.py` e suíte própria de testes.
-  * Zero dependências circulares: fatias nunca importam regras internas umas das outras diretamente.
-* **Eixo Horizontal Compartilhado (`core/` / `shared/`):**
-  * Pool assíncrono de banco de dados e controle de transações.
-  * Gestor de segredos e sanitização de payloads.
-  * Barramento interno de eventos para comunicação desacoplada inter-fatias.
-  * Circuit Breakers e Rate Limiters compartilhados.
-* **Roteador Unificado:** Registro determinístico e centralizado de todas as rotas e contratos da aplicação.
+### Módulo 2.2: Camada Compartilhada (Eixo Horizontal `core/` / `shared/`)
+* **O Que É / O Que Faz:** Fornece serviços transversais padronizados consumidos por todas as fatias: pool assíncrono de banco de dados, sanitização global, circuit breakers e middlewares unificados.
+* **Gate Verificador:** `G_DRIFT_NUCLEO_COMPARTILHADO`
+* **O Que Entrega:** Reuso sem duplicação de infraestrutura crítica.
 
-### 3.3. Quality Gates Associados
-* `G_DRIFT_NUCLEO_COMPARTILHADO`: Audita e sincroniza o núcleo compartilhado entre master e enterprise.
-* `G_FACTORY_VSA`: Garante que todo serviço ou motor integrado nasça obrigatoriamente como uma fatia vertical VSA.
-* `G_BRIDGE_VSA_COMPAT`: Assegura que o código desatado de low-code respeite a estrutura modular de fatias.
+### Módulo 2.3: Roteador Central Declarativo
+* **O Que É / O Que Faz:** Registro unificado de endpoints onde novas fatias conectam-se de forma declarativa, garantindo prefixos semânticos padronizados e documentação automática.
+* **Gate Verificador:** `G_ECOSSISTEMA_INTEGRIDADE`
+* **O Que Entrega:** API consistente sem rotas órfãs ou conflitos de endpoints.
 
-### 3.4. O Que Entrega na Prática
-* **No Ecossistema:** Estrutura clara e previsível onde agentes e desenvolvedores navegam sem ambiguidade.
-* **Nas Aplicações Corporativas:** Código limpo onde uma feature pode ser alterada, testada ou extraída para um microsserviço independente no futuro sem causar quebras em outras áreas do sistema.
+### Módulo 2.4: Gateway de Eventos Desacoplado
+* **O Que É / O Que Faz:** Barramento de eventos assíncronos para comunicação inter-fatias. Fatias nunca chamam o banco de dados de outras fatias diretamente.
+* **Gate Verificador:** `G_FACTORY_VSA`
+* **O Que Entrega:** Arquitetura limpa que permite extrair fatias para microsserviços futuros com atrito zero.
 
 ---
 
 ## 4. Camada 03: Engenharia de Software & Qualidade Industrial
 
-### 4.1. O Que É
-A disciplina de desenvolvimento que substitui a intuição e o "vibe coding" por determinismo estrito, validação mecânica por AST, TDD Red-Green e execução massiva de testes reais automatizados.
+### Módulo 3.1: Zero Stubs e Zero Mocks
+* **O Que É / O Que Faz:** Proibição de stubs (`pass`, `NotImplementedError`, `# TODO`) e mocks estáticos em código de produção. 100% das funções possuem implementação real.
+* **Gate Verificador:** `G_TESTES_REAIS`
+* **O Que Entrega:** Software entregue pronto para operação real em produção.
 
-### 4.2. O Que Tem Dentro
-* **Zero Stubs e Zero Mocks:** Código de produção 100% funcional. Proibição de stubs (`pass`, `NotImplementedError`) e mocks estáticos em produção.
-* **TDD Red-Green Rigoroso:** Testes de integração e unitários escritos previamente contra SQLite em memória ou PostgreSQL antes da escrita da lógica de negócio.
-* **Tratamento Monádico de Erros (Result Monad):** Operações críticas encapsuladas em estruturas determinísticas `Ok(data)` ou `Err(error)`.
-* **Tipagem Estática Total:** Validação em tempo de execução via Pydantic e type hints em Python e TypeScript.
-* **Fixação Criptográfica de Dependências:** `requirements.txt` com pinning estrito de versão e hashes SHA-256 de pacotes.
+### Módulo 3.2: TDD Red-Green Rigoroso
+* **O Que É / O Que Faz:** Escrita de testes de integração e unitários antes da implementação da lógica de negócio, garantindo que o código nasça validado.
+* **Gate Verificador:** `G_GENERATOR_TESTES`
+* **O Que Entrega:** Mais de 2.200 testes reais passando em 100% das ferramentas do ecossistema.
 
-### 4.3. Quality Gates Associados
-* `G_TESTES_REAIS`: Execução obrigatória de todos os testes unitários e integrados em todas as 7 ferramentas (mais de 2.200 testes reais com 100% de sucesso).
-* `G_ECOSSISTEMA_INTEGRIDADE`: Análise sintática e AST em scripts, comandos e skills para evitar regressões.
-* `G_DEPENDENCIAS_PIN_HASH`: Bloqueia qualquer dependência que não possua hash criptográfico exato.
+### Módulo 3.3: Tratamento Determinístico de Erros (Result Monad)
+* **O Que É / O Que Faz:** Encapsulamento de operações de risco em estruturas `Ok(valor)` ou `Err(erro)`, forçando o chamador a tratar explicitamente todos os caminhos de falha.
+* **Gate Verificador:** `G_OPS_SSH`
+* **O Que Entrega:** Resiliência extrema contra exceções não tratadas em runtime.
 
-### 4.4. O Que Entrega na Prática
-* **No Ecossistema:** Confiança determinística em cada commit; nenhum bug entra na branch principal sem ser barrado na esteira.
-* **Nas Aplicações Corporativas:** Aplicação robusta que entra em produção com 100% de cobertura verificada das regras de negócio e estabilidade contínua.
+### Módulo 3.4: Pinning com Hash SHA-256
+* **O Que É / O Que Faz:** Fixação estrita de dependências em `requirements.txt` e `package.json` com versão exata e hash criptográfico.
+* **Gate Verificador:** `G_DEPENDENCIAS_PIN_HASH`
+* **O Que Entrega:** Reprodutibilidade de builds garantida em qualquer máquina ou pipeline CI/CD.
 
 ---
 
 ## 5. Camada 04: Universalidade & Agnosticismo Supremo
 
-### 5.1. O Que É
-A garantia de soberania tecnológica que protege o cliente e a empresa contra vendor lock-in, assegurando que o código pode rodar em qualquer nuvem, sistema operacional, harness de IA ou modelo de linguagem.
+### Módulo 4.1: Nuvem & Infraestrutura (Zero Cloud Lock-in)
+* **O Que É / O Que Faz:** Infraestrutura baseada em padrões abertos: Linux, Docker Compose, PostgreSQL e Nginx. Roda em qualquer VPS (Hetzner, AWS, GCP, DigitalOcean, bare-metal).
+* **Gate Verificador:** `G_INFRA_COMPOSE`
+* **O Que Entrega:** Migração entre provedores em menos de 10 minutos sem alterar código.
 
-### 5.2. O Que Tem Dentro
-* **Cloud-Agnostic:** Infraestrutura baseada em Linux, Docker Compose, PostgreSQL e Traefik/Nginx. Roda em qualquer VPS (Hetzner, AWS, GCP, DigitalOcean, bare-metal).
-* **OS-Agnostic:** Manipulação canônica de caminhos com `pathlib.Path`, normalização de fins de linha `LF` e comandos polimórficos para Windows, Linux e macOS.
-* **Multi-Harness:** Paridade total entre Claude Desktop, Cursor, Gemini Antigravity, Roo Code e Windsurf.
-* **Model-Agnostic:** Exposição e consumo de ferramentas através do protocolo aberto Model Context Protocol (MCP).
+### Módulo 4.2: Sistema Operacional (Windows, Linux & macOS)
+* **O Que É / O Que Faz:** Caminhos normalizados com `pathlib`, fins de linha `LF` forçados em git e scripts polimórficos testados nos 3 sistemas operacionais.
+* **Gate Verificador:** `G_ECOSSISTEMA_INTEGRIDADE`
+* **O Que Entrega:** Interoperabilidade universal para equipes distribuídas.
 
-### 5.3. Quality Gates Associados
-* `G_HARNESS_COMPAT`: Audita a sincronização de regras e ferramentas em todos os perfis multi-harness.
-* `G_COMPONENTE_AGNOSTICO`: Audita componentes transversais contra o manifesto universal.
-* `G_BRIDGE_VENDOR_LOCKIN`: Garante que nenhum código gerado dependa de nuvens proprietárias fechadas.
+### Módulo 4.3: Multi-Harness de IA Sincronizado
+* **O Que É / O Que Faz:** Sincronização contínua de regras canônicas entre Claude Desktop, Cursor, Gemini Antigravity, Roo Code e Windsurf a partir do `AGENTS.md` soberano.
+* **Gate Verificador:** `G_HARNESS_COMPAT`
+* **O Que Entrega:** O agente opera com o mesmo rigor e diretivas em qualquer ferramenta de IA.
 
-### 5.4. O Que Entrega na Prática
-* **No Ecossistema:** Liberdade para cada engenheiro utilizar o sistema operacional e a interface de IA de sua preferência.
-* **Nas Aplicações Corporativas:** Redução drástica de custos de infraestrutura (VPS acessível em vez de serviços gerenciados caros) e portabilidade total em minutos.
+### Módulo 4.4: Modelos LLM & Protocolo Aberto MCP
+* **O Que É / O Que Faz:** Ferramentas expostas através do padrão aberto Model Context Protocol, desacopladas de SDKs proprietários.
+* **Gate Verificador:** `G_COMPONENTE_AGNOSTICO`
+* **O Que Entrega:** Portabilidade total entre Claude, GPT, Gemini, DeepSeek ou modelos locais.
 
 ---
 
 ## 6. Camada 05: O Quarteto Sine Qua Non Dinâmico
 
-### 6.1. O Que É
-O contrato de quatro pilares dinâmicos que garante que nenhuma aplicação gerada no ecossistema seja entregue sem documentação viva, simuladores interativos e interfaces para inteligência artificial.
+### Módulo 5.1: Swagger Studio (`/swagger`)
+* **O Que É / O Que Faz:** Documentação interativa OpenAPI 3.0 dinamicamente gerada a partir dos schemas tipados, permitindo testes imediatos no navegador.
+* **Gate Verificador:** `G_FACTORY_VSA`
+* **O Que Entrega:** Especificação viva de rotas sem documentação manual defasada.
 
-### 6.2. O Que Tem Dentro
-* **Swagger Studio (`/swagger`):** Contratos OpenAPI 3.0 dinâmicos, tipados e interativos.
-* **Webhook Studio (`/webhooks`):** Gestão, teste e disparo de eventos com validação criptográfica HMAC SHA-256 em tempo constante.
-* **MCP Studio (`/mcp`):** Servidor nativo Model Context Protocol para consumo por agentes e LLMs.
-* **Guia do Utilizador (`/docs`):** Manuais vivos com fluxos de onboarding, exemplos de chamadas e documentação para desenvolvedores.
+### Módulo 5.2: Webhook Studio (`/webhooks`)
+* **O Que É / O Que Faz:** Gestão, teste, reenvio e simulação de disparos de webhooks com assinatura HMAC SHA-256 e auditoria de status HTTP.
+* **Gate Verificador:** `G_BRIDGE_VSA_COMPAT`
+* **O Que Entrega:** Integração assíncrona robusta e rastreável.
 
-### 6.3. Quality Gates Associados
-* `G_FACTORY_VSA`: Audita se novas integrações expõem automaticamente os 4 estúdios.
-* `G_BRIDGE_VSA_COMPAT`: Audita a integridade dos 4 contratos gerados no empacotamento de low-code.
+### Módulo 5.3: MCP Studio (`/mcp`)
+* **O Que É / O Que Faz:** Servidor Model Context Protocol nativo que expõe as capacidades do sistema como tools em JSON Schema para consumo por agentes de IA.
+* **Gate Verificador:** `G_FACTORY_VSA`
+* **O Que Entrega:** Sistema orquestrável por copilotos inteligentes desde o Dia Zero.
 
-### 6.4. O Que Entrega na Prática
-* **No Ecossistema:** Padronização absoluta de contratos e ferramentas entre módulos.
-* **Nas Aplicações Corporativas:** Uma plataforma pronta para integração, onde clientes externos, operadores humanos e copilotos de IA interagem com o sistema sem fricção.
+### Módulo 5.4: Guia do Utilizador (`/docs`)
+* **O Que É / O Que Faz:** Manual vivo do utilizador contendo arquitetura, exemplos práticos de onboarding, catálogo de endpoints e orientações de suporte.
+* **Gate Verificador:** `G_BRIDGE_VSA_COMPAT`
+* **O Que Entrega:** Onboarding imediato de novos engenheiros e clientes.
 
 ---
 
 ## 7. Camada 06: Infraestrutura, DevOps & Observabilidade
 
-### 7.1. O Que É
-A esteira de automação operacional que provisiona servidores remotos, isola ambientes em containers seguros, gerencia certificados SSL e monitora a saúde dos serviços em tempo real.
+### Módulo 6.1: Provisionamento Determinístico via SSH
+* **O Que É / O Que Faz:** Conexão remota segura e execução idempotente de comandos de infraestrutura orquestrados pelo gate `G_OPS_SSH`.
+* **Gate Verificador:** `G_OPS_SSH`
+* **O Que Entrega:** Deploy automatizado e seguro sem necessidade de comandos manuais no terminal da VPS.
 
-### 7.2. O Que Tem Dentro
-* **Deploy Remoto via SSH Determinístico:** Execução remota orquestrada pelo gate `G_OPS_SSH` com idempotência e tratamento monádico.
-* **Docker Compose de Produção:** Isolamento de redes internas, volumes persistentes e healthchecks de serviços.
-* **Proxy Reverso & SSL:** Configuração automática de certificados Let's Encrypt via Traefik ou Nginx.
-* **Observabilidade Contínua:** Monitoramento de disponibilidade e tempo de resposta via Uptime Kuma com alertas automatizados.
+### Módulo 6.2: Docker Compose de Produção
+* **O Que É / O Que Faz:** Manifestos Compose com redes privadas internas, volumes persistentes e limites explícitos de memória e CPU.
+* **Gate Verificador:** `G_INFRA_COMPOSE`
+* **O Que Entrega:** Isolamento seguro entre serviços periféricos, aplicação e banco.
 
-### 7.3. Quality Gates Associados
-* `G_OPS_SSH`: Valida a conectividade remota e execução segura de comandos na VPS.
-* `G_INFRA_COMPOSE`: Valida sintaxe e integridade de manifestos docker-compose e scripts init-db.
-* `G_HADOLINT`: Garante conformidade de segurança e boas práticas em Dockerfiles.
+### Módulo 6.3: Proxy Reverso Traefik/Nginx com Let's Encrypt
+* **O Que É / O Que Faz:** Roteamento de tráfego com emissão automática de certificados SSL/TLS, terminação segura e cabeçalhos defensivos injetados.
+* **Gate Verificador:** `G_BRIDGE_DOCKER_OCI`
+* **O Que Entrega:** Tráfego 100% criptografado com renovação automática de certificados.
 
-### 7.4. O Que Entrega na Prática
-* **No Ecossistema:** Comandos determinísticos de deploy e manutenção de servidores.
-* **Nas Aplicações Corporativas:** Infraestrutura estável e segura operando em produção, com telemetria 24/7 e tempo de inatividade minimizado.
+### Módulo 6.4: Uptime Kuma & Observabilidade Ativa
+* **O Que É / O Que Faz:** Monitoramento contínuo de disponibilidade e latência dos endpoints de healthcheck da aplicação, com alertas automatizados.
+* **Gate Verificador:** `G_OPS_OBSERVABILITY`
+* **O Que Entrega:** Visibilidade em tempo real do SLA e da saúde dos containers em produção.
 
 ---
 
-## 8. Camada 07: Governança Agêntica & Economia de Tokens
+## 8. Camada 07: Governança Agêntica & Economia Extrema de Tokens
 
-### 8.1. O Que É
-O conjunto de normas comportamentais que governa o assistente de IA, garantindo precisão cirúrgica, consumo consciente de contexto e supervisão contínua pelo desenvolvedor.
+### Módulo 7.1: Zero Headless (Desenvolvedor no Controle)
+* **O Que É / O Que Faz:** Execuções estritamente sequenciais, transparentes e interativas. Proibição categórica de subagentes ocultos em background.
+* **Gate Verificador:** `G_ZERO_HEADLESS`
+* **O Que Entrega:** O desenvolvedor mantém 100% do controle decisório a cada passo.
 
-### 8.2. O Que Tem Dentro
-* **Desenvolvedor no Controle (Zero Headless):** Proibição de subagentes ocultos em segundo plano. Execuções estritamente sequenciais e transparentes.
-* **Caveman Thinking:** Raciocínio interno em inglês telegráfico compacto, sem repetições e sem meta-deliberações.
-* **Comunicação Direta:** Saídas concisas em português (PT-BR), sem re-resumir artefatos ou duplicar diffs no chat.
-* **Graph-First:** Inspeção de dependências e blast radius via MCP `code-review-graph` antes de buscas em texto livre.
-* **Orçamento de Contexto:** Diretivas mantidas sob 2.000 tokens de contexto ativo.
+### Módulo 7.2: Caveman Thinking (Raciocínio Enxuto)
+* **O Que É / O Que Faz:** Raciocínio interno telegráfico compacto em inglês técnico, eliminando deliberações prolixas e repetições do prompt.
+* **Regra Canônica:** `AGENTS.md Core Constraints`
+* **O Que Entrega:** Redução severa de latência de resposta e consumo de tokens.
 
-### 8.3. Quality Gates Associados
-* `G_ZERO_HEADLESS`: Impede qualquer execução que opere de forma oculta sem interação do usuário.
-* `G_CLI_HELP_CONSISTENCIA`: Audita flags e ajuda de comandos para prevenir comandos quebrados.
+### Módulo 7.3: Graph-First com `code-review-graph`
+* **O Que É / O Que Faz:** Análise de blast radius e impacto via grafo de conhecimento antes de varreduras por grep ou leitura de arquivos inteiros.
+* **Regra Canônica:** `AGENTS.md Seção 5`
+* **O Que Entrega:** Economia de mais de 60% de tokens de contexto por tarefa.
 
-### 8.4. O Que Entrega na Prática
-* **No Ecossistema:** Redução drástica do custo e latência de inferência, com foco total na resolução do problema.
-* **Nas Aplicações Corporativas:** Código gerado sem alucinações, com total alinhamento às decisões arquiteturais aprovadas.
+### Módulo 7.4: Saídas Concisas em Listas e Tabelas
+* **O Que É / O Que Faz:** Respostas diretas ao usuário em português (PT-BR), proibindo re-resumos de artefatos criados ou repetição de código no chat.
+* **Regra Canônica:** `RULE[user_global]`
+* **O Que Entrega:** Interação técnica objetiva e sem ruído.
 
 ---
 
 ## 9. Camada 08: A Tríade Canônica de Criação
 
-### 9.1. O Que É
-A taxonomia de partida que resolve a gênese do software, permitindo derivar a mesma ideia de negócio em três caminhos industriais distintos que convergem obrigatoriamente para a mesma linha de chegada de qualidade.
+### Módulo 8.1: FLUXO 01 — Do Zero Puro (`aidd-generator`)
+* **O Que É / O Que Faz:** Construção proprietária sob medida guiada por esteira determinística de 8 fases (Spec formal -> TDD Red-Green -> Core VSA -> Quarteto).
+* **Gate Verificador:** `G_GENERATOR_*`
+* **O Que Entrega:** Aplicação 100% nativa com controle total sobre cada linha de código.
 
-### 9.2. O Que Tem Dentro
-* **`aidd-forge`:** Ditador supremo da governança, linters e regras no Dia Zero.
-* **`PRÉ-PLANO`:** Intake interativo gerador do `PLANO-MESTRE.json`.
-* **FLUXO 01 (Do Zero Puro):** Engine `aidd-generator` (8 fases determinísticas, TDD Red-Green).
-* **FLUXO 02 (Motores Open-Source):** Engine `aidd-factory` (curadoria e orquestração de motores livres + VSA).
-* **FLUXO 03 (Low-Code Desatado):** Engine `aidd-bridge` (libertação de protótipos de Lovable/v0/Bolt para PostgreSQL VPS).
-* **Funil de Convergência:** Todos os fluxos convergem em `aidd-master` -> `aidd-enterprise` -> `aidd-ops`.
+### Módulo 8.2: FLUXO 02 — Motores Open-Source (`aidd-factory`)
+* **O Que É / O Que Faz:** Alavancagem sobre software livre consolidado (filas, bots, mensageria). Sobe containers dos motores e gera fatias VSA de integração com webhooks HMAC seguros.
+* **Gate Verificador:** `G_FACTORY_*`
+* **O Que Entrega:** Velocidade de entrega aproveitando motores maduros da comunidade.
 
-### 9.3. Quality Gates Associados
-* `G_FORGE_*`: Valida a fundação de governança do repositório.
-* `G_GENERATOR_*`: Valida as 8 fases da fábrica autônoma.
-* `G_FACTORY_*`: Valida a integração de motores periféricos em fatias VSA.
-* `G_BRIDGE_*`: Valida a libertação de código low-code sem lock-in.
+### Módulo 8.3: FLUXO 03 — Low-Code Desatado (`aidd-bridge`)
+* **O Que É / O Que Faz:** Libertação e empacotamento de interfaces do Lovable, v0 ou Bolt. Extirpação de travas de nuvem fechada, conexão ao PostgreSQL corporativo e conteinerização OCI.
+* **Gate Verificador:** `G_BRIDGE_*`
+* **O Que Entrega:** Reaproveitamento de protótipos visuais em produção real sem vendor lock-in.
 
-### 9.4. O Que Entrega na Prática
-* **No Ecossistema:** Clareza imediata sobre qual ferramenta acionar para cada caso de uso.
-* **Nas Aplicações Corporativas:** Solução final no **Padrão CTT**, com robustez enterprise independente do caminho escolhido na largada.
+### Módulo 8.4: Funil de Convergência Universal
+* **O Que É / O Que Faz:** Todos os 3 fluxos convergem obrigatoriamente para `aidd-master` (Monólito Modular VSA) -> `aidd-enterprise` (SHA-256 + Resiliência) -> `aidd-ops` (Deploy VPS, sops+age e Uptime Kuma).
+* **Gate Verificador:** Todos os Quality Gates do Ecossistema
+* **O Que Entrega:** Solução corporativa final no **Padrão CTT**, independente do fluxo de origem.
 
 ---
 
-## 10. Quadro Consolidado das 7 Ferramentas do Ecossistema
+## 10. Quadro de Homologação das 7 Ferramentas do Ecossistema
 
 | Ferramenta | Papel Central na Tríade | Status | Entregável Consolidado |
 | :--- | :--- | :--- | :--- |
@@ -244,4 +252,4 @@ A taxonomia de partida que resolve a gênese do software, permitindo derivar a m
 
 ---
 
-*Este Tratado consolida de forma definitiva as 8 camadas de engenharia do Ecossistema AIDD, estabelecendo uma governança sem ambiguidades para todas as ferramentas e aplicações geradas.*
+*Este documento estabelece o Tratado Canônico Soberano do Ecossistema AIDD, detalhando cada módulo, seus Quality Gates e entregas concretas.*
