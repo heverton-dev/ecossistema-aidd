@@ -853,46 +853,126 @@
       </section>
 
       <!-- SEÇÃO 11: DIAGRAMA DA ÁRVORE FÍSICA CANÔNICA (PADRÃO CTT) -->
-      <section id="arvore-diretorios" class="space-y-6">
+      <section id="arvore-diretorios" class="space-y-8">
         <div class="border-l-4 border-cyan-500 pl-4">
           <span class="text-xs font-mono text-cyan-400 font-bold uppercase tracking-wider">Layout Físico em Disco</span>
           <h2 class="text-2xl font-bold text-white tracking-tight">11. Árvore Física Canônica do Projeto (Padrão CTT)</h2>
-          <p class="text-gray-400 text-sm">A materialização estrutural em disco de qualquer aplicação gerada no ecossistema.</p>
+          <p class="text-gray-400 text-sm">Estruturação real gerada no sistema de arquivos: separação estrita entre o núcleo horizontal compartilhado, fatias verticais autônomas e estúdios contratuais.</p>
         </div>
 
-        <div class="bg-dark-card p-6 rounded-2xl border border-dark-border space-y-4">
-          <div class="font-mono text-xs text-gray-300 leading-relaxed bg-[#0B0F19] p-5 rounded-xl border border-gray-800 overflow-x-auto">
-<span class="text-indigo-400 font-bold">projeto-corporativo/</span>
-├── <span class="text-purple-400 font-bold">src/</span>
-│   ├── <span class="text-emerald-400 font-bold">core/</span>                      <span class="text-gray-500"># Eixo Horizontal Compartilhado</span>
-│   │   ├── database.py            <span class="text-gray-500"># Pool async de conexões PostgreSQL</span>
-│   │   ├── security.py            <span class="text-gray-500"># Sanitização, hashes e secrets manager</span>
-│   │   ├── resilience.py          <span class="text-gray-500"># Circuit Breakers e Rate Limiters compartilhados</span>
-│   │   └── telemetry.py           <span class="text-gray-500"># Logs estruturados e correlacionador trace_id</span>
-│   ├── <span class="text-indigo-400 font-bold">features/</span>                  <span class="text-gray-500"># Eixo Vertical (VSA de Domínio)</span>
-│   │   ├── <span class="text-blue-400">encomendas/</span>            <span class="text-gray-500"># Fatia vertical autônoma 1</span>
-│   │   │   ├── routes.py          <span class="text-gray-500"># Endpoints REST tipados (FastAPI)</span>
-│   │   │   ├── services.py        <span class="text-gray-500"># Regras de negócio puras do domínio</span>
-│   │   │   ├── repositories.py    <span class="text-gray-500"># Queries parametrizadas anti-SQLi</span>
-│   │   │   ├── models.py          <span class="text-gray-500"># Entidades e schemas Pydantic</span>
-│   │   │   └── tests/             <span class="text-gray-500"># Bateria de testes de integração da fatia</span>
-│   │   ├── <span class="text-blue-400">frotas/</span>                <span class="text-gray-500"># Fatia vertical autônoma 2</span>
-│   │   └── <span class="text-blue-400">roteirizacao/</span>          <span class="text-gray-500"># Fatia vertical autônoma 3</span>
-│   └── server.py                  <span class="text-gray-500"># Roteador central declarativo da aplicação</span>
-├── <span class="text-amber-400 font-bold">quarteto_sine_qua_non/</span>        <span class="text-gray-500"># Os 4 Estúdios Contratuais Vivos</span>
-│   ├── swagger_spec.json          <span class="text-gray-500"># Contratos REST OpenAPI 3.0 (/swagger)</span>
-│   ├── webhooks_contract.json     <span class="text-gray-500"># Gestão de eventos com HMAC SHA-256 (/webhooks)</span>
-│   ├── mcp_studio.json            <span class="text-gray-500"># Tools em JSON Schema para agentes (/mcp)</span>
-│   └── USER_GUIDE.md              <span class="text-gray-500"># Manual vivo de produto para equipes humanas (/docs)</span>
-├── <span class="text-cyan-400 font-bold">infra/</span>                         <span class="text-gray-500"># Infraestrutura como Código (aidd-ops)</span>
-│   ├── docker-compose.yml         <span class="text-gray-500"># Orquestração de containers de produção</span>
-│   ├── Dockerfile                 <span class="text-gray-500"># Multi-stage build OCI seguro (USER appuser)</span>
-│   ├── nginx.conf                 <span class="text-gray-500"># Proxy reverso com headers defensivos OWASP</span>
-│   └── secrets.enc.yaml           <span class="text-gray-500"># Cofre criptografado com sops + age</span>
-├── tests/                         <span class="text-gray-500"># Testes globais e suíte de regressão E2E</span>
-├── requirements.txt               <span class="text-gray-500"># Dependências pinadas com hashes criptográficos SHA-256</span>
-└── AGENTS.md                      <span class="text-gray-500"># Diretivas soberanas de governança e regras do projeto</span>
+        <!-- 4 Zonas Arquiteturais em Destaque -->
+        <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          <div class="p-4 rounded-xl bg-dark-card border border-emerald-800/50 space-y-2">
+            <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-emerald-950 text-emerald-400 border border-emerald-800/60 font-bold uppercase">Zona 1: Horizontal</span>
+            <h3 class="text-sm font-bold text-white font-mono">src/core/</h3>
+            <p class="text-xs text-gray-400 leading-relaxed">Infraestrutura transversal compartilhada: conexões com banco, cofre de segredos, Circuit Breakers e telemetria trace_id.</p>
           </div>
+          <div class="p-4 rounded-xl bg-dark-card border border-indigo-800/50 space-y-2">
+            <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-indigo-950 text-indigo-400 border border-indigo-800/60 font-bold uppercase">Zona 2: Vertical (VSA)</span>
+            <h3 class="text-sm font-bold text-white font-mono">src/features/</h3>
+            <p class="text-xs text-gray-400 leading-relaxed">Fatias verticais autônomas. Cada módulo tem rotas, regras, repositórios e testes próprios, sem dependências cruzadas.</p>
+          </div>
+          <div class="p-4 rounded-xl bg-dark-card border border-amber-800/50 space-y-2">
+            <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-amber-950 text-amber-400 border border-amber-800/60 font-bold uppercase">Zona 3: Contratual</span>
+            <h3 class="text-sm font-bold text-white font-mono">quarteto_sine_qua_non/</h3>
+            <p class="text-xs text-gray-400 leading-relaxed">Os 4 estúdios dinâmicos vivos: OpenAPI 3.0 (/swagger), HMAC (/webhooks), Model Context Protocol (/mcp) e Manual (/docs).</p>
+          </div>
+          <div class="p-4 rounded-xl bg-dark-card border border-cyan-800/50 space-y-2">
+            <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-cyan-950 text-cyan-400 border border-cyan-800/60 font-bold uppercase">Zona 4: Infra & Ops</span>
+            <h3 class="text-sm font-bold text-white font-mono">infra/</h3>
+            <p class="text-xs text-gray-400 leading-relaxed">Containers OCI não-root (Hadolint), proxy Nginx blindado por OWASP e segredos cifrados com sops+age prontos para VPS.</p>
+          </div>
+        </div>
+
+        <!-- Painel Duplo: Árvore Hierárquica + Dicionário de Diretórios -->
+        <div class="grid lg:grid-cols-12 gap-6 items-start">
+
+          <!-- Coluna 1: Árvore Visual Formatada em Bloco de Código com Cores e Destaques (5 Colunas) -->
+          <div class="lg:col-span-5 bg-[#0B0F19] p-5 rounded-2xl border border-gray-800 font-mono text-xs text-slate-300 leading-loose overflow-x-auto">
+            <div class="text-[11px] font-bold text-gray-500 uppercase tracking-widest pb-3 mb-3 border-b border-gray-800 flex items-center justify-between">
+              <span>Estrutura Física em Disco</span>
+              <span class="text-indigo-400">Padrão CTT</span>
+            </div>
+            <div><span class="text-indigo-400 font-bold">projeto-corporativo/</span></div>
+            <div>├── <span class="text-purple-400 font-bold">src/</span></div>
+            <div>│   ├── <span class="text-emerald-400 font-bold">core/</span> <span class="text-emerald-500/80">[Núcleo Horizontal]</span></div>
+            <div>│   │   ├── database.py</div>
+            <div>│   │   ├── security.py</div>
+            <div>│   │   ├── resilience.py</div>
+            <div>│   │   └── telemetry.py</div>
+            <div>│   ├── <span class="text-indigo-400 font-bold">features/</span> <span class="text-indigo-400/80">[Fatias Verticais VSA]</span></div>
+            <div>│   │   ├── <span class="text-blue-400 font-bold">encomendas/</span></div>
+            <div>│   │   │   ├── routes.py</div>
+            <div>│   │   │   ├── services.py</div>
+            <div>│   │   │   ├── repositories.py</div>
+            <div>│   │   │   ├── models.py</div>
+            <div>│   │   │   └── tests/</div>
+            <div>│   │   ├── <span class="text-blue-400 font-bold">frotas/</span></div>
+            <div>│   │   └── <span class="text-blue-400 font-bold">roteirizacao/</span></div>
+            <div>│   └── server.py</div>
+            <div>├── <span class="text-amber-400 font-bold">quarteto_sine_qua_non/</span></div>
+            <div>│   ├── swagger_spec.json</div>
+            <div>│   ├── webhooks_contract.json</div>
+            <div>│   ├── mcp_studio.json</div>
+            <div>│   └── USER_GUIDE.md</div>
+            <div>├── <span class="text-cyan-400 font-bold">infra/</span></div>
+            <div>│   ├── docker-compose.yml</div>
+            <div>│   ├── Dockerfile</div>
+            <div>│   ├── nginx.conf</div>
+            <div>│   └── secrets.enc.yaml</div>
+            <div>├── tests/ <span class="text-slate-500">[Suíte E2E Global]</span></div>
+            <div>├── requirements.txt <span class="text-emerald-500">[Hashes SHA-256]</span></div>
+            <div>└── AGENTS.md <span class="text-rose-400">[Governança & Regras]</span></div>
+          </div>
+
+          <!-- Coluna 2: Tabela Explicativa das Pastas (7 Colunas) -->
+          <div class="lg:col-span-7 space-y-3">
+            <div class="p-4 rounded-xl bg-dark-card border border-dark-border flex flex-col gap-1">
+              <div class="flex items-center justify-between">
+                <span class="font-mono font-bold text-emerald-400 text-xs">src/core/</span>
+                <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-gray-800 text-gray-300">Camada Horizontal</span>
+              </div>
+              <p class="text-xs text-gray-300">Centraliza as bibliotecas e utilitários que atravessam todas as regras de negócio: pool assíncrono de banco de dados, sanitização de inputs, circuit breakers e injeção do <code>trace_id</code>.</p>
+              <span class="text-[11px] font-mono text-gray-400 mt-1">Quality Gate Verificador: <strong class="text-emerald-400">G_DRIFT_NUCLEO_COMPARTILHADO</strong></span>
+            </div>
+
+            <div class="p-4 rounded-xl bg-dark-card border border-dark-border flex flex-col gap-1">
+              <div class="flex items-center justify-between">
+                <span class="font-mono font-bold text-indigo-400 text-xs">src/features/{dominio}/</span>
+                <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-gray-800 text-gray-300">Vertical Slice (VSA)</span>
+              </div>
+              <p class="text-xs text-gray-300">Cada pasta representa um caso de uso ou domínio isolado. Contém sua própria rota REST, lógica de negócio, query SQL parametrizada e bateria de testes dedicada. Elimina acoplamento cruzado.</p>
+              <span class="text-[11px] font-mono text-gray-400 mt-1">Quality Gate Verificador: <strong class="text-indigo-400">G_TESTES_REAIS & G_FACTORY_VSA</strong></span>
+            </div>
+
+            <div class="p-4 rounded-xl bg-dark-card border border-dark-border flex flex-col gap-1">
+              <div class="flex items-center justify-between">
+                <span class="font-mono font-bold text-amber-400 text-xs">quarteto_sine_qua_non/</span>
+                <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-gray-800 text-gray-300">Estúdios Contratuais</span>
+              </div>
+              <p class="text-xs text-gray-300">Abriga os 4 arquivos mestres de contrato autônomo: OpenAPI 3.0 para consumo REST, schema de webhooks seguros com HMAC SHA-256, catálogo de tools MCP para agentes e o Guia do Usuário vivo.</p>
+              <span class="text-[11px] font-mono text-gray-400 mt-1">Quality Gate Verificador: <strong class="text-amber-400">G_BRIDGE_VSA_COMPAT</strong></span>
+            </div>
+
+            <div class="p-4 rounded-xl bg-dark-card border border-dark-border flex flex-col gap-1">
+              <div class="flex items-center justify-between">
+                <span class="font-mono font-bold text-cyan-400 text-xs">infra/</span>
+                <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-gray-800 text-gray-300">DevOps & Orquestração</span>
+              </div>
+              <p class="text-xs text-gray-300">Arquitetura de contêineres de produção: Dockerfile multi-stage auditado pelo Hadolint (usuário não-root), proxy Nginx com cabeçalhos OWASP e cofre de credenciais sops+age.</p>
+              <span class="text-[11px] font-mono text-gray-400 mt-1">Quality Gate Verificador: <strong class="text-cyan-400">G_HADOLINT & G_INFRA_COMPOSE</strong></span>
+            </div>
+
+            <div class="p-4 rounded-xl bg-dark-card border border-dark-border flex flex-col gap-1">
+              <div class="flex items-center justify-between">
+                <span class="font-mono font-bold text-rose-400 text-xs">AGENTS.md & requirements.txt</span>
+                <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-gray-800 text-gray-300">Raiz de Governança</span>
+              </div>
+              <p class="text-xs text-gray-300">O <code>AGENTS.md</code> dita as regras invioláveis de execução no repositório. O <code>requirements.txt</code> impõe hashes criptográficos SHA-256 em 100% dos pacotes, bloqueando ataques à cadeia de suprimentos.</p>
+              <span class="text-[11px] font-mono text-gray-400 mt-1">Quality Gate Verificador: <strong class="text-rose-400">G_DEPENDENCIAS_PIN_HASH & G_ECOSSISTEMA_INTEGRIDADE</strong></span>
+            </div>
+          </div>
+
         </div>
       </section>
 

@@ -273,7 +273,57 @@ Toda linha de código, manifesto de infraestrutura, contrato de API ou diretiva 
 
 ---
 
-## 11. Quadro de Homologação das 7 Ferramentas do Ecossistema
+## 11. Árvore Física Canônica do Projeto (Padrão CTT)
+
+A materialização em disco de qualquer aplicação gerada no ecossistema organiza-se em 4 Zonas Físicas bem delimitadas:
+
+* **Zona 1: Horizontal (`src/core/`)** — Infraestrutura transversal compartilhada: conexões com banco, cofre de segredos, Circuit Breakers e telemetria `trace_id`.
+* **Zona 2: Vertical VSA (`src/features/`)** — Fatias verticais autônomas. Cada módulo tem rotas, regras, repositórios e testes próprios, sem dependências cruzadas.
+* **Zona 3: Contratual (`quarteto_sine_qua_non/`)** — Os 4 estúdios dinâmicos vivos: OpenAPI 3.0 (`/swagger`), HMAC SHA-256 (`/webhooks`), Model Context Protocol (`/mcp`) e Guia do Usuário (`/docs`).
+* **Zona 4: Infra & Ops (`infra/`)** — Containers OCI não-root (Hadolint), proxy Nginx blindado por OWASP e segredos cifrados com `sops+age`.
+
+### Estrutura Visual dos Diretórios:
+```text
+projeto-corporativo/
+├── src/
+│   ├── core/                      # [Núcleo Horizontal Compartilhado]
+│   │   ├── database.py            # Pool assíncrono de conexões PostgreSQL
+│   │   ├── security.py            # Sanitização de inputs, hashes e secrets
+│   │   ├── resilience.py          # Circuit Breakers e Rate Limiters
+│   │   └── telemetry.py           # Logs estruturados e injeção do trace_id
+│   ├── features/                  # [Fatias Verticais VSA de Domínio]
+│   │   ├── encomendas/            # Fatia vertical 1 (rotas, regras, repositórios, testes)
+│   │   ├── frotas/                # Fatia vertical 2
+│   │   └── roteirizacao/          # Fatia vertical 3
+│   └── server.py                  # Roteador central declarativo da aplicação
+├── quarteto_sine_qua_non/         # [Os 4 Estúdios Contratuais Vivos]
+│   ├── swagger_spec.json          # Contratos REST OpenAPI 3.0 (/swagger)
+│   ├── webhooks_contract.json     # Gestão de eventos com HMAC SHA-256 (/webhooks)
+│   ├── mcp_studio.json            # Catálogo de tools MCP para agentes (/mcp)
+│   └── USER_GUIDE.md              # Manual vivo de produto para equipes humanas (/docs)
+├── infra/                         # [Infraestrutura como Código - aidd-ops]
+│   ├── docker-compose.yml         # Orquestração de containers de produção
+│   ├── Dockerfile                 # Multi-stage build OCI seguro (USER appuser)
+│   ├── nginx.conf                 # Proxy reverso com headers defensivos OWASP
+│   └── secrets.enc.yaml           # Cofre criptografado com sops + age
+├── tests/                         # Suíte de regressão E2E e testes globais
+├── requirements.txt               # Dependências pinadas com hashes criptográficos SHA-256
+└── AGENTS.md                      # Diretivas soberanas de governança e regras do projeto
+```
+
+### Dicionário de Pastas & Responsabilidades:
+
+| Diretório Físico | Papel Arquitetural | Quality Gate Verificador |
+| :--- | :--- | :--- |
+| `src/core/` | Centraliza bibliotecas transversais (DB, segurança, telemetria) | `G_DRIFT_NUCLEO_COMPARTILHADO` |
+| `src/features/{dominio}/` | Encapsula cada fatia de negócio isolada (VSA) | `G_TESTES_REAIS & G_FACTORY_VSA` |
+| `quarteto_sine_qua_non/` | Exposição contratual dinâmica dos 4 pilares | `G_BRIDGE_VSA_COMPAT` |
+| `infra/` | Configuração de containers OCI, proxy reverso e chaves | `G_HADOLINT & G_INFRA_COMPOSE` |
+| `AGENTS.md & requirements.txt` | Regras invioláveis em código e trava de supply chain por SHA-256 | `G_DEPENDENCIAS_PIN_HASH & G_ECOSSISTEMA_INTEGRIDADE` |
+
+---
+
+## 12. Quadro de Homologação das 7 Ferramentas do Ecossistema
 
 | Ferramenta | Papel Central na Tríade | Status | Entregável Consolidado |
 | :--- | :--- | :--- | :--- |
