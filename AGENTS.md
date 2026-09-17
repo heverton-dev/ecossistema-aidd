@@ -28,6 +28,7 @@
 7. **Developer in Control:** Strictly sequential, interactive executions. Zero invisible headless background subagents.
 8. **Label Honesty:** Never claim certification or test coverage beyond real automated test results.
 9. **Tool Testing Discipline:** Follow the 5-step cycle (`docs/protocolos/PROTOCOLO-TESTES-FERRAMENTAS.md`): 1. Auto-fix bugs until 100% conformant (zero inconsistencies), 2. Git commit & push, 3. Clean target project, 4. Execute cleanly, 5. Update `docs/teste-end-to-end/` report.
+10. **Quarteto Sine Qua Non Dinâmico:** Todo projeto gerado ou evoluído no ecossistema DEVE nascer nativamente com 4 pilares completos: Swagger Studio (`/swagger`), Webhook Studio (`/webhooks`), MCP Studio (`/mcp`) e Guia/Documentação do Utilizador (`/docs`). Todas as rotas e contratos devem cobrir 100% dos módulos do sistema e atualizar-se de forma autônoma e dinâmica a cada novo módulo (ex: autenticação).
 
 ---
 

@@ -456,3 +456,42 @@
      - `https://ctt.vpsconexao.org/mcp` — MCP Studio (HTTP 200, JSON-RPC 2.0).
      - `https://ctt.vpsconexao.org/docs` — Documentação Técnica (HTTP 200, arquitetura Next.js).
 - **Status:** **100% HOMOLOGADO E AUDITADO EM PRODUÇÃO**.
+
+---
+
+### Padronização de Componentes Compartilhados (Shared UI), Manual do Utilizador Comum e Quarteto Sine Qua Non Dinâmico
+
+#### Inconsistência 20: Quebras Visuais em Modais, Documentação Desconectada do Utilizador Comum e Cobertura Incompleta nos Estúdios (Regra Sine Qua Non)
+- **Nome:** Quebra de layout na abertura de diálogos (modais inline soltos sem portal/backdrop), ausência de componentes compartilhados centralizados, documentação técnica genérica em vez de manual para o operador logístico CTT, e estúdios de integração cobrindo apenas fatias parciais.
+- **Motivo:** 
+  1. Os modais de edição e exclusão nas fatias verticais (`frotas`, `encomendas_ctt`, `roteirizacao`) foram implementados com tags `<div>` soltas sem portais ou `z-index/backdrop-blur` unificados, agravado pela purga do Tailwind CSS que não cobria o diretório `./modules/`.
+  2. A documentação em `/docs` e o `README.md` falavam sobre a infraestrutura técnica do ecossistema AIDD em vez de instruir o carteiro, estafeta ou despachante postal no uso diário do sistema.
+  3. O Swagger Studio, Webhook Studio e MCP Studio não cobriam a totalidade dos módulos e ferramentas de inteligência artificial da plataforma.
+- **Correções Executadas:**
+  1. **Biblioteca Centralizada de Componentes Compartilhados (`frontend/components/shared/`):**
+     - [`Modal.tsx`](file:///C:/Users/trcnologia/Desktop/proj_ctt/planos-ctt-app/frontend/components/shared/Modal.tsx): Modal flutuante padronizado com overlay escuro (`bg-slate-950/70 backdrop-blur-sm`), trava de scroll do `body`, suporte a tecla ESC, botão de fechar e título com badge.
+     - [`ConfirmDialog.tsx`](file:///C:/Users/trcnologia/Desktop/proj_ctt/planos-ctt-app/frontend/components/shared/ConfirmDialog.tsx): Diálogo de confirmação de exclusão/soft-delete padronizado com prevenção de cancelamentos acidentais.
+     - [`FormField.tsx`](file:///C:/Users/trcnologia/Desktop/proj_ctt/planos-ctt-app/frontend/components/shared/FormField.tsx): Campos de formulário com estados de foco, hover e validação padronizados.
+     - [`index.ts`](file:///C:/Users/trcnologia/Desktop/proj_ctt/planos-ctt-app/frontend/components/shared/index.ts): Barril de exportação compartilhada.
+     - Refatoração das três fatias de negócio (`frotas`, `encomendas_ctt`, `roteirizacao`) para utilizar exclusivamente os componentes compartilhados.
+     - Correção no [`tailwind.config.ts`](file:///C:/Users/trcnologia/Desktop/proj_ctt/planos-ctt-app/frontend/tailwind.config.ts) adicionando `"./modules/**/*.{ts,tsx}"` ao seletor de purga de classes.
+  2. **Manual Operacional Focado no Utilizador Comum:**
+     - Reescrita completa do [`README.md`](file:///C:/Users/trcnologia/Desktop/proj_ctt/planos-ctt-app/README.md) e do componente [`DocsView.tsx`](file:///C:/Users/trcnologia/Desktop/proj_ctt/planos-ctt-app/frontend/modules/docs/DocsView.tsx) com guias práticos do dia a dia (dar entrada em encomendas, cadastrar viaturas na frota, gerar rotas com VROOM, tabela visual de estados e cores, e FAQ operacional), mantendo a especificação técnica isolada ao final em aba própria.
+  3. **Quarteto Sine Qua Non Dinâmico com 100% de Cobertura:**
+     - **Swagger Studio (`/swagger`):** Catálogo interativo OpenAPI 3.1 com abas categorizadas (`Todos`, `Frotas`, `Encomendas`, `Roteirização`, `Infraestrutura`) e testador de rotas.
+     - **Webhook Studio (`/webhooks`):** Simulador transacional com tipos de eventos de todas as fatias de negócio, payload dinâmico, assinatura HMAC-SHA256, garantia at-least-once outbox e histórico de entregas.
+     - **MCP Studio (`/mcp`):** 10 ferramentas de inteligência artificial expostas (consultar/registar encomenda, frotas, VROOM, despacho, métricas) com testador interativo de RPC JSON-RPC 2.0 e cálculo de hash SHA-256 auditável.
+     - **Central de Documentação (`/docs`):** Abas interativas separando `[Manual do Utilizador]` e `[Especificação Técnica]`.
+  4. **Atualização da Governança Canônica do Ecossistema:**
+     - Adição da **Lei 10: Quarteto Sine Qua Non Dinâmico** ao [`AGENTS.md`](file:///C:/Users/trcnologia/Desktop/ecossistema-aidd/AGENTS.md).
+  5. **Deploy e Validação Visual ao Vivo em Produção na VPS (`167.86.69.79`):**
+     - Rebuild completo sem cache com a nova imagem `planos-ctt-web:latest`.
+     - Atualização convergida no Docker Swarm (`ctt_web` rodando 1/1 réplicas ativas).
+     - Testes visuais automatizados via Playwright comprovando:
+       - Modais flutuantes perfeitos sem sobreposição ou quebra de grid.
+       - Swagger Studio com 100% das rotas de negócio.
+       - Webhook Studio com catálogo completo de eventos.
+       - MCP Studio com 10 ferramentas ativas e resposta simulada JSON-RPC 2.0.
+       - Central de Ajuda com guia do utilizador corporativo CTT.
+- **Status:** **100% RESOLVIDO, RE-PUBLICADO E HOMOLOGADO EM PRODUÇÃO NA VPS**.
+
