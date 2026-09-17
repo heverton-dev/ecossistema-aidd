@@ -113,6 +113,24 @@
       color: #818CF8;
     }
 
+    /* Contenção Absoluta de Transbordamento (Anti-Overflow & Word-Wrap) */
+    *, ::before, ::after {
+      box-sizing: border-box;
+      overflow-wrap: break-word;
+    }
+
+    /* Previne Grid & Flex child blowout em elementos com strings longas */
+    .grid > *, .flex > *, .detail-card, .pillar-box, .flow-step {
+      min-width: 0;
+    }
+
+    /* Força quebra de identificadores longos e constantes em fonte mono */
+    code, pre, .font-mono, [class*="font-mono"], [class*="text-[11px]"] {
+      overflow-wrap: anywhere;
+      word-break: break-word;
+      hyphens: auto;
+    }
+
     .sidebar-link.active {
       background-color: rgba(99, 102, 241, 0.15);
       color: #818CF8;
@@ -1013,8 +1031,8 @@
             </span>
           </div>
 
-          <!-- Trilha Sequencial de 6 Passos com Conectores Animados -->
-          <div class="grid grid-cols-1 md:grid-cols-6 gap-4 relative">
+          <!-- Trilha Sequencial de 6 Passos com Conectores Animados Responsivos -->
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4 relative">
             
             <!-- Passo 1 -->
             <div class="flow-step p-4 rounded-xl bg-[#111A2E] border border-indigo-900/60 flex flex-col justify-between">
