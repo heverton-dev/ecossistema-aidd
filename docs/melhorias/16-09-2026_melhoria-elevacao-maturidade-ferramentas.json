@@ -1,0 +1,23 @@
+{
+  "pedido_original": "Melhorar aidd-bridge, aidd-factory e aidd-forge visando elevar as notas de maturidade de 80-88 para 95+",
+  "data": "16-09-2026",
+  "nota_atual": "85.0",
+  "evidencia": "Analise comparativa de gates reais vs expectativas de producao Enterprise.",
+  "plano_existente": null,
+  "item_relacionado": null,
+  "nota_anterior": null,
+  "evidencia_anterior": null,
+  "itens_avaliados": [],
+  "resumo": "O ecossistema atingiu estabilidade em 11 gates, mas ferramentas de borda (bridge/factory) ainda operam com gaps de automacao e BLUEPRINTS desatualizados.",
+  "achados": [
+    "Bridge: Conversao de tipos inconsistente",
+    "Factory: Blueprints de seguranca desatualizados",
+    "Forge: Autocorrecao de governanca manual"
+  ],
+  "riscos": [
+    "Drift de arquitetura em novos projetos",
+    "Vulnerabilidades em componentes auto-gerados"
+  ],
+  "recomendacao": "Iniciar /plan para elevar maturidade destas ferramentas para 95+ via blueprints Enterprise.",
+  "status": "RASCUNHO - aguardando decisao humana sobre proximo passo (ex: iniciar /plan, ou atualizar a nota do plano existente)"
+}
