@@ -62,31 +62,55 @@
       background: #6366F1;
     }
 
+    /* Redução de Movimento Acessível (WCAG 2.1 AA) */
+    @media (prefers-reduced-motion: reduce) {
+      *, ::before, ::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+      }
+    }
+
+    /* Foco Visível para Navegação Acessível */
+    a:focus-visible, button:focus-visible, input:focus-visible {
+      outline: 2px solid #818CF8 !important;
+      outline-offset: 2px !important;
+    }
+
+    /* Escala Tipográfica Robusta (> 1.25x por nível) */
+    h1 { font-size: 2.5rem !important; line-height: 1.2 !important; }
+    h2 { font-size: 1.875rem !important; line-height: 1.25 !important; }
+    h3 { font-size: 1.35rem !important; line-height: 1.3 !important; }
+    h4 { font-size: 1.05rem !important; line-height: 1.4 !important; }
+
+    /* Elevações Neutras Profissionais & Padding Seguro */
     .pillar-box {
       border: 1px solid #1E293B;
-      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+      padding: 1rem;
+      transition: border-color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
     }
     .pillar-box:hover {
-      border-color: #6366f1;
+      border-color: #4f46e5;
       transform: translateY(-2px);
-      box-shadow: 0 8px 20px -4px rgba(99, 102, 241, 0.15);
+      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.4);
     }
 
     .detail-card {
       background-color: #0E1526;
       border: 1px solid #1E293B;
-      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+      padding: 1.5rem;
+      transition: border-color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
     }
     .detail-card:hover {
-      border-color: #6366f1;
+      border-color: #4f46e5;
       transform: translateY(-2px);
-      box-shadow: 0 10px 25px -5px rgba(99, 102, 241, 0.12);
+      box-shadow: 0 12px 28px -6px rgba(0, 0, 0, 0.5);
     }
 
-    .hero-glow {
-      background: linear-gradient(135deg, #FFFFFF 0%, #E2E8F0 40%, #818CF8 100%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
+    /* Tipografia de Destaque Sem Gradientes Ruidosos */
+    .hero-accent {
+      color: #818CF8;
     }
 
     .sidebar-link.active {
@@ -102,7 +126,7 @@
   <header class="sticky top-0 z-50 bg-[#080B13]/90 backdrop-blur-md border-b border-gray-800">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-4">
       <div class="flex items-center space-x-3">
-        <div class="w-8 h-8 rounded-lg bg-indigo-600 flex items-center justify-center font-bold text-white shadow-lg shadow-indigo-500/20 font-mono text-xs">
+        <div class="w-8 h-8 rounded-lg bg-indigo-600 flex items-center justify-center font-bold text-white shadow-md shadow-black/30 font-mono text-xs">
           AIDD
         </div>
         <div>
@@ -111,17 +135,18 @@
         </div>
       </div>
 
-      <!-- Live Search Box no Header -->
-      <div class="flex-1 max-w-md hidden md:block">
+      <!-- Live Search Box no Header com Semântica Acessível -->
+      <div role="search" class="flex-1 max-w-md hidden md:block">
         <div class="relative">
           <input 
             type="text" 
             id="live-search" 
             onkeyup="filterCards()" 
+            aria-label="Filtrar decisões, tecnologias e quality gates do ecossistema"
             placeholder="Filtrar por tecnologia, gate (ex: SQL, SHA, SSH)..." 
-            class="w-full bg-[#0E1526] border border-gray-800 rounded-xl px-4 py-1.5 text-xs font-mono text-gray-200 focus:outline-none focus:border-indigo-500 transition-colors"
+            class="w-full bg-[#0E1526] border border-gray-800 rounded-xl px-4 py-2 text-xs font-mono text-gray-200 focus:outline-none focus:border-indigo-500 transition-colors"
           >
-          <span id="search-count" class="absolute right-3 top-2 text-[10px] font-mono text-gray-500"></span>
+          <span id="search-count" class="absolute right-3 top-2.5 text-[10px] font-mono text-gray-400"></span>
         </div>
       </div>
 
@@ -139,7 +164,7 @@
     <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">
       <span class="text-xs font-mono font-bold uppercase tracking-widest text-indigo-400 mb-3 inline-block">Tratado Técnico Soberano</span>
       <h1 class="text-4xl sm:text-6xl font-black text-white tracking-tight mb-6 leading-tight">
-        A Carta Magna de Engenharia, <br><span class="hero-glow">Arquitetura e Cibersegurança</span>
+        A Carta Magna de Engenharia, <br><span class="hero-accent">Arquitetura e Cibersegurança</span>
       </h1>
       <p class="text-base sm:text-lg text-gray-400 max-w-3xl mx-auto leading-relaxed mb-6">
         Estruturação completa das 8 camadas fundacionais do ecossistema, matriz de rastreabilidade de Quality Gates, árvore canônica de diretórios do Padrão CTT e o simulador interativo dos 3 fluxos de criação.
@@ -163,20 +188,20 @@
         <div class="text-xs font-mono font-bold text-gray-400 uppercase tracking-wider px-2">
           Navegação Rápida
         </div>
-        <nav class="space-y-1 text-xs font-mono text-gray-400">
-          <a href="#secao-leis" class="sidebar-link block px-2.5 py-1.5 rounded-lg hover:bg-gray-800 hover:text-white transition-colors">1. As 10 Leis Invioláveis</a>
-          <a href="#camada-ciberseguranca" class="sidebar-link block px-2.5 py-1.5 rounded-lg hover:bg-gray-800 hover:text-white transition-colors">2. Cibersegurança</a>
-          <a href="#camada-arquitetura" class="sidebar-link block px-2.5 py-1.5 rounded-lg hover:bg-gray-800 hover:text-white transition-colors">3. Monólito Modular VSA</a>
-          <a href="#camada-engenharia" class="sidebar-link block px-2.5 py-1.5 rounded-lg hover:bg-gray-800 hover:text-white transition-colors">4. Engenharia & Qualidade</a>
-          <a href="#camada-agnosticismo" class="sidebar-link block px-2.5 py-1.5 rounded-lg hover:bg-gray-800 hover:text-white transition-colors">5. Agnosticismo Supremo</a>
-          <a href="#camada-quarteto" class="sidebar-link block px-2.5 py-1.5 rounded-lg hover:bg-gray-800 hover:text-white transition-colors">6. Quarteto Sine Qua Non</a>
-          <a href="#camada-devops" class="sidebar-link block px-2.5 py-1.5 rounded-lg hover:bg-gray-800 hover:text-white transition-colors">7. DevOps & Observabilidade</a>
-          <a href="#camada-governanca" class="sidebar-link block px-2.5 py-1.5 rounded-lg hover:bg-gray-800 hover:text-white transition-colors">8. Governança Agêntica</a>
-          <a href="#camada-triade" class="sidebar-link block px-2.5 py-1.5 rounded-lg hover:bg-gray-800 hover:text-white transition-colors">9. A Tríade Canônica</a>
-          <a href="#matriz-rastreabilidade" class="sidebar-link block px-2.5 py-1.5 rounded-lg hover:bg-gray-800 hover:text-white transition-colors">10. Matriz de Quality Gates</a>
-          <a href="#arvore-diretorios" class="sidebar-link block px-2.5 py-1.5 rounded-lg hover:bg-gray-800 hover:text-white transition-colors">11. Árvore Padrão CTT</a>
-          <a href="#simulador-fluxos" class="sidebar-link block px-2.5 py-1.5 rounded-lg hover:bg-gray-800 hover:text-white transition-colors">12. Simulador dos 3 Fluxos</a>
-          <a href="#quadro-homologacao" class="sidebar-link block px-2.5 py-1.5 rounded-lg hover:bg-gray-800 hover:text-white transition-colors">13. Status das 7 Ferramentas</a>
+        <nav aria-label="Navegação rápida do tratado" class="space-y-1 text-xs font-mono text-gray-400">
+          <a href="#secao-leis" class="sidebar-link min-h-[44px] flex items-center px-3 py-2 rounded-lg hover:bg-gray-800 hover:text-white transition-colors">1. As 10 Leis Invioláveis</a>
+          <a href="#camada-ciberseguranca" class="sidebar-link min-h-[44px] flex items-center px-3 py-2 rounded-lg hover:bg-gray-800 hover:text-white transition-colors">2. Cibersegurança</a>
+          <a href="#camada-arquitetura" class="sidebar-link min-h-[44px] flex items-center px-3 py-2 rounded-lg hover:bg-gray-800 hover:text-white transition-colors">3. Monólito Modular VSA</a>
+          <a href="#camada-engenharia" class="sidebar-link min-h-[44px] flex items-center px-3 py-2 rounded-lg hover:bg-gray-800 hover:text-white transition-colors">4. Engenharia & Qualidade</a>
+          <a href="#camada-agnosticismo" class="sidebar-link min-h-[44px] flex items-center px-3 py-2 rounded-lg hover:bg-gray-800 hover:text-white transition-colors">5. Agnosticismo Supremo</a>
+          <a href="#camada-quarteto" class="sidebar-link min-h-[44px] flex items-center px-3 py-2 rounded-lg hover:bg-gray-800 hover:text-white transition-colors">6. Quarteto Sine Qua Non</a>
+          <a href="#camada-devops" class="sidebar-link min-h-[44px] flex items-center px-3 py-2 rounded-lg hover:bg-gray-800 hover:text-white transition-colors">7. DevOps & Observabilidade</a>
+          <a href="#camada-governanca" class="sidebar-link min-h-[44px] flex items-center px-3 py-2 rounded-lg hover:bg-gray-800 hover:text-white transition-colors">8. Governança Agêntica</a>
+          <a href="#camada-triade" class="sidebar-link min-h-[44px] flex items-center px-3 py-2 rounded-lg hover:bg-gray-800 hover:text-white transition-colors">9. A Tríade Canônica</a>
+          <a href="#matriz-rastreabilidade" class="sidebar-link min-h-[44px] flex items-center px-3 py-2 rounded-lg hover:bg-gray-800 hover:text-white transition-colors">10. Matriz de Quality Gates</a>
+          <a href="#arvore-diretorios" class="sidebar-link min-h-[44px] flex items-center px-3 py-2 rounded-lg hover:bg-gray-800 hover:text-white transition-colors">11. Árvore Padrão CTT</a>
+          <a href="#simulador-fluxos" class="sidebar-link min-h-[44px] flex items-center px-3 py-2 rounded-lg hover:bg-gray-800 hover:text-white transition-colors">12. Simulador dos 3 Fluxos</a>
+          <a href="#quadro-homologacao" class="sidebar-link min-h-[44px] flex items-center px-3 py-2 rounded-lg hover:bg-gray-800 hover:text-white transition-colors">13. Status das 7 Ferramentas</a>
         </nav>
       </div>
     </aside>
@@ -881,13 +906,13 @@
 
         <!-- Seletor de Tabs dos Fluxos -->
         <div class="flex flex-wrap gap-3">
-          <button onclick="switchFlow(1)" id="btn-flow-1" class="px-4 py-2.5 rounded-xl font-mono text-xs font-bold transition-all bg-indigo-600 text-white border border-indigo-500 shadow-lg shadow-indigo-500/20">
+          <button onclick="switchFlow(1)" id="btn-flow-1" class="min-h-[44px] px-4 py-2.5 rounded-xl font-mono text-xs font-bold transition-all bg-indigo-600 text-white border border-indigo-500 shadow-md shadow-black/30">
             FLUXO 01: Do Zero Puro (Generator)
           </button>
-          <button onclick="switchFlow(2)" id="btn-flow-2" class="px-4 py-2.5 rounded-xl font-mono text-xs font-bold transition-all bg-dark-card text-gray-400 border border-dark-border hover:border-gray-600">
+          <button onclick="switchFlow(2)" id="btn-flow-2" class="min-h-[44px] px-4 py-2.5 rounded-xl font-mono text-xs font-bold transition-all bg-dark-card text-gray-300 border border-dark-border hover:border-gray-600">
             FLUXO 02: Motores Open-Source (Factory)
           </button>
-          <button onclick="switchFlow(3)" id="btn-flow-3" class="px-4 py-2.5 rounded-xl font-mono text-xs font-bold transition-all bg-dark-card text-gray-400 border border-dark-border hover:border-gray-600">
+          <button onclick="switchFlow(3)" id="btn-flow-3" class="min-h-[44px] px-4 py-2.5 rounded-xl font-mono text-xs font-bold transition-all bg-dark-card text-gray-300 border border-dark-border hover:border-gray-600">
             FLUXO 03: Low-Code Desatado (Bridge)
           </button>
         </div>
@@ -1177,9 +1202,9 @@
       [1, 2, 3].forEach(id => {
         const btn = document.getElementById('btn-flow-' + id);
         if (id === flowId) {
-          btn.className = "px-4 py-2.5 rounded-xl font-mono text-xs font-bold transition-all bg-indigo-600 text-white border border-indigo-500 shadow-lg shadow-indigo-500/20";
+          btn.className = "min-h-[44px] px-4 py-2.5 rounded-xl font-mono text-xs font-bold transition-all bg-indigo-600 text-white border border-indigo-500 shadow-md shadow-black/30";
         } else {
-          btn.className = "px-4 py-2.5 rounded-xl font-mono text-xs font-bold transition-all bg-dark-card text-gray-400 border border-dark-border hover:border-gray-600";
+          btn.className = "min-h-[44px] px-4 py-2.5 rounded-xl font-mono text-xs font-bold transition-all bg-dark-card text-gray-300 border border-dark-border hover:border-gray-600";
         }
       });
 
@@ -1217,26 +1242,33 @@
       `;
     }
 
-    // Scrollspy para destacar link ativo na barra lateral
+    // Scrollspy Otimizado com requestAnimationFrame (Zero Layout Thrashing)
+    let scrollTicking = false;
     window.addEventListener('scroll', () => {
-      const sections = document.querySelectorAll('main > section');
-      const navLinks = document.querySelectorAll('.sidebar-link');
-      let currentSectionId = '';
+      if (!scrollTicking) {
+        window.requestAnimationFrame(() => {
+          const sections = document.querySelectorAll('main > section');
+          const navLinks = document.querySelectorAll('.sidebar-link');
+          let currentSectionId = '';
+          const scrollPos = window.pageYOffset + 140;
 
-      sections.forEach(section => {
-        const top = section.offsetTop - 120;
-        if (window.pageYOffset >= top) {
-          currentSectionId = section.getAttribute('id');
-        }
-      });
+          sections.forEach(section => {
+            if (scrollPos >= section.offsetTop) {
+              currentSectionId = section.getAttribute('id');
+            }
+          });
 
-      navLinks.forEach(link => {
-        link.classList.remove('active');
-        if (link.getAttribute('href') === '#' + currentSectionId) {
-          link.classList.add('active');
-        }
-      });
-    });
+          navLinks.forEach(link => {
+            link.classList.remove('active');
+            if (link.getAttribute('href') === '#' + currentSectionId) {
+              link.classList.add('active');
+            }
+          });
+          scrollTicking = false;
+        });
+        scrollTicking = true;
+      }
+    }, { passive: true });
   </script>
 
 </body>
