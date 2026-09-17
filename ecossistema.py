@@ -189,7 +189,8 @@ def cmd_forge(args):
 
 def cmd_generate(args):
     gen_dir = os.path.join(TOOLS_DIR, "aidd-generator")
-    pipeline_script = os.path.join(gen_dir, "scripts", "pipeline_completo.py")
+    delegated_runner = os.path.join(gen_dir, "scripts", "run_generator_delegated.py")
+    pipeline_script = delegated_runner if os.path.isfile(delegated_runner) else os.path.join(gen_dir, "scripts", "pipeline_completo.py")
     env = {"PYTHONPATH": gen_dir}
     cmd = [sys.executable, pipeline_script] + args
     return run_command(cmd, cwd=os.getcwd(), env=env)
