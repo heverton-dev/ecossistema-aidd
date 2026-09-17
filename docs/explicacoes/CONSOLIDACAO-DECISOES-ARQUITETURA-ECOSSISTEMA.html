@@ -712,6 +712,259 @@
       </div>
     </section>
 
+    <!-- SEÇÃO 11: SIMULADOR ANIMADO DOS 3 FLUXOS DE CRIAÇÃO -->
+    <section id="simulador-fluxos" class="space-y-6">
+      <div class="border-l-4 border-indigo-500 pl-4">
+        <span class="text-xs font-mono text-indigo-400 font-bold uppercase tracking-wider">Simulador Arquitetural</span>
+        <h2 class="text-2xl font-bold text-white tracking-tight">Funcionamento Passo a Passo dos 3 Fluxos de Criação</h2>
+        <p class="text-gray-400 text-sm">Selecione um fluxo abaixo para visualizar a animação e o pipeline determinístico de entrega.</p>
+      </div>
+
+      <!-- Seletor de Tabs dos Fluxos -->
+      <div class="flex flex-wrap gap-3">
+        <button onclick="switchFlow(1)" id="btn-flow-1" class="px-4 py-2.5 rounded-xl font-mono text-xs font-bold transition-all bg-indigo-600 text-white border border-indigo-500 shadow-lg shadow-indigo-500/20">
+          FLUXO 01: Do Zero Puro (Generator)
+        </button>
+        <button onclick="switchFlow(2)" id="btn-flow-2" class="px-4 py-2.5 rounded-xl font-mono text-xs font-bold transition-all bg-dark-card text-gray-400 border border-dark-border hover:border-gray-600">
+          FLUXO 02: Motores Open-Source (Factory)
+        </button>
+        <button onclick="switchFlow(3)" id="btn-flow-3" class="px-4 py-2.5 rounded-xl font-mono text-xs font-bold transition-all bg-dark-card text-gray-400 border border-dark-border hover:border-gray-600">
+          FLUXO 03: Low-Code Desatado (Bridge)
+        </button>
+      </div>
+
+      <!-- Container do Fluxo Animado -->
+      <div class="bg-dark-card p-6 sm:p-8 rounded-2xl border border-dark-border space-y-8 relative overflow-hidden">
+        <div class="flex items-center justify-between border-b border-dark-border pb-4">
+          <div>
+            <span id="flow-tag" class="text-[10px] font-mono uppercase px-2.5 py-1 rounded bg-indigo-950 text-indigo-300 border border-indigo-800">
+              Pipeline 100% Nativo
+            </span>
+            <h3 id="flow-title" class="text-xl font-bold text-white mt-2">
+              FLUXO 01: FORGE -> PRÉ-PLANO -> GENERATOR -> MASTER -> ENTERPRISE -> OPS
+            </h3>
+          </div>
+          <span class="text-xs font-mono text-emerald-400 hidden sm:block">
+            Status: Esteira Industrial Determinística
+          </span>
+        </div>
+
+        <!-- Trilha Sequencial de 6 Passos com Conectores Animados -->
+        <div class="grid grid-cols-1 md:grid-cols-6 gap-4 relative">
+          
+          <!-- Passo 1 -->
+          <div class="flow-step p-4 rounded-xl bg-[#111A2E] border border-indigo-900/60 flex flex-col justify-between">
+            <div>
+              <span class="text-[10px] font-mono text-indigo-400 font-bold">PASSO 1</span>
+              <h4 class="text-xs font-bold text-white mt-1">aidd-forge</h4>
+              <p class="text-[11px] text-gray-400 mt-1 leading-relaxed">
+                Injeta governança, linters, AGENTS.md canônico e pre-commit hooks.
+              </p>
+            </div>
+            <div class="text-[10px] font-mono text-indigo-300/80 mt-3 pt-2 border-t border-gray-800">
+              Regras do Dia Zero
+            </div>
+          </div>
+
+          <!-- Passo 2 -->
+          <div class="flow-step p-4 rounded-xl bg-[#111A2E] border border-indigo-900/60 flex flex-col justify-between">
+            <div>
+              <span class="text-[10px] font-mono text-indigo-400 font-bold">PASSO 2</span>
+              <h4 class="text-xs font-bold text-white mt-1">PRÉ-PLANO</h4>
+              <p class="text-[11px] text-gray-400 mt-1 leading-relaxed">
+                Entrevista interativa com o desenvolvedor e geração do PLANO-MESTRE.json.
+              </p>
+            </div>
+            <div class="text-[10px] font-mono text-indigo-300/80 mt-3 pt-2 border-t border-gray-800">
+              Intake & Alinhamento
+            </div>
+          </div>
+
+          <!-- Passo 3 (Motor Dinâmico) -->
+          <div id="step-3-box" class="flow-step p-4 rounded-xl bg-blue-950/40 border border-blue-800/80 flex flex-col justify-between ring-1 ring-blue-500/30">
+            <div>
+              <span id="step-3-label" class="text-[10px] font-mono text-blue-400 font-bold">PASSO 3 (MOTOR)</span>
+              <h4 id="step-3-title" class="text-xs font-bold text-white mt-1">aidd-generator</h4>
+              <p id="step-3-desc" class="text-[11px] text-gray-300 mt-1 leading-relaxed">
+                Executa pipeline de 8 fases (Spec -> TDD Red-Green -> Core VSA -> Quarteto).
+              </p>
+            </div>
+            <div id="step-3-sub" class="text-[10px] font-mono text-blue-300 mt-3 pt-2 border-t border-blue-900/50">
+              Construção do Zero
+            </div>
+          </div>
+
+          <!-- Passo 4 -->
+          <div class="flow-step p-4 rounded-xl bg-[#111A2E] border border-purple-900/60 flex flex-col justify-between">
+            <div>
+              <span class="text-[10px] font-mono text-purple-400 font-bold">PASSO 4</span>
+              <h4 class="text-xs font-bold text-white mt-1">aidd-master</h4>
+              <p class="text-[11px] text-gray-400 mt-1 leading-relaxed">
+                Harmoniza tudo em Monólito Modular (VSA de domínio + Camada Horizontal).
+              </p>
+            </div>
+            <div class="text-[10px] font-mono text-purple-300/80 mt-3 pt-2 border-t border-gray-800">
+              Organização Modular
+            </div>
+          </div>
+
+          <!-- Passo 5 -->
+          <div class="flow-step p-4 rounded-xl bg-[#111A2E] border border-emerald-900/60 flex flex-col justify-between">
+            <div>
+              <span class="text-[10px] font-mono text-emerald-400 font-bold">PASSO 5</span>
+              <h4 class="text-xs font-bold text-white mt-1">aidd-enterprise</h4>
+              <p class="text-[11px] text-gray-400 mt-1 leading-relaxed">
+                Injeta blindagem SHA-256, Circuit Breakers, Rate Limiting e trilha trace_id.
+              </p>
+            </div>
+            <div class="text-[10px] font-mono text-emerald-300/80 mt-3 pt-2 border-t border-gray-800">
+              Missão Crítica
+            </div>
+          </div>
+
+          <!-- Passo 6 -->
+          <div class="flow-step p-4 rounded-xl bg-[#111A2E] border border-cyan-900/60 flex flex-col justify-between">
+            <div>
+              <span class="text-[10px] font-mono text-cyan-400 font-bold">PASSO 6</span>
+              <h4 class="text-xs font-bold text-white mt-1">aidd-ops</h4>
+              <p class="text-[11px] text-gray-400 mt-1 leading-relaxed">
+                Deploy VPS via SSH determinístico, cofre sops+age e Uptime Kuma 24/7.
+              </p>
+            </div>
+            <div class="text-[10px] font-mono text-cyan-300/80 mt-3 pt-2 border-t border-gray-800">
+              Produção & Monitoramento
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Painel de Detalhes da Entrega Final do Fluxo -->
+        <div id="flow-deliverables" class="p-5 rounded-xl bg-gray-900/80 border border-gray-800 space-y-3">
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-mono font-bold text-white uppercase tracking-wider">
+              Linha de Chegada: O Que Este Fluxo Entrega na Prática
+            </span>
+            <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-emerald-950 text-emerald-300 border border-emerald-800/50">
+              Padrão CTT Corporativo
+            </span>
+          </div>
+          <div id="flow-deliverables-content" class="grid sm:grid-cols-3 gap-4 text-xs text-gray-300">
+            <div class="p-3 rounded-lg bg-dark-card border border-dark-border">
+              <span class="font-bold text-white block mb-1">1. Código de Negócio</span>
+              Aplicação backend/full-stack 100% proprietária sem dependências de terceiros, construída sob medida via TDD Red-Green com mais de 1.000 testes reais.
+            </div>
+            <div class="p-3 rounded-lg bg-dark-card border border-dark-border">
+              <span class="font-bold text-white block mb-1">2. Quarteto Sine Qua Non</span>
+              Contratos dinâmicos de /swagger (REST OpenAPI 3.0), /webhooks (HMAC SHA-256), /mcp (Model Context Protocol) e /docs (Manual Vivo).
+            </div>
+            <div class="p-3 rounded-lg bg-dark-card border border-dark-border">
+              <span class="font-bold text-white block mb-1">3. Produção & Resiliência</span>
+              Containers Docker OCI com Hadolint, chaves criptografadas com sops+age, Circuit Breakers ativos e telemetria de uptime em tempo real na VPS.
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- Script de Alternância Interativa dos Fluxos -->
+    <script>
+      const flowsData = {
+        1: {
+          tag: "Pipeline 100% Nativo",
+          title: "FLUXO 01: FORGE -> PRÉ-PLANO -> GENERATOR -> MASTER -> ENTERPRISE -> OPS",
+          step3Label: "PASSO 3 (MOTOR NATIVO)",
+          step3Title: "aidd-generator",
+          step3Desc: "Executa esteira determinística de 8 fases (Spec formal -> TDD Red-Green -> Core VSA -> Quarteto).",
+          step3Sub: "Construção do Zero Puro",
+          boxClass: "bg-blue-950/40 border-blue-800/80 ring-1 ring-blue-500/30",
+          labelClass: "text-blue-400",
+          subClass: "text-blue-300 border-blue-900/50",
+          d1: "Aplicação backend/full-stack 100% proprietária sem dependências de terceiros, construída sob medida via TDD Red-Green com mais de 1.000 testes reais.",
+          d2: "Contratos dinâmicos de /swagger (REST OpenAPI 3.0), /webhooks (HMAC SHA-256), /mcp (Model Context Protocol) e /docs (Manual Vivo).",
+          d3: "Containers Docker OCI com Hadolint, chaves criptografadas com sops+age, Circuit Breakers ativos e telemetria de uptime em tempo real na VPS."
+        },
+        2: {
+          tag: "Pipeline Alavancado em Software Livre",
+          title: "FLUXO 02: FORGE -> PRÉ-PLANO -> FACTORY -> MASTER -> ENTERPRISE -> OPS",
+          step3Label: "PASSO 3 (MOTOR OPEN-SOURCE)",
+          step3Title: "aidd-factory",
+          step3Desc: "Realiza curadoria de motores livres (filas, bots, mensageria) e gera fatias VSA de integração com webhooks.",
+          step3Sub: "Integração de Motores Open-Source",
+          boxClass: "bg-amber-950/40 border-amber-800/80 ring-1 ring-amber-500/30",
+          labelClass: "text-amber-400",
+          subClass: "text-amber-300 border-amber-900/50",
+          d1: "Orquestração completa dos containers de motores livres (PostgreSQL, Redis, RabbitMQ, Evolution API) com clientes tipados e tratamento de falhas.",
+          d2: "Fatias VSA de integração geradas automaticamente expondo /swagger, /webhooks, /mcp e /docs para cada motor conectado.",
+          d3: "Deploy de toda a stack unificada na VPS via aidd-ops com sops+age, volumes persistentes e monitoramento no Uptime Kuma."
+        },
+        3: {
+          tag: "Pipeline de Desacoplamento & Unificação",
+          title: "FLUXO 03: FORGE -> PRÉ-PLANO -> BRIDGE -> MASTER -> ENTERPRISE -> OPS",
+          step3Label: "PASSO 3 (MOTOR LOW-CODE)",
+          step3Title: "aidd-bridge",
+          step3Desc: "Scaneia protótipos do Lovable/v0/Bolt, elimina vendor lock-in, conecta ao PostgreSQL e gera Dockerfile OCI.",
+          step3Sub: "Libertação de Low-Code para VPS",
+          boxClass: "bg-pink-950/40 border-pink-800/80 ring-1 ring-pink-500/30",
+          labelClass: "text-pink-400",
+          subClass: "text-pink-300 border-pink-900/50",
+          d1: "Frontend React/Vite/Tailwind desatado de nuvens fechadas, sem URLs hardcoded e com separação estrita de camadas UI vs Rede.",
+          d2: "Banco de dados Supabase sanitizado e convertido em PostgreSQL puro (init-db.sql) com PostgREST e GoTrue conteinerizados.",
+          d3: "Pacote Dockerfile multi-stage com Nginx blindado por headers OWASP, compatível com VSA e pronto para deploy VPS via aidd-ops."
+        }
+      };
+
+      function switchFlow(flowId) {
+        const d = flowsData[flowId];
+        
+        // Atualiza botões
+        [1, 2, 3].forEach(id => {
+          const btn = document.getElementById('btn-flow-' + id);
+          if (id === flowId) {
+            btn.className = "px-4 py-2.5 rounded-xl font-mono text-xs font-bold transition-all bg-indigo-600 text-white border border-indigo-500 shadow-lg shadow-indigo-500/20";
+          } else {
+            btn.className = "px-4 py-2.5 rounded-xl font-mono text-xs font-bold transition-all bg-dark-card text-gray-400 border border-dark-border hover:border-gray-600";
+          }
+        });
+
+        // Atualiza cabeçalho do container
+        document.getElementById('flow-tag').innerText = d.tag;
+        document.getElementById('flow-title').innerText = d.title;
+
+        // Atualiza passo 3
+        const box = document.getElementById('step-3-box');
+        box.className = "flow-step p-4 rounded-xl flex flex-col justify-between " + d.boxClass;
+        
+        const label = document.getElementById('step-3-label');
+        label.innerText = d.step3Label;
+        label.className = "text-[10px] font-mono font-bold " + d.labelClass;
+
+        document.getElementById('step-3-title').innerText = d.step3Title;
+        document.getElementById('step-3-desc').innerText = d.step3Desc;
+
+        const sub = document.getElementById('step-3-sub');
+        sub.innerText = d.step3Sub;
+        sub.className = "text-[10px] font-mono mt-3 pt-2 border-t " + d.subClass;
+
+        // Atualiza entregáveis
+        const content = document.getElementById('flow-deliverables-content');
+        content.innerHTML = `
+          <div class="p-3 rounded-lg bg-dark-card border border-dark-border">
+            <span class="font-bold text-white block mb-1">1. Código de Negócio</span>
+            ${d.d1}
+          </div>
+          <div class="p-3 rounded-lg bg-dark-card border border-dark-border">
+            <span class="font-bold text-white block mb-1">2. Quarteto Sine Qua Non</span>
+            ${d.d2}
+          </div>
+          <div class="p-3 rounded-lg bg-dark-card border border-dark-border">
+            <span class="font-bold text-white block mb-1">3. Produção & Resiliência</span>
+            ${d.d3}
+          </div>
+        `;
+      }
+    </script>
+
     <!-- SEÇÃO 10: QUADRO DE HOMOLOGAÇÃO DAS 7 FERRAMENTAS -->
     <section class="space-y-6">
       <div class="border-l-4 border-gray-600 pl-4">

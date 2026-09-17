@@ -238,7 +238,42 @@ Toda linha de código, manifesto de infraestrutura, contrato de API ou diretiva 
 
 ---
 
-## 10. Quadro de Homologação das 7 Ferramentas do Ecossistema
+## 10. Funcionamento Passo a Passo dos 3 Fluxos de Criação
+
+### FLUXO 01 (Do Zero Puro): `FORGE -> PRÉ-PLANO -> GENERATOR -> MASTER -> ENTERPRISE -> OPS`
+* **Passo 1 (aidd-forge):** Injeta governança, regras de linting, pre-commit hooks e o `AGENTS.md` canônico.
+* **Passo 2 (PRÉ-PLANO):** Realiza entrevista interativa socrática para coletar requisitos de negócio e gera o `PLANO-MESTRE.json`.
+* **Passo 3 (aidd-generator):** Dispara a fábrica autônoma em 8 fases determinísticas (Spec formal -> TDD Red-Green -> Core VSA -> Quarteto).
+* **Passo 4 (aidd-master):** Organiza o código gerado em Monólito Modular (Fatias VSA em `features/` conectadas à Camada Horizontal `core/` / `shared/`).
+* **Passo 5 (aidd-enterprise):** Audita integridade por hash SHA-256 e injeta Circuit Breakers, Rate Limiting distribuído e trilha imutável `trace_id`.
+* **Passo 6 (aidd-ops):** Provisiona a VPS via SSH determinístico com Result Monad, configura cofre `sops+age` e ativa observabilidade no Uptime Kuma 24/7.
+* **Linha de Chegada:** Aplicação proprietária 100% testada e funcional no **Padrão CTT**, com Swagger, Webhooks HMAC, MCP Studio e Docs dinâmicos.
+
+---
+
+### FLUXO 02 (Motores Open-Source): `FORGE -> PRÉ-PLANO -> FACTORY -> MASTER -> ENTERPRISE -> OPS`
+* **Passo 1 (aidd-forge):** Estabelece a fundação inquebrável de regras e governança do repositório.
+* **Passo 2 (PRÉ-PLANO):** Identifica os requisitos funcionais e mapeia quais motores livres (filas, bots, mensageria) devem compor o sistema.
+* **Passo 3 (aidd-factory):** Orquestra os containers de software livre (PostgreSQL, Redis, RabbitMQ, Evolution API) e gera as Fatias Verticais VSA de integração.
+* **Passo 4 (aidd-master):** Harmoniza as fatias de conexão periféricas no Monólito Modular da empresa, evitando acoplamento espaguete.
+* **Passo 5 (aidd-enterprise):** Injeta resiliência bancária e valida integridade criptográfica.
+* **Passo 6 (aidd-ops):** Sobe a stack unificada de containers na VPS com rede isolada, SSL automático e monitoramento contínuo.
+* **Linha de Chegada:** Sistema corporativo de alta velocidade alavancado em motores livres, seguro e operando em produção com o Quarteto Sine Qua Non.
+
+---
+
+### FLUXO 03 (Low-Code / Apps Unificadas): `FORGE -> PRÉ-PLANO -> BRIDGE -> MASTER -> ENTERPRISE -> OPS`
+* **Passo 1 (aidd-forge):** Blinda o repositório com regras de arquitetura e convenções de código limpo.
+* **Passo 2 (PRÉ-PLANO):** Recebe o código exportado das plataformas low-code (Lovable, v0 da Vercel, Bolt.new).
+* **Passo 3 (aidd-bridge):** Executa o pipeline de libertação: extirpa amarras de nuvem fechada, converte Supabase em PostgreSQL corporativo (`init-db.sql`) e gera Dockerfile OCI seguro.
+* **Passo 4 (aidd-master):** Conecta o frontend desatado às fatias de backend VSA correspondentes.
+* **Passo 5 (aidd-enterprise):** Aplica blindagem de missão crítica e auditoria estrita.
+* **Passo 6 (aidd-ops):** Empacota e entrega a solução na VPS corporativa com banco PostgreSQL dedicado.
+* **Linha de Chegada:** Frontend de alta fidelidade resgatado de ferramentas de IA, operando em VPS corporativa sem vendor lock-in e com o Quarteto Sine Qua Non.
+
+---
+
+## 11. Quadro de Homologação das 7 Ferramentas do Ecossistema
 
 | Ferramenta | Papel Central na Tríade | Status | Entregável Consolidado |
 | :--- | :--- | :--- | :--- |
