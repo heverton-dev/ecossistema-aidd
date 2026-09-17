@@ -142,7 +142,7 @@
 
   <!-- Header Fixo -->
   <header class="sticky top-0 z-50 bg-[#080B13]/90 backdrop-blur-md border-b border-gray-800">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-4">
+    <div class="max-w-[1720px] mx-auto px-4 sm:px-6 lg:px-8 xl:px-12 h-16 flex items-center justify-between gap-4">
       <div class="flex items-center space-x-3">
         <div class="w-8 h-8 rounded-lg bg-indigo-600 flex items-center justify-center font-bold text-white shadow-md shadow-black/30 font-mono text-xs">
           AIDD
@@ -154,7 +154,7 @@
       </div>
 
       <!-- Live Search Box no Header com Semântica Acessível -->
-      <div role="search" class="flex-1 max-w-md hidden md:block">
+      <div role="search" class="flex-1 max-w-lg hidden md:block">
         <div class="relative">
           <input 
             type="text" 
@@ -179,12 +179,12 @@
 
   <!-- Hero Section -->
   <section class="py-16 border-b border-gray-800 relative overflow-hidden">
-    <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">
       <span class="text-xs font-mono font-bold uppercase tracking-widest text-indigo-400 mb-3 inline-block">Tratado Técnico Soberano</span>
       <h1 class="text-4xl sm:text-6xl font-black text-white tracking-tight mb-6 leading-tight">
         A Carta Magna de Engenharia, <br><span class="hero-accent">Arquitetura e Cibersegurança</span>
       </h1>
-      <p class="text-base sm:text-lg text-gray-400 max-w-3xl mx-auto leading-relaxed mb-6">
+      <p class="text-base sm:text-lg text-gray-400 max-w-4xl mx-auto leading-relaxed mb-6">
         Estruturação completa das 8 camadas fundacionais do ecossistema, matriz de rastreabilidade de Quality Gates, árvore canônica de diretórios do Padrão CTT e o simulador interativo dos 3 fluxos de criação.
       </p>
       <div class="flex flex-wrap justify-center gap-3 text-xs font-mono text-gray-400">
@@ -197,8 +197,8 @@
     </div>
   </section>
 
-  <!-- Layout com Barra Lateral Fixa + Conteúdo Principal -->
-  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 flex gap-8">
+  <!-- Layout com Barra Lateral Fixa + Conteúdo Principal Amplo (Zero Margens Ociosas) -->
+  <div class="max-w-[1720px] mx-auto px-4 sm:px-6 lg:px-8 xl:px-12 py-10 flex gap-8">
 
     <!-- Floating Sticky Sidebar -->
     <aside class="w-64 hidden xl:block shrink-0">
@@ -224,7 +224,7 @@
       </div>
     </aside>
 
-    <!-- Conteúdo Principal -->
+    <!-- Conteúdo Principal Amplo -->
     <main class="flex-1 min-w-0 space-y-24">
 
       <!-- SEÇÃO 1: O DECÁLOGO DAS 10 LEIS INVIOLÁVEIS (PRESERVADO NO TOPO) -->
@@ -235,7 +235,7 @@
           <p class="text-gray-400 text-sm">Diretrizes universais que subordinam cada linha de código, teste ou comando.</p>
         </div>
 
-        <div class="grid sm:grid-cols-2 lg:grid-cols-5 gap-3">
+        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-5 gap-4">
           <div class="pillar-box bg-dark-card p-4 rounded-xl">
             <div class="text-[10px] font-mono text-indigo-400 font-bold mb-1">LEI 01</div>
             <h3 class="text-xs font-bold text-white mb-1">Determinismo Estrito</h3>
@@ -297,7 +297,7 @@
           <p class="text-gray-400 text-sm">Padrão bancário contra as ameaças do OWASP Top 10 com verificação em tempo constante.</p>
         </div>
 
-        <div class="grid md:grid-cols-3 gap-6">
+        <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
           <div class="detail-card p-6 rounded-2xl space-y-3">
             <div class="flex items-center justify-between">
               <span class="text-xs font-mono text-amber-400 font-bold">OWASP A03 / A07</span>
@@ -398,7 +398,7 @@
           <p class="text-gray-400 text-sm">Estruturação em Fatias Verticais de Domínio (VSA) com Camada Horizontal Compartilhada.</p>
         </div>
 
-        <div class="grid md:grid-cols-4 gap-6">
+        <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
           <div class="detail-card p-6 rounded-2xl space-y-3">
             <div class="text-xs font-mono text-indigo-400 font-bold uppercase">Eixo Vertical</div>
             <h3 class="text-sm font-bold text-white">Fatias Verticais de Domínio (VSA)</h3>
@@ -457,7 +457,7 @@
           <p class="text-gray-400 text-sm">Eliminação total de código especulativo através de TDD Red-Green e testes reais.</p>
         </div>
 
-        <div class="grid md:grid-cols-4 gap-6">
+        <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
           <div class="detail-card p-6 rounded-2xl space-y-3">
             <div class="text-xs font-mono text-emerald-400 font-bold uppercase">Zero Stubs</div>
             <h3 class="text-sm font-bold text-white">100% Funcionalidade Real</h3>
@@ -516,7 +516,7 @@
           <p class="text-gray-400 text-sm">Garantia absoluta de Zero Vendor Lock-in em todas as dimensões da tecnologia.</p>
         </div>
 
-        <div class="grid md:grid-cols-4 gap-6">
+        <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
           <div class="detail-card p-6 rounded-2xl space-y-3">
             <div class="text-xs font-mono text-cyan-400 font-bold uppercase">Nuvem & Infra</div>
             <h3 class="text-sm font-bold text-white">Qualquer VPS ou Bare-Metal</h3>
@@ -575,7 +575,7 @@
           <p class="text-gray-400 text-sm">Os 4 pilares contratuais vivos e integrados em 100% dos módulos do sistema.</p>
         </div>
 
-        <div class="grid md:grid-cols-4 gap-6">
+        <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
           <div class="detail-card p-6 rounded-2xl space-y-3">
             <div class="text-xs font-mono text-cyan-400 font-bold uppercase">Contratos REST</div>
             <h3 class="text-sm font-bold text-white">Swagger Studio (/swagger)</h3>
@@ -634,7 +634,7 @@
           <p class="text-gray-400 text-sm">Automação de servidores remotos, isolamento em containers e monitoramento 24/7.</p>
         </div>
 
-        <div class="grid md:grid-cols-4 gap-6">
+        <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
           <div class="detail-card p-6 rounded-2xl space-y-3">
             <div class="text-xs font-mono text-blue-400 font-bold uppercase">Deploy SSH</div>
             <h3 class="text-sm font-bold text-white">Provisionamento Determinístico</h3>
@@ -693,7 +693,7 @@
           <p class="text-gray-400 text-sm">Diretrizes de precisão que impedem desvios, alucinações e desperdício de contexto.</p>
         </div>
 
-        <div class="grid md:grid-cols-4 gap-6">
+        <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
           <div class="detail-card p-6 rounded-2xl space-y-3">
             <div class="text-xs font-mono text-pink-400 font-bold uppercase">Interatividade</div>
             <h3 class="text-sm font-bold text-white">Zero Headless (Usuário no Controle)</h3>
@@ -752,7 +752,7 @@
           <p class="text-gray-400 text-sm">A autoridade máxima do Forge e a derivação de 3 caminhos industriais a partir do Pré-Plano.</p>
         </div>
 
-        <div class="grid lg:grid-cols-3 gap-6">
+        <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
           <div class="detail-card p-6 rounded-2xl space-y-3 border-blue-900/40">
             <div class="flex items-center justify-between">
               <span class="text-xs font-mono text-blue-400 font-bold">FLUXO 01</span>
