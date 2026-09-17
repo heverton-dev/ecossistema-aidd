@@ -495,3 +495,35 @@
        - Central de Ajuda com guia do utilizador corporativo CTT.
 - **Status:** **100% RESOLVIDO, RE-PUBLICADO E HOMOLOGADO EM PRODUÇÃO NA VPS**.
 
+---
+
+### Validação Prática de Extensibilidade: Inserção de Novos Módulos e Evolução de Recursos Existentes
+
+#### Inconsistência 21: Teste de Desacoplamento & Extensibilidade — Adição do Módulo de Autenticação e Telemetria em Tempo Real na Roteirização
+- **Nome:** Verificação de flexibilidade para o desenvolvedor: facilidade de adicionar novos bounded contexts desacoplados e introduzir recursos avançados (mapa GPS ao vivo) em fatias existentes sem risco de regressão.
+- **Motivo:** Necessidade de comprovação empírica de que a arquitetura Vertical Slice (VSA) associada às ferramentas do ecossistema (`aidd-master`) permite a evolução autônoma de módulos e a assimilação dinâmica pelo Quarteto Sine Qua Non sem necessidade de refatorações complexas.
+- **Ações e Entregas Executadas:**
+  1. **Criação do Novo Módulo de Autenticação (`autenticacao`) via `aidd-master`:**
+     - Execução determinística do scaffolding: `python ecossistema.py master add-module autenticacao`.
+     - Geração da fatia vertical completa em [`src/modules/autenticacao/`](file:///C:/Users/trcnologia/Desktop/proj_ctt/planos-ctt-app/src/modules/autenticacao/) com contratos, DTOs, entidades, Use Cases, Outbox e SQLite WAL Repository.
+     - Suíte de testes unitários aprovada com 10/10 testes passando em 1.13s ([`tests/unit/test_autenticacao.py`](file:///C:/Users/trcnologia/Desktop/proj_ctt/planos-ctt-app/tests/unit/test_autenticacao.py)).
+     - Criação da interface completa em Next.js ([`frontend/modules/autenticacao/AutenticacaoView.tsx`](file:///C:/Users/trcnologia/Desktop/proj_ctt/planos-ctt-app/frontend/modules/autenticacao/AutenticacaoView.tsx)): lista de utilizadores CTT com RBAC (Carteiro, Despachante, Gestor de Frota, TI), criação via `<Modal>`, bloqueio/reativação com `<ConfirmDialog>` e Simulador de emissão de token JWT HS256 com claims e `jti` auditável via Token Revocation List (TRL).
+  2. **Evolução do Módulo Existente de Roteirização (`roteirizacao`):**
+     - Inclusão do **Mapa Interativo em Tempo Real e Painel de Telemetria GPS** em [`frontend/modules/roteirizacao/RoteirizacaoView.tsx`](file:///C:/Users/trcnologia/Desktop/proj_ctt/planos-ctt-app/frontend/modules/roteirizacao/RoteirizacaoView.tsx):
+       - Visualizador com grid de ruas em SVG e traçado poligonal do trajeto.
+       - Paragens numeradas sequenciais (1, 2, 3 concluídas em verde; 4, 5, 6 pendentes em azul/cinza).
+       - Marcador dinâmico da viatura CTT (`42-AB-98`) com animação pulsante (`animate-ping`).
+       - Painel de telemetria ao vivo: coordenadas GPS (`38.7580° N, 9.1154° W`), velocidade atual (`42 km/h`), nível de bateria/combustível (`84%`), estafeta responsável e botão de simulação de avanço de sinal GPS.
+     - Zero impacto nas outras fatias de negócio (Encomendas e Frotas permaneceram 100% intactas).
+  3. **Atualização Dinâmica do Quarteto Sine Qua Non:**
+     - **Swagger Studio (`/swagger`):** Nova categoria `Autenticação` listando `/api/autenticacao/login`, `/api/autenticacao/me`, `/api/autenticacao/utilizadores`, `/api/autenticacao/revogar` e `/api/roteirizacao/telemetria`.
+     - **Webhook Studio (`/webhooks`):** Novos eventos expostos (`autenticacao.login_sucesso`, `autenticacao.bloqueio_seguranca`, `roteirizacao.telemetria_gps`).
+     - **MCP Studio (`/mcp`):** Expansão para 12 ferramentas de inteligência artificial com acréscimo de `autenticar_utilizador_ctt` e `obter_telemetria_tempo_real`.
+     - **Documentação (`/docs`):** Novo card do pilar 4 no Manual do Utilizador detalhando perfis de acesso, revogação e telemetria.
+  4. **Deploy & Validação Visual em Produção:**
+     - Rebuild completo dos contêineres `planos-ctt-app:latest` e `planos-ctt-web:latest` na VPS (`167.86.69.79`).
+     - Serviços convergidos no Docker Swarm.
+     - Testes automatizados via Playwright comprovando 100% de integridade visual e funcional.
+- **Status:** **100% CONCLUÍDO, TESTADO E HOMOLOGADO EM PRODUÇÃO NA VPS**.
+
+
