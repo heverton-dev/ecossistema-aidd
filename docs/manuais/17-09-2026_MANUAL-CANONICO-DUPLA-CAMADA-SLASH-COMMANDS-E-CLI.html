@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="pt-BR" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Manual Canônico: A Dupla Camada — Slash Commands & CLI Determinística | Ecossistema AIDD</title>
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+            mono: ['"JetBrains Mono"', 'monospace'],
+          },
+          colors: {
+            brand: {
+              400: '#818cf8',
+              500: '#6366f1',
+              600: '#4f46e5',
+            },
+            dark: {
+              bg: '#0B0F19',
+              card: '#111827',
+              surface: '#1F2937',
+              border: '#374151',
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    body {
+      background-color: #0B0F19;
+      color: #F3F4F6;
+    }
+    .card-glass {
+      background: rgba(17, 24, 39, 0.7);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(55, 65, 81, 0.6);
+    }
+    .gradient-headline {
+      background: linear-gradient(135deg, #ffffff 0%, #a5b4fc 50%, #6366f1 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+  </style>
+</head>
+<body class="font-sans antialiased selection:bg-indigo-500 selection:text-white">
+
+  <!-- Header -->
+  <header class="sticky top-0 z-50 bg-[#0B0F19]/90 backdrop-blur-md border-b border-gray-800">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+      <div class="flex items-center space-x-3">
+        <span class="text-xl font-extrabold text-white tracking-tight">ECOSSISTEMA <span class="text-indigo-400">AIDD</span></span>
+        <span class="text-xs bg-indigo-500/20 text-indigo-300 border border-indigo-500/30 px-2 py-0.5 rounded-full font-mono font-medium">v2026.09.17</span>
+      </div>
+      <nav class="hidden md:flex items-center space-x-6 text-sm font-medium text-gray-400">
+        <a href="#filosofia" class="hover:text-white transition">Filosofia</a>
+        <a href="#ferramentas" class="hover:text-white transition">Ferramentas & Casos de Uso</a>
+        <a href="#transversais" class="hover:text-white transition">Comandos Globais</a>
+        <a href="#quality-gates" class="hover:text-white transition">Quality Gates</a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Hero Section -->
+  <section class="relative pt-16 pb-12 overflow-hidden border-b border-gray-800">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="text-center max-w-4xl mx-auto">
+        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-indigo-500/30 bg-indigo-500/10 text-indigo-300 text-xs font-semibold mb-6">
+          <span>Manual Canônico de Referência Oficial</span>
+        </div>
+        <h1 class="text-4xl sm:text-5xl font-extrabold tracking-tight mb-6">
+          A Arquitetura de <span class="gradient-headline">Dupla Camada</span>
+        </h1>
+        <p class="text-lg text-gray-300 leading-relaxed max-w-3xl mx-auto">
+          Eliminando o abismo entre <strong>experiência humana sem fricção</strong> e <strong>rigor determinístico de engenharia de software</strong>.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Seção 1: Filosofia da Dupla Camada -->
+  <section id="filosofia" class="py-12 border-b border-gray-800">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <h2 class="text-2xl font-bold text-white mb-8 flex items-center gap-2">
+        <span class="w-2.5 h-6 bg-indigo-500 rounded-sm"></span>
+        1. O Princípio da Dupla Camada Universal
+      </h2>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+        <!-- Camada 1: Zero Fricção -->
+        <div class="card-glass p-6 rounded-2xl border-l-4 border-l-indigo-500">
+          <div class="flex items-center justify-between mb-4">
+            <h3 class="text-lg font-bold text-white flex items-center gap-2">
+              <span class="text-xl">💬</span> CAMADA 1: Zero Fricção Humana
+            </h3>
+            <span class="text-xs bg-indigo-500/20 text-indigo-300 px-2 py-0.5 rounded font-mono">Slash Commands / Chat</span>
+          </div>
+          <p class="text-sm text-gray-300 leading-relaxed mb-4">
+            Projetada para que qualquer usuário (de não-técnico ou júnior a PhD) interaja sem precisar memorizar sintaxes ou flags de terminal.
+          </p>
+          <ul class="space-y-2 text-xs text-gray-300 font-mono">
+            <li class="bg-gray-800/60 p-2.5 rounded border border-gray-700">/planner "Quero um sistema de logística CTT com frotas"</li>
+            <li class="bg-gray-800/60 p-2.5 rounded border border-gray-700">/generate "App de e-commerce do zero puro"</li>
+            <li class="bg-gray-800/60 p-2.5 rounded border border-gray-700">/factory --plano ./PLANNER.json --pasta ./minha-stack</li>
+          </ul>
+        </div>
+
+        <!-- Camada 2: Engenharia Determinística -->
+        <div class="card-glass p-6 rounded-2xl border-l-4 border-l-emerald-500">
+          <div class="flex items-center justify-between mb-4">
+            <h3 class="text-lg font-bold text-white flex items-center gap-2">
+              <span class="text-xl">⚙️</span> CAMADA 2: Engenharia Determinística
+            </h3>
+            <span class="text-xs bg-emerald-500/20 text-emerald-300 px-2 py-0.5 rounded font-mono">CLI & Quality Gates</span>
+          </div>
+          <p class="text-sm text-gray-300 leading-relaxed mb-4">
+            Execução binária via terminal `ecossistema.py`. Garante zero stubs, validação AST, contratos estritos e testes reais com saída binária (exit 0 / exit 1).
+          </p>
+          <ul class="space-y-2 text-xs text-gray-300 font-mono">
+            <li class="bg-gray-800/60 p-2.5 rounded border border-gray-700">python ecossistema.py planner init --fluxo 1 --nome "CTT"</li>
+            <li class="bg-gray-800/60 p-2.5 rounded border border-gray-700">python ecossistema.py planner validate ./PLANNER.json</li>
+            <li class="bg-gray-800/60 p-2.5 rounded border border-gray-700">python ecossistema.py planner audit ./meu-app</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Seção 2: Ferramentas e Casos de Uso -->
+  <section id="ferramentas" class="py-12 border-b border-gray-800">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <h2 class="text-2xl font-bold text-white mb-8 flex items-center gap-2">
+        <span class="w-2.5 h-6 bg-indigo-500 rounded-sm"></span>
+        2. Matriz Canônica de Ferramentas & Casos de Uso
+      </h2>
+
+      <div class="space-y-8">
+
+        <!-- 1. aidd-forge -->
+        <div class="card-glass p-6 rounded-2xl">
+          <div class="flex flex-wrap items-center justify-between gap-4 mb-4">
+            <div>
+              <span class="text-xs font-mono text-indigo-400 font-bold uppercase tracking-wider">Fundação & Governança</span>
+              <h3 class="text-xl font-bold text-white">1. aidd-forge</h3>
+            </div>
+            <span class="text-xs bg-gray-800 text-gray-300 border border-gray-700 px-3 py-1 rounded-full font-mono">Pre-Commit Hooks & AGENTS.md</span>
+          </div>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div class="bg-gray-900/60 p-4 rounded-xl border border-gray-800">
+              <h4 class="text-xs font-bold text-indigo-300 uppercase tracking-wider mb-2">💬 Camada 1: Slash Commands (Chat)</h4>
+              <p class="text-xs text-gray-400 mb-2">Injeta e repara governança sem fricção:</p>
+              <code class="block text-xs font-mono text-gray-200 bg-black/40 p-2.5 rounded border border-gray-800 mb-2">/forge</code>
+              <code class="block text-xs font-mono text-gray-200 bg-black/40 p-2.5 rounded border border-gray-800">/forge ./meu-projeto</code>
+            </div>
+            <div class="bg-gray-900/60 p-4 rounded-xl border border-gray-800">
+              <h4 class="text-xs font-bold text-emerald-300 uppercase tracking-wider mb-2">⚙️ Camada 2: CLI & Gates</h4>
+              <p class="text-xs text-gray-400 mb-2">Comandos formais e validação das 15 regras (G01-G15):</p>
+              <code class="block text-xs font-mono text-gray-200 bg-black/40 p-2.5 rounded border border-gray-800 mb-2">python ecossistema.py forge init &lt;pasta&gt;</code>
+              <code class="block text-xs font-mono text-gray-200 bg-black/40 p-2.5 rounded border border-gray-800">python ecossistema.py forge audit &lt;pasta&gt;</code>
+            </div>
+          </div>
+        </div>
+
+        <!-- 2. aidd-planner -->
+        <div class="card-glass p-6 rounded-2xl border border-indigo-500/40">
+          <div class="flex flex-wrap items-center justify-between gap-4 mb-4">
+            <div>
+              <span class="text-xs font-mono text-indigo-400 font-bold uppercase tracking-wider">Combustão Primária (SDD/BDD)</span>
+              <h3 class="text-xl font-bold text-white">2. aidd-planner</h3>
+            </div>
+            <span class="text-xs bg-indigo-500/20 text-indigo-300 border border-indigo-500/40 px-3 py-1 rounded-full font-mono">Gera PLANNER.json</span>
+          </div>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div class="bg-gray-900/60 p-4 rounded-xl border border-gray-800">
+              <h4 class="text-xs font-bold text-indigo-300 uppercase tracking-wider mb-2">💬 Camada 1: Slash Commands (Chat)</h4>
+              <p class="text-xs text-gray-400 mb-2">Intake socrático em linguagem natural:</p>
+              <code class="block text-xs font-mono text-gray-200 bg-black/40 p-2.5 rounded border border-gray-800 mb-2">/planner "Quero um app de rastreamento CTT"</code>
+              <code class="block text-xs font-mono text-gray-200 bg-black/40 p-2.5 rounded border border-gray-800 mb-2">/planner 1 "Criar MVP de pagamentos do zero"</code>
+              <code class="block text-xs font-mono text-gray-200 bg-black/40 p-2.5 rounded border border-gray-800">/planner 2 "Hub WhatsApp com Evolution API"</code>
+            </div>
+            <div class="bg-gray-900/60 p-4 rounded-xl border border-gray-800">
+              <h4 class="text-xs font-bold text-emerald-300 uppercase tracking-wider mb-2">⚙️ Camada 2: CLI & Gates</h4>
+              <p class="text-xs text-gray-400 mb-2">Geração, validação e exportação de schemas:</p>
+              <code class="block text-xs font-mono text-gray-200 bg-black/40 p-2.5 rounded border border-gray-800 mb-2">python ecossistema.py planner init --fluxo 1 --nome "App" --pasta ./app</code>
+              <code class="block text-xs font-mono text-gray-200 bg-black/40 p-2.5 rounded border border-gray-800 mb-2">python ecossistema.py planner validate ./app/PLANNER.json</code>
+              <code class="block text-xs font-mono text-gray-200 bg-black/40 p-2.5 rounded border border-gray-800">python ecossistema.py planner audit ./app</code>
+            </div>
+          </div>
+        </div>
+
+        <!-- 3. aidd-generator -->
+        <div class="card-glass p-6 rounded-2xl">
+          <div class="flex flex-wrap items-center justify-between gap-4 mb-4">
+            <div>
+              <span class="text-xs font-mono text-indigo-400 font-bold uppercase tracking-wider">Fluxo 01: Do Zero Puro</span>
+              <h3 class="text-xl font-bold text-white">3. aidd-generator</h3>
+            </div>
+            <span class="text-xs bg-gray-800 text-gray-300 border border-gray-700 px-3 py-1 rounded-full font-mono">Pipeline 8 Fases TDD</span>
+          </div>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div class="bg-gray-900/60 p-4 rounded-xl border border-gray-800">
+              <h4 class="text-xs font-bold text-indigo-300 uppercase tracking-wider mb-2">💬 Camada 1: Slash Commands (Chat)</h4>
+              <code class="block text-xs font-mono text-gray-200 bg-black/40 p-2.5 rounded border border-gray-800 mb-2">/generate "Sistema de agendamento de consultas"</code>
+              <code class="block text-xs font-mono text-gray-200 bg-black/40 p-2.5 rounded border border-gray-800">/generate --fases 1,2,3 "Módulo de faturamento"</code>
+            </div>
+            <div class="bg-gray-900/60 p-4 rounded-xl border border-gray-800">
+              <h4 class="text-xs font-bold text-emerald-300 uppercase tracking-wider mb-2">⚙️ Camada 2: CLI & Gates</h4>
+              <code class="block text-xs font-mono text-gray-200 bg-black/40 p-2.5 rounded border border-gray-800 mb-2">python ecossistema.py generate "Ideia"</code>
+              <code class="block text-xs font-mono text-gray-200 bg-black/40 p-2.5 rounded border border-gray-800">G_TESTES_REAIS (pytest Red-Green + AST anti-stubs)</code>
+            </div>
+          </div>
+        </div>
+
+        <!-- 4. aidd-factory -->
+        <div class="card-glass p-6 rounded-2xl">
+          <div class="flex flex-wrap items-center justify-between gap-4 mb-4">
+            <div>
+              <span class="text-xs font-mono text-indigo-400 font-bold uppercase tracking-wider">Fluxo 02: Open-Source</span>
+              <h3 class="text-xl font-bold text-white">4. aidd-factory</h3>
+            </div>
+            <span class="text-xs bg-gray-800 text-gray-300 border border-gray-700 px-3 py-1 rounded-full font-mono">Gateway VSA & Docker Stacks</span>
+          </div>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div class="bg-gray-900/60 p-4 rounded-xl border border-gray-800">
+              <h4 class="text-xs font-bold text-indigo-300 uppercase tracking-wider mb-2">💬 Camada 1: Slash Commands (Chat)</h4>
+              <code class="block text-xs font-mono text-gray-200 bg-black/40 p-2.5 rounded border border-gray-800 mb-2">/factory --plano ./PLANNER.json --pasta ./stack</code>
+              <code class="block text-xs font-mono text-gray-200 bg-black/40 p-2.5 rounded border border-gray-800">/factory "Adicionar Redis e RabbitMQ ao stack"</code>
+            </div>
+            <div class="bg-gray-900/60 p-4 rounded-xl border border-gray-800">
+              <h4 class="text-xs font-bold text-emerald-300 uppercase tracking-wider mb-2">⚙️ Camada 2: CLI & Gates</h4>
+              <code class="block text-xs font-mono text-gray-200 bg-black/40 p-2.5 rounded border border-gray-800 mb-2">python ecossistema.py factory --plano &lt;arq&gt; --pasta &lt;dest&gt;</code>
+              <code class="block text-xs font-mono text-gray-200 bg-black/40 p-2.5 rounded border border-gray-800">G_FACTORY_COMPOSE, G_FACTORY_INTEGRATION (6 Gates)</code>
+            </div>
+          </div>
+        </div>
+
+        <!-- 5. aidd-bridge -->
+        <div class="card-glass p-6 rounded-2xl">
+          <div class="flex flex-wrap items-center justify-between gap-4 mb-4">
+            <div>
+              <span class="text-xs font-mono text-indigo-400 font-bold uppercase tracking-wider">Fluxo 03: Desacoplamento Low-Code</span>
+              <h3 class="text-xl font-bold text-white">5. aidd-bridge</h3>
+            </div>
+            <span class="text-xs bg-gray-800 text-gray-300 border border-gray-700 px-3 py-1 rounded-full font-mono">Anti-Lockin Lovable/v0</span>
+          </div>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div class="bg-gray-900/60 p-4 rounded-xl border border-gray-800">
+              <h4 class="text-xs font-bold text-indigo-300 uppercase tracking-wider mb-2">💬 Camada 1: Slash Commands (Chat)</h4>
+              <code class="block text-xs font-mono text-gray-200 bg-black/40 p-2.5 rounded border border-gray-800 mb-2">/bridge scan ./app-lovable</code>
+              <code class="block text-xs font-mono text-gray-200 bg-black/40 p-2.5 rounded border border-gray-800">/bridge convert-db ./app-lovable --saida ./db</code>
+            </div>
+            <div class="bg-gray-900/60 p-4 rounded-xl border border-gray-800">
+              <h4 class="text-xs font-bold text-emerald-300 uppercase tracking-wider mb-2">⚙️ Camada 2: CLI & Gates</h4>
+              <code class="block text-xs font-mono text-gray-200 bg-black/40 p-2.5 rounded border border-gray-800 mb-2">python ecossistema.py bridge pack ./app --dest ./prod</code>
+              <code class="block text-xs font-mono text-gray-200 bg-black/40 p-2.5 rounded border border-gray-800">G_BRIDGE_SCAN (Verificação estrita anti-lockin)</code>
+            </div>
+          </div>
+        </div>
+
+        <!-- 6. aidd-master -->
+        <div class="card-glass p-6 rounded-2xl">
+          <div class="flex flex-wrap items-center justify-between gap-4 mb-4">
+            <div>
+              <span class="text-xs font-mono text-indigo-400 font-bold uppercase tracking-wider">Harmonização Monólito Modular</span>
+              <h3 class="text-xl font-bold text-white">6. aidd-master</h3>
+            </div>
+            <span class="text-xs bg-gray-800 text-gray-300 border border-gray-700 px-3 py-1 rounded-full font-mono">Vertical Slice Architecture (VSA)</span>
+          </div>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div class="bg-gray-900/60 p-4 rounded-xl border border-gray-800">
+              <h4 class="text-xs font-bold text-indigo-300 uppercase tracking-wider mb-2">💬 Camada 1: Slash Commands (Chat)</h4>
+              <code class="block text-xs font-mono text-gray-200 bg-black/40 p-2.5 rounded border border-gray-800 mb-2">/master init ./meu-monolito</code>
+              <code class="block text-xs font-mono text-gray-200 bg-black/40 p-2.5 rounded border border-gray-800">/master add-module frotas</code>
+            </div>
+            <div class="bg-gray-900/60 p-4 rounded-xl border border-gray-800">
+              <h4 class="text-xs font-bold text-emerald-300 uppercase tracking-wider mb-2">⚙️ Camada 2: CLI & Gates</h4>
+              <code class="block text-xs font-mono text-gray-200 bg-black/40 p-2.5 rounded border border-gray-800 mb-2">python ecossistema.py master add-module &lt;modulo&gt;</code>
+              <code class="block text-xs font-mono text-gray-200 bg-black/40 p-2.5 rounded border border-gray-800">G_MASTER_ISOLATION & Testes unitários da fatia</code>
+            </div>
+          </div>
+        </div>
+
+        <!-- 7. aidd-enterprise -->
+        <div class="card-glass p-6 rounded-2xl">
+          <div class="flex flex-wrap items-center justify-between gap-4 mb-4">
+            <div>
+              <span class="text-xs font-mono text-indigo-400 font-bold uppercase tracking-wider">Missão Crítica & Resiliência</span>
+              <h3 class="text-xl font-bold text-white">7. aidd-enterprise</h3>
+            </div>
+            <span class="text-xs bg-gray-800 text-gray-300 border border-gray-700 px-3 py-1 rounded-full font-mono">Blindagem Criptográfica SHA-256</span>
+          </div>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div class="bg-gray-900/60 p-4 rounded-xl border border-gray-800">
+              <h4 class="text-xs font-bold text-indigo-300 uppercase tracking-wider mb-2">💬 Camada 1: Slash Commands (Chat)</h4>
+              <code class="block text-xs font-mono text-gray-200 bg-black/40 p-2.5 rounded border border-gray-800 mb-2">/enterprise inject component circuit_breaker</code>
+              <code class="block text-xs font-mono text-gray-200 bg-black/40 p-2.5 rounded border border-gray-800">/enterprise audit</code>
+            </div>
+            <div class="bg-gray-900/60 p-4 rounded-xl border border-gray-800">
+              <h4 class="text-xs font-bold text-emerald-300 uppercase tracking-wider mb-2">⚙️ Camada 2: CLI & Gates</h4>
+              <code class="block text-xs font-mono text-gray-200 bg-black/40 p-2.5 rounded border border-gray-800 mb-2">python ecossistema.py enterprise inject skill auth</code>
+              <code class="block text-xs font-mono text-gray-200 bg-black/40 p-2.5 rounded border border-gray-800">G_ENTERPRISE_INTEGRITY (Validação Hash SHA-256)</code>
+            </div>
+          </div>
+        </div>
+
+        <!-- 8. aidd-ops -->
+        <div class="card-glass p-6 rounded-2xl">
+          <div class="flex flex-wrap items-center justify-between gap-4 mb-4">
+            <div>
+              <span class="text-xs font-mono text-indigo-400 font-bold uppercase tracking-wider">Infraestrutura, Segurança & Deploy</span>
+              <h3 class="text-xl font-bold text-white">8. aidd-ops</h3>
+            </div>
+            <span class="text-xs bg-gray-800 text-gray-300 border border-gray-700 px-3 py-1 rounded-full font-mono">SSH Determinístico & Uptime Kuma</span>
+          </div>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div class="bg-gray-900/60 p-4 rounded-xl border border-gray-800">
+              <h4 class="text-xs font-bold text-indigo-300 uppercase tracking-wider mb-2">💬 Camada 1: Slash Commands (Chat)</h4>
+              <code class="block text-xs font-mono text-gray-200 bg-black/40 p-2.5 rounded border border-gray-800 mb-2">/ops "Deploy da app CTT na VPS 192.168.1.10 com SSL"</code>
+              <code class="block text-xs font-mono text-gray-200 bg-black/40 p-2.5 rounded border border-gray-800">/ops init-vps</code>
+            </div>
+            <div class="bg-gray-900/60 p-4 rounded-xl border border-gray-800">
+              <h4 class="text-xs font-bold text-emerald-300 uppercase tracking-wider mb-2">⚙️ Camada 2: CLI & Gates</h4>
+              <code class="block text-xs font-mono text-gray-200 bg-black/40 p-2.5 rounded border border-gray-800 mb-2">python ecossistema.py ops "&lt;requisitos&gt;" --pasta &lt;dest&gt;</code>
+              <code class="block text-xs font-mono text-gray-200 bg-black/40 p-2.5 rounded border border-gray-800">G_INFRA_COMPOSE, G_HADOLINT (Melhores práticas OCI)</code>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- Seção 3: Comandos Transversais -->
+  <section id="transversais" class="py-12 border-b border-gray-800">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <h2 class="text-2xl font-bold text-white mb-8 flex items-center gap-2">
+        <span class="w-2.5 h-6 bg-indigo-500 rounded-sm"></span>
+        3. Comandos Transversais de Orquestração & Auditoria
+      </h2>
+
+      <div class="overflow-x-auto card-glass rounded-2xl border border-gray-800">
+        <table class="w-full text-left text-sm text-gray-300">
+          <thead class="bg-gray-800/80 text-xs uppercase font-mono text-gray-400 border-b border-gray-700">
+            <tr>
+              <th class="px-6 py-4">Slash Command (Zero Fricção)</th>
+              <th class="px-6 py-4">CLI Determinística (Terminal)</th>
+              <th class="px-6 py-4">Objetivo Operacional</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-gray-800 font-mono text-xs">
+            <tr class="hover:bg-gray-800/30">
+              <td class="px-6 py-4 text-indigo-300 font-bold">/melhoria &lt;pedido&gt;</td>
+              <td class="px-6 py-4 text-gray-300">python ecossistema.py melhoria init --pedido "..."</td>
+              <td class="px-6 py-4 font-sans text-gray-400">Análise profunda pré-plano e relatórios em docs/melhorias/</td>
+            </tr>
+            <tr class="hover:bg-gray-800/30">
+              <td class="px-6 py-4 text-indigo-300 font-bold">/plan &lt;nome&gt;</td>
+              <td class="px-6 py-4 text-gray-300">python ecossistema.py plan init &lt;nome&gt;</td>
+              <td class="px-6 py-4 font-sans text-gray-400">Gerenciador determinístico de iniciativas em docs/planos/</td>
+            </tr>
+            <tr class="hover:bg-gray-800/30">
+              <td class="px-6 py-4 text-indigo-300 font-bold">/orchestrate &lt;plano&gt;</td>
+              <td class="px-6 py-4 text-gray-300">python ecossistema.py orchestrate &lt;plano&gt;</td>
+              <td class="px-6 py-4 font-sans text-gray-400">Geração de Flight Plans para ORCA ADE ou Git Worktrees</td>
+            </tr>
+            <tr class="hover:bg-gray-800/30">
+              <td class="px-6 py-4 text-indigo-300 font-bold">(Auditoria Geral)</td>
+              <td class="px-6 py-4 text-gray-300">python ecossistema.py audit</td>
+              <td class="px-6 py-4 font-sans text-gray-400">Execução do Meta-Quality Gate de Integridade do ecossistema</td>
+            </tr>
+            <tr class="hover:bg-gray-800/30">
+              <td class="px-6 py-4 text-indigo-300 font-bold">(Status)</td>
+              <td class="px-6 py-4 text-gray-300">python ecossistema.py status</td>
+              <td class="px-6 py-4 font-sans text-gray-400">Inventário de ferramentas instaladas e skills sincronizadas</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="py-8 bg-[#0B0F19] text-center text-xs text-gray-500 border-t border-gray-800">
+    <p>Ecossistema AIDD &copy; 2026. Documentação Canônica de Engenharia Agêntica.</p>
+  </footer>
+
+</body>
+</html>

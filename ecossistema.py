@@ -229,6 +229,12 @@ def cmd_factory(args):
     cmd = [sys.executable, pipeline_script] + args
     return run_command(cmd, cwd=os.getcwd(), env=env)
 
+def cmd_planner(args):
+    planner_dir = os.path.join(TOOLS_DIR, "aidd-planner")
+    env = {"PYTHONPATH": planner_dir}
+    cmd = [sys.executable, "-m", "src.cli"] + args
+    return run_command(cmd, cwd=os.getcwd(), env=env)
+
 def cmd_components(args):
     sys.path.insert(0, os.path.join(ROOT_DIR, "scripts"))
     import gestor_componentes
@@ -747,7 +753,8 @@ def cmd_status(args):
         ("aidd-enterprise", "Missão crítica, conformidade SHA-256 e Zero-Trust"),
         ("aidd-ops", "Meta-Orquestrador Agêntico de Infraestrutura (Pacote 3)"),
         ("aidd-bridge", "Extrator, unificador e empacotador Lovable/VPS"),
-        ("aidd-factory", "Gerador de Aplicacao e Integracao (Pipeline Factory)")
+        ("aidd-factory", "Gerador de Aplicacao e Integracao (Pipeline Factory)"),
+        ("aidd-planner", "Motor de Planejamento e Combustao da Triade (SDD/BDD)")
     ]
     for name, desc in tools:
         path = os.path.join(TOOLS_DIR, name)
@@ -762,6 +769,7 @@ def cmd_status(args):
         "aidd-enterprise-runner",
         "aidd-ops-runner",
         "aidd-bridge-runner",
+        "aidd-planner-runner",
         "orca-plan-orchestrator",
         "planos-auditoria-runner",
         "componentes-runner"
@@ -773,6 +781,7 @@ def cmd_status(args):
 
     print("\nSlash Commands Ativos:")
     print("  /forge [caminho]        -> Dispara aidd-forge")
+    print("  /planner [comando]      -> Dispara aidd-planner (planejamento Tríade)")
     print("  /generate <ideia>       -> Dispara aidd-generator")
     print("  /master <modulo>        -> Dispara aidd-master")
     print("  /enterprise <tipo> <nome> -> Dispara aidd-enterprise")
@@ -792,6 +801,7 @@ Uso: python ecossistema.py <comando> [argumentos...]
 
 Comandos disponíveis:
   forge <args>        Executa operações do aidd-forge (ex: forge init [pasta])
+  planner <args>      Executa comandos do aidd-planner (init, validate, export, audit)
   generate <args>     Executa o pipeline do aidd-generator (ex: generate "Minha Ideia")
   master <args>       Executa comandos do aidd-master (ex: master add-module faturamento)
   enterprise <args>   Executa comandos do aidd-enterprise (ex: enterprise inject skill auth)
@@ -890,6 +900,7 @@ def main():
         "ops": cmd_ops,
         "bridge": cmd_bridge,
         "factory": cmd_factory,
+        "planner": cmd_planner,
         "components": cmd_components,
         "dependencia": cmd_dependencia,
         "orchestrate": cmd_orchestrate,
