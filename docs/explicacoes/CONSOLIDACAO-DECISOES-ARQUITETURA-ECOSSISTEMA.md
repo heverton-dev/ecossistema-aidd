@@ -288,7 +288,7 @@ Para garantir que o assistente opere com máxima precisão, sem alucinações e 
 | **`aidd-enterprise`**| Guardião de Missão Crítica | Aplicação VSA existente | Checksums SHA-256, Circuit Breakers, Rate Limiters e trilha imutável `trace_id` | ✅ Homologado |
 | **`aidd-ops`** | Orquestrador de Infra & VPS | Plano de infraestrutura | Provisionamento SSH via Result monad, cofre `sops+age`, compose de produção e Uptime Kuma | ✅ Homologado |
 | **`aidd-factory`** | Integrador de Motores Open-Source | Especificação de motores livres | Fatias VSA de integração tipadas, webhooks HMAC, compose dos motores e anti-SQL injection | ✅ Homologado |
-| **`aidd-bridge`** | Desacoplador de Low-Code | Código exportado Lovable/v0/Bolt | Frontend limpo desatado de nuvem fechada, conectado ao PostgreSQL e conteinerizado | 🟡 Próximo Alvo |
+| **`aidd-bridge`** | Desacoplador de Low-Code | Código exportado Lovable/v0/Bolt | Frontend limpo desatado de nuvem fechada, conectado ao PostgreSQL VPS com OCI seguro e Quarteto | ✅ Homologado |
 
 ---
 
