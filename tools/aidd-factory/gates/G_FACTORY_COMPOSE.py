@@ -80,6 +80,8 @@ def executar(caminho_compose: str = None) -> int:
     if caminho_compose is None:
         # Buscar compose padrao
         caminho_compose = os.path.join(_FACTORY_ROOT, "output", "docker-compose.yml")
+    elif os.path.isdir(caminho_compose):
+        caminho_compose = os.path.join(caminho_compose, "docker-compose.yml")
 
     problemas = _validar_compose(caminho_compose)
 

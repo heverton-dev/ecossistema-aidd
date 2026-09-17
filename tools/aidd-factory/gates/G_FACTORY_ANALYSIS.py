@@ -13,6 +13,8 @@ import json
 import sys
 import os
 
+_FACTORY_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
 
 def _validar_analysis(caminho: str) -> list:
     """Valida factory_analysis.json."""
@@ -61,6 +63,8 @@ def executar(caminho: str = None) -> int:
 
     if caminho is None:
         caminho = os.path.join(_FACTORY_ROOT, "output", "factory_analysis.json")
+    elif os.path.isdir(caminho):
+        caminho = os.path.join(caminho, "factory_analysis.json")
 
     problemas = _validar_analysis(caminho)
 

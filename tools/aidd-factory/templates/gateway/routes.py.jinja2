@@ -18,7 +18,7 @@ SERVICES = {
 
 {% for servico in servicos %}
 @router.get("/{{ servico.nome_slug }}")
-async def list_{{ servico.nome_slug }}():
+async def list_{{ servico.nome_ident }}():
     """Lista todos os registros de {{ servico.nome }}."""
     async with httpx.AsyncClient(timeout=30.0) as client:
         try:
@@ -28,7 +28,7 @@ async def list_{{ servico.nome_slug }}():
             raise HTTPException(status_code=502, detail="Servico indisponivel")
 
 @router.get("/{{ servico.nome_slug }}/{item_id}")
-async def get_{{ servico.nome_slug }}(item_id: str):
+async def get_{{ servico.nome_ident }}(item_id: str):
     """Busca registro por ID em {{ servico.nome }}."""
     async with httpx.AsyncClient(timeout=30.0) as client:
         try:
@@ -38,7 +38,7 @@ async def get_{{ servico.nome_slug }}(item_id: str):
             raise HTTPException(status_code=502, detail="Servico indisponivel")
 
 @router.post("/{{ servico.nome_slug }}")
-async def create_{{ servico.nome_slug }}(request: Request):
+async def create_{{ servico.nome_ident }}(request: Request):
     """Cria registro em {{ servico.nome }}."""
     body = await request.json()
     async with httpx.AsyncClient(timeout=30.0) as client:

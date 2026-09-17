@@ -73,7 +73,7 @@ async def health_global():
 
 {% for servico in servicos %}
 @app.get("/{{ servico.nome_slug }}/healthz")
-async def health_{{ servico.nome_slug }}():
+async def health_{{ servico.nome_ident }}():
     """Healthcheck do servico {{ servico.nome }}."""
     try:
         async with httpx.AsyncClient(timeout=5.0) as client:
@@ -83,7 +83,7 @@ async def health_{{ servico.nome_slug }}():
         return {"status": "down"}
 
 @app.api_route("/{{ servico.nome_slug }}/{path:path}", methods=["GET", "POST", "PUT", "DELETE", "PATCH"])
-async def proxy_{{ servico.nome_slug }}(path: str, request: Request):
+async def proxy_{{ servico.nome_ident }}(path: str, request: Request):
     """Proxy reverso para {{ servico.nome }}."""
     url = f"{SERVICES['{{ servico.nome_slug }}']['url']}/{path}"
     body = await request.body()

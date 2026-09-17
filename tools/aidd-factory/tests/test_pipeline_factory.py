@@ -290,3 +290,45 @@ class TestPipelineE2E:
             assert os.path.isfile(os.path.join(tmp, "init-multiple-databases.sh"))
             env_files = [f for f in os.listdir(tmp) if f.startswith(".env.")]
             assert len(env_files) > 0
+
+    def test_gateway_generator_com_hifens_e_espacos(self):
+        """Garante que ferramentas como Evolution API geram funcoes Python sintaticamente validas."""
+        from core.gateway_generator import gerar_gateway
+        import py_compile
+
+        analysis = {
+            "nicho_slug": "delivery",
+            "nicho_nome_exibicao": "Lanchonetes & Delivery",
+            "ferramentas": [
+                {"nome": "Typebot"},
+                {"nome": "Evolution API"},
+                {"nome": "Cal.com"},
+            ],
+        }
+        with tempfile.TemporaryDirectory() as tmp:
+            res = gerar_gateway(analysis, tmp)
+            assert res.sucesso, f"Geracao do gateway falhou: {res.erro}"
+            gw_dir = os.path.join(tmp, "src", "gateway")
+            for arquivo in ["main.py", "models.py", "routes.py"]:
+                caminho = os.path.join(gw_dir, arquivo)
+                assert os.path.isfile(caminho), f"Arquivo {arquivo} ausente"
+                # Deve compilar sem SyntaxError
+                py_compile.compile(caminho, doraise=True)
+
+    def test_pipeline_completo_delivery_e2e(self):
+        """Teste ponta a ponta executando executar_pipeline com LLM e validacao cross-service."""
+        from pipeline_factory import executar_pipeline
+        import copy
+
+        plano = copy.deepcopy(NICHOS_FIXTURE["delivery"])
+        with tempfile.TemporaryDirectory() as tmp:
+            plano_path = os.path.join(tmp, "PLANO-INFRAESTRUTURA.json")
+            with open(plano_path, "w", encoding="utf-8") as f:
+                json.dump(plano, f)
+            dest = os.path.join(tmp, "output")
+            codigo = executar_pipeline(plano_path, dest, incluir_llm=True)
+            assert codigo == 0, "Pipeline E2E completo deve retornar exit code 0"
+            assert os.path.isfile(os.path.join(dest, "FACTORY_OUTPUT.json"))
+            assert os.path.isfile(os.path.join(dest, "factory_analysis.json"))
+            assert os.path.isfile(os.path.join(dest, "docker-compose.yml"))
+            assert os.path.isfile(os.path.join(dest, "init-multiple-databases.sh"))

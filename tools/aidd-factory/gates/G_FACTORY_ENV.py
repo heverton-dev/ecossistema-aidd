@@ -11,6 +11,8 @@ import sys
 import os
 import glob
 
+_FACTORY_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
 
 def _validar_env_dir(diretorio: str) -> list:
     """Valida todos os .env em um diretorio."""

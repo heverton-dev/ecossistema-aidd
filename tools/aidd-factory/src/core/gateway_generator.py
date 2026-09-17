@@ -21,13 +21,18 @@ def _montar_contexto(analysis: dict) -> dict:
     nicho_nome = analysis["nicho_nome_exibicao"]
     ferramentas = analysis.get("ferramentas", [])
 
+    import re
     servicos = []
     for f in ferramentas:
         nome_slug = f["nome"].lower().replace(" ", "-").replace(".", "")
-        nome_camel = "".join(w.capitalize() for w in f["nome"].split())
+        nome_ident = re.sub(r'[^a-zA-Z0-9_]', '_', f["nome"].lower()).strip('_')
+        if not nome_ident or nome_ident[0].isdigit():
+            nome_ident = f"svc_{nome_ident}"
+        nome_camel = "".join(w.capitalize() for w in re.split(r'[\s\-_.]+', f["nome"]) if w)
         servicos.append({
             "nome": f["nome"],
             "nome_slug": nome_slug,
+            "nome_ident": nome_ident,
             "nome_camel": nome_camel,
             "url_default": f"http://{nome_slug}:8000",
             "porta": 8000,

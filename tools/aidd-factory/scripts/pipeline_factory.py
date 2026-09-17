@@ -93,7 +93,7 @@ def executar_pipeline(plano_path: str, pasta_destino: str, incluir_llm: bool = T
         pasta_destino: Diretorio de saida
         incluir_llm: Se True, executa fases 2, 3, 7 (LLM). Se False, apenas deterministicas.
     """
-    total_fases = 9 if incluir_llm else 5
+    total_fases = 9 if incluir_llm else 6
     fase_num = 0
 
     print("=" * 72)
@@ -101,9 +101,8 @@ def executar_pipeline(plano_path: str, pasta_destino: str, incluir_llm: bool = T
     print(f" Modo: {'COMPLETO (inclui LLM)' if incluir_llm else 'DETERMINISTICO (sem LLM)'}")
     print("=" * 72)
 
-    # Carregar plano
-    fase_num += 1
-    print(f"\n[{fase_num}/{total_fases}] Carregando PLANO-INFRAESTRUTURA.json...")
+    # Pre-flight: Carregar plano
+    print(f"\n[Pre-flight] Carregando PLANO-INFRAESTRUTURA.json...")
     res_plano = _carregar_plano(plano_path)
     if not res_plano.sucesso:
         print(f"  [ERRO] {res_plano.codigo}: {res_plano.erro}")

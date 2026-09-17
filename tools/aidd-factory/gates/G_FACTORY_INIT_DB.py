@@ -12,6 +12,8 @@ Verifica:
 import sys
 import os
 
+_FACTORY_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
 
 def _validar_init_db(caminho: str) -> list:
     """Valida o script init DB. Retorna lista de problemas."""
@@ -54,6 +56,8 @@ def executar(caminho: str = None) -> int:
 
     if caminho is None:
         caminho = os.path.join(_FACTORY_ROOT, "output", "init-multiple-databases.sh")
+    elif os.path.isdir(caminho):
+        caminho = os.path.join(caminho, "init-multiple-databases.sh")
 
     problemas = _validar_init_db(caminho)
 
