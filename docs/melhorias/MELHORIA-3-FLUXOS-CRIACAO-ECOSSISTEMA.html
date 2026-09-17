@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="pt-BR" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Melhoria Arquitetural — Os 3 Fluxos Canônicos de Criação AIDD</title>
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+            mono: ['"JetBrains Mono"', 'monospace'],
+          },
+          colors: {
+            brand: {
+              500: '#6366f1',
+              600: '#4f46e5',
+            },
+            dark: {
+              bg: '#0B0F19',
+              card: '#111827',
+              border: '#1F2937',
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    body {
+      background-color: #0B0F19;
+      color: #F3F4F6;
+    }
+    .flow-card {
+      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .flow-card:hover {
+      transform: translateY(-4px);
+    }
+    .gradient-headline {
+      background: linear-gradient(135deg, #ffffff 0%, #a5b4fc 50%, #6366f1 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+  </style>
+</head>
+<body class="font-sans antialiased selection:bg-indigo-500 selection:text-white">
+
+  <!-- Header -->
+  <header class="sticky top-0 z-50 bg-[#0B0F19]/90 backdrop-blur-md border-b border-gray-800">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+      <div class="flex items-center space-x-3">
+        <div class="w-8 h-8 rounded-lg bg-indigo-600 flex items-center justify-center font-black text-white shadow-lg shadow-indigo-500/30">
+          Δ
+        </div>
+        <span class="font-extrabold tracking-tight text-white text-lg">AIDD<span class="text-indigo-400 font-light">.melhorias</span></span>
+      </div>
+      <div class="flex items-center space-x-3">
+        <span class="px-3 py-1 rounded-full text-xs font-mono bg-indigo-950 text-indigo-300 border border-indigo-800/50">
+          Status: Aprovado para Implementação
+        </span>
+      </div>
+    </div>
+  </header>
+
+  <!-- Hero Section -->
+  <section class="py-16 border-b border-gray-800 relative overflow-hidden">
+    <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">
+      <span class="text-xs font-mono font-bold uppercase tracking-widest text-indigo-400 mb-3 inline-block">Evolução Arquitetural 2026</span>
+      <h1 class="text-4xl sm:text-5xl font-black text-white tracking-tight mb-6 leading-tight">
+        A Tríade Canônica: <br><span class="gradient-headline">3 Fluxos de Criação & Entrega de Software</span>
+      </h1>
+      <p class="text-base sm:text-lg text-gray-400 max-w-3xl mx-auto leading-relaxed">
+        Uma arquitetura reestruturada para dar <strong class="text-white">total liberdade ao desenvolvedor</strong>. A partir de uma fundação canônica de regras e um pré-plano interativo, derive a mesma ideia de negócio em três caminhos industriais de máxima robustez.
+      </p>
+    </div>
+  </section>
+
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 space-y-20">
+
+    <!-- 1. O Ponto de Entrada: Forge & Pré-Plano -->
+    <section class="space-y-6">
+      <div class="border-l-4 border-orange-500 pl-4">
+        <h2 class="text-2xl font-bold text-white tracking-tight">1. A Fundação e o Cérebro de Planejamento</h2>
+        <p class="text-gray-400 text-sm">Nenhum código é escrito sem governança blindada e alinhamento prévio de requisitos.</p>
+      </div>
+
+      <div class="grid md:grid-cols-2 gap-6">
+        <!-- aidd-forge -->
+        <div class="bg-gray-900/60 rounded-2xl p-6 border border-gray-800 hover:border-orange-500/50 transition-colors">
+          <div class="flex items-center space-x-3 mb-4">
+            <span class="text-2xl">🛠️</span>
+            <div>
+              <span class="text-[11px] font-mono uppercase text-orange-400 font-bold">Autoridade Máxima</span>
+              <h3 class="text-lg font-bold text-white">aidd-forge (O Ditador de Regras)</h3>
+            </div>
+          </div>
+          <p class="text-sm text-gray-300 leading-relaxed mb-4">
+            Dita e injeta todas as regras do projeto antes de qualquer funcionalidade:
+          </p>
+          <ul class="text-xs font-mono text-gray-400 space-y-2">
+            <li class="flex items-center gap-2"><span class="text-orange-400 font-bold">✓</span> Regras de Arquitetura Limpa e Fatias Verticais (VSA)</li>
+            <li class="flex items-center gap-2"><span class="text-orange-400 font-bold">✓</span> Governança de Economia Severa de Tokens</li>
+            <li class="flex items-center gap-2"><span class="text-orange-400 font-bold">✓</span> Quality Gates binários de pré-commit e pré-push</li>
+            <li class="flex items-center gap-2"><span class="text-orange-400 font-bold">✓</span> Isolamento de ambiente e proteção contra contaminação</li>
+          </ul>
+        </div>
+
+        <!-- PRÉ-PLANO -->
+        <div class="bg-gray-900/60 rounded-2xl p-6 border border-gray-800 hover:border-indigo-500/50 transition-colors">
+          <div class="flex items-center space-x-3 mb-4">
+            <span class="text-2xl">🧠</span>
+            <div>
+              <span class="text-[11px] font-mono uppercase text-indigo-400 font-bold">Planning Engine</span>
+              <h3 class="text-lg font-bold text-white">O Motor de PRÉ-PLANO (Intake Interativo)</h3>
+            </div>
+          </div>
+          <p class="text-sm text-gray-300 leading-relaxed mb-4">
+            Entrevista socrática guiada com o usuário para mapear objetivos e restrições:
+          </p>
+          <ul class="text-xs font-mono text-gray-400 space-y-2">
+            <li class="flex items-center gap-2"><span class="text-indigo-400 font-bold">✓</span> Coleta interativa da ideia, domínio e escopo de negócio</li>
+            <li class="flex items-center gap-2"><span class="text-indigo-400 font-bold">✓</span> Gera o arquivo canônico <code class="text-indigo-300">PLANO-MESTRE.json</code></li>
+            <li class="flex items-center gap-2"><span class="text-indigo-400 font-bold">✓</span> Pergunta ao usuário: <em>"Qual dos 3 fluxos você quer disparar?"</em></li>
+            <li class="flex items-center gap-2"><span class="text-indigo-400 font-bold">✓</span> Permite gerar 3 variações do mesmo projeto a partir de 1 plano</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- 2. Os 3 Fluxos Especializados -->
+    <section class="space-y-6">
+      <div class="border-l-4 border-indigo-500 pl-4">
+        <h2 class="text-2xl font-bold text-white tracking-tight">2. Os 3 Fluxos Canônicos de Criação</h2>
+        <p class="text-gray-400 text-sm">Cada ferramenta especializada no seu motor, sem conflito ou redundância.</p>
+      </div>
+
+      <div class="grid lg:grid-cols-3 gap-6">
+
+        <!-- FLUXO 01 -->
+        <div class="flow-card bg-gray-900/80 rounded-2xl p-6 border border-blue-800/40 hover:border-blue-500 flex flex-col justify-between">
+          <div>
+            <div class="flex items-center justify-between mb-4">
+              <span class="px-2.5 py-1 rounded-full text-[11px] font-mono font-bold bg-blue-950 text-blue-300 border border-blue-800">FLUXO 01</span>
+              <span class="text-xs text-gray-400 font-mono">100% Nativo</span>
+            </div>
+            <h3 class="text-xl font-extrabold text-white mb-1">Do Zero Puro</h3>
+            <div class="text-xs font-mono text-blue-400 mb-4 font-bold">Motor: aidd-generator</div>
+            <p class="text-xs text-gray-300 leading-relaxed mb-4">
+              Desenvolvimento completo sem motores prontos externos. Ideal para lógicas de negócio altamente proprietárias e algoritmos sob medida.
+            </p>
+            <div class="space-y-2 border-t border-gray-800 pt-4 mb-6">
+              <div class="text-[11px] font-mono text-gray-400"><strong>Pipeline:</strong> Spec ➔ TDD (Red-Green) ➔ VSA Core ➔ Quarteto</div>
+              <div class="text-[11px] font-mono text-gray-400"><strong>Zero Mocks:</strong> 100% de testes de integração e unitários reais</div>
+            </div>
+          </div>
+          <div class="bg-blue-950/40 p-3 rounded-lg border border-blue-900/50 text-[11px] font-mono text-blue-200">
+            Entrega: Aplicação pura funcional + 4 Estúdios
+          </div>
+        </div>
+
+        <!-- FLUXO 02 -->
+        <div class="flow-card bg-gray-900/80 rounded-2xl p-6 border border-amber-800/40 hover:border-amber-500 flex flex-col justify-between">
+          <div>
+            <div class="flex items-center justify-between mb-4">
+              <span class="px-2.5 py-1 rounded-full text-[11px] font-mono font-bold bg-amber-950 text-amber-300 border border-amber-800">FLUXO 02</span>
+              <span class="text-xs text-gray-400 font-mono">Alavancado</span>
+            </div>
+            <h3 class="text-xl font-extrabold text-white mb-1">Motores Open-Source</h3>
+            <div class="text-xs font-mono text-amber-400 mb-4 font-bold">Motor: aidd-factory</div>
+            <p class="text-xs text-gray-300 leading-relaxed mb-4">
+              Para soluções que aproveitam os ombros de gigantes open-source (filas, mensageria, chat, bots, automação de workflow).
+            </p>
+            <div class="space-y-2 border-t border-gray-800 pt-4 mb-6">
+              <div class="text-[11px] font-mono text-gray-400"><strong>Intake Dinâmico:</strong> Seleciona e sobe containers de motores reais</div>
+              <div class="text-[11px] font-mono text-gray-400"><strong>Cola VSA:</strong> Gera fatias verticais, clientes tipados e webhooks</div>
+            </div>
+          </div>
+          <div class="bg-amber-950/40 p-3 rounded-lg border border-amber-900/50 text-[11px] font-mono text-amber-200">
+            Entrega: Fatias VSA integradas aos motores + Compose
+          </div>
+        </div>
+
+        <!-- FLUXO 03 -->
+        <div class="flow-card bg-gray-900/80 rounded-2xl p-6 border border-pink-800/40 hover:border-pink-500 flex flex-col justify-between">
+          <div>
+            <div class="flex items-center justify-between mb-4">
+              <span class="px-2.5 py-1 rounded-full text-[11px] font-mono font-bold bg-pink-950 text-pink-300 border border-pink-800">FLUXO 03</span>
+              <span class="text-xs text-gray-400 font-mono">Unificação</span>
+            </div>
+            <h3 class="text-xl font-extrabold text-white mb-1">Low-Code & Apps Unificadas</h3>
+            <div class="text-xs font-mono text-pink-400 mb-4 font-bold">Motor: aidd-bridge</div>
+            <p class="text-xs text-gray-300 leading-relaxed mb-4">
+              Resgata e liberta interfaces e protótipos criados em ferramentas como Lovable, v0 da Vercel ou Bolt.new, eliminando o vendor lock-in.
+            </p>
+            <div class="space-y-2 border-t border-gray-800 pt-4 mb-6">
+              <div class="text-[11px] font-mono text-gray-400"><strong>Desacoplamento:</strong> Remove backends falsos e nuvens fechadas</div>
+              <div class="text-[11px] font-mono text-gray-400"><strong>Conexão Real:</strong> Liga ao PostgreSQL corporativo e conteineriza</div>
+            </div>
+          </div>
+          <div class="bg-pink-950/40 p-3 rounded-lg border border-pink-900/50 text-[11px] font-mono text-pink-200">
+            Entrega: Frontend limpo, conteinerizado e desatado
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- 3. O Funil Comum de Produção -->
+    <section class="space-y-6">
+      <div class="border-l-4 border-emerald-500 pl-4">
+        <h2 class="text-2xl font-bold text-white tracking-tight">3. O Funil Universal de Convergência (Pós-Construção)</h2>
+        <p class="text-gray-400 text-sm">Não importa por qual dos 3 fluxos o software nasceu, a linha de chegada de produção é a mesma.</p>
+      </div>
+
+      <div class="bg-gray-900/50 border border-gray-800 rounded-2xl p-6 sm:p-8 space-y-6">
+        <div class="grid md:grid-cols-3 gap-6 text-left">
+          
+          <!-- Master -->
+          <div class="p-5 rounded-xl bg-purple-950/30 border border-purple-900/50">
+            <div class="text-xs font-mono text-purple-400 font-bold mb-1">PASSO 1 CONVERGÊNCIA</div>
+            <h4 class="text-base font-bold text-white mb-2">aidd-master</h4>
+            <p class="text-xs text-gray-300 leading-relaxed">
+              Harmoniza o código em <strong>Monólito Modular</strong>: fatias verticais (VSA) autônomas para regras de domínio (`features/`) conectadas a uma <strong>camada horizontal compartilhada</strong> (`core/` / `shared/` para banco, auth, telemetry e middlewares), com roteamento unificado.
+            </p>
+          </div>
+
+          <!-- Enterprise -->
+          <div class="p-5 rounded-xl bg-emerald-950/30 border border-emerald-900/50">
+            <div class="text-xs font-mono text-emerald-400 font-bold mb-1">PASSO 2 CONVERGÊNCIA</div>
+            <h4 class="text-base font-bold text-white mb-2">aidd-enterprise</h4>
+            <p class="text-xs text-gray-300 leading-relaxed">
+              Injeta blindagem de missão crítica: verificação <strong>SHA-256</strong>, Circuit Breakers, Rate Limiting distribuído, sanitização anti-injeção e trilhas de auditoria imutáveis.
+            </p>
+          </div>
+
+          <!-- Ops -->
+          <div class="p-5 rounded-xl bg-cyan-950/30 border border-cyan-900/50">
+            <div class="text-xs font-mono text-cyan-400 font-bold mb-1">PASSO 3 CONVERGÊNCIA</div>
+            <h4 class="text-base font-bold text-white mb-2">aidd-ops</h4>
+            <p class="text-xs text-gray-300 leading-relaxed">
+              Realiza o provisionamento na VPS via SSH determinístico, criptografa variáveis com <strong>sops + age</strong> e ativa a observabilidade em tempo real com Uptime Kuma.
+            </p>
+          </div>
+
+        </div>
+
+        <div class="p-4 rounded-xl bg-gray-950 border border-gray-800 flex items-center justify-between text-xs font-mono text-gray-400">
+          <span>Quarteto Obrigatório em 100% dos fluxos:</span>
+          <div class="flex gap-2">
+            <span class="px-2 py-1 rounded bg-gray-900 text-cyan-300">/swagger</span>
+            <span class="px-2 py-1 rounded bg-gray-900 text-emerald-300">/webhooks</span>
+            <span class="px-2 py-1 rounded bg-gray-900 text-purple-300">/mcp</span>
+            <span class="px-2 py-1 rounded bg-gray-900 text-amber-300">/docs</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="border-t border-gray-800 py-8 text-center text-xs text-gray-500 font-mono">
+    Ecossistema AIDD • Arquitetura Canônica dos 3 Fluxos • Documentação de Melhoria
+  </footer>
+
+</body>
+</html>

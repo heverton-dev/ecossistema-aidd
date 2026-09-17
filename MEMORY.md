@@ -174,6 +174,7 @@ O **Ecossistema AIDD** é um monorepo agnóstico que integra 7 ferramentas compl
 - 🔶 **Conclusao Auditoria Maquiagem** — `docs/planos/fazendo/PLAN-0025-conclusao-auditoria-maquiagem/`
 - ⏳ **Implementacao Aidd Factory** — `docs/planos/fazendo/PLAN-0027-implementacao-aidd-factory/`
 - ⏳ **Completude Factory V2** — `docs/planos/fazendo/PLAN-0028-completude-factory-v2/`
+- 🔶 **Upgrade Ferramentas Enterprise** — `docs/planos/fazendo/PLAN-0034-upgrade-ferramentas-enterprise/`
 - ⏳ **Direcionamento Estrategico Anti Nih** — `docs/planos/feitos/PLAN-0010-direcionamento-estrategico-anti-nih/`
 - ⏳ **Upgrade Stack Camadas** — `docs/planos/feitos/PLAN-0028-upgrade-stack-camadas/`
 <!-- AUTO:INICIATIVAS:END -->

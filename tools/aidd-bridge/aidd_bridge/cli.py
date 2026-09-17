@@ -13,6 +13,7 @@ from .unifier import MultiAppUnifier
 from .devops import DevOpsPackager
 from .teardown import BridgeTeardown
 from .auth_migrator import AuthMigrator
+from .pipeline_bridge import BridgePipeline
 
 def cmd_scan(args):
     scanner = LovableScanner(args.project_dir)
@@ -153,6 +154,12 @@ def main():
     p_destroy.add_argument("--cf-zone-id", default=None, help="Zone ID do Cloudflare (usa CLOUDFLARE_ZONE_ID do .env se omitido)")
     p_destroy.add_argument("--yes", "-y", action="store_true", help="Confirmar automaticamente sem interacao")
 
+    # unpack (Pipeline Canônico FLUXO 03)
+    p_unpack = subparsers.add_parser("unpack", help="Executa o pipeline completo de libertacao e empacotamento VSA (FLUXO 03)")
+    p_unpack.add_argument("project_dir", help="Diretorio do projeto low-code")
+    p_unpack.add_argument("--output", "-o", default=None, help="Diretorio destino (padrao: proprio diretorio)")
+    p_unpack.add_argument("--domain", "-d", default="localhost", help="Dominio ou IP para configuracao")
+
     args = parser.parse_args()
 
     if not args.subcommand:
@@ -165,7 +172,8 @@ def main():
         "merge": cmd_merge,
         "pack": cmd_pack,
         "migrate-auth": cmd_migrate_auth,
-        "destroy": cmd_destroy
+        "destroy": cmd_destroy,
+        "unpack": lambda a: BridgePipeline(a.project_dir, output_dir=a.output, domain=a.domain).run()
     }
 
     sys.exit(dispatch[args.subcommand](args) or 0)

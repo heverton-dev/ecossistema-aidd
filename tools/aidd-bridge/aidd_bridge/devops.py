@@ -87,13 +87,19 @@ CMD ["nginx", "-g", "daemon off;"]
     listen 80;
     server_name localhost;
 
+    # Cabecalhos de Seguranca OWASP
+    add_header X-Content-Type-Options "nosniff" always;
+    add_header X-Frame-Options "DENY" always;
+    add_header X-XSS-Protection "1; mode=block" always;
+    add_header Referrer-Policy "strict-origin-when-cross-origin" always;
+
     location / {
         root /usr/share/nginx/html;
         index index.html index.htm;
         try_files $uri $uri/ /index.html;
     }
 
-    # Cache de assets estÃ¡ticos com hash
+    # Cache de assets estaticos com hash
     location ~* \.(js|css|png|jpg|jpeg|gif|ico|svg|woff|woff2|ttf|eot)$ {
         root /usr/share/nginx/html;
         expires 1y;

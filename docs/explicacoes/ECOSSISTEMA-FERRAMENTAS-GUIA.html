@@ -1,0 +1,624 @@
+<!DOCTYPE html>
+<html lang="pt-BR" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ecossistema AIDD — Guia Definitivo das 7 Ferramentas</title>
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+            mono: ['"JetBrains Mono"', 'monospace'],
+          },
+          colors: {
+            brand: {
+              50: '#eef2ff',
+              100: '#e0e7ff',
+              200: '#c7d2fe',
+              300: '#a5b4fc',
+              400: '#818cf8',
+              500: '#6366f1',
+              600: '#4f46e5',
+              700: '#4338ca',
+              800: '#3730a3',
+              900: '#312e81',
+              950: '#1e1b4b',
+            },
+            dark: {
+              bg: '#0B0F19',
+              card: '#111827',
+              border: '#1F2937',
+              muted: '#9CA3AF',
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    body {
+      background-color: #0B0F19;
+      color: #F3F4F6;
+    }
+    .glass-nav {
+      background: rgba(11, 15, 25, 0.85);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid #1F2937;
+    }
+    .tool-card {
+      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+      border: 1px solid #1F2937;
+    }
+    .tool-card:hover {
+      transform: translateY(-3px);
+      border-color: #4f46e5;
+      box-shadow: 0 12px 30px -10px rgba(79, 70, 229, 0.2);
+    }
+    .gradient-text {
+      background: linear-gradient(135deg, #A5B4FC 0%, #6366F1 50%, #38BDF8 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+  </style>
+</head>
+<body class="font-sans antialiased selection:bg-brand-500 selection:text-white">
+
+  <!-- Header / Navigation -->
+  <header class="sticky top-0 z-50 glass-nav">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+      <div class="flex items-center space-x-3">
+        <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-brand-600 to-cyan-400 flex items-center justify-center font-black text-white shadow-lg shadow-brand-500/30">
+          A
+        </div>
+        <div>
+          <span class="font-extrabold tracking-tight text-white text-lg">AIDD<span class="text-brand-400 font-normal">.ecosystem</span></span>
+          <span class="ml-2 text-xs font-mono px-2 py-0.5 rounded-full bg-brand-950/80 text-brand-300 border border-brand-800/50">v2.0 Architecture</span>
+        </div>
+      </div>
+      <nav class="hidden md:flex items-center space-x-6 text-sm font-medium text-gray-400">
+        <a href="#visao-geral" class="hover:text-white transition-colors">Visão Geral</a>
+        <a href="#quarteto" class="hover:text-white transition-colors">Quarteto Essencial</a>
+        <a href="#ferramentas" class="hover:text-white transition-colors">As 7 Ferramentas</a>
+        <a href="#matriz" class="hover:text-white transition-colors">Matriz Comparativa</a>
+        <a href="#fluxo" class="hover:text-white transition-colors">Fluxo Integrado</a>
+      </nav>
+      <div class="flex items-center space-x-3">
+        <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-950/60 text-emerald-400 border border-emerald-800/60">
+          <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 mr-1.5 animate-pulse"></span>
+          Determinismo Estrito
+        </span>
+      </div>
+    </div>
+  </header>
+
+  <!-- Hero Section -->
+  <section class="relative pt-20 pb-16 overflow-hidden border-b border-gray-800">
+    <div class="absolute inset-0 bg-[radial-gradient(ellipse_80%_60%_at_50%_-20%,rgba(99,102,241,0.25),rgba(255,255,255,0))]"></div>
+    <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">
+      <div class="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-brand-950/60 border border-brand-800/50 text-brand-300 text-xs font-medium mb-6">
+        <span>Guia Arquitetural & Funcional Definitivo</span>
+      </div>
+      <h1 class="text-4xl sm:text-6xl font-extrabold tracking-tight text-white mb-6 leading-tight">
+        As 7 Engrenagens do <br><span class="gradient-text">Ecossistema AIDD</span>
+      </h1>
+      <p class="text-lg sm:text-xl text-gray-400 max-w-3xl mx-auto leading-relaxed mb-8">
+        Compreenda o papel, o objetivo primordial e as entregas concretas de cada uma das sete ferramentas, eliminando sobreposições e garantindo o padrão <strong class="text-white">Vertical Slice Architecture (VSA)</strong> de ponta a ponta.
+      </p>
+      <div class="flex flex-wrap justify-center gap-4 text-xs font-mono text-gray-300">
+        <span class="bg-gray-900 px-3 py-1.5 rounded-md border border-gray-800">Zero Mocks / Zero Stubs</span>
+        <span class="bg-gray-900 px-3 py-1.5 rounded-md border border-gray-800">Quality Gates Binários (0 ou 1)</span>
+        <span class="bg-gray-900 px-3 py-1.5 rounded-md border border-gray-800">Quarteto Sine Qua Non</span>
+      </div>
+    </div>
+  </section>
+
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 space-y-24">
+
+    <!-- Seção: Visão Geral -->
+    <section id="visao-geral" class="space-y-6">
+      <div class="border-l-4 border-brand-500 pl-4">
+        <h2 class="text-2xl font-bold text-white tracking-tight">1. Visão Geral e Princípio de Independência</h2>
+        <p class="text-gray-400 text-sm">Cada ferramenta é um elo autônomo e complementar de uma esteira industrial de software.</p>
+      </div>
+      <div class="grid md:grid-cols-3 gap-6">
+        <div class="bg-dark-card p-6 rounded-2xl border border-dark-border">
+          <div class="w-10 h-10 rounded-lg bg-indigo-500/10 border border-indigo-500/20 text-indigo-400 flex items-center justify-center font-bold text-lg mb-4">🎯</div>
+          <h3 class="text-lg font-bold text-white mb-2">Fronteira Delimitada</h3>
+          <p class="text-sm text-gray-400 leading-relaxed">Nenhuma ferramenta tenta resolver tudo. Cada uma possui uma entrada (Input) clara, uma transformação determinística e uma saída (Output) auditável.</p>
+        </div>
+        <div class="bg-dark-card p-6 rounded-2xl border border-dark-border">
+          <div class="w-10 h-10 rounded-lg bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 flex items-center justify-center font-bold text-lg mb-4">⚡</div>
+          <h3 class="text-lg font-bold text-white mb-2">VSA Universal</h3>
+          <p class="text-sm text-gray-400 leading-relaxed">Todo código gerado no ecossistema é organizado em Fatias Verticais (Vertical Slice Architecture), garantindo que cada funcionalidade carregue suas próprias rotas, regras, repositórios e testes.</p>
+        </div>
+        <div class="bg-dark-card p-6 rounded-2xl border border-dark-border">
+          <div class="w-10 h-10 rounded-lg bg-cyan-500/10 border border-cyan-500/20 text-cyan-400 flex items-center justify-center font-bold text-lg mb-4">🛡️</div>
+          <h3 class="text-lg font-bold text-white mb-2">Quality Gates</h3>
+          <p class="text-sm text-gray-400 leading-relaxed">Cada ferramenta possui seu conjunto de Quality Gates automatizados (`G_*`). Se o gate falhar (Exit 1), a esteira é bloqueada até que a conformidade seja restaurada.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Seção: Quarteto Sine Qua Non -->
+    <section id="quarteto" class="space-y-6">
+      <div class="border-l-4 border-cyan-500 pl-4">
+        <h2 class="text-2xl font-bold text-white tracking-tight">2. O Quarteto Sine Qua Non Dinâmico</h2>
+        <p class="text-gray-400 text-sm">Os 4 estúdios que toda aplicação do ecossistema DEVE expor nativamente.</p>
+      </div>
+
+      <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-5">
+        <!-- Swagger Studio -->
+        <div class="bg-dark-card p-5 rounded-xl border border-dark-border hover:border-cyan-500/50 transition-colors">
+          <div class="text-xs font-mono text-cyan-400 font-semibold mb-1">PILAR 1</div>
+          <h3 class="text-base font-bold text-white mb-2">Swagger Studio (`/swagger`)</h3>
+          <p class="text-xs text-gray-400 mb-3">Contratos de API REST OpenAPI 3.0 dinâmicos, totalmente tipados e interativos para teste direto no navegador.</p>
+          <span class="inline-block text-[11px] font-mono px-2 py-0.5 rounded bg-cyan-950 text-cyan-300 border border-cyan-800/40">Contratos REST Vivos</span>
+        </div>
+
+        <!-- Webhook Studio -->
+        <div class="bg-dark-card p-5 rounded-xl border border-dark-border hover:border-emerald-500/50 transition-colors">
+          <div class="text-xs font-mono text-emerald-400 font-semibold mb-1">PILAR 2</div>
+          <h3 class="text-base font-bold text-white mb-2">Webhook Studio (`/webhooks`)</h3>
+          <p class="text-xs text-gray-400 mb-3">Gerenciamento, testes, simulações e validação de assinaturas HMAC SHA-256 para comunicação assíncrona entre sistemas.</p>
+          <span class="inline-block text-[11px] font-mono px-2 py-0.5 rounded bg-emerald-950 text-emerald-300 border border-emerald-800/40">Assinaturas HMAC & Logs</span>
+        </div>
+
+        <!-- MCP Studio -->
+        <div class="bg-dark-card p-5 rounded-xl border border-dark-border hover:border-purple-500/50 transition-colors">
+          <div class="text-xs font-mono text-purple-400 font-semibold mb-1">PILAR 3</div>
+          <h3 class="text-base font-bold text-white mb-2">MCP Studio (`/mcp`)</h3>
+          <p class="text-xs text-gray-400 mb-3">Exposição padronizada de ferramentas (tools) e recursos via Model Context Protocol para orquestração direta por agentes de IA.</p>
+          <span class="inline-block text-[11px] font-mono px-2 py-0.5 rounded bg-purple-950 text-purple-300 border border-purple-800/40">Model Context Protocol</span>
+        </div>
+
+        <!-- User Docs -->
+        <div class="bg-dark-card p-5 rounded-xl border border-dark-border hover:border-amber-500/50 transition-colors">
+          <div class="text-xs font-mono text-amber-400 font-semibold mb-1">PILAR 4</div>
+          <h3 class="text-base font-bold text-white mb-2">Guia do Usuário (`/docs`)</h3>
+          <p class="text-xs text-gray-400 mb-3">Documentação viva de produto com instruções claras de uso de cada rota, credenciais e integrações para operadores humanos.</p>
+          <span class="inline-block text-[11px] font-mono px-2 py-0.5 rounded bg-amber-950 text-amber-300 border border-amber-800/40">Manuais Vivos</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Seção: As 7 Ferramentas -->
+    <section id="ferramentas" class="space-y-8">
+      <div class="border-l-4 border-brand-500 pl-4">
+        <h2 class="text-2xl font-bold text-white tracking-tight">3. As 7 Ferramentas: Papel, O que Faz e O que Entrega</h2>
+        <p class="text-gray-400 text-sm">O mapa exato de competências e saídas tangíveis de cada componente do ecossistema.</p>
+      </div>
+
+      <div class="space-y-6">
+
+        <!-- 1. aidd-forge -->
+        <div class="tool-card bg-dark-card rounded-2xl p-6 sm:p-8">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-dark-border">
+            <div class="flex items-center space-x-4">
+              <div class="w-12 h-12 rounded-xl bg-orange-500/10 border border-orange-500/20 text-orange-400 flex items-center justify-center font-bold text-xl">
+                🛠️
+              </div>
+              <div>
+                <span class="text-xs font-mono uppercase tracking-wider text-orange-400 font-semibold">Ferramenta 01</span>
+                <h3 class="text-xl font-bold text-white">aidd-forge</h3>
+                <p class="text-xs text-gray-400">O Fundador & Blindador de Governança</p>
+              </div>
+            </div>
+            <span class="self-start sm:self-auto px-3 py-1 rounded-full text-xs font-mono bg-orange-950/60 text-orange-300 border border-orange-800/40">Fase Zero • Infraestrutura de Código</span>
+          </div>
+
+          <div class="grid md:grid-cols-3 gap-6 pt-6">
+            <div>
+              <h4 class="text-xs font-mono uppercase tracking-wider text-gray-400 mb-2 font-semibold">🎯 Objetivo da Ferramenta</h4>
+              <p class="text-sm text-gray-300 leading-relaxed">
+                Estabelecer a fundação canônica, governança inquebrável e regras arquiteturais de um projeto antes de qualquer código de negócio ser produzido.
+              </p>
+            </div>
+            <div>
+              <h4 class="text-xs font-mono uppercase tracking-wider text-gray-400 mb-2 font-semibold">⚙️ O que ela Realmente Faz</h4>
+              <ul class="text-sm text-gray-300 space-y-1.5 list-disc list-inside">
+                <li>Inspeciona o ambiente local e instala git pre-commit hooks.</li>
+                <li>Injeta arquivos de governança canônicos (<code class="text-xs text-brand-300 bg-gray-900 px-1 py-0.5 rounded">AGENTS.md</code>, <code class="text-xs text-brand-300 bg-gray-900 px-1 py-0.5 rounded">CLAUDE.md</code>, <code class="text-xs text-brand-300 bg-gray-900 px-1 py-0.5 rounded">GEMINI.md</code>).</li>
+                <li>Configura linters e determinismo para blindagem do repositório.</li>
+              </ul>
+            </div>
+            <div>
+              <h4 class="text-xs font-mono uppercase tracking-wider text-gray-400 mb-2 font-semibold">📦 O que ela Realmente Entrega</h4>
+              <ul class="text-sm text-gray-300 space-y-1.5 list-disc list-inside">
+                <li>Repositório com governança ativa e inquebrável.</li>
+                <li>Gates de auditoria inicial aprovados (<code class="text-xs text-orange-300 bg-gray-900 px-1 py-0.5 rounded">G_FORGE_*</code>).</li>
+                <li>Ambiente isolado pronto para desenvolvedores humanos e agentes de IA.</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <!-- 2. aidd-generator -->
+        <div class="tool-card bg-dark-card rounded-2xl p-6 sm:p-8">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-dark-border">
+            <div class="flex items-center space-x-4">
+              <div class="w-12 h-12 rounded-xl bg-blue-500/10 border border-blue-500/20 text-blue-400 flex items-center justify-center font-bold text-xl">
+                🏭
+              </div>
+              <div>
+                <span class="text-xs font-mono uppercase tracking-wider text-blue-400 font-semibold">Ferramenta 02</span>
+                <h3 class="text-xl font-bold text-white">aidd-generator</h3>
+                <p class="text-xs text-gray-400">A Fábrica Autônoma de Software End-to-End</p>
+              </div>
+            </div>
+            <span class="self-start sm:self-auto px-3 py-1 rounded-full text-xs font-mono bg-blue-950/60 text-blue-300 border border-blue-800/40">8 Fases • Da Ideia ao Deploy</span>
+          </div>
+
+          <div class="grid md:grid-cols-3 gap-6 pt-6">
+            <div>
+              <h4 class="text-xs font-mono uppercase tracking-wider text-gray-400 mb-2 font-semibold">🎯 Objetivo da Ferramenta</h4>
+              <p class="text-sm text-gray-300 leading-relaxed">
+                Construir sistemas completos do zero sem alucinações, guiado por uma esteira determinística de 8 fases (Intake -> TDD -> VSA -> Quarteto -> Auditoria).
+              </p>
+            </div>
+            <div>
+              <h4 class="text-xs font-mono uppercase tracking-wider text-gray-400 mb-2 font-semibold">⚙️ O que ela Realmente Faz</h4>
+              <ul class="text-sm text-gray-300 space-y-1.5 list-disc list-inside">
+                <li>Escreve primeiro testes de integração reais (TDD Red-Green).</li>
+                <li>Implementa fatias verticais VSA completas (Zero Stubs).</li>
+                <li>Gera automaticamente os 4 estúdios do Quarteto Sine Qua Non.</li>
+                <li>Valida o software contra 100% dos Quality Gates da factory.</li>
+              </ul>
+            </div>
+            <div>
+              <h4 class="text-xs font-mono uppercase tracking-wider text-gray-400 mb-2 font-semibold">📦 O que ela Realmente Entrega</h4>
+              <ul class="text-sm text-gray-300 space-y-1.5 list-disc list-inside">
+                <li>Aplicação completa e funcional com servidor FastAPI/Node.</li>
+                <li>Suíte de testes reais rodando e passando 100%.</li>
+                <li>Swagger, Webhooks, MCP e Docs vivos e integrados.</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <!-- 3. aidd-master -->
+        <div class="tool-card bg-dark-card rounded-2xl p-6 sm:p-8">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-dark-border">
+            <div class="flex items-center space-x-4">
+              <div class="w-12 h-12 rounded-xl bg-purple-500/10 border border-purple-500/20 text-purple-400 flex items-center justify-center font-bold text-xl">
+                📐
+              </div>
+              <div>
+                <span class="text-xs font-mono uppercase tracking-wider text-purple-400 font-semibold">Ferramenta 03</span>
+                <h3 class="text-xl font-bold text-white">aidd-master</h3>
+                <p class="text-xs text-gray-400">O Arquiteto Modular de Fatias Verticais (VSA)</p>
+              </div>
+            </div>
+            <span class="self-start sm:self-auto px-3 py-1 rounded-full text-xs font-mono bg-purple-950/60 text-purple-300 border border-purple-800/40">Modelagem de Domínio • Fatias Isoladas</span>
+          </div>
+
+          <div class="grid md:grid-cols-3 gap-6 pt-6">
+            <div>
+              <h4 class="text-xs font-mono uppercase tracking-wider text-gray-400 mb-2 font-semibold">🎯 Objetivo da Ferramenta</h4>
+              <p class="text-sm text-gray-300 leading-relaxed">
+                Esculpir a lógica de negócio do domínio através de fatias verticais isoladas, evitando código espaguete e acoplamentos cruzados em sistemas complexos.
+              </p>
+            </div>
+            <div>
+              <h4 class="text-xs font-mono uppercase tracking-wider text-gray-400 mb-2 font-semibold">⚙️ O que ela Realmente Faz</h4>
+              <ul class="text-sm text-gray-300 space-y-1.5 list-disc list-inside">
+                <li>Separa o negócio em fatias autônomas (<code class="text-xs text-purple-300 bg-gray-900 px-1 py-0.5 rounded">features/</code>).</li>
+                <li>Estrutura cada fatia com rotas, regras, repositórios e esquemas próprios.</li>
+                <li>Conecta as fatias ao roteador central de forma declarativa e limpa.</li>
+              </ul>
+            </div>
+            <div>
+              <h4 class="text-xs font-mono uppercase tracking-wider text-gray-400 mb-2 font-semibold">📦 O que ela Realmente Entrega</h4>
+              <ul class="text-sm text-gray-300 space-y-1.5 list-disc list-inside">
+                <li>Módulos de negócio independentes prontos para evolução paralela.</li>
+                <li>Roteamento unificado sem dependências circulares.</li>
+                <li>Isolamento de banco e entidades por fatia vertical.</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <!-- 4. aidd-enterprise -->
+        <div class="tool-card bg-dark-card rounded-2xl p-6 sm:p-8">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-dark-border">
+            <div class="flex items-center space-x-4">
+              <div class="w-12 h-12 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 flex items-center justify-center font-bold text-xl">
+                🛡️
+              </div>
+              <div>
+                <span class="text-xs font-mono uppercase tracking-wider text-emerald-400 font-semibold">Ferramenta 04</span>
+                <h3 class="text-xl font-bold text-white">aidd-enterprise</h3>
+                <p class="text-xs text-gray-400">O Guardião de Missão Crítica & Resiliência Bancária</p>
+              </div>
+            </div>
+            <span class="self-start sm:self-auto px-3 py-1 rounded-full text-xs font-mono bg-emerald-950/60 text-emerald-300 border border-emerald-800/40">SHA-256 • Resiliência & Auditoria</span>
+          </div>
+
+          <div class="grid md:grid-cols-3 gap-6 pt-6">
+            <div>
+              <h4 class="text-xs font-mono uppercase tracking-wider text-gray-400 mb-2 font-semibold">🎯 Objetivo da Ferramenta</h4>
+              <p class="text-sm text-gray-300 leading-relaxed">
+                Garantir que a aplicação suporte cargas pesadas e requisitos bancários, injetando segurança criptográfica, resiliência e trilha de auditoria imutável.
+              </p>
+            </div>
+            <div>
+              <h4 class="text-xs font-mono uppercase tracking-wider text-gray-400 mb-2 font-semibold">⚙️ O que ela Realmente Faz</h4>
+              <ul class="text-sm text-gray-300 space-y-1.5 list-disc list-inside">
+                <li>Valida a integridade do código via hash SHA-256 anti-tampering.</li>
+                <li>Injeta Circuit Breakers, Rate Limiting distribuído e Retries.</li>
+                <li>Aplica sanitização estrita de dados contra SQL Injection e XSS.</li>
+                <li>Cria trilha de auditoria (audit trail) com correlação de logs (<code class="text-xs text-emerald-300 bg-gray-900 px-1 py-0.5 rounded">trace_id</code>).</li>
+              </ul>
+            </div>
+            <div>
+              <h4 class="text-xs font-mono uppercase tracking-wider text-gray-400 mb-2 font-semibold">📦 O que ela Realmente Entrega</h4>
+              <ul class="text-sm text-gray-300 space-y-1.5 list-disc list-inside">
+                <li>Componentes de segurança enterprise injetados na aplicação.</li>
+                <li>Relatório formal de conformidade criptográfica e resiliência.</li>
+                <li>Código tolerante a falhas preparado para escala corporativa.</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <!-- 5. aidd-ops -->
+        <div class="tool-card bg-dark-card rounded-2xl p-6 sm:p-8">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-dark-border">
+            <div class="flex items-center space-x-4">
+              <div class="w-12 h-12 rounded-xl bg-cyan-500/10 border border-cyan-500/20 text-cyan-400 flex items-center justify-center font-bold text-xl">
+                ☁️
+              </div>
+              <div>
+                <span class="text-xs font-mono uppercase tracking-wider text-cyan-400 font-semibold">Ferramenta 05</span>
+                <h3 class="text-xl font-bold text-white">aidd-ops</h3>
+                <p class="text-xs text-gray-400">O Orquestrador de Infraestrutura, VPS & Observabilidade</p>
+              </div>
+            </div>
+            <span class="self-start sm:self-auto px-3 py-1 rounded-full text-xs font-mono bg-cyan-950/60 text-cyan-300 border border-cyan-800/40">Infraestrutura como Código • Deploy SSH</span>
+          </div>
+
+          <div class="grid md:grid-cols-3 gap-6 pt-6">
+            <div>
+              <h4 class="text-xs font-mono uppercase tracking-wider text-gray-400 mb-2 font-semibold">🎯 Objetivo da Ferramenta</h4>
+              <p class="text-sm text-gray-300 leading-relaxed">
+                Provisionar e colocar o sistema em produção com segurança máxima, orquestrando servidores VPS, containers Docker, criptografia de segredos e monitoramento.
+              </p>
+            </div>
+            <div>
+              <h4 class="text-xs font-mono uppercase tracking-wider text-gray-400 mb-2 font-semibold">⚙️ O que ela Realmente Faz</h4>
+              <ul class="text-sm text-gray-300 space-y-1.5 list-disc list-inside">
+                <li>Gera o <code class="text-xs text-cyan-300 bg-gray-900 px-1 py-0.5 rounded">PLANO-INFRAESTRUTURA.json</code> e manifestos <code class="text-xs text-cyan-300 bg-gray-900 px-1 py-0.5 rounded">docker-compose.yml</code>.</li>
+                <li>Executa provisionamento remoto determinístico via SSH seguro (<code class="text-xs text-cyan-300 bg-gray-900 px-1 py-0.5 rounded">G_OPS_SSH</code>).</li>
+                <li>Protege segredos com chaves <code class="text-xs text-cyan-300 bg-gray-900 px-1 py-0.5 rounded">sops + age</code>.</li>
+                <li>Configura observabilidade ativa com Uptime Kuma e métricas.</li>
+              </ul>
+            </div>
+            <div>
+              <h4 class="text-xs font-mono uppercase tracking-wider text-gray-400 mb-2 font-semibold">📦 O que ela Realmente Entrega</h4>
+              <ul class="text-sm text-gray-300 space-y-1.5 list-disc list-inside">
+                <li>Servidores e containers operando em produção com SSL/Reverse Proxy.</li>
+                <li>Cofre seguro de variáveis de ambiente.</li>
+                <li>Painel de monitoramento ativo alertando sobre quedas em tempo real.</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <!-- 6. aidd-factory -->
+        <div class="tool-card bg-dark-card rounded-2xl p-6 sm:p-8">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-dark-border">
+            <div class="flex items-center space-x-4">
+              <div class="w-12 h-12 rounded-xl bg-amber-500/10 border border-amber-500/20 text-amber-400 flex items-center justify-center font-bold text-xl">
+                ⚙️
+              </div>
+              <div>
+                <span class="text-xs font-mono uppercase tracking-wider text-amber-400 font-semibold">Ferramenta 06</span>
+                <h3 class="text-xl font-bold text-white">aidd-factory</h3>
+                <p class="text-xs text-gray-400">O Integrador de Motores Open-Source & Fatias Periféricas</p>
+              </div>
+            </div>
+            <span class="self-start sm:self-auto px-3 py-1 rounded-full text-xs font-mono bg-amber-950/60 text-amber-300 border border-amber-800/40">Integração de Motores • VSA Periférico</span>
+          </div>
+
+          <div class="grid md:grid-cols-3 gap-6 pt-6">
+            <div>
+              <h4 class="text-xs font-mono uppercase tracking-wider text-gray-400 mb-2 font-semibold">🎯 Objetivo da Ferramenta</h4>
+              <p class="text-sm text-gray-300 leading-relaxed">
+                Acelerar o desenvolvimento integrando motores open-source existentes (ex: mensageria, filas, bots, gateways) e gerando o código de conexão VSA tipado e seguro.
+              </p>
+            </div>
+            <div>
+              <h4 class="text-xs font-mono uppercase tracking-wider text-gray-400 mb-2 font-semibold">⚙️ O que ela Realmente Faz</h4>
+              <ul class="text-sm text-gray-300 space-y-1.5 list-disc list-inside">
+                <li>Recebe a necessidade ou o plano de infraestrutura de serviços.</li>
+                <li>Gera o código de aplicação (fatias verticais VSA) para consumir cada motor.</li>
+                <li>Cria clientes tipados, endpoints de webhooks e tratamento de erros.</li>
+                <li>Expõe os 4 estúdios do Quarteto Sine Qua Non para toda a periferia.</li>
+              </ul>
+            </div>
+            <div>
+              <h4 class="text-xs font-mono uppercase tracking-wider text-gray-400 mb-2 font-semibold">📦 O que ela Realmente Entrega</h4>
+              <ul class="text-sm text-gray-300 space-y-1.5 list-disc list-inside">
+                <li>Fatias de integração VSA nativas com Swagger, Webhooks e MCP.</li>
+                <li>Clientes de integração tipados com proteção contra falhas.</li>
+                <li>Manifesto Compose dos serviços periféricos para orquestração.</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <!-- 7. aidd-bridge -->
+        <div class="tool-card bg-dark-card rounded-2xl p-6 sm:p-8">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-dark-border">
+            <div class="flex items-center space-x-4">
+              <div class="w-12 h-12 rounded-xl bg-pink-500/10 border border-pink-500/20 text-pink-400 flex items-center justify-center font-bold text-xl">
+                🌉
+              </div>
+              <div>
+                <span class="text-xs font-mono uppercase tracking-wider text-pink-400 font-semibold">Ferramenta 07</span>
+                <h3 class="text-xl font-bold text-white">aidd-bridge</h3>
+                <p class="text-xs text-gray-400">O Empacotador de Protótipos Low-Code para Produção</p>
+              </div>
+            </div>
+            <span class="self-start sm:self-auto px-3 py-1 rounded-full text-xs font-mono bg-pink-950/60 text-pink-300 border border-pink-800/40">Zero Lock-in • Lovable/v0/Bolt para VPS</span>
+          </div>
+
+          <div class="grid md:grid-cols-3 gap-6 pt-6">
+            <div>
+              <h4 class="text-xs font-mono uppercase tracking-wider text-gray-400 mb-2 font-semibold">🎯 Objetivo da Ferramenta</h4>
+              <p class="text-sm text-gray-300 leading-relaxed">
+                Resgatar telas e protótipos construídos em plataformas low-code ou ferramentas visuais de IA, libertando-os de amarras proprietárias para rodarem em VPS corporativa.
+              </p>
+            </div>
+            <div>
+              <h4 class="text-xs font-mono uppercase tracking-wider text-gray-400 mb-2 font-semibold">⚙️ O que ela Realmente Faz</h4>
+              <ul class="text-sm text-gray-300 space-y-1.5 list-disc list-inside">
+                <li>Analisa o código exportado do Lovable, v0 da Vercel ou Bolt.new.</li>
+                <li>Remove dependências proprietárias de cloud fechada e backends mockados.</li>
+                <li>Reconecta o frontend ao banco de dados PostgreSQL corporativo.</li>
+                <li>Gera o container Dockerfile de produção com Nginx/Traefik otimizado.</li>
+              </ul>
+            </div>
+            <div>
+              <h4 class="text-xs font-mono uppercase tracking-wider text-gray-400 mb-2 font-semibold">📦 O que ela Realmente Entrega</h4>
+              <ul class="text-sm text-gray-300 space-y-1.5 list-disc list-inside">
+                <li>Frontend limpo, desatado e padronizado em React/Next.js/Vite.</li>
+                <li>Conexão direta aos endpoints de backend VSA gerados no ecossistema.</li>
+                <li>Container e scripts prontos para deploy direto na VPS via aidd-ops.</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- Seção: Matriz Comparativa -->
+    <section id="matriz" class="space-y-6">
+      <div class="border-l-4 border-brand-500 pl-4">
+        <h2 class="text-2xl font-bold text-white tracking-tight">4. Matriz Comparativa Resumida</h2>
+        <p class="text-gray-400 text-sm">Entrada, processamento e momento ideal de acionamento.</p>
+      </div>
+
+      <div class="overflow-x-auto rounded-2xl border border-dark-border bg-dark-card">
+        <table class="w-full text-left text-sm text-gray-300">
+          <thead class="bg-gray-900/80 text-xs font-mono uppercase text-gray-400 border-b border-dark-border">
+            <tr>
+              <th class="p-4">Ferramenta</th>
+              <th class="p-4">Entrada Principal</th>
+              <th class="p-4">Entrega Central</th>
+              <th class="p-4">Quando Usar?</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-dark-border font-normal">
+            <tr class="hover:bg-gray-800/40">
+              <td class="p-4 font-bold text-white flex items-center gap-2">🛠️ aidd-forge</td>
+              <td class="p-4 text-gray-400">Pasta vazia / Novo repositório</td>
+              <td class="p-4 text-orange-300">Repositório blindado com AGENTS.md</td>
+              <td class="p-4">No Dia Zero de qualquer projeto</td>
+            </tr>
+            <tr class="hover:bg-gray-800/40">
+              <td class="p-4 font-bold text-white flex items-center gap-2">🏭 aidd-generator</td>
+              <td class="p-4 text-gray-400">Requisitos ou Ideia de Negócio</td>
+              <td class="p-4 text-blue-300">Aplicação funcional + 4 Estúdios</td>
+              <td class="p-4">Para criar sistemas completos do zero</td>
+            </tr>
+            <tr class="hover:bg-gray-800/40">
+              <td class="p-4 font-bold text-white flex items-center gap-2">📐 aidd-master</td>
+              <td class="p-4 text-gray-400">Modelos de negócio / Domínio</td>
+              <td class="p-4 text-purple-300">Fatias VSA de Domínio desacopladas</td>
+              <td class="p-4">Para desenhar o núcleo de regras de negócio</td>
+            </tr>
+            <tr class="hover:bg-gray-800/40">
+              <td class="p-4 font-bold text-white flex items-center gap-2">🛡️ aidd-enterprise</td>
+              <td class="p-4 text-gray-400">Aplicação existente / Código VSA</td>
+              <td class="p-4 text-emerald-300">Componentes de resiliência e auditoria</td>
+              <td class="p-4">Para elevar o sistema a padrão de banco</td>
+            </tr>
+            <tr class="hover:bg-gray-800/40">
+              <td class="p-4 font-bold text-white flex items-center gap-2">☁️ aidd-ops</td>
+              <td class="p-4 text-gray-400">Requisitos de infra / Plano</td>
+              <td class="p-4 text-cyan-300">VPS com Docker, sops+age e Kuma</td>
+              <td class="p-4">Para provisionar servidores e colocar no ar</td>
+            </tr>
+            <tr class="hover:bg-gray-800/40">
+              <td class="p-4 font-bold text-white flex items-center gap-2">⚙️ aidd-factory</td>
+              <td class="p-4 text-gray-400">Necessidade de motores externos</td>
+              <td class="p-4 text-amber-300">Fatias VSA de integração + Compose</td>
+              <td class="p-4">Para integrar serviços open-source periféricos</td>
+            </tr>
+            <tr class="hover:bg-gray-800/40">
+              <td class="p-4 font-bold text-white flex items-center gap-2">🌉 aidd-bridge</td>
+              <td class="p-4 text-gray-400">Export Lovable / v0 / Bolt</td>
+              <td class="p-4 text-pink-300">Frontend limpo em container para VPS</td>
+              <td class="p-4">Para resgatar protótipos de low-code</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- Seção: Fluxo Integrado -->
+    <section id="fluxo" class="space-y-6">
+      <div class="border-l-4 border-indigo-500 pl-4">
+        <h2 class="text-2xl font-bold text-white tracking-tight">5. Como as Ferramentas Cooperam na Prática</h2>
+        <p class="text-gray-400 text-sm">O pipeline unificado desde o nascimento até a produção.</p>
+      </div>
+
+      <div class="bg-dark-card p-6 sm:p-8 rounded-2xl border border-dark-border space-y-6">
+        <div class="flex flex-col md:flex-row items-center justify-between gap-4 p-4 rounded-xl bg-gray-900/60 border border-gray-800 text-center md:text-left">
+          <div class="flex items-center space-x-3">
+            <span class="w-8 h-8 rounded-lg bg-orange-500/20 text-orange-400 flex items-center justify-center font-bold">1</span>
+            <div>
+              <div class="text-sm font-bold text-white">aidd-forge</div>
+              <div class="text-xs text-gray-400">Prepara o solo, cria as regras e blinda o repositório.</div>
+            </div>
+          </div>
+          <span class="text-gray-600 font-mono text-xs hidden md:block">──────▶</span>
+          <div class="flex items-center space-x-3">
+            <span class="w-8 h-8 rounded-lg bg-purple-500/20 text-purple-400 flex items-center justify-center font-bold">2</span>
+            <div>
+              <div class="text-sm font-bold text-white">aidd-master / bridge</div>
+              <div class="text-xs text-gray-400">Esculpe o domínio em VSA e desata telas low-code.</div>
+            </div>
+          </div>
+          <span class="text-gray-600 font-mono text-xs hidden md:block">──────▶</span>
+          <div class="flex items-center space-x-3">
+            <span class="w-8 h-8 rounded-lg bg-amber-500/20 text-amber-400 flex items-center justify-center font-bold">3</span>
+            <div>
+              <div class="text-sm font-bold text-white">aidd-factory</div>
+              <div class="text-xs text-gray-400">Conecta motores open-source periféricos em fatias VSA.</div>
+            </div>
+          </div>
+          <span class="text-gray-600 font-mono text-xs hidden md:block">──────▶</span>
+          <div class="flex items-center space-x-3">
+            <span class="w-8 h-8 rounded-lg bg-cyan-500/20 text-cyan-400 flex items-center justify-center font-bold">4</span>
+            <div>
+              <div class="text-sm font-bold text-white">enterprise + ops</div>
+              <div class="text-xs text-gray-400">Injeta resiliência SHA-256 e coloca na VPS.</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="p-4 rounded-xl bg-brand-950/40 border border-brand-900/60 text-xs text-brand-200 leading-relaxed">
+          💡 <strong>Conclusão Arquitetural:</strong> Com essa separação nítida de responsabilidades, o ecossistema elimina o risco de uma ferramenta desrespeitar ou sobrescrever a arquitetura da outra. O resultado é sempre um sistema modular, resiliente, auditável e 100% sob o controle do desenvolvedor.
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="border-t border-dark-border py-8 text-center text-xs text-gray-500 font-mono">
+    Ecossistema AIDD • Governança Canônica & Arquitetura Determinística • Documentação Interna
+  </footer>
+
+</body>
+</html>
