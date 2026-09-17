@@ -27,7 +27,13 @@ from pathlib import Path
 
 # Allowlist estrita de variáveis de ambiente herdadas por subprocessos de
 # código gerado (DoD item 1). Qualquer outra chave do host é descartada.
-ENV_EXECUCAO_ALLOWLIST = ('PATH', 'PYTHONPATH', 'PYTHONUTF8', 'TMPDIR')
+# SYSTEMROOT é Windows-only: sem ela, o carregador de DLLs do Windows não
+# inicializa o provedor Winsock e QUALQUER import transitivo que toque
+# asyncio/rede (ex.: plugins de terceiros do pytest, como anyio) quebra com
+# OSError [WinError 10106], derrubando os gates I2/I3/I5 da Fase 8 mesmo com
+# código gerado 100% correto (achado real na validação E2E do Fluxo 01,
+# 17/09/2026 — reproduzido isolando o subprocess com a allowlist antiga).
+ENV_EXECUCAO_ALLOWLIST = ('PATH', 'PYTHONPATH', 'PYTHONUTF8', 'TMPDIR', 'SYSTEMROOT')
 
 # Funções de subprocess que disparam processos filhos (usado pela auditoria AST).
 _SUBPROCESS_FUNCS = frozenset({
@@ -60,6 +66,10 @@ def montar_env_minimo(pythonpath=None, tmpdir=None, path_host=None):
     env['PYTHONUTF8'] = '1'
     if tmpdir is not None:
         env['TMPDIR'] = str(tmpdir)
+    if os.name == 'nt':
+        systemroot = os.environ.get('SYSTEMROOT', '')
+        if systemroot:
+            env['SYSTEMROOT'] = systemroot
     return env
 
 

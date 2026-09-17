@@ -280,6 +280,28 @@ def test_gate_sync_harness_detecta_drift(criador_05, tmp_path, monkeypatch):
     assert 'desatualizada' in resultado.stdout.lower()
 
 
+def test_gate_e5_funciona_com_pasta_relativa(criador_05, tmp_path, monkeypatch):
+    """Achado real na validação E2E do Fluxo 01 (17/09/2026): a CLI real é
+    invocada com `--pasta` relativo (ex.: `testes/fluxo-01-pure`), não
+    absoluto como todo `tmp_path` de teste. `_gate_e5_sincronizacao_harness`
+    fazia `subprocess.run([..., str(gate_path)], cwd=str(pasta))` com
+    `gate_path` relativo — o SO resolve o argv relativo contra o `cwd` do
+    subprocesso, duplicando a pasta alvo no caminho e quebrando o gate
+    (E5 falhava sempre que `pasta_projeto` não era absoluto)."""
+    def symlink_falha(self, *a, **kw):
+        raise OSError("sem privilegio")
+    monkeypatch.setattr(Path, 'symlink_to', symlink_falha)
+    monkeypatch.chdir(tmp_path)
+
+    pasta_relativa = Path('projeto')
+    criador = criador_05.CriadorProjetoFase5(pasta_relativa)
+    criador._criar_estrutura()
+    criador._criar_arquivos_configuracao('Ideia de teste')
+
+    gate = criador_05.ValidadorGatesPhase5._gate_e5_sincronizacao_harness(pasta_relativa)
+    assert gate.passou is True, gate.detalhes
+
+
 def test_criar_symlinks_globais_wiring_fase4(criador_05, tmp_path, monkeypatch):
     """Achado na auditoria pós-Fase 5: decisões GLOBAL da Fase 4 nunca
     chegavam à Fase 5. Este teste prova que agora chegam e viram symlink

@@ -251,7 +251,7 @@ class ValidadorGatesPhase5:
 
         try:
             resultado = subprocess.run(
-                [sys.executable, str(gate_path)],
+                [sys.executable, str(gate_path.resolve())],
                 cwd=str(pasta),
                 capture_output=True,
                 text=True,

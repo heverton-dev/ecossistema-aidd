@@ -806,9 +806,10 @@ class ValidadorGatesPhase8:
             return Gate('I4_cli_executa', 'Validar CLI executa smoke-test', True,
                        'Sem main.py — gate não aplicável, não bloqueia')
         try:
-            with SandboxNivel1(pythonpath=pasta_projeto / 'src') as sandbox:
+            pasta_projeto_absoluta = pasta_projeto.resolve()
+            with SandboxNivel1(pythonpath=pasta_projeto_absoluta / 'src') as sandbox:
                 resultado = subprocess.run(
-                    [sys.executable, str(main_py), '--help'],
+                    [sys.executable, str(pasta_projeto_absoluta / 'main.py'), '--help'],
                     cwd=str(sandbox.cwd), capture_output=True, timeout=10, env=sandbox.env
                 )
             passou = resultado.returncode == 0
@@ -1832,13 +1833,13 @@ Rules:
         (apenas PATH, PYTHONPATH=src, PYTHONUTF8, TMPDIR) e cwd isolado em
         tempdir restrito — o teste do código gerado nunca herda segredos do host."""
         alvo = f'tests/{Path(caminho_relativo).name}' if caminho_relativo else 'tests/'
-        alvo_absoluto = str(self.pasta_projeto / alvo)
 
         try:
-            with SandboxNivel1(pythonpath=self.pasta_projeto / 'src') as sandbox:
+            pasta_projeto_absoluta = self.pasta_projeto.resolve()
+            with SandboxNivel1(pythonpath=pasta_projeto_absoluta / 'src') as sandbox:
                 resultado = subprocess.run(
-                    [sys.executable, '-m', 'pytest', alvo_absoluto, '-v',
-                     f'--rootdir={self.pasta_projeto}'],
+                    [sys.executable, '-m', 'pytest', str(pasta_projeto_absoluta / alvo), '-v',
+                     f'--rootdir={pasta_projeto_absoluta}'],
                     cwd=str(sandbox.cwd), capture_output=True, text=True,
                     encoding='utf-8', errors='replace', timeout=TIMEOUT_PYTEST_SEGUNDOS,
                     env=sandbox.env

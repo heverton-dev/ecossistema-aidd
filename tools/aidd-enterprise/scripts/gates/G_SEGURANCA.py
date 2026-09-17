@@ -37,6 +37,36 @@ import tempfile
 if hasattr(sys.stdout, 'reconfigure'):
     sys.stdout.reconfigure(encoding='utf-8', errors='replace')
 
+
+def _run_matando_arvore_em_timeout(cmd, timeout, cwd=None, text=True):
+    """Como subprocess.run(cmd, timeout=timeout), mas mata a ÁRVORE INTEIRA
+    de processos se o timeout estourar — não só o processo direto.
+
+    Achado real (validação E2E do Fluxo 01, 17/09/2026): pip-audit cria um
+    venv temporário e roda `pip install --upgrade pip wheel setuptools`
+    (acesso a rede real) como subprocesso-neto. `subprocess.run(timeout=...)`
+    só mata o processo direto (pip-audit); no Windows isso deixa o neto
+    (`pip install`) órfão, ainda tentando a rede indefinidamente — travando
+    qualquer pre-commit que rode este gate em rede lenta/instável.
+    """
+    proc = subprocess.Popen(
+        cmd, cwd=cwd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=text,
+    )
+    try:
+        stdout, stderr = proc.communicate(timeout=timeout)
+    except subprocess.TimeoutExpired:
+        if sys.platform == "win32":
+            subprocess.run(
+                ["taskkill", "/F", "/T", "/PID", str(proc.pid)],
+                capture_output=True,
+            )
+        else:
+            proc.kill()
+        proc.wait()
+        raise
+    return subprocess.CompletedProcess(cmd, proc.returncode, stdout, stderr)
+
+
 # Classificação honesta de cada camada (Regra de Ouro #9):
 #   comportamental = executa verificação/ataque real contra código em execução
 #   configuracao   = inspeciona valores de configuração retornados ou declarados
@@ -445,9 +475,9 @@ class SecurityGate:
 
             if req_path and os.path.exists(req_path):
                 try:
-                    result = subprocess.run(
+                    result = _run_matando_arvore_em_timeout(
                         [sys.executable, "-m", "pip_audit", "--format=json", "-r", req_path],
-                        capture_output=True, text=True, timeout=120, cwd=self.root
+                        timeout=120, cwd=self.root
                     )
                     audit_output = result.stdout.strip()
                     if not audit_output:

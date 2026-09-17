@@ -30,7 +30,7 @@ from sandbox_nivel_1 import (
 
 def test_montar_env_minimo_so_tem_chaves_da_allowlist():
     env = montar_env_minimo(pythonpath='/src', tmpdir='/tmp/x', path_host='/usr/bin')
-    assert set(env) <= {'PATH', 'PYTHONPATH', 'PYTHONUTF8', 'TMPDIR'}
+    assert set(env) <= {'PATH', 'PYTHONPATH', 'PYTHONUTF8', 'TMPDIR', 'SYSTEMROOT'}
     assert env['PATH'] == '/usr/bin'
     assert env['PYTHONPATH'] == '/src'
     assert env['TMPDIR'] == '/tmp/x'
@@ -41,7 +41,14 @@ def test_montar_env_minimo_nunca_espelha_environ_do_host(monkeypatch):
     monkeypatch.setenv('MEU_SEGREDO_API_KEY', 'sk-nao-pode-vazar')
     env = montar_env_minimo()
     assert 'MEU_SEGREDO_API_KEY' not in env
-    assert set(env) <= {'PATH', 'PYTHONPATH', 'PYTHONUTF8', 'TMPDIR'}
+    assert set(env) <= {'PATH', 'PYTHONPATH', 'PYTHONUTF8', 'TMPDIR', 'SYSTEMROOT'}
+
+
+@pytest.mark.skipif(os.name != 'nt', reason='SYSTEMROOT so existe/importa no Windows')
+def test_montar_env_minimo_inclui_systemroot_no_windows():
+    env = montar_env_minimo()
+    assert env.get('SYSTEMROOT') == os.environ.get('SYSTEMROOT', '')
+    assert env['SYSTEMROOT'] != ''
 
 
 # =============================================================================
@@ -67,7 +74,29 @@ def test_sandbox_subprocess_nao_enxerga_segredo_do_host(monkeypatch):
         )
     assert resultado.returncode == 0
     assert 'MEU_SEGREDO_API_KEY' not in resultado.stdout
-    assert set(eval(resultado.stdout.strip())) <= {'PATH', 'PYTHONPATH', 'PYTHONUTF8', 'TMPDIR'}
+    assert set(eval(resultado.stdout.strip())) <= {'PATH', 'PYTHONPATH', 'PYTHONUTF8', 'TMPDIR', 'SYSTEMROOT'}
+
+
+@pytest.mark.skipif(os.name != 'nt', reason='WinError 10106 e uma falha exclusiva do Winsock/Windows')
+def test_sandbox_pytest_com_plugin_asyncio_nao_quebra_sem_systemroot(tmp_path):
+    """Achado real na validação E2E do Fluxo 01 (17/09/2026): sem SYSTEMROOT
+    na allowlist, um subprocess pytest no sandbox quebrava com
+    OSError [WinError 10106] sempre que qualquer plugin instalado (ex.:
+    anyio, dependencia transitiva comum de FastAPI/Starlette) importava
+    asyncio.windows_events -> _overlapped — reprovando os gates I2/I3/I5 da
+    Fase 8 mesmo com codigo gerado 100% correto. Este teste roda um pytest
+    real, sem mockar subprocess, contra um arquivo de teste trivial."""
+    (tmp_path / 'test_trivial.py').write_text(
+        'def test_ok():\n    assert 1 == 1\n', encoding='utf-8'
+    )
+    with SandboxNivel1(pythonpath=tmp_path) as sandbox:
+        resultado = sandbox.rodar(
+            [sys.executable, '-m', 'pytest', str(tmp_path), '-p', 'anyio'],
+            capture_output=True, text=True, timeout=30,
+        )
+    saida = resultado.stdout + resultado.stderr
+    assert 'WinError 10106' not in saida, saida[-1500:]
+    assert resultado.returncode == 0, saida[-1500:]
 
 
 def test_sandbox_rodar_usa_cwd_e_env_do_sandbox():

@@ -16,6 +16,8 @@ import sqlite3
 import subprocess
 import sys
 
+import pytest
+
 REPO_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
 GATE_SCRIPT = os.path.join(REPO_ROOT, "scripts", "gates", "G_SEGURANCA.py")
 
@@ -102,3 +104,70 @@ def test_sem_bind_parameter_o_mesmo_payload_seria_vulneravel():
         )
     finally:
         conn.close()
+
+
+def _carregar_gate_como_modulo():
+    import importlib.util
+    spec = importlib.util.spec_from_file_location("g_seguranca_gate_modulo", GATE_SCRIPT)
+    modulo = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(modulo)
+    return modulo
+
+
+def _pid_esta_vivo(pid: int) -> bool:
+    if sys.platform == "win32":
+        saida = subprocess.run(
+            ["tasklist", "/FI", f"PID eq {pid}"], capture_output=True, text=True
+        ).stdout
+        return str(pid) in saida
+    try:
+        os.kill(pid, 0)
+        return True
+    except OSError:
+        return False
+
+
+def test_run_matando_arvore_em_timeout_mata_processo_neto(tmp_path):
+    """Achado real na validação E2E do Fluxo 01 (17/09/2026): pip-audit (Camada
+    8: CVE Dependency Audit) cria um venv temporário e lança `pip install
+    --upgrade pip wheel setuptools` (acesso real à rede) como subprocesso-neto.
+    `subprocess.run(timeout=...)` só mata o processo direto — no Windows isso
+    deixa o neto órfão, ainda tentando a rede indefinidamente, travando
+    qualquer pre-commit que rode este gate com rede lenta/instável.
+    `_run_matando_arvore_em_timeout` precisa matar a árvore inteira.
+
+    Sem rede real e sem mockar subprocess: o "pai" simulado aqui lança um
+    "filho" de longa duração e grava o PID dele num arquivo antes de também
+    dormir, para o teste confirmar que o filho de fato morre junto."""
+    import textwrap
+    import time
+
+    modulo = _carregar_gate_como_modulo()
+
+    pid_filho_path = tmp_path / "pid_filho.txt"
+    script_pai = tmp_path / "pai.py"
+    script_pai.write_text(
+        textwrap.dedent(f"""
+            import subprocess, sys, time
+            filho = subprocess.Popen([sys.executable, "-c", "import time; time.sleep(60)"])
+            with open(r"{pid_filho_path}", "w") as f:
+                f.write(str(filho.pid))
+            time.sleep(60)
+        """),
+        encoding="utf-8",
+    )
+
+    with pytest.raises(subprocess.TimeoutExpired):
+        modulo._run_matando_arvore_em_timeout(
+            [sys.executable, str(script_pai)], timeout=2
+        )
+
+    for _ in range(30):
+        if pid_filho_path.exists():
+            break
+        time.sleep(0.1)
+    assert pid_filho_path.exists(), "processo pai simulado nunca chegou a spawnar o filho"
+    pid_filho = int(pid_filho_path.read_text().strip())
+
+    time.sleep(1)
+    assert not _pid_esta_vivo(pid_filho), "processo neto ficou orfao vivo apos o timeout"

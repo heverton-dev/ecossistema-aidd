@@ -247,6 +247,36 @@ def test_rodar_pytest_excecao_retorna_falha_honesta(implementador_08, tmp_path, 
     assert resultado['total'] == 0
 
 
+def test_rodar_pytest_funciona_com_pasta_relativa(implementador_08, tmp_path, monkeypatch):
+    """Achado real na validação E2E do Fluxo 01 (17/09/2026): a CLI real é
+    invocada com `--pasta` relativo (ex.: `testes/fluxo-01-pure`). `_rodar_pytest`
+    montava `alvo_absoluto = str(self.pasta_projeto / alvo)` sem `.resolve()` e
+    rodava o subprocess com `cwd=str(sandbox.cwd)` (um tempdir isolado, DIFERENTE
+    do cwd do processo pai) — o SO resolvia o path relativo do teste/--rootdir
+    contra o cwd do sandbox, e o pytest reprovava com 'Directory not found',
+    reportado como '0/0 testes passando' (mascarando um script 100% correto).
+    Sem mock de subprocess: pytest real, sandbox real, projeto relativo real."""
+    monkeypatch.chdir(tmp_path)
+    projeto = Path('projeto')
+    (projeto / 'src' / 'pacote').mkdir(parents=True)
+    (projeto / 'src' / 'pacote' / '__init__.py').write_text('', encoding='utf-8')
+    (projeto / 'src' / '__init__.py').write_text('', encoding='utf-8')
+    (projeto / 'src' / 'pacote' / 'somar.py').write_text(
+        'def somar(a, b):\n    return a + b\n', encoding='utf-8'
+    )
+    (projeto / 'tests').mkdir(parents=True)
+    (projeto / 'tests' / 'test_somar.py').write_text(
+        'from pacote.somar import somar\n\ndef test_somar():\n    assert somar(2, 3) == 5\n',
+        encoding='utf-8',
+    )
+
+    imp = implementador_08.ImplementadorFase8(projeto)
+    resultado = imp._rodar_pytest(None)
+    assert resultado['erro_coleta'] is False, resultado['detalhes_coleta']
+    assert resultado['total'] == 1
+    assert resultado['passaram'] == 1
+
+
 # =============================================================================
 # LOOP DE VERIFICAÇÃO E CORREÇÃO REAL
 # =============================================================================
