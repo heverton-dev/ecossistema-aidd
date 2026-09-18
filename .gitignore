@@ -104,3 +104,6 @@ opencode.jsonc
 # apagadas automaticamente apos merge bem sucedido - mas ficam aqui como
 # rede de seguranca caso a limpeza automatica falhe ou o processo trave.
 wt-*/
+.orca/
+testes/
+
