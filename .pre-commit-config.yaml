@@ -187,3 +187,11 @@ repos:
         always_run: true
         pass_filenames: false
         require_serial: true
+
+      - id: g-protocol-fallback
+        name: G_PROTOCOL_FALLBACK (paridade e fallback REST vs MCP)
+        entry: python gates/G_PROTOCOL_FALLBACK.py
+        language: system
+        always_run: true
+        pass_filenames: false
+        require_serial: true
