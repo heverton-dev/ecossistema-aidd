@@ -971,8 +971,8 @@
                 <span class="font-mono font-bold text-emerald-400 text-xs">src/core/</span>
                 <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-gray-800 text-gray-300">Camada Horizontal</span>
               </div>
-              <p class="text-xs text-gray-300">Centraliza as bibliotecas e utilitários que atravessam todas as regras de negócio: pool assíncrono de banco de dados, sanitização de inputs, circuit breakers e injeção do <code>trace_id</code>.</p>
-              <span class="text-[11px] font-mono text-gray-400 mt-1">Quality Gate Verificador: <strong class="text-emerald-400">G_DRIFT_NUCLEO_COMPARTILHADO</strong></span>
+              <p class="text-xs text-gray-300">Centraliza as bibliotecas transversais: pool de banco de dados, sanitização anti-prompt injection (PromptShield), Circuit Breakers, Fake Adapters Tipados (sem mocks) e via rápida VSA Light-Lane.</p>
+              <span class="text-[11px] font-mono text-gray-400 mt-1">Quality Gate Verificador: <strong class="text-emerald-400">G_DRIFT_NUCLEO_COMPARTILHADO & G_LLM_PROMPT_SHIELD</strong></span>
             </div>
 
             <div class="p-4 rounded-xl bg-dark-card border border-dark-border flex flex-col gap-1">
@@ -980,8 +980,17 @@
                 <span class="font-mono font-bold text-indigo-400 text-xs">src/modules/{slug}/</span>
                 <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-gray-800 text-gray-300">Vertical Slice (VSA)</span>
               </div>
-              <p class="text-xs text-gray-300">Cada pasta representa um caso de uso ou domínio isolado (nunca src/features/). Contém sua própria rota REST, lógica de negócio, query SQL parametrizada e bateria de testes dedicada. Elimina acoplamento cruzado.</p>
-              <span class="text-[11px] font-mono text-gray-400 mt-1">Quality Gate Verificador: <strong class="text-indigo-400">G_TESTES / G_ARQUITETURA</strong> (aidd-master/enterprise)</span>
+              <p class="text-xs text-gray-300">Cada pasta representa um caso de uso ou domínio isolado. Bloqueio determinístico de imports cruzados via AST e detecção automática de redundâncias funcionais.</p>
+              <span class="text-[11px] font-mono text-gray-400 mt-1">Quality Gate Verificador: <strong class="text-indigo-400">G_ISOLATION_AUDIT & G_DRIFT_ANALYZER</strong></span>
+            </div>
+
+            <div class="p-4 rounded-xl bg-dark-card border border-dark-border flex flex-col gap-1">
+              <div class="flex items-center justify-between">
+                <span class="font-mono font-bold text-amber-500 text-xs">sandbox/</span>
+                <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-gray-800 text-gray-300">Prototipagem Efêmera</span>
+              </div>
+              <p class="text-xs text-gray-300">Zona isolada para PoCs rápidas. Bloqueio determinístico de promoção direta para produção sem suíte de testes TDD espelhada.</p>
+              <span class="text-[11px] font-mono text-gray-400 mt-1">Quality Gate Verificador: <strong class="text-amber-400">G_PROTOTYPE_REWRITE</strong></span>
             </div>
 
             <div class="p-4 rounded-xl bg-dark-card border border-dark-border flex flex-col gap-1">
@@ -998,7 +1007,7 @@
                 <span class="font-mono font-bold text-cyan-400 text-xs">infra/</span>
                 <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-gray-800 text-gray-300">DevOps & Orquestração</span>
               </div>
-              <p class="text-xs text-gray-300">Arquitetura de contêineres de produção: Dockerfile multi-stage auditado pelo Hadolint (usuário não-root), proxy Nginx com cabeçalhos OWASP e cofre de credenciais sops+age.</p>
+              <p class="text-xs text-gray-300">Arquitetura de contêineres de produção: Dockerfile multi-stage auditado pelo Hadolint (usuário não-root), proxy Nginx com cabeçalhos OWASP, rotação determinística de credenciais efêmeras (rotate_secrets.py 0600) e cofre sops+age.</p>
               <span class="text-[11px] font-mono text-gray-400 mt-1">Quality Gate Verificador: <strong class="text-cyan-400">G_HADOLINT & G_INFRA_COMPOSE</strong></span>
             </div>
 

@@ -118,8 +118,12 @@ Todo projeto gerado por `aidd-master`/`aidd-factory` expõe nativamente:
 | :--- | :--- |
 | Fluxo 01 completo (Etapas 1-7: forge→planner→generator→master→enterprise→ops→auditoria final) | ✅ 100% — 13 bugs reais encontrados e corrigidos, aplicação rodando em Docker, `python ecossistema.py audit` verde |
 | Lei #11 (Next.js) em `aidd-master`, `aidd-factory`, `aidd-generator` | ✅ Implementada e validada com build real |
-| `aidd-ops` cobrindo monólito customizado + OSS por nicho | ✅ Implementado e validado com o projeto real do Fluxo 01 |
+| `aidd-ops` cobrindo monólito customizado + OSS por nicho + rotação de segredos | ✅ Implementado e validado (`rotate_secrets.py` em /run/secrets com permissão 0600) |
+| Blindagem Arquitetural VSA & Quality Gates AST | ✅ 100% — `G_ISOLATION_AUDIT`, `G_DRIFT_ANALYZER`, `G_PROTOTYPE_REWRITE` e `G_PROTOCOL_FALLBACK` integrados ao pre-commit |
+| Segurança & Defesa no Core (`PromptShield` + Fake Adapters) | ✅ 100% — `G_LLM_PROMPT_SHIELD`, sanitização determinística e `InMemoryFakeExternalAdapter` (Lei #5) |
+| Telemetria Total de Testes Reais em `tools/` | ✅ **2.213 testes unitários reais passando** (294 forge, 1.019 generator, 386 master, 336 enterprise, 178 ops) |
 | Fluxo 02 completo (mesma ideia, ponta a ponta) | ⏳ Pendente |
 | Fluxo 03 completo (mesma ideia, ponta a ponta) | ⏳ Pendente |
 | Handoff automático entre etapas adjacentes (planner→generator, generator→master) | ❌ Não existe — lacuna registrada, fora do escopo desta rodada |
 | `aidd-bridge` reconhecendo corretamente projetos Next.js de origem (hoje só reconhece Vite/SPA) | ❌ Não corrigido — pendência separada |
+

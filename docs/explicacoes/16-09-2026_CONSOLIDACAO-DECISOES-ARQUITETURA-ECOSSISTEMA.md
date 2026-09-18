@@ -338,26 +338,27 @@ projeto-corporativo/
 
 | Diretório Físico | Papel Arquitetural | Quality Gate Verificador |
 | :--- | :--- | :--- |
-| `src/core/` | Centraliza bibliotecas transversais (DB, segurança, telemetria, Estúdios nativos) | `G_DRIFT_NUCLEO_COMPARTILHADO`, `G_LLM_PROMPT_SHIELD` |
-| `src/modules/{slug}/` | Encapsula cada fatia de negócio isolada (VSA) — fatias estritamente isoladas via AST | `G_ISOLATION_AUDIT`, `G_TESTES` / `G_ARQUITETURA` |
+| `src/core/` | Centraliza bibliotecas transversais (DB, segurança, telemetria, Estúdios nativos, Fake Adapters Tipados e Light-Lane CQRS) | `G_DRIFT_NUCLEO_COMPARTILHADO`, `G_LLM_PROMPT_SHIELD` |
+| `src/modules/{slug}/` | Encapsula cada fatia de negócio isolada (VSA) — fatias estritamente isoladas via AST e sem duplicidade funcional | `G_ISOLATION_AUDIT`, `G_DRIFT_ANALYZER`, `G_TESTES` / `G_ARQUITETURA` |
+| `sandbox/` | Zona experimental de prototipagem efêmera (PoCs), estritamente bloqueada contra promoção direta sem TDD | `G_PROTOTYPE_REWRITE` |
 | `frontend/` | Next.js/TypeScript/Tailwind com identidade visual única por projeto (Lei #11) | `G_FRONTEND_LAYERS`, `G_CONTRACTS` |
-| `infra/` | Configuração de containers OCI, proxy reverso e chaves | `G_HADOLINT`, `G_INFRA_COMPOSE` |
+| `infra/` | Configuração de containers OCI, proxy reverso, rotação de segredos efêmeros e chaves | `G_HADOLINT`, `G_INFRA_COMPOSE` |
 | `AGENTS.md & requirements.txt` | Regras invioláveis em código e trava de supply chain por SHA-256 | `G_DEPENDENCIAS_PIN_HASH`, `G_ECOSSISTEMA_INTEGRIDADE`, `G_PROTOCOL_FALLBACK` |
 
 ---
 
 ## 12. Quadro de Homologação das 8 Ferramentas do Ecossistema
 
-> Contagens de teste medidas de verdade nesta revisão (`python -m pytest -q` real por ferramenta, 18/09/2026) — nunca digitadas de memória. `aidd-planner` é a 8ª ferramenta (antes descrita genericamente como "PRÉ-PLANO").
+> Contagens de teste medidas de verdade nesta revisão (`python -m pytest -q` real por ferramenta, 18/09/2026) — nunca digitadas de memória. `aidd-planner` é a 8ª ferramenta (antes descrita genericamente como "PRÉ-PLANO"). Total de 2.213 testes unitários reais passando em tools/ e 23 Quality Gates em disco.
 
 | Ferramenta | Papel Central na Tríade | Status | Entregável Consolidado |
 | :--- | :--- | :--- | :--- |
 | **`aidd-forge`** | Ditador de Governança e Regras | Homologado | Repositório blindado, linters, pre-commit e regras de arquitetura e tokens (294 testes) |
 | **`aidd-planner`** | Motor de Planejamento (Ponte Forge -> Tríade) | Homologado | `PLANNER.json` (SDD/BDD/DDD) + `DESIGN-SYSTEM.json` (paleta única por projeto, Fase 9) (10 testes) |
 | **`aidd-generator`** | Fábrica Autônoma (FLUXO 01) | Homologado | Aplicação completa em 8 fases (TDD + VSA), frontend Next.js/TS/Tailwind (Lei #11) (1.019 testes) |
-| **`aidd-master`** | Arquiteto de Monólito Modular | Homologado | Fatias VSA de domínio (`src/modules/`) + frontend Next.js exportado, conectados à camada horizontal compartilhada (375 testes) |
-| **`aidd-enterprise`**| Guardião de Missão Crítica | Homologado | Checksums SHA-256, Circuit Breakers, Rate Limiters e trilha `trace_id` (331 testes) |
-| **`aidd-ops`** | Orquestrador de Infra & VPS | Homologado | Cobre monólito customizado (compose-nativo) e stack OSS curada por nicho (Coolify), motor selecionado por `tipo_origem` (174 testes) |
+| **`aidd-master`** | Arquiteto de Monólito Modular | Homologado | Fatias VSA de domínio (`src/modules/`), VSA Light-Lane, Fake Adapters Tipados + frontend Next.js exportado (386 testes) |
+| **`aidd-enterprise`**| Guardião de Missão Crítica | Homologado | Checksums SHA-256, Circuit Breakers, Rate Limiters, PromptShield e trilha `trace_id` (336 testes) |
+| **`aidd-ops`** | Orquestrador de Infra & VPS | Homologado | Cobre monólito customizado, rotação determinística de segredos efêmeros (0600) e stack OSS Coolify (178 testes) |
 | **`aidd-factory`** | Integrador Open-Source (FLUXO 02) | Homologado | Fatias VSA de conexão, webhooks HMAC seguros, orquestração de motores e frontend Next.js unificado (18 testes) |
 | **`aidd-bridge`** | Desacoplador Low-Code (FLUXO 03) | Homologado | Frontend limpo sem vendor lock-in para PostgreSQL VPS, preserva stack visual de origem (Lei #11 não se aplica aqui) (45 testes) |
 
