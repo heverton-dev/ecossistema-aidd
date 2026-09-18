@@ -28,6 +28,38 @@ ROOT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 TOOLS_DIR = os.path.join(ROOT_DIR, "tools")
 ALLOWLIST_PATH = os.path.join(ROOT_DIR, "gates", "allowlist_skipped_testes.json")
 
+
+def _abrir_console_ao_vivo():
+    """Abre o dispositivo de terminal de controle direto (CON no Windows,
+    /dev/tty no POSIX), contornando a captura de stdout do pre-commit.
+
+    O pre-commit so exibe a saida de um hook DEPOIS que o subprocesso inteiro
+    termina (mesmo com --verbose) -- para hooks rapidos isso e imperceptivel,
+    mas este e o unico hook que roda por ~5min (pytest sequencial de 7
+    ferramentas), e ficava mudo o tempo todo, parecendo travado. Escrever
+    aqui, alem do print() normal, aparece na tela em tempo real independente
+    da captura. Retorna None (silenciosamente) se nao houver terminal de
+    controle (ex: CI headless) -- nunca deve derrubar o gate por isso.
+    """
+    caminho = "CON" if os.name == "nt" else "/dev/tty"
+    try:
+        return open(caminho, "w", encoding="utf-8", errors="replace")
+    except OSError:
+        return None
+
+
+_CONSOLE_AO_VIVO = _abrir_console_ao_vivo()
+
+
+def _anunciar_ao_vivo(mensagem):
+    """Espelha `mensagem` direto no terminal, ao vivo (ver _abrir_console_ao_vivo)."""
+    if _CONSOLE_AO_VIVO is None:
+        return
+    try:
+        print(mensagem, file=_CONSOLE_AO_VIVO, flush=True)
+    except OSError:
+        pass
+
 FERRAMENTAS = [
     "aidd-forge",
     "aidd-generator",
@@ -122,14 +154,18 @@ def executar():
 
     resultados = []
     falhou = False
+    total_ferramentas = len(FERRAMENTAS)
 
-    for ferramenta in FERRAMENTAS:
+    _anunciar_ao_vivo(f"[G_TESTES_REAIS] Iniciando: {total_ferramentas} ferramenta(s) em tools/*...")
+
+    for indice, ferramenta in enumerate(FERRAMENTAS, start=1):
         dir_ferramenta = os.path.join(TOOLS_DIR, ferramenta)
         if not os.path.isdir(dir_ferramenta):
             print(f"  [{ferramenta}] DIRETÓRIO AUSENTE — ignorado")
             resultados.append((ferramenta, "AUSENTE", 0, 0, 0, []))
             continue
 
+        _anunciar_ao_vivo(f"[G_TESTES_REAIS] ({indice}/{total_ferramentas}) {ferramenta}: pytest rodando...")
         print(f"  [{ferramenta}] Rodando pytest...", end=" ", flush=True)
 
         fd_tmp, junitxml_path = tempfile.mkstemp(suffix=".xml", prefix="junit_gtestes_")
@@ -139,17 +175,20 @@ def executar():
                 exit_code, output = _rodar_pytest(dir_ferramenta, junitxml_path)
             except subprocess.TimeoutExpired:
                 print("TIMEOUT (900s)")
+                _anunciar_ao_vivo(f"[G_TESTES_REAIS] ({indice}/{total_ferramentas}) {ferramenta}: TIMEOUT (900s)")
                 resultados.append((ferramenta, "TIMEOUT", 0, 0, 0, []))
                 falhou = True
                 continue
             except Exception as e:
                 print(f"ERRO: {e}")
+                _anunciar_ao_vivo(f"[G_TESTES_REAIS] ({indice}/{total_ferramentas}) {ferramenta}: ERRO ({e})")
                 resultados.append((ferramenta, "ERRO", 0, 0, 0, []))
                 falhou = True
                 continue
 
             if not os.path.isfile(junitxml_path) or os.path.getsize(junitxml_path) == 0:
                 print("ERRO: JUnitXML não gerado pelo pytest")
+                _anunciar_ao_vivo(f"[G_TESTES_REAIS] ({indice}/{total_ferramentas}) {ferramenta}: ERRO (JUnitXML nao gerado)")
                 resultados.append((ferramenta, "ERRO", 0, 0, 0, []))
                 falhou = True
                 continue
@@ -158,6 +197,7 @@ def executar():
                 metricas = parsear_junitxml(junitxml_path)
             except (ValueError, ET.ParseError) as e:
                 print(f"ERRO: JUnitXML inválido ({e})")
+                _anunciar_ao_vivo(f"[G_TESTES_REAIS] ({indice}/{total_ferramentas}) {ferramenta}: ERRO (JUnitXML invalido: {e})")
                 resultados.append((ferramenta, "ERRO", 0, 0, 0, []))
                 falhou = True
                 continue
@@ -171,21 +211,25 @@ def executar():
 
             status = "OK"
             if failed > 0:
-                print(f"FALHOU ({passed} passed, {failed} failed, {skipped} skipped)")
+                msg = f"FALHOU ({passed} passed, {failed} failed, {skipped} skipped)"
+                print(msg)
                 status = "FALHA"
                 falhou = True
             elif nao_autorizados:
-                print(f"ORÇAMENTO ESTOURADO ({passed} passed, {skipped} skipped, "
-                      f"{len(nao_autorizados)} não autorizado(s))")
+                msg = (f"ORÇAMENTO ESTOURADO ({passed} passed, {skipped} skipped, "
+                       f"{len(nao_autorizados)} não autorizado(s))")
+                print(msg)
                 status = "SKIP_NAO_AUTORIZADO"
                 falhou = True
             elif passed == 0 and skipped == 0:
-                print("SEM TESTES (0 resultados)")
+                msg = "SEM TESTES (0 resultados)"
+                print(msg)
             else:
                 msg = f"OK ({passed} passed, {failed} failed, {skipped} skipped)"
                 if skipped:
                     msg += " [dentro do orçamento]"
                 print(msg)
+            _anunciar_ao_vivo(f"[G_TESTES_REAIS] ({indice}/{total_ferramentas}) {ferramenta}: {msg}")
 
             resultados.append((ferramenta, status, passed, failed, skipped, nao_autorizados))
         finally:
@@ -219,6 +263,9 @@ def executar():
     print("-" * 70)
     print(f"  TOTAL: {total_passed} passed, {total_failed} failed, {total_skipped} skipped")
     print()
+    _anunciar_ao_vivo(
+        f"[G_TESTES_REAIS] Concluido: {total_passed} passed, {total_failed} failed, {total_skipped} skipped"
+    )
 
     if falhou:
         print(" [FALHA] Quality Gate G_TESTES_REAIS REPROVADO — falhas reais ou skipped fora do orçamento!")
