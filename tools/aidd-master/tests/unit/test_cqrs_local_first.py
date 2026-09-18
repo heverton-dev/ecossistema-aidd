@@ -202,3 +202,16 @@ def test_saga_compensates_on_failure():
     assert "Saga 'step2' falhou" in str(exc.value)
     # Step 1 should be compensated because step 2 failed
     assert compensations == ["s1_undone"]
+
+
+def test_query_slice_light_lane_execution():
+    from cqrs import QuerySlice
+    
+    # 1. Sem cache
+    res = QuerySlice.execute(lambda: {"total": 42})
+    assert res == {"total": 42}
+
+    # 2. Com cache
+    res_cached = QuerySlice.execute(lambda: {"total": 100}, cache_key="k_light_lane", ttl=30)
+    assert res_cached == {"total": 100}
+
