@@ -29,6 +29,12 @@ from core.result import Result
 
 _DATA_DIR = os.path.join(os.path.dirname(__file__), "..", "..", "data")
 
+# Sentinela de "tipo de origem" para monolitos customizados gerados pelo
+# aidd-master (Fluxo 01) — nao existe no catalogo_nichos.json (que so cobre
+# stacks OSS curadas do Fluxo 02), entao nunca colide com um slug real.
+MONOLITO_SLUG = "monolito_customizado"
+MONOLITO_NOME_EXIBICAO_PREFIXO = "Monólito Customizado (AIDD-Master)"
+
 
 def _normalizar(texto: str) -> str:
     """Remove acentos e baixa a caixa, preservando espaços e hífens."""
@@ -41,6 +47,61 @@ def _carregar_catalogo() -> Dict[str, Any]:
     caminho = os.path.join(_DATA_DIR, "catalogo_nichos.json")
     with open(caminho, "r", encoding="utf-8") as f:
         return json.load(f)
+
+
+def reconhecer_origem_monolito(dir_projeto: str) -> Result:
+    """Reconhece um monólito customizado (gerado por `aidd-master`) a partir
+    de um diretório de projeto real, sem tentar casar texto contra os
+    nichos OSS do catálogo (Fluxo 02). Cobre o Fluxo 01 (Do Zero Puro).
+
+    Pré-requisito: o diretório precisa conter os 3 artefatos que
+    `aidd-master init` sempre gera (`PLANO-EXECUCAO-ESTRUTURADO.json`,
+    `docker-compose.yml`, `Dockerfile`) — evidência real de que é de fato
+    um monólito dessa origem, não uma pasta arbitrária.
+
+    Returns:
+        Result.ok(dados_nicho) no mesmo formato de `reconhecer_nicho`, ou
+        Result.fail(codigo="MONOLITO_INVALIDO") se a pasta não parecer um
+        monólito gerado por `aidd-master`.
+    """
+    plano_path = os.path.join(dir_projeto, "PLANO-EXECUCAO-ESTRUTURADO.json")
+    compose_path = os.path.join(dir_projeto, "docker-compose.yml")
+    dockerfile_path = os.path.join(dir_projeto, "Dockerfile")
+    ausentes = [
+        nome for nome, caminho in [
+            ("PLANO-EXECUCAO-ESTRUTURADO.json", plano_path),
+            ("docker-compose.yml", compose_path),
+            ("Dockerfile", dockerfile_path),
+        ] if not os.path.isfile(caminho)
+    ]
+    if ausentes:
+        return Result.fail(
+            f"Diretório '{dir_projeto}' não parece um monólito gerado por "
+            f"aidd-master (arquivo(s) ausente(s): {', '.join(ausentes)}).",
+            codigo="MONOLITO_INVALIDO",
+            detalhes={"dir_projeto": dir_projeto, "arquivos_ausentes": ausentes},
+        )
+
+    try:
+        with open(plano_path, "r", encoding="utf-8") as f:
+            plano_execucao = json.load(f)
+    except (OSError, json.JSONDecodeError) as exc:
+        return Result.fail(
+            f"Falha ao ler PLANO-EXECUCAO-ESTRUTURADO.json: {exc}",
+            codigo="MONOLITO_INVALIDO",
+            detalhes={"dir_projeto": dir_projeto},
+        )
+
+    nome_projeto = plano_execucao.get("projeto", {}).get("nome") or os.path.basename(
+        os.path.normpath(dir_projeto)
+    )
+
+    return Result.ok({
+        "nicho_slug": MONOLITO_SLUG,
+        "nicho_nome_exibicao": f"{MONOLITO_NOME_EXIBICAO_PREFIXO}: {nome_projeto}",
+        "texto_original": dir_projeto,
+        "palavras_chave_candidatas": [],
+    })
 
 
 def reconhecer_nicho(texto_ou_nicho: str, nicho_explicito: Optional[str] = None) -> Result:

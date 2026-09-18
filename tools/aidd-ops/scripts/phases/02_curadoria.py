@@ -45,6 +45,44 @@ def _validar_campos_obrigatorios(dados: Dict[str, Any], schema: Dict[str, Any]) 
     return erros
 
 
+def curar_stack_monolito(nicho_slug: str, nicho_nome_exibicao: str, dir_projeto: str) -> Result:
+    """Curadoria para um monólito customizado (aidd-master): não há
+    ferramentas OSS de terceiros para escolher — o monólito já É a
+    aplicação completa. As "ferramentas" desta fase (mantendo a mesma
+    forma do contrato/schema, sem exigir mudança nele) passam a ser os
+    próprios módulos (fatias verticais) do projeto, lidos de
+    `PLANO-EXECUCAO-ESTRUTURADO.json`, usados na Fase 3 para dimensionar a
+    VPS pela complexidade real do monólito em vez de um catálogo OSS.
+    """
+    plano_path = os.path.join(dir_projeto, "PLANO-EXECUCAO-ESTRUTURADO.json")
+    try:
+        with open(plano_path, "r", encoding="utf-8") as f:
+            plano_execucao = json.load(f)
+    except (OSError, json.JSONDecodeError) as exc:
+        return Result.fail(
+            f"Falha ao ler PLANO-EXECUCAO-ESTRUTURADO.json: {exc}",
+            codigo="MONOLITO_INVALIDO",
+            detalhes={"dir_projeto": dir_projeto},
+        )
+
+    nomes_modulos = [
+        m.get("slug") or m.get("nome")
+        for m in plano_execucao.get("modulos", [])
+        if isinstance(m, dict) and (m.get("slug") or m.get("nome"))
+    ]
+    if not nomes_modulos:
+        # aidd-master sempre cria o módulo "principal" no init, mesmo que
+        # ele não apareça na lista `modulos` de PLANO-EXECUCAO-ESTRUTURADO
+        # (só entradas de `add-module` são registradas lá).
+        nomes_modulos = ["principal"]
+
+    return Result.ok({
+        "nicho_slug": nicho_slug,
+        "nicho_nome_exibicao": nicho_nome_exibicao,
+        "ferramentas": [{"nome": nome} for nome in nomes_modulos],
+    })
+
+
 def curar_stack(nicho_slug: str, nicho_nome_exibicao: str) -> Result:
     """Retorna a stack de ferramentas para o nicho especificado.
 

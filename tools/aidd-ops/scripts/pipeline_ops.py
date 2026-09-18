@@ -128,13 +128,22 @@ def _primeiro_erro_pipeline(plano: dict) -> Optional[dict]:
     return None
 
 
-def montar_plano_em_memoria(texto: str, nicho_explicito: Optional = None) -> Result:
+def montar_plano_em_memoria(texto: str, nicho_explicito: Optional = None, dir_projeto: Optional = None) -> Result:
     """Roda as 3 fases (Intake → Curadoria → Sizing) e monta o plano EM MEMÓRIA.
 
     Ponto único de construção do PLANO-INFRAESTRUTURA, compartilhado pelo CLI
     (executar_pipeline) e pelo intake web (apps/intake). Sempre retorna
     Result.ok(plano); em caso de falha de fase, o próprio plano carrega o
     `erro` (to_dict do Result da fase) no slot correspondente — nunca lança.
+
+    Args:
+        dir_projeto: quando fornecido, ativa o caminho de "monólito
+            customizado" (Fluxo 01, `aidd-master`) — pula o casamento de
+            texto contra os 5 nichos OSS fixos (Fluxo 02) e reconhece a
+            origem direto pelos artefatos reais do projeto. O contrato
+            `PLANO-INFRAESTRUTURA.json` (schema) não muda: o discriminador
+            é o valor sentinela `nicho_slug="monolito_customizado"`
+            (`01_intake.MONOLITO_SLUG`), nunca colide com um slug OSS real.
     """
     plano: dict = {
         "versao": "1.0.0",
@@ -143,7 +152,10 @@ def montar_plano_em_memoria(texto: str, nicho_explicito: Optional = None) -> Res
     }
 
     # ── Fase 1: Intake ──
-    resultado_f1 = _mod_intake.reconhecer_nicho(texto, nicho_explicito=nicho_explicito)
+    if dir_projeto:
+        resultado_f1 = _mod_intake.reconhecer_origem_monolito(dir_projeto)
+    else:
+        resultado_f1 = _mod_intake.reconhecer_nicho(texto, nicho_explicito=nicho_explicito)
     plano["fase_1_intake"] = {
         "entrada": {"texto": texto, "nicho_explicito": nicho_explicito},
         "saida": resultado_f1.valor if resultado_f1.sucesso else None,
@@ -156,9 +168,13 @@ def montar_plano_em_memoria(texto: str, nicho_explicito: Optional = None) -> Res
     dados_f1 = resultado_f1.valor
     nicho_slug = dados_f1["nicho_slug"]
     nicho_nome = dados_f1["nicho_nome_exibicao"]
+    eh_monolito = nicho_slug == _mod_intake.MONOLITO_SLUG
 
     # ── Fase 2: Curadoria ──
-    resultado_f2 = _mod_curadoria.curar_stack(nicho_slug, nicho_nome)
+    if eh_monolito:
+        resultado_f2 = _mod_curadoria.curar_stack_monolito(nicho_slug, nicho_nome, dir_projeto)
+    else:
+        resultado_f2 = _mod_curadoria.curar_stack(nicho_slug, nicho_nome)
     plano["fase_2_curadoria"] = {
         "entrada": {"nicho_slug": nicho_slug, "nicho_nome_exibicao": nicho_nome},
         "saida": resultado_f2.valor if resultado_f2.sucesso else None,
@@ -172,7 +188,10 @@ def montar_plano_em_memoria(texto: str, nicho_explicito: Optional = None) -> Res
     ferramentas = dados_f2.get("ferramentas", [])
 
     # ── Fase 3: Sizing ──
-    resultado_f3 = _mod_sizing.dimensionar(ferramentas)
+    if eh_monolito:
+        resultado_f3 = _mod_sizing.dimensionar_monolito(ferramentas)
+    else:
+        resultado_f3 = _mod_sizing.dimensionar(ferramentas)
     plano["fase_3_sizing"] = {
         "entrada": {"ferramentas": ferramentas},
         "saida": resultado_f3.valor if resultado_f3.sucesso else None,
@@ -183,7 +202,7 @@ def montar_plano_em_memoria(texto: str, nicho_explicito: Optional = None) -> Res
     return Result.ok(plano)
 
 
-def executar_pipeline(texto: str, pasta_destino: str, nicho_explicito: Optional = None) -> int:
+def executar_pipeline(texto: str, pasta_destino: str, nicho_explicito: Optional = None, dir_projeto: Optional = None) -> int:
     """Executa o pipeline completo das 3 fases.
 
     Uses montar_plano_em_memoria (fonte única do plano) e grava o resultado
@@ -193,11 +212,14 @@ def executar_pipeline(texto: str, pasta_destino: str, nicho_explicito: Optional 
         exit code: 0 = sucesso, 1 = falha.
     """
     caminho_plano = os.path.join(pasta_destino, "PLANO-INFRAESTRUTURA.json")
-    print("[Fase 1/3] Reconhecimento de Nicho...")
+    if dir_projeto:
+        print("[Fase 1/3] Reconhecimento de Origem (monólito customizado)...")
+    else:
+        print("[Fase 1/3] Reconhecimento de Nicho...")
     print("[Fase 2/3] Curadoria da Stack...")
     print("[Fase 3/3] Dimensionamento de Recursos...")
 
-    resultado = montar_plano_em_memoria(texto, nicho_explicito=nicho_explicito)
+    resultado = montar_plano_em_memoria(texto, nicho_explicito=nicho_explicito, dir_projeto=dir_projeto)
     plano = resultado.valor
 
     # Contrato do Item 5: o plano (sucesso OU falha estruturada de fase) DEVE
@@ -317,15 +339,19 @@ def cli():
 @cli.command("plan", context_settings=_CONTEXT, help="Gera plano de infraestrutura (Fases 1-3)")
 @click.argument("texto", required=False)
 @click.option("--nicho", default=None, help="Slug explícito do nicho (clinicas, delivery, farmacias, b2b_industrial, energia_solar)")
+@click.option("--dir-projeto", default=None, help="Diretório de um monólito já gerado por 'aidd-master init' — pula a curadoria OSS de nicho e dimensiona pela contagem real de módulos do projeto")
 @click.option("--pasta", default=None, help="Diretório de destino para PLANO-INFRAESTRUTURA.json (default: temporário)")
-def _cmd_plan(texto, nicho, pasta):
-    if texto is None and nicho is None:
-        raise click.UsageError("Forneça um texto posicional ou use --nicho <slug>")
+def _cmd_plan(texto, nicho, dir_projeto, pasta):
+    if texto is None and nicho is None and not dir_projeto:
+        raise click.UsageError("Forneça um texto posicional, use --nicho <slug> ou --dir-projeto <pasta>")
     import tempfile
     if not pasta:
         pasta = tempfile.mkdtemp(prefix="aidd_ops_plan_")
     os.makedirs(pasta, exist_ok=True)
-    _sair(executar_pipeline(texto=texto or "", pasta_destino=pasta, nicho_explicito=nicho))
+    _sair(executar_pipeline(
+        texto=texto or dir_projeto or "", pasta_destino=pasta,
+        nicho_explicito=nicho, dir_projeto=dir_projeto,
+    ))
 
 
 # ── bootstrap ──
@@ -445,6 +471,27 @@ def _cmd_preflight(ambiente, host, timeout, retries, retry_interval, servicos, w
 # infraestrutura (SSHRunner, PreflightRunner, CoolifyManager) seguem o padrão
 # de import preguiçoso dos demais comandos para não pesar no import do módulo.
 
+def _mapear_servico_coolify(nome_ferramenta: str) -> Dict[str, Any]:
+    """Mapeia o nome de uma ferramenta curada (Fase 2) para o formato que
+    `CoolifyManager.orquestrar_stack()` espera. Usa `data/requisitos_recursos.json`
+    (mesmo catálogo da Fase 3 de sizing) para vCPU/RAM reais quando disponível;
+    porta interna não é catalogada hoje — usa o default 3000, convenção da
+    maioria dos self-hosted apps curados (Next.js/Node)."""
+    dados = {}
+    try:
+        dados = _mod_sizing._carregar_requisitos().get("ferramentas", {}).get(nome_ferramenta, {})
+    except (OSError, json.JSONDecodeError):
+        pass
+    vcpu = dados.get("vcpu", 1)
+    ram_gb = dados.get("ram_gb", 1)
+    return {
+        "nome": nome_ferramenta,
+        "porta_interna": 3000,
+        "cpus": f"{float(vcpu):.1f}",
+        "memory": f"{int(float(ram_gb) * 1024)}M",
+    }
+
+
 class DeployOrchestrator:
     """Orquestrador do ciclo completo de deploy AIDD-Ops."""
 
@@ -458,6 +505,7 @@ class DeployOrchestrator:
         port_ssh: int = 22,
         dry_run: bool = True,
         motor: str = "coolify",
+        motor_explicito: bool = False,
     ):
         self.ambiente = ambiente.strip()
         self.host = host.strip()
@@ -467,7 +515,34 @@ class DeployOrchestrator:
         self.port_ssh = port_ssh
         self.dry_run = dry_run
         self.motor = motor.lower().strip()
+        self.motor_explicito = motor_explicito
+        self.plano_carregado: Optional[Dict[str, Any]] = None
         self.historico_etapas: List[Dict[str, Any]] = []
+
+    @staticmethod
+    def _extrair_ferramentas_e_nicho(plano: Dict[str, Any]) -> "tuple[List[Dict[str, str]], str]":
+        """Le a lista de ferramentas/modulos e o nicho de um plano carregado,
+        cobrindo os dois formatos possiveis: o PLANO-INFRAESTRUTURA.json real
+        (produzido por `ops plan`, com fase_1_intake/fase_2_curadoria) e o
+        plano sintetico de fallback que a Etapa 1 gera quando nenhum
+        `--plano` e fornecido (dict achatado com "nicho"/"blocos")."""
+        if "fase_2_curadoria" in plano:
+            saida_f2 = (plano.get("fase_2_curadoria") or {}).get("saida") or {}
+            ferramentas = saida_f2.get("ferramentas", [])
+            nicho_slug = saida_f2.get("nicho_slug", "")
+            return ferramentas, nicho_slug
+        blocos = plano.get("blocos", [])
+        ferramentas = [{"nome": b} for b in blocos]
+        return ferramentas, plano.get("nicho", "")
+
+    def _dir_projeto_do_plano(self) -> Optional[str]:
+        """Extrai o diretorio do projeto monolito de um plano gerado por
+        `ops plan --dir-projeto` (guardado em fase_1_intake.saida.texto_original)."""
+        if not self.plano_carregado:
+            return None
+        return (
+            (self.plano_carregado.get("fase_1_intake") or {}).get("saida") or {}
+        ).get("texto_original")
 
     def _registrar_etapa(self, nome: str, status: str, detalhes: Any = None) -> None:
         self.historico_etapas.append({
@@ -552,11 +627,24 @@ class DeployOrchestrator:
         return Result.ok({"status": "templates_validados", "templates_dir": templates_dir})
 
     def etapa_5_deploy_conteineres(self) -> Result[Dict[str, Any]]:
-        """Executa orquestração e deploy dos contêineres via Coolify ou Docker Compose."""
+        """Executa orquestração e deploy dos contêineres via Coolify ou Docker Compose nativo."""
+        if self.motor == "compose-nativo":
+            return self._etapa_5_compose_nativo()
+
         if self.motor == "coolify":
             from core.coolify import CoolifyManager
             manager = CoolifyManager(dry_run=self.dry_run)
+            # Achado real corrigido: esta lista era sempre hardcoded
+            # (Twenty/Chatwoot/Calcom/Postgres/UptimeKuma, o "nicho" clínicas)
+            # e ignorava por completo o `--plano` carregado — rodar `deploy`
+            # para qualquer outro nicho curado (delivery, farmacias, ...)
+            # implantava exatamente a mesma stack de clínicas. Agora lê a
+            # stack real curada pela Fase 2 do plano (validação E2E do Fluxo
+            # 01/aidd-ops, 18/09/2026).
+            ferramentas_plano, _ = self._extrair_ferramentas_e_nicho(self.plano_carregado or {})
             servicos_stack = [
+                _mapear_servico_coolify(f["nome"]) for f in ferramentas_plano if f.get("nome")
+            ] or [
                 {"nome": "Twenty", "porta_interna": 3000, "cpus": "1.0", "memory": "1024M"},
                 {"nome": "Chatwoot", "porta_interna": 3000, "cpus": "1.5", "memory": "2048M"},
                 {"nome": "Calcom", "porta_interna": 3000, "cpus": "1.0", "memory": "1024M"},
@@ -599,18 +687,90 @@ class DeployOrchestrator:
             self._registrar_etapa("deploy_coolify", "passou", detalhes_sucesso)
             return Result.ok(detalhes_sucesso)
 
+        return Result.fail(
+            f"Motor de deploy desconhecido: '{self.motor}'. Use 'coolify' ou 'compose-nativo'.",
+            codigo="MOTOR_DESCONHECIDO",
+        )
+
+    def _etapa_5_compose_nativo(self) -> Result[Dict[str, Any]]:
+        """Motor 'compose-nativo': implanta o docker-compose.yml JÁ GERADO
+        pelo projeto (aidd-master), em vez de montar uma stack OSS fixa via
+        Coolify — cobre o Fluxo 01 (monólito customizado), que não é uma
+        composição de ferramentas de terceiros a orquestrar, e sim uma
+        aplicação já pronta com seu próprio Dockerfile/docker-compose.yml/
+        deploy.sh (achado real corrigido: antes, o motor não-Coolify nem
+        lia o compose do projeto, e em modo real só fingia sucesso sem
+        executar nada — validação E2E do Fluxo 01/aidd-ops, 18/09/2026)."""
+        dir_projeto = self._dir_projeto_do_plano()
+        if not dir_projeto:
+            return Result.fail(
+                "Motor 'compose-nativo' requer um plano gerado via "
+                "'ops plan --dir-projeto <pasta>' (precisa saber qual "
+                "projeto tem o docker-compose.yml a implantar).",
+                codigo="DIR_PROJETO_AUSENTE",
+            )
+
+        compose_path = os.path.join(dir_projeto, "docker-compose.yml")
+        if not os.path.isfile(compose_path):
+            return Result.fail(
+                f"docker-compose.yml não encontrado em '{dir_projeto}'.",
+                codigo="COMPOSE_AUSENTE",
+                detalhes={"dir_projeto": dir_projeto},
+            )
+
+        from core.compose_preflight import ComposePreflightValidator
+        with open(compose_path, "r", encoding="utf-8") as f:
+            compose_conteudo = f.read()
+        compose_ok, compose_erros = ComposePreflightValidator.validate_compose_content(compose_conteudo)
+        if not compose_ok:
+            self._registrar_etapa("deploy_compose_nativo", "falhou", compose_erros)
+            return Result.fail(
+                "docker-compose.yml do projeto reprovou o pré-voo de lint.",
+                codigo="COMPOSE_INVALIDO",
+                detalhes={"erros": compose_erros, "dir_projeto": dir_projeto},
+            )
+
+        import yaml
+        servicos = sorted((yaml.safe_load(compose_conteudo) or {}).get("services", {}).keys())
+
         if self.dry_run:
             resultado = {
                 "dry_run": True,
-                "servicos_iniciados": ["traefik", "postgres", "twenty", "chatwoot", "calcom"],
-                "rede": "aidd_network"
+                "motor": "compose-nativo",
+                "dir_projeto": dir_projeto,
+                "servicos_iniciados": servicos,
+                "rede": "aidd_network",
             }
-            self._registrar_etapa("deploy_docker", "passou", resultado)
+            self._registrar_etapa("deploy_compose_nativo", "passou", resultado)
             return Result.ok(resultado)
 
-        # Em execução real contra VPS, os comandos seriam orquestrados via runner remoto
-        self._registrar_etapa("deploy_docker", "passou", {"modo": "real", "status": "executado"})
-        return Result.ok({"modo": "real", "status": "executado"})
+        # Produção real: confirma que a VPS alvo está de fato alcançável via
+        # SSH antes de admitir honestamente o que ainda falta — cópia dos
+        # arquivos do projeto para a VPS + `docker compose up -d --build`
+        # remoto (ou o `deploy.sh` já gerado pelo projeto). Preferir falhar
+        # de forma explícita a fingir sucesso sem executar nada real.
+        from core.ssh_runner import SSHRunner
+        runner = SSHRunner(host=self.host, user=self.user_ssh, port=self.port_ssh, dry_run=False)
+        res_conexao = runner.testar_conexao()
+        self._registrar_etapa(
+            "deploy_compose_nativo_preflight_ssh", "passou" if res_conexao.sucesso else "falhou",
+            res_conexao.valor if res_conexao.sucesso else res_conexao.erro,
+        )
+        return Result.fail(
+            "Deploy real via motor 'compose-nativo' ainda não está implementado "
+            "(falta cópia de arquivos + execução remota de "
+            "`docker compose up -d --build`/`deploy.sh`). "
+            + ("Conectividade SSH com a VPS alvo confirmada — falta só a execução remota."
+               if res_conexao.sucesso else
+               f"Alem disso, a conexao SSH com a VPS falhou: {res_conexao.erro}"),
+            codigo="REAL_NAO_IMPLEMENTADO",
+            detalhes={
+                "dir_projeto": dir_projeto,
+                "servicos": servicos,
+                "ssh_alcancavel": res_conexao.sucesso,
+                "alternativa": f"Copie '{dir_projeto}' para a VPS e rode ./deploy.sh manualmente.",
+            },
+        )
 
     def etapa_6_preflight_verificacao(self) -> Result[Dict[str, Any]]:
         """Dispara a bateria de testes pré-produção via PreflightRunner."""
@@ -652,6 +812,20 @@ class DeployOrchestrator:
         if not r1.sucesso:
             return Result.fail(erro=r1.erro, codigo=r1.codigo, detalhes=self._gerar_relatorio_falha("validacao_plano"))
         print("[OK] Etapa 1: Plano de infraestrutura validado.")
+        self.plano_carregado = r1.valor
+
+        # Seleciona o motor automaticamente a partir do plano carregado quando
+        # o chamador não pediu um motor explícito (achado real: a Etapa 5
+        # ignorava completamente o plano carregado e sempre montava a mesma
+        # stack fixa via Coolify, independente do que `ops plan` curou —
+        # corrigido na validação E2E do Fluxo 01, 18/09/2026). Monólitos
+        # customizados (aidd-master) usam o motor "compose-nativo" — não faz
+        # sentido orquestrá-los via Coolify, eles já trazem seu próprio
+        # docker-compose.yml/deploy.sh.
+        if not self.motor_explicito:
+            _, nicho_slug_plano = self._extrair_ferramentas_e_nicho(self.plano_carregado)
+            if nicho_slug_plano == _mod_intake.MONOLITO_SLUG:
+                self.motor = "compose-nativo"
 
         # 2. Bootstrap VPS
         r2 = self.etapa_2_bootstrap_vps()
@@ -730,7 +904,10 @@ class DeployOrchestrator:
 @click.option("--port", type=int, default=22, show_default=True, help="Porta SSH")
 @click.option("--real", is_flag=True, help="Executa contra infraestrutura real (padrão é --dry-run seguro)")
 @click.option("--dry-run", is_flag=True, default=None, help="Executa em modo simulação seguro (padrão)")
-def _cmd_deploy(ambiente, host, plano, domain, user, port, real, dry_run):
+@click.option("--motor", type=click.Choice(["coolify", "compose-nativo"]), default=None,
+              help="Motor de implantação (default: 'coolify', ou 'compose-nativo' auto-selecionado quando o "
+                   "--plano vem de 'ops plan --dir-projeto' — monólito customizado). Passe aqui para forçar.")
+def _cmd_deploy(ambiente, host, plano, domain, user, port, real, dry_run, motor):
     if dry_run is None:
         dry_run = not real
     orchestrator = DeployOrchestrator(
@@ -741,6 +918,8 @@ def _cmd_deploy(ambiente, host, plano, domain, user, port, real, dry_run):
         user_ssh=user,
         port_ssh=port,
         dry_run=dry_run,
+        motor=motor or "coolify",
+        motor_explicito=motor is not None,
     )
     res = orchestrator.executar_deploy_completo()
     _sair(0 if res.sucesso else 1)

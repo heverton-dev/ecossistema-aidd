@@ -31,6 +31,62 @@ def _carregar_requisitos() -> Dict[str, Any]:
         return json.load(f)
 
 
+def dimensionar_monolito(ferramentas: List[Dict[str, str]]) -> Result:
+    """Dimensiona a VPS para um monólito customizado (aidd-master) a partir
+    da contagem de módulos (fatias verticais), sem depender do catálogo de
+    ferramentas OSS (`data/requisitos_recursos.json`) — o monólito já é a
+    aplicação inteira, não uma composição de ferramentas de terceiros
+    nomeadas. Reaproveita a mesma aritmética/margem/mínimos de `dimensionar()`
+    para consistência de saída (mesmo shape do contrato, zero mudança de
+    schema), mas troca o lookup por nome de ferramenta por uma heurística de
+    baseline fixo (app + nginx + frontend Next.js, sempre presentes) mais um
+    incremento por módulo.
+
+    Args:
+        ferramentas: lista de dicts com chave "nome" — aqui, nomes de
+            módulos do monólito (não nomes de ferramenta OSS).
+    """
+    nomes_modulos = [f["nome"] for f in ferramentas] or ["principal"]
+    num_modulos = len(nomes_modulos)
+
+    baseline_vcpu, baseline_ram, baseline_disco = 1.0, 1.5, 15.0
+    incremento_vcpu, incremento_ram, incremento_disco = 0.25, 0.5, 2.0
+
+    total_vcpu = baseline_vcpu + incremento_vcpu * num_modulos
+    total_ram = baseline_ram + incremento_ram * num_modulos
+    total_disco = baseline_disco + incremento_disco * num_modulos
+
+    margem = 1.2
+    vcpu_final = max(2, math.ceil(total_vcpu * margem))
+    ram_final = max(4, math.ceil(total_ram * margem))
+    disco_final = max(40, math.ceil(total_disco * margem))
+
+    resultado = {
+        "vps": {
+            "vcpu": vcpu_final,
+            "ram_gb": ram_final,
+            "disco_gb": disco_final,
+        },
+        "bancos_logicos": [],
+        "ferramentas_com_banco": [],
+        "ferramentas_sem_banco": nomes_modulos,
+        "fontes_consultadas": [
+            {
+                "ferramenta": nome,
+                "url": "",
+                "requisitos_encontrados": False,
+                "notas": (
+                    f"Monólito customizado (aidd-master): sizing por heurística de "
+                    f"contagem de módulos ({num_modulos} módulo(s): baseline "
+                    f"app+nginx+frontend + incremento por módulo), não por catálogo OSS."
+                ),
+            }
+            for nome in nomes_modulos
+        ],
+    }
+    return Result.ok(resultado)
+
+
 def dimensionar(ferramentas: List[Dict[str, str]]) -> Result:
     """Dimensiona os recursos de VPS e lista bancos lógicos necessários.
 

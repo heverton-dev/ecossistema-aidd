@@ -100,6 +100,104 @@ def test_nicho_completo(slug, texto, tmp_path):
     assert len(f3["fontes_consultadas"]) > 0
 
 
+# ── Testes do tipo de origem "monólito customizado" (Fluxo 01, aidd-master) ──
+
+def _criar_monolito_fake(base_dir: str, nome_projeto: str, slugs_modulos: list) -> str:
+    """Cria um diretório com os 3 artefatos reais que `aidd-master init`
+    sempre gera (estrutura mínima, mas real o suficiente para exercitar o
+    caminho de detecção de arquivo por arquivo, sem depender de rodar o
+    aidd-master de verdade dentro deste teste)."""
+    projeto_dir = os.path.join(base_dir, f"proj_{nome_projeto}")
+    os.makedirs(projeto_dir, exist_ok=True)
+    with open(os.path.join(projeto_dir, "PLANO-EXECUCAO-ESTRUTURADO.json"), "w", encoding="utf-8") as f:
+        json.dump({
+            "projeto": {"nome": nome_projeto},
+            "fases": [],
+            "modulos": [{"nome": s.title(), "slug": s} for s in slugs_modulos],
+        }, f)
+    with open(os.path.join(projeto_dir, "docker-compose.yml"), "w", encoding="utf-8") as f:
+        f.write("services:\n  app:\n    build: .\n")
+    with open(os.path.join(projeto_dir, "Dockerfile"), "w", encoding="utf-8") as f:
+        f.write("FROM python:3.12-slim\n")
+    return projeto_dir
+
+
+def _run_pipeline_dir_projeto(dir_projeto: str, pasta: str) -> subprocess.CompletedProcess:
+    cmd = [sys.executable, PIPELINE_SCRIPT, "plan", "--dir-projeto", dir_projeto, "--pasta", pasta]
+    return subprocess.run(cmd, capture_output=True, text=True, timeout=30, cwd=TOOL_ROOT)
+
+
+def test_monolito_customizado_ponta_a_ponta(tmp_path):
+    """Achado real corrigido: aidd-ops só cobria o Fluxo 02 (OSS por nicho) —
+    um monólito do aidd-master (Fluxo 01) sempre batia NICHO_NAO_RECONHECIDO.
+    Reprodução real via CLI: `ops plan --dir-projeto <monólito>` deve
+    reconhecer a origem, dimensionar pela contagem de módulos (não por
+    catálogo OSS) e gravar um PLANO-INFRAESTRUTURA.json 100% válido contra
+    o mesmo schema canônico — sem nenhuma mudança de schema."""
+    dir_projeto = _criar_monolito_fake(str(tmp_path), "app-teste", ["tarefas", "usuarios"])
+    pasta = str(tmp_path / "saida_monolito")
+    os.makedirs(pasta, exist_ok=True)
+
+    resultado = _run_pipeline_dir_projeto(dir_projeto, pasta)
+    assert resultado.returncode == 0, (
+        f"Exit {resultado.returncode}.\nSTDOUT: {resultado.stdout}\nSTDERR: {resultado.stderr}"
+    )
+
+    plano = _carregar_plano(pasta)
+    f1 = plano["fase_1_intake"]["saida"]
+    assert f1["nicho_slug"] == "monolito_customizado"
+    assert "app-teste" in f1["nicho_nome_exibicao"]
+
+    f2 = plano["fase_2_curadoria"]["saida"]
+    nomes = sorted(f["nome"] for f in f2["ferramentas"])
+    assert nomes == ["tarefas", "usuarios"]
+
+    f3 = plano["fase_3_sizing"]["saida"]
+    # 2 módulos: baseline 1.0 vcpu + 0.25*2=0.5 = 1.5*1.2=1.8 -> ceil 2 (mínimo já cobre)
+    assert f3["vps"]["vcpu"] >= 2
+    assert f3["bancos_logicos"] == []
+    assert sorted(f3["ferramentas_sem_banco"]) == ["tarefas", "usuarios"]
+
+
+def test_monolito_dimensiona_mais_para_mais_modulos(tmp_path):
+    """A heurística de sizing por módulo precisa realmente escalar com a
+    complexidade do monólito — mais módulos, mais vCPU/RAM — provando que
+    não caiu de volta no mínimo fixo independente da entrada."""
+    dir_pequeno = _criar_monolito_fake(str(tmp_path), "pequeno", ["principal"])
+    dir_grande = _criar_monolito_fake(
+        str(tmp_path), "grande",
+        [f"modulo{i}" for i in range(20)],
+    )
+    pasta_pequeno = str(tmp_path / "saida_pequeno")
+    pasta_grande = str(tmp_path / "saida_grande")
+    os.makedirs(pasta_pequeno, exist_ok=True)
+    os.makedirs(pasta_grande, exist_ok=True)
+
+    r_pequeno = _run_pipeline_dir_projeto(dir_pequeno, pasta_pequeno)
+    r_grande = _run_pipeline_dir_projeto(dir_grande, pasta_grande)
+    assert r_pequeno.returncode == 0
+    assert r_grande.returncode == 0
+
+    vps_pequeno = _carregar_plano(pasta_pequeno)["fase_3_sizing"]["saida"]["vps"]
+    vps_grande = _carregar_plano(pasta_grande)["fase_3_sizing"]["saida"]["vps"]
+    assert vps_grande["vcpu"] > vps_pequeno["vcpu"]
+    assert vps_grande["ram_gb"] > vps_pequeno["ram_gb"]
+
+
+def test_monolito_invalido_sem_docker_compose(tmp_path):
+    """Pasta sem os artefatos reais de `aidd-master init` deve reprovar
+    explicitamente (MONOLITO_INVALIDO), nunca cair silenciosamente em
+    NICHO_NAO_RECONHECIDO (que sugeriria, erradamente, tentar nichos OSS)."""
+    dir_projeto = str(tmp_path / "pasta_qualquer")
+    os.makedirs(dir_projeto, exist_ok=True)
+    pasta = str(tmp_path / "saida_invalido")
+    os.makedirs(pasta, exist_ok=True)
+
+    resultado = _run_pipeline_dir_projeto(dir_projeto, pasta)
+    assert resultado.returncode == 1
+    assert "MONOLITO_INVALIDO" in resultado.stdout
+
+
 # ── Teste via --nicho (bypass) ──
 
 def test_nicho_explicito(tmp_path):
