@@ -338,11 +338,11 @@ projeto-corporativo/
 
 | Diretório Físico | Papel Arquitetural | Quality Gate Verificador |
 | :--- | :--- | :--- |
-| `src/core/` | Centraliza bibliotecas transversais (DB, segurança, telemetria, Estúdios nativos) | `G_DRIFT_NUCLEO_COMPARTILHADO` |
-| `src/modules/{slug}/` | Encapsula cada fatia de negócio isolada (VSA) — nunca `src/features/` | `G_TESTES` / `G_ARQUITETURA` (aidd-master/enterprise) |
-| `frontend/` | Next.js/TypeScript/Tailwind com identidade visual única por projeto (Lei #11) | `G_CONTRACTS`, `G_FACTORY_INTEGRATION` (aidd-factory) |
+| `src/core/` | Centraliza bibliotecas transversais (DB, segurança, telemetria, Estúdios nativos) | `G_DRIFT_NUCLEO_COMPARTILHADO`, `G_LLM_PROMPT_SHIELD` |
+| `src/modules/{slug}/` | Encapsula cada fatia de negócio isolada (VSA) — fatias estritamente isoladas via AST | `G_ISOLATION_AUDIT`, `G_TESTES` / `G_ARQUITETURA` |
+| `frontend/` | Next.js/TypeScript/Tailwind com identidade visual única por projeto (Lei #11) | `G_FRONTEND_LAYERS`, `G_CONTRACTS` |
 | `infra/` | Configuração de containers OCI, proxy reverso e chaves | `G_HADOLINT`, `G_INFRA_COMPOSE` |
-| `AGENTS.md & requirements.txt` | Regras invioláveis em código e trava de supply chain por SHA-256 | `G_DEPENDENCIAS_PIN_HASH`, `G_ECOSSISTEMA_INTEGRIDADE` |
+| `AGENTS.md & requirements.txt` | Regras invioláveis em código e trava de supply chain por SHA-256 | `G_DEPENDENCIAS_PIN_HASH`, `G_ECOSSISTEMA_INTEGRIDADE`, `G_PROTOCOL_FALLBACK` |
 
 ---
 

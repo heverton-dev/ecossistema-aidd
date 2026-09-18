@@ -1,0 +1,78 @@
+{
+  "plan_dir": "C:\\Users\\trcnologia\\Desktop\\ecossistema-aidd\\docs\\planos\\a-fazer\\PLAN-0035-blindagem-arquitetural-qualidade",
+  "harness": "agy",
+  "profile_binary": "agy",
+  "fronts": [
+    {
+      "name": "isolamento-ast-fatias",
+      "rotulo": "PLAN-0035-fase-01-isolamento-ast-fatias",
+      "branch": "orca/PLAN-0035-fase-01-isolamento-ast-fatias",
+      "worktree": "PLAN-0035-fase-01-isolamento-ast-fatias",
+      "harness": "agy",
+      "command": [
+        "agy",
+        "--dangerously-skip-permissions",
+        "--model",
+        "gemini-3.8-flash-low",
+        "Scope: Criar o Quality Gate G_ISOLATION_AUDIT.py e sua suite de testes test_g_isolation_audit.py para analise estatica por AST impedindo imports cruzados diretos entre fatias VSA (src/features/*).\n\nDefinition of Done:\n\n1. Implementar `gates/G_ISOLATION_AUDIT.py` com `ast.parse` que varre `src/features/` em projetos e templates, detectando violacoes de import cruzado.\n2. Implementar `gates/test_g_isolation_audit.py` com testes unitarios cobrindo cenarios validos e casos de violacao com exit 1.\n3. Integrar `G_ISOLATION_AUDIT` a lista de gates em `ecossistema.py` e verificar aprovacao em `python ecossistema.py audit`.\n4. Modo /goal ativo: [executar o fluxo alvo do inicio ao fim corrigindo TODOS os bugs, erros, inconsistencias, backlogs encontrados durante a execucao da implementacao (Encontrou? Corrige!) | IMPLEMENTACAO 100% sem erros, bugs, backlogs, ou debitos tecnicos].\n\nExit Criteria:\n\n- Arquivos criados e testados: `gates/G_ISOLATION_AUDIT.py` e `gates/test_g_isolation_audit.py`.\n- Testes reais passando com exit 0 sem stubs.\n- `python ecossistema.py audit` executando o novo gate e retornando sucesso.\n\nOperating in /goal mode with:\n[ Objective: execute target flow end-to-end fixing ALL bugs, errors, inconsistencies, and backlogs encountered during implementation (Found it? Fix it!) | Condition: 100% IMPLEMENTATION with zero errors, bugs, backlogs, or technical debt ]\n\nImplement Item 1: isolamento-ast-fatias.\nCreate gates/G_ISOLATION_AUDIT.py and gates/test_g_isolation_audit.py.\nValidate AST cross-slice imports in VSA (src/features/*).\nIntegrate into ecossistema.py and ensure 100% tests passing with exit 0."
+      ]
+    },
+    {
+      "name": "light-lane-consultas",
+      "rotulo": "PLAN-0035-fase-02-light-lane-consultas",
+      "branch": "orca/PLAN-0035-fase-02-light-lane-consultas",
+      "worktree": "PLAN-0035-fase-02-light-lane-consultas",
+      "harness": "agy",
+      "command": [
+        "agy",
+        "--dangerously-skip-permissions",
+        "--model",
+        "gemini-3.8-flash-low",
+        "Scope: Padronizar e documentar a convencao VSA Light-Lane (Query Slices) para operacoes read-only diretas com DTOs sem boilerplate de Railway Monad.\n\nDefinition of Done:\n\n1. Criar documentacao de padrao arquitetural `docs/padroes/PADRAO-VSA-LIGHT-LANE.md` detalhando a fronteira entre Command Slices (Railway estrito) e Query Slices (Light-Lane).\n2. Fornecer template representativo em `tools/aidd-master/templates/v2/src/core/cqrs.py` suportando execucao leve de queries.\n3. Testar via pytest deterministico comprovando funcionamento das queries sem quebra de contratos.\n4. Modo /goal ativo: [executar o fluxo alvo do inicio ao fim corrigindo TODOS os bugs, erros, inconsistencias, backlogs encontrados durante a execucao da implementacao (Encontrou? Corrige!) | IMPLEMENTACAO 100% sem erros, bugs, backlogs, ou debitos tecnicos].\n\nExit Criteria:\n\n- Documento `docs/padroes/PADRAO-VSA-LIGHT-LANE.md` criado e validado.\n- Testes reais passando com exit 0 sem stubs.\n- Quality Gates de arquitetura mantidos em conformidade.\n\nOperating in /goal mode with:\n[ Objective: execute target flow end-to-end fixing ALL bugs, errors, inconsistencies, and backlogs encountered during implementation (Found it? Fix it!) | Condition: 100% IMPLEMENTATION with zero errors, bugs, backlogs, or technical debt ]\n\nImplement Item 2: light-lane-consultas.\nCreate docs/padroes/PADRAO-VSA-LIGHT-LANE.md and update templates/examples to support direct Query Slices with DTOs.\nEnsure architectural integrity and 100% tests passing."
+      ]
+    },
+    {
+      "name": "protocol-fallback-mcp",
+      "rotulo": "PLAN-0035-fase-03-protocol-fallback-mcp",
+      "branch": "orca/PLAN-0035-fase-03-protocol-fallback-mcp",
+      "worktree": "PLAN-0035-fase-03-protocol-fallback-mcp",
+      "harness": "agy",
+      "command": [
+        "agy",
+        "--dangerously-skip-permissions",
+        "--model",
+        "gemini-3.8-flash-low",
+        "Scope: Implementar o Quality Gate G_PROTOCOL_FALLBACK.py para garantir paridade 1:1 e fallback total entre MCP Tools e rotas REST documentadas no Swagger/OpenAPI.\n\nDefinition of Done:\n\n1. Implementar `gates/G_PROTOCOL_FALLBACK.py` que analisa contratos de projetos/templates (`quarteto_sine_qua_non/swagger_spec.json` vs `mcp_studio.json` ou endpoints do `server.py`).\n2. Implementar `gates/test_g_protocol_fallback.py` com testes reais cobrindo paridade e rejeicao de tools MCP orfas.\n3. Integrar ao `ecossistema.py audit` e validar exit 0.\n4. Modo /goal ativo: [executar o fluxo alvo do inicio ao fim corrigindo TODOS os bugs, erros, inconsistencias, backlogs encontrados durante a execucao da implementacao (Encontrou? Corrige!) | IMPLEMENTACAO 100% sem erros, bugs, backlogs, ou debitos tecnicos].\n\nExit Criteria:\n\n- Arquivos `gates/G_PROTOCOL_FALLBACK.py` e `gates/test_g_protocol_fallback.py` criados e testados.\n- Testes reais passando com exit 0 sem stubs.\n- Verificacao de fallback aprovada no ecossistema.\n\nOperating in /goal mode with:\n[ Objective: execute target flow end-to-end fixing ALL bugs, errors, inconsistencies, and backlogs encountered during implementation (Found it? Fix it!) | Condition: 100% IMPLEMENTATION with zero errors, bugs, backlogs, or technical debt ]\n\nImplement Item 3: protocol-fallback-mcp.\nCreate gates/G_PROTOCOL_FALLBACK.py and gates/test_g_protocol_fallback.py.\nEnsure every MCP tool has a corresponding functional REST counterpart documented in Swagger.\nIntegrate into ecossistema.py and ensure 100% tests passing with exit 0."
+      ]
+    },
+    {
+      "name": "prompt-shield-seguranca",
+      "rotulo": "PLAN-0035-fase-04-prompt-shield-seguranca",
+      "branch": "orca/PLAN-0035-fase-04-prompt-shield-seguranca",
+      "worktree": "PLAN-0035-fase-04-prompt-shield-seguranca",
+      "harness": "agy",
+      "command": [
+        "agy",
+        "--dangerously-skip-permissions",
+        "--model",
+        "gemini-3.8-flash-low",
+        "Scope: Implementar Quality Gate G_LLM_PROMPT_SHIELD.py e modulo deterministico de sanitizacao de prompt injection em src/core/security.py.\n\nDefinition of Done:\n\n1. Implementar funcao deterministica `sanitize_llm_input(text: str) -> SanitizedResult` em `templates/v2/security.py` / `src/core/security.py`.\n2. Implementar `gates/G_LLM_PROMPT_SHIELD.py` e `gates/test_g_llm_prompt_shield.py` testando ataques adversariais tipicos de prompt injection.\n3. Integrar ao `ecossistema.py audit` com exit 0.\n4. Modo /goal ativo: [executar o fluxo alvo do inicio ao fim corrigindo TODOS os bugs, erros, inconsistencias, backlogs encontrados durante a execucao da implementacao (Encontrou? Corrige!) | IMPLEMENTACAO 100% sem erros, bugs, backlogs, ou debitos tecnicos].\n\nExit Criteria:\n\n- Arquivos `gates/G_LLM_PROMPT_SHIELD.py` e testes criados.\n- Modulo de sanitizacao funcional e deterministico sem chamadas a LLM externa.\n- Quality Gates aprovados com exit 0.\n\nOperating in /goal mode with:\n[ Objective: execute target flow end-to-end fixing ALL bugs, errors, inconsistencies, and backlogs encountered during implementation (Found it? Fix it!) | Condition: 100% IMPLEMENTATION with zero errors, bugs, backlogs, or technical debt ]\n\nImplement Item 4: prompt-shield-seguranca.\nCreate gates/G_LLM_PROMPT_SHIELD.py and gates/test_g_llm_prompt_shield.py.\nAdd deterministic anti-injection sanitization in security.py.\nIntegrate into ecossistema.py and ensure 100% tests passing with exit 0."
+      ]
+    },
+    {
+      "name": "governanca-rotas-carta",
+      "rotulo": "PLAN-0035-fase-05-governanca-rotas-carta",
+      "branch": "orca/PLAN-0035-fase-05-governanca-rotas-carta",
+      "worktree": "PLAN-0035-fase-05-governanca-rotas-carta",
+      "harness": "agy",
+      "command": [
+        "agy",
+        "--dangerously-skip-permissions",
+        "--model",
+        "gemini-3.8-flash-low",
+        "Scope: Harmonizar rotas do Quarteto Sine Qua Non no AGENTS.md (Lei #10: /docs e /docs/guia), atualizar Enciclopedia Canônica e rodar auditoria geral.\n\nDefinition of Done:\n\n1. Corrigir no `AGENTS.md` a redacao da Lei #10 refletindo `/docs` para Swagger Studio e `/docs/guia` para Guia do Utilizador.\n2. Atualizar a Enciclopedia Canonica registrando os Quality Gates `G_ISOLATION_AUDIT`, `G_PROTOCOL_FALLBACK`, `G_LLM_PROMPT_SHIELD` e a especificacao Light-Lane.\n3. Executar `python ecossistema.py audit` e atestar 100% de sucesso sem pendencias.\n4. Modo /goal ativo: [executar o fluxo alvo do inicio ao fim corrigindo TODOS os bugs, erros, inconsistencias, backlogs encontrados durante a execucao da implementacao (Encontrou? Corrige!) | IMPLEMENTACAO 100% sem erros, bugs, backlogs, ou debitos tecnicos].\n\nExit Criteria:\n\n- `AGENTS.md` e Enciclopedia Canônica sincronizados.\n- `python ecossistema.py audit` retornando exit 0 com todos os gates passando.\n- Relatorio final e encerramento do plano com nota 10.0.\n\nOperating in /goal mode with:\n[ Objective: execute target flow end-to-end fixing ALL bugs, errors, inconsistencies, and backlogs encountered during implementation (Found it? Fix it!) | Condition: 100% IMPLEMENTATION with zero errors, bugs, backlogs, or technical debt ]\n\nImplement Item 5: governanca-rotas-carta.\nHarmonize Law #10 in AGENTS.md and update Canonical Encyclopedia.\nRun global audit and ensure absolute exit 0 on all quality gates."
+      ]
+    }
+  ],
+  "interactive": true
+}
