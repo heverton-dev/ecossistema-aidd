@@ -87,6 +87,55 @@ def test_api_client_usa_uma_unica_env_var(frontend_gerado):
     assert "NEXT_PUBLIC_API_BASE_URL" not in conteudo
 
 
+def test_paleta_e_dinamica_nao_fixa_entre_projetos(tmp_path):
+    """Achado real do usuário (18/09/2026): um design fixo/hardcoded no
+    gerador faria todo projeto gerado ter a mesma cara — a identidade
+    visual (cor primária) precisa ser única por projeto."""
+    from compose_suite import compose_suite
+    from nextjs_exporter import NextJSExporter
+
+    alvo_saude = tmp_path / "suite-saude"
+    compose_suite(str(alvo_saude), "Clinica Bem Estar", ["produtos"])
+    resultado_saude = NextJSExporter().export_project(
+        str(alvo_saude), str(alvo_saude / "frontend"), suite_name="Clinica Bem Estar"
+    )
+
+    alvo_delivery = tmp_path / "suite-delivery"
+    compose_suite(str(alvo_delivery), "Lanchonete Rapida", ["produtos"])
+    resultado_delivery = NextJSExporter().export_project(
+        str(alvo_delivery), str(alvo_delivery / "frontend"), suite_name="Lanchonete Rapida"
+    )
+
+    assert resultado_saude["paleta"]["primaria"] != resultado_delivery["paleta"]["primaria"]
+
+    tw_saude = (alvo_saude / "frontend" / "tailwind.config.ts").read_text(encoding="utf-8")
+    tw_delivery = (alvo_delivery / "frontend" / "tailwind.config.ts").read_text(encoding="utf-8")
+    assert resultado_saude["paleta"]["primaria"] in tw_saude
+    assert resultado_delivery["paleta"]["primaria"] in tw_delivery
+    assert resultado_saude["paleta"]["primaria"] not in tw_delivery
+
+
+def test_le_design_system_json_do_planner_quando_existe(tmp_path):
+    """A fonte preferida da paleta é o DESIGN-SYSTEM.json gerado pelo
+    aidd-planner (permite customização humana depois) — só cai para o
+    catálogo determinístico direto quando o arquivo não existe."""
+    import json as _json
+    from compose_suite import compose_suite
+    from nextjs_exporter import NextJSExporter
+
+    alvo = tmp_path / "suite-custom"
+    compose_suite(str(alvo), "Projeto Qualquer", ["produtos"])
+    (alvo / "DESIGN-SYSTEM.json").write_text(
+        _json.dumps({"paleta": {"nome": "Custom", "primaria": "#123456", "primaria_hover": "#0f2a44", "neutro": "slate"}}),
+        encoding="utf-8",
+    )
+
+    resultado = NextJSExporter().export_project(str(alvo), str(alvo / "frontend"), suite_name="Projeto Qualquer")
+    assert resultado["paleta"]["primaria"] == "#123456"
+    tw = (alvo / "frontend" / "tailwind.config.ts").read_text(encoding="utf-8")
+    assert "#123456" in tw
+
+
 def test_gera_pasta_public_para_o_dockerfile_encontrar(frontend_gerado):
     """Achado real: Dockerfile faz `COPY --from=builder /app/public ./public`,
     mas o gerador nunca criava essa pasta — `docker compose build` falhava

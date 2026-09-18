@@ -607,7 +607,7 @@ def _generate_server_and_ui(
     if frontend_stack == "nextjs":
         project_dir = target_dir or os.path.dirname(src_dir)
         frontend_dir = os.path.join(project_dir, "frontend")
-        NextJSExporter().export_project(project_dir, frontend_dir)
+        NextJSExporter().export_project(project_dir, frontend_dir, suite_name=suite_name)
         print("  [+] Front-end 'frontend/' gerado em Next.js + TypeScript + Tailwind (Lei #11)!")
     else:
         index_html = generate_superapp_index_html(suite_name, clean_modules)

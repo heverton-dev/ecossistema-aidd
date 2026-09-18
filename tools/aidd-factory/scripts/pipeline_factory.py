@@ -170,7 +170,8 @@ def executar_pipeline(plano_path: str, pasta_destino: str, incluir_llm: bool = T
         print(f"\n[{fase_num}/{total_fases}] Fase 3 - Frontend Next.js + TypeScript + Tailwind...")
         try:
             from nextjs_exporter import NextJSExporter
-            resultado_fe = NextJSExporter().export_project(pasta_destino, os.path.join(pasta_destino, "frontend"))
+            suite_name_fe = res_analysis.valor.get("nicho_nome_exibicao", "") or res_analysis.valor.get("nicho_slug", "")
+            resultado_fe = NextJSExporter().export_project(pasta_destino, os.path.join(pasta_destino, "frontend"), suite_name=suite_name_fe)
             artefatos.append({"tipo": "frontend", "caminho": os.path.join(pasta_destino, "frontend"), "status": "gerado"})
             print(f"  [OK] Frontend Next.js gerado ({len(resultado_fe['files_created'])} arquivos)")
         except Exception as exc:

@@ -121,7 +121,7 @@ def provision(project_desc, base_dir=None, frontend_stack='nextjs'):
 
         if frontend_stack == 'nextjs':
             from nextjs_exporter import NextJSExporter
-            NextJSExporter().export_project(project_dir, os.path.join(project_dir, 'frontend'))
+            NextJSExporter().export_project(project_dir, os.path.join(project_dir, 'frontend'), suite_name=slug)
             print("  [+] Front-end 'frontend/' gerado em Next.js + TypeScript + Tailwind (Lei #11)!")
         else:
             from compose_suite import generate_superapp_index_html

@@ -77,6 +77,22 @@ def cmd_init(args: argparse.Namespace) -> int:
     with open(arquivo_saida, "w", encoding="utf-8") as f:
         json.dump(plano, f, indent=2, ensure_ascii=False)
 
+    # Lei Inviolável #11 (Padrão-Ouro de Stack): a identidade visual de cada
+    # projeto (cor de marca) nasce aqui, de forma determinística (Lei #1 —
+    # zero LLM) e única por projeto — nunca fixa/hardcoded no gerador de
+    # frontend (achado real do usuário na validação E2E do Fluxo 01,
+    # 18/09/2026: um design fixo faria todo projeto gerado ter a mesma cara).
+    caminho_design_system = os.path.join(pasta_destino, "DESIGN-SYSTEM.json")
+    try:
+        from design_system import gerar_design_system
+    except ImportError:
+        _planner_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+        sys.path.insert(0, os.path.join(_planner_root, "src", "core"))
+        from design_system import gerar_design_system
+    design_system = gerar_design_system(nome, slug, descricao, dominio)
+    with open(caminho_design_system, "w", encoding="utf-8") as f:
+        json.dump(design_system, f, indent=2, ensure_ascii=False)
+
     print("=" * 72)
     print(" [aidd-planner] PLANNER.json GERADO COM SUCESSO")
     print("=" * 72)
@@ -84,6 +100,7 @@ def cmd_init(args: argparse.Namespace) -> int:
     print(f" Fluxo Alvo:  {fluxo_alvo}")
     print(f" Destino:     {arquivo_saida}")
     print(" Status:      100% Conforme (Schema + Quarteto Sine Qua Non + SDD/BDD)")
+    print(f" Design System: {design_system['paleta']['nome']} ({design_system['paleta']['primaria']}) -> {caminho_design_system}")
     print("=" * 72)
     return 0
 

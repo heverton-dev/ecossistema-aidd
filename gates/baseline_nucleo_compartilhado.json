@@ -31,6 +31,10 @@
         "esperado_identico": true,
         "motivo": null
       },
+      "design_catalog.py": {
+        "esperado_identico": true,
+        "motivo": null
+      },
       "detector_camada.py": {
         "esperado_identico": false,
         "motivo": "Configuracao de _PROJETO_PADRAO aponta para o projeto local ('aidd-enterprise' vs 'aidd-master')."

@@ -210,7 +210,7 @@ def criar_modulo(nome_modulo: str, descricao: str = "", target_dir: str = "."):
                         try:
                             from nextjs_exporter import NextJSExporter
                             NextJSExporter().export_project(
-                                target_dir, os.path.join(target_dir, "frontend")
+                                target_dir, os.path.join(target_dir, "frontend"), suite_name=suite_name
                             )
                             print(f"  [+] Front-end 'frontend/' religado com o módulo '{slug}' (Next.js)!")
                         except ImportError as e:

@@ -160,3 +160,45 @@ def test_cli_init_e_validate():
         # 2. Teste validate
         ret_val = cli_main(["validate", planner_file])
         assert ret_val == 0
+
+
+def test_cli_init_gera_design_system_unico_por_projeto():
+    """Lei Inviolável #11: a identidade visual nasce no planner, de forma
+    determinística e ÚNICA por projeto — não pode ser fixa/hardcoded no
+    gerador de frontend (achado real do usuário, 18/09/2026: um design fixo
+    faria todo projeto gerado ter a mesma cara)."""
+    with tempfile.TemporaryDirectory() as tmp_saude, tempfile.TemporaryDirectory() as tmp_delivery:
+        cli_main([
+            "init", "--fluxo", "1", "--nome", "Clinica Bem Estar", "--slug", "clinica-bem-estar",
+            "--descricao", "Sistema de agendamento para clinica de saude", "--dominio", "saude",
+            "--pasta", tmp_saude,
+        ])
+        cli_main([
+            "init", "--fluxo", "1", "--nome", "Lanchonete Rapida", "--slug", "lanchonete-rapida",
+            "--descricao", "Sistema de pedidos para delivery de comida", "--dominio", "delivery",
+            "--pasta", tmp_delivery,
+        ])
+
+        ds_saude_path = os.path.join(tmp_saude, "DESIGN-SYSTEM.json")
+        ds_delivery_path = os.path.join(tmp_delivery, "DESIGN-SYSTEM.json")
+        assert os.path.isfile(ds_saude_path)
+        assert os.path.isfile(ds_delivery_path)
+
+        with open(ds_saude_path, encoding="utf-8") as f:
+            ds_saude = json.load(f)
+        with open(ds_delivery_path, encoding="utf-8") as f:
+            ds_delivery = json.load(f)
+
+        # Nichos diferentes -> paletas diferentes (prova de que não é fixo)
+        assert ds_saude["paleta"]["primaria"] != ds_delivery["paleta"]["primaria"]
+        # Nicho "saude" bate a palavra-chave real do catálogo
+        assert ds_saude["paleta"]["primaria"] == "#0F766E"
+        assert ds_delivery["paleta"]["primaria"] == "#EA580C"
+
+        # Determinismo: gerar de novo para o MESMO projeto dá a MESMA paleta
+        from src.core.design_system import gerar_design_system
+        ds_saude_repetido = gerar_design_system(
+            "Clinica Bem Estar", "clinica-bem-estar",
+            "Sistema de agendamento para clinica de saude", "saude",
+        )
+        assert ds_saude_repetido["paleta"] == ds_saude["paleta"]
