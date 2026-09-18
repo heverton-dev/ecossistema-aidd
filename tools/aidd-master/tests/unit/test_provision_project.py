@@ -38,6 +38,7 @@ nunca produzir um projeto que passasse na propria auditoria do produto nem
 que realmente subisse como aplicacao.
 """
 
+import json
 import os
 import subprocess
 import sys
@@ -65,20 +66,37 @@ def test_provision_gera_server_py_no_primeiro_modulo(tmp_path):
     assert server_path.stat().st_size > 0, "src/server.py foi gerado vazio"
 
 
-def test_provision_gera_index_html_com_css_e_modal_atuais(tmp_path):
-    """Achado real: templates/core/index.html (copiado estaticamente) nunca
-    tinha --bg-base nem modal-overlay/modal-generic, exigidos por
-    G_CONTRACTS. provision() deve gerar via generate_superapp_index_html(),
-    igual a compose_suite()."""
+def test_provision_gera_frontend_nextjs_por_padrao(tmp_path):
+    """Lei Inviolável #11 (Padrão-Ouro de Stack): provision() sem
+    frontend_stack explícito deve gerar frontend/ em Next.js, não mais o
+    Super-App em src/static/index.html (Python/HTML puro)."""
     from provision_project import provision
 
-    provision("Projeto Teste Index", base_dir=str(tmp_path))
+    provision("Projeto Teste Nextjs Default", base_dir=str(tmp_path))
+    projeto_dir = next(tmp_path.glob("proj_*"))
+
+    assert (projeto_dir / "frontend" / "package.json").is_file()
+    assert (projeto_dir / "frontend" / "app" / "layout.tsx").is_file()
+    assert not (projeto_dir / "src" / "static" / "index.html").exists()
+
+    pkg = json.loads((projeto_dir / "frontend" / "package.json").read_text(encoding="utf-8"))
+    assert pkg["dependencies"]["next"] == "^14.2.5"
+
+
+def test_provision_gera_index_html_python_quando_pedido_explicitamente(tmp_path):
+    """Lei #11: só muda da stack default (Next.js) se pedido explicitamente
+    (frontend_stack="python-html") — silêncio nunca é licença para gerar
+    outra coisa, mas um pedido explícito continua honrado."""
+    from provision_project import provision
+
+    provision("Projeto Teste Index Explicito", base_dir=str(tmp_path), frontend_stack="python-html")
     projeto_dir = next(tmp_path.glob("proj_*"))
 
     index_path = projeto_dir / "src" / "static" / "index.html"
     conteudo = index_path.read_text(encoding="utf-8")
     assert "<style>" in conteudo and "--bg-base" in conteudo
     assert "modal-overlay" in conteudo or "modal-generic" in conteudo
+    assert not (projeto_dir / "frontend").exists()
 
 
 def test_provision_passa_no_gate_g_estrutura(tmp_path):
@@ -186,3 +204,22 @@ def test_provision_server_py_importa_de_verdade_sem_modulenotfounderror(tmp_path
         capture_output=True, text=True, encoding="utf-8", errors="replace", timeout=15,
     )
     assert resultado.returncode == 0, resultado.stdout + resultado.stderr
+
+
+def test_add_module_religa_pagina_do_frontend_nextjs(tmp_path):
+    """Achado real: `add-module` religava `src/server.py` com o módulo novo,
+    mas nunca regenerava o frontend Next.js — o módulo novo ficava sem
+    página nenhuma em frontend/app/<modulo>/page.tsx."""
+    from provision_project import provision
+    from add_module import criar_modulo
+
+    provision("Projeto Teste Add Module Frontend", base_dir=str(tmp_path))
+    projeto_dir = next(tmp_path.glob("proj_*"))
+    assert (projeto_dir / "frontend" / "package.json").is_file()
+
+    criar_modulo("tarefas", "Módulo de tarefas", target_dir=str(projeto_dir))
+
+    assert (projeto_dir / "frontend" / "app" / "tarefas" / "page.tsx").is_file()
+    # A página do módulo original ("principal") continua existindo — a
+    # regeneração não pode apagar páginas de módulos já existentes.
+    assert (projeto_dir / "frontend" / "app" / "principal" / "page.tsx").is_file()

@@ -8,7 +8,7 @@ def slugify(text):
     text = re.sub(r'[^\w\s-]', '', text)
     return re.sub(r'[\s_-]+', '-', text)[:40]
 
-def provision(project_desc, base_dir=None):
+def provision(project_desc, base_dir=None, frontend_stack='nextjs'):
     if os.path.isabs(project_desc) or os.sep in project_desc or (os.altsep and os.altsep in project_desc) or os.path.exists(project_desc):
         project_dir = os.path.abspath(project_desc)
         slug = slugify(os.path.basename(project_dir)) or "projeto-modular"
@@ -102,27 +102,35 @@ def provision(project_desc, base_dir=None):
     from add_module import criar_modulo
     criar_modulo("principal", "Módulo principal", project_dir)
 
-    # 5.1. Gerar o Servidor Monolítico Modular (src/server.py) e o front-end
-    # Super-App (src/static/index.html). criar_modulo() só RELIGA o
-    # server.py num módulo novo se ele já existir (ver comentário em
-    # add_module.py) — na primeira composição do projeto ele nunca existiu,
-    # então precisa ser gerado aqui, do mesmo jeito que compose_suite() faz.
+    # 5.1. Gerar o Servidor Monolítico Modular (src/server.py) e o frontend.
+    # criar_modulo() só RELIGA o server.py num módulo novo se ele já existir
+    # (ver comentário em add_module.py) — na primeira composição do projeto
+    # ele nunca existiu, então precisa ser gerado aqui, do mesmo jeito que
+    # compose_suite() faz.
+    #
+    # Lei Inviolável #11 (Padrão-Ouro de Stack, `AGENTS.md`): o frontend
+    # default é Next.js + TypeScript + Tailwind CSS (`frontend_stack=
+    # "nextjs"`). O Super-App em HTML/CSS/JS Python puro só é gerado se
+    # pedido explicitamente (`frontend_stack="python-html"`).
     try:
-        from compose_suite import (
-            generate_modular_server_code,
-            generate_superapp_index_html,
-        )
+        from compose_suite import generate_modular_server_code
         server_code = generate_modular_server_code(slug, ["principal"], db_engine="sqlite")
         with open(os.path.join(project_dir, 'src', 'server.py'), 'w', encoding='utf-8') as f:
             f.write(server_code)
         print("  [+] Servidor dinâmico 'src/server.py' gerado com sucesso!")
 
-        index_html = generate_superapp_index_html(slug, ["principal"])
-        with open(os.path.join(project_dir, 'src', 'static', 'index.html'), 'w', encoding='utf-8') as f:
-            f.write(index_html)
-        print("  [+] Front-end Super-App 'src/static/index.html' gerado com sucesso!")
+        if frontend_stack == 'nextjs':
+            from nextjs_exporter import NextJSExporter
+            NextJSExporter().export_project(project_dir, os.path.join(project_dir, 'frontend'))
+            print("  [+] Front-end 'frontend/' gerado em Next.js + TypeScript + Tailwind (Lei #11)!")
+        else:
+            from compose_suite import generate_superapp_index_html
+            index_html = generate_superapp_index_html(slug, ["principal"])
+            with open(os.path.join(project_dir, 'src', 'static', 'index.html'), 'w', encoding='utf-8') as f:
+                f.write(index_html)
+            print("  [+] Front-end Super-App 'src/static/index.html' gerado com sucesso!")
     except ImportError as e:
-        print(f"  [!] Aviso: não foi possível gerar server.py/index.html: {e}")
+        print(f"  [!] Aviso: não foi possível gerar server.py/frontend: {e}")
 
     # 6. Gerar requirements.txt
     from compose_suite import CORE_KERNEL_REQUIREMENTS

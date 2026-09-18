@@ -1,151 +1,111 @@
 # -*- coding: utf-8 -*-
 """
 =============================================================================
-AIDD v6.0-Enterprise — Next.js Project Exporter
+AIDD — Next.js Frontend Exporter (Lei Inviolavel #11: Padrao-Ouro de Stack)
 =============================================================================
-Generates a production-ready Next.js project from AIDD modules:
-- next.config.js, package.json, tsconfig.json
-- Pages Router or App Router directory structure
-- API routes converted from AIDD module routes
-- _app.tsx / layout.tsx with design system CSS import
-- middleware.ts with JWT auth guard
-- Design system CSS copied to public/
+Gera o frontend `frontend/` (Next.js 14 App Router + TypeScript + Tailwind
+CSS) de qualquer suite AIDD (monolito modular com `src/modules/<nome>/`).
 
-Zero external dependencies — uses only stdlib.
+Fonte unica de verdade (Lei #11, `docs/protocolos/PADRAO-OURO-STACK-TECNOLOGICA.md`):
+copiada identica em `tools/aidd-master/src/core/nextjs_exporter.py` e
+`tools/aidd-enterprise/src/core/nextjs_exporter.py` — qualquer alteracao aqui
+precisa ser sincronizada nas 3 copias (G_DRIFT_NUCLEO_COMPARTILHADO cobre
+apenas master/enterprise; sincronizar manualmente com `componentes/`).
+
+Design (corrige defeitos reais encontrados em `proj_ctt`, usado como
+referencia inicial de "padrao-ouro" mas com inconsistencias — validacao E2E
+do Fluxo 01, 18/09/2026):
+  - UMA unica env var (`NEXT_PUBLIC_API_URL`, default vazio = mesma origem),
+    nao duas conflitantes.
+  - UMA unica camada de acesso a API (`lib/api-client.ts`), sem duplicar
+    controller+hook por modulo.
+  - NAO reimplementa em React os Studios nativos do backend (`/docs`,
+    `/webhooks`, `/mcp`, `/openapi.json`, `/health`, `/metrics`, `/api/*`) —
+    esses continuam servidos pelo processo Python (`core/openapi.py`,
+    `core/webhooks.py`, `core/mcp_server.py`), sem mock e sem duplicacao. O
+    Next.js gera apenas paginas de PRODUTO (dashboard + 1 pagina por modulo).
+    O Nginx roteia por prefixo entre os dois servicos (`app` vs `web`).
+  - Zero dependencias externas — so stdlib.
 """
 
+import json
 import os
 import re
-import json
-import shutil
-from typing import Dict, List, Optional, Any
-from pathlib import Path
+from typing import Any, Dict, List
 
 
 class NextJSExporter:
-    """Exports an AIDD project to a Next.js application."""
+    """Gera um frontend Next.js (App Router) para uma suite AIDD."""
 
-    SUPPORTED_ROUTERS = ("pages", "app")
-
-    def __init__(self, router_type: str = "app"):
-        if router_type not in self.SUPPORTED_ROUTERS:
-            raise ValueError(f"router_type must be one of {self.SUPPORTED_ROUTERS}, got '{router_type}'")
-        self.router_type = router_type
-
-    # ------------------------------------------------------------------
-    # Public API
-    # ------------------------------------------------------------------
-
-    def export_project(self, project_dir: str, output_dir: str) -> dict:
-        """Export an AIDD project to a Next.js project.
+    def export_project(self, project_dir: str, output_dir: str) -> Dict[str, Any]:
+        """Gera o frontend Next.js em `output_dir` (tipicamente `<projeto>/frontend`).
 
         Args:
-            project_dir: Path to the AIDD project root (contains src/modules/).
-            output_dir: Path where the Next.js project will be generated.
+            project_dir: raiz do projeto AIDD (contem `src/modules/`).
+            output_dir: pasta onde o frontend Next.js sera gerado.
 
         Returns:
-            dict with keys: files_created (list[str]), modules (list[str]),
-                  router_type (str), warnings (list[str]).
+            dict com `files_created` (list[str]) e `modules` (list[str]).
         """
         project_dir = os.path.abspath(project_dir)
         output_dir = os.path.abspath(output_dir)
 
-        result: Dict[str, Any] = {
-            "files_created": [],
-            "modules": [],
-            "router_type": self.router_type,
-            "warnings": [],
-        }
-
-        # Discover AIDD modules
         modules = self._discover_modules(project_dir)
-        result["modules"] = modules
+        result: Dict[str, Any] = {"files_created": [], "modules": modules}
 
-        # Ensure output directory exists
         os.makedirs(output_dir, exist_ok=True)
 
-        # Generate config files
-        result["files_created"].extend(self._generate_package_json(output_dir, modules))
-        result["files_created"].extend(self._generate_next_config(output_dir))
-        result["files_created"].extend(self._generate_tsconfig(output_dir))
-        result["files_created"].extend(self._generate_gitignore(output_dir))
+        created: List[str] = []
+        created += self._write(output_dir, "package.json", self._package_json())
+        created += self._write(output_dir, "next.config.js", self._next_config())
+        created += self._write(output_dir, "tsconfig.json", self._tsconfig())
+        created += self._write(output_dir, "tailwind.config.ts", self._tailwind_config())
+        created += self._write(output_dir, "postcss.config.js", self._postcss_config())
+        created += self._write(output_dir, ".eslintrc.json", self._eslintrc())
+        created += self._write(output_dir, ".gitignore", self._gitignore())
+        created += self._write(output_dir, ".dockerignore", self._dockerignore())
+        created += self._write(output_dir, "Dockerfile", self._dockerfile())
+        created += self._write(output_dir, "lib/api-client.ts", self._api_client())
+        created += self._write(output_dir, "components/Nav.tsx", self._nav_component(modules))
+        created += self._write(output_dir, "public/.gitkeep", "")
+        created += self._write(output_dir, "app/globals.css", self._globals_css())
+        created += self._write(output_dir, "app/layout.tsx", self._layout_tsx())
+        created += self._write(output_dir, "app/page.tsx", self._index_page(modules))
 
-        # Generate router-specific files
-        if self.router_type == "pages":
-            result["files_created"].extend(
-                self._generate_pages_router(output_dir, project_dir, modules)
+        for mod in modules:
+            created += self._write(
+                output_dir, f"app/{mod}/page.tsx", self._module_page(mod)
             )
-        else:
-            result["files_created"].extend(
-                self._generate_app_router(output_dir, project_dir, modules)
-            )
 
-        # Generate API routes from AIDD modules
-        result["files_created"].extend(
-            self._generate_api_routes(output_dir, project_dir, modules)
-        )
-
-        # Generate middleware with JWT auth
-        result["files_created"].extend(self._generate_middleware(output_dir))
-
-        # Copy design system CSS
-        result["files_created"].extend(self._copy_design_system_css(output_dir))
-
+        result["files_created"] = created
         return result
 
     # ------------------------------------------------------------------
-    # Module Discovery
+    # Descoberta de modulos
     # ------------------------------------------------------------------
 
     def _discover_modules(self, project_dir: str) -> List[str]:
-        """Find all AIDD module names under src/modules/."""
         modules_dir = os.path.join(project_dir, "src", "modules")
         if not os.path.isdir(modules_dir):
             return []
         modules = []
         for entry in sorted(os.listdir(modules_dir)):
             entry_path = os.path.join(modules_dir, entry)
-            if os.path.isdir(entry_path) and not entry.startswith(("_", ".")):
-                # Confirm it has routes.py or services.py
-                has_routes = os.path.isfile(os.path.join(entry_path, "routes.py"))
-                has_services = os.path.isfile(os.path.join(entry_path, "services.py"))
-                if has_routes or has_services:
-                    modules.append(entry)
+            if not os.path.isdir(entry_path) or entry.startswith(("_", ".")):
+                continue
+            has_routes = os.path.isfile(os.path.join(entry_path, "routes.py"))
+            has_services = os.path.isfile(os.path.join(entry_path, "services.py"))
+            if has_routes or has_services:
+                modules.append(entry)
         return modules
 
-    def _parse_routes(self, project_dir: str, module_name: str) -> List[Dict[str, Any]]:
-        """Parse routes.py to extract endpoint definitions."""
-        routes_file = os.path.join(project_dir, "src", "modules", module_name, "routes.py")
-        if not os.path.isfile(routes_file):
-            return []
-
-        with open(routes_file, "r", encoding="utf-8", errors="ignore") as f:
-            content = f.read()
-
-        endpoints = []
-        # Match @registry.get/post/put/delete("path", ...) patterns
-        pattern = re.compile(
-            r'@registry\.(get|post|put|delete)\(\s*["\']([^"\']+)["\']',
-            re.IGNORECASE,
-        )
-        for match in pattern.finditer(content):
-            method = match.group(1).upper()
-            path = match.group(2)
-            endpoints.append({
-                "method": method,
-                "path": path,
-                "module": module_name,
-            })
-        return endpoints
-
     # ------------------------------------------------------------------
-    # Config File Generation
+    # Config files
     # ------------------------------------------------------------------
 
-    def _generate_package_json(self, output_dir: str, modules: List[str]) -> List[str]:
-        """Generate package.json with Next.js dependencies."""
+    def _package_json(self) -> str:
         package = {
-            "name": "aidd-nextjs-app",
+            "name": "aidd-frontend",
             "version": "1.0.0",
             "private": True,
             "scripts": {
@@ -155,72 +115,38 @@ class NextJSExporter:
                 "lint": "next lint",
             },
             "dependencies": {
-                "next": "^14.2.0",
-                "react": "^18.3.0",
-                "react-dom": "^18.3.0",
+                "next": "^14.2.5",
+                "react": "^18.3.1",
+                "react-dom": "^18.3.1",
             },
             "devDependencies": {
-                "@types/node": "^20.0.0",
-                "@types/react": "^18.3.0",
+                "@types/node": "^20.11.0",
+                "@types/react": "^18.3.3",
                 "@types/react-dom": "^18.3.0",
-                "typescript": "^5.4.0",
-                "eslint": "^8.0.0",
-                "eslint-config-next": "^14.2.0",
+                "typescript": "^5.4.5",
+                "tailwindcss": "^3.4.4",
+                "postcss": "^8.4.38",
+                "autoprefixer": "^10.4.19",
+                "eslint": "^8.57.0",
+                "eslint-config-next": "^14.2.5",
             },
         }
-        path = os.path.join(output_dir, "package.json")
-        with open(path, "w", encoding="utf-8") as f:
-            json.dump(package, f, indent=2, ensure_ascii=False)
-            f.write("\n")
-        return [path]
+        return json.dumps(package, indent=2, ensure_ascii=False) + "\n"
 
-    def _generate_next_config(self, output_dir: str) -> List[str]:
-        """Generate next.config.js."""
-        config = """/** @type {import('next').NextConfig} */
-const nextConfig = {
-  reactStrictMode: true,
-  poweredByHeader: false,
-  compress: true,
-  experimental: {
-    optimizeCss: true,
-  },
-  async headers() {
-    return [
-      {
-        source: '/(.*)',
-        headers: [
-          { key: 'X-Content-Type-Options', value: 'nosniff' },
-          { key: 'X-Frame-Options', value: 'DENY' },
-          { key: 'X-XSS-Protection', value: '1; mode=block' },
-          { key: 'Referrer-Policy', value: 'strict-origin-when-cross-origin' },
-          {
-            key: 'Strict-Transport-Security',
-            value: 'max-age=63072000; includeSubDomains; preload',
-          },
-        ],
-      },
-    ];
-  },
-  async rewrites() {
-    return [
-      // Proxy AIDD API routes if needed
-      // { source: '/api/v1/:path*', destination: 'http://localhost:8000/api/:path*' },
-    ];
-  },
-};
+    def _next_config(self) -> str:
+        return (
+            "/** @type {import('next').NextConfig} */\n"
+            "const nextConfig = {\n"
+            "  reactStrictMode: true,\n"
+            "  output: \"standalone\",\n"
+            "};\n\n"
+            "module.exports = nextConfig;\n"
+        )
 
-module.exports = nextConfig;
-"""
-        path = os.path.join(output_dir, "next.config.js")
-        with open(path, "w", encoding="utf-8") as f:
-            f.write(config)
-        return [path]
-
-    def _generate_tsconfig(self, output_dir: str) -> List[str]:
-        """Generate tsconfig.json."""
+    def _tsconfig(self) -> str:
         tsconfig = {
             "compilerOptions": {
-                "target": "ES2017",
+                "target": "es5",
                 "lib": ["dom", "dom.iterable", "esnext"],
                 "allowJs": True,
                 "skipLibCheck": True,
@@ -234,609 +160,276 @@ module.exports = nextConfig;
                 "jsx": "preserve",
                 "incremental": True,
                 "plugins": [{"name": "next"}],
-                "paths": {"@/*": ["./src/*"]},
+                "paths": {"@/*": ["./*"]},
             },
             "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
             "exclude": ["node_modules"],
         }
-        path = os.path.join(output_dir, "tsconfig.json")
-        with open(path, "w", encoding="utf-8") as f:
-            json.dump(tsconfig, f, indent=2, ensure_ascii=False)
-            f.write("\n")
-        return [path]
+        return json.dumps(tsconfig, indent=2, ensure_ascii=False) + "\n"
 
-    def _generate_gitignore(self, output_dir: str) -> List[str]:
-        """Generate .gitignore for Next.js."""
-        content = """# dependencies
-/node_modules
-/.pnp
-.pnp.js
+    def _tailwind_config(self) -> str:
+        return (
+            "import type { Config } from \"tailwindcss\";\n\n"
+            "const config: Config = {\n"
+            "  darkMode: \"class\",\n"
+            "  content: [\n"
+            "    \"./app/**/*.{ts,tsx}\",\n"
+            "    \"./components/**/*.{ts,tsx}\",\n"
+            "    \"./lib/**/*.{ts,tsx}\",\n"
+            "  ],\n"
+            "  theme: { extend: {} },\n"
+            "  plugins: [],\n"
+            "};\n\n"
+            "export default config;\n"
+        )
 
-# testing
-/coverage
+    def _postcss_config(self) -> str:
+        return (
+            "module.exports = {\n"
+            "  plugins: { tailwindcss: {}, autoprefixer: {} },\n"
+            "};\n"
+        )
 
-# next.js
-/.next/
-/out/
+    def _eslintrc(self) -> str:
+        return json.dumps({"extends": "next/core-web-vitals"}, indent=2) + "\n"
 
-# production
-/build
+    def _gitignore(self) -> str:
+        return (
+            "/node_modules\n/.pnp\n.pnp.js\n/coverage\n/.next/\n/out/\n/build\n"
+            ".DS_Store\n*.pem\nnpm-debug.log*\nyarn-debug.log*\nyarn-error.log*\n"
+            ".env*.local\n.env\n.vercel\n*.tsbuildinfo\nnext-env.d.ts\n"
+        )
 
-# misc
-.DS_Store
-*.pem
+    def _dockerignore(self) -> str:
+        return "node_modules\n.next\n.git\n.env*\nnpm-debug.log*\n"
 
-# debug
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-
-# local env files
-.env*.local
-.env
-
-# vercel
-.vercel
-
-# typescript
-*.tsbuildinfo
-next-env.d.ts
-"""
-        path = os.path.join(output_dir, ".gitignore")
-        with open(path, "w", encoding="utf-8") as f:
-            f.write(content)
-        return [path]
-
-    # ------------------------------------------------------------------
-    # Pages Router Generation
-    # ------------------------------------------------------------------
-
-    def _generate_pages_router(
-        self, output_dir: str, project_dir: str, modules: List[str]
-    ) -> List[str]:
-        """Generate Pages Router structure (_app.tsx, index.tsx, pages/)."""
-        created = []
-        pages_dir = os.path.join(output_dir, "pages")
-        os.makedirs(pages_dir, exist_ok=True)
-
-        # _app.tsx
-        app_tsx = """import type { AppProps } from 'next/app';
-import '@/styles/globals.css';
-import '@/styles/design-system.css';
-
-export default function App({ Component, pageProps }: AppProps) {
-  return <Component {...pageProps} />;
-}
-"""
-        path = os.path.join(pages_dir, "_app.tsx")
-        with open(path, "w", encoding="utf-8") as f:
-            f.write(app_tsx)
-        created.append(path)
-
-        # index.tsx — landing page with module links
-        index_tsx = self._generate_index_page(modules)
-        path = os.path.join(pages_dir, "index.tsx")
-        with open(path, "w", encoding="utf-8") as f:
-            f.write(index_tsx)
-        created.append(path)
-
-        # styles directory
-        styles_dir = os.path.join(output_dir, "styles")
-        os.makedirs(styles_dir, exist_ok=True)
-
-        globals_css = """*,
-*::before,
-*::after {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-}
-
-html {
-  font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
-  -webkit-font-smoothing: antialiased;
-}
-
-body {
-  min-height: 100vh;
-}
-"""
-        path = os.path.join(styles_dir, "globals.css")
-        with open(path, "w", encoding="utf-8") as f:
-            f.write(globals_css)
-        created.append(path)
-
-        # Module pages
-        for mod in modules:
-            mod_page_dir = os.path.join(pages_dir, mod)
-            os.makedirs(mod_page_dir, exist_ok=True)
-            page_content = self._generate_module_page(mod)
-            path = os.path.join(mod_page_dir, "index.tsx")
-            with open(path, "w", encoding="utf-8") as f:
-                f.write(page_content)
-            created.append(path)
-
-        return created
+    def _dockerfile(self) -> str:
+        return (
+            "# =========================================================================\n"
+            "# AIDD Frontend — Next.js Production Dockerfile (Lei #11)\n"
+            "# =========================================================================\n\n"
+            "FROM node:20-alpine AS builder\n"
+            "WORKDIR /app\n"
+            "COPY package*.json ./\n"
+            "RUN npm install\n"
+            "COPY . .\n"
+            "RUN npm run build\n\n"
+            "FROM node:20-alpine AS runner\n"
+            "WORKDIR /app\n"
+            "ENV NODE_ENV=production\n"
+            "ENV PORT=3000\n"
+            "ENV HOSTNAME=\"0.0.0.0\"\n\n"
+            "RUN addgroup --system --gid 1001 nodejs && \\\n"
+            "    adduser --system --uid 1001 nextjs\n\n"
+            "COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./\n"
+            "COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static\n"
+            "COPY --from=builder --chown=nextjs:nodejs /app/public ./public\n\n"
+            "USER nextjs\n"
+            "EXPOSE 3000\n\n"
+            "HEALTHCHECK --interval=15s --timeout=5s --start-period=10s --retries=3 \\\n"
+            "    CMD [\"node\", \"-e\", \"require('http').get('http://localhost:3000/', r => process.exit(r.statusCode < 500 ? 0 : 1)).on('error', () => process.exit(1))\"]\n\n"
+            "CMD [\"node\", \"server.js\"]\n"
+        )
 
     # ------------------------------------------------------------------
-    # App Router Generation
+    # Cliente de API — fonte unica, sem duplicacao de camada
     # ------------------------------------------------------------------
 
-    def _generate_app_router(
-        self, output_dir: str, project_dir: str, modules: List[str]
-    ) -> List[str]:
-        """Generate App Router structure (app/layout.tsx, app/page.tsx, etc.)."""
-        created = []
-        app_dir = os.path.join(output_dir, "app")
-        os.makedirs(app_dir, exist_ok=True)
-
-        # layout.tsx
-        layout_tsx = """import type { Metadata } from 'next';
-import '@/styles/globals.css';
-import '@/styles/design-system.css';
-
-export const metadata: Metadata = {
-  title: 'AIDD Enterprise App',
-  description: 'Generated by AIDD Next.js Exporter',
-};
-
-export default function RootLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
-  return (
-    <html lang="pt-BR">
-      <body>{children}</body>
-    </html>
-  );
-}
-"""
-        path = os.path.join(app_dir, "layout.tsx")
-        with open(path, "w", encoding="utf-8") as f:
-            f.write(layout_tsx)
-        created.append(path)
-
-        # page.tsx — root page
-        page_tsx = self._generate_index_page(modules)
-        path = os.path.join(app_dir, "page.tsx")
-        with open(path, "w", encoding="utf-8") as f:
-            f.write(page_tsx)
-        created.append(path)
-
-        # styles directory
-        styles_dir = os.path.join(output_dir, "styles")
-        os.makedirs(styles_dir, exist_ok=True)
-
-        globals_css = """*,
-*::before,
-*::after {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-}
-
-html {
-  font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
-  -webkit-font-smoothing: antialiased;
-}
-
-body {
-  min-height: 100vh;
-}
-"""
-        path = os.path.join(styles_dir, "globals.css")
-        with open(path, "w", encoding="utf-8") as f:
-            f.write(globals_css)
-        created.append(path)
-
-        # Module pages under app/
-        for mod in modules:
-            mod_dir = os.path.join(app_dir, mod)
-            os.makedirs(mod_dir, exist_ok=True)
-
-            mod_layout = f"""export default function {self._to_pascal_case(mod)}Layout({{
-  children,
-}}: {{
-  children: React.ReactNode;
-}}) {{
-  return <section>{{children}}</section>;
-}}
-"""
-            path = os.path.join(mod_dir, "layout.tsx")
-            with open(path, "w", encoding="utf-8") as f:
-                f.write(mod_layout)
-            created.append(path)
-
-            mod_page = self._generate_module_page(mod)
-            path = os.path.join(mod_dir, "page.tsx")
-            with open(path, "w", encoding="utf-8") as f:
-                f.write(mod_page)
-            created.append(path)
-
-        return created
+    def _api_client(self) -> str:
+        return (
+            "// Cliente de API unico do frontend AIDD (Lei #11).\n"
+            "// Fetch direto do browser para o backend Python. NEXT_PUBLIC_API_URL vazia\n"
+            "// (default) significa mesma origem — funciona atras do Nginx, que roteia\n"
+            "// /api, /docs, /webhooks, /mcp, /openapi.json, /health, /metrics para o\n"
+            "// backend e o resto para este frontend.\n"
+            "const API_BASE = process.env.NEXT_PUBLIC_API_URL || \"\";\n\n"
+            "export class ApiError extends Error {\n"
+            "  status: number;\n"
+            "  constructor(message: string, status: number) {\n"
+            "    super(message);\n"
+            "    this.status = status;\n"
+            "  }\n"
+            "}\n\n"
+            "async function request<T>(path: string, init?: RequestInit): Promise<T> {\n"
+            "  const res = await fetch(`${API_BASE}${path}`, {\n"
+            "    headers: { \"Content-Type\": \"application/json\" },\n"
+            "    ...init,\n"
+            "  });\n"
+            "  if (!res.ok) {\n"
+            "    throw new ApiError(`Falha em ${path}: HTTP ${res.status}`, res.status);\n"
+            "  }\n"
+            "  return res.json() as Promise<T>;\n"
+            "}\n\n"
+            "export const apiClient = {\n"
+            "  get: <T>(path: string) => request<T>(path),\n"
+            "  post: <T>(path: string, body: unknown) =>\n"
+            "    request<T>(path, { method: \"POST\", body: JSON.stringify(body) }),\n"
+            "};\n"
+        )
 
     # ------------------------------------------------------------------
-    # API Routes Generation
+    # Componentes/paginas
     # ------------------------------------------------------------------
 
-    def _generate_api_routes(
-        self, output_dir: str, project_dir: str, modules: List[str]
-    ) -> List[str]:
-        """Convert AIDD module routes to Next.js API routes."""
-        created = []
+    def _nav_component(self, modules: List[str]) -> str:
+        module_links = "\n".join(
+            f'        <Link href="/{mod}" className="hover:underline">{self._label(mod)}</Link>'
+            for mod in modules
+        )
+        return (
+            "import Link from \"next/link\";\n\n"
+            "// Links para /docs, /webhooks e /mcp usam <a> (nao <Link>): sao rotas\n"
+            "// nativas do backend Python, roteadas pelo Nginx para outro servico —\n"
+            "// nao existem no roteador do Next.js.\n"
+            "export function Nav() {\n"
+            "  return (\n"
+            "    <nav className=\"flex flex-wrap gap-4 items-center px-6 py-4 border-b border-zinc-200 dark:border-zinc-800\">\n"
+            "      <Link href=\"/\" className=\"font-semibold\">AIDD</Link>\n"
+            f"{module_links}\n"
+            "      <span className=\"flex-1\" />\n"
+            "      <a href=\"/docs\" className=\"hover:underline\">Swagger</a>\n"
+            "      <a href=\"/webhooks\" className=\"hover:underline\">Webhooks</a>\n"
+            "      <a href=\"/mcp\" className=\"hover:underline\">MCP</a>\n"
+            "    </nav>\n"
+            "  );\n"
+            "}\n"
+        )
 
-        if self.router_type == "pages":
-            api_dir = os.path.join(output_dir, "pages", "api")
-        else:
-            api_dir = os.path.join(output_dir, "app", "api")
+    def _globals_css(self) -> str:
+        return (
+            "@tailwind base;\n@tailwind components;\n@tailwind utilities;\n\n"
+            "body {\n"
+            "  @apply bg-white text-zinc-900 dark:bg-zinc-950 dark:text-zinc-100;\n"
+            "}\n"
+        )
 
-        os.makedirs(api_dir, exist_ok=True)
+    def _layout_tsx(self) -> str:
+        return (
+            "import type { Metadata } from \"next\";\n"
+            "import \"./globals.css\";\n"
+            "import { Nav } from \"@/components/Nav\";\n\n"
+            "export const metadata: Metadata = {\n"
+            "  title: \"AIDD\",\n"
+            "  description: \"Gerado pelo Ecossistema AIDD (Lei #11: Next.js + TypeScript + Tailwind)\",\n"
+            "};\n\n"
+            "export default function RootLayout({ children }: { children: React.ReactNode }) {\n"
+            "  return (\n"
+            "    <html lang=\"pt-BR\">\n"
+            "      <body>\n"
+            "        <Nav />\n"
+            "        {children}\n"
+            "      </body>\n"
+            "    </html>\n"
+            "  );\n"
+            "}\n"
+        )
 
-        for mod in modules:
-            endpoints = self._parse_routes(project_dir, mod)
-            if not endpoints:
-                continue
+    def _index_page(self, modules: List[str]) -> str:
+        cards = "\n".join(
+            f'          <Link href="/{mod}" className="rounded-lg border border-zinc-200 dark:border-zinc-800 p-6 hover:border-zinc-400 dark:hover:border-zinc-600 transition">\n'
+            f'            <h2 className="text-lg font-medium">{self._label(mod)}</h2>\n'
+            f'          </Link>'
+            for mod in modules
+        )
+        return (
+            "import Link from \"next/link\";\n\n"
+            "export default function Home() {\n"
+            "  return (\n"
+            "    <main className=\"max-w-5xl mx-auto px-6 py-10\">\n"
+            "      <h1 className=\"text-2xl font-semibold mb-8\">Dashboard</h1>\n"
+            "      <div className=\"grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4\">\n"
+            f"{cards}\n"
+            "      </div>\n"
+            "    </main>\n"
+            "  );\n"
+            "}\n"
+        )
 
-            mod_api_dir = os.path.join(api_dir, mod)
-            os.makedirs(mod_api_dir, exist_ok=True)
-
-            # Group endpoints by path segment
-            for ep in endpoints:
-                route_name = self._path_to_filename(ep["path"])
-                method = ep["method"]
-
-                if self.router_type == "pages":
-                    # Pages Router: single route.ts per endpoint
-                    route_file = os.path.join(mod_api_dir, f"{route_name}.ts")
-                    content = self._generate_pages_api_route(ep)
-                else:
-                    # App Router: route.ts with exported HTTP method functions
-                    route_file = os.path.join(mod_api_dir, "route.ts")
-                    content = self._generate_app_api_route(endpoints)
-                    # Write once per module directory for app router
-                    if os.path.exists(route_file):
-                        continue
-
-                with open(route_file, "w", encoding="utf-8") as f:
-                    f.write(content)
-                created.append(route_file)
-
-                if self.router_type == "pages":
-                    break  # One file per route for pages router
-
-        return created
-
-    def _generate_pages_api_route(self, endpoint: Dict[str, Any]) -> str:
-        """Generate a Pages Router API route handler."""
-        method = endpoint["method"]
-        module = endpoint["module"]
-        path = endpoint["path"]
-
-        return f"""import type {{ NextApiRequest, NextApiResponse }} from 'next';
-
-/**
- * AIDD Route: {method} {path}
- * Module: {module}
- * Auto-generated by AIDD Next.js Exporter
- */
-export default async function handler(
-  req: NextApiRequest,
-  res: NextApiResponse
-) {{
-  if (req.method !== '{method}') {{
-    res.setHeader('Allow', '{method}');
-    return res.status(405).json({{ error: 'Method Not Allowed' }});
-  }}
-
-  try {{
-    // TODO: Connect to AIDD backend API
-    // const response = await fetch(`${{process.env.AIDD_API_URL}}{path}`, {{
-    //   method: '{method}',
-    //   headers: {{
-    //     'Content-Type': 'application/json',
-    //     'Authorization': req.headers.authorization || '',
-    //   }},
-    //   {f"body: JSON.stringify(req.body)," if method in ("POST", "PUT") else ""}
-    // }});
-    // const data = await response.json();
-    // return res.status(response.status).json(data);
-
-    return res.status(200).json({{ message: 'AIDD API route: {path}', module: '{module}' }});
-  }} catch (error) {{
-    console.error('API Error:', error);
-    return res.status(500).json({{ error: 'Internal Server Error' }});
-  }}
-}}
-"""
-
-    def _generate_app_api_route(self, endpoints: List[Dict[str, Any]]) -> str:
-        """Generate an App Router route.ts with exported HTTP method handlers."""
-        lines = [
-            "import { NextRequest, NextResponse } from 'next/server';",
-            "",
-        ]
-
-        methods_seen = set()
-        for ep in endpoints:
-            method = ep["method"]
-            if method in methods_seen:
-                continue
-            methods_seen.add(method)
-            path = ep["path"]
-            module = ep["module"]
-
-            lines.append(f"""/**
- * AIDD Route: {method} {path}
- * Module: {module}
- * Auto-generated by AIDD Next.js Exporter
- */
-export async function {method}(request: NextRequest) {{
-  try {{
-    // TODO: Connect to AIDD backend API
-    // const body = {method in ("POST", "PUT") and "await request.json()" or "undefined"};
-    // const response = await fetch(`${{process.env.AIDD_API_URL}}{path}`, {{
-    //   method: '{method}',
-    //   headers: {{
-    //     'Content-Type': 'application/json',
-    //     'Authorization': request.headers.get('authorization') || '',
-    //   }},
-    //   ...(body ? {{ body: JSON.stringify(body) }} : {{}}),
-    // }});
-    // const data = await response.json();
-    // return NextResponse.json(data, {{ status: response.status }});
-
-    return NextResponse.json({{ message: 'AIDD API route: {path}', module: '{module}' }});
-  }} catch (error) {{
-    console.error('API Error:', error);
-    return NextResponse.json({{ error: 'Internal Server Error' }}, {{ status: 500 }});
-  }}
-}}
-""")
-
-        return "\n".join(lines)
-
-    # ------------------------------------------------------------------
-    # Middleware Generation
-    # ------------------------------------------------------------------
-
-    def _generate_middleware(self, output_dir: str) -> List[str]:
-        """Generate middleware.ts with JWT auth guard."""
-        middleware = """import { NextResponse } from 'next/server';
-import type { NextRequest } from 'next/server';
-
-/**
- * AIDD JWT Auth Middleware
- *
- * Protects /api/* routes (except public ones) by validating
- * the Authorization: Bearer <token> header.
- *
- * Auto-generated by AIDD Next.js Exporter.
- */
-
-// Routes that do not require authentication
-const PUBLIC_ROUTES = [
-  '/api/health',
-  '/api/auth/login',
-  '/api/auth/register',
-];
-
-function isPublicRoute(pathname: string): boolean {
-  return PUBLIC_ROUTES.some((route) => pathname.startsWith(route));
-}
-
-function decodeJWTPayload(token: string): Record<string, unknown> | null {
-  try {
-    const parts = token.split('.');
-    if (parts.length !== 3) return null;
-
-    const payload = JSON.parse(
-      Buffer.from(parts[1], 'base64url').toString('utf-8')
-    );
-
-    // Check expiration
-    if (payload.exp && payload.exp < Math.floor(Date.now() / 1000)) {
-      return null;
-    }
-
-    return payload;
-  } catch {
-    return null;
-  }
-}
-
-export function middleware(request: NextRequest) {
-  const { pathname } = request.nextUrl;
-
-  // Only protect API routes
-  if (!pathname.startsWith('/api/')) {
-    return NextResponse.next();
-  }
-
-  // Allow public routes
-  if (isPublicRoute(pathname)) {
-    return NextResponse.next();
-  }
-
-  // Extract token from Authorization header
-  const authHeader = request.headers.get('authorization');
-  if (!authHeader || !authHeader.startsWith('Bearer ')) {
-    return NextResponse.json(
-      { error: 'Missing or invalid Authorization header' },
-      { status: 401 }
-    );
-  }
-
-  const token = authHeader.slice(7);
-  const payload = decodeJWTPayload(token);
-
-  if (!payload) {
-    return NextResponse.json(
-      { error: 'Invalid or expired token' },
-      { status: 401 }
-    );
-  }
-
-  // Forward user info in headers for downstream handlers
-  const response = NextResponse.next();
-  response.headers.set('X-User-Sub', String(payload.sub || ''));
-  response.headers.set('X-User-Role', String(payload.role || ''));
-
-  return response;
-}
-
-export const config = {
-  matcher: ['/api/:path*'],
-};
-"""
-        path = os.path.join(output_dir, "middleware.ts")
-        with open(path, "w", encoding="utf-8") as f:
-            f.write(middleware)
-        return [path]
-
-    # ------------------------------------------------------------------
-    # Design System CSS Copy
-    # ------------------------------------------------------------------
-
-    def _copy_design_system_css(self, output_dir: str) -> List[str]:
-        """Copy design-system.css to the styles directory."""
-        created = []
-        styles_dir = os.path.join(output_dir, "styles")
-        os.makedirs(styles_dir, exist_ok=True)
-
-        # Also create public/ for static assets
-        public_dir = os.path.join(output_dir, "public")
-        os.makedirs(public_dir, exist_ok=True)
-
-        # The CSS file should exist at templates/static/design-system.css
-        # relative to the AIDD project. We generate a reference copy.
-        css_path = os.path.join(styles_dir, "design-system.css")
-        if not os.path.exists(css_path):
-            # Will be populated by the template; write a placeholder import
-            with open(css_path, "w", encoding="utf-8") as f:
-                f.write("/* Design System CSS — see templates/static/design-system.css */\n")
-            created.append(css_path)
-
-        return created
-
-    # ------------------------------------------------------------------
-    # Page Templates
-    # ------------------------------------------------------------------
-
-    def _generate_index_page(self, modules: List[str]) -> str:
-        """Generate the index/landing page component."""
-        module_links = ""
-        for mod in modules:
-            label = mod.replace("_", " ").replace("-", " ").title()
-            if self.router_type == "pages":
-                href = f"/{mod}"
-            else:
-                href = f"/{mod}"
-            module_links += f"""
-        <Link href="{href}" className="studio-card" style={{ textDecoration: 'none', color: 'inherit' }}>
-          <h2>{label}</h2>
-          <p>Manage {label.lower()} records</p>
-        </Link>"""
-
-        return f"""import Link from 'next/link';
-
-/**
- * AIDD Enterprise — Home Page
- * Auto-generated by AIDD Next.js Exporter
- */
-export default function Home() {{
-  return (
-    <main style={{ padding: '2rem', maxWidth: '1200px', margin: '0 auto' }}>
-      <h1 style={{ marginBottom: '0.5rem' }}>AIDD Enterprise</h1>
-      <p style={{ color: '#6c7086', marginBottom: '2rem' }}>
-        Module dashboard — select a module to manage.
-      </p>
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '1rem' }}>
-        {module_links}
-      </div>
-    </main>
-  );
-}}
-"""
-
-    def _generate_module_page(self, module_name: str) -> str:
-        """Generate a module page component with CRUD UI scaffold."""
-        label = module_name.replace("_", " ").replace("-", " ").title()
-        return f"""'use client';
-
-import {{ useEffect, useState }} from 'react';
-
-/**
- * {label} Module Page
- * Auto-generated by AIDD Next.js Exporter
- */
-interface Item {{
-  id: number;
-  titulo: string;
-  status: string;
-  [key: string]: unknown;
-}}
-
-export default function {self._to_pascal_case(module_name)}Page() {{
-  const [items, setItems] = useState<Item[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-
-  useEffect(() => {{
-    fetch('/api/{module_name}')
-      .then((res) => res.json())
-      .then((data) => {{
-        setItems(Array.isArray(data) ? data : []);
-        setLoading(false);
-      }})
-      .catch((err) => {{
-        setError(err.message);
-        setLoading(false);
-      }});
-  }}, []);
-
-  if (loading) return <div className="studio-card"><p>Loading {label.lower()}...</p></div>;
-  if (error) return <div className="studio-card"><p style={{ color: 'var(--color-danger)' }}>Error: {{error}}</p></div>;
-
-  return (
-    <main style={{ padding: '2rem', maxWidth: '1200px', margin: '0 auto' }}>
-      <h1 style={{ marginBottom: '1.5rem' }}>{label}</h1>
-      <div style={{ display: 'flex', gap: '0.5rem', marginBottom: '1rem' }}>
-        <span className="metric-badge metric-badge--green">{{items.filter(i => i.status === 'ativo').length}} Active</span>
-        <span className="metric-badge metric-badge--yellow">{{items.length}} Total</span>
-      </div>
-      <div style={{ display: 'grid', gap: '1rem' }}>
-        {{items.map((item) => (
-          <div key={{item.id}} className="studio-card">
-            <h3>{{item.titulo}}</h3>
-            <p>Status: {{item.status}}</p>
-          </div>
-        ))}}
-        {{items.length === 0 && (
-          <div className="studio-card">
-            <p>No records found.</p>
-          </div>
-        )}}
-      </div>
-    </main>
-  );
-}}
-"""
+    def _module_page(self, module_name: str) -> str:
+        label = self._label(module_name)
+        pascal = self._to_pascal_case(module_name)
+        return (
+            '"use client";\n\n'
+            'import { useEffect, useState } from "react";\n'
+            'import { apiClient, ApiError } from "@/lib/api-client";\n\n'
+            "interface Item {\n"
+            "  id: number;\n"
+            "  titulo: string;\n"
+            "  status: string;\n"
+            "  [key: string]: unknown;\n"
+            "}\n\n"
+            f"export default function {pascal}Page() {{\n"
+            "  const [items, setItems] = useState<Item[]>([]);\n"
+            "  const [loading, setLoading] = useState(true);\n"
+            "  const [error, setError] = useState<string | null>(null);\n"
+            '  const [titulo, setTitulo] = useState("");\n\n'
+            "  const carregar = () => {\n"
+            "    setLoading(true);\n"
+            f'    apiClient.get<Item[]>("/api/{module_name}")\n'
+            "      .then((data) => { setItems(data); setError(null); })\n"
+            "      .catch((err: ApiError) => setError(err.message))\n"
+            "      .finally(() => setLoading(false));\n"
+            "  };\n\n"
+            "  useEffect(carregar, []);\n\n"
+            "  const criar = async (e: React.FormEvent) => {\n"
+            "    e.preventDefault();\n"
+            '    if (!titulo.trim()) return;\n'
+            "    try {\n"
+            f'      await apiClient.post("/api/{module_name}/criar", {{ titulo, status: "ativo" }});\n'
+            '      setTitulo("");\n'
+            "      carregar();\n"
+            "    } catch (err) {\n"
+            "      setError((err as ApiError).message);\n"
+            "    }\n"
+            "  };\n\n"
+            "  return (\n"
+            '    <main className="max-w-3xl mx-auto px-6 py-10">\n'
+            f'      <h1 className="text-2xl font-semibold mb-6">{label}</h1>\n\n'
+            '      <form onSubmit={criar} className="flex gap-2 mb-8">\n'
+            "        <input\n"
+            "          value={titulo}\n"
+            "          onChange={(e) => setTitulo(e.target.value)}\n"
+            f'          placeholder="Novo item em {label.lower()}"\n'
+            '          className="flex-1 rounded-md border border-zinc-300 dark:border-zinc-700 bg-transparent px-3 py-2"\n'
+            "        />\n"
+            '        <button type="submit" className="rounded-md bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 px-4 py-2">\n'
+            "          Criar\n"
+            "        </button>\n"
+            "      </form>\n\n"
+            '      {loading && <p className="text-zinc-500">Carregando...</p>}\n'
+            '      {error && <p className="text-red-600">{error}</p>}\n\n'
+            '      <div className="grid gap-3">\n'
+            "        {items.map((item) => (\n"
+            '          <div key={item.id} className="rounded-lg border border-zinc-200 dark:border-zinc-800 p-4">\n'
+            '            <p className="font-medium">{item.titulo}</p>\n'
+            '            <p className="text-sm text-zinc-500">{item.status}</p>\n'
+            "          </div>\n"
+            "        ))}\n"
+            "        {!loading && items.length === 0 && (\n"
+            '          <p className="text-zinc-500">Nenhum registro encontrado.</p>\n'
+            "        )}\n"
+            "      </div>\n"
+            "    </main>\n"
+            "  );\n"
+            "}\n"
+        )
 
     # ------------------------------------------------------------------
     # Helpers
     # ------------------------------------------------------------------
 
     @staticmethod
-    def _to_pascal_case(s: str) -> str:
-        """Convert snake_case or kebab-case to PascalCase."""
-        return "".join(word.capitalize() for word in re.split(r"[-_]+", s))
+    def _write(output_dir: str, rel_path: str, content: str) -> List[str]:
+        full_path = os.path.join(output_dir, *rel_path.split("/"))
+        os.makedirs(os.path.dirname(full_path), exist_ok=True)
+        with open(full_path, "w", encoding="utf-8") as f:
+            f.write(content)
+        return [full_path]
 
     @staticmethod
-    def _path_to_filename(path: str) -> str:
-        """Convert an API path like /api/modulo1/obter to a safe filename."""
-        # Remove /api/ prefix, replace slashes with underscores
-        clean = path.lstrip("/").replace("api/", "").replace("/", "_")
-        # Remove non-alphanumeric chars except underscore
-        clean = re.sub(r"[^a-zA-Z0-9_]", "", clean)
-        return clean or "index"
+    def _label(module_name: str) -> str:
+        return module_name.replace("_", " ").replace("-", " ").title()
+
+    @staticmethod
+    def _to_pascal_case(s: str) -> str:
+        return "".join(word.capitalize() for word in re.split(r"[-_]+", s))

@@ -75,20 +75,47 @@ def verificar_contratos(target_dir: str = "."):
         # de hoje (nao propaga, so registra erro), so com tipo explicito.
         erros.append(f"Erro ao gerar snapshot de contratos: {e}")
 
-    # 4. Validar Integridade e Autossuficiência dos 4 Portais Front-End
-    index_html = os.path.join(src_path, "static", "index.html")
-    if os.path.exists(index_html):
+    # 4. Validar Integridade e Autossuficiência do Front-End
+    # Lei Inviolável #11 (Padrão-Ouro de Stack): o frontend default é Next.js
+    # + TypeScript + Tailwind CSS, gerado em `frontend/` (irmã de `src/`), não
+    # mais `src/static/index.html` (Super-App Python puro, só existe quando
+    # gerado explicitamente com frontend_stack="python-html").
+    frontend_dir = os.path.join(target_dir, "frontend")
+    package_json_path = os.path.join(frontend_dir, "package.json")
+    usa_nextjs = False
+    if os.path.exists(package_json_path):
         try:
-            with open(index_html, "r", encoding="utf-8", errors="ignore") as f:
-                h = f.read()
-                if "<style>" not in h or "--bg-base" not in h:
-                    erros.append("Super-App 'index.html' sem CSS offline-first embutido na tag <style>.")
-                if "modal-overlay" not in h and "modal-generic" not in h:
-                    erros.append("Super-App 'index.html' sem estrutura modal com display encapsulado.")
-                if "<svg" in h and 'width="' not in h:
-                    erros.append("Super-App 'index.html' possui SVGs sem dimensões físicas travadas (width/height).")
-        except OSError as e:
-            erros.append(f"Erro ao auditar front-end index.html: {e}")
+            with open(package_json_path, "r", encoding="utf-8") as f:
+                pkg = json.load(f)
+            usa_nextjs = "next" in pkg.get("dependencies", {})
+        except (OSError, json.JSONDecodeError) as e:
+            erros.append(f"Erro ao ler frontend/package.json: {e}")
+
+    if usa_nextjs:
+        exigidos = [
+            os.path.join(frontend_dir, "tsconfig.json"),
+            os.path.join(frontend_dir, "tailwind.config.ts"),
+            os.path.join(frontend_dir, "app", "layout.tsx"),
+            os.path.join(frontend_dir, "app", "page.tsx"),
+        ]
+        for caminho in exigidos:
+            if not os.path.isfile(caminho):
+                rel = os.path.relpath(caminho, target_dir)
+                erros.append(f"Front-end Next.js incompleto: '{rel}' ausente (Lei #11).")
+    else:
+        index_html = os.path.join(src_path, "static", "index.html")
+        if os.path.exists(index_html):
+            try:
+                with open(index_html, "r", encoding="utf-8", errors="ignore") as f:
+                    h = f.read()
+                    if "<style>" not in h or "--bg-base" not in h:
+                        erros.append("Super-App 'index.html' sem CSS offline-first embutido na tag <style>.")
+                    if "modal-overlay" not in h and "modal-generic" not in h:
+                        erros.append("Super-App 'index.html' sem estrutura modal com display encapsulado.")
+                    if "<svg" in h and 'width="' not in h:
+                        erros.append("Super-App 'index.html' possui SVGs sem dimensões físicas travadas (width/height).")
+            except OSError as e:
+                erros.append(f"Erro ao auditar front-end index.html: {e}")
 
     # Checar geradores de HTML dos estúdios integrados
     openapi_py = os.path.join(src_path, "core", "openapi.py")

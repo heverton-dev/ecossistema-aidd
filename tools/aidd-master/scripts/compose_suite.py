@@ -63,6 +63,17 @@ except ImportError:
         sys.path.insert(0, _comp_dir)
     from escritor_atomico import escrever_atomico, escrever_json_atomico
 
+# Gerador de frontend Next.js (Lei Inviolável #11 — Padrão-Ouro de Stack).
+try:
+    from nextjs_exporter import NextJSExporter
+except ImportError:
+    _njs_dir = os.path.join(
+        os.path.dirname(__file__), "..", "..", "..", "componentes", "compartilhado", "src-core"
+    )
+    if os.path.isdir(_njs_dir) and _njs_dir not in sys.path:
+        sys.path.insert(0, _njs_dir)
+    from nextjs_exporter import NextJSExporter
+
 if hasattr(sys.stdout, 'reconfigure'):
     sys.stdout.reconfigure(encoding='utf-8', errors='replace')
 
@@ -578,16 +589,30 @@ def _generate_modules(modules: list, target_dir: str) -> list[str]:
 
 def _generate_server_and_ui(
     suite_name: str, clean_modules: list[str], db_engine: str,
-    src_dir: str, static_dir: str, templates_v2: str
+    src_dir: str, static_dir: str, templates_v2: str,
+    target_dir: str = None, frontend_stack: str = "nextjs",
 ) -> None:
-    """Gerar Servidor Monolítico Modular src/server.py e Front-ends."""
+    """Gerar Servidor Monolítico Modular src/server.py e Front-ends.
+
+    Lei Inviolável #11 (Padrão-Ouro de Stack, `AGENTS.md`): o frontend
+    default é Next.js + TypeScript + Tailwind CSS (`frontend_stack="nextjs"`).
+    O Super-App em HTML/CSS/JS Python puro só é gerado se pedido
+    explicitamente (`frontend_stack="python-html"`) — silêncio nunca é
+    licença para gerar outra coisa.
+    """
     server_code = generate_modular_server_code(suite_name, clean_modules, db_engine=db_engine)
     escrever_atomico(os.path.join(src_dir, "server.py"), server_code)
     print("  [+] Servidor dinâmico 'src/server.py' gerado com sucesso!")
 
-    index_html = generate_superapp_index_html(suite_name, clean_modules)
-    escrever_atomico(os.path.join(static_dir, "index.html"), index_html)
-    print("  [+] Front-end Super-App 'src/static/index.html' gerado!")
+    if frontend_stack == "nextjs":
+        project_dir = target_dir or os.path.dirname(src_dir)
+        frontend_dir = os.path.join(project_dir, "frontend")
+        NextJSExporter().export_project(project_dir, frontend_dir)
+        print("  [+] Front-end 'frontend/' gerado em Next.js + TypeScript + Tailwind (Lei #11)!")
+    else:
+        index_html = generate_superapp_index_html(suite_name, clean_modules)
+        escrever_atomico(os.path.join(static_dir, "index.html"), index_html)
+        print("  [+] Front-end Super-App 'src/static/index.html' gerado!")
 
     docs_template_path = os.path.join(templates_v2, "docs.html")
     if os.path.isfile(docs_template_path):
@@ -724,7 +749,7 @@ def _copy_governance_and_rules(
     print("  [+] Grafo de Memória 'CONTEXTO-PROJETO.md' gerado!")
 
 
-def compose_suite(target_dir: str, suite_name: str, modules: list, db_engine: str = "sqlite"):
+def compose_suite(target_dir: str, suite_name: str, modules: list, db_engine: str = "sqlite", frontend_stack: str = "nextjs"):
     """Motor principal de composição cross-project."""
     target_dir = os.path.abspath(target_dir)
     db_engine = (db_engine or "sqlite").lower()
@@ -745,7 +770,10 @@ def compose_suite(target_dir: str, suite_name: str, modules: list, db_engine: st
     _copy_shared_kernel(templates_v2, dirs["core"], dirs["shared_ui"], dirs["shared_utils"])
     _generate_structured_plan(suite_name, db_engine, target_dir)
     clean_modules = _generate_modules(modules, target_dir)
-    _generate_server_and_ui(suite_name, clean_modules, db_engine, dirs["src"], dirs["static"], templates_v2)
+    _generate_server_and_ui(
+        suite_name, clean_modules, db_engine, dirs["src"], dirs["static"], templates_v2,
+        target_dir=target_dir, frontend_stack=frontend_stack,
+    )
     _generate_manifests(target_dir, db_engine)
     _copy_gates_and_automation(
         skill_root, templates_v2, gates_dir, scripts_dir,

@@ -21,7 +21,24 @@ services:
       retries: 3
       start_period: 5s
 
-  # 2. Nginx Reverse Proxy com SSL, Rate Limiting & Anti-DDoS
+  # 2. Front-end Next.js (Lei Inviolavel #11: Padrao-Ouro de Stack)
+  web:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    restart: always
+    environment:
+      - NEXT_PUBLIC_API_URL=
+    networks:
+      - aidd_network
+    healthcheck:
+      test: ["CMD", "node", "-e", "require('http').get('http://localhost:3000/', r => process.exit(r.statusCode < 500 ? 0 : 1)).on('error', () => process.exit(1))"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+
+  # 3. Nginx Reverse Proxy com SSL, Rate Limiting & Anti-DDoS
   nginx:
     image: nginx:alpine
     restart: always
@@ -34,6 +51,8 @@ services:
       - nginx_logs:/var/log/nginx
     depends_on:
       app:
+        condition: service_healthy
+      web:
         condition: service_healthy
     networks:
       - aidd_network
