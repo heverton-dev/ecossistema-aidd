@@ -80,7 +80,7 @@
     }
   ],
   "testes": {
-    "medido_em": "2026-09-18T00:36:10.445903+00:00",
+    "medido_em": "2026-09-18T01:27:13.594274+00:00",
     "metodo": "python -m pytest -q --tb=no em cada tools/<ferramenta>, parseado do resumo real (nao digitado a mao)",
     "por_ferramenta": {
       "aidd-forge": {
@@ -101,17 +101,17 @@
       },
       "aidd-master": {
         "status": "ok",
-        "passed": 357,
+        "passed": 363,
         "failed": 0,
-        "skipped": 3,
+        "skipped": 1,
         "errors": 0,
         "exit_code": 0
       },
       "aidd-enterprise": {
         "status": "ok",
-        "passed": 329,
+        "passed": 331,
         "failed": 0,
-        "skipped": 3,
+        "skipped": 1,
         "errors": 0,
         "exit_code": 0
       },

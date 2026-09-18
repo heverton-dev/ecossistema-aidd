@@ -117,6 +117,57 @@ def test_provision_passa_no_gate_g_contracts(tmp_path):
     assert resultado.returncode == 0, resultado.stdout + resultado.stderr
 
 
+def test_provision_requirements_txt_inclui_sqlglot_e_returns(tmp_path):
+    """Achado real (validacao E2E do Fluxo 01/Etapa 6, 17/09/2026):
+    requirements.txt gerado por provision() tinha uma lista hardcoded e
+    incompleta — faltavam sqlglot (core/database.py importa incondicional
+    na linha de topo) e returns (core/result.py idem). `docker compose up`
+    contra o projeto gerado quebrava com ModuleNotFoundError dentro do
+    container (ambiente isolado, sem os pacotes ja instalados no host).
+    Corrigido promovendo o conteudo para a constante CORE_KERNEL_REQUIREMENTS
+    em compose_suite.py, mesma fonte unica usada pelo outro fluxo."""
+    from provision_project import provision
+
+    provision("Projeto Teste Requirements", base_dir=str(tmp_path))
+    projeto_dir = next(tmp_path.glob("proj_*"))
+
+    conteudo = (projeto_dir / "requirements.txt").read_text(encoding="utf-8")
+    assert "sqlglot" in conteudo
+    assert "returns" in conteudo
+
+
+def test_provision_copia_pasta_nginx_com_conf_e_gerador_ssl(tmp_path):
+    """Achado real: docker-compose.yml gerado monta ./nginx/nginx.conf e
+    ./nginx/ssl como bind mounts, mas provision() nunca copiava a pasta
+    nginx/ (compose_suite() ja fazia isso corretamente, para outro fluxo).
+    `docker compose up` do projeto gerado por `master init` falhava
+    tentando montar um caminho inexistente."""
+    from provision_project import provision
+
+    provision("Projeto Teste Nginx", base_dir=str(tmp_path))
+    projeto_dir = next(tmp_path.glob("proj_*"))
+
+    assert (projeto_dir / "nginx" / "nginx.conf").is_file()
+    assert (projeto_dir / "nginx" / "ssl" / "generate_ssl.py").is_file()
+
+
+def test_provision_dockerfile_instala_requirements_antes_de_rodar(tmp_path):
+    """Achado real: templates/core/Dockerfile (usado por `master init`) nunca
+    rodava `pip install -r requirements.txt` — so copiava src/ e executava
+    `python src/server.py` direto. Qualquer projeto gerado quebrava com
+    ModuleNotFoundError na primeira dependencia de terceiro nao presente na
+    imagem base `python:3.12-slim`. templates/v2/Dockerfile (compose_suite)
+    ja instalava; os dois templates divergiam."""
+    from provision_project import provision
+
+    provision("Projeto Teste Dockerfile", base_dir=str(tmp_path))
+    projeto_dir = next(tmp_path.glob("proj_*"))
+
+    conteudo = (projeto_dir / "Dockerfile").read_text(encoding="utf-8")
+    assert "pip install" in conteudo and "requirements.txt" in conteudo
+    assert conteudo.index("pip install") < conteudo.index("COPY --chown=aidduser:aiddgroup src/")
+
+
 def test_provision_server_py_importa_de_verdade_sem_modulenotfounderror(tmp_path):
     """Achado real: server.py gerado faz `from core.outbox_worker import ...`
     (e jobs/metrics/logs), mas a lista hardcoded de arquivos copiados por

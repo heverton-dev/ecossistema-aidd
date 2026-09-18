@@ -136,6 +136,65 @@ def test_requirements_gerado_inclui_secure(suite_composta):
 #    assim existir (ex.: um 4o modulo core futuro com o mesmo problema).
 # =============================================================================
 
+def test_servidor_gerado_respeita_env_db_path(suite_composta, tmp_path):
+    """Achado real (validacao E2E do Fluxo 01/Etapa 6, 17/09/2026):
+    docker-compose.yml fixa DB_PATH=/app/data/suite.db — o unico diretorio
+    com permissao de escrita do usuario nao-root do container (/app
+    pertence a root). O server.py gerado ignorava essa env var e sempre
+    calculava DB_PATH a partir de CURRENT_DIR, gravando fora de /app/data.
+    `docker compose up` do projeto gerado quebrava com
+    `sqlite3.OperationalError: unable to open database file`. Reproducao
+    real: sobe o servidor com DB_PATH apontando para um arquivo num
+    diretorio proprio e confirma que o arquivo e criado la (nao no default)."""
+    import urllib.request
+    import urllib.error
+
+    db_customizado = tmp_path / "custom_dir" / "suite.db"
+    db_customizado.parent.mkdir(parents=True)
+    env = dict(os.environ, DB_PATH=str(db_customizado))
+
+    processo = subprocess.Popen(
+        [sys.executable, "src/server.py"],
+        cwd=str(suite_composta),
+        env=env,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.STDOUT,
+        text=True,
+    )
+    try:
+        ultimo_erro = None
+        deadline = time.time() + 15
+        while time.time() < deadline:
+            if processo.poll() is not None:
+                saida = processo.stdout.read()
+                pytest.fail(f"Servidor encerrou sozinho antes de responder (exit "
+                            f"{processo.returncode}):\n{saida}")
+            try:
+                with urllib.request.urlopen("http://127.0.0.1:3000/openapi.json", timeout=1) as resp:
+                    assert resp.status == 200
+                    break
+            except (urllib.error.URLError, ConnectionError) as e:
+                ultimo_erro = e
+                time.sleep(0.05)
+        else:
+            pytest.fail(f"Servidor não respondeu em 15s: {ultimo_erro}")
+    finally:
+        processo.terminate()
+        try:
+            processo.wait(timeout=5)
+        except subprocess.TimeoutExpired:
+            processo.kill()
+
+    assert db_customizado.exists(), (
+        "server.py não respeitou DB_PATH: banco não foi criado no caminho "
+        "customizado indicado pela variável de ambiente"
+    )
+    default_path = suite_composta / "suite.db"
+    assert not default_path.exists(), (
+        "server.py criou o banco no caminho default mesmo com DB_PATH definida"
+    )
+
+
 def test_servidor_gerado_sobe_e_responde(suite_composta):
     import urllib.request
     import urllib.error

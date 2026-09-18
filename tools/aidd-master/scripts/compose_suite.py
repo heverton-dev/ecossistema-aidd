@@ -36,6 +36,21 @@ CORE_KERNEL_FILES = [
     "local_first.py", "logs.py",
 ]
 
+# Fonte única de verdade: dependências de terceiros importadas incondicionalmente
+# (top-level) pelos arquivos em CORE_KERNEL_FILES. provision_project.py reusa
+# este mesmo conteúdo — nunca duplicar, ou as duas ferramentas voltam a divergir
+# (achado real: requirements.txt gerado por `master init` não instalava sqlglot
+# nem returns, e o container Docker do projeto gerado quebrava com
+# ModuleNotFoundError ao rodar `docker compose up` de verdade — validação E2E do
+# Fluxo 01, 17/09/2026. redis fica de fora: só é importado sob demanda dentro de
+# funções em events.py, nunca no import do módulo).
+CORE_KERNEL_REQUIREMENTS = (
+    "pytest>=7.4.0\nmutmut>=2.4.0\nrequests>=2.31.0\n"
+    "pyjwt>=2.8.0\ncryptography>=42.0.0\nsecure>=2.0.0\n"
+    "sqlalchemy>=2.0.0\naiosqlite>=0.20.0\nmcp>=1.28.0\n"
+    "sqlglot>=24.0.0\nreturns>=0.23.0\n"
+)
+
 # Escritor atômico: staging → fsync → os.replace
 try:
     from escritor_atomico import escrever_atomico, escrever_json_atomico
@@ -132,7 +147,17 @@ def generate_modular_server_code(suite_name: str, module_slugs: list, db_engine:
         )
         db_url_expr_str = "os.environ.get(\"DATABASE_URL\", DATABASE_URL_EXEMPLO)"
     else:
-        db_init_str = "DB_PATH = os.path.join(CURRENT_DIR, \"..\", \"suite.db\")"
+        # docker-compose.yml/Dockerfile fixam DB_PATH=/app/data/suite.db (unico
+        # diretorio com permissao de escrita do usuario nao-root 10001:10001;
+        # /app pertence a root). O server.py gerado ignorava essa env var e
+        # sempre calculava o caminho a partir de CURRENT_DIR (fica em /app,
+        # fora de /app/data) — sqlite3.OperationalError: unable to open
+        # database file em qualquer `docker compose up` (achado real,
+        # validacao E2E do Fluxo 01/Etapa 6, 17/09/2026).
+        db_init_str = (
+            "DB_PATH = os.environ.get(\"DB_PATH\") "
+            "or os.path.join(CURRENT_DIR, \"..\", \"suite.db\")"
+        )
         db_url_expr_str = "f\"sqlite:///{DB_PATH}\""
 
     server_code, _ = _render_suite_template({
@@ -584,11 +609,7 @@ def _generate_manifests(target_dir: str, db_engine: str) -> None:
     # as rotas de SSO Corporativo (OAuth2/OIDC + PKCE) que chamam
     # OIDCService.validate_id_token (core/security.py), e esse metodo depende
     # de PyJWT + cryptography (RS256/JWKS) em qualquer produto composto aqui.
-    req_content = (
-        "pytest>=7.4.0\nmutmut>=2.4.0\nrequests>=2.31.0\n"
-        "pyjwt>=2.8.0\ncryptography>=42.0.0\nsecure>=2.0.0\n"
-        "sqlalchemy>=2.0.0\naiosqlite>=0.20.0\nmcp>=1.28.0\n"
-    )
+    req_content = CORE_KERNEL_REQUIREMENTS
     if db_engine == "postgres":
         req_content += "psycopg2-binary>=2.9.9\n"
     escrever_atomico(os.path.join(target_dir, "requirements.txt"), req_content)

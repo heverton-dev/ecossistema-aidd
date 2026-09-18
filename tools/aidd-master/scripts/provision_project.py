@@ -65,7 +65,23 @@ def provision(project_desc, base_dir=None):
             src = os.path.join(templates_dir, f)
             if os.path.exists(src):
                 shutil.copyfile(src, os.path.join(project_dir, f))
-                
+
+        # nginx/ (nginx.conf + ssl/generate_ssl.py): docker-compose.yml monta
+        # ./nginx/nginx.conf e ./nginx/ssl — sem esta pasta o serviço nginx
+        # nunca sobe (bind mount de arquivo inexistente). compose_suite.py já
+        # copiava isto corretamente; provision_project.py nunca copiava
+        # (achado real: `docker compose up` do projeto gerado por `master init`
+        # falhava com bind mount ausente — validação E2E do Fluxo 01, 17/09/2026).
+        nginx_src = os.path.join(templates_dir, 'nginx')
+        if os.path.isdir(nginx_src):
+            nginx_dst = os.path.join(project_dir, 'nginx')
+            for root, _dirs, files in os.walk(nginx_src):
+                rel = os.path.relpath(root, nginx_src)
+                d_dir = os.path.join(nginx_dst, rel) if rel != '.' else nginx_dst
+                os.makedirs(d_dir, exist_ok=True)
+                for f in files:
+                    shutil.copyfile(os.path.join(root, f), os.path.join(d_dir, f))
+
         if os.path.exists(os.path.join(templates_dir, 'locustfile.py')):
             shutil.copyfile(os.path.join(templates_dir, 'locustfile.py'), os.path.join(project_dir, 'tests', 'load', 'locustfile.py'))
 
@@ -109,8 +125,9 @@ def provision(project_desc, base_dir=None):
         print(f"  [!] Aviso: não foi possível gerar server.py/index.html: {e}")
 
     # 6. Gerar requirements.txt
+    from compose_suite import CORE_KERNEL_REQUIREMENTS
     with open(os.path.join(project_dir, 'requirements.txt'), 'w', encoding='utf-8') as f:
-        f.write("pytest>=7.0.0\nrequests>=2.28.0\nlocust>=2.15.0\nsecure>=2.0.0\nsqlalchemy>=2.0.0\naiosqlite>=0.20.0\n")
+        f.write(CORE_KERNEL_REQUIREMENTS)
 
     # 7. Gerar PLANO-EXECUCAO-ESTRUTURADO.json
     plano = {

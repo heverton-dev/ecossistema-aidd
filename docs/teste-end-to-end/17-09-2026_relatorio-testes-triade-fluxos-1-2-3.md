@@ -49,7 +49,7 @@ Cada fluxo representa um caminho industrial especializado alimentado pelo **`aid
 - **Esteira:** `FORGE` → `PLANNER` → `GENERATOR` → `MASTER` → `ENTERPRISE` → `OPS`
 - **Motor Primário:** `aidd-generator` (Pipeline de 8 fases, TDD Red-Green estrito)
 - **Diretório Alvo do Teste:** `testes/fluxo-01-pure/`
-- **Status do Fluxo:** **Etapas 1-4 CONCLUÍDAS; Etapas 5-7 pendentes**
+- **Status do Fluxo:** **Etapas 1-6 CONCLUÍDAS; Etapa 7 pendente**
 
 ### Checklist de Execução por Ferramenta:
 - [x] **Etapa 1 (`aidd-forge`):** Injeção de governança, Git, pre-commit hooks e regras de isolamento.
@@ -57,7 +57,7 @@ Cada fluxo representa um caminho industrial especializado alimentado pelo **`aid
 - [x] **Etapa 3 (`aidd-generator`):** Execução do pipeline TDD de 8 fases (Spec -> Arquitetura -> Testes Red -> Implementação Green -> Quarteto). 4 bugs reais achados e corrigidos, score final 88/100.
 - [x] **Etapa 4 (`aidd-master`):** Harmonização em Monólito Modular (`init` + `add-module`). 3 bugs reais achados e corrigidos (incluindo servidor que nunca subia), auditoria final APROVADA (7/7 gates), servidor testado rodando de verdade.
 - [x] **Etapa 5 (`aidd-enterprise`):** Injeção de componentes resilientes e validação de hashes SHA-256. 1 bug grave achado e corrigido: comando `verificar-drift` não existia de verdade nesta ferramenta.
-- [ ] **Etapa 6 (`aidd-ops`):** Provisionamento do docker-compose unificado e envs de produção.
+- [x] **Etapa 6 (`aidd-ops` / provisionamento Docker):** `aidd-ops plan` não se aplica a este fluxo (achado de escopo, não bug — ver detalhes). 4 bugs reais achados e corrigidos no docker-compose/Dockerfile gerados pelo `aidd-master`; stack completa (`app` + `nginx` + SSL) validada rodando de verdade, com uma tarefa real criada via API sobre HTTPS.
 - [ ] **Etapa 7 (Auditoria Final):** Aprovação com exit code 0 em todos os Quality Gates.
 
 ### Registro de Inconsistências e Auto-Correções (Fluxo 01)
@@ -170,6 +170,53 @@ Mecanismo real: `python ecossistema.py enterprise inject <tipo> <nome> --dir <pr
 - **Novo teste de regressão:** `test_cli_verificar_drift_ponta_a_ponta` em `test_aidd_core_injector.py` — injeta um componente real via subprocess, confirma `verificar-drift` retorna exit 0, edita o arquivo manualmente, confirma que retorna exit 1 (drift detectado). Réplica exata do padrão já existente em `aidd-master`.
 - **Validação real:** reproduzido o bug (comando criava projeto indevido), aplicado o fix, testado de ponta a ponta: `enterprise inject rule ...` → `enterprise verificar-drift` → `SUCESSO`; editado o arquivo manualmente → `verificar-drift` → `[ERRO] SYNC_DIVERGENTE`, hash esperado vs. obtido divergentes, exit 1. Suite completa do `aidd-enterprise`: **329 passed, 3 skipped**.
 - **Achado adicional (via `G_TESTES_REAIS` rodando as 7 ferramentas de uma vez):** confirmado que TODAS as suítes do monorepo passam — `aidd-forge` 294, `aidd-generator` 1019, `aidd-master` 357, `aidd-enterprise` 328→329, `aidd-ops` 168, `aidd-bridge` 45, `aidd-factory` 16. **Total: 2227+ testes, 0 falhas.**
+
+**Etapa 6 (`aidd-ops`) — achado de escopo (não-bug) + 4 bugs reais no docker-compose gerado pelo `aidd-master`, corrigidos com validação end-to-end real:**
+
+Mecanismo real tentado primeiro: `python ecossistema.py ops plan "<ideia>" --dir <projeto>` (Fases 1-3: Reconhecimento de Nicho → Curadoria de Stack → Dimensionamento). Rodado de verdade contra a ideia real do Fluxo 01 (`"Sistema de gestão de tarefas pessoais"`):
+
+```
+[ERRO] NICHO_NAO_RECONHECIDO: Nenhum nicho reconhecido no texto: 'Sistema de gestão de tarefas pessoais'
+Detalhes: {"slugs_disponiveis": ["clinicas", "delivery", "farmacias", "b2b_industrial", "energia_solar"]}
+```
+
+- **Não é um bug — é um achado de escopo real:** `aidd-ops plan` foi desenhado exclusivamente para o Fluxo 02 (curadoria de stacks Open-Source por nicho de negócio pré-cadastrado). Confirmado em código (`scripts/pipeline_ops.py`): os únicos 5 nichos existentes são fixos (`clinicas`, `delivery`, `farmacias`, `b2b_industrial`, `energia_solar`), sem nenhum nicho genérico/fallback para um monólito customizado do Fluxo 01. `aidd-ops` não tem hoje nenhum caminho de "provisionar infraestrutura para um projeto arbitrário" — isso é uma lacuna arquitetural real (mesma classe dos achados de integração não-bloqueantes já registrados nas Etapas 1-3), registrada aqui para o backlog, não corrigida nesta sessão por ser uma feature nova, não um bug.
+- **Mecanismo real e aplicável ao Fluxo 01, usado em seguida:** o próprio `aidd-master` (Etapa 4, `master init`) já gera `Dockerfile` + `docker-compose.yml` + `deploy.sh` + `nginx/` no projeto — esse é o "docker-compose unificado" citado no checklist. A validação real da Etapa 6 passou a ser: **este docker-compose de verdade sobe e serve a aplicação em produção?** Resposta inicial: não — 4 bugs reais, achados só ao tentar `docker compose up` de verdade (nenhum gate/teste antes disso jamais buildava uma imagem Docker real).
+
+**1) BUG corrigido — `requirements.txt` gerado por `master init` não instalava `sqlglot` nem `returns`:**
+- `docker compose up --build` construía a imagem, mas o container `app` entrava em crash-loop: `ModuleNotFoundError: No module named 'sqlglot'` (`core/database.py` importa incondicionalmente na primeira linha).
+- **Causa raiz:** lista hardcoded e desatualizada em `provision_project.py` (mesma classe do bug #3 da Etapa 4) — faltavam `sqlglot` e `returns` (`core/result.py` também importa incondicionalmente), ambos realmente usados pelo kernel compartilhado. No host, o bug nunca aparecia porque esses pacotes já estavam instalados globalmente/no venv da própria ferramenta — só um ambiente Docker isolado (`python:3.12-slim` limpo) expõe a lacuna de verdade.
+- **Correção aplicada:** conteúdo de `requirements.txt` promovido à constante única `CORE_KERNEL_REQUIREMENTS` em `compose_suite.py`, reusada por `provision_project.py` — mesmo padrão de fonte única já usado para `CORE_KERNEL_FILES`.
+- **Novo teste de regressão:** `test_provision_requirements_txt_inclui_sqlglot_e_returns`.
+
+**2) BUG corrigido — `docker-compose.yml` gerado monta `./nginx/nginx.conf` e `./nginx/ssl`, mas `master init` nunca copiava a pasta `nginx/`:**
+- `docker compose up` falhava ao montar um bind mount de caminho inexistente (Docker cria um diretório vazio no lugar, quebrando o Nginx por falta de config e certificados).
+- **Causa raiz:** `compose_suite.py` (usado por outro fluxo) já copiava `templates/*/nginx/` corretamente; `provision_project.py` (o `master init` real) nunca tinha essa etapa.
+- **Correção aplicada:** `provision()` agora copia `nginx/` (mesma lógica de `_copy_shared_kernel`'s cópia de nginx em `compose_suite.py`).
+- **Novo teste de regressão:** `test_provision_copia_pasta_nginx_com_conf_e_gerador_ssl`.
+
+**3) BUG corrigido — `templates/core/Dockerfile` (usado por `master init`) nunca instalava dependências (`pip install`):**
+- Mesmo com `requirements.txt` corrigido, o container continuava quebrando: o `Dockerfile` só copiava `src/` e rodava `python src/server.py` direto, sem nunca instalar nada na imagem — nem o `requirements.txt` era copiado para dentro do container.
+- **Causa raiz:** `templates/v2/Dockerfile` (usado por `compose_suite.py`) já tinha o passo `COPY requirements.txt` + `RUN pip install --no-cache-dir -r requirements.txt`; `templates/core/Dockerfile` era uma cópia desatualizada sem esse passo — os dois templates deveriam ser idênticos e haviam divergido.
+- **Correção aplicada:** `templates/core/Dockerfile` atualizado para instalar dependências antes de copiar `src/`, igual ao `templates/v2/Dockerfile`.
+- **Novo teste de regressão:** `test_provision_dockerfile_instala_requirements_antes_de_rodar`.
+
+**4) BUG corrigido (mais grave) — `server.py` gerado ignora a variável de ambiente `DB_PATH`, quebrando com `sqlite3.OperationalError: unable to open database file` dentro do container:**
+- Com os 3 bugs acima corrigidos, a imagem buildava e instalava tudo, mas o container `app` continuava `unhealthy`: `sqlalchemy.exc.OperationalError: unable to open database file`.
+- **Causa raiz:** `docker-compose.yml`/`Dockerfile` fixam `DB_PATH=/app/data/suite.db` — o **único** diretório com permissão de escrita do usuário não-root `10001:10001` do container (`/app` pertence a `root`, só `/app/data` é `chown`ado para `aidduser`, por design de segurança OWASP). Mas o `server.py` gerado por `generate_modular_server_code()` (`compose_suite.py`) **nunca lia essa variável** — sempre calculava `DB_PATH = os.path.join(CURRENT_DIR, "..", "suite.db")`, resolvendo para `/app/suite.db` (fora de `/app/data`, sem permissão de escrita). Bug presente em AMBOS os fluxos de geração (`provision_project.py` e `compose_suite.py`), já que os dois usam o mesmo gerador de `server.py`.
+- **Por que nem gates nem os 2227+ testes anteriores pegaram:** nenhum teste jamais construía uma imagem Docker real nem definia a variável `DB_PATH` para simular o ambiente de produção — todos rodavam `python src/server.py` direto no host, sem `DB_PATH` setada, onde o caminho relativo default sempre funciona (diretório do projeto é gravável).
+- **Correção aplicada:** `db_init_str` em `compose_suite.py::generate_modular_server_code` agora gera `DB_PATH = os.environ.get("DB_PATH") or os.path.join(CURRENT_DIR, "..", "suite.db")` — respeita a env var quando definida (produção/Docker), mantém o default relativo para uso local (dev sem Docker).
+- **Novo teste de regressão:** `test_servidor_gerado_respeita_env_db_path` — sobe o servidor real com `DB_PATH` customizada, confirma que o banco é criado no caminho indicado (e não no default).
+- **Validação real de ponta a ponta:** projeto `gestao-tarefas-monolito` recriado do zero (`master init` → `master add-module tarefas` → `enterprise inject rule` → `enterprise verificar-drift`, todos OK) com os 4 fixes aplicados. `python nginx/ssl/generate_ssl.py` (gera certificado autoassinado 2048-bit) → `docker compose up -d --build`: **`app` Healthy, `nginx` Started**. Confirmado via `curl` real contra a stack em produção (HTTPS na porta 443, self-signed):
+  - `GET https://localhost/` → 200 (Super-App)
+  - `GET https://localhost/openapi.json` → 200
+  - `GET https://localhost/docs` → 200 (Swagger Studio)
+  - `GET https://localhost/webhooks` → 200 (Webhook Studio)
+  - `GET https://localhost/mcp` → 200 (MCP Server)
+  - `POST https://localhost/api/tarefas/criar` (tarefa real) → 200, `{"sucesso": true, "id": 3, ...}`
+  - `GET https://localhost/api/tarefas` → 200, tarefa criada aparece na listagem junto com os 2 registros de seed
+  - Confirmado dentro do container (`docker exec`) que `suite.db`/`suite.db-wal`/`suite.db-shm` foram criados em `/app/data` (o volume persistente correto), com o dono `aidduser:aiddgroup` — não em `/app`.
+- Suite completa do `aidd-master` após os 4 fixes: **363 passed, 1 skipped** (era 357 passed, 3 skipped ao final da Etapa 4 — 6 testes novos de regressão; 2 skips a menos porque o Docker Desktop, ligado nesta etapa para validar o `docker compose up` real, também destravou 2 testes de `test_database_adapter.py`/`test_events_driver.py` que dependem de `Docker daemon disponível` para subir um container Redis real. O único skip restante é `test_scaffold_infra.py` por falta do binário `terraform` no ambiente).
 
 ---
 

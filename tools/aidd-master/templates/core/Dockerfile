@@ -18,6 +18,10 @@ ENV PYTHONDONTWRITEBYTECODE=1 \
     ALLOW_ANONYMOUS=0 \
     DB_PATH=/app/data/suite.db
 
+# Copia e instala dependências de produção
+COPY requirements.txt /app/requirements.txt
+RUN pip install --no-cache-dir -r /app/requirements.txt
+
 # Copia o código da aplicação
 COPY --chown=aidduser:aiddgroup src/ /app/src/
 
