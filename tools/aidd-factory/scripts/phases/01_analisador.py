@@ -21,6 +21,14 @@ _NICHOS_DIR = os.path.join(_AIDD_OPS_ROOT, "templates", "infra", "nichos")
 _INFRA_DIR = os.path.join(_AIDD_OPS_ROOT, "templates", "infra")
 _REQUISITOS_PATH = os.path.join(_AIDD_OPS_ROOT, "data", "requisitos_recursos.json")
 
+# Reusa o discriminador de nicho dinamico do aidd-ops (fonte unica —
+# 01_intake.eh_nicho_dinamico) em vez de duplicar o prefixo "dinamico_"
+# aqui. Precedente ja existente neste arquivo: _AIDD_OPS_ROOT acima ja le
+# templates/data de aidd-ops diretamente.
+sys.path.insert(0, os.path.join(_AIDD_OPS_ROOT, "scripts", "phases"))
+from importlib import import_module as _imod  # noqa: E402
+_mod_intake_ops = _imod("01_intake")
+
 
 def _carregar_nicho_spec(nicho_slug: str) -> Result:
     """Carrega o nicho spec JSON de templates/infra/nichos/."""
@@ -97,6 +105,49 @@ def _mapear_ferramentas_com_requisitos(ferramentas: list, requisitos: dict) -> l
     return resultado
 
 
+def _blocos_dinamicos(ferramentas_com_req: list) -> list:
+    """Blocos de infra para um nicho dinamico (fora do catalogo fixo de 5
+    nichos): baseline universal observado em TODOS os 5 nichos reais
+    (traefik + postgres — ver templates/infra/nichos/*.json) em vez de
+    exigir um nicho_spec.json pre-cadastrado. Postgres so entra se alguma
+    ferramenta do plano de fato precisar de banco relacional (mesmo
+    criterio usado no sizing, requisitos_recursos.json)."""
+    repo_root = os.path.normpath(os.path.join(_FACTORY_ROOT, "..", ".."))
+
+    def _bloco(slug, obrigatorio, motivo):
+        caminho_relativo = f"tools/aidd-ops/templates/infra/{slug}/"
+        caminho_absoluto = os.path.normpath(os.path.join(repo_root, caminho_relativo))
+        existe = os.path.isdir(caminho_absoluto)
+        compose_existe = os.path.isfile(os.path.join(caminho_absoluto, "docker-compose.yml")) if existe else False
+        return {
+            "slug": slug, "obrigatorio": obrigatorio, "motivo": motivo,
+            "caminho_template": caminho_relativo, "compose_existe": compose_existe,
+        }
+
+    blocos = [_bloco("traefik", True, "Reverse proxy e terminacao TLS (baseline universal de todos os nichos)")]
+    if any(f.get("requer_banco") for f in ferramentas_com_req):
+        blocos.append(_bloco("postgres", True, "Banco centralizado — pelo menos 1 ferramenta do plano requer banco relacional"))
+    return blocos
+
+
+def _bancos_dinamicos(ferramentas_com_req: list) -> list:
+    """Bancos logicos para um nicho dinamico: 1 entrada por ferramenta que
+    o sizing (Fase 3, generico por nome) ja marcou como requer_banco —
+    mesma fonte de verdade, sem depender de nicho_spec.bancos_logicos."""
+    bancos = []
+    for f in ferramentas_com_req:
+        if not f.get("requer_banco"):
+            continue
+        slug = f["nome"].lower().replace(" ", "_").replace("-", "_").replace(".", "")
+        bancos.append({
+            "nome": f"{slug}_db",
+            "usuario": f"{slug}_user",
+            "consumer": None,
+            "notas": "Nicho dinamico: banco derivado do sizing (Fase 3) por nome de ferramenta, sem nicho_spec fixo.",
+        })
+    return bancos
+
+
 def analisar(plano: dict) -> Result:
     """Analisa PLANO-INFRAESTRUTURA.json e produz factory_analysis.json.
 
@@ -111,19 +162,30 @@ def analisar(plano: dict) -> Result:
     ferramentas = plano["fase_2_curadoria"]["saida"]["ferramentas"]
     sizing = plano["fase_3_sizing"]["saida"]
 
-    # Carregar nicho spec
-    res_spec = _carregar_nicho_spec(nicho_slug)
-    if not res_spec.sucesso:
-        return res_spec
-    nicho_spec = res_spec.valor
-
-    # Carregar requisitos
+    # Carregar requisitos e cruzar com as ferramentas do plano ANTES de
+    # decidir blocos/bancos — o caminho dinamico decide o que compor a
+    # partir dessa lista, nao de um nicho_spec.json fixo.
     requisitos = _carregar_requisitos()
-
-    # Mapear componentes
-    blocos = _mapear_blocos(nicho_spec)
-    bancos = _mapear_bancos(nicho_spec)
     ferramentas_com_req = _mapear_ferramentas_com_requisitos(ferramentas, requisitos)
+
+    if _mod_intake_ops.eh_nicho_dinamico(nicho_slug):
+        # Fluxo 02 dinamico (fora dos 5 nichos fixos): compoe a partir da
+        # stack ja decidida no plano, sem exigir templates/infra/nichos/<slug>.json —
+        # gap documentado em docs/features/v2_arquitetura-aidd-ops-factory.md §9.1
+        # ("o factory nao precisa conhecer o catalogo de nichos").
+        blocos = _blocos_dinamicos(ferramentas_com_req)
+        bancos = _bancos_dinamicos(ferramentas_com_req)
+        portas_host = {"80": "Traefik HTTP (redirect -> HTTPS)", "443": "Traefik HTTPS"}
+        ferramentas_sem_bloco = []
+    else:
+        res_spec = _carregar_nicho_spec(nicho_slug)
+        if not res_spec.sucesso:
+            return res_spec
+        nicho_spec = res_spec.valor
+        blocos = _mapear_blocos(nicho_spec)
+        bancos = _mapear_bancos(nicho_spec)
+        portas_host = nicho_spec.get("portas_host", {})
+        ferramentas_sem_bloco = nicho_spec.get("ferramentas_sem_bloco", [])
 
     analysis = {
         "nicho_slug": nicho_slug,
@@ -132,8 +194,8 @@ def analisar(plano: dict) -> Result:
         "bancos_logicos": bancos,
         "blocos": blocos,
         "vps": sizing["vps"],
-        "portas_host": nicho_spec.get("portas_host", {}),
-        "ferramentas_sem_bloco": nicho_spec.get("ferramentas_sem_bloco", []),
+        "portas_host": portas_host,
+        "ferramentas_sem_bloco": ferramentas_sem_bloco,
     }
 
     return Result.ok(analysis)

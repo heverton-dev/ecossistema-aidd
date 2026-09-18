@@ -6,10 +6,24 @@ Responsável por carregar, validar, gerar e exportar planos para os 3 fluxos da 
 
 import json
 import os
+import sys
 from typing import Any, Dict, List, Optional, Tuple
 
 _PLANNER_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 _SCHEMA_PATH = os.path.join(_PLANNER_DIR, "schemas", "planner_schema.json")
+
+# aidd-ops e a fonte unica das Fases 1-3 (Intake -> Curadoria -> Sizing) que
+# produzem o PLANO-INFRAESTRUTURA.json — o mesmo contrato que aidd-factory
+# exige (fase_1_intake/fase_2_curadoria/fase_3_sizing), documentado como
+# imutavel em docs/planos/fazendo/PLAN-0034-upgrade-ferramentas-enterprise/
+# 02-factory-blueprints.md. exportar_para_fluxo_factory reusa essa fonte em
+# vez de reimplementar o envelope aqui (achado real: a versao anterior
+# escrevia {projeto, descricao, servicos, banco_central}, que o validador
+# proprio do aidd-factory rejeitava 100% das vezes).
+_ECOSSISTEMA_ROOT = os.path.join(_PLANNER_DIR, "..", "..")
+_AIDD_OPS_SCRIPTS_DIR = os.path.join(_ECOSSISTEMA_ROOT, "tools", "aidd-ops", "scripts")
+if os.path.isdir(_AIDD_OPS_SCRIPTS_DIR) and _AIDD_OPS_SCRIPTS_DIR not in sys.path:
+    sys.path.insert(0, _AIDD_OPS_SCRIPTS_DIR)
 
 
 class PlannerValidationError(Exception):
@@ -224,7 +238,7 @@ def gerar_template_plano(
         base["payload_especifico_fluxo"] = {
             "ferramentas_opensource": [
                 {
-                    "nome": "evolution-api",
+                    "nome": "Evolution API",
                     "categoria": "whatsapp",
                     "imagem_docker": "atendai/evolution-api:v2.1.2",
                     "porta_host": 8080,
@@ -259,7 +273,19 @@ def gerar_template_plano(
 def exportar_para_fluxo_factory(plano: Dict[str, Any]) -> Dict[str, Any]:
     """
     Converte um PLANNER.json canônico no formato de entrada exigido pela aidd-factory
-    (`pipeline_factory.py --plano <arquivo>`).
+    (`pipeline_factory.py --plano <arquivo>`): o envelope
+    fase_1_intake/fase_2_curadoria/fase_3_sizing produzido pelo aidd-ops
+    (`componentes/compartilhado/specs/plano-infraestrutura.schema.json`).
+
+    A stack de ferramentas já foi curada no PRÉ-PLANO
+    (`payload_especifico_fluxo.ferramentas_opensource`) — em vez de tentar
+    redescobrir o domínio de negócio casando texto contra os 5 nichos fixos
+    de `catalogo_nichos.json` (o que falharia para qualquer domínio fora
+    desses 5, ex.: "gestão de tarefas"), esta exportação usa o caminho
+    "nicho dinâmico" do aidd-ops (`montar_plano_em_memoria(...,
+    ferramentas_planejadas=...)`), que confia na stack já decidida pelo
+    plano — Lei #7 (Developer in Control). Ver gap documentado em
+    docs/features/v2_arquitetura-aidd-ops-factory.md §7.1/§9.1.
     """
     valido, erros = validar_plano(plano)
     if not valido:
@@ -268,26 +294,23 @@ def exportar_para_fluxo_factory(plano: Dict[str, Any]) -> Dict[str, Any]:
     meta = plano["meta"]
     payload = plano.get("payload_especifico_fluxo", {})
     ferramentas = payload.get("ferramentas_opensource", [])
-    infra = plano.get("infraestrutura_alvo", {})
 
-    factory_input = {
-        "projeto": meta["slug"],
-        "descricao": meta["descricao"],
-        "servicos": [],
-        "banco_central": {
-            "tipo": infra.get("banco_dados", "postgresql"),
-            "versao": "16-alpine"
-        }
-    }
+    from pipeline_ops import montar_plano_em_memoria  # noqa: E402 (aidd-ops, sys.path acima)
 
-    for f in ferramentas:
-        factory_input["servicos"].append({
-            "nome": f.get("nome"),
-            "imagem": f.get("imagem_docker"),
-            "categoria": f.get("categoria", "integracao"),
-            "porta_host": f.get("porta_host"),
-            "porta_container": f.get("porta_container"),
-            "descricao": f.get("finalidade", "")
-        })
+    texto_intake = f"{meta.get('dominio', '')} {meta['projeto_nome']}".strip()
+    resultado = montar_plano_em_memoria(texto_intake, ferramentas_planejadas=ferramentas)
+    factory_input = resultado.valor
+
+    erro_fase = (
+        factory_input["fase_1_intake"].get("erro")
+        or factory_input.get("fase_2_curadoria", {}).get("erro")
+        or factory_input.get("fase_3_sizing", {}).get("erro")
+    )
+    if erro_fase:
+        raise PlannerValidationError(
+            f"Exportação para aidd-factory falhou nas Fases 1-3 do aidd-ops: "
+            f"{erro_fase.get('codigo')}: {erro_fase.get('erro')} "
+            f"(detalhes: {erro_fase.get('detalhes')})"
+        )
 
     return factory_input

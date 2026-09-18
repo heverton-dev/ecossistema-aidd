@@ -4,6 +4,7 @@ Suíte de Testes Unitários e de Integração: aidd-planner
 """
 import json
 import os
+import subprocess
 import sys
 import tempfile
 import pytest
@@ -111,6 +112,17 @@ def test_rejeicao_plano_sem_cenarios_bdd():
 
 
 def test_exportacao_para_aidd_factory():
+    """Achado real (18/09/2026): exportar_para_fluxo_factory produzia
+    {projeto, descricao, servicos, banco_central} — um formato que o
+    pipeline_factory.py REAL rejeitava com FACTORY_INPUT_INVALID em 100%
+    dos casos (nenhum PLANNER.json exportado por este comando jamais
+    passou pelo pipeline real), quebrando o Fluxo 02 documentado
+    (FORGE -> PRÉ-PLANO -> FACTORY) ponta a ponta via CLI. A exportação
+    correta usa o envelope fase_1_intake/fase_2_curadoria/fase_3_sizing
+    (aidd-ops, caminho "nicho dinâmico" — a stack já foi decidida no
+    PRÉ-PLANO, sem tentar casar o domínio contra os 5 nichos fixos do
+    catálogo). Regressão: roda o pipeline_factory.py REAL (não uma
+    checagem paralela) contra o plano exportado e exige sucesso real."""
     plano = gerar_template_plano(
         fluxo_alvo="fluxo_02_factory",
         projeto_nome="Stack OpenSource",
@@ -119,9 +131,48 @@ def test_exportacao_para_aidd_factory():
         dominio="mensageria"
     )
     factory_input = exportar_para_fluxo_factory(plano)
-    assert factory_input["projeto"] == "stack-opensource"
-    assert len(factory_input["servicos"]) >= 1
-    assert factory_input["servicos"][0]["nome"] == "evolution-api"
+
+    assert factory_input["fase_1_intake"]["saida"]["nicho_slug"].startswith("dinamico_")
+    ferramentas = factory_input["fase_2_curadoria"]["saida"]["ferramentas"]
+    assert any(f["nome"] == "Evolution API" for f in ferramentas)
+
+    with tempfile.TemporaryDirectory() as tmpdir:
+        plano_path = os.path.join(tmpdir, "PLANO-INFRAESTRUTURA.json")
+        with open(plano_path, "w", encoding="utf-8") as f:
+            json.dump(factory_input, f)
+
+        _repo_root = os.path.dirname(_ECOSSISTEMA_DIR)  # _ECOSSISTEMA_DIR aqui e' "tools/", nao a raiz
+        pipeline_script = os.path.join(_repo_root, "tools", "aidd-factory", "scripts", "pipeline_factory.py")
+        saida_dir = os.path.join(tmpdir, "saida")
+        resultado = subprocess.run(
+            [sys.executable, pipeline_script, "--plano", plano_path, "--pasta", saida_dir, "--sem-llm"],
+            capture_output=True, text=True, timeout=60,
+        )
+        assert resultado.returncode == 0, (
+            f"pipeline_factory.py rejeitou o plano exportado pelo aidd-planner.\n"
+            f"STDOUT: {resultado.stdout}\nSTDERR: {resultado.stderr}"
+        )
+        assert os.path.isfile(os.path.join(saida_dir, "factory_analysis.json"))
+        assert os.path.isfile(os.path.join(saida_dir, "docker-compose.yml"))
+
+
+def test_exportacao_para_aidd_factory_dominio_fora_do_catalogo_fixo():
+    """Achado real (18/09/2026): "gestão de tarefas" não bate nenhuma das
+    palavras-chave dos 5 nichos fixos de catalogo_nichos.json — antes desta
+    correção, isso quebrava a exportação inteira (NICHO_NAO_RECONHECIDO)
+    mesmo com a stack de ferramentas já decidida no PRÉ-PLANO. O caminho
+    "nicho dinâmico" não depende de bater palavra-chave: qualquer domínio
+    passa, desde que a stack já esteja definida no plano."""
+    plano = gerar_template_plano(
+        fluxo_alvo="fluxo_02_factory",
+        projeto_nome="Gestao de Tarefas",
+        slug="gestao-tarefas-factory",
+        descricao="Aplicacao de gestao de tarefas via engines OSS",
+        dominio="gestao de tarefas",
+    )
+    factory_input = exportar_para_fluxo_factory(plano)
+    assert factory_input["fase_1_intake"]["erro"] is None
+    assert factory_input["fase_3_sizing"]["saida"] is not None
 
 
 def test_gates_execucao_com_arquivo_valido():

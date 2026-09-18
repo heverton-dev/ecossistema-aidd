@@ -78,6 +78,16 @@ def _validar_init_db(diretorio: str) -> list:
     with open(caminho, "r", encoding="utf-8") as f:
         conteudo = f.read()
 
+    # Achado real (18/09/2026, nicho dinamico): quando bancos_logicos == []
+    # (ex.: stack so com ferramentas que nao exigem banco relacional),
+    # 05_init_db.gerar_init_db gera de proposito um script trivial ("exit
+    # 0", sem CREATE DATABASE/USER/GRANT) — nao e' um defeito, e' a saida
+    # correta para "nenhum banco necessario". Os 5 nichos fixos do
+    # catalogo sempre tem >=1 ferramenta com banco, entao esse caminho
+    # nunca tinha sido exercitado antes de existir o nicho dinamico.
+    if "Nenhum banco logico necessario" in conteudo:
+        return problemas
+
     if "CREATE DATABASE" not in conteudo:
         problemas.append("init_db sem CREATE DATABASE")
     if "CREATE USER" not in conteudo:

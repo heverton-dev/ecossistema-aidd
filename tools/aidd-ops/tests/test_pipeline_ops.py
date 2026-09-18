@@ -469,3 +469,61 @@ def test_dimensionar_unidade_aritmetica_exata(tmp_path):
         f["ferramenta"] == "FerramentaInexistente" and not f["requisitos_encontrados"]
         for f in r5.valor["fontes_consultadas"]
     )
+
+
+# ── Testes do tipo de origem "nicho dinâmico" (Fluxo 02, fora dos 5 nichos fixos) ──
+
+def _criar_ferramentas_json(base_dir: str, ferramentas: list) -> str:
+    caminho = os.path.join(base_dir, "ferramentas.json")
+    with open(caminho, "w", encoding="utf-8") as f:
+        json.dump(ferramentas, f)
+    return caminho
+
+
+def _run_pipeline_ferramentas_json(texto: str, ferramentas_json: str, pasta: str) -> subprocess.CompletedProcess:
+    cmd = [sys.executable, PIPELINE_SCRIPT, "plan", texto, "--ferramentas-json", ferramentas_json, "--pasta", pasta]
+    return subprocess.run(cmd, capture_output=True, text=True, timeout=30, cwd=TOOL_ROOT)
+
+
+def test_nicho_dinamico_ponta_a_ponta(tmp_path):
+    """Achado real (18/09/2026): um domínio de negócio fora dos 5 nichos
+    fixos do catálogo (ex.: "gestão de tarefas") sempre batia
+    NICHO_NAO_RECONHECIDO, mesmo quando a stack de ferramentas OSS já
+    tinha sido decidida em outra etapa (PRÉ-PLANO do aidd-planner).
+    Reprodução real via CLI: `ops plan "<texto>" --ferramentas-json
+    <arquivo> --pasta <dest>` deve reconhecer a origem como nicho
+    dinâmico, pular o casamento por palavra-chave e gravar um
+    PLANO-INFRAESTRUTURA.json 100% válido contra o mesmo schema
+    canônico — sem nenhuma mudança de schema."""
+    ferramentas_path = _criar_ferramentas_json(str(tmp_path), [{"nome": "Evolution API"}])
+    pasta = str(tmp_path / "saida_dinamico")
+    os.makedirs(pasta, exist_ok=True)
+
+    resultado = _run_pipeline_ferramentas_json("gestao de tarefas", ferramentas_path, pasta)
+    assert resultado.returncode == 0, (
+        f"Exit {resultado.returncode}.\nSTDOUT: {resultado.stdout}\nSTDERR: {resultado.stderr}"
+    )
+
+    plano = _carregar_plano(pasta)
+    f1 = plano["fase_1_intake"]["saida"]
+    assert f1["nicho_slug"].startswith("dinamico_")
+    assert "gestao de tarefas" in f1["nicho_nome_exibicao"].lower() or "gestao_de_tarefas" in f1["nicho_slug"]
+
+    f2 = plano["fase_2_curadoria"]["saida"]
+    assert [f["nome"] for f in f2["ferramentas"]] == ["Evolution API"]
+
+    f3 = plano["fase_3_sizing"]["saida"]
+    assert f3["bancos_logicos"] == []  # Evolution API nao exige banco relacional
+
+
+def test_nicho_dinamico_sem_ferramentas_falha(tmp_path):
+    """Nicho dinâmico exige ao menos 1 ferramenta planejada — lista vazia
+    deve reprovar explicitamente (FERRAMENTAS_VAZIAS), nunca gerar um
+    plano "vazio" silenciosamente."""
+    ferramentas_path = _criar_ferramentas_json(str(tmp_path), [])
+    pasta = str(tmp_path / "saida_dinamico_vazio")
+    os.makedirs(pasta, exist_ok=True)
+
+    resultado = _run_pipeline_ferramentas_json("gestao de tarefas", ferramentas_path, pasta)
+    assert resultado.returncode == 1
+    assert "FERRAMENTAS_VAZIAS" in resultado.stdout

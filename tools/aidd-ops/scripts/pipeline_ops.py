@@ -128,7 +128,12 @@ def _primeiro_erro_pipeline(plano: dict) -> Optional[dict]:
     return None
 
 
-def montar_plano_em_memoria(texto: str, nicho_explicito: Optional = None, dir_projeto: Optional = None) -> Result:
+def montar_plano_em_memoria(
+    texto: str,
+    nicho_explicito: Optional = None,
+    dir_projeto: Optional = None,
+    ferramentas_planejadas: Optional = None,
+) -> Result:
     """Roda as 3 fases (Intake → Curadoria → Sizing) e monta o plano EM MEMÓRIA.
 
     Ponto único de construção do PLANO-INFRAESTRUTURA, compartilhado pelo CLI
@@ -144,6 +149,12 @@ def montar_plano_em_memoria(texto: str, nicho_explicito: Optional = None, dir_pr
             `PLANO-INFRAESTRUTURA.json` (schema) não muda: o discriminador
             é o valor sentinela `nicho_slug="monolito_customizado"`
             (`01_intake.MONOLITO_SLUG`), nunca colide com um slug OSS real.
+        ferramentas_planejadas: quando fornecido (e `dir_projeto` ausente),
+            ativa o caminho "dinâmico" (Fluxo 02 fora dos 5 nichos fixos) —
+            a stack já foi decidida em outra etapa (ex.: PRÉ-PLANO do
+            aidd-planner) e a Fase 1/2 não tentam casar `texto` contra
+            `catalogo_nichos.json`. Discriminador: `nicho_slug` com prefixo
+            `dinamico_` (`01_intake.DINAMICO_PREFIXO_SLUG`/`eh_nicho_dinamico`).
     """
     plano: dict = {
         "versao": "1.0.0",
@@ -154,6 +165,11 @@ def montar_plano_em_memoria(texto: str, nicho_explicito: Optional = None, dir_pr
     # ── Fase 1: Intake ──
     if dir_projeto:
         resultado_f1 = _mod_intake.reconhecer_origem_monolito(dir_projeto)
+    elif ferramentas_planejadas is not None:
+        # `is not None` (nao truthiness): uma lista vazia ainda deve entrar
+        # no caminho dinamico, para reprovar com FERRAMENTAS_VAZIAS (Fase 2)
+        # em vez de cair silenciosamente no casamento por palavra-chave.
+        resultado_f1 = _mod_intake.reconhecer_nicho_dinamico(texto)
     else:
         resultado_f1 = _mod_intake.reconhecer_nicho(texto, nicho_explicito=nicho_explicito)
     plano["fase_1_intake"] = {
@@ -169,10 +185,13 @@ def montar_plano_em_memoria(texto: str, nicho_explicito: Optional = None, dir_pr
     nicho_slug = dados_f1["nicho_slug"]
     nicho_nome = dados_f1["nicho_nome_exibicao"]
     eh_monolito = nicho_slug == _mod_intake.MONOLITO_SLUG
+    eh_dinamico = _mod_intake.eh_nicho_dinamico(nicho_slug)
 
     # ── Fase 2: Curadoria ──
     if eh_monolito:
         resultado_f2 = _mod_curadoria.curar_stack_monolito(nicho_slug, nicho_nome, dir_projeto)
+    elif eh_dinamico:
+        resultado_f2 = _mod_curadoria.curar_stack_dinamico(nicho_slug, nicho_nome, ferramentas_planejadas)
     else:
         resultado_f2 = _mod_curadoria.curar_stack(nicho_slug, nicho_nome)
     plano["fase_2_curadoria"] = {
@@ -188,6 +207,11 @@ def montar_plano_em_memoria(texto: str, nicho_explicito: Optional = None, dir_pr
     ferramentas = dados_f2.get("ferramentas", [])
 
     # ── Fase 3: Sizing ──
+    # Nota: dimensionar() (caminho não-monólito) já é 100% dinâmico por
+    # nome de ferramenta via requisitos_recursos.json — funciona igual para
+    # os 5 nichos fixos e para o caminho dinâmico, sem precisar de variante
+    # própria (diferente do monólito, que dimensiona por contagem de
+    # módulos em vez de nome de ferramenta OSS).
     if eh_monolito:
         resultado_f3 = _mod_sizing.dimensionar_monolito(ferramentas)
     else:
@@ -202,7 +226,13 @@ def montar_plano_em_memoria(texto: str, nicho_explicito: Optional = None, dir_pr
     return Result.ok(plano)
 
 
-def executar_pipeline(texto: str, pasta_destino: str, nicho_explicito: Optional = None, dir_projeto: Optional = None) -> int:
+def executar_pipeline(
+    texto: str,
+    pasta_destino: str,
+    nicho_explicito: Optional = None,
+    dir_projeto: Optional = None,
+    ferramentas_planejadas: Optional = None,
+) -> int:
     """Executa o pipeline completo das 3 fases.
 
     Uses montar_plano_em_memoria (fonte única do plano) e grava o resultado
@@ -214,12 +244,17 @@ def executar_pipeline(texto: str, pasta_destino: str, nicho_explicito: Optional 
     caminho_plano = os.path.join(pasta_destino, "PLANO-INFRAESTRUTURA.json")
     if dir_projeto:
         print("[Fase 1/3] Reconhecimento de Origem (monólito customizado)...")
+    elif ferramentas_planejadas is not None:
+        print("[Fase 1/3] Reconhecimento de Nicho Dinâmico (stack já decidida)...")
     else:
         print("[Fase 1/3] Reconhecimento de Nicho...")
     print("[Fase 2/3] Curadoria da Stack...")
     print("[Fase 3/3] Dimensionamento de Recursos...")
 
-    resultado = montar_plano_em_memoria(texto, nicho_explicito=nicho_explicito, dir_projeto=dir_projeto)
+    resultado = montar_plano_em_memoria(
+        texto, nicho_explicito=nicho_explicito, dir_projeto=dir_projeto,
+        ferramentas_planejadas=ferramentas_planejadas,
+    )
     plano = resultado.valor
 
     # Contrato do Item 5: o plano (sucesso OU falha estruturada de fase) DEVE
@@ -340,10 +375,15 @@ def cli():
 @click.argument("texto", required=False)
 @click.option("--nicho", default=None, help="Slug explícito do nicho (clinicas, delivery, farmacias, b2b_industrial, energia_solar)")
 @click.option("--dir-projeto", default=None, help="Diretório de um monólito já gerado por 'aidd-master init' — pula a curadoria OSS de nicho e dimensiona pela contagem real de módulos do projeto")
+@click.option("--ferramentas-json", default=None, help="Caminho de um JSON com lista [{\"nome\": \"...\"}] de ferramentas já decididas — pula o casamento de texto contra os 5 nichos fixos (nicho dinâmico)")
 @click.option("--pasta", default=None, help="Diretório de destino para PLANO-INFRAESTRUTURA.json (default: temporário)")
-def _cmd_plan(texto, nicho, dir_projeto, pasta):
+def _cmd_plan(texto, nicho, dir_projeto, ferramentas_json, pasta):
     if texto is None and nicho is None and not dir_projeto:
         raise click.UsageError("Forneça um texto posicional, use --nicho <slug> ou --dir-projeto <pasta>")
+    ferramentas_planejadas = None
+    if ferramentas_json:
+        with open(ferramentas_json, "r", encoding="utf-8") as f:
+            ferramentas_planejadas = json.load(f)
     import tempfile
     if not pasta:
         pasta = tempfile.mkdtemp(prefix="aidd_ops_plan_")
@@ -351,6 +391,7 @@ def _cmd_plan(texto, nicho, dir_projeto, pasta):
     _sair(executar_pipeline(
         texto=texto or dir_projeto or "", pasta_destino=pasta,
         nicho_explicito=nicho, dir_projeto=dir_projeto,
+        ferramentas_planejadas=ferramentas_planejadas,
     ))
 
 

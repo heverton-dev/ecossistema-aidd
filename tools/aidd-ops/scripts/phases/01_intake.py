@@ -35,6 +35,22 @@ _DATA_DIR = os.path.join(os.path.dirname(__file__), "..", "..", "data")
 MONOLITO_SLUG = "monolito_customizado"
 MONOLITO_NOME_EXIBICAO_PREFIXO = "Monólito Customizado (AIDD-Master)"
 
+# Sentinela de "tipo de origem" para stacks OSS dinâmicas (Fluxo 02) cuja
+# ferramentas já foram decididas em outra etapa (ex.: PRÉ-PLANO do
+# aidd-planner) e não dependem do casamento de texto contra os 5 nichos
+# fixos de catalogo_nichos.json. Prefixo (nunca um slug isolado) para nunca
+# colidir com um slug real do catálogo, mesmo se um nicho futuro se chamar
+# "dinamico" — ver eh_nicho_dinamico().
+DINAMICO_PREFIXO_SLUG = "dinamico"
+
+
+def eh_nicho_dinamico(nicho_slug: str) -> bool:
+    """True quando o nicho veio do caminho dinâmico (reconhecer_nicho_dinamico),
+    não do catálogo fixo de 5 nichos. Fonte única desse discriminador —
+    reusada por aidd-factory (01_analisador.py) para saber quando pular a
+    leitura de templates/infra/nichos/<slug>.json."""
+    return bool(nicho_slug) and nicho_slug.startswith(f"{DINAMICO_PREFIXO_SLUG}_")
+
 
 def _normalizar(texto: str) -> str:
     """Remove acentos e baixa a caixa, preservando espaços e hífens."""
@@ -100,6 +116,29 @@ def reconhecer_origem_monolito(dir_projeto: str) -> Result:
         "nicho_slug": MONOLITO_SLUG,
         "nicho_nome_exibicao": f"{MONOLITO_NOME_EXIBICAO_PREFIXO}: {nome_projeto}",
         "texto_original": dir_projeto,
+        "palavras_chave_candidatas": [],
+    })
+
+
+def reconhecer_nicho_dinamico(texto_ou_dominio: str) -> Result:
+    """Reconhece um nicho dinâmico (Fluxo 02, fora dos 5 nichos fixos do
+    catálogo) quando a stack OSS já foi decidida em outra etapa — ex.: o
+    PRÉ-PLANO do aidd-planner, que já pede ao humano/LLM para curar
+    `payload_especifico_fluxo.ferramentas_opensource` por projeto, sem
+    depender de casar o domínio de negócio contra um catálogo fixo. Nunca
+    falha — mesmo espírito de `reconhecer_origem_monolito` (Fluxo 01):
+    sempre existe uma origem determinística, mesmo fora do catálogo OSS
+    curado (gap documentado em docs/features/v2_arquitetura-aidd-ops-factory.md
+    §7.1 — Discovery Engine completo via GitHub API é trabalho futuro; este
+    é o subconjunto determinístico: confiar na stack já decidida pelo
+    plano, em vez de tentar redescobrir/adivinhar por palavra-chave)."""
+    texto_normalizado = _normalizar(texto_ou_dominio or "") or "dinamico"
+    slug_base = re.sub(r"[^a-z0-9]+", "_", texto_normalizado).strip("_") or "dinamico"
+    nome_exibicao = (texto_ou_dominio or "Projeto Dinâmico").strip() or "Projeto Dinâmico"
+    return Result.ok({
+        "nicho_slug": f"{DINAMICO_PREFIXO_SLUG}_{slug_base}",
+        "nicho_nome_exibicao": f"Stack Dinâmica: {nome_exibicao}",
+        "texto_original": texto_ou_dominio,
         "palavras_chave_candidatas": [],
     })
 

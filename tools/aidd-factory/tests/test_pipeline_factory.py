@@ -408,6 +408,78 @@ class TestPipelineE2E:
             assert os.path.isfile(os.path.join(tmp, "src", "static", "index.html"))
 
 
+def test_pipeline_completo_nicho_dinamico_sem_llm():
+    """Achado real (18/09/2026): domínios fora dos 5 nichos fixos do
+    catálogo (ex.: "gestão de tarefas") sempre quebravam a Fase 1 com
+    NICHO_SPEC_AUSENTE, porque 01_analisador.py exigia
+    templates/infra/nichos/<slug>.json mesmo quando a stack já vinha
+    resolvida no plano. Regressão: um plano com nicho_slug="dinamico_*"
+    (sem nenhum arquivo de nicho_spec correspondente) e uma única
+    ferramenta que NÃO exige banco relacional (Evolution API) deve rodar
+    o pipeline --sem-llm completo com exit 0 — cobre também o caminho
+    "bancos_logicos == []" da Fase 9 (init_db trivial "exit 0", que a
+    validação cross-service rejeitava antes por não achar CREATE
+    DATABASE/USER/GRANT)."""
+    from pipeline_factory import executar_pipeline
+
+    plano = {
+        "versao": "1.0.0",
+        "pipeline": "aidd-ops-mvp-fases-1-3",
+        "fase_1_intake": {
+            "entrada": {"texto": "gestao de tarefas"},
+            "saida": {
+                "nicho_slug": "dinamico_gestao_de_tarefas",
+                "nicho_nome_exibicao": "Stack Dinâmica: Gestão de Tarefas",
+                "texto_original": "gestao de tarefas",
+                "palavras_chave_candidatas": [],
+            },
+            "erro": None,
+            "timestamp": "2026-09-18T00:00:00Z",
+        },
+        "fase_2_curadoria": {
+            "entrada": {"nicho_slug": "dinamico_gestao_de_tarefas", "nicho_nome_exibicao": "Stack Dinâmica: Gestão de Tarefas"},
+            "saida": {
+                "nicho_slug": "dinamico_gestao_de_tarefas",
+                "nicho_nome_exibicao": "Stack Dinâmica: Gestão de Tarefas",
+                "ferramentas": [{"nome": "Evolution API"}],
+            },
+            "erro": None,
+            "timestamp": "2026-09-18T00:00:00Z",
+        },
+        "fase_3_sizing": {
+            "entrada": {"ferramentas": [{"nome": "Evolution API"}]},
+            "saida": {
+                "vps": {"vcpu": 2, "ram_gb": 4, "disco_gb": 40},
+                "bancos_logicos": [],
+                "ferramentas_com_banco": [],
+                "ferramentas_sem_banco": ["Evolution API"],
+                "fontes_consultadas": [],
+            },
+            "erro": None,
+            "timestamp": "2026-09-18T00:00:00Z",
+        },
+    }
+
+    with tempfile.TemporaryDirectory() as tmp:
+        plano_path = os.path.join(tmp, "PLANO-INFRAESTRUTURA.json")
+        with open(plano_path, "w", encoding="utf-8") as f:
+            json.dump(plano, f)
+        dest = os.path.join(tmp, "output")
+
+        codigo = executar_pipeline(plano_path, dest, incluir_llm=False)
+        assert codigo == 0, "Pipeline dinamico --sem-llm deve retornar exit code 0"
+
+        with open(os.path.join(dest, "factory_analysis.json"), encoding="utf-8") as f:
+            analysis = json.load(f)
+        slugs_blocos = [b["slug"] for b in analysis["blocos"]]
+        assert slugs_blocos == ["traefik"], "So traefik e' baseline; postgres nao deveria entrar sem ferramenta que exija banco"
+        assert analysis["bancos_logicos"] == []
+
+        with open(os.path.join(dest, "init-multiple-databases.sh"), encoding="utf-8") as f:
+            init_db_conteudo = f.read()
+        assert "Nenhum banco logico necessario" in init_db_conteudo
+
+
 import shutil
 import subprocess
 

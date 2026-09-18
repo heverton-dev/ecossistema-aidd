@@ -1,8 +1,8 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://github.com/heverton-dev/ecossistema-aidd/componentes/compartilhado/specs/plano-infraestrutura.schema.json",
-  "title": "Contrato do PLANO-INFRAESTRUTURA.json (aidd-ops → aidd-master/aidd-enterprise)",
-  "description": "Contrato formal versionado do artefato PLANO-INFRAESTRUTURA.json produzido pelo aidd-ops (Fases 1-3: Intake → Curadoria → Sizing) e consumido pelo scaffold_infra.py do aidd-master e do aidd-enterprise. O schema descreve tanto planos bem-sucedidos quanto planos com falha de fase: uma fase que falha carrega erro estruturado (to_dict do Result) no slot `erro` e deixa `saida` nula, e as fases seguintes simplesmente deixam de existir (early-exit do pipeline). Fonte única do contrato — os validadores de ops (produtor), master e enterprise (consumidores) apontam para este arquivo.",
+  "title": "Contrato do PLANO-INFRAESTRUTURA.json (aidd-ops → aidd-master/aidd-enterprise/aidd-factory)",
+  "description": "Contrato formal versionado do artefato PLANO-INFRAESTRUTURA.json produzido pelo aidd-ops (Fases 1-3: Intake → Curadoria → Sizing) e consumido pelo scaffold_infra.py do aidd-master, do aidd-enterprise e por aidd-factory/scripts/contrato_factory.py (Fluxo 02, via 01_analisador.py). O schema descreve tanto planos bem-sucedidos quanto planos com falha de fase: uma fase que falha carrega erro estruturado (to_dict do Result) no slot `erro` e deixa `saida` nula, e as fases seguintes simplesmente deixam de existir (early-exit do pipeline). `fase_1_intake.saida.nicho_slug` pode carregar o prefixo `dinamico_` (nicho fora dos 5 fixos do catálogo, ver aidd-ops/AGENTS.md §2.7) — o shape do contrato não muda, apenas o valor do slug. Fonte única do contrato — os validadores de ops (produtor), master, enterprise e factory (consumidores) apontam para este arquivo.",
   "type": "object",
   "additionalProperties": false,
   "required": ["versao", "gerado_em", "pipeline"],

@@ -12,6 +12,7 @@
 2. **Quarteto Sine Qua Non:** Every generated plan must explicitly configure `/swagger`, `/webhooks`, `/mcp`, and `/docs` with `ativo: true`.
 3. **Strict Polymorphism:** `meta.fluxo_alvo` must strictly govern the structure of `payload_especifico_fluxo`.
 4. **Binary Quality:** All plans must exit 0 on `G_PLANNER_SCHEMA.py`, `G_PLANNER_SINE_QUA_NON.py`, and `G_PLANNER_COERENCIA_FLUXO.py`.
+5. **Factory Export = aidd-ops Envelope (Achado real 18/09/2026):** `export --formato factory` MUST return the exact `fase_1_intake`/`fase_2_curadoria`/`fase_3_sizing` envelope aidd-factory's `contrato_factory.py` validates against (`componentes/compartilhado/specs/plano-infraestrutura.schema.json`) — never a bespoke shape. `exportar_para_fluxo_factory` (`src/core/planner_engine.py`) reuses `aidd-ops`'s `pipeline_ops.montar_plano_em_memoria(texto, ferramentas_planejadas=payload_especifico_fluxo.ferramentas_opensource)` — the "nicho dinâmico" path (`tools/aidd-ops/AGENTS.md` §2.7) — instead of matching the 5 fixed catalog niches, since Lei #7 (Developer in Control) means the PRÉ-PLANO's own curated tool list is authoritative, not a keyword guess.
 
 ---
 

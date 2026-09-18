@@ -24,6 +24,7 @@
 4. **Idempotent Hardening (Anti-NIH #15):** VPS configuration uses Ansible collection `devsec.hardening` via `ansible/playbooks/hardening.yml`. Zero ad-hoc shell scripts.
 5. **Zero Stubs:** All infrastructure definitions and Python managers must be fully functional and tested.
 6. **Engineering Skills Alignment:** Production incidents, container failures, or pipeline regressions must follow the `/aidd-diagnose` protocol (scientific triage & regression test) before applying hotfixes.
+7. **Nicho Dinâmico (Fluxo 02, fora do catálogo fixo):** `01_intake.reconhecer_nicho_dinamico` + `02_curadoria.curar_stack_dinamico` (`pipeline_ops.montar_plano_em_memoria(..., ferramentas_planejadas=[...])`, CLI `plan --ferramentas-json <arquivo>`) let a caller with an already-curated OSS tool list (e.g. `aidd-planner`'s PRÉ-PLANO) skip the 5-niche keyword match in `data/catalogo_nichos.json` entirely. Discriminador: `nicho_slug` prefixed `dinamico_` (`01_intake.DINAMICO_PREFIXO_SLUG`/`eh_nicho_dinamico`) — mirrors the existing `monolito_customizado` bypass for Fluxo 01. Sizing (`03_sizing.dimensionar`) needed no change — it was already 100% tool-name-driven and gracefully skips unknown tools.
 
 ---
 

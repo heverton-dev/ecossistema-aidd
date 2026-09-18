@@ -83,6 +83,33 @@ def curar_stack_monolito(nicho_slug: str, nicho_nome_exibicao: str, dir_projeto:
     })
 
 
+def curar_stack_dinamico(
+    nicho_slug: str, nicho_nome_exibicao: str, ferramentas_planejadas: List[Dict[str, Any]]
+) -> Result:
+    """Curadoria para um nicho dinâmico (Fluxo 02 fora do catálogo fixo de 5
+    nichos): a stack de ferramentas OSS já foi decidida em outra etapa
+    (PRÉ-PLANO do aidd-planner) — sem lookup em catalogo_nichos.json,
+    mesmo espírito de `curar_stack_monolito` (Fluxo 01), mas para
+    ferramentas de terceiros em vez de módulos internos do monólito.
+    """
+    nomes = [
+        f.get("nome") for f in (ferramentas_planejadas or [])
+        if isinstance(f, dict) and f.get("nome")
+    ]
+    if not nomes:
+        return Result.fail(
+            "Nicho dinâmico exige ao menos 1 ferramenta com campo 'nome' em "
+            "ferramentas_planejadas (ex.: payload_especifico_fluxo.ferramentas_opensource "
+            "do PLANNER.json).",
+            codigo="FERRAMENTAS_VAZIAS",
+        )
+    return Result.ok({
+        "nicho_slug": nicho_slug,
+        "nicho_nome_exibicao": nicho_nome_exibicao,
+        "ferramentas": [{"nome": nome} for nome in nomes],
+    })
+
+
 def curar_stack(nicho_slug: str, nicho_nome_exibicao: str) -> Result:
     """Retorna a stack de ferramentas para o nicho especificado.
 

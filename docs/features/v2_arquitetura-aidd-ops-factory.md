@@ -390,6 +390,17 @@ A v1 ja definia o **Cenario A** (PostgreSQL centralizado). A v2 confirma:
 
 Isso **não pertence ao aidd-ops** (que é determinístico) nem ao aidd-generator (que gera código Python). É responsabilidade do factory.
 
+**Status (18/09/2026):** subconjunto determinístico implementado — "nicho
+dinâmico" (`aidd-ops/scripts/phases/01_intake.py::reconhecer_nicho_dinamico`
++ `02_curadoria.py::curar_stack_dinamico`, consumido por
+`aidd-factory/scripts/phases/01_analisador.py`). Quando o texto não bate
+nenhum dos 5 nichos fixos, mas a stack já foi decidida em outra etapa (ex.:
+`aidd-planner` no PRÉ-PLANO), o pipeline usa essa stack direto — sem
+casamento por palavra-chave e sem exigir `templates/infra/nichos/<slug>.json`.
+Os itens 1-3 (busca real no GitHub API, filtro de licença/imagem
+oficial/docs, geração de candidatos) permanecem pendentes — passo 4 do
+roadmap (Fase 4: Integrações).
+
 ### 7.2 Autenticação SSO/IAM (Superficial na v1)
 
 **v1 dizia:** "Authentik / Keycloak com OIDC/OAuth2"
