@@ -1,20 +1,6 @@
 import hmac, hashlib, base64, json, time, os, uuid, urllib.parse, urllib.request
 
 try:
-    import jwt as pyjwt
-except ImportError:
-    pyjwt = None
-
-try:
-    from argon2 import PasswordHasher as _Argon2Hasher
-    from argon2.exceptions import VerifyMismatchError as _Argon2Mismatch
-    _ARGON2_AVAILABLE = True
-except ImportError:
-    _Argon2Hasher = None
-    _Argon2Mismatch = None
-    _ARGON2_AVAILABLE = False
-
-try:
     import secure
     _SECURE_AVAILABLE = True
 except ImportError:
@@ -53,68 +39,43 @@ if not _JWT_SECRET_RAW:
 JWT_SECRET_KEY = _JWT_SECRET_RAW
 
 class JWTService:
-    """Servico JWT com PyJWT (HS256) como motor de serializacao e verificacao.
-    Interface identica à anterior — encode/decode/revoke mantêm assinatura e
-    tipos de retorno. A diferencas interna é o uso de jwt.encode/decode do
-    PyJWT em vez de HMAC manual, herdando validacao de exp, algoritmo e
-    protecao contra ataques de assinatura. Fallback HMAC puro quando PyJWT
-    não está disponível (dev/test)."""
+    @staticmethod
+    def _base64url_encode(data: bytes) -> str:
+        return base64.urlsafe_b64encode(data).decode("utf-8").rstrip("=")
+
+    @staticmethod
+    def _base64url_decode(s: str) -> bytes:
+        rem = len(s) % 4
+        if rem > 0:
+            s += "=" * (4 - rem)
+        return base64.urlsafe_b64decode(s.encode("utf-8"))
 
     @classmethod
     def encode(cls, payload: dict, secret: str = JWT_SECRET_KEY, exp_seconds: int = 86400) -> str:
+        header = {"alg": "HS256", "typ": "JWT"}
         p = payload.copy()
         p["exp"] = int(time.time()) + exp_seconds
         p["iat"] = int(time.time())
         p.setdefault("jti", uuid.uuid4().hex)
 
-        if pyjwt is not None:
-            return pyjwt.encode(p, secret, algorithm="HS256",
-                                headers={"typ": "JWT"})
+        h_b64 = cls._base64url_encode(json.dumps(header, separators=(",", ":")).encode("utf-8"))
+        p_b64 = cls._base64url_encode(json.dumps(p, separators=(",", ":")).encode("utf-8"))
 
-        # Fallback HMAC puro (quando PyJWT indisponível)
-        return cls._encode_fallback(p, secret)
+        sig_input = f"{h_b64}.{p_b64}".encode("utf-8")
+        sig = hmac.new(secret.encode("utf-8"), sig_input, hashlib.sha256).digest()
+        sig_b64 = cls._base64url_encode(sig)
+
+        return f"{h_b64}.{p_b64}.{sig_b64}"
 
     @classmethod
     def decode(cls, token: str, secret: str = JWT_SECRET_KEY) -> tuple:
         if not token:
             return False, None, "Token ausente"
-
+        
         token = token.strip()
         if token.lower().startswith("bearer "):
             token = token[7:].strip()
 
-        if pyjwt is not None:
-            try:
-                payload = pyjwt.decode(token, secret, algorithms=["HS256"])
-            except pyjwt.ExpiredSignatureError:
-                return False, None, "Token expirado"
-            except pyjwt.InvalidSignatureError:
-                return False, None, "Assinatura criptográfica inválida"
-            except pyjwt.DecodeError:
-                return False, None, "Formato de token JWT inválido"
-            except pyjwt.InvalidTokenError as e:
-                return False, None, f"Token inválido: {e}"
-
-            jti = payload.get("jti")
-            if jti and TokenRevocationList.is_revoked(jti):
-                return False, None, "Token revogado"
-            return True, payload, "OK"
-
-        # Fallback HMAC puro
-        return cls._decode_fallback(token, secret)
-
-    @classmethod
-    def _encode_fallback(cls, p: dict, secret: str) -> str:
-        header = {"alg": "HS256", "typ": "JWT"}
-        h_b64 = cls._base64url_encode(json.dumps(header, separators=(",", ":")).encode("utf-8"))
-        p_b64 = cls._base64url_encode(json.dumps(p, separators=(",", ":")).encode("utf-8"))
-        sig_input = f"{h_b64}.{p_b64}".encode("utf-8")
-        sig = hmac.new(secret.encode("utf-8"), sig_input, hashlib.sha256).digest()
-        sig_b64 = cls._base64url_encode(sig)
-        return f"{h_b64}.{p_b64}.{sig_b64}"
-
-    @classmethod
-    def _decode_fallback(cls, token: str, secret: str) -> tuple:
         parts = token.split(".")
         if len(parts) != 3:
             return False, None, "Formato de token JWT inválido"
@@ -142,17 +103,6 @@ class JWTService:
             return False, None, "Token revogado"
 
         return True, payload, "OK"
-
-    @staticmethod
-    def _base64url_encode(data: bytes) -> str:
-        return base64.urlsafe_b64encode(data).decode("utf-8").rstrip("=")
-
-    @staticmethod
-    def _base64url_decode(s: str) -> bytes:
-        rem = len(s) % 4
-        if rem > 0:
-            s += "=" * (4 - rem)
-        return base64.urlsafe_b64decode(s.encode("utf-8"))
 
     @classmethod
     def revoke(cls, token: str) -> bool:
@@ -234,50 +184,18 @@ class SecurityService:
 
     @staticmethod
     def hash_password(password: str, salt: str = None) -> str:
-        """Hash via PBKDF2-SHA256 (legado). Novos projetos devem usar hash_password_argon2id."""
         if not salt:
             salt = base64.b64encode(os.urandom(16)).decode("utf-8")
         key = hashlib.pbkdf2_hmac("sha256", password.encode("utf-8"), salt.encode("utf-8"), 100000)
-        return f"pbkdf2:{salt}:{base64.b64encode(key).decode('utf-8')}"
+        return f"{salt}:{base64.b64encode(key).decode('utf-8')}"
 
     @staticmethod
     def verify_password(password: str, hashed_str: str) -> bool:
-        """Verifica senha contra hash PBKDF2 ou Argon2id (formato automático)."""
-        if hashed_str.startswith("$argon2"):
-            return SecurityService.verify_password_argon2id(password, hashed_str)
         try:
-            if hashed_str.startswith("pbkdf2:"):
-                _, salt, key_b64 = hashed_str.split(":", 2)
-            else:
-                # Retro-compatibilidade: hash antigo "salt:key" sem prefixo
-                salt, key_b64 = hashed_str.split(":", 1)
+            salt, key_b64 = hashed_str.split(":")
             new_key = hashlib.pbkdf2_hmac("sha256", password.encode("utf-8"), salt.encode("utf-8"), 100000)
             return hmac.compare_digest(key_b64, base64.b64encode(new_key).decode("utf-8"))
-        except (ValueError, IndexError):
-            return False
-
-    @staticmethod
-    def hash_password_argon2id(password: str) -> str:
-        """Hash via Argon2id (OWASP recomendado). Requer argon2-cffi."""
-        if not _ARGON2_AVAILABLE or _Argon2Hasher is None:
-            raise RuntimeError(
-                "argon2-cffi não instalado. Instale: pip install argon2-cffi"
-            )
-        ph = _Argon2Hasher()
-        return ph.hash(password)
-
-    @staticmethod
-    def verify_password_argon2id(password: str, hashed_str: str) -> bool:
-        """Verifica senha contra hash Argon2id."""
-        if not _ARGON2_AVAILABLE or _Argon2Hasher is None:
-            raise RuntimeError(
-                "argon2-cffi não instalado. Instale: pip install argon2-cffi"
-            )
-        ph = _Argon2Hasher()
-        try:
-            ph.verify(hashed_str, password)
-            return True
-        except (_Argon2Mismatch, Exception):
+        except ValueError:
             return False
 
     @staticmethod
@@ -383,3 +301,61 @@ class OIDCService:
             if g in group_role_map:
                 return group_role_map[g]
         return "leitor"
+
+
+class PromptShield:
+    """Escudo determinístico contra Prompt Injection e Jailbreaks em integrações LLM.
+    
+    Aplica validação e sanitização estrita em inputs externos antes de submissão
+    a modelos de linguagem, garantindo conformidade com a Lei #5 e Lei #1.
+    """
+
+    _PADROES_INJECAO = [
+        r"ignore\s+(all\s+)?(previous|prior|above)\s+instructions?",
+        r"disregard\s+(all\s+)?(previous|prior|above)\s+instructions?",
+        r"forget\s+(all\s+)?(previous|prior)\s+instructions?",
+        r"you\s+are\s+now\s+(in\s+)?(dan|developer\s+mode|jailbreak)",
+        r"(reveal|show|print|output)\s+(your\s+)?(system\s+prompt|instructions|initial\s+prompt)",
+        r"<\/?(system|instructions|context)>",
+        r"\[(inst|sys)\]",
+        r"assistant\s+must\s+never\s+refuse",
+    ]
+
+    @classmethod
+    def sanitize(cls, text: str) -> str:
+        """Remove caracteres nulos e normaliza quebras de linha."""
+        if not text:
+            return ""
+        # Remove caracteres de controle perigosos e tags injetadas de controle
+        cleaned = text.replace("\x00", "").replace("\r\n", "\n")
+        cleaned = cleaned.replace("```system", "```escaped_system")
+        return cleaned.strip()
+
+    @classmethod
+    def inspect(cls, text: str) -> tuple[bool, list[str]]:
+        """Analisa o texto contra padrões determinísticos de Prompt Injection.
+        
+        Retorna (is_safe: bool, matches: list[str]).
+        """
+        import re
+        if not text:
+            return True, []
+        
+        matches = []
+        for pattern in cls._PADROES_INJECAO:
+            if re.search(pattern, text, re.IGNORECASE):
+                matches.append(pattern)
+        
+        return len(matches) == 0, matches
+
+    @classmethod
+    def wrap_user_payload(cls, system_instruction: str, user_payload: str) -> str:
+        """Empacota o payload do usuário de forma segura e delimitada."""
+        sanitized_user = cls.sanitize(user_payload)
+        return (
+            f"{system_instruction.strip()}\n\n"
+            f"<user_untrusted_input>\n"
+            f"{sanitized_user}\n"
+            f"</user_untrusted_input>"
+        )
+

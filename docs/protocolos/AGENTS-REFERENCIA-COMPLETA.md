@@ -108,6 +108,7 @@ O ecossistema dispõe de Quality Gates globais em gates/:
 - gates/G_FRONTEND_LAYERS.py: Audita a separação estrita de camadas no Frontend, proibindo chamadas diretas de rede (fetch/axios/ky) dentro de componentes de apresentação pura (components/ui/).
 - gates/G_ISOLATION_AUDIT.py: Audita o isolamento estrito de fatias verticais VSA via AST, proibindo imports diretos entre fatias (features/dominio).
 - gates/G_PROTOCOL_FALLBACK.py: Audita paridade e fallback REST vs MCP, garantindo que nenhuma funcionalidade do sistema seja exposta exclusivamente via Model Context Protocol sem contrapartida OpenAPI/REST equivalente.
+- gates/G_LLM_PROMPT_SHIELD.py: Audita via AST se clientes de modelos de linguagem (LLM) utilizam deterministicamente o PromptShield para sanitização e blindagem de prompts contra injeção e jailbreak.
 - **Execução unificada:** `python ecossistema.py audit` delega para `pre-commit run --all-files`.
 
 **Nota (G_SEGREDOS):** movido para `stages: [manual]` em 2026-09-08, decisão explícita do usuário. Causa: inconsistência reproduzida entre `python gates/G_SEGREDOS.py` direto (aprovava) e o mesmo via hook pre-commit (reprovava), causa raiz não encontrada. Roda sob demanda: `pre-commit run --hook-stage manual g-segredos --all-files`.
