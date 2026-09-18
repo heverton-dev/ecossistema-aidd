@@ -25,6 +25,7 @@
 | Blindagem Cyberseguranca | `feitos/PLAN-0031-blindagem-cyberseguranca/` |
 | Remediar Gaps Auditoria | `feitos/PLAN-0032-remediar-gaps-auditoria/` |
 | Implementacao Arquitetural Vsa | `feitos/PLAN-0033-implementacao-arquitetural-vsa/` |
+| Blindagem Arquitetural Qualidade | `feitos/PLAN-0035-blindagem-arquitetural-qualidade/` |
 
 ## 🔶 Em execução
 
