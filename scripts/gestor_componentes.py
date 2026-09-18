@@ -49,7 +49,7 @@ MANIFESTO_PATH = os.path.join(ROOT_DIR, "gates", "manifesto_harnesses.json")
 COMPONENTES_DIR = os.path.join(ROOT_DIR, "componentes")
 
 TODOS_TIPOS_MARCADOR = "todos"
-IGNORAR_ENTRADAS = {".gitkeep"}
+IGNORAR_ENTRADAS = {".gitkeep", "__pycache__"}
 IGNORAR_DIRS = {"__pycache__", ".venv", "venv", ".git", "node_modules"}
 NOMES_PASTA_COMPONENTE = {"commands", "skills", "mcps", "specs", "hooks", "configs", "scripts", "processes", "tests"}
 
@@ -532,7 +532,7 @@ def detectar_drift(tipo=None, ferramenta=None):
             if base_pasta not in NOMES_PASTA_COMPONENTE:
                 continue
             for entrada in sorted(os.listdir(pasta)):
-                if entrada in IGNORAR_ENTRADAS:
+                if entrada in IGNORAR_ENTRADAS or entrada in IGNORAR_DIRS or entrada.endswith((".pyc", ".pyo")):
                     continue
                 caminho_entrada = os.path.join(pasta, entrada)
                 if not os.path.isfile(caminho_entrada):

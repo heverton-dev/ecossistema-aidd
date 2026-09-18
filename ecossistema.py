@@ -689,6 +689,7 @@ _GATES_AUDIT = [
     "G_TESTES_REAIS.py",
     "G_DEPENDENCIAS_PIN_HASH.py",
     "G_FRONTEND_LAYERS.py",
+    "G_ISOLATION_AUDIT.py",
 ]
 
 def _audit_gates_legado(args):
