@@ -211,3 +211,11 @@ repos:
         always_run: true
         pass_filenames: false
         require_serial: true
+
+      - id: g-prototype-rewrite
+        name: G_PROTOTYPE_REWRITE (isolamento de sandbox e trava anti-vibe coding)
+        entry: python gates/G_PROTOTYPE_REWRITE.py
+        language: system
+        always_run: true
+        pass_filenames: false
+        require_serial: true
