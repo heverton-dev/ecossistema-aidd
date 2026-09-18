@@ -16,6 +16,13 @@
 
 set -e
 
+# Sem isto, qualquer gate que imprima acentuacao (a maioria, sao todos em
+# PT-BR) sai com mojibake no console padrao do Windows (codepage cp1252) --
+# mesma causa raiz do crash de U+2713 corrigido em ecossistema.py::run_command,
+# aqui so afeta legibilidade (nao derruba o hook), mas atrapalha exatamente
+# o "descritivo e facil de identificar" que os logs precisam ser.
+export PYTHONIOENCODING=utf-8
+
 REPO_ROOT="$(git rev-parse --show-toplevel)"
 cd "$REPO_ROOT"
 
@@ -25,9 +32,18 @@ cd "$REPO_ROOT"
 # equivalente manual continua em 'python ecossistema.py audit'.
 if python -m pre_commit --version >/dev/null 2>&1; then
   echo "[pre-commit] Rodando quality gates (framework pre-commit)..."
-  if ! python -m pre_commit run --color never; then
+  # --verbose: sem isso, o pre-commit ESCONDE a saida de cada hook ate ele
+  # terminar (so mostra na tela se falhar) -- gates lentos (ex: G_TESTES_REAIS,
+  # ~5min rodando pytest de 7 ferramentas) pareciam travados/mudos por
+  # minutos, mesmo ja imprimindo progresso em tempo real internamente.
+  # --color always: as duas flags juntas sao o que faz o "Passed"/"Failed"
+  # de cada gate aparecer colorido E ao vivo, em vez de um bloco de texto
+  # sem cor só no final.
+  if ! python -m pre_commit run --color always --verbose; then
     echo "[pre-commit] ERRO: quality gates reprovaram. Corrija antes do commit."
     echo "[pre-commit]       Diagnostico: rode 'python ecossistema.py audit' ou os hooks individualmente."
+    echo "[pre-commit]       Arquivos modificados no working tree agora (pode revelar efeito colateral de um hook):"
+    git status --short | sed 's/^/[pre-commit]         /'
     exit 1
   fi
 else

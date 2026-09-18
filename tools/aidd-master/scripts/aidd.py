@@ -34,6 +34,7 @@ from application.commands.setup import ensure_environment, cmd_setup  # noqa: E4
 from application.commands.init import cmd_init  # noqa: E402
 from application.commands.compose import cmd_compose, cmd_compose_orca  # noqa: E402
 from application.commands.add_module import cmd_add_module, cmd_refine_module  # noqa: E402
+from application.commands.attach_vsa import cmd_attach_vsa  # noqa: E402
 from application.commands.test_cmd import cmd_test  # noqa: E402
 from application.commands.audit import cmd_audit  # noqa: E402
 from application.commands.bench import cmd_bench  # noqa: E402
@@ -169,6 +170,14 @@ def _add_module_cmd(nome, descricao, dir):
     cmd_add_module(types.SimpleNamespace(nome=nome, descricao=descricao, dir=dir))
 
 
+@cli.command("attach-vsa", help="Conecta backend VSA (core+modulo+Quarteto) a um frontend preservado (ex: saida do aidd-bridge), sem sobrescrever Docker/Caddy/frontend existentes")
+@click.argument("nome")
+@click.option("--descricao", "-d", default="", help="Descrição do módulo")
+@click.option("--dir", "--pasta", "dir", default=".", help="Diretório do projeto (--pasta é alias de --dir)")
+def _attach_vsa_cmd(nome, descricao, dir):
+    cmd_attach_vsa(types.SimpleNamespace(nome=nome, descricao=descricao, dir=dir))
+
+
 @cli.command("test", help="Executa suítes de testes unitários ou de carga")
 @click.argument("tipo", required=False, default="unit", type=click.Choice(["unit", "load", "contracts", "all"]))
 @click.option("--dir", default=".", help="Diretório do projeto")
@@ -248,7 +257,7 @@ def _verificar_drift_cmd(dir):
 
 
 def main():
-    known_cmds = {"setup", "init", "plan", "apply", "prompt", "compose", "compose-orca", "add-module", "test", "audit", "bench", "heal", "deploy", "status", "export-frontend", "refine-module", "scaffold-infra", "inject", "verificar-drift", "-h", "--help"}
+    known_cmds = {"setup", "init", "plan", "apply", "prompt", "compose", "compose-orca", "add-module", "attach-vsa", "test", "audit", "bench", "heal", "deploy", "status", "export-frontend", "refine-module", "scaffold-infra", "inject", "verificar-drift", "-h", "--help"}
     if len(sys.argv) > 1 and sys.argv[1] not in known_cmds:
         raw_prompt = " ".join(sys.argv[1:])
         if _tentar_injecao_por_linguagem_natural(raw_prompt):

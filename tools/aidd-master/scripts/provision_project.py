@@ -188,6 +188,96 @@ def provision(project_desc, base_dir=None, frontend_stack='nextjs'):
 
     print(f"✨ PROJETO '{slug}' 100% PROVISIONADO COM SHARED KERNEL, FATIAS VERTICAIS E GATES RÍGIDOS!")
 
+def provision_backend_only(project_dir, modulo_nome, descricao=""):
+    """
+    Gera SOMENTE o backend VSA (core kernel, modulo, server.py, gates,
+    requirements.txt) num projeto ja existente -- NUNCA toca em Dockerfile,
+    docker-compose.yml, nginx/ ou frontend/, porque esses arquivos ja
+    pertencem a um frontend preservado (ex: saida do aidd-bridge, FLUXO 03)
+    que nao pode ser sobrescrito pelo Super-App/Next.js que `provision()`
+    geraria por padrao. Usado por `master attach-vsa`.
+
+    O backend nasce isolado em `<project_dir>/backend/` (nao direto na raiz)
+    porque o frontend preservado tambem usa a convencao `src/` na raiz
+    (src/pages, src/integrations — layout Vite/Lovable original); gerar o
+    backend em `<project_dir>/src/core` misturaria os dois namespaces no
+    mesmo diretorio.
+    """
+    project_dir = os.path.abspath(project_dir)
+    backend_dir = os.path.join(project_dir, 'backend')
+    slug = slugify(os.path.basename(project_dir)) or "projeto-modular"
+
+    os.makedirs(os.path.join(backend_dir, 'src', 'core'), exist_ok=True)
+    os.makedirs(os.path.join(backend_dir, 'src', 'modules'), exist_ok=True)
+    os.makedirs(os.path.join(backend_dir, 'tests', 'unit'), exist_ok=True)
+    os.makedirs(os.path.join(backend_dir, 'scripts', 'gates'), exist_ok=True)
+
+    for p in ['src/__init__.py', 'src/core/__init__.py', 'src/modules/__init__.py', 'tests/__init__.py']:
+        full = os.path.join(backend_dir, *p.split('/'))
+        if not os.path.exists(full):
+            open(full, 'w', encoding='utf-8').close()
+
+    repo_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    templates_core = os.path.join(repo_root, 'templates', 'core')
+    templates_dir = templates_core if os.path.isdir(templates_core) else os.path.join(repo_root, 'templates', 'v2')
+    gates_dir = os.path.join(repo_root, 'templates', 'gates')
+
+    if os.path.exists(templates_dir):
+        from compose_suite import CORE_KERNEL_FILES
+        for f in CORE_KERNEL_FILES + ['repositories.py', 'swagger.html', 'webhook_studio.html', 'mcp_studio.html']:
+            src = os.path.join(templates_dir, f)
+            if os.path.exists(src):
+                shutil.copyfile(src, os.path.join(backend_dir, 'src', 'core', f))
+        os.makedirs(os.path.join(backend_dir, 'src', 'static'), exist_ok=True)
+        for sf in ['docs.html', 'output.css']:
+            src = os.path.join(templates_dir, sf)
+            if os.path.exists(src):
+                shutil.copyfile(src, os.path.join(backend_dir, 'src', 'static', sf))
+
+    hub_scripts = os.path.join(repo_root, 'scripts')
+    for s in ['aidd.py', 'add_module.py']:
+        src = os.path.join(hub_scripts, s)
+        if os.path.exists(src):
+            shutil.copyfile(src, os.path.join(backend_dir, 'scripts', s))
+
+    if os.path.exists(gates_dir):
+        for g in os.listdir(gates_dir):
+            if g.endswith('.py'):
+                shutil.copyfile(os.path.join(gates_dir, g), os.path.join(backend_dir, 'scripts', 'gates', g))
+
+    plano_path = os.path.join(backend_dir, 'PLANO-EXECUCAO-ESTRUTURADO.json')
+    if not os.path.exists(plano_path):
+        with open(plano_path, 'w', encoding='utf-8') as f:
+            json.dump({
+                "projeto": {
+                    "nome": slug,
+                    "descricao": descricao or modulo_nome,
+                    "arquitetura": "AIDD v5.1 Modular Monolith (Bridge VSA Attach)",
+                    "zero_api_key_mode": True,
+                    "status": "INICIALIZADO"
+                },
+                "modulos": []
+            }, f, indent=2, ensure_ascii=False)
+
+    from add_module import criar_modulo
+    criar_modulo(modulo_nome, descricao or f"Modulo {modulo_nome}", backend_dir)
+
+    from compose_suite import generate_modular_server_code, CORE_KERNEL_REQUIREMENTS
+    # project_dir aqui e so pra resolver a paleta (DESIGN-SYSTEM.json vive na
+    # raiz do projeto, gerado pelo aidd-planner -- nao dentro de backend/).
+    # Passar backend_dir por engano faz cair no fallback por hash e gerar uma
+    # cor diferente da que o frontend preservado ja usa (two-tone mismatch).
+    server_code = generate_modular_server_code(slug, [modulo_nome], db_engine="sqlite", project_dir=project_dir)
+    with open(os.path.join(backend_dir, 'src', 'server.py'), 'w', encoding='utf-8') as f:
+        f.write(server_code)
+
+    with open(os.path.join(backend_dir, 'requirements.txt'), 'w', encoding='utf-8') as f:
+        f.write(CORE_KERNEL_REQUIREMENTS)
+
+    print(f"[+] Backend VSA ('{modulo_nome}') anexado em {backend_dir} -- frontend/Docker preservados intactos.")
+    return {"project_dir": project_dir, "backend_dir": backend_dir, "slug": slug, "modulo": modulo_nome}
+
+
 if __name__ == '__main__':
     prompt = sys.argv[1] if len(sys.argv) > 1 else 'projeto-modular'
     provision(prompt)

@@ -131,6 +131,11 @@ def print_banner():
 
 def run_command(cmd, cwd, env=None):
     merged_env = os.environ.copy()
+    # Forca UTF-8 no I/O do processo filho: sem isso, no console padrao do
+    # Windows (codepage cp1252), qualquer print com caractere fora do
+    # repertorio cp1252 (ex: "✓" usado por aidd-bridge) derruba a
+    # ferramenta inteira com UnicodeEncodeError antes de terminar o pipeline.
+    merged_env.setdefault("PYTHONIOENCODING", "utf-8")
     if env:
         merged_env.update(env)
     res = subprocess.run(cmd, cwd=cwd, env=merged_env)
@@ -718,8 +723,13 @@ def cmd_audit(args):
         return _audit_gates_legado(args)
     print("[audit] Delegando para o framework pre-commit "
           "('pre-commit run --all-files')...")
+    # --verbose + --color always: mesma correcao aplicada em .githooks/pre-commit
+    # -- sem --verbose, o pre-commit so mostra a saida de cada gate depois que
+    # ele termina (silencio total durante os ~5min do G_TESTES_REAIS, por
+    # exemplo), mesmo os gates ja imprimindo progresso real-time internamente.
     return run_command(
-        [sys.executable, "-m", "pre_commit", "run", "--all-files"], cwd=ROOT_DIR
+        [sys.executable, "-m", "pre_commit", "run", "--all-files", "--color", "always", "--verbose"],
+        cwd=ROOT_DIR
     )
 
 def cmd_preflight_host(args):

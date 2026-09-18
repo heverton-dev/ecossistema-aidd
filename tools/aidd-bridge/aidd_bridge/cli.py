@@ -110,7 +110,19 @@ def cmd_destroy(args):
         return 1
     return 0
 
+def _forcar_utf8_stdio():
+    """Evita UnicodeEncodeError em consoles nao-UTF-8 (ex: cp1252 do Windows)
+    ao imprimir simbolos como '✓' usados pelo pipeline."""
+    for stream in (sys.stdout, sys.stderr):
+        if hasattr(stream, "reconfigure"):
+            try:
+                stream.reconfigure(encoding="utf-8", errors="replace")
+            except Exception:
+                pass
+
+
 def main():
+    _forcar_utf8_stdio()
     parser = argparse.ArgumentParser(description="aidd-bridge: Extrator e unificador de apps Low-Code para VPS propria")
     subparsers = parser.add_subparsers(dest="subcommand", help="Comando a executar")
 
@@ -159,6 +171,7 @@ def main():
     p_unpack.add_argument("project_dir", help="Diretorio do projeto low-code")
     p_unpack.add_argument("--output", "-o", default=None, help="Diretorio destino (padrao: proprio diretorio)")
     p_unpack.add_argument("--domain", "-d", default="localhost", help="Dominio ou IP para configuracao")
+    p_unpack.add_argument("--stack", choices=["lite", "full"], default="lite", help="lite (padrao): PostgREST puro, sem GoTrue (auth.users emulado). full: GoTrue real, exige a tabela auth.users real (nao emulada)")
 
     args = parser.parse_args()
 
@@ -173,7 +186,7 @@ def main():
         "pack": cmd_pack,
         "migrate-auth": cmd_migrate_auth,
         "destroy": cmd_destroy,
-        "unpack": lambda a: BridgePipeline(a.project_dir, output_dir=a.output, domain=a.domain).run()
+        "unpack": lambda a: BridgePipeline(a.project_dir, output_dir=a.output, domain=a.domain, stack=a.stack).run()
     }
 
     sys.exit(dispatch[args.subcommand](args) or 0)

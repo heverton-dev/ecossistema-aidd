@@ -15,14 +15,9 @@ Exit 1: URLs proprietárias hardcoded ou travas de nuvem encontradas.
 
 import os
 import sys
-import re
 
-PATTERNS_PROIBIDOS = [
-    (re.compile(r"https?://[a-zA-Z0-9_\-]+\.supabase\.co(?!\w)", re.IGNORECASE), "URL hardcoded do Supabase Cloud encontrada"),
-    (re.compile(r"https?://[a-zA-Z0-9_\-]+\.firebaseio\.com", re.IGNORECASE), "URL hardcoded do Firebase Cloud encontrada"),
-]
-
-EXTENSOES_VARREDURA = {".ts", ".tsx", ".js", ".jsx", ".json", ".sql", ".env"}
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+from aidd_bridge.vendor_patterns import CLOUD_URL_PATTERNS as PATTERNS_PROIBIDOS, EXTENSOES_VARREDURA
 
 
 def audit_vendor_lockin(target_dir: str) -> int:

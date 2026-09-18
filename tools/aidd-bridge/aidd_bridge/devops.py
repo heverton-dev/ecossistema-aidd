@@ -835,7 +835,6 @@ volumes:
 """
 
     def generate_caddyfile(self) -> str:
-        functions_line = "\n    reverse_proxy /functions/v1/* functions:9000" if self.functions else ""
         functions_handle = ""
         if self.functions:
             functions_handle = """
@@ -846,9 +845,19 @@ volumes:
 """
         if self.domain == "localhost":
             return f"""localhost {{
-    reverse_proxy /rest/v1/* postgrest:3000
-    reverse_proxy /storage/v1/* storage:5000{functions_line}
-    reverse_proxy /* web:80
+    # PostgREST real espera o caminho sem o prefixo /rest/v1 (ex: GET /tarefas),
+    # "reverse_proxy" sozinho mantinha o prefixo e todo pedido voltava 404.
+    handle_path /rest/v1/* {{
+        reverse_proxy postgrest:3000
+    }}
+
+    handle_path /storage/v1/* {{
+        reverse_proxy storage:5000
+    }}
+{functions_handle}
+    handle {{
+        reverse_proxy web:80
+    }}
 }}
 """
         return f"""{self.domain} {{

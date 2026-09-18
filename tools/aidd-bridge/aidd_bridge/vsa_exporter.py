@@ -26,8 +26,12 @@ class BridgeVSAExporter:
         quarteto_dir = os.path.join(self.output_dir, "quarteto_sine_qua_non")
         os.makedirs(quarteto_dir, exist_ok=True)
 
-        app_name = self.manifest.get("framework", "app")
-        rotas = self.manifest.get("routes", [])
+        app_name = self.manifest.get("framework") or self.manifest.get("package_info", {}).get("name", "app")
+        rotas_raw = self.manifest.get("routes", [])
+        # LovableScanner real devolve rotas como dicts ({"path": ..., "component": ...});
+        # so o teste unitario historico usava uma lista de strings diretamente.
+        # Normaliza para strings aqui pra aceitar as duas formas sem quebrar.
+        rotas = [r["path"] if isinstance(r, dict) else r for r in rotas_raw]
         paginas = self.manifest.get("pages", [])
 
         # 1. Swagger OpenAPI Contract

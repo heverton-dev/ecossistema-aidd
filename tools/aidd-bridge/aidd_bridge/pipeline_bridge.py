@@ -22,15 +22,17 @@ from .scanner import LovableScanner
 from .data_bridge import DataBridge
 from .devops import DevOpsPackager
 from .vsa_exporter import BridgeVSAExporter
+from .frontend_liberator import FrontendLiberator
 
 
 class BridgePipeline:
     """Orquestrador do pipeline unificado do FLUXO 03 da aidd-bridge."""
 
-    def __init__(self, project_dir: str, output_dir: Optional[str] = None, domain: str = "localhost"):
+    def __init__(self, project_dir: str, output_dir: Optional[str] = None, domain: str = "localhost", stack: str = "lite"):
         self.project_dir = os.path.abspath(project_dir)
         self.output_dir = os.path.abspath(output_dir or project_dir)
         self.domain = domain
+        self.stack = stack
 
     def run(self) -> int:
         print("=" * 72)
@@ -54,17 +56,29 @@ class BridgePipeline:
 
         # Fase 2: Desacoplamento de Banco de Dados
         print("\n[2/6] Desacoplando banco de dados para PostgreSQL corporativo...")
+        # with_real_auth=True so tira a tabela emulada auth.users do init-db.sql
+        # quando existe um GoTrue real (stack "full") pra criar essa tabela na
+        # primeira subida. Na stack "lite" (padrao, sem GoTrue) isso derrubava
+        # a inicializacao do Postgres com "relation auth.users does not exist"
+        # em qualquer migracao de dominio com FK pra auth.users (padrao universal
+        # de apps Supabase/Lovable) -- as duas fases tem que concordar na stack.
         db_bridge = DataBridge(manifest.get("database", {}).get("migrations", []))
-        init_sql = db_bridge.generate_consolidated_init_sql(with_real_auth=True)
+        init_sql = db_bridge.generate_consolidated_init_sql(with_real_auth=(self.stack == "full"))
         sql_path = os.path.join(self.output_dir, "init-db.sql")
         with open(sql_path, "w", encoding="utf-8") as f:
             f.write(init_sql)
         print(f"      ✓ init-db.sql gerado com sucesso ({len(init_sql.splitlines())} linhas).")
 
-        # Fase 3: Separação de Camadas & Configuração de Rede
-        print("\n[3/6] Configurando variáveis de ambiente sem vendor lock-in...")
+        # Fase 3: Separação de Camadas, Cópia e Libertação do Frontend
+        print("\n[3/6] Copiando frontend preservado e removendo vendor lock-in...")
+        liberator = FrontendLiberator(self.project_dir, self.output_dir)
+        liberation = liberator.copy_and_liberate()
+        print(f"      ✓ Arquivos copiados     : {len(liberation['copiados'])}")
+        print(f"      ✓ Arquivos desatados    : {len(liberation['liberados'])}")
+
+        print("\n      Configurando variáveis de ambiente sem vendor lock-in...")
         env_prod_path = os.path.join(self.output_dir, ".env.production")
-        packager = DevOpsPackager(self.output_dir, domain=self.domain, stack="lite")
+        packager = DevOpsPackager(self.output_dir, domain=self.domain, stack=self.stack)
         env_content = packager.generate_env_production()
         with open(env_prod_path, "w", encoding="utf-8") as f:
             f.write(env_content)
