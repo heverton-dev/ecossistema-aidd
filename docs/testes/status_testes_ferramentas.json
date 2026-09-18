@@ -1,5 +1,5 @@
 {
-  "medido_em": "2026-09-18T15:33:51.811782+00:00",
+  "medido_em": "2026-09-18T18:12:57.262394+00:00",
   "metodo": "python -m pytest -q --tb=no em cada tools/<ferramenta>, parseado do resumo real (nao digitado a mao)",
   "por_ferramenta": {
     "aidd-forge": {
@@ -20,7 +20,7 @@
     },
     "aidd-master": {
       "status": "ok",
-      "passed": 375,
+      "passed": 382,
       "failed": 0,
       "skipped": 1,
       "errors": 0,
@@ -28,7 +28,7 @@
     },
     "aidd-enterprise": {
       "status": "ok",
-      "passed": 331,
+      "passed": 332,
       "failed": 0,
       "skipped": 1,
       "errors": 0,

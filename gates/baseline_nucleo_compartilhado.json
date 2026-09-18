@@ -47,6 +47,10 @@
         "esperado_identico": true,
         "motivo": null
       },
+      "external_adapter.py": {
+        "esperado_identico": true,
+        "motivo": null
+      },
       "fleet_discovery.py": {
         "esperado_identico": true,
         "motivo": null
@@ -241,6 +245,10 @@
         "esperado_identico": true,
         "motivo": null
       },
+      "external_adapter.py": {
+        "esperado_identico": true,
+        "motivo": null
+      },
       "jobs.py": {
         "esperado_identico": true,
         "motivo": null
@@ -320,6 +328,10 @@
         "motivo": null
       },
       "events.py": {
+        "esperado_identico": true,
+        "motivo": null
+      },
+      "external_adapter.py": {
         "esperado_identico": true,
         "motivo": null
       },
