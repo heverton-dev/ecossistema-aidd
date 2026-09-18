@@ -42,3 +42,15 @@ class ReadModelCache:
         return fresh
 
 read_model = ReadModelCache()  # Singleton global
+
+
+class QuerySlice:
+    """Suporte a VSA Light-Lane: execucao direta de queries read-only com DTOs e cache integrado."""
+
+    @staticmethod
+    def execute(fetcher: Callable[[], Any], cache_key: str | None = None, ttl: int = 60) -> Any:
+        """Executa a query diretamente, aplicando Stale-While-Revalidate se cache_key for informada."""
+        if cache_key:
+            return read_model.get_or_revalidate(cache_key, fetcher, ttl=ttl)
+        return fetcher()
+
