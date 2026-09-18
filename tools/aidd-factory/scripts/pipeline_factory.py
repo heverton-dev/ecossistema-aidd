@@ -159,20 +159,20 @@ def executar_pipeline(plano_path: str, pasta_destino: str, incluir_llm: bool = T
             print(f"  [ERRO] VSA App: {exc}")
             erros += 1
 
-    # Fase 3: Frontend (LLM)
+    # Fase 3: Frontend Next.js + TypeScript + Tailwind (Lei Inviolavel #11).
+    # Fonte unica compartilhada (NextJSExporter) — substitui o antigo
+    # core/frontend_generator.py (templates .j2 proprios, incompativeis com
+    # a mesma stack gerada por aidd-master) e a geracao duplicada de
+    # Super-App que vsa_generator.py fazia na Fase 2 (achado real: os dois
+    # geradores produziam frontends divergentes para o mesmo projeto).
     if incluir_llm and res_analysis.sucesso:
         fase_num += 1
-        print(f"\n[{fase_num}/{total_fases}] Fase 3 - Frontend Next.js (LLM)...")
+        print(f"\n[{fase_num}/{total_fases}] Fase 3 - Frontend Next.js + TypeScript + Tailwind...")
         try:
-            from core.frontend_generator import gerar_frontend
-            res_fe = gerar_frontend(res_analysis.valor, pasta_destino)
-            if res_fe.sucesso:
-                artefatos.append({"tipo": "frontend", "caminho": os.path.join(pasta_destino, "frontend"), "status": "gerado"})
-                print(f"  [OK] Frontend Next.js gerado ({len(res_fe.valor)} arquivos)")
-            else:
-                artefatos.append({"tipo": "frontend", "caminho": "", "status": "erro", "detalhes": res_fe.erro})
-                print(f"  [ERRO] {res_fe.codigo}: {res_fe.erro}")
-                erros += 1
+            from nextjs_exporter import NextJSExporter
+            resultado_fe = NextJSExporter().export_project(pasta_destino, os.path.join(pasta_destino, "frontend"))
+            artefatos.append({"tipo": "frontend", "caminho": os.path.join(pasta_destino, "frontend"), "status": "gerado"})
+            print(f"  [OK] Frontend Next.js gerado ({len(resultado_fe['files_created'])} arquivos)")
         except Exception as exc:
             artefatos.append({"tipo": "frontend", "caminho": "", "status": "erro", "detalhes": str(exc)})
             print(f"  [ERRO] Frontend: {exc}")

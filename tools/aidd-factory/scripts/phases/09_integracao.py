@@ -159,11 +159,11 @@ def _validar_vsa(diretorio: str) -> list:
                     except py_compile.PyCompileError as exc:
                         problemas.append(f"Fatia {mod}/{arquivo} com erro de sintaxe: {exc}")
 
-    # 3. Validar Quarteto Sine Qua Non em src/static/
+    # 3. Validar Quarteto Sine Qua Non em src/static/ — swagger/webhooks/mcp/
+    # docs continuam nativos do backend, independente da stack de frontend.
     static_dir = os.path.join(diretorio, "src", "static")
     if os.path.isdir(static_dir):
         quarteto = {
-            "index.html": "Super-App Frontend",
             "swagger.html": "Swagger Studio (/swagger)",
             "webhook_studio.html": "Webhook Studio (/webhooks)",
             "mcp_studio.html": "MCP Studio (/mcp)",
@@ -172,6 +172,24 @@ def _validar_vsa(diretorio: str) -> list:
         for arq, desc in quarteto.items():
             if not os.path.isfile(os.path.join(static_dir, arq)):
                 problemas.append(f"Quarteto Sine Qua Non ausente: {desc} ({arq})")
+
+    # 4. Frontend de produto: Next.js por padrao (Lei Inviolavel #11), ou o
+    # Super-App em src/static/index.html so quando gerado explicitamente.
+    frontend_pkg = os.path.join(diretorio, "frontend", "package.json")
+    usa_nextjs = False
+    if os.path.isfile(frontend_pkg):
+        try:
+            with open(frontend_pkg, "r", encoding="utf-8") as f:
+                usa_nextjs = "next" in json.load(f).get("dependencies", {})
+        except (OSError, json.JSONDecodeError):
+            pass
+
+    if usa_nextjs:
+        for req in ["tsconfig.json", "tailwind.config.ts", os.path.join("app", "layout.tsx"), os.path.join("app", "page.tsx")]:
+            if not os.path.isfile(os.path.join(diretorio, "frontend", req)):
+                problemas.append(f"Front-end Next.js incompleto: frontend/{req} ausente (Lei #11).")
+    elif os.path.isdir(static_dir) and not os.path.isfile(os.path.join(static_dir, "index.html")):
+        problemas.append("Frontend de produto ausente: nem frontend/ (Next.js) nem src/static/index.html")
 
     return problemas
 

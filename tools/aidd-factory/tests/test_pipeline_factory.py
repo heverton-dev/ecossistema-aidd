@@ -332,13 +332,17 @@ class TestPipelineE2E:
             assert os.path.isfile(os.path.join(dest, "factory_analysis.json"))
             assert os.path.isfile(os.path.join(dest, "docker-compose.yml"))
             assert os.path.isfile(os.path.join(dest, "init-multiple-databases.sh"))
-            # Validar VSA e Quarteto
+            # Validar VSA e Quarteto (Studios nativos do backend)
             assert os.path.isfile(os.path.join(dest, "src", "server.py"))
-            assert os.path.isfile(os.path.join(dest, "src", "static", "index.html"))
             assert os.path.isfile(os.path.join(dest, "src", "static", "swagger.html"))
             assert os.path.isfile(os.path.join(dest, "src", "static", "webhook_studio.html"))
             assert os.path.isfile(os.path.join(dest, "src", "static", "mcp_studio.html"))
             assert os.path.isfile(os.path.join(dest, "src", "static", "docs.html"))
+            # Lei Inviolável #11: frontend de produto é Next.js por padrão
+            # (Fase 3), não mais src/static/index.html.
+            assert os.path.isfile(os.path.join(dest, "frontend", "package.json"))
+            assert os.path.isfile(os.path.join(dest, "frontend", "app", "layout.tsx"))
+            assert not os.path.isfile(os.path.join(dest, "src", "static", "index.html"))
 
     def test_vsa_generator_fatias_e_quarteto(self):
         """Valida que vsa_generator gera Shared Kernel, fatias com repositorios e estúdios."""
@@ -377,5 +381,68 @@ class TestPipelineE2E:
             py_compile.compile(server_path, doraise=True)
 
             static_dir = os.path.join(tmp, "src", "static")
-            for studio in ["index.html", "swagger.html", "webhook_studio.html", "mcp_studio.html", "docs.html"]:
+            for studio in ["swagger.html", "webhook_studio.html", "mcp_studio.html", "docs.html"]:
                 assert os.path.isfile(os.path.join(static_dir, studio)), f"Studio {studio} ausente"
+            # Lei Inviolável #11: por padrão (frontend_stack="nextjs"),
+            # gerar_aplicacao_vsa NÃO gera mais o Super-App index.html — o
+            # frontend de produto é gerado por outro passo (NextJSExporter,
+            # Fase 3 de pipeline_factory.py), evitando os dois frontends
+            # divergentes que existiam antes para o mesmo projeto.
+            assert not os.path.isfile(os.path.join(static_dir, "index.html"))
+
+    def test_vsa_generator_index_html_explicito(self):
+        """frontend_stack="python-html" continua disponível para quem pedir
+        explicitamente o Super-App em HTML/CSS/JS puro (Lei #11: silêncio
+        nunca é licença para gerar outra coisa, mas pedido explícito é
+        honrado)."""
+        from core.vsa_generator import gerar_aplicacao_vsa
+
+        analysis = {
+            "nicho_slug": "clinicas",
+            "nicho_nome_exibicao": "Clínicas & Consultórios",
+            "ferramentas": [{"nome": "Typebot"}],
+        }
+        with tempfile.TemporaryDirectory() as tmp:
+            res = gerar_aplicacao_vsa(analysis, tmp, frontend_stack="python-html")
+            assert res.sucesso, f"Geracao VSA falhou: {res.erro}"
+            assert os.path.isfile(os.path.join(tmp, "src", "static", "index.html"))
+
+
+import shutil
+import subprocess
+
+NPM_DISPONIVEL = shutil.which("npm") is not None
+
+
+@pytest.mark.skipif(not NPM_DISPONIVEL, reason="npm não disponível neste ambiente")
+def test_frontend_gerado_pelo_factory_compila_de_verdade():
+    """Teste de fogo: o frontend Next.js gerado pela Fase 3 do pipeline
+    factory precisa REALMENTE compilar (npm install && npm run build), não
+    só passar em checagem estática de arquivo."""
+    from pipeline_factory import executar_pipeline
+    import copy
+
+    plano = copy.deepcopy(NICHOS_FIXTURE["delivery"])
+    with tempfile.TemporaryDirectory() as tmp:
+        plano_path = os.path.join(tmp, "PLANO-INFRAESTRUTURA.json")
+        with open(plano_path, "w", encoding="utf-8") as f:
+            json.dump(plano, f)
+        dest = os.path.join(tmp, "output")
+        codigo = executar_pipeline(plano_path, dest, incluir_llm=True)
+        assert codigo == 0
+
+        frontend_dir = os.path.join(dest, "frontend")
+        res_install = subprocess.run(
+            ["npm", "install"], cwd=frontend_dir,
+            capture_output=True, text=True, encoding="utf-8", errors="replace",
+            timeout=300, shell=(os.name == "nt"),
+        )
+        assert res_install.returncode == 0, res_install.stdout + res_install.stderr
+
+        res_build = subprocess.run(
+            ["npm", "run", "build"], cwd=frontend_dir,
+            capture_output=True, text=True, encoding="utf-8", errors="replace",
+            timeout=300, shell=(os.name == "nt"),
+        )
+        assert res_build.returncode == 0, res_build.stdout + res_build.stderr
+        assert os.path.isfile(os.path.join(frontend_dir, ".next", "standalone", "server.js"))

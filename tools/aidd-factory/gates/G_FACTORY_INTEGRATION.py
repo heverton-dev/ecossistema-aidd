@@ -72,11 +72,31 @@ def _validar_integracao(diretorio: str) -> list:
                     if not os.path.isfile(os.path.join(modules_dir, m, req)):
                         problemas.append(f"Fatia {m} sem {req}")
 
-        # Checar Quarteto Sine Qua Non
+        # Checar Quarteto Sine Qua Non: swagger/webhooks/mcp/docs continuam
+        # nativos do backend (src/static/*.html), independente da stack de
+        # frontend. O 5o item (dashboard de produto) e "index.html" (Super-App
+        # Python puro) so quando pedido explicitamente; por padrao (Lei
+        # Inviolavel #11) e o frontend/ em Next.js.
         static_dir = os.path.join(diretorio, "src", "static")
-        for st in ["swagger.html", "webhook_studio.html", "mcp_studio.html", "docs.html", "index.html"]:
+        for st in ["swagger.html", "webhook_studio.html", "mcp_studio.html", "docs.html"]:
             if not os.path.isfile(os.path.join(static_dir, st)):
                 problemas.append(f"Quarteto Sine Qua Non ausente: {st}")
+
+        frontend_pkg = os.path.join(diretorio, "frontend", "package.json")
+        usa_nextjs = False
+        if os.path.isfile(frontend_pkg):
+            try:
+                with open(frontend_pkg, "r", encoding="utf-8") as f:
+                    usa_nextjs = "next" in json.load(f).get("dependencies", {})
+            except (OSError, json.JSONDecodeError):
+                pass
+
+        if usa_nextjs:
+            for req in ["tsconfig.json", "tailwind.config.ts", os.path.join("app", "layout.tsx"), os.path.join("app", "page.tsx")]:
+                if not os.path.isfile(os.path.join(diretorio, "frontend", req)):
+                    problemas.append(f"Front-end Next.js incompleto: frontend/{req} ausente (Lei #11).")
+        elif not os.path.isfile(os.path.join(static_dir, "index.html")):
+            problemas.append("Quarteto Sine Qua Non ausente: index.html (nem frontend/ Next.js encontrado)")
 
     return problemas
 
