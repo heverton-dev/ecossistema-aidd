@@ -15,5 +15,9 @@
     "sections": "",
     "scripts": "",
     "spotlight_modules": "",
-    "initial_loads": ""
+    "initial_loads": "",
+    "primary_hex": "#4F46E5",
+    "primary_hover_hex": "#4338CA",
+    "primary_light_hex": "#8280F0",
+    "primary_rgb": "79, 70, 229"
 }

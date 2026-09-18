@@ -144,6 +144,20 @@ def test_gera_pasta_public_para_o_dockerfile_encontrar(frontend_gerado):
     assert (frontend_dir / "public").is_dir()
 
 
+def test_navbar_linka_os_5_estudios_nativos(frontend_gerado):
+    """Achado real do usuário (18/09/2026, screenshot da aplicação real): a
+    barra de navegação só linkava para /docs (Swagger), /webhooks e /mcp —
+    faltavam /docs/guia (Guia do Usuário) e /metrics (Métricas), 2 dos 5
+    itens do "quinteto de studios/metrics" que o padrão-ouro exige."""
+    frontend_dir, _ = frontend_gerado
+    navbar = (frontend_dir / "components" / "Navbar.tsx").read_text(encoding="utf-8")
+    assert 'href="/docs"' in navbar
+    assert 'href="/docs/guia"' in navbar
+    assert 'href="/webhooks"' in navbar
+    assert 'href="/mcp"' in navbar
+    assert 'href="/metrics"' in navbar
+
+
 def test_nao_reimplementa_studios_nativos_do_backend(frontend_gerado):
     """Por design: /docs, /webhooks, /mcp continuam nativos do backend
     Python (roteados pelo Nginx), não duplicados/mockados em React — achado

@@ -196,7 +196,7 @@ def criar_modulo(nome_modulo: str, descricao: str = "", target_dir: str = "."):
                     if slug not in module_slugs:
                         module_slugs.append(slug)
 
-                    server_code = generate_modular_server_code(suite_name, module_slugs, db_engine=db_engine)
+                    server_code = generate_modular_server_code(suite_name, module_slugs, db_engine=db_engine, project_dir=target_dir)
                     with open(server_path, "w", encoding="utf-8") as f:
                         f.write(server_code)
                     print(f"  [+] 'src/server.py' regenerado e religado com o módulo '{slug}'!")

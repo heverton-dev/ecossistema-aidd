@@ -56,7 +56,15 @@ def provision(project_desc, base_dir=None, frontend_stack='nextjs'):
         # estática desatualizada (sem as variáveis CSS/modal que G_CONTRACTS
         # exige) — é gerado dinamicamente no passo 5.1 com o mesmo gerador que
         # compose_suite() usa (generate_superapp_index_html), sempre em dia.
-        for sf in ['docs.html']:
+        #
+        # output.css: achado real (18/09/2026, print do usuário) — docs.html
+        # (Swagger/Guia) referencia `<link rel="stylesheet" href="/static/
+        # output.css">` para as classes utilitárias Tailwind (w-6, h-4 etc).
+        # compose_suite() já copiava esse arquivo; provision_project() nunca
+        # copiava — o CSS voltava 404 em produção e TODA a página (ícones,
+        # cores, espaçamento) renderizava sem estilo nenhum (ícones SVG
+        # gigantes, texto sem layout).
+        for sf in ['docs.html', 'output.css']:
             src = os.path.join(templates_dir, sf)
             if os.path.exists(src):
                 shutil.copyfile(src, os.path.join(project_dir, 'src', 'static', sf))
@@ -98,6 +106,30 @@ def provision(project_desc, base_dir=None, frontend_stack='nextjs'):
             if g.endswith('.py'):
                 shutil.copyfile(os.path.join(gates_dir, g), os.path.join(project_dir, 'scripts', 'gates', g))
 
+    # 4.5. Gerar PLANO-EXECUCAO-ESTRUTURADO.json ANTES do módulo padrão inicial.
+    # Achado real (18/09/2026): quando o plano só era escrito no passo 7 (depois
+    # do módulo "principal" já criado), `criar_modulo()` via `add_module.py`
+    # não encontrava o arquivo ainda e pulava o registro do módulo no
+    # manifesto — "principal" ficava só como pasta física em disco, nunca
+    # religado a `src/server.py` nem contabilizado no `modulos`. O
+    # `NextJSExporter` descobre módulos varrendo `src/modules/` no disco
+    # (independente do manifesto), então gerava uma página para "principal"
+    # chamando uma rota que o backend nunca registrou -> HTTP 404 real no
+    # frontend. Escrever o plano aqui garante que `criar_modulo()` registre
+    # e religue "principal" corretamente desde o primeiro módulo.
+    plano_path = os.path.join(project_dir, 'PLANO-EXECUCAO-ESTRUTURADO.json')
+    with open(plano_path, 'w', encoding='utf-8') as f:
+        json.dump({
+            "projeto": {
+                "nome": slug,
+                "descricao": project_desc,
+                "arquitetura": "AIDD v5.1 Modular Monolith",
+                "zero_api_key_mode": True,
+                "status": "INICIALIZADO"
+            },
+            "modulos": []
+        }, f, indent=2, ensure_ascii=False)
+
     # 5. Criar modulo padrão inicial
     from add_module import criar_modulo
     criar_modulo("principal", "Módulo principal", project_dir)
@@ -114,7 +146,7 @@ def provision(project_desc, base_dir=None, frontend_stack='nextjs'):
     # pedido explicitamente (`frontend_stack="python-html"`).
     try:
         from compose_suite import generate_modular_server_code
-        server_code = generate_modular_server_code(slug, ["principal"], db_engine="sqlite")
+        server_code = generate_modular_server_code(slug, ["principal"], db_engine="sqlite", project_dir=project_dir)
         with open(os.path.join(project_dir, 'src', 'server.py'), 'w', encoding='utf-8') as f:
             f.write(server_code)
         print("  [+] Servidor dinâmico 'src/server.py' gerado com sucesso!")
@@ -137,22 +169,17 @@ def provision(project_desc, base_dir=None, frontend_stack='nextjs'):
     with open(os.path.join(project_dir, 'requirements.txt'), 'w', encoding='utf-8') as f:
         f.write(CORE_KERNEL_REQUIREMENTS)
 
-    # 7. Gerar PLANO-EXECUCAO-ESTRUTURADO.json
-    plano = {
-        "projeto": {
-            "nome": slug,
-            "descricao": project_desc,
-            "arquitetura": "AIDD v5.1 Modular Monolith",
-            "zero_api_key_mode": True,
-            "status": "INICIALIZADO"
-        },
-        "fases": [
-            {"id": "fase-01-core", "nome": "Core Kernel & Banco WAL", "status": "CONCLUIDO"},
-            {"id": "fase-02-modulos", "nome": "Fatias Verticais e Full CRUD", "status": "PENDENTE"},
-            {"id": "fase-03-auditoria", "nome": "Auditoria de Gates Rígidos", "status": "PENDENTE"}
-        ]
-    }
-    with open(os.path.join(project_dir, 'PLANO-EXECUCAO-ESTRUTURADO.json'), 'w', encoding='utf-8') as f:
+    # 7. Completar PLANO-EXECUCAO-ESTRUTURADO.json com as fases do projeto.
+    # Atualiza (não sobrescreve) o arquivo escrito no passo 4.5, preservando
+    # o "modulos" que `criar_modulo()` já registrou para "principal".
+    with open(plano_path, 'r', encoding='utf-8') as f:
+        plano = json.load(f)
+    plano["fases"] = [
+        {"id": "fase-01-core", "nome": "Core Kernel & Banco WAL", "status": "CONCLUIDO"},
+        {"id": "fase-02-modulos", "nome": "Fatias Verticais e Full CRUD", "status": "PENDENTE"},
+        {"id": "fase-03-auditoria", "nome": "Auditoria de Gates Rígidos", "status": "PENDENTE"}
+    ]
+    with open(plano_path, 'w', encoding='utf-8') as f:
         json.dump(plano, f, indent=2, ensure_ascii=False)
 
     # 8. Git Init

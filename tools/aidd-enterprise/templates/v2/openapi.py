@@ -287,8 +287,21 @@ class RouteRegistry:
             "paths": paths_obj
         }
 
-    def get_swagger_html(self, title: str):
+    def get_swagger_html(
+        self,
+        title: str,
+        primary: str = "#3b82f6",
+        primary_light: str = "#60a5fa",
+        primary_rgb: str = "59, 130, 246",
+    ):
         endpoints_json = json.dumps(self.endpoints, ensure_ascii=False)
 
         html_template = (Path(__file__).parent / "swagger.html").read_text(encoding="utf-8")
-        return html_template.replace("__TITLE__", title).replace("__ENDPOINTS_JSON__", endpoints_json)
+        return (
+            html_template
+            .replace("__TITLE__", title)
+            .replace("__ENDPOINTS_JSON__", endpoints_json)
+            .replace("__PRIMARY__", primary)
+            .replace("__PRIMARY_LIGHT__", primary_light)
+            .replace("__PRIMARY_RGB__", primary_rgb)
+        )

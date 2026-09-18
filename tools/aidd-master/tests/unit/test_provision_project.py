@@ -206,6 +206,71 @@ def test_provision_server_py_importa_de_verdade_sem_modulenotfounderror(tmp_path
     assert resultado.returncode == 0, resultado.stdout + resultado.stderr
 
 
+def test_provision_copia_output_css_para_docs_html_funcionar(tmp_path):
+    """Achado real (print do usuário, 18/09/2026): `src/static/docs.html`
+    (Swagger Studio e Guia) referencia `<link rel="stylesheet" href="/static/
+    output.css">` para TODAS as classes utilitárias Tailwind (w-6, h-4,
+    cores, espaçamento). `provision()` nunca copiava esse arquivo (só
+    `compose_suite()` copiava, para outro fluxo) — em produção o CSS voltava
+    HTTP 404 e a página inteira renderizava sem nenhum estilo: ícones SVG
+    gigantes sem tamanho, texto sem layout, cores default do navegador."""
+    from provision_project import provision
+
+    provision("Projeto Teste Output Css", base_dir=str(tmp_path))
+    projeto_dir = next(tmp_path.glob("proj_*"))
+
+    css_path = projeto_dir / "src" / "static" / "output.css"
+    assert css_path.is_file(), "src/static/output.css nao foi copiado por provision()"
+    conteudo = css_path.read_text(encoding="utf-8")
+    assert ".w-6{" in conteudo or ".w-6 {" in conteudo, "output.css nao contem as classes Tailwind usadas por docs.html"
+
+
+def test_provision_registra_modulo_principal_no_manifesto(tmp_path):
+    """Achado real (validacao com o usuario, 18/09/2026): `provision()`
+    escrevia PLANO-EXECUCAO-ESTRUTURADO.json SO DEPOIS de chamar
+    `criar_modulo("principal", ...)` — nesse momento o arquivo ainda nao
+    existia, entao `criar_modulo()` (que so registra o modulo no manifesto
+    `if os.path.isfile(plano_path)`) pulava silenciosamente o registro.
+    "principal" ficava so como pasta fisica em disco, nunca contabilizado
+    em `modulos`. Quando outro modulo era adicionado depois via
+    `add_module`, o server.py era regenerado usando so `modulos` do
+    manifesto (sem "principal") -> a pagina Next.js de "principal" (que o
+    frontend gera varrendo pastas em disco, nao o manifesto) chamava uma
+    rota que o backend nunca registrou -> HTTP 404 real, visto pelo usuario
+    rodando a aplicacao de verdade."""
+    from provision_project import provision
+
+    provision("Projeto Teste Manifesto Principal", base_dir=str(tmp_path))
+    projeto_dir = next(tmp_path.glob("proj_*"))
+
+    plano = json.loads((projeto_dir / "PLANO-EXECUCAO-ESTRUTURADO.json").read_text(encoding="utf-8"))
+    slugs = [m.get("slug") for m in plano.get("modulos", [])]
+    assert "principal" in slugs, f"'principal' nao foi registrado no manifesto: {slugs}"
+
+
+def test_add_module_nao_orfa_modulo_anterior_no_server_py(tmp_path):
+    """Reproducao real do bug reportado pelo usuario: depois de adicionar um
+    segundo modulo, o server.py final precisa religar AMBOS os modulos
+    (import + registro de rotas), nao so o modulo novo. Checar apenas se a
+    pagina do frontend existe (como o teste anterior ja fazia) nao pega
+    esse bug — a pagina existe, mas a rota por tras dela nunca foi
+    religada, e isso so aparece testando o server.py gerado de verdade."""
+    from provision_project import provision
+    from add_module import criar_modulo
+
+    provision("Projeto Teste Server Nao Orfao", base_dir=str(tmp_path))
+    projeto_dir = next(tmp_path.glob("proj_*"))
+
+    criar_modulo("tarefas", "Módulo de tarefas", target_dir=str(projeto_dir))
+
+    server_code = (projeto_dir / "src" / "server.py").read_text(encoding="utf-8")
+    assert "from modules.principal.routes import registrar_rotas" in server_code, (
+        "server.py final nao religa mais o modulo 'principal' apos add_module — "
+        "orfao real: a pagina do frontend chamaria uma rota inexistente (HTTP 404)."
+    )
+    assert "from modules.tarefas.routes import registrar_rotas" in server_code
+
+
 def test_add_module_religa_pagina_do_frontend_nextjs(tmp_path):
     """Achado real: `add-module` religava `src/server.py` com o módulo novo,
     mas nunca regenerava o frontend Next.js — o módulo novo ficava sem

@@ -35,6 +35,21 @@ except ImportError:
         sys.path.insert(0, _comp_dir)
     from escritor_atomico import escrever_atomico, escrever_json_atomico
 
+# Catálogo determinístico de paletas (Lei #11 — identidade visual única por
+# projeto), reusado aqui para injetar a MESMA cor primária do frontend
+# Next.js nos Estúdios nativos (Swagger/Webhooks/MCP) — achado real do
+# usuário (18/09/2026): os Estúdios nativos ficavam com azul/violeta fixos,
+# destoando do resto do app.
+try:
+    from design_catalog import resolver_paleta_projeto, hex_para_rgb_str, clarear_hex, escolher_paleta
+except ImportError:
+    _dc_dir = os.path.join(
+        os.path.dirname(__file__), "..", "..", "..", "componentes", "compartilhado", "src-core"
+    )
+    if os.path.isdir(_dc_dir) and _dc_dir not in sys.path:
+        sys.path.insert(0, _dc_dir)
+    from design_catalog import resolver_paleta_projeto, hex_para_rgb_str, clarear_hex, escolher_paleta
+
 if hasattr(sys.stdout, 'reconfigure'):
     sys.stdout.reconfigure(encoding='utf-8', errors='replace')
 
@@ -73,8 +88,24 @@ def _render_suite_template(extra_context: dict) -> str:
         return server_code, index_html
 
 
-def generate_modular_server_code(suite_name: str, module_slugs: list, db_engine: str = "sqlite") -> str:
-    """Gera o código-fonte do servidor dinâmico server.py que carrega todos os módulos."""
+def generate_modular_server_code(suite_name: str, module_slugs: list, db_engine: str = "sqlite", project_dir: str = None) -> str:
+    """Gera o código-fonte do servidor dinâmico server.py que carrega todos os módulos.
+
+    `project_dir` (opcional): raiz do projeto, usada para resolver a mesma
+    paleta única do `DESIGN-SYSTEM.json` (Lei #11) — sem ele, cai no
+    fallback determinístico por hash do `suite_name` (nunca uma cor fixa).
+
+    Importante: o texto de identidade usado no hash de fallback tem que ser
+    IDÊNTICO ao que `NextJSExporter._resolver_paleta` usa (achado real,
+    18/09/2026) — senão o frontend Next.js e os Studios nativos calculam
+    cores "dinâmicas" diferentes para o MESMO projeto sem
+    `DESIGN-SYSTEM.json`."""
+    identidade_paleta = f"{suite_name} {' '.join(module_slugs)}"
+    paleta = resolver_paleta_projeto(project_dir, identidade_paleta) if project_dir else escolher_paleta(identidade_paleta)
+    primary_hex = paleta["primaria"]
+    primary_hover_hex = paleta["primaria_hover"]
+    primary_light_hex = clarear_hex(primary_hex)
+    primary_rgb = hex_para_rgb_str(primary_hex)
     imports_lines = []
     init_schema_calls = []
     rls_init_calls = []
@@ -134,6 +165,10 @@ def generate_modular_server_code(suite_name: str, module_slugs: list, db_engine:
         "routes_regs": routes_regs_str,
         "mcp_tool_regs": mcp_tool_regs_str,
         "webhook_event_regs": webhook_event_regs_str,
+        "primary_hex": primary_hex,
+        "primary_hover_hex": primary_hover_hex,
+        "primary_light_hex": primary_light_hex,
+        "primary_rgb": primary_rgb,
     })
     return server_code
 
@@ -470,11 +505,15 @@ def _copy_shared_kernel(templates_v2: str, core_dir: str, shared_ui_dir: str, sh
             shutil.copyfile(src, dst)
             print(f"  [+] Core Kernel: {cf}")
 
-    # Assets HTML dos Studios referenciados pelo core: webhook_studio.html é
-    # lido por core/webhooks.py (get_studio_html) e mcp_studio.html por
+    # Assets HTML dos Studios referenciados pelo core: swagger.html é lido
+    # por core/openapi.py (get_swagger_html), webhook_studio.html por
+    # core/webhooks.py (get_studio_html) e mcp_studio.html por
     # core/mcp_server.py (get_studio_html). Sem eles, o check comportamental
-    # de XSS do G_SEGURANCA e a rota /webhooks do server.py gerado quebram.
-    for asset in ("webhook_studio.html", "mcp_studio.html"):
+    # de XSS do G_SEGURANCA e as rotas /docs, /webhooks do server.py gerado
+    # quebram. Achado real (18/09/2026): "swagger.html" nunca esteve nesta
+    # lista — todo projeto criado via `compose_suite()` tinha /docs
+    # retornando HTTP 500 (FileNotFoundError) sempre.
+    for asset in ("swagger.html", "webhook_studio.html", "mcp_studio.html"):
         src = os.path.join(templates_v2, asset)
         dst = os.path.join(core_dir, asset)
         if os.path.isfile(src):
@@ -549,7 +588,8 @@ def _generate_server_and_ui(
     src_dir: str, static_dir: str, templates_v2: str
 ) -> None:
     """Gerar Servidor Monolítico Modular src/server.py e Front-ends."""
-    server_code = generate_modular_server_code(suite_name, clean_modules, db_engine=db_engine)
+    project_dir = os.path.dirname(src_dir)
+    server_code = generate_modular_server_code(suite_name, clean_modules, db_engine=db_engine, project_dir=project_dir)
     escrever_atomico(os.path.join(src_dir, "server.py"), server_code)
     print("  [+] Servidor dinâmico 'src/server.py' gerado com sucesso!")
 

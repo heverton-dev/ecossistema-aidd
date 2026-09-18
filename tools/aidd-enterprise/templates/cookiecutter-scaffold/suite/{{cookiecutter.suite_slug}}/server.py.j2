@@ -542,7 +542,12 @@ class AppHandler(http.server.SimpleHTTPRequestHandler):
             self.send_response(200)
             self.send_header("Content-Type", "text/html; charset=utf-8")
             self.end_headers()
-            html = registry.get_swagger_html("{{ cookiecutter.suite_name }} — Swagger Studio")
+            html = registry.get_swagger_html(
+                "{{ cookiecutter.suite_name }} — Swagger Studio",
+                primary="{{ cookiecutter.primary_hex }}",
+                primary_light="{{ cookiecutter.primary_light_hex }}",
+                primary_rgb="{{ cookiecutter.primary_rgb }}",
+            )
             self.wfile.write(html.encode("utf-8"))
             return
 
@@ -560,7 +565,11 @@ class AppHandler(http.server.SimpleHTTPRequestHandler):
             self.send_response(200)
             self.send_header("Content-Type", "text/html; charset=utf-8")
             self.end_headers()
-            html = webhook_dispatcher.get_studio_html("{{ cookiecutter.suite_name }} — Webhook Studio")
+            html = webhook_dispatcher.get_studio_html(
+                "{{ cookiecutter.suite_name }} — Webhook Studio",
+                primary="{{ cookiecutter.primary_hex }}",
+                primary_hover="{{ cookiecutter.primary_hover_hex }}",
+            )
             self.wfile.write(html.encode("utf-8"))
             return
 
@@ -568,7 +577,11 @@ class AppHandler(http.server.SimpleHTTPRequestHandler):
             self.send_response(200)
             self.send_header("Content-Type", "text/html; charset=utf-8")
             self.end_headers()
-            html = mcp_server.get_studio_html("{{ cookiecutter.suite_name }} — MCP Native Studio")
+            html = mcp_server.get_studio_html(
+                "{{ cookiecutter.suite_name }} — MCP Native Studio",
+                primary="{{ cookiecutter.primary_hex }}",
+                primary_hover="{{ cookiecutter.primary_hover_hex }}",
+            )
             self.wfile.write(html.encode("utf-8"))
             return
 

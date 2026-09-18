@@ -15,8 +15,8 @@
             --bg-studio: #020617;
             --border: rgba(255, 255, 255, 0.08);
             --border-hover: rgba(255, 255, 255, 0.16);
-            --primary: #3b82f6;
-            --primary-light: #60a5fa;
+            --primary: __PRIMARY__;
+            --primary-light: __PRIMARY_LIGHT__;
             --text-main: #f8fafc;
             --text-muted: #94a3b8;
             --code-bg: #010409;
@@ -28,7 +28,7 @@
            ========================================================================= */
         * {
             scrollbar-width: thin;
-            scrollbar-color: rgba(59, 130, 246, 0.4) transparent;
+            scrollbar-color: rgba(__PRIMARY_RGB__, 0.4) transparent;
         }
         ::-webkit-scrollbar {
             width: 4px !important;
@@ -38,12 +38,12 @@
             background: transparent !important;
         }
         ::-webkit-scrollbar-thumb {
-            background: rgba(59, 130, 246, 0.35) !important;
+            background: rgba(__PRIMARY_RGB__, 0.35) !important;
             border-radius: 9999px !important;
             transition: background 0.2s ease !important;
         }
         ::-webkit-scrollbar-thumb:hover {
-            background: rgba(59, 130, 246, 0.75) !important;
+            background: rgba(__PRIMARY_RGB__, 0.75) !important;
         }
 
         /* Proteção Universal: Botões em Linha Única */
@@ -94,8 +94,8 @@
             white-space: nowrap;
         }
         .badge-ver {
-            background: rgba(59, 130, 246, 0.15);
-            border: 1px solid rgba(59, 130, 246, 0.3);
+            background: rgba(__PRIMARY_RGB__, 0.15);
+            border: 1px solid rgba(__PRIMARY_RGB__, 0.3);
             color: var(--primary-light);
             font-size: 0.7rem;
             font-weight: 800;
@@ -168,11 +168,11 @@
             text-overflow: ellipsis;
             white-space: nowrap;
         }
-        .endpoint-link:hover, .endpoint-link.active { background: rgba(59, 130, 246, 0.12); color: #fff; }
+        .endpoint-link:hover, .endpoint-link.active { background: rgba(__PRIMARY_RGB__, 0.12); color: #fff; }
         
         .method-pill { font-size: 0.65rem; font-weight: 800; font-family: 'JetBrains Mono', monospace; padding: 0.15rem 0.4rem; border-radius: 4px; min-width: 48px; text-align: center; flex-shrink: 0; }
         .pill-get { background: rgba(16, 185, 129, 0.15); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.3); }
-        .pill-post { background: rgba(59, 130, 246, 0.15); color: #60a5fa; border: 1px solid rgba(59, 130, 246, 0.3); }
+        .pill-post { background: rgba(__PRIMARY_RGB__, 0.15); color: #60a5fa; border: 1px solid rgba(__PRIMARY_RGB__, 0.3); }
         .pill-put { background: rgba(245, 158, 11, 0.15); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.3); }
         .pill-delete { background: rgba(239, 68, 68, 0.15); color: #f87171; border: 1px solid rgba(239, 68, 68, 0.3); }
         .pill-patch { background: rgba(168, 85, 247, 0.15); color: #c084fc; border: 1px solid rgba(168, 85, 247, 0.3); }
@@ -242,7 +242,7 @@
 
         .lang-tabs { display: flex; background: rgba(255, 255, 255, 0.03); border: 1px solid var(--border); border-radius: 8px; padding: 0.2rem; gap: 0.2rem; }
         .lang-tab { padding: 0.3rem 0.65rem; border-radius: 6px; font-size: 0.72rem; font-weight: 700; color: var(--text-muted); cursor: pointer; border: none; background: none; transition: all 0.15s; }
-        .lang-tab.active { background: rgba(59, 130, 246, 0.2); color: var(--primary-light); }
+        .lang-tab.active { background: rgba(__PRIMARY_RGB__, 0.2); color: var(--primary-light); }
 
         .code-box { background: var(--code-bg); border: 1px solid var(--border); border-radius: 10px; overflow: hidden; }
         .code-header { background: rgba(255, 255, 255, 0.02); border-bottom: 1px solid var(--border); padding: 0.5rem 0.85rem; display: flex; justify-content: space-between; align-items: center; font-size: 0.72rem; font-family: 'JetBrains Mono', monospace; color: var(--text-muted); }
@@ -336,7 +336,7 @@
 <body>
     <header>
         <div class="brand-title">
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#3b82f6" stroke-width="2.5"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="__PRIMARY__" stroke-width="2.5"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
             <span class="title-text">__TITLE__</span>
             <span class="badge-ver">OpenAPI 3.1.0</span>
         </div>

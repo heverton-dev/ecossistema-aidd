@@ -403,7 +403,12 @@ class MCPServer:
     # Alias para compatibilidade com gates
     handle_request = handle_json_rpc
 
-    def get_studio_html(self, title: str = "AIDD Enterprise — MCP Server Studio") -> str:
+    def get_studio_html(
+        self,
+        title: str = "AIDD Enterprise — MCP Server Studio",
+        primary: str = "#7c3aed",
+        primary_hover: str = "#6d28d9",
+    ) -> str:
         """Gera a interface Web Impeccable para o Studio de Ferramentas MCP (/mcp) sem CDNs externas."""
         tools = self.get_tools_manifest()
         claude_config = {
@@ -442,6 +447,8 @@ class MCPServer:
         _html = _html.replace("__CLAUDE_CONFIG_JSON__", str(claude_config_json))
         _html = _html.replace("__CARDS_STR__", str(cards_str))
         _html = _html.replace("__TOOLS_JSON__", str(json.dumps(tools, ensure_ascii=False)))
+        _html = _html.replace("__PRIMARY__", str(primary))
+        _html = _html.replace("__PRIMARY_HOVER__", str(primary_hover))
         return _html
 
 

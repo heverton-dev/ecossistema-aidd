@@ -228,3 +228,84 @@ def test_servidor_gerado_sobe_e_responde(suite_composta):
             processo.wait(timeout=5)
         except subprocess.TimeoutExpired:
             processo.kill()
+
+
+def test_paleta_dos_studios_nativos_bate_com_a_do_frontend_nextjs(tmp_path):
+    """Achado real (18/09/2026): sem DESIGN-SYSTEM.json, o fallback por hash
+    usava textos de identidade diferentes no server.py (só suite_name) e no
+    NextJSExporter (suite_name + módulos) — o MESMO projeto acabava com uma
+    cor no frontend e outra cor nos Studios nativos, quebrando o objetivo
+    inteiro de "paleta única"."""
+    from compose_suite import compose_suite
+    from nextjs_exporter import NextJSExporter
+
+    target = tmp_path / "suite-consistencia"
+    compose_suite(str(target), "Suite Consistencia Cores", ["produtos"])
+
+    resultado_frontend = NextJSExporter().export_project(
+        str(target), str(target / "frontend"), suite_name="Suite Consistencia Cores"
+    )
+    cor_frontend = resultado_frontend["paleta"]["primaria"]
+
+    server_code = (target / "src" / "server.py").read_text(encoding="utf-8")
+    assert f'primary="{cor_frontend}"' in server_code, (
+        f"server.py usa uma cor primaria diferente do frontend Next.js ({cor_frontend})"
+    )
+
+
+def test_docs_webhooks_mcp_usam_a_paleta_dinamica_do_projeto(tmp_path):
+    """Achado real do usuário (18/09/2026): os Estúdios nativos (/docs,
+    /webhooks, /mcp) ficavam com cores fixas (azul/violeta) hardcoded,
+    destoando da paleta única que o resto do app (frontend Next.js) já
+    usava — quebrava o "padrão de entrega ouro" pedido. Teste de fogo real:
+    sobe o servidor gerado de verdade e confere que as 3 páginas nativas
+    devolvem a MESMA cor primária do DESIGN-SYSTEM.json do projeto."""
+    import json as _json
+    import urllib.request
+    import urllib.error
+    from compose_suite import compose_suite
+
+    target = tmp_path / "suite-paleta"
+    target.mkdir()
+    (target / "DESIGN-SYSTEM.json").write_text(
+        _json.dumps({"paleta": {"nome": "Teste", "primaria": "#123456", "primaria_hover": "#0f2a44", "neutro": "slate"}}),
+        encoding="utf-8",
+    )
+    compose_suite(str(target), "Suite Paleta", ["produtos"])
+
+    # stdout redirecionado para arquivo (nao PIPE): server.py loga 2 linhas
+    # JSON por requisicao — com stdout=PIPE e ninguem drenando, o buffer do
+    # SO enche e o processo trava no meio de um write() de log, travando a
+    # request inteira (achado real ao escrever este teste: as 3 paginas
+    # cheias abaixo geram log suficiente pra estourar o buffer de 64KB).
+    log_path = tmp_path / "server_stdout.log"
+    with open(log_path, "w", encoding="utf-8") as log_file:
+        processo = subprocess.Popen(
+            [sys.executable, "src/server.py"],
+            cwd=str(target),
+            stdout=log_file, stderr=subprocess.STDOUT,
+        )
+    try:
+        for path in ("/docs", "/webhooks", "/mcp"):
+            deadline = time.time() + 15
+            ultimo_erro = None
+            corpo = None
+            while time.time() < deadline:
+                if processo.poll() is not None:
+                    pytest.fail(f"Servidor encerrou sozinho (exit {processo.returncode}):\n{log_path.read_text(encoding='utf-8', errors='replace')}")
+                try:
+                    with urllib.request.urlopen(f"http://127.0.0.1:3000{path}", timeout=2) as resp:
+                        corpo = resp.read().decode("utf-8")
+                    break
+                except (urllib.error.URLError, ConnectionError) as e:
+                    ultimo_erro = e
+                    time.sleep(0.1)
+            if corpo is None:
+                pytest.fail(f"{path} não respondeu em 15s: {ultimo_erro}")
+            assert "#123456" in corpo, f"{path} nao usa a paleta dinamica do projeto"
+    finally:
+        processo.terminate()
+        try:
+            processo.wait(timeout=5)
+        except subprocess.TimeoutExpired:
+            processo.kill()

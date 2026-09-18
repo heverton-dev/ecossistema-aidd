@@ -30,8 +30,10 @@ identidade visual (quem dá a identidade é a cor primária).
 from __future__ import annotations
 
 import hashlib
+import json
+import os
 import unicodedata
-from typing import Any, Dict, List
+from typing import Any, Dict, List, Optional
 
 # Cada entrada: nome de exibição, hex primário (saturado o bastante para
 # texto branco em cima), hex do hover (mesmo tom ~12% mais escuro) e, para
@@ -112,3 +114,48 @@ def escolher_paleta(texto_identidade: str, dominio: str = "") -> Dict[str, str]:
         "nome": entrada["nome"], "primaria": entrada["primaria"],
         "primaria_hover": entrada["primaria_hover"], "neutro": NEUTRO_PADRAO,
     }
+
+
+def resolver_paleta_projeto(project_dir: str, identidade: str, dominio: str = "") -> Dict[str, str]:
+    """Resolve a paleta de marca de um projeto já provisionado em disco (Lei
+    #11): usa `DESIGN-SYSTEM.json` gerado pelo `aidd-planner` (fonte
+    preferida — pode ter sido customizado por humano depois) quando existe
+    na raiz do projeto; caso contrário deriva a MESMA paleta que o planner
+    geraria, direto do nome do projeto (determinístico). Fonte única
+    reusada por `NextJSExporter` (frontend) e pelos Estúdios nativos
+    (Swagger/Webhooks/MCP, via `server.py` gerado) — nunca duas lógicas de
+    resolução divergentes para o mesmo projeto."""
+    design_system_path = os.path.join(project_dir, "DESIGN-SYSTEM.json")
+    if os.path.isfile(design_system_path):
+        try:
+            with open(design_system_path, "r", encoding="utf-8") as f:
+                dados = json.load(f)
+            paleta = dados.get("paleta")
+            if paleta and "primaria" in paleta:
+                return paleta
+        except (OSError, json.JSONDecodeError):
+            pass
+    return escolher_paleta(identidade, dominio)
+
+
+def hex_para_rgb_str(hex_color: str) -> str:
+    """Converte "#RRGGBB" em "R, G, B" (uso em rgba() dentro de CSS)."""
+    h = hex_color.lstrip("#")
+    if len(h) != 6:
+        return "59, 130, 246"
+    r, g, b = int(h[0:2], 16), int(h[2:4], 16), int(h[4:6], 16)
+    return f"{r}, {g}, {b}"
+
+
+def clarear_hex(hex_color: str, fator: float = 0.22) -> str:
+    """Clareia uma cor hex misturando com branco (`fator` de 0 a 1) — usado
+    para derivar a variante "light" de uma paleta que só define `primaria`/
+    `primaria_hover` (o catálogo não guarda um terceiro tom por entrada)."""
+    h = hex_color.lstrip("#")
+    if len(h) != 6:
+        return hex_color
+    r, g, b = int(h[0:2], 16), int(h[2:4], 16), int(h[4:6], 16)
+    r = round(r + (255 - r) * fator)
+    g = round(g + (255 - g) * fator)
+    b = round(b + (255 - b) * fator)
+    return f"#{r:02x}{g:02x}{b:02x}"
