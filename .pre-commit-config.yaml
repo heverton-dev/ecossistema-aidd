@@ -203,3 +203,11 @@ repos:
         always_run: true
         pass_filenames: false
         require_serial: true
+
+      - id: g-drift-analyzer
+        name: G_DRIFT_ANALYZER (analise de redundancia funcional inter-fatias VSA)
+        entry: python gates/G_DRIFT_ANALYZER.py
+        language: system
+        always_run: true
+        pass_filenames: false
+        require_serial: true
