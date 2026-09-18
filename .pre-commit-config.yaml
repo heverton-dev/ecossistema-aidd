@@ -195,3 +195,11 @@ repos:
         always_run: true
         pass_filenames: false
         require_serial: true
+
+      - id: g-llm-prompt-shield
+        name: G_LLM_PROMPT_SHIELD (auditoria de blindagem anti-prompt injection)
+        entry: python gates/G_LLM_PROMPT_SHIELD.py
+        language: system
+        always_run: true
+        pass_filenames: false
+        require_serial: true

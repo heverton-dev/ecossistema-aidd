@@ -301,3 +301,61 @@ class OIDCService:
             if g in group_role_map:
                 return group_role_map[g]
         return "leitor"
+
+
+class PromptShield:
+    """Escudo determinístico contra Prompt Injection e Jailbreaks em integrações LLM.
+    
+    Aplica validação e sanitização estrita em inputs externos antes de submissão
+    a modelos de linguagem, garantindo conformidade com a Lei #5 e Lei #1.
+    """
+
+    _PADROES_INJECAO = [
+        r"ignore\s+(all\s+)?(previous|prior|above)\s+instructions?",
+        r"disregard\s+(all\s+)?(previous|prior|above)\s+instructions?",
+        r"forget\s+(all\s+)?(previous|prior)\s+instructions?",
+        r"you\s+are\s+now\s+(in\s+)?(dan|developer\s+mode|jailbreak)",
+        r"(reveal|show|print|output)\s+(your\s+)?(system\s+prompt|instructions|initial\s+prompt)",
+        r"<\/?(system|instructions|context)>",
+        r"\[(inst|sys)\]",
+        r"assistant\s+must\s+never\s+refuse",
+    ]
+
+    @classmethod
+    def sanitize(cls, text: str) -> str:
+        """Remove caracteres nulos e normaliza quebras de linha."""
+        if not text:
+            return ""
+        # Remove caracteres de controle perigosos e tags injetadas de controle
+        cleaned = text.replace("\x00", "").replace("\r\n", "\n")
+        cleaned = cleaned.replace("```system", "```escaped_system")
+        return cleaned.strip()
+
+    @classmethod
+    def inspect(cls, text: str) -> tuple[bool, list[str]]:
+        """Analisa o texto contra padrões determinísticos de Prompt Injection.
+        
+        Retorna (is_safe: bool, matches: list[str]).
+        """
+        import re
+        if not text:
+            return True, []
+        
+        matches = []
+        for pattern in cls._PADROES_INJECAO:
+            if re.search(pattern, text, re.IGNORECASE):
+                matches.append(pattern)
+        
+        return len(matches) == 0, matches
+
+    @classmethod
+    def wrap_user_payload(cls, system_instruction: str, user_payload: str) -> str:
+        """Empacota o payload do usuário de forma segura e delimitada."""
+        sanitized_user = cls.sanitize(user_payload)
+        return (
+            f"{system_instruction.strip()}\n\n"
+            f"<user_untrusted_input>\n"
+            f"{sanitized_user}\n"
+            f"</user_untrusted_input>"
+        )
+

@@ -691,6 +691,7 @@ _GATES_AUDIT = [
     "G_FRONTEND_LAYERS.py",
     "G_ISOLATION_AUDIT.py",
     "G_PROTOCOL_FALLBACK.py",
+    "G_LLM_PROMPT_SHIELD.py",
 ]
 
 def _audit_gates_legado(args):
