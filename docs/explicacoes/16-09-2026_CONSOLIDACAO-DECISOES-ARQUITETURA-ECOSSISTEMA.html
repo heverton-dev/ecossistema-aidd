@@ -237,7 +237,7 @@
           <a href="#matriz-rastreabilidade" class="sidebar-link min-h-[44px] flex items-center px-3 py-2 rounded-lg hover:bg-gray-800 hover:text-white transition-colors">10. Matriz de Quality Gates</a>
           <a href="#arvore-diretorios" class="sidebar-link min-h-[44px] flex items-center px-3 py-2 rounded-lg hover:bg-gray-800 hover:text-white transition-colors">11. Árvore Padrão CTT</a>
           <a href="#simulador-fluxos" class="sidebar-link min-h-[44px] flex items-center px-3 py-2 rounded-lg hover:bg-gray-800 hover:text-white transition-colors">12. Simulador dos 3 Fluxos</a>
-          <a href="#quadro-homologacao" class="sidebar-link min-h-[44px] flex items-center px-3 py-2 rounded-lg hover:bg-gray-800 hover:text-white transition-colors">13. Status das 7 Ferramentas</a>
+          <a href="#quadro-homologacao" class="sidebar-link min-h-[44px] flex items-center px-3 py-2 rounded-lg hover:bg-gray-800 hover:text-white transition-colors">13. Status das 8 Ferramentas</a>
         </nav>
       </div>
     </aside>
@@ -282,7 +282,7 @@
           <div class="pillar-box bg-dark-card p-4 rounded-xl">
             <div class="text-[10px] font-mono text-blue-400 font-bold mb-1">LEI 06</div>
             <h3 class="text-xs font-bold text-white mb-1">Quarteto Sine Qua Non</h3>
-            <p class="text-[11px] text-gray-400 leading-relaxed">/swagger, /webhooks, /mcp e /docs ativos cobrindo 100% dos módulos.</p>
+            <p class="text-[11px] text-gray-400 leading-relaxed">/docs (Swagger), /webhooks, /mcp e /docs/guia ativos cobrindo 100% dos módulos.</p>
           </div>
           <div class="pillar-box bg-dark-card p-4 rounded-xl">
             <div class="text-[10px] font-mono text-pink-400 font-bold mb-1">LEI 07</div>
@@ -302,7 +302,7 @@
           <div class="pillar-box bg-dark-card p-4 rounded-xl">
             <div class="text-[10px] font-mono text-orange-400 font-bold mb-1">LEI 10</div>
             <h3 class="text-xs font-bold text-white mb-1">A Tríade Canônica</h3>
-            <p class="text-[11px] text-gray-400 leading-relaxed">Forge -> Pré-Plano derivando em Generator, Factory ou Bridge.</p>
+            <p class="text-[11px] text-gray-400 leading-relaxed">Forge -> aidd-planner derivando em Generator, Factory ou Bridge.</p>
           </div>
         </div>
       </section>
@@ -341,7 +341,7 @@
               Webhooks e assinaturas de integridade são validados estritamente com a função hmac.compare_digest, anulando qualquer possibilidade de ataque por temporização de canal lateral (side-channel).
             </p>
             <div class="text-[11px] font-mono text-indigo-300/90 bg-indigo-950/30 p-2.5 rounded border border-indigo-900/40">
-              <strong>Gate Verificador:</strong> G_FACTORY_VSA / G_BRIDGE_VSA_COMPAT<br>
+              <strong>Gate Verificador:</strong> G_CONTRACTS (aidd-master/enterprise) / G_FACTORY_INTEGRATION (aidd-factory) / G_BRIDGE_VSA_COMPAT (aidd-bridge)<br>
               <strong>Entrega:</strong> Disparos assíncronos e webhooks matematicamente invioláveis.
             </div>
           </div>
@@ -371,7 +371,7 @@
               Componentes e templates de segurança enterprise possuem manifestos de checksum SHA-256. Se um único byte for adulterado sem autorização, a esteira é bloqueada com Exit 1 imediato.
             </p>
             <div class="text-[11px] font-mono text-emerald-300/90 bg-emerald-950/30 p-2.5 rounded border border-emerald-900/40">
-              <strong>Gate Verificador:</strong> G_ENTERPRISE_SHA<br>
+              <strong>Gate Verificador:</strong> G_ECOSSISTEMA_INTEGRIDADE (não existe `G_ENTERPRISE_SHA`)<br>
               <strong>Entrega:</strong> Código canônico imutável contra injeção maliciosa em runtime.
             </div>
           </div>
@@ -386,7 +386,7 @@
               Identificador universal X-Trace-Id propagado em todas as requisições. Logs estruturados com mascaramento automático de PII (senhas, documentos e tokens ofuscados antes da gravação).
             </p>
             <div class="text-[11px] font-mono text-purple-300/90 bg-purple-950/30 p-2.5 rounded border border-purple-900/40">
-              <strong>Gate Verificador:</strong> G_ENTERPRISE_TESTS<br>
+              <strong>Gate Verificador:</strong> G_SEGURANCA (aidd-enterprise; não existe `G_ENTERPRISE_TESTS`)<br>
               <strong>Entrega:</strong> Rastreabilidade total de ponta a ponta sem violação de privacidade.
             </div>
           </div>
@@ -421,10 +421,10 @@
             <div class="text-xs font-mono text-indigo-400 font-bold uppercase">Eixo Vertical</div>
             <h3 class="text-sm font-bold text-white">Fatias Verticais de Domínio (VSA)</h3>
             <p class="text-xs text-gray-300 leading-relaxed">
-              Cada funcionalidade de negócio isolada em features/<dominio>/, contendo routes, services, repositories parametrizados, models Pydantic e testes dedicados.
+              Cada funcionalidade de negócio isolada em src/modules/<slug>/ (nunca features/), contendo routes, services, repositories parametrizados, models e testes dedicados.
             </p>
             <div class="text-[11px] font-mono text-indigo-300/90 bg-indigo-950/30 p-2.5 rounded border border-indigo-900/40">
-              <strong>Gate:</strong> G_FACTORY_VSA<br>
+              <strong>Gate:</strong> G_ARQUITETURA / G_AST_BOUNDED_CONTEXT (aidd-master; não existe `G_FACTORY_VSA`)<br>
               <strong>Entrega:</strong> Coesão máxima por domínio sem acoplamento espaguete.
             </div>
           </div>
@@ -460,7 +460,7 @@
               Comunicação inter-fatias puramente orientada a eventos assíncronos. Fatias nunca chamam o banco de dados de outras fatias diretamente.
             </p>
             <div class="text-[11px] font-mono text-purple-300/90 bg-purple-950/30 p-2.5 rounded border border-purple-900/40">
-              <strong>Gate:</strong> G_FACTORY_VSA<br>
+              <strong>Gate:</strong> G_ARQUITETURA (aidd-master/enterprise)<br>
               <strong>Entrega:</strong> Facilidade de extração para microsserviços futuros.
             </div>
           </div>
@@ -495,7 +495,7 @@
               Suíte de testes de integração escrita na Fase 2 (Red), validando o comportamento esperado contra banco real antes da implementação da lógica (Green).
             </p>
             <div class="text-[11px] font-mono text-indigo-300/90 bg-indigo-950/30 p-2.5 rounded border border-indigo-900/40">
-              <strong>Gate:</strong> G_GENERATOR_TESTES<br>
+              <strong>Gate:</strong> G_TESTES_REAIS (não existe `G_GENERATOR_TESTES`)<br>
               <strong>Entrega:</strong> 100% de cobertura de código verificada.
             </div>
           </div>
@@ -591,17 +591,18 @@
           <span class="text-xs font-mono text-purple-400 font-bold uppercase tracking-wider">Camada 05</span>
           <h2 class="text-2xl font-bold text-white tracking-tight">O Quarteto Sine Qua Non Dinâmico</h2>
           <p class="text-gray-400 text-sm">Os 4 pilares contratuais vivos e integrados em 100% dos módulos do sistema.</p>
+          <p class="text-[11px] text-purple-300/80 mt-1">Correção real desta revisão: o Swagger Studio vive em <code>/docs</code> (não <code>/swagger</code>, path inexistente no código) e o Guia vive em <code>/docs/guia</code>. Confirmado lendo <code>src/server.py</code> gerado.</p>
         </div>
 
         <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
           <div class="detail-card p-6 rounded-2xl space-y-3">
             <div class="text-xs font-mono text-cyan-400 font-bold uppercase">Contratos REST</div>
-            <h3 class="text-sm font-bold text-white">Swagger Studio (/swagger)</h3>
+            <h3 class="text-sm font-bold text-white">Swagger Studio (/docs)</h3>
             <p class="text-xs text-gray-300 leading-relaxed">
-              Documentação interativa OpenAPI 3.0 dinamicamente gerada a partir dos schemas tipados, permitindo testes imediatos no navegador.
+              Documentação interativa OpenAPI 3.1 dinamicamente gerada a partir dos schemas tipados, permitindo testes imediatos no navegador.
             </p>
             <div class="text-[11px] font-mono text-cyan-300/90 bg-cyan-950/30 p-2.5 rounded border border-cyan-900/40">
-              <strong>Gate:</strong> G_FACTORY_VSA<br>
+              <strong>Gate:</strong> G_CONTRACTS (aidd-master/enterprise) / G_FACTORY_INTEGRATION (aidd-factory)<br>
               <strong>Entrega:</strong> Especificação de API viva sem documentação manual defasada.
             </div>
           </div>
@@ -613,7 +614,7 @@
               Interface para registro, teste, reenvio e simulação de disparos de webhooks com assinatura HMAC SHA-256 e auditoria de status HTTP.
             </p>
             <div class="text-[11px] font-mono text-emerald-300/90 bg-emerald-950/30 p-2.5 rounded border border-emerald-900/40">
-              <strong>Gate:</strong> G_BRIDGE_VSA_COMPAT<br>
+              <strong>Gate:</strong> G_BRIDGE_VSA_COMPAT (aidd-bridge); G_CONTRACTS cobre a implementação nativa em aidd-master/enterprise<br>
               <strong>Entrega:</strong> Integração externa confiável e rastreável.
             </div>
           </div>
@@ -625,19 +626,19 @@
               Servidor Model Context Protocol nativo que expõe as ações do sistema como tools em JSON Schema para consumo por agentes inteligentes.
             </p>
             <div class="text-[11px] font-mono text-purple-300/90 bg-purple-950/30 p-2.5 rounded border border-purple-900/40">
-              <strong>Gate:</strong> G_FACTORY_VSA<br>
+              <strong>Gate:</strong> G_CONTRACTS (aidd-master/enterprise) / G_FACTORY_INTEGRATION (aidd-factory)<br>
               <strong>Entrega:</strong> O sistema nasce pronto para ser operado por copilotos.
             </div>
           </div>
 
           <div class="detail-card p-6 rounded-2xl space-y-3">
             <div class="text-xs font-mono text-amber-400 font-bold uppercase">Documentação Humana</div>
-            <h3 class="text-sm font-bold text-white">Guia do Utilizador (/docs)</h3>
+            <h3 class="text-sm font-bold text-white">Guia do Utilizador (/docs/guia)</h3>
             <p class="text-xs text-gray-300 leading-relaxed">
               Manual vivo do utilizador contendo arquitetura, exemplos práticos de onboarding, catálogo de endpoints e orientações de suporte.
             </p>
             <div class="text-[11px] font-mono text-amber-300/90 bg-amber-950/30 p-2.5 rounded border border-amber-900/40">
-              <strong>Gate:</strong> G_BRIDGE_VSA_COMPAT<br>
+              <strong>Gate:</strong> G_BRIDGE_VSA_COMPAT (aidd-bridge); G_FACTORY_INTEGRATION exige o docs.html equivalente em aidd-factory<br>
               <strong>Entrega:</strong> Onboarding instantâneo de novos engenheiros e clientes.
             </div>
           </div>
@@ -679,13 +680,13 @@
 
           <div class="detail-card p-6 rounded-2xl space-y-3">
             <div class="text-xs font-mono text-cyan-400 font-bold uppercase">Tráfego & SSL</div>
-            <h3 class="text-sm font-bold text-white">Traefik / Nginx com Let's Encrypt</h3>
+            <h3 class="text-sm font-bold text-white">Proxy Reverso Nginx com TLS</h3>
             <p class="text-xs text-gray-300 leading-relaxed">
-              Roteamento de tráfego com emissão automática de certificados SSL/TLS, terminação segura e cabeçalhos de segurança pré-injetados.
+              Correção real desta revisão: o proxy gerado por aidd-master/aidd-factory é <strong>Nginx</strong> (não Traefik) com certificado <strong>autoassinado</strong> local (RSA 2048-bit via OpenSSL) — não há emissão automática via Let's Encrypt hoje; fica a cargo do operador quando houver domínio público. Roteia por prefixo entre backend Python e frontend Next.js (Lei #11).
             </p>
             <div class="text-[11px] font-mono text-cyan-300/90 bg-cyan-950/30 p-2.5 rounded border border-cyan-900/40">
-              <strong>Gate:</strong> G_BRIDGE_DOCKER_OCI<br>
-              <strong>Entrega:</strong> Tráfego 100% criptografado com renovação automática.
+              <strong>Gate:</strong> G_BRIDGE_DOCKER_OCI (aidd-bridge); aidd-master/enterprise não têm gate de nginx dedicado hoje<br>
+              <strong>Entrega:</strong> Tráfego criptografado localmente; renovação/Let's Encrypt pendente para domínio público.
             </div>
           </div>
 
@@ -696,7 +697,7 @@
               Sonda ativa verificando a disponibilidade dos endpoints de healthcheck da aplicação, com alertas instantâneos de indisponibilidade.
             </p>
             <div class="text-[11px] font-mono text-purple-300/90 bg-purple-950/30 p-2.5 rounded border border-purple-900/40">
-              <strong>Gate:</strong> G_OPS_OBSERVABILITY<br>
+              <strong>Gate:</strong> G_OPS_MVP (não existe `G_OPS_OBSERVABILITY`)<br>
               <strong>Entrega:</strong> Visibilidade contínua do SLA e saúde do servidor.
             </div>
           </div>
@@ -767,7 +768,7 @@
         <div class="border-l-4 border-orange-500 pl-4">
           <span class="text-xs font-mono text-orange-400 font-bold uppercase tracking-wider">Camada 08</span>
           <h2 class="text-2xl font-bold text-white tracking-tight">A Tríade Canônica de Criação e Entrega</h2>
-          <p class="text-gray-400 text-sm">A autoridade máxima do Forge e a derivação de 3 caminhos industriais a partir do Pré-Plano.</p>
+          <p class="text-gray-400 text-sm">A autoridade máxima do Forge e a derivação de 3 caminhos industriais a partir do planejamento (<code>aidd-planner</code>).</p>
         </div>
 
         <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
@@ -778,10 +779,10 @@
             </div>
             <h3 class="text-base font-bold text-white">Engine: aidd-generator</h3>
             <p class="text-xs text-gray-300 leading-relaxed">
-              Pipeline determinístico de 8 fases com TDD Red-Green estrito. Gera lógica proprietária do zero em fatias VSA com mais de 1.000 testes automatizados e o Quarteto ativo.
+              Pipeline de 8 fases LLM-guiadas com TDD Red-Green estrito. Gera lógica proprietária do zero em fatias VSA (1.019 testes reais) e frontend Next.js/TypeScript/Tailwind (Lei #11) com o Quarteto ativo.
             </p>
             <div class="text-[11px] font-mono text-blue-300/90 bg-blue-950/30 p-2.5 rounded border border-blue-900/40">
-              <strong>Gate:</strong> G_GENERATOR_*<br>
+              <strong>Gate:</strong> G_INTEGRACAO_CROSS_SCRIPT, G_CYBERSECURITY_OWASP, G_SANDBOX_NIVEL_1 (não existe `G_GENERATOR_*`)<br>
               <strong>Entrega:</strong> Aplicação nativa com 100% de controle sobre cada linha.
             </div>
           </div>
@@ -793,10 +794,10 @@
             </div>
             <h3 class="text-base font-bold text-white">Engine: aidd-factory</h3>
             <p class="text-xs text-gray-300 leading-relaxed">
-              Alavancagem sobre software livre consolidado (filas, bots, mensageria). Sobe os containers dos motores e gera fatias VSA de integração com webhooks HMAC seguros.
+              Alavancagem sobre software livre consolidado (filas, bots, mensageria). Sobe os containers dos motores e gera fatias VSA de integração com webhooks HMAC seguros, mais o mesmo frontend Next.js unificado do Fluxo 01 (18 testes reais).
             </p>
             <div class="text-[11px] font-mono text-amber-300/90 bg-amber-950/30 p-2.5 rounded border border-amber-900/40">
-              <strong>Gate:</strong> G_FACTORY_*<br>
+              <strong>Gate:</strong> G_FACTORY_INTEGRATION, G_FACTORY_MVP, G_FACTORY_COMPOSE (não existe `G_FACTORY_*`/`G_FACTORY_VSA`)<br>
               <strong>Entrega:</strong> Velocidade de entrega com motores maduros da comunidade.
             </div>
           </div>
@@ -808,17 +809,17 @@
             </div>
             <h3 class="text-base font-bold text-white">Engine: aidd-bridge</h3>
             <p class="text-xs text-gray-300 leading-relaxed">
-              Libertação e empacotamento de interfaces do Lovable, v0 ou Bolt. Extirpação de travas de nuvem fechada, conexão ao PostgreSQL corporativo e conteinerização OCI.
+              Libertação e empacotamento de interfaces do Lovable, v0 ou Bolt. Extirpação de travas de nuvem fechada, conexão ao PostgreSQL corporativo e conteinerização OCI. Fora do escopo da Lei #11 por decisão deliberada: preserva a stack visual de origem do projeto clonado (45 testes reais).
             </p>
             <div class="text-[11px] font-mono text-pink-300/90 bg-pink-950/30 p-2.5 rounded border border-pink-900/40">
-              <strong>Gate:</strong> G_BRIDGE_*<br>
+              <strong>Gate:</strong> G_BRIDGE_VSA_COMPAT, G_BRIDGE_DOCKER_OCI (não existe `G_BRIDGE_*`)<br>
               <strong>Entrega:</strong> Reaproveitamento de protótipos visuais em produção real.
             </div>
           </div>
         </div>
 
         <div class="p-4 rounded-xl bg-gray-900/90 border border-gray-800 text-center text-xs font-mono text-gray-300">
-          Funil de Convergência Universal: Todos os 3 fluxos desembocam obrigatoriamente em <strong class="text-indigo-400">aidd-master</strong> (Monólito Modular VSA) -> <strong class="text-emerald-400">aidd-enterprise</strong> (SHA-256 + Resiliência) -> <strong class="text-cyan-400">aidd-ops</strong> (Deploy VPS, sops+age e Uptime Kuma).
+          Funil de Convergência Universal: Todos os 3 fluxos desembocam obrigatoriamente em <strong class="text-indigo-400">aidd-master</strong> (Monólito Modular VSA em <code>src/modules/</code>) -> <strong class="text-emerald-400">aidd-enterprise</strong> (SHA-256 + Resiliência) -> <strong class="text-cyan-400">aidd-ops</strong> (Deploy VPS). Desde a correção do backlog "aidd-ops só cobria nicho OSS" nesta revisão, o motor de deploy (compose-nativo para monólito customizado, Coolify para OSS curado) é selecionado automaticamente pelo campo <code>tipo_origem</code> do plano.
         </div>
       </section>
 
@@ -843,31 +844,31 @@
             <tbody class="divide-y divide-dark-border font-normal">
               <tr class="hover:bg-gray-800/30">
                 <td class="p-4 font-bold text-white">01. Cibersegurança</td>
-                <td class="p-4 text-amber-400">G_ENTERPRISE_SHA / G_HADOLINT</td>
+                <td class="p-4 text-amber-400">G_ECOSSISTEMA_INTEGRIDADE / G_HADOLINT</td>
                 <td class="p-4 text-gray-300">Hash de arquivo divergente ou container rodando como root</td>
                 <td class="p-4 text-rose-400 font-bold">Bloqueio total do commit / deploy</td>
               </tr>
               <tr class="hover:bg-gray-800/30">
                 <td class="p-4 font-bold text-white">02. Arquitetura VSA</td>
-                <td class="p-4 text-indigo-400">G_FACTORY_VSA / G_DRIFT_NUCLEO</td>
+                <td class="p-4 text-indigo-400">G_ARQUITETURA / G_DRIFT_NUCLEO_COMPARTILHADO</td>
                 <td class="p-4 text-gray-300">Serviço sem fatia vertical ou divergência no core compartilhado</td>
                 <td class="p-4 text-rose-400 font-bold">Bloqueio da esteira de integração</td>
               </tr>
               <tr class="hover:bg-gray-800/30">
                 <td class="p-4 font-bold text-white">03. Engenharia & Qualidade</td>
-                <td class="p-4 text-emerald-400">G_TESTES_REAIS / G_INTEGRIDADE</td>
+                <td class="p-4 text-emerald-400">G_TESTES_REAIS / G_QUALIDADE</td>
                 <td class="p-4 text-gray-300">Falha em qualquer teste unitário/integrado ou erro de AST</td>
                 <td class="p-4 text-rose-400 font-bold">Bloqueio imediato do pre-commit</td>
               </tr>
               <tr class="hover:bg-gray-800/30">
                 <td class="p-4 font-bold text-white">04. Agnosticismo</td>
-                <td class="p-4 text-cyan-400">G_HARNESS_COMPAT / G_VENDOR_LOCKIN</td>
+                <td class="p-4 text-cyan-400">G_HARNESS_COMPAT / G_COMPONENTE_AGNOSTICO</td>
                 <td class="p-4 text-gray-300">URL proprietária hardcoded ou regras desalinhadas entre harness</td>
                 <td class="p-4 text-rose-400 font-bold">Auto-recuperação ou bloqueio de push</td>
               </tr>
               <tr class="hover:bg-gray-800/30">
                 <td class="p-4 font-bold text-white">05. Quarteto Sine Qua Non</td>
-                <td class="p-4 text-purple-400">G_BRIDGE_VSA_COMPAT</td>
+                <td class="p-4 text-purple-400">G_CONTRACTS / G_FACTORY_INTEGRATION / G_BRIDGE_VSA_COMPAT</td>
                 <td class="p-4 text-gray-300">Ausência de Swagger, Webhooks, MCP ou Docs vivos</td>
                 <td class="p-4 text-rose-400 font-bold">Rejeição da entrega do módulo</td>
               </tr>
@@ -905,13 +906,13 @@
           </div>
           <div class="p-4 rounded-xl bg-dark-card border border-indigo-800/50 space-y-2">
             <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-indigo-950 text-indigo-400 border border-indigo-800/60 font-bold uppercase">Zona 2: Vertical (VSA)</span>
-            <h3 class="text-sm font-bold text-white font-mono">src/features/</h3>
-            <p class="text-xs text-gray-400 leading-relaxed">Fatias verticais autônomas. Cada módulo tem rotas, regras, repositórios e testes próprios, sem dependências cruzadas.</p>
+            <h3 class="text-sm font-bold text-white font-mono">src/modules/</h3>
+            <p class="text-xs text-gray-400 leading-relaxed">Fatias verticais autônomas (nunca src/features/). Cada módulo tem rotas, regras, repositórios e testes próprios, sem dependências cruzadas.</p>
           </div>
           <div class="p-4 rounded-xl bg-dark-card border border-amber-800/50 space-y-2">
-            <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-amber-950 text-amber-400 border border-amber-800/60 font-bold uppercase">Zona 3: Contratual</span>
-            <h3 class="text-sm font-bold text-white font-mono">quarteto_sine_qua_non/</h3>
-            <p class="text-xs text-gray-400 leading-relaxed">Os 4 estúdios dinâmicos vivos: OpenAPI 3.0 (/swagger), HMAC (/webhooks), Model Context Protocol (/mcp) e Manual (/docs).</p>
+            <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-amber-950 text-amber-400 border border-amber-800/60 font-bold uppercase">Zona 3: Apresentação</span>
+            <h3 class="text-sm font-bold text-white font-mono">frontend/</h3>
+            <p class="text-xs text-gray-400 leading-relaxed">Next.js 14 + TypeScript + Tailwind CSS (Lei #11), com paleta única por projeto (DESIGN-SYSTEM.json). Não reimplementa os Estúdios nativos: OpenAPI 3.1 (/docs), HMAC (/webhooks), MCP (/mcp) e Guia (/docs/guia) vivem em src/core/.</p>
           </div>
           <div class="p-4 rounded-xl bg-dark-card border border-cyan-800/50 space-y-2">
             <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-cyan-950 text-cyan-400 border border-cyan-800/60 font-bold uppercase">Zona 4: Infra & Ops</span>
@@ -934,23 +935,25 @@
             <div>│   ├── <span class="text-emerald-400 font-bold">core/</span> <span class="text-emerald-500/80">[Núcleo Horizontal]</span></div>
             <div>│   │   ├── database.py</div>
             <div>│   │   ├── security.py</div>
-            <div>│   │   ├── resilience.py</div>
-            <div>│   │   └── telemetry.py</div>
-            <div>│   ├── <span class="text-indigo-400 font-bold">features/</span> <span class="text-indigo-400/80">[Fatias Verticais VSA]</span></div>
+            <div>│   │   ├── openapi.py <span class="text-slate-500">[Swagger /docs]</span></div>
+            <div>│   │   ├── webhooks.py <span class="text-slate-500">[Webhook /webhooks]</span></div>
+            <div>│   │   ├── mcp_server.py <span class="text-slate-500">[MCP /mcp]</span></div>
+            <div>│   │   └── design_catalog.py <span class="text-slate-500">[paleta det. zero LLM]</span></div>
+            <div>│   ├── <span class="text-indigo-400 font-bold">modules/</span> <span class="text-indigo-400/80">[Fatias Verticais VSA]</span></div>
             <div>│   │   ├── <span class="text-blue-400 font-bold">encomendas/</span></div>
             <div>│   │   │   ├── routes.py</div>
             <div>│   │   │   ├── services.py</div>
-            <div>│   │   │   ├── repositories.py</div>
             <div>│   │   │   ├── models.py</div>
             <div>│   │   │   └── tests/</div>
             <div>│   │   ├── <span class="text-blue-400 font-bold">frotas/</span></div>
             <div>│   │   └── <span class="text-blue-400 font-bold">roteirizacao/</span></div>
-            <div>│   └── server.py</div>
-            <div>├── <span class="text-amber-400 font-bold">quarteto_sine_qua_non/</span></div>
-            <div>│   ├── swagger_spec.json</div>
-            <div>│   ├── webhooks_contract.json</div>
-            <div>│   ├── mcp_studio.json</div>
-            <div>│   └── USER_GUIDE.md</div>
+            <div>│   └── server.py <span class="text-slate-500">[rotas /docs, /docs/guia, /webhooks, /mcp]</span></div>
+            <div>├── <span class="text-amber-400 font-bold">frontend/</span> <span class="text-amber-400/80">[Next.js 14 + TS + Tailwind — Lei #11]</span></div>
+            <div>│   ├── app/ <span class="text-slate-500">[layout.tsx, page.tsx, &lt;modulo&gt;/page.tsx]</span></div>
+            <div>│   ├── tailwind.config.ts <span class="text-slate-500">[cores do DESIGN-SYSTEM.json]</span></div>
+            <div>│   └── Dockerfile</div>
+            <div>├── DESIGN-SYSTEM.json <span class="text-amber-500">[paleta única do projeto]</span></div>
+            <div>├── PLANNER.json <span class="text-amber-500">[plano gerado pelo aidd-planner]</span></div>
             <div>├── <span class="text-cyan-400 font-bold">infra/</span></div>
             <div>│   ├── docker-compose.yml</div>
             <div>│   ├── Dockerfile</div>
@@ -974,20 +977,20 @@
 
             <div class="p-4 rounded-xl bg-dark-card border border-dark-border flex flex-col gap-1">
               <div class="flex items-center justify-between">
-                <span class="font-mono font-bold text-indigo-400 text-xs">src/features/{dominio}/</span>
+                <span class="font-mono font-bold text-indigo-400 text-xs">src/modules/{slug}/</span>
                 <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-gray-800 text-gray-300">Vertical Slice (VSA)</span>
               </div>
-              <p class="text-xs text-gray-300">Cada pasta representa um caso de uso ou domínio isolado. Contém sua própria rota REST, lógica de negócio, query SQL parametrizada e bateria de testes dedicada. Elimina acoplamento cruzado.</p>
-              <span class="text-[11px] font-mono text-gray-400 mt-1">Quality Gate Verificador: <strong class="text-indigo-400">G_TESTES_REAIS & G_FACTORY_VSA</strong></span>
+              <p class="text-xs text-gray-300">Cada pasta representa um caso de uso ou domínio isolado (nunca src/features/). Contém sua própria rota REST, lógica de negócio, query SQL parametrizada e bateria de testes dedicada. Elimina acoplamento cruzado.</p>
+              <span class="text-[11px] font-mono text-gray-400 mt-1">Quality Gate Verificador: <strong class="text-indigo-400">G_TESTES / G_ARQUITETURA</strong> (aidd-master/enterprise)</span>
             </div>
 
             <div class="p-4 rounded-xl bg-dark-card border border-dark-border flex flex-col gap-1">
               <div class="flex items-center justify-between">
-                <span class="font-mono font-bold text-amber-400 text-xs">quarteto_sine_qua_non/</span>
-                <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-gray-800 text-gray-300">Estúdios Contratuais</span>
+                <span class="font-mono font-bold text-amber-400 text-xs">frontend/</span>
+                <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-gray-800 text-gray-300">Next.js / TS / Tailwind</span>
               </div>
-              <p class="text-xs text-gray-300">Abriga os 4 arquivos mestres de contrato autônomo: OpenAPI 3.0 para consumo REST, schema de webhooks seguros com HMAC SHA-256, catálogo de tools MCP para agentes e o Guia do Usuário vivo.</p>
-              <span class="text-[11px] font-mono text-gray-400 mt-1">Quality Gate Verificador: <strong class="text-amber-400">G_BRIDGE_VSA_COMPAT</strong></span>
+              <p class="text-xs text-gray-300">Correção real: não existe um diretório <code>quarteto_sine_qua_non/</code> separado com arquivos .json próprios — os 4 Estúdios são código Python nativo em <code>src/core/</code> (openapi.py, webhooks.py, mcp_server.py), servido pelo próprio server.py em /docs, /webhooks, /mcp e /docs/guia. O <code>frontend/</code> é a camada de apresentação Next.js com paleta única por projeto (Lei #11).</p>
+              <span class="text-[11px] font-mono text-gray-400 mt-1">Quality Gate Verificador: <strong class="text-amber-400">G_CONTRACTS, G_FACTORY_INTEGRATION</strong></span>
             </div>
 
             <div class="p-4 rounded-xl bg-dark-card border border-dark-border flex flex-col gap-1">
@@ -1041,7 +1044,7 @@
                 Pipeline 100% Nativo
               </span>
               <h3 id="flow-title" class="text-xl font-bold text-white mt-2">
-                FLUXO 01: FORGE -> PRÉ-PLANO -> GENERATOR -> MASTER -> ENTERPRISE -> OPS
+                FLUXO 01: FORGE -> PLANNER -> GENERATOR -> MASTER -> ENTERPRISE -> OPS
               </h3>
             </div>
             <span class="text-xs font-mono text-emerald-400 hidden sm:block">
@@ -1070,9 +1073,9 @@
             <div class="flow-step p-4 rounded-xl bg-[#111A2E] border border-indigo-900/60 flex flex-col justify-between">
               <div>
                 <span class="text-[10px] font-mono text-indigo-400 font-bold">PASSO 2</span>
-                <h4 class="text-xs font-bold text-white mt-1">PRÉ-PLANO</h4>
+                <h4 class="text-xs font-bold text-white mt-1">aidd-planner</h4>
                 <p class="text-[11px] text-gray-400 mt-1 leading-relaxed">
-                  Entrevista interativa com o desenvolvedor e geração do PLANO-MESTRE.json.
+                  Entrevista interativa com o desenvolvedor e geração de PLANNER.json + DESIGN-SYSTEM.json (paleta única).
                 </p>
               </div>
               <div class="text-[10px] font-mono text-indigo-300/80 mt-3 pt-2 border-t border-gray-800">
@@ -1128,7 +1131,7 @@
                 <span class="text-[10px] font-mono text-cyan-400 font-bold">PASSO 6</span>
                 <h4 class="text-xs font-bold text-white mt-1">aidd-ops</h4>
                 <p class="text-[11px] text-gray-400 mt-1 leading-relaxed">
-                  Deploy VPS via SSH determinístico, cofre sops+age e Uptime Kuma 24/7.
+                  Reconhece a origem (monólito customizado ou stack OSS por nicho) e faz deploy via SSH (compose-nativo ou Coolify) + Uptime Kuma.
                 </p>
               </div>
               <div class="text-[10px] font-mono text-cyan-300/80 mt-3 pt-2 border-t border-gray-800">
@@ -1151,11 +1154,11 @@
             <div id="flow-deliverables-content" class="grid sm:grid-cols-3 gap-4 text-xs text-gray-300">
               <div class="p-3 rounded-lg bg-dark-card border border-dark-border">
                 <span class="font-bold text-white block mb-1">1. Código de Negócio</span>
-                Aplicação backend/full-stack 100% proprietária sem dependências de terceiros, construída sob medida via TDD Red-Green com mais de 1.000 testes reais.
+                Aplicação backend/full-stack 100% proprietária sem dependências de terceiros, construída sob medida com 1.019 testes reais (aidd-generator) e frontend Next.js (Lei #11).
               </div>
               <div class="p-3 rounded-lg bg-dark-card border border-dark-border">
                 <span class="font-bold text-white block mb-1">2. Quarteto Sine Qua Non</span>
-                Contratos dinâmicos de /swagger (REST OpenAPI 3.0), /webhooks (HMAC SHA-256), /mcp (Model Context Protocol) e /docs (Manual Vivo).
+                Contratos dinâmicos nativos em /docs (REST OpenAPI 3.1 - Swagger), /webhooks (HMAC SHA-256), /mcp (Model Context Protocol) e /docs/guia (Manual Vivo).
               </div>
               <div class="p-3 rounded-lg bg-dark-card border border-dark-border">
                 <span class="font-bold text-white block mb-1">3. Produção & Resiliência</span>
@@ -1167,12 +1170,12 @@
         </div>
       </section>
 
-      <!-- SEÇÃO 13: QUADRO DE HOMOLOGAÇÃO DAS 7 FERRAMENTAS -->
+      <!-- SEÇÃO 13: QUADRO DE HOMOLOGAÇÃO DAS 8 FERRAMENTAS -->
       <section id="quadro-homologacao" class="space-y-6">
         <div class="border-l-4 border-gray-600 pl-4">
           <span class="text-xs font-mono text-gray-400 font-bold uppercase tracking-wider">Status Geral</span>
-          <h2 class="text-2xl font-bold text-white tracking-tight">13. Status de Homologação das 7 Ferramentas</h2>
-          <p class="text-gray-400 text-sm">Quadro consolidado de todas as engrenagens ativas do ecossistema AIDD.</p>
+          <h2 class="text-2xl font-bold text-white tracking-tight">13. Status de Homologação das 8 Ferramentas</h2>
+          <p class="text-gray-400 text-sm">Quadro consolidado de todas as engrenagens ativas do ecossistema AIDD. Contagens de teste medidas de verdade (python -m pytest -q real, 18/09/2026).</p>
         </div>
 
         <div class="overflow-x-auto rounded-2xl border border-dark-border bg-dark-card">
@@ -1190,43 +1193,49 @@
                 <td class="p-4 font-bold text-white">aidd-forge</td>
                 <td class="p-4 text-emerald-400 font-bold">Homologado</td>
                 <td class="p-4 text-gray-300">Ditador de Governança e Regras</td>
-                <td class="p-4 text-indigo-300">Repositório canônico blindado, linters e AGENTS.md</td>
+                <td class="p-4 text-indigo-300">Repositório canônico blindado, linters e AGENTS.md (294 testes)</td>
+              </tr>
+              <tr class="hover:bg-gray-800/30">
+                <td class="p-4 font-bold text-white">aidd-planner</td>
+                <td class="p-4 text-emerald-400 font-bold">Homologado</td>
+                <td class="p-4 text-gray-300">Motor de Planejamento (Ponte Forge -> Tríade)</td>
+                <td class="p-4 text-teal-300">PLANNER.json (SDD/BDD/DDD) + DESIGN-SYSTEM.json (paleta única) (10 testes)</td>
               </tr>
               <tr class="hover:bg-gray-800/30">
                 <td class="p-4 font-bold text-white">aidd-generator</td>
                 <td class="p-4 text-emerald-400 font-bold">Homologado</td>
                 <td class="p-4 text-gray-300">Fábrica Autônoma de Software</td>
-                <td class="p-4 text-blue-300">Aplicação funcional em 8 fases (1.015 testes passando)</td>
+                <td class="p-4 text-blue-300">Aplicação funcional em 8 fases + frontend Next.js/TS/Tailwind (Lei #11) (1.019 testes)</td>
               </tr>
               <tr class="hover:bg-gray-800/30">
                 <td class="p-4 font-bold text-white">aidd-master</td>
                 <td class="p-4 text-emerald-400 font-bold">Homologado</td>
                 <td class="p-4 text-gray-300">Arquiteto de Monólito Modular</td>
-                <td class="p-4 text-purple-300">Fatias VSA de domínio + Camada Horizontal compartilhada</td>
+                <td class="p-4 text-purple-300">Fatias VSA de domínio (src/modules/) + frontend Next.js exportado (375 testes)</td>
               </tr>
               <tr class="hover:bg-gray-800/30">
                 <td class="p-4 font-bold text-white">aidd-enterprise</td>
                 <td class="p-4 text-emerald-400 font-bold">Homologado</td>
                 <td class="p-4 text-gray-300">Guardião de Missão Crítica</td>
-                <td class="p-4 text-emerald-300">Cofre SHA-256, Circuit Breakers e trilha trace_id</td>
+                <td class="p-4 text-emerald-300">Cofre SHA-256, Circuit Breakers e trilha trace_id (331 testes)</td>
               </tr>
               <tr class="hover:bg-gray-800/30">
                 <td class="p-4 font-bold text-white">aidd-ops</td>
                 <td class="p-4 text-emerald-400 font-bold">Homologado</td>
                 <td class="p-4 text-gray-300">Orquestrador de Infra & VPS</td>
-                <td class="p-4 text-cyan-300">Deploy SSH determinístico, sops+age e Uptime Kuma</td>
+                <td class="p-4 text-cyan-300">Cobre monólito customizado (compose-nativo) e stack OSS por nicho (Coolify), motor por tipo_origem (174 testes)</td>
               </tr>
               <tr class="hover:bg-gray-800/30">
                 <td class="p-4 font-bold text-white">aidd-factory</td>
                 <td class="p-4 text-emerald-400 font-bold">Homologado</td>
                 <td class="p-4 text-gray-300">Integrador de Motores Open-Source</td>
-                <td class="p-4 text-amber-300">Fatias VSA de conexão, webhooks seguros e compose</td>
+                <td class="p-4 text-amber-300">Fatias VSA de conexão, webhooks seguros e frontend Next.js unificado (18 testes)</td>
               </tr>
               <tr class="hover:bg-gray-800/30">
                 <td class="p-4 font-bold text-white">aidd-bridge</td>
                 <td class="p-4 text-emerald-400 font-bold">Homologado</td>
                 <td class="p-4 text-gray-300">Desacoplador de Low-Code (Lovable/v0/Bolt)</td>
-                <td class="p-4 text-pink-300">Frontend limpo sem vendor lock-in para PostgreSQL VPS (45 testes)</td>
+                <td class="p-4 text-pink-300">Frontend limpo sem vendor lock-in para PostgreSQL VPS, preserva stack de origem (45 testes)</td>
               </tr>
             </tbody>
           </table>
@@ -1270,45 +1279,45 @@
     const flowsData = {
       1: {
         tag: "Pipeline 100% Nativo",
-        title: "FLUXO 01: FORGE -> PRÉ-PLANO -> GENERATOR -> MASTER -> ENTERPRISE -> OPS",
+        title: "FLUXO 01: FORGE -> PLANNER -> GENERATOR -> MASTER -> ENTERPRISE -> OPS",
         step3Label: "PASSO 3 (MOTOR NATIVO)",
         step3Title: "aidd-generator",
-        step3Desc: "Executa esteira determinística de 8 fases (Spec formal -> TDD Red-Green -> Core VSA -> Quarteto).",
+        step3Desc: "Executa esteira de 8 fases LLM-guiadas (Spec formal -> TDD Red-Green -> Core VSA -> Quarteto), gerando frontend Next.js/TS/Tailwind (Lei #11).",
         step3Sub: "Construção do Zero Puro",
         boxClass: "bg-blue-950/40 border-blue-800/80 ring-1 ring-blue-500/30",
         labelClass: "text-blue-400",
         subClass: "text-blue-300 border-blue-900/50",
-        d1: "Aplicação backend/full-stack 100% proprietária sem dependências de terceiros, construída sob medida via TDD Red-Green com mais de 1.000 testes reais.",
-        d2: "Contratos dinâmicos de /swagger (REST OpenAPI 3.0), /webhooks (HMAC SHA-256), /mcp (Model Context Protocol) e /docs (Manual Vivo).",
-        d3: "Containers Docker OCI com Hadolint, chaves criptografadas com sops+age, Circuit Breakers ativos e telemetria de uptime em tempo real na VPS."
+        d1: "Aplicação backend/full-stack 100% proprietária sem dependências de terceiros, com 1.019 testes reais (aidd-generator) e frontend Next.js com paleta única (DESIGN-SYSTEM.json).",
+        d2: "Contratos dinâmicos nativos em /docs (REST OpenAPI 3.1 - Swagger Studio), /webhooks (HMAC SHA-256), /mcp (Model Context Protocol) e /docs/guia (Manual Vivo).",
+        d3: "Containers Docker OCI com Hadolint, chaves criptografadas com sops+age, Circuit Breakers ativos; deploy compose-nativo via aidd-ops (tipo_origem=monolito_customizado)."
       },
       2: {
         tag: "Pipeline Alavancado em Software Livre",
-        title: "FLUXO 02: FORGE -> PRÉ-PLANO -> FACTORY -> MASTER -> ENTERPRISE -> OPS",
+        title: "FLUXO 02: FORGE -> PLANNER -> FACTORY -> MASTER -> ENTERPRISE -> OPS",
         step3Label: "PASSO 3 (MOTOR OPEN-SOURCE)",
         step3Title: "aidd-factory",
-        step3Desc: "Realiza curadoria de motores livres (filas, bots, mensageria) e gera fatias VSA de integração com webhooks.",
+        step3Desc: "Realiza curadoria de motores livres (filas, bots, mensageria), gera fatias VSA de integração com webhooks e o frontend Next.js unificado (mesmo motor do Fluxo 01).",
         step3Sub: "Integração de Motores Open-Source",
         boxClass: "bg-amber-950/40 border-amber-800/80 ring-1 ring-amber-500/30",
         labelClass: "text-amber-400",
         subClass: "text-amber-300 border-amber-900/50",
         d1: "Orquestração completa dos containers de motores livres (PostgreSQL, Redis, RabbitMQ, Evolution API) com clientes tipados e tratamento de falhas.",
-        d2: "Fatias VSA de integração geradas automaticamente expondo /swagger, /webhooks, /mcp e /docs para cada motor conectado.",
-        d3: "Deploy de toda a stack unificada na VPS via aidd-ops com sops+age, volumes persistentes e monitoramento no Uptime Kuma."
+        d2: "Fatias VSA de integração geradas automaticamente expondo os mesmos Estúdios nativos: /docs, /webhooks, /mcp e /docs/guia.",
+        d3: "Deploy da stack OSS curada na VPS via aidd-ops (motor Coolify, dinâmico por nicho — não mais fixo), com volumes persistentes e monitoramento no Uptime Kuma."
       },
       3: {
         tag: "Pipeline de Desacoplamento & Unificação",
-        title: "FLUXO 03: FORGE -> PRÉ-PLANO -> BRIDGE -> MASTER -> ENTERPRISE -> OPS",
+        title: "FLUXO 03: FORGE -> PLANNER -> BRIDGE -> MASTER -> ENTERPRISE -> OPS",
         step3Label: "PASSO 3 (MOTOR LOW-CODE)",
         step3Title: "aidd-bridge",
-        step3Desc: "Scaneia protótipos do Lovable/v0/Bolt, elimina vendor lock-in, conecta ao PostgreSQL e gera Dockerfile OCI.",
+        step3Desc: "Scaneia protótipos do Lovable/v0/Bolt, elimina vendor lock-in, conecta ao PostgreSQL e gera Dockerfile OCI — preserva a stack visual de origem (Lei #11 não se aplica aqui).",
         step3Sub: "Libertação de Low-Code para VPS",
         boxClass: "bg-pink-950/40 border-pink-800/80 ring-1 ring-pink-500/30",
         labelClass: "text-pink-400",
         subClass: "text-pink-300 border-pink-900/50",
-        d1: "Frontend React/Vite/Tailwind desatado de nuvens fechadas, sem URLs hardcoded e com separação estrita de camadas UI vs Rede.",
+        d1: "Frontend desatado de nuvens fechadas preservando a stack visual de origem do projeto, sem URLs hardcoded e com separação estrita de camadas UI vs Rede.",
         d2: "Banco de dados Supabase sanitizado e convertido em PostgreSQL puro (init-db.sql) com PostgREST e GoTrue conteinerizados.",
-        d3: "Pacote Dockerfile multi-stage com Nginx blindado por headers OWASP, compatível com VSA e pronto para deploy VPS via aidd-ops."
+        d3: "Pacote Dockerfile multi-stage com Nginx blindado por headers OWASP, compatível com VSA e deploy compose-nativo via aidd-ops (tipo_origem=monolito_customizado)."
       }
     };
 

@@ -64,8 +64,8 @@
         <span class="font-extrabold tracking-tight text-white text-lg">AIDD<span class="text-indigo-400 font-light">.melhorias</span></span>
       </div>
       <div class="flex items-center space-x-3">
-        <span class="px-3 py-1 rounded-full text-xs font-mono bg-indigo-950 text-indigo-300 border border-indigo-800/50">
-          Status: Aprovado para Implementação
+        <span class="px-3 py-1 rounded-full text-xs font-mono bg-emerald-950 text-emerald-300 border border-emerald-800/50">
+          Status: Fluxo 01 validado 100% E2E · Fluxos 02/03 pendentes (18/09/2026)
         </span>
       </div>
     </div>
@@ -79,7 +79,7 @@
         A Tríade Canônica: <br><span class="gradient-headline">3 Fluxos de Criação & Entrega de Software</span>
       </h1>
       <p class="text-base sm:text-lg text-gray-400 max-w-3xl mx-auto leading-relaxed">
-        Uma arquitetura reestruturada para dar <strong class="text-white">total liberdade ao desenvolvedor</strong>. A partir de uma fundação canônica de regras e um pré-plano interativo, derive a mesma ideia de negócio em três caminhos industriais de máxima robustez.
+        Uma arquitetura para dar <strong class="text-white">total liberdade ao desenvolvedor</strong>. A partir de uma fundação canônica de regras (<code>aidd-forge</code>) e um intake interativo (<code>aidd-planner</code>), derive a mesma ideia de negócio em três caminhos industriais — hoje sem handoff automático entre as etapas, um achado real da validação de 18/09/2026.
       </p>
     </div>
   </section>
@@ -114,23 +114,23 @@
           </ul>
         </div>
 
-        <!-- PRÉ-PLANO -->
+        <!-- aidd-planner -->
         <div class="bg-gray-900/60 rounded-2xl p-6 border border-gray-800 hover:border-indigo-500/50 transition-colors">
           <div class="flex items-center space-x-3 mb-4">
             <span class="text-2xl">🧠</span>
             <div>
               <span class="text-[11px] font-mono uppercase text-indigo-400 font-bold">Planning Engine</span>
-              <h3 class="text-lg font-bold text-white">O Motor de PRÉ-PLANO (Intake Interativo)</h3>
+              <h3 class="text-lg font-bold text-white">aidd-planner (Intake BDD/SDD)</h3>
             </div>
           </div>
           <p class="text-sm text-gray-300 leading-relaxed mb-4">
-            Entrevista socrática guiada com o usuário para mapear objetivos e restrições:
+            Entrevista guiada com o usuário para mapear objetivos e restrições:
           </p>
           <ul class="text-xs font-mono text-gray-400 space-y-2">
             <li class="flex items-center gap-2"><span class="text-indigo-400 font-bold">✓</span> Coleta interativa da ideia, domínio e escopo de negócio</li>
-            <li class="flex items-center gap-2"><span class="text-indigo-400 font-bold">✓</span> Gera o arquivo canônico <code class="text-indigo-300">PLANO-MESTRE.json</code></li>
+            <li class="flex items-center gap-2"><span class="text-indigo-400 font-bold">✓</span> Gera o arquivo canônico <code class="text-indigo-300">PLANNER.json</code></li>
             <li class="flex items-center gap-2"><span class="text-indigo-400 font-bold">✓</span> Pergunta ao usuário: <em>"Qual dos 3 fluxos você quer disparar?"</em></li>
-            <li class="flex items-center gap-2"><span class="text-indigo-400 font-bold">✓</span> Permite gerar 3 variações do mesmo projeto a partir de 1 plano</li>
+            <li class="flex items-center gap-2 text-amber-400"><span class="font-bold">⚠</span> Achado real: hoje sem handoff automático — <code class="text-amber-300">aidd-generator</code> recebe a ideia como texto livre, não lê o <code class="text-amber-300">PLANNER.json</code></li>
           </ul>
         </div>
       </div>
@@ -150,20 +150,20 @@
           <div>
             <div class="flex items-center justify-between mb-4">
               <span class="px-2.5 py-1 rounded-full text-[11px] font-mono font-bold bg-blue-950 text-blue-300 border border-blue-800">FLUXO 01</span>
-              <span class="text-xs text-gray-400 font-mono">100% Nativo</span>
+              <span class="text-xs text-emerald-400 font-mono font-bold">✓ Validado E2E 100%</span>
             </div>
             <h3 class="text-xl font-extrabold text-white mb-1">Do Zero Puro</h3>
             <div class="text-xs font-mono text-blue-400 mb-4 font-bold">Motor: aidd-generator</div>
             <p class="text-xs text-gray-300 leading-relaxed mb-4">
-              Desenvolvimento completo sem motores prontos externos. Ideal para lógicas de negócio altamente proprietárias e algoritmos sob medida.
+              Desenvolvimento completo guiado por IA via Protocolo Delegado. Ideal para lógicas de negócio altamente proprietárias e algoritmos sob medida.
             </p>
             <div class="space-y-2 border-t border-gray-800 pt-4 mb-6">
-              <div class="text-[11px] font-mono text-gray-400"><strong>Pipeline:</strong> Spec ➔ TDD (Red-Green) ➔ VSA Core ➔ Quarteto</div>
-              <div class="text-[11px] font-mono text-gray-400"><strong>Zero Mocks:</strong> 100% de testes de integração e unitários reais</div>
+              <div class="text-[11px] font-mono text-gray-400"><strong>Pipeline:</strong> Spec ➔ TDD (Red-Green) ➔ Core VSA ➔ Quarteto</div>
+              <div class="text-[11px] font-mono text-gray-400"><strong>13 bugs reais</strong> encontrados e corrigidos na validação de 18/09</div>
             </div>
           </div>
           <div class="bg-blue-950/40 p-3 rounded-lg border border-blue-900/50 text-[11px] font-mono text-blue-200">
-            Entrega: Aplicação pura funcional + 4 Estúdios
+            Entrega: app real rodando em Docker (Next.js + Python + Nginx)
           </div>
         </div>
 
@@ -172,20 +172,20 @@
           <div>
             <div class="flex items-center justify-between mb-4">
               <span class="px-2.5 py-1 rounded-full text-[11px] font-mono font-bold bg-amber-950 text-amber-300 border border-amber-800">FLUXO 02</span>
-              <span class="text-xs text-gray-400 font-mono">Alavancado</span>
+              <span class="text-xs text-amber-400 font-mono font-bold">⚠ Corrigido, não re-testado E2E</span>
             </div>
             <h3 class="text-xl font-extrabold text-white mb-1">Motores Open-Source</h3>
             <div class="text-xs font-mono text-amber-400 mb-4 font-bold">Motor: aidd-factory</div>
             <p class="text-xs text-gray-300 leading-relaxed mb-4">
-              Para soluções que aproveitam os ombros de gigantes open-source (filas, mensageria, chat, bots, automação de workflow).
+              Para soluções que aproveitam os ombros de gigantes open-source, curados por nicho de negócio via <code class="text-amber-300">aidd-ops plan</code>.
             </p>
             <div class="space-y-2 border-t border-gray-800 pt-4 mb-6">
-              <div class="text-[11px] font-mono text-gray-400"><strong>Intake Dinâmico:</strong> Seleciona e sobe containers de motores reais</div>
-              <div class="text-[11px] font-mono text-gray-400"><strong>Cola VSA:</strong> Gera fatias verticais, clientes tipados e webhooks</div>
+              <div class="text-[11px] font-mono text-gray-400"><strong>Intake Dinâmico:</strong> Seleciona ferramentas do catálogo por nicho</div>
+              <div class="text-[11px] font-mono text-gray-400"><strong>Corrigido 18/09:</strong> gerava 2 frontends divergentes p/ o mesmo projeto — unificado no gerador Next.js compartilhado</div>
             </div>
           </div>
           <div class="bg-amber-950/40 p-3 rounded-lg border border-amber-900/50 text-[11px] font-mono text-amber-200">
-            Entrega: Fatias VSA integradas aos motores + Compose
+            Entrega: Fatias VSA + Gateway + frontend Next.js + Compose
           </div>
         </div>
 
@@ -194,16 +194,16 @@
           <div>
             <div class="flex items-center justify-between mb-4">
               <span class="px-2.5 py-1 rounded-full text-[11px] font-mono font-bold bg-pink-950 text-pink-300 border border-pink-800">FLUXO 03</span>
-              <span class="text-xs text-gray-400 font-mono">Unificação</span>
+              <span class="text-xs text-red-400 font-mono font-bold">✗ Não testado nesta rodada</span>
             </div>
             <h3 class="text-xl font-extrabold text-white mb-1">Low-Code & Apps Unificadas</h3>
             <div class="text-xs font-mono text-pink-400 mb-4 font-bold">Motor: aidd-bridge</div>
             <p class="text-xs text-gray-300 leading-relaxed mb-4">
-              Resgata e liberta interfaces e protótipos criados em ferramentas como Lovable, v0 da Vercel ou Bolt.new, eliminando o vendor lock-in.
+              Resgata e liberta interfaces e protótipos criados em ferramentas como Lovable, v0 da Vercel ou Bolt.new (tipicamente Vite+React), eliminando o vendor lock-in.
             </p>
             <div class="space-y-2 border-t border-gray-800 pt-4 mb-6">
-              <div class="text-[11px] font-mono text-gray-400"><strong>Desacoplamento:</strong> Remove backends falsos e nuvens fechadas</div>
-              <div class="text-[11px] font-mono text-gray-400"><strong>Conexão Real:</strong> Liga ao PostgreSQL corporativo e conteineriza</div>
+              <div class="text-[11px] font-mono text-gray-400"><strong>Desacoplamento:</strong> Converte Supabase→PostgreSQL, gera <code>init-db.sql</code></div>
+              <div class="text-[11px] font-mono text-amber-400"><strong>Pendência real:</strong> não reconhece corretamente projeto Next.js de origem (só detecta Vite/SPA) — fica de fora da Lei #11 por design (preserva a stack de origem)</div>
             </div>
           </div>
           <div class="bg-pink-950/40 p-3 rounded-lg border border-pink-900/50 text-[11px] font-mono text-pink-200">
@@ -229,7 +229,7 @@
             <div class="text-xs font-mono text-purple-400 font-bold mb-1">PASSO 1 CONVERGÊNCIA</div>
             <h4 class="text-base font-bold text-white mb-2">aidd-master</h4>
             <p class="text-xs text-gray-300 leading-relaxed">
-              Harmoniza o código em <strong>Monólito Modular</strong>: fatias verticais (VSA) autônomas para regras de domínio (`features/`) conectadas a uma <strong>camada horizontal compartilhada</strong> (`core/` / `shared/` para banco, auth, telemetry e middlewares), com roteamento unificado.
+              Harmoniza o código em <strong>Monólito Modular</strong>: fatias verticais (VSA) autônomas para regras de domínio (<code>src/modules/&lt;slug&gt;/</code> — nome real; "features/" nunca existiu) conectadas a um <strong>núcleo horizontal compartilhado</strong> (<code>src/core/</code>), com roteamento unificado. Gera também o <strong>frontend Next.js</strong> (<code>frontend/</code>, Lei #11).
             </p>
           </div>
 
@@ -238,7 +238,7 @@
             <div class="text-xs font-mono text-emerald-400 font-bold mb-1">PASSO 2 CONVERGÊNCIA</div>
             <h4 class="text-base font-bold text-white mb-2">aidd-enterprise</h4>
             <p class="text-xs text-gray-300 leading-relaxed">
-              Injeta blindagem de missão crítica: verificação <strong>SHA-256</strong>, Circuit Breakers, Rate Limiting distribuído, sanitização anti-injeção e trilhas de auditoria imutáveis.
+              Injeta blindagem de missão crítica: assina componentes por <strong>SHA-256</strong> (<code>inject</code>) e detecta adulteração pós-injeção (<code>verificar-drift</code>). <span class="text-amber-400">Bug grave corrigido 18/09: <code>verificar-drift</code> nunca havia sido implementado de verdade nesta ferramenta.</span>
             </p>
           </div>
 
@@ -247,21 +247,35 @@
             <div class="text-xs font-mono text-cyan-400 font-bold mb-1">PASSO 3 CONVERGÊNCIA</div>
             <h4 class="text-base font-bold text-white mb-2">aidd-ops</h4>
             <p class="text-xs text-gray-300 leading-relaxed">
-              Realiza o provisionamento na VPS via SSH determinístico, criptografa variáveis com <strong>sops + age</strong> e ativa a observabilidade em tempo real com Uptime Kuma.
+              Cobre <strong>dois tipos de origem</strong>: stacks OSS por nicho (Fluxo 02) e monólitos customizados do aidd-master (Fluxo 01/03), motor auto-selecionado. <span class="text-amber-400">Bug grave corrigido 18/09: <code>deploy</code> sempre implantava a mesma stack fixa, ignorando o que foi curado.</span>
             </p>
           </div>
 
         </div>
 
-        <div class="p-4 rounded-xl bg-gray-950 border border-gray-800 flex items-center justify-between text-xs font-mono text-gray-400">
-          <span>Quarteto Obrigatório em 100% dos fluxos:</span>
-          <div class="flex gap-2">
-            <span class="px-2 py-1 rounded bg-gray-900 text-cyan-300">/swagger</span>
+        <div class="p-4 rounded-xl bg-gray-950 border border-gray-800 flex flex-wrap items-center justify-between gap-3 text-xs font-mono text-gray-400">
+          <span>Quarteto Obrigatório (rotas reais, confirmadas no código):</span>
+          <div class="flex flex-wrap gap-2">
+            <span class="px-2 py-1 rounded bg-gray-900 text-cyan-300">/docs (Swagger)</span>
+            <span class="px-2 py-1 rounded bg-gray-900 text-amber-300">/docs/guia (Manual)</span>
             <span class="px-2 py-1 rounded bg-gray-900 text-emerald-300">/webhooks</span>
             <span class="px-2 py-1 rounded bg-gray-900 text-purple-300">/mcp</span>
-            <span class="px-2 py-1 rounded bg-gray-900 text-amber-300">/docs</span>
           </div>
         </div>
+        <p class="text-[11px] font-mono text-gray-500">* <code>/swagger</code> não existe no código — era um erro herdado de versões antigas da documentação.</p>
+      </div>
+    </section>
+
+    <!-- 4. Lei #11 -->
+    <section class="space-y-6">
+      <div class="border-l-4 border-teal-500 pl-4">
+        <h2 class="text-2xl font-bold text-white tracking-tight">4. Lei Inviolável #11 — Padrão-Ouro de Stack (adicionada 18/09/2026)</h2>
+        <p class="text-gray-400 text-sm">Todo fluxo que gera frontend passa a produzir Next.js 14 + TypeScript + Tailwind CSS por padrão.</p>
+      </div>
+      <div class="bg-teal-950/20 border border-teal-900/50 rounded-2xl p-6 space-y-3 text-sm text-gray-300 leading-relaxed">
+        <p>Gerador único e compartilhado (<code class="text-teal-300">componentes/compartilhado/src-core/nextjs_exporter.py</code>) usado por <code class="text-teal-300">aidd-master</code> e <code class="text-teal-300">aidd-factory</code>. Os Studios nativos do backend (<code>/docs</code>, <code>/webhooks</code>, <code>/mcp</code>) não são reimplementados em React — o Nginx roteia por prefixo entre o backend Python e o novo serviço <code>web</code> (Next.js).</p>
+        <p class="text-amber-400">Pendência: <code>aidd-bridge</code> fica de fora — ele não gera frontend, importa o que já existe no projeto de origem (Lovable/v0/Bolt).</p>
+        <p class="text-emerald-400">✓ Validado com build real (<code>npm install && npm run build</code>) e aplicação rodando em Docker.</p>
       </div>
     </section>
 
