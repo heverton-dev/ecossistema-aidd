@@ -476,6 +476,47 @@ def test_sync_check_detecta_drift(tmp_path):
     assert any("regra-drift" in p for p in resultado.detalhes["problemas"])
 
 
+def test_cli_verificar_drift_ponta_a_ponta(tmp_path):
+    """Achado real na validação E2E do Fluxo 01/Etapa 5 (17/09/2026): o
+    subcomando `aidd-enterprise verificar-drift` nunca existia de verdade
+    (nem registrado no Click, nem na `known_cmds` de main()) — só a função
+    interna `sincronizador_harness.verificar_sincronizacao` tinha teste
+    (`test_sync_check_detecta_drift` acima). Rodar `enterprise
+    verificar-drift` de verdade caia no fallback de linguagem natural e
+    criava um projeto novo indevido a partir do texto do comando. Este
+    teste roda o comando real via subprocess (CLI ponta a ponta), como
+    qualquer usuário realmente invoca a ferramenta."""
+    aidd_py = os.path.join(_REPO_ROOT, "scripts", "aidd.py")
+
+    res_inj = subprocess.run(
+        [
+            sys.executable, aidd_py, "inject", "rule", "regra-cli-drift",
+            "--descricao", "Regra para checar drift via CLI",
+            "--dir", str(tmp_path),
+        ],
+        capture_output=True, text=True, encoding="utf-8", errors="replace",
+    )
+    assert res_inj.returncode == 0, res_inj.stdout + res_inj.stderr
+    regra_path = tmp_path / "templates" / "rules" / "regra-cli-drift.md"
+    assert regra_path.is_file()
+
+    res_ok = subprocess.run(
+        [sys.executable, aidd_py, "verificar-drift", "--dir", str(tmp_path)],
+        capture_output=True, text=True, encoding="utf-8", errors="replace",
+    )
+    assert res_ok.returncode == 0, res_ok.stdout + res_ok.stderr
+    assert "SUCESSO" in res_ok.stdout
+
+    with open(regra_path, "a", encoding="utf-8") as f:
+        f.write("\n# Edicao manual para gerar drift via CLI\n")
+
+    res_fail = subprocess.run(
+        [sys.executable, aidd_py, "verificar-drift", "--dir", str(tmp_path)],
+        capture_output=True, text=True, encoding="utf-8", errors="replace",
+    )
+    assert res_fail.returncode == 1, res_fail.stdout + res_fail.stderr
+
+
 # ---------------------------------------------------------------------------
 # 9. Remoção Limpa (Arquivos + Catálogo + Destino Canônico)
 # ---------------------------------------------------------------------------

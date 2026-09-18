@@ -20,6 +20,7 @@ from application.commands.scaffold_infra import cmd_scaffold_infra
 from application.commands.setup import cmd_setup, ensure_environment
 from application.commands.status import cmd_status
 from application.commands.test_cmd import cmd_test
+from application.commands.verificar_drift import cmd_verificar_drift
 
 __all__ = [
     "_default_component_content",
@@ -41,6 +42,7 @@ __all__ = [
     "cmd_setup",
     "cmd_status",
     "cmd_test",
+    "cmd_verificar_drift",
     "ensure_environment",
     "parse_natural_language_intent",
     "run_inject",

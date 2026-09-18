@@ -46,7 +46,8 @@ def provision(project_desc, base_dir=None):
     gates_dir = os.path.join(repo_root, 'templates', 'gates')
 
     if os.path.exists(templates_dir):
-        for f in ['database.py', 'events.py', 'openapi.py', 'webhooks.py', 'security.py', 'token_revocation.py', 'mcp_server.py', 'mcp_repository.py', 'cqrs.py', 'result.py', 'repositories.py', 'circuit_breaker.py', 'saga.py', 'swagger.html', 'webhook_studio.html', 'mcp_studio.html']:
+        from compose_suite import CORE_KERNEL_FILES
+        for f in CORE_KERNEL_FILES + ['repositories.py', 'swagger.html', 'webhook_studio.html', 'mcp_studio.html']:
             src = os.path.join(templates_dir, f)
             if os.path.exists(src):
                 shutil.copyfile(src, os.path.join(project_dir, 'src', 'core', f))

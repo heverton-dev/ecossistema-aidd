@@ -23,6 +23,19 @@ import tempfile
 
 from cookiecutter.main import cookiecutter
 
+# Fonte única de verdade: todo módulo core/*.py que server.py (gerado por
+# generate_modular_server_code) importa via `from core.X import ...`.
+# provision_project.py reusa esta mesma lista — nunca duplicar aqui, ou as
+# duas ferramentas voltam a divergir (achado real: server.py gerado por
+# `master init` quebrava com ModuleNotFoundError por faltar outbox_worker,
+# jobs, metrics e logs — validação E2E do Fluxo 01, 17/09/2026).
+CORE_KERNEL_FILES = [
+    "database.py", "events.py", "outbox_worker.py", "openapi.py", "security.py",
+    "webhooks.py", "mcp_server.py", "mcp_repository.py", "result.py", "jobs.py",
+    "metrics.py", "cqrs.py", "saga.py", "circuit_breaker.py", "token_revocation.py",
+    "local_first.py", "logs.py",
+]
+
 # Escritor atômico: staging → fsync → os.replace
 try:
     from escritor_atomico import escrever_atomico, escrever_json_atomico
@@ -457,13 +470,7 @@ def _setup_directories(target_dir: str) -> dict[str, str]:
 
 def _copy_shared_kernel(templates_v2: str, core_dir: str, shared_ui_dir: str, shared_utils_dir: str) -> None:
     """Copia componentes do kernel compartilhado e utilitários transversais."""
-    core_files = [
-        "database.py", "events.py", "outbox_worker.py", "openapi.py", "security.py",
-        "webhooks.py", "mcp_server.py", "mcp_repository.py", "result.py", "jobs.py",
-        "metrics.py", "cqrs.py", "saga.py", "circuit_breaker.py", "token_revocation.py",
-        "local_first.py", "logs.py",
-    ]
-    for cf in core_files:
+    for cf in CORE_KERNEL_FILES:
         src = os.path.join(templates_v2, cf)
         dst = os.path.join(core_dir, cf)
         if os.path.isfile(src):

@@ -50,6 +50,7 @@ from application.commands.plan import (  # noqa: E402
     parse_natural_language_intent,
 )
 from application.commands.status import cmd_status  # noqa: E402
+from application.commands.verificar_drift import cmd_verificar_drift  # noqa: E402
 
 
 def cmd_inject(args):
@@ -238,8 +239,17 @@ def _inject_cmd(tipo, nome, descricao, content_file, mcp_command, mcp_args, mcp_
     ))
 
 
+@cli.command(
+    "verificar-drift",
+    help="Verifica se os componentes injetados ainda batem com os hashes SHA-256 registrados em CAPABILITIES.json (detecta drift/edição manual)",
+)
+@click.option("--dir", default=".", help="Diretório raiz do projeto (default: diretório atual)")
+def _verificar_drift_cmd(dir):
+    cmd_verificar_drift(types.SimpleNamespace(dir=dir))
+
+
 def main():
-    known_cmds = {"setup", "init", "plan", "apply", "prompt", "compose", "compose-orca", "add-module", "test", "audit", "bench", "heal", "deploy", "status", "export-frontend", "refine-module", "scaffold-infra", "inject", "-h", "--help"}
+    known_cmds = {"setup", "init", "plan", "apply", "prompt", "compose", "compose-orca", "add-module", "test", "audit", "bench", "heal", "deploy", "status", "export-frontend", "refine-module", "scaffold-infra", "inject", "verificar-drift", "-h", "--help"}
     if len(sys.argv) > 1 and sys.argv[1] not in known_cmds:
         raw_prompt = " ".join(sys.argv[1:])
         if _tentar_injecao_por_linguagem_natural(raw_prompt):

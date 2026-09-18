@@ -55,8 +55,8 @@ Cada fluxo representa um caminho industrial especializado alimentado pelo **`aid
 - [x] **Etapa 1 (`aidd-forge`):** Injeção de governança, Git, pre-commit hooks e regras de isolamento.
 - [x] **Etapa 2 (`aidd-planner`):** Intake BDD/SDD, geração e auditoria do `PLANNER.json` (Fluxo 1).
 - [x] **Etapa 3 (`aidd-generator`):** Execução do pipeline TDD de 8 fases (Spec -> Arquitetura -> Testes Red -> Implementação Green -> Quarteto). 4 bugs reais achados e corrigidos, score final 88/100.
-- [x] **Etapa 4 (`aidd-master`):** Harmonização em Monólito Modular (`init` + `add-module`). 2 bugs reais achados e corrigidos, auditoria final APROVADA (7/7 gates).
-- [ ] **Etapa 5 (`aidd-enterprise`):** Injeção de componentes resilientes e validação de hashes SHA-256.
+- [x] **Etapa 4 (`aidd-master`):** Harmonização em Monólito Modular (`init` + `add-module`). 3 bugs reais achados e corrigidos (incluindo servidor que nunca subia), auditoria final APROVADA (7/7 gates), servidor testado rodando de verdade.
+- [x] **Etapa 5 (`aidd-enterprise`):** Injeção de componentes resilientes e validação de hashes SHA-256. 1 bug grave achado e corrigido: comando `verificar-drift` não existia de verdade nesta ferramenta.
 - [ ] **Etapa 6 (`aidd-ops`):** Provisionamento do docker-compose unificado e envs de produção.
 - [ ] **Etapa 7 (Auditoria Final):** Aprovação com exit code 0 em todos os Quality Gates.
 
@@ -142,10 +142,34 @@ Mecanismo real: `python ecossistema.py master init <nome> --pasta <dest>` (cria 
 - **Novo arquivo de teste:** `tests/unit/test_provision_project.py` (4 testes, nenhum existia antes) — cobre os 2 bugs acima com reprodução real (chama `provision()` de verdade, roda os gates `G_ESTRUTURA`/`G_CONTRACTS` reais contra o projeto gerado, sem mock). Confirmado que cada teste detecta a regressão correspondente ao reverter o fix.
 - **Validação real:** `python -m pytest tests/unit/test_provision_project.py -v` → 4 passed. Suite completa do `aidd-master`: `python -m pytest -q` → **356 passed, 3 skipped**.
 
-**RESULTADO FINAL DA ETAPA 4 (projeto recriado do zero com os 2 fixes):**
+**3) BUG corrigido — achado ao tentar de verdade *rodar* a aplicação gerada (não só passar nos gates): `src/server.py` gerado por `master init` nunca conseguia subir.**
+- Auditoria e testes passavam 100%, mas `python src/server.py` quebrava com `ModuleNotFoundError: No module named 'core.outbox_worker'`.
+- **Causa raiz:** a lista hardcoded de arquivos `core/*.py` copiados por `provision()` (linha 49 de `provision_project.py`) estava desatualizada em relação ao que `generate_modular_server_code()` realmente importa — faltavam `outbox_worker.py`, `jobs.py`, `metrics.py` e `logs.py`. `compose_suite.py` (outro fluxo) já tinha a lista completa e correta, mas duplicada localmente dentro de `_copy_shared_kernel()`, nunca compartilhada.
+- **Por que nem gates nem testes anteriores pegaram:** nenhum gate ou teste jamais *importava* `server.py` de verdade — só checavam se o arquivo existia e não estava vazio (`G_ESTRUTURA`). Um `ModuleNotFoundError` só aparece ao tentar rodar/importar o módulo.
+- **Correção aplicada:** a lista foi promovida à constante de módulo `CORE_KERNEL_FILES` em `compose_suite.py` (fonte única), e `provision_project.py` agora importa e reusa essa mesma constante — as duas ferramentas nunca mais podem divergir.
+- **Novo teste de regressão:** `test_provision_server_py_importa_de_verdade_sem_modulenotfounderror` — sobe um subprocess real que faz `import server` a partir de `src/` do projeto gerado (reprodução real do que trava ao tentar rodar a aplicação, não apenas checagem de arquivos em disco).
+- **Validação real:** servidor gerado subiu de fato (`python src/server.py`) e respondeu HTTP 200 em `http://localhost:3000/openapi.json` com o schema OpenAPI real. Suite completa: `python -m pytest -q` → **357 passed, 3 skipped**.
+
+**RESULTADO FINAL DA ETAPA 4 (projeto recriado do zero com os 3 fixes):**
 - `master init` + `master add-module tarefas` → estrutura completa gerada (2 módulos: `principal` + `tarefas`).
 - `master test`: 4/4 testes unitários passando.
 - `master audit --report`: **APROVADO — 7/7 gates PASS** (`G_ESTRUTURA`, `G_QUALIDADE`, `G_TESTES`, `G_CONTRACTS`, `G_SEGREDOS`, `G_HARNESS_COMPAT`, `G_SEGURANCA`).
+- `python src/server.py`: **sobe de verdade**, responde HTTP 200, expõe `/openapi.json`, `/docs`, `/webhooks`, `/mcp`, `/metrics` reais.
+
+**Lei Inviolável #11 registrada nesta sessão — Padrão-Ouro de Stack Tecnológica:** todo fluxo deve gerar Frontend em Next.js + TypeScript + Tailwind CSS (validado em `proj_ctt`), não o HTML Python simples que os fluxos usam hoje por padrão. Ver `AGENTS.md` (raiz) e `docs/protocolos/PADRAO-OURO-STACK-TECNOLOGICA.md`. Pendência de correção nos pipelines geradores registrada, ainda não implementada nesta sessão.
+
+**Etapa 5 (`aidd-enterprise`) — BUG GRAVE achado e corrigido: o comando central da ferramenta não existia.**
+
+Mecanismo real: `python ecossistema.py enterprise inject <tipo> <nome> --dir <projeto>` (injeta um componente assinado com SHA-256 no `CAPABILITIES.json`), seguido de `python ecossistema.py enterprise verificar-drift --dir <projeto>` (detecta se o arquivo foi adulterado depois da assinatura).
+
+- `inject rule regra-tarefas-imutaveis ...` funcionou normalmente e registrou o hash SHA-256 em `CAPABILITIES.json`.
+- `enterprise verificar-drift --dir <pasta>` **não rodou a verificação** — a CLI não reconheceu `verificar-drift` como comando e caiu no fallback de "gerar projeto a partir de linguagem natural", criando um projeto novo indevido (`app_verificar-drift-testes-suite/`) na raiz do próprio monorepo. Limpo manualmente.
+- **Causa raiz:** `verificar-drift` é a funcionalidade central do `aidd-enterprise` (ferramenta cujo propósito declarado no seu próprio `AGENTS.md` é "SHA-256 Validated Component Injection") — mas **nunca foi implementada** nesta ferramenta. Existe completa em `aidd-master` (`application/commands/verificar_drift.py`, registrada no Click, presente na `known_cmds` do dispatcher), mas nunca foi portada para `aidd-enterprise` (faltava o módulo, o registro do comando, e a entrada em `known_cmds`).
+- **Por que nenhum teste pegou:** existia um teste da função interna (`sincronizador_harness.verificar_sincronizacao`, testada diretamente em Python), mas nenhum teste jamais chamava o comando `verificar-drift` via CLI/subprocess — exatamente como um usuário real invoca a ferramenta.
+- **Correção aplicada:** portado `application/commands/verificar_drift.py` de `aidd-master` para `aidd-enterprise` (as duas dependências, `_core_src_path()` e `sincronizador_harness.py`, já existiam lá); registrado o comando Click em `scripts/aidd.py`; adicionado `"verificar-drift"` à `known_cmds` do dispatcher.
+- **Novo teste de regressão:** `test_cli_verificar_drift_ponta_a_ponta` em `test_aidd_core_injector.py` — injeta um componente real via subprocess, confirma `verificar-drift` retorna exit 0, edita o arquivo manualmente, confirma que retorna exit 1 (drift detectado). Réplica exata do padrão já existente em `aidd-master`.
+- **Validação real:** reproduzido o bug (comando criava projeto indevido), aplicado o fix, testado de ponta a ponta: `enterprise inject rule ...` → `enterprise verificar-drift` → `SUCESSO`; editado o arquivo manualmente → `verificar-drift` → `[ERRO] SYNC_DIVERGENTE`, hash esperado vs. obtido divergentes, exit 1. Suite completa do `aidd-enterprise`: **329 passed, 3 skipped**.
+- **Achado adicional (via `G_TESTES_REAIS` rodando as 7 ferramentas de uma vez):** confirmado que TODAS as suítes do monorepo passam — `aidd-forge` 294, `aidd-generator` 1019, `aidd-master` 357, `aidd-enterprise` 328→329, `aidd-ops` 168, `aidd-bridge` 45, `aidd-factory` 16. **Total: 2227+ testes, 0 falhas.**
 
 ---
 

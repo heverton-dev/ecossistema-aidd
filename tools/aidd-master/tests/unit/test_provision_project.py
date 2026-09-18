@@ -22,12 +22,24 @@ gerados. Isso permitiu 2 bugs reais sobreviverem sem ninguem notar:
    que G_CONTRACTS exige — enquanto `compose_suite()` (usado por outro
    fluxo) ja gerava esse mesmo arquivo dinamicamente via
    `generate_superapp_index_html()`, sempre em dia.
+3. A lista hardcoded de arquivos `core/*.py` copiados por `provision()`
+   estava desatualizada em relacao ao que `generate_modular_server_code()`
+   realmente importa: faltavam `outbox_worker.py`, `jobs.py`, `metrics.py`
+   e `logs.py`. O servidor de QUALQUER projeto criado por `master init`
+   quebrava com `ModuleNotFoundError: No module named 'core.outbox_worker'`
+   ao tentar subir de verdade (`python src/server.py`) — achado ao pedir
+   ao usuario para abrir a aplicacao gerada no navegador, nao pelos gates
+   (que nunca importam server.py de verdade). Corrigido promovendo a lista
+   completa e correta de `compose_suite.py` para a constante de modulo
+   `CORE_KERNEL_FILES`, reusada por ambos — fonte unica, nunca mais diverge.
 
-Juntos, os dois bugs faziam o comando oficial de inicio do Fluxo 01/Etapa 4
-nunca produzir um projeto que passasse na propria auditoria do produto.
+Juntos, os tres bugs faziam o comando oficial de inicio do Fluxo 01/Etapa 4
+nunca produzir um projeto que passasse na propria auditoria do produto nem
+que realmente subisse como aplicacao.
 """
 
 import os
+import subprocess
 import sys
 
 import pytest
@@ -97,10 +109,29 @@ def test_provision_passa_no_gate_g_contracts(tmp_path):
     projeto_dir = next(tmp_path.glob("proj_*"))
 
     gate_path = os.path.join(SCRIPTS_DIR, "gates", "G_CONTRACTS.py")
-    import subprocess
 
     resultado = subprocess.run(
         [sys.executable, gate_path, "--dir", str(projeto_dir)],
         capture_output=True, text=True, encoding="utf-8", errors="replace", timeout=30,
+    )
+    assert resultado.returncode == 0, resultado.stdout + resultado.stderr
+
+
+def test_provision_server_py_importa_de_verdade_sem_modulenotfounderror(tmp_path):
+    """Achado real: server.py gerado faz `from core.outbox_worker import ...`
+    (e jobs/metrics/logs), mas a lista hardcoded de arquivos copiados por
+    provision() nao incluia esses 4 modulos — o servidor de qualquer
+    projeto criado por `master init` nunca conseguia sequer ser importado.
+    Reproducao real: sobe um subprocess que importa server.py de verdade a
+    partir de src/ (nao apenas confere se os arquivos existem em disco)."""
+    from provision_project import provision
+
+    provision("Projeto Teste Import Server", base_dir=str(tmp_path))
+    projeto_dir = next(tmp_path.glob("proj_*"))
+
+    resultado = subprocess.run(
+        [sys.executable, "-c", "import server"],
+        cwd=str(projeto_dir / "src"),
+        capture_output=True, text=True, encoding="utf-8", errors="replace", timeout=15,
     )
     assert resultado.returncode == 0, resultado.stdout + resultado.stderr
