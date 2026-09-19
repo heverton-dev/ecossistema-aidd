@@ -1,0 +1,659 @@
+<!DOCTYPE html>
+<html lang="pt-BR" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tratado Arquitetural & Documento Oficial — Ecossistema AIDD</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        ::-webkit-scrollbar { width: 5px; height: 5px; }
+        ::-webkit-scrollbar-track { background: #0f172a; }
+        ::-webkit-scrollbar-thumb { background: #334155; border-radius: 3px; }
+        ::-webkit-scrollbar-thumb:hover { background: #0d9488; }
+        .tab-btn.active {
+            border-bottom: 2px solid #0d9488;
+            color: #0d9488;
+            background: rgba(13, 148, 136, 0.08);
+        }
+        .code-block {
+            background: #020617;
+            border: 1px solid #1e293b;
+            border-radius: 0.5rem;
+            font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+        }
+    </style>
+</head>
+<body class="bg-slate-950 text-slate-100 font-sans antialiased min-h-screen">
+
+    <!-- Topbar Corporativo -->
+    <header class="sticky top-0 z-50 bg-slate-900/90 backdrop-blur border-b border-slate-800">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+            <div class="flex items-center space-x-3">
+                <div class="w-9 h-9 rounded-lg bg-teal-500/10 border border-teal-500/30 flex items-center justify-center font-bold text-teal-400">
+                    AI
+                </div>
+                <div>
+                    <h1 class="text-base font-bold text-white tracking-tight">ECOSSISTEMA AIDD</h1>
+                    <p class="text-[11px] text-teal-400 font-mono tracking-wider">DOCUMENTO OFICIAL CANÔNICO V3.0</p>
+                </div>
+            </div>
+            <nav class="hidden md:flex space-x-6 text-xs font-medium text-slate-300">
+                <a href="#principios" class="hover:text-teal-400 transition">Princípios</a>
+                <a href="#ferramentas" class="hover:text-teal-400 transition">8 Ferramentas</a>
+                <a href="#triade" class="hover:text-teal-400 transition">Tríade Canônica</a>
+                <a href="#funil" class="hover:text-teal-400 transition">Funil Universal</a>
+                <a href="#handoff" class="hover:text-teal-400 transition">Contratos de Handoff</a>
+                <a href="#gates" class="hover:text-teal-400 transition">24 Quality Gates</a>
+                <a href="#operacao" class="hover:text-teal-400 transition">Guia Operacional</a>
+            </nav>
+            <div class="flex items-center space-x-2">
+                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-teal-500/10 text-teal-400 border border-teal-500/30">
+                    2.304 Testes Verdes
+                </span>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <div class="relative overflow-hidden bg-gradient-to-b from-slate-900 to-slate-950 border-b border-slate-800 py-16">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center max-w-3xl mx-auto">
+                <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold bg-slate-800 text-teal-300 border border-slate-700 mb-6">
+                    Diretriz Arquitetural & Operacional Inviolável
+                </div>
+                <h2 class="text-3xl sm:text-4xl font-extrabold text-white tracking-tight leading-tight">
+                    Tratado de Engenharia Agêntica Autônoma e Governança Estrita
+                </h2>
+                <p class="mt-4 text-sm sm:text-base text-slate-400 leading-relaxed">
+                    A erradicação definitiva do paradigma amador do <em>Vibe Coding</em> através de 
+                    <strong class="text-slate-200">Quality Gates mecânicos binários</strong>, 
+                    <strong class="text-slate-200">Fatias Verticais isoladas (VSA)</strong> e a 
+                    <strong class="text-teal-400 font-semibold">Tríade Canônica de Criação</strong> de software autônomo.
+                </p>
+                <div class="mt-8 flex flex-wrap justify-center gap-3">
+                    <a href="#triade" class="px-5 py-2.5 rounded-lg bg-teal-600 hover:bg-teal-500 text-white text-xs font-semibold shadow-lg shadow-teal-900/30 transition">
+                        Conhecer os 3 Fluxos
+                    </a>
+                    <a href="#gates" class="px-5 py-2.5 rounded-lg bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-200 text-xs font-semibold transition">
+                        Auditoria dos 24 Gates
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-20">
+
+        <!-- 1. Princípios Fundamentais -->
+        <section id="principios" class="space-y-6">
+            <div class="border-b border-slate-800 pb-4">
+                <span class="text-xs font-mono text-teal-400 uppercase tracking-wider">Fundamentos</span>
+                <h3 class="text-2xl font-bold text-white tracking-tight">1. Leis Invioláveis do Ecossistema</h3>
+            </div>
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-5">
+                <div class="p-5 rounded-xl bg-slate-900/60 border border-slate-800 hover:border-slate-700 transition">
+                    <div class="w-8 h-8 rounded bg-teal-500/10 text-teal-400 flex items-center justify-center font-bold text-sm mb-3">01</div>
+                    <h4 class="text-sm font-semibold text-white">Determinismo Primeiro</h4>
+                    <p class="text-xs text-slate-400 mt-2 leading-relaxed">
+                        Toda checagem estrutural, linting, AST e segurança é operada por scripts Python, Hadolint e Pytest. A IA nunca audita a si mesma com texto livre.
+                    </p>
+                </div>
+                <div class="p-5 rounded-xl bg-slate-900/60 border border-slate-800 hover:border-slate-700 transition">
+                    <div class="w-8 h-8 rounded bg-teal-500/10 text-teal-400 flex items-center justify-center font-bold text-sm mb-3">02</div>
+                    <h4 class="text-sm font-semibold text-white">Qualidade Binária</h4>
+                    <p class="text-xs text-slate-400 mt-2 leading-relaxed">
+                        Toda verificação mecânica produz apenas <code class="text-teal-400 font-mono">exit 0</code> (pass) ou <code class="text-rose-400 font-mono">exit 1</code> (bloqueio). Sem tolerância a avisos em produção.
+                    </p>
+                </div>
+                <div class="p-5 rounded-xl bg-slate-900/60 border border-slate-800 hover:border-slate-700 transition">
+                    <div class="w-8 h-8 rounded bg-teal-500/10 text-teal-400 flex items-center justify-center font-bold text-sm mb-3">05</div>
+                    <h4 class="text-sm font-semibold text-white">Zero Stubs / Zero Mocks</h4>
+                    <p class="text-xs text-slate-400 mt-2 leading-relaxed">
+                        100% de contratos tipados, banco de dados real em concorrência e testes reais. Proibido o uso de <code>pass</code>, <code>TODO</code> ou retornos fictícios em produção.
+                    </p>
+                </div>
+                <div class="p-5 rounded-xl bg-slate-900/60 border border-slate-800 hover:border-slate-700 transition">
+                    <div class="w-8 h-8 rounded bg-teal-500/10 text-teal-400 flex items-center justify-center font-bold text-sm mb-3">11</div>
+                    <h4 class="text-sm font-semibold text-white">Padrão-Ouro de Stack</h4>
+                    <p class="text-xs text-slate-400 mt-2 leading-relaxed">
+                        <strong>Frontend:</strong> Next.js 14 App Router + TypeScript + Tailwind CSS.<br>
+                        <strong>Backend:</strong> Python Clean Architecture + SQLite WAL ou PostgreSQL + FastAPI.
+                    </p>
+                </div>
+                <div class="p-5 rounded-xl bg-slate-900/60 border border-slate-800 hover:border-slate-700 transition">
+                    <div class="w-8 h-8 rounded bg-teal-500/10 text-teal-400 flex items-center justify-center font-bold text-sm mb-3">10</div>
+                    <h4 class="text-sm font-semibold text-white">Quarteto Sine Qua Non</h4>
+                    <p class="text-xs text-slate-400 mt-2 leading-relaxed">
+                        Todo sistema nasce com 4 estúdios dinâmicos: <code>/swagger</code> (OpenAPI), <code>/webhooks</code>, <code>/mcp</code> (AI Agents) e <code>/guia</code> (Manual do Utilizador).
+                    </p>
+                </div>
+                <div class="p-5 rounded-xl bg-slate-900/60 border border-slate-800 hover:border-slate-700 transition">
+                    <div class="w-8 h-8 rounded bg-teal-500/10 text-teal-400 flex items-center justify-center font-bold text-sm mb-3">07</div>
+                    <h4 class="text-sm font-semibold text-white">Desenvolvedor no Controle</h4>
+                    <p class="text-xs text-slate-400 mt-2 leading-relaxed">
+                        Execução sequencial e estritamente síncrona. Subagentes paralelos invisíveis em segundo plano são proibidos por travas de segurança.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- 2. As 8 Ferramentas -->
+        <section id="ferramentas" class="space-y-6">
+            <div class="border-b border-slate-800 pb-4">
+                <span class="text-xs font-mono text-teal-400 uppercase tracking-wider">Modularização</span>
+                <h3 class="text-2xl font-bold text-white tracking-tight">2. As 8 Ferramentas Homologadas</h3>
+                <p class="text-xs text-slate-400 mt-1">Divisão atômica de responsabilidades em <code class="text-slate-300 font-mono">tools/</code></p>
+            </div>
+            <div class="overflow-x-auto rounded-xl border border-slate-800 bg-slate-900/40">
+                <table class="w-full text-left text-xs">
+                    <thead class="bg-slate-900 text-slate-300 font-semibold border-b border-slate-800">
+                        <tr>
+                            <th class="p-4">Ferramenta</th>
+                            <th class="p-4">Diretório</th>
+                            <th class="p-4">Papel Primário</th>
+                            <th class="p-4">Entrada</th>
+                            <th class="p-4">Entrega Principal</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-800/60 text-slate-300">
+                        <tr class="hover:bg-slate-800/30">
+                            <td class="p-4 font-bold text-white">AIDD Forge</td>
+                            <td class="p-4 font-mono text-slate-400">tools/aidd-forge</td>
+                            <td class="p-4">Guardião da Governança</td>
+                            <td class="p-4">Diretório alvo</td>
+                            <td class="p-4">Regras invioláveis, hooks e travas pre-commit</td>
+                        </tr>
+                        <tr class="hover:bg-slate-800/30">
+                            <td class="p-4 font-bold text-white">AIDD Planner</td>
+                            <td class="p-4 font-mono text-slate-400">tools/aidd-planner</td>
+                            <td class="p-4">Planta Baixa BDD/SDD</td>
+                            <td class="p-4">Requisitos / Negócio</td>
+                            <td class="p-4"><code>PLANNER.json</code> e contratos formais de handoff</td>
+                        </tr>
+                        <tr class="hover:bg-slate-800/30">
+                            <td class="p-4 font-bold text-white">AIDD Generator</td>
+                            <td class="p-4 font-mono text-slate-400">tools/aidd-generator</td>
+                            <td class="p-4">Fábrica Autônoma (8 fases)</td>
+                            <td class="p-4"><code>PLANNER.json</code></td>
+                            <td class="p-4">Aplicação do zero com TDD Red-Green estrito</td>
+                        </tr>
+                        <tr class="hover:bg-slate-800/30">
+                            <td class="p-4 font-bold text-white">AIDD Factory</td>
+                            <td class="p-4 font-mono text-slate-400">tools/aidd-factory</td>
+                            <td class="p-4">Integrador Multi-Serviço</td>
+                            <td class="p-4">Engines OSS + Plano</td>
+                            <td class="p-4">Gateway BFF FastAPI, Next.js e Compose unificado</td>
+                        </tr>
+                        <tr class="hover:bg-slate-800/30">
+                            <td class="p-4 font-bold text-white">AIDD Bridge</td>
+                            <td class="p-4 font-mono text-slate-400">tools/aidd-bridge</td>
+                            <td class="p-4">Libertador de Low-Code</td>
+                            <td class="p-4">Export Lovable/v0</td>
+                            <td class="p-4">Desacoplamento de BaaS e Postgres nativo</td>
+                        </tr>
+                        <tr class="hover:bg-slate-800/30">
+                            <td class="p-4 font-bold text-white">AIDD Master</td>
+                            <td class="p-4 font-mono text-slate-400">tools/aidd-master</td>
+                            <td class="p-4">Harmonização Modular VSA</td>
+                            <td class="p-4">Código das Engines</td>
+                            <td class="p-4">Monólito VSA limpo, Next.js 14 e OpenAPI 3.1</td>
+                        </tr>
+                        <tr class="hover:bg-slate-800/30">
+                            <td class="p-4 font-bold text-white">AIDD Enterprise</td>
+                            <td class="p-4 font-mono text-slate-400">tools/aidd-enterprise</td>
+                            <td class="p-4">Selo de Segurança Bancária</td>
+                            <td class="p-4">Código do Master</td>
+                            <td class="p-4">Injeção SHA-256 de RBAC, Outbox e Zero-Trust</td>
+                        </tr>
+                        <tr class="hover:bg-slate-800/30">
+                            <td class="p-4 font-bold text-white">AIDD Ops</td>
+                            <td class="p-4 font-mono text-slate-400">tools/aidd-ops</td>
+                            <td class="p-4">Meta-Orquestrador de Infra</td>
+                            <td class="p-4">Código Enterprise</td>
+                            <td class="p-4">Sizing VPS, Docker Swarm, Traefik SSL e Uptime Kuma</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- 3. A Tríade Canônica de Criação -->
+        <section id="triade" class="space-y-6">
+            <div class="border-b border-slate-800 pb-4">
+                <span class="text-xs font-mono text-teal-400 uppercase tracking-wider">Criação de Aplicações</span>
+                <h3 class="text-2xl font-bold text-white tracking-tight">3. A Tríade Canônica de Criação</h3>
+                <p class="text-xs text-slate-400 mt-1">3 fluxos determinísticos especializados derivados da mesma fundação</p>
+            </div>
+
+            <!-- Tabs interativas dos 3 fluxos -->
+            <div class="border border-slate-800 rounded-xl bg-slate-900/40 p-6 space-y-6">
+                <div class="flex border-b border-slate-800 gap-4 text-xs font-semibold">
+                    <button onclick="switchTab('pure')" id="tab-btn-pure" class="tab-btn pb-3 text-slate-300 transition active">
+                        FLUXO 01 — aidd-pure (Do Zero Puro)
+                    </button>
+                    <button onclick="switchTab('open')" id="tab-btn-open" class="tab-btn pb-3 text-slate-400 hover:text-slate-200 transition">
+                        FLUXO 02 — aidd-open (Motores Open-Source)
+                    </button>
+                    <button onclick="switchTab('bridge')" id="tab-btn-bridge" class="tab-btn pb-3 text-slate-400 hover:text-slate-200 transition">
+                        FLUXO 03 — aidd-bridge (Low-Code Desatado)
+                    </button>
+                </div>
+
+                <!-- Conteúdo Tab Pure -->
+                <div id="tab-content-pure" class="space-y-4">
+                    <div class="flex items-center justify-between">
+                        <span class="px-2.5 py-1 rounded bg-teal-500/10 text-teal-400 text-xs font-mono font-bold">Pipeline: [FORGE -> PLANNER] -> GENERATOR -> [MASTER -> ENTERPRISE -> OPS]</span>
+                        <span class="text-xs text-slate-400 font-mono">Engine: aidd-generator</span>
+                    </div>
+                    <p class="text-xs text-slate-300 leading-relaxed">
+                        Construção de software autônomo do zero absoluto através de um pipeline de 8 fases sequenciais. Aplica rigorosamente o ciclo <strong>TDD Red-Green-Refactor</strong>: os testes unitários e de integração são gerados e forçados a falhar antes de qualquer linha de lógica de domínio ser implementada.
+                    </p>
+                    <div class="grid sm:grid-cols-2 gap-4 pt-2">
+                        <div class="p-4 rounded-lg bg-slate-950 border border-slate-800">
+                            <span class="text-[11px] font-mono text-teal-400">COMANDO CLI (Dev Sênior)</span>
+                            <p class="text-xs font-mono text-slate-200 mt-1 select-all">python ecossistema.py run-fluxo --fluxo pure --nome "Meu App" --slug meu-app --dominio saas</p>
+                        </div>
+                        <div class="p-4 rounded-lg bg-slate-950 border border-slate-800">
+                            <span class="text-[11px] font-mono text-teal-400">SLASH COMMAND (Leigo / Chat)</span>
+                            <p class="text-xs font-mono text-slate-200 mt-1 select-all">/pure "Construir sistema de cobrança recorrente com split de pagamentos"</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Conteúdo Tab Open -->
+                <div id="tab-content-open" class="hidden space-y-4">
+                    <div class="flex items-center justify-between">
+                        <span class="px-2.5 py-1 rounded bg-teal-500/10 text-teal-400 text-xs font-mono font-bold">Pipeline: [FORGE -> PLANNER] -> FACTORY -> [MASTER -> ENTERPRISE -> OPS]</span>
+                        <span class="text-xs text-slate-400 font-mono">Engine: aidd-factory</span>
+                    </div>
+                    <p class="text-xs text-slate-300 leading-relaxed">
+                        Ideal para aplicações onde já existem motores Open-Source consolidados (ERPs, CRMs, N8N, Evolution API, Directus, etc.). Em vez de reinventar a roda, o ecossistema isola as engines em contêineres OCI herméticos e gera automaticamente o <strong>Gateway/BFF em FastAPI</strong> e o Frontend Next.js para unificação total.
+                    </p>
+                    <div class="grid sm:grid-cols-2 gap-4 pt-2">
+                        <div class="p-4 rounded-lg bg-slate-950 border border-slate-800">
+                            <span class="text-[11px] font-mono text-teal-400">COMANDO CLI (Dev Sênior)</span>
+                            <p class="text-xs font-mono text-slate-200 mt-1 select-all">python ecossistema.py run-fluxo --fluxo open --nome "Clínica" --slug clinica --dominio saude</p>
+                        </div>
+                        <div class="p-4 rounded-lg bg-slate-950 border border-slate-800">
+                            <span class="text-[11px] font-mono text-teal-400">SLASH COMMAND (Leigo / Chat)</span>
+                            <p class="text-xs font-mono text-slate-200 mt-1 select-all">/open "Portal de atendimento ao cliente multicanal com WhatsApp e N8N"</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Conteúdo Tab Bridge -->
+                <div id="tab-content-bridge" class="hidden space-y-4">
+                    <div class="flex items-center justify-between">
+                        <span class="px-2.5 py-1 rounded bg-teal-500/10 text-teal-400 text-xs font-mono font-bold">Pipeline: [FORGE -> PLANNER] -> BRIDGE -> [MASTER -> ENTERPRISE -> OPS]</span>
+                        <span class="text-xs text-slate-400 font-mono">Engine: aidd-bridge</span>
+                    </div>
+                    <p class="text-xs text-slate-300 leading-relaxed">
+                        Desacoplamento e libertação de projetos construídos em plataformas Low-Code (Lovable, v0, Bolt). Elimina 100% das dependências de BaaS proprietários (Supabase Cloud, Clerk pago), compila schemas SQL para PostgreSQL puro com PostgREST e preserva a interface de usuário criada.
+                    </p>
+                    <div class="grid sm:grid-cols-2 gap-4 pt-2">
+                        <div class="p-4 rounded-lg bg-slate-950 border border-slate-800">
+                            <span class="text-[11px] font-mono text-teal-400">COMANDO CLI (Dev Sênior)</span>
+                            <p class="text-xs font-mono text-slate-200 mt-1 select-all">python ecossistema.py run-fluxo --fluxo bridge --origem ./exports/lovable --nome "Meu SaaS"</p>
+                        </div>
+                        <div class="p-4 rounded-lg bg-slate-950 border border-slate-800">
+                            <span class="text-[11px] font-mono text-teal-400">SLASH COMMAND (Leigo / Chat)</span>
+                            <p class="text-xs font-mono text-slate-200 mt-1 select-all">/bridge ./pasta-do-lovable meu-saas-proprio</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 4. Funil Universal de Convergência -->
+        <section id="funil" class="space-y-6">
+            <div class="border-b border-slate-800 pb-4">
+                <span class="text-xs font-mono text-teal-400 uppercase tracking-wider">Padronização Arquitetural</span>
+                <h3 class="text-2xl font-bold text-white tracking-tight">4. O Funil Universal de Convergência</h3>
+                <p class="text-xs text-slate-400 mt-1">Por que toda aplicação converge obrigatoriamente para Master, Enterprise e Ops</p>
+            </div>
+            <div class="grid md:grid-cols-3 gap-6">
+                <div class="p-5 rounded-xl bg-slate-900/60 border border-slate-800 space-y-3">
+                    <div class="flex items-center justify-between">
+                        <h4 class="text-sm font-bold text-white">Etapa 1: AIDD Master</h4>
+                        <span class="text-[10px] font-mono text-teal-400 bg-teal-500/10 px-2 py-0.5 rounded">Harmonização VSA</span>
+                    </div>
+                    <p class="text-xs text-slate-400 leading-relaxed">
+                        Reorganiza o backend em <strong>Fatias Verticais (VSA)</strong> independentes. Gera a interface em <strong>Next.js 14 App Router</strong> (TypeScript + Tailwind) e injeta as 4 rotas dinâmicas do Quarteto Sine Qua Non.
+                    </p>
+                </div>
+                <div class="p-5 rounded-xl bg-slate-900/60 border border-slate-800 space-y-3">
+                    <div class="flex items-center justify-between">
+                        <h4 class="text-sm font-bold text-white">Etapa 2: AIDD Enterprise</h4>
+                        <span class="text-[10px] font-mono text-teal-400 bg-teal-500/10 px-2 py-0.5 rounded">Selo SHA-256</span>
+                    </div>
+                    <p class="text-xs text-slate-400 leading-relaxed">
+                        Aplica injeção auditada de componentes de missão crítica: RBAC com Argon2id, Transactional Outbox, Rate Limiting distribuído e proteção OWASP. Sela o manifesto com hashes SHA-256 anti-adulteração.
+                    </p>
+                </div>
+                <div class="p-5 rounded-xl bg-slate-900/60 border border-slate-800 space-y-3">
+                    <div class="flex items-center justify-between">
+                        <h4 class="text-sm font-bold text-white">Etapa 3: AIDD Ops</h4>
+                        <span class="text-[10px] font-mono text-teal-400 bg-teal-500/10 px-2 py-0.5 rounded">Deploy VPS</span>
+                    </div>
+                    <p class="text-xs text-slate-400 leading-relaxed">
+                        Executa o sizing do servidor, conecta via SSH/Ansible, sobe a aplicação em contêineres Docker sob proxy reverso Traefik com SSL automático Let's Encrypt e monitoramento ativo no Uptime Kuma.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- 5. Contratos de Handoff -->
+        <section id="handoff" class="space-y-6">
+            <div class="border-b border-slate-800 pb-4">
+                <span class="text-xs font-mono text-teal-400 uppercase tracking-wider">Garantia Formal</span>
+                <h3 class="text-2xl font-bold text-white tracking-tight">5. Contratos Formais de Handoff (JSON Schema)</h3>
+                <p class="text-xs text-slate-400 mt-1">Transições entre ferramentas validadas por schemas matemáticos estritos</p>
+            </div>
+            <div class="grid md:grid-cols-2 gap-4">
+                <div class="p-4 rounded-lg bg-slate-900/50 border border-slate-800 space-y-2">
+                    <div class="flex items-center justify-between">
+                        <span class="text-xs font-mono font-bold text-teal-400">Planner ➔ Engine</span>
+                        <span class="text-[10px] font-mono text-slate-400">handoff-planner-to-engine.schema.json</span>
+                    </div>
+                    <p class="text-xs text-slate-300">
+                        Valida metadados, domínio, cenários BDD obrigatórios (<code class="text-teal-300">Given/When/Then</code>), dicionário formal de entidades com tipos e declaração do Quarteto Sine Qua Non.
+                    </p>
+                </div>
+                <div class="p-4 rounded-lg bg-slate-900/50 border border-slate-800 space-y-2">
+                    <div class="flex items-center justify-between">
+                        <span class="text-xs font-mono font-bold text-teal-400">Engine ➔ Master</span>
+                        <span class="text-[10px] font-mono text-slate-400">handoff-engine-to-master.schema.json</span>
+                    </div>
+                    <p class="text-xs text-slate-300">
+                        Exige código de produção, schemas Pydantic, rotas REST, DDL SQL de banco e evidência de testes unitários reais verdes (<code class="text-teal-300">testes_passando = true</code>).
+                    </p>
+                </div>
+                <div class="p-4 rounded-lg bg-slate-900/50 border border-slate-800 space-y-2">
+                    <div class="flex items-center justify-between">
+                        <span class="text-xs font-mono font-bold text-teal-400">Master ➔ Enterprise</span>
+                        <span class="text-[10px] font-mono text-slate-400">handoff-master-to-enterprise.schema.json</span>
+                    </div>
+                    <p class="text-xs text-slate-300">
+                        Verifica a estrutura VSA em <code class="text-teal-300">features/</code>, paridade OpenAPI 3.1, interfaces Next.js geradas e rotas operacionais ativas do Quarteto.
+                    </p>
+                </div>
+                <div class="p-4 rounded-lg bg-slate-900/50 border border-slate-800 space-y-2">
+                    <div class="flex items-center justify-between">
+                        <span class="text-xs font-mono font-bold text-teal-400">Enterprise ➔ Ops</span>
+                        <span class="text-[10px] font-mono text-slate-400">handoff-enterprise-to-ops.schema.json</span>
+                    </div>
+                    <p class="text-xs text-slate-300">
+                        Audita manifesto com hashes SHA-256, lockfiles auditados, credenciais blindadas e especificações de hardware/rede para provisionamento VPS.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- 6. Os 24 Quality Gates -->
+        <section id="gates" class="space-y-6">
+            <div class="border-b border-slate-800 pb-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                <div>
+                    <span class="text-xs font-mono text-teal-400 uppercase tracking-wider">Defesa Mecânica</span>
+                    <h3 class="text-2xl font-bold text-white tracking-tight">6. Matriz dos 24 Quality Gates</h3>
+                    <p class="text-xs text-slate-400 mt-1">Execução hermética no pre-commit ou agregada via <code class="text-slate-300 font-mono">python ecossistema.py audit</code></p>
+                </div>
+                <div class="w-full sm:w-64">
+                    <input type="text" id="gate-search" placeholder="Filtrar gate por nome ou alvo..." oninput="filterGates()" 
+                           class="w-full px-3 py-1.5 rounded-lg bg-slate-900 border border-slate-700 text-xs text-slate-200 focus:outline-none focus:border-teal-500">
+                </div>
+            </div>
+
+            <div class="overflow-x-auto rounded-xl border border-slate-800 bg-slate-900/40">
+                <table class="w-full text-left text-xs" id="gates-table">
+                    <thead class="bg-slate-900 text-slate-300 font-semibold border-b border-slate-800">
+                        <tr>
+                            <th class="p-3 w-16">Gate</th>
+                            <th class="p-3">Script Verificador</th>
+                            <th class="p-3">Alvo de Auditoria Mecânica</th>
+                            <th class="p-3 text-right">Status</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-800/60 text-slate-300" id="gates-tbody">
+                        <tr class="gate-row hover:bg-slate-800/30">
+                            <td class="p-3 font-mono font-bold text-teal-400">G1</td>
+                            <td class="p-3 font-mono text-white">G_ORQUESTRADOR_SINCRONO.py</td>
+                            <td class="p-3">Audita CLI unificada, transições e conformidade dos schemas de handoff.</td>
+                            <td class="p-3 text-right"><span class="px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-400 text-[10px] font-mono">Pass</span></td>
+                        </tr>
+                        <tr class="gate-row hover:bg-slate-800/30">
+                            <td class="p-3 font-mono font-bold text-teal-400">G2</td>
+                            <td class="p-3 font-mono text-white">G_TESTES_REAIS.py</td>
+                            <td class="p-3">Roda pytest real em 7 ferramentas (2.304 testes monitorados). Falha com 1 erro.</td>
+                            <td class="p-3 text-right"><span class="px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-400 text-[10px] font-mono">Pass</span></td>
+                        </tr>
+                        <tr class="gate-row hover:bg-slate-800/30">
+                            <td class="p-3 font-mono font-bold text-teal-400">G3</td>
+                            <td class="p-3 font-mono text-white">G_HARNESS_COMPAT.py</td>
+                            <td class="p-3">Verifica sincronismo bidirecional de skills e comandos entre 6 harnesses de IA.</td>
+                            <td class="p-3 text-right"><span class="px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-400 text-[10px] font-mono">Pass</span></td>
+                        </tr>
+                        <tr class="gate-row hover:bg-slate-800/30">
+                            <td class="p-3 font-mono font-bold text-teal-400">G4</td>
+                            <td class="p-3 font-mono text-white">G_ECOSSISTEMA_INTEGRIDADE.py</td>
+                            <td class="p-3">Varredura de sintaxe Python via AST e integridade de todos os subprojetos.</td>
+                            <td class="p-3 text-right"><span class="px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-400 text-[10px] font-mono">Pass</span></td>
+                        </tr>
+                        <tr class="gate-row hover:bg-slate-800/30">
+                            <td class="p-3 font-mono font-bold text-teal-400">G5</td>
+                            <td class="p-3 font-mono text-white">G_DRIFT_NUCLEO_COMPARTILHADO.py</td>
+                            <td class="p-3">Impede divergência de código entre bibliotecas de Master e Enterprise.</td>
+                            <td class="p-3 text-right"><span class="px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-400 text-[10px] font-mono">Pass</span></td>
+                        </tr>
+                        <tr class="gate-row hover:bg-slate-800/30">
+                            <td class="p-3 font-mono font-bold text-teal-400">G6</td>
+                            <td class="p-3 font-mono text-white">G_DEPENDENCIAS_PIN_HASH.py</td>
+                            <td class="p-3">Bloqueia dependências sem pinagem estrita (==) ou lockfile sem hash SHA-256.</td>
+                            <td class="p-3 text-right"><span class="px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-400 text-[10px] font-mono">Pass</span></td>
+                        </tr>
+                        <tr class="gate-row hover:bg-slate-800/30">
+                            <td class="p-3 font-mono font-bold text-teal-400">G7</td>
+                            <td class="p-3 font-mono text-white">G_FRONTEND_LAYERS.py</td>
+                            <td class="p-3">Audita Next.js e proíbe chamadas de rede diretas em componentes de UI pura.</td>
+                            <td class="p-3 text-right"><span class="px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-400 text-[10px] font-mono">Pass</span></td>
+                        </tr>
+                        <tr class="gate-row hover:bg-slate-800/30">
+                            <td class="p-3 font-mono font-bold text-teal-400">G8</td>
+                            <td class="p-3 font-mono text-white">G_ISOLATION_AUDIT.py</td>
+                            <td class="p-3">Audita fatias VSA via AST e proíbe imports cruzados entre fatias de domínio.</td>
+                            <td class="p-3 text-right"><span class="px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-400 text-[10px] font-mono">Pass</span></td>
+                        </tr>
+                        <tr class="gate-row hover:bg-slate-800/30">
+                            <td class="p-3 font-mono font-bold text-teal-400">G9</td>
+                            <td class="p-3 font-mono text-white">G_HADOLINT.py</td>
+                            <td class="p-3">Audita conformidade OCI e melhores práticas em 17 Dockerfiles via Hadolint.</td>
+                            <td class="p-3 text-right"><span class="px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-400 text-[10px] font-mono">Pass</span></td>
+                        </tr>
+                        <tr class="gate-row hover:bg-slate-800/30">
+                            <td class="p-3 font-mono font-bold text-teal-400">G10</td>
+                            <td class="p-3 font-mono text-white">G_INFRA_COMPOSE.py</td>
+                            <td class="p-3">Audita segurança de portas, redes e volumes em compose via Checkov.</td>
+                            <td class="p-3 text-right"><span class="px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-400 text-[10px] font-mono">Pass</span></td>
+                        </tr>
+                        <tr class="gate-row hover:bg-slate-800/30">
+                            <td class="p-3 font-mono font-bold text-teal-400">G11</td>
+                            <td class="p-3 font-mono text-white">G_PROTOCOL_FALLBACK.py</td>
+                            <td class="p-3">Garante paridade: nenhuma rota MCP existe sem contrapartida REST equivalente.</td>
+                            <td class="p-3 text-right"><span class="px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-400 text-[10px] font-mono">Pass</span></td>
+                        </tr>
+                        <tr class="gate-row hover:bg-slate-800/30">
+                            <td class="p-3 font-mono font-bold text-teal-400">G12</td>
+                            <td class="p-3 font-mono text-white">G_LLM_PROMPT_SHIELD.py</td>
+                            <td class="p-3">Audita sanitização obrigatória de prompts contra Prompt Injection em LLMs.</td>
+                            <td class="p-3 text-right"><span class="px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-400 text-[10px] font-mono">Pass</span></td>
+                        </tr>
+                        <tr class="gate-row hover:bg-slate-800/30">
+                            <td class="p-3 font-mono font-bold text-teal-400">G13</td>
+                            <td class="p-3 font-mono text-white">G_DRIFT_ANALYZER.py</td>
+                            <td class="p-3">Detecta redundância estrutural entre fatias VSA orientando extração canônica.</td>
+                            <td class="p-3 text-right"><span class="px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-400 text-[10px] font-mono">Pass</span></td>
+                        </tr>
+                        <tr class="gate-row hover:bg-slate-800/30">
+                            <td class="p-3 font-mono font-bold text-teal-400">G14</td>
+                            <td class="p-3 font-mono text-white">G_PROTOTYPE_REWRITE.py</td>
+                            <td class="p-3">Garante que código de sandbox/ só seja promovido para produção com testes TDD.</td>
+                            <td class="p-3 text-right"><span class="px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-400 text-[10px] font-mono">Pass</span></td>
+                        </tr>
+                        <tr class="gate-row hover:bg-slate-800/30">
+                            <td class="p-3 font-mono font-bold text-teal-400">G15</td>
+                            <td class="p-3 font-mono text-white">G_ZERO_HEADLESS.py</td>
+                            <td class="p-3">Bloqueia disparo de subagentes ou subprocessos invisíveis em segundo plano.</td>
+                            <td class="p-3 text-right"><span class="px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-400 text-[10px] font-mono">Pass</span></td>
+                        </tr>
+                        <tr class="gate-row hover:bg-slate-800/30">
+                            <td class="p-3 font-mono font-bold text-teal-400">G16</td>
+                            <td class="p-3 font-mono text-white">G_HONESTIDADE_ROTULO.py</td>
+                            <td class="p-3">Bloqueia saídas com alegações de marketing que excedam o comprovado em testes.</td>
+                            <td class="p-3 text-right"><span class="px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-400 text-[10px] font-mono">Pass</span></td>
+                        </tr>
+                        <tr class="gate-row hover:bg-slate-800/30">
+                            <td class="p-3 font-mono font-bold text-teal-400">G17</td>
+                            <td class="p-3 font-mono text-white">G_CLI_HELP_CONSISTENCIA.py</td>
+                            <td class="p-3">Compara flags citadas em mensagens contra parâmetros reais das CLIs.</td>
+                            <td class="p-3 text-right"><span class="px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-400 text-[10px] font-mono">Pass</span></td>
+                        </tr>
+                        <tr class="gate-row hover:bg-slate-800/30">
+                            <td class="p-3 font-mono font-bold text-teal-400">G18</td>
+                            <td class="p-3 font-mono text-white">G_COMPONENTE_AGNOSTICO.py</td>
+                            <td class="p-3">Audita integridade e paridade multi-harness de novos componentes agnósticos.</td>
+                            <td class="p-3 text-right"><span class="px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-400 text-[10px] font-mono">Pass</span></td>
+                        </tr>
+                        <tr class="gate-row hover:bg-slate-800/30">
+                            <td class="p-3 font-mono font-bold text-teal-400">G19</td>
+                            <td class="p-3 font-mono text-white">G_SEGREDOS.py</td>
+                            <td class="p-3">Escaneia repositório contra vazamento de credenciais via detect-secrets.</td>
+                            <td class="p-3 text-right"><span class="px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-400 text-[10px] font-mono">Pass</span></td>
+                        </tr>
+                        <tr class="gate-row hover:bg-slate-800/30">
+                            <td class="p-3 font-mono font-bold text-teal-400">G20</td>
+                            <td class="p-3 font-mono text-white">G_ARQUITETURA_DELIVERABLE.py</td>
+                            <td class="p-3">Valida conformidade com Clean Architecture e DDD em entregáveis estruturados.</td>
+                            <td class="p-3 text-right"><span class="px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-400 text-[10px] font-mono">Pass</span></td>
+                        </tr>
+                        <tr class="gate-row hover:bg-slate-800/30">
+                            <td class="p-3 font-mono font-bold text-teal-400">G21</td>
+                            <td class="p-3 font-mono text-white">G_ESCRITOR_ATOMICO.py</td>
+                            <td class="p-3">Audita o uso de gravação atômica para impedir corrupção em arquivos de estado.</td>
+                            <td class="p-3 text-right"><span class="px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-400 text-[10px] font-mono">Pass</span></td>
+                        </tr>
+                        <tr class="gate-row hover:bg-slate-800/30">
+                            <td class="p-3 font-mono font-bold text-teal-400">G22</td>
+                            <td class="p-3 font-mono text-white">G_TRANSACTION_LOG_LRU.py</td>
+                            <td class="p-3">Audita deterministicamente o transaction log com cache LRU e testes espelhados.</td>
+                            <td class="p-3 text-right"><span class="px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-400 text-[10px] font-mono">Pass</span></td>
+                        </tr>
+                        <tr class="gate-row hover:bg-slate-800/30">
+                            <td class="p-3 font-mono font-bold text-teal-400">G23</td>
+                            <td class="p-3 font-mono text-white">G_UNIVERSAL_HARNESS.py</td>
+                            <td class="p-3">Garante paridade e wiring universal de componentes em todos os ambientes.</td>
+                            <td class="p-3 text-right"><span class="px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-400 text-[10px] font-mono">Pass</span></td>
+                        </tr>
+                        <tr class="gate-row hover:bg-slate-800/30">
+                            <td class="p-3 font-mono font-bold text-teal-400">G24</td>
+                            <td class="p-3 font-mono text-white">G_SUPPLY_CHAIN.py</td>
+                            <td class="p-3">Audita conformidade e integridade criptográfica da cadeia de dependências.</td>
+                            <td class="p-3 text-right"><span class="px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-400 text-[10px] font-mono">Pass</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- 7. Guia Operacional -->
+        <section id="operacao" class="space-y-6">
+            <div class="border-b border-slate-800 pb-4">
+                <span class="text-xs font-mono text-teal-400 uppercase tracking-wider">Usabilidade Total</span>
+                <h3 class="text-2xl font-bold text-white tracking-tight">7. Guia Operacional: Dev Sênior vs. Extremo Leigo</h3>
+                <p class="text-xs text-slate-400 mt-1">Duas portas de entrada com exatamente o mesmo rigor e qualidade técnica</p>
+            </div>
+            <div class="grid md:grid-cols-2 gap-6">
+                <!-- Modo CLI -->
+                <div class="p-6 rounded-xl bg-slate-900/60 border border-slate-800 space-y-4">
+                    <div class="flex items-center gap-2">
+                        <div class="w-2.5 h-2.5 rounded-full bg-teal-400"></div>
+                        <h4 class="text-sm font-bold text-white uppercase tracking-wider">Modo 1: Dev Sênior (CLI Pura)</h4>
+                    </div>
+                    <p class="text-xs text-slate-400">Execução determinística via terminal local ou esteiras de CI/CD:</p>
+                    <div class="code-block p-4 space-y-2 text-[11px] text-slate-300">
+                        <p class="text-slate-500"># Executar a Tríade Canônica:</p>
+                        <p><span class="text-teal-400">python</span> ecossistema.py run-fluxo --fluxo pure --nome "Tarefas" --slug tarefas</p>
+                        <p><span class="text-teal-400">python</span> ecossistema.py run-fluxo --fluxo open --nome "Clínica" --slug clinica</p>
+                        <p><span class="text-teal-400">python</span> ecossistema.py run-fluxo --fluxo bridge --origem ./exports/lovable</p>
+                        <p class="text-slate-500 pt-2"># Auditoria dos 24 Quality Gates:</p>
+                        <p><span class="text-teal-400">python</span> ecossistema.py audit</p>
+                    </div>
+                </div>
+
+                <!-- Modo Chat -->
+                <div class="p-6 rounded-xl bg-slate-900/60 border border-slate-800 space-y-4">
+                    <div class="flex items-center gap-2">
+                        <div class="w-2.5 h-2.5 rounded-full bg-teal-400"></div>
+                        <h4 class="text-sm font-bold text-white uppercase tracking-wider">Modo 2: Utilizador Leigo (Slash Commands)</h4>
+                    </div>
+                    <p class="text-xs text-slate-400">Disparo em linguagem natural no Claude, Antigravity, Cursor ou Mimo:</p>
+                    <div class="code-block p-4 space-y-2 text-[11px] text-slate-300">
+                        <p class="text-slate-500"># Disparar os fluxos pelo chat:</p>
+                        <p><span class="text-teal-400">/pure</span> "Criar sistema de agendamento médico com confirmação por e-mail"</p>
+                        <p><span class="text-teal-400">/open</span> "Plataforma de suporte com WhatsApp integrado via Evolution API"</p>
+                        <p><span class="text-teal-400">/bridge</span> ./meu-export-lovable meu-saas-proprio</p>
+                        <p class="text-slate-500 pt-2"># Orquestração assistida socrática:</p>
+                        <p><span class="text-teal-400">/aidd-orchestrator</span></p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Footer Corporativo -->
+    <footer class="border-t border-slate-800 bg-slate-950 py-10 mt-20">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-4">
+            <div class="text-xs text-slate-500">
+                © 2026 Ecossistema AIDD. Governança Livre & Homologação Canônica.
+            </div>
+            <div class="flex items-center space-x-4 text-xs text-slate-400 font-mono">
+                <span>Versão 3.0</span>
+                <span>•</span>
+                <span class="text-teal-400">2.304 Testes Verdes</span>
+                <span>•</span>
+                <span>24 Quality Gates</span>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Script de Interatividade das Abas e Filtro de Gates -->
+    <script>
+        function switchTab(tabId) {
+            ['pure', 'open', 'bridge'].forEach(t => {
+                const content = document.getElementById(`tab-content-${t}`);
+                const btn = document.getElementById(`tab-btn-${t}`);
+                if (t === tabId) {
+                    content.classList.remove('hidden');
+                    btn.classList.add('active');
+                    btn.classList.remove('text-slate-400');
+                    btn.classList.add('text-slate-200');
+                } else {
+                    content.classList.add('hidden');
+                    btn.classList.remove('active');
+                    btn.classList.remove('text-slate-200');
+                    btn.classList.add('text-slate-400');
+                }
+            });
+        }
+
+        function filterGates() {
+            const query = document.getElementById('gate-search').value.toLowerCase();
+            const rows = document.querySelectorAll('#gates-tbody .gate-row');
+            rows.forEach(row => {
+                const text = row.innerText.toLowerCase();
+                row.style.display = text.includes(query) ? '' : 'none';
+            });
+        }
+    </script>
+</body>
+</html>
