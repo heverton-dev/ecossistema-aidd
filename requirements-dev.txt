@@ -22,4 +22,9 @@ pre-commit==4.6.2
 bandit==1.9.4
 pip-audit==2.10.1
 detect-secrets==1.5.0
-checkov==3.3.17
+# checkov NAO entra aqui: ele exige importlib-metadata<8 e o litellm sem
+# vulnerabilidades conhecidas exige >=8 — os dois nao coexistem na mesma
+# instalacao. Desde 2026-09-19 o checkov vive no venv isolado do hook
+# 'g-infra-compose' (.pre-commit-config.yaml, additional_dependencies).
+# Para rodar o scanner a mao, sem sujar este ambiente:
+#   pipx run checkov==3.3.19 -f <arquivo>

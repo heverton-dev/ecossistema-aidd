@@ -113,7 +113,9 @@ def main() -> int:
         print("=" * 72)
         return 1
 
-    print("\n[SUCESSO] Quality Gate G_LLM_PROMPT_SHIELD APROVADO — 100% blindado contra injeções!")
+    # Rótulo honesto (Lei #8): o gate verifica que as chamadas a LLM passam pelo
+    # PromptShield — não prova ausência de injeção, que depende do próprio shield.
+    print("\n[SUCESSO] Quality Gate G_LLM_PROMPT_SHIELD APROVADO — todas as chamadas a LLM usam PromptShield.")
     print("=" * 72)
     return 0
 

@@ -26,6 +26,27 @@ ele transforma uma ideia em software testado, aplicando os mesmos Quality Gates 
 
 Quer forçar manualmente ou adicionar uma dependência nova (skill ou MCP de terceiro)? Digite `/dependencia bootstrap` (ou `/dependencia skill <nome>`, `/dependencia mcp <nome>`) no chat. Só use o terminal (`python ecossistema.py dependencia bootstrap`) se preferir.
 
+### 🐍 Ambiente Python do projeto (`.venv`)
+
+Desde 2026-09-19 o repositório usa um **ambiente Python próprio**, em `.venv/`, em vez de instalar os pacotes no Python geral da máquina. O motivo é concreto: com tudo no mesmo lugar, um pacote impedia o outro — o `checkov` travava o `litellm` numa versão com 7 vulnerabilidades conhecidas — e o que rodava na máquina não era o que os arquivos mandavam instalar.
+
+```bash
+# Criar e preencher (uma vez por clone)
+python -m venv .venv
+.venv/Scripts/python.exe -m pip install --require-hashes -r requirements-dev.lock   # Windows
+.venv/bin/python -m pip install --require-hashes -r requirements-dev.lock           # Linux/macOS
+
+# Dependências específicas de cada ferramenta
+.venv/Scripts/python.exe -m pip install -r tools/aidd-generator/requirements.txt
+.venv/Scripts/python.exe -m pip install -r tools/aidd-master/requirements.txt
+.venv/Scripts/python.exe -m pip install -r tools/aidd-enterprise/requirements.txt
+.venv/Scripts/python.exe -m pip install -r tools/aidd-ops/requirements.txt
+```
+
+`--require-hashes` é obrigatório: ele recusa qualquer pacote cuja assinatura não bata com a registrada no lockfile. Nunca instale a partir de `requirements.txt` direto para trabalhar no repositório — esse arquivo é a **fonte** dos pins, e o lockfile é o que tem as assinaturas.
+
+O `checkov` **não** entra neste ambiente: ele vive no ambiente isolado do hook `g-infra-compose` (ver `.pre-commit-config.yaml`), porque exige uma dependência interna incompatível com o `litellm` corrigido.
+
 ---
 
 ## 🏛️ A Fábrica de Software AIDD: As 8 Ferramentas Integradas

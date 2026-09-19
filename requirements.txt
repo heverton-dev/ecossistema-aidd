@@ -9,9 +9,14 @@ pytest==9.1.1
 pytest-cov==7.1.0
 hypothesis==6.168.0
 jsonschema==4.26.0
-# litellm preso em 1.83.0 (nao a ultima) pois checkov (requirements-dev.txt)
-# exige importlib-metadata<8, incompativel com litellm>=1.84 (importlib-metadata>=8)
-litellm==1.83.0
+# litellm: destravado em 2026-09-19. A versao anterior (1.83.0) acumulava 7
+# vulnerabilidades catalogadas (PYSEC-2026-388/391/2598..2602), entre elas uma
+# falsificacao de requisicao no lado do servidor. A trava existia porque o checkov
+# exige importlib-metadata<8 e o litellm corrigido exige >=8; a solucao foi mover o
+# checkov para o venv isolado do hook 'g-infra-compose' em vez de manter um pacote
+# vulneravel. Superficie de uso no codigo: apenas litellm.completion()
+# (tools/aidd-generator/scripts/phases/utils_delegacao.py), contrato estavel.
+litellm==1.101.0
 fastapi==0.141.1
 uvicorn==0.52.4
 pydantic==2.13.5
@@ -47,5 +52,18 @@ opentelemetry-exporter-otlp==1.33.0
 structlog==25.4.0
 
 # asyncpg: driver assíncrono de alto desempenho para PostgreSQL
-# us AsyncPostgresAdapter para I/O não-bloqueante
-asyncpg==0.30.0
+# usado por AsyncPostgresAdapter para I/O não-bloqueante
+# 0.30.0 -> 0.31.0 em 2026-09-19: a 0.30.0 nao publica pacote pronto para Python
+# 3.14, entao a instalacao tentava compilar do fonte e exigia Visual Studio — o
+# ambiente declarado simplesmente nao subia em maquina Windows com 3.14.
+asyncpg==0.31.0
+
+# skill aidd-livro-texto: composicao de livro-texto em PDF (pandoc + typst).
+# Sao os dois programas empacotados como modulo Python, para que a geracao de
+# documento funcione em maquina onde nao se pode instalar software do sistema
+# (CI, container enxuto, estacao corporativa travada). Quando pandoc/typst ja
+# existem no PATH, o motor da skill usa os do sistema e ignora estes pacotes.
+# Detalhe operacional: o pacote `typst` expoe API Python e NAO instala executavel,
+# por isso o motor compoe em dois passos nesse caso (ver scripts/livro.py).
+pypandoc-binary==1.17
+typst==0.15.0

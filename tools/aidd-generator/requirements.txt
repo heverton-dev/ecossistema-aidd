@@ -14,7 +14,11 @@ click>=8.0
 
 # MCP (NIH #24): SDK oficial do Model Context Protocol para os servidores
 # MCP gerados pelo Injetor Universal (mcps/*/server.py) — substitui JSON-RPC manual.
-mcp>=1.0
+# VERSAO EXATA desde 2026-09-19: com `mcp>=1.0` solto, um ambiente limpo instalava a
+# 2.2.0, que reorganizou os modulos internos (mcp.client._input_required) e quebrava
+# o codigo gerado por gerar_mcp() — reproduzido em tests/test_scaffold_mcp_sdk.py.
+# So subir apos adaptar o gerador ao contrato da linha 2.x.
+mcp==1.28.1
 
 # Prefect (NIH #26 / Fase2-Gen5): motor genérico de orquestração da pipeline
 # de 8 fases — retries automáticos, checkpointing por (ideia, fase) e estado

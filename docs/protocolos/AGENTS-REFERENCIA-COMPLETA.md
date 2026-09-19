@@ -111,6 +111,7 @@ O ecossistema dispõe de Quality Gates globais em gates/:
 - gates/G_LLM_PROMPT_SHIELD.py: Audita via AST se clientes de modelos de linguagem (LLM) utilizam deterministicamente o PromptShield para sanitização e blindagem de prompts contra injeção e jailbreak.
 - gates/G_DRIFT_ANALYZER.py: Analisa via AST a duplicidade e redundância estrutural de funções inter-fatias VSA (features/dominio) para orientar a extração canônica ao núcleo compartilhado (core).
 - gates/G_PROTOTYPE_REWRITE.py: Garante o isolamento determinístico da pasta sandbox/ e impede a promoção de protótipos ou PoCs para src/ sem suíte de testes TDD espelhada.
+- gates/G_LIVRO_EVIDENCIA.py: Audita o livro-texto gerado para um projeto (etapa 8a dos fluxos) — manifesto válido, rastreabilidade presente em toda parte de conteúdo, todo arquivo citado como fonte existente em disco, zero marcador de trabalho inacabado, procedência dos artefatos lidos e declaração explícita dos ausentes. Roda via `python ecossistema.py livro <pasta>` ou `python gates/G_LIVRO_EVIDENCIA.py --projeto <pasta>`.
 - gates/G_ORQUESTRADOR_SINCRONO.py: Audita a integridade do orquestrador síncrono da Tríade Canônica (aidd-pure, aidd-open, aidd-bridge), CLI ecossistema.py run-fluxo e conformidade com schemas formais de handoff.
 - **Execução unificada:** `python ecossistema.py audit` delega para `pre-commit run --all-files`.
 

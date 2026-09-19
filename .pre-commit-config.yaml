@@ -127,7 +127,17 @@ repos:
       - id: g-infra-compose
         name: G_INFRA_COMPOSE (compose e init sql estaticos do aidd-ops)
         entry: python gates/G_INFRA_COMPOSE.py
-        language: system
+        # AMBIENTE ISOLADO (2026-09-19): 'language: python' faz o pre-commit criar um
+        # venv proprio para este hook, com as dependencias abaixo. Motivo: checkov
+        # exige importlib-metadata<8 e o litellm sem vulnerabilidades conhecidas exige
+        # >=8 — os dois nao cabem na mesma instalacao. Isolando o checkov aqui, o
+        # requirements.txt pode fixar um litellm corrigido sem perder a auditoria de
+        # compose. O gate prefere o executavel do PATH (que este venv fornece) e so
+        # cai para o modulo do Python corrente como ultimo recurso.
+        language: python
+        additional_dependencies:
+          - checkov==3.3.19
+          - pyyaml==6.0.3
         always_run: true
         pass_filenames: false
         require_serial: true

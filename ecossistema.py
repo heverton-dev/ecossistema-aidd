@@ -705,6 +705,27 @@ def cmd_melhoria(args):
     script = os.path.join(ROOT_DIR, "scripts", "gerenciador_melhorias.py")
     return run_command([sys.executable, script] + args, cwd=ROOT_DIR)
 
+
+def cmd_livro(args):
+    """Gera o livro-texto de um projeto a partir dos artefatos que a esteira deixou.
+
+    Etapa 8a dos Fluxos Canonicos: 100% deterministica, zero token de LLM. A etapa
+    8b (redacao explicativa, que consome modelo) e acionada separadamente pela skill
+    'aidd-livro-texto', so quando o desenvolvedor pedir.
+    """
+    script = os.path.join(ROOT_DIR, "scripts", "gerador_livro_projeto.py")
+    codigo = run_command([sys.executable, script] + args, cwd=ROOT_DIR)
+    if codigo != 0:
+        return codigo
+
+    # A trava de honestidade roda sempre: livro que cita arquivo inexistente e
+    # pior que livro nenhum, porque carrega autoridade de documento oficial.
+    pasta = next((a for a in args if not a.startswith("-")), None)
+    if pasta:
+        gate = os.path.join(ROOT_DIR, "gates", "G_LIVRO_EVIDENCIA.py")
+        return run_command([sys.executable, gate, "--projeto", pasta], cwd=ROOT_DIR)
+    return 0
+
 # Gates realmente materializados em gates/ e executados pelo 'audit'.
 # Ordem identica a AGENTS.md §4 (inclui G_HADOLINT, que jah existe em gates/).
 _GATES_AUDIT = [
@@ -900,6 +921,14 @@ Comandos disponíveis:
                       docs/planos/<nome>/ -> docs/planos/a-fazer/<nome>/. 'iniciar-execucao
                       <caminho>' marca EM EXECUCAO de verdade e move -> docs/planos/fazendo/
                       (chamado automaticamente pelo 'orchestrate' no instante real do início).
+  livro <pasta-do-projeto> [--compilar] [--titulo <t>] [--autor <a>]
+                      Gera o livro-texto do projeto a partir dos artefatos reais da
+                      esteira (plano, contratos de passagem, autocritica, arvore em
+                      disco) e roda a trava de evidencia em seguida. Zero token de
+                      LLM: nada aqui e escrito por modelo. --compilar tambem produz
+                      o PDF (exige pandoc + typst, ou os pacotes pypandoc-binary e
+                      typst). Para a versao com texto explicativo, use a skill
+                      /aidd-livro-texto depois.
   audit               Executa o Meta-Quality Gate de Integridade
   harness status|clean
                       Monitora e executa higiene preventiva contra estouro de memória
@@ -961,6 +990,7 @@ def main():
         "orchestrate": cmd_orchestrate,
         "plan": cmd_plan,
         "melhoria": cmd_melhoria,
+        "livro": cmd_livro,
         "audit": cmd_audit,
         "harness": cmd_harness,
         "preflight-host": cmd_preflight_host,

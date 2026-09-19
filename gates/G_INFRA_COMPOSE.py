@@ -43,11 +43,28 @@ TEMPLATES_INFRA_DIR = os.path.join(AIDD_OPS_DIR, "templates", "infra")
 NICHOS_DIR = os.path.join(TEMPLATES_INFRA_DIR, "nichos")
 
 
+def localizar_checkov() -> List[str]:
+    """Monta o comando base do Checkov, preferindo o executável do PATH.
+
+    O Checkov vive em ambiente isolado desde 2026-09-19 (PLAN: destravar litellm):
+    ele exige `importlib-metadata<8` e o litellm sem vulnerabilidades exige `>=8`, o
+    que impedia os dois de coexistirem na mesma instalação. Por isso a busca tenta,
+    nesta ordem: executável no PATH (instalação isolada, ex.: ambiente próprio do
+    hook pre-commit ou pipx) e, só então, o módulo no Python corrente.
+
+    Retorna lista vazia quando o Checkov não está disponível de nenhuma das formas.
+    """
+    executavel = shutil.which("checkov") or shutil.which("checkov.cmd")
+    if executavel:
+        return [executavel]
+    if importlib.util.find_spec("checkov") is not None:
+        return [sys.executable, "-c", "from checkov.main import Checkov; Checkov().run()"]
+    return []
+
+
 def verificar_checkov_disponivel() -> bool:
-    """Verifica se o scanner Checkov está instalado no ambiente Python ou PATH."""
-    if shutil.which("checkov") or shutil.which("checkov.cmd"):
-        return True
-    return importlib.util.find_spec("checkov") is not None
+    """Verifica se o scanner Checkov está acessível (executável isolado ou módulo)."""
+    return bool(localizar_checkov())
 
 
 def verificar_docker_disponivel() -> bool:
@@ -65,10 +82,11 @@ def executar_scan_checkov(arquivos_compose: List[str]) -> Tuple[bool, List[str]]
     if not arquivos_compose:
         return True, erros
 
-    cmd = [
-        sys.executable,
-        "-c",
-        "from checkov.main import Checkov; Checkov().run()",
+    base = localizar_checkov()
+    if not base:
+        return False, ["Checkov indisponivel (nem executavel no PATH, nem modulo Python)"]
+
+    cmd = base + [
         "--framework",
         "secrets",
         "--output",
