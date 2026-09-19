@@ -46,6 +46,11 @@ class TestGHadolint(unittest.TestCase):
             self.assertNotEqual(code, 0)
             self.assertTrue(any(a.get("code") == "DL3025" for a in achados))
 
+            # Prova que o gate completo reprova (exit 1)
+            codigo_gate = gate.escanear([df_invalido])
+            self.assertEqual(codigo_gate, 1)
+
+
     def test_dockerfile_valido_aprova(self):
         """Um Dockerfile bem construído deve ser 100% aprovado pelo hadolint."""
         hadolint_bin = gate.encontrar_binario_hadolint()

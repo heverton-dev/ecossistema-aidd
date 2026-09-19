@@ -30,9 +30,15 @@ class TestGEscritorAtomico:
         )
         assert "SUCESSO" in resultado.stdout or "Total violações:      0" in resultado.stdout
 
-    def test_gate_detecta_violacao(self, tmp_path):
-        """O gate deve detectar open('w') direto em arquivo crítico."""
-        # Criar um arquivo que simula uma violação
+    def test_gate_detecta_violacao(self, tmp_path, monkeypatch):
+        """Lei #13: Prova que o gate morde (exit 1) se houver open('w') direto em arquivo crítico."""
+        import importlib.util
+
+        spec = importlib.util.spec_from_file_location("g_escritor_atomico", GATE_PATH)
+        modulo = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(modulo)
+
+        # Simula arquivo crítico com violação direta dentro de tmp_path
         violacao_dir = tmp_path / "componentes" / "compartilhado" / "src-core"
         violacao_dir.mkdir(parents=True)
         violacao_file = violacao_dir / "materializador.py"
@@ -44,7 +50,9 @@ class TestGEscritorAtomico:
             encoding="utf-8",
         )
 
-        # O gate deve detectar a violação
-        # Nota: este teste é um smoke test — o gate real aponta para o repo real
-        # Aqui verificamos que o gate existe e é executável
-        assert os.path.isfile(GATE_PATH)
+        monkeypatch.setattr(modulo, "ROOT_DIR", str(tmp_path))
+        monkeypatch.setattr(modulo, "ARQUIVOS_CRITICOS", ["componentes/compartilhado/src-core/materializador.py"])
+
+        exit_code = modulo.executar()
+        assert exit_code == 1
+

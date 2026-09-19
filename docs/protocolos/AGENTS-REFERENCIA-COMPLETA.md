@@ -114,7 +114,10 @@ O ecossistema dispõe de Quality Gates globais em gates/:
 - gates/G_LIVRO_EVIDENCIA.py: Audita o livro-texto gerado para um projeto (etapa 8a dos fluxos) — manifesto válido, rastreabilidade presente em toda parte de conteúdo, todo arquivo citado como fonte existente em disco, zero marcador de trabalho inacabado, procedência dos artefatos lidos e declaração explícita dos ausentes. Roda via `python ecossistema.py livro <pasta>` ou `python gates/G_LIVRO_EVIDENCIA.py --projeto <pasta>`.
 - gates/G_ORQUESTRADOR_SINCRONO.py: Audita a integridade do orquestrador síncrono da Tríade Canônica (aidd-pure, aidd-open, aidd-bridge), CLI ecossistema.py run-fluxo e conformidade com schemas formais de handoff.
 - gates/G_DOCS_ROT.py: Audita deterministicamente a documentação ativa, prevenindo docs rot, links quebrados e planos soltos fora dos buckets canônicos.
+- gates/G_PORTAO_PROVA_QUE_MORDE.py: Meta-Quality Gate que audita e bloqueia qualquer gate novo ou modificado entregue sem teste automatizado que prove que ele reprova (exit 1 per Lei #13).
+
 - **Execução unificada:** `python ecossistema.py audit` delega para `pre-commit run --all-files`.
+
 
 **Nota (G_SEGREDOS):** movido para `stages: [manual]` em 2026-09-08, decisão explícita do usuário. Causa: inconsistência reproduzida entre `python gates/G_SEGREDOS.py` direto (aprovava) e o mesmo via hook pre-commit (reprovava), causa raiz não encontrada. Roda sob demanda: `pre-commit run --hook-stage manual g-segredos --all-files`.
 

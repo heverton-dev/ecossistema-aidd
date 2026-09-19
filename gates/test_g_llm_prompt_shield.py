@@ -3,9 +3,13 @@ import os
 import pytest
 
 ROOT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+if ROOT_DIR not in sys.path:
+    sys.path.insert(0, ROOT_DIR)
 sys.path.insert(0, os.path.join(ROOT_DIR, "componentes", "compartilhado", "src-core"))
 from security import PromptShield
+import gates.G_LLM_PROMPT_SHIELD as gate
 from gates.G_LLM_PROMPT_SHIELD import auditar_arquivo, scan_prompt_shield, main
+
 
 
 def test_prompt_shield_inspect_detecta_injecao():
@@ -64,3 +68,26 @@ def responder(prompt_usuario):
 
     erros = auditar_arquivo(str(arquivo_teste))
     assert erros == []
+
+
+def test_gate_reprova_com_chamada_llm_insegura(tmp_path, monkeypatch):
+    """Lei #13: Prova que o gate morde (exit 1) se houver chamada LLM desprotegida."""
+    tools_dir = tmp_path / "tools" / "servico_teste"
+    tools_dir.mkdir(parents=True)
+    vuln_file = tools_dir / "chamada_insegura.py"
+    vuln_file.write_text(
+        "def chamar(p):\n"
+        "    import client\n"
+        "    return client.generate_content(p)\n",
+        encoding="utf-8"
+    )
+
+    monkeypatch.setattr(gate, "ROOT_DIR", str(tmp_path))
+    codigo = gate.main()
+    assert codigo == 1
+
+
+def test_gate_aprova_estado_atual():
+    """Valida que no repositório real todas as chamadas LLM usam PromptShield (exit 0)."""
+    assert gate.main() == 0
+

@@ -747,7 +747,9 @@ _GATES_AUDIT = [
     "G_DRIFT_ANALYZER.py",
     "G_PROTOTYPE_REWRITE.py",
     "G_DOCS_ROT.py",
+    "G_PORTAO_PROVA_QUE_MORDE.py",
 ]
+
 
 def _audit_gates_legado(args):
     for gate in _GATES_AUDIT:

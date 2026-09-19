@@ -62,3 +62,22 @@ def test_hook_com_fetch_fora_de_ui_passa():
         
         violacoes = audit_frontend_file(hook_file)
         assert len(violacoes) == 0
+
+
+def test_gate_reprova_com_violacao_de_camada(tmp_path, monkeypatch):
+    """Lei #13: Prova que o gate morde (exit 1) quando há chamada de rede em components/ui/."""
+    ui_dir = tmp_path / "tools" / "components" / "ui"
+    ui_dir.mkdir(parents=True)
+    card_file = ui_dir / "Card.tsx"
+    card_file.write_text(
+        "export const Card = () => { fetch('/api/leak'); return <div>Card</div>; };\n",
+        encoding="utf-8"
+    )
+
+    monkeypatch.setattr(gate, "ROOT_DIR", str(tmp_path))
+    import pytest
+    with pytest.raises(SystemExit) as excinfo:
+        gate.main()
+    assert excinfo.value.code == 1
+
+

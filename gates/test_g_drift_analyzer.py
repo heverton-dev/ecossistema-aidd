@@ -5,10 +5,17 @@ Testes unitários para G_DRIFT_ANALYZER
 
 import os
 import shutil
+import subprocess
+import sys
 import tempfile
 import pytest
 
-from gates.G_DRIFT_ANALYZER import analyze_slice_drift
+ROOT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+if ROOT_DIR not in sys.path:
+    sys.path.insert(0, ROOT_DIR)
+
+from gates.G_DRIFT_ANALYZER import analyze_slice_drift, main
+
 
 
 @pytest.fixture
@@ -82,3 +89,28 @@ def test_same_slice_function_duplicate_is_not_cross_slice(temp_project):
     duplicates = analyze_slice_drift(str(temp_project))
     # Duplicação interna na mesma fatia não é drift inter-fatias
     assert duplicates == []
+
+
+def test_gate_reprova_com_drift_duplicado_em_modo_estrito(temp_project):
+    """Lei #13: Prova que o gate morde (exit 1) quando há drift e invocado em modo --strict."""
+    features = temp_project / "src" / "features"
+    slice1 = features / "auth"
+    slice2 = features / "billing"
+    slice1.mkdir(parents=True)
+    slice2.mkdir(parents=True)
+
+    code_duplicate = (
+        "def sanitize_string(val: str) -> str:\n"
+        "    clean = val.strip().lower()\n"
+        "    return clean\n"
+    )
+
+    (slice1 / "utils.py").write_text(code_duplicate, encoding="utf-8")
+    (slice2 / "helpers.py").write_text(code_duplicate, encoding="utf-8")
+
+    gate_script = os.path.join(ROOT_DIR, "gates", "G_DRIFT_ANALYZER.py")
+    cmd = [sys.executable, gate_script, "--target", str(temp_project), "--strict"]
+    res = subprocess.run(cmd, capture_output=True, text=True)
+    assert res.returncode == 1
+    assert "Detectadas 1 duplicidade(s) estrutural(is) inter-fatias" in res.stdout
+

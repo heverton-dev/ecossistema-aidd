@@ -4,11 +4,20 @@ Testes unitários para G_PROTOTYPE_REWRITE
 """
 
 import os
+import subprocess
+import sys
 import pytest
+
+ROOT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+if ROOT_DIR not in sys.path:
+    sys.path.insert(0, ROOT_DIR)
+
 from gates.G_PROTOTYPE_REWRITE import (
     verificar_imports_sandbox,
     verificar_promocao_sem_testes,
+    main,
 )
+
 
 
 def test_no_src_dir_returns_no_violations(tmp_path):
@@ -66,3 +75,25 @@ def test_prototype_promoted_with_tests_passes(tmp_path):
 
     sem_testes = verificar_promocao_sem_testes(str(tmp_path))
     assert sem_testes == []
+
+
+def test_gate_reprova_com_import_sandbox_sob_src(tmp_path):
+    """Lei #13: Prova que o gate morde (exit 1) quando código sob src/ importa sandbox."""
+    src = tmp_path / "src"
+    src.mkdir()
+    (src / "leak.py").write_text("import sandbox.poc\n", encoding="utf-8")
+
+    gate_script = os.path.join(ROOT_DIR, "gates", "G_PROTOTYPE_REWRITE.py")
+    cmd = [sys.executable, gate_script, "--target", str(tmp_path)]
+    res = subprocess.run(cmd, capture_output=True, text=True)
+    assert res.returncode == 1
+    assert "Quality Gate G_PROTOTYPE_REWRITE REPROVADO" in res.stdout
+
+
+def test_gate_aprova_estado_atual():
+    """Valida que o estado atual do repositório é limpo (exit 0)."""
+    gate_script = os.path.join(ROOT_DIR, "gates", "G_PROTOTYPE_REWRITE.py")
+    cmd = [sys.executable, gate_script, "--target", ROOT_DIR]
+    res = subprocess.run(cmd, capture_output=True, text=True)
+    assert res.returncode == 0
+

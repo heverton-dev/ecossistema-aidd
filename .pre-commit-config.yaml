@@ -245,3 +245,11 @@ repos:
         stages: [manual]
         pass_filenames: false
         require_serial: true
+
+      - id: g-portao-prova-que-morde
+        name: "G_PORTAO_PROVA_QUE_MORDE (meta-gate: bloqueia gates sem teste de reprovação exit 1)"
+        entry: python gates/G_PORTAO_PROVA_QUE_MORDE.py
+        language: system
+        always_run: true
+        pass_filenames: false
+        require_serial: true

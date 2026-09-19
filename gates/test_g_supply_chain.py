@@ -4,15 +4,24 @@ Testes unitários determinísticos para o Quality Gate G_SUPPLY_CHAIN.
 """
 
 import os
+import sys
 import tempfile
 import unittest
+from unittest.mock import patch
 
+ROOT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+if ROOT_DIR not in sys.path:
+    sys.path.insert(0, ROOT_DIR)
+
+import gates.G_SUPPLY_CHAIN as gate
 from gates.G_SUPPLY_CHAIN import (
     PACOTES_PROIBIDOS_SUPPLY_CHAIN,
     VULNERABILIDADES_CONHECIDAS,
     audit_offline_supply_chain,
     parse_requirements_file,
+    main,
 )
+
 
 
 class TestGSupplyChain(unittest.TestCase):
@@ -64,6 +73,25 @@ class TestGSupplyChain(unittest.TestCase):
 
             erros = audit_offline_supply_chain(tmpdir)
             self.assertEqual(erros, [])
+
+    def test_gate_main_reprova_com_pacote_proibido(self):
+        """Lei #13: Prova que o gate morde (exit 1) se houver pacote proibido em requirements.txt."""
+        with tempfile.TemporaryDirectory() as tmpdir:
+            req_path = os.path.join(tmpdir, "requirements.txt")
+            with open(req_path, "w", encoding="utf-8") as f:
+                f.write("colorama-v2==0.1.0\n")
+
+            with patch.object(gate, "ROOT_DIR", tmpdir):
+                with patch.object(gate, "audit_with_pip_audit", return_value=(True, [])):
+                    codigo = gate.main()
+                    self.assertEqual(codigo, 1)
+
+    def test_gate_main_aprova_estado_atual(self):
+        """Valida que o estado do repositório é aprovado (exit 0)."""
+        with patch.object(gate, "audit_with_pip_audit", return_value=(True, [])):
+            codigo = gate.main()
+            self.assertEqual(codigo, 0)
+
 
 
 if __name__ == "__main__":

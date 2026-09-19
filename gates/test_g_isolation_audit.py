@@ -9,11 +9,18 @@ import sys
 import tempfile
 import pytest
 
+ROOT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+if ROOT_DIR not in sys.path:
+    sys.path.insert(0, ROOT_DIR)
+
+import gates.G_ISOLATION_AUDIT as gate
 from gates.G_ISOLATION_AUDIT import (
     extrair_modulo_e_fatia,
     analisar_imports_arquivo,
     scan_isolation_violations,
+    main,
 )
+
 
 
 def test_extrair_modulo_e_fatia():
@@ -80,3 +87,24 @@ def test_scan_isolation_violations_end_to_end(tmp_path):
     assert len(violacoes) == 1
     assert violacoes[0]["fatia_origem"] == "slice_b"
     assert violacoes[0]["fatia_alvo"] == "slice_a"
+
+
+def test_gate_reprova_com_cross_slice_import(tmp_path, monkeypatch):
+    """Lei #13: Prova que o gate morde (exit 1) se houver import direto entre fatias."""
+    slice_a = tmp_path / "tools" / "src" / "features" / "slice_a"
+    slice_b = tmp_path / "tools" / "src" / "features" / "slice_b"
+    slice_a.mkdir(parents=True)
+    slice_b.mkdir(parents=True)
+
+    (slice_a / "service.py").write_text("def consultar(): pass\n", encoding="utf-8")
+    (slice_b / "router.py").write_text("from src.features.slice_a.service import consultar\n", encoding="utf-8")
+
+    monkeypatch.setattr(gate, "ROOT_DIR", str(tmp_path))
+    codigo = main()
+    assert codigo == 1
+
+
+def test_gate_aprova_estado_atual():
+    """Valida que o estado real do repositório está limpo (exit 0)."""
+    assert main() == 0
+

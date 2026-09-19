@@ -1,9 +1,10 @@
 ---
 id: ISSUE-0011
 title: Todo portão precisa de um teste que prove que ele reprova
-status: in-progress (escopos 1 e 2 concluidos; 3 e 4 para sessao 2)
+status: closed
 blocked_by: []
 created: 2026-09-19
+closed: 2026-09-19
 source: open-decision sweep 2026-09-19 — enforcement gap analysis
 ---
 
@@ -17,18 +18,13 @@ are decoration. This ticket finds them and fixes them.
 
 ## Verified this session
 
-**8 of 26 gates have no test at all:**
+**Todos os 26 gates em gates/ possuem teste de reprovação real (exit 1) comprovado:**
 
-| Gate | Lines | Status Teste Reprovação (Exit 1) |
+| Grupo | Quantidade | Status |
 |---|---|---|
-| `G_ZERO_HEADLESS` | 37 | Entregue (`gates/test_g_zero_headless.py`) + Claim rebaixado per Lei #8 |
-| `G_TESTES_REAIS` | 283 | Entregue (`gates/test_g_testes_reais.py`) |
-| `G_UNIVERSAL_HARNESS` | 125 | Entregue (`gates/test_g_universal_harness.py`) + Hook registrado |
-| `G_HARNESS_COMPAT` | 147 | Entregue (`gates/test_g_harness_compat.py`) |
-| `G_COMPONENTE_AGNOSTICO` | 176 | Entregue (`gates/test_g_componente_agnostico.py`) |
-| `G_LIVRO_EVIDENCIA` | 245 | Entregue (`gates/test_g_livro_evidencia.py`) + Hook registrado |
-| `G_DRIFT_NUCLEO_COMPARTILHADO` | 266 | Entregue (`gates/test_g_drift_nucleo_compartilhado.py`) |
-| `G_ARQUITETURA_DELIVERABLE` | 542 | Entregue (`gates/test_g_arquitetura_deliverable.py`) |
+| Gates sem teste inicial (Escopo 2) | 8 | 100% com teste de reprovação (exit 1) comprovado |
+| Gates com testes auditados (Escopo 3) | 18 | 100% com teste de reprovação (exit 1) comprovado |
+| Meta-Gate de Autoria (Escopo 4) | 1 (`G_PORTAO_PROVA_QUE_MORDE.py`) | 100% ativo, testado (`test_g_portao_prova_que_morde.py`), integrado ao pre-commit e `ecossistema.py` |
 
 ## Scope
 
@@ -37,15 +33,19 @@ are decoration. This ticket finds them and fixes them.
    - Entregue em `docs/protocolos/CONVENCAO-AUTORIA-GATES.md`, `AGENTS.md` (Lei #13) e `docs/protocolos/AGENTS-REFERENCIA-COMPLETA.md`.
 2. [x] Apply to the 8 gates above. Start with `G_ZERO_HEADLESS` and `G_TESTES_REAIS`.
    - Entregue com reprodução real via hooks e suíte pytest dedicada.
-3. [ ] Audit the 18 gates that **do** have tests: confirm each exercises the failing
-   path. A test asserting only exit 0 carries the same defect, just hidden. (Sessão 2)
-4. [ ] Add a meta-gate enforcing rule 1 on any new gate. (Sessão 2)
+3. [x] Audit the 18 gates that **do** have tests: confirm each exercises the failing
+   path. A test asserting only exit 0 carries the same defect, just hidden. (Entregue na Sessão 2)
+   - Diagnosticados 10 gates com gaps de teste de reprovação ponta a ponta (eram puramente unitários ou assertavam exit 0) e 1 teste falso com asserção inútil (`G_ESCRITOR_ATOMICO` assertava `os.path.isfile`).
+   - Todos os 10 testes foram atualizados com asserções estritas de reprovação (`exit 1` / `code == 1` / `returncode == 1`).
+4. [x] Add a meta-gate enforcing rule 1 on any new gate. (Entregue na Sessão 2)
+   - Entregue `gates/G_PORTAO_PROVA_QUE_MORDE.py`, `gates/test_g_portao_prova_que_morde.py`, hook `g-portao-prova-que-morde` no `.pre-commit-config.yaml` e lista `_GATES_AUDIT` em `ecossistema.py`.
 
 ## Acceptance criteria
 
 - [x] Rule written into the project gate-authoring convention (`docs/protocolos/CONVENCAO-AUTORIA-GATES.md`).
 - [x] Each of the 8 untested gates has a test that breaks the guarded condition and asserts exit 1.
-- [ ] The 18 existing gate tests audited for a real failing-path assertion; gaps listed. (Sessão 2)
+- [x] The 18 existing gate tests audited for a real failing-path assertion; gaps listed and corrigidos.
 - [x] Every gate found unable to fail is recorded as a facade with its claim downgraded — never left asserting coverage it lacks (`G_ZERO_HEADLESS`).
-- [ ] Meta-gate blocks any new gate shipped without a failing-path test. (Sessão 2)
+- [x] Meta-gate blocks any new gate shipped without a failing-path test (`gates/G_PORTAO_PROVA_QUE_MORDE.py`).
 - [x] `G_ZERO_HEADLESS` output stops claiming "zero risco" beyond what it actually tests.
+

@@ -125,3 +125,20 @@ def test_arquivos_reais_do_ecossistema_sem_falso_positivo():
 
 def test_gate_completo_aprova_estado_atual():
     assert gate.checar() == 0
+
+
+def test_gate_reprova_com_flag_inconsistente(tmp_path, monkeypatch):
+    """Lei #13: Prova que o gate morde (exit 1) se houver flag inconsistente."""
+    arquivo_violador = tmp_path / "fake_cli_errado.py"
+    arquivo_violador.write_text(
+        "import argparse\n"
+        "parser = argparse.ArgumentParser()\n"
+        "parser.add_argument('--porta')\n"
+        "def run():\n"
+        "    print('Erro: defina --host para conectar')\n",
+        encoding="utf-8"
+    )
+    caminho_rel = os.path.relpath(str(arquivo_violador), gate.ROOT_DIR)
+    monkeypatch.setattr(gate, "ARQUIVOS_AUDITADOS", [caminho_rel])
+    assert gate.checar() == 1
+

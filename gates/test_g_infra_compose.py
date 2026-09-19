@@ -137,7 +137,30 @@ services:
         codigo = gate.auditar()
         self.assertEqual(codigo, 0)
 
+    def test_gate_reprova_com_colisao_de_portas_no_compose(self):
+        """Lei #13: Prova que o gate morde (exit 1) quando há colisão de portas no docker-compose."""
+        with tempfile.TemporaryDirectory() as tmpdir:
+            compose_file = os.path.join(tmpdir, "docker-compose.yml")
+            with open(compose_file, "w", encoding="utf-8") as f:
+                f.write(
+                    "services:\n"
+                    "  srv1:\n"
+                    "    image: nginx\n"
+                    "    ports:\n"
+                    "      - '8080:80'\n"
+                    "  srv2:\n"
+                    "    image: httpd\n"
+                    "    ports:\n"
+                    "      - '8080:80'\n"
+                )
+            with patch.object(gate, "AIDD_OPS_DIR", tmpdir):
+                with patch.object(gate, "executar_scan_checkov", return_value=(True, [])):
+                    with patch("sys.stdout"):
+                        codigo = gate.auditar()
+                        self.assertEqual(codigo, 1)
+
 
 if __name__ == "__main__":
+
     unittest.main()
 

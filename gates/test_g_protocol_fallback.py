@@ -6,9 +6,13 @@ import os
 import subprocess
 import sys
 import tempfile
-import pytest
+ROOT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+if ROOT_DIR not in sys.path:
+    sys.path.insert(0, ROOT_DIR)
 
+import gates.G_PROTOCOL_FALLBACK as gate
 from gates.G_PROTOCOL_FALLBACK import verificar_paridade_contratos, scan_protocol_fallbacks, main
+
 
 
 def test_paridade_contratos_sucesso(tmp_path):
@@ -95,3 +99,24 @@ def test_scan_protocol_fallbacks_ignora_pastas_especiais(tmp_path):
 
     erros = scan_protocol_fallbacks(str(tmp_path))
     assert erros == []
+
+
+def test_gate_reprova_com_tool_orfa(tmp_path, monkeypatch):
+    """Lei #13: Prova que o gate morde (exit 1) se houver tool MCP sem correspondente REST."""
+    deliverable_dir = tmp_path / "tools" / "app_teste"
+    deliverable_dir.mkdir(parents=True)
+
+    swagger_file = deliverable_dir / "swagger_spec.json"
+    mcp_file = deliverable_dir / "mcp_studio.json"
+
+    swagger_file.write_text(json.dumps({"paths": {}}), encoding="utf-8")
+    mcp_file.write_text(json.dumps({"tools": [{"name": "tool_secreta_sem_rest"}]}), encoding="utf-8")
+
+    monkeypatch.setattr(gate, "ROOT_DIR", str(tmp_path))
+    assert gate.main() == 1
+
+
+def test_gate_aprova_estado_atual():
+    """Valida que o estado atual do repositório cumpre a paridade e passa (exit 0)."""
+    assert gate.main() == 0
+
