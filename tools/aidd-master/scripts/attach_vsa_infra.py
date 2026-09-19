@@ -65,7 +65,22 @@ def merge_backend_service_into_compose(project_dir: str) -> str:
     return compose_path
 
 
-QUARTETO_PATHS = ["/docs*", "/webhooks*", "/mcp*", "/metrics*", "/openapi.json", "/health"]
+QUARTETO_PATHS = [
+    "/docs*",
+    "/webhooks*",
+    "/mcp*",
+    "/metrics*",
+    "/openapi.json",
+    "/health",
+    # Achado real (Playwright contra a stack real): docs.html referencia
+    # /static/output.css e webhook_studio.html chama fetch('/api/webhooks*')
+    # -- sem essas duas rotas, ambas caiam no catch-all do frontend (Vite),
+    # que devolve seu proprio index.html (nao CSS, nao JSON), quebrando os
+    # 3 Estudios nativos (icones gigantes sem CSS, "SyntaxError: Unexpected
+    # token '<'" ao tentar fazer .json() de uma pagina HTML).
+    "/static/*",
+    "/api/*",
+]
 
 
 def _quarteto_handle_blocks() -> str:

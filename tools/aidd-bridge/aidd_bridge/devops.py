@@ -29,6 +29,9 @@ class DevOpsPackager:
         jwt_secret: Optional[str] = None,
         db_password: Optional[str] = None,
         stack: str = "lite",
+        ssr_framework: Optional[str] = None,
+        package_manager: str = "npm",
+        post_auth_migrations: bool = False,
     ):
         if stack not in ("lite", "full"):
             raise ValueError(f'stack deve ser "lite" ou "full", recebido: {stack!r}')
@@ -40,6 +43,15 @@ class DevOpsPackager:
         self.jwt = JWTGenerator(jwt_secret=jwt_secret) if jwt_secret else JWTGenerator.novo()
         self.stack = stack
         self.functions = self._detect_edge_functions()
+        # ssr_framework=None (padrao): SPA estatica, Nginx serve na porta 80.
+        # ssr_framework="tanstack-start" (ou outro app com servidor SSR
+        # embutido): roda um processo Node de verdade, escutando na porta
+        # que o proprio Nitro usa por padrao (3000) -- Nginx nao serve pra
+        # nada aqui, so o proxy do Caddy/Traefik na frente do processo Node.
+        self.ssr_framework = ssr_framework
+        self.package_manager = package_manager
+        self.post_auth_migrations = post_auth_migrations
+        self.web_port = 3000 if ssr_framework else 80
 
     def _detect_edge_functions(self) -> "list[str]":
         """
@@ -60,6 +72,8 @@ class DevOpsPackager:
         return functions
 
     def generate_dockerfile(self) -> str:
+        if self.ssr_framework:
+            return self.generate_dockerfile_ssr_node()
         return """# Multi-stage build para SPA Lovable/Vite
 FROM node:20-alpine AS builder
 WORKDIR /app
@@ -80,6 +94,70 @@ COPY nginx.conf /etc/nginx/conf.d/default.conf
 
 EXPOSE 80
 CMD ["nginx", "-g", "daemon off;"]
+"""
+
+    def generate_dockerfile_ssr_node(self) -> str:
+        """
+        Multi-stage build para apps com servidor SSR embutido (Nitro/TanStack
+        Start e equivalentes). Achado real (projeto Lovable "conexao-linktree"):
+        esses apps vem por padrao configurados pro preset Nitro "cloudflare"
+        (rodam so como Cloudflare Worker) -- NITRO_PRESET=node-server na hora
+        do build troca o alvo pra um processo Node comum e autonomo, sem
+        depender de nenhuma plataforma serverless proprietaria. O Nginx nao
+        entra aqui: quem serve tudo (paginas + API) e o proprio processo Node.
+        """
+        if self.package_manager == "bun":
+            builder_from = "oven/bun:1-alpine"
+            install_lines = "RUN bun install --frozen-lockfile"
+            build_lines = "RUN NITRO_PRESET=node-server bun run build"
+        elif self.package_manager == "pnpm":
+            builder_from = "node:20-alpine"
+            install_lines = "RUN corepack enable\nRUN pnpm install --frozen-lockfile"
+            build_lines = "RUN NITRO_PRESET=node-server pnpm run build"
+        elif self.package_manager == "yarn":
+            builder_from = "node:20-alpine"
+            install_lines = "RUN yarn install --frozen-lockfile"
+            build_lines = "RUN NITRO_PRESET=node-server yarn build"
+        else:
+            builder_from = "node:20-alpine"
+            install_lines = "RUN npm ci --prefer-offline || npm install"
+            build_lines = "RUN NITRO_PRESET=node-server npm run build"
+
+        return f"""# Multi-stage build para app SSR (servidor embutido) Lovable -- liberado
+# do preset de nuvem proprietaria (ex: Cloudflare Workers) via
+# NITRO_PRESET=node-server, empacotado como processo Node comum.
+FROM {builder_from} AS builder
+WORKDIR /app
+
+# COPY . . antes do install (em vez de so package*.json) de proposito: o
+# lockfile de cada gerenciador tem nome diferente (bun.lock, bun.lockb,
+# pnpm-lock.yaml, yarn.lock, package-lock.json) e "--frozen-lockfile" exige
+# ele presente -- copiar so package.json quebrava o install por faltar o
+# lockfile no contexto. Perde um pouco de cache de camada Docker, ganha
+# build que funciona de verdade com qualquer gerenciador.
+COPY . .
+{install_lines}
+
+# .env.production deve existir no diretorio antes do build: contem
+# VITE_SUPABASE_URL e VITE_SUPABASE_PUBLISHABLE_KEY (build-time) gerados
+# automaticamente por aidd-bridge (generate_env_production)
+{build_lines}
+
+# Estagio de Producao -- Node puro executando o bundle Nitro (node-server).
+# node:22 (nao 20): achado real rodando o container -- @supabase/supabase-js
+# avisa que Node 20 esta deprecated e sera removido em versao futura.
+FROM node:22-alpine
+RUN addgroup -g 10001 aiddgroup && adduser -D -u 10001 -G aiddgroup aidduser
+WORKDIR /app
+COPY --from=builder --chown=aidduser:aiddgroup /app/.output /app/.output
+
+ENV NODE_ENV=production \\
+    PORT={self.web_port} \\
+    HOST=0.0.0.0
+
+USER 10001:10001
+EXPOSE {self.web_port}
+CMD ["node", ".output/server/index.mjs"]
 """
 
     def generate_nginx_conf(self) -> str:
@@ -122,6 +200,76 @@ CMD ["nginx", "-g", "daemon off;"]
         jwt_secret = self.jwt.jwt_secret
         anon_key = self.jwt.anon_key()
         service_key = self.jwt.service_role_key()
+        protocol = "https" if self.domain != "localhost" else "http"
+
+        # stack="full": GoTrue real tambem no ambiente LOCAL (docker-compose.yml
+        # nao-swarm), nao so no pacote de VPS -- achado real (projeto Lovable de
+        # producao "conexao-linktree"): sem isso nao dava pra testar o login de
+        # verdade em lugar nenhum antes de subir numa VPS de verdade. GoTrue cria
+        # seu proprio schema auth.* ao conectar (funciona com qualquer Postgres
+        # comum, nao precisa da imagem oficial supabase/postgres).
+        auth_block = ""
+        auth_depends = ""
+        if self.stack == "full":
+            auth_depends = '\n      - "auth"'
+            auth_block = f"""
+  auth:
+    image: "{self.FULL_STACK_IMAGES['auth']}"
+    container_name: "aidd_gotrue_auth"
+    restart: "unless-stopped"
+    environment:
+      GOTRUE_API_HOST: "0.0.0.0"
+      GOTRUE_API_PORT: "9999"
+      API_EXTERNAL_URL: "{protocol}://{self.domain}/auth/v1"
+      GOTRUE_SITE_URL: "{protocol}://{self.domain}"
+      GOTRUE_DB_DRIVER: "postgres"
+      GOTRUE_DB_DATABASE_URL: "postgres://postgres:{db_password}@db:5432/app_db?search_path=auth,public"
+      GOTRUE_JWT_SECRET: "{jwt_secret}"
+      GOTRUE_JWT_EXP: "3600"
+      GOTRUE_JWT_DEFAULT_GROUP_NAME: "authenticated"
+      # Sem isso, GOTRUE_JWT_AUD fica "" (vazio) e o GoTrue busca o usuario
+      # com "WHERE aud = ''" -- nenhuma linha real bate (aud sempre
+      # "authenticated" por convencao), login sempre "invalid_credentials"
+      # mesmo com senha certa. Achado real testando login de verdade
+      # (projeto Lovable de producao "conexao-linktree").
+      GOTRUE_JWT_AUD: "authenticated"
+      GOTRUE_DISABLE_SIGNUP: "false"
+      GOTRUE_MAILER_AUTOCONFIRM: "true"
+      GOTRUE_SMS_AUTOCONFIRM: "true"
+      GOTRUE_OPERATOR_TOKEN: "{service_key}"
+    depends_on:
+      - "db"
+    expose:
+      - "9999"
+"""
+            if self.post_auth_migrations:
+                # Roda so DEPOIS que auth.users existir de verdade (o proprio
+                # GoTrue cria essa tabela ao subir) -- poll simples com psql
+                # em vez de depender de healthcheck; a imagem "postgres:16-alpine"
+                # ja tem o cliente psql pronto, sem instalar nada a mais. Job
+                # de uma vez so (restart: "no"): ninguem mais depende dele.
+                auth_block += f"""
+  migrator:
+    image: "postgres:16-alpine"
+    container_name: "aidd_post_auth_migrator"
+    restart: "no"
+    environment:
+      PGPASSWORD: "{db_password}"
+    volumes:
+      - "./post-auth-migrations.sql:/post-auth-migrations.sql:ro"
+    depends_on:
+      - "db"
+      - "auth"
+    entrypoint:
+      - "sh"
+      - "-c"
+      - >
+        until psql -h db -U postgres -d app_db -c "SELECT 1 FROM auth.users LIMIT 1" >/dev/null 2>&1; do
+          echo '[migrator] aguardando GoTrue criar auth.users...'; sleep 2;
+        done;
+        echo '[migrator] auth.users pronto -- aplicando migracoes adiadas...';
+        psql -h db -U postgres -d app_db -f /post-auth-migrations.sql
+"""
         functions_block = ""
         functions_depends = ""
         if self.functions:
@@ -162,7 +310,7 @@ CMD ["nginx", "-g", "daemon off;"]
     depends_on:
       - "web"
       - "postgrest"
-      - "storage"{functions_depends}
+      - "storage"{auth_depends}{functions_depends}
 """
         return f"""version: '3.8'
 
@@ -174,7 +322,7 @@ services:
     container_name: "aidd_web_app"
     restart: "unless-stopped"
     expose:
-      - "80"
+      - "{self.web_port}"
 
   db:
     image: "postgres:16-alpine"
@@ -228,7 +376,7 @@ services:
       - "db"
     expose:
       - "5000"
-{functions_block}{domain_block}
+{auth_block}{functions_block}{domain_block}
 
 volumes:
   postgres_data:
@@ -316,7 +464,7 @@ services:
         - "traefik.http.routers.{app_slug}-web.priority=1"
         - "traefik.http.routers.{app_slug}-web.tls.certresolver={self.cert_resolver}"
         - "traefik.http.routers.{app_slug}-web.service={app_slug}-web"
-        - "traefik.http.services.{app_slug}-web.loadbalancer.server.port=80"
+        - "traefik.http.services.{app_slug}-web.loadbalancer.server.port={self.web_port}"
         - "traefik.http.services.{app_slug}-web.loadbalancer.passHostHeader=true"
 
   auth:
@@ -331,6 +479,12 @@ services:
       GOTRUE_JWT_SECRET: "{jwt_secret}"
       GOTRUE_JWT_EXP: "3600"
       GOTRUE_JWT_DEFAULT_GROUP_NAME: "authenticated"
+      # Sem isso, GOTRUE_JWT_AUD fica "" (vazio) e o GoTrue busca o usuario
+      # com "WHERE aud = ''" -- nenhuma linha real bate (aud sempre
+      # "authenticated" por convencao), login sempre "invalid_credentials"
+      # mesmo com senha certa. Achado real testando login de verdade
+      # (projeto Lovable de producao "conexao-linktree").
+      GOTRUE_JWT_AUD: "authenticated"
       GOTRUE_DISABLE_SIGNUP: "false"
       GOTRUE_MAILER_AUTOCONFIRM: "true"
       GOTRUE_SMS_AUTOCONFIRM: "true"
@@ -701,7 +855,7 @@ services:
         - "traefik.http.routers.{app_slug}-web.priority=1"
         - "traefik.http.routers.{app_slug}-web.tls.certresolver={self.cert_resolver}"
         - "traefik.http.routers.{app_slug}-web.service={app_slug}-web"
-        - "traefik.http.services.{app_slug}-web.loadbalancer.server.port=80"
+        - "traefik.http.services.{app_slug}-web.loadbalancer.server.port={self.web_port}"
         - "traefik.http.services.{app_slug}-web.loadbalancer.passHostHeader=true"
 
   kong:
@@ -750,6 +904,12 @@ services:
       GOTRUE_JWT_SECRET: "{jwt_secret}"
       GOTRUE_JWT_EXP: "3600"
       GOTRUE_JWT_DEFAULT_GROUP_NAME: "authenticated"
+      # Sem isso, GOTRUE_JWT_AUD fica "" (vazio) e o GoTrue busca o usuario
+      # com "WHERE aud = ''" -- nenhuma linha real bate (aud sempre
+      # "authenticated" por convencao), login sempre "invalid_credentials"
+      # mesmo com senha certa. Achado real testando login de verdade
+      # (projeto Lovable de producao "conexao-linktree").
+      GOTRUE_JWT_AUD: "authenticated"
       GOTRUE_DISABLE_SIGNUP: "false"
       GOTRUE_MAILER_AUTOCONFIRM: "true"
       GOTRUE_SMS_AUTOCONFIRM: "true"
@@ -843,6 +1003,16 @@ volumes:
         reverse_proxy functions:9000
     }
 """
+        # stack="full": GoTrue real tambem no ambiente local -- sem esta rota
+        # o login (supabase.auth.signInWithPassword) nunca alcanca o servico
+        # de auth, mesmo com o container "auth" rodando.
+        auth_handle = ""
+        if self.stack == "full":
+            auth_handle = """
+    handle_path /auth/v1/* {
+        reverse_proxy auth:9999
+    }
+"""
         if self.domain == "localhost":
             return f"""localhost {{
     # PostgREST real espera o caminho sem o prefixo /rest/v1 (ex: GET /tarefas),
@@ -854,9 +1024,9 @@ volumes:
     handle_path /storage/v1/* {{
         reverse_proxy storage:5000
     }}
-{functions_handle}
+{auth_handle}{functions_handle}
     handle {{
-        reverse_proxy web:80
+        reverse_proxy web:{self.web_port}
     }}
 }}
 """
@@ -870,16 +1040,24 @@ volumes:
     handle_path /storage/v1/* {{
         reverse_proxy storage:5000
     }}
-{functions_handle}
+{auth_handle}{functions_handle}
     # Frontend SPA
     handle {{
-        reverse_proxy web:80
+        reverse_proxy web:{self.web_port}
     }}
 }}
 """
 
     def generate_env_production(self) -> str:
-        protocol = "http" if self.domain == "localhost" else "https"
+        # Sempre HTTPS: o Caddyfile gerado (generate_caddyfile) ativa HTTPS
+        # automatico do proprio Caddy mesmo para "localhost" (certificado
+        # interno, com redirect automatico de http->https) -- achado real
+        # (Playwright contra a stack real): com protocol="http" aqui, o
+        # frontend chamava "http://localhost/rest/v1/..." enquanto a pagina
+        # rodava em "https://localhost", e o navegador bloqueava a chamada
+        # por CORS/protocolo cruzado (preflight recebe redirect, que o
+        # fetch() rejeita) -- lista de tarefas nunca carregava.
+        protocol = "https"
         anon_key = self.jwt.anon_key()
         return (
             "# Variáveis de Produção geradas por aidd-bridge\n"
@@ -956,12 +1134,18 @@ coverage
         targets = {
             ".dockerignore": dockerignore_content,
             "Dockerfile": self.generate_dockerfile(),
-            "nginx.conf": self.generate_nginx_conf(),
             "docker-compose.yml": self.generate_docker_compose(),
             "docker-compose.swarm.yml": self.generate_docker_compose_swarm(),
             "Caddyfile": self.generate_caddyfile(),
             ".env.production": self.generate_env_production()
         }
+
+        # nginx.conf so faz sentido pra SPA estatica (Nginx e quem serve os
+        # arquivos). Apps SSR rodam um processo Node de verdade que serve
+        # tudo sozinho -- gerar um nginx.conf orfao (nunca copiado por
+        # nenhum Dockerfile SSR) so confundiria quem for debugar o pacote.
+        if not self.ssr_framework:
+            targets["nginx.conf"] = self.generate_nginx_conf()
 
         if self.stack == "full":
             targets["kong.yml"] = self.generate_kong_config()

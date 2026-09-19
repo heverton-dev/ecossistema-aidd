@@ -239,6 +239,12 @@ def cmd_planner(args):
     cmd = [sys.executable, "-m", "src.cli"] + args
     return run_command(cmd, cwd=os.getcwd(), env=env)
 
+def cmd_run_fluxo(args):
+    script_path = os.path.join(ROOT_DIR, "scripts", "orquestrador_sincrono.py")
+    cmd = [sys.executable, script_path] + args
+    return run_command(cmd, cwd=os.getcwd())
+
+
 def cmd_components(args):
     sys.path.insert(0, os.path.join(ROOT_DIR, "scripts"))
     import gestor_componentes
@@ -881,6 +887,10 @@ Comandos disponíveis:
                       (detecta o package manager e instala com confirmacao
                       explicita; ferramentas portateis usam ~/.aidd/bin),
                       --dry-run para exibir os comandos sem executar nada.
+  run-fluxo --fluxo <1|2|3> --nome <n> --slug <s> --dominio <d> --pasta <p> [--origem <o>] [--dry-run]
+                      Executa de ponta a ponta a Tríade Canônica de forma síncrona:
+                      [FORGE -> PLANNER] -> {GENERATOR|FACTORY|BRIDGE} -> [MASTER -> ENTERPRISE -> OPS]
+                      com validação de contratos formais de handoff em cada etapa.
   status              Exibe o status do ecossistema e ferramentas integradas
   status --testes     Roda pytest real em cada ferramenta e atualiza
                       PLANO-EXECUCAO-ESTRUTURADO.json com a contagem medida
@@ -915,6 +925,7 @@ def main():
         "bridge": cmd_bridge,
         "factory": cmd_factory,
         "planner": cmd_planner,
+        "run-fluxo": cmd_run_fluxo,
         "components": cmd_components,
         "dependencia": cmd_dependencia,
         "orchestrate": cmd_orchestrate,

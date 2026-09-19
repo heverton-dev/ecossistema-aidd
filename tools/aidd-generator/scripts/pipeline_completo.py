@@ -658,6 +658,24 @@ def executar_pipeline(ideia: str, pasta_projeto: Path, nao_interativo: bool = Tr
     data_dir = cache_dir / 'data'
     total_fases = 8 if implementar_codigo else 7
 
+    # Handoff: integração determinística de PLANNER.json / HANDOFF_PLANNER_ENGINE.json
+    planner_json = pasta_projeto / 'PLANNER.json'
+    handoff_json = pasta_projeto / 'HANDOFF_PLANNER_ENGINE.json'
+    plano_fonte = handoff_json if handoff_json.exists() else (planner_json if planner_json.exists() else None)
+    if plano_fonte:
+        try:
+            with open(plano_fonte, 'r', encoding='utf-8') as f:
+                plano_dados = json.load(f)
+            meta = plano_dados.get('metadados_projeto') or plano_dados.get('metadados', {})
+            nome = meta.get('nome') or plano_dados.get('nome')
+            dominio = meta.get('dominio') or plano_dados.get('dominio')
+            desc = meta.get('descricao') or plano_dados.get('descricao')
+            if nome and dominio:
+                ideia = f"{nome} ({dominio}): {desc or ideia}"
+                print(f"[HANDOFF] Plano de arquitetura integrado com sucesso a partir de {plano_fonte.name}!")
+        except Exception as e:
+            print(f"[HANDOFF] Aviso ao ler plano integrado: {e}")
+
     # Orçamento de tokens por fase (Item 7)
     orcamentos = _carregar_orcamento_fases()
     pipeline_state_path = cache_dir / '_pipeline_state.json'

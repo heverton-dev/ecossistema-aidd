@@ -108,6 +108,35 @@ def test_provision_backend_only_usa_paleta_do_design_system_da_raiz(tmp_path):
     assert "#E11D48" in server_code, "server.py nao usou a paleta real do DESIGN-SYSTEM.json da raiz do projeto"
 
 
+def test_provision_backend_only_renderiza_docs_html_sem_placeholder_cru(tmp_path):
+    """Reproduz bug real (achado com Playwright de verdade no navegador):
+    /docs/guia servia o MOLDE cru de docs.html sem processar o Jinja2 --
+    o browser recebia `const SPOTLIGHT_COMMANDS = {{ spotlight_commands }};`
+    literal, o que e JS invalido (SyntaxError: Unexpected token '{'),
+    quebrando a pagina inteira. provision_backend_only() fazia so um
+    shutil.copyfile() do template cru, sem chamar generate_documentation_html()
+    (que o compose_suite.py, usado por outro fluxo, ja fazia corretamente)."""
+    from provision_project import provision_backend_only
+
+    project_dir = _cria_saida_bridge_falsa(tmp_path)
+    provision_backend_only(str(project_dir), "tarefas")
+
+    docs_html = (project_dir / "backend" / "src" / "static" / "docs.html").read_text(encoding="utf-8")
+    assert "{{ spotlight_commands }}" not in docs_html
+    assert "{{" not in docs_html and "}}" not in docs_html
+
+    import subprocess
+    import sys
+    import re
+
+    scripts = re.findall(r"<script[^>]*>(.*?)</script>", docs_html, re.S)
+    for script in scripts:
+        script_path = tmp_path / "_check.js"
+        script_path.write_text(script, encoding="utf-8")
+        resultado = subprocess.run(["node", "--check", str(script_path)], capture_output=True, text=True)
+        assert resultado.returncode == 0, f"JS invalido em docs.html: {resultado.stderr}"
+
+
 def test_provision_backend_only_server_py_importa_de_verdade(tmp_path):
     """Mesma disciplina do teste equivalente de provision(): nao basta o
     arquivo existir, ele precisa importar sem ModuleNotFoundError."""
@@ -151,7 +180,7 @@ def test_attach_infra_roteia_quarteto_no_caddyfile_antes_do_catchall(tmp_path):
     attach_infra(str(project_dir))
 
     caddyfile = (project_dir / "Caddyfile").read_text(encoding="utf-8")
-    for path in ["/docs*", "/webhooks*", "/mcp*", "/metrics*", "/openapi.json", "/health"]:
+    for path in ["/docs*", "/webhooks*", "/mcp*", "/metrics*", "/openapi.json", "/health", "/static/*", "/api/*"]:
         assert path in caddyfile, f"rota {path} nao foi mesclada no Caddyfile"
 
     # As rotas do Quarteto precisam vir ANTES do catch-all do frontend,

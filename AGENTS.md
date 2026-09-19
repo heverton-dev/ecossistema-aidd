@@ -35,14 +35,17 @@
 
 ## 3. The 3 Canonical Creation Flows (A Tríade Canônica)
 
-Every robust application in the ecosystem originates from **`aidd-forge`** (supreme governance and rule dictatorship) and an interactive **`PRÉ-PLANO`** intake, allowing the developer to derive 3 distinct specialized paths for the same project:
+Every robust application in the ecosystem originates from **`aidd-forge`** (supreme governance and rule dictatorship) and an interactive **`PRÉ-PLANO`** intake (`aidd-planner`), allowing the developer or user to derive 3 distinct specialized paths with zero friction (CLI or Slash Commands):
 
-- **FLUXO 01 (Do Zero Puro):** `FORGE -> PRÉ-PLANO -> GENERATOR -> MASTER -> ENTERPRISE -> OPS`
-  - Engine: `aidd-generator` (8-phase pipeline, TDD Red-Green, Monólito Modular VSA).
-- **FLUXO 02 (Motores Open-Source):** `FORGE -> PRÉ-PLANO -> FACTORY -> MASTER -> ENTERPRISE -> OPS`
+- **FLUXO 01 — `aidd-pure` (Do Zero Puro | Slash: `/pure`):** `[FORGE -> PLANNER] -> GENERATOR -> [MASTER -> ENTERPRISE -> OPS]`
+  - Engine: `aidd-generator` (8-phase pipeline, TDD Red-Green, Monólito Modular VSA + Next.js).
+  - CLI: `python ecossistema.py run-fluxo --fluxo pure`
+- **FLUXO 02 — `aidd-open` (Motores Open-Source | Slash: `/open`):** `[FORGE -> PLANNER] -> FACTORY -> [MASTER -> ENTERPRISE -> OPS]`
   - Engine: `aidd-factory` (Open-source engine curation, VSA integration slices, compose).
-- **FLUXO 03 (Low-Code / Apps Unificadas):** `FORGE -> PRÉ-PLANO -> BRIDGE -> MASTER -> ENTERPRISE -> OPS`
-  - Engine: `aidd-bridge` (Vendor lock-in eradication, Lovable/v0/Bolt cleanup, PostgreSQL).
+  - CLI: `python ecossistema.py run-fluxo --fluxo open`
+- **FLUXO 03 — `aidd-bridge` (Low-Code / Apps Unificadas | Slash: `/bridge`):** `[FORGE -> PLANNER] -> BRIDGE -> [MASTER -> ENTERPRISE -> OPS]`
+  - Engine: `aidd-bridge` (Vendor lock-in eradication, Lovable/v0/Bolt cleanup, PostgreSQL, UI preservation).
+  - CLI: `python ecossistema.py run-fluxo --fluxo bridge`
 
 **Universal Convergence Funnel:** All 3 flows mandatorily converge into `aidd-master` (Harmonização em Monólito Modular: VSA de domínio + camada horizontal compartilhada) -> `aidd-enterprise` (SHA-256 resilience and audit) -> `aidd-ops` (VPS deployment, sops+age, and Uptime Kuma), delivering the dynamic *Quarteto Sine Qua Non* (`/swagger`, `/webhooks`, `/mcp`, `/docs`).
 

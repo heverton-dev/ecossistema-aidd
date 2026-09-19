@@ -9,15 +9,23 @@
 
 ## 1. IDENTIDADE E ARQUITETURA DO ECOSSISTEMA
 
-O **Ecossistema AIDD** é um monorepo agnóstico que integra 7 ferramentas complementares de Engenharia Agêntica de Software:
+O **Ecossistema AIDD** é um monorepo agnóstico que integra 8 ferramentas complementares de Engenharia Agêntica de Software e a Tríade Canônica de Criação:
 
 - **AIDD Forge (`tools/aidd-forge`):** Bootstrap de governança, isolamento de fases e purge de contexto (`/forge`).
-- **AIDD Generator (`tools/aidd-generator`):** Fábrica autônoma com pipeline de 8 fases e contratos JSON Schema (`/generate`).
-- **AIDD Master (`tools/aidd-master`):** Monólito modular com fatias verticais, SQLite WAL e Result Monad (`/master`).
+- **AIDD Planner (`tools/aidd-planner`):** Planejamento BDD/SDD, contratos de handoff e modelagem de entidades (`/planner`).
+- **AIDD Generator (`tools/aidd-generator`):** Fábrica autônoma com pipeline de 8 fases, TDD Red-Green e Clean Architecture (`/generate` ou `/pure`).
+- **AIDD Master (`tools/aidd-master`):** Monólito modular VSA com fatias verticais, Next.js Padrão-Ouro (Lei #11) e OpenAPI (`/master`).
 - **AIDD Enterprise (`tools/aidd-enterprise`):** Missão crítica com injeção de componentes SHA-256 e Zero-Trust (`/enterprise`).
-- **AIDD Ops (`tools/aidd-ops`):** Meta-Orquestrador Agêntico de Infraestrutura (IaC, sizing de hardware, Helm, Ansible, Docker Swarm, `/ops`).
-- **AIDD Factory (`tools/aidd-factory`):** Gerador de código de aplicação e integração para stacks multi-serviço (Gateway FastAPI BFF, Frontend Next.js, webhooks, compose unificado, `/factory`).
-- **AIDD Bridge (`tools/aidd-bridge`):** Extrator, unificador e empacotador de projetos Low-Code (Lovable/Supabase) para VPS própria com PostgreSQL puro, PostgREST, Traefik/Kong e Docker Compose (`/bridge`).
+- **AIDD Ops (`tools/aidd-ops`):** Meta-Orquestrador de Infraestrutura (IaC, sizing, Docker Swarm, Ansible, deploy VPS, `/ops`).
+- **AIDD Factory (`tools/aidd-factory`):** Integração e fatiamento VSA de motores open-source com compose (`/factory` ou `/open`).
+- **AIDD Bridge (`tools/aidd-bridge`):** Desacoplamento anti-lockin de plataformas Low-Code (Lovable/v0) preservando a UI (`/bridge`).
+
+### A Tríade Canônica de Criação (Nomenclatura Oficial):
+1. **`aidd-pure` (Fluxo 01 — Do Zero Puro | Slash: `/pure`):** `[FORGE -> PLANNER] -> GENERATOR -> [MASTER -> ENTERPRISE -> OPS]`
+2. **`aidd-open` (Fluxo 02 — Motores Open-Source | Slash: `/open`):** `[FORGE -> PLANNER] -> FACTORY -> [MASTER -> ENTERPRISE -> OPS]`
+3. **`aidd-bridge` (Fluxo 03 — Low-Code Bridge | Slash: `/bridge`):** `[FORGE -> PLANNER] -> BRIDGE -> [MASTER -> ENTERPRISE -> OPS]`
+
+**Orquestrador Síncrono:** `python ecossistema.py run-fluxo --fluxo <pure|open|bridge>`
 
 **Fonte Física Canônica Única:** Todo componente (`skill`, `command`, `mcp`, `hook`, `spec`) reside estritamente em `componentes/<escopo>/<tipo>/`. As pastas `.agent/`, `.claude/`, `.gemini/`, `.agents/`, `skills/` são alvos de materialização gerados pelo script `scripts/gestor_componentes.py` (`python ecossistema.py components sync`).
 
@@ -60,6 +68,10 @@ O **Ecossistema AIDD** é um monorepo agnóstico que integra 7 ferramentas compl
 
 | Slash Command | Skill Subjacente | CLI Universal Equivalente | Função |
 |---|---|---|---|
+| `/pure <ideia>` | `fluxo-01-runner` | `python ecossistema.py run-fluxo --fluxo pure` | **Tríade Fluxo 01:** Execução síncrona do zero puro com TDD Red-Green (Generator + Master + Enterprise + Ops). |
+| `/open <ideia>` | `fluxo-02-runner` | `python ecossistema.py run-fluxo --fluxo open` | **Tríade Fluxo 02:** Execução síncrona com motores Open-Source curados (Factory + Master + Enterprise + Ops). |
+| `/bridge <origem> <nome>` | `fluxo-03-runner` | `python ecossistema.py run-fluxo --fluxo bridge` | **Tríade Fluxo 03:** Execução síncrona libertando Low-Code (Lovable/v0) para VPS própria (Bridge + Master + Enterprise + Ops). |
+| `/aidd-orchestrator` | `aidd-orchestrator-runner` | `python ecossistema.py run-fluxo` | Orquestrador Mestre Síncrono da Tríade Canônica com validação formal de contratos. |
 | `/forge [caminho]` | `aidd-forge-runner` | `python ecossistema.py forge init [caminho]` | Bootstrap e blindagem de governança em novos projetos. |
 | `/generate <ideia>` | `aidd-generator-runner` | `python ecossistema.py generate "<ideia>"` | Disparo da fábrica de 8 fases a partir de ideia. |
 | `/master <modulo>` | `aidd-master-runner` | `python ecossistema.py master add-module <modulo>` | Criação de fatia vertical desacoplada em monólito modular. |

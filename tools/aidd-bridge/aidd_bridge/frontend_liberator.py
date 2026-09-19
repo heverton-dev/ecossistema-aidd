@@ -17,6 +17,17 @@ from .vendor_patterns import EXTENSOES_VARREDURA, ANON_KEY_ASSIGNMENT, SUPABASE_
 
 IGNORAR_DIRS = {"node_modules", "dist", "build", ".git", ".next", ".nuxt", "__pycache__", ".turbo"}
 
+# Nunca copiar .env/.env.local/.env.development/etc para a saida liberada:
+# esses arquivos guardam segredos REAIS do projeto de origem (ex: chave da
+# Supabase Cloud do cliente, as vezes uma service-role key) -- achado real
+# com um projeto Lovable de producao de verdade. O bridge sempre gera seu
+# proprio .env.production com credenciais do stack self-hosted; carregar o
+# .env original e puro risco de vazamento (alguem faz `git add` da saida
+# liberada sem perceber). .env.example fica de fora da lista: por convencao
+# so tem placeholders, e documentacao util pro operador saber que variaveis
+# configurar.
+ENV_FILES_PROIBIDOS = {".env", ".env.local", ".env.development", ".env.production.local", ".env.test"}
+
 
 class FrontendLiberator:
     def __init__(self, project_dir: str, output_dir: str):
@@ -31,6 +42,8 @@ class FrontendLiberator:
         for root, dirs, files in os.walk(self.project_dir):
             dirs[:] = [d for d in dirs if d not in IGNORAR_DIRS]
             for filename in files:
+                if filename in ENV_FILES_PROIBIDOS:
+                    continue
                 src_path = os.path.join(root, filename)
                 rel_path = os.path.relpath(src_path, self.project_dir)
                 dest_path = os.path.join(self.output_dir, rel_path)

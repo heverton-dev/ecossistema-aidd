@@ -8,6 +8,28 @@ def slugify(text):
     text = re.sub(r'[^\w\s-]', '', text)
     return re.sub(r'[\s_-]+', '-', text)[:40]
 
+
+def _renderizar_e_escrever_docs_html(templates_dir, static_dir, suite_name, module_slugs, src_dir):
+    """Le o MOLDE docs.html (Jinja2, placeholders tipo {{ spotlight_commands }})
+    e escreve em static_dir a versao renderizada de verdade -- nunca uma copia
+    crua do molde. Achado real (Playwright contra a pagina renderizada, nao so
+    leitura de codigo): um shutil.copyfile() direto do molde deixava
+    `{{ spotlight_commands }}` literal no HTML, JS invalido no navegador
+    (SyntaxError: Unexpected token '{'), pagina inteira quebrada. Precisa
+    rodar DEPOIS que os modulos ja existem em disco (generate_documentation_html
+    faz parsing AST de src/modules/<slug>/{models,routes}.py para o conteudo).
+    """
+    docs_template_path = os.path.join(templates_dir, 'docs.html')
+    if not os.path.exists(docs_template_path):
+        return
+    with open(docs_template_path, 'r', encoding='utf-8') as f:
+        raw_docs_html = f.read()
+    from compose_suite import generate_documentation_html
+    final_docs_html = generate_documentation_html(suite_name, module_slugs, src_dir, raw_docs_html)
+    os.makedirs(static_dir, exist_ok=True)
+    with open(os.path.join(static_dir, 'docs.html'), 'w', encoding='utf-8') as f:
+        f.write(final_docs_html)
+
 def provision(project_desc, base_dir=None, frontend_stack='nextjs'):
     if os.path.isabs(project_desc) or os.sep in project_desc or (os.altsep and os.altsep in project_desc) or os.path.exists(project_desc):
         project_dir = os.path.abspath(project_desc)
@@ -64,10 +86,13 @@ def provision(project_desc, base_dir=None, frontend_stack='nextjs'):
         # copiava — o CSS voltava 404 em produção e TODA a página (ícones,
         # cores, espaçamento) renderizava sem estilo nenhum (ícones SVG
         # gigantes, texto sem layout).
-        for sf in ['docs.html', 'output.css']:
-            src = os.path.join(templates_dir, sf)
-            if os.path.exists(src):
-                shutil.copyfile(src, os.path.join(project_dir, 'src', 'static', sf))
+        # docs.html NÃO é copiado cru aqui: é um MOLDE Jinja2 (placeholders
+        # tipo {{ spotlight_commands }}) que só é renderizado de verdade mais
+        # abaixo, depois que os módulos já existem em disco (ver passo 5.1).
+        src_output_css = os.path.join(templates_dir, 'output.css')
+        if os.path.exists(src_output_css):
+            os.makedirs(os.path.join(project_dir, 'src', 'static'), exist_ok=True)
+            shutil.copyfile(src_output_css, os.path.join(project_dir, 'src', 'static', 'output.css'))
 
         for f in ['Dockerfile', 'docker-compose.yml', 'deploy.sh']:
             src = os.path.join(templates_dir, f)
@@ -133,6 +158,16 @@ def provision(project_desc, base_dir=None, frontend_stack='nextjs'):
     # 5. Criar modulo padrão inicial
     from add_module import criar_modulo
     criar_modulo("principal", "Módulo principal", project_dir)
+
+    # 5.05. Renderizar docs.html de verdade (Jinja2), agora que "principal" já
+    # existe em disco (generate_documentation_html faz parsing AST do módulo).
+    _renderizar_e_escrever_docs_html(
+        templates_dir,
+        os.path.join(project_dir, 'src', 'static'),
+        slug,
+        ["principal"],
+        os.path.join(project_dir, 'src'),
+    )
 
     # 5.1. Gerar o Servidor Monolítico Modular (src/server.py) e o frontend.
     # criar_modulo() só RELIGA o server.py num módulo novo se ele já existir
@@ -229,10 +264,11 @@ def provision_backend_only(project_dir, modulo_nome, descricao=""):
             if os.path.exists(src):
                 shutil.copyfile(src, os.path.join(backend_dir, 'src', 'core', f))
         os.makedirs(os.path.join(backend_dir, 'src', 'static'), exist_ok=True)
-        for sf in ['docs.html', 'output.css']:
-            src = os.path.join(templates_dir, sf)
-            if os.path.exists(src):
-                shutil.copyfile(src, os.path.join(backend_dir, 'src', 'static', sf))
+        # docs.html NAO e copiado cru aqui (mesmo motivo de provision()): e um
+        # molde Jinja2, renderizado de verdade so depois de criar_modulo().
+        src_output_css = os.path.join(templates_dir, 'output.css')
+        if os.path.exists(src_output_css):
+            shutil.copyfile(src_output_css, os.path.join(backend_dir, 'src', 'static', 'output.css'))
 
     hub_scripts = os.path.join(repo_root, 'scripts')
     for s in ['aidd.py', 'add_module.py']:
@@ -261,6 +297,14 @@ def provision_backend_only(project_dir, modulo_nome, descricao=""):
 
     from add_module import criar_modulo
     criar_modulo(modulo_nome, descricao or f"Modulo {modulo_nome}", backend_dir)
+
+    _renderizar_e_escrever_docs_html(
+        templates_dir,
+        os.path.join(backend_dir, 'src', 'static'),
+        slug,
+        [modulo_nome],
+        os.path.join(backend_dir, 'src'),
+    )
 
     from compose_suite import generate_modular_server_code, CORE_KERNEL_REQUIREMENTS
     # project_dir aqui e so pra resolver a paleta (DESIGN-SYSTEM.json vive na

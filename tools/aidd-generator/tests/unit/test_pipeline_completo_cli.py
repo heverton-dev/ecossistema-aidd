@@ -12,6 +12,7 @@ Cobre o shell da CLI:
 """
 
 import sys
+import json
 import importlib.util
 from pathlib import Path
 import pytest
@@ -173,4 +174,32 @@ def test_cli_falha_exibe_erro_e_detalhes(pipeline_mod, monkeypatch, capsys, tmp_
     assert "PIPELINE FALHOU na fase_1_pesquisador" in saida
     assert "Erro: Cache corrompido em insights_phase1.json" in saida
     assert "Detalhe: Remova o arquivo ou reexecute a fase" in saida
+
+
+def test_executar_pipeline_consome_planner_json(pipeline_mod, tmp_path, monkeypatch):
+    """Testa se executar_pipeline consome dados de PLANNER.json enriquecendo a ideia."""
+    planner_payload = {
+        "metadados_projeto": {
+            "nome": "Sistema Tarefas",
+            "dominio": "produtividade",
+            "descricao": "Sistema completo de tarefas"
+        }
+    }
+    planner_file = tmp_path / "PLANNER.json"
+    planner_file.write_text(json.dumps(planner_payload), encoding="utf-8")
+
+    ideia_recebida = []
+
+    class MockStateMgr:
+        def __init__(self, pasta, ideia, total_fases=7):
+            ideia_recebida.append(ideia)
+        def inicializar(self, resume=False):
+            raise pipeline_mod.PipelineCorrompidoError("interrompe teste com sucesso", "detalhe")
+
+    monkeypatch.setattr(pipeline_mod, 'PipelineStateManager', MockStateMgr)
+
+    res = pipeline_mod.executar_pipeline("Ideia crua", tmp_path, nao_interativo=True)
+    assert len(ideia_recebida) == 1
+    assert "Sistema Tarefas (produtividade): Sistema completo de tarefas" in ideia_recebida[0]
+
 

@@ -53,6 +53,11 @@ class BridgePipeline:
         print(f"      ✓ Páginas detectadas: {len(manifest.get('pages', []))}")
         print(f"      ✓ Rotas detectadas  : {len(manifest.get('routes', []))}")
         print(f"      ✓ Migrações SQL     : {len(manifest.get('database', {}).get('migrations', []))}")
+        runtime_info = manifest.get("runtime", {})
+        if runtime_info.get("ssr_framework"):
+            print(f"      ✓ Runtime detectado : {runtime_info['ssr_framework']} (SSR, gerenciador: {runtime_info['package_manager']})")
+        else:
+            print(f"      ✓ Runtime detectado : SPA estática (gerenciador: {runtime_info.get('package_manager', 'npm')})")
 
         # Fase 2: Desacoplamento de Banco de Dados
         print("\n[2/6] Desacoplando banco de dados para PostgreSQL corporativo...")
@@ -69,6 +74,22 @@ class BridgePipeline:
             f.write(init_sql)
         print(f"      ✓ init-db.sql gerado com sucesso ({len(init_sql.splitlines())} linhas).")
 
+        # Migracoes que tocam auth.users/auth.identities direto (ex: bootstrap
+        # de conta admin) nao podem rodar no init-db.sql com GoTrue real: quem
+        # cria essas tabelas e o proprio GoTrue, num container separado, so
+        # depois que o Postgres ja terminou seu init sincrono. Adiadas pra um
+        # arquivo a parte, rodado por um servico "migrator" que so dispara
+        # depois que auth.users existir de verdade (ver DevOpsPackager).
+        has_post_auth_migrations = False
+        if self.stack == "full":
+            post_auth_sql = db_bridge.generate_post_auth_sql()
+            if post_auth_sql.strip():
+                has_post_auth_migrations = True
+                post_auth_path = os.path.join(self.output_dir, "post-auth-migrations.sql")
+                with open(post_auth_path, "w", encoding="utf-8") as f:
+                    f.write(post_auth_sql)
+                print(f"      ✓ post-auth-migrations.sql gerado ({len(post_auth_sql.splitlines())} linhas, aguarda GoTrue).")
+
         # Fase 3: Separação de Camadas, Cópia e Libertação do Frontend
         print("\n[3/6] Copiando frontend preservado e removendo vendor lock-in...")
         liberator = FrontendLiberator(self.project_dir, self.output_dir)
@@ -78,7 +99,15 @@ class BridgePipeline:
 
         print("\n      Configurando variáveis de ambiente sem vendor lock-in...")
         env_prod_path = os.path.join(self.output_dir, ".env.production")
-        packager = DevOpsPackager(self.output_dir, domain=self.domain, stack=self.stack)
+        runtime = manifest.get("runtime", {})
+        packager = DevOpsPackager(
+            self.output_dir,
+            domain=self.domain,
+            stack=self.stack,
+            ssr_framework=runtime.get("ssr_framework"),
+            package_manager=runtime.get("package_manager", "npm"),
+            post_auth_migrations=has_post_auth_migrations,
+        )
         env_content = packager.generate_env_production()
         with open(env_prod_path, "w", encoding="utf-8") as f:
             f.write(env_content)

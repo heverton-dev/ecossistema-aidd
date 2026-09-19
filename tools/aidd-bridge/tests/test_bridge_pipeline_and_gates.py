@@ -221,6 +221,20 @@ def test_pipeline_bridge_copies_and_liberates_frontend_when_output_differs():
         assert audit_vendor_lockin(out_dir) == 0
 
 
+def test_env_production_usa_https_mesmo_para_dominio_localhost():
+    """Reproduz bug real (confirmado com Playwright contra a stack real,
+    reportado pelo usuario abrindo /tarefas no navegador): o Caddyfile
+    gerado ativa HTTPS automatico do proprio Caddy mesmo para "localhost"
+    (certificado interno + redirect http->https), mas .env.production
+    gerava VITE_SUPABASE_URL com protocol="http" para esse mesmo dominio.
+    O frontend rodava em https://localhost e tentava chamar
+    http://localhost/rest/v1/... -- bloqueado por CORS (preflight recebe
+    redirect), lista de tarefas nunca carregava ("Carregando..." infinito)."""
+    packager = DevOpsPackager("/tmp/qualquer", domain="localhost")
+    env = packager.generate_env_production()
+    assert "VITE_SUPABASE_URL=https://localhost" in env
+
+
 def test_caddyfile_localhost_remove_prefixo_rest_e_storage_antes_do_proxy():
     """Reproduz bug real (achado com curl de verdade contra a stack subida):
     o Caddyfile gerado para dominio "localhost" usava "reverse_proxy" puro
@@ -269,6 +283,30 @@ def test_pipeline_bridge_stack_lite_padrao_cria_auth_users_emulado():
         with open(os.path.join(out_dir, "docker-compose.yml"), "r", encoding="utf-8") as f:
             compose = f.read()
         assert "supabase/gotrue" not in compose and "supabase/auth" not in compose
+
+
+def test_frontend_liberator_nunca_copia_env_com_segredos_reais():
+    """Achado de seguranca real (projeto Lovable de producao de verdade,
+    "conexao-linktree"): o .env do projeto de origem tem credenciais REAIS
+    da Supabase Cloud do cliente (as vezes ate uma service-role key). Sem
+    esta exclusao, esse arquivo seria copiado ao pe da letra pra saida
+    liberada -- risco real de vazamento se alguem der `git add` na saida
+    sem perceber. O bridge sempre gera seu proprio .env.production
+    self-hosted; o .env original nunca deveria ser carregado."""
+    from aidd_bridge.frontend_liberator import FrontendLiberator
+
+    with tempfile.TemporaryDirectory() as src_dir, tempfile.TemporaryDirectory() as out_dir:
+        with open(os.path.join(src_dir, ".env"), "w", encoding="utf-8") as f:
+            f.write("SUPABASE_URL=https://real-cliente-prod.supabase.co\nSUPABASE_SERVICE_ROLE_KEY=segredo-real\n")
+        with open(os.path.join(src_dir, ".env.example"), "w", encoding="utf-8") as f:
+            f.write("VITE_SUPABASE_URL=\nVITE_SUPABASE_PUBLISHABLE_KEY=\n")
+        with open(os.path.join(src_dir, "package.json"), "w", encoding="utf-8") as f:
+            f.write('{"name": "projeto-real"}')
+
+        FrontendLiberator(src_dir, out_dir).copy_and_liberate()
+
+        assert not os.path.exists(os.path.join(out_dir, ".env")), ".env com segredo real foi copiado para a saida liberada!"
+        assert os.path.exists(os.path.join(out_dir, ".env.example")), ".env.example (so placeholders) deveria continuar sendo copiado"
 
 
 def test_pipeline_bridge_liberates_frontend_in_place_when_no_output_dir():

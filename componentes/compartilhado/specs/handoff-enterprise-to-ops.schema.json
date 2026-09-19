@@ -1,0 +1,43 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "HandoffEnterpriseToOpsSchema",
+  "description": "Contrato formal de transferência do projeto blindado e auditado pelo aidd-enterprise para o aidd-ops para orquestracao, Docker e deploy VPS.",
+  "type": "object",
+  "required": [
+    "versao_schema",
+    "diretorio_projeto",
+    "sha256_audit_ok",
+    "drift_verificado",
+    "manifesto_deploy"
+  ],
+  "properties": {
+    "versao_schema": {
+      "type": "string",
+      "enum": ["1.0.0"]
+    },
+    "diretorio_projeto": {
+      "type": "string"
+    },
+    "sha256_audit_ok": {
+      "type": "boolean",
+      "enum": [true]
+    },
+    "drift_verificado": {
+      "type": "boolean",
+      "enum": [true]
+    },
+    "manifesto_deploy": {
+      "type": "object",
+      "required": ["tipo_runtime", "dockerfile_presente", "compose_presente", "portas_expostas"],
+      "properties": {
+        "tipo_runtime": { "type": "string", "enum": ["monolito_modular_docker", "compose_multi_service"] },
+        "dockerfile_presente": { "type": "boolean", "enum": [true] },
+        "compose_presente": { "type": "boolean", "enum": [true] },
+        "portas_expostas": {
+          "type": "array",
+          "items": { "type": "integer" }
+        }
+      }
+    }
+  }
+}

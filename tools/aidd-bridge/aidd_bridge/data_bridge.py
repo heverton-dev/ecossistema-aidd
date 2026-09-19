@@ -9,8 +9,57 @@ import re
 from typing import List, Dict, Any
 
 class DataBridge:
+    # Migracoes que tocam essas tabelas so podem rodar DEPOIS que elas
+    # existirem de verdade. Com GoTrue real (with_real_auth=True), quem cria
+    # auth.users/auth.identities e o proprio GoTrue, num container separado,
+    # so depois que o Postgres ja terminou seu init sincrono -- incluir essas
+    # migracoes no init-db.sql (que roda ANTES de qualquer outro container
+    # conseguir se conectar) sempre falha com "relation auth.users does not
+    # exist" (achado real: projeto Lovable de producao "conexao-linktree",
+    # migracao real de bootstrap de conta admin).
+    AUTH_TABLE_PATTERN = re.compile(r"auth\.(users|identities)\b", re.IGNORECASE)
+
     def __init__(self, migrations: List[Dict[str, Any]]):
         self.migrations = migrations
+
+    def _alguma_migracao_depende_de_auth_real(self) -> bool:
+        """True se QUALQUER migracao referenciar auth.users/auth.identities
+        diretamente -- nesse caso NENHUMA migracao de dominio pode rodar no
+        init-db.sql sincrono (precisam todas esperar o GoTrue real existir).
+
+        Importante: a decisao e tudo-ou-nada, nunca arquivo-por-arquivo.
+        Migracoes reais frequentemente dependem umas das outras em ordem
+        (um ENUM criado num arquivo, usado por uma tabela em outro arquivo
+        posterior) -- separar so os arquivos que tocam auth.* e deixar os
+        outros no init-db.sql quebra essa cadeia de dependencia sequencial
+        (achado real: "type public.app_role does not exist", porque o tipo
+        foi criado numa migracao adiada mas usado numa que ficou no init-db.sql).
+        Adiar tudo junto, na MESMA ordem original, elimina essa classe de bug.
+        """
+        for mig in self.migrations:
+            path = mig.get("path")
+            if path and os.path.exists(path):
+                with open(path, "r", encoding="utf-8", errors="ignore") as f:
+                    if self.AUTH_TABLE_PATTERN.search(f.read()):
+                        return True
+        return False
+
+    def generate_post_auth_sql(self) -> str:
+        """SQL de TODAS as migracoes de dominio, na ordem original -- roda
+        depois que o GoTrue real ja criou auth.users/auth.identities. String
+        vazia se nenhuma migracao tocar nessas tabelas (caso comum: nada
+        precisa esperar, tudo roda no init-db.sql normalmente)."""
+        if not self._alguma_migracao_depende_de_auth_real():
+            return ""
+        chunks = []
+        for mig in self.migrations:
+            path = mig.get("path")
+            if path and os.path.exists(path):
+                with open(path, "r", encoding="utf-8", errors="ignore") as f:
+                    content = f.read()
+                sanitized = self.sanitize_sql(content)
+                chunks.append(f"\n-- >>> INICIO (POS-AUTH): {mig.get('filename')} <<<\n{sanitized}\n-- >>> FIM: {mig.get('filename')} <<<\n")
+        return "\n".join(chunks)
 
     def sanitize_sql(self, sql_content: str) -> str:
         """
@@ -45,14 +94,69 @@ class DataBridge:
         Quando False (padrão, modo simples sem GoTrue), a tabela emulada é criada
         normalmente para permitir FKs/RLS via PostgREST puro.
         """
+        # Schema real do auth.users/auth.identities do Supabase (colunas
+        # oficiais, estaveis entre versoes), nao um stub minimo — achado
+        # real (projeto Lovable de producao "conexao-linktree"): migracoes
+        # reais fazem bootstrap de conta admin inserindo direto em
+        # auth.users/auth.identities com colunas como instance_id,
+        # encrypted_password (via pgcrypto crypt/gen_salt), raw_app_meta_data
+        # etc. Um stub de 3 colunas (id/email/created_at) quebra qualquer
+        # migracao real que faca isso, com "column ... does not exist".
         auth_table_block = "" if with_real_auth else """
 CREATE TABLE IF NOT EXISTS auth.users (
+    instance_id uuid,
     id uuid NOT NULL PRIMARY KEY DEFAULT gen_random_uuid(),
-    email text,
-    created_at timestamptz DEFAULT now()
+    aud varchar(255),
+    role varchar(255),
+    email varchar(255),
+    encrypted_password varchar(255),
+    email_confirmed_at timestamptz,
+    invited_at timestamptz,
+    confirmation_token varchar(255),
+    confirmation_sent_at timestamptz,
+    recovery_token varchar(255),
+    recovery_sent_at timestamptz,
+    email_change_token_new varchar(255),
+    email_change varchar(255),
+    email_change_sent_at timestamptz,
+    last_sign_in_at timestamptz,
+    raw_app_meta_data jsonb,
+    raw_user_meta_data jsonb,
+    is_super_admin boolean,
+    created_at timestamptz DEFAULT now(),
+    updated_at timestamptz DEFAULT now(),
+    phone text,
+    phone_confirmed_at timestamptz,
+    phone_change text DEFAULT '',
+    phone_change_token varchar(255) DEFAULT '',
+    phone_change_sent_at timestamptz,
+    email_change_token_current varchar(255) DEFAULT '',
+    email_change_confirm_status smallint DEFAULT 0,
+    banned_until timestamptz,
+    reauthentication_token varchar(255) DEFAULT '',
+    reauthentication_sent_at timestamptz,
+    is_sso_user boolean NOT NULL DEFAULT false,
+    deleted_at timestamptz,
+    is_anonymous boolean NOT NULL DEFAULT false
+);
+
+CREATE TABLE IF NOT EXISTS auth.identities (
+    id uuid NOT NULL DEFAULT gen_random_uuid() PRIMARY KEY,
+    provider_id text NOT NULL,
+    user_id uuid NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
+    identity_data jsonb NOT NULL,
+    provider text NOT NULL,
+    last_sign_in_at timestamptz,
+    created_at timestamptz DEFAULT now(),
+    updated_at timestamptz DEFAULT now(),
+    email text GENERATED ALWAYS AS (lower(identity_data ->> 'email')) STORED,
+    UNIQUE (provider_id, provider)
 );
 """
-        auth_grant_line = "" if with_real_auth else "GRANT SELECT ON auth.users TO anon, authenticated, service_role;\n"
+        auth_grant_line = "" if with_real_auth else (
+            "GRANT SELECT ON auth.users TO anon, authenticated, service_role;\n"
+            "GRANT SELECT ON auth.identities TO anon, authenticated, service_role;\n"
+        )
 
         header = f"""-- =============================================================================
 -- AIDD-BRIDGE: CONSOLIDATED POSTGRESQL INITIALIZATION
@@ -147,7 +251,11 @@ ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT ALL ON SEQUENCES TO anon, authen
 """
         chunks = [header]
 
-        for mig in self.migrations:
+        migracoes_seguras = self.migrations
+        if with_real_auth and self._alguma_migracao_depende_de_auth_real():
+            migracoes_seguras = []
+
+        for mig in migracoes_seguras:
             path = mig.get("path")
             if path and os.path.exists(path):
                 with open(path, "r", encoding="utf-8", errors="ignore") as f:

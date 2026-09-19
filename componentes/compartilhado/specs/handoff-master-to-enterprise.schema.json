@@ -1,0 +1,50 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "HandoffMasterToEnterpriseSchema",
+  "description": "Contrato formal de transferência do Monolito Modular gerado pelo aidd-master para a blindagem de componentes de missao critica e auditoria SHA-256 no aidd-enterprise.",
+  "type": "object",
+  "required": [
+    "versao_schema",
+    "diretorio_projeto",
+    "servidor_fastapi_ok",
+    "quarteto_sine_qua_non_rotas",
+    "componentes_para_blindagem"
+  ],
+  "properties": {
+    "versao_schema": {
+      "type": "string",
+      "enum": ["1.0.0"]
+    },
+    "diretorio_projeto": {
+      "type": "string",
+      "minLength": 2
+    },
+    "servidor_fastapi_ok": {
+      "type": "boolean",
+      "enum": [true]
+    },
+    "quarteto_sine_qua_non_rotas": {
+      "type": "object",
+      "required": ["swagger_url", "webhooks_url", "mcp_url", "docs_url"],
+      "properties": {
+        "swagger_url": { "type": "string", "enum": ["/openapi.json"] },
+        "webhooks_url": { "type": "string", "enum": ["/webhooks"] },
+        "mcp_url": { "type": "string", "enum": ["/mcp"] },
+        "docs_url": { "type": "string", "enum": ["/docs"] }
+      }
+    },
+    "componentes_para_blindagem": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["tipo", "caminho_relativo", "descricao"],
+        "properties": {
+          "tipo": { "type": "string", "enum": ["rule", "kernel", "slice", "security"] },
+          "caminho_relativo": { "type": "string" },
+          "descricao": { "type": "string" }
+        }
+      }
+    }
+  }
+}

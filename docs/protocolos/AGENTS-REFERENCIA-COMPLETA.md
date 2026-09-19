@@ -111,6 +111,7 @@ O ecossistema dispõe de Quality Gates globais em gates/:
 - gates/G_LLM_PROMPT_SHIELD.py: Audita via AST se clientes de modelos de linguagem (LLM) utilizam deterministicamente o PromptShield para sanitização e blindagem de prompts contra injeção e jailbreak.
 - gates/G_DRIFT_ANALYZER.py: Analisa via AST a duplicidade e redundância estrutural de funções inter-fatias VSA (features/dominio) para orientar a extração canônica ao núcleo compartilhado (core).
 - gates/G_PROTOTYPE_REWRITE.py: Garante o isolamento determinístico da pasta sandbox/ e impede a promoção de protótipos ou PoCs para src/ sem suíte de testes TDD espelhada.
+- gates/G_ORQUESTRADOR_SINCRONO.py: Audita a integridade do orquestrador síncrono da Tríade Canônica (aidd-pure, aidd-open, aidd-bridge), CLI ecossistema.py run-fluxo e conformidade com schemas formais de handoff.
 - **Execução unificada:** `python ecossistema.py audit` delega para `pre-commit run --all-files`.
 
 **Nota (G_SEGREDOS):** movido para `stages: [manual]` em 2026-09-08, decisão explícita do usuário. Causa: inconsistência reproduzida entre `python gates/G_SEGREDOS.py` direto (aprovava) e o mesmo via hook pre-commit (reprovava), causa raiz não encontrada. Roda sob demanda: `pre-commit run --hook-stage manual g-segredos --all-files`.

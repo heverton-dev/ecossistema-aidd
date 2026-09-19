@@ -1,10 +1,14 @@
 # Comando /bridge
 
-Extrai, unifica e empacota aplicações Low-Code (Lovable, v0, Bolt) para infraestrutura própria (VPS/Docker).
+Dispara o Fluxo 03 (`aidd-bridge`) da Tríade Canônica: desacoplamento e libertação de projetos exportados de ferramentas low-code (Lovable, v0, Bolt).
 
 ## Uso:
-`/bridge [scan|convert-db|merge|pack] [argumentos...]`
+`/bridge <caminho_do_export> [nome_do_projeto]`
 
 ## Ação:
-Executa a skill `skills/aidd-bridge-runner` para inspecionar projetos, migrar schemas Supabase para PostgreSQL puro ou gerar pacotes de deploy VPS com Docker e SSL.
-Equivalente CLI: `python ecossistema.py bridge <args>`
+Executa a esteira síncrona completa:
+`[FORGE -> PLANNER] -> BRIDGE -> [MASTER -> ENTERPRISE -> OPS]`
+Elimina vendor lock-in, migra banco para PostgreSQL e conecta ao Monólito Modular VSA, preservando estritamente a identidade visual original.
+
+Equivalente CLI:
+`python ecossistema.py run-fluxo --fluxo bridge --nome "<nome>" --slug <slug> --dominio <dominio> --pasta ./projetos/<slug> --origem <caminho_do_export>`

@@ -33,7 +33,40 @@ class LovableScanner:
             "env_vars": self._scan_env_vars(),
             "edge_functions": self._scan_edge_functions()
         }
+        manifest["runtime"] = self._scan_runtime(manifest["package_info"])
         return manifest
+
+    # Frameworks com servidor embutido (SSR) reconhecidos e a chave de
+    # dependencia que os denuncia no package.json. Diferente de uma SPA
+    # estatica (Vite puro), esses apps precisam rodar um processo Node de
+    # verdade em producao -- nao da pra so jogar os arquivos num Nginx.
+    SSR_FRAMEWORK_MARKERS = {
+        "@tanstack/react-start": "tanstack-start",
+    }
+
+    def _scan_runtime(self, package_info: Dict[str, Any]) -> Dict[str, Any]:
+        """Detecta se o projeto e uma SPA estatica (padrao) ou um app com
+        servidor SSR embutido, e qual gerenciador de pacotes ele realmente
+        usa (achado real: exports Lovable recentes vem com bun.lock, nao
+        package-lock.json -- instalar com npm ignorando o lockfile resolve
+        versoes diferentes das que o app foi de fato testado)."""
+        deps = {**package_info.get("dependencies", {}), **package_info.get("devDependencies", {})}
+        ssr_framework = None
+        for marker, nome in self.SSR_FRAMEWORK_MARKERS.items():
+            if marker in deps:
+                ssr_framework = nome
+                break
+
+        if os.path.exists(os.path.join(self.project_dir, "bun.lock")) or os.path.exists(os.path.join(self.project_dir, "bun.lockb")):
+            package_manager = "bun"
+        elif os.path.exists(os.path.join(self.project_dir, "pnpm-lock.yaml")):
+            package_manager = "pnpm"
+        elif os.path.exists(os.path.join(self.project_dir, "yarn.lock")):
+            package_manager = "yarn"
+        else:
+            package_manager = "npm"
+
+        return {"ssr_framework": ssr_framework, "package_manager": package_manager}
 
     def _scan_edge_functions(self) -> List[str]:
         """

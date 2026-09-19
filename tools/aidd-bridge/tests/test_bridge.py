@@ -77,6 +77,30 @@ def test_scanner_detects_real_edge_functions(tmp_path):
     manifest = scanner.scan()
     assert manifest["edge_functions"] == ["enviar_email"]
 
+def test_scanner_detecta_spa_estatica_como_runtime_padrao(mock_lovable_project):
+    """Projeto Vite/React comum (sem framework SSR) -- comportamento
+    retrocompativel: continua sendo tratado como SPA estatica."""
+    manifest = LovableScanner(mock_lovable_project).scan()
+    assert manifest["runtime"]["ssr_framework"] is None
+    assert manifest["runtime"]["package_manager"] == "npm"
+
+def test_scanner_detecta_tanstack_start_e_gerenciador_bun(tmp_path):
+    """Reproduz achado real (projeto Lovable real 'conexao-linktree'): apps
+    TanStack Start rodam servidor SSR de verdade (nao viram um monte de
+    HTML estatico), e exports recentes da Lovable usam bun.lock, nao
+    package-lock.json -- instalar com npm ignorando o lockfile resolveria
+    versoes diferentes das testadas pelo app."""
+    proj = tmp_path / "app-tanstack"
+    proj.mkdir()
+    (proj / "package.json").write_text(
+        '{"name":"x","dependencies":{"@tanstack/react-start":"1.167.50"}}', encoding="utf-8"
+    )
+    (proj / "bun.lock").write_text("", encoding="utf-8")
+
+    manifest = LovableScanner(str(proj)).scan()
+    assert manifest["runtime"]["ssr_framework"] == "tanstack-start"
+    assert manifest["runtime"]["package_manager"] == "bun"
+
 def test_data_bridge(mock_lovable_project):
     scanner = LovableScanner(mock_lovable_project)
     manifest = scanner.scan()
@@ -101,12 +125,91 @@ def test_data_bridge(mock_lovable_project):
     assert "CREATE ROLE service_role NOLOGIN BYPASSRLS" in sql
     assert "ALTER ROLE service_role BYPASSRLS" in sql
 
+def test_data_bridge_auth_users_suporta_bootstrap_de_admin_real(mock_lovable_project):
+    """Reproduz bug real (Postgres real, projeto Lovable de producao
+    'conexao-linktree'): uma migracao real faz bootstrap de conta admin
+    inserindo direto em auth.users/auth.identities com colunas do schema
+    real do Supabase (instance_id, encrypted_password via pgcrypto,
+    raw_app_meta_data, etc). O stub antigo (so id/email/created_at) quebrava
+    com "column instance_id of relation users does not exist" -- reproduzido
+    rodando `docker compose up` de verdade contra o Postgres real."""
+    scanner = LovableScanner(mock_lovable_project)
+    manifest = scanner.scan()
+    bridge = DataBridge(manifest["database"]["migrations"])
+    sql = bridge.generate_consolidated_init_sql()
+
+    colunas_reais_auth_users = [
+        "instance_id", "aud", "role", "encrypted_password", "email_confirmed_at",
+        "raw_app_meta_data", "raw_user_meta_data", "confirmation_token",
+        "email_change_token_new", "recovery_token",
+    ]
+    for coluna in colunas_reais_auth_users:
+        assert coluna in sql, f"coluna real '{coluna}' ausente da emulacao de auth.users"
+
+    assert "CREATE TABLE IF NOT EXISTS auth.identities" in sql
+    for coluna in ["provider_id", "user_id", "identity_data", "provider"]:
+        assert coluna in sql
+
+def test_data_bridge_adia_todas_migracoes_com_gotrue_real_preservando_ordem(tmp_path):
+    """Reproduz 2 bugs reais em sequencia (Postgres real, GoTrue real,
+    projeto Lovable de producao 'conexao-linktree'):
+    1) uma migracao real insere direto em auth.users (bootstrap de admin) --
+       com with_real_auth=True, quem cria auth.users e o GoTrue, num
+       container SEPARADO, so depois que o Postgres ja terminou de rodar
+       init-db.sql. Rodar essa migracao no init-db.sql sempre falhava com
+       "relation auth.users does not exist".
+    2) a 1a correcao (adiar SO os arquivos que tocam auth.*, deixando os
+       outros no init-db.sql) quebrou a ordem sequencial entre migracoes
+       que dependem umas das outras (um ENUM criado num arquivo, usado por
+       uma tabela em outro arquivo posterior) -- "type public.app_role does
+       not exist". A correcao final adia TODAS as migracoes juntas, na
+       ordem original, nunca so um subconjunto."""
+    migrations_dir = tmp_path / "supabase" / "migrations"
+    migrations_dir.mkdir(parents=True)
+    (migrations_dir / "0001_tipo_enum.sql").write_text(
+        "create type public.app_role as enum ('admin', 'user');",
+        encoding="utf-8",
+    )
+    (migrations_dir / "0002_tabela_normal.sql").write_text(
+        "create table public.produtos (id uuid primary key default gen_random_uuid(), papel public.app_role);",
+        encoding="utf-8",
+    )
+    (migrations_dir / "0003_bootstrap_admin.sql").write_text(
+        "insert into auth.users (id, email) values (gen_random_uuid(), 'admin@teste.com');",
+        encoding="utf-8",
+    )
+    (tmp_path / "package.json").write_text('{"name":"x"}', encoding="utf-8")
+
+    manifest = LovableScanner(str(tmp_path)).scan()
+    bridge = DataBridge(manifest["database"]["migrations"])
+
+    init_sql = bridge.generate_consolidated_init_sql(with_real_auth=True)
+    assert "produtos" not in init_sql
+    assert "app_role" not in init_sql
+    assert "insert into auth.users" not in init_sql.lower()
+
+    post_auth_sql = bridge.generate_post_auth_sql()
+    assert "insert into auth.users" in post_auth_sql.lower()
+    assert "produtos" in post_auth_sql
+    # ordem original preservada: o ENUM precisa aparecer ANTES da tabela que o usa
+    assert post_auth_sql.index("app_role") < post_auth_sql.index("produtos")
+
+def test_data_bridge_post_auth_sql_vazio_quando_stack_lite(mock_lovable_project):
+    """stack lite (with_real_auth=False, padrao) nao precisa adiar nada --
+    nossa propria tabela emulada auth.users ja existe desde o inicio."""
+    scanner = LovableScanner(mock_lovable_project)
+    manifest = scanner.scan()
+    bridge = DataBridge(manifest["database"]["migrations"])
+    init_sql = bridge.generate_consolidated_init_sql(with_real_auth=False)
+    assert "CREATE TABLE IF NOT EXISTS auth.users" in init_sql
+
 def test_data_bridge_with_real_auth_skips_fake_users_table(mock_lovable_project):
     scanner = LovableScanner(mock_lovable_project)
     manifest = scanner.scan()
     bridge = DataBridge(manifest["database"]["migrations"])
     sql = bridge.generate_consolidated_init_sql(with_real_auth=True)
     assert "CREATE TABLE IF NOT EXISTS auth.users" not in sql
+    assert "CREATE TABLE IF NOT EXISTS auth.identities" not in sql
     assert "GRANT SELECT ON auth.users" not in sql
     assert "CREATE SCHEMA IF NOT EXISTS auth;" in sql
 
@@ -130,6 +233,58 @@ def test_devops_packager(tmp_path):
     assert "storage" in compose_content
     assert "reverse_proxy storage:5000" in open(files["Caddyfile"], encoding="utf-8").read()
 
+def test_devops_packager_ssr_node_usa_nitro_preset_e_bun(tmp_path):
+    """Reproduz achado real (projeto Lovable de producao 'conexao-linktree',
+    TanStack Start): apps com servidor SSR embutido vem presos por padrao a
+    um preset de nuvem proprietaria (Cloudflare Workers) e usam bun.lock,
+    nao package-lock.json. O Dockerfile gerado precisa trocar o preset pra
+    node-server (self-host generico) e instalar com o gerenciador certo."""
+    packager = DevOpsPackager(str(tmp_path), domain="app.meusite.com", ssr_framework="tanstack-start", package_manager="bun")
+    files = packager.export_all()
+
+    dockerfile = open(files["Dockerfile"], encoding="utf-8").read()
+    assert "oven/bun" in dockerfile
+    assert "bun install" in dockerfile
+    assert "NITRO_PRESET=node-server" in dockerfile
+    assert "NITRO_PRESET=cloudflare" not in dockerfile
+    assert 'CMD ["node", ".output/server/index.mjs"]' in dockerfile
+    assert "AS builder" in dockerfile  # multi-stage, exigido por G_BRIDGE_DOCKER_OCI
+
+    # Achado real: "COPY package.json ./" sozinho (sem o lockfile) fazia
+    # "bun install --frozen-lockfile" falhar por falta de bun.lock no
+    # contexto -- precisa copiar o projeto inteiro (com o lockfile) ANTES
+    # do install, nao so o package.json.
+    copy_idx = dockerfile.index("COPY . .")
+    install_idx = dockerfile.index("bun install")
+    assert copy_idx < install_idx, "install rodou antes do lockfile estar disponivel no contexto"
+
+    # Achado real (container rodado de verdade): @supabase/supabase-js avisa
+    # que Node 20 esta deprecated -- estagio de producao usa Node 22.
+    runtime_stage = dockerfile.split("# Estagio de Producao")[1]
+    assert "node:22-alpine" in runtime_stage
+    assert "node:20-alpine" not in runtime_stage
+
+    # SSR nao usa Nginx -- nao deveria gerar um nginx.conf orfao
+    assert "nginx.conf" not in files
+    assert not os.path.exists(os.path.join(str(tmp_path), "nginx.conf"))
+
+    compose_content = open(files["docker-compose.yml"], encoding="utf-8").read()
+    assert '"3000"' in compose_content  # web expoe a porta do Nitro, nao 80
+
+    caddyfile = open(files["Caddyfile"], encoding="utf-8").read()
+    assert "reverse_proxy web:3000" in caddyfile
+    assert "reverse_proxy web:80" not in caddyfile
+
+
+def test_devops_packager_ssr_node_com_npm_padrao(tmp_path):
+    """package_manager nao informado (default) continua funcionando pra
+    apps SSR que usam npm normal, nao so bun."""
+    packager = DevOpsPackager(str(tmp_path), domain="app.meusite.com", ssr_framework="tanstack-start")
+    dockerfile = packager.generate_dockerfile()
+    assert "npm ci" in dockerfile or "npm install" in dockerfile
+    assert "NITRO_PRESET=node-server" in dockerfile
+
+
 def test_unifier(mock_lovable_project, tmp_path):
     out = tmp_path / "unified-app"
     unifier = MultiAppUnifier([mock_lovable_project], str(out))
@@ -137,6 +292,68 @@ def test_unifier(mock_lovable_project, tmp_path):
     assert res["status"] == "success"
     assert os.path.exists(out / "package.json")
     assert os.path.exists(out / "src" / "AppMasterRouter.tsx")
+
+def test_devops_stack_full_adiciona_gotrue_local_e_rota_auth(tmp_path):
+    """Achado real (projeto Lovable de producao 'conexao-linktree'): login
+    de verdade (supabase.auth.signInWithPassword) so funcionava no pacote de
+    deploy pra VPS (docker-compose.swarm.yml) -- o ambiente LOCAL
+    (docker-compose.yml, sem swarm) nunca incluia GoTrue nem rota /auth/v1,
+    entao nao dava pra testar login nenhuma vez antes de subir numa VPS de
+    verdade. stack="full" agora liga GoTrue tambem localmente."""
+    packager = DevOpsPackager(str(tmp_path), domain="app.meusite.com", stack="full")
+    compose = packager.generate_docker_compose()
+    caddyfile = packager.generate_caddyfile()
+
+    assert "supabase/gotrue" in compose
+    assert "GOTRUE_JWT_SECRET" in compose
+    assert packager.jwt.jwt_secret in compose
+    assert "handle_path /auth/v1/*" in caddyfile
+    assert "reverse_proxy auth:9999" in caddyfile
+
+def test_devops_stack_full_com_post_auth_migrations_gera_servico_migrator(tmp_path):
+    """Achado real: com GoTrue real, a migracao que faz bootstrap de admin
+    (insere em auth.users) precisa rodar DEPOIS que o GoTrue ja criou essa
+    tabela -- servico "migrator" espera (poll com psql) e so entao aplica
+    post-auth-migrations.sql, uma unica vez."""
+    packager = DevOpsPackager(str(tmp_path), domain="app.meusite.com", stack="full", post_auth_migrations=True)
+    compose = packager.generate_docker_compose()
+
+    assert "migrator:" in compose
+    assert "post-auth-migrations.sql" in compose
+    assert 'restart: "no"' in compose
+    assert "SELECT 1 FROM auth.users" in compose
+
+def test_devops_stack_full_sem_post_auth_migrations_nao_gera_migrator(tmp_path):
+    """Nenhuma migracao real toca auth.users/identities: nao ha nada pra
+    adiar, entao o servico migrator nem deveria existir (peso morto)."""
+    packager = DevOpsPackager(str(tmp_path), domain="app.meusite.com", stack="full", post_auth_migrations=False)
+    compose = packager.generate_docker_compose()
+    assert "migrator:" not in compose
+
+def test_devops_gotrue_configura_jwt_aud_authenticated(tmp_path):
+    """Reproduz bug real (login testado de verdade contra GoTrue real,
+    projeto Lovable de producao 'conexao-linktree'): sem GOTRUE_JWT_AUD
+    explicito, o GoTrue busca o usuario com "WHERE aud = ''" (vazio) --
+    nenhuma linha real bate, ja que toda conta tem aud='authenticated' por
+    convencao. Login sempre falhava com "invalid_credentials" mesmo com a
+    senha certa (confirmado comparando o hash com pgcrypto direto no banco).
+    Vale pro GoTrue local (docker-compose.yml) e pros dois modos de swarm."""
+    local = DevOpsPackager(str(tmp_path), domain="app.meusite.com", stack="full").generate_docker_compose()
+    swarm_lite = DevOpsPackager(str(tmp_path), domain="app.meusite.com").generate_docker_compose_swarm()
+    swarm_full = DevOpsPackager(str(tmp_path), domain="app.meusite.com", stack="full").generate_docker_compose_swarm()
+
+    for nome, conteudo in [("local", local), ("swarm lite", swarm_lite), ("swarm full", swarm_full)]:
+        assert 'GOTRUE_JWT_AUD: "authenticated"' in conteudo, f"GOTRUE_JWT_AUD ausente em {nome}"
+
+def test_devops_stack_lite_nao_tem_gotrue_local(tmp_path):
+    """stack="lite" (padrao) continua sem GoTrue -- login real nao
+    funciona nesse modo, e isso e esperado/documentado, nao um bug."""
+    packager = DevOpsPackager(str(tmp_path), domain="app.meusite.com")
+    compose = packager.generate_docker_compose()
+    caddyfile = packager.generate_caddyfile()
+
+    assert "supabase/gotrue" not in compose
+    assert "/auth/v1" not in caddyfile
 
 def test_devops_full_stack_uses_pinned_official_supabase_images(tmp_path):
     packager = DevOpsPackager(str(tmp_path), domain="app.meusite.com", stack="full")
