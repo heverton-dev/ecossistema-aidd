@@ -51,9 +51,9 @@
 
 | Iniciativa | Local |
 |---|---|
-| Testes Motor Orquestrador | `PLAN-0024-testes-motor-orquestrador/` |
 | Implementacao Aidd Factory | `fazendo/PLAN-0027-implementacao-aidd-factory/` |
 | Completude Factory V2 | `fazendo/PLAN-0028-completude-factory-v2/` |
+| Testes Motor Orquestrador | `feitos/PLAN-0024-testes-motor-orquestrador/` |
 
 ## ⚠️ Status indeterminado (revisar manualmente)
 

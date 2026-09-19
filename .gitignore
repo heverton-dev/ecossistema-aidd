@@ -107,3 +107,11 @@ wt-*/
 .orca/
 testes/
 
+# Documentação Efêmera & Anti-Inchaço (Docs Rot)
+docs/secoes/*.md
+docs/rascunhos/
+docs/arquivo/
+docs/tmp/
+*.tmp.md
+*.draft.md
+
