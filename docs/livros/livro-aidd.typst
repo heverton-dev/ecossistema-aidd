@@ -1,0 +1,327 @@
+// =============================================================================
+// TEMPLATE TYPST CORPORATIVO — LIVRO DO ECOSSISTEMA AIDD
+// Uso: pandoc <md> --pdf-engine=typst --template=docs/livros/livro-aidd.typst
+// =============================================================================
+
+#let cor-tinta    = rgb("#0f172a")
+#let cor-texto    = rgb("#1e293b")
+#let cor-suave    = rgb("#475569")
+#let cor-linha    = rgb("#cbd5e1")
+#let cor-accent   = rgb("#0d9488")
+#let cor-accent2  = rgb("#0369a1")
+#let cor-alerta   = rgb("#b45309")
+#let cor-ok       = rgb("#047857")
+#let cor-erro     = rgb("#b91c1c")
+
+#set document(
+  title: [$title$],
+  author: "$for(author)$$author$$sep$, $endfor$",
+)
+
+#set page(
+  paper: "a4",
+  margin: (top: 2.6cm, bottom: 2.4cm, left: 2.3cm, right: 2.3cm),
+)
+
+#set text(
+  font: ("Inter", "Segoe UI", "Calibri", "Liberation Sans"),
+  size: 10pt,
+  lang: "pt",
+  region: "BR",
+  fill: cor-texto,
+  hyphenate: true,
+)
+
+#set par(justify: true, leading: 0.72em, spacing: 0.95em)
+#set smartquote(enabled: false)
+
+// ---------------------------------------------------------------------------
+// Blocos utilitarios expostos ao conteudo (usados via raw typst)
+// ---------------------------------------------------------------------------
+
+#let painel(titulo, corpo, cor: cor-accent) = block(
+  width: 100%, breakable: true, above: 12pt, below: 12pt,
+  fill: rgb("#f1f5f9"), radius: 3pt, inset: 0pt,
+  stroke: (left: 3pt + cor),
+)[
+  #block(inset: (x: 10pt, y: 8pt))[
+    #text(size: 8.5pt, weight: "bold", fill: cor, tracking: 0.6pt)[#upper(titulo)]
+    #v(3pt)
+    #set text(size: 9.3pt)
+    #corpo
+  ]
+]
+
+#let chip(txt, cor: cor-accent) = box(
+  fill: cor.lighten(88%), stroke: 0.5pt + cor.lighten(50%),
+  inset: (x: 4pt, y: 2pt), radius: 2pt, outset: (y: 1.5pt),
+)[#text(size: 8pt, weight: "bold", fill: cor.darken(10%))[#txt]]
+
+#let no(titulo, sub: none, cor: cor-tinta) = block(
+  width: 100%, fill: cor, radius: 3pt, inset: (x: 3pt, y: 6pt),
+)[
+  #align(center)[
+    #text(size: 7.6pt, weight: "bold", fill: white, hyphenate: false)[#titulo]
+    #if sub != none [ #linebreak() #text(size: 6.4pt, fill: rgb("#cbd5e1"), hyphenate: false)[#sub] ]
+  ]
+]
+
+#let no-claro(titulo, sub: none, cor: cor-accent) = block(
+  width: 100%, fill: cor.lighten(90%), radius: 3pt,
+  stroke: 0.6pt + cor.lighten(40%), inset: (x: 3pt, y: 6pt),
+)[
+  #align(center)[
+    #text(size: 7.6pt, weight: "bold", fill: cor.darken(25%), hyphenate: false)[#titulo]
+    #if sub != none [ #linebreak() #text(size: 6.4pt, fill: cor-suave, hyphenate: false)[#sub] ]
+  ]
+]
+
+#let seta = align(horizon + center)[#text(size: 12pt, fill: cor-accent)[#sym.arrow.r]]
+#let seta-baixo = align(center)[#text(size: 12pt, fill: cor-accent)[#sym.arrow.b]]
+
+#let esteira(..itens) = block(width: 100%, above: 12pt, below: 12pt)[
+  #let lista = itens.pos()
+  #let n = lista.len()
+  #grid(
+    columns: range(n * 2 - 1).map(i => if calc.even(i) { 1fr } else { auto }),
+    align: horizon, column-gutter: 4pt,
+    ..lista.enumerate().map(((i, it)) => if i == n - 1 { (it,) } else { (it, seta) }).flatten()
+  )
+]
+
+#let ficha(..pares) = block(width: 100%, above: 10pt, below: 12pt)[
+  #table(
+    columns: (auto, 1fr),
+    stroke: 0.4pt + cor-linha,
+    inset: (x: 7pt, y: 5pt),
+    fill: (x, _) => if x == 0 { rgb("#f1f5f9") } else { white },
+    ..pares.pos().map(p => (
+      text(size: 8.3pt, weight: "bold", fill: cor-tinta)[#p.at(0)],
+      text(size: 8.6pt, fill: cor-texto)[#p.at(1)],
+    )).flatten()
+  )
+]
+
+// ---------------------------------------------------------------------------
+// Titulos
+// ---------------------------------------------------------------------------
+
+#set heading(numbering: none)
+
+#show heading.where(level: 1): it => {
+  pagebreak(weak: true)
+  block(width: 100%, above: 0pt, below: 16pt)[
+    #block(fill: cor-tinta, width: 100%, inset: (x: 12pt, y: 11pt), radius: 3pt)[
+      // Dentro da faixa escura, codigo inline vira texto claro sem realce de fundo.
+      #show raw: r => text(font: ("Consolas", "Courier New"), size: 14pt,
+                           fill: rgb("#5eead4"), weight: "bold")[#r.text]
+      #text(size: 16pt, weight: "black", fill: white)[#it.body]
+    ]
+    #v(-9pt)
+    #line(length: 100%, stroke: 2.5pt + cor-accent)
+  ]
+}
+
+#show heading.where(level: 2): it => block(above: 18pt, below: 8pt, width: 100%)[
+  #text(size: 12.5pt, weight: "bold", fill: cor-tinta)[#it.body]
+  #v(2pt)
+  #line(length: 100%, stroke: 0.8pt + cor-linha)
+]
+
+#show heading.where(level: 3): it => block(above: 14pt, below: 6pt)[
+  #text(size: 10.6pt, weight: "bold", fill: cor-accent.darken(15%))[#it.body]
+]
+
+#show heading.where(level: 4): it => block(above: 11pt, below: 4pt)[
+  #text(size: 9.6pt, weight: "bold", fill: cor-suave)[#it.body]
+]
+
+// ---------------------------------------------------------------------------
+// Codigo, citacoes, listas, tabelas, links
+// ---------------------------------------------------------------------------
+
+// Codigo inline: highlight (e nao box) para permitir quebra de linha dentro de
+// celulas estreitas; zero-width space apos separadores cria pontos de quebra em
+// caminhos longos (ex.: componentes/compartilhado/specs/arquivo.schema.json).
+#let _quebravel(t) = {
+  let saida = t
+  for sep in ("/", "_", ".", "-") {
+    saida = saida.replace(sep, sep + "\u{200B}")
+  }
+  saida
+}
+#show raw.where(block: false): it => highlight(
+  fill: rgb("#eef2f7"), extent: 1.5pt, radius: 2pt,
+  top-edge: "ascender", bottom-edge: "descender",
+)[#text(font: ("Consolas", "Courier New"), size: 8.4pt, fill: cor-accent2, hyphenate: false)[#_quebravel(it.text)]]
+
+#show raw.where(block: true): it => block(
+  width: 100%, fill: rgb("#f8fafc"),
+  stroke: (left: 2.5pt + cor-accent.lighten(35%), rest: 0.5pt + cor-linha),
+  radius: 2pt, inset: (x: 9pt, y: 8pt), above: 11pt, below: 11pt, breakable: true,
+)[#text(font: ("Consolas", "Courier New"), size: 7.9pt, fill: cor-tinta)[#it]]
+
+#show quote.where(block: true): it => block(
+  width: 100%, fill: rgb("#f1f5f9"), stroke: (left: 3pt + cor-accent),
+  inset: (x: 11pt, y: 9pt), radius: 2pt, above: 12pt, below: 12pt, breakable: true,
+)[#set text(size: 9.3pt, fill: cor-suave); #it.body]
+
+#set list(indent: 6pt, body-indent: 6pt, spacing: 0.72em)
+#set enum(indent: 6pt, body-indent: 6pt, spacing: 0.72em)
+
+#set table(
+  stroke: 0.4pt + cor-linha,
+  inset: (x: 6pt, y: 5pt),
+  fill: (_, y) => if y == 0 { cor-tinta } else if calc.odd(y) { rgb("#f8fafc") } else { white },
+)
+#show table.cell.where(y: 0): set text(fill: white, weight: "bold", size: 8.1pt)
+#show table: set text(size: 8.5pt)
+// Celula estreita justificada abre rios de espaco branco: alinhar a esquerda.
+#show table: set par(justify: false, leading: 0.62em)
+#show figure.where(kind: table): set block(breakable: true)
+#show figure.where(kind: table): set align(left)
+#show figure.where(kind: table): set figure(numbering: none)
+#show figure.where(kind: table): set figure.caption(position: top)
+#show figure.caption: it => text(size: 8.2pt, style: "italic", fill: cor-suave)[#it.body]
+
+#show link: it => text(fill: cor-accent2)[#it]
+#let horizontalrule = align(center)[#block(above: 14pt, below: 14pt)[#line(length: 32%, stroke: 0.8pt + cor-linha)]]
+
+#show strong: set text(hyphenate: false)
+
+#show terms.item: it => block(breakable: false, above: 6pt)[
+  #text(weight: "bold", fill: cor-tinta)[#it.term]
+  #block(inset: (left: 1.2em, top: -0.35em))[#it.description]
+]
+
+$for(header-includes)$
+$header-includes$
+$endfor$
+
+// ---------------------------------------------------------------------------
+// CAPA
+// ---------------------------------------------------------------------------
+#page(margin: 0pt, numbering: none, header: none, footer: none)[
+  #block(width: 100%, height: 100%, fill: cor-tinta)[
+    #place(top + left, rect(width: 100%, height: 1.1cm, fill: cor-accent))
+    #place(bottom + right, dx: -3.4cm, dy: -3.6cm,
+      circle(radius: 2.2cm, fill: none, stroke: 1pt + cor-accent.transparentize(45%)))
+    #place(bottom + right, dx: -3.4cm, dy: -3.6cm,
+      circle(radius: 3.8cm, fill: none, stroke: 1pt + cor-accent.transparentize(72%)))
+
+    #pad(x: 2.6cm, top: 5.2cm)[
+      #text(size: 8.6pt, fill: cor-accent, weight: "bold", tracking: 2.2pt)[ENGENHARIA AGÊNTICA APLICADA]
+      #v(10pt)
+      #line(length: 22%, stroke: 2pt + cor-accent)
+      #v(20pt)
+      #text(size: 31pt, weight: "black", fill: white)[$title$]
+      $if(subtitle)$
+      #v(14pt)
+      #text(size: 12.5pt, fill: rgb("#94a3b8"), weight: "medium")[$subtitle$]
+      $endif$
+      #v(28pt)
+      #block(width: 76%)[
+        #text(size: 9.4pt, fill: rgb("#cbd5e1"))[
+          Do macro ao micro: o ecossistema como um todo, os três fluxos canônicos
+          de criação e cada uma das oito ferramentas — arquitetura, engenharia
+          agêntica e economia de tokens, camada por camada.
+        ]
+      ]
+    ]
+
+    #place(bottom + left, dx: 2.6cm, dy: -2.4cm)[
+      #line(length: 5cm, stroke: 1pt + cor-accent.transparentize(40%))
+      #v(10pt)
+      #text(size: 9.3pt, fill: white, weight: "bold")[$for(author)$$author$$sep$ · $endfor$]
+      #v(3pt)
+      #text(size: 8.3pt, fill: rgb("#94a3b8"))[$date$]
+    ]
+  ]
+]
+
+// ---------------------------------------------------------------------------
+// FOLHA DE ROSTO / COLOFAO
+// ---------------------------------------------------------------------------
+#page(numbering: none, header: none, footer: none)[
+  #v(1.6cm)
+  #text(size: 8.4pt, weight: "bold", fill: cor-accent, tracking: 1.6pt)[SOBRE ESTA OBRA]
+  #v(6pt)
+  #line(length: 100%, stroke: 0.8pt + cor-linha)
+  #v(14pt)
+  $if(abstract)$
+  #set text(size: 9.4pt, fill: cor-suave)
+  $abstract$
+  $endif$
+  #v(1fr)
+  #line(length: 100%, stroke: 0.8pt + cor-linha)
+  #v(8pt)
+  #text(size: 8pt, fill: cor-suave)[
+    Documento gerado deterministicamente a partir do código-fonte e da documentação
+    canônica do repositório, via pandoc + typst. Toda afirmação técnica desta obra
+    é rastreável a um arquivo do repositório citado no próprio texto.
+  ]
+]
+
+// ---------------------------------------------------------------------------
+// CORPO: cabecalho, rodape e numeracao
+// ---------------------------------------------------------------------------
+#set page(
+  numbering: "1",
+  header: context {
+    if here().page() > 2 {
+      let pagina = here().page()
+      // Um capitulo que ABRE nesta pagina tem precedencia: sem isso o cabecalho
+      // exibiria o capitulo anterior justamente na pagina de abertura do novo.
+      let nesta = query(heading.where(level: 1)).filter(h => h.location().page() == pagina)
+      let anteriores = query(selector(heading.where(level: 1)).before(here()))
+      let titulo-cap = if nesta.len() > 0 { nesta.first().body }
+        else if anteriores.len() > 0 { anteriores.last().body }
+        else { [Sumário] }
+      stack(
+        spacing: 3pt,
+        grid(columns: (1fr, auto), align: (left + bottom, right + bottom),
+          text(size: 7.4pt, fill: cor-suave, weight: "bold", tracking: 0.5pt)[$title$],
+          text(size: 7.4pt, fill: cor-accent)[#titulo-cap],
+        ),
+        line(length: 100%, stroke: 0.5pt + cor-linha),
+      )
+    }
+  },
+  footer: context {
+    if here().page() > 2 {
+      stack(
+        spacing: 4pt,
+        line(length: 100%, stroke: 0.5pt + cor-linha),
+        grid(columns: (1fr, auto), align: (left, right),
+          text(size: 7.4pt, fill: cor-suave)[Ecossistema AIDD],
+          text(size: 8pt, fill: cor-tinta, weight: "bold")[#counter(page).display("1")],
+        ),
+      )
+    }
+  },
+)
+#counter(page).update(1)
+
+$if(toc)$
+#block(above: 0pt, below: 14pt)[
+  #text(size: 17pt, weight: "black", fill: cor-tinta)[Sumário]
+  #v(4pt)
+  #line(length: 100%, stroke: 2.5pt + cor-accent)
+]
+#show outline.entry.where(level: 1): it => {
+  v(9pt, weak: true)
+  text(size: 9.3pt, weight: "bold", fill: cor-tinta)[#it]
+}
+#show outline.entry.where(level: 2): it => text(size: 8.7pt, fill: cor-suave)[#it]
+#outline(title: none, depth: $if(toc-depth)$$toc-depth$$else$2$endif$, indent: 1.1em)
+$endif$
+
+$for(include-before)$
+$include-before$
+$endfor$
+
+$body$
+
+$for(include-after)$
+$include-after$
+$endfor$
