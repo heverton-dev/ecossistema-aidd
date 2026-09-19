@@ -6,9 +6,6 @@ Dispara o Fluxo 03 (`aidd-bridge`) da Tríade Canônica: desacoplamento e libert
 `/bridge <caminho_do_export> [nome_do_projeto]`
 
 ## Ação:
-Executa a esteira síncrona completa:
-`[FORGE -> PLANNER] -> BRIDGE -> [MASTER -> ENTERPRISE -> OPS]`
-Elimina vendor lock-in, migra banco para PostgreSQL e conecta ao Monólito Modular VSA, preservando estritamente a identidade visual original.
-
-Equivalente CLI:
-`python ecossistema.py run-fluxo --fluxo bridge --nome "<nome>" --slug <slug> --dominio <dominio> --pasta ./projetos/<slug> --origem <caminho_do_export>`
+Executa a skill `aidd-bridge` (ou `fluxo-03-runner`), que coleta os parâmetros e dispara deterministicamente o comando CLI:
+`python ecossistema.py bridge --nome "<nome>" --slug <slug> --dominio <dominio> --pasta ./projetos/<slug> --origem <caminho_do_export>`
+(ou `python ecossistema.py run-fluxo --fluxo bridge ...`)

@@ -68,9 +68,9 @@ O **Ecossistema AIDD** é um monorepo agnóstico que integra 8 ferramentas compl
 
 | Slash Command | Skill Subjacente | CLI Universal Equivalente | Função |
 |---|---|---|---|
-| `/pure <ideia>` | `fluxo-01-runner` | `python ecossistema.py run-fluxo --fluxo pure` | **Tríade Fluxo 01:** Execução síncrona do zero puro com TDD Red-Green (Generator + Master + Enterprise + Ops). |
-| `/open <ideia>` | `fluxo-02-runner` | `python ecossistema.py run-fluxo --fluxo open` | **Tríade Fluxo 02:** Execução síncrona com motores Open-Source curados (Factory + Master + Enterprise + Ops). |
-| `/bridge <origem> <nome>` | `fluxo-03-runner` | `python ecossistema.py run-fluxo --fluxo bridge` | **Tríade Fluxo 03:** Execução síncrona libertando Low-Code (Lovable/v0) para VPS própria (Bridge + Master + Enterprise + Ops). |
+| `/pure <ideia>` | `aidd-pure`, `fluxo-01-runner` | `python ecossistema.py pure` (ou `run-fluxo --fluxo pure`) | **Tríade Fluxo 01:** Execução síncrona do zero puro com TDD Red-Green (Generator + Master + Enterprise + Ops). |
+| `/open <ideia>` | `aidd-open`, `fluxo-02-runner` | `python ecossistema.py open` (ou `run-fluxo --fluxo open`) | **Tríade Fluxo 02:** Execução síncrona com motores Open-Source curados (Factory + Master + Enterprise + Ops). |
+| `/bridge <origem> <nome>` | `aidd-bridge`, `fluxo-03-runner` | `python ecossistema.py bridge` (ou `run-fluxo --fluxo bridge`) | **Tríade Fluxo 03:** Execução síncrona libertando Low-Code (Lovable/v0) para VPS própria (Bridge + Master + Enterprise + Ops). |
 | `/aidd-orchestrator` | `aidd-orchestrator-runner` | `python ecossistema.py run-fluxo` | Orquestrador Mestre Síncrono da Tríade Canônica com validação formal de contratos. |
 | `/forge [caminho]` | `aidd-forge-runner` | `python ecossistema.py forge init [caminho]` | Bootstrap e blindagem de governança em novos projetos. |
 | `/generate <ideia>` | `aidd-generator-runner` | `python ecossistema.py generate "<ideia>"` | Disparo da fábrica de 8 fases a partir de ideia. |

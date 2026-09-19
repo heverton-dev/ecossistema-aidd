@@ -39,13 +39,18 @@ Every robust application in the ecosystem originates from **`aidd-forge`** (supr
 
 - **FLUXO 01 — `aidd-pure` (Do Zero Puro | Slash: `/pure`):** `[FORGE -> PLANNER] -> GENERATOR -> [MASTER -> ENTERPRISE -> OPS]`
   - Engine: `aidd-generator` (8-phase pipeline, TDD Red-Green, Monólito Modular VSA + Next.js).
-  - CLI: `python ecossistema.py run-fluxo --fluxo pure`
+  - CLI: `python ecossistema.py pure` ou `python ecossistema.py run-fluxo --fluxo pure`
+  - Skills: `aidd-pure`, `fluxo-01-runner`
 - **FLUXO 02 — `aidd-open` (Motores Open-Source | Slash: `/open`):** `[FORGE -> PLANNER] -> FACTORY -> [MASTER -> ENTERPRISE -> OPS]`
   - Engine: `aidd-factory` (Open-source engine curation, VSA integration slices, compose).
-  - CLI: `python ecossistema.py run-fluxo --fluxo open`
+  - CLI: `python ecossistema.py open` ou `python ecossistema.py run-fluxo --fluxo open`
+  - Skills: `aidd-open`, `fluxo-02-runner`
 - **FLUXO 03 — `aidd-bridge` (Low-Code / Apps Unificadas | Slash: `/bridge`):** `[FORGE -> PLANNER] -> BRIDGE -> [MASTER -> ENTERPRISE -> OPS]`
   - Engine: `aidd-bridge` (Vendor lock-in eradication, Lovable/v0/Bolt cleanup, PostgreSQL, UI preservation).
-  - CLI: `python ecossistema.py run-fluxo --fluxo bridge`
+  - CLI: `python ecossistema.py bridge` ou `python ecossistema.py run-fluxo --fluxo bridge`
+  - Skills: `aidd-bridge`, `fluxo-03-runner`
+
+**Interoperabilidade Universal dos Slash Commands:** Em harnesses sem suporte a slash commands customizados na UI (como Google Antigravity ou Gemini CLI), qualquer entrada do usuário iniciada por `/pure`, `/open` ou `/bridge` DEVE ser interceptada pelo agente como a invocação imediata do respectivo fluxo (executando a skill correspondente ou o comando CLI `python ecossistema.py pure|open|bridge`). Silêncio ou erro de "comando não suportado" é estritamente proibido.
 
 **Universal Convergence Funnel:** All 3 flows mandatorily converge into `aidd-master` (Harmonização em Monólito Modular: VSA de domínio + camada horizontal compartilhada) -> `aidd-enterprise` (SHA-256 resilience and audit) -> `aidd-ops` (VPS deployment, sops+age, and Uptime Kuma), delivering the dynamic *Quarteto Sine Qua Non* (`/swagger`, `/webhooks`, `/mcp`, `/docs`).
 

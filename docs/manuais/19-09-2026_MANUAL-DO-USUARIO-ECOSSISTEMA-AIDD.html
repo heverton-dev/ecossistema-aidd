@@ -1,0 +1,1349 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="pt-BR" xml:lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc 3.10" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <meta name="author" content="Ecossistema AIDD" />
+  <title>Manual do Usuário — Ecossistema AIDD</title>
+  <style>
+
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: 1.5em;}
+div.column{flex: auto;}
+@media screen {
+div.columns{gap: min(4vw, 1.5em);}
+div.column{overflow-x: auto;}
+}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+
+ul.task-list[class]{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+font-size: inherit;
+width: 0.8em;
+margin: 0 0.8em 0.2em -1.6em;
+vertical-align: middle;
+}
+.display.math{display: block; text-align: center; margin: 0.5rem auto;}
+
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+{ counter-reset: source-line 0; }
+pre.numberSource code > span
+{ position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+{ content: counter(source-line);
+position: relative; left: -1em; text-align: right; vertical-align: baseline;
+border: none; display: inline-block;
+-webkit-touch-callout: none; -webkit-user-select: none;
+-khtml-user-select: none; -moz-user-select: none;
+-ms-user-select: none; user-select: none;
+padding: 0 4px; width: 4em;
+color: #aaaaaa;
+}
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa; padding-left: 4px; }
+div.sourceCode
+{ }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } 
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.at { color: #7d9029; } 
+code span.bn { color: #40a070; } 
+code span.bu { color: #008000; } 
+code span.cf { color: #007020; font-weight: bold; } 
+code span.ch { color: #4070a0; } 
+code span.cn { color: #880000; } 
+code span.co { color: #60a0b0; font-style: italic; } 
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.do { color: #ba2121; font-style: italic; } 
+code span.dt { color: #902000; } 
+code span.dv { color: #40a070; } 
+code span.er { color: #ff0000; font-weight: bold; } 
+code span.ex { } 
+code span.fl { color: #40a070; } 
+code span.fu { color: #06287e; } 
+code span.im { color: #008000; font-weight: bold; } 
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.kw { color: #007020; font-weight: bold; } 
+code span.op { color: #666666; } 
+code span.ot { color: #007020; } 
+code span.pp { color: #bc7a00; } 
+code span.sc { color: #4070a0; } 
+code span.ss { color: #bb6688; } 
+code span.st { color: #4070a0; } 
+code span.va { color: #19177c; } 
+code span.vs { color: #4070a0; } 
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } 
+</style>
+  <style type="text/css">:root {
+--bg-base: #f8fafc;
+--bg-surface: #ffffff;
+--border-subtle: #e2e8f0;
+--border-strong: #cbd5e1;
+--text-primary: #0f172a;
+--text-secondary: #334155;
+--text-muted: #64748b;
+--brand-primary: #1d4ed8;
+--brand-accent: #0369a1;
+--code-bg: #0f172a;
+--code-text: #f8fafc;
+--code-inline-bg: #e2e8f0;
+--code-inline-text: #0f172a;
+--table-header-bg: #0f172a;
+--table-row-zebra: #f1f5f9;
+--shadow-md: 0 4px 6px -1px rgba(15, 23, 42, 0.07), 0 2px 4px -2px rgba(15, 23, 42, 0.05);
+}
+* { box-sizing: border-box; }
+html { color: var(--text-primary); background-color: var(--bg-base); scroll-behavior: smooth; }
+
+* {
+scrollbar-width: thin;
+scrollbar-color: var(--brand-primary) var(--bg-base);
+}
+::-webkit-scrollbar { width: 4px; height: 4px; }
+::-webkit-scrollbar-track { background: var(--bg-base); }
+::-webkit-scrollbar-thumb { background: var(--brand-primary); border-radius: 2px; }
+::-webkit-scrollbar-thumb:hover { background: var(--brand-accent); }
+pre::-webkit-scrollbar-track { background: #1e293b; }
+body {
+margin: 0 auto;
+max-width: 880px;
+padding: 4.5rem 1.75rem 6rem;
+background: var(--bg-base);
+color: var(--text-primary);
+font-family: "Inter", "Segoe UI", system-ui, -apple-system, Roboto, sans-serif;
+font-size: 16px;
+line-height: 1.65;
+hyphens: auto;
+overflow-wrap: break-word;
+}
+
+.aidd-topbar {
+position: fixed;
+top: 0;
+left: 0;
+right: 0;
+z-index: 100;
+height: 3rem;
+display: flex;
+align-items: center;
+justify-content: space-between;
+gap: 1rem;
+padding: 0 1.25rem;
+background: var(--text-primary);
+color: #f8fafc;
+box-shadow: var(--shadow-md);
+font-size: 0.82rem;
+}
+.aidd-topbar .aidd-topbar-brand {
+display: flex;
+align-items: center;
+gap: 0.6rem;
+font-weight: 700;
+letter-spacing: 0.01em;
+white-space: nowrap;
+overflow: hidden;
+text-overflow: ellipsis;
+}
+.aidd-topbar .aidd-topbar-brand .tag {
+display: inline-block;
+background: rgba(29, 78, 216, 0.25);
+border: 1px solid rgba(96, 165, 250, 0.4);
+color: #bfdbfe;
+font-size: 0.68rem;
+font-weight: 700;
+text-transform: uppercase;
+letter-spacing: 0.06em;
+padding: 0.15rem 0.5rem;
+border-radius: 999px;
+white-space: nowrap;
+}
+.aidd-topbar a.aidd-back-to-top {
+color: #cbd5e1;
+text-decoration: none;
+font-weight: 600;
+white-space: nowrap;
+border: 1px solid rgba(203, 213, 225, 0.35);
+padding: 0.3rem 0.75rem;
+border-radius: 6px;
+transition: background-color 0.15s ease, color 0.15s ease;
+}
+.aidd-topbar a.aidd-back-to-top:hover {
+background: var(--brand-primary);
+border-color: var(--brand-primary);
+color: #ffffff;
+}
+header#title-block-header {
+border-bottom: 3px solid var(--text-primary);
+padding-bottom: 1.5rem;
+margin-bottom: 2rem;
+}
+header#title-block-header::before {
+content: "Manual Corporativo de Referência";
+display: inline-block;
+font-size: 0.75rem;
+font-weight: 700;
+letter-spacing: 0.08em;
+text-transform: uppercase;
+color: var(--brand-accent);
+background: rgba(3, 105, 161, 0.08);
+border: 1px solid rgba(3, 105, 161, 0.25);
+border-radius: 999px;
+padding: 0.25rem 0.75rem;
+margin-bottom: 1rem;
+}
+h1.title {
+font-size: 2.1rem;
+font-weight: 800;
+letter-spacing: -0.01em;
+margin: 0 0 0.5rem;
+color: var(--text-primary);
+border: none;
+padding: 0;
+}
+p.subtitle {
+font-size: 1.05rem;
+color: var(--text-secondary);
+margin: 0 0 1rem;
+font-style: normal;
+}
+p.author, p.date {
+display: inline-block;
+font-size: 0.85rem;
+color: var(--text-muted);
+margin: 0 1rem 0 0;
+}
+nav#TOC {
+background: var(--bg-surface);
+border: 1px solid var(--border-subtle);
+border-radius: 8px;
+padding: 1.25rem 1.5rem;
+margin: 2rem 0 2.5rem;
+box-shadow: var(--shadow-md);
+}
+nav#TOC::before {
+content: "Sumário";
+display: block;
+font-size: 0.8rem;
+text-transform: uppercase;
+letter-spacing: 0.06em;
+color: var(--text-muted);
+margin: 0 0 0.75rem;
+font-weight: 700;
+}
+nav#TOC ul {
+columns: 2;
+column-gap: 2rem;
+margin: 0;
+padding: 0;
+list-style: none;
+}
+nav#TOC li { break-inside: avoid; margin-bottom: 0.4rem; }
+nav#TOC ul ul { columns: 1; margin-top: 0.25rem; padding-left: 1rem; }
+nav#TOC a {
+color: var(--text-secondary);
+text-decoration: none;
+font-size: 0.92rem;
+}
+nav#TOC a:hover { color: var(--brand-primary); text-decoration: underline; }
+h1:not(.title) {
+font-size: 1.6rem;
+font-weight: 800;
+color: var(--text-primary);
+border-bottom: 2px solid var(--border-strong);
+padding-bottom: 0.5rem;
+margin: 3rem 0 1.25rem;
+scroll-margin-top: 1.5rem;
+}
+h2 {
+font-size: 1.2rem;
+font-weight: 700;
+color: var(--text-primary);
+margin: 2rem 0 0.85rem;
+scroll-margin-top: 1.5rem;
+}
+h3 {
+font-size: 1.02rem;
+font-weight: 700;
+color: var(--text-secondary);
+margin: 1.5rem 0 0.6rem;
+}
+p { margin: 0 0 1rem; color: var(--text-primary); }
+strong { color: var(--text-primary); font-weight: 700; }
+a { color: var(--brand-primary); }
+hr {
+border: none;
+border-top: 1px solid var(--border-subtle);
+margin: 2.5rem 0;
+}
+blockquote {
+margin: 1.25rem 0;
+padding: 0.9rem 1.25rem;
+background: #f0f9ff;
+border-left: 4px solid var(--brand-accent);
+border-radius: 0 6px 6px 0;
+color: #0c4a6e;
+}
+blockquote p:last-child { margin-bottom: 0; }
+ul, ol { padding-left: 1.4rem; margin: 0 0 1rem; }
+li { margin-bottom: 0.35rem; }
+code {
+font-family: "JetBrains Mono", "Consolas", monospace;
+background: var(--code-inline-bg);
+color: var(--code-inline-text);
+padding: 0.12rem 0.4rem;
+border-radius: 4px;
+font-size: 0.88em;
+}
+.code-block {
+position: relative;
+margin: 0 0 1.25rem;
+}
+.code-block pre { margin: 0; }
+pre {
+background: var(--code-bg);
+color: var(--code-text);
+padding: 1rem 3.75rem 1rem 1.25rem;
+border-radius: 8px;
+overflow-x: auto;
+margin: 0 0 1.25rem;
+box-shadow: var(--shadow-md);
+}
+pre code {
+background: none;
+color: inherit;
+padding: 0;
+font-size: 0.85rem;
+line-height: 1.6;
+}
+.copy-btn {
+position: absolute;
+top: 0.6rem;
+right: 0.6rem;
+display: inline-flex;
+align-items: center;
+gap: 0.35rem;
+font-family: "Inter", "Segoe UI", system-ui, sans-serif;
+font-size: 0.72rem;
+font-weight: 600;
+color: #cbd5e1;
+background: rgba(248, 250, 252, 0.08);
+border: 1px solid rgba(203, 213, 225, 0.25);
+border-radius: 6px;
+padding: 0.3rem 0.6rem;
+cursor: pointer;
+transition: background-color 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+}
+.copy-btn:hover {
+background: var(--brand-primary);
+border-color: var(--brand-primary);
+color: #ffffff;
+}
+.copy-btn.copied {
+background: #0f766e;
+border-color: #0f766e;
+color: #ffffff;
+}
+table {
+width: 100%;
+border-collapse: collapse;
+margin: 0 0 1.5rem;
+font-size: 0.9rem;
+display: block;
+overflow-x: auto;
+}
+table thead { display: table-header-group; }
+table tbody { display: table-row-group; }
+thead th {
+background: var(--table-header-bg);
+color: #f8fafc;
+text-align: left;
+padding: 0.65rem 0.85rem;
+font-weight: 600;
+font-size: 0.82rem;
+}
+tbody td {
+padding: 0.6rem 0.85rem;
+border-bottom: 1px solid var(--border-subtle);
+vertical-align: top;
+}
+tbody tr:nth-child(even) { background: var(--table-row-zebra); }
+@media (max-width: 640px) {
+body { padding: 3.75rem 1rem 4rem; font-size: 0.95rem; }
+h1.title { font-size: 1.55rem; }
+nav#TOC ul { columns: 1; }
+table { font-size: 0.82rem; }
+.aidd-topbar { padding: 0 0.85rem; font-size: 0.76rem; }
+.aidd-topbar .aidd-topbar-brand .tag { display: none; }
+pre { padding-right: 1.25rem; }
+.copy-btn { position: static; display: flex; margin: 0 0 0.6rem auto; width: fit-content; }
+}
+@media print {
+html, body { background: #ffffff; }
+nav#TOC { box-shadow: none; }
+pre { box-shadow: none; }
+.aidd-topbar, .copy-btn { display: none !important; }
+body { padding-top: 3rem; }
+}
+</style>
+</head>
+<body>
+<div class="aidd-topbar">
+  <span class="aidd-topbar-brand">
+    <span class="tag">AIDD</span>
+    <span>Manual do Usuário — Ecossistema AIDD</span>
+  </span>
+  <a class="aidd-back-to-top" href="#title-block-header">Voltar ao topo</a>
+</div>
+<header id="title-block-header">
+<h1 class="title">Manual do Usuário — Ecossistema AIDD</h1>
+<p class="subtitle">Como clonar, instalar e operar a fábrica de software
+governada por Inteligência Artificial</p>
+<p class="author">Ecossistema AIDD</p>
+<p class="date">19 de setembro de 2026</p>
+</header>
+<nav id="TOC" role="doc-toc">
+<ul>
+<li><a href="#o-que-é-o-ecossistema-aidd" id="toc-o-que-é-o-ecossistema-aidd">1. O que é o Ecossistema
+AIDD</a></li>
+<li><a href="#antes-de-começar-requisitos-do-ambiente" id="toc-antes-de-começar-requisitos-do-ambiente">2. Antes de Começar:
+Requisitos do Ambiente</a></li>
+<li><a href="#clonando-e-instalando-o-repositório" id="toc-clonando-e-instalando-o-repositório">3. Clonando e Instalando o
+Repositório</a></li>
+<li><a href="#como-o-ecossistema-está-organizado" id="toc-como-o-ecossistema-está-organizado">4. Como o Ecossistema Está
+Organizado</a></li>
+<li><a href="#duas-formas-de-usar-o-ecossistema" id="toc-duas-formas-de-usar-o-ecossistema">5. Duas Formas de Usar o
+Ecossistema</a></li>
+<li><a href="#os-3-fluxos-de-criação-a-tríade-canônica" id="toc-os-3-fluxos-de-criação-a-tríade-canônica">6. Os 3 Fluxos de
+Criação (a Tríade Canônica)</a></li>
+<li><a href="#as-8-ferramentas-especializadas" id="toc-as-8-ferramentas-especializadas">7. As 8 Ferramentas
+Especializadas</a></li>
+<li><a href="#o-que-todo-projeto-entrega-sempre" id="toc-o-que-todo-projeto-entrega-sempre">8. O que Todo Projeto
+Entrega, Sempre</a></li>
+<li><a href="#os-portões-de-qualidade-quality-gates" id="toc-os-portões-de-qualidade-quality-gates">9. Os Portões de
+Qualidade (Quality Gates)</a></li>
+<li><a href="#passo-a-passo-prático-criando-o-primeiro-projeto" id="toc-passo-a-passo-prático-criando-o-primeiro-projeto">10. Passo a
+Passo Prático: Criando o Primeiro Projeto</a></li>
+<li><a href="#universalidade-nenhum-vínculo-com-um-único-fornecedor" id="toc-universalidade-nenhum-vínculo-com-um-único-fornecedor">11.
+Universalidade: Nenhum Vínculo com um Único Fornecedor</a></li>
+<li><a href="#referência-rápida-de-comandos" id="toc-referência-rápida-de-comandos">12. Referência Rápida de
+Comandos</a></li>
+<li><a href="#mapa-do-repositório" id="toc-mapa-do-repositório">13. Mapa
+do Repositório</a></li>
+<li><a href="#o-que-você-pode-esperar-princípios-de-governança" id="toc-o-que-você-pode-esperar-princípios-de-governança">14. O que Você
+Pode Esperar (Princípios de Governança)</a></li>
+<li><a href="#glossário" id="toc-glossário">15. Glossário</a></li>
+<li><a href="#onde-buscar-mais-informação" id="toc-onde-buscar-mais-informação">16. Onde Buscar Mais
+Informação</a></li>
+</ul>
+</nav>
+<h1 id="o-que-é-o-ecossistema-aidd">1. O que é o Ecossistema AIDD</h1>
+<p>O Ecossistema AIDD (a sigla vem de <em>AI-Driven Development</em>, ou
+“desenvolvimento conduzido por Inteligência Artificial”) é um conjunto
+de ferramentas que transforma uma ideia de software — descrita em
+linguagem natural — em um programa completo, testado e pronto para
+funcionar em produção.</p>
+<p>A forma mais simples de entender o que ele faz é compará-lo a uma
+linha de montagem industrial. Antes de qualquer peça ser fabricada, a
+fábrica constrói a esteira, instala as travas de segurança e define as
+normas que ninguém pode pular. Depois disso, a ideia entra em uma ponta
+da esteira e, estação por estação, sai do outro lado como um produto
+acabado: código-fonte funcional, testes automáticos que comprovam que
+ele funciona, documentação e um pacote pronto para ser colocado em um
+servidor.</p>
+<p>Para quem tem formação técnica, a descrição precisa é: uma plataforma
+de engenharia de software que aplica <strong>portões de qualidade
+determinísticos</strong> (verificações automáticas, objetivas e sem
+interpretação, explicadas em detalhe na Seção 9) a cada etapa da criação
+de um sistema, garantindo que o código gerado por Inteligência
+Artificial siga os mesmos padrões arquiteturais, de segurança e de
+testes que uma equipe de engenharia experiente exigiria —
+independentemente de qual assistente de Inteligência Artificial foi
+usado para escrevê-lo.</p>
+<p>Duas ideias sustentam tudo o que este manual explica:</p>
+<ul>
+<li><strong>Governança antes de geração.</strong> Nenhum código é aceito
+só porque “parece funcionar” ou porque a Inteligência Artificial disse
+que terminou. Ele precisa passar por verificações automáticas que checam
+a estrutura, a segurança e os testes de verdade.</li>
+<li><strong>Você está sempre no comando.</strong> O ecossistema nunca
+executa etapas críticas sem parar para você revisar. Não existem robôs
+trabalhando sozinhos em segundo plano sem o seu conhecimento.</li>
+</ul>
+<hr />
+<h1 id="antes-de-começar-requisitos-do-ambiente">2. Antes de Começar:
+Requisitos do Ambiente</h1>
+<p>O ecossistema é escrito em Python puro e funciona da mesma forma em
+Windows, Linux e macOS. Antes de instalar, confira se o computador tem
+os seguintes programas:</p>
+<table>
+<colgroup>
+<col style="width: 25%" />
+<col style="width: 25%" />
+<col style="width: 25%" />
+<col style="width: 25%" />
+</colgroup>
+<thead>
+<tr>
+<th style="text-align: left;">Programa</th>
+<th style="text-align: left;">Versão mínima</th>
+<th style="text-align: left;">Para que serve</th>
+<th style="text-align: left;">Como verificar</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><strong>Python</strong></td>
+<td style="text-align: left;">3.10 ou superior</td>
+<td style="text-align: left;">Motor de execução de toda a
+plataforma</td>
+<td style="text-align: left;"><code>python --version</code></td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Git</strong></td>
+<td style="text-align: left;">2.30 ou superior</td>
+<td style="text-align: left;">Baixar o repositório e controlar versões
+do código</td>
+<td style="text-align: left;"><code>git --version</code></td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Node.js</strong></td>
+<td style="text-align: left;">20 LTS (recomendado)</td>
+<td style="text-align: left;">Compilar o Frontend (a parte visual das
+aplicações geradas)</td>
+<td style="text-align: left;"><code>node --version</code></td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Docker</strong></td>
+<td style="text-align: left;">Qualquer versão recente</td>
+<td style="text-align: left;">Empacotar e rodar aplicações de forma
+isolada, tanto localmente quanto em servidores</td>
+<td style="text-align: left;"><code>docker --version</code></td>
+</tr>
+</tbody>
+</table>
+<p>Se você não tiver certeza de que tudo está instalado corretamente, o
+próprio ecossistema tem um comando de diagnóstico automático que confere
+isso por você em menos de dois segundos:</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Diagnóstico rápido: lista o que está instalado e o que está faltando</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="ex">python</span> ecossistema.py preflight-host</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Diagnóstico com sugestão de correção automática (mostra o que faria, sem aplicar nada)</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="ex">python</span> ecossistema.py preflight-host <span class="at">--fix</span> <span class="at">--dry-run</span></span></code></pre></div>
+<p>O termo <strong><code>--dry-run</code></strong> aparece várias vezes
+neste manual: significa “simulação sem gravação” — o comando mostra
+exatamente o que faria, mas não altera nada de fato no disco. É a forma
+segura de testar um comando antes de executá-lo de verdade.</p>
+<hr />
+<h1 id="clonando-e-instalando-o-repositório">3. Clonando e Instalando o
+Repositório</h1>
+<p>A instalação tem apenas três passos. Não é necessário digitar nenhum
+comando de instalação de dependências manualmente — isso acontece
+sozinho na primeira conversa com o assistente de Inteligência
+Artificial.</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 1. Clonar o repositório para o seu computador</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> clone https://github.com/heverton-dev/ecossistema-aidd.git</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="co"># 2. Entrar na pasta do projeto</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> ecossistema-aidd</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a><span class="co"># 3. Conferir se o ambiente está saudável</span></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a><span class="ex">python</span> ecossistema.py status</span></code></pre></div>
+<p>A partir daqui, abra essa mesma pasta no seu assistente de
+Inteligência Artificial de preferência — Claude Code, Cursor,
+Antigravity, OpenCode, MimoCode ou qualquer outro
+<strong>harness</strong> compatível (um <em>harness</em>, termo usado no
+restante deste manual, é simplesmente o programa ou interface onde o
+assistente de Inteligência Artificial roda) — e comece a conversar
+normalmente. Na primeira mensagem da sessão, o próprio ecossistema
+instala e registra automaticamente as dependências externas de que
+precisa (habilidades adicionais e integrações de terceiros usadas pelo
+agente).</p>
+<p>Se, por qualquer motivo, você quiser forçar essa instalação
+manualmente ou adicionar uma nova dependência, digite no chat:</p>
+<pre class="text"><code>/dependencia bootstrap          # instala/registra tudo que já está declarado
+/dependencia skill &lt;nome&gt;       # adiciona uma nova habilidade externa
+/dependencia mcp &lt;nome&gt;         # registra uma nova integração externa (MCP)</code></pre>
+<p>O mesmo efeito pode ser obtido pelo terminal, sem depender do
+chat:</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="ex">python</span> ecossistema.py dependencia bootstrap <span class="at">--tipo</span> todos</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="ex">python</span> ecossistema.py dependencia verify</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="ex">python</span> ecossistema.py dependencia list</span></code></pre></div>
+<p><strong>MCP</strong>, sigla para <em>Model Context Protocol</em>
+(Protocolo de Contexto de Modelo), é um padrão aberto que permite que um
+assistente de Inteligência Artificial se conecte a ferramentas e fontes
+de dados externas de forma padronizada — como um “plugue universal”
+entre a Inteligência Artificial e outros sistemas. Ele volta a aparecer
+na Seção 8.</p>
+<hr />
+<h1 id="como-o-ecossistema-está-organizado">4. Como o Ecossistema Está
+Organizado</h1>
+<p>Toda aplicação criada pelo ecossistema segue a mesma sequência de
+estações de trabalho, na seguinte ordem:</p>
+<pre class="text"><code>  aidd-forge  →  aidd-planner  →  [ um dos 3 Fluxos de Criação ]  →  aidd-master  →  aidd-enterprise  →  aidd-ops
+ (fundação)      (planejamento)      (pure | open | bridge)         (montagem)      (auditoria)         (implantação)</code></pre>
+<p>Em linguagem simples:</p>
+<ol type="1">
+<li><strong><code>aidd-forge</code></strong> prepara o terreno: cria as
+pastas, as regras e as travas de proteção do projeto antes que qualquer
+código seja escrito.</li>
+<li><strong><code>aidd-planner</code></strong> conversa com você (ou lê
+uma especificação que você já tem) para transformar a ideia em um
+documento formal de requisitos — o que o sistema deve fazer, quais dados
+ele guarda, quais regras de negócio precisa respeitar.</li>
+<li>Um dos <strong>3 Fluxos de Criação</strong> (explicados na Seção 6)
+efetivamente escreve o código, escolhendo entre construir do zero,
+reaproveitar motores prontos de código aberto, ou libertar um protótipo
+de uma ferramenta <em>low-code</em> (plataformas visuais de “arrastar e
+soltar”, com pouco ou nenhum código manual).</li>
+<li><strong><code>aidd-master</code></strong> organiza tudo em uma
+estrutura modular coerente, encaixando novas funcionalidades como blocos
+de montar, sem quebrar o que já existia.</li>
+<li><strong><code>aidd-enterprise</code></strong> confere a
+autenticidade e a integridade de cada componente crítico, como um selo
+de auditoria.</li>
+<li><strong><code>aidd-ops</code></strong> prepara a infraestrutura de
+nuvem (servidores) e coloca a aplicação no ar.</li>
+</ol>
+<p>Essa sequência é chamada, na documentação técnica do projeto, de
+<strong>Funil de Convergência Universal</strong>: não importa qual dos 3
+Fluxos de Criação você escolheu, todos terminam exatamente no mesmo
+lugar — um sistema harmonizado, auditado e pronto para implantação.</p>
+<hr />
+<h1 id="duas-formas-de-usar-o-ecossistema">5. Duas Formas de Usar o
+Ecossistema</h1>
+<p>Você escolhe a forma de trabalhar de acordo com o seu perfil. As duas
+acionam exatamente o mesmo motor por trás dos panos — nenhuma delas é
+“mais poderosa” que a outra.</p>
+<h3 id="opção-1-pelo-chat-do-assistente-de-inteligência-artificial-modo-sem-fricção">Opção
+1 — Pelo chat do assistente de Inteligência Artificial (modo sem
+fricção)</h3>
+<p>Basta digitar comandos com barra (chamados de <strong>slash
+commands</strong>) diretamente na conversa:</p>
+<pre class="text"><code>/pure &quot;Sistema de Gestão de Tarefas&quot;</code></pre>
+<p>O assistente interpreta o pedido, reúne os parâmetros que faltam
+conversando com você e dispara o comando de terminal equivalente
+automaticamente. Você não precisa saber a sintaxe exata do terminal para
+usar o ecossistema por essa via.</p>
+<blockquote>
+<p>Em assistentes cuja interface não tem suporte nativo a comandos de
+barra (por exemplo, Google Antigravity ou Gemini CLI), basta digitar o
+comando exatamente como está escrito neste manual (<code>/pure</code>,
+<code>/open</code>, <code>/bridge</code>, etc.) como texto normal — o
+agente foi instruído a reconhecer e executar o comando do mesmo
+jeito.</p>
+</blockquote>
+<h3 id="opção-2-pelo-terminal-modo-engenheiro-integração-contínua">Opção
+2 — Pelo terminal (modo engenheiro / integração contínua)</h3>
+<p>Controle total e determinismo absoluto, útil para automação e para
+quem prefere linha de comando:</p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="ex">python</span> ecossistema.py run-fluxo <span class="at">--fluxo</span> pure <span class="at">--nome</span> <span class="st">&quot;Tarefas&quot;</span> <span class="at">--slug</span> tarefas <span class="at">--dominio</span> produtividade <span class="at">--pasta</span> ./projetos/tarefas</span></code></pre></div>
+<p>Ao longo deste manual, cada comando é apresentado nas duas formas
+lado a lado.</p>
+<hr />
+<h1 id="os-3-fluxos-de-criação-a-tríade-canônica">6. Os 3 Fluxos de
+Criação (a Tríade Canônica)</h1>
+<p>Toda aplicação nasce de uma escolha entre três estratégias de
+construção. A diferença entre elas está apenas em <strong>como</strong>
+o código é produzido — o resultado final (a estrutura, a auditoria e o
+processo de implantação) é sempre o mesmo, conforme descrito na Seção
+4.</p>
+<table>
+<colgroup>
+<col style="width: 25%" />
+<col style="width: 25%" />
+<col style="width: 25%" />
+<col style="width: 25%" />
+</colgroup>
+<thead>
+<tr>
+<th style="text-align: left;">Fluxo</th>
+<th style="text-align: left;">Nome técnico</th>
+<th style="text-align: left;">Quando escolher</th>
+<th style="text-align: left;">Motor por trás</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><strong>Fluxo 1</strong></td>
+<td style="text-align: left;"><code>aidd-pure</code></td>
+<td style="text-align: left;">Você quer código autoral, sob medida, sem
+depender de nenhuma base pronta de terceiros.</td>
+<td style="text-align: left;"><code>aidd-generator</code>, que aplica
+<strong>TDD</strong> (<em>Test-Driven Development</em>, ou
+“desenvolvimento guiado por testes”: primeiro se escreve um teste que
+falha, depois o código mínimo para ele passar) em ciclo estrito.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Fluxo 2</strong></td>
+<td style="text-align: left;"><code>aidd-open</code></td>
+<td style="text-align: left;">Você quer entregar mais rápido
+reaproveitando motores de código aberto já consolidados (por exemplo, um
+sistema de CRM ou de agendamento já existente) e apenas conectá-los e
+customizá-los.</td>
+<td style="text-align: left;"><code>aidd-factory</code>, especializado
+em curadoria e integração de peças prontas.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Fluxo 3</strong></td>
+<td style="text-align: left;"><code>aidd-bridge</code></td>
+<td style="text-align: left;">Você já tem um protótipo feito em uma
+ferramenta <em>low-code</em> (Lovable, v0, Bolt) e quer libertá-lo —
+tirá-lo da dependência de um fornecedor único — para rodar em servidor
+próprio, sem mensalidade obrigatória de plataforma.</td>
+<td style="text-align: left;"><code>aidd-bridge</code>, que extrai,
+migra o banco de dados e empacota o projeto preservando a aparência
+visual original.</td>
+</tr>
+</tbody>
+</table>
+<h3 id="como-disparar-cada-fluxo">Como disparar cada fluxo</h3>
+<pre class="text"><code># Pelo chat
+/pure &quot;Sistema de Gestão de Tarefas&quot;
+/open &quot;ERP para Clínicas com WhatsApp&quot;
+/bridge ./meu-export-lovable meu-saas</code></pre>
+<div class="sourceCode" id="cb9"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Pelo terminal — os três aceitam os mesmos parâmetros de identificação do projeto</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="ex">python</span> ecossistema.py pure   <span class="at">--nome</span> <span class="st">&quot;Tarefas&quot;</span>  <span class="at">--slug</span> tarefas  <span class="at">--dominio</span> produtividade <span class="at">--pasta</span> ./projetos/tarefas</span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a><span class="ex">python</span> ecossistema.py open   <span class="at">--nome</span> <span class="st">&quot;Clinica&quot;</span>  <span class="at">--slug</span> clinica  <span class="at">--dominio</span> saude         <span class="at">--pasta</span> ./projetos/clinica</span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a><span class="ex">python</span> ecossistema.py bridge <span class="at">--nome</span> <span class="st">&quot;Hub&quot;</span>      <span class="at">--slug</span> hub      <span class="at">--dominio</span> saas          <span class="at">--pasta</span> ./projetos/hub <span class="at">--origem</span> ./exports/lovable</span></code></pre></div>
+<p>Os parâmetros usados acima significam:</p>
+<ul>
+<li><code>--nome</code>: o nome de exibição do projeto
+(obrigatório).</li>
+<li><code>--slug</code>: uma versão curta do nome, só com letras
+minúsculas e hífens, usada em pastas e URLs (obrigatório).</li>
+<li><code>--dominio</code>: a área de negócio do projeto — por exemplo
+<code>saude</code>, <code>produtividade</code>, <code>financeiro</code>
+(obrigatório).</li>
+<li><code>--pasta</code>: onde o projeto será criado no disco
+(obrigatório).</li>
+<li><code>--origem</code>: caminho do protótipo exportado, usado apenas
+no Fluxo 3 (opcional nos outros dois).</li>
+<li><code>--dry-run</code>: simula a execução inteira sem gravar nada no
+disco (opcional, disponível nos três fluxos).</li>
+</ul>
+<p>Qualquer um dos três comandos pode ser escrito também como
+<code>python ecossistema.py run-fluxo --fluxo pure|open|bridge [mesmos parâmetros]</code>
+— é exatamente a mesma execução por baixo, apenas com um nome de comando
+mais explícito.</p>
+<hr />
+<h1 id="as-8-ferramentas-especializadas">7. As 8 Ferramentas
+Especializadas</h1>
+<p>Além da Tríade, o ecossistema é composto por 8 ferramentas
+independentes, cada uma responsável por uma etapa da fábrica descrita na
+Seção 4. A tabela abaixo traduz cada uma em dois níveis: a explicação
+para quem nunca programou e o resumo técnico para quem já é
+experiente.</p>
+<table>
+<colgroup>
+<col style="width: 20%" />
+<col style="width: 20%" />
+<col style="width: 20%" />
+<col style="width: 20%" />
+<col style="width: 20%" />
+</colgroup>
+<thead>
+<tr>
+<th style="text-align: left;">Ferramenta</th>
+<th style="text-align: left;">Em termos simples</th>
+<th style="text-align: left;">Em termos técnicos</th>
+<th style="text-align: left;">Comando no chat</th>
+<th style="text-align: left;">Comando no terminal</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><strong><code>aidd-forge</code></strong></td>
+<td style="text-align: left;">Prepara o terreno e instala as cercas de
+proteção antes de qualquer código ser escrito.</td>
+<td style="text-align: left;">Bootstrap determinístico de governança,
+isolamento de fases e injeção de regras no projeto.</td>
+<td style="text-align: left;"><code>/forge [pasta]</code></td>
+<td style="text-align: left;"><code>python ecossistema.py forge init [pasta]</code></td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong><code>aidd-planner</code></strong></td>
+<td style="text-align: left;">Escreve a planta baixa do sistema junto
+com você, em conversa.</td>
+<td style="text-align: left;">Motor de planejamento e intake formal de
+requisitos (<strong>SDD/BDD</strong> — <em>Specification/Behavior-Driven
+Development</em>, ou seja, requisitos escritos como especificações e
+comportamentos verificáveis, não como texto livre).</td>
+<td style="text-align: left;"><code>/planner &lt;ideia&gt;</code></td>
+<td style="text-align: left;"><code>python ecossistema.py planner init [args]</code></td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong><code>aidd-generator</code></strong></td>
+<td style="text-align: left;">A linha de montagem autônoma: você
+descreve o que quer, e a fábrica devolve software pronto, já
+testado.</td>
+<td style="text-align: left;">Pipeline autônomo de 8 fases com
+<strong>TDD</strong> Red-Green (ciclo de teste que falha, depois passa)
+e consumo nativo do plano gerado pelo Planner.</td>
+<td style="text-align: left;"><code>/generate &lt;ideia&gt;</code></td>
+<td style="text-align: left;"><code>python ecossistema.py generate &quot;&lt;ideia&gt;&quot;</code></td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong><code>aidd-master</code></strong></td>
+<td style="text-align: left;">Os blocos de montar: permite adicionar
+novas funções sem quebrar o que já existia.</td>
+<td style="text-align: left;">Organização em <strong>Vertical
+Slices</strong> (fatias verticais — cada funcionalidade de negócio
+contém, junta, seu próprio banco, sua própria lógica e sua própria tela,
+em vez de espalhar por camadas técnicas separadas) com Frontend em
+Next.js.</td>
+<td style="text-align: left;"><code>/master &lt;modulo&gt;</code></td>
+<td style="text-align: left;"><code>python ecossistema.py master add-module &lt;modulo&gt;</code></td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong><code>aidd-enterprise</code></strong></td>
+<td style="text-align: left;">A blindagem e o selo de qualidade: confere
+a autenticidade de cada peça crítica.</td>
+<td style="text-align: left;">Injeção de componentes corporativos
+certificados com hash criptográfico <strong>SHA-256</strong> (uma
+“impressão digital” matemática do arquivo, usada para detectar qualquer
+alteração não autorizada) e detecção de desvios.</td>
+<td style="text-align: left;"><code>/enterprise &lt;tipo&gt; &lt;nome&gt;</code></td>
+<td style="text-align: left;"><code>python ecossistema.py enterprise inject &lt;tipo&gt; &lt;nome&gt;</code></td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong><code>aidd-ops</code></strong></td>
+<td style="text-align: left;">A pista de pouso: prepara os servidores,
+ajusta o tráfego e coloca o sistema no ar.</td>
+<td style="text-align: left;">Meta-orquestrador de infraestrutura:
+dimensionamento de servidor, proteção de acesso remoto, containers
+Docker e monitoramento de disponibilidade.</td>
+<td style="text-align: left;"><code>/ops &lt;requisito&gt;</code></td>
+<td style="text-align: left;"><code>python ecossistema.py ops &quot;&lt;requisito&gt;&quot;</code></td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong><code>aidd-factory</code></strong></td>
+<td style="text-align: left;">A central de montagem e fiação: cria a
+porta de entrada única do sistema e conecta todos os serviços entre
+si.</td>
+<td style="text-align: left;">Gerador de aplicação multi-serviço: porta
+de entrada unificada (<strong>BFF</strong>, <em>Backend For
+Frontend</em> — uma camada que reúne várias fontes de dados em uma única
+interface para o Frontend), Frontend, integrações e orquestração via
+containers.</td>
+<td style="text-align: left;"><code>/factory --plano &lt;arquivo&gt; --pasta &lt;destino&gt;</code></td>
+<td style="text-align: left;"><code>python ecossistema.py factory --plano &lt;arquivo&gt; --pasta &lt;destino&gt;</code></td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong><code>aidd-bridge</code></strong></td>
+<td style="text-align: left;">O tradutor e libertador de código: pega
+aplicativos feitos em plataformas visuais e coloca para rodar em
+servidor próprio.</td>
+<td style="text-align: left;">Extrator, migrador de banco de dados (de
+serviços proprietários para PostgreSQL puro) e empacotador de projetos,
+preservando a interface visual original.</td>
+<td style="text-align: left;"><code>/bridge [comando]</code></td>
+<td style="text-align: left;"><code>python ecossistema.py bridge [scan\|convert-db\|merge\|pack]</code></td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h1 id="o-que-todo-projeto-entrega-sempre">8. O que Todo Projeto
+Entrega, Sempre</h1>
+<p>Uma das regras mais rígidas do ecossistema — chamada internamente de
+<strong>Quarteto</strong> <em>Sine Qua Non</em> (expressão em latim para
+“sem o qual não”, ou seja, os quatro itens que nenhum projeto pode
+deixar de ter) — garante que <strong>todo</strong> software gerado, não
+importa qual dos 3 Fluxos foi usado, nasça com quatro entregas
+nativas:</p>
+<ol type="1">
+<li><strong>Documentação de API interativa</strong> (rota
+<code>/swagger</code> ou <code>/docs</code>), no padrão <strong>OpenAPI
+3.1</strong> — um formato aberto e universal que descreve todas as
+operações que o sistema oferece, permitindo que qualquer outro programa
+(ou outra equipe) entenda como se conectar a ele sem precisar ler o
+código-fonte.</li>
+<li><strong>Central de webhooks</strong> (rota <code>/webhooks</code>) —
+um webhook é uma notificação automática que o sistema envia para outro
+sistema quando algo acontece (por exemplo, “um pedido foi pago”), em vez
+de esse outro sistema precisar ficar perguntando repetidamente se algo
+mudou.</li>
+<li><strong>Exposição via MCP</strong> (rota <code>/mcp</code>) — o
+mesmo protocolo explicado na Seção 3, aqui do lado do sistema gerado:
+qualquer assistente de Inteligência Artificial autorizado pode consultar
+e operar esse sistema de forma padronizada.</li>
+<li><strong>Guia do usuário</strong> (rota <code>/docs/guia</code> ou
+<code>/guia</code>) — documentação operacional voltada a quem vai usar o
+sistema no dia a dia, não a quem vai programá-lo.</li>
+</ol>
+<p>Essas quatro entregas são dinâmicas: crescem automaticamente conforme
+novos módulos são adicionados ao sistema (Seção 6,
+<code>aidd-master</code>), sem exigir manutenção manual.</p>
+<p>Além disso, por padrão-ouro de tecnologia, todo Frontend gerado usa
+<strong>Next.js</strong> com <strong>TypeScript</strong> (uma versão do
+JavaScript com verificação de tipos, que reduz erros antes mesmo de
+rodar o programa) e <strong>Tailwind CSS</strong> (um sistema de
+estilização visual), enquanto o Backend usa Python puro com banco de
+dados <strong>SQLite em modo WAL</strong> (<em>Write-Ahead Logging</em>
+— uma técnica que permite leituras e escritas simultâneas sem corromper
+os dados) ou PostgreSQL, dependendo da escala do projeto.</p>
+<hr />
+<h1 id="os-portões-de-qualidade-quality-gates">9. Os Portões de
+Qualidade (Quality Gates)</h1>
+<p>Um <strong>Quality Gate</strong> (portão de qualidade) é um script
+automático que responde apenas “sim” ou “não” — sem opinião, sem “está
+quase bom”: ou o código cumpre exatamente a regra verificada, ou o
+processo é bloqueado ali mesmo. Essa é a diferença entre o ecossistema e
+“confiar na palavra da Inteligência Artificial de que o trabalho está
+pronto”.</p>
+<p>O comando abaixo executa a bateria completa de uma só vez:</p>
+<div class="sourceCode" id="cb10"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="ex">python</span> ecossistema.py audit</span></code></pre></div>
+<p>Esse comando delega a execução para o framework
+<strong>pre-commit</strong> (um mecanismo padrão da indústria que roda
+verificações automáticas antes de cada contribuição de código ser
+aceita), que hoje aplica os seguintes 19 portões, nesta ordem:</p>
+<table>
+<colgroup>
+<col style="width: 27%" />
+<col style="width: 36%" />
+<col style="width: 36%" />
+</colgroup>
+<thead>
+<tr>
+<th style="text-align: center;">#</th>
+<th style="text-align: left;">Portão</th>
+<th style="text-align: left;">O que ele verifica</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;">1</td>
+<td style="text-align: left;"><code>G_ECOSSISTEMA_INTEGRIDADE</code></td>
+<td style="text-align: left;">Estrutura de pastas, ferramentas e sintaxe
+Python 100% íntegras.</td>
+</tr>
+<tr>
+<td style="text-align: center;">2</td>
+<td style="text-align: left;"><code>G_DRIFT_NUCLEO_COMPARTILHADO</code></td>
+<td style="text-align: left;">Se o núcleo de código compartilhado entre
+<code>aidd-master</code> e <code>aidd-enterprise</code> não divergiu por
+acidente.</td>
+</tr>
+<tr>
+<td style="text-align: center;">3</td>
+<td style="text-align: left;"><code>G_HARNESS_COMPAT</code></td>
+<td style="text-align: left;">Se os artefatos estão sincronizados entre
+todos os assistentes de Inteligência Artificial suportados.</td>
+</tr>
+<tr>
+<td style="text-align: center;">4</td>
+<td style="text-align: left;"><code>G_SEGREDOS</code></td>
+<td style="text-align: left;">Varredura completa em busca de senhas,
+chaves de acesso ou tokens esquecidos no código.</td>
+</tr>
+<tr>
+<td style="text-align: center;">5</td>
+<td style="text-align: left;"><code>G_CLI_HELP_CONSISTENCIA</code></td>
+<td style="text-align: left;">Se as opções descritas nas mensagens de
+ajuda do terminal realmente existem no código (nada de instrução
+desatualizada).</td>
+</tr>
+<tr>
+<td style="text-align: center;">6</td>
+<td style="text-align: left;"><code>G_COMPONENTE_AGNOSTICO</code></td>
+<td style="text-align: left;">Se novos componentes funcionam de forma
+universal em qualquer assistente de Inteligência Artificial.</td>
+</tr>
+<tr>
+<td style="text-align: center;">7</td>
+<td style="text-align: left;"><code>G_ZERO_HEADLESS</code></td>
+<td style="text-align: left;">Se nenhum robô ou subagente está rodando
+escondido, sem o desenvolvedor humano no controle.</td>
+</tr>
+<tr>
+<td style="text-align: center;">8</td>
+<td style="text-align: left;"><code>G_INFRA_COMPOSE</code></td>
+<td style="text-align: left;">Arquivos de orquestração de containers
+(Docker Compose), checando portas duplicadas, segredos e configurações
+faltando.</td>
+</tr>
+<tr>
+<td style="text-align: center;">9</td>
+<td style="text-align: left;"><code>G_HADOLINT</code></td>
+<td style="text-align: left;">Boas práticas de segurança e sintaxe em
+todos os arquivos de definição de containers (Dockerfiles).</td>
+</tr>
+<tr>
+<td style="text-align: center;">10</td>
+<td style="text-align: left;"><code>G_TESTES_REAIS</code></td>
+<td style="text-align: left;">Roda a suíte de testes automatizados de
+verdade e reprova se qualquer teste falhar.</td>
+</tr>
+<tr>
+<td style="text-align: center;">11</td>
+<td style="text-align: left;"><code>G_DEPENDENCIAS_PIN_HASH</code></td>
+<td style="text-align: left;">Se as dependências de terceiros estão
+travadas em uma versão e hash exatos, para impedir substituições
+maliciosas.</td>
+</tr>
+<tr>
+<td style="text-align: center;">12</td>
+<td style="text-align: left;"><code>G_HONESTIDADE_ROTULO</code></td>
+<td style="text-align: left;">Se o próprio código não usa termos de
+marketing exagerados no lugar de descrever a cobertura real e
+comprovada.</td>
+</tr>
+<tr>
+<td style="text-align: center;">13</td>
+<td style="text-align: left;"><code>G_ARQUITETURA_DELIVERABLE</code></td>
+<td style="text-align: left;">Se o software entregue respeita os
+princípios de Arquitetura Limpa (organização em camadas bem
+separadas).</td>
+</tr>
+<tr>
+<td style="text-align: center;">14</td>
+<td style="text-align: left;"><code>G_FRONTEND_LAYERS</code></td>
+<td style="text-align: left;">Se a parte visual (interface) está
+corretamente separada da parte de comunicação em rede no Frontend.</td>
+</tr>
+<tr>
+<td style="text-align: center;">15</td>
+<td style="text-align: left;"><code>G_ISOLATION_AUDIT</code></td>
+<td style="text-align: left;">Se as fatias verticais (Seção 7,
+<code>aidd-master</code>) não estão acopladas umas às outras
+indevidamente.</td>
+</tr>
+<tr>
+<td style="text-align: center;">16</td>
+<td style="text-align: left;"><code>G_PROTOCOL_FALLBACK</code></td>
+<td style="text-align: left;">Se as chamadas via API tradicional e via
+MCP (Seção 8) mantêm o mesmo contrato de funcionamento.</td>
+</tr>
+<tr>
+<td style="text-align: center;">17</td>
+<td style="text-align: left;"><code>G_LLM_PROMPT_SHIELD</code></td>
+<td style="text-align: left;">Blindagem contra tentativas de manipular o
+comportamento da Inteligência Artificial por meio de texto malicioso
+injetado (<em>prompt injection</em>).</td>
+</tr>
+<tr>
+<td style="text-align: center;">18</td>
+<td style="text-align: left;"><code>G_DRIFT_ANALYZER</code></td>
+<td style="text-align: left;">Redundância funcional: se duas partes do
+sistema não estão fazendo, sem necessidade, a mesma coisa de formas
+diferentes.</td>
+</tr>
+<tr>
+<td style="text-align: center;">19</td>
+<td style="text-align: left;"><code>G_PROTOTYPE_REWRITE</code></td>
+<td style="text-align: left;">Se código de experimentação (sandbox) está
+isolado e nunca é promovido a produção sem passar por testes
+completos.</td>
+</tr>
+</tbody>
+</table>
+<p>Além desses 19, existem outros portões especializados no repositório
+(por exemplo, verificação de escrita atômica de arquivos, de integridade
+de log de transações e de compatibilidade universal entre harnesses) que
+são exercidos pela própria suíte interna de testes e por pipelines
+específicos de cada ferramenta, e não fazem parte da bateria agregada de
+<code>audit</code>.</p>
+<p><strong>Resultado prático para você:</strong> <code>exit 0</code> (o
+comando termina sem erro) significa aprovação total. Qualquer outro
+resultado bloqueia o avanço até que a causa seja corrigida — nunca
+contornada.</p>
+<hr />
+<h1 id="passo-a-passo-prático-criando-o-primeiro-projeto">10. Passo a
+Passo Prático: Criando o Primeiro Projeto</h1>
+<p>Este exemplo cria um sistema fictício de gestão de tarefas chamado
+<strong>iTask</strong>, do zero, usando o Fluxo 1
+(<code>aidd-pure</code>).</p>
+<h3 id="etapa-1-disparar-a-criação">Etapa 1 — Disparar a criação</h3>
+<pre class="text"><code>Pelo chat:   /pure &quot;iTask Platform&quot; gestao</code></pre>
+<div class="sourceCode" id="cb12"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="ex">Pelo</span> terminal:</span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="ex">python</span> ecossistema.py pure <span class="at">--nome</span> <span class="st">&quot;iTask Platform&quot;</span> <span class="at">--slug</span> itask <span class="at">--dominio</span> gestao <span class="at">--pasta</span> ./projetos/itask</span></code></pre></div>
+<p>Por trás dessa única chamada, o orquestrador executa em sequência:
+<code>aidd-forge</code> (governança) → <code>aidd-planner</code>
+(mapeamento de requisitos) → <code>aidd-generator</code> (código com
+testes) → <code>aidd-master</code> (organização modular) →
+<code>aidd-enterprise</code> (auditoria de segurança) →
+<code>aidd-ops</code> (validação de infraestrutura) — exatamente o funil
+descrito na Seção 4.</p>
+<h3 id="etapa-2-adicionar-uma-nova-funcionalidade-depois">Etapa 2 —
+Adicionar uma nova funcionalidade depois</h3>
+<p>Suponha que, meses depois, você queira acrescentar um módulo de
+cobrança. Isso não exige recomeçar o projeto:</p>
+<div class="sourceCode" id="cb13"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="ex">python</span> ecossistema.py master add-module faturamento <span class="at">--pasta</span> ./projetos/itask</span></code></pre></div>
+<h3 id="etapa-3-reforçar-a-segurança-de-um-componente-específico">Etapa
+3 — Reforçar a segurança de um componente específico</h3>
+<div class="sourceCode" id="cb14"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="ex">python</span> ecossistema.py enterprise inject skill auth-jwt <span class="at">--dir</span> ./projetos/itask</span></code></pre></div>
+<h3 id="etapa-4-auditar-tudo-antes-de-considerar-pronto">Etapa 4 —
+Auditar tudo antes de considerar pronto</h3>
+<div class="sourceCode" id="cb15"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="ex">python</span> ecossistema.py audit</span></code></pre></div>
+<p>Se o comando terminar com sucesso, o projeto está aprovado nos 19
+portões de qualidade da Seção 9.</p>
+<hr />
+<h1 id="universalidade-nenhum-vínculo-com-um-único-fornecedor">11.
+Universalidade: Nenhum Vínculo com um Único Fornecedor</h1>
+<p>O ecossistema segue uma regra que os documentos internos chamam de
+“Supremacia Agnóstica”: nada aqui pertence a uma marca, modelo ou
+fornecedor específico.</p>
+<ul>
+<li><strong>Qualquer sistema operacional:</strong> roda de forma
+idêntica em Windows, Linux e macOS, porque é 100% Python puro.</li>
+<li><strong>Qualquer assistente de Inteligência Artificial:</strong>
+funciona nos harnesses Antigravity, Claude Code, OpenCode, MimoCode,
+Cursor, Gemini CLI e outros.</li>
+<li><strong>Qualquer modelo de Inteligência Artificial:</strong> usa o
+próprio modelo já contratado na sua sessão (sem custo adicional) ou
+modelos externos, locais ou em nuvem.</li>
+<li><strong>Escreva uma vez, use em todos:</strong> uma habilidade ou
+comando criado dentro do ecossistema é automaticamente distribuído para
+as pastas de configuração de todos os assistentes suportados — você não
+precisa duplicar nada manualmente.</li>
+</ul>
+<hr />
+<h1 id="referência-rápida-de-comandos">12. Referência Rápida de
+Comandos</h1>
+<div class="sourceCode" id="cb16"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Diagnóstico e saúde geral</span></span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a><span class="ex">python</span> ecossistema.py status                        <span class="co"># lista ferramentas e habilidades instaladas</span></span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a><span class="ex">python</span> ecossistema.py audit                          <span class="co"># roda os 19 Portões de Qualidade</span></span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a><span class="ex">python</span> ecossistema.py preflight-host                  <span class="co"># diagnóstico rápido do ambiente local</span></span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a><span class="co"># A Tríade Canônica de Criação</span></span>
+<span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a><span class="ex">python</span> ecossistema.py pure   <span class="at">--nome</span> <span class="op">&lt;</span>n<span class="op">&gt;</span> --slug <span class="op">&lt;</span>s<span class="op">&gt;</span> --dominio <span class="op">&lt;</span>d<span class="op">&gt;</span> --pasta <span class="op">&lt;</span>p<span class="op">&gt;</span></span>
+<span id="cb16-8"><a href="#cb16-8" aria-hidden="true" tabindex="-1"></a><span class="ex">python</span> ecossistema.py open   <span class="at">--nome</span> <span class="op">&lt;</span>n<span class="op">&gt;</span> --slug <span class="op">&lt;</span>s<span class="op">&gt;</span> --dominio <span class="op">&lt;</span>d<span class="op">&gt;</span> --pasta <span class="op">&lt;</span>p<span class="op">&gt;</span></span>
+<span id="cb16-9"><a href="#cb16-9" aria-hidden="true" tabindex="-1"></a><span class="ex">python</span> ecossistema.py bridge <span class="at">--nome</span> <span class="op">&lt;</span>n<span class="op">&gt;</span> --slug <span class="op">&lt;</span>s<span class="op">&gt;</span> --dominio <span class="op">&lt;</span>d<span class="op">&gt;</span> --pasta <span class="op">&lt;</span>p<span class="op">&gt;</span> --origem <span class="op">&lt;</span>o<span class="op">&gt;</span></span>
+<span id="cb16-10"><a href="#cb16-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-11"><a href="#cb16-11" aria-hidden="true" tabindex="-1"></a><span class="co"># Ferramentas especialistas</span></span>
+<span id="cb16-12"><a href="#cb16-12" aria-hidden="true" tabindex="-1"></a><span class="ex">python</span> ecossistema.py forge init <span class="pp">[</span><span class="ss">pasta</span><span class="pp">]</span></span>
+<span id="cb16-13"><a href="#cb16-13" aria-hidden="true" tabindex="-1"></a><span class="ex">python</span> ecossistema.py planner init <span class="pp">[</span><span class="ss">args</span><span class="pp">]</span></span>
+<span id="cb16-14"><a href="#cb16-14" aria-hidden="true" tabindex="-1"></a><span class="ex">python</span> ecossistema.py generate <span class="st">&quot;&lt;ideia&gt;&quot;</span></span>
+<span id="cb16-15"><a href="#cb16-15" aria-hidden="true" tabindex="-1"></a><span class="ex">python</span> ecossistema.py master add-module <span class="op">&lt;</span>modulo<span class="op">&gt;</span></span>
+<span id="cb16-16"><a href="#cb16-16" aria-hidden="true" tabindex="-1"></a><span class="ex">python</span> ecossistema.py enterprise inject <span class="op">&lt;</span>tipo<span class="op">&gt;</span> <span class="op">&lt;</span>nome<span class="op">&gt;</span></span>
+<span id="cb16-17"><a href="#cb16-17" aria-hidden="true" tabindex="-1"></a><span class="ex">python</span> ecossistema.py ops <span class="st">&quot;&lt;requisito&gt;&quot;</span></span>
+<span id="cb16-18"><a href="#cb16-18" aria-hidden="true" tabindex="-1"></a><span class="ex">python</span> ecossistema.py factory <span class="at">--plano</span> <span class="op">&lt;</span>arquivo<span class="op">&gt;</span> --pasta <span class="op">&lt;</span>destino<span class="op">&gt;</span></span>
+<span id="cb16-19"><a href="#cb16-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-20"><a href="#cb16-20" aria-hidden="true" tabindex="-1"></a><span class="co"># Distribuição de componentes entre assistentes de Inteligência Artificial</span></span>
+<span id="cb16-21"><a href="#cb16-21" aria-hidden="true" tabindex="-1"></a><span class="ex">python</span> ecossistema.py components sync <span class="at">--tipo</span> todos</span>
+<span id="cb16-22"><a href="#cb16-22" aria-hidden="true" tabindex="-1"></a><span class="ex">python</span> ecossistema.py components verify <span class="at">--tipo</span> todos</span>
+<span id="cb16-23"><a href="#cb16-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-24"><a href="#cb16-24" aria-hidden="true" tabindex="-1"></a><span class="co"># Dependências externas do próprio agente (habilidades e integrações de terceiros)</span></span>
+<span id="cb16-25"><a href="#cb16-25" aria-hidden="true" tabindex="-1"></a><span class="ex">python</span> ecossistema.py dependencia bootstrap</span>
+<span id="cb16-26"><a href="#cb16-26" aria-hidden="true" tabindex="-1"></a><span class="ex">python</span> ecossistema.py dependencia verify</span>
+<span id="cb16-27"><a href="#cb16-27" aria-hidden="true" tabindex="-1"></a><span class="ex">python</span> ecossistema.py dependencia list</span></code></pre></div>
+<p>Equivalentes pelo chat, para quem prefere conversar em vez de digitar
+comandos de terminal:</p>
+<pre class="text"><code>/pure &quot;&lt;ideia&gt;&quot;                 /open &quot;&lt;ideia&gt;&quot;                 /bridge &lt;pasta_export&gt; &lt;nome&gt;
+/forge [pasta]                  /planner &lt;ideia&gt;                /generate &quot;&lt;ideia&gt;&quot;
+/master &lt;modulo&gt;                /enterprise &lt;tipo&gt; &lt;nome&gt;       /ops &lt;requisito&gt;
+/factory --plano &lt;arq&gt; --pasta &lt;dest&gt;                            /dependencia bootstrap</code></pre>
+<hr />
+<h1 id="mapa-do-repositório">13. Mapa do Repositório</h1>
+<pre class="text"><code>ecossistema-aidd/
+├── AGENTS.md              → a lei fundamental e a governança canônica do ecossistema
+├── README.md               → portal de apresentação geral
+├── ecossistema.py           → a central de comando unificada (CLI)
+├── componentes/             → o cofre de onde nascem habilidades e comandos universais
+├── gates/                   → os portões de segurança determinísticos (Seção 9)
+├── tools/                   → as 8 ferramentas homologadas (Seção 7)
+│   ├── aidd-forge/
+│   ├── aidd-planner/
+│   ├── aidd-generator/
+│   ├── aidd-master/
+│   ├── aidd-enterprise/
+│   ├── aidd-ops/
+│   ├── aidd-factory/
+│   └── aidd-bridge/
+└── docs/                    → toda a documentação e inteligência acumulada do projeto
+    ├── manuais/              → manuais como este
+    ├── planos/                → planos de trabalho, organizados por status
+    ├── protocolos/            → protocolos canônicos de funcionamento
+    └── relatorios/            → relatórios formais e auditorias</code></pre>
+<hr />
+<h1 id="o-que-você-pode-esperar-princípios-de-governança">14. O que Você
+Pode Esperar (Princípios de Governança)</h1>
+<p>Estes são os compromissos que regem todo o funcionamento do
+ecossistema, explicados em termos práticos:</p>
+<ul>
+<li><strong>Nada é aceito só de confiança.</strong> Toda alteração passa
+pelos Portões de Qualidade (Seção 9) antes de ser considerada
+pronta.</li>
+<li><strong>Zero improviso (“Zero Stubs”).</strong> O código gerado não
+contém funções vazias, pendências do tipo “fazer depois” ou simulações
+fingindo ser reais — ou o código funciona de verdade, ou o portão
+correspondente bloqueia.</li>
+<li><strong>Você aprova cada etapa importante.</strong> As execuções são
+feitas de forma síncrona e visível; não há subagentes trabalhando
+escondidos, consumindo recursos sem o seu conhecimento.</li>
+<li><strong>O estado do projeto fica registrado em arquivo, não na
+conversa.</strong> Informações importantes (planos, auditorias,
+contratos entre ferramentas) são salvas em arquivos estruturados, e não
+dependem de a conversa “lembrar” de algo.</li>
+<li><strong>Nenhuma alegação além do que foi medido.</strong> Relatórios
+e mensagens do sistema nunca afirmam uma certificação ou cobertura de
+testes maior do que a que os testes automáticos realmente
+comprovaram.</li>
+</ul>
+<hr />
+<h1 id="glossário">15. Glossário</h1>
+<ul>
+<li><strong>API:</strong> conjunto de portas de entrada que um sistema
+oferece para que outros programas conversem com ele.</li>
+<li><strong>BFF (<em>Backend For Frontend</em>):</strong> uma camada de
+backend criada especificamente para atender às necessidades de uma
+interface visual, reunindo várias fontes de dados em um único ponto de
+acesso.</li>
+<li><strong>Docker:</strong> tecnologia que empacota uma aplicação junto
+com tudo que ela precisa para rodar, de forma isolada e portátil entre
+computadores diferentes.</li>
+<li><strong>Dry-run:</strong> execução simulada de um comando, que
+mostra o que aconteceria sem de fato alterar nada.</li>
+<li><strong>Harness:</strong> o programa, interface ou linha de comando
+onde um assistente de Inteligência Artificial é operado (por exemplo,
+Claude Code, Cursor, Antigravity).</li>
+<li><strong>Low-code:</strong> categoria de ferramentas que permite
+criar aplicações por meio de interfaces visuais, com pouco ou nenhum
+código escrito manualmente.</li>
+<li><strong>MCP (<em>Model Context Protocol</em>):</strong> protocolo
+aberto que padroniza como um assistente de Inteligência Artificial se
+conecta a ferramentas e dados externos.</li>
+<li><strong>OpenAPI:</strong> formato aberto e padronizado para
+descrever todas as operações de uma API, de forma que qualquer sistema
+consiga entender como usá-la.</li>
+<li><strong>Quality Gate (Portão de Qualidade):</strong> verificação
+automática de resultado binário (aprova ou bloqueia), sem margem de
+interpretação.</li>
+<li><strong>SHA-256:</strong> algoritmo que gera uma “impressão digital”
+única de um arquivo, usada para detectar qualquer alteração não
+autorizada.</li>
+<li><strong>Slug:</strong> versão curta de um nome, apenas com letras
+minúsculas e hífens, usada em pastas, URLs e identificadores
+técnicos.</li>
+<li><strong>TDD (<em>Test-Driven Development</em>):</strong> técnica de
+programação em que primeiro se escreve um teste que falha, e só depois o
+código mínimo necessário para fazê-lo passar.</li>
+<li><strong>VSA (<em>Vertical Slice Architecture</em>, Arquitetura de
+Fatias Verticais):</strong> forma de organizar o código por
+funcionalidade de negócio completa (dados, lógica e tela juntos), em vez
+de dividir por camada técnica.</li>
+<li><strong>WAL (<em>Write-Ahead Logging</em>):</strong> técnica de
+banco de dados que permite leituras e escritas simultâneas sem corromper
+informações.</li>
+<li><strong>Webhook:</strong> notificação automática que um sistema
+envia a outro quando algo acontece, evitando que o segundo sistema
+precise perguntar repetidamente se houve mudança.</li>
+</ul>
+<hr />
+<h1 id="onde-buscar-mais-informação">16. Onde Buscar Mais
+Informação</h1>
+<ul>
+<li><strong><code>AGENTS.md</code></strong>, na raiz do repositório: a
+governança canônica e as regras invioláveis que todo assistente de
+Inteligência Artificial segue neste projeto.</li>
+<li><strong><code>README.md</code></strong>, na raiz do repositório:
+apresentação geral e visão panorâmica do ecossistema.</li>
+<li><strong><code>docs/protocolos/</code></strong>: os protocolos
+formais de funcionamento de cada mecanismo citado neste manual.</li>
+<li><strong><code>docs/planos/</code></strong>: o histórico de planos de
+trabalho, organizados por status de execução.</li>
+<li>Repositório oficial:
+<code>https://github.com/heverton-dev/ecossistema-aidd</code></li>
+</ul>
+<p>Este manual cobre o uso corrente e verificado do ecossistema na data
+de publicação. Como o projeto evolui continuamente, em caso de
+divergência entre este documento e o comportamento real de um comando, o
+código-fonte e o <code>AGENTS.md</code> são sempre a referência
+definitiva.</p>
+<script>(function () {
+  "use strict";
+
+  function copyIconSVG() {
+    return '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="9" width="13" height="13" rx="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>';
+  }
+
+  function checkIconSVG() {
+    return '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"></polyline></svg>';
+  }
+
+  function attachCopyButtons() {
+    var blocks = document.querySelectorAll("pre > code");
+    blocks.forEach(function (codeEl) {
+      var pre = codeEl.parentElement;
+      if (!pre || pre.dataset.copyReady === "1") return;
+      pre.dataset.copyReady = "1";
+
+      var wrapper = document.createElement("div");
+      wrapper.className = "code-block";
+      pre.parentNode.insertBefore(wrapper, pre);
+      wrapper.appendChild(pre);
+
+      var button = document.createElement("button");
+      button.type = "button";
+      button.className = "copy-btn";
+      button.setAttribute("aria-label", "Copiar comando");
+      button.innerHTML = copyIconSVG() + "<span>Copiar</span>";
+
+      button.addEventListener("click", function () {
+        var text = codeEl.textContent || "";
+        var restore = function () {
+          setTimeout(function () {
+            button.classList.remove("copied");
+            button.innerHTML = copyIconSVG() + "<span>Copiar</span>";
+          }, 1600);
+        };
+        var markCopied = function () {
+          button.classList.add("copied");
+          button.innerHTML = checkIconSVG() + "<span>Copiado</span>";
+          restore();
+        };
+
+        if (navigator.clipboard && window.isSecureContext) {
+          navigator.clipboard.writeText(text).then(markCopied).catch(function () {
+            fallbackCopy(text, markCopied);
+          });
+        } else {
+          fallbackCopy(text, markCopied);
+        }
+      });
+
+      wrapper.insertBefore(button, pre);
+    });
+  }
+
+  function fallbackCopy(text, onDone) {
+    var textarea = document.createElement("textarea");
+    textarea.value = text;
+    textarea.style.position = "fixed";
+    textarea.style.opacity = "0";
+    document.body.appendChild(textarea);
+    textarea.select();
+    try {
+      document.execCommand("copy");
+      onDone();
+    } catch (err) {
+      /* Falha silenciosa: comando permanece selecionável manualmente. */
+    }
+    document.body.removeChild(textarea);
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", attachCopyButtons);
+  } else {
+    attachCopyButtons();
+  }
+})();
+</script>
+</body>
+</html>

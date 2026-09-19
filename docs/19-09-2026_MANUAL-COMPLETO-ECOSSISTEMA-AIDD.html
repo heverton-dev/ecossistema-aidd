@@ -1,0 +1,1637 @@
+<!DOCTYPE html>
+<html lang="pt-BR" data-theme="dark">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Manual Completo do Ecossistema AIDD — Ecossistema AIDD</title>
+  
+  <!-- Tipografia de Elite -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  
+  <style>
+    /* Design Tokens & Theme Variables */
+    :root {
+      --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      --font-mono: 'JetBrains Mono', 'Fira Code', 'Consolas', monospace;
+      
+      /* Light Theme */
+      --bg-base: #f8fafc;
+      --bg-surface: #ffffff;
+      --bg-surface-elevated: #ffffff;
+      --bg-sidebar: #f1f5f9;
+      --border-subtle: #e2e8f0;
+      --border-strong: #cbd5e1;
+      --text-primary: #0f172a;
+      --text-secondary: #475569;
+      --text-muted: #64748b;
+      
+      --brand-primary: #2563eb;
+      --brand-accent: #0284c7;
+      --brand-badge-bg: rgba(37, 99, 235, 0.08);
+      --brand-badge-text: #1d4ed8;
+      
+      --code-bg: #0f172a;
+      --code-text: #f8fafc;
+      --code-inline-bg: #e2e8f0;
+      --code-inline-text: #0f172a;
+      
+      --table-header-bg: #f8fafc;
+      --table-row-zebra: rgba(241, 245, 249, 0.6);
+      --table-row-hover: #f1f5f9;
+      
+      --callout-bg: #f0f9ff;
+      --callout-border: #0284c7;
+      --callout-text: #0369a1;
+      
+      --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+      --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.07), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
+      --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.08), 0 4px 6px -4px rgba(0, 0, 0, 0.04);
+    }
+
+    [data-theme="dark"] {
+      --bg-base: #090d16;
+      --bg-surface: #0f172a;
+      --bg-surface-elevated: #1e293b;
+      --bg-sidebar: #0d1322;
+      --border-subtle: #1e293b;
+      --border-strong: #334155;
+      --text-primary: #f8fafc;
+      --text-secondary: #cbd5e1;
+      --text-muted: #94a3b8;
+      
+      --brand-primary: #38bdf8;
+      --brand-accent: #60a5fa;
+      --brand-badge-bg: rgba(56, 189, 248, 0.12);
+      --brand-badge-text: #38bdf8;
+      
+      --code-bg: #030712;
+      --code-text: #e2e8f0;
+      --code-inline-bg: #1e293b;
+      --code-inline-text: #38bdf8;
+      
+      --table-header-bg: #1e293b;
+      --table-row-zebra: rgba(30, 41, 59, 0.4);
+      --table-row-hover: #1e293b;
+      
+      --callout-bg: rgba(14, 165, 233, 0.08);
+      --callout-border: #38bdf8;
+      --callout-text: #e0f2fe;
+      
+      --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.3);
+      --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.4);
+      --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.5);
+    }
+
+    /* Reset & Base Settings */
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html {
+      scroll-behavior: smooth;
+      font-size: 16px;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+
+    body {
+      font-family: var(--font-sans);
+      background-color: var(--bg-base);
+      color: var(--text-primary);
+      line-height: 1.75;
+      min-height: 100vh;
+      display: flex;
+    }
+
+    ::selection {
+      background-color: rgba(56, 189, 248, 0.25);
+      color: inherit;
+    }
+
+    /* Custom Scrollbar */
+    ::-webkit-scrollbar {
+      width: 8px;
+      height: 8px;
+    }
+    ::-webkit-scrollbar-track {
+      background: var(--bg-base);
+    }
+    ::-webkit-scrollbar-thumb {
+      background: var(--border-strong);
+      border-radius: 4px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: var(--brand-accent);
+    }
+
+    /* Layout Shell */
+    .app-layout {
+      display: flex;
+      width: 100%;
+      min-height: 100vh;
+    }
+
+    /* Sidebar Navigation */
+    .sidebar {
+      width: 320px;
+      background: var(--bg-sidebar);
+      border-right: 1px solid var(--border-subtle);
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      overflow-y: auto;
+      padding: 32px 24px;
+      flex-shrink: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+    }
+
+    .brand-box {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      text-decoration: none;
+      color: inherit;
+      padding-bottom: 16px;
+      border-bottom: 1px solid var(--border-subtle);
+    }
+
+    .brand-icon {
+      width: 36px;
+      height: 36px;
+      border-radius: 8px;
+      background: linear-gradient(135deg, #2563eb, #38bdf8);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #ffffff;
+      font-weight: 800;
+      font-size: 1.1rem;
+      box-shadow: 0 4px 10px rgba(37, 99, 235, 0.3);
+    }
+
+    .brand-title {
+      font-size: 0.95rem;
+      font-weight: 700;
+      letter-spacing: -0.01em;
+      line-height: 1.2;
+    }
+
+    .brand-subtitle {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      font-weight: 500;
+    }
+
+    .toc-title {
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      font-weight: 700;
+      color: var(--text-muted);
+      margin-bottom: 8px;
+    }
+
+    #TOC {
+      font-size: 0.88rem;
+    }
+
+    #TOC ul {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    #TOC ul ul {
+      margin-left: 14px;
+      padding-left: 10px;
+      border-left: 1px solid var(--border-subtle);
+      margin-top: 4px;
+      margin-bottom: 4px;
+      gap: 2px;
+    }
+
+    #TOC a {
+      color: var(--text-secondary);
+      text-decoration: none;
+      display: block;
+      padding: 6px 10px;
+      border-radius: 6px;
+      transition: all 0.15s ease;
+      line-height: 1.4;
+    }
+
+    #TOC a:hover {
+      color: var(--text-primary);
+      background: var(--bg-surface-elevated);
+      transform: translateX(2px);
+    }
+
+    #TOC a.active {
+      color: var(--brand-primary);
+      font-weight: 600;
+      background: var(--brand-badge-bg);
+    }
+
+    /* Main Viewport */
+    .viewport {
+      flex: 1;
+      min-width: 0;
+      padding: 48px 64px 96px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .content-container {
+      width: 100%;
+      max-width: 820px;
+    }
+
+    /* Top Control Bar */
+    .control-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 40px;
+      padding-bottom: 16px;
+      border-bottom: 1px solid var(--border-subtle);
+    }
+
+    .badge-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.78rem;
+      font-weight: 600;
+      padding: 4px 12px;
+      border-radius: 9999px;
+      background: var(--brand-badge-bg);
+      color: var(--brand-badge-text);
+      border: 1px solid rgba(56, 189, 248, 0.2);
+    }
+
+    .badge-pill::before {
+      content: "";
+      display: inline-block;
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: #10b981;
+    }
+
+    .theme-toggle {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-strong);
+      color: var(--text-secondary);
+      padding: 6px 12px;
+      border-radius: 8px;
+      font-size: 0.85rem;
+      font-weight: 500;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.2s ease;
+    }
+
+    .theme-toggle:hover {
+      color: var(--text-primary);
+      border-color: var(--brand-primary);
+    }
+
+    /* Hero Header */
+    #title-block-header {
+      margin-bottom: 48px;
+    }
+
+    #title-block-header h1.title {
+      font-size: 2.75rem;
+      font-weight: 800;
+      letter-spacing: -0.035em;
+      line-height: 1.15;
+      color: var(--text-primary);
+      margin-bottom: 12px;
+    }
+
+    #title-block-header .subtitle {
+      font-size: 1.25rem;
+      color: var(--text-secondary);
+      line-height: 1.5;
+      margin-bottom: 20px;
+    }
+
+    .meta-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      border-top: 1px solid var(--border-subtle);
+      padding-top: 16px;
+    }
+
+    .meta-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    /* Typography & Prose */
+    h1, h2, h3, h4, h5, h6 {
+      color: var(--text-primary);
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      scroll-margin-top: 32px;
+    }
+
+    h1 {
+      font-size: 2.1rem;
+      margin-top: 56px;
+      margin-bottom: 20px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid var(--border-subtle);
+    }
+
+    h2 {
+      font-size: 1.55rem;
+      margin-top: 40px;
+      margin-bottom: 16px;
+    }
+
+    h3 {
+      font-size: 1.25rem;
+      margin-top: 28px;
+      margin-bottom: 12px;
+    }
+
+    p {
+      margin-bottom: 18px;
+      color: var(--text-secondary);
+      line-height: 1.8;
+      font-size: 1.02rem;
+    }
+
+    strong {
+      color: var(--text-primary);
+      font-weight: 600;
+    }
+
+    ul, ol {
+      margin-bottom: 20px;
+      padding-left: 24px;
+      color: var(--text-secondary);
+    }
+
+    li {
+      margin-bottom: 8px;
+      line-height: 1.7;
+    }
+
+    hr {
+      border: none;
+      border-top: 1px solid var(--border-subtle);
+      margin: 48px 0;
+    }
+
+    /* Callouts / Blockquotes */
+    blockquote {
+      background: var(--callout-bg);
+      border: 1px solid var(--border-subtle);
+      border-left: 3px solid var(--callout-border);
+      border-radius: 8px;
+      padding: 16px 20px;
+      margin: 24px 0;
+    }
+
+    blockquote p {
+      color: var(--callout-text);
+      font-size: 0.95rem;
+      margin-bottom: 0;
+    }
+
+    blockquote strong {
+      color: var(--callout-text);
+    }
+
+    /* Inline Code */
+    code:not(pre code) {
+      font-family: var(--font-mono);
+      font-size: 0.88em;
+      background: var(--code-inline-bg);
+      color: var(--code-inline-text);
+      padding: 0.15em 0.45em;
+      border-radius: 5px;
+      font-weight: 500;
+    }
+
+    /* Code Blocks */
+    .code-wrapper {
+      position: relative;
+      margin: 24px 0;
+      border-radius: 10px;
+      overflow: hidden;
+      border: 1px solid var(--border-strong);
+      box-shadow: var(--shadow-md);
+      background: var(--code-bg);
+    }
+
+    .code-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 8px 16px;
+      background: rgba(255, 255, 255, 0.04);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      font-size: 0.75rem;
+      font-family: var(--font-mono);
+      color: #94a3b8;
+    }
+
+    .copy-button {
+      background: transparent;
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      color: #cbd5e1;
+      padding: 3px 8px;
+      border-radius: 4px;
+      font-size: 0.72rem;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      font-family: var(--font-sans);
+    }
+
+    .copy-button:hover {
+      background: rgba(255, 255, 255, 0.1);
+      color: #ffffff;
+    }
+
+    pre {
+      padding: 18px 20px;
+      overflow-x: auto;
+      font-family: var(--font-mono);
+      font-size: 0.88rem;
+      line-height: 1.6;
+      background: var(--code-bg);
+      color: var(--code-text);
+    }
+
+    pre code {
+      background: transparent;
+      padding: 0;
+      color: inherit;
+    }
+
+    /* Tables */
+    .table-responsive {
+      width: 100%;
+      overflow-x: auto;
+      margin: 28px 0;
+      border-radius: 10px;
+      border: 1px solid var(--border-subtle);
+      box-shadow: var(--shadow-sm);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.92rem;
+      background: var(--bg-surface);
+      text-align: left;
+    }
+
+    th {
+      background: var(--table-header-bg);
+      color: var(--text-primary);
+      font-weight: 600;
+      padding: 14px 18px;
+      border-bottom: 1px solid var(--border-strong);
+      letter-spacing: -0.01em;
+    }
+
+    td {
+      padding: 12px 18px;
+      border-bottom: 1px solid var(--border-subtle);
+      color: var(--text-secondary);
+      font-variant-numeric: tabular-nums;
+    }
+
+    tr:last-child td {
+      border-bottom: none;
+    }
+
+    tr:nth-child(even) td {
+      background: var(--table-row-zebra);
+    }
+
+    tr:hover td {
+      background: var(--table-row-hover);
+    }
+
+    /* Floating Back-To-Top */
+    .back-to-top {
+      position: fixed;
+      bottom: 28px;
+      right: 28px;
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      background: var(--bg-surface-elevated);
+      border: 1px solid var(--border-strong);
+      color: var(--text-secondary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      box-shadow: var(--shadow-md);
+      transition: all 0.2s ease;
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .back-to-top.visible {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .back-to-top:hover {
+      color: var(--brand-primary);
+      border-color: var(--brand-primary);
+      transform: translateY(-2px);
+    }
+
+    /* Responsive Queries */
+    @media (max-width: 1080px) {
+      .sidebar {
+        display: none;
+      }
+      .viewport {
+        padding: 32px 24px 64px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="app-layout">
+    
+    <!-- Sidebar / Sticky Table of Contents -->
+    <aside class="sidebar">
+      <a href="#" class="brand-box">
+        <div class="brand-icon">A</div>
+        <div>
+          <div class="brand-title">ECOSSISTEMA AIDD</div>
+          <div class="brand-subtitle">Manual Canônico v3.0</div>
+        </div>
+      </a>
+      
+      <div>
+        <div class="toc-title">Navegação Rápida</div>
+        <nav id="TOC" role="doc-toc">
+          <ul>
+          <li><a href="#seção-1-visão-geral-e-arquitetura-canônica"
+          id="toc-seção-1-visão-geral-e-arquitetura-canônica">Seção 1 —
+          Visão Geral e Arquitetura Canônica</a>
+          <ul>
+          <li><a href="#o-que-é-o-ecossistema-aidd"
+          id="toc-o-que-é-o-ecossistema-aidd">O que é o Ecossistema
+          AIDD?</a>
+          <ul>
+          <li><a href="#as-11-leis-invioláveis-do-ecossistema-aidd"
+          id="toc-as-11-leis-invioláveis-do-ecossistema-aidd">As 11 Leis
+          Invioláveis do Ecossistema AIDD</a></li>
+          </ul></li>
+          <li><a href="#as-8-ferramentas-especializadas"
+          id="toc-as-8-ferramentas-especializadas">As 8 Ferramentas
+          Especializadas</a></li>
+          <li><a
+          href="#a-tríade-canônica-de-criação-os-3-fluxos-de-ponta-a-ponta"
+          id="toc-a-tríade-canônica-de-criação-os-3-fluxos-de-ponta-a-ponta">A
+          Tríade Canônica de Criação (Os 3 Fluxos de Ponta a Ponta)</a>
+          <ul>
+          <li><a href="#detalhamento-dos-3-fluxos"
+          id="toc-detalhamento-dos-3-fluxos">Detalhamento dos 3
+          Fluxos:</a></li>
+          </ul></li>
+          <li><a href="#os-24-quality-gates-do-ecossistema"
+          id="toc-os-24-quality-gates-do-ecossistema">Os 24 Quality
+          Gates do Ecossistema</a></li>
+          </ul></li>
+          <li><a
+          href="#seção-2-pré-requisitos-instalação-e-configuração"
+          id="toc-seção-2-pré-requisitos-instalação-e-configuração">Seção
+          2 — Pré-requisitos, Instalação e Configuração</a>
+          <ul>
+          <li><a href="#requisitos-do-sistema"
+          id="toc-requisitos-do-sistema">Requisitos do Sistema</a></li>
+          <li><a href="#diagnóstico-instantâneo-do-host-preflight-host"
+          id="toc-diagnóstico-instantâneo-do-host-preflight-host">Diagnóstico
+          Instantâneo do Host (<code>preflight-host</code>)</a></li>
+          <li><a href="#instalação-e-auto-bootstrap"
+          id="toc-instalação-e-auto-bootstrap">Instalação e
+          Auto-Bootstrap</a></li>
+          </ul></li>
+          <li><a href="#seção-3-o-projeto-prático-construindo-o-itask"
+          id="toc-seção-3-o-projeto-prático-construindo-o-itask">Seção 3
+          — O Projeto Prático: Construindo o “iTask”</a>
+          <ul>
+          <li><a href="#funcionalidades-do-itask"
+          id="toc-funcionalidades-do-itask">Funcionalidades do
+          iTask:</a></li>
+          </ul></li>
+          <li><a
+          href="#seção-4-caminho-1-execução-via-terminal-cli-central"
+          id="toc-seção-4-caminho-1-execução-via-terminal-cli-central">Seção
+          4 — Caminho 1: Execução via Terminal (CLI Central)</a>
+          <ul>
+          <li><a href="#etapa-1-disparo-do-fluxo-canônico"
+          id="toc-etapa-1-disparo-do-fluxo-canônico">Etapa 1: Disparo do
+          Fluxo Canônico</a></li>
+          <li><a href="#etapa-2-adição-de-novas-fatias-verticais-vsa"
+          id="toc-etapa-2-adição-de-novas-fatias-verticais-vsa">Etapa 2:
+          Adição de Novas Fatias Verticais (VSA)</a></li>
+          <li><a
+          href="#etapa-3-injeção-de-segurança-e-componentes-certificados"
+          id="toc-etapa-3-injeção-de-segurança-e-componentes-certificados">Etapa
+          3: Injeção de Segurança e Componentes Certificados</a></li>
+          <li><a href="#etapa-4-auditoria-de-conformidade"
+          id="toc-etapa-4-auditoria-de-conformidade">Etapa 4: Auditoria
+          de Conformidade</a></li>
+          </ul></li>
+          <li><a
+          href="#seção-5-caminho-2-execução-via-assistentes-de-ia-universalidade"
+          id="toc-seção-5-caminho-2-execução-via-assistentes-de-ia-universalidade">Seção
+          5 — Caminho 2: Execução via Assistentes de IA
+          (Universalidade)</a>
+          <ul>
+          <li><a href="#padrão-canônico-de-skills-aidd--máx.-3-palavras"
+          id="toc-padrão-canônico-de-skills-aidd--máx.-3-palavras">Padrão
+          Canônico de Skills (<code>aidd-*</code>, máx. 3
+          palavras)</a></li>
+          <li><a href="#interoperabilidade-universal-dos-slash-commands"
+          id="toc-interoperabilidade-universal-dos-slash-commands">Interoperabilidade
+          Universal dos Slash Commands</a></li>
+          </ul></li>
+          <li><a
+          href="#seção-6-desacoplamento-low-code-guia-completo-do-bridge"
+          id="toc-seção-6-desacoplamento-low-code-guia-completo-do-bridge">Seção
+          6 — Desacoplamento Low-Code: Guia Completo do Bridge</a>
+          <ul>
+          <li><a href="#ciclo-de-execução-do-bridge"
+          id="toc-ciclo-de-execução-do-bridge">Ciclo de Execução do
+          Bridge:</a></li>
+          </ul></li>
+          <li><a href="#seção-7-referência-rápida-e-tabela-de-comandos"
+          id="toc-seção-7-referência-rápida-e-tabela-de-comandos">Seção
+          7 — Referência Rápida e Tabela de Comandos</a>
+          <ul>
+          <li><a href="#comandos-da-cli-central-ecossistema.py"
+          id="toc-comandos-da-cli-central-ecossistema.py">Comandos da
+          CLI Central (<code>ecossistema.py</code>)</a></li>
+          </ul></li>
+          <li><a href="#seção-8-glossário-técnico-do-ecossistema"
+          id="toc-seção-8-glossário-técnico-do-ecossistema">Seção 8 —
+          Glossário Técnico do Ecossistema</a></li>
+          </ul>
+        </nav>
+      </div>
+    </aside>
+
+    <!-- Main Viewport -->
+    <main class="viewport">
+      <div class="content-container">
+        
+        <!-- Header Controls -->
+        <div class="control-bar">
+          <div class="badge-pill">Governança Canônica Certificada • 2026</div>
+          <button class="theme-toggle" id="themeBtn" aria-label="Alternar Tema">
+            <span id="themeIcon">☀️</span>
+            <span id="themeLabel">Modo Claro</span>
+          </button>
+        </div>
+
+        <!-- Hero Document Header -->
+        <header id="title-block-header">
+          <h1 class="title">Manual Completo do Ecossistema AIDD</h1>
+                    <div class="subtitle">Guia Prático End-to-End: Da
+Tríade Canônica ao Deploy em Produção</div>
+                    <div class="meta-row">
+                        <div class="meta-item">
+              <span>✍️</span> <strong>Ecossistema AIDD —
+heverton-dev</strong>
+            </div>
+                                    <div class="meta-item">
+              <span>📅</span> 19 de Setembro de 2026
+            </div>
+                        <div class="meta-item">
+              <span>🛡️</span> 24 Quality Gates Ativos
+            </div>
+            <div class="meta-item">
+              <span>⚡</span> Tríade Canônica Síncrona
+            </div>
+          </div>
+        </header>
+
+        <!-- Article Prose Content -->
+        <article class="prose-content">
+          <h1 id="seção-1-visão-geral-e-arquitetura-canônica">Seção 1 —
+          Visão Geral e Arquitetura Canônica</h1>
+          <h2 id="o-que-é-o-ecossistema-aidd">O que é o Ecossistema
+          AIDD?</h2>
+          <p>O <strong>Ecossistema AIDD (AI-Driven Development)</strong>
+          é uma plataforma industrial de engenharia de software
+          governada por inteligência artificial determinística. Ele
+          transforma uma ideia bruta ou especificação de negócio em
+          software testado, tipado, modular e pronto para produção com
+          <strong>Zero Stubs</strong>, <strong>Zero Vibe Coding</strong>
+          e <strong>Governança Criptográfica SHA-256</strong>.</p>
+          <p>Funciona como uma fábrica de montagem em esteira de alta
+          precisão: cada ferramenta é uma estação de trabalho
+          especializada conectada por contratos formais de handoff,
+          Quality Gates binários (exit 0 = passa, exit 1 = bloqueia) e
+          paridade estrita entre terminais CLI e múltiplos assistentes
+          de IA (harnesses).</p>
+          <h3 id="as-11-leis-invioláveis-do-ecossistema-aidd">As 11 Leis
+          Invioláveis do Ecossistema AIDD</h3>
+          <ol type="1">
+          <li><strong>Determinism First:</strong> Uso de scripts
+          determinísticos, AST, regex ou JSON Schema para qualquer
+          tarefa mecânica. O LLM nunca executa operações críticas sem
+          travas formais.</li>
+          <li><strong>Binary Quality:</strong> Todo commit ou evolução é
+          submetido à bateria de Quality Gates
+          (<code>python ecossistema.py audit</code>). Se um gate falhar,
+          o build é sumariamente abortado.</li>
+          <li><strong>Structured Persistence:</strong> O estado é
+          persistido em arquivos de auditoria estruturados (JSON, SQLite
+          WAL), nunca na memória volátil da sessão do chat.</li>
+          <li><strong>Extreme Token Economy:</strong> Prompts compactos,
+          regras sem redundância e diretivas em estilo conciso para
+          mitigar o estouro de contexto.</li>
+          <li><strong>Zero Stubs / Zero Mocks:</strong> Código 100%
+          funcional, estritamente tipado, com cobertura de testes reais
+          (unitários, integração e propriedades).</li>
+          <li><strong>Agnostic Supremacy:</strong> Zero lock-in de
+          fornecedor, sistema operacional (Windows, Linux, macOS), LLM
+          ou harness de IA.</li>
+          <li><strong>Developer in Control:</strong> Execuções síncronas
+          e transparentes com paradas obrigatórias para aprovação humana
+          entre cada grande etapa.</li>
+          <li><strong>Label Honesty:</strong> Proibição de alegações de
+          conformidade, certificações ou notas além dos dados reais
+          mensurados pelas ferramentas.</li>
+          <li><strong>Tool Testing Discipline:</strong> Ciclo contínuo
+          de testes end-to-end com auto-correção, commit limpo e
+          relatórios factuais em
+          <code>docs/teste-end-to-end/</code>.</li>
+          <li><strong>Quarteto Sine Qua Non Dinâmico:</strong> Todo
+          projeto gerado ou evoluído no ecossistema nasce nativamente
+          com 4 pilares:
+          <ul>
+          <li><strong>Swagger Studio</strong> (<code>/swagger</code> ou
+          <code>/docs</code>): Contratos OpenAPI 3.1 interativos.</li>
+          <li><strong>Webhook Studio</strong> (<code>/webhooks</code>):
+          Ingestão, disparo e assinatura HMAC de webhooks.</li>
+          <li><strong>MCP Studio</strong> (<code>/mcp</code>): Exposição
+          de Model Context Protocol para consumo por agentes.</li>
+          <li><strong>Guia do Utilizador</strong>
+          (<code>/docs/guia</code> ou <code>/guia</code>): Documentação
+          operacional completa e dinâmica.</li>
+          </ul></li>
+          <li><strong>Padrão-Ouro de Stack Tecnológica:</strong>
+          Frontend gerado obrigatoriamente em <strong>Next.js +
+          TypeScript + Tailwind CSS</strong>; Backend em <strong>Python
+          puro + SQLite WAL</strong> (ou PostgreSQL assíncrono via
+          asyncpg para projetos unificados); API em <strong>OpenAPI
+          3.1</strong>.</li>
+          </ol>
+          <hr />
+          <h2 id="as-8-ferramentas-especializadas">As 8 Ferramentas
+          Especializadas</h2>
+          <p>O ecossistema é composto por 8 ferramentas integradas em
+          <code>tools/</code>:</p>
+          <table>
+          <colgroup>
+          <col style="width: 5%" />
+          <col style="width: 20%" />
+          <col style="width: 40%" />
+          <col style="width: 33%" />
+          </colgroup>
+          <thead>
+          <tr>
+          <th style="text-align: center;">#</th>
+          <th style="text-align: left;">Ferramenta</th>
+          <th style="text-align: left;">Especialidade e Função</th>
+          <th style="text-align: left;">Comando CLI Direto</th>
+          </tr>
+          </thead>
+          <tbody>
+          <tr>
+          <td style="text-align: center;">1</td>
+          <td
+          style="text-align: left;"><strong><code>aidd-forge</code></strong></td>
+          <td style="text-align: left;">Bootstrap de governança,
+          blindagem de hooks git, isolamento de fases e regras</td>
+          <td
+          style="text-align: left;"><code>python ecossistema.py forge init</code></td>
+          </tr>
+          <tr>
+          <td style="text-align: center;">2</td>
+          <td
+          style="text-align: left;"><strong><code>aidd-planner</code></strong></td>
+          <td style="text-align: left;">Motor de intake e planejamento
+          BDD/SDD; gera e valida o <code>PLANNER.json</code></td>
+          <td
+          style="text-align: left;"><code>python ecossistema.py planner init</code></td>
+          </tr>
+          <tr>
+          <td style="text-align: center;">3</td>
+          <td
+          style="text-align: left;"><strong><code>aidd-generator</code></strong></td>
+          <td style="text-align: left;">Fábrica autônoma de software com
+          pipeline de 8 fases determinísticas e TDD Red-Green</td>
+          <td
+          style="text-align: left;"><code>python ecossistema.py generate</code></td>
+          </tr>
+          <tr>
+          <td style="text-align: center;">4</td>
+          <td
+          style="text-align: left;"><strong><code>aidd-factory</code></strong></td>
+          <td style="text-align: left;">Curadoria de motores open-source
+          de ponta, fatiamento vertical e Docker Compose</td>
+          <td
+          style="text-align: left;"><code>python ecossistema.py factory</code></td>
+          </tr>
+          <tr>
+          <td style="text-align: center;">5</td>
+          <td
+          style="text-align: left;"><strong><code>aidd-bridge</code></strong></td>
+          <td style="text-align: left;">Erradicação de vendor lock-in
+          (Lovable, v0, Bolt), migração de banco para PostgreSQL</td>
+          <td
+          style="text-align: left;"><code>python ecossistema.py bridge</code></td>
+          </tr>
+          <tr>
+          <td style="text-align: center;">6</td>
+          <td
+          style="text-align: left;"><strong><code>aidd-master</code></strong></td>
+          <td style="text-align: left;">Harmonização em Monólito Modular
+          VSA (Vertical Slice Architecture) e Next.js</td>
+          <td
+          style="text-align: left;"><code>python ecossistema.py master</code></td>
+          </tr>
+          <tr>
+          <td style="text-align: center;">7</td>
+          <td
+          style="text-align: left;"><strong><code>aidd-enterprise</code></strong></td>
+          <td style="text-align: left;">Injeção de componentes
+          corporativos certificados SHA-256 e auditoria anti-drift</td>
+          <td
+          style="text-align: left;"><code>python ecossistema.py enterprise</code></td>
+          </tr>
+          <tr>
+          <td style="text-align: center;">8</td>
+          <td
+          style="text-align: left;"><strong><code>aidd-ops</code></strong></td>
+          <td style="text-align: left;">Meta-orquestrador agêntico de
+          infraestrutura: VPS, Traefik, SSL, Docker e Uptime Kuma</td>
+          <td
+          style="text-align: left;"><code>python ecossistema.py ops</code></td>
+          </tr>
+          </tbody>
+          </table>
+          <hr />
+          <h2
+          id="a-tríade-canônica-de-criação-os-3-fluxos-de-ponta-a-ponta">A
+          Tríade Canônica de Criação (Os 3 Fluxos de Ponta a Ponta)</h2>
+          <p>Toda nova aplicação no ecossistema nasce a partir de
+          <code>aidd-forge</code> (governança) e
+          <code>aidd-planner</code> (intake interativo), derivando em 3
+          caminhos de alta especialização:</p>
+          <pre class="text"><code>               ┌───────────────┐
+               │  aidd-forge   │  (Governança &amp; Git Hooks)
+               └───────┬───────┘
+                       │
+               ┌───────▼───────┐
+               │ aidd-planner  │  (Planejamento SDD/BDD)
+               └───────┬───────┘
+                       │
+       ┌───────────────┼───────────────┐
+       │               │               │
+┌──────▼──────┐ ┌──────▼──────┐ ┌──────▼──────┐
+│  FLUXO 01   │ │  FLUXO 02   │ │  FLUXO 03   │
+│  aidd-pure  │ │  aidd-open  │ │ aidd-bridge │
+│ (Zero Puro) │ │(Open-Source)│ │ (Low-Code)  │
+└──────┬──────┘ └──────┬──────┘ └──────┬──────┘
+       │               │               │
+       └───────────────┼───────────────┘
+                       │
+               ┌───────▼───────┐
+               │  aidd-master  │  (Harmonização VSA + Next.js)
+               └───────┬───────┘
+                       │
+               ┌───────▼───────┐
+               │aidd-enterprise│  (Blindagem Criptográfica SHA-256)
+               └───────┬───────┘
+                       │
+               ┌───────▼───────┐
+               │   aidd-ops    │  (VPS, Traefik, SSL, Deploy)
+               └───────────────┘</code></pre>
+          <h3 id="detalhamento-dos-3-fluxos">Detalhamento dos 3
+          Fluxos:</h3>
+          <ol type="1">
+          <li><strong>FLUXO 01 — <code>aidd-pure</code> (Do Zero Puro |
+          Slash: <code>/pure</code>):</strong>
+          <ul>
+          <li><strong>Objetivo:</strong> Geração de código autoral sob
+          medida do zero absoluto.</li>
+          <li><strong>Engine:</strong> <code>aidd-generator</code> via
+          TDD estrito Red-Green e arquitetura modular limpa.</li>
+          <li><strong>Acionamento:</strong>
+          <code>/pure &lt;ideia&gt; [dominio]</code> ou
+          <code>python ecossistema.py pure --nome &lt;n&gt; --slug &lt;s&gt; --dominio &lt;d&gt; --pasta &lt;p&gt;</code></li>
+          </ul></li>
+          <li><strong>FLUXO 02 — <code>aidd-open</code> (Motores
+          Open-Source | Slash: <code>/open</code>):</strong>
+          <ul>
+          <li><strong>Objetivo:</strong> Criação ultra-acelerada
+          reutilizando motores open-source consagrados (ex.: Chatwoot,
+          Cal.com, Twenty CRM, Authentik).</li>
+          <li><strong>Engine:</strong> <code>aidd-factory</code> gerando
+          gateways FastAPI, orquestração multi-service e fatias
+          verticais VSA acopladas.</li>
+          <li><strong>Acionamento:</strong>
+          <code>/open &lt;ideia&gt; [dominio]</code> ou
+          <code>python ecossistema.py open --nome &lt;n&gt; --slug &lt;s&gt; --dominio &lt;d&gt; --pasta &lt;p&gt;</code></li>
+          </ul></li>
+          <li><strong>FLUXO 03 — <code>aidd-bridge</code> (Low-Code /
+          Apps Unificadas | Slash: <code>/bridge</code>):</strong>
+          <ul>
+          <li><strong>Objetivo:</strong> Libertação de apps prototipados
+          no Lovable, v0 ou Bolt para VPS própria sem custos de nuvem
+          proprietária.</li>
+          <li><strong>Engine:</strong> <code>aidd-bridge</code>
+          realizando scan anti-lockin, remoção de dependências
+          Supabase/BaaS, migração para PostgreSQL e preservação total da
+          UI/UX original.</li>
+          <li><strong>Acionamento:</strong>
+          <code>/bridge &lt;ideia&gt; --origem &lt;pasta&gt;</code> ou
+          <code>python ecossistema.py bridge --nome &lt;n&gt; --slug &lt;s&gt; --dominio &lt;d&gt; --pasta &lt;p&gt; --origem &lt;o&gt;</code></li>
+          </ul></li>
+          </ol>
+          <hr />
+          <h2 id="os-24-quality-gates-do-ecossistema">Os 24 Quality
+          Gates do Ecossistema</h2>
+          <p>O comando universal
+          <code>python ecossistema.py audit</code> executa os 24 Quality
+          Gates de forma estrita. Exit 0 certifica aprovação total;
+          qualquer falha impede o avanço.</p>
+          <table>
+          <colgroup>
+          <col style="width: 7%" />
+          <col style="width: 35%" />
+          <col style="width: 57%" />
+          </colgroup>
+          <thead>
+          <tr>
+          <th style="text-align: center;">#</th>
+          <th style="text-align: left;">Quality Gate</th>
+          <th style="text-align: left;">Escopo de Verificação</th>
+          </tr>
+          </thead>
+          <tbody>
+          <tr>
+          <td style="text-align: center;">1</td>
+          <td
+          style="text-align: left;"><code>G_ECOSSISTEMA_INTEGRIDADE</code></td>
+          <td style="text-align: left;">Estrutura íntegra de
+          <code>tools/</code>, <code>AGENTS.md</code>, READMEs e
+          ausência de pastas <code>.git</code> acidentais</td>
+          </tr>
+          <tr>
+          <td style="text-align: center;">2</td>
+          <td
+          style="text-align: left;"><code>G_ORQUESTRADOR_SINCRONO</code></td>
+          <td style="text-align: left;">Validação de contratos JSON
+          Schema da Tríade e conformidade do orquestrador</td>
+          </tr>
+          <tr>
+          <td style="text-align: center;">3</td>
+          <td
+          style="text-align: left;"><code>G_HARNESS_COMPAT</code></td>
+          <td style="text-align: left;">Sincronismo perfeito dos
+          artefatos em todos os assistentes de IA suportados</td>
+          </tr>
+          <tr>
+          <td style="text-align: center;">4</td>
+          <td
+          style="text-align: left;"><code>G_COMPONENTE_AGNOSTICO</code></td>
+          <td style="text-align: left;">Cobertura multi-harness (skills,
+          comandos, hooks) conforme o manifesto</td>
+          </tr>
+          <tr>
+          <td style="text-align: center;">5</td>
+          <td
+          style="text-align: left;"><code>G_ZERO_HEADLESS</code></td>
+          <td style="text-align: left;">Proibição de subagentes
+          concorrentes em segundo plano sem controle humano</td>
+          </tr>
+          <tr>
+          <td style="text-align: center;">6</td>
+          <td
+          style="text-align: left;"><code>G_INFRA_COMPOSE</code></td>
+          <td style="text-align: left;">Validação estática de Docker
+          Compose e scripts de banco via Hadolint e Checkov</td>
+          </tr>
+          <tr>
+          <td style="text-align: center;">7</td>
+          <td style="text-align: left;"><code>G_HADOLINT</code></td>
+          <td style="text-align: left;">Inspeção de boas práticas OCI em
+          100% dos Dockerfiles do repositório</td>
+          </tr>
+          <tr>
+          <td style="text-align: center;">8</td>
+          <td style="text-align: left;"><code>G_TESTES_REAIS</code></td>
+          <td style="text-align: left;">Execução real de pytest em todas
+          as ferramentas com orçamento de skipped travado</td>
+          </tr>
+          <tr>
+          <td style="text-align: center;">9</td>
+          <td
+          style="text-align: left;"><code>G_DEPENDENCIAS_PIN_HASH</code></td>
+          <td style="text-align: left;">Fixação estrita de versões e
+          hashes SHA-256 criptográficos em
+          <code>requirements.lock</code></td>
+          </tr>
+          <tr>
+          <td style="text-align: center;">10</td>
+          <td
+          style="text-align: left;"><code>G_FRONTEND_LAYERS</code></td>
+          <td style="text-align: left;">Isolamento estrito entre
+          componentes visuais de UI e camadas de rede no Frontend</td>
+          </tr>
+          <tr>
+          <td style="text-align: center;">11</td>
+          <td
+          style="text-align: left;"><code>G_ISOLATION_AUDIT</code></td>
+          <td style="text-align: left;">Isolamento vertical estrito
+          entre fatias de domínio VSA sem vazamento de acoplamento</td>
+          </tr>
+          <tr>
+          <td style="text-align: center;">12</td>
+          <td
+          style="text-align: left;"><code>G_PROTOCOL_FALLBACK</code></td>
+          <td style="text-align: left;">Paridade de contratos e fallback
+          entre chamadas REST e Model Context Protocol (MCP)</td>
+          </tr>
+          <tr>
+          <td style="text-align: center;">13</td>
+          <td
+          style="text-align: left;"><code>G_LLM_PROMPT_SHIELD</code></td>
+          <td style="text-align: left;">Blindagem ativa de prompts e
+          sanitização contra ataques de Prompt Injection</td>
+          </tr>
+          <tr>
+          <td style="text-align: center;">14</td>
+          <td
+          style="text-align: left;"><code>G_DRIFT_ANALYZER</code></td>
+          <td style="text-align: left;">Detecção de redundâncias
+          funcionais e divergências estruturais inter-fatias</td>
+          </tr>
+          <tr>
+          <td style="text-align: center;">15</td>
+          <td
+          style="text-align: left;"><code>G_PROTOTYPE_REWRITE</code></td>
+          <td style="text-align: left;">Isolamento estrito de código
+          sandbox e proibição de promoção sem suíte TDD</td>
+          </tr>
+          <tr>
+          <td style="text-align: center;">16</td>
+          <td
+          style="text-align: left;"><code>G_CLI_HELP_CONSISTENCIA</code></td>
+          <td style="text-align: left;">Paridade absoluta entre
+          docstrings/mensagens de ajuda e as flags reais de CLI</td>
+          </tr>
+          <tr>
+          <td style="text-align: center;">17</td>
+          <td style="text-align: left;"><code>G_SEGREDOS</code></td>
+          <td style="text-align: left;">Varredura profunda contra
+          credenciais, tokens ou chaves privadas no código</td>
+          </tr>
+          <tr>
+          <td style="text-align: center;">18</td>
+          <td
+          style="text-align: left;"><code>G_DRIFT_NUCLEO_COMPARTILHADO</code></td>
+          <td style="text-align: left;">Byte-identidade do núcleo
+          compartilhado entre fonte e destinos</td>
+          </tr>
+          <tr>
+          <td style="text-align: center;">19</td>
+          <td
+          style="text-align: left;"><code>G_HONESTIDADE_ROTULO</code></td>
+          <td style="text-align: left;">Verificação de conformidade
+          entre rótulos técnicos e evidências reais</td>
+          </tr>
+          <tr>
+          <td style="text-align: center;">20</td>
+          <td
+          style="text-align: left;"><code>G_ARQUITETURA_DELIVERABLE</code></td>
+          <td style="text-align: left;">Aderência às camadas de Clean
+          Architecture no software gerado</td>
+          </tr>
+          <tr>
+          <td style="text-align: center;">21</td>
+          <td
+          style="text-align: left;"><code>G_ESCRITOR_ATOMICO</code></td>
+          <td style="text-align: left;">Garantia de escritas de arquivo
+          atômicas sem corrupção em falhas de processo</td>
+          </tr>
+          <tr>
+          <td style="text-align: center;">22</td>
+          <td
+          style="text-align: left;"><code>G_TRANSACTION_LOG_LRU</code></td>
+          <td style="text-align: left;">Validação de log de transações e
+          expurgo de memória preventiva</td>
+          </tr>
+          <tr>
+          <td style="text-align: center;">23</td>
+          <td
+          style="text-align: left;"><code>G_UNIVERSAL_HARNESS</code></td>
+          <td style="text-align: left;">Garantia de que novos
+          componentes rodam de forma idêntica em 7 harnesses</td>
+          </tr>
+          <tr>
+          <td style="text-align: center;">24</td>
+          <td
+          style="text-align: left;"><code>G_PREFLIGHT_HOST</code></td>
+          <td style="text-align: left;">Diagnóstico instantâneo (&lt;
+          2s) de binários essenciais do sistema operacional</td>
+          </tr>
+          </tbody>
+          </table>
+          <hr />
+          <h1
+          id="seção-2-pré-requisitos-instalação-e-configuração">Seção 2
+          — Pré-requisitos, Instalação e Configuração</h1>
+          <h2 id="requisitos-do-sistema">Requisitos do Sistema</h2>
+          <table>
+          <colgroup>
+          <col style="width: 20%" />
+          <col style="width: 25%" />
+          <col style="width: 20%" />
+          <col style="width: 35%" />
+          </colgroup>
+          <thead>
+          <tr>
+          <th style="text-align: left;">Componente</th>
+          <th style="text-align: left;">Versão Mínima</th>
+          <th style="text-align: left;">Finalidade</th>
+          <th style="text-align: left;">Comando de Checagem</th>
+          </tr>
+          </thead>
+          <tbody>
+          <tr>
+          <td style="text-align: left;"><strong>Python</strong></td>
+          <td style="text-align: left;">3.10 ou superior</td>
+          <td style="text-align: left;">Motor de execução principal</td>
+          <td
+          style="text-align: left;"><code>python --version</code></td>
+          </tr>
+          <tr>
+          <td style="text-align: left;"><strong>Git</strong></td>
+          <td style="text-align: left;">2.30 ou superior</td>
+          <td style="text-align: left;">Controle de versão e worktrees
+          efêmeras</td>
+          <td style="text-align: left;"><code>git --version</code></td>
+          </tr>
+          <tr>
+          <td style="text-align: left;"><strong>Node.js</strong></td>
+          <td style="text-align: left;">20 LTS (recomendado)</td>
+          <td style="text-align: left;">Construção do Frontend
+          Next.js</td>
+          <td style="text-align: left;"><code>node --version</code></td>
+          </tr>
+          <tr>
+          <td style="text-align: left;"><strong>Docker</strong></td>
+          <td style="text-align: left;">Qualquer moderno</td>
+          <td style="text-align: left;">Conteinerização local e deploy
+          de produção</td>
+          <td
+          style="text-align: left;"><code>docker --version</code></td>
+          </tr>
+          </tbody>
+          </table>
+          <h2
+          id="diagnóstico-instantâneo-do-host-preflight-host">Diagnóstico
+          Instantâneo do Host (<code>preflight-host</code>)</h2>
+          <p>O ecossistema dispõe de um inspetor de ambiente de alto
+          desempenho:</p>
+          <div class="sourceCode" id="cb2"><pre
+          class="sourceCode bash"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Diagnóstico rápido de dependências locais</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="ex">python</span> ecossistema.py preflight-host</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Diagnóstico com correção assistida multi-OS</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="ex">python</span> ecossistema.py preflight-host <span class="at">--fix</span> <span class="at">--dry-run</span></span></code></pre></div>
+          <h2 id="instalação-e-auto-bootstrap">Instalação e
+          Auto-Bootstrap</h2>
+          <div class="sourceCode" id="cb3"><pre
+          class="sourceCode bash"><code class="sourceCode bash"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 1. Clonar o repositório canônico</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> clone https://github.com/heverton-dev/ecossistema-aidd.git</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> ecossistema-aidd</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a><span class="co"># 2. Verificar o estado de saúde do ecossistema</span></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a><span class="ex">python</span> ecossistema.py status</span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a><span class="co"># 3. Executar o bootstrap assistido de dependências</span></span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a><span class="ex">python</span> ecossistema.py dependencia bootstrap</span></code></pre></div>
+          <hr />
+          <h1 id="seção-3-o-projeto-prático-construindo-o-itask">Seção 3
+          — O Projeto Prático: Construindo o “iTask”</h1>
+          <p>Para demonstrar o funcionamento prático de ponta a ponta,
+          construímos o <strong>iTask</strong> — uma plataforma
+          corporativa de gestão de projetos e tarefas com autenticação
+          segura, Next.js no Frontend, VSA no Backend e deploy em
+          VPS.</p>
+          <h3 id="funcionalidades-do-itask">Funcionalidades do
+          iTask:</h3>
+          <ul>
+          <li><strong>Autenticação:</strong> Login, registro e renovação
+          via JWT criptografado com Argon2id.</li>
+          <li><strong>Módulo de Projetos:</strong> CRUD completo com
+          controle de membros e papéis.</li>
+          <li><strong>Módulo de Tarefas:</strong> Quadro de tarefas com
+          status, prazos, prioridades e tags.</li>
+          <li><strong>Módulo de Dashboard:</strong> Métricas agregadas
+          de produtividade e taxa de conclusão.</li>
+          <li><strong>Quarteto Sine Qua Non Integrado:</strong> Swagger
+          Studio, Webhook Studio, MCP Studio e Guia do Usuário.</li>
+          </ul>
+          <hr />
+          <h1
+          id="seção-4-caminho-1-execução-via-terminal-cli-central">Seção
+          4 — Caminho 1: Execução via Terminal (CLI Central)</h1>
+          <h3 id="etapa-1-disparo-do-fluxo-canônico">Etapa 1: Disparo do
+          Fluxo Canônico</h3>
+          <p>Para criar o projeto do zero puro via Fluxo 01 com TDD:</p>
+          <div class="sourceCode" id="cb4"><pre
+          class="sourceCode bash"><code class="sourceCode bash"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="ex">python</span> ecossistema.py pure <span class="dt">\</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">--nome</span> <span class="st">&quot;iTask Platform&quot;</span> <span class="dt">\</span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">--slug</span> itask <span class="dt">\</span></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">--dominio</span> gestao <span class="dt">\</span></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">--pasta</span> ./projetos/itask</span></code></pre></div>
+          <p><em>(Para simulação sem escrita no disco, adicione a flag
+          <code>--dry-run</code>).</em></p>
+          <p>O orquestrador síncrono executa: 1.
+          <code>aidd-forge</code>: Injeta governança, regras em
+          <code>AGENTS.md</code> e git hooks de proteção. 2.
+          <code>aidd-planner</code>: Mapeia entidades e valida o
+          contrato <code>handoff-planner-to-engine.schema.json</code>.
+          3. <code>aidd-generator</code>: Executa a esteira TDD gerando
+          o domínio, use cases e testes. 4. <code>aidd-master</code>:
+          Empacota o Monólito Modular VSA + Next.js com Tailwind CSS. 5.
+          <code>aidd-enterprise</code>: Injeta componentes
+          criptográficos certificados SHA-256. 6. <code>aidd-ops</code>:
+          Valida Dockerfile, compose e topologia de deploy.</p>
+          <h3 id="etapa-2-adição-de-novas-fatias-verticais-vsa">Etapa 2:
+          Adição de Novas Fatias Verticais (VSA)</h3>
+          <p>Com o projeto criado, o desenvolvimento incremental é feito
+          adicionando fatias verticais desacopladas:</p>
+          <div class="sourceCode" id="cb5"><pre
+          class="sourceCode bash"><code class="sourceCode bash"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> projetos/itask</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Adicionar fatia de faturamento / assinaturas</span></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a><span class="ex">python</span> ecossistema.py master add-module faturamento <span class="at">--pasta</span> ./projetos/itask</span></code></pre></div>
+          <h3
+          id="etapa-3-injeção-de-segurança-e-componentes-certificados">Etapa
+          3: Injeção de Segurança e Componentes Certificados</h3>
+          <div class="sourceCode" id="cb6"><pre
+          class="sourceCode bash"><code class="sourceCode bash"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="ex">python</span> ecossistema.py enterprise inject skill auth-jwt <span class="at">--dir</span> ./projetos/itask</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="ex">python</span> ecossistema.py enterprise verificar-drift <span class="at">--dir</span> ./projetos/itask</span></code></pre></div>
+          <h3 id="etapa-4-auditoria-de-conformidade">Etapa 4: Auditoria
+          de Conformidade</h3>
+          <div class="sourceCode" id="cb7"><pre
+          class="sourceCode bash"><code class="sourceCode bash"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="ex">python</span> ecossistema.py audit</span></code></pre></div>
+          <hr />
+          <h1
+          id="seção-5-caminho-2-execução-via-assistentes-de-ia-universalidade">Seção
+          5 — Caminho 2: Execução via Assistentes de IA
+          (Universalidade)</h1>
+          <p>No ecossistema AIDD, você pode interagir utilizando
+          qualquer ferramenta de IA: <strong>Google Antigravity, Claude
+          Code, Cursor, OpenCode, MiMoCode ou Gemini CLI</strong>.</p>
+          <h3
+          id="padrão-canônico-de-skills-aidd--máx.-3-palavras">Padrão
+          Canônico de Skills (<code>aidd-*</code>, máx. 3 palavras)</h3>
+          <p>Todas as habilidades do ecossistema seguem o padrão de
+          nomenclatura concisa com no máximo 3 palavras:</p>
+          <table>
+          <colgroup>
+          <col style="width: 26%" />
+          <col style="width: 47%" />
+          <col style="width: 26%" />
+          </colgroup>
+          <thead>
+          <tr>
+          <th style="text-align: left;">Comando Slash</th>
+          <th style="text-align: left;">Skill Canônica Subjacente</th>
+          <th style="text-align: left;">O que executa</th>
+          </tr>
+          </thead>
+          <tbody>
+          <tr>
+          <td
+          style="text-align: left;"><code>/pure &lt;ideia&gt;</code></td>
+          <td style="text-align: left;"><a
+          href="file:///C:/Users/trcnologia/Desktop/ecossistema-aidd/componentes/compartilhado/skills/aidd-pure/SKILL.md"><code>aidd-pure</code></a></td>
+          <td style="text-align: left;">Executa o Fluxo 01 (Do Zero Puro
+          via TDD)</td>
+          </tr>
+          <tr>
+          <td
+          style="text-align: left;"><code>/open &lt;ideia&gt;</code></td>
+          <td style="text-align: left;"><a
+          href="file:///C:/Users/trcnologia/Desktop/ecossistema-aidd/componentes/compartilhado/skills/aidd-open/SKILL.md"><code>aidd-open</code></a></td>
+          <td style="text-align: left;">Executa o Fluxo 02 (Motores
+          Open-Source)</td>
+          </tr>
+          <tr>
+          <td
+          style="text-align: left;"><code>/bridge &lt;ideia&gt;</code></td>
+          <td style="text-align: left;"><a
+          href="file:///C:/Users/trcnologia/Desktop/ecossistema-aidd/componentes/compartilhado/skills/aidd-bridge/SKILL.md"><code>aidd-bridge</code></a></td>
+          <td style="text-align: left;">Executa o Fluxo 03
+          (Desacoplamento Low-Code)</td>
+          </tr>
+          <tr>
+          <td
+          style="text-align: left;"><code>/forge [caminho]</code></td>
+          <td
+          style="text-align: left;"><code>aidd-forge-runner</code></td>
+          <td style="text-align: left;">Bootstrap de governança e
+          blindagem</td>
+          </tr>
+          <tr>
+          <td style="text-align: left;"><code>/planner [cmd]</code></td>
+          <td
+          style="text-align: left;"><code>aidd-planner-runner</code></td>
+          <td style="text-align: left;">Intake BDD/SDD e planejamento
+          estruturado</td>
+          </tr>
+          <tr>
+          <td
+          style="text-align: left;"><code>/master &lt;modulo&gt;</code></td>
+          <td
+          style="text-align: left;"><code>aidd-master-runner</code></td>
+          <td style="text-align: left;">Criação de fatia vertical
+          desacoplada</td>
+          </tr>
+          <tr>
+          <td style="text-align: left;"><code>/enterprise</code></td>
+          <td
+          style="text-align: left;"><code>aidd-enterprise-runner</code></td>
+          <td style="text-align: left;">Injeção de módulos certificados
+          SHA-256</td>
+          </tr>
+          <tr>
+          <td
+          style="text-align: left;"><code>/ops [requisito]</code></td>
+          <td
+          style="text-align: left;"><code>aidd-ops-runner</code></td>
+          <td style="text-align: left;">Planejamento e orquestração de
+          infraestrutura</td>
+          </tr>
+          <tr>
+          <td
+          style="text-align: left;"><code>/melhoria &lt;pedido&gt;</code></td>
+          <td style="text-align: left;"><a
+          href="file:///C:/Users/trcnologia/Desktop/ecossistema-aidd/componentes/compartilhado/skills/aidd-melhoria/SKILL.md"><code>aidd-melhoria</code></a></td>
+          <td style="text-align: left;">Análise profunda pré-código de
+          melhorias</td>
+          </tr>
+          <tr>
+          <td
+          style="text-align: left;"><code>/plan &lt;nome&gt;</code></td>
+          <td style="text-align: left;"><a
+          href="file:///C:/Users/trcnologia/Desktop/ecossistema-aidd/componentes/compartilhado/skills/aidd-plan/SKILL.md"><code>aidd-plan</code></a>
+          / <a
+          href="file:///C:/Users/trcnologia/Desktop/ecossistema-aidd/componentes/compartilhado/skills/aidd-planos/SKILL.md"><code>aidd-planos</code></a></td>
+          <td style="text-align: left;">Geração de planos formais em
+          <code>docs/planos/</code></td>
+          </tr>
+          <tr>
+          <td style="text-align: left;"><code>/orchestrate</code></td>
+          <td style="text-align: left;"><a
+          href="file:///C:/Users/trcnologia/Desktop/ecossistema-aidd/componentes/compartilhado/skills/aidd-orchestrate/SKILL.md"><code>aidd-orchestrate</code></a>
+          / <a
+          href="file:///C:/Users/trcnologia/Desktop/ecossistema-aidd/componentes/compartilhado/skills/aidd-orca/SKILL.md"><code>aidd-orca</code></a></td>
+          <td style="text-align: left;">Execução de planos via worktrees
+          efêmeras</td>
+          </tr>
+          </tbody>
+          </table>
+          <h3
+          id="interoperabilidade-universal-dos-slash-commands">Interoperabilidade
+          Universal dos Slash Commands</h3>
+          <p>Em harnesses que não oferecem menu autônomo de comandos
+          slash na interface gráfica (como Google Antigravity e Gemini
+          CLI), o desenvolvedor pode simplesmente digitar
+          <code>/pure</code>, <code>/open</code> ou <code>/bridge</code>
+          como texto normal no chat. O agente intercepta imediatamente o
+          comando através das regras ativas de <a
+          href="file:///C:/Users/trcnologia/Desktop/ecossistema-aidd/AGENTS.md"><code>AGENTS.md</code></a>
+          e dispara a esteira determinística correspondente.</p>
+          <hr />
+          <h1
+          id="seção-6-desacoplamento-low-code-guia-completo-do-bridge">Seção
+          6 — Desacoplamento Low-Code: Guia Completo do Bridge</h1>
+          <p>O <code>aidd-bridge</code> liberta aplicações prototipadas
+          em ferramentas como <strong>Lovable</strong>,
+          <strong>v0</strong> e <strong>Bolt</strong>, migrando-as para
+          uma infraestrutura autônoma em VPS própria com banco
+          PostgreSQL puro.</p>
+          <h3 id="ciclo-de-execução-do-bridge">Ciclo de Execução do
+          Bridge:</h3>
+          <div class="sourceCode" id="cb8"><pre
+          class="sourceCode bash"><code class="sourceCode bash"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 1. Mapeamento estrutural do protótipo exportado</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="ex">python</span> ecossistema.py bridge scan ./export-lovable</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a><span class="co"># 2. Transpilação do banco (Supabase/BaaS -&gt; PostgreSQL puro + migrations)</span></span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a><span class="ex">python</span> ecossistema.py bridge convert-db ./export-lovable</span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a><span class="co"># 3. Migração de autenticação com senhas preservadas</span></span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a><span class="ex">python</span> ecossistema.py bridge migrate-auth <span class="dt">\</span></span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>  <span class="at">--source</span> postgres://supabase:5432/db <span class="dt">\</span></span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a>  <span class="at">--target</span> postgres://minha-vps:5432/db</span>
+<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a><span class="co"># 4. Empacotamento para Docker + Nginx SSL com identidade visual 100% preservada</span></span>
+<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a><span class="ex">python</span> ecossistema.py bridge pack ./export-lovable <span class="at">--domain</span> itask.minhaempresa.com</span></code></pre></div>
+          <hr />
+          <h1 id="seção-7-referência-rápida-e-tabela-de-comandos">Seção
+          7 — Referência Rápida e Tabela de Comandos</h1>
+          <h3 id="comandos-da-cli-central-ecossistema.py">Comandos da
+          CLI Central (<code>ecossistema.py</code>)</h3>
+          <div class="sourceCode" id="cb9"><pre
+          class="sourceCode bash"><code class="sourceCode bash"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Diagnóstico e Auditoria</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="ex">python</span> ecossistema.py status                       <span class="co"># Exibe ferramentas e skills ativas</span></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a><span class="ex">python</span> ecossistema.py audit                        <span class="co"># Executa os 24 Quality Gates</span></span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a><span class="ex">python</span> ecossistema.py preflight-host               <span class="co"># Diagnóstico de ferramentas locais</span></span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Tríade Canônica de Criação</span></span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a><span class="ex">python</span> ecossistema.py pure <span class="at">--nome</span> <span class="op">&lt;</span>n<span class="op">&gt;</span> --slug <span class="op">&lt;</span>s<span class="op">&gt;</span> --dominio <span class="op">&lt;</span>d<span class="op">&gt;</span> --pasta <span class="op">&lt;</span>p<span class="op">&gt;</span></span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a><span class="ex">python</span> ecossistema.py open <span class="at">--nome</span> <span class="op">&lt;</span>n<span class="op">&gt;</span> --slug <span class="op">&lt;</span>s<span class="op">&gt;</span> --dominio <span class="op">&lt;</span>d<span class="op">&gt;</span> --pasta <span class="op">&lt;</span>p<span class="op">&gt;</span></span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a><span class="ex">python</span> ecossistema.py bridge <span class="at">--nome</span> <span class="op">&lt;</span>n<span class="op">&gt;</span> --slug <span class="op">&lt;</span>s<span class="op">&gt;</span> --dominio <span class="op">&lt;</span>d<span class="op">&gt;</span> --pasta <span class="op">&lt;</span>p<span class="op">&gt;</span> --origem <span class="op">&lt;</span>o<span class="op">&gt;</span></span>
+<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a><span class="co"># Gestão de Componentes Multi-Harness</span></span>
+<span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a><span class="ex">python</span> ecossistema.py components sync <span class="at">--tipo</span> todos <span class="co"># Sincroniza em todos os harnesses</span></span>
+<span id="cb9-13"><a href="#cb9-13" aria-hidden="true" tabindex="-1"></a><span class="ex">python</span> ecossistema.py components verify <span class="at">--tipo</span> todos <span class="co"># Verifica integridade SHA-256</span></span>
+<span id="cb9-14"><a href="#cb9-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-15"><a href="#cb9-15" aria-hidden="true" tabindex="-1"></a><span class="co"># Dependências Externas do Agente</span></span>
+<span id="cb9-16"><a href="#cb9-16" aria-hidden="true" tabindex="-1"></a><span class="ex">python</span> ecossistema.py dependencia bootstrap        <span class="co"># Instala skills e MCPs externos</span></span>
+<span id="cb9-17"><a href="#cb9-17" aria-hidden="true" tabindex="-1"></a><span class="ex">python</span> ecossistema.py dependencia verify           <span class="co"># Audita hashes das dependências</span></span></code></pre></div>
+          <hr />
+          <h1 id="seção-8-glossário-técnico-do-ecossistema">Seção 8 —
+          Glossário Técnico do Ecossistema</h1>
+          <ul>
+          <li><strong>VSA (Vertical Slice Architecture):</strong>
+          Arquitetura que organiza o código por funcionalidades de
+          negócio completas (fatias verticais com domínio, banco e API
+          juntos), em vez de camadas técnicas horizontais.</li>
+          <li><strong>Harness:</strong> Qualquer interface, IDE ou
+          ferramenta de linha de comando onde um agente de IA opera
+          (ex.: Antigravity, Claude Code, Cursor, OpenCode, Gemini
+          CLI).</li>
+          <li><strong>Quality Gate:</strong> Script determinístico de
+          aprovação binária que valida regras arquiteturais e segurança
+          antes de permitir modificações no repositório.</li>
+          <li><strong>Quarteto Sine Qua Non:</strong> Os 4 pilares
+          obrigatórios de todo software gerado: <code>/swagger</code>,
+          <code>/webhooks</code>, <code>/mcp</code> e
+          <code>/docs/guia</code>.</li>
+          <li><strong>Zero Stubs:</strong> Princípio inviolável que
+          proíbe funções vazias, <code>TODO</code> ou mocks simulados em
+          código de produção.</li>
+          </ul>
+        </article>
+
+      </div>
+    </main>
+
+  </div>
+
+  <!-- Back to top button -->
+  <button class="back-to-top" id="backToTop" title="Voltar ao topo" aria-label="Voltar ao topo">↑</button>
+
+  <!-- Interactivity Script -->
+  <script>
+    // 1. Theme Toggle System
+    const htmlEl = document.documentElement;
+    const themeBtn = document.getElementById('themeBtn');
+    const themeIcon = document.getElementById('themeIcon');
+    const themeLabel = document.getElementById('themeLabel');
+
+    function setTheme(theme) {
+      htmlEl.setAttribute('data-theme', theme);
+      localStorage.setItem('aidd-theme', theme);
+      if (theme === 'dark') {
+        themeIcon.textContent = '☀️';
+        themeLabel.textContent = 'Modo Claro';
+      } else {
+        themeIcon.textContent = '🌙';
+        themeLabel.textContent = 'Modo Escuro';
+      }
+    }
+
+    const savedTheme = localStorage.getItem('aidd-theme') || 
+      (window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark');
+    setTheme(savedTheme);
+
+    themeBtn.addEventListener('click', () => {
+      const current = htmlEl.getAttribute('data-theme');
+      setTheme(current === 'dark' ? 'light' : 'dark');
+    });
+
+    // 2. Responsive Tables Wrapping
+    document.querySelectorAll('table').forEach(table => {
+      const wrapper = document.createElement('div');
+      wrapper.className = 'table-responsive';
+      table.parentNode.insertBefore(wrapper, table);
+      wrapper.appendChild(table);
+    });
+
+    // 3. Code Blocks Copy & Terminal Decorator
+    document.querySelectorAll('pre').forEach((pre, idx) => {
+      const wrapper = document.createElement('div');
+      wrapper.className = 'code-wrapper';
+      
+      const header = document.createElement('div');
+      header.className = 'code-header';
+      
+      const code = pre.querySelector('code');
+      let lang = 'TERMINAL';
+      if (code && code.className) {
+        const match = code.className.match(/language-([a-zA-Z0-9_-]+)/);
+        if (match) lang = match[1].toUpperCase();
+      }
+      
+      header.innerHTML = `<span>${lang}</span><button class="copy-button" data-index="${idx}">Copiar</button>`;
+      
+      pre.parentNode.insertBefore(wrapper, pre);
+      wrapper.appendChild(header);
+      wrapper.appendChild(pre);
+
+      const copyBtn = header.querySelector('.copy-button');
+      copyBtn.addEventListener('click', async () => {
+        try {
+          await navigator.clipboard.writeText(code ? code.innerText : pre.innerText);
+          copyBtn.textContent = 'Copiado!';
+          setTimeout(() => copyBtn.textContent = 'Copiar', 2000);
+        } catch(e) {
+          copyBtn.textContent = 'Erro';
+        }
+      });
+    });
+
+    // 4. Back to Top Floating Button
+    const backToTop = document.getElementById('backToTop');
+    window.addEventListener('scroll', () => {
+      if (window.scrollY > 400) {
+        backToTop.classList.add('visible');
+      } else {
+        backToTop.classList.remove('visible');
+      }
+    });
+
+    backToTop.addEventListener('click', () => {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+
+    // 5. ScrollSpy on TOC
+    const headings = document.querySelectorAll('article h1, article h2, article h3');
+    const tocLinks = document.querySelectorAll('#TOC a');
+
+    window.addEventListener('scroll', () => {
+      let currentId = '';
+      headings.forEach(heading => {
+        const top = heading.getBoundingClientRect().top;
+        if (top <= 120) {
+          currentId = heading.getAttribute('id');
+        }
+      });
+
+      if (currentId) {
+        tocLinks.forEach(link => {
+          if (link.getAttribute('href') === '#' + currentId) {
+            link.classList.add('active');
+          } else {
+            link.classList.remove('active');
+          }
+        });
+      }
+    });
+  </script>
+</body>
+</html>

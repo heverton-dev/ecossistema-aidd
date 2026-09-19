@@ -1,0 +1,354 @@
+:root {
+  --bg-base: #f8fafc;
+  --bg-surface: #ffffff;
+  --border-subtle: #e2e8f0;
+  --border-strong: #cbd5e1;
+  --text-primary: #0f172a;
+  --text-secondary: #334155;
+  --text-muted: #64748b;
+  --brand-primary: #1d4ed8;
+  --brand-accent: #0369a1;
+  --code-bg: #0f172a;
+  --code-text: #f8fafc;
+  --code-inline-bg: #e2e8f0;
+  --code-inline-text: #0f172a;
+  --table-header-bg: #0f172a;
+  --table-row-zebra: #f1f5f9;
+  --shadow-md: 0 4px 6px -1px rgba(15, 23, 42, 0.07), 0 2px 4px -2px rgba(15, 23, 42, 0.05);
+}
+
+* { box-sizing: border-box; }
+html { color: var(--text-primary); background-color: var(--bg-base); scroll-behavior: smooth; }
+
+/* Scrollbars do design system: 4px, cor primária da marca */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--brand-primary) var(--bg-base);
+}
+
+::-webkit-scrollbar { width: 4px; height: 4px; }
+::-webkit-scrollbar-track { background: var(--bg-base); }
+::-webkit-scrollbar-thumb { background: var(--brand-primary); border-radius: 2px; }
+::-webkit-scrollbar-thumb:hover { background: var(--brand-accent); }
+
+pre::-webkit-scrollbar-track { background: #1e293b; }
+
+body {
+  margin: 0 auto;
+  max-width: 880px;
+  padding: 4.5rem 1.75rem 6rem;
+  background: var(--bg-base);
+  color: var(--text-primary);
+  font-family: "Inter", "Segoe UI", system-ui, -apple-system, Roboto, sans-serif;
+  font-size: 16px;
+  line-height: 1.65;
+  hyphens: auto;
+  overflow-wrap: break-word;
+}
+
+/* Barra superior fixa (assinatura visual do padrão corporativo do ecossistema) */
+.aidd-topbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 100;
+  height: 3rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0 1.25rem;
+  background: var(--text-primary);
+  color: #f8fafc;
+  box-shadow: var(--shadow-md);
+  font-size: 0.82rem;
+}
+
+.aidd-topbar .aidd-topbar-brand {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.aidd-topbar .aidd-topbar-brand .tag {
+  display: inline-block;
+  background: rgba(29, 78, 216, 0.25);
+  border: 1px solid rgba(96, 165, 250, 0.4);
+  color: #bfdbfe;
+  font-size: 0.68rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  padding: 0.15rem 0.5rem;
+  border-radius: 999px;
+  white-space: nowrap;
+}
+
+.aidd-topbar a.aidd-back-to-top {
+  color: #cbd5e1;
+  text-decoration: none;
+  font-weight: 600;
+  white-space: nowrap;
+  border: 1px solid rgba(203, 213, 225, 0.35);
+  padding: 0.3rem 0.75rem;
+  border-radius: 6px;
+  transition: background-color 0.15s ease, color 0.15s ease;
+}
+
+.aidd-topbar a.aidd-back-to-top:hover {
+  background: var(--brand-primary);
+  border-color: var(--brand-primary);
+  color: #ffffff;
+}
+
+header#title-block-header {
+  border-bottom: 3px solid var(--text-primary);
+  padding-bottom: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+header#title-block-header::before {
+  content: "Manual Corporativo de Referência";
+  display: inline-block;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--brand-accent);
+  background: rgba(3, 105, 161, 0.08);
+  border: 1px solid rgba(3, 105, 161, 0.25);
+  border-radius: 999px;
+  padding: 0.25rem 0.75rem;
+  margin-bottom: 1rem;
+}
+
+h1.title {
+  font-size: 2.1rem;
+  font-weight: 800;
+  letter-spacing: -0.01em;
+  margin: 0 0 0.5rem;
+  color: var(--text-primary);
+  border: none;
+  padding: 0;
+}
+
+p.subtitle {
+  font-size: 1.05rem;
+  color: var(--text-secondary);
+  margin: 0 0 1rem;
+  font-style: normal;
+}
+
+p.author, p.date {
+  display: inline-block;
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  margin: 0 1rem 0 0;
+}
+
+nav#TOC {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-subtle);
+  border-radius: 8px;
+  padding: 1.25rem 1.5rem;
+  margin: 2rem 0 2.5rem;
+  box-shadow: var(--shadow-md);
+}
+
+nav#TOC::before {
+  content: "Sumário";
+  display: block;
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--text-muted);
+  margin: 0 0 0.75rem;
+  font-weight: 700;
+}
+
+nav#TOC ul {
+  columns: 2;
+  column-gap: 2rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+nav#TOC li { break-inside: avoid; margin-bottom: 0.4rem; }
+nav#TOC ul ul { columns: 1; margin-top: 0.25rem; padding-left: 1rem; }
+
+nav#TOC a {
+  color: var(--text-secondary);
+  text-decoration: none;
+  font-size: 0.92rem;
+}
+
+nav#TOC a:hover { color: var(--brand-primary); text-decoration: underline; }
+
+h1:not(.title) {
+  font-size: 1.6rem;
+  font-weight: 800;
+  color: var(--text-primary);
+  border-bottom: 2px solid var(--border-strong);
+  padding-bottom: 0.5rem;
+  margin: 3rem 0 1.25rem;
+  scroll-margin-top: 1.5rem;
+}
+
+h2 {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin: 2rem 0 0.85rem;
+  scroll-margin-top: 1.5rem;
+}
+
+h3 {
+  font-size: 1.02rem;
+  font-weight: 700;
+  color: var(--text-secondary);
+  margin: 1.5rem 0 0.6rem;
+}
+
+p { margin: 0 0 1rem; color: var(--text-primary); }
+strong { color: var(--text-primary); font-weight: 700; }
+a { color: var(--brand-primary); }
+
+hr {
+  border: none;
+  border-top: 1px solid var(--border-subtle);
+  margin: 2.5rem 0;
+}
+
+blockquote {
+  margin: 1.25rem 0;
+  padding: 0.9rem 1.25rem;
+  background: #f0f9ff;
+  border-left: 4px solid var(--brand-accent);
+  border-radius: 0 6px 6px 0;
+  color: #0c4a6e;
+}
+
+blockquote p:last-child { margin-bottom: 0; }
+
+ul, ol { padding-left: 1.4rem; margin: 0 0 1rem; }
+li { margin-bottom: 0.35rem; }
+
+code {
+  font-family: "JetBrains Mono", "Consolas", monospace;
+  background: var(--code-inline-bg);
+  color: var(--code-inline-text);
+  padding: 0.12rem 0.4rem;
+  border-radius: 4px;
+  font-size: 0.88em;
+}
+
+.code-block {
+  position: relative;
+  margin: 0 0 1.25rem;
+}
+
+.code-block pre { margin: 0; }
+
+pre {
+  background: var(--code-bg);
+  color: var(--code-text);
+  padding: 1rem 3.75rem 1rem 1.25rem;
+  border-radius: 8px;
+  overflow-x: auto;
+  margin: 0 0 1.25rem;
+  box-shadow: var(--shadow-md);
+}
+
+pre code {
+  background: none;
+  color: inherit;
+  padding: 0;
+  font-size: 0.85rem;
+  line-height: 1.6;
+}
+
+.copy-btn {
+  position: absolute;
+  top: 0.6rem;
+  right: 0.6rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-family: "Inter", "Segoe UI", system-ui, sans-serif;
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: #cbd5e1;
+  background: rgba(248, 250, 252, 0.08);
+  border: 1px solid rgba(203, 213, 225, 0.25);
+  border-radius: 6px;
+  padding: 0.3rem 0.6rem;
+  cursor: pointer;
+  transition: background-color 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+}
+
+.copy-btn:hover {
+  background: var(--brand-primary);
+  border-color: var(--brand-primary);
+  color: #ffffff;
+}
+
+.copy-btn.copied {
+  background: #0f766e;
+  border-color: #0f766e;
+  color: #ffffff;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 0 0 1.5rem;
+  font-size: 0.9rem;
+  display: block;
+  overflow-x: auto;
+}
+
+table thead { display: table-header-group; }
+table tbody { display: table-row-group; }
+
+thead th {
+  background: var(--table-header-bg);
+  color: #f8fafc;
+  text-align: left;
+  padding: 0.65rem 0.85rem;
+  font-weight: 600;
+  font-size: 0.82rem;
+}
+
+tbody td {
+  padding: 0.6rem 0.85rem;
+  border-bottom: 1px solid var(--border-subtle);
+  vertical-align: top;
+}
+
+tbody tr:nth-child(even) { background: var(--table-row-zebra); }
+
+@media (max-width: 640px) {
+  body { padding: 3.75rem 1rem 4rem; font-size: 0.95rem; }
+  h1.title { font-size: 1.55rem; }
+  nav#TOC ul { columns: 1; }
+  table { font-size: 0.82rem; }
+  .aidd-topbar { padding: 0 0.85rem; font-size: 0.76rem; }
+  .aidd-topbar .aidd-topbar-brand .tag { display: none; }
+  pre { padding-right: 1.25rem; }
+  .copy-btn { position: static; display: flex; margin: 0 0 0.6rem auto; width: fit-content; }
+}
+
+@media print {
+  html, body { background: #ffffff; }
+  nav#TOC { box-shadow: none; }
+  pre { box-shadow: none; }
+  .aidd-topbar, .copy-btn { display: none !important; }
+  body { padding-top: 3rem; }
+}
