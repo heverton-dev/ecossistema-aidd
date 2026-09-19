@@ -62,7 +62,7 @@
 #     travar TODO commit do repo por motivo externo a este item.
 
 default_install_hook_types: [pre-commit]
-default_stages: [pre-commit]
+default_stages: [pre-commit, manual]
 fail_fast: false
 
 repos:
@@ -87,6 +87,14 @@ repos:
       - id: g-harness-compat
         name: G_HARNESS_COMPAT (artefatos multi-harness sincronizados)
         entry: python gates/G_HARNESS_COMPAT.py
+        language: system
+        always_run: true
+        pass_filenames: false
+        require_serial: true
+
+      - id: g-universal-harness
+        name: G_UNIVERSAL_HARNESS (paridade universal de skills, mcps e hooks)
+        entry: python gates/G_UNIVERSAL_HARNESS.py
         language: system
         always_run: true
         pass_filenames: false
@@ -227,5 +235,13 @@ repos:
         entry: python gates/G_PROTOTYPE_REWRITE.py
         language: system
         always_run: true
+        pass_filenames: false
+        require_serial: true
+
+      - id: g-livro-evidencia
+        name: G_LIVRO_EVIDENCIA (auditoria de evidencia do livro-texto)
+        entry: python gates/G_LIVRO_EVIDENCIA.py
+        language: system
+        stages: [manual]
         pass_filenames: false
         require_serial: true

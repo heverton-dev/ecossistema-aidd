@@ -224,8 +224,13 @@ def main(argv: list[str] | None = None) -> int:
                         help="saida estruturada em JSON")
     args = parser.parse_args(argv)
 
+    import os
     if not args.projeto and not args.livro:
-        parser.error("informe --projeto ou --livro")
+        args.projeto = os.environ.get("AIDD_LIVRO_PROJETO")
+        args.livro = os.environ.get("AIDD_LIVRO_PASTA")
+
+    if not args.projeto and not args.livro:
+        parser.error("informe --projeto ou --livro (ou defina AIDD_LIVRO_PROJETO)")
 
     if args.projeto:
         pasta_projeto = Path(args.projeto).resolve()

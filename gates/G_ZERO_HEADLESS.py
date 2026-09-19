@@ -15,8 +15,9 @@ def auditar():
         erros.append('orchestrator_engine.py deve ter interactive: bool = True como padrao obrigatorio.')
 
     eco = ROOT_DIR / 'ecossistema.py'
-    if not eco.exists() or '--dangerously-force-headless' not in eco.read_text(encoding='utf-8'):
-        erros.append('ecossistema.py deve exigir --dangerously-force-headless para qualquer execucao nao-interativa.')
+    eco_conteudo = eco.read_text(encoding='utf-8') if eco.exists() else ''
+    if '@click.option("--dangerously-force-headless"' not in eco_conteudo and "add_argument('--dangerously-force-headless'" not in eco_conteudo:
+        erros.append('ecossistema.py deve declarar a opcao --dangerously-force-headless para qualquer execucao nao-interativa.')
 
     if erros:
         print(f'\n[FALHA] Quality Gate REPROVADO com {len(erros)} erro(s):')
@@ -27,9 +28,9 @@ def auditar():
 
     print('[OK] Modo interativo configurado como padrao estrito no motor.')
     print('[OK] Flag explicita obrigatoria para qualquer excecao headless.')
-    print('[OK] Zero risco de subagentes ocultos em concorrencia silenciosa.')
+    print('[OK] Assinatura estatica de interatividade e flag headless verificadas.')
     print('\n=======================================================================')
-    print(' [SUCESSO] Quality Gate G_ZERO_HEADLESS APROVADO (100% OK)!')
+    print(' [SUCESSO] Quality Gate G_ZERO_HEADLESS APROVADO (checagem estatica concluida)')
     print('=======================================================================\n')
     return 0
 

@@ -154,11 +154,12 @@ def executar():
 
     resultados = []
     falhou = False
-    total_ferramentas = len(FERRAMENTAS)
+    ferramentas_alvo = [f.strip() for f in os.environ.get("AIDD_TESTES_REAIS_FERRAMENTAS", "").split(",") if f.strip()] or FERRAMENTAS
+    total_ferramentas = len(ferramentas_alvo)
 
     _anunciar_ao_vivo(f"[G_TESTES_REAIS] Iniciando: {total_ferramentas} ferramenta(s) em tools/*...")
 
-    for indice, ferramenta in enumerate(FERRAMENTAS, start=1):
+    for indice, ferramenta in enumerate(ferramentas_alvo, start=1):
         dir_ferramenta = os.path.join(TOOLS_DIR, ferramenta)
         if not os.path.isdir(dir_ferramenta):
             print(f"  [{ferramenta}] DIRETÓRIO AUSENTE — ignorado")

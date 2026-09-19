@@ -120,6 +120,8 @@ O ecossistema dispõe de Quality Gates globais em gates/:
 
 **Nota (G_HONESTIDADE_ROTULO):** ainda não incluído no `audit` agregado — reprova contra violação conhecida em tools/aidd-master e aidd-enterprise `scripts/gates/G_SEGURANCA.py`, `G_ARQUITETURA.py`, `G_PERFORMANCE.py`. Pendente de decisão humana em `docs/planos/fazendo/01-correcao-pos-auditoria-sem-maquiagem/`.
 
+**Convenção Canônica de Autoria de Gates:** Todo gate DEVE acompanhar teste automatizado que quebre a condição resguardada e asserte `exit 1` (reprovação). Testes de caminho feliz não satisfazem o critério. Ver [CONVENCAO-AUTORIA-GATES.md](CONVENCAO-AUTORIA-GATES.md).
+
 ---
 
 ## §4.1 — CONVENÇÃO DE NOMENCLATURA DE CÓDIGO (PT-BR / INGLÊS)
