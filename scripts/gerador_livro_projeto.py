@@ -439,7 +439,9 @@ def parte_arquitetura(ev: Evidencia) -> str:
 
     if quarteto or rotas_quarteto:
         linhas = []
-        for chave in ("swagger", "webhooks", "mcp", "docs", "documentacao"):
+        for chave in ("swagger", "webhooks", "mcp", "guia", "docs", "documentacao"):
+            if chave in ("docs", "documentacao") and ("guia" in quarteto or "guia" in rotas_quarteto):
+                continue
             declarado = quarteto.get(chave)
             rota = rotas_quarteto.get(chave)
             if declarado is None and rota is None:

@@ -109,11 +109,14 @@ def validar_plano(plano: Dict[str, Any]) -> Tuple[bool, List[str]]:
 
     # 5. Validação do Quarteto Sine Qua Non
     quarteto = plano.get("quarteto_sine_qua_non", {})
-    for pilar in ["swagger", "webhooks", "mcp", "docs"]:
-        if pilar not in quarteto:
+    for pilar in ["swagger", "webhooks", "mcp", "guia"]:
+        cfg = quarteto.get(pilar)
+        if pilar == "guia" and cfg is None and "docs" in quarteto:
+            cfg = quarteto.get("docs")
+        if cfg is None:
             erros.append(f"Quarteto Sine Qua Non incompleto: falta pilar '{pilar}'.")
         else:
-            if quarteto[pilar].get("ativo") is not True:
+            if cfg.get("ativo") is not True:
                 erros.append(f"Pilar obrigatório do Quarteto '{pilar}' deve estar ativo: true.")
 
     # 6. Validação do Payload Específico de Fluxo
@@ -192,7 +195,7 @@ def gerar_template_plano(
         "quarteto_sine_qua_non": {
           "swagger": {
             "ativo": True,
-            "prefixo": "/swagger"
+            "prefixo": "/docs"
           },
           "webhooks": {
             "ativo": True,
@@ -202,7 +205,7 @@ def gerar_template_plano(
             "ativo": True,
             "ferramentas_expostas": ["consultar_registro", "criar_registro"]
           },
-          "docs": {
+          "guia": {
             "ativo": True,
             "guia_usuario": True
           }

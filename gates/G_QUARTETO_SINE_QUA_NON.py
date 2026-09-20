@@ -112,7 +112,12 @@ def auditar_codigo_fonte(projeto_dir: str) -> Dict[str, bool]:
                             encontrados["webhooks"] = True
                         if q.get("mcp", {}).get("ativo") is True:
                             encontrados["mcp"] = True
-                        if q.get("docs", {}).get("ativo") is True or q.get("docs", {}).get("guia_usuario") is True:
+                        if (
+                            q.get("guia", {}).get("ativo") is True
+                            or q.get("guia", {}).get("guia_usuario") is True
+                            or q.get("docs", {}).get("ativo") is True
+                            or q.get("docs", {}).get("guia_usuario") is True
+                        ):
                             encontrados["guia"] = True
             except Exception:
                 pass

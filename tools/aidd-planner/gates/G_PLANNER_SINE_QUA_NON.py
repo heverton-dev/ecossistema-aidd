@@ -5,10 +5,10 @@ G_PLANNER_SINE_QUA_NON — Valida a conformidade da Lei Inviolável 10 (Quarteto
 Verifica:
   1. Presença da chave quarteto_sine_qua_non
   2. Presença e ativação (ativo: true) dos 4 pilares:
-     - /swagger
-     - /webhooks
-     - /mcp
-     - /docs
+     - Swagger Studio: /docs (ou alias legado /swagger)
+     - Webhook Studio: /webhooks (ou /api/webhooks)
+     - MCP Studio: /mcp (ou /api/mcp)
+     - Guia do Utilizador: /docs/guia (ou /guia)
   3. Existência de ferramentas MCP e eventos de Webhooks mapeados no plano
 """
 import json
@@ -53,9 +53,12 @@ def main(alvo_arg: str = ".") -> int:
         print("[G_PLANNER_SINE_QUA_NON] FALHA: 'quarteto_sine_qua_non' ausente ou inválido.", file=sys.stderr)
         return 1
 
-    pilares = ["swagger", "webhooks", "mcp", "docs"]
+    pilares = ["swagger", "webhooks", "mcp", "guia"]
     for pilar in pilares:
         cfg = quarteto.get(pilar)
+        # Retrocompatibilidade: aceitar chave 'docs' como alias legado para 'guia'
+        if pilar == "guia" and not isinstance(cfg, dict) and isinstance(quarteto.get("docs"), dict):
+            cfg = quarteto.get("docs")
         if not isinstance(cfg, dict):
             erros.append(f"Pilar '{pilar}' ausente no Quarteto Sine Qua Non.")
             continue
@@ -73,9 +76,9 @@ def main(alvo_arg: str = ".") -> int:
     if not isinstance(ferramentas, list) or len(ferramentas) == 0:
         erros.append("Pilar 'mcp' deve declarar ao menos 1 ferramenta exposta em 'ferramentas_expostas'.")
 
-    docs = quarteto.get("docs", {})
-    if docs.get("guia_usuario") is not True:
-        erros.append("Pilar 'docs' deve declarar 'guia_usuario: true'.")
+    guia = quarteto.get("guia") if isinstance(quarteto.get("guia"), dict) else quarteto.get("docs", {})
+    if guia.get("guia_usuario") is not True:
+        erros.append("Pilar 'guia' deve declarar 'guia_usuario: true'.")
 
     if erros:
         print(f"[G_PLANNER_SINE_QUA_NON] FALHA: {len(erros)} violação(ões) do Quarteto Sine Qua Non:", file=sys.stderr)

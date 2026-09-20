@@ -74,14 +74,14 @@
     },
     "quarteto_sine_qua_non": {
       "type": "object",
-      "required": ["swagger", "webhooks", "mcp", "docs"],
+      "required": ["swagger", "webhooks", "mcp", "guia"],
       "properties": {
         "swagger": {
           "type": "object",
           "required": ["ativo", "prefixo"],
           "properties": {
             "ativo": { "type": "boolean", "const": true },
-            "prefixo": { "type": "string", "default": "/swagger" }
+            "prefixo": { "type": "string", "default": "/docs" }
           }
         },
         "webhooks": {
@@ -108,12 +108,20 @@
             }
           }
         },
-        "docs": {
+        "guia": {
           "type": "object",
           "required": ["ativo", "guia_usuario"],
           "properties": {
             "ativo": { "type": "boolean", "const": true },
             "guia_usuario": { "type": "boolean", "const": true }
+          }
+        },
+        "docs": {
+          "type": "object",
+          "description": "Alias legado para retrocompatibilidade per ISSUE-0026",
+          "properties": {
+            "ativo": { "type": "boolean" },
+            "guia_usuario": { "type": "boolean" }
           }
         }
       }

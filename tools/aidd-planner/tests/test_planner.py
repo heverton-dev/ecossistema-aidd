@@ -193,6 +193,53 @@ def test_gates_execucao_com_arquivo_valido():
         assert gate_coerencia_main(tmpdir) == 0
 
 
+def test_quarteto_sine_qua_non_nomenclatura_guia():
+    """ISSUE-0026 (Rota A): Valida que o 4º pilar usa a chave canônica 'guia' e Swagger prefixo '/docs'."""
+    plano = gerar_template_plano(
+        fluxo_alvo="fluxo_01_generator",
+        projeto_nome="Projeto Nomenclatura Guia",
+        slug="projeto-nomenclatura-guia",
+        descricao="Descricao detalhada para testar nome do quarto pilar",
+        dominio="testes",
+    )
+    quarteto = plano["quarteto_sine_qua_non"]
+    assert "guia" in quarteto
+    assert quarteto["guia"]["ativo"] is True
+    assert quarteto["guia"]["guia_usuario"] is True
+    assert quarteto["swagger"]["prefixo"] == "/docs"
+
+    with tempfile.TemporaryDirectory() as tmpdir:
+        caminho = os.path.join(tmpdir, "PLANNER.json")
+        with open(caminho, "w", encoding="utf-8") as f:
+            json.dump(plano, f, indent=2)
+
+        assert gate_schema_main(tmpdir) == 0
+        assert gate_sine_main(tmpdir) == 0
+
+
+def test_quarteto_sine_qua_non_retrocompatibilidade_docs():
+    """ISSUE-0026: Garante que planos com chave legada 'docs' continuam válidos por retrocompatibilidade."""
+    plano = gerar_template_plano(
+        fluxo_alvo="fluxo_01_generator",
+        projeto_nome="Projeto Legado Docs",
+        slug="projeto-legado-docs",
+        descricao="Descricao detalhada para testar retrocompatibilidade do pilar",
+        dominio="testes",
+    )
+    # Substitui 'guia' por 'docs' simulando plano pré-ISSUE-0026
+    plano["quarteto_sine_qua_non"]["docs"] = plano["quarteto_sine_qua_non"].pop("guia")
+
+    valido, erros = validar_plano(plano)
+    assert valido is True, f"Erros inesperados: {erros}"
+
+    with tempfile.TemporaryDirectory() as tmpdir:
+        caminho = os.path.join(tmpdir, "PLANNER.json")
+        with open(caminho, "w", encoding="utf-8") as f:
+            json.dump(plano, f, indent=2)
+
+        assert gate_sine_main(tmpdir) == 0
+
+
 def test_cli_init_e_validate():
     with tempfile.TemporaryDirectory() as tmpdir:
         # 1. Teste init

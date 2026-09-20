@@ -718,6 +718,39 @@
 - **Quality Gates Globais do Ecossistema:** **11 de 11 Gates Aprovados (100% PASS)**.
 - **Status da Etapa 6:** **100% CONCLUÍDA, HOMOLOGADA E AUDITADA**.
 
+---
+
+## 7. Ferramenta: `aidd-planner`
+
+- **Objetivo da Ferramenta:** Intake interativo BDD/SDD, blueprints de arquitetura e geração do `PLANNER.json` com conformidade canônica com a Lei Inviolável #10 (Quarteto *Sine Qua Non*).
+- **Pasta Foco:** [`tools/aidd-planner`](file:///C:/Users/trcnologia/Desktop/ecossistema-aidd/tools/aidd-planner)
+- **O que executou:**
+  1. Auditoria e alinhamento de nomenclatura dos 4 pilares do Quarteto *Sine Qua Non* (ISSUE-0026 / Rota A).
+  2. Atualização do portão local [`tools/aidd-planner/gates/G_PLANNER_SINE_QUA_NON.py`](file:///C:/Users/trcnologia/Desktop/ecossistema-aidd/tools/aidd-planner/gates/G_PLANNER_SINE_QUA_NON.py) para docstring e chave canônica `'guia'` (`/docs/guia`), Swagger canônico `/docs` e retrocompatibilidade com `'docs'`.
+  3. Atualização do schema JSON [`tools/aidd-planner/schemas/planner_schema.json`](file:///C:/Users/trcnologia/Desktop/ecossistema-aidd/tools/aidd-planner/schemas/planner_schema.json) e template em [`tools/aidd-planner/src/core/planner_engine.py`](file:///C:/Users/trcnologia/Desktop/ecossistema-aidd/tools/aidd-planner/src/core/planner_engine.py).
+  4. Criação de testes unitários para verificação de `'guia'` e retrocompatibilidade `'docs'` em `tools/aidd-planner/tests/test_planner.py` (**13 passed**, 0 falhas).
+
+### Registro de Inconsistências, Violações e Correções (`aidd-planner`)
+
+#### Inconsistência 27: Nomenclatura Desatualizada de Pilares no Portão Local do Planner (ISSUE-0026)
+- **Nome:** Chave interna do 4º pilar nomeada como `"docs"` colidindo com a rota `/docs` do 1º pilar (Swagger) e docstring referenciando rotas antigas (`/swagger`).
+- **Motivo:** O portão `G_PLANNER_SINE_QUA_NON.py` não havia sido reconciliado após a padronização das rotas na Lei #10 (Session 7 / ISSUE-0001).
+- **O que ocasionou:** Risco de ambiguidade semântica na leitura do `PLANNER.json` e assimetria conceitual com `gates/G_QUARTETO_SINE_QUA_NON.py`.
+- **Plano de Correção (Rota A):**
+  1. Renomeação da chave do 4º pilar de `"docs"` para `"guia"` no schema, template e validação, mantendo fallback de leitura para `"docs"`.
+  2. Atualização dos docstrings para listar Swagger Studio (`/docs`), Webhook Studio (`/webhooks`), MCP Studio (`/mcp`) e Guia do Utilizador (`/docs/guia`).
+  3. Adição de testes unitários `test_quarteto_sine_qua_non_nomenclatura_guia` e `test_quarteto_sine_qua_non_retrocompatibilidade_docs` no `test_planner.py`.
+- **Status:** **RESOLVIDO**.
+
+### Resultado Final de Validação (`aidd-planner`)
+
+- **Testes Unitários:** **13 passed**, 0 falhas (100% de aprovação).
+- **Quality Gates do Planner:**
+  - `G_PLANNER_SCHEMA.py`: **PASS**
+  - `G_PLANNER_SINE_QUA_NON.py`: **PASS**
+  - `G_PLANNER_COERENCIA_FLUXO.py`: **PASS**
+- **Quality Gates Globais:** **100% PASS** (conforme `G_QUARTETO_SINE_QUA_NON.py` e `G_DISCIPLINA_TESTE_FERRAMENTA.py`).
+
 
 
 
