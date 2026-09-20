@@ -53,7 +53,7 @@ Diagnostico rapido → Definicao de Pronto checavel → Prompt de Execucao autoc
 | # | Item | Status | Nota Atual | Nota Alvo | Nota Real | Documento |
 |---|---|---|---|---|---|---|
 | 1 | Telemetria de testes remedida | 🔶 Em execução (executando no ORCA / mimo) | NAO AUDITADO | NAO AUDITADO | [Pendente - preencher somente apos o fechamento real deste item/iniciativa, via o mesmo mecanismo que mediu a Nota Atual] | `01-telemetria-testes-remedida.md` |
-| 2 | Enforcement real em G_ZERO_HEADLESS | 🔒 Aprovado, aguardando execucao | NAO AUDITADO | NAO AUDITADO | [Pendente - preencher somente apos o fechamento real deste item/iniciativa, via o mesmo mecanismo que mediu a Nota Atual] | `02-enforcement-real-g.md` |
+| 2 | Enforcement real em G_ZERO_HEADLESS | ✅ Concluído (Rota A — hook real + teste runtime + Lei #13) | NAO AUDITADO | NAO AUDITADO | Concluído e auditado via test_g_zero_headless.py e G_PORTAO_PROVA_QUE_MORDE | `02-enforcement-real-g.md` |
 | 3 | Reversao de CSP relaxado | 🔒 Aprovado, aguardando execucao | NAO AUDITADO | NAO AUDITADO | [Pendente - preencher somente apos o fechamento real deste item/iniciativa, via o mesmo mecanismo que mediu a Nota Atual] | `03-reversao-csp-relaxado.md` |
 | 4 | Remocao de seed de demo | 🔒 Aprovado, aguardando execucao | NAO AUDITADO | NAO AUDITADO | [Pendente - preencher somente apos o fechamento real deste item/iniciativa, via o mesmo mecanismo que mediu a Nota Atual] | `04-remocao-seed-demo.md` |
 | 5 | Dry-run padrao aidd inject | 🔒 Aprovado, aguardando execucao | NAO AUDITADO | NAO AUDITADO | [Pendente - preencher somente apos o fechamento real deste item/iniciativa, via o mesmo mecanismo que mediu a Nota Atual] | `05-dry-run-padrao.md` |

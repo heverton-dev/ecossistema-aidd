@@ -1,9 +1,10 @@
 ---
 id: ISSUE-0009
 title: Barreira real contra agentes disparados em paralelo (G_ZERO_HEADLESS)
-status: ready-for-agent
+status: closed
 blocked_by: []
 created: 2026-09-19
+resolved: 2026-09-19
 source: open-decision sweep 2026-09-19 / PLAN-0025 item 2
 ---
 
@@ -52,8 +53,9 @@ implying coverage.
 
 ## Acceptance criteria
 
-- [ ] Hook exists and is configured in the assistant.
-- [ ] Real reproduction: an attempt to launch two parallel agents without confirmation is **actually blocked**, with the block visible in output. Hook code merely existing does not count.
-- [ ] Real reproduction of the legitimate path: a launch the user explicitly asked for passes through.
-- [ ] The recorded incident scenario (agent surviving app closure) is either covered, or its exclusion is written into the ticket — claim no coverage that was not tested.
-- [ ] PLAN-0025 item 2 updated with outcome and evidence.
+- [x] Hook exists (`componentes/compartilhado/hooks/anti_headless_subagent_hook.py`) e sincronizado para todos os harnesses (`.claude/hooks/`, `.agents/hooks/`, etc.) e configurado em `PreToolUse` do assistente (`.claude/settings.json`).
+- [x] Real reproduction: tentativa de disparar 2 subagentes paralelos sem confirmação é **efetivamente bloqueada** em runtime (exit code != 0, saída com `[BLOQUEIO G_ZERO_HEADLESS]`), validado em `gates/test_g_zero_headless.py::test_hook_reproducao_bloqueia_dois_agentes_paralelos`.
+- [x] Real reproduction of the legitimate path: lançamento solicitado com autorização explícita (`user_confirmed: true` / `--confirmed`) passa com exit code 0 e `[PERMITIDO]`, validado em `gates/test_g_zero_headless.py::test_hook_reproducao_permite_caminho_legitimo_com_confirmacao`.
+- [x] The recorded incident scenario (agent surviving app closure) tem sua exclusão/limite explicitamente registrado no gate e na documentação per Lei #8: processos externos rodando fora do escopo intermediado pelo harness não são contidos por hooks locais deste repositório.
+- [x] PLAN-0025 item 2 atualizado com resultado e evidências de execução real.
+

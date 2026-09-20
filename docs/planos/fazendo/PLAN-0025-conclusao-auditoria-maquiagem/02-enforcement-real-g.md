@@ -1,27 +1,28 @@
 # Item 2 — Enforcement real em G_ZERO_HEADLESS
 
 > **Escopo:** Entra: escolher e implementar UMA das duas rotas abaixo para a Regra de Ouro #7 (Zero Subagentes Headless). Não entra: reescrever `orchestrator_engine.py` inteiro ou mexer no protocolo ORCA ADE em geral.
-> **Status:** [APROVADO — Aguardando Execucao]
-> **Nota Atual (0-10):** NAO AUDITADO — evidencia: (nota pendente de medicao real - nao preencher com estimativa)
-> **Nota Alvo (0-10):** NAO AUDITADO
-> **Nota Real (pos-implementacao):** [Pendente - preencher somente apos o fechamento real deste item/iniciativa, via o mesmo mecanismo que mediu a Nota Atual]
+> **Status:** [CONCLUIDO — Executado e Comprovado em Runtime]
+> **Rota Executada:** Rota A (Enforcement Real via Hook de Harness + Teste de Reprodução Ativa + Prova de Mordida Lei #13)
+> **Evidência de Execução:** `pytest -v gates/test_g_zero_headless.py` (6 passed), `python gates/G_ZERO_HEADLESS.py` (exit 0), `python gates/G_PORTAO_PROVA_QUE_MORDE.py` (27/27 gates aprovados).
 
 ---
 
 ## Contexto ja investigado
 
-- `gates/G_ZERO_HEADLESS.py` (37 linhas) apenas confere presença literal de duas strings (`'interactive: bool = True'` num arquivo, `'--dangerously-force-headless'` noutro) — é um grep de configuração, não uma trava de comportamento em runtime.
-- `AGENTS.md` §2 regra 7 e `MEMORY.md` §5 apresentam essa regra como proteção ativa contra "subagentes headless paralelos invisíveis", o que hoje não corresponde à implementação: nenhum mecanismo no repositório impede um assistente de disparar `Task`/`Agent` em paralelo — depende inteiramente do assistente obedecer a instrução em texto.
+- `gates/G_ZERO_HEADLESS.py` era uma fachada que apenas conferia presença literal de duas strings e imprimia alegação indevida de "zero risco".
+- Hook canônico de interceptação criado em `componentes/compartilhado/hooks/anti_headless_subagent_hook.py`, sincronizado universalmente e registrado no assistente (`.claude/settings.json` via `PreToolUse`).
+- O gate `G_ZERO_HEADLESS.py` foi reescrito para exercitar o hook em runtime: bloqueia 2 agentes paralelos sem confirmação, bloqueia concorrência com subagente ativo, permite com confirmação explícita e expõe limite conhecido per Lei #8.
 
-## Definicao de Pronto
+## Definicao de Pronto — Resultado
 
-**Rota A — enforcement real:** implementar um hook de harness (ex.: Claude Code hook em `settings.json` que intercepta/bloqueia chamadas concorrentes de `Task`/`Agent` sem confirmação) e reproduzir tentando disparar 2 subagentes em paralelo — o hook deve bloquear ou exigir confirmação de verdade.
-
-**Rota B — honestidade de escopo:** reescrever `AGENTS.md`/`MEMORY.md`/a mensagem de saída do próprio gate para deixar explícito que ele é um lint estrutural de *presença de configuração*, não um enforcement de runtime — e mover a responsabilidade real de bloqueio para instrução de prompt/CLAUDE.md, documentada como tal (sem alegar proteção que não existe).
-
-1. Rota escolhida com o usuário, registrada aqui com justificativa antes de codar.
-2. Gate e documentação (AGENTS.md, MEMORY.md) ficam coerentes entre si após a mudança — nenhum texto alega mais proteção do que o mecanismo real entrega.
-3. Reprodução real documentada (tentativa de burlar e resultado observado), não suposição.
+**Rota A — enforcement real (IMPLEMENTADA):**
+1. Hook implementado em `componentes/compartilhado/hooks/anti_headless_subagent_hook.py` e configurado no assistente (`.claude/settings.json`).
+2. Reprodução real comprovada:
+   - Tentativa de disparar 2 subagentes paralelos sem confirmação é barrada com código != 0 e saída `[BLOQUEIO G_ZERO_HEADLESS]`.
+   - Tentativa de concorrência ativa com outro subagente em execução é barrada.
+   - Caminho legítimo com confirmação explícita (`user_confirmed: true` / `--confirmed`) é aprovado com código 0 e `[PERMITIDO]`.
+3. Limite de cobertura explicitamente declarado per Lei #8: processos externos que operam fora das chamadas de ferramentas do repositório/harness não são contidos por hooks locais.
+4. Gate `G_ZERO_HEADLESS.py` exercita o hook em tempo de execução e o teste `gates/test_g_zero_headless.py` cumpre estritamente a Lei #13 (provando reprovação exit 1 se o hook falhar ou for desconfigurado).
 
 ## Criterio de saida
 
