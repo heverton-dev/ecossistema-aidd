@@ -1,97 +1,130 @@
-import http.server, socketserver, json, urllib.parse, os, sys, uuid
+# -*- coding: utf-8 -*-
+"""
+=============================================================================
+aidd_project — Servidor Monolítico Modular (AIDD v5.1 Enterprise)
+=============================================================================
+Inicializa o Shared Kernel, orquestra fatias verticais, registra rotas OpenAPI 3.1,
+servidor Webhook Studio, servidor nativo MCP e serve a aplicação Web Super-App.
+"""
+
+import http.server
+import socketserver
+import json
+import urllib.parse
+import os
+import sys
+import time
+import uuid
+import datetime
 
 if hasattr(sys.stdout, 'reconfigure'):
     sys.stdout.reconfigure(encoding='utf-8', errors='replace')
-sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
-from core.database import Database
+# Configura PYTHONPATH para src/
+CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))
+if CURRENT_DIR not in sys.path:
+    sys.path.insert(0, CURRENT_DIR)
+
+from core.database import Database, is_db_locked
+from core.result import Result
 from core.events import EventBus
+from core.outbox_worker import OutboxWorker
+from core.jobs import JobQueue
 from core.openapi import RouteRegistry
 from core.webhooks import WebhookDispatcher
-from core.models import init_all_schemas
-from core.mcp_server import AIDD_EnterpriseMCPServer
-from core.security import SecurityService, JWTService
-from core.repositories import (
-    TriagemRepository, PepRepository, CirurgicoRepository,
-    FarmaciaRepository, FaturamentoRepository, AuditoriaRepository
+from core.security import SecurityService, JWTService, OIDCService
+from core.mcp_server import MCPServer
+from core.metrics import MetricsRegistry, RequestInstrumentation
+from core.logs import (
+    get_logger,
+    correlation_id_var,
+    extract_or_generate_trace_id,
+    get_current_trace_id,
 )
 
-PORT = 3000
-STATIC_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "static")
-DB_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "suite.db")
+logger = get_logger("server")
+
+# Módulos / Fatias Verticais
+from modules.modulo1.models import init_schema as init_modulo1_schema
+from modules.modulo1.services import Modulo1Service
+from modules.modulo1.routes import registrar_rotas as reg_modulo1_routes
+
+PORT = int(os.environ.get("PORT", 3000))
+STATIC_DIR = os.path.join(CURRENT_DIR, "static")
+DB_PATH = os.path.join(CURRENT_DIR, "..", "suite.db")
+
+# ---------------------------------------------------------------------------
+# SQLITE_BUSY — resposta HTTP padronizada quando o retry do EngineFacadeConnection
+# esgota: 503 + Retry-After para o cliente reagendar (nunca retry cego).
+# ---------------------------------------------------------------------------
+RETRY_AFTER_DB_LOCKED_S = 2
+
 db = Database(f"sqlite:///{DB_PATH}")
+from core.token_revocation import TokenRevocationList
+TokenRevocationList.configure(db)
 events = EventBus()
 webhook_dispatcher = WebhookDispatcher(db)
-mcp_engine = AIDD_EnterpriseMCPServer(DB_PATH)
-triagem_repo = TriagemRepository(db)
-pep_repo = PepRepository(db)
-cirurgico_repo = CirurgicoRepository(db)
-farmacia_repo = FarmaciaRepository(db)
-faturamento_repo = FaturamentoRepository(db)
-auditoria_repo = AuditoriaRepository(db)
-
-with db.get_connection() as conn:
-    init_all_schemas(conn)
-
-# ----------------- REGRAS CROSS-DOMAIN -----------------
-def on_triagem_critica(dados):
-    if dados.get("classificacao") in ["vermelho", "laranja"]:
-        leito_emergencia = "UTI Emergência 01" if dados.get("classificacao") == "vermelho" else "Box Observação Rápida"
-        triagem_repo.alocar_leito_por_protocolo(dados.get("protocolo"), leito_emergencia)
-        auditoria_repo.registrar("triagem_critica_leito_alocado", "pronto_socorro", json.dumps(dados, ensure_ascii=False))
-        webhook_dispatcher.disparar("cross_domain.triagem_critica_to_leito", {
-            "protocolo": dados.get("protocolo"),
-            "paciente": dados.get("paciente_nome"),
-            "leito": leito_emergencia,
-            "classificacao": dados.get("classificacao")
-        })
-
-def on_prescricao_emitida(dados):
-    auditoria_repo.registrar("prescricao_emitida_automacao", "pep_clinico", json.dumps(dados, ensure_ascii=False))
-    webhook_dispatcher.disparar("cross_domain.prescricao_to_farmacia", dados)
-
-def on_cirurgia_concluida(dados):
-    num_guia = f"TISS-{uuid.uuid4().hex[:4].upper()}"
-    valor = 12500.00 if dados.get("necessita_opme") else 7800.00
-    faturamento_repo.criar_guia_cirurgia(
-        num_guia, dados.get("paciente_nome"), f"Procedimento Cirúrgico: {dados.get('procedimento')}", valor
-    )
-    auditoria_repo.registrar("cirurgia_faturada_cross_domain", "centro_cirurgico", json.dumps(dados, ensure_ascii=False))
-    webhook_dispatcher.disparar("cross_domain.cirurgia_to_faturamento", {
-        "numero_guia": num_guia,
-        "paciente": dados.get("paciente_nome"),
-        "valor": valor,
-        "procedimento": dados.get("procedimento")
-    })
-
-events.on("triagem_urgencia", on_triagem_critica)
-events.on("prescricao_nova", on_prescricao_emitida)
-events.on("cirurgia_finalizada", on_cirurgia_concluida)
-
 registry = RouteRegistry()
+mcp_server = MCPServer(DB_PATH)
+metrics_registry = MetricsRegistry()
+instrumentation = RequestInstrumentation(metrics_registry)
 
-# =========================================================================
-# 0. AUTENTICAÇÃO JWT (JSON WEB TOKEN)
-# =========================================================================
+# Configuração SSO Corporativo (OAuth2/OIDC + PKCE) — opcional, Zero Fricção
+# quando não configurada: o login local JWT (/api/auth/login) continua ativo.
+OIDC_CONFIG = {
+    "client_id": os.environ.get("OIDC_CLIENT_ID", ""),
+    "client_secret": os.environ.get("OIDC_CLIENT_SECRET", ""),
+    "authorization_endpoint": os.environ.get("OIDC_AUTHORIZATION_ENDPOINT", ""),
+    "token_endpoint": os.environ.get("OIDC_TOKEN_ENDPOINT", ""),
+    "jwks_uri": os.environ.get("OIDC_JWKS_URI", ""),
+    "issuer": os.environ.get("OIDC_ISSUER", ""),
+    "redirect_uri": os.environ.get("OIDC_REDIRECT_URI", f"http://localhost:{PORT}/api/auth/oauth/callback"),
+}
+_oidc_pending_states = {}
+
+# 1. Inicializar Schemas de todos os módulos (via conexão única do processo
+# principal, ANTES de qualquer worker em background tocar o arquivo/schema —
+# evita SQLITE_BUSY transitório na primeira inicialização do WAL)
+with db.get_connection() as conn:
+    init_modulo1_schema(conn)
+
+# 1.5 Workers de background (Outbox e Jobs) só iniciam DEPOIS do schema pronto
+outbox_worker = OutboxWorker(db, events)
+outbox_worker.start()
+job_queue = JobQueue(db=db)
+
+# 2. Instanciar Serviços de Negócio
+service_modulo1 = Modulo1Service(db, events)
+
+# 3. Registrar Rotas OpenAPI
+reg_modulo1_routes(service_modulo1)
+
+# 4. Registrar Ferramentas MCP para cada Módulo
+mcp_server.register_module_tools('modulo1', 'Modulo1')
+
+# 4.5 Registrar Catálogo de Eventos Webhook para cada Módulo
+webhook_dispatcher.register_module_events('modulo1', 'Modulo1')
+
+# 5. Rota de Autenticação JWT
 @registry.post(
     "/api/auth/login",
     summary="Autenticação JWT (Login)",
     tags=["0. Autenticação & Segurança"],
-    description="Gera um token JWT (HS256) seguro contendo claims e perfil médico/administrativo.",
+    description="Gera um token JWT (HS256) seguro contendo perfil e claims de acesso.",
     body_schema=[
-        {"name": "email", "type": "string", "req": True, "desc": "E-mail institucional (ex: medico@hospital.com)"},
+        {"name": "email", "type": "string", "req": True, "desc": "E-mail corporativo"},
         {"name": "password", "type": "string", "req": True, "desc": "Senha de acesso"}
     ],
-    body_example={"email": "medico@hospital.com", "password": "admin"},
+    body_example={"email": "admin@empresa.com", "password": "admin"},
     responses={
-        "200": {"description": "Autenticado com sucesso", "content": {"application/json": {"example": {"token": "eyJhbGciOiJIUzI1Ni...", "tipo": "Bearer", "expira_em": 86400, "usuario": {"email": "medico@hospital.com", "role": "medico_chefe"}}}}},
-        "401": {"description": "Credenciais inválidas", "content": {"application/json": {"example": {"error": "E-mail ou senha incorretos"}}}}
+        "200": {"description": "Autenticado com sucesso", "content": {"application/json": {"example": {"token": "eyJhbGciOiJIUzI1Ni...", "tipo": "Bearer", "expira_em": 86400}}}},
+        "401": {"description": "Credenciais inválidas"}
     }
 )
 def post_login(data):
-    email = data.get("email", "medico@hospital.com")
-    token = JWTService.encode({"sub": email, "role": "medico_chefe", "name": "Dr. Diretor Clínico"})
-    payload = {"email": email, "role": "medico_chefe"}
+    email = data.get("email", "admin@empresa.com")
+    token = JWTService.encode({"sub": email, "role": "admin", "name": "Administrador Suite"})
+    payload = {"email": email, "role": "admin"}
     events.emit("usuario_autenticado", payload)
     webhook_dispatcher.disparar("auth.login_sucesso", payload)
     return {
@@ -99,7 +132,7 @@ def post_login(data):
         "token": token,
         "tipo": "Bearer",
         "expira_em": 86400,
-        "usuario": {"email": email, "role": "medico_chefe", "nome": "Dr. Diretor Clínico"}
+        "usuario": {"email": email, "role": "admin", "nome": "Administrador Suite"}
     }
 
 @registry.get(
@@ -108,555 +141,89 @@ def post_login(data):
     tags=["0. Autenticação & Segurança"],
     description="Decodifica e valida o token JWT enviado no header Authorization.",
     responses={
-        "200": {"description": "Usuário autenticado", "content": {"application/json": {"example": {"autenticado": True, "usuario": {"sub": "medico@hospital.com", "role": "medico_chefe"}}}}}
+        "200": {"description": "Usuário autenticado", "content": {"application/json": {"example": {"autenticado": True, "usuario": {"sub": "admin@empresa.com"}}}}}
     }
 )
 def get_auth_me(params):
-    return {"autenticado": True, "usuario": {"email": "medico@hospital.com", "role": "medico_chefe", "status": "ativo"}}
+    return {"autenticado": True, "usuario": {"email": "admin@empresa.com", "role": "admin", "status": "ativo"}}
 
-# =========================================================================
-# 1. VERTICAL: PRONTO-SOCORRO & TRIAGEM MANCHESTER (FULL CRUD)
-# =========================================================================
+# 5.5 Rotas de SSO Corporativo (OAuth2/OIDC + PKCE)
 @registry.get(
-    "/api/triagem/pacientes",
-    summary="Listar Fila de Triagem Manchester",
-    tags=["1. Pronto-Socorro & Triagem"],
-    description="Retorna a lista de pacientes classificados por risco no protocolo de Manchester (Vermelho, Laranja, Amarelo, Verde, Azul).",
-    responses={"200": {"description": "Lista de triagens", "content": {"application/json": {"example": [{"id": 1, "protocolo": "TRI-9081", "paciente_nome": "Carlos Alberto", "classificacao": "vermelho", "tempo_espera_max_min": 0}]}}}}
+    "/api/auth/oauth/login",
+    summary="Iniciar Login SSO (OAuth2/OIDC + PKCE)",
+    tags=["0. Autenticação & Segurança"],
+    description="Gera a URL de autorização do provedor de identidade corporativo (Google Workspace, Microsoft Entra ID, Okta, GitHub) usando Authorization Code + PKCE. O front-end deve redirecionar o navegador para redirect_url.",
+    responses={
+        "200": {"description": "URL de autorização gerada", "content": {"application/json": {"example": {"redirect_url": "https://idp.exemplo.com/authorize?...", "state": "a1b2c3"}}}}
+    }
 )
-def get_triagens(params):
-    return triagem_repo.listar()
-
-@registry.post(
-    "/api/triagem/novo",
-    summary="Classificar Novo Paciente (Manchester)",
-    tags=["1. Pronto-Socorro & Triagem"],
-    description="Registra um novo paciente na triagem com cálculo automático de SLA de atendimento por gravidade.",
-    body_schema=[
-        {"name": "paciente_nome", "type": "string", "req": True, "desc": "Nome do paciente"},
-        {"name": "idade", "type": "integer", "req": True, "desc": "Idade"},
-        {"name": "sinais_vitais", "type": "string", "req": True, "desc": "PA, FC, SpO2, Temp"},
-        {"name": "queixa_principal", "type": "string", "req": True, "desc": "Sintomas principais"},
-        {"name": "classificacao", "type": "string", "req": True, "desc": "vermelho | laranja | amarelo | verde | azul"}
-    ],
-    body_example={"paciente_nome": "Juliana Castro", "idade": 42, "sinais_vitais": "PA 140x90, FC 85, SpO2 97%", "queixa_principal": "Crise asmática moderada", "classificacao": "laranja"},
-    responses={"200": {"description": "Paciente classificado", "content": {"application/json": {"example": {"sucesso": True, "protocolo": "TRI-9085"}}}}}
-)
-def post_triagem_novo(data):
-    slas = {"vermelho": 0, "laranja": 10, "amarelo": 60, "verde": 120, "azul": 240}
-    cls = data.get("classificacao", "verde").lower()
-    sla = slas.get(cls, 120)
-    proto = f"TRI-{uuid.uuid4().hex[:4].upper()}"
-
-    triagem_repo.criar(
-        proto, data["paciente_nome"], int(data.get("idade", 30)),
-        data.get("sinais_vitais", "Estável"), data.get("queixa_principal", "Dor leve"), cls, sla
+def get_oauth_login(params):
+    if not OIDC_CONFIG.get("authorization_endpoint"):
+        return {"sucesso": False, "erro": "SSO OIDC não configurado. Defina as variáveis OIDC_* no ambiente."}
+    verifier, challenge = OIDCService.generate_pkce_pair()
+    state = uuid.uuid4().hex
+    _oidc_pending_states[state] = verifier
+    url = OIDCService.build_authorization_url(
+        OIDC_CONFIG["authorization_endpoint"], OIDC_CONFIG["client_id"],
+        OIDC_CONFIG["redirect_uri"], state, challenge
     )
-
-    payload = {"protocolo": proto, "paciente_nome": data["paciente_nome"], "classificacao": cls, "sla_min": sla}
-    events.emit("triagem_urgencia", payload)
-    webhook_dispatcher.disparar("triagem.paciente_admitido", payload)
-    return {"sucesso": True, "protocolo": proto, "classificacao": cls, "tempo_espera_max_min": sla}
-
-@registry.put(
-    "/api/triagem/atualizar",
-    summary="Atualizar Triagem de Paciente",
-    tags=["1. Pronto-Socorro & Triagem"],
-    description="Atualiza sinais vitais, classificação de risco ou status de atendimento.",
-    body_schema=[
-        {"name": "id", "type": "integer", "req": True, "desc": "ID do registro"},
-        {"name": "sinais_vitais", "type": "string", "req": False, "desc": "Novos sinais vitais"},
-        {"name": "classificacao", "type": "string", "req": False, "desc": "Reclassificação"},
-        {"name": "status", "type": "string", "req": False, "desc": "aguardando | em_atendimento | internado | alta"}
-    ],
-    body_example={"id": 1, "sinais_vitais": "PA 130x80, FC 80, SpO2 98%", "status": "em_atendimento"},
-    responses={"200": {"description": "Triagem atualizada", "content": {"application/json": {"example": {"sucesso": True}}}}}
-)
-def put_triagem_atualizar(data):
-    tid = int(data.get("id", 0))
-    row = triagem_repo.obter(tid)
-    if not row:
-        return {"sucesso": False, "error": "Triagem não encontrada"}
-
-    sinais = data.get("sinais_vitais", row["sinais_vitais"])
-    st = data.get("status", row["status"])
-    cls = data.get("classificacao", row["classificacao"])
-    triagem_repo.atualizar(tid, sinais, st, cls)
-    return {"sucesso": True, "id": tid}
-
-@registry.delete(
-    "/api/triagem/remover",
-    summary="Remover Registro de Triagem",
-    tags=["1. Pronto-Socorro & Triagem"],
-    description="Exclui um registro da fila de triagem.",
-    body_schema=[{"name": "id", "type": "integer", "req": True, "desc": "ID do registro"}],
-    body_example={"id": 4},
-    responses={"200": {"description": "Registro removido", "content": {"application/json": {"example": {"sucesso": True}}}}}
-)
-def delete_triagem(data):
-    tid = int(data.get("id", 0))
-    triagem_repo.remover(tid)
-    return {"sucesso": True}
-
-@registry.post(
-    "/api/triagem/chamar",
-    summary="Chamar Paciente para Leito / Box",
-    tags=["1. Pronto-Socorro & Triagem"],
-    description="Aloca o paciente em um leito/box e altera status para 'em_atendimento'.",
-    body_schema=[
-        {"name": "id", "type": "integer", "req": True, "desc": "ID da triagem"},
-        {"name": "leito", "type": "string", "req": True, "desc": "Nome do leito (ex: Box 02)"}
-    ],
-    body_example={"id": 2, "leito": "Box Observação 01"},
-    responses={"200": {"description": "Paciente chamado", "content": {"application/json": {"example": {"sucesso": True, "leito": "Box Observação 01"}}}}}
-)
-def post_triagem_chamar(data):
-    tid = int(data.get("id", 0))
-    leito = data.get("leito", "Box Geral")
-    triagem_repo.alocar_leito(tid, leito)
-    return {"sucesso": True, "id": tid, "leito": leito}
-
-# =========================================================================
-# 2. VERTICAL: PRONTUÁRIO ELETRÔNICO (PEP) & PRESCRIÇÕES (FULL CRUD)
-# =========================================================================
-@registry.get(
-    "/api/pep/prontuarios",
-    summary="Listar Prontuários Eletrônicos (PEP)",
-    tags=["2. Prontuário Eletrônico & Prescrições"],
-    description="Lista todos os prontuários ativos com histórico clínico e CID-10.",
-    responses={"200": {"description": "Lista de prontuários", "content": {"application/json": {"example": [{"id": 1, "numero_prontuario": "PEP-1044", "paciente_nome": "Carlos Alberto", "diagnostico_cid10": "I21.9"}]}}}}
-)
-def get_pep_prontuarios(params):
-    return pep_repo.listar_prontuarios()
-
-@registry.post(
-    "/api/pep/prontuarios",
-    summary="Criar Novo Prontuário Eletrônico",
-    tags=["2. Prontuário Eletrônico & Prescrições"],
-    description="Cadastra um novo prontuário médico com diagnóstico CID-10 e evolução inicial.",
-    body_schema=[
-        {"name": "paciente_nome", "type": "string", "req": True, "desc": "Nome do paciente"},
-        {"name": "medico_responsavel", "type": "string", "req": True, "desc": "Nome do médico"},
-        {"name": "crm", "type": "string", "req": True, "desc": "CRM do médico"},
-        {"name": "diagnostico_cid10", "type": "string", "req": True, "desc": "CID-10 e descrição"},
-        {"name": "evolucao_clinica", "type": "string", "req": True, "desc": "Evolução e conduta clínica"},
-        {"name": "alergias", "type": "string", "req": False, "desc": "Alergias relatadas"}
-    ],
-    body_example={"paciente_nome": "Fernando Gusmão", "medico_responsavel": "Dra. Beatriz Helena", "crm": "CRM/SP 148902", "diagnostico_cid10": "J18.9 - Pneumonia não especificada", "evolucao_clinica": "Paciente com tosse produtiva e dispneia leve aos esforços.", "alergias": "Nega"},
-    responses={"200": {"description": "Prontuário criado", "content": {"application/json": {"example": {"sucesso": True, "numero_prontuario": "PEP-1047"}}}}}
-)
-def post_pep_prontuario(data):
-    num = f"PEP-{uuid.uuid4().hex[:4].upper()}"
-    pep_repo.criar_prontuario(
-        num, data["paciente_nome"], data["medico_responsavel"], data["crm"],
-        data["diagnostico_cid10"], data["evolucao_clinica"], data.get("alergias", "Nega alergias")
-    )
-    webhook_dispatcher.disparar("pep.prontuario_atualizado", {"numero_prontuario": num, "paciente": data["paciente_nome"]})
-    return {"sucesso": True, "numero_prontuario": num}
-
-@registry.put(
-    "/api/pep/prontuarios",
-    summary="Atualizar Evolução Clínica do Prontuário",
-    tags=["2. Prontuário Eletrônico & Prescrições"],
-    description="Atualiza a evolução clínica diária ou diagnóstico CID-10.",
-    body_schema=[
-        {"name": "id", "type": "integer", "req": True, "desc": "ID do prontuário"},
-        {"name": "evolucao_clinica", "type": "string", "req": True, "desc": "Nova anotação de evolução médica"},
-        {"name": "diagnostico_cid10", "type": "string", "req": False, "desc": "Atualização do CID-10"}
-    ],
-    body_example={"id": 1, "evolucao_clinica": "Paciente estável após angioplastia primária. Sem queixas álgicas no momento."},
-    responses={"200": {"description": "Prontuário atualizado", "content": {"application/json": {"example": {"sucesso": True}}}}}
-)
-def put_pep_prontuario(data):
-    pid = int(data.get("id", 0))
-    row = pep_repo.obter_prontuario(pid)
-    if not row:
-        return {"sucesso": False, "error": "Prontuário não encontrado"}
-    evol = data.get("evolucao_clinica", row["evolucao_clinica"])
-    cid = data.get("diagnostico_cid10", row["diagnostico_cid10"])
-    pep_repo.atualizar_prontuario(pid, evol, cid)
-    return {"sucesso": True, "id": pid}
-
-@registry.delete(
-    "/api/pep/prontuarios",
-    summary="Arquivar / Remover Prontuário",
-    tags=["2. Prontuário Eletrônico & Prescrições"],
-    description="Arquiva o prontuário eletrônico do paciente.",
-    body_schema=[{"name": "id", "type": "integer", "req": True, "desc": "ID do prontuário"}],
-    body_example={"id": 3},
-    responses={"200": {"description": "Prontuário arquivado", "content": {"application/json": {"example": {"sucesso": True}}}}}
-)
-def delete_pep_prontuario(data):
-    pid = int(data.get("id", 0))
-    pep_repo.remover_prontuario(pid)
-    return {"sucesso": True}
+    return {"redirect_url": url, "state": state}
 
 @registry.get(
-    "/api/pep/prescricoes",
-    summary="Listar Prescrições Médicas Digitais",
-    tags=["2. Prontuário Eletrônico & Prescrições"],
-    description="Lista prescrições ativas e pendentes de dispensação na farmácia.",
-    responses={"200": {"description": "Lista de prescrições", "content": {"application/json": {"example": [{"id": 1, "medicamento": "Nitroglicerina", "status": "pendente"}]}}}}
-)
-def get_pep_prescricoes(params):
-    return pep_repo.listar_prescricoes()
-
-@registry.post(
-    "/api/pep/prescricoes",
-    summary="Emitir Nova Prescrição Digital",
-    tags=["2. Prontuário Eletrônico & Prescrições"],
-    description="Prescreve medicamentos e gera notificação automática para a farmácia hospitalar.",
-    body_schema=[
-        {"name": "prontuario_id", "type": "integer", "req": True, "desc": "ID do prontuário"},
-        {"name": "medicamento", "type": "string", "req": True, "desc": "Nome do fármaco"},
-        {"name": "dosagem", "type": "string", "req": True, "desc": "Posologia e dosagem"},
-        {"name": "frequencia", "type": "string", "req": True, "desc": "Intervalo"},
-        {"name": "via_administracao", "type": "string", "req": True, "desc": "Via de administração"}
+    "/api/auth/oauth/callback",
+    summary="Callback OAuth2/OIDC",
+    tags=["0. Autenticação & Segurança"],
+    description="Troca o authorization code por tokens, valida o id_token via JWKS (RS256) e emite um JWT interno da aplicação com claims e papel corporativo mapeado.",
+    query_params=[
+        {"name": "code", "type": "string", "req": True, "desc": "Authorization code retornado pelo provedor"},
+        {"name": "state", "type": "string", "req": True, "desc": "State para validação CSRF/PKCE"}
     ],
-    body_example={"prontuario_id": 1, "medicamento": "Enoxaparina Sódica 40mg", "dosagem": "40mg/0.4ml", "frequencia": "24/24 horas", "via_administracao": "Subcutânea"},
-    responses={"200": {"description": "Prescrição emitida", "content": {"application/json": {"example": {"sucesso": True, "id": 5}}}}}
+    responses={
+        "200": {"description": "Login concluído, token JWT interno emitido"},
+        "400": {"description": "state inválido/expirado ou id_token não pôde ser validado"}
+    }
 )
-def post_pep_prescricao(data):
-    pid = int(data.get("prontuario_id", 1))
-    p_nome = pep_repo.obter_paciente_nome(pid) or "Paciente Geral"
-    new_id = pep_repo.criar_prescricao(
-        pid, p_nome, data["medicamento"], data["dosagem"], data["frequencia"], data["via_administracao"]
-    )
+def get_oauth_callback(params):
+    code = params.get("code", [None])[0] if isinstance(params.get("code"), list) else params.get("code")
+    state = params.get("state", [None])[0] if isinstance(params.get("state"), list) else params.get("state")
 
-    payload = {"prescricao_id": new_id, "prontuario_id": pid, "paciente": p_nome, "medicamento": data["medicamento"]}
-    events.emit("prescricao_nova", payload)
-    webhook_dispatcher.disparar("pep.prescricao_emitida", payload)
-    return {"sucesso": True, "id": new_id, "paciente": p_nome}
+    verifier = _oidc_pending_states.pop(state, None)
+    if not verifier:
+        return {"sucesso": False, "erro": "state inválido ou expirado"}
 
-@registry.put(
-    "/api/pep/prescricoes/status",
-    summary="Atualizar Status da Prescrição",
-    tags=["2. Prontuário Eletrônico & Prescrições"],
-    description="Atualiza status para dispensada ou cancelada.",
-    body_schema=[
-        {"name": "id", "type": "integer", "req": True, "desc": "ID da prescrição"},
-        {"name": "status", "type": "string", "req": True, "desc": "pendente | dispensada | cancelada"}
-    ],
-    body_example={"id": 2, "status": "dispensada"},
-    responses={"200": {"description": "Status atualizado", "content": {"application/json": {"example": {"sucesso": True}}}}}
-)
-def put_pep_prescricao_status(data):
-    pid = int(data.get("id", 0))
-    st = data.get("status", "dispensada")
-    pep_repo.atualizar_status_prescricao(pid, st)
-    return {"sucesso": True, "id": pid, "status": st}
+    try:
+        tokens = OIDCService.exchange_code_for_tokens(
+            OIDC_CONFIG["token_endpoint"], OIDC_CONFIG["client_id"], OIDC_CONFIG["client_secret"],
+            code, verifier, OIDC_CONFIG["redirect_uri"]
+        )
+        id_token = tokens.get("id_token")
+        jwks = OIDCService.fetch_jwks(OIDC_CONFIG["jwks_uri"])
+        claims = OIDCService.validate_id_token(id_token, jwks, OIDC_CONFIG["client_id"], OIDC_CONFIG["issuer"])
+    except Exception as e:
+        return {"sucesso": False, "erro": f"Falha na validação SSO: {e}"}
 
-# =========================================================================
-# 3. VERTICAL: CENTRO CIRÚRGICO & ESCALA DE SALAS (FULL CRUD)
-# =========================================================================
-@registry.get(
-    "/api/cirurgico/agendamentos",
-    summary="Listar Agendamentos do Bloco Cirúrgico",
-    tags=["3. Centro Cirúrgico & Escala de Salas"],
-    description="Retorna a escala diária de cirurgias, salas ocupadas e equipe médica alocada.",
-    responses={"200": {"description": "Lista de cirurgias", "content": {"application/json": {"example": [{"id": 1, "codigo_agendamento": "CC-501", "paciente_nome": "Roberto Kenji", "sala_bloco": "Sala 02", "status": "pre_op"}]}}}}
-)
-def get_cirurgias(params):
-    return cirurgico_repo.listar()
+    role = OIDCService.map_claims_to_role(claims, OIDC_CONFIG.get("group_role_map", {}))
+    email = claims.get("email", claims.get("sub", ""))
+    app_token = JWTService.encode({"sub": email, "role": role, "name": claims.get("name", "")})
 
-@registry.post(
-    "/api/cirurgico/novo",
-    summary="Agendar Nova Cirurgia",
-    tags=["3. Centro Cirúrgico & Escala de Salas"],
-    description="Reserva sala cirúrgica, escala equipe e registra necessidade de OPME.",
-    body_schema=[
-        {"name": "paciente_nome", "type": "string", "req": True, "desc": "Nome do paciente"},
-        {"name": "procedimento", "type": "string", "req": True, "desc": "Procedimento cirúrgico"},
-        {"name": "sala_bloco", "type": "string", "req": True, "desc": "Sala do bloco"},
-        {"name": "cirurgiao_principal", "type": "string", "req": True, "desc": "Cirurgião responsável"},
-        {"name": "anestesista", "type": "string", "req": True, "desc": "Médico anestesista"},
-        {"name": "tipo_anestesia", "type": "string", "req": True, "desc": "Tipo de anestesia"},
-        {"name": "data_hora_cirurgia", "type": "string", "req": True, "desc": "Data e Hora (YYYY-MM-DD HH:MM)"},
-        {"name": "necessita_opme", "type": "boolean", "req": False, "desc": "Requer OPME"}
-    ],
-    body_example={"paciente_nome": "Marcos Vinicius", "procedimento": "Reconstrução LCA Joelho Esquerdo", "sala_bloco": "Sala 03 - Ortopedia", "cirurgiao_principal": "Dr. Ricardo Valente", "anestesista": "Dr. Marcelo Paiva", "tipo_anestesia": "Raquianestesia", "data_hora_cirurgia": "2026-09-01 18:00", "necessita_opme": True},
-    responses={"200": {"description": "Cirurgia agendada", "content": {"application/json": {"example": {"sucesso": True, "codigo_agendamento": "CC-504"}}}}}
-)
-def post_cirurgico_novo(data):
-    cod = f"CC-{uuid.uuid4().hex[:4].upper()}"
-    opme = 1 if data.get("necessita_opme") else 0
-    cirurgico_repo.criar(
-        cod, data["paciente_nome"], data["procedimento"], data["sala_bloco"], data["cirurgiao_principal"],
-        data["anestesista"], data["tipo_anestesia"], data["data_hora_cirurgia"], opme
-    )
+    payload = {"email": email, "role": role}
+    events.emit("usuario_autenticado_sso", payload)
+    webhook_dispatcher.disparar("auth.sso_login_sucesso", payload)
 
-    webhook_dispatcher.disparar("cirurgico.cirurgia_agendada", {"codigo_agendamento": cod, "procedimento": data["procedimento"], "sala": data["sala_bloco"]})
-    return {"sucesso": True, "codigo_agendamento": cod}
-
-@registry.put(
-    "/api/cirurgico/atualizar",
-    summary="Atualizar Agendamento Cirúrgico",
-    tags=["3. Centro Cirúrgico & Escala de Salas"],
-    description="Modifica detalhes da cirurgia, sala ou equipe.",
-    body_schema=[
-        {"name": "id", "type": "integer", "req": True, "desc": "ID da cirurgia"},
-        {"name": "sala_bloco", "type": "string", "req": False, "desc": "Nova sala"},
-        {"name": "status", "type": "string", "req": False, "desc": "Novo status"}
-    ],
-    body_example={"id": 1, "status": "em_andamento"},
-    responses={"200": {"description": "Cirurgia atualizada", "content": {"application/json": {"example": {"sucesso": True}}}}}
-)
-def put_cirurgico_atualizar(data):
-    cid = int(data.get("id", 0))
-    row = cirurgico_repo.obter(cid)
-    if not row:
-        return {"sucesso": False, "error": "Cirurgia não encontrada"}
-    sala = data.get("sala_bloco", row["sala_bloco"])
-    st = data.get("status", row["status"])
-    cirurgico_repo.atualizar(cid, sala, st)
-    return {"sucesso": True, "id": cid}
-
-@registry.delete(
-    "/api/cirurgico/cancelar",
-    summary="Cancelar Cirurgia",
-    tags=["3. Centro Cirúrgico & Escala de Salas"],
-    description="Cancela o agendamento cirúrgico e libera a sala.",
-    body_schema=[{"name": "id", "type": "integer", "req": True, "desc": "ID da cirurgia"}],
-    body_example={"id": 2},
-    responses={"200": {"description": "Cirurgia cancelada", "content": {"application/json": {"example": {"sucesso": True}}}}}
-)
-def delete_cirurgico_cancelar(data):
-    cid = int(data.get("id", 0))
-    cirurgico_repo.cancelar(cid)
-    return {"sucesso": True}
-
-@registry.post(
-    "/api/cirurgico/avancar-status",
-    summary="Avançar Fase Cirúrgica",
-    tags=["3. Centro Cirúrgico & Escala de Salas"],
-    description="Avança a fase da cirurgia (agendada -> pre_op -> em_andamento -> rpa_recuperacao -> concluida). Se concluída, aciona automação de faturamento.",
-    body_schema=[
-        {"name": "id", "type": "integer", "req": True, "desc": "ID da cirurgia"},
-        {"name": "novo_status", "type": "string", "req": True, "desc": "pre_op | em_andamento | rpa_recuperacao | concluida"}
-    ],
-    body_example={"id": 1, "novo_status": "concluida"},
-    responses={"200": {"description": "Fase avançada", "content": {"application/json": {"example": {"sucesso": True, "status": "concluida"}}}}}
-)
-def post_cirurgico_avancar(data):
-    cid = int(data.get("id", 0))
-    st = data.get("novo_status", "concluida")
-    row = cirurgico_repo.obter(cid)
-    if not row:
-        return {"sucesso": False, "error": "Cirurgia não encontrada"}
-    cirurgico_repo.atualizar_status(cid, st)
-    c_dict = row
-
-    webhook_dispatcher.disparar("cirurgico.fase_alterada", {"cirurgia_id": cid, "novo_status": st})
-    if st == "concluida":
-        events.emit("cirurgia_finalizada", c_dict)
-    return {"sucesso": True, "id": cid, "novo_status": st}
-
-# =========================================================================
-# 4. VERTICAL: FARMÁCIA HOSPITALAR & DISPENSAÇÃO (FULL CRUD)
-# =========================================================================
-@registry.get(
-    "/api/farmacia/estoque",
-    summary="Consultar Estoque Farmacêutico",
-    tags=["4. Farmácia Hospitalar & Dispensação"],
-    description="Retorna lista de medicamentos em estoque, saldo, validade e nível de criticidade.",
-    responses={"200": {"description": "Estoque de medicamentos", "content": {"application/json": {"example": [{"id": 1, "codigo_item": "MED-001", "medicamento": "Nitroglicerina", "quantidade_disponivel": 48}]}}}}
-)
-def get_farmacia_estoque(params):
-    return farmacia_repo.listar_estoque()
-
-@registry.post(
-    "/api/farmacia/medicamento",
-    summary="Cadastrar Novo Lote de Medicamento",
-    tags=["4. Farmácia Hospitalar & Dispensação"],
-    description="Adiciona um novo medicamento/lote ao estoque da farmácia.",
-    body_schema=[
-        {"name": "medicamento", "type": "string", "req": True, "desc": "Nome do fármaco"},
-        {"name": "lote", "type": "string", "req": True, "desc": "Lote"},
-        {"name": "categoria", "type": "string", "req": True, "desc": "antibiotico | analgesico | anestesico | controlado | alto_custo"},
-        {"name": "quantidade_disponivel", "type": "integer", "req": True, "desc": "Quantidade inicial"},
-        {"name": "quantidade_minima", "type": "integer", "req": True, "desc": "Estoque mínimo de segurança"},
-        {"name": "temperatura_armazenamento", "type": "string", "req": False, "desc": "Temperatura"},
-        {"name": "validade", "type": "string", "req": True, "desc": "Validade (YYYY-MM-DD)"}
-    ],
-    body_example={"medicamento": "Fentanila 50mcg/ml 2ml", "lote": "LOT-FEN-99", "categoria": "controlado", "quantidade_disponivel": 35, "quantidade_minima": 15, "temperatura_armazenamento": "Armário Blindado", "validade": "2027-12-31"},
-    responses={"200": {"description": "Medicamento cadastrado", "content": {"application/json": {"example": {"sucesso": True, "codigo_item": "MED-007"}}}}}
-)
-def post_farmacia_medicamento(data):
-    cod = f"MED-{uuid.uuid4().hex[:4].upper()}"
-    qtd = int(data.get("quantidade_disponivel", 10))
-    min_qtd = int(data.get("quantidade_minima", 5))
-    st = "critico" if qtd <= min_qtd else "normal"
-    farmacia_repo.criar_item(
-        cod, data["medicamento"], data["lote"], data["categoria"], qtd, min_qtd,
-        data.get("temperatura_armazenamento", "Ambiente"), data["validade"], st
-    )
-    return {"sucesso": True, "codigo_item": cod}
-
-@registry.put(
-    "/api/farmacia/atualizar-lote",
-    summary="Atualizar Saldo / Lote do Medicamento",
-    tags=["4. Farmácia Hospitalar & Dispensação"],
-    description="Ajusta saldo de estoque ou validade do lote.",
-    body_schema=[
-        {"name": "id", "type": "integer", "req": True, "desc": "ID do item"},
-        {"name": "quantidade_disponivel", "type": "integer", "req": True, "desc": "Novo saldo físico"}
-    ],
-    body_example={"id": 3, "quantidade_disponivel": 50},
-    responses={"200": {"description": "Estoque ajustado", "content": {"application/json": {"example": {"sucesso": True}}}}}
-)
-def put_farmacia_atualizar(data):
-    iid = int(data.get("id", 0))
-    qtd = int(data.get("quantidade_disponivel", 0))
-    min_qtd = farmacia_repo.obter_quantidade_minima(iid)
-    if min_qtd is None:
-        return {"sucesso": False, "error": "Item não encontrado"}
-    st = "critico" if qtd <= min_qtd else "normal"
-    if qtd == 0:
-        st = "zerado"
-    farmacia_repo.atualizar_saldo(iid, qtd, st)
-    return {"sucesso": True, "id": iid, "quantidade_disponivel": qtd, "status_estoque": st}
-
-@registry.delete(
-    "/api/farmacia/remover-item",
-    summary="Remover Item de Estoque",
-    tags=["4. Farmácia Hospitalar & Dispensação"],
-    description="Remove um registro do estoque farmacêutico.",
-    body_schema=[{"name": "id", "type": "integer", "req": True, "desc": "ID do item"}],
-    body_example={"id": 5},
-    responses={"200": {"description": "Item removido", "content": {"application/json": {"example": {"sucesso": True}}}}}
-)
-def delete_farmacia_item(data):
-    iid = int(data.get("id", 0))
-    farmacia_repo.remover_item(iid)
-    return {"sucesso": True}
-
-@registry.post(
-    "/api/farmacia/dispensar",
-    summary="Efetuar Dispensação Controlada",
-    tags=["4. Farmácia Hospitalar & Dispensação"],
-    description="Efetua a baixa e entrega de medicamentos para o paciente.",
-    body_schema=[
-        {"name": "codigo_item", "type": "string", "req": True, "desc": "Código do medicamento (MED-XXXX)"},
-        {"name": "quantidade", "type": "integer", "req": True, "desc": "Quantidade a dispensar"},
-        {"name": "farmaceutico_crf", "type": "string", "req": True, "desc": "Registro CRF"},
-        {"name": "prescricao_id", "type": "integer", "req": False, "desc": "ID da prescrição atendida"}
-    ],
-    body_example={"codigo_item": "MED-002", "quantidade": 2, "farmaceutico_crf": "CRF/SP 44.921", "prescricao_id": 3},
-    responses={"200": {"description": "Dispensação concluída", "content": {"application/json": {"example": {"sucesso": True, "medicamento": "Ceftriaxona", "saldo_restante": 118}}}}}
-)
-def post_farmacia_dispensar(data):
-    res = mcp_engine.execute_tool("med_farmacia_dispensar_medicamento", data)
-    if res.get("sucesso"):
-        webhook_dispatcher.disparar("farmacia.item_dispensado", res)
-    return res
-
-@registry.get(
-    "/api/farmacia/dispensacoes",
-    summary="Histórico de Dispensações",
-    tags=["4. Farmácia Hospitalar & Dispensação"],
-    description="Retorna o histórico de todas as baixas de medicamentos empresariais.",
-    responses={"200": {"description": "Lista de dispensações", "content": {"application/json": {"example": [{"id": 1, "medicamento": "AAS", "quantidade": 3}]}}}}
-)
-def get_farmacia_dispensacoes(params):
-    return farmacia_repo.listar_dispensacoes()
-
-# =========================================================================
-# 5. VERTICAL: FATURAMENTO HOSPITALAR TISS/TUSS & CONVÊNIOS (FULL CRUD)
-# =========================================================================
-@registry.get(
-    "/api/faturamento/guias",
-    summary="Listar Guias de Faturamento TISS/TUSS",
-    tags=["5. Faturamento Hospitalar TISS/TUSS"],
-    description="Retorna todas as contas empresariais e guias de convênio.",
-    responses={"200": {"description": "Lista de guias", "content": {"application/json": {"example": [{"id": 1, "numero_guia": "TISS-8801", "paciente_nome": "Carlos Alberto", "valor_total": 14850.0}]}}}}
-)
-def get_faturamento_guias(params):
-    return faturamento_repo.listar_guias()
-
-@registry.post(
-    "/api/faturamento/nova-guia",
-    summary="Emitir Nova Guia Hospitalar TISS",
-    tags=["5. Faturamento Hospitalar TISS/TUSS"],
-    description="Gera nova guia de faturamento para convênio ou atendimento particular.",
-    body_schema=[
-        {"name": "paciente_nome", "type": "string", "req": True, "desc": "Nome do paciente"},
-        {"name": "convenio", "type": "string", "req": True, "desc": "Operadora de saúde ou Particular"},
-        {"name": "codigo_tuss", "type": "string", "req": True, "desc": "Código TUSS (8 dígitos)"},
-        {"name": "descricao_procedimento", "type": "string", "req": True, "desc": "Descrição do procedimento"},
-        {"name": "valor_total", "type": "number", "req": True, "desc": "Valor total em R$"}
-    ],
-    body_example={"paciente_nome": "Helena Matos", "convenio": "SulAmérica Especial", "codigo_tuss": "40801055", "descricao_procedimento": "Ressonância Magnética de Crânio", "valor_total": 2400.00},
-    responses={"200": {"description": "Guia emitida", "content": {"application/json": {"example": {"sucesso": True, "numero_guia": "TISS-8805"}}}}}
-)
-def post_faturamento_nova_guia(data):
-    num = f"TISS-{uuid.uuid4().hex[:4].upper()}"
-    faturamento_repo.criar_guia(
-        num, data["paciente_nome"], data["convenio"], data["codigo_tuss"],
-        data["descricao_procedimento"], float(data["valor_total"])
-    )
-
-    webhook_dispatcher.disparar("faturamento.guia_gerada", {"numero_guia": num, "valor_total": float(data["valor_total"]), "convenio": data["convenio"]})
-    return {"sucesso": True, "numero_guia": num}
-
-@registry.put(
-    "/api/faturamento/atualizar-status",
-    summary="Atualizar Status da Guia TISS",
-    tags=["5. Faturamento Hospitalar TISS/TUSS"],
-    description="Atualiza status da guia (gerada -> autorizada -> faturada -> liquidada | glosada).",
-    body_schema=[
-        {"name": "id", "type": "integer", "req": True, "desc": "ID da guia"},
-        {"name": "status_guia", "type": "string", "req": True, "desc": "gerada | autorizada | faturada | liquidada | glosada"}
-    ],
-    body_example={"id": 1, "status_guia": "liquidada"},
-    responses={"200": {"description": "Status atualizado", "content": {"application/json": {"example": {"sucesso": True}}}}}
-)
-def put_faturamento_status(data):
-    gid = int(data.get("id", 0))
-    st = data.get("status_guia", "liquidada")
-    faturamento_repo.atualizar_status(gid, st)
-    if st == "liquidada":
-        webhook_dispatcher.disparar("faturamento.guia_liquidada", {"guia_id": gid, "status": "liquidada"})
-    return {"sucesso": True, "id": gid, "status_guia": st}
-
-@registry.delete(
-    "/api/faturamento/cancelar-guia",
-    summary="Cancelar Guia Hospitalar",
-    tags=["5. Faturamento Hospitalar TISS/TUSS"],
-    description="Cancela a guia de faturamento.",
-    body_schema=[{"name": "id", "type": "integer", "req": True, "desc": "ID da guia"}],
-    body_example={"id": 3},
-    responses={"200": {"description": "Guia cancelada", "content": {"application/json": {"example": {"sucesso": True}}}}}
-)
-def delete_faturamento_guia(data):
-    gid = int(data.get("id", 0))
-    faturamento_repo.remover_guia(gid)
-    return {"sucesso": True}
-
-@registry.get(
-    "/api/faturamento/dre",
-    summary="Demonstrativo Consolidado de Faturamento Hospitalar",
-    tags=["5. Faturamento Hospitalar TISS/TUSS"],
-    description="Retorna o consolidado financeiro de guias faturadas, recebidas e pendentes.",
-    responses={"200": {"description": "Consolidado DRE", "content": {"application/json": {"example": {"total_faturado": 39450.0, "total_liquidado": 8900.0, "pendente": 30550.0}}}}}
-)
-def get_faturamento_dre(params):
-    total, liquidado = faturamento_repo.dre()
-    pendente = total - liquidado
     return {
-        "total_faturado_brl": round(total, 2),
-        "total_liquidado_brl": round(liquidado, 2),
-        "pendente_recebimento_brl": round(pendente, 2)
+        "sucesso": True,
+        "token": app_token,
+        "tipo": "Bearer",
+        "usuario": {"email": email, "role": role, "nome": claims.get("name", "")}
     }
 
-# =========================================================================
-# 6. WEBHOOK STUDIO & AUDITORIA
-# =========================================================================
+# 6. Rotas de Webhooks
 @registry.get(
     "/api/webhooks",
     summary="Listar Webhooks Cadastrados",
     tags=["6. Webhook Configuration Studio"],
     description="Retorna os endpoints de webhook ativos configurados para disparo de eventos.",
-    responses={"200": {"description": "Lista de webhooks", "content": {"application/json": {"example": [{"id": 1, "url": "https://webhook.site/mock", "ativo": 1}]}}}}
+    responses={"200": {"description": "Lista de webhooks"}}
 )
 def get_webhooks(params):
     return webhook_dispatcher.listar_webhooks()
@@ -671,156 +238,182 @@ def get_webhooks(params):
         {"name": "secret", "type": "string", "req": False, "desc": "Chave secreta para assinatura HMAC SHA-256"},
         {"name": "eventos", "type": "string", "req": True, "desc": "Eventos assinados separados por vírgula (ou '*' para todos)"}
     ],
-    body_example={"url": "https://webhook.site/demo", "secret": "sec_prod_992", "eventos": "faturamento.guia_gerada,triagem.urgencia_critica"},
-    responses={"200": {"description": "Webhook cadastrado", "content": {"application/json": {"example": {"sucesso": True, "id": 2}}}}}
+    body_example={"url": "https://webhook.site/demo", "secret": "sec_suite_2026", "eventos": "*"},
+    responses={"200": {"description": "Webhook cadastrado"}}
 )
 def post_webhooks(data):
     url = data.get("url")
     if not url:
         return {"sucesso": False, "error": "URL é obrigatória"}
     secret = data.get("secret", "")
-    eventos = data.get("eventos", "*")
-    new_id = webhook_dispatcher.cadastrar_webhook(url, secret, eventos)
+    evs = data.get("eventos", "*")
+    new_id = webhook_dispatcher.cadastrar_webhook(url, secret, evs)
     return {"sucesso": True, "id": new_id}
 
-@registry.delete(
-    "/api/webhooks/remover",
-    summary="Remover Webhook",
-    tags=["6. Webhook Configuration Studio"],
-    description="Remove um webhook configurado.",
-    body_schema=[{"name": "id", "type": "integer", "req": True, "desc": "ID do webhook a ser excluído"}],
-    body_example={"id": 1},
-    responses={"200": {"description": "Webhook excluído", "content": {"application/json": {"example": {"sucesso": True}}}}}
+# 6.5 Rotas de Background Jobs & Dead Letter Queue (DLQ)
+@registry.get(
+    "/api/jobs",
+    summary="Listar Jobs em Background (Painel DLQ)",
+    tags=["7. Background Jobs & DLQ"],
+    description="Retorna o estado persistido das tarefas assíncronas: ENFILEIRADO, PROCESSANDO, CONCLUIDO, AGUARDANDO_RETRY ou DLQ.",
+    responses={"200": {"description": "Lista de jobs"}}
 )
-def delete_webhooks(data):
-    wid = int(data.get("id", 0))
-    webhook_dispatcher.remover_webhook(wid)
-    return {"sucesso": True}
+def get_jobs(params):
+    return job_queue.list_jobs()
 
 @registry.post(
-    "/api/webhooks/testar",
-    summary="Testar Disparo de Webhook",
-    tags=["6. Webhook Configuration Studio"],
-    description="Executa um disparo de teste imediato para a URL informada com validação HMAC e latência.",
+    "/api/jobs/reprocessar",
+    summary="Reprocessar Job em DLQ",
+    tags=["7. Background Jobs & DLQ"],
+    description="Reencaminha manualmente um job (tipicamente em DLQ) para a fila, zerando o contador de tentativas.",
     body_schema=[
-        {"name": "url", "type": "string", "req": True, "desc": "URL de destino para teste"},
-        {"name": "secret", "type": "string", "req": False, "desc": "Secret para assinatura"},
-        {"name": "evento", "type": "string", "req": True, "desc": "Nome do evento teste"},
-        {"name": "payload", "type": "object", "req": False, "desc": "Objeto JSON de carga útil"}
+        {"name": "id", "type": "string", "req": True, "desc": "ID do job a reprocessar"}
     ],
-    body_example={"url": "https://webhook.site/health-mock-n8n", "secret": "sec_aidd_suite_2026", "evento": "triagem.urgencia_critica", "payload": {"protocolo": "TRI-9081", "teste": True}},
-    responses={"200": {"description": "Resultado do teste", "content": {"application/json": {"example": {"sucesso": True, "status_code": 200, "tempo_ms": 142}}}}}
+    body_example={"id": "b3f1..."},
+    responses={"200": {"description": "Job reencaminhado"}}
 )
-def post_testar_webhook(data):
-    url = data.get("url")
-    secret = data.get("secret", "")
-    evento = data.get("evento", "teste.ping")
-    payload = data.get("payload", {"teste": True, "timestamp": time.time()})
-    return webhook_dispatcher.testar_disparo(url, secret, evento, payload)
+def post_jobs_reprocessar(data):
+    job_id = data.get("id")
+    if not job_id:
+        return {"sucesso": False, "erro": "id é obrigatório"}
+    return job_queue.reprocessar(job_id)
 
-@registry.get(
-    "/api/webhooks/logs",
-    summary="Auditoria de Disparos de Webhook",
-    tags=["6. Webhook Configuration Studio"],
-    description="Lista o histórico completo de tentativas de envio de webhooks.",
-    responses={"200": {"description": "Logs de webhook", "content": {"application/json": {"example": [{"id": 1, "evento": "triagem.urgencia_critica", "sucesso": 1}]}}}}
-)
-def get_webhook_logs(params):
-    return webhook_dispatcher.listar_logs(limite=50)
 
-@registry.post(
-    "/api/webhooks/logs/reenviar",
-    summary="Reenviar Disparo de Webhook",
-    tags=["6. Webhook Configuration Studio"],
-    description="Repete um envio de webhook a partir de um registro de log histórico.",
-    body_schema=[{"name": "log_id", "type": "integer", "req": True, "desc": "ID do log a ser reenviado"}],
-    body_example={"log_id": 1},
-    responses={"200": {"description": "Disparo reenviado", "content": {"application/json": {"example": {"sucesso": True}}}}}
-)
-def post_reenviar_webhook_log(data):
-    log_id = int(data.get("log_id", 0))
-    row = webhook_dispatcher.obter_log(log_id)
-    if not row:
-        return {"sucesso": False, "error": "Log não encontrado"}
-    evento, url, payload_json, wid = row[0], row[1], row[2], row[3]
-    secret = ""
-    if wid:
-        found_secret = webhook_dispatcher.obter_secret_webhook(wid)
-        if found_secret:
-            secret = found_secret
-    try:
-        payload = json.loads(payload_json) if payload_json else {}
-        if "data" in payload:
-            payload = payload["data"]
-    except json.JSONDecodeError:
-        payload = {}
-    res = webhook_dispatcher.testar_disparo(url, secret, evento, payload)
-    return {"sucesso": True, "detalhes": res}
-
-@registry.get(
-    "/api/webhooks/eventos",
-    summary="Catálogo Oficial de Eventos do Sistema",
-    tags=["6. Webhook Configuration Studio"],
-    description="Retorna o dicionário de todos os eventos suportados pela AIDD Enterprise Suite v5.1.",
-    responses={"200": {"description": "Catálogo de eventos", "content": {"application/json": {"example": [{"event": "triagem.urgencia_critica", "modulo": "Pronto-Socorro"}]}}}}
-)
-def get_webhook_eventos(params):
-    return WebhookDispatcher.EVENT_CATALOG
-
-# =========================================================================
-# 7. DASHBOARD KPIS & AUDITORIA
-# =========================================================================
-@registry.get(
-    "/api/dashboard/kpis",
-    summary="KPIs Gerenciais Hospitalares em Tempo Real",
-    tags=["7. Painel de Controle & Auditoria"],
-    description="Retorna o panorama gerencial consolidado do hospital.",
-    responses={"200": {"description": "KPIs em tempo real", "content": {"application/json": {"example": {"kpis": {"pacientes_aguardando_triagem": 4, "emergencias_vermelho_laranja": 2}}}}}}
-)
-def get_dashboard_kpis(params):
-    return mcp_engine.execute_tool("med_kpi_dashboard_geral", {})
-
-@registry.get(
-    "/api/logs/auditoria",
-    summary="Consultar Logs de Auditoria Geral",
-    tags=["7. Painel de Controle & Auditoria"],
-    description="Retorna o histórico cronológico de transações e automações da suíte.",
-    responses={"200": {"description": "Logs de auditoria", "content": {"application/json": {"example": [{"id": 1, "evento": "triagem_critica_leito_alocado", "modulo": "pronto_socorro"}]}}}}
-)
-def get_logs_auditoria(params):
-    return auditoria_repo.listar(limite=50)
-
-# =========================================================================
-# HTTP HANDLER COM OWASP SECURITY HEADERS
-# =========================================================================
-class AIDD_EnterpriseAppHandler(http.server.SimpleHTTPRequestHandler):
+# 7. Handler HTTP com OWASP Security Headers + Instrumentação Prometheus
+class AppHandler(http.server.SimpleHTTPRequestHandler):
     def __init__(self, *args, **kwargs):
+        self._last_status_code = 200
+        self._trace_id = None
         super().__init__(*args, directory=STATIC_DIR, **kwargs)
 
+    def parse_request(self):
+        ok = super().parse_request()
+        if ok:
+            self._trace_id = extract_or_generate_trace_id(self.headers)
+        return ok
+
+    def send_response(self, code, message=None):
+        self._last_status_code = code
+        super().send_response(code, message)
+
     def end_headers(self):
+        trace_id = getattr(self, "_trace_id", None) or correlation_id_var.get()
+        if trace_id and trace_id != "N/A":
+            self.send_header("X-Trace-Id", trace_id)
+        self.send_header("Access-Control-Allow-Origin", "*")
         for header, value in SecurityService.get_security_headers().items():
             self.send_header(header, value)
         super().end_headers()
 
+    def log_message(self, format, *args):
+        trace_id = getattr(self, "_trace_id", None) or correlation_id_var.get()
+        logger.info(
+            format % args,
+            extra={
+                "client_address": self.address_string(),
+                "trace_id": trace_id,
+                "correlation_id": trace_id,
+            },
+        )
+
+    def _responder_db_travado(self):
+        """SQLITE_BUSY não-resolvido pelos retries: HTTP 503 com Retry-After e
+        corpo Result estruturado (codigo='DB_LOCKED') — o cliente reagenda a
+        requisição sem risco de retry cego duplicar efeito colateral."""
+        body = Result.fail(
+            "Banco de dados temporariamente bloqueado por outra conexão (SQLITE_BUSY). Tente novamente.",
+            codigo="DB_LOCKED",
+            detalhes={"retry_after_segundos": RETRY_AFTER_DB_LOCKED_S},
+        ).to_dict()
+        self.send_response(503)
+        self.send_header("Retry-After", str(RETRY_AFTER_DB_LOCKED_S))
+        self.send_header("Content-Type", "application/json; charset=utf-8")
+        self.end_headers()
+        self.wfile.write(json.dumps(body, ensure_ascii=False).encode("utf-8"))
+
+    def _escrever_resultado_rota(self, result):
+        """Serializa o resultado de uma rota. Se for um Result monádico,
+        converte via ``to_dict()`` e mapeia ``codigo='DB_LOCKED'`` -> HTTP 503
+        + Retry-After. Caso contrário, serializa como o body JSON legado."""
+        if isinstance(result, Result):
+            if result.codigo == "DB_LOCKED":
+                self._responder_db_travado()
+                return
+            body = result.to_dict()
+        else:
+            body = result
+        self.send_response(200)
+        self.send_header("Content-Type", "application/json; charset=utf-8")
+        self.end_headers()
+        self.wfile.write(json.dumps(body, ensure_ascii=False).encode("utf-8"))
+
+    def do_OPTIONS(self):
+        self.send_response(204)
+        self.send_header("Access-Control-Allow-Origin", "*")
+        self.send_header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
+        self.send_header("Access-Control-Allow-Headers", "Content-Type, Authorization, X-Requested-With")
+        self.end_headers()
+
     def do_GET(self):
+        t0 = time.time()
+        path_only = self.path.split("?")[0]
+        try:
+            self._handle_get()
+        finally:
+            instrumentation.track_request("GET", path_only, self._last_status_code, time.time() - t0)
+
+    def do_POST(self):
+        t0 = time.time()
+        path_only = self.path.split("?")[0]
+        try:
+            self._handle_post()
+        finally:
+            instrumentation.track_request("POST", path_only, self._last_status_code, time.time() - t0)
+
+    def _handle_get(self):
         parsed = urllib.parse.urlparse(self.path)
         path = parsed.path
         query = urllib.parse.parse_qs(parsed.query)
 
-        if path in ["/", "/index.html"]:
+        if path == "/metrics":
             self.send_response(200)
-            self.send_header("Content-Type", "text/html; charset=utf-8")
+            self.send_header("Content-Type", "text/plain; version=0.0.4; charset=utf-8")
             self.end_headers()
-            idx_file = os.path.join(STATIC_DIR, "index.html")
-            with open(idx_file, "rb") as f:
-                self.wfile.write(f.read())
+            self.wfile.write(metrics_registry.render().encode("utf-8"))
             return
+
+        if path == "/favicon.ico":
+            self.send_response(204)
+            self.end_headers()
+            return
+
+        if path in ["/", "/index.html"]:
+            index_file = os.path.join(STATIC_DIR, "index.html")
+            if os.path.isfile(index_file):
+                self.send_response(200)
+                self.send_header("Content-Type", "text/html; charset=utf-8")
+                self.end_headers()
+                with open(index_file, "rb") as f:
+                    self.wfile.write(f.read())
+                return
+
+        if path.startswith("/static/"):
+            rel_p = path[len("/static/"):]
+            target_f = os.path.join(STATIC_DIR, rel_p)
+            if os.path.isfile(target_f):
+                content_type = "text/html" if target_f.endswith(".html") else ("application/javascript" if target_f.endswith(".js") else "text/css" if target_f.endswith(".css") else "text/plain")
+                self.send_response(200)
+                self.send_header("Content-Type", f"{content_type}; charset=utf-8")
+                self.end_headers()
+                with open(target_f, "rb") as f:
+                    self.wfile.write(f.read())
+                return
 
         if path == "/openapi.json":
             self.send_response(200)
             self.send_header("Content-Type", "application/json; charset=utf-8")
             self.end_headers()
-            doc = registry.generate_openapi_json("Plataforma Core Suite v5.1 — Hospital & Biotech Enterprise Monolith", "4.0.0")
+            doc = registry.generate_openapi_json("aidd_project", "4.1.0")
             self.wfile.write(json.dumps(doc, ensure_ascii=False, indent=2).encode("utf-8"))
             return
 
@@ -828,162 +421,147 @@ class AIDD_EnterpriseAppHandler(http.server.SimpleHTTPRequestHandler):
             self.send_response(200)
             self.send_header("Content-Type", "text/html; charset=utf-8")
             self.end_headers()
-            html = registry.get_swagger_html("Plataforma Core Suite v5.1 — API Reference Studio")
+            html = registry.get_swagger_html("aidd_project — Swagger Studio")
             self.wfile.write(html.encode("utf-8"))
             return
+
+        if path == "/docs/guia":
+            guia_file = os.path.join(STATIC_DIR, "docs.html")
+            if os.path.isfile(guia_file):
+                self.send_response(200)
+                self.send_header("Content-Type", "text/html; charset=utf-8")
+                self.end_headers()
+                with open(guia_file, "r", encoding="utf-8") as f:
+                    self.wfile.write(f.read().encode("utf-8"))
+                return
 
         if path == "/webhooks":
             self.send_response(200)
             self.send_header("Content-Type", "text/html; charset=utf-8")
             self.end_headers()
-            html = webhook_dispatcher.get_studio_html("Plataforma SaaS Suite — Webhook Studio")
+            html = webhook_dispatcher.get_studio_html("aidd_project — Webhook Studio")
             self.wfile.write(html.encode("utf-8"))
             return
-
-        if path == "/docs/guia":
-            docs_file = os.path.join(STATIC_DIR, "docs.html")
-            if os.path.exists(docs_file):
-                self.send_response(200)
-                self.send_header("Content-Type", "text/html; charset=utf-8")
-                self.end_headers()
-                with open(docs_file, "rb") as f:
-                    self.wfile.write(f.read())
-                return
 
         if path == "/mcp":
             self.send_response(200)
             self.send_header("Content-Type", "text/html; charset=utf-8")
             self.end_headers()
-            html = mcp_engine.get_studio_html("AIDD Enterprise Suite v5.1 — MCP Native Server Studio")
+            html = mcp_server.get_studio_html("aidd_project — MCP Native Studio")
             self.wfile.write(html.encode("utf-8"))
             return
 
-        if path in registry.routes["GET"]:
-            flat_params = {k: v[0] if len(v) == 1 else v for k, v in query.items()}
-            try:
-                result = registry.routes["GET"][path](flat_params)
-                self.send_response(200)
-                self.send_header("Content-Type", "application/json; charset=utf-8")
-                self.end_headers()
-                self.wfile.write(json.dumps(result, ensure_ascii=False).encode("utf-8"))
-            except Exception as e:
-                self.send_response(500)
-                self.send_header("Content-Type", "application/json; charset=utf-8")
-                self.end_headers()
-                self.wfile.write(json.dumps({"error": str(e)}).encode("utf-8"))
-            return
-
-        return super().do_GET()
-
-    def do_POST(self):
-        parsed = urllib.parse.urlparse(self.path)
-        path = parsed.path
-        length = int(self.headers.get("Content-Length", 0))
-        body_bytes = self.rfile.read(length) if length > 0 else b""
-        
-        try:
-            body = json.loads(body_bytes.decode("utf-8")) if body_bytes else {}
-        except (json.JSONDecodeError, UnicodeDecodeError):
-            body = {}
-
-        if path == "/mcp":
-            resp = mcp_engine.handle_json_rpc(body)
+        if path == "/health":
             self.send_response(200)
             self.send_header("Content-Type", "application/json; charset=utf-8")
             self.end_headers()
-            self.wfile.write(json.dumps(resp, ensure_ascii=False).encode("utf-8"))
+            self.wfile.write(json.dumps({"status": "ok", "suite": "aidd_project", "versao": "4.1.0"}).encode("utf-8"))
             return
 
-        if path in registry.routes["POST"]:
+        if path in registry.routes.get("GET", {}):
+            handler = registry.routes["GET"][path]
             try:
-                result = registry.routes["POST"][path](body)
-                self.send_response(200)
-                self.send_header("Content-Type", "application/json; charset=utf-8")
-                self.end_headers()
-                self.wfile.write(json.dumps(result, ensure_ascii=False).encode("utf-8"))
+                result = handler(query)
             except Exception as e:
+                if is_db_locked(e):
+                    self._responder_db_travado()
+                    return
                 self.send_response(500)
                 self.send_header("Content-Type", "application/json; charset=utf-8")
                 self.end_headers()
                 self.wfile.write(json.dumps({"error": str(e)}).encode("utf-8"))
+                return
+            self._escrever_resultado_rota(result)
+            return
+
+        super().do_GET()
+
+    def _handle_post(self):
+        parsed = urllib.parse.urlparse(self.path)
+        path = parsed.path
+
+        length = int(self.headers.get('Content-Length', 0))
+        body_bytes = self.rfile.read(length) if length > 0 else b'{}'
+        try:
+            body_data = json.loads(body_bytes.decode('utf-8')) if body_bytes else {}
+        except ValueError:
+            body_data = {}
+
+        if path == "/api/mcp/rpc":
+            self.send_response(200)
+            self.send_header("Content-Type", "application/json; charset=utf-8")
+            self.end_headers()
+            rpc_res = mcp_server.handle_json_rpc(body_data)
+            self.wfile.write(json.dumps(rpc_res, ensure_ascii=False).encode("utf-8"))
+            return
+
+        if path == "/api/webhooks/testar":
+            self.send_response(200)
+            self.send_header("Content-Type", "application/json; charset=utf-8")
+            self.end_headers()
+            res = webhook_dispatcher.testar_disparo(
+                url=body_data.get("url", ""),
+                secret=body_data.get("secret", ""),
+                evento=body_data.get("evento", "*"),
+                payload=body_data.get("payload", {})
+            )
+            self.wfile.write(json.dumps(res, ensure_ascii=False).encode("utf-8"))
+            return
+
+        if path in registry.routes.get("POST", {}):
+            handler = registry.routes["POST"][path]
+            try:
+                result = handler(body_data)
+            except Exception as e:
+                if is_db_locked(e):
+                    self._responder_db_travado()
+                    return
+                self.send_response(500)
+                self.send_header("Content-Type", "application/json; charset=utf-8")
+                self.end_headers()
+                self.wfile.write(json.dumps({"error": str(e)}).encode("utf-8"))
+                return
+            self._escrever_resultado_rota(result)
             return
 
         self.send_response(404)
         self.send_header("Content-Type", "application/json; charset=utf-8")
         self.end_headers()
-        self.wfile.write(json.dumps({"error": "Endpoint POST não encontrado", "path": path}).encode("utf-8"))
+        self.wfile.write(json.dumps({"error": "Rota POST não encontrada"}).encode("utf-8"))
 
-    def do_PUT(self):
-        parsed = urllib.parse.urlparse(self.path)
-        path = parsed.path
-        length = int(self.headers.get("Content-Length", 0))
-        body_bytes = self.rfile.read(length) if length > 0 else b""
-        try:
-            body = json.loads(body_bytes.decode("utf-8")) if body_bytes else {}
-        except (json.JSONDecodeError, UnicodeDecodeError):
-            body = {}
-
-        if path in registry.routes["PUT"]:
-            try:
-                result = registry.routes["PUT"][path](body)
-                self.send_response(200)
-                self.send_header("Content-Type", "application/json; charset=utf-8")
-                self.end_headers()
-                self.wfile.write(json.dumps(result, ensure_ascii=False).encode("utf-8"))
-            except Exception as e:
-                self.send_response(500)
-                self.send_header("Content-Type", "application/json; charset=utf-8")
-                self.end_headers()
-                self.wfile.write(json.dumps({"error": str(e)}).encode("utf-8"))
-            return
-
-        self.send_response(404)
-        self.end_headers()
-
-    def do_DELETE(self):
-        parsed = urllib.parse.urlparse(self.path)
-        path = parsed.path
-        length = int(self.headers.get("Content-Length", 0))
-        body_bytes = self.rfile.read(length) if length > 0 else b""
-        try:
-            body = json.loads(body_bytes.decode("utf-8")) if body_bytes else {}
-        except (json.JSONDecodeError, UnicodeDecodeError):
-            body = {}
-
-        if path in registry.routes["DELETE"]:
-            try:
-                result = registry.routes["DELETE"][path](body)
-                self.send_response(200)
-                self.send_header("Content-Type", "application/json; charset=utf-8")
-                self.end_headers()
-                self.wfile.write(json.dumps(result, ensure_ascii=False).encode("utf-8"))
-            except Exception as e:
-                self.send_response(500)
-                self.send_header("Content-Type", "application/json; charset=utf-8")
-                self.end_headers()
-                self.wfile.write(json.dumps({"error": str(e)}).encode("utf-8"))
-            return
-
-        self.send_response(404)
-        self.end_headers()
 
 def run_server():
+    global PORT
     socketserver.ThreadingTCPServer.allow_reuse_address = True
-    with socketserver.ThreadingTCPServer(("0.0.0.0", PORT), AIDD_EnterpriseAppHandler) as httpd:
-        print(f"================================================================================")
-        print(f"  [MEDHEALTH] Plataforma Core Suite v5.1 — Hospital & Biotech Enterprise Monolith")
-        print(f"================================================================================")
-        print(f"  • App Super-App Front-End : http://localhost:{PORT}")
-        print(f"  • Swagger Studio (/docs)  : http://localhost:{PORT}/docs")
-        print(f"  • Webhook Studio          : http://localhost:{PORT}/webhooks")
-        print(f"  • MCP Native Server (/mcp): http://localhost:{PORT}/mcp")
-        print(f"  • Guia Enciclopédico      : http://localhost:{PORT}/docs/guia")
-        print(f"  • OpenAPI Spec            : http://localhost:{PORT}/openapi.json")
-        print(f"================================================================================")
+    httpd = None
+    for attempt_port in range(PORT, PORT + 25):
+        try:
+            httpd = socketserver.ThreadingTCPServer(("", attempt_port), AppHandler)
+            PORT = attempt_port
+            break
+        except OSError:
+            continue
+
+    if not httpd:
+        print("[FATAL] Não foi possível vincular o servidor em nenhuma porta entre 3000 e 3025.")
+        sys.exit(1)
+
+    with httpd:
+        print("=" * 80)
+        print(f"🚀 aidd_project (AIDD v5.1 Enterprise)")
+        print(f"📡 Servidor Ativo:     http://localhost:{PORT}")
+        print(f"📜 Swagger Studio:     http://localhost:{PORT}/docs")
+        print(f"⚡ Webhook Studio:     http://localhost:{PORT}/webhooks")
+        print(f"🤖 MCP Native Studio:  http://localhost:{PORT}/mcp")
+        print(f"📊 OpenAPI Spec:       http://localhost:{PORT}/openapi.json")
+        print(f"📈 Métricas Prometheus: http://localhost:{PORT}/metrics")
+        print("=" * 80)
         try:
             httpd.serve_forever()
         except KeyboardInterrupt:
-            print("\n[!] Servidor encerrado.")
+            print("\n[!] Encerrando servidor gracefully...")
+            httpd.server_close()
+
 
 if __name__ == "__main__":
     run_server()

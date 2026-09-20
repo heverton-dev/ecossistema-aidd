@@ -179,6 +179,9 @@ def test_modulo_gerado_pelo_add_module_py_atual_crud_via_http(tmp_path):
         stderr=subprocess.STDOUT,
         text=True,
     )
+    import threading
+    t_dreno = threading.Thread(target=lambda: [l for l in processo.stdout], daemon=True)
+    t_dreno.start()
     try:
         base = "http://127.0.0.1:3000"
         status = _aguardar_servidor(processo, f"{base}/api/itemdinamico")

@@ -35,6 +35,14 @@ from core.webhooks import WebhookDispatcher
 from core.security import SecurityService, JWTService, OIDCService
 from core.mcp_server import MCPServer
 from core.metrics import MetricsRegistry, RequestInstrumentation
+from core.logs import (
+    get_logger,
+    correlation_id_var,
+    extract_or_generate_trace_id,
+    get_current_trace_id,
+)
+
+logger = get_logger("server")
 
 # Módulos / Fatias Verticais
 from modules.modulo1.models import init_schema as init_modulo1_schema
@@ -93,9 +101,6 @@ reg_modulo1_routes(service_modulo1)
 
 # 4. Registrar Ferramentas MCP para cada Módulo
 mcp_server.register_module_tools('modulo1', 'Modulo1')
-
-# 4.1 Registrar Ferramentas MCP injetadas pelo Injetor Universal (src/core/mcp/*.py)
-mcp_server.register_injected_tools()
 
 # 4.5 Registrar Catálogo de Eventos Webhook para cada Módulo
 webhook_dispatcher.register_module_events('modulo1', 'Modulo1')
@@ -278,17 +283,38 @@ def post_jobs_reprocessar(data):
 class AppHandler(http.server.SimpleHTTPRequestHandler):
     def __init__(self, *args, **kwargs):
         self._last_status_code = 200
+        self._trace_id = None
         super().__init__(*args, directory=STATIC_DIR, **kwargs)
+
+    def parse_request(self):
+        ok = super().parse_request()
+        if ok:
+            self._trace_id = extract_or_generate_trace_id(self.headers)
+        return ok
 
     def send_response(self, code, message=None):
         self._last_status_code = code
         super().send_response(code, message)
 
     def end_headers(self):
+        trace_id = getattr(self, "_trace_id", None) or correlation_id_var.get()
+        if trace_id and trace_id != "N/A":
+            self.send_header("X-Trace-Id", trace_id)
         self.send_header("Access-Control-Allow-Origin", "*")
         for header, value in SecurityService.get_security_headers().items():
             self.send_header(header, value)
         super().end_headers()
+
+    def log_message(self, format, *args):
+        trace_id = getattr(self, "_trace_id", None) or correlation_id_var.get()
+        logger.info(
+            format % args,
+            extra={
+                "client_address": self.address_string(),
+                "trace_id": trace_id,
+                "correlation_id": trace_id,
+            },
+        )
 
     def _responder_db_travado(self):
         """SQLITE_BUSY não-resolvido pelos retries: HTTP 503 com Retry-After e

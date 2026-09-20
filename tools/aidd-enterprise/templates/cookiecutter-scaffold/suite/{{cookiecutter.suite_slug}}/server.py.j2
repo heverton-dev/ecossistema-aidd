@@ -36,7 +36,12 @@ from core.security import SecurityService, JWTService, OIDCService
 from core.mcp_server import MCPServer
 from core.metrics import MetricsRegistry, RequestInstrumentation
 from core.circuit_breaker import CircuitBreaker, CircuitState
-from core.logs import get_logger, correlation_id_var
+from core.logs import (
+    get_logger,
+    correlation_id_var,
+    extract_or_generate_trace_id,
+    get_current_trace_id,
+)
 
 # Inicialização do Logger Universal
 logger = get_logger("{{ cookiecutter.suite_name }}")
@@ -391,7 +396,14 @@ def get_circuit_breakers(params):
 class AppHandler(http.server.SimpleHTTPRequestHandler):
     def __init__(self, *args, **kwargs):
         self._last_status_code = 200
+        self._trace_id = None
         super().__init__(*args, directory=STATIC_DIR, **kwargs)
+
+    def parse_request(self):
+        ok = super().parse_request()
+        if ok:
+            self._trace_id = extract_or_generate_trace_id(self.headers)
+        return ok
 
     def _set_rls_tenant_context(self):
         """Extrai tenant_id do JWT (header Authorization) e configura o contexto
@@ -410,10 +422,24 @@ class AppHandler(http.server.SimpleHTTPRequestHandler):
         super().send_response(code, message)
 
     def end_headers(self):
+        trace_id = getattr(self, "_trace_id", None) or correlation_id_var.get()
+        if trace_id and trace_id != "N/A":
+            self.send_header("X-Trace-Id", trace_id)
         self.send_header("Access-Control-Allow-Origin", "*")
         for header, value in SecurityService.get_security_headers().items():
             self.send_header(header, value)
         super().end_headers()
+
+    def log_message(self, format, *args):
+        trace_id = getattr(self, "_trace_id", None) or correlation_id_var.get()
+        logger.info(
+            format % args,
+            extra={
+                "client_address": self.address_string(),
+                "trace_id": trace_id,
+                "correlation_id": trace_id,
+            },
+        )
 
     def _responder_db_travado(self):
         """SQLITE_BUSY não-resolvido pelos retries: HTTP 503 com Retry-After e
@@ -456,34 +482,20 @@ class AppHandler(http.server.SimpleHTTPRequestHandler):
     def do_GET(self):
         t0 = time.time()
         path_only = self.path.split("?")[0]
-        corr_id = self.headers.get('X-Correlation-ID', uuid.uuid4().hex)
-        correlation_id_var.set(corr_id)
         self._set_rls_tenant_context()
-        logger.info(f"Iniciando requisição GET para {path_only}")
         try:
             self._handle_get()
-        except Exception as e:
-            logger.error(f"Exceção não tratada em GET {path_only}: {e}", exc_info=True)
-            raise
         finally:
             instrumentation.track_request("GET", path_only, self._last_status_code, time.time() - t0)
-            logger.info(f"Finalizando requisição GET para {path_only} com status {self._last_status_code}")
 
     def do_POST(self):
         t0 = time.time()
         path_only = self.path.split("?")[0]
-        corr_id = self.headers.get('X-Correlation-ID', uuid.uuid4().hex)
-        correlation_id_var.set(corr_id)
         self._set_rls_tenant_context()
-        logger.info(f"Iniciando requisição POST para {path_only}")
         try:
             self._handle_post()
-        except Exception as e:
-            logger.error(f"Exceção não tratada em POST {path_only}: {e}", exc_info=True)
-            raise
         finally:
             instrumentation.track_request("POST", path_only, self._last_status_code, time.time() - t0)
-            logger.info(f"Finalizando requisição POST para {path_only} com status {self._last_status_code}")
 
     def do_PUT(self):
         self.do_POST()

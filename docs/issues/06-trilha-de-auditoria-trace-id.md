@@ -1,7 +1,7 @@
 ---
 id: ISSUE-0006
 title: Trilha de auditoria (X-Trace-Id) — entregar de verdade ou parar de prometer
-status: ready-for-agent
+status: done
 blocked_by: []
 created: 2026-09-19
 source: open-decision sweep 2026-09-19 / PLAN-0025 item 10
@@ -51,8 +51,8 @@ is today's state: promise on paper, silence in code.
 
 ## Acceptance criteria
 
-- [ ] Route chosen and justified.
-- [ ] Route A: real end-to-end test proves the trace id enters, traverses and exits. The piece merely existing does not count.
-- [ ] Route B: architecture doc Module 1.5 and the book corrected; compliance claim removed.
-- [ ] Either route: no dead piece left in `src/core/opentelemetry.py` nor in the template and `componentes/compartilhado/` mirrors.
-- [ ] Full suite still passes.
+- [x] Route chosen and justified (Route A escolhida pelo usuário para entregar a implementação real da trilha de auditoria).
+- [x] Route A: real end-to-end test proves the trace id enters, traverses and exits. The piece merely existing does not count (`tests/integration/test_trace_id_audit_trail.py` validado em `aidd-enterprise` e `aidd-master`).
+- [ ] Route B: architecture doc Module 1.5 and the book corrected; compliance claim removed. (N/A — Rota A adotada).
+- [x] Either route: no dead piece left in `src/core/opentelemetry.py` nor in the template and `componentes/compartilhado/` mirrors.
+- [x] Full suite still passes.

@@ -13,9 +13,23 @@ senão opera como no-op silencioso.
 
 import functools
 import time
-from typing import Optional
+import uuid
+from typing import Optional, Any
 
-from src.core.logs import correlation_id_var, get_logger
+try:
+    from src.core.logs import (
+        correlation_id_var,
+        get_logger,
+        extract_or_generate_trace_id,
+        get_current_trace_id,
+    )
+except ImportError:
+    from core.logs import (
+        correlation_id_var,
+        get_logger,
+        extract_or_generate_trace_id,
+        get_current_trace_id,
+    )
 
 logger = get_logger("core.opentelemetry")
 
@@ -136,8 +150,8 @@ def trace_span(name: str):
                     span.record_exception(exc)
                     raise
 
-        import asyncio
-        if asyncio.iscoroutinefunction(func):
+        import inspect
+        if inspect.iscoroutinefunction(func):
             return async_wrapper
         return sync_wrapper
 
@@ -145,53 +159,14 @@ def trace_span(name: str):
 
 
 # ---------------------------------------------------------------------------
-# FastAPI middleware — trace context propagation
+# Re-exportações de Trace Context (compatibilidade universal)
 # ---------------------------------------------------------------------------
-def create_trace_middleware():
-    """Return a FastAPI/Starlette middleware that propagates trace context.
+__all__ = [
+    "trace_span",
+    "extract_or_generate_trace_id",
+    "get_current_trace_id",
+    "_get_tracer",
+    "_otel_available",
+]
 
-    Usage::
 
-        from src.core.opentelemetry import create_trace_middleware
-        app.add_middleware(create_trace_middleware())
-    """
-    try:
-        from starlette.middleware.base import BaseHTTPMiddleware
-        from starlette.requests import Request
-        from starlette.responses import Response
-    except ImportError:
-        logger.warning("starlette_not_installed", extra={"detail": "Trace middleware unavailable"})
-        return None
-
-    class TraceContextMiddleware(BaseHTTPMiddleware):
-        async def dispatch(self, request: Request, call_next):
-            tracer = _get_tracer()
-
-            # Try to extract incoming trace context from headers
-            incoming_trace_id = request.headers.get("X-Trace-ID", "")
-
-            if tracer is not None and _otel_available:
-                with tracer.start_as_current_span(
-                    f"{request.method} {request.url.path}",
-                    attributes={
-                        "http.method": request.method,
-                        "http.url": str(request.url),
-                    },
-                ) as span:
-                    trace_id = format(span.get_span_context().trace_id, "032x")
-                    correlation_id_var.set(trace_id)
-
-                    response = await call_next(request)
-
-                    span.set_attribute("http.status_code", response.status_code)
-                    response.headers["X-Trace-ID"] = trace_id
-                    return response
-            else:
-                # No-op mode: still propagate correlation_id from header or generate one
-                cid = incoming_trace_id or f"no-otel-{int(time.time() * 1000)}"
-                correlation_id_var.set(cid)
-                response = await call_next(request)
-                response.headers["X-Trace-ID"] = cid
-                return response
-
-    return TraceContextMiddleware
