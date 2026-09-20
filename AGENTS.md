@@ -16,6 +16,12 @@
     2. Short bulleted body. Facts, numbers, findings. No narration of steps taken.
     3. One closing suggestion block, separated from the body.
     - Forbidden: polite greetings, restating the request, recapping what was just said, listing options without a recommendation, unexplained jargon.
+  - **Token budget — decide before writing, not after:** target ≤300 tokens for a
+    normal answer, ≤600 for a technical one (code/tables). This is a pre-generation
+    limit, not a post-hoc filter — plan the answer's length before writing the first
+    word. A hook that blocks and forces a rewrite after the fact already cost the
+    tokens of the rejected draft; treat any such block as a signal you planned wrong,
+    not as the mechanism meant to enforce this.
 - **Editing rule:** Always use exact search/replace block tools (`replace_file_content`). Never dump entire rewritten files into output.
 - **Bash rule:** Always pipe verbose commands to tail/grep. E.g., `pytest 2>&1 | tail -n 25`. Never dump raw bundle outputs, logs, or lockfiles into context.
 - **Graph-first:** Always query knowledge graph (`code-review-graph` MCP) before Grep, Glob, or full file reads.

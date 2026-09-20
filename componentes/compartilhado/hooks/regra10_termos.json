@@ -5,6 +5,9 @@
   "ignorar_respostas_curtas": true,
   "min_palavras_para_bloqueio": 30,
   "verificar_shape": true,
+  "verificar_teto_tokens": true,
+  "teto_tokens_normal": 300,
+  "teto_tokens_tecnico": 600,
   "termos": [
     "diff",
     "baseline",

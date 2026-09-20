@@ -8,6 +8,9 @@ Melhorias implementadas:
 2. Reconhece termos que ja venham acompanhados de explicacao ou analogia didatica.
 3. Protege tokens: evita re-geracao cara em respostas ultracurtas e suporta modo aviso.
 4. Portavel e agnostico a harness.
+5. Teto de tokens por resposta (Lei #4): 300 para prosa normal, 600 para resposta
+   tecnica (com codigo, tabela ou multiplos trechos de codigo inline). Conta tokens
+   reais via tiktoken quando disponivel, com fallback aproximado declarado.
 """
 
 import argparse
@@ -18,9 +21,22 @@ import sys
 import tempfile
 import time
 
+try:
+    import tiktoken
+    TIKTOKEN_DISPONIVEL = True
+except ImportError:
+    TIKTOKEN_DISPONIVEL = False
+
 HOOKS_DIR = os.path.dirname(os.path.abspath(__file__))
 CONFIG_PATH = os.path.join(HOOKS_DIR, "regra10_termos.json")
 STATE_DIR = os.path.join(tempfile.gettempdir(), "aidd_regra10_state")
+
+LIMIAR_TOKENS_NORMAL = 300
+LIMIAR_TOKENS_TECNICO = 600
+MIN_INLINE_CODE_TECNICO = 3
+RE_INLINE_CODE = re.compile(r"`[^`\n]+`")
+RE_LINHA_TABELA_MD = re.compile(r"^\s*\|.*\|\s*$", re.MULTILINE)
+RE_BLOCO_CODIGO_CERCADO = re.compile(r"```[\s\S]*?```")
 
 TERMOS_PADRAO = [
     "diff", "baseline", "byte a byte", "endpoint", "payload", "pipeline",
@@ -88,6 +104,9 @@ DEFAULT_CONFIG = {
     "ignorar_respostas_curtas": True,
     "min_palavras_para_bloqueio": 30,
     "verificar_shape": True,
+    "verificar_teto_tokens": True,
+    "teto_tokens_normal": LIMIAR_TOKENS_NORMAL,
+    "teto_tokens_tecnico": LIMIAR_TOKENS_TECNICO,
     "termos": TERMOS_PADRAO,
 }
 
@@ -114,6 +133,9 @@ def carregar_config():
     cfg.setdefault("ignorar_respostas_curtas", True)
     cfg.setdefault("min_palavras_para_bloqueio", 30)
     cfg.setdefault("verificar_shape", True)
+    cfg.setdefault("verificar_teto_tokens", True)
+    cfg.setdefault("teto_tokens_normal", LIMIAR_TOKENS_NORMAL)
+    cfg.setdefault("teto_tokens_tecnico", LIMIAR_TOKENS_TECNICO)
     cfg.setdefault("termos", TERMOS_PADRAO)
     return cfg
 
@@ -193,6 +215,75 @@ def contar_bloqueios(chave: str) -> int:
     with open(caminho, "w", encoding="utf-8") as f:
         f.write(str(contagem))
     return contagem
+
+
+_ENCODER_TIKTOKEN = None
+
+
+def _obter_encoder_tokens():
+    """Carrega o codificador cl100k_base uma unica vez por processo."""
+    global _ENCODER_TIKTOKEN
+    if not TIKTOKEN_DISPONIVEL:
+        return None
+    if _ENCODER_TIKTOKEN is None:
+        try:
+            _ENCODER_TIKTOKEN = tiktoken.get_encoding("cl100k_base")
+        except Exception:
+            _ENCODER_TIKTOKEN = False
+    return _ENCODER_TIKTOKEN or None
+
+
+def contar_tokens(texto: str) -> tuple[int, str]:
+    """Conta tokens reais da mensagem inteira (inclui blocos de codigo).
+
+    Usa tiktoken (cl100k_base) quando disponivel. Sem a biblioteca, aproxima
+    por palavras * 1.3 e informa o metodo usado na propria mensagem de bloqueio,
+    para nunca alegar precisao que nao foi medida (Lei #8).
+    """
+    encoder = _obter_encoder_tokens()
+    if encoder is not None:
+        return len(encoder.encode(texto)), "tiktoken/cl100k_base"
+    palavras = len(texto.split())
+    return round(palavras * 1.3), "aproximado sem tiktoken"
+
+
+def mensagem_e_tecnica(texto: str) -> bool:
+    """Classifica a mensagem como tecnica (teto maior) quando traz bloco de
+    codigo cercado, tabela Markdown, ou varios trechos de codigo inline."""
+    if RE_BLOCO_CODIGO_CERCADO.search(texto):
+        return True
+    if RE_LINHA_TABELA_MD.search(texto):
+        return True
+    texto_sem_blocos = RE_BLOCO_CODIGO_CERCADO.sub(" ", texto)
+    if len(RE_INLINE_CODE.findall(texto_sem_blocos)) >= MIN_INLINE_CODE_TECNICO:
+        return True
+    return False
+
+
+def verificar_teto_tokens(mensagem: str, cfg: dict) -> list[str]:
+    """Bloqueia resposta acima do teto de tokens definido para o seu tipo.
+
+    Teto normal (ex.: 300) para prosa comum; teto tecnico (ex.: 600) quando a
+    mensagem traz codigo, tabela ou multiplos trechos de codigo inline.
+    """
+    if not cfg.get("verificar_teto_tokens", True):
+        return []
+
+    total, metodo = contar_tokens(mensagem)
+    tecnica = mensagem_e_tecnica(mensagem)
+    teto = (
+        cfg.get("teto_tokens_tecnico", LIMIAR_TOKENS_TECNICO)
+        if tecnica
+        else cfg.get("teto_tokens_normal", LIMIAR_TOKENS_NORMAL)
+    )
+
+    if total > teto:
+        tipo = "tecnica (codigo/tabela)" if tecnica else "normal"
+        return [
+            f"Teto de tokens excedido: {total} tokens ({metodo}) acima do limite de "
+            f"{teto} para resposta {tipo}."
+        ]
+    return []
 
 
 def verificar_shape(mensagem: str, cfg: dict) -> list[str]:
@@ -280,6 +371,9 @@ def main():
             f"Termos técnicos sem explicação ({termos_str})"
         )
 
+    # 3. Validacao de Teto de Tokens (Lei #4)
+    motivos_bloqueio.extend(verificar_teto_tokens(mensagem, cfg))
+
     if not motivos_bloqueio:
         return 0
 
@@ -301,11 +395,18 @@ def main():
         )
         return 0
 
+    excedeu_teto = any("Teto de tokens excedido" in m for m in motivos_bloqueio)
+    instrucao_extra = (
+        " Corte o conteúdo até caber no teto: mantenha só o essencial, remova código/"
+        "trechos redundantes e não regenere a mesma resposta apenas reformatada."
+        if excedeu_teto
+        else ""
+    )
     razao_formatada = (
         f"Regra 10 (ISSUE-0013): Resposta fora do padrão ({'; '.join(motivos_bloqueio)}). "
         "Formato obrigatório: 1 frase direta no topo (sem preâmbulo/saudação), "
         "corpo em tópicos objetivos (fatos, números, achados; sem narrar processo), "
-        "e bloco final de sugestão/próximo passo isolado."
+        "e bloco final de sugestão/próximo passo isolado." + instrucao_extra
     )
     saida = {
         "decision": "block",

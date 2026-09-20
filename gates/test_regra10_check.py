@@ -141,6 +141,78 @@ def test_hook_aprova_status_executivo_curto_1_linha():
     assert res.stdout.strip() == ""
 
 
+def _resposta_com_n_bullets(n: int, prefixo: str = "Item numero") -> str:
+    """Gera uma resposta em conformidade com o shape (cabecalho + bullets + sugestao),
+    com N linhas de bullet, para variar o tamanho de forma previsivel e testavel."""
+    linhas = [f"- {prefixo} {i}: dado medido e fato objetivo relatado nesta linha." for i in range(n)]
+    corpo = "\n".join(linhas)
+    return f"Sincronizacao concluida com sucesso.\n\n{corpo}\n\nRecomendacao: prosseguir."
+
+
+def test_hook_bloqueia_resposta_normal_acima_do_teto_de_tokens():
+    """
+    Failing-path test (Lei #13): resposta em conformidade com o shape (sem
+    jargao, sem preambulo, com bullets), mas longa o suficiente para
+    ultrapassar o teto de 300 tokens de uma resposta normal (sem codigo/tabela).
+    Deve bloquear citando o teto excedido, isolando esse motivo dos demais.
+    """
+    resposta_longa_normal = _resposta_com_n_bullets(60)
+    res = executar_hook(resposta_longa_normal)
+    saida = json.loads(res.stdout)
+    assert saida.get("decision") == "block", f"Esperado bloqueio por teto, obtido: {res.stdout}"
+    assert "Teto de tokens excedido" in saida.get("reason", "")
+    assert "normal" in saida.get("reason", "")
+
+
+def test_hook_aprova_resposta_normal_abaixo_do_teto_de_tokens():
+    """
+    False-positive check: mesma forma de resposta (shape correto), mas curta o
+    suficiente para ficar abaixo do teto de 300 tokens. Nao deve bloquear.
+    """
+    resposta_curta_normal = _resposta_com_n_bullets(3)
+    res = executar_hook(resposta_curta_normal)
+    assert res.returncode == 0
+    assert res.stdout.strip() == "", f"Esperado aprovacao, obtido: {res.stdout}"
+
+
+def test_hook_bloqueia_resposta_tecnica_acima_do_teto_de_600():
+    """
+    Failing-path test (Lei #13): resposta com bloco de codigo cercado (marca
+    a mensagem como 'tecnica', teto de 600), mas longa o suficiente para
+    ultrapassar mesmo o teto maior. Deve bloquear citando o teto tecnico.
+    """
+    bloco_codigo = "```python\n" + "\n".join(f"linha_{i} = {i}" for i in range(250)) + "\n```"
+    resposta_tecnica_longa = (
+        "Implementacao concluida com sucesso.\n\n"
+        f"{bloco_codigo}\n\n"
+        "- Arquivo alterado conforme especificado.\n\n"
+        "Recomendacao: revisar antes do commit."
+    )
+    res = executar_hook(resposta_tecnica_longa)
+    saida = json.loads(res.stdout)
+    assert saida.get("decision") == "block", f"Esperado bloqueio por teto tecnico, obtido: {res.stdout}"
+    assert "Teto de tokens excedido" in saida.get("reason", "")
+    assert "tecnica" in saida.get("reason", "")
+
+
+def test_hook_aprova_resposta_tecnica_entre_300_e_600_tokens():
+    """
+    Prova que o teto tecnico (600) e realmente maior que o normal (300):
+    uma resposta com bloco de codigo, medindo entre 300 e 600 tokens, deve
+    APROVAR — a mesma quantidade de texto sem marcador tecnico reprovaria
+    (ver test_hook_bloqueia_resposta_normal_acima_do_teto_de_tokens).
+    """
+    bloco_codigo = "```python\n" + "\n".join(f"x{i} = {i}" for i in range(90)) + "\n```"
+    resposta_tecnica_media = (
+        "Ajuste no script concluido.\n\n"
+        f"{bloco_codigo}\n\n"
+        "Recomendacao: rodar os testes."
+    )
+    res = executar_hook(resposta_tecnica_media)
+    assert res.returncode == 0
+    assert res.stdout.strip() == "", f"Esperado aprovacao (dentro do teto tecnico), obtido: {res.stdout}"
+
+
 def test_hook_claude_sincronizado_comporta_se_identicamente():
     """
     Valida que a cópia em .claude/hooks/regra10_check.py possui o mesmo comportamento.
