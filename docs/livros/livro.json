@@ -1,0 +1,26 @@
+{
+  "versao_manifesto": "1.0",
+  "titulo": "Ecossistema AIDD",
+  "nome_base": "20-09-2026_LIVRO-ECOSSISTEMA-AIDD",
+  "pasta_partes": "partes",
+  "template": "livro-aidd.typst",
+  "partes": [
+    "00-frontmatter.md",
+    "01-macro.md",
+    "02-fluxos.md",
+    "03-ferramentas-a.md",
+    "04-ferramentas-b.md",
+    "05-transversais.md",
+    "06-apendices.md"
+  ],
+  "revisoes": [
+    {
+      "data": "2026-09-20",
+      "hash_fonte": "ca3b4e48ff3980dbd18c43b9a0d2354acbb67dd3e2328e16faf2d60362010032",
+      "palavras": 23618,
+      "nota": "Alinhamento taxonomico canonico, inclusao de aidd-planner e correcoes deterministicas"
+    }
+  ],
+  "hash_fonte": "ca3b4e48ff3980dbd18c43b9a0d2354acbb67dd3e2328e16faf2d60362010032",
+  "ultima_compilacao": "2026-09-20"
+}

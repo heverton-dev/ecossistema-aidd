@@ -9,11 +9,11 @@ de slash command, conforme a dupla camada descrita no capítulo 2.
 | :--------------------------------- | :----------- | :--------------------------------------------------------------- |
 | `python ecossistema.py pure`       | `aidd-pure`  | Fluxo 01 — do zero puro, motor `aidd-generator`                 |
 | `python ecossistema.py open`       | `aidd-open`  | Fluxo 02 — motores open-source, motor `aidd-factory`            |
-| `python ecossistema.py bridge`     | `aidd-bridge`| Fluxo 03 — libertação de low-code, motor `aidd-bridge`          |
-| `python ecossistema.py run-fluxo --fluxo <pure\|open\|bridge>` | — | Forma longa, aceita `--dry-run`             |
+| `python ecossistema.py freedom`    | `aidd-freedom` | Fluxo 03 — libertação de low-code, motor `aidd-bridge`        |
+| `python ecossistema.py run-fluxo --fluxo <pure\|open\|freedom>` | — | Forma longa, aceita `--dry-run`             |
 
 Parâmetros comuns aos fluxos: `--nome`, `--slug`, `--dominio`, `--pasta`,
-`--origem-export` (Fluxo 03), `--dry-run`.
+`--origem` (Fluxo 03), `--dry-run`.
 
 ## A.2 Ferramentas
 

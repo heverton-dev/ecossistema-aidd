@@ -92,12 +92,13 @@ Every robust application in the ecosystem originates from **`aidd-forge`** (supr
 
 Core rules are universal. Domain and tool-specific instructions reside in their respective directories:
 - `tools/aidd-forge/AGENTS.md` -> Bootstrap, templates, and environment shielding.
+- `tools/aidd-planner/AGENTS.md` -> Planning engine, SDD/BDD intake, and Triad fuel generation.
 - `tools/aidd-generator/AGENTS.md` -> 8-phase software generation factory.
 - `tools/aidd-master/AGENTS.md` -> Modular Vertical Slice architecture.
 - `tools/aidd-enterprise/AGENTS.md` -> Mission-critical SHA-256 injected components.
 - `tools/aidd-ops/AGENTS.md` -> Agentic infrastructure meta-orchestration.
 - `tools/aidd-factory/AGENTS.md` -> Multi-service application & integration code generator.
-- `tools/aidd-bridge/` -> Low-code (Lovable/v0/Bolt) VPS packager.
+- `tools/aidd-bridge/AGENTS.md` -> Low-code (Lovable/v0/Bolt) VPS packager.
 
 ---
 

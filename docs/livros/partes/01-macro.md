@@ -1,7 +1,7 @@
 # PARTE I — MACRO: O ECOSSISTEMA
 
 A Parte I responde à pergunta mais alta: *o que é esta coisa, por que ela existe nesta
-forma e quais são as regras que valem em todos os níveis abaixo?* Os quatro capítulos
+forma e quais são as regras que se aplicam a todos os níveis abaixo?* Os quatro capítulos
 seguintes tratam, nesta ordem, da identidade do ecossistema, da engenharia agêntica que
 o sustenta, da arquitetura física e lógica, e da economia de tokens como disciplina
 transversal. O quinto capítulo cobre a camada de governança executável — portões,
@@ -192,8 +192,8 @@ Nenhuma etapa confia na anterior. Entre cada par de ferramentas na esteira exist
 esquema JSON versionado em `componentes/compartilhado/specs/`, e o orquestrador
 valida a saída de uma etapa contra o esquema **antes** de passar para a seguinte.
 
-| Esquema                                     | Fronteira                      | Campos obrigatórios                                                                                             |
-| :------------------------------------------ | :----------------------------- | :--------------------------------------------------------------------------------------------------------------- |
+| Esquema                                                          | Fronteira                      | Campos obrigatórios                                                                       |
+| :--------------------------------------------------------------- | :----------------------------- | :---------------------------------------------------------------------------------------- |
 | `handoff-planner-to-engine.schema.json`     | Planner → motor do fluxo       | `versao_schema`, `fluxo_alvo`, `metadados_projeto`, `quarteto_sine_qua_non`, `arquitetura_alvo`, `modulos_funcionais` |
 | `handoff-engine-to-master.schema.json`      | Motor → aidd-master            | `versao_schema`, `origem_engine`, `projeto_slug`, `slices_geradas`, `artefatos_frontend`, `testes_executados`     |
 | `handoff-master-to-enterprise.schema.json`  | aidd-master → aidd-enterprise  | `versao_schema`, `diretorio_projeto`, `servidor_fastapi_ok`, `quarteto_sine_qua_non_rotas`, `componentes_para_blindagem` |
@@ -649,7 +649,7 @@ diretório `gates/` contém, ao lado de cada portão relevante, o seu `test_g_*.
 | `G_HADOLINT`                       | Boas práticas OCI, segurança e sintaxe de todos os Dockerfiles                                   |
 | `G_TESTES_REAIS`                   | Roda `pytest` de verdade em cada `tools/<ferramenta>`; falha se qualquer suíte tiver `failed > 0` |
 | `G_DEPENDENCIAS_PIN_HASH`          | Pin exato (`==`), hash SHA-256 por pacote nos lockfiles e `pip install --require-hashes` no CI   |
-| `G_HONESTIDADE_ROTULO`             | Lei #9: termos de marketing proibidos em `print()`/`raise()` dos scripts de portão                |
+| `G_HONESTIDADE_ROTULO`             | Lei #8: termos de marketing proibidos em `print()`/`raise()` dos scripts de portão                |
 | `G_ARQUITETURA_DELIVERABLE`        | Conformidade com Clean Architecture/DDD via AST                                                  |
 | `G_ESCRITOR_ATOMICO`               | Uso de gravação atômica nos arquivos críticos do ecossistema                                     |
 | `G_TRANSACTION_LOG_LRU`            | Por AST + SHA-256: fonte única, destinos byte-idênticos, símbolos críticos e testes espelhados    |

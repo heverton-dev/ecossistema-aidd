@@ -514,9 +514,9 @@ disparos.
 **Passo a passo.**
 
 ```bash
-python scripts/preflight_llm.py                       # 0 = pronto, 1 = falta configuração
-python ecossistema.py generate "app de habitos" --pasta ../MEU-PROJETO --implementar-codigo
-python scripts/gates/G_TOKENOMICS.py --pasta ../MEU-PROJETO
+    python scripts/preflight_llm.py                       # 0 = pronto, 1 = falta configuração
+    python ecossistema.py generate "app de habitos" --pasta ../MEU-PROJETO --implementar-codigo # `implementação`
+    python scripts/gates/G_TOKENOMICS.py --pasta ../MEU-PROJETO
 ```
 
 O pré-voo verifica se há `LLM_MODEL` configurado **e** credencial do provedor antes de

@@ -25,22 +25,22 @@ O repositório tem **60 habilidades** nessa pasta e **14 comandos** em
 
 Um por ferramenta, cada um dono de exatamente um slash command:
 
-| Habilidade                    | Comando         | Ferramenta       |
-| :---------------------------- | :-------------- | :--------------- |
-| `aidd-forge-runner`           | `/forge`        | `aidd-forge`     |
-| `aidd-planner-runner`         | `/planner`      | `aidd-planner`   |
-| `aidd-generator-runner`       | `/generate`     | `aidd-generator` |
-| `aidd-factory-runner`         | `/factory`      | `aidd-factory`   |
-| `aidd-bridge-runner`          | `/bridge`       | `aidd-bridge`    |
-| `aidd-master-runner`          | `/master`       | `aidd-master`    |
-| `aidd-enterprise-runner`      | `/enterprise`   | `aidd-enterprise`|
-| `aidd-ops-runner`             | `/ops`          | `aidd-ops`       |
+| Habilidade                             | Comando                 | Ferramenta              |
+| :------------------------------------- | :---------------------- | :---------------------- |
+| `aidd-forge-runner`                    | `/forge`                | `aidd-forge`            |
+| `aidd-planner-runner`                  | `/planner`              | `aidd-planner`          |
+| `aidd-generator-runner`                | `/generate`             | `aidd-generator`        |
+| `aidd-factory-runner`                  | `/factory`              | `aidd-factory`          |
+| `aidd-bridge-runner`                   | `/bridge`               | `aidd-bridge`           |
+| `aidd-master-runner`                   | `/master`               | `aidd-master`           |
+| `aidd-enterprise-runner`               | `/enterprise`           | `aidd-enterprise`       |
+| `aidd-ops-runner`                      | `/ops`                  | `aidd-ops`              |
 
 ### Runners de fluxo
 
-`aidd-pure` e `fluxo-01-runner`; `aidd-open` e `fluxo-02-runner`; `aidd-bridge` e
-`fluxo-03-runner`. O par existe porque uma habilidade é a dona do slash command e a
-outra é o motor que executa a esteira.
+`aidd-pure` e `fluxo-01-runner`; `aidd-open` e `fluxo-02-runner`; `aidd-freedom` e
+`fluxo-03-runner` (com operações atômicas da engine via `aidd-bridge-runner`). O par
+existe porque uma habilidade é a dona do slash command e a outra é o motor que executa a esteira.
 
 ### Habilidades procedimentais de engenharia
 

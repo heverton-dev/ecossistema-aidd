@@ -3,7 +3,7 @@ title: "Ecossistema AIDD"
 subtitle: "Tratado completo: do macro ao micro"
 author:
   - Ecossistema AIDD — Governança Canônica
-date: "19 de setembro de 2026"
+date: "20 de setembro de 2026"
 lang: pt-BR
 toc: true
 toc-depth: 2
@@ -13,7 +13,7 @@ abstract: |
 
   Os três níveis são o **macro** (o ecossistema como organismo único: leis, governança,
   CLI unificada, portões de qualidade e distribuição multi-harness), o **meso** (os três
-  fluxos canônicos de criação — `aidd-pure`, `aidd-open` e `aidd-bridge` — e o fluxo de
+  fluxos canônicos de criação — `aidd-pure`, `aidd-open` e `aidd-freedom` [motor `aidd-bridge`] — e o fluxo de
   evolução `/melhoria → /plan → /orchestrate`) e o **micro** (cada uma das oito
   ferramentas homologadas, uma a uma).
 

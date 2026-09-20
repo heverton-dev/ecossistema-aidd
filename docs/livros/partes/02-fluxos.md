@@ -146,11 +146,12 @@ python ecossistema.py pure --nome "Clinica Vida" --slug clinica --dominio saude 
 python ecossistema.py open --nome "Central CRM" --slug crm --dominio vendas --pasta ../proj_crm
 
 # Fluxo 03 — libertação de low-code
-python ecossistema.py bridge --nome "App Lovable" --slug app --dominio geral \
-  --pasta ../proj_app --origem-export ../export-lovable
+python ecossistema.py freedom --nome "App Lovable" --slug app --dominio geral \
+  --pasta ../proj_app --origem ../export-lovable
 
 # Forma longa equivalente, com simulação segura
 python ecossistema.py run-fluxo --fluxo pure --nome "..." --slug ... --dominio ... --pasta ... --dry-run
+python ecossistema.py run-fluxo --fluxo freedom --nome "..." --slug ... --dominio ... --pasta ... --origem ...
 ```
 
 O `--dry-run` executa toda a lógica de decisão e validação de contrato sem escrever no
@@ -288,7 +289,7 @@ serviços curados, banco inicializado, `.env` resolvido, integração entre os s
 fatia a integração em VSA) e, no fim da esteira, **para o `aidd-ops`**, que provisiona a
 infraestrutura correspondente.
 
-# Capítulo 9 — Fluxo 03: `aidd-bridge` (libertação de low-code)
+# Capítulo 9 — Fluxo 03: `aidd-freedom` (motor `aidd-bridge` — libertação de low-code)
 
 ## 9.1 O que é
 

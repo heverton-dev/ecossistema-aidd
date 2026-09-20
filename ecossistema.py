@@ -4,8 +4,9 @@
 ECOSSISTEMA AIDD — CLI UNIFICADA DO META-REPOSITÓRIO
 =============================================================================
 Ponto único de entrada e orquestração do ecossistema-aidd.
-Roteia comandos para as 7 ferramentas integradas:
+Roteia comandos para as 8 ferramentas integradas:
   - forge      -> tools/aidd-forge
+  - planner    -> tools/aidd-planner
   - generate   -> tools/aidd-generator
   - master     -> tools/aidd-master
   - enterprise -> tools/aidd-enterprise
@@ -883,7 +884,6 @@ Comandos disponíveis:
   master <args>       Executa comandos do aidd-master (ex: master add-module faturamento)
   enterprise <args>   Executa comandos do aidd-enterprise (ex: enterprise inject skill auth)
   ops <args>          Executa o pipeline do aidd-ops (ex: ops "<texto>" --pasta <dest>)
-  bridge <args>       Executa comandos do aidd-bridge (scan, convert-db, merge, pack)
   factory <args>      Executa o pipeline do aidd-factory (ex: factory --plano <arq> --pasta <dest>)
   components sync|verify --tipo <tipo|todos> [--ferramenta <nome>] [--dry-run]
                       Sincroniza/verifica distribuicao fisica multi-harness de

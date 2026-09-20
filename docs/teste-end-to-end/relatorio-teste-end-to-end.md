@@ -749,7 +749,8 @@
   - `G_PLANNER_SCHEMA.py`: **PASS**
   - `G_PLANNER_SINE_QUA_NON.py`: **PASS**
   - `G_PLANNER_COERENCIA_FLUXO.py`: **PASS**
-- **Quality Gates Globais:** **100% PASS** (conforme `G_QUARTETO_SINE_QUA_NON.py` e `G_DISCIPLINA_TESTE_FERRAMENTA.py`).
+- **Quality Gates Globais:** **100% PASS** (conforme `G_QUARTETO_SINE_QUA_NON.py`, `G_ECOSSISTEMA_INTEGRIDADE.py` e `G_DISCIPLINA_TESTE_FERRAMENTA.py`).
+- **Data da Última Auditoria:** 20/09/2026 (Alinhamento taxonômico de AGENTS.md e inclusão oficial na esteira).
 
 
 

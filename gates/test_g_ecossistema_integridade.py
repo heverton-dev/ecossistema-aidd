@@ -20,6 +20,7 @@ CLI_PATH = os.path.join(
 
 TOOLS_REQUIRED = [
     "aidd-forge",
+    "aidd-planner",
     "aidd-generator",
     "aidd-master",
     "aidd-enterprise",
@@ -30,6 +31,7 @@ TOOLS_REQUIRED = [
 
 SKILLS_REQUIRED = [
     "aidd-forge-runner",
+    "aidd-planner-runner",
     "aidd-generator-runner",
     "aidd-master-runner",
     "aidd-enterprise-runner",
@@ -40,6 +42,7 @@ SKILLS_REQUIRED = [
 
 COMMANDS_REQUIRED = [
     "forge.md",
+    "planner.md",
     "generate.md",
     "master.md",
     "enterprise.md",

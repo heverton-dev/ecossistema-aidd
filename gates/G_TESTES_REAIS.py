@@ -62,6 +62,7 @@ def _anunciar_ao_vivo(mensagem):
 
 FERRAMENTAS = [
     "aidd-forge",
+    "aidd-planner",
     "aidd-generator",
     "aidd-master",
     "aidd-enterprise",
