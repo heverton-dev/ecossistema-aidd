@@ -123,6 +123,7 @@ O ecossistema dispõe de Quality Gates globais em gates/:
 - gates/G_LEI_DECLARA_PORTAO.py: Meta-Quality Gate que audita e bloqueia se qualquer Lei Inviolável em AGENTS.md não declarar explicitamente seu portão verificador ou 'sem gate' e sua respectiva força de enforcement (ISSUE-0010).
 - gates/G_CONTRACT_ROT.py: Audita deterministicamente a árvore de rotas e formatos de resposta expostos pelo servidor em execução, comparando-os com o contrato openapi.json commitado e bloqueando qualquer contract rot (divergência de status code, query param ou tipo de campo per Lei #10).
 - gates/G_ENV_ROT.py: Audita via AST todas as leituras de variáveis de ambiente no código-fonte (os.getenv, os.environ, process.env), bloqueando qualquer divergência em relação ao .env.example (prevenção de environment rot per Lei #9).
+- gates/G_IDIOMA_LEI_4.py: Audita deterministicamente a adesão ao inglês compacto nos caminhos centrais voltados a modelos e agentes (tickets, skills, prompts, núcleo), prevenindo gasto excessivo de tokens por prosa em português (enforcement da Lei #4).
 
 - **Execução unificada:** `python ecossistema.py audit` delega para `pre-commit run --all-files`.
 

@@ -17,29 +17,29 @@ every commit — or it is written down why it is not.
 
 ## Verified this session
 
-Os alertas fora dos diretórios diretos de teste foram inspecionados individualmente:
+Non-test directory alerts individually inspected:
 
-| Localização | Natureza Factual | Classificação |
+| Location | Factual Nature | Classification |
 |---|---|---|
-| `chaves/manifesto/ed25519_public.json:3` | Chave **pública** Ed25519 para verificação de assinaturas do manifesto CAPABILITIES.json | Falso positivo (chave pública não é segredo) |
-| `componentes/compartilhado/src-core/database_adapter.py:405` | Comentário de documentação de formato de string de conexão (exemplo genérico na docstring/comentário) | Falso positivo (comentário explicativo) |
-| `componentes/compartilhado/src-core/security.py:15` | Constante sentinela de segurança com verificação que aborta imediatamente se usada em ambiente produtivo | Falso positivo (sentinela de segurança local) |
-| `tools/aidd-bridge/aidd_bridge/cli.py:154` | Exemplo de formato de DSN em string de ajuda do argumento CLI | Falso positivo (help text) |
-| `tools/aidd-master/CAPABILITIES.json:29` | Hash SHA-256 do artefato de segurança MCP para integridade | Falso positivo (checksum de integridade) |
+| `chaves/manifesto/ed25519_public.json:3` | Public key Ed25519 for CAPABILITIES.json manifest verification | False positive (public key is not a secret) |
+| `componentes/compartilhado/src-core/database_adapter.py:405` | Documentation comment of connection string format (generic example in docstring) | False positive (explanatory comment) |
+| `componentes/compartilhado/src-core/security.py:15` | Security sentinel constant asserting immediate abort if executed in production | False positive (local security sentinel) |
+| `tools/aidd-bridge/aidd_bridge/cli.py:154` | DSN format example in CLI argument help string | False positive (help text) |
+| `tools/aidd-master/CAPABILITIES.json:29` | SHA-256 hash of MCP security artifact for integrity | False positive (integrity checksum) |
 
-Nenhum segredo real foi identificado no código-fonte. Portanto, nenhuma rotação de credenciais externas foi necessária.
+Zero real secrets identified in source code. No external credential rotation required.
 
-## Decisão de Rota: ROTA A (Reativar o Gate)
+## Route Decision: ROUTE A (Re-enable Gate)
 
-A **Rota A** foi adotada com sucesso:
-- O hook `g-segredos` teve `stages: [manual]` substituído por `always_run: true` em `.pre-commit-config.yaml`.
-- A causa raiz da divergência histórica (2026-09-08) foi esclarecida: `detect-secrets` exige que `.secrets.baseline` esteja staged ao rodar no hook (`raise_exception_if_baseline_file_is_unstaged`) e que o scan de atualização receba a árvore completa de arquivos rastreados para não podar baselines existentes durante o merge.
-- Execução do hook real tanto manual quanto com o hook reativado retornou `exit 0` (`Passed`).
+**Route A** successfully adopted:
+- The `g-segredos` hook had `stages: [manual]` replaced by `always_run: true` in `.pre-commit-config.yaml`.
+- Root cause of historical divergence (2026-09-08) resolved: `detect-secrets` requires `.secrets.baseline` to be staged when running in hook (`raise_exception_if_baseline_file_is_unstaged`) and the update scan to receive the full tree of tracked files so existing baselines are not pruned during merge.
+- Execution of real hook both manual and re-enabled returned `exit 0` (`Passed`).
 
 ## Acceptance criteria
 
 - [x] Each non-test alert classified false-positive or real-secret.
-- [x] Every real secret removed from source **and the credential rotated** — (nenhum segredo real no repositório; todos comprovados falsos positivos).
+- [x] Every real secret removed from source **and the credential rotated** — (zero real secrets in repository; all proven false positives).
 - [x] Real hook (`pre-commit run --hook-stage manual g-segredos --all-files`) exits 0.
-- [x] Chosen route (A or B) recorded with justification in `.pre-commit-config.yaml` (Rota A reativada).
+- [x] Chosen route (A or B) recorded with justification in `.pre-commit-config.yaml` (Route A re-enabled).
 - [x] Route A: a test commit proves the gate runs and produces no false positive inside the hook.

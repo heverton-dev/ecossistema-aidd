@@ -295,7 +295,7 @@ Rules:
 
  6 — disciplina de saída
 
-- [ ] **Session 16 — ISSUE-0012 (gate de idioma)**
+- [x] **Session 16 — ISSUE-0012 (gate de idioma)**
 
 Toca: `gates/`, `AGENTS.md` · Requer: sessão 15
 

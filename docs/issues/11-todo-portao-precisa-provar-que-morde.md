@@ -18,33 +18,33 @@ are decoration. This ticket finds them and fixes them.
 
 ## Verified this session
 
-**Todos os 26 gates em gates/ possuem teste de reprovação real (exit 1) comprovado:**
+**All 26 gates in gates/ carry proven failing-path tests (asserting exit 1):**
 
-| Grupo | Quantidade | Status |
+| Group | Quantity | Status |
 |---|---|---|
-| Gates sem teste inicial (Escopo 2) | 8 | 100% com teste de reprovação (exit 1) comprovado |
-| Gates com testes auditados (Escopo 3) | 18 | 100% com teste de reprovação (exit 1) comprovado |
-| Meta-Gate de Autoria (Escopo 4) | 1 (`G_PORTAO_PROVA_QUE_MORDE.py`) | 100% ativo, testado (`test_g_portao_prova_que_morde.py`), integrado ao pre-commit e `ecossistema.py` |
+| Gates without initial test (Scope 2) | 8 | 100% with proven failing-path test (exit 1) |
+| Gates with audited tests (Scope 3) | 18 | 100% with proven failing-path test (exit 1) |
+| Authoring Meta-Gate (Scope 4) | 1 (`G_PORTAO_PROVA_QUE_MORDE.py`) | 100% active, tested (`test_g_portao_prova_que_morde.py`), integrated in pre-commit and `ecossistema.py` |
 
 ## Scope
 
 1. [x] Write the rule: every gate ships with a test that **breaks the guarded condition
    and asserts exit 1**. Passing-path tests alone do not satisfy it.
-   - Entregue em `docs/protocolos/CONVENCAO-AUTORIA-GATES.md`, `AGENTS.md` (Lei #13) e `docs/protocolos/AGENTS-REFERENCIA-COMPLETA.md`.
+   - Delivered in `docs/protocolos/CONVENCAO-AUTORIA-GATES.md`, `AGENTS.md` (Law #13) and `docs/protocolos/AGENTS-REFERENCIA-COMPLETA.md`.
 2. [x] Apply to the 8 gates above. Start with `G_ZERO_HEADLESS` and `G_TESTES_REAIS`.
-   - Entregue com reprodução real via hooks e suíte pytest dedicada.
+   - Delivered with real reproduction via hooks and dedicated pytest suite.
 3. [x] Audit the 18 gates that **do** have tests: confirm each exercises the failing
-   path. A test asserting only exit 0 carries the same defect, just hidden. (Entregue na Sessão 2)
-   - Diagnosticados 10 gates com gaps de teste de reprovação ponta a ponta (eram puramente unitários ou assertavam exit 0) e 1 teste falso com asserção inútil (`G_ESCRITOR_ATOMICO` assertava `os.path.isfile`).
-   - Todos os 10 testes foram atualizados com asserções estritas de reprovação (`exit 1` / `code == 1` / `returncode == 1`).
-4. [x] Add a meta-gate enforcing rule 1 on any new gate. (Entregue na Sessão 2)
-   - Entregue `gates/G_PORTAO_PROVA_QUE_MORDE.py`, `gates/test_g_portao_prova_que_morde.py`, hook `g-portao-prova-que-morde` no `.pre-commit-config.yaml` e lista `_GATES_AUDIT` em `ecossistema.py`.
+   path. A test asserting only exit 0 carries the same defect, just hidden. (Delivered in Session 2)
+   - Diagnosed 10 gates with end-to-end failure test gaps (pure unit tests or asserted exit 0) and 1 fake test with useless assertion (`G_ESCRITOR_ATOMICO` asserted `os.path.isfile`).
+   - All 10 tests updated with strict failure assertions (`exit 1` / `code == 1` / `returncode == 1`).
+4. [x] Add a meta-gate enforcing rule 1 on any new gate. (Delivered in Session 2)
+   - Delivered `gates/G_PORTAO_PROVA_QUE_MORDE.py`, `gates/test_g_portao_prova_que_morde.py`, hook `g-portao-prova-que-morde` in `.pre-commit-config.yaml` and `_GATES_AUDIT` list in `ecossistema.py`.
 
 ## Acceptance criteria
 
 - [x] Rule written into the project gate-authoring convention (`docs/protocolos/CONVENCAO-AUTORIA-GATES.md`).
 - [x] Each of the 8 untested gates has a test that breaks the guarded condition and asserts exit 1.
-- [x] The 18 existing gate tests audited for a real failing-path assertion; gaps listed and corrigidos.
+- [x] The 18 existing gate tests audited for a real failing-path assertion; gaps listed and fixed.
 - [x] Every gate found unable to fail is recorded as a facade with its claim downgraded — never left asserting coverage it lacks (`G_ZERO_HEADLESS`).
 - [x] Meta-gate blocks any new gate shipped without a failing-path test (`gates/G_PORTAO_PROVA_QUE_MORDE.py`).
 - [x] `G_ZERO_HEADLESS` output stops claiming "zero risco" beyond what it actually tests.
