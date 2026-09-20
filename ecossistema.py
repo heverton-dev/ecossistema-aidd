@@ -751,6 +751,7 @@ _GATES_AUDIT = [
     "G_LEI_DECLARA_PORTAO.py",
     "G_CONTRACT_ROT.py",
     "G_ENV_ROT.py",
+    "G_SKILL_ROT.py",
 ]
 
 

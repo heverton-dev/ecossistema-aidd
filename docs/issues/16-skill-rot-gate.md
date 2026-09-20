@@ -1,9 +1,10 @@
 ---
 id: ISSUE-0016
 title: Portão de Skill Rot (skills apontando para o que não existe mais)
-status: ready-for-agent
+status: completed
 blocked_by: []
 created: 2026-09-19
+resolved: 2026-09-20
 source: docs/melhorias/19-09-2026_melhoria-taxonomia-prevencao-rot-ecossistema.md — category 8
 ---
 
@@ -39,9 +40,9 @@ real defect.
 
 ## Acceptance criteria
 
-- [ ] Every path, script and command referenced in `SKILL.md` bodies is resolved; exit 1 on any that does not.
-- [ ] Mirror strategy decided and documented; one real defect produces one reported failure, not six.
-- [ ] Run against the current repo; the resulting list is triaged individually, not bulk-suppressed.
-- [ ] The `sandeco-token-reduce` case is used as the regression fixture — if the gate does not flag it, the gate is insufficient.
-- [ ] Failing-path test, strict Law #13: rename a referenced script, execute the gate, assert exit 1.
-- [ ] Declared against its law in `AGENTS.md`, per ISSUE-0010 convention.
+- [x] Every path, script and command referenced in `SKILL.md` bodies is resolved; exit 1 on any that does not.
+- [x] Mirror strategy decided and documented; one real defect produces one reported failure, not six.
+- [x] Run against the current repo; the resulting list is triaged individually, not bulk-suppressed.
+- [x] The `sandeco-token-reduce` case is used as the regression fixture — if the gate does not flag it, the gate is insufficient.
+- [x] Failing-path test, strict Law #13: rename a referenced script, execute the gate, assert exit 1.
+- [x] Declared against its law in `AGENTS.md`, per ISSUE-0010 convention.

@@ -253,4 +253,12 @@ repos:
         language: system
         always_run: true
         pass_filenames: false
-        require_serial: true
+        require_serial: true
+
+      - id: g-skill-rot
+        name: "G_SKILL_ROT (prevencao de skill rot e resolucao estatica de paths e comandos)"
+        entry: python gates/G_SKILL_ROT.py
+        language: system
+        always_run: true
+        pass_filenames: false
+        require_serial: true

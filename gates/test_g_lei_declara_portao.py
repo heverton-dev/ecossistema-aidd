@@ -29,7 +29,33 @@ def test_gate_aprova_estado_atual_agents_md():
     assert code == 0
     assert len(erros) == 0
     assert total >= 12
-    assert len(conformes) == total
+    assert len(conformes) >= total
+
+
+def test_gate_aprova_multiplos_portoes_por_lei():
+    """Valida que uma lei pode declarar mais de um portão verificador (exit 0)."""
+    conteudo_valido = """
+## 2. Inviolable Laws
+
+1. **Tool Testing Discipline:** Protocolo de testes de ferramentas.
+   - Portão: gates/G_ENV_ROT.py (provado)
+   - Portão: gates/G_SKILL_ROT.py (provado)
+
+---
+"""
+    with tempfile.NamedTemporaryFile("w", suffix=".md", delete=False, encoding="utf-8") as f:
+        f.write(conteudo_valido)
+        temp_path = f.name
+
+    try:
+        code, erros, conformes, total = auditar_declaracoes_leis(temp_path)
+        assert code == 0
+        assert len(erros) == 0
+        assert total == 1
+        assert len(conformes) == 2
+    finally:
+        if os.path.exists(temp_path):
+            os.remove(temp_path)
 
 
 def test_gate_reprova_quando_lei_sem_declaracao():

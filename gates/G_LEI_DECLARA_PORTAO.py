@@ -80,19 +80,19 @@ def parse_leis_e_declaracoes(bloco_leis: str) -> List[Dict[str, any]]:
                 "numero": num,
                 "titulo": titulo,
                 "texto": linha.strip(),
-                "declaracao": None,
-                "raw_declaracao": None,
+                "declaracoes": [],
+                "raw_declaracoes": [],
             }
             continue
 
         if lei_atual is not None:
             decl_match = RE_GATE_DECLARATION.match(linha)
             if decl_match:
-                lei_atual["declaracao"] = {
+                lei_atual["declaracoes"].append({
                     "target": decl_match.group("target").strip(),
                     "strength": decl_match.group("strength").strip().lower(),
-                }
-                lei_atual["raw_declaracao"] = linha.strip()
+                })
+                lei_atual["raw_declaracoes"].append(linha.strip())
 
     if lei_atual is not None:
         leis.append(lei_atual)
@@ -100,7 +100,7 @@ def parse_leis_e_declaracoes(bloco_leis: str) -> List[Dict[str, any]]:
     return leis
 
 
-def auditar_declaracoes_leis(agents_path: str = AGENTS_FILE_DEFAULT) -> Tuple[int, List[str]]:
+def auditar_declaracoes_leis(agents_path: str = AGENTS_FILE_DEFAULT) -> Tuple[int, List[str], List[Tuple[int, str, str, str]], int]:
     """Audita a declaração de portão para todas as leis em AGENTS.md."""
     if not os.path.isfile(agents_path):
         return 1, [f"Arquivo de governança não encontrado: {agents_path}"]
@@ -125,44 +125,45 @@ def auditar_declaracoes_leis(agents_path: str = AGENTS_FILE_DEFAULT) -> Tuple[in
     for lei in leis:
         num = lei["numero"]
         titulo = lei["titulo"]
-        decl = lei["declaracao"]
+        decls = lei["declaracoes"]
 
-        if not decl:
+        if not decls:
             erros.append(f"Lei #{num} ({titulo}): Ausência de linha de declaração de portão.")
             continue
 
-        target = decl["target"]
-        strength = decl["strength"]
+        for decl in decls:
+            target = decl["target"]
+            strength = decl["strength"]
 
-        if strength not in VALID_STRENGTHS:
-            erros.append(
-                f"Lei #{num} ({titulo}): Força '{strength}' inválida. Esperado: provado, nao-provado ou sem-gate."
-            )
-            continue
-
-        # Caso sem gate
-        if normalizar_literal_sem_gate(target):
-            if strength != "sem-gate":
+            if strength not in VALID_STRENGTHS:
                 erros.append(
-                    f"Lei #{num} ({titulo}): Declara '{target}', portanto a força DEVE ser 'sem-gate', mas foi '{strength}'."
+                    f"Lei #{num} ({titulo}): Força '{strength}' inválida. Esperado: provado, nao-provado ou sem-gate."
                 )
-            else:
-                conformes.append((num, titulo, target, strength))
-            continue
+                continue
 
-        # Caso com portão declarado
-        gate_path = os.path.normpath(os.path.join(ROOT_DIR, target))
-        if not os.path.isfile(gate_path):
-            erros.append(f"Lei #{num} ({titulo}): Portão declarado não existe no disco: '{target}'.")
-            continue
+            # Caso sem gate
+            if normalizar_literal_sem_gate(target):
+                if strength != "sem-gate":
+                    erros.append(
+                        f"Lei #{num} ({titulo}): Declara '{target}', portanto a força DEVE ser 'sem-gate', mas foi '{strength}'."
+                    )
+                else:
+                    conformes.append((num, titulo, target, strength))
+                continue
 
-        if strength == "sem-gate":
-            erros.append(
-                f"Lei #{num} ({titulo}): Portão '{target}' existe, mas foi marcado como 'sem-gate'."
-            )
-            continue
+            # Caso com portão declarado
+            gate_path = os.path.normpath(os.path.join(ROOT_DIR, target))
+            if not os.path.isfile(gate_path):
+                erros.append(f"Lei #{num} ({titulo}): Portão declarado não existe no disco: '{target}'.")
+                continue
 
-        conformes.append((num, titulo, target, strength))
+            if strength == "sem-gate":
+                erros.append(
+                    f"Lei #{num} ({titulo}): Portão '{target}' existe, mas foi marcado como 'sem-gate'."
+                )
+                continue
+
+            conformes.append((num, titulo, target, strength))
 
     return (0 if not erros else 1), erros, conformes, len(leis)
 

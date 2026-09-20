@@ -24,10 +24,10 @@ Esta skill formaliza e padroniza a criacao de iniciativas de plano em `docs/plan
 ## Referencias Canonicas no Repositorio
 
 Consulte a estrutura e tom dos 4 exemplos reais ja estabelecidos no ecossistema:
-- `docs/planos/feitos/PLAN-0001_04-09-2026-evolucao-notas-auditoria/00-PROCESSO-E-DECISOES.md`
-- `docs/planos/feitos/PLAN-0003_05-09-2026-refinamento-notas-auditoria/00-PROCESSO-E-DECISOES.md`
+- `docs/planos/feitos/PLAN-0001-evolucao-notas-auditoria/00-PROCESSO-E-DECISOES.md`
+- `docs/planos/feitos/PLAN-0003-refinamento-notas-auditoria/00-PROCESSO-E-DECISOES.md`
 - `docs/planos/feitos/PLAN-0007-testes-completos-ecossistema/00-PROCESSO-E-DECISOES.md`
-- `docs/planos/feitos/PLAN-0005_06-09-2026-skill-gerador-planos-auditoria/00-PROCESSO-E-DECISOES.md`
+- `docs/planos/feitos/PLAN-0005-skill-gerador-planos/00-PROCESSO-E-DECISOES.md`
 
 ## Convencao de Nome das Iniciativas (obrigatoria)
 

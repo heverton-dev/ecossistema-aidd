@@ -35,9 +35,9 @@
 
 | # | Ticket | Nota |
 |---|---|---|
-| 0014 | [Contract Rot](14-contract-rot-gate.md) | Rotas reais vs. contrato escrito |
-| 0015 | [Env Rot](15-env-rot-gate.md) | Variáveis exigidas vs. `.env.example` |
-| 0016 | [Skill Rot](16-skill-rot-gate.md) | Teria pego o caso da `sandeco` sozinho |
+| 0014 | [Contract Rot](14-contract-rot-gate.md) | Rotas reais vs. contrato escrito *(Concluído)* |
+| 0015 | [Env Rot](15-env-rot-gate.md) | Variáveis exigidas vs. `.env.example` *(Concluído)* |
+| 0016 | [Skill Rot](16-skill-rot-gate.md) | Teria pego o caso da `sandeco` sozinho *(Concluído)* |
 | 0017 | [Migration Rot](17-migration-rot-gate.md) | Migração que não volta atrás |
 
 ## 🟢 Disciplina de saída

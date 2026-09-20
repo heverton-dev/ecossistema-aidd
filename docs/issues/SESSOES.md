@@ -244,7 +244,7 @@ Rules:
 - Stop and ask before any commit.
 ```
 
-- [ ] **Session 14 — ISSUE-0016 (Skill Rot)**
+- [x] **Session 14 — ISSUE-0016 (Skill Rot)**
 
 Toca: `gates/`, `AGENTS.md` · Requer: sessão 13
 

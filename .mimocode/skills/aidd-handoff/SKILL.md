@@ -10,7 +10,7 @@ Execute this skill when closing a session, rotating context, or transferring wor
 ## Protocol Invariants
 
 1. **Artifact Destination:**
-   - Save the serialized handoff to `secoes/sessao-<date>-<slug>.md`.
+   - Save the serialized handoff to `docs/secoes/sessao-<date>-<slug>.md`.
 2. **Mandatory Handoff Sections:**
    - **Initial Goal:** What was originally requested.
    - **Completed Work:** Explicit list of created/modified files and verified test suites.
