@@ -40,7 +40,7 @@ def test_orquestrador_dry_run_fluxo_1(tmp_path):
     assert orq.nome_fluxo == "aidd-pure"
 
 
-def test_orquestrador_aceita_nomes_canonicos_pure_open_bridge(tmp_path):
+def test_orquestrador_aceita_nomes_canonicos_pure_open_freedom_bridge(tmp_path):
     orq_pure = OrquestradorSincrono(fluxo="pure", nome="P", slug="p", dominio="d", pasta=str(tmp_path/"p"), dry_run=True)
     assert orq_pure.fluxo == 1
     assert orq_pure.nome_fluxo == "aidd-pure"
@@ -49,9 +49,13 @@ def test_orquestrador_aceita_nomes_canonicos_pure_open_bridge(tmp_path):
     assert orq_open.fluxo == 2
     assert orq_open.nome_fluxo == "aidd-open"
 
+    orq_freedom = OrquestradorSincrono(fluxo="freedom", nome="F", slug="f", dominio="d", pasta=str(tmp_path/"f"), dry_run=True)
+    assert orq_freedom.fluxo == 3
+    assert orq_freedom.nome_fluxo == "aidd-freedom"
+
     orq_bridge = OrquestradorSincrono(fluxo="bridge", nome="B", slug="b", dominio="d", pasta=str(tmp_path/"b"), dry_run=True)
     assert orq_bridge.fluxo == 3
-    assert orq_bridge.nome_fluxo == "aidd-bridge"
+    assert orq_bridge.nome_fluxo == "aidd-freedom"
 
 
 

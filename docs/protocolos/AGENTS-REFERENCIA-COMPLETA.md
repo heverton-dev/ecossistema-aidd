@@ -66,9 +66,14 @@ skills respondendo ao mesmo comando, com regras opostas, foi a causa direta das
 - **Regras fixas da via ORCA:** carregar o manual da versão instalada (`orca skills get orca-cli`) antes de qualquer comando; mesa independente (`--no-parent`) por padrão, filha só a pedido explícito; **nunca** lançar harness com `--resume <id-de-sessão>`; esperar `tui-idle` com `satisfied: true` antes de enviar o prompt; nunca reenviar no silêncio.
 - **CLI Equivalente:** python ecossistema.py orchestrate [plano]
 
+### /freedom <origem> [nome]
+- **Skill:** skills/aidd-freedom (ou skills/fluxo-03-runner)
+- **Ação:** Dispara o Fluxo 03 (`aidd-freedom`) da Tríade Canônica: desacoplamento e libertação de projetos Low-Code (Lovable, v0, Bolt) para infraestrutura própria e Monólito Modular VSA.
+- **CLI Equivalente:** python ecossistema.py freedom (ou python ecossistema.py run-fluxo --fluxo freedom)
+
 ### /bridge [comando]
 - **Skill:** skills/aidd-bridge-runner
-- **Ação:** Extrai, unifica e empacota aplicações Low-Code (Lovable, v0, Bolt) para VPS própria com PostgreSQL puro, PostgREST e Docker Compose.
+- **Ação:** Aciona operações atômicas da ferramenta aidd-bridge: scan, convert-db, merge, pack e migrate-auth.
 - **CLI Equivalente:** python ecossistema.py bridge [scan|convert-db|merge|pack]
 
 ### Skills Procedimentais de Engenharia (Anti-Vibe Coding)
@@ -112,7 +117,7 @@ O ecossistema dispõe de Quality Gates globais em gates/:
 - gates/G_DRIFT_ANALYZER.py: Analisa via AST a duplicidade e redundância estrutural de funções inter-fatias VSA (features/dominio) para orientar a extração canônica ao núcleo compartilhado (core).
 - gates/G_PROTOTYPE_REWRITE.py: Garante o isolamento determinístico da pasta sandbox/ e impede a promoção de protótipos ou PoCs para src/ sem suíte de testes TDD espelhada.
 - gates/G_LIVRO_EVIDENCIA.py: Audita o livro-texto gerado para um projeto (etapa 8a dos fluxos) — manifesto válido, rastreabilidade presente em toda parte de conteúdo, todo arquivo citado como fonte existente em disco, zero marcador de trabalho inacabado, procedência dos artefatos lidos e declaração explícita dos ausentes. Roda via `python ecossistema.py livro <pasta>` ou `python gates/G_LIVRO_EVIDENCIA.py --projeto <pasta>`.
-- gates/G_ORQUESTRADOR_SINCRONO.py: Audita a integridade do orquestrador síncrono da Tríade Canônica (aidd-pure, aidd-open, aidd-bridge), CLI ecossistema.py run-fluxo e conformidade com schemas formais de handoff.
+- gates/G_ORQUESTRADOR_SINCRONO.py: Audita a integridade do orquestrador síncrono da Tríade Canônica (aidd-pure, aidd-open, aidd-freedom), CLI ecossistema.py run-fluxo e conformidade com schemas formais de handoff.
 - gates/G_DOCS_ROT.py: Audita deterministicamente a documentação ativa, prevenindo docs rot, links quebrados e planos soltos fora dos buckets canônicos.
 - gates/G_PORTAO_PROVA_QUE_MORDE.py: Meta-Quality Gate que audita e bloqueia qualquer gate novo ou modificado entregue sem teste automatizado que prove que ele reprova (exit 1 per Lei #13).
 - gates/G_LEI_DECLARA_PORTAO.py: Meta-Quality Gate que audita e bloqueia se qualquer Lei Inviolável em AGENTS.md não declarar explicitamente seu portão verificador ou 'sem gate' e sua respectiva força de enforcement (ISSUE-0010).

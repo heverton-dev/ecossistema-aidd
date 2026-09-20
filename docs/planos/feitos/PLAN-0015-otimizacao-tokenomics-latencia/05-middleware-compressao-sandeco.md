@@ -1,8 +1,8 @@
 # Item 5 — middleware-compressao-sandeco-token-reduce
 
 > **Escopo:** Integrar a skill sandeco-token-reduce como middleware opcional de pipeline para compressao de handoffs de prosa longa (Fase 1->2 e documentacao), com preflight de verificacao e fallback deterministico.
-> **Status:** [CONCLUIDO]
-> **Auditoria por reproducao real (11-09-2026):** `python -m pytest tests/test_compressor_middleware.py -q` executado em `tools/aidd-generator/`, exit code 0. Prova: tests/test_compressor_middleware.py + tests/test_preflight_llm.py
+> **Status:** [REVOGADO / REMOVIDO — ISSUE-0008 Rota B]
+> **Auditoria por reproducao real (19-09-2026 / 20-09-2026 — ISSUE-0008):** Retificado. A economia alegada (~10-12k tokens) NÃO ocorria em produção: (1) nenhum script do pipeline invocava `compressor_middleware.py`; (2) a checagem rodava no Python do sistema onde `llmlingua` não estava instalada, caindo silenciosamente no fallback de truncamento. Decidido por Rota B na ISSUE-0008: middleware, testes, skill e manifestos foram completamente removidos para eliminar dependência ociosa e sanar alegação irreal de economia per Lei #8 (Label Honesty).
 
 ---
 

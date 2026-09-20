@@ -1,9 +1,10 @@
 ---
 id: ISSUE-0007
 title: SagaOrchestrator — ligar ou remover
-status: ready-for-agent
+status: closed
 blocked_by: []
 created: 2026-09-19
+resolved: 2026-09-20
 source: open-decision sweep 2026-09-19 / PLAN-0025 item 10
 ---
 
@@ -12,7 +13,7 @@ source: open-decision sweep 2026-09-19 / PLAN-0025 item 10
 **Deliver:** a recorded decision on a class that exists, is tested, and is never
 used — so it stops surfacing in every dead-code audit.
 
-**Blocked by:** nothing. Start now.
+**Resolution:** Route A executed. `SagaOrchestrator` e `SagaStep` removidos de todas as ferramentas, templates, manifestos e testes unitários. Suítes passam e `G_DRIFT_NUCLEO_COMPARTILHADO` aprovado.
 
 ## Verified this session
 
@@ -40,7 +41,7 @@ never sells distributed transaction management. Far less urgent.
 
 ## Acceptance criteria
 
-- [ ] Route chosen and justified in PLAN-0025 item 10.
-- [ ] Route A: class, mirrors and test removed; full suite still passes; master/enterprise drift gate still approves.
-- [ ] Route B: record of where and when it gets wired.
-- [ ] Dead-code inventory updated so this stops resurfacing.
+- [x] Route chosen and justified in PLAN-0025 item 10 (Rota A escolhida pelo comitê).
+- [x] Route A: class, mirrors and test removed; full suite still passes; master/enterprise drift gate still approves.
+- [x] Route B: N/A (Rota A executada).
+- [x] Dead-code inventory updated so this stops resurfacing.

@@ -12,6 +12,8 @@
 | 0011 | [Todo portão precisa provar que morde](11-todo-portao-precisa-provar-que-morde.md) |
 | 0018 | [Reconciliar as 6 categorias duplicadas](18-reconciliar-taxonomia-rot.md) |
 | 0019 | [Endurecer o cobrador da Lei #13](19-endurecer-cobrador-da-lei-13.md) |
+| 0007 | [SagaOrchestrator: ligar ou remover](07-saga-orchestrator-ligar-ou-remover.md) |
+| 0008 | [Compressor sandeco: ligar ou remover](08-compressor-sandeco-ligar-ou-remover.md) |
 
 ## 🔴 Prioridade — a cobrança está frouxa
 
@@ -26,8 +28,6 @@
 |---|---|
 | 0001 | [Faxina de registros desatualizados](01-faxina-registros-desatualizados.md) |
 | 0004 | [Zerar 18 violações de arquitetura](04-zerar-violacoes-arquitetura-e-religar-trava.md) |
-| 0007 | [SagaOrchestrator: ligar ou remover](07-saga-orchestrator-ligar-ou-remover.md) |
-| 0008 | [Compressor sandeco: ligar ou remover](08-compressor-sandeco-ligar-ou-remover.md) |
 | 0009 | [Barreira contra agentes paralelos](09-barreira-agentes-paralelos.md) |
 | 0005 | [Dividir o AGENTS.md](05-dividir-agents-md.md) — bloqueado por 0001 |
 

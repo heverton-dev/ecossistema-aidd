@@ -52,7 +52,7 @@ Diagnostico rapido → Definicao de Pronto checavel → Prompt de Execucao autoc
 | 2 | orcador-de-contexto-handoff-fase-01-para-02 | ✅ Concluido | `02-orcador-contexto-handoff.md` |
 | 3 | reparo-json-deterministico-zero-llm | ✅ Concluido | `03-reparo-json-deterministico.md` |
 | 4 | hermeticidade-verificavel-sessoes-e-rotulagem-telemetria | ✅ Concluido | `04-hermeticidade-verificavel-sessoes.md` |
-| 5 | middleware-compressao-sandeco-token-reduce | ✅ Concluido | `05-middleware-compressao-sandeco.md` |
+| 5 | middleware-compressao-sandeco-token-reduce | ❌ Removido (ISSUE-0008 Rota B) | `05-middleware-compressao-sandeco.md` |
 | 6 | orcador-handoff-fase-06-para-07-mapa-secoes | ✅ Concluido | `06-orcador-handoff-fase.md` |
 | 7 | orcamento-fases-pipeline-e-alerta-desvio | ✅ Concluido | `07-orcamento-fases-pipeline.md` |
 

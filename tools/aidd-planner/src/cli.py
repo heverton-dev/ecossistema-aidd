@@ -33,6 +33,10 @@ MAPA_FLUXOS = {
     "1": "fluxo_01_generator",
     "2": "fluxo_02_factory",
     "3": "fluxo_03_bridge",
+    "pure": "fluxo_01_generator",
+    "open": "fluxo_02_factory",
+    "freedom": "fluxo_03_bridge",
+    "bridge": "fluxo_03_bridge",
     "fluxo_01_generator": "fluxo_01_generator",
     "fluxo_02_factory": "fluxo_02_factory",
     "fluxo_03_bridge": "fluxo_03_bridge",
@@ -43,7 +47,7 @@ def cmd_init(args: argparse.Namespace) -> int:
     fluxo_chave = str(args.fluxo).lower()
     fluxo_alvo = MAPA_FLUXOS.get(fluxo_chave)
     if not fluxo_alvo:
-        print(f"[ERRO] Fluxo inválido: '{args.fluxo}'. Use 1 (generator), 2 (factory) ou 3 (bridge).", file=sys.stderr)
+        print(f"[ERRO] Fluxo inválido: '{args.fluxo}'. Use 1 (pure), 2 (open) ou 3 (freedom).", file=sys.stderr)
         return 1
 
     nome = args.nome or "Meu Projeto AIDD"

@@ -1,7 +1,7 @@
 # Camada Servicos — Regras de Logica de Negocio
 
 > **Escopo:** Toda logica de negocio em `services.py` dos modulos (`src/modules/<dominio>/`).
-> **Referencia:** `templates/core/result.py`, `templates/core/events.py`, `templates/core/circuit_breaker.py`, `templates/core/saga.py`.
+> **Referencia:** `templates/core/result.py`, `templates/core/events.py`, `templates/core/circuit_breaker.py`.
 
 ---
 
@@ -90,42 +90,7 @@ Regras estritas de isolamento:
 
 ---
 
-## 5. Saga Pattern para Transacoes Distribuidas
-
-Operacoes que envolvem multiplos modulos DEVEM usar Saga Orchestration:
-
-```python
-from src.core.saga import SagaOrchestrator, SagaStep
-
-saga = SagaOrchestrator(steps=[
-    SagaStep(
-        name="reservar_estoque",
-        execute=lambda ctx: estoque_service.reservar(ctx["pedido"]),
-        compensate=lambda ctx: estoque_service.liberar(ctx["pedido"])
-    ),
-    SagaStep(
-        name="processar_pagamento",
-        execute=lambda ctx: pagamento_service.cobrar(ctx["pedido"]),
-        compensate=lambda ctx: pagamento_service.estornar(ctx["pedido"])
-    ),
-    SagaStep(
-        name="confirmar_pedido",
-        execute=lambda ctx: pedido_service.confirmar(ctx["pedido"]),
-        compensate=lambda ctx: pedido_service.cancelar(ctx["pedido"])
-    ),
-])
-
-resultado = saga.run({"pedido": pedido_data})
-```
-
-- Cada `SagaStep` tem `execute` (acao) e `compensate` (rollback).
-- Em caso de falha, compensacoes sao executadas em ordem reversa.
-- `saga_id` rastreavel em todos os logs e eventos.
-- Sagas longas (>30s) DEVEM persistir estado no banco via tabela `_saga_state`.
-
----
-
-## 6. Estrutura Padrao de um Service
+## 5. Estrutura Padrao de um Service
 
 ```python
 class ModuloService:
@@ -158,7 +123,7 @@ class ModuloService:
 
 ---
 
-## 7. Validacao de Entrada
+## 6. Validacao de Entrada
 
 - Validacao DEVE ocorrer antes de qualquer operacao de persistencia.
 - Usar `Result.fail()` com codigo especifico para cada tipo de erro.
@@ -178,6 +143,5 @@ class ModuloService:
 | 4 | EventBus para comunicacao cross-module | G_CONTRACTS |
 | 5 | Outbox event na mesma transacao da mutacao | G_TESTES |
 | 6 | Handlers idempotentes | G_TESTES |
-| 7 | Saga com compensacao para transacoes distribuidas | G_QUALIDADE |
-| 8 | Campos de auditoria em toda entidade | G_ESTRUTURA |
-| 9 | Validacao de entrada antes de persistencia | G_SEGURANCA |
+| 7 | Campos de auditoria em toda entidade | G_ESTRUTURA |
+| 8 | Validacao de entrada antes de persistencia | G_SEGURANCA |

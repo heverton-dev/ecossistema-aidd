@@ -41,16 +41,6 @@
         ".gemini/hooks/",
         ".github/code-review-graph.instruction.md"
       ]
-    },
-    "sandeco-token-reduce": {
-      "pacote": "llmlingua",
-      "instalar": "python componentes/compartilhado/skills/sandeco-token-reduce/scripts/setup.py",
-      "verificar": "componentes/compartilhado/skills/sandeco-token-reduce/.venv",
-      "sha256": null,
-      "sha256_nota": "N/A: 'verificar' aponta para um diretorio (.venv), nao um arquivo unico. Um .venv contem caminhos absolutos do host e binarios especificos de plataforma, entao um hash fixo de diretorio diverge em toda maquina mesmo sem adulteracao — nao seria uma verificacao real. Para travar de verdade os pacotes pip instalados aqui (llmlingua, anthropic), o caminho correto e o mesmo padrao de lockfile com --generate-hashes usado em requirements.lock (ver 04-pin-exato-hashes.md), aplicado a esta skill em um item futuro.",
-      "gitignore": [
-        "*/skills/sandeco-token-reduce/.venv/"
-      ]
     }
   },
   "mcps": {

@@ -26,6 +26,17 @@
   - SHA-256 de ambos os arquivos: `514fcd432733329b3191bb98dc309b6f4de7df8fb885ce2e4f19d727a36df045`.
 - **Classificação:** Espelho canônico de template — mantido conforme projetado para alimentar scaffolds enterprise.
 
+### Resolução Comprovada: SagaOrchestrator (ISSUE-0007)
+
+- **Veredito:** `SagaOrchestrator` e `SagaStep` identificados como scaffolding residual sem uso no ecossistema (instanciados exclusivamente no próprio teste unitário, ausentes dos templates de geração de servidor).
+- **Decisão:** Rota A (Remoção total).
+- **Ações executadas:**
+  1. Removidos `componentes/compartilhado/src-core/saga.py`, `tools/aidd-master/src/core/saga.py`, `tools/aidd-enterprise/src/core/saga.py`.
+  2. Removidos espelhos em `templates/core/saga.py`, `templates/v2/saga.py` (master e enterprise) e `tools/aidd-factory/templates/vsa/saga.py`.
+  3. Removidos de `MANIFEST.json` de `src-core` e `baseline_nucleo_compartilhado.json` atualizado.
+  4. Removidos testes unitários em `tests/unit/test_cqrs_local_first.py` e referências nos geradores/templates de regras.
+  5. Suítes de testes aprovadas e `G_DRIFT_NUCLEO_COMPARTILHADO` aprovado com 100% de paridade.
+
 ## Definição de Pronto
 
 1. Pra cada um dos 3 símbolos, reproduzir a checagem (`code-review-graph query --pattern callers_of --target <símbolo>` ou equivalente) confirmando de novo que não há chamador — não confiar cegamente no scan anterior sem reproduzir.

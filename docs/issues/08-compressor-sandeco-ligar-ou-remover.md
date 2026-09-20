@@ -1,9 +1,10 @@
 ---
 id: ISSUE-0008
 title: Compressor de prosa (skill sandeco) — ligar de verdade ou remover
-status: ready-for-agent
+status: closed
 blocked_by: []
 created: 2026-09-19
+resolved: 2026-09-20
 source: open-decision sweep 2026-09-19 / PLAN-0015 item 5, PLAN-0018
 ---
 
@@ -12,7 +13,7 @@ source: open-decision sweep 2026-09-19 / PLAN-0015 item 5, PLAN-0018
 **Deliver:** either the project really saves tokens by compressing prose, or it
 stops carrying a heavy dependency that currently does nothing at all.
 
-**Blocked by:** nothing. Start now.
+**Resolution:** Route B executed. Skill `sandeco-token-reduce`, `compressor_middleware.py`, seus testes e manifestos foram removidos. Alegação irreal em PLAN-0015 retificada e item de pinning em PLAN-0018 encerrado por remoção.
 
 ## Verified this session
 
@@ -52,9 +53,9 @@ demolished. If the route is removal, that item dies with it.
 
 ## Acceptance criteria
 
-- [ ] Route chosen and justified.
-- [ ] Route A: real measured reduction at one or more pipeline points, before/after numbers — no estimates. Versions pinned with hashes.
-- [ ] Route A: a test fails if compression silently falls back due to a missing library. The current silent-failure mode must not return.
-- [ ] Route B: skill, code, test and manifest entries removed; full suite and `dependencia verify` still pass.
-- [ ] Either route: PLAN-0015 item 5 stops recording an unrealised saving.
-- [ ] PLAN-0018 pinning item closed with this decision's outcome.
+- [x] Route chosen and justified (Rota B escolhida pelo comitê).
+- [ ] Route A: N/A (Rota B executada).
+- [ ] Route A: N/A.
+- [x] Route B: skill, code, test and manifest entries removed; full suite and `dependencia verify` still pass.
+- [x] Either route: PLAN-0015 item 5 stops recording an unrealised saving.
+- [x] PLAN-0018 pinning item closed with this decision's outcome.

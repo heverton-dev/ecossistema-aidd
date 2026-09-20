@@ -48,7 +48,17 @@ except ImportError:
     )
     if os.path.isdir(_dc_dir) and _dc_dir not in sys.path:
         sys.path.insert(0, _dc_dir)
-    from design_catalog import resolver_paleta_projeto, hex_para_rgb_str, clarear_hex, escolher_paleta
+    try:
+        from design_catalog import resolver_paleta_projeto, hex_para_rgb_str, clarear_hex, escolher_paleta
+    except ImportError:
+        def resolver_paleta_projeto(nome):
+            return {"nome": "indigo", "primaria": "#4f46e5", "accent": "#06b6d4", "classe_tailwind": "indigo", "descricao": "Fallback"}
+        def hex_para_rgb_str(h):
+            return "79, 70, 229"
+        def clarear_hex(h, f=0.3):
+            return h
+        def escolher_paleta(nome):
+            return resolver_paleta_projeto(nome)
 
 if hasattr(sys.stdout, 'reconfigure'):
     sys.stdout.reconfigure(encoding='utf-8', errors='replace')
@@ -495,7 +505,7 @@ def _copy_shared_kernel(templates_v2: str, core_dir: str, shared_ui_dir: str, sh
     core_files = [
         "database.py", "events.py", "outbox_worker.py", "openapi.py", "security.py",
         "webhooks.py", "mcp_server.py", "mcp_repository.py", "result.py", "jobs.py",
-        "metrics.py", "cqrs.py", "saga.py", "circuit_breaker.py", "token_revocation.py",
+        "metrics.py", "cqrs.py", "circuit_breaker.py", "token_revocation.py",
         "local_first.py", "logs.py",
     ]
     for cf in core_files:
@@ -659,6 +669,14 @@ def _copy_gates_and_automation(
     if os.path.isfile(escritor_src):
         shutil.copyfile(escritor_src, os.path.join(target_scripts_dir, "escritor_atomico.py"))
         print(f"  [+] Script: escritor_atomico.py")
+
+    # Copiar design_catalog.py (dependência de compose_suite) para scripts/
+    dc_src = os.path.join(scripts_dir, "..", "..", "..", "componentes", "compartilhado", "src-core", "design_catalog.py")
+    if not os.path.isfile(dc_src):
+        dc_src = os.path.join(scripts_dir, "design_catalog.py")
+    if os.path.isfile(dc_src):
+        shutil.copyfile(dc_src, os.path.join(target_scripts_dir, "design_catalog.py"))
+        print(f"  [+] Script: design_catalog.py")
 
     cookiecutter_templates_src = os.path.join(skill_root, "templates", "cookiecutter-scaffold")
     cookiecutter_templates_dst = os.path.join(target_dir, "templates", "cookiecutter-scaffold")

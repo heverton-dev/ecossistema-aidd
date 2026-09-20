@@ -3,15 +3,17 @@ name: aidd-bridge
 description: Dispara o Fluxo 03 (Low-Code / Apps Unificadas | Slash: /bridge) da Tríade Canônica. Desmonte de lock-in Lovable/v0/Bolt e migração PostgreSQL.
 ---
 
-# aidd-bridge — Fluxo 03 Canônico (Low-Code / Apps Unificadas | /bridge)
+# aidd-bridge — Alias do Fluxo 03 Canônico (Novo comando canônico: /freedom)
 
-Dispara e conduz o Fluxo 03 (`aidd-bridge`) da Tríade Canônica de criação de software no Ecossistema AIDD:
+> **Aviso de Taxonomia:** O comando oficial e canônico para disparar o Fluxo 03 completo da Tríade é **`/freedom`** (skill `aidd-freedom` ou CLI `python ecossistema.py freedom`). O comando `/bridge` é reservado para as operações atômicas da ferramenta (skill `aidd-bridge-runner`).
+
+Dispara e conduz o Fluxo 03 (`aidd-freedom`) da Tríade Canônica de criação de software no Ecossistema AIDD:
 `[FORGE -> PLANNER] -> BRIDGE -> [MASTER -> ENTERPRISE -> OPS]`
 
 ## Gatilhos Universais:
-- Comando Slash: `/bridge <nome_ou_ideia> --origem <pasta_export>`
-- Invocação por Skill: `/aidd-bridge` ou skill `aidd-bridge`
-- Linguagem Natural: "desacoplar app lovable", "migrar v0 ou bolt para postgresql", "empacotar projeto low-code"
+- Comando Slash: `/freedom <nome_ou_ideia> --origem <pasta_export>` (ou `/bridge` por compatibilidade)
+- Invocação por Skill: `/aidd-freedom` ou `/aidd-bridge`
+- Linguagem Natural: "libertar app lovable", "desacoplar app low-code", "migrar v0 ou bolt para postgresql", "empacotar projeto low-code"
 
 ## Como Executar
 

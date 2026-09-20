@@ -36,13 +36,13 @@ SPECS_DIR = ROOT_DIR / "componentes" / "compartilhado" / "specs"
 MAPA_FLUXOS = {
     1: 1, "1": 1, "pure": 1, "aidd-pure": 1,
     2: 2, "2": 2, "open": 2, "aidd-open": 2,
-    3: 3, "3": 3, "bridge": 3, "aidd-bridge": 3,
+    3: 3, "3": 3, "freedom": 3, "aidd-freedom": 3, "bridge": 3, "aidd-bridge": 3,
 }
 
 NOMES_CANONICOS_FLUXOS = {
     1: "aidd-pure",
     2: "aidd-open",
-    3: "aidd-bridge"
+    3: "aidd-freedom"
 }
 
 
@@ -65,7 +65,7 @@ class OrquestradorSincrono:
         chave = str(fluxo).lower().strip() if not isinstance(fluxo, int) else fluxo
         fluxo_normalizado = MAPA_FLUXOS.get(chave)
         if not fluxo_normalizado:
-            raise ValueError(f"Fluxo inválido: '{fluxo}'. Deve ser 'pure' (1), 'open' (2) ou 'bridge' (3).")
+            raise ValueError(f"Fluxo inválido: '{fluxo}'. Deve ser 'pure' (1), 'open' (2) ou 'freedom'/'bridge' (3).")
         self.fluxo = fluxo_normalizado
         self.nome_fluxo = NOMES_CANONICOS_FLUXOS[self.fluxo]
         self.nome = nome
@@ -499,8 +499,8 @@ def main():
         "--fluxo",
         type=str,
         required=True,
-        choices=["1", "2", "3", "pure", "open", "bridge", "aidd-pure", "aidd-open", "aidd-bridge"],
-        help="pure (ou 1), open (ou 2), bridge (ou 3)"
+        choices=["1", "2", "3", "pure", "open", "freedom", "bridge", "aidd-pure", "aidd-open", "aidd-freedom", "aidd-bridge"],
+        help="pure (ou 1), open (ou 2), freedom (ou 3)"
     )
     parser.add_argument("--nome", type=str, required=True, help="Nome do projeto")
     parser.add_argument("--slug", type=str, required=True, help="Slug do projeto (letras minúsculas e hífens)")

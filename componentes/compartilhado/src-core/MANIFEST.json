@@ -28,7 +28,6 @@
         "opentelemetry.py",
         "outbox_worker.py",
         "result.py",
-        "saga.py",
         "security.py",
         "sincronizador_harness.py",
         "subagent_engine.py",

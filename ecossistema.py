@@ -221,14 +221,10 @@ def cmd_ops(args):
     return run_command(cmd, cwd=os.getcwd(), env=env)
 
 def cmd_bridge(args):
-    subcomandos_tool = {"scan", "convert-db", "merge", "pack", "validate"}
-    if args and not args[0].startswith("-") and args[0] in subcomandos_tool:
-        bridge_dir = os.path.join(TOOLS_DIR, "aidd-bridge")
-        env = {"PYTHONPATH": bridge_dir}
-        cmd = [sys.executable, "-m", "aidd_bridge.cli"] + args
-        return run_command(cmd, cwd=os.getcwd(), env=env)
+    """Executa a ferramenta aidd-bridge (scan, convert-db, merge, pack, validate)."""
     if any(arg.startswith("--nome") or arg.startswith("--pasta") or arg.startswith("--slug") or arg.startswith("--dry-run") for arg in args):
-        return cmd_run_fluxo(["--fluxo", "bridge"] + args)
+        print("[AVISO] Para executar o Fluxo 03 completo da Tríade, utilize 'python ecossistema.py freedom' (ou /freedom).")
+        return cmd_run_fluxo(["--fluxo", "freedom"] + args)
     bridge_dir = os.path.join(TOOLS_DIR, "aidd-bridge")
     env = {"PYTHONPATH": bridge_dir}
     cmd = [sys.executable, "-m", "aidd_bridge.cli"] + args
@@ -242,9 +238,13 @@ def cmd_open(args):
     """Atalho de alta ergonomia para run-fluxo --fluxo open."""
     return cmd_run_fluxo(["--fluxo", "open"] + args)
 
+def cmd_freedom(args):
+    """Atalho de alta ergonomia para run-fluxo --fluxo freedom (Fluxo 03 da Tríade)."""
+    return cmd_run_fluxo(["--fluxo", "freedom"] + args)
+
 def cmd_aidd_bridge(args):
-    """Atalho de alta ergonomia para run-fluxo --fluxo bridge."""
-    return cmd_run_fluxo(["--fluxo", "bridge"] + args)
+    """Retrocompatibilidade de alias para o Fluxo 03."""
+    return cmd_freedom(args)
 
 def cmd_factory(args):
     factory_dir = os.path.join(TOOLS_DIR, "aidd-factory")
@@ -847,7 +847,8 @@ def cmd_status(args):
     print("\nSlash Commands Ativos:")
     print("  /pure <ideia>           -> Dispara aidd-pure (Fluxo 01: Do Zero Puro)")
     print("  /open <ideia>           -> Dispara aidd-open (Fluxo 02: Motores Open-Source)")
-    print("  /bridge [comando]       -> Dispara aidd-bridge (Fluxo 03: Desacoplamento Low-Code)")
+    print("  /freedom <export>       -> Dispara aidd-freedom (Fluxo 03: Desacoplamento Low-Code)")
+    print("  /bridge [comando]       -> Dispara aidd-bridge (ferramenta: scan, convert-db, pack)")
     print("  /forge [caminho]        -> Dispara aidd-forge")
     print("  /planner [comando]      -> Dispara aidd-planner (planejamento Tríade)")
     print("  /generate <ideia>       -> Dispara aidd-generator")
@@ -869,7 +870,8 @@ Uso: python ecossistema.py <comando> [argumentos...]
 Comandos disponíveis:
   pure <args>         Executa o Fluxo 01 da Tríade (Do Zero Puro via aidd-pure)
   open <args>         Executa o Fluxo 02 da Tríade (Motores Open-Source via aidd-open)
-  bridge <args>       Executa o Fluxo 03 da Tríade ou ferramentas do aidd-bridge (scan, convert-db, etc)
+  freedom <args>      Executa o Fluxo 03 da Tríade (Desacoplamento Low-Code via aidd-freedom)
+  bridge <args>       Executa comandos do aidd-bridge (scan, convert-db, merge, pack)
   forge <args>        Executa operações do aidd-forge (ex: forge init [pasta])
   planner <args>      Executa comandos do aidd-planner (init, validate, export, audit)
   generate <args>     Executa o pipeline do aidd-generator (ex: generate "Minha Ideia")
@@ -982,6 +984,8 @@ def main():
         "ops": cmd_ops,
         "bridge": cmd_bridge,
         "aidd-bridge": cmd_aidd_bridge,
+        "freedom": cmd_freedom,
+        "aidd-freedom": cmd_freedom,
         "factory": cmd_factory,
         "planner": cmd_planner,
         "pure": cmd_pure,

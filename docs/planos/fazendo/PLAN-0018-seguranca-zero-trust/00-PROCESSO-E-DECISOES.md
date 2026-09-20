@@ -279,14 +279,7 @@ original e confirmei `exit 0` de novo. Suite completa do repositorio:
 133/133 testes passando. `python ecossistema.py audit`: todos os gates
 deterministicos aprovados (`exit 0`).
 
-## 10. MEMO — hash pip para sandeco-token-reduce (nao endereçado neste item)
+## 10. MEMO — hash pip para sandeco-token-reduce (RESOLVIDO / ENCERRADO POR REMOÇÃO)
 
-O ambiente virtual privado da skill `sandeco-token-reduce`
-(`componentes/compartilhado/skills/sandeco-token-reduce/scripts/setup.py`)
-instala `llmlingua` e `anthropic` sem versao travada e sem
-`--require-hashes` — o mesmo risco de supply chain que o Item 4 corrigiu na
-raiz do repositorio, ainda presente aqui. Nao foi corrigido neste item
-porque o alvo declarado do Item 7 e hash de "bundles e scripts instalados"
-verificaveis por um arquivo unico, nao a criacao de um segundo lockfile
-Python — fica registrado como candidato a proximo item, seguindo a mesma
-regra de nao fabricar decisao/aprovacao desta iniciativa.
+Encerrado em 2026-09-20 via **ISSUE-0008 (Rota B)**.
+A skill `sandeco-token-reduce` e sua dependência de `llmlingua`/`anthropic` foram completamente removidas do monorepo e de `gates/dependencias_externas.json`, eliminando a superfície de dependência e encerrando formalmente este item em aberto sem necessidade de pinning de biblioteca descontinuada.

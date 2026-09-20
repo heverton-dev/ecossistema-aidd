@@ -10,7 +10,6 @@ if TEMPLATES_V2 not in sys.path:
 from cqrs import ReadModelCache
 from local_first import CRDTSet
 from circuit_breaker import CircuitBreaker, CircuitState
-from saga import SagaOrchestrator, SagaStep
 
 
 def _aguardar_condicao(condicao, timeout=5.0, intervalo=0.01):
@@ -175,33 +174,6 @@ def test_circuit_breaker_opens_after_threshold():
     with pytest.raises(RuntimeError) as exc:
         cb.call(lambda: "Success")
     assert "OPEN" in str(exc.value)
-
-def test_saga_compensates_on_failure():
-    compensations = []
-    
-    step1 = SagaStep(
-        name="step1",
-        execute=lambda ctx: ctx.update({"s1": True}),
-        compensate=lambda ctx: compensations.append("s1_undone")
-    )
-    
-    def fail_execute(ctx):
-        raise ValueError("Failed step2")
-        
-    step2 = SagaStep(
-        name="step2",
-        execute=fail_execute,
-        compensate=lambda ctx: compensations.append("s2_undone")
-    )
-    
-    orchestrator = SagaOrchestrator([step1, step2])
-    
-    with pytest.raises(RuntimeError) as exc:
-        orchestrator.run({})
-        
-    assert "Saga 'step2' falhou" in str(exc.value)
-    # Step 1 should be compensated because step 2 failed
-    assert compensations == ["s1_undone"]
 
 
 def test_query_slice_light_lane_execution():

@@ -74,7 +74,7 @@ Toda aplicação robusta no ecossistema nasce da fundação **`aidd-forge`** e d
 | :--- | :--- | :--- | :---: | :--- | :--- |
 | **Fluxo 01** | **`aidd-pure`** | `aidd-generator` | **`/pure`** | `python ecossistema.py run-fluxo --fluxo pure` | **Do Zero Puro:** Código autoral sob medida, gerado via TDD Red-Green estrito com Clean Architecture. |
 | **Fluxo 02** | **`aidd-open`** | `aidd-factory` | **`/open`** | `python ecossistema.py run-fluxo --fluxo open` | **Motores Open-Source:** Curadoria, integração e fatiamento VSA de bases OSS consolidadas com Compose. |
-| **Fluxo 03** | **`aidd-bridge`** | `aidd-bridge` | **`/bridge`** | `python ecossistema.py run-fluxo --fluxo bridge` | **Desacoplamento Low-Code:** Desmonte de vendor lock-in (Lovable/v0/Bolt), migração para Postgres e preservação pixel-perfect da UI. |
+| **Fluxo 03** | **`aidd-freedom`** | `aidd-bridge` | **`/freedom`** | `python ecossistema.py run-fluxo --fluxo freedom` | **Desacoplamento Low-Code:** Desmonte de vendor lock-in (Lovable/v0/Bolt), migração para Postgres e preservação pixel-perfect da UI. |
 
 > **Universal Convergence Funnel:** Qualquer que seja o fluxo, a entrega final entrega nativamente o **Quarteto *Sine Qua Non*** (`/swagger`, `/webhooks`, `/mcp`, `/docs`) e o Frontend no **Padrão-Ouro Next.js + TypeScript + Tailwind CSS** (Lei Inviolável #11).
 
@@ -117,7 +117,7 @@ Basta digitar os comandos com barra no chat do seu assistente de IA (Claude, Ant
 # 🔱 Disparar a Tríade Canônica de Criação:
 /pure "Sistema de Gestão de Tarefas"       # Fluxo 01: Do Zero Puro via TDD Red-Green
 /open "ERP para Clínicas com WhatsApp"     # Fluxo 02: Acelerado por Motores Open-Source
-/bridge ./meu-export-lovable meu-saas      # Fluxo 03: Desacopla Low-Code preservando a UI
+/freedom ./meu-export-lovable meu-saas    # Fluxo 03: Desacopla Low-Code preservando a UI
 
 # Ferramentas Especialistas e Comandos Rápidos:
 /forge .                                  # Blindar um projeto com regras de qualidade

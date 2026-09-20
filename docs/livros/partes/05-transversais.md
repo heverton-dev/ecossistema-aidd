@@ -279,7 +279,6 @@ dispersamente. É o eixo "economia de tokens" visto simultaneamente nos três n�
 | Orçamento formal por fase        | Micro     | `generator/config/token_budgets.json`              | Teto declarado + limiar de desvio de 1,2                      |
 | Auditoria de tokenomics          | Micro     | `G_TOKENOMICS`                                     | Reprova estouro de orçamento e rótulo desonesto de medição    |
 | Benchmark real                   | Micro     | `generator/scripts/benchmark_tokenomics.py`        | Mede com `tiktoken` contra baseline legada                    |
-| Compressão seletiva de prosa     | Micro     | `generator/scripts/compressor_middleware.py`       | LLMLingua-2 só em prosa; nunca em código ou esquema           |
 | Purga de contexto de subagente   | Macro     | `forge/core/subagent_purger.py`                    | Subagente morre após validação AST                            |
 | Disciplina de terminal           | Macro     | `AGENTS.md` §1                                     | `tail`/`grep` obrigatórios; zero despejo de log ou lockfile   |
 | Edição por busca e substituição  | Macro     | `AGENTS.md` §1                                     | Nunca reescrever arquivo inteiro na saída                     |

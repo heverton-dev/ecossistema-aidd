@@ -118,20 +118,6 @@ def chamar_servico_externo(payload):
         return Result.fail("Servico externo indisponivel", codigo="CIRCUIT_OPEN")
 ```
 
-### Saga Pattern para Transacoes Distribuidas
-
-```python
-from src.core.saga import SagaOrchestrator, SagaStep
-
-def executar_pedido(pedido):
-    saga = SagaOrchestrator(steps=[
-        SagaStep("reservar_estoque", estoque.reservar, estoque.liberar),
-        SagaStep("processar_pagamento", pagamento.cobrar, pagamento.estornar),
-        SagaStep("confirmar_pedido", pedido.confirmar, pedido.cancelar),
-    ])
-    return saga.run({"pedido": pedido})
-```
-
 ### Codigos de Erro Padronizados
 
 | Codigo | Significado | HTTP Status |

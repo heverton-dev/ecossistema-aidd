@@ -68,6 +68,8 @@ def _compor_e_adicionar_modulo(target, db_engine="sqlite"):
         cwd=str(target),
         capture_output=True,
         text=True,
+        encoding="utf-8",
+        errors="replace",
     )
     assert resultado.returncode == 0, (
         f"add_module.py falhou ao adicionar 'billing':\n"
@@ -95,6 +97,8 @@ def test_rota_do_modulo_adicionado_depois_responde_200(suite_com_modulo_adiciona
         stdout=subprocess.PIPE,
         stderr=subprocess.STDOUT,
         text=True,
+        encoding="utf-8",
+        errors="replace",
     )
     try:
         status_inicial = _aguardar_servidor(processo, "http://127.0.0.1:3000/api/crm")

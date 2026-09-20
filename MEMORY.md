@@ -23,9 +23,9 @@ O **Ecossistema AIDD** é um monorepo agnóstico que integra 8 ferramentas compl
 ### A Tríade Canônica de Criação (Nomenclatura Oficial):
 1. **`aidd-pure` (Fluxo 01 — Do Zero Puro | Slash: `/pure`):** `[FORGE -> PLANNER] -> GENERATOR -> [MASTER -> ENTERPRISE -> OPS]`
 2. **`aidd-open` (Fluxo 02 — Motores Open-Source | Slash: `/open`):** `[FORGE -> PLANNER] -> FACTORY -> [MASTER -> ENTERPRISE -> OPS]`
-3. **`aidd-bridge` (Fluxo 03 — Low-Code Bridge | Slash: `/bridge`):** `[FORGE -> PLANNER] -> BRIDGE -> [MASTER -> ENTERPRISE -> OPS]`
+3. **`aidd-freedom` (Fluxo 03 — Desacoplamento Low-Code | Slash: `/freedom`):** `[FORGE -> PLANNER] -> BRIDGE -> [MASTER -> ENTERPRISE -> OPS]`
 
-**Orquestrador Síncrono:** `python ecossistema.py run-fluxo --fluxo <pure|open|bridge>`
+**Orquestrador Síncrono:** `python ecossistema.py run-fluxo --fluxo <pure|open|freedom>`
 
 **Fonte Física Canônica Única:** Todo componente (`skill`, `command`, `mcp`, `hook`, `spec`) reside estritamente em `componentes/<escopo>/<tipo>/`. As pastas `.agent/`, `.claude/`, `.gemini/`, `.agents/`, `skills/` são alvos de materialização gerados pelo script `scripts/gestor_componentes.py` (`python ecossistema.py components sync`).
 
@@ -70,7 +70,7 @@ O **Ecossistema AIDD** é um monorepo agnóstico que integra 8 ferramentas compl
 |---|---|---|---|
 | `/pure <ideia>` | `aidd-pure`, `fluxo-01-runner` | `python ecossistema.py pure` (ou `run-fluxo --fluxo pure`) | **Tríade Fluxo 01:** Execução síncrona do zero puro com TDD Red-Green (Generator + Master + Enterprise + Ops). |
 | `/open <ideia>` | `aidd-open`, `fluxo-02-runner` | `python ecossistema.py open` (ou `run-fluxo --fluxo open`) | **Tríade Fluxo 02:** Execução síncrona com motores Open-Source curados (Factory + Master + Enterprise + Ops). |
-| `/bridge <origem> <nome>` | `aidd-bridge`, `fluxo-03-runner` | `python ecossistema.py bridge` (ou `run-fluxo --fluxo bridge`) | **Tríade Fluxo 03:** Execução síncrona libertando Low-Code (Lovable/v0) para VPS própria (Bridge + Master + Enterprise + Ops). |
+| `/freedom <origem> <nome>` | `aidd-freedom`, `fluxo-03-runner` | `python ecossistema.py freedom` (ou `run-fluxo --fluxo freedom`) | **Tríade Fluxo 03:** Execução síncrona libertando Low-Code (Lovable/v0) para VPS própria (Bridge + Master + Enterprise + Ops). |
 | `/aidd-orchestrator` | `aidd-orchestrator-runner` | `python ecossistema.py run-fluxo` | Orquestrador Mestre Síncrono da Tríade Canônica com validação formal de contratos. |
 | `/forge [caminho]` | `aidd-forge-runner` | `python ecossistema.py forge init [caminho]` | Bootstrap e blindagem de governança em novos projetos. |
 | `/generate <ideia>` | `aidd-generator-runner` | `python ecossistema.py generate "<ideia>"` | Disparo da fábrica de 8 fases a partir de ideia. |
@@ -187,6 +187,7 @@ O **Ecossistema AIDD** é um monorepo agnóstico que integra 8 ferramentas compl
 - ⏳ **Completude Factory V2** — `docs/planos/fazendo/PLAN-0028-completude-factory-v2/`
 - 🔶 **Upgrade Ferramentas Enterprise** — `docs/planos/fazendo/PLAN-0034-upgrade-ferramentas-enterprise/`
 - ⏳ **Direcionamento Estrategico Anti Nih** — `docs/planos/feitos/PLAN-0010-direcionamento-estrategico-anti-nih/`
+- ⏳ **Otimizacao Tokenomics Latencia** — `docs/planos/feitos/PLAN-0015-otimizacao-tokenomics-latencia/`
 - ⏳ **Testes Motor Orquestrador** — `docs/planos/feitos/PLAN-0024-testes-motor-orquestrador/`
 - ⏳ **Upgrade Stack Camadas** — `docs/planos/feitos/PLAN-0028-upgrade-stack-camadas/`
 <!-- AUTO:INICIATIVAS:END -->

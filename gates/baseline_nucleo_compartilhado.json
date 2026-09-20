@@ -115,10 +115,6 @@
         "esperado_identico": true,
         "motivo": null
       },
-      "saga.py": {
-        "esperado_identico": true,
-        "motivo": null
-      },
       "security.py": {
         "esperado_identico": true,
         "motivo": null
@@ -293,10 +289,6 @@
         "esperado_identico": true,
         "motivo": null
       },
-      "saga.py": {
-        "esperado_identico": true,
-        "motivo": null
-      },
       "security.py": {
         "esperado_identico": true,
         "motivo": null
@@ -376,10 +368,6 @@
         "motivo": null
       },
       "result.py": {
-        "esperado_identico": true,
-        "motivo": null
-      },
-      "saga.py": {
         "esperado_identico": true,
         "motivo": null
       },
