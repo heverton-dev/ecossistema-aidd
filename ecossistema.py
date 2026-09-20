@@ -752,6 +752,7 @@ _GATES_AUDIT = [
     "G_CONTRACT_ROT.py",
     "G_ENV_ROT.py",
     "G_SKILL_ROT.py",
+    "G_MIGRATION_ROT.py",
 ]
 
 

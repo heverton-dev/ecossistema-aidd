@@ -262,3 +262,11 @@ repos:
         always_run: true
         pass_filenames: false
         require_serial: true
+
+      - id: g-migration-rot
+        name: "G_MIGRATION_ROT (prevencao de migration rot, rollback e idempotencia)"
+        entry: python gates/G_MIGRATION_ROT.py
+        language: system
+        always_run: true
+        pass_filenames: false
+        require_serial: true

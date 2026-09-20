@@ -264,7 +264,7 @@ Rules:
 - Stop and ask before any commit.
 ```
 
-- [ ] **Session 15 — ISSUE-0017 (Migration Rot)**
+- [x] **Session 15 — ISSUE-0017 (Migration Rot)**
 
 Toca: `gates/`, `AGENTS.md` · Requer: sessão 14
 
