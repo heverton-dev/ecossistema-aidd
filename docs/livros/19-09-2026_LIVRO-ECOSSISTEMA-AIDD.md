@@ -778,11 +778,9 @@ demanda explícita.
   legítimos por falsos positivos já revisados. A checagem não foi desligada, mudou de
   frequência: `pre-commit run --hook-stage manual g-segredos --all-files`.
 
-  *G_HONESTIDADE_ROTULO* está vermelho por violação conhecida e rastreada em
-  `tools/aidd-master` e `tools/aidd-enterprise` (`scripts/gates/G_SEGURANCA.py`,
-  `G_ARQUITETURA.py`, `G_PERFORMANCE.py`), com decisão humana pendente registrada em
-  `docs/planos/fazendo/01-correcao-pos-auditoria-sem-maquiagem/`. Ficou em modo manual
-  para não travar todo commit do repositório por motivo externo ao item.
+  *G_HONESTIDADE_ROTULO* foi reabilitado para execução obrigatória em todo commit
+  (`always_run: true`). Os termos de marketing proibidos foram erradicados dos scripts
+  de portão e a trava roda com exit 0, auditando todos os scripts com zero violações.
 ]
 ```
 
@@ -2479,14 +2477,11 @@ do ecossistema.
 **Hooks e regras.** A regra de que assinatura só vem depois de TDD com asserção real.
 
 ```{=typst}
-#painel("Um portão vermelho conhecido")[
-  `G_HONESTIDADE_ROTULO` reprova contra violação já identificada e rastreada em
-  `tools/aidd-master` e `tools/aidd-enterprise` — especificamente nos arquivos
-  `scripts/gates/G_SEGURANCA.py`, `G_ARQUITETURA.py` e `G_PERFORMANCE.py`, que usam
-  termos de marketing proibidos em mensagens de saída. A decisão humana está pendente e
-  registrada em `docs/planos/fazendo/01-correcao-pos-auditoria-sem-maquiagem/`. Por isso o
-  portão está em `stages: [manual]`: para não travar todo commit do repositório por um
-  item cuja resolução depende de decisão, não de código.
+#painel("Conformidade da Honestidade de Rótulo")[
+  `G_HONESTIDADE_ROTULO` foi plenamente reabilitado e roda como portão obrigatório em
+  todo commit (`always_run: true`). As mensagens de saída de todos os scripts de portão
+  em `gates/`, `tools/aidd-master` e `tools/aidd-enterprise` foram alinhadas à linguagem
+  técnica factual, auditando com zero termos proibidos.
 ]
 ```
 
@@ -3235,7 +3230,6 @@ vermelho ou aguardando decisão.
 | Item                                                          | Estado                                                                    | Onde está registrado                                                        |
 | :------------------------------------------------------------ | :-------------------------------------------------------------------------- | :--------------------------------------------------------------------------- |
 | `G_SEGREDOS` em execução manual                               | Movido para `stages: [manual]` em 2026-09-08; causa raiz não identificada  | `.pre-commit-config.yaml`, comentário de cabeçalho                          |
-| `G_HONESTIDADE_ROTULO` vermelho                               | Violação conhecida em `aidd-master` e `aidd-enterprise`; decisão pendente  | `docs/planos/fazendo/01-correcao-pos-auditoria-sem-maquiagem/`               |
 | `G_ARQUITETURA_DELIVERABLE` em execução manual                | Violações legadas conhecidas                                              | `docs/protocolos/AGENTS-REFERENCIA-COMPLETA.md` §4                          |
 | Campos de telemetria do orquestrador síncrono                 | Parte dos payloads de handoff é montada com valores fixos, não medidos     | `scripts/orquestrador_sincrono.py`, etapas 3, 5 e 7                         |
 | Discovery Engine completo do `aidd-factory`                   | Só o subconjunto determinístico (nicho dinâmico) está implementado         | `docs/features/v2_arquitetura-aidd-ops-factory.md` §7.1 e §9.1              |

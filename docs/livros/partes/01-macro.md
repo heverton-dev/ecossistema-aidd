@@ -675,11 +675,9 @@ demanda explícita.
   legítimos por falsos positivos já revisados. A checagem não foi desligada, mudou de
   frequência: `pre-commit run --hook-stage manual g-segredos --all-files`.
 
-  *G_HONESTIDADE_ROTULO* está vermelho por violação conhecida e rastreada em
-  `tools/aidd-master` e `tools/aidd-enterprise` (`scripts/gates/G_SEGURANCA.py`,
-  `G_ARQUITETURA.py`, `G_PERFORMANCE.py`), com decisão humana pendente registrada em
-  `docs/planos/fazendo/01-correcao-pos-auditoria-sem-maquiagem/`. Ficou em modo manual
-  para não travar todo commit do repositório por motivo externo ao item.
+  *G_HONESTIDADE_ROTULO* foi reabilitado para execução obrigatória em todo commit
+  (`always_run: true`). Os termos de marketing proibidos foram erradicados dos scripts
+  de portão e a trava roda com exit 0, auditando todos os scripts com zero violações.
 ]
 ```
 

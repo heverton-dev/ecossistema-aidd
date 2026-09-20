@@ -1,7 +1,7 @@
 ---
 id: ISSUE-0001
 title: Faxina de registros desatualizados (trava de honestidade, Lei 10, CircuitBreaker)
-status: ready-for-agent
+status: done
 blocked_by: []
 created: 2026-09-19
 source: open-decision sweep 2026-09-19
@@ -29,9 +29,9 @@ and one disabled gate goes back on. No behaviour change — truth on paper only.
 
 ## Acceptance criteria
 
-- [ ] Label-honesty gate leaves `stages: [manual]`; runs on every commit.
-- [ ] Drop the `.pre-commit-config.yaml` comments claiming a pending human decision for it.
-- [ ] Book Appendix E and equivalent sections stop listing it as open.
-- [ ] Law #10 cites only the real path (`/docs`).
-- [ ] PLAN-0025 item 10 records CircuitBreaker reclassified as template mirror, with diff evidence.
-- [ ] A test commit confirms the re-enabled gate blocks nothing legitimate.
+- [x] Label-honesty gate leaves `stages: [manual]`; runs on every commit.
+- [x] Drop the `.pre-commit-config.yaml` comments claiming a pending human decision for it.
+- [x] Book Appendix E and equivalent sections stop listing it as open.
+- [x] Law #10 cites only the real path (`/docs`).
+- [x] PLAN-0025 item 10 records CircuitBreaker reclassified as template mirror, with diff evidence.
+- [x] A test commit confirms the re-enabled gate blocks nothing legitimate.

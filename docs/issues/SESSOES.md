@@ -98,7 +98,7 @@ Rules:
 > As três sessões abaixo religam travas no mesmo arquivo. **Uma de cada vez**, nunca
 > em paralelo, ou uma sobrescreve a outra.
 
-- [ ] **Session 7 — ISSUE-0001**
+- [x] **Session 7 — ISSUE-0001**
 
 Toca: `.pre-commit-config.yaml`, `AGENTS.md` (Lei #10), livro · Requer: nada
 

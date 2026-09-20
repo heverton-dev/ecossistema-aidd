@@ -452,14 +452,11 @@ do ecossistema.
 **Hooks e regras.** A regra de que assinatura só vem depois de TDD com asserção real.
 
 ```{=typst}
-#painel("Um portão vermelho conhecido")[
-  `G_HONESTIDADE_ROTULO` reprova contra violação já identificada e rastreada em
-  `tools/aidd-master` e `tools/aidd-enterprise` — especificamente nos arquivos
-  `scripts/gates/G_SEGURANCA.py`, `G_ARQUITETURA.py` e `G_PERFORMANCE.py`, que usam
-  termos de marketing proibidos em mensagens de saída. A decisão humana está pendente e
-  registrada em `docs/planos/fazendo/01-correcao-pos-auditoria-sem-maquiagem/`. Por isso o
-  portão está em `stages: [manual]`: para não travar todo commit do repositório por um
-  item cuja resolução depende de decisão, não de código.
+#painel("Conformidade da Honestidade de Rótulo")[
+  `G_HONESTIDADE_ROTULO` foi plenamente reabilitado e roda como portão obrigatório em
+  todo commit (`always_run: true`). As mensagens de saída de todos os scripts de portão
+  em `gates/`, `tools/aidd-master` e `tools/aidd-enterprise` foram alinhadas à linguagem
+  técnica factual, auditando com zero termos proibidos.
 ]
 ```
 

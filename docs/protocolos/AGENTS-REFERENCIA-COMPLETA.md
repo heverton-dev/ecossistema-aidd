@@ -122,7 +122,7 @@ O ecossistema dispõe de Quality Gates globais em gates/:
 
 **Nota (G_SEGREDOS):** movido para `stages: [manual]` em 2026-09-08, decisão explícita do usuário. Causa: inconsistência reproduzida entre `python gates/G_SEGREDOS.py` direto (aprovava) e o mesmo via hook pre-commit (reprovava), causa raiz não encontrada. Roda sob demanda: `pre-commit run --hook-stage manual g-segredos --all-files`.
 
-**Nota (G_HONESTIDADE_ROTULO):** ainda não incluído no `audit` agregado — reprova contra violação conhecida em tools/aidd-master e aidd-enterprise `scripts/gates/G_SEGURANCA.py`, `G_ARQUITETURA.py`, `G_PERFORMANCE.py`. Pendente de decisão humana em `docs/planos/fazendo/01-correcao-pos-auditoria-sem-maquiagem/`.
+**Nota (G_HONESTIDADE_ROTULO):** reabilitado para execução obrigatória em todo commit (`always_run: true`) per ISSUE-0001 — auditado com exit 0 e zero termos de marketing proibidos detectados em todos os scripts do repositório.
 
 **Convenção Canônica de Autoria de Gates:** Todo gate DEVE acompanhar teste automatizado que quebre a condição resguardada e asserte `exit 1` (reprovação). Testes de caminho feliz não satisfazem o critério. Ver [CONVENCAO-AUTORIA-GATES.md](CONVENCAO-AUTORIA-GATES.md).
 

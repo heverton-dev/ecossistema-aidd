@@ -11,8 +11,20 @@
 ## Contexto já investigado
 
 - Achado em 2026-09-07 rodando `code-review-graph dead-code` de verdade: 740 símbolos sem nenhum chamador no ecossistema inteiro. A maioria é cópia esperada (exemplos em `materiais-extras/`, espelhos multi-harness de `.claude/`, `.gemini/` etc. da mesma skill).
-- **3 casos graves, isolados dos demais:** `CircuitBreaker` (`tools/aidd-enterprise/src/core/circuit_breaker.py:9`), `SagaOrchestrator` (`tools/aidd-enterprise/src/core/saga.py:11`), `TraceContextMiddleware` (`tools/aidd-enterprise/src/core/opentelemetry.py:166`) — três padrões de resiliência/observabilidade de missão crítica, presentes no código do `aidd-enterprise` (a ferramenta que se vende como "Missão Crítica"), mas **nenhum tem um único chamador** confirmado pelo grafo. Mesmos 3 espelhados em `templates/core/` e `templates/v2/`.
-- Contradiz a Regra de Ouro #5 (Zero Stubs / Zero Mocks Falsos em Produção) se for scaffolding abandonado — ou é uma feature real que falta só o fio de ligação, caso em que o achado é "termine, não remova".
+- **Casos de infraestrutura/resiliência inicialmente levantados:** `CircuitBreaker` (`tools/aidd-enterprise/src/core/circuit_breaker.py:9`), `SagaOrchestrator` (`tools/aidd-enterprise/src/core/saga.py:11`), `TraceContextMiddleware` (`tools/aidd-enterprise/src/core/opentelemetry.py:166`) em `tools/aidd-enterprise/src/core/` e espelhos em `templates/core/` e `templates/v2/`.
+
+### Reclassificação Comprovada: CircuitBreaker (ISSUE-0001)
+
+- **Veredito:** `CircuitBreaker` NÃO é código morto nem órfão. É um **espelho de template (template mirror)** deliberado e ativo.
+- **Evidência de uso real:**
+  1. Usado ativamente no template gerador de servidores: `tools/aidd-enterprise/templates/cookiecutter-scaffold/suite/{{cookiecutter.suite_slug}}/server.py.j2` instanciando três disjuntores de resiliência (`webhooks`, `sso`, `mcp`).
+  2. Possui endpoint de monitoramento de estado de circuito no servidor gerado.
+  3. Possui testes unitários reais e ativos em `tools/aidd-enterprise/tests/unit/test_cqrs_local_first.py`.
+- **Evidência de paridade estrita (diff / hash):**
+  - O arquivo `tools/aidd-enterprise/src/core/circuit_breaker.py` é byte-idêntico a `tools/aidd-enterprise/templates/core/circuit_breaker.py`.
+  - `git diff --no-index tools/aidd-enterprise/src/core/circuit_breaker.py tools/aidd-enterprise/templates/core/circuit_breaker.py` retorna código de saída `0` e saída nula (zero diferenças).
+  - SHA-256 de ambos os arquivos: `514fcd432733329b3191bb98dc309b6f4de7df8fb885ce2e4f19d727a36df045`.
+- **Classificação:** Espelho canônico de template — mantido conforme projetado para alimentar scaffolds enterprise.
 
 ## Definição de Pronto
 
