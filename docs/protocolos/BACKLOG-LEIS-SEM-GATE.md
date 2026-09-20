@@ -1,14 +1,14 @@
 # Backlog de Invariantes: Leis Invioláveis em Estado "Sem Gate" (ISSUE-0010)
 
-> **Data de Levantamento:** 19/09/2026 (Revisado em 20/09/2026 — Leis #3, #9 e #10 ganharam portão parcial nas Sessões 12-15; gap residual de cada uma virou ticket próprio)
-> **Status:** Ativo e Auditado via `gates/G_LEI_DECLARA_PORTAO.py`  
+> **Data de Levantamento:** 19/09/2026 (Revisado em 20/09/2026 — backlog fechado: Sessões 12-15 deram portão parcial às Leis #3, #9 e #10; Sessões 19-24 fecharam o gap residual dessas três e cobriram as Leis #1, #2 e #11 que ainda não tinham nenhum)
+> **Status:** Fechado — 13/13 Leis Invioláveis com portão `provado`. Mantido como registro histórico do processo, auditado via `gates/G_LEI_DECLARA_PORTAO.py`.
 > **Referência:** `AGENTS.md` §2 e `docs/issues/10-cada-lei-declara-seu-portao.md`  
 
 ---
 
 ## 1. Visão Geral e Mapa de Força de Enforcement
 
-Em conformidade com a **ISSUE-0010** e a **Lei #8 (Honestidade de Rótulo)**, nenhuma lei do ecossistema pode ter enforcement presumido ou silencioso. Cada lei declara explicitamente se possui portão verificador (`provado` ou `nao-provado`) ou se opera como `sem gate — cumprimento por convenção` (`sem-gate`).
+Em conformidade com a **ISSUE-0010** e a **Lei #8 (Honestidade de Rótulo)**, nenhuma lei do ecossistema pode ter enforcement presumido ou silencioso. Cada lei declara explicitamente se possui portão verificador (`provado` ou `nao-provado`) ou se opera como `sem gate — cumprimento por convenção` (`sem-gate`). Em 20/09/2026, as Sessões 19 a 24 (ISSUE-0020 a ISSUE-0025) fecharam o último grupo de leis sem cobertura; a tabela abaixo não tem mais nenhuma linha `sem-gate` — a Seção 2 permanece como registro de como cada gap foi fechado, não como lista de pendências.
 
 | Lei | Nome | Portão Declarado | Força | Status da Cobertura |
 | :---: | :--- | :--- | :---: | :--- |
@@ -21,14 +21,14 @@ Em conformidade com a **ISSUE-0010** e a **Lei #8 (Honestidade de Rótulo)**, ne
 | **07** | Developer in Control | `gates/G_ZERO_HEADLESS.py` | `provado` | Coberto e testado (exit 1) |
 | **08** | Label Honesty | `gates/G_HONESTIDADE_ROTULO.py` | `provado` | Coberto e testado (exit 1) |
 | **09** | Tool Testing Discipline | `gates/G_ENV_ROT.py`, `gates/G_SKILL_ROT.py`, `gates/G_DISCIPLINA_TESTE_FERRAMENTA.py` | `provado` | Env rot (Sessão 13), skill rot (Sessão 14) e frescor do relatório de teste em tools/ (Sessão 22) cobertos e provados |
-| **10** | Quarteto Sine Qua Non Dinâmico | `gates/G_CONTRACT_ROT.py` | `provado (parcial)` | Divergência rota-vs-spec coberta (Sessão 12); presença dos 4 pilares num deliverable gerado ainda sem portão de raiz — ver Item 2.6, ticket aberto ISSUE-0024 |
-| **11** | Padrão-Ouro de Stack Tecnológica | `sem gate — cumprimento por convenção` | `sem-gate` | No Backlog (Ver Item 2.7); ticket aberto ISSUE-0025 |
+| **10** | Quarteto Sine Qua Non Dinâmico | `gates/G_CONTRACT_ROT.py`, `gates/G_QUARTETO_SINE_QUA_NON.py` | `provado` | Divergência rota-vs-spec (Sessão 12) e presença dos 4 pilares num deliverable gerado (Sessão 23) cobertos e provados |
+| **11** | Padrão-Ouro de Stack Tecnológica | `gates/G_STACK_PADRAO_OURO.py` | `provado` | Coberto e testado (exit 1); validado contra `proj_ctt` real |
 | **12** | Anti-Docs Rot & Canonical Ingestion | `gates/G_DOCS_ROT.py` | `provado` | Coberto e testado (exit 1) |
 | **13** | Todo Portão Deve Provar que Morde | `gates/G_PORTAO_PROVA_QUE_MORDE.py` | `provado` | Coberto e testado (exit 1) |
 
 ---
 
-## 2. Detalhamento do Backlog: Leis Sem Portão
+## 2. Detalhamento do Backlog: Leis Sem Portão (histórico — todas fechadas em 20/09/2026)
 
 ### 2.1 Lei #1 — Determinism First (ISSUE-0020)
 - **Exigência:** Uso de scripts determinísticos, AST, regex ou JSON Schema. Proibição de uso de LLM para tarefas puramente mecânicas.

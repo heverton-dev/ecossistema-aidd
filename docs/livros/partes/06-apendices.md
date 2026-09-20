@@ -170,7 +170,7 @@ daquela fase.
 assistente da sessão, sem abrir conexão própria com provedor.
 
 **Quarteto *Sine Qua Non*** — Lei #10. Os quatro estúdios obrigatórios em todo projeto:
-`/swagger`, `/webhooks`, `/mcp` e `/docs`.
+`/docs`, `/webhooks`, `/mcp` e `/docs/guia`.
 
 **Tríade Canônica** — Os três fluxos de criação: `aidd-pure`, `aidd-open` e
 `aidd-bridge`.
@@ -190,7 +190,7 @@ a rota mais curta para cada assunto.
 
 | Assunto                                  | Arquivo                                                         |
 | :--------------------------------------- | :---------------------------------------------------------------- |
-| As doze leis invioláveis                 | `AGENTS.md` §2                                                   |
+| As treze leis invioláveis                | `AGENTS.md` §2                                                   |
 | A Tríade Canônica                        | `AGENTS.md` §3                                                   |
 | Catálogo detalhado de portões e comandos | `docs/protocolos/AGENTS-REFERENCIA-COMPLETA.md`                  |
 | Padrão-Ouro de stack                     | `docs/protocolos/PADRAO-OURO-STACK-TECNOLOGICA.md`               |
@@ -223,8 +223,7 @@ vermelho ou aguardando decisão.
 
 | Item                                                          | Estado                                                                    | Onde está registrado                                                        |
 | :------------------------------------------------------------ | :-------------------------------------------------------------------------- | :--------------------------------------------------------------------------- |
-| `G_SEGREDOS` em execução manual                               | Movido para `stages: [manual]` em 2026-09-08; causa raiz não identificada  | `.pre-commit-config.yaml`, comentário de cabeçalho                          |
-| `G_ARQUITETURA_DELIVERABLE` em execução manual                | Violações legadas conhecidas                                              | `docs/protocolos/AGENTS-REFERENCIA-COMPLETA.md` §4                          |
+| `G_QUARTETO_SINE_QUA_NON` auto-descoberta                     | Cobre 2 de 3 fluxos canônicos com exemplo real (falta saída real do Fluxo 02/03) | `gates/G_QUARTETO_SINE_QUA_NON.py`, saída do próprio portão                 |
 | Campos de telemetria do orquestrador síncrono                 | Parte dos payloads de handoff é montada com valores fixos, não medidos     | `scripts/orquestrador_sincrono.py`, etapas 3, 5 e 7                         |
 | Discovery Engine completo do `aidd-factory`                   | Só o subconjunto determinístico (nicho dinâmico) está implementado         | `docs/features/v2_arquitetura-aidd-ops-factory.md` §7.1 e §9.1              |
 | `.gemini/skills/` como mecanismo                              | Sincronizado, mas `confirmado: false` — o mecanismo real são as extensões  | `docs/protocolos/AGENTS-REFERENCIA-COMPLETA.md` §5                          |

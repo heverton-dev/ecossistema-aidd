@@ -151,7 +151,7 @@ menor, e a duplicação entre `aidd-master` e `aidd-enterprise` é justamente o 
 
 ## 20.3 As categorias de auditoria
 
-Os 24 portões globais podem ser lidos por intenção, e essa leitura revela a estratégia
+Os 39 portões globais podem ser lidos por intenção, e essa leitura revela a estratégia
 de qualidade do ecossistema:
 
 | Categoria                | Portões                                                                                     |
@@ -161,8 +161,10 @@ de qualidade do ecossistema:
 | **Agnosticidade**        | `G_HARNESS_COMPAT`, `G_UNIVERSAL_HARNESS`, `G_COMPONENTE_AGNOSTICO`, `G_PROTOCOL_FALLBACK`   |
 | **Segurança**            | `G_SEGREDOS`, `G_LLM_PROMPT_SHIELD`, `G_SUPPLY_CHAIN`, `G_DEPENDENCIAS_PIN_HASH`             |
 | **Infraestrutura**       | `G_INFRA_COMPOSE`, `G_HADOLINT`                                                              |
-| **Honestidade**          | `G_HONESTIDADE_ROTULO`, `G_TESTES_REAIS`, `G_CLI_HELP_CONSISTENCIA`                          |
+| **Honestidade**          | `G_HONESTIDADE_ROTULO`, `G_TESTES_REAIS`, `G_CLI_HELP_CONSISTENCIA`, `G_DOCS_ROT`, `G_LIVRO_EVIDENCIA` |
 | **Governança agêntica**  | `G_ZERO_HEADLESS`, `G_ORQUESTRADOR_SINCRONO`, `G_DRIFT_NUCLEO_COMPARTILHADO`                 |
+| **Meta-portões**         | `G_PORTAO_PROVA_QUE_MORDE` (Lei #13), `G_LEI_DECLARA_PORTAO` (Lei #8)                        |
+| **Anti-rot por Lei** (fecham as Leis 1, 2, 3, 4, 9, 10, 11 — Sessões 12-24) | `G_DETERMINISMO_LEI_1`, `G_SAIDA_BINARIA`, `G_MIGRATION_ROT`, `G_ESTRUTURA_ESTADO`, `G_IDIOMA_LEI_4`, `G_ENV_ROT`, `G_SKILL_ROT`, `G_DISCIPLINA_TESTE_FERRAMENTA`, `G_CONTRACT_ROT`, `G_QUARTETO_SINE_QUA_NON`, `G_STACK_PADRAO_OURO` |
 
 Três portões merecem nota especial porque auditam coisas que a maioria dos projetos não
 audita.
@@ -193,7 +195,7 @@ que a execução se apoie em artefato residual de uma execução anterior.
 
 ## 20.5 Rastreabilidade
 
-`gates/` (24 portões e suítes); `tools/*/gates/` e `tools/*/scripts/gates/`;
+`gates/` (39 portões e suítes); `tools/*/gates/` e `tools/*/scripts/gates/`;
 `.pre-commit-config.yaml`; `docs/protocolos/PROTOCOLO-TESTES-FERRAMENTAS.md`;
 `docs/protocolos/AGENTS-REFERENCIA-COMPLETA.md` §4.
 

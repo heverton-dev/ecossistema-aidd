@@ -324,8 +324,8 @@ O pipeline determinístico do bridge tem seis fases, documentadas no cabeçalho 
    limpo, sem credencial de fornecedor.
 4. **Empacotamento DevOps OCI** (`DevOpsPackager`): Dockerfile com usuário não-root,
    Nginx com cabeçalhos OWASP, compose.
-5. **Conector VSA e Quarteto *Sine Qua Non***: exporta `/swagger`, `/webhooks`, `/mcp`
-   e `/docs` em `quarteto_sine_qua_non/` para harmonização no `aidd-master`.
+5. **Conector VSA e Quarteto *Sine Qua Non***: exporta `/docs`, `/webhooks`, `/mcp`
+   e `/docs/guia` em `quarteto_sine_qua_non/` para harmonização no `aidd-master`.
 6. **Portões dedicados**: `G_BRIDGE_VENDOR_LOCKIN`, `G_BRIDGE_DOCKER_OCI`,
    `G_BRIDGE_POSTGRESQL` e `G_BRIDGE_VSA_COMPAT`.
 

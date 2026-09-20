@@ -47,11 +47,13 @@ morre quando qualquer um dos três muda.
 ]
 ```
 
-## 1.3 As doze leis invioláveis
+## 1.3 As treze leis invioláveis
 
-O `AGENTS.md` da raiz é a lei fundamental. Ele define doze invariantes que valem para
-todo agente, toda ferramenta e todo fluxo. Não são recomendações: a maioria tem um
-portão determinístico correspondente que bloqueia o commit quando violada.
+O `AGENTS.md` da raiz é a lei fundamental. Ele define treze invariantes que valem para
+todo agente, toda ferramenta e todo fluxo. Não são recomendações: desde 20/09/2026,
+100% delas têm ao menos um portão determinístico correspondente que bloqueia o commit
+quando violada — três leis (#3, #9 e #10) têm mais de um portão, cada um cobrindo uma
+fatia diferente da mesma exigência.
 
 | Lei  | Nome                                | O que exige, na prática                                                                                                    |
 | :---- | :------------------------------ | :------------------------------------------------------------------------------------------------------------------------- |
@@ -64,16 +66,17 @@ portão determinístico correspondente que bloqueia o commit quando violada.
 | 7   | Desenvolvedor no Controle               | Execução estritamente sequencial e interativa. Zero subagentes headless invisíveis em segundo plano.                        |
 | 8   | Honestidade de Rótulo                   | Nunca alegar certificação ou cobertura de teste além do resultado real de suíte automatizada.                               |
 | 9   | Disciplina de Teste de Ferramenta       | Ciclo de cinco passos do `docs/protocolos/PROTOCOLO-TESTES-FERRAMENTAS.md` antes de declarar uma ferramenta conforme.        |
-| 10  | Quarteto *Sine Qua Non* Dinâmico        | Todo projeto nasce com `/swagger`, `/webhooks`, `/mcp` e `/docs` cobrindo 100% dos módulos e se atualizando sozinho.        |
+| 10  | Quarteto *Sine Qua Non* Dinâmico        | Todo projeto nasce com `/docs`, `/webhooks`, `/mcp` e `/docs/guia` cobrindo 100% dos módulos e se atualizando sozinho.        |
 | 11  | Padrão-Ouro de Stack                    | Frontend em Next.js + TypeScript + Tailwind; backend Python puro + SQLite WAL; API em OpenAPI 3.1 — salvo pedido explícito. |
 | 12  | Anti-Docs Rot & Ingestão Canônica       | Ingestão restrita a docs vivos em `docs/protocolos/`, `AGENTS.md` e schemas; links quebrados barrados por `G_DOCS_ROT.py`.   |
+| 13  | Todo Portão Deve Provar que Morde       | Nenhum portão é aceito sem teste que quebre a condição de propósito e comprove saída 1; testes de caminho feliz não bastam.  |
 
 As leis 1, 5 e 8 são as que mais aparecem no restante deste livro, porque são elas que
 explicam por que o ecossistema tem a forma que tem: é a Lei 1 que empurra o trabalho
 para scripts Python e reserva o modelo apenas para julgamento e criação; é a Lei 5 que
 obriga cada gerador a produzir código executável em vez de esqueleto; é a Lei 8 que
-obriga este livro a registrar os dois portões atualmente em execução manual em vez de
-apresentar um painel todo verde.
+obriga este livro a registrar, no Apêndice E, exatamente o que ainda não está coberto
+em vez de apresentar um painel todo verde.
 
 ## 1.4 O inventário: oito ferramentas
 
@@ -104,24 +107,27 @@ O ecossistema é um monorepo com oito ferramentas em `tools/`, cada uma com o pr
 
 ## 1.5 A dimensão real do repositório
 
-Os números a seguir foram medidos no repositório na data de geração deste livro, e não
-estimados.
+Os números a seguir foram remedidos no repositório em 20/09/2026 (revisão pós Sessões
+16-24), e não estimados. As linhas marcadas com `*` não foram remedidas nesta revisão
+— mantêm o valor da geração original (19/09/2026) e não devem ser tomadas como atuais.
 
 | Métrica                                                                 | Valor medido |
 | :---------------------------------------------------------------------- | -----------: |
 | Ferramentas homologadas em `tools/`                                     |            8 |
-| Portões de qualidade globais em `gates/` (arquivos `G_*.py`)            |           24 |
-| Portões `G_*.py` em todo o repositório (globais + locais de ferramenta) |          145 |
-| Hooks de portão registrados em `.pre-commit-config.yaml`                |           19 |
-| Habilidades (skills) canônicas em `componentes/compartilhado/skills/`   |           60 |
-| Comandos canônicos em `componentes/compartilhado/comandos/`             |           14 |
-| Módulos do núcleo compartilhado em `componentes/compartilhado/src-core/`|           35 |
+| Portões de qualidade globais em `gates/` (arquivos `G_*.py`)            |           39 |
+| Portões `G_*.py` em todo o repositório (globais + locais de ferramenta) *|          145 |
+| Hooks de portão registrados em `.pre-commit-config.yaml`                |           34 |
+| Habilidades (skills) canônicas em `componentes/compartilhado/skills/`   |           61 |
+| Comandos canônicos em `componentes/compartilhado/comandos/`             |           16 |
+| Módulos do núcleo compartilhado em `componentes/compartilhado/src-core/`|           34 |
 | Esquemas formais de handoff em `componentes/compartilhado/specs/`       |            5 |
 | Diretórios de harness sincronizados na raiz                             |           10 |
-| Módulos Python autorais nas ferramentas (`tools/`)                      |        1.207 |
-| Módulos Python de portões e scripts da raiz                             |          ~80 |
-| Arquivos de teste (`test_*.py`) no repositório                          |        1.512 |
-| Dependências externas declaradas e verificadas                          |           40 |
+| Módulos Python autorais nas ferramentas (`tools/`)                      *|        1.207 |
+| Módulos Python de portões e scripts da raiz                             *|          ~80 |
+| Arquivos de teste (`test_*.py`) no repositório                          *|        1.512 |
+| Dependências externas declaradas e verificadas                         *|           40 |
+| Suítes de portão que provam reprovação (exit 1), via `G_PORTAO_PROVA_QUE_MORDE.py` |    38/38 |
+| Leis Invioláveis com portão declarado `provado`, via `G_LEI_DECLARA_PORTAO.py`     |    13/13 |
 
 ```{=typst}
 #painel("Leitura honesta dos números")[
@@ -136,7 +142,7 @@ estimados.
 
 ## 1.6 Rastreabilidade do capítulo
 
-`AGENTS.md` (leis 1 a 11, tríade canônica, dispatch de contexto); `README.md` (mapa do
+`AGENTS.md` (leis 1 a 13, tríade canônica, dispatch de contexto); `README.md` (mapa do
 repositório, tabela das oito ferramentas); `ecossistema.py` (roteamento de comandos);
 `gates/` (portões globais); `componentes/compartilhado/specs/` (esquemas de handoff);
 `docs/protocolos/AGENTS-REFERENCIA-COMPLETA.md` (catálogo detalhado de portões e
@@ -309,7 +315,7 @@ ecossistema-aidd/
 ├── MEMORY.md                  A memória viva consolidada do projeto
 ├── ecossistema.py             A CLI unificada: ponto único de entrada
 ├── core/                      Otimizadores cognitivos do meta-repositório
-├── gates/                     24 portões determinísticos globais
+├── gates/                     39 portões determinísticos globais
 ├── scripts/                   Orquestrador síncrono e gestores (componentes, deps)
 ├── componentes/               O cofre canônico: skills, comandos, specs, src-core
 ├── tools/                     As 8 ferramentas homologadas
@@ -406,13 +412,16 @@ Protocol sem contrapartida REST equivalente (`G_PROTOCOL_FALLBACK`). Essa é a t
 arquitetural da Lei #6: um sistema cuja única porta é o MCP estaria preso ao
 ecossistema de agentes.
 
-**Quarteto *Sine Qua Non*.** `/swagger`, `/webhooks`, `/mcp` e `/docs` presentes desde
-o nascimento, cobrindo 100% dos módulos e se atualizando a cada módulo novo.
+**Quarteto *Sine Qua Non*.** `/docs`, `/webhooks`, `/mcp` e `/docs/guia` presentes desde
+o nascimento, cobrindo 100% dos módulos e se atualizando a cada módulo novo. Verificado
+em dois níveis desde 20/09/2026: `G_CONTRACT_ROT` prova que o servidor vivo bate com o
+`openapi.json` commitado, e `G_QUARTETO_SINE_QUA_NON` prova que os 4 pilares realmente
+existem no deliverable gerado.
 
 ```{=typst}
 #painel("O Quarteto como decisão arquitetural, não como enfeite")[
   Os quatro estúdios existem porque o sistema gerado precisa ser operável por três
-  públicos simultâneos: humanos (`/docs`), sistemas externos (`/swagger`, `/webhooks`)
+  públicos simultâneos: humanos (`/docs`, `/docs/guia`), sistemas externos (`/webhooks`)
   e agentes de IA (`/mcp`). Um sistema que só serve a um dos três volta para a mesa
   seis meses depois. A Lei #10 exige, além da presença, o *dinamismo*: um módulo novo
   aparece nos quatro sem intervenção manual.
@@ -624,7 +633,7 @@ Todo portão obedece a três invariantes de construção: é determinístico (ze
 modelo), é executável isoladamente (`python gates/G_X.py`) e tem teste próprio — o
 diretório `gates/` contém, ao lado de cada portão relevante, o seu `test_g_*.py`.
 
-## 5.2 Os 24 portões globais
+## 5.2 Os 39 portões globais
 
 | Portão                             | O que audita                                                                                  |
 | :--------------------------------- | :---------------------------------------------------------------------------------------------- |
@@ -652,11 +661,26 @@ diretório `gates/` contém, ao lado de cada portão relevante, o seu `test_g_*.
 | `G_DRIFT_ANALYZER`                 | Duplicidade e redundância estrutural de funções entre fatias, para extração ao núcleo             |
 | `G_PROTOTYPE_REWRITE`              | Isolamento de `sandbox/` e proibição de promover protótipo a `src/` sem suíte TDD espelhada       |
 | `G_ORQUESTRADOR_SINCRONO`          | Integridade do orquestrador da tríade, da CLI `run-fluxo` e dos esquemas de handoff                |
+| `G_DOCS_ROT`                       | Documentação viva, links quebrados e planos fora dos buckets canônicos                            |
+| `G_PORTAO_PROVA_QUE_MORDE`         | Meta-portão (Lei #13): bloqueia gate novo/alterado sem teste que prove reprovação real (exit 1)   |
+| `G_LEI_DECLARA_PORTAO`             | Meta-portão (Lei #8): bloqueia Lei Inviolável sem portão ou "sem gate" declarado em `AGENTS.md`   |
+| `G_CONTRACT_ROT`                   | Rotas e formatos do servidor em execução contra o `openapi.json` commitado (Lei #10)              |
+| `G_ENV_ROT`                        | Por AST: leituras de variável de ambiente sem entrada correspondente em `.env.example` (Lei #9)   |
+| `G_SKILL_ROT`                      | Resolução estática de path/script/comando citado em `SKILL.md` (Lei #9)                           |
+| `G_MIGRATION_ROT`                  | Migração de banco aplica/reverte/reaplica sem divergência num SQLite efêmero (Lei #3)             |
+| `G_IDIOMA_LEI_4`                   | Densidade de prosa em PT-BR nos caminhos que devem ser inglês compacto (tickets, skills, núcleo)  |
+| `G_LIVRO_EVIDENCIA`                | Rastreabilidade e evidência de um livro-texto gerado — roda sob demanda, não a cada commit deste repositório |
+| `G_DETERMINISMO_LEI_1`             | Por AST: SDK de LLM conhecido importado em rota declarada mecânica (Lei #1)                        |
+| `G_SAIDA_BINARIA`                  | Por AST: todo portão em `gates/` sai estritamente via `sys.exit(0)` ou `sys.exit(1)` (Lei #2)      |
+| `G_ESTRUTURA_ESTADO`               | Artefatos de estado do orquestrador (`flight_plan.json`, logs `.jsonl`) contra o formato esperado (Lei #3) |
+| `G_DISCIPLINA_TESTE_FERRAMENTA`    | Alteração em `tools/<ferramenta>/` sem relatório contemporâneo em `docs/teste-end-to-end/` (Lei #9) |
+| `G_QUARTETO_SINE_QUA_NON`          | Presença real dos 4 pilares (`/docs`, `/webhooks`, `/mcp`, `/docs/guia`) num deliverable gerado (Lei #10) |
+| `G_STACK_PADRAO_OURO`              | Dependências de frontend/backend gerado contra o padrão-ouro, com respeito a override explícito (Lei #11) |
 
 ## 5.3 A execução: `pre-commit` como runner
 
 `python ecossistema.py audit` delega a `pre-commit run --all-files`. A configuração em
-`.pre-commit-config.yaml` registra 19 hooks, todos **locais** (`repo: local`,
+`.pre-commit-config.yaml` registra 34 hooks, todos **locais** (`repo: local`,
 `language: system`) — o que torna a auditoria hermética, offline e independente de
 assistente ou sistema operacional, em conformidade com a Lei #6.
 
@@ -666,18 +690,20 @@ de `G_TESTES_REAIS`, que roda pytest de verdade); e `stages: [manual]` roda apen
 demanda explícita.
 
 ```{=typst}
-#painel("Dois portões em execução manual — o estado honesto")[
-  *G_SEGREDOS* foi movido para `stages: [manual]` em 2026-09-08 por decisão explícita do
-  usuário. O motivo está registrado no próprio arquivo de configuração: foi reproduzida
-  uma inconsistência real entre `python gates/G_SEGREDOS.py` executado direto (aprovava)
-  e o mesmo script dentro do hook (reprovava), nos mesmos arquivos, sem diferença de
-  conteúdo nem de filtros — causa raiz não identificada. O efeito era bloquear commits
-  legítimos por falsos positivos já revisados. A checagem não foi desligada, mudou de
-  frequência: `pre-commit run --hook-stage manual g-segredos --all-files`.
+#painel("Zero portões pendentes por causa raiz desconhecida — o estado honesto em 20/09/2026")[
+  Em 19/09/2026 dois portões estavam em `stages: [manual]`: *G_SEGREDOS*, movido em
+  2026-09-08 por uma inconsistência real entre execução direta (aprovava) e via hook
+  (reprovava) cuja causa raiz não tinha sido identificada; e *G_ARQUITETURA_DELIVERABLE*,
+  por 18 violações legadas conhecidas em `src/core`. Os dois foram fechados: a causa raiz
+  do primeiro foi encontrada (o `detect-secrets` exige o baseline staged e a lista
+  completa de arquivos rastreados no scan com merge) e os 31 alertas foram triados
+  individualmente como falsos positivos; as 18 violações do segundo foram corrigidas
+  movendo as chamadas SQL para a camada de infraestrutura. Ambos voltaram a
+  `always_run: true` e aprovam com exit 0.
 
-  *G_HONESTIDADE_ROTULO* foi reabilitado para execução obrigatória em todo commit
-  (`always_run: true`). Os termos de marketing proibidos foram erradicados dos scripts
-  de portão e a trava roda com exit 0, auditando todos os scripts com zero violações.
+  O único portão que ainda roda em `stages: [manual]` é *G_LIVRO_EVIDENCIA* — por
+  desenho, não por pendência: ele audita o livro-texto de um projeto *gerado* pelo
+  ecossistema, não este repositório, então não há sentido em rodá-lo a cada commit daqui.
 ]
 ```
 
@@ -720,7 +746,7 @@ execução.
 
 ## 5.6 Rastreabilidade do capítulo
 
-`gates/` (24 portões + suítes de teste); `.pre-commit-config.yaml` (linhas 1–66 para a
+`gates/` (39 portões + suítes de teste); `.pre-commit-config.yaml` (linhas 1–66 para a
 documentação das decisões, 67–220 para os hooks); `.claude/settings.json`;
 `componentes/compartilhado/hooks/`; `scripts/gestor_dependencias.py`;
 `docs/protocolos/AGENTS-REFERENCIA-COMPLETA.md` §4.

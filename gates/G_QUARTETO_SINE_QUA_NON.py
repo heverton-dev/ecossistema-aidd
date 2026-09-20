@@ -241,6 +241,11 @@ def main(alvo_arg: Optional[str] = None) -> int:
     print("   O gate valida a presença de definições de rotas e manipuladores dos 4 pilares")
     print("   (/docs, /webhooks, /mcp, /docs/guia) via inspeção de OpenAPI spec, AST de")
     print("   código-fonte e rotas da aplicação.")
+    print("   Cobertura real de auto-descoberta: 2 deliverables reais disponíveis neste")
+    print("   ambiente (enterprise-suite-v4 e proj_ctt) — nenhum exemplo real de saída do")
+    print("   Fluxo 02 (aidd-open/factory) ou Fluxo 03 (aidd-freedom/bridge) foi encontrado")
+    print("   para auto-auditoria. Não afirmar cobertura dos 3 fluxos canônicos além do que")
+    print("   foi medido aqui.")
     print("=" * 72)
 
     if falhas_totais:

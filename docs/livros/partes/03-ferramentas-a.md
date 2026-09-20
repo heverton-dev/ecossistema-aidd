@@ -273,8 +273,11 @@ O orquestrador roda `planner init --fluxo N --nome --slug --dominio --pasta`, l�
 ## 12.3 O papel da ferramenta dentro do ECOSSISTEMA
 
 No ecossistema, o planner é o **guardião da Lei #10**: nenhum plano passa sem
-`/swagger`, `/webhooks`, `/mcp` e `/docs` marcados como `ativo: true`. O portão
-`G_PLANNER_SINE_QUA_NON` reprova qualquer plano que tente nascer sem o Quarteto.
+`/docs`, `/webhooks`, `/mcp` e `/docs/guia` marcados como `ativo: true`. O portão
+`G_PLANNER_SINE_QUA_NON` (local, em `tools/aidd-planner/gates/`) reprova qualquer
+plano que tente nascer sem o Quarteto; desde 20/09/2026 ele é complementado pelo
+`gates/G_QUARTETO_SINE_QUA_NON.py` na raiz, que audita a presença real dos 4 pilares
+no deliverable já gerado, não só na intenção declarada no plano.
 
 É também o ponto onde a Lei #7 (Desenvolvedor no Controle) tem a sua expressão mais
 forte: a lista de ferramentas curada pelo usuário no PRÉ-PLANO é **autoritativa**, e o

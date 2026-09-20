@@ -96,7 +96,7 @@ O ecossistema dispõe de Quality Gates globais em gates/:
 - gates/G_ECOSSISTEMA_INTEGRIDADE.py: Audita a integridade física, sintática e estrutural dos 5 subprojetos e das skills.
 - gates/G_DRIFT_NUCLEO_COMPARTILHADO.py: Detecta divergência não documentada entre os arquivos de núcleo compartilhados por linhagem entre aidd-master e aidd-enterprise (baseline em gates/baseline_nucleo_compartilhado.json).
 - gates/G_HARNESS_COMPAT.py: Verifica que os artefatos multi-harness da raiz (comandos, skills, arquivos-ponteiro) permanecem sincronizados entre si.
-- gates/G_SEGREDOS.py: Escaneia todo o repositório rastreado pelo git em busca de credenciais hardcoded, delegando ao detect-secrets (Yelp); baseline auditado em .secrets.baseline na raiz. Em `stages: [manual]` desde 2026-09-08 — roda sob demanda, não em todo commit.
+- gates/G_SEGREDOS.py: Escaneia todo o repositório rastreado pelo git em busca de credenciais hardcoded, delegando ao detect-secrets (Yelp); baseline auditado em .secrets.baseline na raiz. Reativado com `always_run: true` em 2026-09-19 (ISSUE-0002/ISSUE-0003) — roda em todo commit.
 - gates/G_CLI_HELP_CONSISTENCIA.py: Compara, via AST, flags citadas em print()/raise() contra flags realmente definidas via add_argument nos pontos de entrada argparse das 4 ferramentas.
 - gates/G_COMPONENTE_AGNOSTICO.py: Audita a integridade e cobertura multi-harness de todo componente novo ou modificado contra o manifesto.
 - gates/G_ZERO_HEADLESS.py: Impede a execução de subagentes headless paralelos e assegura o modo interativo como rota primária e mandatória.
@@ -105,7 +105,7 @@ O ecossistema dispõe de Quality Gates globais em gates/:
 - gates/G_TESTES_REAIS.py: Roda pytest de verdade em cada tools/<ferramenta> e falha (exit 1) se qualquer suíte tiver failed > 0.
 - gates/G_DEPENDENCIAS_PIN_HASH.py: Reprova requirements.txt/requirements-dev.txt sem pin exato (`==`), lockfiles (requirements.lock/requirements-dev.lock) sem hash sha256 completo por pacote, ou CI sem `pip install --require-hashes`.
 - gates/G_HONESTIDADE_ROTULO.py: Verifica Regra #9 — escaneia print()/raise() dos scripts de gates/ contra termos de marketing proibidos em gates/termos_proibidos_marketing.json.
-- gates/G_ARQUITETURA_DELIVERABLE.py: Audita conformidade com Clean Architecture/DDD via AST. Em `stages: [manual]` (violações legadas conhecidas).
+- gates/G_ARQUITETURA_DELIVERABLE.py: Audita conformidade com Clean Architecture/DDD via AST. Reativado com `always_run: true` em 2026-09-20 (ISSUE-0004) — as 18 violações legadas em src/core foram corrigidas; roda em todo commit.
 - gates/G_ESCRITOR_ATOMICO.py: Audita o uso de gravação atômica em arquivos críticos do ecossistema.
 - gates/G_TRANSACTION_LOG_LRU.py: Audita deterministicamente (AST + SHA-256) a entrega do transaction log com cache LRU — fonte única, destinos byte-idênticos, declarações em MANIFEST/baseline, símbolos críticos e testes espelhados.
 - gates/G_UNIVERSAL_HARNESS.py: Audita a garantia SINE QUA NON de paridade e wiring de skills, MCPs e hooks agnósticos em todos os harnesses.
@@ -124,11 +124,19 @@ O ecossistema dispõe de Quality Gates globais em gates/:
 - gates/G_CONTRACT_ROT.py: Audita deterministicamente a árvore de rotas e formatos de resposta expostos pelo servidor em execução, comparando-os com o contrato openapi.json commitado e bloqueando qualquer contract rot (divergência de status code, query param ou tipo de campo per Lei #10).
 - gates/G_ENV_ROT.py: Audita via AST todas as leituras de variáveis de ambiente no código-fonte (os.getenv, os.environ, process.env), bloqueando qualquer divergência em relação ao .env.example (prevenção de environment rot per Lei #9).
 - gates/G_IDIOMA_LEI_4.py: Audita deterministicamente a adesão ao inglês compacto nos caminhos centrais voltados a modelos e agentes (tickets, skills, prompts, núcleo), prevenindo gasto excessivo de tokens por prosa em português (enforcement da Lei #4).
+- gates/G_SKILL_ROT.py: Resolve estaticamente todo path, script e comando CLI citado dentro de SKILL.md, bloqueando referências quebradas (prevenção de skill rot per Lei #9).
+- gates/G_MIGRATION_ROT.py: Aplica cada migração (up/down) contra um banco SQLite efêmero, provando convergência ao schema declarado e idempotência na reaplicação (prevenção de migration rot per Lei #3).
+- gates/G_DETERMINISMO_LEI_1.py: Audita via AST o uso de SDKs de LLM conhecidos (anthropic, openai, google.generativeai, litellm, langchain) dentro de gates/ e módulos declarados mecânicos, bloqueando chamada a modelo em rota que deveria ser puramente determinística (Lei #1). Limite declarado: classificação semântica "mecânico vs. cognitivo" fora do escopo estático.
+- gates/G_SAIDA_BINARIA.py: Audita via AST todo arquivo em gates/, exigindo que os únicos pontos de saída sejam `sys.exit(0)` ou `sys.exit(1)` — sem retorno numérico ambíguo nem fall-through implícito (Lei #2).
+- gates/G_ESTRUTURA_ESTADO.py: Valida os artefatos de estado das ferramentas de orquestração (`.orca-flight-plan.json`, `flight_plan.json`, `.orca_state.json`, logs de telemetria `.jsonl`) contra o schema declarado, complementando o G_MIGRATION_ROT.py na cobertura da Lei #3.
+- gates/G_DISCIPLINA_TESTE_FERRAMENTA.py: Bloqueia qualquer alteração sob tools/<ferramenta>/ desacompanhada de relatório contemporâneo em docs/teste-end-to-end/, complementando G_ENV_ROT.py e G_SKILL_ROT.py na cobertura da Lei #9.
+- gates/G_QUARTETO_SINE_QUA_NON.py: Audita no nível raiz, contra deliverables reais gerados pelos fluxos canônicos, a presença efetiva dos 4 pilares (/docs, /webhooks, /mcp, /docs/guia), complementando o G_CONTRACT_ROT.py na cobertura da Lei #10.
+- gates/G_STACK_PADRAO_OURO.py: Audita dependências de frontend gerado (Next.js, React, TypeScript, Tailwind) e configuração de backend (SQLite WAL, OpenAPI 3.1.x) contra o padrão-ouro da Lei #11, respeitando override explícito registrado no plano.
 
 - **Execução unificada:** `python ecossistema.py audit` delega para `pre-commit run --all-files`.
 
 
-**Nota (G_SEGREDOS):** movido para `stages: [manual]` em 2026-09-08, decisão explícita do usuário. Causa: inconsistência reproduzida entre `python gates/G_SEGREDOS.py` direto (aprovava) e o mesmo via hook pre-commit (reprovava), causa raiz não encontrada. Roda sob demanda: `pre-commit run --hook-stage manual g-segredos --all-files`.
+**Nota (G_SEGREDOS):** reativado com `always_run: true` em 2026-09-19 (ISSUE-0002/ISSUE-0003, Rota A). Causa raiz da disparidade histórica de 2026-09-08 esclarecida: detect-secrets exige que o baseline esteja staged e que a lista de arquivos rastreados passe completa para o scan com merge. Os 31 alertas foram triados individualmente (falsos positivos auditados no `.secrets.baseline`); nenhum segredo real encontrado.
 
 **Nota (G_HONESTIDADE_ROTULO):** reabilitado para execução obrigatória em todo commit (`always_run: true`) per ISSUE-0001 — auditado com exit 0 e zero termos de marketing proibidos detectados em todos os scripts do repositório.
 
