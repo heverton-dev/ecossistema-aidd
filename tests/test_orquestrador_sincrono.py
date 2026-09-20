@@ -150,3 +150,24 @@ def test_orquestrador_valida_schema_handoff(tmp_path):
         "handoff-planner-to-engine.schema.json"
     )
     assert valido is True
+
+
+def test_orquestrador_cli_posicionais_freedom(monkeypatch):
+    from scripts.orquestrador_sincrono import main
+    # Simula chamada: python scripts/orquestrador_sincrono.py --fluxo freedom ./exports/lovable-app --dry-run
+    test_args = ["orquestrador_sincrono.py", "--fluxo", "freedom", "./exports/lovable-app", "--dry-run"]
+    monkeypatch.setattr(sys, "argv", test_args)
+    with pytest.raises(SystemExit) as exc_info:
+        main()
+    assert exc_info.value.code == 0
+
+
+def test_orquestrador_cli_posicionais_pure(monkeypatch):
+    from scripts.orquestrador_sincrono import main
+    # Simula chamada: python scripts/orquestrador_sincrono.py --fluxo pure "App Loja" ecommerce --dry-run
+    test_args = ["orquestrador_sincrono.py", "--fluxo", "pure", "App Loja", "ecommerce", "--dry-run"]
+    monkeypatch.setattr(sys, "argv", test_args)
+    with pytest.raises(SystemExit) as exc_info:
+        main()
+    assert exc_info.value.code == 0
+

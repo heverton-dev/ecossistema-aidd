@@ -19,6 +19,7 @@ imediatamente (exit 1).
 import argparse
 import json
 import os
+import re
 import subprocess
 import sys
 import time
@@ -502,22 +503,69 @@ def main():
         choices=["1", "2", "3", "pure", "open", "freedom", "bridge", "aidd-pure", "aidd-open", "aidd-freedom", "aidd-bridge"],
         help="pure (ou 1), open (ou 2), freedom (ou 3)"
     )
-    parser.add_argument("--nome", type=str, required=True, help="Nome do projeto")
-    parser.add_argument("--slug", type=str, required=True, help="Slug do projeto (letras minúsculas e hífens)")
-    parser.add_argument("--dominio", type=str, required=True, help="Domínio de negócio")
-    parser.add_argument("--pasta", type=str, required=True, help="Caminho do diretório destino do projeto")
+    parser.add_argument("--nome", type=str, default=None, help="Nome do projeto")
+    parser.add_argument("--slug", type=str, default=None, help="Slug do projeto (letras minúsculas e hífens)")
+    parser.add_argument("--dominio", type=str, default=None, help="Domínio de negócio")
+    parser.add_argument("--pasta", type=str, default=None, help="Caminho do diretório destino do projeto")
     parser.add_argument("--origem", type=str, default=None, help="Caminho do export original (somente Fluxo 3)")
     parser.add_argument("--dry-run", action="store_true", help="Simula execução sem disparar comandos no disco")
+    parser.add_argument("posicionais", nargs="*", help="Argumentos posicionais para ergonomia simplificada")
 
     args = parser.parse_args()
 
+    # Normalização de fluxo
+    chave_fluxo = MAPA_FLUXOS.get(str(args.fluxo).lower().strip())
+    nome = args.nome
+    slug = args.slug
+    dominio = args.dominio
+    pasta = args.pasta
+    origem = args.origem
+    pos = [p.strip() for p in args.posicionais if p.strip()]
+
+    # Inferência ergonômica para o Fluxo 3 (freedom / bridge)
+    if chave_fluxo == 3:
+        if not origem and pos:
+            origem = pos[0]
+            if not nome and len(pos) >= 2:
+                nome = pos[1]
+            if not dominio and len(pos) >= 3:
+                dominio = pos[2]
+        if origem and not nome:
+            nome = Path(origem).name.replace("-", " ").replace("_", " ").title() or "App Freedom"
+    # Inferência ergonômica para os Fluxos 1 e 2 (pure / open)
+    else:
+        if not nome and pos:
+            nome = pos[0]
+            if not dominio and len(pos) >= 2:
+                dominio = pos[1]
+
+    # Defaults determinísticos se ainda não definidos
+    if nome:
+        if not slug:
+            slug = re.sub(r"[^a-z0-9]+", "-", nome.lower()).strip("-") or "projeto-app"
+        if not dominio:
+            dominio = "saas"
+        if not pasta:
+            pasta = f"./projetos/{slug}"
+
+    # Verificação de parâmetros mínimos essenciais
+    if not (nome and slug and dominio and pasta):
+        parser.error(
+            "Parâmetros obrigatórios ausentes. Informe via flags:\n"
+            "  --nome <nome> --slug <slug> --dominio <dominio> --pasta <pasta> [--origem <origem>]\n"
+            "Ou via sintaxe ergonômica simplificada:\n"
+            "  Fluxo 3: python ecossistema.py freedom <origem_export> [nome_do_projeto] [dominio]\n"
+            "  Fluxo 1: python ecossistema.py pure <nome_do_projeto> [dominio]\n"
+            "  Fluxo 2: python ecossistema.py open <nome_do_projeto> [dominio]"
+        )
+
     orquestrador = OrquestradorSincrono(
         fluxo=args.fluxo,
-        nome=args.nome,
-        slug=args.slug,
-        dominio=args.dominio,
-        pasta=args.pasta,
-        origem_export=args.origem,
+        nome=nome,
+        slug=slug,
+        dominio=dominio,
+        pasta=pasta,
+        origem_export=origem,
         dry_run=args.dry_run
     )
 
