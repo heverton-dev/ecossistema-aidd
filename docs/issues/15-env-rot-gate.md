@@ -1,7 +1,7 @@
 ---
 id: ISSUE-0015
 title: Portão de Env Rot (variáveis exigidas versus .env.example)
-status: ready-for-agent
+status: completed
 blocked_by: []
 created: 2026-09-19
 source: docs/melhorias/19-09-2026_melhoria-taxonomia-prevencao-rot-ecossistema.md — category 7
@@ -33,9 +33,9 @@ at minimum be reported.
 
 ## Acceptance criteria
 
-- [ ] AST scan, not regex, so dynamic key construction is detected or explicitly reported as undecidable.
-- [ ] Every key read by code appears in `.env.example`; exit 1 otherwise, naming the key and file.
-- [ ] Orphan keys in `.env.example` reported.
-- [ ] Failing-path test, strict Law #13: add a `os.getenv` call for an undocumented key, execute the gate, assert exit 1.
-- [ ] Correct law mapping recorded — not the non-existent "Lei #9 Execução Limpa".
-- [ ] Declared against its law in `AGENTS.md`, per ISSUE-0010 convention.
+- [x] AST scan, not regex, so dynamic key construction is detected or explicitly reported as undecidable.
+- [x] Every key read by code appears in `.env.example`; exit 1 otherwise, naming the key and file.
+- [x] Orphan keys in `.env.example` reported.
+- [x] Failing-path test, strict Law #13: add a `os.getenv` call for an undocumented key, execute the gate, assert exit 1.
+- [x] Correct law mapping recorded — not the non-existent "Lei #9 Execução Limpa".
+- [x] Declared against its law in `AGENTS.md`, per ISSUE-0010 convention.

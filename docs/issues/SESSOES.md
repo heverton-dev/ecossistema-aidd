@@ -226,7 +226,7 @@ Rules:
 - Stop and ask before any commit.
 ```
 
-- [ ] **Session 13 — ISSUE-0015 (Env Rot)**
+- [x] **Session 13 — ISSUE-0015 (Env Rot)**
 
 Toca: `gates/`, `AGENTS.md` · Requer: sessão 12
 

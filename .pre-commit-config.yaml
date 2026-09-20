@@ -245,4 +245,12 @@ repos:
         language: system
         always_run: true
         pass_filenames: false
+        require_serial: true
+
+      - id: g-env-rot
+        name: "G_ENV_ROT (prevencao de environment rot via AST vs .env.example)"
+        entry: python gates/G_ENV_ROT.py
+        language: system
+        always_run: true
+        pass_filenames: false
         require_serial: true
