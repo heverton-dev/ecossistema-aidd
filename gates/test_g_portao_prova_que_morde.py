@@ -50,6 +50,24 @@ def test_meta_gate_reprova_se_teste_e_apenas_caminho_feliz(tmp_path):
     assert codigo == 1
 
 
+def test_meta_gate_reprova_se_teste_possui_padrao_mas_falha_na_execucao(tmp_path):
+    """Lei #13 e ISSUE-0019: Prova que o meta-gate morde (exit 1) se o teste tem pattern-match de exit 1 mas falha na execução."""
+    novo_gate = tmp_path / "G_GATE_COM_TESTE_QUEBRADO.py"
+    novo_gate.write_text("# Gate funcional\n", encoding="utf-8")
+
+    # Teste que contém padrão regex (returncode == 1), mas falha ao ser executado (assert False)
+    teste_quebrado = tmp_path / "test_g_gate_com_teste_quebrado.py"
+    teste_quebrado.write_text(
+        "def test_falha_reprova_com_exit_1():\n"
+        "    # returncode == 1\n"
+        "    assert False, 'Erro de execucao forcado para testar ISSUE-0019'\n",
+        encoding="utf-8"
+    )
+
+    codigo = auditar_gates(str(tmp_path))
+    assert codigo == 1
+
+
 def test_meta_gate_subprocess_exit_1_com_violacao(tmp_path):
     """Lei #13: Prova via processo CLI que o meta-gate retorna exit code 1 no shell."""
     novo_gate = tmp_path / "G_FACHADA.py"
@@ -70,3 +88,4 @@ def test_meta_gate_subprocess_exit_1_com_violacao(tmp_path):
     res = subprocess.run([sys.executable, str(wrapper)], capture_output=True, text=True)
     assert res.returncode == 1
     assert "REGRA CANÔNICA VIOLADA (Lei #13)" in res.stdout
+

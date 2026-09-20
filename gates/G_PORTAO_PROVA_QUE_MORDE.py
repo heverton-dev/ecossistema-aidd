@@ -25,8 +25,10 @@ Saída:
 """
 
 import ast
+from concurrent.futures import ThreadPoolExecutor
 import os
 import re
+import subprocess
 import sys
 from typing import Dict, List, Tuple
 
@@ -66,8 +68,36 @@ def encontrar_arquivo_teste(gate_file: str, gates_dir: str) -> str | None:
     return None
 
 
-def auditar_teste_de_falha(test_path: str) -> Tuple[bool, List[str]]:
-    """Verifica se o arquivo de teste contém teste de caminho de falha com exit 1."""
+def executar_suite_teste(test_path: str) -> Tuple[bool, str]:
+    """Executa a suíte de teste usando pytest e valida saída bem-sucedida (exit 0 do pytest)."""
+    test_dir = os.path.dirname(os.path.abspath(test_path))
+    env = dict(os.environ)
+    existing_pp = env.get("PYTHONPATH", "")
+    env["PYTHONPATH"] = f"{test_dir}{os.pathsep}{ROOT_DIR}" + (f"{os.pathsep}{existing_pp}" if existing_pp else "")
+
+    cmd = [sys.executable, "-m", "pytest", "-o", "addopts=", "-q", test_path]
+    try:
+        res = subprocess.run(
+            cmd,
+            capture_output=True,
+            text=True,
+            env=env,
+            cwd=ROOT_DIR,
+            timeout=30,
+        )
+        if res.returncode == 0:
+            return True, ""
+        detalhe = (res.stdout.strip() or res.stderr.strip()).splitlines()
+        resumo_falha = "\n".join(detalhe[-5:]) if detalhe else f"retorno={res.returncode}"
+        return False, f"Falha na execução em runtime (código {res.returncode}):\n{resumo_falha}"
+    except subprocess.TimeoutExpired:
+        return False, "Execução da suíte de teste excedeu o timeout de 30s."
+    except Exception as e:
+        return False, f"Erro ao disparar execução do teste: {e}"
+
+
+def auditar_teste_de_falha(test_path: str, executar: bool = True) -> Tuple[bool, List[str]]:
+    """Verifica se o arquivo de teste contém asserção de exit 1 e executa com sucesso."""
     erros = []
     try:
         with open(test_path, "r", encoding="utf-8", errors="replace") as f:
@@ -109,6 +139,14 @@ def auditar_teste_de_falha(test_path: str) -> Tuple[bool, List[str]]:
             "Nenhum cenário deliberado de quebra de condição ou detecção de violação identificado."
         )
 
+    # 4. Execução real do teste (ISSUE-0019)
+    if not erros and executar:
+        sucesso_exec, motivo_exec = executar_suite_teste(test_path)
+        if not sucesso_exec:
+            erros.append(
+                f"Teste contém padrão de exit 1 mas falhou na execução real (Lei #13 / ISSUE-0019):\n{motivo_exec}"
+            )
+
     return len(erros) == 0, erros
 
 
@@ -135,27 +173,32 @@ def auditar_gates(gates_dir: str = GATES_DIR) -> int:
     erros_totais: Dict[str, List[str]] = {}
     conformes = []
 
-    for gate_file in gates:
+    def processar_gate(gate_file: str) -> Tuple[str, bool, List[str]]:
         test_file = encontrar_arquivo_teste(gate_file, gates_dir)
         if not test_file:
-            erros_totais[gate_file] = [
+            return gate_file, False, [
                 f"Arquivo de teste ausente. Esperado: test_{os.path.splitext(gate_file)[0].lower()}.py"
             ]
-            continue
+        valido, errs = auditar_teste_de_falha(test_file, executar=True)
+        return gate_file, valido, errs
 
-        valido, erros = auditar_teste_de_falha(test_file)
+    max_workers = min(os.cpu_count() or 4, 6) if len(gates) > 3 else 1
+    with ThreadPoolExecutor(max_workers=max_workers) as executor:
+        resultados = list(executor.map(processar_gate, gates))
+
+    for gate_file, valido, errs in resultados:
         if not valido:
-            erros_totais[gate_file] = erros
+            erros_totais[gate_file] = errs
         else:
             conformes.append(gate_file)
 
     # Exibição de Resultados
     for g in conformes:
-        print(f"[OK] {g:<35} -> Teste de reprovação (exit 1) comprovado.")
+        print(f"[OK] {g:<35} -> Teste de reprovação (exit 1) executado e comprovado.")
 
     if erros_totais:
         print("\n" + "=" * 72)
-        print(f" [FALHA] {len(erros_totais)} gate(s) sem teste de reprovação válido (Lei #13):")
+        print(f" [FALHA] {len(erros_totais)} gate(s) com teste ausente, inválido ou falho na execução (Lei #13):")
         print("=" * 72)
         for g, errs in sorted(erros_totais.items()):
             print(f"\n  [VIOLAÇÃO] {g}:")
@@ -164,12 +207,20 @@ def auditar_gates(gates_dir: str = GATES_DIR) -> int:
         print("\n" + "=" * 72)
         print(" REGRA CANÔNICA VIOLADA (Lei #13):")
         print(" Nenhum quality gate é aceito sem teste automatizado que deliberadamente")
-        print(" quebre a condição resguardada e asserte exit 1.")
+        print(" quebre a condição resguardada, asserte exit 1 e execute com sucesso em runtime.")
         print("=" * 72)
         return 1
 
     print("\n" + "=" * 72)
-    print(f" [SUCESSO] 100% dos {len(gates)} Quality Gates provam que mordem (exit 1)!")
+    print(f" [SUCESSO] {len(conformes)}/{len(gates)} Quality Gates verificados:")
+    print("           Suítes de teste de reprovação executadas e aprovadas com sucesso em runtime.")
+    print("=" * 72)
+    print(" [LIMITE METROLÓGICO — LEI #8 / ISSUE-0019]:")
+    print("   A execução automatizada comprova que os testes de reprovação rodam e passam.")
+    print("   A verificação determinística de que o cenário de teste quebra estritamente a")
+    print("   invariante sob guarda (e não um erro colateral genérico) requer auditoria")
+    print("   semântica / teste de mutação (ISSUE-0011 escopo 3), não sendo afirmada como")
+    print("   cobertura total de 100% da integridade da invariante.")
     print("=" * 72)
     return 0
 
