@@ -39,6 +39,38 @@ from typing import Any, Dict, List, Optional
 
 from logs import get_logger
 
+try:
+    from core.database import (
+        criar_tabela_transaction_log,
+        obter_ultimo_hash_transaction_log,
+        inserir_transaction_log,
+        obter_transaction_log_por_id,
+        listar_recentes_transaction_log,
+        contar_transaction_log,
+    )
+except ImportError:
+    try:
+        from database import (
+            criar_tabela_transaction_log,
+            obter_ultimo_hash_transaction_log,
+            inserir_transaction_log,
+            obter_transaction_log_por_id,
+            listar_recentes_transaction_log,
+            contar_transaction_log,
+        )
+    except ImportError:
+        import os
+        import sys
+        sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+        from database import (
+            criar_tabela_transaction_log,
+            obter_ultimo_hash_transaction_log,
+            inserir_transaction_log,
+            obter_transaction_log_por_id,
+            listar_recentes_transaction_log,
+            contar_transaction_log,
+        )
+
 logger = get_logger("core.transaction_log")
 
 DEFAULT_CACHE_CAPACITY = 128
@@ -240,20 +272,7 @@ class TransactionLogRepositoryImpl:
     @staticmethod
     def criar_tabela(conn: Any):
         """Cria (idempotente) a tabela de transaction log e seu índice."""
-        conn.execute(
-            "CREATE TABLE IF NOT EXISTS _transaction_log ("
-            "id TEXT PRIMARY KEY,"
-            "timestamp TEXT NOT NULL,"
-            "action TEXT NOT NULL,"
-            "payload TEXT NOT NULL,"
-            "prev_hash TEXT NOT NULL,"
-            "curr_hash TEXT NOT NULL"
-            ");"
-        )
-        conn.execute(
-            "CREATE INDEX IF NOT EXISTS idx_transaction_log_timestamp "
-            "ON _transaction_log(timestamp);"
-        )
+        criar_tabela_transaction_log(conn)
 
     # ------------------------------------------------------------------ #
     # Escrita
@@ -266,25 +285,19 @@ class TransactionLogRepositoryImpl:
         — quem quiser o caminho completo com write-through usa ``registrar_log``.
         """
         self.criar_tabela(conn)
-        anterior = conn.execute(
-            "SELECT curr_hash FROM _transaction_log "
-            "ORDER BY timestamp DESC, id DESC LIMIT 1"
-        ).fetchone()
+        anterior = obter_ultimo_hash_transaction_log(conn)
         prev_hash = (anterior["curr_hash"] if isinstance(anterior, dict) else anterior[0]) if anterior else _ZERO_HASH
         timestamp = datetime.now(timezone.utc).isoformat()
         log_id = uuid.uuid4().hex
         curr_hash = TransactionLogEntry.computar_hash(prev_hash, action, payload)
-        conn.execute(
-            "INSERT INTO _transaction_log (id, timestamp, action, payload, prev_hash, curr_hash) "
-            "VALUES (?, ?, ?, ?, ?, ?)",
-            (
-                log_id,
-                timestamp,
-                action,
-                json.dumps(payload, ensure_ascii=False),
-                prev_hash,
-                curr_hash,
-            ),
+        inserir_transaction_log(
+            conn,
+            log_id,
+            timestamp,
+            action,
+            json.dumps(payload, ensure_ascii=False),
+            prev_hash,
+            curr_hash,
         )
         return TransactionLogEntry(
             id=log_id,
@@ -322,10 +335,7 @@ class TransactionLogRepositoryImpl:
             return cached
         with self._conectar() as conn:
             self.criar_tabela(conn)
-            row = conn.execute(
-                "SELECT * FROM _transaction_log WHERE id = ?",
-                (log_id,),
-            ).fetchone()
+            row = obter_transaction_log_por_id(conn, log_id)
         if row is None:
             return None
         entry = TransactionLogEntry.from_row(row)
@@ -343,11 +353,7 @@ class TransactionLogRepositoryImpl:
             raise ValueError(f"limit deve ser >= 1 (recebido: {limit})")
         with self._conectar() as conn:
             self.criar_tabela(conn)
-            rows = conn.execute(
-                "SELECT * FROM _transaction_log "
-                "ORDER BY timestamp DESC, id DESC LIMIT ?",
-                (limit,),
-            ).fetchall()
+            rows = listar_recentes_transaction_log(conn, limit)
         entradas = [TransactionLogEntry.from_row(r) for r in rows]
         for entry in entradas:
             self._cache.put(entry.id, entry)
@@ -357,8 +363,7 @@ class TransactionLogRepositoryImpl:
         """Total de registros persistidos na tabela."""
         with self._conectar() as conn:
             self.criar_tabela(conn)
-            row = conn.execute("SELECT count(*) FROM _transaction_log").fetchone()
-        return int(row[0])
+            return contar_transaction_log(conn)
 
     # ------------------------------------------------------------------ #
     # Métricas do cache

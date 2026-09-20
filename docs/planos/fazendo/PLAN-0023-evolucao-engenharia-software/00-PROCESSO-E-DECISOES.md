@@ -47,7 +47,7 @@ Diagnostico rapido → Definicao de Pronto checavel → Prompt de Execucao autoc
 
 | # | Item | Status | Nota Atual | Nota Alvo | Nota Real | Documento |
 |---|---|---|---|---|---|---|
-| 1 | Reativar G_ARQUITETURA_DELIVERABLE corrigindo 212 violacoes SQL-fora-infra nos templates | 🔶 Em execucao | 3.0 | 10.0 | [Pendente - preencher somente apos o fechamento real deste item/iniciativa, via o mesmo mecanismo que mediu a Nota Atual] | `01-reativar-g-arquitetura.md` |
+| 1 | Reativar G_ARQUITETURA_DELIVERABLE corrigindo 212 violacoes SQL-fora-infra nos templates | ✅ Concluido | 3.0 | 10.0 | 10.0 | `01-reativar-g-arquitetura.md` |
 | 2 | Adicionar testes reais as 2 entregas sem cobertura (enterprise-suite-v4, logistica-hub-v4) | 🔶 Em execucao | 2.0 | 9.0 | [Pendente - preencher somente apos o fechamento real deste item/iniciativa, via o mesmo mecanismo que mediu a Nota Atual] | `02-adicionar-testes-reais.md` |
 | 3 | Quebrar funcoes gigantes get_swagger_html (736 linhas) e compose_suite (277/273) | 🔶 Em execucao | 4.0 | 8.0 | [Pendente - preencher somente apos o fechamento real deste item/iniciativa, via o mesmo mecanismo que mediu a Nota Atual] | `03-quebrar-funcoes-gigantes.md` |
 | 4 | Documentar e eliminar divergencia master-enterprise (3 src/core + 6 scripts + mcp/) | 🔶 Em execucao | 5.0 | 9.0 | [Pendente - preencher somente apos o fechamento real deste item/iniciativa, via o mesmo mecanismo que mediu a Nota Atual] | `04-documentar-eliminar-divergencia.md` |

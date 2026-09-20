@@ -475,6 +475,76 @@ def append_audit_log(cursor, action: str, payload: dict):
     )
 
 
+# ---------------------------------------------------------------------------
+# Transaction Log — Persistência na camada de infraestrutura (PLAN-0017 / ISSUE-0004)
+# ---------------------------------------------------------------------------
+
+def criar_tabela_transaction_log(conn):
+    """Cria (idempotente) a tabela de transaction log e seu índice."""
+    conn.execute(
+        "CREATE TABLE IF NOT EXISTS _transaction_log ("
+        "id TEXT PRIMARY KEY,"
+        "timestamp TEXT NOT NULL,"
+        "action TEXT NOT NULL,"
+        "payload TEXT NOT NULL,"
+        "prev_hash TEXT NOT NULL,"
+        "curr_hash TEXT NOT NULL"
+        ");"
+    )
+    conn.execute(
+        "CREATE INDEX IF NOT EXISTS idx_transaction_log_timestamp "
+        "ON _transaction_log(timestamp);"
+    )
+
+
+def obter_ultimo_hash_transaction_log(conn):
+    """Obtém o registro com hash curr_hash mais recente ou None."""
+    return conn.execute(
+        "SELECT curr_hash FROM _transaction_log "
+        "ORDER BY timestamp DESC, id DESC LIMIT 1"
+    ).fetchone()
+
+
+def inserir_transaction_log(
+    conn,
+    log_id: str,
+    timestamp: str,
+    action: str,
+    payload_json: str,
+    prev_hash: str,
+    curr_hash: str,
+):
+    """Insere um novo registro de transaction log."""
+    conn.execute(
+        "INSERT INTO _transaction_log (id, timestamp, action, payload, prev_hash, curr_hash) "
+        "VALUES (?, ?, ?, ?, ?, ?)",
+        (log_id, timestamp, action, payload_json, prev_hash, curr_hash),
+    )
+
+
+def obter_transaction_log_por_id(conn, log_id: str):
+    """Busca um registro de transaction log por ID."""
+    return conn.execute(
+        "SELECT * FROM _transaction_log WHERE id = ?",
+        (log_id,),
+    ).fetchone()
+
+
+def listar_recentes_transaction_log(conn, limit: int):
+    """Lista registros mais recentes ordenados por timestamp decrescente."""
+    return conn.execute(
+        "SELECT * FROM _transaction_log "
+        "ORDER BY timestamp DESC, id DESC LIMIT ?",
+        (limit,),
+    ).fetchall()
+
+
+def contar_transaction_log(conn) -> int:
+    """Retorna a contagem total de registros na tabela _transaction_log."""
+    row = conn.execute("SELECT count(*) FROM _transaction_log").fetchone()
+    return int(row[0]) if row else 0
+
+
 def enable_rls_tenant(cursor, table_name: str):
     """Enable RLS for a table.  On PostgreSQL uses native policies; on SQLite
     registers the table for application-layer enforcement via RLSConnection."""
