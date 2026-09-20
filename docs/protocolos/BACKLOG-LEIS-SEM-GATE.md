@@ -13,7 +13,7 @@ Em conformidade com a **ISSUE-0010** e a **Lei #8 (Honestidade de Rótulo)**, ne
 | Lei | Nome | Portão Declarado | Força | Status da Cobertura |
 | :---: | :--- | :--- | :---: | :--- |
 | **01** | Determinism First | `gates/G_DETERMINISMO_LEI_1.py` | `provado` | Coberto para SDKs de LLM conhecidos em gates/ e rotas mecânicas; limite declarado (semântica cognitiva requer revisão humana) |
-| **02** | Binary Quality | `sem gate — cumprimento por convenção` | `sem-gate` | No Backlog (Ver Item 2.2); ticket aberto ISSUE-0021 |
+| **02** | Binary Quality | `gates/G_SAIDA_BINARIA.py` | `provado` | Coberto via AST: todo gate em gates/ termina estritamente em sys.exit(0) ou sys.exit(1) |
 | **03** | Structured Persistence | `gates/G_MIGRATION_ROT.py` | `provado (parcial)` | Migrações de app gerado cobertas (Sessão 15); estado próprio do orquestrador ainda sem portão — ver Item 2.3, ticket aberto ISSUE-0022 |
 | **04** | Extreme Token Economy | `.claude/hooks/regra10_check.py`, `gates/G_IDIOMA_LEI_4.py` | `provado` | Enforced no Claude (formato + idioma); indisponível em outros harnesses (Ver 2.4) |
 | **05** | Zero Stubs / Zero Mocks | `gates/G_TESTES_REAIS.py` | `provado` | Coberto e testado (exit 1) |
@@ -35,10 +35,9 @@ Em conformidade com a **ISSUE-0010** e a **Lei #8 (Honestidade de Rótulo)**, ne
 - **Enforcement Implementado:** Quality gate `gates/G_DETERMINISMO_LEI_1.py` audita via AST caminhos mecânicos (`gates/*.py` e módulos declarados) e bloqueia importações e chamadas a SDKs de LLMs conhecidos (`anthropic`, `openai`, `google.generativeai`, `litellm`, `langchain`, etc.).
 - **Limite Metrológico (Lei #8 / ISSUE-0020):** Nenhum analisador estático classifica de forma geral o uso "mecânico" versus "cognitivo" de um LLM em pipelines arbitrários. O portão cobre o subconjunto verificável de SDKs conhecidos em rotas determinísticas; a integridade semântica universal permanece sob convenção e revisão arquitetural humana. Concluído na Sessão 19.
 
-### 2.2 Lei #2 — Binary Quality
+### 2.2 Lei #2 — Binary Quality (ISSUE-0021)
 - **Exigência:** Toda mudança deve passar por Quality Gates (`python ecossistema.py audit`, exit 0 = passa, exit 1 = bloqueia).
-- **Gap Atual:** A qualidade binária é imposta pelo orquestrador de pre-commit e pelo runner `cmd_audit`. Não existe um portão que audite se os próprios scripts terminam estritamente com `sys.exit(0)` ou `sys.exit(1)` (sem retorno numérico ambíguo).
-- **Ação Futura:** Criar um lint estático (`G_SAIDA_BINARIA.py`) que inspecione todos os arquivos em `gates/` e asserte via AST que os únicos pontos de saída sejam chamadas a `sys.exit(0)` ou `sys.exit(1)`. **Ticket aberto:** `docs/issues/21-gate-saida-binaria-lei-2.md` (ISSUE-0021).
+- **Enforcement Implementado:** Quality gate `gates/G_SAIDA_BINARIA.py` inspeciona via AST todos os arquivos em `gates/` e asserte que todos os pontos de saída utilizem estritamente `sys.exit(0)` ou `sys.exit(1)`, sem códigos numéricos ambíguos, sem bare returns e sem risco de fall-through no bloco `__main__`. Concluído na Sessão 20.
 
 ### 2.3 Lei #3 — Structured Persistence
 - **Exigência:** Persistência de estado em arquivos estruturados (JSON, SQLite WAL), nunca na memória volátil da conversa.

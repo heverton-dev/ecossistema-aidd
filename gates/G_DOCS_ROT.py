@@ -130,7 +130,7 @@ def auditar_docs_rot() -> Tuple[int, List[str]]:
     return (1 if falhas else 0, falhas)
 
 
-def main():
+def main() -> int:
     codigo, falhas = auditar_docs_rot()
     if codigo != 0:
         print(f"[G_DOCS_ROT] ❌ REPROVADO: {len(falhas)} inconsistência(s) encontrada(s):")
@@ -138,11 +138,11 @@ def main():
             print(f"  - {f}")
         if len(falhas) > 25:
             print(f"  ... e mais {len(falhas) - 25} problemas.")
-        sys.exit(1)
+        return 1
     else:
         print("[G_DOCS_ROT] ✅ APROVADO: Documentação viva íntegra, sem links quebrados ou rot.")
-        sys.exit(0)
+        return 0
 
 
 if __name__ == "__main__":
-    main()
+    sys.exit(main())

@@ -28,7 +28,7 @@
 1. **Determinism First:** Use deterministic scripts, AST, regex, or JSON Schema. Never use LLM for mechanical tasks.
    - Portão: gates/G_DETERMINISMO_LEI_1.py (provado)
 2. **Binary Quality:** Every change must pass Quality Gates (`python ecossistema.py audit`, exit 0 = pass, exit 1 = block).
-   - Portão: sem gate — cumprimento por convenção (sem-gate)
+   - Portão: gates/G_SAIDA_BINARIA.py (provado)
 3. **Structured Persistence:** Persist state in audit files (JSON, SQLite), never in volatile conversation memory.
    - Portão: gates/G_MIGRATION_ROT.py (provado)
 4. **Extreme Token Economy:** Minimalist prompts, compact English core rules, dense PT-BR user responses only when requested.

@@ -405,7 +405,7 @@ Rules:
 - Stop and ask before any commit.
 ```
 
-- [ ] **Session 20 — ISSUE-0021 (Law #2 binary-exit gate)**
+- [x] **Session 20 — ISSUE-0021 (Law #2 binary-exit gate)**
 
 Toca: `gates/`, `AGENTS.md`, `.pre-commit-config.yaml` · Requer: sessão 19
 

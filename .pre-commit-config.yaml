@@ -286,3 +286,11 @@ repos:
         always_run: true
         pass_filenames: false
         require_serial: true
+
+      - id: g-saida-binaria
+        name: "G_SAIDA_BINARIA (auditoria de saida estritamente binaria 0/1 per Lei #2)"
+        entry: python gates/G_SAIDA_BINARIA.py
+        language: system
+        always_run: true
+        pass_filenames: false
+        require_serial: true

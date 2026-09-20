@@ -1,7 +1,7 @@
 ---
 id: ISSUE-0021
 title: Gate de saída binária para a Lei #2 (sys.exit(0)/sys.exit(1) estrito)
-status: ready-for-agent
+status: closed
 blocked_by: []
 created: 2026-09-20
 source: BACKLOG-LEIS-SEM-GATE.md item 2.2 — enforcement gap analysis
@@ -27,13 +27,13 @@ exception falling through to Python's implicit exit 0.
 
 ## Acceptance criteria
 
-- [ ] Gate flags any gate file exiting with something other than literal 0/1.
-- [ ] Gate flags a gate file with no explicit `sys.exit` in its main block.
-- [ ] Own failing-path test: synthetic gate file with `sys.exit(2)`, assert
+- [x] Gate flags any gate file exiting with something other than literal 0/1.
+- [x] Gate flags a gate file with no explicit `sys.exit` in its main block.
+- [x] Own failing-path test: synthetic gate file with `sys.exit(2)`, assert
       exit 1.
-- [ ] False-positive check: an existing compliant gate (e.g.
+- [x] False-positive check: an existing compliant gate (e.g.
       `G_HONESTIDADE_ROTULO.py`) passes.
-- [ ] Run against the current `gates/` directory; violations triaged
+- [x] Run against the current `gates/` directory; violations triaged
       individually, not bulk-suppressed.
-- [ ] Law #2 in `AGENTS.md` updated from `sem-gate` to name this gate.
-- [ ] `BACKLOG-LEIS-SEM-GATE.md` row for Lei #2 updated.
+- [x] Law #2 in `AGENTS.md` updated from `sem-gate` to name this gate.
+- [x] `BACKLOG-LEIS-SEM-GATE.md` row for Lei #2 updated.

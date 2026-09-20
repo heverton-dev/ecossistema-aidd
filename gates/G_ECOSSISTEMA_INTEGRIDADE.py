@@ -174,11 +174,11 @@ def audit():
         for err in erros:
             print(f"  - {err}")
         print("=" * 70)
-        sys.exit(1)
+        return 1
     else:
         print(" [SUCESSO] Quality Gate G_ECOSSISTEMA_INTEGRIDADE APROVADO (100% OK)!")
         print("=" * 70)
-        sys.exit(0)
+        return 0
 
 if __name__ == "__main__":
-    audit()
+    sys.exit(audit())
