@@ -318,7 +318,7 @@ Rules:
 - Stop and ask before any commit.
 ```
 
-- [ ] **Session 17 — ISSUE-0013 (formato de resposta)**
+- [x] **Session 17 — ISSUE-0013 (formato de resposta)**
 
 Toca: `AGENTS.md`, hooks de todos os harnesses · Requer: sessão 16
 

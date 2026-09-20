@@ -10,15 +10,17 @@ Melhorias implementadas:
 4. Portavel e agnostico a harness.
 """
 
+import argparse
 import json
 import os
 import re
 import sys
+import tempfile
 import time
 
 HOOKS_DIR = os.path.dirname(os.path.abspath(__file__))
 CONFIG_PATH = os.path.join(HOOKS_DIR, "regra10_termos.json")
-STATE_DIR = os.path.join(HOOKS_DIR, "regra10_state")
+STATE_DIR = os.path.join(tempfile.gettempdir(), "aidd_regra10_state")
 
 TERMOS_PADRAO = [
     "diff", "baseline", "byte a byte", "endpoint", "payload", "pipeline",
@@ -39,12 +41,53 @@ PADRAO_EXPLICACAO = re.compile(
     re.IGNORECASE,
 )
 
+RE_PREAMBULO_INICIO = re.compile(
+    r"^\s*(?:"
+    r"olá|oi|bom dia|boa tarde|boa noite|com certeza|certamente|claro|perfeito|com prazer|hello|hi|"
+    r"você pediu|como solicitado|conforme solicitado|de acordo com|você solicitou|conforme você pediu|atendendo ao seu pedido|"
+    r"entendido|entendi|compreendido|"
+    r"vou te ajudar|vou explicar|vou resumir|aqui está o resumo|aqui estão as alterações|neste passo vou|deixe-me explicar"
+    r")\b",
+    re.IGNORECASE,
+)
+
+RE_NARRACAO_PASSOS = re.compile(
+    r"\b(?:"
+    r"primeiro eu|em seguida eu|depois eu|então eu|após isso eu|"
+    r"em seguida verifiquei|depois verifiquei|primeiro analisei|em seguida analisei|"
+    r"depois li|em seguida li|depois executei|em seguida executei|agora vou|"
+    r"como podemos ver acima|"
+    r"first i|then i|after that i|next i|i started by|i then"
+    r")\b",
+    re.IGNORECASE,
+)
+
+RE_OPCOES_SEM_RECOMENDACAO = re.compile(
+    r"\b(?:"
+    r"você pode optar por|as opções são|as alternativas são|você pode escolher entre|"
+    r"temos duas opções|temos 3 opções|há duas formas|você decide entre|"
+    r"you can choose between|the options are|you can either"
+    r")\b",
+    re.IGNORECASE,
+)
+
+RE_PALAVRAS_RECOMENDACAO = re.compile(
+    r"\b(?:"
+    r"recomendo|recomendação|sugiro|sugestão|recomenda-se|preferível|indico|"
+    r"recommend|recommendation|suggest|suggestion|preferred"
+    r")\b",
+    re.IGNORECASE,
+)
+
+RE_BULLET_ITEM = re.compile(r"^\s*(?:[-*•]|\d+\.)\s+", re.MULTILINE)
+
 DEFAULT_CONFIG = {
     "ativo": True,
     "modo": "bloqueio",  # "bloqueio" ou "aviso"
     "limite_bloqueios_por_pergunta": 2,
     "ignorar_respostas_curtas": True,
     "min_palavras_para_bloqueio": 30,
+    "verificar_shape": True,
     "termos": TERMOS_PADRAO,
 }
 
@@ -70,6 +113,7 @@ def carregar_config():
     cfg.setdefault("limite_bloqueios_por_pergunta", 2)
     cfg.setdefault("ignorar_respostas_curtas", True)
     cfg.setdefault("min_palavras_para_bloqueio", 30)
+    cfg.setdefault("verificar_shape", True)
     cfg.setdefault("termos", TERMOS_PADRAO)
     return cfg
 
@@ -151,31 +195,97 @@ def contar_bloqueios(chave: str) -> int:
     return contagem
 
 
+def verificar_shape(mensagem: str, cfg: dict) -> list[str]:
+    """Valida deterministicamente o formato da resposta do assistente segundo a Regra 10 e ISSUE-0013.
+
+    Formato obrigatório para respostas explicativas/prolixas:
+    1. One top sentence declarando o fato/ação imediata sem preâmbulo/saudação.
+    2. Short bulleted body com fatos, métricas e achados. Proibido narrar passos passados.
+    3. One closing suggestion block separado do corpo.
+    Proibido: saudações/polidez, repetição da solicitação, listar opções sem recomendar.
+    """
+    erros = []
+    texto_sem_blocos = re.sub(r"```[\s\S]*?```", "", mensagem).strip()
+    if not texto_sem_blocos:
+        return erros
+
+    palavras = texto_sem_blocos.split()
+    min_palavras = cfg.get("min_palavras_para_bloqueio", 30)
+
+    # 1. Proibicoes estritas (aplicam-se a qualquer mensagem)
+    linhas = [l.strip() for l in texto_sem_blocos.splitlines() if l.strip()]
+    if linhas and RE_PREAMBULO_INICIO.search(linhas[0]):
+        erros.append("Preâmbulo ou saudação proibida no início. A primeira linha deve ser direta.")
+
+    texto_limpo = limpar_codigo_e_links(texto_sem_blocos)
+    if RE_NARRACAO_PASSOS.search(texto_limpo):
+        erros.append("Narração de processo/passos tomados. Use apenas fatos, números e achados objetivos.")
+
+    if RE_OPCOES_SEM_RECOMENDACAO.search(texto_limpo) and not RE_PALAVRAS_RECOMENDACAO.search(texto_limpo):
+        erros.append("Listagem de alternativas sem recomendação explícita de escolha.")
+
+    # 2. Exigencia de topicos/bullets: apenas para respostas com corpo explicativo (> 2 linhas ou >= min_palavras)
+    # Status curtos de 1-2 linhas factuais sao permitidos sem bullets por Law #4 (Silent executor).
+    if len(linhas) > 2 or len(palavras) >= min_palavras:
+        bullets = RE_BULLET_ITEM.findall(texto_sem_blocos)
+        if not bullets:
+            erros.append("Ausência de corpo estruturado em tópicos/bullets (fatos, números, achados).")
+
+    return erros
+
+
 def main():
+    parser = argparse.ArgumentParser(description="Stop hook Regra 10 - Validador de formato e jargão.")
+    parser.add_argument("--strict", action="store_true", help="Retorna exit 1 quando a resposta for bloqueada.")
+    args, _ = parser.parse_known_args()
+
     try:
-        entrada = json.load(sys.stdin)
-    except (json.JSONDecodeError, ValueError):
+        conteudo_raw = sys.stdin.read()
+        if not conteudo_raw.strip():
+            return 0
+        try:
+            entrada = json.loads(conteudo_raw)
+            if isinstance(entrada, dict):
+                mensagem = entrada.get("last_assistant_message") or ""
+            elif isinstance(entrada, str):
+                mensagem = entrada
+            else:
+                mensagem = str(entrada)
+        except (json.JSONDecodeError, ValueError):
+            entrada = {}
+            mensagem = conteudo_raw
+    except Exception:
         return 0
 
     cfg = carregar_config()
     if not cfg.get("ativo", True):
         return 0
 
-    mensagem = entrada.get("last_assistant_message") or ""
     if not mensagem.strip():
         return 0
 
-    palavras = mensagem.split()
-    if cfg.get("ignorar_respostas_curtas", True) and len(palavras) < cfg.get("min_palavras_para_bloqueio", 30):
-        return 0
+    motivos_bloqueio = []
 
+    # 1. Validacao de Shape / Formato deterministico
+    if cfg.get("verificar_shape", True):
+        erros_shape = verificar_shape(mensagem, cfg)
+        if erros_shape:
+            motivos_bloqueio.extend(erros_shape)
+
+    # 2. Validacao de Jargao Tecnico
     achados = termos_encontrados(mensagem, cfg.get("termos", TERMOS_PADRAO))
-    if not achados:
+    if achados:
+        termos_str = ", ".join(sorted(set(achados)))
+        motivos_bloqueio.append(
+            f"Termos técnicos sem explicação ({termos_str})"
+        )
+
+    if not motivos_bloqueio:
         return 0
 
     if cfg.get("modo", "bloqueio") == "aviso":
         sys.stderr.write(
-            f"[regra10:aviso] Termos tecnicos identificados na resposta: {', '.join(achados)}\n"
+            f"[regra10:aviso] Violações identificadas na resposta: {'; '.join(motivos_bloqueio)}\n"
         )
         return 0
 
@@ -187,20 +297,23 @@ def main():
     if tentativa > limite:
         sys.stderr.write(
             f"[regra10] Limite de {limite} bloqueio(s) atingido para esta pergunta; "
-            f"liberando resposta mesmo com termos: {', '.join(achados)}\n"
+            f"liberando resposta mesmo com violações: {'; '.join(motivos_bloqueio)}\n"
         )
         return 0
 
-    termos_str = ", ".join(sorted(set(achados)))
+    razao_formatada = (
+        f"Regra 10 (ISSUE-0013): Resposta fora do padrão ({'; '.join(motivos_bloqueio)}). "
+        "Formato obrigatório: 1 frase direta no topo (sem preâmbulo/saudação), "
+        "corpo em tópicos objetivos (fatos, números, achados; sem narrar processo), "
+        "e bloco final de sugestão/próximo passo isolado."
+    )
     saida = {
         "decision": "block",
-        "reason": (
-            f"Regra 10: Resposta com termos tecnicos sem explicacao ({termos_str}). "
-            f"Reescreva de forma concisa e densa em linguagem simples, usando analogias "
-            f"do cotidiano se necessario. Mantenha o rigor tecnico sem inflar tokens."
-        ),
+        "reason": razao_formatada,
     }
     print(json.dumps(saida, ensure_ascii=False))
+    if args.strict:
+        return 1
     return 0
 
 

@@ -15,7 +15,7 @@ Em conformidade com a **ISSUE-0010** e a **Lei #8 (Honestidade de Rótulo)**, ne
 | **01** | Determinism First | `sem gate — cumprimento por convenção` | `sem-gate` | No Backlog (Ver Item 2.1) |
 | **02** | Binary Quality | `sem gate — cumprimento por convenção` | `sem-gate` | No Backlog (Ver Item 2.2) |
 | **03** | Structured Persistence | `sem gate — cumprimento por convenção` | `sem-gate` | No Backlog (Ver Item 2.3) |
-| **04** | Extreme Token Economy | `sem gate — cumprimento por convenção` | `sem-gate` | Mitigação via ISSUE-0012 |
+| **04** | Extreme Token Economy | `.claude/hooks/regra10_check.py` | `provado` | Enforced no Claude; indisponível em outros harnesses (Ver 2.4) |
 | **05** | Zero Stubs / Zero Mocks | `gates/G_TESTES_REAIS.py` | `provado` | Coberto e testado (exit 1) |
 | **06** | Agnostic Supremacy | `gates/G_COMPONENTE_AGNOSTICO.py` | `provado` | Coberto e testado (exit 1) |
 | **07** | Developer in Control | `gates/G_ZERO_HEADLESS.py` | `provado` | Coberto e testado (exit 1) |
@@ -45,10 +45,12 @@ Em conformidade com a **ISSUE-0010** e a **Lei #8 (Honestidade de Rótulo)**, ne
 - **Gap Atual:** O motor de orquestração salva em `flight_plan.json` e logs em `.jsonl`. Não há portão estático global garantindo que nenhum script mantenha estado apenas em variáveis de processo transitórias.
 - **Ação Futura:** Criar gate `G_ESTRUTURA_ESTADO.py` validando os schemas JSON de persistência das ferramentas.
 
-### 2.4 Lei #4 — Extreme Token Economy
-- **Exigência:** Prompts minimalistas, regras em inglês compacto, respostas densas em PT-BR apenas quando solicitadas.
-- **Gap Atual:** Nenhum dos 27 gates atuais analisa o idioma dos arquivos de regras centrais (`AGENTS.md`).
-- **Mitigação Planejada:** Já formalizada na **ISSUE-0012** (`docs/issues/12-gate-de-idioma-lei-4.md`), que construirá o gate determinístico de idioma e concisão.
+### 2.4 Lei #4 — Extreme Token Economy (ISSUE-0013)
+- **Exigência:** Prompts minimalistas, regras em inglês compacto, respostas estritamente moldadas (Rule 10: 1 top sentence direta, corpo em bullets com fatos/números sem narrar passos, bloco final de sugestão/recomendação isolado; proibido preâmbulo, saudações, ou alternativas sem recomendação).
+- **Enforcement Implementado:** O hook determinístico `.claude/hooks/regra10_check.py` (sincronizado universalmente via `componentes/compartilhado/hooks/regra10_check.py`) audita tanto termos técnicos não explicados quanto o shape determinístico da mensagem.
+- **Limitação de Enforcement por Harness (Honestidade de Rótulo - Lei #8):**
+  - **Claude Code:** Suporte total e ativo via Stop Hook no ciclo de vida da mensagem.
+  - **Cursor, Gemini CLI / Antigravity, OpenCode, MimoCode, Qoder, CodeBuddy:** **Enforcement automatizado INDISPONÍVEL.** Esses ambientes não fornecem hook nativo de interceptação de resposta de chat (Stop hook). O hook físico é replicado nas pastas de hooks para integridade de distribuição, mas o cumprimento da regra opera exclusivamente por convenção e diretiva explícita nos arquivos ponteiro (`GEMINI.md`, `QODER.md`, `CODEBUDDY.md`, `.cursor/rules/aidd.md`). Nunca assumir cobertura automatizada nesses harnesses.
 
 ### 2.5 Lei #9 — Tool Testing Discipline
 - **Exigência:** Ciclo de cinco passos do `docs/protocolos/PROTOCOLO-TESTES-FERRAMENTAS.md` antes de declarar conformidade de ferramenta.

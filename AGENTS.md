@@ -10,7 +10,12 @@
 
 - **Thinking constraint:** Think strictly in compact English. No meta-deliberation. Focus only on architectural invariants and edge cases. Under 150 words of reasoning.
 - **Execution limit:** Resolve tasks in 3 to 5 discrete steps. Stop and request confirmation if more steps are required.
-- **Output format:** Silent executor. Return code edits and 1-line execution status only. Do not explain what was changed unless explicitly asked. Do not repeat code in conversational reply.
+- **Output format (Rule 10):** Silent executor. Return code edits and 1-line execution status only. Do not explain what was changed unless explicitly asked. Do not repeat code in conversational reply.
+  - When prose is requested, strictly shape answers as:
+    1. One top sentence stating what to do or what happened. No preamble.
+    2. Short bulleted body. Facts, numbers, findings. No narration of steps taken.
+    3. One closing suggestion block, separated from the body.
+    - Forbidden: polite greetings, restating the request, recapping what was just said, listing options without a recommendation, unexplained jargon.
 - **Editing rule:** Always use exact search/replace block tools (`replace_file_content`). Never dump entire rewritten files into output.
 - **Bash rule:** Always pipe verbose commands to tail/grep. E.g., `pytest 2>&1 | tail -n 25`. Never dump raw bundle outputs, logs, or lockfiles into context.
 - **Graph-first:** Always query knowledge graph (`code-review-graph` MCP) before Grep, Glob, or full file reads.
@@ -27,7 +32,7 @@
 3. **Structured Persistence:** Persist state in audit files (JSON, SQLite), never in volatile conversation memory.
    - Portão: gates/G_MIGRATION_ROT.py (provado)
 4. **Extreme Token Economy:** Minimalist prompts, compact English core rules, dense PT-BR user responses only when requested.
-   - Portão: sem gate — cumprimento por convenção (sem-gate)
+   - Portão: .claude/hooks/regra10_check.py (provado)
 5. **Zero Stubs / Zero Mocks:** 100% functional, typed production code with real tests.
    - Portão: gates/G_TESTES_REAIS.py (provado)
 6. **Agnostic Supremacy:** Zero vendor lock-in across OS, harness, and LLM providers.

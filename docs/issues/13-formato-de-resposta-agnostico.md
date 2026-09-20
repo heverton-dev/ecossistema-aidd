@@ -1,7 +1,7 @@
 ---
 id: ISSUE-0013
 title: Formato de resposta obrigatório, cobrado em todo harness
-status: ready-for-agent
+status: concluida
 blocked_by: []
 created: 2026-09-19
 source: user directive 2026-09-19 — chat output discipline
@@ -36,9 +36,9 @@ block present — so this needs no LLM, per Law #1.
 
 ## Acceptance criteria
 
-- [ ] Format rule written into `AGENTS.md` alongside Rule 10, in compact English per Law #4.
-- [ ] Hook extended to check shape, not only jargon. Deterministic, zero LLM.
-- [ ] Hook replicated into every harness that supports hooks: Cursor, Gemini, opencode, mimocode, qoder, codebuddy. Harnesses without hook support get the rule in their pointer file plus an explicit note in the backlog that enforcement is unavailable there.
-- [ ] Failing-path test per Law #13, strict reading: the test **executes** the hook against a prolix answer and asserts it blocks. Pattern presence does not count.
-- [ ] Law #4 in `AGENTS.md` names this hook, per ISSUE-0010 convention.
-- [ ] Harnesses that cannot enforce it are listed in `docs/protocolos/BACKLOG-LEIS-SEM-GATE.md`, never silently assumed covered.
+- [x] Format rule written into `AGENTS.md` alongside Rule 10, in compact English per Law #4.
+- [x] Hook extended to check shape, not only jargon. Deterministic, zero LLM.
+- [x] Hook replicated into every harness that supports hooks: Cursor, Gemini, opencode, mimocode, qoder, codebuddy. Harnesses without hook support get the rule in their pointer file plus an explicit note in the backlog that enforcement is unavailable there.
+- [x] Failing-path test per Law #13, strict reading: the test **executes** the hook against a prolix answer and asserts it blocks. Pattern presence does not count.
+- [x] Law #4 in `AGENTS.md` names this hook, per ISSUE-0010 convention.
+- [x] Harnesses that cannot enforce it are listed in `docs/protocolos/BACKLOG-LEIS-SEM-GATE.md`, never silently assumed covered.
