@@ -278,3 +278,11 @@ repos:
         always_run: true
         pass_filenames: false
         require_serial: true
+
+      - id: g-determinismo-lei-1
+        name: "G_DETERMINISMO_LEI_1 (bloqueio de chamadas LLM em rotas mecanicas per Lei #1)"
+        entry: python gates/G_DETERMINISMO_LEI_1.py
+        language: system
+        always_run: true
+        pass_filenames: false
+        require_serial: true

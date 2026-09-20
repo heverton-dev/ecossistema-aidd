@@ -1,6 +1,6 @@
 # Backlog de Invariantes: Leis Invioláveis em Estado "Sem Gate" (ISSUE-0010)
 
-> **Data de Levantamento:** 19/09/2026  
+> **Data de Levantamento:** 19/09/2026 (Revisado em 20/09/2026 — Leis #3, #9 e #10 ganharam portão parcial nas Sessões 12-15; gap residual de cada uma virou ticket próprio)
 > **Status:** Ativo e Auditado via `gates/G_LEI_DECLARA_PORTAO.py`  
 > **Referência:** `AGENTS.md` §2 e `docs/issues/10-cada-lei-declara-seu-portao.md`  
 
@@ -12,17 +12,17 @@ Em conformidade com a **ISSUE-0010** e a **Lei #8 (Honestidade de Rótulo)**, ne
 
 | Lei | Nome | Portão Declarado | Força | Status da Cobertura |
 | :---: | :--- | :--- | :---: | :--- |
-| **01** | Determinism First | `sem gate — cumprimento por convenção` | `sem-gate` | No Backlog (Ver Item 2.1) |
-| **02** | Binary Quality | `sem gate — cumprimento por convenção` | `sem-gate` | No Backlog (Ver Item 2.2) |
-| **03** | Structured Persistence | `sem gate — cumprimento por convenção` | `sem-gate` | No Backlog (Ver Item 2.3) |
-| **04** | Extreme Token Economy | `.claude/hooks/regra10_check.py` | `provado` | Enforced no Claude; indisponível em outros harnesses (Ver 2.4) |
+| **01** | Determinism First | `gates/G_DETERMINISMO_LEI_1.py` | `provado` | Coberto para SDKs de LLM conhecidos em gates/ e rotas mecânicas; limite declarado (semântica cognitiva requer revisão humana) |
+| **02** | Binary Quality | `sem gate — cumprimento por convenção` | `sem-gate` | No Backlog (Ver Item 2.2); ticket aberto ISSUE-0021 |
+| **03** | Structured Persistence | `gates/G_MIGRATION_ROT.py` | `provado (parcial)` | Migrações de app gerado cobertas (Sessão 15); estado próprio do orquestrador ainda sem portão — ver Item 2.3, ticket aberto ISSUE-0022 |
+| **04** | Extreme Token Economy | `.claude/hooks/regra10_check.py`, `gates/G_IDIOMA_LEI_4.py` | `provado` | Enforced no Claude (formato + idioma); indisponível em outros harnesses (Ver 2.4) |
 | **05** | Zero Stubs / Zero Mocks | `gates/G_TESTES_REAIS.py` | `provado` | Coberto e testado (exit 1) |
 | **06** | Agnostic Supremacy | `gates/G_COMPONENTE_AGNOSTICO.py` | `provado` | Coberto e testado (exit 1) |
 | **07** | Developer in Control | `gates/G_ZERO_HEADLESS.py` | `provado` | Coberto e testado (exit 1) |
 | **08** | Label Honesty | `gates/G_HONESTIDADE_ROTULO.py` | `provado` | Coberto e testado (exit 1) |
-| **09** | Tool Testing Discipline | `sem gate — cumprimento por convenção` | `sem-gate` | No Backlog (Ver Item 2.4) |
-| **10** | Quarteto Sine Qua Non Dinâmico | `sem gate — cumprimento por convenção` | `sem-gate` | No Backlog (Ver Item 2.5) |
-| **11** | Padrão-Ouro de Stack Tecnológica | `sem gate — cumprimento por convenção` | `sem-gate` | No Backlog (Ver Item 2.6) |
+| **09** | Tool Testing Discipline | `gates/G_ENV_ROT.py`, `gates/G_SKILL_ROT.py` | `provado (parcial)` | Env e skill rot cobertos (Sessões 13-14); frescor do ciclo de 5 passos de teste ainda sem portão — ver Item 2.5, ticket aberto ISSUE-0023 |
+| **10** | Quarteto Sine Qua Non Dinâmico | `gates/G_CONTRACT_ROT.py` | `provado (parcial)` | Divergência rota-vs-spec coberta (Sessão 12); presença dos 4 pilares num deliverable gerado ainda sem portão de raiz — ver Item 2.6, ticket aberto ISSUE-0024 |
+| **11** | Padrão-Ouro de Stack Tecnológica | `sem gate — cumprimento por convenção` | `sem-gate` | No Backlog (Ver Item 2.7); ticket aberto ISSUE-0025 |
 | **12** | Anti-Docs Rot & Canonical Ingestion | `gates/G_DOCS_ROT.py` | `provado` | Coberto e testado (exit 1) |
 | **13** | Todo Portão Deve Provar que Morde | `gates/G_PORTAO_PROVA_QUE_MORDE.py` | `provado` | Coberto e testado (exit 1) |
 
@@ -30,20 +30,21 @@ Em conformidade com a **ISSUE-0010** e a **Lei #8 (Honestidade de Rótulo)**, ne
 
 ## 2. Detalhamento do Backlog: Leis Sem Portão
 
-### 2.1 Lei #1 — Determinism First
+### 2.1 Lei #1 — Determinism First (ISSUE-0020)
 - **Exigência:** Uso de scripts determinísticos, AST, regex ou JSON Schema. Proibição de uso de LLM para tarefas puramente mecânicas.
-- **Gap Atual:** O ecossistema possui `G_LLM_PROMPT_SHIELD.py` que audita sanitização de prompts, mas não existe um analisador estático que determine se uma chamada a LLM é "mecânica" versus "heurística/cognitiva".
-- **Ação Futura:** Especificar heurística de AST que detecte chamadas de modelo em pipelines mecânicos sem decisão de alto nível, ou manter formalmente sob verificação arquitetural humana.
+- **Enforcement Implementado:** Quality gate `gates/G_DETERMINISMO_LEI_1.py` audita via AST caminhos mecânicos (`gates/*.py` e módulos declarados) e bloqueia importações e chamadas a SDKs de LLMs conhecidos (`anthropic`, `openai`, `google.generativeai`, `litellm`, `langchain`, etc.).
+- **Limite Metrológico (Lei #8 / ISSUE-0020):** Nenhum analisador estático classifica de forma geral o uso "mecânico" versus "cognitivo" de um LLM em pipelines arbitrários. O portão cobre o subconjunto verificável de SDKs conhecidos em rotas determinísticas; a integridade semântica universal permanece sob convenção e revisão arquitetural humana. Concluído na Sessão 19.
 
 ### 2.2 Lei #2 — Binary Quality
 - **Exigência:** Toda mudança deve passar por Quality Gates (`python ecossistema.py audit`, exit 0 = passa, exit 1 = bloqueia).
 - **Gap Atual:** A qualidade binária é imposta pelo orquestrador de pre-commit e pelo runner `cmd_audit`. Não existe um portão que audite se os próprios scripts terminam estritamente com `sys.exit(0)` ou `sys.exit(1)` (sem retorno numérico ambíguo).
-- **Ação Futura:** Criar um lint estático (`G_SAIDA_BINARIA.py`) que inspecione todos os arquivos em `gates/` e asserte via AST que os únicos pontos de saída sejam chamadas a `sys.exit(0)` ou `sys.exit(1)`.
+- **Ação Futura:** Criar um lint estático (`G_SAIDA_BINARIA.py`) que inspecione todos os arquivos em `gates/` e asserte via AST que os únicos pontos de saída sejam chamadas a `sys.exit(0)` ou `sys.exit(1)`. **Ticket aberto:** `docs/issues/21-gate-saida-binaria-lei-2.md` (ISSUE-0021).
 
 ### 2.3 Lei #3 — Structured Persistence
 - **Exigência:** Persistência de estado em arquivos estruturados (JSON, SQLite WAL), nunca na memória volátil da conversa.
-- **Gap Atual:** O motor de orquestração salva em `flight_plan.json` e logs em `.jsonl`. Não há portão estático global garantindo que nenhum script mantenha estado apenas em variáveis de processo transitórias.
-- **Ação Futura:** Criar gate `G_ESTRUTURA_ESTADO.py` validando os schemas JSON de persistência das ferramentas.
+- **Coberto (Sessão 15):** `gates/G_MIGRATION_ROT.py` prova, num banco SQLite descartável, que as migrações de banco dos apps gerados aplicam, revertem e reaplicam sem divergência.
+- **Gap Residual:** O que o portão acima NÃO cobre: os arquivos de estado das próprias ferramentas de orquestração (`flight_plan.json`, logs `.jsonl`). Nenhum portão garante que esses artefatos existem e batem com o formato esperado depois de uma execução real.
+- **Ação Futura:** Criar gate `G_ESTRUTURA_ESTADO.py` validando os schemas JSON de persistência das ferramentas de orquestração — sem substituir `G_MIGRATION_ROT.py`, apenas somar. **Ticket aberto:** `docs/issues/22-gate-persistencia-estruturada-lei-3.md` (ISSUE-0022).
 
 ### 2.4 Lei #4 — Extreme Token Economy (ISSUE-0013)
 - **Exigência:** Prompts minimalistas, regras em inglês compacto, respostas estritamente moldadas (Rule 10: 1 top sentence direta, corpo em bullets com fatos/números sem narrar passos, bloco final de sugestão/recomendação isolado; proibido preâmbulo, saudações, ou alternativas sem recomendação).
@@ -54,15 +55,17 @@ Em conformidade com a **ISSUE-0010** e a **Lei #8 (Honestidade de Rótulo)**, ne
 
 ### 2.5 Lei #9 — Tool Testing Discipline
 - **Exigência:** Ciclo de cinco passos do `docs/protocolos/PROTOCOLO-TESTES-FERRAMENTAS.md` antes de declarar conformidade de ferramenta.
-- **Gap Atual:** A disciplina de 5 passos é procedimental e executada interativamente pelo desenvolvedor/agente; não é checada no pre-commit.
-- **Ação Futura:** Criar verificação em CI que audite se a data/hash do relatório em `docs/teste-end-to-end/` coincide com o último commit que tocou a ferramenta.
+- **Coberto (Sessões 13-14):** `gates/G_ENV_ROT.py` (variáveis de ambiente não documentadas) e `gates/G_SKILL_ROT.py` (referências quebradas em SKILL.md) já rodam no commit.
+- **Gap Residual:** O que os dois portões acima NÃO cobrem: nenhum checa se o relatório de teste em `docs/teste-end-to-end/` está fresco (mesma data/commit) toda vez que uma ferramenta em `tools/<nome>/` é alterada.
+- **Ação Futura:** Criar verificação que audite se a data/hash do relatório em `docs/teste-end-to-end/` coincide com o último commit que tocou a ferramenta — soma aos dois portões já existentes. **Ticket aberto:** `docs/issues/23-gate-disciplina-teste-ferramenta-lei-9.md` (ISSUE-0023).
 
 ### 2.6 Lei #10 — Quarteto Sine Qua Non Dinâmico
 - **Exigência:** Todo projeto gerado ou evoluído DEVE nascer nativamente com 4 pilares: Swagger Studio, Webhook Studio, MCP Studio e Guia do Utilizador.
-- **Gap Atual:** Existe `gates/G_PROTOCOL_FALLBACK.py` (que valida paridade REST vs MCP quando ambos existem) e `tools/aidd-planner/scripts/gates/G_PLANNER_SINE_QUA_NON.py` (local do planner). Porém, falta um gate na raiz que audite deliverables gerados em testes ou saídas reais contra a presença obrigatória dos 4 pilares.
-- **Ação Futura:** Promover `G_PLANNER_SINE_QUA_NON.py` ou criar `G_QUARTETO_SINE_QUA_NON.py` no nível raiz.
+- **Coberto (Sessão 12):** `gates/G_CONTRACT_ROT.py` prova, contra um servidor rodando de verdade, que as rotas batem com o `openapi.json` comitado.
+- **Gap Residual:** O que o portão acima NÃO cobre: ele detecta divergência entre servidor e especificação, mas não audita se um deliverable gerado tem os 4 pilares presentes de fato. Existe também `gates/G_PROTOCOL_FALLBACK.py` (paridade REST vs MCP) e `tools/aidd-planner/scripts/gates/G_PLANNER_SINE_QUA_NON.py` (só local do planner) — nenhum roda na raiz contra uma saída gerada real.
+- **Ação Futura:** Promover `G_PLANNER_SINE_QUA_NON.py` ou criar `G_QUARTETO_SINE_QUA_NON.py` no nível raiz — soma ao `G_CONTRACT_ROT.py`, não substitui. **Ticket aberto:** `docs/issues/24-gate-quarteto-sine-qua-non-lei-10.md` (ISSUE-0024).
 
 ### 2.7 Lei #11 — Padrão-Ouro de Stack Tecnológica
 - **Exigência:** Todo fluxo deve gerar Frontend em Next.js + TypeScript + Tailwind CSS (Backend Python + SQLite WAL, API OpenAPI 3.1).
 - **Gap Atual:** O ecossistema possui `gates/G_FRONTEND_LAYERS.py` (que valida separação de camadas dumb components vs fetch), mas não há gate que reprove a existência de frameworks não autorizados no frontend quando gerado.
-- **Ação Futura:** Criar gate `G_STACK_FRONTEND_PADRAO.py` validando dependências de frontend (`package.json` gerado) contra Next.js, React, Tailwind CSS e TypeScript.
+- **Ação Futura:** Criar gate `G_STACK_FRONTEND_PADRAO.py` validando dependências de frontend (`package.json` gerado) contra Next.js, React, Tailwind CSS e TypeScript. **Ticket aberto:** `docs/issues/25-gate-stack-padrao-ouro-lei-11.md` (ISSUE-0025).

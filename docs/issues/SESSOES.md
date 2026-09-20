@@ -366,3 +366,159 @@ Rules:
 - Stop and ask before any commit.
 ```
 
+---
+
+## Fase 8 — new gates for laws still marked "no gate"
+
+> All six sessions below touch `AGENTS.md` and `.pre-commit-config.yaml` — same
+> collision risk as Fase 5. Run one at a time in this checkout, in this order.
+> To parallelize safely, isolate each session in its own `git worktree`
+> (`git worktree add ../sessao-XX -b sessao-XX`), run each interactively in its
+> own confirmed session (never headless/unattended — Law #7), then merge
+> branches back to `main` **one at a time**, re-running the full gate suite
+> after each merge. Sessions 21-23 correct a stale premise: `BACKLOG-LEIS-SEM-GATE.md`
+> still lists Laws #3, #9 and #10 as "no gate", but Sessions 12-15 already gave
+> them one. Add a second `Portão:` line under the existing one — never overwrite it.
+
+- [x] **Session 19 — ISSUE-0020 (Law #1 determinism gate)**
+
+Toca: `gates/`, `AGENTS.md`, `.pre-commit-config.yaml` · Requer: sessão 18
+
+```bash
+Execute docs/issues/20-gate-determinismo-lei-1.md.
+
+Law #1 (Determinism First) is convention-only today. Build a static check blocking
+known LLM SDK imports/calls (anthropic, openai, google.generativeai, ...) inside
+gates/*.py or any file a manifest tags deterministic-only.
+
+Known limit, state it in the gate's own output: no static analyzer classifies
+"mechanical" vs "cognitive" LLM usage in general. This gate covers only the known
+SDK subset. Full coverage stays human-review territory.
+
+Rules:
+- Reuse detection logic already built for G_LLM_PROMPT_SHIELD.py where possible.
+- Exceptions only via a documented, version-controlled list, never a silent skip.
+- Failing-path test must EXECUTE: inject a synthetic file importing an LLM SDK into gates/, assert exit 1.
+- False-positive check: a normal deterministic gate file passes (exit 0).
+- Law #1 in AGENTS.md changes from "sem-gate" to name this gate, per ISSUE-0010.
+- BACKLOG-LEIS-SEM-GATE.md row for Lei #1 updated to reflect coverage and its stated limit.
+- Stop and ask before any commit.
+```
+
+- [ ] **Session 20 — ISSUE-0021 (Law #2 binary-exit gate)**
+
+Toca: `gates/`, `AGENTS.md`, `.pre-commit-config.yaml` · Requer: sessão 19
+
+```bash
+Execute docs/issues/21-gate-saida-binaria-lei-2.md.
+
+Law #2 (Binary Quality) is convention-only today. Build a gate auditing every
+gates/*.py file: its only exit points must be sys.exit(0) or sys.exit(1) — no bare
+return, no other numeric code, no unguarded exception falling through to Python's
+implicit exit 0.
+
+Rules:
+- AST walk each gate file: find sys.exit call sites, flag any argument that is not literal 0 or 1.
+- Flag any gate whose __main__ block can fall through without an explicit sys.exit call.
+- Failing-path test must EXECUTE: synthetic gate file with sys.exit(2), assert exit 1.
+- False-positive check: an existing compliant gate (e.g. G_HONESTIDADE_ROTULO.py) passes.
+- Run against the current gates/ directory; triage violations individually, no bulk suppression.
+- Law #2 in AGENTS.md changes from "sem-gate" to name this gate.
+- BACKLOG-LEIS-SEM-GATE.md row for Lei #2 updated.
+- Stop and ask before any commit.
+```
+
+- [ ] **Session 21 — ISSUE-0022 (Law #3 second gate — orchestrator state persistence)**
+
+Toca: `gates/`, `AGENTS.md`, `.pre-commit-config.yaml`, `docs/protocolos/BACKLOG-LEIS-SEM-GATE.md` · Requer: sessão 20
+
+```bash
+Execute docs/issues/22-gate-persistencia-estruturada-lei-3.md.
+
+Correction before starting: Law #3 already has a proven gate (gates/G_MIGRATION_ROT.py,
+declared in AGENTS.md from Session 15). That gate covers generated-app database
+migrations. This ticket covers a different surface: the orchestration tools' own
+state files (flight_plan.json, .jsonl logs). Add a second Portão line under Law #3
+in AGENTS.md — do not replace the existing one, do not claim the law was "sem-gate".
+
+Known limit, state it in the gate's own output: cannot prove a negative ("no script
+anywhere keeps state only in a variable") in general. Scope narrows to tools that
+already claim structured persistence — verify the claim, do not invent global coverage.
+
+Rules:
+- Inventory tools claiming JSON/SQLite persistence, starting from flight_plan.json's schema and existing .jsonl writers. Keep the inventory list explicit in the gate; additions require a deliberate edit.
+- Failing-path test must EXECUTE: run a tool with its persistence write disabled/corrupted, assert exit 1.
+- False-positive check: a tool with valid persisted state passes.
+- BACKLOG-LEIS-SEM-GATE.md row for Lei #3 updated to list both gates, not replace one with the other.
+- Stop and ask before any commit.
+```
+
+- [ ] **Session 22 — ISSUE-0023 (Law #9 third gate — tool-test-report freshness)**
+
+Toca: `gates/`, `AGENTS.md`, `.pre-commit-config.yaml`, `docs/protocolos/BACKLOG-LEIS-SEM-GATE.md` · Requer: sessão 21
+
+```bash
+Execute docs/issues/23-gate-disciplina-teste-ferramenta-lei-9.md.
+
+Correction before starting: Law #9 already has two proven gates (G_ENV_ROT.py,
+G_SKILL_ROT.py, from Sessions 13-14). Neither checks the 5-step test-and-report
+cycle from PROTOCOLO-TESTES-FERRAMENTAS.md. Add a third Portão line under Law #9
+in AGENTS.md — do not replace the existing two.
+
+Rules:
+- Define "touches a tool" as: the change set includes files under a tools/<name>/ path.
+- Gate requires a report file under docs/teste-end-to-end/ whose git-log timestamp is not older than the change touching the tool; block if missing or stale.
+- Wire into the same pre-commit path as the other gates.
+- Failing-path test must EXECUTE: synthetic change touching a tool folder with a stale/missing report, assert exit 1.
+- False-positive check: a change with a same-day updated report passes.
+- BACKLOG-LEIS-SEM-GATE.md row for Lei #9 updated to list all three gates.
+- Stop and ask before any commit.
+```
+
+- [ ] **Session 23 — ISSUE-0024 (Law #10 second gate — root Quarteto Sine Qua Non)**
+
+Toca: `gates/`, `AGENTS.md`, `.pre-commit-config.yaml`, `docs/protocolos/BACKLOG-LEIS-SEM-GATE.md`, `tools/aidd-planner/` · Requer: sessão 22
+
+```bash
+Execute docs/issues/24-gate-quarteto-sine-qua-non-lei-10.md.
+
+Correction before starting: Law #10 already has a proven gate (gates/G_CONTRACT_ROT.py,
+from Session 12), which checks a running server's routes against the committed
+openapi.json. This ticket is different: audit a generated deliverable for the 4
+mandatory pillars (/docs, /webhooks, /mcp, /docs/guia) actually being present. Add a
+second Portão line under Law #10 in AGENTS.md — do not replace the existing one.
+
+Rules:
+- Read tools/aidd-planner/scripts/gates/G_PLANNER_SINE_QUA_NON.py in full first; decide promote-in-place vs. wrap from root, record the decision and why.
+- Gate takes a generated project path and asserts all 4 route groups resolve, via OpenAPI spec or live route registry.
+- Run it against real fixture output from each of the 3 canonical flows (pure, open, factory-derived), not only the planner's own test fixture.
+- Failing-path test must EXECUTE: fixture project missing one pillar (e.g. no /mcp), assert exit 1.
+- False-positive check: a complete fixture with all 4 pillars passes.
+- BACKLOG-LEIS-SEM-GATE.md row for Lei #10 updated to list both gates.
+- Stop and ask before any commit.
+```
+
+- [ ] **Session 24 — ISSUE-0025 (Law #11 stack gate)**
+
+Toca: `gates/`, `AGENTS.md`, `.pre-commit-config.yaml`, `docs/protocolos/BACKLOG-LEIS-SEM-GATE.md` · Requer: sessão 23
+
+```bash
+Execute docs/issues/25-gate-stack-padrao-ouro-lei-11.md.
+
+Law #11 (Padrão-Ouro de Stack) is convention-only today. Build a gate rejecting a
+generated project whose frontend is not Next.js + TypeScript + Tailwind, or whose
+backend is not Python + SQLite WAL + OpenAPI 3.1 — unless the plan/prompt explicitly
+authorized a different stack for that layer.
+
+Rules:
+- Parse the generated package.json / tsconfig.json / tailwind.config.* for Next.js, React, TypeScript and Tailwind CSS as declared deps.
+- Pair with a backend check: SQLite journal_mode=WAL in generated DB init code, OpenAPI spec declares version 3.1.x.
+- Honor the explicit-override clause in Law #11 (AGENTS.md §2.11): pass when the plan/prompt recorded an explicit different-stack decision for that layer; fail only on silent drift.
+- Failing-path test must EXECUTE: fixture package.json without Tailwind, assert exit 1.
+- False-positive check: fixture with an explicit recorded override for that layer passes.
+- Run against proj_ctt's real generated output (the reference case named in Law #11); confirm it passes.
+- Law #11 in AGENTS.md changes from "sem-gate" to name this gate.
+- BACKLOG-LEIS-SEM-GATE.md row for Lei #11 updated.
+- Stop and ask before any commit.
+```
+

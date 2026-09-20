@@ -26,7 +26,7 @@
 ## 2. Inviolable Laws
 
 1. **Determinism First:** Use deterministic scripts, AST, regex, or JSON Schema. Never use LLM for mechanical tasks.
-   - Portão: sem gate — cumprimento por convenção (sem-gate)
+   - Portão: gates/G_DETERMINISMO_LEI_1.py (provado)
 2. **Binary Quality:** Every change must pass Quality Gates (`python ecossistema.py audit`, exit 0 = pass, exit 1 = block).
    - Portão: sem gate — cumprimento por convenção (sem-gate)
 3. **Structured Persistence:** Persist state in audit files (JSON, SQLite), never in volatile conversation memory.

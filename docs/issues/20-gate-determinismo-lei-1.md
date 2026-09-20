@@ -1,7 +1,7 @@
 ---
 id: ISSUE-0020
 title: Gate de determinismo para a Lei #1 (bloqueia LLM em pipeline mecânico)
-status: ready-for-agent
+status: closed
 blocked_by: []
 created: 2026-09-20
 source: BACKLOG-LEIS-SEM-GATE.md item 2.1 — enforcement gap analysis
@@ -36,14 +36,14 @@ own output, per Law #8.
 
 ## Acceptance criteria
 
-- [ ] Gate scans `gates/` and any declared deterministic-only path; exits 1
+- [x] Gate scans `gates/` and any declared deterministic-only path; exits 1
       on LLM SDK usage found there.
-- [ ] Own failing-path test: inject a synthetic file importing an LLM SDK
+- [x] Own failing-path test: inject a synthetic file importing an LLM SDK
       into `gates/`, assert exit 1.
-- [ ] False-positive check: a normal deterministic gate file passes (exit 0).
-- [ ] Gate's stated limit (semantic classification out of scope) is printed
+- [x] False-positive check: a normal deterministic gate file passes (exit 0).
+- [x] Gate's stated limit (semantic classification out of scope) is printed
       in its own output, not just in this ticket.
-- [ ] Law #1 in `AGENTS.md` updated from `sem-gate` to name this gate, per
+- [x] Law #1 in `AGENTS.md` updated from `sem-gate` to name this gate, per
       ISSUE-0010 convention.
-- [ ] `BACKLOG-LEIS-SEM-GATE.md` row for Lei #1 updated to reflect coverage
+- [x] `BACKLOG-LEIS-SEM-GATE.md` row for Lei #1 updated to reflect coverage
       and its stated limit.
