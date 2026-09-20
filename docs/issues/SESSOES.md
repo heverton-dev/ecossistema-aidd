@@ -295,7 +295,7 @@ Rules:
 
  6 — disciplina de saída
 
-- [x] **Session 16 — ISSUE-0012 (gate de idioma)**
+- [ ] **Session 16 — ISSUE-0012 (gate de idioma)**
 
 Toca: `gates/`, `AGENTS.md` · Requer: sessão 15
 
@@ -347,7 +347,7 @@ Rules:
 > A sessão 18 parte o `AGENTS.md` em dois. Todas as sessões acima escrevem nele.
 > Rodar antes obrigaria a refazer cada declaração de portão no formato novo.
 
-- [ ] **Session 18 — ISSUE-0005**
+- [x] **Session 18 — ISSUE-0005**
 
 Toca: `AGENTS.md` e todos os arquivos-ponteiro · Requer: sessões 7, 12 a 17
 

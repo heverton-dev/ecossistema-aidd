@@ -46,7 +46,7 @@ Diagnostico rapido → Definicao de Pronto checavel → Prompt de Execucao autoc
 | # | Item | Status | Nota Atual | Nota Alvo | Nota Real | Documento |
 |---|---|---|---|---|---|---|
 | 1 | Corrigir path de skills no ecossistema.py status (falso negativo) | 🔶 Em execucao | NAO AUDITADO | 10 | [Pendente - preencher somente apos o fechamento real deste item/iniciativa, via o mesmo mecanismo que mediu a Nota Atual] | `01-corrigir-path-skills.md` |
-| 2 | Avaliar e dividir AGENTS.md em nucleo obrigatorio vs secoes sob demanda | 🔶 Em execucao | NAO AUDITADO | 8 | [Pendente - preencher somente apos o fechamento real deste item/iniciativa, via o mesmo mecanismo que mediu a Nota Atual] | `02-avaliar-dividir-agentsmd.md` |
+| 2 | Avaliar e dividir AGENTS.md em nucleo obrigatorio vs secoes sob demanda | 🟢 Concluido | 8 | 8 | 8 | `02-avaliar-dividir-agentsmd.md` |
 | 3 | Atualizar PLANO-EXECUCAO-ESTRUTURADO.json com telemetria real | 🔶 Em execucao | NAO AUDITADO | 9 | [Pendente - preencher somente apos o fechamento real deste item/iniciativa, via o mesmo mecanismo que mediu a Nota Atual] | `03-atualizar-plano-execucao.md` |
 | 4 | Auditar MCPs inativos/idle na stack (6 servidores) | 🔶 Em execucao | NAO AUDITADO | 8 | [Pendente - preencher somente apos o fechamento real deste item/iniciativa, via o mesmo mecanismo que mediu a Nota Atual] | `04-auditar-mcps-inativosidle.md` |
 

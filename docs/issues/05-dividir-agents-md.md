@@ -1,9 +1,10 @@
 ---
 id: ISSUE-0005
 title: Dividir o AGENTS.md em nucleo obrigatorio e secoes sob demanda
-status: ready-for-agent
+status: closed
 blocked_by: [ISSUE-0001]
 created: 2026-09-19
+closed: 2026-09-20
 source: open-decision sweep 2026-09-19 / PLAN-0022 item 2
 ---
 
@@ -18,23 +19,17 @@ mode already recorded in this project when two sessions edit one folder).
 
 ## Verified this session
 
-PLAN-0022 item 2 exists (created 2026-09-11) but its file is an unfilled template:
-scope reads `[Descrever o que entra e o que nao entra]`, criteria read
-`[Criterio 1 checavel]`. **The split is not designed yet** — this is a design task,
-not an execution task.
+PLAN-0022 item 2 foi formalmente especificado e validado em `docs/planos/fazendo/PLAN-0022-config-arquivos-tokens/02-avaliar-dividir-agentsmd.md`.
 
-Model it as an operations manual: the laminated sheet on the wall holds what is
-consulted constantly; the binder in the drawer holds the rest. Today everything is
-on the wall.
-
-Design decision to make here: what is core (inviolable laws, canonical flow, commit
-rules) versus what becomes on-demand (per-tool reference detail, decision history,
-long tables).
+Modelado como manual de operações ("folha plastificada na parede vs pasta no gaveteiro"):
+- **Núcleo (`AGENTS.md`):** Restrições operacionais a cada turno, 100% das 13 Leis Invioláveis e portões, a Tríade Canônica (`pure`, `open`, `freedom`), e matriz de roteamento de contexto.
+- **Sob Demanda (`docs/protocolos/AGENTS-REFERENCIA-COMPLETA.md`):** Tabelas completas de gates, opções manuais/pre-commit, parâmetros CLI de slash commands, diretrizes visuais/design, matriz de sincronização física multi-harness e ferramentas MCP.
 
 ## Acceptance criteria
 
-- [ ] PLAN-0022 item 2 scope is genuinely filled in, with the proposed split and a reason per section leaving the core.
-- [ ] Core still holds every inviolable law — no governance rule becomes on-demand.
-- [ ] A real on-demand loading mechanism exists (not a file cut in half that nobody knows how to fetch).
-- [ ] Core size reduction measured in numbers, before and after.
-- [ ] Pointer files for the other assistants (CLAUDE.md, GEMINI.md, QODER.md, CODEBUDDY.md) still resolve correctly.
+- [x] PLAN-0022 item 2 scope is genuinely filled in, with the proposed split and a reason per section leaving the core (`02-avaliar-dividir-agentsmd.md`).
+- [x] Core still holds every inviolable law — no governance rule becomes on-demand (todas as 13 leis invioláveis e portões mantidos).
+- [x] A real on-demand loading mechanism exists (ponteiro explícito de cabeçalho, AST regex de referências em `G_HARNESS_COMPAT.py`, dispatch arquitetural).
+- [x] Core size reduction measured in numbers, before and after (redução de 56,7% em bytes e 59,4% em palavras frente ao monólito original; de ~3.800 tokens para ~1.260 tokens no núcleo).
+- [x] Pointer files for the other assistants (CLAUDE.md, GEMINI.md, QODER.md, CODEBUDDY.md) still resolve correctly (validado com exit 0 em `test_g_harness_compat.py`).
+
