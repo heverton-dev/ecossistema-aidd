@@ -10,6 +10,7 @@
 |---|---|
 | 0010 | [Cada lei declara seu portão](10-cada-lei-declara-seu-portao.md) |
 | 0011 | [Todo portão precisa provar que morde](11-todo-portao-precisa-provar-que-morde.md) |
+| 0018 | [Reconciliar as 6 categorias duplicadas](18-reconciliar-taxonomia-rot.md) |
 | 0019 | [Endurecer o cobrador da Lei #13](19-endurecer-cobrador-da-lei-13.md) |
 
 ## 🔴 Prioridade — a cobrança está frouxa
@@ -34,7 +35,6 @@
 
 | # | Ticket | Nota |
 |---|---|---|
-| 0018 | [Reconciliar as 6 categorias duplicadas](18-reconciliar-taxonomia-rot.md) | **Fazer primeiro.** 6 dos 10 portões propostos já existem; o documento tem 4 erros a corrigir |
 | 0014 | [Contract Rot](14-contract-rot-gate.md) | Rotas reais vs. contrato escrito |
 | 0015 | [Env Rot](15-env-rot-gate.md) | Variáveis exigidas vs. `.env.example` |
 | 0016 | [Skill Rot](16-skill-rot-gate.md) | Teria pego o caso da `sandeco` sozinho |
@@ -47,14 +47,28 @@
 | 0012 | [Gate de idioma para a Lei #4](12-gate-de-idioma-lei-4.md) |
 | 0013 | [Formato de resposta em todo harness](13-formato-de-resposta-agnostico.md) |
 
+## ⚪ Leis sem gate (auditoria 2026-09-20 — `BACKLOG-LEIS-SEM-GATE.md`)
+
+| # | Ticket | Lei |
+|---|---|---|
+| 0020 | [Gate de determinismo](20-gate-determinismo-lei-1.md) | #1 Determinism First |
+| 0021 | [Gate de saída binária](21-gate-saida-binaria-lei-2.md) | #2 Binary Quality |
+| 0022 | [Gate de persistência estruturada](22-gate-persistencia-estruturada-lei-3.md) | #3 Structured Persistence |
+| 0023 | [Gate de disciplina de teste de ferramentas](23-gate-disciplina-teste-ferramenta-lei-9.md) | #9 Tool Testing Discipline |
+| 0024 | [Gate raiz do Quarteto Sine Qua Non](24-gate-quarteto-sine-qua-non-lei-10.md) | #10 Quarteto Sine Qua Non |
+| 0025 | [Gate de stack padrão-ouro](25-gate-stack-padrao-ouro-lei-11.md) | #11 Padrão-Ouro de Stack |
+
+Lei #4 já coberta por **0012**. Todas sem bloqueio entre si — podem rodar em paralelo.
+
 ## Ordem sugerida
 
-1. **0019** — todo portão escrito daqui pra frente herda a rigidez dele.
-2. **0018** — evita construir 6 portões que já existem.
+1. **0019** — todo portão escrito daqui pra frente herda a rigidez dele. *(Concluído)*
+2. **0018** — reconciliar taxonomia e evitar construir 6 portões redundantes. *(Concluído)*
 3. **0006**, depois **0002 → 0003**.
 4. **0014 a 0017** — os portões novos, já sob a regra endurecida.
 5. **0012 + 0013** — disciplina de saída, juntos.
 6. **0001**, **0004**, **0007**, **0008**, **0009**, **0005** por conveniência.
+7. **0020 a 0025** — fecha o backlog das leis sem gate, já sob a regra endurecida (0019). Paralelizável entre si.
 
 ## Achado transversal
 

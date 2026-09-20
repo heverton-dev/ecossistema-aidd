@@ -133,10 +133,10 @@ ISSUE-0003: handle the 5 outside tests. Any real secret gets removed AND the cre
 Rules:
 - No bulk acceptance of any alert group.
 - Verify with the real hook: pre-commit run --hook-stage manual g-segredos --all-files.
-- Commit e push.
+- Stop, send the correct message to the committee and ask before any commit.
 ```
 
-- [ ] **Session 9 — ISSUE-0004**
+- [x] **Session 9 — ISSUE-0004**
 
 Toca: `src/core/` (master+enterprise), `.pre-commit-config.yaml` · Requer: sessão 8
 
@@ -151,14 +151,14 @@ Rules:
 - Master/enterprise drift gate must keep approving.
 - Verify with the real hook, then remove the gate from stages: [manual].
 - Update PLAN-0023 item 1 with the real number and outcome.
-- Commit e push.
+- Stop, send the correct message to the committee and ask before any commit.
 ```
 
 ---
 
 ## Fase 4 — análise e decisões, sem construir nada
 
-- [ ] **Session 10 — ISSUE-0018**
+- [x] **Session 10 — ISSUE-0018**
 
 Toca: doc de melhorias de ROT · Requer: nada
 
@@ -178,7 +178,7 @@ Also correct four false statements verified against the repo:
 Rules:
 - Every decision carries its evidence: which existing gate covers the category, verified by reading it.
 - Change the document status to reflect what was accepted and what was rejected, with reasons.
-- Commit e push.
+- Stop, send the correct message to the committee and ask before any commit.
 ```
 
 - [ ] **Session 11 — ISSUE-0007 e ISSUE-0008**
@@ -197,7 +197,7 @@ Context already verified, do not re-derive:
 Rules:
 - ISSUE-0008 route A requires measured before/after numbers at a real pipeline point, plus a test that fails if compression silently falls back. No estimates.
 - ISSUE-0008 outcome closes the PLAN-0018 version-pinning item either way.
-- Commit e push.
+- Stop, send the correct message to the committee and ask before any commit.
 ```
 
 ---
@@ -223,7 +223,7 @@ Rules:
 - Failing-path test must EXECUTE, per the strict Law #13 reading: mutate one route's status code, run the gate, assert exit 1.
 - Output claims only what it checks. No coverage language beyond the diff performed.
 - Declare the gate against its law in AGENTS.md, per the ISSUE-0010 convention.
-- Commit e push.
+- Stop, send the correct message to the committee and ask before any commit.
 ```
 
 - [ ] **Session 13 — ISSUE-0015 (Env Rot)**
@@ -241,7 +241,7 @@ Rules:
 - AST, not regex, so dynamically constructed keys are detected or explicitly reported as undecidable.
 - Failing-path test must EXECUTE: add an os.getenv call for an undocumented key, run the gate, assert exit 1.
 - Declare the gate against its law in AGENTS.md, per the ISSUE-0010 convention.
-- Commit e push.
+- Stop, send the correct message to the committee and ask before any commit.
 ```
 
 - [ ] **Session 14 — ISSUE-0016 (Skill Rot)**
@@ -261,7 +261,7 @@ Rules:
 - Run against the current repo and triage the resulting list individually. No bulk suppression.
 - Failing-path test must EXECUTE: rename a referenced script, run the gate, assert exit 1.
 - Declare the gate against its law in AGENTS.md, per the ISSUE-0010 convention.
-- Commit e push.
+- Stop, send the correct message to the committee and ask before any commit.
 ```
 
 - [ ] **Session 15 — ISSUE-0017 (Migration Rot)**
@@ -282,7 +282,7 @@ Rules:
 - Idempotency is proven by re-application, never assumed.
 - Failing-path test must EXECUTE: remove a rollback, run the gate, assert exit 1.
 - Declare the gate against Law #3 in AGENTS.md, per the ISSUE-0010 convention.
-- Commit e push.
+- Stop, send the correct message to the committee and ask before any commit.
 ```
 
 ---
@@ -309,7 +309,7 @@ Rules:
 - False-positive check against a PT-BR path that must NOT trigger, e.g. INDEX.md.
 - Run against the current repo and triage violations individually. No bulk suppression.
 - Declare the gate against Law #4 in AGENTS.md, per the ISSUE-0010 convention.
-- Commit e push.
+- Stop, send the correct message to the committee and ask before any commit.
 ```
 
 - [ ] **Session 17 — ISSUE-0013 (formato de resposta)**
@@ -331,7 +331,7 @@ Rules:
 - Harnesses without hook support get the rule in their pointer file AND an explicit entry in docs/protocolos/BACKLOG-LEIS-SEM-GATE.md saying enforcement is unavailable there. Never silently assume coverage.
 - Failing-path test must EXECUTE: feed the hook a prolix answer, assert it blocks.
 - Declare the hook against Law #4 in AGENTS.md, per the ISSUE-0010 convention.
-- Commit e push.
+- Stop, send the correct message to the committee and ask before any commit.
 ```
 
 ---
@@ -357,6 +357,6 @@ Rules:
 - A real on-demand loading mechanism must exist. A file cut in half that nobody knows how to fetch does not count.
 - Measure core size reduction in numbers, before and after.
 - Pointer files for the other assistants (CLAUDE.md, GEMINI.md, QODER.md, CODEBUDDY.md) must still resolve.
-- Commit e push.
+- Stop, send the correct message to the committee and ask before any commit.
 ```
 
