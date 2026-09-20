@@ -1,7 +1,8 @@
 ---
 id: ISSUE-0025
 title: Gate de stack padrão-ouro para a Lei #11
-status: ready-for-agent
+status: closed
+closed: 2026-09-20
 blocked_by: []
 created: 2026-09-20
 source: BACKLOG-LEIS-SEM-GATE.md item 2.7 — enforcement gap analysis
@@ -29,14 +30,14 @@ explicitly authorized a different stack for that layer.
 
 ## Acceptance criteria
 
-- [ ] Gate flags a generated frontend missing Next.js/TypeScript/Tailwind
+- [x] Gate flags a generated frontend missing Next.js/TypeScript/Tailwind
       when no explicit override was recorded.
-- [ ] Gate flags a backend without SQLite WAL or without OpenAPI 3.1.
-- [ ] Own failing-path test: fixture `package.json` without Tailwind,
+- [x] Gate flags a backend without SQLite WAL or without OpenAPI 3.1.
+- [x] Own failing-path test: fixture `package.json` without Tailwind,
       assert exit 1.
-- [ ] False-positive check: fixture with an explicit recorded override for
+- [x] False-positive check: fixture with an explicit recorded override for
       that layer passes.
-- [ ] Runs against `proj_ctt`'s real generated output (the reference case
+- [x] Runs against `proj_ctt`'s real generated output (the reference case
       named in Law #11) and confirms it passes.
-- [ ] Law #11 in `AGENTS.md` updated from `sem-gate` to name this gate.
-- [ ] `BACKLOG-LEIS-SEM-GATE.md` row for Lei #11 updated.
+- [x] Law #11 in `AGENTS.md` updated from `sem-gate` to name this gate.
+- [x] `BACKLOG-LEIS-SEM-GATE.md` row for Lei #11 updated.

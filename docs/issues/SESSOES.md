@@ -498,7 +498,7 @@ Rules:
 - Stop and ask before any commit.
 ```
 
-- [ ] **Session 24 — ISSUE-0025 (Law #11 stack gate)**
+- [x] **Session 24 — ISSUE-0025 (Law #11 stack gate)**
 
 Toca: `gates/`, `AGENTS.md`, `.pre-commit-config.yaml`, `docs/protocolos/BACKLOG-LEIS-SEM-GATE.md` · Requer: sessão 23
 

@@ -51,7 +51,7 @@
    - Portão: gates/G_CONTRACT_ROT.py (provado)
    - Portão: gates/G_QUARTETO_SINE_QUA_NON.py (provado)
 11. **Padrão-Ouro de Stack Tecnológica:** Todo fluxo (`generator`, `master`, `factory`, `bridge`) DEVE gerar o Frontend em **Next.js + TypeScript + Tailwind CSS** (Backend em Python puro + SQLite WAL, API em OpenAPI 3.1), conforme definido em `docs/protocolos/PADRAO-OURO-STACK-TECNOLOGICA.md` — padrão validado em `proj_ctt`. Só muda se o plano estruturado ou o prompt do usuário especificar outra stack de forma explícita para aquela camada; silêncio nunca é licença para gerar outra coisa (ex.: HTML Python simples só é aceitável se pedido expressamente).
-   - Portão: sem gate — cumprimento por convenção (sem-gate)
+   - Portão: gates/G_STACK_PADRAO_OURO.py (provado)
 12. **Anti-Docs Rot & Canonical Ingestion:** Agentes nunca devem ingerir ou se basear em documentos rascunho, históricos ou sem validação factual com o código. A documentação técnica viva reside exclusivamente em `docs/protocolos/`, `AGENTS.md` e schemas/OpenAPI ativos. Documentos e links quebrados são ativamente bloqueados pelo gate determinístico `gates/G_DOCS_ROT.py`.
    - Portão: gates/G_DOCS_ROT.py (provado)
 13. **Todo Portão Deve Provar que Morde:** Nenhum quality gate é aceito sem teste automatizado que deliberadamente quebre a condição resguardada e asserte `exit 1`. Testes de caminho feliz (exit 0) não satisfazem o requisito. Qualquer gate incapaz de reprovar sob violação real ou sintética comprovada deve ser registrado como fachada e ter seu claim rebaixado per Lei #8. Ver `docs/protocolos/CONVENCAO-AUTORIA-GATES.md`.

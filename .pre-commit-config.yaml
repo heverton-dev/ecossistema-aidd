@@ -318,3 +318,11 @@ repos:
         always_run: true
         pass_filenames: false
         require_serial: true
+
+      - id: g-stack-padrao-ouro
+        name: "G_STACK_PADRAO_OURO (auditoria da stack padrao-ouro Next/TS/Tailwind + Py/WAL/OpenAPI per Lei #11)"
+        entry: python gates/G_STACK_PADRAO_OURO.py
+        language: system
+        always_run: true
+        pass_filenames: false
+        require_serial: true

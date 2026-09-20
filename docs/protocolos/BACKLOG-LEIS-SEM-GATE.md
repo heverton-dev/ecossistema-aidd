@@ -68,7 +68,7 @@ Em conformidade com a **ISSUE-0010** e a **Lei #8 (Honestidade de Rótulo)**, ne
   2. `gates/G_QUARTETO_SINE_QUA_NON.py`: audita no nível raiz todo projeto/deliverable gerado pelos 3 fluxos (pure, open, freedom/bridge) e monólito master, assegurando a presença efetiva dos 4 pilares nas rotas/código/OpenAPI spec.
 - **Limite Metrológico (Lei #8 / ISSUE-0024):** O gate valida estaticamente e contratualmente as rotas e manipuladores dos 4 pilares (/docs, /webhooks, /mcp, /docs/guia). A conformidade operacional em runtime vivo de cada serviço é validada pelo G_CONTRACT_ROT sob servidor ativo. Concluído na Sessão 23.
 
-### 2.7 Lei #11 — Padrão-Ouro de Stack Tecnológica
-- **Exigência:** Todo fluxo deve gerar Frontend em Next.js + TypeScript + Tailwind CSS (Backend Python + SQLite WAL, API OpenAPI 3.1).
-- **Gap Atual:** O ecossistema possui `gates/G_FRONTEND_LAYERS.py` (que valida separação de camadas dumb components vs fetch), mas não há gate que reprove a existência de frameworks não autorizados no frontend quando gerado.
-- **Ação Futura:** Criar gate `G_STACK_FRONTEND_PADRAO.py` validando dependências de frontend (`package.json` gerado) contra Next.js, React, Tailwind CSS e TypeScript. **Ticket aberto:** `docs/issues/25-gate-stack-padrao-ouro-lei-11.md` (ISSUE-0025).
+### 2.7 Lei #11 — Padrão-Ouro de Stack Tecnológica (ISSUE-0025)
+- **Exigência:** Todo fluxo deve gerar Frontend em Next.js + TypeScript + Tailwind CSS (Backend Python + SQLite WAL, API OpenAPI 3.1), salvo override explícito registrado.
+- **Cobertura Implementada (Sessão 24):** `gates/G_STACK_PADRAO_OURO.py` audita deterministicamente dependências de frontend (`package.json` para Next.js, React, TypeScript e Tailwind CSS) e configurações de backend (SQLite `journal_mode=WAL` e OpenAPI `3.1.x`).
+- **Limite Metrológico (Lei #8 / ISSUE-0025):** O portão valida estaticamente dependências declaradas e configurações em código; decisões de override explícito documentadas no plano para qualquer camada são rigorosamente respeitadas para evitar falso-positivo em projetos sob demanda de nicho. Concluído na Sessão 24.
