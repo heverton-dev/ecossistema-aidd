@@ -1,7 +1,7 @@
 ---
 id: ISSUE-0022
 title: Gate de persistência estruturada para a Lei #3
-status: ready-for-agent
+status: closed
 blocked_by: []
 created: 2026-09-20
 source: BACKLOG-LEIS-SEM-GATE.md item 2.3 — enforcement gap analysis
@@ -36,12 +36,12 @@ gate's own output, per Law #8.
 
 ## Acceptance criteria
 
-- [ ] Gate validates each inventoried tool's persistence artifact against
+- [x] Gate validates each inventoried tool's persistence artifact against
       its schema.
-- [ ] Own failing-path test: run a tool with its persistence write
+- [x] Own failing-path test: run a tool with its persistence write
       disabled/corrupted, assert exit 1.
-- [ ] False-positive check: a tool with valid persisted state passes.
-- [ ] Gate's own output states the inventory is a named list, not exhaustive
+- [x] False-positive check: a tool with valid persisted state passes.
+- [x] Gate's own output states the inventory is a named list, not exhaustive
       coverage.
-- [ ] Law #3 in `AGENTS.md` updated from `sem-gate` to name this gate.
-- [ ] `BACKLOG-LEIS-SEM-GATE.md` row for Lei #3 updated.
+- [x] Law #3 in `AGENTS.md` updated from `sem-gate` to name this gate.
+- [x] `BACKLOG-LEIS-SEM-GATE.md` row for Lei #3 updated.

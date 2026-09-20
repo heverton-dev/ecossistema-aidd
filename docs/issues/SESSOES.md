@@ -428,7 +428,7 @@ Rules:
 - Stop and ask before any commit.
 ```
 
-- [ ] **Session 21 — ISSUE-0022 (Law #3 second gate — orchestrator state persistence)**
+- [x] **Session 21 — ISSUE-0022 (Law #3 second gate — orchestrator state persistence)**
 
 Toca: `gates/`, `AGENTS.md`, `.pre-commit-config.yaml`, `docs/protocolos/BACKLOG-LEIS-SEM-GATE.md` · Requer: sessão 20
 

@@ -14,7 +14,7 @@ Em conformidade com a **ISSUE-0010** e a **Lei #8 (Honestidade de Rótulo)**, ne
 | :---: | :--- | :--- | :---: | :--- |
 | **01** | Determinism First | `gates/G_DETERMINISMO_LEI_1.py` | `provado` | Coberto para SDKs de LLM conhecidos em gates/ e rotas mecânicas; limite declarado (semântica cognitiva requer revisão humana) |
 | **02** | Binary Quality | `gates/G_SAIDA_BINARIA.py` | `provado` | Coberto via AST: todo gate em gates/ termina estritamente em sys.exit(0) ou sys.exit(1) |
-| **03** | Structured Persistence | `gates/G_MIGRATION_ROT.py` | `provado (parcial)` | Migrações de app gerado cobertas (Sessão 15); estado próprio do orquestrador ainda sem portão — ver Item 2.3, ticket aberto ISSUE-0022 |
+| **03** | Structured Persistence | `gates/G_MIGRATION_ROT.py`, `gates/G_ESTRUTURA_ESTADO.py` | `provado` | Migrações de app gerado (Sessão 15) e schemas de estado do orquestrador (Sessão 21) cobertos e provados |
 | **04** | Extreme Token Economy | `.claude/hooks/regra10_check.py`, `gates/G_IDIOMA_LEI_4.py` | `provado` | Enforced no Claude (formato + idioma); indisponível em outros harnesses (Ver 2.4) |
 | **05** | Zero Stubs / Zero Mocks | `gates/G_TESTES_REAIS.py` | `provado` | Coberto e testado (exit 1) |
 | **06** | Agnostic Supremacy | `gates/G_COMPONENTE_AGNOSTICO.py` | `provado` | Coberto e testado (exit 1) |
@@ -39,11 +39,12 @@ Em conformidade com a **ISSUE-0010** e a **Lei #8 (Honestidade de Rótulo)**, ne
 - **Exigência:** Toda mudança deve passar por Quality Gates (`python ecossistema.py audit`, exit 0 = passa, exit 1 = bloqueia).
 - **Enforcement Implementado:** Quality gate `gates/G_SAIDA_BINARIA.py` inspeciona via AST todos os arquivos em `gates/` e asserte que todos os pontos de saída utilizem estritamente `sys.exit(0)` ou `sys.exit(1)`, sem códigos numéricos ambíguos, sem bare returns e sem risco de fall-through no bloco `__main__`. Concluído na Sessão 20.
 
-### 2.3 Lei #3 — Structured Persistence
+### 2.3 Lei #3 — Structured Persistence (ISSUE-0022)
 - **Exigência:** Persistência de estado em arquivos estruturados (JSON, SQLite WAL), nunca na memória volátil da conversa.
-- **Coberto (Sessão 15):** `gates/G_MIGRATION_ROT.py` prova, num banco SQLite descartável, que as migrações de banco dos apps gerados aplicam, revertem e reaplicam sem divergência.
-- **Gap Residual:** O que o portão acima NÃO cobre: os arquivos de estado das próprias ferramentas de orquestração (`flight_plan.json`, logs `.jsonl`). Nenhum portão garante que esses artefatos existem e batem com o formato esperado depois de uma execução real.
-- **Ação Futura:** Criar gate `G_ESTRUTURA_ESTADO.py` validando os schemas JSON de persistência das ferramentas de orquestração — sem substituir `G_MIGRATION_ROT.py`, apenas somar. **Ticket aberto:** `docs/issues/22-gate-persistencia-estruturada-lei-3.md` (ISSUE-0022).
+- **Cobertura Dupla Implementada (Sessões 15 e 21):**
+  1. `gates/G_MIGRATION_ROT.py`: prova, num banco SQLite descartável, que as migrações de banco dos apps gerados aplicam, revertem e reaplicam sem divergência.
+  2. `gates/G_ESTRUTURA_ESTADO.py`: valida os schemas e integridade estruturada dos artefatos de estado do orquestrador (`.orca-flight-plan.json`, `flight_plan.json`, `.orca_state.json`, logs `*telemetry*.jsonl`).
+- **Limite Metrológico (Lei #8 / ISSUE-0022):** A validação cobre estritamente o inventário declarado de artefatos de persistência de orquestração do ecossistema; a inexistência de variáveis voláteis arbitrárias fora do inventário permanece sob revisão arquitetural humana. Concluído na Sessão 21.
 
 ### 2.4 Lei #4 — Extreme Token Economy (ISSUE-0013)
 - **Exigência:** Prompts minimalistas, regras em inglês compacto, respostas estritamente moldadas (Rule 10: 1 top sentence direta, corpo em bullets com fatos/números sem narrar passos, bloco final de sugestão/recomendação isolado; proibido preâmbulo, saudações, ou alternativas sem recomendação).

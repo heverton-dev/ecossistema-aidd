@@ -31,6 +31,7 @@
    - Portão: gates/G_SAIDA_BINARIA.py (provado)
 3. **Structured Persistence:** Persist state in audit files (JSON, SQLite), never in volatile conversation memory.
    - Portão: gates/G_MIGRATION_ROT.py (provado)
+   - Portão: gates/G_ESTRUTURA_ESTADO.py (provado)
 4. **Extreme Token Economy:** Minimalist prompts, compact English core rules, dense PT-BR user responses only when requested.
    - Portão: gates/G_IDIOMA_LEI_4.py (provado)
    - Portão: .claude/hooks/regra10_check.py (provado)
