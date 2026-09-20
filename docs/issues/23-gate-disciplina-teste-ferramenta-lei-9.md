@@ -1,7 +1,7 @@
 ---
 id: ISSUE-0023
 title: Gate de disciplina de teste de ferramentas para a Lei #9
-status: ready-for-agent
+status: closed
 blocked_by: []
 created: 2026-09-20
 source: BACKLOG-LEIS-SEM-GATE.md item 2.5 — enforcement gap analysis
@@ -27,10 +27,10 @@ touches a tool under `tools/` without a matching, freshly-dated report under
 
 ## Acceptance criteria
 
-- [ ] Gate blocks a commit touching `tools/<name>/` with no correspondingly
+- [x] Gate blocks a commit touching `tools/<name>/` with no correspondingly
       fresh report.
-- [ ] Own failing-path test: synthetic commit touching a tool dir with a
+- [x] Own failing-path test: synthetic commit touching a tool dir with a
       stale/missing report, assert exit 1.
-- [ ] False-positive check: a commit with a same-day updated report passes.
-- [ ] Law #9 in `AGENTS.md` updated from `sem-gate` to name this gate.
-- [ ] `BACKLOG-LEIS-SEM-GATE.md` row for Lei #9 updated.
+- [x] False-positive check: a commit with a same-day updated report passes.
+- [x] Law #9 in `AGENTS.md` updated from `sem-gate` to name this gate.
+- [x] `BACKLOG-LEIS-SEM-GATE.md` row for Lei #9 updated.

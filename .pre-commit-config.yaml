@@ -302,3 +302,11 @@ repos:
         always_run: true
         pass_filenames: false
         require_serial: true
+
+      - id: g-disciplina-teste-ferramenta
+        name: "G_DISCIPLINA_TESTE_FERRAMENTA (ciclo de 5 passos e frescor de relatorio per Lei #9)"
+        entry: python gates/G_DISCIPLINA_TESTE_FERRAMENTA.py
+        language: system
+        always_run: true
+        pass_filenames: false
+        require_serial: true

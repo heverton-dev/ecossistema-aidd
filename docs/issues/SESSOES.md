@@ -453,7 +453,7 @@ Rules:
 - Stop and ask before any commit.
 ```
 
-- [ ] **Session 22 — ISSUE-0023 (Law #9 third gate — tool-test-report freshness)**
+- [x] **Session 22 — ISSUE-0023 (Law #9 third gate — tool-test-report freshness)**
 
 Toca: `gates/`, `AGENTS.md`, `.pre-commit-config.yaml`, `docs/protocolos/BACKLOG-LEIS-SEM-GATE.md` · Requer: sessão 21
 

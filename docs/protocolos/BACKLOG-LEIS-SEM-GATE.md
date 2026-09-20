@@ -20,7 +20,7 @@ Em conformidade com a **ISSUE-0010** e a **Lei #8 (Honestidade de Rótulo)**, ne
 | **06** | Agnostic Supremacy | `gates/G_COMPONENTE_AGNOSTICO.py` | `provado` | Coberto e testado (exit 1) |
 | **07** | Developer in Control | `gates/G_ZERO_HEADLESS.py` | `provado` | Coberto e testado (exit 1) |
 | **08** | Label Honesty | `gates/G_HONESTIDADE_ROTULO.py` | `provado` | Coberto e testado (exit 1) |
-| **09** | Tool Testing Discipline | `gates/G_ENV_ROT.py`, `gates/G_SKILL_ROT.py` | `provado (parcial)` | Env e skill rot cobertos (Sessões 13-14); frescor do ciclo de 5 passos de teste ainda sem portão — ver Item 2.5, ticket aberto ISSUE-0023 |
+| **09** | Tool Testing Discipline | `gates/G_ENV_ROT.py`, `gates/G_SKILL_ROT.py`, `gates/G_DISCIPLINA_TESTE_FERRAMENTA.py` | `provado` | Env rot (Sessão 13), skill rot (Sessão 14) e frescor do relatório de teste em tools/ (Sessão 22) cobertos e provados |
 | **10** | Quarteto Sine Qua Non Dinâmico | `gates/G_CONTRACT_ROT.py` | `provado (parcial)` | Divergência rota-vs-spec coberta (Sessão 12); presença dos 4 pilares num deliverable gerado ainda sem portão de raiz — ver Item 2.6, ticket aberto ISSUE-0024 |
 | **11** | Padrão-Ouro de Stack Tecnológica | `sem gate — cumprimento por convenção` | `sem-gate` | No Backlog (Ver Item 2.7); ticket aberto ISSUE-0025 |
 | **12** | Anti-Docs Rot & Canonical Ingestion | `gates/G_DOCS_ROT.py` | `provado` | Coberto e testado (exit 1) |
@@ -53,11 +53,13 @@ Em conformidade com a **ISSUE-0010** e a **Lei #8 (Honestidade de Rótulo)**, ne
   - **Claude Code:** Suporte total e ativo via Stop Hook no ciclo de vida da mensagem.
   - **Cursor, Gemini CLI / Antigravity, OpenCode, MimoCode, Qoder, CodeBuddy:** **Enforcement automatizado INDISPONÍVEL.** Esses ambientes não fornecem hook nativo de interceptação de resposta de chat (Stop hook). O hook físico é replicado nas pastas de hooks para integridade de distribuição, mas o cumprimento da regra opera exclusivamente por convenção e diretiva explícita nos arquivos ponteiro (`GEMINI.md`, `QODER.md`, `CODEBUDDY.md`, `.cursor/rules/aidd.md`). Nunca assumir cobertura automatizada nesses harnesses.
 
-### 2.5 Lei #9 — Tool Testing Discipline
+### 2.5 Lei #9 — Tool Testing Discipline (ISSUE-0023)
 - **Exigência:** Ciclo de cinco passos do `docs/protocolos/PROTOCOLO-TESTES-FERRAMENTAS.md` antes de declarar conformidade de ferramenta.
-- **Coberto (Sessões 13-14):** `gates/G_ENV_ROT.py` (variáveis de ambiente não documentadas) e `gates/G_SKILL_ROT.py` (referências quebradas em SKILL.md) já rodam no commit.
-- **Gap Residual:** O que os dois portões acima NÃO cobrem: nenhum checa se o relatório de teste em `docs/teste-end-to-end/` está fresco (mesma data/commit) toda vez que uma ferramenta em `tools/<nome>/` é alterada.
-- **Ação Futura:** Criar verificação que audite se a data/hash do relatório em `docs/teste-end-to-end/` coincide com o último commit que tocou a ferramenta — soma aos dois portões já existentes. **Ticket aberto:** `docs/issues/23-gate-disciplina-teste-ferramenta-lei-9.md` (ISSUE-0023).
+- **Cobertura Tríplice Implementada (Sessões 13, 14 e 22):**
+  1. `gates/G_ENV_ROT.py`: audita variáveis de ambiente não documentadas em `.env.example`.
+  2. `gates/G_SKILL_ROT.py`: audita referências de arquivos e comandos quebrados em `SKILL.md`.
+  3. `gates/G_DISCIPLINA_TESTE_FERRAMENTA.py`: bloqueia qualquer alteração sob `tools/<ferramenta>/` desacompanhada de atualização contemporânea do relatório de testes em `docs/teste-end-to-end/`.
+- **Limite Metrológico (Lei #8 / ISSUE-0023):** A checagem automatizada audita a presença e o frescor do relatório de teste contra alterações em `tools/`; a integridade substancial dos resultados depende da aprovação das suítes de testes reais de cada ferramenta. Concluído na Sessão 22.
 
 ### 2.6 Lei #10 — Quarteto Sine Qua Non Dinâmico
 - **Exigência:** Todo projeto gerado ou evoluído DEVE nascer nativamente com 4 pilares: Swagger Studio, Webhook Studio, MCP Studio e Guia do Utilizador.
