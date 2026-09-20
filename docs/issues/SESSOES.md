@@ -117,7 +117,7 @@ Rules:
 - Commit e push.
 ```
 
-- [ ] **Session 8 — ISSUE-0002 → ISSUE-0003**
+- [x] **Session 8 — ISSUE-0002 → ISSUE-0003**
 
 Toca: `.secrets.baseline`, `.pre-commit-config.yaml` · Requer: sessão 7
 
