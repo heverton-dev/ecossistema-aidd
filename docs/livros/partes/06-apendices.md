@@ -190,7 +190,7 @@ a rota mais curta para cada assunto.
 
 | Assunto                                  | Arquivo                                                         |
 | :--------------------------------------- | :---------------------------------------------------------------- |
-| As onze leis invioláveis                 | `AGENTS.md` §2                                                   |
+| As doze leis invioláveis                 | `AGENTS.md` §2                                                   |
 | A Tríade Canônica                        | `AGENTS.md` §3                                                   |
 | Catálogo detalhado de portões e comandos | `docs/protocolos/AGENTS-REFERENCIA-COMPLETA.md`                  |
 | Padrão-Ouro de stack                     | `docs/protocolos/PADRAO-OURO-STACK-TECNOLOGICA.md`               |

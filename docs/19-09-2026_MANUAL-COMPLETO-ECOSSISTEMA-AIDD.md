@@ -14,7 +14,7 @@ O **Ecossistema AIDD (AI-Driven Development)** é uma plataforma industrial de e
 
 Funciona como uma fábrica de montagem em esteira de alta precisão: cada ferramenta é uma estação de trabalho especializada conectada por contratos formais de handoff, Quality Gates binários (exit 0 = passa, exit 1 = bloqueia) e paridade estrita entre terminais CLI e múltiplos assistentes de IA (harnesses).
 
-### As 11 Leis Invioláveis do Ecossistema AIDD
+### As 12 Leis Invioláveis do Ecossistema AIDD
 
 1. **Determinism First:** Uso de scripts determinísticos, AST, regex ou JSON Schema para qualquer tarefa mecânica. O LLM nunca executa operações críticas sem travas formais.
 2. **Binary Quality:** Todo commit ou evolução é submetido à bateria de Quality Gates (`python ecossistema.py audit`). Se um gate falhar, o build é sumariamente abortado.
@@ -31,6 +31,7 @@ Funciona como uma fábrica de montagem em esteira de alta precisão: cada ferram
     - **MCP Studio** (`/mcp`): Exposição de Model Context Protocol para consumo por agentes.
     - **Guia do Utilizador** (`/docs/guia` ou `/guia`): Documentação operacional completa e dinâmica.
 11. **Padrão-Ouro de Stack Tecnológica:** Frontend gerado obrigatoriamente em **Next.js + TypeScript + Tailwind CSS**; Backend em **Python puro + SQLite WAL** (ou PostgreSQL assíncrono via asyncpg para projetos unificados); API em **OpenAPI 3.1**.
+12. **Anti-Docs Rot & Canonical Ingestion:** Agentes nunca devem ingerir ou se basear em documentos rascunho, históricos ou sem validação factual com o código. A documentação técnica viva reside exclusivamente em `docs/protocolos/`, `AGENTS.md` e schemas/OpenAPI ativos. Documentos e links quebrados são ativamente bloqueados pelo gate determinístico `gates/G_DOCS_ROT.py`.
 
 ---
 

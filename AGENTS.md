@@ -21,18 +21,31 @@
 ## 2. Inviolable Laws
 
 1. **Determinism First:** Use deterministic scripts, AST, regex, or JSON Schema. Never use LLM for mechanical tasks.
+   - Portão: sem gate — cumprimento por convenção (sem-gate)
 2. **Binary Quality:** Every change must pass Quality Gates (`python ecossistema.py audit`, exit 0 = pass, exit 1 = block).
+   - Portão: sem gate — cumprimento por convenção (sem-gate)
 3. **Structured Persistence:** Persist state in audit files (JSON, SQLite), never in volatile conversation memory.
+   - Portão: sem gate — cumprimento por convenção (sem-gate)
 4. **Extreme Token Economy:** Minimalist prompts, compact English core rules, dense PT-BR user responses only when requested.
+   - Portão: sem gate — cumprimento por convenção (sem-gate)
 5. **Zero Stubs / Zero Mocks:** 100% functional, typed production code with real tests.
+   - Portão: gates/G_TESTES_REAIS.py (provado)
 6. **Agnostic Supremacy:** Zero vendor lock-in across OS, harness, and LLM providers.
+   - Portão: gates/G_COMPONENTE_AGNOSTICO.py (provado)
 7. **Developer in Control:** Strictly sequential, interactive executions. Zero invisible headless background subagents.
+   - Portão: gates/G_ZERO_HEADLESS.py (provado)
 8. **Label Honesty:** Never claim certification or test coverage beyond real automated test results.
+   - Portão: gates/G_HONESTIDADE_ROTULO.py (provado)
 9. **Tool Testing Discipline:** Follow the 5-step cycle (`docs/protocolos/PROTOCOLO-TESTES-FERRAMENTAS.md`): 1. Auto-fix bugs until 100% conformant (zero inconsistencies), 2. Git commit & push, 3. Clean target project, 4. Execute cleanly, 5. Update `docs/teste-end-to-end/` report.
+   - Portão: sem gate — cumprimento por convenção (sem-gate)
 10. **Quarteto Sine Qua Non Dinâmico:** Todo projeto gerado ou evoluído no ecossistema DEVE nascer nativamente com 4 pilares completos: Swagger Studio (`/swagger` ou `/docs`), Webhook Studio (`/webhooks`), MCP Studio (`/mcp`) e Guia/Documentação do Utilizador (`/docs/guia` ou `/guia`). Todas as rotas e contratos devem cobrir 100% dos módulos do sistema e atualizar-se de forma autônoma e dinâmica a cada novo módulo (ex: autenticação).
+   - Portão: sem gate — cumprimento por convenção (sem-gate)
 11. **Padrão-Ouro de Stack Tecnológica:** Todo fluxo (`generator`, `master`, `factory`, `bridge`) DEVE gerar o Frontend em **Next.js + TypeScript + Tailwind CSS** (Backend em Python puro + SQLite WAL, API em OpenAPI 3.1), conforme definido em `docs/protocolos/PADRAO-OURO-STACK-TECNOLOGICA.md` — padrão validado em `proj_ctt`. Só muda se o plano estruturado ou o prompt do usuário especificar outra stack de forma explícita para aquela camada; silêncio nunca é licença para gerar outra coisa (ex.: HTML Python simples só é aceitável se pedido expressamente).
+   - Portão: sem gate — cumprimento por convenção (sem-gate)
 12. **Anti-Docs Rot & Canonical Ingestion:** Agentes nunca devem ingerir ou se basear em documentos rascunho, históricos ou sem validação factual com o código. A documentação técnica viva reside exclusivamente em `docs/protocolos/`, `AGENTS.md` e schemas/OpenAPI ativos. Documentos e links quebrados são ativamente bloqueados pelo gate determinístico `gates/G_DOCS_ROT.py`.
+   - Portão: gates/G_DOCS_ROT.py (provado)
 13. **Todo Portão Deve Provar que Morde:** Nenhum quality gate é aceito sem teste automatizado que deliberadamente quebre a condição resguardada e asserte `exit 1`. Testes de caminho feliz (exit 0) não satisfazem o requisito. Qualquer gate incapaz de reprovar sob violação real ou sintética comprovada deve ser registrado como fachada e ter seu claim rebaixado per Lei #8. Ver `docs/protocolos/CONVENCAO-AUTORIA-GATES.md`.
+   - Portão: gates/G_PORTAO_PROVA_QUE_MORDE.py (provado)
 
 ---
 

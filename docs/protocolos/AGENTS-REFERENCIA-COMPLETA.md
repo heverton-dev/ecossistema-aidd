@@ -115,6 +115,7 @@ O ecossistema dispõe de Quality Gates globais em gates/:
 - gates/G_ORQUESTRADOR_SINCRONO.py: Audita a integridade do orquestrador síncrono da Tríade Canônica (aidd-pure, aidd-open, aidd-bridge), CLI ecossistema.py run-fluxo e conformidade com schemas formais de handoff.
 - gates/G_DOCS_ROT.py: Audita deterministicamente a documentação ativa, prevenindo docs rot, links quebrados e planos soltos fora dos buckets canônicos.
 - gates/G_PORTAO_PROVA_QUE_MORDE.py: Meta-Quality Gate que audita e bloqueia qualquer gate novo ou modificado entregue sem teste automatizado que prove que ele reprova (exit 1 per Lei #13).
+- gates/G_LEI_DECLARA_PORTAO.py: Meta-Quality Gate que audita e bloqueia se qualquer Lei Inviolável em AGENTS.md não declarar explicitamente seu portão verificador ou 'sem gate' e sua respectiva força de enforcement (ISSUE-0010).
 
 - **Execução unificada:** `python ecossistema.py audit` delega para `pre-commit run --all-files`.
 

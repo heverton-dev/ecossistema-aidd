@@ -11,13 +11,13 @@
 
 ---
 
-## 1. As 11 Leis Invioláveis do Ecossistema (fonte real: `AGENTS.md`, raiz do repositório)
+## 1. As 12 Leis Invioláveis do Ecossistema (fonte real: `AGENTS.md`, raiz do repositório)
 
-Toda linha de código, manifesto de infraestrutura, contrato de API ou diretiva agêntica dentro do ecossistema AIDD é rigorosamente subordinada a 11 leis universais (o texto abaixo é a tradução fiel do `AGENTS.md` real — a versão anterior deste documento tinha títulos/números que não correspondiam ao arquivo fonte):
+Toda linha de código, manifesto de infraestrutura, contrato de API ou diretiva agêntica dentro do ecossistema AIDD é rigorosamente subordinada a 12 leis universais (o texto abaixo é a tradução fiel do `AGENTS.md` real — a versão anterior deste documento tinha títulos/números que não correspondiam ao arquivo fonte):
 
 ```
 +--------------------------------------------------------------------------------------------------------+
-|                                  AS 11 LEIS INVIOLÁVEIS DO ECOSSISTEMA                                 |
+|                                  AS 12 LEIS INVIOLÁVEIS DO ECOSSISTEMA                                 |
 +------------------------------+------------------------------+------------------------------------------+
 | 1. Determinismo Primeiro     | 2. Qualidade Binária          | 3. Persistência Estruturada              |
 | Scripts determinísticos, AST,| `python ecossistema.py audit`| Estado em arquivos de auditoria (JSON,   |
@@ -40,6 +40,10 @@ Toda linha de código, manifesto de infraestrutura, contrato de API ou diretiva 
 | 11. Padrão-Ouro de Stack Tecnológica (adicionada 18/09/2026)                                             |
 | Todo fluxo que gera Frontend DEVE usar Next.js + TypeScript + Tailwind CSS (Backend Python + SQLite WAL, |
 | API OpenAPI 3.1) — só muda com pedido explícito do usuário para aquela camada                           |
++------------------------------+------------------------------+------------------------------------------+
+| 12. Anti-Docs Rot & Canonical Ingestion (adicionada 19/09/2026)                                         |
+| Agentes nunca devem ingerir docs rascunho/históricos sem validação factual; links quebrados bloqueados |
+| deterministamente pelo gate gates/G_DOCS_ROT.py                                                         |
 +------------------------------+------------------------------+------------------------------------------+
 | A Tríade Canônica de Criação                                                                             |
 | FORGE (Governança) -> aidd-planner (Intake) -> [GENERATOR | FACTORY | BRIDGE] -> MASTER -> ENTERPRISE -> OPS |

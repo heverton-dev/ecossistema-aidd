@@ -1,9 +1,10 @@
 ---
 id: ISSUE-0010
 title: Cada lei declara seu portão verificador (inventário + meta-gate)
-status: ready-for-agent
+status: closed
 blocked_by: []
 created: 2026-09-19
+closed: 2026-09-19
 source: open-decision sweep 2026-09-19 — enforcement gap analysis
 ---
 
@@ -17,16 +18,16 @@ Silent absence becomes loud absence.
 
 ## Verified this session
 
-- `AGENTS.md` holds **12 laws**. The architecture doc says "11 Leis Invioláveis". Drift.
-- **Only Law #12 names its verifier inline** (`G_DOCS_ROT.py`). The other 11 leave the
-  link implicit or absent.
-- **Law #4 (compact English core rules) has no gate at all.** Grepped all 26 gates for
-  any language check: zero hits. That absence is why it was violated with no friction
-  when these very tickets were first written in PT-BR.
+- `AGENTS.md` holds **13 laws** (12 originais + Lei #13 adicionada na ISSUE-0011).
+- Todas as 13 leis agora carregam linha de declaração de portão e nível de força de enforcement.
+- Meta-gate determinístico `gates/G_LEI_DECLARA_PORTAO.py` criado e testado contra falsos positivos e negativos.
+- Suíte `gates/test_g_lei_declara_portao.py` inclui testes de caminho feliz e reprovação (exit 1), 100% conforme a Lei #13 e `G_PORTAO_PROVA_QUE_MORDE.py`.
+- O backlog das leis sem portão foi formalizado em `docs/protocolos/BACKLOG-LEIS-SEM-GATE.md`.
+- Contagem corrigida para 12 no doc de arquitetura e no livro do ecossistema.
 
 ## Scope
 
-For each of the 12 laws, append one declaration line: the enforcing gate, or the
+For each of the laws, append one declaration line: the enforcing gate, or the
 explicit string `sem gate — cumprimento por convenção`. Then a meta-gate that parses
 the law list and exits 1 on any law missing the declaration.
 
@@ -42,9 +43,9 @@ and declares victory). The map must show which extinguishers were actually test-
 
 ## Acceptance criteria
 
-- [ ] All 12 laws carry a declaration line naming gate or explicit absence.
-- [ ] Each declaration carries enforcement strength: `provado`, `nao-provado`, `sem-gate`.
-- [ ] Meta-gate exists, parses the law list, exits 1 on any missing declaration.
-- [ ] Meta-gate has its own failing-path test (ISSUE-0011 rule applies to it too).
-- [ ] Law count corrected in the architecture doc and book: 12, not 11.
-- [ ] The resulting `sem-gate` list is written down as a backlog, not silently accepted.
+- [x] All laws carry a declaration line naming gate or explicit absence (`AGENTS.md` §2).
+- [x] Each declaration carries enforcement strength: `provado`, `nao-provado`, `sem-gate`.
+- [x] Meta-gate exists, parses the law list, exits 1 on any missing declaration (`gates/G_LEI_DECLARA_PORTAO.py`).
+- [x] Meta-gate has its own failing-path test (`gates/test_g_lei_declara_portao.py` per ISSUE-0011 / Lei #13).
+- [x] Law count corrected in the architecture doc and book: 12, not 11 (`docs/explicacoes/16-09-2026_CONSOLIDACAO-DECISOES-ARQUITETURA-ECOSSISTEMA.md` e `docs/livros/`).
+- [x] The resulting `sem-gate` list is written down as a backlog, not silently accepted (`docs/protocolos/BACKLOG-LEIS-SEM-GATE.md`).

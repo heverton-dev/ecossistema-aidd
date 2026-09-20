@@ -47,9 +47,9 @@ morre quando qualquer um dos três muda.
 ]
 ```
 
-## 1.3 As onze leis invioláveis
+## 1.3 As doze leis invioláveis
 
-O `AGENTS.md` da raiz é a lei fundamental. Ele define onze invariantes que valem para
+O `AGENTS.md` da raiz é a lei fundamental. Ele define doze invariantes que valem para
 todo agente, toda ferramenta e todo fluxo. Não são recomendações: a maioria tem um
 portão determinístico correspondente que bloqueia o commit quando violada.
 
@@ -66,6 +66,7 @@ portão determinístico correspondente que bloqueia o commit quando violada.
 | 9   | Disciplina de Teste de Ferramenta       | Ciclo de cinco passos do `docs/protocolos/PROTOCOLO-TESTES-FERRAMENTAS.md` antes de declarar uma ferramenta conforme.        |
 | 10  | Quarteto *Sine Qua Non* Dinâmico        | Todo projeto nasce com `/swagger`, `/webhooks`, `/mcp` e `/docs` cobrindo 100% dos módulos e se atualizando sozinho.        |
 | 11  | Padrão-Ouro de Stack                    | Frontend em Next.js + TypeScript + Tailwind; backend Python puro + SQLite WAL; API em OpenAPI 3.1 — salvo pedido explícito. |
+| 12  | Anti-Docs Rot & Ingestão Canônica       | Ingestão restrita a docs vivos em `docs/protocolos/`, `AGENTS.md` e schemas; links quebrados barrados por `G_DOCS_ROT.py`.   |
 
 As leis 1, 5 e 8 são as que mais aparecem no restante deste livro, porque são elas que
 explicam por que o ecossistema tem a forma que tem: é a Lei 1 que empurra o trabalho
