@@ -1,3 +1,8 @@
+---
+description: Comanda a ferramenta individual aidd-bridge para acoes atomicas
+argument-hint: "[scan|convert-db|merge|pack] <args>"
+---
+
 # Comando /bridge
 
 Comanda a ferramenta individual `aidd-bridge` para ingestão, conversão de banco e empacotamento de aplicações low-code (Lovable, v0, Bolt).

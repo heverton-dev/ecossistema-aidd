@@ -1,3 +1,8 @@
+---
+description: Dispara o Fluxo 02 (Motores Open-Source) da Tríade Canônica
+argument-hint: "<nome_do_projeto> [dominio]"
+---
+
 # Comando /open
 
 Dispara o Fluxo 02 (`aidd-open`) da Tríade Canônica: criação acelerada integrando motores open-source robustos em fatias verticais VSA.

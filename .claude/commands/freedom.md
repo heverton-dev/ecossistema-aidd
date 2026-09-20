@@ -1,3 +1,8 @@
+---
+description: Dispara o Fluxo 03 (Low-Code / Apps Unificadas) da Tríade Canônica
+argument-hint: "<caminho_do_export> [nome_do_projeto]"
+---
+
 # Comando /freedom
 
 Dispara o Fluxo 03 (`aidd-freedom`) da Tríade Canônica: desacoplamento completo e libertação de projetos exportados de ferramentas low-code (Lovable, v0, Bolt) para infraestrutura própria e Monólito Modular VSA.

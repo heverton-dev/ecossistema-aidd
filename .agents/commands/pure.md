@@ -1,3 +1,8 @@
+---
+description: Dispara o Fluxo 01 (Do Zero Puro) da Tríade Canônica
+argument-hint: "<nome_do_projeto> [dominio]"
+---
+
 # Comando /pure
 
 Dispara o Fluxo 01 (`aidd-pure`) da Tríade Canônica: geração de software de ponta a ponta do zero absoluto via TDD e Monólito Modular VSA.

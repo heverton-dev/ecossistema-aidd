@@ -1,5 +1,23 @@
 {
   "$schema": "https://mimo.xiaomi.com/mimocode/config.json",
+  "commands": {
+    "freedom": {
+      "description": "Dispara o Fluxo 03 (Low-Code / Apps Unificadas) da Tríade Canônica",
+      "template": "Execute imediatamente o Fluxo 03 (aidd-freedom) da Tríade Canônica para o export: $ARGUMENTS. Use a skill aidd-freedom ou comando CLI: python ecossistema.py freedom $ARGUMENTS"
+    },
+    "pure": {
+      "description": "Dispara o Fluxo 01 (Do Zero Puro) da Tríade Canônica",
+      "template": "Execute imediatamente o Fluxo 01 (aidd-pure) da Tríade Canônica para o projeto: $ARGUMENTS. Use a skill aidd-pure ou comando CLI: python ecossistema.py pure $ARGUMENTS"
+    },
+    "open": {
+      "description": "Dispara o Fluxo 02 (Motores Open-Source) da Tríade Canônica",
+      "template": "Execute imediatamente o Fluxo 02 (aidd-open) da Tríade Canônica para o projeto: $ARGUMENTS. Use a skill aidd-open ou comando CLI: python ecossistema.py open $ARGUMENTS"
+    },
+    "bridge": {
+      "description": "Executa operacoes atomicas da ferramenta aidd-bridge (scan, convert-db, merge, pack)",
+      "template": "Execute a operacao atomica da ferramenta aidd-bridge: $ARGUMENTS. Use a skill aidd-bridge-runner ou CLI: python ecossistema.py bridge $ARGUMENTS"
+    }
+  },
   "mcp": {
     "playwright": {
       "type": "local",
