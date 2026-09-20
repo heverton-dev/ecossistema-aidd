@@ -237,4 +237,12 @@ repos:
         language: system
         always_run: true
         pass_filenames: false
+        require_serial: true
+
+      - id: g-contract-rot
+        name: "G_CONTRACT_ROT (prevencao de contract rot entre servidor vivo e openapi.json)"
+        entry: python gates/G_CONTRACT_ROT.py
+        language: system
+        always_run: true
+        pass_filenames: false
         require_serial: true

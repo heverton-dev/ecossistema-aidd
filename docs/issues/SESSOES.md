@@ -207,7 +207,7 @@ Rules:
 > Só entram depois da Fase 1. Cada um declara seu portão no `AGENTS.md`, então rodam
 > em sequência, não em paralelo.
 
-- [ ] **Session 12 — ISSUE-0014 (Contract Rot)**
+- [x] **Session 12 — ISSUE-0014 (Contract Rot)**
 
 Toca: `gates/`, `AGENTS.md` · Requer: sessão 4
 

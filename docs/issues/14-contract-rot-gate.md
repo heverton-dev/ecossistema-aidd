@@ -1,7 +1,7 @@
 ---
 id: ISSUE-0014
 title: Portão de Contract Rot (rotas reais versus contrato escrito)
-status: ready-for-agent
+status: completed
 blocked_by: []
 created: 2026-09-19
 source: docs/melhorias/19-09-2026_melhoria-taxonomia-prevencao-rot-ecossistema.md — category 6
@@ -36,9 +36,9 @@ served paths, not the documented ones.
 
 ## Acceptance criteria
 
-- [ ] Gate enumerates routes from the running generated server, not from source comments.
-- [ ] Diffs status codes, query params and field types against committed `openapi.json`.
-- [ ] Exit 1 on divergence, with the diverging route named in the output.
-- [ ] Failing-path test, strict Law #13: mutate one route's status code, execute the gate, assert exit 1.
-- [ ] Output claims only what it checks. No coverage language beyond the diff performed (Law #8).
-- [ ] Declared against its law in `AGENTS.md`, per ISSUE-0010 convention.
+- [x] Gate enumerates routes from the running generated server, not from source comments.
+- [x] Diffs status codes, query params and field types against committed `openapi.json`.
+- [x] Exit 1 on divergence, with the diverging route named in the output.
+- [x] Failing-path test, strict Law #13: mutate one route's status code, execute the gate, assert exit 1.
+- [x] Output claims only what it checks. No coverage language beyond the diff performed (Law #8).
+- [x] Declared against its law in `AGENTS.md`, per ISSUE-0010 convention.
