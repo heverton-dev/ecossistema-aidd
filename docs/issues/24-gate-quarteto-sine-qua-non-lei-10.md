@@ -1,7 +1,8 @@
 ---
 id: ISSUE-0024
 title: Gate raiz do Quarteto Sine Qua Non para a Lei #10
-status: ready-for-agent
+status: closed
+closed: 2026-09-20
 blocked_by: []
 created: 2026-09-20
 source: BACKLOG-LEIS-SEM-GATE.md item 2.6 — enforcement gap analysis
@@ -30,13 +31,13 @@ check.
 
 ## Acceptance criteria
 
-- [ ] Gate audits a generated project's routes for all 4 pillars; exits 1
+- [x] Gate audits a generated project's routes for all 4 pillars; exits 1
       if any is missing.
-- [ ] Own failing-path test: fixture project missing one pillar (e.g. no
+- [x] Own failing-path test: fixture project missing one pillar (e.g. no
       `/mcp`), assert exit 1.
-- [ ] False-positive check: a complete fixture project with all 4 pillars
+- [x] False-positive check: a complete fixture project with all 4 pillars
       passes.
-- [ ] Runs against at least one real deliverable from each of the 3
+- [x] Runs against at least one real deliverable from each of the 3
       canonical flows.
-- [ ] Law #10 in `AGENTS.md` updated from `sem-gate` to name this gate.
-- [ ] `BACKLOG-LEIS-SEM-GATE.md` row for Lei #10 updated.
+- [x] Law #10 in `AGENTS.md` updated from `sem-gate` to name this gate.
+- [x] `BACKLOG-LEIS-SEM-GATE.md` row for Lei #10 updated.

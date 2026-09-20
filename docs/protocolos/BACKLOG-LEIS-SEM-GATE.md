@@ -61,11 +61,12 @@ Em conformidade com a **ISSUE-0010** e a **Lei #8 (Honestidade de Rótulo)**, ne
   3. `gates/G_DISCIPLINA_TESTE_FERRAMENTA.py`: bloqueia qualquer alteração sob `tools/<ferramenta>/` desacompanhada de atualização contemporânea do relatório de testes em `docs/teste-end-to-end/`.
 - **Limite Metrológico (Lei #8 / ISSUE-0023):** A checagem automatizada audita a presença e o frescor do relatório de teste contra alterações em `tools/`; a integridade substancial dos resultados depende da aprovação das suítes de testes reais de cada ferramenta. Concluído na Sessão 22.
 
-### 2.6 Lei #10 — Quarteto Sine Qua Non Dinâmico
+### 2.6 Lei #10 — Quarteto Sine Qua Non Dinâmico (ISSUE-0024)
 - **Exigência:** Todo projeto gerado ou evoluído DEVE nascer nativamente com 4 pilares: Swagger Studio, Webhook Studio, MCP Studio e Guia do Utilizador.
-- **Coberto (Sessão 12):** `gates/G_CONTRACT_ROT.py` prova, contra um servidor rodando de verdade, que as rotas batem com o `openapi.json` comitado.
-- **Gap Residual:** O que o portão acima NÃO cobre: ele detecta divergência entre servidor e especificação, mas não audita se um deliverable gerado tem os 4 pilares presentes de fato. Existe também `gates/G_PROTOCOL_FALLBACK.py` (paridade REST vs MCP) e `tools/aidd-planner/scripts/gates/G_PLANNER_SINE_QUA_NON.py` (só local do planner) — nenhum roda na raiz contra uma saída gerada real.
-- **Ação Futura:** Promover `G_PLANNER_SINE_QUA_NON.py` ou criar `G_QUARTETO_SINE_QUA_NON.py` no nível raiz — soma ao `G_CONTRACT_ROT.py`, não substitui. **Ticket aberto:** `docs/issues/24-gate-quarteto-sine-qua-non-lei-10.md` (ISSUE-0024).
+- **Cobertura Dupla Implementada (Sessões 12 e 23):**
+  1. `gates/G_CONTRACT_ROT.py`: prova, contra um servidor rodando de verdade, que as rotas batem com o `openapi.json` comitado.
+  2. `gates/G_QUARTETO_SINE_QUA_NON.py`: audita no nível raiz todo projeto/deliverable gerado pelos 3 fluxos (pure, open, freedom/bridge) e monólito master, assegurando a presença efetiva dos 4 pilares nas rotas/código/OpenAPI spec.
+- **Limite Metrológico (Lei #8 / ISSUE-0024):** O gate valida estaticamente e contratualmente as rotas e manipuladores dos 4 pilares (/docs, /webhooks, /mcp, /docs/guia). A conformidade operacional em runtime vivo de cada serviço é validada pelo G_CONTRACT_ROT sob servidor ativo. Concluído na Sessão 23.
 
 ### 2.7 Lei #11 — Padrão-Ouro de Stack Tecnológica
 - **Exigência:** Todo fluxo deve gerar Frontend em Next.js + TypeScript + Tailwind CSS (Backend Python + SQLite WAL, API OpenAPI 3.1).

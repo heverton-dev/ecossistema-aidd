@@ -310,3 +310,11 @@ repos:
         always_run: true
         pass_filenames: false
         require_serial: true
+
+      - id: g-quarteto-sine-qua-non
+        name: "G_QUARTETO_SINE_QUA_NON (auditoria dos 4 pilares mandatorios per Lei #10)"
+        entry: python gates/G_QUARTETO_SINE_QUA_NON.py
+        language: system
+        always_run: true
+        pass_filenames: false
+        require_serial: true

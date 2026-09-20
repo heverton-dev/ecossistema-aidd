@@ -475,7 +475,7 @@ Rules:
 - Stop and ask before any commit.
 ```
 
-- [ ] **Session 23 — ISSUE-0024 (Law #10 second gate — root Quarteto Sine Qua Non)**
+- [x] **Session 23 — ISSUE-0024 (Law #10 second gate — root Quarteto Sine Qua Non)**
 
 Toca: `gates/`, `AGENTS.md`, `.pre-commit-config.yaml`, `docs/protocolos/BACKLOG-LEIS-SEM-GATE.md`, `tools/aidd-planner/` · Requer: sessão 22
 
