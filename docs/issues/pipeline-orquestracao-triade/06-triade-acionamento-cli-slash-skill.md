@@ -1,7 +1,7 @@
 ---
 id: ISSUE-PIPE-0006
 title: Acionamento Tríade Universal: CLI, Slash Command e Skill Runner
-status: ready-for-agent
+status: completed
 blocked_by: [ISSUE-PIPE-0003, ISSUE-PIPE-0004, ISSUE-PIPE-0005]
 created: 2026-09-21
 source: Relatório de Melhoria 21-09-2026 — Pipeline Unificado de Orquestração
@@ -27,7 +27,7 @@ source: Relatório de Melhoria 21-09-2026 — Pipeline Unificado de Orquestraç�
 
 ## Acceptance criteria
 
-- [ ] `python ecossistema.py run-plan --help` and `python ecossistema.py pipeline --help` work with exit 0.
-- [ ] Skill `aidd-pipeline-runner` synchronized and present in `.agents/`, `.claude/`, `.gemini/`.
-- [ ] Quality gate `gates/G_UNIVERSAL_HARNESS.py` passes with exit 0.
-- [ ] Quality gate `gates/G_CLI_HELP_CONSISTENCIA.py` passes with exit 0.
+- [x] `python ecossistema.py run-plan --help` and `python ecossistema.py pipeline --help` work with exit 0.
+- [x] Skill `aidd-pipeline-runner` synchronized and present in `.agents/`, `.claude/`, `.gemini/`.
+- [x] Quality gate `gates/G_UNIVERSAL_HARNESS.py` passes with exit 0.
+- [x] Quality gate `gates/G_CLI_HELP_CONSISTENCIA.py` passes with exit 0.

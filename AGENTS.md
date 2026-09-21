@@ -84,8 +84,12 @@ Every robust application in the ecosystem originates from **`aidd-forge`** (supr
   - Engine: `aidd-bridge` (Vendor lock-in eradication, Lovable/v0/Bolt cleanup, PostgreSQL, UI preservation).
   - CLI: `python ecossistema.py freedom` ou `python ecossistema.py run-fluxo --fluxo freedom`
   - Skills: `aidd-freedom`, `freedom`, `fluxo-03-runner` (operações atômicas da ferramenta via `aidd-bridge-runner`)
+- **EXECUÇÃO DETERMINÍSTICA DE PIPELINE & PLANOS (Slash: `/run-plan` e `/pipeline`):**
+  - Engine: `tools/aidd-master/scripts/orchestrator_pipeline.py` & `scripts/compilador_tickets_plano.py` (Worktrees efêmeras + Join Barrier).
+  - CLI: `python ecossistema.py run-plan <plano>` e `python ecossistema.py pipeline --handoff <json>`
+  - Skills: `aidd-pipeline-runner`
 
-**Interoperabilidade Universal dos Slash Commands:** Em harnesses sem suporte a slash commands customizados na UI ou com colisões de namespace (como `/open` no Google Antigravity CLI), qualquer entrada do usuário referenciando `/pure`, `pure`, `/open`, `/aidd-open`, `open`, `/freedom`, `freedom`, `/factory` ou `/bridge` DEVE ser interceptada pelo agente como a invocação imediata do respectivo fluxo. Silêncio ou erro de "comando não suportado" é estritamente proibido.
+**Interoperabilidade Universal dos Slash Commands:** Em harnesses sem suporte a slash commands customizados na UI ou com colisões de namespace (como `/open` no Google Antigravity CLI), qualquer entrada do usuário referenciando `/pure`, `pure`, `/open`, `/aidd-open`, `open`, `/freedom`, `freedom`, `/factory`, `/bridge`, `/run-plan`, `run-plan`, `/pipeline` ou `pipeline` DEVE ser interceptada pelo agente como a invocação imediata do respectivo fluxo ou comando do ecossistema. Silêncio ou erro de "comando não suportado" é estritamente proibido.
 
 **Universal Convergence Funnel:** All 3 flows mandatorily converge into `aidd-master` (Harmonização em Monólito Modular: VSA de domínio + camada horizontal compartilhada) -> `aidd-enterprise` (SHA-256 resilience and audit) -> `aidd-ops` (VPS deployment, sops+age, and Uptime Kuma), delivering the dynamic *Quarteto Sine Qua Non* (`/docs`, `/webhooks`, `/mcp`, `/docs/guia`).
 

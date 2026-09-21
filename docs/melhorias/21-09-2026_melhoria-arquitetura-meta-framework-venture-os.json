@@ -1,0 +1,31 @@
+{
+  "pedido_original": "Formalização e arquitetura das frentes SPEC, WORKFLOW e PIPELINE, caso prático da esteira Novela das Frutas via Google Suite/MCPs (DEV-AFK-DEV) e proposta do Meta-Framework de Negócios Autônomos (Venture OS) no ecossistema AIDD.",
+  "data": "21-09-2026",
+  "nota_atual": "9.5",
+  "evidencia": "Documentação canônica registrada em docs/melhorias/21-09-2026_melhoria-arquitetura-meta-framework-venture-os.md unificando os conceitos fundamentais, a integração MCP do Google Workspace e a evolução para o Meta-Framework aidd-venture.",
+  "plano_existente": null,
+  "item_relacionado": null,
+  "nota_anterior": null,
+  "evidencia_anterior": null,
+  "itens_avaliados": [
+    "Diferenciação conceitual e arquitetural entre SPEC, WORKFLOW e PIPELINE",
+    "Processo determinístico de construção de cada uma das três frentes",
+    "Estudo de caso industrial: Automação 'Novela das Frutas' em regime DEV-AFK-DEV",
+    "Orquestração completa na Google Suite via MCPs (Trends, Gemini, Docs, Sheets, Imagen 3, Veo, Cloud TTS, YouTube, BigQuery)",
+    "Meta-Framework de Negócios Autônomos (aidd-venture / Venture OS) baseado nas micro-ferramentas nativas do AIDD"
+  ],
+  "resumo": "Consolidação teórica e prática da separação entre contratos (SPEC), orquestração de decisões (WORKFLOW) e execução mecânica contínua (PIPELINE). Demonstração da aplicação no caso de canais dark de animação com personagens-atores e formalização do plano para criar o Meta-Framework universal aidd-venture.",
+  "achados": [
+    "A Tríade Spec-Workflow-Pipeline é agnóstica e se aplica perfeitamente tanto a sistemas de software quanto a operações de negócios e estúdios de mídia sintética.",
+    "O ecossistema AIDD já possui todas as micro-ferramentas fundamentais (grill, spec, planner, forge, mcp, generator) para originar e operar esteiras completas.",
+    "A Suite Google integrada via MCPs oferece a infraestrutura ideal para o fluxo DEV-AFK-DEV, utilizando Docs e Sheets como barramento de controle desacoplado da computação de vídeo.",
+    "A criação do aidd-venture permite democratizar o design de negócios determinísticos mantendo governança estrita e custo mínimo de tokens."
+  ],
+  "riscos": [
+    "Custo de APIs gerativas volumétricas (vídeo Veo/Runway) exige travas determinísticas e circuit breakers antes do disparo em lote no pipeline",
+    "Necessidade de manter a consistência de seeds e embeddings dos personagens entre cenas para evitar descaracterização atorial",
+    "Complexidade de autorização OAuth em múltiplos serviços do Google Workspace em ambiente de agentes autônomos"
+  ],
+  "recomendacao": "Desenvolver formalmente a skill canônica aidd-venture e o schema venture_blueprint.schema.json, acompanhados de uma prova de conceito (PoC) auditável em exemplos/poc_novela_frutas/.",
+  "status": "REGISTRADO - aguardando ciclo de priorização e implementação"
+}

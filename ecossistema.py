@@ -17,6 +17,7 @@ Roteia comandos para as 8 ferramentas integradas:
   - status     -> Resumo do status do ecossistema
 """
 
+import argparse
 import importlib
 import os
 import shutil
@@ -265,6 +266,114 @@ def cmd_run_fluxo(args):
     script_path = os.path.join(ROOT_DIR, "scripts", "orquestrador_sincrono.py")
     cmd = [sys.executable, script_path] + args
     return run_command(cmd, cwd=os.getcwd())
+
+def cmd_pipeline(args):
+    """Executa o pipeline determinístico em Git Worktrees via orchestrator_pipeline."""
+    script_path = os.path.join(TOOLS_DIR, "aidd-master", "scripts", "orchestrator_pipeline.py")
+    mapped_args = ["-m" if a == "--handoff" else a for a in args]
+    cmd = [sys.executable, script_path] + mapped_args
+    return run_command(cmd, cwd=os.getcwd())
+
+def cmd_run_plan(args):
+    """Compila tickets de plano Markdown para handoff JSON e executa o pipeline em Git Worktrees."""
+    parser = argparse.ArgumentParser(
+        prog="python ecossistema.py run-plan",
+        description="Compila tickets de plano Markdown para handoff JSON e executa o pipeline em Git Worktrees (ISSUE-PIPE-0006)."
+    )
+    parser.add_argument(
+        "plano",
+        nargs="?",
+        default=None,
+        help="Caminho ou slug do diretório de plano em docs/planos/ (ou arquivo JSON de handoff)."
+    )
+    parser.add_argument(
+        "-o", "--output",
+        default=None,
+        help="Caminho de destino para o handoff JSON compilado (padrão: <pasta_plano>/handoff_evolution.json)."
+    )
+    parser.add_argument(
+        "-b", "--base-branch",
+        default=None,
+        help="Branch base para ramificação das worktrees e merge final."
+    )
+    parser.add_argument(
+        "--worktree-dir",
+        default=None,
+        help="Diretório onde as worktrees efêmeras serão instanciadas."
+    )
+    parser.add_argument(
+        "--repo-root",
+        default=None,
+        help="Raiz do repositório git alvo."
+    )
+    parser.add_argument(
+        "--dry-run",
+        action="store_true",
+        help="Modo simulação determinístico sem invocar comandos reais."
+    )
+    parser.add_argument(
+        "-q", "--quiet",
+        action="store_true",
+        help="Modo silencioso (apenas saídas essenciais)."
+    )
+    parser.add_argument(
+        "--no-exec",
+        action="store_true",
+        help="Apenas compila o plano para handoff JSON, sem disparar a execução do pipeline."
+    )
+
+    if "--help" in args or "-h" in args:
+        parser.parse_args(args)
+        return 0
+
+    if not args:
+        parser.print_help()
+        return 0
+
+    parsed_args, unknown = parser.parse_known_args(args)
+    if not parsed_args.plano:
+        parser.print_help()
+        return 1
+
+    plano_input = parsed_args.plano
+    if plano_input.endswith(".json") and os.path.isfile(plano_input):
+        handoff_path = os.path.abspath(plano_input)
+    else:
+        compilador_script = os.path.join(ROOT_DIR, "scripts", "compilador_tickets_plano.py")
+        comp_cmd = [sys.executable, compilador_script, "--plano", plano_input]
+        if parsed_args.output:
+            comp_cmd += ["--output", parsed_args.output]
+            handoff_path = os.path.abspath(parsed_args.output)
+        else:
+            handoff_path = None
+
+        comp_code = run_command(comp_cmd, cwd=os.getcwd())
+        if comp_code != 0:
+            return comp_code
+
+        if not handoff_path:
+            sys.path.insert(0, os.path.join(ROOT_DIR, "scripts"))
+            import compilador_tickets_plano
+            dir_plano = compilador_tickets_plano.resolver_diretorio_plano(plano_input)
+            handoff_path = os.path.join(dir_plano, "handoff_evolution.json")
+
+    if parsed_args.no_exec:
+        return 0
+
+    pipeline_args = ["--handoff", str(handoff_path)]
+    if parsed_args.base_branch:
+        pipeline_args += ["--base-branch", parsed_args.base_branch]
+    if parsed_args.worktree_dir:
+        pipeline_args += ["--worktree-dir", parsed_args.worktree_dir]
+    if parsed_args.repo_root:
+        pipeline_args += ["--repo-root", parsed_args.repo_root]
+    if parsed_args.dry_run:
+        pipeline_args.append("--dry-run")
+    if parsed_args.quiet:
+        pipeline_args.append("--quiet")
+    pipeline_args.extend(unknown)
+
+    return cmd_pipeline(pipeline_args)
 
 
 def cmd_components(args):
@@ -887,6 +996,12 @@ Comandos disponíveis:
   enterprise <args>   Executa comandos do aidd-enterprise (ex: enterprise inject skill auth)
   ops <args>          Executa o pipeline do aidd-ops (ex: ops "<texto>" --pasta <dest>)
   factory <args>      Executa o pipeline do aidd-factory (ex: factory --plano <arq> --pasta <dest>)
+  run-plan <plano> [--dry-run] ...
+                      Compila tickets de plano Markdown para handoff JSON e executa
+                      o pipeline em Git Worktrees com barreira de sincronização
+  pipeline --handoff <json> [--dry-run] ...
+                      Executa o motor determinístico de fases em Git Worktrees
+                      a partir de manifesto formal de handoff de execução
   components sync|verify --tipo <tipo|todos> [--ferramenta <nome>] [--dry-run]
                       Sincroniza/verifica distribuicao fisica multi-harness de
                       componentes (gates/manifesto_harnesses.json)
@@ -1000,6 +1115,9 @@ def main():
         "open": cmd_open,
         "aidd-open": cmd_open,
         "run-fluxo": cmd_run_fluxo,
+        "run-plan": cmd_run_plan,
+        "run_plan": cmd_run_plan,
+        "pipeline": cmd_pipeline,
         "components": cmd_components,
         "dependencia": cmd_dependencia,
         "orchestrate": cmd_orchestrate,
