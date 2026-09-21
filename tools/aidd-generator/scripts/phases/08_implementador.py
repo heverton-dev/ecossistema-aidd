@@ -51,7 +51,7 @@ try:
     from .utils_delegacao import solicitar_llm, extrair_json_resposta, LLMNaoConfiguradoException
 except ImportError:  # pragma: no cover — execução direta (python scripts/phases/08_implementador.py)
     from utils_modelo import detectar_modelo_harness, obter_nome_amigavel_modelo
-    from utils_delegacao import solicitar_llm, extrair_json_resposta, LLMNaoConfiguradoException
+    from utils_delegacao import solicitar_llm, extrair_json_resposta, LLMNaoConfiguradoException, obter_timeout_por_fase
 
 # SANDBOX NÍVEL 1 (item PLAN-0018 sandbox-nivel-1-subprocess-env-minimo-fase-08):
 # execução de código gerado com ambiente mínimo (allowlist estrita) + cwd
@@ -1627,14 +1627,14 @@ class ImplementadorFase8:
     # =========================================================================
 
     def _chamar_llm_result(self, prompt: str, contexto: str, fase: str,
-                           timeout: int = 60) -> Result:
+                           timeout: Optional[int] = None) -> Result:
         """Chama LLM retornando Result em vez de levantar exceção.
         Ok(dict) em sucesso, Err(mensagem) em falha."""
         try:
             resposta = solicitar_llm(
                 prompt=prompt, contexto=contexto, fase=fase,
                 modelo=os.getenv('LLM_MODEL', self.modelo_final),
-                timeout_delegacao=timeout
+                timeout_delegacao=obter_timeout_por_fase(fase, timeout)
             )
         except LLMNaoConfiguradoException as e:
             return Result.fail(e.mensagem_usuario)

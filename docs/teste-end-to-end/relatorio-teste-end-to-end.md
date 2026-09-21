@@ -72,6 +72,11 @@
 - **Nome:** Criação da pasta legada `.agent/` e dispersão das pastas `gates/`, `governance/`, `orca/`, `pipeline_phases/`, `skills/` diretamente na raiz.
 - **Status:** **RESOLVIDO** (centralizado em `componentes/`, `.agent` removido).
 
+#### Atualização Canônica (21/09/2026): Alinhamento de Gates, Skills e Templates
+- **Nome:** Sincronização dos novos quality gates e skills canônicas nos templates do Forge per Leis #1, #2, #10 e #11.
+- **Entrega:** Templates de gates (`G_DETERMINISMO_LEI_1.py`, `G_QUARTETO_SINE_QUA_NON.py`, `G_SAIDA_BINARIA.py`, `G_STACK_PADRAO_OURO.py`) e skills (`aidd-grill`, `aidd-spec`, `aidd-tdd`, `aidd-tickets`) integrados ao injetor e validados na suíte unitária/integração.
+- **Status:** **HOMOLOGADO** (100% de conformidade com os testes automatizados).
+
 - **Taxa de Conformidade:** **100.0%** (15 de 15 verificadores aprovados - **PASS**)
 - **Testes Unitários:** **294 passed**, 1 skipped.
 
@@ -603,6 +608,7 @@
   - Fase 6: F1-F3 PASS (HTML, PDF, Markdown tripartite válidos)
   - Fase 7: Auto-Crítica 91/100 (Profissional)
 - **Quality Gates Globais do Ecossistema:** **11 de 11 Gates Aprovados (100% PASS)**.
+- **Atualização Canônica (21/09/2026):** Alinhamento das fases 02 (Analisador), 03 (Designer) e 08 (Implementador) com a Lei #11 (Stack Padrão-Ouro Next.js + TypeScript + Tailwind CSS no frontend e Python + SQLite WAL + OpenAPI 3.1 no backend).
 - **Status da Etapa 5:** **100% CONCLUÍDA, HOMOLOGADA E AUDITADA**.
 
 ---

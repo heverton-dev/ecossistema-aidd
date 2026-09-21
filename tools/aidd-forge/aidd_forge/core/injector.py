@@ -49,6 +49,9 @@ class Injector:
         result = InjectionResult()
         for src in sorted(self.templates_root.rglob("*")):
             rel = src.relative_to(self.templates_root)
+            # pipeline_phases e template interno provisionado em .aidd/pipeline/ pelo PhaseFencer
+            if rel.parts and rel.parts[0] == "pipeline_phases":
+                continue
             dst = self.target_root / rel
 
             if src.is_dir():

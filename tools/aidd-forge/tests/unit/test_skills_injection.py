@@ -5,12 +5,16 @@ from aidd_forge.core.injector import Injector
 REAL_TEMPLATES_ROOT = Path(__file__).resolve().parents[2] / "aidd_forge" / "templates"
 
 EXPECTED_SKILLS = (
+    "aidd-grill",
+    "aidd-spec",
+    "aidd-tdd",
+    "aidd-tickets",
     "caveman-ultra",
-    "orca-orchestration",
+    "cybersecurity-audit",
     "impeccable-ui",
     "open-code-review",
+    "orca-orchestration",
     "post-mortem",
-    "cybersecurity-audit",
 )
 
 

@@ -44,10 +44,10 @@ except ImportError:
 # preservando os dois modos sem mutação de sys.path.
 try:
     from .utils_modelo import detectar_modelo_harness, obter_nome_amigavel_modelo, log_modelo_detectado
-    from .utils_delegacao import solicitar_llm, extrair_json_resposta, LLMNaoConfiguradoException
+    from .utils_delegacao import solicitar_llm, extrair_json_resposta, LLMNaoConfiguradoException, obter_timeout_por_fase
 except ImportError:  # pragma: no cover — execução direta (python scripts/phases/03_designer.py)
     from utils_modelo import detectar_modelo_harness, obter_nome_amigavel_modelo, log_modelo_detectado
-    from utils_delegacao import solicitar_llm, extrair_json_resposta, LLMNaoConfiguradoException
+    from utils_delegacao import solicitar_llm, extrair_json_resposta, LLMNaoConfiguradoException, obter_timeout_por_fase
 
 if sys.platform == 'win32':
     sys.stdout.reconfigure(encoding='utf-8')
@@ -449,7 +449,7 @@ class DesignerFase3:
                         contexto=contexto,
                         fase=f"phase_03_subagent_{nome}",
                         modelo=os.getenv('LLM_MODEL', self.modelo_final),
-                        timeout_delegacao=60
+                        timeout_delegacao=obter_timeout_por_fase(f"phase_03_subagent_{nome}")
                     )
                 except LLMNaoConfiguradoException as e:
                     print(f"   ❌ {e.mensagem_usuario}")

@@ -53,6 +53,7 @@
    - Portão: gates/G_ENV_ROT.py (provado)
    - Portão: gates/G_SKILL_ROT.py (provado)
    - Portão: gates/G_DISCIPLINA_TESTE_FERRAMENTA.py (provado)
+   - Portão: gates/G_TEMPLATE_FORGE_ROT.py (provado)
 10. **Quarteto Sine Qua Non Dinâmico:** Todo projeto gerado ou evoluído no ecossistema DEVE nascer nativamente com 4 pilares completos: Swagger Studio (`/docs`), Webhook Studio (`/webhooks`), MCP Studio (`/mcp`) e Guia/Documentação do Utilizador (`/docs/guia` ou `/guia`). Todas as rotas e contratos devem cobrir 100% dos módulos do sistema e atualizar-se de forma autônoma e dinâmica a cada novo módulo (ex: autenticação).
    - Portão: gates/G_CONTRACT_ROT.py (provado)
    - Portão: gates/G_QUARTETO_SINE_QUA_NON.py (provado)
@@ -73,16 +74,17 @@ Every robust application in the ecosystem originates from **`aidd-forge`** (supr
   - Engine: `aidd-generator` (8-phase pipeline, TDD Red-Green, Monólito Modular VSA + Next.js).
   - CLI: `python ecossistema.py pure` ou `python ecossistema.py run-fluxo --fluxo pure`
   - Skills: `aidd-pure`, `fluxo-01-runner`
-- **FLUXO 02 — `aidd-open` (Motores Open-Source | Slash: `/open`):** `[FORGE -> PLANNER] -> FACTORY -> [MASTER -> ENTERPRISE -> OPS]`
+- **FLUXO 02 — `aidd-open` (Motores Open-Source | Slash: `/aidd-open` ou `/open` ou `/factory`):** `[FORGE -> PLANNER] -> FACTORY -> [MASTER -> ENTERPRISE -> OPS]`
   - Engine: `aidd-factory` (Open-source engine curation, VSA integration slices, compose).
-  - CLI: `python ecossistema.py open` ou `python ecossistema.py run-fluxo --fluxo open`
-  - Skills: `aidd-open`, `fluxo-02-runner`
+  - CLI: `python ecossistema.py open` (ou `python ecossistema.py aidd-open`) ou `python ecossistema.py run-fluxo --fluxo open`
+  - Skills: `aidd-open`, `open`, `fluxo-02-runner`
+  - *Aviso de Namespace:* No Antigravity CLI (`agy`), o comando `/open <path>` é reservado internamente pela ferramenta para abrir arquivos no editor do sistema. Por isso, no AGY/Antigravity utilize `/aidd-open` ou `/factory` para acionar este fluxo sem colisão.
 - **FLUXO 03 — `aidd-freedom` (Low-Code / Apps Unificadas | Slash: `/freedom`):** `[FORGE -> PLANNER] -> BRIDGE -> [MASTER -> ENTERPRISE -> OPS]`
   - Engine: `aidd-bridge` (Vendor lock-in eradication, Lovable/v0/Bolt cleanup, PostgreSQL, UI preservation).
   - CLI: `python ecossistema.py freedom` ou `python ecossistema.py run-fluxo --fluxo freedom`
-  - Skills: `aidd-freedom`, `fluxo-03-runner` (operações atômicas da ferramenta via `aidd-bridge-runner`)
+  - Skills: `aidd-freedom`, `freedom`, `fluxo-03-runner` (operações atômicas da ferramenta via `aidd-bridge-runner`)
 
-**Interoperabilidade Universal dos Slash Commands:** Em harnesses sem suporte a slash commands customizados na UI (como Google Antigravity ou Gemini CLI), qualquer entrada do usuário iniciada por `/pure`, `/open` ou `/freedom` DEVE ser interceptada pelo agente como a invocação imediata do respectivo fluxo (executando a skill correspondente ou o comando CLI `python ecossistema.py pure|open|freedom`). Comandos iniciados por `/bridge` direcionam para as operações atômicas da engine `aidd-bridge` (`scan`, `convert-db`, `merge`, `pack`). Silêncio ou erro de "comando não suportado" é estritamente proibido.
+**Interoperabilidade Universal dos Slash Commands:** Em harnesses sem suporte a slash commands customizados na UI ou com colisões de namespace (como `/open` no Google Antigravity CLI), qualquer entrada do usuário referenciando `/pure`, `pure`, `/open`, `/aidd-open`, `open`, `/freedom`, `freedom`, `/factory` ou `/bridge` DEVE ser interceptada pelo agente como a invocação imediata do respectivo fluxo. Silêncio ou erro de "comando não suportado" é estritamente proibido.
 
 **Universal Convergence Funnel:** All 3 flows mandatorily converge into `aidd-master` (Harmonização em Monólito Modular: VSA de domínio + camada horizontal compartilhada) -> `aidd-enterprise` (SHA-256 resilience and audit) -> `aidd-ops` (VPS deployment, sops+age, and Uptime Kuma), delivering the dynamic *Quarteto Sine Qua Non* (`/docs`, `/webhooks`, `/mcp`, `/docs/guia`).
 
