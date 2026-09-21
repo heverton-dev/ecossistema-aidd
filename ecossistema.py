@@ -257,7 +257,8 @@ def cmd_factory(args):
 def cmd_planner(args):
     planner_dir = os.path.join(TOOLS_DIR, "aidd-planner")
     env = {"PYTHONPATH": planner_dir}
-    cmd = [sys.executable, "-m", "src.cli"] + args
+    modulo_cli = "aidd_planner.cli" if os.path.isdir(os.path.join(planner_dir, "aidd_planner")) else "src.cli"
+    cmd = [sys.executable, "-m", modulo_cli] + args
     return run_command(cmd, cwd=os.getcwd(), env=env)
 
 def cmd_run_fluxo(args):

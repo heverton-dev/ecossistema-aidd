@@ -255,6 +255,16 @@ def test_cli_init_e_validate():
         planner_file = os.path.join(tmpdir, "PLANNER.json")
         assert os.path.isfile(planner_file)
 
+        handoff_file = os.path.join(tmpdir, "HANDOFF_PLANNER_ENGINE.json")
+        assert os.path.isfile(handoff_file)
+        with open(handoff_file, "r", encoding="utf-8") as f:
+            handoff_data = json.load(f)
+        assert handoff_data["versao_schema"] == "1.0.0"
+        assert handoff_data["fluxo_alvo"] == 1
+        assert handoff_data["quarteto_sine_qua_non"]["swagger"] is True
+        assert handoff_data["quarteto_sine_qua_non"]["documentacao"] is True
+        assert handoff_data["arquitetura_alvo"]["padrao_frontend"] == "nextjs_typescript_tailwind"
+
         # 2. Teste validate
         ret_val = cli_main(["validate", planner_file])
         assert ret_val == 0

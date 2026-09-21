@@ -84,3 +84,10 @@ O mesmo defeito apareceu cinco vezes, em lugares sem relação entre si:
 
 Não são cinco bugs. É um só, repetido: **regra escrita sem cobrança executável** — e
 duas vezes seguidas o remédio nasceu com a mesma doença.
+
+---
+
+## 🚀 Iniciativas Dedicadas de Engenharia
+
+- [Pipeline Unificado de Orquestração com Acionamento Tríade](pipeline-orquestracao-triade/INDEX.md) — 7 tickets atômicos (`ISSUE-PIPE-0001` a `0007`) para orquestração determinística via Git Worktrees e Tríade Universal.
+

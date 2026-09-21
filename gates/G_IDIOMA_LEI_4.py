@@ -119,10 +119,10 @@ def analisar_texto(texto: str) -> Tuple[float, float, int, List[str], bool]:
 
 
 def listar_arquivos_padrao() -> List[str]:
-    """Lista todos os arquivos de tickets em docs/issues/*.md que devem ser estritamente em inglês."""
-    padrao = os.path.join(ROOT_DIR, "docs", "issues", "*.md")
+    """Lista todos os arquivos de tickets em docs/issues/**/*.md que devem ser estritamente em inglês."""
+    padrao = os.path.join(ROOT_DIR, "docs", "issues", "**", "*.md")
     arquivos = []
-    for caminho in sorted(glob.glob(padrao)):
+    for caminho in sorted(glob.glob(padrao, recursive=True)):
         nome = os.path.basename(caminho)
         if nome in ISENCOES_ISSUES:
             continue

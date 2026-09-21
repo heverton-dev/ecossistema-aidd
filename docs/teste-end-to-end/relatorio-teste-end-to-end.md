@@ -748,6 +748,17 @@
   3. Adição de testes unitários `test_quarteto_sine_qua_non_nomenclatura_guia` e `test_quarteto_sine_qua_non_retrocompatibilidade_docs` no `test_planner.py`.
 - **Status:** **RESOLVIDO**.
 
+#### Inconsistência 28: Assimetria de Empacotamento Python e Falta de Emissão Autônoma de Contrato Handoff
+- **Nome:** Invocação direta `python -m aidd_planner.cli` quebrava por falta de pacote nomeado `aidd_planner/` e `cmd_init` dependia do orquestrador para gravar o handoff JSON da Tríade.
+- **Motivo:** O código fonte residia apenas sob `src/` sem arquivo `setup.py` e o contrato de saída `HANDOFF_PLANNER_ENGINE.json` era sintetizado externamente pelo `orquestrador_sincrono.py`.
+- **O que ocasionou:** Quebra da simetria da Micro Camada frente às demais ferramentas (`aidd-forge`) e acoplamento desnecessário do orquestrador na montagem do contrato de saída do planejamento.
+- **Plano de Correção:**
+  1. Criação do pacote canônico [`tools/aidd-planner/aidd_planner`](file:///C:/Users/trcnologia/Desktop/ecossistema-aidd/tools/aidd-planner/aidd_planner) e [`setup.py`](file:///C:/Users/trcnologia/Desktop/ecossistema-aidd/tools/aidd-planner/setup.py).
+  2. Implementação da emissão autônoma e determinística de `HANDOFF_PLANNER_ENGINE.json` diretamente no `cmd_init` de `aidd_planner/cli.py` e `src/cli.py`.
+  3. Atualização de `ecossistema.py` para invocar canonicamente `aidd_planner.cli`.
+  4. Validação automatizada em `test_planner.py` garantindo que o contrato emitido satisfaz o schema da Tríade.
+- **Status:** **RESOLVIDO**.
+
 ### Resultado Final de Validação (`aidd-planner`)
 
 - **Testes Unitários:** **13 passed**, 0 falhas (100% de aprovação).
@@ -756,7 +767,7 @@
   - `G_PLANNER_SINE_QUA_NON.py`: **PASS**
   - `G_PLANNER_COERENCIA_FLUXO.py`: **PASS**
 - **Quality Gates Globais:** **100% PASS** (conforme `G_QUARTETO_SINE_QUA_NON.py`, `G_ECOSSISTEMA_INTEGRIDADE.py` e `G_DISCIPLINA_TESTE_FERRAMENTA.py`).
-- **Data da Última Auditoria:** 20/09/2026 (Alinhamento taxonômico de AGENTS.md e inclusão oficial na esteira).
+- **Data da Última Auditoria:** 21/09/2026 (Padronização de pacote canônico e emissão formal de handoff da Tríade).
 
 
 

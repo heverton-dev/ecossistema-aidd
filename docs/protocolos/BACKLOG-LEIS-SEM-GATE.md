@@ -2,7 +2,7 @@
 
 > **Data de Levantamento:** 19/09/2026 (Revisado em 20/09/2026 — backlog fechado: Sessões 12-15 deram portão parcial às Leis #3, #9 e #10; Sessões 19-24 fecharam o gap residual dessas três e cobriram as Leis #1, #2 e #11 que ainda não tinham nenhum)
 > **Status:** Fechado — 13/13 Leis Invioláveis com portão `provado`. Mantido como registro histórico do processo, auditado via `gates/G_LEI_DECLARA_PORTAO.py`.
-> **Referência:** `AGENTS.md` §2 e `docs/issues/10-cada-lei-declara-seu-portao.md`  
+> **Referência:** `AGENTS.md` §2 e `docs/issues/saneamento-governanca/10-cada-lei-declara-seu-portao.md`  
 
 ---
 

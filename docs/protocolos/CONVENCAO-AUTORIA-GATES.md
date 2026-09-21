@@ -1,7 +1,7 @@
 # Convenção Canônica de Autoria e Validação de Quality Gates
 
 > **Status:** Ativo / Obrigatório (Lei Canônica #1 e #8)  
-> **Referência:** `docs/issues/11-todo-portao-precisa-provar-que-morde.md`  
+> **Referência:** `docs/issues/saneamento-governanca/11-todo-portao-precisa-provar-que-morde.md`  
 > **Última atualização:** 2026-09-19
 
 ---

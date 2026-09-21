@@ -32,7 +32,7 @@ por isso é a última: rodar antes faria todo mundo editar algo prestes a mudar 
 Toca: `gates/G_PORTAO_PROVA_QUE_MORDE.py` · Requer: nada
 
 ```bash
-Execute docs/issues/19-endurecer-cobrador-da-lei-13.md.
+Execute docs/issues/saneamento-governanca/19-endurecer-cobrador-da-lei-13.md.
 
 gates/G_PORTAO_PROVA_QUE_MORDE.py enforces Law #13 statically: it checks a test file exists, has test functions, and its text matches one of eleven regex patterns asserting exit 1. It never runs the tests. Then it prints "100% dos 26 Quality Gates provam que mordem".
 
@@ -52,7 +52,7 @@ Rules:
 Toca: `gates/G_ZERO_HEADLESS.py`, hooks do harness · Requer: sessão 4
 
 ```bash
-Execute docs/issues/09-barreira-agentes-paralelos.md.
+Execute docs/issues/saneamento-governanca/09-barreira-agentes-paralelos.md.
 
 G_ZERO_HEADLESS is a facade: it checks that the string "interactive: bool = True" appears in one file and "--dangerously-force-headless" in another, never launches an agent, then prints "[OK] Zero risco de subagentes ocultos em concorrencia silenciosa".
 
@@ -78,7 +78,7 @@ Rules:
 Toca: `src/core/opentelemetry.py`, templates, doc de arquitetura · Requer: nada
 
 ```bash
-Execute docs/issues/06-trilha-de-auditoria-trace-id.md.
+Execute docs/issues/saneamento-governanca/06-trilha-de-auditoria-trace-id.md.
 
 This ticket carries a route decision (A: implement, B: remove and correct the docs). Do NOT choose it yourself. Open by presenting both sides with the cost of each, then wait for the user's call.
 
@@ -103,7 +103,7 @@ Rules:
 Toca: `.pre-commit-config.yaml`, `AGENTS.md` (Lei #10), livro · Requer: nada
 
 ```bash
-Execute docs/issues/01-faxina-registros-desatualizados.md.
+Execute docs/issues/saneamento-governanca/01-faxina-registros-desatualizados.md.
 
 Three records describe a reality that no longer exists:
 1. The label-honesty gate sits in stages: [manual] pending a decision whose cause is gone — verified passing: exit 0, 68 files, zero banned terms. Re-enable it.
@@ -122,7 +122,7 @@ Rules:
 Toca: `.secrets.baseline`, `.pre-commit-config.yaml` · Requer: sessão 7
 
 ```bash
-Execute docs/issues/02-triar-alertas-segredo-em-testes.md, then docs/issues/03-resolver-segredos-reais-e-religar-trava.md.
+Execute docs/issues/saneamento-governanca/02-triar-alertas-segredo-em-testes.md, then docs/issues/saneamento-governanca/03-resolver-segredos-reais-e-religar-trava.md.
 
 31 alerts total: 26 in test files, 5 outside.
 
@@ -141,7 +141,7 @@ Rules:
 Toca: `src/core/` (master+enterprise), `.pre-commit-config.yaml` · Requer: sessão 8
 
 ```bash
-Execute docs/issues/04-zerar-violacoes-arquitetura-e-religar-trava.md.
+Execute docs/issues/saneamento-governanca/04-zerar-violacoes-arquitetura-e-religar-trava.md.
 
 18 SQL-outside-infrastructure violations in four files, two mirrored pairs across master and enterprise: transaction_log.py (7 each) and mcp_server.py (2 each). Move the DB calls into the infrastructure layer on both sides.
 
@@ -163,7 +163,7 @@ Rules:
 Toca: doc de melhorias de ROT · Requer: nada
 
 ```bash
-Execute docs/issues/18-reconciliar-taxonomia-rot.md.
+Execute docs/issues/saneamento-governanca/18-reconciliar-taxonomia-rot.md.
 
 Analysis session, no gate construction.
 
@@ -186,7 +186,7 @@ Rules:
 Toca: `src/core/`, skill `sandeco`, PLAN-0015, PLAN-0018 · Requer: nada
 
 ```bash
-Execute docs/issues/07-saga-orchestrator-ligar-ou-remover.md, then docs/issues/08-compressor-sandeco-ligar-ou-remover.md.
+Execute docs/issues/saneamento-governanca/07-saga-orchestrator-ligar-ou-remover.md, then docs/issues/saneamento-governanca/08-compressor-sandeco-ligar-ou-remover.md.
 
 Both carry route decisions. Do NOT choose them yourself. Present each trade-off to the user and wait.
 
@@ -212,7 +212,7 @@ Rules:
 Toca: `gates/`, `AGENTS.md` · Requer: sessão 4
 
 ```bash
-Execute docs/issues/14-contract-rot-gate.md.
+Execute docs/issues/saneamento-governanca/14-contract-rot-gate.md.
 
 Build a gate that enumerates routes and response shapes as the generated server actually exposes them, and diffs them against the committed openapi.json. Exit 1 on any divergence, naming the diverging route.
 
@@ -231,7 +231,7 @@ Rules:
 Toca: `gates/`, `AGENTS.md` · Requer: sessão 12
 
 ```bash
-Execute docs/issues/15-env-rot-gate.md.
+Execute docs/issues/saneamento-governanca/15-env-rot-gate.md.
 
 Build a gate that AST-scans for os.getenv(...), os.environ[...] and process.env.*, and requires every key found to appear in .env.example. Exit 1 on any missing key, naming key and file. Also report orphan keys present in .env.example that no code reads.
 
@@ -249,7 +249,7 @@ Rules:
 Toca: `gates/`, `AGENTS.md` · Requer: sessão 13
 
 ```bash
-Execute docs/issues/16-skill-rot-gate.md.
+Execute docs/issues/saneamento-governanca/16-skill-rot-gate.md.
 
 Build a gate that statically resolves every path, script reference and CLI command written inside SKILL.md bodies. Exit 1 on any reference that does not resolve.
 
@@ -269,7 +269,7 @@ Rules:
 Toca: `gates/`, `AGENTS.md` · Requer: sessão 14
 
 ```bash
-Execute docs/issues/17-migration-rot-gate.md.
+Execute docs/issues/saneamento-governanca/17-migration-rot-gate.md.
 
 Build a gate that applies every migration up then down against an ephemeral in-memory database per run, asserts convergence to the declared final schema, and proves re-application is idempotent. Exit 1 on divergence, missing rollback, or non-idempotent re-application.
 
@@ -300,7 +300,7 @@ Rules:
 Toca: `gates/`, `AGENTS.md` · Requer: sessão 15
 
 ```bash
-Execute docs/issues/12-gate-de-idioma-lei-4.md.
+Execute docs/issues/saneamento-governanca/12-gate-de-idioma-lei-4.md.
 
 Build the language gate for Law #4. Deterministic detection, zero LLM. Copy the shape of G_HONESTIDADE_ROTULO.
 
@@ -323,7 +323,7 @@ Rules:
 Toca: `AGENTS.md`, hooks de todos os harnesses · Requer: sessão 16
 
 ```bash
-Execute docs/issues/13-formato-de-resposta-agnostico.md.
+Execute docs/issues/saneamento-governanca/13-formato-de-resposta-agnostico.md.
 
 Encode the mandatory answer shape into AGENTS.md next to Rule 10, in compact English per Law #4:
 1. One top sentence stating what to do or what happened. No preamble.
@@ -352,7 +352,7 @@ Rules:
 Toca: `AGENTS.md` e todos os arquivos-ponteiro · Requer: sessões 7, 12 a 17
 
 ```bash
-Execute docs/issues/05-dividir-agents-md.md.
+Execute docs/issues/saneamento-governanca/05-dividir-agents-md.md.
 
 PLAN-0022 item 2 exists but its file is an unfilled template. The split is not designed yet. This is a design task before it is an execution task.
 
@@ -385,7 +385,7 @@ Rules:
 Toca: `gates/`, `AGENTS.md`, `.pre-commit-config.yaml` · Requer: sessão 18
 
 ```bash
-Execute docs/issues/20-gate-determinismo-lei-1.md.
+Execute docs/issues/saneamento-governanca/20-gate-determinismo-lei-1.md.
 
 Law #1 (Determinism First) is convention-only today. Build a static check blocking
 known LLM SDK imports/calls (anthropic, openai, google.generativeai, ...) inside
@@ -410,7 +410,7 @@ Rules:
 Toca: `gates/`, `AGENTS.md`, `.pre-commit-config.yaml` · Requer: sessão 19
 
 ```bash
-Execute docs/issues/21-gate-saida-binaria-lei-2.md.
+Execute docs/issues/saneamento-governanca/21-gate-saida-binaria-lei-2.md.
 
 Law #2 (Binary Quality) is convention-only today. Build a gate auditing every
 gates/*.py file: its only exit points must be sys.exit(0) or sys.exit(1) — no bare
@@ -433,7 +433,7 @@ Rules:
 Toca: `gates/`, `AGENTS.md`, `.pre-commit-config.yaml`, `docs/protocolos/BACKLOG-LEIS-SEM-GATE.md` · Requer: sessão 20
 
 ```bash
-Execute docs/issues/22-gate-persistencia-estruturada-lei-3.md.
+Execute docs/issues/saneamento-governanca/22-gate-persistencia-estruturada-lei-3.md.
 
 Correction before starting: Law #3 already has a proven gate (gates/G_MIGRATION_ROT.py,
 declared in AGENTS.md from Session 15). That gate covers generated-app database
@@ -458,7 +458,7 @@ Rules:
 Toca: `gates/`, `AGENTS.md`, `.pre-commit-config.yaml`, `docs/protocolos/BACKLOG-LEIS-SEM-GATE.md` · Requer: sessão 21
 
 ```bash
-Execute docs/issues/23-gate-disciplina-teste-ferramenta-lei-9.md.
+Execute docs/issues/saneamento-governanca/23-gate-disciplina-teste-ferramenta-lei-9.md.
 
 Correction before starting: Law #9 already has two proven gates (G_ENV_ROT.py,
 G_SKILL_ROT.py, from Sessions 13-14). Neither checks the 5-step test-and-report
@@ -480,7 +480,7 @@ Rules:
 Toca: `gates/`, `AGENTS.md`, `.pre-commit-config.yaml`, `docs/protocolos/BACKLOG-LEIS-SEM-GATE.md`, `tools/aidd-planner/` · Requer: sessão 22
 
 ```bash
-Execute docs/issues/24-gate-quarteto-sine-qua-non-lei-10.md.
+Execute docs/issues/saneamento-governanca/24-gate-quarteto-sine-qua-non-lei-10.md.
 
 Correction before starting: Law #10 already has a proven gate (gates/G_CONTRACT_ROT.py,
 from Session 12), which checks a running server's routes against the committed
@@ -503,7 +503,7 @@ Rules:
 Toca: `gates/`, `AGENTS.md`, `.pre-commit-config.yaml`, `docs/protocolos/BACKLOG-LEIS-SEM-GATE.md` · Requer: sessão 23
 
 ```bash
-Execute docs/issues/25-gate-stack-padrao-ouro-lei-11.md.
+Execute docs/issues/saneamento-governanca/25-gate-stack-padrao-ouro-lei-11.md.
 
 Law #11 (Padrão-Ouro de Stack) is convention-only today. Build a gate rejecting a
 generated project whose frontend is not Next.js + TypeScript + Tailwind, or whose
