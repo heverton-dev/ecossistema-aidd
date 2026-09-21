@@ -1,7 +1,7 @@
 ---
 id: ISSUE-PIPE-0003
 title: Motor de Execução de Fases em Git Worktrees e Join Barrier
-status: ready-for-agent
+status: done
 blocked_by: [ISSUE-PIPE-0002]
 created: 2026-09-21
 source: Relatório de Melhoria 21-09-2026 — Pipeline Unificado de Orquestração
@@ -30,7 +30,7 @@ source: Relatório de Melhoria 21-09-2026 — Pipeline Unificado de Orquestraç�
 
 ## Acceptance criteria
 
-- [ ] `orchestrator_pipeline.py` executes cleanly on Windows PowerShell and Linux bash.
-- [ ] Ephemeral worktrees are 100% cleaned up even upon unhandled exceptions.
-- [ ] Concurrency test: runs 3 mock parallel tasks in worktrees simultaneously without file collision.
-- [ ] Join barrier blocks merge when one task fails validation.
+- [x] `orchestrator_pipeline.py` executes cleanly on Windows PowerShell and Linux bash.
+- [x] Ephemeral worktrees are 100% cleaned up even upon unhandled exceptions.
+- [x] Concurrency test: runs 3 mock parallel tasks in worktrees simultaneously without file collision.
+- [x] Join barrier blocks merge when one task fails validation.

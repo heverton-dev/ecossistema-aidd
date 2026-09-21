@@ -769,6 +769,35 @@
 - **Quality Gates Globais:** **100% PASS** (conforme `G_QUARTETO_SINE_QUA_NON.py`, `G_ECOSSISTEMA_INTEGRIDADE.py` e `G_DISCIPLINA_TESTE_FERRAMENTA.py`).
 - **Data da Última Auditoria:** 21/09/2026 (Padronização de pacote canônico e emissão formal de handoff da Tríade).
 
+---
 
+## 8. Ferramenta: `aidd-master`
 
+- **Objetivo da Ferramenta:** Harmonização em Monólito Modular VSA, Scaffold de fatias verticais e Motor de Execução de Pipeline com Git Worktrees Efêmeras e Join Barrier.
+- **Pasta Foco:** [`tools/aidd-master`](file:///C:/Users/trcnologia/Desktop/ecossistema-aidd/tools/aidd-master)
+- **O que executou:**
+  1. Implementação do motor determinístico [`tools/aidd-master/scripts/orchestrator_pipeline.py`](file:///C:/Users/trcnologia/Desktop/ecossistema-aidd/tools/aidd-master/scripts/orchestrator_pipeline.py) (ISSUE-PIPE-0003).
+  2. Ingestão e validação formal de manifestos JSON via [`gates/G_PIPELINE_HANDOFF.py`](file:///C:/Users/trcnologia/Desktop/ecossistema-aidd/gates/G_PIPELINE_HANDOFF.py).
+  3. Execução paralela assíncrona isolada via Git Worktrees efêmeras (`git worktree add -b task/<id> .worktrees/<id>`).
+  4. Barreira de Sincronização (Join Barrier) com avaliação de Quality Gates por branch e bloqueio de merge em falha/conflito.
+  5. Fase sequencial síncrona para migrações e testes de integração globais na árvore principal.
+  6. Limpeza garantida de 100% das worktrees e branches temporárias via bloco `try-finally`.
+- **Como executou:**
+  ```powershell
+  python tools/aidd-master/scripts/orchestrator_pipeline.py --manifesto <caminho_manifesto.json>
+  pytest tests/test_orchestrator_pipeline.py -v
+  ```
+- **O que entregou:**
+  - Script [`tools/aidd-master/scripts/orchestrator_pipeline.py`](file:///C:/Users/trcnologia/Desktop/ecossistema-aidd/tools/aidd-master/scripts/orchestrator_pipeline.py).
+  - Suíte de testes [`tests/test_orchestrator_pipeline.py`](file:///C:/Users/trcnologia/Desktop/ecossistema-aidd/tests/test_orchestrator_pipeline.py) com 5/5 testes aprovados.
 
+### Resultado Final de Validação (`aidd-master`)
+
+- **Testes Unitários e de Concorrência:** **5 passed em 4.73s** (100% de aprovação).
+  - `test_concurrency_3_parallel_tasks_in_worktrees`: **PASS** (3 tasks simultâneas sem colisão).
+  - `test_join_barrier_blocks_merge_on_task_failure`: **PASS** (bloqueio imediato na barreira).
+  - `test_join_barrier_blocks_merge_on_quality_gate_failure`: **PASS** (bloqueio por quality gate falho).
+  - `test_unhandled_exception_guarantees_cleanup`: **PASS** (limpeza de 100% das worktrees).
+  - `test_cli_execution_cross_platform`: **PASS** (execução determinística via CLI).
+- **Quality Gates:** Conforme Lei #1, #2, #5, #9, #13.
+- **Data da Última Auditoria:** 21/09/2026.

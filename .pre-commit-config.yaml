@@ -326,3 +326,11 @@ repos:
         always_run: true
         pass_filenames: false
         require_serial: true
+
+      - id: g-pipeline-handoff
+        name: "G_PIPELINE_HANDOFF (validacao deterministica de manifestos de handoff)"
+        entry: python gates/G_PIPELINE_HANDOFF.py
+        language: system
+        always_run: true
+        pass_filenames: false
+        require_serial: true

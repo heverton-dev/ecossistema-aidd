@@ -1,7 +1,7 @@
 ---
 id: ISSUE-PIPE-0002
 title: Quality Gate G_PIPELINE_HANDOFF com Prova que Morde
-status: ready-for-agent
+status: done
 blocked_by: [ISSUE-PIPE-0001]
 created: 2026-09-21
 source: Relatório de Melhoria 21-09-2026 — Pipeline Unificado de Orquestração
@@ -26,7 +26,7 @@ source: Relatório de Melhoria 21-09-2026 — Pipeline Unificado de Orquestraç�
 
 ## Acceptance criteria
 
-- [ ] `gates/G_PIPELINE_HANDOFF.py` exists with binary exit points.
-- [ ] Automated test `tests/test_gate_pipeline_handoff.py` passes `pytest`.
-- [ ] Test proves gate bites by exercising a deliberately invalid manifest asserting exit 1.
-- [ ] Gate registered in `ecossistema.py` `_GATES_AUDIT` list.
+- [x] `gates/G_PIPELINE_HANDOFF.py` exists with binary exit points.
+- [x] Automated test `tests/test_gate_pipeline_handoff.py` passes `pytest`.
+- [x] Test proves gate bites by exercising a deliberately invalid manifest asserting exit 1.
+- [x] Gate registered in `ecossistema.py` `_GATES_AUDIT` list.
