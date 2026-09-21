@@ -36,53 +36,43 @@ def test_aprova_gates_com_saida_binaria_conforme():
     assert "LIMITE METROLÓGICO" in res.stdout
 
 
-def test_reprova_quando_gate_usa_saida_nao_binaria():
+def test_reprova_quando_gate_usa_saida_nao_binaria(tmp_path):
     """Prova que o portão morde (Lei #13): synthetic gate com sys.exit(2) retorna exit 1."""
-    synthetic_gate = os.path.join(GATES_DIR, "G_SYNTHETIC_EXIT_TRAP.py")
-    try:
-        with open(synthetic_gate, "w", encoding="utf-8") as f:
-            f.write("#!/usr/bin/env python3\n")
-            f.write("import sys\n\n")
-            f.write("if __name__ == '__main__':\n")
-            f.write("    sys.exit(2)\n")
+    synthetic_gate = tmp_path / "G_SYNTHETIC_EXIT_TRAP.py"
+    synthetic_gate.write_text(
+        "#!/usr/bin/env python3\nimport sys\n\nif __name__ == '__main__':\n    sys.exit(2)\n",
+        encoding="utf-8",
+    )
 
-        res = subprocess.run(
-            [sys.executable, GATE_SCRIPT],
-            capture_output=True,
-            text=True,
-            cwd=ROOT_DIR,
-            encoding="utf-8",
-            errors="replace",
-        )
-        assert res.returncode == 1, f"Deveria reprovar com exit 1, retornou {res.returncode}"
-        assert "G_SYNTHETIC_EXIT_TRAP.py" in res.stdout
-        assert "Código de saída '2' inválido" in res.stdout
-    finally:
-        if os.path.exists(synthetic_gate):
-            os.remove(synthetic_gate)
+    res = subprocess.run(
+        [sys.executable, GATE_SCRIPT, str(tmp_path)],
+        capture_output=True,
+        text=True,
+        cwd=ROOT_DIR,
+        encoding="utf-8",
+        errors="replace",
+    )
+    assert res.returncode == 1, f"Deveria reprovar com exit 1, retornou {res.returncode}"
+    assert "G_SYNTHETIC_EXIT_TRAP.py" in res.stdout
+    assert "Código de saída '2' inválido" in res.stdout
 
 
-def test_reprova_quando_gate_carece_de_sys_exit_no_main():
+def test_reprova_quando_gate_carece_de_sys_exit_no_main(tmp_path):
     """Prova que o portão morde quando bloco __main__ não chama sys.exit (fall-through)."""
-    synthetic_gate = os.path.join(GATES_DIR, "G_SYNTHETIC_FALLTHROUGH_TRAP.py")
-    try:
-        with open(synthetic_gate, "w", encoding="utf-8") as f:
-            f.write("#!/usr/bin/env python3\n")
-            f.write("def run():\n    pass\n\n")
-            f.write("if __name__ == '__main__':\n")
-            f.write("    run()\n")
+    synthetic_gate = tmp_path / "G_SYNTHETIC_FALLTHROUGH_TRAP.py"
+    synthetic_gate.write_text(
+        "#!/usr/bin/env python3\ndef run():\n    pass\n\nif __name__ == '__main__':\n    run()\n",
+        encoding="utf-8",
+    )
 
-        res = subprocess.run(
-            [sys.executable, GATE_SCRIPT],
-            capture_output=True,
-            text=True,
-            cwd=ROOT_DIR,
-            encoding="utf-8",
-            errors="replace",
-        )
-        assert res.returncode == 1, f"Deveria reprovar com exit 1, retornou {res.returncode}"
-        assert "G_SYNTHETIC_FALLTHROUGH_TRAP.py" in res.stdout
-        assert "não contém chamada explícita a sys.exit" in res.stdout
-    finally:
-        if os.path.exists(synthetic_gate):
-            os.remove(synthetic_gate)
+    res = subprocess.run(
+        [sys.executable, GATE_SCRIPT, str(tmp_path)],
+        capture_output=True,
+        text=True,
+        cwd=ROOT_DIR,
+        encoding="utf-8",
+        errors="replace",
+    )
+    assert res.returncode == 1, f"Deveria reprovar com exit 1, retornou {res.returncode}"
+    assert "G_SYNTHETIC_FALLTHROUGH_TRAP.py" in res.stdout
+    assert "não contém chamada explícita a sys.exit" in res.stdout

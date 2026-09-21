@@ -1,7 +1,7 @@
 ---
 id: ISSUE-PIPE-0004
 title: Compilador de Tickets de Planos Markdown para Handoff JSON
-status: ready-for-agent
+status: completed
 blocked_by: [ISSUE-PIPE-0001]
 created: 2026-09-21
 source: Relatório de Melhoria 21-09-2026 — Pipeline Unificado de Orquestração
@@ -26,7 +26,7 @@ source: Relatório de Melhoria 21-09-2026 — Pipeline Unificado de Orquestraç�
 
 ## Acceptance criteria
 
-- [ ] CLI command `python scripts/compilador_tickets_plano.py --plano <path>` compiles plan into JSON.
-- [ ] Compiles real plan fixture without loss of criteria or target files.
-- [ ] Validates generated JSON through `gates/G_PIPELINE_HANDOFF.py` with exit 0.
-- [ ] Exits 1 if input markdown contains unresolvable cycles or missing validation commands.
+- [x] CLI command `python scripts/compilador_tickets_plano.py --plano <path>` compiles plan into JSON.
+- [x] Compiles real plan fixture without loss of criteria or target files.
+- [x] Validates generated JSON through `gates/G_PIPELINE_HANDOFF.py` with exit 0.
+- [x] Exits 1 if input markdown contains unresolvable cycles or missing validation commands.

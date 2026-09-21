@@ -164,7 +164,11 @@ def main() -> int:
     print(" [GATE] G_SAIDA_BINARIA — Auditoria de Saída Estritamente Binária (Lei #2)")
     print("=" * 72)
 
-    code, erros, total = auditar_todos_os_gates(GATES_DIR)
+    target_dir = GATES_DIR
+    if len(sys.argv) > 1 and not sys.argv[1].startswith("-"):
+        target_dir = sys.argv[1]
+
+    code, erros, total = auditar_todos_os_gates(target_dir)
 
     if erros:
         print(f"\n[FALHA] Detectada(s) {len(erros)} violação(ões) de saída binária (Lei #2):\n")

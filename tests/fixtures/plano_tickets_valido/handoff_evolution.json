@@ -1,0 +1,56 @@
+{
+  "versao_schema": "1.0.0",
+  "origem_plano": "evolucao",
+  "fluxo_alvo": "evolution",
+  "meta": {
+    "nome_projeto": "pipeline-orquestracao-triade",
+    "repositorio_alvo": "ecossistema-aidd",
+    "timestamp_execucao": "2026-09-21T14:25:44Z",
+    "iniciativa_id": "PLAN-plano_tickets_valido",
+    "descricao": "Unificar o pipeline de orquestracao deterministica da Triade Canonica com suporte a git worktrees e join barrier."
+  },
+  "fase_paralela_assincrona": [
+    {
+      "id": "TICKET-01",
+      "titulo": "Validar contratos e schemas de handoff",
+      "arquivos_alvo": [
+        "componentes/compartilhado/specs/handoff-execucao.schema.json",
+        "gates/G_PIPELINE_HANDOFF.py"
+      ],
+      "comando_validacao": "python gates/G_PIPELINE_HANDOFF.py",
+      "blocked_by": [],
+      "isolamento": "git-worktree",
+      "comando_red": "python gates/G_PIPELINE_HANDOFF.py",
+      "comando_green": "python gates/G_PIPELINE_HANDOFF.py"
+    },
+    {
+      "id": "TICKET-03",
+      "titulo": "Implementar compilador de tickets para handoff",
+      "arquivos_alvo": [
+        "scripts/compilador_tickets_plano.py",
+        "tests/test_compilador_tickets_plano.py"
+      ],
+      "comando_validacao": "pytest tests/test_compilador_tickets_plano.py",
+      "blocked_by": [],
+      "isolamento": "git-worktree"
+    }
+  ],
+  "barreira_sincronizacao": [
+    "gates/G_SAIDA_BINARIA.py"
+  ],
+  "fase_sequencial_sincrona": [
+    {
+      "id": "TICKET-02",
+      "titulo": "Implementar motor de execucao síncrono",
+      "arquivos_alvo": [
+        "tools/aidd-master/scripts/orchestrator_pipeline.py",
+        "tests/test_orchestrator_pipeline.py"
+      ],
+      "comando_validacao": "pytest tests/test_orchestrator_pipeline.py",
+      "blocked_by": [
+        "TICKET-01"
+      ],
+      "isolamento": "git-worktree"
+    }
+  ]
+}
