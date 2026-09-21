@@ -1,7 +1,7 @@
 ---
 id: ISSUE-PIPE-0007
 title: Integração Completa de Ponta a Ponta e Testes de Regressão
-status: ready-for-agent
+status: done
 blocked_by: [ISSUE-PIPE-0006]
 created: 2026-09-21
 source: Relatório de Melhoria 21-09-2026 — Pipeline Unificado de Orquestração
@@ -30,7 +30,7 @@ source: Relatório de Melhoria 21-09-2026 — Pipeline Unificado de Orquestraç�
 
 ## Acceptance criteria
 
-- [ ] `pytest tests/test_e2e_pipeline_orquestracao.py` passes 100% of scenarios.
-- [ ] Subprocess run in temporary repository leaves zero orphaned worktrees.
-- [ ] `python ecossistema.py audit` exits 0 with all 26 Quality Gates green.
-- [ ] Contemporany report committed in `docs/teste-end-to-end/` per Law #9.
+- [x] `pytest tests/test_e2e_pipeline_orquestracao.py` passes 100% of scenarios.
+- [x] Subprocess run in temporary repository leaves zero orphaned worktrees.
+- [x] `python ecossistema.py audit` exits 0 with all 26 Quality Gates green.
+- [x] Contemporany report committed in `docs/teste-end-to-end/` per Law #9.

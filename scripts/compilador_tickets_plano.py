@@ -367,7 +367,10 @@ def _processar_bloco_ticket(ticket_id: str, titulo: str, bloco: str, nome_arquiv
             comando_validacao = _extrair_comando(m_sec_cmd.group(1))
 
     # 3. Blocked By / Dependências
-    txt_deps = _extrair_campo_bloco(bloco, r"Blocked By|blocked_by|Depend[êe]ncias|dependencias")
+    txt_deps = _extrair_campo_bloco(
+        bloco,
+        r"Blocked By|blocked_by|Bloqueado\s+por|bloqueado_por|Depend[êe]ncias|dependencias",
+    )
     blocked_by: List[str] = []
     if txt_deps:
         raw_deps = txt_deps.strip().strip("[]")

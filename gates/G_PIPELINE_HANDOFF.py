@@ -200,10 +200,28 @@ def auditar_manifesto(caminho_manifesto: Path) -> Tuple[bool, List[str]]:
     # Identificar diretório base do repositório
     meta = manifesto.get("meta", {}) if isinstance(manifesto, dict) else {}
     repo_alvo = meta.get("repositorio_alvo") or meta.get("target_repository") or "."
-    base_repo = ROOT_DIR if repo_alvo in (".", "ecossistema-aidd", "") else (ROOT_DIR / repo_alvo)
-    if not base_repo.exists():
-        # Fallback para ROOT_DIR se for caminho relativo inexistente
-        base_repo = ROOT_DIR
+    
+    p_alvo = Path(repo_alvo)
+    if p_alvo.is_dir():
+        base_repo = p_alvo.resolve()
+    else:
+        # Detecta raiz do repositório subindo a partir do local do manifesto (.git)
+        cur = caminho_manifesto.parent.resolve()
+        detected_git = None
+        while cur != cur.parent:
+            if (cur / ".git").exists():
+                detected_git = cur
+                break
+            cur = cur.parent
+
+        if detected_git and (repo_alvo in (".", "ecossistema-aidd", "") or detected_git.name == repo_alvo):
+            base_repo = detected_git
+        elif repo_alvo in (".", "ecossistema-aidd", ""):
+            base_repo = ROOT_DIR
+        else:
+            base_repo = ROOT_DIR / repo_alvo
+            if not base_repo.exists():
+                base_repo = ROOT_DIR
 
     # 3. Coleta de tickets de todas as fases
     tickets: List[Dict[str, Any]] = []

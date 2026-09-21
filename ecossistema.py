@@ -317,6 +317,11 @@ def cmd_run_plan(args):
         help="Modo silencioso (apenas saídas essenciais)."
     )
     parser.add_argument(
+        "--barreira-gate",
+        default=None,
+        help="Quality gate a inserir na barreira de sincronização durante a compilação."
+    )
+    parser.add_argument(
         "--no-exec",
         action="store_true",
         help="Apenas compila o plano para handoff JSON, sem disparar a execução do pipeline."
@@ -346,6 +351,9 @@ def cmd_run_plan(args):
             handoff_path = os.path.abspath(parsed_args.output)
         else:
             handoff_path = None
+
+        if parsed_args.barreira_gate:
+            comp_cmd += ["--barreira-gate", parsed_args.barreira_gate]
 
         comp_code = run_command(comp_cmd, cwd=os.getcwd())
         if comp_code != 0:
