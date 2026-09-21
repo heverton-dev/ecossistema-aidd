@@ -20,6 +20,7 @@ try:
         validar_plano,
         gerar_template_plano,
         exportar_para_fluxo_factory,
+        exportar_para_pipeline_execucao,
     )
 except ImportError:
     from src.core.planner_engine import (
@@ -27,6 +28,7 @@ except ImportError:
         validar_plano,
         gerar_template_plano,
         exportar_para_fluxo_factory,
+        exportar_para_pipeline_execucao,
     )
 
 MAPA_FLUXOS = {
@@ -250,6 +252,18 @@ def cmd_export(args: argparse.Namespace) -> int:
             json.dump(resultado, f, indent=2, ensure_ascii=False)
         print(f"[aidd-planner] Exportado com sucesso para aidd-factory: {saida_caminho}")
         return 0
+    elif formato == "pipeline":
+        try:
+            resultado = exportar_para_pipeline_execucao(plano)
+        except PlannerValidationError as e:
+            print(f"[ERRO] Não foi possível exportar para pipeline: {e}", file=sys.stderr)
+            return 1
+
+        saida_caminho = os.path.abspath(args.saida or os.path.join(os.path.dirname(caminho), "handoff_execucao.json"))
+        with open(saida_caminho, "w", encoding="utf-8") as f:
+            json.dump(resultado, f, indent=2, ensure_ascii=False)
+        print(f"[aidd-planner] Exportado com sucesso para pipeline de execução: {saida_caminho}")
+        return 0
     else:
         print(f"[ERRO] Formato de exportação não suportado: '{formato}'", file=sys.stderr)
         return 1
@@ -323,7 +337,7 @@ def main(argv: Optional[List[str]] = None) -> int:
     # Subcomando export
     p_exp = subparsers.add_parser("export", help="Exporta plano para formato específico de fluxo")
     p_exp.add_argument("arquivo", help="Caminho do arquivo PLANNER.json")
-    p_exp.add_argument("--formato", required=True, choices=["factory"], help="Formato de destino")
+    p_exp.add_argument("--formato", required=True, choices=["factory", "pipeline"], help="Formato de destino")
     p_exp.add_argument("--saida", "-o", help="Caminho do arquivo exportado")
     p_exp.set_defaults(func=cmd_export)
 

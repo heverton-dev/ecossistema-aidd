@@ -757,17 +757,28 @@
   2. Implementação da emissão autônoma e determinística de `HANDOFF_PLANNER_ENGINE.json` diretamente no `cmd_init` de `aidd_planner/cli.py` e `src/cli.py`.
   3. Atualização de `ecossistema.py` para invocar canonicamente `aidd_planner.cli`.
   4. Validação automatizada em `test_planner.py` garantindo que o contrato emitido satisfaz o schema da Tríade.
+#### Inconsistência 29: Ausência de Exportador Nativo de Plano para o Pipeline Unificado de Execução (ISSUE-PIPE-0005)
+- **Nome:** Ausência de função e comando CLI no `aidd-planner` para converter planos canônicos (`PLANNER.json`) no manifesto formal unificado de execução (`handoff-execucao.schema.json`).
+- **Motivo:** O compilador de tickets anterior existia apenas para planos em Markdown (`compilador_tickets_plano.py`), enquanto o intake do `aidd-planner` exportava apenas para o formato intermediário de infraestrutura (`--formato factory`), carecendo de tradução direta para despacho determinístico de execução com worktrees e join barrier.
+- **O que ocasionou:** Necessidade de conversão manual ou scripts ad-hoc para acionar a execução formal de projetos da Tríade Canônica sob o motor de orquestração unificado.
+- **Plano de Correção:**
+  1. Implementação da função pura `exportar_para_pipeline_execucao(plano: Dict[str, Any]) -> Dict[str, Any]` em `tools/aidd-planner/src/core/planner_engine.py` e espelhada em `tools/aidd-planner/aidd_planner/core/planner_engine.py`.
+  2. Mapeamento determinístico de Bounded Contexts (DDD) em fatias verticais isoladas em `fase_paralela_assincrona` com isolamento `git-worktree` e comandos TDD Red/Green/Validation (`pytest tests/unit/test_<slice>.py`).
+  3. Mapeamento de barramento central compartilhado, scripts de migração de banco de dados e validação do Quarteto Sine Qua Non em `fase_sequencial_sincrona` com isolamento de processo e dependências explícitas (`blocked_by`).
+  4. Inclusão dos portões determinísticos `gates/G_SAIDA_BINARIA.py` e `gates/G_TESTES_REAIS.py` na barreira de sincronização (`barreira_sincronizacao`).
+  5. Exposição via CLI através da opção `--formato pipeline` em `python -m aidd_planner.cli export <caminho> --formato pipeline [--saida <destino>]`.
+  6. Adição de suíte de testes unitários em `tools/aidd-planner/tests/test_planner.py` validando os Fluxos 01 (Pure), 02 (Open) e 03 (Freedom), rejeição de planos inválidos e auditoria de 100% de conformidade contra `gates/G_PIPELINE_HANDOFF.py`.
 - **Status:** **RESOLVIDO**.
 
 ### Resultado Final de Validação (`aidd-planner`)
 
-- **Testes Unitários:** **13 passed**, 0 falhas (100% de aprovação).
+- **Testes Unitários:** **18 passed**, 0 falhas (100% de aprovação).
 - **Quality Gates do Planner:**
   - `G_PLANNER_SCHEMA.py`: **PASS**
   - `G_PLANNER_SINE_QUA_NON.py`: **PASS**
   - `G_PLANNER_COERENCIA_FLUXO.py`: **PASS**
-- **Quality Gates Globais:** **100% PASS** (conforme `G_QUARTETO_SINE_QUA_NON.py`, `G_ECOSSISTEMA_INTEGRIDADE.py` e `G_DISCIPLINA_TESTE_FERRAMENTA.py`).
-- **Data da Última Auditoria:** 21/09/2026 (Padronização de pacote canônico e emissão formal de handoff da Tríade).
+- **Quality Gates Globais:** **100% PASS** (conforme `G_PIPELINE_HANDOFF.py`, `G_QUARTETO_SINE_QUA_NON.py`, `G_TESTES_REAIS.py` e `G_DISCIPLINA_TESTE_FERRAMENTA.py`).
+- **Data da Última Auditoria:** 21/09/2026 (Exportador nativo para pipeline de execução — ISSUE-PIPE-0005).
 
 ---
 

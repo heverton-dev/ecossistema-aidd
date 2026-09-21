@@ -11,17 +11,29 @@ import pytest
 
 _PLANNER_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 _ECOSSISTEMA_DIR = os.path.dirname(_PLANNER_DIR)
+_ROOT_DIR = os.path.dirname(_ECOSSISTEMA_DIR)
 
 if _PLANNER_DIR not in sys.path:
     sys.path.insert(0, _PLANNER_DIR)
 if _ECOSSISTEMA_DIR not in sys.path:
     sys.path.insert(0, _ECOSSISTEMA_DIR)
 
+import importlib.util
+
+def _auditar_manifesto_pipeline(manifesto_path):
+    gate_script = os.path.join(_ROOT_DIR, "gates", "G_PIPELINE_HANDOFF.py")
+    spec = importlib.util.spec_from_file_location("G_PIPELINE_HANDOFF_GATE", gate_script)
+    mod = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(mod)
+    from pathlib import Path
+    return mod.auditar_manifesto(Path(manifesto_path))
+
 from src.core.planner_engine import (
     carregar_schema,
     validar_plano,
     gerar_template_plano,
     exportar_para_fluxo_factory,
+    exportar_para_pipeline_execucao,
     PlannerValidationError,
 )
 from src.cli import main as cli_main
@@ -310,3 +322,158 @@ def test_cli_init_gera_design_system_unico_por_projeto():
             "Sistema de agendamento para clinica de saude", "saude",
         )
         assert ds_saude_repetido["paleta"] == ds_saude["paleta"]
+
+
+def _preparar_diretorios_alvo(base_dir: str, manifesto: dict) -> None:
+    """Garante que diretórios pai dos arquivos alvo existam para o gate G_PIPELINE_HANDOFF."""
+    todos_tickets = list(manifesto.get("fase_paralela_assincrona", [])) + list(manifesto.get("fase_sequencial_sincrona", []))
+    for t in todos_tickets:
+        for alvo in t.get("arquivos_alvo", []):
+            alvo_p = os.path.join(base_dir, alvo)
+            os.makedirs(os.path.dirname(alvo_p), exist_ok=True)
+
+
+def test_exportar_para_pipeline_execucao_fluxo_01_pure(tmp_path):
+    """Verifica exportação para pipeline no Fluxo 01 (Pure) e conformidade com G_PIPELINE_HANDOFF."""
+    plano = gerar_template_plano(
+        fluxo_alvo="fluxo_01_generator",
+        projeto_nome="App E-Commerce Pure",
+        slug="app-ecommerce-pure",
+        descricao="Sistema completo e puro para validacao de pipeline",
+        dominio="comercio",
+    )
+    plano["meta"]["repositorio_alvo"] = str(tmp_path)
+
+    manifesto = exportar_para_pipeline_execucao(plano)
+
+    assert manifesto["versao_schema"] == "1.0.0"
+    assert manifesto["origem_plano"] == "criacao"
+    assert manifesto["fluxo_alvo"] == "pure"
+    assert manifesto["meta"]["nome_projeto"] == "App E-Commerce Pure"
+    assert manifesto["meta"]["repositorio_alvo"] == str(tmp_path)
+
+    # Verifica fase paralela assíncrona (Bounded Contexts)
+    fase_paralela = manifesto["fase_paralela_assincrona"]
+    assert len(fase_paralela) >= 1
+    for ticket in fase_paralela:
+        assert ticket["id"].startswith("SLICE-")
+        assert ticket["isolamento"] == "git-worktree"
+        assert ticket["blocked_by"] == []
+        assert len(ticket["arquivos_alvo"]) >= 1
+        assert "pytest tests/unit/" in ticket["comando_validacao"]
+
+    # Verifica barreira de sincronização
+    assert "gates/G_SAIDA_BINARIA.py" in manifesto["barreira_sincronizacao"]
+    assert "gates/G_TESTES_REAIS.py" in manifesto["barreira_sincronizacao"]
+
+    # Verifica fase sequencial síncrona
+    fase_seq = manifesto["fase_sequencial_sincrona"]
+    ids_seq = [t["id"] for t in fase_seq]
+    assert "STEP-SHARED-CORE-INTEGRATION" in ids_seq
+    assert "STEP-DB-MIGRATIONS" in ids_seq
+    assert "STEP-QUARTETO-SINE-QUA-NON" in ids_seq
+
+    step_core = next(t for t in fase_seq if t["id"] == "STEP-SHARED-CORE-INTEGRATION")
+    assert step_core["blocked_by"] == [t["id"] for t in fase_paralela]
+
+    step_quarteto = next(t for t in fase_seq if t["id"] == "STEP-QUARTETO-SINE-QUA-NON")
+    assert "python gates/G_QUARTETO_SINE_QUA_NON.py" in step_quarteto["comando_validacao"]
+
+    # Prepara diretórios e audita com G_PIPELINE_HANDOFF
+    _preparar_diretorios_alvo(str(tmp_path), manifesto)
+    manifesto_path = tmp_path / "manifesto_pure.json"
+    manifesto_path.write_text(json.dumps(manifesto, indent=2), encoding="utf-8")
+
+    conforme, erros = _auditar_manifesto_pipeline(manifesto_path)
+    assert conforme is True, f"Gate G_PIPELINE_HANDOFF reprovou manifesto Fluxo 01: {erros}"
+
+
+def test_exportar_para_pipeline_execucao_fluxo_02_open(tmp_path):
+    """Verifica exportação para pipeline no Fluxo 02 (Open/Factory) e conformidade com G_PIPELINE_HANDOFF."""
+    plano = gerar_template_plano(
+        fluxo_alvo="fluxo_02_factory",
+        projeto_nome="Hub Mensageria Open",
+        slug="hub-mensageria-open",
+        descricao="Plataforma de integracao com motores open source",
+        dominio="atendimento",
+    )
+    plano["meta"]["repositorio_alvo"] = str(tmp_path)
+
+    manifesto = exportar_para_pipeline_execucao(plano)
+
+    assert manifesto["fluxo_alvo"] == "open"
+    assert len(manifesto["fase_paralela_assincrona"]) >= 1
+    assert any("integrations" in alvo for t in manifesto["fase_paralela_assincrona"] for alvo in t["arquivos_alvo"])
+
+    _preparar_diretorios_alvo(str(tmp_path), manifesto)
+    manifesto_path = tmp_path / "manifesto_open.json"
+    manifesto_path.write_text(json.dumps(manifesto, indent=2), encoding="utf-8")
+
+    conforme, erros = _auditar_manifesto_pipeline(manifesto_path)
+    assert conforme is True, f"Gate G_PIPELINE_HANDOFF reprovou manifesto Fluxo 02: {erros}"
+
+
+def test_exportar_para_pipeline_execucao_fluxo_03_freedom(tmp_path):
+    """Verifica exportação para pipeline no Fluxo 03 (Freedom/Bridge) e conformidade com G_PIPELINE_HANDOFF."""
+    plano = gerar_template_plano(
+        fluxo_alvo="fluxo_03_bridge",
+        projeto_nome="Portal Desacoplado Freedom",
+        slug="portal-desacoplado-freedom",
+        descricao="Sistema desacoplado de low-code para alta fidelidade",
+        dominio="financeiro",
+    )
+    plano["meta"]["repositorio_alvo"] = str(tmp_path)
+
+    manifesto = exportar_para_pipeline_execucao(plano)
+
+    assert manifesto["fluxo_alvo"] == "freedom"
+    assert len(manifesto["fase_paralela_assincrona"]) >= 1
+    assert any("routes" in alvo for t in manifesto["fase_paralela_assincrona"] for alvo in t["arquivos_alvo"])
+
+    _preparar_diretorios_alvo(str(tmp_path), manifesto)
+    manifesto_path = tmp_path / "manifesto_freedom.json"
+    manifesto_path.write_text(json.dumps(manifesto, indent=2), encoding="utf-8")
+
+    conforme, erros = _auditar_manifesto_pipeline(manifesto_path)
+    assert conforme is True, f"Gate G_PIPELINE_HANDOFF reprovou manifesto Fluxo 03: {erros}"
+
+
+def test_exportar_para_pipeline_rejeita_plano_invalido():
+    """Garante que exportação para pipeline rejeita planos corrompidos com PlannerValidationError."""
+    plano_invalido = {
+        "meta": {"projeto_nome": "Invalido"},
+        "ddd_bounded_contexts": [],
+    }
+    with pytest.raises(PlannerValidationError):
+        exportar_para_pipeline_execucao(plano_invalido)
+
+
+def test_cli_export_formato_pipeline(tmp_path):
+    """Valida comando CLI 'python -m aidd_planner.cli export <caminho> --formato pipeline'."""
+    # 1. Cria PLANNER.json
+    plano = gerar_template_plano(
+        fluxo_alvo="fluxo_01_generator",
+        projeto_nome="Projeto CLI Pipeline",
+        slug="projeto-cli-pipeline",
+        descricao="Validacao via linha de comando do exportador pipeline",
+        dominio="testes",
+    )
+    plano["meta"]["repositorio_alvo"] = str(tmp_path)
+    planner_file = tmp_path / "PLANNER.json"
+    planner_file.write_text(json.dumps(plano, indent=2), encoding="utf-8")
+
+    saida_file = tmp_path / "handoff_pipeline_cli.json"
+
+    # 2. Executa export via CLI
+    ret = cli_main(["export", str(planner_file), "--formato", "pipeline", "--saida", str(saida_file)])
+    assert ret == 0
+    assert saida_file.is_file()
+
+    manifesto = json.loads(saida_file.read_text(encoding="utf-8"))
+    assert manifesto["fluxo_alvo"] == "pure"
+    assert len(manifesto["fase_paralela_assincrona"]) >= 1
+
+    # 3. Valida contra G_PIPELINE_HANDOFF
+    _preparar_diretorios_alvo(str(tmp_path), manifesto)
+    conforme, erros = _auditar_manifesto_pipeline(saida_file)
+    assert conforme is True, f"Manifesto gerado via CLI reprovou no gate: {erros}"

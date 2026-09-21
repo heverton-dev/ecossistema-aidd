@@ -1,7 +1,7 @@
 ---
 id: ISSUE-PIPE-0005
 title: Exportador Nativo do aidd-planner para o Schema de Pipeline
-status: ready-for-agent
+status: completed
 blocked_by: [ISSUE-PIPE-0001]
 created: 2026-09-21
 source: Relatório de Melhoria 21-09-2026 — Pipeline Unificado de Orquestração
@@ -24,6 +24,6 @@ source: Relatório de Melhoria 21-09-2026 — Pipeline Unificado de Orquestraç�
 
 ## Acceptance criteria
 
-- [ ] Command `python -m aidd_planner.cli export <path> --formato pipeline` outputs valid execution handoff.
-- [ ] Exported output validates cleanly against `gates/G_PIPELINE_HANDOFF.py` with exit 0.
-- [ ] Unit tests in `tools/aidd-planner/tests/` verify translation fidelity for Flows 1, 2, and 3.
+- [x] Command `python -m aidd_planner.cli export <path> --formato pipeline` outputs valid execution handoff.
+- [x] Exported output validates cleanly against `gates/G_PIPELINE_HANDOFF.py` with exit 0.
+- [x] Unit tests in `tools/aidd-planner/tests/` verify translation fidelity for Flows 1, 2, and 3.

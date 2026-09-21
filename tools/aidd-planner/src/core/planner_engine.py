@@ -11,6 +11,7 @@ from typing import Any, Dict, List, Optional, Tuple
 
 _PLANNER_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 _SCHEMA_PATH = os.path.join(_PLANNER_DIR, "schemas", "planner_schema.json")
+_SCHEMA_PIPELINE_PATH = os.path.join(_PLANNER_DIR, "..", "..", "componentes", "compartilhado", "specs", "handoff-execucao.schema.json")
 
 # aidd-ops e a fonte unica das Fases 1-3 (Intake -> Curadoria -> Sizing) que
 # produzem o PLANO-INFRAESTRUTURA.json — o mesmo contrato que aidd-factory
@@ -317,3 +318,164 @@ def exportar_para_fluxo_factory(plano: Dict[str, Any]) -> Dict[str, Any]:
         )
 
     return factory_input
+
+
+def exportar_para_pipeline_execucao(plano: Dict[str, Any]) -> Dict[str, Any]:
+    """
+    Converte um PLANNER.json canônico no manifesto de handoff de execução unificado
+    para a Tríade Canônica (Pure, Open, Freedom), estritamente conforme com
+    handoff-execucao.schema.json e auditável via G_PIPELINE_HANDOFF.
+
+    Invariantes aplicadas:
+      - Bounded Contexts mapeados em fatias verticais para fase_paralela_assincrona (git-worktrees).
+      - Integração de núcleo compartilhado, migrations e validação do Quarteto Sine Qua Non
+        mapeados em fase_sequencial_sincrona.
+      - Quality Gates inseridos na barreira_sincronizacao (join barrier).
+      - Zero Stubs em identificadores, títulos e comandos de validação.
+    """
+    valido, erros = validar_plano(plano)
+    if not valido:
+        raise PlannerValidationError(f"Plano inválido para exportação de pipeline: {erros}")
+
+    meta = plano.get("meta", {})
+    projeto_nome = meta.get("projeto_nome") or meta.get("nome_projeto") or "Projeto AIDD"
+    slug = meta.get("slug") or projeto_nome.lower().replace(" ", "-").replace("_", "-")
+    fluxo_raw = str(meta.get("fluxo_alvo", "")).lower()
+
+    if "01" in fluxo_raw or "generator" in fluxo_raw or "pure" in fluxo_raw:
+        fluxo_alvo = "pure"
+    elif "02" in fluxo_raw or "factory" in fluxo_raw or "open" in fluxo_raw:
+        fluxo_alvo = "open"
+    elif "03" in fluxo_raw or "bridge" in fluxo_raw or "freedom" in fluxo_raw:
+        fluxo_alvo = "freedom"
+    else:
+        fluxo_alvo = "pure"
+
+    repositorio_alvo = meta.get("repositorio_alvo") or "."
+    iniciativa_id = meta.get("iniciativa_id") or f"PLAN-{slug}"
+    descricao = meta.get("descricao") or f"Pipeline de execucao deterministico para {projeto_nome}"
+
+    timestamp_execucao = meta.get("timestamp_execucao")
+    if not timestamp_execucao:
+        from datetime import datetime, timezone
+        timestamp_execucao = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
+
+    contexts = plano.get("ddd_bounded_contexts", [])
+    fase_paralela: List[Dict[str, Any]] = []
+
+    for idx, ctx in enumerate(contexts, start=1):
+        mod_nome = ctx.get("modulo", f"modulo_{idx}")
+        mod_slug = mod_nome.lower().replace(" ", "-").replace("_", "-")
+        ticket_id = f"SLICE-{mod_slug.upper()}"
+
+        alvos = ctx.get("arquivos_alvo") or []
+        if not alvos:
+            if fluxo_alvo == "pure":
+                alvos = [
+                    f"src/slices/{mod_slug}/slice.py",
+                    f"tests/unit/test_{mod_slug}.py",
+                ]
+            elif fluxo_alvo == "open":
+                alvos = [
+                    f"src/integrations/{mod_slug}/adapter.py",
+                    f"tests/unit/test_{mod_slug}.py",
+                ]
+            elif fluxo_alvo == "freedom":
+                alvos = [
+                    f"src/routes/{mod_slug}/route.py",
+                    f"tests/unit/test_{mod_slug}.py",
+                ]
+            else:
+                alvos = [
+                    f"src/slices/{mod_slug}/slice.py",
+                    f"tests/unit/test_{mod_slug}.py",
+                ]
+
+        cmd_val = ctx.get("comando_validacao") or f"pytest tests/unit/test_{mod_slug}.py"
+        cmd_red = ctx.get("comando_red") or f"pytest tests/unit/test_{mod_slug}.py"
+        cmd_green = ctx.get("comando_green") or f"pytest tests/unit/test_{mod_slug}.py"
+
+        fase_paralela.append({
+            "id": ticket_id,
+            "titulo": f"Implementar fatia vertical {mod_nome}",
+            "arquivos_alvo": alvos,
+            "comando_validacao": cmd_val,
+            "comando_red": cmd_red,
+            "comando_green": cmd_green,
+            "isolamento": "git-worktree",
+            "blocked_by": [],
+        })
+
+    barreira_sincronizacao = [
+        "gates/G_SAIDA_BINARIA.py",
+        "gates/G_TESTES_REAIS.py",
+    ]
+
+    todos_slices_ids = [t["id"] for t in fase_paralela]
+
+    fase_sequencial: List[Dict[str, Any]] = [
+        {
+            "id": "STEP-SHARED-CORE-INTEGRATION",
+            "titulo": "Integrar barramento central de servicos e rotas do gateway API",
+            "arquivos_alvo": [
+                "src/core/gateway.py",
+                "tests/integration/test_gateway.py",
+            ],
+            "comando_validacao": "pytest tests/integration/test_gateway.py",
+            "blocked_by": todos_slices_ids,
+            "isolamento": "processo-isolado",
+        },
+        {
+            "id": "STEP-DB-MIGRATIONS",
+            "titulo": "Executar scripts de migracao e schema do banco de dados",
+            "arquivos_alvo": [
+                "migrations/001_initial_schema.sql",
+                "tests/test_migrations.py",
+            ],
+            "comando_validacao": "pytest tests/test_migrations.py",
+            "blocked_by": ["STEP-SHARED-CORE-INTEGRATION"],
+            "isolamento": "processo-isolado",
+        },
+        {
+            "id": "STEP-QUARTETO-SINE-QUA-NON",
+            "titulo": "Validar conformidade dos 4 pilares do Quarteto Sine Qua Non (/docs, /webhooks, /mcp, /guia)",
+            "arquivos_alvo": [
+                "gates/G_QUARTETO_SINE_QUA_NON.py",
+                "docs/guia/README.md",
+            ],
+            "comando_validacao": "python gates/G_QUARTETO_SINE_QUA_NON.py",
+            "blocked_by": ["STEP-DB-MIGRATIONS"],
+            "isolamento": "processo-isolado",
+        },
+    ]
+
+    manifesto: Dict[str, Any] = {
+        "versao_schema": "1.0.0",
+        "origem_plano": "criacao",
+        "fluxo_alvo": fluxo_alvo,
+        "meta": {
+            "nome_projeto": projeto_nome,
+            "repositorio_alvo": repositorio_alvo,
+            "timestamp_execucao": timestamp_execucao,
+            "iniciativa_id": iniciativa_id,
+            "descricao": descricao,
+        },
+        "fase_paralela_assincrona": fase_paralela,
+        "barreira_sincronizacao": barreira_sincronizacao,
+        "fase_sequencial_sincrona": fase_sequencial,
+    }
+
+    try:
+        import jsonschema
+        if os.path.isfile(_SCHEMA_PIPELINE_PATH):
+            with open(_SCHEMA_PIPELINE_PATH, "r", encoding="utf-8") as f_s:
+                schema_pipeline = json.load(f_s)
+            validator = jsonschema.Draft7Validator(schema_pipeline)
+            erros_schema = list(validator.iter_errors(manifesto))
+            if erros_schema:
+                msgs = [f"[{e.path}]: {e.message}" for e in erros_schema]
+                raise PlannerValidationError(f"Manifesto gerado viola handoff-execucao.schema.json: {msgs}")
+    except ImportError:
+        pass
+
+    return manifesto
