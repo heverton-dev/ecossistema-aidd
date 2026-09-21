@@ -1,0 +1,25 @@
+{
+  "pedido_original": "pipeline unificado de orquestracao e execucao com acionamento triade e isolamento por git worktree",
+  "data": "21-09-2026",
+  "nota_atual": "7.8",
+  "evidencia": "Analise estrutural de ecossistema.py (1026 LOC), aidd-planner/AGENTS.md, aidd-plan/SKILL.md, 64 skills sincronizadas e 26 Quality Gates em gates/. Falta de barreira automatica de execucao paralela e dispersao entre plan e planner.",
+  "plano_existente": null,
+  "item_relacionado": null,
+  "nota_anterior": null,
+  "evidencia_anterior": null,
+  "itens_avaliados": [],
+  "resumo": "O ecossistema possui arquitetura documental e de planejamento madura (plan e planner), mas a execucao fisica no orchestrate ainda depende de intervencao manual ou bifurcacoes no Orca. A introducao de um pipeline proprietario com contrato de handoff unico, acionamento triade e execucao em Git Worktrees isolados fecha o ciclo deterministico sem quebra de compatibilidade.",
+  "achados": [
+    "Dispersao entre plan (frentes markdown) e planner (JSON schema) sem interface comum de execucao",
+    "Ausencia de motor deterministico no orchestrate para particionar 15 passos paralelos em Git Worktrees",
+    "Falta de acionamento triade formal (CLI, Slash, Skill) no pipeline de execucao de planos de evolucao",
+    "Existencia comprovada de 26 Quality Gates e esteira anti-vibe coding (grill, spec, tickets) pronta para acoplamento"
+  ],
+  "riscos": [
+    "Risco de colisao de arquivos e sobrescrita de codigo ao executar frentes paralelas no mesmo workspace sem worktree",
+    "Explosao de tokens e vazamento de contexto caso se use subagentes puros em vez de worktrees particionados",
+    "Ambiguidade na transicao entre planejamento e codificacao sem um validador de handoff rigido"
+  ],
+  "recomendacao": "Implementar o pipeline proprietario aidd-pipeline-runner com acionamento triade, contrato handoff_execution.schema.json, gate de validacao G_PIPELINE_HANDOFF e integracao direta no ecossistema.py.",
+  "status": "RASCUNHO - aguardando decisao humana sobre proximo passo (ex: iniciar /plan, ou atualizar a nota do plano existente)"
+}

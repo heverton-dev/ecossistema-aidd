@@ -1,0 +1,134 @@
+<!doctype html>
+<html lang="pt-br">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>21-09-2026_melhoria-meso-camada-triade-canonica</title>
+<style>
+  :root {
+    color-scheme: light dark;
+    --bg:#f6f7f9; --bg-card:#ffffff; --border:#e2e5ea;
+    --fg:#1b1f26; --fg-muted:#5b6472;
+    --accent:#2563eb; --accent-fg:#ffffff;
+    --good:#1a7f4e; --good-bg:#e4f6ec;
+    --warn:#9a6400; --warn-bg:#fdf1d9;
+    --bad:#b3261e; --bad-bg:#fbe7e6;
+    --neutra:#6b7280; --neutra-bg:#eceef1;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg:#0b111a; --bg-card:#131b26; --border:#232d3b;
+      --fg:#e6edf3; --fg-muted:#94a3b8;
+      --accent:#4c8dff; --accent-fg:#08111f;
+      --good:#3ddc84; --good-bg:#0f2c1d;
+      --warn:#f2b84b; --warn-bg:#2c2410;
+      --bad:#ff6b6b; --bad-bg:#2c1414;
+      --neutra:#9aa4b2; --neutra-bg:#1b232f;
+    }
+  }
+  * { box-sizing: border-box; scrollbar-width: thin; scrollbar-color: var(--accent) var(--bg); }
+  ::-webkit-scrollbar { width:4px; height:4px; }
+  ::-webkit-scrollbar-track { background: var(--bg); }
+  ::-webkit-scrollbar-thumb { background: var(--accent); border-radius:4px; }
+  body {
+    background:var(--bg); color:var(--fg);
+    font-family: -apple-system, "Segoe UI", system-ui, sans-serif;
+    line-height: 1.5; margin:0; padding: 32px 16px;
+  }
+  .pagina { max-width: 760px; margin: 0 auto; }
+  h1 { font-size: 1.375rem; font-weight: 700; margin: 0 0 4px; letter-spacing: -0.01em; }
+  .subtitulo { color: var(--fg-muted); font-size: 0.875rem; margin: 0 0 24px; }
+  .card {
+    background: var(--bg-card); border: 1px solid var(--border);
+    border-radius: 12px; padding: 24px; margin-bottom: 16px;
+  }
+  .pedido { font-size: 0.9375rem; color: var(--fg-muted); margin-bottom: 16px; }
+  .pedido strong { color: var(--fg); }
+  .evidencia { font-size: 0.8125rem; color: var(--fg-muted); margin: 8px 0 0; }
+  .gauge { display:flex; align-items:center; gap:12px; margin-bottom: 8px; }
+  .gauge-rotulo { flex: 0 0 140px; font-size: 0.8125rem; color: var(--fg-muted); }
+  .gauge-trilho { flex: 1; height: 10px; background: var(--border); border-radius: 6px; overflow: hidden; }
+  .gauge-fill { height: 100%; border-radius: 6px; }
+  .gauge-valor { flex: 0 0 44px; text-align:right; font-weight:700; font-size: 0.875rem; }
+  .secao-titulo { font-size: 0.9375rem; font-weight: 600; margin: 20px 0 8px; }
+  ul { margin: 0; padding-left: 20px; }
+  li { margin-bottom: 6px; font-size: 0.875rem; }
+  .status-badge {
+    display: inline-block; padding: 4px 10px; border-radius: 6px;
+    font-size: 0.75rem; font-weight: 600; text-transform: uppercase;
+    background: var(--good-bg); color: var(--good); margin-top: 16px;
+  }
+  table { width: 100%; border-collapse: collapse; margin-top: 12px; font-size: 0.8125rem; }
+  th, td { text-align: left; padding: 8px; border-bottom: 1px solid var(--border); }
+  th { color: var(--fg-muted); font-weight: 600; }
+</style>
+</head>
+<body>
+<div class="pagina">
+  <h1>Meso-Camada da Tríade Canônica (Aplicações Completas)</h1>
+  <div class="subtitulo">Relatório de Avaliação Técnica e Arquitetural · 21-09-2026</div>
+
+  <div class="card">
+    <div class="pedido">
+      <strong>Iniciativa:</strong> Meso-Camada da Tríade Canônica (<code>aidd-dispatch-pipeline</code>)
+    </div>
+
+    <div class="gauge">
+      <div class="gauge-rotulo">Nota da Meso-Camada</div>
+      <div class="gauge-trilho">
+        <div class="gauge-fill" style="width: 81%; background: var(--good);"></div>
+      </div>
+      <div class="gauge-valor" style="color: var(--good);">8.1</div>
+    </div>
+    <div class="evidencia">
+      Baseado na análise de <code>scripts/orquestrador_sincrono.py</code>, <code>tools/aidd-planner/</code>, <code>tools/aidd-master/</code> e 26 Quality Gates canônicos.
+    </div>
+
+    <div class="secao-titulo">Fluxo Ponta a Ponta:</div>
+    <div style="font-family: monospace; font-size: 0.75rem; background: var(--border); padding: 10px; border-radius: 6px; overflow-x: auto;">
+      [FORGE] ➔ [PRÉ-PLANO (Grill + Spec)] ➔ [PLANNER] ➔ [DISPATCH-PIPELINE] ➔ [ENGINE (Pure/Open/Freedom)] ➔ [MASTER CONVERGENCE]
+    </div>
+
+    <div class="secao-titulo">O que será CRIADO:</div>
+    <table>
+      <thead>
+        <tr><th>Componente</th><th>Tipo</th><th>Caminho</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>Contrato Grafo VSA</td><td>Schema JSON</td><td>componentes/compartilhado/specs/vsa-topological-dispatch.schema.json</td></tr>
+        <tr><td>Quality Gate</td><td>Gate Lei #13</td><td>gates/G_DISPATCH_PIPELINE_VSA.py + testes</td></tr>
+        <tr><td>Motor Central</td><td>Python Core</td><td>tools/aidd-master/scripts/dispatch_pipeline.py</td></tr>
+        <tr><td>Roteador Especialista</td><td>Python Core</td><td>tools/aidd-master/scripts/engine_router.py</td></tr>
+        <tr><td>Barreira de Validação</td><td>Python Core</td><td>tools/aidd-master/scripts/vsa_join_barrier.py</td></tr>
+        <tr><td>Skill Runner Canônico</td><td>Multi-Harness</td><td>componentes/compartilhado/skills/aidd-dispatch-runner/</td></tr>
+      </tbody>
+    </table>
+
+    <div class="secao-titulo">O que será MUDADO:</div>
+    <ul>
+      <li><code>scripts/orquestrador_sincrono.py</code>: substituição dos mocks estáticos pelo despacho real em worktrees paralelos.</li>
+      <li><code>tools/aidd-planner/aidd_planner/core/planner_engine.py</code>: inclusão do compilador do Grafo Topológico VSA.</li>
+      <li><code>ecossistema.py</code>: inclusão do comando central <code>dispatch</code>.</li>
+      <li>Documentação canônica e skills de intake atualizadas para encadear no pipeline de despacho.</li>
+    </ul>
+
+    <div class="secao-titulo">O que será ELIMINADO:</div>
+    <ul>
+      <li>Geração monolítica não-fatiada de aplicações sem isolamento de fatias.</li>
+      <li>Payloads e dicionários estáticos mockados em código executável.</li>
+      <li>Execução paralela suja sem isolamento em Git Worktrees.</li>
+    </ul>
+
+    <div class="secao-titulo">O que será MANTIDO:</div>
+    <ul>
+      <li>26 Quality Gates Canônicos inegociáveis.</li>
+      <li>Padrão-Ouro de Stack: Next.js + TS + Tailwind, Python FastAPI + SQLite WAL / Postgres, OpenAPI 3.1.</li>
+      <li>Quarteto Sine Qua Non Dinâmico em 100% dos módulos.</li>
+      <li>Funil de convergência macro: Monólito Modular VSA ➔ aidd-enterprise ➔ aidd-ops.</li>
+    </ul>
+
+    <span class="status-badge">Aprovado para Execução</span>
+  </div>
+</div>
+</body>
+</html>

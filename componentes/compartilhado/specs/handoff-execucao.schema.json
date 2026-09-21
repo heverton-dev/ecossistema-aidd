@@ -1,0 +1,270 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "HandoffExecucaoSchema",
+  "description": "Contrato canônico formal para orquestração e despacho determinístico de execução do ecossistema AIDD (Planos de Evolução e Tríade Canônica: pure, open, freedom).",
+  "type": "object",
+  "required": [
+    "versao_schema",
+    "origem_plano",
+    "fluxo_alvo",
+    "meta"
+  ],
+  "properties": {
+    "versao_schema": {
+      "type": "string",
+      "pattern": "^\\d+\\.\\d+\\.\\d+$",
+      "description": "Versão semântica estrita do schema de handoff de execução."
+    },
+    "origem_plano": {
+      "type": "string",
+      "enum": ["evolucao", "criacao", "evolution", "creation"],
+      "description": "Origem da iniciativa: evolucao (aidd-plan/tickets) ou criacao (aidd-planner)."
+    },
+    "fluxo_alvo": {
+      "type": "string",
+      "enum": ["evolution", "pure", "open", "freedom", "evolucao"],
+      "description": "Fluxo canônico de destino para despacho de execução."
+    },
+    "meta": {
+      "type": "object",
+      "required": ["nome_projeto", "repositorio_alvo", "timestamp_execucao"],
+      "properties": {
+        "nome_projeto": {
+          "type": "string",
+          "minLength": 2,
+          "pattern": "^(?!.*(?i:TODO|FIXME|PLACEHOLDER|TBD)).+$"
+        },
+        "project_name": {
+          "type": "string",
+          "minLength": 2,
+          "pattern": "^(?!.*(?i:TODO|FIXME|PLACEHOLDER|TBD)).+$"
+        },
+        "repositorio_alvo": {
+          "type": "string",
+          "minLength": 1,
+          "pattern": "^(?!.*(?i:TODO|FIXME|PLACEHOLDER|TBD)).+$"
+        },
+        "target_repository": {
+          "type": "string",
+          "minLength": 1,
+          "pattern": "^(?!.*(?i:TODO|FIXME|PLACEHOLDER|TBD)).+$"
+        },
+        "timestamp_execucao": {
+          "type": "string",
+          "minLength": 10,
+          "pattern": "^\\d{4}-\\d{2}-\\d{2}(T\\d{2}:\\d{2}:\\d{2}.*)?$"
+        },
+        "execution_timestamp": {
+          "type": "string",
+          "minLength": 10,
+          "pattern": "^\\d{4}-\\d{2}-\\d{2}(T\\d{2}:\\d{2}:\\d{2}.*)?$"
+        },
+        "iniciativa_id": {
+          "type": "string",
+          "minLength": 2,
+          "pattern": "^[A-Za-z0-9_.-]+$"
+        },
+        "descricao": {
+          "type": "string",
+          "minLength": 5,
+          "pattern": "^(?!.*(?i:TODO|FIXME|PLACEHOLDER|TBD)).+$"
+        }
+      }
+    },
+    "fase_paralela_assincrona": {
+      "type": "array",
+      "description": "Lista de tickets ou fatias verticais independentes para execução isolada em Git Worktrees.",
+      "items": {
+        "$ref": "#/definitions/ticket"
+      }
+    },
+    "parallel_async_steps": {
+      "type": "array",
+      "description": "Alias para fase_paralela_assincrona.",
+      "items": {
+        "$ref": "#/definitions/ticket"
+      }
+    },
+    "barreira_sincronizacao": {
+      "type": "array",
+      "description": "Quality Gates obrigatórios a serem satisfeitos antes de mesclar as branches das worktrees.",
+      "items": {
+        "type": "string",
+        "minLength": 2,
+        "pattern": "^(?!.*(?i:TODO|FIXME|PLACEHOLDER|TBD)).+$"
+      }
+    },
+    "join_barrier": {
+      "type": "array",
+      "description": "Alias para barreira_sincronizacao.",
+      "items": {
+        "type": "string",
+        "minLength": 2,
+        "pattern": "^(?!.*(?i:TODO|FIXME|PLACEHOLDER|TBD)).+$"
+      }
+    },
+    "fase_sequencial_sincrona": {
+      "type": "array",
+      "description": "Lista ordenada de tarefas sequenciais dependentes (ex: migrations, wiring, testes E2E).",
+      "items": {
+        "$ref": "#/definitions/ticket"
+      }
+    },
+    "sequential_sync_steps": {
+      "type": "array",
+      "description": "Alias para fase_sequencial_sincrona.",
+      "items": {
+        "$ref": "#/definitions/ticket"
+      }
+    }
+  },
+  "anyOf": [
+    {
+      "required": ["fase_paralela_assincrona"],
+      "properties": {
+        "fase_paralela_assincrona": { "minItems": 1 }
+      }
+    },
+    {
+      "required": ["fase_sequencial_sincrona"],
+      "properties": {
+        "fase_sequencial_sincrona": { "minItems": 1 }
+      }
+    },
+    {
+      "required": ["parallel_async_steps"],
+      "properties": {
+        "parallel_async_steps": { "minItems": 1 }
+      }
+    },
+    {
+      "required": ["sequential_sync_steps"],
+      "properties": {
+        "sequential_sync_steps": { "minItems": 1 }
+      }
+    }
+  ],
+  "definitions": {
+    "ticket": {
+      "type": "object",
+      "required": ["id"],
+      "anyOf": [
+        {
+          "required": ["titulo", "arquivos_alvo", "comando_validacao"]
+        },
+        {
+          "required": ["title", "target_files", "validation_gate"]
+        },
+        {
+          "required": ["titulo", "arquivos_alvo", "validation_gate"]
+        },
+        {
+          "required": ["title", "target_files", "comando_validacao"]
+        }
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 2,
+          "pattern": "^[A-Za-z0-9_.-]+$",
+          "description": "Identificador unívoco do ticket/step."
+        },
+        "titulo": {
+          "type": "string",
+          "minLength": 3,
+          "pattern": "^(?!.*(?i:TODO|FIXME|PLACEHOLDER|TBD|stub|dummy)).+$",
+          "description": "Título com ação imperativa concisa."
+        },
+        "title": {
+          "type": "string",
+          "minLength": 3,
+          "pattern": "^(?!.*(?i:TODO|FIXME|PLACEHOLDER|TBD|stub|dummy)).+$",
+          "description": "Alias em inglês para titulo."
+        },
+        "arquivos_alvo": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "pattern": "^(?!.*(?i:TODO|FIXME|PLACEHOLDER|TBD)).+$"
+          },
+          "description": "Lista de arquivos relativos impactados pela tarefa."
+        },
+        "target_files": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "pattern": "^(?!.*(?i:TODO|FIXME|PLACEHOLDER|TBD)).+$"
+          },
+          "description": "Alias em inglês para arquivos_alvo."
+        },
+        "comando_validacao": {
+          "type": "string",
+          "minLength": 3,
+          "pattern": "^(?!.*(?i:TODO|FIXME|PLACEHOLDER|TBD|exit 0|echo ok)$).+$",
+          "description": "Comando determinístico de validação com expectativa de exit code 0."
+        },
+        "validation_gate": {
+          "type": "string",
+          "minLength": 3,
+          "pattern": "^(?!.*(?i:TODO|FIXME|PLACEHOLDER|TBD|exit 0|echo ok)$).+$",
+          "description": "Alias em inglês para comando_validacao."
+        },
+        "comando_red": {
+          "type": "string",
+          "minLength": 3,
+          "pattern": "^(?!.*(?i:TODO|FIXME|PLACEHOLDER|TBD)).+$",
+          "description": "Comando de teste no estado Red (TDD)."
+        },
+        "command_red": {
+          "type": "string",
+          "minLength": 3,
+          "pattern": "^(?!.*(?i:TODO|FIXME|PLACEHOLDER|TBD)).+$",
+          "description": "Alias para comando_red."
+        },
+        "comando_green": {
+          "type": "string",
+          "minLength": 3,
+          "pattern": "^(?!.*(?i:TODO|FIXME|PLACEHOLDER|TBD)).+$",
+          "description": "Comando de teste no estado Green (TDD)."
+        },
+        "command_green": {
+          "type": "string",
+          "minLength": 3,
+          "pattern": "^(?!.*(?i:TODO|FIXME|PLACEHOLDER|TBD)).+$",
+          "description": "Alias para comando_green."
+        },
+        "isolamento": {
+          "type": "string",
+          "enum": ["git-worktree", "processo-isolado", "nenhum"],
+          "default": "git-worktree",
+          "description": "Mecanismo de isolamento da execução."
+        },
+        "isolation": {
+          "type": "string",
+          "enum": ["git-worktree", "isolated-process", "none"],
+          "description": "Alias para isolamento."
+        },
+        "blocked_by": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "description": "IDs dos tickets predecessores obrigatórios."
+        },
+        "dependencias": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "description": "Alias para blocked_by."
+        }
+      }
+    }
+  }
+}
