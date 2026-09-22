@@ -271,6 +271,14 @@ repos:
         pass_filenames: false
         require_serial: true
 
+      - id: g-resumo-usuario
+        name: "G_RESUMO_USUARIO (template duplo de encerramento)"
+        entry: python gates/G_RESUMO_USUARIO.py
+        language: system
+        always_run: true
+        pass_filenames: false
+        require_serial: true
+
       - id: g-pacote-core
         name: "G_PACOTE_CORE (pacote usuario sem artefatos dev-only)"
         entry: python gates/G_PACOTE_CORE.py

@@ -1,7 +1,7 @@
 ---
 id: ISSUE-USA-0007
 title: Template duplo de encerramento usuário + técnico (A9)
-status: open
+status: done
 blocked_by: []
 created: 2026-09-22
 source: 22-09-2026_RELATORIO-ACHADOS-USABILIDADE-ECOSSISTEMA-AIDD.md (A9)
@@ -25,8 +25,8 @@ source: 22-09-2026_RELATORIO-ACHADOS-USABILIDADE-ECOSSISTEMA-AIDD.md (A9)
 
 ## Acceptance criteria
 
-- [ ] Template dual emitted on flow close; omission = gate exit 1.
-- [ ] `RESUMO-USUARIO.md` ≤20 lines and contains the 3 mandatory answers.
-- [ ] `RELATORIO-TECNICO.md` preserves full telemetry (no dumbing-down).
-- [ ] `G_RESUMO_USUARIO` exit 1 on bad fixture (Law #13); exit 0 on good close.
-- [ ] `python ecossistema.py audit` exit 0.
+- [x] Template dual emitted on flow close; omission = gate exit 1 — `gerar_resumo_usuario`/`gerar_relatorio_tecnico` no `_fechar_entrega`.
+- [x] `RESUMO-USUARIO.md` ≤20 lines and contains the 3 mandatory answers — gerador trunca em 20 linhas; 3 perguntas obrigatórias.
+- [x] `RELATORIO-TECNICO.md` preserves full telemetry (no dumbing-down) — JSON de metadados no rodapé.
+- [x] `G_RESUMO_USUARIO` exit 1 on bad fixture (Law #13); exit 0 on good close — 5/5 bite tests.
+- [x] `python ecossistema.py audit` exit 0 — `G_RESUMO_USUARIO`/`G_HARNESS_COMPAT` (47 gates)/`G_LEI_DECLARA_PORTAO` exit 0.

@@ -136,7 +136,7 @@ Must enforce:
 
 **Touches:** flow closers, `RESUMO-USUARIO.md` / `RELATORIO-TECNICO.md` templates, `gates/G_RESUMO_USUARIO.py`, `gates/test_g_resumo_usuario.py` · **Blocked by:** Sessão 1
 
-- [ ] Concluída
+- [x] Concluída
 
 ```bash
 Execute docs/issues/usabilidade-ecossistema/07-template-duplo-encerramento.md.

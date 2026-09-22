@@ -574,7 +574,13 @@ class OrquestradorSincrono:
         else:
             status_git = "git init (dry-run, não executado)"
 
-        from core.entrega_guia import comando_e_url, gerar_make_run, gerar_readme_usuario
+        from core.entrega_guia import (
+            comando_e_url,
+            gerar_make_run,
+            gerar_readme_usuario,
+            gerar_relatorio_tecnico,
+            gerar_resumo_usuario,
+        )
 
         if not self.dry_run:
             gerar_make_run(raiz)
@@ -587,8 +593,35 @@ class OrquestradorSincrono:
                 url_principal=url,
                 urls_extras=extras,
             )
+        # ISSUE-USA-0007: template duplo de encerramento
+        if not self.dry_run:
+            gerar_resumo_usuario(
+                raiz,
+                nome_app=self.nome or self.slug,
+                o_que_mudou=f"O aplicativo {self.nome or self.slug} foi criado e validado neste fluxo.",
+                como_abro=f"Entre na pasta e rode:  {comando_subir}",
+                como_verifico=f"Abra no navegador:  {url}  e confira se a página carrega.",
+            )
+            gerar_relatorio_tecnico(
+                raiz,
+                nome_app=self.nome or self.slug,
+                metadados={
+                    "fluxo": f"0{self.fluxo} {self.nome_fluxo}",
+                    "pasta": str(raiz.resolve()),
+                    "git": status_git,
+                    "etapas": [
+                        "forge", "planner", "engine", "master",
+                        "enterprise", "ops", "auditoria",
+                    ],
+                    "telemetria_json": (
+                        f'{{"fluxo": {self.fluxo}, "slug": "{self.slug}", '
+                        f'"url": "{url}", "comando": "{comando_subir}"}}'
+                    ),
+                },
+            )
         guia = raiz / "README-USUARIO.md"
         guia_txt = str(guia) if guia.is_file() else "(guia ainda não gerado)"
+        resumo_txt = str(raiz / "RESUMO-USUARIO.md") if (raiz / "RESUMO-USUARIO.md").is_file() else "(resumo ainda não gerado)"
 
         # Card de entrega: primeira linha = onde está; sem jargão.
         print()
@@ -597,6 +630,7 @@ class OrquestradorSincrono:
         print(f"Como subir:  {comando_subir}")
         print(f"Abrir:       {url}")
         print(f"Guia:        {guia_txt}")
+        print(f"Resumo:      {resumo_txt}")
         print(f"Versão:      {status_git}")
         print()
 

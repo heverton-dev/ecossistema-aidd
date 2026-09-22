@@ -959,6 +959,7 @@ _GATES_AUDIT = [
     "G_SYNC_CMD_ROT.py",
     "G_LAYOUT_ENTREGA.py",
     "G_PACOTE_CORE.py",
+    "G_RESUMO_USUARIO.py",
     "G_PIPELINE_HANDOFF.py",
     "G_DISPATCH_PIPELINE_VSA.py",
 ]

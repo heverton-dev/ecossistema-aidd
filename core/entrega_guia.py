@@ -103,3 +103,56 @@ def comando_e_url(raiz: Path) -> tuple[str, str, list[str]]:
         return comando, "http://localhost:8000/docs", []
 
     return "(veja o passo 2 do guia)", "(veja o guia)", []
+
+
+def gerar_resumo_usuario(
+    raiz: Path,
+    nome_app: str,
+    o_que_mudou: str,
+    como_abro: str,
+    como_verifico: str,
+) -> Path:
+    """RESUMO-USUARIO.md — ≤20 linhas, zero sigla, 3 perguntas obrigatórias (ISSUE-USA-0007)."""
+    linhas = [
+        f"# {nome_app} — resumo para você",
+        "",
+        "## O que mudou?",
+        o_que_mudou,
+        "",
+        "## Como eu abro?",
+        como_abro,
+        "",
+        "## Como eu verifico?",
+        como_verifico,
+        "",
+    ]
+    alvo = raiz / "RESUMO-USUARIO.md"
+    alvo.write_text("\n".join(linhas[:20]), encoding="utf-8")
+    return alvo
+
+
+def gerar_relatorio_tecnico(
+    raiz: Path,
+    nome_app: str,
+    metadados: dict,
+) -> Path:
+    """RELATORIO-TECNICO.md — densidade técnica permitida (jargão ok, Lei #8)."""
+    linhas = [
+        f"# RELATORIO-TECNICO — {nome_app}",
+        "",
+        f"- Fluxo: {metadados.get('fluxo', 'n/d')}",
+        f"- Pasta de entrega: {metadados.get('pasta', str(raiz))}",
+        f"- Duração: {metadados.get('duracao_s', 'n/d')}s",
+        f"- Git: {metadados.get('git', 'n/d')}",
+        f"- Etapas: {', '.join(metadados.get('etapas', []) or ['n/d'])}",
+        "",
+        "## Telemetria",
+        "```json",
+        str(metadados.get("telemetria_json", "{}")),
+        "```",
+        "",
+    ]
+    alvo = raiz / "RELATORIO-TECNICO.md"
+    alvo.write_text("\n".join(linhas), encoding="utf-8")
+    return alvo
+
