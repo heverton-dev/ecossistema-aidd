@@ -45,7 +45,7 @@ O **Ecossistema AIDD** é um monorepo agnóstico que integra 8 ferramentas compl
 7. **Desenvolvedor no Controle (Lei #7):** Execuções estritamente sequenciais e interativas. Zero subagentes invisíveis ou headless em background. (`G_ZERO_HEADLESS.py`).
 8. **Honestidade de Rótulo (Lei #8):** Nenhuma mensagem ou alegação de segurança/certificação além da cobertura real testada. (`G_HONESTIDADE_ROTULO.py`).
 9. **Disciplina de Teste de Ferramentas (Lei #9):** Ciclo de 5 passos obrigatório com atualização contemporânea em `docs/teste-end-to-end/`. (`G_DISCIPLINA_TESTE_FERRAMENTA.py`, `G_ENV_ROT.py`, `G_SKILL_ROT.py`).
-10. **Quarteto Sine Qua Non Dinâmico (Lei #10):** Todo projeto gerado ou evoluído provê dinamicamente `/docs`, `/webhooks`, `/mcp` e `/docs/guia`. (`G_QUARTETO_SINE_QUA_NON.py`, `G_CONTRACT_ROT.py`).
+10. **Quarteto Sine Qua Non Dinâmico (Lei #10):** Todo projeto gerado ou evoluído provê dinamicamente OpenAPI/Swagger Studio (`/api`), Webhook Studio (`/webhook`), MCP Studio (`/mcp`) e Central de Documentação / Guia (`/docs`). (`G_QUARTETO_SINE_QUA_NON.py`, `G_CONTRACT_ROT.py`).
 11. **Padrão-Ouro de Stack Tecnológica (Lei #11):** Frontend Next.js + TypeScript + Tailwind CSS; Backend Python + SQLite WAL + OpenAPI 3.1. (`G_STACK_PADRAO_OURO.py`).
 12. **Anti-Docs Rot & Ingestão Canônica (Lei #12):** Proibido ingerir relatórios históricos ou rascunhos. Documentação viva estritamente em `docs/protocolos/` e `AGENTS.md`. (`G_DOCS_ROT.py`).
 13. **Todo Portão Deve Provar que Morde (Lei #13):** Nenhum Quality Gate é aceito sem teste automatizado que force a violação e asserte `exit 1`. (`G_PORTAO_PROVA_QUE_MORDE.py`).
@@ -196,6 +196,12 @@ O **Ecossistema AIDD** é um monorepo agnóstico que integra 8 ferramentas compl
     - Barreira de validação e convergência master (`tools/aidd-master/scripts/vsa_join_barrier.py`) com validação de fronteiras de arquivos via `git status --porcelain -uall` e manifesto com SHA-256 para `aidd-enterprise`.
     - Integração no `scripts/orquestrador_sincrono.py` eliminando stubs/mocks estáticos e exposição do comando CLI `python ecossistema.py dispatch`.
     - Skill canônica multi-harness `aidd-dispatch-runner` e encadeamento de intake formal `/aidd-grill` ➔ `/aidd-spec` ➔ `/aidd-planner` ➔ `/aidd-dispatch-runner`.
+  - **Evolução da Taxonomia do Quarteto Sine Qua Non (`PLAN-0036`):**
+    - Atualização da Lei #10: de `[/docs, /webhooks, /mcp, /docs/guia]` para a convenção canônica `[/api, /webhook, /mcp, /docs]`.
+    - `/api` passa a ser a rota oficial do OpenAPI/Swagger Studio.
+    - `/webhook` passa a ser a rota do Webhook Studio (mantendo `/webhooks` como fallback).
+    - `/mcp` permanece a rota do MCP Studio.
+    - `/docs` é promovido a Central de Documentação e Guia do Utilizador Humano.
 
 
 ## 7. INICIATIVAS ATIVAS (gerado automaticamente — não editar à mão)
@@ -219,4 +225,5 @@ O **Ecossistema AIDD** é um monorepo agnóstico que integra 8 ferramentas compl
 - ⏳ **Otimizacao Tokenomics Latencia** — `docs/planos/feitos/PLAN-0015-otimizacao-tokenomics-latencia/`
 - ⏳ **Testes Motor Orquestrador** — `docs/planos/feitos/PLAN-0024-testes-motor-orquestrador/`
 - ⏳ **Upgrade Stack Camadas** — `docs/planos/feitos/PLAN-0028-upgrade-stack-camadas/`
+- ⏳ **Taxonomia Quarteto Sine Qua Non** — `docs/planos/feitos/PLAN-0036-taxonomia-quarteto-sine-qua-non/`
 <!-- AUTO:INICIATIVAS:END -->

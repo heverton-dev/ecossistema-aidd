@@ -32,17 +32,17 @@ if hasattr(sys.stdout, "reconfigure"):
 
 ROOT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
-# Pilares canônicos per Lei #10
+# Pilares canônicos per Lei #10 (Nova taxonomia: [/api, /webhook, /mcp, /docs])
 PILARES_OBRIGATORIOS = {
     "swagger": {
-        "nome": "Swagger Studio",
-        "rotas": ["/docs", "/swagger", "/openapi.json", "/api/docs"],
-        "padroes_codigo": [r"/docs\b", r"/swagger\b", r"openapi\.json", r"Swagger Studio"],
+        "nome": "API Studio",
+        "rotas": ["/api", "/docs", "/swagger", "/openapi.json", "/api/docs"],
+        "padroes_codigo": [r"/api\b", r"/docs\b", r"/swagger\b", r"openapi\.json", r"Swagger Studio", r"API Studio", r"OpenAPI Studio"],
     },
     "webhooks": {
         "nome": "Webhook Studio",
-        "rotas": ["/webhooks", "/api/webhooks", "/webhook"],
-        "padroes_codigo": [r"/webhooks\b", r"/api/webhooks\b", r"/webhook\b", r"Webhook Studio"],
+        "rotas": ["/webhook", "/webhooks", "/api/webhooks", "/api/webhook"],
+        "padroes_codigo": [r"/webhook\b", r"/webhooks\b", r"/api/webhooks\b", r"/api/webhook\b", r"Webhook Studio"],
     },
     "mcp": {
         "nome": "MCP Studio",
@@ -50,9 +50,9 @@ PILARES_OBRIGATORIOS = {
         "padroes_codigo": [r"/mcp\b", r"/api/mcp\b", r"/api/mcp/rpc\b", r"MCP Studio", r"Portal MCP"],
     },
     "guia": {
-        "nome": "Guia do Utilizador",
-        "rotas": ["/docs/guia", "/guia", "/api/docs/guia"],
-        "padroes_codigo": [r"/docs/guia\b", r"/guia\b", r"Guia do Utilizador"],
+        "nome": "Central de Documentação e Guia",
+        "rotas": ["/docs", "/docs/guia", "/guia", "/api/docs/guia"],
+        "padroes_codigo": [r"/docs\b", r"/docs/guia\b", r"/guia\b", r"Guia do Utilizador", r"Central de Documentação", r"Central de Docs"],
     },
 }
 
@@ -64,16 +64,18 @@ def auditar_openapi_spec(spec_data: Dict[str, Any]) -> Dict[str, bool]:
     if not isinstance(paths, dict):
         return encontrados
 
-    # Swagger / Docs: Se a spec OpenAPI existe e tem caminhos, a spec em si atende o contrato do Swagger Studio
+    # Swagger / Docs: Se a spec OpenAPI existe e tem caminhos, a spec em si atende o contrato do Swagger/API Studio
     encontrados["swagger"] = True
 
     for p in paths.keys():
         p_lower = p.lower()
-        if p_lower.startswith("/webhooks") or p_lower.startswith("/api/webhooks") or p_lower.startswith("/webhook"):
+        if p_lower.startswith("/api") or p_lower.startswith("/docs") or p_lower.startswith("/swagger"):
+            encontrados["swagger"] = True
+        if p_lower.startswith("/webhook") or p_lower.startswith("/webhooks") or p_lower.startswith("/api/webhook") or p_lower.startswith("/api/webhooks"):
             encontrados["webhooks"] = True
         if p_lower.startswith("/mcp") or p_lower.startswith("/api/mcp"):
             encontrados["mcp"] = True
-        if p_lower == "/docs/guia" or p_lower == "/guia" or p_lower.startswith("/docs/guia") or p_lower.startswith("/guia"):
+        if p_lower == "/docs" or p_lower.startswith("/docs") or p_lower == "/guia" or p_lower.startswith("/guia"):
             encontrados["guia"] = True
 
     return encontrados

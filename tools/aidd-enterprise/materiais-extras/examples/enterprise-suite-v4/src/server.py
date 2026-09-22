@@ -769,7 +769,8 @@ class AppHandler(http.server.SimpleHTTPRequestHandler):
             self.wfile.write(json.dumps(doc, ensure_ascii=False, indent=2).encode("utf-8"))
             return
 
-        if path == "/docs":
+        # 1. API Studio (OpenAPI / Swagger Studio)
+        if path in ["/api", "/api/docs", "/swagger"]:
             self.send_response(200)
             self.send_header("Content-Type", "text/html; charset=utf-8")
             self.end_headers()
@@ -777,15 +778,8 @@ class AppHandler(http.server.SimpleHTTPRequestHandler):
             self.wfile.write(html.encode("utf-8"))
             return
 
-        if path == "/webhooks":
-            self.send_response(200)
-            self.send_header("Content-Type", "text/html; charset=utf-8")
-            self.end_headers()
-            html = webhook_dispatcher.get_studio_html("Logística Hub Suite v5.1 — Webhook Configuration Studio")
-            self.wfile.write(html.encode("utf-8"))
-            return
-
-        if path == "/docs/guia":
+        # 2. Central de Documentação / Guia do Utilizador
+        if path in ["/docs", "/docs/guia", "/guia"]:
             guia_path = os.path.join(STATIC_DIR, "docs.html")
             if os.path.exists(guia_path):
                 self.send_response(200)
@@ -794,19 +788,28 @@ class AppHandler(http.server.SimpleHTTPRequestHandler):
                 with open(guia_path, "r", encoding="utf-8") as f:
                     self.wfile.write(f.read().encode("utf-8"))
                 return
+            html = registry.get_swagger_html("Logística Hub Suite v5.1 — API Reference Studio")
+            self.send_response(200)
+            self.send_header("Content-Type", "text/html; charset=utf-8")
+            self.end_headers()
+            self.wfile.write(html.encode("utf-8"))
+            return
 
+        # 3. Webhook Studio
+        if path in ["/webhook", "/webhooks"]:
+            self.send_response(200)
+            self.send_header("Content-Type", "text/html; charset=utf-8")
+            self.end_headers()
+            html = webhook_dispatcher.get_studio_html("Logística Hub Suite v5.1 — Webhook Configuration Studio")
+            self.wfile.write(html.encode("utf-8"))
+            return
+
+        # 4. MCP Studio
         if path == "/mcp":
             self.send_response(200)
             self.send_header("Content-Type", "text/html; charset=utf-8")
             self.end_headers()
             self.wfile.write(mcp_engine.get_portal_html().encode("utf-8"))
-            return
-
-        if path == "/webhooks":
-            self.send_response(200)
-            self.send_header("Content-Type", "text/html; charset=utf-8")
-            self.end_headers()
-            self.wfile.write(webhook_dispatcher.get_dashboard_html().encode("utf-8"))
             return
 
         if path in registry.routes.get("GET", {}):

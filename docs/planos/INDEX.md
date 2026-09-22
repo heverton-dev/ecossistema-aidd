@@ -61,6 +61,7 @@
 | Direcionamento Estrategico Anti Nih | `feitos/PLAN-0010-direcionamento-estrategico-anti-nih/` |
 | Otimizacao Tokenomics Latencia | `feitos/PLAN-0015-otimizacao-tokenomics-latencia/` |
 | Upgrade Stack Camadas | `feitos/PLAN-0028-upgrade-stack-camadas/` |
+| Taxonomia Quarteto Sine Qua Non | `feitos/PLAN-0036-taxonomia-quarteto-sine-qua-non/` |
 
 ---
 

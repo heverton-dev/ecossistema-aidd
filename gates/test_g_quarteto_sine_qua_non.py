@@ -135,3 +135,32 @@ def test_quarteto_projetos_reais_canonicos():
         assert cod == 0
         assert all(status.values())
 
+
+def test_quarteto_aprova_nova_taxonomia_canonica(tmp_path):
+    """Valida projeto estritamente formatado na nova taxonomia [/api, /webhook, /mcp, /docs]."""
+    server_code = """
+from fastapi import FastAPI
+app = FastAPI()
+
+@app.get("/api")
+def api_studio(): return {"pilar": "API Studio"}
+
+@app.post("/webhook")
+def webhook_studio(): return {"pilar": "Webhook Studio"}
+
+@app.post("/mcp")
+def mcp_studio(): return {"pilar": "MCP Studio"}
+
+@app.get("/docs")
+def central_docs(): return {"pilar": "Central de Documentação"}
+"""
+    proj_dir = tmp_path / "proj_nova_taxonomia"
+    proj_dir.mkdir()
+    (proj_dir / "server.py").write_text(server_code, encoding="utf-8")
+
+    codigo, erros, status = auditar_projeto(str(proj_dir))
+    assert codigo == 0
+    assert len(erros) == 0
+    assert all(status.values())
+
+

@@ -1,0 +1,92 @@
+{
+  "versao_schema": "1.0.0",
+  "origem_plano": "evolucao",
+  "fluxo_alvo": "evolution",
+  "meta": {
+    "nome_projeto": "taxonomia-quarteto-sine-qua-non",
+    "repositorio_alvo": "ecossistema-aidd",
+    "timestamp_execucao": "2026-09-22T02:14:52Z",
+    "iniciativa_id": "PLAN-0036",
+    "descricao": "Harmonizar a definição nas Leis, nos Quality Gates (`G_QUARTETO_SINE_QUA_NON` e `G_CONTRACT_ROT`), no núcleo compartilhado, nos templates de servidores, nos projetos de referência e nos livros corporativos."
+  },
+  "fase_paralela_assincrona": [
+    {
+      "id": "TICKET-01",
+      "titulo": "governanca-leis-agents-memory",
+      "arquivos_alvo": [
+        "AGENTS.md",
+        "MEMORY.md",
+        "GEMINI.md"
+      ],
+      "comando_validacao": "python gates/G_HARNESS_COMPAT.py",
+      "blocked_by": [],
+      "isolamento": "git-worktree"
+    }
+  ],
+  "barreira_sincronizacao": [
+    "gates/G_SAIDA_BINARIA.py"
+  ],
+  "fase_sequencial_sincrona": [
+    {
+      "id": "TICKET-02",
+      "titulo": "quality-gates-quarteto-contract-rot",
+      "arquivos_alvo": [
+        "gates/G_QUARTETO_SINE_QUA_NON.py",
+        "gates/test_g_quarteto_sine_qua_non.py",
+        "tests/test_gate_quarteto_sine_qua_non.py"
+      ],
+      "comando_validacao": "python gates/test_g_quarteto_sine_qua_non.py",
+      "blocked_by": [
+        "TICKET-01"
+      ],
+      "isolamento": "git-worktree"
+    },
+    {
+      "id": "TICKET-03",
+      "titulo": "templates-servidores-core-master-enterprise",
+      "arquivos_alvo": [
+        "componentes/compartilhado/src-core/server.py",
+        "componentes/compartilhado/src-core/openapi.py",
+        "tools/aidd-master/src/server.py",
+        "tools/aidd-master/src/core/server.py",
+        "tools/aidd-master/src/core/openapi.py",
+        "tools/aidd-enterprise/src/server.py",
+        "tools/aidd-enterprise/src/core/server.py",
+        "tools/aidd-enterprise/src/core/openapi.py"
+      ],
+      "comando_validacao": "python gates/G_DRIFT_NUCLEO_COMPARTILHADO.py",
+      "blocked_by": [
+        "TICKET-02"
+      ],
+      "isolamento": "git-worktree"
+    },
+    {
+      "id": "TICKET-04",
+      "titulo": "projetos-referencia-e-exemplos",
+      "arquivos_alvo": [
+        "tools/aidd-enterprise/materiais-extras/examples/enterprise-suite-v4/server.py",
+        "tools/aidd-enterprise/materiais-extras/examples/enterprise-suite-v4/openapi.json"
+      ],
+      "comando_validacao": "python gates/G_QUARTETO_SINE_QUA_NON.py",
+      "blocked_by": [
+        "TICKET-03"
+      ],
+      "isolamento": "git-worktree"
+    },
+    {
+      "id": "TICKET-05",
+      "titulo": "livros-documentacao-e-sincronismo",
+      "arquivos_alvo": [
+        "docs/livros/21-09-2026_MINI-LIVRO-DO-ZERO-AO-APP-PRONTO.md",
+        "docs/livros/21-09-2026_MINI-LIVRO-DO-ZERO-AO-APP-PRONTO.pdf",
+        "docs/livros/partes/05-transversais.md",
+        "docs/livros/livro.json"
+      ],
+      "comando_validacao": "python ecossistema.py components verify",
+      "blocked_by": [
+        "TICKET-04"
+      ],
+      "isolamento": "git-worktree"
+    }
+  ]
+}

@@ -261,8 +261,18 @@ class VSADispatchPipeline:
 
         self.worktree_base_dir.mkdir(parents=True, exist_ok=True)
 
+        if self.dry_run:
+            worktree_path.mkdir(parents=True, exist_ok=True)
+            active = ActiveSliceWorktree(slice_id=slice_id, branch_name=branch_name, worktree_path=worktree_path)
+            self.active_worktrees.append(active)
+            return active
+
         if worktree_path.exists():
             self._cleanup_single_worktree(worktree_path, branch_name)
+
+        # Higiene determinística: remove resquícios de worktrees e branch prévia
+        subprocess.run(["git", "worktree", "prune"], cwd=str(self.repo_root), capture_output=True, check=False)
+        subprocess.run(["git", "branch", "-D", branch_name], cwd=str(self.repo_root), capture_output=True, check=False)
 
         self.log(f"Criando worktree efêmera para '{slice_id}' em '{worktree_path}' na branch '{branch_name}'")
         cmd = [
@@ -431,6 +441,11 @@ class VSADispatchPipeline:
     def _cleanup_single_worktree(self, path: Path, branch: Optional[str] = None) -> None:
         """Desmonta e remove com segurança uma worktree."""
         self.log(f"Removendo worktree efêmera: {path}")
+        if self.dry_run:
+            if path.exists():
+                shutil.rmtree(path, ignore_errors=True)
+            return
+
         subprocess.run(
             ["git", "worktree", "remove", "--force", str(path)],
             cwd=str(self.repo_root),
@@ -445,6 +460,8 @@ class VSADispatchPipeline:
                 except Exception:
                     time.sleep(0.2)
         subprocess.run(["git", "worktree", "prune"], cwd=str(self.repo_root), capture_output=True, check=False)
+        if branch:
+            subprocess.run(["git", "branch", "-D", branch], cwd=str(self.repo_root), capture_output=True, check=False)
 
     def cleanup_all_worktrees(self) -> None:
         """Limpa deterministicamente todas as worktrees ativas."""

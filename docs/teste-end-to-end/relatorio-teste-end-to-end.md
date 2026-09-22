@@ -836,3 +836,21 @@
   - Sincronização de componentes: 66/66 componentes verificados com SHA-256 idêntico.
 - **Data da Última Auditoria:** 21/09/2026.
 
+---
+
+## 10. Evolução Taxonômica do Quarteto Sine Qua Non: `aidd-master` e `aidd-enterprise` (PLAN-0036)
+
+- **Objetivo da Evolução:** Transição taxonômica e semântica da Lei Inviolável #10 de `[/docs, /webhooks, /mcp, /docs/guia]` para a nomenclatura limpa canônica `[/api, /webhook, /mcp, /docs]`, mantendo total retrocompatibilidade via redirects e aliases HTTP.
+- **Ferramentas Tocadas:** [`tools/aidd-master`](file:///C:/Users/trcnologia/Desktop/ecossistema-aidd/tools/aidd-master) e [`tools/aidd-enterprise`](file:///C:/Users/trcnologia/Desktop/ecossistema-aidd/tools/aidd-enterprise).
+- **O que executou:**
+  1. Atualização dos servidores de desenvolvimento e produção em `tools/aidd-master/src/server.py`, `tools/aidd-master/templates/core/server.py` e `tools/aidd-master/templates/v2/server.py`.
+  2. Atualização dos servidores corporativos e templates em `tools/aidd-enterprise/src/server.py`, `tools/aidd-enterprise/templates/core/server.py`, `tools/aidd-enterprise/templates/v2/server.py` e exemplo canônico `enterprise-suite-v4`.
+  3. Atualização e extensão de testes unitários do Quality Gate `gates/G_QUARTETO_SINE_QUA_NON.py` e `gates/test_g_quarteto_sine_qua_non.py` com prova que morde (exit 0 / exit 1).
+  4. Sincronização dos 91 componentes agnósticos em todos os harnesses sem drift de código compartilhado.
+- **Resultados de Testes e Conformidade:**
+  - `gates/test_g_quarteto_sine_qua_non.py`: 6/6 passed (100% de aprovação).
+  - `gates/G_DRIFT_NUCLEO_COMPARTILHADO.py`: exit 0 (paridade entre templates e src mantida).
+  - `gates/G_QUARTETO_SINE_QUA_NON.py`: exit 0 (auditoria de 2 projetos canônicos aprovada).
+  - `python ecossistema.py components verify --tipo todos`: 91/91 componentes íntegros (SHA-256 idêntico).
+- **Data da Última Auditoria:** 21/09/2026.
+

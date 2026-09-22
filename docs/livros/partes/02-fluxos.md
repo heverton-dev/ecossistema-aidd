@@ -486,8 +486,8 @@ fatia na Tríade:
 
 Adicionalmente, o roteador garante que toda fatia nasça em estrita conformidade com a
 **Lei #10 (Quarteto Sine Qua Non)**, injetando os pontos de montagem dinâmica para
-Swagger Studio (`/docs`), Webhook Studio (`/webhooks`), MCP Studio (`/mcp`) e Guia do
-Utilizador (`/docs/guia`).
+API Studio (`/api`), Webhook Studio (`/webhook`), MCP Studio (`/mcp`) e Central de
+Documentação e Guia (`/docs`).
 
 ## 11.5 Barreira de Validação e Convergência Master
 

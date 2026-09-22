@@ -417,15 +417,17 @@ class AppHandler(http.server.SimpleHTTPRequestHandler):
             self.wfile.write(json.dumps(doc, ensure_ascii=False, indent=2).encode("utf-8"))
             return
 
-        if path == "/docs":
+        # 1. API Studio (OpenAPI / Swagger Studio)
+        if path in ["/api", "/api/docs", "/swagger"]:
             self.send_response(200)
             self.send_header("Content-Type", "text/html; charset=utf-8")
             self.end_headers()
-            html = registry.get_swagger_html("aidd_project — Swagger Studio")
+            html = registry.get_swagger_html("aidd_project — OpenAPI/Swagger Studio")
             self.wfile.write(html.encode("utf-8"))
             return
 
-        if path == "/docs/guia":
+        # 2. Central de Documentação e Guia do Utilizador
+        if path in ["/docs", "/docs/guia", "/guia"]:
             guia_file = os.path.join(STATIC_DIR, "docs.html")
             if os.path.isfile(guia_file):
                 self.send_response(200)
@@ -434,8 +436,15 @@ class AppHandler(http.server.SimpleHTTPRequestHandler):
                 with open(guia_file, "r", encoding="utf-8") as f:
                     self.wfile.write(f.read().encode("utf-8"))
                 return
+            html = registry.get_swagger_html("aidd_project — Swagger Studio")
+            self.send_response(200)
+            self.send_header("Content-Type", "text/html; charset=utf-8")
+            self.end_headers()
+            self.wfile.write(html.encode("utf-8"))
+            return
 
-        if path == "/webhooks":
+        # 3. Webhook Studio
+        if path in ["/webhook", "/webhooks"]:
             self.send_response(200)
             self.send_header("Content-Type", "text/html; charset=utf-8")
             self.end_headers()
@@ -443,6 +452,7 @@ class AppHandler(http.server.SimpleHTTPRequestHandler):
             self.wfile.write(html.encode("utf-8"))
             return
 
+        # 4. MCP Studio
         if path == "/mcp":
             self.send_response(200)
             self.send_header("Content-Type", "text/html; charset=utf-8")
