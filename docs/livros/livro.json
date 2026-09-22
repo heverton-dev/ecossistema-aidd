@@ -27,12 +27,12 @@
       "nota": "Inclusão da Meso-Camada da Tríade Canônica, Despacho Topológico VSA em Worktrees efêmeras e novos Quality Gates"
     },
     {
-      "data": "2026-09-21",
-      "hash_fonte": "968acc39438c5e462f4e8e68694a126e5d83246f377534eb4c91a244e396da83",
-      "palavras": 24304,
-      "nota": ""
+      "data": "2026-09-22",
+      "hash_fonte": "19c4097ca4267eac907e9f0f87ee4ffdee3ac651e6b9fede997ce9e93a664167",
+      "palavras": 24546,
+      "nota": "Inclusão da topologia Git padrão (ISSUE-USA-0009 / A8) e alinhamento do plano de usabilidade"
     }
   ],
-  "hash_fonte": "968acc39438c5e462f4e8e68694a126e5d83246f377534eb4c91a244e396da83",
-  "ultima_compilacao": "2026-09-21"
+  "hash_fonte": "19c4097ca4267eac907e9f0f87ee4ffdee3ac651e6b9fede997ce9e93a664167",
+  "ultima_compilacao": "2026-09-22"
 }

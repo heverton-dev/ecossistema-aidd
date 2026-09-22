@@ -1,7 +1,7 @@
 # 🧠 MEMORY.md — Memória Estruturada e Contexto Operacional Consolidado
 
 > **Repositório:** `https://github.com/heverton-dev/ecossistema-aidd`  
-> **Última Atualização:** 2026-09-21  
+> **Última Atualização:** 2026-09-22  
 > **Status:** PRODUÇÃO & ORQUESTRADO (ORCA ADE / ORC 3 / VSA TOPOLOGICAL DISPATCH)  
 > **Finalidade:** Memória persistente de longo prazo para guiar desenvolvedores e agentes de IA em qualquer harness, evitando amnésia de contexto e retrabalho.
 
@@ -71,6 +71,12 @@ O **Ecossistema AIDD** é um monorepo agnóstico que integra 8 ferramentas compl
 | **G_PIPELINE_HANDOFF** | `gates/G_PIPELINE_HANDOFF.py` | Validação determinística de manifestos JSON de execução de pipeline. |
 | **G_DISPATCH_PIPELINE_VSA** | `gates/G_DISPATCH_PIPELINE_VSA.py` | Validação formal de grafos DAG topológicos e fatias VSA. |
 | **G_DOCS_ROT** | `gates/G_DOCS_ROT.py` | Bloqueia documentação rot e links quebrados na documentação viva. |
+| **G_SYNC_CMD_ROT** | `gates/G_SYNC_CMD_ROT.py` | Valida forma canônica `components sync --tipo todos` e aliases públicos. |
+| **G_LAYOUT_ENTREGA** | `gates/G_LAYOUT_ENTREGA.py` | Garante entrega achatada fora do clone e impede legado aninhado. |
+| **G_USER_FACING_PTBR** | `gates/G_USER_FACING_PTBR.py` | Garante PT-BR amigável ao leigo nas camadas voltadas ao usuário final. |
+| **G_PACOTE_CORE** | `gates/G_PACOTE_CORE.py` | Audita empacotamento enxuto de distribuição sem arquivos de dev/testes. |
+| **G_RESUMO_USUARIO** | `gates/G_RESUMO_USUARIO.py` | Exige template duplo de encerramento (RESUMO-USUARIO e RELATORIO-TECNICO). |
+| **G_ANT_LOCKIN_LEGADO** | `gates/G_ANT_LOCKIN_LEGADO.py` | Varredura de resíduos de plataformas proprietárias (lovable, supabase, firebase). |
 
 ---
 
@@ -202,6 +208,16 @@ O **Ecossistema AIDD** é um monorepo agnóstico que integra 8 ferramentas compl
     - `/webhook` passa a ser a rota do Webhook Studio (mantendo `/webhooks` como fallback).
     - `/mcp` permanece a rota do MCP Studio.
     - `/docs` é promovido a Central de Documentação e Guia do Utilizador Humano.
+  - **Iniciativa de Usabilidade do Ecossistema (`docs/issues/usabilidade-ecossistema/` — 9/9 tickets DONE):**
+    - `ISSUE-USA-0001`: Formato canônico e aliases públicos de sincronização (`G_SYNC_CMD_ROT`).
+    - `ISSUE-USA-0002`: Helper determinístico de posicionamento da entrega (`G_LAYOUT_ENTREGA`).
+    - `ISSUE-USA-0003`: Entrega fora do clone, layout achatado e card de entrega.
+    - `ISSUE-USA-0004`: Perfil de linguagem para o leigo e diretivas em `GEMINI.md` (`G_USER_FACING_PTBR`).
+    - `ISSUE-USA-0005`: Ponto de entrada único com umbrella launcher `README-USUARIO.md`.
+    - `ISSUE-USA-0006`: Pacote core enxuto de distribuição sem inflação de dev/testes (`G_PACOTE_CORE`).
+    - `ISSUE-USA-0007`: Template duplo de encerramento (`RESUMO-USUARIO.md` e `RELATORIO-TECNICO.md` per `G_RESUMO_USUARIO`).
+    - `ISSUE-USA-0008`: Varredura anti-lock-in determinística de resíduos Lovable/Supabase/Firebase (`G_ANT_LOCKIN_LEGADO`).
+    - `ISSUE-USA-0009`: Topologia Git padrão com proteção contra aninhamento de repositórios.
 
 
 ## 7. INICIATIVAS ATIVAS (gerado automaticamente — não editar à mão)
