@@ -115,7 +115,7 @@ Must enforce:
 
 **Touches:** `.gitattributes`, `.gitignore`, `ecossistema.py` (package), `gates/G_PACOTE_CORE.py`, `gates/test_g_pacote_core.py`, README · **Blocked by:** Sessão 1
 
-- [ ] Concluída
+- [x] Concluída
 
 ```bash
 Execute docs/issues/usabilidade-ecossistema/06-pacote-core-enxuto.md.

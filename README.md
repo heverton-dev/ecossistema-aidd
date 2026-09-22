@@ -24,6 +24,15 @@ ele transforma uma ideia em software testado, aplicando os mesmos Quality Gates 
 2. Abra a pasta no seu assistente de IA (Claude Code, Cursor, Antigravity, OpenCode, MimoCode etc.) e comece a conversar normalmente.
 3. Pronto. As dependências externas (skills e MCPs de terceiros usados pelo agente) se instalam sozinhas na primeira mensagem da sessão — você não precisa digitar nenhum comando no terminal.
 
+**Só o núcleo (clone leve — ~poucas dezenas de MB):**
+
+```bash
+git clone --depth 1 --filter=blob:none --sparse https://github.com/heverton-dev/ecossistema-aidd.git
+cd ecossistema-aidd
+git sparse-checkout set ecossistema.py gates core componentes scripts tools docs/protocolos docs/glossario requirements.txt README.md LICENSE AGENTS.md
+# ou pacote zip: python ecossistema.py package --perfil usuario  →  dist/ecossistema-aidd-usuario.zip
+```
+
 Quer forçar manualmente ou adicionar uma dependência nova (skill ou MCP de terceiro)? Digite `/dependencia bootstrap` (ou `/dependencia skill <nome>`, `/dependencia mcp <nome>`) no chat. Só use o terminal (`python ecossistema.py dependencia bootstrap`) se preferir.
 
 ### 🐍 Ambiente Python do projeto (`.venv`)

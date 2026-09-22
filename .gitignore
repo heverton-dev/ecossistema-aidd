@@ -64,9 +64,12 @@ logs/
 Thumbs.db
 
 # Banco de dados e caches locais
+*.db
 *.sqlite3
 *.db-journal
 .cache/
+.worktrees/
+.ade_tmp/
 
 # Dependencias externas instaladas via 'python ecossistema.py dependencia bootstrap'
 */skills/impeccable/

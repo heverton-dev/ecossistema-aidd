@@ -21,3 +21,21 @@
 *.ico binary
 *.sqlite3 binary
 *.wasm binary
+
+# ISSUE-USA-0006 — fora do pacote de distribuição (git archive / release)
+tests/ export-ignore
+testes/ export-ignore
+*.db export-ignore
+requirements-dev.txt export-ignore
+requirements-dev.lock export-ignore
+pytest.ini export-ignore
+__pycache__/ export-ignore
+.pytest_cache/ export-ignore
+.worktrees/ export-ignore
+.ade_tmp/ export-ignore
+PLANO-EXECUCAO-ESTRUTURADO.json export-ignore
+.pre-commit-config.yaml export-ignore
+.secrets.baseline export-ignore
+docs/relatorios/ export-ignore
+docs/reports/ export-ignore
+docs/livros/ export-ignore

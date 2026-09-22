@@ -423,6 +423,25 @@ def cmd_dispatch(args):
     return run_command(cmd, cwd=ROOT_DIR)
 
 
+def cmd_package(args):
+    """ISSUE-USA-0006: empacota o núcleo para o usuário final."""
+    sys.path.insert(0, os.path.join(ROOT_DIR, "scripts"))
+    from package_usuario import main as package_main
+
+    # reconstrói argv simples: package --perfil usuario [--outdir x]
+    argv = []
+    if any(a in ("--perfil", "--outdir") for a in args):
+        argv = list(args)
+    elif not args:
+        argv = ["--perfil", "usuario"]
+    sys_argv_bak = sys.argv
+    sys.argv = ["package_usuario.py"] + (argv or ["--perfil", "usuario"])
+    try:
+        return package_main()
+    finally:
+        sys.argv = sys_argv_bak
+
+
 def cmd_sync(args):
     """Alias de `components sync` (ISSUE-USA-0001)."""
     return cmd_components(["sync"] + list(args))
@@ -939,6 +958,7 @@ _GATES_AUDIT = [
     "G_USER_FACING_PTBR.py",
     "G_SYNC_CMD_ROT.py",
     "G_LAYOUT_ENTREGA.py",
+    "G_PACOTE_CORE.py",
     "G_PIPELINE_HANDOFF.py",
     "G_DISPATCH_PIPELINE_VSA.py",
 ]
@@ -1085,6 +1105,8 @@ Comandos disponíveis:
   sync [--tipo <tipo|todos>] [--ferramenta <nome>] [--dry-run]
                       Alias de `components sync` (forma canonica:
                       python ecossistema.py components sync --tipo todos)
+  package --perfil usuario [--outdir <dir>]
+                      Gera zip so com o nucleo de distribuicao (ISSUE-USA-0006)
   dependencia bootstrap [--tipo skills|mcps|todos] [--dry-run]
   dependencia add-skill --nome <n> --pacote <p> --instalar "<cmd>" --verificar <caminho> [--gitignore "a,b"]
   dependencia add-mcp --nome <n> --pacote <p> --comando <cmd> [--args "a,b"] [--env V1,V2] [--harnesses claude-code,opencode]
@@ -1204,6 +1226,7 @@ def main():
         "components": cmd_components,
         "componentes": cmd_components,
         "sync": cmd_sync,
+        "package": cmd_package,
         "dependencia": cmd_dependencia,
         "orchestrate": cmd_orchestrate,
         "plan": cmd_plan,
