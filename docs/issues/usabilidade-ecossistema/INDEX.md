@@ -16,7 +16,7 @@
 | 06 | `ISSUE-USA-0006` | [Pacote core enxuto de distribuição](06-pacote-core-enxuto.md) | A3 | P1 | `done` | `[]` |
 | 07 | `ISSUE-USA-0007` | [Template duplo de encerramento](07-template-duplo-encerramento.md) | A9 | P1 | `done` | `[]` |
 | 08 | `ISSUE-USA-0008` | [Varredura anti-lock-in completa](08-varredura-anti-lockin.md) | A7 | P2 | `done` | `[]` |
-| 09 | `ISSUE-USA-0009` | [Topologia Git padrão](09-topologia-git-padrao.md) | A8 | P2 | `open` | `[ISSUE-USA-0003]` |
+| 09 | `ISSUE-USA-0009` | [Topologia Git padrão](09-topologia-git-padrao.md) | A8 | P2 | `done` | `[ISSUE-USA-0003]` |
 
 ## Mapa de Rastreabilidade
 

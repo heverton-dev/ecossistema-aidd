@@ -566,11 +566,40 @@ class OrquestradorSincrono:
         raiz = _P(self.pasta)
         if not self.dry_run:
             raiz.mkdir(parents=True, exist_ok=True)
-            if not (raiz / ".git").exists():
-                r = subprocess.run(["git", "init"], cwd=str(raiz), capture_output=True, text=True)
-                status_git = "git init feito" if r.returncode == 0 else "git init falhou — rode 'git init' manualmente"
-            else:
+            # ISSUE-USA-0003/0009: git init na raiz da entrega (não aninhado).
+            # Guarda triple-repo: tool + projetos/* + proj_* → só init se não
+            # houver .git do produto em uma camada acima da ferramenta.
+            if (raiz / ".git").exists():
                 status_git = "git já iniciado"
+            else:
+                # ISSUE-USA-0009: não init dentro do clone da ferramenta
+                # (evita triple-repo: tool + projetos/* + proj_*).
+                clone = None
+                atual = raiz.resolve()
+                for candidato in atual.parents:
+                    if not (candidato / ".git").exists():
+                        continue
+                    if (
+                        (candidato / "ecossistema.py").is_file()
+                        or (candidato / "gates").is_dir()
+                        or "ecossistema" in candidato.name.lower()
+                    ):
+                        clone = candidato
+                        break
+                dentro_da_ferramenta = clone is not None
+
+                if dentro_da_ferramenta:
+                    status_git = (
+                        "AVISO: entrega dentro do clone da ferramenta — "
+                        "git init NÃO feito (evita triple-repo). "
+                        "Mova a entrega para fora e rode: git init"
+                    )
+                else:
+                    r = subprocess.run(["git", "init"], cwd=str(raiz), capture_output=True, text=True)
+                    status_git = (
+                        "git init feito" if r.returncode == 0
+                        else "git init falhou — rode 'git init' manualmente"
+                    )
         else:
             status_git = "git init (dry-run, não executado)"
 

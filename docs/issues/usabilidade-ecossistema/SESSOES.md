@@ -176,7 +176,7 @@ Must enforce:
 
 **Touches:** delivery-root `git init`, nested-repo guard, mini-livro topology note, E2E usabilidade · **Blocked by:** Sessão 3
 
-- [ ] Concluída
+- [x] Concluída
 
 ```bash
 Execute docs/issues/usabilidade-ecossistema/09-topologia-git-padrao.md.
@@ -196,7 +196,7 @@ Must enforce:
 
 **Touches:** `docs/issues/usabilidade-ecossistema/INDEX.md` · **Blocked by:** Sessões 1–9
 
-- [ ] Concluída
+- [x] Concluída
 
 ```bash
 Close initiative docs/issues/usabilidade-ecossistema/ after all 9 tickets.

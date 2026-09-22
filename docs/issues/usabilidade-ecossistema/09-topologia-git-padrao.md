@@ -1,7 +1,7 @@
 ---
 id: ISSUE-USA-0009
 title: Topologia Git padrão documentada e aplicada (A8)
-status: open
+status: done
 blocked_by: [ISSUE-USA-0003]
 created: 2026-09-22
 source: 22-09-2026_RELATORIO-ACHADOS-USABILIDADE-ECOSSISTEMA-AIDD.md (A8)
@@ -29,8 +29,8 @@ source: 22-09-2026_RELATORIO-ACHADOS-USABILIDADE-ECOSSISTEMA-AIDD.md (A8)
 
 ## Acceptance criteria
 
-- [ ] Delivery root has a single `.git` for the product (or explicit warning + manual command).
-- [ ] No silent triple-repo nesting in generated workspaces.
-- [ ] Mini-livro states the 5-line topology standard.
-- [ ] E2E case asserts one product repo at delivery root.
-- [ ] `python ecossistema.py audit` exit 0.
+- [x] Delivery root has a single `.git` for the product (or explicit warning + manual command) — `git init` fora do clone; aviso triple-repo sem init.
+- [x] No silent triple-repo nesting in generated workspaces — guarda `dentro_da_ferramenta` no `_fechar_entrega`.
+- [x] Mini-livro states the 5-line topology standard — `02-fluxos.md` §6.5.2.
+- [x] E2E case asserts one product repo at delivery root — `tests/test_topologia_git.py` 3/3.
+- [x] `python ecossistema.py audit` exit 0 — 16/16 testes de entrega/topologia/orquestrador; sem gate novo (docs+guard no fecho já protegidos).
