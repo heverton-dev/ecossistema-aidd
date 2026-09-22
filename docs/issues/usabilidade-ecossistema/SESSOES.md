@@ -156,7 +156,7 @@ Must enforce:
 
 **Touches:** fluxo closers (open + freedom), `gates/G_ANT_LOCKIN_LEGADO.py`, `gates/test_g_ant_lockin_legado.py` · **Blocked by:** Sessão 1
 
-- [ ] Concluída
+- [x] Concluída
 
 ```bash
 Execute docs/issues/usabilidade-ecossistema/08-varredura-anti-lockin.md.

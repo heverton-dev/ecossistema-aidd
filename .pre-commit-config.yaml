@@ -271,6 +271,14 @@ repos:
         pass_filenames: false
         require_serial: true
 
+      - id: g-ant-lockin-legado
+        name: "G_ANT_LOCKIN_LEGADO (varredura vendor lock-in na entrega)"
+        entry: python gates/G_ANT_LOCKIN_LEGADO.py
+        language: system
+        always_run: true
+        pass_filenames: false
+        require_serial: true
+
       - id: g-resumo-usuario
         name: "G_RESUMO_USUARIO (template duplo de encerramento)"
         entry: python gates/G_RESUMO_USUARIO.py

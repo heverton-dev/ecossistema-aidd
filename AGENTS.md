@@ -39,6 +39,7 @@
    - Portão: gates/G_LAYOUT_ENTREGA.py (provado) — `resolve_pasta_entrega` e proibição de entrega aninhada sob `projetos/` com legado irmão
    - Portão: gates/G_PACOTE_CORE.py (provado) — distribuição sem `*.db`, `requirements-dev*` e `docs/relatorios/`
    - Portão: gates/G_RESUMO_USUARIO.py (provado) — encerramento com RESUMO-USUARIO e RELATORIO-TECNICO
+   - Portão: gates/G_ANT_LOCKIN_LEGADO.py (provado) — varredura lovable/supabase/firebase sem auto-delete
 2. **Binary Quality:** Every change must pass Quality Gates (`python ecossistema.py audit`, exit 0 = pass, exit 1 = block).
    - Portão: gates/G_SAIDA_BINARIA.py (provado)
 3. **Structured Persistence:** Persist state in audit files (JSON, SQLite), never in volatile conversation memory.

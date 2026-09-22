@@ -1,7 +1,7 @@
 ---
 id: ISSUE-USA-0008
 title: Varredura anti-lock-in completa em legado (A7)
-status: open
+status: done
 blocked_by: []
 created: 2026-09-22
 source: 22-09-2026_RELATORIO-ACHADOS-USABILIDADE-ECOSSISTEMA-AIDD.md (A7)
@@ -28,8 +28,8 @@ source: 22-09-2026_RELATORIO-ACHADOS-USABILIDADE-ECOSSISTEMA-AIDD.md (A7)
 
 ## Acceptance criteria
 
-- [ ] Sweep runs on every flow that touches a pre-existing project.
-- [ ] `G_ANT_LOCKIN_LEGADO` exit 1 on residue fixture; exit 0 on clean tree.
-- [ ] No auto-delete of user files without confirm.
-- [ ] Allowlist path documented for intentional vendors.
-- [ ] `python ecossistema.py audit` exit 0.
+- [x] Sweep runs on every flow that touches a pre-existing project — `varredura()` no `_fechar_entrega` do orquestrador.
+- [x] `G_ANT_LOCKIN_LEGADO` exit 1 on residue fixture; exit 0 on clean tree — 5/5 bite tests.
+- [x] No auto-delete of user files without confirm — `descrever()` lista e imprime Lei #7; zero `unlink`.
+- [x] Allowlist path documented for intentional vendors — `lockin-allowlist.txt` (termo # justificativa).
+- [x] `python ecossistema.py audit` exit 0 — `G_ANT_LOCKIN_LEGADO`/`G_HARNESS_COMPAT` (48 gates)/`G_LEI_DECLARA_PORTAO` exit 0.

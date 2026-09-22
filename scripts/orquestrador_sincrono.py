@@ -623,6 +623,15 @@ class OrquestradorSincrono:
         guia_txt = str(guia) if guia.is_file() else "(guia ainda não gerado)"
         resumo_txt = str(raiz / "RESUMO-USUARIO.md") if (raiz / "RESUMO-USUARIO.md").is_file() else "(resumo ainda não gerado)"
 
+        # ISSUE-USA-0008: varredura anti-lock-in (lista, nunca apaga — Lei #7)
+        if not self.dry_run:
+            from core.anti_lockin import descrever, possui_sujeira, varredura
+
+            resultado = varredura(raiz)
+            print(descrever(resultado, raiz))
+            if possui_sujeira(resultado):
+                print("  (Lei #7: nada foi apagado — confirme item a item.)")
+
         # Card de entrega: primeira linha = onde está; sem jargão.
         print()
         print("=== SEU APP ESTÁ PRONTO ===")
