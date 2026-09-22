@@ -937,6 +937,7 @@ _GATES_AUDIT = [
     "G_MIGRATION_ROT.py",
     "G_IDIOMA_LEI_4.py",
     "G_SYNC_CMD_ROT.py",
+    "G_LAYOUT_ENTREGA.py",
     "G_PIPELINE_HANDOFF.py",
     "G_DISPATCH_PIPELINE_VSA.py",
 ]

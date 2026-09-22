@@ -158,6 +158,19 @@ O `--dry-run` executa toda a lógica de decisão e validação de contrato sem e
 disco nem tocar em git — é o modo recomendado para conhecer o fluxo antes de rodá-lo
 de verdade.
 
+### 6.5.1 Clone dentro de projeto existente (o que acontece)
+
+Se você clonou o `ecossistema-aidd` **dentro** de uma pasta que já tem o seu app
+(existe `package.json`, `src/`, `app/` ou `backend/` ao lado do clone), o projeto
+novo **não** nasce em `ecossistema-aidd/projetos/`. Ele nasce **irmão do clone**,
+na raiz da pasta de trabalho — a mesma regra do `--pasta ../proj_clinica`.
+
+- **Na festa:** o app novo fica junto com o seu app antigo, não escondido dentro da ferramenta.
+- **Na casa:** `core/resolve_pasta_entrega.py` decide; com legado irmão o default é
+  `<workspace>/<slug>`, nunca `<clone>/projetos/<slug>`. Se houver duas pastas plausíveis,
+  o fluxo **para e pergunta** (Lei #7) — nada é escrito em silêncio. Passe `--pasta`
+  para escolher. Sem legado algum, o default continua sendo `<clone>/projetos/<slug>`.
+
 ## 6.6 Rastreabilidade do capítulo
 
 `scripts/orquestrador_sincrono.py` (etapas 1 a 7, mapa de fluxos, validação de

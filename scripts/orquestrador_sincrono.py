@@ -613,7 +613,16 @@ def main():
         if not dominio:
             dominio = "saas"
         if not pasta:
-            pasta = f"./projetos/{slug}"
+            # ISSUE-USA-0002: única fonte de posicionamento da entrega.
+            from core.resolve_pasta_entrega import resolve_pasta_entrega
+
+            resultado = resolve_pasta_entrega(Path.cwd(), nome or slug, pasta_arg=None)
+            if not resultado.ok:
+                import json as _json
+
+                print(_json.dumps(resultado.como_dict(), ensure_ascii=False, indent=2))
+                raise SystemExit(1)
+            pasta = str(resultado.caminho)
 
     # Verificação de parâmetros mínimos essenciais
     if not (nome and slug and dominio and pasta):

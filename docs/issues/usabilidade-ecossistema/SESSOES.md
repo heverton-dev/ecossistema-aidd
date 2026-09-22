@@ -32,7 +32,7 @@ Must enforce:
 
 **Touches:** `core/` (resolve_pasta_entrega), triad flow entrypoints, `gates/G_LAYOUT_ENTREGA.py`, `gates/test_g_layout_entrega.py`, `docs/livros/partes/02-fluxos.md` · **Blocked by:** Sessão 1
 
-- [ ] Concluída
+- [x] Concluída
 
 ```bash
 Execute docs/issues/usabilidade-ecossistema/02-helper-posicionamento-entrega.md.
