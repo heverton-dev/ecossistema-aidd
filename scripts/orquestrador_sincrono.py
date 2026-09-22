@@ -556,7 +556,51 @@ class OrquestradorSincrono:
 
         duracao = round(time.time() - t_inicio, 2)
         self.log(f"Pipeline síncrono do {self.nome_fluxo.upper()} (FLUXO 0{self.fluxo}) finalizado com sucesso em {duracao}s!", "OK")
+        self._fechar_entrega()
         return True
+
+    def _fechar_entrega(self):
+        """ISSUE-USA-0003: git init na raiz da entrega + card de entrega (PT-BR simples)."""
+        from pathlib import Path as _P
+
+        raiz = _P(self.pasta)
+        if not self.dry_run:
+            raiz.mkdir(parents=True, exist_ok=True)
+            if not (raiz / ".git").exists():
+                r = subprocess.run(["git", "init"], cwd=str(raiz), capture_output=True, text=True)
+                status_git = "git init feito" if r.returncode == 0 else "git init falhou — rode 'git init' manualmente"
+            else:
+                status_git = "git já iniciado"
+        else:
+            status_git = "git init (dry-run, não executado)"
+
+        tem_compose = (raiz / "docker-compose.yml").is_file()
+        tem_server = (raiz / "src" / "server.py").is_file()
+        tem_frontend = (raiz / "frontend" / "package.json").is_file()
+        if tem_compose:
+            comando_subir = "docker compose up"
+            url = "http://localhost:3000"
+        elif tem_server and tem_frontend:
+            comando_subir = "python src/server.py  (em outro terminal: cd frontend && npm run dev)"
+            url = "http://localhost:3000"
+        elif tem_server:
+            comando_subir = "python src/server.py"
+            url = "http://localhost:8000"
+        else:
+            comando_subir = "(veja o guia — composição de subida indisponível)"
+            url = "(veja o guia)"
+        guia = raiz / "README-USUARIO.md"
+        guia_txt = str(guia) if guia.is_file() else "(guia ainda não gerado — Sessão 5)"
+
+        # Card de entrega: primeira linha = onde está; sem jargão.
+        print()
+        print("=== SEU APP ESTÁ PRONTO ===")
+        print(f"Onde está:  {raiz.resolve()}")
+        print(f"Como subir:  {comando_subir}")
+        print(f"Abrir:       {url}")
+        print(f"Guia:        {guia_txt}")
+        print(f"Versão:      {status_git}")
+        print()
 
 
 def main():

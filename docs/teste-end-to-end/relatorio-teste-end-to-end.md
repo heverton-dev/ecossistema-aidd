@@ -854,3 +854,23 @@
   - `python ecossistema.py components verify --tipo todos`: 91/91 componentes íntegros (SHA-256 idêntico).
 - **Data da Última Auditoria:** 21/09/2026.
 
+
+---
+
+## 11. Entrega Achatada e Card de Entrega: `aidd-master` e `aidd-enterprise` (ISSUE-USA-0003)
+
+- **Objetivo da Evolução:** Eliminar o prefixo `proj_` e o aninhamento duplo (`<app>/proj_<app>/`) no provisionamento; emitir card de entrega em PT-BR simples e `git init` na raiz da entrega ao fim do fluxo.
+- **Ferramentas Tocadas:** [`tools/aidd-master`](file:///C:/Users/trcnologia/Desktop/ecossistema-aidd/tools/aidd-master) e [`tools/aidd-enterprise`](file:///C:/Users/trcnologia/Desktop/ecossistema-aidd/tools/aidd-enterprise).
+- **O que executou:**
+  1. `provision_project.py` (master e enterprise): layout achatado `<base>/<slug>/` sem prefixo `proj_`; caminho explícito é usado como `project_dir` (sem camada extra).
+  2. `application/commands/init.py` (master e enterprise): `--dir`/`--pasta` explícito É o diretório do projeto (ISSUE-USA-0003).
+  3. `scripts/orquestrador_sincrono.py`: `_fechar_entrega()` — `git init` na raiz + card `=== SEU APP ESTÁ PRONTO ===` (onde está / como subir / abrir / guia / versão), com degradação honesta (Lei #8) quando não há compose.
+  4. Atualização de `tools/aidd-master/tests/unit/test_provision_project.py` (abolicão do `proj_*`).
+  5. Novos testes `tests/test_entrega_achatada.py` (layout, caminho explícito, card, degradação).
+- **Resultados de Testes:**
+  - `tools/aidd-master/tests/unit/test_provision_project.py`: 13/13 passed.
+  - `tests/test_entrega_achatada.py`: 4/4 passed.
+  - `tests/test_orquestrador_sincrono.py`: 9/9 passed.
+  - `gates/G_DRIFT_NUCLEO_COMPARTILHADO.py`: exit 0 (paridade master/enterprise mantida).
+  - `gates/G_LAYOUT_ENTREGA.py`: exit 0.
+- **Data da Última Auditoria:** 22/09/2026.

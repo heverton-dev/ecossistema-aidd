@@ -57,8 +57,10 @@ def test_provision_gera_server_py_no_primeiro_modulo(tmp_path):
 
     provision("Projeto Teste Provision", base_dir=str(tmp_path))
 
-    projetos = list(tmp_path.glob("proj_*"))
-    assert len(projetos) == 1, f"esperava 1 diretorio proj_*, achei: {projetos}"
+    # ISSUE-USA-0003: layout achatado — sem prefixo proj_ e sem camada extra.
+    assert not list(tmp_path.glob("proj_*")), "prefixo proj_ foi abolido (ISSUE-USA-0003)"
+    projetos = [p for p in tmp_path.iterdir() if p.is_dir()]
+    assert len(projetos) == 1, f"esperava 1 diretorio de projeto, achei: {projetos}"
     projeto_dir = projetos[0]
 
     server_path = projeto_dir / "src" / "server.py"
@@ -73,7 +75,7 @@ def test_provision_gera_frontend_nextjs_por_padrao(tmp_path):
     from provision_project import provision
 
     provision("Projeto Teste Nextjs Default", base_dir=str(tmp_path))
-    projeto_dir = next(tmp_path.glob("proj_*"))
+    projeto_dir = next(p for p in tmp_path.iterdir() if p.is_dir() and not p.name.startswith("proj_"))
 
     assert (projeto_dir / "frontend" / "package.json").is_file()
     assert (projeto_dir / "frontend" / "app" / "layout.tsx").is_file()
@@ -90,7 +92,7 @@ def test_provision_gera_index_html_python_quando_pedido_explicitamente(tmp_path)
     from provision_project import provision
 
     provision("Projeto Teste Index Explicito", base_dir=str(tmp_path), frontend_stack="python-html")
-    projeto_dir = next(tmp_path.glob("proj_*"))
+    projeto_dir = next(p for p in tmp_path.iterdir() if p.is_dir() and not p.name.startswith("proj_"))
 
     index_path = projeto_dir / "src" / "static" / "index.html"
     conteudo = index_path.read_text(encoding="utf-8")
@@ -106,7 +108,7 @@ def test_provision_passa_no_gate_g_estrutura(tmp_path):
     from provision_project import provision
 
     provision("Projeto Teste Estrutura", base_dir=str(tmp_path))
-    projeto_dir = next(tmp_path.glob("proj_*"))
+    projeto_dir = next(p for p in tmp_path.iterdir() if p.is_dir() and not p.name.startswith("proj_"))
 
     gate_path = os.path.join(SCRIPTS_DIR, "gates", "G_ESTRUTURA.py")
     import subprocess
@@ -124,7 +126,7 @@ def test_provision_passa_no_gate_g_contracts(tmp_path):
     from provision_project import provision
 
     provision("Projeto Teste Contracts", base_dir=str(tmp_path))
-    projeto_dir = next(tmp_path.glob("proj_*"))
+    projeto_dir = next(p for p in tmp_path.iterdir() if p.is_dir() and not p.name.startswith("proj_"))
 
     gate_path = os.path.join(SCRIPTS_DIR, "gates", "G_CONTRACTS.py")
 
@@ -147,7 +149,7 @@ def test_provision_requirements_txt_inclui_sqlglot_e_returns(tmp_path):
     from provision_project import provision
 
     provision("Projeto Teste Requirements", base_dir=str(tmp_path))
-    projeto_dir = next(tmp_path.glob("proj_*"))
+    projeto_dir = next(p for p in tmp_path.iterdir() if p.is_dir() and not p.name.startswith("proj_"))
 
     conteudo = (projeto_dir / "requirements.txt").read_text(encoding="utf-8")
     assert "sqlglot" in conteudo
@@ -163,7 +165,7 @@ def test_provision_copia_pasta_nginx_com_conf_e_gerador_ssl(tmp_path):
     from provision_project import provision
 
     provision("Projeto Teste Nginx", base_dir=str(tmp_path))
-    projeto_dir = next(tmp_path.glob("proj_*"))
+    projeto_dir = next(p for p in tmp_path.iterdir() if p.is_dir() and not p.name.startswith("proj_"))
 
     assert (projeto_dir / "nginx" / "nginx.conf").is_file()
     assert (projeto_dir / "nginx" / "ssl" / "generate_ssl.py").is_file()
@@ -179,7 +181,7 @@ def test_provision_dockerfile_instala_requirements_antes_de_rodar(tmp_path):
     from provision_project import provision
 
     provision("Projeto Teste Dockerfile", base_dir=str(tmp_path))
-    projeto_dir = next(tmp_path.glob("proj_*"))
+    projeto_dir = next(p for p in tmp_path.iterdir() if p.is_dir() and not p.name.startswith("proj_"))
 
     conteudo = (projeto_dir / "Dockerfile").read_text(encoding="utf-8")
     assert "pip install" in conteudo and "requirements.txt" in conteudo
@@ -196,7 +198,7 @@ def test_provision_server_py_importa_de_verdade_sem_modulenotfounderror(tmp_path
     from provision_project import provision
 
     provision("Projeto Teste Import Server", base_dir=str(tmp_path))
-    projeto_dir = next(tmp_path.glob("proj_*"))
+    projeto_dir = next(p for p in tmp_path.iterdir() if p.is_dir() and not p.name.startswith("proj_"))
 
     resultado = subprocess.run(
         [sys.executable, "-c", "import server"],
@@ -217,7 +219,7 @@ def test_provision_copia_output_css_para_docs_html_funcionar(tmp_path):
     from provision_project import provision
 
     provision("Projeto Teste Output Css", base_dir=str(tmp_path))
-    projeto_dir = next(tmp_path.glob("proj_*"))
+    projeto_dir = next(p for p in tmp_path.iterdir() if p.is_dir() and not p.name.startswith("proj_"))
 
     css_path = projeto_dir / "src" / "static" / "output.css"
     assert css_path.is_file(), "src/static/output.css nao foi copiado por provision()"
@@ -241,7 +243,7 @@ def test_provision_registra_modulo_principal_no_manifesto(tmp_path):
     from provision_project import provision
 
     provision("Projeto Teste Manifesto Principal", base_dir=str(tmp_path))
-    projeto_dir = next(tmp_path.glob("proj_*"))
+    projeto_dir = next(p for p in tmp_path.iterdir() if p.is_dir() and not p.name.startswith("proj_"))
 
     plano = json.loads((projeto_dir / "PLANO-EXECUCAO-ESTRUTURADO.json").read_text(encoding="utf-8"))
     slugs = [m.get("slug") for m in plano.get("modulos", [])]
@@ -259,7 +261,7 @@ def test_add_module_nao_orfa_modulo_anterior_no_server_py(tmp_path):
     from add_module import criar_modulo
 
     provision("Projeto Teste Server Nao Orfao", base_dir=str(tmp_path))
-    projeto_dir = next(tmp_path.glob("proj_*"))
+    projeto_dir = next(p for p in tmp_path.iterdir() if p.is_dir() and not p.name.startswith("proj_"))
 
     criar_modulo("tarefas", "Módulo de tarefas", target_dir=str(projeto_dir))
 
@@ -279,7 +281,7 @@ def test_add_module_religa_pagina_do_frontend_nextjs(tmp_path):
     from add_module import criar_modulo
 
     provision("Projeto Teste Add Module Frontend", base_dir=str(tmp_path))
-    projeto_dir = next(tmp_path.glob("proj_*"))
+    projeto_dir = next(p for p in tmp_path.iterdir() if p.is_dir() and not p.name.startswith("proj_"))
     assert (projeto_dir / "frontend" / "package.json").is_file()
 
     criar_modulo("tarefas", "Módulo de tarefas", target_dir=str(projeto_dir))

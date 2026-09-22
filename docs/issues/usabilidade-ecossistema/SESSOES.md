@@ -53,7 +53,7 @@ Must enforce:
 
 **Touches:** generator/factory/bridge path writers, delivery-card emitter, `git init` wiring · **Blocked by:** Sessão 2
 
-- [ ] Concluída
+- [x] Concluída
 
 ```bash
 Execute docs/issues/usabilidade-ecossistema/03-entrega-fora-clone-achatada.md.

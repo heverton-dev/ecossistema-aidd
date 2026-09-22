@@ -41,8 +41,9 @@ def provision(project_desc, base_dir=None, frontend_stack='nextjs'):
         
         if not base_dir:
             base_dir = os.path.join(os.path.expanduser('~'), 'orca', 'workspaces', 'PROJETOS Criados com IA')
-            
-        project_dir = os.path.join(base_dir, f'proj_{slug}')
+
+        # ISSUE-USA-0003: sem prefixo proj_ — layout achatado <raiz>/<slug>/...
+        project_dir = os.path.join(base_dir, slug)
     
     print(f"🚀 [AIDD MASTER] Provisionando ecossistema modular: {slug}")
     print(f"📁 Destino: {project_dir}")

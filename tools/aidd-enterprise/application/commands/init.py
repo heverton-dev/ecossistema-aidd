@@ -10,4 +10,9 @@ def cmd_init(args):
         from provision_project import provision
     except ImportError:
         from scripts.provision_project import provision
-    provision(args.nome, base_dir=getattr(args, "dir", "."))
+    destino = getattr(args, "dir", ".") or "."
+    # ISSUE-USA-0003: --dir/--pasta explícito É o diretório do projeto (achatado).
+    if destino not in (".", ""):
+        provision(destino)
+    else:
+        provision(args.nome, base_dir=destino)

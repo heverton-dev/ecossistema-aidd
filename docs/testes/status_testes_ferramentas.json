@@ -1,5 +1,5 @@
 {
-  "medido_em": "2026-09-22T03:40:00.410617+00:00",
+  "medido_em": "2026-09-22T13:47:05.184891+00:00",
   "metodo": "python -m pytest -q --tb=no em cada tools/<ferramenta>, parseado do resumo real (nao digitado a mao)",
   "por_ferramenta": {
     "aidd-forge": {

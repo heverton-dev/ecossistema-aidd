@@ -1,7 +1,7 @@
 ---
 id: ISSUE-USA-0003
 title: Entrega fora do clone e aninhamento achatado (A4)
-status: open
+status: done
 blocked_by: [ISSUE-USA-0002]
 created: 2026-09-22
 source: 22-09-2026_RELATORIO-ACHADOS-USABILIDADE-ECOSSISTEMA-AIDD.md (A4)
@@ -32,8 +32,8 @@ source: 22-09-2026_RELATORIO-ACHADOS-USABILIDADE-ECOSSISTEMA-AIDD.md (A4)
 
 ## Acceptance criteria
 
-- [ ] No `proj_` prefix and no double `<app>/<app>` nesting in generated trees.
-- [ ] Delivery card emitted on success; missing card = ticket incomplete.
-- [ ] Ambiguous layout still stops and asks (from ISSUE-USA-0002) — never silent `projetos/`.
-- [ ] E2E fixture: legacy sibling present ⇒ delivery at workspace root.
-- [ ] `python ecossistema.py audit` exit 0.
+- [x] No `proj_` prefix and no double `<app>/<app>` nesting in generated trees — `provision_project.py` (master+enterprise) e `cmd_init` achatados; `test_provision_project` 13/13 + `test_entrega_achatada` 4/4.
+- [x] Delivery card emitted on success; missing card = ticket incomplete — `_fechar_entrega()` no orquestrador (card `=== SEU APP ESTÁ PRONTO ===`).
+- [x] Ambiguous layout still stops and asks (from ISSUE-USA-0002) — never silent `projetos/`.
+- [x] E2E fixture: legacy sibling present ⇒ delivery at workspace root — coberto em `test_g_layout_entrega.py` / `resolve_pasta_entrega`.
+- [x] `python ecossistema.py audit` exit 0 — `G_LAYOUT_ENTREGA`, `G_DISCIPLINA_TESTE_FERRAMENTA` (relatório §11), `G_DRIFT_NUCLEO_COMPARTILHADO`, `G_IDIOMA_LEI_4` exit 0; suíte 26/26.
