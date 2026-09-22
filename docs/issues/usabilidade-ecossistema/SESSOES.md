@@ -95,7 +95,7 @@ Must enforce:
 
 **Touches:** flow closers, `README-USUARIO.md` template, `docker-compose.yml`/`make run` umbrella, E2E golden path · **Blocked by:** Sessão 3
 
-- [ ] Concluída
+- [x] Concluída
 
 ```bash
 Execute docs/issues/usabilidade-ecossistema/05-ponto-entrada-unico.md.

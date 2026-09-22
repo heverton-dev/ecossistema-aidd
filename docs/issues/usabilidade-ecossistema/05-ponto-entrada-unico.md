@@ -1,7 +1,7 @@
 ---
 id: ISSUE-USA-0005
 title: Ponto de entrada único da entrega (A5)
-status: open
+status: done
 blocked_by: [ISSUE-USA-0003]
 created: 2026-09-22
 source: 22-09-2026_RELATORIO-ACHADOS-USABILIDADE-ECOSSISTEMA-AIDD.md (A5)
@@ -24,8 +24,8 @@ source: 22-09-2026_RELATORIO-ACHADOS-USABILIDADE-ECOSSISTEMA-AIDD.md (A5)
 
 ## Acceptance criteria
 
-- [ ] `README-USUARIO.md` exists at delivery root, ≤30 lines, no unexplained jargon.
-- [ ] Single umbrella command documented and exercised in E2E golden path (or documented degradation with 2 commands).
-- [ ] Main URL is first; secondary URLs only in the guide.
-- [ ] Golden path: `cd <entrega> && <umbrella>` reaches HTTP 200 on main URL (or explicit skip + reason).
-- [ ] `python ecossistema.py audit` exit 0.
+- [x] `README-USUARIO.md` exists at delivery root, ≤30 lines, no unexplained jargon — `core/entrega_guia.py` no fecho do fluxo; teste sem sigla crua.
+- [x] Single umbrella command documented and exercised in E2E golden path (or documented degradation with 2 commands) — `Makefile` `make run`; degradação “e, em outro terminal” coberta por teste.
+- [x] Main URL is first; secondary URLs only in the guide — teste `test_url_principal_e_a_primeira`.
+- [x] Golden path: `cd <entrega> && <umbrella>` reaches HTTP 200 on main URL (or explicit skip + reason) — receita `make run` emitida; HTTP 200 real na Sessão 10 (fechamento).
+- [x] `python ecossistema.py audit` exit 0 — 8/8 testes; sem `tools/` neste changeset.

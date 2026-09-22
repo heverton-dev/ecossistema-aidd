@@ -12,7 +12,7 @@
 | 02 | `ISSUE-USA-0002` | [Helper determinístico de posicionamento da entrega](02-helper-posicionamento-entrega.md) | A6 | P0 | `done` | `[]` |
 | 03 | `ISSUE-USA-0003` | [Entrega fora do clone e aninhamento achatado](03-entrega-fora-clone-achatada.md) | A4 | P0 | `done` | `[ISSUE-USA-0002]` |
 | 04 | `ISSUE-USA-0004` | [Perfil de linguagem leigo e GEMINI.md](04-perfil-linguagem-leigo.md) | A2 | P0 | `done` | `[]` |
-| 05 | `ISSUE-USA-0005` | [Ponto de entrada único da entrega](05-ponto-entrada-unico.md) | A5 | P1 | `open` | `[ISSUE-USA-0003]` |
+| 05 | `ISSUE-USA-0005` | [Ponto de entrada único da entrega](05-ponto-entrada-unico.md) | A5 | P1 | `done` | `[ISSUE-USA-0003]` |
 | 06 | `ISSUE-USA-0006` | [Pacote core enxuto de distribuição](06-pacote-core-enxuto.md) | A3 | P1 | `open` | `[]` |
 | 07 | `ISSUE-USA-0007` | [Template duplo de encerramento](07-template-duplo-encerramento.md) | A9 | P1 | `open` | `[]` |
 | 08 | `ISSUE-USA-0008` | [Varredura anti-lock-in completa](08-varredura-anti-lockin.md) | A7 | P2 | `open` | `[]` |

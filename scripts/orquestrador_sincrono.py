@@ -574,23 +574,21 @@ class OrquestradorSincrono:
         else:
             status_git = "git init (dry-run, não executado)"
 
-        tem_compose = (raiz / "docker-compose.yml").is_file()
-        tem_server = (raiz / "src" / "server.py").is_file()
-        tem_frontend = (raiz / "frontend" / "package.json").is_file()
-        if tem_compose:
-            comando_subir = "docker compose up"
-            url = "http://localhost:3000"
-        elif tem_server and tem_frontend:
-            comando_subir = "python src/server.py  (em outro terminal: cd frontend && npm run dev)"
-            url = "http://localhost:3000"
-        elif tem_server:
-            comando_subir = "python src/server.py"
-            url = "http://localhost:8000"
-        else:
-            comando_subir = "(veja o guia — composição de subida indisponível)"
-            url = "(veja o guia)"
+        from core.entrega_guia import comando_e_url, gerar_make_run, gerar_readme_usuario
+
+        if not self.dry_run:
+            gerar_make_run(raiz)
+        comando_subir, url, extras = comando_e_url(raiz)
+        if not (raiz / "README-USUARIO.md").is_file() or not self.dry_run:
+            gerar_readme_usuario(
+                raiz,
+                nome_app=self.nome or self.slug,
+                comando_subir=comando_subir,
+                url_principal=url,
+                urls_extras=extras,
+            )
         guia = raiz / "README-USUARIO.md"
-        guia_txt = str(guia) if guia.is_file() else "(guia ainda não gerado — Sessão 5)"
+        guia_txt = str(guia) if guia.is_file() else "(guia ainda não gerado)"
 
         # Card de entrega: primeira linha = onde está; sem jargão.
         print()
