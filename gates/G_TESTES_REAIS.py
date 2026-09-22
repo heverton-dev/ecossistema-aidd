@@ -88,7 +88,7 @@ def _carregar_allowlist():
 def _rodar_pytest(diretorio, junitxml_path):
     """Executa pytest com relatório JUnitXML e retorna (exit_code, stdout_text)."""
     resultado = subprocess.run(
-        [sys.executable, "-m", "pytest", "-q", "--tb=no", f"--junitxml={junitxml_path}"],
+        [sys.executable, "-m", "pytest", "-q", "--tb=short", f"--junitxml={junitxml_path}"],
         cwd=diretorio,
         capture_output=True,
         text=True,
@@ -215,6 +215,10 @@ def executar():
             if failed > 0:
                 msg = f"FALHOU ({passed} passed, {failed} failed, {skipped} skipped)"
                 print(msg)
+                if output:
+                    print("\n--- DETALHES DA FALHA PYTEST ---")
+                    print(output[:4000])
+                    print("--------------------------------\n")
                 status = "FALHA"
                 falhou = True
             elif nao_autorizados:

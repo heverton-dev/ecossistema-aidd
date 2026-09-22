@@ -1,7 +1,7 @@
 ---
 id: ISSUE-MESO-0002
 title: Compilador de Grafo Topológico VSA no aidd-planner
-status: ready-for-agent
+status: done
 blocked_by: [ISSUE-MESO-0001]
 created: 2026-09-21
 source: Relatório de Melhoria 21-09-2026 — Meso-Camada da Tríade Canônica
@@ -28,7 +28,7 @@ source: Relatório de Melhoria 21-09-2026 — Meso-Camada da Tríade Canônica
 
 ## Acceptance criteria
 
-- [ ] `compilar_grafo_topologico_vsa` handles all 3 flows (`fluxo_01_generator`, `fluxo_02_factory`, `fluxo_03_bridge`).
-- [ ] Cyclic dependency triggers explicit exception.
-- [ ] Output complies 100% with `vsa-topological-dispatch.schema.json`.
-- [ ] All tests in `test_vsa_compiler.py` pass cleanly.
+- [x] `compilar_grafo_topologico_vsa` handles all 3 flows (`fluxo_01_generator`, `fluxo_02_factory`, `fluxo_03_bridge`).
+- [x] Cyclic dependency triggers explicit exception.
+- [x] Output complies 100% with `vsa-topological-dispatch.schema.json`.
+- [x] All tests in `test_vsa_compiler.py` pass cleanly.

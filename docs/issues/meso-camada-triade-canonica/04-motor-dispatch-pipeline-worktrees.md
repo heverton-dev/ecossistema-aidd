@@ -1,7 +1,7 @@
 ---
 id: ISSUE-MESO-0004
 title: Motor de Despacho de Fatias em Git Worktrees Efêmeros
-status: ready-for-agent
+status: done
 blocked_by: [ISSUE-MESO-0003]
 created: 2026-09-21
 source: Relatório de Melhoria 21-09-2026 — Meso-Camada da Tríade Canônica
@@ -33,6 +33,6 @@ source: Relatório de Melhoria 21-09-2026 — Meso-Camada da Tríade Canônica
 
 ## Acceptance criteria
 
-- [ ] Motor runs multiple independent slices in isolated worktrees without file conflicts.
-- [ ] Temporary worktree directories are completely cleaned up after execution.
-- [ ] In case of execution failure in a slice, the pipeline safely unmounts worktrees and reports exact failure code without corrupting main git index.
+- [x] Motor runs multiple independent slices in isolated worktrees without file conflicts.
+- [x] Temporary worktree directories are completely cleaned up after execution.
+- [x] In case of execution failure in a slice, the pipeline safely unmounts worktrees and reports exact failure code without corrupting main git index.

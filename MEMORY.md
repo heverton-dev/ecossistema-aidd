@@ -1,8 +1,8 @@
 # 🧠 MEMORY.md — Memória Estruturada e Contexto Operacional Consolidado
 
 > **Repositório:** `https://github.com/heverton-dev/ecossistema-aidd`  
-> **Última Atualização:** 2026-09-10  
-> **Status:** PRODUÇÃO & ORQUESTRADO (ORCA ADE / ORC 3)  
+> **Última Atualização:** 2026-09-21  
+> **Status:** PRODUÇÃO & ORQUESTRADO (ORCA ADE / ORC 3 / VSA TOPOLOGICAL DISPATCH)  
 > **Finalidade:** Memória persistente de longo prazo para guiar desenvolvedores e agentes de IA em qualquer harness, evitando amnésia de contexto e retrabalho.
 
 ---
@@ -12,55 +12,65 @@
 O **Ecossistema AIDD** é um monorepo agnóstico que integra 8 ferramentas complementares de Engenharia Agêntica de Software e a Tríade Canônica de Criação:
 
 - **AIDD Forge (`tools/aidd-forge`):** Bootstrap de governança, isolamento de fases e purge de contexto (`/forge`).
-- **AIDD Planner (`tools/aidd-planner`):** Planejamento BDD/SDD, contratos de handoff e modelagem de entidades (`/planner`).
+- **AIDD Planner (`tools/aidd-planner`):** Planejamento BDD/SDD, compilador topológico DAG VSA e contratos de handoff (`/planner`).
 - **AIDD Generator (`tools/aidd-generator`):** Fábrica autônoma com pipeline de 8 fases, TDD Red-Green e Clean Architecture (`/generate` ou `/pure`).
-- **AIDD Master (`tools/aidd-master`):** Monólito modular VSA com fatias verticais, Next.js Padrão-Ouro (Lei #11) e OpenAPI (`/master`).
+- **AIDD Master (`tools/aidd-master`):** Monólito modular VSA com fatias verticais, motor de despacho `dispatch_pipeline.py`, convergência master, Next.js Padrão-Ouro (Lei #11) e OpenAPI (`/master`).
 - **AIDD Enterprise (`tools/aidd-enterprise`):** Missão crítica com injeção de componentes SHA-256 e Zero-Trust (`/enterprise`).
 - **AIDD Ops (`tools/aidd-ops`):** Meta-Orquestrador de Infraestrutura (IaC, sizing, Docker Swarm, Ansible, deploy VPS, `/ops`).
-- **AIDD Factory (`tools/aidd-factory`):** Integração e fatiamento VSA de motores open-source com compose (`/factory` ou `/open`).
-- **AIDD Bridge (`tools/aidd-bridge`):** Desacoplamento anti-lockin de plataformas Low-Code (Lovable/v0) preservando a UI (`/bridge`).
+- **AIDD Factory (`tools/aidd-factory`):** Integração e fatiamento VSA de motores open-source com compose (`/factory` ou `/open` ou `/aidd-open`).
+- **AIDD Bridge (`tools/aidd-bridge`):** Desacoplamento anti-lockin de plataformas Low-Code (Lovable/v0) preservando a UI (`/bridge` ou `/freedom`).
 
 ### A Tríade Canônica de Criação (Nomenclatura Oficial):
 1. **`aidd-pure` (Fluxo 01 — Do Zero Puro | Slash: `/pure`):** `[FORGE -> PLANNER] -> GENERATOR -> [MASTER -> ENTERPRISE -> OPS]`
-2. **`aidd-open` (Fluxo 02 — Motores Open-Source | Slash: `/open`):** `[FORGE -> PLANNER] -> FACTORY -> [MASTER -> ENTERPRISE -> OPS]`
+2. **`aidd-open` (Fluxo 02 — Motores Open-Source | Slash: `/aidd-open` ou `/open`):** `[FORGE -> PLANNER] -> FACTORY -> [MASTER -> ENTERPRISE -> OPS]`
 3. **`aidd-freedom` (Fluxo 03 — Desacoplamento Low-Code | Slash: `/freedom`):** `[FORGE -> PLANNER] -> BRIDGE -> [MASTER -> ENTERPRISE -> OPS]`
 
-**Orquestrador Síncrono:** `python ecossistema.py run-fluxo --fluxo <pure|open|freedom>`
+**Execução e Orquestração Determinística:**
+- **Orquestrador Síncrono:** `python ecossistema.py run-fluxo --fluxo <pure|open|freedom>`
+- **Pipeline em Worktrees & Join Barrier:** `python ecossistema.py run-plan <plano>` e `python ecossistema.py pipeline --handoff <json>`
+- **Meso-Camada VSA (Topological Dispatch):** `python ecossistema.py dispatch --planner <plano>`
 
-**Fonte Física Canônica Única:** Todo componente (`skill`, `command`, `mcp`, `hook`, `spec`) reside estritamente em `componentes/<escopo>/<tipo>/`. As pastas `.agent/`, `.claude/`, `.gemini/`, `.agents/`, `skills/` são alvos de materialização gerados pelo script `scripts/gestor_componentes.py` (`python ecossistema.py components sync`).
-
----
-
-## 2. AS 10 REGRAS DE OURO INEGOCIÁVEIS (`AGENTS.md`)
-
-1. **Determinismo Primeiro (Zero Token Fallacy):** Nunca usar LLM para tarefas mecânicas determinísticas (usar scripts Python, AST, regex, JSON Schema).
-2. **Qualidade Binária (Gates Determinísticos):** Toda validação produz saída binária (`exit 0` = aprovado, `exit 1` = bloqueado).
-3. **Persistência Estruturada e Transparência Total:** Estado reside em arquivos auditáveis (JSON, SQLite WAL, Git), nunca na memória volátil do chat.
-4. **Economia Extrema de Tokens (Tríade Caveman Ultra):** Thinking telegráfico Caveman, saídas concisas em PT-BR, purge de contexto entre fases.
-5. **Zero Stubs / Zero Mocks Falsos em Produção:** Código gerado deve ser funcional, tipado e com testes reais.
-6. **Supremacia Agnóstica (Universalidade Total):** Nenhuma dependência proprietária ou lock-in. Suporte idêntico entre sistemas operacionais (Windows, Linux, macOS) e harnesses (Claude Code, Antigravity, OpenCode, MimoCode, Gemini CLI, Hermes, Cursor).
-7. **Desenvolvedor no Controle (Zero Subagentes Headless Paralelos):** Proibido disparar subagentes invisíveis em segundo plano (`invoke_subagent` ou subprocessos desassistidos). Execução sequencial governada pelo desenvolvedor no terminal.
-8. **Anti-NIH (Not Invented Here):** Antes de escrever mecanismo novo com mais de 30-50 linhas para problema genérico, justificar por escrito por que nenhuma ferramenta OSS madura resolve.
-9. **Honestidade de Rótulo:** Nenhuma mensagem de saída pode usar alegações de segurança/certificação maiores que a cobertura real testada. Verificado por `G_HONESTIDADE_ROTULO.py`.
-10. **Comunicação Direta, Sem Jargão e Sem Formalidade:** Respostas diretas, sem rodeios, alta densidade e organização visual em tópicos/tabelas/negrito.
+**Fonte Física Canônica Única:** Todo componente (`skill`, `command`, `mcp`, `hook`, `spec`) reside estritamente em `componentes/<escopo>/<tipo>/`. As pastas `.agents/`, `.claude/`, `.gemini/`, `.cursor/`, `.opencode/`, `.mimocode/`, `.codebuddy/` são alvos de materialização gerados por `scripts/gestor_componentes.py` (`python ecossistema.py components sync`).
 
 ---
 
-## 3. OS 11 META-QUALITY GATES UNIFICADOS (`python ecossistema.py audit`)
+## 2. AS 13 LEIS CANÔNICAS INEGOCIÁVEIS (`AGENTS.md`)
+
+1. **Determinismo Primeiro (Lei #1):** Uso de scripts determinísticos, AST, regex, JSON Schema. LLM estritamente proibido para tarefas mecânicas. (`G_DETERMINISMO_LEI_1.py`, `G_PIPELINE_HANDOFF.py`, `G_DISPATCH_PIPELINE_VSA.py`).
+2. **Qualidade Binária (Lei #2):** Toda validação produz saída binária estrita (`exit 0` = aprovado, `exit 1` = bloqueado). (`G_SAIDA_BINARIA.py`).
+3. **Persistência Estruturada (Lei #3):** Estado reside em arquivos auditáveis (JSON, SQLite WAL, Git), nunca na memória volátil do chat. (`G_ESTRUTURA_ESTADO.py`, `G_MIGRATION_ROT.py`).
+4. **Economia Extrema de Tokens (Lei #4):** Thinking telegráfico Caveman, saídas concisas em PT-BR, purge de contexto entre fases. (`G_IDIOMA_LEI_4.py`, `regra10_check.py`).
+5. **Zero Stubs / Zero Mocks (Lei #5):** Código gerado deve ser funcional, tipado e com testes reais. Rejeição mecânica de TODO/FIXME. (`G_TESTES_REAIS.py`).
+6. **Supremacia Agnóstica (Lei #6):** Universalidade total across OS e harnesses. (`G_COMPONENTE_AGNOSTICO.py`).
+7. **Desenvolvedor no Controle (Lei #7):** Execuções estritamente sequenciais e interativas. Zero subagentes invisíveis ou headless em background. (`G_ZERO_HEADLESS.py`).
+8. **Honestidade de Rótulo (Lei #8):** Nenhuma mensagem ou alegação de segurança/certificação além da cobertura real testada. (`G_HONESTIDADE_ROTULO.py`).
+9. **Disciplina de Teste de Ferramentas (Lei #9):** Ciclo de 5 passos obrigatório com atualização contemporânea em `docs/teste-end-to-end/`. (`G_DISCIPLINA_TESTE_FERRAMENTA.py`, `G_ENV_ROT.py`, `G_SKILL_ROT.py`).
+10. **Quarteto Sine Qua Non Dinâmico (Lei #10):** Todo projeto gerado ou evoluído provê dinamicamente `/docs`, `/webhooks`, `/mcp` e `/docs/guia`. (`G_QUARTETO_SINE_QUA_NON.py`, `G_CONTRACT_ROT.py`).
+11. **Padrão-Ouro de Stack Tecnológica (Lei #11):** Frontend Next.js + TypeScript + Tailwind CSS; Backend Python + SQLite WAL + OpenAPI 3.1. (`G_STACK_PADRAO_OURO.py`).
+12. **Anti-Docs Rot & Ingestão Canônica (Lei #12):** Proibido ingerir relatórios históricos ou rascunhos. Documentação viva estritamente em `docs/protocolos/` e `AGENTS.md`. (`G_DOCS_ROT.py`).
+13. **Todo Portão Deve Provar que Morde (Lei #13):** Nenhum Quality Gate é aceito sem teste automatizado que force a violação e asserte `exit 1`. (`G_PORTAO_PROVA_QUE_MORDE.py`).
+
+---
+
+## 3. OS META-QUALITY GATES UNIFICADOS (`python ecossistema.py audit`)
 
 | Gate | Arquivo | Responsabilidade |
 |---|---|---|
-| **G1** | `gates/G_ECOSSISTEMA_INTEGRIDADE.py` | Audita presença estrutural, sintaxe Python (AST) e integridade dos subprojetos. |
-| **G2** | `gates/G_DRIFT_NUCLEO_COMPARTILHADO.py` | Detecta divergências entre o núcleo compartilhado `aidd-master` e `aidd-enterprise`. |
-| **G3** | `gates/G_HARNESS_COMPAT.py` | Garante sincronismo universal de componentes e correspondência entre gates e documentação. |
-| **G4** | `gates/G_SEGREDOS.py` | Varredura de credenciais e tokens expostos via detect-secrets (stage manual). |
-| **G5** | `gates/G_CLI_HELP_CONSISTENCIA.py` | Compara flags mencionadas em mensagens contra argumentos reais CLI. |
-| **G6** | `gates/G_COMPONENTE_AGNOSTICO.py` | Audita integridade e cobertura multi-harness de componentes novos ou modificados. |
-| **G7** | `gates/G_ZERO_HEADLESS.py` | Garante modo interativo mandatório e bloqueia execução headless oculta. |
-| **G8** | `gates/G_INFRA_COMPOSE.py` | Audita integridade, sintaxe e segurança de Docker Compose (Checkov + PyYAML). |
-| **G9** | `gates/G_HADOLINT.py` | Audita boas práticas e sintaxe OCI em Dockerfiles via Hadolint. |
-| **G10** | `gates/G_TESTES_REAIS.py` | Roda pytest real em cada ferramenta e bloqueia se failed > 0. |
-| **G11** | `gates/G_HONESTIDADE_ROTULO.py` | Verifica ausência de termos de marketing não comprovados por testes reais. |
+| **G_DETERMINISMO_LEI_1** | `gates/G_DETERMINISMO_LEI_1.py` | Bloqueia chamadas LLM em rotas e scripts mecânicos. |
+| **G_SAIDA_BINARIA** | `gates/G_SAIDA_BINARIA.py` | Audita saída estritamente binária (0/1) em todos os gates. |
+| **G_ESTRUTURA_ESTADO** | `gates/G_ESTRUTURA_ESTADO.py` | Audita persistência estruturada e validação de schemas. |
+| **G_IDIOMA_LEI_4** | `gates/G_IDIOMA_LEI_4.py` | Assegura inglês compacto no núcleo/tickets para economia de tokens. |
+| **G_TESTES_REAIS** | `gates/G_TESTES_REAIS.py` | Executa suítes reais de pytest em cada ferramenta (zero mocks). |
+| **G_COMPONENTE_AGNOSTICO** | `gates/G_COMPONENTE_AGNOSTICO.py` | Audita conformidade e integridade multi-harness. |
+| **G_ZERO_HEADLESS** | `gates/G_ZERO_HEADLESS.py` | Garante modo interativo e bloqueia subagentes headless. |
+| **G_HONESTIDADE_ROTULO** | `gates/G_HONESTIDADE_ROTULO.py` | Bloqueia alegações de marketing não comprovadas. |
+| **G_DISCIPLINA_TESTE_FERRAMENTA** | `gates/G_DISCIPLINA_TESTE_FERRAMENTA.py` | Exige relatório end-to-end atualizado para mudanças em tools/. |
+| **G_QUARTETO_SINE_QUA_NON** | `gates/G_QUARTETO_SINE_QUA_NON.py` | Valida `/docs`, `/webhooks`, `/mcp`, `/docs/guia` nos deliverables. |
+| **G_STACK_PADRAO_OURO** | `gates/G_STACK_PADRAO_OURO.py` | Audita aderência ao padrão Next.js/TS/Tailwind + Py/WAL. |
+| **G_PORTAO_PROVA_QUE_MORDE** | `gates/G_PORTAO_PROVA_QUE_MORDE.py` | Garante que todo gate possui teste unitário comprovando `exit 1`. |
+| **G_PIPELINE_HANDOFF** | `gates/G_PIPELINE_HANDOFF.py` | Validação determinística de manifestos JSON de execução de pipeline. |
+| **G_DISPATCH_PIPELINE_VSA** | `gates/G_DISPATCH_PIPELINE_VSA.py` | Validação formal de grafos DAG topológicos e fatias VSA. |
+| **G_DOCS_ROT** | `gates/G_DOCS_ROT.py` | Bloqueia documentação rot e links quebrados na documentação viva. |
 
 ---
 
@@ -78,11 +88,15 @@ O **Ecossistema AIDD** é um monorepo agnóstico que integra 8 ferramentas compl
 | `/enterprise <tipo> <nome>` | `aidd-enterprise-runner` | `python ecossistema.py enterprise inject <tipo> <nome>` | Injeção de componentes corporativos certificados SHA-256. |
 | `/ops [requisito]` | `aidd-ops-runner` | `python ecossistema.py ops [requisito]` | Meta-Orquestrador de Infraestrutura: VPS, Docker, SSH, deploy. |
 | `/orchestrate [plano]` | `orca-plan-orchestrator` | `python ecossistema.py orchestrate [plano]` | ORCA ADE — orquestração de planos de desenvolvimento via worktrees efêmeras. |
+| `/run-plan <plano>` | `aidd-pipeline-runner` | `python ecossistema.py run-plan <plano>` | Executa pipeline determinístico de planos Markdown em Git Worktrees com Join Barrier. |
+| `/pipeline <handoff>` | `aidd-pipeline-runner` | `python ecossistema.py pipeline --handoff <json>` | Executa pipeline determinístico a partir de manifesto JSON de handoff. |
+| `/dispatch [args]` | `aidd-dispatch-runner` | `python ecossistema.py dispatch --planner <plano>` | Despacha fatias verticais VSA em Git Worktrees efêmeras com ordenação DAG topológica e convergência master. |
+| `/aidd-dispatch` | `aidd-dispatch-runner` | `python ecossistema.py dispatch` | Alias canônico para o despacho da Meso-Camada VSA. |
 | `/plan <nome>` | `planos-auditoria-runner` | `python ecossistema.py plan init <nome>` | Estruturação determinística de planos de auditoria e evolução. |
 | `/bridge [comando]` | `aidd-bridge-runner` | `python ecossistema.py bridge [scan\|convert-db\|merge\|pack]` | Extrai, unifica e empacota apps Lovable/Supabase para VPS com PostgREST e Docker. |
-| `/aidd-grill` | `aidd-grill` | N/A (Chat Interativo / Headless Fallback) | Entrevista socrática pré-código para alinhamento de invariantes e edge cases. |
+| `/aidd-grill` | `aidd-grill` | N/A (Chat Interativo / Headless Fallback) | Entrevista socrática pré-código para alinhamento de invariantes e edge cases (handoff para `/aidd-spec`). |
 | `/aidd-grill-docs` | `aidd-grill-docs` | N/A (Chat Interativo) | Questionamento socrático ancorado em MEMORY.md e governança local. |
-| `/aidd-spec` | `aidd-spec` | N/A (Chat / Plan Generator) | Especificação técnica determinística com não-escopos e critérios binários. |
+| `/aidd-spec` | `aidd-spec` | N/A (Chat / Plan Generator) | Especificação técnica determinística com critérios binários (handoff para `/aidd-planner`). |
 | `/aidd-tickets` | `aidd-tickets` | N/A (Chat / Vertical Slicing) | Decomposição em tickets atômicos tracer-bullet com blast radius restrito. |
 | `/aidd-tdd` | `aidd-tdd` | N/A (Protocolo de Execução) | Ciclo Red-Green-Refactor estrito com regra Zero Stubs e suporte poliglota. |
 | `/aidd-diagnose` | `aidd-diagnose` | N/A (Triage Científica) | Método de 5 fases para triage de incidentes integrado ao code-review-graph. |
@@ -168,6 +182,21 @@ O **Ecossistema AIDD** é um monorepo agnóstico que integra 8 ferramentas compl
   - Sincronização e verificação física multi-harness em 7 ambientes (.agents, .claude, .cursor, .gemini, .opencode, .mimocode, .codebuddy) com 100% de hashes SHA-256 validados via `python ecossistema.py components verify --tipo skill`.
   - Vinculação formal nos `AGENTS.md` das ferramentas `aidd-generator` (Fases 1 e 2), `aidd-master` (Vertical Slices), `aidd-enterprise` (Selo TDD) e `aidd-ops` (Diagnose).
   - Plano oficial arquivado em `docs/planos/feitos/PLAN-0030-integracao-skills-matt-pocock/plano.md`.
+- **2026-09-21 — Orquestração de Pipeline e Meso-Camada da Tríade Canônica (VSA Topological Dispatch):**
+  - **Iniciativa Pipeline de Orquestração (`docs/issues/pipeline-orquestracao-triade/` — 7/7 tickets DONE):**
+    - Schema canônico `handoff-execucao.schema.json` e Quality Gate `G_PIPELINE_HANDOFF` com prova que morde (`exit 1`).
+    - Motor determinístico em Git Worktrees efêmeras (`tools/aidd-master/scripts/orchestrator_pipeline.py`) com Join Barrier e limpeza de 100% dos recursos em `try-finally`.
+    - Compilador de planos Markdown (`scripts/compilador_tickets_plano.py`) e exportador nativo em `aidd-planner`.
+    - Skill canônica multi-harness `aidd-pipeline-runner` e comandos universais `/run-plan` e `/pipeline`.
+  - **Iniciativa Meso-Camada da Tríade Canônica (`docs/issues/meso-camada-triade-canonica/` — 8/8 tickets DONE):**
+    - Schema formal `vsa-topological-dispatch.schema.json` e Quality Gate `G_DISPATCH_PIPELINE_VSA` com prova que morde (10/10 testes PASS).
+    - Compilador topológico DAG VSA em `aidd-planner` com algoritmo de Kahn e detecção mecânica de ciclos.
+    - Motor de despacho topológico `tools/aidd-master/scripts/dispatch_pipeline.py` com isolamento estrito de fatias em Git Worktrees efêmeras (`.worktrees/<slice_id>`).
+    - Roteador especialista de engines da Tríade (`tools/aidd-master/scripts/engine_router.py`) com injeção do Quarteto Sine Qua Non (`/docs`, `/webhooks`, `/mcp`, `/docs/guia`).
+    - Barreira de validação e convergência master (`tools/aidd-master/scripts/vsa_join_barrier.py`) com validação de fronteiras de arquivos via `git status --porcelain -uall` e manifesto com SHA-256 para `aidd-enterprise`.
+    - Integração no `scripts/orquestrador_sincrono.py` eliminando stubs/mocks estáticos e exposição do comando CLI `python ecossistema.py dispatch`.
+    - Skill canônica multi-harness `aidd-dispatch-runner` e encadeamento de intake formal `/aidd-grill` ➔ `/aidd-spec` ➔ `/aidd-planner` ➔ `/aidd-dispatch-runner`.
+
 
 ## 7. INICIATIVAS ATIVAS (gerado automaticamente — não editar à mão)
 

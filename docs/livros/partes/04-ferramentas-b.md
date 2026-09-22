@@ -278,14 +278,19 @@ fluxo.
 
 ## 16.6 Como funciona dentro da camada FLUXO
 
-**Passo a passo.** Etapa 4. `master init <slug>` seguido de `master add-module <slug>`.
+**Passo a passo.** Etapa 4. `master init <slug>` seguido de `master add-module <slug>`
+ou, na Meso-Camada, o despacho em Git Worktrees efêmeras governado por `dispatch_pipeline.py`.
+O roteador especialista (`engine_router.py`) encaminha a implementação para a engine
+correspondente (Generator, Factory ou Bridge) e a barreira `vsa_join_barrier.py` audita as
+fronteiras de arquivos via `git status --porcelain -uall` antes de efetuar a fusão no
+Monólito Modular VSA.
 
-**Portões.** Os dez locais, mais a validação do handoff
-`handoff-master-to-enterprise.schema.json`, cujos campos obrigatórios são
-`versao_schema`, `diretorio_projeto`, `servidor_fastapi_ok`,
+**Portões.** Os dez locais, `G_DISPATCH_PIPELINE_VSA` (para fatias despachadas via DAG)
+mais a validação do handoff `handoff-master-to-enterprise.schema.json`, cujos campos
+obrigatórios são `versao_schema`, `diretorio_projeto`, `servidor_fastapi_ok`,
 `quarteto_sine_qua_non_rotas` e `componentes_para_blindagem`.
 
-**Habilidades.** `componentes-runner`, `aidd-master-runner`, e os runners de fluxo.
+**Habilidades.** `componentes-runner`, `aidd-master-runner`, `aidd-dispatch-runner` e os runners de fluxo.
 
 **Determinismo.** Integral — etapa de custo zero em tokens.
 
@@ -301,13 +306,15 @@ confirmação de que o servidor sobe e as rotas do Quarteto respondem.
 ## 16.7 Como funciona dentro da camada ECOSSISTEMA
 
 **Passo a passo.** Fora do fluxo, `/master <modulo>` é o comando do dia a dia: adicionar
-uma fatia nova a um sistema em produção.
+uma fatia nova a um sistema em produção. Na orquestração de fatias paralelas, o comando
+`python ecossistema.py dispatch --planner PLANNER.json` governa a execução concorrente
+em worktrees efêmeras.
 
-**Portões.** `G_ISOLATION_AUDIT`, `G_FRONTEND_LAYERS`, `G_ARQUITETURA_DELIVERABLE` e
-`G_DRIFT_ANALYZER` do ecossistema complementam os dez locais.
+**Portões.** `G_ISOLATION_AUDIT`, `G_FRONTEND_LAYERS`, `G_ARQUITETURA_DELIVERABLE`,
+`G_DISPATCH_PIPELINE_VSA` e `G_DRIFT_ANALYZER` do ecossistema complementam os dez locais.
 
 **Habilidades.** `/aidd-grill` antes de projetar a fatia; `/aidd-tdd` durante;
-`/aidd-diagnose` quando algo quebra.
+`/aidd-diagnose` quando algo quebra; `/aidd-dispatch-runner` para despacho topológico.
 
 **Determinismo.** Integral.
 
@@ -324,9 +331,14 @@ construído.
 ## 16.8 Rastreabilidade
 
 `tools/aidd-master/AGENTS.md`; `tools/aidd-master/scripts/aidd.py` (22 subcomandos);
+`tools/aidd-master/scripts/dispatch_pipeline.py`;
+`tools/aidd-master/scripts/engine_router.py`;
+`tools/aidd-master/scripts/vsa_join_barrier.py`;
+`tools/aidd-master/scripts/orchestrator_pipeline.py`;
 `tools/aidd-master/scripts/run_all.py`; `tools/aidd-master/scripts/gates/` (12 portões);
 `tools/aidd-master/CAPABILITIES.json` e a assinatura Ed25519;
-`componentes/compartilhado/specs/handoff-master-to-enterprise.schema.json`.
+`componentes/compartilhado/specs/handoff-master-to-enterprise.schema.json`;
+`componentes/compartilhado/specs/vsa-topological-dispatch.schema.json`.
 
 # Capítulo 17 — `aidd-enterprise`: a blindagem criptográfica
 

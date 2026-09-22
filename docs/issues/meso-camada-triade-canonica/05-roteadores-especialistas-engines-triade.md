@@ -1,7 +1,7 @@
 ---
 id: ISSUE-MESO-0005
 title: Roteadores Especialistas para as 3 Engines da Tríade
-status: ready-for-agent
+status: done
 blocked_by: [ISSUE-MESO-0004]
 created: 2026-09-21
 source: Relatório de Melhoria 21-09-2026 — Meso-Camada da Tríade Canônica
@@ -25,7 +25,7 @@ source: Relatório de Melhoria 21-09-2026 — Meso-Camada da Tríade Canônica
 
 ## Acceptance criteria
 
-- [ ] Generator router successfully calls `aidd-generator` sub-process with slice scope.
-- [ ] Factory router adapts open-source curation parameters to slice integration scope.
-- [ ] Bridge router adapts low-code decoupling parameters to slice scope.
-- [ ] Zero hardcoded entity mocks; all parameters originate from slice definition.
+- [x] Generator router successfully calls `aidd-generator` sub-process with slice scope.
+- [x] Factory router adapts open-source curation parameters to slice integration scope.
+- [x] Bridge router adapts low-code decoupling parameters to slice scope.
+- [x] Zero hardcoded entity mocks; all parameters originate from slice definition.

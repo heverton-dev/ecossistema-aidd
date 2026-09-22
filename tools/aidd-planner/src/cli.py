@@ -21,6 +21,7 @@ try:
         gerar_template_plano,
         exportar_para_fluxo_factory,
         exportar_para_pipeline_execucao,
+        compilar_grafo_topologico_vsa,
     )
 except ImportError:
     from src.core.planner_engine import (
@@ -29,6 +30,7 @@ except ImportError:
         gerar_template_plano,
         exportar_para_fluxo_factory,
         exportar_para_pipeline_execucao,
+        compilar_grafo_topologico_vsa,
     )
 
 MAPA_FLUXOS = {
@@ -264,9 +266,44 @@ def cmd_export(args: argparse.Namespace) -> int:
             json.dump(resultado, f, indent=2, ensure_ascii=False)
         print(f"[aidd-planner] Exportado com sucesso para pipeline de execução: {saida_caminho}")
         return 0
+    elif formato == "dispatch":
+        try:
+            resultado = compilar_grafo_topologico_vsa(plano)
+        except PlannerValidationError as e:
+            print(f"[ERRO] Não foi possível compilar despacho topológico VSA: {e}", file=sys.stderr)
+            return 1
+
+        saida_caminho = os.path.abspath(args.saida or os.path.join(os.path.dirname(caminho), "vsa_dispatch.json"))
+        with open(saida_caminho, "w", encoding="utf-8") as f:
+            json.dump(resultado, f, indent=2, ensure_ascii=False)
+        print(f"[aidd-planner] Despacho topológico VSA exportado com sucesso: {saida_caminho}")
+        return 0
     else:
         print(f"[ERRO] Formato de exportação não suportado: '{formato}'", file=sys.stderr)
         return 1
+
+
+def cmd_export_dispatch(args: argparse.Namespace) -> int:
+    """Compila o grafo topológico VSA e exporta o manifesto de despacho formal."""
+    caminho = os.path.abspath(args.arquivo)
+    if not os.path.isfile(caminho):
+        print(f"[ERRO] Arquivo de plano não encontrado: '{caminho}'", file=sys.stderr)
+        return 1
+
+    with open(caminho, "r", encoding="utf-8") as f:
+        plano = json.load(f)
+
+    try:
+        resultado = compilar_grafo_topologico_vsa(plano)
+    except PlannerValidationError as e:
+        print(f"[ERRO] Falha ao compilar despacho topológico VSA: {e}", file=sys.stderr)
+        return 1
+
+    saida_caminho = os.path.abspath(getattr(args, "output", None) or getattr(args, "saida", None) or os.path.join(os.path.dirname(caminho), "vsa_dispatch.json"))
+    with open(saida_caminho, "w", encoding="utf-8") as f:
+        json.dump(resultado, f, indent=2, ensure_ascii=False)
+    print(f"[aidd-planner] Despacho topológico VSA exportado com sucesso: {saida_caminho}")
+    return 0
 
 
 def cmd_audit(args: argparse.Namespace) -> int:
@@ -337,9 +374,15 @@ def main(argv: Optional[List[str]] = None) -> int:
     # Subcomando export
     p_exp = subparsers.add_parser("export", help="Exporta plano para formato específico de fluxo")
     p_exp.add_argument("arquivo", help="Caminho do arquivo PLANNER.json")
-    p_exp.add_argument("--formato", required=True, choices=["factory", "pipeline"], help="Formato de destino")
+    p_exp.add_argument("--formato", required=True, choices=["factory", "pipeline", "dispatch"], help="Formato de destino")
     p_exp.add_argument("--saida", "-o", help="Caminho do arquivo exportado")
     p_exp.set_defaults(func=cmd_export)
+
+    # Subcomando export-dispatch
+    p_exp_disp = subparsers.add_parser("export-dispatch", help="Compila grafo topológico VSA e exporta manifesto de despacho")
+    p_exp_disp.add_argument("arquivo", help="Caminho do arquivo PLANNER.json")
+    p_exp_disp.add_argument("--output", "-o", "--saida", dest="output", help="Caminho do arquivo exportado")
+    p_exp_disp.set_defaults(func=cmd_export_dispatch)
 
     # Subcomando audit
     p_aud = subparsers.add_parser("audit", help="Executa os Quality Gates do aidd-planner")

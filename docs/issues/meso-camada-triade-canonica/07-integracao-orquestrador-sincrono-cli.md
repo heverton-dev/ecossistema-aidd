@@ -1,7 +1,7 @@
 ---
 id: ISSUE-MESO-0007
 title: Integração no Orquestrador Síncrono e Comando CLI ecossistema.py
-status: ready-for-agent
+status: done
 blocked_by: [ISSUE-MESO-0006]
 created: 2026-09-21
 source: Relatório de Melhoria 21-09-2026 — Meso-Camada da Tríade Canônica

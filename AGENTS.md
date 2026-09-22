@@ -34,6 +34,7 @@
 1. **Determinism First:** Use deterministic scripts, AST, regex, or JSON Schema. Never use LLM for mechanical tasks.
    - Portão: gates/G_DETERMINISMO_LEI_1.py (provado)
    - Portão: gates/G_PIPELINE_HANDOFF.py (provado)
+   - Portão: gates/G_DISPATCH_PIPELINE_VSA.py (provado)
 2. **Binary Quality:** Every change must pass Quality Gates (`python ecossistema.py audit`, exit 0 = pass, exit 1 = block).
    - Portão: gates/G_SAIDA_BINARIA.py (provado)
 3. **Structured Persistence:** Persist state in audit files (JSON, SQLite), never in volatile conversation memory.
@@ -88,8 +89,12 @@ Every robust application in the ecosystem originates from **`aidd-forge`** (supr
   - Engine: `tools/aidd-master/scripts/orchestrator_pipeline.py` & `scripts/compilador_tickets_plano.py` (Worktrees efêmeras + Join Barrier).
   - CLI: `python ecossistema.py run-plan <plano>` e `python ecossistema.py pipeline --handoff <json>`
   - Skills: `aidd-pipeline-runner`
+- **MESO-CAMADA VSA — DESPACHO TOPOLÓGICO EM WORKTREES (Slash: `/dispatch` e `/aidd-dispatch`):**
+  - Engine: `tools/aidd-master/scripts/dispatch_pipeline.py` & `engine_router.py` & `vsa_join_barrier.py` (Kahn DAG, worktrees efêmeras, barreira de validação e convergência master).
+  - CLI: `python ecossistema.py dispatch --planner <plano>` ou `python ecossistema.py dispatch --dispatch <json>`
+  - Skills: `aidd-dispatch-runner`
 
-**Interoperabilidade Universal dos Slash Commands:** Em harnesses sem suporte a slash commands customizados na UI ou com colisões de namespace (como `/open` no Google Antigravity CLI), qualquer entrada do usuário referenciando `/pure`, `pure`, `/open`, `/aidd-open`, `open`, `/freedom`, `freedom`, `/factory`, `/bridge`, `/run-plan`, `run-plan`, `/pipeline` ou `pipeline` DEVE ser interceptada pelo agente como a invocação imediata do respectivo fluxo ou comando do ecossistema. Silêncio ou erro de "comando não suportado" é estritamente proibido.
+**Interoperabilidade Universal dos Slash Commands:** Em harnesses sem suporte a slash commands customizados na UI ou com colisões de namespace (como `/open` no Google Antigravity CLI), qualquer entrada do usuário referenciando `/pure`, `pure`, `/open`, `/aidd-open`, `open`, `/freedom`, `freedom`, `/factory`, `/bridge`, `/run-plan`, `run-plan`, `/pipeline`, `pipeline`, `/dispatch`, `dispatch` ou `/aidd-dispatch` DEVE ser interceptada pelo agente como a invocação imediata do respectivo fluxo ou comando do ecossistema. Silêncio ou erro de "comando não suportado" é estritamente proibido.
 
 **Universal Convergence Funnel:** All 3 flows mandatorily converge into `aidd-master` (Harmonização em Monólito Modular: VSA de domínio + camada horizontal compartilhada) -> `aidd-enterprise` (SHA-256 resilience and audit) -> `aidd-ops` (VPS deployment, sops+age, and Uptime Kuma), delivering the dynamic *Quarteto Sine Qua Non* (`/docs`, `/webhooks`, `/mcp`, `/docs/guia`).
 

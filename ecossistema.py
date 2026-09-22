@@ -384,6 +384,45 @@ def cmd_run_plan(args):
     return cmd_pipeline(pipeline_args)
 
 
+def cmd_dispatch(args):
+    """Despacha a execução e materialização de fatias verticais VSA em Git Worktrees efêmeras."""
+    dispatch_script = os.path.join(TOOLS_DIR, "aidd-master", "scripts", "dispatch_pipeline.py")
+    parser = argparse.ArgumentParser(
+        prog="ecossistema.py dispatch",
+        description="Despacha fatias verticais VSA em Git Worktrees efêmeras com isolamento e convergência master"
+    )
+    parser.add_argument("--planner", "-p", help="Caminho do arquivo PLANNER.json")
+    parser.add_argument("--dispatch", "-d", help="Caminho do arquivo vsa_dispatch.json")
+    parser.add_argument("--target-dir", "-t", help="Diretório do repositório alvo (auto-detectado se omitido)")
+    parser.add_argument("--base-branch", "-b", help="Branch base para convergência (auto-detectada se omitida)")
+    parser.add_argument("--dry-run", action="store_true", help="Simulação determinística sem alteração do git")
+    parser.add_argument("--workers", "-w", type=int, default=2, help="Número máximo de worktrees simultâneas")
+
+    parsed, extra = parser.parse_known_args(args)
+    caminho_manifesto = parsed.dispatch or parsed.planner
+    if not caminho_manifesto and extra:
+        caminho_manifesto = extra[0]
+
+    if not caminho_manifesto:
+        parser.print_help()
+        return 1
+
+    cmd = [
+        sys.executable, dispatch_script,
+        "--dispatch", str(caminho_manifesto),
+    ]
+    if parsed.target_dir:
+        cmd.extend(["--target-dir", str(parsed.target_dir)])
+    if parsed.base_branch:
+        cmd.extend(["--base-branch", str(parsed.base_branch)])
+    if parsed.dry_run:
+        cmd.append("--dry-run")
+    if parsed.workers:
+        cmd.extend(["--workers", str(parsed.workers)])
+
+    return run_command(cmd, cwd=ROOT_DIR)
+
+
 def cmd_components(args):
     sys.path.insert(0, os.path.join(ROOT_DIR, "scripts"))
     import gestor_componentes
@@ -874,6 +913,7 @@ _GATES_AUDIT = [
     "G_MIGRATION_ROT.py",
     "G_IDIOMA_LEI_4.py",
     "G_PIPELINE_HANDOFF.py",
+    "G_DISPATCH_PIPELINE_VSA.py",
 ]
 
 
@@ -1126,6 +1166,9 @@ def main():
         "run-plan": cmd_run_plan,
         "run_plan": cmd_run_plan,
         "pipeline": cmd_pipeline,
+        "dispatch": cmd_dispatch,
+        "run-dispatch": cmd_dispatch,
+        "run_dispatch": cmd_dispatch,
         "components": cmd_components,
         "dependencia": cmd_dependencia,
         "orchestrate": cmd_orchestrate,

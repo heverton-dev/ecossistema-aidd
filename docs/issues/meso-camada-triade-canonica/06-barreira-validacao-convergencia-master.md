@@ -1,7 +1,7 @@
 ---
 id: ISSUE-MESO-0006
 title: Barreira de Validação por Fatia e Fusão Convergente no aidd-master
-status: ready-for-agent
+status: done
 blocked_by: [ISSUE-MESO-0005]
 created: 2026-09-21
 source: Relatório de Melhoria 21-09-2026 — Meso-Camada da Tríade Canônica
@@ -30,6 +30,6 @@ source: Relatório de Melhoria 21-09-2026 — Meso-Camada da Tríade Canônica
 
 ## Acceptance criteria
 
-- [ ] Slices with failing tests or violated quality gates are blocked from merging.
-- [ ] Cross-slice file collision is detected and blocked before merge.
-- [ ] Approved slices are seamlessly aggregated into `aidd-master` main router.
+- [x] Slices with failing tests or violated quality gates are blocked from merging.
+- [x] Cross-slice file collision is detected and blocked before merge.
+- [x] Approved slices are seamlessly aggregated into `aidd-master` main router.

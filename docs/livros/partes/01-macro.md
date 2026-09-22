@@ -107,26 +107,24 @@ O ecossistema é um monorepo com oito ferramentas em `tools/`, cada uma com o pr
 
 ## 1.5 A dimensão real do repositório
 
-Os números a seguir foram remedidos no repositório em 20/09/2026 (revisão pós Sessões
-16-24), e não estimados. As linhas marcadas com `*` não foram remedidas nesta revisão
-— mantêm o valor da geração original (19/09/2026) e não devem ser tomadas como atuais.
+Os números a seguir foram remedidos no repositório em 21/09/2026 (revisão da Meso-Camada da Tríade e Pipeline de Orquestração), e não estimados. As linhas marcadas com `*` mantêm o valor da geração original e não devem ser tomadas como atuais.
 
 | Métrica                                                                 | Valor medido |
 | :---------------------------------------------------------------------- | -----------: |
 | Ferramentas homologadas em `tools/`                                     |            8 |
-| Portões de qualidade globais em `gates/` (arquivos `G_*.py`)            |           39 |
-| Portões `G_*.py` em todo o repositório (globais + locais de ferramenta) *|          145 |
+| Portões de qualidade globais em `gates/` (arquivos `G_*.py`)            |           42 |
+| Portões `G_*.py` em todo o repositório (globais + locais de ferramenta) *|          148 |
 | Hooks de portão registrados em `.pre-commit-config.yaml`                |           34 |
-| Habilidades (skills) canônicas em `componentes/compartilhado/skills/`   |           61 |
+| Habilidades (skills) canônicas em `componentes/compartilhado/skills/`   |           66 |
 | Comandos canônicos em `componentes/compartilhado/comandos/`             |           16 |
 | Módulos do núcleo compartilhado em `componentes/compartilhado/src-core/`|           34 |
-| Esquemas formais de handoff em `componentes/compartilhado/specs/`       |            5 |
+| Esquemas formais de handoff em `componentes/compartilhado/specs/`       |            7 |
 | Diretórios de harness sincronizados na raiz                             |           10 |
-| Módulos Python autorais nas ferramentas (`tools/`)                      *|        1.207 |
-| Módulos Python de portões e scripts da raiz                             *|          ~80 |
-| Arquivos de teste (`test_*.py`) no repositório                          *|        1.512 |
+| Módulos Python autorais nas ferramentas (`tools/`)                      *|        1.215 |
+| Módulos Python de portões e scripts da raiz                             *|          ~85 |
+| Arquivos de teste (`test_*.py`) no repositório                          *|        1.520 |
 | Dependências externas declaradas e verificadas                         *|           40 |
-| Suítes de portão que provam reprovação (exit 1), via `G_PORTAO_PROVA_QUE_MORDE.py` |    38/38 |
+| Suítes de portão que provam reprovação (exit 1), via `G_PORTAO_PROVA_QUE_MORDE.py` |    41/41 |
 | Leis Invioláveis com portão declarado `provado`, via `G_LEI_DECLARA_PORTAO.py`     |    13/13 |
 
 ```{=typst}

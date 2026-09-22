@@ -1,7 +1,7 @@
 ---
 id: ISSUE-MESO-0001
 title: Schema Canônico do Grafo Topológico VSA de Despacho
-status: ready-for-agent
+status: done
 blocked_by: []
 created: 2026-09-21
 source: Relatório de Melhoria 21-09-2026 — Meso-Camada da Tríade Canônica
@@ -32,7 +32,7 @@ source: Relatório de Melhoria 21-09-2026 — Meso-Camada da Tríade Canônica
 
 ## Acceptance criteria
 
-- [ ] File `componentes/compartilhado/specs/vsa-topological-dispatch.schema.json` exists and is valid JSON.
-- [ ] Schema compiles without error in `jsonschema.Draft7Validator.check_schema()`.
-- [ ] Valid dispatch manifest passes validation.
-- [ ] Invalid dispatch manifest (cyclic dependency or missing validation command) fails validation with actionable error.
+- [x] File `componentes/compartilhado/specs/vsa-topological-dispatch.schema.json` exists and is valid JSON.
+- [x] Schema compiles without error in `jsonschema.Draft7Validator.check_schema()`.
+- [x] Valid dispatch manifest passes validation.
+- [x] Invalid dispatch manifest (cyclic dependency or missing validation command) fails validation with actionable error.

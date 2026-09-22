@@ -1,7 +1,7 @@
 ---
 id: ISSUE-MESO-0003
 title: Quality Gate G_DISPATCH_PIPELINE_VSA com Prova que Morde
-status: ready-for-agent
+status: done
 blocked_by: [ISSUE-MESO-0001, ISSUE-MESO-0002]
 created: 2026-09-21
 source: Relatório de Melhoria 21-09-2026 — Meso-Camada da Tríade Canônica
@@ -29,6 +29,6 @@ source: Relatório de Melhoria 21-09-2026 — Meso-Camada da Tríade Canônica
 
 ## Acceptance criteria
 
-- [ ] `python gates/G_DISPATCH_PIPELINE_VSA.py --manifest <valid_manifest>` returns exit code 0.
-- [ ] `pytest tests/test_gate_dispatch_pipeline_vsa.py` passes all test cases proving bite per Law #13.
-- [ ] Gate appears in `python ecossistema.py audit` listing.
+- [x] `python gates/G_DISPATCH_PIPELINE_VSA.py --manifest <valid_manifest>` returns exit code 0.
+- [x] `pytest tests/test_gate_dispatch_pipeline_vsa.py` passes all test cases proving bite per Law #13.
+- [x] Gate appears in `python ecossistema.py audit` listing.

@@ -12,6 +12,7 @@ from typing import Any, Dict, List, Optional, Tuple
 _PLANNER_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 _SCHEMA_PATH = os.path.join(_PLANNER_DIR, "schemas", "planner_schema.json")
 _SCHEMA_PIPELINE_PATH = os.path.join(_PLANNER_DIR, "..", "..", "componentes", "compartilhado", "specs", "handoff-execucao.schema.json")
+_SCHEMA_VSA_DISPATCH_PATH = os.path.join(_PLANNER_DIR, "..", "..", "componentes", "compartilhado", "specs", "vsa-topological-dispatch.schema.json")
 
 # aidd-ops e a fonte unica das Fases 1-3 (Intake -> Curadoria -> Sizing) que
 # produzem o PLANO-INFRAESTRUTURA.json — o mesmo contrato que aidd-factory
@@ -479,3 +480,142 @@ def exportar_para_pipeline_execucao(plano: Dict[str, Any]) -> Dict[str, Any]:
         pass
 
     return manifesto
+
+
+def compilar_grafo_topologico_vsa(plano: Dict[str, Any]) -> Dict[str, Any]:
+    """
+    Compila o manifesto formal de despacho de fatias verticais (VSA) em grafo topológico acíclico (DAG).
+    Valida dependências via algoritmo de Kahn e assegura conformidade estrita com vsa-topological-dispatch.schema.json.
+    """
+    valido, erros = validar_plano(plano)
+    if not valido:
+        raise PlannerValidationError(f"Plano inválido para compilação VSA: {'; '.join(erros)}")
+
+    meta = plano.get("meta", {})
+    projeto_nome = meta.get("nome_projeto") or "app-aidd"
+    projeto_slug = meta.get("slug") or projeto_nome.lower().replace(" ", "-").replace("_", "-")
+    projeto_slug = "".join(c for c in projeto_slug if c.isalnum() or c in "-_")
+    if not projeto_slug:
+        projeto_slug = "app-aidd"
+
+    fluxo_raw = meta.get("fluxo_alvo") or plano.get("fluxo_alvo") or "fluxo_01_generator"
+    fluxo_map = {
+        "1": "fluxo_01_generator",
+        "2": "fluxo_02_factory",
+        "3": "fluxo_03_bridge",
+        "pure": "fluxo_01_generator",
+        "open": "fluxo_02_factory",
+        "freedom": "fluxo_03_bridge",
+        "bridge": "fluxo_03_bridge",
+        "fluxo_01_generator": "fluxo_01_generator",
+        "fluxo_02_factory": "fluxo_02_factory",
+        "fluxo_03_bridge": "fluxo_03_bridge",
+    }
+    fluxo_alvo = fluxo_map.get(str(fluxo_raw).lower(), "fluxo_01_generator")
+
+    bounded_contexts = plano.get("ddd_bounded_contexts", [])
+    if not bounded_contexts:
+        raise PlannerValidationError("Plano não contém ddd_bounded_contexts para geração de fatias VSA.")
+
+    grafo_fatias: List[Dict[str, Any]] = []
+    nomes_slices: Set[str] = set()
+    mapa_deps: Dict[str, List[str]] = {}
+
+    for bc in bounded_contexts:
+        nome_bc = bc.get("modulo") or bc.get("nome") or "modulo"
+        slug_bc = "".join(c for c in nome_bc.lower().replace(" ", "_").replace("-", "_") if c.isalnum() or c == "_")
+        slice_id = f"slice_{slug_bc}" if not slug_bc.startswith("slice_") else slug_bc
+
+        # Evita colisões de slice_id
+        orig_slice_id = slice_id
+        idx = 1
+        while slice_id in nomes_slices:
+            slice_id = f"{orig_slice_id}_{idx}"
+            idx += 1
+        nomes_slices.add(slice_id)
+
+        deps_raw = bc.get("dependencias") or []
+        deps_sanitizadas = []
+        for d in deps_raw:
+            d_slug = "".join(c for c in str(d).lower().replace(" ", "_").replace("-", "_") if c.isalnum() or c == "_")
+            d_id = f"slice_{d_slug}" if not d_slug.startswith("slice_") else d_slug
+            deps_sanitizadas.append(d_id)
+
+        mapa_deps[slice_id] = deps_sanitizadas
+
+        arquivos_alvo = [
+            f"src/slices/{slug_bc}/router.py",
+            f"src/slices/{slug_bc}/service.py",
+            f"tests/slices/test_{slug_bc}.py",
+        ]
+
+        grafo_fatias.append({
+            "slice_id": slice_id,
+            "modulo_ddd": nome_bc,
+            "dependencias": deps_sanitizadas,
+            "isolamento": "git-worktree",
+            "arquivos_esperados": arquivos_alvo,
+            "barreira_validacao": {
+                "comandos_teste": [f"pytest tests/slices/test_{slug_bc}.py"],
+                "quality_gates": ["python gates/G_SAIDA_BINARIA.py", "python gates/G_TESTES_REAIS.py"],
+            },
+        })
+
+    # Validação topológica de Kahn
+    in_degree: Dict[str, int] = {s: 0 for s in nomes_slices}
+    adj: Dict[str, List[str]] = {s: [] for s in nomes_slices}
+
+    for u, deps in mapa_deps.items():
+        for v in deps:
+            if v not in nomes_slices:
+                raise PlannerValidationError(f"Fatia '{u}' referencia dependência inexistente '{v}'.")
+            adj[v].append(u)
+            in_degree[u] += 1
+
+    queue = [s for s in nomes_slices if in_degree[s] == 0]
+    processados = 0
+
+    while queue:
+        curr = queue.pop(0)
+        processados += 1
+        for vizinho in adj[curr]:
+            in_degree[vizinho] -= 1
+            if in_degree[vizinho] == 0:
+                queue.append(vizinho)
+
+    if processados < len(nomes_slices):
+        raise PlannerValidationError(
+            f"Ciclo de dependência detectado no grafo topológico VSA! Total de nós: {len(nomes_slices)}, processados: {processados}."
+        )
+
+    convergencia_master = {
+        "target_branch": "main",
+        "merge_strategy": "fast-forward",
+        "post_merge_suite": [
+            "python ecossistema.py audit",
+            "python gates/G_QUARTETO_SINE_QUA_NON.py",
+        ],
+    }
+
+    manifesto_vsa: Dict[str, Any] = {
+        "versao_schema": "1.0.0",
+        "projeto_slug": projeto_slug,
+        "fluxo_alvo": fluxo_alvo,
+        "grafo_fatias": grafo_fatias,
+        "convergencia_master": convergencia_master,
+    }
+
+    try:
+        import jsonschema
+        if os.path.isfile(_SCHEMA_VSA_DISPATCH_PATH):
+            with open(_SCHEMA_VSA_DISPATCH_PATH, "r", encoding="utf-8") as f_s:
+                schema_vsa = json.load(f_s)
+            validator = jsonschema.Draft7Validator(schema_vsa)
+            erros_schema = list(validator.iter_errors(manifesto_vsa))
+            if erros_schema:
+                msgs = [f"[{e.path}]: {e.message}" for e in erros_schema]
+                raise PlannerValidationError(f"Manifesto VSA gerado viola vsa-topological-dispatch.schema.json: {msgs}")
+    except ImportError:
+        pass
+
+    return manifesto_vsa

@@ -1,7 +1,7 @@
 {
   "versao_manifesto": "1.0",
   "titulo": "Ecossistema AIDD",
-  "nome_base": "20-09-2026_LIVRO-ECOSSISTEMA-AIDD",
+  "nome_base": "21-09-2026_LIVRO-ECOSSISTEMA-AIDD",
   "pasta_partes": "partes",
   "template": "livro-aidd.typst",
   "partes": [
@@ -19,8 +19,20 @@
       "hash_fonte": "ca3b4e48ff3980dbd18c43b9a0d2354acbb67dd3e2328e16faf2d60362010032",
       "palavras": 23618,
       "nota": "Alinhamento taxonomico canonico, inclusao de aidd-planner e correcoes deterministicas"
+    },
+    {
+      "data": "2026-09-21",
+      "hash_fonte": "968acc39438c5e462f4e8e68694a126e5d83246f377534eb4c91a244e396da83",
+      "palavras": 24304,
+      "nota": "Inclusão da Meso-Camada da Tríade Canônica, Despacho Topológico VSA em Worktrees efêmeras e novos Quality Gates"
+    },
+    {
+      "data": "2026-09-21",
+      "hash_fonte": "968acc39438c5e462f4e8e68694a126e5d83246f377534eb4c91a244e396da83",
+      "palavras": 24304,
+      "nota": ""
     }
   ],
-  "hash_fonte": "ca3b4e48ff3980dbd18c43b9a0d2354acbb67dd3e2328e16faf2d60362010032",
-  "ultima_compilacao": "2026-09-20"
+  "hash_fonte": "968acc39438c5e462f4e8e68694a126e5d83246f377534eb4c91a244e396da83",
+  "ultima_compilacao": "2026-09-21"
 }

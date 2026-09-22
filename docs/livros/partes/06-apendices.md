@@ -72,9 +72,9 @@ em vez de apenas exibir o banner educativo e sair com 1.
 
 # Apêndice B — Os contratos formais de handoff
 
-Os cinco esquemas em `componentes/compartilhado/specs/` são a espinha dorsal da
+Os sete esquemas em `componentes/compartilhado/specs/` são a espinha dorsal da
 integração entre ferramentas. Todos seguem JSON Schema e são validados por
-`jsonschema` no orquestrador síncrono.
+`jsonschema` no orquestrador síncrono e nos Quality Gates.
 
 ## B.1 `handoff-planner-to-engine.schema.json`
 
@@ -110,10 +110,24 @@ Campos obrigatórios: `versao_schema`, `diretorio_projeto`, `sha256_audit_ok`,
 
 ## B.5 `plano-infraestrutura.schema.json`
 
-O maior dos cinco (10,8 KB). Define o envelope de três fases —
-`fase_1_intake`, `fase_2_curadoria`, `fase_3_sizing` — compartilhado por `aidd-ops`,
-`aidd-factory` e `aidd-planner`. É o contrato que permite ao planner exportar
-diretamente para a fábrica sem tradução intermediária.
+O envelope de três fases — `fase_1_intake`, `fase_2_curadoria`, `fase_3_sizing` —
+compartilhado por `aidd-ops`, `aidd-factory` e `aidd-planner`. É o contrato que permite
+ao planner exportar diretamente para a fábrica sem tradução intermediária.
+
+## B.6 `handoff-execucao.schema.json`
+
+Governa a execução determinística de tarefas paralelas e fases síncronas em Git Worktrees
+efêmeras (`orchestrator_pipeline.py`). Campos obrigatórios: `versao_schema`, `id_plano`,
+`fase_paralela` (com `tasks_worktrees`, comandos isolados e quality gates locais) e
+`fase_sequencial` (execuções ordenadas pós Join Barrier).
+
+## B.7 `vsa-topological-dispatch.schema.json`
+
+Governa o despacho topológico de fatias verticais VSA (`dispatch_pipeline.py`). Define o
+Grafo Acíclico Dirigido (DAG) compilado pelo `aidd-planner` com ordenação por algoritmo
+de Kahn, particionamento em lotes paralelos (`lotes_execucao`), fronteiras rígidas de
+arquivos por fatia (`arquivos_permitidos`) e barreira de validação e convergência master.
+
 
 # Apêndice C — Glossário
 
@@ -212,6 +226,8 @@ a rota mais curta para cada assunto.
 | Hooks canônicos compartilhados           | `componentes/compartilhado/hooks/`                               |
 | Manifesto multi-harness                  | `gates/manifesto_harnesses.json`                                 |
 | Baseline do núcleo compartilhado         | `gates/baseline_nucleo_compartilhado.json`                       |
+| Despacho topológico VSA em worktrees     | `tools/aidd-master/scripts/dispatch_pipeline.py`                 |
+| Contrato de despacho DAG VSA             | `componentes/compartilhado/specs/vsa-topological-dispatch.schema.json` |
 | Memória viva do projeto                  | `MEMORY.md`                                                      |
 | Índice de planos                         | `docs/planos/INDEX.md`                                           |
 
@@ -224,7 +240,7 @@ vermelho ou aguardando decisão.
 | Item                                                          | Estado                                                                    | Onde está registrado                                                        |
 | :------------------------------------------------------------ | :-------------------------------------------------------------------------- | :--------------------------------------------------------------------------- |
 | `G_QUARTETO_SINE_QUA_NON` auto-descoberta                     | Cobre 2 de 3 fluxos canônicos com exemplo real (falta saída real do Fluxo 02/03) | `gates/G_QUARTETO_SINE_QUA_NON.py`, saída do próprio portão                 |
-| Campos de telemetria do orquestrador síncrono                 | Parte dos payloads de handoff é montada com valores fixos, não medidos     | `scripts/orquestrador_sincrono.py`, etapas 3, 5 e 7                         |
+| Campos de telemetria do orquestrador síncrono                 | **RESOLVIDO** (21/09/2026): payloads de handoff e fatias são derivados dinamicamente de `PLANNER.json` e `dispatch_pipeline.py` | `scripts/orquestrador_sincrono.py`, `ISSUE-MESO-0007`                        |
 | Discovery Engine completo do `aidd-factory`                   | Só o subconjunto determinístico (nicho dinâmico) está implementado         | `docs/features/v2_arquitetura-aidd-ops-factory.md` §7.1 e §9.1              |
 | `.gemini/skills/` como mecanismo                              | Sincronizado, mas `confirmado: false` — o mecanismo real são as extensões  | `docs/protocolos/AGENTS-REFERENCIA-COMPLETA.md` §5                          |
 | Freebuff                                                      | Instalado, sem modo não interativo para validação automatizada             | `docs/protocolos/AGENTS-REFERENCIA-COMPLETA.md` §5                          |

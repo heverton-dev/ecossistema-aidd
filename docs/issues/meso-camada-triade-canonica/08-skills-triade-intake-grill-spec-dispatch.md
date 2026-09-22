@@ -1,7 +1,7 @@
 ---
 id: ISSUE-MESO-0008
 title: Skill Canônica Multi-Harness aidd-dispatch-runner e Encadeamento de Intake
-status: ready-for-agent
+status: done
 blocked_by: [ISSUE-MESO-0007]
 created: 2026-09-21
 source: Relatório de Melhoria 21-09-2026 — Meso-Camada da Tríade Canônica

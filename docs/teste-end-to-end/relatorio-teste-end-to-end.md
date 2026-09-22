@@ -812,3 +812,27 @@
   - `test_cli_execution_cross_platform`: **PASS** (execução determinística via CLI).
 - **Quality Gates:** Conforme Lei #1, #2, #5, #9, #13.
 - **Data da Última Auditoria:** 21/09/2026.
+
+---
+
+## 9. Meso-Camada da Tríade Canônica: `aidd-planner` e `aidd-master` (VSA Topological Dispatch)
+
+- **Objetivo da Meso-Camada:** Execução determinística e paralela de Fatias Verticais (VSA) em Git Worktrees efêmeras, roteamento de engines da Tríade Canônica e barreira de validação e convergência master.
+- **Ferramentas Tocadas:** [`tools/aidd-planner`](file:///C:/Users/trcnologia/Desktop/ecossistema-aidd/tools/aidd-planner) e [`tools/aidd-master`](file:///C:/Users/trcnologia/Desktop/ecossistema-aidd/tools/aidd-master).
+- **O que executou:**
+  1. `aidd-planner`: Implementação do compilador topológico VSA (`compilar_grafo_topologico_vsa`) com algoritmo de Kahn e subcomando `export-dispatch` (ISSUE-MESO-0002).
+  2. Quality Gate `G_DISPATCH_PIPELINE_VSA` com validação de schema Draft-07, Kahn DAG e prova que morde (ISSUE-MESO-0003).
+  3. `aidd-master`: Motor de despacho de fatias VSA em Git Worktrees efêmeras com isolamento estrito (`tools/aidd-master/scripts/dispatch_pipeline.py`) (ISSUE-MESO-0004).
+  4. `aidd-master`: Roteador especialista de engines da Tríade e injeção do Quarteto Sine Qua Non (`tools/aidd-master/scripts/engine_router.py`) (ISSUE-MESO-0005).
+  5. `aidd-master`: Barreira de validação de fronteiras de arquivos e convergência master (`tools/aidd-master/scripts/vsa_join_barrier.py`) (ISSUE-MESO-0006).
+  6. Integração do comando `ecossistema.py dispatch` e orquestrador síncrono da Tríade (ISSUE-MESO-0007).
+  7. Skill canônica multi-harness `aidd-dispatch-runner` sincronizada nos 7 harnesses (ISSUE-MESO-0008).
+- **Resultados de Testes:**
+  - `tools/aidd-planner/tests/test_vsa_compiler.py`: 6/6 passed (24/24 na suíte total do planner).
+  - `gates/test_g_dispatch_pipeline_vsa.py`: 10/10 passed (prova que morde exit 0 / exit 1).
+  - `tools/aidd-master/tests/unit/test_dispatch_pipeline.py`: 4/4 passed.
+  - `tools/aidd-master/tests/unit/test_engine_router.py`: 5/5 passed.
+  - `tools/aidd-master/tests/unit/test_vsa_join_barrier.py`: 4/4 passed (13/13 na suíte agregada do master).
+  - Sincronização de componentes: 66/66 componentes verificados com SHA-256 idêntico.
+- **Data da Última Auditoria:** 21/09/2026.
+

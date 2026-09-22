@@ -30,3 +30,9 @@ python ecossistema.py planner audit <path/to/project>
 - **DDD (Domain-Driven Design):** Bounded contexts, domain entities, and invariants.
 - **Quarteto Sine Qua Non:** Mandatory `/swagger`, `/webhooks`, `/mcp`, `/docs`.
 - **Zero Stubs:** Binary verification against placeholders and incomplete specifications.
+
+## Encadeamento Canônico de Intake
+Após gerar e validar o blueprint `PLANNER.json`:
+- **Próxima Skill:** `/aidd-dispatch-runner` (ou `python ecossistema.py dispatch --planner PLANNER.json`).
+- **Fluxo Geral:** `/aidd-grill` ➔ `/aidd-spec` ➔ `/aidd-planner` ➔ `/aidd-dispatch-runner` ➔ `aidd-master`.
+

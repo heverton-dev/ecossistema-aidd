@@ -20,4 +20,10 @@ Every specification produced by this skill must include:
 ## Efficiency Rules
 - Concise, dense Markdown. Zero conversational filler.
 - Outputs must be structured for direct insertion into `docs/planos/`.
-- Upon user approval of the specification, invoke `/aidd-tickets` immediately.
+- Upon user approval of the specification, invoke `/aidd-tickets` or proceed directly to `/aidd-planner`.
+
+## Encadeamento Canônico de Intake
+Após aprovação da especificação formal:
+- **Próxima Skill:** `/aidd-planner` (gera o blueprint formal `PLANNER.json` com DDD/BDD/SDD).
+- **Fluxo Geral:** `/aidd-grill` ➔ `/aidd-spec` ➔ `/aidd-planner` ➔ `/aidd-dispatch-runner`.
+

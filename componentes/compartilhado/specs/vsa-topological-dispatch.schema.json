@@ -1,0 +1,159 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "VSATopologicalDispatchSchema",
+  "description": "Contrato canônico formal para despacho de fatias verticais (VSA) em grafo topológico acíclico dirigido (DAG) pelas engines da Tríade Canônica (pure, open, freedom).",
+  "type": "object",
+  "required": [
+    "versao_schema",
+    "projeto_slug",
+    "fluxo_alvo",
+    "grafo_fatias",
+    "convergencia_master"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "versao_schema": {
+      "type": "string",
+      "enum": ["1.0.0"],
+      "description": "Versão estrita do schema de despacho VSA."
+    },
+    "projeto_slug": {
+      "type": "string",
+      "pattern": "^[a-z0-9_-]+$",
+      "minLength": 2,
+      "description": "Identificador slug do projeto em caixa baixa com hífens ou underlines."
+    },
+    "fluxo_alvo": {
+      "type": "string",
+      "enum": [
+        "fluxo_01_generator",
+        "fluxo_02_factory",
+        "fluxo_03_bridge"
+      ],
+      "description": "Engine alvo da Tríade Canônica para despacho das fatias."
+    },
+    "grafo_fatias": {
+      "type": "array",
+      "minItems": 1,
+      "description": "Conjunto ordenável de fatias verticais VSA a serem despachadas.",
+      "items": {
+        "$ref": "#/definitions/FatiaVSA"
+      }
+    },
+    "convergencia_master": {
+      "type": "object",
+      "required": [
+        "target_branch",
+        "merge_strategy",
+        "post_merge_suite"
+      ],
+      "additionalProperties": false,
+      "description": "Definição formal de barreira de convergência no núcleo aidd-master.",
+      "properties": {
+        "target_branch": {
+          "type": "string",
+          "enum": ["main", "master"],
+          "description": "Branch base de destino para fusão das fatias aprovadas."
+        },
+        "merge_strategy": {
+          "type": "string",
+          "enum": ["fast-forward", "merge-commit", "squash"],
+          "description": "Estratégia de integração no branch de convergência."
+        },
+        "post_merge_suite": {
+          "type": "array",
+          "minItems": 1,
+          "description": "Comandos de validação global e gates executados após a convergência de todas as fatias.",
+          "items": {
+            "type": "string",
+            "minLength": 3,
+            "pattern": "^(?!.*(?i:TODO|FIXME|PLACEHOLDER|TBD|stub|dummy|echo ok|exit 0)).+$"
+          }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "FatiaVSA": {
+      "type": "object",
+      "required": [
+        "slice_id",
+        "modulo_ddd",
+        "dependencias",
+        "isolamento",
+        "arquivos_esperados",
+        "barreira_validacao"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "slice_id": {
+          "type": "string",
+          "pattern": "^[a-z0-9_]+$",
+          "minLength": 3,
+          "description": "Identificador único da fatia vertical (ex: slice_auth, slice_pedidos)."
+        },
+        "modulo_ddd": {
+          "type": "string",
+          "minLength": 2,
+          "pattern": "^(?!.*(?i:TODO|FIXME|PLACEHOLDER|TBD|stub|dummy)).+$",
+          "description": "Nome do Bounded Context correspondente no design orientado a domínio."
+        },
+        "dependencias": {
+          "type": "array",
+          "description": "Lista de slice_ids dos quais esta fatia depende diretamente.",
+          "items": {
+            "type": "string",
+            "pattern": "^[a-z0-9_]+$",
+            "minLength": 3
+          }
+        },
+        "isolamento": {
+          "type": "string",
+          "enum": ["git-worktree"],
+          "description": "Mecanismo determinístico de isolamento de execução da fatia."
+        },
+        "arquivos_esperados": {
+          "type": "array",
+          "minItems": 1,
+          "description": "Caminhos relativos esperados gerados ou modificados pela fatia vertical.",
+          "items": {
+            "type": "string",
+            "minLength": 2,
+            "pattern": "^(?!.*(?i:TODO|FIXME|PLACEHOLDER|TBD|stub|dummy)).+$"
+          }
+        },
+        "barreira_validacao": {
+          "type": "object",
+          "required": [
+            "comandos_teste",
+            "quality_gates"
+          ],
+          "additionalProperties": false,
+          "description": "Critérios e comandos determinísticos que atestam a integridade da fatia.",
+          "properties": {
+            "comandos_teste": {
+              "type": "array",
+              "minItems": 1,
+              "description": "Comandos de testes unitários/integrados da fatia vertical.",
+              "items": {
+                "type": "string",
+                "minLength": 3,
+                "pattern": "^(?!.*(?i:TODO|FIXME|PLACEHOLDER|TBD|stub|dummy|echo ok|exit 0)).+$"
+              }
+            },
+            "quality_gates": {
+              "type": "array",
+              "minItems": 1,
+              "description": "Quality gates determinísticos obrigatórios antes de liberar o merge da fatia.",
+              "items": {
+                "type": "string",
+                "minLength": 3,
+                "pattern": "^(?!.*(?i:TODO|FIXME|PLACEHOLDER|TBD|stub|dummy)).+$"
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

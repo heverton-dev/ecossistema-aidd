@@ -438,3 +438,78 @@ regras opostas causou o incidente de mesas recursivas de 11 de setembro de 2026.
 via ORCA); `componentes/compartilhado/skills/melhoria/`, `plan/`, `orchestrate/`,
 `planos-auditoria-runner/`, `orca-plan-orchestrator/`; `ecossistema.py`
 (`cmd_melhoria`, `cmd_plan`, `cmd_orchestrate`); `docs/melhorias/`; `docs/planos/`.
+
+# Capítulo 11 — Meso-Camada: Despacho Topológico VSA em Git Worktrees
+
+## 11.1 A Necessidade da Meso-Camada
+
+A execução de sistemas complexos baseados em Vertical Slice Architecture (VSA) impõe
+um desafio estrutural: fatias verticais independentes podem ser desenvolvidas em paralelo,
+mas fatias interdependentes exigem uma ordem estrita de precedência causal. A Meso-Camada
+da Tríade Canônica resolve esse problema através de compilação topológica de dependências
+e execução em ambientes efêmeros isolados.
+
+Em vez de permitir concorrência cega ou execuções monolíticas sequenciais desnecessárias,
+o ecossistema compila o `PLANNER.json` em um Directed Acyclic Graph (DAG) governado pelo
+schema formal `vsa-topological-dispatch.schema.json`.
+
+## 11.2 Compilação Topológica (Algoritmo de Kahn)
+
+O motor do `aidd-planner` analisa as dependências declaradas entre fatias verticais e
+aplica o algoritmo de Kahn:
+1. **Identificação de Raízes:** Fatias com grau de entrada zero (sem dependências) formam
+   o Lote 0 (execução simultânea).
+2. **Resolução em Camadas:** Conforme cada lote é satisfeito, fatias dependentes são
+   destravadas e alocadas no lote topológico subsequente.
+3. **Detecção Estrita de Ciclos:** Caso exista uma dependência circular (A depende de B e
+   B depende de A), o compilador rejeita o plano deterministamente com código de saída 1.
+
+## 11.3 Isolamento em Git Worktrees Efêmeras
+
+Cada fatia vertical aprovada é despachada pelo motor `dispatch_pipeline.py` em uma
+Git Worktree dedicada (`.worktrees/<slice_id>`), ancorada em uma branch limpa
+`slice/<slice_id>` originada da branch base.
+
+- **Zero Contaminação Cruzada:** Cada fatia só enxerga os arquivos explicitamente
+  concedidos em seu escopo (`arquivos_permitidos`).
+- **Limpeza Garantida (Lei #7):** Um bloco `try-finally` invariável assegura que, em caso
+  de sucesso ou aborto por interrupção, 100% das worktrees e branches efêmeras sejam
+  desmontadas e expurgadas do disco.
+
+## 11.4 Roteamento Especialista e Quarteto Sine Qua Non
+
+O roteador especialista (`engine_router.py`) inspeciona o tipo de motor associado a cada
+fatia na Tríade:
+- `fluxo_01_generator`: Geração com TDD Red-Green (código autoral).
+- `fluxo_02_factory`: Curadoria e integração de motores Open-Source.
+- `fluxo_03_bridge`: Desacoplamento de plataformas low-code e unificação SQL.
+
+Adicionalmente, o roteador garante que toda fatia nasça em estrita conformidade com a
+**Lei #10 (Quarteto Sine Qua Non)**, injetando os pontos de montagem dinâmica para
+Swagger Studio (`/docs`), Webhook Studio (`/webhooks`), MCP Studio (`/mcp`) e Guia do
+Utilizador (`/docs/guia`).
+
+## 11.5 Barreira de Validação e Convergência Master
+
+Antes que qualquer fatia seja mesclada no repositório principal, a barreira
+`vsa_join_barrier.py` executa a auditoria de integridade:
+1. **Auditoria de Fronteiras:** Via `git status --porcelain -uall`, verifica se algum
+   arquivo fora de `arquivos_permitidos` foi modificado. Qualquer vazamento causa o
+   aborto imediato da fatia.
+2. **Quality Gates da Fatia:** Execução dos testes unitários e validações locais da fatia.
+3. **Convergência Master:** As fatias aprovadas são mescladas sequencialmente na branch
+   base (`--no-ff`), o registro de rotas do Monólito Modular (`router_registry.py`) é
+   atualizado deterministicamente, e um manifesto formal com SHA-256 é gerado para a
+   etapa de `aidd-enterprise`.
+
+## 11.6 Rastreabilidade do capítulo
+
+`componentes/compartilhado/specs/vsa-topological-dispatch.schema.json`;
+`gates/G_DISPATCH_PIPELINE_VSA.py`; `gates/test_g_dispatch_pipeline_vsa.py`;
+`tools/aidd-master/scripts/dispatch_pipeline.py`;
+`tools/aidd-master/scripts/engine_router.py`;
+`tools/aidd-master/scripts/vsa_join_barrier.py`;
+`tools/aidd-planner/aidd_planner/core/planner_engine.py` (`compilar_grafo_topologico_vsa`);
+`componentes/compartilhado/skills/aidd-dispatch-runner/SKILL.md`;
+`ecossistema.py` (`cmd_dispatch`).
+
