@@ -1,6 +1,6 @@
 {
   "$schema": "https://mimo.xiaomi.com/mimocode/config.json",
-  "commands": {
+  "command": {
     "freedom": {
       "description": "Dispara o Fluxo 03 (Low-Code / Apps Unificadas) da Tríade Canônica",
       "template": "Execute imediatamente o Fluxo 03 (aidd-freedom) da Tríade Canônica para o export: $ARGUMENTS. Use a skill aidd-freedom ou comando CLI: python ecossistema.py freedom $ARGUMENTS"

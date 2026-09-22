@@ -204,7 +204,7 @@ instalada e hooks ativos.
 **Passo a passo.** Fora de fluxo, o forge é acionado para criar componentes novos
 (`inject`), auditar projetos (`audit`) e corrigir divergência (`conform`). A criação de
 uma habilidade nova segue o caminho: `forge inject skill <nome>` → o componente nasce em
-`componentes/compartilhado/skills/<nome>/` → `python ecossistema.py components sync
+`componentes/compartilhado/skills/<nome>/` → `python ecossistema.py components sync --tipo todos
 --tipo skills` distribui para os dez assistentes → `G_COMPONENTE_AGNOSTICO` audita a
 cobertura.
 

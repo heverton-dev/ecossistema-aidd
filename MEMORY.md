@@ -30,7 +30,7 @@ O **Ecossistema AIDD** é um monorepo agnóstico que integra 8 ferramentas compl
 - **Pipeline em Worktrees & Join Barrier:** `python ecossistema.py run-plan <plano>` e `python ecossistema.py pipeline --handoff <json>`
 - **Meso-Camada VSA (Topological Dispatch):** `python ecossistema.py dispatch --planner <plano>`
 
-**Fonte Física Canônica Única:** Todo componente (`skill`, `command`, `mcp`, `hook`, `spec`) reside estritamente em `componentes/<escopo>/<tipo>/`. As pastas `.agents/`, `.claude/`, `.gemini/`, `.cursor/`, `.opencode/`, `.mimocode/`, `.codebuddy/` são alvos de materialização gerados por `scripts/gestor_componentes.py` (`python ecossistema.py components sync`).
+**Fonte Física Canônica Única:** Todo componente (`skill`, `command`, `mcp`, `hook`, `spec`) reside estritamente em `componentes/<escopo>/<tipo>/`. As pastas `.agents/`, `.claude/`, `.gemini/`, `.cursor/`, `.opencode/`, `.mimocode/`, `.codebuddy/` são alvos de materialização gerados por `scripts/gestor_componentes.py` (`python ecossistema.py components sync --tipo todos`).
 
 ---
 

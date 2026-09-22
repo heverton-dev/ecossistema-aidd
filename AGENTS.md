@@ -35,6 +35,7 @@
    - Portão: gates/G_DETERMINISMO_LEI_1.py (provado)
    - Portão: gates/G_PIPELINE_HANDOFF.py (provado)
    - Portão: gates/G_DISPATCH_PIPELINE_VSA.py (provado)
+   - Portão: gates/G_SYNC_CMD_ROT.py (provado) — forma canônica `components sync --tipo todos` e aliases públicos (`sync`, `--tipos`)
 2. **Binary Quality:** Every change must pass Quality Gates (`python ecossistema.py audit`, exit 0 = pass, exit 1 = block).
    - Portão: gates/G_SAIDA_BINARIA.py (provado)
 3. **Structured Persistence:** Persist state in audit files (JSON, SQLite), never in volatile conversation memory.

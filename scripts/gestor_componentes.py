@@ -29,6 +29,7 @@
    python scripts/gestor_componentes.py sync --tipo <tipo|todos> [--ferramenta <nome>] [--dry-run]
    python scripts/gestor_componentes.py sync --force --tipo <tipo|todos> [--ferramenta <nome>]
    python scripts/gestor_componentes.py verify --tipo <tipo|todos> [--ferramenta <nome>]
+   (--tipos e sinonimo de --tipo; sem --tipo, default 'todos' + aviso)
 """
 
 from __future__ import annotations
@@ -838,7 +839,9 @@ def main(argv=None):
     sub = parser.add_subparsers(dest="acao", required=True)
 
     p_sync = sub.add_parser("sync")
-    p_sync.add_argument("--tipo", required=True)
+    p_sync.add_argument("--tipo", default=None)
+    p_sync.add_argument("--tipos", dest="tipo_syn", default=None,
+                        help="Sinonimo de --tipo")
     p_sync.add_argument("--ferramenta", default=None)
     p_sync.add_argument("--dry-run", action="store_true")
     p_sync.add_argument("--force", action="store_true",
@@ -846,11 +849,24 @@ def main(argv=None):
     p_sync.set_defaults(func=_cmd_sync)
 
     p_verify = sub.add_parser("verify")
-    p_verify.add_argument("--tipo", required=True)
+    p_verify.add_argument("--tipo", default=None)
+    p_verify.add_argument("--tipos", dest="tipo_syn", default=None,
+                          help="Sinonimo de --tipo")
     p_verify.add_argument("--ferramenta", default=None)
     p_verify.set_defaults(func=_cmd_verify)
 
     args_ns = parser.parse_args(argv)
+
+    tipo = getattr(args_ns, "tipo", None)
+    tipo_syn = getattr(args_ns, "tipo_syn", None)
+    if tipo is not None and tipo_syn is not None and tipo != tipo_syn:
+        print('Erro: use "python ecossistema.py components sync --tipo todos".')
+        return 1
+    resolvido = tipo if tipo is not None else tipo_syn
+    if resolvido is None:
+        print("Aviso: --tipo ausente; usando 'todos'.")
+        resolvido = "todos"
+    args_ns.tipo = resolvido
 
     if args_ns.acao == "sync" and getattr(args_ns, "force", False):
         return _cmd_force_sync(args_ns)

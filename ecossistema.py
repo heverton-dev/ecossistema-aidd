@@ -423,6 +423,11 @@ def cmd_dispatch(args):
     return run_command(cmd, cwd=ROOT_DIR)
 
 
+def cmd_sync(args):
+    """Alias de `components sync` (ISSUE-USA-0001)."""
+    return cmd_components(["sync"] + list(args))
+
+
 def cmd_components(args):
     sys.path.insert(0, os.path.join(ROOT_DIR, "scripts"))
     import gestor_componentes
@@ -432,13 +437,28 @@ def cmd_components(args):
         """Sincroniza/verifica distribuicao fisica multi-harness de componentes."""
         pass
 
+    def _resolver_tipo(tipo, tipos):
+        # --tipos e sinonimo de --tipo; ausente => default 'todos' + aviso 1 linha.
+        if tipo is not None and tipos is not None and tipo != tipos:
+            print('Erro: use "python ecossistema.py components sync --tipo todos".')
+            return None
+        resolvido = tipo if tipo is not None else tipos
+        if resolvido is None:
+            print("Aviso: --tipo ausente; usando 'todos'.")
+            return "todos"
+        return resolvido
+
     @comp_cli.command("sync")
-    @click.option("--tipo", required=True, help="Tipo de componente ou 'todos'")
+    @click.option("--tipo", "tipo_opt", default=None, help="Tipo de componente ou 'todos'")
+    @click.option("--tipos", "tipos_opt", default=None, help="Sinonimo de --tipo")
     @click.option("--ferramenta", default=None, help="Nome da ferramenta alvo")
     @click.option("--dry-run", is_flag=True, default=False, help="Modo simulacao sem escrita")
     @click.option("--force", is_flag=True, default=False,
                   help="Restaura destinos divergentes e orfaos a partir da fonte")
-    def sync_cmd(tipo, ferramenta, dry_run, force):
+    def sync_cmd(tipo_opt, tipos_opt, ferramenta, dry_run, force):
+        tipo = _resolver_tipo(tipo_opt, tipos_opt)
+        if tipo is None:
+            return 1
         if force:
             ns = types.SimpleNamespace(tipo=tipo, ferramenta=ferramenta)
             return gestor_componentes._cmd_force_sync(ns)
@@ -446,9 +466,13 @@ def cmd_components(args):
         return gestor_componentes._cmd_sync(ns)
 
     @comp_cli.command("verify")
-    @click.option("--tipo", required=True, help="Tipo de componente ou 'todos'")
+    @click.option("--tipo", "tipo_opt", default=None, help="Tipo de componente ou 'todos'")
+    @click.option("--tipos", "tipos_opt", default=None, help="Sinonimo de --tipo")
     @click.option("--ferramenta", default=None, help="Nome da ferramenta alvo")
-    def verify_cmd(tipo, ferramenta):
+    def verify_cmd(tipo_opt, tipos_opt, ferramenta):
+        tipo = _resolver_tipo(tipo_opt, tipos_opt)
+        if tipo is None:
+            return 1
         ns = types.SimpleNamespace(tipo=tipo, ferramenta=ferramenta)
         return gestor_componentes._cmd_verify(ns)
 
@@ -912,6 +936,7 @@ _GATES_AUDIT = [
     "G_SKILL_ROT.py",
     "G_MIGRATION_ROT.py",
     "G_IDIOMA_LEI_4.py",
+    "G_SYNC_CMD_ROT.py",
     "G_PIPELINE_HANDOFF.py",
     "G_DISPATCH_PIPELINE_VSA.py",
 ]
@@ -1052,7 +1077,12 @@ Comandos disponíveis:
                       a partir de manifesto formal de handoff de execução
   components sync|verify --tipo <tipo|todos> [--ferramenta <nome>] [--dry-run]
                       Sincroniza/verifica distribuicao fisica multi-harness de
-                      componentes (gates/manifesto_harnesses.json)
+                      componentes (gates/manifesto_harnesses.json).
+                      Alias: `sync` (== components sync). --tipos e sinonimo
+                      de --tipo. Sem --tipo, default 'todos' + aviso.
+  sync [--tipo <tipo|todos>] [--ferramenta <nome>] [--dry-run]
+                      Alias de `components sync` (forma canonica:
+                      python ecossistema.py components sync --tipo todos)
   dependencia bootstrap [--tipo skills|mcps|todos] [--dry-run]
   dependencia add-skill --nome <n> --pacote <p> --instalar "<cmd>" --verificar <caminho> [--gitignore "a,b"]
   dependencia add-mcp --nome <n> --pacote <p> --comando <cmd> [--args "a,b"] [--env V1,V2] [--harnesses claude-code,opencode]
@@ -1170,6 +1200,8 @@ def main():
         "run-dispatch": cmd_dispatch,
         "run_dispatch": cmd_dispatch,
         "components": cmd_components,
+        "componentes": cmd_components,
+        "sync": cmd_sync,
         "dependencia": cmd_dependencia,
         "orchestrate": cmd_orchestrate,
         "plan": cmd_plan,
@@ -1189,6 +1221,8 @@ def main():
         sys.exit(exit_code or 0)
     else:
         print(f"Erro: comando desconhecido '{cmd}'. Digite 'python ecossistema.py help' para ver as opções.")
+        if cmd in ("componentes", "components-sync", "sync-components") or "sync" in cmd or "tipo" in cmd or "tipos" in cmd:
+            print('Erro: use "python ecossistema.py components sync --tipo todos".')
         sys.exit(1)
 
 if __name__ == "__main__":

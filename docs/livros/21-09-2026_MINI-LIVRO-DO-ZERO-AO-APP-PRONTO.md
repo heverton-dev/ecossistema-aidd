@@ -70,7 +70,7 @@ A entrada única e invariante do ecossistema é o arquivo `ecossistema.py`, loca
   ```
 - **Sincronizar as ferramentas em todos os programas de IA:**
   ```bash
-  python ecossistema.py components sync
+  python ecossistema.py components sync --tipo todos
   ```
 
 ---

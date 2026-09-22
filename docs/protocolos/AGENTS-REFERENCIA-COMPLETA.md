@@ -124,6 +124,7 @@ O ecossistema dispõe de Quality Gates globais em gates/:
 - gates/G_CONTRACT_ROT.py: Audita deterministicamente a árvore de rotas e formatos de resposta expostos pelo servidor em execução, comparando-os com o contrato openapi.json commitado e bloqueando qualquer contract rot (divergência de status code, query param ou tipo de campo per Lei #10).
 - gates/G_ENV_ROT.py: Audita via AST todas as leituras de variáveis de ambiente no código-fonte (os.getenv, os.environ, process.env), bloqueando qualquer divergência em relação ao .env.example (prevenção de environment rot per Lei #9).
 - gates/G_IDIOMA_LEI_4.py: Audita deterministicamente a adesão ao inglês compacto nos caminhos centrais voltados a modelos e agentes (tickets, skills, prompts, núcleo), prevenindo gasto excessivo de tokens por prosa em português (enforcement da Lei #4).
+- gates/G_SYNC_CMD_ROT.py: Audita a forma canônica `python ecossistema.py components sync --tipo todos` nos docs vivos e exige que o parser continue mapeando os aliases públicos `sync` e `--tipos` (ISSUE-USA-0001, Lei #1).
 - gates/G_SKILL_ROT.py: Resolve estaticamente todo path, script e comando CLI citado dentro de SKILL.md, bloqueando referências quebradas (prevenção de skill rot per Lei #9).
 - gates/G_MIGRATION_ROT.py: Aplica cada migração (up/down) contra um banco SQLite efêmero, provando convergência ao schema declarado e idempotência na reaplicação (prevenção de migration rot per Lei #3).
 - gates/G_DETERMINISMO_LEI_1.py: Audita via AST o uso de SDKs de LLM conhecidos (anthropic, openai, google.generativeai, litellm, langchain) dentro de gates/ e módulos declarados mecânicos, bloqueando chamada a modelo em rota que deveria ser puramente determinística (Lei #1). Limite declarado: classificação semântica "mecânico vs. cognitivo" fora do escopo estático.
@@ -178,7 +179,7 @@ Para qualquer relatório gerado em `.html` salvo em `docs/relatorios/`:
 - **Freebuff:** instalado, sem modo não interativo para validação automatizada.
 - **Kiro CLI:** `.kiro/agents/` — não faz parte do padrão de skills deste ecossistema.
 - **Cursor IDE:** `.cursor/rules/` (mecanismo de arquivo único).
-- **Fonte física canônica:** `componentes/<ferramenta ou compartilhado>/<tipo>/`. Pastas por harness são destinos gerados por `python ecossistema.py components sync`.
+- **Fonte física canônica:** `componentes/<ferramenta ou compartilhado>/<tipo>/`. Pastas por harness são destinos gerados por `python ecossistema.py components sync --tipo todos`.
 
 > **Proveniência:** testes empíricos em 2026-09-05 contra instalações reais dos 7 harnesses nesta máquina.
 

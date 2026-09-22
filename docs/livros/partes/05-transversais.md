@@ -14,7 +14,7 @@ Uma habilidade (*skill*) é um pacote de instruções versionado que qualquer as
 IA carrega para executar um procedimento específico do ecossistema. No AIDD, uma
 habilidade nasce em `componentes/compartilhado/skills/<nome>/` — a fonte física canônica
 — e é distribuída para os dez ambientes de assistente por
-`python ecossistema.py components sync`.
+`python ecossistema.py components sync --tipo todos`.
 
 O repositório tem **66 habilidades** nessa pasta e **16 comandos** em
 `componentes/compartilhado/comandos/`.
@@ -112,7 +112,7 @@ dentro de mesas no aplicativo de orquestração em 11 de setembro de 2026.
 ]
 ```
 
-Há ainda o modo de reparo: `components sync --force` restaura destinos divergentes e
+Há ainda o modo de reparo: `components sync --tipo todos --force` restaura destinos divergentes e
 órfãos a partir da fonte, e `components verify` audita sem escrever.
 
 ## 19.5 Rastreabilidade

@@ -271,6 +271,14 @@ repos:
         pass_filenames: false
         require_serial: true
 
+      - id: g-sync-cmd-rot
+        name: "G_SYNC_CMD_ROT (forma canonica de components sync + aliases)"
+        entry: python gates/G_SYNC_CMD_ROT.py
+        language: system
+        always_run: true
+        pass_filenames: false
+        require_serial: true
+
       - id: g-idioma-lei-4
         name: "G_IDIOMA_LEI_4 (ingles compacto no nucleo e tickets per Lei #4)"
         entry: python gates/G_IDIOMA_LEI_4.py

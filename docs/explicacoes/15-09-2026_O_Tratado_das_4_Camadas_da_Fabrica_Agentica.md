@@ -1179,7 +1179,7 @@ meu-projeto/
 ```
 
 ### 2.2 Sincronização Agnóstica Determinística
-O segredo da Camada 1 é o desacoplamento: o desenvolvedor e os agentes editam exclusivamente os arquivos dentro de `componentes/`. Quando o comando `python ecossistema.py components sync` é executado, um script determinístico lê os componentes e gera as configurações específicas para Claude Code, Antigravity, Cursor ou qualquer outro harness. Se amanhã surgir um novo harness no mercado, basta adicionar um novo adaptador de sincronização; o seu repositório permanece 100% soberano e inalterado.
+O segredo da Camada 1 é o desacoplamento: o desenvolvedor e os agentes editam exclusivamente os arquivos dentro de `componentes/`. Quando o comando `python ecossistema.py components sync --tipo todos` é executado, um script determinístico lê os componentes e gera as configurações específicas para Claude Code, Antigravity, Cursor ou qualquer outro harness. Se amanhã surgir um novo harness no mercado, basta adicionar um novo adaptador de sincronização; o seu repositório permanece 100% soberano e inalterado.
 
 ## 3. Ilustra
 
@@ -2879,7 +2879,7 @@ No dia a dia da fábrica agêntica, você comanda o desenvolvimento através de 
 
 ### 2.2 O Ciclo de Desenvolvimento Soberano em 5 Passos
 Para construir qualquer funcionalidade na fábrica agêntica, o engenheiro segue o roteiro canônico:
-1. **Passo 1 (Pré-Voo e Sincronização):** Executa `python ecossistema.py components sync` e roda o Super-Auditor para confirmar o estado verde da fábrica.
+1. **Passo 1 (Pré-Voo e Sincronização):** Executa `python ecossistema.py components sync --tipo todos` e roda o Super-Auditor para confirmar o estado verde da fábrica.
 2. **Passo 2 (Investigação Deliberada):** Aciona `/melhoria "quero adicionar recurso X"`. O agente analisa o grafo AST via `code-review-graph`, calcula o raio de impacto e emite um relatório com nota técnica (0 a 10).
 3. **Passo 3 (Planejamento Tipado):** O desenvolvedor aprova o relatório e aciona `/plan`. Um plano formal (`PLAN-<NNNN>`) é registrado no SQLite com tarefas atômicas e critérios binários.
 4. **Passo 4 (Execução em Worktree Isolado):** O desenvolvedor dispara `/orchestrate`. O sistema cria um Git Worktree nativo limpo, despacha os modelos do Tier correto e aplica as alterações atomicamente.

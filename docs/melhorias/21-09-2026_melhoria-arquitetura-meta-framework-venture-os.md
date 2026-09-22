@@ -193,5 +193,5 @@ Ideia Bruta do Usuário
 
 - [ ] **Etapa 1:** Especificar formalmente o schema `venture_blueprint.schema.json` em `componentes/compartilhado/specs/`.
 - [ ] **Etapa 2:** Desenvolver o Quality Gate `gates/G_VENTURE_CONFORMIDADE.py` garantindo que todo projeto de negócio gerado possua o trio Spec + Workflow + Pipeline devidamente isolado.
-- [ ] **Etapa 3:** Criar a skill unificada `aidd-venture` em `componentes/compartilhado/skills/aidd-venture/` e sincronizar para todos os harnesses via `python ecossistema.py componentes sync`.
+- [ ] **Etapa 3:** Criar a skill unificada `aidd-venture` em `componentes/compartilhado/skills/aidd-venture/` e sincronizar para todos os harnesses via `python ecossistema.py components sync --tipo todos`.
 - [ ] **Etapa 4:** Montar o projeto piloto "Novela das Frutas" como prova de conceito (PoC) auditável em `exemplos/poc_novela_frutas/`.

@@ -428,7 +428,7 @@ ecossistema-aidd/
 A regra que governa essa topologia é a de **fonte física canônica**: um componente
 (habilidade, comando, hook, MCP) nasce em `componentes/<ferramenta ou
 compartilhado>/<tipo>/` e é *distribuído* para as pastas de cada assistente por
-`python ecossistema.py components sync`. As pastas `.claude/`, `.opencode/`,
+`python ecossistema.py components sync --tipo todos`. As pastas `.claude/`, `.opencode/`,
 `.gemini/`, `.agents/`, `.cursor/`, `.mimocode/` e as demais são **destinos gerados**,
 nunca fontes. Editar um destino diretamente é um erro que o portão
 `G_COMPONENTE_AGNOSTICO` detecta.
@@ -829,7 +829,7 @@ code-review-graph >/dev/null 2>&1 || exit 0` — o que preserva o agnosticismo.
 **Hooks canônicos compartilhados** (`componentes/compartilhado/hooks/`):
 `crg_session_start.py`, `crg_update.py` e `regra10_check.py`, com invólucros `.sh` e
 `.cmd` para funcionar em POSIX e Windows. São a fonte física distribuída aos
-assistentes pelo `components sync`.
+assistentes pelo `components sync --tipo todos`.
 
 ## 5.5 Gestão de dependências e cadeia de suprimentos
 
@@ -1501,7 +1501,7 @@ instalada e hooks ativos.
 **Passo a passo.** Fora de fluxo, o forge é acionado para criar componentes novos
 (`inject`), auditar projetos (`audit`) e corrigir divergência (`conform`). A criação de
 uma habilidade nova segue o caminho: `forge inject skill <nome>` → o componente nasce em
-`componentes/compartilhado/skills/<nome>/` → `python ecossistema.py components sync
+`componentes/compartilhado/skills/<nome>/` → `python ecossistema.py components sync --tipo todos
 --tipo skills` distribui para os dez assistentes → `G_COMPONENTE_AGNOSTICO` audita a
 cobertura.
 
@@ -2725,7 +2725,7 @@ Uma habilidade (*skill*) é um pacote de instruções versionado que qualquer as
 IA carrega para executar um procedimento específico do ecossistema. No AIDD, uma
 habilidade nasce em `componentes/compartilhado/skills/<nome>/` — a fonte física canônica
 — e é distribuída para os dez ambientes de assistente por
-`python ecossistema.py components sync`.
+`python ecossistema.py components sync --tipo todos`.
 
 O repositório tem **60 habilidades** nessa pasta e **14 comandos** em
 `componentes/compartilhado/comandos/`.
@@ -2821,7 +2821,7 @@ dentro de mesas no aplicativo de orquestração em 11 de setembro de 2026.
 ]
 ```
 
-Há ainda o modo de reparo: `components sync --force` restaura destinos divergentes e
+Há ainda o modo de reparo: `components sync --tipo todos --force` restaura destinos divergentes e
 órfãos a partir da fonte, e `components verify` audita sem escrever.
 
 ## 19.5 Rastreabilidade

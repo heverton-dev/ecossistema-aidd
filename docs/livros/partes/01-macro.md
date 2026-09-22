@@ -323,7 +323,7 @@ ecossistema-aidd/
 A regra que governa essa topologia é a de **fonte física canônica**: um componente
 (habilidade, comando, hook, MCP) nasce em `componentes/<ferramenta ou
 compartilhado>/<tipo>/` e é *distribuído* para as pastas de cada assistente por
-`python ecossistema.py components sync`. As pastas `.claude/`, `.opencode/`,
+`python ecossistema.py components sync --tipo todos`. As pastas `.claude/`, `.opencode/`,
 `.gemini/`, `.agents/`, `.cursor/`, `.mimocode/` e as demais são **destinos gerados**,
 nunca fontes. Editar um destino diretamente é um erro que o portão
 `G_COMPONENTE_AGNOSTICO` detecta.
@@ -724,7 +724,7 @@ code-review-graph >/dev/null 2>&1 || exit 0` — o que preserva o agnosticismo.
 **Hooks canônicos compartilhados** (`componentes/compartilhado/hooks/`):
 `crg_session_start.py`, `crg_update.py` e `regra10_check.py`, com invólucros `.sh` e
 `.cmd` para funcionar em POSIX e Windows. São a fonte física distribuída aos
-assistentes pelo `components sync`.
+assistentes pelo `components sync --tipo todos`.
 
 ## 5.5 Gestão de dependências e cadeia de suprimentos
 

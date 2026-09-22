@@ -63,7 +63,7 @@ O resto deste arquivo é cada cômodo, devagar.
 
 **Na festa.** Não é uma cozinha. É um depósito com oito cozinhas dentro, uma porta da rua e um almoxarifado único. O que é de verdade mora no almoxarifado. O que está pendurado em cada porta é cópia.
 
-**Na casa.** Isto é um monorepo: um único depósito git. A porta da rua é `python ecossistema.py`. As oito cozinhas moram em `tools/`. O almoxarifado único mora em `componentes/`. As cópias penduradas nas portas são as pastas de cada programa de conversa (os harnesses). Quem copia é a máquina `scripts/gestor_componentes.py`, chamada por `python ecossistema.py components sync`. Quem confere se a cópia ainda é igual é `python ecossistema.py components verify`.
+**Na casa.** Isto é um monorepo: um único depósito git. A porta da rua é `python ecossistema.py`. As oito cozinhas moram em `tools/`. O almoxarifado único mora em `componentes/`. As cópias penduradas nas portas são as pastas de cada programa de conversa (os harnesses). Quem copia é a máquina `scripts/gestor_componentes.py`, chamada por `python ecossistema.py components sync --tipo todos`. Quem confere se a cópia ainda é igual é `python ecossistema.py components verify`.
 
 Regra de ouro do terreno: você edita a fonte. Você não edita a cópia. Se editar a cópia, o próximo sync apaga o seu bilhete.
 
@@ -366,7 +366,7 @@ Cartões de fora (impeccable, code-review-graph, e outros) não nascem nesta gav
 | `/dispatch`, `/aidd-dispatch` | Despacha as fatias |
 | `/melhoria`, `/plan`, `/orchestrate` | Olhar, planejar, executar obra na casa que já existe |
 | `audit` | Chama os guardas |
-| `components sync\|verify` | Copia ou confere os cartões |
+| `components sync --tipo todos\|verify` | Copia ou confere os cartões |
 | `dependencia bootstrap\|add-skill\|add-mcp\|list\|verify` | O que veio de fora |
 | `harness status\|clean` | Vê e limpa o lixo de memória dos programas de conversa |
 | `preflight-host` | Confere se Git, Node, Docker e os verificadores de receita de container estão na máquina |
@@ -759,7 +759,7 @@ Economia não é esconder passo, não é dizer "pronto" sem prova, não é corta
 
 1. **Uma fonte.** Tudo que é cartão, comando, telefone, campainha ou contrato nasce em `componentes/<escopo>/<tipo>/`. Escopo `compartilhado` vale para a casa toda. Escopo de uma cozinha vale só para ela.
 2. **Um manifesto de cópia.** `gates/manifesto_harnesses.json` diz as sete portas e o formato de cada uma. Você não copia na mão.
-3. **Sete portas, um texto.** Claude (`.claude`), Antigravity (`.agents`), OpenCode (`.opencode`), MiMo (`.mimocode`), Gemini (`.gemini/extensions`), Cursor (`.cursor`), CodeBuddy (`.codebuddy`). `python ecossistema.py components sync` materializa. `verify` confere a impressão digital.
+3. **Sete portas, um texto.** Claude (`.claude`), Antigravity (`.agents`), OpenCode (`.opencode`), MiMo (`.mimocode`), Gemini (`.gemini/extensions`), Cursor (`.cursor`), CodeBuddy (`.codebuddy`). `python ecossistema.py components sync --tipo todos` materializa. `verify` confere a impressão digital.
 4. **Um cartaz e uma memória.** `AGENTS.md` é lei. `MEMORY.md` é o que a casa já decidiu. Ponteiros nas portas não repetem a lei.
 5. **Botões em arquivo.** Tudo que é número, lista, exceção ou teto está nos JSON da seção 6. Mudou o botão, mudou o arquivo. Não mudou "o combinado de hoje".
 6. **Oito cozinhas.** `tools/aidd-*`, cada uma com o seu `AGENTS.md` local para o detalhe daquela cozinha. O cartaz da raiz continua mandando.
