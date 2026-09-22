@@ -874,3 +874,23 @@
   - `gates/G_DRIFT_NUCLEO_COMPARTILHADO.py`: exit 0 (paridade master/enterprise mantida).
   - `gates/G_LAYOUT_ENTREGA.py`: exit 0.
 - **Data da Última Auditoria:** 22/09/2026.
+
+---
+
+## 12. Auditoria Bit a Bit e Fortalecimento Contratual: `aidd-planner` e `aidd-generator` (AUDIT-0001)
+
+- **Objetivo da Auditoria:** Mapeamento integral das 11 dimensões de todas as ferramentas e fortalecimento da integridade de tipos canônicos nos contratos de handoff e consultas temporais de pesquisa.
+- **Ferramentas Tocadas:** [`tools/aidd-planner`](file:///C:/Users/trcnologia/Desktop/ecossistema-aidd/tools/aidd-planner) e [`tools/aidd-generator`](file:///C:/Users/trcnologia/Desktop/ecossistema-aidd/tools/aidd-generator).
+- **O que executou:**
+  1. `tools/aidd-planner/src/cli.py` e `planner_engine.py`: tipagem canônica estrita (`_tipo_canonico`) garantindo enums válidos em `HANDOFF_PLANNER_ENGINE.json` e `PLANNER.json`.
+  2. `tools/aidd-generator/scripts/phases/01_pesquisador.py`: enriquecimento semântico de vocabulário e filtro temporal dinâmico para repositórios ativos nos últimos 90 dias.
+  3. `tools/aidd-generator/scripts/phases/08_implementador.py`: sincronização de `obter_timeout_por_fase` para robustez em execuções concorrentes.
+  4. Execução de testes unitários completos de ambas as ferramentas:
+     - `tools/aidd-planner`: 24/24 passed (100% de cobertura).
+     - `tools/aidd-generator`: 1006 passed, 0 failed (100% de aprovação funcional).
+- **Resultados de Testes:**
+  - `pytest tools/aidd-planner/tests`: 24 passed in 1.25s.
+  - `pytest tools/aidd-generator/tests`: 1006 passed, 5 skipped in 26.50s.
+  - `docs/auditoria/manifesto_auditoria.json`: Atualizado e validado.
+- **Data da Última Auditoria:** 22/09/2026.
+

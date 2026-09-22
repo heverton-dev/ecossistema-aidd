@@ -48,7 +48,7 @@ except ImportError:
 # preservando os dois modos sem mutação de sys.path.
 try:
     from .utils_modelo import detectar_modelo_harness, obter_nome_amigavel_modelo
-    from .utils_delegacao import solicitar_llm, extrair_json_resposta, LLMNaoConfiguradoException
+    from .utils_delegacao import solicitar_llm, extrair_json_resposta, LLMNaoConfiguradoException, obter_timeout_por_fase
 except ImportError:  # pragma: no cover — execução direta (python scripts/phases/08_implementador.py)
     from utils_modelo import detectar_modelo_harness, obter_nome_amigavel_modelo
     from utils_delegacao import solicitar_llm, extrair_json_resposta, LLMNaoConfiguradoException, obter_timeout_por_fase

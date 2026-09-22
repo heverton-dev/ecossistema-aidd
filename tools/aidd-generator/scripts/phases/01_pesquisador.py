@@ -136,6 +136,29 @@ TRADUCOES_PT_EN = {
     'api': 'api',
     'cli': 'cli',
     'local': 'local',
+    'gestao': 'management',
+    'frota': 'fleet',
+    'frotas': 'fleet',
+    'entrega': 'delivery',
+    'entregas': 'delivery',
+    'motorista': 'driver',
+    'motoristas': 'driver',
+    'roteirizacao': 'routing',
+    'inteligente': 'smart',
+    'carrinha': 'van',
+    'carrinhas': 'van',
+    'veiculo': 'vehicle',
+    'veiculos': 'vehicle',
+    'logistica': 'logistics',
+    'rastreamento': 'tracking',
+    'monitoramento': 'tracking',
+    'recolha': 'pickup',
+    'devolucao': 'returns',
+    'app': 'app',
+    'aplicativo': 'mobile',
+    'sistema': 'system',
+    'pick': 'pick',
+    'offline': 'offline',
 }
 
 
@@ -174,9 +197,12 @@ class PesquisadorGitHub:
                     palavras_enriquecidas.append(traducao)
             query = ' OR '.join(palavras_enriquecidas[:6])
 
+            from datetime import timedelta
+            desde = (datetime.now(timezone.utc) - timedelta(days=90)).strftime('%Y-%m-%d')
+
             params = {
-                'q': f"{query} stars:>=100",
-                'sort': 'stars',
+                'q': f"{query} stars:>=100 pushed:>={desde}",
+                'sort': 'pushed',
                 'order': 'desc',
                 'per_page': 30
             }

@@ -1,0 +1,578 @@
+{
+  "total_skills_canonicas": 66,
+  "total_quality_gates": 48,
+  "skills": [
+    {
+      "id": "agents-sdk",
+      "tipo": "skill",
+      "descricao": "Build, debug, or review Cloudflare Agents SDK applications using the agents package."
+    },
+    {
+      "id": "aidd-bridge",
+      "tipo": "skill",
+      "descricao": "Dispara o Fluxo 03 (Low-Code / Apps Unificadas | Slash: /bridge) da Tríade Canônica. Desmonte de lock-in Lovable/v0/Bolt e migração PostgreSQL."
+    },
+    {
+      "id": "aidd-bridge-runner",
+      "tipo": "skill",
+      "descricao": "Extracts, unifies, and packages low-code projects (Lovable, v0, Bolt) for VPS deployment with PostgreSQL."
+    },
+    {
+      "id": "aidd-componentes",
+      "tipo": "skill",
+      "descricao": "Creates, updates, and synchronizes agnostic components across all ecosystem harnesses."
+    },
+    {
+      "id": "aidd-dependencias",
+      "tipo": "skill",
+      "descricao": "Installs and verifies third-party skills and MCPs against dependencias_externas.json."
+    },
+    {
+      "id": "aidd-diagnose",
+      "tipo": "skill",
+      "descricao": "Systematic scientific fault triage using hypothesis isolation, regression testing, and code review graph."
+    },
+    {
+      "id": "aidd-dispatch-runner",
+      "tipo": "skill",
+      "descricao": "Despacha fatias verticais VSA em Git Worktrees efêmeras com isolamento estrito, verificação de Quality Gates e convergência master."
+    },
+    {
+      "id": "aidd-enterprise-runner",
+      "tipo": "skill",
+      "descricao": "Injects and audits mission-critical enterprise components with SHA-256 validation."
+    },
+    {
+      "id": "aidd-factory-runner",
+      "tipo": "skill",
+      "descricao": "Application code and integration generator for multi-service stacks."
+    },
+    {
+      "id": "aidd-forge-runner",
+      "tipo": "skill",
+      "descricao": "Executes bootstrap and governance hardening on target repositories using aidd-forge."
+    },
+    {
+      "id": "aidd-freedom",
+      "tipo": "skill",
+      "descricao": "Dispara o Fluxo 03 (Low-Code / Apps Unificadas | Slash: /freedom) da Tríade Canônica. Desmonte de lock-in Lovable/v0/Bolt e migração PostgreSQL."
+    },
+    {
+      "id": "aidd-generator-runner",
+      "tipo": "skill",
+      "descricao": "Triggers autonomous software generation via 8-phase pipeline using aidd-generator."
+    },
+    {
+      "id": "aidd-grill",
+      "tipo": "skill",
+      "descricao": "Relentless Socratic interview protocol to resolve assumptions, trade-offs, and invariants before writing code."
+    },
+    {
+      "id": "aidd-grill-docs",
+      "tipo": "skill",
+      "descricao": "Socratic interview grounded in existing repository architecture, domain documentation, and invariant rules."
+    },
+    {
+      "id": "aidd-handoff",
+      "tipo": "skill",
+      "descricao": "Serializes and compacts session state into a structured markdown artifact for context rotation or agent handover."
+    },
+    {
+      "id": "aidd-livro-texto",
+      "tipo": "skill",
+      "descricao": "Generates and updates auditable corporate textbooks as PDF via pandoc and typst."
+    },
+    {
+      "id": "aidd-master-runner",
+      "tipo": "skill",
+      "descricao": "Scaffolds and integrates clean vertical slices in aidd-master architecture."
+    },
+    {
+      "id": "aidd-mcp",
+      "tipo": "skill",
+      "descricao": "Scaffolds and exposes new Model Context Protocol (MCP) servers across harnesses."
+    },
+    {
+      "id": "aidd-melhoria",
+      "tipo": "skill",
+      "descricao": "Deeply analyzes code improvements from natural language and produces structured evaluation reports."
+    },
+    {
+      "id": "aidd-open",
+      "tipo": "skill",
+      "descricao": "Dispara o Fluxo 02 (Motores Open-Source | Slash: /open) da Tríade Canônica. Curadoria e integração de engines open-source em fatias VSA."
+    },
+    {
+      "id": "aidd-ops-runner",
+      "tipo": "skill",
+      "descricao": "Agentic infrastructure meta-orchestrator for cloud and container deployments."
+    },
+    {
+      "id": "aidd-orca",
+      "tipo": "skill",
+      "descricao": "Executes multi-phase ORCA plans using isolated Git worktrees and quality gates."
+    },
+    {
+      "id": "aidd-orchestrate",
+      "tipo": "skill",
+      "descricao": "Routes plan execution between ORCA app, agent worktrees, and native execution engines."
+    },
+    {
+      "id": "aidd-orchestrator-runner",
+      "tipo": "skill",
+      "descricao": "Orquestrador mestre síncrono da Tríade Canônica. Executa qualquer fluxo com validação formal de contratos de handoff."
+    },
+    {
+      "id": "aidd-pipeline-runner",
+      "tipo": "skill",
+      "descricao": "Executa pipelines determinísticos da Tríade em Git Worktrees efêmeras com barreira de sincronização (Join Barrier) a partir de planos Markdown ou manifestos JSON."
+    },
+    {
+      "id": "aidd-plan",
+      "tipo": "skill",
+      "descricao": "Transforms analysis reports into structured audit/evolution plans in docs/planos/."
+    },
+    {
+      "id": "aidd-planner-runner",
+      "tipo": "skill",
+      "descricao": "Generates and validates canonical SDD/BDD project blueprints and fuels the Triad flows (Generator, Factory, Bridge)."
+    },
+    {
+      "id": "aidd-planos",
+      "tipo": "skill",
+      "descricao": "Generates standard templates and drafts for audit, evolution, or test plans."
+    },
+    {
+      "id": "aidd-pure",
+      "tipo": "skill",
+      "descricao": "Dispara o Fluxo 01 (Do Zero Puro | Slash: /pure) da Tríade Canônica. Geração autoral via TDD Red-Green estrito e Monólito Modular VSA."
+    },
+    {
+      "id": "aidd-skills",
+      "tipo": "skill",
+      "descricao": "Creates, optimizes, and evaluates agent skills across all ecosystem harnesses."
+    },
+    {
+      "id": "aidd-spec",
+      "tipo": "skill",
+      "descricao": "Synthesizes discussions, requirements, and decisions into a deterministic, executable technical specification."
+    },
+    {
+      "id": "aidd-tdd",
+      "tipo": "skill",
+      "descricao": "Strict Test-Driven Development protocol (Red-Green-Refactor) with zero stubs and polyglot runtime support."
+    },
+    {
+      "id": "aidd-tickets",
+      "tipo": "skill",
+      "descricao": "Decomposes specifications into atomic, incremental tracer-bullet tasks with bounded blast radius."
+    },
+    {
+      "id": "cloudflare",
+      "tipo": "skill",
+      "descricao": "Discover and choose Cloudflare products for apps, APIs, AI agents, storage, networking, and security. Use for architecture and product selection, including when the user describes a need without naming a Cloudflare product; then find the relevant skill or documentation."
+    },
+    {
+      "id": "cloudflare-email-service",
+      "tipo": "skill",
+      "descricao": "Implement or troubleshoot Cloudflare Email Sending and Email Routing integrations and their delivery configuration."
+    },
+    {
+      "id": "cloudflare-one",
+      "tipo": "skill",
+      "descricao": "Design, configure, troubleshoot, or review Cloudflare One Zero Trust and SASE deployments. Use cloudflare-one-migrations for migration planning from other vendors."
+    },
+    {
+      "id": "cloudflare-one-migrations",
+      "tipo": "skill",
+      "descricao": "Assess and plan migrations from existing VPN, SWG, or SASE platforms to Cloudflare One, including policy mapping, parity gaps, and rollout."
+    },
+    {
+      "id": "componentes-runner",
+      "tipo": "skill",
+      "descricao": "Creates, updates, and synchronizes agnostic components across all ecosystem harnesses."
+    },
+    {
+      "id": "debug-issue",
+      "tipo": "skill",
+      "descricao": "Systematically debug issues using graph-powered code navigation"
+    },
+    {
+      "id": "dependencia-runner",
+      "tipo": "skill",
+      "descricao": "Installs and verifies third-party skills and MCPs against dependencias_externas.json."
+    },
+    {
+      "id": "durable-objects",
+      "tipo": "skill",
+      "descricao": "Build, debug, or review Cloudflare Durable Objects code for persistent state and coordination."
+    },
+    {
+      "id": "explore-codebase",
+      "tipo": "skill",
+      "descricao": "Navigate and understand codebase structure using the knowledge graph"
+    },
+    {
+      "id": "fluxo-01-runner",
+      "tipo": "skill",
+      "descricao": "Executa de ponta a ponta o Fluxo 01 (Do Zero Puro) da Tríade Canônica de forma estritamente síncrona."
+    },
+    {
+      "id": "fluxo-02-runner",
+      "tipo": "skill",
+      "descricao": "Executa de ponta a ponta o Fluxo 02 (Motores Open-Source) da Tríade Canônica de forma estritamente síncrona."
+    },
+    {
+      "id": "fluxo-03-runner",
+      "tipo": "skill",
+      "descricao": "Executa de ponta a ponta o Fluxo 03 (Low-Code / Apps Unificadas) da Tríade Canônica de forma estritamente síncrona."
+    },
+    {
+      "id": "freedom",
+      "tipo": "skill",
+      "descricao": "Dispara o Fluxo 03 (Low-Code / Apps Unificadas | Slash: /freedom) da Tríade Canônica. Desmonte de lock-in Lovable/v0/Bolt e migração PostgreSQL."
+    },
+    {
+      "id": "impeccable",
+      "tipo": "skill",
+      "descricao": "Use when the user wants to design, redesign, shape, critique, audit, polish, clarify, distill, harden, optimize, adapt, animate, colorize, extract, or otherwise improve a frontend interface. Covers websites, landing pages, dashboards, product UI, app shells, components, forms, settings, onboarding, and empty states. Handles UX review, visual hierarchy, information architecture, cognitive load, accessibility, performance, responsive behavior, theming, anti-patterns, typography, fonts, spacing, layout, alignment, color, motion, micro-interactions, UX copy, error states, edge cases, i18n, and reusable design systems or tokens. Also use for bland designs that need to become bolder or more delightful, loud designs that should become quieter, live browser iteration on UI elements, or ambitious visual effects that should feel technically extraordinary. Not for backend-only or non-UI tasks."
+    },
+    {
+      "id": "mcp-creator-runner",
+      "tipo": "skill",
+      "descricao": "Scaffolds and exposes new Model Context Protocol (MCP) servers across harnesses."
+    },
+    {
+      "id": "melhoria",
+      "tipo": "skill",
+      "descricao": "Deeply analyzes code improvements from natural language and produces structured evaluation reports."
+    },
+    {
+      "id": "nextjs-on-cloudflare",
+      "tipo": "skill",
+      "descricao": "Build, migrate, and deploy Next.js apps on Cloudflare Workers with vinext. Use when starting a Next.js project on Cloudflare, moving an existing app to Workers, choosing between vinext and OpenNext, or setting up vinext for Workers. For setup, migration, or deployment, install vinext's upstream skills with `npx skills add cloudflare/vinext` if missing, then read and follow the applicable skill and docs."
+    },
+    {
+      "id": "open",
+      "tipo": "skill",
+      "descricao": "Dispara o Fluxo 02 (Motores Open-Source | Slash: /open) da Tríade Canônica. Curadoria de motores e fatias verticais VSA."
+    },
+    {
+      "id": "orca-plan-orchestrator",
+      "tipo": "skill",
+      "descricao": "Executes multi-phase ORCA plans using isolated Git worktrees and quality gates."
+    },
+    {
+      "id": "orchestrate",
+      "tipo": "skill",
+      "descricao": "Routes plan execution between ORCA app, agent worktrees, and native execution engines."
+    },
+    {
+      "id": "plan",
+      "tipo": "skill",
+      "descricao": "Transforms analysis reports into structured audit/evolution plans in docs/planos/."
+    },
+    {
+      "id": "planos-auditoria-runner",
+      "tipo": "skill",
+      "descricao": "Generates standard templates and drafts for audit, evolution, or test plans."
+    },
+    {
+      "id": "pure",
+      "tipo": "skill",
+      "descricao": "Dispara o Fluxo 01 (Do Zero Puro | Slash: /pure) da Tríade Canônica. Geração autoral via TDD Red-Green estrito e Monólito Modular VSA."
+    },
+    {
+      "id": "refactor-safely",
+      "tipo": "skill",
+      "descricao": "Plan and execute safe refactoring using dependency analysis"
+    },
+    {
+      "id": "review-changes",
+      "tipo": "skill",
+      "descricao": "Perform a structured code review using change detection and impact"
+    },
+    {
+      "id": "sandbox-migrate-to-next",
+      "tipo": "skill",
+      "descricao": "Migrate Cloudflare Sandbox apps from stable @cloudflare/sandbox to @cloudflare/sandbox@next (SDK 1.0 preview). Use sandbox-next for apps already on the preview."
+    },
+    {
+      "id": "sandbox-next",
+      "tipo": "skill",
+      "descricao": "Build or maintain Cloudflare Sandbox apps on @cloudflare/sandbox@next (SDK 1.0 preview). Use sandbox-migrate-to-next when porting a stable app."
+    },
+    {
+      "id": "sandbox-stable",
+      "tipo": "skill",
+      "descricao": "Build or maintain Cloudflare Sandbox apps on the stable @cloudflare/sandbox package. Use sandbox-next for preview apps and sandbox-migrate-to-next for stable-to-preview migrations."
+    },
+    {
+      "id": "skill-creator-runner",
+      "tipo": "skill",
+      "descricao": "Creates, optimizes, and evaluates agent skills across all ecosystem harnesses."
+    },
+    {
+      "id": "turnstile-spin",
+      "tipo": "skill",
+      "descricao": "Set up, repair, or migrate to Cloudflare Turnstile bot verification in an existing frontend and backend, including server-side Siteverify."
+    },
+    {
+      "id": "web-perf",
+      "tipo": "skill",
+      "descricao": "Audit, diagnose, or optimize website loading and interaction performance, Core Web Vitals, and Lighthouse performance scores."
+    },
+    {
+      "id": "workers-best-practices",
+      "tipo": "skill",
+      "descricao": "Cloudflare Workers best practices for production applications. Use when writing, reviewing, or configuring Workers."
+    },
+    {
+      "id": "wrangler",
+      "tipo": "skill",
+      "descricao": "Run or troubleshoot Wrangler CLI commands and configure Worker projects for local development, deployment, and Cloudflare resource management."
+    }
+  ],
+  "gates": [
+    {
+      "id": "G_ANT_LOCKIN_LEGADO.py",
+      "tipo": "quality_gate",
+      "descricao": "G_ANT_LOCKIN_LEGADO.py"
+    },
+    {
+      "id": "G_ARQUITETURA_DELIVERABLE.py",
+      "tipo": "quality_gate",
+      "descricao": "ECOSSISTEMA AIDD — QUALITY GATE: G_ARQUITETURA_DELIVERABLE"
+    },
+    {
+      "id": "G_CLI_HELP_CONSISTENCIA.py",
+      "tipo": "quality_gate",
+      "descricao": "ECOSSISTEMA AIDD — QUALITY GATE: G_CLI_HELP_CONSISTENCIA"
+    },
+    {
+      "id": "G_COMPONENTE_AGNOSTICO.py",
+      "tipo": "quality_gate",
+      "descricao": "ECOSSISTEMA AIDD — QUALITY GATE: G_COMPONENTE_AGNOSTICO"
+    },
+    {
+      "id": "G_CONTRACT_ROT.py",
+      "tipo": "quality_gate",
+      "descricao": "ECOSSISTEMA AIDD — QUALITY GATE: G_CONTRACT_ROT (ISSUE-0014 & Lei Canônica #10)"
+    },
+    {
+      "id": "G_DEPENDENCIAS_PIN_HASH.py",
+      "tipo": "quality_gate",
+      "descricao": "ECOSSISTEMA AIDD — QUALITY GATE: G_DEPENDENCIAS_PIN_HASH"
+    },
+    {
+      "id": "G_DETERMINISMO_LEI_1.py",
+      "tipo": "quality_gate",
+      "descricao": "ECOSSISTEMA AIDD — QUALITY GATE: G_DETERMINISMO_LEI_1 (Lei Canônica #1)"
+    },
+    {
+      "id": "G_DISCIPLINA_TESTE_FERRAMENTA.py",
+      "tipo": "quality_gate",
+      "descricao": "ECOSSISTEMA AIDD — QUALITY GATE: G_DISCIPLINA_TESTE_FERRAMENTA (Lei Canônica #9)"
+    },
+    {
+      "id": "G_DISPATCH_PIPELINE_VSA.py",
+      "tipo": "quality_gate",
+      "descricao": "ECOSSISTEMA AIDD — QUALITY GATE: G_DISPATCH_PIPELINE_VSA (ISSUE-MESO-0003)"
+    },
+    {
+      "id": "G_DOCS_ROT.py",
+      "tipo": "quality_gate",
+      "descricao": "G_DOCS_ROT.py"
+    },
+    {
+      "id": "G_DRIFT_ANALYZER.py",
+      "tipo": "quality_gate",
+      "descricao": "ECOSSISTEMA AIDD — QUALITY GATE: G_DRIFT_ANALYZER"
+    },
+    {
+      "id": "G_DRIFT_NUCLEO_COMPARTILHADO.py",
+      "tipo": "quality_gate",
+      "descricao": "ECOSSISTEMA AIDD — QUALITY GATE: G_DRIFT_NUCLEO_COMPARTILHADO"
+    },
+    {
+      "id": "G_ECOSSISTEMA_INTEGRIDADE.py",
+      "tipo": "quality_gate",
+      "descricao": "ECOSSISTEMA AIDD — QUALITY GATE: G_ECOSSISTEMA_INTEGRIDADE"
+    },
+    {
+      "id": "G_ENV_ROT.py",
+      "tipo": "quality_gate",
+      "descricao": "ECOSSISTEMA AIDD — QUALITY GATE: G_ENV_ROT (ISSUE-0015 / Lei Canônica #9)"
+    },
+    {
+      "id": "G_ESCRITOR_ATOMICO.py",
+      "tipo": "quality_gate",
+      "descricao": "ECOSSISTEMA AIDD — QUALITY GATE: G_ESCRITOR_ATOMICO"
+    },
+    {
+      "id": "G_ESTRUTURA_ESTADO.py",
+      "tipo": "quality_gate",
+      "descricao": "ECOSSISTEMA AIDD — QUALITY GATE: G_ESTRUTURA_ESTADO (Lei Canônica #3)"
+    },
+    {
+      "id": "G_FRONTEND_LAYERS.py",
+      "tipo": "quality_gate",
+      "descricao": "ECOSSISTEMA AIDD — QUALITY GATE: G_FRONTEND_LAYERS"
+    },
+    {
+      "id": "G_HADOLINT.py",
+      "tipo": "quality_gate",
+      "descricao": "ECOSSISTEMA AIDD — QUALITY GATE: G_HADOLINT"
+    },
+    {
+      "id": "G_HARNESS_COMPAT.py",
+      "tipo": "quality_gate",
+      "descricao": "ECOSSISTEMA AIDD — QUALITY GATE: G_HARNESS_COMPAT"
+    },
+    {
+      "id": "G_HONESTIDADE_ROTULO.py",
+      "tipo": "quality_gate",
+      "descricao": "ECOSSISTEMA AIDD — QUALITY GATE: G_HONESTIDADE_ROTULO"
+    },
+    {
+      "id": "G_IDIOMA_LEI_4.py",
+      "tipo": "quality_gate",
+      "descricao": "ECOSSISTEMA AIDD — QUALITY GATE: G_IDIOMA_LEI_4 (ISSUE-0012)"
+    },
+    {
+      "id": "G_INFRA_COMPOSE.py",
+      "tipo": "quality_gate",
+      "descricao": "ECOSSISTEMA AIDD — QUALITY GATE: G_INFRA_COMPOSE (Anti-NIH #3)"
+    },
+    {
+      "id": "G_ISOLATION_AUDIT.py",
+      "tipo": "quality_gate",
+      "descricao": "ECOSSISTEMA AIDD — QUALITY GATE: G_ISOLATION_AUDIT"
+    },
+    {
+      "id": "G_LAYOUT_ENTREGA.py",
+      "tipo": "quality_gate",
+      "descricao": "G_LAYOUT_ENTREGA.py"
+    },
+    {
+      "id": "G_LEI_DECLARA_PORTAO.py",
+      "tipo": "quality_gate",
+      "descricao": "ECOSSISTEMA AIDD — QUALITY GATE: G_LEI_DECLARA_PORTAO (ISSUE-0010)"
+    },
+    {
+      "id": "G_LIVRO_EVIDENCIA.py",
+      "tipo": "quality_gate",
+      "descricao": "G_LIVRO_EVIDENCIA.py"
+    },
+    {
+      "id": "G_LLM_PROMPT_SHIELD.py",
+      "tipo": "quality_gate",
+      "descricao": "ECOSSISTEMA AIDD — QUALITY GATE: G_LLM_PROMPT_SHIELD"
+    },
+    {
+      "id": "G_MIGRATION_ROT.py",
+      "tipo": "quality_gate",
+      "descricao": "ECOSSISTEMA AIDD — QUALITY GATE: G_MIGRATION_ROT (ISSUE-0017 / Lei Canônica #3)"
+    },
+    {
+      "id": "G_ORQUESTRADOR_SINCRONO.py",
+      "tipo": "quality_gate",
+      "descricao": "G_ORQUESTRADOR_SINCRONO.py"
+    },
+    {
+      "id": "G_PACOTE_CORE.py",
+      "tipo": "quality_gate",
+      "descricao": "G_PACOTE_CORE.py"
+    },
+    {
+      "id": "G_PIPELINE_HANDOFF.py",
+      "tipo": "quality_gate",
+      "descricao": "ECOSSISTEMA AIDD — QUALITY GATE: G_PIPELINE_HANDOFF (ISSUE-PIPE-0002)"
+    },
+    {
+      "id": "G_PORTAO_PROVA_QUE_MORDE.py",
+      "tipo": "quality_gate",
+      "descricao": "ECOSSISTEMA AIDD — QUALITY GATE: G_PORTAO_PROVA_QUE_MORDE (Lei Canônica #13)"
+    },
+    {
+      "id": "G_PROTOCOL_FALLBACK.py",
+      "tipo": "quality_gate",
+      "descricao": "ECOSSISTEMA AIDD — QUALITY GATE: G_PROTOCOL_FALLBACK"
+    },
+    {
+      "id": "G_PROTOTYPE_REWRITE.py",
+      "tipo": "quality_gate",
+      "descricao": "ECOSSISTEMA AIDD — QUALITY GATE: G_PROTOTYPE_REWRITE"
+    },
+    {
+      "id": "G_QUARTETO_SINE_QUA_NON.py",
+      "tipo": "quality_gate",
+      "descricao": "ECOSSISTEMA AIDD — QUALITY GATE: G_QUARTETO_SINE_QUA_NON (ISSUE-0024 & Lei #10)"
+    },
+    {
+      "id": "G_RESUMO_USUARIO.py",
+      "tipo": "quality_gate",
+      "descricao": "G_RESUMO_USUARIO.py"
+    },
+    {
+      "id": "G_SAIDA_BINARIA.py",
+      "tipo": "quality_gate",
+      "descricao": "ECOSSISTEMA AIDD — QUALITY GATE: G_SAIDA_BINARIA (Lei Canônica #2)"
+    },
+    {
+      "id": "G_SEGREDOS.py",
+      "tipo": "quality_gate",
+      "descricao": "ECOSSISTEMA AIDD — QUALITY GATE: G_SEGREDOS"
+    },
+    {
+      "id": "G_SKILL_ROT.py",
+      "tipo": "quality_gate",
+      "descricao": "ECOSSISTEMA AIDD — QUALITY GATE: G_SKILL_ROT (ISSUE-0016 / Lei Canônica #9)"
+    },
+    {
+      "id": "G_STACK_PADRAO_OURO.py",
+      "tipo": "quality_gate",
+      "descricao": "ECOSSISTEMA AIDD — QUALITY GATE: G_STACK_PADRAO_OURO (ISSUE-0025 & Lei #11)"
+    },
+    {
+      "id": "G_SUPPLY_CHAIN.py",
+      "tipo": "quality_gate",
+      "descricao": "ECOSSISTEMA AIDD — QUALITY GATE: G_SUPPLY_CHAIN"
+    },
+    {
+      "id": "G_SYNC_CMD_ROT.py",
+      "tipo": "quality_gate",
+      "descricao": "G_SYNC_CMD_ROT.py"
+    },
+    {
+      "id": "G_TEMPLATE_FORGE_ROT.py",
+      "tipo": "quality_gate",
+      "descricao": "ECOSSISTEMA AIDD — QUALITY GATE: G_TEMPLATE_FORGE_ROT (Lei #1, #8, #12, #13)"
+    },
+    {
+      "id": "G_TESTES_REAIS.py",
+      "tipo": "quality_gate",
+      "descricao": "ECOSSISTEMA AIDD — QUALITY GATE: G_TESTES_REAIS (v2)"
+    },
+    {
+      "id": "G_TRANSACTION_LOG_LRU.py",
+      "tipo": "quality_gate",
+      "descricao": "ECOSSISTEMA AIDD — QUALITY GATE: G_TRANSACTION_LOG_LRU"
+    },
+    {
+      "id": "G_UNIVERSAL_HARNESS.py",
+      "tipo": "quality_gate",
+      "descricao": "ECOSSISTEMA AIDD — QUALITY GATE: G_UNIVERSAL_HARNESS"
+    },
+    {
+      "id": "G_USER_FACING_PTBR.py",
+      "tipo": "quality_gate",
+      "descricao": "G_USER_FACING_PTBR.py"
+    },
+    {
+      "id": "G_ZERO_HEADLESS.py",
+      "tipo": "quality_gate",
+      "descricao": "ECOSSISTEMA AIDD — QUALITY GATE: G_ZERO_HEADLESS (Lei Canônica #7 e #8)"
+    }
+  ]
+}

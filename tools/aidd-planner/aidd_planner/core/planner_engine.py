@@ -171,9 +171,9 @@ def gerar_template_plano(
                     {
                         "nome": "RegistroPrincipal",
                         "atributos": {
-                            "id": "str",
-                            "nome": "str",
-                            "status": "str",
+                            "id": "string",
+                            "nome": "string",
+                            "status": "string",
                             "criado_em": "datetime"
                         },
                         "regras_invariantes": [

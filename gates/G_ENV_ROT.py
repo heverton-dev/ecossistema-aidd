@@ -61,6 +61,7 @@ IGNORE_DIRS = {
     ".turbo",
     ".temp",
     "target_project",
+    "projetos",
 }
 
 # Variáveis providas nativamente pelo kernel/shell do Sistema Operacional.

@@ -47,6 +47,35 @@ MAPA_FLUXOS = {
 }
 
 
+def _tipo_canonico(valor: object) -> str:
+    """Normaliza um token de tipo (Python ou textual) para o enum canônico do contrato."""
+    mapa = {
+        "": "string",
+        "str": "string",
+        "string": "string",
+        "text": "string",
+        "texto": "string",
+        "<class 'str'>": "string",
+        "int": "integer",
+        "integer": "integer",
+        "<class 'int'>": "integer",
+        "bool": "boolean",
+        "boolean": "boolean",
+        "<class 'bool'>": "boolean",
+        "float": "float",
+        "<class 'float'>": "float",
+        "datetime": "datetime",
+        "date": "datetime",
+        "timestamp": "datetime",
+        "<class 'datetime.datetime'>": "datetime",
+        "json": "json",
+        "dict": "json",
+        "<class 'dict'>": "json",
+    }
+    chave = valor.lower() if isinstance(valor, str) else str(valor)
+    return mapa.get(chave, "string")
+
+
 def cmd_init(args: argparse.Namespace) -> int:
     fluxo_chave = str(args.fluxo).lower()
     fluxo_alvo = MAPA_FLUXOS.get(fluxo_chave)
@@ -113,7 +142,7 @@ def cmd_init(args: argparse.Namespace) -> int:
                 {
                     "nome": ent.get("nome"),
                     "campos": [
-                        {"nome": k, "tipo": str(v), "obrigatorio": True}
+                        {"nome": k, "tipo": _tipo_canonico(v), "obrigatorio": True}
                         for k, v in ent.get("atributos", {}).items()
                     ] or [{"nome": "id", "tipo": "integer", "obrigatorio": True}],
                 }
