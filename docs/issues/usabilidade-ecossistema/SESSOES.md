@@ -73,7 +73,7 @@ Must enforce:
 
 **Touches:** `AGENTS.md`, `GEMINI.md`, `CODEX.md`, `MIMOCODE.md`, `OPENCODE.md`, `ecossistema.py` (preflight), `gates/G_USER_FACING_PTBR.py`, `docs/glossario/` · **Blocked by:** Sessão 1
 
-- [ ] Concluída
+- [x] Concluída
 
 ```bash
 Execute docs/issues/usabilidade-ecossistema/04-perfil-linguagem-leigo.md.

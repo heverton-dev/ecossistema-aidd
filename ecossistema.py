@@ -936,6 +936,7 @@ _GATES_AUDIT = [
     "G_SKILL_ROT.py",
     "G_MIGRATION_ROT.py",
     "G_IDIOMA_LEI_4.py",
+    "G_USER_FACING_PTBR.py",
     "G_SYNC_CMD_ROT.py",
     "G_LAYOUT_ENTREGA.py",
     "G_PIPELINE_HANDOFF.py",
@@ -1141,7 +1142,7 @@ Comandos disponíveis:
                       Monitora e executa higiene preventiva contra estouro de memória
                       e disco nos bancos de dados e caches dos harnesses (OpenCode,
                       MiMoCode, Claude, Cursor, Antigravity)
-  preflight-host [--json] [--fix] [--dry-run]
+  preflight-host [--json] [--fix] [--dry-run] [--perfil leigo|tecnico]
                       Diagnostico instantaneo (< 2s) de binarios do sistema
                       (Git, Node, Docker, Hadolint, Checkov). --json para saida
                       estruturada, --fix para bootstrapper assistido multi-OS

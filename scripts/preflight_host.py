@@ -718,9 +718,12 @@ def main():
                         help="Bootstrapper assistido: monta plano de instalacao e executa com confirmacao explicita")
     parser.add_argument("--dry-run", action="store_true",
                         help="Exibe os comandos de instalacao sem executar nada (so com --fix)")
+    parser.add_argument("--perfil", choices=["leigo", "tecnico"], default="tecnico",
+                        help="Perfil de linguagem das respostas (ISSUE-USA-0004)")
     args = parser.parse_args()
 
     resultado = executar_preflight()
+    resultado["perfil_linguagem"] = args.perfil
 
     if args.fix:
         if args.json:
@@ -731,6 +734,15 @@ def main():
         print(json.dumps(resultado, indent=2, ensure_ascii=False))
     else:
         print(_formatar_tabela(resultado))
+        if args.perfil == "leigo":
+            print()
+            print("=== PERFIL LEIGO (fale assim com o usuario) ===")
+            print("1. Uma frase simples dizendo o que fazer ou o que aconteceu.")
+            print("2. No maximo 5 topicos curtos. Toda sigla traduzida na primeira vez.")
+            print("3. Comandos sempre completos e copiaveis (Na Casa).")
+            print("4. Proibido jargao sem traducao: harness, quality gate, drift, handoff,")
+            print("   worktree, VSA, fatia vertical, pipeline, orquestrador, preflight,")
+            print("   E2E, BDD, SDD, Quarteto Sine Qua Non.")
     sys.exit(0 if resultado["sucesso"] else 1)
 
 

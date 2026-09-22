@@ -1,18 +1,27 @@
-# Gemini Agent Pointer
-Canonical governance and instructions: [AGENTS.md](AGENTS.md)
+# Ponte do Gemini — regras canônicas em [AGENTS.md](AGENTS.md)
 
-## Mandatory Answer Shape (Rule 10 / Law #4)
-1. One top sentence stating what to do or what happened. No preamble.
-2. Short bulleted body. Facts, numbers, findings. No narration of steps taken.
-3. One closing suggestion block, separated from the body.
-Forbidden: introductions, restating the request, recapping what was just said, listing options without a recommendation.
+## Forma da Resposta (Rule 10 / Lei #4)
+Fale em português simples, sem jargão. Dupla fala: “Na Festa” (frase curta para gente) e “Na Casa” (comando completo para copiar).
 
-*Note on Hook Enforcement:* Automated stop-hook enforcement is unavailable in Gemini CLI / Antigravity due to lack of a native response-interception hook event; compliance is maintained by convention.
+1. Primeira frase: o que fazer ou o que aconteceu. Sem enrolação.
+2. Depois: poucos tópicos curtos. Fatos, números, achados. Sem narrar passos.
+3. Por fim: uma sugestão de próximo passo.
 
-## Universal & Agnostic Flow Activation (Law #6)
-- Any user input referencing `/freedom`, `freedom`, `/pure`, `pure`, `/open`, `/aidd-open`, `open`, `/factory`, `/bridge`, `bridge`, `/run-plan`, `run-plan`, `/pipeline`, `pipeline`, `/dispatch`, `dispatch`, `/aidd-dispatch`, or natural language equivalents (e.g. "desacoplar lovable", "criar do zero puro", "migrar open source", "executar plano", "rodar pipeline", "despachar fatias", "rodar dispatch") MUST be intercepted immediately by the agent as the direct invocation of the corresponding Canonical Flow, Pipeline or Tool.
-- **Importante para o Fluxo 02 no Antigravity/AGY:** No Antigravity CLI (`agy`), o comando `/open <path>` é reservado internamente para abrir arquivos no editor do sistema. Portanto, no AGY utilize o comando `/aidd-open` (ou `/factory` ou menção natural) para disparar o Fluxo 02 sem conflito de namespace.
-- **NEVER** reply that the command is unknown, unsupported, or invalid.
-- Immediately execute the corresponding skill (`freedom`, `pure`, `aidd-open`, `open`, `aidd-bridge-runner`, `aidd-pipeline-runner`, `aidd-dispatch-runner`) or CLI command (`python ecossistema.py freedom|pure|open|bridge|run-plan|pipeline|dispatch <args>`).
-- If arguments are missing, ask for the required input (e.g., path to export, plan path, or handoff JSON) while confirming that the flow is active.
+Proibido: saudação, repetir o pedido, recapitular o que acabou de ser dito, listar opções sem recomendar uma.
 
+**Siglas:** traduza na primeira vez (ex.: VSA — Arquitetura por Fatias Verticais).  
+**Comandos:** sempre completos e copiáveis.
+
+*Sobre a campainha automática:* no Gemini CLI / Antigravity não há hook de interceptação de resposta. O cumprimento aqui é por convenção + o portão `G_USER_FACING_PTBR` no fim do fluxo.
+
+## Nomenclatura (sem ambiguidade)
+- **Rule 10 (Formato de Resposta)** — a forma da resposta. Nunca chame isso de “Lei #10”.
+- **Lei #10 (Quarteto)** — os 4 estúdios obrigatórios: `/api`, `/webhook`, `/mcp`, `/docs`. Nunca chame isso de “Rule 10”.
+- **Lei #4 (Idioma)** — PT-BR simples para o usuário; inglês compacto no núcleo do agente.
+
+## Ativação universal dos fluxos (Lei #6)
+- Qualquer menção a `/freedom`, `freedom`, `/pure`, `pure`, `/open`, `/aidd-open`, `open`, `/factory`, `/bridge`, `bridge`, `/run-plan`, `run-plan`, `/pipeline`, `pipeline`, `/dispatch`, `dispatch`, `/aidd-dispatch` — ou linguagem natural equivalente (ex.: “desacoplar lovable”, “criar do zero”, “migrar open source”, “executar plano”, “rodar pipeline”) — DEVE ser tratada como a invocação imediata do fluxo correspondente.
+- **Importante para o Fluxo 02 no Antigravity/AGY:** o comando `/open <path>` é reservado para abrir arquivos no editor. Use `/aidd-open` (ou `/factory`) para disparar o Fluxo 02.
+- **NUNCA** responda que o comando é desconhecido ou inválido.
+- Execute a skill (`freedom`, `pure`, `aidd-open`, `open`, `aidd-bridge-runner`, `aidd-pipeline-runner`, `aidd-dispatch-runner`) ou o CLI (`python ecossistema.py freedom|pure|open|bridge|run-plan|pipeline|dispatch <args>`).
+- Se faltar argumento, peça só o necessário (caminho do export, do plano ou do JSON) e confirme que o fluxo está ativo.

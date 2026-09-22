@@ -1,7 +1,7 @@
 ---
 id: ISSUE-USA-0004
 title: Perfil de linguagem leigo e GEMINI.md em PT-BR simples (A2)
-status: open
+status: done
 blocked_by: []
 created: 2026-09-22
 source: 22-09-2026_RELATORIO-ACHADOS-USABILIDADE-ECOSSISTEMA-AIDD.md (A2)
@@ -28,9 +28,9 @@ source: 22-09-2026_RELATORIO-ACHADOS-USABILIDADE-ECOSSISTEMA-AIDD.md (A2)
 
 ## Acceptance criteria
 
-- [ ] Zero ambiguous “Lei #10”/“Rule 10” misuse in harness files.
-- [ ] `GEMINI.md` 100% simple PT-BR; no English “Mandatory Answer Shape”.
-- [ ] `preflight-host --perfil leigo` changes agent answer shape (documented contract).
-- [ ] `G_USER_FACING_PTBR` exit 1 on jargon fixture; exit 0 on clean README.
-- [ ] Glossary present in generated `/docs`.
-- [ ] `python ecossistema.py audit` exit 0.
+- [x] Zero ambiguous “Lei #10”/“Rule 10” misuse in harness files — `AGENTS.md` rotulado `Rule 10 (Formato de Resposta)` e `Lei #10 (Quarteto; distinto de Rule 10)`.
+- [x] `GEMINI.md` 100% simple PT-BR; no English “Mandatory Answer Shape”.
+- [x] `preflight-host --perfil leigo` changes agent answer shape (documented contract) — bloco `=== PERFIL LEIGO ===` impresso.
+- [x] `G_USER_FACING_PTBR` exit 1 on jargon fixture; exit 0 on clean README — 4/4 bite tests.
+- [x] Glossary present in generated `/docs` — `docs/glossario/glossario.md`.
+- [x] `python ecossistema.py audit` exit 0 — `G_USER_FACING_PTBR`/`G_HARNESS_COMPAT` (45 gates)/`G_SAIDA_BINARIA`/`G_IDIOMA` exit 0.

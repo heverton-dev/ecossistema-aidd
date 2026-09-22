@@ -271,6 +271,14 @@ repos:
         pass_filenames: false
         require_serial: true
 
+      - id: g-user-facing-ptbr
+        name: "G_USER_FACING_PTBR (jargao explicado em superficies de usuario)"
+        entry: python gates/G_USER_FACING_PTBR.py
+        language: system
+        always_run: true
+        pass_filenames: false
+        require_serial: true
+
       - id: g-layout-entrega
         name: "G_LAYOUT_ENTREGA (posicionamento da entrega vs legado irmao)"
         entry: python gates/G_LAYOUT_ENTREGA.py

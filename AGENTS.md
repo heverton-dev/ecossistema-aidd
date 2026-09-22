@@ -10,7 +10,7 @@
 
 - **Thinking constraint:** Think strictly in compact English. No meta-deliberation. Focus only on architectural invariants and edge cases. Under 150 words of reasoning.
 - **Execution limit:** Resolve tasks in 3 to 5 discrete steps. Stop and request confirmation if more steps are required.
-- **Output format (Rule 10):** Silent executor. Return code edits and 1-line execution status only. Do not explain what was changed unless explicitly asked. Do not repeat code in conversational reply.
+- **Output format (Rule 10 — Formato de Resposta):** Silent executor. Return code edits and 1-line execution status only. Do not explain what was changed unless explicitly asked. Do not repeat code in conversational reply. (Distinct from Lei #10 (Quarteto).)
   - When prose is requested, strictly shape answers as:
     1. One top sentence stating what to do or what happened. No preamble.
     2. Short bulleted body. Facts, numbers, findings. No narration of steps taken.
@@ -44,6 +44,7 @@
    - Portão: gates/G_ESTRUTURA_ESTADO.py (provado)
 4. **Extreme Token Economy:** Minimalist prompts, compact English core rules, dense PT-BR user responses only when requested.
    - Portão: gates/G_IDIOMA_LEI_4.py (provado)
+   - Portão: gates/G_USER_FACING_PTBR.py (provado) — jargão explicado em README/`--help`/perfil leigo (Rule 10)
    - Portão: .claude/hooks/regra10_check.py (provado)
 5. **Zero Stubs / Zero Mocks:** 100% functional, typed production code with real tests.
    - Portão: gates/G_TESTES_REAIS.py (provado)
@@ -58,7 +59,7 @@
    - Portão: gates/G_SKILL_ROT.py (provado)
    - Portão: gates/G_DISCIPLINA_TESTE_FERRAMENTA.py (provado)
    - Portão: gates/G_TEMPLATE_FORGE_ROT.py (provado)
-10. **Quarteto Sine Qua Non Dinâmico:** Todo projeto gerado ou evoluído no ecossistema DEVE nascer nativamente com 4 pilares completos: OpenAPI/Swagger Studio (`/api`), Webhook Studio (`/webhook`), MCP Studio (`/mcp`) e Central de Documentação / Guia do Utilizador (`/docs`). Todas as rotas e contratos devem cobrir 100% dos módulos do sistema e atualizar-se de forma autônoma e dinâmica a cada novo módulo (ex: autenticação).
+10. **Quarteto Sine Qua Non Dinâmico (Lei #10 — Quarteto; distinto de Rule 10 Formato de Resposta):** Todo projeto gerado ou evoluído no ecossistema DEVE nascer nativamente com 4 pilares completos: OpenAPI/Swagger Studio (`/api`), Webhook Studio (`/webhook`), MCP Studio (`/mcp`) e Central de Documentação / Guia do Utilizador (`/docs`). Todas as rotas e contratos devem cobrir 100% dos módulos do sistema e atualizar-se de forma autônoma e dinâmica a cada novo módulo (ex: autenticação).
    - Portão: gates/G_CONTRACT_ROT.py (provado)
    - Portão: gates/G_QUARTETO_SINE_QUA_NON.py (provado)
 11. **Padrão-Ouro de Stack Tecnológica:** Todo fluxo (`generator`, `master`, `factory`, `bridge`) DEVE gerar o Frontend em **Next.js + TypeScript + Tailwind CSS** (Backend em Python puro + SQLite WAL, API em OpenAPI 3.1), conforme definido em `docs/protocolos/PADRAO-OURO-STACK-TECNOLOGICA.md` — padrão validado em `proj_ctt`. Só muda se o plano estruturado ou o prompt do usuário especificar outra stack de forma explícita para aquela camada; silêncio nunca é licença para gerar outra coisa (ex.: HTML Python simples só é aceitável se pedido expressamente).
