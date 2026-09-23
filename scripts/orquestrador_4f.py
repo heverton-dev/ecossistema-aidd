@@ -15,19 +15,17 @@ def run_cmd(cmd, cwd=None, exit_on_fail=True, input_data=None):
     env["NO_COLOR"] = "1"
     env["TERM"] = "dumb"
     
-    # Executa com Popen para ler output em streaming ao inves de segurar na RAM (evita deadlock de IO)
+    # Para não travar Nodejs CLIs esperando TTY, injetamos o input nativamente via pipe do CMD
+    comando = cmd
+    if input_data:
+        comando = f'type "{input_data}" | {cmd}'
+        
     proc = subprocess.Popen(
-        cmd, shell=True, cwd=cwd, text=True,
-        stdin=subprocess.PIPE if input_data else None,
+        comando, shell=True, cwd=cwd, text=True,
         stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
         env=env, encoding="utf-8", errors="replace",
         bufsize=1
     )
-    
-    if input_data:
-        # Envia input, mas sem bloquear a leitura
-        proc.stdin.write(input_data)
-        proc.stdin.close()
         
     def heartbeat():
         start = time.time()
@@ -95,17 +93,14 @@ def main():
         print(f"[+] Isolando Worktree...")
         run_cmd(f"git worktree add -b {branch} {wt_path}")
         
-        print(f"[+] Lendo Input Prompt: {fase.get('input_prompt')}")
+        print(f"[+] Lendo Input Prompt via nativo: {fase.get('input_prompt')}")
         input_file = repo_root / fase.get("input_prompt")
-        input_data = ""
-        if input_file.exists():
-            with open(input_file, "r", encoding="utf-8") as f:
-                input_data = f.read()
-        else:
+        
+        if not input_file.exists():
             print(f"[-] AVISO: Prompt input não encontrado em {input_file}")
             
         print(f"[+] Acionando Agente ({fase.get('harness')} | {fase.get('model')})...")
-        run_cmd(comando, cwd=wt_path, exit_on_fail=True, input_data=input_data if input_data else None)
+        run_cmd(comando, cwd=wt_path, exit_on_fail=True, input_data=str(input_file).replace('/', '\\') if input_file.exists() else None)
         
         print(f"[+] Verificando Output Handoff...")
         handoff_file = wt_path / handoff
