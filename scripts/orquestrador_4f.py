@@ -8,32 +8,58 @@ import time
 import threading
 from pathlib import Path
 
-def run_cmd(cmd, cwd=None, exit_on_fail=True, input_data=None):
-    print(f"[ORCHESTRATOR 4F] Executando em TTY Efêmero: {cmd}")
+def run_cmd_tty(cmd, cwd=None, input_data=None, expected_handoff=None):
+    print(f"[ORCHESTRATOR 4F] Acionando Agente em TTY Efêmero: {cmd}")
     env = os.environ.copy()
     
-    # Monta o pipe nativo do windows
     comando = cmd
     if input_data:
         comando = f'type "{input_data}" | {cmd}'
         
-    # Injeção estrutural: Criação de TTY Físico (Nova Janela CMD)
-    # Isso resolve a Síndrome do Node.js IsTTY falso.
     if sys.platform == "win32":
-        # /WAIT bloqueia o python até a janela fechar
-        # cmd /c fecha o popup quando o processo concluir
-        # O titulo da janela leva a marcação do Pipeline
-        comando_tty = f'start "AIDD TTY Efemero - Pipeline 4F" /WAIT cmd /c "{comando}"'
+        # Sem /WAIT para nao travar. Lancamos o popup autonomo.
+        window_title = f"AIDD_TTY_Efemero_{time.time()}"
+        comando_tty = f'start "{window_title}" cmd /c "{comando}"'
+        subprocess.run(comando_tty, shell=True, cwd=cwd, env=env)
+        
+        if expected_handoff:
+            print(f"[WATCHDOG] Monitorando entrega de '{expected_handoff.name}'...")
+            start_wait = time.time()
+            handoff_ready = False
+            last_size = -1
+            stable_count = 0
+            
+            while True:
+                time.sleep(2)
+                if expected_handoff.exists():
+                    current_size = expected_handoff.stat().st_size
+                    if current_size == last_size and current_size > 0:
+                        stable_count += 1
+                        if stable_count >= 3:  # 6 segundos sem mudancas no arquivo = LLM Terminou
+                            handoff_ready = True
+                            break
+                    else:
+                        last_size = current_size
+                        stable_count = 0
+                        
+                if time.time() - start_wait > 3600:
+                    print("[WATCHDOG] Timeout extremo (1h). Abortando.")
+                    break
+                    
+            if handoff_ready:
+                print(f"[WATCHDOG] Handoff detectado e estavel! Puxando a tomada da TUI...")
+                subprocess.run(f'taskkill /F /FI "WINDOWTITLE eq {window_title}*" /T', shell=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+                # Taskkill tb mata o sub-processo cmd /c
+                return True
     else:
-        # Fallback linux/mac
-        comando_tty = comando
+        # Fallback linux
+        subprocess.run(comando, shell=True, cwd=cwd, env=env)
+        return True
 
-    print(f"[TELEMETRIA] Aguardando janela efêmera TTY concluir a fase... (veja o pop-up)")
-    
-    res = subprocess.run(
-        comando_tty, shell=True, cwd=cwd, env=env
-    )
-    
+def run_cmd(cmd, cwd=None, exit_on_fail=True):
+    # Execucao nativa oculta padrao para cmds git, etc
+    print(f"[ORCHESTRATOR 4F] Executando: {cmd}")
+    res = subprocess.run(cmd, shell=True, cwd=cwd, text=True)
     if res.returncode != 0 and exit_on_fail:
         print(f"[ORCHESTRATOR 4F] FALHA CRÍTICA. Exit {res.returncode}")
         sys.exit(res.returncode)
@@ -88,7 +114,8 @@ def main():
             print(f"[-] AVISO: Prompt input não encontrado em {input_file}")
             
         print(f"[+] Acionando Agente ({fase.get('harness')} | {fase.get('model')})...")
-        run_cmd(comando, cwd=wt_path, exit_on_fail=True, input_data=str(input_file).replace('/', '\\') if input_file.exists() else None)
+        handoff_expected = wt_path / fase.get("output_handoff")
+        run_cmd_tty(comando, cwd=wt_path, input_data=str(input_file).replace('/', '\\') if input_file.exists() else None, expected_handoff=handoff_expected)
         
         print(f"[+] Verificando Output Handoff...")
         handoff_file = wt_path / handoff
