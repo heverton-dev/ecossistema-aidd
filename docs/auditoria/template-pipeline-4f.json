@@ -18,15 +18,15 @@
       "model": "opencode/big-pickle",
       "input_prompt": "docs/protocolos/auditoria/input_fase_2_arquiteto.txt",
       "comando_terminal": "opencode --pure --auto --agent -m opencode/big-pickle",
-      "output_handoff": ".agents/skills/aidd-melhoria-v2/PLANO-EVOLUCAO.md"
+      "output_handoff": "docs/auditoria/aidd-melhoria-v2/PLANO-EVOLUCAO.md"
     },
     {
       "nome": "Fase_3_Construtor",
       "harness": "agy",
       "model": "gemini-3.8-flash-high",
-      "input_prompt": ".agents/skills/aidd-melhoria-v2/PLANO-EVOLUCAO.md",
+      "input_prompt": "docs/auditoria/aidd-melhoria-v2/PLANO-EVOLUCAO.md",
       "comando_terminal": "agy --model gemini-3.8-flash-high --dangerously-skip-permissions",
-      "output_handoff": ".agents/skills/aidd-melhoria-v2/IMPLEMENTACAO_DONE.txt"
+      "output_handoff": "docs/auditoria/aidd-melhoria-v2/IMPLEMENTACAO_DONE.txt"
     },
     {
       "nome": "Fase_4_Inspetor_Retorno",
