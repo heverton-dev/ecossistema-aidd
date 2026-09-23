@@ -9,33 +9,63 @@ import threading
 from pathlib import Path
 
 def run_cmd_tty(cmd, cwd=None, input_data=None, expected_handoff=None):
-    print(f"[ORCHESTRATOR 4F] Acionando Agente em TTY Efêmero: {cmd}")
+    print(f"[ORCHESTRATOR 4F] Acionando Agente em TTY Interativo Efêmero: {cmd}")
     env = os.environ.copy()
     
-    comando = cmd
-    if input_data:
-        comando = f'type "{input_data}" | {cmd}'
-        
     if sys.platform == "win32":
-        # Sem /WAIT para nao travar. Lancamos o popup autonomo.
-        window_title = f"AIDD_TTY_Efemero_{time.time()}"
-        comando_tty = f'start "{window_title}" cmd /c "{comando}"'
+        window_title = f"AIDD_TTY_Efemero_{int(time.time())}"
+        
+        # Prepara prompt em arquivo local na worktree para leitura segura
+        prompt_txt = ""
+        if input_data and Path(input_data).exists():
+            prompt_txt = Path(input_data).read_text(encoding="utf-8").strip()
+            local_prompt_path = Path(cwd) / "PROMPT_FASE.txt"
+            local_prompt_path.write_text(prompt_txt, encoding="utf-8")
+        
+        # Script PowerShell interativo visível para o usuário acompanhar ao vivo
+        launcher_ps1 = Path(cwd) / "iniciar_agente.ps1"
+        launcher_code = f"""
+$Host.UI.RawUI.WindowTitle = "{window_title}"
+Write-Host "============================================================" -ForegroundColor Cyan
+Write-Host "  AIDD 4F - AGENTE INTERATIVO AO VIVO" -ForegroundColor Green
+Write-Host "  Worktree: $PWD" -ForegroundColor Yellow
+Write-Host "  Comando: {cmd}" -ForegroundColor DarkGray
+Write-Host "============================================================" -ForegroundColor Cyan
+Write-Host ""
+
+if (Test-Path "PROMPT_FASE.txt") {{
+    $prompt = Get-Content "PROMPT_FASE.txt" -Raw
+    & {cmd} $prompt
+}} else {{
+    & {cmd}
+}}
+
+Write-Host ""
+Write-Host "============================================================" -ForegroundColor Cyan
+Write-Host "  Execução do Agente finalizada. Pressione Enter para fechar." -ForegroundColor Green
+Write-Host "============================================================" -ForegroundColor Cyan
+Read-Host
+"""
+        launcher_ps1.write_text(launcher_code, encoding="utf-8")
+        
+        # Abre nova janela visível no Windows
+        comando_tty = f'start "{window_title}" powershell -ExecutionPolicy Bypass -NoExit -File "{launcher_ps1}"'
         subprocess.run(comando_tty, shell=True, cwd=cwd, env=env)
         
         if expected_handoff:
-            print(f"[WATCHDOG] Monitorando entrega de '{expected_handoff.name}'...")
+            print(f"[WATCHDOG] Janela interativa aberta. Monitorando entrega de '{expected_handoff.name}'...")
             start_wait = time.time()
             handoff_ready = False
             last_size = -1
             stable_count = 0
             
             while True:
-                time.sleep(2)
+                time.sleep(3)
                 if expected_handoff.exists():
                     current_size = expected_handoff.stat().st_size
                     if current_size == last_size and current_size > 0:
                         stable_count += 1
-                        if stable_count >= 3:  # 6 segundos sem mudancas no arquivo = LLM Terminou
+                        if stable_count >= 3:  # 9 segundos estável = concluído
                             handoff_ready = True
                             break
                     else:
@@ -47,13 +77,12 @@ def run_cmd_tty(cmd, cwd=None, input_data=None, expected_handoff=None):
                     break
                     
             if handoff_ready:
-                print(f"[WATCHDOG] Handoff detectado e estavel! Puxando a tomada da TUI...")
+                print(f"[WATCHDOG] Handoff detectado e estável! Finalizando TTY interativo...")
                 subprocess.run(f'taskkill /F /FI "WINDOWTITLE eq {window_title}*" /T', shell=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
-                # Taskkill tb mata o sub-processo cmd /c
                 return True
     else:
         # Fallback linux
-        subprocess.run(comando, shell=True, cwd=cwd, env=env)
+        subprocess.run(cmd, shell=True, cwd=cwd, env=env)
         return True
 
 def run_cmd(cmd, cwd=None, exit_on_fail=True):
@@ -68,6 +97,8 @@ def run_cmd(cmd, cwd=None, exit_on_fail=True):
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--manifest", required=True)
+    parser.add_argument("--force", action="store_true", help="Força re-execução ignorando cache")
+    parser.add_argument("--fase", help="Executa exclusivamente uma fase específica")
     args = parser.parse_args()
 
     manifest_path = Path(args.manifest).resolve()
@@ -94,9 +125,13 @@ def main():
         comando = fase.get("comando_terminal")
         handoff = fase.get("output_handoff")
         
+        if args.fase and args.fase != nome:
+            print(f"[PULANDO] Fase {nome} (filtro por fase: {args.fase})")
+            continue
+
         print(f"\n---> INICIANDO FASE {i}: {nome}")
         
-        if handoff:
+        if handoff and not args.force and not args.fase:
             handoff_base_path = repo_root / handoff
             if handoff_base_path.exists() and handoff_base_path.stat().st_size > 0:
                 print(f"[CACHE] Memória detectada! O arquivo '{handoff_base_path.name}' já está consolidado no projeto principal.")
