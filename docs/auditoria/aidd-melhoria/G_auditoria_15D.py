@@ -37,7 +37,9 @@ def run_gate(markdown_path):
     sys.exit(0)
 
 if __name__ == "__main__":
-    default_target = os.path.join(os.path.dirname(__file__), "aidd-melhoria-15D.md")
-    target = sys.argv[1] if len(sys.argv) > 1 else (default_target if os.path.exists(default_target) else "aidd-melhoria-15D.md")
+    revisado_target = os.path.join(os.path.dirname(__file__), "LAUDO-15D-REVISADO.md")
+    inicial_target = os.path.join(os.path.dirname(__file__), "LAUDO-15D-INICIAL.md")
+    default_target = revisado_target if os.path.exists(revisado_target) else inicial_target
+    target = sys.argv[1] if len(sys.argv) > 1 else default_target
     run_gate(target)
 

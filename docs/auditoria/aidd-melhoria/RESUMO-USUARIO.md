@@ -15,10 +15,10 @@ A ferramenta `aidd-melhoria` passou por um ciclo completo de auditoria e evoluç
 
 | Fase | Agente / Harness | Função | Entrega | Status |
 | :--- | :--- | :--- | :--- | :--- |
-| **Fase 1** | Mimo Flash | Inspetor Inicial | Laudo 15-D Inicial (`aidd-melhoria-15D.md`) | Aprovado |
+| **Fase 1** | Mimo Flash | Inspetor Inicial | Laudo 15-D Inicial (`LAUDO-15D-INICIAL.md`) | Aprovado |
 | **Fase 2** | OpenCode | Arquiteto de Software | Plano de Evolução Técnica (`PLANO-EVOLUCAO.md`) | Aprovado |
 | **Fase 3** | Antigravity (AGY) | Construtor | Módulo de Isolamento (`isolamento.py`) e Suite de Testes | Concluído |
-| **Fase 4** | Claude Opus | Inspetor de Retorno | Laudo 15-D Revisado com Honestidade de Rótulo | Aprovado (EXIT 0) |
+| **Fase 4** | Claude Opus | Inspetor de Retorno | Laudo 15-D Revisado (`LAUDO-15D-REVISADO.md`) | Aprovado (EXIT 0) |
 
 ---
 
@@ -36,7 +36,7 @@ A ferramenta `aidd-melhoria` passou por um ciclo completo de auditoria e evoluç
 
 **Verificar conformidade do Laudo 15-D:**
 ```bash
-python docs/auditoria/aidd-melhoria/G_auditoria_15D.py docs/auditoria/aidd-melhoria/aidd-melhoria-15D-REVISADO.md
+python docs/auditoria/aidd-melhoria/G_auditoria_15D.py docs/auditoria/aidd-melhoria/LAUDO-15D-REVISADO.md
 ```
 
 **Executar auditoria das fatias de isolamento implementadas:**

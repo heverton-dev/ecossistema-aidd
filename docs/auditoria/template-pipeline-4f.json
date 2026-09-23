@@ -2,15 +2,15 @@
   "pipeline_id": "auditoria-linear-4f",
   "target_tool": "aidd-melhoria",
   "session_id": "auto_generated",
-  "definition_of_done": "docs/auditoria/aidd-melhoria/DOD-aidd-melhoria.md",
+  "definition_of_done": "docs/auditoria/aidd-melhoria/DOD.md",
   "fases": [
     {
       "nome": "Fase_1_Inspetor",
       "harness": "mimo",
       "model": "xiaomi-token-plan-sgp/mimo-v2.6-flash",
-      "input_prompt": "docs/auditoria/aidd-melhoria/comando_chat_prompt.txt",
+      "input_prompt": "docs/auditoria/aidd-melhoria/PROMPT-FASE-1-INSPETOR.txt",
       "comando_terminal": "mimo --pure -m xiaomi-token-plan-sgp/mimo-v2.6-flash",
-      "output_handoff": "docs/auditoria/aidd-melhoria/aidd-melhoria-15D.md"
+      "output_handoff": "docs/auditoria/aidd-melhoria/LAUDO-15D-INICIAL.md"
     },
     {
       "nome": "Fase_2_Arquiteto",
@@ -32,9 +32,9 @@
       "nome": "Fase_4_Inspetor_Retorno",
       "harness": "claude",
       "model": "opus",
-      "input_prompt": "docs/auditoria/aidd-melhoria/comando_retorno_prompt.txt",
+      "input_prompt": "docs/auditoria/aidd-melhoria/PROMPT-FASE-4-RETORNO.txt",
       "comando_terminal": "claude --dangerously-skip-permissions --chrome --model opus",
-      "output_handoff": "docs/auditoria/aidd-melhoria/aidd-melhoria-15D-REVISADO.md"
+      "output_handoff": "docs/auditoria/aidd-melhoria/LAUDO-15D-REVISADO.md"
     }
   ]
 }

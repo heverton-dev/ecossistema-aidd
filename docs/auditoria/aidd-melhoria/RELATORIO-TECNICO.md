@@ -14,14 +14,16 @@
 - `6e5fabd`: chore(audit) Finalização da worktree e merge da Fase 4 Inspetor de Retorno
 
 ## 3. Estrutura Canônica de Arquivos da Auditoria (`docs/auditoria/aidd-melhoria/`)
-- `DOD-aidd-melhoria.md`: Critérios de aceitação da Definition of Done.
+- `DOD.md`: Critérios de aceitação da Definition of Done.
 - `G_auditoria_15D.py`: Script determinístico de Quality Gate para validação das 15 dimensões.
-- `aidd-melhoria-15D.md`: Laudo 15-D inicial emitido pelo Inspetor (Fase 1).
+- `LAUDO-15D-INICIAL.md`: Laudo 15-D inicial emitido pelo Inspetor (Fase 1).
+- `PROMPT-FASE-1-INSPETOR.txt`: Prompt canônico de entrada do Inspetor (Fase 1).
 - `PLANO-EVOLUCAO.md`: Plano de arquitetura emitido pelo Arquiteto (Fase 2).
-- `aidd-melhoria-15D-REVISADO.md`: Laudo 15-D final emitido pelo Inspetor de Retorno (Fase 4).
+- `LAUDO-15D-REVISADO.md`: Laudo 15-D final emitido pelo Inspetor de Retorno (Fase 4).
+- `PROMPT-FASE-4-RETORNO.txt`: Prompt canônico de entrada do Inspetor de Retorno (Fase 4).
 - `RESUMO-USUARIO.md`: Resumo executivo em linguagem acessível (Lei #1 e Lei #4).
 - `RELATORIO-TECNICO.md`: Documentação técnica factual e rastreabilidade (Lei #1 e Lei #8).
 
 ## 4. Quality Gates e Atestado Binário
-- `python docs/auditoria/aidd-melhoria/G_auditoria_15D.py docs/auditoria/aidd-melhoria/aidd-melhoria-15D-REVISADO.md` -> **EXIT 0** (Aprovado)
+- `python docs/auditoria/aidd-melhoria/G_auditoria_15D.py docs/auditoria/aidd-melhoria/LAUDO-15D-REVISADO.md` -> **EXIT 0** (Aprovado)
 - `pytest tests/test_melhoria_isolamento.py` -> **2 passed in 0.35s** (Aprovado)
