@@ -1,0 +1,40 @@
+{
+  "pipeline_id": "auditoria-linear-4f",
+  "target_tool": "aidd-melhoria",
+  "session_id": "auto_generated",
+  "definition_of_done": "docs/auditoria/aidd-melhoria/DOD-aidd-melhoria.md",
+  "fases": [
+    {
+      "nome": "Fase_1_Inspetor",
+      "harness": "a_definir_pelo_usuario",
+      "model": "a_definir_pelo_usuario",
+      "input_prompt": "docs/auditoria/aidd-melhoria/comando_chat_prompt.txt",
+      "comando_terminal": "a_definir_comando_execucao",
+      "output_handoff": "docs/auditoria/aidd-melhoria/aidd-melhoria-15D.md"
+    },
+    {
+      "nome": "Fase_2_Arquiteto",
+      "harness": "a_definir_pelo_usuario",
+      "model": "a_definir_pelo_usuario",
+      "input_prompt": "docs/protocolos/auditoria/input_fase_2_arquiteto.txt",
+      "comando_terminal": "a_definir_comando_execucao",
+      "output_handoff": ".agents/skills/aidd-melhoria/PLANO-EVOLUCAO.md"
+    },
+    {
+      "nome": "Fase_3_Construtor",
+      "harness": "a_definir_pelo_usuario",
+      "model": "a_definir_pelo_usuario",
+      "input_prompt": ".agents/skills/aidd-melhoria/PLANO-EVOLUCAO.md",
+      "comando_terminal": "a_definir_comando_execucao",
+      "output_handoff": ".agents/skills/aidd-melhoria/IMPLEMENTACAO_DONE.txt"
+    },
+    {
+      "nome": "Fase_4_Inspetor_Retorno",
+      "harness": "a_definir_pelo_usuario",
+      "model": "a_definir_pelo_usuario",
+      "input_prompt": "docs/auditoria/aidd-melhoria/comando_chat_prompt.txt",
+      "comando_terminal": "a_definir_comando_execucao",
+      "output_handoff": "docs/auditoria/aidd-melhoria/aidd-melhoria-15D.md"
+    }
+  ]
+}

@@ -99,8 +99,12 @@ Every robust application in the ecosystem originates from **`aidd-forge`** (supr
   - Engine: `tools/aidd-master/scripts/dispatch_pipeline.py` & `engine_router.py` & `vsa_join_barrier.py` (Kahn DAG, worktrees efêmeras, barreira de validação e convergência master).
   - CLI: `python ecossistema.py dispatch --planner <plano>` ou `python ecossistema.py dispatch --dispatch <json>`
   - Skills: `aidd-dispatch-runner`
+- **PIPELINE LINEAR DE AUDITORIA 4 FASES (Slash: `/audit-4f` e `/aidd-auditor`):**
+  - Engine: `docs/protocolos/PIPELINE-AUDITORIA-4F.md` & `componentes/compartilhado/skills/aidd-auditor-4f-runner` (Execução 4F: Inspetor, Arquiteto, Construtor, Retorno).
+  - CLI: `python ecossistema.py audit-4f --manifest <json>`
+  - Skills: `aidd-auditor-4f-runner`
 
-**Interoperabilidade Universal dos Slash Commands:** Em harnesses sem suporte a slash commands customizados na UI ou com colisões de namespace (como `/open` no Google Antigravity CLI), qualquer entrada do usuário referenciando `/pure`, `pure`, `/open`, `/aidd-open`, `open`, `/freedom`, `freedom`, `/factory`, `/bridge`, `/run-plan`, `run-plan`, `/pipeline`, `pipeline`, `/dispatch`, `dispatch` ou `/aidd-dispatch` DEVE ser interceptada pelo agente como a invocação imediata do respectivo fluxo ou comando do ecossistema. Silêncio ou erro de "comando não suportado" é estritamente proibido.
+**Interoperabilidade Universal dos Slash Commands:** Em harnesses sem suporte a slash commands customizados na UI ou com colisões de namespace (como `/open` no Google Antigravity CLI), qualquer entrada do usuário referenciando `/pure`, `pure`, `/open`, `/aidd-open`, `open`, `/freedom`, `freedom`, `/factory`, `/bridge`, `/run-plan`, `run-plan`, `/pipeline`, `pipeline`, `/dispatch`, `dispatch`, `/aidd-dispatch`, `/audit-4f`, `audit-4f` ou `/aidd-auditor` DEVE ser interceptada pelo agente como a invocação imediata do respectivo fluxo ou comando do ecossistema. Silêncio ou erro de "comando não suportado" é estritamente proibido.
 
 **Universal Convergence Funnel:** All 3 flows mandatorily converge into `aidd-master` (Harmonização em Monólito Modular: VSA de domínio + camada horizontal compartilhada) -> `aidd-enterprise` (SHA-256 resilience and audit) -> `aidd-ops` (VPS deployment, sops+age, and Uptime Kuma), delivering the dynamic *Quarteto Sine Qua Non* (`/api`, `/webhook`, `/mcp`, `/docs`).
 
