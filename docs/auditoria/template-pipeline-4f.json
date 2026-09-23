@@ -32,9 +32,9 @@
       "nome": "Fase_4_Inspetor_Retorno",
       "harness": "claude",
       "model": "opus",
-      "input_prompt": "docs/auditoria/aidd-melhoria-v2/comando_chat_prompt.txt",
+      "input_prompt": "docs/auditoria/aidd-melhoria-v2/comando_retorno_prompt.txt",
       "comando_terminal": "claude --dangerously-skip-permissions --chrome --model opus",
-      "output_handoff": "docs/auditoria/aidd-melhoria-v2/aidd-melhoria-15D.md"
+      "output_handoff": "docs/auditoria/aidd-melhoria-v2/aidd-melhoria-15D-REVISADO.md"
     }
   ]
 }

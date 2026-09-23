@@ -1,0 +1,13 @@
+Invoque um subagente Flash para auditar a ferramenta 'aidd-melhoria' e mande a ele estritamente a seguinte instrução:
+
+You are a strict System Auditor. Execute the Lens 15-D Architectural Audit on the 'aidd-melhoria' skill.
+1. Use your tools to read the canonical template file located exactly at:
+docs/protocolos/TEMPLATE-AUDITORIA-FERRAMENTA.md
+2. Use your tools to read and analyze the entire source code of the target skill at:
+.agents/skills/aidd-melhoria/
+3. Based on the source code, meticulously fill out the 15 dimensions of the template. If a dimension is missing in the source code (e.g., no Quality Gate or Fallback logic), explicitly write "FAILED: Not implemented" for that dimension.
+4. Save the generated Markdown file exactly at:
+docs/auditoria/aidd-melhoria-v2/aidd-melhoria-15D-REVISADO.md
+5. Run the Quality Gate script to assert your output:
+python docs/auditoria/aidd-melhoria-v2/G_auditoria_15D.py docs/auditoria/aidd-melhoria-v2/aidd-melhoria-15D-REVISADO.md
+6. If the script returns EXIT 1, fix the missing parameters in your Markdown file and re-run the gate until EXIT 0 is achieved.
