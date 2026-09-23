@@ -168,7 +168,8 @@ def interromper_pipeline_gracefully(
     Interrompe o fluxo da ferramenta gracefully registrando a falha e preservando o estado factual.
     Gera arquivo de log de estado e atualiza handoff sem perda de dados.
     """
-    estado.status = "FALLBACK_ACIONADO"
+    if estado.status != "INTERROMPIDO":
+        estado.status = "FALLBACK_ACIONADO"
     estado.registrar_erro(estado.etapa_atual, motivo, detalhes)
     
     if arquivo_log:
