@@ -1,0 +1,5 @@
+{
+  "name": "aidd-evolucao-runner",
+  "version": "1.0.0",
+  "description": "Motor agnóstico do Pipeline de Evolução Técnica gerado a partir do Plano de Evolução."
+}

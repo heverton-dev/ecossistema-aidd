@@ -996,6 +996,48 @@ def cmd_audit_4f(args):
     ]
     return subprocess.run(cmd).returncode
 
+def cmd_evolucao(args):
+    """Motor sequencial do Pipeline de Evolução gerado a partir do Plano de Evolução."""
+    import sys
+    from pathlib import Path
+    import subprocess
+    
+    manifest_val = None
+    if "--manifest" in args:
+        try:
+            idx = args.index("--manifest")
+            manifest_val = args[idx + 1]
+        except (ValueError, IndexError):
+            print("Erro: Forneça o caminho do arquivo após --manifest.")
+            return 1
+    elif len(args) > 0 and not args[0].startswith("-"):
+        tool_name = args[0]
+        candidato = Path("docs") / "auditoria" / tool_name / "PLANO-EVOLUCAO.json"
+        if candidato.exists():
+            manifest_val = str(candidato)
+        else:
+            # Se só existir o Markdown, tenta compilar automaticamente
+            md_candidato = Path("docs") / "auditoria" / tool_name / "PLANO-EVOLUCAO.md"
+            if md_candidato.exists():
+                print(f"[AUTO] Compilando {md_candidato.name} para {candidato.name}...")
+                from scripts.compilador_plano_evolucao import compilar_plano_evolucao
+                compilar_plano_evolucao(md_candidato, Path("docs/auditoria/CONFIG-EXECUCAO-USUARIO.json"))
+                manifest_val = str(candidato)
+            else:
+                print(f"Erro: Plano de evolução não encontrado em 'docs/auditoria/{tool_name}/'.")
+                return 1
+    else:
+        print("Erro: Forneça o nome da ferramenta (ex: python ecossistema.py evolucao aidd-melhoria) ou --manifest <json>.")
+        return 1
+
+    cmd = [
+        sys.executable,
+        "-u",
+        str(Path("scripts") / "orquestrador_4f.py"),
+        "--manifest", manifest_val
+    ]
+    return subprocess.run(cmd).returncode
+
 def cmd_audit(args):
     # NIH #4 (Fase 2-Gates3): o runner proprio dos quality gates foi
     # substituido pelo framework pre-commit. 'audit' DELEGA para
@@ -1073,7 +1115,9 @@ def cmd_status(args):
         "aidd-planner-runner",
         "orca-plan-orchestrator",
         "planos-auditoria-runner",
-        "componentes-runner"
+        "componentes-runner",
+        "aidd-auditor-4f-runner",
+        "aidd-evolucao-runner"
     ]
     for skill in skills_list:
         path = os.path.join(ROOT_DIR, "componentes", "compartilhado", "skills", skill, "SKILL.md")
@@ -1092,6 +1136,8 @@ def cmd_status(args):
     print("  /enterprise <tipo> <nome> -> Dispara aidd-enterprise")
     print("  /ops [requisito]        -> Dispara aidd-ops (infraestrutura)")
     print("  /orchestrate [plano]    -> Dispara orca-plan-orchestrator (ORCA ADE)")
+    print("  /audit-4f [manifesto]   -> Dispara pipeline linear de auditoria 4F")
+    print("  /evolucao [ferramenta]  -> Dispara pipeline de evolução a partir do plano")
     print("  /melhoria <pedido>      -> Dispara analise profunda pre-planejamento (docs/melhorias/)")
     print("  /plan <nome>            -> Dispara planos-auditoria-runner")
     print("  /factory --plano <arq> --pasta <dest> -> Dispara aidd-factory (geracao de stack)")
@@ -1183,6 +1229,12 @@ Comandos disponíveis:
                       o PDF (exige pandoc + typst, ou os pacotes pypandoc-binary e
                       typst). Para a versao com texto explicativo, use a skill
                       /aidd-livro-texto depois.
+  audit-4f --manifest <json>
+                      Executa o Pipeline Linear de Auditoria 4 Fases (Inspetor, Arquiteto,
+                      Construtor, Retorno) em Git Worktrees efêmeras.
+  evolucao <ferramenta> [--manifest <json>]
+                      Executa o Pipeline de Evolução Técnica gerado a partir do Plano
+                      de Evolução em Git Worktrees efêmeras.
   audit               Executa o Meta-Quality Gate de Integridade
   harness status|clean
                       Monitora e executa higiene preventiva contra estouro de memória
@@ -1257,6 +1309,9 @@ def main():
         "melhoria": cmd_melhoria,
         "livro": cmd_livro,
         "audit-4f": cmd_audit_4f,
+        "aidd-audit-4f": cmd_audit_4f,
+        "evolucao": cmd_evolucao,
+        "aidd-evolucao": cmd_evolucao,
         "audit": cmd_audit,
         "harness": cmd_harness,
         "preflight-host": cmd_preflight_host,
