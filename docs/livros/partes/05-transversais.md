@@ -10,8 +10,13 @@ agnosticidade e a síntese consolidada da economia de tokens.
 
 ## 19.1 O que é uma habilidade no AIDD
 
-Uma habilidade (*skill*) é um pacote de instruções versionado que qualquer assistente de
-IA carrega para executar um procedimento específico do ecossistema. No AIDD, uma
+Pense numa receita de bolo plastificada, pendurada na cozinha: qualquer cozinheiro que
+entrar naquela cozinha — não importa se é o titular ou um substituto de última hora —
+segue os mesmos passos e produz o mesmo bolo, porque a receita está ali, escrita, não
+na cabeça de uma pessoa só. Uma habilidade (*skill*) é essa receita para o assistente
+de IA: um pacote de instruções versionado que qualquer assistente carrega para executar
+um procedimento específico do ecossistema, sempre da mesma forma, não importa qual
+"cozinheiro" (Claude, Gemini, Cursor…) está de plantão. No AIDD, uma
 habilidade nasce em `componentes/compartilhado/skills/<nome>/` — a fonte física canônica
 — e é distribuída para os dez ambientes de assistente por
 `python ecossistema.py components sync --tipo todos`.
@@ -117,8 +122,8 @@ Há ainda o modo de reparo: `components sync --tipo todos --force` restaura dest
 
 ## 19.5 Rastreabilidade
 
-`componentes/compartilhado/skills/` (60 habilidades);
-`componentes/compartilhado/comandos/` (14 comandos); `scripts/gestor_componentes.py`;
+`componentes/compartilhado/skills/` (66 habilidades, contagem em 23/09/2026);
+`componentes/compartilhado/comandos/` (16 comandos); `scripts/gestor_componentes.py`;
 `ecossistema.py::cmd_components`; `docs/protocolos/AGENTS-REFERENCIA-COMPLETA.md` §3 e §5.
 
 # Capítulo 20 — O catálogo completo de portões

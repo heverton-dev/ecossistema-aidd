@@ -8,7 +8,7 @@ import json
 from pathlib import Path
 
 ROOT_DIR = Path(__file__).resolve().parents[2]
-LIVRO_PATH = ROOT_DIR / "docs" / "livros" / "22-09-2026_O-GRANDE-LIVRO-VISUAL-DA-AUDITORIA-AIDD.md"
+LIVRO_PATH = ROOT_DIR / "docs" / "livros" / "23-09-2026_O-GRANDE-LIVRO-VISUAL-DA-AUDITORIA-AIDD.md"
 CATALOGO_PATH = ROOT_DIR / "docs" / "auditoria" / "catalogo_micro_ferramentas_e_gates.json"
 
 with open(CATALOGO_PATH, encoding="utf-8") as f:
@@ -40,7 +40,7 @@ title: "O Grande Livro Visual da Auditoria AIDD"
 subtitle: "A Fábrica de Software Perfeita: Uma Viagem Pelas 8 Ferramentas Macro, 66 Micro-Ferramentas, 48 Guardas e 91 Componentes"
 author:
   - "Equipe de Engenharia Canônica do Ecossistema AIDD e Antigravity Agent"
-date: "22 de setembro de 2026"
+date: "23 de setembro de 2026"
 lang: pt-BR
 toc: true
 toc-depth: 3
@@ -112,8 +112,24 @@ metaforas_macro = {
     }
 }
 
+# Cada ferramenta tem um papel DIFERENTE na linha de produção — nunca resuma todas como
+# "o mestre de obras que constrói", ou o leitor sai achando que forge/planner erguem
+# parede, quando na verdade só generator/factory/bridge fazem isso. Esta frase-ponte
+# amarra a metáfora da festa ao papel técnico real de cada uma, sem contradizer nenhuma.
+pontes_tecnicas = {
+    "aidd-forge": "Antes de qualquer parede ser erguida, é este ferreiro que crava as estacas no chão e escreve, na própria parede da oficina, as regras que toda construção futura vai ter que obedecer. Sem terreno preparado e sem regra escrita, não existe planta nem construção — é por isso que ele entra primeiro, e é por isso que ele mesmo não ergue tijolo nenhum.",
+    "aidd-planner": "Com o terreno pronto e as regras na parede, é aqui que o sonho do cliente vira desenho técnico: cada cômodo, medida, porta e contrato descritos em detalhe antes de qualquer prego ser batido. O arquiteto entrega a planta — quem constrói é o próximo mestre da linha.",
+    "aidd-generator": "Com a planta em mãos, este é o motor que efetivamente ergue a construção do zero: vagão por vagão, a ideia pura vira aplicação funcionando, sem depender de nenhum tijolo pré-fabricado de terceiros.",
+    "aidd-factory": "Também constrói a partir da mesma planta, mas em vez de erguer tijolo por tijolo, monta a casa com módulos open-source já prontos, testados por milhares de outras obras e encaixados sob medida no projeto.",
+    "aidd-bridge": "Aqui a casa já existe — só que presa a um dono que cobra aluguel para você nem abrir a porta. Este é o chaveiro que destranca as paredes de vendor lock-in e devolve as chaves de verdade para o dono real do código.",
+    "aidd-master": "Com as construções de pé, é este maestro que garante que todas as alas do prédio funcionem como um único edifício coerente — nenhuma fatia vertical pisa no cano ou na fiação da vizinha.",
+    "aidd-enterprise": "É o inspetor que sela cada ambiente com um lacre inviolável (assinatura criptográfica) antes de qualquer chave ser entregue para o mundo real — se o lacre estiver quebrado, a entrega não sai.",
+    "aidd-ops": "É quem liga a energia do prédio já pronto, tranca as portas externas com fechaduras fortes e instala as câmeras de vigilância — para que a construção funcione 24 horas por dia sem ninguém arrombar a fechadura enquanto todos dormem.",
+}
+
 for idx, t in enumerate(tools_order, 1):
     m = metaforas_macro[t]
+    ponte = pontes_tecnicas[t]
     conteudo_ficha = fichas_macro.get(t, "")
     partes.append(f"""
 ## Capítulo {idx}: {m['nome']}
@@ -121,7 +137,7 @@ for idx, t in enumerate(tools_order, 1):
 ### Na Festa (A Metáfora Memorável)
 > {m['festa']}
 
-Imagine que você precisa construir um prédio. Esta ferramenta é o mestre de obras especializado exatamente nessa missão. Ela não adivinha, não improvisa e não erra porque possui trilhos de aço milimétricos.
+{ponte}
 
 ### Na Casa (A Foto Técnica Rigorosa e as 11 Dimensões)
 - **Caminho Físico no Disco:** [`{m['caminho']}`](file:///{Path(ROOT_DIR / m['caminho']).resolve().as_posix()})
@@ -229,7 +245,7 @@ Quando você junta as **8 Ferramentas Macro**, as **66 Micro-Ferramentas**, os *
 
 No Ecossistema AIDD, nenhuma linha de código nasce sem plano, nenhuma ferramenta opera sem contrato e nenhum portão se abre sem que a prova matemática tenha sido atendida.
 
-*Fim da Auditoria Canônica — 22 de Setembro de 2026.*
+*Fim da Auditoria Canônica — 23 de Setembro de 2026.*
 """)
 
 LIVRO_PATH.write_text("\n".join(partes), encoding="utf-8")

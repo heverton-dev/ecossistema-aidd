@@ -16,11 +16,19 @@ gabarito de sete itens usado no restante do livro. O capítulo 10 trata da evolu
 
 ## 6.1 O que é um fluxo no AIDD
 
-Um fluxo é uma **esteira síncrona de sete etapas**, executada por
-`scripts/orquestrador_sincrono.py`, em que cada etapa valida formalmente o contrato de
-handoff antes de passar a bola para a seguinte. Se qualquer etapa falhar, o pipeline é
-abortado imediatamente com código de saída 1 — não existe continuação com dado
-fabricado nem etapa pulada silenciosamente.
+- **Na festa:** pense numa corrida de revezamento. O primeiro corredor (Forge) só corre
+  depois que a pista está demarcada e as regras da prova estão penduradas no mural
+  (o terreno e a governança). O segundo (Planner) corre com o mapa do percurso na mão
+  — é ele quem desenha o trajeto que todos os próximos vão seguir. Só então o terceiro
+  corredor entra em cena para construir de fato o resultado — e é o único trecho da
+  corrida em que a equipe muda de estratégia conforme o tipo de prova. Ninguém passa o
+  bastão adiante se deixou cair alguma coisa no chão: se um corredor tropeça, a corrida
+  para ali, não continua fingindo que está tudo bem.
+- **Na casa:** um fluxo é uma **esteira síncrona de sete etapas**, executada por
+  `scripts/orquestrador_sincrono.py`, em que cada etapa valida formalmente o contrato de
+  handoff antes de passar a bola para a seguinte. Se qualquer etapa falhar, o pipeline é
+  abortado imediatamente com código de saída 1 — não existe continuação com dado
+  fabricado nem etapa pulada silenciosamente.
 
 ```{=typst}
 #esteira(
@@ -464,11 +472,19 @@ via ORCA); `componentes/compartilhado/skills/melhoria/`, `plan/`, `orchestrate/`
 
 ## 11.1 A Necessidade da Meso-Camada
 
-A execução de sistemas complexos baseados em Vertical Slice Architecture (VSA) impõe
-um desafio estrutural: fatias verticais independentes podem ser desenvolvidas em paralelo,
-mas fatias interdependentes exigem uma ordem estrita de precedência causal. A Meso-Camada
-da Tríade Canônica resolve esse problema através de compilação topológica de dependências
-e execução em ambientes efêmeros isolados.
+- **Na festa:** pense em vestir-se de manhã. Meia vem antes do sapato — nessa ordem,
+  sempre — mas a camisa e a calça não dependem uma da outra: pode vestir qualquer uma
+  primeiro, ou as duas ao mesmo tempo se você tivesse quatro braços. Fazer tudo em fila
+  única, uma peça de roupa por vez, seria mais lento do que necessário; fazer tudo ao
+  mesmo tempo sem checar a ordem faria você tentar calçar o sapato antes da meia. A
+  Meso-Camada é o "assistente" que olha a lista de roupas do dia, descobre sozinho quais
+  peças podem ir juntas e quais têm que esperar a anterior, e só então distribui o
+  trabalho.
+- **Na casa:** a execução de sistemas complexos baseados em Vertical Slice Architecture
+  (VSA) impõe um desafio estrutural: fatias verticais independentes podem ser
+  desenvolvidas em paralelo, mas fatias interdependentes exigem uma ordem estrita de
+  precedência causal. A Meso-Camada da Tríade Canônica resolve esse problema através de
+  compilação topológica de dependências e execução em ambientes efêmeros isolados.
 
 Em vez de permitir concorrência cega ou execuções monolíticas sequenciais desnecessárias,
 o ecossistema compila o `PLANNER.json` em um Directed Acyclic Graph (DAG) governado pelo

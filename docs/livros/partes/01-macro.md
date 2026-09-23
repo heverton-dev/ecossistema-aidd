@@ -11,11 +11,23 @@ hooks e auditoria — que é o que transforma as leis em comportamento observáv
 
 ## 1.1 A definição em uma frase
 
-O Ecossistema AIDD é um **meta-repositório de engenharia de software assistida por
-agentes** que transforma uma intenção em linguagem natural em um sistema completo,
-testado, auditado e implantado, usando oito ferramentas especializadas encadeadas por
-contratos formais, submetidas a portões determinísticos de qualidade e operáveis a
-partir de qualquer assistente de IA ou de um terminal.
+Pense numa fábrica de automóveis de verdade. Ninguém entra na linha de montagem e
+solda uma porta "de improviso": existe uma planta de engenharia, uma esteira com
+estações fixas, e um inspetor de qualidade em cada estação que recusa a peça se ela
+não bater com a especificação — mesmo que o operário jure que "está bom assim". O
+Ecossistema AIDD faz o mesmo com software: em vez de pedir a uma IA para "escrever um
+app" e torcer para o resultado prestar, ele obriga a ideia a passar por estações fixas
+(as oito ferramentas), cada uma entregando o trabalho para a próxima só depois de um
+inspetor automático (o portão de qualidade) carimbar aprovado.
+
+Em termos técnicos: o Ecossistema AIDD é um **meta-repositório de engenharia de
+software assistida por agentes** que transforma uma intenção em linguagem natural em
+um sistema completo, testado, auditado e implantado, usando oito ferramentas
+especializadas encadeadas por contratos formais, submetidas a portões determinísticos
+de qualidade e operáveis a partir de qualquer assistente de IA ou de um terminal. Quem
+quiser conferir cada "inspetor" com as próprias mãos encontra os 42 scripts de portão
+em `gates/*.py` — cada um roda isolado com `python gates/G_<nome>.py` e devolve código
+de saída 0 (aprova) ou 1 (bloqueia), sem meio-termo.
 
 A sigla AIDD é lida no repositório como *AI-Driven Development* — desenvolvimento
 dirigido por inteligência artificial — e o guia da família está em
@@ -80,8 +92,29 @@ em vez de apresentar um painel todo verde.
 
 ## 1.4 O inventário: oito ferramentas
 
-O ecossistema é um monorepo com oito ferramentas em `tools/`, cada uma com o próprio
-`AGENTS.md`, os próprios portões e o próprio ciclo de testes.
+Imagine a construção de uma casa, na ordem em que ela realmente acontece: primeiro
+alguém compra o terreno, providencia o alvará e cerca a obra com regras de segurança
+(**isso é o `aidd-forge`** — ele não ergue parede nenhuma, ele prepara o chão onde a
+casa vai poder existir). Só depois entra o arquiteto, que desenha a planta baixa e
+decide quantos cômodos a casa vai ter (**isso é o `aidd-planner`**). Com o terreno
+pronto e a planta aprovada, os pedreiros finalmente erguem as paredes — e aqui o
+ecossistema oferece três equipes de obra diferentes conforme o tipo de casa
+(`aidd-generator` para construir do zero, `aidd-factory` para montar com peças
+pré-fabricadas open-source, `aidd-bridge` para reformar uma casa pré-fabricada que veio
+de outro fornecedor). Depois da obra pronta vem a mobília e as instalações finais
+(`aidd-master` une os cômodos num único sistema elétrico e hidráulico coerente,
+`aidd-enterprise` troca as fechaduras por trava de cofre) e, por fim, a concessionária
+liga água, luz e internet (`aidd-ops` entrega a casa habitável, com servidor,
+observabilidade e infraestrutura). Nenhuma dessas oito equipes decide sozinha começar
+antes da anterior terminar: quem obriga a ordem são os portões de qualidade e os
+contratos formais descritos na seção seguinte.
+
+Tecnicamente, o ecossistema é um monorepo com oito ferramentas em `tools/`, cada uma
+com o próprio `AGENTS.md`, os próprios portões e o próprio ciclo de testes. Qualquer
+leitor cético pode conferir a ordem real de execução em
+`scripts/orquestrador_sincrono.py:9-11`, onde os três fluxos estão escritos
+literalmente como `[FORGE -> PLANNER] -> GENERATOR -> [MASTER -> ENTERPRISE -> OPS]` e
+variações — terreno e planta sempre antes da construção, nunca depois.
 
 | Ferramenta                | Papel em uma linha                                                        | Ponto de entrada                                   |
 | :------------------------ | :------------------------------------------------------------------------ | :------------------------------------------------- |
@@ -153,9 +186,15 @@ foi pensado, como foi construído, como está configurado e como está aplicado 
 
 ## 2.1 Como foi pensada: a tese dos regimes de execução
 
-A decisão fundadora do ecossistema é que **um agente de IA não é um trabalhador
-genérico, é um recurso caro e não determinístico que deve ser usado apenas onde não
-existe algoritmo**. Isso gera uma classificação de toda tarefa em três regimes.
+Pense num restaurante bem administrado: o cozinheiro caro e criativo não é escalado
+para lavar louça, porque lavar louça tem procedimento fixo e qualquer lava-louças
+automática faz igual, todo dia, sem variar. O cozinheiro entra só onde o prato exige
+julgamento — temperar, ajustar, decidir. Gastar o recurso caro (o cozinheiro, ou aqui,
+o modelo de IA) numa tarefa que uma máquina resolve sempre igual é desperdício e fonte
+de erro. A decisão fundadora do ecossistema é exatamente essa: **um agente de IA não é
+um trabalhador genérico, é um recurso caro e não determinístico que deve ser usado
+apenas onde não existe algoritmo**. Isso gera uma classificação de toda tarefa em três
+regimes.
 
 O **regime determinístico** cobre tudo que tem resposta certa computável: criar
 diretórios, escrever arquivos a partir de template, validar JSON contra esquema, fazer

@@ -31,8 +31,14 @@
       "hash_fonte": "19c4097ca4267eac907e9f0f87ee4ffdee3ac651e6b9fede997ce9e93a664167",
       "palavras": 24546,
       "nota": "Inclusão da topologia Git padrão (ISSUE-USA-0009 / A8) e alinhamento do plano de usabilidade"
+    },
+    {
+      "data": "2026-09-23",
+      "hash_fonte": "b27e5ad2d158b93a47bfb2e12bc8bcf23c26ed829e1595229bf7234a9f4b1168",
+      "palavras": 25701,
+      "nota": "Revisao de storytelling: analogias concretas (casa/obra, corrida de revezamento, receita de bolo) em cada conceito denso, mantendo rigor tecnico e rastreabilidade; correcao de contagem desatualizada de habilidades/comandos (60/14 -> 66/16)"
     }
   ],
-  "hash_fonte": "19c4097ca4267eac907e9f0f87ee4ffdee3ac651e6b9fede997ce9e93a664167",
-  "ultima_compilacao": "2026-09-22"
+  "hash_fonte": "b27e5ad2d158b93a47bfb2e12bc8bcf23c26ed829e1595229bf7234a9f4b1168",
+  "ultima_compilacao": "2026-09-23"
 }

@@ -250,9 +250,14 @@ resultado.
 
 ## 12.1 O que é a ferramenta
 
-`aidd-planner` é o **intake formal** do ecossistema: transforma uma conversa sobre o que
-se quer construir em um documento tipado que os motores conseguem executar. O
-`AGENTS.md` o define como "motor de planejamento, intake SDD/BDD e geração de
+Se o `aidd-forge` prepara o terreno, o `aidd-planner` é o **arquiteto que desenha a
+planta baixa antes de qualquer pedreiro erguer uma parede**. Ele não constrói nada —
+ele conversa com o cliente (o usuário), anota quantos cômodos a casa vai ter, onde fica
+a porta de entrada e o que precisa estar pronto no dia da mudança, e entrega esse
+desenho num formato que qualquer equipe de obra consegue seguir sem precisar perguntar
+de novo. `aidd-planner` é o **intake formal** do ecossistema: transforma uma conversa
+sobre o que se quer construir em um documento tipado que os motores conseguem executar.
+O `AGENTS.md` o define como "motor de planejamento, intake SDD/BDD e geração de
 combustível para a Tríade Canônica".
 
 A entrada é um PRÉ-PLANO interativo conduzido com o usuário. A saída é `PLANNER.json`:
@@ -417,10 +422,13 @@ consumir sem tradução. É o que torna possível trocar o motor sem reescrever 
 
 ## 13.1 O que é a ferramenta
 
-`aidd-generator` é a ferramenta mais complexa do ecossistema e a única que constrói
-software do zero. É um pipeline de oito fases, com máquina de estados formal validada
-por JSON Schema Draft 2020-12, que vai da pesquisa de referências reais até a entrega de
-código funcional verificado por pytest.
+Continuando a obra: com o terreno pronto (forge) e a planta aprovada (planner), o
+`aidd-generator` é a equipe de pedreiros que ergue a casa **tijolo por tijolo, sob
+medida**, sem usar nenhuma peça pré-fabricada — é a opção certa quando a planta pede
+algo que nenhum catálogo pronto atende. `aidd-generator` é a ferramenta mais complexa
+do ecossistema e a única que constrói software do zero. É um pipeline de oito fases,
+com máquina de estados formal validada por JSON Schema Draft 2020-12, que vai da
+pesquisa de referências reais até a entrega de código funcional verificado por pytest.
 
 ## 13.2 O papel da ferramenta dentro do FLUXO
 
@@ -626,10 +634,14 @@ fase, custo em dólares e resultado de pytest.
 
 ## 14.1 O que é a ferramenta
 
-`aidd-factory` é o **integrador**: em vez de escrever o sistema, ele compõe uma
-aplicação a partir de motores open-source curados, gerando a camada que os une —
-gateway/BFF, orquestração compose, inicialização de banco, variáveis de ambiente e
-código de integração.
+Se `aidd-generator` é a equipe que constrói tijolo por tijolo, `aidd-factory` é a
+equipe que monta a casa com **peças pré-fabricadas de fornecedores confiáveis** —
+como quem compra módulos de cozinha planejada em vez de marcenaria sob medida: mais
+rápido, mais barato, e perfeito quando o "cômodo" que você precisa (um CRM, um sistema
+de agendamento) já existe pronto em algum lugar e só falta encaixar. `aidd-factory` é
+o **integrador**: em vez de escrever o sistema, ele compõe uma aplicação a partir de
+motores open-source curados, gerando a camada que os une — gateway/BFF, orquestração
+compose, inicialização de banco, variáveis de ambiente e código de integração.
 
 É a materialização da política anti-NIH do ecossistema: quando existe software
 consolidado que resolve o problema, escrever de novo é desperdício de tokens, de tempo

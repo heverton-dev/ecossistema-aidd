@@ -13,7 +13,12 @@
 
 ## 15.1 O que é a ferramenta
 
-`aidd-bridge` resolve o aprisionamento por fornecedor em aplicações geradas por
+Pense numa casa pré-fabricada que você comprou de outra construtora: por fora está
+linda, mas a fiação e a fundação são proprietárias — só o técnico daquela construtora
+mexe nelas, e você paga aluguel de manutenção para sempre. `aidd-bridge` é a equipe que
+entra, refaz a fiação e a fundação com material aberto e padrão de mercado, **sem
+tocar na decoração que você já gosta**. `aidd-bridge` resolve o aprisionamento por
+fornecedor em aplicações geradas por
 plataformas low-code. Ele ingere um projeto React + Vite + Tailwind + Supabase, extrai
 páginas, componentes shadcn e migrações, converte o banco para PostgreSQL puro com
 emulação PostgREST, empacota em Docker com boas práticas OCI e entrega uma aplicação
@@ -355,7 +360,12 @@ construído.
 
 ## 17.1 O que é a ferramenta
 
-`aidd-enterprise` é o `aidd-master` com uma camada adicional de garantia: todo componente
+Se o `aidd-master` já instalou fechaduras normais em cada porta da casa, o
+`aidd-enterprise` é o especialista que chega depois e troca todas por **fechadura de
+cofre com selo de violação**: cada peça só entra se vier com certificado de origem
+(a assinatura SHA-256), e um sensor continua verificando depois se alguém trocou a
+fechadura escondido (a detecção de drift). `aidd-enterprise` é o `aidd-master` com uma
+camada adicional de garantia: todo componente
 injetado é **validado contra assinatura SHA-256 antes de ser admitido em execução**, e a
 sincronização multi-harness é verificada por detecção de drift depois da injeção.
 
@@ -499,7 +509,11 @@ verificável — e o registro honesto de onde ela ainda não está.
 
 ## 18.1 O que é a ferramenta
 
-`aidd-ops` transforma um requisito em linguagem natural — *"uma clínica com agendamento
+Fechando a obra: a casa está construída, mobiliada e trancada — falta a concessionária
+ligar água, luz e internet, e o síndico instalar câmeras que avisam se algo cair. É
+isso que o `aidd-ops` faz pelo sistema: dimensiona o "tamanho do imóvel" (a VPS),
+liga os serviços essenciais e mantém um vigia ligado 24 horas. `aidd-ops` transforma um
+requisito em linguagem natural — *"uma clínica com agendamento
 e prontuário para 2 mil pacientes"* — em uma infraestrutura dimensionada, provisionada e
 monitorada: sizing de VPS, hardening de SSH, Docker, Traefik, PostgreSQL, Uptime Kuma e
 bateria de preflight de ponta a ponta.
