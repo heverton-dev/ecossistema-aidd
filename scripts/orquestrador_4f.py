@@ -4,6 +4,8 @@ import os
 import shutil
 import subprocess
 import sys
+import time
+import threading
 from pathlib import Path
 
 def run_cmd(cmd, cwd=None, exit_on_fail=True, input_data=None):
@@ -26,6 +28,18 @@ def run_cmd(cmd, cwd=None, exit_on_fail=True, input_data=None):
         # Envia input, mas sem bloquear a leitura
         proc.stdin.write(input_data)
         proc.stdin.close()
+        
+    def heartbeat():
+        start = time.time()
+        while proc.poll() is None:
+            time.sleep(1)
+            elapsed = int(time.time() - start)
+            if elapsed > 0 and elapsed % 60 == 0:
+                sys.stdout.write(f"\n[TELEMETRIA] Fase operando silenciosamente há {elapsed} segundos... (PID: {proc.pid})\n")
+                sys.stdout.flush()
+                
+    t = threading.Thread(target=heartbeat, daemon=True)
+    t.start()
         
     for line in iter(proc.stdout.readline, ''):
         sys.stdout.write(line)
