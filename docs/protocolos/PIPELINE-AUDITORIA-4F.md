@@ -9,7 +9,7 @@
    - Gera o laudo base (ex: `aidd-melhoria-15D.md`).
 2. **Fase 2: Arquiteto (Plano de Evolução)**
    - Lê o laudo e as Definições de Pronto (DoD).
-   - Gera o `PLANO-EVOLUCAO.md` na pasta estrita da auditoria versionada (`docs/auditoria/<ferramenta-alvo>-v<N>/`) com os tickets de correção e prompts de delegação. É proibido usar `docs/planos/`.
+   - Gera o `PLANO-EVOLUCAO.md` na pasta da auditoria da ferramenta (`docs/auditoria/<ferramenta-alvo>/`) com os tickets de correção e prompts de delegação. É proibido usar `docs/planos/`.
 3. **Fase 3: Construtor (Implementação)**
    - Executa os tickets gerados.
    - Altera o código da ferramenta em Worktree isolada.
