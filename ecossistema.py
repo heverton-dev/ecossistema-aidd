@@ -903,6 +903,10 @@ def cmd_plan(args):
     return run_command([sys.executable, script] + args, cwd=ROOT_DIR)
 
 def cmd_melhoria(args):
+    if "--manifest" in args:
+        script = os.path.join(ROOT_DIR, ".agents", "skills", "aidd-melhoria", "scripts", "cli.py")
+        if os.path.isfile(script):
+            return run_command([sys.executable, script] + args, cwd=ROOT_DIR)
     script = os.path.join(ROOT_DIR, "scripts", "gerenciador_melhorias.py")
     return run_command([sys.executable, script] + args, cwd=ROOT_DIR)
 

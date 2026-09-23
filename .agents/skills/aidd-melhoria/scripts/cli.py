@@ -153,7 +153,6 @@ def processar_manifesto(
         plano_existente=manifest_dados.get("plano_existente"),
         item_relacionado=manifest_dados.get("item") or manifest_dados.get("item_relacionado"),
         itens_avaliados=itens_avaliados,
-        sobrescrever=True,
     )
 
     if codigo_resultado == 0:

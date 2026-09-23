@@ -51,3 +51,64 @@ def test_validador_aceita_json_conforme():
     dados = validar_resposta_analitica(json_valido)
     assert "relatorio" in dados
     assert dados["relatorio"]["pedido"] == "Otimizar cache de memoria"
+
+
+def test_cli_parser_string_malformada_crash_exit_1():
+    """Garante que execução da CLI com string malformada encerra com exit 1 (crash esperado)."""
+    import subprocess
+    script_analisador = SKILL_SCRIPTS / "analisador.py"
+    res = subprocess.run(
+        [sys.executable, str(script_analisador), "{ string malformada que nao fecha"],
+        capture_output=True,
+        text=True,
+        encoding="utf-8",
+        errors="replace"
+    )
+    assert res.returncode == 1
+
+
+def test_cli_parser_texto_puro_crash_exit_1():
+    """Garante que execução da CLI com texto puro encerra com exit 1."""
+    import subprocess
+    script_analisador = SKILL_SCRIPTS / "analisador.py"
+    res = subprocess.run(
+        [sys.executable, str(script_analisador), "Texto puro sem json"],
+        capture_output=True,
+        text=True,
+        encoding="utf-8",
+        errors="replace"
+    )
+    assert res.returncode == 1
+
+
+def test_cli_parser_json_valido_sucesso_exit_0():
+    """Garante que execução da CLI com JSON estruturado conforme encerra com exit 0."""
+    import subprocess
+    script_analisador = SKILL_SCRIPTS / "analisador.py"
+    json_valido = '{"relatorio": {"pedido": "Otimizar cache", "nota_atual": "5.0"}}'
+    res = subprocess.run(
+        [sys.executable, str(script_analisador), json_valido],
+        capture_output=True,
+        text=True,
+        encoding="utf-8",
+        errors="replace"
+    )
+    assert res.returncode == 0
+    assert "relatorio" in res.stdout
+
+
+def test_motor_deterministico_gera_relatorio_conforme_schema():
+    """Garante que o motor analítico determinístico substitui 100% LLM gerando JSON conforme."""
+    from analisador import MotorAnaliticoDeterministico
+
+    motor = MotorAnaliticoDeterministico()
+    relatorio_dict = motor.processar_analise(
+        pedido="Otimizar desempenho de leitura em disco",
+        nota_atual="6.0",
+        evidencia="I/O alto em disco mecânico"
+    )
+    assert "relatorio" in relatorio_dict
+    rel = relatorio_dict["relatorio"]
+    assert rel["pedido"] == "Otimizar desempenho de leitura em disco"
+    assert "recomendacao" in rel
+    assert "Sugestão de refatoração" in rel["recomendacao"]
