@@ -50,23 +50,32 @@ def compilar_plano_evolucao(md_file: Path, config_file: Path = None, output_file
     
     tickets = parse_plano_evolucao_md(md_file)
     
-    # Carrega config do usuário
+    # Carrega config do usuário com suporte a revezamento cíclico (Round-Robin)
     user_config = {}
     if config_file and config_file.exists():
         with open(config_file, "r", encoding="utf-8") as cf:
             user_config = json.load(cf)
             
-    construtor = user_config.get("papeis_pipeline_4f", {}).get("construtor", user_config.get("padrao_geral", {}))
+    lista_rotativa = user_config.get("pipeline_evolucao_rotativo")
+    if not lista_rotativa:
+        construtor = user_config.get("pipeline_auditoria_4f", {}).get("construtor") or user_config.get("padrao_geral", {})
+        lista_rotativa = [construtor] if construtor else [{
+            "harness": "agy",
+            "model": "gemini-3.8-flash-high",
+            "comando_terminal": "agy --model gemini-3.8-flash-high --dangerously-skip-permissions"
+        }]
     
+    num_opcoes = len(lista_rotativa)
     fases = []
-    for t in tickets:
+    for i, t in enumerate(tickets):
+        config_fase = lista_rotativa[i % num_opcoes]
         fases.append({
             "ticket_id": t["ticket_id"],
             "nome": t["nome"],
             "dimensao_15d": t["dimensao_15d"],
-            "harness": construtor.get("harness", "agy"),
-            "model": construtor.get("model", "gemini-3.8-flash-high"),
-            "comando_terminal": construtor.get("comando_terminal", "agy --model gemini-3.8-flash-high --dangerously-skip-permissions"),
+            "harness": config_fase.get("harness", "agy"),
+            "model": config_fase.get("model", "gemini-3.8-flash-high"),
+            "comando_terminal": config_fase.get("comando_terminal", "agy --model gemini-3.8-flash-high --dangerously-skip-permissions"),
             "input_prompt": t["input_prompt"],
             "output_handoff": t["output_handoff"]
         })

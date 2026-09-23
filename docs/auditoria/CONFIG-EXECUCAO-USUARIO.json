@@ -1,58 +1,49 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "descricao": "Configuração Central de Preferências de Execução do Usuário (Harness, Modelo e Comandos)",
-  "versao": "1.0.0",
-  "padrao_geral": {
-    "harness": "agy",
-    "model": "gemini-3.8-flash-high",
-    "comando_terminal": "agy --model gemini-3.8-flash-high --dangerously-skip-permissions"
-  },
-  "papeis_pipeline_4f": {
+  "descricao": "Configuração de Execução do Usuário: Fases Fixas de Auditoria e Revezamento Cíclico de Evolução",
+  "versao": "2.0.0",
+  "pipeline_auditoria_4f": {
     "inspetor": {
-      "descricao": "Fase 1: Diagnóstico inicial e levantamento das 15 dimensões",
       "harness": "mimo",
       "model": "xiaomi-token-plan-sgp/mimo-v2.6-flash",
       "comando_terminal": "mimo --pure -m xiaomi-token-plan-sgp/mimo-v2.6-flash"
     },
     "arquiteto": {
-      "descricao": "Fase 2: Decomposição de arquitetura e geração do Plano de Evolução",
       "harness": "opencode",
       "model": "opencode/big-pickle",
       "comando_terminal": "opencode --pure --auto --agent -m opencode/big-pickle"
     },
     "construtor": {
-      "descricao": "Fase 3: Implementação TDD estrita e codificação em Worktree",
       "harness": "agy",
       "model": "gemini-3.8-flash-high",
       "comando_terminal": "agy --model gemini-3.8-flash-high --dangerously-skip-permissions"
     },
     "retorno": {
-      "descricao": "Fase 4: Re-auditoria independente e checagem do DoD",
       "harness": "claude",
       "model": "opus",
       "comando_terminal": "claude --dangerously-skip-permissions --chrome --model opus"
     }
   },
-  "perfis_harnesses_disponiveis": {
-    "agy": {
-      "binario": "agy",
-      "modelos": ["gemini-3.8-flash-high", "gemini-3.1-pro-high"],
-      "comando_template": "agy --model {model} --dangerously-skip-permissions"
+  "pipeline_evolucao_rotativo": [
+    {
+      "harness": "agy",
+      "model": "gemini-3.8-flash-high",
+      "comando_terminal": "agy --model gemini-3.8-flash-high --dangerously-skip-permissions"
     },
-    "claude": {
-      "binario": "claude",
-      "modelos": ["opus", "sonnet", "haiku"],
-      "comando_template": "claude --dangerously-skip-permissions --chrome --model {model}"
+    {
+      "harness": "claude",
+      "model": "opus",
+      "comando_terminal": "claude --dangerously-skip-permissions --chrome --model opus"
     },
-    "mimo": {
-      "binario": "mimo",
-      "modelos": ["xiaomi-token-plan-sgp/mimo-v2.6-flash"],
-      "comando_template": "mimo --pure -m {model}"
+    {
+      "harness": "opencode",
+      "model": "opencode/big-pickle",
+      "comando_terminal": "opencode --pure --auto --agent -m opencode/big-pickle"
     },
-    "opencode": {
-      "binario": "opencode",
-      "modelos": ["opencode/big-pickle"],
-      "comando_template": "opencode --pure --auto --agent -m {model}"
+    {
+      "harness": "mimo",
+      "model": "xiaomi-token-plan-sgp/mimo-v2.6-flash",
+      "comando_terminal": "mimo --pure -m xiaomi-token-plan-sgp/mimo-v2.6-flash"
     }
-  }
+  ]
 }
