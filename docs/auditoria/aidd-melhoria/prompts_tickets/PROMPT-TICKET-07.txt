@@ -1,0 +1,15 @@
+Você é o Construtor do Ecossistema AIDD executando o Ticket 7 da evolução técnica de aidd-melhoria.
+
+Ticket 7: Critério de Rejeição, Limpeza e Rollback (Refere-se a D14)
+
+- **Falha 15-D:** `D14. Critério de Rejeição (Rollback)`
+- **Requisito TDD (Red):** Injetar um erro no meio da análise (ex. parser crash). Se os arquivos intermediários permanecem em disco, o teste deve reprovar.
+- **Implementação Técnica:**
+  - Estabelecer a rotina `finally` ou context manager no motor Python.
+  - Em caso de saída não-zero (`exit 1`), o código DEVE excluir artefatos parciais (limpeza) e reverter mudanças de ambiente (rollback).
+- **Verificação (Green):** O crash no meio do processo deixa zero rastro temporário ou corrupção no repositório.
+
+REGRAS DE EXECUÇÃO:
+1. Implemente o código funcional com zero stubs e testes reais em pytest.
+2. Certifique-se de entregar o artefato esperado: '.agents/skills/aidd-melhoria/scripts/rollback.py'.
+3. Execute os testes para comprovar a passagem de Red para Green.

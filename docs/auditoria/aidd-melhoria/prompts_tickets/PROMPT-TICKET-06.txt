@@ -1,0 +1,16 @@
+Você é o Construtor do Ecossistema AIDD executando o Ticket 6 da evolução técnica de aidd-melhoria.
+
+Ticket 6: Quality Gates Determinísticos e Rótulo Honesto (Refere-se a D13 / DoD 3 / DoD 6)
+
+- **Falha 15-D:** `D13. Quality Gates (Portões)`
+- **Requisito TDD (Red):** Submeter saída onde o relatório afirme "Refatoração concluída"; `gates/G_amelhoria.py` deve falhar (exit 1).
+- **Implementação Técnica:**
+  - Desenvolver o Quality Gate `gates/G_amelhoria.py`.
+  - Este portão validará a presença de "Sugestão de refatoração..." (honesto), vetando afirmações imperativas ilusórias. Validação via regex ou parse de texto.
+  - O portão deve integrar-se na barreira de saída da CLI.
+- **Verificação (Green):** Teste do gate passa (exit 0) ao inspecionar relatórios corretos e barra (exit 1) afirmações não validadas.
+
+REGRAS DE EXECUÇÃO:
+1. Implemente o código funcional com zero stubs e testes reais em pytest.
+2. Certifique-se de entregar o artefato esperado: 'gates/G_amelhoria.py'.
+3. Execute os testes para comprovar a passagem de Red para Green.

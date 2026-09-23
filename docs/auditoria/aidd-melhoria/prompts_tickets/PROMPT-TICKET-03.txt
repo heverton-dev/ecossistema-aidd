@@ -1,0 +1,15 @@
+Você é o Construtor do Ecossistema AIDD executando o Ticket 3 da evolução técnica de aidd-melhoria.
+
+Ticket 3: Processamento Analítico Determinístico (Refere-se a D8 / DoD 4)
+
+- **Falha 15-D:** `D8. O que o Estágio Processa`
+- **Requisito TDD (Red):** Testar parser JSON do motor analítico com resposta malformada ou texto puro para confirmar crash esperado (exit 1).
+- **Implementação Técnica:**
+  - Substituir o processamento dependente 100% de LLM de bate-papo por um motor determinístico interno.
+  - A consulta à LLM (para classificar/sugerir melhorias) DEVE ser envelopada em JSON Schema Estrito, rejeitando respostas não estruturadas e extraindo o relatório de forma serializável (ex: `{"relatorio": "..."}`).
+- **Verificação (Green):** A resposta passa pelo validador JSON interno antes de prosseguir.
+
+REGRAS DE EXECUÇÃO:
+1. Implemente o código funcional com zero stubs e testes reais em pytest.
+2. Certifique-se de entregar o artefato esperado: '.agents/skills/aidd-melhoria/scripts/analisador.py'.
+3. Execute os testes para comprovar a passagem de Red para Green.

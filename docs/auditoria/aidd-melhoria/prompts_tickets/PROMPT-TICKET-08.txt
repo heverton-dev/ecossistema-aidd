@@ -1,0 +1,16 @@
+Você é o Construtor do Ecossistema AIDD executando o Ticket 8 da evolução técnica de aidd-melhoria.
+
+Ticket 8: Output Consolidado e Handoff Estruturado (Refere-se a D15 / DoD 2 / DoD 7 / DoD 8)
+
+- **Falha 15-D:** `D15. Output Consolidado e Handoff`
+- **Requisito TDD (Red):** Testar pipeline com execução completa e checar ausência do `./handoff-melhoria.json` (deve falhar a transição).
+- **Implementação Técnica:**
+  - Alterar o final da execução da skill para produzir e assinar estruturadamente o artefato `./handoff-melhoria.json`, relatando sucesso ou falha.
+  - Atualizar/gerar `docs/teste-end-to-end/aidd-melhoria.md` comprovando o fluxo (Ciclo de 5 passos).
+  - Incluir no PR de entrega a justificativa técnica obrigatória de que `aidd-melhoria` não terá Quarteto Sine Qua Non por ser ferramenta CLI sem servidor/UI.
+- **Verificação (Green):** `handoff-melhoria.json` emitido corretamente, habilitando o pipeline (orchestrator) a consumir e transitar de fase.
+
+REGRAS DE EXECUÇÃO:
+1. Implemente o código funcional com zero stubs e testes reais em pytest.
+2. Certifique-se de entregar o artefato esperado: 'docs/teste-end-to-end/aidd-melhoria.md'.
+3. Execute os testes para comprovar a passagem de Red para Green.

@@ -1,0 +1,15 @@
+Você é o Construtor do Ecossistema AIDD executando o Ticket 2 da evolução técnica de aidd-melhoria.
+
+Ticket 2: Componentes, Fractalidade e CLI Fallback (Refere-se a D4 / DoD 1)
+
+- **Falha 15-D:** `D4. Componentes e Fractalidade`
+- **Requisito TDD (Red):** Executar `python ecossistema.py melhoria --manifest dummy.json` deve falhar por falta de implementação do fallback CLI.
+- **Implementação Técnica:**
+  - Estruturar a skill com micro-skills ou scripts locais em Python em vez de apenas prompts no `.agents`.
+  - Integrar a interface CLI `ecossistema.py melhoria --manifest <json>` mapeando a entrada para acionar a pipeline da ferramenta, sem depender unicamente de interpretação de prompt de chat.
+- **Verificação (Green):** Execução do CLI retorna sucesso e processo o manifesto de entrada adequadamente.
+
+REGRAS DE EXECUÇÃO:
+1. Implemente o código funcional com zero stubs e testes reais em pytest.
+2. Certifique-se de entregar o artefato esperado: '.agents/skills/aidd-melhoria/scripts/cli.py'.
+3. Execute os testes para comprovar a passagem de Red para Green.

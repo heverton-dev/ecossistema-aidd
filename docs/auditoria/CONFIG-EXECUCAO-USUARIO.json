@@ -26,6 +26,11 @@
   },
   "pipeline_evolucao_rotativo": [
     {
+      "harness": "mimo",
+      "model": "xiaomi-token-plan-sgp/mimo-v2.6-flash",
+      "comando_terminal": "mimo --pure -m xiaomi-token-plan-sgp/mimo-v2.6-flash"
+    },
+    {
       "harness": "agy",
       "model": "gemini-3.8-flash-high",
       "comando_terminal": "agy --model gemini-3.8-flash-high --dangerously-skip-permissions"
@@ -39,11 +44,6 @@
       "harness": "opencode",
       "model": "opencode/big-pickle",
       "comando_terminal": "opencode --pure --auto --agent -m opencode/big-pickle"
-    },
-    {
-      "harness": "mimo",
-      "model": "xiaomi-token-plan-sgp/mimo-v2.6-flash",
-      "comando_terminal": "mimo --pure -m xiaomi-token-plan-sgp/mimo-v2.6-flash"
     }
   ]
 }

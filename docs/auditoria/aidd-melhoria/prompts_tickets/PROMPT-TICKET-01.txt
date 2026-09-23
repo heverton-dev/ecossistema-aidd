@@ -1,0 +1,15 @@
+Você é o Construtor do Ecossistema AIDD executando o Ticket 1 da evolução técnica de aidd-melhoria.
+
+Ticket 1: Isolamento de Raio de Impacto e Worktree (Refere-se a D3 / DoD 5)
+
+- **Falha 15-D:** `D3. Raio de Impacto e Isolamento`
+- **Requisito TDD (Red):** Criar um teste que reprove (exit 1) se a ferramenta tentar modificar arquivos fora da pasta `docs/` ou fora de uma Git Worktree efêmera isolada.
+- **Implementação Técnica:**
+  - Codificar rotina na infraestrutura da skill (`.agents/skills/aidd-melhoria/scripts/`) para realizar a análise dentro de um VSA (Git Worktree isolado).
+  - Bloquear acessos de I/O de escrita no repositório root (exceção para `docs/melhorias/`).
+- **Verificação (Green):** Teste de ambiente passa após garantir a sandboxing de execução.
+
+REGRAS DE EXECUÇÃO:
+1. Implemente o código funcional com zero stubs e testes reais em pytest.
+2. Certifique-se de entregar o artefato esperado: '.agents/skills/aidd-melhoria/scripts/isolamento.py'.
+3. Execute os testes para comprovar a passagem de Red para Green.

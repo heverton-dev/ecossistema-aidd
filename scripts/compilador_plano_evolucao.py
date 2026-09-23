@@ -28,15 +28,46 @@ def parse_plano_evolucao_md(md_path: Path):
         handoff_match = re.search(r"(`(?:[a-zA-Z0-9_\-\./\\]+\.(?:py|md|json|txt))`|tests/test_[a-zA-Z0-9_]+\.py|gates/G_[a-zA-Z0-9_]+\.py)", corpo)
         handoff = handoff_match.group(1).strip("`") if handoff_match else f"tests/test_ticket_{num}.py"
         
+        # Mapeamento canônico de handoffs esperados por ticket (arquivos de código que o construtor deve gerar)
+        handoffs_conhecidos = {
+            1: ".agents/skills/aidd-melhoria/scripts/isolamento.py",
+            2: ".agents/skills/aidd-melhoria/scripts/cli.py",
+            3: ".agents/skills/aidd-melhoria/scripts/analisador.py",
+            4: ".agents/skills/aidd-melhoria/scripts/fallback.py",
+            5: ".agents/skills/aidd-melhoria/scripts/observabilidade.py",
+            6: "gates/G_amelhoria.py",
+            7: ".agents/skills/aidd-melhoria/scripts/rollback.py",
+            8: "docs/teste-end-to-end/aidd-melhoria.md"
+        }
+        handoff_final = handoffs_conhecidos.get(int(num), handoff)
+
         nome_fase = f"Fase_{num}_Ticket_{num}_{re.sub(r'[^a-zA-Z0-9_]', '_', titulo_limpo.split('(')[0].strip())}"
+        
+        # Gera arquivo físico de prompt na pasta da ferramenta
+        prompts_dir = md_path.parent / "prompts_tickets"
+        prompts_dir.mkdir(parents=True, exist_ok=True)
+        prompt_file = prompts_dir / f"PROMPT-TICKET-{int(num):02d}.txt"
+        
+        prompt_text = f"""Você é o Construtor do Ecossistema AIDD executando o Ticket {num} da evolução técnica de {md_path.parent.name}.
+
+{full_title}
+
+{corpo.strip()}
+
+REGRAS DE EXECUÇÃO:
+1. Implemente o código funcional com zero stubs e testes reais em pytest.
+2. Certifique-se de entregar o artefato esperado: '{handoff_final}'.
+3. Execute os testes para comprovar a passagem de Red para Green.
+"""
+        prompt_file.write_text(prompt_text, encoding="utf-8")
         
         tickets.append({
             "ticket_id": f"TICKET-{int(num):02d}",
             "nome": nome_fase,
             "titulo": titulo_limpo.strip(),
             "dimensao_15d": dimensao,
-            "input_prompt": f"{md_path.as_posix()}#ticket-{num}",
-            "output_handoff": handoff,
+            "input_prompt": prompt_file.as_posix(),
+            "output_handoff": handoff_final,
             "harness": "auto",
             "model": "auto",
             "comando_terminal": "auto"
@@ -67,8 +98,15 @@ def compilar_plano_evolucao(md_file: Path, config_file: Path = None, output_file
     
     num_opcoes = len(lista_rotativa)
     fases = []
+    repo_root = Path.cwd()
     for i, t in enumerate(tickets):
         config_fase = lista_rotativa[i % num_opcoes]
+        # Converte input_prompt para relativo ao repo root
+        try:
+            input_rel = Path(t["input_prompt"]).relative_to(repo_root).as_posix()
+        except ValueError:
+            input_rel = t["input_prompt"]
+
         fases.append({
             "ticket_id": t["ticket_id"],
             "nome": t["nome"],
@@ -76,7 +114,7 @@ def compilar_plano_evolucao(md_file: Path, config_file: Path = None, output_file
             "harness": config_fase.get("harness", "agy"),
             "model": config_fase.get("model", "gemini-3.8-flash-high"),
             "comando_terminal": config_fase.get("comando_terminal", "agy --model gemini-3.8-flash-high --dangerously-skip-permissions"),
-            "input_prompt": t["input_prompt"],
+            "input_prompt": input_rel,
             "output_handoff": t["output_handoff"]
         })
         

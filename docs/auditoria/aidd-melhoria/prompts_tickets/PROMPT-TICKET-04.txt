@@ -1,0 +1,15 @@
+Você é o Construtor do Ecossistema AIDD executando o Ticket 4 da evolução técnica de aidd-melhoria.
+
+Ticket 4: Tratamento de Exceções e Fallback Operacional (Refere-se a D11)
+
+- **Falha 15-D:** `D11. Tratamento de Exceções e Fallback`
+- **Requisito TDD (Red):** Simular falha na leitura de manifesto ou timeout na LLM; o sistema deve propagar erro abrupto no estado atual.
+- **Implementação Técnica:**
+  - Implementar lógica de retry backoff autônomo.
+  - Criar fallbacks de resposta gracefully e interrupção do pipeline no código Python do `aidd-melhoria`, documentando a falha sem perder o estado.
+- **Verificação (Green):** Os testes de stress/falha mostram os logs de fallback/retry sendo acionados.
+
+REGRAS DE EXECUÇÃO:
+1. Implemente o código funcional com zero stubs e testes reais em pytest.
+2. Certifique-se de entregar o artefato esperado: '.agents/skills/aidd-melhoria/scripts/fallback.py'.
+3. Execute os testes para comprovar a passagem de Red para Green.

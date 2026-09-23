@@ -1,0 +1,15 @@
+Você é o Construtor do Ecossistema AIDD executando o Ticket 5 da evolução técnica de aidd-melhoria.
+
+Ticket 5: Observabilidade e Frugalidade (Refere-se a D12)
+
+- **Falha 15-D:** `D12. Observabilidade e Frugalidade`
+- **Requisito TDD (Red):** Testar a ausência de emissão de logs ou métricas pós-execução (falha esperada de conformidade).
+- **Implementação Técnica:**
+  - Instrumentar scripts da skill para logar orçamentos de tokens usados (fictício/estimado ou real se API for usada) ou tempo de execução.
+  - O log deverá ser padronizado e gravado em `secoes/` ou exposto em console durante a execução do processo via CLI.
+- **Verificação (Green):** Artefatos de log persistem com os metadados solicitados ao fim da execução.
+
+REGRAS DE EXECUÇÃO:
+1. Implemente o código funcional com zero stubs e testes reais em pytest.
+2. Certifique-se de entregar o artefato esperado: '.agents/skills/aidd-melhoria/scripts/observabilidade.py'.
+3. Execute os testes para comprovar a passagem de Red para Green.
