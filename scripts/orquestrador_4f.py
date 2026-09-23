@@ -96,6 +96,13 @@ def main():
         
         print(f"\n---> INICIANDO FASE {i}: {nome}")
         
+        if handoff:
+            handoff_base_path = repo_root / handoff
+            if handoff_base_path.exists() and handoff_base_path.stat().st_size > 0:
+                print(f"[CACHE] Memória detectada! O arquivo '{handoff_base_path.name}' já está consolidado no projeto principal.")
+                print(f"[CACHE] Pulando a execução da IA desta fase para economizar tokens.")
+                continue
+                
         wt_path = worktrees_base / nome
         branch = f"audit/{pipeline_id}/{nome}"
         
