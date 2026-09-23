@@ -990,6 +990,7 @@ def cmd_audit_4f(args):
 
     cmd = [
         sys.executable,
+        "-u",
         str(Path("scripts") / "orquestrador_4f.py"),
         "--manifest", manifest_val
     ]

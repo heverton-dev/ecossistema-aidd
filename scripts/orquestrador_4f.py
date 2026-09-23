@@ -6,9 +6,23 @@ import subprocess
 import sys
 from pathlib import Path
 
-def run_cmd(cmd, cwd=None, exit_on_fail=True):
+def run_cmd(cmd, cwd=None, exit_on_fail=True, input_data=None):
     print(f"[ORCHESTRATOR 4F] Executando: {cmd}")
-    res = subprocess.run(cmd, shell=True, cwd=cwd, text=True)
+    env = os.environ.copy()
+    env["PYTHONIOENCODING"] = "utf-8"
+    env["NO_COLOR"] = "1"
+    env["TERM"] = "dumb"  # Desliga UI rica no Mimo/Opencode
+    
+    res = subprocess.run(
+        cmd, shell=True, cwd=cwd, text=True, capture_output=True, 
+        input=input_data, env=env, encoding="utf-8", errors="replace"
+    )
+    
+    if res.stdout:
+        print(f"[STDOUT]\n{res.stdout.strip()}")
+    if res.stderr:
+        print(f"[STDERR]\n{res.stderr.strip()}")
+        
     if res.returncode != 0 and exit_on_fail:
         print(f"[ORCHESTRATOR 4F] FALHA CRÍTICA. Exit {res.returncode}")
         sys.exit(res.returncode)
@@ -56,8 +70,17 @@ def main():
         print(f"[+] Isolando Worktree...")
         run_cmd(f"git worktree add -b {branch} {wt_path}")
         
+        print(f"[+] Lendo Input Prompt: {fase.get('input_prompt')}")
+        input_file = repo_root / fase.get("input_prompt")
+        input_data = ""
+        if input_file.exists():
+            with open(input_file, "r", encoding="utf-8") as f:
+                input_data = f.read()
+        else:
+            print(f"[-] AVISO: Prompt input não encontrado em {input_file}")
+            
         print(f"[+] Acionando Agente ({fase.get('harness')} | {fase.get('model')})...")
-        run_cmd(comando, cwd=wt_path, exit_on_fail=True)
+        run_cmd(comando, cwd=wt_path, exit_on_fail=True, input_data=input_data if input_data else None)
         
         print(f"[+] Verificando Output Handoff...")
         handoff_file = wt_path / handoff
