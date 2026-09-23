@@ -135,7 +135,11 @@ def main():
         run_cmd(f"git commit --no-verify -m \"chore(audit): finalizando {nome}\"", cwd=wt_path, exit_on_fail=False)
         
         print(f"[+] Descartando Worktree (Drop & Push to memory)...")
-        run_cmd(f"git worktree remove --force {wt_path}")
+        res_wt = run_cmd(f"git worktree remove --force {wt_path}", exit_on_fail=False)
+        if wt_path.exists():
+            time.sleep(1)
+            shutil.rmtree(wt_path, ignore_errors=True)
+            run_cmd("git worktree prune", exit_on_fail=False)
         
         print(f"[+] Cumulando artefatos: Merge da fase {nome} na memória principal...")
         run_cmd(f"git merge {branch}", exit_on_fail=True)
