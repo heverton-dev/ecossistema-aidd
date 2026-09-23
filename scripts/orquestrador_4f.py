@@ -11,22 +11,33 @@ def run_cmd(cmd, cwd=None, exit_on_fail=True, input_data=None):
     env = os.environ.copy()
     env["PYTHONIOENCODING"] = "utf-8"
     env["NO_COLOR"] = "1"
-    env["TERM"] = "dumb"  # Desliga UI rica no Mimo/Opencode
+    env["TERM"] = "dumb"
     
-    res = subprocess.run(
-        cmd, shell=True, cwd=cwd, text=True, capture_output=True, 
-        input=input_data, env=env, encoding="utf-8", errors="replace"
+    # Executa com Popen para ler output em streaming ao inves de segurar na RAM (evita deadlock de IO)
+    proc = subprocess.Popen(
+        cmd, shell=True, cwd=cwd, text=True,
+        stdin=subprocess.PIPE if input_data else None,
+        stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
+        env=env, encoding="utf-8", errors="replace",
+        bufsize=1
     )
     
-    if res.stdout:
-        print(f"[STDOUT]\n{res.stdout.strip()}")
-    if res.stderr:
-        print(f"[STDERR]\n{res.stderr.strip()}")
+    if input_data:
+        # Envia input, mas sem bloquear a leitura
+        proc.stdin.write(input_data)
+        proc.stdin.close()
         
-    if res.returncode != 0 and exit_on_fail:
-        print(f"[ORCHESTRATOR 4F] FALHA CRÍTICA. Exit {res.returncode}")
-        sys.exit(res.returncode)
-    return res
+    for line in iter(proc.stdout.readline, ''):
+        sys.stdout.write(line)
+        sys.stdout.flush()
+        
+    proc.stdout.close()
+    proc.wait()
+    
+    if proc.returncode != 0 and exit_on_fail:
+        print(f"[ORCHESTRATOR 4F] FALHA CRÍTICA. Exit {proc.returncode}")
+        sys.exit(proc.returncode)
+    return proc
 
 def main():
     parser = argparse.ArgumentParser()
