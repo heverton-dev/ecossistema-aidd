@@ -9,47 +9,35 @@ import threading
 from pathlib import Path
 
 def run_cmd(cmd, cwd=None, exit_on_fail=True, input_data=None):
-    print(f"[ORCHESTRATOR 4F] Executando: {cmd}")
+    print(f"[ORCHESTRATOR 4F] Executando em TTY Efêmero: {cmd}")
     env = os.environ.copy()
-    env["PYTHONIOENCODING"] = "utf-8"
-    env["NO_COLOR"] = "1"
-    env["TERM"] = "dumb"
     
-    # Para não travar Nodejs CLIs esperando TTY, injetamos o input nativamente via pipe do CMD
+    # Monta o pipe nativo do windows
     comando = cmd
     if input_data:
         comando = f'type "{input_data}" | {cmd}'
         
-    proc = subprocess.Popen(
-        comando, shell=True, cwd=cwd, text=True,
-        stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
-        env=env, encoding="utf-8", errors="replace",
-        bufsize=1
-    )
-        
-    def heartbeat():
-        start = time.time()
-        while proc.poll() is None:
-            time.sleep(1)
-            elapsed = int(time.time() - start)
-            if elapsed > 0 and elapsed % 60 == 0:
-                sys.stdout.write(f"\n[TELEMETRIA] Fase operando silenciosamente há {elapsed} segundos... (PID: {proc.pid})\n")
-                sys.stdout.flush()
-                
-    t = threading.Thread(target=heartbeat, daemon=True)
-    t.start()
-        
-    for line in iter(proc.stdout.readline, ''):
-        sys.stdout.write(line)
-        sys.stdout.flush()
-        
-    proc.stdout.close()
-    proc.wait()
+    # Injeção estrutural: Criação de TTY Físico (Nova Janela CMD)
+    # Isso resolve a Síndrome do Node.js IsTTY falso.
+    if sys.platform == "win32":
+        # /WAIT bloqueia o python até a janela fechar
+        # cmd /c fecha o popup quando o processo concluir
+        # O titulo da janela leva a marcação do Pipeline
+        comando_tty = f'start "AIDD TTY Efemero - Pipeline 4F" /WAIT cmd /c "{comando}"'
+    else:
+        # Fallback linux/mac
+        comando_tty = comando
+
+    print(f"[TELEMETRIA] Aguardando janela efêmera TTY concluir a fase... (veja o pop-up)")
     
-    if proc.returncode != 0 and exit_on_fail:
-        print(f"[ORCHESTRATOR 4F] FALHA CRÍTICA. Exit {proc.returncode}")
-        sys.exit(proc.returncode)
-    return proc
+    res = subprocess.run(
+        comando_tty, shell=True, cwd=cwd, env=env
+    )
+    
+    if res.returncode != 0 and exit_on_fail:
+        print(f"[ORCHESTRATOR 4F] FALHA CRÍTICA. Exit {res.returncode}")
+        sys.exit(res.returncode)
+    return res
 
 def main():
     parser = argparse.ArgumentParser()
