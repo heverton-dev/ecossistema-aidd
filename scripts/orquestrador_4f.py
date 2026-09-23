@@ -120,11 +120,44 @@ def main():
     print(f" Worktrees geradas em: {worktrees_base}")
     print(f"============================================================")
 
+    config_user_path = repo_root / "docs" / "auditoria" / "CONFIG-EXECUCAO-USUARIO.json"
+    user_config = {}
+    if config_user_path.exists():
+        try:
+            with open(config_user_path, "r", encoding="utf-8") as cf:
+                user_config = json.load(cf)
+            print(f"[CONFIG] Perfil do usuário carregado de {config_user_path.name}")
+        except Exception as e:
+            print(f"[CONFIG] Aviso: Falha ao carregar perfil do usuário: {e}")
+
     for i, fase in enumerate(fases, 1):
         nome = fase.get("nome", f"fase_{i}")
         comando = fase.get("comando_terminal")
         handoff = fase.get("output_handoff")
         
+        # Resolução Dinâmica de Harness, Modelo e Comando
+        papeis = user_config.get("papeis_pipeline_4f", {})
+        padrao = user_config.get("padrao_geral", {})
+        perfil_aplicado = None
+        
+        if "Inspetor_Retorno" in nome or "Retorno" in nome:
+            perfil_aplicado = papeis.get("retorno")
+        elif "Inspetor" in nome:
+            perfil_aplicado = papeis.get("inspetor")
+        elif "Arquiteto" in nome:
+            perfil_aplicado = papeis.get("arquiteto")
+        elif "Construtor" in nome or "Ticket" in nome:
+            perfil_aplicado = papeis.get("construtor")
+        else:
+            perfil_aplicado = padrao
+
+        if perfil_aplicado and (not comando or comando == "auto" or comando == "a_definir_comando_execucao"):
+            fase["harness"] = perfil_aplicado.get("harness", fase.get("harness"))
+            fase["model"] = perfil_aplicado.get("model", fase.get("model"))
+            fase["comando_terminal"] = perfil_aplicado.get("comando_terminal", comando)
+            comando = fase["comando_terminal"]
+            print(f"[DINÂMICO] Fase '{nome}' configurada via CONFIG-EXECUCAO-USUARIO: {fase['harness']} | {fase['model']}")
+
         if args.fase and args.fase != nome:
             print(f"[PULANDO] Fase {nome} (filtro por fase: {args.fase})")
             continue

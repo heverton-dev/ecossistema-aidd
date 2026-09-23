@@ -1,0 +1,89 @@
+{
+  "pipeline_id": "evolucao-aidd-melhoria",
+  "target_tool": "aidd-melhoria",
+  "descricao": "Plano de Evolução Tática montado a partir dos 8 tickets de PLANO-EVOLUCAO.md",
+  "config_usuario_ref": "docs/auditoria/CONFIG-EXECUCAO-USUARIO.json",
+  "definition_of_done": "docs/auditoria/aidd-melhoria/DOD.md",
+  "fases": [
+    {
+      "ticket_id": "TICKET-01",
+      "nome": "Fase_1_Ticket_1_Isolamento_de_Raio_de_Impacto_e_Worktree",
+      "dimensao_15d": "D3. Raio de Impacto e Isolamento",
+      "harness": "agy",
+      "model": "gemini-3.8-flash-high",
+      "comando_terminal": "agy --model gemini-3.8-flash-high --dangerously-skip-permissions",
+      "input_prompt": "docs/auditoria/aidd-melhoria/PLANO-EVOLUCAO.md#ticket-1",
+      "output_handoff": "tests/test_ticket_1.py"
+    },
+    {
+      "ticket_id": "TICKET-02",
+      "nome": "Fase_2_Ticket_2_Componentes__Fractalidade_e_CLI_Fallback",
+      "dimensao_15d": "D4. Componentes e Fractalidade",
+      "harness": "agy",
+      "model": "gemini-3.8-flash-high",
+      "comando_terminal": "agy --model gemini-3.8-flash-high --dangerously-skip-permissions",
+      "input_prompt": "docs/auditoria/aidd-melhoria/PLANO-EVOLUCAO.md#ticket-2",
+      "output_handoff": "tests/test_ticket_2.py"
+    },
+    {
+      "ticket_id": "TICKET-03",
+      "nome": "Fase_3_Ticket_3_Processamento_Anal_tico_Determin_stico",
+      "dimensao_15d": "D8. O que o Estágio Processa",
+      "harness": "agy",
+      "model": "gemini-3.8-flash-high",
+      "comando_terminal": "agy --model gemini-3.8-flash-high --dangerously-skip-permissions",
+      "input_prompt": "docs/auditoria/aidd-melhoria/PLANO-EVOLUCAO.md#ticket-3",
+      "output_handoff": "tests/test_ticket_3.py"
+    },
+    {
+      "ticket_id": "TICKET-04",
+      "nome": "Fase_4_Ticket_4_Tratamento_de_Exce__es_e_Fallback_Operacional",
+      "dimensao_15d": "D11. Tratamento de Exceções e Fallback",
+      "harness": "agy",
+      "model": "gemini-3.8-flash-high",
+      "comando_terminal": "agy --model gemini-3.8-flash-high --dangerously-skip-permissions",
+      "input_prompt": "docs/auditoria/aidd-melhoria/PLANO-EVOLUCAO.md#ticket-4",
+      "output_handoff": "tests/test_ticket_4.py"
+    },
+    {
+      "ticket_id": "TICKET-05",
+      "nome": "Fase_5_Ticket_5_Observabilidade_e_Frugalidade",
+      "dimensao_15d": "D12. Observabilidade e Frugalidade",
+      "harness": "agy",
+      "model": "gemini-3.8-flash-high",
+      "comando_terminal": "agy --model gemini-3.8-flash-high --dangerously-skip-permissions",
+      "input_prompt": "docs/auditoria/aidd-melhoria/PLANO-EVOLUCAO.md#ticket-5",
+      "output_handoff": "tests/test_ticket_5.py"
+    },
+    {
+      "ticket_id": "TICKET-06",
+      "nome": "Fase_6_Ticket_6_Quality_Gates_Determin_sticos_e_R_tulo_Honesto",
+      "dimensao_15d": "D13. Quality Gates (Portões)",
+      "harness": "agy",
+      "model": "gemini-3.8-flash-high",
+      "comando_terminal": "agy --model gemini-3.8-flash-high --dangerously-skip-permissions",
+      "input_prompt": "docs/auditoria/aidd-melhoria/PLANO-EVOLUCAO.md#ticket-6",
+      "output_handoff": "gates/G_amelhoria.py"
+    },
+    {
+      "ticket_id": "TICKET-07",
+      "nome": "Fase_7_Ticket_7_Crit_rio_de_Rejei__o__Limpeza_e_Rollback",
+      "dimensao_15d": "D14. Critério de Rejeição (Rollback)",
+      "harness": "agy",
+      "model": "gemini-3.8-flash-high",
+      "comando_terminal": "agy --model gemini-3.8-flash-high --dangerously-skip-permissions",
+      "input_prompt": "docs/auditoria/aidd-melhoria/PLANO-EVOLUCAO.md#ticket-7",
+      "output_handoff": "tests/test_ticket_7.py"
+    },
+    {
+      "ticket_id": "TICKET-08",
+      "nome": "Fase_8_Ticket_8_Output_Consolidado_e_Handoff_Estruturado",
+      "dimensao_15d": "D15. Output Consolidado e Handoff",
+      "harness": "agy",
+      "model": "gemini-3.8-flash-high",
+      "comando_terminal": "agy --model gemini-3.8-flash-high --dangerously-skip-permissions",
+      "input_prompt": "docs/auditoria/aidd-melhoria/PLANO-EVOLUCAO.md#ticket-8",
+      "output_handoff": "./handoff-melhoria.json"
+    }
+  ]
+}

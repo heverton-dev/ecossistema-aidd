@@ -19,10 +19,14 @@
 - `LAUDO-15D-INICIAL.md`: Laudo 15-D inicial emitido pelo Inspetor (Fase 1).
 - `PROMPT-FASE-1-INSPETOR.txt`: Prompt canônico de entrada do Inspetor (Fase 1).
 - `PLANO-EVOLUCAO.md`: Plano de arquitetura emitido pelo Arquiteto (Fase 2).
+- `PLANO-EVOLUCAO.json`: Template executável do plano de evolução decomposto em 8 fases (Fase 2).
 - `LAUDO-15D-REVISADO.md`: Laudo 15-D final emitido pelo Inspetor de Retorno (Fase 4).
 - `PROMPT-FASE-4-RETORNO.txt`: Prompt canônico de entrada do Inspetor de Retorno (Fase 4).
 - `RESUMO-USUARIO.md`: Resumo executivo em linguagem acessível (Lei #1 e Lei #4).
 - `RELATORIO-TECNICO.md`: Documentação técnica factual e rastreabilidade (Lei #1 e Lei #8).
+
+## 4. Configuração Central de Execução Dinâmica
+- `docs/auditoria/CONFIG-EXECUCAO-USUARIO.json`: Governa os harnesses, modelos e comandos do usuário, preenchendo automaticamente as variáveis dinâmicas em qualquer pipeline (auditoria ou evolução).
 
 ## 4. Quality Gates e Atestado Binário
 - `python docs/auditoria/aidd-melhoria/G_auditoria_15D.py docs/auditoria/aidd-melhoria/LAUDO-15D-REVISADO.md` -> **EXIT 0** (Aprovado)

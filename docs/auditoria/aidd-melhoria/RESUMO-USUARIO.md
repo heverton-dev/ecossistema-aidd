@@ -43,3 +43,8 @@ python docs/auditoria/aidd-melhoria/G_auditoria_15D.py docs/auditoria/aidd-melho
 ```bash
 pytest tests/test_melhoria_isolamento.py
 ```
+
+**Executar pipeline com o template de evolução gerado:**
+```bash
+python scripts/orquestrador_4f.py --manifest docs/auditoria/aidd-melhoria/PLANO-EVOLUCAO.json
+```
