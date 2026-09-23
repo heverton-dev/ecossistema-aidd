@@ -974,6 +974,11 @@ def _audit_gates_legado(args):
             return codigo
     return 0
 
+def cmd_audit_4f(args):
+    """Atalho de orquestracao para o Pipeline Linear de Auditoria 4 Fases."""
+    mapped_args = ["--handoff" if a == "--manifest" else a for a in args]
+    return cmd_pipeline(mapped_args)
+
 def cmd_audit(args):
     # NIH #4 (Fase 2-Gates3): o runner proprio dos quality gates foi
     # substituido pelo framework pre-commit. 'audit' DELEGA para
@@ -1234,6 +1239,7 @@ def main():
         "plan": cmd_plan,
         "melhoria": cmd_melhoria,
         "livro": cmd_livro,
+        "audit-4f": cmd_audit_4f,
         "audit": cmd_audit,
         "harness": cmd_harness,
         "preflight-host": cmd_preflight_host,
