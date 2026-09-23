@@ -1,12 +1,7 @@
 {
   "ferramenta": "aidd-melhoria",
-  "status": "SUCESSO",
-  "codigo_saida": 0,
-  "manifesto": "C:\\Users\\trcnologia\\AppData\\Local\\Temp\\pytest-of-tecnologia\\pytest-1658\\test_cli_melhoria_com_manifest0\\manifesto_teste.json",
-  "detalhes": {
-    "pedido": "Refatorar modulo de logs para reduzir verbosidade",
-    "nome": "refatorar-modulo-logs",
-    "nota_atual": "6.5",
-    "destino_base": "C:\\Users\\trcnologia\\Desktop\\worktrees_evolucao-aidd-melhoria\\Fase_3_Ticket_3_Deterministic_Analytical_Processing\\docs\\melhorias"
-  }
+  "status": "FALHA",
+  "codigo_saida": 1,
+  "manifesto": "C:\\Users\\trcnologia\\AppData\\Local\\Temp\\pytest-of-tecnologia\\pytest-1664\\test_cli_melhoria_com_manifest0\\manifesto_teste.json",
+  "erro": "Falha na geração do relatório de melhoria (exit code 1)."
 }
