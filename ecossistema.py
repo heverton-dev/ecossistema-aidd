@@ -975,9 +975,25 @@ def _audit_gates_legado(args):
     return 0
 
 def cmd_audit_4f(args):
-    """Atalho de orquestracao para o Pipeline Linear de Auditoria 4 Fases."""
-    mapped_args = ["--handoff" if a == "--manifest" else a for a in args]
-    return cmd_pipeline(mapped_args)
+    """Motor autônomo e sequencial do Pipeline Linear de Auditoria 4 Fases."""
+    import sys
+    from pathlib import Path
+    import subprocess
+    
+    # Extrair os args de namespace ou lista
+    try:
+        idx = args.index("--manifest")
+        manifest_val = args[idx+1]
+    except (ValueError, IndexError):
+        print("Erro: --manifest é obrigatório para audit-4f.")
+        return 1
+
+    cmd = [
+        sys.executable,
+        str(Path("scripts") / "orquestrador_4f.py"),
+        "--manifest", manifest_val
+    ]
+    return subprocess.run(cmd).returncode
 
 def cmd_audit(args):
     # NIH #4 (Fase 2-Gates3): o runner proprio dos quality gates foi
