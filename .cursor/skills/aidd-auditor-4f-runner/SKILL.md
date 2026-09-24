@@ -16,11 +16,11 @@ Este motor orquestra as 4 fases estritas de auditoria e correção contínua do 
    - **Natural Language:** "Inicie a auditoria 4F na ferramenta X", "rode o pipeline de auditoria".
 
 ## Regra Estrutural de Pastas (Motor de Refração)
-Todo o ciclo de vida deste pipeline DEVE ser gerado estritamente dentro da raiz `docs/auditoria/<ferramenta-alvo>/` (ex: `docs/auditoria/aidd-melhoria/`). É terminantemente proibido jogar artefatos, laudos 15-D, DoD ou Planos de Evolução em `docs/planos/`. O agente orquestrador consolida os artefatos das 4 fases nessa pasta.
+Todo o ciclo de vida deste pipeline DEVE ser gerado estritamente dentro de `docs/auditoria/<ferramenta-alvo>/ciclo-NN/` (ex: `docs/auditoria/aidd-melhoria/ciclo-01/`); só o gate `G_auditoria_15D.py` fica na raiz da ferramenta. Cada nova rodada abre o próximo ciclo (`python scripts/scaffold_auditoria.py <ferramenta>`: sem ciclo → `ciclo-01`; ciclo vigente sem `LAUDO-15D-REVISADO.md` → retoma; ciclo concluído → abre `ciclo-NN+1`, herdando o `DOD.md` e comparando Nota Anterior → Nota Nova). É terminantemente proibido jogar artefatos, laudos 15-D, DoD ou Planos de Evolução em `docs/planos/`. O agente orquestrador consolida os artefatos das 4 fases nessa pasta.
 
 ## Fluxo de Execução Restrita (4 Fases)
 - O Runner intercepta o manifesto JSON do alvo (ex: `docs/auditoria/template-pipeline-4f.json`).
-- Cria/Aloca a pasta da auditoria: `docs/auditoria/<tool-name>/`.
+- Cria/Aloca a pasta do ciclo: `docs/auditoria/<tool-name>/ciclo-NN/`. Se todas as fases do manifesto já têm saída, o orquestrador informa `NADA A FAZER` e não declara sucesso.
 - Isola o branch (`git checkout -b audit/<tool-name>`).
 - Lança a Fase 1 (Inspetor) e aguarda o EXIT 0 e o `output_handoff` (Laudo 15-D).
 - Lança a Fase 2 (Arquiteto) que gera o `PLANO-EVOLUCAO.md` na pasta da auditoria.

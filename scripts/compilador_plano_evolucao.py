@@ -121,7 +121,10 @@ RULES:
 
 def compilar_plano_evolucao(md_file: Path, config_file: Path = None, output_file: Path = None):
     tool_dir = md_file.parent
-    tool_name = tool_dir.name
+    # Layout por ciclo: docs/auditoria/<ferramenta>/ciclo-NN/PLANO-EVOLUCAO.md
+    em_ciclo = re.match(r"^ciclo-\d+$", tool_dir.name) is not None
+    tool_name = tool_dir.parent.name if em_ciclo else tool_dir.name
+    pipeline_id = f"evolucao-{tool_name}-{tool_dir.name}" if em_ciclo else f"evolucao-{tool_name}"
 
     # Valida tudo ANTES de escrever qualquer arquivo (falha não deixa prompt parcial)
     lista_rotativa = carregar_rotativo(config_file)
@@ -152,7 +155,7 @@ def compilar_plano_evolucao(md_file: Path, config_file: Path = None, output_file
         })
 
     manifesto = {
-        "pipeline_id": f"evolucao-{tool_name}",
+        "pipeline_id": pipeline_id,
         "target_tool": tool_name,
         "descricao": f"Plano de Evolução Tática montado a partir dos {len(fases)} tickets de {md_file.name}",
         "config_usuario_ref": config_file.as_posix() if config_file else None,

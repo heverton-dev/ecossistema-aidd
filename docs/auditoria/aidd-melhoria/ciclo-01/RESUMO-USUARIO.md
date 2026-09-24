@@ -36,7 +36,7 @@ A ferramenta `aidd-melhoria` passou por um ciclo completo de auditoria e evoluç
 
 **Verificar conformidade do Laudo 15-D:**
 ```bash
-python docs/auditoria/aidd-melhoria/G_auditoria_15D.py docs/auditoria/aidd-melhoria/LAUDO-15D-REVISADO.md
+python docs/auditoria/aidd-melhoria/G_auditoria_15D.py docs/auditoria/aidd-melhoria/ciclo-01/LAUDO-15D-REVISADO.md
 ```
 
 **Executar auditoria das fatias de isolamento implementadas:**
@@ -46,5 +46,5 @@ pytest tests/test_melhoria_isolamento.py
 
 **Executar pipeline com o template de evolução gerado:**
 ```bash
-python scripts/orquestrador_4f.py --manifest docs/auditoria/aidd-melhoria/PLANO-EVOLUCAO.json
+python scripts/orquestrador_4f.py --manifest docs/auditoria/aidd-melhoria/ciclo-01/PLANO-EVOLUCAO.json
 ```

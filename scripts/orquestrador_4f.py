@@ -322,6 +322,7 @@ def main():
         except Exception as e:
             print(f"[CONFIG] Aviso: Falha ao carregar perfil do usuário: {e}")
 
+    fases_em_cache = 0
     for i, fase in enumerate(fases, 1):
         nome = fase.get("nome", f"fase_{i}")
         comando = fase.get("comando_terminal")
@@ -361,6 +362,7 @@ def main():
             if handoff_base_path.exists() and handoff_base_path.stat().st_size > 0:
                 print(f"[CACHE] Memória detectada! O arquivo '{handoff_base_path.name}' já está consolidado no projeto principal.")
                 print(f"[CACHE] Pulando a execução da IA desta fase para economizar tokens.")
+                fases_em_cache += 1
                 continue
                 
         wt_path = worktrees_base / nome
@@ -412,6 +414,17 @@ def main():
         # N?o, o pipeline opera de forma independente para n?o sujar a master at? a aprova??o,
         # Ent?o ns pr?ximas fases DEVEM puxar da branch da fase anterior!
         
+    if fases and fases_em_cache == len(fases):
+        # Nenhum agente foi chamado: declarar sucesso aqui seria rótulo desonesto (Lei #8).
+        alvo = data.get("target_tool", "<ferramenta>")
+        print("\n============================================================")
+        print(f" NADA A FAZER: as {len(fases)} fases deste manifesto já têm saída ({data.get('ciclo', 'ciclo atual')}).")
+        print(" Nenhum agente foi executado. Para uma nova rodada, abra o próximo ciclo:")
+        print(f"   python scripts/scaffold_auditoria.py {alvo}")
+        print(" Para refazer este mesmo ciclo por cima: --force")
+        print("============================================================")
+        return
+
     print("\n============================================================")
     print(" PIPELINE FINALIZADO COM SUCESSO!")
     print(" A aprovação humana (Join Barrier) agora é requerida.")

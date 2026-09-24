@@ -1016,12 +1016,15 @@ def cmd_evolucao(args):
             return 1
     elif len(args) > 0 and not args[0].startswith("-"):
         tool_name = args[0]
-        candidato = Path("docs") / "auditoria" / tool_name / "PLANO-EVOLUCAO.json"
+        from scripts.scaffold_auditoria import ciclo_vigente
+        pasta_tool = Path("docs") / "auditoria" / tool_name
+        pasta_plano = ciclo_vigente(pasta_tool) or pasta_tool  # layout por ciclo (ciclo-NN)
+        candidato = pasta_plano / "PLANO-EVOLUCAO.json"
         if candidato.exists():
             manifest_val = str(candidato)
         else:
             # Se só existir o Markdown, tenta compilar automaticamente
-            md_candidato = Path("docs") / "auditoria" / tool_name / "PLANO-EVOLUCAO.md"
+            md_candidato = pasta_plano / "PLANO-EVOLUCAO.md"
             if md_candidato.exists():
                 print(f"[AUTO] Compilando {md_candidato.name} para {candidato.name}...")
                 from scripts.compilador_plano_evolucao import compilar_plano_evolucao
@@ -1032,7 +1035,7 @@ def cmd_evolucao(args):
                     return 1
                 manifest_val = str(candidato)
             else:
-                print(f"Erro: Plano de evolução não encontrado em 'docs/auditoria/{tool_name}/'.")
+                print(f"Erro: Plano de evolução não encontrado em '{pasta_plano.as_posix()}/'.")
                 return 1
     else:
         print("Erro: Forneça o nome da ferramenta (ex: python ecossistema.py evolucao aidd-melhoria) ou --manifest <json>.")

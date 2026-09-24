@@ -38,12 +38,12 @@ Durante a auditoria, o próprio gerador de auditorias foi consertado: agora ele 
 
 **Verificar conformidade do Laudo 15-D:**
 ```bash
-python docs/auditoria/aidd-diagnose/G_auditoria_15D.py docs/auditoria/aidd-diagnose/LAUDO-15D-INICIAL.md
+python docs/auditoria/aidd-diagnose/G_auditoria_15D.py docs/auditoria/aidd-diagnose/ciclo-01/LAUDO-15D-INICIAL.md
 ```
 
 **Recompilar o plano a partir do config atual:**
 ```bash
-python scripts/compilador_plano_evolucao.py --plano docs/auditoria/aidd-diagnose/PLANO-EVOLUCAO.md
+python scripts/compilador_plano_evolucao.py --plano docs/auditoria/aidd-diagnose/ciclo-01/PLANO-EVOLUCAO.md
 ```
 
 **Executar a evolução (Fase 3):**

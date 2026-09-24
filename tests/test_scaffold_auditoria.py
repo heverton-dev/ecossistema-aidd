@@ -46,7 +46,7 @@ def _config(tmp_path: Path, conteudo: dict) -> Path:
 
 
 def _manifesto(tmp_path: Path, tool: str) -> dict:
-    caminho = tmp_path / "docs" / "auditoria" / tool / "MANIFESTO-4F.json"
+    caminho = tmp_path / "docs" / "auditoria" / tool / "ciclo-01" / "MANIFESTO-4F.json"
     return json.loads(caminho.read_text(encoding="utf-8"))
 
 
@@ -78,7 +78,7 @@ def test_config_ausente_ou_incompleto_reprova_sem_inventar_padrao(tmp_path, cont
     _config(tmp_path, conteudo)
     with pytest.raises(ValueError, match="CONFIG-EXECUCAO-USUARIO.json"):
         criar_scaffold_auditoria("ferramenta-x", repo_root=tmp_path)
-    assert not (tmp_path / "docs" / "auditoria" / "ferramenta-x" / "MANIFESTO-4F.json").exists()
+    assert not (tmp_path / "docs" / "auditoria" / "ferramenta-x").exists()
 
 
 def test_scaffold_nunca_escreve_no_config_do_usuario(tmp_path):
@@ -91,7 +91,7 @@ def test_scaffold_nunca_escreve_no_config_do_usuario(tmp_path):
 def test_prompts_apontam_para_template_existente(tmp_path):
     _config(tmp_path, {"pipeline_auditoria_4f": _papeis()})
     criar_scaffold_auditoria("ferramenta-z", repo_root=tmp_path)
-    pasta = tmp_path / "docs" / "auditoria" / "ferramenta-z"
+    pasta = tmp_path / "docs" / "auditoria" / "ferramenta-z" / "ciclo-01"
 
     assert (ROOT_DIR / TEMPLATE_REAL).exists()
     for nome in ("PROMPT-FASE-1-INSPETOR.txt", "PROMPT-FASE-4-RETORNO.txt"):
@@ -103,20 +103,20 @@ def test_prompts_apontam_para_template_existente(tmp_path):
 def test_fases_2_e_3_recebem_prompt_fechado_da_ferramenta(tmp_path):
     _config(tmp_path, {"pipeline_auditoria_4f": _papeis()})
     criar_scaffold_auditoria("ferramenta-w", repo_root=tmp_path)
-    pasta = tmp_path / "docs" / "auditoria" / "ferramenta-w"
+    pasta = tmp_path / "docs" / "auditoria" / "ferramenta-w" / "ciclo-01"
     fases = _manifesto(tmp_path, "ferramenta-w")["fases"]
 
-    assert fases[1]["input_prompt"] == "docs/auditoria/ferramenta-w/PROMPT-FASE-2-ARQUITETO.txt"
-    assert fases[2]["input_prompt"] == "docs/auditoria/ferramenta-w/PROMPT-FASE-3-CONSTRUTOR.txt"
+    assert fases[1]["input_prompt"] == "docs/auditoria/ferramenta-w/ciclo-01/PROMPT-FASE-2-ARQUITETO.txt"
+    assert fases[2]["input_prompt"] == "docs/auditoria/ferramenta-w/ciclo-01/PROMPT-FASE-3-CONSTRUTOR.txt"
 
     f2 = (pasta / "PROMPT-FASE-2-ARQUITETO.txt").read_text(encoding="utf-8")
-    assert "docs/auditoria/ferramenta-w/LAUDO-15D-INICIAL.md" in f2
-    assert "docs/auditoria/ferramenta-w/PLANO-EVOLUCAO.md" in f2
+    assert "docs/auditoria/ferramenta-w/ciclo-01/LAUDO-15D-INICIAL.md" in f2
+    assert "docs/auditoria/ferramenta-w/ciclo-01/PLANO-EVOLUCAO.md" in f2
     assert "**Construtor Prompt (EN):**" in f2
 
     f3 = (pasta / "PROMPT-FASE-3-CONSTRUTOR.txt").read_text(encoding="utf-8")
-    assert "docs/auditoria/ferramenta-w/PLANO-EVOLUCAO.json" in f3
-    assert "docs/auditoria/ferramenta-w/prompts_tickets/" in f3
+    assert "docs/auditoria/ferramenta-w/ciclo-01/PLANO-EVOLUCAO.json" in f3
+    assert "docs/auditoria/ferramenta-w/ciclo-01/prompts_tickets/" in f3
 
     # Únicos não-ASCII tolerados: rótulos fixos do ticket que o compilador lê por regex.
     rotulos_do_ticket = ("**Implementação Técnica:**", "**Verificação (Green):**")

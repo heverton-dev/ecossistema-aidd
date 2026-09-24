@@ -1,11 +1,12 @@
-ROLE: Builder. Phase 3. Audit pipeline 4F. Target tool: 'aidd-diagnose'.
+ROLE: Builder. Phase 3. Audit pipeline 4F. Target tool: 'aidd-diagnose'. Cycle: docs/auditoria/aidd-diagnose/ciclo-01.
 
-1. Read compiled plan: docs/auditoria/aidd-diagnose/PLANO-EVOLUCAO.json
+1. Read compiled plan: docs/auditoria/aidd-diagnose/ciclo-01/PLANO-EVOLUCAO.json
 2. Execute tickets in listed order. One ticket at a time.
-3. For each ticket read its prompt: docs/auditoria/aidd-diagnose/prompts_tickets/PROMPT-TICKET-<NN>.txt
+3. For each ticket read its prompt: docs/auditoria/aidd-diagnose/ciclo-01/prompts_tickets/PROMPT-TICKET-<NN>.txt
 4. Work inside ephemeral Git Worktree only. Never write in main working tree.
 5. TDD: write failing test first. Run it. Assert exit 1. Implement. Run again. Assert exit 0.
 6. Deliver exactly the ticket output_handoff file. Zero stubs. Real pytest tests.
 7. Capture real exit codes: redirect output to file, read $? on same line. Never trust pipes.
 8. NEVER edit docs/auditoria/CONFIG-EXECUCAO-USUARIO.json.
 9. Stop on first ticket failure. Report ticket id, command, exit code.
+10. Finish by writing docs/auditoria/aidd-diagnose/ciclo-01/RELATORIO-CONSTRUTOR.md: one row per ticket with ticket id, delivered file, test command, exit code before fix, exit code after fix.

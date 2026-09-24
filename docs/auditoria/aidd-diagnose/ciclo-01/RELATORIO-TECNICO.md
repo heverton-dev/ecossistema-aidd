@@ -20,20 +20,24 @@
 - `ecossistema.py evolucao`: erro de compilação vira EXIT 1 limpo.
 - Testes: `tests/test_scaffold_auditoria.py` (8) + `tests/test_compilador_plano_evolucao.py` (10) → 18 passed. RED provado antes (12 falhas com o código anterior).
 
-## 4. Estrutura Canônica de Arquivos da Auditoria (`docs/auditoria/aidd-diagnose/`)
+## 4. Estrutura Canônica de Arquivos da Auditoria (`docs/auditoria/aidd-diagnose/ciclo-01/`)
 - `DOD.md`: Definition of Done.
 - `MANIFESTO-4F.json`: manifesto das 4 fases, derivado do config.
 - `PROMPT-FASE-1-INSPETOR.txt`, `PROMPT-FASE-2-ARQUITETO.txt`, `PROMPT-FASE-3-CONSTRUTOR.txt`, `PROMPT-FASE-4-RETORNO.txt`: prompts fechados de cada fase.
-- `G_auditoria_15D.py`: gate das 15 dimensões.
+- `../G_auditoria_15D.py` (raiz da ferramenta, compartilhado entre ciclos): gate das 15 dimensões; sem argumento valida o ciclo vigente.
 - `LAUDO-15D-INICIAL.md`: laudo da Fase 1 (nota 4/10).
 - `PLANO-EVOLUCAO.md` / `PLANO-EVOLUCAO.json`: 8 tickets (D2, D3, D8, D11, D12, D13, D14, D15).
 - `prompts_tickets/PROMPT-TICKET-01..08.txt`: prompts do Construtor em inglês telegráfico imperativo.
 - `RESUMO-USUARIO.md` / `RELATORIO-TECNICO.md`: este par de fechamento parcial.
 
 ## 5. Quality Gates e Atestado Binário
-- `python docs/auditoria/aidd-diagnose/G_auditoria_15D.py docs/auditoria/aidd-diagnose/LAUDO-15D-INICIAL.md` → **EXIT 0**
-- `python scripts/compilador_plano_evolucao.py --plano docs/auditoria/aidd-diagnose/PLANO-EVOLUCAO.md` → **EXIT 0** (8 fases, 8/8 iguais ao config, 8/8 prompts ASCII)
+- `python docs/auditoria/aidd-diagnose/G_auditoria_15D.py docs/auditoria/aidd-diagnose/ciclo-01/LAUDO-15D-INICIAL.md` → **EXIT 0**
+- `python scripts/compilador_plano_evolucao.py --plano docs/auditoria/aidd-diagnose/ciclo-01/PLANO-EVOLUCAO.md` → **EXIT 0** (8 fases, 8/8 iguais ao config, 8/8 prompts ASCII)
 - `pytest tests/test_scaffold_auditoria.py tests/test_compilador_plano_evolucao.py` → **18 passed**
 
 ## 6. Pendências Conhecidas
-- Nenhuma no gerador. O `docs/auditoria/aidd-melhoria/PLANO-EVOLUCAO.md` ganhou os 8 blocos `**Construtor Prompt (EN):**` e foi recompilado (EXIT 0). Os prompts dele agora estão em inglês, os handoffs e nomes das fases ficaram iguais, e harness/model/comando_terminal seguem o rodízio do config.
+- Nenhuma no gerador. O `docs/auditoria/aidd-melhoria/ciclo-01/PLANO-EVOLUCAO.md` ganhou os 8 blocos `**Construtor Prompt (EN):**` e foi recompilado (EXIT 0). Os prompts dele agora estão em inglês, os handoffs e nomes das fases ficaram iguais, e harness/model/comando_terminal seguem o rodízio do config.
+
+## 7. Migração para Ciclos (2026-09-24)
+- Os artefatos desta rodada foram movidos da raiz para `ciclo-01/`, e os caminhos internos foram reescritos. A Fase 3 agora entrega `ciclo-01/RELATORIO-CONSTRUTOR.md`, e não mais um diretório de código, para que o cache do orquestrador valha por ciclo.
+- Uma nova rodada (`python scripts/scaffold_auditoria.py aidd-diagnose`) retoma este ciclo enquanto não existir `LAUDO-15D-REVISADO.md`. Depois disso, abre `ciclo-02/`.

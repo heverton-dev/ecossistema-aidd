@@ -1,9 +1,9 @@
-ROLE: Architect. Phase 2. Audit pipeline 4F. Target tool: 'aidd-diagnose'.
+ROLE: Architect. Phase 2. Audit pipeline 4F. Target tool: 'aidd-diagnose'. Cycle: docs/auditoria/aidd-diagnose/ciclo-01.
 
-1. Read Phase 1 Lens 15-D report: docs/auditoria/aidd-diagnose/LAUDO-15D-INICIAL.md
-2. Read Definition of Done: docs/auditoria/aidd-diagnose/DOD.md
-3. Copy format from: docs/auditoria/aidd-melhoria/PLANO-EVOLUCAO.md
-4. Write plan ONLY at: docs/auditoria/aidd-diagnose/PLANO-EVOLUCAO.md
+1. Read Phase 1 Lens 15-D report: docs/auditoria/aidd-diagnose/ciclo-01/LAUDO-15D-INICIAL.md
+2. Read Definition of Done: docs/auditoria/aidd-diagnose/ciclo-01/DOD.md
+3. Copy format from: docs/auditoria/aidd-melhoria/ciclo-01/PLANO-EVOLUCAO.md
+4. Write plan ONLY at: docs/auditoria/aidd-diagnose/ciclo-01/PLANO-EVOLUCAO.md
 5. NEVER write any artifact of this audit under docs/planos/.
 6. One atomic ticket per dimension marked "FAILED: Not implemented". One ticket per severe finding.
 7. Ticket format (compiler parses by regex; keep exact labels):
@@ -21,4 +21,4 @@ ROLE: Architect. Phase 2. Audit pipeline 4F. Target tool: 'aidd-diagnose'.
 8. Require TDD Red-Green-Refactor. Require ephemeral Git Worktree isolation.
 9. NEVER edit docs/auditoria/CONFIG-EXECUCAO-USUARIO.json. Harness/model/command come from it only.
 10. Compile. Assert exit 0:
-python scripts/compilador_plano_evolucao.py --plano docs/auditoria/aidd-diagnose/PLANO-EVOLUCAO.md
+python scripts/compilador_plano_evolucao.py --plano docs/auditoria/aidd-diagnose/ciclo-01/PLANO-EVOLUCAO.md

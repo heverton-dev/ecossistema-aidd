@@ -16,13 +16,13 @@ Este motor orquestra a execução sequencial dos tickets de evolução técnica 
    - **Natural Language:** "Execute a evolução da ferramenta X", "rode o pipeline de evolução", "evolua a ferramenta X a partir do plano".
 
 ## Estrutura de Entrada e Saída
-- **Origem dos Tickets:** `docs/auditoria/<ferramenta-alvo>/PLANO-EVOLUCAO.md` compilado deterministicamente para `docs/auditoria/<ferramenta-alvo>/PLANO-EVOLUCAO.json`.
+- **Origem dos Tickets:** `docs/auditoria/<ferramenta-alvo>/ciclo-NN/PLANO-EVOLUCAO.md` (ciclo vigente) compilado deterministicamente para `docs/auditoria/<ferramenta-alvo>/ciclo-NN/PLANO-EVOLUCAO.json`.
 - **Configuração de Execução:** `docs/auditoria/CONFIG-EXECUCAO-USUARIO.json`.
 - **Áreas de Trabalho:** Git Worktrees efêmeras isoladas geradas em `../worktrees_evolucao-<ferramenta>/`.
 - **Destino do Código:** `.agents/skills/<ferramenta>/scripts/` e `tests/`.
 
 ## Fluxo de Execução Estrita
-1. O Runner intercepta o manifesto JSON de evolução (ex: `docs/auditoria/<tool-name>/PLANO-EVOLUCAO.json`).
+1. O Runner intercepta o manifesto JSON de evolução (ex: `docs/auditoria/<tool-name>/ciclo-NN/PLANO-EVOLUCAO.json`).
 2. Para cada ticket do plano:
    - Isola uma Git Worktree efêmera na branch `evolucao/<tool-name>/<ticket_nome>`.
    - Lê a especificação do ticket (`input_prompt`).

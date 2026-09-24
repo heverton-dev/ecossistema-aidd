@@ -1,9 +1,9 @@
 {
-  "pipeline_id": "evolucao-aidd-melhoria",
+  "pipeline_id": "evolucao-aidd-melhoria-ciclo-01",
   "target_tool": "aidd-melhoria",
   "descricao": "Plano de Evolução Tática montado a partir dos 8 tickets de PLANO-EVOLUCAO.md",
   "config_usuario_ref": "docs/auditoria/CONFIG-EXECUCAO-USUARIO.json",
-  "definition_of_done": "docs/auditoria/aidd-melhoria/DOD.md",
+  "definition_of_done": "docs/auditoria/aidd-melhoria/ciclo-01/DOD.md",
   "fases": [
     {
       "ticket_id": "TICKET-01",
@@ -12,7 +12,7 @@
       "harness": "claude",
       "model": "haiku",
       "comando_terminal": "claude --dangerously-skip-permissions -p",
-      "input_prompt": "docs/auditoria/aidd-melhoria/prompts_tickets/PROMPT-TICKET-01.txt",
+      "input_prompt": "docs/auditoria/aidd-melhoria/ciclo-01/prompts_tickets/PROMPT-TICKET-01.txt",
       "output_handoff": ".agents/skills/aidd-melhoria/scripts/isolamento.py"
     },
     {
@@ -22,7 +22,7 @@
       "harness": "agy",
       "model": "haiku",
       "comando_terminal": "agy --model gemini-3.8-flash-low  --dangerously-skip-permissions",
-      "input_prompt": "docs/auditoria/aidd-melhoria/prompts_tickets/PROMPT-TICKET-02.txt",
+      "input_prompt": "docs/auditoria/aidd-melhoria/ciclo-01/prompts_tickets/PROMPT-TICKET-02.txt",
       "output_handoff": ".agents/skills/aidd-melhoria/scripts/cli.py"
     },
     {
@@ -32,7 +32,7 @@
       "harness": "mimo",
       "model": "xiaomi-token-plan-sgp/mimo-v2.6-flash",
       "comando_terminal": "mimo --pure -m xiaomi-token-plan-sgp/mimo-v2.6-flash",
-      "input_prompt": "docs/auditoria/aidd-melhoria/prompts_tickets/PROMPT-TICKET-03.txt",
+      "input_prompt": "docs/auditoria/aidd-melhoria/ciclo-01/prompts_tickets/PROMPT-TICKET-03.txt",
       "output_handoff": ".agents/skills/aidd-melhoria/scripts/analisador.py"
     },
     {
@@ -42,7 +42,7 @@
       "harness": "opencode",
       "model": "opencode/big-pickle",
       "comando_terminal": "opencode --pure --auto --agent -m opencode/big-pickle",
-      "input_prompt": "docs/auditoria/aidd-melhoria/prompts_tickets/PROMPT-TICKET-04.txt",
+      "input_prompt": "docs/auditoria/aidd-melhoria/ciclo-01/prompts_tickets/PROMPT-TICKET-04.txt",
       "output_handoff": ".agents/skills/aidd-melhoria/scripts/fallback.py"
     },
     {
@@ -52,7 +52,7 @@
       "harness": "claude",
       "model": "haiku",
       "comando_terminal": "claude --dangerously-skip-permissions -p",
-      "input_prompt": "docs/auditoria/aidd-melhoria/prompts_tickets/PROMPT-TICKET-05.txt",
+      "input_prompt": "docs/auditoria/aidd-melhoria/ciclo-01/prompts_tickets/PROMPT-TICKET-05.txt",
       "output_handoff": ".agents/skills/aidd-melhoria/scripts/observabilidade.py"
     },
     {
@@ -62,7 +62,7 @@
       "harness": "agy",
       "model": "haiku",
       "comando_terminal": "agy --model gemini-3.8-flash-low  --dangerously-skip-permissions",
-      "input_prompt": "docs/auditoria/aidd-melhoria/prompts_tickets/PROMPT-TICKET-06.txt",
+      "input_prompt": "docs/auditoria/aidd-melhoria/ciclo-01/prompts_tickets/PROMPT-TICKET-06.txt",
       "output_handoff": "gates/G_amelhoria.py"
     },
     {
@@ -72,7 +72,7 @@
       "harness": "mimo",
       "model": "xiaomi-token-plan-sgp/mimo-v2.6-flash",
       "comando_terminal": "mimo --pure -m xiaomi-token-plan-sgp/mimo-v2.6-flash",
-      "input_prompt": "docs/auditoria/aidd-melhoria/prompts_tickets/PROMPT-TICKET-07.txt",
+      "input_prompt": "docs/auditoria/aidd-melhoria/ciclo-01/prompts_tickets/PROMPT-TICKET-07.txt",
       "output_handoff": ".agents/skills/aidd-melhoria/scripts/rollback.py"
     },
     {
@@ -82,7 +82,7 @@
       "harness": "opencode",
       "model": "opencode/big-pickle",
       "comando_terminal": "opencode --pure --auto --agent -m opencode/big-pickle",
-      "input_prompt": "docs/auditoria/aidd-melhoria/prompts_tickets/PROMPT-TICKET-08.txt",
+      "input_prompt": "docs/auditoria/aidd-melhoria/ciclo-01/prompts_tickets/PROMPT-TICKET-08.txt",
       "output_handoff": "docs/teste-end-to-end/aidd-melhoria.md"
     }
   ]

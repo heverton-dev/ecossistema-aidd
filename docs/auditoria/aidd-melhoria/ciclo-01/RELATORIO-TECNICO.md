@@ -29,5 +29,5 @@
 - `docs/auditoria/CONFIG-EXECUCAO-USUARIO.json`: Governa os harnesses, modelos e comandos do usuário, preenchendo automaticamente as variáveis dinâmicas em qualquer pipeline (auditoria ou evolução).
 
 ## 4. Quality Gates e Atestado Binário
-- `python docs/auditoria/aidd-melhoria/G_auditoria_15D.py docs/auditoria/aidd-melhoria/LAUDO-15D-REVISADO.md` -> **EXIT 0** (Aprovado)
+- `python docs/auditoria/aidd-melhoria/G_auditoria_15D.py docs/auditoria/aidd-melhoria/ciclo-01/LAUDO-15D-REVISADO.md` -> **EXIT 0** (Aprovado)
 - `pytest tests/test_melhoria_isolamento.py` -> **2 passed in 0.35s** (Aprovado)
