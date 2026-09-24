@@ -5,13 +5,13 @@
   "pipeline_auditoria_4f": {
     "inspetor": { "harness": "claude", "model": "haiku", "comando_terminal": "claude --dangerously-skip-permissions --chrome --model haiku" },
     "arquiteto": {"harness": "agy", "model": "gemini-3.8-flash-low", "comando_terminal": "agy --model gemini-3.8-flash-low  --dangerously-skip-permissions"},
-    "construtor": {"harness": "mimo", "model": "xiaomi-token-plan-sgp/mimo-v2.6-flash", "comando_terminal": "mimo -m xiaomi-token-plan-sgp/mimo-v2.6-flash --pure"},
+    "construtor": {"harness": "mimo", "model": "xiaomi-token-plan-sgp/mimo-v2.6-flash", "comando_terminal": "mimo -m xiaomi-token-plan-sgp/mimo-v2.6-flash --pure --yolo --trust"},
     "retorno": {"harness": "opencode", "model": "opencode/big-pickle", "comando_terminal": "opencode --pure --auto --agent -m opencode/big-pickle"}
   },
   "pipeline_evolucao_rotativo": [
     {"harness": "claude", "model": "haiku", "comando_terminal": "claude --dangerously-skip-permissions --chrome --model haiku"},
     {"harness": "agy", "model": "gemini-3.8-flash-low", "comando_terminal": "agy --model gemini-3.8-flash-low  --dangerously-skip-permissions"},
-    {"harness": "mimo", "model": "xiaomi-token-plan-sgp/mimo-v2.6-flash", "comando_terminal": "mimo -m xiaomi-token-plan-sgp/mimo-v2.6-flash --pure"},
+    {"harness": "mimo", "model": "xiaomi-token-plan-sgp/mimo-v2.6-flash", "comando_terminal": "mimo -m xiaomi-token-plan-sgp/mimo-v2.6-flash --pure --yolo --trust"},
     {"harness": "opencode", "model": "opencode/big-pickle", "comando_terminal": "opencode --pure --auto --agent -m opencode/big-pickle"}
   ]
 }
