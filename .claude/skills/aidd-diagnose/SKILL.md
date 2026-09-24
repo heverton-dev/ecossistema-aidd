@@ -15,6 +15,7 @@ Execute this skill when triaging unexpected test failures, regressions, or syste
    - Isolate the failure into a minimal reproducible command or unit test.
    - Do not proceed until reproduction is 100% deterministic locally.
 2. **Graph Blast Radius Analysis:**
+   - **Mandatory coverage pre-check (before any impact query):** run `python .agents/skills/aidd-diagnose/scripts/cobertura_grafo.py verificar <suspect-files>`. It queries each suspect file with `query_graph_tool(pattern="file_summary", target=<file>)`; zero results = graph stale for that file (the script runs `code-review-graph update --repo .` once and rechecks). Still zero → `modo_fase2 = "fallback"` and hand off to the Ticket 4 fallback. Never report "0 impacted" for a file without graph nodes — only files with `zero_impacto_permitido: true` may appear as zero impact; for uncovered files report `grafo desatualizado → fallback`.
    - Use `code-review-graph` (`query_graph_tool` with callers/callees, `detect_changes_tool`, `get_impact_radius_tool`).
    - Trace entry points, affected call flows, and direct downstream consumers.
 3. **Single Hypothesis Formulation:**
