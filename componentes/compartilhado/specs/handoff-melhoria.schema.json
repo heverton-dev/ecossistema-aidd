@@ -1,0 +1,59 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "HandoffMelhoriaSchema",
+  "description": "Contrato formal de saída consolidada do aidd-melhoria (etapa 1) consumido pelo orquestrador para transitar para /plan (etapa 2). A assinatura cobre o payload canônico (chaves ordenadas, sem o campo 'assinatura').",
+  "type": "object",
+  "required": [
+    "versao_schema",
+    "ferramenta",
+    "status",
+    "codigo_saida",
+    "emitido_em",
+    "transicao",
+    "artefatos",
+    "assinatura"
+  ],
+  "properties": {
+    "versao_schema": { "type": "string", "enum": ["1.0.0"] },
+    "ferramenta": { "type": "string", "enum": ["aidd-melhoria"] },
+    "status": { "type": "string", "enum": ["SUCESSO", "SUCESSO_FALLBACK", "FALHA"] },
+    "codigo_saida": { "type": "integer" },
+    "emitido_em": { "type": "string", "minLength": 20 },
+    "manifesto": { "type": "string" },
+    "erro": { "type": "string" },
+    "detalhes": { "type": "object" },
+    "transicao": {
+      "type": "object",
+      "required": ["fase_atual", "proxima_fase", "liberada", "requer_aprovacao_humana"],
+      "additionalProperties": false,
+      "properties": {
+        "fase_atual": { "type": "string", "enum": ["melhoria"] },
+        "proxima_fase": { "type": ["string", "null"], "enum": ["plan", null] },
+        "liberada": { "type": "boolean" },
+        "requer_aprovacao_humana": { "type": "boolean", "enum": [true] }
+      }
+    },
+    "artefatos": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["caminho", "sha256"],
+        "additionalProperties": false,
+        "properties": {
+          "caminho": { "type": "string", "minLength": 1 },
+          "sha256": { "type": "string", "pattern": "^[0-9a-f]{64}$" }
+        }
+      }
+    },
+    "assinatura": {
+      "type": "object",
+      "required": ["algoritmo", "escopo", "valor"],
+      "additionalProperties": false,
+      "properties": {
+        "algoritmo": { "type": "string", "enum": ["sha256", "hmac-sha256"] },
+        "escopo": { "type": "string", "enum": ["payload-canonico-sem-assinatura"] },
+        "valor": { "type": "string", "pattern": "^[0-9a-f]{64}$" }
+      }
+    }
+  }
+}
