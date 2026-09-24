@@ -1,4 +1,5 @@
 import argparse
+import ctypes
 import json
 import os
 import shutil
@@ -7,83 +8,274 @@ import sys
 import time
 import threading
 from pathlib import Path
+import tkinter as tk
+from tkinter import scrolledtext
+
+class LiveHUD:
+    def __init__(self, title="AIDD - MONITOR AO VIVO", proc_ref=None):
+        self.root = tk.Tk()
+        self.root.title(title)
+        self.root.geometry("900x560+150+100")
+        self.root.configure(bg="#0f172a")
+        self.proc_ref = proc_ref
+        
+        # Always on top e foco físico
+        self.root.attributes("-topmost", True)
+        self.root.lift()
+
+        # Cabeçalho
+        header = tk.Label(
+            self.root, 
+            text="⚡ AIDD ECOSSISTEMA - MONITOR DE EXECUÇÃO & CORREÇÃO AO VIVO ⚡", 
+            font=("Consolas", 12, "bold"), 
+            fg="#38bdf8", 
+            bg="#1e293b",
+            pady=8
+        )
+        header.pack(fill="x")
+
+        # Terminal de Logs
+        self.text_area = scrolledtext.ScrolledText(
+            self.root, 
+            wrap="word", 
+            bg="#020617", 
+            fg="#f8fafc", 
+            font=("Consolas", 10),
+            padx=12,
+            pady=10
+        )
+        self.text_area.pack(fill="both", expand=True, padx=12, pady=6)
+        self.text_area.tag_config("cyan", foreground="#38bdf8")
+        self.text_area.tag_config("green", foreground="#4ade80")
+        self.text_area.tag_config("yellow", foreground="#facc15")
+        self.text_area.tag_config("magenta", foreground="#f43f5e", font=("Consolas", 10, "bold"))
+        self.text_area.tag_config("user", foreground="#a855f7", font=("Consolas", 10, "bold"))
+
+        # Barra de status do Watchdog
+        self.status_bar = tk.Label(
+            self.root,
+            text="[WATCHDOG TERMODINÂMICO] Inicializando...",
+            font=("Consolas", 9),
+            fg="#94a3b8",
+            bg="#0f172a",
+            anchor="w",
+            padx=15
+        )
+        self.status_bar.pack(fill="x")
+
+        # Container inferior (Input do Prompt de Correção)
+        input_container = tk.Frame(self.root, bg="#1e293b", padx=10, pady=8)
+        input_container.pack(fill="x", padx=12, pady=6)
+
+        lbl_input = tk.Label(
+            input_container, 
+            text="Prompt de Correção:", 
+            font=("Consolas", 10, "bold"), 
+            fg="#f8fafc", 
+            bg="#1e293b"
+        )
+        lbl_input.pack(side="left", padx=5)
+
+        self.entry_correction = tk.Entry(
+            input_container, 
+            font=("Consolas", 11), 
+            bg="#020617", 
+            fg="#ffffff", 
+            insertbackground="white"
+        )
+        self.entry_correction.pack(side="left", fill="x", expand=True, padx=8)
+        self.entry_correction.bind("<Return>", lambda event: self.enviar_correcao())
+
+        self.btn_send = tk.Button(
+            input_container, 
+            text="📤 Enviar Correção", 
+            font=("Consolas", 10, "bold"), 
+            bg="#38bdf8", 
+            fg="#0f172a",
+            activebackground="#0284c7",
+            padx=10, 
+            pady=4,
+            command=self.enviar_correcao
+        )
+        self.btn_send.pack(side="left", padx=4)
+
+        self.btn_close = tk.Button(
+            input_container, 
+            text="✅ Concluir / Fechar", 
+            font=("Consolas", 10, "bold"), 
+            bg="#22c55e", 
+            fg="#ffffff",
+            activebackground="#16a34a",
+            padx=10, 
+            pady=4,
+            command=self.concluir
+        )
+        self.btn_close.pack(side="right", padx=5)
+
+    def log(self, text, tag=None):
+        def _append():
+            self.text_area.insert(tk.END, text + ("\n" if not text.endswith("\n") else ""), tag)
+            self.text_area.see(tk.END)
+        try:
+            self.root.after(0, _append)
+        except Exception:
+            pass
+
+    def update_status(self, text, color="#94a3b8"):
+        def _up():
+            self.status_bar.config(text=text, fg=color)
+        try:
+            self.root.after(0, _up)
+        except Exception:
+            pass
+
+    def enviar_correcao(self):
+        texto = self.entry_correction.get().strip()
+        if not texto:
+            return
+        self.log(f"\n[INTERVENÇÃO HUMANA] Enviando Prompt de Correção: \"{texto}\"", "user")
+        correcao_file = Path("PROMPT_CORRECAO_USUARIO.txt")
+        correcao_file.write_text(texto, encoding="utf-8")
+        self.update_status(f"[STATUS] Correção registrada! Injetando no agente...", "#a855f7")
+        self.entry_correction.delete(0, tk.END)
+        if self.proc_ref and self.proc_ref.poll() is None and self.proc_ref.stdin:
+            try:
+                self.proc_ref.stdin.write(texto + "\n")
+                self.proc_ref.stdin.flush()
+            except Exception:
+                pass
+
+    def fechar_com_atraso(self, delay=2):
+        def _close():
+            time.sleep(delay)
+            try:
+                self.root.after(0, self.root.destroy)
+            except Exception:
+                pass
+        threading.Thread(target=_close, daemon=True).start()
+
+    def concluir(self):
+        try:
+            self.root.destroy()
+        except Exception:
+            pass
+
+    def start(self):
+        self.root.mainloop()
 
 def run_cmd_tty(cmd, cwd=None, input_data=None, expected_handoff=None):
-    print(f"[ORCHESTRATOR 4F] Acionando Agente em TTY Interativo Efêmero: {cmd}")
+    print(f"[ORCHESTRATOR 4F] Acionando Agente em TTY Efêmero HUD: {cmd}")
     env = os.environ.copy()
     
+    # Anexa thread ao Desktop físico Default do Windows
     if sys.platform == "win32":
-        window_title = f"AIDD_TTY_Efemero_{int(time.time())}"
-        
-        # Prepara prompt em arquivo local na worktree para leitura segura
-        prompt_txt = ""
-        if input_data and Path(input_data).exists():
-            prompt_txt = Path(input_data).read_text(encoding="utf-8").strip()
-            local_prompt_path = Path(cwd) / "PROMPT_FASE.txt"
-            local_prompt_path.write_text(prompt_txt, encoding="utf-8")
-        
-        # Script PowerShell interativo visível para o usuário acompanhar ao vivo
-        launcher_ps1 = Path(cwd) / "iniciar_agente.ps1"
-        launcher_code = f"""
-$Host.UI.RawUI.WindowTitle = "{window_title}"
-Write-Host "============================================================" -ForegroundColor Cyan
-Write-Host "  AIDD 4F - AGENTE INTERATIVO AO VIVO" -ForegroundColor Green
-Write-Host "  Worktree: $PWD" -ForegroundColor Yellow
-Write-Host "  Comando: {cmd}" -ForegroundColor DarkGray
-Write-Host "============================================================" -ForegroundColor Cyan
-Write-Host ""
+        try:
+            user32 = ctypes.windll.user32
+            hdesk = user32.OpenDesktopW("Default", 0, False, 0x01FF)
+            if hdesk:
+                user32.SetThreadDesktop(hdesk)
+        except Exception:
+            pass
 
-if (Test-Path "PROMPT_FASE.txt") {{
-    $prompt = Get-Content "PROMPT_FASE.txt" -Raw
-    & {cmd} $prompt
-}} else {{
-    & {cmd}
-}}
+    # Garante a flag nativa de leitura de prompt via stdin para o harness
+    parts = cmd.split()
+    final_cmd = cmd
+    if any("claude" in p for p in parts[:2]):
+        if "-p" not in parts and "--print" not in parts:
+            final_cmd = f"{cmd} -p"
+    elif any("agy" in p for p in parts[:2]):
+        if "-p" not in parts and "--print" not in parts and "-i" not in parts:
+            final_cmd = f"{cmd} -p -"
 
-Write-Host ""
-Write-Host "============================================================" -ForegroundColor Cyan
-Write-Host "  Execução do Agente finalizada. Pressione Enter para fechar." -ForegroundColor Green
-Write-Host "============================================================" -ForegroundColor Cyan
-Read-Host
-"""
-        launcher_ps1.write_text(launcher_code, encoding="utf-8")
-        
-        # Abre nova janela visível no Windows
-        comando_tty = f'start "{window_title}" powershell -ExecutionPolicy Bypass -NoExit -File "{launcher_ps1}"'
-        subprocess.run(comando_tty, shell=True, cwd=cwd, env=env)
-        
-        if expected_handoff:
-            print(f"[WATCHDOG] Janela interativa aberta. Monitorando entrega de '{expected_handoff.name}'...")
-            start_wait = time.time()
-            handoff_ready = False
-            last_size = -1
-            stable_count = 0
-            
-            while True:
-                time.sleep(3)
-                if expected_handoff.exists():
-                    current_size = expected_handoff.stat().st_size
-                    if current_size == last_size and current_size > 0:
-                        stable_count += 1
-                        if stable_count >= 3:  # 9 segundos estável = concluído
-                            handoff_ready = True
-                            break
-                    else:
-                        last_size = current_size
-                        stable_count = 0
-                        
-                if time.time() - start_wait > 3600:
-                    print("[WATCHDOG] Timeout extremo (1h). Abortando.")
-                    break
-                    
-            if handoff_ready:
-                print(f"[WATCHDOG] Handoff detectado e estável! Finalizando TTY interativo...")
-                subprocess.run(f'taskkill /F /FI "WINDOWTITLE eq {window_title}*" /T', shell=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
-                return True
+    if input_data:
+        comando = f'type "{input_data}" | {final_cmd}'
     else:
-        # Fallback linux
-        subprocess.run(cmd, shell=True, cwd=cwd, env=env)
-        return True
+        comando = final_cmd
+
+    # Inicia o processo conectando streams de E/S
+    proc = subprocess.Popen(
+        comando,
+        shell=True,
+        cwd=cwd,
+        env=env,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.STDOUT,
+        stdin=subprocess.DEVNULL,
+        text=True,
+        bufsize=1
+    )
+
+    hud_title = f"AIDD - {expected_handoff.name if expected_handoff else 'AGENTE'}"
+    hud = LiveHUD(title=hud_title, proc_ref=proc)
+    hud.log(f"[INFO] Comando: {comando}", "cyan")
+    hud.log(f"[INFO] Worktree: {cwd}", "cyan")
+    hud.log("[AGENTE] Sessão iniciada. Transmitindo saída ao vivo...", "green")
+
+    # Thread 1: Leitura de stdout em tempo real linha a linha
+    def reader_thread():
+        try:
+            for line in iter(proc.stdout.readline, ''):
+                if line:
+                    hud.log(line)
+        except Exception:
+            pass
+        hud.log("\n[PROCESSO] Saída do agente finalizada.", "yellow")
+
+    threading.Thread(target=reader_thread, daemon=True).start()
+
+    # Thread 2: Watchdog Termodinâmico
+    def watchdog_thread():
+        if not expected_handoff:
+            return
+        hud.log(f"[WATCHDOG] Monitorando entrega de '{expected_handoff.name}'...", "yellow")
+        start_wait = time.time()
+        last_size = -1
+        stable_count = 0
+        
+        while True:
+            time.sleep(2)
+            if expected_handoff.exists():
+                current_size = expected_handoff.stat().st_size
+                hud.update_status(f"[WATCHDOG] '{expected_handoff.name}' detectado ({current_size} bytes). Aferindo estabilidade térmica...", "#eab308")
+                if current_size == last_size and current_size > 0:
+                    stable_count += 1
+                    if stable_count >= 3:  # 6 segundos de taxa de variação zero = concluído
+                        hud.log(f"[WATCHDOG] Handoff detectado e estável ({current_size} bytes)! Finalizando...", "green")
+                        hud.update_status(f"[SUCESSO] Handoff concluído com sucesso ({current_size} bytes)! Fechando HUD...", "#4ade80")
+                        time.sleep(1)
+                        if proc.poll() is None:
+                            try:
+                                proc.terminate()
+                            except Exception:
+                                pass
+                        hud.fechar_com_atraso(delay=2)
+                        break
+                else:
+                    last_size = current_size
+                    stable_count = 0
+            else:
+                hud.update_status(f"[WATCHDOG] Aguardando criação de '{expected_handoff.name}'...", "#94a3b8")
+
+            if time.time() - start_wait > 3600:
+                hud.log("[WATCHDOG] Timeout extremo (1h). Abortando.", "magenta")
+                break
+
+    threading.Thread(target=watchdog_thread, daemon=True).start()
+
+    # Abre a interface gráfica (bloqueia até a finalização)
+    try:
+        hud.start()
+    except Exception as e:
+        print(f"[HUD] Janela finalizada: {e}")
+
+    # Garante encerramento do processo filho
+    if proc.poll() is None:
+        try:
+            proc.kill()
+        except Exception:
+            pass
+
+    return True
 
 def run_cmd(cmd, cwd=None, exit_on_fail=True):
     # Execucao nativa oculta padrao para cmds git, etc

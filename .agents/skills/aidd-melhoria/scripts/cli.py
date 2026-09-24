@@ -144,7 +144,22 @@ def processar_manifesto(
             itens_formatados.append(f"{item_nome}::{item_status}::{item_just}")
         itens_avaliados = itens_formatados
 
+<<<<<<< Updated upstream
     hoje = date.today()
+=======
+    from datetime import date
+    tres = gm._tres_palavras(manifest_dados.get("nome") or pedido)
+    data_str = date.today().strftime("%d-%m-%Y")
+    slug_arquivo = f"{data_str}_melhoria-{tres}"
+    for ext in (".json", ".html"):
+        arq_velho = destino_base / f"{slug_arquivo}{ext}"
+        if arq_velho.exists():
+            try:
+                arq_velho.unlink()
+            except OSError:
+                pass
+
+>>>>>>> Stashed changes
     codigo_resultado = gm.cmd_init(
         pedido=pedido,
         hoje=hoje,
