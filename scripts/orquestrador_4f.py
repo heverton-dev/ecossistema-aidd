@@ -206,6 +206,19 @@ def tela(handle):
     return "\n".join(lido.get("terminal", {}).get("tail", []))
 
 
+def tela_estavel(handle, leituras=10, intervalo=2):
+    """Tela depois de parar de mudar (2 leituras iguais seguidas). tui-idle volta antes de alguns
+    harnesses desenharem a pergunta de confiança (agy, TICKET-06): decidir cedo demais a perde."""
+    anterior = None
+    for _ in range(leituras):
+        atual = tela(handle)
+        if atual and atual == anterior:
+            return atual
+        anterior = atual
+        time.sleep(intervalo)
+    return anterior or ""
+
+
 def enviar_linha(handle, texto, marca, tentativas=5, espera=3):
     """Texto e Enter em envios separados: 'texto + --enter' passa pela observação de prompt do
     Orca, que retém o envio quando acha que o harness ainda espera confiança (mimo, 2026-09-24).
@@ -226,7 +239,7 @@ def confirmar_confianca_pasta(handle, tentativas=3):
     """Harness novo numa worktree nova pergunta "confiar nesta pasta?". Sem isso, o texto
     enviado é consumido pela pergunta e o prompt se perde (visto com mimo, 2026-09-24)."""
     for _ in range(tentativas):
-        atual = tela(handle).lower()
+        atual = tela_estavel(handle).lower()
         if "accept the risks" in atual:
             # Aviso de risco (mimo --yolo) tem "No, exit" como padrão: Enter fecharia o agente.
             print("[ORCA] AVISO: harness abriu confirmação de risco; Enter não será enviado. "
@@ -255,8 +268,13 @@ def aguardar_worker_done(run_id, dispatch_id, timeout_s=None):
             payload = json.loads(msg.get("payload") or "{}")
             if payload.get("dispatchId") != dispatch_id:
                 continue
-            achado = ("failed" if msg.get("type") == "escalation" else payload.get("outcome", "failed"),
-                      msg.get("subject", ""))
+            resumo = msg.get("subject", "")
+            rejeicao = payload.get("_orcaLifecycleRejection")
+            if rejeicao:
+                # Orca recusou o registro (ex.: processo do agente reiniciado na aba); o resultado
+                # real da fase continua decidido pelo gate_fase logo em seguida.
+                resumo = f"[registro recusado pelo Orca: {rejeicao.get('code')}] {resumo}"
+            achado = ("failed" if msg.get("type") == "escalation" else payload.get("outcome", "failed"), resumo)
         if lote.get("deliveryId"):
             orca("orchestration", "check", "--run", run_id, "--ack", lote["deliveryId"])
         if achado:
