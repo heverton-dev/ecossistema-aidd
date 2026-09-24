@@ -144,9 +144,6 @@ def processar_manifesto(
             itens_formatados.append(f"{item_nome}::{item_status}::{item_just}")
         itens_avaliados = itens_formatados
 
-<<<<<<< Updated upstream
-    hoje = date.today()
-=======
     from datetime import date
     tres = gm._tres_palavras(manifest_dados.get("nome") or pedido)
     data_str = date.today().strftime("%d-%m-%Y")
@@ -158,8 +155,7 @@ def processar_manifesto(
                 arq_velho.unlink()
             except OSError:
                 pass
-
->>>>>>> Stashed changes
+    hoje = date.today()
     codigo_resultado = gm.cmd_init(
         pedido=pedido,
         hoje=hoje,
