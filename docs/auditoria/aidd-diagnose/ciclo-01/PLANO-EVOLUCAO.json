@@ -12,7 +12,7 @@
       "dimensao_15d": "D2. Input e Gatilhos",
       "harness": "claude",
       "model": "haiku",
-      "comando_terminal": "claude --dangerously-skip-permissions -p",
+      "comando_terminal": "claude --dangerously-skip-permissions --chrome --model haiku",
       "input_prompt": "docs/auditoria/aidd-diagnose/ciclo-01/prompts_tickets/PROMPT-TICKET-01.txt",
       "output_handoff": ".agents/skills/aidd-diagnose/scripts/cli.py",
       "gate_fase": "python -m pytest -q -p no:cacheprovider tests"
@@ -22,7 +22,7 @@
       "nome": "Fase_2_Ticket_2_Isolamento_da_Instrumenta__o_em_Worktree",
       "dimensao_15d": "D3. Raio de Impacto e Isolamento",
       "harness": "agy",
-      "model": "haiku",
+      "model": "gemini-3.8-flash-low",
       "comando_terminal": "agy --model gemini-3.8-flash-low  --dangerously-skip-permissions",
       "input_prompt": "docs/auditoria/aidd-diagnose/ciclo-01/prompts_tickets/PROMPT-TICKET-02.txt",
       "output_handoff": ".agents/skills/aidd-diagnose/scripts/isolamento.py",
@@ -34,7 +34,7 @@
       "dimensao_15d": "D8. O que o Estágio Processa",
       "harness": "mimo",
       "model": "xiaomi-token-plan-sgp/mimo-v2.6-flash",
-      "comando_terminal": "mimo --pure -m xiaomi-token-plan-sgp/mimo-v2.6-flash",
+      "comando_terminal": "MIMOCODE_DANGEROUSLY_SKIP_PERMISSIONS=1 MIMOCODE_TUI_PLAIN=1 mimo -m xiaomi-token-plan-sgp/mimo-v2.6-flash --pure --trust",
       "input_prompt": "docs/auditoria/aidd-diagnose/ciclo-01/prompts_tickets/PROMPT-TICKET-03.txt",
       "output_handoff": ".agents/skills/aidd-diagnose/scripts/cobertura_grafo.py",
       "gate_fase": "python -m pytest -q -p no:cacheprovider tests"
@@ -56,7 +56,7 @@
       "dimensao_15d": "D12. Observabilidade e Frugalidade",
       "harness": "claude",
       "model": "haiku",
-      "comando_terminal": "claude --dangerously-skip-permissions -p",
+      "comando_terminal": "claude --dangerously-skip-permissions --chrome --model haiku",
       "input_prompt": "docs/auditoria/aidd-diagnose/ciclo-01/prompts_tickets/PROMPT-TICKET-05.txt",
       "output_handoff": ".agents/skills/aidd-diagnose/scripts/observabilidade.py",
       "gate_fase": "python -m pytest -q -p no:cacheprovider tests"
@@ -66,7 +66,7 @@
       "nome": "Fase_6_Ticket_6_Quality_Gate_Pr_prio_e_R_tulo_Honesto",
       "dimensao_15d": "D13. Quality Gates (Portões)",
       "harness": "agy",
-      "model": "haiku",
+      "model": "gemini-3.8-flash-low",
       "comando_terminal": "agy --model gemini-3.8-flash-low  --dangerously-skip-permissions",
       "input_prompt": "docs/auditoria/aidd-diagnose/ciclo-01/prompts_tickets/PROMPT-TICKET-06.txt",
       "output_handoff": "gates/G_aidd_diagnose.py",
@@ -78,7 +78,7 @@
       "dimensao_15d": "D14. Critério de Rejeição (Rollback)",
       "harness": "mimo",
       "model": "xiaomi-token-plan-sgp/mimo-v2.6-flash",
-      "comando_terminal": "mimo --pure -m xiaomi-token-plan-sgp/mimo-v2.6-flash",
+      "comando_terminal": "MIMOCODE_DANGEROUSLY_SKIP_PERMISSIONS=1 MIMOCODE_TUI_PLAIN=1 mimo -m xiaomi-token-plan-sgp/mimo-v2.6-flash --pure --trust",
       "input_prompt": "docs/auditoria/aidd-diagnose/ciclo-01/prompts_tickets/PROMPT-TICKET-07.txt",
       "output_handoff": ".agents/skills/aidd-diagnose/scripts/rollback.py",
       "gate_fase": "python -m pytest -q -p no:cacheprovider tests"

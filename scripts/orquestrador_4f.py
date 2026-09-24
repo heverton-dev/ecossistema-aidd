@@ -296,6 +296,9 @@ def run_agente_orca(cmd, cwd, input_data=None, expected_handoff=None, titulo="AI
         spec = Path(input_data).read_text(encoding="utf-8-sig").strip() if input_data else titulo
         if expected_handoff:
             spec += f" Required deliverable: {Path(expected_handoff).relative_to(cwd).as_posix()}."
+        # Commit é do orquestrador, depois do gate_fase. Commit do agente na worktree roda o
+        # pre-commit ali (reprova por arquivos gerados fora do git) e já poluiu a branch do ciclo.
+        spec += " Do NOT run git commit, git push or git reset: the orchestrator commits after the phase gate."
         tarefa = orca("orchestration", "task-create", "--run", run_id, "--task-title", titulo, "--spec", spec)
         # --inject digita o preâmbulo mas o Orca bloqueia o Enter em harness que ele não reconhece
         # (agent_prompt_blocked no agy, 2026-09-24). Preâmbulo em arquivo + 1 linha funciona em todos.
