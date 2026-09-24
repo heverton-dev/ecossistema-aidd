@@ -6,9 +6,9 @@ seguintes tratam de camadas que atravessam **todas** as ferramentas e **todos** 
 fluxos: as habilidades e comandos, o catálogo completo de portões, a malha de
 agnosticidade e a síntese consolidada da economia de tokens.
 
-# Capítulo 19 — Habilidades e comandos: a interface universal
+# Capítulo 21 — Habilidades e comandos: a interface universal
 
-## 19.1 O que é uma habilidade no AIDD
+## 21.1 O que é uma habilidade no AIDD
 
 Pense numa receita de bolo plastificada, pendurada na cozinha: qualquer cozinheiro que
 entrar naquela cozinha — não importa se é o titular ou um substituto de última hora —
@@ -21,10 +21,10 @@ habilidade nasce em `componentes/compartilhado/skills/<nome>/` — a fonte físi
 — e é distribuída para os dez ambientes de assistente por
 `python ecossistema.py components sync --tipo todos`.
 
-O repositório tem **66 habilidades** nessa pasta e **16 comandos** em
+O repositório tem **68 habilidades** nessa pasta e **16 comandos** em
 `componentes/compartilhado/comandos/`.
 
-## 19.2 As famílias de habilidades
+## 21.2 As famílias de habilidades
 
 ### Runners de ferramenta
 
@@ -70,7 +70,9 @@ As sete habilidades anti-*vibe coding* descritas no capítulo 2 — `/aidd-grill
 `melhoria`, `plan`, `orchestrate` (as três donas do fluxo de evolução);
 `planos-auditoria-runner` e `orca-plan-orchestrator` (os motores);
 `aidd-orca`, `aidd-orchestrate`, `aidd-orchestrator-runner`, `aidd-planos`,
-`aidd-melhoria`.
+`aidd-melhoria`. Desde 23/09/2026, duas novas donas de pipeline:
+`aidd-auditor-4f-runner` (`/audit-4f`, `/aidd-auditor`) e `aidd-evolucao-runner`
+(`/evolucao`, `/aidd-evolucao`) — ambas descritas no capítulo 12.
 
 ### Habilidades de gestão do próprio ecossistema
 
@@ -86,10 +88,10 @@ O ecossistema integra habilidades de terceiros como dependências declaradas:
 `cloudflare`, `cloudflare-one`, `cloudflare-email-service`,
 `cloudflare-one-migrations`, `durable-objects`, `nextjs-on-cloudflare`,
 `workers-best-practices`, `wrangler`, `turnstile-spin`, `web-perf`, `sandbox-next`,
-`sandbox-stable`, `sandbox-migrate-to-next`, `agents-sdk`, `impeccable`,
-`sandeco-token-reduce`.
+`sandbox-stable`, `sandbox-migrate-to-next`, `agents-sdk` e `impeccable`. (A antiga
+`sandeco-token-reduce` foi removida em 20/09/2026 — ver capítulo 4, §4.8.)
 
-## 19.3 A regra: um comando, um dono
+## 21.3 A regra: um comando, um dono
 
 Já enunciada no capítulo 2, ela merece repetição aqui porque é a regra que estrutura
 toda a camada de habilidades: **cada slash command tem exatamente uma habilidade dona**;
@@ -100,7 +102,7 @@ uma resposta única. A consequência histórica é que a regra nasceu de um inci
 habilidades respondendo ao mesmo comando com regras opostas causaram mesas recursivas
 dentro de mesas no aplicativo de orquestração em 11 de setembro de 2026.
 
-## 19.4 A distribuição física
+## 21.4 A distribuição física
 
 ```{=typst}
 #painel("O caminho de um componente, do nascimento à distribuição")[
@@ -120,45 +122,49 @@ dentro de mesas no aplicativo de orquestração em 11 de setembro de 2026.
 Há ainda o modo de reparo: `components sync --tipo todos --force` restaura destinos divergentes e
 órfãos a partir da fonte, e `components verify` audita sem escrever.
 
-## 19.5 Rastreabilidade
+## 21.5 Rastreabilidade
 
-`componentes/compartilhado/skills/` (66 habilidades, contagem em 23/09/2026);
+`componentes/compartilhado/skills/` (68 habilidades, contagem em 24/09/2026);
 `componentes/compartilhado/comandos/` (16 comandos); `scripts/gestor_componentes.py`;
 `ecossistema.py::cmd_components`; `docs/protocolos/AGENTS-REFERENCIA-COMPLETA.md` §3 e §5.
 
-# Capítulo 20 — O catálogo completo de portões
+# Capítulo 22 — O catálogo completo de portões
 
-## 20.1 A distribuição dos 148 portões
+## 22.1 A distribuição dos 177 portões
 
-O repositório tem 148 arquivos `G_*.py`. Eles se distribuem em quatro camadas:
+O repositório tem 177 arquivos `G_*.py` rastreados pelo git (contagem de 24/09/2026).
+Eles se distribuem em seis camadas:
 
 | Camada                  | Onde                                   | Quantidade | Papel                                               |
 | :---------------------- | :------------------------------------- | ---------: | :---------------------------------------------------- |
-| Portões globais         | `gates/`                               |         42 | Auditam o ecossistema inteiro                        |
-| Portões de ferramenta   | `tools/<ferramenta>/gates/` ou `scripts/gates/` | ~55 | Auditam a ferramenta e o que ela produz        |
-| Portões-template        | `tools/aidd-forge/aidd_forge/templates/gates/` | 8 | São injetados nos projetos gerados               |
+| Portões globais         | `gates/`                               |         50 | Auditam o ecossistema inteiro                        |
+| Portões de ferramenta   | `tools/<ferramenta>/gates/` ou `scripts/gates/` | 47 | Auditam a ferramenta e o que ela produz        |
+| Portões-template        | `templates/gates/` do forge, master e enterprise | 32 (12 + 10 + 10) | São injetados nos projetos gerados |
+| Exemplos de referência  | `tools/aidd-enterprise/materiais-extras/examples/` | 38 | Cópias dentro de projetos-exemplo (não rodam no commit) |
+| Sandbox de teste        | `tools/aidd-forge/sandbox-forge-teste/gates/` | 8 | Alvo de teste da injeção do forge |
+| Auditoria 15-D          | `docs/auditoria/{aidd-diagnose,aidd-melhoria}/` | 2 | `G_auditoria_15D.py` do pipeline 4F |
 | Portões de projeto      | Projetos gerados                       |   variável | Cópias dos templates, ativas no projeto do usuário   |
 
-A contagem de 148 inclui as cópias distribuídas — o número de portões **distintos** é
+A contagem de 177 inclui as cópias distribuídas — o número de portões **distintos** é
 menor, e a duplicação entre `aidd-master` e `aidd-enterprise` é justamente o que
 `G_DRIFT_NUCLEO_COMPARTILHADO` mantém sob controle.
 
-## 20.2 Portões por ferramenta
+## 22.2 Portões por ferramenta
 
 | Ferramenta        | Portões locais                                                                                          |
 | :---------------- | :-------------------------------------------------------------------------------------------------------- |
 | `aidd-forge`      | `G_BLOQUEAR_SEGREDOS`, `G_CONTRACTS`, `G_CYBERSECURITY_OWASP`, `G_ESTRUTURA_AST`, `G_HARNESS_COMPAT`, `G_INJECT`, `G_PERFORMANCE`, `G_TESTES_REAIS` |
 | `aidd-planner`    | `G_PLANNER_SCHEMA`, `G_PLANNER_SINE_QUA_NON`, `G_PLANNER_COERENCIA_FLUXO`                               |
 | `aidd-generator`  | `G_TOKENOMICS`, `G_CYBERSECURITY_OWASP`, `G_SANDBOX_NIVEL_1`, `G_SESSAO_HERMETICA`, `G_BLOQUEAR_SEGREDOS`, `G_INTEGRACAO_CROSS_SCRIPT`, `G_VERIFICAR_LLM_PRONTO`, `G_INJECT`, `G_HARNESS_COMPAT`, `AUDITAR_COMPARATIVO_HARNESS` |
-| `aidd-factory`    | `G_FACTORY_INPUT`, `G_FACTORY_OUTPUT`, `G_FACTORY_DETERMINISTIC`                                        |
+| `aidd-factory`    | `G_FACTORY_ANALYSIS`, `G_FACTORY_COMPOSE`, `G_FACTORY_ENV`, `G_FACTORY_INIT_DB`, `G_FACTORY_INTEGRATION`, `G_FACTORY_MVP` |
 | `aidd-bridge`     | `G_BRIDGE_VENDOR_LOCKIN`, `G_BRIDGE_DOCKER_OCI`, `G_BRIDGE_POSTGRESQL`, `G_BRIDGE_VSA_COMPAT`           |
 | `aidd-master`     | `G_ESTRUTURA`, `G_SEGREDOS`, `G_SEGURANCA`, `G_TESTES`, `G_QUALIDADE`, `G_CONTRACTS`, `G_CHAOS`, `G_HARNESS_COMPAT`, `G_ARQUITETURA`, `G_INJECT`, `G_AST_BOUNDED_CONTEXT`, `G_PERFORMANCE` |
 | `aidd-enterprise` | A mesma bateria do master, com `G_INJECT` estendido para verificação criptográfica                      |
 | `aidd-ops`        | `G_OPS_MVP`, `G_OPS_SSH`                                                                                |
 
-## 20.3 As categorias de auditoria
+## 22.3 As categorias de auditoria
 
-Os 42 portões globais podem ser lidos por intenção, e essa leitura revela a estratégia
+Os 50 portões globais podem ser lidos por intenção, e essa leitura revela a estratégia
 de qualidade do ecossistema:
 
 | Categoria                | Portões                                                                                     |
@@ -172,7 +178,9 @@ de qualidade do ecossistema:
 | **Governança agêntica**  | `G_ZERO_HEADLESS`, `G_ORQUESTRADOR_SINCRONO`, `G_DRIFT_NUCLEO_COMPARTILHADO`                 |
 | **Meta-portões**         | `G_PORTAO_PROVA_QUE_MORDE` (Lei #13), `G_LEI_DECLARA_PORTAO` (Lei #8)                        |
 | **Pipeline & Meso-Camada**| `G_PIPELINE_HANDOFF` (Leis #1, #2, #5), `G_DISPATCH_PIPELINE_VSA` (Kahn DAG & Worktrees)     |
-| **Anti-rot por Lei** (fecham as Leis 1, 2, 3, 4, 9, 10, 11) | `G_DETERMINISMO_LEI_1`, `G_SAIDA_BINARIA`, `G_MIGRATION_ROT`, `G_ESTRUTURA_ESTADO`, `G_IDIOMA_LEI_4`, `G_ENV_ROT`, `G_SKILL_ROT`, `G_DISCIPLINA_TESTE_FERRAMENTA`, `G_CONTRACT_ROT`, `G_QUARTETO_SINE_QUA_NON`, `G_STACK_PADRAO_OURO` |
+| **Evolução e auditoria** | `G_amelhoria` (rótulo honesto do `aidd-melhoria`), `G_HANDOFF_MELHORIA` (handoff `melhoria → plan` assinado) |
+| **Usabilidade e entrega** | `G_LAYOUT_ENTREGA`, `G_PACOTE_CORE`, `G_RESUMO_USUARIO`, `G_USER_FACING_PTBR`, `G_ANT_LOCKIN_LEGADO`, `G_SYNC_CMD_ROT` |
+| **Anti-rot por Lei** (fecham as Leis 1, 2, 3, 4, 9, 10, 11) | `G_DETERMINISMO_LEI_1`, `G_SAIDA_BINARIA`, `G_MIGRATION_ROT`, `G_ESTRUTURA_ESTADO`, `G_IDIOMA_LEI_4`, `G_ENV_ROT`, `G_SKILL_ROT`, `G_DISCIPLINA_TESTE_FERRAMENTA`, `G_CONTRACT_ROT`, `G_QUARTETO_SINE_QUA_NON`, `G_STACK_PADRAO_OURO`, `G_TEMPLATE_FORGE_ROT` |
 
 Três portões merecem nota especial porque auditam coisas que a maioria dos projetos não
 audita.
@@ -190,7 +198,7 @@ verde sem suíte verde.
 deterministicamente o `PromptShield` para sanitização contra injeção de prompt e
 jailbreak. É um portão de segurança específico de sistemas agênticos.
 
-## 20.4 O ciclo de teste de ferramenta
+## 22.4 O ciclo de teste de ferramenta
 
 A Lei #9 define um ciclo de cinco passos, documentado em
 `docs/protocolos/PROTOCOLO-TESTES-FERRAMENTAS.md`, que precede qualquer declaração de
@@ -201,15 +209,15 @@ limpa; (5) atualizar o relatório em `docs/teste-end-to-end/`.
 O passo 3 é o que distingue esse ciclo de um teste comum: limpar o projeto alvo impede
 que a execução se apoie em artefato residual de uma execução anterior.
 
-## 20.5 Rastreabilidade
+## 22.5 Rastreabilidade
 
-`gates/` (42 portões e suítes); `tools/*/gates/` e `tools/*/scripts/gates/`;
+`gates/` (50 portões e suítes); `tools/*/gates/` e `tools/*/scripts/gates/`;
 `.pre-commit-config.yaml`; `docs/protocolos/PROTOCOLO-TESTES-FERRAMENTAS.md`;
 `docs/protocolos/AGENTS-REFERENCIA-COMPLETA.md` §4.
 
-# Capítulo 21 — Agnosticidade: escrever uma vez, rodar em todos
+# Capítulo 23 — Agnosticidade: escrever uma vez, rodar em todos
 
-## 21.1 As quatro dimensões de agnosticidade
+## 23.1 As quatro dimensões de agnosticidade
 
 A Lei #6 — Supremacia Agnóstica — proíbe dependência de fornecedor em quatro dimensões
 simultâneas, e cada uma tem uma implementação concreta.
@@ -231,7 +239,7 @@ credencial. `preflight_llm.py` verifica os dois antes de começar.
 MCP sem contrapartida REST/OpenAPI. Um sistema cuja única porta fosse o MCP estaria
 preso ao ecossistema de agentes — o oposto do objetivo.
 
-## 21.2 O protocolo delegado
+## 23.2 O protocolo delegado
 
 O protocolo delegado é o mecanismo pelo qual o pipeline usa o modelo **do assistente que
 está conduzindo a sessão**, em vez de abrir uma conexão própria com um provedor. Quando o
@@ -247,7 +255,7 @@ o `AGENTS.md` da Fase 2 proíbe explicitamente chamada direta a `litellm`. Essa
 centralização é o que torna a troca de provedor uma mudança de configuração em vez de
 uma refatoração.
 
-## 21.3 O manifesto de harness
+## 23.3 O manifesto de harness
 
 `gates/manifesto_harnesses.json` (13 KB) é o registro canônico de qual componente deve
 existir em qual assistente, em qual caminho. `G_COMPONENTE_AGNOSTICO` audita todo
@@ -260,7 +268,7 @@ possível, o registro diz isso — o caso de `.gemini/skills/`, sincronizado mas
 `confirmado: false`, e o do Freebuff, instalado mas sem modo não interativo para
 validação automatizada.
 
-## 21.4 Rastreabilidade
+## 23.4 Rastreabilidade
 
 `AGENTS.md` Lei #6; `docs/protocolos/AGENTS-REFERENCIA-COMPLETA.md` §5;
 `docs/protocolos/05-09-2026_protocolo-agnosticidade-componentes.md`;
@@ -268,34 +276,34 @@ validação automatizada.
 `gates/G_COMPONENTE_AGNOSTICO.py`; `gates/G_PROTOCOL_FALLBACK.py`;
 `tools/aidd-generator/scripts/phases/utils_delegacao.py`.
 
-# Capítulo 22 — Síntese: a economia de tokens ponta a ponta
+# Capítulo 24 — Síntese: a economia de tokens ponta a ponta
 
 Este capítulo consolida, numa visão única, o que os capítulos anteriores trataram
 dispersamente. É o eixo "economia de tokens" visto simultaneamente nos três níveis.
 
-## 22.1 A matriz consolidada
+## 24.1 A matriz consolidada
 
 | Mecanismo                        | Nível     | Onde vive                                          | Efeito                                                       |
 | :------------------------------- | :-------- | :-------------------------------------------------- | :------------------------------------------------------------- |
 | Determinismo obrigatório         | Macro     | Lei #1; 145 portões; 5 das 7 etapas de fluxo       | Elimina a chamada em vez de baratear                          |
-| Protocolo Caveman tri-fase       | Macro     | `src-core/caveman_protocol.py`                     | 30–50% de redução na entrada, em contagem BPE                 |
-| Linter de Caveman                | Micro     | `generator/scripts/core/caveman_linter.py`         | Garante a tríade ENTRADA/COT/SAÍDA por AST, sem gastar token  |
+| Protocolo Caveman tri-fase       | Macro     | `componentes/compartilhado/src-core/caveman_protocol.py`                     | 30–50% de redução na entrada, em contagem BPE                 |
+| Linter de Caveman                | Micro     | `tools/aidd-generator/scripts/core/caveman_linter.py`         | Garante a tríade ENTRADA/COT/SAÍDA por AST, sem gastar token  |
 | Fatiamento de contexto           | Macro     | `core/context_slicer.py`                           | Payload de assinaturas abaixo de 150 tokens                   |
 | Grafo antes de busca textual     | Macro     | `AGENTS.md` §1; MCP `code-review-graph`            | Evita leitura de arquivo inteiro e `grep` exploratório        |
 | Descarregamento de esquema MCP   | Macro     | `core/mcp_dynamic_router.py`                       | Remove milhares de tokens fixos do prompt de sistema          |
 | Estado em arquivo                | Meso      | Handoffs JSON; `cognitive_ledger.py`               | Substitui histórico conversacional por ~5k tokens tipados     |
-| Retomada inteligente             | Micro     | `generator/scripts/core/pipeline_state.py`         | `--resume` pula fase completa com artefato válido             |
-| Micro-ambiente por fase          | Micro     | `generator/scripts/phases/phase_*/AGENTS.md`       | Só as regras da fase corrente entram em memória               |
-| Orçamento formal por fase        | Micro     | `generator/config/token_budgets.json`              | Teto declarado + limiar de desvio de 1,2                      |
+| Retomada inteligente             | Micro     | `tools/aidd-generator/scripts/core/pipeline_state.py`         | `--resume` pula fase completa com artefato válido             |
+| Micro-ambiente por fase          | Micro     | `tools/aidd-generator/scripts/phases/phase_*/AGENTS.md`       | Só as regras da fase corrente entram em memória               |
+| Orçamento formal por fase        | Micro     | `tools/aidd-generator/config/token_budgets.json`              | Teto declarado + limiar de desvio de 1,2                      |
 | Auditoria de tokenomics          | Micro     | `G_TOKENOMICS`                                     | Reprova estouro de orçamento e rótulo desonesto de medição    |
-| Benchmark real                   | Micro     | `generator/scripts/benchmark_tokenomics.py`        | Mede com `tiktoken` contra baseline legada                    |
-| Purga de contexto de subagente   | Macro     | `forge/core/subagent_purger.py`                    | Subagente morre após validação AST                            |
+| Benchmark real                   | Micro     | `tools/aidd-generator/scripts/benchmark_tokenomics.py`        | Mede com `tiktoken` contra baseline legada                    |
+| Purga de contexto de subagente   | Macro     | `tools/aidd-forge/aidd_forge/core/subagent_purger.py`                    | Subagente morre após validação AST                            |
 | Disciplina de terminal           | Macro     | `AGENTS.md` §1                                     | `tail`/`grep` obrigatórios; zero despejo de log ou lockfile   |
 | Edição por busca e substituição  | Macro     | `AGENTS.md` §1                                     | Nunca reescrever arquivo inteiro na saída                     |
 | Executor silencioso              | Macro     | `AGENTS.md` §1                                     | Status de uma linha; zero repetição de código na conversa     |
-| Protocolo delegado               | Macro     | `generator/scripts/phases/utils_delegacao.py`      | Usa o modelo da sessão; zero custo adicional de API           |
+| Protocolo delegado               | Macro     | `tools/aidd-generator/scripts/phases/utils_delegacao.py`      | Usa o modelo da sessão; zero custo adicional de API           |
 
-## 22.2 Onde o token é realmente gasto
+## 24.2 Onde o token é realmente gasto
 
 Num Fluxo 01 completo com implementação de código, o consumo se concentra em quatro
 fases do gerador, com orçamento total declarado de 115 mil tokens. As outras seis etapas
@@ -316,7 +324,7 @@ pipeline de libertação.
 ]
 ```
 
-## 22.3 A honestidade da métrica
+## 24.3 A honestidade da métrica
 
 O ecossistema audita a própria alegação de economia. `G_TOKENOMICS` reprova quando uma
 fase afirma "medição real" para um valor autodeclarado, e exige que a origem da medição
@@ -328,6 +336,6 @@ Este livro segue a mesma regra: os orçamentos citados são **valores declarados
 `token_budgets.json`**, não medições de execução. Onde há medição real disponível, ela
 vive nos relatórios de benchmark do repositório, não aqui.
 
-## 22.4 Rastreabilidade
+## 24.4 Rastreabilidade
 
-Todos os arquivos citados na matriz da seção 22.1, mais `AGENTS.md` Lei #4 e §1.
+Todos os arquivos citados na matriz da seção 24.1, mais `AGENTS.md` Lei #4 e §1.

@@ -352,7 +352,7 @@ ecossistema-aidd/
 ├── MEMORY.md                  A memória viva consolidada do projeto
 ├── ecossistema.py             A CLI unificada: ponto único de entrada
 ├── core/                      Otimizadores cognitivos do meta-repositório
-├── gates/                     39 portões determinísticos globais
+├── gates/                     50 portões determinísticos globais
 ├── scripts/                   Orquestrador síncrono e gestores (componentes, deps)
 ├── componentes/               O cofre canônico: skills, comandos, specs, src-core
 ├── tools/                     As 8 ferramentas homologadas
@@ -369,7 +369,8 @@ nunca fontes. Editar um destino diretamente é um erro que o portão
 
 ## 3.2 A CLI unificada como barramento
 
-`ecossistema.py` é o barramento do monorepo: 21 comandos que roteiam para as
+`ecossistema.py` é o barramento do monorepo: 29 comandos distintos (39 contando os
+apelidos, como `aidd-pure` para `pure`) que roteiam para as
 ferramentas, os gestores e o orquestrador. Ele resolve três problemas de integração que
 seriam invisíveis num diagrama ingênuo.
 
@@ -520,9 +521,12 @@ Disso decorre a hierarquia de decisão que atravessa todo o repositório:
 A maior economia do ecossistema não vem de comprimir texto: vem de **não chamar o
 modelo**. As Fases 1, 5, 6 e 7 do `aidd-generator` declaram consumo zero porque são
 Python puro. As Fases 1, 4, 5 e 6 do `aidd-factory` são 100% determinísticas por
-contrato (`G_FACTORY_DETERMINISTIC`). Todo o `aidd-forge`, todo o `aidd-master`, todo o
+contrato — o `AGENTS.md` da ferramenta chama essa invariante de `G_FACTORY_DETERMINISTIC`,
+mas ela é um rótulo de regra, não um arquivo: quem cobra de fato são os seis portões
+reais em `tools/aidd-factory/gates/` (`G_FACTORY_ANALYSIS`, `G_FACTORY_COMPOSE`,
+`G_FACTORY_ENV`, `G_FACTORY_INIT_DB`, `G_FACTORY_INTEGRATION`, `G_FACTORY_MVP`). Todo o `aidd-forge`, todo o `aidd-master`, todo o
 `aidd-enterprise` e o pipeline de três fases do `aidd-ops` operam sem chamada de
-modelo. Os 145 portões `G_*.py` do repositório são, sem exceção, determinísticos: leem
+modelo. Os 177 arquivos `G_*.py` do repositório são, sem exceção, determinísticos: leem
 arquivo, aplicam regra, retornam código de saída.
 
 ## 4.3 Mecanismo 2 — O Protocolo Caveman Ultra tri-fase
@@ -596,7 +600,7 @@ arquivos alterados e vereditos de portões, permitindo recuperação de sessão 
 depender de histórico volátil. `get_latest_session_state()` devolve os dez eventos mais
 recentes de uma sessão.
 
-O `core/pipeline_state.py` do gerador adiciona retomada inteligente: com `--resume`, o
+O `tools/aidd-generator/scripts/core/pipeline_state.py` do gerador adiciona retomada inteligente: com `--resume`, o
 pipeline pula fases já completas cujos artefatos são válidos, evitando reconsumo de
 tokens em trabalho já feito.
 
@@ -628,14 +632,16 @@ comparando o pipeline atual contra uma baseline legada (despejo bruto, loop de c
 sem diff, regras monolíticas) e produzindo relatório JSON auditável com economia
 percentual real por fase, custo em dólares e resultado de pytest.
 
-## 4.8 Mecanismo 7 — Compressão seletiva de prosa
+## 4.8 Mecanismo 7 — Compressão seletiva de prosa (removido)
 
-`scripts/compressor_middleware.py` integra a habilidade `sandeco-token-reduce`
-(LLMLingua-2) sob política estrita: comprime **somente prosa descritiva** — resumos de
-referência, narrativa da Fase 6 — e **nunca** código, JSON de esquema, caminhos ou
-identificadores. Se o LLMLingua-2 não estiver disponível, o pipeline segue com fallback
-determinístico transparente (truncamento por seção com elipse) em vez de falhar. Toda
-compressão registra telemetria com a taxa real obtida.
+Este mecanismo **não existe mais**. O antigo `compressor_middleware.py` e a habilidade
+`sandeco-token-reduce` (LLMLingua-2) foram removidos em 20/09/2026 (commit `ad8695b`),
+pela Rota B da issue
+`docs/issues/saneamento-governanca/08-compressor-sandeco-ligar-ou-remover.md`: o
+compressor nunca foi ligado ao pipeline de verdade, então a economia que ele prometia
+não existia. O registro fica aqui porque a Lei #8 (Honestidade de Rótulo) proíbe um
+livro de descrever como ativo algo que foi desligado — e porque o caso virou a prova
+histórica que motivou o portão `G_SKILL_ROT`.
 
 ## 4.9 Mecanismo 8 — Disciplina de contexto no terminal
 
@@ -653,7 +659,7 @@ consumir mais contexto do que três fases inteiras do pipeline.
 `tools/aidd-generator/scripts/gates/G_TOKENOMICS.py`;
 `tools/aidd-generator/scripts/core/caveman_linter.py`;
 `tools/aidd-generator/scripts/core/pipeline_state.py`;
-`tools/aidd-generator/scripts/compressor_middleware.py`;
+`docs/issues/saneamento-governanca/08-compressor-sandeco-ligar-ou-remover.md`;
 `tools/aidd-generator/scripts/benchmark_tokenomics.py`; `AGENTS.md` §1 e Lei #4.
 
 # Capítulo 5 — Governança executável: portões, hooks e auditoria
@@ -670,7 +676,7 @@ Todo portão obedece a três invariantes de construção: é determinístico (ze
 modelo), é executável isoladamente (`python gates/G_X.py`) e tem teste próprio — o
 diretório `gates/` contém, ao lado de cada portão relevante, o seu `test_g_*.py`.
 
-## 5.2 Os 39 portões globais
+## 5.2 Os 50 portões globais
 
 | Portão                             | O que audita                                                                                  |
 | :--------------------------------- | :---------------------------------------------------------------------------------------------- |
@@ -713,11 +719,22 @@ diretório `gates/` contém, ao lado de cada portão relevante, o seu `test_g_*.
 | `G_DISCIPLINA_TESTE_FERRAMENTA`    | Alteração em `tools/<ferramenta>/` sem relatório contemporâneo em `docs/teste-end-to-end/` (Lei #9) |
 | `G_QUARTETO_SINE_QUA_NON`          | Presença real dos 4 pilares (`/docs`, `/webhooks`, `/mcp`, `/docs/guia`) num deliverable gerado (Lei #10) |
 | `G_STACK_PADRAO_OURO`              | Dependências de frontend/backend gerado contra o padrão-ouro, com respeito a override explícito (Lei #11) |
+| `G_ANT_LOCKIN_LEGADO`              | Resíduo de Lovable/Supabase/Firebase numa entrega ou legado, com allowlist explícita; nunca apaga |
+| `G_DISPATCH_PIPELINE_VSA`          | Manifesto de despacho topológico VSA contra o esquema formal (meso-camada)                         |
+| `G_PIPELINE_HANDOFF`               | Manifesto de handoff de execução da tríade e dos Planos de Evolução contra o esquema formal        |
+| `G_LAYOUT_ENTREGA`                 | Entrega aninhada em `<clone>/projetos/` quando existe projeto legado irmão                         |
+| `G_PACOTE_CORE`                    | Artefato só de desenvolvimento (`*.db`, `requirements-dev*`, `docs/relatorios/`) no pacote distribuído |
+| `G_RESUMO_USUARIO`                 | Entrega com `README-USUARIO.md` exige `RESUMO-USUARIO.md` (≤20 linhas) e `RELATORIO-TECNICO.md`     |
+| `G_USER_FACING_PTBR`               | Jargão sem tradução em superfícies lidas pelo usuário leigo (README, `--help`, card de entrega)     |
+| `G_SYNC_CMD_ROT`                   | `components sync` sem `--tipo` em docs vivos e aliases públicos desmapeados no parser             |
+| `G_TEMPLATE_FORGE_ROT`             | Templates do `aidd-forge`: 13 Leis na íntegra e orçamento de tokens do `AGENTS.md` injetado       |
+| `G_amelhoria`                      | Rótulo honesto do `aidd-melhoria`: veta "refatoração concluída" em análise que só sugere           |
+| `G_HANDOFF_MELHORIA`               | Handoff `melhoria → plan`: JSON válido, esquema `handoff-melhoria.schema.json` e assinatura HMAC  |
 
 ## 5.3 A execução: `pre-commit` como runner
 
 `python ecossistema.py audit` delega a `pre-commit run --all-files`. A configuração em
-`.pre-commit-config.yaml` registra 34 hooks, todos **locais** (`repo: local`,
+`.pre-commit-config.yaml` registra 41 hooks, todos **locais** (`repo: local`,
 `language: system`) — o que torna a auditoria hermética, offline e independente de
 assistente ou sistema operacional, em conformidade com a Lei #6.
 
@@ -725,6 +742,12 @@ As regras de gatilho são três: `always_run: true` roda em todo commit;
 `files: ^tools/` roda apenas quando um arquivo correspondente está no stage (é o caso
 de `G_TESTES_REAIS`, que roda pytest de verdade); e `stages: [manual]` roda apenas sob
 demanda explícita.
+
+Nem todo portão global está nessa lista. Em 24/09/2026, dos 50 portões de `gates/`, 40
+rodam no commit, 1 fica em `stages: [manual]` (`G_LIVRO_EVIDENCIA`) e 9 **não estão
+registrados** no `.pre-commit-config.yaml`: `G_DISPATCH_PIPELINE_VSA`, `G_DOCS_ROT`, `G_ESCRITOR_ATOMICO`, `G_HANDOFF_MELHORIA`, `G_ORQUESTRADOR_SINCRONO`, `G_SUPPLY_CHAIN`, `G_TEMPLATE_FORGE_ROT`, `G_TRANSACTION_LOG_LRU` e `G_amelhoria`. Esses nove só rodam quando alguém
+os chama (à mão, por um orquestrador ou por um teste). Portanto, `python ecossistema.py
+audit` verde não prova que eles passaram.
 
 ```{=typst}
 #painel("Zero portões pendentes por causa raiz desconhecida — o estado honesto em 20/09/2026")[
@@ -750,7 +773,7 @@ O ecossistema usa hooks em três camadas distintas, e confundi-las gera erro de
 diagnóstico.
 
 **Hooks de git** (`.githooks/pre-commit`, instalados pelo `aidd-forge` via
-`core/git_hooks.py`): interceptam o commit e executam os portões. É a camada que
+`tools/aidd-forge/aidd_forge/core/git_hooks.py`): interceptam o commit e executam os portões. É a camada que
 transforma a Lei #2 em bloqueio real.
 
 **Hooks de assistente** (`.claude/settings.json` e equivalentes): reagem a eventos do
@@ -783,7 +806,7 @@ execução.
 
 ## 5.6 Rastreabilidade do capítulo
 
-`gates/` (39 portões + suítes de teste); `.pre-commit-config.yaml` (linhas 1–66 para a
+`gates/` (50 portões + suítes de teste); `.pre-commit-config.yaml` (linhas 1–66 para a
 documentação das decisões, 67–220 para os hooks); `.claude/settings.json`;
 `componentes/compartilhado/hooks/`; `scripts/gestor_dependencias.py`;
 `docs/protocolos/AGENTS-REFERENCIA-COMPLETA.md` §4.

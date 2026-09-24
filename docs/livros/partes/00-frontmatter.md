@@ -3,7 +3,7 @@ title: "Ecossistema AIDD"
 subtitle: "Tratado completo: do macro ao micro"
 author:
   - Ecossistema AIDD — Governança Canônica
-date: "21 de setembro de 2026"
+date: "24 de setembro de 2026"
 lang: pt-BR
 toc: true
 toc-depth: 2
@@ -14,7 +14,8 @@ abstract: |
   Os três níveis são o **macro** (o ecossistema como organismo único: leis, governança,
   CLI unificada, portões de qualidade e distribuição multi-harness), o **meso** (os três
   fluxos canônicos de criação — `aidd-pure`, `aidd-open` e `aidd-freedom` [motor `aidd-bridge`] — e o fluxo de
-  evolução `/melhoria → /plan → /orchestrate`) e o **micro** (cada uma das oito
+  evolução `/melhoria → /plan → /orchestrate`, mais a meso-camada de despacho e os
+  pipelines de auditoria `/audit-4f` e `/evolucao`) e o **micro** (cada uma das oito
   ferramentas homologadas, uma a uma).
 
   Os três eixos, aplicados em todos os níveis, são: **Engenharia Agêntica Aplicada**
@@ -62,7 +63,7 @@ pergunta que se faz em cada nível.
 | Nível de aproximação                       | Engenharia agêntica aplicada                                             | Arquitetura                                                          | Economia de tokens aplicada                                          |
 | :----------------------------------------- | :----------------------------------------------------------------------- | :------------------------------------------------------------------- | :------------------------------------------------------------------- |
 | **Macro** — o ecossistema (Parte I)        | Capítulo 2: leis, papéis, autonomia limitada, desenvolvedor no controle   | Capítulo 3: monorepo, CLI unificada, núcleo compartilhado, harnesses  | Capítulo 4: tríade Caveman, determinismo como economia, orçamentos   |
-| **Meso** — os fluxos (Parte II)            | Capítulo 6 e 10: quem decide o quê em cada etapa da esteira               | Capítulos 7–9: topologia de cada fluxo e contratos de handoff        | Capítulo 6: onde o token é gasto e onde é proibido gastar            |
+| **Meso** — os fluxos (Parte II)            | Capítulos 6, 10 e 12: quem decide o quê em cada etapa da esteira          | Capítulos 7–9 e 11: topologia de cada fluxo e contratos de handoff   | Capítulo 6: onde o token é gasto e onde é proibido gastar            |
 | **Micro** — as ferramentas (Parte III)     | Seções "como foi pensada" e "individual" de cada capítulo                 | Seções "como está estruturada" de cada capítulo                      | Seções "economia de tokens" de cada capítulo                         |
 
 ## As convenções visuais

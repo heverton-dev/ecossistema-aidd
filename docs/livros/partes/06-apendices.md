@@ -47,6 +47,9 @@ Parâmetros comuns aos fluxos: `--nome`, `--slug`, `--dominio`, `--pasta`,
 | `melhoria init --pedido "<texto>" --nome "<n>"`  | Etapa 1: análise com nota e evidência em `docs/melhorias/`     |
 | `plan init <nome>`                               | Etapa 2: estrutura o plano em `docs/planos/<nome>/`            |
 | `orchestrate <plano> [--dry-run]`                | Etapa 3: roteia ambiente, monta Plano de Voo e executa         |
+| `audit-4f --manifest <json>`                     | Pipeline Linear de Auditoria 4F de uma ferramenta (capítulo 12) |
+| `evolucao <ferramenta>` ou `evolucao --manifest <json>` | Executa os tickets do `PLANO-EVOLUCAO` do ciclo vigente (capítulo 12) |
+| `livro <pasta-do-projeto> [--compilar]`          | Gera o livro-texto de um projeto a partir dos artefatos reais  |
 | `audit`                                          | Delega a `pre-commit run --all-files`                          |
 | `status`                                         | Painel de ferramentas, habilidades e slash commands            |
 | `status --testes [--write]`                      | Telemetria de testes                                           |
@@ -227,6 +230,8 @@ a rota mais curta para cada assunto.
 | Manifesto multi-harness                  | `gates/manifesto_harnesses.json`                                 |
 | Baseline do núcleo compartilhado         | `gates/baseline_nucleo_compartilhado.json`                       |
 | Despacho topológico VSA em worktrees     | `tools/aidd-master/scripts/dispatch_pipeline.py`                 |
+| Pipeline de auditoria 4F e de evolução   | `scripts/orquestrador_4f.py`, `docs/protocolos/PIPELINE-AUDITORIA-4F.md` |
+| Assistente e modelo de cada fase         | `docs/auditoria/CONFIG-EXECUCAO-USUARIO.json`                    |
 | Contrato de despacho DAG VSA             | `componentes/compartilhado/specs/vsa-topological-dispatch.schema.json` |
 | Memória viva do projeto                  | `MEMORY.md`                                                      |
 | Índice de planos                         | `docs/planos/INDEX.md`                                           |
@@ -244,6 +249,11 @@ vermelho ou aguardando decisão.
 | Discovery Engine completo do `aidd-factory`                   | Só o subconjunto determinístico (nicho dinâmico) está implementado         | `docs/features/v2_arquitetura-aidd-ops-factory.md` §7.1 e §9.1              |
 | `.gemini/skills/` como mecanismo                              | Sincronizado, mas `confirmado: false` — o mecanismo real são as extensões  | `docs/protocolos/AGENTS-REFERENCIA-COMPLETA.md` §5                          |
 | Freebuff                                                      | Instalado, sem modo não interativo para validação automatizada             | `docs/protocolos/AGENTS-REFERENCIA-COMPLETA.md` §5                          |
+| 9 portões globais fora do `.pre-commit-config.yaml`            | Rodam só sob demanda; `audit` verde não cobre esses nove (lista no capítulo 5, §5.3) | `.pre-commit-config.yaml`, `gates/`                                          |
+| Pipeline de auditoria 4F                                      | Em uso real; ciclo `aidd-diagnose/ciclo-01` parado depois da Fase 2        | `docs/auditoria/aidd-diagnose/ciclo-01/`                                     |
+| Commit por fase com `--no-verify` e merge pelo orquestrador   | Escolha deliberada no código, ainda em revisão                             | `scripts/orquestrador_4f.py`                                                 |
+| Compressor de prosa (`sandeco-token-reduce`)                  | **REMOVIDO** (20/09/2026) — nunca esteve ligado ao pipeline                | `docs/issues/saneamento-governanca/` (ISSUE-0008)                            |
+| Portões `G_FACTORY_INPUT/OUTPUT/DETERMINISTIC`                 | São rótulos de invariante no `AGENTS.md` da factory, não arquivos; a cobrança real está nos 6 portões de `tools/aidd-factory/gates/` | `tools/aidd-factory/AGENTS.md`, `tools/aidd-factory/gates/`                  |
 
 ```{=typst}
 #painel("Por que este apêndice existe")[

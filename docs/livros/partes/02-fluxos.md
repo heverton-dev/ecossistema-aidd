@@ -7,10 +7,13 @@ São quatro movimentos. Três deles são fluxos de **criação** — a Tríade C
 `aidd-pure`, `aidd-open` e `aidd-bridge` — e diferem entre si apenas na estratégia de
 construção do artefato central. O quarto é o fluxo de **evolução**,
 `/melhoria → /plan → /orchestrate`, que atua sobre o que já existe.
+Acima deles ficam duas engrenagens de apoio: a meso-camada de despacho em worktrees
+(capítulo 11) e os pipelines de auditoria das próprias ferramentas (capítulo 12).
 
 O capítulo 6 estabelece a anatomia comum, porque as três criações compartilham
 princípio, cabeça e cauda. Os capítulos 7, 8 e 9 tratam de cada fluxo pelo mesmo
-gabarito de sete itens usado no restante do livro. O capítulo 10 trata da evolução.
+gabarito de sete itens usado no restante do livro. O capítulo 10 trata da evolução, o 11 da meso-camada e o 12
+dos pipelines `/audit-4f` e `/evolucao`.
 
 # Capítulo 6 — Anatomia comum de um fluxo de criação
 
@@ -301,10 +304,17 @@ vez de tentar casar o texto com um dos cinco nichos fixos.
 
 O `AGENTS.md` do factory é explícito sobre o regime de cada fase:
 
-| Fases            | Regime                   | Portão associado                  |
-| :--------------- | :----------------------- | :--------------------------------- |
-| 1, 4, 5, 6       | 100% determinístico, zero LLM | `G_FACTORY_DETERMINISTIC`     |
-| 2, 3, 7          | LLM com portões AST + bandit  | `G_FACTORY_INPUT`, `G_FACTORY_OUTPUT` |
+| Fases            | Regime                        | Portão real (`tools/aidd-factory/gates/`)             |
+| :--------------- | :---------------------------- | :----------------------------------------------------- |
+| 1                | 100% determinístico, zero LLM | `G_FACTORY_ANALYSIS` (valida `factory_analysis.json`)  |
+| 4, 5, 6          | 100% determinístico, zero LLM | `G_FACTORY_COMPOSE`, `G_FACTORY_INIT_DB`, `G_FACTORY_ENV` |
+| 2, 3, 7          | LLM com portões AST + bandit  | `G_FACTORY_MVP` (AST anti-stub + esquema da saída)     |
+| Cadeia inteira   | Verificação ponta a ponta     | `G_FACTORY_INTEGRATION`                                |
+
+O `AGENTS.md` da factory usa os nomes `G_FACTORY_INPUT`, `G_FACTORY_OUTPUT` e
+`G_FACTORY_DETERMINISTIC` como **rótulos das invariantes** (entrada única, saída única,
+fases sem modelo). Nenhum deles é um arquivo de portão: a cobrança real está nos seis
+portões da tabela.
 
 O resultado é que o Fluxo 02 custa uma fração do Fluxo 01 em tokens: o trabalho pesado
 — escrever o software — já foi feito por terceiros, e o que resta é integração, que é
@@ -507,8 +517,9 @@ Cada fatia vertical aprovada é despachada pelo motor `dispatch_pipeline.py` em 
 Git Worktree dedicada (`.worktrees/<slice_id>`), ancorada em uma branch limpa
 `slice/<slice_id>` originada da branch base.
 
-- **Zero Contaminação Cruzada:** Cada fatia só enxerga os arquivos explicitamente
-  concedidos em seu escopo (`arquivos_permitidos`).
+- **Zero Contaminação Cruzada:** Cada fatia só pode alterar o próprio escopo:
+  `src/slices/<fatia>/`, `tests/` e `docs/` (padrão fixo em
+  `validar_fronteiras_fatia`, dentro de `vsa_join_barrier.py`).
 - **Limpeza Garantida (Lei #7):** Um bloco `try-finally` invariável assegura que, em caso
   de sucesso ou aborto por interrupção, 100% das worktrees e branches efêmeras sejam
   desmontadas e expurgadas do disco.
@@ -531,7 +542,7 @@ Documentação e Guia (`/docs`).
 Antes que qualquer fatia seja mesclada no repositório principal, a barreira
 `vsa_join_barrier.py` executa a auditoria de integridade:
 1. **Auditoria de Fronteiras:** Via `git status --porcelain -uall`, verifica se algum
-   arquivo fora de `arquivos_permitidos` foi modificado. Qualquer vazamento causa o
+   arquivo fora do escopo da fatia foi modificado. Qualquer vazamento causa o
    aborto imediato da fatia.
 2. **Quality Gates da Fatia:** Execução dos testes unitários e validações locais da fatia.
 3. **Convergência Master:** As fatias aprovadas são mescladas sequencialmente na branch
@@ -550,3 +561,94 @@ Antes que qualquer fatia seja mesclada no repositório principal, a barreira
 `componentes/compartilhado/skills/aidd-dispatch-runner/SKILL.md`;
 `ecossistema.py` (`cmd_dispatch`).
 
+
+# Capítulo 12 — Os pipelines de auditoria: `/audit-4f` e `/evolucao`
+
+## 12.1 Por que existem
+
+- **Na festa:** pense numa revisão de carro em quatro boxes. No primeiro, o mecânico
+  só olha e anota o que está errado. No segundo, o chefe da oficina lê as anotações e
+  escreve a ordem de serviço. No terceiro, outro mecânico executa a ordem. No quarto,
+  o primeiro mecânico volta e refaz a mesma inspeção do começo. O carro só sai da
+  oficina quando o dono olha o resultado e assina a liberação.
+- **Na casa:** o fluxo de evolução do capítulo 10 melhora um *projeto*. Os dois
+  pipelines deste capítulo, entregues em 23/09/2026, auditam e corrigem as próprias
+  *ferramentas* do ecossistema, com um agente diferente em cada fase e sem que nada seja
+  mesclado sem aprovação humana.
+
+## 12.2 Pipeline Linear de Auditoria 4F (`/audit-4f`, `/aidd-auditor`)
+
+| Fase   | Papel                | O que faz                                                                 |
+| :----- | :------------------- | :-------------------------------------------------------------------------- |
+| 1      | Inspetor             | Roda a Lente 15-D (ou um portão específico) e gera o laudo inicial          |
+| 2      | Arquiteto            | Lê o laudo e o `DOD.md` e escreve o `PLANO-EVOLUCAO.md` com tickets         |
+| 3      | Construtor           | Executa os tickets numa Git Worktree isolada                                |
+| 4      | Inspetor de Retorno  | Refaz exatamente o prompt da Fase 1; só avança com `exit 0` perante o DoD    |
+
+Três regras não se negociam (`docs/protocolos/PIPELINE-AUDITORIA-4F.md`):
+
+1. **Quem escolhe o assistente é o usuário.** Harness e modelo de cada fase vêm de
+   `docs/auditoria/CONFIG-EXECUCAO-USUARIO.json`, nunca de uma decisão da IA.
+2. **Existe um "pronto" fixo.** Cada ciclo aponta para um `DOD.md` estático; isso impede
+   o laço infinito de "só mais uma correção".
+3. **Merge só com aprovação humana.** Depois da Fase 4 a execução para. O merge acontece
+   só com `python scripts/orquestrador_4f.py --manifest <json> --aprovar`.
+
+O plano de correção de uma ferramenta mora em
+`docs/auditoria/<ferramenta>/ciclo-NN/`, nunca em `docs/planos/`. Cada rodada de
+auditoria é um ciclo numerado; `docs/auditoria/aidd-diagnose/ciclo-01/` é o primeiro
+exemplo real (laudo, DoD, manifesto, plano, prompts das quatro fases, resumo e
+relatório técnico).
+
+## 12.3 Pipeline de Evolução Técnica (`/evolucao`, `/aidd-evolucao`)
+
+É o motor da Fase 3 levado a sério: pega o `PLANO-EVOLUCAO.md` do ciclo vigente,
+compila para `PLANO-EVOLUCAO.json` (`scripts/compilador_plano_evolucao.py`) e executa os
+tickets um por um:
+
+1. Cada ticket ganha uma worktree efêmera sobre a branch do ciclo (`audit/<pipeline_id>`);
+   a branch em que o usuário está **não muda**.
+2. O agente do ticket vem da lista `pipeline_evolucao_rotativo` do arquivo de
+   configuração, em rodízio (ticket 1 no primeiro assistente, ticket 2 no segundo, e
+   assim por diante).
+3. O `gate_fase` do ticket roda **antes** do commit. Reprovou: o pipeline para, nada é
+   commitado e a worktree fica preservada para inspeção.
+4. No fim, o `gate_final` (`python ecossistema.py audit`) roda uma única vez e a
+   execução para na mesma barreira humana do 4F.
+
+## 12.4 O agente visível no terminal do Orca
+
+Por padrão (`AIDD_AGENTE_MODO=orca`), o orquestrador abre cada agente numa aba
+**visível** do Orca, entrega a tarefa por `orchestration dispatch` e espera o sinal
+`worker_done` (ou `escalation`) na caixa de entrada do Run, sem ficar consultando em
+laço. O commit é do orquestrador, depois do portão da fase, e nunca do agente. Se o Orca
+não estiver disponível, o orquestrador cai no modo oculto com o monitor ao vivo (HUD).
+
+## 12.5 Portões do capítulo
+
+`G_auditoria_15D.py` (em `docs/auditoria/<ferramenta>/`) é o portão de DoD da Lente
+15-D. `G_amelhoria` veta o rótulo "refatoração concluída" em análise que só sugere.
+`G_HANDOFF_MELHORIA` exige handoff `melhoria → plan` válido contra
+`handoff-melhoria.schema.json` e assinado.
+
+## 12.6 Estado honesto
+
+O pipeline está em uso real, mas ainda amadurecendo: os últimos commits antes desta
+edição (23 e 24/09/2026) corrigem o portão por fase, a branch do ciclo, o comando do
+`mimo` e o isolamento do git nos testes. O ciclo `aidd-diagnose/ciclo-01` está parado
+depois da Fase 2: o laudo e o plano existem, mas o relatório do construtor e o laudo
+revisado ainda não. O commit de cada fase usa `--no-verify` de propósito, porque o
+`gate_fase` acabou de passar e a bateria completa roda uma vez no `gate_final`. Essa
+escolha, e o merge feito pelo próprio orquestrador depois de `--aprovar`, ainda estão em
+revisão.
+
+## 12.7 Rastreabilidade do capítulo
+
+`docs/protocolos/PIPELINE-AUDITORIA-4F.md`; `docs/auditoria/ARQUITETURA-SCAFFOLD.md`;
+`docs/auditoria/CONFIG-EXECUCAO-USUARIO.json`; `docs/auditoria/template-pipeline-4f.json`;
+`scripts/orquestrador_4f.py`; `scripts/compilador_plano_evolucao.py`;
+`scripts/scaffold_auditoria.py`;
+`componentes/compartilhado/skills/aidd-auditor-4f-runner/SKILL.md`;
+`componentes/compartilhado/skills/aidd-evolucao-runner/SKILL.md`;
+`gates/G_amelhoria.py`; `gates/G_HANDOFF_MELHORIA.py`;
+`ecossistema.py` (`cmd_audit_4f`, `cmd_evolucao`).

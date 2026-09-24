@@ -1,7 +1,7 @@
 {
   "versao_manifesto": "1.0",
   "titulo": "Ecossistema AIDD",
-  "nome_base": "21-09-2026_LIVRO-ECOSSISTEMA-AIDD",
+  "nome_base": "24-09-2026_LIVRO-ECOSSISTEMA-AIDD",
   "pasta_partes": "partes",
   "template": "livro-aidd.typst",
   "partes": [
@@ -37,8 +37,14 @@
       "hash_fonte": "b27e5ad2d158b93a47bfb2e12bc8bcf23c26ed829e1595229bf7234a9f4b1168",
       "palavras": 25701,
       "nota": "Revisao de storytelling: analogias concretas (casa/obra, corrida de revezamento, receita de bolo) em cada conceito denso, mantendo rigor tecnico e rastreabilidade; correcao de contagem desatualizada de habilidades/comandos (60/14 -> 66/16)"
+    },
+    {
+      "data": "2026-09-24",
+      "hash_fonte": "65345dbfcbbd3a7f4e09717e63a6cc9274617dbc926b6bdd234bd1e6acb17727",
+      "palavras": 27198,
+      "nota": "Atualizacao factual 24/09: contagens reais (50 portoes globais, 177 G_*.py, 68 habilidades, 29 comandos), capitulo 12 novo (pipelines /audit-4f e /evolucao), portoes reais da factory, remocao do compressor sandeco, caminhos completos, renumeracao dos capitulos 13-24; Correcao: barreira de fronteira da fatia usa escopo fixo por slug (src/slices/<fatia>/, tests/, docs/), nao lista arquivos_permitidos; 9 portoes globais fora do pre-commit documentados; 41 hooks; ajuste de largura da tabela 12.2"
     }
   ],
-  "hash_fonte": "b27e5ad2d158b93a47bfb2e12bc8bcf23c26ed829e1595229bf7234a9f4b1168",
-  "ultima_compilacao": "2026-09-23"
+  "hash_fonte": "65345dbfcbbd3a7f4e09717e63a6cc9274617dbc926b6bdd234bd1e6acb17727",
+  "ultima_compilacao": "2026-09-24"
 }

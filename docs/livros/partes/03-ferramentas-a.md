@@ -31,7 +31,7 @@ cabeça (`aidd-forge`, `aidd-planner`), depois os três motores (`aidd-generator
 `aidd-factory`, `aidd-bridge`), depois a cauda (`aidd-master`, `aidd-enterprise`,
 `aidd-ops`).
 
-# Capítulo 11 — `aidd-forge`: a fundação
+# Capítulo 13 — `aidd-forge`: a fundação
 
 ```{=typst}
 #ficha(
@@ -44,7 +44,7 @@ cabeça (`aidd-forge`, `aidd-planner`), depois os três motores (`aidd-generator
 )
 ```
 
-## 11.1 O que é a ferramenta
+## 13.1 O que é a ferramenta
 
 `aidd-forge` é o **injetor de governança** do ecossistema. Ele pega um diretório — vazio
 ou com um projeto existente — e o transforma em um ambiente onde as leis do AIDD são
@@ -57,7 +57,7 @@ um lugar onde a IA pode fazer o que quiser. Depois dele, é um lugar onde a IA n
 consegue commitar código que viole as regras, porque o hook de pre-commit roda os
 portões e bloqueia.
 
-## 11.2 O papel da ferramenta dentro do FLUXO
+## 13.2 O papel da ferramenta dentro do FLUXO
 
 Dentro de qualquer um dos três fluxos, `aidd-forge` é a **etapa 1**, e a sua função é
 garantir que as seis etapas seguintes rodem sobre terreno preparado. O orquestrador
@@ -69,7 +69,7 @@ A ordem importa: sem o forge, o `aidd-planner` escreveria `PLANNER.json` num dir
 sem governança, e o código gerado pelo motor da etapa 3 poderia ser commitado sem
 passar por portão nenhum.
 
-## 11.3 O papel da ferramenta dentro do ECOSSISTEMA
+## 13.3 O papel da ferramenta dentro do ECOSSISTEMA
 
 Fora do contexto de um fluxo, o `aidd-forge` tem três funções permanentes.
 
@@ -81,12 +81,12 @@ deterministicamente dez tipos de artefato — `skill`, `mcp`, `rule`, `spec`, `r
 É o **auditor de conformidade de governança**: `forge audit` verifica se um projeto
 está aderente às regras, e `forge conform` aplica correções automáticas.
 
-É o **sincronizador multi-harness**: `core/harness_sync.py` e `core/harness_manifest.py`
-mantêm a paridade entre os dez ambientes de assistente, e o `core/agents_md_anchor.py`
+É o **sincronizador multi-harness**: `tools/aidd-forge/aidd_forge/core/harness_sync.py` e `tools/aidd-forge/aidd_forge/core/harness_manifest.py`
+mantêm a paridade entre os dez ambientes de assistente, e o `tools/aidd-forge/aidd_forge/core/agents_md_anchor.py`
 garante que o `AGENTS.md` permaneça a âncora canônica com os arquivos-ponteiro dos
 demais assistentes apontando para ele.
 
-## 11.4 Como foi pensada, está estruturada e configurada
+## 13.4 Como foi pensada, está estruturada e configurada
 
 ### A tese
 
@@ -138,7 +138,7 @@ no código é explícito sobre o escopo: isso não é necessário para
 chamadas diretas de `python -m aidd_forge.cli` e os testes da própria ferramenta
 continuem funcionando após um clone novo.
 
-## 11.5 Como funciona individualmente
+## 13.5 Como funciona individualmente
 
 **Passo a passo.** `forge init <caminho> [--force]` executa: detecção do estado do
 diretório alvo → materialização da estrutura AIDD → injeção do `AGENTS.md` âncora e dos
@@ -167,7 +167,7 @@ Python puro operando sobre templates, AST e sistema de arquivos.
 instalação editável), sistema de arquivos. Nenhuma API externa.
 
 **Hooks e regras.** O forge é a ferramenta que **instala** hooks —
-`.githooks/pre-commit` via `core/git_hooks.py`. As regras que segue: Zero Stubs,
+`.githooks/pre-commit` via `tools/aidd-forge/aidd_forge/core/git_hooks.py`. As regras que segue: Zero Stubs,
 mônada `Result`, purga de contexto, rollback atômico e os sete portões.
 
 **Entrega.** Entrega um diretório governado. O formato da entrega é o próprio sistema
@@ -175,7 +175,7 @@ de arquivos do projeto alvo. O destinatário é a etapa seguinte do fluxo (o
 `aidd-planner`) ou, fora de fluxo, o desenvolvedor que rodou `/forge` num projeto
 existente.
 
-## 11.6 Como funciona dentro da camada FLUXO
+## 13.6 Como funciona dentro da camada FLUXO
 
 **Passo a passo.** O orquestrador cria a pasta, roda `git init` se necessário, e chama
 `forge init <pasta> --force`. Código de saída diferente de zero aborta o fluxo inteiro.
@@ -199,7 +199,7 @@ portões.
 **Entrega.** Entrega ao `aidd-planner` um diretório com git inicializado, governança
 instalada e hooks ativos.
 
-## 11.7 Como funciona dentro da camada ECOSSISTEMA
+## 13.7 Como funciona dentro da camada ECOSSISTEMA
 
 **Passo a passo.** Fora de fluxo, o forge é acionado para criar componentes novos
 (`inject`), auditar projetos (`audit`) e corrigir divergência (`conform`). A criação de
@@ -227,7 +227,7 @@ o erro que `G_COMPONENTE_AGNOSTICO` detecta.
 destinatário é o ecossistema inteiro — toda ferramenta e todo assistente consome o
 resultado.
 
-## 11.8 Rastreabilidade
+## 13.8 Rastreabilidade
 
 `tools/aidd-forge/AGENTS.md`; `tools/aidd-forge/aidd_forge/cli.py`;
 `tools/aidd-forge/aidd_forge/core/` (23 módulos);
@@ -235,7 +235,7 @@ resultado.
 `ecossistema.py::cmd_forge` e `_reparar_instalacao_editable_aidd_forge`;
 `scripts/orquestrador_sincrono.py::etapa_01_forge`.
 
-# Capítulo 12 — `aidd-planner`: o plano formal
+# Capítulo 14 — `aidd-planner`: o plano formal
 
 ```{=typst}
 #ficha(
@@ -248,7 +248,7 @@ resultado.
 )
 ```
 
-## 12.1 O que é a ferramenta
+## 14.1 O que é a ferramenta
 
 Se o `aidd-forge` prepara o terreno, o `aidd-planner` é o **arquiteto que desenha a
 planta baixa antes de qualquer pedreiro erguer uma parede**. Ele não constrói nada —
@@ -264,7 +264,7 @@ A entrada é um PRÉ-PLANO interativo conduzido com o usuário. A saída é `PLA
 entidades, endpoints, cenários BDD, módulos funcionais, arquitetura alvo e a
 configuração explícita do Quarteto *Sine Qua Non*.
 
-## 12.2 O papel da ferramenta dentro do FLUXO
+## 14.2 O papel da ferramenta dentro do FLUXO
 
 É a etapa 2, e é a **única etapa da cabeça em que o usuário participa da decisão**. O
 que o planner decide aqui governa tudo o que vem depois: o campo `meta.fluxo_alvo`
@@ -275,7 +275,7 @@ O orquestrador roda `planner init --fluxo N --nome --slug --dominio --pasta`, l�
 `PLANNER.json` resultante, monta o payload de handoff, valida contra
 `handoff-planner-to-engine.schema.json` e grava `HANDOFF_PLANNER_ENGINE.json`.
 
-## 12.3 O papel da ferramenta dentro do ECOSSISTEMA
+## 14.3 O papel da ferramenta dentro do ECOSSISTEMA
 
 No ecossistema, o planner é o **guardião da Lei #10**: nenhum plano passa sem
 `/docs`, `/webhooks`, `/mcp` e `/docs/guia` marcados como `ativo: true`. O portão
@@ -304,7 +304,7 @@ ecossistema mudou o próprio código para respeitá-la.
 ]
 ```
 
-## 12.4 Como foi pensada, está estruturada e configurada
+## 14.4 Como foi pensada, está estruturada e configurada
 
 A ferramenta é enxuta por desenho: `src/cli.py` com quatro subcomandos e
 `src/core/planner_engine.py` mais `src/core/design_system.py` como núcleo. O contrato
@@ -317,7 +317,7 @@ entidades, endpoints e cenários BDD devem ser completos e tipados); **Quarteto 
 Qua Non*** com os quatro ativos; **polimorfismo estrito** governado por
 `meta.fluxo_alvo`; e **qualidade binária** contra os três portões.
 
-## 12.5 Como funciona individualmente
+## 14.5 Como funciona individualmente
 
 **Passo a passo.**
 
@@ -353,7 +353,7 @@ para o caminho do nicho dinâmico no export.
 **Entrega.** Entrega `PLANNER.json` no diretório do projeto. Entrega **para o motor do
 fluxo escolhido** — `aidd-generator`, `aidd-factory` ou `aidd-bridge`.
 
-## 12.6 Como funciona dentro da camada FLUXO
+## 14.6 Como funciona dentro da camada FLUXO
 
 **Passo a passo.** Etapa 2 de 7. O orquestrador invoca, lê o resultado, monta e valida
 o handoff. Falha em qualquer ponto aborta o fluxo.
@@ -376,7 +376,7 @@ e 02, `postgresql` no Fluxo 03.
 
 **Entrega.** Entrega `HANDOFF_PLANNER_ENGINE.json` validado, para a etapa 3.
 
-## 12.7 Como funciona dentro da camada ECOSSISTEMA
+## 14.7 Como funciona dentro da camada ECOSSISTEMA
 
 **Passo a passo.** Fora de um fluxo completo, o planner é usado para produzir e auditar
 planos isoladamente — por exemplo, para avaliar a viabilidade de um domínio antes de
@@ -399,7 +399,7 @@ como contrato compartilhado com `aidd-ops` e `aidd-factory`.
 **Entrega.** Entrega um contrato formal que qualquer motor do ecossistema consegue
 consumir sem tradução. É o que torna possível trocar o motor sem reescrever o plano.
 
-## 12.8 Rastreabilidade
+## 14.8 Rastreabilidade
 
 `tools/aidd-planner/AGENTS.md`; `tools/aidd-planner/src/cli.py`;
 `tools/aidd-planner/src/core/planner_engine.py`;
@@ -407,7 +407,7 @@ consumir sem tradução. É o que torna possível trocar o motor sem reescrever 
 `componentes/compartilhado/specs/handoff-planner-to-engine.schema.json`;
 `scripts/orquestrador_sincrono.py::etapa_02_planner`.
 
-# Capítulo 13 — `aidd-generator`: a fábrica autônoma de oito fases
+# Capítulo 15 — `aidd-generator`: a fábrica autônoma de oito fases
 
 ```{=typst}
 #ficha(
@@ -420,7 +420,7 @@ consumir sem tradução. É o que torna possível trocar o motor sem reescrever 
 )
 ```
 
-## 13.1 O que é a ferramenta
+## 15.1 O que é a ferramenta
 
 Continuando a obra: com o terreno pronto (forge) e a planta aprovada (planner), o
 `aidd-generator` é a equipe de pedreiros que ergue a casa **tijolo por tijolo, sob
@@ -430,7 +430,7 @@ do ecossistema e a única que constrói software do zero. É um pipeline de oito
 com máquina de estados formal validada por JSON Schema Draft 2020-12, que vai da
 pesquisa de referências reais até a entrega de código funcional verificado por pytest.
 
-## 13.2 O papel da ferramenta dentro do FLUXO
+## 15.2 O papel da ferramenta dentro do FLUXO
 
 É o motor da etapa 3 do Fluxo 01. Recebe o handoff do planner, executa as oito fases e
 entrega um sistema que o `aidd-master` vai harmonizar em fatias verticais.
@@ -441,13 +441,13 @@ logo após a 5 faz com que a documentação da Fase 6 descreva o código real e 
 auto-crítica da Fase 7 audite o projeto funcional completo, em vez de auditar um
 esqueleto.
 
-## 13.3 O papel da ferramenta dentro do ECOSSISTEMA
+## 15.3 O papel da ferramenta dentro do ECOSSISTEMA
 
 No ecossistema, o gerador cumpre dois papéis além de gerar software.
 
 É o **laboratório de tokenomics**: `config/token_budgets.json`, `G_TOKENOMICS`,
-`benchmark_tokenomics.py`, `compressor_middleware.py`, `caveman_linter.py` e
-`core/pipeline_state.py` estão todos aqui. As técnicas de economia de tokens do
+`benchmark_tokenomics.py`, `caveman_linter.py` e
+`tools/aidd-generator/scripts/core/pipeline_state.py` estão todos aqui. As técnicas de economia de tokens do
 ecossistema são desenvolvidas e medidas neste contexto.
 
 É o **laboratório de engenharia agêntica**: Fleet Discovery (descoberta automática dos
@@ -455,7 +455,7 @@ assistentes instalados no host), Context-Purge Engine (subagentes efêmeros), In
 Router (detecção de intenção), micro-ambientes por fase e o protocolo delegado nasceram
 aqui.
 
-## 13.4 Como foi pensada, está estruturada e configurada
+## 15.4 Como foi pensada, está estruturada e configurada
 
 ### As oito fases
 
@@ -517,7 +517,7 @@ sistema operacional via `share/ui_dialogs.js`); Swagger em tema escuro nativo; S
 MCP com JSON-RPC 2.0; e Studio de Webhooks com HMAC SHA-256 assíncrono e auditoria de
 disparos.
 
-## 13.5 Como funciona individualmente
+## 15.5 Como funciona individualmente
 
 **Passo a passo.**
 
@@ -549,7 +549,7 @@ Fase 8, `_validar_contrato_ast` roda antes do pytest real.
 **Ferramentas acessadas.** API do GitHub e do HuggingFace (Fase 1, via `requests`);
 provedor de LLM configurado, sempre através de `solicitar_llm()` de
 `utils_delegacao.py` — nunca chamada direta a `litellm`; `pytest` (Fase 8);
-`Repomix` via `core/repomix_runner.py` para empacotamento de contexto; Typst (Fase 6,
+`Repomix` via `tools/aidd-generator/scripts/core/repomix_runner.py` para empacotamento de contexto; Typst (Fase 6,
 geração de PDF); MCP de sistema de arquivos; MCP verificador de CVE em `mcps/`.
 
 **Hooks e regras.** Prompt em inglês com saída em PT-BR (tríade Caveman, auditada pelo
@@ -561,7 +561,7 @@ pytest reenviado ao modelo por até três tentativas.
 (pesos 20+20+25+10+15+10), roadmap filtrado pelo score atingido e investimento estimado
 com premissas rotuladas explicitamente como estimativa.
 
-## 13.6 Como funciona dentro da camada FLUXO
+## 15.6 Como funciona dentro da camada FLUXO
 
 **Passo a passo.** Etapa 3 do Fluxo 01, invocada com `--implementar-codigo`, ordem
 1→2→3→4→5→8→6→7.
@@ -583,7 +583,7 @@ commit que a Fase 5 executa passa pelos portões.
 **Entrega.** Entrega ao `aidd-master` um projeto com fatias, artefatos de frontend e
 resultado de testes.
 
-## 13.7 Como funciona dentro da camada ECOSSISTEMA
+## 15.7 Como funciona dentro da camada ECOSSISTEMA
 
 **Passo a passo.** Fora do fluxo completo, `/generate` é o caminho mais curto entre uma
 ideia e um sistema. É também o campo de prova das técnicas de economia: rodar
@@ -592,8 +592,7 @@ ideia e um sistema. É também o campo de prova das técnicas de economia: rodar
 **Portões.** `G_TOKENOMICS` é o portão que liga esta ferramenta à Lei #8 — ele reprova
 quem alegar medição real para valor autodeclarado.
 
-**Habilidades.** `sandeco-token-reduce` (LLMLingua-2) via `compressor_middleware.py`;
-`aidd-orca` e `aidd-orchestrate` quando a execução acontece em ambiente orquestrado.
+**Habilidades.** `aidd-generator-runner` é a dona de `/generate`; `aidd-orca` e `aidd-orchestrate` quando a execução acontece em ambiente orquestrado.
 
 **Determinismo.** Metade do pipeline.
 
@@ -609,7 +608,7 @@ no host (claude, codex, agy, cursor, ollama) usando apenas `shutil.which()` e
 economia de tokens** — o relatório JSON do benchmark com economia percentual real por
 fase, custo em dólares e resultado de pytest.
 
-## 13.8 Rastreabilidade
+## 15.8 Rastreabilidade
 
 `tools/aidd-generator/AGENTS.md` e `AGENTS-WORKFLOW.md`;
 `tools/aidd-generator/scripts/pipeline_completo.py`;
@@ -619,7 +618,7 @@ fase, custo em dólares e resultado de pytest.
 `tools/aidd-generator/config/token_budgets.json`;
 `tools/aidd-generator/scripts/gates/` (10 portões).
 
-# Capítulo 14 — `aidd-factory`: o integrador multi-serviço
+# Capítulo 16 — `aidd-factory`: o integrador multi-serviço
 
 ```{=typst}
 #ficha(
@@ -632,7 +631,7 @@ fase, custo em dólares e resultado de pytest.
 )
 ```
 
-## 14.1 O que é a ferramenta
+## 16.1 O que é a ferramenta
 
 Se `aidd-generator` é a equipe que constrói tijolo por tijolo, `aidd-factory` é a
 equipe que monta a casa com **peças pré-fabricadas de fornecedores confiáveis** —
@@ -647,17 +646,18 @@ compose, inicialização de banco, variáveis de ambiente e código de integraç
 consolidado que resolve o problema, escrever de novo é desperdício de tokens, de tempo
 e de confiabilidade.
 
-## 14.2 O papel da ferramenta dentro do FLUXO
+## 16.2 O papel da ferramenta dentro do FLUXO
 
 É o motor da etapa 3 do Fluxo 02. Recebe um plano já resolvido e produz os artefatos que
 o `aidd-master` vai fatiar em VSA e que o `aidd-ops` vai provisionar.
 
-A restrição de entrada é dura e está no portão `G_FACTORY_INPUT`: a fábrica consome
+A restrição de entrada é dura e está na invariante que o `AGENTS.md` chama de
+`G_FACTORY_INPUT` (um rótulo de regra, não um arquivo de portão): a fábrica consome
 **apenas** `PLANO-INFRAESTRUTURA.json` validado contra
 `componentes/compartilhado/specs/plano-infraestrutura.schema.json`, e **nunca** lê
 catálogos de nicho diretamente — o plano já chega resolvido.
 
-## 14.3 O papel da ferramenta dentro do ECOSSISTEMA
+## 16.3 O papel da ferramenta dentro do ECOSSISTEMA
 
 No ecossistema, a `aidd-factory` é o par simétrico do `aidd-ops`: o ops decide *qual
 infraestrutura*, a factory decide *qual código de integração*. Os dois compartilham o
@@ -668,11 +668,12 @@ sem tradução.
 inteiramente determinísticas convivendo com três fases de modelo cercadas por portões de
 AST e `bandit`.
 
-## 14.4 Como foi pensada, está estruturada e configurada
+## 16.4 Como foi pensada, está estruturada e configurada
 
 O `AGENTS.md` declara cinco invariantes: contrato de entrada único
-(`G_FACTORY_INPUT`), contrato de saída único (`G_FACTORY_OUTPUT`), fases determinísticas
-explicitamente demarcadas (`G_FACTORY_DETERMINISTIC` para as fases 1, 4, 5 e 6), Zero
+(rótulo `G_FACTORY_INPUT`), contrato de saída único (rótulo `G_FACTORY_OUTPUT`), fases
+determinísticas explicitamente demarcadas (rótulo `G_FACTORY_DETERMINISTIC` para as
+fases 1, 4, 5 e 6) — rótulos cobrados pelos portões reais de `gates/` —, Zero
 Stubs, e **reuso obrigatório do núcleo compartilhado** — `result.py` e
 `escritor_atomico.py` vêm de `componentes/compartilhado/src-core/`, não são
 reimplementados.
@@ -694,7 +695,7 @@ determinístico do gap do Discovery Engine documentado em
 `docs/features/v2_arquitetura-aidd-ops-factory.md` §7.1/§9.1 — um motor completo de
 busca no GitHub permanece trabalho futuro"*.
 
-## 14.5 Como funciona individualmente
+## 16.5 Como funciona individualmente
 
 **Passo a passo.** `pipeline_factory.py` valida o plano de entrada contra o esquema →
 Fase 1 analisa e resolve blocos e bancos lógicos → Fases 2 e 3 usam modelo para a
@@ -702,7 +703,7 @@ curadoria e o desenho de integração, com portões AST e `bandit` → Fase 4 ge
 → Fase 5 inicializa o banco → Fase 6 resolve o `.env` → Fase 9 gera o código de
 integração → grava `FACTORY_OUTPUT.json` com todos os artefatos e seus status.
 
-**Portões.** `G_FACTORY_INPUT`, `G_FACTORY_OUTPUT`, `G_FACTORY_DETERMINISTIC`, mais AST
+**Portões.** `G_FACTORY_ANALYSIS`, `G_FACTORY_COMPOSE`, `G_FACTORY_ENV`, `G_FACTORY_INIT_DB`, `G_FACTORY_INTEGRATION`, `G_FACTORY_MVP`, mais AST
 e `bandit` nas fases de modelo.
 
 **Habilidades.** `aidd-factory-runner` é a dona de `/factory`.
@@ -718,7 +719,7 @@ funcional, sem marcador de espaço nem `TODO`.
 **Entrega.** Entrega `FACTORY_OUTPUT.json` e os artefatos listados nele. O destinatário
 declarado no `AGENTS.md` é o `DeployOrchestrator`.
 
-## 14.6 Como funciona dentro da camada FLUXO
+## 16.6 Como funciona dentro da camada FLUXO
 
 **Passo a passo.** Etapa 3 do Fluxo 02, invocada pelo orquestrador como
 `factory curate --dominio <d> --output <pasta>/factory_output`.
@@ -737,7 +738,7 @@ fábrica não roda. Não existe modo tolerante.
 
 **Entrega.** Entrega ao `aidd-master` a stack integrada para fatiamento em VSA.
 
-## 14.7 Como funciona dentro da camada ECOSSISTEMA
+## 16.7 Como funciona dentro da camada ECOSSISTEMA
 
 **Passo a passo.** Fora do fluxo, a factory pode ser usada isoladamente para gerar a
 camada de integração de uma stack já planejada.
@@ -760,7 +761,7 @@ divergência.
 **Entrega.** Entrega ao ecossistema a prova de que integração é majoritariamente
 mecânica — e, portanto, majoritariamente determinística.
 
-## 14.8 Rastreabilidade
+## 16.8 Rastreabilidade
 
 `tools/aidd-factory/AGENTS.md`; `tools/aidd-factory/scripts/contrato_factory.py`;
 `tools/aidd-factory/scripts/pipeline_factory.py`;
