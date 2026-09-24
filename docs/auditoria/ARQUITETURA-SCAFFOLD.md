@@ -91,8 +91,19 @@ Como todo `output_handoff` fica dentro do ciclo, o cache do orquestrador (pular 
     IN   todos os OUT de 0 a 4
     OUT  <f>/RESUMO-USUARIO.md                          [LLM]      linguagem simples ("Na Festa")
     OUT  <f>/RELATORIO-TECNICO.md                       [LLM]      rastreabilidade: comandos e exit codes ("Na Casa")
-    GATE aprovação humana (Join Barrier) antes de merge/commit
+    GATE aprovação humana (Join Barrier): --aprovar
 ```
+
+**Fluxo git do orquestrador** (`scripts/orquestrador_4f.py`):
+
+| Passo | O que acontece | Se falhar |
+| :--- | :--- | :--- |
+| Início | Cria a branch `audit/<pipeline_id>` a partir do HEAD; a branch atual não muda mais até a aprovação | — |
+| Cada fase | Worktree efêmera sobre a branch do ciclo → agente → `gate_fase` → commit na branch do ciclo | Pipeline para, nada é commitado, worktree preservada |
+| Fim | `gate_final` (`python ecossistema.py audit`) roda uma vez; se passar, o commit testado é marcado como aprovável | Ciclo não fica aprovável |
+| Aprovação (humano) | `--aprovar`: merge `--no-ff` na branch atual, só se a branch do ciclo ainda é o commit aprovado | Recusa (exit 1) |
+
+Commit de fase usa `--no-verify` de propósito: o gate da própria fase acabou de passar, e a bateria completa roda uma vez no `gate_final`, e não a cada fase.
 
 **Índice físico** (a mesma pasta vista como árvore; a lógica está nos blocos acima):
 
@@ -179,4 +190,9 @@ python scripts/compilador_plano_evolucao.py --plano docs/auditoria/<nome-da-ferr
 **Executar plano de evolução da ferramenta:**
 ```bash
 python scripts/orquestrador_4f.py --manifest docs/auditoria/<nome-da-ferramenta>/ciclo-NN/PLANO-EVOLUCAO.json
+```
+
+**Aprovar o ciclo (Join Barrier, ação humana; merge na branch atual):**
+```bash
+python scripts/orquestrador_4f.py --manifest docs/auditoria/<nome-da-ferramenta>/ciclo-NN/MANIFESTO-4F.json --aprovar
 ```

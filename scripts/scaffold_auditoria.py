@@ -82,6 +82,11 @@ ARTEFATOS_DO_CICLO = (
 )
 EXTENSOES_TEXTO = (".md", ".json", ".txt")
 
+# Gate que cada fase precisa passar ANTES do commit (orquestrador_4f.py) e bateria
+# completa que roda uma única vez no fim, antes de liberar a aprovação humana.
+GATE_TESTES = "python -m pytest -q -p no:cacheprovider tests"
+GATE_FINAL = "python ecossistema.py audit"
+
 
 def carregar_papeis_4f(config_path: Path) -> dict:
     """Lê 'pipeline_auditoria_4f' do config; reprova se papel/campo faltar."""
@@ -322,11 +327,15 @@ def criar_scaffold_auditoria(tool_name: str, repo_root: Path = None) -> Path:
 
     # MANIFESTO-4F.json — artefato DERIVADO do config: sempre regerado, nunca editado à mão.
     # Todos os output_handoff ficam dentro do ciclo: o cache do orquestrador vale por ciclo.
+    gate15 = f"python {raiz}/G_auditoria_15D.py"
     fases_4f = [
-        ("Fase_1_Inspetor", inspetor, "PROMPT-FASE-1-INSPETOR.txt", "LAUDO-15D-INICIAL.md"),
-        ("Fase_2_Arquiteto", arquiteto, "PROMPT-FASE-2-ARQUITETO.txt", "PLANO-EVOLUCAO.md"),
-        ("Fase_3_Construtor", construtor, "PROMPT-FASE-3-CONSTRUTOR.txt", "RELATORIO-CONSTRUTOR.md"),
-        ("Fase_4_Inspetor_Retorno", retorno, "PROMPT-FASE-4-RETORNO.txt", "LAUDO-15D-REVISADO.md"),
+        ("Fase_1_Inspetor", inspetor, "PROMPT-FASE-1-INSPETOR.txt", "LAUDO-15D-INICIAL.md",
+         f"{gate15} {c}/LAUDO-15D-INICIAL.md"),
+        ("Fase_2_Arquiteto", arquiteto, "PROMPT-FASE-2-ARQUITETO.txt", "PLANO-EVOLUCAO.md",
+         f"python scripts/compilador_plano_evolucao.py --plano {c}/PLANO-EVOLUCAO.md"),
+        ("Fase_3_Construtor", construtor, "PROMPT-FASE-3-CONSTRUTOR.txt", "RELATORIO-CONSTRUTOR.md", GATE_TESTES),
+        ("Fase_4_Inspetor_Retorno", retorno, "PROMPT-FASE-4-RETORNO.txt", "LAUDO-15D-REVISADO.md",
+         f"{gate15} {c}/LAUDO-15D-REVISADO.md"),
     ]
     manifesto_data = {
         "pipeline_id": f"auditoria-{tool_name}-{ciclo_dir.name}",
@@ -335,6 +344,7 @@ def criar_scaffold_auditoria(tool_name: str, repo_root: Path = None) -> Path:
         "session_id": "auto_generated",
         "definition_of_done": f"{c}/DOD.md",
         "config_usuario_ref": "docs/auditoria/CONFIG-EXECUCAO-USUARIO.json",
+        "gate_final": GATE_FINAL,
         "fases": [
             {
                 "nome": nome,
@@ -343,8 +353,9 @@ def criar_scaffold_auditoria(tool_name: str, repo_root: Path = None) -> Path:
                 "input_prompt": f"{c}/{prompt}",
                 "comando_terminal": papel["comando_terminal"],
                 "output_handoff": f"{c}/{handoff}",
+                "gate_fase": gate,
             }
-            for nome, papel, prompt, handoff in fases_4f
+            for nome, papel, prompt, handoff, gate in fases_4f
         ],
     }
     manifesto_file = ciclo_dir / "MANIFESTO-4F.json"

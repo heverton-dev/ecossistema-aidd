@@ -4,6 +4,7 @@
   "descricao": "Plano de Evolução Tática montado a partir dos 8 tickets de PLANO-EVOLUCAO.md",
   "config_usuario_ref": "docs/auditoria/CONFIG-EXECUCAO-USUARIO.json",
   "definition_of_done": "docs/auditoria/aidd-diagnose/ciclo-01/DOD.md",
+  "gate_final": "python ecossistema.py audit",
   "fases": [
     {
       "ticket_id": "TICKET-01",
@@ -13,7 +14,8 @@
       "model": "haiku",
       "comando_terminal": "claude --dangerously-skip-permissions -p",
       "input_prompt": "docs/auditoria/aidd-diagnose/ciclo-01/prompts_tickets/PROMPT-TICKET-01.txt",
-      "output_handoff": ".agents/skills/aidd-diagnose/scripts/cli.py"
+      "output_handoff": ".agents/skills/aidd-diagnose/scripts/cli.py",
+      "gate_fase": "python -m pytest -q -p no:cacheprovider tests"
     },
     {
       "ticket_id": "TICKET-02",
@@ -23,7 +25,8 @@
       "model": "haiku",
       "comando_terminal": "agy --model gemini-3.8-flash-low  --dangerously-skip-permissions",
       "input_prompt": "docs/auditoria/aidd-diagnose/ciclo-01/prompts_tickets/PROMPT-TICKET-02.txt",
-      "output_handoff": ".agents/skills/aidd-diagnose/scripts/isolamento.py"
+      "output_handoff": ".agents/skills/aidd-diagnose/scripts/isolamento.py",
+      "gate_fase": "python -m pytest -q -p no:cacheprovider tests"
     },
     {
       "ticket_id": "TICKET-03",
@@ -33,7 +36,8 @@
       "model": "xiaomi-token-plan-sgp/mimo-v2.6-flash",
       "comando_terminal": "mimo --pure -m xiaomi-token-plan-sgp/mimo-v2.6-flash",
       "input_prompt": "docs/auditoria/aidd-diagnose/ciclo-01/prompts_tickets/PROMPT-TICKET-03.txt",
-      "output_handoff": ".agents/skills/aidd-diagnose/scripts/cobertura_grafo.py"
+      "output_handoff": ".agents/skills/aidd-diagnose/scripts/cobertura_grafo.py",
+      "gate_fase": "python -m pytest -q -p no:cacheprovider tests"
     },
     {
       "ticket_id": "TICKET-04",
@@ -43,7 +47,8 @@
       "model": "opencode/big-pickle",
       "comando_terminal": "opencode --pure --auto --agent -m opencode/big-pickle",
       "input_prompt": "docs/auditoria/aidd-diagnose/ciclo-01/prompts_tickets/PROMPT-TICKET-04.txt",
-      "output_handoff": ".agents/skills/aidd-diagnose/scripts/fallback.py"
+      "output_handoff": ".agents/skills/aidd-diagnose/scripts/fallback.py",
+      "gate_fase": "python -m pytest -q -p no:cacheprovider tests"
     },
     {
       "ticket_id": "TICKET-05",
@@ -53,7 +58,8 @@
       "model": "haiku",
       "comando_terminal": "claude --dangerously-skip-permissions -p",
       "input_prompt": "docs/auditoria/aidd-diagnose/ciclo-01/prompts_tickets/PROMPT-TICKET-05.txt",
-      "output_handoff": ".agents/skills/aidd-diagnose/scripts/observabilidade.py"
+      "output_handoff": ".agents/skills/aidd-diagnose/scripts/observabilidade.py",
+      "gate_fase": "python -m pytest -q -p no:cacheprovider tests"
     },
     {
       "ticket_id": "TICKET-06",
@@ -63,7 +69,8 @@
       "model": "haiku",
       "comando_terminal": "agy --model gemini-3.8-flash-low  --dangerously-skip-permissions",
       "input_prompt": "docs/auditoria/aidd-diagnose/ciclo-01/prompts_tickets/PROMPT-TICKET-06.txt",
-      "output_handoff": "gates/G_aidd_diagnose.py"
+      "output_handoff": "gates/G_aidd_diagnose.py",
+      "gate_fase": "python -m pytest -q -p no:cacheprovider tests"
     },
     {
       "ticket_id": "TICKET-07",
@@ -73,7 +80,8 @@
       "model": "xiaomi-token-plan-sgp/mimo-v2.6-flash",
       "comando_terminal": "mimo --pure -m xiaomi-token-plan-sgp/mimo-v2.6-flash",
       "input_prompt": "docs/auditoria/aidd-diagnose/ciclo-01/prompts_tickets/PROMPT-TICKET-07.txt",
-      "output_handoff": ".agents/skills/aidd-diagnose/scripts/rollback.py"
+      "output_handoff": ".agents/skills/aidd-diagnose/scripts/rollback.py",
+      "gate_fase": "python -m pytest -q -p no:cacheprovider tests"
     },
     {
       "ticket_id": "TICKET-08",
@@ -83,7 +91,8 @@
       "model": "opencode/big-pickle",
       "comando_terminal": "opencode --pure --auto --agent -m opencode/big-pickle",
       "input_prompt": "docs/auditoria/aidd-diagnose/ciclo-01/prompts_tickets/PROMPT-TICKET-08.txt",
-      "output_handoff": ".agents/skills/aidd-diagnose/scripts/handoff.py"
+      "output_handoff": ".agents/skills/aidd-diagnose/scripts/handoff.py",
+      "gate_fase": "python -m pytest -q -p no:cacheprovider tests"
     }
   ]
 }

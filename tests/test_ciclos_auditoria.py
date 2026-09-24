@@ -181,6 +181,9 @@ def test_gate_15d_sem_argumento_valida_o_ciclo_vigente(tmp_path):
 
 
 def test_orquestrador_com_tudo_em_cache_nao_declara_sucesso(tmp_path):
+    subprocess.run(["git", "init", "-q"], cwd=tmp_path, check=True)
+    subprocess.run(["git", "-c", "user.email=t@t", "-c", "user.name=t", "commit", "-q", "--allow-empty", "-m", "base"],
+                   cwd=tmp_path, check=True)
     handoff = tmp_path / "saida.md"
     handoff.write_text("ja existe", encoding="utf-8")
     manifesto = tmp_path / "m.json"
@@ -195,3 +198,30 @@ def test_orquestrador_com_tudo_em_cache_nao_declara_sucesso(tmp_path):
     assert "NADA A FAZER" in res.stdout
     assert "FINALIZADO COM SUCESSO" not in res.stdout
     assert "scaffold_auditoria.py" in res.stdout
+
+
+def test_manifestos_declaram_gate_por_fase_e_gate_final(tmp_path):
+    repo = _repo(tmp_path)
+    ciclo = criar_scaffold_auditoria("ferramenta-x", repo_root=repo)
+    m = json.loads((ciclo / "MANIFESTO-4F.json").read_text(encoding="utf-8"))
+    c = "docs/auditoria/ferramenta-x/ciclo-01"
+    gate15 = "python docs/auditoria/ferramenta-x/G_auditoria_15D.py"
+
+    assert m["gate_final"] == "python ecossistema.py audit"
+    assert [f["gate_fase"] for f in m["fases"]] == [
+        f"{gate15} {c}/LAUDO-15D-INICIAL.md",
+        f"python scripts/compilador_plano_evolucao.py --plano {c}/PLANO-EVOLUCAO.md",
+        "python -m pytest -q -p no:cacheprovider tests",
+        f"{gate15} {c}/LAUDO-15D-REVISADO.md",
+    ]
+
+    md = ciclo / "PLANO-EVOLUCAO.md"
+    md.write_text("""### Ticket 1: Ajuste (Refere-se a D11)
+- **Falha 15-D:** `D11. Fallback`
+- **Artefato de Handoff:** `gates/G_x.py`
+- **Construtor Prompt (EN):**
+  - Create gate.
+""", encoding="utf-8")
+    plano = json.loads(Path(compilar_plano_evolucao(md, repo / "docs" / "auditoria" / "CONFIG-EXECUCAO-USUARIO.json")).read_text(encoding="utf-8"))
+    assert plano["gate_final"] == "python ecossistema.py audit"
+    assert plano["fases"][0]["gate_fase"] == "python -m pytest -q -p no:cacheprovider tests"

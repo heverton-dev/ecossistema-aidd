@@ -286,11 +286,81 @@ def run_cmd(cmd, cwd=None, exit_on_fail=True):
         sys.exit(res.returncode)
     return res
 
+
+def git(args, cwd, exit_on_fail=True):
+    """git com argumentos em lista (caminhos com espaço/acento seguros no Windows)."""
+    res = subprocess.run(["git", *args], cwd=cwd, capture_output=True, text=True)
+    if res.returncode != 0 and exit_on_fail:
+        print(f"[ORCHESTRATOR 4F] FALHA: git {' '.join(args)} -> exit {res.returncode}\n{res.stderr.strip()}")
+        sys.exit(1)
+    return res
+
+
+def ref_existe(ref, cwd):
+    return git(["rev-parse", "--verify", "--quiet", ref], cwd, exit_on_fail=False).returncode == 0
+
+
+def sha_de(ref, cwd):
+    return git(["rev-parse", ref], cwd).stdout.strip()
+
+
+def saida_ja_existe(caminho, branch_ciclo, repo_root):
+    """Saída já consolidada: aprovada na branch atual OU produzida neste ciclo e aguardando aprovação."""
+    no_projeto = repo_root / caminho
+    if no_projeto.exists() and no_projeto.stat().st_size > 0:
+        return True
+    return git(["cat-file", "-e", f"{branch_ciclo}:{Path(caminho).as_posix()}"], repo_root, exit_on_fail=False).returncode == 0
+
+
+def rodar_gate(comando, cwd):
+    print(f"[GATE] {comando}")
+    return subprocess.run(comando, shell=True, cwd=cwd).returncode
+
+
+def abrir_worktree(branch, wt_path, repo_root):
+    fechar_worktree(wt_path, repo_root)
+    wt_path.parent.mkdir(parents=True, exist_ok=True)
+    git(["worktree", "add", str(wt_path), branch], repo_root)
+
+
+def fechar_worktree(wt_path, repo_root):
+    if wt_path.exists():
+        git(["worktree", "remove", "--force", str(wt_path)], repo_root, exit_on_fail=False)
+        shutil.rmtree(wt_path, ignore_errors=True)
+    git(["worktree", "prune"], repo_root, exit_on_fail=False)
+
+
+def ref_aprovavel(pipeline_id):
+    return f"refs/aidd/aprovavel/{pipeline_id}"
+
+
+def aprovar(pipeline_id, repo_root):
+    """Join Barrier: ação HUMANA. Merge na branch atual só do commit que passou no gate_final."""
+    branch_ciclo = f"audit/{pipeline_id}"
+    ref = ref_aprovavel(pipeline_id)
+    if not ref_existe(ref, repo_root) or not ref_existe(branch_ciclo, repo_root):
+        print(f"[APROVAÇÃO] RECUSADA: '{branch_ciclo}' não tem execução aprovada pelo gate_final.")
+        return 1
+    if sha_de(branch_ciclo, repo_root) != sha_de(ref, repo_root):
+        print(f"[APROVAÇÃO] RECUSADA: '{branch_ciclo}' mudou depois do gate_final. Rode o pipeline de novo.")
+        return 1
+    res = git(["merge", "--no-ff", "-m", f"chore(audit): aprova {pipeline_id}", branch_ciclo], repo_root, exit_on_fail=False)
+    if res.returncode != 0:
+        print(f"[APROVAÇÃO] FALHA no merge de '{branch_ciclo}':\n{res.stdout}{res.stderr}")
+        return 1
+    git(["branch", "-D", branch_ciclo], repo_root, exit_on_fail=False)
+    git(["update-ref", "-d", ref], repo_root, exit_on_fail=False)
+    print(f"[APROVAÇÃO] '{branch_ciclo}' mergeada na branch atual e removida.")
+    return 0
+
+
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--manifest", required=True)
     parser.add_argument("--force", action="store_true", help="Força re-execução ignorando cache")
     parser.add_argument("--fase", help="Executa exclusivamente uma fase específica")
+    parser.add_argument("--aprovar", action="store_true",
+                        help="Join Barrier (ação humana): mergeia a branch do ciclo aprovada pelo gate_final")
     args = parser.parse_args()
 
     manifest_path = Path(args.manifest).resolve()
@@ -300,120 +370,83 @@ def main():
 
     with open(manifest_path, "r", encoding="utf-8") as f:
         data = json.load(f)
-    
+
     pipeline_id = data.get("pipeline_id", "audit")
     fases = data.get("fases", [])
     repo_root = Path.cwd()
+
+    if args.aprovar:
+        sys.exit(aprovar(pipeline_id, repo_root))
+
+    # As fases acumulam numa branch própria do ciclo; a branch atual só muda com --aprovar.
+    branch_ciclo = f"audit/{pipeline_id}"
     worktrees_base = repo_root.parent / f"worktrees_{pipeline_id}"
-    
+
     print(f"============================================================")
     print(f" PIPELINE 4F INICIADO: {pipeline_id}")
     print(f" Total de Fases: {len(fases)}")
+    print(f" Branch do ciclo: {branch_ciclo}")
     print(f" Worktrees geradas em: {worktrees_base}")
     print(f"============================================================")
 
-    config_user_path = repo_root / "docs" / "auditoria" / "CONFIG-EXECUCAO-USUARIO.json"
-    user_config = {}
-    if config_user_path.exists():
-        try:
-            with open(config_user_path, "r", encoding="utf-8") as cf:
-                user_config = json.load(cf)
-            print(f"[CONFIG] Perfil do usuário carregado de {config_user_path.name}")
-        except Exception as e:
-            print(f"[CONFIG] Aviso: Falha ao carregar perfil do usuário: {e}")
+    if not ref_existe(branch_ciclo, repo_root):
+        git(["branch", branch_ciclo, "HEAD"], repo_root)
 
     fases_em_cache = 0
     for i, fase in enumerate(fases, 1):
         nome = fase.get("nome", f"fase_{i}")
         comando = fase.get("comando_terminal")
         handoff = fase.get("output_handoff")
-        
-        # Resolução Dinâmica de Harness, Modelo e Comando
-        papeis = user_config.get("papeis_pipeline_4f", {})
-        padrao = user_config.get("padrao_geral", {})
-        perfil_aplicado = None
-        
-        if "Inspetor_Retorno" in nome or "Retorno" in nome:
-            perfil_aplicado = papeis.get("retorno")
-        elif "Inspetor" in nome:
-            perfil_aplicado = papeis.get("inspetor")
-        elif "Arquiteto" in nome:
-            perfil_aplicado = papeis.get("arquiteto")
-        elif "Construtor" in nome or "Ticket" in nome:
-            perfil_aplicado = papeis.get("construtor")
-        else:
-            perfil_aplicado = padrao
-
-        if perfil_aplicado and (not comando or comando == "auto" or comando == "a_definir_comando_execucao"):
-            fase["harness"] = perfil_aplicado.get("harness", fase.get("harness"))
-            fase["model"] = perfil_aplicado.get("model", fase.get("model"))
-            fase["comando_terminal"] = perfil_aplicado.get("comando_terminal", comando)
-            comando = fase["comando_terminal"]
-            print(f"[DINÂMICO] Fase '{nome}' configurada via CONFIG-EXECUCAO-USUARIO: {fase['harness']} | {fase['model']}")
+        gate_fase = fase.get("gate_fase")
 
         if args.fase and args.fase != nome:
             print(f"[PULANDO] Fase {nome} (filtro por fase: {args.fase})")
             continue
 
         print(f"\n---> INICIANDO FASE {i}: {nome}")
-        
-        if handoff and not args.force and not args.fase:
-            handoff_base_path = repo_root / handoff
-            if handoff_base_path.exists() and handoff_base_path.stat().st_size > 0:
-                print(f"[CACHE] Memória detectada! O arquivo '{handoff_base_path.name}' já está consolidado no projeto principal.")
-                print(f"[CACHE] Pulando a execução da IA desta fase para economizar tokens.")
-                fases_em_cache += 1
-                continue
-                
-        wt_path = worktrees_base / nome
-        branch = f"audit/{pipeline_id}/{nome}"
-        
-        if wt_path.exists():
-            shutil.rmtree(wt_path, ignore_errors=True)
-            run_cmd(f"git worktree remove --force {wt_path}", exit_on_fail=False)
-        run_cmd(f"git branch -D {branch}", exit_on_fail=False)
 
-        print(f"[+] Isolando Worktree...")
-        run_cmd(f"git worktree add -b {branch} {wt_path}")
-        
+        if handoff and not args.force and not args.fase and saida_ja_existe(handoff, branch_ciclo, repo_root):
+            print(f"[CACHE] '{handoff}' já existe (projeto ou {branch_ciclo}). Pulando a execução da IA desta fase.")
+            fases_em_cache += 1
+            continue
+
+        if not gate_fase:
+            print(f"[-] FALHA: fase '{nome}' sem 'gate_fase' no manifesto. Nenhuma fase é commitada sem gate.")
+            print("    Regere o manifesto (scaffold_auditoria.py ou compilador_plano_evolucao.py).")
+            sys.exit(1)
+
+        wt_path = worktrees_base / nome
+        print(f"[+] Isolando Worktree na branch do ciclo...")
+        abrir_worktree(branch_ciclo, wt_path, repo_root)
+
         print(f"[+] Lendo Input Prompt via nativo: {fase.get('input_prompt')}")
         input_file = repo_root / fase.get("input_prompt")
-        
         if not input_file.exists():
             print(f"[-] AVISO: Prompt input não encontrado em {input_file}")
-            
+
         print(f"[+] Acionando Agente ({fase.get('harness')} | {fase.get('model')})...")
-        handoff_expected = wt_path / fase.get("output_handoff")
-        run_cmd_tty(comando, cwd=wt_path, input_data=str(input_file).replace('/', '\\') if input_file.exists() else None, expected_handoff=handoff_expected)
-        
-        print(f"[+] Verificando Output Handoff...")
         handoff_file = wt_path / handoff
+        run_cmd_tty(comando, cwd=wt_path, input_data=str(input_file).replace('/', '\\') if input_file.exists() else None,
+                    expected_handoff=handoff_file)
+
+        print(f"[+] Verificando Output Handoff...")
         if not handoff_file.exists():
-            print(f"[-] FALHA: Output {handoff} não foi gerado na worktree.")
+            print(f"[-] FALHA: Output {handoff} não foi gerado. Worktree preservada para inspeção: {wt_path}")
             sys.exit(1)
-            
-        print(f"[+] Handoff confirmado! Persistindo artefatos no worktree...")
-        run_cmd("git add -A", cwd=wt_path)
-        run_cmd(f"git commit --no-verify -m \"chore(audit): finalizando {nome}\"", cwd=wt_path, exit_on_fail=False)
-        
-        print(f"[+] Descartando Worktree (Drop & Push to memory)...")
-        res_wt = run_cmd(f"git worktree remove --force {wt_path}", exit_on_fail=False)
-        if wt_path.exists():
-            time.sleep(1)
-            shutil.rmtree(wt_path, ignore_errors=True)
-            run_cmd("git worktree prune", exit_on_fail=False)
-        
-        print(f"[+] Cumulando artefatos: Merge da fase {nome} na memória principal...")
-        run_cmd(f"git merge {branch}", exit_on_fail=True)
-        
-        # A próxima fase vai partir dessa mesma branch ou da master?
-        # Num fluxo cumulativo (Fase 1->2->3), todas devem alterar a mesma base sucessivamente.
-        # Portanto, o pipeline linear puxa o branch anterior, faz merge ou continua.
-        # Mas o usuário instruiu: "the next phase then audit and drop the next phase, drop the work tree and start your work and so successively until the end"
-        # Para ser estritamente sequencial na mesma base de branch, fazemos merge na master (ou branch alvo) ap??s cada fase?
-        # N?o, o pipeline opera de forma independente para n?o sujar a master at? a aprova??o,
-        # Ent?o ns pr?ximas fases DEVEM puxar da branch da fase anterior!
-        
+
+        # Gate da fase ANTES do commit: saída não conferida nunca entra no histórico.
+        if rodar_gate(gate_fase, wt_path) != 0:
+            print(f"[-] FALHA: gate_fase de '{nome}' reprovou. Nada foi commitado; fases seguintes não rodam.")
+            print(f"    Worktree preservada para inspeção: {wt_path}")
+            sys.exit(1)
+
+        git(["add", "-A"], wt_path)
+        # --no-verify aqui é deliberado: o gate específico da fase acabou de passar, e a bateria
+        # completa (gate_final) roda uma única vez no fim, antes de liberar a aprovação.
+        git(["commit", "--no-verify", "-m", f"chore(audit): {nome} (gate_fase exit 0)"], wt_path, exit_on_fail=False)
+        fechar_worktree(wt_path, repo_root)
+        print(f"[+] Fase {nome} commitada em {branch_ciclo}.")
+
     if fases and fases_em_cache == len(fases):
         # Nenhum agente foi chamado: declarar sucesso aqui seria rótulo desonesto (Lei #8).
         alvo = data.get("target_tool", "<ferramenta>")
@@ -425,10 +458,30 @@ def main():
         print("============================================================")
         return
 
+    if args.fase:
+        print(f"\n[FASE ÚNICA] '{args.fase}' concluída em {branch_ciclo}. gate_final não roda com --fase.")
+        return
+
+    gate_final = data.get("gate_final")
+    if not gate_final:
+        print("[-] FALHA: manifesto sem 'gate_final'. O ciclo não pode ficar aprovável sem a bateria completa.")
+        sys.exit(1)
+
+    wt_final = worktrees_base / "_gate_final"
+    abrir_worktree(branch_ciclo, wt_final, repo_root)
+    codigo_final = rodar_gate(gate_final, wt_final)
+    fechar_worktree(wt_final, repo_root)
+    if codigo_final != 0:
+        print(f"[-] FALHA: gate_final reprovou (exit {codigo_final}). {branch_ciclo} NÃO está aprovável.")
+        sys.exit(1)
+
+    git(["update-ref", ref_aprovavel(pipeline_id), branch_ciclo], repo_root)
     print("\n============================================================")
-    print(" PIPELINE FINALIZADO COM SUCESSO!")
-    print(" A aprovação humana (Join Barrier) agora é requerida.")
+    print(f" PIPELINE CONCLUÍDO: {branch_ciclo} passou no gate_final.")
+    print(" A branch atual NÃO foi alterada. Aprovação humana (Join Barrier) requerida:")
+    print(f"   python scripts/orquestrador_4f.py --manifest {args.manifest} --aprovar")
     print("============================================================")
+
 
 if __name__ == "__main__":
     main()

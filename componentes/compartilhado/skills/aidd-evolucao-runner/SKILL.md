@@ -23,16 +23,17 @@ Este motor orquestra a execução sequencial dos tickets de evolução técnica 
 
 ## Fluxo de Execução Estrita
 1. O Runner intercepta o manifesto JSON de evolução (ex: `docs/auditoria/<tool-name>/ciclo-NN/PLANO-EVOLUCAO.json`).
-2. Para cada ticket do plano:
-   - Isola uma Git Worktree efêmera na branch `evolucao/<tool-name>/<ticket_nome>`.
+2. Todos os tickets acumulam numa branch própria do ciclo (`audit/<pipeline_id>`); a branch atual **não muda** durante a execução.
+3. Para cada ticket do plano:
+   - Isola uma Git Worktree efêmera sobre a branch do ciclo.
    - Lê a especificação do ticket (`input_prompt`).
    - Dispara o agente configurado com TTY interativo e monitoramento térmico do Watchdog.
    - Aguarda a entrega do artefato esperado (`output_handoff`).
-   - Valida a suite de testes associada (`pytest tests/`).
-   - Comita e descarta a worktree temporária.
-   - Executa merge cumulativo na branch principal.
-3. Ao finalizar todos os tickets:
-   - Emite barreira de decisão humana (Join Barrier).
+   - Roda o `gate_fase` do ticket (`pytest tests`) **antes** do commit; se reprovar, o pipeline para, nada é commitado e a worktree fica preservada para inspeção.
+   - Comita na branch do ciclo e descarta a worktree.
+4. Ao finalizar todos os tickets:
+   - Roda o `gate_final` (`python ecossistema.py audit`) uma única vez; só se passar o ciclo fica aprovável.
+   - Emite barreira de decisão humana (Join Barrier): o merge na branch atual só acontece com `python scripts/orquestrador_4f.py --manifest <json> --aprovar`, e só se a branch do ciclo não mudou depois do `gate_final`.
    - Registra o encerramento em `RESUMO-USUARIO.md` e `RELATORIO-TECNICO.md`.
 
 ## Disparo

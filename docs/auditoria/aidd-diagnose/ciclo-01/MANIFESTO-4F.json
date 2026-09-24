@@ -5,6 +5,7 @@
   "session_id": "auto_generated",
   "definition_of_done": "docs/auditoria/aidd-diagnose/ciclo-01/DOD.md",
   "config_usuario_ref": "docs/auditoria/CONFIG-EXECUCAO-USUARIO.json",
+  "gate_final": "python ecossistema.py audit",
   "fases": [
     {
       "nome": "Fase_1_Inspetor",
@@ -12,7 +13,8 @@
       "model": "haiku",
       "input_prompt": "docs/auditoria/aidd-diagnose/ciclo-01/PROMPT-FASE-1-INSPETOR.txt",
       "comando_terminal": "claude --dangerously-skip-permissions -p",
-      "output_handoff": "docs/auditoria/aidd-diagnose/ciclo-01/LAUDO-15D-INICIAL.md"
+      "output_handoff": "docs/auditoria/aidd-diagnose/ciclo-01/LAUDO-15D-INICIAL.md",
+      "gate_fase": "python docs/auditoria/aidd-diagnose/G_auditoria_15D.py docs/auditoria/aidd-diagnose/ciclo-01/LAUDO-15D-INICIAL.md"
     },
     {
       "nome": "Fase_2_Arquiteto",
@@ -20,7 +22,8 @@
       "model": "haiku",
       "input_prompt": "docs/auditoria/aidd-diagnose/ciclo-01/PROMPT-FASE-2-ARQUITETO.txt",
       "comando_terminal": "agy --model gemini-3.8-flash-low  --dangerously-skip-permissions",
-      "output_handoff": "docs/auditoria/aidd-diagnose/ciclo-01/PLANO-EVOLUCAO.md"
+      "output_handoff": "docs/auditoria/aidd-diagnose/ciclo-01/PLANO-EVOLUCAO.md",
+      "gate_fase": "python scripts/compilador_plano_evolucao.py --plano docs/auditoria/aidd-diagnose/ciclo-01/PLANO-EVOLUCAO.md"
     },
     {
       "nome": "Fase_3_Construtor",
@@ -28,7 +31,8 @@
       "model": "xiaomi-token-plan-sgp/mimo-v2.6-flash",
       "input_prompt": "docs/auditoria/aidd-diagnose/ciclo-01/PROMPT-FASE-3-CONSTRUTOR.txt",
       "comando_terminal": "mimo --pure -m xiaomi-token-plan-sgp/mimo-v2.6-flash",
-      "output_handoff": "docs/auditoria/aidd-diagnose/ciclo-01/RELATORIO-CONSTRUTOR.md"
+      "output_handoff": "docs/auditoria/aidd-diagnose/ciclo-01/RELATORIO-CONSTRUTOR.md",
+      "gate_fase": "python -m pytest -q -p no:cacheprovider tests"
     },
     {
       "nome": "Fase_4_Inspetor_Retorno",
@@ -36,7 +40,8 @@
       "model": "opencode/big-pickle",
       "input_prompt": "docs/auditoria/aidd-diagnose/ciclo-01/PROMPT-FASE-4-RETORNO.txt",
       "comando_terminal": "opencode --pure --auto --agent -m opencode/big-pickle",
-      "output_handoff": "docs/auditoria/aidd-diagnose/ciclo-01/LAUDO-15D-REVISADO.md"
+      "output_handoff": "docs/auditoria/aidd-diagnose/ciclo-01/LAUDO-15D-REVISADO.md",
+      "gate_fase": "python docs/auditoria/aidd-diagnose/G_auditoria_15D.py docs/auditoria/aidd-diagnose/ciclo-01/LAUDO-15D-REVISADO.md"
     }
   ]
 }

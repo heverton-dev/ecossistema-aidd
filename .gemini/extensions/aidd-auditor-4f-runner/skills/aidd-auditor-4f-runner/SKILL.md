@@ -21,12 +21,12 @@ Todo o ciclo de vida deste pipeline DEVE ser gerado estritamente dentro de `docs
 ## Fluxo de Execução Restrita (4 Fases)
 - O Runner intercepta o manifesto JSON do alvo (ex: `docs/auditoria/template-pipeline-4f.json`).
 - Cria/Aloca a pasta do ciclo: `docs/auditoria/<tool-name>/ciclo-NN/`. Se todas as fases do manifesto já têm saída, o orquestrador informa `NADA A FAZER` e não declara sucesso.
-- Isola o branch (`git checkout -b audit/<tool-name>`).
+- Acumula as fases numa branch própria do ciclo (`audit/<pipeline_id>`), sem tocar a branch atual. Cada fase roda seu `gate_fase` antes do commit; reprovou, o pipeline para sem commitar.
 - Lança a Fase 1 (Inspetor) e aguarda o EXIT 0 e o `output_handoff` (Laudo 15-D).
 - Lança a Fase 2 (Arquiteto) que gera o `PLANO-EVOLUCAO.md` na pasta da auditoria.
 - Lança a Fase 3 (Construtor) que efetua o código.
 - Lança a Fase 4 (Inspetor de Retorno) que valerá o `DOD`.
-- Se EXIT 0, emite alerta de bloqueio (Join Barrier) aguardando APROVAÇÃO HUMANA para fazer o merge.
+- No fim roda o `gate_final` (bateria completa) uma vez. Se EXIT 0, emite o Join Barrier: o merge só acontece com `python scripts/orquestrador_4f.py --manifest <json> --aprovar` (ação humana), e só se a branch do ciclo não mudou depois do `gate_final`.
 
 ## Disparo
 Quando acionado via linguagem natural ou slash, este agente DEVE parar, solicitar ao usuário a confirmação do Harness/Model que consta no manifesto JSON, e então chamar a ferramenta de Terminal (bash/cmd) para executar o comando Python de orquestração.

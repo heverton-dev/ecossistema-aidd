@@ -4,6 +4,11 @@ import re
 import sys
 from pathlib import Path
 
+try:  # executado como script (scripts/ no sys.path) ou importado como scripts.compilador_plano_evolucao
+    from scaffold_auditoria import GATE_FINAL, GATE_TESTES
+except ImportError:
+    from scripts.scaffold_auditoria import GATE_FINAL, GATE_TESTES
+
 CAMPOS_EXECUCAO = ("harness", "model", "comando_terminal")
 
 # Palavras frequentes em PT-BR que não existem em inglês: detector determinístico
@@ -151,7 +156,8 @@ def compilar_plano_evolucao(md_file: Path, config_file: Path = None, output_file
             "model": config_fase["model"],
             "comando_terminal": config_fase["comando_terminal"],
             "input_prompt": input_rel,
-            "output_handoff": t["output_handoff"]
+            "output_handoff": t["output_handoff"],
+            "gate_fase": GATE_TESTES
         })
 
     manifesto = {
@@ -160,6 +166,7 @@ def compilar_plano_evolucao(md_file: Path, config_file: Path = None, output_file
         "descricao": f"Plano de Evolução Tática montado a partir dos {len(fases)} tickets de {md_file.name}",
         "config_usuario_ref": config_file.as_posix() if config_file else None,
         "definition_of_done": (tool_dir / "DOD.md").as_posix(),
+        "gate_final": GATE_FINAL,
         "fases": fases
     }
     
