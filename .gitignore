@@ -118,3 +118,6 @@ docs/tmp/
 *.tmp.md
 *.draft.md
 
+
+# credenciais — nunca versionar
+docs/VPS-CONEXAO.md
