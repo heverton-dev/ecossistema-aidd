@@ -206,13 +206,20 @@ def tela(handle):
     return "\n".join(lido.get("terminal", {}).get("tail", []))
 
 
-def enviar_linha(handle, texto):
+def enviar_linha(handle, texto, marca, tentativas=5, espera=3):
     """Texto e Enter em envios separados: 'texto + --enter' passa pela observação de prompt do
-    Orca, que retém o envio quando acha que o harness ainda espera confiança (mimo, 2026-09-24)."""
-    if orca("terminal", "send", "--terminal", handle, "--text", texto) is None:
-        return False
-    time.sleep(1)
-    return orca("terminal", "send", "--terminal", handle, "--enter") is not None
+    Orca, que retém o envio quando acha que o harness ainda espera confiança (mimo, 2026-09-24).
+    O Enter só sai depois que 'marca' aparece na tela: texto enviado enquanto o harness ainda
+    carrega é descartado em silêncio (TICKET-03/mimo ficou 10 min parado na tela inicial)."""
+    for _ in range(tentativas):
+        if orca("terminal", "send", "--terminal", handle, "--text", texto) is None:
+            return False
+        time.sleep(1)
+        if marca in tela(handle):
+            return orca("terminal", "send", "--terminal", handle, "--enter") is not None
+        time.sleep(espera)
+    print(f"[ORCA] FALHA: texto não apareceu no terminal após {tentativas} envios.")
+    return False
 
 
 def confirmar_confianca_pasta(handle, tentativas=3):
@@ -311,7 +318,7 @@ def run_agente_orca(cmd, cwd, input_data=None, expected_handoff=None, titulo="AI
         excluir_do_git(cwd, PREAMBULO)
         preambulo.write_text(envio["preamble"], encoding="utf-8")
         instrucao = f"Read the file {PREAMBULO} and follow its instructions exactly."
-        if not enviar_linha(handle, instrucao):
+        if not enviar_linha(handle, instrucao, marca=PREAMBULO):
             print("[ORCA] FALHA: instrução não entregue ao terminal.")
             return "failed"
         outcome, resumo = aguardar_worker_done(run_id, envio["dispatch"]["id"])

@@ -36,10 +36,17 @@ def run_limpo(monkeypatch):
     monkeypatch.setattr(orquestrador_4f.time, "sleep", lambda s: None)
 
 
-def _orca_falso(chamadas, mensagens):
+def _orca_falso(chamadas, mensagens, eco=True):
+    """eco=True: o texto enviado aparece na tela (harness pronto); False: é descartado."""
+    digitado = []
+
     def orca(*args, **kwargs):
         chamadas.append(args)
         acao = args[:2]
+        if acao == ("terminal", "send") and "--text" in args and eco:
+            digitado.append(args[args.index("--text") + 1])
+        if acao == ("terminal", "read"):
+            return {"terminal": {"tail": digitado[-1:]}}
         if acao == ("orchestration", "run-create"):
             return {"run": {"id": "run_1"}}
         if acao == ("terminal", "create"):
@@ -91,6 +98,16 @@ def test_fluxo_injeta_tarefa_espera_worker_done_e_fecha_terminais(tmp_path, monk
     assert not preambulo.exists()
     assert any("--ack" in a for a in chamadas)
     assert chamadas[-1][:2] == ("terminal", "close") and "--all" in chamadas[-1]
+
+
+def test_texto_descartado_pelo_harness_e_reenviado_e_nunca_confirmado_as_cegas(tmp_path, monkeypatch):
+    chamadas = []
+    monkeypatch.setattr(orquestrador_4f, "orca", _orca_falso(chamadas, [_lote("ctx_1")], eco=False))
+
+    assert orquestrador_4f.run_agente_orca("mimo", tmp_path, None, None, titulo="T") == "failed"
+    envios = [a for a in chamadas if a[:2] == ("terminal", "send")]
+    assert sum("--text" in a for a in envios) == 5  # reenviou até o limite
+    assert not any(a[-1] == "--enter" and "--text" not in a for a in envios)  # Enter nunca às cegas
 
 
 def test_worker_done_de_outro_dispatch_e_ignorado(tmp_path, monkeypatch):
