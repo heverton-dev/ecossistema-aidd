@@ -18,7 +18,7 @@ Todas as 66 skills foram auditadas em suas 11 dimensões, organizadas por famíl
 | `aidd-spec` | Especificação técnica determinística | Premissas do grill | Spec formal em `docs/planos/` | `G_CONTRACTS` |
 | `aidd-tickets` | Decomposição em tarefas Tracer Bullet | Spec formal | Sequência de tickets TDD | `G_DETERMINISMO_LEI_1` |
 | `aidd-tdd` | Ciclo Red-Green-Refactor estrito com zero stubs | Ticket atômico | Código e teste real exit 0 | `G_TESTES_REAIS` |
-| `aidd-diagnose` | Triagem científica de falhas em 5 fases | Falha ou regressão | Teste de regressão e causa-raiz | `G_PORTAO_PROVA_QUE_MORDE` |
+| `aidd-diagnose` | Triagem científica de falhas em 5 fases | Falha ou regressão | Teste de regressão e causa-raiz | `G_aidd_diagnose` |
 | `aidd-melhoria` | Análise profunda de código pré-planejamento | Código ou sugestão | Relatório com nota em `docs/melhorias/` | `G_QUALIDADE` |
 | `aidd-plan` | Estruturação de planos formais de evolução | Relatório aprovado | Pasta em `docs/planos/` | `G_ESTRUTURA_ESTADO` |
 
