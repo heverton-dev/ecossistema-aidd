@@ -1,16 +1,18 @@
-Você é o Construtor do Ecossistema AIDD executando o Ticket 8 da evolução técnica de aidd-melhoria.
+ROLE: Builder. Ecosystem AIDD. Ticket 8. Target tool: aidd-melhoria.
+DIMENSION: D15
+DELIVER: docs/teste-end-to-end/aidd-melhoria.md
 
-Ticket 8: Output Consolidado e Handoff Estruturado (Refere-se a D15 / DoD 2 / DoD 7 / DoD 8)
+STEPS:
+- Write test first: run full pipeline. Fail transition when ./handoff-melhoria.json missing.
+- Emit and sign structured ./handoff-melhoria.json at end of run, reporting success or failure.
+- Create or update docs/teste-end-to-end/aidd-melhoria.md proving 5-step cycle.
+- Add PR justification: aidd-melhoria has no Quarteto Sine Qua Non; CLI tool without server or UI.
+- Run tests/test_melhoria_handoff.py. Assert handoff emitted and consumable by orchestrator.
 
-- **Falha 15-D:** `D15. Output Consolidado e Handoff`
-- **Requisito TDD (Red):** Testar pipeline com execução completa e checar ausência do `./handoff-melhoria.json` (deve falhar a transição).
-- **Implementação Técnica:**
-  - Alterar o final da execução da skill para produzir e assinar estruturadamente o artefato `./handoff-melhoria.json`, relatando sucesso ou falha.
-  - Atualizar/gerar `docs/teste-end-to-end/aidd-melhoria.md` comprovando o fluxo (Ciclo de 5 passos).
-  - Incluir no PR de entrega a justificativa técnica obrigatória de que `aidd-melhoria` não terá Quarteto Sine Qua Non por ser ferramenta CLI sem servidor/UI.
-- **Verificação (Green):** `handoff-melhoria.json` emitido corretamente, habilitando o pipeline (orchestrator) a consumir e transitar de fase.
-
-REGRAS DE EXECUÇÃO:
-1. Implemente o código funcional com zero stubs e testes reais em pytest.
-2. Certifique-se de entregar o artefato esperado: 'docs/teste-end-to-end/aidd-melhoria.md'.
-3. Execute os testes para comprovar a passagem de Red para Green.
+RULES:
+1. Write failing test first. Run. Assert exit 1.
+2. Implement. Zero stubs. Real pytest tests. Run. Assert exit 0.
+3. Work inside ephemeral Git Worktree only.
+4. Capture real exit code: redirect to file, read $? same line. Never trust pipes.
+5. NEVER edit docs/auditoria/CONFIG-EXECUCAO-USUARIO.json.
+6. Deliver exactly: docs/teste-end-to-end/aidd-melhoria.md

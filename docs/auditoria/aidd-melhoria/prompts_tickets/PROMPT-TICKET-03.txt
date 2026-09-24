@@ -1,15 +1,17 @@
-Você é o Construtor do Ecossistema AIDD executando o Ticket 3 da evolução técnica de aidd-melhoria.
+ROLE: Builder. Ecosystem AIDD. Ticket 3. Target tool: aidd-melhoria.
+DIMENSION: D8
+DELIVER: .agents/skills/aidd-melhoria/scripts/analisador.py
 
-Ticket 3: Processamento Analítico Determinístico (Refere-se a D8 / DoD 4)
+STEPS:
+- Write test first: feed malformed JSON or plain text to analytic parser. Assert exit 1.
+- Implement .agents/skills/aidd-melhoria/scripts/analisador.py. Replace chat-only processing with deterministic engine.
+- Wrap LLM call in strict JSON Schema. Reject unstructured replies. Extract serializable report, e.g. {"relatorio": "..."}.
+- Run tests/test_melhoria_motor_deterministico.py. Assert exit 0.
 
-- **Falha 15-D:** `D8. O que o Estágio Processa`
-- **Requisito TDD (Red):** Testar parser JSON do motor analítico com resposta malformada ou texto puro para confirmar crash esperado (exit 1).
-- **Implementação Técnica:**
-  - Substituir o processamento dependente 100% de LLM de bate-papo por um motor determinístico interno.
-  - A consulta à LLM (para classificar/sugerir melhorias) DEVE ser envelopada em JSON Schema Estrito, rejeitando respostas não estruturadas e extraindo o relatório de forma serializável (ex: `{"relatorio": "..."}`).
-- **Verificação (Green):** A resposta passa pelo validador JSON interno antes de prosseguir.
-
-REGRAS DE EXECUÇÃO:
-1. Implemente o código funcional com zero stubs e testes reais em pytest.
-2. Certifique-se de entregar o artefato esperado: '.agents/skills/aidd-melhoria/scripts/analisador.py'.
-3. Execute os testes para comprovar a passagem de Red para Green.
+RULES:
+1. Write failing test first. Run. Assert exit 1.
+2. Implement. Zero stubs. Real pytest tests. Run. Assert exit 0.
+3. Work inside ephemeral Git Worktree only.
+4. Capture real exit code: redirect to file, read $? same line. Never trust pipes.
+5. NEVER edit docs/auditoria/CONFIG-EXECUCAO-USUARIO.json.
+6. Deliver exactly: .agents/skills/aidd-melhoria/scripts/analisador.py

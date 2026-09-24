@@ -7,64 +7,135 @@
 
 ## 1. Topologia Estrutural
 
-Toda ferramenta sob auditoria possui uma pasta exclusiva dentro de `docs/auditoria/<ferramenta-alvo>/`. Esta pasta atua como a memória persistente e o centro de comando de todas as 4 fases.
+Toda ferramenta sob auditoria tem uma pasta exclusiva, `docs/auditoria/<ferramenta>/`, que guarda a memória de todos os estágios. A topologia abaixo é lida **de cima para baixo, na ordem de execução**. Cada estágio lista o que entra (`IN`), o que sai (`OUT`) e o que prova que saiu certo (`GATE`). Todo `OUT` de um estágio reaparece como `IN` de algum estágio seguinte, com o mesmo nome e a marca `← N`.
+
+**Legenda de autoria** (quem escreve o arquivo):
+
+| Marca | Quem escreve | Regra |
+| :--- | :--- | :--- |
+| `[HUMANO]` | Só o usuário | Nenhum script ou agente edita. Scripts só leem. |
+| `[FIXO]` | Governança do repositório | Referência comum a todas as ferramentas. |
+| `[SCAFFOLD]` | `scripts/scaffold_auditoria.py` | Determinístico. `MANIFESTO-4F.json` é regerado a cada execução; os demais só são criados se não existirem. |
+| `[LLM]` | Agente do estágio (harness/model do config) | Inteligência; sempre validada por um `GATE`. |
+| `[COMPILADOR]` | `scripts/compilador_plano_evolucao.py` | Determinístico, sem LLM. Regerado a cada compilação. |
+
+`<f>` = `docs/auditoria/<ferramenta>`
+
+```text
+[0] SCAFFOLD ─ python scripts/scaffold_auditoria.py <ferramenta>   (determinístico, sem LLM)
+    IN   docs/auditoria/CONFIG-EXECUCAO-USUARIO.json    [HUMANO]   só leitura; chave pipeline_auditoria_4f
+    OUT  <f>/DOD.md                                     [SCAFFOLD]
+    OUT  <f>/MANIFESTO-4F.json                          [SCAFFOLD] harness/model/comando_terminal = config
+    OUT  <f>/PROMPT-FASE-1-INSPETOR.txt                 [SCAFFOLD]
+    OUT  <f>/PROMPT-FASE-2-ARQUITETO.txt                [SCAFFOLD] inglês, caminhos reais, formato de ticket
+    OUT  <f>/PROMPT-FASE-3-CONSTRUTOR.txt               [SCAFFOLD] inglês
+    OUT  <f>/PROMPT-FASE-4-RETORNO.txt                  [SCAFFOLD]
+    OUT  <f>/G_auditoria_15D.py                         [SCAFFOLD]
+    GATE config incompleto (papel ou campo ausente)  -> exit 1, nada é gerado
+
+[1] INSPETOR ─ config.pipeline_auditoria_4f.inspetor
+    IN   <f>/PROMPT-FASE-1-INSPETOR.txt                 [SCAFFOLD ← 0]
+    IN   docs/auditoria/TEMPLATE-AUDITORIA-FERRAMENTA.md [FIXO]    Lens 15-D
+    IN   código-fonte da skill alvo                     (reprodução real, nunca só leitura)
+    OUT  <f>/LAUDO-15D-INICIAL.md                       [LLM]
+    GATE python <f>/G_auditoria_15D.py <f>/LAUDO-15D-INICIAL.md  -> exit 0 / exit 1
+
+[2] ARQUITETO ─ config.pipeline_auditoria_4f.arquiteto
+    IN   <f>/PROMPT-FASE-2-ARQUITETO.txt                [SCAFFOLD ← 0]
+    IN   <f>/LAUDO-15D-INICIAL.md                       [LLM ← 1]
+    IN   <f>/DOD.md                                     [SCAFFOLD ← 0]
+    IN   docs/auditoria/aidd-melhoria/PLANO-EVOLUCAO.md [FIXO]    molde de formato
+    OUT  <f>/PLANO-EVOLUCAO.md                          [LLM]      1 ticket por dimensão FAILED
+    GATE estágio 2b (o compilador reprova ticket fora do formato)
+
+[2b] COMPILADOR ─ python scripts/compilador_plano_evolucao.py --plano <f>/PLANO-EVOLUCAO.md
+    IN   <f>/PLANO-EVOLUCAO.md                          [LLM ← 2]
+    IN   docs/auditoria/CONFIG-EXECUCAO-USUARIO.json    [HUMANO]   só leitura; chave pipeline_evolucao_rotativo
+    OUT  <f>/PLANO-EVOLUCAO.json                        [COMPILADOR] rodízio harness/model/comando por ticket
+    OUT  <f>/prompts_tickets/PROMPT-TICKET-NN.txt       [COMPILADOR] inglês telegráfico imperativo
+    GATE exit 1 se: ticket sem **Artefato de Handoff:**, sem **Construtor Prompt (EN):**,
+         prompt com PT-BR/não-ASCII, ou config ausente/incompleto; nada parcial fica em disco
+
+[3] CONSTRUTOR ─ fase: config.pipeline_auditoria_4f.construtor | tickets: PLANO-EVOLUCAO.json
+    IN   <f>/PROMPT-FASE-3-CONSTRUTOR.txt               [SCAFFOLD ← 0]
+    IN   <f>/PLANO-EVOLUCAO.json                        [COMPILADOR ← 2b]
+    IN   <f>/prompts_tickets/PROMPT-TICKET-NN.txt       [COMPILADOR ← 2b]
+    OUT  output_handoff de cada ticket                  [LLM]      código + testes, em Git Worktree efêmera
+    GATE pytest do ticket: exit 1 antes da correção (RED) e exit 0 depois (GREEN)
+
+[4] RETORNO ─ config.pipeline_auditoria_4f.retorno
+    IN   <f>/PROMPT-FASE-4-RETORNO.txt                  [SCAFFOLD ← 0]
+    IN   <f>/LAUDO-15D-INICIAL.md                       [LLM ← 1]
+    IN   <f>/DOD.md                                     [SCAFFOLD ← 0]
+    IN   código alterado (output_handoff)               [LLM ← 3]
+    OUT  <f>/LAUDO-15D-REVISADO.md                      [LLM]      honestidade de rótulo
+    GATE python <f>/G_auditoria_15D.py <f>/LAUDO-15D-REVISADO.md  -> exit 0 / exit 1
+
+[5] FECHAMENTO ─ consolidação
+    IN   todos os OUT de 0 a 4
+    OUT  <f>/RESUMO-USUARIO.md                          [LLM]      linguagem simples ("Na Festa")
+    OUT  <f>/RELATORIO-TECNICO.md                       [LLM]      rastreabilidade: comandos e exit codes ("Na Casa")
+    GATE aprovação humana (Join Barrier) antes de merge/commit
+```
+
+**Índice físico** (a mesma pasta vista como árvore; a lógica está nos blocos acima):
 
 ```text
 docs/auditoria/
-│
-├── CONFIG-EXECUCAO-USUARIO.json     <-- SOBERANIA DO USUÁRIO: Harnesses, modelos e comandos
-├── PLANO-MESTRE-AUDITORIA.md        <-- MATRIZ DE GOVERNANÇA: Catálogo e progresso geral
-├── TEMPLATE-AUDITORIA-FERRAMENTA.md <-- LENS 15-D: Modelo formal das 15 dimensões
-│
-└── <ferramenta-alvo>/               <-- PASTA EXCLUSIVA DA FERRAMENTA (Ex: aidd-melhoria)
-    ├── DOD.md                       <-- Critérios estáticos de "Pronto" (Definition of Done)
-    ├── MANIFESTO-4F.json            <-- Manifesto de orquestração do pipeline de auditoria
-    │
-    ├── PROMPT-FASE-1-INSPETOR.txt   <-- Input parametrizado do Inspetor
-    ├── LAUDO-15D-INICIAL.md         <-- Output gerado pelo Inspetor (Fase 1)
-    │
-    ├── PLANO-EVOLUCAO.md            <-- Output do Arquiteto: decomposição em tickets (Fase 2)
-    ├── PLANO-EVOLUCAO.json          <-- Pipeline gerado automaticamente a partir dos tickets
-    │
-    ├── PROMPT-FASE-4-RETORNO.txt    <-- Input parametrizado do Inspetor de Retorno
-    ├── LAUDO-15D-REVISADO.md        <-- Output do Retorno com Honestidade de Rótulo (Fase 4)
-    │
-    ├── G_auditoria_15D.py           <-- Quality Gate determinístico (EXIT 0 / EXIT 1)
-    ├── RESUMO-USUARIO.md            <-- Resumo executivo ("Na Festa")
-    └── RELATORIO-TECNICO.md         <-- Rastreabilidade técnica ("Na Casa")
+├── CONFIG-EXECUCAO-USUARIO.json       [HUMANO]
+├── TEMPLATE-AUDITORIA-FERRAMENTA.md   [FIXO]
+├── PLANO-MESTRE-AUDITORIA.md          [FIXO]   catálogo e progresso geral
+└── <ferramenta>/
+    ├── DOD.md                         [SCAFFOLD]    0
+    ├── MANIFESTO-4F.json              [SCAFFOLD]    0
+    ├── G_auditoria_15D.py             [SCAFFOLD]    0
+    ├── PROMPT-FASE-1-INSPETOR.txt     [SCAFFOLD]    0 -> 1
+    ├── LAUDO-15D-INICIAL.md           [LLM]         1 -> 2, 4
+    ├── PROMPT-FASE-2-ARQUITETO.txt    [SCAFFOLD]    0 -> 2
+    ├── PLANO-EVOLUCAO.md              [LLM]         2 -> 2b
+    ├── PLANO-EVOLUCAO.json            [COMPILADOR]  2b -> 3
+    ├── prompts_tickets/               [COMPILADOR]  2b -> 3
+    ├── PROMPT-FASE-3-CONSTRUTOR.txt   [SCAFFOLD]    0 -> 3
+    ├── PROMPT-FASE-4-RETORNO.txt      [SCAFFOLD]    0 -> 4
+    ├── LAUDO-15D-REVISADO.md          [LLM]         4 -> 5
+    ├── RESUMO-USUARIO.md              [LLM]         5
+    └── RELATORIO-TECNICO.md           [LLM]         5
 ```
+
+**Proibido:** gravar qualquer artefato de auditoria em `docs/planos/`.
 
 ---
 
 ## 2. As Duas Engrenagens Dinâmicas
 
 ### Engrenagem A: Soberania do Usuário (`CONFIG-EXECUCAO-USUARIO.json`)
-As ferramentas e agentes **não escolhem seus próprios modelos**. O documento `CONFIG-EXECUCAO-USUARIO.json` na raiz de `docs/auditoria/` define:
-- `harness_padrao` e `model_padrao`
-- Perfis específicos por papel (`inspetor`, `arquiteto`, `construtor`, `retorno`)
-- Comandos de terminal com flags de segurança (ex: `--dangerously-skip-permissions`, `--chrome`)
+As ferramentas e agentes **não escolhem seus próprios modelos**. O `CONFIG-EXECUCAO-USUARIO.json` na raiz de `docs/auditoria/` define `harness`, `model` e `comando_terminal` em duas chaves:
+- `pipeline_auditoria_4f`: um perfil por papel (`inspetor`, `arquiteto`, `construtor`, `retorno`), que é lido pelo scaffold para montar o `MANIFESTO-4F.json`.
+- `pipeline_evolucao_rotativo`: uma lista em rodízio (ticket 1 → item 1, ticket 2 → item 2, ...), que é lida pelo compilador para montar o `PLANO-EVOLUCAO.json`.
 
-Ao alterar uma linha neste arquivo, **todos os pipelines (tanto o de auditoria quanto os de evolução) se adaptam automaticamente**, sem edição manual de manifestos JSON.
+Só o humano edita este arquivo; scaffold e compilador apenas leem. Papel, item ou campo ausente reprova com exit 1, sem valor padrão inventado. Depois de editar o config, rode de novo o scaffold (que regera o `MANIFESTO-4F.json`) e o compilador (que regera o `PLANO-EVOLUCAO.json` e os `prompts_tickets/`).
 
 ### Engrenagem B: O Compilador de Planos (`compilador_plano_evolucao.py`)
 O Arquiteto (Fase 2) gera o documento textual `PLANO-EVOLUCAO.md`. O compilador determinístico:
-1. Extrai cada ticket usando regex estruturado.
-2. Mapeia as variáveis estáticas: `nome`, `dimensao_15d`, `input_prompt` e `output_handoff`.
-3. Injeta as variáveis dinâmicas de `CONFIG-EXECUCAO-USUARIO.json`.
-4. Emite o `PLANO-EVOLUCAO.json` pronto para execução pelo orquestrador.
+1. Extrai cada ticket (`### Ticket N: <Título> (Refere-se a Dx / DoD y)`) por regex.
+2. Lê `**Falha 15-D:**` → `dimensao_15d`; `**Artefato de Handoff:**` → `output_handoff`; `**Construtor Prompt (EN):**` → corpo do prompt.
+3. Reprova (exit 1) um ticket sem handoff, sem prompt EN, ou com prompt em PT-BR ou não-ASCII.
+4. Injeta `harness`/`model`/`comando_terminal` do `pipeline_evolucao_rotativo`, em rodízio.
+5. Emite `PLANO-EVOLUCAO.json` e `prompts_tickets/PROMPT-TICKET-NN.txt`. Tudo é validado antes de gravar: em caso de falha, nenhum arquivo parcial fica em disco.
 
 ---
 
-## 3. Matriz Operacional dos 4 Estágios
+## 3. Matriz Operacional (resumo da Seção 1)
 
-| Estágio Agêntico | Entradas (Inputs) | O que Processa | Saídas (Outputs) |
-| :--- | :--- | :--- | :--- |
-| **0. Scaffolder (CLI)** | Nome da ferramenta + `SKILL.md` | Cria o chassi da pasta | `DOD.md`, `PROMPT-*.txt`, `MANIFESTO-4F.json` |
-| **1. Inspetor** | `TEMPLATE-AUDITORIA-FERRAMENTA.md` + código | Diagnóstico Lens 15-D | `LAUDO-15D-INICIAL.md` |
-| **2. Arquiteto** | `LAUDO-15D-INICIAL.md` + `DOD.md` | Planejamento tático de tickets | `PLANO-EVOLUCAO.md` e `PLANO-EVOLUCAO.json` |
-| **3. Construtor** | `PLANO-EVOLUCAO.json` (fase a fase) | TDD em Git Worktree efêmera | Código em `scripts/` e testes em `tests/` |
-| **4. Retorno** | `LAUDO-15D-INICIAL.md` + código alterado | Re-auditoria e validação DoD | `LAUDO-15D-REVISADO.md` + `G_auditoria_15D.py` (EXIT 0) |
-| **5. Fechamento** | Todos os artefatos gerados | Consolidação de resultados | `RESUMO-USUARIO.md` e `RELATORIO-TECNICO.md` |
+| Estágio | Harness vem de | IN principal | OUT | GATE |
+| :--- | :--- | :--- | :--- | :--- |
+| **0. Scaffold** | — (determinístico) | `CONFIG-EXECUCAO-USUARIO.json` | `DOD.md`, `MANIFESTO-4F.json`, `PROMPT-FASE-1..4`, `G_auditoria_15D.py` | config incompleto → exit 1 |
+| **1. Inspetor** | `pipeline_auditoria_4f.inspetor` | `PROMPT-FASE-1`, template, código | `LAUDO-15D-INICIAL.md` | `G_auditoria_15D.py` |
+| **2. Arquiteto** | `pipeline_auditoria_4f.arquiteto` | `PROMPT-FASE-2`, laudo, `DOD.md` | `PLANO-EVOLUCAO.md` | compilador (2b) |
+| **2b. Compilador** | — (determinístico) | `PLANO-EVOLUCAO.md`, config | `PLANO-EVOLUCAO.json`, `prompts_tickets/` | formato/idioma/config → exit 1 |
+| **3. Construtor** | `pipeline_auditoria_4f.construtor` + rodízio por ticket | `PROMPT-FASE-3`, `PLANO-EVOLUCAO.json` | `output_handoff` de cada ticket | pytest RED → GREEN |
+| **4. Retorno** | `pipeline_auditoria_4f.retorno` | `PROMPT-FASE-4`, laudo inicial, código | `LAUDO-15D-REVISADO.md` | `G_auditoria_15D.py` |
+| **5. Fechamento** | — | todos os OUT | `RESUMO-USUARIO.md`, `RELATORIO-TECNICO.md` | aprovação humana |
 
 ---
 

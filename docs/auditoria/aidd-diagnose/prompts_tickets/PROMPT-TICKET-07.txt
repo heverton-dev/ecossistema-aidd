@@ -1,0 +1,19 @@
+ROLE: Builder. Ecosystem AIDD. Ticket 7. Target tool: aidd-diagnose.
+DIMENSION: D14
+DELIVER: .agents/skills/aidd-diagnose/scripts/rollback.py
+
+STEPS:
+- Create .agents/skills/aidd-diagnose/scripts/rollback.py.
+- Tag every temporary phase 4 line with marker AIDD-DIAGNOSE-TEMP.
+- On phase 5 end or exception: scan diff, strip marked lines, drop ticket 2 worktree.
+- On non-zero exit leave zero partial files in docs/diagnosticos/.
+- Test: inject marked line, finish phase 5. Assert git diff has no marker.
+- Test: crash mid-run. Assert zero partial files.
+
+RULES:
+1. Write failing test first. Run. Assert exit 1.
+2. Implement. Zero stubs. Real pytest tests. Run. Assert exit 0.
+3. Work inside ephemeral Git Worktree only.
+4. Capture real exit code: redirect to file, read $? same line. Never trust pipes.
+5. NEVER edit docs/auditoria/CONFIG-EXECUCAO-USUARIO.json.
+6. Deliver exactly: .agents/skills/aidd-diagnose/scripts/rollback.py

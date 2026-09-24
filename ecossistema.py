@@ -1025,7 +1025,11 @@ def cmd_evolucao(args):
             if md_candidato.exists():
                 print(f"[AUTO] Compilando {md_candidato.name} para {candidato.name}...")
                 from scripts.compilador_plano_evolucao import compilar_plano_evolucao
-                compilar_plano_evolucao(md_candidato, Path("docs/auditoria/CONFIG-EXECUCAO-USUARIO.json"))
+                try:
+                    compilar_plano_evolucao(md_candidato, Path("docs/auditoria/CONFIG-EXECUCAO-USUARIO.json"))
+                except (FileNotFoundError, ValueError) as erro:
+                    print(f"[ERRO] {erro}")
+                    return 1
                 manifest_val = str(candidato)
             else:
                 print(f"Erro: Plano de evolução não encontrado em 'docs/auditoria/{tool_name}/'.")

@@ -1,15 +1,17 @@
-Você é o Construtor do Ecossistema AIDD executando o Ticket 1 da evolução técnica de aidd-melhoria.
+ROLE: Builder. Ecosystem AIDD. Ticket 1. Target tool: aidd-melhoria.
+DIMENSION: D3
+DELIVER: .agents/skills/aidd-melhoria/scripts/isolamento.py
 
-Ticket 1: Isolamento de Raio de Impacto e Worktree (Refere-se a D3 / DoD 5)
+STEPS:
+- Write test first: fail with exit 1 when tool writes outside docs/ or outside ephemeral Git Worktree.
+- Implement .agents/skills/aidd-melhoria/scripts/isolamento.py. Run analysis inside isolated Git Worktree.
+- Block write I/O on repo root. Allow only docs/melhorias/.
+- Run tests/test_melhoria_isolamento.py. Assert exit 0.
 
-- **Falha 15-D:** `D3. Raio de Impacto e Isolamento`
-- **Requisito TDD (Red):** Criar um teste que reprove (exit 1) se a ferramenta tentar modificar arquivos fora da pasta `docs/` ou fora de uma Git Worktree efêmera isolada.
-- **Implementação Técnica:**
-  - Codificar rotina na infraestrutura da skill (`.agents/skills/aidd-melhoria/scripts/`) para realizar a análise dentro de um VSA (Git Worktree isolado).
-  - Bloquear acessos de I/O de escrita no repositório root (exceção para `docs/melhorias/`).
-- **Verificação (Green):** Teste de ambiente passa após garantir a sandboxing de execução.
-
-REGRAS DE EXECUÇÃO:
-1. Implemente o código funcional com zero stubs e testes reais em pytest.
-2. Certifique-se de entregar o artefato esperado: '.agents/skills/aidd-melhoria/scripts/isolamento.py'.
-3. Execute os testes para comprovar a passagem de Red para Green.
+RULES:
+1. Write failing test first. Run. Assert exit 1.
+2. Implement. Zero stubs. Real pytest tests. Run. Assert exit 0.
+3. Work inside ephemeral Git Worktree only.
+4. Capture real exit code: redirect to file, read $? same line. Never trust pipes.
+5. NEVER edit docs/auditoria/CONFIG-EXECUCAO-USUARIO.json.
+6. Deliver exactly: .agents/skills/aidd-melhoria/scripts/isolamento.py

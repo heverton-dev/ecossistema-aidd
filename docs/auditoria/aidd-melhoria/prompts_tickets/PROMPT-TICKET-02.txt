@@ -1,15 +1,17 @@
-Você é o Construtor do Ecossistema AIDD executando o Ticket 2 da evolução técnica de aidd-melhoria.
+ROLE: Builder. Ecosystem AIDD. Ticket 2. Target tool: aidd-melhoria.
+DIMENSION: D4
+DELIVER: .agents/skills/aidd-melhoria/scripts/cli.py
 
-Ticket 2: Componentes, Fractalidade e CLI Fallback (Refere-se a D4 / DoD 1)
+STEPS:
+- Write test first: python ecossistema.py melhoria --manifest dummy.json must fail while CLI fallback missing.
+- Implement .agents/skills/aidd-melhoria/scripts/cli.py. Use local Python scripts, not chat-prompt-only logic.
+- Wire ecossistema.py melhoria --manifest <json> to run tool pipeline.
+- Run tests/test_melhoria_cli_manifest.py. Assert exit 0 and manifest processed.
 
-- **Falha 15-D:** `D4. Componentes e Fractalidade`
-- **Requisito TDD (Red):** Executar `python ecossistema.py melhoria --manifest dummy.json` deve falhar por falta de implementação do fallback CLI.
-- **Implementação Técnica:**
-  - Estruturar a skill com micro-skills ou scripts locais em Python em vez de apenas prompts no `.agents`.
-  - Integrar a interface CLI `ecossistema.py melhoria --manifest <json>` mapeando a entrada para acionar a pipeline da ferramenta, sem depender unicamente de interpretação de prompt de chat.
-- **Verificação (Green):** Execução do CLI retorna sucesso e processo o manifesto de entrada adequadamente.
-
-REGRAS DE EXECUÇÃO:
-1. Implemente o código funcional com zero stubs e testes reais em pytest.
-2. Certifique-se de entregar o artefato esperado: '.agents/skills/aidd-melhoria/scripts/cli.py'.
-3. Execute os testes para comprovar a passagem de Red para Green.
+RULES:
+1. Write failing test first. Run. Assert exit 1.
+2. Implement. Zero stubs. Real pytest tests. Run. Assert exit 0.
+3. Work inside ephemeral Git Worktree only.
+4. Capture real exit code: redirect to file, read $? same line. Never trust pipes.
+5. NEVER edit docs/auditoria/CONFIG-EXECUCAO-USUARIO.json.
+6. Deliver exactly: .agents/skills/aidd-melhoria/scripts/cli.py

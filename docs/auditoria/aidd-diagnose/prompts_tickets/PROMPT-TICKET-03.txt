@@ -1,0 +1,21 @@
+ROLE: Builder. Ecosystem AIDD. Ticket 3. Target tool: aidd-diagnose.
+DIMENSION: D8
+DELIVER: .agents/skills/aidd-diagnose/scripts/cobertura_grafo.py
+
+STEPS:
+- Create .agents/skills/aidd-diagnose/scripts/cobertura_grafo.py.
+- Before phase 2 query each suspect file: query_graph_tool(pattern="file_summary", target=<file>).
+- Zero results: mark graph stale for file. Run code-review-graph update --repo . once. Recheck.
+- Still zero: mark phase 2 mode fallback. Hand off to ticket 4 fallback.
+- Never report "0 impacted" for file without graph nodes.
+- Measure missing tracked .py files in .code-review-graph/graph.db before and after update and full build. Record counts and root cause in docs/diagnosticos/.
+- Do not modify site-packages.
+- Update phase 2 of componentes/compartilhado/skills/aidd-diagnose/SKILL.md. Propagate via official sync. Run python gates/G_HARNESS_COMPAT.py. Assert exit 0.
+
+RULES:
+1. Write failing test first. Run. Assert exit 1.
+2. Implement. Zero stubs. Real pytest tests. Run. Assert exit 0.
+3. Work inside ephemeral Git Worktree only.
+4. Capture real exit code: redirect to file, read $? same line. Never trust pipes.
+5. NEVER edit docs/auditoria/CONFIG-EXECUCAO-USUARIO.json.
+6. Deliver exactly: .agents/skills/aidd-diagnose/scripts/cobertura_grafo.py

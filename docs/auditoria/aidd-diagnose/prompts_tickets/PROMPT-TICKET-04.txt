@@ -1,0 +1,19 @@
+ROLE: Builder. Ecosystem AIDD. Ticket 4. Target tool: aidd-diagnose.
+DIMENSION: D11
+DELIVER: .agents/skills/aidd-diagnose/scripts/fallback.py
+
+STEPS:
+- Create .agents/skills/aidd-diagnose/scripts/fallback.py.
+- Retry MCP code-review-graph connection with backoff. Cold start takes about 11 s.
+- On failure use Grep/Glob/Read: callers by function name search, callees by body read, impact by import search.
+- Record phase 2 mode fallback in sessao.json.
+- Add block "Fallback (MCP unavailable)" to phase 2 of componentes/compartilhado/skills/aidd-diagnose/SKILL.md. Follow componentes/compartilhado/comandos/melhoria.md wording.
+- Test: simulate MCP down. Assert phase 2 completes via fallback. Assert mode recorded.
+
+RULES:
+1. Write failing test first. Run. Assert exit 1.
+2. Implement. Zero stubs. Real pytest tests. Run. Assert exit 0.
+3. Work inside ephemeral Git Worktree only.
+4. Capture real exit code: redirect to file, read $? same line. Never trust pipes.
+5. NEVER edit docs/auditoria/CONFIG-EXECUCAO-USUARIO.json.
+6. Deliver exactly: .agents/skills/aidd-diagnose/scripts/fallback.py

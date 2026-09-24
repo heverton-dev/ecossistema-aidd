@@ -1,15 +1,17 @@
-Você é o Construtor do Ecossistema AIDD executando o Ticket 5 da evolução técnica de aidd-melhoria.
+ROLE: Builder. Ecosystem AIDD. Ticket 5. Target tool: aidd-melhoria.
+DIMENSION: D12
+DELIVER: .agents/skills/aidd-melhoria/scripts/observabilidade.py
 
-Ticket 5: Observabilidade e Frugalidade (Refere-se a D12)
+STEPS:
+- Write test first: assert failure when run emits no logs or metrics.
+- Implement .agents/skills/aidd-melhoria/scripts/observabilidade.py. Log token budget (estimated or real) and run time.
+- Write standardized log to secoes/ or print it during CLI run.
+- Run tests/test_melhoria_observabilidade.py. Assert log artifacts persist with required metadata.
 
-- **Falha 15-D:** `D12. Observabilidade e Frugalidade`
-- **Requisito TDD (Red):** Testar a ausência de emissão de logs ou métricas pós-execução (falha esperada de conformidade).
-- **Implementação Técnica:**
-  - Instrumentar scripts da skill para logar orçamentos de tokens usados (fictício/estimado ou real se API for usada) ou tempo de execução.
-  - O log deverá ser padronizado e gravado em `secoes/` ou exposto em console durante a execução do processo via CLI.
-- **Verificação (Green):** Artefatos de log persistem com os metadados solicitados ao fim da execução.
-
-REGRAS DE EXECUÇÃO:
-1. Implemente o código funcional com zero stubs e testes reais em pytest.
-2. Certifique-se de entregar o artefato esperado: '.agents/skills/aidd-melhoria/scripts/observabilidade.py'.
-3. Execute os testes para comprovar a passagem de Red para Green.
+RULES:
+1. Write failing test first. Run. Assert exit 1.
+2. Implement. Zero stubs. Real pytest tests. Run. Assert exit 0.
+3. Work inside ephemeral Git Worktree only.
+4. Capture real exit code: redirect to file, read $? same line. Never trust pipes.
+5. NEVER edit docs/auditoria/CONFIG-EXECUCAO-USUARIO.json.
+6. Deliver exactly: .agents/skills/aidd-melhoria/scripts/observabilidade.py

@@ -1,15 +1,17 @@
-Você é o Construtor do Ecossistema AIDD executando o Ticket 4 da evolução técnica de aidd-melhoria.
+ROLE: Builder. Ecosystem AIDD. Ticket 4. Target tool: aidd-melhoria.
+DIMENSION: D11
+DELIVER: .agents/skills/aidd-melhoria/scripts/fallback.py
 
-Ticket 4: Tratamento de Exceções e Fallback Operacional (Refere-se a D11)
+STEPS:
+- Write test first: simulate manifest read failure or LLM timeout. Current code must crash abruptly.
+- Implement .agents/skills/aidd-melhoria/scripts/fallback.py. Add autonomous retry with backoff.
+- Add graceful fallback and pipeline stop. Record failure without losing state.
+- Run tests/test_melhoria_excecoes_fallback.py. Assert retry and fallback logs appear.
 
-- **Falha 15-D:** `D11. Tratamento de Exceções e Fallback`
-- **Requisito TDD (Red):** Simular falha na leitura de manifesto ou timeout na LLM; o sistema deve propagar erro abrupto no estado atual.
-- **Implementação Técnica:**
-  - Implementar lógica de retry backoff autônomo.
-  - Criar fallbacks de resposta gracefully e interrupção do pipeline no código Python do `aidd-melhoria`, documentando a falha sem perder o estado.
-- **Verificação (Green):** Os testes de stress/falha mostram os logs de fallback/retry sendo acionados.
-
-REGRAS DE EXECUÇÃO:
-1. Implemente o código funcional com zero stubs e testes reais em pytest.
-2. Certifique-se de entregar o artefato esperado: '.agents/skills/aidd-melhoria/scripts/fallback.py'.
-3. Execute os testes para comprovar a passagem de Red para Green.
+RULES:
+1. Write failing test first. Run. Assert exit 1.
+2. Implement. Zero stubs. Real pytest tests. Run. Assert exit 0.
+3. Work inside ephemeral Git Worktree only.
+4. Capture real exit code: redirect to file, read $? same line. Never trust pipes.
+5. NEVER edit docs/auditoria/CONFIG-EXECUCAO-USUARIO.json.
+6. Deliver exactly: .agents/skills/aidd-melhoria/scripts/fallback.py

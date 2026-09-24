@@ -48,34 +48,43 @@ if __name__ == "__main__":
     run_gate(target)
 '''
 
+PAPEIS_4F = ("inspetor", "arquiteto", "construtor", "retorno")
+CAMPOS_EXECUCAO = ("harness", "model", "comando_terminal")
+
+
+def carregar_papeis_4f(config_path: Path) -> dict:
+    """Lê 'pipeline_auditoria_4f' do config; reprova se papel/campo faltar."""
+    try:
+        config = json.loads(config_path.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError) as erro:
+        raise ValueError(f"CONFIG-EXECUCAO-USUARIO.json ilegível em {config_path}: {erro}") from erro
+
+    papeis = config.get("pipeline_auditoria_4f") or {}
+    faltando = [
+        f"{papel}.{campo}"
+        for papel in PAPEIS_4F
+        for campo in CAMPOS_EXECUCAO
+        if not str((papeis.get(papel) or {}).get(campo, "")).strip()
+    ]
+    if faltando:
+        raise ValueError(
+            f"CONFIG-EXECUCAO-USUARIO.json sem 'pipeline_auditoria_4f' completo; faltam: {', '.join(faltando)}"
+        )
+    return {p: {c: papeis[p][c] for c in CAMPOS_EXECUCAO} for p in PAPEIS_4F}
+
+
 def criar_scaffold_auditoria(tool_name: str, repo_root: Path = None):
     if not repo_root:
         repo_root = Path.cwd()
         
     auditoria_root = repo_root / "docs" / "auditoria"
     target_dir = auditoria_root / tool_name
+
+    # Soberania do usuário: harness/model/comando_terminal vêm SOMENTE do config
+    # (editado só por humano, nunca por este script). Sem valores padrão inventados.
+    papeis = carregar_papeis_4f(auditoria_root / "CONFIG-EXECUCAO-USUARIO.json")
+    inspetor, arquiteto, construtor, retorno = (papeis[p] for p in PAPEIS_4F)
     target_dir.mkdir(parents=True, exist_ok=True)
-    
-    config_user_path = auditoria_root / "CONFIG-EXECUCAO-USUARIO.json"
-    user_config = {}
-    if config_user_path.exists():
-        try:
-            with open(config_user_path, "r", encoding="utf-8") as cf:
-                user_config = json.load(cf)
-        except Exception:
-            pass
-            
-    papeis = user_config.get("papeis_pipeline_4f", {})
-    padrao = user_config.get("padrao_geral", {
-        "harness": "agy",
-        "model": "gemini-3.8-flash-high",
-        "comando_terminal": "agy --model gemini-3.8-flash-high --dangerously-skip-permissions"
-    })
-    
-    inspetor = papeis.get("inspetor", padrao)
-    arquiteto = papeis.get("arquiteto", padrao)
-    construtor = papeis.get("construtor", padrao)
-    retorno = papeis.get("retorno", padrao)
 
     # 1. DOD.md
     dod_file = target_dir / "DOD.md"
@@ -120,7 +129,7 @@ def criar_scaffold_auditoria(tool_name: str, repo_root: Path = None):
 
 You are a strict System Auditor. Execute the Lens 15-D Architectural Audit on the '{tool_name}' skill.
 1. Use your tools to read the canonical template file located exactly at:
-docs/protocolos/TEMPLATE-AUDITORIA-FERRAMENTA.md
+docs/auditoria/TEMPLATE-AUDITORIA-FERRAMENTA.md
 2. Use your tools to read and analyze the entire source code of the target skill at:
 .agents/skills/{tool_name}/
 3. Based on the source code, meticulously fill out the 15 dimensions of the template. If a dimension is missing in the source code (e.g., no Quality Gate or Fallback logic), explicitly write "FAILED: Not implemented" for that dimension.
@@ -133,6 +142,55 @@ python docs/auditoria/{tool_name}/G_auditoria_15D.py docs/auditoria/{tool_name}/
         prompt_f1.write_text(prompt_f1_content, encoding="utf-8")
         print(f"[+] Criado: {prompt_f1.relative_to(repo_root)}")
 
+    # 2b. PROMPT-FASE-2-ARQUITETO.txt (closed prompt, telegraphic English, no placeholder)
+    prompt_f2 = target_dir / "PROMPT-FASE-2-ARQUITETO.txt"
+    if not prompt_f2.exists():
+        prompt_f2_content = f"""ROLE: Architect. Phase 2. Audit pipeline 4F. Target tool: '{tool_name}'.
+
+1. Read Phase 1 Lens 15-D report: docs/auditoria/{tool_name}/LAUDO-15D-INICIAL.md
+2. Read Definition of Done: docs/auditoria/{tool_name}/DOD.md
+3. Copy format from: docs/auditoria/aidd-melhoria/PLANO-EVOLUCAO.md
+4. Write plan ONLY at: docs/auditoria/{tool_name}/PLANO-EVOLUCAO.md
+5. NEVER write any artifact of this audit under docs/planos/.
+6. One atomic ticket per dimension marked "FAILED: Not implemented". One ticket per severe finding.
+7. Ticket format (compiler parses by regex; keep exact labels):
+
+### Ticket N: <Title> (Refere-se a D<x> / DoD <y>)
+- **Falha 15-D:** `D<x>. <Dimension name>`
+- **Artefato de Handoff:** `<file the Builder delivers>`
+- **Requisito TDD (Red):** <test that fails with exit 1 before fix>
+- **Implementação Técnica:**
+  - <step>
+- **Verificação (Green):** <proof of fix>
+- **Construtor Prompt (EN):**
+  - <imperative telegraphic English step. ASCII only. No Portuguese.>
+
+8. Require TDD Red-Green-Refactor. Require ephemeral Git Worktree isolation.
+9. NEVER edit docs/auditoria/CONFIG-EXECUCAO-USUARIO.json. Harness/model/command come from it only.
+10. Compile. Assert exit 0:
+python scripts/compilador_plano_evolucao.py --plano docs/auditoria/{tool_name}/PLANO-EVOLUCAO.md
+"""
+        prompt_f2.write_text(prompt_f2_content, encoding="utf-8")
+        print(f"[+] Criado: {prompt_f2.relative_to(repo_root)}")
+
+    # 2c. PROMPT-FASE-3-CONSTRUTOR.txt (closed prompt, telegraphic English)
+    prompt_f3 = target_dir / "PROMPT-FASE-3-CONSTRUTOR.txt"
+    if not prompt_f3.exists():
+        prompt_f3_content = f"""ROLE: Builder. Phase 3. Audit pipeline 4F. Target tool: '{tool_name}'.
+
+1. Read compiled plan: docs/auditoria/{tool_name}/PLANO-EVOLUCAO.json
+2. Execute tickets in listed order. One ticket at a time.
+3. For each ticket read its prompt: docs/auditoria/{tool_name}/prompts_tickets/PROMPT-TICKET-<NN>.txt
+4. Work inside ephemeral Git Worktree only. Never write in main working tree.
+5. TDD: write failing test first. Run it. Assert exit 1. Implement. Run again. Assert exit 0.
+6. Deliver exactly the ticket output_handoff file. Zero stubs. Real pytest tests.
+7. Capture real exit codes: redirect output to file, read $? on same line. Never trust pipes.
+8. NEVER edit docs/auditoria/CONFIG-EXECUCAO-USUARIO.json.
+9. Stop on first ticket failure. Report ticket id, command, exit code.
+"""
+        prompt_f3.write_text(prompt_f3_content, encoding="utf-8")
+        print(f"[+] Criado: {prompt_f3.relative_to(repo_root)}")
+
     # 3. PROMPT-FASE-4-RETORNO.txt
     prompt_f4 = target_dir / "PROMPT-FASE-4-RETORNO.txt"
     if not prompt_f4.exists():
@@ -140,7 +198,7 @@ python docs/auditoria/{tool_name}/G_auditoria_15D.py docs/auditoria/{tool_name}/
 
 You are a strict System Auditor. Execute the Lens 15-D Architectural Audit on the '{tool_name}' skill.
 1. Use your tools to read the canonical template file located exactly at:
-docs/protocolos/TEMPLATE-AUDITORIA-FERRAMENTA.md
+docs/auditoria/TEMPLATE-AUDITORIA-FERRAMENTA.md
 2. Use your tools to read and analyze the entire source code of the target skill at:
 .agents/skills/{tool_name}/
 3. Based on the source code, meticulously fill out the 15 dimensions of the template. If a dimension is missing in the source code (e.g., no Quality Gate or Fallback logic), explicitly write "FAILED: Not implemented" for that dimension.
@@ -159,55 +217,36 @@ python docs/auditoria/{tool_name}/G_auditoria_15D.py docs/auditoria/{tool_name}/
         gate_file.write_text(GATE_15D_CODE, encoding="utf-8")
         print(f"[+] Criado: {gate_file.relative_to(repo_root)}")
 
-    # 5. MANIFESTO-4F.json
+    # 5. MANIFESTO-4F.json — artefato DERIVADO do config: sempre regerado, nunca editado à mão
+    fases_4f = [
+        ("Fase_1_Inspetor", inspetor, "PROMPT-FASE-1-INSPETOR.txt", f"docs/auditoria/{tool_name}/LAUDO-15D-INICIAL.md"),
+        ("Fase_2_Arquiteto", arquiteto, "PROMPT-FASE-2-ARQUITETO.txt", f"docs/auditoria/{tool_name}/PLANO-EVOLUCAO.md"),
+        ("Fase_3_Construtor", construtor, "PROMPT-FASE-3-CONSTRUTOR.txt", f".agents/skills/{tool_name}/scripts/"),
+        ("Fase_4_Inspetor_Retorno", retorno, "PROMPT-FASE-4-RETORNO.txt", f"docs/auditoria/{tool_name}/LAUDO-15D-REVISADO.md"),
+    ]
+    manifesto_data = {
+        "pipeline_id": f"auditoria-{tool_name}",
+        "target_tool": tool_name,
+        "session_id": "auto_generated",
+        "definition_of_done": f"docs/auditoria/{tool_name}/DOD.md",
+        "config_usuario_ref": "docs/auditoria/CONFIG-EXECUCAO-USUARIO.json",
+        "fases": [
+            {
+                "nome": nome,
+                "harness": papel["harness"],
+                "model": papel["model"],
+                "input_prompt": f"docs/auditoria/{tool_name}/{prompt}",
+                "comando_terminal": papel["comando_terminal"],
+                "output_handoff": handoff,
+            }
+            for nome, papel, prompt, handoff in fases_4f
+        ],
+    }
     manifesto_file = target_dir / "MANIFESTO-4F.json"
-    if not manifesto_file.exists():
-        manifesto_data = {
-            "pipeline_id": f"auditoria-{tool_name}",
-            "target_tool": tool_name,
-            "session_id": "auto_generated",
-            "definition_of_done": f"docs/auditoria/{tool_name}/DOD.md",
-            "config_usuario_ref": "docs/auditoria/CONFIG-EXECUCAO-USUARIO.json",
-            "fases": [
-                {
-                    "nome": "Fase_1_Inspetor",
-                    "harness": inspetor.get("harness", "mimo"),
-                    "model": inspetor.get("model", "xiaomi-token-plan-sgp/mimo-v2.6-flash"),
-                    "input_prompt": f"docs/auditoria/{tool_name}/PROMPT-FASE-1-INSPETOR.txt",
-                    "comando_terminal": inspetor.get("comando_terminal", "mimo --pure -m xiaomi-token-plan-sgp/mimo-v2.6-flash"),
-                    "output_handoff": f"docs/auditoria/{tool_name}/LAUDO-15D-INICIAL.md"
-                },
-                {
-                    "nome": "Fase_2_Arquiteto",
-                    "harness": arquiteto.get("harness", "opencode"),
-                    "model": arquiteto.get("model", "opencode/big-pickle"),
-                    "input_prompt": "docs/protocolos/auditoria/input_fase_2_arquiteto.txt",
-                    "comando_terminal": arquiteto.get("comando_terminal", "opencode --pure --auto --agent -m opencode/big-pickle"),
-                    "output_handoff": f"docs/auditoria/{tool_name}/PLANO-EVOLUCAO.md"
-                },
-                {
-                    "nome": "Fase_3_Construtor",
-                    "harness": construtor.get("harness", "agy"),
-                    "model": construtor.get("model", "gemini-3.8-flash-high"),
-                    "input_prompt": f"docs/auditoria/{tool_name}/PLANO-EVOLUCAO.md",
-                    "comando_terminal": construtor.get("comando_terminal", "agy --model gemini-3.8-flash-high --dangerously-skip-permissions"),
-                    "output_handoff": f".agents/skills/{tool_name}/scripts/"
-                },
-                {
-                    "nome": "Fase_4_Inspetor_Retorno",
-                    "harness": retorno.get("harness", "claude"),
-                    "model": retorno.get("model", "opus"),
-                    "input_prompt": f"docs/auditoria/{tool_name}/PROMPT-FASE-4-RETORNO.txt",
-                    "comando_terminal": retorno.get("comando_terminal", "claude --dangerously-skip-permissions --chrome --model opus"),
-                    "output_handoff": f"docs/auditoria/{tool_name}/LAUDO-15D-REVISADO.md"
-                }
-            ]
-        }
-        with open(manifesto_file, "w", encoding="utf-8") as mf:
-            json.dump(manifesto_data, mf, indent=2, ensure_ascii=False)
-        print(f"[+] Criado: {manifesto_file.relative_to(repo_root)}")
+    with open(manifesto_file, "w", encoding="utf-8") as mf:
+        json.dump(manifesto_data, mf, indent=2, ensure_ascii=False)
+    print(f"[+] Regerado a partir do config: {manifesto_file.relative_to(repo_root)}")
 
-    # Atualiza também o template genérico em docs/auditoria/aidd-melhoria/MANIFESTO-4F.json se não existir
     print(f"\n[SUCESSO] Scaffold agêntico de '{tool_name}' concluído em: docs/auditoria/{tool_name}/")
     print(f"Para disparar a auditoria:")
     print(f"  python scripts/orquestrador_4f.py --manifest docs/auditoria/{tool_name}/MANIFESTO-4F.json")
@@ -218,7 +257,11 @@ def main():
     parser.add_argument("tool", help="Nome da ferramenta (ex: aidd-planner, aidd-generator, aidd-melhoria)")
     args = parser.parse_args()
     
-    criar_scaffold_auditoria(args.tool)
+    try:
+        criar_scaffold_auditoria(args.tool)
+    except ValueError as erro:
+        print(f"[ERRO] {erro}")
+        sys.exit(1)
 
 if __name__ == "__main__":
     main()

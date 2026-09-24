@@ -1,0 +1,19 @@
+ROLE: Builder. Ecosystem AIDD. Ticket 1. Target tool: aidd-diagnose.
+DIMENSION: D2
+DELIVER: .agents/skills/aidd-diagnose/scripts/cli.py
+
+STEPS:
+- Create .agents/skills/aidd-diagnose/scripts/cli.py.
+- Add subcommand: iniciar --sintoma <text>. Write docs/diagnosticos/<date>_<slug>/sessao.json.
+- Add subcommand: fase --numero <1-5>. Reject phase N when phase N-1 not done. Exit 1.
+- Register command diagnose in ecossistema.py. Mirror melhoria delegation pattern.
+- Test: python ecossistema.py diagnose iniciar --sintoma "x". Assert exit 0. Assert sessao.json exists.
+- Test: skip phase. Assert exit 1.
+
+RULES:
+1. Write failing test first. Run. Assert exit 1.
+2. Implement. Zero stubs. Real pytest tests. Run. Assert exit 0.
+3. Work inside ephemeral Git Worktree only.
+4. Capture real exit code: redirect to file, read $? same line. Never trust pipes.
+5. NEVER edit docs/auditoria/CONFIG-EXECUCAO-USUARIO.json.
+6. Deliver exactly: .agents/skills/aidd-diagnose/scripts/cli.py

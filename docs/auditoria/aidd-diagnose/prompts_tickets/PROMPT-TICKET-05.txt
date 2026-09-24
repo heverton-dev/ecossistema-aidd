@@ -1,0 +1,18 @@
+ROLE: Builder. Ecosystem AIDD. Ticket 5. Target tool: aidd-diagnose.
+DIMENSION: D12
+DELIVER: .agents/skills/aidd-diagnose/scripts/observabilidade.py
+
+STEPS:
+- Create .agents/skills/aidd-diagnose/scripts/observabilidade.py.
+- Log per phase: start, end, duration, repro command, hypotheses, discarded hypotheses with proof, phase 2 mode.
+- On phase 5 end write docs/diagnosticos/<date>_<slug>/RELATORIO-CAUSA-RAIZ.md.
+- Reuse .agents/skills/aidd-melhoria/scripts/observabilidade.py where it fits.
+- Test: full run without report. Assert exit 1. Full run with report. Assert all phases present.
+
+RULES:
+1. Write failing test first. Run. Assert exit 1.
+2. Implement. Zero stubs. Real pytest tests. Run. Assert exit 0.
+3. Work inside ephemeral Git Worktree only.
+4. Capture real exit code: redirect to file, read $? same line. Never trust pipes.
+5. NEVER edit docs/auditoria/CONFIG-EXECUCAO-USUARIO.json.
+6. Deliver exactly: .agents/skills/aidd-diagnose/scripts/observabilidade.py

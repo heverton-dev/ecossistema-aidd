@@ -1,0 +1,20 @@
+ROLE: Builder. Ecosystem AIDD. Ticket 6. Target tool: aidd-diagnose.
+DIMENSION: D13
+DELIVER: gates/G_aidd_diagnose.py
+
+STEPS:
+- Create gates/G_aidd_diagnose.py and gates/test_g_aidd_diagnose.py.
+- Gate checks root cause report: repro command ran N times with same result; one active hypothesis at a time; regression test failed before fix and passed after.
+- Bite tests: missing repro, two active hypotheses, missing regression test. Each asserts exit 1.
+- Fix docs linking aidd-diagnose to G_PORTAO_PROVA_QUE_MORDE: docs/auditoria/historico_auditorias/matriz_exaustiva_66_skills_e_48_gates.md line 21, docs/auditoria/historico_auditorias/micro-ferramentas-evolucao-2026-09-22.md line 18, entry aidd-diagnose in docs/auditoria/historico_auditorias/catalogo_micro_ferramentas_e_gates.json.
+- Remove --fase <1-5> promise unless ticket 1 ships it.
+- Document new gate in AGENTS.md.
+- Run python gates/G_PORTAO_PROVA_QUE_MORDE.py. Assert exit 0.
+
+RULES:
+1. Write failing test first. Run. Assert exit 1.
+2. Implement. Zero stubs. Real pytest tests. Run. Assert exit 0.
+3. Work inside ephemeral Git Worktree only.
+4. Capture real exit code: redirect to file, read $? same line. Never trust pipes.
+5. NEVER edit docs/auditoria/CONFIG-EXECUCAO-USUARIO.json.
+6. Deliver exactly: gates/G_aidd_diagnose.py

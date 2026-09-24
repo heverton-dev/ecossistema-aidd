@@ -4,15 +4,14 @@
   "versao": "2.0.0",
   "pipeline_auditoria_4f": {
     "inspetor": { "harness": "claude", "model": "haiku", "comando_terminal": "claude --dangerously-skip-permissions -p" },
-    "arquiteto": { "harness": "claude", "model": "haiku", "comando_terminal": "claude --dangerously-skip-permissions -p" },
-    "construtor": { "harness": "claude", "model": "haiku", "comando_terminal": "claude --dangerously-skip-permissions -p" },
-    "retorno": { "harness": "claude", "model": "haiku", "comando_terminal": "claude --dangerously-skip-permissions -p" }
+    "arquiteto": {"harness": "agy", "model": "haiku", "comando_terminal": "agy --model gemini-3.8-flash-low  --dangerously-skip-permissions"},
+    "construtor": {"harness": "mimo", "model": "xiaomi-token-plan-sgp/mimo-v2.6-flash", "comando_terminal": "mimo --pure -m xiaomi-token-plan-sgp/mimo-v2.6-flash"},
+    "retorno": {"harness": "opencode", "model": "opencode/big-pickle", "comando_terminal": "opencode --pure --auto --agent -m opencode/big-pickle"}
   },
   "pipeline_evolucao_rotativo": [
-    {
-      "harness": "claude",
-      "model": "haiku",
-      "comando_terminal": "claude --dangerously-skip-permissions -p"
-    }
+    {"harness": "claude", "model": "haiku", "comando_terminal": "claude --dangerously-skip-permissions -p"},
+    {"harness": "agy", "model": "haiku", "comando_terminal": "agy --model gemini-3.8-flash-low  --dangerously-skip-permissions"},
+    {"harness": "mimo", "model": "xiaomi-token-plan-sgp/mimo-v2.6-flash", "comando_terminal": "mimo --pure -m xiaomi-token-plan-sgp/mimo-v2.6-flash"},
+    {"harness": "opencode", "model": "opencode/big-pickle", "comando_terminal": "opencode --pure --auto --agent -m opencode/big-pickle"}
   ]
 }

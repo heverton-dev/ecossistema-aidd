@@ -1,0 +1,19 @@
+ROLE: Builder. Ecosystem AIDD. Ticket 2. Target tool: aidd-diagnose.
+DIMENSION: D3
+DELIVER: .agents/skills/aidd-diagnose/scripts/isolamento.py
+
+STEPS:
+- Create .agents/skills/aidd-diagnose/scripts/isolamento.py.
+- On phase 4 entry create ephemeral worktree ../worktrees_diagnose-<slug>/. Remove on exit.
+- Block writes outside worktree. Allow only docs/diagnosticos/.
+- Reuse .agents/skills/aidd-melhoria/scripts/isolamento.py logic. No copy-paste duplication.
+- Test: write instrumentation in main working tree. Assert exit 1.
+- Test: after phase 4 main tree git status clean. Assert exit 0.
+
+RULES:
+1. Write failing test first. Run. Assert exit 1.
+2. Implement. Zero stubs. Real pytest tests. Run. Assert exit 0.
+3. Work inside ephemeral Git Worktree only.
+4. Capture real exit code: redirect to file, read $? same line. Never trust pipes.
+5. NEVER edit docs/auditoria/CONFIG-EXECUCAO-USUARIO.json.
+6. Deliver exactly: .agents/skills/aidd-diagnose/scripts/isolamento.py

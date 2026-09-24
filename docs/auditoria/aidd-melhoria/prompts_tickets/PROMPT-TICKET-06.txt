@@ -1,16 +1,17 @@
-Você é o Construtor do Ecossistema AIDD executando o Ticket 6 da evolução técnica de aidd-melhoria.
+ROLE: Builder. Ecosystem AIDD. Ticket 6. Target tool: aidd-melhoria.
+DIMENSION: D13
+DELIVER: gates/G_amelhoria.py
 
-Ticket 6: Quality Gates Determinísticos e Rótulo Honesto (Refere-se a D13 / DoD 3 / DoD 6)
+STEPS:
+- Write test first: submit output claiming refactor done. gates/G_amelhoria.py must exit 1.
+- Implement gates/G_amelhoria.py. Require honest wording (refactor suggestion). Reject unverified imperative claims via regex or text parse.
+- Hook gate into CLI output barrier.
+- Run gate test. Assert exit 0 on valid reports. Assert exit 1 on unverified claims.
 
-- **Falha 15-D:** `D13. Quality Gates (Portões)`
-- **Requisito TDD (Red):** Submeter saída onde o relatório afirme "Refatoração concluída"; `gates/G_amelhoria.py` deve falhar (exit 1).
-- **Implementação Técnica:**
-  - Desenvolver o Quality Gate `gates/G_amelhoria.py`.
-  - Este portão validará a presença de "Sugestão de refatoração..." (honesto), vetando afirmações imperativas ilusórias. Validação via regex ou parse de texto.
-  - O portão deve integrar-se na barreira de saída da CLI.
-- **Verificação (Green):** Teste do gate passa (exit 0) ao inspecionar relatórios corretos e barra (exit 1) afirmações não validadas.
-
-REGRAS DE EXECUÇÃO:
-1. Implemente o código funcional com zero stubs e testes reais em pytest.
-2. Certifique-se de entregar o artefato esperado: 'gates/G_amelhoria.py'.
-3. Execute os testes para comprovar a passagem de Red para Green.
+RULES:
+1. Write failing test first. Run. Assert exit 1.
+2. Implement. Zero stubs. Real pytest tests. Run. Assert exit 0.
+3. Work inside ephemeral Git Worktree only.
+4. Capture real exit code: redirect to file, read $? same line. Never trust pipes.
+5. NEVER edit docs/auditoria/CONFIG-EXECUCAO-USUARIO.json.
+6. Deliver exactly: gates/G_amelhoria.py

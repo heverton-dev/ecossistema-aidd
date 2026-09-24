@@ -1,79 +1,79 @@
 {
-  "pipeline_id": "evolucao-aidd-melhoria",
-  "target_tool": "aidd-melhoria",
+  "pipeline_id": "evolucao-aidd-diagnose",
+  "target_tool": "aidd-diagnose",
   "descricao": "Plano de Evolução Tática montado a partir dos 8 tickets de PLANO-EVOLUCAO.md",
   "config_usuario_ref": "docs/auditoria/CONFIG-EXECUCAO-USUARIO.json",
-  "definition_of_done": "docs/auditoria/aidd-melhoria/DOD.md",
+  "definition_of_done": "docs/auditoria/aidd-diagnose/DOD.md",
   "fases": [
     {
       "ticket_id": "TICKET-01",
-      "nome": "Fase_1_Ticket_1_Isolamento_de_Raio_de_Impacto_e_Worktree",
-      "dimensao_15d": "D3. Raio de Impacto e Isolamento",
+      "nome": "Fase_1_Ticket_1_CLI_Determin_stica_e_Contrato_de_Entrada",
+      "dimensao_15d": "D2. Input e Gatilhos",
       "harness": "claude",
       "model": "haiku",
       "comando_terminal": "claude --dangerously-skip-permissions -p",
-      "input_prompt": "docs/auditoria/aidd-melhoria/prompts_tickets/PROMPT-TICKET-01.txt",
-      "output_handoff": ".agents/skills/aidd-melhoria/scripts/isolamento.py"
+      "input_prompt": "docs/auditoria/aidd-diagnose/prompts_tickets/PROMPT-TICKET-01.txt",
+      "output_handoff": ".agents/skills/aidd-diagnose/scripts/cli.py"
     },
     {
       "ticket_id": "TICKET-02",
-      "nome": "Fase_2_Ticket_2_Componentes__Fractalidade_e_CLI_Fallback",
-      "dimensao_15d": "D4. Componentes e Fractalidade",
+      "nome": "Fase_2_Ticket_2_Isolamento_da_Instrumenta__o_em_Worktree",
+      "dimensao_15d": "D3. Raio de Impacto e Isolamento",
       "harness": "agy",
       "model": "haiku",
       "comando_terminal": "agy --model gemini-3.8-flash-low  --dangerously-skip-permissions",
-      "input_prompt": "docs/auditoria/aidd-melhoria/prompts_tickets/PROMPT-TICKET-02.txt",
-      "output_handoff": ".agents/skills/aidd-melhoria/scripts/cli.py"
+      "input_prompt": "docs/auditoria/aidd-diagnose/prompts_tickets/PROMPT-TICKET-02.txt",
+      "output_handoff": ".agents/skills/aidd-diagnose/scripts/isolamento.py"
     },
     {
       "ticket_id": "TICKET-03",
-      "nome": "Fase_3_Ticket_3_Processamento_Anal_tico_Determin_stico",
+      "nome": "Fase_3_Ticket_3_Detec__o_de_Grafo_Desatualizado",
       "dimensao_15d": "D8. O que o Estágio Processa",
       "harness": "mimo",
       "model": "xiaomi-token-plan-sgp/mimo-v2.6-flash",
       "comando_terminal": "mimo --pure -m xiaomi-token-plan-sgp/mimo-v2.6-flash",
-      "input_prompt": "docs/auditoria/aidd-melhoria/prompts_tickets/PROMPT-TICKET-03.txt",
-      "output_handoff": ".agents/skills/aidd-melhoria/scripts/analisador.py"
+      "input_prompt": "docs/auditoria/aidd-diagnose/prompts_tickets/PROMPT-TICKET-03.txt",
+      "output_handoff": ".agents/skills/aidd-diagnose/scripts/cobertura_grafo.py"
     },
     {
       "ticket_id": "TICKET-04",
-      "nome": "Fase_4_Ticket_4_Tratamento_de_Exce__es_e_Fallback_Operacional",
+      "nome": "Fase_4_Ticket_4_Fallback_Operacional_sem_MCP",
       "dimensao_15d": "D11. Tratamento de Exceções e Fallback",
       "harness": "opencode",
       "model": "opencode/big-pickle",
       "comando_terminal": "opencode --pure --auto --agent -m opencode/big-pickle",
-      "input_prompt": "docs/auditoria/aidd-melhoria/prompts_tickets/PROMPT-TICKET-04.txt",
-      "output_handoff": ".agents/skills/aidd-melhoria/scripts/fallback.py"
+      "input_prompt": "docs/auditoria/aidd-diagnose/prompts_tickets/PROMPT-TICKET-04.txt",
+      "output_handoff": ".agents/skills/aidd-diagnose/scripts/fallback.py"
     },
     {
       "ticket_id": "TICKET-05",
-      "nome": "Fase_5_Ticket_5_Observabilidade_e_Frugalidade",
+      "nome": "Fase_5_Ticket_5_Relat_rio_de_Causa_Raiz_e_Observabilidade",
       "dimensao_15d": "D12. Observabilidade e Frugalidade",
       "harness": "claude",
       "model": "haiku",
       "comando_terminal": "claude --dangerously-skip-permissions -p",
-      "input_prompt": "docs/auditoria/aidd-melhoria/prompts_tickets/PROMPT-TICKET-05.txt",
-      "output_handoff": ".agents/skills/aidd-melhoria/scripts/observabilidade.py"
+      "input_prompt": "docs/auditoria/aidd-diagnose/prompts_tickets/PROMPT-TICKET-05.txt",
+      "output_handoff": ".agents/skills/aidd-diagnose/scripts/observabilidade.py"
     },
     {
       "ticket_id": "TICKET-06",
-      "nome": "Fase_6_Ticket_6_Quality_Gates_Determin_sticos_e_R_tulo_Honesto",
+      "nome": "Fase_6_Ticket_6_Quality_Gate_Pr_prio_e_R_tulo_Honesto",
       "dimensao_15d": "D13. Quality Gates (Portões)",
       "harness": "agy",
       "model": "haiku",
       "comando_terminal": "agy --model gemini-3.8-flash-low  --dangerously-skip-permissions",
-      "input_prompt": "docs/auditoria/aidd-melhoria/prompts_tickets/PROMPT-TICKET-06.txt",
-      "output_handoff": "gates/G_amelhoria.py"
+      "input_prompt": "docs/auditoria/aidd-diagnose/prompts_tickets/PROMPT-TICKET-06.txt",
+      "output_handoff": "gates/G_aidd_diagnose.py"
     },
     {
       "ticket_id": "TICKET-07",
-      "nome": "Fase_7_Ticket_7_Crit_rio_de_Rejei__o__Limpeza_e_Rollback",
+      "nome": "Fase_7_Ticket_7_Limpeza_da_Instrumenta__o_e_Rollback",
       "dimensao_15d": "D14. Critério de Rejeição (Rollback)",
       "harness": "mimo",
       "model": "xiaomi-token-plan-sgp/mimo-v2.6-flash",
       "comando_terminal": "mimo --pure -m xiaomi-token-plan-sgp/mimo-v2.6-flash",
-      "input_prompt": "docs/auditoria/aidd-melhoria/prompts_tickets/PROMPT-TICKET-07.txt",
-      "output_handoff": ".agents/skills/aidd-melhoria/scripts/rollback.py"
+      "input_prompt": "docs/auditoria/aidd-diagnose/prompts_tickets/PROMPT-TICKET-07.txt",
+      "output_handoff": ".agents/skills/aidd-diagnose/scripts/rollback.py"
     },
     {
       "ticket_id": "TICKET-08",
@@ -82,8 +82,8 @@
       "harness": "opencode",
       "model": "opencode/big-pickle",
       "comando_terminal": "opencode --pure --auto --agent -m opencode/big-pickle",
-      "input_prompt": "docs/auditoria/aidd-melhoria/prompts_tickets/PROMPT-TICKET-08.txt",
-      "output_handoff": "docs/teste-end-to-end/aidd-melhoria.md"
+      "input_prompt": "docs/auditoria/aidd-diagnose/prompts_tickets/PROMPT-TICKET-08.txt",
+      "output_handoff": ".agents/skills/aidd-diagnose/scripts/handoff.py"
     }
   ]
 }

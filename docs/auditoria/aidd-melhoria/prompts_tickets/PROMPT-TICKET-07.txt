@@ -1,15 +1,17 @@
-Você é o Construtor do Ecossistema AIDD executando o Ticket 7 da evolução técnica de aidd-melhoria.
+ROLE: Builder. Ecosystem AIDD. Ticket 7. Target tool: aidd-melhoria.
+DIMENSION: D14
+DELIVER: .agents/skills/aidd-melhoria/scripts/rollback.py
 
-Ticket 7: Critério de Rejeição, Limpeza e Rollback (Refere-se a D14)
+STEPS:
+- Write test first: inject parser crash mid-analysis. Fail if intermediate files remain on disk.
+- Implement .agents/skills/aidd-melhoria/scripts/rollback.py. Use finally block or context manager.
+- On non-zero exit delete partial artifacts and revert environment changes.
+- Run tests/test_melhoria_rollback.py. Assert crash leaves zero temp files or corruption.
 
-- **Falha 15-D:** `D14. Critério de Rejeição (Rollback)`
-- **Requisito TDD (Red):** Injetar um erro no meio da análise (ex. parser crash). Se os arquivos intermediários permanecem em disco, o teste deve reprovar.
-- **Implementação Técnica:**
-  - Estabelecer a rotina `finally` ou context manager no motor Python.
-  - Em caso de saída não-zero (`exit 1`), o código DEVE excluir artefatos parciais (limpeza) e reverter mudanças de ambiente (rollback).
-- **Verificação (Green):** O crash no meio do processo deixa zero rastro temporário ou corrupção no repositório.
-
-REGRAS DE EXECUÇÃO:
-1. Implemente o código funcional com zero stubs e testes reais em pytest.
-2. Certifique-se de entregar o artefato esperado: '.agents/skills/aidd-melhoria/scripts/rollback.py'.
-3. Execute os testes para comprovar a passagem de Red para Green.
+RULES:
+1. Write failing test first. Run. Assert exit 1.
+2. Implement. Zero stubs. Real pytest tests. Run. Assert exit 0.
+3. Work inside ephemeral Git Worktree only.
+4. Capture real exit code: redirect to file, read $? same line. Never trust pipes.
+5. NEVER edit docs/auditoria/CONFIG-EXECUCAO-USUARIO.json.
+6. Deliver exactly: .agents/skills/aidd-melhoria/scripts/rollback.py

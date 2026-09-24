@@ -1,0 +1,18 @@
+ROLE: Builder. Ecosystem AIDD. Ticket 8. Target tool: aidd-diagnose.
+DIMENSION: D15
+DELIVER: .agents/skills/aidd-diagnose/scripts/handoff.py
+
+STEPS:
+- Create .agents/skills/aidd-diagnose/scripts/handoff.py.
+- Emit docs/diagnosticos/<date>_<slug>/handoff-diagnose.json: root cause, changed files, regression test, G_aidd_diagnose status, next tool (aidd-tdd or aidd-handoff).
+- Persist state between phases in sessao.json from ticket 1.
+- Reuse .agents/skills/aidd-melhoria/scripts/handoff.py where it fits.
+- Test: full run without handoff file. Assert exit 1. With file. Assert valid JSON.
+
+RULES:
+1. Write failing test first. Run. Assert exit 1.
+2. Implement. Zero stubs. Real pytest tests. Run. Assert exit 0.
+3. Work inside ephemeral Git Worktree only.
+4. Capture real exit code: redirect to file, read $? same line. Never trust pipes.
+5. NEVER edit docs/auditoria/CONFIG-EXECUCAO-USUARIO.json.
+6. Deliver exactly: .agents/skills/aidd-diagnose/scripts/handoff.py
