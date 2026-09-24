@@ -116,7 +116,7 @@ def checar():
         conteudo_referenciado = _ler(referenciado)
         if conteudo_referenciado:
             texto_documentacao += "\n" + conteudo_referenciado
-    documentados = set(re.findall(r"(?<!/)gates/(G_[A-Z0-9_]+\.py)", texto_documentacao))
+    documentados = set(re.findall(r"(?<!/)gates/(G_[A-Za-z0-9_]+\.py)", texto_documentacao))
     em_disco = {
         f for f in os.listdir(os.path.join(ROOT_DIR, "gates"))
         if f.startswith("G_") and f.endswith(".py")
