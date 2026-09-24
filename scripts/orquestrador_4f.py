@@ -163,7 +163,173 @@ class LiveHUD:
     def start(self):
         self.root.mainloop()
 
-def run_cmd_tty(cmd, cwd=None, input_data=None, expected_handoff=None):
+ORCA_TIMEOUT_AGENTE_S = 3600
+ORCA_ESPERA_CHECK_MS = 900000
+PREAMBULO = ".aidd-preambulo.md"
+_run_orca = {}
+
+
+def orca(*args, timeout=120):
+    """orca CLI com --json. Devolve o 'result' ou None (CLI ausente, runtime fora, erro)."""
+    try:
+        res = subprocess.run(["orca", *args, "--json"], capture_output=True, text=True,
+                             encoding="utf-8", errors="replace", timeout=timeout)
+        dados = json.loads(res.stdout or "{}")
+    except (OSError, subprocess.TimeoutExpired, json.JSONDecodeError) as e:
+        print(f"[ORCA] erro em 'orca {' '.join(args[:2])}': {type(e).__name__}")
+        return None
+    if not dados.get("ok"):
+        erro = dados.get("error") or {}
+        print(f"[ORCA] erro em 'orca {' '.join(args[:2])}': {erro.get('code')} {erro.get('message', '')}".rstrip())
+        return None
+    return dados.get("result")
+
+
+def comando_interativo(cmd):
+    """No terminal visível o agente roda em modo interativo: sem -p/--print (modo headless)."""
+    partes = cmd.split()
+    return " ".join(p for i, p in enumerate(partes)
+                    if p not in ("-p", "--print") and not (p == "-" and i and partes[i - 1] in ("-p", "--print")))
+
+
+def run_orca(objetivo):
+    """Um Run de orquestração por pipeline: caixa de entrada onde chegam os worker_done."""
+    if "id" not in _run_orca:
+        run = orca("orchestration", "run-create", "--objective", objetivo)
+        _run_orca["id"] = ((run or {}).get("run") or {}).get("id")
+    return _run_orca["id"]
+
+
+def tela(handle):
+    """O que o terminal mostra AGORA (read --screen); o agentWait do Orca fica velho no mimo."""
+    lido = orca("terminal", "read", "--terminal", handle, "--screen") or {}
+    return "\n".join(lido.get("terminal", {}).get("tail", []))
+
+
+def enviar_linha(handle, texto):
+    """Texto e Enter em envios separados: 'texto + --enter' passa pela observação de prompt do
+    Orca, que retém o envio quando acha que o harness ainda espera confiança (mimo, 2026-09-24)."""
+    if orca("terminal", "send", "--terminal", handle, "--text", texto) is None:
+        return False
+    time.sleep(1)
+    return orca("terminal", "send", "--terminal", handle, "--enter") is not None
+
+
+def confirmar_confianca_pasta(handle, tentativas=3):
+    """Harness novo numa worktree nova pergunta "confiar nesta pasta?". Sem isso, o texto
+    enviado é consumido pela pergunta e o prompt se perde (visto com mimo, 2026-09-24)."""
+    for _ in range(tentativas):
+        atual = tela(handle).lower()
+        if "accept the risks" in atual:
+            # Aviso de risco (mimo --yolo) tem "No, exit" como padrão: Enter fecharia o agente.
+            print("[ORCA] AVISO: harness abriu confirmação de risco; Enter não será enviado. "
+                  "Use a variável de ambiente do harness no lugar da flag (ex.: MIMOCODE_DANGEROUSLY_SKIP_PERMISSIONS=1).")
+            return
+        if "trust this folder" not in atual and "trust the contents" not in atual:
+            return
+        print("[ORCA] Confirmando 'confiar nesta pasta' do harness.")
+        orca("terminal", "send", "--terminal", handle, "--enter")
+        orca("terminal", "wait", "--terminal", handle, "--for", "tui-idle", "--timeout-ms", "30000", timeout=60)
+
+
+def aguardar_worker_done(run_id, dispatch_id, timeout_s=None):
+    """Bloqueia no inbox do Run (sem polling) até o worker_done/escalation deste dispatch."""
+    timeout_s = timeout_s or ORCA_TIMEOUT_AGENTE_S
+    espera_ms = min(ORCA_ESPERA_CHECK_MS, timeout_s * 1000)
+    inicio = time.time()
+    while time.time() - inicio < timeout_s:
+        lote = orca("orchestration", "check", "--run", run_id, "--wait", "--types", "worker_done,escalation",
+                    "--timeout-ms", str(espera_ms), timeout=espera_ms // 1000 + 60)
+        if not lote:
+            time.sleep(5)
+            continue
+        achado = None
+        for msg in lote.get("messages", []):
+            payload = json.loads(msg.get("payload") or "{}")
+            if payload.get("dispatchId") != dispatch_id:
+                continue
+            achado = ("failed" if msg.get("type") == "escalation" else payload.get("outcome", "failed"),
+                      msg.get("subject", ""))
+        if lote.get("deliveryId"):
+            orca("orchestration", "check", "--run", run_id, "--ack", lote["deliveryId"])
+        if achado:
+            return achado
+    return "timeout", f"sem worker_done em {timeout_s}s"
+
+
+def excluir_do_git(cwd, nome):
+    """Registra 'nome' no info/exclude local do repositório (compartilhado pelas worktrees)."""
+    caminho = subprocess.run(["git", "rev-parse", "--git-path", "info/exclude"], cwd=cwd,
+                             capture_output=True, text=True).stdout.strip()
+    if not caminho:
+        return
+    exclude = Path(cwd) / caminho
+    atual = exclude.read_text(encoding="utf-8") if exclude.exists() else ""
+    if nome not in atual.splitlines():
+        exclude.parent.mkdir(parents=True, exist_ok=True)
+        exclude.write_text(atual + ("" if atual.endswith("\n") or not atual else "\n") + nome + "\n", encoding="utf-8")
+
+
+def run_agente_orca(cmd, cwd, input_data=None, expected_handoff=None, titulo="AIDD"):
+    """Agente num terminal VISÍVEL do Orca, com a tarefa entregue por orchestration dispatch.
+    Devolve None se o Orca não abriu o terminal (chamador cai no modo oculto); senão o outcome."""
+    run_id = run_orca(f"Pipeline 4F: {Path(cwd).parent.name}")
+    seletor = f"path:{cwd}"
+    terminal = None
+    for _ in range(5):  # o Orca pode levar alguns segundos para enxergar uma worktree recém-criada
+        terminal = run_id and orca("terminal", "create", "--worktree", seletor, "--title", titulo,
+                                   "--command", comando_interativo(cmd))
+        if terminal:
+            break
+        time.sleep(2)
+    if not terminal:
+        return None
+
+    handle = terminal["terminal"]["handle"]
+    preambulo = Path(cwd) / PREAMBULO
+    print(f"[ORCA] Agente visível na aba '{titulo}' ({handle}). Acompanhe pelo Orca.")
+    try:
+        orca("terminal", "wait", "--terminal", handle, "--for", "tui-idle", "--timeout-ms", "60000", timeout=90)
+        confirmar_confianca_pasta(handle)
+        # Prompt embutido na spec: o agente não precisa ler nada fora da worktree (mimo pede
+        # permissão de "external directory" mesmo com auto-aprovação, 2026-09-24).
+        spec = Path(input_data).read_text(encoding="utf-8-sig").strip() if input_data else titulo
+        if expected_handoff:
+            spec += f" Required deliverable: {Path(expected_handoff).relative_to(cwd).as_posix()}."
+        tarefa = orca("orchestration", "task-create", "--run", run_id, "--task-title", titulo, "--spec", spec)
+        # --inject digita o preâmbulo mas o Orca bloqueia o Enter em harness que ele não reconhece
+        # (agent_prompt_blocked no agy, 2026-09-24). Preâmbulo em arquivo + 1 linha funciona em todos.
+        envio = tarefa and orca("orchestration", "dispatch", "--task", tarefa["task"]["id"], "--to", handle,
+                                "--run", run_id, "--return-preamble")
+        if not envio:
+            print("[ORCA] FALHA: dispatch da tarefa recusado pelo Orca.")
+            return "failed"
+        # O preâmbulo tem a credencial do dispatch: ignorado pelo git e apagado antes do gate/commit.
+        excluir_do_git(cwd, PREAMBULO)
+        preambulo.write_text(envio["preamble"], encoding="utf-8")
+        instrucao = f"Read the file {PREAMBULO} and follow its instructions exactly."
+        if not enviar_linha(handle, instrucao):
+            print("[ORCA] FALHA: instrução não entregue ao terminal.")
+            return "failed"
+        outcome, resumo = aguardar_worker_done(run_id, envio["dispatch"]["id"])
+        print(f"[ORCA] worker_done: {outcome} — {resumo}")
+        return outcome
+    finally:
+        # Terminal aberto trava a pasta da worktree: fecha antes de qualquer remoção.
+        orca("terminal", "close", "--worktree", seletor, "--all")
+        preambulo.unlink(missing_ok=True)
+
+
+def run_cmd_tty(cmd, cwd=None, input_data=None, expected_handoff=None, titulo="AIDD"):
+    if os.environ.get("AIDD_AGENTE_MODO", "orca") == "orca":
+        outcome = run_agente_orca(cmd, cwd, input_data, expected_handoff, titulo=titulo)
+        if outcome is not None:
+            return outcome
+        print("[ORCA] Orca indisponível. Caindo no modo oculto (HUD).")
+    return run_hud_oculto(cmd, cwd, input_data, expected_handoff)
+
+
+def run_hud_oculto(cmd, cwd=None, input_data=None, expected_handoff=None):
     print(f"[ORCHESTRATOR 4F] Acionando Agente em TTY Efêmero HUD: {cmd}")
     env = os.environ.copy()
     
@@ -323,10 +489,17 @@ def abrir_worktree(branch, wt_path, repo_root):
     git(["worktree", "add", str(wt_path), branch], repo_root)
 
 
-def fechar_worktree(wt_path, repo_root):
-    if wt_path.exists():
+def fechar_worktree(wt_path, repo_root, tentativas=12, intervalo=5):
+    # Terminal recém-fechado ainda segura a pasta por alguns segundos no Windows: tenta de novo.
+    for i in range(tentativas):
+        if not wt_path.exists():
+            break
         git(["worktree", "remove", "--force", str(wt_path)], repo_root, exit_on_fail=False)
         shutil.rmtree(wt_path, ignore_errors=True)
+        if wt_path.exists() and i < tentativas - 1:
+            time.sleep(intervalo)
+    if wt_path.exists():
+        print(f"[ORCHESTRATOR 4F] AVISO: pasta ainda travada, remova depois: {wt_path}")
     git(["worktree", "prune"], repo_root, exit_on_fail=False)
 
 
@@ -426,8 +599,12 @@ def main():
 
         print(f"[+] Acionando Agente ({fase.get('harness')} | {fase.get('model')})...")
         handoff_file = wt_path / handoff
-        run_cmd_tty(comando, cwd=wt_path, input_data=str(input_file).replace('/', '\\') if input_file.exists() else None,
-                    expected_handoff=handoff_file)
+        outcome = run_cmd_tty(comando, cwd=wt_path,
+                              input_data=str(input_file).replace('/', '\\') if input_file.exists() else None,
+                              expected_handoff=handoff_file, titulo=fase.get("ticket_id", nome))
+        if outcome in ("failed", "timeout"):
+            print(f"[-] FALHA: agente de '{nome}' encerrou com '{outcome}'. Worktree preservada para inspeção: {wt_path}")
+            sys.exit(1)
 
         print(f"[+] Verificando Output Handoff...")
         if not handoff_file.exists():

@@ -59,7 +59,7 @@ def repo(tmp_path, monkeypatch):
 
     chamadas = []
 
-    def agente_falso(cmd, cwd=None, input_data=None, expected_handoff=None):
+    def agente_falso(cmd, cwd=None, input_data=None, expected_handoff=None, titulo=None):
         chamadas.append(expected_handoff.name)
         expected_handoff.parent.mkdir(parents=True, exist_ok=True)
         expected_handoff.write_text(f"saida {expected_handoff.name}", encoding="utf-8")
