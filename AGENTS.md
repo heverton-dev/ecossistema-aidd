@@ -62,6 +62,8 @@
    - Portão: gates/G_SKILL_ROT.py (provado)
    - Portão: gates/G_DISCIPLINA_TESTE_FERRAMENTA.py (provado)
    - Portão: gates/G_TEMPLATE_FORGE_ROT.py (provado)
+   - Portão: gates/G_amelhoria.py (provado) — quality gate da ferramenta `aidd-melhoria` (Fase 6, Ticket 6)
+   - Portão: gates/G_HANDOFF_MELHORIA.py (provado) — integridade e assinatura HMAC do handoff de melhoria (Fase 8, Ticket 8)
 10. **Quarteto Sine Qua Non Dinâmico (Lei #10 — Quarteto; distinto de Rule 10 Formato de Resposta):** Todo projeto gerado ou evoluído no ecossistema DEVE nascer nativamente com 4 pilares completos: OpenAPI/Swagger Studio (`/api`), Webhook Studio (`/webhook`), MCP Studio (`/mcp`) e Central de Documentação / Guia do Utilizador (`/docs`). Todas as rotas e contratos devem cobrir 100% dos módulos do sistema e atualizar-se de forma autônoma e dinâmica a cada novo módulo (ex: autenticação).
    - Portão: gates/G_CONTRACT_ROT.py (provado)
    - Portão: gates/G_QUARTETO_SINE_QUA_NON.py (provado)
