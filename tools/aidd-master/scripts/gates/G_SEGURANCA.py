@@ -51,6 +51,9 @@ def _run_matando_arvore_em_timeout(cmd, timeout, cwd=None, text=True):
     """
     proc = subprocess.Popen(
         cmd, cwd=cwd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=text,
+        # Sem encoding explicito o Windows decodifica em cp1252 e a saida UTF-8 do pip-audit
+        # quebra a thread leitora (stdout vira None -> .strip() estoura).
+        encoding="utf-8" if text else None, errors="replace" if text else None,
     )
     try:
         stdout, stderr = proc.communicate(timeout=timeout)

@@ -157,6 +157,39 @@ def test_aprovar_reprova_se_branch_mudou_depois_do_gate_final(repo, monkeypatch)
     assert not (repo.path / "extra.txt").exists()
 
 
+def test_preparo_do_gate_final_copia_so_config_local_ignorada(repo, monkeypatch, tmp_path):
+    (repo.path / ".gitignore").write_text(".local/mcp.json\n", encoding="utf-8")
+    (repo.path / "versionado.json").write_text("main", encoding="utf-8")
+    _git(repo.path, "add", "-A")
+    _git(repo.path, "commit", "-q", "-m", "configs")
+    (repo.path / ".local").mkdir()
+    (repo.path / ".local" / "mcp.json").write_text('{"mcpServers": {}}', encoding="utf-8")
+    monkeypatch.setattr(orquestrador_4f, "configs_mcp_locais",
+                        lambda: [Path(".local/mcp.json"), Path("versionado.json"), Path("ausente.json")])
+
+    wt = tmp_path / "wt_final"
+    _git(repo.path, "worktree", "add", "-q", "--detach", str(wt), "HEAD")
+    (wt / "versionado.json").write_text("ciclo", encoding="utf-8")
+    orquestrador_4f.preparar_worktree_gate_final(wt, repo.path)
+
+    assert (wt / ".local" / "mcp.json").read_text(encoding="utf-8") == '{"mcpServers": {}}'
+    assert (wt / "versionado.json").read_text(encoding="utf-8") == "ciclo"  # versionado nunca é sobrescrito
+    assert not (wt / "ausente.json").exists()
+
+
+def test_retomada_com_fases_commitadas_roda_so_o_gate_final(repo, monkeypatch, capsys):
+    # Pipeline parou antes de aprovar (gate_final reprovou / última fase concluída à mão).
+    m = _manifesto(repo.path, [_fase("Fase_1_Inspetor", "out/a.md")], gate_final=FALHA)
+    assert _rodar(monkeypatch, "--manifest", str(m)) == 1
+    repo.chamadas.clear()
+
+    m = _manifesto(repo.path, [_fase("Fase_1_Inspetor", "out/a.md")], gate_final=OK)
+    assert _rodar(monkeypatch, "--manifest", str(m)) == 0
+    assert repo.chamadas == []  # nenhum agente de novo
+    assert "RETOMADA" in capsys.readouterr().out
+    assert _rodar(monkeypatch, "--manifest", str(m), "--aprovar") == 0
+
+
 def test_rerodar_antes_de_aprovar_nao_repete_fases(repo, monkeypatch, capsys):
     m = _manifesto(repo.path, [_fase("Fase_1_Inspetor", "out/a.md")])
     assert _rodar(monkeypatch, "--manifest", str(m)) == 0

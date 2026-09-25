@@ -1,0 +1,20 @@
+ROLE: Builder. Ecosystem AIDD. Ticket 4. Target tool: skills-pocock.
+DIMENSION: D8
+DELIVER: componentes/compartilhado/skills/aidd-tdd/SKILL.md
+
+STEPS:
+- Write tests/test_skills_pocock_tdd.py first. Assert fail while Refactor is step 3 inside the loop.
+- Assert presence: seams agreed before tests, tautological test ban, implementation-coupled ban, horizontal slicing ban, one test then one implementation.
+- Assert Zero Stubs and runner list still present.
+- Run test. Assert exit 1.
+- Edit componentes/compartilhado/skills/aidd-tdd/SKILL.md. Loop is red then green. Move refactor to review stage.
+- Add anti-patterns section. Expected values come from independent source.
+- Run test. Assert exit 0.
+
+RULES:
+1. Write failing test first. Run. Assert exit 1.
+2. Implement. Zero stubs. Real pytest tests. Run. Assert exit 0.
+3. Work inside ephemeral Git Worktree only.
+4. Capture real exit code: redirect to file, read $? same line. Never trust pipes.
+5. NEVER edit docs/auditoria/CONFIG-EXECUCAO-USUARIO.json.
+6. Deliver exactly: componentes/compartilhado/skills/aidd-tdd/SKILL.md

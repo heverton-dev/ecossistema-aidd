@@ -1,0 +1,26 @@
+ROLE: Builder. Ecosystem AIDD. Ticket 13. Target tool: skills-pocock.
+DIMENSION: D13
+DELIVER: gates/G_PROVA_SKILLS_POCOCK.py
+
+STEPS:
+- Create tests/fixtures/skills_pocock/ with one good and one bad saved artifact per skill.
+- Add mini Python project with planted bug. Add short spec with three behaviors.
+- Write tests/test_g_prova_skills_pocock.py first. Bad artifact must give exit 1. Good artifact must give exit 0. No model call inside test.
+- Run test. Assert exit 1 while gate missing.
+- Create gates/G_PROVA_SKILLS_POCOCK.py. Run each changed skill headless with claude -p --model haiku against fixtures.
+- Check aidd-diagnose: 3 or more numbered hypotheses. Run repro command on planted bug project. Assert nonzero exit before fix.
+- Check aidd-tickets: every ticket has Blocked by. No ticket holds only tests or only code.
+- Check aidd-grill headless: Consolidated Assumptions block with recommendation per item.
+- Check aidd-tdd: seams section before first test.
+- Keep gate out of pre-commit. Document it as manual on-demand gate.
+- Run test. Assert exit 0. Run gate once for real. Redirect output to file. Read real exit code.
+- Attach gate output and exit code to RELATORIO-CONSTRUTOR.md.
+- Run python ecossistema.py audit again. Assert exit 0. This is final gate of cycle.
+
+RULES:
+1. Write failing test first. Run. Assert exit 1.
+2. Implement. Zero stubs. Real pytest tests. Run. Assert exit 0.
+3. Work inside ephemeral Git Worktree only.
+4. Capture real exit code: redirect to file, read $? same line. Never trust pipes.
+5. NEVER edit docs/auditoria/CONFIG-EXECUCAO-USUARIO.json.
+6. Deliver exactly: gates/G_PROVA_SKILLS_POCOCK.py

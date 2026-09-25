@@ -1,0 +1,19 @@
+ROLE: Builder. Ecosystem AIDD. Ticket 11. Target tool: skills-pocock.
+DIMENSION: D3
+DELIVER: scripts/relatorio_skills_duplicadas.py
+
+STEPS:
+- Write tests/test_relatorio_skills_duplicadas.py first. Build temp global dir and temp project dir with overlapping skills.
+- Assert script lists pair grilling and aidd-grill. Assert no file changed in temp dirs.
+- Run test. Assert exit 1.
+- Create scripts/relatorio_skills_duplicadas.py. Read only. Fixed map upstream to AIDD pairs. Output markdown table.
+- Never delete. User removes global copies by hand.
+- Run test. Assert exit 0. Run against real global skills dir. Attach output to RELATORIO-CONSTRUTOR.md.
+
+RULES:
+1. Write failing test first. Run. Assert exit 1.
+2. Implement. Zero stubs. Real pytest tests. Run. Assert exit 0.
+3. Work inside ephemeral Git Worktree only.
+4. Capture real exit code: redirect to file, read $? same line. Never trust pipes.
+5. NEVER edit docs/auditoria/CONFIG-EXECUCAO-USUARIO.json.
+6. Deliver exactly: scripts/relatorio_skills_duplicadas.py

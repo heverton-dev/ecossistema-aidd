@@ -85,11 +85,26 @@ def _carregar_allowlist():
         return {}
 
 
+VARIAVEIS_DE_REPOSITORIO_DO_HOOK = (
+    "GIT_DIR", "GIT_WORK_TREE", "GIT_INDEX_FILE", "GIT_COMMON_DIR",
+    "GIT_OBJECT_DIRECTORY", "GIT_ALTERNATE_OBJECT_DIRECTORIES", "GIT_PREFIX",
+)
+
+
+def _env_sem_repositorio_do_hook():
+    """Cada ferramenta de tools/ tem config de pytest própria, então o conftest.py da raiz (que
+    limpa estas variáveis) não carrega ali. Dentro do pre-commit o git exporta GIT_DIR/
+    GIT_INDEX_FILE e os 'git commit' dos testes em tmp_path batiam no repositório real
+    (2026-09-24: test_secrets_gate_prefers_staged_files_over_full_tree do aidd-forge)."""
+    return {k: v for k, v in os.environ.items() if k not in VARIAVEIS_DE_REPOSITORIO_DO_HOOK}
+
+
 def _rodar_pytest(diretorio, junitxml_path):
     """Executa pytest com relatório JUnitXML e retorna (exit_code, stdout_text)."""
     resultado = subprocess.run(
         [sys.executable, "-m", "pytest", "-q", "--tb=short", f"--junitxml={junitxml_path}"],
         cwd=diretorio,
+        env=_env_sem_repositorio_do_hook(),
         capture_output=True,
         text=True,
         encoding="utf-8",

@@ -1,0 +1,19 @@
+ROLE: Builder. Ecosystem AIDD. Ticket 6. Target tool: skills-pocock.
+DIMENSION: D12
+DELIVER: componentes/compartilhado/skills/aidd-retro/SKILL.md
+
+STEPS:
+- Write tests/test_skills_pocock_retro.py first. Assert fail while skill file missing.
+- Assert: session log read, seven categories, mechanical maps to gates/, judgement maps to review rule, severity order, pointer to aidd-escrita-agentes, handoff to aidd-melhoria.
+- Run test. Assert exit 1.
+- Create componentes/compartilhado/skills/aidd-retro/SKILL.md. Adapt upstream retro. Propose only, never apply.
+- Credit mattpocock/skills, MIT license.
+- Run test. Assert exit 0.
+
+RULES:
+1. Write failing test first. Run. Assert exit 1.
+2. Implement. Zero stubs. Real pytest tests. Run. Assert exit 0.
+3. Work inside ephemeral Git Worktree only.
+4. Capture real exit code: redirect to file, read $? same line. Never trust pipes.
+5. NEVER edit docs/auditoria/CONFIG-EXECUCAO-USUARIO.json.
+6. Deliver exactly: componentes/compartilhado/skills/aidd-retro/SKILL.md

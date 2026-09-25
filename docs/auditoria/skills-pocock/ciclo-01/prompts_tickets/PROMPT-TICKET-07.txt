@@ -1,0 +1,21 @@
+ROLE: Builder. Ecosystem AIDD. Ticket 7. Target tool: skills-pocock.
+DIMENSION: D1
+DELIVER: CONTEXT.md
+
+STEPS:
+- Write tests/test_skills_pocock_contexto.py first. Assert fail while CONTEXT.md, docs/adr/README.md, aidd-reexplica skill missing.
+- Run test. Assert exit 1.
+- Draft CONTEXT.md from AGENTS.md, docs/auditoria/, docs/planos/. Terms: ciclo, fase, plano, sessao, ticket, gate, harness, 4F, 15-D, worktree.
+- Term with two meanings: never pick one. List it under flagged ambiguities for user decision.
+- Create docs/adr/README.md with ADR format.
+- Before editing AGENTS.md check git status for concurrent writes. Add one pointer line to CONTEXT.md.
+- Create componentes/compartilhado/skills/aidd-reexplica/SKILL.md. Re-pitch last message in plain Portuguese using CONTEXT.md terms.
+- Run test. Assert exit 0.
+
+RULES:
+1. Write failing test first. Run. Assert exit 1.
+2. Implement. Zero stubs. Real pytest tests. Run. Assert exit 0.
+3. Work inside ephemeral Git Worktree only.
+4. Capture real exit code: redirect to file, read $? same line. Never trust pipes.
+5. NEVER edit docs/auditoria/CONFIG-EXECUCAO-USUARIO.json.
+6. Deliver exactly: CONTEXT.md

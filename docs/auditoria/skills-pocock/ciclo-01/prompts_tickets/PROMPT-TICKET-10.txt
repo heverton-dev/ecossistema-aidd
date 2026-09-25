@@ -1,0 +1,19 @@
+ROLE: Builder. Ecosystem AIDD. Ticket 10. Target tool: skills-pocock.
+DIMENSION: D5
+DELIVER: componentes/compartilhado/skills/aidd-planos/SKILL.md
+
+STEPS:
+- Locate where aidd-planos builds plan template. SKILL.md or script.
+- Write tests/test_skills_pocock_planos.py first. Assert fail while template lacks not-yet-specified section and out-of-scope section. Headings stay Portuguese as in plan text.
+- If template comes from script, test runs script and checks output.
+- Run test. Assert exit 1.
+- Add both sections. Rule: out of scope never returns to current plan.
+- Run test. Assert exit 0.
+
+RULES:
+1. Write failing test first. Run. Assert exit 1.
+2. Implement. Zero stubs. Real pytest tests. Run. Assert exit 0.
+3. Work inside ephemeral Git Worktree only.
+4. Capture real exit code: redirect to file, read $? same line. Never trust pipes.
+5. NEVER edit docs/auditoria/CONFIG-EXECUCAO-USUARIO.json.
+6. Deliver exactly: componentes/compartilhado/skills/aidd-planos/SKILL.md

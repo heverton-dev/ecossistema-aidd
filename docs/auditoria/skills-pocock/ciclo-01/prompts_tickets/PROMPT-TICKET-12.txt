@@ -1,0 +1,19 @@
+ROLE: Builder. Ecosystem AIDD. Ticket 12. Target tool: skills-pocock.
+DIMENSION: D15
+DELIVER: docs/auditoria/skills-pocock/ciclo-01/RELATORIO-CONSTRUTOR.md
+
+STEPS:
+- Run python ecossistema.py components verify. Redirect to file. Read real exit code. Assert exit 1 before sync.
+- Run python ecossistema.py components sync. Register new skills where gestor_componentes.py requires.
+- Update forge copies in tools/aidd-forge/aidd_forge/templates/skills/ for changed skills.
+- Update skill list in docs/protocolos/AGENTS-REFERENCIA-COMPLETA.md.
+- Run components verify again. Assert exit 0. Run python ecossistema.py audit. Assert exit 0.
+- Write RELATORIO-CONSTRUTOR.md: one row per ticket with file, test command, exit before, exit after.
+
+RULES:
+1. Write failing test first. Run. Assert exit 1.
+2. Implement. Zero stubs. Real pytest tests. Run. Assert exit 0.
+3. Work inside ephemeral Git Worktree only.
+4. Capture real exit code: redirect to file, read $? same line. Never trust pipes.
+5. NEVER edit docs/auditoria/CONFIG-EXECUCAO-USUARIO.json.
+6. Deliver exactly: docs/auditoria/skills-pocock/ciclo-01/RELATORIO-CONSTRUTOR.md

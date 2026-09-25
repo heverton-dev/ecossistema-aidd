@@ -1,0 +1,20 @@
+ROLE: Builder. Ecosystem AIDD. Ticket 5. Target tool: skills-pocock.
+DIMENSION: D1
+DELIVER: componentes/compartilhado/skills/aidd-escrita-agentes/SKILL.md
+
+STEPS:
+- Write tests/test_skills_pocock_escrita.py first. Assert fail while skill file missing.
+- Assert frontmatter name and description. Assert sections: context pointer, no-op, sediment, negation, single source of truth, completion criterion.
+- Assert file under 150 lines.
+- Run test. Assert exit 1.
+- Create componentes/compartilhado/skills/aidd-escrita-agentes/SKILL.md. Adapt upstream writing-for-agents. Telegraphic English.
+- Credit mattpocock/skills, MIT license. Trigger: create or edit skill, AGENTS.md, CLAUDE.md.
+- Run test. Assert exit 0.
+
+RULES:
+1. Write failing test first. Run. Assert exit 1.
+2. Implement. Zero stubs. Real pytest tests. Run. Assert exit 0.
+3. Work inside ephemeral Git Worktree only.
+4. Capture real exit code: redirect to file, read $? same line. Never trust pipes.
+5. NEVER edit docs/auditoria/CONFIG-EXECUCAO-USUARIO.json.
+6. Deliver exactly: componentes/compartilhado/skills/aidd-escrita-agentes/SKILL.md

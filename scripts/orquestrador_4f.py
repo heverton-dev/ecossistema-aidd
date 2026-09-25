@@ -531,6 +531,27 @@ def fechar_worktree(wt_path, repo_root, tentativas=12, intervalo=5):
     git(["worktree", "prune"], repo_root, exit_on_fail=False)
 
 
+def configs_mcp_locais():
+    """Arquivos de registro de MCP por harness (mesma fonte que o G_UNIVERSAL_HARNESS confere)."""
+    import gestor_dependencias
+    return [Path(os.path.relpath(d["caminho"], gestor_dependencias.ROOT_DIR))
+            for d in gestor_dependencias.DESTINOS_MCP.values()]
+
+
+def preparar_worktree_gate_final(wt_path, repo_root):
+    """Worktree nova não tem o que a main tem de gerado/local, e 5 gates do audit reprovavam até
+    na main limpa (2026-09-24): (1) cópias das skills por harness, geradas pelo components sync;
+    (2) registros de MCP git-ignorados. Copia só o que é ignorado pelo git e não existe na worktree."""
+    subprocess.run([sys.executable, "ecossistema.py", "components", "sync", "--tipo", "todos"],
+                   cwd=wt_path, capture_output=True)
+    for rel in configs_mcp_locais():
+        origem, destino = repo_root / rel, wt_path / rel
+        ignorado = git(["check-ignore", "-q", rel.as_posix()], repo_root, exit_on_fail=False).returncode == 0
+        if origem.is_file() and not destino.exists() and ignorado:
+            destino.parent.mkdir(parents=True, exist_ok=True)
+            shutil.copyfile(origem, destino)
+
+
 def ref_aprovavel(pipeline_id):
     return f"refs/aidd/aprovavel/{pipeline_id}"
 
@@ -652,7 +673,14 @@ def main():
         fechar_worktree(wt_path, repo_root)
         print(f"[+] Fase {nome} commitada em {branch_ciclo}.")
 
-    if fases and fases_em_cache == len(fases):
+    ref = ref_aprovavel(pipeline_id)
+    ciclo_sem_gate_final = (sha_de(branch_ciclo, repo_root) != sha_de("HEAD", repo_root)
+                            and not (ref_existe(ref, repo_root) and sha_de(ref, repo_root) == sha_de(branch_ciclo, repo_root)))
+    if fases and fases_em_cache == len(fases) and ciclo_sem_gate_final and not args.fase:
+        # Retomada: todas as fases já commitadas no ciclo, mas o gate_final nunca aprovou esse topo
+        # (ex.: pipeline parou no gate da última fase e ela foi concluída à mão).
+        print(f"\n[RETOMADA] Todas as fases já estão em {branch_ciclo}; falta só o gate_final.")
+    elif fases and fases_em_cache == len(fases):
         # Nenhum agente foi chamado: declarar sucesso aqui seria rótulo desonesto (Lei #8).
         alvo = data.get("target_tool", "<ferramenta>")
         print("\n============================================================")
@@ -674,6 +702,7 @@ def main():
 
     wt_final = worktrees_base / "_gate_final"
     abrir_worktree(branch_ciclo, wt_final, repo_root)
+    preparar_worktree_gate_final(wt_final, repo_root)
     codigo_final = rodar_gate(gate_final, wt_final)
     fechar_worktree(wt_final, repo_root)
     if codigo_final != 0:
