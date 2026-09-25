@@ -224,7 +224,7 @@ def test_painel_em_terminal_mostra_gate_rodando_e_reescreve_a_linha():
     out = _TerminalFalso()
     painel = _painel(out)
     painel.parcial("G_SEGREDOS (detect-secrets)........")
-    assert out.getvalue() == faz_commit.RECUO + "⋯ G_SEGREDOS"
+    assert out.getvalue().startswith(faz_commit.RECUO + "⋯ G_SEGREDOS")
     painel.linha("G_SEGREDOS (detect-secrets)........Passed")
     assert "\r\033[K" + faz_commit.RECUO + "✓ G_SEGREDOS" in out.getvalue()
 
@@ -241,3 +241,36 @@ def test_icones_tem_largura_de_uma_coluna():
     for uni, _ in faz_commit._ICONES.values():
         for ch in uni:
             assert unicodedata.east_asian_width(ch) in ("N", "Na", "H"), ch
+
+
+def test_tempo_formata_segundos_e_minutos():
+    assert faz_commit._tempo(0.34) == "0,3s"
+    assert faz_commit._tempo(59.94) == "59,9s"
+    assert faz_commit._tempo(178.5) == "2m58s"
+
+
+def test_tique_mostra_cronometro_e_progresso_do_gate_sem_quebrar_linha(tmp_path, monkeypatch):
+    monkeypatch.setattr(faz_commit.shutil, "get_terminal_size", lambda fallback=None: os.terminal_size((120, 24)))
+    progresso = tmp_path / "progresso.txt"
+    progresso.write_text("[G_OUTRO] mensagem antiga de outro gate\n", encoding="utf-8")
+    out = _TerminalFalso()
+    painel = faz_commit.PainelGates(faz_commit.Estilo(cor=False, stream=out), str(progresso))
+
+    painel.parcial("G_TESTES_REAIS (pytest real)........")
+    with open(progresso, "a", encoding="utf-8") as f:
+        f.write("[G_TESTES_REAIS] (3/8) aidd-generator: pytest rodando... " + "x" * 80 + "\n")
+    painel.tique()
+
+    ultima = out.getvalue().split("\r\033[K")[-1]
+    assert ultima.startswith(faz_commit.RECUO + "⋯ G_TESTES_REAIS")
+    assert "(3/8) aidd-generator: pytest rodando..." in ultima
+    assert "mensagem antiga" not in ultima  # só o que o gate atual escreveu
+    assert len(ultima) < 120  # nunca quebra a linha, senão o \r não reescreve
+
+
+def test_tique_fora_de_terminal_nao_escreve_nada(tmp_path):
+    out = io.StringIO()
+    painel = faz_commit.PainelGates(faz_commit.Estilo(cor=False, stream=out))
+    painel.parcial("G_SEGREDOS (detect-secrets)........")
+    painel.tique()
+    assert out.getvalue() == ""

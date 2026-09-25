@@ -40,7 +40,17 @@ def _abrir_console_ao_vivo():
     aqui, alem do print() normal, aparece na tela em tempo real independente
     da captura. Retorna None (silenciosamente) se nao houver terminal de
     controle (ex: CI headless) -- nunca deve derrubar o gate por isso.
+
+    Se AIDD_PROGRESSO_AO_VIVO apontar um arquivo, o progresso vai para ele em
+    vez da tela: o faz-commit (painel compacto) le esse arquivo e mostra o
+    progresso na propria linha do gate, sem furar o painel.
     """
+    destino = os.environ.get("AIDD_PROGRESSO_AO_VIVO")
+    if destino:
+        try:
+            return open(destino, "a", encoding="utf-8", errors="replace")
+        except OSError:
+            return None
     caminho = "CON" if os.name == "nt" else "/dev/tty"
     try:
         return open(caminho, "w", encoding="utf-8", errors="replace")

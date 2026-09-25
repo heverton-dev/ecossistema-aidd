@@ -134,3 +134,24 @@ def test_g_testes_reais_isola_git_do_hook_nos_testes_da_ferramenta(tmp_path):
     assert proc.returncode == 0, f"Falhou inesperadamente:\n{proc.stdout}\n{proc.stderr}"
     depois = subprocess.run(["git", "rev-parse", "HEAD"], cwd=real, capture_output=True, text=True).stdout.strip()
     assert depois == antes
+
+
+def test_g_testes_reais_grava_progresso_no_arquivo_pedido(tmp_path):
+    """Com AIDD_PROGRESSO_AO_VIVO, o progresso vai para o arquivo (faz-commit) e não para a tela."""
+    fake_gates, fake_tools = _criar_arvore_sintetica(tmp_path)
+    (fake_tools / "test_ok.py").write_text("def test_ok():\n    assert True\n", encoding="utf-8")
+    progresso = tmp_path / "progresso.txt"
+
+    env = os.environ.copy()
+    env["AIDD_TESTES_REAIS_FERRAMENTAS"] = "aidd-forge"
+    env["AIDD_PROGRESSO_AO_VIVO"] = str(progresso)
+    env["PYTHONIOENCODING"] = "utf-8"
+
+    proc = subprocess.run(
+        [sys.executable, str(fake_gates / "G_TESTES_REAIS.py")],
+        cwd=str(tmp_path), capture_output=True, text=True, encoding="utf-8", errors="replace", env=env,
+    )
+    assert proc.returncode == 0, proc.stdout
+    conteudo = progresso.read_text(encoding="utf-8")
+    assert "(1/1) aidd-forge: pytest rodando..." in conteudo
+    assert "(1/1) aidd-forge: OK" in conteudo

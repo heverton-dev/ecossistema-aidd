@@ -23,6 +23,8 @@ import urllib.request
 import urllib.error
 import argparse
 import re
+import shutil
+import threading
 import time
 from dataclasses import dataclass, field
 
@@ -605,48 +607,97 @@ def imprimir_sucesso(inicio, destino, estilo=None):
 _RE_INICIO_HOOK = re.compile(r"^(?P<nome>[^\s\-\[].*?)\.{6,}$")
 
 
-class PainelGates:
-    """Mostra 1 linha por gate (✔/✖ + duração) em vez do relatório bruto de cada um."""
+def _tempo(segundos):
+    """12,3s até 1 minuto; depois 2m58s (mesma largura curta nas duas formas)."""
+    if segundos < 60:
+        return f"{segundos:.1f}s".replace(".", ",")
+    return f"{int(segundos // 60)}m{int(segundos % 60):02d}s"
 
-    def __init__(self, estilo):
+
+_RE_PREFIXO_GATE = re.compile(r"^\[G_\w+\]\s*")
+
+
+class PainelGates:
+    """Mostra 1 linha por gate (✓/✗ + duração) em vez do relatório bruto de cada um.
+
+    Em terminal humano, a linha do gate em andamento é reescrita a cada segundo
+    com cronômetro e, se o gate publicar progresso (AIDD_PROGRESSO_AO_VIVO),
+    com a última mensagem dele.
+    """
+
+    def __init__(self, estilo, caminho_progresso=None):
         self.estilo = estilo
+        self.caminho_progresso = caminho_progresso
         self.atual = None
         self.inicio_gate = 0.0
+        self.offset_progresso = 0
         self.contagem = {"Passed": 0, "Failed": 0, "Skipped": 0}
+        self.trava = threading.Lock()
 
     def _escreve(self, texto, fim="\n"):
         self.estilo.stream.write(texto + fim)
         self.estilo.stream.flush()
 
+    def _linha_rodando(self, progresso=""):
+        e = self.estilo
+        base = f"{RECUO}{e.icone('rodando')} {self.atual:<{LARGURA_GATE}}{_tempo(time.time() - self.inicio_gate).rjust(7)}"
+        livre = shutil.get_terminal_size((100, 24)).columns - len(base) - 3
+        extra = f"  {progresso[:livre]}" if progresso and livre > 10 else ""
+        # Recorta antes de pintar: a linha nunca pode quebrar, senão o \r não a reescreve.
+        return e.pinta("2", base + extra)
+
+    def _ultimo_progresso(self):
+        if not self.caminho_progresso:
+            return ""
+        try:
+            with open(self.caminho_progresso, "r", encoding="utf-8", errors="replace") as f:
+                f.seek(self.offset_progresso)
+                linhas = [l.strip() for l in f.read().splitlines() if l.strip()]
+        except OSError:
+            return ""
+        return _RE_PREFIXO_GATE.sub("", linhas[-1]) if linhas else ""
+
     def parcial(self, texto):
         """Linha ainda incompleta: detecta o gate que acabou de começar."""
-        if self.atual is not None:
-            return
-        m = _RE_INICIO_HOOK.match(texto)
-        if m:
-            self.atual = _nome_curto_gate(m.group("nome"))
-            self.inicio_gate = time.time()
-            if self.estilo.interativo:
-                self._escreve(f"{RECUO}{self.estilo.pinta('2', self.estilo.icone('rodando'))} {self.atual}", fim="")
+        with self.trava:
+            if self.atual is not None:
+                return
+            m = _RE_INICIO_HOOK.match(texto)
+            if m:
+                self.atual = _nome_curto_gate(m.group("nome"))
+                self.inicio_gate = time.time()
+                try:
+                    self.offset_progresso = os.path.getsize(self.caminho_progresso) if self.caminho_progresso else 0
+                except OSError:
+                    self.offset_progresso = 0
+                if self.estilo.interativo:
+                    self._escreve(self._linha_rodando(), fim="")
+
+    def tique(self):
+        """Chamado a cada segundo: atualiza cronômetro/progresso do gate em andamento."""
+        with self.trava:
+            if self.atual is not None and self.estilo.interativo:
+                self._escreve("\r\033[K" + self._linha_rodando(self._ultimo_progresso()), fim="")
 
     def linha(self, texto):
         """Linha completa: se for o status de um gate, imprime o resultado."""
         m = _RE_STATUS_HOOK.match(texto.strip())
         if not m:
             return
-        nome, status = _nome_curto_gate(m.group("nome")), m.group("status")
-        duracao = time.time() - self.inicio_gate if self.atual else 0.0
-        self.atual = None
-        self.contagem[status] += 1
-        limpa = "\r\033[K" if self.estilo.interativo else ""
-        if status == "Skipped":
-            if limpa:
-                self._escreve(limpa, fim="")
-            return
-        icone = (self.estilo.pinta("1;32", self.estilo.icone("ok")) if status == "Passed"
-                 else self.estilo.pinta("1;31", self.estilo.icone("erro")))
-        tempo = self.estilo.pinta("2", f"{duracao:.1f}s".replace(".", ",").rjust(7))
-        self._escreve(f"{limpa}{RECUO}{icone} {nome:<{LARGURA_GATE}}{tempo}")
+        with self.trava:
+            nome, status = _nome_curto_gate(m.group("nome")), m.group("status")
+            duracao = time.time() - self.inicio_gate if self.atual else 0.0
+            self.atual = None
+            self.contagem[status] += 1
+            limpa = "\r\033[K" if self.estilo.interativo else ""
+            if status == "Skipped":
+                if limpa:
+                    self._escreve(limpa, fim="")
+                return
+            icone = (self.estilo.pinta("1;32", self.estilo.icone("ok")) if status == "Passed"
+                     else self.estilo.pinta("1;31", self.estilo.icone("erro")))
+            tempo = self.estilo.pinta("2", _tempo(duracao).rjust(7))
+            self._escreve(f"{limpa}{RECUO}{icone} {nome:<{LARGURA_GATE}}{tempo}")
 
     def resumo(self):
         c = self.contagem
@@ -661,12 +712,12 @@ class PainelGates:
         self.estilo.detalhe(self.estilo.pinta("2", f" {p} ".join(partes)))
 
 
-def caminho_log_commit():
+def caminho_log_commit(nome="faz-commit.log"):
     """Log bruto do último commit fica dentro de .git (nunca é versionado)."""
     try:
-        return run_git(["rev-parse", "--git-path", "faz-commit.log"])
+        return run_git(["rev-parse", "--git-path", nome])
     except Exception:
-        return "faz-commit.log"
+        return nome
 
 
 def executar_commit(cmd, caminho_log, verboso=False, estilo=None):
@@ -676,11 +727,24 @@ def executar_commit(cmd, caminho_log, verboso=False, estilo=None):
     só o painel compacto de gates.
     """
     estilo = estilo or ui
-    painel = None if verboso else PainelGates(estilo)
+    env, painel = None, None
+    if not verboso:
+        # Gates que falam direto com o terminal (G_TESTES_REAIS) passam a gravar
+        # o progresso neste arquivo; o painel mostra na linha do gate.
+        caminho_progresso = os.path.abspath(caminho_log_commit("faz-commit.progresso"))
+        open(caminho_progresso, "w").close()
+        env = dict(os.environ, AIDD_PROGRESSO_AO_VIVO=caminho_progresso)
+        painel = PainelGates(estilo, caminho_progresso)
     proc = subprocess.Popen(
         cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
-        text=True, encoding="utf-8", errors="replace",
+        text=True, encoding="utf-8", errors="replace", env=env,
     )
+    parar = threading.Event()
+    if painel and estilo.interativo:
+        def _relogio():
+            while not parar.wait(1):
+                painel.tique()
+        threading.Thread(target=_relogio, daemon=True).start()
     capturado, buffer = [], []
     with open(caminho_log, "w", encoding="utf-8") as log:
         # Lê caractere a caractere: o nome do gate chega antes do "\n", enquanto ele roda.
@@ -703,6 +767,7 @@ def executar_commit(cmd, caminho_log, verboso=False, estilo=None):
                 if ch == ".":
                     painel.parcial(_limpa("".join(buffer)).strip())
     proc.wait()
+    parar.set()
     if painel:
         painel.resumo()
     return proc.returncode, "".join(capturado)
