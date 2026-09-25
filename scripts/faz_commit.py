@@ -263,15 +263,23 @@ def fallback_mensagem(status_short):
 # SAÍDA VISUAL
 # Cor e ícones só para humano no terminal. Agente, pipe ou NO_COLOR recebem
 # texto simples com o mesmo número de linhas (nenhum token a mais).
+#
+# Grade fixa monoespaçada: todo conteúdo começa na coluna 6 (largura de
+# "[1/4] "), detalhes na coluna 8. Só ícones de largura 1 (nada de emoji, que
+# ocupa 2 colunas em vários terminais e desalinha tudo).
 # =============================================================================
 
+RECUO = " " * 6
+LARGURA_GATE = 34
+
 _ICONES = {
-    "ok": ("✔", "[OK]"),
-    "erro": ("✖", "[ERRO]"),
-    "aviso": ("⚠", "[!]"),
-    "info": ("›", "->"),
-    "seta": ("→", "->"),
-    "ponto": ("·", "|"),
+    "ok": ("✓", "+"),
+    "erro": ("✗", "x"),
+    "aviso": ("!", "!"),
+    "info": ("›", ">"),
+    "seta": ("▸", ">"),
+    "ponto": ("∙", "|"),
+    "rodando": ("⋯", "."),
 }
 
 
@@ -294,6 +302,8 @@ class Estilo:
         self.stream = stream or sys.stdout
         self.stream_erro = stream_erro or sys.stderr
         self.cor = _usar_cor(self.stream) if cor is None else cor
+        # Terminal humano: permite reescrever a linha do gate em andamento (\r).
+        self.interativo = hasattr(self.stream, "isatty") and self.stream.isatty()
         self._detecta_unicode()
 
     def _detecta_unicode(self):
@@ -309,7 +319,7 @@ class Estilo:
         for stream in (sys.stdout, sys.stderr):
             if hasattr(stream, "reconfigure"):
                 stream.reconfigure(encoding="utf-8", errors="replace")
-        if self.cor and os.name == "nt":
+        if (self.cor or self.interativo) and os.name == "nt":
             os.system("")
         self._detecta_unicode()
 
@@ -326,17 +336,32 @@ class Estilo:
     def etapa(self, n, total, texto):
         self.escreve(self.pinta("1;36", f"[{n}/{total}]") + " " + self.pinta("1", texto))
 
-    def info(self, texto):
-        self.escreve(f"  {self.pinta('2', self.icone('info'))} {texto}")
+    def item(self, icone, cor, texto, erro=False):
+        """Linha dentro de uma etapa: ícone na coluna 6, texto na coluna 8."""
+        self.escreve(f"{RECUO}{self.pinta(cor, self.icone(icone))} {texto}", erro=erro)
 
-    def ok(self, texto):
-        self.escreve(f"{self.pinta('1;32', self.icone('ok'))} {texto}")
+    def detalhe(self, texto, erro=False, nivel=1):
+        """Texto sem ícone, alinhado com o texto dos itens (coluna 8, ou 10 no nível 2)."""
+        self.escreve(f"{RECUO}{'  ' * nivel}{texto}", erro=erro)
+
+    def campo(self, rotulo, texto, erro=False):
+        self.escreve(f"{RECUO}{rotulo:<10}{texto}", erro=erro)
+
+    def info(self, texto):
+        self.item("info", "2", texto)
 
     def aviso(self, texto):
-        self.escreve(f"  {self.pinta('1;33', self.icone('aviso'))} {texto}")
+        self.item("aviso", "1;33", texto)
+
+    def _final(self, icone, cor, texto, erro=False):
+        """Linha de resultado: ícone na coluna 2, texto na mesma coluna 6 das etapas."""
+        self.escreve(f"  {self.pinta(cor, self.icone(icone))}   {texto}", erro=erro)
+
+    def ok(self, texto):
+        self._final("ok", "1;32", texto)
 
     def erro(self, texto):
-        self.escreve(f"{self.pinta('1;31', self.icone('erro'))} {texto}", erro=True)
+        self._final("erro", "1;31", texto, erro=True)
 
 
 ui = Estilo()
@@ -532,24 +557,27 @@ def _duracao(inicio):
     return f"{time.time() - inicio:.1f}s".replace(".", ",")
 
 
-def imprimir_falha(diag, inicio, estilo=None):
+def imprimir_falha(diag, inicio, estilo=None, caminho_log=""):
     estilo = estilo or ui
     seta = estilo.icone("seta")
     estilo.escreve("", erro=True)
-    estilo.erro(estilo.pinta("1", f"FALHOU na etapa: {diag.etapa}") + f" {estilo.icone('ponto')} {_duracao(inicio)}")
+    estilo.erro(estilo.pinta("1", f"FALHOU em: {diag.etapa}") + f" {estilo.icone('ponto')} {_duracao(inicio)}")
     for gate in diag.gates:
-        cmd = f"  {seta} {estilo.pinta('36', gate.comando)}" if gate.comando else ""
-        estilo.escreve(f"  {estilo.pinta('1;31', gate.nome)}{cmd}", erro=True)
-        if not gate.locais:
-            estilo.escreve(estilo.pinta("2", "      (o gate não informou arquivo/linha — rode o comando acima)"), erro=True)
+        estilo.item("erro", "1;31", estilo.pinta("1", gate.nome), erro=True)
         for local in gate.locais:
-            estilo.escreve(f"      {seta} {local}", erro=True)
+            estilo.detalhe(f"{seta} {local}", erro=True, nivel=2)
+        if not gate.locais:
+            estilo.detalhe(estilo.pinta("2", "(o gate não informou arquivo/linha)"), erro=True, nivel=2)
+        if gate.comando:
+            estilo.detalhe(f"{'repetir:':<10}{estilo.pinta('36', gate.comando)}", erro=True, nivel=2)
     for local in diag.locais:
-        estilo.escreve(f"  {seta} {local}", erro=True)
+        estilo.item("seta", "0", str(local), erro=True)
     if diag.causa:
-        estilo.escreve(f"  Causa: {diag.causa}", erro=True)
+        estilo.campo("Causa", diag.causa, erro=True)
     if diag.comando:
-        estilo.escreve(f"  Corrigir: {estilo.pinta('36', diag.comando)}", erro=True)
+        estilo.campo("Corrigir", estilo.pinta("36", diag.comando), erro=True)
+    if caminho_log:
+        estilo.campo("Log", caminho_log, erro=True)
 
 
 def ler_shortstat(texto):
@@ -573,19 +601,118 @@ def imprimir_sucesso(inicio, destino, estilo=None):
     )
 
 
-def executar_ao_vivo(cmd):
-    """Roda o comando mostrando a saída em tempo real e guarda uma cópia para o diagnóstico."""
+# O pre-commit imprime "NOME......" ao começar o hook e completa com o status ao terminar.
+_RE_INICIO_HOOK = re.compile(r"^(?P<nome>[^\s\-\[].*?)\.{6,}$")
+
+
+class PainelGates:
+    """Mostra 1 linha por gate (✔/✖ + duração) em vez do relatório bruto de cada um."""
+
+    def __init__(self, estilo):
+        self.estilo = estilo
+        self.atual = None
+        self.inicio_gate = 0.0
+        self.contagem = {"Passed": 0, "Failed": 0, "Skipped": 0}
+
+    def _escreve(self, texto, fim="\n"):
+        self.estilo.stream.write(texto + fim)
+        self.estilo.stream.flush()
+
+    def parcial(self, texto):
+        """Linha ainda incompleta: detecta o gate que acabou de começar."""
+        if self.atual is not None:
+            return
+        m = _RE_INICIO_HOOK.match(texto)
+        if m:
+            self.atual = _nome_curto_gate(m.group("nome"))
+            self.inicio_gate = time.time()
+            if self.estilo.interativo:
+                self._escreve(f"{RECUO}{self.estilo.pinta('2', self.estilo.icone('rodando'))} {self.atual}", fim="")
+
+    def linha(self, texto):
+        """Linha completa: se for o status de um gate, imprime o resultado."""
+        m = _RE_STATUS_HOOK.match(texto.strip())
+        if not m:
+            return
+        nome, status = _nome_curto_gate(m.group("nome")), m.group("status")
+        duracao = time.time() - self.inicio_gate if self.atual else 0.0
+        self.atual = None
+        self.contagem[status] += 1
+        limpa = "\r\033[K" if self.estilo.interativo else ""
+        if status == "Skipped":
+            if limpa:
+                self._escreve(limpa, fim="")
+            return
+        icone = (self.estilo.pinta("1;32", self.estilo.icone("ok")) if status == "Passed"
+                 else self.estilo.pinta("1;31", self.estilo.icone("erro")))
+        tempo = self.estilo.pinta("2", f"{duracao:.1f}s".replace(".", ",").rjust(7))
+        self._escreve(f"{limpa}{RECUO}{icone} {nome:<{LARGURA_GATE}}{tempo}")
+
+    def resumo(self):
+        c = self.contagem
+        if not sum(c.values()):
+            return
+        p = self.estilo.icone("ponto")
+        partes = [f"{c['Passed']} aprovado(s)"]
+        if c["Failed"]:
+            partes.append(f"{c['Failed']} reprovado(s)")
+        if c["Skipped"]:
+            partes.append(f"{c['Skipped']} pulado(s)")
+        self.estilo.detalhe(self.estilo.pinta("2", f" {p} ".join(partes)))
+
+
+def caminho_log_commit():
+    """Log bruto do último commit fica dentro de .git (nunca é versionado)."""
+    try:
+        return run_git(["rev-parse", "--git-path", "faz-commit.log"])
+    except Exception:
+        return "faz-commit.log"
+
+
+def executar_commit(cmd, caminho_log, verboso=False, estilo=None):
+    """Roda o git commit guardando a saída completa em log e para o diagnóstico.
+
+    verboso=True repassa tudo para a tela (comportamento antigo); senão mostra
+    só o painel compacto de gates.
+    """
+    estilo = estilo or ui
+    painel = None if verboso else PainelGates(estilo)
     proc = subprocess.Popen(
         cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
-        text=True, encoding="utf-8", errors="replace", bufsize=1,
+        text=True, encoding="utf-8", errors="replace",
     )
-    capturado = []
-    for linha in proc.stdout:
-        sys.stdout.write(linha)
-        sys.stdout.flush()
-        capturado.append(linha)
+    capturado, buffer = [], []
+    with open(caminho_log, "w", encoding="utf-8") as log:
+        # Lê caractere a caractere: o nome do gate chega antes do "\n", enquanto ele roda.
+        while True:
+            ch = proc.stdout.read(1)
+            if not ch:
+                break
+            capturado.append(ch)
+            log.write(ch)
+            if verboso:
+                sys.stdout.write(ch)
+                if ch == "\n":
+                    sys.stdout.flush()
+                continue
+            if ch == "\n":
+                painel.linha(_limpa("".join(buffer)))
+                buffer = []
+            elif ch != "\r":
+                buffer.append(ch)
+                if ch == ".":
+                    painel.parcial(_limpa("".join(buffer)).strip())
     proc.wait()
+    if painel:
+        painel.resumo()
     return proc.returncode, "".join(capturado)
+
+
+def _detalhes_brutos(texto, estilo=None):
+    """Mensagem original do git, recuada na grade (curta: só em falha de add/push)."""
+    estilo = estilo or ui
+    for linha in (texto or "").strip().splitlines():
+        estilo.detalhe(estilo.pinta("2", linha.rstrip()), erro=True)
 
 
 def _rodar(cmd):
@@ -601,6 +728,8 @@ def main():
     parser.add_argument("-m", "--message", dest="mensagem_flag", default=None, help="Mensagem explícita de commit")
     parser.add_argument("--no-push", action="store_true", help="Executa git add e commit, mas pula o git push")
     parser.add_argument("--dry-run", action="store_true", help="Apenas simula o processo e exibe a mensagem")
+    parser.add_argument("-v", "--verbose", action="store_true",
+                        help="Mostra a saída completa dos quality gates (padrão: 1 linha por gate)")
 
     args = parser.parse_args()
 
@@ -627,7 +756,7 @@ def main():
     ui.etapa(1, 4, "git add -A")
     res = _rodar(["git", "add", "-A"])
     if res.returncode != 0:
-        print(res.stderr.strip(), file=sys.stderr)
+        _detalhes_brutos(res.stderr)
         imprimir_falha(diagnosticar("git add", res.stderr), inicio)
         sys.exit(res.returncode)
 
@@ -636,12 +765,14 @@ def main():
     if not status_cached:
         ui.info("Nenhuma alteração pendente para commit.")
         sys.exit(0)
+    ui.info(f"{len(status_cached.splitlines())} arquivo(s) no stage")
 
     # 3. Probabilismo: Geração da mensagem
     msg_final = args.mensagem_flag or args.mensagem
 
+    ui.etapa(2, 4, "mensagem de commit")
     if not msg_final:
-        ui.etapa(2, 4, "Gerando mensagem via IA a partir do diff")
+        ui.info("Gerando via IA a partir do diff...")
         diff_resumo = obter_diff_resumido()
         msg_final = gerar_mensagem_probabilistica(diff_resumo)
 
@@ -652,30 +783,34 @@ def main():
             if sys.stdin.isatty():
                 try:
                     sugerida = fallback_mensagem(status_short)
-                    msg_digitada = input(f"  Digite a mensagem de commit [{sugerida}]: ").strip()
+                    msg_digitada = input(f"{RECUO}Digite a mensagem [{sugerida}]: ").strip()
                     msg_final = msg_digitada if msg_digitada else sugerida
                 except EOFError:
                     msg_final = fallback_mensagem(status_short)
             else:
                 msg_final = fallback_mensagem(status_short)
 
-    ui.info("Mensagem: " + ui.pinta("1", msg_final))
+    # Só o título: corpo de várias linhas sairia fora da grade (ele vai inteiro no commit).
+    linhas_msg = msg_final.strip().splitlines() or [""]
+    extra = f"  (+{len(linhas_msg) - 1} linha(s) de corpo)" if len(linhas_msg) > 1 else ""
+    ui.info(ui.pinta("1", linhas_msg[0]) + ui.pinta("2", extra))
 
     if args.dry_run:
         if stage_original:
             run_git(["read-tree", stage_original])
-            ui.ok("[DRY-RUN] Nada foi commitado nem enviado (stage restaurado como estava).")
+            ui.ok("DRY-RUN: nada foi commitado nem enviado (stage restaurado como estava).")
         else:
             # write-tree falha com conflito de merge pendente: não há foto confiável.
-            ui.aviso("[DRY-RUN] Nada foi commitado, mas o stage não pôde ser restaurado "
+            ui.aviso("DRY-RUN: nada foi commitado, mas o stage não pôde ser restaurado "
                      "(conflito de merge pendente?). Confira com: git status")
         sys.exit(0)
 
-    # 4. Determinismo: Executa commit (saída ao vivo + cópia para o diagnóstico)
-    ui.etapa(3, 4, "git commit (quality gates)")
-    codigo, saida = executar_ao_vivo(["git", "commit", "-m", msg_final])
+    # 4. Determinismo: Executa commit (painel compacto de gates + log completo)
+    ui.etapa(3, 4, "git commit" + ("" if args.verbose else " (quality gates)"))
+    caminho_log = caminho_log_commit()
+    codigo, saida = executar_commit(["git", "commit", "-m", msg_final], caminho_log, verboso=args.verbose)
     if codigo != 0:
-        imprimir_falha(diagnosticar("commit (quality gates)", saida), inicio)
+        imprimir_falha(diagnosticar("commit (quality gates)", saida), inicio, caminho_log=caminho_log)
         sys.exit(codigo)
 
     # 5. Determinismo: Executa push
@@ -691,13 +826,15 @@ def main():
         ui.info(f"Configurando upstream para origin/{branch_atual}...")
         push.insert(2, "--set-upstream")
         res = _rodar(push)
-    if res.stdout.strip():
-        print(res.stdout.strip(), flush=True)
-    if res.stderr.strip():
-        print(res.stderr.strip(), file=sys.stderr, flush=True)
+    if args.verbose:
+        for texto in (res.stdout, res.stderr):
+            if texto.strip():
+                print(texto.strip(), flush=True)
     if res.returncode != 0:
+        _detalhes_brutos(res.stderr)
         imprimir_falha(diagnosticar("push", res.stderr, branch_atual), inicio)
         sys.exit(res.returncode)
+    ui.item("ok", "1;32", f"origin/{branch_atual}")
 
     imprimir_sucesso(inicio, f"origin/{branch_atual}")
 

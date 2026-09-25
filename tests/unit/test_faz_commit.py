@@ -128,7 +128,7 @@ def test_estilo_sem_cor_nao_emite_ansi_nem_linhas_extras():
     faz_commit.imprimir_falha(diag, faz_commit.time.time(), estilo)
     texto = err.getvalue()
     assert "\x1b[" not in texto
-    assert "FALHOU na etapa: commit" in texto
+    assert "FALHOU em: commit" in texto
     assert "gates/G_SEGREDOS.py:88" in texto
 
 
@@ -178,11 +178,66 @@ def test_dry_run_preserva_stage_que_o_usuario_ja_tinha(tmp_path):
     git("add", "preparado.txt")
 
     res = subprocess.run(
-        [sys.executable, os.path.join(ROOT_DIR, "scripts", "faz_commit.py"), "--dry-run", "-m", "chore: teste"],
+        [sys.executable, os.path.join(ROOT_DIR, "scripts", "faz_commit.py"), "--dry-run", "-m", "chore: teste\n\ncorpo longo do commit"],
         cwd=tmp_path, capture_output=True, text=True, encoding="utf-8",
     )
 
     assert res.returncode == 0, res.stderr
     assert "stage restaurado" in res.stdout
+    assert "corpo longo" not in res.stdout  # só o título aparece, a grade não quebra
+    assert "(+2 linha(s) de corpo)" in res.stdout
     assert git("diff", "--cached", "--name-only").split() == ["preparado.txt"]
     assert "?? solto.txt" in git("status", "--short")
+
+
+class _TerminalFalso(io.StringIO):
+    def isatty(self):
+        return True
+
+
+def _painel(stream):
+    return faz_commit.PainelGates(faz_commit.Estilo(cor=False, stream=stream))
+
+
+def test_painel_mostra_uma_linha_alinhada_por_gate_e_esconde_relatorio():
+    out = io.StringIO()
+    painel = _painel(out)
+    for linha in [
+        "G_SEGREDOS (detect-secrets)........................Passed",
+        "- hook id: g-segredos",
+        " [GATE] relatorio enorme que nao deve aparecer",
+        "G_TESTES_REAIS (pytest real)........................Failed",
+        "G_HADOLINT (Dockerfile)..........(no files to check)Skipped",
+    ]:
+        painel.linha(linha)
+    painel.resumo()
+    linhas = out.getvalue().splitlines()
+    assert len(linhas) == 3
+    assert "relatorio" not in out.getvalue()
+    assert linhas[0].startswith(faz_commit.RECUO + "✓ G_SEGREDOS")
+    assert linhas[1].startswith(faz_commit.RECUO + "✗ G_TESTES_REAIS")
+    assert len(linhas[0]) == len(linhas[1])  # coluna de tempo alinhada
+    assert "1 aprovado(s) ∙ 1 reprovado(s) ∙ 1 pulado(s)" in linhas[2]
+
+
+def test_painel_em_terminal_mostra_gate_rodando_e_reescreve_a_linha():
+    out = _TerminalFalso()
+    painel = _painel(out)
+    painel.parcial("G_SEGREDOS (detect-secrets)........")
+    assert out.getvalue() == faz_commit.RECUO + "⋯ G_SEGREDOS"
+    painel.linha("G_SEGREDOS (detect-secrets)........Passed")
+    assert "\r\033[K" + faz_commit.RECUO + "✓ G_SEGREDOS" in out.getvalue()
+
+
+def test_painel_fora_de_terminal_nao_emite_linha_provisoria():
+    out = io.StringIO()
+    painel = _painel(out)
+    painel.parcial("G_SEGREDOS (detect-secrets)........")
+    assert out.getvalue() == ""
+
+
+def test_icones_tem_largura_de_uma_coluna():
+    import unicodedata
+    for uni, _ in faz_commit._ICONES.values():
+        for ch in uni:
+            assert unicodedata.east_asian_width(ch) in ("N", "Na", "H"), ch
