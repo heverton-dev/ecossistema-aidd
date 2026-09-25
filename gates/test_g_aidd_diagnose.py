@@ -6,6 +6,8 @@ e reprove (exit 1) casos inválidos:
 1. Ausência de comando de reprodução determinística (missing repro).
 2. Duas ou mais hipóteses ativas simultâneas (two active hypotheses).
 3. Teste de regressão ausente ou que não comprove falha antes e passagem depois.
+4. Teste de regressão declarado que não existe ou que falha de verdade
+   (relatório inventado não passa mais só por auto-declaração).
 """
 
 import json
@@ -27,6 +29,46 @@ def executar_gate_diagnose(caminho_relatorio: Path) -> subprocess.CompletedProce
         encoding="utf-8",
         errors="replace",
     )
+
+
+def criar_teste(pasta: Path, nome: str, passa: bool = True) -> Path:
+    arquivo = pasta / nome
+    corpo = "assert 1 + 1 == 2" if passa else "assert 1 + 1 == 3"
+    arquivo.write_text(f"def test_regressao():\n    {corpo}\n", encoding="utf-8")
+    return arquivo
+
+
+def relatorio_json_valido(arquivo_teste) -> dict:
+    return {
+        "comando_reproducao": "pytest tests/repro.py -k test_falha",
+        "execucoes_reproducao": 3,
+        "resultado_deterministico": True,
+        "hipoteses_ativas": ["Hipótese 1: timeout de socket não capturado"],
+        "teste_regressao": {"arquivo": str(arquivo_teste), "falhou_antes": True, "passou_depois": True},
+    }
+
+
+def test_bite_reprova_relatorio_inventado_com_teste_inexistente(tmp_path):
+    """Morde (exit 1): relatório auto-declarado cujo teste de regressão não existe."""
+    relatorio = tmp_path / "relatorio_inventado.json"
+    dados = relatorio_json_valido("tests/test_que_nao_existe_xyz.py")
+    dados["comando_reproducao"] = "echo inventado"
+    relatorio.write_text(json.dumps(dados, ensure_ascii=False), encoding="utf-8")
+
+    res = executar_gate_diagnose(relatorio)
+    assert res.returncode == 1
+    assert "não existe" in res.stdout
+
+
+def test_bite_reprova_quando_teste_regressao_falha_de_verdade(tmp_path):
+    """Morde (exit 1): 'passou_depois: true' declarado, mas o pytest falha."""
+    relatorio = tmp_path / "relatorio_mentiroso.json"
+    dados = relatorio_json_valido(criar_teste(tmp_path, "test_vermelho.py", passa=False))
+    relatorio.write_text(json.dumps(dados, ensure_ascii=False), encoding="utf-8")
+
+    res = executar_gate_diagnose(relatorio)
+    assert res.returncode == 1
+    assert "falha agora" in res.stdout
 
 
 def test_bite_reprova_quando_falta_comando_reproducao(tmp_path):
@@ -107,7 +149,7 @@ def test_aprova_relatorio_valido_json(tmp_path):
             {"hipotese": "Hipótese preliminar 0: DNS inválido", "prova": "DNS resolvido com sucesso"}
         ],
         "teste_regressao": {
-            "arquivo": "tests/test_regressao.py",
+            "arquivo": str(criar_teste(tmp_path, "test_regressao.py")),
             "falhou_antes": True,
             "passou_depois": True,
         },
@@ -145,10 +187,11 @@ Análise de diagnose realizada com isolamento de falha.
 
 ### Fase 5: Teste de Regressão e Correção Cirúrgica
 - **Status**: CONCLUIDA
-- **Teste de Regressão**: `tests/test_regressao_diagnose.py`
+- **Teste de Regressão**: `test_regressao_diagnose.py`
 - **Resultado Antes do Fix**: FALHA (exit 1)
 - **Resultado Após o Fix**: PASSOU (exit 0)
 """
+    criar_teste(tmp_path, "test_regressao_diagnose.py")
     relatorio.write_text(conteudo, encoding="utf-8")
 
     res = executar_gate_diagnose(relatorio)

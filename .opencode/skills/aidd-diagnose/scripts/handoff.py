@@ -123,12 +123,15 @@ def _caminho_relativo(caminho: Union[Path, str], base: Union[Path, str]) -> str:
 
 
 def localizar_ultima_sessao(repo_root: Union[Path, str]) -> Optional[Path]:
-    """Última sessão de diagnose em docs/diagnosticos/<data>_<slug>/ (Ticket 1)."""
-    diagnosticos = Path(repo_root) / "docs" / "diagnosticos"
-    if not diagnosticos.is_dir():
-        return None
-    subdirs = sorted(diagnosticos.glob("*_*"), reverse=True)
-    return subdirs[0] if subdirs else None
+    """Última sessão de diagnose (Ticket 1). Fonte única: cli.localizar_ultima_sessao."""
+    nome = "aidd_diagnose_cli"
+    cli = sys.modules.get(nome)
+    if cli is None:
+        spec = importlib.util.spec_from_file_location(nome, str(Path(__file__).resolve().parent / "cli.py"))
+        cli = importlib.util.module_from_spec(spec)
+        sys.modules[nome] = cli
+        spec.loader.exec_module(cli)
+    return cli.localizar_ultima_sessao(Path(repo_root))
 
 
 def persistir_sessao(

@@ -5,7 +5,6 @@ REGRA: Teste falhando primeiro (TDD).
 """
 
 import json
-import subprocess
 import sys
 from datetime import datetime
 from pathlib import Path
@@ -22,6 +21,20 @@ def repo_root():
 
 
 ROOT = repo_root()
+SCRIPT_OBS = ROOT / ".agents" / "skills" / "aidd-diagnose" / "scripts" / "observabilidade.py"
+
+
+def _carregar_obs():
+    """Carrega o observabilidade.py do diagnose com nome único (não colide com o do aidd-melhoria)."""
+    import importlib.util
+    spec = importlib.util.spec_from_file_location("aidd_diagnose_observabilidade_teste", str(SCRIPT_OBS))
+    modulo = importlib.util.module_from_spec(spec)
+    sys.modules[spec.name] = modulo  # @dataclass exige o módulo registrado
+    spec.loader.exec_module(modulo)
+    return modulo
+
+
+OBS = _carregar_obs()
 
 
 class TestObservabilidadeDiagnose:
@@ -29,14 +42,11 @@ class TestObservabilidadeDiagnose:
 
     def test_modulo_observabilidade_existe(self):
         """Verifica se observabilidade.py existe."""
-        observabilidade_path = (
-            ROOT / ".agents" / "skills" / "aidd-diagnose" / "scripts" / "observabilidade.py"
-        )
-        assert observabilidade_path.exists(), f"Arquivo {observabilidade_path} não encontrado"
+        assert SCRIPT_OBS.exists(), f"Arquivo {SCRIPT_OBS} não encontrado"
 
     def test_rastreador_execucao_com_contexto(self):
         """Verifica se RastreadorExecucao funciona como context manager."""
-        from observabilidade import RastreadorExecucao
+        RastreadorExecucao = OBS.RastreadorExecucao
 
         with RastreadorExecucao(etapa="teste_contexto") as rastreador:
             rastreador.registrar_entrada("entrada de teste")
@@ -51,7 +61,7 @@ class TestObservabilidadeDiagnose:
 
     def test_registrador_fase_com_completo(self, tmp_path):
         """Verifica se RegistradorFase registra completo."""
-        from observabilidade import RegistradorFase
+        RegistradorFase = OBS.RegistradorFase
 
         diretorio_log = tmp_path / "diagnosticos"
         diretorio_log.mkdir()
@@ -74,7 +84,8 @@ class TestObservabilidadeDiagnose:
 
     def test_relatorio_causa_raiz_gerado(self, tmp_path):
         """Verifica se relatório de causa raiz é gerado ao final."""
-        from observabilidade import RegistradorFase, gerar_relatorio_causa_raiz
+        RegistradorFase = OBS.RegistradorFase
+        gerar_relatorio_causa_raiz = OBS.gerar_relatorio_causa_raiz
 
         diretorio_sessao = tmp_path / "diagnosticos" / "20260924_teste"
         diretorio_sessao.mkdir(parents=True)
@@ -103,38 +114,10 @@ class TestObservabilidadeDiagnose:
         assert "Fase 1" in conteudo or "Fase 2" in conteudo
         assert "Conclus" in conteudo  # Conclusões (com ç)
 
-    def test_observabilidade_sem_relatorio_retorna_1(self):
-        """Verifica que sem relatório final retorna exit 1."""
-        # Este teste simula uma execução sem gerar o relatório
-        # e verifica que o exit code é 1
-        observabilidade_module = (
-            ROOT / ".agents" / "skills" / "aidd-diagnose" / "scripts" / "observabilidade.py"
-        )
-
-        # Cria um script temporário que tenta usar o módulo sem gerar relatório
-        test_script = observabilidade_module.parent / "test_temp_no_report.py"
-        test_script.write_text(
-            "from observabilidade import RegistradorFase\n"
-            "import sys\n"
-            "try:\n"
-            "    reg = RegistradorFase(numero=1)\n"
-            "    reg.registrar_inicio()\n"
-            "    # Não registra relatório\n"
-            "    sys.exit(1)  # Simula falha\n"
-            "except Exception as e:\n"
-            "    sys.exit(1)\n"
-        )
-
-        cmd = [sys.executable, str(test_script)]
-        result = subprocess.run(cmd, cwd=str(observabilidade_module.parent), capture_output=True)
-
-        assert result.returncode == 1, "Sem relatório deveria retornar exit 1"
-
-        test_script.unlink()
-
     def test_observabilidade_com_relatorio_retorna_0(self, tmp_path):
         """Verifica que com relatório gerado retorna exit 0."""
-        from observabilidade import RegistradorFase, gerar_relatorio_causa_raiz
+        RegistradorFase = OBS.RegistradorFase
+        gerar_relatorio_causa_raiz = OBS.gerar_relatorio_causa_raiz
 
         diretorio_sessao = tmp_path / "diagnosticos" / "20260924_teste_sucesso"
         diretorio_sessao.mkdir(parents=True)

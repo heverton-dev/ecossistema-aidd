@@ -288,12 +288,16 @@ class RegistradorFase:
 def gerar_relatorio_causa_raiz(
     diretorio_sessao: Union[str, Path],
     slug: Optional[str] = None,
+    execucoes: int = 0,
+    teste_regressao: Optional[str] = None,
+    exit_antes_fix: Optional[int] = None,
 ) -> Path:
     """
     Gera relatório consolidado de causa raiz em RELATORIO-CAUSA-RAIZ.md.
 
     Lê todos os arquivos fase_*.log do diretório, consolida dados e gera
-    um relatório final em Markdown.
+    um relatório final em Markdown. Com execucoes/teste_regressao/exit_antes_fix
+    inclui a seção que o G_aidd_diagnose exige (o gate roda o teste de novo).
 
     Retorna o caminho do arquivo gerado.
     """
@@ -366,13 +370,23 @@ def gerar_relatorio_causa_raiz(
                 linhas.append(f"  - {item.get('hipotese', '?')}: {item.get('prova', '?')}")
             linhas.append("")
 
+    if execucoes or teste_regressao:
+        linhas.extend(["## Prova", ""])
+        if execucoes:
+            linhas.append(f"- **Execuções**: {execucoes} execuções com o mesmo resultado")
+        if teste_regressao:
+            linhas.append(f"- **Teste de Regressão**: `{teste_regressao}`")
+            if exit_antes_fix is not None and exit_antes_fix != 0:
+                linhas.append(f"- **Resultado Antes do Fix**: FALHA (exit {exit_antes_fix}, declarado)")
+            linhas.append("- **Resultado Após o Fix**: PASSOU (conferido pelo G_aidd_diagnose)")
+        linhas.append("")
+
     # Seção de conclusões
     linhas.extend([
         "",
         "## Conclusões",
         "",
-        "Este relatório consolida os achados de todas as fases de diagnose.",
-        "Cada fase testou hipóteses específicas e descartou as não-aplicáveis.",
+        "Este relatório consolida os registros das fases de diagnose gravados em fase_*.log.",
         "",
     ])
 

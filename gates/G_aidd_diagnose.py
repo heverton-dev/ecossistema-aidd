@@ -24,12 +24,15 @@ import argparse
 import json
 import os
 import re
+import subprocess
 import sys
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Tuple, Union
 
 if hasattr(sys.stdout, "reconfigure"):
     sys.stdout.reconfigure(encoding="utf-8", errors="replace")
+
+ROOT_DIR = Path(__file__).resolve().parent.parent
 
 
 PADROES_ILUSORIOS_PROIBIDOS = [
@@ -158,12 +161,41 @@ def extrair_metadados_markdown(texto: str) -> Dict[str, Any]:
     return dados
 
 
-def validar_conteudo_diagnose(dados: Dict[str, Any], texto_bruto: str = "") -> Tuple[bool, List[str]]:
+def conferir_teste_regressao(arquivo: Any, base_relatorio: Optional[Path]) -> Optional[str]:
+    """
+    Não confia no 'passou_depois' declarado: o arquivo tem que existir e o pytest
+    tem que passar agora. 'falhou_antes' continua declarado (não dá para voltar no tempo).
+    """
+    if not arquivo or not str(arquivo).strip():
+        return "Teste de regressão sem arquivo: impossível conferir que ele passa (D13)."
+    alvo = Path(str(arquivo).strip())
+    candidatos = [alvo] if alvo.is_absolute() else [
+        c / alvo for c in (base_relatorio, ROOT_DIR) if c is not None
+    ]
+    existente = next((c for c in candidatos if c.is_file()), None)
+    if existente is None:
+        return f"Teste de regressão '{arquivo}' não existe em disco: relatório não comprovado (D13)."
+    res = subprocess.run(
+        [sys.executable, "-m", "pytest", str(existente), "-q", "-p", "no:cacheprovider"],
+        cwd=str(ROOT_DIR), capture_output=True, text=True, timeout=600,
+    )
+    if res.returncode != 0:
+        return (
+            f"Teste de regressão '{arquivo}' falha agora (pytest exit {res.returncode}): "
+            "'passou_depois' declarado não confere com a execução real (D13)."
+        )
+    return None
+
+
+def validar_conteudo_diagnose(
+    dados: Dict[str, Any], texto_bruto: str = "", base_relatorio: Optional[Path] = None
+) -> Tuple[bool, List[str]]:
     """
     Valida as regras de integridade do diagnóstico e causa-raiz:
       1. Comando de reprodução executado N vezes com mesmo resultado (N >= 1 e determinístico).
       2. Exatamente UMA hipótese ativa por vez.
-      3. Teste de regressão comprovado com falha antes e sucesso depois.
+      3. Teste de regressão comprovado com falha antes e sucesso depois; o arquivo
+         precisa existir e passar de verdade quando o gate roda.
     """
     erros: List[str] = []
 
@@ -226,6 +258,10 @@ def validar_conteudo_diagnose(dados: Dict[str, Any], texto_bruto: str = "") -> T
                 f"(falhou_antes={falhou_antes}, passou_depois={passou_depois}). "
                 "Exige-se prova de que o teste falhava antes da correção e passou após o fix cirúrgico."
             )
+        else:
+            erro_execucao = conferir_teste_regressao(reg_test.get("arquivo"), base_relatorio)
+            if erro_execucao:
+                erros.append(erro_execucao)
 
     if erros:
         return False, erros
@@ -248,12 +284,12 @@ def validar_arquivo_diagnose(caminho: Union[str, Path]) -> Tuple[bool, List[str]
             dados = json.loads(texto)
             if not isinstance(dados, dict):
                 return False, [f"Arquivo JSON {p} não contém um objeto raiz."]
-            return validar_conteudo_diagnose(dados, texto_bruto=texto)
+            return validar_conteudo_diagnose(dados, texto_bruto=texto, base_relatorio=p.parent)
         except json.JSONDecodeError as exc:
             return False, [f"JSON inválido em {p}: {exc}"]
     else:
         dados = extrair_metadados_markdown(texto)
-        return validar_conteudo_diagnose(dados, texto_bruto=texto)
+        return validar_conteudo_diagnose(dados, texto_bruto=texto, base_relatorio=p.parent)
 
 
 def main(argv: Optional[List[str]] = None) -> int:

@@ -99,6 +99,44 @@ def validar_caminho_escrita(
     )
 
 
+def criar_worktree_fase4(repo_root: str | Path, slug: str) -> Path:
+    """
+    Cria o git worktree efêmero ../worktrees_diagnose-<slug>/ (branch diagnose/<slug>-<id>).
+    Sem limpeza automática: quem chama descarta depois (rollback.finalizar_fase5 / `diagnose limpar`).
+    """
+    raiz = Path(repo_root).resolve()
+    branch_name = f"diagnose/{slug}-{uuid.uuid4().hex[:6]}"
+    worktree_path = (raiz.parent / f"worktrees_diagnose-{slug}").resolve()
+
+    # Remove previamente caso exista resquício anterior
+    if worktree_path.exists():
+        shutil.rmtree(worktree_path, ignore_errors=True)
+
+    res = subprocess.run(
+        ["git", "worktree", "add", "-b", branch_name, str(worktree_path), "HEAD"],
+        cwd=str(raiz),
+        capture_output=True,
+        text=True,
+    )
+    if res.returncode != 0:
+        raise RuntimeError(f"Falha ao criar Git Worktree isolado de diagnose: {res.stderr or res.stdout}")
+    return worktree_path
+
+
+def _branch_da_worktree(repo_root: Path, worktree_path: Path) -> Optional[str]:
+    res = subprocess.run(
+        ["git", "worktree", "list", "--porcelain"],
+        cwd=str(repo_root), capture_output=True, text=True,
+    )
+    atual: Optional[Path] = None
+    for linha in res.stdout.splitlines():
+        if linha.startswith("worktree "):
+            atual = Path(linha[len("worktree "):].strip()).resolve()
+        elif linha.startswith("branch ") and atual == worktree_path:
+            return linha[len("branch "):].strip().replace("refs/heads/", "", 1)
+    return None
+
+
 class DiagnoseWorktreeManager(_BaseVSAWorktreeManager):
     """Gerenciador de Worktrees efêmeros para experimentação de aidd-diagnose (Fase 4)."""
 
@@ -112,28 +150,8 @@ class DiagnoseWorktreeManager(_BaseVSAWorktreeManager):
         Cria um git worktree efêmero isolado em ../worktrees_diagnose-<slug>/ ao entrar na Fase 4.
         Garante limpeza determinística completa (worktree remove + branch delete + rmtree) na saída.
         """
-        id_unico = uuid.uuid4().hex[:6]
-        branch_name = f"diagnose/{slug}-{id_unico}"
-        worktree_path = (self.repo_root.parent / f"worktrees_diagnose-{slug}").resolve()
-
-        # Remove previamente caso exista resquício anterior
-        if worktree_path.exists():
-            shutil.rmtree(worktree_path, ignore_errors=True)
-
-        cmd_add = [
-            "git", "worktree", "add",
-            "-b", branch_name,
-            str(worktree_path),
-            "HEAD",
-        ]
-        res = subprocess.run(
-            cmd_add,
-            cwd=str(self.repo_root),
-            capture_output=True,
-            text=True,
-        )
-        if res.returncode != 0:
-            raise RuntimeError(f"Falha ao criar Git Worktree isolado de diagnose: {res.stderr or res.stdout}")
+        worktree_path = criar_worktree_fase4(self.repo_root, slug)
+        branch_name = _branch_da_worktree(self.repo_root, worktree_path)
 
         try:
             yield worktree_path
@@ -149,15 +167,16 @@ class DiagnoseWorktreeManager(_BaseVSAWorktreeManager):
             except Exception:
                 pass
 
-            try:
-                subprocess.run(
-                    ["git", "branch", "-D", branch_name],
-                    cwd=str(self.repo_root),
-                    capture_output=True,
-                    text=True,
-                )
-            except Exception:
-                pass
+            if branch_name:
+                try:
+                    subprocess.run(
+                        ["git", "branch", "-D", branch_name],
+                        cwd=str(self.repo_root),
+                        capture_output=True,
+                        text=True,
+                    )
+                except Exception:
+                    pass
 
             if worktree_path.exists():
                 shutil.rmtree(worktree_path, ignore_errors=True)
