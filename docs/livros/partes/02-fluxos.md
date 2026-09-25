@@ -585,6 +585,24 @@ Antes que qualquer fatia seja mesclada no repositório principal, a barreira
 | 3      | Construtor           | Executa os tickets numa Git Worktree isolada                                |
 | 4      | Inspetor de Retorno  | Refaz exatamente o prompt da Fase 1; só avança com `exit 0` perante o DoD    |
 
+A **Lente 15-D** é a régua do Inspetor: 15 dimensões, agrupadas em quatro blocos
+(`docs/auditoria/TEMPLATE-AUDITORIA-FERRAMENTA.md`). O portão `G_auditoria_15D.py`
+reprova o laudo em que falte alguma delas.
+
+| Bloco                               | Dimensões                                                                                                   |
+| :---------------------------------- | :------------------------------------------------------------------------------------------------------------ |
+| Governança e blindagem              | D1 Contratos e Regras · D2 Input e Gatilhos · D3 Raio de Impacto e Isolamento · D4 Componentes e Fractalidade |
+| Chão de fábrica (o trabalho em si)  | D5 Visão e Escopo · D6 O que o Estágio Faz · D7 O que Recebe · D8 O que Processa · D9 O que Entrega (D6 a D9 repetem para cada estágio) · D10 Orquestração e Topologia |
+| Resiliência e economia              | D11 Tratamento de Exceções e Fallback · D12 Observabilidade e Frugalidade                                   |
+| Inspetor e expedição (validação)    | D13 Quality Gates · D14 Critério de Rejeição (Rollback) · D15 Output Consolidado e Handoff                  |
+
+A auditoria anterior das 8 ferramentas, de 22/09/2026, usava uma matriz de **11
+dimensões** (Recebe, Cria/Processa, Entrega, Configs, Gates, Scripts, Hooks, Agents,
+Skills, MCPs, Rules). Seis dimensões da lente atual não existiam nela: D3, D5, D10, D11,
+D12 e D14. Por isso nenhuma das 8 ferramentas tem, ainda, avaliação de isolamento,
+fallback, observabilidade ou rollback no padrão 15-D. Os únicos laudos 15-D existentes
+são dos ciclos de `aidd-diagnose` e `aidd-melhoria`.
+
 Três regras não se negociam (`docs/protocolos/PIPELINE-AUDITORIA-4F.md`):
 
 1. **Quem escolhe o assistente é o usuário.** Harness e modelo de cada fase vêm de
@@ -624,6 +642,19 @@ Por padrão (`AIDD_AGENTE_MODO=orca`), o orquestrador abre cada agente numa aba
 laço. O commit é do orquestrador, depois do portão da fase, e nunca do agente. Se o Orca
 não estiver disponível, o orquestrador cai no modo oculto com o monitor ao vivo (HUD).
 
+Três correções de 24/09/2026 vieram de travamentos reais no terminal:
+
+- **Enter só depois do texto aparecer.** A tarefa era colada e o Enter chegava antes de
+  o terminal mostrar o texto; o agente recebia uma linha vazia.
+- **Esperar a tela parar de mudar.** Alguns assistentes (o `agy`) desenham a pergunta
+  "confiar nesta pasta?" depois de parecerem prontos. O orquestrador agora só decide
+  depois de duas leituras iguais seguidas da tela (até 20 segundos).
+- **Worktree do `gate_final` completa.** Uma worktree nova não tem as cópias das
+  habilidades por harness nem os registros de MCP locais (que o git ignora), e 5 portões
+  do `audit` reprovavam até na `main` limpa. Antes do `gate_final` o orquestrador roda
+  `components sync --tipo todos` e copia só esses registros. Também passou a retomar um ciclo em que
+  todas as fases já estão commitadas, mas o `gate_final` nunca aprovou.
+
 ## 12.5 Portões do capítulo
 
 `G_auditoria_15D.py` (em `docs/auditoria/<ferramenta>/`) é o portão de DoD da Lente
@@ -633,14 +664,23 @@ não estiver disponível, o orquestrador cai no modo oculto com o monitor ao viv
 
 ## 12.6 Estado honesto
 
-O pipeline está em uso real, mas ainda amadurecendo: os últimos commits antes desta
-edição (23 e 24/09/2026) corrigem o portão por fase, a branch do ciclo, o comando do
-`mimo` e o isolamento do git nos testes. O ciclo `aidd-diagnose/ciclo-01` está parado
-depois da Fase 2: o laudo e o plano existem, mas o relatório do construtor e o laudo
-revisado ainda não. O commit de cada fase usa `--no-verify` de propósito, porque o
-`gate_fase` acabou de passar e a bateria completa roda uma vez no `gate_final`. Essa
-escolha, e o merge feito pelo próprio orquestrador depois de `--aprovar`, ainda estão em
-revisão.
+O pipeline está em uso real, mas ainda amadurecendo.
+
+- **Primeiro ciclo real, `aidd-diagnose/ciclo-01`:** a Fase 3 rodou em 24/09/2026, das
+  13:38 às 17:16, e os 8 tickets passaram no `gate_fase` (CLI determinística, isolamento
+  em worktree, grafo desatualizado, fallback sem MCP, relatório de causa-raiz, portão
+  próprio `G_aidd_diagnose`, limpeza e handoff). O trabalho está na branch
+  `audit/evolucao-aidd-diagnose-ciclo-01`, com 10 commits **fora da `main`**. O
+  `gate_final` nunca aprovou esse topo (não existe `refs/aidd/aprovavel/...`), a Fase 4
+  não rodou e a branch mexe em 86 arquivos, alguns fora do escopo da ferramenta
+  (`projetos/app-loja/README-USUARIO.md`, `projetos/lovable-app/README-USUARIO.md`).
+  Por isso não houve merge.
+- **Segundo ciclo, `skills-pocock/ciclo-01`:** plano em rascunho (13 tickets) para
+  corrigir as habilidades derivadas de `mattpocock/skills`. Não foi executado e depende
+  do merge acima, porque mexe no mesmo `aidd-diagnose/SKILL.md`.
+- **Em revisão:** o commit de cada fase usa `--no-verify` de propósito (o `gate_fase`
+  acabou de passar e a bateria completa roda uma vez no `gate_final`), e o merge é feito
+  pelo próprio orquestrador depois de `--aprovar`.
 
 ## 12.7 Rastreabilidade do capítulo
 
@@ -648,6 +688,7 @@ revisão.
 `docs/auditoria/CONFIG-EXECUCAO-USUARIO.json`; `docs/auditoria/template-pipeline-4f.json`;
 `scripts/orquestrador_4f.py`; `scripts/compilador_plano_evolucao.py`;
 `scripts/scaffold_auditoria.py`;
+`docs/auditoria/aidd-diagnose/ciclo-01/`; `docs/auditoria/skills-pocock/ciclo-01/`;
 `componentes/compartilhado/skills/aidd-auditor-4f-runner/SKILL.md`;
 `componentes/compartilhado/skills/aidd-evolucao-runner/SKILL.md`;
 `gates/G_amelhoria.py`; `gates/G_HANDOFF_MELHORIA.py`;

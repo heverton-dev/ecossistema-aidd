@@ -231,7 +231,7 @@ resultado.
 
 `tools/aidd-forge/AGENTS.md`; `tools/aidd-forge/aidd_forge/cli.py`;
 `tools/aidd-forge/aidd_forge/core/` (23 módulos);
-`tools/aidd-forge/aidd_forge/templates/gates/` (7 portões);
+`tools/aidd-forge/aidd_forge/templates/gates/` (12 portões);
 `ecossistema.py::cmd_forge` e `_reparar_instalacao_editable_aidd_forge`;
 `scripts/orquestrador_sincrono.py::etapa_01_forge`.
 

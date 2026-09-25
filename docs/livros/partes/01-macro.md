@@ -140,34 +140,34 @@ variações — terreno e planta sempre antes da construção, nunca depois.
 
 ## 1.5 A dimensão real do repositório
 
-Os números a seguir foram remedidos no repositório em 21/09/2026 (revisão da Meso-Camada da Tríade e Pipeline de Orquestração), e não estimados. As linhas marcadas com `*` mantêm o valor da geração original e não devem ser tomadas como atuais.
+Os números a seguir foram remedidos no repositório em 25/09/2026, direto do disco (`git ls-files`, contagem de pastas e saída dos próprios portões), e não estimados.
 
 | Métrica                                                                 | Valor medido |
 | :---------------------------------------------------------------------- | -----------: |
 | Ferramentas homologadas em `tools/`                                     |            8 |
-| Portões de qualidade globais em `gates/` (arquivos `G_*.py`)            |           42 |
-| Portões `G_*.py` em todo o repositório (globais + locais de ferramenta) *|          148 |
-| Hooks de portão registrados em `.pre-commit-config.yaml`                |           34 |
-| Habilidades (skills) canônicas em `componentes/compartilhado/skills/`   |           66 |
+| Portões de qualidade globais em `gates/` (arquivos `G_*.py`)            |           51 |
+| Portões `G_*.py` em todo o repositório (globais + locais de ferramenta) |          178 |
+| Hooks registrados em `.pre-commit-config.yaml`                          |           41 |
+| Habilidades (skills) canônicas em `componentes/compartilhado/skills/`   |           70 |
 | Comandos canônicos em `componentes/compartilhado/comandos/`             |           16 |
 | Módulos do núcleo compartilhado em `componentes/compartilhado/src-core/`|           34 |
-| Esquemas formais de handoff em `componentes/compartilhado/specs/`       |            7 |
+| Esquemas formais de handoff em `componentes/compartilhado/specs/`       |            8 |
 | Diretórios de harness sincronizados na raiz                             |           10 |
-| Módulos Python autorais nas ferramentas (`tools/`)                      *|        1.215 |
-| Módulos Python de portões e scripts da raiz                             *|          ~85 |
-| Arquivos de teste (`test_*.py`) no repositório                          *|        1.520 |
-| Dependências externas declaradas e verificadas                         *|           40 |
-| Suítes de portão que provam reprovação (exit 1), via `G_PORTAO_PROVA_QUE_MORDE.py` |    41/41 |
-| Leis Invioláveis com portão declarado `provado`, via `G_LEI_DECLARA_PORTAO.py`     |    13/13 |
+| Módulos Python rastreados nas ferramentas (`tools/`)                    |        1.220 |
+| Módulos Python de portões e scripts da raiz (`gates/` + `scripts/`)     |          133 |
+| Arquivos de teste (`test_*.py`) rastreados pelo git                     |          395 |
+| Dependências externas declaradas e verificadas (`dependencia verify`)   |           39 |
+| Portões que provam reprovação (exit 1), via `G_PORTAO_PROVA_QUE_MORDE.py` (o meta-portão não conta a si mesmo) | 50/50 |
+| Leis Invioláveis com portão declarado `provado`, via `G_LEI_DECLARA_PORTAO.py` |    13/13 |
 
 ```{=typst}
 #painel("Leitura honesta dos números")[
-  A contagem de 1.512 arquivos de teste inclui as suítes das habilidades de terceiros
-  distribuídas em `componentes/compartilhado/skills/`, que trazem seus próprios pacotes
-  Python. O código autoral do ecossistema — as oito ferramentas, os portões, o núcleo
-  compartilhado e os scripts da raiz — soma aproximadamente 1.300 módulos. Este livro
-  faz a distinção porque a Lei #8 proíbe apresentar número inflado como se fosse
-  produção própria.
+  As edições anteriores deste livro diziam 1.520 arquivos de teste. Esse número contava
+  também cópias que não estão no git (ambientes virtuais, pastas geradas e pacotes de
+  habilidades de terceiros). Contando só o que o git rastreia, são 395; no disco inteiro,
+  com as cópias, são cerca de 700. Os 1.220 módulos de `tools/` também incluem código de
+  exemplo e o sandbox de teste do forge. Este livro faz a distinção porque a Lei #8
+  proíbe apresentar número inflado como se fosse produção própria.
 ]
 ```
 
@@ -352,7 +352,7 @@ ecossistema-aidd/
 ├── MEMORY.md                  A memória viva consolidada do projeto
 ├── ecossistema.py             A CLI unificada: ponto único de entrada
 ├── core/                      Otimizadores cognitivos do meta-repositório
-├── gates/                     50 portões determinísticos globais
+├── gates/                     51 portões determinísticos globais
 ├── scripts/                   Orquestrador síncrono e gestores (componentes, deps)
 ├── componentes/               O cofre canônico: skills, comandos, specs, src-core
 ├── tools/                     As 8 ferramentas homologadas
@@ -676,7 +676,7 @@ Todo portão obedece a três invariantes de construção: é determinístico (ze
 modelo), é executável isoladamente (`python gates/G_X.py`) e tem teste próprio — o
 diretório `gates/` contém, ao lado de cada portão relevante, o seu `test_g_*.py`.
 
-## 5.2 Os 50 portões globais
+## 5.2 Os 51 portões globais
 
 | Portão                             | O que audita                                                                                  |
 | :--------------------------------- | :---------------------------------------------------------------------------------------------- |
@@ -730,6 +730,7 @@ diretório `gates/` contém, ao lado de cada portão relevante, o seu `test_g_*.
 | `G_TEMPLATE_FORGE_ROT`             | Templates do `aidd-forge`: 13 Leis na íntegra e orçamento de tokens do `AGENTS.md` injetado       |
 | `G_amelhoria`                      | Rótulo honesto do `aidd-melhoria`: veta "refatoração concluída" em análise que só sugere           |
 | `G_HANDOFF_MELHORIA`               | Handoff `melhoria → plan`: JSON válido, esquema `handoff-melhoria.schema.json` e assinatura HMAC  |
+| `G_GESTOR_SESSOES`                 | Contrato do registro de sessões de IA (`scripts/gestor_sessoes.py`): funções, gravação isolada e recusa de ID inválido (desde 24/09/2026) |
 
 ## 5.3 A execução: `pre-commit` como runner
 
@@ -743,11 +744,13 @@ As regras de gatilho são três: `always_run: true` roda em todo commit;
 de `G_TESTES_REAIS`, que roda pytest de verdade); e `stages: [manual]` roda apenas sob
 demanda explícita.
 
-Nem todo portão global está nessa lista. Em 24/09/2026, dos 50 portões de `gates/`, 40
-rodam no commit, 1 fica em `stages: [manual]` (`G_LIVRO_EVIDENCIA`) e 9 **não estão
-registrados** no `.pre-commit-config.yaml`: `G_DISPATCH_PIPELINE_VSA`, `G_DOCS_ROT`, `G_ESCRITOR_ATOMICO`, `G_HANDOFF_MELHORIA`, `G_ORQUESTRADOR_SINCRONO`, `G_SUPPLY_CHAIN`, `G_TEMPLATE_FORGE_ROT`, `G_TRANSACTION_LOG_LRU` e `G_amelhoria`. Esses nove só rodam quando alguém
+Nem todo portão global está nessa lista. Em 25/09/2026, dos 51 portões de `gates/`, 40
+rodam no commit, 1 fica em `stages: [manual]` (`G_LIVRO_EVIDENCIA`) e 10 **não estão
+registrados** no `.pre-commit-config.yaml`: `G_DISPATCH_PIPELINE_VSA`, `G_DOCS_ROT`, `G_ESCRITOR_ATOMICO`, `G_GESTOR_SESSOES`, `G_HANDOFF_MELHORIA`, `G_ORQUESTRADOR_SINCRONO`, `G_SUPPLY_CHAIN`, `G_TEMPLATE_FORGE_ROT`, `G_TRANSACTION_LOG_LRU` e `G_amelhoria`. Esses dez só rodam quando alguém
 os chama (à mão, por um orquestrador ou por um teste). Portanto, `python ecossistema.py
-audit` verde não prova que eles passaram.
+audit` verde não prova que eles passaram. O décimo, `G_GESTOR_SESSOES`, entrou em
+24/09/2026 junto com o registro de sessões e repetiu o mesmo padrão: o portão existe,
+mas ninguém o ligou ao commit.
 
 ```{=typst}
 #painel("Zero portões pendentes por causa raiz desconhecida — o estado honesto em 20/09/2026")[
@@ -804,9 +807,51 @@ lockfiles (`requirements.lock`, `requirements-dev.lock`) e `pip install
 `componentes/compartilhado/src-core/package_verifier.py` faz a verificação em tempo de
 execução.
 
-## 5.6 Rastreabilidade do capítulo
+## 5.6 O commit do dia a dia e o registro de sessões
 
-`gates/` (50 portões + suítes de teste); `.pre-commit-config.yaml` (linhas 1–66 para a
+Os portões só servem se alguém passar por eles. Duas peças, entregues em 24/09/2026,
+cuidam da ponta humana dessa passagem.
+
+**O `faz-commit`** (`scripts/faz_commit.py`) é o botão de "salvar e enviar" do usuário.
+Pense no caixa de supermercado que passa tudo o que está na esteira: ele faz
+`git add -A`, gera a mensagem a partir do diff (por IA, se houver chave de API, ou
+pedindo ao usuário), faz o commit — que dispara os 41 hooks do pre-commit — e o push.
+
+- **Painel compacto:** cada portão ocupa uma linha, com o progresso ao vivo dentro da
+  própria linha (o `G_TESTES_REAIS` escreve o andamento no arquivo apontado por
+  `AIDD_PROGRESSO_AO_VIVO`). `-v` volta a mostrar a saída completa.
+- **Diagnóstico de falha:** quando um portão reprova, o resumo final diz a etapa, o
+  portão, o `arquivo:linha` e o comando exato para reproduzir só aquele ponto. O log
+  completo fica salvo em arquivo.
+- **`--dry-run` honesto:** fotografa o stage (`git write-tree`) antes do `git add -A` e o
+  devolve igualzinho no fim. A versão antiga fazia `git reset` e tirava do stage o que o
+  usuário já tinha preparado.
+- **Atalho global:** o comando `faz-commit` digitado no Git Bash resolve para
+  `~/.local/bin/faz_commit.py`. Até 24/09/2026 isso era uma cópia de 20/09 que nunca
+  atualizava; agora é um atalho que sempre executa o script do repositório.
+
+```{=typst}
+#painel("O limite honesto do faz-commit")[
+  `git add -A` leva **tudo** o que está modificado na pasta, inclusive o trabalho de
+  outra sessão de IA aberta no mesmo repositório. Foi o que aconteceu em 24/09/2026: o
+  plano `docs/auditoria/skills-pocock/ciclo-01/`, escrito por uma sessão, entrou no
+  commit `a1ea899` ("registro de sessão agêntica") feito a partir de outra. Nada se
+  perdeu, mas o histórico ficou com um commit que mistura dois assuntos. Com mais de uma
+  sessão aberta, o commit seletivo (`git add <caminhos>`) é o caminho seguro.
+]
+```
+
+**O registro de sessões** (`scripts/gestor_sessoes.py`, habilidades `aidd-sessao` e
+`sessao`) é o livro de ponto das sessões de IA. Cada sessão pode ser gravada com ID,
+harness, título e data em `secoes/historico_sessoes.json`, com um espelho legível em
+`secoes/INDICE-SESSOES.md`. Pela CLI: `python ecossistema.py sessao registrar|listar|buscar`
+(apelidos `session` e `sessoes`). O portão `G_GESTOR_SESSOES` confere o contrato do
+gestor (funções, gravação num ambiente isolado e recusa de ID vazio com exit 1), mas
+ainda não roda no commit (§5.3).
+
+## 5.7 Rastreabilidade do capítulo
+
+`gates/` (51 portões + suítes de teste); `.pre-commit-config.yaml` (linhas 1–66 para a
 documentação das decisões, 67–220 para os hooks); `.claude/settings.json`;
 `componentes/compartilhado/hooks/`; `scripts/gestor_dependencias.py`;
 `docs/protocolos/AGENTS-REFERENCIA-COMPLETA.md` §4.

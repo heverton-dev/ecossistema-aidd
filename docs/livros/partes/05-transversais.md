@@ -21,7 +21,7 @@ habilidade nasce em `componentes/compartilhado/skills/<nome>/` — a fonte físi
 — e é distribuída para os dez ambientes de assistente por
 `python ecossistema.py components sync --tipo todos`.
 
-O repositório tem **68 habilidades** nessa pasta e **16 comandos** em
+O repositório tem **70 habilidades** nessa pasta e **16 comandos** em
 `componentes/compartilhado/comandos/`.
 
 ## 21.2 As famílias de habilidades
@@ -80,7 +80,8 @@ As sete habilidades anti-*vibe coding* descritas no capítulo 2 — `/aidd-grill
 `dependencia-runner` (dependências de terceiros); `aidd-skills` e
 `skill-creator-runner` (criação de habilidades); `aidd-mcp` e `mcp-creator-runner`
 (servidores MCP); `explore-codebase`, `refactor-safely`, `review-changes`,
-`debug-issue`.
+`debug-issue`. Desde 24/09/2026, `aidd-sessao` e `sessao` registram o ID e os dados de
+cada sessão de IA (capítulo 5, §5.6).
 
 ### Habilidades de domínio externo
 
@@ -124,20 +125,20 @@ Há ainda o modo de reparo: `components sync --tipo todos --force` restaura dest
 
 ## 21.5 Rastreabilidade
 
-`componentes/compartilhado/skills/` (68 habilidades, contagem em 24/09/2026);
+`componentes/compartilhado/skills/` (70 habilidades, contagem em 25/09/2026);
 `componentes/compartilhado/comandos/` (16 comandos); `scripts/gestor_componentes.py`;
 `ecossistema.py::cmd_components`; `docs/protocolos/AGENTS-REFERENCIA-COMPLETA.md` §3 e §5.
 
 # Capítulo 22 — O catálogo completo de portões
 
-## 22.1 A distribuição dos 177 portões
+## 22.1 A distribuição dos 178 portões
 
-O repositório tem 177 arquivos `G_*.py` rastreados pelo git (contagem de 24/09/2026).
+O repositório tem 178 arquivos `G_*.py` rastreados pelo git (contagem de 25/09/2026).
 Eles se distribuem em seis camadas:
 
 | Camada                  | Onde                                   | Quantidade | Papel                                               |
 | :---------------------- | :------------------------------------- | ---------: | :---------------------------------------------------- |
-| Portões globais         | `gates/`                               |         50 | Auditam o ecossistema inteiro                        |
+| Portões globais         | `gates/`                               |         51 | Auditam o ecossistema inteiro                        |
 | Portões de ferramenta   | `tools/<ferramenta>/gates/` ou `scripts/gates/` | 47 | Auditam a ferramenta e o que ela produz        |
 | Portões-template        | `templates/gates/` do forge, master e enterprise | 32 (12 + 10 + 10) | São injetados nos projetos gerados |
 | Exemplos de referência  | `tools/aidd-enterprise/materiais-extras/examples/` | 38 | Cópias dentro de projetos-exemplo (não rodam no commit) |
@@ -145,7 +146,7 @@ Eles se distribuem em seis camadas:
 | Auditoria 15-D          | `docs/auditoria/{aidd-diagnose,aidd-melhoria}/` | 2 | `G_auditoria_15D.py` do pipeline 4F |
 | Portões de projeto      | Projetos gerados                       |   variável | Cópias dos templates, ativas no projeto do usuário   |
 
-A contagem de 177 inclui as cópias distribuídas — o número de portões **distintos** é
+A contagem de 178 inclui as cópias distribuídas — o número de portões **distintos** é
 menor, e a duplicação entre `aidd-master` e `aidd-enterprise` é justamente o que
 `G_DRIFT_NUCLEO_COMPARTILHADO` mantém sob controle.
 
@@ -164,7 +165,7 @@ menor, e a duplicação entre `aidd-master` e `aidd-enterprise` é justamente o 
 
 ## 22.3 As categorias de auditoria
 
-Os 50 portões globais podem ser lidos por intenção, e essa leitura revela a estratégia
+Os 51 portões globais podem ser lidos por intenção, e essa leitura revela a estratégia
 de qualidade do ecossistema:
 
 | Categoria                | Portões                                                                                     |
@@ -175,7 +176,7 @@ de qualidade do ecossistema:
 | **Segurança**            | `G_SEGREDOS`, `G_LLM_PROMPT_SHIELD`, `G_SUPPLY_CHAIN`, `G_DEPENDENCIAS_PIN_HASH`             |
 | **Infraestrutura**       | `G_INFRA_COMPOSE`, `G_HADOLINT`                                                              |
 | **Honestidade**          | `G_HONESTIDADE_ROTULO`, `G_TESTES_REAIS`, `G_CLI_HELP_CONSISTENCIA`, `G_DOCS_ROT`, `G_LIVRO_EVIDENCIA` |
-| **Governança agêntica**  | `G_ZERO_HEADLESS`, `G_ORQUESTRADOR_SINCRONO`, `G_DRIFT_NUCLEO_COMPARTILHADO`                 |
+| **Governança agêntica**  | `G_ZERO_HEADLESS`, `G_ORQUESTRADOR_SINCRONO`, `G_DRIFT_NUCLEO_COMPARTILHADO`, `G_GESTOR_SESSOES` |
 | **Meta-portões**         | `G_PORTAO_PROVA_QUE_MORDE` (Lei #13), `G_LEI_DECLARA_PORTAO` (Lei #8)                        |
 | **Pipeline & Meso-Camada**| `G_PIPELINE_HANDOFF` (Leis #1, #2, #5), `G_DISPATCH_PIPELINE_VSA` (Kahn DAG & Worktrees)     |
 | **Evolução e auditoria** | `G_amelhoria` (rótulo honesto do `aidd-melhoria`), `G_HANDOFF_MELHORIA` (handoff `melhoria → plan` assinado) |
@@ -211,7 +212,7 @@ que a execução se apoie em artefato residual de uma execução anterior.
 
 ## 22.5 Rastreabilidade
 
-`gates/` (50 portões e suítes); `tools/*/gates/` e `tools/*/scripts/gates/`;
+`gates/` (51 portões e suítes); `tools/*/gates/` e `tools/*/scripts/gates/`;
 `.pre-commit-config.yaml`; `docs/protocolos/PROTOCOLO-TESTES-FERRAMENTAS.md`;
 `docs/protocolos/AGENTS-REFERENCIA-COMPLETA.md` §4.
 

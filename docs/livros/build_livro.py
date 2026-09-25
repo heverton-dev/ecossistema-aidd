@@ -35,7 +35,7 @@ ORDEM_PARTES = (
     "06-apendices.md",
 )
 
-NOME_BASE = "24-09-2026_LIVRO-ECOSSISTEMA-AIDD"
+NOME_BASE = "25-09-2026_LIVRO-ECOSSISTEMA-AIDD"
 
 
 def verificar_ferramentas() -> bool:

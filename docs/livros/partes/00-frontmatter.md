@@ -3,7 +3,7 @@ title: "Ecossistema AIDD"
 subtitle: "Tratado completo: do macro ao micro"
 author:
   - Ecossistema AIDD — Governança Canônica
-date: "24 de setembro de 2026"
+date: "25 de setembro de 2026"
 lang: pt-BR
 toc: true
 toc-depth: 2

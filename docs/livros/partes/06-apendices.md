@@ -50,6 +50,7 @@ Parâmetros comuns aos fluxos: `--nome`, `--slug`, `--dominio`, `--pasta`,
 | `audit-4f --manifest <json>`                     | Pipeline Linear de Auditoria 4F de uma ferramenta (capítulo 12) |
 | `evolucao <ferramenta>` ou `evolucao --manifest <json>` | Executa os tickets do `PLANO-EVOLUCAO` do ciclo vigente (capítulo 12) |
 | `livro <pasta-do-projeto> [--compilar]`          | Gera o livro-texto de um projeto a partir dos artefatos reais  |
+| `sessao registrar\|listar\|buscar`               | Registro de sessões de IA em `secoes/` (capítulo 5, §5.6)      |
 | `audit`                                          | Delega a `pre-commit run --all-files`                          |
 | `status`                                         | Painel de ferramentas, habilidades e slash commands            |
 | `status --testes [--write]`                      | Telemetria de testes                                           |
@@ -75,7 +76,7 @@ em vez de apenas exibir o banner educativo e sair com 1.
 
 # Apêndice B — Os contratos formais de handoff
 
-Os sete esquemas em `componentes/compartilhado/specs/` são a espinha dorsal da
+Os oito esquemas em `componentes/compartilhado/specs/` são a espinha dorsal da
 integração entre ferramentas. Todos seguem JSON Schema e são validados por
 `jsonschema` no orquestrador síncrono e nos Quality Gates.
 
@@ -130,6 +131,14 @@ Governa o despacho topológico de fatias verticais VSA (`dispatch_pipeline.py`).
 Grafo Acíclico Dirigido (DAG) compilado pelo `aidd-planner` com ordenação por algoritmo
 de Kahn, particionamento em lotes paralelos (`lotes_execucao`), fronteiras rígidas de
 arquivos por fatia (`arquivos_permitidos`) e barreira de validação e convergência master.
+
+## B.8 `handoff-melhoria.schema.json`
+
+Saída consolidada do `aidd-melhoria` (etapa 1 do fluxo de evolução) que o orquestrador
+lê para passar a `/plan`. Campos obrigatórios: `versao_schema`, `ferramenta`, `status`,
+`codigo_saida`, `emitido_em`, `transicao`, `artefatos` e `assinatura`. A assinatura HMAC
+cobre o conteúdo com as chaves ordenadas, sem o próprio campo `assinatura`; quem confere é
+o `G_HANDOFF_MELHORIA`.
 
 
 # Apêndice C — Glossário
@@ -231,6 +240,9 @@ a rota mais curta para cada assunto.
 | Baseline do núcleo compartilhado         | `gates/baseline_nucleo_compartilhado.json`                       |
 | Despacho topológico VSA em worktrees     | `tools/aidd-master/scripts/dispatch_pipeline.py`                 |
 | Pipeline de auditoria 4F e de evolução   | `scripts/orquestrador_4f.py`, `docs/protocolos/PIPELINE-AUDITORIA-4F.md` |
+| Commit do usuário (`faz-commit`)         | `scripts/faz_commit.py`                                          |
+| Registro de sessões de IA                | `scripts/gestor_sessoes.py`, `secoes/historico_sessoes.json`     |
+| Guia de entrada para quem chega          | `ONBOARDING.md`                                                  |
 | Assistente e modelo de cada fase         | `docs/auditoria/CONFIG-EXECUCAO-USUARIO.json`                    |
 | Contrato de despacho DAG VSA             | `componentes/compartilhado/specs/vsa-topological-dispatch.schema.json` |
 | Memória viva do projeto                  | `MEMORY.md`                                                      |
@@ -249,8 +261,10 @@ vermelho ou aguardando decisão.
 | Discovery Engine completo do `aidd-factory`                   | Só o subconjunto determinístico (nicho dinâmico) está implementado         | `docs/features/v2_arquitetura-aidd-ops-factory.md` §7.1 e §9.1              |
 | `.gemini/skills/` como mecanismo                              | Sincronizado, mas `confirmado: false` — o mecanismo real são as extensões  | `docs/protocolos/AGENTS-REFERENCIA-COMPLETA.md` §5                          |
 | Freebuff                                                      | Instalado, sem modo não interativo para validação automatizada             | `docs/protocolos/AGENTS-REFERENCIA-COMPLETA.md` §5                          |
-| 9 portões globais fora do `.pre-commit-config.yaml`            | Rodam só sob demanda; `audit` verde não cobre esses nove (lista no capítulo 5, §5.3) | `.pre-commit-config.yaml`, `gates/`                                          |
-| Pipeline de auditoria 4F                                      | Em uso real; ciclo `aidd-diagnose/ciclo-01` parado depois da Fase 2        | `docs/auditoria/aidd-diagnose/ciclo-01/`                                     |
+| 10 portões globais fora do `.pre-commit-config.yaml`           | Rodam só sob demanda; `audit` verde não cobre esses dez (lista no capítulo 5, §5.3). O décimo, `G_GESTOR_SESSOES`, entrou em 24/09/2026 | `.pre-commit-config.yaml`, `gates/`                                          |
+| Pipeline de auditoria 4F                                      | Em uso real; ciclo `aidd-diagnose/ciclo-01` com a Fase 3 pronta numa branch fora da `main`, sem `gate_final` aprovado nem Fase 4 | `docs/auditoria/aidd-diagnose/ciclo-01/`, branch `audit/evolucao-aidd-diagnose-ciclo-01` |
+| Plano `skills-pocock/ciclo-01`                                | Rascunho com 13 tickets; não executado; depende do merge do `aidd-diagnose` | `docs/auditoria/skills-pocock/ciclo-01/`                                     |
+| `faz-commit` com mais de uma sessão aberta                    | `git add -A` leva o trabalho de outra sessão junto (caso real: commit `a1ea899`) | `scripts/faz_commit.py`                                                      |
 | Commit por fase com `--no-verify` e merge pelo orquestrador   | Escolha deliberada no código, ainda em revisão                             | `scripts/orquestrador_4f.py`                                                 |
 | Compressor de prosa (`sandeco-token-reduce`)                  | **REMOVIDO** (20/09/2026) — nunca esteve ligado ao pipeline                | `docs/issues/saneamento-governanca/` (ISSUE-0008)                            |
 | Portões `G_FACTORY_INPUT/OUTPUT/DETERMINISTIC`                 | São rótulos de invariante no `AGENTS.md` da factory, não arquivos; a cobrança real está nos 6 portões de `tools/aidd-factory/gates/` | `tools/aidd-factory/AGENTS.md`, `tools/aidd-factory/gates/`                  |

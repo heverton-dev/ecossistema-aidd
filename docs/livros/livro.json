@@ -1,7 +1,7 @@
 {
   "versao_manifesto": "1.0",
   "titulo": "Ecossistema AIDD",
-  "nome_base": "24-09-2026_LIVRO-ECOSSISTEMA-AIDD",
+  "nome_base": "25-09-2026_LIVRO-ECOSSISTEMA-AIDD",
   "pasta_partes": "partes",
   "template": "livro-aidd.typst",
   "partes": [
@@ -43,8 +43,14 @@
       "hash_fonte": "65345dbfcbbd3a7f4e09717e63a6cc9274617dbc926b6bdd234bd1e6acb17727",
       "palavras": 27198,
       "nota": "Atualizacao factual 24/09: contagens reais (50 portoes globais, 177 G_*.py, 68 habilidades, 29 comandos), capitulo 12 novo (pipelines /audit-4f e /evolucao), portoes reais da factory, remocao do compressor sandeco, caminhos completos, renumeracao dos capitulos 13-24; Correcao: barreira de fronteira da fatia usa escopo fixo por slug (src/slices/<fatia>/, tests/, docs/), nao lista arquivos_permitidos; 9 portoes globais fora do pre-commit documentados; 41 hooks; ajuste de largura da tabela 12.2"
+    },
+    {
+      "data": "2026-09-25",
+      "hash_fonte": "343e3bb95d45e58092b3ea14c0e01d7f1b500bb90bb54e67680d91e44e97d6da",
+      "palavras": 28261,
+      "nota": "Remedição completa a partir do disco (51 portões, 178 G_*.py, 70 habilidades, 8 esquemas, 395 testes rastreados); faz-commit e registro de sessões (§5.6); estado real do ciclo aidd-diagnose e plano skills-pocock; B.8 handoff-melhoria; Correção da forma canônica de components sync no capítulo 12; Lente 15-D explicada no capítulo 12 (D1 a D15) e diferença para a matriz antiga de 11 dimensões"
     }
   ],
-  "hash_fonte": "65345dbfcbbd3a7f4e09717e63a6cc9274617dbc926b6bdd234bd1e6acb17727",
-  "ultima_compilacao": "2026-09-24"
+  "hash_fonte": "343e3bb95d45e58092b3ea14c0e01d7f1b500bb90bb54e67680d91e44e97d6da",
+  "ultima_compilacao": "2026-09-25"
 }
