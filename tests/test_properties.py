@@ -116,7 +116,7 @@ class TestJWTRoundtrip:
 
     @given(
         payload=st.just({"x": 1}),
-        secret_suffix=st.text(min_size=1, max_size=30, alphabet=st.characters(blacklist_characters="\x00")),
+        secret_suffix=st.text(min_size=1, max_size=30, alphabet=st.characters(blacklist_characters="\x00", blacklist_categories=("Cs",))),
     )
     @settings(max_examples=30)
     def test_wrong_secret_rejects_token(self, payload, secret_suffix):

@@ -1,6 +1,6 @@
 {
   "total_skills_canonicas": 66,
-  "total_quality_gates": 48,
+  "total_quality_gates": 49,
   "skills": [
     {
       "id": "agents-sdk",
@@ -30,7 +30,7 @@
     {
       "id": "aidd-diagnose",
       "tipo": "skill",
-      "descricao": "Systematic scientific fault triage using hypothesis isolation, regression testing, and code review graph."
+      "descricao": "Systematic scientific fault triage using hypothesis isolation, regression testing, and code review graph. Portão associado: G_aidd_diagnose."
     },
     {
       "id": "aidd-dispatch-runner",
@@ -573,6 +573,11 @@
       "id": "G_ZERO_HEADLESS.py",
       "tipo": "quality_gate",
       "descricao": "ECOSSISTEMA AIDD — QUALITY GATE: G_ZERO_HEADLESS (Lei Canônica #7 e #8)"
+    },
+    {
+      "id": "G_aidd_diagnose.py",
+      "tipo": "quality_gate",
+      "descricao": "ECOSSISTEMA AIDD — QUALITY GATE: G_aidd_diagnose (D13 / DoD 6)"
     }
   ]
 }
