@@ -1,0 +1,153 @@
+{
+  "pipeline_id": "evolucao-skills-pocock-ciclo-01",
+  "target_tool": "skills-pocock",
+  "descricao": "Plano de Evolução Tática montado a partir dos 13 tickets de PLANO-EVOLUCAO.md",
+  "config_usuario_ref": "docs/auditoria/CONFIG-EXECUCAO-USUARIO.json",
+  "definition_of_done": "docs/auditoria/skills-pocock/ciclo-01/DOD.md",
+  "gate_final": "python ecossistema.py audit",
+  "fases": [
+    {
+      "ticket_id": "TICKET-01",
+      "nome": "Fase_1_Ticket_1_Diagn_stico_com_loop_vermelho_e_hip_teses_em_ordem",
+      "dimensao_15d": "D8. O que o Estágio Processa",
+      "harness": "claude",
+      "model": "haiku",
+      "comando_terminal": "claude --dangerously-skip-permissions --chrome --model haiku",
+      "input_prompt": "docs/auditoria/skills-pocock/ciclo-01/prompts_tickets/PROMPT-TICKET-01.txt",
+      "output_handoff": "componentes/compartilhado/skills/aidd-diagnose/SKILL.md",
+      "gate_fase": "python -m pytest -q -p no:cacheprovider tests"
+    },
+    {
+      "ticket_id": "TICKET-02",
+      "nome": "Fase_2_Ticket_2_Tickets_em_fatias_verticais_com_bloqueios",
+      "dimensao_15d": "D10. Orquestração e Topologia",
+      "harness": "agy",
+      "model": "gemini-3.8-flash-low",
+      "comando_terminal": "agy --model gemini-3.8-flash-low  --dangerously-skip-permissions",
+      "input_prompt": "docs/auditoria/skills-pocock/ciclo-01/prompts_tickets/PROMPT-TICKET-02.txt",
+      "output_handoff": "componentes/compartilhado/skills/aidd-tickets/SKILL.md",
+      "gate_fase": "python -m pytest -q -p no:cacheprovider tests"
+    },
+    {
+      "ticket_id": "TICKET-03",
+      "nome": "Fase_3_Ticket_3_Entrevista_em_rodadas_com_resposta_recomendada",
+      "dimensao_15d": "D2. Input e Gatilhos",
+      "harness": "mimo",
+      "model": "xiaomi-token-plan-sgp/mimo-v2.6-flash",
+      "comando_terminal": "MIMOCODE_DANGEROUSLY_SKIP_PERMISSIONS=1 MIMOCODE_TUI_PLAIN=1 mimo -m xiaomi-token-plan-sgp/mimo-v2.6-flash --pure --trust",
+      "input_prompt": "docs/auditoria/skills-pocock/ciclo-01/prompts_tickets/PROMPT-TICKET-03.txt",
+      "output_handoff": "componentes/compartilhado/skills/aidd-grill/SKILL.md",
+      "gate_fase": "python -m pytest -q -p no:cacheprovider tests"
+    },
+    {
+      "ticket_id": "TICKET-04",
+      "nome": "Fase_4_Ticket_4_TDD_com_pontos_de_teste_combinados_e_sem_testes_de_fachada",
+      "dimensao_15d": "D8. O que o Estágio Processa",
+      "harness": "opencode",
+      "model": "opencode/big-pickle",
+      "comando_terminal": "opencode --pure --auto --agent -m opencode/big-pickle",
+      "input_prompt": "docs/auditoria/skills-pocock/ciclo-01/prompts_tickets/PROMPT-TICKET-04.txt",
+      "output_handoff": "componentes/compartilhado/skills/aidd-tdd/SKILL.md",
+      "gate_fase": "python -m pytest -q -p no:cacheprovider tests"
+    },
+    {
+      "ticket_id": "TICKET-05",
+      "nome": "Fase_5_Ticket_5_Guia_de_escrita_para_agentes",
+      "dimensao_15d": "D1. Contratos e Regras",
+      "harness": "claude",
+      "model": "haiku",
+      "comando_terminal": "claude --dangerously-skip-permissions --chrome --model haiku",
+      "input_prompt": "docs/auditoria/skills-pocock/ciclo-01/prompts_tickets/PROMPT-TICKET-05.txt",
+      "output_handoff": "componentes/compartilhado/skills/aidd-escrita-agentes/SKILL.md",
+      "gate_fase": "python -m pytest -q -p no:cacheprovider tests"
+    },
+    {
+      "ticket_id": "TICKET-06",
+      "nome": "Fase_6_Ticket_6_Retrospectiva_que_transforma_erro_em_gate",
+      "dimensao_15d": "D12. Observabilidade e Frugalidade",
+      "harness": "agy",
+      "model": "gemini-3.8-flash-low",
+      "comando_terminal": "agy --model gemini-3.8-flash-low  --dangerously-skip-permissions",
+      "input_prompt": "docs/auditoria/skills-pocock/ciclo-01/prompts_tickets/PROMPT-TICKET-06.txt",
+      "output_handoff": "componentes/compartilhado/skills/aidd-retro/SKILL.md",
+      "gate_fase": "python -m pytest -q -p no:cacheprovider tests"
+    },
+    {
+      "ticket_id": "TICKET-07",
+      "nome": "Fase_7_Ticket_7_Gloss_rio_CONTEXT_md__formato_ADR_e__aidd_reexplica",
+      "dimensao_15d": "D1. Contratos e Regras",
+      "harness": "mimo",
+      "model": "xiaomi-token-plan-sgp/mimo-v2.6-flash",
+      "comando_terminal": "MIMOCODE_DANGEROUSLY_SKIP_PERMISSIONS=1 MIMOCODE_TUI_PLAIN=1 mimo -m xiaomi-token-plan-sgp/mimo-v2.6-flash --pure --trust",
+      "input_prompt": "docs/auditoria/skills-pocock/ciclo-01/prompts_tickets/PROMPT-TICKET-07.txt",
+      "output_handoff": "CONTEXT.md",
+      "gate_fase": "python -m pytest -q -p no:cacheprovider tests"
+    },
+    {
+      "ticket_id": "TICKET-08",
+      "nome": "Fase_8_Ticket_8_Modelo_de_entrega_com_evid_ncia",
+      "dimensao_15d": "D15. Output Consolidado e Handoff",
+      "harness": "opencode",
+      "model": "opencode/big-pickle",
+      "comando_terminal": "opencode --pure --auto --agent -m opencode/big-pickle",
+      "input_prompt": "docs/auditoria/skills-pocock/ciclo-01/prompts_tickets/PROMPT-TICKET-08.txt",
+      "output_handoff": "componentes/compartilhado/skills/aidd-entrega/SKILL.md",
+      "gate_fase": "python -m pytest -q -p no:cacheprovider tests"
+    },
+    {
+      "ticket_id": "TICKET-09",
+      "nome": "Fase_9_Ticket_9_Wizard_para_passos_que_s__o_humano_faz",
+      "dimensao_15d": "D11. Tratamento de Exceções e Fallback",
+      "harness": "claude",
+      "model": "haiku",
+      "comando_terminal": "claude --dangerously-skip-permissions --chrome --model haiku",
+      "input_prompt": "docs/auditoria/skills-pocock/ciclo-01/prompts_tickets/PROMPT-TICKET-09.txt",
+      "output_handoff": "componentes/compartilhado/skills/aidd-wizard/template.sh",
+      "gate_fase": "python -m pytest -q -p no:cacheprovider tests"
+    },
+    {
+      "ticket_id": "TICKET-10",
+      "nome": "Fase_10_Ticket_10_Se__es_de_escopo_no_modelo_de_planos",
+      "dimensao_15d": "D5. Visão e Escopo",
+      "harness": "agy",
+      "model": "gemini-3.8-flash-low",
+      "comando_terminal": "agy --model gemini-3.8-flash-low  --dangerously-skip-permissions",
+      "input_prompt": "docs/auditoria/skills-pocock/ciclo-01/prompts_tickets/PROMPT-TICKET-10.txt",
+      "output_handoff": "componentes/compartilhado/skills/aidd-planos/SKILL.md",
+      "gate_fase": "python -m pytest -q -p no:cacheprovider tests"
+    },
+    {
+      "ticket_id": "TICKET-11",
+      "nome": "Fase_11_Ticket_11_Relat_rio_de_skills_globais_duplicadas",
+      "dimensao_15d": "D3. Raio de Impacto e Isolamento",
+      "harness": "mimo",
+      "model": "xiaomi-token-plan-sgp/mimo-v2.6-flash",
+      "comando_terminal": "MIMOCODE_DANGEROUSLY_SKIP_PERMISSIONS=1 MIMOCODE_TUI_PLAIN=1 mimo -m xiaomi-token-plan-sgp/mimo-v2.6-flash --pure --trust",
+      "input_prompt": "docs/auditoria/skills-pocock/ciclo-01/prompts_tickets/PROMPT-TICKET-11.txt",
+      "output_handoff": "scripts/relatorio_skills_duplicadas.py",
+      "gate_fase": "python -m pytest -q -p no:cacheprovider tests"
+    },
+    {
+      "ticket_id": "TICKET-12",
+      "nome": "Fase_12_Ticket_12_Distribui__o_multi_harness_e_gate_final",
+      "dimensao_15d": "D15. Output Consolidado e Handoff",
+      "harness": "opencode",
+      "model": "opencode/big-pickle",
+      "comando_terminal": "opencode --pure --auto --agent -m opencode/big-pickle",
+      "input_prompt": "docs/auditoria/skills-pocock/ciclo-01/prompts_tickets/PROMPT-TICKET-12.txt",
+      "output_handoff": "docs/auditoria/skills-pocock/ciclo-01/RELATORIO-CONSTRUTOR.md",
+      "gate_fase": "python -m pytest -q -p no:cacheprovider tests"
+    },
+    {
+      "ticket_id": "TICKET-13",
+      "nome": "Fase_13_Ticket_13_Prova_de_uso_real_das_skills_alteradas",
+      "dimensao_15d": "D13. Quality Gates (Portões)",
+      "harness": "claude",
+      "model": "haiku",
+      "comando_terminal": "claude --dangerously-skip-permissions --chrome --model haiku",
+      "input_prompt": "docs/auditoria/skills-pocock/ciclo-01/prompts_tickets/PROMPT-TICKET-13.txt",
+      "output_handoff": "gates/G_PROVA_SKILLS_POCOCK.py",
+      "gate_fase": "python -m pytest -q -p no:cacheprovider tests"
+    }
+  ]
+}

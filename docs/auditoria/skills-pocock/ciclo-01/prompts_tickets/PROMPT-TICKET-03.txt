@@ -1,0 +1,22 @@
+ROLE: Builder. Ecosystem AIDD. Ticket 3. Target tool: skills-pocock.
+DIMENSION: D2
+DELIVER: componentes/compartilhado/skills/aidd-grill/SKILL.md
+
+STEPS:
+- Write tests/test_skills_pocock_grill.py first. Assert fail while aidd-grill says One Question at a Time.
+- Assert presence: numbered rounds, recommended answer per question, facts are agent job, decisions are user job, Consolidated Assumptions.
+- Assert aidd-grill-docs mentions CONTEXT.md and docs/adr/.
+- Run test. Assert exit 1.
+- Edit componentes/compartilhado/skills/aidd-grill/SKILL.md. Ask whole frontier per round. Number questions. Give recommended answer.
+- Agent looks up facts. User makes decisions. Done when frontier empty and user confirms.
+- Keep headless Consolidated Assumptions mode.
+- Edit componentes/compartilhado/skills/aidd-grill-docs/SKILL.md. Read CONTEXT.md and docs/adr/ if present. Update glossary when term resolved.
+- Run test. Assert exit 0.
+
+RULES:
+1. Write failing test first. Run. Assert exit 1.
+2. Implement. Zero stubs. Real pytest tests. Run. Assert exit 0.
+3. Work inside ephemeral Git Worktree only.
+4. Capture real exit code: redirect to file, read $? same line. Never trust pipes.
+5. NEVER edit docs/auditoria/CONFIG-EXECUCAO-USUARIO.json.
+6. Deliver exactly: componentes/compartilhado/skills/aidd-grill/SKILL.md

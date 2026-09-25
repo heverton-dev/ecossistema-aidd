@@ -102,3 +102,56 @@ def test_g_testes_reais_reprova_com_skip_nao_autorizado(tmp_path):
     )
     assert proc.returncode == 1, f"Deveria ter retornado 1, retornou {proc.returncode}"
     assert "ORÇAMENTO ESTOURADO" in proc.stdout or "G_TESTES_REAIS REPROVADO" in proc.stdout
+
+
+def test_g_testes_reais_isola_git_do_hook_nos_testes_da_ferramenta(tmp_path):
+    """Regressao 2026-09-24: dentro do pre-commit, GIT_DIR/GIT_INDEX_FILE do hook vazavam para o
+    pytest de cada ferramenta (sem o conftest.py da raiz) e o 'git commit' dos testes em tmp_path
+    gravava no repositorio real."""
+    fake_gates, fake_tools = _criar_arvore_sintetica(tmp_path)
+    real = tmp_path / "repo_real"
+    real.mkdir()
+    subprocess.run(["git", "init", "-q", "-b", "main"], cwd=real, check=True)
+    subprocess.run(["git", "-c", "user.email=t@t", "-c", "user.name=t", "commit", "-q", "--allow-empty", "-m", "base"],
+                   cwd=real, check=True)
+    antes = subprocess.run(["git", "rev-parse", "HEAD"], cwd=real, capture_output=True, text=True).stdout.strip()
+
+    (fake_tools / "test_git.py").write_text(
+        "import subprocess\n"
+        "def test_commit_em_tmp(tmp_path):\n"
+        "    (tmp_path / 'a.txt').write_text('x')\n"
+        "    subprocess.run(['git', 'init', '-q'], cwd=tmp_path, check=True)\n"
+        "    subprocess.run(['git', 'add', '.'], cwd=tmp_path, check=True)\n"
+        "    subprocess.run(['git', '-c', 'user.email=t@t', '-c', 'user.name=t', 'commit', '-q', '-m', 'Commit teste'],\n"
+        "                   cwd=tmp_path, check=True)\n",
+        encoding="utf-8",
+    )
+    env = dict(os.environ, AIDD_TESTES_REAIS_FERRAMENTAS="aidd-forge", PYTHONIOENCODING="utf-8",
+               GIT_DIR=str(real / ".git"), GIT_WORK_TREE=str(real), GIT_INDEX_FILE=str(real / ".git" / "index"))
+    proc = subprocess.run([sys.executable, str(fake_gates / "G_TESTES_REAIS.py")], cwd=str(tmp_path),
+                          capture_output=True, text=True, encoding="utf-8", errors="replace", env=env)
+
+    assert proc.returncode == 0, f"Falhou inesperadamente:\n{proc.stdout}\n{proc.stderr}"
+    depois = subprocess.run(["git", "rev-parse", "HEAD"], cwd=real, capture_output=True, text=True).stdout.strip()
+    assert depois == antes
+
+
+def test_g_testes_reais_grava_progresso_no_arquivo_pedido(tmp_path):
+    """Com AIDD_PROGRESSO_AO_VIVO, o progresso vai para o arquivo (faz-commit) e não para a tela."""
+    fake_gates, fake_tools = _criar_arvore_sintetica(tmp_path)
+    (fake_tools / "test_ok.py").write_text("def test_ok():\n    assert True\n", encoding="utf-8")
+    progresso = tmp_path / "progresso.txt"
+
+    env = os.environ.copy()
+    env["AIDD_TESTES_REAIS_FERRAMENTAS"] = "aidd-forge"
+    env["AIDD_PROGRESSO_AO_VIVO"] = str(progresso)
+    env["PYTHONIOENCODING"] = "utf-8"
+
+    proc = subprocess.run(
+        [sys.executable, str(fake_gates / "G_TESTES_REAIS.py")],
+        cwd=str(tmp_path), capture_output=True, text=True, encoding="utf-8", errors="replace", env=env,
+    )
+    assert proc.returncode == 0, proc.stdout
+    conteudo = progresso.read_text(encoding="utf-8")
+    assert "(1/1) aidd-forge: pytest rodando..." in conteudo
+    assert "(1/1) aidd-forge: OK" in conteudo

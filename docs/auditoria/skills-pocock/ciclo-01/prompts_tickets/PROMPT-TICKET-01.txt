@@ -1,0 +1,25 @@
+ROLE: Builder. Ecosystem AIDD. Ticket 1. Target tool: skills-pocock.
+DIMENSION: D8
+DELIVER: componentes/compartilhado/skills/aidd-diagnose/SKILL.md
+
+STEPS:
+- Write tests/test_skills_pocock_diagnose.py first. Assert fail while SKILL.md says "exactly ONE hypothesis".
+- Also assert presence: red-capable command already run, minimise step, 3-5 ranked hypotheses, [DEBUG- prefix, no-seam finding.
+- Run test. Assert exit 1.
+- Edit componentes/compartilhado/skills/aidd-diagnose/SKILL.md. Phase 1 builds feedback loop: one command, already run, goes red on this bug, deterministic, fast.
+- No loop: stop, ask user for access or redacted artifact.
+- Add minimise step. Replace single hypothesis with 3-5 falsifiable ranked hypotheses, shown to user, tested one at a time.
+- Tag temp logs [DEBUG-xxxx]. Keep file under 150 lines.
+- Precondition: branch audit/evolucao-aidd-diagnose-ciclo-01 merged into main. Else stop, exit 1, tell user.
+- Never rewrite whole file. Edit phases 1, 3, 4, 6 only. Keep phase 2 byte for byte.
+- Put ranked list under own heading "## Hipoteses candidatas" placed before "HIPOTESES ATIVAS:". Keep exactly one active hypothesis. Run python gates/G_aidd_diagnose.py on a sample report. Assert exit 0.
+- Test asserts phase 2 block unchanged versus git HEAD.
+- Run test. Assert exit 0. Run python gates/G_HARNESS_COMPAT.py. Assert exit 0.
+
+RULES:
+1. Write failing test first. Run. Assert exit 1.
+2. Implement. Zero stubs. Real pytest tests. Run. Assert exit 0.
+3. Work inside ephemeral Git Worktree only.
+4. Capture real exit code: redirect to file, read $? same line. Never trust pipes.
+5. NEVER edit docs/auditoria/CONFIG-EXECUCAO-USUARIO.json.
+6. Deliver exactly: componentes/compartilhado/skills/aidd-diagnose/SKILL.md

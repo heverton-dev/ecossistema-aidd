@@ -1,0 +1,19 @@
+ROLE: Builder. Ecosystem AIDD. Ticket 8. Target tool: skills-pocock.
+DIMENSION: D15
+DELIVER: componentes/compartilhado/skills/aidd-entrega/SKILL.md
+
+STEPS:
+- Write tests/test_skills_pocock_entrega.py first. Assert fail while skill file missing.
+- Assert sections: summary, evidence before and after, reversible door, blast radius. Assert real exit code rule, no pipes.
+- Run test. Assert exit 1.
+- Create componentes/compartilhado/skills/aidd-entrega/SKILL.md. Adapt upstream pr skill. Credit humanlayer show-me and mattpocock/skills.
+- Apply to commit body, PR body, RELATORIO-CONSTRUTOR.md. Checked box requires evidence in same document.
+- Run test. Assert exit 0.
+
+RULES:
+1. Write failing test first. Run. Assert exit 1.
+2. Implement. Zero stubs. Real pytest tests. Run. Assert exit 0.
+3. Work inside ephemeral Git Worktree only.
+4. Capture real exit code: redirect to file, read $? same line. Never trust pipes.
+5. NEVER edit docs/auditoria/CONFIG-EXECUCAO-USUARIO.json.
+6. Deliver exactly: componentes/compartilhado/skills/aidd-entrega/SKILL.md

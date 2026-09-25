@@ -894,3 +894,17 @@
   - `docs/auditoria/manifesto_auditoria.json`: Atualizado e validado.
 - **Data da Última Auditoria:** 22/09/2026.
 
+---
+
+## 13. Leitura UTF-8 da saída do pip-audit no G_SEGURANCA: `aidd-master` e `aidd-enterprise`
+
+- **Objetivo da Correção:** `test_cmd_audit_sucesso_todos_gates_passam` reprovava no `G_TESTES_REAIS` (2 falhas em cada ferramenta, iguais na `main` limpa e no ciclo `evolucao-aidd-diagnose-ciclo-01`). O `Popen` de `G_SEGURANCA.py` lia a saída do `pip-audit` com `text=True` sem `encoding`; no Windows a decodificação em cp1252 quebrava a thread leitora (`UnicodeDecodeError` no byte `0x90`), `stdout` virava `None` e `.strip()` estourava.
+- **Ferramentas Tocadas:** [`tools/aidd-master`](file:///C:/Users/trcnologia/Desktop/ecossistema-aidd/tools/aidd-master) e [`tools/aidd-enterprise`](file:///C:/Users/trcnologia/Desktop/ecossistema-aidd/tools/aidd-enterprise).
+- **O que executou:**
+  1. `templates/gates/G_SEGURANCA.py` e `scripts/gates/G_SEGURANCA.py` (master e enterprise): `encoding="utf-8", errors="replace"` no `Popen` quando `text=True`. As 4 cópias seguem idênticas (mesmo hash).
+- **Resultados de Testes:**
+  - `pytest tools/aidd-master/tests`: 439 passed, 3 skipped (antes: 2 failed).
+  - `pytest tools/aidd-enterprise/tests`: 365 passed, 3 skipped (antes: 2 failed).
+  - `G_TESTES_REAIS` dentro do pre-commit: `aidd-master` 408 passed / 0 failed; `aidd-enterprise` 336 passed / 0 failed.
+- **Data da Última Auditoria:** 24/09/2026.
+

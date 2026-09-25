@@ -976,6 +976,7 @@ _GATES_AUDIT = [
     "G_ANT_LOCKIN_LEGADO.py",
     "G_PIPELINE_HANDOFF.py",
     "G_DISPATCH_PIPELINE_VSA.py",
+    "G_GESTOR_SESSOES.py",
 ]
 
 
@@ -1097,6 +1098,16 @@ def cmd_harness(args):
         print(f"Erro: script '{script}' não encontrado.")
         return 1
     return run_command([sys.executable, script, action], cwd=ROOT_DIR)
+
+def cmd_sessao(args):
+    """Gerencia registro, consulta e busca determinística de sessões agênticas."""
+    script = os.path.join(ROOT_DIR, "scripts", "gestor_sessoes.py")
+    if not os.path.exists(script):
+        print(f"Erro: script '{script}' não encontrado.")
+        return 1
+    if not args:
+        args = ["listar"]
+    return run_command([sys.executable, script] + args, cwd=ROOT_DIR)
 
 
 def cmd_status(args):
@@ -1271,6 +1282,9 @@ Comandos disponíveis:
                       Executa de ponta a ponta a Tríade Canônica de forma síncrona:
                       [FORGE -> PLANNER] -> {GENERATOR|FACTORY|BRIDGE} -> [MASTER -> ENTERPRISE -> OPS]
                       com validação de contratos formais de handoff em cada etapa.
+  sessao [registrar|listar|buscar]
+                      Registra, lista e busca IDs e metadados de sessões agênticas
+                      em secoes/historico_sessoes.json e secoes/INDICE-SESSOES.md
   status              Exibe o status do ecossistema e ferramentas integradas
   status --testes     Roda pytest real em cada ferramenta e atualiza
                       PLANO-EXECUCAO-ESTRUTURADO.json com a contagem medida
@@ -1335,6 +1349,9 @@ def main():
         "aidd-evolucao": cmd_evolucao,
         "audit": cmd_audit,
         "harness": cmd_harness,
+        "sessao": cmd_sessao,
+        "session": cmd_sessao,
+        "sessoes": cmd_sessao,
         "preflight-host": cmd_preflight_host,
         "status": cmd_status,
         "help": lambda a: print_help() or 0,

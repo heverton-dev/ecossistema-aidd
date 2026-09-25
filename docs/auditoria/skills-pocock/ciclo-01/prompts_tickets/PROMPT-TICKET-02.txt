@@ -1,0 +1,21 @@
+ROLE: Builder. Ecosystem AIDD. Ticket 2. Target tool: skills-pocock.
+DIMENSION: D10
+DELIVER: componentes/compartilhado/skills/aidd-tickets/SKILL.md
+
+STEPS:
+- Write tests/test_skills_pocock_tickets.py first. Assert fail while fixed order tests-then-code-then-refactor exists.
+- Assert presence: Blocked by field, vertical slice rule, expand-migrate-contract, Target Files, Validation Command.
+- Run test. Assert exit 1.
+- Edit componentes/compartilhado/skills/aidd-tickets/SKILL.md. Each ticket delivers one complete verifiable behavior.
+- Add Blocked by per ticket. Prefactor first. Wide refactor: expand, migrate in batches, contract.
+- Keep Target Files and Validation Command fields. Keep user review before publish.
+- Grep consumers for TICKET- format. Confirm aidd-master still parses tickets.
+- Run test. Assert exit 0.
+
+RULES:
+1. Write failing test first. Run. Assert exit 1.
+2. Implement. Zero stubs. Real pytest tests. Run. Assert exit 0.
+3. Work inside ephemeral Git Worktree only.
+4. Capture real exit code: redirect to file, read $? same line. Never trust pipes.
+5. NEVER edit docs/auditoria/CONFIG-EXECUCAO-USUARIO.json.
+6. Deliver exactly: componentes/compartilhado/skills/aidd-tickets/SKILL.md

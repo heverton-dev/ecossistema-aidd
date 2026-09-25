@@ -1,0 +1,19 @@
+ROLE: Builder. Ecosystem AIDD. Ticket 9. Target tool: skills-pocock.
+DIMENSION: D11
+DELIVER: componentes/compartilhado/skills/aidd-wizard/template.sh
+
+STEPS:
+- Write tests/test_skills_pocock_wizard.py first. Assert fail while template.sh missing.
+- Test runs real bash: bash -n passes, write_env twice same key leaves one line in temp .env, ask_secret does not echo.
+- Run test. Assert exit 1.
+- Create componentes/compartilhado/skills/aidd-wizard/template.sh and SKILL.md. Adapt upstream wizard. Credit MIT.
+- Support Git Bash on Windows for URL opening.
+- Run test. Assert exit 0.
+
+RULES:
+1. Write failing test first. Run. Assert exit 1.
+2. Implement. Zero stubs. Real pytest tests. Run. Assert exit 0.
+3. Work inside ephemeral Git Worktree only.
+4. Capture real exit code: redirect to file, read $? same line. Never trust pipes.
+5. NEVER edit docs/auditoria/CONFIG-EXECUCAO-USUARIO.json.
+6. Deliver exactly: componentes/compartilhado/skills/aidd-wizard/template.sh

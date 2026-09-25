@@ -1,0 +1,16 @@
+{
+  "versao": "1.0",
+  "atualizado_em": "2026-09-24T20:54:32.879404",
+  "total_sessoes": 1,
+  "sessoes": [
+    {
+      "id": "fc4566a8-0804-4748-ab5f-ec105414273c",
+      "registrado_em": "2026-09-24 20:54:32",
+      "harness": "antigravity",
+      "modelo": "gemini-3.8-flash",
+      "titulo": "Criacao do Gestor e Skill de Gravacao de Sessao",
+      "workspace": "C:\\Users\\trcnologia\\Desktop\\ecossistema-aidd",
+      "transcript_path": "C:\\Users\\trcnologia\\.gemini\\antigravity-cli\\brain\\fc4566a8-0804-4748-ab5f-ec105414273c\\.system_generated\\logs\\transcript.jsonl"
+    }
+  ]
+}

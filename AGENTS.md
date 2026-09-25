@@ -45,6 +45,7 @@
 3. **Structured Persistence:** Persist state in audit files (JSON, SQLite), never in volatile conversation memory.
    - Portão: gates/G_MIGRATION_ROT.py (provado)
    - Portão: gates/G_ESTRUTURA_ESTADO.py (provado)
+   - Portão: gates/G_GESTOR_SESSOES.py (provado)
 4. **Extreme Token Economy:** Minimalist prompts, compact English core rules, dense PT-BR user responses only when requested.
    - Portão: gates/G_IDIOMA_LEI_4.py (provado)
    - Portão: gates/G_USER_FACING_PTBR.py (provado) — jargão explicado em README/`--help`/perfil leigo (Rule 10)
@@ -111,7 +112,7 @@ Every robust application in the ecosystem originates from **`aidd-forge`** (supr
   - CLI: `python ecossistema.py evolucao <tool>` ou `python ecossistema.py evolucao --manifest <json>`
   - Skills: `aidd-evolucao-runner`
 
-**Interoperabilidade Universal dos Slash Commands:** Em harnesses sem suporte a slash commands customizados na UI ou com colisões de namespace (como `/open` no Google Antigravity CLI), qualquer entrada do usuário referenciando `/pure`, `pure`, `/open`, `/aidd-open`, `open`, `/freedom`, `freedom`, `/factory`, `/bridge`, `/run-plan`, `run-plan`, `/pipeline`, `pipeline`, `/dispatch`, `dispatch`, `/aidd-dispatch`, `/audit-4f`, `audit-4f`, `/aidd-auditor`, `/evolucao`, `evolucao`, `/aidd-evolucao` DEVE ser interceptada pelo agente como a invocação imediata do respectivo fluxo ou comando do ecossistema. Silêncio ou erro de "comando não suportado" é estritamente proibido.
+**Interoperabilidade Universal dos Slash Commands:** Em harnesses sem suporte a slash commands customizados na UI ou com colisões de namespace (como `/open` no Google Antigravity CLI), qualquer entrada do usuário referenciando `/pure`, `pure`, `/open`, `/aidd-open`, `open`, `/freedom`, `freedom`, `/factory`, `/bridge`, `/run-plan`, `run-plan`, `/pipeline`, `pipeline`, `/dispatch`, `dispatch`, `/aidd-dispatch`, `/audit-4f`, `audit-4f`, `/aidd-auditor`, `/evolucao`, `evolucao`, `/aidd-evolucao`, `/sessao`, `sessao`, `/session`, `session`, `/id` DEVE ser interceptada pelo agente como a invocação imediata do respectivo fluxo ou comando do ecossistema. Silêncio ou erro de "comando não suportado" é estritamente proibido.
 
 **Universal Convergence Funnel:** All 3 flows mandatorily converge into `aidd-master` (Harmonização em Monólito Modular: VSA de domínio + camada horizontal compartilhada) -> `aidd-enterprise` (SHA-256 resilience and audit) -> `aidd-ops` (VPS deployment, sops+age, and Uptime Kuma), delivering the dynamic *Quarteto Sine Qua Non* (`/api`, `/webhook`, `/mcp`, `/docs`).
 
@@ -151,3 +152,4 @@ Canonical workflow skills available across all harnesses to eliminate vibe codin
 - `/aidd-tdd`: Strict Red-Green-Refactor cycle with zero stubs invariant across all language runtimes.
 - `/aidd-diagnose`: 5-phase scientific fault triage integrated with `code-review-graph`.
 - `/aidd-handoff`: Compact session context serialization directly into `secoes/`.
+- `/aidd-sessao`: Deterministic session ID and metadata persistence in `secoes/` for instant recovery.

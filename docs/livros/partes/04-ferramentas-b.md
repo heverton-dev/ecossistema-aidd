@@ -1,4 +1,4 @@
-# Capítulo 15 — `aidd-bridge`: o libertador de low-code
+# Capítulo 17 — `aidd-bridge`: o libertador de low-code
 
 ```{=typst}
 #ficha(
@@ -11,7 +11,7 @@
 )
 ```
 
-## 15.1 O que é a ferramenta
+## 17.1 O que é a ferramenta
 
 Pense numa casa pré-fabricada que você comprou de outra construtora: por fora está
 linda, mas a fiação e a fundação são proprietárias — só o técnico daquela construtora
@@ -28,7 +28,7 @@ A propriedade que torna isso viável é a emulação PostgREST: o cliente
 `@supabase/supabase-js` do frontend continua funcionando contra o novo backend, e por
 isso a interface é preservada exatamente como estava.
 
-## 15.2 O papel da ferramenta dentro do FLUXO
+## 17.2 O papel da ferramenta dentro do FLUXO
 
 É o motor da etapa 3 do Fluxo 03. A diferença essencial em relação aos outros dois
 motores é a origem: aqui existe um artefato de partida real — o export da plataforma
@@ -37,7 +37,7 @@ low-code — e o trabalho é de transformação, não de criação.
 Ao final, exporta o Quarteto *Sine Qua Non* em `quarteto_sine_qua_non/` para que o
 `aidd-master` o harmonize na estrutura VSA canônica.
 
-## 15.3 O papel da ferramenta dentro do ECOSSISTEMA
+## 17.3 O papel da ferramenta dentro do ECOSSISTEMA
 
 No ecossistema, o bridge é a **prova de agnosticidade aplicada a terceiros**: a Lei #6
 proíbe aprisionamento no próprio ecossistema, e o bridge estende esse princípio aos
@@ -46,7 +46,7 @@ projetos dos usuários, desfazendo o aprisionamento criado por outras plataforma
 É também a ferramenta com o maior número de operações destrutivas, e por isso a que tem
 o protocolo de confirmação mais rígido.
 
-## 15.4 Como foi pensada, está estruturada e configurada
+## 17.4 Como foi pensada, está estruturada e configurada
 
 O pacote `aidd_bridge/` organiza-se por responsabilidade de transformação:
 
@@ -71,7 +71,7 @@ PostgREST; fusão multi-aplicação em fatias; migração real de autenticação
 preservação de hash; teardown atômico com confirmação obrigatória; Quarteto *Sine Qua
 Non* exportado; e subordinação aos quatro portões dedicados.
 
-## 15.5 Como funciona individualmente
+## 17.5 Como funciona individualmente
 
 **Passo a passo.** O pipeline completo (`unpack`) executa as seis fases descritas no
 capítulo 9. Os subcomandos individuais permitem operar fase a fase:
@@ -107,7 +107,7 @@ derrubava o pipeline no console padrão do Windows.
 limpo e Quarteto exportado. Entrega **para o `aidd-master`** dentro do fluxo e **para a
 VPS do usuário** ao final.
 
-## 15.6 Como funciona dentro da camada FLUXO
+## 17.6 Como funciona dentro da camada FLUXO
 
 **Passo a passo.** Etapa 3 do Fluxo 03. O orquestrador chama `bridge scan --dir
 <origem>`; o pipeline completo é acionado via `bridge unpack`.
@@ -128,7 +128,7 @@ Fluxos 01 e 02 usam `sqlite_wal`).
 **Entrega.** Entrega ao `aidd-master` o projeto convertido com o Quarteto pronto para
 harmonização.
 
-## 15.7 Como funciona dentro da camada ECOSSISTEMA
+## 17.7 Como funciona dentro da camada ECOSSISTEMA
 
 **Passo a passo.** Fora do fluxo, o bridge é usado cirurgicamente: converter só o banco,
 só empacotar, só migrar contas, só destruir uma stack.
@@ -150,13 +150,13 @@ projeto do usuário.
 dele — é o caminho pelo qual um sistema criado em plataforma proprietária passa a ser
 governado pelas mesmas leis dos sistemas nascidos aqui.
 
-## 15.8 Rastreabilidade
+## 17.8 Rastreabilidade
 
 `tools/aidd-bridge/AGENTS.md`; `tools/aidd-bridge/aidd_bridge/pipeline_bridge.py`;
 `tools/aidd-bridge/aidd_bridge/` (13 módulos); `tools/aidd-bridge/gates/` (4 portões);
 `ecossistema.py::cmd_bridge`; `scripts/orquestrador_sincrono.py::etapa_03_engine`.
 
-# Capítulo 16 — `aidd-master`: o harmonizador modular
+# Capítulo 18 — `aidd-master`: o harmonizador modular
 
 ```{=typst}
 #ficha(
@@ -169,7 +169,7 @@ governado pelas mesmas leis dos sistemas nascidos aqui.
 )
 ```
 
-## 16.1 O que é a ferramenta
+## 18.1 O que é a ferramenta
 
 `aidd-master` é onde os três fluxos convergem. Qualquer que seja o motor da etapa 3, o
 resultado passa por aqui e sai no mesmo formato: **monólito modular em fatias verticais**
@@ -178,7 +178,7 @@ resultado passa por aqui e sai no mesmo formato: **monólito modular em fatias v
 A analogia do `README.md` é a dos blocos de encaixe: permite acrescentar função nova sem
 quebrar o que já existe. A razão técnica é o isolamento de contexto delimitado.
 
-## 16.2 O papel da ferramenta dentro do FLUXO
+## 18.2 O papel da ferramenta dentro do FLUXO
 
 É a etapa 4 e a primeira do funil de convergência. O orquestrador roda `master init
 <slug>` e depois `master add-module <slug>`, criando a fatia vertical principal a partir
@@ -188,7 +188,7 @@ A etapa existe porque os três motores produzem coisas estruturalmente diferente
 autoral, integração de serviços, projeto low-code convertido — e o ecossistema precisa
 de uma forma canônica única para as etapas 5 e 6 operarem.
 
-## 16.3 O papel da ferramenta dentro do ECOSSISTEMA
+## 18.3 O papel da ferramenta dentro do ECOSSISTEMA
 
 No ecossistema, o `aidd-master` é o **guardião da arquitetura alvo**. Os seus dez
 portões locais definem, na prática, o que "arquitetura correta" significa no AIDD:
@@ -199,7 +199,7 @@ consulta parametrizada, exclusão lógica, observabilidade com SLA.
 e o `aidd-enterprise` compartilham são auditados contra baseline por
 `G_DRIFT_NUCLEO_COMPARTILHADO`.
 
-## 16.4 Como foi pensada, está estruturada e configurada
+## 18.4 Como foi pensada, está estruturada e configurada
 
 ### Os sete invariantes
 
@@ -252,7 +252,7 @@ um backend VSA (núcleo, módulo e Quarteto) a um frontend preservado — por ex
 saída do `aidd-bridge` — **sem sobrescrever** Docker, Caddy ou o frontend existente; é a
 peça que torna o Fluxo 03 possível sem perder a interface original.
 
-## 16.5 Como funciona individualmente
+## 18.5 Como funciona individualmente
 
 **Passo a passo.** `master init <slug> --pasta <p>` provisiona o projeto modular;
 `master add-module <nome>` gera a fatia vertical desacoplada com backend e frontend
@@ -281,7 +281,7 @@ verificável.
 tipado, banco WAL e contratos OpenAPI. Entrega **para o `aidd-enterprise`** dentro do
 fluxo.
 
-## 16.6 Como funciona dentro da camada FLUXO
+## 18.6 Como funciona dentro da camada FLUXO
 
 **Passo a passo.** Etapa 4. `master init <slug>` seguido de `master add-module <slug>`
 ou, na Meso-Camada, o despacho em Git Worktrees efêmeras governado por `dispatch_pipeline.py`.
@@ -308,7 +308,7 @@ Next.js e a Lei #10 (Quarteto) tem as rotas verificadas para o handoff.
 **Entrega.** Entrega ao `aidd-enterprise` a lista de componentes para blindagem e a
 confirmação de que o servidor sobe e as rotas do Quarteto respondem.
 
-## 16.7 Como funciona dentro da camada ECOSSISTEMA
+## 18.7 Como funciona dentro da camada ECOSSISTEMA
 
 **Passo a passo.** Fora do fluxo, `/master <modulo>` é o comando do dia a dia: adicionar
 uma fatia nova a um sistema em produção. Na orquestração de fatias paralelas, o comando
@@ -333,7 +333,7 @@ da ferramenta no cofre canônico.
 os seus portões são a especificação operacional do que o AIDD considera um sistema bem
 construído.
 
-## 16.8 Rastreabilidade
+## 18.8 Rastreabilidade
 
 `tools/aidd-master/AGENTS.md`; `tools/aidd-master/scripts/aidd.py` (22 subcomandos);
 `tools/aidd-master/scripts/dispatch_pipeline.py`;
@@ -345,7 +345,7 @@ construído.
 `componentes/compartilhado/specs/handoff-master-to-enterprise.schema.json`;
 `componentes/compartilhado/specs/vsa-topological-dispatch.schema.json`.
 
-# Capítulo 17 — `aidd-enterprise`: a blindagem criptográfica
+# Capítulo 19 — `aidd-enterprise`: a blindagem criptográfica
 
 ```{=typst}
 #ficha(
@@ -358,7 +358,7 @@ construído.
 )
 ```
 
-## 17.1 O que é a ferramenta
+## 19.1 O que é a ferramenta
 
 Se o `aidd-master` já instalou fechaduras normais em cada porta da casa, o
 `aidd-enterprise` é o especialista que chega depois e troca todas por **fechadura de
@@ -373,7 +373,7 @@ A distinção entre as duas ferramentas é de regime de confiança, não de arqu
 master constrói; o enterprise constrói **sob suspeita permanente** — zero-trust aplicado
 à própria cadeia de componentes.
 
-## 17.2 O papel da ferramenta dentro do FLUXO
+## 19.2 O papel da ferramenta dentro do FLUXO
 
 É a etapa 5. O orquestrador executa duas operações: `enterprise inject rule
 regra-integridade-<slug>` e `enterprise verificar-drift`. Ambas precisam sair com
@@ -383,7 +383,7 @@ O que essa etapa acrescenta ao produto é a garantia de que os componentes de go
 presentes no projeto são exatamente os que deveriam estar ali — nem adulterados, nem
 dessincronizados entre assistentes.
 
-## 17.3 O papel da ferramenta dentro do ECOSSISTEMA
+## 19.3 O papel da ferramenta dentro do ECOSSISTEMA
 
 No ecossistema, o enterprise é o **par de linhagem do master**. As duas ferramentas
 compartilham arquivos de núcleo, e essa duplicação é deliberada e auditada: o portão
@@ -394,7 +394,7 @@ as duas linhagens.
 É também a ferramenta que responde pela conformidade regulada: projetos que precisam
 demonstrar integridade de cadeia a um auditor externo passam por aqui.
 
-## 17.4 Como foi pensada, está estruturada e configurada
+## 19.4 Como foi pensada, está estruturada e configurada
 
 Os seis invariantes do `AGENTS.md`: integridade criptográfica (validação SHA-256 antes
 da execução); mônada `Result` com exceção bloqueada no perímetro; contextos delimitados
@@ -413,7 +413,7 @@ JSON Schema, arquivos de núcleo `profiles_registry.py`, `detector_camada.py`,
 varredura AST anti-stub e suíte pytest dedicada) e a sincronização multi-harness com
 integridade SHA-256 pós-injeção via `sincronizador_harness.verificar_sincronizacao()`.
 
-## 17.5 Como funciona individualmente
+## 19.5 Como funciona individualmente
 
 **Passo a passo.** `enterprise inject <tipo> <nome> --dir <projeto>` resolve o perfil do
 componente, materializa com transação, sincroniza para os assistentes, calcula os hashes
@@ -437,7 +437,7 @@ assinatura.
 **Entrega.** Entrega componentes blindados e um veredito de drift. Entrega **para o
 `aidd-ops`** dentro do fluxo.
 
-## 17.6 Como funciona dentro da camada FLUXO
+## 19.6 Como funciona dentro da camada FLUXO
 
 **Passo a passo.** Etapa 5: `inject` seguido de `verificar-drift`.
 
@@ -456,7 +456,7 @@ e compose, e as portas expostas (80, 443, 3000).
 
 **Entrega.** Entrega ao `aidd-ops` a confirmação de integridade e o manifesto de deploy.
 
-## 17.7 Como funciona dentro da camada ECOSSISTEMA
+## 19.7 Como funciona dentro da camada ECOSSISTEMA
 
 **Passo a passo.** Fora do fluxo, `/enterprise inject` é o caminho para introduzir
 componente certificado em qualquer projeto AIDD.
@@ -485,7 +485,7 @@ do ecossistema.
 **Entrega.** Entrega ao ecossistema a garantia de que a cadeia de componentes é
 verificável — e o registro honesto de onde ela ainda não está.
 
-## 17.8 Rastreabilidade
+## 19.8 Rastreabilidade
 
 `tools/aidd-enterprise/AGENTS.md`; `tools/aidd-enterprise/scripts/aidd.py`;
 `tools/aidd-enterprise/scripts/run_all.py`;
@@ -494,7 +494,7 @@ verificável — e o registro honesto de onde ela ainda não está.
 `componentes/compartilhado/src-core/assinatura_manifesto.py`;
 `gates/G_DRIFT_NUCLEO_COMPARTILHADO.py` e `gates/baseline_nucleo_compartilhado.json`.
 
-# Capítulo 18 — `aidd-ops`: a infraestrutura agêntica
+# Capítulo 20 — `aidd-ops`: a infraestrutura agêntica
 
 ```{=typst}
 #ficha(
@@ -507,7 +507,7 @@ verificável — e o registro honesto de onde ela ainda não está.
 )
 ```
 
-## 18.1 O que é a ferramenta
+## 20.1 O que é a ferramenta
 
 Fechando a obra: a casa está construída, mobiliada e trancada — falta a concessionária
 ligar água, luz e internet, e o síndico instalar câmeras que avisam se algo cair. É
@@ -518,7 +518,7 @@ e prontuário para 2 mil pacientes"* — em uma infraestrutura dimensionada, pro
 monitorada: sizing de VPS, hardening de SSH, Docker, Traefik, PostgreSQL, Uptime Kuma e
 bateria de preflight de ponta a ponta.
 
-## 18.2 O papel da ferramenta dentro do FLUXO
+## 20.2 O papel da ferramenta dentro do FLUXO
 
 É a etapa 6. No orquestrador síncrono atual, a etapa se limita a **validar** a presença
 de `Dockerfile` e `docker-compose.yml` no projeto — o provisionamento real da VPS é
@@ -526,7 +526,7 @@ acionado separadamente, porque envolve credencial, host remoto e custo. Esse
 desacoplamento é deliberado: a Lei #7 (Desenvolvedor no Controle) não permite que um
 fluxo automatizado provisione infraestrutura paga sem decisão humana explícita.
 
-## 18.3 O papel da ferramenta dentro do ECOSSISTEMA
+## 20.3 O papel da ferramenta dentro do ECOSSISTEMA
 
 No ecossistema, o `aidd-ops` é a **fonte do plano de infraestrutura** — o mesmo
 `PLANO-INFRAESTRUTURA.json` que a `aidd-factory` consome e que o `aidd-planner` exporta.
@@ -537,7 +537,7 @@ descrito nos capítulos 8 e 12 nasceu aqui.
 escrever monitoramento, usa os templates oficiais do Uptime Kuma; em vez de escrever
 scripts de hardening, usa a coleção Ansible `devsec.hardening`.
 
-## 18.4 Como foi pensada, está estruturada e configurada
+## 20.4 Como foi pensada, está estruturada e configurada
 
 ### As três fases do pipeline
 
@@ -600,7 +600,7 @@ subdomínios da topologia, com resolver injetável; e simulação de um webhook 
 ponta com disparo sintético no gateway. Suporta injeção de dependência para execução
 hermética em teste unitário e devolve `Result` com relatório estruturado em JSON.
 
-## 18.5 Como funciona individualmente
+## 20.5 Como funciona individualmente
 
 **Passo a passo.**
 
@@ -632,7 +632,7 @@ oficiais apenas.
 relatório de preflight em JSON. Entrega **para a `aidd-factory`** (o plano) e **para a
 produção** (a infraestrutura).
 
-## 18.6 Como funciona dentro da camada FLUXO
+## 20.6 Como funciona dentro da camada FLUXO
 
 **Passo a passo.** Etapa 6: valida a presença dos manifestos Docker no projeto. O
 provisionamento real fica fora do fluxo automatizado, por decisão de governança.
@@ -650,7 +650,7 @@ provisionamento real fica fora do fluxo automatizado, por decisão de governanç
 **Entrega.** Entrega à etapa 7 (auditoria) a confirmação de que os manifestos existem e
 são válidos.
 
-## 18.7 Como funciona dentro da camada ECOSSISTEMA
+## 20.7 Como funciona dentro da camada ECOSSISTEMA
 
 **Passo a passo.** Fora do fluxo, o `aidd-ops` é a ferramenta de operação contínua:
 planejar, provisionar, implantar, monitorar, rotacionar segredo
@@ -673,7 +673,7 @@ consistentemente integrar o que já existe a escrever o próprio.
 **Entrega.** Entrega ao ecossistema o contrato de infraestrutura compartilhado e, ao
 usuário, um sistema em produção com observabilidade real.
 
-## 18.8 Rastreabilidade
+## 20.8 Rastreabilidade
 
 `tools/aidd-ops/AGENTS.md`; `tools/aidd-ops/scripts/pipeline_ops.py`;
 `tools/aidd-ops/scripts/phases/` (3 fases); `tools/aidd-ops/src/core/` (7 módulos);

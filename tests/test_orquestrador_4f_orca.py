@@ -36,10 +36,17 @@ def run_limpo(monkeypatch):
     monkeypatch.setattr(orquestrador_4f.time, "sleep", lambda s: None)
 
 
-def _orca_falso(chamadas, mensagens):
+def _orca_falso(chamadas, mensagens, eco=True):
+    """eco=True: o texto enviado aparece na tela (harness pronto); False: é descartado."""
+    digitado = []
+
     def orca(*args, **kwargs):
         chamadas.append(args)
         acao = args[:2]
+        if acao == ("terminal", "send") and "--text" in args and eco:
+            digitado.append(args[args.index("--text") + 1])
+        if acao == ("terminal", "read"):
+            return {"terminal": {"tail": digitado[-1:]}}
         if acao == ("orchestration", "run-create"):
             return {"run": {"id": "run_1"}}
         if acao == ("terminal", "create"):
@@ -93,6 +100,16 @@ def test_fluxo_injeta_tarefa_espera_worker_done_e_fecha_terminais(tmp_path, monk
     assert chamadas[-1][:2] == ("terminal", "close") and "--all" in chamadas[-1]
 
 
+def test_texto_descartado_pelo_harness_e_reenviado_e_nunca_confirmado_as_cegas(tmp_path, monkeypatch):
+    chamadas = []
+    monkeypatch.setattr(orquestrador_4f, "orca", _orca_falso(chamadas, [_lote("ctx_1")], eco=False))
+
+    assert orquestrador_4f.run_agente_orca("mimo", tmp_path, None, None, titulo="T") == "failed"
+    envios = [a for a in chamadas if a[:2] == ("terminal", "send")]
+    assert sum("--text" in a for a in envios) == 5  # reenviou até o limite
+    assert not any(a[-1] == "--enter" and "--text" not in a for a in envios)  # Enter nunca às cegas
+
+
 def test_worker_done_de_outro_dispatch_e_ignorado(tmp_path, monkeypatch):
     chamadas = []
     monkeypatch.setattr(orquestrador_4f, "orca", _orca_falso(chamadas, [_lote("ctx_outro"), _lote("ctx_1", "failed")]))
@@ -114,21 +131,39 @@ def test_orca_indisponivel_cai_no_modo_oculto(tmp_path, monkeypatch):
     assert len(chamadas) == 1
 
 
-def test_confirma_pergunta_de_confianca_antes_da_tarefa(monkeypatch):
-    # agentWait do Orca fica velho (mimo): vale só o que a tela mostra agora.
-    telas = [{"terminal": {"tail": ["> Yes, I trust this folder", "No, exit"]}},
-             {"terminal": {"tail": ["Type your message..."]}}]
-    enviados = []
+def _terminal_com_confianca_tardia(enviados):
+    """Harness que desenha a pergunta de confiança só depois de carregar (agy, TICKET-06);
+    a tela só muda para 'pronto' depois do Enter. agentWait do Orca é ignorado (fica velho)."""
+    antes = iter(["Antigravity CLI carregando", "> Yes, I trust this folder\nNo, exit"])
+    estado = {"confirmado": False, "ultima": None}
 
     def orca_falso(*args, **kwargs):
         if args[:2] == ("terminal", "read"):
-            return telas.pop(0)
+            if estado["confirmado"]:
+                return {"terminal": {"tail": ["Type your message..."]}}
+            estado["ultima"] = next(antes, estado["ultima"])
+            return {"terminal": {"tail": [estado["ultima"]]}}
         enviados.append(args)
+        if args[:2] == ("terminal", "send") and "--enter" in args:
+            estado["confirmado"] = True
         return {}
+    return orca_falso
 
-    monkeypatch.setattr(orquestrador_4f, "orca", orca_falso)
+
+def test_confirma_pergunta_de_confianca_que_aparece_depois_de_carregar(monkeypatch):
+    enviados = []
+    monkeypatch.setattr(orquestrador_4f, "orca", _terminal_com_confianca_tardia(enviados))
     orquestrador_4f.confirmar_confianca_pasta("term_x")
     assert [a for a in enviados if a[:2] == ("terminal", "send")] == [("terminal", "send", "--terminal", "term_x", "--enter")]
+
+
+def test_worker_done_recusado_pelo_orca_aparece_no_resumo(monkeypatch):
+    payload = json.dumps({"dispatchId": "ctx_1", "outcome": "succeeded",
+                          "_orcaLifecycleRejection": {"code": "sender_not_assignee"}})
+    lote = {"deliveryId": "d1", "messages": [{"type": "worker_done", "subject": "feito", "payload": payload}]}
+    monkeypatch.setattr(orquestrador_4f, "orca", lambda *a, **k: lote if "--wait" in a else {})
+    outcome, resumo = orquestrador_4f.aguardar_worker_done("run_1", "ctx_1", timeout_s=5)
+    assert outcome == "succeeded" and "recusado pelo Orca: sender_not_assignee" in resumo
 
 
 def test_aviso_de_risco_com_padrao_exit_nunca_recebe_enter(monkeypatch):
