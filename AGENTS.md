@@ -3,6 +3,7 @@
 > **Repository:** https://github.com/heverton-dev/ecossistema-aidd
 > **Governance Standard:** Zero Stubs, Strict Determinism, Context Optimization (<2000 tokens), Absolute Cache Invariance.
 > **Full Reference:** `docs/protocolos/AGENTS-REFERENCIA-COMPLETA.md`
+> **Glossary:** `CONTEXT.md` — domain terms; read before using ciclo, fase, plano, sessão or ticket.
 
 ---
 
