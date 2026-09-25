@@ -9,15 +9,16 @@ Execute this skill BEFORE modifying code, designing features, or starting major 
 
 ## Execution Rules
 
-1. **One Question at a Time:** Never overwhelm the user with question dumps. Target the highest-risk ambiguity or architectural branching point first.
-2. **Exhaust Decision Branches:**
+1. **Rounds, Not Single Questions:** Each round asks the whole frontier: every open question whose prerequisites are already decided. Number the questions (1, 2, 3...) so the user can answer by number. Questions still blocked by an open decision wait for a later round.
+2. **Recommended Answer per Question:** Every question carries a recommended answer and one-line reason (e.g., "Recommended: A, because X"). The user may just reply "ok" to accept.
+3. **Facts vs Decisions:** Facts are the agent's job: read code, docs, configs, and git history before asking; never ask the user what the repository already answers. Decisions are the user's job: trade-offs, priorities, scope, naming.
+4. **Exhaust Decision Branches:**
    - Critical edge cases and boundary conditions.
    - Failure behavior: null, invalid, or concurrent inputs.
    - Core data invariants that must never be violated.
    - Blast radius and unwanted coupling with other modules.
-3. **Structured Options:** Provide concise, opinionated options (e.g., "Option A vs Option B; recommend A because of X").
-4. **Headless / Autonomous Fallback:** When executed in non-interactive batch pipelines (e.g., `aidd-generator` phases), synthesize default architectural assumptions into a structured `### Consolidated Assumptions` block and proceed deterministically.
-5. **Completion Gate:** Once critical decision branches are resolved, declare alignment and hand off execution to `/aidd-spec`.
+5. **Headless / Autonomous Fallback:** When executed in non-interactive batch pipelines (e.g., `aidd-generator` phases), synthesize default architectural assumptions into a structured `### Consolidated Assumptions` block, one numbered item per open question with its recommended answer, and proceed deterministically.
+6. **Completion Gate:** Done only when the frontier is empty and the user confirms alignment. Then hand off execution to `/aidd-spec`.
 
 ## Encadeamento Canônico de Intake
 Após concluir a entrevista socrática, avance deterministicamente para a próxima etapa:
