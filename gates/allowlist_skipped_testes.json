@@ -5,7 +5,11 @@
     "tests/unit/test_event_emitted_on_instance_a_is_processed_on_instance_b_via_redis": "Integracao real com Redis; skip automatico quando o binario redis-server nao esta disponivel na maquina.",
     "tests/unit/test_terraform_validate_real_binary": "Valida com o binario real do terraform; skip automatico quando o binario nao esta instalado.",
     "tests/unit/test_helm_lint_real_binary": "Valida com o binario real do helm; skip automatico quando o binario nao esta instalado.",
-    "tests/unit/test_harness_gate_fails_on_broken_symlink": "Requer criacao de symlink quebrado, privilegio indisponivel no Windows sem modo administrador (skip condicional de plataforma)."
+    "tests/unit/test_harness_gate_fails_on_broken_symlink": "Requer criacao de symlink quebrado, privilegio indisponivel no Windows sem modo administrador (skip condicional de plataforma).",
+    "tests/test_bash_n_passa": "aidd-wizard (skills-pocock T9): roda bash real sobre template.sh; skip automatico so quando nao ha bash utilizavel (Git Bash/nativo) no PATH. Suite da raiz (tests/test_skills_pocock_wizard.py), fora de tools/: G_TESTES_REAIS nao le esta chave; registro para rastreio.",
+    "tests/test_write_env_idempotente": "aidd-wizard (skills-pocock T9): roda bash real sobre template.sh; skip automatico so quando nao ha bash utilizavel (Git Bash/nativo) no PATH. Suite da raiz (tests/test_skills_pocock_wizard.py), fora de tools/: G_TESTES_REAIS nao le esta chave; registro para rastreio.",
+    "tests/test_entrada_oculta_nao_ecoa_e_captura": "aidd-wizard (skills-pocock T9): roda bash real sobre template.sh; skip automatico so quando nao ha bash utilizavel (Git Bash/nativo) no PATH. Suite da raiz (tests/test_skills_pocock_wizard.py), fora de tools/: G_TESTES_REAIS nao le esta chave; registro para rastreio.",
+    "tests/test_open_url_no_git_bash_usa_cmd_start": "aidd-wizard (skills-pocock T9): roda bash real sobre template.sh; skip automatico so quando nao ha bash utilizavel (Git Bash/nativo) no PATH. Suite da raiz (tests/test_skills_pocock_wizard.py), fora de tools/: G_TESTES_REAIS nao le esta chave; registro para rastreio."
   },
   "aidd-forge": [
     "tests/unit/test_harness_gate_fails_on_broken_symlink"
@@ -29,5 +33,11 @@
     "tests/unit/test_terraform_validate_real_binary",
     "tests/unit/test_helm_lint_real_binary"
   ],
-  "aidd-ops": []
+  "aidd-ops": [],
+  "raiz-tests": [
+    "tests/test_bash_n_passa",
+    "tests/test_write_env_idempotente",
+    "tests/test_entrada_oculta_nao_ecoa_e_captura",
+    "tests/test_open_url_no_git_bash_usa_cmd_start"
+  ]
 }
