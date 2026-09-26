@@ -13,27 +13,27 @@
 Cada comando possui contrato formal executável em qualquer harness (Antigravity, Claude Code, MimoCode, Cursor):
 
 ### /forge [caminho]
-- **Skill:** skills/aidd-forge-runner
+- **Skill:** skills/aidd-forge
 - **Ação:** Inicializa o ecossistema AIDD, cria governança, gates e otimizadores de token no diretório indicado (ou . para o diretório atual).
 - **CLI Equivalente:** python ecossistema.py forge init [caminho]
 
 ### /generate <ideia>
-- **Skill:** skills/aidd-generator-runner
+- **Skill:** skills/aidd-generator
 - **Ação:** Inicia o pipeline autônomo de 8 fases para transformar uma ideia em um projeto completo de software.
 - **CLI Equivalente:** python ecossistema.py generate "<ideia>"
 
 ### /master <modulo>
-- **Skill:** skills/aidd-master-runner
+- **Skill:** skills/aidd-master
 - **Ação:** Cria e integra uma nova fatia vertical de negócio (src/modules/<modulo>/) com rotas, modelos, serviços, UI e testes.
 - **CLI Equivalente:** python ecossistema.py master add-module <modulo>
 
 ### /enterprise <tipo> <nome>
-- **Skill:** skills/aidd-enterprise-runner
+- **Skill:** skills/aidd-enterprise
 - **Ação:** Injeta e valida componentes certificados com hashes SHA-256 e conformidade Zero-Trust.
 - **CLI Equivalente:** python ecossistema.py enterprise inject <tipo> <nome>
 
 ### /ops [requisito]
-- **Skill:** skills/aidd-ops-runner
+- **Skill:** skills/aidd-ops
 - **Ação:** Meta-Orquestrador Agêntico de Infraestrutura — orquestra stacks self-hosted a partir de requisitos em linguagem natural (sizing VPS, hardening SSH, Docker, deploy).
 - **CLI Equivalente:** python ecossistema.py ops [requisito]
 
@@ -72,7 +72,7 @@ skills respondendo ao mesmo comando, com regras opostas, foi a causa direta das
 - **CLI Equivalente:** python ecossistema.py freedom (ou python ecossistema.py run-fluxo --fluxo freedom)
 
 ### /bridge [comando]
-- **Skill:** skills/aidd-bridge-runner
+- **Skill:** skills/aidd-bridge
 - **Ação:** Aciona operações atômicas da ferramenta aidd-bridge: scan, convert-db, merge, pack e migrate-auth.
 - **CLI Equivalente:** python ecossistema.py bridge [scan|convert-db|merge|pack]
 

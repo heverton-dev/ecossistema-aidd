@@ -1138,13 +1138,13 @@ def cmd_status(args):
 
     print("\nSkills Universais:")
     skills_list = [
-        "aidd-forge-runner",
-        "aidd-generator-runner",
-        "aidd-master-runner",
-        "aidd-enterprise-runner",
-        "aidd-ops-runner",
-        "aidd-bridge-runner",
-        "aidd-planner-runner",
+        "aidd-forge",
+        "aidd-generator",
+        "aidd-master",
+        "aidd-enterprise",
+        "aidd-ops",
+        "aidd-bridge",
+        "aidd-planner",
         "orca-plan-orchestrator",
         "planos-auditoria-runner",
         "componentes-runner",

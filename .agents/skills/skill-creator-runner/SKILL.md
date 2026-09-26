@@ -23,7 +23,7 @@ escrito direto numa pasta de harness.
 2. **Se o harness não tiver ferramenta nativa de autoria de skills**, siga
    este checklist condensado, usando como referência real as skills já
    existentes em `componentes/compartilhado/skills/` (ex.: `dependencia-runner`,
-   `aidd-ops-runner`) — leia uma antes de escrever:
+   `aidd-ops`) — leia uma antes de escrever:
    - `name`: kebab-case, único no ecossistema (confira `python ecossistema.py components verify --tipo skill` não vai colidir).
    - `description`: 1 frase, específica o bastante pra disparar só quando deveria — nunca genérica ("ajuda com X") a ponto de competir com outra skill.
    - Corpo: seção "Protocolo ao ser acionada" com passos numerados e determinísticos sempre que possível (comando real, não "decida a melhor forma").

@@ -51,31 +51,31 @@
     {
       "id": "aidd-forge",
       "caminho": "tools/aidd-forge",
-      "skill": "skills/aidd-forge-runner",
+      "skill": "skills/aidd-forge",
       "slash_command": "/forge [caminho]"
     },
     {
       "id": "aidd-generator",
       "caminho": "tools/aidd-generator",
-      "skill": "skills/aidd-generator-runner",
+      "skill": "skills/aidd-generator",
       "slash_command": "/generate <ideia>"
     },
     {
       "id": "aidd-master",
       "caminho": "tools/aidd-master",
-      "skill": "skills/aidd-master-runner",
+      "skill": "skills/aidd-master",
       "slash_command": "/master <modulo>"
     },
     {
       "id": "aidd-enterprise",
       "caminho": "tools/aidd-enterprise",
-      "skill": "skills/aidd-enterprise-runner",
+      "skill": "skills/aidd-enterprise",
       "slash_command": "/enterprise <tipo> <nome>"
     },
     {
       "id": "aidd-ops",
       "caminho": "tools/aidd-ops",
-      "skill": "skills/aidd-ops-runner",
+      "skill": "skills/aidd-ops",
       "slash_command": "/ops [acao]"
     }
   ],

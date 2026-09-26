@@ -6,5 +6,5 @@ Dispara o pipeline autônomo de 8 fases do `aidd-generator` para transformar uma
 `/generate <ideia>`
 
 ## Ação:
-Executa a skill `skills/aidd-generator-runner` para conduzir desde requisitos até testes automatizados.
+Executa a skill `skills/aidd-generator` para conduzir desde requisitos até testes automatizados.
 Equivalente CLI: `python ecossistema.py generate "<ideia>"`

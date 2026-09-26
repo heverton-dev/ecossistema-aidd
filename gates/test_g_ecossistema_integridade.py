@@ -30,14 +30,14 @@ TOOLS_REQUIRED = [
 ]
 
 SKILLS_REQUIRED = [
-    "aidd-forge-runner",
-    "aidd-planner-runner",
-    "aidd-generator-runner",
-    "aidd-master-runner",
-    "aidd-enterprise-runner",
-    "aidd-ops-runner",
-    "aidd-bridge-runner",
-    "aidd-factory-runner"
+    "aidd-forge",
+    "aidd-planner",
+    "aidd-generator",
+    "aidd-master",
+    "aidd-enterprise",
+    "aidd-ops",
+    "aidd-bridge",
+    "aidd-factory"
 ]
 
 COMMANDS_REQUIRED = [
@@ -125,7 +125,7 @@ def test_falha_se_git_acidental_dentro_de_tool(tmp_path):
 
 def test_falha_se_skill_sem_yaml_frontmatter(tmp_path):
     gate_path = _montar_arvore_valida(tmp_path)
-    skill_file = tmp_path / "componentes" / "compartilhado" / "skills" / "aidd-forge-runner" / "SKILL.md"
+    skill_file = tmp_path / "componentes" / "compartilhado" / "skills" / "aidd-forge" / "SKILL.md"
     skill_file.write_text("# Sem frontmatter\nApenas markdown normal.", encoding="utf-8")
 
     res = rodar_gate(gate_path, tmp_path)
@@ -163,14 +163,14 @@ def test_falha_se_tool_aidd_ops_ausente(tmp_path):
 
 
 def test_falha_se_skill_aidd_ops_runner_ausente(tmp_path):
-    """Gate reprova quando componentes/compartilhado/skills/aidd-ops-runner/SKILL.md não existe."""
+    """Gate reprova quando componentes/compartilhado/skills/aidd-ops/SKILL.md não existe."""
     gate_path = _montar_arvore_valida(tmp_path)
-    os.remove(tmp_path / "componentes" / "compartilhado" / "skills" / "aidd-ops-runner" / "SKILL.md")
-    os.rmdir(tmp_path / "componentes" / "compartilhado" / "skills" / "aidd-ops-runner")
+    os.remove(tmp_path / "componentes" / "compartilhado" / "skills" / "aidd-ops" / "SKILL.md")
+    os.rmdir(tmp_path / "componentes" / "compartilhado" / "skills" / "aidd-ops")
 
     res = rodar_gate(gate_path, tmp_path)
     assert res.returncode == 1
-    assert "aidd-ops-runner" in res.stdout
+    assert "aidd-ops" in res.stdout
 
 
 def test_falha_se_command_ops_md_ausente(tmp_path):

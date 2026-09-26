@@ -88,18 +88,18 @@ O **Ecossistema AIDD** é um monorepo agnóstico que integra 8 ferramentas compl
 | `/open <ideia>` | `aidd-open`, `fluxo-02-runner` | `python ecossistema.py open` (ou `run-fluxo --fluxo open`) | **Tríade Fluxo 02:** Execução síncrona com motores Open-Source curados (Factory + Master + Enterprise + Ops). |
 | `/freedom <origem> <nome>` | `aidd-freedom`, `fluxo-03-runner` | `python ecossistema.py freedom` (ou `run-fluxo --fluxo freedom`) | **Tríade Fluxo 03:** Execução síncrona libertando Low-Code (Lovable/v0) para VPS própria (Bridge + Master + Enterprise + Ops). |
 | `/aidd-orchestrator` | `aidd-orchestrator-runner` | `python ecossistema.py run-fluxo` | Orquestrador Mestre Síncrono da Tríade Canônica com validação formal de contratos. |
-| `/forge [caminho]` | `aidd-forge-runner` | `python ecossistema.py forge init [caminho]` | Bootstrap e blindagem de governança em novos projetos. |
-| `/generate <ideia>` | `aidd-generator-runner` | `python ecossistema.py generate "<ideia>"` | Disparo da fábrica de 8 fases a partir de ideia. |
-| `/master <modulo>` | `aidd-master-runner` | `python ecossistema.py master add-module <modulo>` | Criação de fatia vertical desacoplada em monólito modular. |
-| `/enterprise <tipo> <nome>` | `aidd-enterprise-runner` | `python ecossistema.py enterprise inject <tipo> <nome>` | Injeção de componentes corporativos certificados SHA-256. |
-| `/ops [requisito]` | `aidd-ops-runner` | `python ecossistema.py ops [requisito]` | Meta-Orquestrador de Infraestrutura: VPS, Docker, SSH, deploy. |
+| `/forge [caminho]` | `aidd-forge` | `python ecossistema.py forge init [caminho]` | Bootstrap e blindagem de governança em novos projetos. |
+| `/generate <ideia>` | `aidd-generator` | `python ecossistema.py generate "<ideia>"` | Disparo da fábrica de 8 fases a partir de ideia. |
+| `/master <modulo>` | `aidd-master` | `python ecossistema.py master add-module <modulo>` | Criação de fatia vertical desacoplada em monólito modular. |
+| `/enterprise <tipo> <nome>` | `aidd-enterprise` | `python ecossistema.py enterprise inject <tipo> <nome>` | Injeção de componentes corporativos certificados SHA-256. |
+| `/ops [requisito]` | `aidd-ops` | `python ecossistema.py ops [requisito]` | Meta-Orquestrador de Infraestrutura: VPS, Docker, SSH, deploy. |
 | `/orchestrate [plano]` | `orca-plan-orchestrator` | `python ecossistema.py orchestrate [plano]` | ORCA ADE — orquestração de planos de desenvolvimento via worktrees efêmeras. |
 | `/run-plan <plano>` | `aidd-pipeline-runner` | `python ecossistema.py run-plan <plano>` | Executa pipeline determinístico de planos Markdown em Git Worktrees com Join Barrier. |
 | `/pipeline <handoff>` | `aidd-pipeline-runner` | `python ecossistema.py pipeline --handoff <json>` | Executa pipeline determinístico a partir de manifesto JSON de handoff. |
 | `/dispatch [args]` | `aidd-dispatch-runner` | `python ecossistema.py dispatch --planner <plano>` | Despacha fatias verticais VSA em Git Worktrees efêmeras com ordenação DAG topológica e convergência master. |
 | `/aidd-dispatch` | `aidd-dispatch-runner` | `python ecossistema.py dispatch` | Alias canônico para o despacho da Meso-Camada VSA. |
 | `/plan <nome>` | `planos-auditoria-runner` | `python ecossistema.py plan init <nome>` | Estruturação determinística de planos de auditoria e evolução. |
-| `/bridge [comando]` | `aidd-bridge-runner` | `python ecossistema.py bridge [scan\|convert-db\|merge\|pack]` | Extrai, unifica e empacota apps Lovable/Supabase para VPS com PostgREST e Docker. |
+| `/bridge [comando]` | `aidd-bridge` | `python ecossistema.py bridge [scan\|convert-db\|merge\|pack]` | Extrai, unifica e empacota apps Lovable/Supabase para VPS com PostgREST e Docker. |
 | `/aidd-grill` | `aidd-grill` | N/A (Chat Interativo / Headless Fallback) | Entrevista socrática pré-código para alinhamento de invariantes e edge cases (handoff para `/aidd-spec`). |
 | `/aidd-grill-docs` | `aidd-grill-docs` | N/A (Chat Interativo) | Questionamento socrático ancorado em MEMORY.md e governança local. |
 | `/aidd-spec` | `aidd-spec` | N/A (Chat / Plan Generator) | Especificação técnica determinística com critérios binários (handoff para `/aidd-planner`). |

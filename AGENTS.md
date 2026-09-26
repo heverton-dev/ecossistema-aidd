@@ -96,7 +96,7 @@ Every robust application in the ecosystem originates from **`aidd-forge`** (supr
 - **FLUXO 03 — `aidd-freedom` (Low-Code / Apps Unificadas | Slash: `/freedom`):** `[FORGE -> PLANNER] -> BRIDGE -> [MASTER -> ENTERPRISE -> OPS]`
   - Engine: `aidd-bridge` (Vendor lock-in eradication, Lovable/v0/Bolt cleanup, PostgreSQL, UI preservation).
   - CLI: `python ecossistema.py freedom` ou `python ecossistema.py run-fluxo --fluxo freedom`
-  - Skills: `aidd-freedom`, `freedom`, `fluxo-03-runner` (operações atômicas da ferramenta via `aidd-bridge-runner`)
+  - Skills: `aidd-freedom`, `freedom`, `fluxo-03-runner` (operações atômicas da ferramenta via `aidd-bridge`)
 - **EXECUÇÃO DETERMINÍSTICA DE PIPELINE & PLANOS (Slash: `/run-plan` e `/pipeline`):**
   - Engine: `tools/aidd-master/scripts/orchestrator_pipeline.py` & `scripts/compilador_tickets_plano.py` (Worktrees efêmeras + Join Barrier).
   - CLI: `python ecossistema.py run-plan <plano>` e `python ecossistema.py pipeline --handoff <json>`
