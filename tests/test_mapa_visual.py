@@ -146,3 +146,50 @@ def test_todo_mapa_previsto_tem_molde_se_tem_gerador():
         if tipo in mv.GERADORES:
             assert (mv.MOLDES / f"{tipo}.html").is_file(), tipo
             assert tipo in mv.TITULOS, tipo
+
+
+def _cat_encaixes():
+    etapas = [
+        {"etapa": "etapa_01_forge", "descricao": "Etapa 1.", "chamadas_cli": [["forge", "init"]],
+         "chamadas_por_fluxo": {}, "atalhos_internos": [], "chama_alguma_ferramenta": True},
+        {"etapa": "etapa_03_engine", "descricao": "Etapa 3.", "chamadas_cli": [["factory", "curate"]],
+         "chamadas_por_fluxo": {"open": [["factory", "curate"]]}, "atalhos_internos": ["tools/x"],
+         "chama_alguma_ferramenta": True},
+        {"etapa": "etapa_07_auditoria", "descricao": "Etapa 7.", "chamadas_cli": [], "chamadas_por_fluxo": {},
+         "atalhos_internos": [], "chama_alguma_ferramenta": False},
+    ]
+    return {"receita_triade": {"etapas": etapas},
+            "encaixes": [{"etapa": "etapa_01_forge", "chamada": "ecossistema.py forge init", "encaixa": True, "problemas": []},
+                         {"etapa": "etapa_03_engine", "chamada": "ecossistema.py factory curate", "encaixa": False,
+                          "problemas": ["flags inexistentes: --dir"]}],
+            "contratos": [{"id": "handoff-a", "titulo": "A", "usado_por": ["scripts/x.py"]}],
+            "achados": {"etapas_sem_ferramenta": ["etapa_07_auditoria"],
+                        "etapas_com_atalho_interno": {"etapa_03_engine": ["tools/x"]}}}
+
+
+def test_encaixes_quebra_e_fachada_saem_do_catalogo():
+    valores = mv.valores_encaixes(_cat_encaixes())
+    assert 'chip falha">quebra' in valores["RECEITA"] and "só open" in valores["RECEITA"]
+    assert "flags inexistentes: --dir" in valores["QUEBRADOS"]
+    assert "7 · auditoria" in valores["SEM_FERRAMENTA"] and "tools/x" in valores["ATALHOS"]
+    assert "Não chama nenhuma ferramenta." in valores["RECEITA"] and "handoff-a" in valores["CONTRATOS"]
+
+
+def test_encaixes_marcador_desencontrado_reprova(tmp_path, monkeypatch):
+    (tmp_path / "encaixes.html").write_text("{{TOTAIS}} {{RECEITA}} {{SOBROU}}", encoding="utf-8")
+    (tmp_path / "base.css").write_text("", encoding="utf-8")
+    monkeypatch.setattr(mv, "MOLDES", tmp_path)
+    with pytest.raises(ValueError, match="SOBROU"):
+        mv.montar("encaixes", _cat_encaixes(), "m.html", fragmento=True)
+
+
+@pytest.mark.parametrize("tipo", ["encaixes"])
+def test_mapa_roda_de_verdade_no_repositorio(tmp_path, tipo):
+    saida = tmp_path / "mapa.html"
+    proc = subprocess.run([sys.executable, str(ROOT / "scripts" / "mapa_visual.py"), tipo,
+                           "--saida", str(saida), "--fragmento"],
+                          cwd=ROOT, capture_output=True, text=True, encoding="utf-8")
+    assert proc.returncode == 0, proc.stdout + proc.stderr
+    texto = saida.read_text(encoding="utf-8")
+    assert texto.startswith(f"<title>{mv.TITULOS[tipo]}</title>") and "{{" not in texto
+    assert texto.count('<article class="item"') > 0

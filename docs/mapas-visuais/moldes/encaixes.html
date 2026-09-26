@@ -1,0 +1,59 @@
+<!-- Molde do mapa dos encaixes. Texto fixo aqui; etapas, chamadas e contratos entram por scripts/mapa_visual.py. -->
+<div class="wrap">
+
+<a class="voltar" href="{{LINK_MANUAL}}">← Manual de montagem</a>
+<header>
+  <span class="eyebrow">Mapa visual · peça: encaixe (contrato)</span>
+  <h1>Mapa dos encaixes</h1>
+  <p class="lead">Um encaixe é o formato combinado entre duas peças: o que uma entrega e a próxima recebe. Este mapa mostra a receita da Tríade etapa por etapa, cada chamada que uma etapa faz a uma ferramenta e se ela encaixa de verdade, e os contratos que ligam as etapas.</p>
+  {{TOTAIS}}
+</header>
+
+<section id="o-que">
+  <span class="eyebrow">O quê · por quê · para quê</span>
+  <h2>Por que o encaixe importa</h2>
+  <div class="grid3">
+    <div class="box"><h3>O que é</h3><p>Duas coisas: a <b>chamada</b> (o comando exato que a receita manda para a ferramenta) e o <b>contrato</b> (o arquivo JSON Schema que diz o formato do que passa de uma etapa para a outra).</p></div>
+    <div class="box"><h3>Por que conferir</h3><p>Uma chamada com uma opção que a ferramenta não conhece faz a etapa quebrar na hora de rodar, mesmo que cada peça, sozinha, funcione.</p></div>
+    <div class="box"><h3>Para que serve</h3><p>Para ver onde a receita quebra antes de rodar, e para uma peça nova saber exatamente o formato que precisa entregar.</p></div>
+  </div>
+</section>
+
+<section id="receita">
+  <span class="eyebrow">A receita · etapa por etapa</span>
+  <h2>As etapas da Tríade e suas chamadas</h2>
+  <p>Cada chamada foi conferida contra a ajuda real da ferramenta (os subcomandos e as opções que ela aceita). <span class="chip ok">encaixa</span> quer dizer que a ferramenta aceita a chamada como está escrita; <span class="chip falha">quebra</span> quer dizer que não aceita.</p>
+  {{RECEITA}}
+</section>
+
+<section id="quebras">
+  <span class="eyebrow">Onde quebra · encontrado agora</span>
+  <h2>O que está quebrado hoje</h2>
+  <div class="grid2">
+    <div class="box"><h3>Chamadas que não encaixam</h3><p>A receita manda um comando que a ferramenta não aceita:</p>{{QUEBRADOS}}</div>
+    <div class="box"><h3>Etapas que não chamam ferramenta nenhuma</h3><p>A etapa existe na receita, mas não entrega nada de uma ferramenta. Se ela diz que conferiu algo, é uma fachada:</p>{{SEM_FERRAMENTA}}</div>
+    <div class="box"><h3>Atalhos por dentro</h3><p>A receita pula o painel de botões (<code>ecossistema.py</code>) e mexe direto nos arquivos de uma ferramenta. Funciona, mas a ferramenta perde o controle do próprio encaixe:</p>{{ATALHOS}}</div>
+  </div>
+</section>
+
+<section id="contratos">
+  <span class="eyebrow">Os contratos</span>
+  <h2>Os formatos combinados</h2>
+  <p>Moram em <code>componentes/compartilhado/specs/</code>, um arquivo <code>.schema.json</code> por contrato. Embaixo de cada um, quem usa.</p>
+  {{CONTRATOS}}
+</section>
+
+<section id="como">
+  <span class="eyebrow">Como</span>
+  <h2>Como criar um encaixe novo</h2>
+  <ol class="passos">
+    <li><div><b>Procure antes.</b><span>Se um dos contratos acima já leva o dado que você precisa, acrescente o campo nele em vez de criar outro.</span></div></li>
+    <li><div><b>Escreva o contrato.</b><span>Um JSON Schema em <code>componentes/compartilhado/specs/&lt;de&gt;-to-&lt;para&gt;.schema.json</code>, com os campos obrigatórios marcados.</span></div></li>
+    <li><div><b>Valide na passagem.</b><span>A etapa que recebe confere o arquivo contra o schema antes de trabalhar, e para com erro se não bater. Conferir e deixar passar é fachada.</span></div></li>
+    <li><div><b>Prove que morde.</b><span>Um teste que entrega um arquivo fora do formato e exige a reprovação.</span></div></li>
+    <li><div><b>Confira a chamada.</b><span>Rode <code>python scripts/catalogo_pecas.py</code>: ele confere cada chamada da receita contra a ferramenta, e este mapa mostra o resultado.</span></div></li>
+  </ol>
+</section>
+
+<footer>Gerado por <code>scripts/mapa_visual.py encaixes</code> a partir de <code>docs/auditoria/mapa-pecas/catalogo-pecas.json</code>. Para atualizar: <code>python scripts/catalogo_pecas.py</code> e depois <code>python scripts/mapa_visual.py encaixes</code>.</footer>
+</div>

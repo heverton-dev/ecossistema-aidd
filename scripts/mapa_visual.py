@@ -35,7 +35,8 @@ CATALOGO = RAIZ / "docs" / "auditoria" / "mapa-pecas" / "catalogo-pecas.json"
 FONTES = ("https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;"
           "12..96,700;12..96,800&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500"
           "&display=swap")
-TITULOS = {"guardas": "Mapa dos Guardas", "skills": "Mapa das Skills", "indice": "Mapas do Ecossistema"}
+TITULOS = {"guardas": "Mapa dos Guardas", "skills": "Mapa das Skills", "indice": "Mapas do Ecossistema",
+           "encaixes": "Mapa dos Encaixes"}
 # Os mapas que o ecossistema precisa ter, na ordem de criação. O índice mostra
 # cada um como concluído (arquivo em dia com o catálogo), desatualizado ou a criar.
 MAPAS_PREVISTOS = (
@@ -202,6 +203,67 @@ def valores_skills(cat: dict) -> dict[str, str]:
     }
 
 
+def _nome_etapa(etapa: str) -> str:
+    m = re.match(r"etapa_(\d+)_(.+)", etapa)
+    return f"{int(m.group(1))} · {m.group(2)}" if m else etapa
+
+
+def valores_encaixes(cat: dict) -> dict[str, str]:
+    etapas = cat["receita_triade"]["etapas"]
+    encaixes = cat.get("encaixes") or []
+    achados = cat["achados"]
+    por_chamada = {x["chamada"]: x for x in encaixes}
+    fluxo_de = {}
+    for et in etapas:
+        for fluxo, chamadas in et["chamadas_por_fluxo"].items():
+            for tokens in chamadas:
+                fluxo_de["ecossistema.py " + " ".join(tokens)] = fluxo
+    cartoes = []
+    for et in etapas:
+        linhas = []
+        for tokens in et["chamadas_cli"]:
+            chamada = "ecossistema.py " + " ".join(tokens)
+            enc = por_chamada.get(chamada)
+            if enc is None:
+                chip = '<span class="chip aviso">não conferida</span>'
+            elif enc["encaixa"]:
+                chip = '<span class="chip ok">encaixa</span>'
+            else:
+                chip = '<span class="chip falha">quebra</span>'
+            fluxo = f'<span class="chip lei">só {e(fluxo_de[chamada])}</span>' if chamada in fluxo_de else ""
+            linhas.append(f'<div class="chips"><code>{e(chamada)}</code>{chip}{fluxo}</div>')
+        if not linhas:
+            linhas.append('<p class="vazio">Não chama nenhuma ferramenta.</p>')
+        for atalho in et["atalhos_internos"]:
+            linhas.append(f'<div class="chips"><code>{e(atalho)}</code><span class="chip aviso">atalho por dentro</span></div>')
+        cor = "var(--c-trabalha)" if et["chama_alguma_ferramenta"] else "var(--brick)"
+        cartoes.append(f'<article class="item" style="--c:{cor}" data-busca="{e(et["etapa"])}">'
+                       f'<span class="nome">{e(_nome_etapa(et["etapa"]))}</span>'
+                       f'<p class="desc">{e(et["descricao"])}</p>{"".join(linhas)}</article>')
+    quebrados = [f'{_nome_etapa(x["etapa"])}: {x["chamada"]} ({"; ".join(x["problemas"])})'
+                 for x in encaixes if not x["encaixa"]]
+    atalhos = [f'{_nome_etapa(et)}: {", ".join(cam)}' for et, cam in achados.get("etapas_com_atalho_interno", {}).items()]
+    contratos = "".join(
+        f'<article class="item" style="--c:var(--brick)" data-busca="{e(c["id"])}"><span class="nome">{e(c["id"])}</span>'
+        f'<p class="desc">{e(c["titulo"])}</p><span class="onde">{e(" · ".join(c["usado_por"]))}</span></article>'
+        for c in cat["contratos"])
+    return {
+        "TOTAIS": _totais([
+            (len(etapas), "etapas na receita", ""),
+            (len(encaixes), "chamadas conferidas", ""),
+            (len(quebrados), "chamadas que quebram", "falha" if quebrados else ""),
+            (len(achados.get("etapas_sem_ferramenta", [])), "etapas sem ferramenta", "aviso" if achados.get("etapas_sem_ferramenta") else ""),
+            (len(cat["contratos"]), "contratos", ""),
+        ]),
+        "RECEITA": f'<div class="grupo"><div class="itens">{"".join(cartoes)}</div></div>',
+        "QUEBRADOS": _lista_curta(quebrados, "Todas as chamadas encaixam hoje."),
+        "SEM_FERRAMENTA": _lista_curta([_nome_etapa(x) for x in achados.get("etapas_sem_ferramenta", [])],
+                                       "Toda etapa chama uma ferramenta."),
+        "ATALHOS": _lista_curta(atalhos, "Nenhum atalho por dentro hoje."),
+        "CONTRATOS": f'<div class="grupo"><div class="itens">{contratos}</div></div>',
+    }
+
+
 def status_mapa(tipo: str, cat: dict) -> str:
     """concluido = arquivo existe e está em dia com o catálogo; desatualizado = existe e
     difere; a-criar = sem gerador ou sem arquivo."""
@@ -239,7 +301,8 @@ def valores_indice(cat: dict) -> dict[str, str]:
     }
 
 
-GERADORES = {"guardas": valores_guardas, "skills": valores_skills, "indice": valores_indice}
+GERADORES = {"guardas": valores_guardas, "skills": valores_skills, "indice": valores_indice,
+             "encaixes": valores_encaixes}
 
 
 def montar(tipo: str, cat: dict, link_manual: str, fragmento: bool) -> str:
