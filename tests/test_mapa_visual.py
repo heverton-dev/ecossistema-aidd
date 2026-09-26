@@ -7,6 +7,7 @@ do catálogo (fora do commit, sem prova, versões, lei); texto do catálogo é
 escapado; --check reprova arquivo desatualizado. O último teste roda de verdade
 contra o catálogo do repositório.
 """
+import json
 import subprocess
 import sys
 from pathlib import Path
@@ -183,7 +184,7 @@ def test_encaixes_marcador_desencontrado_reprova(tmp_path, monkeypatch):
         mv.montar("encaixes", _cat_encaixes(), "m.html", fragmento=True)
 
 
-@pytest.mark.parametrize("tipo", ["encaixes", "ferramentas", "comandos"])
+@pytest.mark.parametrize("tipo", ["encaixes", "ferramentas", "comandos", "conexoes"])
 def test_mapa_roda_de_verdade_no_repositorio(tmp_path, tipo):
     saida = tmp_path / "mapa.html"
     proc = subprocess.run([sys.executable, str(ROOT / "scripts" / "mapa_visual.py"), tipo,
@@ -241,3 +242,33 @@ def test_comandos_marcador_desencontrado_reprova(tmp_path, monkeypatch):
     monkeypatch.setattr(mv, "MOLDES", tmp_path)
     with pytest.raises(ValueError, match="EXTRA"):
         mv.montar("comandos", _cat_comandos(), "m.html", fragmento=True)
+
+
+def _cat_conexoes(internos=True, hooks=True):
+    return {"mcps": {"registrados_mcp_json": ["context7", "github"],
+                     "internos_das_ferramentas": [{"id": "docker-mcp", "ferramenta": "aidd-ops",
+                                                   "caminho": "tools/aidd-ops/mcps/docker-mcp/server.py",
+                                                   "registrado_em_config": False}] if internos else []},
+            "hooks": [{"evento": "PreToolUse", "matcher": "Task|Agent", "script": ".claude/hooks/x.py"}] if hooks else []}
+
+
+def test_conexoes_listas_saem_do_catalogo():
+    valores = mv.valores_conexoes(_cat_conexoes())
+    assert "context7" in valores["REGISTRADOS"] and "vai com o app gerado" in valores["INTERNOS"]
+    assert "PreToolUse" in valores["HOOKS"] and "Task|Agent" in valores["HOOKS"]
+    vazio = mv.valores_conexoes(_cat_conexoes(internos=False, hooks=False))
+    assert "Nenhum hoje." in vazio["INTERNOS"] and "Nenhum hoje." in vazio["HOOKS"]
+
+
+def test_conexoes_marcador_desencontrado_reprova(tmp_path, monkeypatch):
+    (tmp_path / "conexoes.html").write_text("{{TOTAIS}} {{HOOKS}} {{FALTA}}", encoding="utf-8")
+    (tmp_path / "base.css").write_text("", encoding="utf-8")
+    monkeypatch.setattr(mv, "MOLDES", tmp_path)
+    with pytest.raises(ValueError, match="FALTA"):
+        mv.montar("conexoes", _cat_conexoes(), "m.html", fragmento=True)
+
+
+def test_indice_marca_todos_os_mapas_previstos_como_concluidos():
+    cat = json.loads(mv.CATALOGO.read_text(encoding="utf-8"))
+    pendentes = [t for t, _, _ in mv.MAPAS_PREVISTOS if mv.status_mapa(t, cat) != "concluido"]
+    assert not pendentes, f"mapas pendentes ou desatualizados: {pendentes}"

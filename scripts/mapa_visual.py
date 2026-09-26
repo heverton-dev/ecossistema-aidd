@@ -37,7 +37,7 @@ FONTES = ("https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wgh
           "&display=swap")
 TITULOS = {"guardas": "Mapa dos Guardas", "skills": "Mapa das Skills", "indice": "Mapas do Ecossistema",
            "encaixes": "Mapa dos Encaixes", "ferramentas": "Mapa das Ferramentas",
-           "comandos": "Mapa dos Comandos Slash"}
+           "comandos": "Mapa dos Comandos Slash", "conexoes": "Mapa das Conexões"}
 # Os mapas que o ecossistema precisa ter, na ordem de criação. O índice mostra
 # cada um como concluído (arquivo em dia com o catálogo), desatualizado ou a criar.
 MAPAS_PREVISTOS = (
@@ -331,6 +331,33 @@ def valores_comandos(cat: dict) -> dict[str, str]:
     }
 
 
+def valores_conexoes(cat: dict) -> dict[str, str]:
+    registrados = cat["mcps"]["registrados_mcp_json"]
+    internos = cat["mcps"]["internos_das_ferramentas"]
+    hooks = cat["hooks"]
+    lista_internos = "".join(
+        f'<article class="item" style="--c:var(--c-trabalha)" data-busca="{e(m["id"])}"><span class="nome">{e(m["id"])}</span>'
+        f'<p class="desc">da ferramenta {e(m["ferramenta"])}</p>'
+        f'<div class="chips"><span class="chip {"ok" if m["registrado_em_config"] else "lei"}">'
+        f'{"registrado para o agente" if m["registrado_em_config"] else "vai com o app gerado"}</span></div>'
+        f'<span class="onde">{e(m["caminho"])}</span></article>' for m in internos)
+    lista_hooks = "".join(
+        f'<article class="item" style="--c:var(--c-guarda)" data-busca="{e(h["evento"])}"><span class="nome">{e(h["evento"])}</span>'
+        f'<p class="desc">filtro: {e(h["matcher"] or "qualquer ferramenta")}</p>'
+        f'<span class="onde">{e(h["script"])}</span></article>' for h in hooks)
+    vazio = '<p class="vazio">Nenhum hoje.</p>'
+    return {
+        "TOTAIS": _totais([
+            (len(registrados), "MCPs que o agente usa", ""),
+            (len(internos), "MCPs dentro das ferramentas", ""),
+            (len(hooks), "hooks", ""),
+        ]),
+        "REGISTRADOS": _lista_curta(registrados, "Nenhum MCP registrado."),
+        "INTERNOS": f'<div class="grupo"><div class="itens">{lista_internos}</div></div>' if internos else vazio,
+        "HOOKS": f'<div class="grupo"><div class="itens">{lista_hooks}</div></div>' if hooks else vazio,
+    }
+
+
 def status_mapa(tipo: str, cat: dict) -> str:
     """concluido = arquivo existe e está em dia com o catálogo; desatualizado = existe e
     difere; a-criar = sem gerador ou sem arquivo."""
@@ -370,7 +397,7 @@ def valores_indice(cat: dict) -> dict[str, str]:
 
 GERADORES = {"guardas": valores_guardas, "skills": valores_skills, "indice": valores_indice,
              "encaixes": valores_encaixes, "ferramentas": valores_ferramentas,
-             "comandos": valores_comandos}
+             "comandos": valores_comandos, "conexoes": valores_conexoes}
 
 
 def montar(tipo: str, cat: dict, link_manual: str, fragmento: bool) -> str:

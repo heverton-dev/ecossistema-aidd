@@ -10,13 +10,13 @@ A map has three pieces and nothing in its lists is hand-written:
 - **generator** `valores_<type>(cat)` in `scripts/mapa_visual.py`: fills every marker from the catalog;
 - **data** `docs/auditoria/mapa-pecas/catalogo-pecas.json`, produced by `scripts/catalogo_pecas.py`.
 
-Existing maps: `guardas` and `skills`. Read both moldes before writing a new one. The assembly manual (`docs/mapas-visuais/manual-montagem-aidd.html`) links every map.
+The maps the ecosystem needs are listed in `MAPAS_PREVISTOS` (`scripts/mapa_visual.py`); the index `docs/mapas-visuais/mapa-indice.html` shows each one as concluded, stale or to create, checked against disk. Read two existing moldes before writing a new one. The assembly manual (`docs/mapas-visuais/manual-montagem-aidd.html`) links every map.
 
 ## New map
 
 1. **Make sure the catalog has the data.** If a field is missing, add it in `scripts/catalogo_pecas.py` (e.g. `coletar_skills_terceiros()`) with a test in `tests/test_catalogo_pecas.py`. Done when `python scripts/catalogo_pecas.py` exits 0 and the field is in the JSON.
 2. **Write the molde** in PT-BR, same sections as the existing moldes: what / why / what for, when to build and when not, where it lives, how to build, done when / who checks, common mistakes, filterable list. Every catalog-driven part is a `{{MARKER}}`; `{{LINK_MANUAL}}` is mandatory. When an official rule exists (e.g. `docs/protocolos/CONVENCAO-AUTORIA-GATES.md`), the molde summarizes it and links to it; never copy its text. Styles come from `moldes/base.css`.
-3. **Write the generator** `valores_<type>(cat)` returning exactly the molde's markers (without `LINK_MANUAL`, added by `montar`). Escape catalog text with `e()`. Register it in `GERADORES` and its title in `TITULOS`.
+3. **Write the generator** `valores_<type>(cat)` returning exactly the molde's markers (without `LINK_MANUAL`, added by `montar`). Escape catalog text with `e()`. Register it in `GERADORES`, its title in `TITULOS` and the map in `MAPAS_PREVISTOS`.
 4. **Write the tests** in `tests/test_mapa_visual.py`, at least:
    - a molde marker without a value raises `ValueError` (proof that it bites);
    - badges and lists come from a fake catalog;
@@ -34,13 +34,15 @@ Existing maps: `guardas` and `skills`. Read both moldes before writing a new one
 
 ## Refresh an existing map
 
-A new or removed piece (a guard, a skill) makes maps stale. Run `--check` for every type in `GERADORES`; regenerate each one that exits 1:
+A new or removed piece (a guard, a skill) makes maps stale. Regenerate the catalog, then every map, and the index last (its status reads the other files):
 
 ```bash
 python scripts/catalogo_pecas.py
-python scripts/mapa_visual.py guardas --check
-python scripts/mapa_visual.py skills --check
+python scripts/mapa_visual.py <type>      # each type in GERADORES except indice
+python scripts/mapa_visual.py indice
 ```
+
+Done when the index shows every map as concluded (`tests/test_mapa_visual.py` checks it).
 
 ## Publishing
 
