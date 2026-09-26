@@ -59,3 +59,30 @@ Comando: `python scripts/relatorio_skills_duplicadas.py > saida.txt 2>&1; echo $
 | `~/.agents/skills/to-tickets` | `aidd-tickets` | remover |
 
 Remoção só à mão pelo usuário; este script nunca apaga nada.
+
+## Ticket 13: prova de uso real (G_PROVA_SKILLS_POCOCK)
+
+Gate manual (`stages: [manual]`, fora do pre-commit e do audit): `python gates/G_PROVA_SKILLS_POCOCK.py`.
+Roda cada skill com `claude -p --model haiku` sobre `tests/fixtures/skills_pocock/`; o que o modelo gera
+fica em pasta temporária apagada no fim. Teste do gate (`gates/test_g_prova_skills_pocock.py`, sem modelo):
+13 passed; antes do gate existir: 9 failed (exit 1).
+
+Execuções reais (exit code real, saída redirecionada para arquivo):
+
+| Rodada | Estado | diagnose | tickets | grill | tdd | Exit |
+|---|---|---|---|---|---|---|
+| 0 | skills do T1-T12 | REPROVADO: comando conferia o valor com bug (`== 6.0`), verde com o bug | APROVADO | REPROVADO: 3 itens sem recomendação | APROVADO | 1 |
+| 1 | + regra "vermelho = assert do valor correto" (diagnose) e "Recommended: X, because Y" (grill) | APROVADO | APROVADO | APROVADO | APROVADO | 0 |
+| 2 | idem | timeout do modelo (600 s) | REPROVADO: TICKET-01 só de estrutura (exceções), sem teste | APROVADO | APROVADO | 1 |
+| 3 | + regra "nunca ticket só de preparação" (tickets) e 1 nova tentativa em timeout | APROVADO* | APROVADO | APROVADO | APROVADO | 0* |
+| 4 | idem | APROVADO* | APROVADO | REPROVADO: itens 6 e 7 só decisão, sem motivo | APROVADO | 1 |
+| 5 | idem | APROVADO | APROVADO | APROVADO* | APROVADO | 0* |
+| 6 | idem (final) | APROVADO | APROVADO | APROVADO | APROVADO | **0** |
+
+\* Resultado após corrigir a LEITURA do gate, relendo o mesmo artefato salvo (`--artefatos`): hipóteses em
+tabela (`| 1 |`, `| **H1** |`) e motivo escrito como "porque"/"*Razão:*" passaram a contar. A exigência não
+mudou: 3+ hipóteses; resposta com motivo. Casos cobertos no teste do gate.
+
+Leitura honesta: depois das 3 correções de texto, em 5 rodadas reais diagnose, tickets e tdd passaram 5/5
+(a rodada 2 de diagnose foi timeout, não reprovação); grill passou 4/5 (a rodada 4 deixou 2 de 8 itens sem
+motivo). O modelo não segue a skill 100% das vezes; o gate pega quando não segue.

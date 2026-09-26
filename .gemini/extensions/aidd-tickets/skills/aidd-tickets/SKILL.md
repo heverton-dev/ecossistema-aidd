@@ -9,7 +9,7 @@ Decomposes the specification created by `/aidd-spec` into executable tickets ope
 
 ## Decomposition Invariants
 
-1. **Vertical Slice:** Each ticket delivers one complete, independently verifiable behavior, cutting through every layer it needs (contract, test, code, wiring). Never split one behavior into a "tests" ticket, a "code" ticket and a "refactor" ticket: each ticket carries its own failing test, implementation and cleanup.
+1. **Vertical Slice:** Each ticket delivers one complete, independently verifiable behavior, cutting through every layer it needs (contract, test, code, wiring). Never split one behavior into a "tests" ticket, a "code" ticket and a "refactor" ticket: each ticket carries its own failing test, implementation and cleanup. Never a setup-only ticket (types, exceptions, module skeleton): that code goes inside the first behavior ticket that needs it, and every ticket's Target Files include at least one test file.
 2. **Fresh Context Fit:** Each ticket must be small enough to be executed from a fresh context window using only its own text plus the files it names.
 3. **Bounded Blast Radius:** Each ticket must touch the minimum set of contiguous files necessary.
 4. **Prefactor First:** When the code must be reshaped before the new behavior fits, the prefactor is its own ticket, scheduled first and blocking the tickets that depend on it. A prefactor changes structure only, never behavior.

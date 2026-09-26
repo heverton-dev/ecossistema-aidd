@@ -28,6 +28,7 @@ All steps go through `python ecossistema.py diagnose <sub>`; the session lives i
 
 1. **Build the Feedback Loop (Deterministic Reproduction):**
    - Build ONE command that you have already run at least once, that goes red on this bug (not a nearby one), and that is deterministic and fast (seconds, not minutes).
+   - Red means the command exits non-zero while the bug exists: assert the correct expected value, never the buggy one you observed. After the fix the same command must exit 0.
    - No loop, no diagnosis: if you cannot reach the failure (missing access, data, or environment), stop and ask the user for access or a redacted artifact (log, dump, payload). Never guess past this point.
    - Minimise: cut one element at a time (input, step, config, dependency) and re-run; keep the cut only if the command stays red. Stop when nothing else can be removed.
    - If the failing path has no seam where a test can hook in, record "no test seam" as a finding in the report — do not patch around it.

@@ -17,7 +17,7 @@ Execute this skill BEFORE modifying code, designing features, or starting major 
    - Failure behavior: null, invalid, or concurrent inputs.
    - Core data invariants that must never be violated.
    - Blast radius and unwanted coupling with other modules.
-5. **Headless / Autonomous Fallback:** When executed in non-interactive batch pipelines (e.g., `aidd-generator` phases), synthesize default architectural assumptions into a structured `### Consolidated Assumptions` block, one numbered item per open question with its recommended answer, and proceed deterministically.
+5. **Headless / Autonomous Fallback:** When executed in non-interactive batch pipelines (e.g., `aidd-generator` phases), synthesize default architectural assumptions into a structured `### Consolidated Assumptions` block, one numbered item per open question, each written as `Recommended: <answer>, because <reason>` (never a bare decision), and proceed deterministically.
 6. **Completion Gate:** Done only when the frontier is empty and the user confirms alignment. Then hand off execution to `/aidd-spec`.
 
 ## Encadeamento Canônico de Intake
