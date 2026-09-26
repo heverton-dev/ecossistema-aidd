@@ -27,6 +27,12 @@ ROOT_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__fil
 PLANO_PATH = os.path.join(ROOT_DIR, "docs", "testes", "status_testes_ferramentas.json")
 PLANO_ESTRUTURADO_PATH = os.path.join(ROOT_DIR, "PLANO-EXECUCAO-ESTRUTURADO.json")
 
+# Fonte única das variáveis que o hook do git exporta (GIT_DIR/GIT_INDEX_FILE...):
+# sem limpá-las, os testes das ferramentas que fazem 'git commit' em tmp_path
+# gravavam na branch real (25/09/2026: 9 commits de lixo na branch do ciclo).
+sys.path.insert(0, os.path.join(ROOT_DIR, "gates"))
+from G_TESTES_REAIS import _env_sem_repositorio_do_hook  # noqa: E402
+
 FERRAMENTAS = ["aidd-forge", "aidd-generator", "aidd-master", "aidd-enterprise", "aidd-ops"]
 
 _PADRAO_PASSED = re.compile(r"(\d+) passed")
@@ -42,6 +48,7 @@ def _rodar_pytest(ferramenta: str) -> dict:
             [sys.executable, "-m", "pytest", "-q", "--tb=no"],
             cwd=caminho, capture_output=True, text=True,
             encoding="utf-8", errors="replace", timeout=900,
+            env=_env_sem_repositorio_do_hook(),
         )
     except Exception as e:
         return {"status": "erro", "detalhe": str(e)}

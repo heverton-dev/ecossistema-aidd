@@ -157,7 +157,7 @@ def test_aprova_relatorio_valido_json(tmp_path):
     relatorio.write_text(json.dumps(dados, ensure_ascii=False), encoding="utf-8")
 
     res = executar_gate_diagnose(relatorio)
-    assert res.returncode == 0
+    assert res.returncode == 0, res.stdout + res.stderr
     assert "APROVADO" in res.stdout or "EXIT 0" in res.stdout
 
 
@@ -195,5 +195,5 @@ Análise de diagnose realizada com isolamento de falha.
     relatorio.write_text(conteudo, encoding="utf-8")
 
     res = executar_gate_diagnose(relatorio)
-    assert res.returncode == 0
+    assert res.returncode == 0, res.stdout + res.stderr
     assert "APROVADO" in res.stdout or "EXIT 0" in res.stdout
