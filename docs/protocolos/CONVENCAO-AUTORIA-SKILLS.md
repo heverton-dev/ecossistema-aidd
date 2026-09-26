@@ -158,5 +158,5 @@ As regras formais da especificação (nome, tamanho, BOM, `<`/`>`) passam nas 75
 - Boas práticas da Anthropic: <https://platform.claude.com/docs/en/agents-and-tools/agent-skills/best-practices>
 - Skills no Claude Code: <https://code.claude.com/docs/en/skills>
 - Skills no opencode: <https://opencode.ai/docs/skills/>
-- Escrita para agentes (casa): `componentes/compartilhado/skills/aidd-escrita-agentes/SKILL.md`
+- Escrita para agentes (casa): `componentes/compartilhado/skills/aidd-agent-writing/SKILL.md`
 - Distribuição multi-harness (casa): `docs/protocolos/05-09-2026_protocolo-agnosticidade-componentes.md`

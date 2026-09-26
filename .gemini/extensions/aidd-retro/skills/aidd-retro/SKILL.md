@@ -11,7 +11,7 @@ Adapted from `retro` in mattpocock/skills (commit c55ee46), MIT license.
 
 ## Steps
 
-1. **Style guide:** load the `aidd-escrita-agentes` skill before drafting any proposal. Done when it is in context.
+1. **Style guide:** load the `aidd-agent-writing` skill before drafting any proposal. Done when it is in context.
 2. **Read the session log:** default to the current session. If the user names another session, read its log by path (Claude Code keeps logs as JSONL under the user's projects folder; other harnesses keep their own). Read the primary source, not a summary. Done when every tool error, retry, user correction, and skipped gate in the log is listed.
 3. **Find candidates** in the seven categories below. Done when every listed event is mapped to a category or marked "no environment fix".
 4. **Classify each candidate:**

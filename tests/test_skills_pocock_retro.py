@@ -61,7 +61,7 @@ def test_ordem_de_gravidade():
 
 def test_ponteiro_escrita_e_encaminhamento_melhoria():
     texto = _texto()
-    assert "aidd-escrita-agentes" in texto
+    assert "aidd-agent-writing" in texto
     assert "aidd-improvement" in texto
 
 

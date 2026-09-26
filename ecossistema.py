@@ -1147,7 +1147,7 @@ def cmd_status(args):
         "aidd-planner",
         "aidd-orca",
         "aidd-plan",
-        "componentes-runner",
+        "aidd-components",
         "aidd-audit-4f",
         "aidd-evolution"
     ]

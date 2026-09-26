@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-Ticket 5 (skills-pocock ciclo-01, D1): contrato do texto do aidd-escrita-agentes.
+Ticket 5 (skills-pocock ciclo-01, D1): contrato do texto do aidd-agent-writing.
 
 Rótulo honesto: prova que a regra está escrita na skill, não que o agente a segue
 (prova de comportamento = Ticket 13).
@@ -11,7 +11,7 @@ from pathlib import Path
 import yaml
 
 ROOT = Path(__file__).resolve().parent.parent
-SKILL = ROOT / "componentes" / "compartilhado" / "skills" / "aidd-escrita-agentes" / "SKILL.md"
+SKILL = ROOT / "componentes" / "compartilhado" / "skills" / "aidd-agent-writing" / "SKILL.md"
 
 
 def _texto() -> str:
@@ -27,7 +27,7 @@ def _frontmatter() -> dict:
 
 def test_frontmatter_valido_com_gatilho():
     fm = _frontmatter()
-    assert fm.get("name") == "aidd-escrita-agentes"
+    assert fm.get("name") == "aidd-agent-writing"
     desc = fm.get("description") or ""
     assert re.search(r"skill", desc, re.IGNORECASE)
     assert "AGENTS.md" in desc

@@ -88,10 +88,10 @@ Conjunto de skills universais inspiradas nas práticas de Matt Pocock, adaptadas
 - **/aidd-diagnose:** Triage científica de falhas: loop vermelho já executado e minimizado, análise de grafo via `code-review-graph`, 3 a 5 hipóteses em ordem (uma ativa por vez), logs `[DEBUG-xxxx]`, prova e teste de regressão.
 - **/aidd-handoff:** Serialização compacta do estado da sessão diretamente em `secoes/sessao-<data>-<slug>.md` para rotação de contexto ou troca de agentes.
 - **/aidd-plan:** Gera o esqueleto de iniciativas em `docs/planos/` (`python ecossistema.py plan init`), com seções "Ainda nao especificado" e "Fora de escopo" (fora de escopo nunca volta para o plano atual).
-- **/aidd-escrita-agentes:** Guia de escrita para textos que agentes leem (skills, `AGENTS.md`, `CLAUDE.md`): ponteiros de contexto, teste de no-op, fonte única, sedimento, critério de pronto.
+- **/aidd-agent-writing:** Guia de escrita para textos que agentes leem (skills, `AGENTS.md`, `CLAUDE.md`): ponteiros de contexto, teste de no-op, fonte única, sedimento, critério de pronto.
 - **/aidd-retro:** Retrospectiva de sessão: cada erro vira proposta de gate (mecânico) ou regra de revisão (julgamento), em ordem de gravidade; só propõe, aplicação via `aidd-melhoria`.
-- **/aidd-reexplica:** Reexplica a última mensagem em PT-BR simples usando o glossário `CONTEXT.md`.
-- **/aidd-entrega:** Modelo de entrega com evidência antes/depois (exit code real), "Dá para desfazer?" e "O que pode quebrar"; para corpo de commit, PR e `RELATORIO-CONSTRUTOR.md`.
+- **/aidd-reexplain:** Reexplica a última mensagem em PT-BR simples usando o glossário `CONTEXT.md`.
+- **/aidd-delivery:** Modelo de entrega com evidência antes/depois (exit code real), "Dá para desfazer?" e "O que pode quebrar"; para corpo de commit, PR e `RELATORIO-CONSTRUTOR.md`.
 - **/aidd-wizard:** Gera script bash interativo para passos que só o humano faz (credenciais, painéis, migrações), com `.env` idempotente e segredo oculto; funciona no Git Bash.
 
 ---
