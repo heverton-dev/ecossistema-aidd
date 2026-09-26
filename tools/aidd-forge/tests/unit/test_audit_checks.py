@@ -200,9 +200,17 @@ def test_g11_skips_when_no_skills(tmp_path: Path) -> None:
 
 
 def test_g12_passes_with_required_patterns(tmp_path: Path) -> None:
-    _write(tmp_path / ".gitignore", "node_modules/\npackage-lock.json\npnpm-lock.yaml\nyarn.lock\nbun.lockb\n")
+    _write(tmp_path / ".gitignore", "node_modules/\n")
     result = check_g12_gitignore(tmp_path)
     assert result.status == "PASS"
+
+
+def test_g12_does_not_require_ignoring_lockfiles(tmp_path: Path) -> None:
+    # Regressao: exigir lockfiles no .gitignore quebrava `npm ci` (caso rotaprime-replica).
+    _write(tmp_path / ".gitignore", "node_modules/\n")
+    result = check_g12_gitignore(tmp_path)
+    assert result.status == "PASS"
+    assert "lock" not in result.details
 
 
 def test_g12_fails_when_missing_patterns(tmp_path: Path) -> None:

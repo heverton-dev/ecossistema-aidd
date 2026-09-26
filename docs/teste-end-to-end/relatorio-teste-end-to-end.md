@@ -943,3 +943,19 @@
   - `tests/test_skills_pocock_distribuicao.py` (cópias do forge = fonte) → passa.
 - **Inconsistências:** as mesmas da seção 14 (G04 e pasta `.agent/`), sem mudança. **Status:** ABERTO.
 - **Data da Última Auditoria:** 26/09/2026.
+
+---
+
+## 16. `forge conform` grava LF e G12 não exige ignorar lockfiles (achado na blindagem do rotaprime-replica)
+
+- **Objetivo da Correção:** na blindagem do app Lovable `rotaprime-replica`, o `forge conform` (1) gravou `AGENTS.md`, `CLAUDE.md` e `.gitignore` em CRLF no Windows e (2) colocou `package-lock.json`/`bun.lockb` no `.gitignore`, o que quebra `npm ci` e o CI. O rollback de backup também trocava o fim de linha do arquivo original.
+- **Ferramenta Tocada:** [`tools/aidd-forge`](file:///C:/Users/trcnologia/Desktop/ecossistema-aidd/tools/aidd-forge): `core/conform_fixers.py`, `core/audit_checks.py`, `templates/.gitignore` e 2 arquivos de teste.
+- **O que executou:**
+  1. Reprodução antes da correção, em pasta temporária com `AGENTS.md` e `package-lock.json`: `forge conform` → 3 arquivos em CRLF e `package-lock.json` no `.gitignore`.
+  2. Correção: `_safe_write` com `newline="\n"`; backup/restore em bytes; G12 exige só `node_modules/` (checagem, fixer e template).
+  3. Testes novos: `test_fixers_write_lf_only`, `test_restore_backup_preserves_original_bytes`, `test_g12_does_not_require_ignoring_lockfiles`. Sem a correção os dois de fim de linha falham (exit 1); com ela, passam.
+  4. Execução real em pasta temporária vazia (`git init -b main` + `package-lock.json`): `python ecossistema.py forge init` → exit 0; `forge conform` → exit 0; `forge audit` → exit 0, conformidade 93,3% (14/15), G12 PASS, nenhum lockfile no `.gitignore`, nenhum arquivo gerado com CRLF.
+- **Resultados de Testes:**
+  - `tools/aidd-forge`: `python -m pytest -q` → 297 passed, 1 skipped (exit 0).
+- **Inconsistências:** G04 e a pasta `.agent/` continuam como nas seções 14 e 15. Projetos que já passaram pelo conform antigo continuam com os lockfiles no `.gitignore`: o fixer não remove linhas. **Status:** ABERTO.
+- **Data da Última Auditoria:** 26/09/2026.
