@@ -16,6 +16,8 @@ Objetivo:
 
 Escopo padrão auditado:
   - `docs/issues/*.md` (excluídos `INDEX.md`, `README.md`, `SESSOES.md`)
+  - `componentes/*/skills/**/*.md` (SKILL.md e arquivos de apoio; regra em
+    docs/protocolos/CONVENCAO-AUTORIA-SKILLS.md, seção 5.2)
     O frontmatter YAML (campo `title:`) e blocos de código (```...```) são
     desconsiderados na auditoria do corpo.
 
@@ -119,14 +121,14 @@ def analisar_texto(texto: str) -> Tuple[float, float, int, List[str], bool]:
 
 
 def listar_arquivos_padrao() -> List[str]:
-    """Lista todos os arquivos de tickets em docs/issues/**/*.md que devem ser estritamente em inglês."""
-    padrao = os.path.join(ROOT_DIR, "docs", "issues", "**", "*.md")
+    """Lista os arquivos que devem ser estritamente em inglês: tickets em
+    docs/issues/**/*.md e skills (SKILL.md e apoio) em componentes/*/skills/**/*.md."""
     arquivos = []
-    for caminho in sorted(glob.glob(padrao, recursive=True)):
-        nome = os.path.basename(caminho)
-        if nome in ISENCOES_ISSUES:
+    for caminho in sorted(glob.glob(os.path.join(ROOT_DIR, "docs", "issues", "**", "*.md"), recursive=True)):
+        if os.path.basename(caminho) in ISENCOES_ISSUES:
             continue
         arquivos.append(caminho)
+    arquivos += sorted(glob.glob(os.path.join(ROOT_DIR, "componentes", "*", "skills", "**", "*.md"), recursive=True))
     return arquivos
 
 

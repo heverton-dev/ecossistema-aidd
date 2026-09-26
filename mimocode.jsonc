@@ -15,7 +15,7 @@
     },
     "bridge": {
       "description": "Executa operacoes atomicas da ferramenta aidd-bridge (scan, convert-db, merge, pack)",
-      "template": "Execute a operacao atomica da ferramenta aidd-bridge: $ARGUMENTS. Use a skill aidd-bridge-runner ou CLI: python ecossistema.py bridge $ARGUMENTS"
+      "template": "Execute a operacao atomica da ferramenta aidd-bridge: $ARGUMENTS. Use a skill aidd-bridge ou CLI: python ecossistema.py bridge $ARGUMENTS"
     }
   },
   "mcp": {

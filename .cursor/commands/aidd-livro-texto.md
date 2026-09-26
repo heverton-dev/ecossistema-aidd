@@ -24,4 +24,4 @@ python <skill>/scripts/livro.py preview <pasta>
 ```
 
 Dentro deste monorepo, `<skill>` resolve para
-`componentes/compartilhado/skills/aidd-livro-texto`.
+`componentes/compartilhado/skills/aidd-textbook`.

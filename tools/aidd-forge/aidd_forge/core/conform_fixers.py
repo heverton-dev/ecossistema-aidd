@@ -51,12 +51,8 @@ AGENTS_MD_TEMPLATE = (
 )
 
 GITIGNORE_ADDITIONS = (
-    "\n# AIDD Forge: dependency and lockfile patterns\n"
+    "\n# AIDD Forge: dependencies (lockfiles stay versioned for reproducible installs)\n"
     "node_modules/\n"
-    "package-lock.json\n"
-    "pnpm-lock.yaml\n"
-    "yarn.lock\n"
-    "bun.lockb\n"
 )
 
 GITATTRIBUTES_CONTENT = "* text=auto eol=lf\n"
@@ -83,7 +79,7 @@ class ConformFix:
 @dataclass
 class _Backup:
     path: Path
-    original_content: str | None
+    original_content: bytes | None
 
 
 # ---------------------------------------------------------------------------
@@ -150,7 +146,7 @@ def fix_g03_ide_pointers(project_path: Path) -> ConformFix:
             if line.strip() not in ("CLAUDE.md", "GEMINI.md")
         ]
         if len(new_lines) != len(content.splitlines()):
-            gitignore.write_text("\n".join(new_lines) + "\n", encoding="utf-8")
+            _safe_write(gitignore, "\n".join(new_lines) + "\n")
             touched.append(".gitignore (removed CLAUDE.md/GEMINI.md from ignore)")
 
     return ConformFix(
@@ -261,11 +257,7 @@ def fix_g12_gitignore(project_path: Path) -> ConformFix:
 
     backup = _backup_file(gitignore_path)
     content = gitignore_path.read_text(encoding="utf-8")
-    additions = [
-        "node_modules/", "package-lock.json", "pnpm-lock.yaml",
-        "yarn.lock", "bun.lockb",
-    ]
-    missing = [a for a in additions if a not in content]
+    missing = [] if "node_modules" in content else ["node_modules/"]
 
     if not missing:
         return ConformFix(
@@ -274,7 +266,7 @@ def fix_g12_gitignore(project_path: Path) -> ConformFix:
             files_touched=[], success=True,
         )
 
-    append = "\n# AIDD Forge: dependency and lockfile patterns\n" + "\n".join(missing) + "\n"
+    append = "\n# AIDD Forge: dependencies (lockfiles stay versioned for reproducible installs)\n" + "\n".join(missing) + "\n"
     try:
         _safe_write(gitignore_path, content + append)
         return ConformFix(
@@ -344,22 +336,22 @@ def fix_g13_gitattributes(project_path: Path) -> ConformFix:
 
 
 def _safe_write(path: Path, content: str) -> None:
-    """Escreve arquivo com criacao de diretorio pai."""
+    """Escreve arquivo com criacao de diretorio pai, sempre em LF (no Windows write_text gravaria CRLF)."""
     path.parent.mkdir(parents=True, exist_ok=True)
-    path.write_text(content, encoding="utf-8")
+    path.write_text(content, encoding="utf-8", newline="\n")
 
 
 def _backup_file(path: Path) -> _Backup:
-    """Cria backup do conteudo original de um arquivo."""
+    """Cria backup byte a byte do arquivo original (preserva o fim de linha)."""
     if path.exists():
-        return _Backup(path=path, original_content=path.read_text(encoding="utf-8"))
+        return _Backup(path=path, original_content=path.read_bytes())
     return _Backup(path=path, original_content=None)
 
 
 def _restore_backup(backup: _Backup) -> None:
     """Restaura um arquivo a partir do backup."""
     if backup.original_content is not None:
-        backup.path.write_text(backup.original_content, encoding="utf-8")
+        backup.path.write_bytes(backup.original_content)
     elif backup.path.exists():
         backup.path.unlink()
 

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-Testes reais do motor da skill aidd-livro-texto (componentes/compartilhado/skills).
+Testes reais do motor da skill aidd-textbook (componentes/compartilhado/skills).
 
 Cobre o contrato deterministico da ferramenta, sem simular nada do que ela faz:
   - ciclo de vida completo (init -> check -> build -> status -> add-parte -> update)
@@ -23,7 +23,7 @@ from pathlib import Path
 import pytest
 
 RAIZ = Path(__file__).resolve().parents[2]
-DIR_SKILL = RAIZ / "componentes" / "compartilhado" / "skills" / "aidd-livro-texto"
+DIR_SKILL = RAIZ / "componentes" / "compartilhado" / "skills" / "aidd-textbook"
 LIVRO_PY = DIR_SKILL / "scripts" / "livro.py"
 
 sys.path.insert(0, str(DIR_SKILL / "scripts"))
@@ -66,11 +66,11 @@ def test_frontmatter_segue_a_convencao_do_ecossistema():
     texto = (DIR_SKILL / "SKILL.md").read_text(encoding="utf-8")
     assert texto.startswith("---\n")
     bloco = texto.split("---", 2)[1]
-    assert "name: aidd-livro-texto" in bloco
+    assert "name: aidd-textbook" in bloco
     descricao = [l for l in bloco.splitlines() if l.startswith("description:")]
     assert len(descricao) == 1, "description deve existir e ocupar exatamente 1 linha"
     # prefixo aidd-*, kebab-case, no maximo 3 palavras
-    assert len("aidd-livro-texto".split("-")) <= 3
+    assert len("aidd-textbook".split("-")) <= 3
 
 
 def test_motor_nao_depende_de_pacote_externo():

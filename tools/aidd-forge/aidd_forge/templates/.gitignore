@@ -1,9 +1,5 @@
 # AIDD Framework - Repository Hygiene
 node_modules/
-package-lock.json
-pnpm-lock.yaml
-yarn.lock
-bun.lockb
 
 # Environments & Python
 .venv/

@@ -9,7 +9,7 @@ from pathlib import Path
 
 ROOT_DIR = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT_DIR / "gates"))
-sys.path.insert(0, str(ROOT_DIR / ".agents" / "skills" / "aidd-melhoria" / "scripts"))
+sys.path.insert(0, str(ROOT_DIR / ".agents" / "skills" / "aidd-improvement" / "scripts"))
 
 import G_HANDOFF_MELHORIA as gate  # noqa: E402
 import handoff  # noqa: E402

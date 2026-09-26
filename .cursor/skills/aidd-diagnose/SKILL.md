@@ -1,6 +1,6 @@
 ---
 name: aidd-diagnose
-description: Systematic scientific fault triage using hypothesis isolation, regression testing, and code review graph.
+description: Systematic scientific fault triage using hypothesis isolation, regression testing, and code review graph. Use when the user reports a bug, a failing test or unexpected behavior, or says "diagnosticar", "investigar bug", "por que quebrou".
 depends:
   mcp: code-review-graph
 ---

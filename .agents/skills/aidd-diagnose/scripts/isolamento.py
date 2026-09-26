@@ -33,7 +33,7 @@ def _carregar_base_melhoria_isolamento():
     current = Path(__file__).resolve()
     candidates = [current] + list(current.parents)
     for parent in candidates:
-        alvo = parent / ".agents" / "skills" / "aidd-melhoria" / "scripts" / "isolamento.py"
+        alvo = parent / ".agents" / "skills" / "aidd-improvement" / "scripts" / "isolamento.py"
         if alvo.is_file():
             spec = importlib.util.spec_from_file_location("aidd_melhoria_isolamento_base", str(alvo))
             if spec and spec.loader:

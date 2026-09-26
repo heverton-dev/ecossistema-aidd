@@ -54,7 +54,7 @@ def auditar(root: Path = ROOT_DIR) -> int:
     hook_compartilhado = root / "componentes" / "compartilhado" / "hooks" / "anti_headless_subagent_hook.py"
     hook_claude = root / ".claude" / "hooks" / "anti_headless_subagent_hook.py"
     claude_settings = root / ".claude" / "settings.json"
-    engine = root / "componentes" / "compartilhado" / "skills" / "orca-plan-orchestrator" / "scripts" / "orchestrator_engine.py"
+    engine = root / "componentes" / "compartilhado" / "skills" / "aidd-orca" / "scripts" / "orchestrator_engine.py"
     eco = root / "ecossistema.py"
 
     # 1. Presença física do hook canônico e de harness

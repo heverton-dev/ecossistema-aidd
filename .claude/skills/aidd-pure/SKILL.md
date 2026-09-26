@@ -1,35 +1,42 @@
 ---
 name: aidd-pure
-description: Dispara o Fluxo 01 (Do Zero Puro | Slash: /pure) da Tríade Canônica. Geração autoral via TDD Red-Green estrito e Monólito Modular VSA.
+description: Runs Triad Flow 01 (build from scratch) end to end - forge, planner, generator with strict TDD Red-Green, then master, enterprise and ops. Use when the user wants a brand-new project from zero, or types "/pure", "pure", "criar projeto do zero", "projeto do zero puro", "novo projeto com TDD".
 ---
 
-# aidd-pure — Fluxo 01 Canônico (Do Zero Puro | /pure)
+# aidd-pure (Flow 01, build from scratch)
 
-Dispara e conduz o Fluxo 01 (`aidd-pure`) da Tríade Canônica de criação de software no Ecossistema AIDD:
-`[FORGE -> PLANNER] -> GENERATOR -> [MASTER -> ENTERPRISE -> OPS]`
+Pipeline: `[FORGE -> PLANNER] -> GENERATOR -> [MASTER -> ENTERPRISE -> OPS]`
 
-## Gatilhos Universais:
-- Comando Slash: `/pure <nome_ou_ideia> [dominio]`
-- Invocação por Skill: `/aidd-pure` ou skill `aidd-pure`
-- Linguagem Natural: "criar projeto do zero puro", "gerar software via pure", "novo projeto com TDD"
+| Stage | Tool | Output |
+|---|---|---|
+| Foundation | `aidd-forge` | git hooks and isolation rules |
+| Planning | `aidd-planner` | BDD/SDD entities, acceptance criteria, Quarteto Sine Qua Non |
+| Engine | `aidd-generator` | strict TDD Red-Green, Clean Architecture in Python |
+| Harmonization | `aidd-master` | Modular Monolith VSA + Next.js |
+| Shielding | `aidd-enterprise` | SHA-256 injection and anti-drift audit |
+| Infrastructure | `aidd-ops` | Dockerfile, Nginx SSL, compose |
 
-## Como Executar
+## Steps
 
-### 1. Via CLI Central (Zero Fricção):
-```bash
-python ecossistema.py pure --nome "Meu Projeto" --slug meu-projeto --dominio gestao --pasta ./projetos/meu-projeto
-```
-Ou via comando legado:
-```bash
-python ecossistema.py run-fluxo --fluxo pure --nome "Meu Projeto" --slug meu-projeto --dominio gestao --pasta ./projetos/meu-projeto
-```
+1. Collect or confirm name, slug, domain and destination folder with the user. Done when all four are known (slug and domain have defaults).
+2. Simulate first:
+   ```bash
+   python ecossistema.py pure "My Project" gestao --dry-run
+   ```
+3. Run:
+   ```bash
+   python ecossistema.py pure "My Project" gestao
+   # explicit flags
+   python ecossistema.py pure --nome "My Project" --slug my-project --dominio gestao --pasta ./projetos/my-project
+   # same engine
+   python ecossistema.py run-fluxo --fluxo pure --nome "My Project" --slug my-project --dominio gestao --pasta ./projetos/my-project
+   ```
+   Positional form: `<name> [domain]`. Done when the command exits 0.
+4. Confirm the delivery honors the Quarteto Sine Qua Non defined in `AGENTS.md` section 3 and a Next.js frontend.
 
-### 2. Simulação (Dry-Run):
-```bash
-python ecossistema.py pure --nome "Meu Projeto" --slug meu-projeto --dominio gestao --pasta ./projetos/meu-projeto --dry-run
-```
+## Engine invariants (`run-fluxo`)
 
-## Ação do Agente:
-1. Coleta ou valida o nome, slug, domínio e pasta de destino do projeto com o usuário.
-2. Executa a esteira determinística de ponta a ponta com validação síncrona de handoffs em cada fase.
-3. Garante o cumprimento do *Quarteto Sine Qua Non* (`/swagger`, `/webhooks`, `/mcp`, `/docs/guia`) e Next.js no Frontend.
+- Synchronous: no stage starts before the previous one exits 0.
+- Handoffs validated by JSON Schema (`componentes/compartilhado/specs/handoff-*.schema.json`).
+- Fail-fast: any gate break stops the pipeline.
+- Writes `ORQUESTRACAO_EXECUCAO.json` in the target folder.

@@ -63,10 +63,9 @@ def auditar():
 
     # 4. Verifica as Skills de Fluxo e Orquestrador
     skills_obrigatorias = [
-        "fluxo-01-runner",
-        "fluxo-02-runner",
-        "fluxo-03-runner",
-        "aidd-orchestrator-runner"
+        "aidd-pure",
+        "aidd-open",
+        "aidd-freedom",
     ]
     for skill_nome in skills_obrigatorias:
         skill_path = SKILLS_DIR / skill_nome / "SKILL.md"

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-Ticket 8 (skills-pocock ciclo-01, D15): contrato do texto do aidd-entrega.
+Ticket 8 (skills-pocock ciclo-01, D15): contrato do texto do aidd-delivery.
 
 Rótulo honesto: prova que a regra está escrita na skill, não que o agente a segue
 (prova de comportamento = Ticket 13).
@@ -11,7 +11,7 @@ from pathlib import Path
 import yaml
 
 ROOT = Path(__file__).resolve().parent.parent
-SKILL = ROOT / "componentes" / "compartilhado" / "skills" / "aidd-entrega" / "SKILL.md"
+SKILL = ROOT / "componentes" / "compartilhado" / "skills" / "aidd-delivery" / "SKILL.md"
 
 SECOES = ("Resumo", "Evidência (antes/depois)", "Dá para desfazer?", "O que pode quebrar")
 
@@ -31,7 +31,7 @@ def test_frontmatter():
     m = re.match(r"---\n(.*?)\n---\n", _texto(), re.DOTALL)
     assert m, "frontmatter ausente"
     fm = yaml.safe_load(m.group(1))
-    assert fm.get("name") == "aidd-entrega"
+    assert fm.get("name") == "aidd-delivery"
     assert fm.get("description")
 
 

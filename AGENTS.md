@@ -62,6 +62,7 @@
 9. **Tool Testing Discipline:** Follow the 5-step cycle (`docs/protocolos/PROTOCOLO-TESTES-FERRAMENTAS.md`): 1. Auto-fix bugs until 100% conformant (zero inconsistencies), 2. Git commit & push, 3. Clean target project, 4. Execute cleanly, 5. Update `docs/teste-end-to-end/` report.
    - Portão: gates/G_ENV_ROT.py (provado)
    - Portão: gates/G_SKILL_ROT.py (provado)
+   - Portão: gates/G_SKILL_FORMATO.py (provado)
    - Portão: gates/G_DISCIPLINA_TESTE_FERRAMENTA.py (provado)
    - Portão: gates/G_TEMPLATE_FORGE_ROT.py (provado)
    - Portão: gates/G_amelhoria.py (provado) — quality gate da ferramenta `aidd-melhoria` (Fase 6, Ticket 6)
@@ -87,32 +88,32 @@ Every robust application in the ecosystem originates from **`aidd-forge`** (supr
 - **FLUXO 01 — `aidd-pure` (Do Zero Puro | Slash: `/pure`):** `[FORGE -> PLANNER] -> GENERATOR -> [MASTER -> ENTERPRISE -> OPS]`
   - Engine: `aidd-generator` (8-phase pipeline, TDD Red-Green, Monólito Modular VSA + Next.js).
   - CLI: `python ecossistema.py pure` ou `python ecossistema.py run-fluxo --fluxo pure`
-  - Skills: `aidd-pure`, `fluxo-01-runner`
+  - Skill: `aidd-pure`
 - **FLUXO 02 — `aidd-open` (Motores Open-Source | Slash: `/aidd-open` ou `/open` ou `/factory`):** `[FORGE -> PLANNER] -> FACTORY -> [MASTER -> ENTERPRISE -> OPS]`
   - Engine: `aidd-factory` (Open-source engine curation, VSA integration slices, compose).
   - CLI: `python ecossistema.py open` (ou `python ecossistema.py aidd-open`) ou `python ecossistema.py run-fluxo --fluxo open`
-  - Skills: `aidd-open`, `open`, `fluxo-02-runner`
+  - Skill: `aidd-open`
   - *Aviso de Namespace:* No Antigravity CLI (`agy`), o comando `/open <path>` é reservado internamente pela ferramenta para abrir arquivos no editor do sistema. Por isso, no AGY/Antigravity utilize `/aidd-open` ou `/factory` para acionar este fluxo sem colisão.
 - **FLUXO 03 — `aidd-freedom` (Low-Code / Apps Unificadas | Slash: `/freedom`):** `[FORGE -> PLANNER] -> BRIDGE -> [MASTER -> ENTERPRISE -> OPS]`
   - Engine: `aidd-bridge` (Vendor lock-in eradication, Lovable/v0/Bolt cleanup, PostgreSQL, UI preservation).
   - CLI: `python ecossistema.py freedom` ou `python ecossistema.py run-fluxo --fluxo freedom`
-  - Skills: `aidd-freedom`, `freedom`, `fluxo-03-runner` (operações atômicas da ferramenta via `aidd-bridge-runner`)
+  - Skill: `aidd-freedom` (operações atômicas da ferramenta via `aidd-bridge`)
 - **EXECUÇÃO DETERMINÍSTICA DE PIPELINE & PLANOS (Slash: `/run-plan` e `/pipeline`):**
   - Engine: `tools/aidd-master/scripts/orchestrator_pipeline.py` & `scripts/compilador_tickets_plano.py` (Worktrees efêmeras + Join Barrier).
   - CLI: `python ecossistema.py run-plan <plano>` e `python ecossistema.py pipeline --handoff <json>`
-  - Skills: `aidd-pipeline-runner`
+  - Skill: `aidd-pipeline`
 - **MESO-CAMADA VSA — DESPACHO TOPOLÓGICO EM WORKTREES (Slash: `/dispatch` e `/aidd-dispatch`):**
   - Engine: `tools/aidd-master/scripts/dispatch_pipeline.py` & `engine_router.py` & `vsa_join_barrier.py` (Kahn DAG, worktrees efêmeras, barreira de validação e convergência master).
   - CLI: `python ecossistema.py dispatch --planner <plano>` ou `python ecossistema.py dispatch --dispatch <json>`
-  - Skills: `aidd-dispatch-runner`
+  - Skill: `aidd-dispatch`
 - **PIPELINE LINEAR DE AUDITORIA 4 FASES (Slash: `/audit-4f` e `/aidd-auditor`):**
-  - Engine: `docs/protocolos/PIPELINE-AUDITORIA-4F.md` & `componentes/compartilhado/skills/aidd-auditor-4f-runner` (Execução 4F: Inspetor, Arquiteto, Construtor, Retorno).
+  - Engine: `docs/protocolos/PIPELINE-AUDITORIA-4F.md` & `componentes/compartilhado/skills/aidd-audit-4f` (Execução 4F: Inspetor, Arquiteto, Construtor, Retorno).
   - CLI: `python ecossistema.py audit-4f --manifest <json>`
-  - Skills: `aidd-auditor-4f-runner`
+  - Skill: `aidd-audit-4f`
 - **PIPELINE DE EVOLUÇÃO TÉCNICA (Slash: `/evolucao` e `/aidd-evolucao`):**
-  - Engine: `docs/auditoria/ARQUITETURA-SCAFFOLD.md` & `componentes/compartilhado/skills/aidd-evolucao-runner` & `scripts/compilador_plano_evolucao.py` (Execução sequencial dos tickets do Plano de Evolução).
+  - Engine: `docs/auditoria/ARQUITETURA-SCAFFOLD.md` & `componentes/compartilhado/skills/aidd-evolution` & `scripts/compilador_plano_evolucao.py` (Execução sequencial dos tickets do Plano de Evolução).
   - CLI: `python ecossistema.py evolucao <tool>` ou `python ecossistema.py evolucao --manifest <json>`
-  - Skills: `aidd-evolucao-runner`
+  - Skill: `aidd-evolution`
 
 **Interoperabilidade Universal dos Slash Commands:** Em harnesses sem suporte a slash commands customizados na UI ou com colisões de namespace (como `/open` no Google Antigravity CLI), qualquer entrada do usuário referenciando `/pure`, `pure`, `/open`, `/aidd-open`, `open`, `/freedom`, `freedom`, `/factory`, `/bridge`, `/run-plan`, `run-plan`, `/pipeline`, `pipeline`, `/dispatch`, `dispatch`, `/aidd-dispatch`, `/audit-4f`, `audit-4f`, `/aidd-auditor`, `/evolucao`, `evolucao`, `/aidd-evolucao`, `/sessao`, `sessao`, `/session`, `session`, `/id` DEVE ser interceptada pelo agente como a invocação imediata do respectivo fluxo ou comando do ecossistema. Silêncio ou erro de "comando não suportado" é estritamente proibido.
 
@@ -146,6 +147,8 @@ Query the graph BEFORE file scanning:
 
 ## 6. Procedural Engineering Skills (`componentes/compartilhado/skills/`)
 
+Authoring rules: `docs/protocolos/CONVENCAO-AUTORIA-SKILLS.md` (checked by `G_SKILL_FORMATO`, `G_SKILL_ROT` and `G_IDIOMA_LEI_4`).
+
 Canonical workflow skills available across all harnesses to eliminate vibe coding and ensure rigorous pre-code alignment:
 - `/aidd-grill`: Socratic interview protocol to resolve edge cases and invariants before code modification.
 - `/aidd-grill-docs`: Architecture-grounded questioning anchored in `MEMORY.md` and repository laws.
@@ -154,9 +157,9 @@ Canonical workflow skills available across all harnesses to eliminate vibe codin
 - `/aidd-tdd`: Agreed seams, then Red → Green loop; refactor at review; zero stubs, polyglot.
 - `/aidd-diagnose`: 5-phase scientific fault triage integrated with `code-review-graph`.
 - `/aidd-handoff`: Compact session context serialization directly into `secoes/`.
-- `/aidd-sessao`: Deterministic session ID and metadata persistence in `secoes/` for instant recovery.
-- `/aidd-escrita-agentes`: Writing guide for skills, AGENTS.md, CLAUDE.md.
+- `/aidd-session`: Deterministic session ID and metadata persistence in `secoes/` for instant recovery.
+- `/aidd-agent-writing`: Writing guide for skills, AGENTS.md, CLAUDE.md.
 - `/aidd-retro`: Session retro; mistakes become proposed gates or review rules.
-- `/aidd-reexplica`: Re-explain last message in plain PT-BR using the glossary above.
-- `/aidd-entrega`: Delivery template with before/after evidence and real exit codes.
+- `/aidd-reexplain`: Re-explain last message in plain PT-BR using the glossary above.
+- `/aidd-delivery`: Delivery template with before/after evidence and real exit codes.
 - `/aidd-wizard`: Bash wizard for steps only the human can do.

@@ -80,7 +80,7 @@ def test_cli_melhoria_com_manifesto_valido(tmp_path, relatorio_isolado):
     assert res.returncode == 0, f"Falha na execução: stdout={res.stdout}, stderr={res.stderr}"
     assert "Processamento concluído com sucesso" in res.stdout or "SUCESSO" in res.stdout
 
-    sys.path.insert(0, str(ROOT_DIR / ".agents" / "skills" / "aidd-melhoria" / "scripts"))
+    sys.path.insert(0, str(ROOT_DIR / ".agents" / "skills" / "aidd-improvement" / "scripts"))
     import handoff
 
     destino_handoff = tmp_path / "handoff-melhoria.json"

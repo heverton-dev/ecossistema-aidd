@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-Ticket 7 (skills-pocock ciclo-01, D1): glossário CONTEXT.md, formato ADR e aidd-reexplica.
+Ticket 7 (skills-pocock ciclo-01, D1): glossário CONTEXT.md, formato ADR e aidd-reexplain.
 
 Rótulo honesto: prova que os artefatos existem com a estrutura combinada, não que
 o agente os usa (prova de comportamento = Ticket 13). As ambiguidades ficam abertas
@@ -14,7 +14,7 @@ import yaml
 ROOT = Path(__file__).resolve().parent.parent
 CONTEXT = ROOT / "CONTEXT.md"
 ADR = ROOT / "docs" / "adr" / "README.md"
-REEXPLICA = ROOT / "componentes" / "compartilhado" / "skills" / "aidd-reexplica" / "SKILL.md"
+REEXPLICA = ROOT / "componentes" / "compartilhado" / "skills" / "aidd-reexplain" / "SKILL.md"
 AGENTS = ROOT / "AGENTS.md"
 
 TERMOS = ["ciclo", "fase", "plano", "sessão", "ticket", "gate", "harness", "4F", "15-D", "worktree"]
@@ -71,7 +71,7 @@ def test_reexplica_aponta_para_context():
     m = re.match(r"---\n(.*?)\n---\n", texto, re.DOTALL)
     assert m, "frontmatter ausente"
     fm = yaml.safe_load(m.group(1))
-    assert fm.get("name") == "aidd-reexplica"
+    assert fm.get("name") == "aidd-reexplain"
     assert fm.get("description")
     assert "CONTEXT.md" in texto
     assert re.search(r"last (assistant )?message", texto, re.IGNORECASE)

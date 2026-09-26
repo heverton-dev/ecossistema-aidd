@@ -1,37 +1,27 @@
 ---
 name: aidd-bridge
-description: Dispara o Fluxo 03 (Low-Code / Apps Unificadas | Slash: /bridge) da Tríade Canônica. Desmonte de lock-in Lovable/v0/Bolt e migração PostgreSQL.
+description: Runs the atomic aidd-bridge tool operations that free low-code projects (Lovable, v0, Bolt) for self-hosting - scan, Supabase-to-PostgreSQL conversion, app merge and VPS packaging. Use when the user asks for one bridge step, or says "bridge", "/bridge", "scan do lovable", "converter banco", "empacotar para VPS". For the full Flow 03 use aidd-freedom.
 ---
 
-# aidd-bridge — Alias do Fluxo 03 Canônico (Novo comando canônico: /freedom)
+# aidd-bridge
 
-> **Aviso de Taxonomia:** O comando oficial e canônico para disparar o Fluxo 03 completo da Tríade é **`/freedom`** (skill `aidd-freedom` ou CLI `python ecossistema.py freedom`). O comando `/bridge` é reservado para as operações atômicas da ferramenta (skill `aidd-bridge-runner`).
+Atomic operations of `tools/aidd-bridge`. The full Flow 03 (`[FORGE -> PLANNER] -> BRIDGE -> [MASTER -> ENTERPRISE -> OPS]`) is `aidd-freedom`.
 
-Dispara e conduz o Fluxo 03 (`aidd-freedom`) da Tríade Canônica de criação de software no Ecossistema AIDD:
-`[FORGE -> PLANNER] -> BRIDGE -> [MASTER -> ENTERPRISE -> OPS]`
+- Ingest and scan Lovable/Vite/React repositories.
+- Sanitize Supabase migrations into plain PostgreSQL and PostgREST.
+- Merge 2 to 4 apps into one monorepo with unified Tailwind.
+- Generate Dockerfile, Docker Compose and Caddy reverse proxy with automatic HTTPS.
 
-## Gatilhos Universais:
-- Comando Slash: `/freedom <nome_ou_ideia> --origem <pasta_export>` (ou `/bridge` por compatibilidade)
-- Invocação por Skill: `/aidd-freedom` ou `/aidd-bridge`
-- Linguagem Natural: "libertar app lovable", "desacoplar app low-code", "migrar v0 ou bolt para postgresql", "empacotar projeto low-code"
+## Run
 
-## Como Executar
-
-### 1. Via CLI Central (Zero Fricção):
 ```bash
-python ecossistema.py bridge --nome "App Hub" --slug app-hub --dominio saas --pasta ./projetos/app-hub --origem ./exports/lovable-app
-```
-Ou via comando legado:
-```bash
-python ecossistema.py run-fluxo --fluxo bridge --nome "App Hub" --slug app-hub --dominio saas --pasta ./projetos/app-hub --origem ./exports/lovable-app
+python ecossistema.py bridge scan [path]
+python ecossistema.py bridge convert-db [path]
+python ecossistema.py bridge merge [app1] [app2] --output [destination]
+python ecossistema.py bridge pack [path] --domain example.com
 ```
 
-### 2. Simulação (Dry-Run):
-```bash
-python ecossistema.py bridge --nome "App Hub" --slug app-hub --dominio saas --pasta ./projetos/app-hub --origem ./exports/lovable-app --dry-run
-```
+Slash command: `/bridge <scan|convert-db|merge|pack> ...`.
+Passing `--nome`, `--pasta`, `--slug` or `--dry-run` to `bridge` redirects to the full Flow 03 (`freedom`).
 
-## Ação do Agente:
-1. Analisa a pasta exportada (Lovable, v0, Bolt) eliminando vendor lock-in e substituindo client Supabase/BaaS por chamadas à API limpa.
-2. Gera schema PostgreSQL e unifica o frontend Next.js/React preservando 100% da UI/UX.
-3. Harmoniza em Monólito Modular VSA com blindagem SHA-256 e entrega do *Quarteto Sine Qua Non*.
+Done when: each operation exits 0.

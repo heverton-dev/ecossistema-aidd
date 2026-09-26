@@ -946,7 +946,53 @@
 
 ---
 
-## 16. CSP sem `'unsafe-inline'` no `script-src`, com nonce por requisição: `aidd-master`, `aidd-enterprise` e `aidd-factory` (PLAN-0025 item 3)
+## 16. `forge conform` grava LF e G12 não exige ignorar lockfiles (achado na blindagem do rotaprime-replica)
+
+- **Objetivo da Correção:** na blindagem do app Lovable `rotaprime-replica`, o `forge conform` (1) gravou `AGENTS.md`, `CLAUDE.md` e `.gitignore` em CRLF no Windows e (2) colocou `package-lock.json`/`bun.lockb` no `.gitignore`, o que quebra `npm ci` e o CI. O rollback de backup também trocava o fim de linha do arquivo original.
+- **Ferramenta Tocada:** [`tools/aidd-forge`](file:///C:/Users/trcnologia/Desktop/ecossistema-aidd/tools/aidd-forge): `core/conform_fixers.py`, `core/audit_checks.py`, `templates/.gitignore` e 2 arquivos de teste.
+- **O que executou:**
+  1. Reprodução antes da correção, em pasta temporária com `AGENTS.md` e `package-lock.json`: `forge conform` → 3 arquivos em CRLF e `package-lock.json` no `.gitignore`.
+  2. Correção: `_safe_write` com `newline="\n"`; backup/restore em bytes; G12 exige só `node_modules/` (checagem, fixer e template).
+  3. Testes novos: `test_fixers_write_lf_only`, `test_restore_backup_preserves_original_bytes`, `test_g12_does_not_require_ignoring_lockfiles`. Sem a correção os dois de fim de linha falham (exit 1); com ela, passam.
+  4. Execução real em pasta temporária vazia (`git init -b main` + `package-lock.json`): `python ecossistema.py forge init` → exit 0; `forge conform` → exit 0; `forge audit` → exit 0, conformidade 93,3% (14/15), G12 PASS, nenhum lockfile no `.gitignore`, nenhum arquivo gerado com CRLF.
+- **Resultados de Testes:**
+  - `tools/aidd-forge`: `python -m pytest -q` → 297 passed, 1 skipped (exit 0).
+- **Inconsistências:** G04 e a pasta `.agent/` continuam como nas seções 14 e 15. Projetos que já passaram pelo conform antigo continuam com os lockfiles no `.gitignore`: o fixer não remove linhas. **Status:** ABERTO.
+- **Data da Última Auditoria:** 26/09/2026.
+
+---
+
+## 17. Templates `aidd-grill` e `aidd-spec` do `aidd-forge` com o nome novo da skill de despacho (mapa-pecas ciclo-01, etapa 4)
+
+- **Objetivo da Correção:** a renomeação das skills (`docs/auditoria/mapa-pecas/ciclo-01/PROPOSTA-NOMES-SKILLS.md`) trocou `aidd-dispatch-runner` por `aidd-dispatch`. A linha "Fluxo Geral" de `aidd-grill` e `aidd-spec` cita esse nome, e as cópias do forge precisam seguir a fonte.
+- **Ferramenta Tocada:** [`tools/aidd-forge`](file:///C:/Users/trcnologia/Desktop/ecossistema-aidd/tools/aidd-forge). Só 2 arquivos `SKILL.md` de template; nenhum código Python mudou.
+- **O que executou:**
+  1. Copiou `aidd-grill/SKILL.md` e `aidd-spec/SKILL.md` da fonte canônica para os templates do forge.
+  2. Execução real em pasta temporária vazia (`git init -b main`): `python ecossistema.py forge init <pasta>` → exit 0; `python ecossistema.py forge audit <pasta>` → exit 0, conformidade 93,3% (14/15). As 2 skills entregues em `.claude/skills/` saem idênticas à fonte (conferido com `cmp`).
+- **Resultados de Testes:**
+  - `G_TESTES_REAIS` no pre-commit: `aidd-forge` 294 passed, 0 failed, 1 skipped.
+  - `tests/test_skills_pocock_distribuicao.py` (cópias do forge = fonte) → passa.
+- **Inconsistências:** as mesmas da seção 14 (G04 e pasta `.agent/`), sem mudança. **Status:** ABERTO.
+- **Data da Última Auditoria:** 26/09/2026.
+
+---
+
+## 18. Descrições das 4 skills entregues pelo `aidd-forge` com "Use when" em até 20 palavras (mapa-pecas ciclo-01, etapa 6)
+
+- **Objetivo da Correção:** o guarda novo `G_SKILL_FORMATO` passou a exigir "Use when" na descrição de toda skill (`docs/protocolos/CONVENCAO-AUTORIA-SKILLS.md`, seção 5.1). A primeira versão das descrições de `aidd-grill`, `aidd-spec`, `aidd-tdd` e `aidd-tickets` passou de 20 palavras e derrubou o item G11 do `forge audit` (93,3% → 86,7%). As 4 descrições foram reescritas com até 20 palavras, cumprindo as duas regras.
+- **Ferramenta Tocada:** [`tools/aidd-forge`](file:///C:/Users/trcnologia/Desktop/ecossistema-aidd/tools/aidd-forge). Só 4 arquivos `SKILL.md` de template; nenhum código Python mudou.
+- **O que executou:**
+  1. Copiou as 4 `SKILL.md` da fonte canônica para os templates do forge.
+  2. Execução real em pasta temporária vazia (`git init -b main`): `python ecossistema.py forge init <pasta>` → exit 0; `python ecossistema.py forge audit <pasta>` → exit 0, conformidade 93,3% (14/15), G11 PASS. As 4 skills entregues em `.claude/skills/` saem idênticas à fonte (conferido com `cmp`).
+- **Resultados de Testes:**
+  - `tools/aidd-forge`: `python -m pytest -q` → 294 passed, 1 skipped (exit 0).
+  - `tests/test_skills_pocock_distribuicao.py` (cópias do forge = fonte) → passa.
+- **Inconsistências:** as mesmas da seção 14 (G04 e pasta `.agent/`), sem mudança. **Status:** ABERTO.
+- **Data da Última Auditoria:** 26/09/2026.
+
+---
+
+## 19. CSP sem `'unsafe-inline'` no `script-src`, com nonce por requisição: `aidd-master`, `aidd-enterprise` e `aidd-factory` (PLAN-0025 item 3)
 
 - **Objetivo da Correção:** a `main` ainda emitia `script-src 'self' 'unsafe-inline'` em 14 arquivos. A correção original (`0459f63`, na tag `arquivo/Heverton-dev/PLAN-0025-fase-03-reversao-csp-relaxado`) nunca entrou na `main` e foi feita sobre um commit sujo ("Inicialização de projeto AIDD"). O cherry-pick deu 61 conflitos add/add, então só o delta real (`048cfb5..0459f63`) foi reaplicado sobre a `main` atual.
 - **Ferramentas Tocadas:** [`tools/aidd-master`](file:///C:/Users/trcnologia/Desktop/ecossistema-aidd/tools/aidd-master), [`tools/aidd-enterprise`](file:///C:/Users/trcnologia/Desktop/ecossistema-aidd/tools/aidd-enterprise), [`tools/aidd-factory`](file:///C:/Users/trcnologia/Desktop/ecossistema-aidd/tools/aidd-factory) e a fonte `componentes/compartilhado/src-core`.

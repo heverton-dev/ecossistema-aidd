@@ -1,6 +1,6 @@
 ---
 name: aidd-spec
-description: Synthesizes discussions, requirements, and decisions into a deterministic, executable technical specification.
+description: Turns discussions and decisions into an executable spec with binary acceptance criteria. Use when writing a spec, or "especificação".
 ---
 
 # AIDD-Spec — Deterministic Technical Specification
@@ -25,5 +25,5 @@ Every specification produced by this skill must include:
 ## Encadeamento Canônico de Intake
 Após aprovação da especificação formal:
 - **Próxima Skill:** `/aidd-planner` (gera o blueprint formal `PLANNER.json` com DDD/BDD/SDD).
-- **Fluxo Geral:** `/aidd-grill` ➔ `/aidd-spec` ➔ `/aidd-planner` ➔ `/aidd-dispatch-runner`.
+- **Fluxo Geral:** `/aidd-grill` ➔ `/aidd-spec` ➔ `/aidd-planner` ➔ `/aidd-dispatch`.
 

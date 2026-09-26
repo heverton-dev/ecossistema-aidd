@@ -137,7 +137,7 @@ def test_g12_adds_missing_patterns(tmp_path: Path) -> None:
     assert fix.success is True
     content = (tmp_path / ".gitignore").read_text(encoding="utf-8")
     assert "node_modules" in content
-    assert "package-lock.json" in content
+    assert "package-lock.json" not in content  # lockfiles ficam versionados
     assert "*.pyc" in content  # Preserved
 
 
@@ -179,3 +179,32 @@ def test_g13_is_idempotent(tmp_path: Path) -> None:
     assert fix1.success is True
     assert fix2.success is True
     assert fix2.files_touched == []
+
+
+# --- Fim de linha (regressao: no Windows os fixers gravavam CRLF) --------------
+
+
+def test_fixers_write_lf_only(tmp_path: Path) -> None:
+    fix_g01_agents_md_missing(tmp_path)
+    fix_g03_ide_pointers(tmp_path)
+    for directive_id in DIRECTIVES:
+        fix_directive(tmp_path, directive_id)
+    fix_g12_gitignore(tmp_path)
+    fix_g13_gitattributes(tmp_path)
+
+    for name in ("AGENTS.md", "CLAUDE.md", ".gitignore", ".gitattributes"):
+        assert b"\r\n" not in (tmp_path / name).read_bytes(), name
+
+
+def test_restore_backup_preserves_original_bytes(tmp_path: Path) -> None:
+    from aidd_forge.core.conform_fixers import _backup_file, _restore_backup
+
+    target = tmp_path / "AGENTS.md"
+    original = b"# AGENTS\nlinha LF\nlinha CRLF\r\n"
+    target.write_bytes(original)
+    backup = _backup_file(target)
+    target.write_bytes(b"alterado\n")
+
+    _restore_backup(backup)
+
+    assert target.read_bytes() == original

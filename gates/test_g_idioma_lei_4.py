@@ -132,3 +132,37 @@ def test_repo_real_passes():
     )
     assert res.returncode == 0, f"Repositório real falhou no gate G_IDIOMA_LEI_4:\n{res.stdout}\n{res.stderr}"
     assert "[OK] G_IDIOMA_LEI_4" in res.stdout
+
+
+def test_failing_path_skill_em_portugues_asserts_exit_1(tmp_path):
+    """Escopo ampliado (PROPOSTA-NOMES-SKILLS, etapa 6): skill em componentes/*/skills/
+    com corpo ou arquivo de apoio em PT-BR reprova com exit 1."""
+    gate_script = _preparar_arvore_sintetica(tmp_path)
+    ref_dir = os.path.join(tmp_path, "componentes", "compartilhado", "skills", "aidd-exemplo", "references")
+    os.makedirs(ref_dir, exist_ok=True)
+    with open(os.path.join(ref_dir, "guia.md"), "w", encoding="utf-8") as f:
+        f.write(
+            "# Guia\n\n"
+            "Esta referência foi escrita inteiramente em português com palavras estruturais "
+            "e não deve ser aceita pelo portão de qualidade da Lei 4. O conteúdo das skills é lido "
+            "pela máquina, então precisa estar em inglês compacto para gastar menos tokens no "
+            "contexto do agente quando a skill for acionada em qualquer sessão.\n"
+        )
+
+    res = rodar_gate(gate_script, tmp_path)
+    assert res.returncode == 1, f"Gate deveria falhar com exit 1. Output:\n{res.stdout}"
+    assert "aidd-exemplo/references/guia.md" in res.stdout
+
+
+def test_skill_em_ingles_aprova_exit_0(tmp_path):
+    gate_script = _preparar_arvore_sintetica(tmp_path)
+    skill_dir = os.path.join(tmp_path, "componentes", "compartilhado", "skills", "aidd-exemplo")
+    os.makedirs(skill_dir, exist_ok=True)
+    with open(os.path.join(skill_dir, "SKILL.md"), "w", encoding="utf-8") as f:
+        f.write(
+            "---\nname: aidd-exemplo\ndescription: Builds things. Use when the user says \"construir\".\n---\n\n"
+            "# aidd-exemplo\n\nRun the deterministic command, read its output and report the exit code. "
+            "Every step ends on a checkable condition, and the skill never invents approval or data.\n"
+        )
+    res = rodar_gate(gate_script, tmp_path)
+    assert res.returncode == 0, res.stdout

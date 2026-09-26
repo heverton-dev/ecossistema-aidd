@@ -76,7 +76,6 @@ IMPACT_MAP: dict[str, str] = {
 MAX_CONTEXT_TOKENS = 1500
 MAX_SKILL_DESC_WORDS = 20
 GITIGNORE_REQUIRED_PATTERNS = ("node_modules/", "node_modules/**")
-GITIGNORE_LOCKFILE_PATTERNS = ("package-lock.json", "pnpm-lock.yaml", "yarn.lock", "bun.lockb")
 
 EXCLUDED_DIRS = frozenset({
     ".git", "__pycache__", "node_modules", ".venv", "venv",
@@ -402,12 +401,15 @@ def check_g11_skills_frontmatter(project_path: Path) -> AuditItem:
 
 
 def check_g12_gitignore(project_path: Path) -> AuditItem:
-    """G12: Verifica se .gitignore contem padroes obrigatorios."""
+    """G12: Verifica se .gitignore ignora node_modules/.
+
+    Lockfiles NAO entram: ignora-los quebra `npm ci`/instalacao reproduzivel no CI.
+    """
     gitignore_path = project_path / ".gitignore"
     if not gitignore_path.exists():
         return AuditItem(
             id="G12", category="Repository Hygiene",
-            requirement=".gitignore contains node_modules/ and lockfile patterns",
+            requirement=".gitignore contains node_modules/ (lockfiles stay versioned)",
             status="FAIL", details=".gitignore not found",
             impact=IMPACT_MAP["G12"], fixable=True,
         )
@@ -418,21 +420,17 @@ def check_g12_gitignore(project_path: Path) -> AuditItem:
     if "node_modules" not in content:
         missing.append("node_modules/")
 
-    for pattern in GITIGNORE_LOCKFILE_PATTERNS:
-        if pattern not in content:
-            missing.append(pattern)
-
     if missing:
         return AuditItem(
             id="G12", category="Repository Hygiene",
-            requirement=".gitignore contains node_modules/ and lockfile patterns",
+            requirement=".gitignore contains node_modules/ (lockfiles stay versioned)",
             status="FAIL", details=f"missing: {', '.join(missing)}",
             impact=IMPACT_MAP["G12"], fixable=True,
         )
 
     return AuditItem(
         id="G12", category="Repository Hygiene",
-        requirement=".gitignore contains node_modules/ and lockfile patterns",
+        requirement=".gitignore contains node_modules/ (lockfiles stay versioned)",
         status="PASS", details="all required patterns present",
         impact=IMPACT_MAP["G12"], fixable=True,
     )

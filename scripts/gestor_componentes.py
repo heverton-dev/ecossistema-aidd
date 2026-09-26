@@ -671,11 +671,17 @@ def verify_detallado(tipo=None, ferramenta=None):
 def auto_ingest_skills(dry_run=False) -> list[str]:
     """Varre as pastas de skills de todos os harnesses suportados.
     Se encontrar uma skill que possui SKILL.md mas não existe em componentes/compartilhado/skills/,
-    ingere-a automaticamente para a fonte canônica, permitindo propagação universal."""
+    ingere-a automaticamente para a fonte canônica, permitindo propagação universal.
+    Skills de terceiros declaradas em gates/dependencias_externas.json nunca são
+    ingeridas: são instaladas pelo instalador do fornecedor (CONVENCAO-AUTORIA-SKILLS 5.3.5)."""
+    import gestor_dependencias
     manifesto = carregar_manifesto()
     fonte_skills = os.path.join(COMPONENTES_DIR, "compartilhado", "skills")
     os.makedirs(fonte_skills, exist_ok=True)
     skills_canonica = set(os.listdir(fonte_skills))
+    terceiros = gestor_dependencias.skills_de_terceiros(
+        os.path.join(ROOT_DIR, "gates", "dependencias_externas.json")
+    )
 
     pastas_busca = []
     # Harnesses normais
@@ -703,7 +709,7 @@ def auto_ingest_skills(dry_run=False) -> list[str]:
                 continue
             if not os.path.isfile(os.path.join(caminho_item, "SKILL.md")):
                 continue
-            if item in skills_canonica:
+            if item in skills_canonica or item in terceiros:
                 continue
 
             destino_canonico = os.path.join(fonte_skills, item)

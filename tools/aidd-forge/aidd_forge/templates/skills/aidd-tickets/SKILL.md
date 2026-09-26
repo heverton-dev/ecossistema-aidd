@@ -1,6 +1,6 @@
 ---
 name: aidd-tickets
-description: Decomposes specifications into atomic, incremental tracer-bullet tasks with bounded blast radius.
+description: Splits a spec into vertical-slice tracer-bullet tickets with Blocked by. Use when breaking work into tasks, or "tickets".
 ---
 
 # AIDD-Tickets — Atomic Task Decomposition

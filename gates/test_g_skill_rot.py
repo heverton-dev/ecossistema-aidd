@@ -48,7 +48,9 @@ def test_gate_aprova_estado_atual_do_repositorio():
     code, falhas, conformes, total = auditar_skills()
     assert code == 0
     assert len(falhas) == 0
-    assert total >= 300
+    # piso contra auditoria vazia; caiu de 300 quando as 19 skills de terceiros
+    # sairam da fonte unica (PROPOSTA-NOMES-SKILLS, etapa 1)
+    assert total >= 100
     orfaos = auditar_orfaos_em_mirrors()
     assert len(orfaos) == 0
 
@@ -206,6 +208,30 @@ def test_gate_reprova_skill_orfa_no_harness():
         orfaos = auditar_orfaos_em_mirrors(temp_root)
         assert len(orfaos) == 1
         assert "skill-fantasma-orfa" in orfaos[0]
+
+
+def test_orfaos_ignora_skill_de_terceiro_declarada_em_dependencias_externas():
+    """Skill de terceiro registrada em gates/dependencias_externas.json (pela chave ou
+    pelo padrao */skills/<nome>/ do gitignore) vive so no harness: nao e orfa. A nao
+    declarada continua reprovada."""
+    import json
+    with tempfile.TemporaryDirectory() as temp_root:
+        os.makedirs(os.path.join(temp_root, "componentes", "compartilhado", "skills"))
+        os.makedirs(os.path.join(temp_root, "gates"))
+        with open(os.path.join(temp_root, "gates", "dependencias_externas.json"), "w", encoding="utf-8") as f:
+            json.dump({"skills": {
+                "wrangler": {"gitignore": ["*/skills/wrangler/"]},
+                "code-review-graph": {"gitignore": ["*/skills/review-changes/", "CLAUDE.md"]},
+            }}, f)
+        for nome in ("wrangler", "review-changes", "skill-sem-dono"):
+            d = os.path.join(temp_root, ".claude", "skills", nome)
+            os.makedirs(d)
+            with open(os.path.join(d, "SKILL.md"), "w", encoding="utf-8") as f:
+                f.write(f"---\nname: {nome}\n---\n")
+
+        orfaos = auditar_orfaos_em_mirrors(temp_root)
+        assert len(orfaos) == 1
+        assert "skill-sem-dono" in orfaos[0]
 
 
 def test_gate_subprocess_execucao_real_exit_1():
