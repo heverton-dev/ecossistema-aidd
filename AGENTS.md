@@ -156,6 +156,6 @@ Canonical workflow skills available across all harnesses to eliminate vibe codin
 - `/aidd-sessao`: Deterministic session ID and metadata persistence in `secoes/` for instant recovery.
 - `/aidd-escrita-agentes`: Writing guide for skills, AGENTS.md, CLAUDE.md.
 - `/aidd-retro`: Session retro; mistakes become proposed gates or review rules.
-- `/aidd-reexplica`: Re-explain last message in plain PT-BR via `CONTEXT.md`.
+- `/aidd-reexplica`: Re-explain last message in plain PT-BR using the glossary above.
 - `/aidd-entrega`: Delivery template with before/after evidence and real exit codes.
 - `/aidd-wizard`: Bash wizard for steps only the human can do.
