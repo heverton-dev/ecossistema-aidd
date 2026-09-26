@@ -146,6 +146,8 @@ Query the graph BEFORE file scanning:
 
 ## 6. Procedural Engineering Skills (`componentes/compartilhado/skills/`)
 
+Authoring rules: `docs/protocolos/CONVENCAO-AUTORIA-SKILLS.md`. Format guard: gates/G_SKILL_FORMATO.py, warning mode (`--aviso`) until the rename in `docs/auditoria/mapa-pecas/ciclo-01/PROPOSTA-NOMES-SKILLS.md` ends.
+
 Canonical workflow skills available across all harnesses to eliminate vibe coding and ensure rigorous pre-code alignment:
 - `/aidd-grill`: Socratic interview protocol to resolve edge cases and invariants before code modification.
 - `/aidd-grill-docs`: Architecture-grounded questioning anchored in `MEMORY.md` and repository laws.

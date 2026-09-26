@@ -126,9 +126,9 @@ description: Ajuda com o ecossistema.
 | Caminhos, comandos e scripts citados existem | `G_SKILL_ROT` | provado |
 | Cópia idêntica em todos os harnesses | `G_COMPONENTE_AGNOSTICO`, `G_UNIVERSAL_HARNESS`, `components verify` | provado |
 | Compatibilidade de harness | `G_HARNESS_COMPAT` | provado |
-| Formato do frontmatter e nomes (5.1 e 5.3), tamanho 450 | nenhum | **sem guarda.** Proposta: `G_SKILL_FORMATO` |
+| Formato do frontmatter e nomes (5.1 e 5.3), tamanho 450 | `G_SKILL_FORMATO` | **modo aviso** (só imprime) até o fim da renomeação |
 | Corpo em inglês | `G_IDIOMA_LEI_4` | **não cobre skills:** o escopo padrão só confere `docs/issues/`. Ampliar para `componentes/*/skills/` |
-| Descrição diz "quando usar" | nenhum | **sem guarda.** Heurística cabe no `G_SKILL_FORMATO` |
+| Descrição diz "quando usar" | `G_SKILL_FORMATO` (código `SEM_USE_WHEN`) | **modo aviso** |
 | Testes de comportamento existem e passam | só `G_PROVA_SKILLS_POCOCK` (4 skills: diagnose, tickets, grill, tdd) | **parcial** |
 | Skill repetida (alias) | nenhum | **sem guarda.** Catálogo já detecta (`skills_mesma_descricao`) |
 
