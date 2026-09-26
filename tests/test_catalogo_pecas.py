@@ -151,3 +151,19 @@ def test_skill_de_terceiro_copiada_para_a_fonte_e_marcada(tmp_path, monkeypatch)
     skills = {s["id"]: s["terceiro"] for s in cp.coletar_skills(["wrangler"])}
     assert skills == {"aidd-proprio": False, "wrangler": True}
     assert "wrangler" in cp.coletar_skills_terceiros()
+
+
+
+def test_comando_slash_registra_a_skill_e_se_ela_existe(tmp_path, monkeypatch):
+    (tmp_path / "comandos").mkdir()
+    (tmp_path / "skills" / "aidd-pure").mkdir(parents=True)
+    (tmp_path / "skills" / "aidd-pure" / "SKILL.md").write_text("---\nname: aidd-pure\n---\n", encoding="utf-8")
+    (tmp_path / "comandos" / "pure.md").write_text("# /pure\n\nFluxo 01.\n\nExecuta a skill `aidd-pure`.\n", encoding="utf-8")
+    (tmp_path / "comandos" / "velho.md").write_text("# /velho\n\nExecuta a skill `skills/aidd-velho`.\n", encoding="utf-8")
+    (tmp_path / "comandos" / "solto.md").write_text("# /solto\n\nSem skill.\n", encoding="utf-8")
+    monkeypatch.setattr(cp, "COMPARTILHADO", tmp_path)
+    monkeypatch.setattr(cp, "RAIZ", tmp_path)
+    por_id ={c["id"]: c for c in cp.coletar_comandos_slash()}
+    assert (por_id["pure"]["skill"], por_id["pure"]["skill_existe"], por_id["pure"]["descricao"]) == ("aidd-pure", True, "Fluxo 01.")
+    assert (por_id["velho"]["skill"], por_id["velho"]["skill_existe"]) == ("aidd-velho", False)
+    assert por_id["solto"]["skill"] == ""

@@ -8,7 +8,7 @@ não é específico deste ecossistema.
 `/aidd-livro-texto <criar|atualizar> <pasta> [descrição do que documentar]`
 
 ## Ação:
-Executa a skill `aidd-livro-texto` (dona única deste comando), que decide entre obra
+Executa a skill `aidd-textbook` (dona única deste comando), que decide entre obra
 nova e atualização pelo manifesto `livro.json` da pasta alvo, escreve as partes em
 Markdown e delega todo o trabalho mecânico ao motor determinístico `livro.py`
 (concatenação, auditoria, compilação, versionamento e registro de revisão).

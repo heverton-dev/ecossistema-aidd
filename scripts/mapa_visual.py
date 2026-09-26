@@ -36,7 +36,8 @@ FONTES = ("https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wgh
           "12..96,700;12..96,800&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500"
           "&display=swap")
 TITULOS = {"guardas": "Mapa dos Guardas", "skills": "Mapa das Skills", "indice": "Mapas do Ecossistema",
-           "encaixes": "Mapa dos Encaixes", "ferramentas": "Mapa das Ferramentas"}
+           "encaixes": "Mapa dos Encaixes", "ferramentas": "Mapa das Ferramentas",
+           "comandos": "Mapa dos Comandos Slash"}
 # Os mapas que o ecossistema precisa ter, na ordem de criação. O índice mostra
 # cada um como concluído (arquivo em dia com o catálogo), desatualizado ou a criar.
 MAPAS_PREVISTOS = (
@@ -301,6 +302,35 @@ def valores_ferramentas(cat: dict) -> dict[str, str]:
     }
 
 
+def valores_comandos(cat: dict) -> dict[str, str]:
+    comandos = cat["comandos_slash"]
+    quebrados = [f'/{c["id"]} → {c["skill"]}' for c in comandos if c.get("skill") and not c.get("skill_existe")]
+    sem_skill = [f'/{c["id"]}' for c in comandos if not c.get("skill")]
+    cartoes = []
+    for c in comandos:
+        if not c.get("skill"):
+            chip = '<span class="chip aviso">sem skill</span>'
+        elif c.get("skill_existe"):
+            chip = f'<code>{e(c["skill"])}</code><span class="chip ok">existe</span>'
+        else:
+            chip = f'<code>{e(c["skill"])}</code><span class="chip falha">não existe</span>'
+        cartoes.append(f'<article class="item" style="--c:var(--c-regra)" data-busca="{e(c["id"])}">'
+                       f'<span class="nome">/{e(c["id"])}</span>'
+                       f'<p class="desc">{e(c.get("descricao") or "sem descrição")}</p>'
+                       f'<div class="chips">{chip}</div><span class="onde">{e(c["caminho"])}</span></article>')
+    return {
+        "TOTAIS": _totais([
+            (len(comandos), "comandos slash", ""),
+            (sum(1 for c in comandos if c.get("skill_existe")), "apontam para uma skill que existe", ""),
+            (len(quebrados), "apontam para skill que não existe", "falha" if quebrados else ""),
+            (len(sem_skill), "não dizem qual skill chamam", "aviso" if sem_skill else ""),
+        ]),
+        "QUEBRADOS": _lista_curta(quebrados, "Nenhum hoje."),
+        "SEM_SKILL": _lista_curta(sem_skill, "Nenhum hoje."),
+        "LISTA": f'<div class="grupo"><div class="itens">{"".join(cartoes)}</div></div>',
+    }
+
+
 def status_mapa(tipo: str, cat: dict) -> str:
     """concluido = arquivo existe e está em dia com o catálogo; desatualizado = existe e
     difere; a-criar = sem gerador ou sem arquivo."""
@@ -339,7 +369,8 @@ def valores_indice(cat: dict) -> dict[str, str]:
 
 
 GERADORES = {"guardas": valores_guardas, "skills": valores_skills, "indice": valores_indice,
-             "encaixes": valores_encaixes, "ferramentas": valores_ferramentas}
+             "encaixes": valores_encaixes, "ferramentas": valores_ferramentas,
+             "comandos": valores_comandos}
 
 
 def montar(tipo: str, cat: dict, link_manual: str, fragmento: bool) -> str:

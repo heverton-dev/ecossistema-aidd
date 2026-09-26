@@ -183,7 +183,7 @@ def test_encaixes_marcador_desencontrado_reprova(tmp_path, monkeypatch):
         mv.montar("encaixes", _cat_encaixes(), "m.html", fragmento=True)
 
 
-@pytest.mark.parametrize("tipo", ["encaixes", "ferramentas"])
+@pytest.mark.parametrize("tipo", ["encaixes", "ferramentas", "comandos"])
 def test_mapa_roda_de_verdade_no_repositorio(tmp_path, tipo):
     saida = tmp_path / "mapa.html"
     proc = subprocess.run([sys.executable, str(ROOT / "scripts" / "mapa_visual.py"), tipo,
@@ -220,3 +220,24 @@ def test_ferramentas_marcador_desencontrado_reprova(tmp_path, monkeypatch):
     monkeypatch.setattr(mv, "MOLDES", tmp_path)
     with pytest.raises(ValueError, match="VELHO"):
         mv.montar("ferramentas", _cat_ferramentas(), "m.html", fragmento=True)
+
+
+def _cat_comandos():
+    return {"comandos_slash": [
+        {"id": "pure", "caminho": "c/pure.md", "descricao": "Fluxo 01.", "skill": "aidd-pure", "skill_existe": True},
+        {"id": "livro", "caminho": "c/livro.md", "descricao": "", "skill": "aidd-velho", "skill_existe": False},
+        {"id": "planner", "caminho": "c/planner.md", "descricao": "Intake.", "skill": "", "skill_existe": False}]}
+
+
+def test_comandos_quebrados_e_sem_skill_saem_do_catalogo():
+    valores = mv.valores_comandos(_cat_comandos())
+    assert "/livro → aidd-velho" in valores["QUEBRADOS"] and "/planner" in valores["SEM_SKILL"]
+    assert 'chip falha">não existe' in valores["LISTA"] and 'chip ok">existe' in valores["LISTA"]
+
+
+def test_comandos_marcador_desencontrado_reprova(tmp_path, monkeypatch):
+    (tmp_path / "comandos.html").write_text("{{TOTAIS}} {{LISTA}} {{QUEBRADOS}} {{EXTRA}}", encoding="utf-8")
+    (tmp_path / "base.css").write_text("", encoding="utf-8")
+    monkeypatch.setattr(mv, "MOLDES", tmp_path)
+    with pytest.raises(ValueError, match="EXTRA"):
+        mv.montar("comandos", _cat_comandos(), "m.html", fragmento=True)
