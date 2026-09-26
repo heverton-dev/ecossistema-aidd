@@ -8,4 +8,4 @@ Instala e registra skills e MCPs de terceiros usados pelo próprio agente de IA 
 `/dependencia mcp <nome ou pedido>` — registra um novo MCP de terceiros
 
 ## Ação:
-Executa a skill `skills/dependencia-runner`, que completa os dados que faltarem (pacote, comando de instalação, nomes de variável de ambiente) e delega para `python ecossistema.py dependencia <acao> ...`.
+Executa a skill `skills/aidd-dependencies`, que completa os dados que faltarem (pacote, comando de instalação, nomes de variável de ambiente) e delega para `python ecossistema.py dependencia <acao> ...`.

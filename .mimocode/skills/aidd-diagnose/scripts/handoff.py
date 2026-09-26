@@ -20,7 +20,7 @@ Provê:
    artefatos inalterados.
 
 Reaproveita (DRY) os primitivos determinísticos de
-`.agents/skills/aidd-melhoria/scripts/handoff.py` (sha256 de arquivo, payload
+`.agents/skills/aidd-improvement/scripts/handoff.py` (sha256 de arquivo, payload
 canônico e cálculo de assinatura), com fallback local idêntico para garantir
 independência total do módulo (Zero Stubs).
 """
@@ -57,7 +57,7 @@ _TODAS_FASES = list(range(1, FASE_FINAL + 1))
 _MELHORIA_HANDOFF: Any = None
 _NOME_MODULO_MELHORIA = "aidd_melhoria_handoff_dry"
 _src_melhoria = (
-    Path(__file__).resolve().parents[3] / "aidd-melhoria" / "scripts" / "handoff.py"
+    Path(__file__).resolve().parents[3] / "aidd-improvement" / "scripts" / "handoff.py"
 )
 if _src_melhoria.is_file():
     try:

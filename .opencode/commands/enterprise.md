@@ -6,5 +6,5 @@ Injeta componentes de missão crítica com validação de hashes SHA-256 e confo
 `/enterprise <tipo> <nome>`
 
 ## Ação:
-Executa a skill `skills/aidd-enterprise-runner`. Tipos suportados: `skill`, `rule`, `mcp`, `spec`, `config`, `hook`, `agent`.
+Executa a skill `skills/aidd-enterprise`. Tipos suportados: `skill`, `rule`, `mcp`, `spec`, `config`, `hook`, `agent`.
 Equivalente CLI: `python ecossistema.py enterprise inject <tipo> <nome>`

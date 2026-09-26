@@ -51,36 +51,36 @@
     {
       "id": "aidd-forge",
       "caminho": "tools/aidd-forge",
-      "skill": "skills/aidd-forge-runner",
+      "skill": "skills/aidd-forge",
       "slash_command": "/forge [caminho]"
     },
     {
       "id": "aidd-generator",
       "caminho": "tools/aidd-generator",
-      "skill": "skills/aidd-generator-runner",
+      "skill": "skills/aidd-generator",
       "slash_command": "/generate <ideia>"
     },
     {
       "id": "aidd-master",
       "caminho": "tools/aidd-master",
-      "skill": "skills/aidd-master-runner",
+      "skill": "skills/aidd-master",
       "slash_command": "/master <modulo>"
     },
     {
       "id": "aidd-enterprise",
       "caminho": "tools/aidd-enterprise",
-      "skill": "skills/aidd-enterprise-runner",
+      "skill": "skills/aidd-enterprise",
       "slash_command": "/enterprise <tipo> <nome>"
     },
     {
       "id": "aidd-ops",
       "caminho": "tools/aidd-ops",
-      "skill": "skills/aidd-ops-runner",
+      "skill": "skills/aidd-ops",
       "slash_command": "/ops [acao]"
     }
   ],
   "testes": {
-    "medido_em": "2026-09-26T20:30:11.100614+00:00",
+    "medido_em": "2026-09-26T21:56:52.308385+00:00",
     "metodo": "python -m pytest -q --tb=no em cada tools/<ferramenta>, parseado do resumo real (nao digitado a mao)",
     "por_ferramenta": {
       "aidd-forge": {

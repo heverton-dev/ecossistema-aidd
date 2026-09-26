@@ -13,27 +13,27 @@
 Cada comando possui contrato formal executável em qualquer harness (Antigravity, Claude Code, MimoCode, Cursor):
 
 ### /forge [caminho]
-- **Skill:** skills/aidd-forge-runner
+- **Skill:** skills/aidd-forge
 - **Ação:** Inicializa o ecossistema AIDD, cria governança, gates e otimizadores de token no diretório indicado (ou . para o diretório atual).
 - **CLI Equivalente:** python ecossistema.py forge init [caminho]
 
 ### /generate <ideia>
-- **Skill:** skills/aidd-generator-runner
+- **Skill:** skills/aidd-generator
 - **Ação:** Inicia o pipeline autônomo de 8 fases para transformar uma ideia em um projeto completo de software.
 - **CLI Equivalente:** python ecossistema.py generate "<ideia>"
 
 ### /master <modulo>
-- **Skill:** skills/aidd-master-runner
+- **Skill:** skills/aidd-master
 - **Ação:** Cria e integra uma nova fatia vertical de negócio (src/modules/<modulo>/) com rotas, modelos, serviços, UI e testes.
 - **CLI Equivalente:** python ecossistema.py master add-module <modulo>
 
 ### /enterprise <tipo> <nome>
-- **Skill:** skills/aidd-enterprise-runner
+- **Skill:** skills/aidd-enterprise
 - **Ação:** Injeta e valida componentes certificados com hashes SHA-256 e conformidade Zero-Trust.
 - **CLI Equivalente:** python ecossistema.py enterprise inject <tipo> <nome>
 
 ### /ops [requisito]
-- **Skill:** skills/aidd-ops-runner
+- **Skill:** skills/aidd-ops
 - **Ação:** Meta-Orquestrador Agêntico de Infraestrutura — orquestra stacks self-hosted a partir de requisitos em linguagem natural (sizing VPS, hardening SSH, Docker, deploy).
 - **CLI Equivalente:** python ecossistema.py ops [requisito]
 
@@ -51,28 +51,28 @@ skills respondendo ao mesmo comando, com regras opostas, foi a causa direta das
 árvores de mesa dentro de mesa no app ORCA (incidente de 11-09-2026).
 
 ### /melhoria <descrição em linguagem natural>
-- **Skill:** skills/melhoria (dona) — etapa 1 de 3
+- **Skill:** skills/aidd-improvement (dona) — etapa 1 de 3
 - **Ação:** Investiga o código real (graph → Grep/Read → reprodução real), atribui Nota Atual 0-10 **com evidência**, e gera relatório `.html` + `.json` em `docs/melhorias/`. Também reanalisa um plano já existente, comparando previsto vs. implementado item a item.
 - **CLI Equivalente:** python ecossistema.py melhoria init --pedido "<texto>" --nome "<3 palavras>"
 
 ### /plan <nome>
-- **Skill:** skills/plan (dona) — etapa 2 de 3; motor: skills/planos-auditoria-runner
+- **Skill:** skills/aidd-plan (dona) — etapa 2 de 3
 - **Ação:** Gera estruturação padronizada e rascunhos de planos de auditoria, evolução ou testes com checagem determinística de cercas markdown sem fabricar decisões ou aprovações.
 - **CLI Equivalente:** python ecossistema.py plan init <nome>
 
 ### /orchestrate [plano]
-- **Skill:** skills/orchestrate (dona) — etapa 3 de 3; motor da via nativa: skills/orca-plan-orchestrator
+- **Skill:** skills/aidd-orchestrate (dona) — etapa 3 de 3; motor da via nativa: skills/aidd-orca
 - **Ação:** Roteador de ambiente (ORCA / Subagentes / Git Worktree nativo) + Plano de Voo, e execução das frentes do plano. **Não é o comando do AIDD Ops** (que é `/ops`).
 - **Regras fixas da via ORCA:** carregar o manual da versão instalada (`orca skills get orca-cli`) antes de qualquer comando; mesa independente (`--no-parent`) por padrão, filha só a pedido explícito; **nunca** lançar harness com `--resume <id-de-sessão>`; esperar `tui-idle` com `satisfied: true` antes de enviar o prompt; nunca reenviar no silêncio.
 - **CLI Equivalente:** python ecossistema.py orchestrate [plano]
 
 ### /freedom <origem> [nome]
-- **Skill:** skills/aidd-freedom (ou skills/fluxo-03-runner)
+- **Skill:** skills/aidd-freedom
 - **Ação:** Dispara o Fluxo 03 (`aidd-freedom`) da Tríade Canônica: desacoplamento e libertação de projetos Low-Code (Lovable, v0, Bolt) para infraestrutura própria e Monólito Modular VSA.
 - **CLI Equivalente:** python ecossistema.py freedom (ou python ecossistema.py run-fluxo --fluxo freedom)
 
 ### /bridge [comando]
-- **Skill:** skills/aidd-bridge-runner
+- **Skill:** skills/aidd-bridge
 - **Ação:** Aciona operações atômicas da ferramenta aidd-bridge: scan, convert-db, merge, pack e migrate-auth.
 - **CLI Equivalente:** python ecossistema.py bridge [scan|convert-db|merge|pack]
 
@@ -87,11 +87,11 @@ Conjunto de skills universais inspiradas nas práticas de Matt Pocock, adaptadas
 - **/aidd-tdd:** Seams combinados com o usuário antes do primeiro teste, depois loop Red → Green (um teste, uma implementação por vez); refatoração na revisão. Proíbe teste tautológico, acoplado à implementação e fatiado em camadas. Poliglota (pytest, vitest, cargo test, go test) com regra Zero Stubs.
 - **/aidd-diagnose:** Triage científica de falhas: loop vermelho já executado e minimizado, análise de grafo via `code-review-graph`, 3 a 5 hipóteses em ordem (uma ativa por vez), logs `[DEBUG-xxxx]`, prova e teste de regressão.
 - **/aidd-handoff:** Serialização compacta do estado da sessão diretamente em `secoes/sessao-<data>-<slug>.md` para rotação de contexto ou troca de agentes.
-- **/aidd-planos:** Gera o esqueleto de iniciativas em `docs/planos/` (`python ecossistema.py plan init`), com seções "Ainda nao especificado" e "Fora de escopo" (fora de escopo nunca volta para o plano atual).
-- **/aidd-escrita-agentes:** Guia de escrita para textos que agentes leem (skills, `AGENTS.md`, `CLAUDE.md`): ponteiros de contexto, teste de no-op, fonte única, sedimento, critério de pronto.
+- **/aidd-plan:** Gera o esqueleto de iniciativas em `docs/planos/` (`python ecossistema.py plan init`), com seções "Ainda nao especificado" e "Fora de escopo" (fora de escopo nunca volta para o plano atual).
+- **/aidd-agent-writing:** Guia de escrita para textos que agentes leem (skills, `AGENTS.md`, `CLAUDE.md`): ponteiros de contexto, teste de no-op, fonte única, sedimento, critério de pronto.
 - **/aidd-retro:** Retrospectiva de sessão: cada erro vira proposta de gate (mecânico) ou regra de revisão (julgamento), em ordem de gravidade; só propõe, aplicação via `aidd-melhoria`.
-- **/aidd-reexplica:** Reexplica a última mensagem em PT-BR simples usando o glossário `CONTEXT.md`.
-- **/aidd-entrega:** Modelo de entrega com evidência antes/depois (exit code real), "Dá para desfazer?" e "O que pode quebrar"; para corpo de commit, PR e `RELATORIO-CONSTRUTOR.md`.
+- **/aidd-reexplain:** Reexplica a última mensagem em PT-BR simples usando o glossário `CONTEXT.md`.
+- **/aidd-delivery:** Modelo de entrega com evidência antes/depois (exit code real), "Dá para desfazer?" e "O que pode quebrar"; para corpo de commit, PR e `RELATORIO-CONSTRUTOR.md`.
 - **/aidd-wizard:** Gera script bash interativo para passos que só o humano faz (credenciais, painéis, migrações), com `.env` idempotente e segredo oculto; funciona no Git Bash.
 
 ---

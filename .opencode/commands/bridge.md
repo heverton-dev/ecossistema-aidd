@@ -14,5 +14,5 @@ Comanda a ferramenta individual `aidd-bridge` para ingestão, conversão de banc
 - `/bridge pack <caminho> [--domain meusite.com]`
 
 ## Ação:
-Executa a skill `skills/aidd-bridge-runner` para acionar as operações atômicas da engine `tools/aidd-bridge`.
+Executa a skill `skills/aidd-bridge` para acionar as operações atômicas da engine `tools/aidd-bridge`.
 Equivalente CLI: `python ecossistema.py bridge [scan|convert-db|merge|pack] <args>`

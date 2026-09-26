@@ -1,0 +1,2900 @@
+{
+  "versao": 1,
+  "gerado_por": "scripts/catalogo_pecas.py",
+  "totais": {
+    "ferramentas": 8,
+    "comandos_cli": 69,
+    "skills": 37,
+    "skills_nossas": 37,
+    "skills_terceiros_copiadas": 0,
+    "skills_terceiros_registradas": 20,
+    "comandos_slash": 17,
+    "mcps_registrados": 6,
+    "mcps_internos": 3,
+    "hooks": 3,
+    "gates_nomes": 87,
+    "gates_arquivos": 133,
+    "contratos": 8,
+    "etapas_receita": 7,
+    "encaixes_quebrados": 2
+  },
+  "ferramentas": [
+    {
+      "id": "aidd-bridge",
+      "descricao": "Extrator, Unificador e Empacotador de Projetos Low-Code (Lovable, v0, Bolt) para VPS Própria.",
+      "chamada": "python ecossistema.py bridge",
+      "entrada_cli": "tools/aidd-bridge/aidd_bridge/cli.py",
+      "comandos": [
+        "convert-db",
+        "destroy",
+        "merge",
+        "migrate-auth",
+        "pack",
+        "scan",
+        "unpack"
+      ],
+      "gates_proprios": [
+        "tools/aidd-bridge/gates/G_BRIDGE_DOCKER_OCI.py",
+        "tools/aidd-bridge/gates/G_BRIDGE_POSTGRESQL.py",
+        "tools/aidd-bridge/gates/G_BRIDGE_VENDOR_LOCKIN.py",
+        "tools/aidd-bridge/gates/G_BRIDGE_VSA_COMPAT.py"
+      ],
+      "mcps_proprios": [],
+      "arquivos_py": 19
+    },
+    {
+      "id": "aidd-enterprise",
+      "descricao": "O Framework Definitivo para Monólitos Modulares, Clean Architecture, Fatias Verticais e Governança Anti-Atalhos por Gates Rígidos.",
+      "chamada": "python ecossistema.py enterprise",
+      "entrada_cli": "tools/aidd-enterprise/scripts/aidd.py",
+      "comandos": [
+        "add-module",
+        "apply",
+        "audit",
+        "bench",
+        "compose",
+        "compose-orca",
+        "deploy",
+        "export-frontend",
+        "heal",
+        "init",
+        "inject",
+        "plan",
+        "prompt",
+        "refine-module",
+        "scaffold-infra",
+        "setup",
+        "status",
+        "test",
+        "verificar-drift"
+      ],
+      "gates_proprios": [
+        "tools/aidd-enterprise/scripts/gates/G_ARQUITETURA.py",
+        "tools/aidd-enterprise/scripts/gates/G_CHAOS.py",
+        "tools/aidd-enterprise/scripts/gates/G_CONTRACTS.py",
+        "tools/aidd-enterprise/scripts/gates/G_ESTRUTURA.py",
+        "tools/aidd-enterprise/scripts/gates/G_HARNESS_COMPAT.py",
+        "tools/aidd-enterprise/scripts/gates/G_INJECT.py",
+        "tools/aidd-enterprise/scripts/gates/G_PERFORMANCE.py",
+        "tools/aidd-enterprise/scripts/gates/G_QUALIDADE.py",
+        "tools/aidd-enterprise/scripts/gates/G_SEGREDOS.py",
+        "tools/aidd-enterprise/scripts/gates/G_SEGURANCA.py",
+        "tools/aidd-enterprise/scripts/gates/G_TESTES.py",
+        "tools/aidd-enterprise/templates/gates/G_ARQUITETURA.py",
+        "tools/aidd-enterprise/templates/gates/G_CHAOS.py",
+        "tools/aidd-enterprise/templates/gates/G_CONTRACTS.py",
+        "tools/aidd-enterprise/templates/gates/G_ESTRUTURA.py",
+        "tools/aidd-enterprise/templates/gates/G_HARNESS_COMPAT.py",
+        "tools/aidd-enterprise/templates/gates/G_PERFORMANCE.py",
+        "tools/aidd-enterprise/templates/gates/G_QUALIDADE.py",
+        "tools/aidd-enterprise/templates/gates/G_SEGREDOS.py",
+        "tools/aidd-enterprise/templates/gates/G_SEGURANCA.py",
+        "tools/aidd-enterprise/templates/gates/G_TESTES.py"
+      ],
+      "mcps_proprios": [],
+      "arquivos_py": 185
+    },
+    {
+      "id": "aidd-factory",
+      "descricao": "Gerador de Código de Aplicação e Integração para Stacks Multi-Serviço.",
+      "chamada": "python ecossistema.py factory",
+      "entrada_cli": "tools/aidd-factory/scripts/pipeline_factory.py",
+      "comandos": [],
+      "gates_proprios": [
+        "tools/aidd-factory/gates/G_FACTORY_ANALYSIS.py",
+        "tools/aidd-factory/gates/G_FACTORY_COMPOSE.py",
+        "tools/aidd-factory/gates/G_FACTORY_ENV.py",
+        "tools/aidd-factory/gates/G_FACTORY_INIT_DB.py",
+        "tools/aidd-factory/gates/G_FACTORY_INTEGRATION.py",
+        "tools/aidd-factory/gates/G_FACTORY_MVP.py"
+      ],
+      "mcps_proprios": [],
+      "arquivos_py": 44
+    },
+    {
+      "id": "aidd-forge",
+      "descricao": "Motor Universal de Governança Agêntica, Descarte de Contexto e Economia Extrema de Tokens",
+      "chamada": "python ecossistema.py forge",
+      "entrada_cli": "tools/aidd-forge/aidd_forge/cli.py",
+      "comandos": [
+        "audit",
+        "conform",
+        "init",
+        "inject"
+      ],
+      "gates_proprios": [
+        "tools/aidd-forge/aidd_forge/templates/gates/G_BLOQUEAR_SEGREDOS.py",
+        "tools/aidd-forge/aidd_forge/templates/gates/G_CONTRACTS.py",
+        "tools/aidd-forge/aidd_forge/templates/gates/G_CYBERSECURITY_OWASP.py",
+        "tools/aidd-forge/aidd_forge/templates/gates/G_DETERMINISMO_LEI_1.py",
+        "tools/aidd-forge/aidd_forge/templates/gates/G_ESTRUTURA_AST.py",
+        "tools/aidd-forge/aidd_forge/templates/gates/G_HARNESS_COMPAT.py",
+        "tools/aidd-forge/aidd_forge/templates/gates/G_INJECT.py",
+        "tools/aidd-forge/aidd_forge/templates/gates/G_PERFORMANCE.py",
+        "tools/aidd-forge/aidd_forge/templates/gates/G_QUARTETO_SINE_QUA_NON.py",
+        "tools/aidd-forge/aidd_forge/templates/gates/G_SAIDA_BINARIA.py",
+        "tools/aidd-forge/aidd_forge/templates/gates/G_STACK_PADRAO_OURO.py",
+        "tools/aidd-forge/aidd_forge/templates/gates/G_TESTES_REAIS.py"
+      ],
+      "mcps_proprios": [],
+      "arquivos_py": 40
+    },
+    {
+      "id": "aidd-generator",
+      "descricao": "",
+      "chamada": "python ecossistema.py generate",
+      "entrada_cli": "tools/aidd-generator/scripts/pipeline_completo.py",
+      "comandos": [],
+      "gates_proprios": [
+        "tools/aidd-generator/scripts/gates/G_BLOQUEAR_SEGREDOS.py",
+        "tools/aidd-generator/scripts/gates/G_CYBERSECURITY_OWASP.py",
+        "tools/aidd-generator/scripts/gates/G_HARNESS_COMPAT.py",
+        "tools/aidd-generator/scripts/gates/G_INJECT.py",
+        "tools/aidd-generator/scripts/gates/G_INTEGRACAO_CROSS_SCRIPT.py",
+        "tools/aidd-generator/scripts/gates/G_SANDBOX_NIVEL_1.py",
+        "tools/aidd-generator/scripts/gates/G_SESSAO_HERMETICA.py",
+        "tools/aidd-generator/scripts/gates/G_TOKENOMICS.py",
+        "tools/aidd-generator/scripts/gates/G_VERIFICAR_LLM_PRONTO.py"
+      ],
+      "mcps_proprios": [
+        "tools/aidd-generator/mcps/mcp-verificador-cve/server.py"
+      ],
+      "arquivos_py": 69
+    },
+    {
+      "id": "aidd-master",
+      "descricao": "O Framework Definitivo para Monólitos Modulares, Clean Architecture, Fatias Verticais e Governança Anti-Atalhos por Gates Rígidos.",
+      "chamada": "python ecossistema.py master",
+      "entrada_cli": "tools/aidd-master/scripts/aidd.py",
+      "comandos": [
+        "add-module",
+        "apply",
+        "attach-vsa",
+        "audit",
+        "bench",
+        "compose",
+        "compose-orca",
+        "deploy",
+        "export-frontend",
+        "heal",
+        "init",
+        "inject",
+        "plan",
+        "prompt",
+        "refine-module",
+        "scaffold-infra",
+        "setup",
+        "status",
+        "test",
+        "verificar-drift"
+      ],
+      "gates_proprios": [
+        "tools/aidd-master/scripts/gates/G_ARQUITETURA.py",
+        "tools/aidd-master/scripts/gates/G_AST_BOUNDED_CONTEXT.py",
+        "tools/aidd-master/scripts/gates/G_CHAOS.py",
+        "tools/aidd-master/scripts/gates/G_CONTRACTS.py",
+        "tools/aidd-master/scripts/gates/G_ESTRUTURA.py",
+        "tools/aidd-master/scripts/gates/G_HARNESS_COMPAT.py",
+        "tools/aidd-master/scripts/gates/G_INJECT.py",
+        "tools/aidd-master/scripts/gates/G_PERFORMANCE.py",
+        "tools/aidd-master/scripts/gates/G_QUALIDADE.py",
+        "tools/aidd-master/scripts/gates/G_SEGREDOS.py",
+        "tools/aidd-master/scripts/gates/G_SEGURANCA.py",
+        "tools/aidd-master/scripts/gates/G_TESTES.py",
+        "tools/aidd-master/templates/gates/G_ARQUITETURA.py",
+        "tools/aidd-master/templates/gates/G_CHAOS.py",
+        "tools/aidd-master/templates/gates/G_CONTRACTS.py",
+        "tools/aidd-master/templates/gates/G_ESTRUTURA.py",
+        "tools/aidd-master/templates/gates/G_HARNESS_COMPAT.py",
+        "tools/aidd-master/templates/gates/G_PERFORMANCE.py",
+        "tools/aidd-master/templates/gates/G_QUALIDADE.py",
+        "tools/aidd-master/templates/gates/G_SEGREDOS.py",
+        "tools/aidd-master/templates/gates/G_SEGURANCA.py",
+        "tools/aidd-master/templates/gates/G_TESTES.py"
+      ],
+      "mcps_proprios": [],
+      "arquivos_py": 191
+    },
+    {
+      "id": "aidd-ops",
+      "descricao": "",
+      "chamada": "python ecossistema.py ops",
+      "entrada_cli": "tools/aidd-ops/scripts/pipeline_ops.py",
+      "comandos": [
+        "bootstrap",
+        "check",
+        "create",
+        "decrypt",
+        "deploy",
+        "encrypt",
+        "export",
+        "health",
+        "init",
+        "plan",
+        "preflight",
+        "setenv",
+        "status",
+        "up"
+      ],
+      "gates_proprios": [
+        "tools/aidd-ops/gates/G_OPS_MVP.py",
+        "tools/aidd-ops/gates/G_OPS_SSH.py"
+      ],
+      "mcps_proprios": [
+        "tools/aidd-ops/mcps/cloudflare-mcp/server.py",
+        "tools/aidd-ops/mcps/docker-mcp/server.py"
+      ],
+      "arquivos_py": 25
+    },
+    {
+      "id": "aidd-planner",
+      "descricao": "",
+      "chamada": "python ecossistema.py planner",
+      "entrada_cli": "tools/aidd-planner/aidd_planner/cli.py",
+      "comandos": [
+        "audit",
+        "export",
+        "export-dispatch",
+        "init",
+        "validate"
+      ],
+      "gates_proprios": [
+        "tools/aidd-planner/gates/G_PLANNER_COERENCIA_FLUXO.py",
+        "tools/aidd-planner/gates/G_PLANNER_SCHEMA.py",
+        "tools/aidd-planner/gates/G_PLANNER_SINE_QUA_NON.py"
+      ],
+      "mcps_proprios": [],
+      "arquivos_py": 14
+    }
+  ],
+  "skills": [
+    {
+      "id": "aidd-agent-writing",
+      "descricao": "Guides writing any document an agent consumes (context pointers, information hierarchy, completion criteria, pruning). Use when creating or editing a skill, or modifying AGENTS.md or CLAUDE.md, or the user says \"escrever skill\", \"escrita para agentes\".",
+      "linhas": 64,
+      "terceiro": false
+    },
+    {
+      "id": "aidd-audit-4f",
+      "descricao": "Runs the linear 4-phase audit pipeline (Inspector, Architect, Builder, Return) on an ecosystem tool through the 15-D lens, in a cycle folder docs/auditoria/<tool>/ciclo-NN/ and an own branch, merging only on human approval. Use when the user wants to audit a tool, or types \"/audit-4f\", \"/aidd-auditor\", \"audit-4f\", \"auditoria 4F\", \"auditar ferramenta\", \"rodar pipeline de auditoria\".",
+      "linhas": 32,
+      "terceiro": false
+    },
+    {
+      "id": "aidd-bridge",
+      "descricao": "Runs the atomic aidd-bridge tool operations that free low-code projects (Lovable, v0, Bolt) for self-hosting - scan, Supabase-to-PostgreSQL conversion, app merge and VPS packaging. Use when the user asks for one bridge step, or says \"bridge\", \"/bridge\", \"scan do lovable\", \"converter banco\", \"empacotar para VPS\". For the full Flow 03 use aidd-freedom.",
+      "linhas": 28,
+      "terceiro": false
+    },
+    {
+      "id": "aidd-components",
+      "descricao": "Creates or updates agnostic ecosystem components (skills, commands, hooks, mcps, specs, configs, sub-agents, scripts) in the single source componentes/ and distributes them to every harness with components sync and verify. Use when the user asks to create, update or sync a component, or says \"componente\", \"sincronizar componentes\", \"components sync\", \"distribuir para os harnesses\".",
+      "linhas": 33,
+      "terceiro": false
+    },
+    {
+      "id": "aidd-delivery",
+      "descricao": "Provides the delivery template with before/after evidence and real exit codes, rollback door and blast radius. Use when writing a long commit body, a PR body, a RELATORIO-CONSTRUTOR.md entry, or closing a ticket, or the user says \"entrega\", \"fechar ticket\".",
+      "linhas": 49,
+      "terceiro": false
+    },
+    {
+      "id": "aidd-dependencies",
+      "descricao": "Registers, installs and verifies third-party skills and MCP servers the agent itself uses in this repository (e.g. impeccable, Cloudflare skills, Playwright, GitHub) through gates/dependencias_externas.json. Use when the user wants to bootstrap after a clone, add a third-party skill or MCP, or says \"/dependencia\", \"dependência\", \"instalar skill de terceiro\", \"adicionar MCP\". Not for MCPs that ship inside a generated product (that is aidd-mcp).",
+      "linhas": 36,
+      "terceiro": false
+    },
+    {
+      "id": "aidd-diagnose",
+      "descricao": "Systematic scientific fault triage using hypothesis isolation, regression testing, and code review graph. Use when the user reports a bug, a failing test or unexpected behavior, or says \"diagnosticar\", \"investigar bug\", \"por que quebrou\".",
+      "linhas": 57,
+      "terceiro": false
+    },
+    {
+      "id": "aidd-dispatch",
+      "descricao": "Dispatches VSA vertical slices into ephemeral git worktrees in topological (DAG) batches, with strict file boundaries, quality gates per slice and safe convergence into the aidd-master modular monolith. Use when the user wants to execute a PLANNER.json or vsa_dispatch.json as slices, or types \"/dispatch\", \"/aidd-dispatch\", \"dispatch\", \"despachar fatias\".",
+      "linhas": 37,
+      "terceiro": false
+    },
+    {
+      "id": "aidd-enterprise",
+      "descricao": "Injects and audits mission-critical components with JSON Schema validation, SHA-256 integrity and automatic rollback. Use when the user wants to inject a certified skill, rule, mcp, spec, config, hook or agent, or says \"enterprise\", \"/enterprise\", \"injetar componente\", \"blindagem SHA-256\".",
+      "linhas": 23,
+      "terceiro": false
+    },
+    {
+      "id": "aidd-evolution",
+      "descricao": "Runs the technical evolution pipeline that executes, ticket by ticket, the PLANO-EVOLUCAO of an audit cycle in ephemeral git worktrees, with a gate before every commit and merge only on human approval. Use when the user wants to evolve a tool from its evolution plan, or types \"/evolucao\", \"/aidd-evolucao\", \"evolucao\", \"evoluir ferramenta\", \"rodar pipeline de evolução\".",
+      "linhas": 42,
+      "terceiro": false
+    },
+    {
+      "id": "aidd-factory",
+      "descricao": "Generates a complete multi-service application stack (gateway, frontend, compose, webhooks, docs) from a PLANO-INFRAESTRUTURA.json produced by aidd-ops. Use when the user wants to go from an infrastructure plan to a deployable app, or says \"factory\", \"/factory\", \"gerar stack\", \"gerar gateway\", \"gerar frontend\", \"gerar compose\".",
+      "linhas": 38,
+      "terceiro": false
+    },
+    {
+      "id": "aidd-forge",
+      "descricao": "Bootstraps and hardens a target repository with the aidd-forge governance kit (quality gates, git hooks, token-economy rules, phase isolation). Use when the user asks to bootstrap, initialize or harden a project, or says \"forge\", \"/forge\", \"blindar projeto\", \"inicializar governança\".",
+      "linhas": 23,
+      "terceiro": false
+    },
+    {
+      "id": "aidd-freedom",
+      "descricao": "Runs Triad Flow 03 (low-code liberation) end to end - removes Lovable, v0 or Bolt vendor lock-in, migrates Supabase to PostgreSQL through aidd-bridge while keeping the UI, then master, enterprise and ops. Use when the user wants to free or self-host a low-code app, or types \"/freedom\", \"freedom\", \"libertar app lovable\", \"desacoplar app low-code\", \"migrar v0 ou bolt para postgresql\". For a single bridge step use aidd-bridge.",
+      "linhas": 45,
+      "terceiro": false
+    },
+    {
+      "id": "aidd-generator",
+      "descricao": "Runs the aidd-generator 8-phase pipeline that turns a natural-language idea into tested software. Use when the user wants to generate an app from an idea, or says \"generate\", \"/generate\", \"gerar software\", \"gerar app a partir da ideia\".",
+      "linhas": 27,
+      "terceiro": false
+    },
+    {
+      "id": "aidd-grill",
+      "descricao": "Socratic interview that resolves assumptions, trade-offs and invariants before code. Use when requirements are open, or \"grill\".",
+      "linhas": 28,
+      "terceiro": false
+    },
+    {
+      "id": "aidd-grill-docs",
+      "descricao": "Socratic interview grounded in existing repository architecture, domain documentation, and invariant rules. Use when a change must be checked against MEMORY.md, AGENTS.md laws or domain docs before coding, or the user says \"grill com docs\", \"confrontar com a arquitetura\".",
+      "linhas": 20,
+      "terceiro": false
+    },
+    {
+      "id": "aidd-handoff",
+      "descricao": "Serializes and compacts session state into a structured markdown artifact for context rotation or agent handover. Use when the context is heavy, the session ends or work passes to another agent, or the user says \"handoff\", \"passar o bastão\", \"salvar contexto\".",
+      "linhas": 23,
+      "terceiro": false
+    },
+    {
+      "id": "aidd-improvement",
+      "descricao": "Deeply investigates a requested ecosystem improvement in the real code and writes a scored evaluation report (current grade 0-10 with evidence) in docs/melhorias/. Step 1 of the melhoria -> plan -> orchestrate flow. Use when the user asks to analyze, evaluate or grade an improvement or refactor before planning, or to re-analyze an existing plan, or types \"/melhoria\", \"melhoria\", \"analisar melhoria\", \"avaliar melhoria\", \"reanalisar plano\".",
+      "linhas": 62,
+      "terceiro": false
+    },
+    {
+      "id": "aidd-master",
+      "descricao": "Scaffolds and integrates self-contained vertical slices in the aidd-master modular monolith (models, services, REST routes, contract tests, UI). Use when the user wants a new module or slice, or says \"master\", \"/master\", \"nova fatia vertical\", \"adicionar módulo\".",
+      "linhas": 21,
+      "terceiro": false
+    },
+    {
+      "id": "aidd-mcp",
+      "descricao": "Builds a new Model Context Protocol (MCP) server that ships inside an ecosystem tool or generated product, with its single source in componentes/<scope>/mcps/<name>/ and distribution through components sync. Use when the user wants to create or change an own MCP server, or says \"criar MCP\", \"novo servidor MCP\", \"expor ferramenta via MCP\". Not for third-party MCPs the agent consumes (that is aidd-dependencies).",
+      "linhas": 25,
+      "terceiro": false
+    },
+    {
+      "id": "aidd-open",
+      "descricao": "Runs Triad Flow 02 (open-source engines) end to end - curates tested open-source engines, integrates them as VSA slices through aidd-factory, then master, enterprise and ops. Use when the user wants an app built on open-source engines, or types \"/open\", \"/aidd-open\", \"open\", \"criar com open-source\", \"integrar motor open source\", \"gerar app via factory\".",
+      "linhas": 45,
+      "terceiro": false
+    },
+    {
+      "id": "aidd-ops",
+      "descricao": "Runs the aidd-ops agentic infrastructure pipeline (VPS sizing, SSH hardening, Docker, Cloudflare, deploy). Use when the user wants to provision or deploy infrastructure, or says \"ops\", \"/ops\", \"infraestrutura\", \"subir na VPS\", \"provisionar\".",
+      "linhas": 24,
+      "terceiro": false
+    },
+    {
+      "id": "aidd-orca",
+      "descricao": "Native git-worktree engine that executes multi-phase plans (00-PROCESSO-E-DECISOES.md + NN-*.md) with ephemeral worktrees, per-front harness choice, local gate audit before merge and an anti-loop circuit breaker. Called by aidd-orchestrate when the user picks the native git worktree environment. Use when that environment was chosen, or the user says \"worktree nativo\", \"motor de worktree\", \"orca nativo\".",
+      "linhas": 43,
+      "terceiro": false
+    },
+    {
+      "id": "aidd-orchestrate",
+      "descricao": "Routes the execution of an approved plan to one of three environments (ORCA app via orca-cli, subagents of this session, or native git worktrees), compiles the per-environment Flight Plan and runs it only after explicit approval. Step 3 of the melhoria -> plan -> orchestrate flow. Use when the user wants to execute an approved plan, or types \"/orchestrate\", \"orchestrate\", \"executar plano\", \"orquestrar plano\", \"plano de voo\".",
+      "linhas": 56,
+      "terceiro": false
+    },
+    {
+      "id": "aidd-pipeline",
+      "descricao": "Runs the deterministic Triad pipeline in ephemeral git worktrees with a join barrier, from a Markdown plan (run-plan) or a JSON handoff manifest (pipeline). Use when the user wants to execute plan tickets in parallel worktrees, or types \"/run-plan\", \"/pipeline\", \"run-plan\", \"pipeline\", \"rodar plano em worktrees\".",
+      "linhas": 52,
+      "terceiro": false
+    },
+    {
+      "id": "aidd-plan",
+      "descricao": "Creates and validates ecosystem improvement plan folders in docs/planos/ (PLAN-NNNN-<name>, items in draft with current/target grades and evidence), then approves them only on explicit user approval. Step 2 of the melhoria -> plan -> orchestrate flow. Use when the user wants to turn a report or request into a plan, or types \"/plan\", \"plan\", \"criar plano\", \"gerar plano\", \"aprovar plano\". Not for the app blueprint PLANNER.json (that is aidd-planner).",
+      "linhas": 64,
+      "terceiro": false
+    },
+    {
+      "id": "aidd-planner",
+      "descricao": "Generates and validates the canonical SDD/BDD app blueprint (PLANNER.json) that fuels the Triad flows (Generator, Factory, Bridge). Use when the user wants architecture intake, a project blueprint or a spec for a new app, or says \"planner\", \"pré-plano\", \"intake\", \"blueprint\", \"SDD\", \"BDD\". Not for ecosystem improvement plans in docs/planos/ (that is aidd-plan).",
+      "linhas": 40,
+      "terceiro": false
+    },
+    {
+      "id": "aidd-pure",
+      "descricao": "Runs Triad Flow 01 (build from scratch) end to end - forge, planner, generator with strict TDD Red-Green, then master, enterprise and ops. Use when the user wants a brand-new project from zero, or types \"/pure\", \"pure\", \"criar projeto do zero\", \"projeto do zero puro\", \"novo projeto com TDD\".",
+      "linhas": 43,
+      "terceiro": false
+    },
+    {
+      "id": "aidd-reexplain",
+      "descricao": "Re-explains the last message in plain PT-BR using the CONTEXT.md glossary. Use when the user says they did not understand, \"não entendi\", \"explica de novo\", or \"reexplica\".",
+      "linhas": 19,
+      "terceiro": false
+    },
+    {
+      "id": "aidd-retro",
+      "descricao": "Retrospective on a coding session. Turns each agent mistake into a proposed gate (mechanical) or review rule (judgement). Use when the user asks for a retro or post-mortem of a session.",
+      "linhas": 37,
+      "terceiro": false
+    },
+    {
+      "id": "aidd-session",
+      "descricao": "Records the current agent session ID and metadata deterministically in secoes/historico_sessoes.json and secoes/INDICE-SESSOES.md for traceability and context recovery. Use when the user wants to save or see the session ID, or types \"/sessao\", \"/session\", \"/id\", \"/id-sessao\", \"/salvar-id\", \"salve o id desta sessão\", \"qual o id desta conversa\".",
+      "linhas": 25,
+      "terceiro": false
+    },
+    {
+      "id": "aidd-skills",
+      "descricao": "Creates, improves and evaluates own agent skills following docs/protocolos/CONVENCAO-AUTORIA-SKILLS.md (aidd-<subject> name, \"Use when\" description, compact English body, single source in componentes/) and distributes them to every harness. Use when the user wants to create, edit, rename or review a skill, or says \"criar skill\", \"nova skill\", \"melhorar skill\", \"skill-creator\".",
+      "linhas": 29,
+      "terceiro": false
+    },
+    {
+      "id": "aidd-spec",
+      "descricao": "Turns discussions and decisions into an executable spec with binary acceptance criteria. Use when writing a spec, or \"especificação\".",
+      "linhas": 30,
+      "terceiro": false
+    },
+    {
+      "id": "aidd-tdd",
+      "descricao": "Strict TDD with agreed seams, Red-Green loop, refactor at review, zero stubs. Use when implementing test first, or \"tdd\".",
+      "linhas": 46,
+      "terceiro": false
+    },
+    {
+      "id": "aidd-textbook",
+      "descricao": "Generates and updates auditable corporate textbooks as PDF (pandoc + typst) with a macro-meso-micro structure, per-chapter traceability and a deterministic audit. Works in any repository. Use when the user wants to write or update a textbook, manual or book in PDF, or types \"/aidd-livro-texto\", \"livro-texto\", \"gerar livro\", \"atualizar livro\".",
+      "linhas": 103,
+      "terceiro": false
+    },
+    {
+      "id": "aidd-tickets",
+      "descricao": "Splits a spec into vertical-slice tracer-bullet tickets with Blocked by. Use when breaking work into tasks, or \"tickets\".",
+      "linhas": 42,
+      "terceiro": false
+    },
+    {
+      "id": "aidd-wizard",
+      "descricao": "Generate an interactive bash wizard that walks a human through steps only they can perform. Use when provisioning infrastructure (VPS, Cloudflare), setting up credentials or CI secrets, walking a third-party dashboard, or running a one-off migration or cutover. Use only for steps the agent cannot perform itself.",
+      "linhas": 35,
+      "terceiro": false
+    }
+  ],
+  "skills_terceiros": [
+    "agents-sdk",
+    "cloudflare",
+    "cloudflare-email-service",
+    "cloudflare-one",
+    "cloudflare-one-migrations",
+    "code-review-graph",
+    "debug-issue",
+    "durable-objects",
+    "explore-codebase",
+    "impeccable",
+    "nextjs-on-cloudflare",
+    "refactor-safely",
+    "review-changes",
+    "sandbox-migrate-to-next",
+    "sandbox-next",
+    "sandbox-stable",
+    "turnstile-spin",
+    "web-perf",
+    "workers-best-practices",
+    "wrangler"
+  ],
+  "comandos_slash": [
+    {
+      "id": "aidd-livro-texto",
+      "caminho": "componentes/compartilhado/comandos/aidd-livro-texto.md",
+      "descricao": ""
+    },
+    {
+      "id": "bridge",
+      "caminho": "componentes/compartilhado/comandos/bridge.md",
+      "descricao": "Comanda a ferramenta individual aidd-bridge para acoes atomicas"
+    },
+    {
+      "id": "dependencia",
+      "caminho": "componentes/compartilhado/comandos/dependencia.md",
+      "descricao": ""
+    },
+    {
+      "id": "enterprise",
+      "caminho": "componentes/compartilhado/comandos/enterprise.md",
+      "descricao": ""
+    },
+    {
+      "id": "factory",
+      "caminho": "componentes/compartilhado/comandos/factory.md",
+      "descricao": ""
+    },
+    {
+      "id": "forge",
+      "caminho": "componentes/compartilhado/comandos/forge.md",
+      "descricao": ""
+    },
+    {
+      "id": "freedom",
+      "caminho": "componentes/compartilhado/comandos/freedom.md",
+      "descricao": "Dispara o Fluxo 03 (Low-Code / Apps Unificadas) da Tríade Canônica"
+    },
+    {
+      "id": "generate",
+      "caminho": "componentes/compartilhado/comandos/generate.md",
+      "descricao": ""
+    },
+    {
+      "id": "master",
+      "caminho": "componentes/compartilhado/comandos/master.md",
+      "descricao": ""
+    },
+    {
+      "id": "melhoria",
+      "caminho": "componentes/compartilhado/comandos/melhoria.md",
+      "descricao": ""
+    },
+    {
+      "id": "open",
+      "caminho": "componentes/compartilhado/comandos/open.md",
+      "descricao": "Dispara o Fluxo 02 (Motores Open-Source) da Tríade Canônica"
+    },
+    {
+      "id": "ops",
+      "caminho": "componentes/compartilhado/comandos/ops.md",
+      "descricao": ""
+    },
+    {
+      "id": "orchestrate",
+      "caminho": "componentes/compartilhado/comandos/orchestrate.md",
+      "descricao": ""
+    },
+    {
+      "id": "plan",
+      "caminho": "componentes/compartilhado/comandos/plan.md",
+      "descricao": ""
+    },
+    {
+      "id": "planner",
+      "caminho": "componentes/compartilhado/comandos/planner.md",
+      "descricao": ""
+    },
+    {
+      "id": "pure",
+      "caminho": "componentes/compartilhado/comandos/pure.md",
+      "descricao": "Dispara o Fluxo 01 (Do Zero Puro) da Tríade Canônica"
+    },
+    {
+      "id": "sessao",
+      "caminho": "componentes/compartilhado/comandos/sessao.md",
+      "descricao": "Registra o ID e os metadados da sessao atual em secoes/"
+    }
+  ],
+  "mcps": {
+    "registrados_mcp_json": [
+      "cloudflare",
+      "cloudflare-docs",
+      "code-review-graph",
+      "context7",
+      "github",
+      "playwright"
+    ],
+    "internos_das_ferramentas": [
+      {
+        "id": "mcp-verificador-cve",
+        "ferramenta": "aidd-generator",
+        "caminho": "tools/aidd-generator/mcps/mcp-verificador-cve/server.py",
+        "registrado_em_config": false
+      },
+      {
+        "id": "cloudflare-mcp",
+        "ferramenta": "aidd-ops",
+        "caminho": "tools/aidd-ops/mcps/cloudflare-mcp/server.py",
+        "registrado_em_config": false
+      },
+      {
+        "id": "docker-mcp",
+        "ferramenta": "aidd-ops",
+        "caminho": "tools/aidd-ops/mcps/docker-mcp/server.py",
+        "registrado_em_config": false
+      }
+    ]
+  },
+  "hooks": [
+    {
+      "evento": "PreToolUse",
+      "matcher": "Task|Agent",
+      "script": ".claude/hooks/anti_headless_subagent_hook.py"
+    },
+    {
+      "evento": "PostToolUse",
+      "matcher": "Edit|Write",
+      "script": "cat >/dev/null || true; command -v code-review-graph >/dev/null 2>&1 || exit 0; "
+    },
+    {
+      "evento": "SessionStart",
+      "matcher": "",
+      "script": "cat >/dev/null || true; command -v code-review-graph >/dev/null 2>&1 || exit 0; "
+    }
+  ],
+  "gates": [
+    {
+      "id": "G_ANT_LOCKIN_LEGADO",
+      "descricao": "Varre entrega/legado por resíduo lovable|supabase|firebase e dirs `.lovable/`, `supabase/`. Nunca apaga (Lei #7). Allowlist: lockin-allowlist.txt (Lei #8).",
+      "copias": [
+        {
+          "caminho": "gates/G_ANT_LOCKIN_LEGADO.py",
+          "versao": "A",
+          "papel": "ecossistema"
+        }
+      ],
+      "versoes_distintas": 1,
+      "no_pre_commit": true,
+      "prova_que_morde": true,
+      "leis": [
+        1
+      ]
+    },
+    {
+      "id": "G_ARQUITETURA",
+      "descricao": "Linter AST de Bounded Context que bloqueia imports diretos entre fatias verticais (módulos). Cada módulo em src/modules/ é um Bounded Context isolado — só pode importar de core.* ou comunicar via…",
+      "copias": [
+        {
+          "caminho": "tools/aidd-enterprise/scripts/gates/G_ARQUITETURA.py",
+          "versao": "A",
+          "papel": "ferramenta"
+        },
+        {
+          "caminho": "tools/aidd-enterprise/templates/gates/G_ARQUITETURA.py",
+          "versao": "A",
+          "papel": "entrega"
+        },
+        {
+          "caminho": "tools/aidd-master/scripts/gates/G_ARQUITETURA.py",
+          "versao": "A",
+          "papel": "ferramenta"
+        },
+        {
+          "caminho": "tools/aidd-master/templates/gates/G_ARQUITETURA.py",
+          "versao": "A",
+          "papel": "entrega"
+        }
+      ],
+      "versoes_distintas": 1,
+      "no_pre_commit": false,
+      "prova_que_morde": null,
+      "leis": []
+    },
+    {
+      "id": "G_ARQUITETURA_DELIVERABLE",
+      "descricao": "Gate estatico via AST que valida conformidade com Clean Architecture e DDD nos deliverables (templates e modulos de software gerados pelas ferramentas).",
+      "copias": [
+        {
+          "caminho": "gates/G_ARQUITETURA_DELIVERABLE.py",
+          "versao": "A",
+          "papel": "ecossistema"
+        }
+      ],
+      "versoes_distintas": 1,
+      "no_pre_commit": true,
+      "prova_que_morde": true,
+      "leis": []
+    },
+    {
+      "id": "G_AST_BOUNDED_CONTEXT",
+      "descricao": "Analisa a AST de todos os arquivos em src/modules/ e bloqueia qualquer importacao direta cruzada entre dominios de negocio distintos (ex: modulo crm importando modulo erp diretamente sem passar pelo…",
+      "copias": [
+        {
+          "caminho": "tools/aidd-master/scripts/gates/G_AST_BOUNDED_CONTEXT.py",
+          "versao": "A",
+          "papel": "ferramenta"
+        }
+      ],
+      "versoes_distintas": 1,
+      "no_pre_commit": false,
+      "prova_que_morde": null,
+      "leis": []
+    },
+    {
+      "id": "G_BLOQUEAR_SEGREDOS",
+      "descricao": "bloqueia commits contendo segredos expostos.",
+      "copias": [
+        {
+          "caminho": "tools/aidd-forge/aidd_forge/templates/gates/G_BLOQUEAR_SEGREDOS.py",
+          "versao": "A",
+          "papel": "entrega"
+        },
+        {
+          "caminho": "tools/aidd-generator/scripts/gates/G_BLOQUEAR_SEGREDOS.py",
+          "versao": "B",
+          "papel": "ferramenta"
+        }
+      ],
+      "versoes_distintas": 2,
+      "no_pre_commit": false,
+      "prova_que_morde": null,
+      "leis": []
+    },
+    {
+      "id": "G_BRIDGE_DOCKER_OCI",
+      "descricao": "Valida que os manifestos OCI/Docker gerados pela aidd-bridge (Dockerfile, nginx.conf, compose) atendem às melhores práticas de segurança: Multi-stage build",
+      "copias": [
+        {
+          "caminho": "tools/aidd-bridge/gates/G_BRIDGE_DOCKER_OCI.py",
+          "versao": "A",
+          "papel": "ferramenta"
+        }
+      ],
+      "versoes_distintas": 1,
+      "no_pre_commit": false,
+      "prova_que_morde": null,
+      "leis": []
+    },
+    {
+      "id": "G_BRIDGE_POSTGRESQL",
+      "descricao": "Valida que os scripts SQL gerados/consolidados pela aidd-bridge (init-db.sql) são PostgreSQL puro, possuem integridade de sintaxe básica e garantem isolamento transacional e esquemas padronizados.",
+      "copias": [
+        {
+          "caminho": "tools/aidd-bridge/gates/G_BRIDGE_POSTGRESQL.py",
+          "versao": "A",
+          "papel": "ferramenta"
+        }
+      ],
+      "versoes_distintas": 1,
+      "no_pre_commit": false,
+      "prova_que_morde": null,
+      "leis": []
+    },
+    {
+      "id": "G_BRIDGE_VENDOR_LOCKIN",
+      "descricao": "Valida que o projeto extraído/empacotado pela aidd-bridge não possui dependências ou URLs fixas de nuvens proprietárias (ex: *.supabase.co, mock backends não configuráveis). Garante independência…",
+      "copias": [
+        {
+          "caminho": "tools/aidd-bridge/gates/G_BRIDGE_VENDOR_LOCKIN.py",
+          "versao": "A",
+          "papel": "ferramenta"
+        }
+      ],
+      "versoes_distintas": 1,
+      "no_pre_commit": false,
+      "prova_que_morde": null,
+      "leis": []
+    },
+    {
+      "id": "G_BRIDGE_VSA_COMPAT",
+      "descricao": "Valida que o pacote gerado pela aidd-bridge possui compatibilidade com o Monólito Modular VSA e entrega os 4 contratos do Quarteto Sine Qua Non: Swagger (/swagger)",
+      "copias": [
+        {
+          "caminho": "tools/aidd-bridge/gates/G_BRIDGE_VSA_COMPAT.py",
+          "versao": "A",
+          "papel": "ferramenta"
+        }
+      ],
+      "versoes_distintas": 1,
+      "no_pre_commit": false,
+      "prova_que_morde": null,
+      "leis": []
+    },
+    {
+      "id": "G_CHAOS",
+      "descricao": "Valida a resiliência do sistema perante quedas e stress. Conforme PLANO_ENGENHARIA_ELITE.md",
+      "copias": [
+        {
+          "caminho": "tools/aidd-enterprise/scripts/gates/G_CHAOS.py",
+          "versao": "A",
+          "papel": "ferramenta"
+        },
+        {
+          "caminho": "tools/aidd-enterprise/templates/gates/G_CHAOS.py",
+          "versao": "A",
+          "papel": "entrega"
+        },
+        {
+          "caminho": "tools/aidd-master/scripts/gates/G_CHAOS.py",
+          "versao": "A",
+          "papel": "ferramenta"
+        },
+        {
+          "caminho": "tools/aidd-master/templates/gates/G_CHAOS.py",
+          "versao": "A",
+          "papel": "entrega"
+        }
+      ],
+      "versoes_distintas": 1,
+      "no_pre_commit": false,
+      "prova_que_morde": null,
+      "leis": []
+    },
+    {
+      "id": "G_CLI_HELP_CONSISTENCIA",
+      "descricao": "Detecta divergência entre flags de CLI realmente definidas via `argparse.add_argument(...)` e flags citadas em mensagens de erro/print dentro do mesmo arquivo (Pacote 1 —…",
+      "copias": [
+        {
+          "caminho": "gates/G_CLI_HELP_CONSISTENCIA.py",
+          "versao": "A",
+          "papel": "ecossistema"
+        }
+      ],
+      "versoes_distintas": 1,
+      "no_pre_commit": true,
+      "prova_que_morde": true,
+      "leis": []
+    },
+    {
+      "id": "G_COMPONENTE_AGNOSTICO",
+      "descricao": "Audita se todo componente novo ou modificado (detectado via git diff / status) possui cobertura completa em todas as pastas de harness exigidas pelo manifesto canonico…",
+      "copias": [
+        {
+          "caminho": "gates/G_COMPONENTE_AGNOSTICO.py",
+          "versao": "A",
+          "papel": "ecossistema"
+        }
+      ],
+      "versoes_distintas": 1,
+      "no_pre_commit": true,
+      "prova_que_morde": true,
+      "leis": [
+        6
+      ]
+    },
+    {
+      "id": "G_CONTRACTS",
+      "descricao": "Valida a conformidade de 100% das rotas registradas no RouteRegistry com o padrão OpenAPI 3.1, ferramentas expostas no MCP Server, integridade dos 4 Portais e Snapshot SHA-256.",
+      "copias": [
+        {
+          "caminho": "tools/aidd-enterprise/scripts/gates/G_CONTRACTS.py",
+          "versao": "A",
+          "papel": "ferramenta"
+        },
+        {
+          "caminho": "tools/aidd-enterprise/templates/gates/G_CONTRACTS.py",
+          "versao": "A",
+          "papel": "entrega"
+        },
+        {
+          "caminho": "tools/aidd-forge/aidd_forge/templates/gates/G_CONTRACTS.py",
+          "versao": "B",
+          "papel": "entrega"
+        },
+        {
+          "caminho": "tools/aidd-master/scripts/gates/G_CONTRACTS.py",
+          "versao": "A",
+          "papel": "ferramenta"
+        },
+        {
+          "caminho": "tools/aidd-master/templates/gates/G_CONTRACTS.py",
+          "versao": "A",
+          "papel": "entrega"
+        }
+      ],
+      "versoes_distintas": 2,
+      "no_pre_commit": false,
+      "prova_que_morde": null,
+      "leis": []
+    },
+    {
+      "id": "G_CONTRACT_ROT",
+      "descricao": "Portão determinístico de prevenção de Contract Rot. Compara a árvore de rotas e formatos de resposta expostos pelo servidor em execução com o contrato canônico openapi.json commitado.",
+      "copias": [
+        {
+          "caminho": "gates/G_CONTRACT_ROT.py",
+          "versao": "A",
+          "papel": "ecossistema"
+        }
+      ],
+      "versoes_distintas": 1,
+      "no_pre_commit": true,
+      "prova_que_morde": true,
+      "leis": [
+        10
+      ]
+    },
+    {
+      "id": "G_CYBERSECURITY_OWASP",
+      "descricao": "varredura estatica de vulnerabilidades OWASP Top 10.",
+      "copias": [
+        {
+          "caminho": "tools/aidd-forge/aidd_forge/templates/gates/G_CYBERSECURITY_OWASP.py",
+          "versao": "A",
+          "papel": "entrega"
+        },
+        {
+          "caminho": "tools/aidd-generator/scripts/gates/G_CYBERSECURITY_OWASP.py",
+          "versao": "B",
+          "papel": "ferramenta"
+        }
+      ],
+      "versoes_distintas": 2,
+      "no_pre_commit": false,
+      "prova_que_morde": null,
+      "leis": []
+    },
+    {
+      "id": "G_DEPENDENCIAS_PIN_HASH",
+      "descricao": "PLAN-0018 fase 04 (pin-exato-e-hashes-requirements-lockfile — SEC-4): requirements.txt/requirements-dev.txt usavam `>=` solto, permitindo que",
+      "copias": [
+        {
+          "caminho": "gates/G_DEPENDENCIAS_PIN_HASH.py",
+          "versao": "A",
+          "papel": "ecossistema"
+        }
+      ],
+      "versoes_distintas": 1,
+      "no_pre_commit": true,
+      "prova_que_morde": true,
+      "leis": []
+    },
+    {
+      "id": "G_DETERMINISMO_LEI_1",
+      "descricao": "Auditoria de Determinismo Mecânico: Bloqueia o uso de SDKs e chamadas de LLM em caminhos de execução estritamente determinísticos (ex: gates/*.py e módulos declarados mecânicos).",
+      "copias": [
+        {
+          "caminho": "gates/G_DETERMINISMO_LEI_1.py",
+          "versao": "A",
+          "papel": "ecossistema"
+        },
+        {
+          "caminho": "tools/aidd-forge/aidd_forge/templates/gates/G_DETERMINISMO_LEI_1.py",
+          "versao": "A",
+          "papel": "entrega"
+        }
+      ],
+      "versoes_distintas": 1,
+      "no_pre_commit": true,
+      "prova_que_morde": true,
+      "leis": [
+        1
+      ]
+    },
+    {
+      "id": "G_DISCIPLINA_TESTE_FERRAMENTA",
+      "descricao": "Auditoria de Disciplina de Teste e Validação de Ferramentas. Valida deterministicamente o cumprimento do ciclo de 5 passos definido em docs/protocolos/PROTOCOLO-TESTES-FERRAMENTAS.md, bloqueando…",
+      "copias": [
+        {
+          "caminho": "gates/G_DISCIPLINA_TESTE_FERRAMENTA.py",
+          "versao": "A",
+          "papel": "ecossistema"
+        }
+      ],
+      "versoes_distintas": 1,
+      "no_pre_commit": true,
+      "prova_que_morde": true,
+      "leis": [
+        9
+      ]
+    },
+    {
+      "id": "G_DISPATCH_PIPELINE_VSA",
+      "descricao": "Portão determinístico de validação formal de manifestos de despacho topológico de fatias verticais (VSA) pelas engines da Tríade Canônica (pure, open, freedom).",
+      "copias": [
+        {
+          "caminho": "gates/G_DISPATCH_PIPELINE_VSA.py",
+          "versao": "A",
+          "papel": "ecossistema"
+        }
+      ],
+      "versoes_distintas": 1,
+      "no_pre_commit": false,
+      "prova_que_morde": true,
+      "leis": [
+        1
+      ]
+    },
+    {
+      "id": "G_DOCS_ROT",
+      "descricao": "Verifica: Links relativos quebrados em documentações vivas (docs/protocolos, docs/ e READMEs principais).",
+      "copias": [
+        {
+          "caminho": "gates/G_DOCS_ROT.py",
+          "versao": "A",
+          "papel": "ecossistema"
+        }
+      ],
+      "versoes_distintas": 1,
+      "no_pre_commit": false,
+      "prova_que_morde": true,
+      "leis": [
+        12
+      ]
+    },
+    {
+      "id": "G_DRIFT_ANALYZER",
+      "descricao": "Detecta redundâncias estruturais e duplicidade de assinaturas de funções entre fatias verticais VSA (features).",
+      "copias": [
+        {
+          "caminho": "gates/G_DRIFT_ANALYZER.py",
+          "versao": "A",
+          "papel": "ecossistema"
+        }
+      ],
+      "versoes_distintas": 1,
+      "no_pre_commit": true,
+      "prova_que_morde": true,
+      "leis": []
+    },
+    {
+      "id": "G_DRIFT_NUCLEO_COMPARTILHADO",
+      "descricao": "Detecta divergência silenciosa entre pares de diretórios que nasceram da mesma linhagem e compartilham arquivos byte-a-byte idênticos (R3 do PLANO-CORRECAO-RISCOS-ECOSSISTEMA-AIDD.md, ampliado pelo…",
+      "copias": [
+        {
+          "caminho": "gates/G_DRIFT_NUCLEO_COMPARTILHADO.py",
+          "versao": "A",
+          "papel": "ecossistema"
+        }
+      ],
+      "versoes_distintas": 1,
+      "no_pre_commit": true,
+      "prova_que_morde": true,
+      "leis": []
+    },
+    {
+      "id": "G_ECOSSISTEMA_INTEGRIDADE",
+      "descricao": "Validação determinística de integridade do meta-repositório ecossistema-aidd. Audita: Existência e integridade estrutural das 5 ferramentas em tools/",
+      "copias": [
+        {
+          "caminho": "gates/G_ECOSSISTEMA_INTEGRIDADE.py",
+          "versao": "A",
+          "papel": "ecossistema"
+        }
+      ],
+      "versoes_distintas": 1,
+      "no_pre_commit": true,
+      "prova_que_morde": true,
+      "leis": []
+    },
+    {
+      "id": "G_ENV_ROT",
+      "descricao": "Quality Gate determinístico de prevenção a Config & Environment Rot. Audita via AST (Abstract Syntax Tree) todas as chamadas de variáveis de ambiente no código-fonte (Python: os.getenv, os.environ;…",
+      "copias": [
+        {
+          "caminho": "gates/G_ENV_ROT.py",
+          "versao": "A",
+          "papel": "ecossistema"
+        }
+      ],
+      "versoes_distintas": 1,
+      "no_pre_commit": true,
+      "prova_que_morde": true,
+      "leis": [
+        9
+      ]
+    },
+    {
+      "id": "G_ESCRITOR_ATOMICO",
+      "descricao": "Verificação determinística (AST) de que os pontos críticos de gravação de filesystem utilizam o módulo `escritor_atomico` ao invés de `open(..., 'w')` direto.",
+      "copias": [
+        {
+          "caminho": "gates/G_ESCRITOR_ATOMICO.py",
+          "versao": "A",
+          "papel": "ecossistema"
+        }
+      ],
+      "versoes_distintas": 1,
+      "no_pre_commit": false,
+      "prova_que_morde": true,
+      "leis": []
+    },
+    {
+      "id": "G_ESTRUTURA",
+      "descricao": "Valida layout do projeto, presença do Shared Kernel, módulos desacoplados, manifesto estruturado, AST Anti-Acoplamento e Zero Connection Leak.",
+      "copias": [
+        {
+          "caminho": "tools/aidd-enterprise/scripts/gates/G_ESTRUTURA.py",
+          "versao": "A",
+          "papel": "ferramenta"
+        },
+        {
+          "caminho": "tools/aidd-enterprise/templates/gates/G_ESTRUTURA.py",
+          "versao": "A",
+          "papel": "entrega"
+        },
+        {
+          "caminho": "tools/aidd-master/scripts/gates/G_ESTRUTURA.py",
+          "versao": "A",
+          "papel": "ferramenta"
+        },
+        {
+          "caminho": "tools/aidd-master/templates/gates/G_ESTRUTURA.py",
+          "versao": "A",
+          "papel": "entrega"
+        }
+      ],
+      "versoes_distintas": 1,
+      "no_pre_commit": false,
+      "prova_que_morde": null,
+      "leis": []
+    },
+    {
+      "id": "G_ESTRUTURA_AST",
+      "descricao": "valida a sintaxe de todo arquivo `.py` do repositorio.",
+      "copias": [
+        {
+          "caminho": "tools/aidd-forge/aidd_forge/templates/gates/G_ESTRUTURA_AST.py",
+          "versao": "A",
+          "papel": "entrega"
+        }
+      ],
+      "versoes_distintas": 1,
+      "no_pre_commit": false,
+      "prova_que_morde": null,
+      "leis": []
+    },
+    {
+      "id": "G_ESTRUTURA_ESTADO",
+      "descricao": "Auditoria de Persistência Estruturada de Estado de Orquestração. Valida deterministicamente que as ferramentas de orquestração do ecossistema persistem seu estado em formatos estruturados (JSON…",
+      "copias": [
+        {
+          "caminho": "gates/G_ESTRUTURA_ESTADO.py",
+          "versao": "A",
+          "papel": "ecossistema"
+        }
+      ],
+      "versoes_distintas": 1,
+      "no_pre_commit": true,
+      "prova_que_morde": true,
+      "leis": [
+        3
+      ]
+    },
+    {
+      "id": "G_FACTORY_ANALYSIS",
+      "descricao": "Valida factory_analysis.json.",
+      "copias": [
+        {
+          "caminho": "tools/aidd-factory/gates/G_FACTORY_ANALYSIS.py",
+          "versao": "A",
+          "papel": "ferramenta"
+        }
+      ],
+      "versoes_distintas": 1,
+      "no_pre_commit": false,
+      "prova_que_morde": null,
+      "leis": []
+    },
+    {
+      "id": "G_FACTORY_COMPOSE",
+      "descricao": "Valida docker-compose.yml gerado pelo factory.",
+      "copias": [
+        {
+          "caminho": "tools/aidd-factory/gates/G_FACTORY_COMPOSE.py",
+          "versao": "A",
+          "papel": "ferramenta"
+        }
+      ],
+      "versoes_distintas": 1,
+      "no_pre_commit": false,
+      "prova_que_morde": null,
+      "leis": []
+    },
+    {
+      "id": "G_FACTORY_ENV",
+      "descricao": "Valida .env gerados pelo factory.",
+      "copias": [
+        {
+          "caminho": "tools/aidd-factory/gates/G_FACTORY_ENV.py",
+          "versao": "A",
+          "papel": "ferramenta"
+        }
+      ],
+      "versoes_distintas": 1,
+      "no_pre_commit": false,
+      "prova_que_morde": null,
+      "leis": []
+    },
+    {
+      "id": "G_FACTORY_INIT_DB",
+      "descricao": "Valida init-multiple-databases.sh gerado.",
+      "copias": [
+        {
+          "caminho": "tools/aidd-factory/gates/G_FACTORY_INIT_DB.py",
+          "versao": "A",
+          "papel": "ferramenta"
+        }
+      ],
+      "versoes_distintas": 1,
+      "no_pre_commit": false,
+      "prova_que_morde": null,
+      "leis": []
+    },
+    {
+      "id": "G_FACTORY_INTEGRATION",
+      "descricao": "Valida cadeia completa do pipeline factory.",
+      "copias": [
+        {
+          "caminho": "tools/aidd-factory/gates/G_FACTORY_INTEGRATION.py",
+          "versao": "A",
+          "papel": "ferramenta"
+        }
+      ],
+      "versoes_distintas": 1,
+      "no_pre_commit": false,
+      "prova_que_morde": null,
+      "leis": []
+    },
+    {
+      "id": "G_FACTORY_MVP",
+      "descricao": "Valida estrutura do diretorio aidd-factory.",
+      "copias": [
+        {
+          "caminho": "tools/aidd-factory/gates/G_FACTORY_MVP.py",
+          "versao": "A",
+          "papel": "ferramenta"
+        }
+      ],
+      "versoes_distintas": 1,
+      "no_pre_commit": false,
+      "prova_que_morde": null,
+      "leis": []
+    },
+    {
+      "id": "G_FRONTEND_LAYERS",
+      "descricao": "Validação estática de separação de camadas nas entregas e templates de Frontend. Imposição de Arquitetura: Componentes visuais puros (Dumb Components em 'components/ui/') são",
+      "copias": [
+        {
+          "caminho": "gates/G_FRONTEND_LAYERS.py",
+          "versao": "A",
+          "papel": "ecossistema"
+        }
+      ],
+      "versoes_distintas": 1,
+      "no_pre_commit": true,
+      "prova_que_morde": true,
+      "leis": []
+    },
+    {
+      "id": "G_GESTOR_SESSOES",
+      "descricao": "Valida a integridade determinística do subsistema de rastreamento de sessões: scripts/gestor_sessoes.py deve existir e compilar via AST sem erros.",
+      "copias": [
+        {
+          "caminho": "gates/G_GESTOR_SESSOES.py",
+          "versao": "A",
+          "papel": "ecossistema"
+        }
+      ],
+      "versoes_distintas": 1,
+      "no_pre_commit": false,
+      "prova_que_morde": true,
+      "leis": [
+        3
+      ]
+    },
+    {
+      "id": "G_HADOLINT",
+      "descricao": "Audita estaticamente todos os Dockerfiles do repositório (e os gerados pelas ferramentas do ecossistema) utilizando o Hadolint (Haskell Dockerfile Linter), garantindo melhores práticas OCI, segurança…",
+      "copias": [
+        {
+          "caminho": "gates/G_HADOLINT.py",
+          "versao": "A",
+          "papel": "ecossistema"
+        }
+      ],
+      "versoes_distintas": 1,
+      "no_pre_commit": true,
+      "prova_que_morde": true,
+      "leis": []
+    },
+    {
+      "id": "G_HANDOFF_MELHORIA",
+      "descricao": "Portão de transição melhoria -> plan consumido pelo orquestrador.",
+      "copias": [
+        {
+          "caminho": "gates/G_HANDOFF_MELHORIA.py",
+          "versao": "A",
+          "papel": "ecossistema"
+        }
+      ],
+      "versoes_distintas": 1,
+      "no_pre_commit": false,
+      "prova_que_morde": true,
+      "leis": [
+        9
+      ]
+    },
+    {
+      "id": "G_HARNESS_COMPAT",
+      "descricao": "Materializa o gate G_HARNESS_COMPAT que o plano de execução original (docs/planos/PLANO-EXECUCAO-ECOSSISTEMA-AIDD.md) já declarava existir em gates/, mas nunca tinha sido implementado (R6 do…",
+      "copias": [
+        {
+          "caminho": "gates/G_HARNESS_COMPAT.py",
+          "versao": "A",
+          "papel": "ecossistema"
+        },
+        {
+          "caminho": "tools/aidd-enterprise/scripts/gates/G_HARNESS_COMPAT.py",
+          "versao": "B",
+          "papel": "ferramenta"
+        },
+        {
+          "caminho": "tools/aidd-enterprise/templates/gates/G_HARNESS_COMPAT.py",
+          "versao": "B",
+          "papel": "entrega"
+        },
+        {
+          "caminho": "tools/aidd-forge/aidd_forge/templates/gates/G_HARNESS_COMPAT.py",
+          "versao": "C",
+          "papel": "entrega"
+        },
+        {
+          "caminho": "tools/aidd-generator/scripts/gates/G_HARNESS_COMPAT.py",
+          "versao": "D",
+          "papel": "ferramenta"
+        },
+        {
+          "caminho": "tools/aidd-master/scripts/gates/G_HARNESS_COMPAT.py",
+          "versao": "B",
+          "papel": "ferramenta"
+        },
+        {
+          "caminho": "tools/aidd-master/templates/gates/G_HARNESS_COMPAT.py",
+          "versao": "B",
+          "papel": "entrega"
+        }
+      ],
+      "versoes_distintas": 4,
+      "no_pre_commit": true,
+      "prova_que_morde": true,
+      "leis": []
+    },
+    {
+      "id": "G_HONESTIDADE_ROTULO",
+      "descricao": "Verificacao mecanica da Regra de Ouro #9 (AGENTS.md §2, \"Honestidade de Rotulo\"): nenhuma mensagem de saida de gate/CLI pode usar linguagem que sugira certificacao/seguranca maior do que a cobertura…",
+      "copias": [
+        {
+          "caminho": "gates/G_HONESTIDADE_ROTULO.py",
+          "versao": "A",
+          "papel": "ecossistema"
+        }
+      ],
+      "versoes_distintas": 1,
+      "no_pre_commit": true,
+      "prova_que_morde": true,
+      "leis": [
+        8
+      ]
+    },
+    {
+      "id": "G_IDIOMA_LEI_4",
+      "descricao": "Verificação mecânica determinística da Lei #4 (AGENTS.md §2, \"Extreme Token Economy: Minimalist prompts, compact English core rules, dense PT-BR user responses only when requested\").",
+      "copias": [
+        {
+          "caminho": "gates/G_IDIOMA_LEI_4.py",
+          "versao": "A",
+          "papel": "ecossistema"
+        }
+      ],
+      "versoes_distintas": 1,
+      "no_pre_commit": true,
+      "prova_que_morde": true,
+      "leis": [
+        4
+      ]
+    },
+    {
+      "id": "G_INFRA_COMPOSE",
+      "descricao": "Audita a integridade estática, sintática, de segurança e topológica dos arquivos de orquestração Docker Compose e scripts de banco de dados do aidd-ops, delegando a análise de segurança e…",
+      "copias": [
+        {
+          "caminho": "gates/G_INFRA_COMPOSE.py",
+          "versao": "A",
+          "papel": "ecossistema"
+        }
+      ],
+      "versoes_distintas": 1,
+      "no_pre_commit": true,
+      "prova_que_morde": true,
+      "leis": []
+    },
+    {
+      "id": "G_INJECT",
+      "descricao": "Valida a implementação do Injetor Universal de Componentes: Infraestrutura do motor: contrato JSON Schema, arquivos core (profiles_registry,",
+      "copias": [
+        {
+          "caminho": "tools/aidd-enterprise/scripts/gates/G_INJECT.py",
+          "versao": "A",
+          "papel": "ferramenta"
+        },
+        {
+          "caminho": "tools/aidd-forge/aidd_forge/templates/gates/G_INJECT.py",
+          "versao": "B",
+          "papel": "entrega"
+        },
+        {
+          "caminho": "tools/aidd-generator/scripts/gates/G_INJECT.py",
+          "versao": "C",
+          "papel": "ferramenta"
+        },
+        {
+          "caminho": "tools/aidd-master/scripts/gates/G_INJECT.py",
+          "versao": "D",
+          "papel": "ferramenta"
+        }
+      ],
+      "versoes_distintas": 4,
+      "no_pre_commit": false,
+      "prova_que_morde": null,
+      "leis": []
+    },
+    {
+      "id": "G_INTEGRACAO_CROSS_SCRIPT",
+      "descricao": "Gate I3: Compatibilidade entre scripts irmãos.",
+      "copias": [
+        {
+          "caminho": "tools/aidd-generator/scripts/gates/G_INTEGRACAO_CROSS_SCRIPT.py",
+          "versao": "A",
+          "papel": "ferramenta"
+        }
+      ],
+      "versoes_distintas": 1,
+      "no_pre_commit": false,
+      "prova_que_morde": null,
+      "leis": []
+    },
+    {
+      "id": "G_ISOLATION_AUDIT",
+      "descricao": "Auditoria estática de isolamento de fatias verticais (Vertical Slice Architecture - VSA).",
+      "copias": [
+        {
+          "caminho": "gates/G_ISOLATION_AUDIT.py",
+          "versao": "A",
+          "papel": "ecossistema"
+        }
+      ],
+      "versoes_distintas": 1,
+      "no_pre_commit": true,
+      "prova_que_morde": true,
+      "leis": []
+    },
+    {
+      "id": "G_LAYOUT_ENTREGA",
+      "descricao": "Bloqueia entrega do usuário gerada sob `<clone>/projetos/` quando existe projeto legado irmão (a regra do livro: projeto nasce irmão do clone).",
+      "copias": [
+        {
+          "caminho": "gates/G_LAYOUT_ENTREGA.py",
+          "versao": "A",
+          "papel": "ecossistema"
+        }
+      ],
+      "versoes_distintas": 1,
+      "no_pre_commit": true,
+      "prova_que_morde": true,
+      "leis": [
+        1
+      ]
+    },
+    {
+      "id": "G_LEI_DECLARA_PORTAO",
+      "descricao": "Meta-Quality Gate que audita e bloqueia se qualquer Lei Inviolável em AGENTS.md não declarar explicitamente seu portão verificador ou a ausência deliberada dele, junto com o nível de força de…",
+      "copias": [
+        {
+          "caminho": "gates/G_LEI_DECLARA_PORTAO.py",
+          "versao": "A",
+          "papel": "ecossistema"
+        }
+      ],
+      "versoes_distintas": 1,
+      "no_pre_commit": true,
+      "prova_que_morde": true,
+      "leis": []
+    },
+    {
+      "id": "G_LIVRO_EVIDENCIA",
+      "descricao": "Audita deterministicamente o livro-texto gerado para um projeto, impedindo que ele afirme o que nao pode provar.",
+      "copias": [
+        {
+          "caminho": "gates/G_LIVRO_EVIDENCIA.py",
+          "versao": "A",
+          "papel": "ecossistema"
+        }
+      ],
+      "versoes_distintas": 1,
+      "no_pre_commit": true,
+      "prova_que_morde": true,
+      "leis": []
+    },
+    {
+      "id": "G_LLM_PROMPT_SHIELD",
+      "descricao": "Auditoria de Blindagem e Sanitização Anti-Prompt Injection em Clientes LLM.",
+      "copias": [
+        {
+          "caminho": "gates/G_LLM_PROMPT_SHIELD.py",
+          "versao": "A",
+          "papel": "ecossistema"
+        }
+      ],
+      "versoes_distintas": 1,
+      "no_pre_commit": true,
+      "prova_que_morde": true,
+      "leis": []
+    },
+    {
+      "id": "G_MIGRATION_ROT",
+      "descricao": "Quality Gate determinístico de prevenção a Migration Rot. Garante que toda migração de banco de dados seja idempotente, possua rollback funcional e completo (downgrade) e convirja perfeitamente para…",
+      "copias": [
+        {
+          "caminho": "gates/G_MIGRATION_ROT.py",
+          "versao": "A",
+          "papel": "ecossistema"
+        }
+      ],
+      "versoes_distintas": 1,
+      "no_pre_commit": true,
+      "prova_que_morde": true,
+      "leis": [
+        3
+      ]
+    },
+    {
+      "id": "G_OPS_MVP",
+      "descricao": "Dois modos de operação: (a) Sem --dir: valida a própria estrutura de tools/aidd-ops/",
+      "copias": [
+        {
+          "caminho": "tools/aidd-ops/gates/G_OPS_MVP.py",
+          "versao": "A",
+          "papel": "ferramenta"
+        }
+      ],
+      "versoes_distintas": 1,
+      "no_pre_commit": false,
+      "prova_que_morde": null,
+      "leis": []
+    },
+    {
+      "id": "G_OPS_SSH",
+      "descricao": "Validação estrita via AST de tools/aidd-ops/src/core/ssh_runner.py (NIH #15: hardening manual via paramiko substituído por Ansible + devsec.hardening):",
+      "copias": [
+        {
+          "caminho": "tools/aidd-ops/gates/G_OPS_SSH.py",
+          "versao": "A",
+          "papel": "ferramenta"
+        }
+      ],
+      "versoes_distintas": 1,
+      "no_pre_commit": false,
+      "prova_que_morde": null,
+      "leis": []
+    },
+    {
+      "id": "G_ORQUESTRADOR_SINCRONO",
+      "descricao": "Valida a existência, integridade, conformidade dos contratos de handoff e a capacidade de execução síncrona dos 3 fluxos canônicos do ecossistema.",
+      "copias": [
+        {
+          "caminho": "gates/G_ORQUESTRADOR_SINCRONO.py",
+          "versao": "A",
+          "papel": "ecossistema"
+        }
+      ],
+      "versoes_distintas": 1,
+      "no_pre_commit": false,
+      "prova_que_morde": true,
+      "leis": []
+    },
+    {
+      "id": "G_PACOTE_CORE",
+      "descricao": "Falha se a árvore de distribuição (export / pacote usuário) contiver artefatos dev-only: *.db, requirements-dev*, docs/relatorios/.",
+      "copias": [
+        {
+          "caminho": "gates/G_PACOTE_CORE.py",
+          "versao": "A",
+          "papel": "ecossistema"
+        }
+      ],
+      "versoes_distintas": 1,
+      "no_pre_commit": true,
+      "prova_que_morde": true,
+      "leis": [
+        1
+      ]
+    },
+    {
+      "id": "G_PERFORMANCE",
+      "descricao": "Executa a bateria completa de 6 camadas de testes de performance: Response time histogram (p99 < 200ms)",
+      "copias": [
+        {
+          "caminho": "tools/aidd-enterprise/scripts/gates/G_PERFORMANCE.py",
+          "versao": "A",
+          "papel": "ferramenta"
+        },
+        {
+          "caminho": "tools/aidd-enterprise/templates/gates/G_PERFORMANCE.py",
+          "versao": "A",
+          "papel": "entrega"
+        },
+        {
+          "caminho": "tools/aidd-forge/aidd_forge/templates/gates/G_PERFORMANCE.py",
+          "versao": "B",
+          "papel": "entrega"
+        },
+        {
+          "caminho": "tools/aidd-master/scripts/gates/G_PERFORMANCE.py",
+          "versao": "A",
+          "papel": "ferramenta"
+        },
+        {
+          "caminho": "tools/aidd-master/templates/gates/G_PERFORMANCE.py",
+          "versao": "A",
+          "papel": "entrega"
+        }
+      ],
+      "versoes_distintas": 2,
+      "no_pre_commit": false,
+      "prova_que_morde": null,
+      "leis": []
+    },
+    {
+      "id": "G_PIPELINE_HANDOFF",
+      "descricao": "Portão determinístico de validação formal de manifestos de handoff de execução da Tríade Canônica (pure, open, freedom) e Planos de Evolução.",
+      "copias": [
+        {
+          "caminho": "gates/G_PIPELINE_HANDOFF.py",
+          "versao": "A",
+          "papel": "ecossistema"
+        }
+      ],
+      "versoes_distintas": 1,
+      "no_pre_commit": true,
+      "prova_que_morde": true,
+      "leis": [
+        1
+      ]
+    },
+    {
+      "id": "G_PLANNER_COERENCIA_FLUXO",
+      "descricao": "Valida a coerência do payload específico com o fluxo alvo selecionado.",
+      "copias": [
+        {
+          "caminho": "tools/aidd-planner/gates/G_PLANNER_COERENCIA_FLUXO.py",
+          "versao": "A",
+          "papel": "ferramenta"
+        }
+      ],
+      "versoes_distintas": 1,
+      "no_pre_commit": false,
+      "prova_que_morde": null,
+      "leis": []
+    },
+    {
+      "id": "G_PLANNER_SCHEMA",
+      "descricao": "Valida a conformidade de schema do PLANNER.json gerado pelo aidd-planner.",
+      "copias": [
+        {
+          "caminho": "tools/aidd-planner/gates/G_PLANNER_SCHEMA.py",
+          "versao": "A",
+          "papel": "ferramenta"
+        }
+      ],
+      "versoes_distintas": 1,
+      "no_pre_commit": false,
+      "prova_que_morde": null,
+      "leis": []
+    },
+    {
+      "id": "G_PLANNER_SINE_QUA_NON",
+      "descricao": "Valida a conformidade da Lei Inviolável 10 (Quarteto Sine Qua Non Dinâmico).",
+      "copias": [
+        {
+          "caminho": "tools/aidd-planner/gates/G_PLANNER_SINE_QUA_NON.py",
+          "versao": "A",
+          "papel": "ferramenta"
+        }
+      ],
+      "versoes_distintas": 1,
+      "no_pre_commit": false,
+      "prova_que_morde": null,
+      "leis": []
+    },
+    {
+      "id": "G_PORTAO_PROVA_QUE_MORDE",
+      "descricao": "Meta-Quality Gate que audita e bloqueia qualquer gate que seja entregue sem um teste automatizado que prove que ele reprova (exit 1).",
+      "copias": [
+        {
+          "caminho": "gates/G_PORTAO_PROVA_QUE_MORDE.py",
+          "versao": "A",
+          "papel": "ecossistema"
+        }
+      ],
+      "versoes_distintas": 1,
+      "no_pre_commit": true,
+      "prova_que_morde": true,
+      "leis": [
+        13
+      ]
+    },
+    {
+      "id": "G_PROTOCOL_FALLBACK",
+      "descricao": "Auditoria de Paridade e Fallback REST vs Model Context Protocol (MCP).",
+      "copias": [
+        {
+          "caminho": "gates/G_PROTOCOL_FALLBACK.py",
+          "versao": "A",
+          "papel": "ecossistema"
+        }
+      ],
+      "versoes_distintas": 1,
+      "no_pre_commit": true,
+      "prova_que_morde": true,
+      "leis": []
+    },
+    {
+      "id": "G_PROTOTYPE_REWRITE",
+      "descricao": "Garante o isolamento determinístico de protótipos em sandbox/ e impede a promoção direta de código experimental (vibe coding / PoC) para produção (src/ ou features/) sem cobertura de testes TDD…",
+      "copias": [
+        {
+          "caminho": "gates/G_PROTOTYPE_REWRITE.py",
+          "versao": "A",
+          "papel": "ecossistema"
+        }
+      ],
+      "versoes_distintas": 1,
+      "no_pre_commit": true,
+      "prova_que_morde": true,
+      "leis": []
+    },
+    {
+      "id": "G_PROVA_SKILLS_POCOCK",
+      "descricao": "Prova de uso real das skills alteradas no ciclo skills-pocock/ciclo-01.",
+      "copias": [
+        {
+          "caminho": "gates/G_PROVA_SKILLS_POCOCK.py",
+          "versao": "A",
+          "papel": "ecossistema"
+        }
+      ],
+      "versoes_distintas": 1,
+      "no_pre_commit": true,
+      "prova_que_morde": true,
+      "leis": [
+        9
+      ]
+    },
+    {
+      "id": "G_QUALIDADE",
+      "descricao": "Valida compilação estática (py_compile), varredura AST anti-stubs vazios, Linter de Acessibilidade & Impeccable UI (WCAG 2.1), e Fuzzing Contínuo de APIs.",
+      "copias": [
+        {
+          "caminho": "tools/aidd-enterprise/scripts/gates/G_QUALIDADE.py",
+          "versao": "A",
+          "papel": "ferramenta"
+        },
+        {
+          "caminho": "tools/aidd-enterprise/templates/gates/G_QUALIDADE.py",
+          "versao": "A",
+          "papel": "entrega"
+        },
+        {
+          "caminho": "tools/aidd-master/scripts/gates/G_QUALIDADE.py",
+          "versao": "A",
+          "papel": "ferramenta"
+        },
+        {
+          "caminho": "tools/aidd-master/templates/gates/G_QUALIDADE.py",
+          "versao": "A",
+          "papel": "entrega"
+        }
+      ],
+      "versoes_distintas": 1,
+      "no_pre_commit": false,
+      "prova_que_morde": null,
+      "leis": []
+    },
+    {
+      "id": "G_QUARTETO_SINE_QUA_NON",
+      "descricao": "Portão determinístico de auditoria do Quarteto Sine Qua Non Dinâmico. Garante que todo projeto gerado ou entregável da Tríade Canônica exponha nativamente os 4 pilares mandatórios: Swagger Studio:…",
+      "copias": [
+        {
+          "caminho": "gates/G_QUARTETO_SINE_QUA_NON.py",
+          "versao": "A",
+          "papel": "ecossistema"
+        },
+        {
+          "caminho": "tools/aidd-forge/aidd_forge/templates/gates/G_QUARTETO_SINE_QUA_NON.py",
+          "versao": "B",
+          "papel": "entrega"
+        }
+      ],
+      "versoes_distintas": 2,
+      "no_pre_commit": true,
+      "prova_que_morde": true,
+      "leis": [
+        10
+      ]
+    },
+    {
+      "id": "G_RESUMO_USUARIO",
+      "descricao": "Exige, quando existe raiz de entrega com README-USUARIO.md, também `RESUMO-USUARIO.md` (≤20 linhas, 3 perguntas) e `RELATORIO-TECNICO.md`.",
+      "copias": [
+        {
+          "caminho": "gates/G_RESUMO_USUARIO.py",
+          "versao": "A",
+          "papel": "ecossistema"
+        }
+      ],
+      "versoes_distintas": 1,
+      "no_pre_commit": true,
+      "prova_que_morde": true,
+      "leis": [
+        1
+      ]
+    },
+    {
+      "id": "G_SAIDA_BINARIA",
+      "descricao": "Auditoria de Qualidade Binária: Verifica deterministicamente via AST que todos os Quality Gates em gates/ terminam estritamente com sys.exit(0) ou sys.exit(1). Nenhum código de saída ambíguo (2, 3,…",
+      "copias": [
+        {
+          "caminho": "gates/G_SAIDA_BINARIA.py",
+          "versao": "A",
+          "papel": "ecossistema"
+        },
+        {
+          "caminho": "tools/aidd-forge/aidd_forge/templates/gates/G_SAIDA_BINARIA.py",
+          "versao": "B",
+          "papel": "entrega"
+        }
+      ],
+      "versoes_distintas": 2,
+      "no_pre_commit": true,
+      "prova_que_morde": true,
+      "leis": [
+        2
+      ]
+    },
+    {
+      "id": "G_SANDBOX_NIVEL_1",
+      "descricao": "Subprocessos de código gerado nunca herdam os.environ.",
+      "copias": [
+        {
+          "caminho": "tools/aidd-generator/scripts/gates/G_SANDBOX_NIVEL_1.py",
+          "versao": "A",
+          "papel": "ferramenta"
+        }
+      ],
+      "versoes_distintas": 1,
+      "no_pre_commit": false,
+      "prova_que_morde": null,
+      "leis": []
+    },
+    {
+      "id": "G_SEGREDOS",
+      "descricao": "Escaneia TODOS os arquivos rastreados pelo git (na raiz do ecossistema, não só um subprojeto) em busca de credenciais hardcoded, delegando a varredura para o detect-secrets (Yelp) — ferramenta OSS…",
+      "copias": [
+        {
+          "caminho": "gates/G_SEGREDOS.py",
+          "versao": "A",
+          "papel": "ecossistema"
+        },
+        {
+          "caminho": "tools/aidd-enterprise/scripts/gates/G_SEGREDOS.py",
+          "versao": "B",
+          "papel": "ferramenta"
+        },
+        {
+          "caminho": "tools/aidd-enterprise/templates/gates/G_SEGREDOS.py",
+          "versao": "B",
+          "papel": "entrega"
+        },
+        {
+          "caminho": "tools/aidd-master/scripts/gates/G_SEGREDOS.py",
+          "versao": "B",
+          "papel": "ferramenta"
+        },
+        {
+          "caminho": "tools/aidd-master/templates/gates/G_SEGREDOS.py",
+          "versao": "B",
+          "papel": "entrega"
+        }
+      ],
+      "versoes_distintas": 2,
+      "no_pre_commit": true,
+      "prova_que_morde": true,
+      "leis": []
+    },
+    {
+      "id": "G_SEGURANCA",
+      "descricao": "Executa a bateria de camadas de testes de cibersegurança e compliance: Auditoria de Headers OWASP e Hardening HTTP (config retornada pelo código)",
+      "copias": [
+        {
+          "caminho": "tools/aidd-enterprise/scripts/gates/G_SEGURANCA.py",
+          "versao": "A",
+          "papel": "ferramenta"
+        },
+        {
+          "caminho": "tools/aidd-enterprise/templates/gates/G_SEGURANCA.py",
+          "versao": "A",
+          "papel": "entrega"
+        },
+        {
+          "caminho": "tools/aidd-master/scripts/gates/G_SEGURANCA.py",
+          "versao": "A",
+          "papel": "ferramenta"
+        },
+        {
+          "caminho": "tools/aidd-master/templates/gates/G_SEGURANCA.py",
+          "versao": "A",
+          "papel": "entrega"
+        }
+      ],
+      "versoes_distintas": 1,
+      "no_pre_commit": false,
+      "prova_que_morde": null,
+      "leis": []
+    },
+    {
+      "id": "G_SESSAO_HERMETICA",
+      "descricao": "Item 4 [TK-6] hermeticidade verificável de sessões.",
+      "copias": [
+        {
+          "caminho": "tools/aidd-generator/scripts/gates/G_SESSAO_HERMETICA.py",
+          "versao": "A",
+          "papel": "ferramenta"
+        }
+      ],
+      "versoes_distintas": 1,
+      "no_pre_commit": false,
+      "prova_que_morde": null,
+      "leis": []
+    },
+    {
+      "id": "G_SKILL_FORMATO",
+      "descricao": "Confere o formato de cada skill da fonte unica contra docs/protocolos/CONVENCAO-AUTORIA-SKILLS.md (secoes 5.1, 5.2 e 5.3).",
+      "copias": [
+        {
+          "caminho": "gates/G_SKILL_FORMATO.py",
+          "versao": "A",
+          "papel": "ecossistema"
+        }
+      ],
+      "versoes_distintas": 1,
+      "no_pre_commit": true,
+      "prova_que_morde": true,
+      "leis": [
+        9
+      ]
+    },
+    {
+      "id": "G_SKILL_ROT",
+      "descricao": "Quality Gate determinístico de prevenção a Skill & Tool Rot. Audita e resolve estaticamente todo caminho de arquivo, referência a script, link markdown, comando CLI e ponto de entrada de ambiente…",
+      "copias": [
+        {
+          "caminho": "gates/G_SKILL_ROT.py",
+          "versao": "A",
+          "papel": "ecossistema"
+        }
+      ],
+      "versoes_distintas": 1,
+      "no_pre_commit": true,
+      "prova_que_morde": true,
+      "leis": [
+        9
+      ]
+    },
+    {
+      "id": "G_STACK_PADRAO_OURO",
+      "descricao": "Portão determinístico do Padrão-Ouro de Stack Tecnológica (Lei Canônica #11). Audita se os projetos gerados ou entregáveis dos fluxos da Tríade aderem à stack mandatória: Frontend: Next.js + React +…",
+      "copias": [
+        {
+          "caminho": "gates/G_STACK_PADRAO_OURO.py",
+          "versao": "A",
+          "papel": "ecossistema"
+        },
+        {
+          "caminho": "tools/aidd-forge/aidd_forge/templates/gates/G_STACK_PADRAO_OURO.py",
+          "versao": "A",
+          "papel": "entrega"
+        }
+      ],
+      "versoes_distintas": 1,
+      "no_pre_commit": true,
+      "prova_que_morde": true,
+      "leis": [
+        11
+      ]
+    },
+    {
+      "id": "G_SUPPLY_CHAIN",
+      "descricao": "PLAN-0031 fase 01: Verificação da integridade da cadeia de suprimentos e auditoria de vulnerabilidades conhecidas (CVEs / advisories) em dependências.",
+      "copias": [
+        {
+          "caminho": "gates/G_SUPPLY_CHAIN.py",
+          "versao": "A",
+          "papel": "ecossistema"
+        }
+      ],
+      "versoes_distintas": 1,
+      "no_pre_commit": false,
+      "prova_que_morde": true,
+      "leis": []
+    },
+    {
+      "id": "G_SYNC_CMD_ROT",
+      "descricao": "Bloqueia a forma incompleta de sincronizacao de componentes em docs vivos e exige que o parser continue mapeando os aliases publicos.",
+      "copias": [
+        {
+          "caminho": "gates/G_SYNC_CMD_ROT.py",
+          "versao": "A",
+          "papel": "ecossistema"
+        }
+      ],
+      "versoes_distintas": 1,
+      "no_pre_commit": true,
+      "prova_que_morde": true,
+      "leis": [
+        1
+      ]
+    },
+    {
+      "id": "G_TEMPLATE_FORGE_ROT",
+      "descricao": "Portão determinístico de integridade dos templates do aidd-forge. Impede o apodrecimento e divergência dos artefatos injetados em novos projetos: AGENTS.md template deve conter as 13 Leis Canônicas…",
+      "copias": [
+        {
+          "caminho": "gates/G_TEMPLATE_FORGE_ROT.py",
+          "versao": "A",
+          "papel": "ecossistema"
+        }
+      ],
+      "versoes_distintas": 1,
+      "no_pre_commit": false,
+      "prova_que_morde": true,
+      "leis": [
+        9
+      ]
+    },
+    {
+      "id": "G_TESTES",
+      "descricao": "Executa obrigatoriamente a suíte pytest em tests/unit/ e valida o healthcheck sintético de rotas e fatias verticais. Bloqueia com exit 1 se 0 testes forem encontrados ou se houver qualquer falha de…",
+      "copias": [
+        {
+          "caminho": "tools/aidd-enterprise/scripts/gates/G_TESTES.py",
+          "versao": "A",
+          "papel": "ferramenta"
+        },
+        {
+          "caminho": "tools/aidd-enterprise/templates/gates/G_TESTES.py",
+          "versao": "A",
+          "papel": "entrega"
+        },
+        {
+          "caminho": "tools/aidd-master/scripts/gates/G_TESTES.py",
+          "versao": "A",
+          "papel": "ferramenta"
+        },
+        {
+          "caminho": "tools/aidd-master/templates/gates/G_TESTES.py",
+          "versao": "A",
+          "papel": "entrega"
+        }
+      ],
+      "versoes_distintas": 1,
+      "no_pre_commit": false,
+      "prova_que_morde": null,
+      "leis": []
+    },
+    {
+      "id": "G_TESTES_REAIS",
+      "descricao": "Roda pytest de verdade em cada tools/<ferramenta> e falha (exit 1) se qualquer suíte tiver failed > 0 ou erro de execução. Métricas (passed/ failed/skipped/errors) são extraídas do relatório JUnitXML…",
+      "copias": [
+        {
+          "caminho": "gates/G_TESTES_REAIS.py",
+          "versao": "A",
+          "papel": "ecossistema"
+        },
+        {
+          "caminho": "tools/aidd-forge/aidd_forge/templates/gates/G_TESTES_REAIS.py",
+          "versao": "B",
+          "papel": "entrega"
+        }
+      ],
+      "versoes_distintas": 2,
+      "no_pre_commit": true,
+      "prova_que_morde": true,
+      "leis": [
+        5
+      ]
+    },
+    {
+      "id": "G_TOKENOMICS",
+      "descricao": "Validação de economia de tokens no pipeline.",
+      "copias": [
+        {
+          "caminho": "tools/aidd-generator/scripts/gates/G_TOKENOMICS.py",
+          "versao": "A",
+          "papel": "ferramenta"
+        }
+      ],
+      "versoes_distintas": 1,
+      "no_pre_commit": false,
+      "prova_que_morde": null,
+      "leis": []
+    },
+    {
+      "id": "G_TRANSACTION_LOG_LRU",
+      "descricao": "Verificação determinística (AST + hashes SHA-256) da entrega do item 'transactionlog-lru-cache' (PLAN-0017, fase 06): O módulo `transaction_log.py` existe na fonte única",
+      "copias": [
+        {
+          "caminho": "gates/G_TRANSACTION_LOG_LRU.py",
+          "versao": "A",
+          "papel": "ecossistema"
+        }
+      ],
+      "versoes_distintas": 1,
+      "no_pre_commit": false,
+      "prova_que_morde": true,
+      "leis": []
+    },
+    {
+      "id": "G_UNIVERSAL_HARNESS",
+      "descricao": "Audita a garantia SINE QUA NON de que todo componente, skill, MCP e hook esteja universalmente sincronizado, configurado e disponível de forma agnóstica para qualquer harness e sistema operacional…",
+      "copias": [
+        {
+          "caminho": "gates/G_UNIVERSAL_HARNESS.py",
+          "versao": "A",
+          "papel": "ecossistema"
+        }
+      ],
+      "versoes_distintas": 1,
+      "no_pre_commit": true,
+      "prova_que_morde": true,
+      "leis": []
+    },
+    {
+      "id": "G_USER_FACING_PTBR",
+      "descricao": "Bloqueia jargão não explicado em superfícies lidas pelo usuário leigo (README.md, --help da CLI raiz, card de entrega / perfis de linguagem).",
+      "copias": [
+        {
+          "caminho": "gates/G_USER_FACING_PTBR.py",
+          "versao": "A",
+          "papel": "ecossistema"
+        }
+      ],
+      "versoes_distintas": 1,
+      "no_pre_commit": true,
+      "prova_que_morde": true,
+      "leis": [
+        4
+      ]
+    },
+    {
+      "id": "G_VERIFICAR_LLM_PRONTO",
+      "descricao": "Pré-voo obrigatório antes de rodar pipeline_completo.py com fallback headless.",
+      "copias": [
+        {
+          "caminho": "tools/aidd-generator/scripts/gates/G_VERIFICAR_LLM_PRONTO.py",
+          "versao": "A",
+          "papel": "ferramenta"
+        }
+      ],
+      "versoes_distintas": 1,
+      "no_pre_commit": false,
+      "prova_que_morde": null,
+      "leis": []
+    },
+    {
+      "id": "G_ZERO_HEADLESS",
+      "descricao": "Gate de Enforcement Real contra Subagentes Headless e Concorrência Paralela Silenciosa.",
+      "copias": [
+        {
+          "caminho": "gates/G_ZERO_HEADLESS.py",
+          "versao": "A",
+          "papel": "ecossistema"
+        }
+      ],
+      "versoes_distintas": 1,
+      "no_pre_commit": true,
+      "prova_que_morde": true,
+      "leis": [
+        7
+      ]
+    },
+    {
+      "id": "G_aidd_diagnose",
+      "descricao": "Quality Gate Determinístico e Rótulo Honesto para a ferramenta aidd-diagnose. Valida estritamente os critérios científicos de relatório de causa-raiz: Comando de reprodução determinística executado N…",
+      "copias": [
+        {
+          "caminho": "gates/G_aidd_diagnose.py",
+          "versao": "A",
+          "papel": "ecossistema"
+        }
+      ],
+      "versoes_distintas": 1,
+      "no_pre_commit": false,
+      "prova_que_morde": true,
+      "leis": [
+        9
+      ]
+    },
+    {
+      "id": "G_amelhoria",
+      "descricao": "Quality Gate Determinístico de Rótulo Honesto para aidd-melhoria. Valida estritamente a presença do rótulo honesto (\"Sugestão de refatoração...\") e veta categoricamente afirmações imperativas…",
+      "copias": [
+        {
+          "caminho": "gates/G_amelhoria.py",
+          "versao": "A",
+          "papel": "ecossistema"
+        }
+      ],
+      "versoes_distintas": 1,
+      "no_pre_commit": false,
+      "prova_que_morde": true,
+      "leis": [
+        9
+      ]
+    }
+  ],
+  "contratos": [
+    {
+      "id": "handoff-engine-to-master",
+      "titulo": "HandoffEngineToMasterSchema",
+      "usado_por": [
+        "gates/G_ORQUESTRADOR_SINCRONO.py",
+        "scripts/orquestrador_sincrono.py"
+      ]
+    },
+    {
+      "id": "handoff-enterprise-to-ops",
+      "titulo": "HandoffEnterpriseToOpsSchema",
+      "usado_por": [
+        "gates/G_ORQUESTRADOR_SINCRONO.py",
+        "scripts/orquestrador_sincrono.py"
+      ]
+    },
+    {
+      "id": "handoff-execucao",
+      "titulo": "HandoffExecucaoSchema",
+      "usado_por": [
+        "gates/G_PIPELINE_HANDOFF.py",
+        "scripts/compilador_tickets_plano.py",
+        "tools/aidd-planner/aidd_planner/core/planner_engine.py",
+        "tools/aidd-planner/src/core/planner_engine.py"
+      ]
+    },
+    {
+      "id": "handoff-master-to-enterprise",
+      "titulo": "HandoffMasterToEnterpriseSchema",
+      "usado_por": [
+        "gates/G_ORQUESTRADOR_SINCRONO.py",
+        "scripts/orquestrador_sincrono.py"
+      ]
+    },
+    {
+      "id": "handoff-melhoria",
+      "titulo": "HandoffMelhoriaSchema",
+      "usado_por": [
+        "componentes/compartilhado/skills/aidd-improvement/scripts/handoff.py",
+        "gates/G_HANDOFF_MELHORIA.py"
+      ]
+    },
+    {
+      "id": "handoff-planner-to-engine",
+      "titulo": "HandoffPlannerToEngineSchema",
+      "usado_por": [
+        "gates/G_ORQUESTRADOR_SINCRONO.py",
+        "scripts/orquestrador_sincrono.py",
+        "tools/aidd-planner/aidd_planner/cli.py",
+        "tools/aidd-planner/src/cli.py"
+      ]
+    },
+    {
+      "id": "plano-infraestrutura",
+      "titulo": "Contrato do PLANO-INFRAESTRUTURA.json (aidd-ops → aidd-master/aidd-enterprise/aidd-factory)",
+      "usado_por": [
+        "tools/aidd-enterprise/scripts/scaffold_infra.py",
+        "tools/aidd-master/scripts/scaffold_infra.py",
+        "tools/aidd-ops/scripts/contrato_plano.py",
+        "tools/aidd-planner/aidd_planner/core/planner_engine.py",
+        "tools/aidd-planner/src/core/planner_engine.py"
+      ]
+    },
+    {
+      "id": "vsa-topological-dispatch",
+      "titulo": "VSATopologicalDispatchSchema",
+      "usado_por": [
+        "gates/G_DISPATCH_PIPELINE_VSA.py",
+        "tools/aidd-planner/aidd_planner/core/planner_engine.py",
+        "tools/aidd-planner/src/core/planner_engine.py"
+      ]
+    }
+  ],
+  "receita_triade": {
+    "arquivo": "scripts/orquestrador_sincrono.py",
+    "etapas": [
+      {
+        "etapa": "etapa_01_forge",
+        "descricao": "Etapa 1: Fundação, Git, pre-commit e regras de governança.",
+        "chamadas_cli": [
+          [
+            "forge",
+            "init",
+            "<var>",
+            "--force"
+          ]
+        ],
+        "chamadas_por_fluxo": {},
+        "atalhos_internos": [],
+        "chama_alguma_ferramenta": true
+      },
+      {
+        "etapa": "etapa_02_planner",
+        "descricao": "Etapa 2: Planejamento BDD/SDD, contratos e Quarteto Sine Qua Non.",
+        "chamadas_cli": [
+          [
+            "planner",
+            "init",
+            "--fluxo",
+            "<var>",
+            "--nome",
+            "<var>",
+            "--slug",
+            "<var>",
+            "--dominio",
+            "<var>",
+            "--pasta",
+            "<var>"
+          ]
+        ],
+        "chamadas_por_fluxo": {},
+        "atalhos_internos": [
+          "tools/aidd-planner"
+        ],
+        "chama_alguma_ferramenta": true
+      },
+      {
+        "etapa": "etapa_03_engine",
+        "descricao": "Etapa 3: Execução da Engine correspondente ao Fluxo.",
+        "chamadas_cli": [
+          [
+            "generate",
+            "<var>",
+            "--pasta",
+            "<var>",
+            "--implementar-codigo"
+          ],
+          [
+            "factory",
+            "curate",
+            "--dominio",
+            "<var>",
+            "--output",
+            "<var>"
+          ],
+          [
+            "bridge",
+            "scan",
+            "--dir",
+            "<var>"
+          ]
+        ],
+        "chamadas_por_fluxo": {
+          "freedom": [
+            [
+              "bridge",
+              "scan",
+              "--dir",
+              "<var>"
+            ]
+          ],
+          "open": [
+            [
+              "factory",
+              "curate",
+              "--dominio",
+              "<var>",
+              "--output",
+              "<var>"
+            ]
+          ],
+          "pure": [
+            [
+              "generate",
+              "<var>",
+              "--pasta",
+              "<var>",
+              "--implementar-codigo"
+            ]
+          ]
+        },
+        "atalhos_internos": [
+          "tools/aidd-master/scripts/dispatch_pipeline.py"
+        ],
+        "chama_alguma_ferramenta": true
+      },
+      {
+        "etapa": "etapa_04_master",
+        "descricao": "Etapa 4: Harmonização no Monólito Modular VSA + Next.js.",
+        "chamadas_cli": [
+          [
+            "master",
+            "init",
+            "<var>",
+            "--pasta",
+            "<var>"
+          ],
+          [
+            "master",
+            "add-module",
+            "<var>",
+            "--pasta",
+            "<var>"
+          ]
+        ],
+        "chamadas_por_fluxo": {},
+        "atalhos_internos": [],
+        "chama_alguma_ferramenta": true
+      },
+      {
+        "etapa": "etapa_05_enterprise",
+        "descricao": "Etapa 5: Blindagem SHA-256 e detecção de drift.",
+        "chamadas_cli": [
+          [
+            "enterprise",
+            "inject",
+            "rule",
+            "<var>",
+            "--dir",
+            "<var>"
+          ],
+          [
+            "enterprise",
+            "verificar-drift",
+            "--dir",
+            "<var>"
+          ]
+        ],
+        "chamadas_por_fluxo": {},
+        "atalhos_internos": [],
+        "chama_alguma_ferramenta": true
+      },
+      {
+        "etapa": "etapa_06_ops",
+        "descricao": "Etapa 6: Infraestrutura, Docker Compose e Validação de Portas.",
+        "chamadas_cli": [],
+        "chamadas_por_fluxo": {},
+        "atalhos_internos": [],
+        "chama_alguma_ferramenta": false
+      },
+      {
+        "etapa": "etapa_07_auditoria",
+        "descricao": "Etapa 7: Verificação final de conformidade do projeto.",
+        "chamadas_cli": [],
+        "chamadas_por_fluxo": {},
+        "atalhos_internos": [],
+        "chama_alguma_ferramenta": false
+      }
+    ]
+  },
+  "encaixes": [
+    {
+      "etapa": "etapa_01_forge",
+      "chamada": "ecossistema.py forge init <var> --force",
+      "encaixa": true,
+      "problemas": []
+    },
+    {
+      "etapa": "etapa_02_planner",
+      "chamada": "ecossistema.py planner init --fluxo <var> --nome <var> --slug <var> --dominio <var> --pasta <var>",
+      "encaixa": true,
+      "problemas": []
+    },
+    {
+      "etapa": "etapa_03_engine",
+      "chamada": "ecossistema.py generate <var> --pasta <var> --implementar-codigo",
+      "encaixa": true,
+      "problemas": []
+    },
+    {
+      "etapa": "etapa_03_engine",
+      "chamada": "ecossistema.py factory curate --dominio <var> --output <var>",
+      "encaixa": false,
+      "problemas": [
+        "'curate' passado como argumento, mas a ferramenta não aceita argumento posicional",
+        "flags inexistentes: --dominio, --output"
+      ]
+    },
+    {
+      "etapa": "etapa_03_engine",
+      "chamada": "ecossistema.py bridge scan --dir <var>",
+      "encaixa": false,
+      "problemas": [
+        "flags inexistentes: --dir"
+      ]
+    },
+    {
+      "etapa": "etapa_04_master",
+      "chamada": "ecossistema.py master init <var> --pasta <var>",
+      "encaixa": true,
+      "problemas": []
+    },
+    {
+      "etapa": "etapa_04_master",
+      "chamada": "ecossistema.py master add-module <var> --pasta <var>",
+      "encaixa": true,
+      "problemas": []
+    },
+    {
+      "etapa": "etapa_05_enterprise",
+      "chamada": "ecossistema.py enterprise inject rule <var> --dir <var>",
+      "encaixa": true,
+      "problemas": []
+    },
+    {
+      "etapa": "etapa_05_enterprise",
+      "chamada": "ecossistema.py enterprise verificar-drift --dir <var>",
+      "encaixa": true,
+      "problemas": []
+    }
+  ],
+  "achados": {
+    "arquivos_identicos_entre_donas": [
+      {
+        "donas": "aidd-enterprise + aidd-master",
+        "arquivos": 54
+      },
+      {
+        "donas": "aidd-enterprise + aidd-master + componentes",
+        "arquivos": 23
+      },
+      {
+        "donas": "aidd-enterprise + aidd-factory + aidd-master",
+        "arquivos": 8
+      },
+      {
+        "donas": "aidd-enterprise + aidd-factory + aidd-master + componentes",
+        "arquivos": 7
+      },
+      {
+        "donas": "aidd-forge + gates",
+        "arquivos": 2
+      }
+    ],
+    "verbos_cli_repetidos": {
+      "add-module": [
+        "aidd-enterprise",
+        "aidd-master"
+      ],
+      "apply": [
+        "aidd-enterprise",
+        "aidd-master"
+      ],
+      "audit": [
+        "aidd-enterprise",
+        "aidd-forge",
+        "aidd-master",
+        "aidd-planner"
+      ],
+      "bench": [
+        "aidd-enterprise",
+        "aidd-master"
+      ],
+      "compose": [
+        "aidd-enterprise",
+        "aidd-master"
+      ],
+      "compose-orca": [
+        "aidd-enterprise",
+        "aidd-master"
+      ],
+      "deploy": [
+        "aidd-enterprise",
+        "aidd-master",
+        "aidd-ops"
+      ],
+      "export": [
+        "aidd-ops",
+        "aidd-planner"
+      ],
+      "export-frontend": [
+        "aidd-enterprise",
+        "aidd-master"
+      ],
+      "heal": [
+        "aidd-enterprise",
+        "aidd-master"
+      ],
+      "init": [
+        "aidd-enterprise",
+        "aidd-forge",
+        "aidd-master",
+        "aidd-ops",
+        "aidd-planner"
+      ],
+      "inject": [
+        "aidd-enterprise",
+        "aidd-forge",
+        "aidd-master"
+      ],
+      "plan": [
+        "aidd-enterprise",
+        "aidd-master",
+        "aidd-ops"
+      ],
+      "prompt": [
+        "aidd-enterprise",
+        "aidd-master"
+      ],
+      "refine-module": [
+        "aidd-enterprise",
+        "aidd-master"
+      ],
+      "scaffold-infra": [
+        "aidd-enterprise",
+        "aidd-master"
+      ],
+      "setup": [
+        "aidd-enterprise",
+        "aidd-master"
+      ],
+      "status": [
+        "aidd-enterprise",
+        "aidd-master",
+        "aidd-ops"
+      ],
+      "test": [
+        "aidd-enterprise",
+        "aidd-master"
+      ],
+      "verificar-drift": [
+        "aidd-enterprise",
+        "aidd-master"
+      ]
+    },
+    "tarefas_com_varias_donas": {
+      "barrar-segredos": {
+        "donas": [
+          "aidd-enterprise",
+          "aidd-forge",
+          "aidd-generator",
+          "aidd-master",
+          "aidd-ops",
+          "gates"
+        ],
+        "arquivos": [
+          "gates/G_SEGREDOS.py",
+          "tools/aidd-enterprise/scripts/gates/G_SEGREDOS.py",
+          "tools/aidd-enterprise/templates/gates/G_SEGREDOS.py",
+          "tools/aidd-forge/aidd_forge/templates/gates/G_BLOQUEAR_SEGREDOS.py",
+          "tools/aidd-generator/scripts/gates/G_BLOQUEAR_SEGREDOS.py",
+          "tools/aidd-master/scripts/gates/G_SEGREDOS.py",
+          "tools/aidd-master/templates/gates/G_SEGREDOS.py",
+          "tools/aidd-ops/scripts/rotate_secrets.py"
+        ]
+      },
+      "compat-harness": {
+        "donas": [
+          "aidd-enterprise",
+          "aidd-forge",
+          "aidd-generator",
+          "aidd-master",
+          "componentes",
+          "gates",
+          "scripts"
+        ],
+        "arquivos": [
+          "componentes/compartilhado/src-core/sincronizador_harness.py",
+          "gates/G_HARNESS_COMPAT.py",
+          "gates/G_UNIVERSAL_HARNESS.py",
+          "scripts/harness_hygiene.py",
+          "tools/aidd-enterprise/scripts/gates/G_HARNESS_COMPAT.py",
+          "tools/aidd-enterprise/src/core/sincronizador_harness.py",
+          "tools/aidd-enterprise/templates/gates/G_HARNESS_COMPAT.py",
+          "tools/aidd-forge/aidd_forge/core/harness_manifest.py",
+          "tools/aidd-forge/aidd_forge/core/harness_sync.py",
+          "tools/aidd-forge/aidd_forge/templates/gates/G_HARNESS_COMPAT.py",
+          "tools/aidd-generator/scripts/core/injector/sincronizador_harness.py",
+          "tools/aidd-generator/scripts/gates/AUDITAR_COMPARATIVO_HARNESS.py",
+          "tools/aidd-generator/scripts/gates/G_HARNESS_COMPAT.py",
+          "tools/aidd-master/scripts/gates/G_HARNESS_COMPAT.py",
+          "tools/aidd-master/src/core/sincronizador_harness.py",
+          "tools/aidd-master/templates/gates/G_HARNESS_COMPAT.py"
+        ]
+      },
+      "injetar-componentes": {
+        "donas": [
+          "aidd-enterprise",
+          "aidd-forge",
+          "aidd-generator",
+          "aidd-master"
+        ],
+        "arquivos": [
+          "tools/aidd-enterprise/application/commands/inject.py",
+          "tools/aidd-enterprise/scripts/gates/G_INJECT.py",
+          "tools/aidd-forge/aidd_forge/core/injection_schema.py",
+          "tools/aidd-forge/aidd_forge/core/injector.py",
+          "tools/aidd-forge/aidd_forge/core/injector_profiles.py",
+          "tools/aidd-forge/aidd_forge/core/universal_injector.py",
+          "tools/aidd-forge/aidd_forge/templates/gates/G_INJECT.py",
+          "tools/aidd-generator/scripts/aidd_inject.py",
+          "tools/aidd-generator/scripts/gates/G_INJECT.py",
+          "tools/aidd-master/application/commands/inject.py",
+          "tools/aidd-master/scripts/gates/G_INJECT.py"
+        ]
+      },
+      "detectar-stack-camada": {
+        "donas": [
+          "aidd-enterprise",
+          "aidd-forge",
+          "aidd-generator",
+          "aidd-master"
+        ],
+        "arquivos": [
+          "tools/aidd-enterprise/src/core/detector_camada.py",
+          "tools/aidd-forge/aidd_forge/core/camada_detector.py",
+          "tools/aidd-forge/aidd_forge/core/detector.py",
+          "tools/aidd-generator/scripts/core/detector.py",
+          "tools/aidd-generator/scripts/core/injector/detector_camada.py",
+          "tools/aidd-master/src/core/detector_camada.py"
+        ]
+      },
+      "auditar-conformidade": {
+        "donas": [
+          "aidd-enterprise",
+          "aidd-forge",
+          "aidd-generator",
+          "aidd-master",
+          "componentes",
+          "gates",
+          "scripts"
+        ],
+        "arquivos": [
+          "componentes/compartilhado/skills/aidd-orca/scripts/gate_auditor.py",
+          "gates/G_ISOLATION_AUDIT.py",
+          "scripts/scaffold_auditoria.py",
+          "tools/aidd-enterprise/application/commands/audit.py",
+          "tools/aidd-forge/aidd_forge/core/audit_checks.py",
+          "tools/aidd-forge/aidd_forge/core/audit_engine.py",
+          "tools/aidd-forge/aidd_forge/core/audit_report.py",
+          "tools/aidd-generator/scripts/gates/AUDITAR_COMPARATIVO_HARNESS.py",
+          "tools/aidd-master/application/commands/audit.py",
+          "tools/aidd-master/src/core/mcp/auditoria-seguranca.py"
+        ]
+      },
+      "docker-compose": {
+        "donas": [
+          "aidd-enterprise",
+          "aidd-factory",
+          "aidd-master",
+          "aidd-ops",
+          "gates"
+        ],
+        "arquivos": [
+          "gates/G_INFRA_COMPOSE.py",
+          "tools/aidd-enterprise/application/commands/compose.py",
+          "tools/aidd-enterprise/scripts/compose_suite.py",
+          "tools/aidd-factory/gates/G_FACTORY_COMPOSE.py",
+          "tools/aidd-factory/scripts/phases/04_compose.py",
+          "tools/aidd-master/application/commands/compose.py",
+          "tools/aidd-master/scripts/compose_suite.py",
+          "tools/aidd-ops/src/core/compose_preflight.py"
+        ]
+      },
+      "gerar-frontend": {
+        "donas": [
+          "aidd-bridge",
+          "aidd-enterprise",
+          "aidd-factory",
+          "aidd-master",
+          "gates"
+        ],
+        "arquivos": [
+          "gates/G_FRONTEND_LAYERS.py",
+          "tools/aidd-bridge/aidd_bridge/frontend_liberator.py",
+          "tools/aidd-enterprise/application/commands/export_frontend.py",
+          "tools/aidd-factory/src/core/frontend_generator.py",
+          "tools/aidd-master/application/commands/export_frontend.py"
+        ]
+      },
+      "ponte-orca": {
+        "donas": [
+          "aidd-forge",
+          "aidd-generator",
+          "componentes"
+        ],
+        "arquivos": [
+          "componentes/compartilhado/skills/aidd-orca/scripts/orca_real_plan.py",
+          "tools/aidd-forge/aidd_forge/core/orca_bridge.py",
+          "tools/aidd-generator/scripts/core/orca_fleet.py"
+        ]
+      },
+      "escrita-atomica": {
+        "donas": [
+          "aidd-enterprise",
+          "aidd-factory",
+          "aidd-master",
+          "componentes",
+          "gates"
+        ],
+        "arquivos": [
+          "componentes/compartilhado/src-core/escritor_atomico.py",
+          "gates/G_ESCRITOR_ATOMICO.py",
+          "tools/aidd-enterprise/src/core/escritor_atomico.py",
+          "tools/aidd-factory/src/core/escritor_atomico.py",
+          "tools/aidd-master/src/core/escritor_atomico.py"
+        ]
+      },
+      "resultado-monad": {
+        "donas": [
+          "aidd-enterprise",
+          "aidd-factory",
+          "aidd-master",
+          "aidd-ops",
+          "componentes"
+        ],
+        "arquivos": [
+          "componentes/compartilhado/src-core/result.py",
+          "tools/aidd-enterprise/src/core/result.py",
+          "tools/aidd-enterprise/templates/core/result.py",
+          "tools/aidd-enterprise/templates/v2/result.py",
+          "tools/aidd-factory/src/core/result.py",
+          "tools/aidd-factory/templates/vsa/result.py",
+          "tools/aidd-master/src/core/result.py",
+          "tools/aidd-master/templates/core/result.py",
+          "tools/aidd-master/templates/v2/result.py",
+          "tools/aidd-ops/src/core/result.py"
+        ]
+      }
+    },
+    "gates_mesmo_nome_codigo_diferente": [
+      "G_BLOQUEAR_SEGREDOS",
+      "G_CONTRACTS",
+      "G_CYBERSECURITY_OWASP",
+      "G_HARNESS_COMPAT",
+      "G_INJECT",
+      "G_PERFORMANCE",
+      "G_QUARTETO_SINE_QUA_NON",
+      "G_SAIDA_BINARIA",
+      "G_SEGREDOS",
+      "G_TESTES_REAIS"
+    ],
+    "skills_mesma_descricao": [],
+    "etapas_sem_ferramenta": [
+      "etapa_06_ops",
+      "etapa_07_auditoria"
+    ],
+    "etapas_com_atalho_interno": {
+      "etapa_02_planner": [
+        "tools/aidd-planner"
+      ],
+      "etapa_03_engine": [
+        "tools/aidd-master/scripts/dispatch_pipeline.py"
+      ]
+    },
+    "declaracoes_de_lei_invisiveis_ao_meta_gate": [
+      "Lei #1: G_SYNC_CMD_ROT",
+      "Lei #1: G_LAYOUT_ENTREGA",
+      "Lei #1: G_PACOTE_CORE",
+      "Lei #1: G_RESUMO_USUARIO",
+      "Lei #1: G_ANT_LOCKIN_LEGADO",
+      "Lei #4: G_USER_FACING_PTBR",
+      "Lei #9: G_amelhoria",
+      "Lei #9: G_aidd_diagnose",
+      "Lei #9: G_PROVA_SKILLS_POCOCK",
+      "Lei #9: G_HANDOFF_MELHORIA"
+    ]
+  }
+}

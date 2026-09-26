@@ -1,0 +1,137 @@
+<!-- Molde do mapa das skills. Texto fixo aqui; listas e números entram por scripts/mapa_visual.py. A regra oficial é docs/protocolos/CONVENCAO-AUTORIA-SKILLS.md: este molde só resume e aponta para ela. -->
+<div class="wrap">
+
+<a class="voltar" href="{{LINK_MANUAL}}">← Manual de montagem</a>
+<header>
+  <span class="eyebrow">Mapa visual · peça: skill (manual de tarefa)</span>
+  <h1>Mapa das skills</h1>
+  <p class="lead">Uma skill é um <b>manual de tarefa</b>: uma pasta com um <code>SKILL.md</code> que ensina o agente a fazer uma coisa do jeito da casa. Este mapa mostra todas as skills que existem hoje e resume como construir uma nova sem repetir as que já existem.</p>
+  {{TOTAIS}}
+</header>
+
+<section id="o-que">
+  <span class="eyebrow">O quê · por quê · para quê</span>
+  <h2>Por que o ecossistema precisa de skills</h2>
+  <div class="grid3">
+    <div class="box"><h3>O que é</h3><p>Um manual que o agente só abre quando a tarefa combina com a <b>descrição</b>. Até lá, ele lê apenas o nome e a descrição de cada skill. Por isso a descrição é o gatilho.</p></div>
+    <div class="box"><h3>Por que construir</h3><p>Para a mesma tarefa sair do mesmo jeito em toda sessão, sem alguém explicar de novo: a ordem certa, os comandos exatos, as armadilhas já vividas.</p></div>
+    <div class="box"><h3>O que não é</h3><p>Skill ensina; <b>guarda confere</b>. Se a regra precisa ser obrigatória, ela precisa de um guarda (veja o mapa dos guardas).</p></div>
+  </div>
+</section>
+
+<section id="quando">
+  <span class="eyebrow">Quando</span>
+  <h2>Quando criar, e quando não</h2>
+  <div class="grid2">
+    <div class="box">
+      <h3>Crie quando…</h3>
+      <ul>
+        <li>você explicou a mesma coisa ao agente pela segunda vez;</li>
+        <li>a tarefa tem uma ordem de passos que não pode variar;</li>
+        <li>existe um script pronto que o agente deve rodar em vez de reescrever;</li>
+        <li>uma ferramenta nova precisa de um "como usar".</li>
+      </ul>
+    </div>
+    <div class="box">
+      <h3>Não crie quando…</h3>
+      <ul>
+        <li>já existe uma skill com o mesmo trabalho (procure na lista abaixo);</li>
+        <li>é só um atalho com outro nome: atalho é <b>comando slash</b>, não skill;</li>
+        <li>é algo que o modelo já sabe sozinho;</li>
+        <li>a skill é de outro fornecedor: ela entra pelo instalador dele, não por cópia.</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section id="onde">
+  <span class="eyebrow">Onde</span>
+  <h2>Onde cada coisa mora</h2>
+  <div class="grid3">
+    <div class="box" style="--c:var(--c-trabalha)"><h3><span class="sw" aria-hidden="true"></span>Fonte única</h3><p><code>componentes/compartilhado/skills/&lt;nome&gt;/</code></p><p>O único lugar onde se edita. As pastas dos harnesses (<code>.claude/</code>, <code>.agents/</code>, <code>.opencode/</code>…) são cópias geradas pelo <code>components sync</code>.</p></div>
+    <div class="box" style="--c:var(--c-regra)"><h3><span class="sw" aria-hidden="true"></span>Atalho para pessoas</h3><p><code>componentes/compartilhado/comandos/&lt;nome&gt;.md</code></p><p>O que você digita (<code>/pure</code>, <code>/melhoria</code>, <code>/plan</code>) pode ter nome em português e só chama a skill <code>aidd-*</code>.</p></div>
+    <div class="box" style="--c:var(--brick)"><h3><span class="sw" aria-hidden="true"></span>Skill de terceiros</h3><p><code>gates/dependencias_externas.json</code></p><p>Registrada com <code>dependencia add-skill</code> e instalada pelo instalador do fornecedor. Nunca copiada para a fonte única.</p>{{TERCEIROS}}</div>
+  </div>
+</section>
+
+<section id="como">
+  <span class="eyebrow">Como</span>
+  <h2>Como construir, em resumo</h2>
+  <p>Resumo da regra oficial, <a href="../protocolos/CONVENCAO-AUTORIA-SKILLS.md"><code>docs/protocolos/CONVENCAO-AUTORIA-SKILLS.md</code></a>. Na dúvida, vale o que está lá.</p>
+  <ol class="passos">
+    <li><div><b>Procure antes.</b><span>Use o filtro da lista abaixo. Se existe uma parecida, melhore a existente.</span></div></li>
+    <li><div><b>Escreva primeiro os cenários.</b><span>Três pedidos reais em que o agente erra sem a skill. Eles são a linha de base.</span></div></li>
+    <li><div><b>Nome e descrição.</b><span>Nome <code>aidd-&lt;assunto&gt;</code> em inglês, igual à pasta, sem <code>-runner</code> e sem número. Descrição em inglês dizendo o que faz e "Use when…", com as palavras que você digita em português.</span></div></li>
+    <li><div><b>Corpo curto.</b><span>Inglês compacto, meta de 150 linhas, trava em 450. Material de consulta vai para <code>references/</code>; cada passo termina numa condição que dá para conferir.</span></div></li>
+    <li><div><b>Distribua e confira.</b><span><code>python ecossistema.py components sync --tipo skill</code>, depois <code>components verify</code>, <code>G_SKILL_ROT</code> e <code>G_SKILL_FORMATO</code>, todos com exit 0.</span></div></li>
+    <li><div><b>Teste de verdade.</b><span>Rode os três cenários numa sessão nova. Se a skill não disparou sozinha, o problema está na descrição.</span></div></li>
+  </ol>
+</section>
+
+<section id="pronto">
+  <span class="eyebrow">Pronto quando · quem confere</span>
+  <h2>Como saber que a skill está pronta</h2>
+  <div class="grid2">
+    <div class="box">
+      <h3>Quem confere</h3>
+      <ul>
+        <li><code>G_SKILL_FORMATO</code>: nome, "Use when", tamanho, prefixo <code>aidd-</code></li>
+        <li><code>G_SKILL_ROT</code>: todo caminho e comando citado existe; nenhuma cópia órfã</li>
+        <li><code>G_IDIOMA_LEI_4</code>: corpo em inglês compacto</li>
+        <li><code>components verify</code>: cópia idêntica em todos os harnesses</li>
+      </ul>
+    </div>
+    <div class="box">
+      <h3>Acima da meta de 150 linhas</h3>
+      <p>Passam na trava de 450, mas pedem material movido para <code>references/</code>:</p>
+      {{ACIMA_META}}
+    </div>
+  </div>
+</section>
+
+<section id="erros">
+  <span class="eyebrow">Erros comuns · encontrados neste ecossistema</span>
+  <h2>O que não fazer</h2>
+  <div class="grid2">
+    <div class="box"><h3>Descrição sem "quando usar"</h3><p>Era o motivo principal de skill que não disparava: em 26/09/2026, só 10 de 75 diziam quando usar.</p></div>
+    <div class="box"><h3>A mesma skill com dois nomes</h3><p>Apelidos como <code>pure</code> e <code>aidd-pure</code> deixavam o agente sem saber qual escolher. Hoje, pares com a mesma descrição:</p>{{MESMA_DESCRICAO}}</div>
+    <div class="box"><h3>Terceiros copiados para dentro</h3><p>Skill de fornecedor copiada para a fonte única existe em dobro e envelhece. O <code>components sync</code> também não pode puxá-la de volta dos harnesses.</p></div>
+    <div class="box"><h3>Renomear sem limpar as cópias</h3><p>O <code>components sync</code> nunca apaga. A pasta antiga precisa sair de todos os harnesses, senão o <code>G_SKILL_ROT</code> acusa skill órfã.</p></div>
+  </div>
+</section>
+
+<section id="lista">
+  <span class="eyebrow">Integrantes · procure antes de construir</span>
+  <h2>Todas as skills nossas</h2>
+  <div class="filtros" role="search">
+    <label for="busca" class="eyebrow" style="flex-basis:100%">Filtrar</label>
+    <input id="busca" type="search" placeholder="nome ou assunto: plano, fluxo, sessão…" autocomplete="off">
+    <button type="button" data-filtro="acima" aria-pressed="false">só acima de 150 linhas</button>
+    <button type="button" data-filtro="semuse" aria-pressed="false">só sem "Use when"</button>
+  </div>
+  <p class="legenda" id="contagem" aria-live="polite"></p>
+  {{LISTA}}
+</section>
+
+<footer>Gerado por <code>scripts/mapa_visual.py skills</code> a partir de <code>docs/auditoria/mapa-pecas/catalogo-pecas.json</code>. Para atualizar: <code>python scripts/catalogo_pecas.py</code> e depois <code>python scripts/mapa_visual.py skills</code>.</footer>
+</div>
+
+<script>
+(function(){
+  var busca=document.getElementById('busca'), botoes=[].slice.call(document.querySelectorAll('[data-filtro]'));
+  var itens=[].slice.call(document.querySelectorAll('.item')), contagem=document.getElementById('contagem');
+  function aplicar(){
+    var q=busca.value.trim().toLowerCase(), ativos=botoes.filter(function(b){return b.getAttribute('aria-pressed')==='true'}).map(function(b){return b.dataset.filtro});
+    var n=0;
+    itens.forEach(function(it){
+      var ok=(!q||it.dataset.busca.indexOf(q)>=0)&&ativos.every(function(f){return it.dataset[f]==='1'});
+      it.hidden=!ok; if(ok)n++;
+    });
+    document.querySelectorAll('.grupo').forEach(function(g){g.hidden=!g.querySelector('.item:not([hidden])')});
+    contagem.textContent=n+' de '+itens.length+' skills';
+  }
+  busca.addEventListener('input',aplicar);
+  botoes.forEach(function(b){b.addEventListener('click',function(){b.setAttribute('aria-pressed',b.getAttribute('aria-pressed')==='true'?'false':'true');aplicar()})});
+  aplicar();
+})();
+</script>

@@ -1,6 +1,6 @@
 ---
 name: aidd-grill-docs
-description: Socratic interview grounded in existing repository architecture, domain documentation, and invariant rules.
+description: Socratic interview grounded in existing repository architecture, domain documentation, and invariant rules. Use when a change must be checked against MEMORY.md, AGENTS.md laws or domain docs before coding, or the user says "grill com docs", "confrontar com a arquitetura".
 ---
 
 # AIDD-Grill-Docs — Architecture-Grounded Interview

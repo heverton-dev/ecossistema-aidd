@@ -52,11 +52,11 @@ def main():
         "aidd-ops" in r1["stdout"]
     )
     ok_skills = (
-        "aidd-forge-runner" in r1["stdout"] and "[OK]" in r1["stdout"] and
-        "aidd-generator-runner" in r1["stdout"] and
-        "aidd-master-runner" in r1["stdout"] and
-        "aidd-enterprise-runner" in r1["stdout"] and
-        "aidd-ops-runner" in r1["stdout"]
+        "aidd-forge" in r1["stdout"] and "[OK]" in r1["stdout"] and
+        "aidd-generator" in r1["stdout"] and
+        "aidd-master" in r1["stdout"] and
+        "aidd-enterprise" in r1["stdout"] and
+        "aidd-ops" in r1["stdout"]
     )
     r1["passed"] = (r1["returncode"] == 0) and ok_tools and ok_skills
     results["item_1_status"] = r1

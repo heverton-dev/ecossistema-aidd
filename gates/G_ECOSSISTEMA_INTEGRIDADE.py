@@ -34,14 +34,14 @@ TOOLS_REQUIRED = [
 ]
 
 SKILLS_REQUIRED = [
-    "aidd-forge-runner",
-    "aidd-planner-runner",
-    "aidd-generator-runner",
-    "aidd-master-runner",
-    "aidd-enterprise-runner",
-    "aidd-ops-runner",
-    "aidd-bridge-runner",
-    "aidd-factory-runner"
+    "aidd-forge",
+    "aidd-planner",
+    "aidd-generator",
+    "aidd-master",
+    "aidd-enterprise",
+    "aidd-ops",
+    "aidd-bridge",
+    "aidd-factory"
 ]
 
 COMMANDS_REQUIRED = [

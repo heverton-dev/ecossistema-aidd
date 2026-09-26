@@ -11,14 +11,14 @@ Adapted from `retro` in mattpocock/skills (commit c55ee46), MIT license.
 
 ## Steps
 
-1. **Style guide:** load the `aidd-escrita-agentes` skill before drafting any proposal. Done when it is in context.
+1. **Style guide:** load the `aidd-agent-writing` skill before drafting any proposal. Done when it is in context.
 2. **Read the session log:** default to the current session. If the user names another session, read its log by path (Claude Code keeps logs as JSONL under the user's projects folder; other harnesses keep their own). Read the primary source, not a summary. Done when every tool error, retry, user correction, and skipped gate in the log is listed.
 3. **Find candidates** in the seven categories below. Done when every listed event is mapped to a category or marked "no environment fix".
 4. **Classify each candidate:**
    - **Mechanical** (fixed pattern, banned API, import shape, file location, missing exit-code check) → propose a deterministic gate in `gates/` (new `G_*.py` + test that proves it fails with exit 1). Default to the gate over a written rule.
    - **Judgement** (cross-file consistency, "matches surrounding style") → propose a review rule for the review stage (`review-changes`), not an always-loaded instruction.
 5. **Present** the list to the user in order of severity (worst first). Each item: evidence from the log (quote + position), category, mechanical/judgement, proposed change, target file.
-6. **Hand off:** approved items go to `aidd-melhoria` as the change request. Done when the user has approved or rejected each item.
+6. **Hand off:** approved items go to `aidd-improvement` (`/melhoria`) as the change request. Done when the user has approved or rejected each item.
 
 ## Categories
 

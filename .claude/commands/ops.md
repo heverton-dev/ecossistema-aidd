@@ -8,6 +8,6 @@ Dispara o Meta-Orquestrador Agêntico de Infraestrutura (AIDD-Ops) para orquestr
 ```
 
 ## Ação:
-Executa a skill `skills/aidd-ops-runner` para orquestrar o provisionamento de infraestrutura (sizing VPS, hardening SSH, Docker, Cloudflare, deploy).
+Executa a skill `skills/aidd-ops` para orquestrar o provisionamento de infraestrutura (sizing VPS, hardening SSH, Docker, Cloudflare, deploy).
 
 Equivalente CLI: `python ecossistema.py ops "<requisito>"`

@@ -1,6 +1,6 @@
 ---
 name: aidd-tdd
-description: Strict Test-Driven Development protocol (Red-Green loop, refactor at review) with agreed test seams, zero stubs and polyglot runtime support.
+description: Strict TDD with agreed seams, Red-Green loop, refactor at review, zero stubs. Use when implementing test first, or "tdd".
 ---
 
 # AIDD-TDD — Polyglot Test-Driven Development

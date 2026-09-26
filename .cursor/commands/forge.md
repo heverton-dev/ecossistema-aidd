@@ -6,5 +6,5 @@ Dispara a inicialização e blindagem de governança AIDD no diretório especifi
 `/forge [caminho]`
 
 ## Ação:
-Executa a skill `skills/aidd-forge-runner` para configurar o projeto com isolamento de fases, gates e orquestração determinística.
+Executa a skill `skills/aidd-forge` para configurar o projeto com isolamento de fases, gates e orquestração determinística.
 Equivalente CLI: `python ecossistema.py forge init [caminho]`

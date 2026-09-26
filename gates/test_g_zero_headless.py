@@ -151,7 +151,7 @@ def test_g_zero_headless_reprova_se_hook_nao_bloquear_paralelos(tmp_path):
         }
     }), encoding="utf-8")
 
-    fake_engine_dir = tmp_path / "componentes" / "compartilhado" / "skills" / "orca-plan-orchestrator" / "scripts"
+    fake_engine_dir = tmp_path / "componentes" / "compartilhado" / "skills" / "aidd-orca" / "scripts"
     fake_engine_dir.mkdir(parents=True)
     (fake_engine_dir / "orchestrator_engine.py").write_text("interactive: bool = True\n", encoding="utf-8")
 
@@ -182,7 +182,7 @@ def test_g_zero_headless_reprova_se_hook_estiver_desconfigurado(tmp_path):
     fake_settings = tmp_path / ".claude" / "settings.json"
     fake_settings.write_text(json.dumps({"hooks": {}}), encoding="utf-8")
 
-    fake_engine_dir = tmp_path / "componentes" / "compartilhado" / "skills" / "orca-plan-orchestrator" / "scripts"
+    fake_engine_dir = tmp_path / "componentes" / "compartilhado" / "skills" / "aidd-orca" / "scripts"
     fake_engine_dir.mkdir(parents=True)
     (fake_engine_dir / "orchestrator_engine.py").write_text("interactive: bool = True\n", encoding="utf-8")
     (tmp_path / "ecossistema.py").write_text("@click.option(\"--dangerously-force-headless\")\n", encoding="utf-8")
