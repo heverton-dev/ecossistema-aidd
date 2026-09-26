@@ -908,3 +908,38 @@
   - `G_TESTES_REAIS` dentro do pre-commit: `aidd-master` 408 passed / 0 failed; `aidd-enterprise` 336 passed / 0 failed.
 - **Data da Última Auditoria:** 24/09/2026.
 
+
+---
+
+## 14. Cópias de skills do `aidd-forge` alinhadas à fonte canônica (skills-pocock ciclo-01, Ticket 12)
+
+- **Objetivo da Correção:** as cópias de template em `tools/aidd-forge/aidd_forge/templates/skills/` (`aidd-grill`, `aidd-spec`, `aidd-tdd`, `aidd-tickets`) estavam atrás de `componentes/compartilhado/skills/`. Projetos novos nasciam com as versões antigas (ex.: `aidd-tdd` com Refactor dentro do loop). Nenhum gate comparava o conteúdo.
+- **Ferramenta Tocada:** [`tools/aidd-forge`](file:///C:/Users/trcnologia/Desktop/ecossistema-aidd/tools/aidd-forge). Só arquivos `SKILL.md` de template; nenhum código Python mudou.
+- **O que executou:**
+  1. Copiou as 4 `SKILL.md` da fonte canônica para os templates do forge.
+  2. Novo teste `tests/test_skills_pocock_distribuicao.py` compara byte a byte cada cópia do forge com a fonte (antes: exit 1 nas 4; depois: exit 0).
+  3. Execução real em pasta temporária vazia (`git init -b main`):
+     `python ecossistema.py forge init <pasta>` → exit 0; `python ecossistema.py forge audit <pasta>` → exit 0, conformidade 93,3% (14/15).
+     As 4 skills entregues em `.claude/skills/` saem idênticas à fonte canônica (conferido com `cmp`).
+- **Resultados de Testes:**
+  - `G_TESTES_REAIS` dentro do `python ecossistema.py audit`: `aidd-forge` 294 passed, 0 failed, 1 skipped (dentro do orçamento).
+- **Inconsistências já existentes (iguais com o forge da `main` em `f6cdb15`, não causadas por este ticket):**
+  - `forge audit` G04 FAIL: "Root AGENTS.md is generic (no tool-specific operational specs)".
+  - `forge init` ainda cria a pasta legada `.agent/` (singular), apesar da Inconsistência de eliminação registrada na seção 1.
+  - **Status:** ABERTO — pede ticket próprio no `aidd-forge`.
+- **Data da Última Auditoria:** 25/09/2026.
+
+---
+
+## 15. Templates `aidd-grill` e `aidd-tickets` do `aidd-forge` com as regras da prova real (skills-pocock ciclo-01, Ticket 13)
+
+- **Objetivo da Correção:** a prova real do Ticket 13 (`G_PROVA_SKILLS_POCOCK`, modelo haiku) mostrou o agente dando decisão sem motivo no `aidd-grill` e criando ticket só de preparação no `aidd-tickets`. As duas regras ficaram explícitas na fonte canônica, e as cópias do forge seguem a fonte.
+- **Ferramenta Tocada:** [`tools/aidd-forge`](file:///C:/Users/trcnologia/Desktop/ecossistema-aidd/tools/aidd-forge). Só 2 arquivos `SKILL.md` de template; nenhum código Python mudou.
+- **O que executou:**
+  1. Copiou `aidd-grill/SKILL.md` e `aidd-tickets/SKILL.md` da fonte canônica para os templates do forge.
+  2. Execução real em pasta temporária vazia (`git init -b main`): `python ecossistema.py forge init <pasta>` → exit 0; `python ecossistema.py forge audit <pasta>` → exit 0, conformidade 93,3% (14/15). As 2 skills entregues em `.claude/skills/` saem idênticas à fonte (conferido com `cmp`).
+- **Resultados de Testes:**
+  - `tools/aidd-forge`: `python -m pytest -q` → 294 passed, 1 skipped (exit 0).
+  - `tests/test_skills_pocock_distribuicao.py` (cópias do forge = fonte) → passa.
+- **Inconsistências:** as mesmas da seção 14 (G04 e pasta `.agent/`), sem mudança. **Status:** ABERTO.
+- **Data da Última Auditoria:** 26/09/2026.

@@ -443,6 +443,18 @@ Defina aqui os objetivos claros, escopo e limites desta iniciativa.
 - **Objetivo Principal:** [Descrever objetivo]
 - **Limites de Escopo:** Nao inclui decisoes nao aprovadas por humano.
 
+### Ainda nao especificado
+
+Pontos que pertencem a este plano mas ainda nao foram decididos (dependem de
+informacao ou de decisao humana). Cada ponto sai daqui quando for decidido.
+- [Ponto em aberto — quem decide / o que falta]
+
+### Fora de escopo
+
+O que foi explicitamente deixado de fora desta iniciativa. Regra: item fora de
+escopo nunca volta para o plano atual; se voltar a importar, vira nova iniciativa.
+- [Item excluido — motivo]
+
 ### Metrica da Iniciativa (0-10)
 
 - **Nota Atual:** {nota_atual_geral_str} — evidencia: {evidencia_geral_str}

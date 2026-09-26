@@ -223,6 +223,15 @@ repos:
         pass_filenames: false
         require_serial: true
 
+      # Manual: chama o modelo (claude -p --model haiku), gasta tokens e depende de rede.
+      - id: g-prova-skills-pocock
+        name: G_PROVA_SKILLS_POCOCK (uso real das skills do ciclo skills-pocock)
+        entry: python gates/G_PROVA_SKILLS_POCOCK.py
+        language: system
+        stages: [manual]
+        pass_filenames: false
+        require_serial: true
+
       - id: g-portao-prova-que-morde
         name: "G_PORTAO_PROVA_QUE_MORDE (meta-gate: bloqueia gates sem teste de reprovação exit 1)"
         entry: python gates/G_PORTAO_PROVA_QUE_MORDE.py

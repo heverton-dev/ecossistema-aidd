@@ -5,12 +5,12 @@ description: Socratic interview grounded in existing repository architecture, do
 
 # AIDD-Grill-Docs — Architecture-Grounded Interview
 
-Grounded variation of `aidd-grill` strictly anchored in the repository's documentation and architectural constraints.
+Grounded variation of `aidd-grill` (same numbered rounds with recommended answers) strictly anchored in the repository's documentation and architectural constraints.
 
 ## Execution Rules
 
-1. **Context Ingestion:** Briefly inspect canonical project context files (`AGENTS.md`, `MEMORY.md`, and `docs/`) before querying.
-2. **Ubiquitous Language:** Strictly enforce established domain terminology (e.g., Vertical Slice, Quality Gates, Harnesses, Result Monad).
+1. **Context Ingestion:** Briefly inspect canonical project context files (`AGENTS.md`, `MEMORY.md`, and `docs/`) before querying. When present, read the glossary `CONTEXT.md` and the decision records in docs/adr/ (optional folder; may not exist yet).
+2. **Ubiquitous Language:** Strictly enforce established domain terminology (e.g., Vertical Slice, Quality Gates, Harnesses, Result Monad). When the user resolves a term, update the glossary in `CONTEXT.md` (propose the diff; ambiguous terms stay flagged until the user decides).
 3. **Detect Architectural Violations:** Interrogate any request threatening:
    - Inviolable Laws (Determinism, Zero Stubs, Extreme Token Economy).
    - Module isolation and bounded context boundaries.

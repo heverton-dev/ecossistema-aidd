@@ -3,6 +3,7 @@
 > **Repository:** https://github.com/heverton-dev/ecossistema-aidd
 > **Governance Standard:** Zero Stubs, Strict Determinism, Context Optimization (<2000 tokens), Absolute Cache Invariance.
 > **Full Reference:** `docs/protocolos/AGENTS-REFERENCIA-COMPLETA.md`
+> **Glossary:** `CONTEXT.md` — domain terms; read before using ciclo, fase, plano, sessão or ticket.
 
 ---
 
@@ -65,6 +66,7 @@
    - Portão: gates/G_TEMPLATE_FORGE_ROT.py (provado)
    - Portão: gates/G_amelhoria.py (provado) — quality gate da ferramenta `aidd-melhoria` (Fase 6, Ticket 6)
    - Portão: gates/G_aidd_diagnose.py (provado) — quality gate da ferramenta `aidd-diagnose` (Fase 6, Ticket 6)
+   - Portão: gates/G_PROVA_SKILLS_POCOCK.py (provado, manual) — uso real das skills do ciclo skills-pocock via modelo; fora do pre-commit (skills-pocock, Ticket 13)
    - Portão: gates/G_HANDOFF_MELHORIA.py (provado) — integridade e assinatura HMAC do handoff de melhoria (Fase 8, Ticket 8)
 10. **Quarteto Sine Qua Non Dinâmico (Lei #10 — Quarteto; distinto de Rule 10 Formato de Resposta):** Todo projeto gerado ou evoluído no ecossistema DEVE nascer nativamente com 4 pilares completos: OpenAPI/Swagger Studio (`/api`), Webhook Studio (`/webhook`), MCP Studio (`/mcp`) e Central de Documentação / Guia do Utilizador (`/docs`). Todas as rotas e contratos devem cobrir 100% dos módulos do sistema e atualizar-se de forma autônoma e dinâmica a cada novo módulo (ex: autenticação).
    - Portão: gates/G_CONTRACT_ROT.py (provado)
@@ -148,8 +150,13 @@ Canonical workflow skills available across all harnesses to eliminate vibe codin
 - `/aidd-grill`: Socratic interview protocol to resolve edge cases and invariants before code modification.
 - `/aidd-grill-docs`: Architecture-grounded questioning anchored in `MEMORY.md` and repository laws.
 - `/aidd-spec`: Deterministic technical specification generator with binary acceptance criteria.
-- `/aidd-tickets`: Atomic tracer-bullet task decomposition with bounded blast radius.
-- `/aidd-tdd`: Strict Red-Green-Refactor cycle with zero stubs invariant across all language runtimes.
+- `/aidd-tickets`: Vertical-slice tickets (one verifiable behavior each) with `Blocked by`.
+- `/aidd-tdd`: Agreed seams, then Red → Green loop; refactor at review; zero stubs, polyglot.
 - `/aidd-diagnose`: 5-phase scientific fault triage integrated with `code-review-graph`.
 - `/aidd-handoff`: Compact session context serialization directly into `secoes/`.
 - `/aidd-sessao`: Deterministic session ID and metadata persistence in `secoes/` for instant recovery.
+- `/aidd-escrita-agentes`: Writing guide for skills, AGENTS.md, CLAUDE.md.
+- `/aidd-retro`: Session retro; mistakes become proposed gates or review rules.
+- `/aidd-reexplica`: Re-explain last message in plain PT-BR using the glossary above.
+- `/aidd-entrega`: Delivery template with before/after evidence and real exit codes.
+- `/aidd-wizard`: Bash wizard for steps only the human can do.

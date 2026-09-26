@@ -26,9 +26,12 @@ All steps go through `python ecossistema.py diagnose <sub>`; the session lives i
 
 ## 5-Phase Protocol
 
-1. **Deterministic Reproduction:**
-   - Isolate the failure into a minimal reproducible command or unit test.
-   - Do not proceed until reproduction is 100% deterministic locally.
+1. **Build the Feedback Loop (Deterministic Reproduction):**
+   - Build ONE command that you have already run at least once, that goes red on this bug (not a nearby one), and that is deterministic and fast (seconds, not minutes).
+   - Red means the command exits non-zero while the bug exists: assert the correct expected value, never the buggy one you observed. After the fix the same command must exit 0.
+   - No loop, no diagnosis: if you cannot reach the failure (missing access, data, or environment), stop and ask the user for access or a redacted artifact (log, dump, payload). Never guess past this point.
+   - Minimise: cut one element at a time (input, step, config, dependency) and re-run; keep the cut only if the command stays red. Stop when nothing else can be removed.
+   - If the failing path has no seam where a test can hook in, record "no test seam" as a finding in the report — do not patch around it.
    - Record it: `diagnose registrar --fase 1 --comando "<repro>"`.
 2. **Graph Blast Radius Analysis:**
    - **Mandatory coverage pre-check (before any impact query):** run `python .agents/skills/aidd-diagnose/scripts/cobertura_grafo.py verificar <suspect-files>`. It queries each suspect file with `query_graph_tool(pattern="file_summary", target=<file>)`; zero results = graph stale for that file (the script runs `code-review-graph update --repo .` once and rechecks). Still zero → `modo_fase2 = "fallback"` and execute the Ticket 4 fallback below. Never report "0 impacted" for a file without graph nodes — only files with `zero_impacto_permitido: true` may appear as zero impact; for uncovered files report `grafo desatualizado → fallback`.
@@ -36,16 +39,18 @@ All steps go through `python ecossistema.py diagnose <sub>`; the session lives i
    - Trace entry points, affected call flows, and direct downstream consumers.
 
    **Fallback (MCP unavailable)** — prefer `code-review-graph` when available (fast, precise); otherwise run once `python .agents/skills/aidd-diagnose/scripts/fallback.py analisar --repo <raiz> --arquivos <suspect-files> [--funcao <alvo>]`. It probes the MCP `code-review-graph` with retry + exponential backoff (the cold start takes ~11 s); if the connection stays down, it completes the triage deterministically in the spirit of Grep/Glob/Read, without any LLM: callers via AST search by function name across repo `.py` files, callees via body read of the target function, and impact via search of who imports the suspect module. It records the real Phase 2 mode in `sessao.json` (`fase2.modo` = `"grafo"` or `"fallback"`) — never claim graph provenance for conclusions derived by static fallback. Exit 1 means the fallback itself could not run; exit 0 means Phase 2 completed in either mode.
-3. **Single Hypothesis Formulation:**
-   - Formulate exactly ONE testable hypothesis: *"The failure occurs because function X receives null input when Y is uninitialized"*.
-   - Record it: `diagnose registrar --fase 3 --hipotese "<hypothesis>"`.
+3. **Ranked Hypotheses:**
+   - Write 3–5 falsifiable hypotheses, ranked most likely first, each with the observation that would disprove it: *"The failure occurs because function X receives null input when Y is uninitialized"*.
+   - Show the ranked list to the user before testing. Then test them one at a time, top first; keep exactly one active hypothesis at any moment.
+   - In the report, put the list under its own heading `## Hipóteses candidatas`, placed before the `HIPOTESES ATIVAS:` block (or `**Hipóteses Ativas**:`), which keeps a single entry — `G_aidd_diagnose` fails on more than one.
+   - Record only the active one: `diagnose registrar --fase 3 --hipotese "<hypothesis>"`.
 4. **Instrumentation & Proof:**
    - Instrument only inside the isolated worktree: `diagnose worktree --slug <slug>` (`isolamento.py` blocks writes outside it and `docs/diagnosticos/`).
-   - Add minimal assertions or temporary instrumentation to prove or disprove the hypothesis. End every temporary line with `# AIDD-DIAGNOSE-TEMP`.
-   - If disproved, discard immediately (`diagnose registrar --fase 4 --descartada "<h>" --prova "<evidence>"`) and formulate the next hypothesis. If proved, proceed.
+   - Add minimal assertions or temporary instrumentation to prove or disprove the hypothesis. Tag every temporary log message with a unique `[DEBUG-xxxx]` prefix (e.g. `print("[DEBUG-a3f1] y =", y)`) and end every temporary line with `# AIDD-DIAGNOSE-TEMP`.
+   - If disproved, discard immediately (`diagnose registrar --fase 4 --descartada "<h>" --prova "<evidence>"`) and promote the next hypothesis on the ranked list. If proved, proceed.
 5. **Surgical Fix & Regression Test:**
    - Apply the minimal viable fix.
    - Convert the reproduction step from Phase 1 into a permanent automated regression test.
-   - Strip all temporary instrumentation before committing: `diagnose limpar --slug <slug>` removes every `AIDD-DIAGNOSE-TEMP` line and discards the worktree (`rollback.py`).
+   - Strip all temporary instrumentation before committing: `diagnose limpar --slug <slug>` removes every `AIDD-DIAGNOSE-TEMP` line and discards the worktree (`rollback.py`). Then `grep -n "\[DEBUG-" <instrumented-files>` must return nothing.
    - Generate the report with `diagnose relatorio ...` and run `G_aidd_diagnose`: it re-runs the regression test file and fails if it is missing or red. `falhou_antes` stays self-declared.
    - Hand off with `handoff.py emitir` (`handoff-diagnose.json`).

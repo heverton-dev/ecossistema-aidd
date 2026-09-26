@@ -28,7 +28,7 @@ def test_cmd_init_cria_estrutura_completa():
         ret = cmd_init("auditoria-modulo-x", itens, destino_base=dest)
         assert ret == 0
 
-        pasta = dest / "auditoria-modulo-x"
+        pasta = dest / "PLAN-0001-auditoria-modulo-x"
         assert pasta.is_dir()
         
         proc_md = pasta / "00-PROCESSO-E-DECISOES.md"
@@ -39,14 +39,14 @@ def test_cmd_init_cria_estrutura_completa():
         assert "Execucao e Entrega" in conteudo_proc
         assert "⏳ Rascunho gerado, aguardando aprovacao" in conteudo_proc
 
-        item1 = pasta / "01-planejamento-e-analise.md"
+        item1 = pasta / "01-planejamento-analise.md"
         assert item1.exists()
         conteudo_item1 = item1.read_text(encoding="utf-8")
         assert "Definicao de Pronto" in conteudo_item1
         assert "Prompt de Execucao (PT-BR)" in conteudo_item1
         assert "Prompt de Execucao — English version" in conteudo_item1
 
-        item2 = pasta / "02-execucao-e-entrega.md"
+        item2 = pasta / "02-execucao-entrega.md"
         assert item2.exists()
 
 
@@ -70,7 +70,7 @@ def test_cmd_check_fences_sucesso():
     with tempfile.TemporaryDirectory() as tmpdir:
         dest = Path(tmpdir)
         cmd_init("iniciativa-teste", ["Item Unico"], destino_base=dest)
-        pasta = dest / "iniciativa-teste"
+        pasta = dest / "PLAN-0001-iniciativa-teste"
         ret = cmd_check_fences(str(pasta))
         assert ret == 0
 
@@ -91,7 +91,7 @@ def test_atualizar_nota_geral_insere_bloco_em_plano_antigo_e_depois_substitui():
     with tempfile.TemporaryDirectory() as tmpdir:
         dest = Path(tmpdir)
         cmd_init("plano-para-atualizar", ["Item Unico"], destino_base=dest)
-        pasta = dest / "plano-para-atualizar"
+        pasta = dest / "PLAN-0001-plano-atualizar"
 
         # Remove o bloco gerado (simula plano antigo, anterior a metrica).
         caminho_00 = pasta / "00-PROCESSO-E-DECISOES.md"
@@ -115,7 +115,7 @@ def test_atualizar_nota_item_exige_evidencia():
     with tempfile.TemporaryDirectory() as tmpdir:
         dest = Path(tmpdir)
         cmd_init("plano-item-nota", ["Item Unico"], destino_base=dest)
-        pasta = dest / "plano-item-nota"
+        pasta = dest / "PLAN-0001-plano-item-nota"
 
         ret = cmd_atualizar_nota(str(pasta), "1", "9", None)
         assert ret == 1
@@ -133,7 +133,7 @@ def test_cmd_aprovar_reescreve_status_de_todos_os_itens(mock_atualizador):
     with tempfile.TemporaryDirectory() as tmpdir:
         dest = Path(tmpdir)
         cmd_init("plano-aprovar", ["Item Um", "Item Dois"], destino_base=dest)
-        pasta = dest / "plano-aprovar"
+        pasta = dest / "PLAN-0001-plano-aprovar"
 
         ret = cmd_aprovar(str(pasta))
         assert ret == 0
@@ -154,7 +154,7 @@ def test_cmd_aprovar_e_idempotente_nao_reaplica_em_item_ja_aprovado(mock_atualiz
     with tempfile.TemporaryDirectory() as tmpdir:
         dest = Path(tmpdir)
         cmd_init("plano-aprovar-2x", ["Item Unico"], destino_base=dest)
-        pasta = dest / "plano-aprovar-2x"
+        pasta = dest / "PLAN-0001-plano-aprovar-2x"
 
         cmd_aprovar(str(pasta))
         conteudo_apos_1a = (pasta / "01-item-unico.md").read_text(encoding="utf-8")
@@ -171,7 +171,7 @@ def test_cmd_iniciar_execucao_reescreve_status_para_em_execucao(mock_atualizador
     with tempfile.TemporaryDirectory() as tmpdir:
         dest = Path(tmpdir)
         cmd_init("plano-execucao", ["Item Unico"], destino_base=dest)
-        pasta = dest / "plano-execucao"
+        pasta = dest / "PLAN-0001-plano-execucao"
         cmd_aprovar(str(pasta))
 
         ret = cmd_iniciar_execucao(str(pasta))
@@ -192,7 +192,7 @@ def test_cmd_iniciar_execucao_funciona_direto_de_rascunho(mock_atualizador):
     with tempfile.TemporaryDirectory() as tmpdir:
         dest = Path(tmpdir)
         cmd_init("plano-direto", ["Item Unico"], destino_base=dest)
-        pasta = dest / "plano-direto"
+        pasta = dest / "PLAN-0001-plano-direto"
 
         ret = cmd_iniciar_execucao(str(pasta))
         assert ret == 0

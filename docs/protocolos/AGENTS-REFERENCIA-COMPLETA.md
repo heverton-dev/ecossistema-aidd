@@ -80,13 +80,19 @@ skills respondendo ao mesmo comando, com regras opostas, foi a causa direta das
 
 Conjunto de skills universais inspiradas nas práticas de Matt Pocock, adaptadas para serem 100% poliglotas, concisas e com tolerância zero a stubs:
 
-- **/aidd-grill:** Entrevista socrática pré-código para mapear premissas, invariantes e edge cases antes de qualquer modificação. Possui fallback não-bloqueante para pipelines autônomos.
-- **/aidd-grill-docs:** Entrevista socrática ancorada no `MEMORY.md`, arquitetura e regras locais do repositório.
+- **/aidd-grill:** Entrevista socrática pré-código em rodadas numeradas, cada pergunta com resposta recomendada; fatos o agente busca sozinho, decisões ficam com o usuário. Possui fallback não-bloqueante (`Consolidated Assumptions`) para pipelines autônomos.
+- **/aidd-grill-docs:** Entrevista socrática ancorada no `MEMORY.md`, no glossário `CONTEXT.md`, nos ADRs de docs/adr/ e nas regras locais do repositório; atualiza o glossário quando um termo é decidido.
 - **/aidd-spec:** Transforma ideação e alinhamento em especificação técnica formal determinística com não-escopos claros e critérios binários de aceite.
-- **/aidd-tickets:** Decompõe a especificação técnica em tickets atômicos tracer-bullet com blast radius restrito e ordem estrita de dependência.
-- **/aidd-tdd:** Ciclo estrito Red-Green-Refactor (Red real -> Minimal Green -> Refactor) poliglota (pytest, vitest, cargo test, go test) com regra Zero Stubs.
-- **/aidd-diagnose:** Triage científica de falhas em 5 fases (reprodução determinística, análise de grafo via `code-review-graph`, hipótese única, prova e teste de regressão).
+- **/aidd-tickets:** Decompõe a especificação em tickets de fatia vertical (um comportamento completo e verificável por ticket), com campo `Blocked by`, prefatoração primeiro e refatoração ampla em expand → migrate → contract.
+- **/aidd-tdd:** Seams combinados com o usuário antes do primeiro teste, depois loop Red → Green (um teste, uma implementação por vez); refatoração na revisão. Proíbe teste tautológico, acoplado à implementação e fatiado em camadas. Poliglota (pytest, vitest, cargo test, go test) com regra Zero Stubs.
+- **/aidd-diagnose:** Triage científica de falhas: loop vermelho já executado e minimizado, análise de grafo via `code-review-graph`, 3 a 5 hipóteses em ordem (uma ativa por vez), logs `[DEBUG-xxxx]`, prova e teste de regressão.
 - **/aidd-handoff:** Serialização compacta do estado da sessão diretamente em `secoes/sessao-<data>-<slug>.md` para rotação de contexto ou troca de agentes.
+- **/aidd-planos:** Gera o esqueleto de iniciativas em `docs/planos/` (`python ecossistema.py plan init`), com seções "Ainda nao especificado" e "Fora de escopo" (fora de escopo nunca volta para o plano atual).
+- **/aidd-escrita-agentes:** Guia de escrita para textos que agentes leem (skills, `AGENTS.md`, `CLAUDE.md`): ponteiros de contexto, teste de no-op, fonte única, sedimento, critério de pronto.
+- **/aidd-retro:** Retrospectiva de sessão: cada erro vira proposta de gate (mecânico) ou regra de revisão (julgamento), em ordem de gravidade; só propõe, aplicação via `aidd-melhoria`.
+- **/aidd-reexplica:** Reexplica a última mensagem em PT-BR simples usando o glossário `CONTEXT.md`.
+- **/aidd-entrega:** Modelo de entrega com evidência antes/depois (exit code real), "Dá para desfazer?" e "O que pode quebrar"; para corpo de commit, PR e `RELATORIO-CONSTRUTOR.md`.
+- **/aidd-wizard:** Gera script bash interativo para passos que só o humano faz (credenciais, painéis, migrações), com `.env` idempotente e segredo oculto; funciona no Git Bash.
 
 ---
 
