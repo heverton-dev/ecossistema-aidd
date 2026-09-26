@@ -116,3 +116,28 @@ def test_detectar_drift_orfao_e_force_sync():
     finally:
         if os.path.exists(destino_teste):
             os.remove(destino_teste)
+
+
+def test_auto_ingest_nao_puxa_skill_de_terceiro_para_a_fonte(monkeypatch):
+    """Regressao (PROPOSTA-NOMES-SKILLS, etapa 1): o sync ingeria de volta para
+    componentes/ as skills de terceiros instaladas nos harnesses, desfazendo a remocao."""
+    import json
+    with tempfile.TemporaryDirectory() as raiz:
+        os.makedirs(os.path.join(raiz, "gates"))
+        with open(os.path.join(raiz, "gates", "dependencias_externas.json"), "w", encoding="utf-8") as f:
+            json.dump({"skills": {"wrangler": {"gitignore": ["*/skills/wrangler/"]}}}, f)
+        for nome in ("wrangler", "skill-local-nova"):
+            d = os.path.join(raiz, ".claude", "skills", nome)
+            os.makedirs(d)
+            with open(os.path.join(d, "SKILL.md"), "w", encoding="utf-8") as f:
+                f.write(f"---\nname: {nome}\n---\n")
+        monkeypatch.setattr(gestor_componentes, "ROOT_DIR", raiz)
+        monkeypatch.setattr(gestor_componentes, "COMPONENTES_DIR", os.path.join(raiz, "componentes"))
+        monkeypatch.setattr(gestor_componentes, "carregar_manifesto",
+                            lambda: {"harnesses_suportados": {"claude-code": {"prefixo_pasta": ".claude"}}})
+
+        ingeridas = gestor_componentes.auto_ingest_skills()
+
+        fonte = os.listdir(os.path.join(raiz, "componentes", "compartilhado", "skills"))
+        assert fonte == ["skill-local-nova"]
+        assert len(ingeridas) == 1

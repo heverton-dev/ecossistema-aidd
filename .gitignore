@@ -121,3 +121,20 @@ docs/tmp/
 
 # credenciais — nunca versionar
 docs/VPS-CONEXAO.md
+
+# Skills da Cloudflare (cloudflare/skills), instaladas via 'python ecossistema.py dependencia bootstrap'
+*/skills/agents-sdk/
+skills-lock.json
+*/skills/cloudflare/
+*/skills/cloudflare-email-service/
+*/skills/cloudflare-one/
+*/skills/cloudflare-one-migrations/
+*/skills/durable-objects/
+*/skills/nextjs-on-cloudflare/
+*/skills/sandbox-migrate-to-next/
+*/skills/sandbox-next/
+*/skills/sandbox-stable/
+*/skills/turnstile-spin/
+*/skills/web-perf/
+*/skills/workers-best-practices/
+*/skills/wrangler/

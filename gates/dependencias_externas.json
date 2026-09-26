@@ -41,6 +41,146 @@
         ".gemini/hooks/",
         ".github/code-review-graph.instruction.md"
       ]
+    },
+    "agents-sdk": {
+      "pacote": "cloudflare/skills",
+      "instalar": "npx -y skills add cloudflare/skills --skill agents-sdk --agent claude-code opencode cursor gemini-cli antigravity codebuddy -y --copy",
+      "verificar": ".claude/skills/agents-sdk/SKILL.md",
+      "sha256": null,
+      "gitignore": [
+        "*/skills/agents-sdk/",
+        "skills-lock.json"
+      ]
+    },
+    "cloudflare": {
+      "pacote": "cloudflare/skills",
+      "instalar": "npx -y skills add cloudflare/skills --skill cloudflare --agent claude-code opencode cursor gemini-cli antigravity codebuddy -y --copy",
+      "verificar": ".claude/skills/cloudflare/SKILL.md",
+      "sha256": null,
+      "gitignore": [
+        "*/skills/cloudflare/",
+        "skills-lock.json"
+      ]
+    },
+    "cloudflare-email-service": {
+      "pacote": "cloudflare/skills",
+      "instalar": "npx -y skills add cloudflare/skills --skill cloudflare-email-service --agent claude-code opencode cursor gemini-cli antigravity codebuddy -y --copy",
+      "verificar": ".claude/skills/cloudflare-email-service/SKILL.md",
+      "sha256": null,
+      "gitignore": [
+        "*/skills/cloudflare-email-service/",
+        "skills-lock.json"
+      ]
+    },
+    "cloudflare-one": {
+      "pacote": "cloudflare/skills",
+      "instalar": "npx -y skills add cloudflare/skills --skill cloudflare-one --agent claude-code opencode cursor gemini-cli antigravity codebuddy -y --copy",
+      "verificar": ".claude/skills/cloudflare-one/SKILL.md",
+      "sha256": null,
+      "gitignore": [
+        "*/skills/cloudflare-one/",
+        "skills-lock.json"
+      ]
+    },
+    "cloudflare-one-migrations": {
+      "pacote": "cloudflare/skills",
+      "instalar": "npx -y skills add cloudflare/skills --skill cloudflare-one-migrations --agent claude-code opencode cursor gemini-cli antigravity codebuddy -y --copy",
+      "verificar": ".claude/skills/cloudflare-one-migrations/SKILL.md",
+      "sha256": null,
+      "gitignore": [
+        "*/skills/cloudflare-one-migrations/",
+        "skills-lock.json"
+      ]
+    },
+    "durable-objects": {
+      "pacote": "cloudflare/skills",
+      "instalar": "npx -y skills add cloudflare/skills --skill durable-objects --agent claude-code opencode cursor gemini-cli antigravity codebuddy -y --copy",
+      "verificar": ".claude/skills/durable-objects/SKILL.md",
+      "sha256": null,
+      "gitignore": [
+        "*/skills/durable-objects/",
+        "skills-lock.json"
+      ]
+    },
+    "nextjs-on-cloudflare": {
+      "pacote": "cloudflare/skills",
+      "instalar": "npx -y skills add cloudflare/skills --skill nextjs-on-cloudflare --agent claude-code opencode cursor gemini-cli antigravity codebuddy -y --copy",
+      "verificar": ".claude/skills/nextjs-on-cloudflare/SKILL.md",
+      "sha256": null,
+      "gitignore": [
+        "*/skills/nextjs-on-cloudflare/",
+        "skills-lock.json"
+      ]
+    },
+    "sandbox-migrate-to-next": {
+      "pacote": "cloudflare/skills",
+      "instalar": "npx -y skills add cloudflare/skills --skill sandbox-migrate-to-next --agent claude-code opencode cursor gemini-cli antigravity codebuddy -y --copy",
+      "verificar": ".claude/skills/sandbox-migrate-to-next/SKILL.md",
+      "sha256": null,
+      "gitignore": [
+        "*/skills/sandbox-migrate-to-next/",
+        "skills-lock.json"
+      ]
+    },
+    "sandbox-next": {
+      "pacote": "cloudflare/skills",
+      "instalar": "npx -y skills add cloudflare/skills --skill sandbox-next --agent claude-code opencode cursor gemini-cli antigravity codebuddy -y --copy",
+      "verificar": ".claude/skills/sandbox-next/SKILL.md",
+      "sha256": null,
+      "gitignore": [
+        "*/skills/sandbox-next/",
+        "skills-lock.json"
+      ]
+    },
+    "sandbox-stable": {
+      "pacote": "cloudflare/skills",
+      "instalar": "npx -y skills add cloudflare/skills --skill sandbox-stable --agent claude-code opencode cursor gemini-cli antigravity codebuddy -y --copy",
+      "verificar": ".claude/skills/sandbox-stable/SKILL.md",
+      "sha256": null,
+      "gitignore": [
+        "*/skills/sandbox-stable/",
+        "skills-lock.json"
+      ]
+    },
+    "turnstile-spin": {
+      "pacote": "cloudflare/skills",
+      "instalar": "npx -y skills add cloudflare/skills --skill turnstile-spin --agent claude-code opencode cursor gemini-cli antigravity codebuddy -y --copy",
+      "verificar": ".claude/skills/turnstile-spin/SKILL.md",
+      "sha256": null,
+      "gitignore": [
+        "*/skills/turnstile-spin/",
+        "skills-lock.json"
+      ]
+    },
+    "web-perf": {
+      "pacote": "cloudflare/skills",
+      "instalar": "npx -y skills add cloudflare/skills --skill web-perf --agent claude-code opencode cursor gemini-cli antigravity codebuddy -y --copy",
+      "verificar": ".claude/skills/web-perf/SKILL.md",
+      "sha256": null,
+      "gitignore": [
+        "*/skills/web-perf/",
+        "skills-lock.json"
+      ]
+    },
+    "workers-best-practices": {
+      "pacote": "cloudflare/skills",
+      "instalar": "npx -y skills add cloudflare/skills --skill workers-best-practices --agent claude-code opencode cursor gemini-cli antigravity codebuddy -y --copy",
+      "verificar": ".claude/skills/workers-best-practices/SKILL.md",
+      "sha256": null,
+      "gitignore": [
+        "*/skills/workers-best-practices/",
+        "skills-lock.json"
+      ]
+    },
+    "wrangler": {
+      "pacote": "cloudflare/skills",
+      "instalar": "npx -y skills add cloudflare/skills --skill wrangler --agent claude-code opencode cursor gemini-cli antigravity codebuddy -y --copy",
+      "verificar": ".claude/skills/wrangler/SKILL.md",
+      "sha256": null,
+      "gitignore": [
+        "*/skills/wrangler/",
+        "skills-lock.json"
+      ]
     }
   },
   "mcps": {

@@ -47,6 +47,7 @@ import argparse
 import hashlib
 import json
 import os
+import re
 import shlex
 import shutil
 import subprocess
@@ -81,6 +82,26 @@ def carregar_manifesto():
         return {"versao": "1.0.0", "descricao": "", "skills": {}, "mcps": {}}
     with open(MANIFESTO_PATH, "r", encoding="utf-8") as f:
         return json.load(f)
+
+
+PADRAO_SKILL_GITIGNORE = re.compile(r"^\*/skills/([a-z0-9]+(?:-[a-z0-9]+)*)/$")
+
+
+def skills_de_terceiros(manifesto_path=MANIFESTO_PATH):
+    """Nomes das skills de terceiros declaradas no manifesto: a chave de cada entrada
+    e cada padrao '*/skills/<nome>/' do seu gitignore (um pacote pode instalar varias
+    skills, ex.: code-review-graph). Elas vivem so nos harnesses, nunca na fonte unica."""
+    if not os.path.exists(manifesto_path):
+        return set()
+    with open(manifesto_path, "r", encoding="utf-8") as f:
+        skills = json.load(f).get("skills", {})
+    nomes = set(skills)
+    for cfg in skills.values():
+        for padrao in cfg.get("gitignore") or []:
+            m = PADRAO_SKILL_GITIGNORE.match(padrao)
+            if m:
+                nomes.add(m.group(1))
+    return nomes
 
 
 def _salvar_manifesto(manifesto):

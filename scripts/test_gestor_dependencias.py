@@ -331,3 +331,16 @@ class TestVerificacaoHashSkill:
         codigo = gestor_dependencias._cmd_bootstrap(args_ns)
 
         assert codigo == 0
+
+
+class TestCliRaizAddSkill:
+    def test_add_skill_da_cli_raiz_repassa_sha256(self):
+        """Regressao: 'ecossistema.py dependencia add-skill' montava o namespace sem
+        'sha256' e todo registro quebrava com AttributeError antes de gravar."""
+        raiz = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+        proc = subprocess.run(
+            ["python", os.path.join(raiz, "ecossistema.py"), "dependencia", "add-skill", "--help"],
+            cwd=raiz, capture_output=True, text=True, encoding="utf-8",
+        )
+        assert proc.returncode == 0
+        assert "--sha256" in proc.stdout

@@ -530,8 +530,9 @@ def cmd_dependencia(args):
     @click.option("--instalar", required=True)
     @click.option("--verificar", required=True)
     @click.option("--gitignore", default="")
-    def add_skill_cmd(nome, pacote, instalar, verificar, gitignore):
-        ns = types.SimpleNamespace(acao="add-skill", nome=nome, pacote=pacote, instalar=instalar, verificar=verificar, gitignore=gitignore)
+    @click.option("--sha256", default=None)
+    def add_skill_cmd(nome, pacote, instalar, verificar, gitignore, sha256):
+        ns = types.SimpleNamespace(acao="add-skill", nome=nome, pacote=pacote, instalar=instalar, verificar=verificar, gitignore=gitignore, sha256=sha256)
         return gestor_dependencias._cmd_add_skill(ns)
 
     @dep_cli.command("add-mcp")
