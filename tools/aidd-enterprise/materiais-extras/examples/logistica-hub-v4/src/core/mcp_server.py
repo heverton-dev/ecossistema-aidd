@@ -542,7 +542,7 @@ class LogisticaMCPServer:
         </div>
     </main>
 
-    <script>
+    <script nonce="__CSP_NONCE__">
         async function executarRpc() {{
             const input = document.getElementById('rpc-input').value;
             const output = document.getElementById('rpc-output');

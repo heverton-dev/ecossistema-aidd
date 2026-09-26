@@ -170,8 +170,35 @@ class JWTService:
 
 
 class SecurityService:
+    # Placeholder injetado nos <script> inline dos HTML para receber um nonce
+    # por requisição (ver nova_nonce/inject_nonce). O servidor o substitui pelo
+    # nonce real compartilhado com o header Content-Security-Policy.
+    CSP_NONCE_PLACEHOLDER = "__CSP_NONCE__"
+
+    _CSP_SCRIPT_SRC = ["'self'", "https://cdn.jsdelivr.net"]
+    # Atributos de handler inline (onclick/oninput/...) continuam permitidos via
+    # script-src-attr. O script-src propriamente dito (elementos <script>) fica
+    # sem 'unsafe-inline', protegido por nonce por requisição.
+    _CSP_SCRIPT_SRC_ATTR = ["'unsafe-inline'"]
+    _CSP_STYLE_SRC = ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com", "https://cdn.jsdelivr.net"]
+    _CSP_FONT_SRC = ["'self'", "https://fonts.gstatic.com"]
+    _CSP_IMG_SRC = ["'self'", "data:"]
+    _CSP_CONNECT_SRC = ["'self'", "https://cdn.jsdelivr.net"]
+
     @staticmethod
-    def build_csp(custom_directives: dict = None) -> "secure.ContentSecurityPolicy":
+    def new_nonce() -> str:
+        """Gera um nonce CSP por requisição (base64url seguro, sem '+'/'/'/'=', padding removido)."""
+        return base64.urlsafe_b64encode(os.urandom(16)).decode("ascii").rstrip("=")
+
+    @staticmethod
+    def inject_nonce(content: str, nonce: str = None) -> str:
+        """Substitui o placeholder de nonce nos scripts inline pelo nonce real."""
+        if not nonce:
+            return content
+        return content.replace(SecurityService.CSP_NONCE_PLACEHOLDER, nonce)
+
+    @staticmethod
+    def build_csp(custom_directives: dict = None, nonce: str = None) -> "secure.ContentSecurityPolicy":
         """
         Constrói a Content-Security-Policy (CSP) via biblioteca 'secure' (secure.py)
         em vez de string literal hand-rolled, garantindo validação tipada e
@@ -183,14 +210,19 @@ class SecurityService:
                 "instale: pip install secure>=2.0.0"
             )
 
+        script_src = list(SecurityService._CSP_SCRIPT_SRC)
+        if nonce:
+            script_src.append(f"'nonce-{nonce}'")
+
         csp = (
             secure.ContentSecurityPolicy()
             .default_src("'self'")
-            .script_src("'self'", "'unsafe-inline'", "https://cdn.jsdelivr.net")
-            .style_src("'self'", "'unsafe-inline'", "https://fonts.googleapis.com", "https://cdn.jsdelivr.net")
-            .font_src("'self'", "https://fonts.gstatic.com")
-            .img_src("'self'", "data:")
-            .connect_src("'self'", "https://cdn.jsdelivr.net")
+            .script_src(*script_src)
+            .script_src_attr(*SecurityService._CSP_SCRIPT_SRC_ATTR)
+            .style_src(*SecurityService._CSP_STYLE_SRC)
+            .font_src(*SecurityService._CSP_FONT_SRC)
+            .img_src(*SecurityService._CSP_IMG_SRC)
+            .connect_src(*SecurityService._CSP_CONNECT_SRC)
         )
         if custom_directives:
             for directive, values in custom_directives.items():
@@ -203,22 +235,36 @@ class SecurityService:
         return csp
 
     @classmethod
-    def get_security_headers(cls) -> dict:
+    def get_security_headers(cls, nonce: str = None) -> dict:
         """
         Retorna os headers de segurança OWASP montados via biblioteca 'secure' (secure.py).
+        Quando a biblioteca não está disponível, a CSP é montada a partir das
+        mesmas diretivas base (sem 'unsafe-inline' em script-src).
         """
         if not _SECURE_AVAILABLE or secure is None:
+            script_src = list(cls._CSP_SCRIPT_SRC)
+            if nonce:
+                script_src.append(f"'nonce-{nonce}'")
+            csp_value = (
+                "default-src 'self'; "
+                f"script-src {' '.join(script_src)}; "
+                f"script-src-attr {' '.join(cls._CSP_SCRIPT_SRC_ATTR)}; "
+                f"style-src {' '.join(cls._CSP_STYLE_SRC)}; "
+                f"font-src {' '.join(cls._CSP_FONT_SRC)}; "
+                f"img-src {' '.join(cls._CSP_IMG_SRC)}; "
+                f"connect-src {' '.join(cls._CSP_CONNECT_SRC)}"
+            )
             return {
                 "X-Content-Type-Options": "nosniff",
                 "X-Frame-Options": "DENY",
                 "X-XSS-Protection": "1; mode=block",
                 "Referrer-Policy": "strict-origin-when-cross-origin",
-                "Content-Security-Policy": "default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdn.jsdelivr.net; font-src 'self' https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self' https://cdn.jsdelivr.net",
+                "Content-Security-Policy": csp_value,
                 "Permissions-Policy": "geolocation=(), microphone=(), camera=()",
                 "Strict-Transport-Security": "max-age=63072000; includeSubDomains; preload"
             }
 
-        csp = cls.build_csp()
+        csp = cls.build_csp(nonce=nonce)
         sec = secure.Secure(
             csp=csp,
             xcto=secure.XContentTypeOptions().nosniff(),

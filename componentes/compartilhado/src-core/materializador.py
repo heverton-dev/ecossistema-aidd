@@ -192,7 +192,12 @@ def _default_ecossistema_root() -> Path:
     funcionar igualmente a partir da fonte única em
     componentes/compartilhado/src-core/ e das cópias sincronizadas em
     tools/<ferramenta>/src/core/. Isolada para monkeypatch em testes.
+    AIDD_ECOSSISTEMA_ROOT sobrescreve a descoberta — é o único jeito de
+    isolar a raiz quando a CLI roda em subprocesso (monkeypatch não chega lá).
     """
+    forcada = os.environ.get("AIDD_ECOSSISTEMA_ROOT")
+    if forcada:
+        return Path(forcada)
     atual = Path(__file__).resolve().parent
     for candidato in atual.parents:
         if (candidato / "ecossistema.py").is_file():

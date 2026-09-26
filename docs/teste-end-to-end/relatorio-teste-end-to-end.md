@@ -943,3 +943,26 @@
   - `tests/test_skills_pocock_distribuicao.py` (cópias do forge = fonte) → passa.
 - **Inconsistências:** as mesmas da seção 14 (G04 e pasta `.agent/`), sem mudança. **Status:** ABERTO.
 - **Data da Última Auditoria:** 26/09/2026.
+
+---
+
+## 16. CSP sem `'unsafe-inline'` no `script-src`, com nonce por requisição: `aidd-master`, `aidd-enterprise` e `aidd-factory` (PLAN-0025 item 3)
+
+- **Objetivo da Correção:** a `main` ainda emitia `script-src 'self' 'unsafe-inline'` em 14 arquivos. A correção original (`0459f63`, na tag `arquivo/Heverton-dev/PLAN-0025-fase-03-reversao-csp-relaxado`) nunca entrou na `main` e foi feita sobre um commit sujo ("Inicialização de projeto AIDD"). O cherry-pick deu 61 conflitos add/add, então só o delta real (`048cfb5..0459f63`) foi reaplicado sobre a `main` atual.
+- **Ferramentas Tocadas:** [`tools/aidd-master`](file:///C:/Users/trcnologia/Desktop/ecossistema-aidd/tools/aidd-master), [`tools/aidd-enterprise`](file:///C:/Users/trcnologia/Desktop/ecossistema-aidd/tools/aidd-enterprise), [`tools/aidd-factory`](file:///C:/Users/trcnologia/Desktop/ecossistema-aidd/tools/aidd-factory) e a fonte `componentes/compartilhado/src-core`.
+- **O que executou:**
+  1. `security.py` (fonte compartilhada, src/core, templates core/v2, factory vsa): `script-src 'self' https://cdn.jsdelivr.net 'nonce-<n>'`; handlers inline (`onclick`) seguem via `script-src-attr 'unsafe-inline'`. Novos `new_nonce()` e `inject_nonce()`.
+  2. `server.py` / `server.py.j2`: nonce por resposta no header e `_write_html()` troca o placeholder `__CSP_NONCE__` em todas as saídas HTML (index, /static/*.html, Swagger, Guia, Webhook, MCP). Os 9 servidores com conflito foram refeitos à mão.
+  3. `server_fastapi.py` (v2 master/enterprise e factory vsa): middleware gera o nonce; as rotas HTML injetam; `/docs` e `/redoc` do FastAPI recebem o nonce no middleware. (Fora do commit original: sem isso, a UI desses templates quebraria.)
+  4. Exemplos v4 (`enterprise-suite-v4`, `logistica-hub-v4`): só a parte CSP (antes era `default-src 'unsafe-inline' 'unsafe-eval'`). O restante do `security.py` do `0459f63` (OIDC, remoção de `ALLOW_ANONYMOUS`) **não** foi trazido. O `/` do `enterprise-suite-v4` passou a servir o index com nonce.
+  5. HTMLs: `<script nonce="__CSP_NONCE__">` nos scripts inline.
+- **Resultados de Testes:**
+  - `git grep "script-src[^;]*unsafe-inline"`: sobram só docs/planos históricos, a referência da skill impeccable e os testes que verificam o `script-src-attr`.
+  - `pytest`: `aidd-enterprise` 341 passed / 3 skipped, `aidd-master` 413 / 3, `aidd-factory` 19 (exit 0). `components verify --tipo todos` → exit 0.
+  - Execução real: `enterprise compose` e `master compose` em pasta temporária → exit 0. Servidores gerados + repo + exemplos v4 no Chromium (Playwright): 18 páginas, 0 violações de CSP. Controle negativo: script sem nonce bloqueado, com nonce executa, `onclick` executa.
+- **Inconsistências:**
+  - `ed3a113` (seed de webhook demo opt-in) **não** trazido: sozinho quebra o `compose` (`UndefinedVariableInTemplate: semear_demo_webhook`, reproduzido). Faltam `semear_demo_webhook`, `webhook_demo_secret` e `webhook_demo_descricao` no `cookiecutter.json`/`compose_suite.py`. A `main` segue semeando o webhook demo com segredo fixo `sec_demo_2026`. **Status:** ABERTO.
+  - O servidor gerado por `aidd-factory/src/core/vsa_generator.py` não emite nenhum header CSP (pré-existente). **Status:** ABERTO.
+  - `server_fastapi.py` dos templates não é usado por nenhum gerador e não roda isolado (falta `core.models`); validado só por compilação.
+  - `test_cli_inject_hook_ponta_a_ponta` (aidd-master) gravava no repo real: a CLI roda em subprocesso, onde o monkeypatch do conftest não chega, e deixava `componentes/aidd-master/hooks/` vazia para trás. Correção: `_default_ecossistema_root()` aceita `AIDD_ECOSSISTEMA_ROOT` (fonte `componentes/compartilhado/src-core/materializador.py`, sincronizada com `src-core/sync.py`, `verify` exit 0); o teste passa uma raiz falsa e verifica que o repo real ficou intocado. Controle negativo: com o materializador antigo o teste reprova (exit 1); com o novo, 48 passed (master) e 39 passed (enterprise, injector). A pasta vazia `componentes/aidd-master/` foi removida. **Status:** RESOLVIDO.
+- **Data da Última Auditoria:** 26/09/2026.
