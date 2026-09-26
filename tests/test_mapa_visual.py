@@ -119,5 +119,7 @@ def test_skills_roda_de_verdade_no_repositorio(tmp_path):
     assert proc.returncode == 0, proc.stdout + proc.stderr
     texto = saida.read_text(encoding="utf-8")
     assert texto.startswith("<title>Mapa das Skills</title>") and "{{" not in texto
-    assert texto.count('<article class="item"') == 37
+    import json
+    cat = json.loads((ROOT / "docs" / "auditoria" / "mapa-pecas" / "catalogo-pecas.json").read_text(encoding="utf-8"))
+    assert texto.count('<article class="item"') == sum(1 for s in cat["skills"] if not s["terceiro"])
     assert "CONVENCAO-AUTORIA-SKILLS.md" in texto

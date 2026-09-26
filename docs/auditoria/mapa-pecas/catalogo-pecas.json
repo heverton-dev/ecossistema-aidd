@@ -4,8 +4,8 @@
   "totais": {
     "ferramentas": 8,
     "comandos_cli": 69,
-    "skills": 37,
-    "skills_nossas": 37,
+    "skills": 38,
+    "skills_nossas": 38,
     "skills_terceiros_copiadas": 0,
     "skills_terceiros_registradas": 20,
     "comandos_slash": 17,
@@ -482,6 +482,12 @@
       "id": "aidd-tickets",
       "descricao": "Splits a spec into vertical-slice tracer-bullet tickets with Blocked by. Use when breaking work into tasks, or \"tickets\".",
       "linhas": 42,
+      "terceiro": false
+    },
+    {
+      "id": "aidd-visual-maps",
+      "descricao": "Builds or updates a visual map of one ecosystem piece type (guards, skills...) in docs/mapas-visuais/ from a PT-BR molde plus data read from the parts catalog, with tests that prove the generator bites. Use when the user wants a new map, to refresh a stale map, or says \"mapa visual\", \"novo mapa\", \"mapa das skills\", \"mapa dos guardas\", \"atualizar mapa\".",
+      "linhas": 48,
       "terceiro": false
     },
     {
@@ -2554,7 +2560,7 @@
     "arquivos_identicos_entre_donas": [
       {
         "donas": "aidd-enterprise + aidd-master",
-        "arquivos": 54
+        "arquivos": 60
       },
       {
         "donas": "aidd-enterprise + aidd-master + componentes",
