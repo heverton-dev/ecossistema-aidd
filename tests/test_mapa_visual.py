@@ -183,7 +183,7 @@ def test_encaixes_marcador_desencontrado_reprova(tmp_path, monkeypatch):
         mv.montar("encaixes", _cat_encaixes(), "m.html", fragmento=True)
 
 
-@pytest.mark.parametrize("tipo", ["encaixes"])
+@pytest.mark.parametrize("tipo", ["encaixes", "ferramentas"])
 def test_mapa_roda_de_verdade_no_repositorio(tmp_path, tipo):
     saida = tmp_path / "mapa.html"
     proc = subprocess.run([sys.executable, str(ROOT / "scripts" / "mapa_visual.py"), tipo,
@@ -193,3 +193,30 @@ def test_mapa_roda_de_verdade_no_repositorio(tmp_path, tipo):
     texto = saida.read_text(encoding="utf-8")
     assert texto.startswith(f"<title>{mv.TITULOS[tipo]}</title>") and "{{" not in texto
     assert texto.count('<article class="item"') > 0
+
+
+def _cat_ferramentas():
+    return {"ferramentas": [
+        {"id": "aidd-a", "descricao": "Faz A.", "chamada": "python ecossistema.py a", "comandos": ["audit", "run"],
+         "gates_proprios": ["tools/aidd-a/gates/G_A.py"], "mcps_proprios": [], "arquivos_py": 3},
+        {"id": "aidd-b", "descricao": "", "chamada": "python ecossistema.py b", "comandos": ["audit"],
+         "gates_proprios": [], "mcps_proprios": ["tools/aidd-b/mcps/m/server.py"], "arquivos_py": 1}],
+        "achados": {"verbos_cli_repetidos": {"audit": ["aidd-a", "aidd-b"]},
+                    "tarefas_com_varias_donas": {"barrar-segredos": {"donas": ["aidd-a", "aidd-b"], "arquivos": []}},
+                    "arquivos_identicos_entre_donas": [{"donas": "aidd-a + aidd-b", "arquivos": 4}]}}
+
+
+def test_ferramentas_repeticoes_saem_do_catalogo():
+    valores = mv.valores_ferramentas(_cat_ferramentas())
+    assert "audit: aidd-a, aidd-b" in valores["VERBOS"] and "barrar-segredos" in valores["DONAS"]
+    assert "aidd-a + aidd-b: 4" in valores["IDENTICOS"]
+    assert 'chip aviso">repetido' in valores["LISTA"] and "sem descrição no README" in valores["LISTA"]
+    assert "1 MCPs" in valores["LISTA"]
+
+
+def test_ferramentas_marcador_desencontrado_reprova(tmp_path, monkeypatch):
+    (tmp_path / "ferramentas.html").write_text("{{TOTAIS}} {{LISTA}} {{VELHO}}", encoding="utf-8")
+    (tmp_path / "base.css").write_text("", encoding="utf-8")
+    monkeypatch.setattr(mv, "MOLDES", tmp_path)
+    with pytest.raises(ValueError, match="VELHO"):
+        mv.montar("ferramentas", _cat_ferramentas(), "m.html", fragmento=True)

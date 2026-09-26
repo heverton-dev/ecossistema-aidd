@@ -36,7 +36,7 @@ FONTES = ("https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wgh
           "12..96,700;12..96,800&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500"
           "&display=swap")
 TITULOS = {"guardas": "Mapa dos Guardas", "skills": "Mapa das Skills", "indice": "Mapas do Ecossistema",
-           "encaixes": "Mapa dos Encaixes"}
+           "encaixes": "Mapa dos Encaixes", "ferramentas": "Mapa das Ferramentas"}
 # Os mapas que o ecossistema precisa ter, na ordem de criação. O índice mostra
 # cada um como concluído (arquivo em dia com o catálogo), desatualizado ou a criar.
 MAPAS_PREVISTOS = (
@@ -264,6 +264,43 @@ def valores_encaixes(cat: dict) -> dict[str, str]:
     }
 
 
+def valores_ferramentas(cat: dict) -> dict[str, str]:
+    ferramentas = cat["ferramentas"]
+    achados = cat["achados"]
+    verbos = achados.get("verbos_cli_repetidos", {})
+    donas = achados.get("tarefas_com_varias_donas", {})
+    identicos = achados.get("arquivos_identicos_entre_donas", [])
+    cartoes = []
+    for f in ferramentas:
+        chips = "".join(
+            f'<code>{e(c)}</code>' if c not in verbos else f'<code>{e(c)}</code><span class="chip aviso">repetido</span>'
+            for c in f["comandos"])
+        extras = [f'{len(f["comandos"])} comandos', f'{len(f["gates_proprios"])} guardas próprios',
+                  f'{f["arquivos_py"]} arquivos .py']
+        if f["mcps_proprios"]:
+            extras.append(f'{len(f["mcps_proprios"])} MCPs')
+        busca = " ".join([f["id"], f["descricao"], " ".join(f["comandos"])]).lower()
+        cartoes.append(f'<article class="item" style="--c:var(--c-trabalha)" data-busca="{e(busca)}">'
+                       f'<span class="nome">{e(f["id"])}</span>'
+                       f'<p class="desc">{e(f["descricao"] or "sem descrição no README")}</p>'
+                       f'<div class="chips" style="display:flex;flex-wrap:wrap;gap:6px">{chips or "<span class=vazio>sem comandos</span>"}</div>'
+                       f'<span class="onde">{e(f["chamada"])} · {e(" · ".join(extras))}</span></article>')
+    return {
+        "TOTAIS": _totais([
+            (len(ferramentas), "ferramentas", ""),
+            (sum(len(f["comandos"]) for f in ferramentas), "comandos de CLI", ""),
+            (len(verbos), "verbos em mais de uma ferramenta", "aviso" if verbos else ""),
+            (len(donas), "tarefas com várias donas", "aviso" if donas else ""),
+            (sum(x["arquivos"] for x in identicos), "arquivos idênticos copiados", "aviso" if identicos else ""),
+        ]),
+        "VERBOS": _lista_curta([f'{v}: {", ".join(fs)}' for v, fs in sorted(verbos.items())], "Nenhum verbo repetido hoje."),
+        "DONAS": _lista_curta([f'{t}: {", ".join(d["donas"])}' for t, d in sorted(donas.items())],
+                              "Nenhuma tarefa com mais de uma dona hoje."),
+        "IDENTICOS": _lista_curta([f'{x["donas"]}: {x["arquivos"]}' for x in identicos], "Nenhuma cópia hoje."),
+        "LISTA": f'<div class="grupo"><div class="itens">{"".join(cartoes)}</div></div>',
+    }
+
+
 def status_mapa(tipo: str, cat: dict) -> str:
     """concluido = arquivo existe e está em dia com o catálogo; desatualizado = existe e
     difere; a-criar = sem gerador ou sem arquivo."""
@@ -302,7 +339,7 @@ def valores_indice(cat: dict) -> dict[str, str]:
 
 
 GERADORES = {"guardas": valores_guardas, "skills": valores_skills, "indice": valores_indice,
-             "encaixes": valores_encaixes}
+             "encaixes": valores_encaixes, "ferramentas": valores_ferramentas}
 
 
 def montar(tipo: str, cat: dict, link_manual: str, fragmento: bool) -> str:
