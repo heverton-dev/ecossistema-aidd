@@ -23,5 +23,5 @@ Execute this skill BEFORE modifying code, designing features, or starting major 
 ## Encadeamento Canônico de Intake
 Após concluir a entrevista socrática, avance deterministicamente para a próxima etapa:
 - **Próxima Skill:** `/aidd-spec` (sintetiza decisões e invariantes em especificação técnica com critérios binários).
-- **Fluxo Geral:** `/aidd-grill` ➔ `/aidd-spec` ➔ `/aidd-planner` ➔ `/aidd-dispatch-runner`.
+- **Fluxo Geral:** `/aidd-grill` ➔ `/aidd-spec` ➔ `/aidd-planner` ➔ `/aidd-dispatch`.
 

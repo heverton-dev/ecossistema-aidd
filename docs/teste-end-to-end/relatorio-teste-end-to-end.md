@@ -943,3 +943,18 @@
   - `tests/test_skills_pocock_distribuicao.py` (cópias do forge = fonte) → passa.
 - **Inconsistências:** as mesmas da seção 14 (G04 e pasta `.agent/`), sem mudança. **Status:** ABERTO.
 - **Data da Última Auditoria:** 26/09/2026.
+
+---
+
+## 16. Templates `aidd-grill` e `aidd-spec` do `aidd-forge` com o nome novo da skill de despacho (mapa-pecas ciclo-01, etapa 4)
+
+- **Objetivo da Correção:** a renomeação das skills (`docs/auditoria/mapa-pecas/ciclo-01/PROPOSTA-NOMES-SKILLS.md`) trocou `aidd-dispatch-runner` por `aidd-dispatch`. A linha "Fluxo Geral" de `aidd-grill` e `aidd-spec` cita esse nome, e as cópias do forge precisam seguir a fonte.
+- **Ferramenta Tocada:** [`tools/aidd-forge`](file:///C:/Users/trcnologia/Desktop/ecossistema-aidd/tools/aidd-forge). Só 2 arquivos `SKILL.md` de template; nenhum código Python mudou.
+- **O que executou:**
+  1. Copiou `aidd-grill/SKILL.md` e `aidd-spec/SKILL.md` da fonte canônica para os templates do forge.
+  2. Execução real em pasta temporária vazia (`git init -b main`): `python ecossistema.py forge init <pasta>` → exit 0; `python ecossistema.py forge audit <pasta>` → exit 0, conformidade 93,3% (14/15). As 2 skills entregues em `.claude/skills/` saem idênticas à fonte (conferido com `cmp`).
+- **Resultados de Testes:**
+  - `G_TESTES_REAIS` no pre-commit: `aidd-forge` 294 passed, 0 failed, 1 skipped.
+  - `tests/test_skills_pocock_distribuicao.py` (cópias do forge = fonte) → passa.
+- **Inconsistências:** as mesmas da seção 14 (G04 e pasta `.agent/`), sem mudança. **Status:** ABERTO.
+- **Data da Última Auditoria:** 26/09/2026.

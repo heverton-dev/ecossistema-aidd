@@ -23,7 +23,7 @@ AGENTS = ROOT / "AGENTS.md"
 SKILLS_DO_CICLO = (
     "aidd-diagnose", "aidd-tickets", "aidd-grill", "aidd-grill-docs", "aidd-tdd",
     "aidd-escrita-agentes", "aidd-retro", "aidd-reexplica", "aidd-entrega",
-    "aidd-wizard", "aidd-planos",
+    "aidd-wizard", "aidd-plan",
 )
 SKILLS_NOVAS = ("aidd-escrita-agentes", "aidd-retro", "aidd-reexplica", "aidd-entrega", "aidd-wizard")
 

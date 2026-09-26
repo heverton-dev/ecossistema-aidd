@@ -84,21 +84,20 @@ O **Ecossistema AIDD** é um monorepo agnóstico que integra 8 ferramentas compl
 
 | Slash Command | Skill Subjacente | CLI Universal Equivalente | Função |
 |---|---|---|---|
-| `/pure <ideia>` | `aidd-pure`, `fluxo-01-runner` | `python ecossistema.py pure` (ou `run-fluxo --fluxo pure`) | **Tríade Fluxo 01:** Execução síncrona do zero puro com TDD Red-Green (Generator + Master + Enterprise + Ops). |
-| `/open <ideia>` | `aidd-open`, `fluxo-02-runner` | `python ecossistema.py open` (ou `run-fluxo --fluxo open`) | **Tríade Fluxo 02:** Execução síncrona com motores Open-Source curados (Factory + Master + Enterprise + Ops). |
-| `/freedom <origem> <nome>` | `aidd-freedom`, `fluxo-03-runner` | `python ecossistema.py freedom` (ou `run-fluxo --fluxo freedom`) | **Tríade Fluxo 03:** Execução síncrona libertando Low-Code (Lovable/v0) para VPS própria (Bridge + Master + Enterprise + Ops). |
-| `/aidd-orchestrator` | `aidd-orchestrator-runner` | `python ecossistema.py run-fluxo` | Orquestrador Mestre Síncrono da Tríade Canônica com validação formal de contratos. |
+| `/pure <ideia>` | `aidd-pure` | `python ecossistema.py pure` (ou `run-fluxo --fluxo pure`) | **Tríade Fluxo 01:** Execução síncrona do zero puro com TDD Red-Green (Generator + Master + Enterprise + Ops). |
+| `/open <ideia>` | `aidd-open` | `python ecossistema.py open` (ou `run-fluxo --fluxo open`) | **Tríade Fluxo 02:** Execução síncrona com motores Open-Source curados (Factory + Master + Enterprise + Ops). |
+| `/freedom <origem> <nome>` | `aidd-freedom` | `python ecossistema.py freedom` (ou `run-fluxo --fluxo freedom`) | **Tríade Fluxo 03:** Execução síncrona libertando Low-Code (Lovable/v0) para VPS própria (Bridge + Master + Enterprise + Ops). |
 | `/forge [caminho]` | `aidd-forge` | `python ecossistema.py forge init [caminho]` | Bootstrap e blindagem de governança em novos projetos. |
 | `/generate <ideia>` | `aidd-generator` | `python ecossistema.py generate "<ideia>"` | Disparo da fábrica de 8 fases a partir de ideia. |
 | `/master <modulo>` | `aidd-master` | `python ecossistema.py master add-module <modulo>` | Criação de fatia vertical desacoplada em monólito modular. |
 | `/enterprise <tipo> <nome>` | `aidd-enterprise` | `python ecossistema.py enterprise inject <tipo> <nome>` | Injeção de componentes corporativos certificados SHA-256. |
 | `/ops [requisito]` | `aidd-ops` | `python ecossistema.py ops [requisito]` | Meta-Orquestrador de Infraestrutura: VPS, Docker, SSH, deploy. |
-| `/orchestrate [plano]` | `orca-plan-orchestrator` | `python ecossistema.py orchestrate [plano]` | ORCA ADE — orquestração de planos de desenvolvimento via worktrees efêmeras. |
-| `/run-plan <plano>` | `aidd-pipeline-runner` | `python ecossistema.py run-plan <plano>` | Executa pipeline determinístico de planos Markdown em Git Worktrees com Join Barrier. |
-| `/pipeline <handoff>` | `aidd-pipeline-runner` | `python ecossistema.py pipeline --handoff <json>` | Executa pipeline determinístico a partir de manifesto JSON de handoff. |
-| `/dispatch [args]` | `aidd-dispatch-runner` | `python ecossistema.py dispatch --planner <plano>` | Despacha fatias verticais VSA em Git Worktrees efêmeras com ordenação DAG topológica e convergência master. |
-| `/aidd-dispatch` | `aidd-dispatch-runner` | `python ecossistema.py dispatch` | Alias canônico para o despacho da Meso-Camada VSA. |
-| `/plan <nome>` | `planos-auditoria-runner` | `python ecossistema.py plan init <nome>` | Estruturação determinística de planos de auditoria e evolução. |
+| `/orchestrate [plano]` | `aidd-orchestrate` (motor nativo: `aidd-orca`) | `python ecossistema.py orchestrate [plano]` | ORCA ADE — orquestração de planos de desenvolvimento via worktrees efêmeras. |
+| `/run-plan <plano>` | `aidd-pipeline` | `python ecossistema.py run-plan <plano>` | Executa pipeline determinístico de planos Markdown em Git Worktrees com Join Barrier. |
+| `/pipeline <handoff>` | `aidd-pipeline` | `python ecossistema.py pipeline --handoff <json>` | Executa pipeline determinístico a partir de manifesto JSON de handoff. |
+| `/dispatch [args]` | `aidd-dispatch` | `python ecossistema.py dispatch --planner <plano>` | Despacha fatias verticais VSA em Git Worktrees efêmeras com ordenação DAG topológica e convergência master. |
+| `/aidd-dispatch` | `aidd-dispatch` | `python ecossistema.py dispatch` | Alias canônico para o despacho da Meso-Camada VSA. |
+| `/plan <nome>` | `aidd-plan` | `python ecossistema.py plan init <nome>` | Estruturação determinística de planos de auditoria e evolução. |
 | `/bridge [comando]` | `aidd-bridge` | `python ecossistema.py bridge [scan\|convert-db\|merge\|pack]` | Extrai, unifica e empacota apps Lovable/Supabase para VPS com PostgREST e Docker. |
 | `/aidd-grill` | `aidd-grill` | N/A (Chat Interativo / Headless Fallback) | Entrevista socrática pré-código para alinhamento de invariantes e edge cases (handoff para `/aidd-spec`). |
 | `/aidd-grill-docs` | `aidd-grill-docs` | N/A (Chat Interativo) | Questionamento socrático ancorado em MEMORY.md e governança local. |
@@ -193,7 +192,7 @@ O **Ecossistema AIDD** é um monorepo agnóstico que integra 8 ferramentas compl
     - Schema canônico `handoff-execucao.schema.json` e Quality Gate `G_PIPELINE_HANDOFF` com prova que morde (`exit 1`).
     - Motor determinístico em Git Worktrees efêmeras (`tools/aidd-master/scripts/orchestrator_pipeline.py`) com Join Barrier e limpeza de 100% dos recursos em `try-finally`.
     - Compilador de planos Markdown (`scripts/compilador_tickets_plano.py`) e exportador nativo em `aidd-planner`.
-    - Skill canônica multi-harness `aidd-pipeline-runner` e comandos universais `/run-plan` e `/pipeline`.
+    - Skill canônica multi-harness `aidd-pipeline` e comandos universais `/run-plan` e `/pipeline`.
   - **Iniciativa Meso-Camada da Tríade Canônica (`docs/issues/meso-camada-triade-canonica/` — 8/8 tickets DONE):**
     - Schema formal `vsa-topological-dispatch.schema.json` e Quality Gate `G_DISPATCH_PIPELINE_VSA` com prova que morde (10/10 testes PASS).
     - Compilador topológico DAG VSA em `aidd-planner` com algoritmo de Kahn e detecção mecânica de ciclos.
@@ -201,7 +200,7 @@ O **Ecossistema AIDD** é um monorepo agnóstico que integra 8 ferramentas compl
     - Roteador especialista de engines da Tríade (`tools/aidd-master/scripts/engine_router.py`) com injeção do Quarteto Sine Qua Non (`/docs`, `/webhooks`, `/mcp`, `/docs/guia`).
     - Barreira de validação e convergência master (`tools/aidd-master/scripts/vsa_join_barrier.py`) com validação de fronteiras de arquivos via `git status --porcelain -uall` e manifesto com SHA-256 para `aidd-enterprise`.
     - Integração no `scripts/orquestrador_sincrono.py` eliminando stubs/mocks estáticos e exposição do comando CLI `python ecossistema.py dispatch`.
-    - Skill canônica multi-harness `aidd-dispatch-runner` e encadeamento de intake formal `/aidd-grill` ➔ `/aidd-spec` ➔ `/aidd-planner` ➔ `/aidd-dispatch-runner`.
+    - Skill canônica multi-harness `aidd-dispatch` e encadeamento de intake formal `/aidd-grill` ➔ `/aidd-spec` ➔ `/aidd-planner` ➔ `/aidd-dispatch`.
   - **Evolução da Taxonomia do Quarteto Sine Qua Non (`PLAN-0036`):**
     - Atualização da Lei #10: de `[/docs, /webhooks, /mcp, /docs/guia]` para a convenção canônica `[/api, /webhook, /mcp, /docs]`.
     - `/api` passa a ser a rota oficial do OpenAPI/Swagger Studio.

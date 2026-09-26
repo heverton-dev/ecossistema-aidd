@@ -50,7 +50,7 @@ from pathlib import Path
 from typing import Any
 
 ROOT_DIR = Path(__file__).resolve().parent.parent
-SKILL_LIVRO = ROOT_DIR / "componentes" / "compartilhado" / "skills" / "aidd-livro-texto"
+SKILL_LIVRO = ROOT_DIR / "componentes" / "compartilhado" / "skills" / "aidd-textbook"
 MOTOR_LIVRO = SKILL_LIVRO / "scripts" / "livro.py"
 
 if hasattr(sys.stdout, "reconfigure"):

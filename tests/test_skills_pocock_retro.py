@@ -62,7 +62,7 @@ def test_ordem_de_gravidade():
 def test_ponteiro_escrita_e_encaminhamento_melhoria():
     texto = _texto()
     assert "aidd-escrita-agentes" in texto
-    assert "aidd-melhoria" in texto
+    assert "aidd-improvement" in texto
 
 
 def test_so_propoe_nunca_aplica():

@@ -25,5 +25,5 @@ Every specification produced by this skill must include:
 ## Encadeamento Canônico de Intake
 Após aprovação da especificação formal:
 - **Próxima Skill:** `/aidd-planner` (gera o blueprint formal `PLANNER.json` com DDD/BDD/SDD).
-- **Fluxo Geral:** `/aidd-grill` ➔ `/aidd-spec` ➔ `/aidd-planner` ➔ `/aidd-dispatch-runner`.
+- **Fluxo Geral:** `/aidd-grill` ➔ `/aidd-spec` ➔ `/aidd-planner` ➔ `/aidd-dispatch`.
 

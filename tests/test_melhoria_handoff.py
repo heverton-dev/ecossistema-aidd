@@ -18,7 +18,7 @@ from pathlib import Path
 import pytest
 
 ROOT_DIR = Path(__file__).resolve().parent.parent
-SKILL_SCRIPTS = ROOT_DIR / ".agents" / "skills" / "aidd-melhoria" / "scripts"
+SKILL_SCRIPTS = ROOT_DIR / ".agents" / "skills" / "aidd-improvement" / "scripts"
 GATE = ROOT_DIR / "gates" / "G_HANDOFF_MELHORIA.py"
 
 if str(SKILL_SCRIPTS) not in sys.path:

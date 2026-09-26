@@ -18,7 +18,7 @@ Adapted from `retro` in mattpocock/skills (commit c55ee46), MIT license.
    - **Mechanical** (fixed pattern, banned API, import shape, file location, missing exit-code check) → propose a deterministic gate in `gates/` (new `G_*.py` + test that proves it fails with exit 1). Default to the gate over a written rule.
    - **Judgement** (cross-file consistency, "matches surrounding style") → propose a review rule for the review stage (`review-changes`), not an always-loaded instruction.
 5. **Present** the list to the user in order of severity (worst first). Each item: evidence from the log (quote + position), category, mechanical/judgement, proposed change, target file.
-6. **Hand off:** approved items go to `aidd-melhoria` as the change request. Done when the user has approved or rejected each item.
+6. **Hand off:** approved items go to `aidd-improvement` (`/melhoria`) as the change request. Done when the user has approved or rejected each item.
 
 ## Categories
 

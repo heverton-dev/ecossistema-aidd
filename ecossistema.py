@@ -631,7 +631,7 @@ def cmd_orchestrate(args):
     )
     def orchestrate_cli(plano, dry_run, resume, yes, stream, interactive, dangerously_force_headless, ambiente, harness, harness_map, profiles, subagent_type, model, repo_path, parent_worktree, from_flight_plan):
         orchestrator_root = os.path.join(
-            ROOT_DIR, "componentes", "compartilhado", "skills", "orca-plan-orchestrator"
+            ROOT_DIR, "componentes", "compartilhado", "skills", "aidd-orca"
         )
         sys.path.insert(0, orchestrator_root)
 
@@ -688,7 +688,7 @@ def cmd_orchestrate(args):
             if profiles is None:
                 profiles = os.path.join(
                     ROOT_DIR, "componentes", "compartilhado", "skills",
-                    "orca-plan-orchestrator", ".orca", "harness_profiles.json.example",
+                    "aidd-orca", ".orca", "harness_profiles.json.example",
                 )
             harness_map_pars = {}
             if harness_map:
@@ -723,7 +723,7 @@ def cmd_orchestrate(args):
                 "compilador mecanico, sem acesso ao orca-cli. Revise/edite o JSON acima e peca ao "
                 "assistente da sessao pra executar cada frente via orca-cli (worktree create "
                 f"--parent-worktree {data['parent_worktree']} -> terminal create -> terminal send), "
-                "seguindo o protocolo completo em componentes/compartilhado/skills/orchestrate/SKILL.md."
+                "seguindo o protocolo completo em componentes/compartilhado/skills/aidd-orchestrate/SKILL.md."
             )
             return 0
 
@@ -754,14 +754,14 @@ def cmd_orchestrate(args):
                 "ecossistema.py é um compilador mecânico, sem acesso a modelo/Agent tool. "
                 "Revise/edite o JSON acima e peça ao assistente da sessão pra executar "
                 "cada frente via Agent tool seguindo o Plano de Voo confirmado "
-                "(protocolo completo em componentes/compartilhado/skills/orchestrate/SKILL.md)."
+                "(protocolo completo em componentes/compartilhado/skills/aidd-orchestrate/SKILL.md)."
             )
             return 0
 
         if profiles is None:
             profiles = os.path.join(
                 ROOT_DIR, "componentes", "compartilhado", "skills",
-                "orca-plan-orchestrator", ".orca", "harness_profiles.json.example",
+                "aidd-orca", ".orca", "harness_profiles.json.example",
             )
 
         candidatos = ["claude", "agy", "mimo", "opencode"]
@@ -905,7 +905,7 @@ def cmd_plan(args):
 
 def cmd_melhoria(args):
     if "--manifest" in args:
-        script = os.path.join(ROOT_DIR, ".agents", "skills", "aidd-melhoria", "scripts", "cli.py")
+        script = os.path.join(ROOT_DIR, ".agents", "skills", "aidd-improvement", "scripts", "cli.py")
         if os.path.isfile(script):
             return run_command([sys.executable, script] + args, cwd=ROOT_DIR)
     script = os.path.join(ROOT_DIR, "scripts", "gerenciador_melhorias.py")
@@ -1145,11 +1145,11 @@ def cmd_status(args):
         "aidd-ops",
         "aidd-bridge",
         "aidd-planner",
-        "orca-plan-orchestrator",
-        "planos-auditoria-runner",
+        "aidd-orca",
+        "aidd-plan",
         "componentes-runner",
-        "aidd-auditor-4f-runner",
-        "aidd-evolucao-runner"
+        "aidd-audit-4f",
+        "aidd-evolution"
     ]
     for skill in skills_list:
         path = os.path.join(ROOT_DIR, "componentes", "compartilhado", "skills", skill, "SKILL.md")
@@ -1167,11 +1167,11 @@ def cmd_status(args):
     print("  /master <modulo>        -> Dispara aidd-master")
     print("  /enterprise <tipo> <nome> -> Dispara aidd-enterprise")
     print("  /ops [requisito]        -> Dispara aidd-ops (infraestrutura)")
-    print("  /orchestrate [plano]    -> Dispara orca-plan-orchestrator (ORCA ADE)")
+    print("  /orchestrate [plano]    -> Dispara aidd-orchestrate (ORCA ADE)")
     print("  /audit-4f [manifesto]   -> Dispara pipeline linear de auditoria 4F")
     print("  /evolucao [ferramenta]  -> Dispara pipeline de evolução a partir do plano")
     print("  /melhoria <pedido>      -> Dispara analise profunda pre-planejamento (docs/melhorias/)")
-    print("  /plan <nome>            -> Dispara planos-auditoria-runner")
+    print("  /plan <nome>            -> Dispara aidd-plan")
     print("  /factory --plano <arq> --pasta <dest> -> Dispara aidd-factory (geracao de stack)")
     print("-" * 72)
     return 0

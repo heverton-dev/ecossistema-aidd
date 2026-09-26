@@ -1,35 +1,44 @@
 ---
 name: aidd-open
-description: Dispara o Fluxo 02 (Motores Open-Source | Slash: /open) da Tríade Canônica. Curadoria e integração de engines open-source em fatias VSA.
+description: Runs Triad Flow 02 (open-source engines) end to end - curates tested open-source engines, integrates them as VSA slices through aidd-factory, then master, enterprise and ops. Use when the user wants an app built on open-source engines, or types "/open", "/aidd-open", "open", "criar com open-source", "integrar motor open source", "gerar app via factory".
 ---
 
-# aidd-open — Fluxo 02 Canônico (Motores Open-Source | /open)
+# aidd-open (Flow 02, open-source engines)
 
-Dispara e conduz o Fluxo 02 (`aidd-open`) da Tríade Canônica de criação de software no Ecossistema AIDD:
-`[FORGE -> PLANNER] -> FACTORY -> [MASTER -> ENTERPRISE -> OPS]`
+Pipeline: `[FORGE -> PLANNER] -> FACTORY -> [MASTER -> ENTERPRISE -> OPS]`
 
-## Gatilhos Universais:
-- Comando Slash: `/open <nome_ou_ideia> [dominio]`
-- Invocação por Skill: `/aidd-open` ou skill `aidd-open`
-- Linguagem Natural: "criar projeto com base em open-source", "integrar engine open-source", "gerar via open"
+| Stage | Tool | Output |
+|---|---|---|
+| Foundation | `aidd-forge` | agentic governance and hooks |
+| Planning | `aidd-planner` | integrations and requirements |
+| Engine | `aidd-factory` | curated engines, multi-service compose, OpenAPI contracts |
+| Harmonization | `aidd-master` | Modular Monolith VSA + Next.js |
+| Shielding | `aidd-enterprise` | SHA-256 audit of proxies and gateways |
+| Infrastructure | `aidd-ops` | isolated networks and native compose |
 
-## Como Executar
+Namespace note: Antigravity CLI (`agy`) reserves `/open` to open files. There, use `/aidd-open` or `/factory`.
 
-### 1. Via CLI Central (Zero Fricção):
-```bash
-python ecossistema.py open --nome "ERP Clínicas" --slug erp-clinicas --dominio clinicas --pasta ./projetos/erp-clinicas
-```
-Ou via comando legado:
-```bash
-python ecossistema.py run-fluxo --fluxo open --nome "ERP Clínicas" --slug erp-clinicas --dominio clinicas --pasta ./projetos/erp-clinicas
-```
+## Steps
 
-### 2. Simulação (Dry-Run):
-```bash
-python ecossistema.py open --nome "ERP Clínicas" --slug erp-clinicas --dominio clinicas --pasta ./projetos/erp-clinicas --dry-run
-```
+1. Agree with the user on the reference open-source engines, routes and integration requirements. Done when name and domain are known.
+2. Simulate first:
+   ```bash
+   python ecossistema.py open "My ERP" saas --dry-run
+   ```
+3. Run:
+   ```bash
+   python ecossistema.py open "My ERP" saas
+   # explicit flags
+   python ecossistema.py open --nome "My ERP" --slug my-erp --dominio saas --pasta ./projetos/my-erp
+   # same engine
+   python ecossistema.py run-fluxo --fluxo open --nome "My ERP" --slug my-erp --dominio saas --pasta ./projetos/my-erp
+   ```
+   Positional form: `<name> [domain]`. Done when the command exits 0.
+4. Confirm the delivery honors the Quarteto Sine Qua Non defined in `AGENTS.md` section 3.
 
-## Ação do Agente:
-1. Alinha os motores open-source de referência, rotas e requisitos de integração com o usuário.
-2. Dispara a fábrica com curadoria de engines, contratos OpenAPI e docker compose multi-service.
-3. Harmoniza a solução em Monólito Modular VSA + Next.js com blindagem SHA-256 e entrega do *Quarteto Sine Qua Non*.
+## Engine invariants (`run-fluxo`)
+
+- Synchronous: no stage starts before the previous one exits 0.
+- Handoffs validated by JSON Schema (`componentes/compartilhado/specs/handoff-*.schema.json`).
+- Fail-fast: any gate break stops the pipeline.
+- Writes `ORQUESTRACAO_EXECUCAO.json` in the target folder.

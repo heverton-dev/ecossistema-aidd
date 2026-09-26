@@ -27,7 +27,7 @@ escrito direto numa pasta de harness.
    - `name`: kebab-case, único no ecossistema (confira `python ecossistema.py components verify --tipo skill` não vai colidir).
    - `description`: 1 frase, específica o bastante pra disparar só quando deveria — nunca genérica ("ajuda com X") a ponto de competir com outra skill.
    - Corpo: seção "Protocolo ao ser acionada" com passos numerados e determinísticos sempre que possível (comando real, não "decida a melhor forma").
-   - Nunca fabricar aprovação/decisão do usuário dentro da skill — mesma regra de `planos-auditoria-runner`.
+   - Nunca fabricar aprovação/decisão do usuário dentro da skill — mesma regra de `aidd-plan`.
 
 3. **Sempre grave a fonte em `componentes/<ferramenta ou compartilhado>/skills/<nome>/SKILL.md`** — nunca em `.claude/skills/`, `.agents/skills/` etc. diretamente (essas são destinos gerados).
 
