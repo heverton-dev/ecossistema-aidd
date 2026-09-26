@@ -1,0 +1,171 @@
+<!-- Molde do mapa dos guardas. Texto fixo aqui; listas e números entram por scripts/mapa_visual.py. -->
+<div class="wrap">
+
+<a class="voltar" href="{{LINK_MANUAL}}">← Manual de montagem</a>
+<header>
+  <span class="eyebrow">Mapa visual · peça: guarda (gate)</span>
+  <h1>Mapa dos guardas</h1>
+  <p class="lead">Um guarda confere uma coisa só e responde com um número: <b>0</b> (pode passar) ou <b>1</b> (para tudo). Este mapa mostra todos os guardas que existem hoje e ensina a construir um novo sem repetir os que já existem.</p>
+  {{TOTAIS}}
+</header>
+
+<section id="o-que">
+  <span class="eyebrow">O quê · por quê · para quê</span>
+  <h2>Por que o ecossistema precisa de guardas</h2>
+  <div class="grid3">
+    <div class="box"><h3>O que é</h3><p>Um script em Python, 100% máquina, sem LLM. Lê a saída de uma peça, confere bit a bit e devolve <code>exit 0</code> ou <code>exit 1</code>, com uma mensagem dizendo o que achou e onde.</p></div>
+    <div class="box"><h3>Por que construir</h3><p>Uma regra escrita no <code>AGENTS.md</code> é só um pedido: o cérebro pode esquecer. O guarda transforma o pedido em trava. <b>Regra sem guarda é conselho.</b></p></div>
+    <div class="box"><h3>Para que serve</h3><p>Para um erro conhecido nunca mais voltar. Cada vez que o mesmo erro mecânico aparece duas vezes, ele vira um guarda, e a partir daí o commit é barrado sozinho.</p></div>
+  </div>
+</section>
+
+<section id="quando">
+  <span class="eyebrow">Quando</span>
+  <h2>Quando construir, e quando não</h2>
+  <div class="grid2">
+    <div class="box">
+      <h3>Construa um guarda quando…</h3>
+      <ul>
+        <li>uma lei nova entra no <code>AGENTS.md</code>: toda lei precisa declarar o guarda que a prova;</li>
+        <li>o mesmo erro mecânico aconteceu duas vezes;</li>
+        <li>uma peça entrega algo que a próxima precisa receber num formato exato (um contrato);</li>
+        <li>uma ferramenta nova nasce: ela precisa de um guarda para o que produz.</li>
+      </ul>
+    </div>
+    <div class="box">
+      <h3>Não construa quando…</h3>
+      <ul>
+        <li>já existe um guarda que confere a mesma coisa (procure na lista abaixo antes);</li>
+        <li>a conferência depende de julgamento ("o texto está bom?"): isso é revisão, não guarda;</li>
+        <li>não dá para escrever um teste que faça o guarda reprovar: sem isso, ele é de fachada;</li>
+        <li>a ideia é "copiar o guarda da outra ferramenta": chame o original em vez de copiar.</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section id="onde">
+  <span class="eyebrow">Onde</span>
+  <h2>As quatro casas de um guarda</h2>
+  <p>Onde o arquivo mora diz o que ele vigia e quem o chama.</p>
+  <div class="grid4">
+    <div class="box" style="--c:var(--c-guarda)"><h3><span class="sw" aria-hidden="true"></span>Ecossistema</h3><p><code>gates/G_*.py</code></p><p>Vigia este repositório. Roda em todo commit, pelo pre-commit. Precisa de teste em <code>gates/test_g_&lt;nome&gt;.py</code>.</p></div>
+    <div class="box" style="--c:var(--c-trabalha)"><h3><span class="sw" aria-hidden="true"></span>Ferramenta</h3><p><code>tools/&lt;f&gt;/gates/</code> ou <code>tools/&lt;f&gt;/scripts/gates/</code></p><p>Vigia o que uma ferramenta produz. Roda dentro do fluxo daquela ferramenta.</p></div>
+    <div class="box" style="--c:var(--brick)"><h3><span class="sw" aria-hidden="true"></span>Entrega</h3><p><code>tools/&lt;f&gt;/templates/gates/</code></p><p>Vai junto com o app gerado e vigia o projeto do cliente. É uma cópia gerada por <code>scripts/gerador_templates_gates.py</code>: nunca edite à mão.</p></div>
+    <div class="box" style="--c:var(--c-pensa)"><h3><span class="sw" aria-hidden="true"></span>Meta</h3><p><code>G_PORTAO_PROVA_QUE_MORDE</code>, <code>G_LEI_DECLARA_PORTAO</code></p><p>Guardas que vigiam os outros guardas: todo guarda tem prova de que reprova? Toda lei declara seu guarda?</p></div>
+  </div>
+</section>
+
+<section id="como">
+  <span class="eyebrow">Como</span>
+  <h2>Como construir, passo a passo</h2>
+  <p>Resumo da <code>docs/protocolos/CONVENCAO-AUTORIA-GATES.md</code>, que é a regra oficial. O exemplo é um guarda de ecossistema.</p>
+  <ol class="passos">
+    <li><div><b>Procure antes.</b><span>Use o filtro da lista abaixo. Se já existe um guarda que confere a mesma coisa, melhore esse em vez de criar outro.</span></div></li>
+    <li><div><b>Escreva primeiro o teste que quebra a regra.</b><span>Em <code>gates/test_g_&lt;nome&gt;.py</code>, monte uma situação errada numa pasta temporária, rode o guarda e exija <code>returncode == 1</code> e a mensagem de erro. O teste precisa falhar agora, porque o guarda ainda não existe.</span>
+<pre><code>def test_g_exemplo_reprova_quando_falta_readme(tmp_path):
+    proc = rodar_gate("G_EXEMPLO.py", cwd=tmp_path)
+    assert proc.returncode == 1
+    assert "README.md ausente" in proc.stdout</code></pre></div></li>
+    <li><div><b>Escreva o guarda.</b><span><code>gates/G_&lt;NOME&gt;.py</code>: um docstring que diz o que confere e o que significam o 0 e o 1, só código mecânico (AST, regex, JSON Schema) e mensagem com arquivo, linha e como corrigir.</span>
+<pre><code>"""G_EXEMPLO — confere que todo pacote em tools/ tem README.md.
+exit 0 = todos têm. exit 1 = algum não tem (lista impressa)."""
+import sys
+from pathlib import Path
+
+def main() -> int:
+    faltando = [p for p in Path("tools").iterdir()
+                if p.is_dir() and not (p / "README.md").is_file()]
+    for p in faltando:
+        print(f"[FALHA] {p}/README.md ausente: crie o arquivo.")
+    return 1 if faltando else 0
+
+if __name__ == "__main__":
+    sys.exit(main())</code></pre></div></li>
+    <li><div><b>Teste também o caminho certo.</b><span>No mesmo arquivo de teste, uma situação correta precisa dar <code>returncode == 0</code>.</span></div></li>
+    <li><div><b>Ligue no commit.</b><span>Acrescente um bloco no <code>.pre-commit-config.yaml</code> com <code>entry: python gates/G_&lt;NOME&gt;.py</code>.</span></div></li>
+    <li><div><b>Declare na lei.</b><span>Embaixo da lei que o guarda prova, no <code>AGENTS.md</code>, escreva <code>- Portão: gates/G_&lt;NOME&gt;.py (provado)</code>. Deixe essa linha sem comentário depois do parêntese: hoje o meta-guarda não lê linhas com comentário (veja os erros comuns).</span></div></li>
+    <li><div><b>Rode pelo mecanismo real.</b><span><code>pre-commit run --hook-stage manual &lt;id&gt; --all-files</code>, e pegue o código de saída na mesma linha, nunca depois de um <code>| tail</code>.</span></div></li>
+    <li><div><b>Mensagem honesta.</b><span>Diga exatamente o que foi conferido. Nada de "zero risco" ou "100% seguro" se a checagem é uma busca de texto.</span></div></li>
+  </ol>
+</section>
+
+<section id="pronto">
+  <span class="eyebrow">Pronto quando · quem confere</span>
+  <h2>Como saber que o guarda está pronto</h2>
+  <div class="grid2">
+    <div class="box">
+      <h3>Checklist</h3>
+      <ul class="checklist">
+        <li>existe um teste que quebra a regra e exige exit 1</li>
+        <li>existe um teste do caminho certo com exit 0</li>
+        <li>o guarda não chama LLM e responde só 0 ou 1</li>
+        <li>a mensagem diz o que corrigir e onde</li>
+        <li>está no pre-commit (se for de ecossistema)</li>
+        <li>a lei que ele prova o declara no <code>AGENTS.md</code></li>
+        <li>não existe outro guarda com o mesmo trabalho</li>
+      </ul>
+    </div>
+    <div class="box">
+      <h3>Quem confere o guarda</h3>
+      <ul>
+        <li><code>G_PORTAO_PROVA_QUE_MORDE</code>: exige o teste com exit 1 (Lei #13)</li>
+        <li><code>G_LEI_DECLARA_PORTAO</code>: exige que cada lei declare seu guarda</li>
+        <li><code>G_SAIDA_BINARIA</code>: exige saída só 0 ou 1 (Lei #2)</li>
+        <li><code>G_HONESTIDADE_ROTULO</code>: barra promessa maior que a checagem (Lei #8)</li>
+        <li><code>G_DETERMINISMO_LEI_1</code>: barra chamada de LLM em peça mecânica (Lei #1)</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section id="erros">
+  <span class="eyebrow">Erros comuns · encontrados neste ecossistema</span>
+  <h2>O que não fazer</h2>
+  <div class="grid2">
+    <div class="box"><h3>Guarda de fachada</h3><p>A etapa 7 da Tríade grava "100% conforme" sem rodar nenhum guarda. Parece guarda, mas nunca diz 1.</p></div>
+    <div class="box"><h3>Guarda que abre quando quebra</h3><p>A validação de contrato do orquestrador responde "aprovado" quando falta o schema. O certo é reprovar quando não consegue conferir.</p></div>
+    <div class="box"><h3>Mesma regra, várias versões</h3><p>Guardas com o mesmo nome e código diferente em cada ferramenta. A lista abaixo marca cada caso com o selo <span class="chip aviso">versões</span>.</p>{{DIVERGENTES}}</div>
+    <div class="box"><h3>Mesmo trabalho, nomes diferentes</h3><p><code>G_ARQUITETURA</code> (enterprise/master) e <code>G_AST_BOUNDED_CONTEXT</code> (master) barram a mesma coisa: import direto entre módulos. O selo "versões" não pega esse caso, porque os nomes são diferentes. Só procurar antes evita.</p></div>
+    <div class="box"><h3>Meta-guarda cego</h3><p>O <code>G_LEI_DECLARA_PORTAO</code> não lê as declarações que têm comentário depois do "(provado)". Estas passam sem ser conferidas:</p>{{INVISIVEIS}}</div>
+    <div class="box"><h3>Guarda fora do commit</h3><p>Guardas de ecossistema que existem mas não rodam no pre-commit só funcionam quando alguém lembra de chamar:</p>{{FORA_COMMIT}}</div>
+  </div>
+</section>
+
+<section id="lista">
+  <span class="eyebrow">Integrantes · procure antes de construir</span>
+  <h2>Todos os guardas</h2>
+  <p>Agrupados pela casa principal. Um guarda que existe em mais de uma casa aparece uma vez, com as outras cópias listadas embaixo.</p>
+  <div class="filtros" role="search">
+    <label for="busca" class="eyebrow" style="flex-basis:100%">Filtrar</label>
+    <input id="busca" type="search" placeholder="nome ou assunto: segredo, docker, harness…" autocomplete="off">
+    <button type="button" data-filtro="versoes" aria-pressed="false">só com versões diferentes</button>
+    <button type="button" data-filtro="sem-lei" aria-pressed="false">só sem lei</button>
+    <button type="button" data-filtro="fora-commit" aria-pressed="false">só fora do commit</button>
+  </div>
+  <p class="legenda" id="contagem" aria-live="polite"></p>
+  {{LISTA}}
+</section>
+
+<footer>Gerado por <code>scripts/mapa_visual.py guardas</code> a partir de <code>docs/auditoria/mapa-pecas/catalogo-pecas.json</code>. Para atualizar: <code>python scripts/catalogo_pecas.py</code> e depois <code>python scripts/mapa_visual.py guardas</code>.</footer>
+</div>
+
+<script>
+(function(){
+  var busca=document.getElementById('busca'), botoes=[].slice.call(document.querySelectorAll('[data-filtro]'));
+  var itens=[].slice.call(document.querySelectorAll('.item')), contagem=document.getElementById('contagem');
+  function aplicar(){
+    var q=busca.value.trim().toLowerCase(), ativos=botoes.filter(function(b){return b.getAttribute('aria-pressed')==='true'}).map(function(b){return b.dataset.filtro});
+    var n=0;
+    itens.forEach(function(it){
+      var ok=(!q||it.dataset.busca.indexOf(q)>=0)&&ativos.every(function(f){return it.dataset[f.replace('-','')]==='1'});
+      it.hidden=!ok; if(ok)n++;
+    });
+    document.querySelectorAll('.grupo').forEach(function(g){g.hidden=!g.querySelector('.item:not([hidden])')});
+    contagem.textContent=n+' de '+itens.length+' guardas';
+  }
+  busca.addEventListener('input',aplicar);
+  botoes.forEach(function(b){b.addEventListener('click',function(){b.setAttribute('aria-pressed',b.getAttribute('aria-pressed')==='true'?'false':'true');aplicar()})});
+  aplicar();
+})();
+</script>

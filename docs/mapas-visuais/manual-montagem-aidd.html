@@ -1,0 +1,567 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Manual de Montagem AIDD</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+:root{
+  --paper:#EEF1F4; --surface:#FFFFFF; --ink:#16202B; --muted:#5A6878; --line:#D3DAE2;
+  --brick:#F2B705; --brick-ink:#3B2C00;
+  --c-pensa:#7048E8; --c-trabalha:#2F6FDB; --c-regra:#0E9384; --c-guarda:#D92D20; --c-liga:#C4620A;
+  --ok:#12805C; --ok-bg:#E3F4EC; --falha:#C0261B; --falha-bg:#FCE7E5; --fach:#A15C00; --fach-bg:#FDF0DC;
+  --tint:#E4E9EF;
+  --display:"Bricolage Grotesque", "Segoe UI", system-ui, sans-serif;
+  --body:"IBM Plex Sans", "Segoe UI", system-ui, sans-serif;
+  --mono:"IBM Plex Mono", ui-monospace, Consolas, monospace;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    color-scheme:dark;
+    --paper:#0F141A; --surface:#17202A; --ink:#E6EBF0; --muted:#95A3B2; --line:#2A3642;
+    --brick:#F5C542; --brick-ink:#2A1F00;
+    --c-pensa:#A48BFF; --c-trabalha:#79A4FF; --c-regra:#3CCBB4; --c-guarda:#FF7A70; --c-liga:#FFAA55;
+    --ok:#4FD1A0; --ok-bg:#12302A; --falha:#FF8A80; --falha-bg:#3A1A18; --fach:#FFBE5C; --fach-bg:#3A2A10;
+    --tint:#1D2833;
+  }
+}
+:root[data-theme="dark"]{
+  color-scheme:dark;
+  --paper:#0F141A; --surface:#17202A; --ink:#E6EBF0; --muted:#95A3B2; --line:#2A3642;
+  --brick:#F5C542; --brick-ink:#2A1F00;
+  --c-pensa:#A48BFF; --c-trabalha:#79A4FF; --c-regra:#3CCBB4; --c-guarda:#FF7A70; --c-liga:#FFAA55;
+  --ok:#4FD1A0; --ok-bg:#12302A; --falha:#FF8A80; --falha-bg:#3A1A18; --fach:#FFBE5C; --fach-bg:#3A2A10;
+  --tint:#1D2833;
+}
+*{box-sizing:border-box}
+/* barras de rolagem: 4px, cores dos tokens (seguem o tema) */
+::-webkit-scrollbar{width:4px;height:4px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--muted);border-radius:4px}
+::-webkit-scrollbar-thumb:hover{background:var(--brick)}
+::-webkit-scrollbar-corner{background:transparent}
+/* Firefox não aceita largura em px: usa a mais fina disponível */
+@supports not selector(::-webkit-scrollbar){*{scrollbar-width:thin;scrollbar-color:var(--muted) transparent}}
+body{background:var(--paper);color:var(--ink);font-family:var(--body);font-size:16px;line-height:1.55;padding-inline:16px;padding-block:0 64px}
+.wrap{max-width:1040px;margin:0 auto}
+h1,h2,h3{font-family:var(--display);text-wrap:balance;margin:0;line-height:1.1}
+h1{font-size:clamp(2.2rem,6vw,3.6rem);font-weight:800;letter-spacing:-.02em}
+h2{font-size:clamp(1.5rem,3.6vw,2.1rem);font-weight:700;letter-spacing:-.01em}
+h3{font-size:1.15rem;font-weight:700}
+p{margin:0;max-width:65ch}
+code,.mono{font-family:var(--mono);font-size:.86em}
+code{background:var(--tint);padding:.08em .35em;border-radius:4px;overflow-wrap:anywhere}
+.eyebrow{font-family:var(--mono);font-size:.75rem;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+section{display:flex;flex-direction:column;gap:20px;padding-block:44px;border-top:1px solid var(--line)}
+.lead{font-size:1.1rem;color:var(--muted)}
+
+/* hero */
+header{display:grid;grid-template-columns:1fr auto;gap:32px;align-items:end;padding-block:48px 40px}
+header .txt{display:flex;flex-direction:column;gap:16px}
+.formula{display:flex;flex-wrap:wrap;gap:8px;align-items:center;font-family:var(--mono);font-size:.9rem}
+.formula span{padding:4px 10px;border:1px solid var(--line);border-radius:6px;background:var(--surface)}
+.formula b{color:var(--muted);font-weight:400}
+.stack{display:grid;gap:6px;justify-items:end}
+.brick{--c:var(--brick);position:relative;display:inline-flex;align-items:center;height:40px;padding:0 14px;background:var(--c);color:#fff;font-family:var(--mono);font-size:.78rem;border-radius:4px;margin-top:9px}
+.brick::before{content:"";position:absolute;top:-9px;left:12px;right:12px;height:9px;background:radial-gradient(circle at 9px 9px,var(--c) 7px,transparent 7.5px) 0 0/28px 18px repeat-x}
+@media (max-width:640px){header{grid-template-columns:1fr}.stack{justify-items:start}}
+
+/* verdict chips */
+.chip{display:inline-block;font-family:var(--mono);font-size:.7rem;letter-spacing:.06em;text-transform:uppercase;padding:3px 8px;border-radius:999px;white-space:nowrap}
+.chip.certo{color:var(--ok);background:var(--ok-bg)}
+.chip.ajuste{color:var(--fach);background:var(--fach-bg)}
+.chip.novo{color:var(--brick-ink);background:var(--brick)}
+.chip.falha{color:var(--falha);background:var(--falha-bg)}
+.chip.fach{color:var(--fach);background:var(--fach-bg)}
+
+/* pieces */
+.familias{display:flex;flex-wrap:wrap;gap:8px 18px;font-size:.88rem;color:var(--muted)}
+.familias i{display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:6px;vertical-align:-1px}
+.pecas{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:14px}
+.peca{background:var(--surface);border:1px solid var(--line);border-top:6px solid var(--c);border-radius:8px;padding:18px;display:flex;flex-direction:column;gap:10px}
+.peca .top{display:flex;justify-content:space-between;align-items:start;gap:10px}
+.peca .tec{font-family:var(--mono);font-size:.78rem;color:var(--c)}
+.peca .ana{font-size:.95rem}
+.peca .ex{font-size:.82rem;color:var(--muted);border-top:1px dashed var(--line);padding-top:10px}
+.peca .fix{font-size:.9rem;background:var(--fach-bg);color:var(--ink);border-radius:6px;padding:10px 12px}
+.peca .fix b{color:var(--fach)}
+
+/* anatomy */
+.anat{display:grid;grid-template-columns:1fr 1.4fr 1fr;gap:12px;align-items:stretch}
+.box{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:18px;display:flex;flex-direction:column;gap:10px}
+.box h3{display:flex;align-items:center;gap:8px}
+.box ul{margin:0;padding-left:18px;display:flex;flex-direction:column;gap:4px;font-size:.93rem}
+.box.proc{border:2px solid var(--c-trabalha)}
+@media (max-width:760px){.anat{grid-template-columns:1fr}}
+.nota{font-size:.93rem;background:var(--tint);border-radius:8px;padding:12px 16px;max-width:70ch}
+
+/* encaixe */
+.encaixe{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+@media (max-width:760px){.encaixe{grid-template-columns:1fr}}
+.pino{display:flex;align-items:center;gap:0;flex-wrap:nowrap;overflow-x:auto;padding:8px 0}
+.pino .b{flex:0 0 auto;padding:14px 16px;border-radius:6px;font-family:var(--mono);font-size:.8rem;color:#fff;background:var(--c-trabalha)}
+.pino .c{flex:0 0 auto;padding:8px 12px;border:2px dashed var(--brick);border-radius:999px;margin:0 -2px;font-family:var(--mono);font-size:.74rem;background:var(--surface);z-index:1}
+.pino .c.x{border-color:var(--falha);color:var(--falha)}
+.pino .line{flex:0 0 24px;height:2px;background:var(--line)}
+
+/* guarda */
+.guarda{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+@media (max-width:760px){.guarda{grid-template-columns:1fr}}
+.guarda .box{border-top:6px solid var(--c-guarda)}
+.exit{display:flex;gap:10px;flex-wrap:wrap}
+.exit span{font-family:var(--mono);font-size:.85rem;padding:6px 10px;border-radius:6px}
+.exit .z{background:var(--ok-bg);color:var(--ok)}
+.exit .u{background:var(--falha-bg);color:var(--falha)}
+.ouro{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+@media (max-width:760px){.ouro{grid-template-columns:1fr}}
+.ouro .box{background:var(--tint);border:none}
+
+/* receita */
+.receita-scroll{overflow-x:auto;padding-bottom:6px}
+.receita{display:grid;grid-template-columns:repeat(7,minmax(128px,1fr));gap:8px;min-width:940px}
+.passo{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:12px;display:flex;flex-direction:column;gap:8px;font-size:.85rem}
+.passo .n{font-family:var(--mono);font-size:.72rem;color:var(--muted)}
+.passo strong{font-family:var(--display);font-size:1.02rem}
+.passo.var{border:2px solid var(--brick)}
+.passo .alt{display:flex;flex-direction:column;gap:6px}
+.passo .alt div{display:flex;justify-content:space-between;gap:6px;align-items:center;font-family:var(--mono);font-size:.74rem}
+.legenda{font-size:.85rem;color:var(--muted)}
+
+/* hook vs guarda + cola */
+.duo{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+@media (max-width:760px){.duo{grid-template-columns:1fr}}
+.tab-scroll{overflow-x:auto;background:var(--surface);border:1px solid var(--line);border-radius:8px}
+table{border-collapse:collapse;width:100%;font-size:.92rem;min-width:560px}
+th,td{text-align:left;padding:11px 14px;border-bottom:1px solid var(--line);vertical-align:top}
+th{font-family:var(--mono);font-size:.72rem;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:500}
+tr:last-child td{border-bottom:none}
+
+/* nav */
+.nav{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:.88rem;padding-block:0 28px}
+.nav a{color:var(--muted);text-decoration:none;border-bottom:1px solid var(--line)}
+.nav a:hover,.nav a:focus-visible{color:var(--ink);border-color:var(--ink)}
+a:focus-visible{outline:2px solid var(--brick);outline-offset:2px}
+
+/* parte 0 */
+.inicio{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
+@media (max-width:860px){.inicio{grid-template-columns:1fr}}
+.rota{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:18px;display:flex;flex-direction:column;gap:12px;align-items:flex-start}
+.rota > *{max-width:100%}
+.rota .q{font-family:var(--display);font-size:1.2rem;font-weight:700;line-height:1.2}
+.rota .f{display:flex;justify-content:space-between;align-items:center;gap:8px;width:100%;font-family:var(--mono);font-size:.82rem;color:var(--muted)}
+.rota .f b{font-family:var(--display);font-size:1.05rem;color:var(--ink)}
+.cmd{display:block;width:100%;font-family:var(--mono);font-size:.8rem;background:var(--tint);border-radius:6px;padding:10px 12px;overflow-x:auto;white-space:pre;margin:0}
+.rota .obs{font-size:.88rem;color:var(--muted)}
+.entrega{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:10px}
+.entrega div{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:12px 14px;font-size:.9rem;display:flex;flex-direction:column;gap:4px}
+.entrega b{font-family:var(--display)}
+
+/* oficina */
+.linha{display:flex;align-items:stretch;overflow-x:auto;padding-bottom:6px}
+.linha .st{flex:0 0 auto;width:190px;background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:14px;display:flex;flex-direction:column;gap:6px;font-size:.86rem}
+.linha .st strong{font-family:var(--display);font-size:1.02rem}
+.linha .st code{align-self:flex-start}
+.linha .seta{flex:0 0 28px;display:flex;align-items:center;justify-content:center;color:var(--muted);font-family:var(--mono)}
+.fases{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
+@media (max-width:760px){.fases{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:440px){.fases{grid-template-columns:1fr}}
+.fase{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:12px 14px;display:flex;flex-direction:column;gap:4px;font-size:.88rem}
+.fase b{font-family:var(--display);font-size:1rem}
+.avulsas{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:10px}
+.avulsas div{background:var(--tint);border-radius:8px;padding:12px 14px;font-size:.88rem;display:flex;flex-direction:column;gap:4px;align-items:flex-start}
+.avulsas code{background:var(--surface)}
+.mapa-link{align-self:flex-start;font-family:var(--display);font-weight:700;font-size:1.02rem;color:var(--ink);text-decoration:none;border-bottom:3px solid var(--brick);padding-bottom:2px}
+.mapa-link:hover{border-color:var(--c-guarda)}
+footer{padding-top:28px;border-top:1px solid var(--line);font-size:.85rem;color:var(--muted)}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <div class="txt">
+    <span class="eyebrow">Ecossistema AIDD · guia de consulta</span>
+    <h1>Manual de montagem</h1>
+    <p class="lead">Tudo aqui é peça de LEGO. Cada peça faz uma coisa só. As peças se encaixam por um formato combinado, e a receita diz a ordem de montagem. É assim que nascem os fluxos.</p>
+    <div class="formula"><span>peça</span><b>+</b><span>encaixe</span><b>+</b><span>receita</span><b>=</b><span>fluxo</span></div>
+  </div>
+  <div class="stack" aria-hidden="true">
+    <div class="brick" style="--c:var(--c-guarda)">guarda</div>
+    <div class="brick" style="--c:var(--c-trabalha)">ferramenta</div>
+    <div class="brick" style="--c:var(--brick);color:var(--brick-ink)">contrato</div>
+    <div class="brick" style="--c:var(--c-trabalha)">ferramenta</div>
+  </div>
+</header>
+
+<nav class="nav" aria-label="Partes do manual">
+  <a href="#inicio">0 · Por onde eu começo</a>
+  <a href="#pecas">1 · As peças</a>
+  <a href="#resto">2 · O resto da caixa</a>
+  <a href="#ferramenta">3 · Por dentro da ferramenta</a>
+  <a href="#encaixe">4 · O encaixe</a>
+  <a href="#guarda">5 · O guarda</a>
+  <a href="#receita">6 · A receita</a>
+  <a href="#oficina">7 · A oficina</a>
+  <a href="#cola">8 · Cola rápida</a>
+</nav>
+
+<section id="inicio">
+  <span class="eyebrow">Parte 0</span>
+  <h2>Por onde eu começo</h2>
+  <p>Toda aplicação começa com uma pergunta só: <b>de onde você parte?</b> A resposta escolhe o fluxo. O resto da montagem é igual para os três.</p>
+  <div class="inicio">
+    <div class="rota">
+      <span class="q">Só tenho a ideia</span>
+      <span class="f"><b>pure</b>Fluxo 01 · /pure</span>
+      <p>O ecossistema escreve o sistema do zero, com teste antes de cada pedaço de código.</p>
+      <code class="cmd">python ecossistema.py pure "Clinica Vet" saude</code>
+      <span class="chip certo">encaixes ok</span>
+      <p class="obs">Passa pela etapa 3. As etapas 6 e 7 ainda são de fachada.</p>
+    </div>
+    <div class="rota">
+      <span class="q">Quero aproveitar motores open-source prontos</span>
+      <span class="f"><b>open</b>Fluxo 02 · /open ou /aidd-open</span>
+      <p>Escolhe motores abertos já existentes e cola as partes do seu negócio em volta deles.</p>
+      <code class="cmd">python ecossistema.py open "Clinica Vet" saude</code>
+      <span class="chip falha">quebra na etapa 3</span>
+      <p class="obs">No Antigravity use <code>/aidd-open</code>, porque lá <code>/open</code> abre arquivo.</p>
+    </div>
+    <div class="rota">
+      <span class="q">Já tenho um app no Lovable, v0 ou Bolt</span>
+      <span class="f"><b>freedom</b>Fluxo 03 · /freedom</span>
+      <p>Tira o app da plataforma, troca o banco por um PostgreSQL próprio e deixa tudo pronto para a sua VPS.</p>
+      <code class="cmd">python ecossistema.py freedom ./export-lovable "Clinica Vet" saude</code>
+      <span class="chip falha">quebra na etapa 3</span>
+      <p class="obs">O primeiro argumento é a pasta exportada da plataforma.</p>
+    </div>
+  </div>
+  <p>Dicas que valem para os três: acrescente <code>--dry-run</code> para simular sem gravar nada. Sem domínio informado, o padrão é <code>saas</code>. A entrega vai para <code>projetos/&lt;nome&gt;</code> dentro do ecossistema, ou para onde você mandar com <code>--pasta</code>.</p>
+  <h3>O que todo app deve ter ao sair</h3>
+  <div class="entrega">
+    <div><b>Tela de API</b><span><code>/api</code>: o Swagger, com todas as rotas documentadas</span></div>
+    <div><b>Tela de webhooks</b><span><code>/webhook</code>: avisos automáticos para outros sistemas</span></div>
+    <div><b>Tela de MCP</b><span><code>/mcp</code>: o próprio app vira um telefone para agentes</span></div>
+    <div><b>Central de ajuda</b><span><code>/docs</code>: guia do usuário, atualizado a cada módulo novo</span></div>
+    <div><b>Stack padrão-ouro</b><span>Next.js + TypeScript + Tailwind na frente; Python + SQLite WAL atrás</span></div>
+    <div><b>Pronto para subir</b><span>Dockerfile, docker-compose e testes de verdade</span></div>
+  </div>
+  <p class="legenda">As quatro telas são a Lei #10 (Quarteto) e a stack é a Lei #11. Só muda se você pedir outra coisa explicitamente.</p>
+</section>
+
+<section id="pecas">
+  <span class="eyebrow">Parte 1</span>
+  <h2>As peças da caixa</h2>
+  <p>Estas são as suas anotações, peça por peça. O selo mostra onde você acertou e onde vale um ajuste.</p>
+  <div class="familias">
+    <span><i style="background:var(--c-pensa)"></i>quem pensa</span>
+    <span><i style="background:var(--c-trabalha)"></i>quem trabalha</span>
+    <span><i style="background:var(--c-regra)"></i>quem ensina e orienta</span>
+    <span><i style="background:var(--c-guarda)"></i>quem vigia</span>
+    <span><i style="background:var(--c-liga)"></i>quem liga as partes</span>
+  </div>
+  <div class="pecas">
+    <article class="peca" style="--c:var(--c-pensa)">
+      <div class="top"><h3>O cérebro</h3><span class="chip certo">você acertou</span></div>
+      <span class="tec">LLM (Claude, GPT, Gemini…)</span>
+      <p class="ana">Muito inteligente, mas probabilístico: a mesma pergunta pode ter respostas diferentes. Ótimo para decidir e criar; ruim para repetir igual mil vezes.</p>
+      <p class="ex">Por isso a Lei #1 separa inteligência de força bruta.</p>
+    </article>
+    <article class="peca" style="--c:var(--c-pensa)">
+      <div class="top"><h3>O agente orquestrador</h3><span class="chip certo">você acertou</span></div>
+      <span class="tec">a sessão do Claude Code, opencode, mimo…</span>
+      <p class="ana">O mestre de obras. Um cérebro com mãos: lê as regras, escolhe o manual certo, liga para fora, chama as máquinas e entrega o resultado.</p>
+      <p class="ex">Ele pode chamar ajudantes (subagentes), que são outras cópias dele com uma tarefa só.</p>
+    </article>
+    <article class="peca" style="--c:var(--c-trabalha)">
+      <div class="top"><h3>A máquina</h3><span class="chip certo">você acertou</span></div>
+      <span class="tec">script determinístico · 0 LLM</span>
+      <p class="ana">Faz o que é matemático e mecânico. Mesma entrada, sempre a mesma saída. Não pensa, não esquece, não inventa.</p>
+      <p class="ex">Ex.: <code>scripts/catalogo_pecas.py</code> gera o mesmo catálogo toda vez.</p>
+    </article>
+    <article class="peca" style="--c:var(--c-trabalha)">
+      <div class="top"><h3>A ferramenta</h3><span class="chip certo">você acertou</span></div>
+      <span class="tec">tools/aidd-forge, aidd-planner, aidd-ops…</span>
+      <p class="ana">Uma pequena fábrica com entrada, processamento e saída. Dentro dela trabalham máquinas e, às vezes, o cérebro. Deve ser especialista em uma tarefa só.</p>
+      <p class="ex">São 8 hoje. Chamadas sempre por <code>python ecossistema.py &lt;nome&gt;</code>.</p>
+    </article>
+    <article class="peca" style="--c:var(--c-regra)">
+      <div class="top"><h3>O manual de tarefa</h3><span class="chip ajuste">ajuste</span></div>
+      <span class="tec">skill · SKILL.md</span>
+      <p class="ana">Uma receita escrita que ensina o agente a fazer uma tarefa específica. O agente lê o manual e executa.</p>
+      <p class="fix"><b>Ajuste:</b> skill não é um agente. É o papel com as instruções. O mesmo agente pode ler 10 manuais diferentes ao longo do dia.</p>
+    </article>
+    <article class="peca" style="--c:var(--c-regra)">
+      <div class="top"><h3>O regulamento</h3><span class="chip ajuste">ajuste</span></div>
+      <span class="tec">rules · AGENTS.md</span>
+      <p class="ana">As regras da casa que todo agente lê ao chegar: idioma, formato de resposta, o que é proibido.</p>
+      <p class="fix"><b>Ajuste:</b> regra é um pedido, não uma trava. O cérebro pode esquecer. Só vira obrigação quando um guarda ou um alarme confere. Regra sem guarda é conselho.</p>
+    </article>
+    <article class="peca" style="--c:var(--c-liga)">
+      <div class="top"><h3>O telefone externo</h3><span class="chip certo">você acertou</span></div>
+      <span class="tec">MCP</span>
+      <p class="ana">O agente liga para fora e recebe uma resposta: documentação atualizada, GitHub, Cloudflare, o grafo do código.</p>
+      <p class="ex">6 ligados em <code>.mcp.json</code>. Outros 3 existem dentro das ferramentas, mas ninguém instalou o aparelho.</p>
+    </article>
+    <article class="peca" style="--c:var(--c-guarda)">
+      <div class="top"><h3>O alarme</h3><span class="chip ajuste">ajuste</span></div>
+      <span class="tec">hook</span>
+      <p class="ana">Dispara sozinho num momento certo: antes de usar uma ferramenta, depois de editar, no início da sessão, antes do commit. Pode barrar a operação.</p>
+      <p class="fix"><b>Ajuste:</b> o hook é o <b>quando</b>, o guarda é o <b>o quê</b>. Normalmente o alarme toca e chama um guarda para inspecionar.</p>
+    </article>
+    <article class="peca" style="--c:var(--c-guarda)">
+      <div class="top"><h3>O guarda</h3><span class="chip certo">você acertou</span></div>
+      <span class="tec">gate · gates/G_*.py</span>
+      <p class="ana">Um inspetor sem coração. Recebe o que foi produzido, confere bit a bit e responde só sim ou não.</p>
+      <p class="ex">Ex.: <code>G_SEGREDOS</code> barra senha no código. 42 guardas estão ligados ao commit.</p>
+    </article>
+    <article class="peca" style="--c:var(--brick)">
+      <div class="top"><h3>O encaixe</h3><span class="chip novo">faltava</span></div>
+      <span class="tec">contrato · handoff-*.schema.json</span>
+      <p class="ana">O tamanho do pino do LEGO. Diz o formato exato que a saída de uma peça precisa ter para entrar na próxima.</p>
+      <p class="ex">8 contratos em <code>componentes/compartilhado/specs/</code>.</p>
+    </article>
+    <article class="peca" style="--c:var(--brick)">
+      <div class="top"><h3>A receita</h3><span class="chip novo">faltava</span></div>
+      <span class="tec">fluxo · pipeline</span>
+      <p class="ana">A lista de montagem: qual peça vem primeiro, qual guarda confere cada etapa, o que acontece se falhar.</p>
+      <p class="ex">A Tríade (pure, open, freedom) são 3 receitas quase iguais. Veja a Parte 6.</p>
+    </article>
+  </div>
+</section>
+
+<section id="resto">
+  <span class="eyebrow">Parte 2</span>
+  <h2>O resto da caixa</h2>
+  <p>Estas peças não aparecem nas suas anotações, mas trabalham o tempo todo por trás das outras.</p>
+  <div class="pecas">
+    <article class="peca" style="--c:var(--c-liga)">
+      <div class="top"><h3>O painel de botões</h3></div>
+      <span class="tec">ecossistema.py · comandos slash</span>
+      <p class="ana">A porta de entrada única. Cada botão do painel liga uma ferramenta ou uma receita. Os comandos slash (<code>/pure</code>, <code>/plan</code>…) são os mesmos botões, apertados de dentro do chat.</p>
+      <p class="ex">16 comandos slash. <code>python ecossistema.py help</code> mostra o painel inteiro.</p>
+    </article>
+    <article class="peca" style="--c:var(--c-trabalha)">
+      <div class="top"><h3>Os moldes</h3></div>
+      <span class="tec">templates/</span>
+      <p class="ana">Formas de ferro prontas. A ferramenta só despeja os dados do seu negócio dentro delas, sem inventar a estrutura do zero. É isso que faz dois apps diferentes saírem com a mesma qualidade.</p>
+      <p class="ex">Ex.: <code>tools/aidd-master/templates/core</code>, <code>tools/aidd-factory/templates/vsa</code>.</p>
+    </article>
+    <article class="peca" style="--c:var(--c-regra)">
+      <div class="top"><h3>O almoxarifado e o entregador</h3></div>
+      <span class="tec">componentes/compartilhado · components sync</span>
+      <p class="ana">Cada skill, hook e comando é guardado uma vez só, no almoxarifado. O entregador copia tudo para cada mestre de obras (Claude, opencode, mimo, Antigravity…), cada um na pasta que ele sabe ler.</p>
+      <p class="ex">Nunca edite as cópias em <code>.claude/</code> ou <code>.agents/</code>. Edite o almoxarifado e rode <code>components sync --tipo todos</code>.</p>
+    </article>
+    <article class="peca" style="--c:var(--c-regra)">
+      <div class="top"><h3>O diário de bordo</h3></div>
+      <span class="tec">secoes/ · handoffs · memória</span>
+      <p class="ana">O cérebro esquece tudo quando a sessão fecha. O diário guarda o que aconteceu: quais sessões rodaram, o que cada peça entregou para a próxima, o que foi decidido.</p>
+      <p class="ex">Ex.: <code>secoes/INDICE-SESSOES.md</code>, <code>HANDOFF_PLANNER_ENGINE.json</code>, <code>ORQUESTRACAO_EXECUCAO.json</code>.</p>
+    </article>
+    <article class="peca" style="--c:var(--c-liga)">
+      <div class="top"><h3>Os fornecedores de fora</h3></div>
+      <span class="tec">dependências externas</span>
+      <p class="ana">Skills e telefones feitos por outras pessoas, que o ecossistema usa. Ficam anotados numa lista, e uma máquina confere se todos estão instalados antes de começar.</p>
+      <p class="ex">39 declaradas em <code>gates/dependencias_externas.json</code>. Conferência: <code>dependencia verify</code>.</p>
+    </article>
+    <article class="peca" style="--c:var(--brick)">
+      <div class="top"><h3>O produto entregue</h3></div>
+      <span class="tec">o app gerado</span>
+      <p class="ana">A caixa que chega ao cliente. Não é peça do ecossistema: é o que ele fabrica. Tem padrão fixo, com as quatro telas, a stack padrão-ouro e a pasta pronta para subir no servidor.</p>
+      <p class="ex">A lista completa está na Parte 0.</p>
+    </article>
+  </div>
+</section>
+
+<section id="ferramenta">
+  <span class="eyebrow">Parte 3</span>
+  <h2>Por dentro de uma ferramenta</h2>
+  <p>Seu desenho de entrada → processamento → saída está certo. Aqui ele aparece organizado, com dois detalhes a mais.</p>
+  <div class="anat">
+    <div class="box">
+      <h3>Entrada</h3>
+      <ul>
+        <li>vem de uma pessoa ou de outra peça</li>
+        <li>num formato combinado (.md, .json, .txt)</li>
+        <li>pode ser a saída de outra ferramenta (o handoff)</li>
+        <li>tem configurações (flags, perfis)</li>
+      </ul>
+    </div>
+    <div class="box proc">
+      <h3>Processamento</h3>
+      <ul>
+        <li>máquinas (scripts) fazem o repetitivo</li>
+        <li>o cérebro (LLM) entra só onde precisa pensar</li>
+        <li>lê manuais (skills) e segue regras</li>
+        <li>pode ligar para fora (MCPs)</li>
+        <li>tem alarmes instalados (hooks)</li>
+        <li>roda numa redoma: a worktree temporária, uma cópia isolada do projeto</li>
+      </ul>
+    </div>
+    <div class="box">
+      <h3>Saída</h3>
+      <ul>
+        <li>formato combinado (.md, .json, .yaml, .pdf)</li>
+        <li>obedece a um contrato de encaixe</li>
+        <li>vai direto para o guarda</li>
+        <li>vira entrada da próxima peça</li>
+      </ul>
+    </div>
+  </div>
+  <p class="nota"><b>Detalhe 1.</b> Você escreveu "determinístico | probabilístico" no processamento. As duas coisas convivem: o esqueleto da ferramenta (ordem, etapas, conferências) é sempre máquina; o cérebro só preenche as partes criativas.</p>
+  <p class="nota"><b>Detalhe 2.</b> Você escreveu "utilizar outras ferramentas (skills)". Uma ferramenta pode ler manuais à vontade. Já para usar outra ferramenta, ela deve chamar pela porta da frente (a linha de comando), nunca mexer por dentro. Hoje a receita da Tríade mexe por dentro do master e do planner, e isso deixa as peças grudadas.</p>
+</section>
+
+<section id="encaixe">
+  <span class="eyebrow">Parte 4</span>
+  <h2>O encaixe</h2>
+  <p>Duas peças só se encaixam se o pino de uma tiver o tamanho do furo da outra. No ecossistema, o pino é o contrato: um arquivo que descreve campo por campo o que precisa ser passado adiante.</p>
+  <div class="encaixe">
+    <div class="box">
+      <h3>Encaixa <span class="chip certo">exit 0</span></h3>
+      <div class="pino">
+        <span class="b">planner</span><span class="line"></span>
+        <span class="c">handoff-planner-to-engine</span><span class="line"></span>
+        <span class="b">generator</span>
+      </div>
+      <p>O planner entrega o plano no formato que o generator espera, e a chamada usa só opções que o generator aceita.</p>
+    </div>
+    <div class="box">
+      <h3>Não encaixa <span class="chip falha">exit 2</span></h3>
+      <div class="pino">
+        <span class="b">receita</span><span class="line"></span>
+        <span class="c x">factory curate --dominio</span><span class="line"></span>
+        <span class="b">factory</span>
+      </div>
+      <p>A receita do Fluxo 02 (open) pede <code>--dominio</code>, mas o factory só aceita <code>--plano</code> e <code>--pasta</code>. O pino tem o tamanho errado, e a montagem para aí.</p>
+    </div>
+  </div>
+</section>
+
+<section id="guarda">
+  <span class="eyebrow">Parte 5</span>
+  <h2>O guarda</h2>
+  <div class="guarda">
+    <div class="box"><h3>Entrada</h3><p>A saída da ferramenta, exatamente como ela foi produzida.</p></div>
+    <div class="box"><h3>Processamento</h3><p>Conferência bit a bit, 100% máquina. Nada de "acho que está bom".</p></div>
+    <div class="box"><h3>Saída</h3><div class="exit"><span class="z">exit 0 · passa</span><span class="u">exit 1 · para tudo</span></div></div>
+  </div>
+  <p>O guarda não conserta nada. Ele só diz sim ou não. Quem conserta é a ferramenta, na próxima tentativa.</p>
+  <a class="mapa-link" href="mapa-guardas.html">Ver o mapa completo dos guardas: todos os 86, e como construir um novo →</a>
+  <div class="ouro">
+    <div class="box">
+      <h3>Regra de ouro 1: quem fabrica não fiscaliza</h3>
+      <p>O guarda fica fora da ferramenta. Hoje cada ferramenta carrega o próprio guarda de segredos, e as 4 versões já estão diferentes entre si.</p>
+    </div>
+    <div class="box">
+      <h3>Regra de ouro 2: guarda que nunca diz "não" é de mentira</h3>
+      <p>Todo guarda precisa provar que reprova quando algo está errado (Lei #13). A etapa 7 da Tríade é um guarda de mentira: escreve "100% conforme" sem conferir nada.</p>
+    </div>
+  </div>
+</section>
+
+<section id="receita">
+  <span class="eyebrow">Parte 6</span>
+  <h2>A receita: a Tríade Canônica</h2>
+  <p>Os três fluxos usam as mesmas 7 etapas. Só a etapa 3, a engine, troca de peça. O status abaixo é o de hoje (26/09/2026), medido rodando cada chamada de verdade.</p>
+  <div class="receita-scroll">
+    <div class="receita">
+      <div class="passo"><span class="n">etapa 1</span><strong>forge</strong><span>prepara o terreno e as regras</span><span class="chip certo">encaixa</span></div>
+      <div class="passo"><span class="n">etapa 2</span><strong>planner</strong><span>escreve o plano</span><span class="chip certo">encaixa</span></div>
+      <div class="passo var"><span class="n">etapa 3 · troca</span><strong>engine</strong>
+        <div class="alt">
+          <div>pure · generator <span class="chip certo">ok</span></div>
+          <div>open · factory <span class="chip falha">quebra</span></div>
+          <div>freedom · bridge <span class="chip falha">quebra</span></div>
+        </div>
+      </div>
+      <div class="passo"><span class="n">etapa 4</span><strong>master</strong><span>monta o esqueleto e os módulos</span><span class="chip certo">encaixa</span></div>
+      <div class="passo"><span class="n">etapa 5</span><strong>enterprise</strong><span>blinda e vigia mudanças</span><span class="chip certo">encaixa</span></div>
+      <div class="passo"><span class="n">etapa 6</span><strong>ops</strong><span>deveria subir a infraestrutura</span><span class="chip fach">fachada</span></div>
+      <div class="passo"><span class="n">etapa 7</span><strong>auditoria</strong><span>deveria rodar os guardas</span><span class="chip fach">fachada</span></div>
+    </div>
+  </div>
+  <p class="legenda"><b>fachada</b> = a etapa existe no papel, mas não chama a peça que diz chamar. <b>quebra</b> = a chamada usa um pino que a peça não tem.</p>
+</section>
+
+<section id="oficina">
+  <span class="eyebrow">Parte 7</span>
+  <h2>A oficina</h2>
+  <p>A Tríade é a <b>fábrica</b>: ela produz apps. A oficina é outra família de receitas, que <b>conserta e melhora a própria fábrica</b>. É nela que vivem os planos, as auditorias e os ciclos.</p>
+  <div class="linha">
+    <div class="st"><span class="eyebrow">passo 1</span><strong>Análise</strong><span>mede o que está bom e o que falta, com nota</span><code>melhoria init</code></div>
+    <div class="seta" aria-hidden="true">→</div>
+    <div class="st"><span class="eyebrow">passo 2</span><strong>Plano</strong><span>vira itens com nota atual e nota alvo</span><code>plan init</code></div>
+    <div class="seta" aria-hidden="true">→</div>
+    <div class="st"><span class="eyebrow">passo 3</span><strong>Aprovação</strong><span>você aprova o documento</span><code>plan aprovar</code></div>
+    <div class="seta" aria-hidden="true">→</div>
+    <div class="st"><span class="eyebrow">passo 4</span><strong>Execução</strong><span>tickets rodam em redomas: worktree, subagente ou ORCA</span><code>run-plan · orchestrate</code></div>
+    <div class="seta" aria-hidden="true">→</div>
+    <div class="st"><span class="eyebrow">passo 5</span><strong>Feito</strong><span>só depois de os guardas passarem e você conferir</span><code>docs/planos/feitos</code></div>
+  </div>
+  <p class="nota"><b>Regra da oficina:</b> aprovar um plano aprova o papel, não manda executar. Começar a obra é uma ordem separada.</p>
+  <h3>O ciclo de auditoria (4F)</h3>
+  <p>Para inspecionar uma ferramenta a fundo, a oficina roda quatro fases em sequência, cada uma numa redoma:</p>
+  <div class="fases">
+    <div class="fase"><b>1 · Inspetor</b><span>procura os defeitos e escreve o relatório técnico</span></div>
+    <div class="fase"><b>2 · Arquiteto</b><span>transforma os defeitos em plano de evolução, ticket por ticket</span></div>
+    <div class="fase"><b>3 · Construtor</b><span>executa os tickets com teste antes do código</span></div>
+    <div class="fase"><b>4 · Retorno</b><span>o inspetor volta com a mesma lista e confere se melhorou</span></div>
+  </div>
+  <p class="legenda">Nada é juntado ao projeto principal sozinho: depois da fase 4, a obra para e espera a sua aprovação. O mapa de peças que gerou este manual é a fase 1 do ciclo <code>mapa-pecas/ciclo-01</code>.</p>
+  <h3>Ferramentas avulsas da oficina</h3>
+  <div class="avulsas">
+    <div><b>Caça-defeito</b><span>investiga um bug por hipóteses, uma de cada vez</span><code>diagnose</code></div>
+    <div><b>Diário de sessões</b><span>registra e busca o que cada sessão fez</span><code>sessao</code></div>
+    <div><b>Livro do projeto</b><span>gera o livro-texto a partir dos arquivos reais, sem LLM</span><code>livro</code></div>
+    <div><b>Meta-guarda</b><span>confere a integridade do ecossistema inteiro</span><code>audit</code></div>
+    <div><b>Termômetro</b><span>roda os testes de cada ferramenta e anota o resultado</span><code>status --testes</code></div>
+    <div><b>Checagem da máquina</b><span>confere Git, Node, Docker e cia. em menos de 2 s</span><code>preflight-host</code></div>
+  </div>
+</section>
+
+<section id="cola">
+  <span class="eyebrow">Parte 8</span>
+  <h2>Cola rápida</h2>
+  <div class="duo">
+    <div class="box">
+      <h3>Alarme (hook)</h3>
+      <p><b>Quando</b> inspecionar. Ex.: <code>PreToolUse</code> toca antes de o agente abrir um subagente; o pre-commit toca antes de todo commit.</p>
+    </div>
+    <div class="box">
+      <h3>Guarda (gate)</h3>
+      <p><b>O que</b> inspecionar. Ex.: <code>G_SEGREDOS</code> procura senha; <code>G_TESTES_REAIS</code> roda os testes de verdade.</p>
+    </div>
+  </div>
+  <div class="tab-scroll">
+    <table>
+      <thead><tr><th>Se alguém disser…</th><th>Pense em…</th><th>Onde mora</th></tr></thead>
+      <tbody>
+        <tr><td>skill</td><td>manual de uma tarefa</td><td><code>componentes/compartilhado/skills/</code></td></tr>
+        <tr><td>regra, lei</td><td>regulamento da casa (pedido)</td><td><code>AGENTS.md</code></td></tr>
+        <tr><td>MCP</td><td>telefone para fora</td><td><code>.mcp.json</code></td></tr>
+        <tr><td>hook</td><td>alarme que toca num momento</td><td><code>.claude/settings.json</code>, pre-commit</td></tr>
+        <tr><td>gate</td><td>guarda que responde sim ou não</td><td><code>gates/G_*.py</code></td></tr>
+        <tr><td>script</td><td>máquina sem cérebro</td><td><code>scripts/</code>, dentro de cada ferramenta</td></tr>
+        <tr><td>ferramenta</td><td>pequena fábrica especialista</td><td><code>tools/aidd-*</code></td></tr>
+        <tr><td>handoff, contrato, schema</td><td>tamanho do pino do encaixe</td><td><code>componentes/compartilhado/specs/</code></td></tr>
+        <tr><td>fluxo, pipeline</td><td>receita de montagem</td><td><code>scripts/orquestrador_sincrono.py</code></td></tr>
+        <tr><td>worktree</td><td>redoma: cópia isolada do projeto para testar sem risco</td><td>criada e apagada por cada rodada</td></tr>
+        <tr><td>ecossistema.py, slash</td><td>painel de botões</td><td>raiz do projeto, <code>componentes/compartilhado/comandos/</code></td></tr>
+        <tr><td>template</td><td>molde de ferro</td><td><code>tools/*/templates/</code></td></tr>
+        <tr><td>components sync</td><td>entregador do almoxarifado</td><td><code>componentes/compartilhado/</code> → <code>.claude/</code>, <code>.agents/</code>…</td></tr>
+        <tr><td>sessão, handoff</td><td>diário de bordo</td><td><code>secoes/</code>, arquivos <code>HANDOFF_*.json</code></td></tr>
+        <tr><td>dependência externa</td><td>fornecedor de fora</td><td><code>gates/dependencias_externas.json</code></td></tr>
+        <tr><td>plano, ciclo, 4F</td><td>ordem de serviço da oficina</td><td><code>docs/planos/</code>, <code>docs/auditoria/</code></td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<footer>Números tirados de <code>docs/auditoria/mapa-pecas/catalogo-pecas.json</code>, gerado por <code>scripts/catalogo_pecas.py</code> em 26/09/2026.</footer>
+</div>
+</body>
+</html>
