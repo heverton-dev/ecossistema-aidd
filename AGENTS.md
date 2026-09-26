@@ -149,8 +149,13 @@ Canonical workflow skills available across all harnesses to eliminate vibe codin
 - `/aidd-grill`: Socratic interview protocol to resolve edge cases and invariants before code modification.
 - `/aidd-grill-docs`: Architecture-grounded questioning anchored in `MEMORY.md` and repository laws.
 - `/aidd-spec`: Deterministic technical specification generator with binary acceptance criteria.
-- `/aidd-tickets`: Atomic tracer-bullet task decomposition with bounded blast radius.
-- `/aidd-tdd`: Strict Red-Green-Refactor cycle with zero stubs invariant across all language runtimes.
+- `/aidd-tickets`: Vertical-slice tickets (one verifiable behavior each) with `Blocked by`.
+- `/aidd-tdd`: Agreed seams, then Red → Green loop; refactor at review; zero stubs, polyglot.
 - `/aidd-diagnose`: 5-phase scientific fault triage integrated with `code-review-graph`.
 - `/aidd-handoff`: Compact session context serialization directly into `secoes/`.
 - `/aidd-sessao`: Deterministic session ID and metadata persistence in `secoes/` for instant recovery.
+- `/aidd-escrita-agentes`: Writing guide for skills, AGENTS.md, CLAUDE.md.
+- `/aidd-retro`: Session retro; mistakes become proposed gates or review rules.
+- `/aidd-reexplica`: Re-explain last message in plain PT-BR via `CONTEXT.md`.
+- `/aidd-entrega`: Delivery template with before/after evidence and real exit codes.
+- `/aidd-wizard`: Bash wizard for steps only the human can do.
