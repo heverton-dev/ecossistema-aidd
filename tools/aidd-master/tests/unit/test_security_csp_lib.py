@@ -32,6 +32,68 @@ def test_csp_construido_via_biblioteca_secure():
     assert "connect-src" in val
 
 
+def _parse_csp(val):
+    diretores = {}
+    for parte in val.split(";"):
+        parte = parte.strip()
+        if not parte:
+            continue
+        chave, *valores = parte.split()
+        diretores[chave] = " ".join(valores)
+    return diretores
+
+
+def test_script_src_sem_unsafe_inline():
+    """PLAN-0025 Item 3 (Reversão de CSP relaxado): script-src nunca contém
+    'unsafe-inline' — com ou sem nonce por requisição."""
+    for headers in (
+        SecurityService.get_security_headers(),
+        SecurityService.get_security_headers(nonce="abc123"),
+    ):
+        d = _parse_csp(headers["Content-Security-Policy"])
+        assert "script-src" in d
+        assert "'unsafe-inline'" not in d["script-src"], (
+            "VULNERABILIDADE: 'unsafe-inline' em script-src proíbe o CSP relaxado"
+        )
+
+
+def test_nonce_por_requisicao_aplicado_no_header():
+    """CSP com nonce inclui 'nonce-<v>' em script-src; sem nonce, apenas a base."""
+    sem_nonce = _parse_csp(SecurityService.get_security_headers()["Content-Security-Policy"])
+    com_nonce = _parse_csp(SecurityService.get_security_headers(nonce="abc123")["Content-Security-Policy"])
+    assert "nonce-" not in sem_nonce["script-src"]
+    assert "'nonce-abc123'" in com_nonce["script-src"]
+
+
+def test_script_src_attr_permite_handlers_inline():
+    """Handlers inline (onclick/oninput/...) seguem permitidos via script-src-attr
+    'unsafe-inline', mantendo script-src estrito (sem unsafe-inline)."""
+    for headers in (
+        SecurityService.get_security_headers(),
+        SecurityService.get_security_headers(nonce="abc123"),
+    ):
+        d = _parse_csp(headers["Content-Security-Policy"])
+        assert d.get("script-src-attr") == "'unsafe-inline'"
+
+
+def test_new_nonce_genera_entropia_suficiente():
+    """new_nonce() retorna base64url sem padding com 128 bits de entropia (16 bytes)."""
+    n1 = SecurityService.new_nonce()
+    n2 = SecurityService.new_nonce()
+    assert len(n1) == 22
+    assert n1 != n2
+    assert "+" not in n1 and "/" not in n1 and "=" not in n1
+
+
+def test_inject_nonce_substitui_placeholder():
+    """inject_nonce() troca o placeholder __CSP_NONCE__ pelo nonce real do header."""
+    html = '<script type="module" nonce="__CSP_NONCE__">import x from "https://cdn.jsdelivr.net/x";</script>'
+    injetado = SecurityService.inject_nonce(html, "abc123")
+    assert '__CSP_NONCE__' not in injetado
+    assert 'nonce="abc123"' in injetado
+    assert SecurityService.inject_nonce(html) == html, "sem nonce o HTML deve ficar intacto"
+
+
 def test_csp_custom_directives():
     """Valida que diretivas customizadas podem ser adicionadas atraves do builder."""
     csp = SecurityService.build_csp(custom_directives={"frame_ancestors": "'none'"})

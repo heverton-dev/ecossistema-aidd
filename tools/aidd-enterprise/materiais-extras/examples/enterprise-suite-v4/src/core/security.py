@@ -63,14 +63,52 @@ class JWTService:
 
 
 class SecurityService:
+    # Placeholder injetado nos <script> inline dos HTML para receber um nonce
+    # por requisição (ver new_nonce/inject_nonce). O servidor o substitui pelo
+    # nonce real compartilhado com o header Content-Security-Policy.
+    CSP_NONCE_PLACEHOLDER = "__CSP_NONCE__"
+
+    _CSP_SCRIPT_SRC = ["'self'", "https://cdn.jsdelivr.net"]
+    # Handlers inline (onclick/oninput/...) seguem via script-src-attr; o
+    # elementos <script> ficam protegidos só por nonce por requisição.
+    _CSP_SCRIPT_SRC_ATTR = ["'unsafe-inline'"]
+    _CSP_STYLE_SRC = ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com", "https://cdn.jsdelivr.net"]
+    _CSP_FONT_SRC = ["'self'", "https://fonts.gstatic.com"]
+    _CSP_IMG_SRC = ["'self'", "data:"]
+    _CSP_CONNECT_SRC = ["'self'", "https://cdn.jsdelivr.net"]
+
     @staticmethod
-    def get_security_headers() -> dict:
+    def new_nonce() -> str:
+        """Gera um nonce CSP por requisição (base64url, padding removido)."""
+        return base64.urlsafe_b64encode(os.urandom(16)).decode("ascii").rstrip("=")
+
+    @staticmethod
+    def inject_nonce(content: str, nonce: str = None) -> str:
+        """Substitui o placeholder de nonce nos scripts inline pelo nonce real."""
+        if not nonce:
+            return content
+        return content.replace(SecurityService.CSP_NONCE_PLACEHOLDER, nonce)
+
+    @classmethod
+    def get_security_headers(cls, nonce: str = None) -> dict:
+        script_src = list(cls._CSP_SCRIPT_SRC)
+        if nonce:
+            script_src.append(f"'nonce-{nonce}'")
+        csp_value = (
+            "default-src 'self'; "
+            f"script-src {' '.join(script_src)}; "
+            f"script-src-attr {' '.join(cls._CSP_SCRIPT_SRC_ATTR)}; "
+            f"style-src {' '.join(cls._CSP_STYLE_SRC)}; "
+            f"font-src {' '.join(cls._CSP_FONT_SRC)}; "
+            f"img-src {' '.join(cls._CSP_IMG_SRC)}; "
+            f"connect-src {' '.join(cls._CSP_CONNECT_SRC)}"
+        )
         return {
             "X-Content-Type-Options": "nosniff",
             "X-Frame-Options": "DENY",
             "X-XSS-Protection": "1; mode=block",
             "Referrer-Policy": "strict-origin-when-cross-origin",
-            "Content-Security-Policy": "default-src 'self' 'unsafe-inline' 'unsafe-eval' https://fonts.googleapis.com https://fonts.gstatic.com https://cdn.jsdelivr.net; img-src 'self' data:; font-src 'self' https://fonts.gstatic.com;",
+            "Content-Security-Policy": csp_value,
             "Permissions-Policy": "geolocation=(), microphone=(), camera=()",
             "Strict-Transport-Security": "max-age=63072000; includeSubDomains; preload"
         }

@@ -751,15 +751,40 @@ class AppHandler(http.server.SimpleHTTPRequestHandler):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, directory=STATIC_DIR, **kwargs)
 
+    def _obter_nonce(self):
+        nonce = self.__dict__.get("_csp_nonce")
+        if nonce is None:
+            nonce = SecurityService.new_nonce()
+            self._csp_nonce = nonce
+        return nonce
+
+    def _write_html(self, content: str):
+        self.wfile.write(SecurityService.inject_nonce(content, self.__dict__.get("_csp_nonce")).encode("utf-8"))
+
     def end_headers(self):
-        for header, value in SecurityService.get_security_headers().items():
+        nonce = self._obter_nonce()
+        for header, value in SecurityService.get_security_headers(nonce=nonce).items():
             self.send_header(header, value)
         super().end_headers()
+
+    def _serve_index(self):
+        index_file = os.path.join(STATIC_DIR, "index.html")
+        if os.path.isfile(index_file):
+            self.send_response(200)
+            self.send_header("Content-Type", "text/html; charset=utf-8")
+            self.end_headers()
+            with open(index_file, "r", encoding="utf-8") as f:
+                self._write_html(f.read())
+            return True
+        return False
 
     def do_GET(self):
         parsed = urllib.parse.urlparse(self.path)
         path = parsed.path
         query = urllib.parse.parse_qs(parsed.query)
+
+        if path in ["/", "/index.html"] and self._serve_index():
+            return
 
         if path == "/openapi.json":
             self.send_response(200)
@@ -775,7 +800,7 @@ class AppHandler(http.server.SimpleHTTPRequestHandler):
             self.send_header("Content-Type", "text/html; charset=utf-8")
             self.end_headers()
             html = registry.get_swagger_html("Logística Hub Suite v5.1 — API Reference Studio")
-            self.wfile.write(html.encode("utf-8"))
+            self._write_html(html)
             return
 
         # 2. Central de Documentação / Guia do Utilizador
@@ -786,13 +811,13 @@ class AppHandler(http.server.SimpleHTTPRequestHandler):
                 self.send_header("Content-Type", "text/html; charset=utf-8")
                 self.end_headers()
                 with open(guia_path, "r", encoding="utf-8") as f:
-                    self.wfile.write(f.read().encode("utf-8"))
+                    self._write_html(f.read())
                 return
             html = registry.get_swagger_html("Logística Hub Suite v5.1 — API Reference Studio")
             self.send_response(200)
             self.send_header("Content-Type", "text/html; charset=utf-8")
             self.end_headers()
-            self.wfile.write(html.encode("utf-8"))
+            self._write_html(html)
             return
 
         # 3. Webhook Studio
@@ -801,7 +826,7 @@ class AppHandler(http.server.SimpleHTTPRequestHandler):
             self.send_header("Content-Type", "text/html; charset=utf-8")
             self.end_headers()
             html = webhook_dispatcher.get_studio_html("Logística Hub Suite v5.1 — Webhook Configuration Studio")
-            self.wfile.write(html.encode("utf-8"))
+            self._write_html(html)
             return
 
         # 4. MCP Studio
@@ -809,7 +834,7 @@ class AppHandler(http.server.SimpleHTTPRequestHandler):
             self.send_response(200)
             self.send_header("Content-Type", "text/html; charset=utf-8")
             self.end_headers()
-            self.wfile.write(mcp_engine.get_portal_html().encode("utf-8"))
+            self._write_html(mcp_engine.get_portal_html())
             return
 
         if path in registry.routes.get("GET", {}):

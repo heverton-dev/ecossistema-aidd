@@ -104,10 +104,24 @@ except Exception as exc:
 # OWASP Security Headers via Middleware (substitui handler manual de 200 linhas)
 @app.middleware("http")
 async def owasp_security_headers(request: Request, call_next):
+    # Nonce CSP por requisição: vai no header e nos <script> inline das páginas.
+    nonce = SecurityService.new_nonce()
+    request.state.csp_nonce = nonce
     response: Response = await call_next(request)
-    for header, value in SecurityService.get_security_headers().items():
+    if request.url.path in (app.docs_url, app.redoc_url) and response.headers.get("content-type", "").startswith("text/html"):
+        # Páginas geradas pelo próprio FastAPI (conteúdo estático, sem dado do usuário).
+        body = b"".join([chunk async for chunk in response.body_iterator]).decode("utf-8")
+        headers = {k: v for k, v in response.headers.items() if k.lower() != "content-length"}
+        response = HTMLResponse(body.replace("<script>", f'<script nonce="{nonce}">'), status_code=response.status_code, headers=headers)
+    for header, value in SecurityService.get_security_headers(nonce=nonce).items():
         response.headers[header] = value
     return response
+
+
+def _html_com_nonce(request: Request, content) -> HTMLResponse:
+    if isinstance(content, bytes):
+        content = content.decode("utf-8")
+    return HTMLResponse(SecurityService.inject_nonce(content, getattr(request.state, "csp_nonce", None)))
 
 # CORS — restrito em producao, aberto em dev
 app.add_middleware(
@@ -519,19 +533,20 @@ def get_logs_auditoria():
 # 8. PLATAFORMA ENDPOINTS (HTML Studios)
 # ---------------------------------------------------------------------------
 @app.get("/", include_in_schema=False)
-async def serve_index():
+async def serve_index(request: Request):
     index_file = os.path.join(STATIC_DIR, "index.html")
     if os.path.exists(index_file):
-        return HTMLResponse(open(index_file, "rb").read())
+        with open(index_file, "rb") as f:
+            return _html_com_nonce(request, f.read())
     return HTMLResponse("<h1>AIDD Enterprise Suite v5.1</h1>")
 
 @app.get("/webhooks", include_in_schema=False)
-async def serve_webhook_studio():
-    return HTMLResponse(webhook_dispatcher.get_studio_html("AIDD Enterprise Suite — Webhook Studio"))
+async def serve_webhook_studio(request: Request):
+    return _html_com_nonce(request, webhook_dispatcher.get_studio_html("AIDD Enterprise Suite — Webhook Studio"))
 
 @app.get("/mcp", include_in_schema=False)
-async def serve_mcp_studio():
-    return HTMLResponse(mcp_engine.get_studio_html("AIDD Enterprise Suite — MCP Native Server Studio"))
+async def serve_mcp_studio(request: Request):
+    return _html_com_nonce(request, mcp_engine.get_studio_html("AIDD Enterprise Suite — MCP Native Server Studio"))
 
 @app.post("/mcp", include_in_schema=False)
 async def handle_mcp(request: Request):

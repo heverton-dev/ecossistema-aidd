@@ -296,12 +296,23 @@ class AppHandler(http.server.SimpleHTTPRequestHandler):
         self._last_status_code = code
         super().send_response(code, message)
 
+    def _obter_nonce(self):
+        nonce = self.__dict__.get("_csp_nonce")
+        if nonce is None:
+            nonce = SecurityService.new_nonce()
+            self._csp_nonce = nonce
+        return nonce
+
+    def _write_html(self, content: str):
+        self.wfile.write(SecurityService.inject_nonce(content, self.__dict__.get("_csp_nonce")).encode("utf-8"))
+
     def end_headers(self):
+        nonce = self._obter_nonce()
         trace_id = getattr(self, "_trace_id", None) or correlation_id_var.get()
         if trace_id and trace_id != "N/A":
             self.send_header("X-Trace-Id", trace_id)
         self.send_header("Access-Control-Allow-Origin", "*")
-        for header, value in SecurityService.get_security_headers().items():
+        for header, value in SecurityService.get_security_headers(nonce=nonce).items():
             self.send_header(header, value)
         super().end_headers()
 
@@ -393,8 +404,8 @@ class AppHandler(http.server.SimpleHTTPRequestHandler):
                 self.send_response(200)
                 self.send_header("Content-Type", "text/html; charset=utf-8")
                 self.end_headers()
-                with open(index_file, "rb") as f:
-                    self.wfile.write(f.read())
+                with open(index_file, "r", encoding="utf-8") as f:
+                    self._write_html(f.read())
                 return
 
         if path.startswith("/static/"):
@@ -405,8 +416,12 @@ class AppHandler(http.server.SimpleHTTPRequestHandler):
                 self.send_response(200)
                 self.send_header("Content-Type", f"{content_type}; charset=utf-8")
                 self.end_headers()
-                with open(target_f, "rb") as f:
-                    self.wfile.write(f.read())
+                if target_f.endswith(".html"):
+                    with open(target_f, "r", encoding="utf-8") as f:
+                        self._write_html(f.read())
+                else:
+                    with open(target_f, "rb") as f:
+                        self.wfile.write(f.read())
                 return
 
         if path == "/openapi.json":
@@ -423,7 +438,7 @@ class AppHandler(http.server.SimpleHTTPRequestHandler):
             self.send_header("Content-Type", "text/html; charset=utf-8")
             self.end_headers()
             html = registry.get_swagger_html("aidd_project — OpenAPI/Swagger Studio")
-            self.wfile.write(html.encode("utf-8"))
+            self._write_html(html)
             return
 
         # 2. Central de Documentação e Guia do Utilizador
@@ -434,13 +449,13 @@ class AppHandler(http.server.SimpleHTTPRequestHandler):
                 self.send_header("Content-Type", "text/html; charset=utf-8")
                 self.end_headers()
                 with open(guia_file, "r", encoding="utf-8") as f:
-                    self.wfile.write(f.read().encode("utf-8"))
+                    self._write_html(f.read())
                 return
             html = registry.get_swagger_html("aidd_project — Swagger Studio")
             self.send_response(200)
             self.send_header("Content-Type", "text/html; charset=utf-8")
             self.end_headers()
-            self.wfile.write(html.encode("utf-8"))
+            self._write_html(html)
             return
 
         # 3. Webhook Studio
@@ -449,7 +464,7 @@ class AppHandler(http.server.SimpleHTTPRequestHandler):
             self.send_header("Content-Type", "text/html; charset=utf-8")
             self.end_headers()
             html = webhook_dispatcher.get_studio_html("aidd_project — Webhook Studio")
-            self.wfile.write(html.encode("utf-8"))
+            self._write_html(html)
             return
 
         # 4. MCP Studio
@@ -458,7 +473,7 @@ class AppHandler(http.server.SimpleHTTPRequestHandler):
             self.send_header("Content-Type", "text/html; charset=utf-8")
             self.end_headers()
             html = mcp_server.get_studio_html("aidd_project — MCP Native Studio")
-            self.wfile.write(html.encode("utf-8"))
+            self._write_html(html)
             return
 
         if path == "/health":

@@ -331,29 +331,24 @@ def test_materializador_hook_escreve_alvo_espelhos_e_canonico(tmp_path):
 
 
 def test_cli_inject_hook_ponta_a_ponta(tmp_path):
+    """A CLI roda em subprocesso, fora do alcance do monkeypatch do conftest:
+    AIDD_ECOSSISTEMA_ROOT isola a raiz canônica e o repo real fica intocado."""
     aidd_py = os.path.join(_ROOT, "scripts", "aidd.py")
-    try:
-        res = subprocess.run(
-            [sys.executable, aidd_py, "inject", "hook", "ci-audit", "-d", "Hook de auditoria de CI", "--dir", str(tmp_path)],
-            capture_output=True, text=True, encoding="utf-8", errors="replace",
-        )
-        assert res.returncode == 0, res.stdout + res.stderr
-        assert (tmp_path / ".agent" / "hooks" / "ci-audit" / "ci-audit.json").is_file()
-        assert (tmp_path / ".claude" / "hooks" / "ci-audit" / "ci-audit.json").is_file()
-    finally:
-        repo_root = Path(_ROOT).parents[1]
-        import shutil
-        for p in [
-            repo_root / "componentes" / "aidd-master" / "hooks" / "ci-audit",
-            repo_root / "tools" / "aidd-master" / ".agent" / "hooks" / "ci-audit",
-            repo_root / "tools" / "aidd-master" / ".agents" / "hooks" / "ci-audit",
-            repo_root / "tools" / "aidd-master" / ".claude" / "hooks" / "ci-audit",
-            repo_root / "tools" / "aidd-master" / ".gemini" / "hooks" / "ci-audit",
-            repo_root / "tools" / "aidd-master" / ".mimocode" / "hooks" / "ci-audit",
-            repo_root / "tools" / "aidd-master" / ".opencode" / "hooks" / "ci-audit",
-        ]:
-            if p.exists():
-                shutil.rmtree(p, ignore_errors=True)
+    raiz_fake = tmp_path / "_ecossistema_fake_root"
+    projeto = tmp_path / "projeto"
+    projeto.mkdir()
+    repo_canonico = Path(_ROOT).parents[1] / "componentes" / "aidd-master"
+    existia_antes = repo_canonico.exists()
+    res = subprocess.run(
+        [sys.executable, aidd_py, "inject", "hook", "ci-audit", "-d", "Hook de auditoria de CI", "--dir", str(projeto)],
+        capture_output=True, text=True, encoding="utf-8", errors="replace",
+        env={**os.environ, "AIDD_ECOSSISTEMA_ROOT": str(raiz_fake)},
+    )
+    assert res.returncode == 0, res.stdout + res.stderr
+    assert (projeto / ".agent" / "hooks" / "ci-audit" / "ci-audit.json").is_file()
+    assert (projeto / ".claude" / "hooks" / "ci-audit" / "ci-audit.json").is_file()
+    assert (raiz_fake / "componentes" / "aidd-master" / "hooks" / "ci-audit" / "ci-audit.json").is_file()
+    assert repo_canonico.exists() == existia_antes, "inject hook gravou no repo real"
 
 
 def test_mcp_sem_command_mantem_comportamento_legado(tmp_path):
