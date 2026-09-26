@@ -4,13 +4,16 @@
   "totais": {
     "ferramentas": 8,
     "comandos_cli": 69,
-    "skills": 75,
-    "comandos_slash": 16,
+    "skills": 37,
+    "skills_nossas": 37,
+    "skills_terceiros_copiadas": 0,
+    "skills_terceiros_registradas": 20,
+    "comandos_slash": 17,
     "mcps_registrados": 6,
     "mcps_internos": 3,
     "hooks": 3,
-    "gates_nomes": 86,
-    "gates_arquivos": 132,
+    "gates_nomes": 87,
+    "gates_arquivos": 133,
     "contratos": 8,
     "etapas_receita": 7,
     "encaixes_quebrados": 2
@@ -266,380 +269,249 @@
   ],
   "skills": [
     {
-      "id": "agents-sdk",
-      "descricao": "Build, debug, or review Cloudflare Agents SDK applications using the agents package.",
-      "linhas": 203
+      "id": "aidd-agent-writing",
+      "descricao": "Guides writing any document an agent consumes (context pointers, information hierarchy, completion criteria, pruning). Use when creating or editing a skill, or modifying AGENTS.md or CLAUDE.md, or the user says \"escrever skill\", \"escrita para agentes\".",
+      "linhas": 64,
+      "terceiro": false
     },
     {
-      "id": "aidd-auditor-4f-runner",
-      "descricao": "Motor agnóstico do Pipeline Linear de Auditoria 4 Fases (Inspetor, Arquiteto, Construtor, Retorno). Executa em Git Worktrees efêmeras.",
-      "linhas": 33
+      "id": "aidd-audit-4f",
+      "descricao": "Runs the linear 4-phase audit pipeline (Inspector, Architect, Builder, Return) on an ecosystem tool through the 15-D lens, in a cycle folder docs/auditoria/<tool>/ciclo-NN/ and an own branch, merging only on human approval. Use when the user wants to audit a tool, or types \"/audit-4f\", \"/aidd-auditor\", \"audit-4f\", \"auditoria 4F\", \"auditar ferramenta\", \"rodar pipeline de auditoria\".",
+      "linhas": 32,
+      "terceiro": false
     },
     {
       "id": "aidd-bridge",
-      "descricao": "Dispara o Fluxo 03 (Low-Code / Apps Unificadas | Slash: /bridge) da Tríade Canônica. Desmonte de lock-in Lovable/v0/Bolt e migração PostgreSQL.",
-      "linhas": 38
+      "descricao": "Runs the atomic aidd-bridge tool operations that free low-code projects (Lovable, v0, Bolt) for self-hosting - scan, Supabase-to-PostgreSQL conversion, app merge and VPS packaging. Use when the user asks for one bridge step, or says \"bridge\", \"/bridge\", \"scan do lovable\", \"converter banco\", \"empacotar para VPS\". For the full Flow 03 use aidd-freedom.",
+      "linhas": 28,
+      "terceiro": false
     },
     {
-      "id": "aidd-bridge-runner",
-      "descricao": "Extracts, unifies, and packages low-code projects (Lovable, v0, Bolt) for VPS deployment with PostgreSQL.",
-      "linhas": 29
+      "id": "aidd-components",
+      "descricao": "Creates or updates agnostic ecosystem components (skills, commands, hooks, mcps, specs, configs, sub-agents, scripts) in the single source componentes/ and distributes them to every harness with components sync and verify. Use when the user asks to create, update or sync a component, or says \"componente\", \"sincronizar componentes\", \"components sync\", \"distribuir para os harnesses\".",
+      "linhas": 33,
+      "terceiro": false
     },
     {
-      "id": "aidd-componentes",
-      "descricao": "Creates, updates, and synchronizes agnostic components across all ecosystem harnesses.",
-      "linhas": 35
+      "id": "aidd-delivery",
+      "descricao": "Provides the delivery template with before/after evidence and real exit codes, rollback door and blast radius. Use when writing a long commit body, a PR body, a RELATORIO-CONSTRUTOR.md entry, or closing a ticket, or the user says \"entrega\", \"fechar ticket\".",
+      "linhas": 49,
+      "terceiro": false
     },
     {
-      "id": "aidd-dependencias",
-      "descricao": "Installs and verifies third-party skills and MCPs against dependencias_externas.json.",
-      "linhas": 25
+      "id": "aidd-dependencies",
+      "descricao": "Registers, installs and verifies third-party skills and MCP servers the agent itself uses in this repository (e.g. impeccable, Cloudflare skills, Playwright, GitHub) through gates/dependencias_externas.json. Use when the user wants to bootstrap after a clone, add a third-party skill or MCP, or says \"/dependencia\", \"dependência\", \"instalar skill de terceiro\", \"adicionar MCP\". Not for MCPs that ship inside a generated product (that is aidd-mcp).",
+      "linhas": 36,
+      "terceiro": false
     },
     {
       "id": "aidd-diagnose",
-      "descricao": "Systematic scientific fault triage using hypothesis isolation, regression testing, and code review graph.",
-      "linhas": 57
+      "descricao": "Systematic scientific fault triage using hypothesis isolation, regression testing, and code review graph. Use when the user reports a bug, a failing test or unexpected behavior, or says \"diagnosticar\", \"investigar bug\", \"por que quebrou\".",
+      "linhas": 57,
+      "terceiro": false
     },
     {
-      "id": "aidd-dispatch-runner",
-      "descricao": "Despacha fatias verticais VSA em Git Worktrees efêmeras com isolamento estrito, verificação de Quality Gates e convergência master.",
-      "linhas": 54
+      "id": "aidd-dispatch",
+      "descricao": "Dispatches VSA vertical slices into ephemeral git worktrees in topological (DAG) batches, with strict file boundaries, quality gates per slice and safe convergence into the aidd-master modular monolith. Use when the user wants to execute a PLANNER.json or vsa_dispatch.json as slices, or types \"/dispatch\", \"/aidd-dispatch\", \"dispatch\", \"despachar fatias\".",
+      "linhas": 37,
+      "terceiro": false
     },
     {
-      "id": "aidd-enterprise-runner",
-      "descricao": "Injects and audits mission-critical enterprise components with SHA-256 validation.",
-      "linhas": 24
+      "id": "aidd-enterprise",
+      "descricao": "Injects and audits mission-critical components with JSON Schema validation, SHA-256 integrity and automatic rollback. Use when the user wants to inject a certified skill, rule, mcp, spec, config, hook or agent, or says \"enterprise\", \"/enterprise\", \"injetar componente\", \"blindagem SHA-256\".",
+      "linhas": 23,
+      "terceiro": false
     },
     {
-      "id": "aidd-entrega",
-      "descricao": "Delivery template with evidence. Use when writing a long commit body, a PR body, a RELATORIO-CONSTRUTOR.md entry, or closing a ticket.",
-      "linhas": 49
+      "id": "aidd-evolution",
+      "descricao": "Runs the technical evolution pipeline that executes, ticket by ticket, the PLANO-EVOLUCAO of an audit cycle in ephemeral git worktrees, with a gate before every commit and merge only on human approval. Use when the user wants to evolve a tool from its evolution plan, or types \"/evolucao\", \"/aidd-evolucao\", \"evolucao\", \"evoluir ferramenta\", \"rodar pipeline de evolução\".",
+      "linhas": 42,
+      "terceiro": false
     },
     {
-      "id": "aidd-escrita-agentes",
-      "descricao": "Writing documents agents consume. Use when creating or editing a skill, or modifying AGENTS.md or CLAUDE.md.",
-      "linhas": 64
+      "id": "aidd-factory",
+      "descricao": "Generates a complete multi-service application stack (gateway, frontend, compose, webhooks, docs) from a PLANO-INFRAESTRUTURA.json produced by aidd-ops. Use when the user wants to go from an infrastructure plan to a deployable app, or says \"factory\", \"/factory\", \"gerar stack\", \"gerar gateway\", \"gerar frontend\", \"gerar compose\".",
+      "linhas": 38,
+      "terceiro": false
     },
     {
-      "id": "aidd-evolucao-runner",
-      "descricao": "Motor agnóstico do Pipeline de Evolução Técnica gerado a partir do Plano de Evolução. Executa fases sequenciais de tickets em Git Worktrees efêmeras.",
-      "linhas": 41
-    },
-    {
-      "id": "aidd-factory-runner",
-      "descricao": "Application code and integration generator for multi-service stacks.",
-      "linhas": 43
-    },
-    {
-      "id": "aidd-forge-runner",
-      "descricao": "Executes bootstrap and governance hardening on target repositories using aidd-forge.",
-      "linhas": 26
+      "id": "aidd-forge",
+      "descricao": "Bootstraps and hardens a target repository with the aidd-forge governance kit (quality gates, git hooks, token-economy rules, phase isolation). Use when the user asks to bootstrap, initialize or harden a project, or says \"forge\", \"/forge\", \"blindar projeto\", \"inicializar governança\".",
+      "linhas": 23,
+      "terceiro": false
     },
     {
       "id": "aidd-freedom",
-      "descricao": "Dispara o Fluxo 03 (Low-Code / Apps Unificadas | Slash: /freedom) da Tríade Canônica. Desmonte de lock-in Lovable/v0/Bolt e migração PostgreSQL.",
-      "linhas": 36
+      "descricao": "Runs Triad Flow 03 (low-code liberation) end to end - removes Lovable, v0 or Bolt vendor lock-in, migrates Supabase to PostgreSQL through aidd-bridge while keeping the UI, then master, enterprise and ops. Use when the user wants to free or self-host a low-code app, or types \"/freedom\", \"freedom\", \"libertar app lovable\", \"desacoplar app low-code\", \"migrar v0 ou bolt para postgresql\". For a single bridge step use aidd-bridge.",
+      "linhas": 45,
+      "terceiro": false
     },
     {
-      "id": "aidd-generator-runner",
-      "descricao": "Triggers autonomous software generation via 8-phase pipeline using aidd-generator.",
-      "linhas": 28
+      "id": "aidd-generator",
+      "descricao": "Runs the aidd-generator 8-phase pipeline that turns a natural-language idea into tested software. Use when the user wants to generate an app from an idea, or says \"generate\", \"/generate\", \"gerar software\", \"gerar app a partir da ideia\".",
+      "linhas": 27,
+      "terceiro": false
     },
     {
       "id": "aidd-grill",
-      "descricao": "Relentless Socratic interview protocol to resolve assumptions, trade-offs, and invariants before writing code.",
-      "linhas": 28
+      "descricao": "Socratic interview that resolves assumptions, trade-offs and invariants before code. Use when requirements are open, or \"grill\".",
+      "linhas": 28,
+      "terceiro": false
     },
     {
       "id": "aidd-grill-docs",
-      "descricao": "Socratic interview grounded in existing repository architecture, domain documentation, and invariant rules.",
-      "linhas": 20
+      "descricao": "Socratic interview grounded in existing repository architecture, domain documentation, and invariant rules. Use when a change must be checked against MEMORY.md, AGENTS.md laws or domain docs before coding, or the user says \"grill com docs\", \"confrontar com a arquitetura\".",
+      "linhas": 20,
+      "terceiro": false
     },
     {
       "id": "aidd-handoff",
-      "descricao": "Serializes and compacts session state into a structured markdown artifact for context rotation or agent handover.",
-      "linhas": 23
+      "descricao": "Serializes and compacts session state into a structured markdown artifact for context rotation or agent handover. Use when the context is heavy, the session ends or work passes to another agent, or the user says \"handoff\", \"passar o bastão\", \"salvar contexto\".",
+      "linhas": 23,
+      "terceiro": false
     },
     {
-      "id": "aidd-livro-texto",
-      "descricao": "Generates and updates auditable corporate textbooks as PDF via pandoc and typst.",
-      "linhas": 128
+      "id": "aidd-improvement",
+      "descricao": "Deeply investigates a requested ecosystem improvement in the real code and writes a scored evaluation report (current grade 0-10 with evidence) in docs/melhorias/. Step 1 of the melhoria -> plan -> orchestrate flow. Use when the user asks to analyze, evaluate or grade an improvement or refactor before planning, or to re-analyze an existing plan, or types \"/melhoria\", \"melhoria\", \"analisar melhoria\", \"avaliar melhoria\", \"reanalisar plano\".",
+      "linhas": 62,
+      "terceiro": false
     },
     {
-      "id": "aidd-master-runner",
-      "descricao": "Scaffolds and integrates clean vertical slices in aidd-master architecture.",
-      "linhas": 23
+      "id": "aidd-master",
+      "descricao": "Scaffolds and integrates self-contained vertical slices in the aidd-master modular monolith (models, services, REST routes, contract tests, UI). Use when the user wants a new module or slice, or says \"master\", \"/master\", \"nova fatia vertical\", \"adicionar módulo\".",
+      "linhas": 21,
+      "terceiro": false
     },
     {
       "id": "aidd-mcp",
-      "descricao": "Scaffolds and exposes new Model Context Protocol (MCP) servers across harnesses.",
-      "linhas": 22
-    },
-    {
-      "id": "aidd-melhoria",
-      "descricao": "Deeply analyzes code improvements from natural language and produces structured evaluation reports.",
-      "linhas": 29
+      "descricao": "Builds a new Model Context Protocol (MCP) server that ships inside an ecosystem tool or generated product, with its single source in componentes/<scope>/mcps/<name>/ and distribution through components sync. Use when the user wants to create or change an own MCP server, or says \"criar MCP\", \"novo servidor MCP\", \"expor ferramenta via MCP\". Not for third-party MCPs the agent consumes (that is aidd-dependencies).",
+      "linhas": 25,
+      "terceiro": false
     },
     {
       "id": "aidd-open",
-      "descricao": "Dispara o Fluxo 02 (Motores Open-Source | Slash: /open) da Tríade Canônica. Curadoria e integração de engines open-source em fatias VSA.",
-      "linhas": 36
+      "descricao": "Runs Triad Flow 02 (open-source engines) end to end - curates tested open-source engines, integrates them as VSA slices through aidd-factory, then master, enterprise and ops. Use when the user wants an app built on open-source engines, or types \"/open\", \"/aidd-open\", \"open\", \"criar com open-source\", \"integrar motor open source\", \"gerar app via factory\".",
+      "linhas": 45,
+      "terceiro": false
     },
     {
-      "id": "aidd-ops-runner",
-      "descricao": "Agentic infrastructure meta-orchestrator for cloud and container deployments.",
-      "linhas": 27
+      "id": "aidd-ops",
+      "descricao": "Runs the aidd-ops agentic infrastructure pipeline (VPS sizing, SSH hardening, Docker, Cloudflare, deploy). Use when the user wants to provision or deploy infrastructure, or says \"ops\", \"/ops\", \"infraestrutura\", \"subir na VPS\", \"provisionar\".",
+      "linhas": 24,
+      "terceiro": false
     },
     {
       "id": "aidd-orca",
-      "descricao": "Executes multi-phase ORCA plans using isolated Git worktrees and quality gates.",
-      "linhas": 24
+      "descricao": "Native git-worktree engine that executes multi-phase plans (00-PROCESSO-E-DECISOES.md + NN-*.md) with ephemeral worktrees, per-front harness choice, local gate audit before merge and an anti-loop circuit breaker. Called by aidd-orchestrate when the user picks the native git worktree environment. Use when that environment was chosen, or the user says \"worktree nativo\", \"motor de worktree\", \"orca nativo\".",
+      "linhas": 43,
+      "terceiro": false
     },
     {
       "id": "aidd-orchestrate",
-      "descricao": "Routes plan execution between ORCA app, agent worktrees, and native execution engines.",
-      "linhas": 21
+      "descricao": "Routes the execution of an approved plan to one of three environments (ORCA app via orca-cli, subagents of this session, or native git worktrees), compiles the per-environment Flight Plan and runs it only after explicit approval. Step 3 of the melhoria -> plan -> orchestrate flow. Use when the user wants to execute an approved plan, or types \"/orchestrate\", \"orchestrate\", \"executar plano\", \"orquestrar plano\", \"plano de voo\".",
+      "linhas": 56,
+      "terceiro": false
     },
     {
-      "id": "aidd-orchestrator-runner",
-      "descricao": "Orquestrador mestre síncrono da Tríade Canônica. Executa qualquer fluxo com validação formal de contratos de handoff.",
-      "linhas": 33
-    },
-    {
-      "id": "aidd-pipeline-runner",
-      "descricao": "Executa pipelines determinísticos da Tríade em Git Worktrees efêmeras com barreira de sincronização (Join Barrier) a partir de planos Markdown ou manifestos JSON.",
-      "linhas": 76
+      "id": "aidd-pipeline",
+      "descricao": "Runs the deterministic Triad pipeline in ephemeral git worktrees with a join barrier, from a Markdown plan (run-plan) or a JSON handoff manifest (pipeline). Use when the user wants to execute plan tickets in parallel worktrees, or types \"/run-plan\", \"/pipeline\", \"run-plan\", \"pipeline\", \"rodar plano em worktrees\".",
+      "linhas": 52,
+      "terceiro": false
     },
     {
       "id": "aidd-plan",
-      "descricao": "Transforms analysis reports into structured audit/evolution plans in docs/planos/.",
-      "linhas": 21
+      "descricao": "Creates and validates ecosystem improvement plan folders in docs/planos/ (PLAN-NNNN-<name>, items in draft with current/target grades and evidence), then approves them only on explicit user approval. Step 2 of the melhoria -> plan -> orchestrate flow. Use when the user wants to turn a report or request into a plan, or types \"/plan\", \"plan\", \"criar plano\", \"gerar plano\", \"aprovar plano\". Not for the app blueprint PLANNER.json (that is aidd-planner).",
+      "linhas": 64,
+      "terceiro": false
     },
     {
-      "id": "aidd-planner-runner",
-      "descricao": "Generates and validates canonical SDD/BDD project blueprints and fuels the Triad flows (Generator, Factory, Bridge).",
-      "linhas": 39
-    },
-    {
-      "id": "aidd-planos",
-      "descricao": "Generates standard templates and drafts for audit, evolution, or test plans.",
-      "linhas": 31
+      "id": "aidd-planner",
+      "descricao": "Generates and validates the canonical SDD/BDD app blueprint (PLANNER.json) that fuels the Triad flows (Generator, Factory, Bridge). Use when the user wants architecture intake, a project blueprint or a spec for a new app, or says \"planner\", \"pré-plano\", \"intake\", \"blueprint\", \"SDD\", \"BDD\". Not for ecosystem improvement plans in docs/planos/ (that is aidd-plan).",
+      "linhas": 40,
+      "terceiro": false
     },
     {
       "id": "aidd-pure",
-      "descricao": "Dispara o Fluxo 01 (Do Zero Puro | Slash: /pure) da Tríade Canônica. Geração autoral via TDD Red-Green estrito e Monólito Modular VSA.",
-      "linhas": 36
+      "descricao": "Runs Triad Flow 01 (build from scratch) end to end - forge, planner, generator with strict TDD Red-Green, then master, enterprise and ops. Use when the user wants a brand-new project from zero, or types \"/pure\", \"pure\", \"criar projeto do zero\", \"projeto do zero puro\", \"novo projeto com TDD\".",
+      "linhas": 43,
+      "terceiro": false
     },
     {
-      "id": "aidd-reexplica",
-      "descricao": "Re-explain the last message in plain PT-BR using the CONTEXT.md glossary. Use when the user says they did not understand, \"não entendi\", \"explica de novo\", or \"reexplica\".",
-      "linhas": 19
+      "id": "aidd-reexplain",
+      "descricao": "Re-explains the last message in plain PT-BR using the CONTEXT.md glossary. Use when the user says they did not understand, \"não entendi\", \"explica de novo\", or \"reexplica\".",
+      "linhas": 19,
+      "terceiro": false
     },
     {
       "id": "aidd-retro",
       "descricao": "Retrospective on a coding session. Turns each agent mistake into a proposed gate (mechanical) or review rule (judgement). Use when the user asks for a retro or post-mortem of a session.",
-      "linhas": 37
+      "linhas": 37,
+      "terceiro": false
     },
     {
-      "id": "aidd-sessao",
-      "descricao": "Registra deterministicamente o ID e metadados da sessão agêntica atual em secoes/historico_sessoes.json e secoes/INDICE-SESSOES.md para rastreabilidade e recuperação de contexto.",
-      "linhas": 50
+      "id": "aidd-session",
+      "descricao": "Records the current agent session ID and metadata deterministically in secoes/historico_sessoes.json and secoes/INDICE-SESSOES.md for traceability and context recovery. Use when the user wants to save or see the session ID, or types \"/sessao\", \"/session\", \"/id\", \"/id-sessao\", \"/salvar-id\", \"salve o id desta sessão\", \"qual o id desta conversa\".",
+      "linhas": 25,
+      "terceiro": false
     },
     {
       "id": "aidd-skills",
-      "descricao": "Creates, optimizes, and evaluates agent skills across all ecosystem harnesses.",
-      "linhas": 23
+      "descricao": "Creates, improves and evaluates own agent skills following docs/protocolos/CONVENCAO-AUTORIA-SKILLS.md (aidd-<subject> name, \"Use when\" description, compact English body, single source in componentes/) and distributes them to every harness. Use when the user wants to create, edit, rename or review a skill, or says \"criar skill\", \"nova skill\", \"melhorar skill\", \"skill-creator\".",
+      "linhas": 29,
+      "terceiro": false
     },
     {
       "id": "aidd-spec",
-      "descricao": "Synthesizes discussions, requirements, and decisions into a deterministic, executable technical specification.",
-      "linhas": 30
+      "descricao": "Turns discussions and decisions into an executable spec with binary acceptance criteria. Use when writing a spec, or \"especificação\".",
+      "linhas": 30,
+      "terceiro": false
     },
     {
       "id": "aidd-tdd",
-      "descricao": "Strict Test-Driven Development protocol (Red-Green loop, refactor at review) with agreed test seams, zero stubs and polyglot runtime support.",
-      "linhas": 46
+      "descricao": "Strict TDD with agreed seams, Red-Green loop, refactor at review, zero stubs. Use when implementing test first, or \"tdd\".",
+      "linhas": 46,
+      "terceiro": false
+    },
+    {
+      "id": "aidd-textbook",
+      "descricao": "Generates and updates auditable corporate textbooks as PDF (pandoc + typst) with a macro-meso-micro structure, per-chapter traceability and a deterministic audit. Works in any repository. Use when the user wants to write or update a textbook, manual or book in PDF, or types \"/aidd-livro-texto\", \"livro-texto\", \"gerar livro\", \"atualizar livro\".",
+      "linhas": 103,
+      "terceiro": false
     },
     {
       "id": "aidd-tickets",
-      "descricao": "Decomposes specifications into atomic, incremental tracer-bullet tasks with bounded blast radius.",
-      "linhas": 42
+      "descricao": "Splits a spec into vertical-slice tracer-bullet tickets with Blocked by. Use when breaking work into tasks, or \"tickets\".",
+      "linhas": 42,
+      "terceiro": false
     },
     {
       "id": "aidd-wizard",
       "descricao": "Generate an interactive bash wizard that walks a human through steps only they can perform. Use when provisioning infrastructure (VPS, Cloudflare), setting up credentials or CI secrets, walking a third-party dashboard, or running a one-off migration or cutover. Use only for steps the agent cannot perform itself.",
-      "linhas": 35
-    },
-    {
-      "id": "cloudflare",
-      "descricao": "Discover and choose Cloudflare products for apps, APIs, AI agents, storage, networking, and security. Use for architecture and product selection, including when the user describes a need without naming a Cloudflare product; then find the relevant skill or documentation.",
-      "linhas": 138
-    },
-    {
-      "id": "cloudflare-email-service",
-      "descricao": "Implement or troubleshoot Cloudflare Email Sending and Email Routing integrations and their delivery configuration.",
-      "linhas": 74
-    },
-    {
-      "id": "cloudflare-one",
-      "descricao": "Design, configure, troubleshoot, or review Cloudflare One Zero Trust and SASE deployments. Use cloudflare-one-migrations for migration planning from other vendors.",
-      "linhas": 179
-    },
-    {
-      "id": "cloudflare-one-migrations",
-      "descricao": "Assess and plan migrations from existing VPN, SWG, or SASE platforms to Cloudflare One, including policy mapping, parity gaps, and rollout.",
-      "linhas": 111
-    },
-    {
-      "id": "componentes-runner",
-      "descricao": "Creates, updates, and synchronizes agnostic components across all ecosystem harnesses.",
-      "linhas": 47
-    },
-    {
-      "id": "debug-issue",
-      "descricao": "Systematically debug issues using graph-powered code navigation",
-      "linhas": 31
-    },
-    {
-      "id": "dependencia-runner",
-      "descricao": "Installs and verifies third-party skills and MCPs against dependencias_externas.json.",
-      "linhas": 91
-    },
-    {
-      "id": "durable-objects",
-      "descricao": "Build, debug, or review Cloudflare Durable Objects code for persistent state and coordination.",
-      "linhas": 176
-    },
-    {
-      "id": "explore-codebase",
-      "descricao": "Navigate and understand codebase structure using the knowledge graph",
-      "linhas": 32
-    },
-    {
-      "id": "fluxo-01-runner",
-      "descricao": "Executa de ponta a ponta o Fluxo 01 (Do Zero Puro) da Tríade Canônica de forma estritamente síncrona.",
-      "linhas": 28
-    },
-    {
-      "id": "fluxo-02-runner",
-      "descricao": "Executa de ponta a ponta o Fluxo 02 (Motores Open-Source) da Tríade Canônica de forma estritamente síncrona.",
-      "linhas": 28
-    },
-    {
-      "id": "fluxo-03-runner",
-      "descricao": "Executa de ponta a ponta o Fluxo 03 (Low-Code / Apps Unificadas) da Tríade Canônica de forma estritamente síncrona.",
-      "linhas": 28
-    },
-    {
-      "id": "freedom",
-      "descricao": "Dispara o Fluxo 03 (Low-Code / Apps Unificadas | Slash: /freedom) da Tríade Canônica. Desmonte de lock-in Lovable/v0/Bolt e migração PostgreSQL.",
-      "linhas": 36
-    },
-    {
-      "id": "impeccable",
-      "descricao": "Use when the user wants to design, redesign, shape, critique, audit, polish, clarify, distill, harden, optimize, adapt, animate, colorize, extract, or otherwise improve a frontend interface. Covers websites, landing pages, dashboards, product UI, app shells, components, forms, settings, onboarding, and empty states. Handles UX review, visual hierarchy, information architecture, cognitive load, accessibility, performance, responsive behavior, theming, anti-patterns, typography, fonts, spacing, layout, alignment, color, motion, micro-interactions, UX copy, error states, edge cases, i18n, and reusable design systems or tokens. Also use for bland designs that need to become bolder or more delightful, loud designs that should become quieter, live browser iteration on UI elements, or ambitious visual effects that should feel technically extraordinary. Not for backend-only or non-UI tasks.",
-      "linhas": 86
-    },
-    {
-      "id": "mcp-creator-runner",
-      "descricao": "Scaffolds and exposes new Model Context Protocol (MCP) servers across harnesses.",
-      "linhas": 60
-    },
-    {
-      "id": "melhoria",
-      "descricao": "Deeply analyzes code improvements from natural language and produces structured evaluation reports.",
-      "linhas": 146
-    },
-    {
-      "id": "nextjs-on-cloudflare",
-      "descricao": "Build, migrate, and deploy Next.js apps on Cloudflare Workers with vinext. Use when starting a Next.js project on Cloudflare, moving an existing app to Workers, choosing between vinext and OpenNext, or setting up vinext for Workers. For setup, migration, or deployment, install vinext's upstream skills with `npx skills add cloudflare/vinext` if missing, then read and follow the applicable skill and docs.",
-      "linhas": 34
-    },
-    {
-      "id": "open",
-      "descricao": "Dispara o Fluxo 02 (Motores Open-Source | Slash: /open) da Tríade Canônica. Curadoria de motores e fatias verticais VSA.",
-      "linhas": 36
-    },
-    {
-      "id": "orca-plan-orchestrator",
-      "descricao": "Executes multi-phase ORCA plans using isolated Git worktrees and quality gates.",
-      "linhas": 69
-    },
-    {
-      "id": "orchestrate",
-      "descricao": "Routes plan execution between ORCA app, agent worktrees, and native execution engines.",
-      "linhas": 186
-    },
-    {
-      "id": "plan",
-      "descricao": "Transforms analysis reports into structured audit/evolution plans in docs/planos/.",
-      "linhas": 103
-    },
-    {
-      "id": "planos-auditoria-runner",
-      "descricao": "Generates standard templates and drafts for audit, evolution, or test plans.",
-      "linhas": 153
-    },
-    {
-      "id": "pure",
-      "descricao": "Dispara o Fluxo 01 (Do Zero Puro | Slash: /pure) da Tríade Canônica. Geração autoral via TDD Red-Green estrito e Monólito Modular VSA.",
-      "linhas": 36
-    },
-    {
-      "id": "refactor-safely",
-      "descricao": "Plan and execute safe refactoring using dependency analysis",
-      "linhas": 32
-    },
-    {
-      "id": "review-changes",
-      "descricao": "Perform a structured code review using change detection and impact",
-      "linhas": 33
-    },
-    {
-      "id": "sandbox-migrate-to-next",
-      "descricao": "Migrate Cloudflare Sandbox apps from stable @cloudflare/sandbox to @cloudflare/sandbox@next (SDK 1.0 preview). Use sandbox-next for apps already on the preview.",
-      "linhas": 186
-    },
-    {
-      "id": "sandbox-next",
-      "descricao": "Build or maintain Cloudflare Sandbox apps on @cloudflare/sandbox@next (SDK 1.0 preview). Use sandbox-migrate-to-next when porting a stable app.",
-      "linhas": 93
-    },
-    {
-      "id": "sandbox-stable",
-      "descricao": "Build or maintain Cloudflare Sandbox apps on the stable @cloudflare/sandbox package. Use sandbox-next for preview apps and sandbox-migrate-to-next for stable-to-preview migrations.",
-      "linhas": 111
-    },
-    {
-      "id": "sessao",
-      "descricao": "Registra deterministicamente o ID e metadados da sessão agêntica atual em secoes/historico_sessoes.json e secoes/INDICE-SESSOES.md.",
-      "linhas": 18
-    },
-    {
-      "id": "skill-creator-runner",
-      "descricao": "Creates, optimizes, and evaluates agent skills across all ecosystem harnesses.",
-      "linhas": 45
-    },
-    {
-      "id": "turnstile-spin",
-      "descricao": "Set up, repair, or migrate to Cloudflare Turnstile bot verification in an existing frontend and backend, including server-side Siteverify.",
-      "linhas": 337
-    },
-    {
-      "id": "web-perf",
-      "descricao": "Audit, diagnose, or optimize website loading and interaction performance, Core Web Vitals, and Lighthouse performance scores.",
-      "linhas": 202
-    },
-    {
-      "id": "workers-best-practices",
-      "descricao": "Cloudflare Workers best practices for production applications. Use when writing, reviewing, or configuring Workers.",
-      "linhas": 61
-    },
-    {
-      "id": "wrangler",
-      "descricao": "Run or troubleshoot Wrangler CLI commands and configure Worker projects for local development, deployment, and Cloudflare resource management.",
-      "linhas": 53
+      "linhas": 35,
+      "terceiro": false
     }
+  ],
+  "skills_terceiros": [
+    "agents-sdk",
+    "cloudflare",
+    "cloudflare-email-service",
+    "cloudflare-one",
+    "cloudflare-one-migrations",
+    "code-review-graph",
+    "debug-issue",
+    "durable-objects",
+    "explore-codebase",
+    "impeccable",
+    "nextjs-on-cloudflare",
+    "refactor-safely",
+    "review-changes",
+    "sandbox-migrate-to-next",
+    "sandbox-next",
+    "sandbox-stable",
+    "turnstile-spin",
+    "web-perf",
+    "workers-best-practices",
+    "wrangler"
   ],
   "comandos_slash": [
     {
@@ -721,6 +593,11 @@
       "id": "pure",
       "caminho": "componentes/compartilhado/comandos/pure.md",
       "descricao": "Dispara o Fluxo 01 (Do Zero Puro) da Tríade Canônica"
+    },
+    {
+      "id": "sessao",
+      "caminho": "componentes/compartilhado/comandos/sessao.md",
+      "descricao": "Registra o ID e os metadados da sessao atual em secoes/"
     }
   ],
   "mcps": {
@@ -2086,6 +1963,23 @@
       "leis": []
     },
     {
+      "id": "G_SKILL_FORMATO",
+      "descricao": "Confere o formato de cada skill da fonte unica contra docs/protocolos/CONVENCAO-AUTORIA-SKILLS.md (secoes 5.1, 5.2 e 5.3).",
+      "copias": [
+        {
+          "caminho": "gates/G_SKILL_FORMATO.py",
+          "versao": "A",
+          "papel": "ecossistema"
+        }
+      ],
+      "versoes_distintas": 1,
+      "no_pre_commit": true,
+      "prova_que_morde": true,
+      "leis": [
+        9
+      ]
+    },
+    {
       "id": "G_SKILL_ROT",
       "descricao": "Quality Gate determinístico de prevenção a Skill & Tool Rot. Audita e resolve estaticamente todo caminho de arquivo, referência a script, link markdown, comando CLI e ponto de entrada de ambiente…",
       "copias": [
@@ -2393,7 +2287,7 @@
       "id": "handoff-melhoria",
       "titulo": "HandoffMelhoriaSchema",
       "usado_por": [
-        "componentes/compartilhado/skills/aidd-melhoria/scripts/handoff.py",
+        "componentes/compartilhado/skills/aidd-improvement/scripts/handoff.py",
         "gates/G_HANDOFF_MELHORIA.py"
       ]
     },
@@ -2868,7 +2762,7 @@
           "scripts"
         ],
         "arquivos": [
-          "componentes/compartilhado/skills/orca-plan-orchestrator/scripts/gate_auditor.py",
+          "componentes/compartilhado/skills/aidd-orca/scripts/gate_auditor.py",
           "gates/G_ISOLATION_AUDIT.py",
           "scripts/scaffold_auditoria.py",
           "tools/aidd-enterprise/application/commands/audit.py",
@@ -2922,7 +2816,7 @@
           "componentes"
         ],
         "arquivos": [
-          "componentes/compartilhado/skills/orca-plan-orchestrator/scripts/orca_real_plan.py",
+          "componentes/compartilhado/skills/aidd-orca/scripts/orca_real_plan.py",
           "tools/aidd-forge/aidd_forge/core/orca_bridge.py",
           "tools/aidd-generator/scripts/core/orca_fleet.py"
         ]
@@ -2977,60 +2871,7 @@
       "G_SEGREDOS",
       "G_TESTES_REAIS"
     ],
-    "skills_mesma_descricao": [
-      [
-        "aidd-componentes",
-        "componentes-runner"
-      ],
-      [
-        "aidd-dependencias",
-        "dependencia-runner"
-      ],
-      [
-        "aidd-freedom",
-        "freedom"
-      ],
-      [
-        "aidd-mcp",
-        "mcp-creator-runner"
-      ],
-      [
-        "aidd-melhoria",
-        "melhoria"
-      ],
-      [
-        "aidd-open",
-        "open"
-      ],
-      [
-        "aidd-orca",
-        "orca-plan-orchestrator"
-      ],
-      [
-        "aidd-orchestrate",
-        "orchestrate"
-      ],
-      [
-        "aidd-plan",
-        "plan"
-      ],
-      [
-        "aidd-planos",
-        "planos-auditoria-runner"
-      ],
-      [
-        "aidd-pure",
-        "pure"
-      ],
-      [
-        "aidd-sessao",
-        "sessao"
-      ],
-      [
-        "aidd-skills",
-        "skill-creator-runner"
-      ]
-    ],
+    "skills_mesma_descricao": [],
     "etapas_sem_ferramenta": [
       "etapa_06_ops",
       "etapa_07_auditoria"

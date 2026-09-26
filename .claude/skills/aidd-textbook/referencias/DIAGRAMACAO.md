@@ -1,12 +1,10 @@
-# Diagramação: o que existe e o que quebra
+# Layout: what exists and what breaks
 
-Abra este guia quando for montar tabela, diagrama, painel ou ficha técnica. Todas as
-regras aqui vieram de defeito observado em página renderizada, não de preferência.
+Open this guide when building a table, diagram, panel or technical sheet. Every rule here came from a defect seen on a rendered page, not from taste. PT-BR strings inside the examples are literal book content.
 
-## 1. Blocos visuais disponíveis
+## 1. Available visual blocks
 
-O modelo visual expõe cinco construções. Use-as dentro de um bloco marcado como
-conteúdo bruto de diagramação:
+The visual template exposes these constructs. Use them inside a raw layout block:
 
 ````markdown
 ```{=typst}
@@ -16,16 +14,16 @@ conteúdo bruto de diagramação:
 ```
 ````
 
-| Construção     | Para que serve                                                      |
+| Construct | What it is for |
 | :------------- | :-------------------------------------------------------------------- |
-| `#painel(t)[…]` | Caixa de destaque com faixa colorida à esquerda                     |
-| `#ficha(…)`    | Tabela de duas colunas: o cartão de identidade de um objeto          |
-| `#esteira(…)`  | Sequência horizontal de caixas ligadas por setas                     |
-| `#no(t, sub:)` | Caixa escura — representa etapa automática, sem intervenção          |
-| `#no-claro(t, sub:)` | Caixa clara — representa etapa que consome modelo de IA         |
-| `#chip(t)`     | Etiqueta pequena, para marcar estado dentro de um parágrafo          |
+| `#painel(t)[…]` | highlight box with a colored stripe on the left |
+| `#ficha(…)` | two-column table: the identity card of an object |
+| `#esteira(…)` | horizontal sequence of boxes linked by arrows |
+| `#no(t, sub:)` | dark box: an automatic step, no intervention |
+| `#no-claro(t, sub:)` | light box: a step that uses an AI model |
+| `#chip(t)` | small tag to mark a status inside a paragraph |
 
-Exemplos prontos:
+Ready examples:
 
 ````markdown
 ```{=typst}
@@ -47,16 +45,13 @@ Exemplos prontos:
 ```
 ````
 
-A distinção escuro/claro deve significar a mesma coisa no livro inteiro. Escolha o
-significado na abertura e nunca troque no meio.
+Dark/light must mean the same thing in the whole book. Pick the meaning in the opening and never switch it.
 
-## 2. Tabelas: as duas armadilhas
+## 2. Tables: the two traps
 
-**Armadilha 1 — tabela estreita.** O conversor só faz a tabela ocupar a largura da
-página quando a linha de separadores passa de 72 caracteres. Abaixo disso, a tabela
-encolhe para o tamanho do conteúdo e fica desalinhada no meio da página.
+**Trap 1: narrow table.** The converter only makes a table fill the page width when the separator line is longer than 72 characters. Below that the table shrinks to its content and sits misaligned in the middle of the page.
 
-Errado (a tabela vai sair minúscula):
+Wrong (the table comes out tiny):
 
 ```markdown
 | A | B |
@@ -64,7 +59,7 @@ Errado (a tabela vai sair minúscula):
 | 1 | 2 |
 ```
 
-Certo (separadores longos, tabela ocupa a página):
+Right (long separators, the table fills the page):
 
 ```markdown
 | Coluna A                        | Coluna B                                          |
@@ -72,29 +67,21 @@ Certo (separadores longos, tabela ocupa a página):
 | 1                               | 2                                                 |
 ```
 
-**Armadilha 2 — coluna estreita demais para o conteúdo.** A largura de cada coluna é
-proporcional ao comprimento do separador dela. Se a primeira coluna tem separador curto
-e o conteúdo é um nome longo, o texto invade a coluna vizinha.
+**Trap 2: column too narrow for its content.** Each column's width is proportional to its separator length. If the first column has a short separator and a long name, the text spills into the next column.
 
-Regra prática: **o separador de cada coluna deve ser proporcional ao maior conteúdo
-dela.** Nome técnico longo pede separador longo.
+Rule of thumb: **each column's separator is proportional to its longest content.** A long technical name needs a long separator.
 
-O comando `check` acusa as duas situações antes de você compilar. Rode-o sempre.
+`check` flags both cases before you build. Always run it.
 
-## 3. Nomes técnicos e caminhos de arquivo
+## 3. Technical names and file paths
 
-Escreva nome de arquivo, comando e identificador entre crases. O modelo visual aplica
-fundo claro, impede que o corretor os separe em sílabas e insere pontos de quebra
-invisíveis depois de `/`, `.`, `_` e `-`, para que um caminho longo quebre dentro da
-célula em vez de vazar por cima da coluna vizinha.
+Write file names, commands and identifiers between backticks. The template gives them a light background, prevents hyphenation and inserts invisible break points after `/`, `.`, `_` and `-`, so a long path breaks inside the cell instead of spilling over the next column.
 
-Em **negrito**, a separação em sílabas está desligada — nome próprio de ferramenta não
-deve virar "aidd-mas-ter".
+In **bold**, hyphenation is off: a tool's proper name must not become "aidd-mas-ter".
 
-## 4. Diagramas: limite de quatro caixas por linha
+## 4. Diagrams: at most four boxes per row
 
-Uma esteira com mais de quatro caixas deixa cada uma estreita demais, e palavras longas
-começam a vazar. Quebre em duas linhas:
+A pipeline with more than four boxes makes each one too narrow and long words start to spill. Break it into two rows:
 
 ````markdown
 ```{=typst}
@@ -112,32 +99,26 @@ começam a vazar. Quebre em duas linhas:
 ```
 ````
 
-Rótulo de caixa: no máximo duas palavras curtas. O detalhe vai no `sub:`.
+Box label: at most two short words. The detail goes in `sub:`.
 
-## 5. Títulos
+## 5. Headings
 
-Um `#` abre capítulo — e sempre começa em página nova, com faixa escura. Use-o para
-capítulos e para as folhas de abertura de parte, nunca para subdivisão interna.
+`#` opens a chapter and always starts a new page with a dark stripe. Use it for chapters and part opening sheets, never for internal subdivision.
 
-`##` é seção, `###` é subseção, `####` é o último nível útil. Abaixo disso, o leitor
-perde a hierarquia e o sumário fica ilegível.
+`##` is a section, `###` a subsection, `####` the last useful level. Below that the reader loses the hierarchy and the table of contents becomes unreadable.
 
-Código entre crases dentro de um título de capítulo é convertido para texto claro sobre
-a faixa escura automaticamente — pode usar.
+Backtick code inside a chapter heading is automatically turned into light text on the dark stripe: it is fine to use.
 
-## 6. Acentuação
+## 6. Accents
 
-Texto em português mantém todos os acentos. Palavra sem acento é erro de revisão, e o
-comando `check` acusa as ocorrências mais comuns. Isso vale também para os rótulos
-dentro dos diagramas, que passam despercebidos por estarem dentro de um bloco de código.
+Portuguese text keeps every accent. A word without its accent is a review error, and `check` flags the most common cases. This also applies to labels inside diagrams, which go unnoticed because they sit inside a code block.
 
-## 7. Antes de declarar pronto
+## 7. Before declaring it done
 
 ```bash
-python <skill>/scripts/livro.py check <pasta>     # acusa os defeitos acima
-python <skill>/scripts/livro.py build <pasta>
-python <skill>/scripts/livro.py preview <pasta>   # gera uma imagem por página
+python <skill>/scripts/livro.py check <folder>     # flags the defects above
+python <skill>/scripts/livro.py build <folder>
+python <skill>/scripts/livro.py preview <folder>   # one image per page
 ```
 
-Olhe pelo menos quatro páginas: a capa, o sumário, uma com tabela larga e uma com
-diagrama. Compilar sem erro significa que o arquivo foi gerado — não que ficou legível.
+Look at least at four pages: the cover, the table of contents, one with a wide table and one with a diagram. Building without error means the file was generated, not that it is readable.

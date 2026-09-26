@@ -140,3 +140,14 @@ def test_declaracao_com_comentario_e_invisivel_ao_meta_gate():
     mapa, invisiveis = cp._leis_por_gate(leis_mod, agents)
     assert mapa == {"G_A": [1], "G_B": [1]}
     assert invisiveis == ["Lei #1: G_B"]
+
+
+def test_skill_de_terceiro_copiada_para_a_fonte_e_marcada(tmp_path, monkeypatch):
+    for nome in ("aidd-proprio", "wrangler"):
+        d = tmp_path / "skills" / nome
+        d.mkdir(parents=True)
+        (d / "SKILL.md").write_text(f"---\nname: {nome}\ndescription: x\n---\n", encoding="utf-8")
+    monkeypatch.setattr(cp, "COMPARTILHADO", tmp_path)
+    skills = {s["id"]: s["terceiro"] for s in cp.coletar_skills(["wrangler"])}
+    assert skills == {"aidd-proprio": False, "wrangler": True}
+    assert "wrangler" in cp.coletar_skills_terceiros()

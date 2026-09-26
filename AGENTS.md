@@ -62,6 +62,7 @@
 9. **Tool Testing Discipline:** Follow the 5-step cycle (`docs/protocolos/PROTOCOLO-TESTES-FERRAMENTAS.md`): 1. Auto-fix bugs until 100% conformant (zero inconsistencies), 2. Git commit & push, 3. Clean target project, 4. Execute cleanly, 5. Update `docs/teste-end-to-end/` report.
    - Portão: gates/G_ENV_ROT.py (provado)
    - Portão: gates/G_SKILL_ROT.py (provado)
+   - Portão: gates/G_SKILL_FORMATO.py (provado)
    - Portão: gates/G_DISCIPLINA_TESTE_FERRAMENTA.py (provado)
    - Portão: gates/G_TEMPLATE_FORGE_ROT.py (provado)
    - Portão: gates/G_amelhoria.py (provado) — quality gate da ferramenta `aidd-melhoria` (Fase 6, Ticket 6)
@@ -146,7 +147,7 @@ Query the graph BEFORE file scanning:
 
 ## 6. Procedural Engineering Skills (`componentes/compartilhado/skills/`)
 
-Authoring rules: `docs/protocolos/CONVENCAO-AUTORIA-SKILLS.md`. Format guard: gates/G_SKILL_FORMATO.py, warning mode (`--aviso`) until the rename in `docs/auditoria/mapa-pecas/ciclo-01/PROPOSTA-NOMES-SKILLS.md` ends.
+Authoring rules: `docs/protocolos/CONVENCAO-AUTORIA-SKILLS.md` (checked by `G_SKILL_FORMATO`, `G_SKILL_ROT` and `G_IDIOMA_LEI_4`).
 
 Canonical workflow skills available across all harnesses to eliminate vibe coding and ensure rigorous pre-code alignment:
 - `/aidd-grill`: Socratic interview protocol to resolve edge cases and invariants before code modification.

@@ -1,111 +1,91 @@
-# Atualizar um livro-texto existente
+# Updating an existing textbook
 
-Abra este guia quando a obra já existe. Atualizar é cirurgia, não reescrita.
+Open this guide when the work already exists. Updating is surgery, not rewriting.
 
-## 1. Primeiro, situe-se
+## 1. First, get your bearings
 
 ```bash
-python <skill>/scripts/livro.py status <pasta>
+python <skill>/scripts/livro.py status <folder>
 ```
 
-A saída diz quantas partes existem, quantas palavras, se o PDF está em dia com o texto
-e quantas revisões já aconteceram. O manifesto (`livro.json`) guarda o histórico: data,
-impressão digital do texto, palavras e a nota de cada revisão.
+The output says how many parts exist, how many words, whether the PDF is current with the text and how many revisions happened. The manifest (`livro.json`) keeps the history: date, text fingerprint, words and the note of each revision.
 
-Três respostas possíveis:
+Three possible results (literal output):
 
-| Resultado          | O que significa                                    | O que fazer                        |
+| Result | Meaning | What to do |
 | :----------------- | :--------------------------------------------------- | :--------------------------------- |
-| `PDF em dia`       | Ninguém mexeu no texto desde a última compilação    | Siga para a seção 2                |
-| `DESATUALIZADO`    | Alguém editou o texto e não recompilou              | Entenda o que mudou antes de mexer |
-| `PENDENTE`         | Nunca foi compilado                                 | Trate como obra nova               |
+| `PDF em dia` | nobody touched the text since the last build | go to section 2 |
+| `DESATUALIZADO` | someone edited the text and did not rebuild | understand what changed before touching it |
+| `PENDENTE` | never built | treat it as a new work |
 
-Se o resultado for `DESATUALIZADO`, **não recompile por reflexo.** Veja primeiro o que
-foi editado: pode ser trabalho de outra pessoa pela metade.
+If the result is `DESATUALIZADO`, **do not rebuild by reflex.** Look at what was edited first: it may be someone else's half-done work.
 
-## 2. Classifique a mudança antes de tocar no texto
+## 2. Classify the change before touching the text
 
-| Tipo de mudança                                  | Alcance                                                  |
+| Kind of change | Reach |
 | :----------------------------------------------- | :--------------------------------------------------------- |
-| Um fato mudou (número, versão, estado, caminho)  | As frases que citam aquele fato — em todas as partes       |
-| Uma peça nova apareceu                           | Um capítulo novo + a tabela de inventário + o glossário    |
-| Uma peça saiu                                    | O capítulo sai + as menções a ela nos outros capítulos     |
-| Um processo mudou de forma                       | O capítulo do processo + os diagramas afetados             |
-| Algo pendente foi resolvido                      | O apêndice de estado honesto + o capítulo correspondente   |
-| A obra ganhou um nível ou eixo novo              | Estrutural: converse com quem pediu antes de reorganizar   |
+| a fact changed (number, version, status, path) | the sentences citing that fact, in every part |
+| a new piece appeared | a new chapter + the inventory table + the glossary |
+| a piece left | its chapter goes out + its mentions in other chapters |
+| a process changed shape | the process chapter + the affected diagrams |
+| something pending was solved | the honest status appendix + the matching chapter |
+| the work gained a level or axis | structural: talk to whoever asked before reorganizing |
 
-A última linha é a regra de segurança: **mudança estrutural não se faz por conta
-própria.** Reorganizar partes invalida referências cruzadas, números de capítulo e o
-índice — avise antes.
+The last row is the safety rule: **no structural change on your own.** Reorganizing parts breaks cross references, chapter numbers and the index; warn first.
 
-## 3. Ache tudo que fala do fato antigo
+## 3. Find everything that mentions the old fact
 
-O maior risco de uma atualização não é errar o texto novo: é **deixar o texto velho
-vivo em outro capítulo**. Um livro que diz duas coisas diferentes sobre o mesmo assunto
-perde a autoridade inteira.
+The biggest risk of an update is not getting the new text wrong: it is **leaving the old text alive in another chapter**. A book that says two different things about the same subject loses all its authority.
 
 ```bash
-grep -rn "termo antigo" <pasta>/partes/     # todas as ocorrências, em todas as partes
+grep -rn "old term" <folder>/partes/     # every occurrence, in every part
 ```
 
-Confira também as menções indiretas: tabela de inventário, glossário, apêndice de
-arquivos-chave, apêndice de estado honesto e os rótulos dentro dos diagramas.
+Also check indirect mentions: inventory table, glossary, key-files appendix, honest status appendix and the labels inside diagrams.
 
-## 4. Edite só o que precisa
+## 4. Edit only what is needed
 
-Altere as frases afetadas, não o arquivo inteiro. Reescrever uma parte inteira para
-trocar um número gasta muito e costuma introduzir defeito onde não havia.
+Change the affected sentences, not the whole file. Rewriting a whole part to change one number is expensive and tends to add defects where there were none.
 
-Ao acrescentar capítulo novo:
+To add a new chapter:
 
 ```bash
-python <skill>/scripts/livro.py add-parte <pasta> --nome 07-nova --titulo "Capítulo 7 — ..."
+python <skill>/scripts/livro.py add-parte <folder> --nome 07-nova --titulo "Capítulo 7 — ..."
 ```
 
-Para inserir no meio, use `--depois-de <nome-da-parte-anterior>`; a ordem no manifesto é
-a ordem do livro.
+To insert in the middle, use `--depois-de <previous-part-name>`; the manifest order is the book order.
 
-## 5. Atualize a evidência, não só a prosa
+## 5. Update the evidence, not only the prose
 
-Quando o fato muda, a seção *Rastreabilidade* daquele capítulo muda junto: arquivo que
-deixou de existir sai, arquivo novo entra. Livro que aponta para fonte inexistente é
-pior que livro sem fonte, porque promete auditoria e entrega engano.
+When the fact changes, that chapter's "Rastreabilidade" section changes too: a file that no longer exists goes out, a new file comes in. A book pointing to a missing source is worse than a book without sources, because it promises an audit and delivers a mistake.
 
 ```bash
-python <skill>/scripts/livro.py check <pasta> --raiz-evidencia <raiz-do-projeto>
+python <skill>/scripts/livro.py check <folder> --raiz-evidencia <project-root>
 ```
 
-Esse comando confere se cada arquivo citado existe de verdade.
+This command checks that every cited file really exists.
 
-## 6. Recompile e registre
+## 6. Rebuild and record
 
 ```bash
-python <skill>/scripts/livro.py update <pasta> --nota "o que mudou nesta revisão"
+python <skill>/scripts/livro.py update <folder> --nota "what changed in this revision"
 ```
 
-O `update` compara a impressão digital do texto, roda a auditoria, recompila **só se
-algo mudou** e grava a revisão no manifesto. A nota não é burocracia: é o que permite,
-meses depois, saber por que o capítulo 12 mudou.
+`update` compares the text fingerprint, runs the audit, rebuilds **only if something changed** and records the revision in the manifest. The note is not bureaucracy: months later it tells why chapter 12 changed.
 
-Se a auditoria reprovar, corrija os achados. Existe uma saída de emergência
-(`--pular-check`), mas usá-la significa publicar um livro com defeito conhecido — só
-com decisão explícita de quem pediu a obra.
+If the audit fails, fix the findings. There is an emergency exit (`--pular-check`), but using it means publishing a book with a known defect: only on an explicit decision of whoever asked for the work.
 
-## 7. Confira o resultado
+## 7. Check the result
 
 ```bash
-python <skill>/scripts/livro.py preview <pasta>
+python <skill>/scripts/livro.py preview <folder>
 ```
 
-Olhe as páginas que você mudou e as duas vizinhas — o texto novo empurra o anterior e
-pode ter quebrado uma tabela ou deixado um título sozinho no fim da página.
+Look at the pages you changed and the two neighbors: new text pushes the old one and may have broken a table or left a title alone at the bottom of a page.
 
-## 8. O que nunca fazer numa atualização
+## 8. Never do in an update
 
-- Rodar `init` sobre uma obra existente: apaga o manifesto e o histórico de revisões.
-- Editar o arquivo consolidado (`<nome-base>.md`): ele é gerado, e some na próxima
-  compilação. O conteúdo vive em `partes/`.
-- Apagar o apêndice de estado honesto porque "agora está tudo funcionando": atualize as
-  linhas, registrando o que foi resolvido e quando.
-- Trocar o título da obra ou o nome-base sem avisar: muda o nome do arquivo entregue e
-  quebra todo link externo que apontava para ele.
+- Run `init` over an existing work: it deletes the manifest and the revision history.
+- Edit the consolidated file (`<base-name>.md`): it is generated and disappears at the next build. The content lives in `partes/`.
+- Delete the honest status appendix because "everything works now": update its rows, recording what was solved and when.
+- Change the work title or base name without warning: it renames the delivered file and breaks every external link to it.

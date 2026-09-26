@@ -1,38 +1,30 @@
-# Instalação fora deste repositório
+# Installing outside this repository
 
-Esta habilidade é autocontida: a pasta inteira (`SKILL.md`, `ativos/`, `referencias/`,
-`scripts/`) funciona em qualquer projeto, com qualquer assistente de IA e em qualquer
-sistema operacional. Nada aqui importa código de fora da biblioteca padrão do Python.
+This skill is self-contained: the whole folder (`SKILL.md`, `ativos/`, `referencias/`, `scripts/`) works in any project, with any AI assistant and on any operating system. Nothing here imports code outside the Python standard library.
 
-## 1. Copie a pasta para o lugar que o seu assistente lê
+## 1. Copy the folder to where your assistant reads skills
 
-| Assistente          | Onde colocar a pasta                                      |
+| Assistant | Where to put the folder |
 | :------------------ | :---------------------------------------------------------- |
-| Claude Code         | `.claude/skills/aidd-livro-texto/`                        |
-| OpenCode            | `.opencode/skills/aidd-livro-texto/`                      |
-| MimoCode            | `.mimocode/skills/aidd-livro-texto/`                      |
-| Antigravity, Hermes | `.agents/skills/aidd-livro-texto/`                        |
-| CodeBuddy           | `.codebuddy/skills/aidd-livro-texto/`                     |
-| Gemini CLI          | `.gemini/extensions/aidd-livro-texto/skills/aidd-livro-texto/` |
-| Cursor              | Aponte a regra do projeto para o `SKILL.md` desta pasta   |
+| Claude Code | `.claude/skills/aidd-textbook/` |
+| OpenCode | `.opencode/skills/aidd-textbook/` |
+| MimoCode | `.mimocode/skills/aidd-textbook/` |
+| Antigravity, Hermes | `.agents/skills/aidd-textbook/` |
+| CodeBuddy | `.codebuddy/skills/aidd-textbook/` |
+| Gemini CLI | `.gemini/extensions/aidd-textbook/skills/aidd-textbook/` |
+| Cursor | point the project rule to this folder's `SKILL.md` |
 
-Para uso em todos os projetos da máquina, coloque na pasta pessoal do assistente (por
-exemplo `~/.claude/skills/`) em vez da pasta do projeto.
+For every project on the machine, put it in the assistant's personal folder (e.g. `~/.claude/skills/`) instead of the project folder.
 
-No Gemini CLI, acrescente ao lado da pasta um arquivo `gemini-extension.json` com o
-nome e a versão da extensão — é o formato que ele exige para enxergar a habilidade.
+In Gemini CLI, add a `gemini-extension.json` next to the folder with the extension name and version: it is the format it needs to see the skill.
 
-Dentro do ecossistema AIDD, nada disso é manual: a fonte fica em
-`componentes/compartilhado/skills/aidd-livro-texto/` e a distribuição é feita por
-`python ecossistema.py components sync --tipo skill`.
+Inside the AIDD ecosystem none of this is manual: the source lives in `componentes/compartilhado/skills/aidd-textbook/` and `python ecossistema.py components sync --tipo skill` distributes it.
 
-## 2. Instale as duas ferramentas de composição
+## 2. Install the two typesetting tools
 
-A habilidade precisa de dois programas: um que converte texto em documento (pandoc) e
-outro que faz a diagramação e gera o PDF (typst). Há dois caminhos, e o `livro.py`
-detecta sozinho qual está disponível.
+The skill needs two programs: one that converts text into a document (pandoc) and one that lays it out and produces the PDF (typst). There are two paths, and `livro.py` detects which one is available.
 
-**Caminho A — programas instalados no sistema (mais rápido).**
+**Path A: programs installed on the system (faster).**
 
 ```bash
 # Windows
@@ -42,54 +34,47 @@ winget install --id Typst.Typst
 # macOS
 brew install pandoc typst
 
-# Linux (Debian/Ubuntu): pandoc pelo gerenciador; typst pelo binário do projeto
+# Linux (Debian/Ubuntu): pandoc from the package manager; typst from the project binary
 sudo apt install pandoc
 ```
 
-**Caminho B — pacotes Python (não exige instalar nada no sistema).**
+**Path B: Python packages (nothing installed on the system).**
 
 ```bash
 pip install pypandoc-binary typst
 ```
 
-Esses dois pacotes trazem os programas dentro deles. Serve bem para máquina onde você
-não pode instalar programas, e para servidores de integração contínua.
+Both packages bundle the programs. Good for machines where you cannot install programs, and for CI servers.
 
-Diferença prática: no caminho A o pandoc chama o typst diretamente; no caminho B o
-pacote `typst` não instala um programa chamável, só uma função Python, então a
-composição acontece em dois passos. O resultado em PDF é o mesmo.
+Practical difference: in path A pandoc calls typst directly; in path B the `typst` package installs no callable program, only a Python function, so typesetting happens in two steps. The PDF is the same.
 
-## 3. Confirme
+## 3. Confirm
 
 ```bash
-python <pasta-da-habilidade>/scripts/livro.py doctor
+python <skill-folder>/scripts/livro.py doctor
 ```
 
-A saída informa qual caminho está em uso e avisa quando encontra um typst no sistema
-que não serve — por exemplo, uma versão anterior à 0.11 (o modelo visual usa um recurso
-introduzido nela) ou um atalho de instalação por gerenciador de pacotes que o pandoc não
-consegue acionar. Nesses casos ele usa o pacote Python, se estiver instalado.
+The output says which path is in use and warns when it finds a system typst that does not work, e.g. a version below 0.11 (the template uses a feature introduced there) or a package-manager shim pandoc cannot call. In those cases it uses the Python package if installed.
 
-Saída 0 significa pronto para usar.
+Exit 0 means ready to use.
 
-## 4. Requisitos mínimos
+## 4. Minimum requirements
 
-| Item              | Mínimo                                                          |
+| Item | Minimum |
 | :---------------- | :----------------------------------------------------------------- |
-| Python            | 3.10                                                            |
-| pandoc            | 3.0 (testado em 3.9 e 3.10)                                     |
-| typst             | 0.11 — abaixo disso o modelo visual não compila                 |
-| Fontes            | Nenhuma obrigatória; o modelo declara alternativas e o typst substitui o que faltar |
+| Python | 3.10 |
+| pandoc | 3.0 (tested on 3.9 and 3.10) |
+| typst | 0.11; below it the template does not compile |
+| Fonts | none required; the template declares fallbacks and typst substitutes what is missing |
 
-As fontes preferidas são Inter (texto) e Consolas (código). Sem elas, o documento
-continua sendo gerado com as substitutas do sistema — muda a aparência, não o conteúdo.
+Preferred fonts are Inter (text) and Consolas (code). Without them the document is still produced with system substitutes: the look changes, not the content.
 
-## 5. Uso imediato
+## 5. Quick start
 
 ```bash
-python <pasta-da-habilidade>/scripts/livro.py init ./meu-livro --titulo "Minha Obra" --autor "Meu Nome"
-python <pasta-da-habilidade>/scripts/livro.py check ./meu-livro
-python <pasta-da-habilidade>/scripts/livro.py build ./meu-livro
+python <skill-folder>/scripts/livro.py init ./my-book --titulo "Minha Obra" --autor "Meu Nome"
+python <skill-folder>/scripts/livro.py check ./my-book
+python <skill-folder>/scripts/livro.py build ./my-book
 ```
 
-Pelo assistente, basta pedir `/aidd-livro-texto` e dizer o que quer documentar.
+From the assistant, ask `/aidd-livro-texto` and say what you want to document.

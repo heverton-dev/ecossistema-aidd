@@ -1,6 +1,6 @@
 ---
 name: aidd-handoff
-description: Serializes and compacts session state into a structured markdown artifact for context rotation or agent handover.
+description: Serializes and compacts session state into a structured markdown artifact for context rotation or agent handover. Use when the context is heavy, the session ends or work passes to another agent, or the user says "handoff", "passar o bastão", "salvar contexto".
 ---
 
 # AIDD-Handoff — Structured Context Preservation

@@ -1,32 +1,28 @@
-# Estrutura canônica de um livro-texto
+# Canonical structure of a textbook
 
-Abra este guia quando for definir o índice da obra ou escrever qualquer capítulo.
+Open this guide when defining the index of the work or writing any chapter. Section and chapter titles quoted in PT-BR below are the literal text that goes into the book.
 
-## 1. A matriz: três níveis, eixos fixos
+## 1. The matrix: three levels, fixed axes
 
-A obra desce do geral para o particular em três níveis, e em cada nível faz **sempre as
-mesmas perguntas**. É isso que permite ao leitor comparar dois objetos lendo a mesma
-seção de cada capítulo, em vez de reler o livro inteiro.
+The work goes from the general to the particular in three levels, and at each level it asks **the same questions**. That lets the reader compare two objects by reading the same section of each chapter instead of rereading the whole book.
 
-| Nível     | O que descreve                                              | Parte do livro |
+| Level | What it describes | Book part |
 | :-------- | :----------------------------------------------------------- | :------------- |
-| **Macro** | O todo como organismo único: propósito, leis, topologia      | Parte I        |
-| **Meso**  | Os processos: as esteiras que levam da intenção ao resultado | Parte II       |
-| **Micro** | As peças: cada componente, um capítulo                       | Parte III      |
-| Transversal | O que atravessa todos os níveis (padrões, qualidade)       | Parte IV       |
-| Apêndices | Referência de consulta, glossário, estado honesto            | Apêndices      |
+| **Macro** | the whole as a single organism: purpose, laws, topology | Part I |
+| **Meso** | the processes: the pipelines from intent to result | Part II |
+| **Micro** | the pieces: one chapter per component | Part III |
+| Cross-cutting | what crosses every level (patterns, quality) | Part IV |
+| Appendices | lookup reference, glossary, honest status | Appendices |
 
-Os eixos fixos — as perguntas repetidas em todo nível — são três. Adapte os nomes ao
-domínio da obra, mas mantenha a repetição:
+There are three fixed axes (the questions repeated at every level). Adapt the names to the domain, but keep the repetition:
 
-1. **Como foi pensado e construído** (a intenção e a engenharia por trás).
-2. **Como está hoje** (a arquitetura real, não a desejada).
-3. **O eixo próprio do domínio** (custo, desempenho, segurança, economia — escolha o
-   que mais importa naquele sistema e mantenha-o em todos os níveis).
+1. **How it was designed and built** (the intent and the engineering behind it).
+2. **How it is today** (the real architecture, not the desired one).
+3. **The domain's own axis** (cost, performance, security, economy: pick what matters most in that system and keep it at every level).
 
-## 2. O gabarito de cada capítulo da Parte III
+## 2. Template of each Part III chapter
 
-Todo capítulo de peça segue oito seções, na mesma ordem:
+Every piece chapter has eight sections, in this order (literal PT-BR titles):
 
 ```
 X.1  O que é
@@ -34,67 +30,54 @@ X.2  Papel dentro do processo (nível meso)
 X.3  Papel dentro do todo (nível macro)
 X.4  Como foi pensada, está estruturada e configurada
 X.5  Como funciona individualmente        ─┐
-X.6  Como funciona dentro do processo      ├─ os sete itens abaixo, em cada uma
+X.6  Como funciona dentro do processo      ├─ the seven items below, in each one
 X.7  Como funciona dentro do todo         ─┘
 X.8  Rastreabilidade
 ```
 
-As seções X.5, X.6 e X.7 respondem **sempre aos mesmos sete itens**:
+Sections X.5, X.6 and X.7 always answer **the same seven items**:
 
-| Item | Pergunta                                                                  |
+| Item | Question |
 | ---: | :------------------------------------------------------------------------- |
-| 1    | Passo a passo de execução — o que acontece, em ordem                      |
-| 2    | Verificações de qualidade — o que bloqueia, e com qual critério           |
-| 3    | Habilidades — o que é acionado nessa camada                               |
-| 4    | Automação — quais scripts fazem o trabalho sem intervenção                |
-| 5    | Ferramentas acessadas — programas, serviços e dados externos              |
-| 6    | Disparos automáticos e regras — o que roda sozinho e quais normas valem   |
-| 7    | Entrega — o que entrega, como entrega e para quem entrega                 |
+| 1 | Step-by-step execution: what happens, in order |
+| 2 | Quality checks: what blocks, and with which criterion |
+| 3 | Skills: what is triggered in that layer |
+| 4 | Automation: which scripts do the work without intervention |
+| 5 | Tools accessed: external programs, services and data |
+| 6 | Automatic triggers and rules: what runs by itself and which norms apply |
+| 7 | Delivery: what it delivers, how, and to whom |
 
-Abrir o capítulo com uma **ficha técnica** (`#ficha(...)`) economiza páginas: papel,
-posição no processo, forma de acionamento, entrada, saída, natureza.
+Opening the chapter with a **technical sheet** (`#ficha(...)`) saves pages: role, position in the process, trigger, input, output, nature.
 
-## 3. As quatro seções obrigatórias da obra
+## 3. The four mandatory sections of the work
 
-**Como ler este livro** (abertura). A quem se destina, a matriz da obra, as convenções
-visuais e o que a obra deliberadamente não é.
+**"Como ler este livro"** (opening). Who it is for, the matrix of the work, the visual conventions and what the work deliberately is not.
 
-**Rastreabilidade** (fim de cada capítulo). Os arquivos ou fontes que sustentam as
-afirmações daquele capítulo. É o que separa um livro auditável de um texto de opinião.
-Quem lê deve conseguir conferir sozinho.
+**"Rastreabilidade"** (end of each chapter). The files or sources that support the chapter's claims. It separates an auditable book from an opinion text: the reader must be able to check alone.
 
-**Glossário** (apêndice). Todo termo do domínio definido em uma ou duas frases. Se o
-termo apareceu no corpo sem explicação, ele precisa estar aqui.
+**"Glossário"** (appendix). Every domain term defined in one or two sentences. A term used in the body without explanation must be here.
 
-**Estado honesto** (apêndice final). Tabela consolidada do que está incompleto, do que
-está falhando e do que aguarda decisão humana — com data, motivo e onde isso está
-registrado. Um livro que só mostra o que funciona é folheto de vendas, e a perda de
-confiança contamina o resto do texto.
+**"Estado honesto"** (final appendix). Consolidated table of what is incomplete, failing or awaiting a human decision, with date, reason and where it is recorded. A book that only shows what works is a sales brochure, and the lost trust spreads to the rest of the text.
 
-## 4. Como escrever cada capítulo
+## 4. How to write each chapter
 
-**Evidência primeiro, prosa depois.** Leia o material real antes de escrever. Números
-vêm de medição, nunca de estimativa; quando for estimativa, diga que é.
+**Evidence first, prose after.** Read the real material before writing. Numbers come from measurement, never estimation; when something is an estimate, say so.
 
-**Uma afirmação, uma fonte.** Se você não consegue apontar onde aquilo está, ou a
-afirmação sai, ou entra marcada como hipótese.
+**One claim, one source.** If you cannot point to where something is, the claim goes out or goes in marked as a hypothesis.
 
-**Explique o porquê, não só o quê.** A decisão técnica interessante é a que tem motivo
-documentado — especialmente quando nasceu de um problema real. Registre o problema.
+**Explain why, not only what.** The interesting technical decision is the one with a documented reason, especially when it came from a real problem. Record the problem.
 
-**Contradição é conteúdo.** Quando a documentação diz uma coisa e o código faz outra,
-o livro registra as duas e diz qual vale.
+**Contradiction is content.** When the documentation says one thing and the code does another, the book records both and says which one holds.
 
-**Comprimento segue a complexidade.** Capítulo de peça simples pode ter três páginas;
-não infle para igualar ao vizinho.
+**Length follows complexity.** A simple piece chapter may have three pages; do not inflate it to match its neighbor.
 
-## 5. Ordem de escrita recomendada
+## 5. Recommended writing order
 
-1. Levantar a evidência e montar o índice (nomes dos capítulos e o que cada um cobre).
-2. Escrever a Parte III (as peças) — é onde está a evidência mais concreta.
-3. Escrever a Parte II (os processos) — já sabendo como as peças funcionam.
-4. Escrever a Parte I (o todo) — que sintetiza o que as duas anteriores mostraram.
-5. Escrever a Parte IV e os apêndices — que consolidam o que se repetiu.
-6. Escrever a abertura por último: só aí você sabe o que o livro realmente ficou sendo.
+1. Gather evidence and build the index (chapter names and what each covers).
+2. Write Part III (the pieces): the most concrete evidence is there.
+3. Write Part II (the processes), already knowing how the pieces work.
+4. Write Part I (the whole), which synthesizes what the two previous parts showed.
+5. Write Part IV and the appendices, which consolidate what repeated.
+6. Write the opening last: only then do you know what the book really became.
 
-Escrever o macro primeiro leva a prometer no início o que o micro depois desmente.
+Writing the macro first leads to promising at the start what the micro later contradicts.

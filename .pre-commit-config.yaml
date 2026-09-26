@@ -273,8 +273,8 @@ repos:
         require_serial: true
 
       - id: g-skill-formato
-        name: "G_SKILL_FORMATO (nome, descricao e tamanho das skills; modo aviso)"
-        entry: python gates/G_SKILL_FORMATO.py --aviso
+        name: "G_SKILL_FORMATO (nome, descricao e tamanho das skills)"
+        entry: python gates/G_SKILL_FORMATO.py
         language: system
         always_run: true
         pass_filenames: false

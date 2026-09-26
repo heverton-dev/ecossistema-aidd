@@ -116,3 +116,11 @@ def test_modo_aviso_imprime_violacao_e_sai_0(tmp_path):
     assert res.returncode == 0
     assert "SUFIXO_RUNNER" in res.stdout
     assert "AVISO" in res.stdout
+
+
+def test_repositorio_real_aprova_em_modo_bloqueante():
+    env = os.environ.copy()
+    env["PYTHONIOENCODING"] = "utf-8"
+    res = subprocess.run([sys.executable, GATE_PATH], capture_output=True, text=True,
+                         encoding="utf-8", errors="replace", env=env)
+    assert res.returncode == 0, res.stdout

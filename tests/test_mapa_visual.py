@@ -82,3 +82,42 @@ def test_roda_de_verdade_no_repositorio(tmp_path):
     texto = saida.read_text(encoding="utf-8")
     assert texto.startswith("<title>Mapa dos Guardas</title>") and "{{" not in texto
     assert texto.count('<article class="item"') > 50
+
+
+def _cat_skills(*skills, terceiros=(), pares=()):
+    return {"skills": list(skills), "skills_terceiros": list(terceiros),
+            "achados": {"skills_mesma_descricao": [list(p) for p in pares]}}
+
+
+def _skill(nome, linhas=40, descricao="Does X. Use when the user says \"x\".", terceiro=False):
+    return {"id": nome, "descricao": descricao, "linhas": linhas, "terceiro": terceiro}
+
+
+def test_skills_marcador_desencontrado_reprova(tmp_path, monkeypatch):
+    (tmp_path / "skills.html").write_text("<p>{{TOTAIS}} {{LISTA}} {{MARCADOR_VELHO}}</p>", encoding="utf-8")
+    (tmp_path / "base.css").write_text("", encoding="utf-8")
+    monkeypatch.setattr(mv, "MOLDES", tmp_path)
+    with pytest.raises(ValueError, match="MARCADOR_VELHO"):
+        mv.montar("skills", _cat_skills(_skill("aidd-a")), "m.html", fragmento=True)
+
+
+def test_skills_selos_e_listas_saem_do_catalogo():
+    grande = _skill("aidd-grande", linhas=300, descricao="Does Y.")
+    valores = mv.valores_skills(_cat_skills(_skill("aidd-a"), grande, _skill("wrangler", terceiro=True),
+                                            terceiros=["wrangler"], pares=[("aidd-a", "a")]))
+    assert "aidd-grande (300)" in valores["ACIMA_META"]
+    assert "wrangler" in valores["TERCEIROS"] and "aidd-a = a" in valores["MESMA_DESCRICAO"]
+    assert 'sem "Use when"' in valores["LISTA"] and 'data-acima="1"' in valores["LISTA"]
+    assert "terceiros copiados para a fonte" in valores["TOTAIS"]
+
+
+def test_skills_roda_de_verdade_no_repositorio(tmp_path):
+    saida = tmp_path / "mapa.html"
+    proc = subprocess.run([sys.executable, str(ROOT / "scripts" / "mapa_visual.py"), "skills",
+                           "--saida", str(saida), "--fragmento"],
+                          cwd=ROOT, capture_output=True, text=True, encoding="utf-8")
+    assert proc.returncode == 0, proc.stdout + proc.stderr
+    texto = saida.read_text(encoding="utf-8")
+    assert texto.startswith("<title>Mapa das Skills</title>") and "{{" not in texto
+    assert texto.count('<article class="item"') == 37
+    assert "CONVENCAO-AUTORIA-SKILLS.md" in texto

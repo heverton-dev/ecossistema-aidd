@@ -1,6 +1,6 @@
 ---
 name: aidd-spec
-description: Synthesizes discussions, requirements, and decisions into a deterministic, executable technical specification.
+description: Turns discussions and decisions into an executable spec with binary acceptance criteria. Use when writing a spec, or "especificação".
 ---
 
 # AIDD-Spec — Deterministic Technical Specification

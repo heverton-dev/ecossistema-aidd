@@ -13,7 +13,7 @@ valor sem marcador é erro (exit 1), para o molde e o gerador não se desencontr
 
 Uso:
   python scripts/mapa_visual.py <tipo> [--saida ARQ] [--fragmento] [--link-manual URL] [--check]
-    <tipo>         hoje: guardas
+    <tipo>         guardas | skills
     --saida        destino (padrão: docs/mapas-visuais/mapa-<tipo>.html)
     --fragmento    grava sem <!doctype>/<head> (formato de publicação do Artifact)
     --link-manual  destino do link "voltar ao manual" (padrão: manual-montagem-aidd.html)
@@ -35,7 +35,8 @@ CATALOGO = RAIZ / "docs" / "auditoria" / "mapa-pecas" / "catalogo-pecas.json"
 FONTES = ("https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;"
           "12..96,700;12..96,800&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500"
           "&display=swap")
-TITULOS = {"guardas": "Mapa dos Guardas"}
+TITULOS = {"guardas": "Mapa dos Guardas", "skills": "Mapa das Skills"}
+META_LINHAS_SKILL = 150
 META_GUARDAS = ("G_PORTAO_PROVA_QUE_MORDE", "G_LEI_DECLARA_PORTAO")
 ORDEM_CASAS = ("meta", "ecossistema", "ferramenta", "entrega", "componente")
 NOMES_CASAS = {
@@ -145,7 +146,53 @@ def valores_guardas(cat: dict) -> dict[str, str]:
     }
 
 
-GERADORES = {"guardas": valores_guardas}
+def _usa_quando(descricao: str) -> bool:
+    return "use when" in (descricao or "").lower()
+
+
+def _item_skill(s: dict) -> str:
+    acima = s["linhas"] > META_LINHAS_SKILL
+    chips = [f'<span class="chip {"aviso" if acima else "ok"}">{s["linhas"]} linhas</span>']
+    if not _usa_quando(s["descricao"]):
+        chips.append('<span class="chip falha">sem "Use when"</span>')
+    atributos = {"busca": f'{s["id"]} {s["descricao"]}'.lower(), "acima": int(acima),
+                 "semuse": int(not _usa_quando(s["descricao"]))}
+    dados = " ".join(f'data-{k}="{e(v)}"' for k, v in atributos.items())
+    return (f'<article class="item" style="--c:var(--c-trabalha)" {dados}>'
+            f'<span class="nome">{e(s["id"])}</span>'
+            f'<p class="desc">{e(s["descricao"] or "sem descrição")}</p>'
+            f'<div class="chips">{"".join(chips)}</div></article>')
+
+
+def valores_skills(cat: dict) -> dict[str, str]:
+    skills = [s for s in cat["skills"] if not s.get("terceiro")]
+    copiadas = [s["id"] for s in cat["skills"] if s.get("terceiro")]
+    terceiros = cat.get("skills_terceiros", [])
+    acima = [f'{s["id"]} ({s["linhas"]})' for s in skills if s["linhas"] > META_LINHAS_SKILL]
+    grupos = [("Até a meta de 150 linhas", [s for s in skills if s["linhas"] <= META_LINHAS_SKILL]),
+              ("Acima da meta", [s for s in skills if s["linhas"] > META_LINHAS_SKILL])]
+    lista = "".join(
+        f'<div class="grupo"><h3>{e(nome)} <small>{len(itens)}</small></h3>'
+        f'<div class="itens">{"".join(_item_skill(s) for s in itens)}</div></div>'
+        for nome, itens in grupos if itens)
+    return {
+        "TOTAIS": _totais([
+            (len(skills), "skills nossas", ""),
+            (len(terceiros), "nomes de terceiros registrados", ""),
+            (len(copiadas), "terceiros copiados para a fonte", "falha" if copiadas else ""),
+            (sum(1 for s in skills if _usa_quando(s["descricao"])), f"de {len(skills)} com \"Use when\"", ""),
+            (len(acima), "acima de 150 linhas", "aviso" if acima else ""),
+            (len(cat["achados"].get("skills_mesma_descricao", [])), "pares com a mesma descrição", ""),
+        ]),
+        "TERCEIROS": _lista_curta(terceiros, "Nenhuma skill de terceiros registrada."),
+        "ACIMA_META": _lista_curta(acima, "Nenhuma skill acima da meta hoje."),
+        "MESMA_DESCRICAO": _lista_curta([" = ".join(p) for p in cat["achados"].get("skills_mesma_descricao", [])],
+                                        "Nenhum par hoje."),
+        "LISTA": lista,
+    }
+
+
+GERADORES = {"guardas": valores_guardas, "skills": valores_skills}
 
 
 def montar(tipo: str, cat: dict, link_manual: str, fragmento: bool) -> str:

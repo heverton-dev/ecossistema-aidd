@@ -36,6 +36,7 @@ RAIZ = Path(__file__).resolve().parent.parent
 SAIDA_PADRAO = RAIZ / "docs" / "auditoria" / "mapa-pecas" / "catalogo-pecas.json"
 COMPARTILHADO = RAIZ / "componentes" / "compartilhado"
 ORQUESTRADOR = RAIZ / "scripts" / "orquestrador_sincrono.py"
+DEPENDENCIAS = RAIZ / "gates" / "dependencias_externas.json"
 
 # Pastas que são exemplos/sandboxes copiados, não peças vivas.
 IGNORAR = ("materiais-extras", "sandbox-forge-teste", ".venv", "node_modules", "__pycache__")
@@ -134,7 +135,15 @@ def coletar_ferramentas() -> list[dict]:
     return ferramentas
 
 
-def coletar_skills() -> list[dict]:
+def coletar_skills_terceiros() -> list[str]:
+    """Skills de terceiros registradas em gates/dependencias_externas.json (instaladas
+    pelo instalador do fornecedor, nunca copiadas para a fonte unica)."""
+    sys.path.insert(0, str(RAIZ / "scripts"))
+    import gestor_dependencias
+    return sorted(gestor_dependencias.skills_de_terceiros(str(DEPENDENCIAS)))
+
+
+def coletar_skills(terceiros: list[str] = ()) -> list[dict]:
     skills = []
     for skill_md in sorted((COMPARTILHADO / "skills").glob("*/SKILL.md")):
         texto = _ler(skill_md)
@@ -142,6 +151,7 @@ def coletar_skills() -> list[dict]:
             "id": skill_md.parent.name,
             "descricao": _frontmatter(texto, "description"),
             "linhas": texto.count("\n") + 1,
+            "terceiro": skill_md.parent.name in terceiros,
         })
     return skills
 
@@ -507,7 +517,8 @@ def achar_repeticoes(ferramentas, skills, gates, receita) -> dict:
 
 def gerar(com_encaixe: bool = True) -> dict:
     ferramentas = coletar_ferramentas()
-    skills = coletar_skills()
+    skills_terceiros = coletar_skills_terceiros()
+    skills = coletar_skills(skills_terceiros)
     gates, declaracoes_invisiveis = coletar_gates()
     receita = coletar_receita()
     catalogo = {
@@ -516,6 +527,7 @@ def gerar(com_encaixe: bool = True) -> dict:
         "totais": {},
         "ferramentas": ferramentas,
         "skills": skills,
+        "skills_terceiros": skills_terceiros,
         "comandos_slash": coletar_comandos_slash(),
         "mcps": coletar_mcps(ferramentas),
         "hooks": coletar_hooks(),
@@ -530,6 +542,9 @@ def gerar(com_encaixe: bool = True) -> dict:
         "ferramentas": len(ferramentas),
         "comandos_cli": sum(len(f["comandos"]) for f in ferramentas),
         "skills": len(skills),
+        "skills_nossas": sum(1 for s in skills if not s["terceiro"]),
+        "skills_terceiros_copiadas": sum(1 for s in skills if s["terceiro"]),
+        "skills_terceiros_registradas": len(skills_terceiros),
         "comandos_slash": len(catalogo["comandos_slash"]),
         "mcps_registrados": len(catalogo["mcps"]["registrados_mcp_json"]),
         "mcps_internos": len(catalogo["mcps"]["internos_das_ferramentas"]),
