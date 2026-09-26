@@ -123,3 +123,26 @@ def test_skills_roda_de_verdade_no_repositorio(tmp_path):
     cat = json.loads((ROOT / "docs" / "auditoria" / "mapa-pecas" / "catalogo-pecas.json").read_text(encoding="utf-8"))
     assert texto.count('<article class="item"') == sum(1 for s in cat["skills"] if not s["terceiro"])
     assert "CONVENCAO-AUTORIA-SKILLS.md" in texto
+
+
+def test_indice_status_sai_do_disco(tmp_path, monkeypatch):
+    monkeypatch.setattr(mv, "MAPAS", tmp_path)
+    monkeypatch.setattr(mv, "MAPAS_PREVISTOS", (
+        ("skills", "Mapa das skills", "a"), ("guardas", "Mapa dos guardas", "b"), ("futuro", "Mapa futuro", "c")))
+    cat = {**_cat_skills(_skill("aidd-a")), "gates": [_gate("G_A")],
+           "achados": {"skills_mesma_descricao": [], "declaracoes_de_lei_invisiveis_ao_meta_gate": []}}
+    (tmp_path / "mapa-skills.html").write_text(mv.montar("skills", cat, "manual-montagem-aidd.html", False),
+                                               encoding="utf-8")
+    (tmp_path / "mapa-guardas.html").write_text("velho", encoding="utf-8")
+    assert mv.status_mapa("skills", cat) == "concluido"
+    assert mv.status_mapa("guardas", cat) == "desatualizado"
+    assert mv.status_mapa("futuro", cat) == "a-criar"
+    valores = mv.valores_indice(cat)
+    assert "de 3 mapas concluídos" in valores["TOTAIS"] and "ainda não existe" in valores["LISTA"]
+
+
+def test_todo_mapa_previsto_tem_molde_se_tem_gerador():
+    for tipo, _titulo, _para_que in mv.MAPAS_PREVISTOS:
+        if tipo in mv.GERADORES:
+            assert (mv.MOLDES / f"{tipo}.html").is_file(), tipo
+            assert tipo in mv.TITULOS, tipo

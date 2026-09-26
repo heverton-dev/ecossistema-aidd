@@ -13,7 +13,7 @@ valor sem marcador é erro (exit 1), para o molde e o gerador não se desencontr
 
 Uso:
   python scripts/mapa_visual.py <tipo> [--saida ARQ] [--fragmento] [--link-manual URL] [--check]
-    <tipo>         guardas | skills
+    <tipo>         indice | guardas | skills | ... (ver MAPAS_PREVISTOS)
     --saida        destino (padrão: docs/mapas-visuais/mapa-<tipo>.html)
     --fragmento    grava sem <!doctype>/<head> (formato de publicação do Artifact)
     --link-manual  destino do link "voltar ao manual" (padrão: manual-montagem-aidd.html)
@@ -35,7 +35,17 @@ CATALOGO = RAIZ / "docs" / "auditoria" / "mapa-pecas" / "catalogo-pecas.json"
 FONTES = ("https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;"
           "12..96,700;12..96,800&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500"
           "&display=swap")
-TITULOS = {"guardas": "Mapa dos Guardas", "skills": "Mapa das Skills"}
+TITULOS = {"guardas": "Mapa dos Guardas", "skills": "Mapa das Skills", "indice": "Mapas do Ecossistema"}
+# Os mapas que o ecossistema precisa ter, na ordem de criação. O índice mostra
+# cada um como concluído (arquivo em dia com o catálogo), desatualizado ou a criar.
+MAPAS_PREVISTOS = (
+    ("guardas", "Mapa dos guardas", "todos os guardas, onde moram e quem prova que morde"),
+    ("skills", "Mapa das skills", "todas as skills nossas, os terceiros e como criar uma"),
+    ("encaixes", "Mapa dos encaixes", "as etapas da Tríade, os contratos entre elas e onde cada fluxo quebra"),
+    ("ferramentas", "Mapa das ferramentas", "as 8 ferramentas, seus comandos de CLI e as tarefas com mais de uma dona"),
+    ("comandos", "Mapa dos comandos slash", "o que você digita e qual skill cada comando chama"),
+    ("conexoes", "Mapa das conexões", "os MCPs (telefones para fora) e os hooks (alarmes)"),
+)
 META_LINHAS_SKILL = 150
 META_GUARDAS = ("G_PORTAO_PROVA_QUE_MORDE", "G_LEI_DECLARA_PORTAO")
 ORDEM_CASAS = ("meta", "ecossistema", "ferramenta", "entrega", "componente")
@@ -192,7 +202,44 @@ def valores_skills(cat: dict) -> dict[str, str]:
     }
 
 
-GERADORES = {"guardas": valores_guardas, "skills": valores_skills}
+def status_mapa(tipo: str, cat: dict) -> str:
+    """concluido = arquivo existe e está em dia com o catálogo; desatualizado = existe e
+    difere; a-criar = sem gerador ou sem arquivo."""
+    arquivo = MAPAS / f"mapa-{tipo}.html"
+    if tipo not in GERADORES or not arquivo.is_file():
+        return "a-criar"
+    em_dia = arquivo.read_text(encoding="utf-8") == montar(tipo, cat, "manual-montagem-aidd.html", False)
+    return "concluido" if em_dia else "desatualizado"
+
+
+ROTULO_STATUS = {"concluido": ("concluído", "ok"), "desatualizado": ("desatualizado", "aviso"),
+                 "a-criar": ("a criar", "falha")}
+
+
+def valores_indice(cat: dict) -> dict[str, str]:
+    linhas = []
+    contagem = defaultdict(int)
+    for n, (tipo, titulo, para_que) in enumerate(MAPAS_PREVISTOS, 1):
+        status = status_mapa(tipo, cat)
+        contagem[status] += 1
+        rotulo, cls = ROTULO_STATUS[status]
+        link = (f'<a class="mapa-link" href="mapa-{e(tipo)}.html">abrir →</a>' if status != "a-criar"
+                else '<span class="vazio">ainda não existe</span>')
+        linhas.append(f'<article class="item" style="--c:var(--c-trabalha)" data-busca="{e((titulo + " " + para_que).lower())}">'
+                      f'<span class="nome">{n}. {e(titulo)}</span><p class="desc">{e(para_que)}</p>'
+                      f'<div class="chips"><span class="chip {cls}">{rotulo}</span></div>{link}</article>')
+    total = len(MAPAS_PREVISTOS)
+    return {
+        "TOTAIS": _totais([
+            (contagem["concluido"], f"de {total} mapas concluídos", ""),
+            (contagem["desatualizado"], "desatualizados", "aviso" if contagem["desatualizado"] else ""),
+            (contagem["a-criar"], "a criar", "falha" if contagem["a-criar"] else ""),
+        ]),
+        "LISTA": f'<div class="grupo"><div class="itens">{"".join(linhas)}</div></div>',
+    }
+
+
+GERADORES = {"guardas": valores_guardas, "skills": valores_skills, "indice": valores_indice}
 
 
 def montar(tipo: str, cat: dict, link_manual: str, fragmento: bool) -> str:
