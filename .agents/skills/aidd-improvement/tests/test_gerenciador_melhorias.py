@@ -91,7 +91,7 @@ def test_cmd_init_reanalise_plano_existente_sem_nota_anterior():
         dest_melhorias = Path(tmp_melhorias)
 
         plano_cmd_init("plano-antigo-reanalise", ["Item Um"], destino_base=dest_planos)
-        pasta_plano = dest_planos / "plano-antigo-reanalise"
+        pasta_plano = next(dest_planos.glob("PLAN-*"))
         # Remove o bloco de nota para simular um plano de formato antigo.
         caminho_00 = pasta_plano / "00-PROCESSO-E-DECISOES.md"
         conteudo = caminho_00.read_text(encoding="utf-8")
@@ -132,7 +132,7 @@ def test_cmd_init_reanalise_com_nota_anterior_ja_registrada():
             nota_atual_geral="5",
             evidencia_geral="relatorio-antigo.html",
         )
-        pasta_plano = dest_planos / "plano-com-nota"
+        pasta_plano = next(dest_planos.glob("PLAN-*"))
 
         ret = cmd_init(
             "Reanalisar plano-com-nota",

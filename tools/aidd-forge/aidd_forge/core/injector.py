@@ -108,7 +108,7 @@ class Injector:
         return result
 
     def link_skills(
-        self, skills_subdir: str = "skills", canonical_dir: str = ".agent/skills"
+        self, skills_subdir: str = "skills", canonical_dir: str = ".agents/skills"
     ) -> InjectionResult:
         """Vincula cada skill ja injetada em `target_root/<skills_subdir>/<nome>`
         na pasta canonica `target_root/<canonical_dir>/<nome>`.
@@ -124,31 +124,41 @@ class Injector:
         if not skills_root.exists():
             return result
 
-        canonical_root = self.target_root / canonical_dir
-        canonical_root.mkdir(parents=True, exist_ok=True)
+        destinos = [canonical_dir]
+        if canonical_dir == ".agents/skills":
+            destinos.append(".agent/skills")
+        elif canonical_dir == ".agent/skills":
+            destinos.append(".agents/skills")
 
-        for skill_dir in sorted(p for p in skills_root.iterdir() if p.is_dir()):
-            if not (skill_dir / "SKILL.md").exists():
-                continue
+        for i, c_dir in enumerate(destinos):
+            canonical_root = self.target_root / c_dir
+            canonical_root.mkdir(parents=True, exist_ok=True)
 
-            link_path = canonical_root / skill_dir.name
-
-            if link_path.exists() or link_path.is_symlink():
-                if not self.force:
-                    result.skipped.append(link_path)
+            for skill_dir in sorted(p for p in skills_root.iterdir() if p.is_dir()):
+                if not (skill_dir / "SKILL.md").exists():
                     continue
-                if link_path.is_symlink() or link_path.is_file():
-                    link_path.unlink()
-                else:
-                    shutil.rmtree(link_path)
-                result.overwritten.append(link_path)
-            else:
-                result.created.append(link_path)
 
-            try:
-                link_path.symlink_to(skill_dir, target_is_directory=True)
-            except OSError:
-                shutil.copytree(skill_dir, link_path)
+                link_path = canonical_root / skill_dir.name
+
+                if link_path.exists() or link_path.is_symlink():
+                    if not self.force:
+                        if i == 0:
+                            result.skipped.append(link_path)
+                        continue
+                    if link_path.is_symlink() or link_path.is_file():
+                        link_path.unlink()
+                    else:
+                        shutil.rmtree(link_path)
+                    if i == 0:
+                        result.overwritten.append(link_path)
+                else:
+                    if i == 0:
+                        result.created.append(link_path)
+
+                try:
+                    link_path.symlink_to(skill_dir, target_is_directory=True)
+                except OSError:
+                    shutil.copytree(skill_dir, link_path)
 
         return result
 

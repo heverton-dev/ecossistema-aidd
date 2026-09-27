@@ -1061,6 +1061,11 @@ def cmd_evolucao(args):
     return subprocess.run(cmd).returncode
 
 def cmd_audit(args):
+    if "-h" in args or "--help" in args:
+        print("Uso: python ecossistema.py audit")
+        print("Executa a bateria de Quality Gates do ecossistema via pre-commit.")
+        return 0
+
     # NIH #4 (Fase 2-Gates3): o runner proprio dos quality gates foi
     # substituido pelo framework pre-commit. 'audit' DELEGA para
     # 'pre-commit run --all-files', que roda os mesmos gates do _GATES_AUDIT

@@ -1,0 +1,17 @@
+{
+  "ticket": 1,
+  "titulo": "Correção de Leis Invisíveis e Corrida no G_PORTAO_PROVA_QUE_MORDE",
+  "status": "CONCLUIDO",
+  "falha_15d": "D1. Contratos e Regras",
+  "achados_resolvidos": ["CAT-declaracoes-invisiveis", "VER-005"],
+  "artefatos_modificados": [
+    "gates/G_LEI_DECLARA_PORTAO.py",
+    "gates/G_DETERMINISMO_LEI_1.py",
+    "gates/test_g_determinismo_lei_1.py"
+  ],
+  "evidencias": [
+    "G_LEI_DECLARA_PORTAO.py aceita anotações pós-(provado), zerando as 10 declarações invisíveis",
+    "test_g_determinismo_lei_1.py isolado em tempfile.TemporaryDirectory(), eliminando corrida com meta-guarda",
+    "pytest gates/test_g_determinismo_lei_1.py passa com 3/3 em 0.69s"
+  ]
+}

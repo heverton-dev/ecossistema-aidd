@@ -111,13 +111,13 @@ class OrquestradorSincrono:
 
     def _validar_schema(self, dados: Dict[str, Any], schema_nome: str) -> bool:
         if not jsonschema:
-            self.log("jsonschema não instalado, pulando validação estrita", "WARN")
-            return True
+            self.log("jsonschema não instalado, impossível validar contrato formal", "ERRO")
+            return False
 
         schema_path = SPECS_DIR / schema_nome
         if not schema_path.exists():
-            self.log(f"Schema não encontrado: {schema_path}", "WARN")
-            return True
+            self.log(f"Schema não encontrado: {schema_path}", "ERRO")
+            return False
 
         with open(schema_path, "r", encoding="utf-8") as f:
             schema = json.load(f)
@@ -273,10 +273,21 @@ class OrquestradorSincrono:
 
         elif self.fluxo == 2:
             self.log("INICIANDO ETAPA 3: aidd-factory (Engine Fluxo 02: Open-Source)", "ETAPA")
+            plano_infra = self.pasta / "PLANO-INFRAESTRUTURA.json"
+            if not self.dry_run and not plano_infra.exists():
+                plano_infra.parent.mkdir(parents=True, exist_ok=True)
+                plano_dados = {
+                    "versao": "1.0.0",
+                    "dominio": self.dominio,
+                    "nome": self.nome,
+                    "servicos": ["gateway", "app"]
+                }
+                with open(plano_infra, "w", encoding="utf-8") as f:
+                    json.dump(plano_dados, f, indent=2, ensure_ascii=False)
             cmd = [
-                sys.executable, "ecossistema.py", "factory", "curate",
-                "--dominio", self.dominio,
-                "--output", str(self.pasta / "factory_output")
+                sys.executable, "ecossistema.py", "factory",
+                "--plano", str(plano_infra),
+                "--pasta", str(self.pasta / "factory_output")
             ]
             rc = self._executar_comando(cmd)
             if rc != 0:
@@ -288,7 +299,7 @@ class OrquestradorSincrono:
             origem = str(self.origem_export or (self.pasta / "origem"))
             cmd = [
                 sys.executable, "ecossistema.py", "bridge", "scan",
-                "--dir", origem
+                origem
             ]
             rc = self._executar_comando(cmd)
             if rc != 0:
@@ -495,6 +506,16 @@ class OrquestradorSincrono:
         """Etapa 6: Infraestrutura, Docker Compose e Validação de Portas."""
         self.log("INICIANDO ETAPA 6: aidd-ops (Infraestrutura e Provisionamento)", "ETAPA")
 
+        cmd = [
+            sys.executable, "ecossistema.py", "ops", "plan",
+            f"Provisionar infraestrutura para {self.nome}",
+            "--pasta", str(self.pasta)
+        ]
+        rc = self._executar_comando(cmd)
+        if rc != 0:
+            self.log("Falha na execução do aidd-ops", "ERRO")
+            return False
+
         # Verifica presença de Dockerfile e docker-compose.yml
         dockerfile = self.pasta / "Dockerfile"
         compose = self.pasta / "docker-compose.yml"
@@ -508,6 +529,12 @@ class OrquestradorSincrono:
     def etapa_07_auditoria(self) -> bool:
         """Etapa 7: Verificação final de conformidade do projeto."""
         self.log("INICIANDO ETAPA 7: Auditoria de Conformidade Final", "ETAPA")
+
+        cmd_audit = [sys.executable, "ecossistema.py", "audit"]
+        rc = self._executar_comando(cmd_audit)
+        if rc != 0:
+            self.log("Falha na auditoria final de conformidade", "ERRO")
+            return False
 
         # Salva manifesto da orquestração síncrona
         manifesto_final = {
@@ -616,7 +643,7 @@ class OrquestradorSincrono:
         if not self.dry_run:
             gerar_make_run(raiz)
         comando_subir, url, extras = comando_e_url(raiz)
-        if not (raiz / "README-USUARIO.md").is_file() or not self.dry_run:
+        if not self.dry_run and not (raiz / "README-USUARIO.md").is_file():
             gerar_readme_usuario(
                 raiz,
                 nome_app=self.nome or self.slug,

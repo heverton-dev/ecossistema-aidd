@@ -4,25 +4,25 @@
   "totais": {
     "ferramentas": 8,
     "comandos_cli": 69,
-    "skills": 38,
+    "skills": 39,
     "leis": 13,
     "lente_15d": 15,
     "oficina": 37,
     "scripts": 24,
     "moldes_entrega": 24,
     "harnesses": 7,
-    "skills_nossas": 38,
+    "skills_nossas": 39,
     "skills_terceiros_copiadas": 0,
     "skills_terceiros_registradas": 20,
-    "comandos_slash": 17,
+    "comandos_slash": 18,
     "mcps_registrados": 6,
     "mcps_internos": 3,
     "hooks": 3,
-    "gates_nomes": 87,
-    "gates_arquivos": 133,
+    "gates_nomes": 88,
+    "gates_arquivos": 134,
     "contratos": 8,
     "etapas_receita": 7,
-    "encaixes_quebrados": 2
+    "encaixes_quebrados": 0
   },
   "ferramentas": [
     {
@@ -278,6 +278,12 @@
       "id": "aidd-agent-writing",
       "descricao": "Guides writing any document an agent consumes (context pointers, information hierarchy, completion criteria, pruning). Use when creating or editing a skill, or modifying AGENTS.md or CLAUDE.md, or the user says \"escrever skill\", \"escrita para agentes\".",
       "linhas": 64,
+      "terceiro": false
+    },
+    {
+      "id": "aidd-anatomy",
+      "descricao": "Extracts and documents the complete technical anatomy of an ecosystem target (pipeline, tool, or component) producing both Markdown and visual HTML artifacts in docs/anatomias/anatomia-<target>/. Use when dissecting a target, or when the user asks for \"anatomia\", \"/anatomia\", \"desmontar ferramenta\", \"anatomia do alvo\", \"analisar anatomia\", or \"anatomia do pipeline\".",
+      "linhas": 49,
       "terceiro": false
     },
     {
@@ -548,27 +554,27 @@
         {
           "gate": "G_SYNC_CMD_ROT",
           "forca": "provado",
-          "visivel": false
+          "visivel": true
         },
         {
           "gate": "G_LAYOUT_ENTREGA",
           "forca": "provado",
-          "visivel": false
+          "visivel": true
         },
         {
           "gate": "G_PACOTE_CORE",
           "forca": "provado",
-          "visivel": false
+          "visivel": true
         },
         {
           "gate": "G_RESUMO_USUARIO",
           "forca": "provado",
-          "visivel": false
+          "visivel": true
         },
         {
           "gate": "G_ANT_LOCKIN_LEGADO",
           "forca": "provado",
-          "visivel": false
+          "visivel": true
         }
       ],
       "sem_gate": false
@@ -619,7 +625,7 @@
         {
           "gate": "G_USER_FACING_PTBR",
           "forca": "provado",
-          "visivel": false
+          "visivel": true
         }
       ],
       "sem_gate": false
@@ -668,6 +674,11 @@
           "gate": "G_HONESTIDADE_ROTULO",
           "forca": "provado",
           "visivel": true
+        },
+        {
+          "gate": "G_mapa_pecas",
+          "forca": "provado",
+          "visivel": true
         }
       ],
       "sem_gate": false
@@ -704,22 +715,22 @@
         {
           "gate": "G_amelhoria",
           "forca": "provado",
-          "visivel": false
+          "visivel": true
         },
         {
           "gate": "G_aidd_diagnose",
           "forca": "provado",
-          "visivel": false
+          "visivel": true
         },
         {
           "gate": "G_PROVA_SKILLS_POCOCK",
           "forca": "provado",
-          "visivel": false
+          "visivel": true
         },
         {
           "gate": "G_HANDOFF_MELHORIA",
           "forca": "provado",
-          "visivel": false
+          "visivel": true
         }
       ],
       "sem_gate": false
@@ -884,6 +895,50 @@
           "13": "falha",
           "14": "falha",
           "15": "falha"
+        }
+      },
+      {
+        "alvo": "mapa-pecas",
+        "ciclo": "ciclo-01",
+        "laudo": "docs/auditoria/mapa-pecas/ciclo-01/LAUDO-15D-REVISADO.md",
+        "dimensoes": {
+          "1": "descrito",
+          "2": "descrito",
+          "3": "descrito",
+          "4": "descrito",
+          "5": "descrito",
+          "6": "descrito",
+          "7": "descrito",
+          "8": "descrito",
+          "9": "descrito",
+          "10": "descrito",
+          "11": "descrito",
+          "12": "descrito",
+          "13": "descrito",
+          "14": "descrito",
+          "15": "descrito"
+        }
+      },
+      {
+        "alvo": "skills-pocock",
+        "ciclo": "ciclo-01",
+        "laudo": "docs/auditoria/skills-pocock/ciclo-01/LAUDO-15D-REVISADO.md",
+        "dimensoes": {
+          "1": "descrito",
+          "2": "descrito",
+          "3": "descrito",
+          "4": "descrito",
+          "5": "descrito",
+          "6": "descrito",
+          "7": "descrito",
+          "8": "descrito",
+          "9": "descrito",
+          "10": "descrito",
+          "11": "descrito",
+          "12": "descrito",
+          "13": "descrito",
+          "14": "descrito",
+          "15": "descrito"
         }
       }
     ]
@@ -1106,24 +1161,24 @@
         "ciclo": "ciclo-01",
         "caminho": "docs/auditoria/mapa-pecas/ciclo-01",
         "fases": {
-          "laudo_inicial": false,
-          "plano_evolucao": false,
-          "laudo_revisado": false,
-          "dod": false
+          "laudo_inicial": true,
+          "plano_evolucao": true,
+          "laudo_revisado": true,
+          "dod": true
         },
-        "nota": ""
+        "nota": "10.0"
       },
       {
         "alvo": "skills-pocock",
         "ciclo": "ciclo-01",
         "caminho": "docs/auditoria/skills-pocock/ciclo-01",
         "fases": {
-          "laudo_inicial": false,
+          "laudo_inicial": true,
           "plano_evolucao": true,
-          "laudo_revisado": false,
+          "laudo_revisado": true,
           "dod": true
         },
-        "nota": ""
+        "nota": "10.0"
       }
     ],
     "relatorios_melhoria": 13
@@ -1487,7 +1542,7 @@
           "hook": ".claude/hooks/{nome}",
           "sub-agent": ".claude/agents/{nome}"
         },
-        "skills_em_disco": 57,
+        "skills_em_disco": 58,
         "nossas_faltando": [],
         "terceiros_em_disco": 19,
         "config_mcp": ".mcp.json"
@@ -1508,7 +1563,7 @@
           "hook": ".agents/hooks/{nome}",
           "sub-agent": ".agents/agents/{nome}"
         },
-        "skills_em_disco": 57,
+        "skills_em_disco": 58,
         "nossas_faltando": [],
         "terceiros_em_disco": 19,
         "config_mcp": ".agents/mcp_config.json"
@@ -1529,7 +1584,7 @@
           "hook": ".opencode/hooks/{nome}",
           "sub-agent": ".opencode/agents/{nome}"
         },
-        "skills_em_disco": 43,
+        "skills_em_disco": 44,
         "nossas_faltando": [],
         "terceiros_em_disco": 5,
         "config_mcp": "opencode.jsonc"
@@ -1550,7 +1605,7 @@
           "hook": ".mimocode/hooks/{nome}",
           "sub-agent": ".mimocode/agents/{nome}"
         },
-        "skills_em_disco": 43,
+        "skills_em_disco": 44,
         "nossas_faltando": [],
         "terceiros_em_disco": 5,
         "config_mcp": "mimocode.jsonc"
@@ -1569,7 +1624,7 @@
           "hook": ".gemini/hooks/{nome}",
           "sub-agent": ".gemini/agents/{nome}"
         },
-        "skills_em_disco": 38,
+        "skills_em_disco": 39,
         "nossas_faltando": [],
         "terceiros_em_disco": 0,
         "config_mcp": ".gemini/settings.json"
@@ -1588,7 +1643,7 @@
           "command": ".cursor/commands/{nome}",
           "hook": ".cursor/hooks/{nome}"
         },
-        "skills_em_disco": 43,
+        "skills_em_disco": 44,
         "nossas_faltando": [],
         "terceiros_em_disco": 5,
         "config_mcp": ".cursor/mcp.json"
@@ -1607,18 +1662,13 @@
           "command": ".codebuddy/commands/{nome}",
           "hook": ".codebuddy/hooks/{nome}"
         },
-        "skills_em_disco": 57,
+        "skills_em_disco": 58,
         "nossas_faltando": [],
         "terceiros_em_disco": 19,
         "config_mcp": ""
       }
     ],
-    "pastas_legadas": [
-      {
-        "pasta": ".gemini/skills",
-        "arquivos_versionados": 346
-      }
-    ]
+    "pastas_legadas": []
   },
   "comandos_slash": [
     {
@@ -1626,6 +1676,13 @@
       "caminho": "componentes/compartilhado/comandos/aidd-livro-texto.md",
       "descricao": "Gera e atualiza livros-texto corporativos em PDF, com estrutura macro-meso-micro,",
       "skill": "aidd-textbook",
+      "skill_existe": true
+    },
+    {
+      "id": "anatomia",
+      "caminho": "componentes/compartilhado/comandos/anatomia.md",
+      "descricao": "Investiga o código real e documentação do alvo (grafo -> docs -> implementação -> ecossistema) e gera os artefatos de anatomia técnica estruturados em Markdown e HTML visual.",
+      "skill": "aidd-anatomy",
       "skill_existe": true
     },
     {
@@ -2106,11 +2163,11 @@
         },
         {
           "caminho": "tools/aidd-forge/aidd_forge/templates/gates/G_DETERMINISMO_LEI_1.py",
-          "versao": "A",
+          "versao": "B",
           "papel": "entrega"
         }
       ],
-      "versoes_distintas": 1,
+      "versoes_distintas": 2,
       "no_pre_commit": true,
       "prova_que_morde": true,
       "leis": [
@@ -3387,6 +3444,23 @@
       "leis": [
         9
       ]
+    },
+    {
+      "id": "G_mapa_pecas",
+      "descricao": "Quality Gate Determinístico de Integridade do Mapa de Peças e Catálogo. Valida estritamente: Integridade estrutural e factual do catálogo de peças (catalogo-pecas.json).",
+      "copias": [
+        {
+          "caminho": "gates/G_mapa_pecas.py",
+          "versao": "A",
+          "papel": "ecossistema"
+        }
+      ],
+      "versoes_distintas": 1,
+      "no_pre_commit": false,
+      "prova_que_morde": true,
+      "leis": [
+        8
+      ]
     }
   ],
   "contratos": [
@@ -3519,16 +3593,14 @@
           ],
           [
             "factory",
-            "curate",
-            "--dominio",
+            "--plano",
             "<var>",
-            "--output",
+            "--pasta",
             "<var>"
           ],
           [
             "bridge",
             "scan",
-            "--dir",
             "<var>"
           ]
         ],
@@ -3537,17 +3609,15 @@
             [
               "bridge",
               "scan",
-              "--dir",
               "<var>"
             ]
           ],
           "open": [
             [
               "factory",
-              "curate",
-              "--dominio",
+              "--plano",
               "<var>",
-              "--output",
+              "--pasta",
               "<var>"
             ]
           ],
@@ -3615,18 +3685,30 @@
       {
         "etapa": "etapa_06_ops",
         "descricao": "Etapa 6: Infraestrutura, Docker Compose e Validação de Portas.",
-        "chamadas_cli": [],
+        "chamadas_cli": [
+          [
+            "ops",
+            "plan",
+            "<var>",
+            "--pasta",
+            "<var>"
+          ]
+        ],
         "chamadas_por_fluxo": {},
         "atalhos_internos": [],
-        "chama_alguma_ferramenta": false
+        "chama_alguma_ferramenta": true
       },
       {
         "etapa": "etapa_07_auditoria",
         "descricao": "Etapa 7: Verificação final de conformidade do projeto.",
-        "chamadas_cli": [],
+        "chamadas_cli": [
+          [
+            "audit"
+          ]
+        ],
         "chamadas_por_fluxo": {},
         "atalhos_internos": [],
-        "chama_alguma_ferramenta": false
+        "chama_alguma_ferramenta": true
       }
     ]
   },
@@ -3651,20 +3733,15 @@
     },
     {
       "etapa": "etapa_03_engine",
-      "chamada": "ecossistema.py factory curate --dominio <var> --output <var>",
-      "encaixa": false,
-      "problemas": [
-        "'curate' passado como argumento, mas a ferramenta não aceita argumento posicional",
-        "flags inexistentes: --dominio, --output"
-      ]
+      "chamada": "ecossistema.py factory --plano <var> --pasta <var>",
+      "encaixa": true,
+      "problemas": []
     },
     {
       "etapa": "etapa_03_engine",
-      "chamada": "ecossistema.py bridge scan --dir <var>",
-      "encaixa": false,
-      "problemas": [
-        "flags inexistentes: --dir"
-      ]
+      "chamada": "ecossistema.py bridge scan <var>",
+      "encaixa": true,
+      "problemas": []
     },
     {
       "etapa": "etapa_04_master",
@@ -3689,6 +3766,18 @@
       "chamada": "ecossistema.py enterprise verificar-drift --dir <var>",
       "encaixa": true,
       "problemas": []
+    },
+    {
+      "etapa": "etapa_06_ops",
+      "chamada": "ecossistema.py ops plan <var> --pasta <var>",
+      "encaixa": true,
+      "problemas": []
+    },
+    {
+      "etapa": "etapa_07_auditoria",
+      "chamada": "ecossistema.py audit",
+      "encaixa": true,
+      "problemas": []
     }
   ],
   "achados": {
@@ -3711,7 +3800,7 @@
       },
       {
         "donas": "aidd-forge + gates",
-        "arquivos": 2
+        "arquivos": 1
       }
     ],
     "verbos_cli_repetidos": {
@@ -4004,6 +4093,7 @@
       "G_BLOQUEAR_SEGREDOS",
       "G_CONTRACTS",
       "G_CYBERSECURITY_OWASP",
+      "G_DETERMINISMO_LEI_1",
       "G_HARNESS_COMPAT",
       "G_INJECT",
       "G_PERFORMANCE",
@@ -4013,10 +4103,7 @@
       "G_TESTES_REAIS"
     ],
     "skills_mesma_descricao": [],
-    "etapas_sem_ferramenta": [
-      "etapa_06_ops",
-      "etapa_07_auditoria"
-    ],
+    "etapas_sem_ferramenta": [],
     "etapas_com_atalho_interno": {
       "etapa_02_planner": [
         "tools/aidd-planner"
@@ -4025,17 +4112,6 @@
         "tools/aidd-master/scripts/dispatch_pipeline.py"
       ]
     },
-    "declaracoes_de_lei_invisiveis_ao_meta_gate": [
-      "Lei #1: G_SYNC_CMD_ROT",
-      "Lei #1: G_LAYOUT_ENTREGA",
-      "Lei #1: G_PACOTE_CORE",
-      "Lei #1: G_RESUMO_USUARIO",
-      "Lei #1: G_ANT_LOCKIN_LEGADO",
-      "Lei #4: G_USER_FACING_PTBR",
-      "Lei #9: G_amelhoria",
-      "Lei #9: G_aidd_diagnose",
-      "Lei #9: G_PROVA_SKILLS_POCOCK",
-      "Lei #9: G_HANDOFF_MELHORIA"
-    ]
+    "declaracoes_de_lei_invisiveis_ao_meta_gate": []
   }
 }

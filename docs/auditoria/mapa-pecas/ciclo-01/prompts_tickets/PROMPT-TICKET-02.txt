@@ -1,0 +1,21 @@
+ROLE: Builder. Ecosystem AIDD. Ticket 2. Target tool: mapa-pecas.
+DIMENSION: D10
+DELIVER: docs/auditoria/mapa-pecas/ciclo-01/ENTREGA-TICKET-02.json
+
+STEPS:
+- Fix orchestrator recipe calls for bridge scan and factory curate to match accepted tool CLI args.
+- Wire step 06 ops and step 07 audit to invoke real tools and gates.
+- Prevent step 07 from recording 100 percent compliance without executing quality gates.
+- Supply required PLANO-INFRAESTRUTURA.json in step 03 of Flow 02 before factory run.
+- Ensure dry run flag never writes README-USUARIO.md to disk.
+- Replace internal imports in step 02 planner and step 03 engine with public tool interfaces.
+- Run tests on pipeline orchestration. Assert exit 0.
+- Write handoff json to docs/auditoria/mapa-pecas/ciclo-01/ENTREGA-TICKET-02.json.
+
+RULES:
+1. Write failing test first. Run. Assert exit 1.
+2. Implement. Zero stubs. Real pytest tests. Run. Assert exit 0.
+3. Work inside ephemeral Git Worktree only.
+4. Capture real exit code: redirect to file, read $? same line. Never trust pipes.
+5. NEVER edit docs/auditoria/CONFIG-EXECUCAO-USUARIO.json.
+6. Deliver exactly: docs/auditoria/mapa-pecas/ciclo-01/ENTREGA-TICKET-02.json

@@ -113,10 +113,11 @@ def auditar_determinismo(repo_root: str = ROOT_DIR) -> Tuple[int, List[str], int
     excecoes = carregar_excecoes()
     violations: List[str] = []
     total_auditados = 0
+    gates_dir = os.path.join(repo_root, "gates")
 
     # Escopo 1: Todos os scripts em gates/ (excluindo testes que testam a própria detecção)
-    if os.path.isdir(GATES_DIR):
-        for root, _, files in os.walk(GATES_DIR):
+    if os.path.isdir(gates_dir):
+        for root, _, files in os.walk(gates_dir):
             for file in sorted(files):
                 if not file.endswith(".py"):
                     continue
@@ -133,12 +134,17 @@ def auditar_determinismo(repo_root: str = ROOT_DIR) -> Tuple[int, List[str], int
     return (1 if violations else 0), violations, total_auditados
 
 
-def main() -> int:
+def main(argv: List[str] = None) -> int:
+    import argparse
+    parser = argparse.ArgumentParser(description="Auditoria de Determinismo Mecânico (Lei #1)")
+    parser.add_argument("--repo-root", default=ROOT_DIR, help="Diretório raiz do repositório a auditar")
+    args = parser.parse_args(argv)
+
     print("=" * 72)
     print(" [GATE] G_DETERMINISMO_LEI_1 — Auditoria de Determinismo Mecânico (Lei #1)")
     print("=" * 72)
 
-    code, violations, total = auditar_determinismo(ROOT_DIR)
+    code, violations, total = auditar_determinismo(args.repo_root)
 
     if violations:
         print(f"\n[FALHA] Detectada(s) {len(violations)} violação(ões) da Lei #1 (Determinism First):\n")

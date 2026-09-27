@@ -37,16 +37,18 @@ def test_aprova_gates_determinismo_conformes():
 
 
 def test_reprova_quando_llm_sdk_injetado_em_gates():
-    """Prova que o portão morde (Lei #13): injeção de import openai/anthropic em gates/ deve retornar exit 1."""
-    synthetic_gate_file = os.path.join(GATES_DIR, "G_SYNTHETIC_LLM_TRAP.py")
-    try:
+    """Prova que o portão morde (Lei #13): injeção de import openai/anthropic deve retornar exit 1."""
+    with tempfile.TemporaryDirectory() as tmp_dir:
+        tmp_gates = os.path.join(tmp_dir, "gates")
+        os.makedirs(tmp_gates, exist_ok=True)
+        synthetic_gate_file = os.path.join(tmp_gates, "G_SYNTHETIC_LLM_TRAP.py")
         with open(synthetic_gate_file, "w", encoding="utf-8") as f:
             f.write("# Injeção sintética para testar reprovação da Lei #1\n")
             f.write("import openai\n")
             f.write("def dummy():\n    pass\n")
 
         res = subprocess.run(
-            [sys.executable, GATE_SCRIPT],
+            [sys.executable, GATE_SCRIPT, "--repo-root", tmp_dir],
             capture_output=True,
             text=True,
             cwd=ROOT_DIR,
@@ -56,22 +58,21 @@ def test_reprova_quando_llm_sdk_injetado_em_gates():
         assert res.returncode == 1, f"Gate deveria ter falhado (exit 1), mas retornou {res.returncode}: {res.stdout}"
         assert "G_SYNTHETIC_LLM_TRAP.py" in res.stdout
         assert "Importação de SDK de LLM proibido" in res.stdout
-    finally:
-        if os.path.exists(synthetic_gate_file):
-            os.remove(synthetic_gate_file)
 
 
 def test_reprova_quando_import_from_llm_sdk_injetado():
     """Prova que o portão morde com 'from anthropic import Anthropic' (exit 1)."""
-    synthetic_gate_file = os.path.join(GATES_DIR, "G_SYNTHETIC_ANTHROPIC_TRAP.py")
-    try:
+    with tempfile.TemporaryDirectory() as tmp_dir:
+        tmp_gates = os.path.join(tmp_dir, "gates")
+        os.makedirs(tmp_gates, exist_ok=True)
+        synthetic_gate_file = os.path.join(tmp_gates, "G_SYNTHETIC_ANTHROPIC_TRAP.py")
         with open(synthetic_gate_file, "w", encoding="utf-8") as f:
             f.write("# Injeção sintética from anthropic\n")
             f.write("from anthropic import Anthropic\n")
             f.write("def dummy():\n    pass\n")
 
         res = subprocess.run(
-            [sys.executable, GATE_SCRIPT],
+            [sys.executable, GATE_SCRIPT, "--repo-root", tmp_dir],
             capture_output=True,
             text=True,
             cwd=ROOT_DIR,
@@ -80,6 +81,3 @@ def test_reprova_quando_import_from_llm_sdk_injetado():
         )
         assert res.returncode == 1, f"Gate deveria ter falhado (exit 1), mas retornou {res.returncode}"
         assert "G_SYNTHETIC_ANTHROPIC_TRAP.py" in res.stdout
-    finally:
-        if os.path.exists(synthetic_gate_file):
-            os.remove(synthetic_gate_file)

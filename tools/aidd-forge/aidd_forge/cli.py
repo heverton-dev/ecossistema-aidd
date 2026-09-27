@@ -62,7 +62,7 @@ def cmd_init(path: str, force: bool) -> int:
     if files_result.overwritten:
         print(f"[aidd-forge] arquivos sobrescritos: {len(files_result.overwritten)}")
     print(f"[aidd-forge] regras de IDE vinculadas: {len(links_result.created)}")
-    print(f"[aidd-forge] skills vinculadas em .agent/skills/: {len(skills_result.created)}")
+    print(f"[aidd-forge] skills vinculadas em .agents/skills/: {len(skills_result.created)}")
     print(f"[aidd-forge] fases provisionadas: {len(fence_result.phases)}")
     print(f"[aidd-forge] slash commands gravados: {len(router_result.created)}")
     if router_result.intent_router_injected:

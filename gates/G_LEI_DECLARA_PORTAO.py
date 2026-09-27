@@ -38,9 +38,9 @@ AGENTS_FILE_DEFAULT = os.path.join(ROOT_DIR, "AGENTS.md")
 RE_LAW_HEADER = re.compile(r"^(\d+)\.\s+\*\*(.+?)\*\*")
 
 # Regex para linha de declaração de portão
-# Aceita: "- Portão: <gate_ou_literal> (<força>)" ou com colchetes "[<força>]"
+# Aceita: "- Portão: <gate_ou_literal> (<força>)" ou com colchetes "[<força>]" e comentários opcionais
 RE_GATE_DECLARATION = re.compile(
-    r"^\s*-\s+(?:\*\*)?(?:Portão|Portao|Gate)(?:\*\*)?:\s+(?P<target>.+?)\s+(?:[\(\[])(?P<strength>[\w\-]+)(?:[\)\]])\s*$",
+    r"^\s*-\s+(?:\*\*)?(?:Portão|Portao|Gate)(?:\*\*)?:\s+(?P<target>.+?)\s+(?:[\(\[])(?P<strength>[\w\-]+)(?:,\s*[\w\-]+)?(?:[\)\]])(?:\s*[—–-].*)?\s*$",
     re.IGNORECASE,
 )
 

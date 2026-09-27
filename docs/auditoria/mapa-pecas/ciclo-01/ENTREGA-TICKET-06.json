@@ -1,0 +1,19 @@
+{
+  "ticket": 6,
+  "titulo": "Quality Gate e Rótulo Honesto do Mapa de Peças",
+  "status": "CONCLUIDO",
+  "falha_15d": "D14. Critério de Rejeição (Rollback)",
+  "achados_resolvidos": [
+    "CAT-ciclo-mapa-pecas-ciclo-01"
+  ],
+  "artefatos_modificados": [
+    "gates/G_mapa_pecas.py",
+    "gates/test_g_mapa_pecas.py",
+    "tests/test_g_mapa_pecas.py"
+  ],
+  "evidencias": [
+    "Portão determinístico G_mapa_pecas.py implementado auditando catálogo, achados e mapas visuais",
+    "Suíte tests/test_g_mapa_pecas.py com 7 testes provando que o portão morde (exit 1 sob catálogo corrompido, achado crítico aberto, mapa ausente ou vazio)",
+    "7/7 testes passando com exit 0"
+  ]
+}

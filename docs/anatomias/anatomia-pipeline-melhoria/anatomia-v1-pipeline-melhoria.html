@@ -1,0 +1,189 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Anatomia Técnica: pipeline-melhoria</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+:root {
+  --paper:#EEF1F4; --surface:#FFFFFF; --ink:#16202B; --muted:#5A6878; --line:#D3DAE2;
+  --brick:#F2B705; --brick-ink:#3B2C00;
+  --c-pensa:#7048E8; --c-trabalha:#2F6FDB; --c-regra:#0E9384; --c-guarda:#D92D20; --c-liga:#C4620A;
+  --ok:#12805C; --ok-bg:#E3F4EC; --falha:#C0261B; --falha-bg:#FCE7E5; --fach:#A15C00; --fach-bg:#FDF0DC;
+  --tint:#E4E9EF;
+  --display:"Bricolage Grotesque", "Segoe UI", system-ui, sans-serif;
+  --body:"IBM Plex Sans", "Segoe UI", system-ui, sans-serif;
+  --mono:"IBM Plex Mono", ui-monospace, Consolas, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    color-scheme:dark;
+    --paper:#0F141A; --surface:#17202A; --ink:#E6EBF0; --muted:#95A3B2; --line:#2A3642;
+    --brick:#F5C542; --brick-ink:#2A1F00;
+    --c-pensa:#A48BFF; --c-trabalha:#79A4FF; --c-regra:#3CCBB4; --c-guarda:#FF7A70; --c-liga:#FFAA55;
+    --ok:#4FD1A0; --ok-bg:#12302A; --falha:#FF8A80; --falha-bg:#3A1A18; --fach:#FFBE5C; --fach-bg:#3A2A10;
+    --tint:#1D2833;
+  }
+}
+* { box-sizing:border-box }
+body { margin:0; background:var(--paper); color:var(--ink); font-family:var(--body); font-size:16px; line-height:1.55; padding-inline:16px; padding-block:0 64px }
+.wrap { max-width:1040px; margin:0 auto }
+h1,h2,h3 { font-family:var(--display); text-wrap:balance; margin:0; line-height:1.1 }
+h1 { font-size:clamp(2.0rem,5vw,3.0rem); font-weight:800; letter-spacing:-.02em }
+h2 { font-size:clamp(1.3rem,3vw,1.8rem); font-weight:700; letter-spacing:-.01em; margin-top:16px }
+h3 { font-size:1.1rem; font-weight:700 }
+p { margin:0; max-width:75ch }
+code { font-family:var(--mono); font-size:.86em; background:var(--tint); padding:.08em .35em; border-radius:4px }
+pre { margin:0; font-family:var(--mono); font-size:.82rem; background:var(--tint); border-radius:8px; padding:14px 16px; overflow-x:auto }
+.eyebrow { font-family:var(--mono); font-size:.75rem; letter-spacing:.12em; text-transform:uppercase; color:var(--muted) }
+header { display:flex; flex-direction:column; gap:12px; padding-block:28px 24px }
+section { display:flex; flex-direction:column; gap:16px; padding-block:32px; border-top:1px solid var(--line) }
+.box { background:var(--surface); border:1px solid var(--line); border-radius:8px; padding:18px; display:flex; flex-direction:column; gap:10px }
+.grid2 { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:12px }
+@media (max-width:680px) { .grid2 { grid-template-columns:1fr } }
+.chip { display:inline-block; font-family:var(--mono); font-size:.72rem; letter-spacing:.04em; text-transform:uppercase; padding:3px 8px; border-radius:999px; background:var(--tint); color:var(--muted) }
+.chip.ok { color:var(--ok); background:var(--ok-bg) }
+.chip.falha { color:var(--falha); background:var(--falha-bg) }
+.chip.aviso { color:var(--fach); background:var(--fach-bg) }
+.chip.lei { color:var(--brick-ink); background:var(--brick) }
+.passos { counter-reset:passo; display:flex; flex-direction:column; gap:10px; margin:0; padding:0; list-style:none }
+.passos li { counter-increment:passo; display:grid; grid-template-columns:36px 1fr; gap:12px; align-items:start; background:var(--surface); border:1px solid var(--line); border-radius:8px; padding:14px 16px }
+.passos li::before { content:counter(passo); font-family:var(--display); font-weight:800; font-size:1.3rem; color:var(--c-trabalha); line-height:1.2 }
+.passos li div { display:flex; flex-direction:column; gap:6px }
+.bloco-esteira { display:flex; flex-direction:column; gap:10px; background:var(--surface); border:1px solid var(--line); border-radius:8px; padding:16px }
+.esteira-passo { display:grid; grid-template-columns:140px 1fr; gap:12px; align-items:center; padding-block:8px; border-bottom:1px dashed var(--line) }
+.esteira-passo:last-child { border-bottom:none }
+.esteira-tag { font-family:var(--mono); font-size:.75rem; font-weight:600; text-transform:uppercase; color:var(--muted) }
+.alert { border-radius:8px; padding:14px 16px; font-size:.92rem; display:flex; flex-direction:column; gap:6px }
+.alert.warning { background:var(--falha-bg); border-left:4px solid var(--falha); color:var(--ink) }
+.alert.tip { background:var(--ok-bg); border-left:4px solid var(--ok); color:var(--ink) }
+.alert-title { font-weight:700; font-family:var(--display); font-size:1.0rem }
+.cartao-tabela { width:100%; border-collapse:collapse; font-size:.9rem }
+.cartao-tabela td, .cartao-tabela th { padding:8px 12px; border:1px solid var(--line); text-align:left }
+.cartao-tabela th { background:var(--tint); font-family:var(--mono); font-weight:600; width:25% }
+ul.defeitos { margin:0; padding-left:20px; display:flex; flex-direction:column; gap:8px }
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+  <div class="eyebrow">Ecossistema AIDD • Anatomia Técnica</div>
+  <h1>pipeline-melhoria</h1>
+  <p class="lead">Tríade /melhoria ➔ /plan ➔ /orchestrate: ciclo de vida em 3 estágios independentes com paradas humanas compulsórias e ancoragem em evidência factual.</p>
+</header>
+
+<section>
+  <h2>1. Cartão de Identidade</h2>
+  <table class="cartao-tabela">
+    <tr><th>Nome do Alvo</th><td><code>pipeline-melhoria</code> (Tríade /melhoria ➔ /plan ➔ /orchestrate)</td></tr>
+    <tr><th>Finalidade</th><td>Investigar fatos e notas no código real, compilar planos de melhoria com notas de maturidade (0-10) ancoradas em evidências e orquestrar a execução multiamplo (ORCA app, Subagentes ou Git Worktrees nativos) com paradas humanas obrigatórias.</td></tr>
+    <tr><th>Nível de Maturidade</th><td><span class="chip ok">Produção / Blindado</span> Estrutura canônica de ciclo de vida em 3 estágios independentes.</td></tr>
+    <tr><th>Trava Principal</th><td>Paradas humanas compulsórias entre estágios (Lei #7 - Developer in Control), proibição estrita de notas estimadas sem medição real (<code>NAO AUDITADO</code>) e barreira de sincronização antes de qualquer merge.</td></tr>
+    <tr><th>Comando Acionador</th><td><code>python ecossistema.py melhoria ...</code> (ou <code>/melhoria</code>), <code>python ecossistema.py plan ...</code> (ou <code>/plan</code>), <code>python ecossistema.py orchestrate ...</code> (ou <code>/orchestrate</code>)</td></tr>
+    <tr><th>Localização</th><td><code>scripts/gerenciador_melhorias.py</code>, <code>scripts/gerenciador_planos.py</code>, <code>componentes/compartilhado/skills/aidd-orca/scripts/</code> e skills <code>aidd-improvement</code>, <code>aidd-plan</code>, <code>aidd-orchestrate</code></td></tr>
+  </table>
+</section>
+
+<section>
+  <h2>2. Fluxo de Execução</h2>
+  <ol class="passos">
+    <li>
+      <div>
+        <strong>Etapa 1 — Investiga (Estágio /melhoria)</strong>
+        <p><strong>Dispara</strong> a análise profunda acionada exclusivamente por pedido explícito em linguagem natural.</p>
+        <p><strong>Consulta</strong> o grafo de conhecimento via <code>code-review-graph</code> e complementa com inspeção direta via CLI/Grep.</p>
+        <p><strong>Mede</strong> a nota atual (0-10) baseada em evidência factual verificável; na ausência de prova real, <strong>atribui</strong> compulsoriamente <code>NAO AUDITADO</code>.</p>
+        <p><strong>Gera</strong> deterministicamente o par de artefatos <code>&lt;data&gt;_melhoria-&lt;3-palavras&gt;.html</code> e <code>.json</code> em <code>docs/melhorias/</code> via <code>scripts/gerenciador_melhorias.py</code>.</p>
+        <p><strong>Interrompe</strong> o fluxo e <strong>devolve</strong> o controle ao usuário com pergunta de confirmação antes de avançar para planejamento.</p>
+      </div>
+    </li>
+    <li>
+      <div>
+        <strong>Etapa 2 — Modela (Estágio /plan)</strong>
+        <p><strong>Estrutura</strong> a pasta da iniciativa em <code>docs/planos/PLAN-&lt;NNNN&gt;-&lt;nome&gt;/</code>.</p>
+        <p><strong>Valida</strong> escopo, itens previstos, notas atuais e notas-alvo junto ao usuário antes da escrita.</p>
+        <p><strong>Compila</strong> deterministicamente os arquivos <code>00-PROCESSO-E-DECISOES.md</code> e <code>NN-&lt;item&gt;.md</code> através de <code>python ecossistema.py plan init</code>.</p>
+        <p><strong>Audita</strong> a integridade dos blocos de código markdown via <code>python ecossistema.py plan check-fences</code>.</p>
+        <p><strong>Mantém</strong> todos os itens em estado <code>DRAFT</code> até aprovação expressa do usuário.</p>
+        <p><strong>Aprova</strong> e <strong>move</strong> a pasta do plano para <code>docs/planos/a-fazer/</code> via <code>python ecossistema.py plan aprovar</code> somente sob comando explícito.</p>
+      </div>
+    </li>
+    <li>
+      <div>
+        <strong>Etapa 3 — Roteia (Estágio /orchestrate - Pré-voo)</strong>
+        <p><strong>Seleciona</strong> o ambiente de execução sem presunção autônoma.</p>
+        <p><strong>Interroga</strong> o usuário sobre o ambiente pretendido: ORCA app real (<code>orca-cli</code>), Subagentes da sessão, ou Git Worktrees nativos.</p>
+        <p><strong>Compila</strong> o manifesto mecânico <code>.orca-flight-plan.json</code> em modo seco (<code>--dry-run</code>) via <code>componentes/compartilhado/skills/aidd-orca/scripts/</code>.</p>
+        <p><strong>Exibe</strong> o plano de voo e <strong>aguarda</strong> validação/edição manual de harnesses, modelos e parâmetros.</p>
+      </div>
+    </li>
+    <li>
+      <div>
+        <strong>Etapa 4 — Executa (Estágio /orchestrate - Voo)</strong>
+        <p><strong>Inicia</strong> a implementação controlada dos tickets.</p>
+        <p><strong>Marca</strong> o plano em andamento movendo a pasta para <code>docs/planos/fazendo/</code> via <code>python ecossistema.py plan iniciar-execucao</code>.</p>
+        <p><strong>Isola</strong> as frentes em árvores de trabalho Git efêmeras (<code>git worktree</code>) ou despacha tarefas isoladas para subagentes conforme o ambiente eleito.</p>
+        <p><strong>Executa</strong> o ciclo de implementação assegurando passagens por gates locais e verificação de handoff.</p>
+      </div>
+    </li>
+    <li>
+      <div>
+        <strong>Etapa 5 — Conclui (Estágio /orchestrate - Pós-voo)</strong>
+        <p><strong>Consolida</strong> o ciclo e <strong>arquiva</strong> a iniciativa.</p>
+        <p><strong>Revalida</strong> a suíte de testes e o contrato do ecossistema antes de qualquer integração na branch base.</p>
+        <p><strong>Move</strong> a pasta do plano para <code>docs/planos/concluidos/</code> após validação humana.</p>
+      </div>
+    </li>
+  </ol>
+</section>
+
+<section>
+  <h2>3. Esteira Visual com Blocos</h2>
+  <div class="bloco-esteira">
+    <div class="esteira-passo">
+      <span class="esteira-tag">Entrada</span>
+      <span>Pedido em linguagem natural do usuário, relatório de auditoria ou plano existente para reanálise comparativa.</span>
+    </div>
+    <div class="esteira-passo">
+      <span class="esteira-tag">Processo</span>
+      <span>Triangulação investigativa no código real ➔ Escopo e compilação de pastas de plano ➔ Geração do Flight Plan multiamplo ➔ Execução isolada por frentes.</span>
+    </div>
+    <div class="esteira-passo">
+      <span class="esteira-tag">Trava</span>
+      <span>Portão humano obrigatório entre cada estágio (Lei #7), proibição estrita de notas estimadas sem teste real e checagem rígida de markdown fences.</span>
+    </div>
+    <div class="esteira-passo">
+      <span class="esteira-tag">Saída</span>
+      <span>Relatórios auditados em <code>docs/melhorias/</code>, planos versionados em <code>docs/planos/</code> e código testado integrado à branch principal com histórico limpo.</span>
+    </div>
+  </div>
+</section>
+
+<section>
+  <h2>4. Defeitos e Limitações</h2>
+  <div class="box">
+    <ul class="defeitos">
+      <li><strong>Fragmenta</strong> a orquestração em scripts heterogêneos entre <code>scripts/gerenciador_*</code> e <code>componentes/compartilhado/skills/aidd-orca/scripts/</code>.</li>
+      <li><strong>Depende</strong> de formatação estrita de nomes de pastas (<code>PLAN-&lt;NNNN&gt;-&lt;3-palavras&gt;</code>), falhando deterministicamente se pastas forem manipuladas manualmente.</li>
+      <li><strong>Limita</strong> o modo Subagentes ao mesmo contexto de arquivos da sessão, gerando risco de concorrência se frentes paralelas tocarem nos mesmos arquivos sem worktree.</li>
+      <li><strong>Impede</strong> qualquer transição contínua autônoma (zero pipeline unattended), exigindo presença humana a cada mudança de estágio (<code>melhoria</code> ➔ <code>plan</code> ➔ <code>orchestrate</code>).</li>
+    </ul>
+  </div>
+
+  <div class="alert warning">
+    <div class="alert-title">Aviso Operacional: Trava de Transição</div>
+    <span><strong>Ponto Crítico:</strong> Nunca execute comandos de atualização de nota (<code>plan atualizar-nota</code>) ou início de orquestração de forma autônoma. A atualização sobrescreve a nota permanentemente no plano e o início de execução move pastas físicas no disco, quebrando a rastreabilidade se disparados sem autorização do desenvolvedor.</span>
+  </div>
+
+  <div class="alert tip">
+    <div class="alert-title">Dica Prática: Reanálise Comparativa</div>
+    <span><strong>Recomendação Prática:</strong> Ao reanalisar um plano com <code>/melhoria</code>, sempre passe <code>--plano-existente &lt;caminho&gt;</code> e <code>--itens-avaliados</code> para produzir a tabela comparativa visual de avanço (nota anterior vs nova nota com status <code>feito</code>, <code>parcial</code> ou <code>nao-feito</code>).</span>
+  </div>
+</section>
+
+</div>
+</body>
+</html>

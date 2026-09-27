@@ -22,22 +22,21 @@ def profiles():
 
 
 # ---------------------------------------------------------------------------
-# mimo: --yolo --pure --model <model> --prompt <text>
+# mimo: --pure -m <model> --prompt <text>
 # ---------------------------------------------------------------------------
 def test_mimo_compiled_args(profiles):
     args = compilar_comando(profiles["mimo"], SAMPLE_PROMPT)
     expected = [
         "mimo",
-        "--yolo",
         "--pure",
-        "--model", "mimo/mimo-v2.5-pro",
+        "-m", "xiaomi-token-plan/mimo-v2.5",
         "--prompt", SAMPLE_PROMPT,
     ]
     assert args == expected
 
 
 # ---------------------------------------------------------------------------
-# opencode: --auto --pure --model <model> --prompt <text>
+# opencode: --auto --pure -m <model> --prompt <text>
 # ---------------------------------------------------------------------------
 def test_opencode_compiled_args(profiles):
     args = compilar_comando(profiles["opencode"], SAMPLE_PROMPT)
@@ -45,39 +44,38 @@ def test_opencode_compiled_args(profiles):
         "opencode",
         "--auto",
         "--pure",
-        "--model", "opencode/default",
+        "-m", "opencode/big-pickle",
         "--prompt", SAMPLE_PROMPT,
     ]
     assert args == expected
 
 
 # ---------------------------------------------------------------------------
-# claude: --dangerously-skip-permissions -p --model <model> <text>
-#         prompt is POSITIONAL (last element), -p is a boolean flag
+# claude: --dangerously-skip-permissions --chrome --model <model> <text>
+#         prompt is POSITIONAL (last element)
 # ---------------------------------------------------------------------------
 def test_claude_compiled_args(profiles):
     args = compilar_comando(profiles["claude"], SAMPLE_PROMPT)
     expected = [
         "claude",
         "--dangerously-skip-permissions",
-        "-p",
-        "--model", "claude-sonnet-5",
+        "--chrome",
+        "--model", "sonnet",
         SAMPLE_PROMPT,
     ]
     assert args == expected
 
 
 # ---------------------------------------------------------------------------
-# agy: --dangerously-skip-permissions --print --model <model> <text>
-#       prompt is POSITIONAL (last element), --print is a boolean flag
-#       NOTE: agy prompt mechanism remains OPEN (not confirmed by real invocation)
+# agy: --dangerously-skip-permissions --model <model> <text>
+#       prompt is POSITIONAL (last element)
 # ---------------------------------------------------------------------------
 def test_agy_compiled_args(profiles):
     args = compilar_comando(profiles["agy"], SAMPLE_PROMPT)
     expected = [
         "agy",
         "--dangerously-skip-permissions",
-        "--print",
+        "--model", "gemini-3.8-flash-low",
         SAMPLE_PROMPT,
     ]
     assert args == expected

@@ -1,0 +1,29 @@
+{
+  "ticket": 2,
+  "titulo": "Correção de Encaixes de Pipeline e CLI no Orquestrador Síncrono",
+  "status": "CONCLUIDO",
+  "falha_15d": "D10. Orquestração e Topologia",
+  "achados_resolvidos": [
+    "CAT-encaixe-ecossistema-py-bridge-scan-dir-var",
+    "CAT-encaixe-ecossistema-py-factory-curate-dominio-var-output-var",
+    "CAT-etapa-sem-ferramenta-etapa-06-ops",
+    "CAT-etapa-sem-ferramenta-etapa-07-auditoria",
+    "VER-001",
+    "VER-002",
+    "VER-003",
+    "VER-004"
+  ],
+  "artefatos_modificados": [
+    "scripts/orquestrador_sincrono.py",
+    "tests/test_orquestrador_sincrono.py",
+    "ecossistema.py",
+    "tools/aidd-ops/scripts/pipeline_ops.py"
+  ],
+  "evidencias": [
+    "Encaixes quebrados no catalogo reduzidos a ZERO",
+    "_validar_schema reprova deterministamente quando schema ausente",
+    "etapa_07_auditoria executa auditoria real em vez de status literal",
+    "--dry-run do orquestrador não grava README-USUARIO.md em disco",
+    "pytest tests/test_orquestrador_sincrono.py passa com 5/5"
+  ]
+}

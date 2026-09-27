@@ -1,0 +1,76 @@
+{
+  "pipeline_id": "evolucao-mapa-pecas-ciclo-01",
+  "target_tool": "mapa-pecas",
+  "descricao": "Plano de Evolução Tática montado a partir dos 6 tickets de PLANO-EVOLUCAO.md",
+  "config_usuario_ref": "docs/auditoria/CONFIG-EXECUCAO-USUARIO.json",
+  "definition_of_done": "docs/auditoria/mapa-pecas/ciclo-01/DOD.md",
+  "gate_final": "python ecossistema.py audit",
+  "fases": [
+    {
+      "ticket_id": "TICKET-01",
+      "nome": "Fase_1_Ticket_1_Integridade_de_Port_es_e_Leis_Fundamentais",
+      "dimensao_15d": "D1. Contratos e Regras",
+      "harness": "agy",
+      "model": "gemini-3.8-flash-low",
+      "comando_terminal": "agy --model gemini-3.8-flash-low  --dangerously-skip-permissions",
+      "input_prompt": "docs/auditoria/mapa-pecas/ciclo-01/prompts_tickets/PROMPT-TICKET-01.txt",
+      "output_handoff": "docs/auditoria/mapa-pecas/ciclo-01/ENTREGA-TICKET-01.json",
+      "gate_fase": "python -m pytest -q -p no:cacheprovider tests"
+    },
+    {
+      "ticket_id": "TICKET-02",
+      "nome": "Fase_2_Ticket_2_Corre__o_de_Encaixes_de_Pipeline_e_CLI",
+      "dimensao_15d": "D10. Orquestração e Topologia",
+      "harness": "mimo",
+      "model": "xiaomi-token-plan-sgp/mimo-v2.6-flash",
+      "comando_terminal": "MIMOCODE_DANGEROUSLY_SKIP_PERMISSIONS=1 MIMOCODE_TUI_PLAIN=1 mimo -m xiaomi-token-plan-sgp/mimo-v2.6-flash --pure --trust",
+      "input_prompt": "docs/auditoria/mapa-pecas/ciclo-01/prompts_tickets/PROMPT-TICKET-02.txt",
+      "output_handoff": "docs/auditoria/mapa-pecas/ciclo-01/ENTREGA-TICKET-02.json",
+      "gate_fase": "python -m pytest -q -p no:cacheprovider tests"
+    },
+    {
+      "ticket_id": "TICKET-03",
+      "nome": "Fase_3_Ticket_3_Resili_ncia_de_Hooks__Handoff_e_Testes_Quebrados",
+      "dimensao_15d": "D11. Tratamento de Exceções e Fallback",
+      "harness": "opencode",
+      "model": "opencode/big-pickle",
+      "comando_terminal": "opencode --pure --auto --agent -m opencode/big-pickle",
+      "input_prompt": "docs/auditoria/mapa-pecas/ciclo-01/prompts_tickets/PROMPT-TICKET-03.txt",
+      "output_handoff": "docs/auditoria/mapa-pecas/ciclo-01/ENTREGA-TICKET-03.json",
+      "gate_fase": "python -m pytest -q -p no:cacheprovider tests"
+    },
+    {
+      "ticket_id": "TICKET-04",
+      "nome": "Fase_4_Ticket_4_Higieniza__o_de_Skills__Comandos_e_Fontes__nicas",
+      "dimensao_15d": "D4. Componentes e Fractalidade",
+      "harness": "agy",
+      "model": "gemini-3.8-flash-low",
+      "comando_terminal": "agy --model gemini-3.8-flash-low  --dangerously-skip-permissions",
+      "input_prompt": "docs/auditoria/mapa-pecas/ciclo-01/prompts_tickets/PROMPT-TICKET-04.txt",
+      "output_handoff": "docs/auditoria/mapa-pecas/ciclo-01/ENTREGA-TICKET-04.json",
+      "gate_fase": "python -m pytest -q -p no:cacheprovider tests"
+    },
+    {
+      "ticket_id": "TICKET-05",
+      "nome": "Fase_5_Ticket_5_Deduplica__o_de_Artefatos__Moldes_e_Scripts__rf_os",
+      "dimensao_15d": "D12. Observabilidade e Frugalidade",
+      "harness": "mimo",
+      "model": "xiaomi-token-plan-sgp/mimo-v2.6-flash",
+      "comando_terminal": "MIMOCODE_DANGEROUSLY_SKIP_PERMISSIONS=1 MIMOCODE_TUI_PLAIN=1 mimo -m xiaomi-token-plan-sgp/mimo-v2.6-flash --pure --trust",
+      "input_prompt": "docs/auditoria/mapa-pecas/ciclo-01/prompts_tickets/PROMPT-TICKET-05.txt",
+      "output_handoff": "docs/auditoria/mapa-pecas/ciclo-01/ENTREGA-TICKET-05.json",
+      "gate_fase": "python -m pytest -q -p no:cacheprovider tests"
+    },
+    {
+      "ticket_id": "TICKET-06",
+      "nome": "Fase_6_Ticket_6_Quality_Gate_e_R_tulo_Honesto_do_Mapa_de_Pe_as",
+      "dimensao_15d": "D14. Critério de Rejeição (Rollback)",
+      "harness": "opencode",
+      "model": "opencode/big-pickle",
+      "comando_terminal": "opencode --pure --auto --agent -m opencode/big-pickle",
+      "input_prompt": "docs/auditoria/mapa-pecas/ciclo-01/prompts_tickets/PROMPT-TICKET-06.txt",
+      "output_handoff": "gates/G_mapa_pecas.py",
+      "gate_fase": "python -m pytest -q -p no:cacheprovider tests"
+    }
+  ]
+}

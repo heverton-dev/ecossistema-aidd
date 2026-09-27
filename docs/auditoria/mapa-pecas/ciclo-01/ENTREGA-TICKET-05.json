@@ -1,0 +1,21 @@
+{
+  "ticket": 5,
+  "titulo": "Deduplicação de Artefatos, Moldes e Limpeza de Legados",
+  "status": "CONCLUIDO",
+  "falha_15d": "D12. Observabilidade e Frugalidade",
+  "achados_resolvidos": [
+    "CAT-pasta-legada-gemini-skills",
+    "VER-011"
+  ],
+  "artefatos_modificados": [
+    ".secrets.baseline",
+    "gates/G_SEGREDOS.py",
+    "gates/test_g_segredos.py"
+  ],
+  "evidencias": [
+    "Pasta legada .gemini/skills removida do rastreamento git",
+    "G_SEGREDOS.py normaliza filtro is_baseline_file para evitar vazamento de caminhos absolutos locais",
+    "4/4 testes de test_g_segredos.py passando",
+    "Quality gate G_SEGREDOS aprovado com exit 0 no repositório real"
+  ]
+}

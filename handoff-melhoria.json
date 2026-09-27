@@ -1,12 +1,29 @@
 {
+  "versao_schema": "1.0.0",
   "ferramenta": "aidd-melhoria",
   "status": "SUCESSO",
   "codigo_saida": 0,
-  "manifesto": "C:\\Users\\trcnologia\\AppData\\Local\\Temp\\pytest-of-tecnologia\\pytest-1671\\test_cli_melhoria_com_manifest0\\manifesto_teste.json",
+  "emitido_em": "2026-09-27T14:57:51+00:00",
+  "transicao": {
+    "fase_atual": "melhoria",
+    "proxima_fase": "plan",
+    "liberada": true,
+    "requer_aprovacao_humana": true
+  },
+  "artefatos": [
+    {
+      "caminho": "AGENTS.md",
+      "sha256": "8ebc8a5d83d2df904cfb92bd8ad4f61db69a60594ac89a8d161a389bc9aeb78f"
+    }
+  ],
+  "manifesto": "docs/melhorias/manifesto-exemplo.json",
   "detalhes": {
-    "pedido": "Refatorar modulo de logs para reduzir verbosidade",
-    "nome": "refatorar-modulo-logs",
-    "nota_atual": "6.5",
-    "destino_base": "C:\\Users\\trcnologia\\Desktop\\worktrees_evolucao-aidd-melhoria\\Fase_7_Ticket_7_Crit_rio_de_Rejei__o__Limpeza_e_Rollback\\docs\\melhorias"
+    "pedido": "Consolidar handoff de melhoria",
+    "nome": "consolidar-handoff"
+  },
+  "assinatura": {
+    "algoritmo": "sha256",
+    "escopo": "payload-canonico-sem-assinatura",
+    "valor": "1e1f8aece2bf6fc9d6ead0245443b03935940e5429408722edff14850a1b2a7d"
   }
 }

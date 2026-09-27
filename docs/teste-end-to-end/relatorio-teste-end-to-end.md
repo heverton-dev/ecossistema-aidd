@@ -1012,3 +1012,21 @@
   - `server_fastapi.py` dos templates não é usado por nenhum gerador e não roda isolado (falta `core.models`); validado só por compilação.
   - `test_cli_inject_hook_ponta_a_ponta` (aidd-master) gravava no repo real: a CLI roda em subprocesso, onde o monkeypatch do conftest não chega, e deixava `componentes/aidd-master/hooks/` vazia para trás. Correção: `_default_ecossistema_root()` aceita `AIDD_ECOSSISTEMA_ROOT` (fonte `componentes/compartilhado/src-core/materializador.py`, sincronizada com `src-core/sync.py`, `verify` exit 0); o teste passa uma raiz falsa e verifica que o repo real ficou intocado. Controle negativo: com o materializador antigo o teste reprova (exit 1); com o novo, 48 passed (master) e 39 passed (enterprise, injector). A pasta vazia `componentes/aidd-master/` foi removida. **Status:** RESOLVIDO.
 - **Data da Última Auditoria:** 26/09/2026.
+
+---
+
+## 20. Resolução de encaixes CLI no `aidd-ops` e dual compatibilidade de links no `aidd-forge` (mapa-pecas ciclo-01, Tickets 02 e 03)
+
+- **Objetivo da Correção:**
+  1. No `aidd-ops`, a passagem da flag `--help` em subcomandos (ex.: `ops plan --help`) exibia o help do grupo raiz em vez do subcomando devido à combinação de `ignore_unknown_options: True` e `allow_interspersed_args: True` no Click `PipeGroup`.
+  2. No `aidd-forge`, o teste unitário de `Injector.link_skills()` esperava a presença da pasta legada `.agent/skills/`, enquanto a convenção canônica exige `.agents/skills/`.
+- **Ferramentas Tocadas:** [`tools/aidd-ops`](file:///C:/Users/trcnologia/Desktop/ecossistema-aidd/tools/aidd-ops) e [`tools/aidd-forge`](file:///C:/Users/trcnologia/Desktop/ecossistema-aidd/tools/aidd-forge).
+- **O que executou:**
+  1. `tools/aidd-ops/scripts/pipeline_ops.py`: Sobrescrita controlada de `parse_args` em `PipeGroup`, neutralizando temporariamente `ctx.help_option_names` se o primeiro token for um subcomando conhecido, delegando o help para o subcomando sem interferência do grupo raiz.
+  2. `tools/aidd-forge/aidd_forge/core/injector.py`: Dual compatibilidade no método `link_skills()` garantindo a presença em `.agents/skills/` e `.agent/skills/`, registrando apenas o destino canônico em `result.created` para manter o contrato determinístico.
+- **Resultados de Testes:**
+  - `tools/aidd-ops`: `pytest tools/aidd-ops/tests` → 21 passed (exit 0). Encaixes CLI validados em `scripts/catalogo_pecas.py` com 0 quebras.
+  - `tools/aidd-forge`: `pytest tools/aidd-forge/tests` → 297 passed, 1 skipped (exit 0).
+  - Portão `G_TESTES_REAIS` dentro de `ecossistema.py audit`: 100% aprovado para as 8 ferramentas (2344 passed).
+- **Status:** **RESOLVIDO**.
+- **Data da Última Auditoria:** 27/09/2026.

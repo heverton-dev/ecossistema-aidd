@@ -1,0 +1,20 @@
+ROLE: Builder. Ecosystem AIDD. Ticket 4. Target tool: mapa-pecas.
+DIMENSION: D4
+DELIVER: docs/auditoria/mapa-pecas/ciclo-01/ENTREGA-TICKET-04.json
+
+STEPS:
+- Ensure component sync is strictly one way from source to harnesses.
+- Clean duplicated skills and harmonize naming conventions in single source.
+- Fix slash command mappings for book generation and planner skills.
+- Remove legacy .gemini/skills directory.
+- Clean or mark unused internal MCP definitions.
+- Run component verification. Assert exit 0.
+- Write handoff json to docs/auditoria/mapa-pecas/ciclo-01/ENTREGA-TICKET-04.json.
+
+RULES:
+1. Write failing test first. Run. Assert exit 1.
+2. Implement. Zero stubs. Real pytest tests. Run. Assert exit 0.
+3. Work inside ephemeral Git Worktree only.
+4. Capture real exit code: redirect to file, read $? same line. Never trust pipes.
+5. NEVER edit docs/auditoria/CONFIG-EXECUCAO-USUARIO.json.
+6. Deliver exactly: docs/auditoria/mapa-pecas/ciclo-01/ENTREGA-TICKET-04.json

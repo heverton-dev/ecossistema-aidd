@@ -171,3 +171,33 @@ def test_orquestrador_cli_posicionais_pure(monkeypatch):
         main()
     assert exc_info.value.code == 0
 
+
+def test_orquestrador_validar_schema_reprova_se_schema_inexistente(tmp_path):
+    orq = OrquestradorSincrono(
+        fluxo=1,
+        nome="Teste Reprovacao Schema",
+        slug="teste-reprovacao",
+        dominio="geral",
+        pasta=str(tmp_path / "projeto-invalido"),
+        dry_run=True,
+    )
+    valido = orq._validar_schema({"dummy": 123}, "schema-fantasma-inexistente.json")
+    assert valido is False
+
+
+def test_orquestrador_dry_run_nao_grava_readme_usuario(tmp_path):
+    pasta_destino = tmp_path / "projeto-dry-run-puro"
+    orq = OrquestradorSincrono(
+        fluxo=1,
+        nome="Dry Run Limpo",
+        slug="dry-run-limpo",
+        dominio="geral",
+        pasta=str(pasta_destino),
+        dry_run=True,
+    )
+    sucesso = orq.executar_fluxo_completo()
+    assert sucesso is True
+    # O dry-run NUNCA deve gravar README-USUARIO.md no disco
+    assert not (pasta_destino / "README-USUARIO.md").exists()
+
+

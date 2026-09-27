@@ -120,6 +120,7 @@ def _make_plan(repo: Path, plan_name: str, fronts: dict[str, str]) -> Path:
 
 def _run(repo, plan_dir, profiles_path, **kwargs):
     kwargs.setdefault("yes", True)
+    kwargs.setdefault("interactive", False)
     return executar_orquestracao(
         plan_dir, profiles_path, harness="test-stub", repo_path=repo, **kwargs
     )

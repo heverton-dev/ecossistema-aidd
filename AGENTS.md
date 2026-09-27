@@ -59,6 +59,7 @@
    - Portão: gates/G_ZERO_HEADLESS.py (provado)
 8. **Label Honesty:** Never claim certification or test coverage beyond real automated test results.
    - Portão: gates/G_HONESTIDADE_ROTULO.py (provado)
+   - Portão: gates/G_mapa_pecas.py (provado) — integridade do catálogo de peças e mapas visuais (mapa-pecas, Ticket 6)
 9. **Tool Testing Discipline:** Follow the 5-step cycle (`docs/protocolos/PROTOCOLO-TESTES-FERRAMENTAS.md`): 1. Auto-fix bugs until 100% conformant (zero inconsistencies), 2. Git commit & push, 3. Clean target project, 4. Execute cleanly, 5. Update `docs/teste-end-to-end/` report.
    - Portão: gates/G_ENV_ROT.py (provado)
    - Portão: gates/G_SKILL_ROT.py (provado)

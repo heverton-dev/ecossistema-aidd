@@ -1,0 +1,20 @@
+ROLE: Builder. Ecosystem AIDD. Ticket 1. Target tool: mapa-pecas.
+DIMENSION: D1
+DELIVER: docs/auditoria/mapa-pecas/ciclo-01/ENTREGA-TICKET-01.json
+
+STEPS:
+- Inspect AGENTS.md law declarations and G_LEI_DECLARA_PORTAO logic.
+- Fix inline comments after proved markers to make all declarations visible.
+- Fix G_CONTRACT_ROT to strictly fail instead of passing when contract check fails.
+- Fix concurrency race condition in tests for G_PORTAO_PROVA_QUE_MORDE.
+- Sync divergent guard codes between root gates and tool subdirectories.
+- Run pytest on affected gate tests. Assert exit 0.
+- Write handoff json to docs/auditoria/mapa-pecas/ciclo-01/ENTREGA-TICKET-01.json.
+
+RULES:
+1. Write failing test first. Run. Assert exit 1.
+2. Implement. Zero stubs. Real pytest tests. Run. Assert exit 0.
+3. Work inside ephemeral Git Worktree only.
+4. Capture real exit code: redirect to file, read $? same line. Never trust pipes.
+5. NEVER edit docs/auditoria/CONFIG-EXECUCAO-USUARIO.json.
+6. Deliver exactly: docs/auditoria/mapa-pecas/ciclo-01/ENTREGA-TICKET-01.json

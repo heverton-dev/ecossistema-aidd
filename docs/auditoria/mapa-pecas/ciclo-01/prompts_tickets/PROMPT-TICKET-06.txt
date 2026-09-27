@@ -1,0 +1,18 @@
+ROLE: Builder. Ecosystem AIDD. Ticket 6. Target tool: mapa-pecas.
+DIMENSION: D14
+DELIVER: gates/G_mapa_pecas.py
+
+STEPS:
+- Implement quality gate gates/G_mapa_pecas.py verifying parts catalog and visual maps integrity.
+- Implement tests/test_g_mapa_pecas.py proving gate bites with exit 1 on corrupted catalog and passes with exit 0.
+- Ensure canonical audit cycle documents exist for mapa-pecas and skills-pocock.
+- Run pytest on tests/test_g_mapa_pecas.py. Assert exit 0.
+- Deliver gates/G_mapa_pecas.py.
+
+RULES:
+1. Write failing test first. Run. Assert exit 1.
+2. Implement. Zero stubs. Real pytest tests. Run. Assert exit 0.
+3. Work inside ephemeral Git Worktree only.
+4. Capture real exit code: redirect to file, read $? same line. Never trust pipes.
+5. NEVER edit docs/auditoria/CONFIG-EXECUCAO-USUARIO.json.
+6. Deliver exactly: gates/G_mapa_pecas.py

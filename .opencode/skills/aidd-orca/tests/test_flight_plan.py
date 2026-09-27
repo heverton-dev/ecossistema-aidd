@@ -84,7 +84,7 @@ class TestGerarPlanoDeVoo:
         )
         cmd = result["fronts"][0]["command"]
         assert cmd[0] == "mimo"
-        assert "--yolo" in cmd
+        assert "--pure" in cmd
         assert "--prompt" in cmd
 
     def test_harness_field_matches_input(self) -> None:

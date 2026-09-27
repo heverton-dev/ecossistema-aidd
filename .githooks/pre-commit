@@ -69,13 +69,17 @@ if echo "$STAGED" | grep -q '^componentes/'; then
   MIRROR_DIRS=".claude .agents .agent .opencode .mimocode .cursor .gemini .github .skills skills"
 
   for dir in $MIRROR_DIRS; do
-    [ -d "$dir" ] && git add -- "$dir" 2>/dev/null
+    if [ -d "$dir" ]; then
+      git add -- "$dir" || { echo "[pre-commit] ERRO ao adicionar espelho $dir ao commit."; exit 1; }
+    fi
   done
 
   for tool_dir in tools/*/; do
     for dir in $MIRROR_DIRS; do
       alvo="${tool_dir}${dir}"
-      [ -d "$alvo" ] && git add -- "$alvo" 2>/dev/null
+      if [ -d "$alvo" ]; then
+        git add -- "$alvo" || { echo "[pre-commit] ERRO ao adicionar espelho $alvo ao commit."; exit 1; }
+      fi
     done
   done
 

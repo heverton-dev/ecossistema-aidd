@@ -1,0 +1,30 @@
+{
+  "ticket": 3,
+  "titulo": "Resiliência de Testes, Hooks e Manifestos Críticos",
+  "status": "CONCLUIDO",
+  "falha_15d": "D13. Quality Gates (Portões)",
+  "achados_resolvidos": [
+    "VER-006",
+    "VER-007",
+    "VER-008",
+    "VER-009",
+    "VER-010"
+  ],
+  "artefatos_modificados": [
+    "componentes/compartilhado/skills/aidd-orca/tests/test_agent_spawner.py",
+    "componentes/compartilhado/skills/aidd-orca/tests/test_flight_plan.py",
+    "componentes/compartilhado/skills/aidd-orca/tests/test_orchestrator_engine.py",
+    "componentes/compartilhado/skills/aidd-improvement/tests/test_gerenciador_melhorias.py",
+    "handoff-melhoria.json",
+    ".githooks/pre-commit",
+    "tools/aidd-forge/aidd_forge/core/injector.py",
+    "tools/aidd-forge/aidd_forge/cli.py"
+  ],
+  "evidencias": [
+    "117/117 testes de aidd-orca passando sem falhas",
+    "6/6 testes de aidd-improvement passando",
+    "G_HANDOFF_MELHORIA aprovado com exit 0 para handoff-melhoria.json",
+    ".githooks/pre-commit sem supressão cega de erros de git add",
+    "forge init atualizado para .agents/skills canônico"
+  ]
+}

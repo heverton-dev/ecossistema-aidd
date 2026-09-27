@@ -325,6 +325,11 @@ class PipeGroup(click.Group):
 
     legacy_cmd = None
 
+    def parse_args(self, ctx, args):
+        if args and args[0] in self.commands and any(h in args[1:] for h in ("-h", "--help")):
+            ctx.help_option_names = []
+        return super().parse_args(ctx, args)
+
     def resolve_command(self, ctx, args):
         if args and args[0] in self.commands:
             return super().resolve_command(ctx, args)

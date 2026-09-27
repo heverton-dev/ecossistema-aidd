@@ -66,6 +66,28 @@ def _arquivos_rastreados():
     return arquivos
 
 
+def _sanitizar_baseline(caminho_baseline):
+    """Garante que o filtro is_baseline_file use caminho relativo, sem vazar caminhos absolutos."""
+    if not os.path.isfile(caminho_baseline):
+        return
+    try:
+        import json
+        with open(caminho_baseline, "r", encoding="utf-8") as f:
+            data = json.load(f)
+        alterado = False
+        for filtro in data.get("filters_used", []):
+            if filtro.get("path") == "detect_secrets.filters.common.is_baseline_file":
+                if filtro.get("filename") != ".secrets.baseline":
+                    filtro["filename"] = ".secrets.baseline"
+                    alterado = True
+        if alterado:
+            with open(caminho_baseline, "w", encoding="utf-8") as f:
+                json.dump(data, f, indent=2)
+                f.write("\n")
+    except Exception:
+        pass
+
+
 def escanear():
     print("=" * 70)
     print(" [GATE] G_SEGREDOS — Varredura de credenciais hardcoded (detect-secrets)")
@@ -81,7 +103,7 @@ def escanear():
     tem_baseline = os.path.exists(BASELINE_PATH)
     if tem_baseline:
         print(f"[OK] Baseline carregado de {os.path.relpath(BASELINE_PATH, ROOT_DIR)}")
-        argv = ["--baseline", BASELINE_PATH]
+        argv = ["--baseline", ".secrets.baseline"]
     else:
         print("[AVISO] Nenhum .secrets.baseline encontrado — tolerância zero "
               "(qualquer achado é tratado como novo).")
@@ -93,6 +115,7 @@ def escanear():
     try:
         codigo = pre_commit_hook.main(argv)
     finally:
+        _sanitizar_baseline(BASELINE_PATH)
         os.chdir(cwd_original)
 
     print("\n" + "=" * 70)
