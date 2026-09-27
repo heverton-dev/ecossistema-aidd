@@ -39,6 +39,7 @@ TITULOS = {"guardas": "Mapa dos Guardas", "skills": "Mapa das Skills", "indice":
            "encaixes": "Mapa dos Encaixes", "ferramentas": "Mapa das Ferramentas",
            "comandos": "Mapa dos Comandos Slash", "conexoes": "Mapa das Conexões",
            "leis": "Mapa das Leis",
+           "moldes": "Mapa dos Moldes de Entrega",
            "harnesses": "Mapa dos Harnesses"}
 # Os mapas que o ecossistema precisa ter, na ordem de criação. O índice mostra
 # cada um como concluído (arquivo em dia com o catálogo), desatualizado ou a criar.
@@ -50,6 +51,7 @@ MAPAS_PREVISTOS = (
     ("comandos", "Mapa dos comandos slash", "o que você digita e qual skill cada comando chama"),
     ("conexoes", "Mapa das conexões", "os MCPs (telefones para fora) e os hooks (alarmes)"),
     ("leis", "Mapa das leis", "cada lei do AGENTS.md e o guarda que a prova, e onde a prova é fraca"),
+    ("moldes", "Mapa dos moldes de entrega", "o que cada ferramenta entrega junto com o app gerado"),
     ("harnesses", "Mapa dos harnesses", "para onde cada peça é copiada em cada programa de agente"),
 )
 META_LINHAS_SKILL = 150
@@ -442,6 +444,33 @@ def valores_harnesses(cat: dict) -> dict[str, str]:
         "LISTA": f'<div class="grupo"><div class="itens">{"".join(cartoes)}</div></div>',
     }
 
+def valores_moldes(cat: dict) -> dict[str, str]:
+    moldes = cat["moldes_entrega"]
+    por_ferramenta = defaultdict(list)
+    for m in moldes:
+        por_ferramenta[m["ferramenta"]].append(m)
+    grupos = []
+    for f, itens in sorted(por_ferramenta.items()):
+        cartoes = "".join(
+            f'<article class="item" style="--c:var(--brick)" data-busca="{e(m["molde"])}"><span class="nome">{e(m["molde"])}</span>'
+            f'<p class="desc">{m["arquivos"]} arquivos</p><span class="onde">{e(m["caminho"])}</span></article>' for m in itens)
+        grupos.append(f'<div class="grupo"><h3>{e(f)} <small>{len(itens)} moldes · '
+                      f'{sum(m["arquivos"] for m in itens)} arquivos</small></h3><div class="itens">{cartoes}</div></div>')
+    nomes = defaultdict(set)
+    for m in moldes:
+        nomes[m["molde"]].add(m["ferramenta"])
+    repetidos = [f'{n}: {", ".join(sorted(fs))}' for n, fs in sorted(nomes.items()) if len(fs) > 1]
+    return {
+        "TOTAIS": _totais([
+            (len(por_ferramenta), "ferramentas com moldes", ""),
+            (len(moldes), "moldes", ""),
+            (sum(m["arquivos"] for m in moldes), "arquivos de molde", ""),
+            (len(repetidos), "moldes com o mesmo nome em várias ferramentas", "aviso" if repetidos else ""),
+        ]),
+        "REPETIDOS": _lista_curta(repetidos, "Nenhum molde repetido hoje."),
+        "LISTA": "".join(grupos),
+    }
+
 def status_mapa(tipo: str, cat: dict) -> str:
     """concluido = arquivo existe e está em dia com o catálogo; desatualizado = existe e
     difere; a-criar = sem gerador ou sem arquivo."""
@@ -483,6 +512,7 @@ GERADORES = {"guardas": valores_guardas, "skills": valores_skills, "indice": val
              "encaixes": valores_encaixes, "ferramentas": valores_ferramentas,
              "comandos": valores_comandos, "conexoes": valores_conexoes,
              "leis": valores_leis,
+             "moldes": valores_moldes,
              "harnesses": valores_harnesses}
 
 

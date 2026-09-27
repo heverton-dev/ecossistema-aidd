@@ -375,6 +375,18 @@ def coletar_harnesses() -> dict:
             legadas.append({"pasta": pasta, "arquivos_versionados": n})
     return {"harnesses": lista, "pastas_legadas": legadas}
 
+def coletar_moldes_entrega() -> list[dict]:
+    """Cada molde de entrega (tools/<f>/templates/<molde>/): o que vai junto com o app gerado."""
+    moldes = []
+    pastas = list(RAIZ.glob("tools/*/templates")) + list(RAIZ.glob("tools/*/aidd_*/templates"))
+    for tpl in sorted(pastas):
+        for sub in sorted(p for p in tpl.iterdir() if p.is_dir() and p.name not in IGNORAR):
+            arquivos = [f for f in sub.rglob("*") if f.is_file() and not any(x in IGNORAR for x in f.parts)]
+            dona = tpl.relative_to(RAIZ / "tools").parts[0]
+            moldes.append({"ferramenta": dona, "molde": sub.name, "caminho": _rel(sub),
+                           "arquivos": len(arquivos)})
+    return moldes
+
 def _prova_que_morde(morde_mod, nome: str) -> bool:
     teste = morde_mod.encontrar_arquivo_teste(f"{nome}.py", str(RAIZ / "gates"))
     return bool(teste) and morde_mod.auditar_teste_de_falha(teste, executar=False)[0]
@@ -621,6 +633,7 @@ def gerar(com_encaixe: bool = True) -> dict:
         "skills": skills,
         "skills_terceiros": skills_terceiros,
         "leis": coletar_leis(),
+        "moldes_entrega": coletar_moldes_entrega(),
         "harnesses": coletar_harnesses(),
         "comandos_slash": coletar_comandos_slash(),
         "mcps": coletar_mcps(ferramentas),
@@ -637,6 +650,7 @@ def gerar(com_encaixe: bool = True) -> dict:
         "comandos_cli": sum(len(f["comandos"]) for f in ferramentas),
         "skills": len(skills),
         "leis": len(catalogo["leis"]),
+        "moldes_entrega": len(catalogo["moldes_entrega"]),
         "harnesses": len(catalogo["harnesses"]["harnesses"]),
         "skills_nossas": sum(1 for s in skills if not s["terceiro"]),
         "skills_terceiros_copiadas": sum(1 for s in skills if s["terceiro"]),

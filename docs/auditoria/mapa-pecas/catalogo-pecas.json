@@ -6,6 +6,7 @@
     "comandos_cli": 69,
     "skills": 38,
     "leis": 13,
+    "moldes_entrega": 24,
     "harnesses": 7,
     "skills_nossas": 38,
     "skills_terceiros_copiadas": 0,
@@ -772,6 +773,152 @@
         }
       ],
       "sem_gate": false
+    }
+  ],
+  "moldes_entrega": [
+    {
+      "ferramenta": "aidd-enterprise",
+      "molde": "agents",
+      "caminho": "tools/aidd-enterprise/templates/agents",
+      "arquivos": 9
+    },
+    {
+      "ferramenta": "aidd-enterprise",
+      "molde": "cookiecutter-scaffold",
+      "caminho": "tools/aidd-enterprise/templates/cookiecutter-scaffold",
+      "arquivos": 24
+    },
+    {
+      "ferramenta": "aidd-enterprise",
+      "molde": "core",
+      "caminho": "tools/aidd-enterprise/templates/core",
+      "arquivos": 45
+    },
+    {
+      "ferramenta": "aidd-enterprise",
+      "molde": "gates",
+      "caminho": "tools/aidd-enterprise/templates/gates",
+      "arquivos": 10
+    },
+    {
+      "ferramenta": "aidd-enterprise",
+      "molde": "rules",
+      "caminho": "tools/aidd-enterprise/templates/rules",
+      "arquivos": 11
+    },
+    {
+      "ferramenta": "aidd-enterprise",
+      "molde": "static",
+      "caminho": "tools/aidd-enterprise/templates/static",
+      "arquivos": 1
+    },
+    {
+      "ferramenta": "aidd-enterprise",
+      "molde": "v2",
+      "caminho": "tools/aidd-enterprise/templates/v2",
+      "arquivos": 94
+    },
+    {
+      "ferramenta": "aidd-factory",
+      "molde": "docs",
+      "caminho": "tools/aidd-factory/templates/docs",
+      "arquivos": 2
+    },
+    {
+      "ferramenta": "aidd-factory",
+      "molde": "frontend",
+      "caminho": "tools/aidd-factory/templates/frontend",
+      "arquivos": 4
+    },
+    {
+      "ferramenta": "aidd-factory",
+      "molde": "gateway",
+      "caminho": "tools/aidd-factory/templates/gateway",
+      "arquivos": 3
+    },
+    {
+      "ferramenta": "aidd-factory",
+      "molde": "vsa",
+      "caminho": "tools/aidd-factory/templates/vsa",
+      "arquivos": 32
+    },
+    {
+      "ferramenta": "aidd-forge",
+      "molde": "gates",
+      "caminho": "tools/aidd-forge/aidd_forge/templates/gates",
+      "arquivos": 12
+    },
+    {
+      "ferramenta": "aidd-forge",
+      "molde": "governance",
+      "caminho": "tools/aidd-forge/aidd_forge/templates/governance",
+      "arquivos": 1
+    },
+    {
+      "ferramenta": "aidd-forge",
+      "molde": "orca",
+      "caminho": "tools/aidd-forge/aidd_forge/templates/orca",
+      "arquivos": 2
+    },
+    {
+      "ferramenta": "aidd-forge",
+      "molde": "pipeline_phases",
+      "caminho": "tools/aidd-forge/aidd_forge/templates/pipeline_phases",
+      "arquivos": 10
+    },
+    {
+      "ferramenta": "aidd-forge",
+      "molde": "skills",
+      "caminho": "tools/aidd-forge/aidd_forge/templates/skills",
+      "arquivos": 10
+    },
+    {
+      "ferramenta": "aidd-master",
+      "molde": "agents",
+      "caminho": "tools/aidd-master/templates/agents",
+      "arquivos": 9
+    },
+    {
+      "ferramenta": "aidd-master",
+      "molde": "cookiecutter-scaffold",
+      "caminho": "tools/aidd-master/templates/cookiecutter-scaffold",
+      "arquivos": 24
+    },
+    {
+      "ferramenta": "aidd-master",
+      "molde": "core",
+      "caminho": "tools/aidd-master/templates/core",
+      "arquivos": 45
+    },
+    {
+      "ferramenta": "aidd-master",
+      "molde": "gates",
+      "caminho": "tools/aidd-master/templates/gates",
+      "arquivos": 10
+    },
+    {
+      "ferramenta": "aidd-master",
+      "molde": "rules",
+      "caminho": "tools/aidd-master/templates/rules",
+      "arquivos": 11
+    },
+    {
+      "ferramenta": "aidd-master",
+      "molde": "static",
+      "caminho": "tools/aidd-master/templates/static",
+      "arquivos": 1
+    },
+    {
+      "ferramenta": "aidd-master",
+      "molde": "v2",
+      "caminho": "tools/aidd-master/templates/v2",
+      "arquivos": 94
+    },
+    {
+      "ferramenta": "aidd-ops",
+      "molde": "infra",
+      "caminho": "tools/aidd-ops/templates/infra",
+      "arquivos": 30
     }
   ],
   "harnesses": {

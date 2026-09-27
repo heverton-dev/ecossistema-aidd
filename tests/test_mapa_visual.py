@@ -184,7 +184,7 @@ def test_encaixes_marcador_desencontrado_reprova(tmp_path, monkeypatch):
         mv.montar("encaixes", _cat_encaixes(), "m.html", fragmento=True)
 
 
-@pytest.mark.parametrize("tipo", ["encaixes", "ferramentas", "comandos", "conexoes", "leis", "harnesses"])
+@pytest.mark.parametrize("tipo", ["encaixes", "ferramentas", "comandos", "conexoes", "leis", "moldes", "harnesses"])
 def test_mapa_roda_de_verdade_no_repositorio(tmp_path, tipo):
     saida = tmp_path / "mapa.html"
     proc = subprocess.run([sys.executable, str(ROOT / "scripts" / "mapa_visual.py"), tipo,
@@ -323,3 +323,23 @@ def test_harnesses_marcador_desencontrado_reprova(tmp_path, monkeypatch):
     monkeypatch.setattr(mv, "MOLDES", tmp_path)
     with pytest.raises(ValueError, match="SOBRA"):
         mv.montar("harnesses", _cat_harnesses(), "m.html", fragmento=True)
+
+
+def _cat_moldes():
+    return {"moldes_entrega": [
+        {"ferramenta": "aidd-master", "molde": "core", "caminho": "tools/aidd-master/templates/core", "arquivos": 20},
+        {"ferramenta": "aidd-enterprise", "molde": "core", "caminho": "tools/aidd-enterprise/templates/core", "arquivos": 20},
+        {"ferramenta": "aidd-forge", "molde": "skills", "caminho": "tools/aidd-forge/templates/skills", "arquivos": 4}]}
+
+
+def test_moldes_repetidos_saem_do_catalogo():
+    valores = mv.valores_moldes(_cat_moldes())
+    assert "core: aidd-enterprise, aidd-master" in valores["REPETIDOS"] and "aidd-forge" in valores["LISTA"]
+
+
+def test_moldes_marcador_desencontrado_reprova(tmp_path, monkeypatch):
+    (tmp_path / "moldes.html").write_text("{{TOTAIS}} {{LISTA}} {{SOBRA}}", encoding="utf-8")
+    (tmp_path / "base.css").write_text("", encoding="utf-8")
+    monkeypatch.setattr(mv, "MOLDES", tmp_path)
+    with pytest.raises(ValueError, match="SOBRA"):
+        mv.montar("moldes", _cat_moldes(), "m.html", fragmento=True)
