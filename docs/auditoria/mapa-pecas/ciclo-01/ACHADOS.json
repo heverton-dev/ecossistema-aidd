@@ -1,0 +1,527 @@
+{
+  "versao": 1,
+  "gerado_por": "scripts/achados_ciclo.py",
+  "fontes": [
+    "docs/auditoria/mapa-pecas/catalogo-pecas.json",
+    "docs/auditoria/mapa-pecas/ciclo-01/achados-verificados.json"
+  ],
+  "como_usar": "Cada achado em aberto traz pedido_melhoria: o texto para python ecossistema.py melhoria init --pedido \"...\".",
+  "totais": {
+    "aberto": 30,
+    "suspeita": 1,
+    "resolvido": 3,
+    "abertos_alta": 9,
+    "abertos_media": 13,
+    "abertos_baixa": 9
+  },
+  "achados": [
+    {
+      "id": "CAT-arquivos-identicos",
+      "titulo": "100 arquivos idênticos copiados entre ferramentas",
+      "gravidade": "alta",
+      "estado": "aberto",
+      "origem": "catalogo",
+      "mapa": "ferramentas",
+      "evidencia": [
+        "aidd-enterprise + aidd-master: 60",
+        "aidd-enterprise + aidd-master + componentes: 23",
+        "aidd-enterprise + aidd-factory + aidd-master: 8",
+        "aidd-enterprise + aidd-factory + aidd-master + componentes: 7",
+        "aidd-forge + gates: 2"
+      ],
+      "pedido_melhoria": "Separar aidd-master (esqueleto) de aidd-enterprise (blindagem) e tirar as cópias idênticas."
+    },
+    {
+      "id": "CAT-encaixe-ecossistema-py-bridge-scan-dir-var",
+      "titulo": "Chamada da receita não encaixa: ecossistema.py bridge scan --dir <var>",
+      "gravidade": "alta",
+      "estado": "aberto",
+      "origem": "catalogo",
+      "mapa": "encaixes",
+      "evidencia": [
+        "etapa_03_engine: flags inexistentes: --dir"
+      ],
+      "pedido_melhoria": "Corrigir a chamada \"ecossistema.py bridge scan --dir <var>\" da etapa_03_engine do orquestrador síncrono para os parâmetros que a ferramenta aceita."
+    },
+    {
+      "id": "CAT-encaixe-ecossistema-py-factory-curate-dominio-var-output-var",
+      "titulo": "Chamada da receita não encaixa: ecossistema.py factory curate --dominio <var> --output <var>",
+      "gravidade": "alta",
+      "estado": "aberto",
+      "origem": "catalogo",
+      "mapa": "encaixes",
+      "evidencia": [
+        "etapa_03_engine: 'curate' passado como argumento, mas a ferramenta não aceita argumento posicional",
+        "etapa_03_engine: flags inexistentes: --dominio, --output"
+      ],
+      "pedido_melhoria": "Corrigir a chamada \"ecossistema.py factory curate --dominio <var> --output <var>\" da etapa_03_engine do orquestrador síncrono para os parâmetros que a ferramenta aceita."
+    },
+    {
+      "id": "CAT-etapa-sem-ferramenta-etapa-06-ops",
+      "titulo": "Etapa da receita não chama ferramenta: etapa_06_ops",
+      "gravidade": "alta",
+      "estado": "aberto",
+      "origem": "catalogo",
+      "mapa": "encaixes",
+      "evidencia": [
+        "catálogo: etapa_06_ops com chama_alguma_ferramenta=false"
+      ],
+      "pedido_melhoria": "Ligar a etapa_06_ops do orquestrador síncrono à ferramenta que faz esse trabalho."
+    },
+    {
+      "id": "CAT-etapa-sem-ferramenta-etapa-07-auditoria",
+      "titulo": "Etapa da receita não chama ferramenta: etapa_07_auditoria",
+      "gravidade": "alta",
+      "estado": "aberto",
+      "origem": "catalogo",
+      "mapa": "encaixes",
+      "evidencia": [
+        "catálogo: etapa_07_auditoria com chama_alguma_ferramenta=false"
+      ],
+      "pedido_melhoria": "Ligar a etapa_07_auditoria do orquestrador síncrono à ferramenta que faz esse trabalho."
+    },
+    {
+      "id": "VER-001",
+      "titulo": "A validação de contrato aprova quando não consegue conferir",
+      "gravidade": "alta",
+      "estado": "aberto",
+      "mapa": "encaixes",
+      "evidencia": [
+        "scripts/orquestrador_sincrono.py:113-120: _validar_schema devolve True sem jsonschema instalado e quando o schema não existe"
+      ],
+      "pedido_melhoria": "Fazer _validar_schema do orquestrador síncrono reprovar (False + ERRO) quando faltar jsonschema ou o arquivo de schema, com teste que prove a reprovação.",
+      "origem": "reproducao"
+    },
+    {
+      "id": "VER-002",
+      "titulo": "Etapa 7 grava CONFORME_100_POR_CENTO sem rodar guarda nenhum",
+      "gravidade": "alta",
+      "estado": "aberto",
+      "mapa": "encaixes",
+      "evidencia": [
+        "scripts/orquestrador_sincrono.py:519: status fixo CONFORME_100_POR_CENTO no manifesto final",
+        "catálogo: etapa_07_auditoria sem chamada de ferramenta"
+      ],
+      "pedido_melhoria": "Trocar a etapa 7 do orquestrador síncrono por uma auditoria real (guardas do projeto gerado) e gravar o status medido, nunca um literal.",
+      "origem": "reproducao"
+    },
+    {
+      "id": "VER-003",
+      "titulo": "Etapa 3 do Fluxo 02 chama o factory sem o PLANO-INFRAESTRUTURA.json que ele exige",
+      "gravidade": "alta",
+      "estado": "aberto",
+      "mapa": "encaixes",
+      "evidencia": [
+        "python ecossistema.py factory --help: --plano (PLANO-INFRAESTRUTURA.json) é obrigatório",
+        "o plano é gerado pelo ops, que roda depois, na etapa 6 (scripts/orquestrador_sincrono.py:259 e :494)"
+      ],
+      "pedido_melhoria": "Rever a ordem da receita do Fluxo 02: gerar o PLANO-INFRAESTRUTURA.json (ops plan) antes da etapa 3, ou mudar o contrato do factory.",
+      "origem": "reproducao"
+    },
+    {
+      "id": "VER-005",
+      "titulo": "Corrida entre testes no G_PORTAO_PROVA_QUE_MORDE",
+      "gravidade": "alta",
+      "estado": "aberto",
+      "mapa": "guardas",
+      "evidencia": [
+        "gates/test_g_determinismo_lei_1.py:41: grava G_SYNTHETIC_LLM_TRAP.py no gates/ real",
+        "gates/G_PORTAO_PROVA_QUE_MORDE.py:186: roda as suítes em paralelo (ThreadPoolExecutor)",
+        "barrou 5 commits em 26/09 com FileNotFoundError em G_DOCS_ROT, G_DRIFT_ANALYZER ou G_aidd_diagnose; passou ao repetir"
+      ],
+      "pedido_melhoria": "Fazer test_g_determinismo_lei_1 usar uma pasta temporária em vez de gravar no gates/ real, para acabar com a corrida no meta-guarda.",
+      "origem": "reproducao"
+    },
+    {
+      "id": "CAT-15d-aidd-melhoria",
+      "titulo": "7 dimensões 15-D com falha no laudo de aidd-melhoria",
+      "gravidade": "media",
+      "estado": "aberto",
+      "origem": "catalogo",
+      "mapa": "lente15d",
+      "evidencia": [
+        "docs/auditoria/aidd-melhoria/ciclo-01/LAUDO-15D-REVISADO.md: D4, D8, D11, D12, D13, D14, D15"
+      ],
+      "pedido_melhoria": "Abrir o próximo ciclo 4F de aidd-melhoria para as dimensões D4, D8, D11, D12, D13, D14, D15."
+    },
+    {
+      "id": "CAT-atalho-interno-etapa-02-planner",
+      "titulo": "Etapa mexe por dentro de uma ferramenta: etapa_02_planner",
+      "gravidade": "media",
+      "estado": "aberto",
+      "origem": "catalogo",
+      "mapa": "encaixes",
+      "evidencia": [
+        "etapa_02_planner: tools/aidd-planner"
+      ],
+      "pedido_melhoria": "Fazer a etapa_02_planner usar a CLI da ferramenta em vez de importar arquivos internos."
+    },
+    {
+      "id": "CAT-atalho-interno-etapa-03-engine",
+      "titulo": "Etapa mexe por dentro de uma ferramenta: etapa_03_engine",
+      "gravidade": "media",
+      "estado": "aberto",
+      "origem": "catalogo",
+      "mapa": "encaixes",
+      "evidencia": [
+        "etapa_03_engine: tools/aidd-master/scripts/dispatch_pipeline.py"
+      ],
+      "pedido_melhoria": "Fazer a etapa_03_engine usar a CLI da ferramenta em vez de importar arquivos internos."
+    },
+    {
+      "id": "CAT-declaracoes-invisiveis",
+      "titulo": "10 declarações de lei que o meta-guarda não lê",
+      "gravidade": "media",
+      "estado": "aberto",
+      "origem": "catalogo",
+      "mapa": "leis",
+      "evidencia": [
+        "Lei #1: G_SYNC_CMD_ROT",
+        "Lei #1: G_LAYOUT_ENTREGA",
+        "Lei #1: G_PACOTE_CORE",
+        "Lei #1: G_RESUMO_USUARIO",
+        "Lei #1: G_ANT_LOCKIN_LEGADO",
+        "Lei #4: G_USER_FACING_PTBR",
+        "Lei #9: G_amelhoria",
+        "Lei #9: G_aidd_diagnose",
+        "Lei #9: G_PROVA_SKILLS_POCOCK",
+        "Lei #9: G_HANDOFF_MELHORIA"
+      ],
+      "pedido_melhoria": "Fazer o G_LEI_DECLARA_PORTAO ler declarações com comentário depois do '(provado)', ou tirar os comentários do AGENTS.md."
+    },
+    {
+      "id": "CAT-declarados-fora-do-commit",
+      "titulo": "7 guardas declarados em lei que não rodam no commit",
+      "gravidade": "media",
+      "estado": "aberto",
+      "origem": "catalogo",
+      "mapa": "leis",
+      "evidencia": [
+        "Lei #1: G_DISPATCH_PIPELINE_VSA",
+        "Lei #3: G_GESTOR_SESSOES",
+        "Lei #9: G_TEMPLATE_FORGE_ROT",
+        "Lei #9: G_amelhoria",
+        "Lei #9: G_aidd_diagnose",
+        "Lei #9: G_HANDOFF_MELHORIA",
+        "Lei #12: G_DOCS_ROT"
+      ],
+      "pedido_melhoria": "Colocar no pre-commit os guardas declarados nas leis, ou rebaixar a declaração."
+    },
+    {
+      "id": "CAT-gates-versoes",
+      "titulo": "10 guardas com o mesmo nome e código diferente",
+      "gravidade": "media",
+      "estado": "aberto",
+      "origem": "catalogo",
+      "mapa": "guardas",
+      "evidencia": [
+        "G_BLOQUEAR_SEGREDOS",
+        "G_CONTRACTS",
+        "G_CYBERSECURITY_OWASP",
+        "G_HARNESS_COMPAT",
+        "G_INJECT",
+        "G_PERFORMANCE",
+        "G_QUARTETO_SINE_QUA_NON",
+        "G_SAIDA_BINARIA",
+        "G_SEGREDOS",
+        "G_TESTES_REAIS"
+      ],
+      "pedido_melhoria": "Deixar uma versão só de cada guarda repetido e fazer as ferramentas chamarem a original."
+    },
+    {
+      "id": "CAT-moldes-repetidos",
+      "titulo": "7 moldes de entrega com o mesmo nome em várias ferramentas",
+      "gravidade": "media",
+      "estado": "aberto",
+      "origem": "catalogo",
+      "mapa": "moldes",
+      "evidencia": [
+        "agents: aidd-enterprise, aidd-master",
+        "cookiecutter-scaffold: aidd-enterprise, aidd-master",
+        "core: aidd-enterprise, aidd-master",
+        "gates: aidd-enterprise, aidd-forge, aidd-master",
+        "rules: aidd-enterprise, aidd-master",
+        "static: aidd-enterprise, aidd-master",
+        "v2: aidd-enterprise, aidd-master"
+      ],
+      "pedido_melhoria": "Deixar cada molde de entrega numa ferramenta dona e gerar as cópias."
+    },
+    {
+      "id": "CAT-pasta-legada-gemini-skills",
+      "titulo": "Pasta legada ainda versionada: .gemini/skills",
+      "gravidade": "media",
+      "estado": "aberto",
+      "origem": "catalogo",
+      "mapa": "harnesses",
+      "evidencia": [
+        "346 arquivos versionados"
+      ],
+      "pedido_melhoria": "Remover a pasta legada .gemini/skills do repositório e do auto-ingest do components sync."
+    },
+    {
+      "id": "CAT-tarefas-varias-donas",
+      "titulo": "10 tarefas feitas por mais de uma ferramenta",
+      "gravidade": "media",
+      "estado": "aberto",
+      "origem": "catalogo",
+      "mapa": "ferramentas",
+      "evidencia": [
+        "auditar-conformidade: aidd-enterprise, aidd-forge, aidd-generator, aidd-master, componentes, gates, scripts",
+        "barrar-segredos: aidd-enterprise, aidd-forge, aidd-generator, aidd-master, aidd-ops, gates",
+        "compat-harness: aidd-enterprise, aidd-forge, aidd-generator, aidd-master, componentes, gates, scripts",
+        "detectar-stack-camada: aidd-enterprise, aidd-forge, aidd-generator, aidd-master",
+        "docker-compose: aidd-enterprise, aidd-factory, aidd-master, aidd-ops, gates",
+        "escrita-atomica: aidd-enterprise, aidd-factory, aidd-master, componentes, gates",
+        "gerar-frontend: aidd-bridge, aidd-enterprise, aidd-factory, aidd-master, gates",
+        "injetar-componentes: aidd-enterprise, aidd-forge, aidd-generator, aidd-master",
+        "ponte-orca: aidd-forge, aidd-generator, componentes",
+        "resultado-monad: aidd-enterprise, aidd-factory, aidd-master, aidd-ops, componentes"
+      ],
+      "pedido_melhoria": "Definir uma dona única para cada tarefa repetida e fazer as outras chamarem a dona."
+    },
+    {
+      "id": "VER-004",
+      "titulo": "O --dry-run do orquestrador grava README-USUARIO.md no disco",
+      "gravidade": "media",
+      "estado": "aberto",
+      "mapa": "encaixes",
+      "evidencia": [
+        "scripts/orquestrador_sincrono.py:619: a condição 'not is_file() or not dry_run' grava o guia quando ele ainda não existe",
+        "reproduzido: python ecossistema.py pure \"Projeto X\" gestao --dry-run criou projetos/projeto-x/README-USUARIO.md"
+      ],
+      "pedido_melhoria": "Fazer o --dry-run do orquestrador síncrono não gravar nada em disco (README-USUARIO.md incluído), com teste.",
+      "origem": "reproducao"
+    },
+    {
+      "id": "VER-006",
+      "titulo": "6 testes falhando na aidd-orca, fora do pre-commit",
+      "gravidade": "media",
+      "estado": "aberto",
+      "mapa": "skills",
+      "evidencia": [
+        "cd componentes/compartilhado/skills/aidd-orca && python -m pytest tests -q: 6 failed, 111 passed (igual antes da renomeação)"
+      ],
+      "pedido_melhoria": "Corrigir os 6 testes quebrados da aidd-orca (agent_spawner, flight_plan, orchestrator_engine) e ligá-los ao pre-commit.",
+      "origem": "reproducao"
+    },
+    {
+      "id": "VER-008",
+      "titulo": "G_HANDOFF_MELHORIA reprova com o handoff-melhoria.json versionado",
+      "gravidade": "media",
+      "estado": "aberto",
+      "mapa": "leis",
+      "evidencia": [
+        "python gates/G_HANDOFF_MELHORIA.py: exit 1, campos obrigatórios ausentes (versao_schema, emitido_em, transicao, artefatos, assinatura)",
+        "o guarda está declarado na Lei #9 e não roda no commit"
+      ],
+      "pedido_melhoria": "Regenerar o handoff-melhoria.json no formato do schema (ou removê-lo do repositório) e colocar o G_HANDOFF_MELHORIA no pre-commit.",
+      "origem": "reproducao"
+    },
+    {
+      "id": "CAT-ciclo-mapa-pecas-ciclo-01",
+      "titulo": "Ciclo de auditoria sem todos os documentos: mapa-pecas/ciclo-01",
+      "gravidade": "baixa",
+      "estado": "aberto",
+      "origem": "catalogo",
+      "mapa": "oficina",
+      "evidencia": [
+        "faltam: laudo_inicial, plano_evolucao, laudo_revisado, dod"
+      ],
+      "pedido_melhoria": "Completar ou fechar o ciclo mapa-pecas/ciclo-01."
+    },
+    {
+      "id": "CAT-ciclo-skills-pocock-ciclo-01",
+      "titulo": "Ciclo de auditoria sem todos os documentos: skills-pocock/ciclo-01",
+      "gravidade": "baixa",
+      "estado": "aberto",
+      "origem": "catalogo",
+      "mapa": "oficina",
+      "evidencia": [
+        "faltam: laudo_inicial, laudo_revisado"
+      ],
+      "pedido_melhoria": "Completar ou fechar o ciclo skills-pocock/ciclo-01."
+    },
+    {
+      "id": "CAT-guardas-sem-lei",
+      "titulo": "22 guardas da raiz que nenhuma lei declara",
+      "gravidade": "baixa",
+      "estado": "aberto",
+      "origem": "catalogo",
+      "mapa": "leis",
+      "evidencia": [
+        "G_ARQUITETURA_DELIVERABLE",
+        "G_CLI_HELP_CONSISTENCIA",
+        "G_DEPENDENCIAS_PIN_HASH",
+        "G_DRIFT_ANALYZER",
+        "G_DRIFT_NUCLEO_COMPARTILHADO",
+        "G_ECOSSISTEMA_INTEGRIDADE",
+        "G_ESCRITOR_ATOMICO",
+        "G_FRONTEND_LAYERS",
+        "G_HADOLINT",
+        "G_HARNESS_COMPAT",
+        "G_INFRA_COMPOSE",
+        "G_ISOLATION_AUDIT",
+        "G_LEI_DECLARA_PORTAO",
+        "G_LIVRO_EVIDENCIA",
+        "G_LLM_PROMPT_SHIELD",
+        "G_ORQUESTRADOR_SINCRONO",
+        "G_PROTOCOL_FALLBACK",
+        "G_PROTOTYPE_REWRITE",
+        "G_SEGREDOS",
+        "G_SUPPLY_CHAIN",
+        "G_TRANSACTION_LOG_LRU",
+        "G_UNIVERSAL_HARNESS"
+      ],
+      "pedido_melhoria": "Amarrar cada guarda da raiz à lei que ele prova no AGENTS.md."
+    },
+    {
+      "id": "CAT-mcps-internos",
+      "titulo": "3 MCPs das ferramentas que nenhum agente deste repositório usa",
+      "gravidade": "baixa",
+      "estado": "aberto",
+      "origem": "catalogo",
+      "mapa": "conexoes",
+      "evidencia": [
+        "mcp-verificador-cve",
+        "cloudflare-mcp",
+        "docker-mcp"
+      ],
+      "pedido_melhoria": "Decidir se os MCPs internos das ferramentas devem ser registrados para o agente ou só ir com o app gerado."
+    },
+    {
+      "id": "CAT-scripts-sem-chamador",
+      "titulo": "3 scripts que nenhum código chama",
+      "gravidade": "baixa",
+      "estado": "aberto",
+      "origem": "catalogo",
+      "mapa": "scripts",
+      "evidencia": [
+        "gerador_relatorio_evolucao_planos",
+        "gerador_templates_gates",
+        "gerar_chave_manifesto"
+      ],
+      "pedido_melhoria": "Ligar ao painel ou remover os scripts de scripts/ que nenhum código chama."
+    },
+    {
+      "id": "CAT-verbos-repetidos",
+      "titulo": "20 verbos de CLI em mais de uma ferramenta",
+      "gravidade": "baixa",
+      "estado": "aberto",
+      "origem": "catalogo",
+      "mapa": "ferramentas",
+      "evidencia": [
+        "add-module: aidd-enterprise, aidd-master",
+        "apply: aidd-enterprise, aidd-master",
+        "audit: aidd-enterprise, aidd-forge, aidd-master, aidd-planner",
+        "bench: aidd-enterprise, aidd-master",
+        "compose: aidd-enterprise, aidd-master",
+        "compose-orca: aidd-enterprise, aidd-master",
+        "deploy: aidd-enterprise, aidd-master, aidd-ops",
+        "export: aidd-ops, aidd-planner",
+        "export-frontend: aidd-enterprise, aidd-master",
+        "heal: aidd-enterprise, aidd-master",
+        "init: aidd-enterprise, aidd-forge, aidd-master, aidd-ops, aidd-planner",
+        "inject: aidd-enterprise, aidd-forge, aidd-master",
+        "plan: aidd-enterprise, aidd-master, aidd-ops",
+        "prompt: aidd-enterprise, aidd-master",
+        "refine-module: aidd-enterprise, aidd-master",
+        "scaffold-infra: aidd-enterprise, aidd-master",
+        "setup: aidd-enterprise, aidd-master",
+        "status: aidd-enterprise, aidd-master, aidd-ops",
+        "test: aidd-enterprise, aidd-master",
+        "verificar-drift: aidd-enterprise, aidd-master"
+      ],
+      "pedido_melhoria": "Revisar os verbos de CLI repetidos e manter cada comando numa ferramenta só."
+    },
+    {
+      "id": "VER-007",
+      "titulo": "2 testes falhando na aidd-improvement, fora do pre-commit",
+      "gravidade": "baixa",
+      "estado": "aberto",
+      "mapa": "skills",
+      "evidencia": [
+        "cd componentes/compartilhado/skills/aidd-improvement && python -m pytest tests -q: 2 failed, 4 passed (reanálise de plano: nome PLAN-NNNN)"
+      ],
+      "pedido_melhoria": "Atualizar os 2 testes de reanálise da aidd-improvement para o nome de pasta PLAN-NNNN e ligá-los ao pre-commit.",
+      "origem": "reproducao"
+    },
+    {
+      "id": "VER-010",
+      "titulo": "forge audit: AGENTS.md genérico (G04) e forge init ainda cria .agent/",
+      "gravidade": "baixa",
+      "estado": "aberto",
+      "mapa": "ferramentas",
+      "evidencia": [
+        "python ecossistema.py forge audit <pasta vazia>: 93,3% (14/15), G04 FAIL",
+        "docs/teste-end-to-end/relatorio-teste-end-to-end.md seções 14 a 18"
+      ],
+      "pedido_melhoria": "Resolver o item G04 do forge audit e parar de criar a pasta legada .agent/ no forge init.",
+      "origem": "reproducao"
+    },
+    {
+      "id": "VER-011",
+      "titulo": "O detect-secrets grava o caminho absoluto da máquina no .secrets.baseline",
+      "gravidade": "baixa",
+      "estado": "aberto",
+      "mapa": "guardas",
+      "evidencia": [
+        "26/09: ao regravar o baseline, o filtro is_baseline_file ganhou C:\\Users\\...\\.secrets.baseline no lugar de .secrets.baseline (corrigido à mão em d41eb4b)"
+      ],
+      "pedido_melhoria": "Fazer o G_SEGREDOS manter o filtro is_baseline_file com caminho relativo ao regravar o .secrets.baseline.",
+      "origem": "reproducao"
+    },
+    {
+      "id": "VER-009",
+      "titulo": "O .githooks/pre-commit pode falhar sem mensagem",
+      "gravidade": "media",
+      "estado": "suspeita",
+      "mapa": "scripts",
+      "evidencia": [
+        ".githooks/pre-commit:17 usa set -e e as linhas 72 e 78 escondem o erro do git add (2>/dev/null)",
+        "26/09: um commit de merge saiu com exit 1 depois do components sync, sem mensagem; o mesmo trecho rodado sozinho saiu com 0"
+      ],
+      "pedido_melhoria": "Investigar a saída silenciosa do .githooks/pre-commit: mostrar o erro do git add dos espelhos em vez de escondê-lo.",
+      "origem": "reproducao"
+    },
+    {
+      "id": "VER-013",
+      "titulo": "O sync de componentes puxava skills dos harnesses de volta para a fonte",
+      "gravidade": "alta",
+      "estado": "resolvido",
+      "mapa": "harnesses",
+      "evidencia": [
+        "auto_ingest_skills passou a ignorar skills de terceiros declaradas; teste em gates/test_gestor_componentes_drift.py"
+      ],
+      "resolvido_em": "416dcd1",
+      "pedido_melhoria": "",
+      "origem": "reproducao"
+    },
+    {
+      "id": "VER-012",
+      "titulo": "Skills repetidas, nomes misturados e terceiros copiados na fonte única",
+      "gravidade": "media",
+      "estado": "resolvido",
+      "mapa": "skills",
+      "evidencia": [
+        "75 skills -> 37 nossas (aidd-*) + terceiros via dependencias_externas.json",
+        "G_SKILL_FORMATO bloqueando no commit"
+      ],
+      "resolvido_em": "9d66a5e",
+      "pedido_melhoria": "",
+      "origem": "reproducao"
+    },
+    {
+      "id": "VER-014",
+      "titulo": "Comandos /aidd-livro-texto e /planner sem skill válida",
+      "gravidade": "media",
+      "estado": "resolvido",
+      "mapa": "comandos",
+      "evidencia": [
+        "mapa dos comandos: 17 de 17 apontam para skill que existe"
+      ],
+      "resolvido_em": "2293e13",
+      "pedido_melhoria": "",
+      "origem": "reproducao"
+    }
+  ]
+}

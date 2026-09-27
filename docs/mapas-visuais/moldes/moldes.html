@@ -1,0 +1,35 @@
+<!-- Molde do mapa dos moldes de entrega. Texto fixo aqui; listas entram por scripts/mapa_visual.py. -->
+<div class="wrap">
+
+<a class="voltar" href="{{LINK_MANUAL}}">← Manual de montagem</a>
+<header>
+  <span class="eyebrow">Mapa visual · peça: molde de entrega (template)</span>
+  <h1>Mapa dos moldes de entrega</h1>
+  <p class="lead">Um molde é a forma de ferro de onde sai o app gerado. Ele mora dentro da ferramenta, em <code>templates/</code>, e vai junto com o que ela entrega ao cliente. Este mapa mostra todos os moldes de cada ferramenta.</p>
+  {{TOTAIS}}
+</header>
+
+<section id="regra">
+  <span class="eyebrow">A regra</span>
+  <h2>O que vai com o app, e o que fica</h2>
+  <div class="grid3">
+    <div class="box"><h3>O que é</h3><p>Pastas em <code>tools/&lt;f&gt;/templates/</code>: código, guardas e configurações que são copiados ou renderizados dentro do projeto do cliente.</p></div>
+    <div class="box"><h3>Guardas de entrega</h3><p><code>templates/gates/</code> é gerado por <code>scripts/gerador_templates_gates.py</code> a partir dos guardas da ferramenta. Não se edita à mão.</p></div>
+    <div class="box"><h3>O risco</h3><p>O mesmo molde mantido em duas ferramentas envelhece em duas velocidades. Os repetidos estão abaixo.</p></div>
+  </div>
+</section>
+
+<section id="repetidos">
+  <span class="eyebrow">Erros comuns · conferido agora</span>
+  <h2>O mesmo molde em várias ferramentas</h2>
+  {{REPETIDOS}}
+</section>
+
+<section id="lista">
+  <span class="eyebrow">Integrantes</span>
+  <h2>Todos os moldes, por ferramenta</h2>
+  {{LISTA}}
+</section>
+
+<footer>Gerado por <code>scripts/mapa_visual.py moldes</code> a partir de <code>docs/auditoria/mapa-pecas/catalogo-pecas.json</code>. Para atualizar: <code>python scripts/catalogo_pecas.py</code> e depois <code>python scripts/mapa_visual.py moldes</code>.</footer>
+</div>

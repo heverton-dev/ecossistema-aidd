@@ -305,6 +305,184 @@ def _leis_por_gate(leis_mod, agents_md: str) -> tuple[dict[str, list[int]], list
     return mapa, invisiveis
 
 
+RE_FORCA = re.compile(r"\((provado|nao-provado|sem-gate)")
+RE_DECLARACAO_QUALQUER = re.compile(r"^\s*-\s+(?:\*\*)?Port[ãa]o(?:\*\*)?:\s*(.+)$")
+
+
+def coletar_leis() -> list[dict]:
+    """Cada lei do AGENTS.md e as declarações de portão embaixo dela, lidas de forma
+    tolerante; 'visivel' diz se o G_LEI_DECLARA_PORTAO (regex estrito) enxerga a linha."""
+    leis_mod, _ = _meta_gates()
+    bloco = leis_mod.extrair_bloco_leis(_ler(RAIZ / "AGENTS.md"))
+    leis, atual = [], None
+    for linha in bloco.splitlines():
+        cabecalho = leis_mod.RE_LAW_HEADER.match(linha.strip())
+        if cabecalho:
+            atual = {"numero": int(cabecalho.group(1)), "titulo": cabecalho.group(2).strip().rstrip(":"),
+                     "portoes": [], "sem_gate": False}
+            leis.append(atual)
+            continue
+        if atual is None:
+            continue
+        m = RE_DECLARACAO_TOLERANTE.match(linha)
+        if m:
+            forca = RE_FORCA.search(linha)
+            atual["portoes"].append({
+                "gate": m.group(1),
+                "forca": forca.group(1) if forca else "",
+                "visivel": bool(leis_mod.RE_GATE_DECLARATION.match(linha)),
+            })
+        else:
+            decl = RE_DECLARACAO_QUALQUER.match(linha)
+            alvo = re.sub(r"\s*[\(\[][\w\-]+[\)\]].*$", "", decl.group(1)) if decl else ""
+            if alvo and leis_mod.normalizar_literal_sem_gate(alvo):
+                atual["sem_gate"] = True
+    return leis
+
+
+def coletar_harnesses() -> dict:
+    """Cada harness do manifesto: pasta, tipos de peça que recebe, destino de cada tipo,
+    skills presentes em disco e arquivo de config de MCP. Mais as pastas legadas versionadas."""
+    manifesto = json.loads(_ler(RAIZ / "gates" / "manifesto_harnesses.json"))
+    sys.path.insert(0, str(RAIZ / "scripts"))
+    import gestor_dependencias
+    tipos = manifesto["tipos_componente"]
+    nossas = {p.parent.name for p in (COMPARTILHADO / "skills").glob("*/SKILL.md")}
+    lista = []
+    for nome, info in manifesto["harnesses_suportados"].items():
+        prefixo = info.get("prefixo_pasta", "")
+        recebe = [t for t, v in tipos.items() if nome in (v.get("harnesses_aplicaveis") or [])]
+        destinos = {t: ((tipos[t].get("dest_harness_template_overrides") or {}).get(nome)
+                        or tipos[t].get("dest_harness_template") or "").replace("{prefixo_pasta}", prefixo)
+                    for t in recebe}
+        base = RAIZ / prefixo
+        if nome == "gemini-cli":
+            skills = list(base.glob("extensions/*/skills/*/SKILL.md"))
+        else:
+            skills = list(base.glob("skills/*/SKILL.md"))
+        mcp = gestor_dependencias.DESTINOS_MCP.get(nome, {}).get("caminho")
+        nomes_em_disco = {s.parent.name for s in skills}
+        lista.append({"id": nome, "prefixo": prefixo, "confirmado": bool(info.get("confirmado")), "recebe": recebe,
+                      "destinos": destinos, "skills_em_disco": len(skills),
+                      "nossas_faltando": sorted(nossas - nomes_em_disco),
+                      "terceiros_em_disco": len(nomes_em_disco - nossas),
+                      "config_mcp": _rel(Path(mcp)) if mcp else ""})
+    legadas = []
+    for pasta in (".gemini/skills", ".agent/skills"):
+        r = subprocess.run(["git", "ls-files", pasta], cwd=RAIZ, capture_output=True, text=True)
+        n = len([linha for linha in r.stdout.splitlines() if linha.strip()])
+        if n:
+            legadas.append({"pasta": pasta, "arquivos_versionados": n})
+    return {"harnesses": lista, "pastas_legadas": legadas}
+
+def coletar_moldes_entrega() -> list[dict]:
+    """Cada molde de entrega (tools/<f>/templates/<molde>/): o que vai junto com o app gerado."""
+    moldes = []
+    pastas = list(RAIZ.glob("tools/*/templates")) + list(RAIZ.glob("tools/*/aidd_*/templates"))
+    for tpl in sorted(pastas):
+        for sub in sorted(p for p in tpl.iterdir() if p.is_dir() and p.name not in IGNORAR):
+            arquivos = [f for f in sub.rglob("*") if f.is_file() and not any(x in IGNORAR for x in f.parts)]
+            dona = tpl.relative_to(RAIZ / "tools").parts[0]
+            moldes.append({"ferramenta": dona, "molde": sub.name, "caminho": _rel(sub),
+                           "arquivos": len(arquivos)})
+    return moldes
+
+GERADORES_DE_DOC = {"catalogo_pecas", "mapa_visual", "livro_mapas", "achados_ciclo"}
+
+
+def coletar_scripts() -> list[dict]:
+    """Cada script de scripts/: o que faz (docstring) e quem o chama (painel, commit, guardas, outros scripts, testes)."""
+    fontes = {"painel": [RAIZ / "ecossistema.py"],
+              "commit": [RAIZ / ".pre-commit-config.yaml", RAIZ / ".githooks" / "pre-commit"],
+              "guardas": sorted((RAIZ / "gates").glob("G_*.py")),
+              "scripts": sorted((RAIZ / "scripts").glob("*.py")),
+              "testes": sorted((RAIZ / "tests").rglob("test_*.py")) + sorted((RAIZ / "scripts").glob("test_*.py"))
+              + sorted((RAIZ / "gates").glob("test_*.py"))}
+    # Geradores de documentação citam scripts como dado (texto do mapa/livro), não os chamam.
+    textos = {grupo: [(p, _ler(p)) for p in arquivos if p.is_file() and p.stem not in GERADORES_DE_DOC]
+              for grupo, arquivos in fontes.items()}
+    lista = []
+    for p in sorted((RAIZ / "scripts").glob("*.py")):
+        if p.name.startswith("test_") or p.name == "__init__.py":
+            continue
+        try:
+            doc = ast.get_docstring(ast.parse(_ler(p).lstrip("\ufeff"))) or ""
+        except SyntaxError:
+            doc = ""
+        linha = next((x.strip() for x in doc.splitlines() if x.strip() and not set(x.strip()) <= set("=-─")), "")
+        chamado_por = sorted(grupo for grupo, itens in textos.items()
+                             if any(p.stem in texto for arq, texto in itens if arq != p))
+        lista.append({"id": p.stem, "descricao": linha, "chamado_por": chamado_por})
+    return lista
+
+RE_NOTA_LAUDO = re.compile(r"[Nn]ota[^:\n]*:\s*\**\s*(\d+(?:[.,]\d+)?)\s*/\s*10")
+# Documentos que toda rodada 4F produz; a fase 3 (Construtor) entrega código, não documento fixo.
+FASES_CICLO = (("laudo_inicial", "LAUDO-15D-INICIAL.md"), ("plano_evolucao", "PLANO-EVOLUCAO.md"),
+               ("laudo_revisado", "LAUDO-15D-REVISADO.md"), ("dod", "DOD.md"))
+
+
+def coletar_oficina() -> dict:
+    """Planos em docs/planos/ (rascunho, a-fazer, fazendo, feitos) e ciclos de auditoria em
+    docs/auditoria/<alvo>/ciclo-NN/, com as fases presentes e a última nota do laudo."""
+    base = RAIZ / "docs" / "planos"
+    planos = []
+    for estado, pasta in (("rascunho", base), ("a-fazer", base / "a-fazer"), ("fazendo", base / "fazendo"),
+                          ("feitos", base / "feitos")):
+        for p in sorted(pasta.glob("PLAN-*")):
+            itens = len([f for f in p.glob("[0-9][0-9]-*.md") if not f.name.startswith("00-")]) if p.is_dir() else 0
+            planos.append({"id": p.name.removesuffix(".md"), "estado": estado, "itens": itens})
+    ciclos = []
+    for d in sorted((RAIZ / "docs" / "auditoria").glob("*/ciclo-*")):
+        nomes = {f.name for f in d.iterdir()}
+        nota = ""
+        for arquivo in ("LAUDO-15D-REVISADO.md", "LAUDO-15D-INICIAL.md"):
+            if arquivo in nomes:
+                notas = RE_NOTA_LAUDO.findall(_ler(d / arquivo))
+                if notas:
+                    nota = notas[-1].replace(",", ".")
+                    break
+        ciclos.append({"alvo": d.parent.name, "ciclo": d.name, "caminho": _rel(d),
+                       "fases": {chave: arquivo in nomes for chave, arquivo in FASES_CICLO}, "nota": nota})
+    melhorias = len(list((RAIZ / "docs" / "melhorias").glob("*.json")))
+    return {"planos": planos, "ciclos": ciclos, "relatorios_melhoria": melhorias}
+
+RE_DIMENSAO_MOLDE = re.compile(r"\*\*(?:\[[^\]]*\]\s*)?D(\d+)\.\s*([^:*]+):\*\*")
+RE_DIMENSAO_LAUDO = re.compile(r"D(\d+)\.\s*[^:*]+:\*\*")
+
+
+def classificar_dimensao(texto: str) -> str:
+    """Classificação por palavra-chave do texto do laudo (aproximação honesta, não julgamento)."""
+    baixo = texto.lower()
+    if "failed" in baixo or "not implemented" in baixo:
+        return "falha"
+    if "parcial" in baixo:
+        return "parcial"
+    if "implementado" in baixo:
+        return "ok"
+    return "descrito"
+
+
+def coletar_lente_15d() -> dict:
+    """As 15 dimensões do molde de auditoria e, para cada ciclo com laudo, a classificação de
+    cada dimensão no laudo mais recente (revisado, senão inicial)."""
+    molde = _ler(RAIZ / "docs" / "auditoria" / "TEMPLATE-AUDITORIA-FERRAMENTA.md")
+    dimensoes = {}
+    for n, titulo in RE_DIMENSAO_MOLDE.findall(molde):
+        dimensoes.setdefault(int(n), titulo.strip())
+    laudos = []
+    for d in sorted((RAIZ / "docs" / "auditoria").glob("*/ciclo-*")):
+        for arquivo in ("LAUDO-15D-REVISADO.md", "LAUDO-15D-INICIAL.md"):
+            if (d / arquivo).is_file():
+                classes = {}
+                for linha in _ler(d / arquivo).splitlines():
+                    achados = list(RE_DIMENSAO_LAUDO.finditer(linha))
+                    for i, m in enumerate(achados):
+                        fim = achados[i + 1].start() if i + 1 < len(achados) else len(linha)
+                        classes.setdefault(str(int(m.group(1))), classificar_dimensao(linha[m.end():fim]))
+                laudos.append({"alvo": d.parent.name, "ciclo": d.name, "laudo": _rel(d / arquivo), "dimensoes": classes})
+                break
+    return {"dimensoes": [{"numero": n, "titulo": t} for n, t in sorted(dimensoes.items())], "laudos": laudos}
+
 def _prova_que_morde(morde_mod, nome: str) -> bool:
     teste = morde_mod.encontrar_arquivo_teste(f"{nome}.py", str(RAIZ / "gates"))
     return bool(teste) and morde_mod.auditar_teste_de_falha(teste, executar=False)[0]
@@ -550,6 +728,12 @@ def gerar(com_encaixe: bool = True) -> dict:
         "ferramentas": ferramentas,
         "skills": skills,
         "skills_terceiros": skills_terceiros,
+        "leis": coletar_leis(),
+        "lente_15d": coletar_lente_15d(),
+        "oficina": coletar_oficina(),
+        "scripts": coletar_scripts(),
+        "moldes_entrega": coletar_moldes_entrega(),
+        "harnesses": coletar_harnesses(),
         "comandos_slash": coletar_comandos_slash(),
         "mcps": coletar_mcps(ferramentas),
         "hooks": coletar_hooks(),
@@ -564,6 +748,12 @@ def gerar(com_encaixe: bool = True) -> dict:
         "ferramentas": len(ferramentas),
         "comandos_cli": sum(len(f["comandos"]) for f in ferramentas),
         "skills": len(skills),
+        "leis": len(catalogo["leis"]),
+        "lente_15d": len(catalogo["lente_15d"]["dimensoes"]),
+        "oficina": len(catalogo["oficina"]["planos"]),
+        "scripts": len(catalogo["scripts"]),
+        "moldes_entrega": len(catalogo["moldes_entrega"]),
+        "harnesses": len(catalogo["harnesses"]["harnesses"]),
         "skills_nossas": sum(1 for s in skills if not s["terceiro"]),
         "skills_terceiros_copiadas": sum(1 for s in skills if s["terceiro"]),
         "skills_terceiros_registradas": len(skills_terceiros),

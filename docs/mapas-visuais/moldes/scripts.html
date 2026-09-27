@@ -1,0 +1,55 @@
+<!-- Molde do mapa dos scripts. Texto fixo aqui; listas entram por scripts/mapa_visual.py. -->
+<div class="wrap">
+
+<a class="voltar" href="{{LINK_MANUAL}}">← Manual de montagem</a>
+<header>
+  <span class="eyebrow">Mapa visual · peça: script (máquina sem cérebro)</span>
+  <h1>Mapa dos scripts</h1>
+  <p class="lead">Um script é uma máquina sem cérebro: faz um trabalho mecânico, sem LLM. Os de <code>scripts/</code> servem o ecossistema inteiro. Este mapa mostra cada um, o que faz e quem o chama, para achar as máquinas que ninguém liga.</p>
+  {{TOTAIS}}
+</header>
+
+<section id="regra">
+  <span class="eyebrow">A regra</span>
+  <h2>Quem pode chamar um script</h2>
+  <div class="grid3">
+    <div class="box"><h3>O painel</h3><p><code>ecossistema.py</code>: o script vira um comando que você digita.</p></div>
+    <div class="box"><h3>O commit</h3><p><code>.pre-commit-config.yaml</code> ou <code>.githooks/pre-commit</code>: roda sozinho a cada commit.</p></div>
+    <div class="box"><h3>Guardas e outros scripts</h3><p>Um guarda ou outro script importa o módulo. "Quem chama" é medido por nome citado no código, então é uma aproximação.</p></div>
+  </div>
+</section>
+
+<section id="soltos">
+  <span class="eyebrow">Erros comuns · conferido agora</span>
+  <h2>Máquinas que ninguém liga</h2>
+  <div class="grid2">
+    <div class="box"><h3>Ninguém chama</h3><p>Nenhum painel, commit, guarda, script ou teste cita o nome. Candidato a remover ou a ligar:</p>{{SOLTOS}}</div>
+    <div class="box"><h3>Só os testes chamam</h3><p>Testado, mas sem uso real no ecossistema:</p>{{SO_TESTES}}</div>
+  </div>
+</section>
+
+<section id="lista">
+  <span class="eyebrow">Integrantes</span>
+  <h2>Todos os scripts</h2>
+  <div class="filtros" role="search">
+    <label for="busca" class="eyebrow" style="flex-basis:100%">Filtrar</label>
+    <input id="busca" type="search" placeholder="nome ou assunto: plano, catálogo, livro…" autocomplete="off">
+  </div>
+  <p class="legenda" id="contagem" aria-live="polite"></p>
+  {{LISTA}}
+</section>
+
+<footer>Gerado por <code>scripts/mapa_visual.py scripts</code> a partir de <code>docs/auditoria/mapa-pecas/catalogo-pecas.json</code>. Para atualizar: <code>python scripts/catalogo_pecas.py</code> e depois <code>python scripts/mapa_visual.py scripts</code>.</footer>
+</div>
+
+<script>
+(function(){
+  var busca=document.getElementById('busca'), itens=[].slice.call(document.querySelectorAll('.item')), contagem=document.getElementById('contagem');
+  function aplicar(){
+    var q=busca.value.trim().toLowerCase(), n=0;
+    itens.forEach(function(it){var ok=!q||it.dataset.busca.indexOf(q)>=0; it.hidden=!ok; if(ok)n++;});
+    contagem.textContent=n+' de '+itens.length+' scripts';
+  }
+  busca.addEventListener('input',aplicar); aplicar();
+})();
+</script>

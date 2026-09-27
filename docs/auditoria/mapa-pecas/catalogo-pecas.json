@@ -5,6 +5,12 @@
     "ferramentas": 8,
     "comandos_cli": 69,
     "skills": 38,
+    "leis": 13,
+    "lente_15d": 15,
+    "oficina": 37,
+    "scripts": 24,
+    "moldes_entrega": 24,
+    "harnesses": 7,
     "skills_nossas": 38,
     "skills_terceiros_copiadas": 0,
     "skills_terceiros_registradas": 20,
@@ -519,6 +525,1101 @@
     "workers-best-practices",
     "wrangler"
   ],
+  "leis": [
+    {
+      "numero": 1,
+      "titulo": "Determinism First",
+      "portoes": [
+        {
+          "gate": "G_DETERMINISMO_LEI_1",
+          "forca": "provado",
+          "visivel": true
+        },
+        {
+          "gate": "G_PIPELINE_HANDOFF",
+          "forca": "provado",
+          "visivel": true
+        },
+        {
+          "gate": "G_DISPATCH_PIPELINE_VSA",
+          "forca": "provado",
+          "visivel": true
+        },
+        {
+          "gate": "G_SYNC_CMD_ROT",
+          "forca": "provado",
+          "visivel": false
+        },
+        {
+          "gate": "G_LAYOUT_ENTREGA",
+          "forca": "provado",
+          "visivel": false
+        },
+        {
+          "gate": "G_PACOTE_CORE",
+          "forca": "provado",
+          "visivel": false
+        },
+        {
+          "gate": "G_RESUMO_USUARIO",
+          "forca": "provado",
+          "visivel": false
+        },
+        {
+          "gate": "G_ANT_LOCKIN_LEGADO",
+          "forca": "provado",
+          "visivel": false
+        }
+      ],
+      "sem_gate": false
+    },
+    {
+      "numero": 2,
+      "titulo": "Binary Quality",
+      "portoes": [
+        {
+          "gate": "G_SAIDA_BINARIA",
+          "forca": "provado",
+          "visivel": true
+        }
+      ],
+      "sem_gate": false
+    },
+    {
+      "numero": 3,
+      "titulo": "Structured Persistence",
+      "portoes": [
+        {
+          "gate": "G_MIGRATION_ROT",
+          "forca": "provado",
+          "visivel": true
+        },
+        {
+          "gate": "G_ESTRUTURA_ESTADO",
+          "forca": "provado",
+          "visivel": true
+        },
+        {
+          "gate": "G_GESTOR_SESSOES",
+          "forca": "provado",
+          "visivel": true
+        }
+      ],
+      "sem_gate": false
+    },
+    {
+      "numero": 4,
+      "titulo": "Extreme Token Economy",
+      "portoes": [
+        {
+          "gate": "G_IDIOMA_LEI_4",
+          "forca": "provado",
+          "visivel": true
+        },
+        {
+          "gate": "G_USER_FACING_PTBR",
+          "forca": "provado",
+          "visivel": false
+        }
+      ],
+      "sem_gate": false
+    },
+    {
+      "numero": 5,
+      "titulo": "Zero Stubs / Zero Mocks",
+      "portoes": [
+        {
+          "gate": "G_TESTES_REAIS",
+          "forca": "provado",
+          "visivel": true
+        }
+      ],
+      "sem_gate": false
+    },
+    {
+      "numero": 6,
+      "titulo": "Agnostic Supremacy",
+      "portoes": [
+        {
+          "gate": "G_COMPONENTE_AGNOSTICO",
+          "forca": "provado",
+          "visivel": true
+        }
+      ],
+      "sem_gate": false
+    },
+    {
+      "numero": 7,
+      "titulo": "Developer in Control",
+      "portoes": [
+        {
+          "gate": "G_ZERO_HEADLESS",
+          "forca": "provado",
+          "visivel": true
+        }
+      ],
+      "sem_gate": false
+    },
+    {
+      "numero": 8,
+      "titulo": "Label Honesty",
+      "portoes": [
+        {
+          "gate": "G_HONESTIDADE_ROTULO",
+          "forca": "provado",
+          "visivel": true
+        }
+      ],
+      "sem_gate": false
+    },
+    {
+      "numero": 9,
+      "titulo": "Tool Testing Discipline",
+      "portoes": [
+        {
+          "gate": "G_ENV_ROT",
+          "forca": "provado",
+          "visivel": true
+        },
+        {
+          "gate": "G_SKILL_ROT",
+          "forca": "provado",
+          "visivel": true
+        },
+        {
+          "gate": "G_SKILL_FORMATO",
+          "forca": "provado",
+          "visivel": true
+        },
+        {
+          "gate": "G_DISCIPLINA_TESTE_FERRAMENTA",
+          "forca": "provado",
+          "visivel": true
+        },
+        {
+          "gate": "G_TEMPLATE_FORGE_ROT",
+          "forca": "provado",
+          "visivel": true
+        },
+        {
+          "gate": "G_amelhoria",
+          "forca": "provado",
+          "visivel": false
+        },
+        {
+          "gate": "G_aidd_diagnose",
+          "forca": "provado",
+          "visivel": false
+        },
+        {
+          "gate": "G_PROVA_SKILLS_POCOCK",
+          "forca": "provado",
+          "visivel": false
+        },
+        {
+          "gate": "G_HANDOFF_MELHORIA",
+          "forca": "provado",
+          "visivel": false
+        }
+      ],
+      "sem_gate": false
+    },
+    {
+      "numero": 10,
+      "titulo": "Quarteto Sine Qua Non Dinâmico (Lei #10 — Quarteto; distinto de Rule 10 Formato de Resposta)",
+      "portoes": [
+        {
+          "gate": "G_CONTRACT_ROT",
+          "forca": "provado",
+          "visivel": true
+        },
+        {
+          "gate": "G_QUARTETO_SINE_QUA_NON",
+          "forca": "provado",
+          "visivel": true
+        }
+      ],
+      "sem_gate": false
+    },
+    {
+      "numero": 11,
+      "titulo": "Padrão-Ouro de Stack Tecnológica",
+      "portoes": [
+        {
+          "gate": "G_STACK_PADRAO_OURO",
+          "forca": "provado",
+          "visivel": true
+        }
+      ],
+      "sem_gate": false
+    },
+    {
+      "numero": 12,
+      "titulo": "Anti-Docs Rot & Canonical Ingestion",
+      "portoes": [
+        {
+          "gate": "G_DOCS_ROT",
+          "forca": "provado",
+          "visivel": true
+        }
+      ],
+      "sem_gate": false
+    },
+    {
+      "numero": 13,
+      "titulo": "Todo Portão Deve Provar que Morde",
+      "portoes": [
+        {
+          "gate": "G_PORTAO_PROVA_QUE_MORDE",
+          "forca": "provado",
+          "visivel": true
+        }
+      ],
+      "sem_gate": false
+    }
+  ],
+  "lente_15d": {
+    "dimensoes": [
+      {
+        "numero": 1,
+        "titulo": "Contratos e Regras"
+      },
+      {
+        "numero": 2,
+        "titulo": "Input e Gatilhos"
+      },
+      {
+        "numero": 3,
+        "titulo": "Raio de Impacto e Isolamento"
+      },
+      {
+        "numero": 4,
+        "titulo": "Componentes e Fractalidade"
+      },
+      {
+        "numero": 5,
+        "titulo": "Visão e Escopo"
+      },
+      {
+        "numero": 6,
+        "titulo": "O que o Estágio Faz"
+      },
+      {
+        "numero": 7,
+        "titulo": "O que o Estágio Recebe"
+      },
+      {
+        "numero": 8,
+        "titulo": "O que o Estágio Processa"
+      },
+      {
+        "numero": 9,
+        "titulo": "O que o Estágio Entrega"
+      },
+      {
+        "numero": 10,
+        "titulo": "Orquestração e Topologia"
+      },
+      {
+        "numero": 11,
+        "titulo": "Tratamento de Exceções e Fallback"
+      },
+      {
+        "numero": 12,
+        "titulo": "Observabilidade e Frugalidade"
+      },
+      {
+        "numero": 13,
+        "titulo": "Quality Gates (Portões)"
+      },
+      {
+        "numero": 14,
+        "titulo": "Critério de Rejeição (Rollback)"
+      },
+      {
+        "numero": 15,
+        "titulo": "Output Consolidado e Handoff"
+      }
+    ],
+    "laudos": [
+      {
+        "alvo": "aidd-diagnose",
+        "ciclo": "ciclo-01",
+        "laudo": "docs/auditoria/aidd-diagnose/ciclo-01/LAUDO-15D-REVISADO.md",
+        "dimensoes": {
+          "1": "descrito",
+          "2": "ok",
+          "3": "parcial",
+          "4": "descrito",
+          "5": "descrito",
+          "6": "descrito",
+          "7": "descrito",
+          "8": "descrito",
+          "9": "descrito",
+          "10": "descrito",
+          "11": "ok",
+          "12": "parcial",
+          "13": "descrito",
+          "14": "parcial",
+          "15": "descrito"
+        }
+      },
+      {
+        "alvo": "aidd-melhoria",
+        "ciclo": "ciclo-01",
+        "laudo": "docs/auditoria/aidd-melhoria/ciclo-01/LAUDO-15D-REVISADO.md",
+        "dimensoes": {
+          "1": "descrito",
+          "2": "descrito",
+          "3": "parcial",
+          "4": "falha",
+          "5": "descrito",
+          "6": "descrito",
+          "7": "descrito",
+          "8": "falha",
+          "9": "descrito",
+          "10": "descrito",
+          "11": "falha",
+          "12": "falha",
+          "13": "falha",
+          "14": "falha",
+          "15": "falha"
+        }
+      }
+    ]
+  },
+  "oficina": {
+    "planos": [
+      {
+        "id": "PLAN-0029-teste-e2e-ferramentas",
+        "estado": "a-fazer",
+        "itens": 5
+      },
+      {
+        "id": "PLAN-0016-qualidade-testes-mutacao",
+        "estado": "fazendo",
+        "itens": 10
+      },
+      {
+        "id": "PLAN-0017-resiliencia-concorrencia-integridade",
+        "estado": "fazendo",
+        "itens": 8
+      },
+      {
+        "id": "PLAN-0018-seguranca-zero-trust",
+        "estado": "fazendo",
+        "itens": 10
+      },
+      {
+        "id": "PLAN-0019-bootstrap-ambiente-preflight",
+        "estado": "fazendo",
+        "itens": 9
+      },
+      {
+        "id": "PLAN-0021-codigo-limpo-profundo",
+        "estado": "fazendo",
+        "itens": 17
+      },
+      {
+        "id": "PLAN-0022-config-arquivos-tokens",
+        "estado": "fazendo",
+        "itens": 4
+      },
+      {
+        "id": "PLAN-0023-evolucao-engenharia-software",
+        "estado": "fazendo",
+        "itens": 6
+      },
+      {
+        "id": "PLAN-0025-conclusao-auditoria-maquiagem",
+        "estado": "fazendo",
+        "itens": 11
+      },
+      {
+        "id": "PLAN-0027-implementacao-aidd-factory",
+        "estado": "fazendo",
+        "itens": 8
+      },
+      {
+        "id": "PLAN-0028-completude-factory-v2",
+        "estado": "fazendo",
+        "itens": 8
+      },
+      {
+        "id": "PLAN-0034-upgrade-ferramentas-enterprise",
+        "estado": "fazendo",
+        "itens": 3
+      },
+      {
+        "id": "PLAN-0001-evolucao-notas-auditoria",
+        "estado": "feitos",
+        "itens": 7
+      },
+      {
+        "id": "PLAN-0002-correcao-riscos-ecossistema",
+        "estado": "feitos",
+        "itens": 0
+      },
+      {
+        "id": "PLAN-0003-refinamento-notas-auditoria",
+        "estado": "feitos",
+        "itens": 6
+      },
+      {
+        "id": "PLAN-0004-integracao-aidd-ops",
+        "estado": "feitos",
+        "itens": 9
+      },
+      {
+        "id": "PLAN-0005-skill-gerador-planos",
+        "estado": "feitos",
+        "itens": 1
+      },
+      {
+        "id": "PLAN-0006-skill-orquestracao-orca",
+        "estado": "feitos",
+        "itens": 6
+      },
+      {
+        "id": "PLAN-0007-testes-completos-ecossistema",
+        "estado": "feitos",
+        "itens": 6
+      },
+      {
+        "id": "PLAN-0008-validacao-humana-testes",
+        "estado": "feitos",
+        "itens": 6
+      },
+      {
+        "id": "PLAN-0009-correcao-auditoria-maquiagem",
+        "estado": "feitos",
+        "itens": 18
+      },
+      {
+        "id": "PLAN-0010-direcionamento-estrategico-anti-nih",
+        "estado": "feitos",
+        "itens": 9
+      },
+      {
+        "id": "PLAN-0011-evolucao-aidd-ops",
+        "estado": "feitos",
+        "itens": 4
+      },
+      {
+        "id": "PLAN-0012-correcao-arquitetura-limpa",
+        "estado": "feitos",
+        "itens": 5
+      },
+      {
+        "id": "PLAN-0013-correcao-codigo-limpo",
+        "estado": "feitos",
+        "itens": 8
+      },
+      {
+        "id": "PLAN-0014-reestruturacao-ddd-clean-architecture",
+        "estado": "feitos",
+        "itens": 10
+      },
+      {
+        "id": "PLAN-0015-otimizacao-tokenomics-latencia",
+        "estado": "feitos",
+        "itens": 7
+      },
+      {
+        "id": "PLAN-0020-aidd-bridge",
+        "estado": "feitos",
+        "itens": 4
+      },
+      {
+        "id": "PLAN-0024-testes-motor-orquestrador",
+        "estado": "feitos",
+        "itens": 3
+      },
+      {
+        "id": "PLAN-0026-universalidade-harnesses-mcp-hooks",
+        "estado": "feitos",
+        "itens": 4
+      },
+      {
+        "id": "PLAN-0028-upgrade-stack-camadas",
+        "estado": "feitos",
+        "itens": 6
+      },
+      {
+        "id": "PLAN-0030-integracao-skills-matt-pocock",
+        "estado": "feitos",
+        "itens": 0
+      },
+      {
+        "id": "PLAN-0031-blindagem-cyberseguranca",
+        "estado": "feitos",
+        "itens": 4
+      },
+      {
+        "id": "PLAN-0032-remediar-gaps-auditoria",
+        "estado": "feitos",
+        "itens": 3
+      },
+      {
+        "id": "PLAN-0033-implementacao-arquitetural-vsa",
+        "estado": "feitos",
+        "itens": 3
+      },
+      {
+        "id": "PLAN-0035-blindagem-arquitetural-qualidade",
+        "estado": "feitos",
+        "itens": 5
+      },
+      {
+        "id": "PLAN-0036-taxonomia-quarteto-sine-qua-non",
+        "estado": "feitos",
+        "itens": 5
+      }
+    ],
+    "ciclos": [
+      {
+        "alvo": "aidd-diagnose",
+        "ciclo": "ciclo-01",
+        "caminho": "docs/auditoria/aidd-diagnose/ciclo-01",
+        "fases": {
+          "laudo_inicial": true,
+          "plano_evolucao": true,
+          "laudo_revisado": true,
+          "dod": true
+        },
+        "nota": "8"
+      },
+      {
+        "alvo": "aidd-melhoria",
+        "ciclo": "ciclo-01",
+        "caminho": "docs/auditoria/aidd-melhoria/ciclo-01",
+        "fases": {
+          "laudo_inicial": true,
+          "plano_evolucao": true,
+          "laudo_revisado": true,
+          "dod": true
+        },
+        "nota": ""
+      },
+      {
+        "alvo": "mapa-pecas",
+        "ciclo": "ciclo-01",
+        "caminho": "docs/auditoria/mapa-pecas/ciclo-01",
+        "fases": {
+          "laudo_inicial": false,
+          "plano_evolucao": false,
+          "laudo_revisado": false,
+          "dod": false
+        },
+        "nota": ""
+      },
+      {
+        "alvo": "skills-pocock",
+        "ciclo": "ciclo-01",
+        "caminho": "docs/auditoria/skills-pocock/ciclo-01",
+        "fases": {
+          "laudo_inicial": false,
+          "plano_evolucao": true,
+          "laudo_revisado": false,
+          "dod": true
+        },
+        "nota": ""
+      }
+    ],
+    "relatorios_melhoria": 13
+  },
+  "scripts": [
+    {
+      "id": "achados_ciclo",
+      "descricao": "Gera docs/auditoria/mapa-pecas/ciclo-01/ACHADOS.json: todos os erros e itens em",
+      "chamado_por": [
+        "testes"
+      ]
+    },
+    {
+      "id": "atualizar_index_planos",
+      "descricao": "ECOSSISTEMA AIDD — ATUALIZADOR DETERMINÍSTICO DE docs/planos/INDEX.md",
+      "chamado_por": [
+        "commit",
+        "painel",
+        "scripts",
+        "testes"
+      ]
+    },
+    {
+      "id": "catalogo_pecas",
+      "descricao": "Catálogo de peças do Ecossistema AIDD (mapa-pecas ciclo-01, passo 1).",
+      "chamado_por": [
+        "testes"
+      ]
+    },
+    {
+      "id": "compilador_plano_evolucao",
+      "descricao": "",
+      "chamado_por": [
+        "painel",
+        "scripts",
+        "testes"
+      ]
+    },
+    {
+      "id": "compilador_tickets_plano",
+      "descricao": "ECOSSISTEMA AIDD — COMPILADOR DE TICKETS DE PLANO PARA HANDOFF (ISSUE-PIPE-0004)",
+      "chamado_por": [
+        "guardas",
+        "painel",
+        "testes"
+      ]
+    },
+    {
+      "id": "faz_commit",
+      "descricao": "FAZ-COMMIT — EXECUÇÃO DETERMINÍSTICA DE GIT COM MENSAGEM PROBABILÍSTICA (IA)",
+      "chamado_por": [
+        "testes"
+      ]
+    },
+    {
+      "id": "gerador_livro_projeto",
+      "descricao": "ECOSSISTEMA AIDD — GERADOR DETERMINISTICO DO LIVRO-TEXTO DO PROJETO",
+      "chamado_por": [
+        "painel",
+        "testes"
+      ]
+    },
+    {
+      "id": "gerador_relatorio_evolucao_planos",
+      "descricao": "Gera o par <dd-mm-aaaa>_relatorio-evolucao-plano-acao.{json,html} em",
+      "chamado_por": []
+    },
+    {
+      "id": "gerador_templates_gates",
+      "descricao": "ECOSSISTEMA AIDD — GERADOR MECÂNICO DE TEMPLATES DE GATES (Item 3)",
+      "chamado_por": []
+    },
+    {
+      "id": "gerar_chave_manifesto",
+      "descricao": "ECOSSISTEMA AIDD — Geração do Par de Chaves Ed25519 do Manifesto Canônico",
+      "chamado_por": []
+    },
+    {
+      "id": "gerenciador_melhorias",
+      "descricao": "Gerenciador deterministico de relatorios de analise profunda de melhorias.",
+      "chamado_por": [
+        "painel",
+        "testes"
+      ]
+    },
+    {
+      "id": "gerenciador_planos",
+      "descricao": "Gerenciador deterministico de planos de auditoria/evolucao/testes.",
+      "chamado_por": [
+        "painel",
+        "scripts",
+        "testes"
+      ]
+    },
+    {
+      "id": "gestor_componentes",
+      "descricao": "ECOSSISTEMA AIDD — GESTOR ÚNICO DE COMPONENTES MULTI-HARNESS",
+      "chamado_por": [
+        "guardas",
+        "painel",
+        "scripts",
+        "testes"
+      ]
+    },
+    {
+      "id": "gestor_dependencias",
+      "descricao": "ECOSSISTEMA AIDD — GESTOR DE DEPENDÊNCIAS EXTERNAS (SKILLS + MCPS DE TERCEIROS)",
+      "chamado_por": [
+        "guardas",
+        "painel",
+        "scripts",
+        "testes"
+      ]
+    },
+    {
+      "id": "gestor_sessoes",
+      "descricao": "GESTOR DETERMINÍSTICO DE SESSÕES AGÊNTICAS (AIDD-SESSAO)",
+      "chamado_por": [
+        "guardas",
+        "painel",
+        "testes"
+      ]
+    },
+    {
+      "id": "harness_hygiene",
+      "descricao": "Higiene e Manutenção Preventiva Multi-Harness",
+      "chamado_por": [
+        "commit",
+        "painel"
+      ]
+    },
+    {
+      "id": "livro_mapas",
+      "descricao": "Gera as partes do livro corporativo dos mapas (docs/livros/mapas-aidd/) a partir",
+      "chamado_por": [
+        "testes"
+      ]
+    },
+    {
+      "id": "mapa_visual",
+      "descricao": "Gerador dos mapas visuais (docs/mapas-visuais), um por tipo de peça.",
+      "chamado_por": [
+        "testes"
+      ]
+    },
+    {
+      "id": "orquestrador_4f",
+      "descricao": "",
+      "chamado_por": [
+        "painel",
+        "scripts",
+        "testes"
+      ]
+    },
+    {
+      "id": "orquestrador_sincrono",
+      "descricao": "ECOSSISTEMA AIDD — ORQUESTRADOR SÍNCRONO DA TRÍADE CANÔNICA",
+      "chamado_por": [
+        "guardas",
+        "painel",
+        "testes"
+      ]
+    },
+    {
+      "id": "package_usuario",
+      "descricao": "Empacota o núcleo de distribuição para o usuário final (ISSUE-USA-0006).",
+      "chamado_por": [
+        "guardas",
+        "painel",
+        "testes"
+      ]
+    },
+    {
+      "id": "preflight_host",
+      "descricao": "Preflight Host — diagnostico instantaneo (< 2s) de binarios do sistema",
+      "chamado_por": [
+        "guardas",
+        "painel",
+        "scripts",
+        "testes"
+      ]
+    },
+    {
+      "id": "relatorio_skills_duplicadas",
+      "descricao": "Relatório de skills globais duplicadas (skills-pocock ciclo-01, Ticket 11).",
+      "chamado_por": [
+        "testes"
+      ]
+    },
+    {
+      "id": "scaffold_auditoria",
+      "descricao": "",
+      "chamado_por": [
+        "painel",
+        "scripts",
+        "testes"
+      ]
+    }
+  ],
+  "moldes_entrega": [
+    {
+      "ferramenta": "aidd-enterprise",
+      "molde": "agents",
+      "caminho": "tools/aidd-enterprise/templates/agents",
+      "arquivos": 9
+    },
+    {
+      "ferramenta": "aidd-enterprise",
+      "molde": "cookiecutter-scaffold",
+      "caminho": "tools/aidd-enterprise/templates/cookiecutter-scaffold",
+      "arquivos": 24
+    },
+    {
+      "ferramenta": "aidd-enterprise",
+      "molde": "core",
+      "caminho": "tools/aidd-enterprise/templates/core",
+      "arquivos": 45
+    },
+    {
+      "ferramenta": "aidd-enterprise",
+      "molde": "gates",
+      "caminho": "tools/aidd-enterprise/templates/gates",
+      "arquivos": 10
+    },
+    {
+      "ferramenta": "aidd-enterprise",
+      "molde": "rules",
+      "caminho": "tools/aidd-enterprise/templates/rules",
+      "arquivos": 11
+    },
+    {
+      "ferramenta": "aidd-enterprise",
+      "molde": "static",
+      "caminho": "tools/aidd-enterprise/templates/static",
+      "arquivos": 1
+    },
+    {
+      "ferramenta": "aidd-enterprise",
+      "molde": "v2",
+      "caminho": "tools/aidd-enterprise/templates/v2",
+      "arquivos": 94
+    },
+    {
+      "ferramenta": "aidd-factory",
+      "molde": "docs",
+      "caminho": "tools/aidd-factory/templates/docs",
+      "arquivos": 2
+    },
+    {
+      "ferramenta": "aidd-factory",
+      "molde": "frontend",
+      "caminho": "tools/aidd-factory/templates/frontend",
+      "arquivos": 4
+    },
+    {
+      "ferramenta": "aidd-factory",
+      "molde": "gateway",
+      "caminho": "tools/aidd-factory/templates/gateway",
+      "arquivos": 3
+    },
+    {
+      "ferramenta": "aidd-factory",
+      "molde": "vsa",
+      "caminho": "tools/aidd-factory/templates/vsa",
+      "arquivos": 32
+    },
+    {
+      "ferramenta": "aidd-forge",
+      "molde": "gates",
+      "caminho": "tools/aidd-forge/aidd_forge/templates/gates",
+      "arquivos": 12
+    },
+    {
+      "ferramenta": "aidd-forge",
+      "molde": "governance",
+      "caminho": "tools/aidd-forge/aidd_forge/templates/governance",
+      "arquivos": 1
+    },
+    {
+      "ferramenta": "aidd-forge",
+      "molde": "orca",
+      "caminho": "tools/aidd-forge/aidd_forge/templates/orca",
+      "arquivos": 2
+    },
+    {
+      "ferramenta": "aidd-forge",
+      "molde": "pipeline_phases",
+      "caminho": "tools/aidd-forge/aidd_forge/templates/pipeline_phases",
+      "arquivos": 10
+    },
+    {
+      "ferramenta": "aidd-forge",
+      "molde": "skills",
+      "caminho": "tools/aidd-forge/aidd_forge/templates/skills",
+      "arquivos": 10
+    },
+    {
+      "ferramenta": "aidd-master",
+      "molde": "agents",
+      "caminho": "tools/aidd-master/templates/agents",
+      "arquivos": 9
+    },
+    {
+      "ferramenta": "aidd-master",
+      "molde": "cookiecutter-scaffold",
+      "caminho": "tools/aidd-master/templates/cookiecutter-scaffold",
+      "arquivos": 24
+    },
+    {
+      "ferramenta": "aidd-master",
+      "molde": "core",
+      "caminho": "tools/aidd-master/templates/core",
+      "arquivos": 45
+    },
+    {
+      "ferramenta": "aidd-master",
+      "molde": "gates",
+      "caminho": "tools/aidd-master/templates/gates",
+      "arquivos": 10
+    },
+    {
+      "ferramenta": "aidd-master",
+      "molde": "rules",
+      "caminho": "tools/aidd-master/templates/rules",
+      "arquivos": 11
+    },
+    {
+      "ferramenta": "aidd-master",
+      "molde": "static",
+      "caminho": "tools/aidd-master/templates/static",
+      "arquivos": 1
+    },
+    {
+      "ferramenta": "aidd-master",
+      "molde": "v2",
+      "caminho": "tools/aidd-master/templates/v2",
+      "arquivos": 94
+    },
+    {
+      "ferramenta": "aidd-ops",
+      "molde": "infra",
+      "caminho": "tools/aidd-ops/templates/infra",
+      "arquivos": 30
+    }
+  ],
+  "harnesses": {
+    "harnesses": [
+      {
+        "id": "claude-code",
+        "prefixo": ".claude",
+        "confirmado": true,
+        "recebe": [
+          "skill",
+          "command",
+          "hook",
+          "sub-agent"
+        ],
+        "destinos": {
+          "skill": ".claude/skills/{nome}",
+          "command": ".claude/commands/{nome}",
+          "hook": ".claude/hooks/{nome}",
+          "sub-agent": ".claude/agents/{nome}"
+        },
+        "skills_em_disco": 57,
+        "nossas_faltando": [],
+        "terceiros_em_disco": 19,
+        "config_mcp": ".mcp.json"
+      },
+      {
+        "id": "antigravity",
+        "prefixo": ".agents",
+        "confirmado": true,
+        "recebe": [
+          "skill",
+          "command",
+          "hook",
+          "sub-agent"
+        ],
+        "destinos": {
+          "skill": ".agents/skills/{nome}",
+          "command": ".agents/commands/{nome}",
+          "hook": ".agents/hooks/{nome}",
+          "sub-agent": ".agents/agents/{nome}"
+        },
+        "skills_em_disco": 57,
+        "nossas_faltando": [],
+        "terceiros_em_disco": 19,
+        "config_mcp": ".agents/mcp_config.json"
+      },
+      {
+        "id": "opencode",
+        "prefixo": ".opencode",
+        "confirmado": true,
+        "recebe": [
+          "skill",
+          "command",
+          "hook",
+          "sub-agent"
+        ],
+        "destinos": {
+          "skill": ".opencode/skills/{nome}",
+          "command": ".opencode/commands/{nome}",
+          "hook": ".opencode/hooks/{nome}",
+          "sub-agent": ".opencode/agents/{nome}"
+        },
+        "skills_em_disco": 43,
+        "nossas_faltando": [],
+        "terceiros_em_disco": 5,
+        "config_mcp": "opencode.jsonc"
+      },
+      {
+        "id": "mimocode",
+        "prefixo": ".mimocode",
+        "confirmado": true,
+        "recebe": [
+          "skill",
+          "command",
+          "hook",
+          "sub-agent"
+        ],
+        "destinos": {
+          "skill": ".mimocode/skills/{nome}",
+          "command": ".mimocode/commands/{nome}",
+          "hook": ".mimocode/hooks/{nome}",
+          "sub-agent": ".mimocode/agents/{nome}"
+        },
+        "skills_em_disco": 43,
+        "nossas_faltando": [],
+        "terceiros_em_disco": 5,
+        "config_mcp": "mimocode.jsonc"
+      },
+      {
+        "id": "gemini-cli",
+        "prefixo": ".gemini",
+        "confirmado": true,
+        "recebe": [
+          "skill",
+          "hook",
+          "sub-agent"
+        ],
+        "destinos": {
+          "skill": ".gemini/extensions/{nome}/skills/{nome}",
+          "hook": ".gemini/hooks/{nome}",
+          "sub-agent": ".gemini/agents/{nome}"
+        },
+        "skills_em_disco": 38,
+        "nossas_faltando": [],
+        "terceiros_em_disco": 0,
+        "config_mcp": ".gemini/settings.json"
+      },
+      {
+        "id": "cursor",
+        "prefixo": ".cursor",
+        "confirmado": true,
+        "recebe": [
+          "skill",
+          "command",
+          "hook"
+        ],
+        "destinos": {
+          "skill": ".cursor/skills/{nome}",
+          "command": ".cursor/commands/{nome}",
+          "hook": ".cursor/hooks/{nome}"
+        },
+        "skills_em_disco": 43,
+        "nossas_faltando": [],
+        "terceiros_em_disco": 5,
+        "config_mcp": ".cursor/mcp.json"
+      },
+      {
+        "id": "codebuddy",
+        "prefixo": ".codebuddy",
+        "confirmado": true,
+        "recebe": [
+          "skill",
+          "command",
+          "hook"
+        ],
+        "destinos": {
+          "skill": ".codebuddy/skills/{nome}",
+          "command": ".codebuddy/commands/{nome}",
+          "hook": ".codebuddy/hooks/{nome}"
+        },
+        "skills_em_disco": 57,
+        "nossas_faltando": [],
+        "terceiros_em_disco": 19,
+        "config_mcp": ""
+      }
+    ],
+    "pastas_legadas": [
+      {
+        "pasta": ".gemini/skills",
+        "arquivos_versionados": 346
+      }
+    ]
+  },
   "comandos_slash": [
     {
       "id": "aidd-livro-texto",

@@ -167,3 +167,50 @@ def test_comando_slash_registra_a_skill_e_se_ela_existe(tmp_path, monkeypatch):
     assert (por_id["pure"]["skill"], por_id["pure"]["skill_existe"], por_id["pure"]["descricao"]) == ("aidd-pure", True, "Fluxo 01.")
     assert (por_id["velho"]["skill"], por_id["velho"]["skill_existe"]) == ("aidd-velho", False)
     assert por_id["solto"]["skill"] == ""
+
+
+def test_leis_registram_declaracao_invisivel_ao_meta_gate(tmp_path, monkeypatch):
+    agents = tmp_path / "AGENTS.md"
+    agents.write_text(
+        "## 2. Inviolable Laws\n\n"
+        "1. **Primeira:** texto.\n"
+        "   - Portão: gates/G_A.py (provado)\n"
+        "   - Portão: gates/G_B.py (provado) — comentário\n"
+        "2. **Segunda:** texto.\n"
+        "   - Portão: sem gate — cumprimento por convenção (sem-gate)\n"
+        "\n## 3. Outra seção\n", encoding="utf-8")
+    monkeypatch.setattr(cp, "RAIZ", tmp_path)
+    monkeypatch.setattr(cp, "_meta_gates", lambda: (_leis_mod(), None))
+    leis = {lei["numero"]: lei for lei in cp.coletar_leis()}
+    assert [(pt["gate"], pt["visivel"]) for pt in leis[1]["portoes"]] == [("G_A", True), ("G_B", False)]
+    assert leis[2]["sem_gate"] is True and leis[2]["portoes"] == []
+
+
+def _leis_mod():
+    sys.path.insert(0, str(ROOT / "gates"))
+    try:
+        import G_LEI_DECLARA_PORTAO as leis
+    finally:
+        sys.path.pop(0)
+    return leis
+
+
+def test_classificar_dimensao_por_palavra_chave():
+    assert cp.classificar_dimensao("FAILED: Not implemented. x") == "falha"
+    assert cp.classificar_dimensao("IMPLEMENTADO PARCIALMENTE. x") == "parcial"
+    assert cp.classificar_dimensao("Implementado. `iniciar` exige") == "ok"
+    assert cp.classificar_dimensao("Objetivo de avaliar a base") == "descrito"
+
+
+
+def test_script_citado_so_por_gerador_de_documentacao_continua_sem_chamador(tmp_path, monkeypatch):
+    (tmp_path / "scripts").mkdir()
+    (tmp_path / "scripts" / "solto.py").write_text('"""Faz algo."""\n', encoding="utf-8")
+    (tmp_path / "scripts" / "livro_mapas.py").write_text('"""Cita scripts/solto.py como texto."""\n', encoding="utf-8")
+    (tmp_path / "scripts" / "usa.py").write_text('"""Usa."""\nimport solto\n', encoding="utf-8")
+    monkeypatch.setattr(cp, "RAIZ", tmp_path)
+    por_id = {s["id"]: s["chamado_por"] for s in cp.coletar_scripts()}
+    assert por_id["solto"] == ["scripts"]
+    (tmp_path / "scripts" / "usa.py").unlink()
+    por_id = {s["id"]: s["chamado_por"] for s in cp.coletar_scripts()}
+    assert por_id["solto"] == []

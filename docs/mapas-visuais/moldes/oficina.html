@@ -1,0 +1,43 @@
+<!-- Molde do mapa da oficina. Texto fixo aqui; listas entram por scripts/mapa_visual.py. -->
+<div class="wrap">
+
+<a class="voltar" href="{{LINK_MANUAL}}">← Manual de montagem</a>
+<header>
+  <span class="eyebrow">Mapa visual · a oficina (planos e ciclos de auditoria)</span>
+  <h1>Mapa da oficina</h1>
+  <p class="lead">A Tríade é a fábrica; a oficina é onde a fábrica é consertada e melhorada. Este mapa mostra todos os planos (do rascunho ao feito) e todos os ciclos de auditoria, com as fases que cada um já cumpriu.</p>
+  {{TOTAIS}}
+</header>
+
+<section id="regra">
+  <span class="eyebrow">Como a oficina trabalha</span>
+  <h2>Duas trilhas</h2>
+  <div class="grid2">
+    <div class="box"><h3>Planos</h3><p><code>/melhoria</code> mede com nota, <code>/plan</code> cria o plano em <code>docs/planos/</code>, e <code>/orchestrate</code> executa. O plano muda de pasta sozinho pelo estado real: <code>a-fazer</code>, <code>fazendo</code>, <code>feitos</code>.</p></div>
+    <div class="box"><h3>Ciclos de auditoria (4F)</h3><p>Inspetor (laudo inicial), Arquiteto (plano de evolução), Construtor e Retorno (laudo revisado e DoD), em <code>docs/auditoria/&lt;alvo&gt;/ciclo-NN/</code>. O merge só acontece com aprovação humana.</p></div>
+  </div>
+</section>
+
+<section id="atencao">
+  <span class="eyebrow">Onde olhar · conferido agora</span>
+  <h2>O que está aberto</h2>
+  <div class="grid2">
+    <div class="box"><h3>Planos em execução</h3><p>Muitos planos abertos ao mesmo tempo dividem a atenção. Hoje:</p>{{FAZENDO}}</div>
+    <div class="box"><h3>Ciclos sem os 4 documentos</h3><p>Todo ciclo 4F deixa laudo inicial, plano de evolução, laudo revisado e DoD (a fase 3 entrega código). Ciclos que ainda não têm os quatro:</p>{{INCOMPLETOS}}</div>
+  </div>
+</section>
+
+<section id="planos">
+  <span class="eyebrow">Integrantes</span>
+  <h2>Todos os planos</h2>
+  {{PLANOS}}
+</section>
+
+<section id="ciclos">
+  <span class="eyebrow">Integrantes</span>
+  <h2>Todos os ciclos de auditoria</h2>
+  {{CICLOS}}
+</section>
+
+<footer>Gerado por <code>scripts/mapa_visual.py oficina</code> a partir de <code>docs/auditoria/mapa-pecas/catalogo-pecas.json</code>. Para atualizar: <code>python scripts/catalogo_pecas.py</code> e depois <code>python scripts/mapa_visual.py oficina</code>.</footer>
+</div>

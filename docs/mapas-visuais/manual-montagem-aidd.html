@@ -293,7 +293,7 @@ footer{padding-top:28px;border-top:1px solid var(--line);font-size:.85rem;color:
       <span class="tec">skill · SKILL.md</span>
       <p class="ana">Uma receita escrita que ensina o agente a fazer uma tarefa específica. O agente lê o manual e executa.</p>
       <p class="fix"><b>Ajuste:</b> skill não é um agente. É o papel com as instruções. O mesmo agente pode ler 10 manuais diferentes ao longo do dia.</p>
-      <a class="mapa-link" href="mapa-skills.html">Ver o mapa das skills, e como construir uma nova →</a>
+      <a class="mapa-link" href="mapa-05-skills.html">Ver o mapa das skills, e como construir uma nova →</a>
     </article>
     <article class="peca" style="--c:var(--c-regra)">
       <div class="top"><h3>O regulamento</h3><span class="chip ajuste">ajuste</span></div>
@@ -344,19 +344,21 @@ footer{padding-top:28px;border-top:1px solid var(--line);font-size:.85rem;color:
       <span class="tec">ecossistema.py · comandos slash</span>
       <p class="ana">A porta de entrada única. Cada botão do painel liga uma ferramenta ou uma receita. Os comandos slash (<code>/pure</code>, <code>/plan</code>…) são os mesmos botões, apertados de dentro do chat.</p>
       <p class="ex">17 comandos slash. <code>python ecossistema.py help</code> mostra o painel inteiro.</p>
-      <a class="mapa-link" href="mapa-comandos.html">Ver o mapa dos comandos: qual skill cada botão chama →</a>
+      <a class="mapa-link" href="mapa-06-comandos.html">Ver o mapa dos comandos: qual skill cada botão chama →</a>
     </article>
     <article class="peca" style="--c:var(--c-trabalha)">
       <div class="top"><h3>Os moldes</h3></div>
       <span class="tec">templates/</span>
       <p class="ana">Formas de ferro prontas. A ferramenta só despeja os dados do seu negócio dentro delas, sem inventar a estrutura do zero. É isso que faz dois apps diferentes saírem com a mesma qualidade.</p>
       <p class="ex">Ex.: <code>tools/aidd-master/templates/core</code>, <code>tools/aidd-factory/templates/vsa</code>.</p>
+      <a class="mapa-link" href="mapa-09-moldes.html">Ver o mapa dos moldes de entrega: o que cada ferramenta entrega →</a>
     </article>
     <article class="peca" style="--c:var(--c-regra)">
       <div class="top"><h3>O almoxarifado e o entregador</h3></div>
       <span class="tec">componentes/compartilhado · components sync</span>
       <p class="ana">Cada skill, hook e comando é guardado uma vez só, no almoxarifado. O entregador copia tudo para cada mestre de obras (Claude, opencode, mimo, Antigravity…), cada um na pasta que ele sabe ler.</p>
       <p class="ex">Nunca edite as cópias em <code>.claude/</code> ou <code>.agents/</code>. Edite o almoxarifado e rode <code>components sync --tipo todos</code>.</p>
+      <a class="mapa-link" href="mapa-08-harnesses.html">Ver o mapa dos harnesses: para onde cada peça é copiada →</a>
     </article>
     <article class="peca" style="--c:var(--c-regra)">
       <div class="top"><h3>O diário de bordo</h3></div>
@@ -369,7 +371,7 @@ footer{padding-top:28px;border-top:1px solid var(--line);font-size:.85rem;color:
       <span class="tec">dependências externas</span>
       <p class="ana">Skills e telefones feitos por outras pessoas, que o ecossistema usa. Ficam anotados numa lista, e uma máquina confere se todos estão instalados antes de começar.</p>
       <p class="ex">39 declaradas em <code>gates/dependencias_externas.json</code>. Conferência: <code>dependencia verify</code>.</p>
-      <a class="mapa-link" href="mapa-conexoes.html">Ver o mapa das conexões: MCPs e hooks →</a>
+      <a class="mapa-link" href="mapa-07-conexoes.html">Ver o mapa das conexões: MCPs e hooks →</a>
     </article>
     <article class="peca" style="--c:var(--brick)">
       <div class="top"><h3>O produto entregue</h3></div>
@@ -417,7 +419,7 @@ footer{padding-top:28px;border-top:1px solid var(--line);font-size:.85rem;color:
   </div>
   <p class="nota"><b>Detalhe 1.</b> Você escreveu "determinístico | probabilístico" no processamento. As duas coisas convivem: o esqueleto da ferramenta (ordem, etapas, conferências) é sempre máquina; o cérebro só preenche as partes criativas.</p>
   <p class="nota"><b>Detalhe 2.</b> Você escreveu "utilizar outras ferramentas (skills)". Uma ferramenta pode ler manuais à vontade. Já para usar outra ferramenta, ela deve chamar pela porta da frente (a linha de comando), nunca mexer por dentro. Hoje a receita da Tríade mexe por dentro do master e do planner, e isso deixa as peças grudadas.</p>
-  <a class="mapa-link" href="mapa-ferramentas.html">Ver o mapa das ferramentas: comandos de cada uma e onde duas fazem o mesmo trabalho →</a>
+  <a class="mapa-link" href="mapa-02-ferramentas.html">Ver o mapa das ferramentas: comandos de cada uma e onde duas fazem o mesmo trabalho →</a>
 </section>
 
 <section id="encaixe">
@@ -444,7 +446,7 @@ footer{padding-top:28px;border-top:1px solid var(--line);font-size:.85rem;color:
       <p>A receita do Fluxo 02 (open) pede <code>--dominio</code>, mas o factory só aceita <code>--plano</code> e <code>--pasta</code>. O pino tem o tamanho errado, e a montagem para aí.</p>
     </div>
   </div>
-  <a class="mapa-link" href="mapa-encaixes.html">Ver o mapa dos encaixes: cada etapa, cada chamada e os contratos →</a>
+  <a class="mapa-link" href="mapa-03-encaixes.html">Ver o mapa dos encaixes: cada etapa, cada chamada e os contratos →</a>
 </section>
 
 <section id="guarda">
@@ -456,7 +458,8 @@ footer{padding-top:28px;border-top:1px solid var(--line);font-size:.85rem;color:
     <div class="box"><h3>Saída</h3><div class="exit"><span class="z">exit 0 · passa</span><span class="u">exit 1 · para tudo</span></div></div>
   </div>
   <p>O guarda não conserta nada. Ele só diz sim ou não. Quem conserta é a ferramenta, na próxima tentativa.</p>
-  <a class="mapa-link" href="mapa-guardas.html">Ver o mapa completo dos guardas: todos os 86, e como construir um novo →</a>
+  <a class="mapa-link" href="mapa-04-guardas.html">Ver o mapa completo dos guardas, e como construir um novo →</a>
+  <a class="mapa-link" href="mapa-01-leis.html">Ver o mapa das leis: cada lei e o guarda que a prova →</a>
   <div class="ouro">
     <div class="box">
       <h3>Regra de ouro 1: quem fabrica não fiscaliza</h3>
@@ -508,6 +511,7 @@ footer{padding-top:28px;border-top:1px solid var(--line);font-size:.85rem;color:
     <div class="seta" aria-hidden="true">→</div>
     <div class="st"><span class="eyebrow">passo 5</span><strong>Feito</strong><span>só depois de os guardas passarem e você conferir</span><code>docs/planos/feitos</code></div>
   </div>
+  <a class="mapa-link" href="mapa-11-oficina.html">Ver o mapa da oficina: todos os planos e ciclos →</a>
   <p class="nota"><b>Regra da oficina:</b> aprovar um plano aprova o papel, não manda executar. Começar a obra é uma ordem separada.</p>
   <h3>O ciclo de auditoria (4F)</h3>
   <p>Para inspecionar uma ferramenta a fundo, a oficina roda quatro fases em sequência, cada uma numa redoma:</p>
@@ -517,6 +521,7 @@ footer{padding-top:28px;border-top:1px solid var(--line);font-size:.85rem;color:
     <div class="fase"><b>3 · Construtor</b><span>executa os tickets com teste antes do código</span></div>
     <div class="fase"><b>4 · Retorno</b><span>o inspetor volta com a mesma lista e confere se melhorou</span></div>
   </div>
+  <a class="mapa-link" href="mapa-12-lente15d.html">Ver o mapa da lente 15D: as 15 perguntas e como cada ferramenta se saiu →</a>
   <p class="legenda">Nada é juntado ao projeto principal sozinho: depois da fase 4, a obra para e espera a sua aprovação. O mapa de peças que gerou este manual é a fase 1 do ciclo <code>mapa-pecas/ciclo-01</code>.</p>
   <h3>Ferramentas avulsas da oficina</h3>
   <div class="avulsas">
@@ -571,7 +576,7 @@ footer{padding-top:28px;border-top:1px solid var(--line);font-size:.85rem;color:
   <span class="eyebrow">Parte 9</span>
   <h2>Os mapas</h2>
   <p>Cada tipo de peça tem um mapa: a lista completa do que existe hoje e o jeito de construir uma nova. Os mapas <b>não são escritos à mão</b>. Um molde guarda o texto fixo, e o gerador preenche as listas e os números a partir do catálogo de peças.</p>
-  <a class="mapa-link" href="mapa-indice.html">Ver o índice de todos os mapas, com o estado real de cada um →</a>
+  <a class="mapa-link" href="mapa-00-indice.html">Ver o índice de todos os mapas, com o estado real de cada um →</a>
   <h3>Como fazer um mapa novo</h3>
   <div class="linha">
     <div class="st"><span class="eyebrow">passo 1</span><strong>Dados</strong><span>o catálogo precisa ter o que o mapa vai mostrar</span><code>catalogo_pecas.py</code></div>

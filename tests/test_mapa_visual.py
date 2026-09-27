@@ -132,9 +132,9 @@ def test_indice_status_sai_do_disco(tmp_path, monkeypatch):
         ("skills", "Mapa das skills", "a"), ("guardas", "Mapa dos guardas", "b"), ("futuro", "Mapa futuro", "c")))
     cat = {**_cat_skills(_skill("aidd-a")), "gates": [_gate("G_A")],
            "achados": {"skills_mesma_descricao": [], "declaracoes_de_lei_invisiveis_ao_meta_gate": []}}
-    (tmp_path / "mapa-skills.html").write_text(mv.montar("skills", cat, "manual-montagem-aidd.html", False),
-                                               encoding="utf-8")
-    (tmp_path / "mapa-guardas.html").write_text("velho", encoding="utf-8")
+    (tmp_path / mv.arquivo_mapa("skills")).write_text(mv.montar("skills", cat, "manual-montagem-aidd.html", False),
+                                                      encoding="utf-8")
+    (tmp_path / mv.arquivo_mapa("guardas")).write_text("velho", encoding="utf-8")
     assert mv.status_mapa("skills", cat) == "concluido"
     assert mv.status_mapa("guardas", cat) == "desatualizado"
     assert mv.status_mapa("futuro", cat) == "a-criar"
@@ -184,7 +184,7 @@ def test_encaixes_marcador_desencontrado_reprova(tmp_path, monkeypatch):
         mv.montar("encaixes", _cat_encaixes(), "m.html", fragmento=True)
 
 
-@pytest.mark.parametrize("tipo", ["encaixes", "ferramentas", "comandos", "conexoes"])
+@pytest.mark.parametrize("tipo", ["encaixes", "ferramentas", "comandos", "conexoes", "leis", "lente15d", "oficina", "scripts", "moldes", "harnesses"])
 def test_mapa_roda_de_verdade_no_repositorio(tmp_path, tipo):
     saida = tmp_path / "mapa.html"
     proc = subprocess.run([sys.executable, str(ROOT / "scripts" / "mapa_visual.py"), tipo,
@@ -193,7 +193,7 @@ def test_mapa_roda_de_verdade_no_repositorio(tmp_path, tipo):
     assert proc.returncode == 0, proc.stdout + proc.stderr
     texto = saida.read_text(encoding="utf-8")
     assert texto.startswith(f"<title>{mv.TITULOS[tipo]}</title>") and "{{" not in texto
-    assert texto.count('<article class="item"') > 0
+    assert texto.count('<article class="item"') > 0 or "<table>" in texto
 
 
 def _cat_ferramentas():
@@ -272,3 +272,148 @@ def test_indice_marca_todos_os_mapas_previstos_como_concluidos():
     cat = json.loads(mv.CATALOGO.read_text(encoding="utf-8"))
     pendentes = [t for t, _, _ in mv.MAPAS_PREVISTOS if mv.status_mapa(t, cat) != "concluido"]
     assert not pendentes, f"mapas pendentes ou desatualizados: {pendentes}"
+
+
+def _cat_leis():
+    return {"leis": [
+        {"numero": 1, "titulo": "Determinism First", "sem_gate": False, "portoes": [
+            {"gate": "G_OK", "forca": "provado", "visivel": True},
+            {"gate": "G_CEGO", "forca": "provado", "visivel": False},
+            {"gate": "G_SUMIU", "forca": "provado", "visivel": True}]},
+        {"numero": 2, "titulo": "Convencao", "sem_gate": True, "portoes": []}],
+        "gates": [_gate("G_OK"), _gate("G_CEGO", no_pre_commit=False, prova_que_morde=False), _gate("G_SOLTO")]}
+
+
+def test_leis_prova_fraca_sai_do_catalogo():
+    valores = mv.valores_leis(_cat_leis())
+    assert "Lei #1: G_CEGO" in valores["INVISIVEIS"] and "Lei #1: G_CEGO" in valores["FORA_COMMIT"]
+    assert "Lei #1: G_CEGO" in valores["SEM_PROVA"] and "G_SOLTO" in valores["SEM_LEI"]
+    assert 'chip ok">prova válida' in valores["LISTA"] and "guarda não existe" in valores["LISTA"]
+    assert "sem gate — cumprimento por convenção" in valores["LISTA"]
+
+
+def test_leis_marcador_desencontrado_reprova(tmp_path, monkeypatch):
+    (tmp_path / "leis.html").write_text("{{TOTAIS}} {{LISTA}} {{OUTRO}}", encoding="utf-8")
+    (tmp_path / "base.css").write_text("", encoding="utf-8")
+    monkeypatch.setattr(mv, "MOLDES", tmp_path)
+    with pytest.raises(ValueError, match="OUTRO"):
+        mv.montar("leis", _cat_leis(), "m.html", fragmento=True)
+
+
+def _cat_harnesses():
+    return {"harnesses": {"harnesses": [
+        {"id": "claude-code", "prefixo": ".claude", "confirmado": True, "recebe": ["skill"],
+         "destinos": {"skill": ".claude/skills/{nome}"}, "skills_em_disco": 38, "config_mcp": ".mcp.json"},
+        {"id": "codebuddy", "prefixo": ".codebuddy", "confirmado": False, "recebe": ["skill"],
+         "destinos": {"skill": ".codebuddy/skills/{nome}"}, "skills_em_disco": 40, "config_mcp": "",
+         "nossas_faltando": ["aidd-x"], "terceiros_em_disco": 3}],
+        "pastas_legadas": [{"pasta": ".gemini/skills", "arquivos_versionados": 12}]}}
+
+
+def test_harnesses_legado_e_contagens_saem_do_catalogo():
+    valores = mv.valores_harnesses(_cat_harnesses())
+    assert ".gemini/skills (12 arquivos)" in valores["LEGADAS"] and "não confirmado" in valores["LISTA"]
+    assert ".claude/skills/{nome}" in valores["LISTA"] and "codebuddy: aidd-x" in valores["FALTANDO"]
+    assert "3 de terceiros" in valores["LISTA"] and "faltam 1 nossas" in valores["LISTA"]
+
+
+def test_harnesses_marcador_desencontrado_reprova(tmp_path, monkeypatch):
+    (tmp_path / "harnesses.html").write_text("{{TOTAIS}} {{LISTA}} {{SOBRA}}", encoding="utf-8")
+    (tmp_path / "base.css").write_text("", encoding="utf-8")
+    monkeypatch.setattr(mv, "MOLDES", tmp_path)
+    with pytest.raises(ValueError, match="SOBRA"):
+        mv.montar("harnesses", _cat_harnesses(), "m.html", fragmento=True)
+
+
+def _cat_moldes():
+    return {"moldes_entrega": [
+        {"ferramenta": "aidd-master", "molde": "core", "caminho": "tools/aidd-master/templates/core", "arquivos": 20},
+        {"ferramenta": "aidd-enterprise", "molde": "core", "caminho": "tools/aidd-enterprise/templates/core", "arquivos": 20},
+        {"ferramenta": "aidd-forge", "molde": "skills", "caminho": "tools/aidd-forge/templates/skills", "arquivos": 4}]}
+
+
+def test_moldes_repetidos_saem_do_catalogo():
+    valores = mv.valores_moldes(_cat_moldes())
+    assert "core: aidd-enterprise, aidd-master" in valores["REPETIDOS"] and "aidd-forge" in valores["LISTA"]
+
+
+def test_moldes_marcador_desencontrado_reprova(tmp_path, monkeypatch):
+    (tmp_path / "moldes.html").write_text("{{TOTAIS}} {{LISTA}} {{SOBRA}}", encoding="utf-8")
+    (tmp_path / "base.css").write_text("", encoding="utf-8")
+    monkeypatch.setattr(mv, "MOLDES", tmp_path)
+    with pytest.raises(ValueError, match="SOBRA"):
+        mv.montar("moldes", _cat_moldes(), "m.html", fragmento=True)
+
+
+def _cat_scripts():
+    return {"scripts": [
+        {"id": "catalogo_pecas", "descricao": "Gera o catálogo.", "chamado_por": ["scripts", "testes"]},
+        {"id": "velho", "descricao": "", "chamado_por": []},
+        {"id": "testado", "descricao": "Só testado.", "chamado_por": ["testes"]}]}
+
+
+def test_scripts_soltos_saem_do_catalogo():
+    valores = mv.valores_scripts(_cat_scripts())
+    assert "velho" in valores["SOLTOS"] and "testado" in valores["SO_TESTES"]
+    assert 'chip falha">ninguém chama' in valores["LISTA"] and "sem docstring" in valores["LISTA"]
+
+
+def test_scripts_marcador_desencontrado_reprova(tmp_path, monkeypatch):
+    (tmp_path / "scripts.html").write_text("{{TOTAIS}} {{LISTA}} {{SOBRA}}", encoding="utf-8")
+    (tmp_path / "base.css").write_text("", encoding="utf-8")
+    monkeypatch.setattr(mv, "MOLDES", tmp_path)
+    with pytest.raises(ValueError, match="SOBRA"):
+        mv.montar("scripts", _cat_scripts(), "m.html", fragmento=True)
+
+
+def _cat_oficina():
+    fases = {"laudo_inicial": True, "plano_evolucao": True, "laudo_revisado": False, "dod": True}
+    return {"oficina": {"planos": [{"id": "PLAN-0001-a", "estado": "feitos", "itens": 3},
+                                   {"id": "PLAN-0002-b", "estado": "fazendo", "itens": 0}],
+                        "ciclos": [{"alvo": "aidd-x", "ciclo": "ciclo-01", "caminho": "docs/auditoria/aidd-x/ciclo-01",
+                                    "fases": fases, "nota": "8"}],
+                        "relatorios_melhoria": 2}}
+
+
+def test_oficina_planos_e_ciclos_saem_do_catalogo():
+    valores = mv.valores_oficina(_cat_oficina())
+    assert "PLAN-0002-b" in valores["FAZENDO"] and "aidd-x/ciclo-01" in valores["INCOMPLETOS"]
+    assert "3 itens" in valores["PLANOS"] and "nota 8/10" in valores["CICLOS"]
+    assert 'chip falha">laudo revisado' in valores["CICLOS"]
+
+
+def test_oficina_marcador_desencontrado_reprova(tmp_path, monkeypatch):
+    (tmp_path / "oficina.html").write_text("{{TOTAIS}} {{PLANOS}} {{SOBRA}}", encoding="utf-8")
+    (tmp_path / "base.css").write_text("", encoding="utf-8")
+    monkeypatch.setattr(mv, "MOLDES", tmp_path)
+    with pytest.raises(ValueError, match="SOBRA"):
+        mv.montar("oficina", _cat_oficina(), "m.html", fragmento=True)
+
+
+def _cat_lente15d():
+    return {"lente_15d": {"dimensoes": [{"numero": 1, "titulo": "Contratos e Regras"},
+                                        {"numero": 13, "titulo": "Quality Gates"}],
+                          "laudos": [{"alvo": "aidd-x", "ciclo": "ciclo-01", "laudo": "l.md",
+                                      "dimensoes": {"1": "ok", "13": "falha"}}]}}
+
+
+def test_lente15d_matriz_sai_do_catalogo():
+    valores = mv.valores_lente15d(_cat_lente15d())
+    assert 'chip falha">falha' in valores["TABELA"] and 'chip ok">implementado' in valores["TABELA"]
+    assert "D13 · Quality Gates" in valores["FALHAS"] and "Contratos e Regras" in valores["DIMENSOES"]
+
+
+def test_lente15d_marcador_desencontrado_reprova(tmp_path, monkeypatch):
+    (tmp_path / "lente15d.html").write_text("{{TOTAIS}} {{TABELA}} {{SOBRA}}", encoding="utf-8")
+    (tmp_path / "base.css").write_text("", encoding="utf-8")
+    monkeypatch.setattr(mv, "MOLDES", tmp_path)
+    with pytest.raises(ValueError, match="SOBRA"):
+        mv.montar("lente15d", _cat_lente15d(), "m.html", fragmento=True)
+
+
+def test_arquivos_seguem_a_ordem_de_leitura():
+    assert mv.arquivo_mapa("indice") == "mapa-00-indice.html"
+    for n, (tipo, _titulo, _para_que) in enumerate(mv.MAPAS_PREVISTOS, 1):
+        assert mv.arquivo_mapa(tipo) == f"mapa-{n:02d}-{tipo}.html"
+        if mv.status_mapa(tipo, json.loads(mv.CATALOGO.read_text(encoding="utf-8"))) != "a-criar":
+            assert (mv.MAPAS / mv.arquivo_mapa(tipo)).is_file(), tipo
