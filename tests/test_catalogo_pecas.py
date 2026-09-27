@@ -200,3 +200,17 @@ def test_classificar_dimensao_por_palavra_chave():
     assert cp.classificar_dimensao("IMPLEMENTADO PARCIALMENTE. x") == "parcial"
     assert cp.classificar_dimensao("Implementado. `iniciar` exige") == "ok"
     assert cp.classificar_dimensao("Objetivo de avaliar a base") == "descrito"
+
+
+
+def test_script_citado_so_por_gerador_de_documentacao_continua_sem_chamador(tmp_path, monkeypatch):
+    (tmp_path / "scripts").mkdir()
+    (tmp_path / "scripts" / "solto.py").write_text('"""Faz algo."""\n', encoding="utf-8")
+    (tmp_path / "scripts" / "livro_mapas.py").write_text('"""Cita scripts/solto.py como texto."""\n', encoding="utf-8")
+    (tmp_path / "scripts" / "usa.py").write_text('"""Usa."""\nimport solto\n', encoding="utf-8")
+    monkeypatch.setattr(cp, "RAIZ", tmp_path)
+    por_id = {s["id"]: s["chamado_por"] for s in cp.coletar_scripts()}
+    assert por_id["solto"] == ["scripts"]
+    (tmp_path / "scripts" / "usa.py").unlink()
+    por_id = {s["id"]: s["chamado_por"] for s in cp.coletar_scripts()}
+    assert por_id["solto"] == []

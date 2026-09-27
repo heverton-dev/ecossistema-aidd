@@ -8,7 +8,7 @@
     "leis": 13,
     "lente_15d": 15,
     "oficina": 37,
-    "scripts": 22,
+    "scripts": 24,
     "moldes_entrega": 24,
     "harnesses": 7,
     "skills_nossas": 38,
@@ -1130,6 +1130,13 @@
   },
   "scripts": [
     {
+      "id": "achados_ciclo",
+      "descricao": "Gera docs/auditoria/mapa-pecas/ciclo-01/ACHADOS.json: todos os erros e itens em",
+      "chamado_por": [
+        "testes"
+      ]
+    },
+    {
       "id": "atualizar_index_planos",
       "descricao": "ECOSSISTEMA AIDD — ATUALIZADOR DETERMINÍSTICO DE docs/planos/INDEX.md",
       "chamado_por": [
@@ -1143,7 +1150,6 @@
       "id": "catalogo_pecas",
       "descricao": "Catálogo de peças do Ecossistema AIDD (mapa-pecas ciclo-01, passo 1).",
       "chamado_por": [
-        "scripts",
         "testes"
       ]
     },
@@ -1250,6 +1256,13 @@
       ]
     },
     {
+      "id": "livro_mapas",
+      "descricao": "Gera as partes do livro corporativo dos mapas (docs/livros/mapas-aidd/) a partir",
+      "chamado_por": [
+        "testes"
+      ]
+    },
+    {
       "id": "mapa_visual",
       "descricao": "Gerador dos mapas visuais (docs/mapas-visuais), um por tipo de peça.",
       "chamado_por": [
@@ -1271,7 +1284,6 @@
       "chamado_por": [
         "guardas",
         "painel",
-        "scripts",
         "testes"
       ]
     },

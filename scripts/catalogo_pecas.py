@@ -387,6 +387,9 @@ def coletar_moldes_entrega() -> list[dict]:
                            "arquivos": len(arquivos)})
     return moldes
 
+GERADORES_DE_DOC = {"catalogo_pecas", "mapa_visual", "livro_mapas", "achados_ciclo"}
+
+
 def coletar_scripts() -> list[dict]:
     """Cada script de scripts/: o que faz (docstring) e quem o chama (painel, commit, guardas, outros scripts, testes)."""
     fontes = {"painel": [RAIZ / "ecossistema.py"],
@@ -395,7 +398,9 @@ def coletar_scripts() -> list[dict]:
               "scripts": sorted((RAIZ / "scripts").glob("*.py")),
               "testes": sorted((RAIZ / "tests").rglob("test_*.py")) + sorted((RAIZ / "scripts").glob("test_*.py"))
               + sorted((RAIZ / "gates").glob("test_*.py"))}
-    textos = {grupo: [(p, _ler(p)) for p in arquivos if p.is_file()] for grupo, arquivos in fontes.items()}
+    # Geradores de documentação citam scripts como dado (texto do mapa/livro), não os chamam.
+    textos = {grupo: [(p, _ler(p)) for p in arquivos if p.is_file() and p.stem not in GERADORES_DE_DOC]
+              for grupo, arquivos in fontes.items()}
     lista = []
     for p in sorted((RAIZ / "scripts").glob("*.py")):
         if p.name.startswith("test_") or p.name == "__init__.py":

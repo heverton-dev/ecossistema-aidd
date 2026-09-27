@@ -62,7 +62,7 @@ Onde mora: `scripts/`. Quem confere: nenhum guarda específico; o mapa mede quem
 
 | Medida | Valor |
 | :-------------------------------------- | :-------------------------------------------- |
-| scripts | 22 |
+| scripts | 24 |
 | chamados pelo painel | 15 |
 | nenhum código chama | 3 |
 
