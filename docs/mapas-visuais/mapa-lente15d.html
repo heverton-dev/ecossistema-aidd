@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Mapas do Ecossistema</title>
+<title>Mapa da Lente 15D</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&amp;family=IBM+Plex+Sans:wght@400;500;600&amp;family=IBM+Plex+Mono:wght@400;500&amp;display=swap">
@@ -109,36 +109,38 @@ footer{padding-top:28px;border-top:1px solid var(--line);font-size:.85rem;color:
 </style>
 </head>
 <body>
-<!-- Molde do índice dos mapas. A lista e o status de cada mapa entram por scripts/mapa_visual.py (MAPAS_PREVISTOS + status real em disco). -->
+<!-- Molde do mapa da lente 15D. Texto fixo aqui; listas entram por scripts/mapa_visual.py. -->
 <div class="wrap">
 
 <a class="voltar" href="manual-montagem-aidd.html">← Manual de montagem</a>
 <header>
-  <span class="eyebrow">Mapas visuais · índice</span>
-  <h1>Mapas do ecossistema</h1>
-  <p class="lead">Um mapa por tipo de peça. Cada um mostra tudo o que existe hoje daquele tipo e ensina a construir uma peça nova sem repetir as que já existem. Esta página lista todos os mapas que o ecossistema precisa ter e o estado real de cada um.</p>
-  <div class="totais"><div class="total "><b>12</b><span>de 12 mapas concluídos</span></div><div class="total "><b>0</b><span>desatualizados</span></div><div class="total "><b>0</b><span>a criar</span></div></div>
+  <span class="eyebrow">Mapa visual · a lente 15-D (como uma ferramenta é inspecionada)</span>
+  <h1>Mapa da lente 15D</h1>
+  <p class="lead">A lente 15-D é a lista de 15 perguntas que o Inspetor faz a uma ferramenta num ciclo de auditoria, de contratos e gatilhos até a entrega final. Este mapa mostra as 15 dimensões e como cada ferramenta auditada se saiu em cada uma, segundo o laudo mais recente.</p>
+  <div class="totais"><div class="total "><b>15</b><span>dimensões na lente</span></div><div class="total "><b>2</b><span>laudos lidos</span></div><div class="total falha"><b>7</b><span>marcações de falha nos laudos</span></div></div>
 </header>
 
-<section id="estado">
-  <span class="eyebrow">Estado · conferido agora</span>
-  <h2>Os mapas</h2>
-  <p>O estado não é marcado à mão. <b>Concluído</b> quer dizer que o arquivo existe e está igual ao que o gerador produz hoje a partir do catálogo. <b>Desatualizado</b> quer dizer que o arquivo existe, mas o catálogo mudou depois dele. <b>A criar</b> quer dizer que o mapa ainda não tem molde e gerador.</p>
-  <div class="grupo"><div class="itens"><article class="item" style="--c:var(--c-trabalha)" data-busca="mapa dos guardas todos os guardas, onde moram e quem prova que morde"><span class="nome">1. Mapa dos guardas</span><p class="desc">todos os guardas, onde moram e quem prova que morde</p><div class="chips"><span class="chip ok">concluído</span></div><a class="mapa-link" href="mapa-guardas.html">abrir →</a></article><article class="item" style="--c:var(--c-trabalha)" data-busca="mapa das skills todas as skills nossas, os terceiros e como criar uma"><span class="nome">2. Mapa das skills</span><p class="desc">todas as skills nossas, os terceiros e como criar uma</p><div class="chips"><span class="chip ok">concluído</span></div><a class="mapa-link" href="mapa-skills.html">abrir →</a></article><article class="item" style="--c:var(--c-trabalha)" data-busca="mapa dos encaixes as etapas da tríade, os contratos entre elas e onde cada fluxo quebra"><span class="nome">3. Mapa dos encaixes</span><p class="desc">as etapas da Tríade, os contratos entre elas e onde cada fluxo quebra</p><div class="chips"><span class="chip ok">concluído</span></div><a class="mapa-link" href="mapa-encaixes.html">abrir →</a></article><article class="item" style="--c:var(--c-trabalha)" data-busca="mapa das ferramentas as 8 ferramentas, seus comandos de cli e as tarefas com mais de uma dona"><span class="nome">4. Mapa das ferramentas</span><p class="desc">as 8 ferramentas, seus comandos de CLI e as tarefas com mais de uma dona</p><div class="chips"><span class="chip ok">concluído</span></div><a class="mapa-link" href="mapa-ferramentas.html">abrir →</a></article><article class="item" style="--c:var(--c-trabalha)" data-busca="mapa dos comandos slash o que você digita e qual skill cada comando chama"><span class="nome">5. Mapa dos comandos slash</span><p class="desc">o que você digita e qual skill cada comando chama</p><div class="chips"><span class="chip ok">concluído</span></div><a class="mapa-link" href="mapa-comandos.html">abrir →</a></article><article class="item" style="--c:var(--c-trabalha)" data-busca="mapa das conexões os mcps (telefones para fora) e os hooks (alarmes)"><span class="nome">6. Mapa das conexões</span><p class="desc">os MCPs (telefones para fora) e os hooks (alarmes)</p><div class="chips"><span class="chip ok">concluído</span></div><a class="mapa-link" href="mapa-conexoes.html">abrir →</a></article><article class="item" style="--c:var(--c-trabalha)" data-busca="mapa das leis cada lei do agents.md e o guarda que a prova, e onde a prova é fraca"><span class="nome">7. Mapa das leis</span><p class="desc">cada lei do AGENTS.md e o guarda que a prova, e onde a prova é fraca</p><div class="chips"><span class="chip ok">concluído</span></div><a class="mapa-link" href="mapa-leis.html">abrir →</a></article><article class="item" style="--c:var(--c-trabalha)" data-busca="mapa da lente 15d as 15 dimensões de auditoria e como cada ferramenta se saiu"><span class="nome">8. Mapa da lente 15D</span><p class="desc">as 15 dimensões de auditoria e como cada ferramenta se saiu</p><div class="chips"><span class="chip ok">concluído</span></div><a class="mapa-link" href="mapa-lente15d.html">abrir →</a></article><article class="item" style="--c:var(--c-trabalha)" data-busca="mapa da oficina todos os planos e ciclos de auditoria, com as fases cumpridas"><span class="nome">9. Mapa da oficina</span><p class="desc">todos os planos e ciclos de auditoria, com as fases cumpridas</p><div class="chips"><span class="chip ok">concluído</span></div><a class="mapa-link" href="mapa-oficina.html">abrir →</a></article><article class="item" style="--c:var(--c-trabalha)" data-busca="mapa dos scripts cada script de scripts/, o que faz e quem o chama"><span class="nome">10. Mapa dos scripts</span><p class="desc">cada script de scripts/, o que faz e quem o chama</p><div class="chips"><span class="chip ok">concluído</span></div><a class="mapa-link" href="mapa-scripts.html">abrir →</a></article><article class="item" style="--c:var(--c-trabalha)" data-busca="mapa dos moldes de entrega o que cada ferramenta entrega junto com o app gerado"><span class="nome">11. Mapa dos moldes de entrega</span><p class="desc">o que cada ferramenta entrega junto com o app gerado</p><div class="chips"><span class="chip ok">concluído</span></div><a class="mapa-link" href="mapa-moldes.html">abrir →</a></article><article class="item" style="--c:var(--c-trabalha)" data-busca="mapa dos harnesses para onde cada peça é copiada em cada programa de agente"><span class="nome">12. Mapa dos harnesses</span><p class="desc">para onde cada peça é copiada em cada programa de agente</p><div class="chips"><span class="chip ok">concluído</span></div><a class="mapa-link" href="mapa-harnesses.html">abrir →</a></article></div></div>
+<section id="dimensoes">
+  <span class="eyebrow">As 15 dimensões</span>
+  <h2>As perguntas da lente</h2>
+  <p>Molde oficial: <code>docs/auditoria/TEMPLATE-AUDITORIA-FERRAMENTA.md</code>. As fases: governança e blindagem (D1–D4), chão de fábrica (D5–D10), resiliência e economia (D11–D12), inspetor e expedição (D13–D15).</p>
+  <ol class="passos"><li><b>D1</b> · Contratos e Regras</li><li><b>D2</b> · Input e Gatilhos</li><li><b>D3</b> · Raio de Impacto e Isolamento</li><li><b>D4</b> · Componentes e Fractalidade</li><li><b>D5</b> · Visão e Escopo</li><li><b>D6</b> · O que o Estágio Faz</li><li><b>D7</b> · O que o Estágio Recebe</li><li><b>D8</b> · O que o Estágio Processa</li><li><b>D9</b> · O que o Estágio Entrega</li><li><b>D10</b> · Orquestração e Topologia</li><li><b>D11</b> · Tratamento de Exceções e Fallback</li><li><b>D12</b> · Observabilidade e Frugalidade</li><li><b>D13</b> · Quality Gates (Portões)</li><li><b>D14</b> · Critério de Rejeição (Rollback)</li><li><b>D15</b> · Output Consolidado e Handoff</li></ol>
 </section>
 
-<section id="como">
-  <span class="eyebrow">Como</span>
-  <h2>Como um mapa é feito</h2>
-  <div class="grid3">
-    <div class="box"><h3>Molde</h3><p><code>docs/mapas-visuais/moldes/&lt;tipo&gt;.html</code>: o texto fixo em português, com marcadores onde entram as listas.</p></div>
-    <div class="box"><h3>Gerador</h3><p><code>scripts/mapa_visual.py</code>: uma função por mapa, que preenche cada marcador a partir do catálogo.</p></div>
-    <div class="box"><h3>Dados</h3><p><code>docs/auditoria/mapa-pecas/catalogo-pecas.json</code>, gerado por <code>scripts/catalogo_pecas.py</code>. Nada da lista é escrito à mão.</p></div>
-  </div>
-  <p>O passo a passo está na parte 9 do manual de montagem e, para o agente, na skill <code>aidd-visual-maps</code>.</p>
+<section id="matriz">
+  <span class="eyebrow">A matriz · conferida agora</span>
+  <h2>Cada ferramenta auditada, dimensão por dimensão</h2>
+  <p>A classificação é feita por palavra-chave no texto do laudo (<code>FAILED</code>, <code>parcial</code>, <code>implementado</code>). É uma aproximação: "descrito" quer dizer que o laudo fala da dimensão sem dar veredito explícito.</p>
+  <div class="tab-scroll"><table><thead><tr><th scope="col">Dimensão</th><th scope="col">aidd-diagnose<br><small>ciclo-01</small></th><th scope="col">aidd-melhoria<br><small>ciclo-01</small></th></tr></thead><tbody><tr><th scope="row">D1 · Contratos e Regras</th><td><span class="chip lei">descrito</span></td><td><span class="chip lei">descrito</span></td></tr><tr><th scope="row">D2 · Input e Gatilhos</th><td><span class="chip ok">implementado</span></td><td><span class="chip lei">descrito</span></td></tr><tr><th scope="row">D3 · Raio de Impacto e Isolamento</th><td><span class="chip aviso">parcial</span></td><td><span class="chip aviso">parcial</span></td></tr><tr><th scope="row">D4 · Componentes e Fractalidade</th><td><span class="chip lei">descrito</span></td><td><span class="chip falha">falha</span></td></tr><tr><th scope="row">D5 · Visão e Escopo</th><td><span class="chip lei">descrito</span></td><td><span class="chip lei">descrito</span></td></tr><tr><th scope="row">D6 · O que o Estágio Faz</th><td><span class="chip lei">descrito</span></td><td><span class="chip lei">descrito</span></td></tr><tr><th scope="row">D7 · O que o Estágio Recebe</th><td><span class="chip lei">descrito</span></td><td><span class="chip lei">descrito</span></td></tr><tr><th scope="row">D8 · O que o Estágio Processa</th><td><span class="chip lei">descrito</span></td><td><span class="chip falha">falha</span></td></tr><tr><th scope="row">D9 · O que o Estágio Entrega</th><td><span class="chip lei">descrito</span></td><td><span class="chip lei">descrito</span></td></tr><tr><th scope="row">D10 · Orquestração e Topologia</th><td><span class="chip lei">descrito</span></td><td><span class="chip lei">descrito</span></td></tr><tr><th scope="row">D11 · Tratamento de Exceções e Fallback</th><td><span class="chip ok">implementado</span></td><td><span class="chip falha">falha</span></td></tr><tr><th scope="row">D12 · Observabilidade e Frugalidade</th><td><span class="chip aviso">parcial</span></td><td><span class="chip falha">falha</span></td></tr><tr><th scope="row">D13 · Quality Gates (Portões)</th><td><span class="chip lei">descrito</span></td><td><span class="chip falha">falha</span></td></tr><tr><th scope="row">D14 · Critério de Rejeição (Rollback)</th><td><span class="chip aviso">parcial</span></td><td><span class="chip falha">falha</span></td></tr><tr><th scope="row">D15 · Output Consolidado e Handoff</th><td><span class="chip lei">descrito</span></td><td><span class="chip falha">falha</span></td></tr></tbody></table></div>
 </section>
 
-<footer>Gerado por <code>scripts/mapa_visual.py indice</code>. Para atualizar tudo: <code>python scripts/catalogo_pecas.py</code>, depois <code>python scripts/mapa_visual.py &lt;tipo&gt;</code> para cada mapa e, por último, <code>python scripts/mapa_visual.py indice</code>.</footer>
+<section id="falhas">
+  <span class="eyebrow">Onde olhar</span>
+  <h2>Dimensões com falha em algum laudo</h2>
+  <p class="chips" style="display:flex;flex-wrap:wrap;gap:6px"><code>D4 · Componentes e Fractalidade</code><code>D8 · O que o Estágio Processa</code><code>D11 · Tratamento de Exceções e Fallback</code><code>D12 · Observabilidade e Frugalidade</code><code>D13 · Quality Gates (Portões)</code><code>D14 · Critério de Rejeição (Rollback)</code><code>D15 · Output Consolidado e Handoff</code></p>
+</section>
+
+<footer>Gerado por <code>scripts/mapa_visual.py lente15d</code> a partir de <code>docs/auditoria/mapa-pecas/catalogo-pecas.json</code>. Para atualizar: <code>python scripts/catalogo_pecas.py</code> e depois <code>python scripts/mapa_visual.py lente15d</code>.</footer>
 </div>
 </body>
 </html>

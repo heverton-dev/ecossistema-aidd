@@ -184,7 +184,7 @@ def test_encaixes_marcador_desencontrado_reprova(tmp_path, monkeypatch):
         mv.montar("encaixes", _cat_encaixes(), "m.html", fragmento=True)
 
 
-@pytest.mark.parametrize("tipo", ["encaixes", "ferramentas", "comandos", "conexoes", "leis", "oficina", "scripts", "moldes", "harnesses"])
+@pytest.mark.parametrize("tipo", ["encaixes", "ferramentas", "comandos", "conexoes", "leis", "lente15d", "oficina", "scripts", "moldes", "harnesses"])
 def test_mapa_roda_de_verdade_no_repositorio(tmp_path, tipo):
     saida = tmp_path / "mapa.html"
     proc = subprocess.run([sys.executable, str(ROOT / "scripts" / "mapa_visual.py"), tipo,
@@ -193,7 +193,7 @@ def test_mapa_roda_de_verdade_no_repositorio(tmp_path, tipo):
     assert proc.returncode == 0, proc.stdout + proc.stderr
     texto = saida.read_text(encoding="utf-8")
     assert texto.startswith(f"<title>{mv.TITULOS[tipo]}</title>") and "{{" not in texto
-    assert texto.count('<article class="item"') > 0
+    assert texto.count('<article class="item"') > 0 or "<table>" in texto
 
 
 def _cat_ferramentas():
@@ -388,3 +388,24 @@ def test_oficina_marcador_desencontrado_reprova(tmp_path, monkeypatch):
     monkeypatch.setattr(mv, "MOLDES", tmp_path)
     with pytest.raises(ValueError, match="SOBRA"):
         mv.montar("oficina", _cat_oficina(), "m.html", fragmento=True)
+
+
+def _cat_lente15d():
+    return {"lente_15d": {"dimensoes": [{"numero": 1, "titulo": "Contratos e Regras"},
+                                        {"numero": 13, "titulo": "Quality Gates"}],
+                          "laudos": [{"alvo": "aidd-x", "ciclo": "ciclo-01", "laudo": "l.md",
+                                      "dimensoes": {"1": "ok", "13": "falha"}}]}}
+
+
+def test_lente15d_matriz_sai_do_catalogo():
+    valores = mv.valores_lente15d(_cat_lente15d())
+    assert 'chip falha">falha' in valores["TABELA"] and 'chip ok">implementado' in valores["TABELA"]
+    assert "D13 · Quality Gates" in valores["FALHAS"] and "Contratos e Regras" in valores["DIMENSOES"]
+
+
+def test_lente15d_marcador_desencontrado_reprova(tmp_path, monkeypatch):
+    (tmp_path / "lente15d.html").write_text("{{TOTAIS}} {{TABELA}} {{SOBRA}}", encoding="utf-8")
+    (tmp_path / "base.css").write_text("", encoding="utf-8")
+    monkeypatch.setattr(mv, "MOLDES", tmp_path)
+    with pytest.raises(ValueError, match="SOBRA"):
+        mv.montar("lente15d", _cat_lente15d(), "m.html", fragmento=True)

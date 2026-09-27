@@ -193,3 +193,10 @@ def _leis_mod():
     finally:
         sys.path.pop(0)
     return leis
+
+
+def test_classificar_dimensao_por_palavra_chave():
+    assert cp.classificar_dimensao("FAILED: Not implemented. x") == "falha"
+    assert cp.classificar_dimensao("IMPLEMENTADO PARCIALMENTE. x") == "parcial"
+    assert cp.classificar_dimensao("Implementado. `iniciar` exige") == "ok"
+    assert cp.classificar_dimensao("Objetivo de avaliar a base") == "descrito"

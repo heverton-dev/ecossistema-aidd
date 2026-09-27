@@ -39,6 +39,7 @@ TITULOS = {"guardas": "Mapa dos Guardas", "skills": "Mapa das Skills", "indice":
            "encaixes": "Mapa dos Encaixes", "ferramentas": "Mapa das Ferramentas",
            "comandos": "Mapa dos Comandos Slash", "conexoes": "Mapa das Conexões",
            "leis": "Mapa das Leis",
+           "lente15d": "Mapa da Lente 15D",
            "oficina": "Mapa da Oficina",
            "scripts": "Mapa dos Scripts",
            "moldes": "Mapa dos Moldes de Entrega",
@@ -53,6 +54,7 @@ MAPAS_PREVISTOS = (
     ("comandos", "Mapa dos comandos slash", "o que você digita e qual skill cada comando chama"),
     ("conexoes", "Mapa das conexões", "os MCPs (telefones para fora) e os hooks (alarmes)"),
     ("leis", "Mapa das leis", "cada lei do AGENTS.md e o guarda que a prova, e onde a prova é fraca"),
+    ("lente15d", "Mapa da lente 15D", "as 15 dimensões de auditoria e como cada ferramenta se saiu"),
     ("oficina", "Mapa da oficina", "todos os planos e ciclos de auditoria, com as fases cumpridas"),
     ("scripts", "Mapa dos scripts", "cada script de scripts/, o que faz e quem o chama"),
     ("moldes", "Mapa dos moldes de entrega", "o que cada ferramenta entrega junto com o app gerado"),
@@ -551,6 +553,39 @@ def valores_oficina(cat: dict) -> dict[str, str]:
         "CICLOS": f'<div class="grupo"><div class="itens">{"".join(ciclos)}</div></div>',
     }
 
+ROTULO_DIMENSAO = {"ok": ("implementado", "ok"), "parcial": ("parcial", "aviso"), "falha": ("falha", "falha"),
+                   "descrito": ("descrito", "lei"), "": ("sem registro", "")}
+
+
+def valores_lente15d(cat: dict) -> dict[str, str]:
+    lente = cat["lente_15d"]
+    cabeca = "".join(f'<th scope="col">{e(l["alvo"])}<br><small>{e(l["ciclo"])}</small></th>' for l in lente["laudos"])
+    linhas = []
+    falhas = defaultdict(int)
+    for d in lente["dimensoes"]:
+        celulas = []
+        for l in lente["laudos"]:
+            classe = l["dimensoes"].get(str(d["numero"]), "")
+            rotulo, cls = ROTULO_DIMENSAO[classe]
+            if classe == "falha":
+                falhas[d["numero"]] += 1
+            celulas.append(f'<td><span class="chip {cls}">{rotulo}</span></td>')
+        linhas.append(f'<tr><th scope="row">D{d["numero"]} · {e(d["titulo"])}</th>{"".join(celulas)}</tr>')
+    tabela = (f'<div class="tab-scroll"><table><thead><tr><th scope="col">Dimensão</th>{cabeca}</tr></thead>'
+              f'<tbody>{"".join(linhas)}</tbody></table></div>')
+    total_falhas = sum(falhas.values())
+    mais_falhas = [f'D{n} · {t}' for n, t in ((d["numero"], d["titulo"]) for d in lente["dimensoes"]) if falhas[n] >= 1]
+    return {
+        "TOTAIS": _totais([
+            (len(lente["dimensoes"]), "dimensões na lente", ""),
+            (len(lente["laudos"]), "laudos lidos", ""),
+            (total_falhas, "marcações de falha nos laudos", "falha" if total_falhas else ""),
+        ]),
+        "DIMENSOES": "".join(f'<li><b>D{d["numero"]}</b> · {e(d["titulo"])}</li>' for d in lente["dimensoes"]),
+        "FALHAS": _lista_curta(mais_falhas, "Nenhuma dimensão marcada como falha nos laudos lidos."),
+        "TABELA": tabela if lente["laudos"] else '<p class="vazio">Nenhum laudo encontrado.</p>',
+    }
+
 def status_mapa(tipo: str, cat: dict) -> str:
     """concluido = arquivo existe e está em dia com o catálogo; desatualizado = existe e
     difere; a-criar = sem gerador ou sem arquivo."""
@@ -592,6 +627,7 @@ GERADORES = {"guardas": valores_guardas, "skills": valores_skills, "indice": val
              "encaixes": valores_encaixes, "ferramentas": valores_ferramentas,
              "comandos": valores_comandos, "conexoes": valores_conexoes,
              "leis": valores_leis,
+             "lente15d": valores_lente15d,
              "oficina": valores_oficina,
              "scripts": valores_scripts,
              "moldes": valores_moldes,

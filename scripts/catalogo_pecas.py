@@ -441,6 +441,43 @@ def coletar_oficina() -> dict:
     melhorias = len(list((RAIZ / "docs" / "melhorias").glob("*.json")))
     return {"planos": planos, "ciclos": ciclos, "relatorios_melhoria": melhorias}
 
+RE_DIMENSAO_MOLDE = re.compile(r"\*\*(?:\[[^\]]*\]\s*)?D(\d+)\.\s*([^:*]+):\*\*")
+RE_DIMENSAO_LAUDO = re.compile(r"D(\d+)\.\s*[^:*]+:\*\*")
+
+
+def classificar_dimensao(texto: str) -> str:
+    """Classificação por palavra-chave do texto do laudo (aproximação honesta, não julgamento)."""
+    baixo = texto.lower()
+    if "failed" in baixo or "not implemented" in baixo:
+        return "falha"
+    if "parcial" in baixo:
+        return "parcial"
+    if "implementado" in baixo:
+        return "ok"
+    return "descrito"
+
+
+def coletar_lente_15d() -> dict:
+    """As 15 dimensões do molde de auditoria e, para cada ciclo com laudo, a classificação de
+    cada dimensão no laudo mais recente (revisado, senão inicial)."""
+    molde = _ler(RAIZ / "docs" / "auditoria" / "TEMPLATE-AUDITORIA-FERRAMENTA.md")
+    dimensoes = {}
+    for n, titulo in RE_DIMENSAO_MOLDE.findall(molde):
+        dimensoes.setdefault(int(n), titulo.strip())
+    laudos = []
+    for d in sorted((RAIZ / "docs" / "auditoria").glob("*/ciclo-*")):
+        for arquivo in ("LAUDO-15D-REVISADO.md", "LAUDO-15D-INICIAL.md"):
+            if (d / arquivo).is_file():
+                classes = {}
+                for linha in _ler(d / arquivo).splitlines():
+                    achados = list(RE_DIMENSAO_LAUDO.finditer(linha))
+                    for i, m in enumerate(achados):
+                        fim = achados[i + 1].start() if i + 1 < len(achados) else len(linha)
+                        classes.setdefault(str(int(m.group(1))), classificar_dimensao(linha[m.end():fim]))
+                laudos.append({"alvo": d.parent.name, "ciclo": d.name, "laudo": _rel(d / arquivo), "dimensoes": classes})
+                break
+    return {"dimensoes": [{"numero": n, "titulo": t} for n, t in sorted(dimensoes.items())], "laudos": laudos}
+
 def _prova_que_morde(morde_mod, nome: str) -> bool:
     teste = morde_mod.encontrar_arquivo_teste(f"{nome}.py", str(RAIZ / "gates"))
     return bool(teste) and morde_mod.auditar_teste_de_falha(teste, executar=False)[0]
@@ -687,6 +724,7 @@ def gerar(com_encaixe: bool = True) -> dict:
         "skills": skills,
         "skills_terceiros": skills_terceiros,
         "leis": coletar_leis(),
+        "lente_15d": coletar_lente_15d(),
         "oficina": coletar_oficina(),
         "scripts": coletar_scripts(),
         "moldes_entrega": coletar_moldes_entrega(),
@@ -706,6 +744,7 @@ def gerar(com_encaixe: bool = True) -> dict:
         "comandos_cli": sum(len(f["comandos"]) for f in ferramentas),
         "skills": len(skills),
         "leis": len(catalogo["leis"]),
+        "lente_15d": len(catalogo["lente_15d"]["dimensoes"]),
         "oficina": len(catalogo["oficina"]["planos"]),
         "scripts": len(catalogo["scripts"]),
         "moldes_entrega": len(catalogo["moldes_entrega"]),

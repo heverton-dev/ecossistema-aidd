@@ -6,6 +6,7 @@
     "comandos_cli": 69,
     "skills": 38,
     "leis": 13,
+    "lente_15d": 15,
     "oficina": 37,
     "scripts": 22,
     "moldes_entrega": 24,
@@ -777,6 +778,116 @@
       "sem_gate": false
     }
   ],
+  "lente_15d": {
+    "dimensoes": [
+      {
+        "numero": 1,
+        "titulo": "Contratos e Regras"
+      },
+      {
+        "numero": 2,
+        "titulo": "Input e Gatilhos"
+      },
+      {
+        "numero": 3,
+        "titulo": "Raio de Impacto e Isolamento"
+      },
+      {
+        "numero": 4,
+        "titulo": "Componentes e Fractalidade"
+      },
+      {
+        "numero": 5,
+        "titulo": "Visão e Escopo"
+      },
+      {
+        "numero": 6,
+        "titulo": "O que o Estágio Faz"
+      },
+      {
+        "numero": 7,
+        "titulo": "O que o Estágio Recebe"
+      },
+      {
+        "numero": 8,
+        "titulo": "O que o Estágio Processa"
+      },
+      {
+        "numero": 9,
+        "titulo": "O que o Estágio Entrega"
+      },
+      {
+        "numero": 10,
+        "titulo": "Orquestração e Topologia"
+      },
+      {
+        "numero": 11,
+        "titulo": "Tratamento de Exceções e Fallback"
+      },
+      {
+        "numero": 12,
+        "titulo": "Observabilidade e Frugalidade"
+      },
+      {
+        "numero": 13,
+        "titulo": "Quality Gates (Portões)"
+      },
+      {
+        "numero": 14,
+        "titulo": "Critério de Rejeição (Rollback)"
+      },
+      {
+        "numero": 15,
+        "titulo": "Output Consolidado e Handoff"
+      }
+    ],
+    "laudos": [
+      {
+        "alvo": "aidd-diagnose",
+        "ciclo": "ciclo-01",
+        "laudo": "docs/auditoria/aidd-diagnose/ciclo-01/LAUDO-15D-REVISADO.md",
+        "dimensoes": {
+          "1": "descrito",
+          "2": "ok",
+          "3": "parcial",
+          "4": "descrito",
+          "5": "descrito",
+          "6": "descrito",
+          "7": "descrito",
+          "8": "descrito",
+          "9": "descrito",
+          "10": "descrito",
+          "11": "ok",
+          "12": "parcial",
+          "13": "descrito",
+          "14": "parcial",
+          "15": "descrito"
+        }
+      },
+      {
+        "alvo": "aidd-melhoria",
+        "ciclo": "ciclo-01",
+        "laudo": "docs/auditoria/aidd-melhoria/ciclo-01/LAUDO-15D-REVISADO.md",
+        "dimensoes": {
+          "1": "descrito",
+          "2": "descrito",
+          "3": "parcial",
+          "4": "falha",
+          "5": "descrito",
+          "6": "descrito",
+          "7": "descrito",
+          "8": "falha",
+          "9": "descrito",
+          "10": "descrito",
+          "11": "falha",
+          "12": "falha",
+          "13": "falha",
+          "14": "falha",
+          "15": "falha"
+        }
+      }
+    ]
+  },
   "oficina": {
     "planos": [
       {

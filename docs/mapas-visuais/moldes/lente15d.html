@@ -1,0 +1,33 @@
+<!-- Molde do mapa da lente 15D. Texto fixo aqui; listas entram por scripts/mapa_visual.py. -->
+<div class="wrap">
+
+<a class="voltar" href="{{LINK_MANUAL}}">← Manual de montagem</a>
+<header>
+  <span class="eyebrow">Mapa visual · a lente 15-D (como uma ferramenta é inspecionada)</span>
+  <h1>Mapa da lente 15D</h1>
+  <p class="lead">A lente 15-D é a lista de 15 perguntas que o Inspetor faz a uma ferramenta num ciclo de auditoria, de contratos e gatilhos até a entrega final. Este mapa mostra as 15 dimensões e como cada ferramenta auditada se saiu em cada uma, segundo o laudo mais recente.</p>
+  {{TOTAIS}}
+</header>
+
+<section id="dimensoes">
+  <span class="eyebrow">As 15 dimensões</span>
+  <h2>As perguntas da lente</h2>
+  <p>Molde oficial: <code>docs/auditoria/TEMPLATE-AUDITORIA-FERRAMENTA.md</code>. As fases: governança e blindagem (D1–D4), chão de fábrica (D5–D10), resiliência e economia (D11–D12), inspetor e expedição (D13–D15).</p>
+  <ol class="passos">{{DIMENSOES}}</ol>
+</section>
+
+<section id="matriz">
+  <span class="eyebrow">A matriz · conferida agora</span>
+  <h2>Cada ferramenta auditada, dimensão por dimensão</h2>
+  <p>A classificação é feita por palavra-chave no texto do laudo (<code>FAILED</code>, <code>parcial</code>, <code>implementado</code>). É uma aproximação: "descrito" quer dizer que o laudo fala da dimensão sem dar veredito explícito.</p>
+  {{TABELA}}
+</section>
+
+<section id="falhas">
+  <span class="eyebrow">Onde olhar</span>
+  <h2>Dimensões com falha em algum laudo</h2>
+  {{FALHAS}}
+</section>
+
+<footer>Gerado por <code>scripts/mapa_visual.py lente15d</code> a partir de <code>docs/auditoria/mapa-pecas/catalogo-pecas.json</code>. Para atualizar: <code>python scripts/catalogo_pecas.py</code> e depois <code>python scripts/mapa_visual.py lente15d</code>.</footer>
+</div>
