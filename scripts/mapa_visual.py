@@ -37,7 +37,8 @@ FONTES = ("https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wgh
           "&display=swap")
 TITULOS = {"guardas": "Mapa dos Guardas", "skills": "Mapa das Skills", "indice": "Mapas do Ecossistema",
            "encaixes": "Mapa dos Encaixes", "ferramentas": "Mapa das Ferramentas",
-           "comandos": "Mapa dos Comandos Slash", "conexoes": "Mapa das Conexões"}
+           "comandos": "Mapa dos Comandos Slash", "conexoes": "Mapa das Conexões",
+           "leis": "Mapa das Leis"}
 # Os mapas que o ecossistema precisa ter, na ordem de criação. O índice mostra
 # cada um como concluído (arquivo em dia com o catálogo), desatualizado ou a criar.
 MAPAS_PREVISTOS = (
@@ -47,6 +48,7 @@ MAPAS_PREVISTOS = (
     ("ferramentas", "Mapa das ferramentas", "as 8 ferramentas, seus comandos de CLI e as tarefas com mais de uma dona"),
     ("comandos", "Mapa dos comandos slash", "o que você digita e qual skill cada comando chama"),
     ("conexoes", "Mapa das conexões", "os MCPs (telefones para fora) e os hooks (alarmes)"),
+    ("leis", "Mapa das leis", "cada lei do AGENTS.md e o guarda que a prova, e onde a prova é fraca"),
 )
 META_LINHAS_SKILL = 150
 META_GUARDAS = ("G_PORTAO_PROVA_QUE_MORDE", "G_LEI_DECLARA_PORTAO")
@@ -358,6 +360,55 @@ def valores_conexoes(cat: dict) -> dict[str, str]:
     }
 
 
+def valores_leis(cat: dict) -> dict[str, str]:
+    leis = cat["leis"]
+    gates = {g["id"]: g for g in cat["gates"]}
+    invisiveis, fora, sem_prova, cartoes = [], [], [], []
+    declarados = set()
+    for lei in leis:
+        linhas = []
+        for pt in lei["portoes"]:
+            g = gates.get(pt["gate"], {})
+            declarados.add(pt["gate"])
+            chips = [f'<code>{e(pt["gate"])}</code>']
+            if not g:
+                chips.append('<span class="chip falha">guarda não existe</span>')
+            if not pt["visivel"]:
+                chips.append('<span class="chip falha">meta-guarda não lê</span>')
+                invisiveis.append(f'Lei #{lei["numero"]}: {pt["gate"]}')
+            if g and not g.get("no_pre_commit"):
+                chips.append('<span class="chip aviso">fora do commit</span>')
+                fora.append(f'Lei #{lei["numero"]}: {pt["gate"]}')
+            if g and g.get("prova_que_morde") is False:
+                chips.append('<span class="chip falha">sem prova</span>')
+                sem_prova.append(f'Lei #{lei["numero"]}: {pt["gate"]}')
+            if g and g.get("prova_que_morde") and g.get("no_pre_commit") and pt["visivel"]:
+                chips.append('<span class="chip ok">prova válida</span>')
+            linhas.append(f'<div class="chips" style="display:flex;flex-wrap:wrap;gap:6px">{"".join(chips)}</div>')
+        if lei["sem_gate"]:
+            linhas.append('<p class="vazio">sem gate — cumprimento por convenção</p>')
+        if not linhas:
+            linhas.append('<p class="vazio">Nenhuma declaração.</p>')
+        cartoes.append(f'<article class="item" style="--c:var(--c-regra)" data-busca="{e(lei["titulo"].lower())}">'
+                       f'<span class="nome">Lei #{lei["numero"]} · {e(lei["titulo"])}</span>{"".join(linhas)}</article>')
+    sem_lei = sorted(g["id"] for g in cat["gates"] if g["prova_que_morde"] is not None and g["id"] not in declarados)
+    total_decl = sum(len(lei["portoes"]) for lei in leis)
+    return {
+        "TOTAIS": _totais([
+            (len(leis), "leis", ""),
+            (total_decl, "declarações de guarda", ""),
+            (len(invisiveis), "o meta-guarda não lê", "falha" if invisiveis else ""),
+            (len(fora), "declarados fora do commit", "aviso" if fora else ""),
+            (len(sem_lei), "guardas da raiz sem lei", "aviso" if sem_lei else ""),
+        ]),
+        "INVISIVEIS": _lista_curta(invisiveis, "Nenhuma hoje."),
+        "FORA_COMMIT": _lista_curta(fora, "Todos os guardas declarados rodam no commit."),
+        "SEM_PROVA": _lista_curta(sem_prova, "Todos os guardas declarados têm prova que morde."),
+        "SEM_LEI": _lista_curta(sem_lei, "Todo guarda da raiz está ligado a uma lei."),
+        "LISTA": f'<div class="grupo"><div class="itens">{"".join(cartoes)}</div></div>',
+    }
+
+
 def status_mapa(tipo: str, cat: dict) -> str:
     """concluido = arquivo existe e está em dia com o catálogo; desatualizado = existe e
     difere; a-criar = sem gerador ou sem arquivo."""
@@ -397,7 +448,8 @@ def valores_indice(cat: dict) -> dict[str, str]:
 
 GERADORES = {"guardas": valores_guardas, "skills": valores_skills, "indice": valores_indice,
              "encaixes": valores_encaixes, "ferramentas": valores_ferramentas,
-             "comandos": valores_comandos, "conexoes": valores_conexoes}
+             "comandos": valores_comandos, "conexoes": valores_conexoes,
+             "leis": valores_leis}
 
 
 def montar(tipo: str, cat: dict, link_manual: str, fragmento: bool) -> str:

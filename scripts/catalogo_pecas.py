@@ -305,6 +305,41 @@ def _leis_por_gate(leis_mod, agents_md: str) -> tuple[dict[str, list[int]], list
     return mapa, invisiveis
 
 
+RE_FORCA = re.compile(r"\((provado|nao-provado|sem-gate)")
+RE_DECLARACAO_QUALQUER = re.compile(r"^\s*-\s+(?:\*\*)?Port[ãa]o(?:\*\*)?:\s*(.+)$")
+
+
+def coletar_leis() -> list[dict]:
+    """Cada lei do AGENTS.md e as declarações de portão embaixo dela, lidas de forma
+    tolerante; 'visivel' diz se o G_LEI_DECLARA_PORTAO (regex estrito) enxerga a linha."""
+    leis_mod, _ = _meta_gates()
+    bloco = leis_mod.extrair_bloco_leis(_ler(RAIZ / "AGENTS.md"))
+    leis, atual = [], None
+    for linha in bloco.splitlines():
+        cabecalho = leis_mod.RE_LAW_HEADER.match(linha.strip())
+        if cabecalho:
+            atual = {"numero": int(cabecalho.group(1)), "titulo": cabecalho.group(2).strip().rstrip(":"),
+                     "portoes": [], "sem_gate": False}
+            leis.append(atual)
+            continue
+        if atual is None:
+            continue
+        m = RE_DECLARACAO_TOLERANTE.match(linha)
+        if m:
+            forca = RE_FORCA.search(linha)
+            atual["portoes"].append({
+                "gate": m.group(1),
+                "forca": forca.group(1) if forca else "",
+                "visivel": bool(leis_mod.RE_GATE_DECLARATION.match(linha)),
+            })
+        else:
+            decl = RE_DECLARACAO_QUALQUER.match(linha)
+            alvo = re.sub(r"\s*[\(\[][\w\-]+[\)\]].*$", "", decl.group(1)) if decl else ""
+            if alvo and leis_mod.normalizar_literal_sem_gate(alvo):
+                atual["sem_gate"] = True
+    return leis
+
+
 def _prova_que_morde(morde_mod, nome: str) -> bool:
     teste = morde_mod.encontrar_arquivo_teste(f"{nome}.py", str(RAIZ / "gates"))
     return bool(teste) and morde_mod.auditar_teste_de_falha(teste, executar=False)[0]
@@ -550,6 +585,7 @@ def gerar(com_encaixe: bool = True) -> dict:
         "ferramentas": ferramentas,
         "skills": skills,
         "skills_terceiros": skills_terceiros,
+        "leis": coletar_leis(),
         "comandos_slash": coletar_comandos_slash(),
         "mcps": coletar_mcps(ferramentas),
         "hooks": coletar_hooks(),
@@ -564,6 +600,7 @@ def gerar(com_encaixe: bool = True) -> dict:
         "ferramentas": len(ferramentas),
         "comandos_cli": sum(len(f["comandos"]) for f in ferramentas),
         "skills": len(skills),
+        "leis": len(catalogo["leis"]),
         "skills_nossas": sum(1 for s in skills if not s["terceiro"]),
         "skills_terceiros_copiadas": sum(1 for s in skills if s["terceiro"]),
         "skills_terceiros_registradas": len(skills_terceiros),

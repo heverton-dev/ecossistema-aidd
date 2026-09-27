@@ -167,3 +167,29 @@ def test_comando_slash_registra_a_skill_e_se_ela_existe(tmp_path, monkeypatch):
     assert (por_id["pure"]["skill"], por_id["pure"]["skill_existe"], por_id["pure"]["descricao"]) == ("aidd-pure", True, "Fluxo 01.")
     assert (por_id["velho"]["skill"], por_id["velho"]["skill_existe"]) == ("aidd-velho", False)
     assert por_id["solto"]["skill"] == ""
+
+
+def test_leis_registram_declaracao_invisivel_ao_meta_gate(tmp_path, monkeypatch):
+    agents = tmp_path / "AGENTS.md"
+    agents.write_text(
+        "## 2. Inviolable Laws\n\n"
+        "1. **Primeira:** texto.\n"
+        "   - Portão: gates/G_A.py (provado)\n"
+        "   - Portão: gates/G_B.py (provado) — comentário\n"
+        "2. **Segunda:** texto.\n"
+        "   - Portão: sem gate — cumprimento por convenção (sem-gate)\n"
+        "\n## 3. Outra seção\n", encoding="utf-8")
+    monkeypatch.setattr(cp, "RAIZ", tmp_path)
+    monkeypatch.setattr(cp, "_meta_gates", lambda: (_leis_mod(), None))
+    leis = {lei["numero"]: lei for lei in cp.coletar_leis()}
+    assert [(pt["gate"], pt["visivel"]) for pt in leis[1]["portoes"]] == [("G_A", True), ("G_B", False)]
+    assert leis[2]["sem_gate"] is True and leis[2]["portoes"] == []
+
+
+def _leis_mod():
+    sys.path.insert(0, str(ROOT / "gates"))
+    try:
+        import G_LEI_DECLARA_PORTAO as leis
+    finally:
+        sys.path.pop(0)
+    return leis

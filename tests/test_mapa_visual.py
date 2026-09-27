@@ -184,7 +184,7 @@ def test_encaixes_marcador_desencontrado_reprova(tmp_path, monkeypatch):
         mv.montar("encaixes", _cat_encaixes(), "m.html", fragmento=True)
 
 
-@pytest.mark.parametrize("tipo", ["encaixes", "ferramentas", "comandos", "conexoes"])
+@pytest.mark.parametrize("tipo", ["encaixes", "ferramentas", "comandos", "conexoes", "leis"])
 def test_mapa_roda_de_verdade_no_repositorio(tmp_path, tipo):
     saida = tmp_path / "mapa.html"
     proc = subprocess.run([sys.executable, str(ROOT / "scripts" / "mapa_visual.py"), tipo,
@@ -272,3 +272,29 @@ def test_indice_marca_todos_os_mapas_previstos_como_concluidos():
     cat = json.loads(mv.CATALOGO.read_text(encoding="utf-8"))
     pendentes = [t for t, _, _ in mv.MAPAS_PREVISTOS if mv.status_mapa(t, cat) != "concluido"]
     assert not pendentes, f"mapas pendentes ou desatualizados: {pendentes}"
+
+
+def _cat_leis():
+    return {"leis": [
+        {"numero": 1, "titulo": "Determinism First", "sem_gate": False, "portoes": [
+            {"gate": "G_OK", "forca": "provado", "visivel": True},
+            {"gate": "G_CEGO", "forca": "provado", "visivel": False},
+            {"gate": "G_SUMIU", "forca": "provado", "visivel": True}]},
+        {"numero": 2, "titulo": "Convencao", "sem_gate": True, "portoes": []}],
+        "gates": [_gate("G_OK"), _gate("G_CEGO", no_pre_commit=False, prova_que_morde=False), _gate("G_SOLTO")]}
+
+
+def test_leis_prova_fraca_sai_do_catalogo():
+    valores = mv.valores_leis(_cat_leis())
+    assert "Lei #1: G_CEGO" in valores["INVISIVEIS"] and "Lei #1: G_CEGO" in valores["FORA_COMMIT"]
+    assert "Lei #1: G_CEGO" in valores["SEM_PROVA"] and "G_SOLTO" in valores["SEM_LEI"]
+    assert 'chip ok">prova válida' in valores["LISTA"] and "guarda não existe" in valores["LISTA"]
+    assert "sem gate — cumprimento por convenção" in valores["LISTA"]
+
+
+def test_leis_marcador_desencontrado_reprova(tmp_path, monkeypatch):
+    (tmp_path / "leis.html").write_text("{{TOTAIS}} {{LISTA}} {{OUTRO}}", encoding="utf-8")
+    (tmp_path / "base.css").write_text("", encoding="utf-8")
+    monkeypatch.setattr(mv, "MOLDES", tmp_path)
+    with pytest.raises(ValueError, match="OUTRO"):
+        mv.montar("leis", _cat_leis(), "m.html", fragmento=True)
