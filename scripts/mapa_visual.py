@@ -38,7 +38,8 @@ FONTES = ("https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wgh
 TITULOS = {"guardas": "Mapa dos Guardas", "skills": "Mapa das Skills", "indice": "Mapas do Ecossistema",
            "encaixes": "Mapa dos Encaixes", "ferramentas": "Mapa das Ferramentas",
            "comandos": "Mapa dos Comandos Slash", "conexoes": "Mapa das Conexões",
-           "leis": "Mapa das Leis"}
+           "leis": "Mapa das Leis",
+           "harnesses": "Mapa dos Harnesses"}
 # Os mapas que o ecossistema precisa ter, na ordem de criação. O índice mostra
 # cada um como concluído (arquivo em dia com o catálogo), desatualizado ou a criar.
 MAPAS_PREVISTOS = (
@@ -49,6 +50,7 @@ MAPAS_PREVISTOS = (
     ("comandos", "Mapa dos comandos slash", "o que você digita e qual skill cada comando chama"),
     ("conexoes", "Mapa das conexões", "os MCPs (telefones para fora) e os hooks (alarmes)"),
     ("leis", "Mapa das leis", "cada lei do AGENTS.md e o guarda que a prova, e onde a prova é fraca"),
+    ("harnesses", "Mapa dos harnesses", "para onde cada peça é copiada em cada programa de agente"),
 )
 META_LINHAS_SKILL = 150
 META_GUARDAS = ("G_PORTAO_PROVA_QUE_MORDE", "G_LEI_DECLARA_PORTAO")
@@ -409,6 +411,37 @@ def valores_leis(cat: dict) -> dict[str, str]:
     }
 
 
+def valores_harnesses(cat: dict) -> dict[str, str]:
+    dados = cat["harnesses"]
+    cartoes = []
+    for h in dados["harnesses"]:
+        destinos = "".join(f'<div class="chips"><span class="chip lei">{e(t)}</span><code>{e(d)}</code></div>'
+                           for t, d in sorted(h["destinos"].items()))
+        chips = [f'<span class="chip {"ok" if h["confirmado"] else "aviso"}">'
+                 f'{"confirmado em doc oficial" if h["confirmado"] else "não confirmado"}</span>',
+                 f'<span class="chip ok">{h["skills_em_disco"] - h.get("terceiros_em_disco", 0)} nossas</span>',
+                 f'<span class="chip lei">{h.get("terceiros_em_disco", 0)} de terceiros</span>']
+        if h.get("nossas_faltando"):
+            chips.append(f'<span class="chip falha">faltam {len(h["nossas_faltando"])} nossas</span>')
+        if h["config_mcp"]:
+            chips.append(f'<code>{e(h["config_mcp"])}</code>')
+        cartoes.append(f'<article class="item" style="--c:var(--c-liga)" data-busca="{e(h["id"])}">'
+                       f'<span class="nome">{e(h["id"])}</span><p class="desc">pasta <code>{e(h["prefixo"])}/</code></p>'
+                       f'<div class="chips" style="display:flex;flex-wrap:wrap;gap:6px">{"".join(chips)}</div>{destinos}</article>')
+    legadas = [f'{x["pasta"]} ({x["arquivos_versionados"]} arquivos)' for x in dados["pastas_legadas"]]
+    faltando = [f'{h["id"]}: {", ".join(h["nossas_faltando"])}' for h in dados["harnesses"] if h.get("nossas_faltando")]
+    return {
+        "TOTAIS": _totais([
+            (len(dados["harnesses"]), "harnesses", ""),
+            (sum(1 for h in dados["harnesses"] if h["confirmado"]), "confirmados em doc oficial", ""),
+            (len(faltando), "harnesses sem todas as nossas skills", "falha" if faltando else ""),
+            (len(legadas), "pastas legadas versionadas", "aviso" if legadas else ""),
+        ]),
+        "LEGADAS": _lista_curta(legadas, "Nenhuma pasta legada versionada."),
+        "FALTANDO": _lista_curta(faltando, "Todos os harnesses têm todas as nossas skills."),
+        "LISTA": f'<div class="grupo"><div class="itens">{"".join(cartoes)}</div></div>',
+    }
+
 def status_mapa(tipo: str, cat: dict) -> str:
     """concluido = arquivo existe e está em dia com o catálogo; desatualizado = existe e
     difere; a-criar = sem gerador ou sem arquivo."""
@@ -449,7 +482,8 @@ def valores_indice(cat: dict) -> dict[str, str]:
 GERADORES = {"guardas": valores_guardas, "skills": valores_skills, "indice": valores_indice,
              "encaixes": valores_encaixes, "ferramentas": valores_ferramentas,
              "comandos": valores_comandos, "conexoes": valores_conexoes,
-             "leis": valores_leis}
+             "leis": valores_leis,
+             "harnesses": valores_harnesses}
 
 
 def montar(tipo: str, cat: dict, link_manual: str, fragmento: bool) -> str:

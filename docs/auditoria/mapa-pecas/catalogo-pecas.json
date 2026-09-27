@@ -6,6 +6,7 @@
     "comandos_cli": 69,
     "skills": 38,
     "leis": 13,
+    "harnesses": 7,
     "skills_nossas": 38,
     "skills_terceiros_copiadas": 0,
     "skills_terceiros_registradas": 20,
@@ -773,6 +774,157 @@
       "sem_gate": false
     }
   ],
+  "harnesses": {
+    "harnesses": [
+      {
+        "id": "claude-code",
+        "prefixo": ".claude",
+        "confirmado": true,
+        "recebe": [
+          "skill",
+          "command",
+          "hook",
+          "sub-agent"
+        ],
+        "destinos": {
+          "skill": ".claude/skills/{nome}",
+          "command": ".claude/commands/{nome}",
+          "hook": ".claude/hooks/{nome}",
+          "sub-agent": ".claude/agents/{nome}"
+        },
+        "skills_em_disco": 57,
+        "nossas_faltando": [],
+        "terceiros_em_disco": 19,
+        "config_mcp": ".mcp.json"
+      },
+      {
+        "id": "antigravity",
+        "prefixo": ".agents",
+        "confirmado": true,
+        "recebe": [
+          "skill",
+          "command",
+          "hook",
+          "sub-agent"
+        ],
+        "destinos": {
+          "skill": ".agents/skills/{nome}",
+          "command": ".agents/commands/{nome}",
+          "hook": ".agents/hooks/{nome}",
+          "sub-agent": ".agents/agents/{nome}"
+        },
+        "skills_em_disco": 57,
+        "nossas_faltando": [],
+        "terceiros_em_disco": 19,
+        "config_mcp": ".agents/mcp_config.json"
+      },
+      {
+        "id": "opencode",
+        "prefixo": ".opencode",
+        "confirmado": true,
+        "recebe": [
+          "skill",
+          "command",
+          "hook",
+          "sub-agent"
+        ],
+        "destinos": {
+          "skill": ".opencode/skills/{nome}",
+          "command": ".opencode/commands/{nome}",
+          "hook": ".opencode/hooks/{nome}",
+          "sub-agent": ".opencode/agents/{nome}"
+        },
+        "skills_em_disco": 43,
+        "nossas_faltando": [],
+        "terceiros_em_disco": 5,
+        "config_mcp": "opencode.jsonc"
+      },
+      {
+        "id": "mimocode",
+        "prefixo": ".mimocode",
+        "confirmado": true,
+        "recebe": [
+          "skill",
+          "command",
+          "hook",
+          "sub-agent"
+        ],
+        "destinos": {
+          "skill": ".mimocode/skills/{nome}",
+          "command": ".mimocode/commands/{nome}",
+          "hook": ".mimocode/hooks/{nome}",
+          "sub-agent": ".mimocode/agents/{nome}"
+        },
+        "skills_em_disco": 43,
+        "nossas_faltando": [],
+        "terceiros_em_disco": 5,
+        "config_mcp": "mimocode.jsonc"
+      },
+      {
+        "id": "gemini-cli",
+        "prefixo": ".gemini",
+        "confirmado": true,
+        "recebe": [
+          "skill",
+          "hook",
+          "sub-agent"
+        ],
+        "destinos": {
+          "skill": ".gemini/extensions/{nome}/skills/{nome}",
+          "hook": ".gemini/hooks/{nome}",
+          "sub-agent": ".gemini/agents/{nome}"
+        },
+        "skills_em_disco": 38,
+        "nossas_faltando": [],
+        "terceiros_em_disco": 0,
+        "config_mcp": ".gemini/settings.json"
+      },
+      {
+        "id": "cursor",
+        "prefixo": ".cursor",
+        "confirmado": true,
+        "recebe": [
+          "skill",
+          "command",
+          "hook"
+        ],
+        "destinos": {
+          "skill": ".cursor/skills/{nome}",
+          "command": ".cursor/commands/{nome}",
+          "hook": ".cursor/hooks/{nome}"
+        },
+        "skills_em_disco": 43,
+        "nossas_faltando": [],
+        "terceiros_em_disco": 5,
+        "config_mcp": ".cursor/mcp.json"
+      },
+      {
+        "id": "codebuddy",
+        "prefixo": ".codebuddy",
+        "confirmado": true,
+        "recebe": [
+          "skill",
+          "command",
+          "hook"
+        ],
+        "destinos": {
+          "skill": ".codebuddy/skills/{nome}",
+          "command": ".codebuddy/commands/{nome}",
+          "hook": ".codebuddy/hooks/{nome}"
+        },
+        "skills_em_disco": 57,
+        "nossas_faltando": [],
+        "terceiros_em_disco": 19,
+        "config_mcp": ""
+      }
+    ],
+    "pastas_legadas": [
+      {
+        "pasta": ".gemini/skills",
+        "arquivos_versionados": 346
+      }
+    ]
+  },
   "comandos_slash": [
     {
       "id": "aidd-livro-texto",

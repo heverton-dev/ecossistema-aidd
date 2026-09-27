@@ -184,7 +184,7 @@ def test_encaixes_marcador_desencontrado_reprova(tmp_path, monkeypatch):
         mv.montar("encaixes", _cat_encaixes(), "m.html", fragmento=True)
 
 
-@pytest.mark.parametrize("tipo", ["encaixes", "ferramentas", "comandos", "conexoes", "leis"])
+@pytest.mark.parametrize("tipo", ["encaixes", "ferramentas", "comandos", "conexoes", "leis", "harnesses"])
 def test_mapa_roda_de_verdade_no_repositorio(tmp_path, tipo):
     saida = tmp_path / "mapa.html"
     proc = subprocess.run([sys.executable, str(ROOT / "scripts" / "mapa_visual.py"), tipo,
@@ -298,3 +298,28 @@ def test_leis_marcador_desencontrado_reprova(tmp_path, monkeypatch):
     monkeypatch.setattr(mv, "MOLDES", tmp_path)
     with pytest.raises(ValueError, match="OUTRO"):
         mv.montar("leis", _cat_leis(), "m.html", fragmento=True)
+
+
+def _cat_harnesses():
+    return {"harnesses": {"harnesses": [
+        {"id": "claude-code", "prefixo": ".claude", "confirmado": True, "recebe": ["skill"],
+         "destinos": {"skill": ".claude/skills/{nome}"}, "skills_em_disco": 38, "config_mcp": ".mcp.json"},
+        {"id": "codebuddy", "prefixo": ".codebuddy", "confirmado": False, "recebe": ["skill"],
+         "destinos": {"skill": ".codebuddy/skills/{nome}"}, "skills_em_disco": 40, "config_mcp": "",
+         "nossas_faltando": ["aidd-x"], "terceiros_em_disco": 3}],
+        "pastas_legadas": [{"pasta": ".gemini/skills", "arquivos_versionados": 12}]}}
+
+
+def test_harnesses_legado_e_contagens_saem_do_catalogo():
+    valores = mv.valores_harnesses(_cat_harnesses())
+    assert ".gemini/skills (12 arquivos)" in valores["LEGADAS"] and "não confirmado" in valores["LISTA"]
+    assert ".claude/skills/{nome}" in valores["LISTA"] and "codebuddy: aidd-x" in valores["FALTANDO"]
+    assert "3 de terceiros" in valores["LISTA"] and "faltam 1 nossas" in valores["LISTA"]
+
+
+def test_harnesses_marcador_desencontrado_reprova(tmp_path, monkeypatch):
+    (tmp_path / "harnesses.html").write_text("{{TOTAIS}} {{LISTA}} {{SOBRA}}", encoding="utf-8")
+    (tmp_path / "base.css").write_text("", encoding="utf-8")
+    monkeypatch.setattr(mv, "MOLDES", tmp_path)
+    with pytest.raises(ValueError, match="SOBRA"):
+        mv.montar("harnesses", _cat_harnesses(), "m.html", fragmento=True)

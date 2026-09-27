@@ -340,6 +340,41 @@ def coletar_leis() -> list[dict]:
     return leis
 
 
+def coletar_harnesses() -> dict:
+    """Cada harness do manifesto: pasta, tipos de peça que recebe, destino de cada tipo,
+    skills presentes em disco e arquivo de config de MCP. Mais as pastas legadas versionadas."""
+    manifesto = json.loads(_ler(RAIZ / "gates" / "manifesto_harnesses.json"))
+    sys.path.insert(0, str(RAIZ / "scripts"))
+    import gestor_dependencias
+    tipos = manifesto["tipos_componente"]
+    nossas = {p.parent.name for p in (COMPARTILHADO / "skills").glob("*/SKILL.md")}
+    lista = []
+    for nome, info in manifesto["harnesses_suportados"].items():
+        prefixo = info.get("prefixo_pasta", "")
+        recebe = [t for t, v in tipos.items() if nome in (v.get("harnesses_aplicaveis") or [])]
+        destinos = {t: ((tipos[t].get("dest_harness_template_overrides") or {}).get(nome)
+                        or tipos[t].get("dest_harness_template") or "").replace("{prefixo_pasta}", prefixo)
+                    for t in recebe}
+        base = RAIZ / prefixo
+        if nome == "gemini-cli":
+            skills = list(base.glob("extensions/*/skills/*/SKILL.md"))
+        else:
+            skills = list(base.glob("skills/*/SKILL.md"))
+        mcp = gestor_dependencias.DESTINOS_MCP.get(nome, {}).get("caminho")
+        nomes_em_disco = {s.parent.name for s in skills}
+        lista.append({"id": nome, "prefixo": prefixo, "confirmado": bool(info.get("confirmado")), "recebe": recebe,
+                      "destinos": destinos, "skills_em_disco": len(skills),
+                      "nossas_faltando": sorted(nossas - nomes_em_disco),
+                      "terceiros_em_disco": len(nomes_em_disco - nossas),
+                      "config_mcp": _rel(Path(mcp)) if mcp else ""})
+    legadas = []
+    for pasta in (".gemini/skills", ".agent/skills"):
+        r = subprocess.run(["git", "ls-files", pasta], cwd=RAIZ, capture_output=True, text=True)
+        n = len([linha for linha in r.stdout.splitlines() if linha.strip()])
+        if n:
+            legadas.append({"pasta": pasta, "arquivos_versionados": n})
+    return {"harnesses": lista, "pastas_legadas": legadas}
+
 def _prova_que_morde(morde_mod, nome: str) -> bool:
     teste = morde_mod.encontrar_arquivo_teste(f"{nome}.py", str(RAIZ / "gates"))
     return bool(teste) and morde_mod.auditar_teste_de_falha(teste, executar=False)[0]
@@ -586,6 +621,7 @@ def gerar(com_encaixe: bool = True) -> dict:
         "skills": skills,
         "skills_terceiros": skills_terceiros,
         "leis": coletar_leis(),
+        "harnesses": coletar_harnesses(),
         "comandos_slash": coletar_comandos_slash(),
         "mcps": coletar_mcps(ferramentas),
         "hooks": coletar_hooks(),
@@ -601,6 +637,7 @@ def gerar(com_encaixe: bool = True) -> dict:
         "comandos_cli": sum(len(f["comandos"]) for f in ferramentas),
         "skills": len(skills),
         "leis": len(catalogo["leis"]),
+        "harnesses": len(catalogo["harnesses"]["harnesses"]),
         "skills_nossas": sum(1 for s in skills if not s["terceiro"]),
         "skills_terceiros_copiadas": sum(1 for s in skills if s["terceiro"]),
         "skills_terceiros_registradas": len(skills_terceiros),
