@@ -387,6 +387,29 @@ def coletar_moldes_entrega() -> list[dict]:
                            "arquivos": len(arquivos)})
     return moldes
 
+def coletar_scripts() -> list[dict]:
+    """Cada script de scripts/: o que faz (docstring) e quem o chama (painel, commit, guardas, outros scripts, testes)."""
+    fontes = {"painel": [RAIZ / "ecossistema.py"],
+              "commit": [RAIZ / ".pre-commit-config.yaml", RAIZ / ".githooks" / "pre-commit"],
+              "guardas": sorted((RAIZ / "gates").glob("G_*.py")),
+              "scripts": sorted((RAIZ / "scripts").glob("*.py")),
+              "testes": sorted((RAIZ / "tests").rglob("test_*.py")) + sorted((RAIZ / "scripts").glob("test_*.py"))
+              + sorted((RAIZ / "gates").glob("test_*.py"))}
+    textos = {grupo: [(p, _ler(p)) for p in arquivos if p.is_file()] for grupo, arquivos in fontes.items()}
+    lista = []
+    for p in sorted((RAIZ / "scripts").glob("*.py")):
+        if p.name.startswith("test_") or p.name == "__init__.py":
+            continue
+        try:
+            doc = ast.get_docstring(ast.parse(_ler(p).lstrip("\ufeff"))) or ""
+        except SyntaxError:
+            doc = ""
+        linha = next((x.strip() for x in doc.splitlines() if x.strip() and not set(x.strip()) <= set("=-─")), "")
+        chamado_por = sorted(grupo for grupo, itens in textos.items()
+                             if any(p.stem in texto for arq, texto in itens if arq != p))
+        lista.append({"id": p.stem, "descricao": linha, "chamado_por": chamado_por})
+    return lista
+
 def _prova_que_morde(morde_mod, nome: str) -> bool:
     teste = morde_mod.encontrar_arquivo_teste(f"{nome}.py", str(RAIZ / "gates"))
     return bool(teste) and morde_mod.auditar_teste_de_falha(teste, executar=False)[0]
@@ -633,6 +656,7 @@ def gerar(com_encaixe: bool = True) -> dict:
         "skills": skills,
         "skills_terceiros": skills_terceiros,
         "leis": coletar_leis(),
+        "scripts": coletar_scripts(),
         "moldes_entrega": coletar_moldes_entrega(),
         "harnesses": coletar_harnesses(),
         "comandos_slash": coletar_comandos_slash(),
@@ -650,6 +674,7 @@ def gerar(com_encaixe: bool = True) -> dict:
         "comandos_cli": sum(len(f["comandos"]) for f in ferramentas),
         "skills": len(skills),
         "leis": len(catalogo["leis"]),
+        "scripts": len(catalogo["scripts"]),
         "moldes_entrega": len(catalogo["moldes_entrega"]),
         "harnesses": len(catalogo["harnesses"]["harnesses"]),
         "skills_nossas": sum(1 for s in skills if not s["terceiro"]),

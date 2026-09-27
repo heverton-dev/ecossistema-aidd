@@ -6,6 +6,7 @@
     "comandos_cli": 69,
     "skills": 38,
     "leis": 13,
+    "scripts": 22,
     "moldes_entrega": 24,
     "harnesses": 7,
     "skills_nossas": 38,
@@ -773,6 +774,189 @@
         }
       ],
       "sem_gate": false
+    }
+  ],
+  "scripts": [
+    {
+      "id": "atualizar_index_planos",
+      "descricao": "ECOSSISTEMA AIDD — ATUALIZADOR DETERMINÍSTICO DE docs/planos/INDEX.md",
+      "chamado_por": [
+        "commit",
+        "painel",
+        "scripts",
+        "testes"
+      ]
+    },
+    {
+      "id": "catalogo_pecas",
+      "descricao": "Catálogo de peças do Ecossistema AIDD (mapa-pecas ciclo-01, passo 1).",
+      "chamado_por": [
+        "scripts",
+        "testes"
+      ]
+    },
+    {
+      "id": "compilador_plano_evolucao",
+      "descricao": "",
+      "chamado_por": [
+        "painel",
+        "scripts",
+        "testes"
+      ]
+    },
+    {
+      "id": "compilador_tickets_plano",
+      "descricao": "ECOSSISTEMA AIDD — COMPILADOR DE TICKETS DE PLANO PARA HANDOFF (ISSUE-PIPE-0004)",
+      "chamado_por": [
+        "guardas",
+        "painel",
+        "testes"
+      ]
+    },
+    {
+      "id": "faz_commit",
+      "descricao": "FAZ-COMMIT — EXECUÇÃO DETERMINÍSTICA DE GIT COM MENSAGEM PROBABILÍSTICA (IA)",
+      "chamado_por": [
+        "testes"
+      ]
+    },
+    {
+      "id": "gerador_livro_projeto",
+      "descricao": "ECOSSISTEMA AIDD — GERADOR DETERMINISTICO DO LIVRO-TEXTO DO PROJETO",
+      "chamado_por": [
+        "painel",
+        "testes"
+      ]
+    },
+    {
+      "id": "gerador_relatorio_evolucao_planos",
+      "descricao": "Gera o par <dd-mm-aaaa>_relatorio-evolucao-plano-acao.{json,html} em",
+      "chamado_por": []
+    },
+    {
+      "id": "gerador_templates_gates",
+      "descricao": "ECOSSISTEMA AIDD — GERADOR MECÂNICO DE TEMPLATES DE GATES (Item 3)",
+      "chamado_por": []
+    },
+    {
+      "id": "gerar_chave_manifesto",
+      "descricao": "ECOSSISTEMA AIDD — Geração do Par de Chaves Ed25519 do Manifesto Canônico",
+      "chamado_por": []
+    },
+    {
+      "id": "gerenciador_melhorias",
+      "descricao": "Gerenciador deterministico de relatorios de analise profunda de melhorias.",
+      "chamado_por": [
+        "painel",
+        "testes"
+      ]
+    },
+    {
+      "id": "gerenciador_planos",
+      "descricao": "Gerenciador deterministico de planos de auditoria/evolucao/testes.",
+      "chamado_por": [
+        "painel",
+        "scripts",
+        "testes"
+      ]
+    },
+    {
+      "id": "gestor_componentes",
+      "descricao": "ECOSSISTEMA AIDD — GESTOR ÚNICO DE COMPONENTES MULTI-HARNESS",
+      "chamado_por": [
+        "guardas",
+        "painel",
+        "scripts",
+        "testes"
+      ]
+    },
+    {
+      "id": "gestor_dependencias",
+      "descricao": "ECOSSISTEMA AIDD — GESTOR DE DEPENDÊNCIAS EXTERNAS (SKILLS + MCPS DE TERCEIROS)",
+      "chamado_por": [
+        "guardas",
+        "painel",
+        "scripts",
+        "testes"
+      ]
+    },
+    {
+      "id": "gestor_sessoes",
+      "descricao": "GESTOR DETERMINÍSTICO DE SESSÕES AGÊNTICAS (AIDD-SESSAO)",
+      "chamado_por": [
+        "guardas",
+        "painel",
+        "testes"
+      ]
+    },
+    {
+      "id": "harness_hygiene",
+      "descricao": "Higiene e Manutenção Preventiva Multi-Harness",
+      "chamado_por": [
+        "commit",
+        "painel"
+      ]
+    },
+    {
+      "id": "mapa_visual",
+      "descricao": "Gerador dos mapas visuais (docs/mapas-visuais), um por tipo de peça.",
+      "chamado_por": [
+        "testes"
+      ]
+    },
+    {
+      "id": "orquestrador_4f",
+      "descricao": "",
+      "chamado_por": [
+        "painel",
+        "scripts",
+        "testes"
+      ]
+    },
+    {
+      "id": "orquestrador_sincrono",
+      "descricao": "ECOSSISTEMA AIDD — ORQUESTRADOR SÍNCRONO DA TRÍADE CANÔNICA",
+      "chamado_por": [
+        "guardas",
+        "painel",
+        "scripts",
+        "testes"
+      ]
+    },
+    {
+      "id": "package_usuario",
+      "descricao": "Empacota o núcleo de distribuição para o usuário final (ISSUE-USA-0006).",
+      "chamado_por": [
+        "guardas",
+        "painel",
+        "testes"
+      ]
+    },
+    {
+      "id": "preflight_host",
+      "descricao": "Preflight Host — diagnostico instantaneo (< 2s) de binarios do sistema",
+      "chamado_por": [
+        "guardas",
+        "painel",
+        "scripts",
+        "testes"
+      ]
+    },
+    {
+      "id": "relatorio_skills_duplicadas",
+      "descricao": "Relatório de skills globais duplicadas (skills-pocock ciclo-01, Ticket 11).",
+      "chamado_por": [
+        "testes"
+      ]
+    },
+    {
+      "id": "scaffold_auditoria",
+      "descricao": "",
+      "chamado_por": [
+        "painel",
+        "scripts",
+        "testes"
+      ]
     }
   ],
   "moldes_entrega": [

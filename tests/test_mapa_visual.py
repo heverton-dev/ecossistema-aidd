@@ -184,7 +184,7 @@ def test_encaixes_marcador_desencontrado_reprova(tmp_path, monkeypatch):
         mv.montar("encaixes", _cat_encaixes(), "m.html", fragmento=True)
 
 
-@pytest.mark.parametrize("tipo", ["encaixes", "ferramentas", "comandos", "conexoes", "leis", "moldes", "harnesses"])
+@pytest.mark.parametrize("tipo", ["encaixes", "ferramentas", "comandos", "conexoes", "leis", "scripts", "moldes", "harnesses"])
 def test_mapa_roda_de_verdade_no_repositorio(tmp_path, tipo):
     saida = tmp_path / "mapa.html"
     proc = subprocess.run([sys.executable, str(ROOT / "scripts" / "mapa_visual.py"), tipo,
@@ -343,3 +343,24 @@ def test_moldes_marcador_desencontrado_reprova(tmp_path, monkeypatch):
     monkeypatch.setattr(mv, "MOLDES", tmp_path)
     with pytest.raises(ValueError, match="SOBRA"):
         mv.montar("moldes", _cat_moldes(), "m.html", fragmento=True)
+
+
+def _cat_scripts():
+    return {"scripts": [
+        {"id": "catalogo_pecas", "descricao": "Gera o catálogo.", "chamado_por": ["scripts", "testes"]},
+        {"id": "velho", "descricao": "", "chamado_por": []},
+        {"id": "testado", "descricao": "Só testado.", "chamado_por": ["testes"]}]}
+
+
+def test_scripts_soltos_saem_do_catalogo():
+    valores = mv.valores_scripts(_cat_scripts())
+    assert "velho" in valores["SOLTOS"] and "testado" in valores["SO_TESTES"]
+    assert 'chip falha">ninguém chama' in valores["LISTA"] and "sem docstring" in valores["LISTA"]
+
+
+def test_scripts_marcador_desencontrado_reprova(tmp_path, monkeypatch):
+    (tmp_path / "scripts.html").write_text("{{TOTAIS}} {{LISTA}} {{SOBRA}}", encoding="utf-8")
+    (tmp_path / "base.css").write_text("", encoding="utf-8")
+    monkeypatch.setattr(mv, "MOLDES", tmp_path)
+    with pytest.raises(ValueError, match="SOBRA"):
+        mv.montar("scripts", _cat_scripts(), "m.html", fragmento=True)

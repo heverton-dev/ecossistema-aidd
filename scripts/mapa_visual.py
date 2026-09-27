@@ -39,6 +39,7 @@ TITULOS = {"guardas": "Mapa dos Guardas", "skills": "Mapa das Skills", "indice":
            "encaixes": "Mapa dos Encaixes", "ferramentas": "Mapa das Ferramentas",
            "comandos": "Mapa dos Comandos Slash", "conexoes": "Mapa das Conexões",
            "leis": "Mapa das Leis",
+           "scripts": "Mapa dos Scripts",
            "moldes": "Mapa dos Moldes de Entrega",
            "harnesses": "Mapa dos Harnesses"}
 # Os mapas que o ecossistema precisa ter, na ordem de criação. O índice mostra
@@ -51,6 +52,7 @@ MAPAS_PREVISTOS = (
     ("comandos", "Mapa dos comandos slash", "o que você digita e qual skill cada comando chama"),
     ("conexoes", "Mapa das conexões", "os MCPs (telefones para fora) e os hooks (alarmes)"),
     ("leis", "Mapa das leis", "cada lei do AGENTS.md e o guarda que a prova, e onde a prova é fraca"),
+    ("scripts", "Mapa dos scripts", "cada script de scripts/, o que faz e quem o chama"),
     ("moldes", "Mapa dos moldes de entrega", "o que cada ferramenta entrega junto com o app gerado"),
     ("harnesses", "Mapa dos harnesses", "para onde cada peça é copiada em cada programa de agente"),
 )
@@ -471,6 +473,36 @@ def valores_moldes(cat: dict) -> dict[str, str]:
         "LISTA": "".join(grupos),
     }
 
+ORDEM_CHAMADORES = ("painel", "commit", "guardas", "scripts", "testes")
+
+
+def valores_scripts(cat: dict) -> dict[str, str]:
+    scripts = cat["scripts"]
+    soltos = [s["id"] for s in scripts if not s["chamado_por"]]
+    so_testes = [s["id"] for s in scripts if s["chamado_por"] == ["testes"]]
+    cartoes = []
+    for s in scripts:
+        chips = "".join(f'<span class="chip lei">{e(c)}</span>' for c in ORDEM_CHAMADORES if c in s["chamado_por"])
+        if not s["chamado_por"]:
+            chips = '<span class="chip falha">ninguém chama</span>'
+        elif s["chamado_por"] == ["testes"]:
+            chips += '<span class="chip aviso">só os testes</span>'
+        cartoes.append(f'<article class="item" style="--c:var(--c-trabalha)" data-busca="{e((s["id"] + " " + s["descricao"]).lower())}">'
+                       f'<span class="nome">{e(s["id"])}.py</span><p class="desc">{e(s["descricao"] or "sem docstring")}</p>'
+                       f'<div class="chips" style="display:flex;flex-wrap:wrap;gap:6px">{chips}</div></article>')
+    return {
+        "TOTAIS": _totais([
+            (len(scripts), "scripts em scripts/", ""),
+            (sum(1 for s in scripts if "painel" in s["chamado_por"]), "chamados pelo painel", ""),
+            (sum(1 for s in scripts if "commit" in s["chamado_por"]), "rodam no commit", ""),
+            (len(so_testes), "só os testes chamam", "aviso" if so_testes else ""),
+            (len(soltos), "ninguém chama", "falha" if soltos else ""),
+        ]),
+        "SOLTOS": _lista_curta(soltos, "Todo script tem quem o chame."),
+        "SO_TESTES": _lista_curta(so_testes, "Nenhum hoje."),
+        "LISTA": f'<div class="grupo"><div class="itens">{"".join(cartoes)}</div></div>',
+    }
+
 def status_mapa(tipo: str, cat: dict) -> str:
     """concluido = arquivo existe e está em dia com o catálogo; desatualizado = existe e
     difere; a-criar = sem gerador ou sem arquivo."""
@@ -512,6 +544,7 @@ GERADORES = {"guardas": valores_guardas, "skills": valores_skills, "indice": val
              "encaixes": valores_encaixes, "ferramentas": valores_ferramentas,
              "comandos": valores_comandos, "conexoes": valores_conexoes,
              "leis": valores_leis,
+             "scripts": valores_scripts,
              "moldes": valores_moldes,
              "harnesses": valores_harnesses}
 
