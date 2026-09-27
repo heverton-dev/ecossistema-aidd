@@ -39,6 +39,7 @@ TITULOS = {"guardas": "Mapa dos Guardas", "skills": "Mapa das Skills", "indice":
            "encaixes": "Mapa dos Encaixes", "ferramentas": "Mapa das Ferramentas",
            "comandos": "Mapa dos Comandos Slash", "conexoes": "Mapa das Conexões",
            "leis": "Mapa das Leis",
+           "oficina": "Mapa da Oficina",
            "scripts": "Mapa dos Scripts",
            "moldes": "Mapa dos Moldes de Entrega",
            "harnesses": "Mapa dos Harnesses"}
@@ -52,6 +53,7 @@ MAPAS_PREVISTOS = (
     ("comandos", "Mapa dos comandos slash", "o que você digita e qual skill cada comando chama"),
     ("conexoes", "Mapa das conexões", "os MCPs (telefones para fora) e os hooks (alarmes)"),
     ("leis", "Mapa das leis", "cada lei do AGENTS.md e o guarda que a prova, e onde a prova é fraca"),
+    ("oficina", "Mapa da oficina", "todos os planos e ciclos de auditoria, com as fases cumpridas"),
     ("scripts", "Mapa dos scripts", "cada script de scripts/, o que faz e quem o chama"),
     ("moldes", "Mapa dos moldes de entrega", "o que cada ferramenta entrega junto com o app gerado"),
     ("harnesses", "Mapa dos harnesses", "para onde cada peça é copiada em cada programa de agente"),
@@ -503,6 +505,52 @@ def valores_scripts(cat: dict) -> dict[str, str]:
         "LISTA": f'<div class="grupo"><div class="itens">{"".join(cartoes)}</div></div>',
     }
 
+NOMES_FASES = {"laudo_inicial": "laudo inicial", "plano_evolucao": "plano de evolução",
+               "laudo_revisado": "laudo revisado", "dod": "pronto (DoD)"}
+ORDEM_ESTADOS = (("rascunho", "Rascunho", "aviso"), ("a-fazer", "A fazer", "lei"),
+                 ("fazendo", "Fazendo", "aviso"), ("feitos", "Feitos", "ok"))
+
+
+def _chip_itens(n: int) -> str:
+    return f'<span class="chip">{n} itens</span>' if n else ""
+
+
+def valores_oficina(cat: dict) -> dict[str, str]:
+    of = cat["oficina"]
+    grupos = []
+    for estado, rotulo, cls in ORDEM_ESTADOS:
+        itens = [p for p in of["planos"] if p["estado"] == estado]
+        if not itens:
+            continue
+        cartoes = "".join(
+            f'<article class="item" style="--c:var(--c-pensa)" data-busca="{e(p["id"])}"><span class="nome">{e(p["id"])}</span>'
+            f'<div class="chips"><span class="chip {cls}">{rotulo}</span>{_chip_itens(p["itens"])}</div></article>'
+            for p in itens)
+        grupos.append(f'<div class="grupo"><h3>{e(rotulo)} <small>{len(itens)}</small></h3><div class="itens">{cartoes}</div></div>')
+    ciclos = []
+    for c in of["ciclos"]:
+        fases = "".join(f'<span class="chip {"ok" if feito else "falha"}">{e(NOMES_FASES[k])}</span>' for k, feito in c["fases"].items())
+        nota = f'<span class="chip lei">nota {e(c["nota"])}/10</span>' if c["nota"] else ""
+        ciclos.append(f'<article class="item" style="--c:var(--c-guarda)" data-busca="{e(c["alvo"])}">'
+                      f'<span class="nome">{e(c["alvo"])} · {e(c["ciclo"])}</span>'
+                      f'<div class="chips" style="display:flex;flex-wrap:wrap;gap:6px">{fases}{nota}</div>'
+                      f'<span class="onde">{e(c["caminho"])}</span></article>')
+    incompletos = [f'{c["alvo"]}/{c["ciclo"]}' for c in of["ciclos"] if not all(c["fases"].values())]
+    parados = [p["id"] for p in of["planos"] if p["estado"] == "fazendo"]
+    return {
+        "TOTAIS": _totais([
+            (len(of["planos"]), "planos", ""),
+            (len(parados), "em execução", "aviso" if len(parados) > 3 else ""),
+            (len(of["ciclos"]), "ciclos de auditoria", ""),
+            (len(incompletos), "ciclos sem os 4 documentos", "aviso" if incompletos else ""),
+            (of["relatorios_melhoria"], "relatórios de melhoria", ""),
+        ]),
+        "FAZENDO": _lista_curta(parados, "Nenhum plano em execução."),
+        "INCOMPLETOS": _lista_curta(incompletos, "Todos os ciclos têm os 4 documentos."),
+        "PLANOS": "".join(grupos),
+        "CICLOS": f'<div class="grupo"><div class="itens">{"".join(ciclos)}</div></div>',
+    }
+
 def status_mapa(tipo: str, cat: dict) -> str:
     """concluido = arquivo existe e está em dia com o catálogo; desatualizado = existe e
     difere; a-criar = sem gerador ou sem arquivo."""
@@ -544,6 +592,7 @@ GERADORES = {"guardas": valores_guardas, "skills": valores_skills, "indice": val
              "encaixes": valores_encaixes, "ferramentas": valores_ferramentas,
              "comandos": valores_comandos, "conexoes": valores_conexoes,
              "leis": valores_leis,
+             "oficina": valores_oficina,
              "scripts": valores_scripts,
              "moldes": valores_moldes,
              "harnesses": valores_harnesses}

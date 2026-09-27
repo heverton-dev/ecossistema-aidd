@@ -184,7 +184,7 @@ def test_encaixes_marcador_desencontrado_reprova(tmp_path, monkeypatch):
         mv.montar("encaixes", _cat_encaixes(), "m.html", fragmento=True)
 
 
-@pytest.mark.parametrize("tipo", ["encaixes", "ferramentas", "comandos", "conexoes", "leis", "scripts", "moldes", "harnesses"])
+@pytest.mark.parametrize("tipo", ["encaixes", "ferramentas", "comandos", "conexoes", "leis", "oficina", "scripts", "moldes", "harnesses"])
 def test_mapa_roda_de_verdade_no_repositorio(tmp_path, tipo):
     saida = tmp_path / "mapa.html"
     proc = subprocess.run([sys.executable, str(ROOT / "scripts" / "mapa_visual.py"), tipo,
@@ -364,3 +364,27 @@ def test_scripts_marcador_desencontrado_reprova(tmp_path, monkeypatch):
     monkeypatch.setattr(mv, "MOLDES", tmp_path)
     with pytest.raises(ValueError, match="SOBRA"):
         mv.montar("scripts", _cat_scripts(), "m.html", fragmento=True)
+
+
+def _cat_oficina():
+    fases = {"laudo_inicial": True, "plano_evolucao": True, "laudo_revisado": False, "dod": True}
+    return {"oficina": {"planos": [{"id": "PLAN-0001-a", "estado": "feitos", "itens": 3},
+                                   {"id": "PLAN-0002-b", "estado": "fazendo", "itens": 0}],
+                        "ciclos": [{"alvo": "aidd-x", "ciclo": "ciclo-01", "caminho": "docs/auditoria/aidd-x/ciclo-01",
+                                    "fases": fases, "nota": "8"}],
+                        "relatorios_melhoria": 2}}
+
+
+def test_oficina_planos_e_ciclos_saem_do_catalogo():
+    valores = mv.valores_oficina(_cat_oficina())
+    assert "PLAN-0002-b" in valores["FAZENDO"] and "aidd-x/ciclo-01" in valores["INCOMPLETOS"]
+    assert "3 itens" in valores["PLANOS"] and "nota 8/10" in valores["CICLOS"]
+    assert 'chip falha">laudo revisado' in valores["CICLOS"]
+
+
+def test_oficina_marcador_desencontrado_reprova(tmp_path, monkeypatch):
+    (tmp_path / "oficina.html").write_text("{{TOTAIS}} {{PLANOS}} {{SOBRA}}", encoding="utf-8")
+    (tmp_path / "base.css").write_text("", encoding="utf-8")
+    monkeypatch.setattr(mv, "MOLDES", tmp_path)
+    with pytest.raises(ValueError, match="SOBRA"):
+        mv.montar("oficina", _cat_oficina(), "m.html", fragmento=True)

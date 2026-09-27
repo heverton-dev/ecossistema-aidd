@@ -410,6 +410,37 @@ def coletar_scripts() -> list[dict]:
         lista.append({"id": p.stem, "descricao": linha, "chamado_por": chamado_por})
     return lista
 
+RE_NOTA_LAUDO = re.compile(r"[Nn]ota[^:\n]*:\s*\**\s*(\d+(?:[.,]\d+)?)\s*/\s*10")
+# Documentos que toda rodada 4F produz; a fase 3 (Construtor) entrega código, não documento fixo.
+FASES_CICLO = (("laudo_inicial", "LAUDO-15D-INICIAL.md"), ("plano_evolucao", "PLANO-EVOLUCAO.md"),
+               ("laudo_revisado", "LAUDO-15D-REVISADO.md"), ("dod", "DOD.md"))
+
+
+def coletar_oficina() -> dict:
+    """Planos em docs/planos/ (rascunho, a-fazer, fazendo, feitos) e ciclos de auditoria em
+    docs/auditoria/<alvo>/ciclo-NN/, com as fases presentes e a última nota do laudo."""
+    base = RAIZ / "docs" / "planos"
+    planos = []
+    for estado, pasta in (("rascunho", base), ("a-fazer", base / "a-fazer"), ("fazendo", base / "fazendo"),
+                          ("feitos", base / "feitos")):
+        for p in sorted(pasta.glob("PLAN-*")):
+            itens = len([f for f in p.glob("[0-9][0-9]-*.md") if not f.name.startswith("00-")]) if p.is_dir() else 0
+            planos.append({"id": p.name.removesuffix(".md"), "estado": estado, "itens": itens})
+    ciclos = []
+    for d in sorted((RAIZ / "docs" / "auditoria").glob("*/ciclo-*")):
+        nomes = {f.name for f in d.iterdir()}
+        nota = ""
+        for arquivo in ("LAUDO-15D-REVISADO.md", "LAUDO-15D-INICIAL.md"):
+            if arquivo in nomes:
+                notas = RE_NOTA_LAUDO.findall(_ler(d / arquivo))
+                if notas:
+                    nota = notas[-1].replace(",", ".")
+                    break
+        ciclos.append({"alvo": d.parent.name, "ciclo": d.name, "caminho": _rel(d),
+                       "fases": {chave: arquivo in nomes for chave, arquivo in FASES_CICLO}, "nota": nota})
+    melhorias = len(list((RAIZ / "docs" / "melhorias").glob("*.json")))
+    return {"planos": planos, "ciclos": ciclos, "relatorios_melhoria": melhorias}
+
 def _prova_que_morde(morde_mod, nome: str) -> bool:
     teste = morde_mod.encontrar_arquivo_teste(f"{nome}.py", str(RAIZ / "gates"))
     return bool(teste) and morde_mod.auditar_teste_de_falha(teste, executar=False)[0]
@@ -656,6 +687,7 @@ def gerar(com_encaixe: bool = True) -> dict:
         "skills": skills,
         "skills_terceiros": skills_terceiros,
         "leis": coletar_leis(),
+        "oficina": coletar_oficina(),
         "scripts": coletar_scripts(),
         "moldes_entrega": coletar_moldes_entrega(),
         "harnesses": coletar_harnesses(),
@@ -674,6 +706,7 @@ def gerar(com_encaixe: bool = True) -> dict:
         "comandos_cli": sum(len(f["comandos"]) for f in ferramentas),
         "skills": len(skills),
         "leis": len(catalogo["leis"]),
+        "oficina": len(catalogo["oficina"]["planos"]),
         "scripts": len(catalogo["scripts"]),
         "moldes_entrega": len(catalogo["moldes_entrega"]),
         "harnesses": len(catalogo["harnesses"]["harnesses"]),

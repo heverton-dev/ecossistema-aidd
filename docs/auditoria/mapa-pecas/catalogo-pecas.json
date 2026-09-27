@@ -6,6 +6,7 @@
     "comandos_cli": 69,
     "skills": 38,
     "leis": 13,
+    "oficina": 37,
     "scripts": 22,
     "moldes_entrega": 24,
     "harnesses": 7,
@@ -776,6 +777,246 @@
       "sem_gate": false
     }
   ],
+  "oficina": {
+    "planos": [
+      {
+        "id": "PLAN-0029-teste-e2e-ferramentas",
+        "estado": "a-fazer",
+        "itens": 5
+      },
+      {
+        "id": "PLAN-0016-qualidade-testes-mutacao",
+        "estado": "fazendo",
+        "itens": 10
+      },
+      {
+        "id": "PLAN-0017-resiliencia-concorrencia-integridade",
+        "estado": "fazendo",
+        "itens": 8
+      },
+      {
+        "id": "PLAN-0018-seguranca-zero-trust",
+        "estado": "fazendo",
+        "itens": 10
+      },
+      {
+        "id": "PLAN-0019-bootstrap-ambiente-preflight",
+        "estado": "fazendo",
+        "itens": 9
+      },
+      {
+        "id": "PLAN-0021-codigo-limpo-profundo",
+        "estado": "fazendo",
+        "itens": 17
+      },
+      {
+        "id": "PLAN-0022-config-arquivos-tokens",
+        "estado": "fazendo",
+        "itens": 4
+      },
+      {
+        "id": "PLAN-0023-evolucao-engenharia-software",
+        "estado": "fazendo",
+        "itens": 6
+      },
+      {
+        "id": "PLAN-0025-conclusao-auditoria-maquiagem",
+        "estado": "fazendo",
+        "itens": 11
+      },
+      {
+        "id": "PLAN-0027-implementacao-aidd-factory",
+        "estado": "fazendo",
+        "itens": 8
+      },
+      {
+        "id": "PLAN-0028-completude-factory-v2",
+        "estado": "fazendo",
+        "itens": 8
+      },
+      {
+        "id": "PLAN-0034-upgrade-ferramentas-enterprise",
+        "estado": "fazendo",
+        "itens": 3
+      },
+      {
+        "id": "PLAN-0001-evolucao-notas-auditoria",
+        "estado": "feitos",
+        "itens": 7
+      },
+      {
+        "id": "PLAN-0002-correcao-riscos-ecossistema",
+        "estado": "feitos",
+        "itens": 0
+      },
+      {
+        "id": "PLAN-0003-refinamento-notas-auditoria",
+        "estado": "feitos",
+        "itens": 6
+      },
+      {
+        "id": "PLAN-0004-integracao-aidd-ops",
+        "estado": "feitos",
+        "itens": 9
+      },
+      {
+        "id": "PLAN-0005-skill-gerador-planos",
+        "estado": "feitos",
+        "itens": 1
+      },
+      {
+        "id": "PLAN-0006-skill-orquestracao-orca",
+        "estado": "feitos",
+        "itens": 6
+      },
+      {
+        "id": "PLAN-0007-testes-completos-ecossistema",
+        "estado": "feitos",
+        "itens": 6
+      },
+      {
+        "id": "PLAN-0008-validacao-humana-testes",
+        "estado": "feitos",
+        "itens": 6
+      },
+      {
+        "id": "PLAN-0009-correcao-auditoria-maquiagem",
+        "estado": "feitos",
+        "itens": 18
+      },
+      {
+        "id": "PLAN-0010-direcionamento-estrategico-anti-nih",
+        "estado": "feitos",
+        "itens": 9
+      },
+      {
+        "id": "PLAN-0011-evolucao-aidd-ops",
+        "estado": "feitos",
+        "itens": 4
+      },
+      {
+        "id": "PLAN-0012-correcao-arquitetura-limpa",
+        "estado": "feitos",
+        "itens": 5
+      },
+      {
+        "id": "PLAN-0013-correcao-codigo-limpo",
+        "estado": "feitos",
+        "itens": 8
+      },
+      {
+        "id": "PLAN-0014-reestruturacao-ddd-clean-architecture",
+        "estado": "feitos",
+        "itens": 10
+      },
+      {
+        "id": "PLAN-0015-otimizacao-tokenomics-latencia",
+        "estado": "feitos",
+        "itens": 7
+      },
+      {
+        "id": "PLAN-0020-aidd-bridge",
+        "estado": "feitos",
+        "itens": 4
+      },
+      {
+        "id": "PLAN-0024-testes-motor-orquestrador",
+        "estado": "feitos",
+        "itens": 3
+      },
+      {
+        "id": "PLAN-0026-universalidade-harnesses-mcp-hooks",
+        "estado": "feitos",
+        "itens": 4
+      },
+      {
+        "id": "PLAN-0028-upgrade-stack-camadas",
+        "estado": "feitos",
+        "itens": 6
+      },
+      {
+        "id": "PLAN-0030-integracao-skills-matt-pocock",
+        "estado": "feitos",
+        "itens": 0
+      },
+      {
+        "id": "PLAN-0031-blindagem-cyberseguranca",
+        "estado": "feitos",
+        "itens": 4
+      },
+      {
+        "id": "PLAN-0032-remediar-gaps-auditoria",
+        "estado": "feitos",
+        "itens": 3
+      },
+      {
+        "id": "PLAN-0033-implementacao-arquitetural-vsa",
+        "estado": "feitos",
+        "itens": 3
+      },
+      {
+        "id": "PLAN-0035-blindagem-arquitetural-qualidade",
+        "estado": "feitos",
+        "itens": 5
+      },
+      {
+        "id": "PLAN-0036-taxonomia-quarteto-sine-qua-non",
+        "estado": "feitos",
+        "itens": 5
+      }
+    ],
+    "ciclos": [
+      {
+        "alvo": "aidd-diagnose",
+        "ciclo": "ciclo-01",
+        "caminho": "docs/auditoria/aidd-diagnose/ciclo-01",
+        "fases": {
+          "laudo_inicial": true,
+          "plano_evolucao": true,
+          "laudo_revisado": true,
+          "dod": true
+        },
+        "nota": "8"
+      },
+      {
+        "alvo": "aidd-melhoria",
+        "ciclo": "ciclo-01",
+        "caminho": "docs/auditoria/aidd-melhoria/ciclo-01",
+        "fases": {
+          "laudo_inicial": true,
+          "plano_evolucao": true,
+          "laudo_revisado": true,
+          "dod": true
+        },
+        "nota": ""
+      },
+      {
+        "alvo": "mapa-pecas",
+        "ciclo": "ciclo-01",
+        "caminho": "docs/auditoria/mapa-pecas/ciclo-01",
+        "fases": {
+          "laudo_inicial": false,
+          "plano_evolucao": false,
+          "laudo_revisado": false,
+          "dod": false
+        },
+        "nota": ""
+      },
+      {
+        "alvo": "skills-pocock",
+        "ciclo": "ciclo-01",
+        "caminho": "docs/auditoria/skills-pocock/ciclo-01",
+        "fases": {
+          "laudo_inicial": false,
+          "plano_evolucao": true,
+          "laudo_revisado": false,
+          "dod": true
+        },
+        "nota": ""
+      }
+    ],
+    "relatorios_melhoria": 13
+  },
   "scripts": [
     {
       "id": "atualizar_index_planos",
