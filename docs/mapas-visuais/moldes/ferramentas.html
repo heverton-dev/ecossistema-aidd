@@ -1,0 +1,89 @@
+<!-- Molde do mapa das ferramentas. Texto fixo aqui; ferramentas, comandos e repetições entram por scripts/mapa_visual.py. -->
+<div class="wrap">
+
+<a class="voltar" href="{{LINK_MANUAL}}">← Manual de montagem</a>
+<header>
+  <span class="eyebrow">Mapa visual · peça: ferramenta</span>
+  <h1>Mapa das ferramentas</h1>
+  <p class="lead">Uma ferramenta é uma pequena fábrica especialista: recebe um pedido pelo painel de botões (<code>ecossistema.py</code>) e entrega uma coisa pronta. Este mapa mostra todas as ferramentas, os comandos de cada uma e onde duas ferramentas fazem o mesmo trabalho.</p>
+  {{TOTAIS}}
+</header>
+
+<section id="o-que">
+  <span class="eyebrow">O quê · por quê · para quê</span>
+  <h2>O que é uma ferramenta</h2>
+  <div class="grid3">
+    <div class="box"><h3>O que é</h3><p>Uma pasta em <code>tools/aidd-&lt;nome&gt;/</code> com código, testes, guardas próprios e um <code>AGENTS.md</code> com as regras dela. Ela é chamada por <code>python ecossistema.py &lt;nome&gt; ...</code>.</p></div>
+    <div class="box"><h3>Por que existe</h3><p>Cada etapa da Tríade precisa de uma fábrica que faça uma coisa só, bem feita, e que dê para testar sozinha.</p></div>
+    <div class="box"><h3>O que não é</h3><p>Não é skill: a skill é o manual que ensina o agente a usar a ferramenta. Não é guarda: o guarda confere o que ela produziu.</p></div>
+  </div>
+</section>
+
+<section id="quando">
+  <span class="eyebrow">Quando</span>
+  <h2>Quando criar, e quando não</h2>
+  <div class="grid2">
+    <div class="box">
+      <h3>Crie quando…</h3>
+      <ul>
+        <li>uma etapa da receita não tem ferramenta nenhuma (veja o mapa dos encaixes);</li>
+        <li>um trabalho novo tem entrada e saída bem definidas e dá para testar isolado.</li>
+      </ul>
+    </div>
+    <div class="box">
+      <h3>Não crie quando…</h3>
+      <ul>
+        <li>outra ferramenta já tem um comando com o mesmo trabalho (veja os verbos repetidos abaixo);</li>
+        <li>a ideia é copiar arquivos de outra ferramenta: chame a original, não duplique.</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section id="como">
+  <span class="eyebrow">Como</span>
+  <h2>O que toda ferramenta precisa ter</h2>
+  <ol class="passos">
+    <li><div><b>Pasta e descrição.</b><span><code>tools/aidd-&lt;nome&gt;/</code> com um <code>README.md</code> cuja primeira citação (<code>&gt;</code>) diz o que ela faz. É dali que este mapa tira a descrição.</span></div></li>
+    <li><div><b>Botão no painel.</b><span>Um comando em <code>ecossistema.py</code> que chama a entrada de CLI da ferramenta, com <code>--help</code> que responda.</span></div></li>
+    <li><div><b>Testes reais.</b><span>Uma pasta <code>tests/</code>: o guarda <code>G_TESTES_REAIS</code> roda o pytest de cada ferramenta em todo commit que toca <code>tools/</code>.</span></div></li>
+    <li><div><b>Manual para o agente.</b><span>Uma skill <code>aidd-&lt;nome&gt;</code>, seguindo a convenção de autoria de skills.</span></div></li>
+    <li><div><b>Disciplina de teste.</b><span>Toda mudança em <code>tools/&lt;nome&gt;/</code> registra a execução real em <code>docs/teste-end-to-end/relatorio-teste-end-to-end.md</code> (Lei #9, conferida pelo <code>G_DISCIPLINA_TESTE_FERRAMENTA</code>).</span></div></li>
+  </ol>
+</section>
+
+<section id="repeticoes">
+  <span class="eyebrow">Erros comuns · encontrados neste ecossistema</span>
+  <h2>Onde duas ferramentas fazem o mesmo trabalho</h2>
+  <div class="grid2">
+    <div class="box"><h3>O mesmo comando em várias ferramentas</h3><p>Verbos de CLI que existem em mais de uma ferramenta. Às vezes é o mesmo trabalho em dobro:</p>{{VERBOS}}</div>
+    <div class="box"><h3>A mesma tarefa com várias donas</h3><p>Uma tarefa que mais de uma ferramenta faz com código próprio:</p>{{DONAS}}</div>
+    <div class="box"><h3>Arquivos idênticos copiados</h3><p>Arquivos com o mesmo conteúdo em mais de uma ferramenta. Cópia envelhece: quando uma muda, as outras ficam para trás.</p>{{IDENTICOS}}</div>
+  </div>
+</section>
+
+<section id="lista">
+  <span class="eyebrow">Integrantes · procure antes de construir</span>
+  <h2>Todas as ferramentas</h2>
+  <div class="filtros" role="search">
+    <label for="busca" class="eyebrow" style="flex-basis:100%">Filtrar</label>
+    <input id="busca" type="search" placeholder="nome, comando ou assunto: compose, audit, lovable…" autocomplete="off">
+  </div>
+  <p class="legenda" id="contagem" aria-live="polite"></p>
+  {{LISTA}}
+</section>
+
+<footer>Gerado por <code>scripts/mapa_visual.py ferramentas</code> a partir de <code>docs/auditoria/mapa-pecas/catalogo-pecas.json</code>. Para atualizar: <code>python scripts/catalogo_pecas.py</code> e depois <code>python scripts/mapa_visual.py ferramentas</code>.</footer>
+</div>
+
+<script>
+(function(){
+  var busca=document.getElementById('busca'), itens=[].slice.call(document.querySelectorAll('.item')), contagem=document.getElementById('contagem');
+  function aplicar(){
+    var q=busca.value.trim().toLowerCase(), n=0;
+    itens.forEach(function(it){var ok=!q||it.dataset.busca.indexOf(q)>=0; it.hidden=!ok; if(ok)n++;});
+    contagem.textContent=n+' de '+itens.length+' ferramentas';
+  }
+  busca.addEventListener('input',aplicar); aplicar();
+})();
+</script>

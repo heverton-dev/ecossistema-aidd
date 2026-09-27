@@ -4,8 +4,8 @@
   "totais": {
     "ferramentas": 8,
     "comandos_cli": 69,
-    "skills": 37,
-    "skills_nossas": 37,
+    "skills": 38,
+    "skills_nossas": 38,
     "skills_terceiros_copiadas": 0,
     "skills_terceiros_registradas": 20,
     "comandos_slash": 17,
@@ -485,6 +485,12 @@
       "terceiro": false
     },
     {
+      "id": "aidd-visual-maps",
+      "descricao": "Builds or updates a visual map of one ecosystem piece type (guards, skills...) in docs/mapas-visuais/ from a PT-BR molde plus data read from the parts catalog, with tests that prove the generator bites. Use when the user wants a new map, to refresh a stale map, or says \"mapa visual\", \"novo mapa\", \"mapa das skills\", \"mapa dos guardas\", \"atualizar mapa\".",
+      "linhas": 50,
+      "terceiro": false
+    },
+    {
       "id": "aidd-wizard",
       "descricao": "Generate an interactive bash wizard that walks a human through steps only they can perform. Use when provisioning infrastructure (VPS, Cloudflare), setting up credentials or CI secrets, walking a third-party dashboard, or running a one-off migration or cutover. Use only for steps the agent cannot perform itself.",
       "linhas": 35,
@@ -517,87 +523,121 @@
     {
       "id": "aidd-livro-texto",
       "caminho": "componentes/compartilhado/comandos/aidd-livro-texto.md",
-      "descricao": ""
+      "descricao": "Gera e atualiza livros-texto corporativos em PDF, com estrutura macro-meso-micro,",
+      "skill": "aidd-textbook",
+      "skill_existe": true
     },
     {
       "id": "bridge",
       "caminho": "componentes/compartilhado/comandos/bridge.md",
-      "descricao": "Comanda a ferramenta individual aidd-bridge para acoes atomicas"
+      "descricao": "Comanda a ferramenta individual aidd-bridge para acoes atomicas",
+      "skill": "aidd-bridge",
+      "skill_existe": true
     },
     {
       "id": "dependencia",
       "caminho": "componentes/compartilhado/comandos/dependencia.md",
-      "descricao": ""
+      "descricao": "Instala e registra skills e MCPs de terceiros usados pelo próprio agente de IA neste monorepo (não é para MCPs de produtos gerados — esses seguem `componentes/<escopo>/mcps/`).",
+      "skill": "aidd-dependencies",
+      "skill_existe": true
     },
     {
       "id": "enterprise",
       "caminho": "componentes/compartilhado/comandos/enterprise.md",
-      "descricao": ""
+      "descricao": "Injeta componentes de missão crítica com validação de hashes SHA-256 e conformidade Zero-Trust no `aidd-enterprise`.",
+      "skill": "aidd-enterprise",
+      "skill_existe": true
     },
     {
       "id": "factory",
       "caminho": "componentes/compartilhado/comandos/factory.md",
-      "descricao": ""
+      "descricao": "Gera código de aplicação e integrações para stacks multi-serviço através da pipeline Factory.",
+      "skill": "aidd-factory",
+      "skill_existe": true
     },
     {
       "id": "forge",
       "caminho": "componentes/compartilhado/comandos/forge.md",
-      "descricao": ""
+      "descricao": "Dispara a inicialização e blindagem de governança AIDD no diretório especificado ou no diretório atual.",
+      "skill": "aidd-forge",
+      "skill_existe": true
     },
     {
       "id": "freedom",
       "caminho": "componentes/compartilhado/comandos/freedom.md",
-      "descricao": "Dispara o Fluxo 03 (Low-Code / Apps Unificadas) da Tríade Canônica"
+      "descricao": "Dispara o Fluxo 03 (Low-Code / Apps Unificadas) da Tríade Canônica",
+      "skill": "aidd-freedom",
+      "skill_existe": true
     },
     {
       "id": "generate",
       "caminho": "componentes/compartilhado/comandos/generate.md",
-      "descricao": ""
+      "descricao": "Dispara o pipeline autônomo de 8 fases do `aidd-generator` para transformar uma ideia em código completo.",
+      "skill": "aidd-generator",
+      "skill_existe": true
     },
     {
       "id": "master",
       "caminho": "componentes/compartilhado/comandos/master.md",
-      "descricao": ""
+      "descricao": "Adiciona uma nova fatia vertical de negócio modular (`Vertical Slice`) ao `aidd-master`.",
+      "skill": "aidd-master",
+      "skill_existe": true
     },
     {
       "id": "melhoria",
       "caminho": "componentes/compartilhado/comandos/melhoria.md",
-      "descricao": ""
+      "descricao": "Recebe um pedido de melhoria em linguagem natural, investiga o codigo real de forma profunda e gera um relatorio com nota (0-10) em `docs/melhorias/` — etapa anterior ao `/plan`.",
+      "skill": "aidd-improvement",
+      "skill_existe": true
     },
     {
       "id": "open",
       "caminho": "componentes/compartilhado/comandos/open.md",
-      "descricao": "Dispara o Fluxo 02 (Motores Open-Source) da Tríade Canônica"
+      "descricao": "Dispara o Fluxo 02 (Motores Open-Source) da Tríade Canônica",
+      "skill": "aidd-open",
+      "skill_existe": true
     },
     {
       "id": "ops",
       "caminho": "componentes/compartilhado/comandos/ops.md",
-      "descricao": ""
+      "descricao": "Dispara o Meta-Orquestrador Agêntico de Infraestrutura (AIDD-Ops) para orquestrar stacks self-hosted a partir de requisitos em linguagem natural.",
+      "skill": "aidd-ops",
+      "skill_existe": true
     },
     {
       "id": "orchestrate",
       "caminho": "componentes/compartilhado/comandos/orchestrate.md",
-      "descricao": ""
+      "descricao": "Dispara a orquestração multi-agente ORCA ADE para o plano especificado ou plano local.",
+      "skill": "aidd-orchestrate",
+      "skill_existe": true
     },
     {
       "id": "plan",
       "caminho": "componentes/compartilhado/comandos/plan.md",
-      "descricao": ""
+      "descricao": "Gera a estrutura padrao e rascunhos de planos de auditoria, evolucao ou testes em `docs/planos/`.",
+      "skill": "aidd-plan",
+      "skill_existe": true
     },
     {
       "id": "planner",
       "caminho": "componentes/compartilhado/comandos/planner.md",
-      "descricao": ""
+      "descricao": "Interface Zero-Fricção de Planejamento e Intake da Tríade AIDD.",
+      "skill": "aidd-planner",
+      "skill_existe": true
     },
     {
       "id": "pure",
       "caminho": "componentes/compartilhado/comandos/pure.md",
-      "descricao": "Dispara o Fluxo 01 (Do Zero Puro) da Tríade Canônica"
+      "descricao": "Dispara o Fluxo 01 (Do Zero Puro) da Tríade Canônica",
+      "skill": "aidd-pure",
+      "skill_existe": true
     },
     {
       "id": "sessao",
       "caminho": "componentes/compartilhado/comandos/sessao.md",
-      "descricao": "Registra o ID e os metadados da sessao atual em secoes/"
+      "descricao": "Registra o ID e os metadados da sessao atual em secoes/",
+      "skill": "aidd-session",
+      "skill_existe": true
     }
   ],
   "mcps": {
@@ -2554,7 +2594,7 @@
     "arquivos_identicos_entre_donas": [
       {
         "donas": "aidd-enterprise + aidd-master",
-        "arquivos": 54
+        "arquivos": 60
       },
       {
         "donas": "aidd-enterprise + aidd-master + componentes",

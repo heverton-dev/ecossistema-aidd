@@ -1,0 +1,57 @@
+<!-- Molde do mapa das conexões (MCPs e hooks). Texto fixo aqui; listas entram por scripts/mapa_visual.py. -->
+<div class="wrap">
+
+<a class="voltar" href="{{LINK_MANUAL}}">← Manual de montagem</a>
+<header>
+  <span class="eyebrow">Mapa visual · peças: MCP (telefone) e hook (alarme)</span>
+  <h1>Mapa das conexões</h1>
+  <p class="lead">Duas peças que ligam o agente ao resto do mundo. O <b>MCP</b> é um telefone para fora: dá ao agente uma ferramenta que mora em outro programa. O <b>hook</b> é um alarme: toca sozinho num momento combinado, sem ninguém pedir.</p>
+  {{TOTAIS}}
+</header>
+
+<section id="o-que">
+  <span class="eyebrow">O quê · onde mora</span>
+  <h2>Os três tipos de conexão</h2>
+  <div class="grid3">
+    <div class="box" style="--c:var(--c-liga)"><h3><span class="sw" aria-hidden="true"></span>MCP que o agente usa</h3><p>Registrado em <code>.mcp.json</code> (e nas configs dos outros harnesses). Vem de fora e é registrado com <code>dependencia add-mcp</code>, nunca copiado. Skill: <code>aidd-dependencies</code>.</p></div>
+    <div class="box" style="--c:var(--c-trabalha)"><h3><span class="sw" aria-hidden="true"></span>MCP de uma ferramenta</h3><p>Mora dentro da ferramenta (<code>tools/&lt;f&gt;/mcps/</code>) e vai junto com o app que ela gera. Não é para o agente deste repositório usar, por isso não aparece nas configs. Skill: <code>aidd-mcp</code>.</p></div>
+    <div class="box" style="--c:var(--c-guarda)"><h3><span class="sw" aria-hidden="true"></span>Hook</h3><p>Configurado em <code>.claude/settings.json</code>: um evento (<code>PreToolUse</code>, <code>SessionStart</code>…), um filtro e o comando que roda.</p></div>
+  </div>
+</section>
+
+<section id="quando">
+  <span class="eyebrow">Quando</span>
+  <h2>Quando criar cada uma</h2>
+  <div class="grid2">
+    <div class="box">
+      <h3>MCP</h3>
+      <ul>
+        <li>o agente precisa de um serviço de fora (documentação, navegador, GitHub): registre um MCP de terceiro;</li>
+        <li>o app gerado precisa expor uma ferramenta própria: crie um MCP dentro da ferramenta, com fonte em <code>componentes/</code>;</li>
+        <li>segredo nunca vai no arquivo: só o <b>nome</b> da variável de ambiente.</li>
+      </ul>
+    </div>
+    <div class="box">
+      <h3>Hook</h3>
+      <ul>
+        <li>algo precisa acontecer <b>sempre</b> num momento, sem depender de o agente lembrar;</li>
+        <li>se a regra só precisa ser conferida no commit, é guarda no pre-commit, não hook;</li>
+        <li>o hook precisa ser rápido e não pode travar a sessão se a ferramenta dele faltar.</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section id="lista">
+  <span class="eyebrow">Integrantes</span>
+  <h2>Todas as conexões de hoje</h2>
+  <h3>MCPs que o agente usa</h3>
+  {{REGISTRADOS}}
+  <h3>MCPs dentro das ferramentas</h3>
+  {{INTERNOS}}
+  <h3>Hooks</h3>
+  {{HOOKS}}
+</section>
+
+<footer>Gerado por <code>scripts/mapa_visual.py conexoes</code> a partir de <code>docs/auditoria/mapa-pecas/catalogo-pecas.json</code>. Para atualizar: <code>python scripts/catalogo_pecas.py</code> e depois <code>python scripts/mapa_visual.py conexoes</code>.</footer>
+</div>

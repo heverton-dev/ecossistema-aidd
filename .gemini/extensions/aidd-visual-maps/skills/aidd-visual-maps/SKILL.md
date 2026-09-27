@@ -1,0 +1,49 @@
+---
+name: aidd-visual-maps
+description: Builds or updates a visual map of one ecosystem piece type (guards, skills...) in docs/mapas-visuais/ from a PT-BR molde plus data read from the parts catalog, with tests that prove the generator bites. Use when the user wants a new map, to refresh a stale map, or says "mapa visual", "novo mapa", "mapa das skills", "mapa dos guardas", "atualizar mapa".
+---
+
+# aidd-visual-maps
+
+A map has three pieces and nothing in its lists is hand-written:
+- **molde** `docs/mapas-visuais/moldes/<type>.html`: fixed PT-BR text with `{{MARKER}}` slots;
+- **generator** `valores_<type>(cat)` in `scripts/mapa_visual.py`: fills every marker from the catalog;
+- **data** `docs/auditoria/mapa-pecas/catalogo-pecas.json`, produced by `scripts/catalogo_pecas.py`.
+
+The maps the ecosystem needs are listed in `MAPAS_PREVISTOS` (`scripts/mapa_visual.py`); the index `docs/mapas-visuais/mapa-indice.html` shows each one as concluded, stale or to create, checked against disk. Read two existing moldes before writing a new one. The assembly manual (`docs/mapas-visuais/manual-montagem-aidd.html`) links every map.
+
+## New map
+
+1. **Make sure the catalog has the data.** If a field is missing, add it in `scripts/catalogo_pecas.py` (e.g. `coletar_skills_terceiros()`) with a test in `tests/test_catalogo_pecas.py`. Done when `python scripts/catalogo_pecas.py` exits 0 and the field is in the JSON.
+2. **Write the molde** in PT-BR, same sections as the existing moldes: what / why / what for, when to build and when not, where it lives, how to build, done when / who checks, common mistakes, filterable list. Every catalog-driven part is a `{{MARKER}}`; `{{LINK_MANUAL}}` is mandatory. When an official rule exists (e.g. `docs/protocolos/CONVENCAO-AUTORIA-GATES.md`), the molde summarizes it and links to it; never copy its text. Styles come from `moldes/base.css`.
+3. **Write the generator** `valores_<type>(cat)` returning exactly the molde's markers (without `LINK_MANUAL`, added by `montar`). Escape catalog text with `e()`. Register it in `GERADORES`, its title in `TITULOS` and the map in `MAPAS_PREVISTOS`.
+4. **Write the tests** in `tests/test_mapa_visual.py`, at least:
+   - a molde marker without a value raises `ValueError` (proof that it bites);
+   - badges and lists come from a fake catalog;
+   - a real run: `python scripts/mapa_visual.py <type> --fragmento --saida <tmp>` exits 0, with no `{{` left and the expected item count.
+   Done when `python -m pytest tests/test_mapa_visual.py -q` exits 0.
+5. **Generate and check:**
+   ```bash
+   python scripts/catalogo_pecas.py
+   python scripts/mapa_visual.py <type>
+   python scripts/mapa_visual.py <type> --check
+   ```
+   Done when `--check` exits 0.
+6. **Link it from the manual:** add a `mapa-link` in the matching section of `docs/mapas-visuais/manual-montagem-aidd.html`.
+7. **Commit** molde, generator, tests, catalog and generated map together, through the full pre-commit.
+
+## Refresh an existing map
+
+A new or removed piece (a guard, a skill) makes maps stale. Regenerate the catalog, then every map, and the index last (its status reads the other files):
+
+```bash
+python scripts/catalogo_pecas.py
+python scripts/mapa_visual.py <type>      # each type in GERADORES except indice
+python scripts/mapa_visual.py indice
+```
+
+Done when the index shows every map as concluded (`tests/test_mapa_visual.py` checks it).
+
+## Publishing
+
+`--fragmento` writes without `<!doctype>`/`<head>` (Artifact publishing format). `--link-manual <url>` sets the "back to the manual" link.

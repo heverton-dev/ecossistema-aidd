@@ -18,6 +18,7 @@ Transforma ideias, requisitos de negócio ou especificações em um `PLANNER.jso
 - `/planner audit [pasta]`
 
 ## Ação do Agente:
+Executa a skill `aidd-planner`:
 1. Conduz o alinhamento de requisitos (Intake SDD/BDD) com o usuário.
 2. Executa deterministicamente `python ecossistema.py planner init ...` com os parâmetros alinhados.
 3. Valida a conformidade binária via `python ecossistema.py planner audit`.

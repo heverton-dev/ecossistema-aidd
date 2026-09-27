@@ -1,0 +1,144 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Mapas do Ecossistema</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&amp;family=IBM+Plex+Sans:wght@400;500;600&amp;family=IBM+Plex+Mono:wght@400;500&amp;display=swap">
+<style>
+/* Estilo comum dos mapas visuais (docs/mapas-visuais). Mesmos tokens do manual de montagem. */
+:root{
+  --paper:#EEF1F4; --surface:#FFFFFF; --ink:#16202B; --muted:#5A6878; --line:#D3DAE2;
+  --brick:#F2B705; --brick-ink:#3B2C00;
+  --c-pensa:#7048E8; --c-trabalha:#2F6FDB; --c-regra:#0E9384; --c-guarda:#D92D20; --c-liga:#C4620A;
+  --ok:#12805C; --ok-bg:#E3F4EC; --falha:#C0261B; --falha-bg:#FCE7E5; --fach:#A15C00; --fach-bg:#FDF0DC;
+  --tint:#E4E9EF;
+  --display:"Bricolage Grotesque", "Segoe UI", system-ui, sans-serif;
+  --body:"IBM Plex Sans", "Segoe UI", system-ui, sans-serif;
+  --mono:"IBM Plex Mono", ui-monospace, Consolas, monospace;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    color-scheme:dark;
+    --paper:#0F141A; --surface:#17202A; --ink:#E6EBF0; --muted:#95A3B2; --line:#2A3642;
+    --brick:#F5C542; --brick-ink:#2A1F00;
+    --c-pensa:#A48BFF; --c-trabalha:#79A4FF; --c-regra:#3CCBB4; --c-guarda:#FF7A70; --c-liga:#FFAA55;
+    --ok:#4FD1A0; --ok-bg:#12302A; --falha:#FF8A80; --falha-bg:#3A1A18; --fach:#FFBE5C; --fach-bg:#3A2A10;
+    --tint:#1D2833;
+  }
+}
+:root[data-theme="dark"]{
+  color-scheme:dark;
+  --paper:#0F141A; --surface:#17202A; --ink:#E6EBF0; --muted:#95A3B2; --line:#2A3642;
+  --brick:#F5C542; --brick-ink:#2A1F00;
+  --c-pensa:#A48BFF; --c-trabalha:#79A4FF; --c-regra:#3CCBB4; --c-guarda:#FF7A70; --c-liga:#FFAA55;
+  --ok:#4FD1A0; --ok-bg:#12302A; --falha:#FF8A80; --falha-bg:#3A1A18; --fach:#FFBE5C; --fach-bg:#3A2A10;
+  --tint:#1D2833;
+}
+*{box-sizing:border-box}
+::-webkit-scrollbar{width:4px;height:4px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--muted);border-radius:4px}
+::-webkit-scrollbar-thumb:hover{background:var(--brick)}
+::-webkit-scrollbar-corner{background:transparent}
+@supports not selector(::-webkit-scrollbar){*{scrollbar-width:thin;scrollbar-color:var(--muted) transparent}}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--body);font-size:16px;line-height:1.55;padding-inline:16px;padding-block:0 64px}
+.wrap{max-width:1040px;margin:0 auto}
+h1,h2,h3{font-family:var(--display);text-wrap:balance;margin:0;line-height:1.1}
+h1{font-size:clamp(2.2rem,6vw,3.4rem);font-weight:800;letter-spacing:-.02em}
+h2{font-size:clamp(1.45rem,3.4vw,2rem);font-weight:700;letter-spacing:-.01em}
+h3{font-size:1.1rem;font-weight:700}
+p{margin:0;max-width:65ch}
+a{color:inherit}
+a:focus-visible,button:focus-visible,input:focus-visible{outline:2px solid var(--brick);outline-offset:2px}
+code{font-family:var(--mono);font-size:.86em;background:var(--tint);padding:.08em .35em;border-radius:4px;overflow-wrap:anywhere}
+pre{margin:0;font-family:var(--mono);font-size:.8rem;background:var(--tint);border-radius:8px;padding:14px 16px;overflow-x:auto;line-height:1.5}
+pre code{background:none;padding:0;font-size:inherit}
+.eyebrow{font-family:var(--mono);font-size:.75rem;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+.lead{font-size:1.1rem;color:var(--muted)}
+.voltar{display:inline-block;font-size:.88rem;color:var(--muted);text-decoration:none;border-bottom:1px solid var(--line);margin-top:24px}
+header{display:flex;flex-direction:column;gap:14px;padding-block:28px 36px}
+section{display:flex;flex-direction:column;gap:18px;padding-block:40px;border-top:1px solid var(--line)}
+.box{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:18px;display:flex;flex-direction:column;gap:10px}
+.grid2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.grid3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+.grid4{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
+@media (max-width:860px){.grid3,.grid4{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:600px){.grid2,.grid3,.grid4{grid-template-columns:1fr}}
+.box ul,.box ol{margin:0;padding-left:20px;display:flex;flex-direction:column;gap:5px;font-size:.93rem}
+.nota{font-size:.93rem;background:var(--tint);border-radius:8px;padding:12px 16px;max-width:70ch}
+.legenda{font-size:.85rem;color:var(--muted)}
+.chip{display:inline-block;font-family:var(--mono);font-size:.7rem;letter-spacing:.04em;text-transform:uppercase;padding:3px 8px;border-radius:999px;white-space:nowrap;background:var(--tint);color:var(--muted)}
+.chip.ok{color:var(--ok);background:var(--ok-bg)}
+.chip.falha{color:var(--falha);background:var(--falha-bg)}
+.chip.aviso{color:var(--fach);background:var(--fach-bg)}
+.chip.lei{color:var(--brick-ink);background:var(--brick)}
+.totais{display:flex;flex-wrap:wrap;gap:10px}
+.total{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:10px 14px;display:flex;flex-direction:column;min-width:120px}
+.total b{font-family:var(--display);font-size:1.6rem;font-variant-numeric:tabular-nums;line-height:1.1}
+.total span{font-size:.8rem;color:var(--muted)}
+.total.falha b{color:var(--falha)} .total.aviso b{color:var(--fach)}
+.passos{counter-reset:passo;display:flex;flex-direction:column;gap:10px;margin:0;padding:0;list-style:none}
+.passos li{counter-increment:passo;display:grid;grid-template-columns:36px 1fr;gap:12px;align-items:start;background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:14px 16px}
+.passos li::before{content:counter(passo);font-family:var(--display);font-weight:800;font-size:1.3rem;color:var(--c-guarda);line-height:1.2}
+.passos li div{display:flex;flex-direction:column;gap:6px;min-width:0}
+.checklist{list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:6px}
+.checklist li{padding-left:26px;position:relative}
+.checklist li::before{content:"";position:absolute;left:0;top:.3em;width:14px;height:14px;border:2px solid var(--ok);border-radius:3px}
+.filtros{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.filtros input{flex:1 1 240px;font:inherit;font-size:.95rem;padding:9px 12px;border:1px solid var(--line);border-radius:8px;background:var(--surface);color:var(--ink)}
+.filtros button{font-family:var(--mono);font-size:.74rem;padding:7px 11px;border:1px solid var(--line);border-radius:999px;background:var(--surface);color:var(--muted);cursor:pointer}
+.filtros button[aria-pressed="true"]{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+.itens{display:flex;flex-direction:column;gap:8px}
+.item{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:12px 16px;display:flex;flex-direction:column;gap:6px}
+.item .nome{font-family:var(--mono);font-size:.92rem;font-weight:500;overflow-wrap:anywhere}
+/* cor da casa: quadradinho antes do nome, igual à legenda do manual */
+.sw,.item .nome::before{content:"";display:inline-block;width:10px;height:10px;border-radius:2px;background:var(--c,var(--line));margin-right:8px;vertical-align:1px}
+.item .desc{font-size:.9rem;color:var(--muted);max-width:none}
+.item .chips{display:flex;flex-wrap:wrap;gap:6px}
+.item .onde{font-size:.8rem;color:var(--muted);font-family:var(--mono);overflow-wrap:anywhere}
+.grupo{display:flex;flex-direction:column;gap:10px}
+.grupo h3{display:flex;gap:10px;align-items:baseline;flex-wrap:wrap}
+.grupo h3 small{font-family:var(--mono);font-size:.75rem;color:var(--muted);font-weight:400}
+.vazio{font-size:.9rem;color:var(--muted)}
+footer{padding-top:28px;border-top:1px solid var(--line);font-size:.85rem;color:var(--muted)}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<!-- Molde do índice dos mapas. A lista e o status de cada mapa entram por scripts/mapa_visual.py (MAPAS_PREVISTOS + status real em disco). -->
+<div class="wrap">
+
+<a class="voltar" href="manual-montagem-aidd.html">← Manual de montagem</a>
+<header>
+  <span class="eyebrow">Mapas visuais · índice</span>
+  <h1>Mapas do ecossistema</h1>
+  <p class="lead">Um mapa por tipo de peça. Cada um mostra tudo o que existe hoje daquele tipo e ensina a construir uma peça nova sem repetir as que já existem. Esta página lista todos os mapas que o ecossistema precisa ter e o estado real de cada um.</p>
+  <div class="totais"><div class="total "><b>6</b><span>de 6 mapas concluídos</span></div><div class="total "><b>0</b><span>desatualizados</span></div><div class="total "><b>0</b><span>a criar</span></div></div>
+</header>
+
+<section id="estado">
+  <span class="eyebrow">Estado · conferido agora</span>
+  <h2>Os mapas</h2>
+  <p>O estado não é marcado à mão. <b>Concluído</b> quer dizer que o arquivo existe e está igual ao que o gerador produz hoje a partir do catálogo. <b>Desatualizado</b> quer dizer que o arquivo existe, mas o catálogo mudou depois dele. <b>A criar</b> quer dizer que o mapa ainda não tem molde e gerador.</p>
+  <div class="grupo"><div class="itens"><article class="item" style="--c:var(--c-trabalha)" data-busca="mapa dos guardas todos os guardas, onde moram e quem prova que morde"><span class="nome">1. Mapa dos guardas</span><p class="desc">todos os guardas, onde moram e quem prova que morde</p><div class="chips"><span class="chip ok">concluído</span></div><a class="mapa-link" href="mapa-guardas.html">abrir →</a></article><article class="item" style="--c:var(--c-trabalha)" data-busca="mapa das skills todas as skills nossas, os terceiros e como criar uma"><span class="nome">2. Mapa das skills</span><p class="desc">todas as skills nossas, os terceiros e como criar uma</p><div class="chips"><span class="chip ok">concluído</span></div><a class="mapa-link" href="mapa-skills.html">abrir →</a></article><article class="item" style="--c:var(--c-trabalha)" data-busca="mapa dos encaixes as etapas da tríade, os contratos entre elas e onde cada fluxo quebra"><span class="nome">3. Mapa dos encaixes</span><p class="desc">as etapas da Tríade, os contratos entre elas e onde cada fluxo quebra</p><div class="chips"><span class="chip ok">concluído</span></div><a class="mapa-link" href="mapa-encaixes.html">abrir →</a></article><article class="item" style="--c:var(--c-trabalha)" data-busca="mapa das ferramentas as 8 ferramentas, seus comandos de cli e as tarefas com mais de uma dona"><span class="nome">4. Mapa das ferramentas</span><p class="desc">as 8 ferramentas, seus comandos de CLI e as tarefas com mais de uma dona</p><div class="chips"><span class="chip ok">concluído</span></div><a class="mapa-link" href="mapa-ferramentas.html">abrir →</a></article><article class="item" style="--c:var(--c-trabalha)" data-busca="mapa dos comandos slash o que você digita e qual skill cada comando chama"><span class="nome">5. Mapa dos comandos slash</span><p class="desc">o que você digita e qual skill cada comando chama</p><div class="chips"><span class="chip ok">concluído</span></div><a class="mapa-link" href="mapa-comandos.html">abrir →</a></article><article class="item" style="--c:var(--c-trabalha)" data-busca="mapa das conexões os mcps (telefones para fora) e os hooks (alarmes)"><span class="nome">6. Mapa das conexões</span><p class="desc">os MCPs (telefones para fora) e os hooks (alarmes)</p><div class="chips"><span class="chip ok">concluído</span></div><a class="mapa-link" href="mapa-conexoes.html">abrir →</a></article></div></div>
+</section>
+
+<section id="como">
+  <span class="eyebrow">Como</span>
+  <h2>Como um mapa é feito</h2>
+  <div class="grid3">
+    <div class="box"><h3>Molde</h3><p><code>docs/mapas-visuais/moldes/&lt;tipo&gt;.html</code>: o texto fixo em português, com marcadores onde entram as listas.</p></div>
+    <div class="box"><h3>Gerador</h3><p><code>scripts/mapa_visual.py</code>: uma função por mapa, que preenche cada marcador a partir do catálogo.</p></div>
+    <div class="box"><h3>Dados</h3><p><code>docs/auditoria/mapa-pecas/catalogo-pecas.json</code>, gerado por <code>scripts/catalogo_pecas.py</code>. Nada da lista é escrito à mão.</p></div>
+  </div>
+  <p>O passo a passo está na parte 9 do manual de montagem e, para o agente, na skill <code>aidd-visual-maps</code>.</p>
+</section>
+
+<footer>Gerado por <code>scripts/mapa_visual.py indice</code>. Para atualizar tudo: <code>python scripts/catalogo_pecas.py</code>, depois <code>python scripts/mapa_visual.py &lt;tipo&gt;</code> para cada mapa e, por último, <code>python scripts/mapa_visual.py indice</code>.</footer>
+</div>
+</body>
+</html>

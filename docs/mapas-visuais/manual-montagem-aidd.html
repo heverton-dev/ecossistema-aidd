@@ -206,6 +206,7 @@ footer{padding-top:28px;border-top:1px solid var(--line);font-size:.85rem;color:
   <a href="#receita">6 · A receita</a>
   <a href="#oficina">7 · A oficina</a>
   <a href="#cola">8 · Cola rápida</a>
+  <a href="#mapas">9 · Os mapas</a>
 </nav>
 
 <section id="inicio">
@@ -292,6 +293,7 @@ footer{padding-top:28px;border-top:1px solid var(--line);font-size:.85rem;color:
       <span class="tec">skill · SKILL.md</span>
       <p class="ana">Uma receita escrita que ensina o agente a fazer uma tarefa específica. O agente lê o manual e executa.</p>
       <p class="fix"><b>Ajuste:</b> skill não é um agente. É o papel com as instruções. O mesmo agente pode ler 10 manuais diferentes ao longo do dia.</p>
+      <a class="mapa-link" href="mapa-skills.html">Ver o mapa das skills, e como construir uma nova →</a>
     </article>
     <article class="peca" style="--c:var(--c-regra)">
       <div class="top"><h3>O regulamento</h3><span class="chip ajuste">ajuste</span></div>
@@ -341,7 +343,8 @@ footer{padding-top:28px;border-top:1px solid var(--line);font-size:.85rem;color:
       <div class="top"><h3>O painel de botões</h3></div>
       <span class="tec">ecossistema.py · comandos slash</span>
       <p class="ana">A porta de entrada única. Cada botão do painel liga uma ferramenta ou uma receita. Os comandos slash (<code>/pure</code>, <code>/plan</code>…) são os mesmos botões, apertados de dentro do chat.</p>
-      <p class="ex">16 comandos slash. <code>python ecossistema.py help</code> mostra o painel inteiro.</p>
+      <p class="ex">17 comandos slash. <code>python ecossistema.py help</code> mostra o painel inteiro.</p>
+      <a class="mapa-link" href="mapa-comandos.html">Ver o mapa dos comandos: qual skill cada botão chama →</a>
     </article>
     <article class="peca" style="--c:var(--c-trabalha)">
       <div class="top"><h3>Os moldes</h3></div>
@@ -366,6 +369,7 @@ footer{padding-top:28px;border-top:1px solid var(--line);font-size:.85rem;color:
       <span class="tec">dependências externas</span>
       <p class="ana">Skills e telefones feitos por outras pessoas, que o ecossistema usa. Ficam anotados numa lista, e uma máquina confere se todos estão instalados antes de começar.</p>
       <p class="ex">39 declaradas em <code>gates/dependencias_externas.json</code>. Conferência: <code>dependencia verify</code>.</p>
+      <a class="mapa-link" href="mapa-conexoes.html">Ver o mapa das conexões: MCPs e hooks →</a>
     </article>
     <article class="peca" style="--c:var(--brick)">
       <div class="top"><h3>O produto entregue</h3></div>
@@ -413,6 +417,7 @@ footer{padding-top:28px;border-top:1px solid var(--line);font-size:.85rem;color:
   </div>
   <p class="nota"><b>Detalhe 1.</b> Você escreveu "determinístico | probabilístico" no processamento. As duas coisas convivem: o esqueleto da ferramenta (ordem, etapas, conferências) é sempre máquina; o cérebro só preenche as partes criativas.</p>
   <p class="nota"><b>Detalhe 2.</b> Você escreveu "utilizar outras ferramentas (skills)". Uma ferramenta pode ler manuais à vontade. Já para usar outra ferramenta, ela deve chamar pela porta da frente (a linha de comando), nunca mexer por dentro. Hoje a receita da Tríade mexe por dentro do master e do planner, e isso deixa as peças grudadas.</p>
+  <a class="mapa-link" href="mapa-ferramentas.html">Ver o mapa das ferramentas: comandos de cada uma e onde duas fazem o mesmo trabalho →</a>
 </section>
 
 <section id="encaixe">
@@ -439,6 +444,7 @@ footer{padding-top:28px;border-top:1px solid var(--line);font-size:.85rem;color:
       <p>A receita do Fluxo 02 (open) pede <code>--dominio</code>, mas o factory só aceita <code>--plano</code> e <code>--pasta</code>. O pino tem o tamanho errado, e a montagem para aí.</p>
     </div>
   </div>
+  <a class="mapa-link" href="mapa-encaixes.html">Ver o mapa dos encaixes: cada etapa, cada chamada e os contratos →</a>
 </section>
 
 <section id="guarda">
@@ -559,6 +565,28 @@ footer{padding-top:28px;border-top:1px solid var(--line);font-size:.85rem;color:
       </tbody>
     </table>
   </div>
+</section>
+
+<section id="mapas">
+  <span class="eyebrow">Parte 9</span>
+  <h2>Os mapas</h2>
+  <p>Cada tipo de peça tem um mapa: a lista completa do que existe hoje e o jeito de construir uma nova. Os mapas <b>não são escritos à mão</b>. Um molde guarda o texto fixo, e o gerador preenche as listas e os números a partir do catálogo de peças.</p>
+  <a class="mapa-link" href="mapa-indice.html">Ver o índice de todos os mapas, com o estado real de cada um →</a>
+  <h3>Como fazer um mapa novo</h3>
+  <div class="linha">
+    <div class="st"><span class="eyebrow">passo 1</span><strong>Dados</strong><span>o catálogo precisa ter o que o mapa vai mostrar</span><code>catalogo_pecas.py</code></div>
+    <div class="seta" aria-hidden="true">→</div>
+    <div class="st"><span class="eyebrow">passo 2</span><strong>Molde</strong><span>texto fixo em português, com marcadores onde entram as listas</span><code>moldes/&lt;tipo&gt;.html</code></div>
+    <div class="seta" aria-hidden="true">→</div>
+    <div class="st"><span class="eyebrow">passo 3</span><strong>Gerador</strong><span>uma função que preenche cada marcador a partir do catálogo</span><code>mapa_visual.py</code></div>
+    <div class="seta" aria-hidden="true">→</div>
+    <div class="st"><span class="eyebrow">passo 4</span><strong>Testes</strong><span>marcador sem valor reprova; rodada real no repositório</span><code>test_mapa_visual.py</code></div>
+    <div class="seta" aria-hidden="true">→</div>
+    <div class="st"><span class="eyebrow">passo 5</span><strong>Gerar e conferir</strong><span>grava o mapa e confere se está em dia</span><code>mapa_visual.py &lt;tipo&gt; --check</code></div>
+    <div class="seta" aria-hidden="true">→</div>
+    <div class="st"><span class="eyebrow">passo 6</span><strong>Ligar aqui</strong><span>um link neste manual, na parte da peça</span><code>manual-montagem-aidd.html</code></div>
+  </div>
+  <p class="nota"><b>Regra dos mapas:</b> se já existe uma regra oficial para a peça, o molde só resume e aponta para ela, nunca copia o texto. Peça nova ou apagada deixa mapa desatualizado: rode o <code>--check</code> de todos. O passo a passo completo, para o agente, está na skill <code>aidd-visual-maps</code>.</p>
 </section>
 
 <footer>Números tirados de <code>docs/auditoria/mapa-pecas/catalogo-pecas.json</code>, gerado por <code>scripts/catalogo_pecas.py</code> em 26/09/2026.</footer>

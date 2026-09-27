@@ -156,11 +156,33 @@ def coletar_skills(terceiros: list[str] = ()) -> list[dict]:
     return skills
 
 
+RE_SKILL_DO_COMANDO = re.compile(r"skill `(?:skills/)?([a-z0-9]+(?:-[a-z0-9]+)*)`")
+
+
+def _descricao_comando(texto: str) -> str:
+    descricao = _frontmatter(texto, "description")
+    if descricao:
+        return descricao
+    corpo = re.sub(r"^---\n.*?\n---\n", "", texto, flags=re.DOTALL)
+    for linha in corpo.splitlines():
+        linha = linha.strip()
+        if linha and not linha.startswith(("#", ">", "-", "`", "|")):
+            return linha
+    return ""
+
+
 def coletar_comandos_slash() -> list[dict]:
-    return [
-        {"id": p.stem, "caminho": _rel(p), "descricao": _frontmatter(_ler(p), "description")}
-        for p in sorted((COMPARTILHADO / "comandos").glob("*.md"))
-    ]
+    """Cada comando e a skill que ele chama (frase 'Executa a skill `x`'), e se ela existe."""
+    comandos = []
+    for p in sorted((COMPARTILHADO / "comandos").glob("*.md")):
+        texto = _ler(p)
+        m = RE_SKILL_DO_COMANDO.search(texto)
+        skill = m.group(1) if m else ""
+        comandos.append({
+            "id": p.stem, "caminho": _rel(p), "descricao": _descricao_comando(texto),
+            "skill": skill, "skill_existe": bool(skill) and (COMPARTILHADO / "skills" / skill / "SKILL.md").is_file(),
+        })
+    return comandos
 
 
 def coletar_mcps(ferramentas: list[dict]) -> dict:

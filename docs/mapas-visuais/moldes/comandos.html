@@ -1,0 +1,49 @@
+<!-- Molde do mapa dos comandos slash. Texto fixo aqui; comandos e a skill de cada um entram por scripts/mapa_visual.py. -->
+<div class="wrap">
+
+<a class="voltar" href="{{LINK_MANUAL}}">← Manual de montagem</a>
+<header>
+  <span class="eyebrow">Mapa visual · peça: comando slash (botão)</span>
+  <h1>Mapa dos comandos slash</h1>
+  <p class="lead">Um comando slash é o botão que você aperta no chat: <code>/pure</code>, <code>/melhoria</code>, <code>/plan</code>. Ele não faz o trabalho sozinho; só chama a skill certa. Este mapa mostra todos os comandos e qual skill cada um chama.</p>
+  {{TOTAIS}}
+</header>
+
+<section id="o-que">
+  <span class="eyebrow">O quê · por quê · para quê</span>
+  <h2>O botão e o manual</h2>
+  <div class="grid3">
+    <div class="box"><h3>O que é</h3><p>Um arquivo em <code>componentes/compartilhado/comandos/&lt;nome&gt;.md</code>, distribuído para todos os harnesses pelo <code>components sync</code>.</p></div>
+    <div class="box"><h3>Por que existe</h3><p>O nome que as pessoas digitam pode ser em português (<code>/melhoria</code>), enquanto a skill tem nome em inglês (<code>aidd-improvement</code>). O comando liga um ao outro.</p></div>
+    <div class="box"><h3>A regra</h3><p>O comando só aponta para a skill <code>aidd-*</code>; ele nunca copia o conteúdo dela. A regra oficial está na convenção de autoria de skills.</p></div>
+  </div>
+</section>
+
+<section id="como">
+  <span class="eyebrow">Como</span>
+  <h2>Como criar um comando</h2>
+  <ol class="passos">
+    <li><div><b>Procure antes.</b><span>Se um comando abaixo já chama a skill, não crie outro com outro nome.</span></div></li>
+    <li><div><b>Escreva o arquivo.</b><span><code>componentes/compartilhado/comandos/&lt;nome&gt;.md</code>, com o uso e a frase <code>Executa a skill `aidd-&lt;assunto&gt;`</code>. É por essa frase que este mapa descobre qual skill o comando chama.</span></div></li>
+    <li><div><b>Distribua.</b><span><code>python ecossistema.py components sync --tipo command</code> e depois <code>components verify</code>, com exit 0.</span></div></li>
+  </ol>
+  <p>Regra oficial: <a href="../protocolos/CONVENCAO-AUTORIA-SKILLS.md"><code>docs/protocolos/CONVENCAO-AUTORIA-SKILLS.md</code></a>, seção 5.3.</p>
+</section>
+
+<section id="erros">
+  <span class="eyebrow">Erros comuns · conferido agora</span>
+  <h2>Botões que não chamam nada</h2>
+  <div class="grid2">
+    <div class="box"><h3>Aponta para skill que não existe</h3><p>O comando cita uma skill que foi renomeada ou apagada:</p>{{QUEBRADOS}}</div>
+    <div class="box"><h3>Não diz qual skill chama</h3><p>O comando descreve o que fazer, mas não aponta para nenhuma skill:</p>{{SEM_SKILL}}</div>
+  </div>
+</section>
+
+<section id="lista">
+  <span class="eyebrow">Integrantes</span>
+  <h2>Todos os comandos</h2>
+  {{LISTA}}
+</section>
+
+<footer>Gerado por <code>scripts/mapa_visual.py comandos</code> a partir de <code>docs/auditoria/mapa-pecas/catalogo-pecas.json</code>. Para atualizar: <code>python scripts/catalogo_pecas.py</code> e depois <code>python scripts/mapa_visual.py comandos</code>.</footer>
+</div>

@@ -13,7 +13,7 @@ valor sem marcador é erro (exit 1), para o molde e o gerador não se desencontr
 
 Uso:
   python scripts/mapa_visual.py <tipo> [--saida ARQ] [--fragmento] [--link-manual URL] [--check]
-    <tipo>         guardas | skills
+    <tipo>         indice | guardas | skills | ... (ver MAPAS_PREVISTOS)
     --saida        destino (padrão: docs/mapas-visuais/mapa-<tipo>.html)
     --fragmento    grava sem <!doctype>/<head> (formato de publicação do Artifact)
     --link-manual  destino do link "voltar ao manual" (padrão: manual-montagem-aidd.html)
@@ -35,7 +35,19 @@ CATALOGO = RAIZ / "docs" / "auditoria" / "mapa-pecas" / "catalogo-pecas.json"
 FONTES = ("https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;"
           "12..96,700;12..96,800&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500"
           "&display=swap")
-TITULOS = {"guardas": "Mapa dos Guardas", "skills": "Mapa das Skills"}
+TITULOS = {"guardas": "Mapa dos Guardas", "skills": "Mapa das Skills", "indice": "Mapas do Ecossistema",
+           "encaixes": "Mapa dos Encaixes", "ferramentas": "Mapa das Ferramentas",
+           "comandos": "Mapa dos Comandos Slash", "conexoes": "Mapa das Conexões"}
+# Os mapas que o ecossistema precisa ter, na ordem de criação. O índice mostra
+# cada um como concluído (arquivo em dia com o catálogo), desatualizado ou a criar.
+MAPAS_PREVISTOS = (
+    ("guardas", "Mapa dos guardas", "todos os guardas, onde moram e quem prova que morde"),
+    ("skills", "Mapa das skills", "todas as skills nossas, os terceiros e como criar uma"),
+    ("encaixes", "Mapa dos encaixes", "as etapas da Tríade, os contratos entre elas e onde cada fluxo quebra"),
+    ("ferramentas", "Mapa das ferramentas", "as 8 ferramentas, seus comandos de CLI e as tarefas com mais de uma dona"),
+    ("comandos", "Mapa dos comandos slash", "o que você digita e qual skill cada comando chama"),
+    ("conexoes", "Mapa das conexões", "os MCPs (telefones para fora) e os hooks (alarmes)"),
+)
 META_LINHAS_SKILL = 150
 META_GUARDAS = ("G_PORTAO_PROVA_QUE_MORDE", "G_LEI_DECLARA_PORTAO")
 ORDEM_CASAS = ("meta", "ecossistema", "ferramenta", "entrega", "componente")
@@ -192,7 +204,200 @@ def valores_skills(cat: dict) -> dict[str, str]:
     }
 
 
-GERADORES = {"guardas": valores_guardas, "skills": valores_skills}
+def _nome_etapa(etapa: str) -> str:
+    m = re.match(r"etapa_(\d+)_(.+)", etapa)
+    return f"{int(m.group(1))} · {m.group(2)}" if m else etapa
+
+
+def valores_encaixes(cat: dict) -> dict[str, str]:
+    etapas = cat["receita_triade"]["etapas"]
+    encaixes = cat.get("encaixes") or []
+    achados = cat["achados"]
+    por_chamada = {x["chamada"]: x for x in encaixes}
+    fluxo_de = {}
+    for et in etapas:
+        for fluxo, chamadas in et["chamadas_por_fluxo"].items():
+            for tokens in chamadas:
+                fluxo_de["ecossistema.py " + " ".join(tokens)] = fluxo
+    cartoes = []
+    for et in etapas:
+        linhas = []
+        for tokens in et["chamadas_cli"]:
+            chamada = "ecossistema.py " + " ".join(tokens)
+            enc = por_chamada.get(chamada)
+            if enc is None:
+                chip = '<span class="chip aviso">não conferida</span>'
+            elif enc["encaixa"]:
+                chip = '<span class="chip ok">encaixa</span>'
+            else:
+                chip = '<span class="chip falha">quebra</span>'
+            fluxo = f'<span class="chip lei">só {e(fluxo_de[chamada])}</span>' if chamada in fluxo_de else ""
+            linhas.append(f'<div class="chips"><code>{e(chamada)}</code>{chip}{fluxo}</div>')
+        if not linhas:
+            linhas.append('<p class="vazio">Não chama nenhuma ferramenta.</p>')
+        for atalho in et["atalhos_internos"]:
+            linhas.append(f'<div class="chips"><code>{e(atalho)}</code><span class="chip aviso">atalho por dentro</span></div>')
+        cor = "var(--c-trabalha)" if et["chama_alguma_ferramenta"] else "var(--brick)"
+        cartoes.append(f'<article class="item" style="--c:{cor}" data-busca="{e(et["etapa"])}">'
+                       f'<span class="nome">{e(_nome_etapa(et["etapa"]))}</span>'
+                       f'<p class="desc">{e(et["descricao"])}</p>{"".join(linhas)}</article>')
+    quebrados = [f'{_nome_etapa(x["etapa"])}: {x["chamada"]} ({"; ".join(x["problemas"])})'
+                 for x in encaixes if not x["encaixa"]]
+    atalhos = [f'{_nome_etapa(et)}: {", ".join(cam)}' for et, cam in achados.get("etapas_com_atalho_interno", {}).items()]
+    contratos = "".join(
+        f'<article class="item" style="--c:var(--brick)" data-busca="{e(c["id"])}"><span class="nome">{e(c["id"])}</span>'
+        f'<p class="desc">{e(c["titulo"])}</p><span class="onde">{e(" · ".join(c["usado_por"]))}</span></article>'
+        for c in cat["contratos"])
+    return {
+        "TOTAIS": _totais([
+            (len(etapas), "etapas na receita", ""),
+            (len(encaixes), "chamadas conferidas", ""),
+            (len(quebrados), "chamadas que quebram", "falha" if quebrados else ""),
+            (len(achados.get("etapas_sem_ferramenta", [])), "etapas sem ferramenta", "aviso" if achados.get("etapas_sem_ferramenta") else ""),
+            (len(cat["contratos"]), "contratos", ""),
+        ]),
+        "RECEITA": f'<div class="grupo"><div class="itens">{"".join(cartoes)}</div></div>',
+        "QUEBRADOS": _lista_curta(quebrados, "Todas as chamadas encaixam hoje."),
+        "SEM_FERRAMENTA": _lista_curta([_nome_etapa(x) for x in achados.get("etapas_sem_ferramenta", [])],
+                                       "Toda etapa chama uma ferramenta."),
+        "ATALHOS": _lista_curta(atalhos, "Nenhum atalho por dentro hoje."),
+        "CONTRATOS": f'<div class="grupo"><div class="itens">{contratos}</div></div>',
+    }
+
+
+def valores_ferramentas(cat: dict) -> dict[str, str]:
+    ferramentas = cat["ferramentas"]
+    achados = cat["achados"]
+    verbos = achados.get("verbos_cli_repetidos", {})
+    donas = achados.get("tarefas_com_varias_donas", {})
+    identicos = achados.get("arquivos_identicos_entre_donas", [])
+    cartoes = []
+    for f in ferramentas:
+        chips = "".join(
+            f'<code>{e(c)}</code>' if c not in verbos else f'<code>{e(c)}</code><span class="chip aviso">repetido</span>'
+            for c in f["comandos"])
+        extras = [f'{len(f["comandos"])} comandos', f'{len(f["gates_proprios"])} guardas próprios',
+                  f'{f["arquivos_py"]} arquivos .py']
+        if f["mcps_proprios"]:
+            extras.append(f'{len(f["mcps_proprios"])} MCPs')
+        busca = " ".join([f["id"], f["descricao"], " ".join(f["comandos"])]).lower()
+        cartoes.append(f'<article class="item" style="--c:var(--c-trabalha)" data-busca="{e(busca)}">'
+                       f'<span class="nome">{e(f["id"])}</span>'
+                       f'<p class="desc">{e(f["descricao"] or "sem descrição no README")}</p>'
+                       f'<div class="chips" style="display:flex;flex-wrap:wrap;gap:6px">{chips or "<span class=vazio>sem comandos</span>"}</div>'
+                       f'<span class="onde">{e(f["chamada"])} · {e(" · ".join(extras))}</span></article>')
+    return {
+        "TOTAIS": _totais([
+            (len(ferramentas), "ferramentas", ""),
+            (sum(len(f["comandos"]) for f in ferramentas), "comandos de CLI", ""),
+            (len(verbos), "verbos em mais de uma ferramenta", "aviso" if verbos else ""),
+            (len(donas), "tarefas com várias donas", "aviso" if donas else ""),
+            (sum(x["arquivos"] for x in identicos), "arquivos idênticos copiados", "aviso" if identicos else ""),
+        ]),
+        "VERBOS": _lista_curta([f'{v}: {", ".join(fs)}' for v, fs in sorted(verbos.items())], "Nenhum verbo repetido hoje."),
+        "DONAS": _lista_curta([f'{t}: {", ".join(d["donas"])}' for t, d in sorted(donas.items())],
+                              "Nenhuma tarefa com mais de uma dona hoje."),
+        "IDENTICOS": _lista_curta([f'{x["donas"]}: {x["arquivos"]}' for x in identicos], "Nenhuma cópia hoje."),
+        "LISTA": f'<div class="grupo"><div class="itens">{"".join(cartoes)}</div></div>',
+    }
+
+
+def valores_comandos(cat: dict) -> dict[str, str]:
+    comandos = cat["comandos_slash"]
+    quebrados = [f'/{c["id"]} → {c["skill"]}' for c in comandos if c.get("skill") and not c.get("skill_existe")]
+    sem_skill = [f'/{c["id"]}' for c in comandos if not c.get("skill")]
+    cartoes = []
+    for c in comandos:
+        if not c.get("skill"):
+            chip = '<span class="chip aviso">sem skill</span>'
+        elif c.get("skill_existe"):
+            chip = f'<code>{e(c["skill"])}</code><span class="chip ok">existe</span>'
+        else:
+            chip = f'<code>{e(c["skill"])}</code><span class="chip falha">não existe</span>'
+        cartoes.append(f'<article class="item" style="--c:var(--c-regra)" data-busca="{e(c["id"])}">'
+                       f'<span class="nome">/{e(c["id"])}</span>'
+                       f'<p class="desc">{e(c.get("descricao") or "sem descrição")}</p>'
+                       f'<div class="chips">{chip}</div><span class="onde">{e(c["caminho"])}</span></article>')
+    return {
+        "TOTAIS": _totais([
+            (len(comandos), "comandos slash", ""),
+            (sum(1 for c in comandos if c.get("skill_existe")), "apontam para uma skill que existe", ""),
+            (len(quebrados), "apontam para skill que não existe", "falha" if quebrados else ""),
+            (len(sem_skill), "não dizem qual skill chamam", "aviso" if sem_skill else ""),
+        ]),
+        "QUEBRADOS": _lista_curta(quebrados, "Nenhum hoje."),
+        "SEM_SKILL": _lista_curta(sem_skill, "Nenhum hoje."),
+        "LISTA": f'<div class="grupo"><div class="itens">{"".join(cartoes)}</div></div>',
+    }
+
+
+def valores_conexoes(cat: dict) -> dict[str, str]:
+    registrados = cat["mcps"]["registrados_mcp_json"]
+    internos = cat["mcps"]["internos_das_ferramentas"]
+    hooks = cat["hooks"]
+    lista_internos = "".join(
+        f'<article class="item" style="--c:var(--c-trabalha)" data-busca="{e(m["id"])}"><span class="nome">{e(m["id"])}</span>'
+        f'<p class="desc">da ferramenta {e(m["ferramenta"])}</p>'
+        f'<div class="chips"><span class="chip {"ok" if m["registrado_em_config"] else "lei"}">'
+        f'{"registrado para o agente" if m["registrado_em_config"] else "vai com o app gerado"}</span></div>'
+        f'<span class="onde">{e(m["caminho"])}</span></article>' for m in internos)
+    lista_hooks = "".join(
+        f'<article class="item" style="--c:var(--c-guarda)" data-busca="{e(h["evento"])}"><span class="nome">{e(h["evento"])}</span>'
+        f'<p class="desc">filtro: {e(h["matcher"] or "qualquer ferramenta")}</p>'
+        f'<span class="onde">{e(h["script"])}</span></article>' for h in hooks)
+    vazio = '<p class="vazio">Nenhum hoje.</p>'
+    return {
+        "TOTAIS": _totais([
+            (len(registrados), "MCPs que o agente usa", ""),
+            (len(internos), "MCPs dentro das ferramentas", ""),
+            (len(hooks), "hooks", ""),
+        ]),
+        "REGISTRADOS": _lista_curta(registrados, "Nenhum MCP registrado."),
+        "INTERNOS": f'<div class="grupo"><div class="itens">{lista_internos}</div></div>' if internos else vazio,
+        "HOOKS": f'<div class="grupo"><div class="itens">{lista_hooks}</div></div>' if hooks else vazio,
+    }
+
+
+def status_mapa(tipo: str, cat: dict) -> str:
+    """concluido = arquivo existe e está em dia com o catálogo; desatualizado = existe e
+    difere; a-criar = sem gerador ou sem arquivo."""
+    arquivo = MAPAS / f"mapa-{tipo}.html"
+    if tipo not in GERADORES or not arquivo.is_file():
+        return "a-criar"
+    em_dia = arquivo.read_text(encoding="utf-8") == montar(tipo, cat, "manual-montagem-aidd.html", False)
+    return "concluido" if em_dia else "desatualizado"
+
+
+ROTULO_STATUS = {"concluido": ("concluído", "ok"), "desatualizado": ("desatualizado", "aviso"),
+                 "a-criar": ("a criar", "falha")}
+
+
+def valores_indice(cat: dict) -> dict[str, str]:
+    linhas = []
+    contagem = defaultdict(int)
+    for n, (tipo, titulo, para_que) in enumerate(MAPAS_PREVISTOS, 1):
+        status = status_mapa(tipo, cat)
+        contagem[status] += 1
+        rotulo, cls = ROTULO_STATUS[status]
+        link = (f'<a class="mapa-link" href="mapa-{e(tipo)}.html">abrir →</a>' if status != "a-criar"
+                else '<span class="vazio">ainda não existe</span>')
+        linhas.append(f'<article class="item" style="--c:var(--c-trabalha)" data-busca="{e((titulo + " " + para_que).lower())}">'
+                      f'<span class="nome">{n}. {e(titulo)}</span><p class="desc">{e(para_que)}</p>'
+                      f'<div class="chips"><span class="chip {cls}">{rotulo}</span></div>{link}</article>')
+    total = len(MAPAS_PREVISTOS)
+    return {
+        "TOTAIS": _totais([
+            (contagem["concluido"], f"de {total} mapas concluídos", ""),
+            (contagem["desatualizado"], "desatualizados", "aviso" if contagem["desatualizado"] else ""),
+            (contagem["a-criar"], "a criar", "falha" if contagem["a-criar"] else ""),
+        ]),
+        "LISTA": f'<div class="grupo"><div class="itens">{"".join(linhas)}</div></div>',
+    }
+
+
+GERADORES = {"guardas": valores_guardas, "skills": valores_skills, "indice": valores_indice,
+             "encaixes": valores_encaixes, "ferramentas": valores_ferramentas,
+             "comandos": valores_comandos, "conexoes": valores_conexoes}
 
 
 def montar(tipo: str, cat: dict, link_manual: str, fragmento: bool) -> str:
