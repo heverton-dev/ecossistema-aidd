@@ -10,7 +10,7 @@ A map has three pieces and nothing in its lists is hand-written:
 - **generator** `valores_<type>(cat)` in `scripts/mapa_visual.py`: fills every marker from the catalog;
 - **data** `docs/auditoria/mapa-pecas/catalogo-pecas.json`, produced by `scripts/catalogo_pecas.py`.
 
-The maps the ecosystem needs are listed in `MAPAS_PREVISTOS` (`scripts/mapa_visual.py`); the index `docs/mapas-visuais/mapa-indice.html` shows each one as concluded, stale or to create, checked against disk. Read two existing moldes before writing a new one. The assembly manual (`docs/mapas-visuais/manual-montagem-aidd.html`) links every map.
+The maps the ecosystem needs are listed in `MAPAS_PREVISTOS` (`scripts/mapa_visual.py`); the index `docs/mapas-visuais/mapa-00-indice.html` shows each one as concluded, stale or to create, checked against disk. Read two existing moldes before writing a new one. The assembly manual (`docs/mapas-visuais/manual-montagem-aidd.html`) links every map.
 
 ## New map
 

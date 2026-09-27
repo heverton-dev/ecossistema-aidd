@@ -14,7 +14,7 @@ valor sem marcador é erro (exit 1), para o molde e o gerador não se desencontr
 Uso:
   python scripts/mapa_visual.py <tipo> [--saida ARQ] [--fragmento] [--link-manual URL] [--check]
     <tipo>         indice | guardas | skills | ... (ver MAPAS_PREVISTOS)
-    --saida        destino (padrão: docs/mapas-visuais/mapa-<tipo>.html)
+    --saida        destino (padrão: docs/mapas-visuais/mapa-NN-<tipo>.html, NN = ordem de leitura)
     --fragmento    grava sem <!doctype>/<head> (formato de publicação do Artifact)
     --link-manual  destino do link "voltar ao manual" (padrão: manual-montagem-aidd.html)
     --check        não grava; exit 1 se o arquivo existente estiver desatualizado
@@ -44,21 +44,22 @@ TITULOS = {"guardas": "Mapa dos Guardas", "skills": "Mapa das Skills", "indice":
            "scripts": "Mapa dos Scripts",
            "moldes": "Mapa dos Moldes de Entrega",
            "harnesses": "Mapa dos Harnesses"}
-# Os mapas que o ecossistema precisa ter, na ordem de criação. O índice mostra
+# Os mapas que o ecossistema precisa ter, na ordem de leitura (macro -> micro); a posição
+# numera o arquivo (mapa-NN-<tipo>.html) e o capítulo do livro. O índice mostra
 # cada um como concluído (arquivo em dia com o catálogo), desatualizado ou a criar.
 MAPAS_PREVISTOS = (
+    ("leis", "Mapa das leis", "cada lei do AGENTS.md e o guarda que a prova, e onde a prova é fraca"),
+    ("ferramentas", "Mapa das ferramentas", "as 8 ferramentas, seus comandos de CLI e as tarefas com mais de uma dona"),
+    ("encaixes", "Mapa dos encaixes", "as etapas da Tríade, os contratos entre elas e onde cada fluxo quebra"),
     ("guardas", "Mapa dos guardas", "todos os guardas, onde moram e quem prova que morde"),
     ("skills", "Mapa das skills", "todas as skills nossas, os terceiros e como criar uma"),
-    ("encaixes", "Mapa dos encaixes", "as etapas da Tríade, os contratos entre elas e onde cada fluxo quebra"),
-    ("ferramentas", "Mapa das ferramentas", "as 8 ferramentas, seus comandos de CLI e as tarefas com mais de uma dona"),
     ("comandos", "Mapa dos comandos slash", "o que você digita e qual skill cada comando chama"),
     ("conexoes", "Mapa das conexões", "os MCPs (telefones para fora) e os hooks (alarmes)"),
-    ("leis", "Mapa das leis", "cada lei do AGENTS.md e o guarda que a prova, e onde a prova é fraca"),
-    ("lente15d", "Mapa da lente 15D", "as 15 dimensões de auditoria e como cada ferramenta se saiu"),
-    ("oficina", "Mapa da oficina", "todos os planos e ciclos de auditoria, com as fases cumpridas"),
-    ("scripts", "Mapa dos scripts", "cada script de scripts/, o que faz e quem o chama"),
-    ("moldes", "Mapa dos moldes de entrega", "o que cada ferramenta entrega junto com o app gerado"),
     ("harnesses", "Mapa dos harnesses", "para onde cada peça é copiada em cada programa de agente"),
+    ("moldes", "Mapa dos moldes de entrega", "o que cada ferramenta entrega junto com o app gerado"),
+    ("scripts", "Mapa dos scripts", "cada script de scripts/, o que faz e quem o chama"),
+    ("oficina", "Mapa da oficina", "todos os planos e ciclos de auditoria, com as fases cumpridas"),
+    ("lente15d", "Mapa da lente 15D", "as 15 dimensões de auditoria e como cada ferramenta se saiu"),
 )
 META_LINHAS_SKILL = 150
 META_GUARDAS = ("G_PORTAO_PROVA_QUE_MORDE", "G_LEI_DECLARA_PORTAO")
@@ -586,10 +587,18 @@ def valores_lente15d(cat: dict) -> dict[str, str]:
         "TABELA": tabela if lente["laudos"] else '<p class="vazio">Nenhum laudo encontrado.</p>',
     }
 
+def arquivo_mapa(tipo: str) -> str:
+    """Nome do arquivo do mapa na ordem de leitura: índice 00, os demais pela posição em MAPAS_PREVISTOS."""
+    if tipo == "indice":
+        return "mapa-00-indice.html"
+    ordem = [t for t, _, _ in MAPAS_PREVISTOS]
+    return f"mapa-{ordem.index(tipo) + 1:02d}-{tipo}.html" if tipo in ordem else f"mapa-{tipo}.html"
+
+
 def status_mapa(tipo: str, cat: dict) -> str:
     """concluido = arquivo existe e está em dia com o catálogo; desatualizado = existe e
     difere; a-criar = sem gerador ou sem arquivo."""
-    arquivo = MAPAS / f"mapa-{tipo}.html"
+    arquivo = MAPAS / arquivo_mapa(tipo)
     if tipo not in GERADORES or not arquivo.is_file():
         return "a-criar"
     em_dia = arquivo.read_text(encoding="utf-8") == montar(tipo, cat, "manual-montagem-aidd.html", False)
@@ -607,7 +616,7 @@ def valores_indice(cat: dict) -> dict[str, str]:
         status = status_mapa(tipo, cat)
         contagem[status] += 1
         rotulo, cls = ROTULO_STATUS[status]
-        link = (f'<a class="mapa-link" href="mapa-{e(tipo)}.html">abrir →</a>' if status != "a-criar"
+        link = (f'<a class="mapa-link" href="{e(arquivo_mapa(tipo))}">abrir →</a>' if status != "a-criar"
                 else '<span class="vazio">ainda não existe</span>')
         linhas.append(f'<article class="item" style="--c:var(--c-trabalha)" data-busca="{e((titulo + " " + para_que).lower())}">'
                       f'<span class="nome">{n}. {e(titulo)}</span><p class="desc">{e(para_que)}</p>'
@@ -671,7 +680,7 @@ def main(argv: list[str] | None = None) -> int:
     except ValueError as erro:
         print(f"[ERRO] {erro}")
         return 1
-    saida = args.saida or MAPAS / f"mapa-{args.tipo}.html"
+    saida = args.saida or MAPAS / arquivo_mapa(args.tipo)
     if args.check:
         if not saida.is_file() or saida.read_text(encoding="utf-8") != texto:
             print(f"[DESATUALIZADO] {saida} difere do catálogo. Rode: python scripts/mapa_visual.py {args.tipo}")

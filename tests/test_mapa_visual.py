@@ -132,9 +132,9 @@ def test_indice_status_sai_do_disco(tmp_path, monkeypatch):
         ("skills", "Mapa das skills", "a"), ("guardas", "Mapa dos guardas", "b"), ("futuro", "Mapa futuro", "c")))
     cat = {**_cat_skills(_skill("aidd-a")), "gates": [_gate("G_A")],
            "achados": {"skills_mesma_descricao": [], "declaracoes_de_lei_invisiveis_ao_meta_gate": []}}
-    (tmp_path / "mapa-skills.html").write_text(mv.montar("skills", cat, "manual-montagem-aidd.html", False),
-                                               encoding="utf-8")
-    (tmp_path / "mapa-guardas.html").write_text("velho", encoding="utf-8")
+    (tmp_path / mv.arquivo_mapa("skills")).write_text(mv.montar("skills", cat, "manual-montagem-aidd.html", False),
+                                                      encoding="utf-8")
+    (tmp_path / mv.arquivo_mapa("guardas")).write_text("velho", encoding="utf-8")
     assert mv.status_mapa("skills", cat) == "concluido"
     assert mv.status_mapa("guardas", cat) == "desatualizado"
     assert mv.status_mapa("futuro", cat) == "a-criar"
@@ -409,3 +409,11 @@ def test_lente15d_marcador_desencontrado_reprova(tmp_path, monkeypatch):
     monkeypatch.setattr(mv, "MOLDES", tmp_path)
     with pytest.raises(ValueError, match="SOBRA"):
         mv.montar("lente15d", _cat_lente15d(), "m.html", fragmento=True)
+
+
+def test_arquivos_seguem_a_ordem_de_leitura():
+    assert mv.arquivo_mapa("indice") == "mapa-00-indice.html"
+    for n, (tipo, _titulo, _para_que) in enumerate(mv.MAPAS_PREVISTOS, 1):
+        assert mv.arquivo_mapa(tipo) == f"mapa-{n:02d}-{tipo}.html"
+        if mv.status_mapa(tipo, json.loads(mv.CATALOGO.read_text(encoding="utf-8"))) != "a-criar":
+            assert (mv.MAPAS / mv.arquivo_mapa(tipo)).is_file(), tipo
