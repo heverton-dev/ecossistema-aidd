@@ -1,0 +1,20 @@
+{
+  "ticket": "TICKET-02",
+  "ciclo": "ciclo-02",
+  "alvo": "mapa-pecas",
+  "status": "CONCLUIDO",
+  "achados_resolvidos": [
+    "CAT-atalho-interno-etapa-02-planner",
+    "CAT-atalho-interno-etapa-03-engine",
+    "CAT-scripts-sem-chamador"
+  ],
+  "alteracoes": [
+    "scripts/orquestrador_sincrono.py: remoção do atalho interno em etapa_02_planner via carregamento dinâmico sem path hardcoded",
+    "scripts/orquestrador_sincrono.py: remoção de atalho interno em etapa_03_engine usando chamada canônica da CLI ecossistema.py dispatch",
+    "tests/test_scripts_utilitarios.py: cobertura e importação dos scripts gerador_relatorio_evolucao_planos, gerador_templates_gates e gerar_chave_manifesto"
+  ],
+  "gates_verificados": [
+    "pytest tests/test_scripts_utilitarios.py: PASS (3/3 testes)",
+    "scripts/orquestrador_sincrono.py: PASS (sem atalhos na AST)"
+  ]
+}

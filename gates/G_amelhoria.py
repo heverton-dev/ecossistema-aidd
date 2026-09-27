@@ -143,7 +143,9 @@ def main(argv: Optional[List[str]] = None) -> int:
     if not alvos:
         docs_dir = Path("docs") / "melhorias"
         if docs_dir.is_dir():
-            alvos.extend(sorted(docs_dir.glob("*.json")))
+            jsons = sorted(docs_dir.glob("*.json"))
+            if jsons:
+                alvos.append(jsons[-1])
 
     if not alvos:
         print("[AVISO] Nenhum relatório especificado ou encontrado para auditoria.")

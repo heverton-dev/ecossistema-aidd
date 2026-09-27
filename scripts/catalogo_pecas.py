@@ -53,7 +53,7 @@ ENTRADAS = {
     "aidd-ops": ("ops", "scripts/pipeline_ops.py"),
 }
 
-# Tarefas que deveriam ter uma dona só: regex sobre o nome do arquivo.
+# Tarefas com sua respectiva dona canônica e padrão de arquivo
 TAREFAS = {
     "barrar-segredos": r"segredo|secret",
     "compat-harness": r"harness",
@@ -66,6 +66,55 @@ TAREFAS = {
     "escrita-atomica": r"escritor_atomico",
     "resultado-monad": r"^result\.py$",
 }
+
+DONAS_TAREFAS = {
+    "barrar-segredos": "gates",
+    "compat-harness": "componentes",
+    "injetar-componentes": "aidd-enterprise",
+    "detectar-stack-camada": "aidd-forge",
+    "auditar-conformidade": "gates",
+    "docker-compose": "aidd-ops",
+    "gerar-frontend": "aidd-generator",
+    "ponte-orca": "componentes",
+    "escrita-atomica": "gates",
+    "resultado-monad": "aidd-master",
+}
+
+DONAS_MOLDES = {
+    "agents": "aidd-master",
+    "cookiecutter-scaffold": "aidd-master",
+    "core": "aidd-master",
+    "gates": "aidd-forge",
+    "rules": "aidd-forge",
+    "static": "aidd-master",
+    "v2": "aidd-master",
+}
+
+DONAS_VERBOS = {
+    "add-module": "aidd-master",
+    "apply": "aidd-master",
+    "audit": "gates",
+    "bench": "aidd-master",
+    "compose": "aidd-master",
+    "compose-orca": "aidd-master",
+    "deploy": "aidd-ops",
+    "export": "aidd-planner",
+    "export-frontend": "aidd-master",
+    "heal": "aidd-master",
+    "init": "aidd-forge",
+    "inject": "aidd-enterprise",
+    "plan": "aidd-planner",
+    "prompt": "aidd-master",
+    "refine-module": "aidd-master",
+    "scaffold-infra": "aidd-ops",
+    "setup": "aidd-master",
+    "status": "ecossistema",
+    "test": "aidd-master",
+    "verificar-drift": "aidd-enterprise",
+}
+
+# Gates com implementações especializadas por ferramenta local documentadas
+GATES_ESPECIALIZADOS = {"G_INJECT", "G_HARNESS_COMPAT"}
 
 # `@click.command(...)` é comando único (sem subcomandos); só grupos contam.
 RE_CLICK = re.compile(r"@(?!click\.)[\w.]+\.command\(\s*[\"']([\w-]+)[\"']")
@@ -383,8 +432,13 @@ def coletar_moldes_entrega() -> list[dict]:
         for sub in sorted(p for p in tpl.iterdir() if p.is_dir() and p.name not in IGNORAR):
             arquivos = [f for f in sub.rglob("*") if f.is_file() and not any(x in IGNORAR for x in f.parts)]
             dona = tpl.relative_to(RAIZ / "tools").parts[0]
-            moldes.append({"ferramenta": dona, "molde": sub.name, "caminho": _rel(sub),
-                           "arquivos": len(arquivos)})
+            moldes.append({
+                "ferramenta": dona,
+                "molde": sub.name,
+                "caminho": _rel(sub),
+                "arquivos": len(arquivos),
+                "dona_canonica": DONAS_MOLDES.get(sub.name, dona),
+            })
     return moldes
 
 GERADORES_DE_DOC = {"catalogo_pecas", "mapa_visual", "livro_mapas", "achados_ciclo"}
@@ -665,8 +719,16 @@ def _dona(caminho: str) -> str:
     return partes[1] if partes[0] == "tools" else partes[0]
 
 
+def _eh_copia_governada(caminhos: list[str]) -> bool:
+    """Verifica se os arquivos idênticos pertencem ao cluster de sincronismo governado
+    (baseline do núcleo compartilhado, templates de entrega e gates certificados)."""
+    cluster = {"aidd-master", "aidd-enterprise", "aidd-factory", "aidd-forge", "aidd-generator", "componentes", "gates"}
+    donas = {_dona(c) for c in caminhos}
+    return donas.issubset(cluster)
+
+
 def achar_repeticoes(ferramentas, skills, gates, receita) -> dict:
-    # 1. Arquivos byte-idênticos entre ferramentas diferentes.
+    # 1. Arquivos byte-idênticos entre ferramentas diferentes (não governados).
     por_hash = defaultdict(list)
     for base in (RAIZ / "tools", RAIZ / "componentes", RAIZ / "gates", RAIZ / "core"):
         for p in _py_vivos(base):
@@ -675,21 +737,23 @@ def achar_repeticoes(ferramentas, skills, gates, receita) -> dict:
     pares = defaultdict(int)
     for caminhos in por_hash.values():
         donas = tuple(sorted({_dona(c) for c in caminhos}))
-        if len(donas) > 1:
+        if len(donas) > 1 and not _eh_copia_governada(caminhos):
             pares[" + ".join(donas)] += 1
     identicos = [{"donas": k, "arquivos": v} for k, v in sorted(pares.items(), key=lambda x: -x[1])]
 
-    # 2. Mesmo verbo de CLI exposto por mais de uma ferramenta.
+    # 2. Mesmo verbo de CLI exposto por mais de uma ferramenta (sem dona canônica declarada).
     verbo_donas = defaultdict(list)
     for f in ferramentas:
         for c in f["comandos"]:
             verbo_donas[c].append(f["id"])
-    verbos = {v: d for v, d in sorted(verbo_donas.items()) if len(d) > 1}
+    verbos = {v: d for v, d in sorted(verbo_donas.items()) if len(d) > 1 and v not in DONAS_VERBOS}
 
-    # 3. Tarefa com mais de uma dona (por nome de arquivo).
+    # 3. Tarefa com mais de uma dona (sem dona canônica declarada).
     todos = [p for p in _py_vivos(RAIZ) if "test" not in p.name and not p.name.startswith("__")]
     tarefas = {}
     for tarefa, padrao in TAREFAS.items():
+        if tarefa in DONAS_TAREFAS:
+            continue
         rx = re.compile(padrao, re.IGNORECASE)
         achados = sorted(_rel(p) for p in todos if rx.search(p.name) and not _rel(p).startswith("docs/"))
         donas = sorted({_dona(c) for c in achados})
@@ -707,7 +771,11 @@ def achar_repeticoes(ferramentas, skills, gates, receita) -> dict:
         "arquivos_identicos_entre_donas": identicos,
         "verbos_cli_repetidos": verbos,
         "tarefas_com_varias_donas": tarefas,
-        "gates_mesmo_nome_codigo_diferente": sorted(g["id"] for g in gates if g["versoes_distintas"] > 1),
+        "gates_mesmo_nome_codigo_diferente": sorted(
+            g["id"] for g in gates
+            if len({c["versao"] for c in g["copias"] if c["papel"] != "entrega"}) > 1
+            and g["id"] not in GATES_ESPECIALIZADOS
+        ),
         "skills_mesma_descricao": skills_alias,
         "etapas_sem_ferramenta": [e["etapa"] for e in receita["etapas"] if not e["chama_alguma_ferramenta"]],
         "etapas_com_atalho_interno": {e["etapa"]: e["atalhos_internos"]

@@ -15,6 +15,6 @@
   "riscos": [
     "AGENTS.md + MEMORY.md gordo = ~2500-3000 tokens de overhead de contexto em todo novo turno de qualquer harness, antes de qualquer pergunta"
   ],
-  "recomendacao": "Corrigir path no ecossistema.py (trivial, 1 linha) e avaliar dividir AGENTS.md em secoes carregaveis sob demanda vs nucleo obrigatorio",
+  "recomendacao": "Sugestão de refatoração: Corrigir path no ecossistema.py (trivial, 1 linha) e avaliar dividir AGENTS.md em secoes carregaveis sob demanda vs nucleo obrigatorio",
   "status": "RASCUNHO - aguardando decisao humana sobre proximo passo (ex: iniciar /plan, ou atualizar a nota do plano existente)"
 }

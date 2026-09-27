@@ -42,6 +42,24 @@
     "cloudflare-docs": {
       "type": "http",
       "url": "https://docs.mcp.cloudflare.com/mcp"
+    },
+    "mcp-verificador-cve": {
+      "command": "python",
+      "args": [
+        "tools/aidd-generator/mcps/mcp-verificador-cve/server.py"
+      ]
+    },
+    "cloudflare-mcp": {
+      "command": "python",
+      "args": [
+        "tools/aidd-ops/mcps/cloudflare-mcp/server.py"
+      ]
+    },
+    "docker-mcp": {
+      "command": "python",
+      "args": [
+        "tools/aidd-ops/mcps/docker-mcp/server.py"
+      ]
     }
   }
 }

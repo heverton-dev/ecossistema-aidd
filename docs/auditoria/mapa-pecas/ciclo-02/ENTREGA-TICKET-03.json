@@ -1,0 +1,20 @@
+{
+  "ticket": "TICKET-03",
+  "ciclo": "ciclo-02",
+  "alvo": "mapa-pecas",
+  "status": "CONCLUIDO",
+  "achados_resolvidos": [
+    "CAT-mcps-internos",
+    "CAT-tarefas-varias-donas",
+    "CAT-verbos-repetidos"
+  ],
+  "alteracoes": [
+    ".mcp.json: registro formal dos 3 MCPs das ferramentas (mcp-verificador-cve, cloudflare-mcp, docker-mcp) como servidores agênticos",
+    "catalogo-pecas: mapeamento de donas primárias e distinção entre monólito VSA (aidd-master) e camada enterprise (aidd-enterprise)",
+    "docs/mapas-visuais: visualização e isolamento da governança de comandos"
+  ],
+  "gates_verificados": [
+    "G_UNIVERSAL_HARNESS: PASS",
+    "G_COMPONENTE_AGNOSTICO: PASS"
+  ]
+}

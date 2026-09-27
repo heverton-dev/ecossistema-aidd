@@ -1,0 +1,23 @@
+{
+  "ticket": "TICKET-01",
+  "ciclo": "ciclo-02",
+  "alvo": "mapa-pecas",
+  "status": "CONCLUIDO",
+  "achados_resolvidos": [
+    "CAT-declarados-fora-do-commit",
+    "CAT-guardas-sem-lei",
+    "CAT-gates-versoes"
+  ],
+  "alteracoes": [
+    ".pre-commit-config.yaml: inclusão dos 12 guardas em conformidade com as leis",
+    "AGENTS.md: amarração formal dos 22 guardas da raiz com as Leis Fundamentais",
+    "templates/gates: sincronização de 11 guardas homônimos com a fonte canônica",
+    "handoff-melhoria.json: re-emissão de assinatura HMAC/sha256 com zero drift"
+  ],
+  "gates_verificados": [
+    "G_LEI_DECLARA_PORTAO: PASS (13/13 leis conformes)",
+    "G_amelhoria: PASS (rotulo honesto)",
+    "G_HANDOFF_MELHORIA: PASS (transição liberada)",
+    "G_DRIFT_NUCLEO_COMPARTILHADO: PASS (100% OK)"
+  ]
+}

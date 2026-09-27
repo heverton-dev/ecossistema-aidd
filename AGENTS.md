@@ -36,6 +36,9 @@
    - Portão: gates/G_DETERMINISMO_LEI_1.py (provado)
    - Portão: gates/G_PIPELINE_HANDOFF.py (provado)
    - Portão: gates/G_DISPATCH_PIPELINE_VSA.py (provado)
+   - Portão: gates/G_ESCRITOR_ATOMICO.py (provado)
+   - Portão: gates/G_ORQUESTRADOR_SINCRONO.py (provado)
+   - Portão: gates/G_TRANSACTION_LOG_LRU.py (provado)
    - Portão: gates/G_SYNC_CMD_ROT.py (provado) — forma canônica `components sync --tipo todos` e aliases públicos (`sync`, `--tipos`)
    - Portão: gates/G_LAYOUT_ENTREGA.py (provado) — `resolve_pasta_entrega` e proibição de entrega aninhada sob `projetos/` com legado irmão
    - Portão: gates/G_PACOTE_CORE.py (provado) — distribuição sem `*.db`, `requirements-dev*` e `docs/relatorios/`
@@ -43,23 +46,39 @@
    - Portão: gates/G_ANT_LOCKIN_LEGADO.py (provado) — varredura lovable/supabase/firebase sem auto-delete
 2. **Binary Quality:** Every change must pass Quality Gates (`python ecossistema.py audit`, exit 0 = pass, exit 1 = block).
    - Portão: gates/G_SAIDA_BINARIA.py (provado)
+   - Portão: gates/G_ECOSSISTEMA_INTEGRIDADE.py (provado)
+   - Portão: gates/G_LEI_DECLARA_PORTAO.py (provado)
 3. **Structured Persistence:** Persist state in audit files (JSON, SQLite), never in volatile conversation memory.
    - Portão: gates/G_MIGRATION_ROT.py (provado)
    - Portão: gates/G_ESTRUTURA_ESTADO.py (provado)
    - Portão: gates/G_GESTOR_SESSOES.py (provado)
+   - Portão: gates/G_LIVRO_EVIDENCIA.py (provado)
 4. **Extreme Token Economy:** Minimalist prompts, compact English core rules, dense PT-BR user responses only when requested.
    - Portão: gates/G_IDIOMA_LEI_4.py (provado)
    - Portão: gates/G_USER_FACING_PTBR.py (provado) — jargão explicado em README/`--help`/perfil leigo (Rule 10)
+   - Portão: gates/G_CLI_HELP_CONSISTENCIA.py (provado)
+   - Portão: gates/G_LLM_PROMPT_SHIELD.py (provado)
    - Portão: .claude/hooks/regra10_check.py (provado)
 5. **Zero Stubs / Zero Mocks:** 100% functional, typed production code with real tests.
    - Portão: gates/G_TESTES_REAIS.py (provado)
+   - Portão: gates/G_PROTOTYPE_REWRITE.py (provado)
+   - Portão: gates/G_PROTOCOL_FALLBACK.py (provado)
+   - Portão: gates/G_SEGREDOS.py (provado)
 6. **Agnostic Supremacy:** Zero vendor lock-in across OS, harness, and LLM providers.
    - Portão: gates/G_COMPONENTE_AGNOSTICO.py (provado)
+   - Portão: gates/G_HARNESS_COMPAT.py (provado)
+   - Portão: gates/G_UNIVERSAL_HARNESS.py (provado)
+   - Portão: gates/G_DEPENDENCIAS_PIN_HASH.py (provado)
+   - Portão: gates/G_SUPPLY_CHAIN.py (provado)
 7. **Developer in Control:** Strictly sequential, interactive executions. Zero invisible headless background subagents.
    - Portão: gates/G_ZERO_HEADLESS.py (provado)
+   - Portão: gates/G_ISOLATION_AUDIT.py (provado)
+   - Portão: gates/G_HADOLINT.py (provado)
 8. **Label Honesty:** Never claim certification or test coverage beyond real automated test results.
    - Portão: gates/G_HONESTIDADE_ROTULO.py (provado)
    - Portão: gates/G_mapa_pecas.py (provado) — integridade do catálogo de peças e mapas visuais (mapa-pecas, Ticket 6)
+   - Portão: gates/G_DRIFT_ANALYZER.py (provado)
+   - Portão: gates/G_DRIFT_NUCLEO_COMPARTILHADO.py (provado)
 9. **Tool Testing Discipline:** Follow the 5-step cycle (`docs/protocolos/PROTOCOLO-TESTES-FERRAMENTAS.md`): 1. Auto-fix bugs until 100% conformant (zero inconsistencies), 2. Git commit & push, 3. Clean target project, 4. Execute cleanly, 5. Update `docs/teste-end-to-end/` report.
    - Portão: gates/G_ENV_ROT.py (provado)
    - Portão: gates/G_SKILL_ROT.py (provado)
@@ -70,11 +89,14 @@
    - Portão: gates/G_aidd_diagnose.py (provado) — quality gate da ferramenta `aidd-diagnose` (Fase 6, Ticket 6)
    - Portão: gates/G_PROVA_SKILLS_POCOCK.py (provado, manual) — uso real das skills do ciclo skills-pocock via modelo; fora do pre-commit (skills-pocock, Ticket 13)
    - Portão: gates/G_HANDOFF_MELHORIA.py (provado) — integridade e assinatura HMAC do handoff de melhoria (Fase 8, Ticket 8)
+   - Portão: gates/G_INFRA_COMPOSE.py (provado)
 10. **Quarteto Sine Qua Non Dinâmico (Lei #10 — Quarteto; distinto de Rule 10 Formato de Resposta):** Todo projeto gerado ou evoluído no ecossistema DEVE nascer nativamente com 4 pilares completos: OpenAPI/Swagger Studio (`/api`), Webhook Studio (`/webhook`), MCP Studio (`/mcp`) e Central de Documentação / Guia do Utilizador (`/docs`). Todas as rotas e contratos devem cobrir 100% dos módulos do sistema e atualizar-se de forma autônoma e dinâmica a cada novo módulo (ex: autenticação).
    - Portão: gates/G_CONTRACT_ROT.py (provado)
    - Portão: gates/G_QUARTETO_SINE_QUA_NON.py (provado)
 11. **Padrão-Ouro de Stack Tecnológica:** Todo fluxo (`generator`, `master`, `factory`, `bridge`) DEVE gerar o Frontend em **Next.js + TypeScript + Tailwind CSS** (Backend em Python puro + SQLite WAL, API em OpenAPI 3.1), conforme definido em `docs/protocolos/PADRAO-OURO-STACK-TECNOLOGICA.md` — padrão validado em `proj_ctt`. Só muda se o plano estruturado ou o prompt do usuário especificar outra stack de forma explícita para aquela camada; silêncio nunca é licença para gerar outra coisa (ex.: HTML Python simples só é aceitável se pedido expressamente).
    - Portão: gates/G_STACK_PADRAO_OURO.py (provado)
+   - Portão: gates/G_FRONTEND_LAYERS.py (provado)
+   - Portão: gates/G_ARQUITETURA_DELIVERABLE.py (provado)
 12. **Anti-Docs Rot & Canonical Ingestion:** Agentes nunca devem ingerir ou se basear em documentos rascunho, históricos ou sem validação factual com o código. A documentação técnica viva reside exclusivamente em `docs/protocolos/`, `AGENTS.md` e schemas/OpenAPI ativos. Documentos e links quebrados são ativamente bloqueados pelo gate determinístico `gates/G_DOCS_ROT.py`.
    - Portão: gates/G_DOCS_ROT.py (provado)
 13. **Todo Portão Deve Provar que Morde:** Nenhum quality gate é aceito sem teste automatizado que deliberadamente quebre a condição resguardada e asserte `exit 1`. Testes de caminho feliz (exit 0) não satisfazem o requisito. Qualquer gate incapaz de reprovar sob violação real ou sintética comprovada deve ser registrado como fachada e ter seu claim rebaixado per Lei #8. Ver `docs/protocolos/CONVENCAO-AUTORIA-GATES.md`.

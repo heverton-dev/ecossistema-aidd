@@ -1,0 +1,17 @@
+ROLE: Builder. Ecosystem AIDD. Ticket 2. Target tool: mapa-pecas.
+DIMENSION: D4
+DELIVER: docs/auditoria/mapa-pecas/ciclo-03/ENTREGA-TICKET-02.json
+
+STEPS:
+- Add dona_canonica to coletar_moldes_entrega in scripts/catalogo_pecas.py using DONAS_MOLDES.
+- Update scripts/achados_ciclo.py to filter delivery templates governed by DONAS_MOLDES.
+- Run achados_ciclo.py and assert CAT-moldes-repetidos is eliminated.
+- Write handoff json to docs/auditoria/mapa-pecas/ciclo-03/ENTREGA-TICKET-02.json.
+
+RULES:
+1. Write failing test first. Run. Assert exit 1.
+2. Implement. Zero stubs. Real pytest tests. Run. Assert exit 0.
+3. Work inside ephemeral Git Worktree only.
+4. Capture real exit code: redirect to file, read $? same line. Never trust pipes.
+5. NEVER edit docs/auditoria/CONFIG-EXECUCAO-USUARIO.json.
+6. Deliver exactly: docs/auditoria/mapa-pecas/ciclo-03/ENTREGA-TICKET-02.json

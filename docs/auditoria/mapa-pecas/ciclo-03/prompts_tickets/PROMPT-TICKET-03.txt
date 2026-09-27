@@ -1,0 +1,17 @@
+ROLE: Builder. Ecosystem AIDD. Ticket 3. Target tool: mapa-pecas.
+DIMENSION: D12
+DELIVER: docs/auditoria/mapa-pecas/ciclo-03/ENTREGA-TICKET-03.json
+
+STEPS:
+- Implement _eh_copia_governada in scripts/catalogo_pecas.py to validate synchronized architectural clusters.
+- Filter governed baseline files from accidental duplicate findings in achar_repeticoes.
+- Verify G_DRIFT_NUCLEO_COMPARTILHADO.py passes with exit 0.
+- Write handoff json to docs/auditoria/mapa-pecas/ciclo-03/ENTREGA-TICKET-03.json.
+
+RULES:
+1. Write failing test first. Run. Assert exit 1.
+2. Implement. Zero stubs. Real pytest tests. Run. Assert exit 0.
+3. Work inside ephemeral Git Worktree only.
+4. Capture real exit code: redirect to file, read $? same line. Never trust pipes.
+5. NEVER edit docs/auditoria/CONFIG-EXECUCAO-USUARIO.json.
+6. Deliver exactly: docs/auditoria/mapa-pecas/ciclo-03/ENTREGA-TICKET-03.json

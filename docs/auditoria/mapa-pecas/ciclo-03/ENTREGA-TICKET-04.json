@@ -1,0 +1,17 @@
+{
+  "ticket": 4,
+  "titulo": "Conclusão do Ciclo 4F e Recompilação de Artefatos",
+  "status": "CONCLUIDO",
+  "fase_15d": "D13. Quality Gates (Portões)",
+  "modificacoes": [
+    "docs/auditoria/mapa-pecas/ciclo-03/*",
+    "docs/mapas-visuais/*",
+    "docs/livros/mapas-aidd/*"
+  ],
+  "gates_verificados": [
+    "G_mapa_pecas",
+    "G_SAIDA_BINARIA",
+    "G_PORTAO_PROVA_QUE_MORDE"
+  ],
+  "exit_code": 0
+}

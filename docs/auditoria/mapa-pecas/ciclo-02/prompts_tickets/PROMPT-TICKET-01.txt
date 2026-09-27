@@ -1,0 +1,20 @@
+ROLE: Builder. Ecosystem AIDD. Ticket 1. Target tool: mapa-pecas.
+DIMENSION: D1
+DELIVER: docs/auditoria/mapa-pecas/ciclo-02/ENTREGA-TICKET-01.json
+
+STEPS:
+- Read AGENTS.md and .pre-commit-config.yaml to inspect all declared gates.
+- Add missing law declared gates to .pre-commit-config.yaml hooks.
+- Link root gates to their corresponding laws in AGENTS.md section 2.
+- Synchronize duplicate gate files across tool templates with root gates.
+- Fix any failing gate assertions in G_amelhoria and G_HANDOFF_MELHORIA.
+- Run pytest on gate test suites. Assert exit 0.
+- Write handoff json to docs/auditoria/mapa-pecas/ciclo-02/ENTREGA-TICKET-01.json.
+
+RULES:
+1. Write failing test first. Run. Assert exit 1.
+2. Implement. Zero stubs. Real pytest tests. Run. Assert exit 0.
+3. Work inside ephemeral Git Worktree only.
+4. Capture real exit code: redirect to file, read $? same line. Never trust pipes.
+5. NEVER edit docs/auditoria/CONFIG-EXECUCAO-USUARIO.json.
+6. Deliver exactly: docs/auditoria/mapa-pecas/ciclo-02/ENTREGA-TICKET-01.json

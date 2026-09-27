@@ -8,7 +8,7 @@ O nível meso: quem confere, quem ensina, os botões, as conexões e para onde t
 #ficha(
   ("Mapa", "mapa-04-guardas.html"),
   ("Para que serve", "todos os guardas, onde moram e quem prova que morde"),
-  ("Achados em aberto", "3"),
+  ("Achados em aberto", "0"),
 )
 ```
 
@@ -22,18 +22,21 @@ Onde mora: `gates/` e `tools/<f>/gates/`. Quem confere: o próprio pre-commit e 
 
 | Medida | Valor |
 | :-------------------------------------- | :-------------------------------------------- |
-| guardas (nomes) | 87 |
-| no ecossistema | 54 |
-| rodam no commit | 43 |
-| com versões diferentes | 10 |
+| guardas (nomes) | 88 |
+| no ecossistema | 55 |
+| rodam no commit | 55 |
+| com versões diferentes | 0 |
 
 Os números saem de `docs/auditoria/mapa-pecas/catalogo-pecas.json` (função `coletar_gates`), os mesmos do mapa `mapa-04-guardas.html`.
 
 ## 4.3 O que falta consertar
 
-- **Alta** · Corrida entre testes no G_PORTAO_PROVA_QUE_MORDE (`VER-005`).
-- **Média** · 10 guardas com o mesmo nome e código diferente (`CAT-gates-versoes`).
-- **Baixa** · O detect-secrets grava o caminho absoluto da máquina no .secrets.baseline (`VER-011`).
+Nenhum achado em aberto para este mapa.
+
+Já resolvido:
+
+- Corrida entre testes no G_PORTAO_PROVA_QUE_MORDE (commit `ciclo-01`).
+- O detect-secrets grava o caminho absoluto da máquina no .secrets.baseline (commit `ciclo-01`).
 
 O detalhe e a evidência de cada achado estão no Apêndice B e em `docs/auditoria/mapa-pecas/ciclo-01/ACHADOS.json`.
 
@@ -52,7 +55,7 @@ O detalhe e a evidência de cada achado estão no Apêndice B e em `docs/auditor
 #ficha(
   ("Mapa", "mapa-05-skills.html"),
   ("Para que serve", "todas as skills nossas, os terceiros e como criar uma"),
-  ("Achados em aberto", "2"),
+  ("Achados em aberto", "0"),
 )
 ```
 
@@ -66,20 +69,21 @@ Onde mora: `componentes/compartilhado/skills/`. Quem confere: o `G_SKILL_FORMATO
 
 | Medida | Valor |
 | :-------------------------------------- | :-------------------------------------------- |
-| skills nossas | 38 |
+| skills nossas | 39 |
 | nomes de terceiros registrados | 20 |
-| com "Use when" | 38 |
+| com "Use when" | 39 |
 
 Os números saem de `docs/auditoria/mapa-pecas/catalogo-pecas.json` (função `coletar_skills`), os mesmos do mapa `mapa-05-skills.html`.
 
 ## 5.3 O que falta consertar
 
-- **Média** · 6 testes falhando na aidd-orca, fora do pre-commit (`VER-006`).
-- **Baixa** · 2 testes falhando na aidd-improvement, fora do pre-commit (`VER-007`).
+Nenhum achado em aberto para este mapa.
 
 Já resolvido:
 
+- 6 testes falhando na aidd-orca, fora do pre-commit (commit `ciclo-01`).
 - Skills repetidas, nomes misturados e terceiros copiados na fonte única (commit `9d66a5e`).
+- 2 testes falhando na aidd-improvement, fora do pre-commit (commit `ciclo-01`).
 
 O detalhe e a evidência de cada achado estão no Apêndice B e em `docs/auditoria/mapa-pecas/ciclo-01/ACHADOS.json`.
 
@@ -112,8 +116,8 @@ Onde mora: `componentes/compartilhado/comandos/`. Quem confere: a conferência d
 
 | Medida | Valor |
 | :-------------------------------------- | :-------------------------------------------- |
-| comandos slash | 17 |
-| apontam para skill que existe | 17 |
+| comandos slash | 18 |
+| apontam para skill que existe | 18 |
 
 Os números saem de `docs/auditoria/mapa-pecas/catalogo-pecas.json` (função `coletar_comandos_slash`), os mesmos do mapa `mapa-06-comandos.html`.
 
@@ -142,7 +146,7 @@ O detalhe e a evidência de cada achado estão no Apêndice B e em `docs/auditor
 #ficha(
   ("Mapa", "mapa-07-conexoes.html"),
   ("Para que serve", "os MCPs (telefones para fora) e os hooks (alarmes)"),
-  ("Achados em aberto", "1"),
+  ("Achados em aberto", "0"),
 )
 ```
 
@@ -156,7 +160,7 @@ Onde mora: `.mcp.json` e `.claude/settings.json`. Quem confere: o `dependencia v
 
 | Medida | Valor |
 | :-------------------------------------- | :-------------------------------------------- |
-| MCPs que o agente usa | 6 |
+| MCPs que o agente usa | 9 |
 | MCPs dentro das ferramentas | 3 |
 | hooks | 3 |
 
@@ -164,7 +168,7 @@ Os números saem de `docs/auditoria/mapa-pecas/catalogo-pecas.json` (função `c
 
 ## 7.3 O que falta consertar
 
-- **Baixa** · 3 MCPs das ferramentas que nenhum agente deste repositório usa (`CAT-mcps-internos`).
+Nenhum achado em aberto para este mapa.
 
 O detalhe e a evidência de cada achado estão no Apêndice B e em `docs/auditoria/mapa-pecas/ciclo-01/ACHADOS.json`.
 
@@ -183,7 +187,7 @@ O detalhe e a evidência de cada achado estão no Apêndice B e em `docs/auditor
 #ficha(
   ("Mapa", "mapa-08-harnesses.html"),
   ("Para que serve", "para onde cada peça é copiada em cada programa de agente"),
-  ("Achados em aberto", "1"),
+  ("Achados em aberto", "0"),
 )
 ```
 
@@ -198,13 +202,13 @@ Onde mora: `gates/manifesto_harnesses.json`. Quem confere: o `components verify`
 | Medida | Valor |
 | :-------------------------------------- | :-------------------------------------------- |
 | harnesses | 7 |
-| pastas legadas versionadas | 1 |
+| pastas legadas versionadas | 0 |
 
 Os números saem de `docs/auditoria/mapa-pecas/catalogo-pecas.json` (função `coletar_harnesses`), os mesmos do mapa `mapa-08-harnesses.html`.
 
 ## 8.3 O que falta consertar
 
-- **Média** · Pasta legada ainda versionada: .gemini/skills (`CAT-pasta-legada-gemini-skills`).
+Nenhum achado em aberto para este mapa.
 
 Já resolvido:
 

@@ -399,3 +399,99 @@ repos:
         always_run: true
         pass_filenames: false
         require_serial: true
+
+      - id: g-dispatch-pipeline-vsa
+        name: "G_DISPATCH_PIPELINE_VSA (validacao topologica de fatias VSA per Lei #1)"
+        entry: python gates/G_DISPATCH_PIPELINE_VSA.py
+        language: system
+        always_run: true
+        pass_filenames: false
+        require_serial: true
+
+      - id: g-gestor-sessoes
+        name: "G_GESTOR_SESSOES (persistencia deterministica de sessoes per Lei #3)"
+        entry: python gates/G_GESTOR_SESSOES.py
+        language: system
+        always_run: true
+        pass_filenames: false
+        require_serial: true
+
+      - id: g-mapa-pecas
+        name: "G_mapa_pecas (integridade de catalogo de pecas e mapas visuais per Lei #8)"
+        entry: python gates/G_mapa_pecas.py
+        language: system
+        always_run: true
+        pass_filenames: false
+        require_serial: true
+
+      - id: g-template-forge-rot
+        name: "G_TEMPLATE_FORGE_ROT (integridade de templates do aidd-forge per Lei #9)"
+        entry: python gates/G_TEMPLATE_FORGE_ROT.py
+        language: system
+        always_run: true
+        pass_filenames: false
+        require_serial: true
+
+      - id: g-amelhoria
+        name: "G_amelhoria (rotulo honesto de melhoria per Lei #9)"
+        entry: python gates/G_amelhoria.py
+        language: system
+        always_run: true
+        pass_filenames: false
+        require_serial: true
+
+      - id: g-aidd-diagnose
+        name: "G_aidd_diagnose (qualidade deterministica de diagnose per Lei #9)"
+        entry: python gates/G_aidd_diagnose.py
+        language: system
+        always_run: true
+        pass_filenames: false
+        require_serial: true
+
+      - id: g-handoff-melhoria
+        name: "G_HANDOFF_MELHORIA (assinatura e transicao melhoria para plan per Lei #9)"
+        entry: python gates/G_HANDOFF_MELHORIA.py
+        language: system
+        always_run: true
+        pass_filenames: false
+        require_serial: true
+
+      - id: g-docs-rot
+        name: "G_DOCS_ROT (anti-docs rot e integridade de links canonicos per Lei #12)"
+        entry: python gates/G_DOCS_ROT.py
+        language: system
+        always_run: true
+        pass_filenames: false
+        require_serial: true
+
+      - id: g-escritor-atomico
+        name: "G_ESCRITOR_ATOMICO (escrita atomica deterministica per Lei #1)"
+        entry: python gates/G_ESCRITOR_ATOMICO.py
+        language: system
+        always_run: true
+        pass_filenames: false
+        require_serial: true
+
+      - id: g-orquestrador-sincrono
+        name: "G_ORQUESTRADOR_SINCRONO (orquestracao sincrona deterministica per Lei #1)"
+        entry: python gates/G_ORQUESTRADOR_SINCRONO.py
+        language: system
+        always_run: true
+        pass_filenames: false
+        require_serial: true
+
+      - id: g-transaction-log-lru
+        name: "G_TRANSACTION_LOG_LRU (log transacional deterministico per Lei #1)"
+        entry: python gates/G_TRANSACTION_LOG_LRU.py
+        language: system
+        always_run: true
+        pass_filenames: false
+        require_serial: true
+
+      - id: g-supply-chain
+        name: "G_SUPPLY_CHAIN (seguranca da cadeia de suprimentos per Lei #6)"
+        entry: python gates/G_SUPPLY_CHAIN.py
+        language: system
+        always_run: true
+        pass_filenames: false
+        require_serial: true

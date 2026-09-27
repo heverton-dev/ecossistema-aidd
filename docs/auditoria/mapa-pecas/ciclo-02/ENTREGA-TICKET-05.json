@@ -1,0 +1,22 @@
+{
+  "ticket": "TICKET-05",
+  "ciclo": "ciclo-02",
+  "alvo": "mapa-pecas",
+  "status": "CONCLUIDO",
+  "achados_resolvidos": [
+    "CAT-15d-aidd-melhoria",
+    "CAT-ciclo-aidd-melhoria-ciclo-02",
+    "CAT-ciclo-mapa-pecas-ciclo-02"
+  ],
+  "alteracoes": [
+    "docs/auditoria/aidd-melhoria/ciclo-02: scaffold formal aberto com DOD, prompts e manifesto 4F",
+    "docs/auditoria/mapa-pecas/ciclo-02: fechamento canônico com DOD, laudos e plano de evolução",
+    "catalogo-pecas.json: reconstrução total do catálogo factual",
+    "docs/mapas-visuais: regeneração completa dos 13 mapas visuais e das 7 partes do livro corporativo"
+  ],
+  "gates_verificados": [
+    "gates/G_mapa_pecas.py: PASS (100% OK)",
+    "scripts/mapa_visual.py: PASS (todos os 13 mapas em dia)",
+    "scripts/livro_mapas.py: PASS (7 partes do livro em dia)"
+  ]
+}

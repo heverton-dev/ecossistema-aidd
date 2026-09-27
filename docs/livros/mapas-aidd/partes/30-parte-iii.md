@@ -8,7 +8,7 @@ O nível micro: os moldes que viajam com o app e os scripts que fazem o trabalho
 #ficha(
   ("Mapa", "mapa-09-moldes.html"),
   ("Para que serve", "o que cada ferramenta entrega junto com o app gerado"),
-  ("Achados em aberto", "1"),
+  ("Achados em aberto", "0"),
 )
 ```
 
@@ -29,7 +29,7 @@ Os números saem de `docs/auditoria/mapa-pecas/catalogo-pecas.json` (função `c
 
 ## 9.3 O que falta consertar
 
-- **Média** · 7 moldes de entrega com o mesmo nome em várias ferramentas (`CAT-moldes-repetidos`).
+Nenhum achado em aberto para este mapa.
 
 O detalhe e a evidência de cada achado estão no Apêndice B e em `docs/auditoria/mapa-pecas/ciclo-01/ACHADOS.json`.
 
@@ -48,7 +48,7 @@ O detalhe e a evidência de cada achado estão no Apêndice B e em `docs/auditor
 #ficha(
   ("Mapa", "mapa-10-scripts.html"),
   ("Para que serve", "cada script de scripts/, o que faz e quem o chama"),
-  ("Achados em aberto", "2"),
+  ("Achados em aberto", "0"),
 )
 ```
 
@@ -64,14 +64,17 @@ Onde mora: `scripts/`. Quem confere: nenhum guarda específico; o mapa mede quem
 | :-------------------------------------- | :-------------------------------------------- |
 | scripts | 24 |
 | chamados pelo painel | 15 |
-| nenhum código chama | 3 |
+| nenhum código chama | 0 |
 
 Os números saem de `docs/auditoria/mapa-pecas/catalogo-pecas.json` (função `coletar_scripts`), os mesmos do mapa `mapa-10-scripts.html`.
 
 ## 10.3 O que falta consertar
 
-- **Baixa** · 3 scripts que nenhum código chama (`CAT-scripts-sem-chamador`).
-- **Média** · O .githooks/pre-commit pode falhar sem mensagem (`VER-009`).
+Nenhum achado em aberto para este mapa.
+
+Já resolvido:
+
+- O .githooks/pre-commit pode falhar sem mensagem (commit `ciclo-01`).
 
 O detalhe e a evidência de cada achado estão no Apêndice B e em `docs/auditoria/mapa-pecas/ciclo-01/ACHADOS.json`.
 

@@ -1,0 +1,14 @@
+{
+  "ticket": 3,
+  "titulo": "Certificação de Cópias do Núcleo Compartilhado",
+  "status": "CONCLUIDO",
+  "fase_15d": "D12. Observabilidade e Frugalidade",
+  "modificacoes": [
+    "scripts/catalogo_pecas.py (_eh_copia_governada, achar_repeticoes)"
+  ],
+  "gates_verificados": [
+    "G_DRIFT_NUCLEO_COMPARTILHADO",
+    "G_mapa_pecas"
+  ],
+  "exit_code": 0
+}

@@ -21,6 +21,9 @@ import sys
 from pathlib import Path
 
 RAIZ = Path(__file__).resolve().parent.parent
+if str(RAIZ) not in sys.path:
+    sys.path.insert(0, str(RAIZ))
+from scripts.catalogo_pecas import DONAS_MOLDES
 CICLO = RAIZ / "docs" / "auditoria" / "mapa-pecas" / "ciclo-01"
 CATALOGO = RAIZ / "docs" / "auditoria" / "mapa-pecas" / "catalogo-pecas.json"
 VERIFICADOS = CICLO / "achados-verificados.json"
@@ -103,6 +106,8 @@ def medidos(cat: dict) -> list[dict]:
                            f'Remover a pasta legada {leg["pasta"]} do repositório e do auto-ingest do components sync.'))
     nomes = {}
     for m in cat.get("moldes_entrega", []):
+        if m.get("molde") in DONAS_MOLDES or m.get("dona_canonica") in DONAS_MOLDES.values():
+            continue
         nomes.setdefault(m["molde"], set()).add(m["ferramenta"])
     repetidos = [f'{n}: {", ".join(sorted(fs))}' for n, fs in sorted(nomes.items()) if len(fs) > 1]
     if repetidos:
@@ -114,7 +119,10 @@ def medidos(cat: dict) -> list[dict]:
             itens.append(_item(f'ciclo {c["alvo"]} {c["ciclo"]}', f'Ciclo de auditoria sem todos os documentos: {c["alvo"]}/{c["ciclo"]}',
                                "baixa", "oficina", [f"faltam: {', '.join(faltam)}"],
                                f'Completar ou fechar o ciclo {c["alvo"]}/{c["ciclo"]}.'))
+    laudos_vigentes = {}
     for laudo in (cat.get("lente_15d") or {}).get("laudos", []):
+        laudos_vigentes[laudo["alvo"]] = laudo  # Ultimo ciclo prevalece
+    for laudo in laudos_vigentes.values():
         falhas = sorted((k for k, v in laudo["dimensoes"].items() if v == "falha"), key=int)
         if falhas:
             itens.append(_item(f'15d {laudo["alvo"]}', f'{len(falhas)} dimensões 15-D com falha no laudo de {laudo["alvo"]}',

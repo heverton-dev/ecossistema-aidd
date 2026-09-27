@@ -1,0 +1,18 @@
+ROLE: Builder. Ecosystem AIDD. Ticket 1. Target tool: mapa-pecas.
+DIMENSION: D4
+DELIVER: docs/auditoria/mapa-pecas/ciclo-03/ENTREGA-TICKET-01.json
+
+STEPS:
+- Define canonical task ownership in DONAS_TAREFAS table in scripts/catalogo_pecas.py.
+- Define canonical CLI verb ownership in DONAS_VERBOS table in scripts/catalogo_pecas.py.
+- Filter declared canonical tasks and verbs in achar_repeticoes.
+- Verify that catalog repetition check reports zero task and verb conflicts.
+- Write handoff json to docs/auditoria/mapa-pecas/ciclo-03/ENTREGA-TICKET-01.json.
+
+RULES:
+1. Write failing test first. Run. Assert exit 1.
+2. Implement. Zero stubs. Real pytest tests. Run. Assert exit 0.
+3. Work inside ephemeral Git Worktree only.
+4. Capture real exit code: redirect to file, read $? same line. Never trust pipes.
+5. NEVER edit docs/auditoria/CONFIG-EXECUCAO-USUARIO.json.
+6. Deliver exactly: docs/auditoria/mapa-pecas/ciclo-03/ENTREGA-TICKET-01.json

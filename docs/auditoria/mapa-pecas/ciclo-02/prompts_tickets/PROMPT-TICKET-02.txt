@@ -1,0 +1,18 @@
+ROLE: Builder. Ecosystem AIDD. Ticket 2. Target tool: mapa-pecas.
+DIMENSION: D10
+DELIVER: docs/auditoria/mapa-pecas/ciclo-02/ENTREGA-TICKET-02.json
+
+STEPS:
+- Refactor etapa_02_planner in scripts/orquestrador_sincrono.py to remove internal tool imports.
+- Refactor etapa_03_engine in scripts/orquestrador_sincrono.py to use canonical dispatch CLI command.
+- Wire orphan scripts in scripts directory to CLI dispatcher or documented entry points.
+- Run orchestrator unit tests. Assert exit 0.
+- Write handoff json to docs/auditoria/mapa-pecas/ciclo-02/ENTREGA-TICKET-02.json.
+
+RULES:
+1. Write failing test first. Run. Assert exit 1.
+2. Implement. Zero stubs. Real pytest tests. Run. Assert exit 0.
+3. Work inside ephemeral Git Worktree only.
+4. Capture real exit code: redirect to file, read $? same line. Never trust pipes.
+5. NEVER edit docs/auditoria/CONFIG-EXECUCAO-USUARIO.json.
+6. Deliver exactly: docs/auditoria/mapa-pecas/ciclo-02/ENTREGA-TICKET-02.json

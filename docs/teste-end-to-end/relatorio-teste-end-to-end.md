@@ -1030,3 +1030,23 @@
   - Portão `G_TESTES_REAIS` dentro de `ecossistema.py audit`: 100% aprovado para as 8 ferramentas (2344 passed).
 - **Status:** **RESOLVIDO**.
 - **Data da Última Auditoria:** 27/09/2026.
+
+---
+
+## 21. Sincronização de Quality Gates Homônimos em Templates de Ferramentas (mapa-pecas Ciclos 02 e 03)
+
+- **Objetivo da Correção:**
+  Sincronizar cópias homônimas de guardas em `tools/*/templates/gates/` e `tools/*/scripts/gates/` com as versões canônicas da raiz `gates/`, eliminando versões divergentes de código e mantendo paridade byte-a-byte com a governança central do monorepo.
+- **Ferramentas Tocadas:** [`tools/aidd-enterprise`](file:///C:/Users/trcnologia/Desktop/ecossistema-aidd/tools/aidd-enterprise), [`tools/aidd-forge`](file:///C:/Users/trcnologia/Desktop/ecossistema-aidd/tools/aidd-forge), [`tools/aidd-generator`](file:///C:/Users/trcnologia/Desktop/ecossistema-aidd/tools/aidd-generator), [`tools/aidd-master`](file:///C:/Users/trcnologia/Desktop/ecossistema-aidd/tools/aidd-master).
+- **O que executou:**
+  1. `tools/aidd-forge/aidd_forge/templates/gates/`: Sincronizados `G_SAIDA_BINARIA.py`, `G_TESTES_REAIS.py`, `G_DETERMINISMO_LEI_1.py`, `G_QUARTETO_SINE_QUA_NON.py`, `G_STACK_PADRAO_OURO.py` com as versões vigentes da raiz.
+  2. `tools/aidd-generator/scripts/gates/`: Sincronizados `G_BLOQUEAR_SEGREDOS.py`, `G_CYBERSECURITY_OWASP.py` com `aidd-forge`.
+  3. `tools/aidd-master/templates/gates/` e `tools/aidd-enterprise/templates/gates/`: Atualizados gates de template de scaffolding em conformidade com o baseline de drift `baseline_nucleo_compartilhado.json`.
+- **Resultados de Testes:**
+  - `G_DRIFT_NUCLEO_COMPARTILHADO.py` → exit 0.
+  - `G_TEMPLATE_FORGE_ROT.py` → exit 0.
+  - `G_TESTES_REAIS.py` → exit 0 (todas as 8 ferramentas aprovadas).
+  - `catalogo_pecas.py` → `gates_mesmo_nome_codigo_diferente`: 0 (zero divergências).
+- **Status:** **RESOLVIDO**.
+- **Data da Última Auditoria:** 27/09/2026.
+

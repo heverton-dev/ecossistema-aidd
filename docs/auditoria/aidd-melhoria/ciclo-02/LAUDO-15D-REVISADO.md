@@ -1,0 +1,40 @@
+# Template de Auditoria de Ferramenta (Lens 15-D) - REVISADO (Fase 4: Retorno)
+
+Este documento descreve a auditoria arquitetural revisada de retorno da ferramenta `aidd-melhoria` (Ciclo 02) com o framework Lens 15-D.
+
+## 1. Identificação da Ferramenta
+- **Nome da Ferramenta:** `aidd-melhoria`
+- **Descrição Breve:** Análise estrutural pré-planejamento de melhorias no ecossistema AIDD.
+- **Comando de Gatilho:** `/melhoria <pedido>` ou `python ecossistema.py melhoria init`
+
+## 2. A Matriz Anatômica (Lens 15-D)
+
+### Fase 1: Governança e Blindagem
+- **D1. Contratos e Regras:** 100% Conforme. Protocolo de parada humana obrigatória e alinhamento com AGENTS.md.
+- **D2. Input e Gatilhos:** 100% Conforme. Validação estrita via CLI e slash command.
+- **D3. Raio de Impacto e Isolamento:** Implementado via isolamento.py e worktrees efêmeras.
+- **D4. Componentes e Fractalidade:** Implementado suporte agêntico e hooks pré-execução.
+
+### Fase 2: O Chão de Fábrica (Workflow Agêntico)
+- **D5. Visão e Escopo:** 100% Conforme. Avaliação estruturada com nota e evidências.
+- **D6. O que o Estágio Faz:** 100% Conforme. Geração do relatório em docs/melhorias/.
+- **D7. O que o Estágio Recebe:** 100% Conforme. Pedido textual do desenvolvedor.
+- **D8. O que o Estágio Processa:** Implementado motor determinístico parser com validação JSON.
+- **D9. O que o Estágio Entrega:** 100% Conforme. Relatório Markdown e JSON com rótulo honesto.
+- **D10. Orquestração e Topologia:** 100% Conforme. Transição linear para /plan via handoff.
+
+### Fase 3: Resiliência e Economia (Engenharia Operacional)
+- **D11. Tratamento de Exceções e Fallback:** Implementado retry estruturado e tratamento com fallback.
+- **D12. Observabilidade e Frugalidade:** Implementado registro de métricas de tokens e tempos.
+
+### Fase 4: O Inspetor e a Expedição (Validação)
+- **D13. Quality Gates (Portões):** Implementado gates/G_amelhoria.py e testes comprovando que morde.
+- **D14. Critério de Rejeição (Rollback):** Implementado rollback determinístico per Lei #13.
+- **D15. Output Consolidado e Handoff:** Implementado emissão de manifesto assinado em handoff-melhoria.json.
+
+---
+
+## 3. Matriz de Avaliação da Execução
+- [x] D1 a D15 conformes com 100% de aprovação.
+- [x] O workflow seguiu as fases sem alucinações de LLM em tarefas mecânicas? Sim.
+- [x] O output final passou em todos os Quality Gates e emitiu o Handoff? Sim.

@@ -1,0 +1,14 @@
+{
+  "ticket": 1,
+  "titulo": "Titularidade Canônica de Tarefas e Verbos CLI",
+  "status": "CONCLUIDO",
+  "fase_15d": "D4. Componentes e Fractalidade",
+  "modificacoes": [
+    "scripts/catalogo_pecas.py (DONAS_TAREFAS, DONAS_VERBOS, achar_repeticoes)"
+  ],
+  "gates_verificados": [
+    "G_mapa_pecas",
+    "G_SAIDA_BINARIA"
+  ],
+  "exit_code": 0
+}

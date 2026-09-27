@@ -1,0 +1,47 @@
+{
+  "pipeline_id": "auditoria-mapa-pecas-ciclo-02",
+  "target_tool": "mapa-pecas",
+  "ciclo": "ciclo-02",
+  "session_id": "auto_generated",
+  "definition_of_done": "docs/auditoria/mapa-pecas/ciclo-02/DOD.md",
+  "config_usuario_ref": "docs/auditoria/CONFIG-EXECUCAO-USUARIO.json",
+  "gate_final": "python ecossistema.py audit",
+  "fases": [
+    {
+      "nome": "Fase_1_Inspetor",
+      "harness": "agy",
+      "model": "gemini-3.8-flash-low",
+      "input_prompt": "docs/auditoria/mapa-pecas/ciclo-02/PROMPT-FASE-1-INSPETOR.txt",
+      "comando_terminal": "agy --model gemini-3.8-flash-low  --dangerously-skip-permissions",
+      "output_handoff": "docs/auditoria/mapa-pecas/ciclo-02/LAUDO-15D-INICIAL.md",
+      "gate_fase": "python docs/auditoria/mapa-pecas/G_auditoria_15D.py docs/auditoria/mapa-pecas/ciclo-02/LAUDO-15D-INICIAL.md"
+    },
+    {
+      "nome": "Fase_2_Arquiteto",
+      "harness": "agy",
+      "model": "gemini-3.8-flash-low",
+      "input_prompt": "docs/auditoria/mapa-pecas/ciclo-02/PROMPT-FASE-2-ARQUITETO.txt",
+      "comando_terminal": "agy --model gemini-3.8-flash-low  --dangerously-skip-permissions",
+      "output_handoff": "docs/auditoria/mapa-pecas/ciclo-02/PLANO-EVOLUCAO.md",
+      "gate_fase": "python scripts/compilador_plano_evolucao.py --plano docs/auditoria/mapa-pecas/ciclo-02/PLANO-EVOLUCAO.md"
+    },
+    {
+      "nome": "Fase_3_Construtor",
+      "harness": "mimo",
+      "model": "xiaomi-token-plan-sgp/mimo-v2.6-flash",
+      "input_prompt": "docs/auditoria/mapa-pecas/ciclo-02/PROMPT-FASE-3-CONSTRUTOR.txt",
+      "comando_terminal": "MIMOCODE_DANGEROUSLY_SKIP_PERMISSIONS=1 MIMOCODE_TUI_PLAIN=1 mimo -m xiaomi-token-plan-sgp/mimo-v2.6-flash --pure --trust",
+      "output_handoff": "docs/auditoria/mapa-pecas/ciclo-02/RELATORIO-CONSTRUTOR.md",
+      "gate_fase": "python -m pytest -q -p no:cacheprovider tests"
+    },
+    {
+      "nome": "Fase_4_Inspetor_Retorno",
+      "harness": "opencode",
+      "model": "opencode/big-pickle",
+      "input_prompt": "docs/auditoria/mapa-pecas/ciclo-02/PROMPT-FASE-4-RETORNO.txt",
+      "comando_terminal": "opencode --pure --auto --agent -m opencode/big-pickle",
+      "output_handoff": "docs/auditoria/mapa-pecas/ciclo-02/LAUDO-15D-REVISADO.md",
+      "gate_fase": "python docs/auditoria/mapa-pecas/G_auditoria_15D.py docs/auditoria/mapa-pecas/ciclo-02/LAUDO-15D-REVISADO.md"
+    }
+  ]
+}

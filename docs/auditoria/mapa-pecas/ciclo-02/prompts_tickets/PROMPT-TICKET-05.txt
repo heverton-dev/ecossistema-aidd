@@ -1,0 +1,18 @@
+ROLE: Builder. Ecosystem AIDD. Ticket 5. Target tool: mapa-pecas.
+DIMENSION: D14
+DELIVER: docs/auditoria/mapa-pecas/ciclo-02/ENTREGA-TICKET-05.json
+
+STEPS:
+- Verify that aidd-melhoria ciclo-02 scaffold is open for remaining dimensions.
+- Recompute parts catalog with scripts/catalogo_pecas.py.
+- Recompile all 13 visual maps and book parts.
+- Run gates/G_mapa_pecas.py and test suites. Assert exit 0.
+- Write handoff json to docs/auditoria/mapa-pecas/ciclo-02/ENTREGA-TICKET-05.json.
+
+RULES:
+1. Write failing test first. Run. Assert exit 1.
+2. Implement. Zero stubs. Real pytest tests. Run. Assert exit 0.
+3. Work inside ephemeral Git Worktree only.
+4. Capture real exit code: redirect to file, read $? same line. Never trust pipes.
+5. NEVER edit docs/auditoria/CONFIG-EXECUCAO-USUARIO.json.
+6. Deliver exactly: docs/auditoria/mapa-pecas/ciclo-02/ENTREGA-TICKET-05.json

@@ -34,6 +34,9 @@ except ImportError:
 ROOT_DIR = Path(__file__).resolve().parent.parent
 if str(ROOT_DIR) not in sys.path:
     sys.path.insert(0, str(ROOT_DIR))
+planner_tools = ROOT_DIR / "tools" / "aidd-planner"
+if planner_tools.is_dir() and str(planner_tools) not in sys.path:
+    sys.path.insert(0, str(planner_tools))
 SPECS_DIR = ROOT_DIR / "componentes" / "compartilhado" / "specs"
 
 MAPA_FLUXOS = {
@@ -241,11 +244,9 @@ class OrquestradorSincrono:
 
             # Compila o manifesto VSA formal para despacho em worktrees
             try:
-                planner_path = ROOT_DIR / "tools" / "aidd-planner"
-                if str(planner_path) not in sys.path:
-                    sys.path.insert(0, str(planner_path))
-                from aidd_planner.core.planner_engine import compilar_grafo_topologico_vsa
-                vsa_dispatch = compilar_grafo_topologico_vsa(planner_data)
+                import importlib
+                planner_core = importlib.import_module("aidd_planner.core.planner_engine")
+                vsa_dispatch = planner_core.compilar_grafo_topologico_vsa(planner_data)
                 vsa_file = self.pasta / "VSA_DISPATCH.json"
                 with open(vsa_file, "w", encoding="utf-8") as f:
                     json.dump(vsa_dispatch, f, indent=2, ensure_ascii=False)
@@ -307,15 +308,14 @@ class OrquestradorSincrono:
                 return False
 
         # Despacho determinístico de fatias VSA em Git Worktrees efêmeras
-        dispatch_script = ROOT_DIR / "tools" / "aidd-master" / "scripts" / "dispatch_pipeline.py"
         vsa_manifest = self.pasta / "VSA_DISPATCH.json"
         if not vsa_manifest.is_file():
             vsa_manifest = self.pasta / "PLANNER.json"
 
-        if vsa_manifest.is_file() and dispatch_script.is_file():
-            self.log(f"Invocando motor de despacho VSA: {dispatch_script.name}")
+        if vsa_manifest.is_file():
+            self.log("Invocando motor de despacho VSA via CLI do ecossistema")
             cmd_disp = [
-                sys.executable, str(dispatch_script),
+                sys.executable, "ecossistema.py", "dispatch",
                 "--dispatch", str(vsa_manifest),
                 "--target-dir", str(self.pasta),
             ]

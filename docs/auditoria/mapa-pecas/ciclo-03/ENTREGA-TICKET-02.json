@@ -1,0 +1,15 @@
+{
+  "ticket": 2,
+  "titulo": "Governança e Titularidade de Moldes de Entrega",
+  "status": "CONCLUIDO",
+  "fase_15d": "D4. Componentes e Fractalidade",
+  "modificacoes": [
+    "scripts/catalogo_pecas.py (coletar_moldes_entrega)",
+    "scripts/achados_ciclo.py (DONAS_MOLDES filter)"
+  ],
+  "gates_verificados": [
+    "G_mapa_pecas",
+    "G_TEMPLATE_FORGE_ROT"
+  ],
+  "exit_code": 0
+}
