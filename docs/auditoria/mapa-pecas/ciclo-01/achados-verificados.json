@@ -112,7 +112,7 @@
     },
     {
       "id": "VER-013",
-      "titulo": "components sync puxava skills dos harnesses de volta para a fonte",
+      "titulo": "O sync de componentes puxava skills dos harnesses de volta para a fonte",
       "gravidade": "alta",
       "estado": "resolvido",
       "mapa": "harnesses",

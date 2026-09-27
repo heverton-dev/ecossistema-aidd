@@ -1,0 +1,19 @@
+{
+  "versao_manifesto": "1.0",
+  "titulo": "Mapas do Ecossistema AIDD",
+  "nome_base": "26-09-2026_LIVRO-MAPAS-AIDD",
+  "pasta_partes": "partes",
+  "template": null,
+  "partes": [
+    "00-frontmatter.md",
+    "10-parte-i.md",
+    "20-parte-ii.md",
+    "30-parte-iii.md",
+    "40-parte-iv.md",
+    "90-apendice-glossario.md",
+    "91-apendice-estado.md"
+  ],
+  "revisoes": [],
+  "hash_fonte": "3931fb37971f27290cb386c2c3509b5f84d28dfaf07d7c9b35eab20fd3e808a2",
+  "ultima_compilacao": "2026-09-26"
+}
