@@ -1,0 +1,48 @@
+{
+  "componentes": [
+    {
+      "bytes": 2283,
+      "caminho": ".agents/skills/aidd-forge/scripts/isolamento.py",
+      "sha256": "1a98626fc8a3fa88ec95d1be382d41b695cfa3ce5fd3a198f41729a4b4e3046b"
+    },
+    {
+      "bytes": 9286,
+      "caminho": ".agents/skills/aidd-forge/scripts/cli.py",
+      "sha256": "1713139b91d03beffe0f638052ab9e24c69066fa702a31f8c80125bafb1e3ad2"
+    },
+    {
+      "bytes": 6414,
+      "caminho": ".agents/skills/aidd-forge/scripts/bootstrap.py",
+      "sha256": "ec22177e01a1efb805d3d46c7224497a68a32371b5aaf37719469360de063766"
+    },
+    {
+      "bytes": 7062,
+      "caminho": ".agents/skills/aidd-forge/scripts/orquestracao.py",
+      "sha256": "d2e518a282423b90ceec9296a949b041133152e1620ba0f264371ca83a20595b"
+    },
+    {
+      "bytes": 3787,
+      "caminho": ".agents/skills/aidd-forge/scripts/resiliencia.py",
+      "sha256": "4e22cc5ca4b967910a89790486c71aa7afe2eccde54395cb6e3abe48deba49d4"
+    },
+    {
+      "bytes": 4772,
+      "caminho": ".agents/skills/aidd-forge/scripts/observabilidade.py",
+      "sha256": "4f1e15d548eff2f2575cf7c3e86ba00bdcd6e5cada628e152afd6be148e7b041"
+    },
+    {
+      "bytes": 6606,
+      "caminho": ".agents/skills/aidd-forge/scripts/rollback.py",
+      "sha256": "3cc8d3b1da65556713bc61bb3b2288bfd4e5779492811fab3fd613e5fa1560b7"
+    },
+    {
+      "bytes": 7330,
+      "caminho": "gates/G_aidd_forge.py",
+      "sha256": "a5698ad0b858dc0a6a43266824d899c5f36304d91854082faea6edfd8b6ecfb4"
+    }
+  ],
+  "consumidor": "aidd-planner",
+  "ferramenta": "aidd-forge",
+  "gerado_em": "2026-09-28T10:42:05+00:00",
+  "versao": "1.0"
+}

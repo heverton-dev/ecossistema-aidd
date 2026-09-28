@@ -117,7 +117,7 @@ footer{padding-top:28px;border-top:1px solid var(--line);font-size:.85rem;color:
   <span class="eyebrow">Mapa visual · peça: lei e sua prova</span>
   <h1>Mapa das leis</h1>
   <p class="lead">Uma lei é uma regra do <code>AGENTS.md</code>. Sozinha, ela é só um pedido. Ela vira trava quando um guarda a prova. Este mapa mostra cada lei, os guardas declarados embaixo dela e se essa prova vale de verdade: o guarda tem teste que reprova, roda no commit e o meta-guarda consegue ler a declaração.</p>
-  <div class="totais"><div class="total "><b>13</b><span>leis</span></div><div class="total "><b>55</b><span>declarações de guarda</span></div><div class="total "><b>0</b><span>o meta-guarda não lê</span></div><div class="total "><b>0</b><span>declarados fora do commit</span></div><div class="total "><b>0</b><span>guardas da raiz sem lei</span></div></div>
+  <div class="totais"><div class="total "><b>13</b><span>leis</span></div><div class="total "><b>55</b><span>declarações de guarda</span></div><div class="total "><b>0</b><span>o meta-guarda não lê</span></div><div class="total "><b>0</b><span>declarados fora do commit</span></div><div class="total aviso"><b>1</b><span>guardas da raiz sem lei</span></div></div>
 </header>
 
 <section id="regra">
@@ -138,7 +138,7 @@ footer{padding-top:28px;border-top:1px solid var(--line);font-size:.85rem;color:
     <div class="box"><h3>Declarações que o meta-guarda não lê</h3><p>A linha tem comentário depois do parêntese; ninguém confere se ela está certa:</p><p class="vazio">Nenhuma hoje.</p></div>
     <div class="box"><h3>Guardas declarados que não rodam no commit</h3><p>A lei aponta para um guarda que só funciona quando alguém lembra de chamar:</p><p class="vazio">Todos os guardas declarados rodam no commit.</p></div>
     <div class="box"><h3>Guardas declarados sem prova que morde</h3><p>Não há teste que force a reprovação deste guarda:</p><p class="vazio">Todos os guardas declarados têm prova que morde.</p></div>
-    <div class="box"><h3>Guardas da raiz que nenhuma lei declara</h3><p>Existem e conferem algo, mas não estão amarrados a nenhuma lei:</p><p class="vazio">Todo guarda da raiz está ligado a uma lei.</p></div>
+    <div class="box"><h3>Guardas da raiz que nenhuma lei declara</h3><p>Existem e conferem algo, mas não estão amarrados a nenhuma lei:</p><p class="chips" style="display:flex;flex-wrap:wrap;gap:6px"><code>G_aidd_forge</code></p></div>
   </div>
 </section>
 

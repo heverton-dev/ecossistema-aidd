@@ -1,6 +1,16 @@
 # Apêndice B — Estado honesto
 
-Tabela consolidada de todos os achados dos mapas, gerada de `docs/auditoria/mapa-pecas/ciclo-01/ACHADOS.json`. Em aberto por gravidade: 0 alta, 0 média, 0 baixa. Cada achado em aberto traz no arquivo o texto pronto para abrir o fluxo de melhoria (`pedido_melhoria`).
+Tabela consolidada de todos os achados dos mapas, gerada de `docs/auditoria/mapa-pecas/ciclo-01/ACHADOS.json`. Em aberto por gravidade: 0 alta, 2 média, 3 baixa. Cada achado em aberto traz no arquivo o texto pronto para abrir o fluxo de melhoria (`pedido_melhoria`).
+
+## Em aberto (5)
+
+| Achado | Gravidade · mapa |
+| :-------------------------------------- | :-------------------------------------------- |
+| 9 dimensões 15-D com falha no laudo de aidd-forge (`CAT-15d-aidd-forge`) | Média · lente15d |
+| 1 guardas com o mesmo nome e código diferente (`CAT-gates-versoes`) | Média · guardas |
+| Ciclo de auditoria sem todos os documentos: aidd-forge/ciclo-01 (`CAT-ciclo-aidd-forge-ciclo-01`) | Baixa · oficina |
+| Ciclo de auditoria sem todos os documentos: skills-ddd/ciclo-01 (`CAT-ciclo-skills-ddd-ciclo-01`) | Baixa · oficina |
+| 1 guardas da raiz que nenhuma lei declara (`CAT-guardas-sem-lei`) | Baixa · leis |
 
 ## Resolvidos (14)
 

@@ -18,8 +18,8 @@
     "mcps_registrados": 9,
     "mcps_internos": 3,
     "hooks": 3,
-    "gates_nomes": 88,
-    "gates_arquivos": 134,
+    "gates_nomes": 89,
+    "gates_arquivos": 135,
     "contratos": 8,
     "etapas_receita": 7,
     "encaixes_quebrados": 0
@@ -998,6 +998,28 @@
         }
       },
       {
+        "alvo": "aidd-forge",
+        "ciclo": "ciclo-01",
+        "laudo": "docs/auditoria/aidd-forge/ciclo-01/LAUDO-15D-INICIAL.md",
+        "dimensoes": {
+          "1": "descrito",
+          "2": "descrito",
+          "3": "falha",
+          "4": "falha",
+          "5": "descrito",
+          "6": "descrito",
+          "7": "descrito",
+          "8": "falha",
+          "9": "descrito",
+          "10": "falha",
+          "11": "falha",
+          "12": "falha",
+          "13": "falha",
+          "14": "falha",
+          "15": "falha"
+        }
+      },
+      {
         "alvo": "aidd-melhoria",
         "ciclo": "ciclo-01",
         "laudo": "docs/auditoria/aidd-melhoria/ciclo-01/LAUDO-15D-REVISADO.md",
@@ -1339,6 +1361,18 @@
         "nota": "8"
       },
       {
+        "alvo": "aidd-forge",
+        "ciclo": "ciclo-01",
+        "caminho": "docs/auditoria/aidd-forge/ciclo-01",
+        "fases": {
+          "laudo_inicial": true,
+          "plano_evolucao": true,
+          "laudo_revisado": false,
+          "dod": true
+        },
+        "nota": ""
+      },
+      {
         "alvo": "aidd-melhoria",
         "ciclo": "ciclo-01",
         "caminho": "docs/auditoria/aidd-melhoria/ciclo-01",
@@ -1673,7 +1707,7 @@
       "ferramenta": "aidd-enterprise",
       "molde": "v2",
       "caminho": "tools/aidd-enterprise/templates/v2",
-      "arquivos": 94,
+      "arquivos": 86,
       "dona_canonica": "aidd-master"
     },
     {
@@ -1785,7 +1819,7 @@
       "ferramenta": "aidd-master",
       "molde": "v2",
       "caminho": "tools/aidd-master/templates/v2",
-      "arquivos": 94,
+      "arquivos": 86,
       "dona_canonica": "aidd-master"
     },
     {
@@ -1814,9 +1848,9 @@
           "hook": ".claude/hooks/{nome}",
           "sub-agent": ".claude/agents/{nome}"
         },
-        "skills_em_disco": 60,
+        "skills_em_disco": 41,
         "nossas_faltando": [],
-        "terceiros_em_disco": 19,
+        "terceiros_em_disco": 0,
         "config_mcp": ".mcp.json"
       },
       {
@@ -1835,9 +1869,9 @@
           "hook": ".agents/hooks/{nome}",
           "sub-agent": ".agents/agents/{nome}"
         },
-        "skills_em_disco": 60,
+        "skills_em_disco": 41,
         "nossas_faltando": [],
-        "terceiros_em_disco": 19,
+        "terceiros_em_disco": 0,
         "config_mcp": ".agents/mcp_config.json"
       },
       {
@@ -1856,9 +1890,9 @@
           "hook": ".opencode/hooks/{nome}",
           "sub-agent": ".opencode/agents/{nome}"
         },
-        "skills_em_disco": 46,
+        "skills_em_disco": 41,
         "nossas_faltando": [],
-        "terceiros_em_disco": 5,
+        "terceiros_em_disco": 0,
         "config_mcp": "opencode.jsonc"
       },
       {
@@ -1877,9 +1911,9 @@
           "hook": ".mimocode/hooks/{nome}",
           "sub-agent": ".mimocode/agents/{nome}"
         },
-        "skills_em_disco": 46,
+        "skills_em_disco": 41,
         "nossas_faltando": [],
-        "terceiros_em_disco": 5,
+        "terceiros_em_disco": 0,
         "config_mcp": "mimocode.jsonc"
       },
       {
@@ -1915,9 +1949,9 @@
           "command": ".cursor/commands/{nome}",
           "hook": ".cursor/hooks/{nome}"
         },
-        "skills_em_disco": 46,
+        "skills_em_disco": 41,
         "nossas_faltando": [],
-        "terceiros_em_disco": 5,
+        "terceiros_em_disco": 0,
         "config_mcp": ".cursor/mcp.json"
       },
       {
@@ -1934,9 +1968,9 @@
           "command": ".codebuddy/commands/{nome}",
           "hook": ".codebuddy/hooks/{nome}"
         },
-        "skills_em_disco": 60,
+        "skills_em_disco": 41,
         "nossas_faltando": [],
-        "terceiros_em_disco": 19,
+        "terceiros_em_disco": 0,
         "config_mcp": ""
       }
     ],
@@ -3746,6 +3780,21 @@
       "leis": [
         9
       ]
+    },
+    {
+      "id": "G_aidd_forge",
+      "descricao": "Quality Gate Determinístico de bootstrap do aidd-forge (Lei #8 / Lei #13). Valida estritamente um alvo de bootstrap forge: Arquivo de governança AGENTS.md presente e não vazio.",
+      "copias": [
+        {
+          "caminho": "gates/G_aidd_forge.py",
+          "versao": "A",
+          "papel": "ecossistema"
+        }
+      ],
+      "versoes_distintas": 1,
+      "no_pre_commit": false,
+      "prova_que_morde": true,
+      "leis": []
     },
     {
       "id": "G_amelhoria",

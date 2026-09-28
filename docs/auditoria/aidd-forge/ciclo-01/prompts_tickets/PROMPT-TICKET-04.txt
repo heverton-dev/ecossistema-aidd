@@ -1,0 +1,17 @@
+ROLE: Builder. Ecosystem AIDD. Ticket 4. Target tool: aidd-forge.
+DIMENSION: D10
+DELIVER: .agents/skills/aidd-forge/scripts/orquestracao.py
+
+STEPS:
+- Write test first: corrupt intermediate stage state. Assert pipeline aborts with exit 1.
+- Implement .agents/skills/aidd-forge/scripts/orquestracao.py defining sequential staged pipeline.
+- Enforce stage state transitions: pre-validation, injection, post-verification.
+- Run tests/test_forge_orquestracao.py. Assert exit 0.
+
+RULES:
+1. Write failing test first. Run. Assert exit 1.
+2. Implement. Zero stubs. Real pytest tests. Run. Assert exit 0.
+3. Work inside ephemeral Git Worktree only.
+4. Capture real exit code: redirect to file, read $? same line. Never trust pipes.
+5. NEVER edit docs/auditoria/CONFIG-EXECUCAO-USUARIO.json.
+6. Deliver exactly: .agents/skills/aidd-forge/scripts/orquestracao.py

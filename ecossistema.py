@@ -188,6 +188,12 @@ def _reparar_instalacao_editable_aidd_forge(forge_dir):
 
 
 def cmd_forge(args):
+    # Roteia para a script local deterministica da skill (D4): exit 1 em
+    # entrada invalida, sem interpretacao por prompt. Fallback: pacote pip.
+    skill_cli = os.path.join(ROOT_DIR, ".agents", "skills", "aidd-forge", "scripts", "cli.py")
+    if os.path.isfile(skill_cli):
+        cmd = [sys.executable, skill_cli] + list(args)
+        return run_command(cmd, cwd=os.getcwd())
     forge_dir = os.path.join(TOOLS_DIR, "aidd-forge")
     _reparar_instalacao_editable_aidd_forge(forge_dir)
     env = {"PYTHONPATH": forge_dir}

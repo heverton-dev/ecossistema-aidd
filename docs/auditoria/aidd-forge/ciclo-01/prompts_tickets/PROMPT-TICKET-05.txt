@@ -1,0 +1,17 @@
+ROLE: Builder. Ecosystem AIDD. Ticket 5. Target tool: aidd-forge.
+DIMENSION: D11
+DELIVER: .agents/skills/aidd-forge/scripts/resiliencia.py
+
+STEPS:
+- Write test first: simulate IO permission error or lock failure. Current code must fail abruptly.
+- Implement .agents/skills/aidd-forge/scripts/resiliencia.py with exponential backoff and error handlers.
+- Handle transient git lock and permission exceptions gracefully.
+- Run tests/test_forge_resiliencia.py. Assert exit 0 and retry mechanisms verified.
+
+RULES:
+1. Write failing test first. Run. Assert exit 1.
+2. Implement. Zero stubs. Real pytest tests. Run. Assert exit 0.
+3. Work inside ephemeral Git Worktree only.
+4. Capture real exit code: redirect to file, read $? same line. Never trust pipes.
+5. NEVER edit docs/auditoria/CONFIG-EXECUCAO-USUARIO.json.
+6. Deliver exactly: .agents/skills/aidd-forge/scripts/resiliencia.py
