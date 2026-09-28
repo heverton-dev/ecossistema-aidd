@@ -8,7 +8,7 @@ O nível meso: quem confere, quem ensina, os botões, as conexões e para onde t
 #ficha(
   ("Mapa", "mapa-04-guardas.html"),
   ("Para que serve", "todos os guardas, onde moram e quem prova que morde"),
-  ("Achados em aberto", "0"),
+  ("Achados em aberto", "1"),
 )
 ```
 
@@ -22,16 +22,16 @@ Onde mora: `gates/` e `tools/<f>/gates/`. Quem confere: o próprio pre-commit e 
 
 | Medida | Valor |
 | :-------------------------------------- | :-------------------------------------------- |
-| guardas (nomes) | 88 |
-| no ecossistema | 55 |
+| guardas (nomes) | 89 |
+| no ecossistema | 56 |
 | rodam no commit | 55 |
-| com versões diferentes | 0 |
+| com versões diferentes | 1 |
 
 Os números saem de `docs/auditoria/mapa-pecas/catalogo-pecas.json` (função `coletar_gates`), os mesmos do mapa `mapa-04-guardas.html`.
 
 ## 4.3 O que falta consertar
 
-Nenhum achado em aberto para este mapa.
+- **Média** · 1 guardas com o mesmo nome e código diferente (`CAT-gates-versoes`).
 
 Já resolvido:
 
@@ -69,9 +69,9 @@ Onde mora: `componentes/compartilhado/skills/`. Quem confere: o `G_SKILL_FORMATO
 
 | Medida | Valor |
 | :-------------------------------------- | :-------------------------------------------- |
-| skills nossas | 39 |
+| skills nossas | 41 |
 | nomes de terceiros registrados | 20 |
-| com "Use when" | 39 |
+| com "Use when" | 41 |
 
 Os números saem de `docs/auditoria/mapa-pecas/catalogo-pecas.json` (função `coletar_skills`), os mesmos do mapa `mapa-05-skills.html`.
 
