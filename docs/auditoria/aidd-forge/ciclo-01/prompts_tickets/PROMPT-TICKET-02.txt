@@ -1,0 +1,17 @@
+ROLE: Builder. Ecosystem AIDD. Ticket 2. Target tool: aidd-forge.
+DIMENSION: D4
+DELIVER: .agents/skills/aidd-forge/scripts/cli.py
+
+STEPS:
+- Write test first: verify CLI fails with exit 1 on missing parameters or unhandled input.
+- Implement .agents/skills/aidd-forge/scripts/cli.py to provide deterministic CLI entrypoint.
+- Connect ecossistema.py forge commands directly to local scripts instead of pure prompt interpretation.
+- Run tests/test_forge_cli.py. Assert exit 0.
+
+RULES:
+1. Write failing test first. Run. Assert exit 1.
+2. Implement. Zero stubs. Real pytest tests. Run. Assert exit 0.
+3. Work inside ephemeral Git Worktree only.
+4. Capture real exit code: redirect to file, read $? same line. Never trust pipes.
+5. NEVER edit docs/auditoria/CONFIG-EXECUCAO-USUARIO.json.
+6. Deliver exactly: .agents/skills/aidd-forge/scripts/cli.py

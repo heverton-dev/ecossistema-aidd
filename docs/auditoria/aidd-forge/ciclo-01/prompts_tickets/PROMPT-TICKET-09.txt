@@ -1,0 +1,18 @@
+ROLE: Builder. Ecosystem AIDD. Ticket 9. Target tool: aidd-forge.
+DIMENSION: D15
+DELIVER: docs/teste-end-to-end/aidd-forge.md
+
+STEPS:
+- Write test first: complete bootstrap without ./handoff-forge.json. Assert exit 1.
+- Emit structured ./handoff-forge.json with SHA-256 component hashes for aidd-planner handoff.
+- Create or update docs/teste-end-to-end/aidd-forge.md proving 5-step cycle.
+- Document Quarteto Sine Qua Non exemption for forge CLI tool in report.
+- Run tests/test_forge_handoff.py. Assert exit 0.
+
+RULES:
+1. Write failing test first. Run. Assert exit 1.
+2. Implement. Zero stubs. Real pytest tests. Run. Assert exit 0.
+3. Work inside ephemeral Git Worktree only.
+4. Capture real exit code: redirect to file, read $? same line. Never trust pipes.
+5. NEVER edit docs/auditoria/CONFIG-EXECUCAO-USUARIO.json.
+6. Deliver exactly: docs/teste-end-to-end/aidd-forge.md

@@ -1,0 +1,17 @@
+ROLE: Builder. Ecosystem AIDD. Ticket 6. Target tool: aidd-forge.
+DIMENSION: D12
+DELIVER: .agents/skills/aidd-forge/scripts/observabilidade.py
+
+STEPS:
+- Write test first: assert failure when run does not emit structured execution metrics.
+- Implement .agents/skills/aidd-forge/scripts/observabilidade.py recording duration and injected artifacts.
+- Write structured JSON log to secoes/ or stdout.
+- Run tests/test_forge_observabilidade.py. Assert exit 0.
+
+RULES:
+1. Write failing test first. Run. Assert exit 1.
+2. Implement. Zero stubs. Real pytest tests. Run. Assert exit 0.
+3. Work inside ephemeral Git Worktree only.
+4. Capture real exit code: redirect to file, read $? same line. Never trust pipes.
+5. NEVER edit docs/auditoria/CONFIG-EXECUCAO-USUARIO.json.
+6. Deliver exactly: .agents/skills/aidd-forge/scripts/observabilidade.py
