@@ -23,7 +23,7 @@ Onde mora: `AGENTS.md`, seção 2. Quem confere: o meta-guarda `G_LEI_DECLARA_PO
 | Medida | Valor |
 | :-------------------------------------- | :-------------------------------------------- |
 | leis | 13 |
-| declarações de guarda | 55 |
+| declarações de guarda | 56 |
 | declarações que o meta-guarda não lê | 0 |
 
 Os números saem de `docs/auditoria/mapa-pecas/catalogo-pecas.json` (função `coletar_leis`), os mesmos do mapa `mapa-01-leis.html`.

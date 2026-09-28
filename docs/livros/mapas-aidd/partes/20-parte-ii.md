@@ -24,8 +24,8 @@ Onde mora: `gates/` e `tools/<f>/gates/`. Quem confere: o próprio pre-commit e 
 | :-------------------------------------- | :-------------------------------------------- |
 | guardas (nomes) | 89 |
 | no ecossistema | 56 |
-| rodam no commit | 55 |
-| com versões diferentes | 1 |
+| rodam no commit | 56 |
+| com versões diferentes | 0 |
 
 Os números saem de `docs/auditoria/mapa-pecas/catalogo-pecas.json` (função `coletar_gates`), os mesmos do mapa `mapa-04-guardas.html`.
 
