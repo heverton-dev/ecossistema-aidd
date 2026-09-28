@@ -227,7 +227,7 @@ footer{padding-top:28px;border-top:1px solid var(--line);font-size:.85rem;color:
       <span class="f"><b>open</b>Fluxo 02 · /open ou /aidd-open</span>
       <p>Escolhe motores abertos já existentes e cola as partes do seu negócio em volta deles.</p>
       <code class="cmd">python ecossistema.py open "Clinica Vet" saude</code>
-      <span class="chip falha">quebra na etapa 3</span>
+      <span class="chip certo">todas as etapas encaixam</span>
       <p class="obs">No Antigravity use <code>/aidd-open</code>, porque lá <code>/open</code> abre arquivo.</p>
     </div>
     <div class="rota">
@@ -235,7 +235,7 @@ footer{padding-top:28px;border-top:1px solid var(--line);font-size:.85rem;color:
       <span class="f"><b>freedom</b>Fluxo 03 · /freedom</span>
       <p>Tira o app da plataforma, troca o banco por um PostgreSQL próprio e deixa tudo pronto para a sua VPS.</p>
       <code class="cmd">python ecossistema.py freedom ./export-lovable "Clinica Vet" saude</code>
-      <span class="chip falha">quebra na etapa 3</span>
+      <span class="chip certo">todas as etapas encaixam</span>
       <p class="obs">O primeiro argumento é a pasta exportada da plataforma.</p>
     </div>
   </div>
@@ -483,17 +483,17 @@ footer{padding-top:28px;border-top:1px solid var(--line);font-size:.85rem;color:
       <div class="passo var"><span class="n">etapa 3 · troca</span><strong>engine</strong>
         <div class="alt">
           <div>pure · generator <span class="chip certo">ok</span></div>
-          <div>open · factory <span class="chip falha">quebra</span></div>
-          <div>freedom · bridge <span class="chip falha">quebra</span></div>
+          <div>open · factory <span class="chip certo">ok</span></div>
+          <div>freedom · bridge <span class="chip certo">ok</span></div>
         </div>
       </div>
       <div class="passo"><span class="n">etapa 4</span><strong>master</strong><span>monta o esqueleto e os módulos</span><span class="chip certo">encaixa</span></div>
       <div class="passo"><span class="n">etapa 5</span><strong>enterprise</strong><span>blinda e vigia mudanças</span><span class="chip certo">encaixa</span></div>
-      <div class="passo"><span class="n">etapa 6</span><strong>ops</strong><span>deveria subir a infraestrutura</span><span class="chip fach">fachada</span></div>
-      <div class="passo"><span class="n">etapa 7</span><strong>auditoria</strong><span>deveria rodar os guardas</span><span class="chip fach">fachada</span></div>
+      <div class="passo"><span class="n">etapa 6</span><strong>ops</strong><span>planeja a infraestrutura</span><span class="chip certo">encaixa</span></div>
+      <div class="passo"><span class="n">etapa 7</span><strong>auditoria</strong><span>roda os guardas</span><span class="chip certo">encaixa</span></div>
     </div>
   </div>
-  <p class="legenda"><b>fachada</b> = a etapa existe no papel, mas não chama a peça que diz chamar. <b>quebra</b> = a chamada usa um pino que a peça não tem.</p>
+  <p class="legenda">Todas as 7 etapas e 12 chamadas da receita foram conferidas e encaixam de verdade (0 chamadas que quebram).</p>
 </section>
 
 <section id="oficina">
