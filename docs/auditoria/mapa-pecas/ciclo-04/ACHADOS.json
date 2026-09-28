@@ -1,0 +1,210 @@
+{
+  "versao": 1,
+  "gerado_por": "scripts/achados_ciclo.py",
+  "fontes": [
+    "docs/auditoria/mapa-pecas/catalogo-pecas.json",
+    "docs/auditoria/mapa-pecas/ciclo-01/achados-verificados.json"
+  ],
+  "como_usar": "Cada achado em aberto traz pedido_melhoria: o texto para python ecossistema.py melhoria init --pedido \"...\".",
+  "totais": {
+    "aberto": 0,
+    "suspeita": 0,
+    "resolvido": 14,
+    "abertos_alta": 0,
+    "abertos_media": 0,
+    "abertos_baixa": 0
+  },
+  "achados": [
+    {
+      "id": "VER-001",
+      "titulo": "A validação de contrato aprova quando não consegue conferir",
+      "gravidade": "alta",
+      "estado": "resolvido",
+      "mapa": "encaixes",
+      "evidencia": [
+        "scripts/orquestrador_sincrono.py:113-120: _validar_schema devolve True sem jsonschema instalado e quando o schema não existe"
+      ],
+      "resolvido_em": "ciclo-01",
+      "pedido_melhoria": "Fazer _validar_schema do orquestrador síncrono reprovar (False + ERRO) quando faltar jsonschema ou o arquivo de schema, com teste que prove a reprovação.",
+      "origem": "reproducao"
+    },
+    {
+      "id": "VER-002",
+      "titulo": "Etapa 7 grava CONFORME_100_POR_CENTO sem rodar guarda nenhum",
+      "gravidade": "alta",
+      "estado": "resolvido",
+      "mapa": "encaixes",
+      "evidencia": [
+        "scripts/orquestrador_sincrono.py:519: status fixo CONFORME_100_POR_CENTO no manifesto final",
+        "catálogo: etapa_07_auditoria sem chamada de ferramenta"
+      ],
+      "resolvido_em": "ciclo-01",
+      "pedido_melhoria": "Trocar a etapa 7 do orquestrador síncrono por uma auditoria real (guardas do projeto gerado) e gravar o status medido, nunca um literal.",
+      "origem": "reproducao"
+    },
+    {
+      "id": "VER-003",
+      "titulo": "Etapa 3 do Fluxo 02 chama o factory sem o PLANO-INFRAESTRUTURA.json que ele exige",
+      "gravidade": "alta",
+      "estado": "resolvido",
+      "mapa": "encaixes",
+      "evidencia": [
+        "python ecossistema.py factory --help: --plano (PLANO-INFRAESTRUTURA.json) é obrigatório",
+        "o plano é gerado pelo ops, que roda depois, na etapa 6 (scripts/orquestrador_sincrono.py:259 e :494)"
+      ],
+      "resolvido_em": "ciclo-01",
+      "pedido_melhoria": "Rever a ordem da receita do Fluxo 02: gerar o PLANO-INFRAESTRUTURA.json (ops plan) antes da etapa 3, ou mudar o contrato do factory.",
+      "origem": "reproducao"
+    },
+    {
+      "id": "VER-005",
+      "titulo": "Corrida entre testes no G_PORTAO_PROVA_QUE_MORDE",
+      "gravidade": "alta",
+      "estado": "resolvido",
+      "mapa": "guardas",
+      "evidencia": [
+        "gates/test_g_determinismo_lei_1.py:41: grava G_SYNTHETIC_LLM_TRAP.py no gates/ real",
+        "gates/G_PORTAO_PROVA_QUE_MORDE.py:186: roda as suítes em paralelo (ThreadPoolExecutor)",
+        "barrou 5 commits em 26/09 com FileNotFoundError em G_DOCS_ROT, G_DRIFT_ANALYZER ou G_aidd_diagnose; passou ao repetir"
+      ],
+      "resolvido_em": "ciclo-01",
+      "pedido_melhoria": "Fazer test_g_determinismo_lei_1 usar uma pasta temporária em vez de gravar no gates/ real, para acabar com a corrida no meta-guarda.",
+      "origem": "reproducao"
+    },
+    {
+      "id": "VER-013",
+      "titulo": "O sync de componentes puxava skills dos harnesses de volta para a fonte",
+      "gravidade": "alta",
+      "estado": "resolvido",
+      "mapa": "harnesses",
+      "evidencia": [
+        "auto_ingest_skills passou a ignorar skills de terceiros declaradas; teste em gates/test_gestor_componentes_drift.py"
+      ],
+      "resolvido_em": "416dcd1",
+      "pedido_melhoria": "",
+      "origem": "reproducao"
+    },
+    {
+      "id": "VER-004",
+      "titulo": "O --dry-run do orquestrador grava README-USUARIO.md no disco",
+      "gravidade": "media",
+      "estado": "resolvido",
+      "mapa": "encaixes",
+      "evidencia": [
+        "scripts/orquestrador_sincrono.py:619: a condição 'not is_file() or not dry_run' grava o guia quando ele ainda não existe",
+        "reproduzido: python ecossistema.py pure \"Projeto X\" gestao --dry-run criou projetos/projeto-x/README-USUARIO.md"
+      ],
+      "resolvido_em": "ciclo-01",
+      "pedido_melhoria": "Fazer o --dry-run do orquestrador síncrono não gravar nada em disco (README-USUARIO.md incluído), com teste.",
+      "origem": "reproducao"
+    },
+    {
+      "id": "VER-006",
+      "titulo": "6 testes falhando na aidd-orca, fora do pre-commit",
+      "gravidade": "media",
+      "estado": "resolvido",
+      "mapa": "skills",
+      "evidencia": [
+        "cd componentes/compartilhado/skills/aidd-orca && python -m pytest tests -q: 6 failed, 111 passed (igual antes da renomeação)"
+      ],
+      "resolvido_em": "ciclo-01",
+      "pedido_melhoria": "Corrigir os 6 testes quebrados da aidd-orca (agent_spawner, flight_plan, orchestrator_engine) e ligá-los ao pre-commit.",
+      "origem": "reproducao"
+    },
+    {
+      "id": "VER-008",
+      "titulo": "G_HANDOFF_MELHORIA reprova com o handoff-melhoria.json versionado",
+      "gravidade": "media",
+      "estado": "resolvido",
+      "mapa": "leis",
+      "evidencia": [
+        "python gates/G_HANDOFF_MELHORIA.py: exit 1, campos obrigatórios ausentes (versao_schema, emitido_em, transicao, artefatos, assinatura)",
+        "o guarda está declarado na Lei #9 e não roda no commit"
+      ],
+      "resolvido_em": "ciclo-01",
+      "pedido_melhoria": "Regenerar o handoff-melhoria.json no formato do schema (ou removê-lo do repositório) e colocar o G_HANDOFF_MELHORIA no pre-commit.",
+      "origem": "reproducao"
+    },
+    {
+      "id": "VER-009",
+      "titulo": "O .githooks/pre-commit pode falhar sem mensagem",
+      "gravidade": "media",
+      "estado": "resolvido",
+      "mapa": "scripts",
+      "evidencia": [
+        ".githooks/pre-commit:17 usa set -e e as linhas 72 e 78 escondem o erro do git add (2>/dev/null)",
+        "26/09: um commit de merge saiu com exit 1 depois do components sync, sem mensagem; o mesmo trecho rodado sozinho saiu com 0"
+      ],
+      "resolvido_em": "ciclo-01",
+      "pedido_melhoria": "Investigar a saída silenciosa do .githooks/pre-commit: mostrar o erro do git add dos espelhos em vez de escondê-lo.",
+      "origem": "reproducao"
+    },
+    {
+      "id": "VER-012",
+      "titulo": "Skills repetidas, nomes misturados e terceiros copiados na fonte única",
+      "gravidade": "media",
+      "estado": "resolvido",
+      "mapa": "skills",
+      "evidencia": [
+        "75 skills -> 37 nossas (aidd-*) + terceiros via dependencias_externas.json",
+        "G_SKILL_FORMATO bloqueando no commit"
+      ],
+      "resolvido_em": "9d66a5e",
+      "pedido_melhoria": "",
+      "origem": "reproducao"
+    },
+    {
+      "id": "VER-014",
+      "titulo": "Comandos /aidd-livro-texto e /planner sem skill válida",
+      "gravidade": "media",
+      "estado": "resolvido",
+      "mapa": "comandos",
+      "evidencia": [
+        "mapa dos comandos: 17 de 17 apontam para skill que existe"
+      ],
+      "resolvido_em": "2293e13",
+      "pedido_melhoria": "",
+      "origem": "reproducao"
+    },
+    {
+      "id": "VER-007",
+      "titulo": "2 testes falhando na aidd-improvement, fora do pre-commit",
+      "gravidade": "baixa",
+      "estado": "resolvido",
+      "mapa": "skills",
+      "evidencia": [
+        "cd componentes/compartilhado/skills/aidd-improvement && python -m pytest tests -q: 2 failed, 4 passed (reanálise de plano: nome PLAN-NNNN)"
+      ],
+      "resolvido_em": "ciclo-01",
+      "pedido_melhoria": "Atualizar os 2 testes de reanálise da aidd-improvement para o nome de pasta PLAN-NNNN e ligá-los ao pre-commit.",
+      "origem": "reproducao"
+    },
+    {
+      "id": "VER-010",
+      "titulo": "forge audit: AGENTS.md genérico (G04) e forge init ainda cria .agent/",
+      "gravidade": "baixa",
+      "estado": "resolvido",
+      "mapa": "ferramentas",
+      "evidencia": [
+        "python ecossistema.py forge audit <pasta vazia>: 93,3% (14/15), G04 FAIL",
+        "docs/teste-end-to-end/relatorio-teste-end-to-end.md seções 14 a 18"
+      ],
+      "resolvido_em": "ciclo-01",
+      "pedido_melhoria": "Resolver o item G04 do forge audit e parar de criar a pasta legada .agent/ no forge init.",
+      "origem": "reproducao"
+    },
+    {
+      "id": "VER-011",
+      "titulo": "O detect-secrets grava o caminho absoluto da máquina no .secrets.baseline",
+      "gravidade": "baixa",
+      "estado": "resolvido",
+      "mapa": "guardas",
+      "evidencia": [
+        "26/09: ao regravar o baseline, o filtro is_baseline_file ganhou C:\\Users\\...\\.secrets.baseline no lugar de .secrets.baseline (corrigido à mão em d41eb4b)"
+      ],
+      "resolvido_em": "ciclo-01",
+      "pedido_melhoria": "Fazer o G_SEGREDOS manter o filtro is_baseline_file com caminho relativo ao regravar o .secrets.baseline.",
+      "origem": "reproducao"
+    }
+  ]
+}

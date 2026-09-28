@@ -1,0 +1,4 @@
+Ticket 1: Standardize G_SEGREDOS.py across tools/aidd-enterprise/ and tools/aidd-master/ to match the canonical gates/G_SEGREDOS.py.
+Remove legacy custom Shannon entropy implementations and point to the OSS detect-secrets engine.
+Run python scripts/catalogo_pecas.py and verify gates_mesmo_nome_codigo_diferente is 0.
+Write handoff json to docs/auditoria/mapa-pecas/ciclo-04/ENTREGA-TICKET-01.json.

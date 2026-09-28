@@ -1,0 +1,1 @@
+Arquiteto da Fase 2: Estruturar os tickets TDD em PLANO-EVOLUCAO.md e compilar PLANO-EVOLUCAO.json com base nos achados de LAUDO-15D-INICIAL.md.

@@ -1050,3 +1050,22 @@
 - **Status:** **RESOLVIDO**.
 - **Data da Última Auditoria:** 27/09/2026.
 
+---
+
+## 22. Padronização Canônica de G_SEGREDOS no Ecossistema (mapa-pecas Ciclo 04)
+
+- **Objetivo da Correção:**
+  Erradicar implementação legada de entropia Shannon caseira e unificar o portão de segurança `G_SEGREDOS.py` nos templates e scripts de `tools/aidd-enterprise` e `tools/aidd-master` com a versão canônica da raiz baseada no motor `detect-secrets` OSS e baseline auditado (`.secrets.baseline`).
+- **Ferramentas Tocadas:** [`tools/aidd-enterprise`](file:///C:/Users/trcnologia/Desktop/ecossistema-aidd/tools/aidd-enterprise), [`tools/aidd-master`](file:///C:/Users/trcnologia/Desktop/ecossistema-aidd/tools/aidd-master).
+- **O que executou:**
+  1. `tools/aidd-enterprise/scripts/gates/G_SEGREDOS.py` e `tools/aidd-enterprise/templates/gates/G_SEGREDOS.py`: Sincronizados byte-a-byte com `gates/G_SEGREDOS.py`.
+  2. `tools/aidd-master/scripts/gates/G_SEGREDOS.py` e `tools/aidd-master/templates/gates/G_SEGREDOS.py`: Sincronizados byte-a-byte com `gates/G_SEGREDOS.py`.
+  3. Varredura do catálogo de peças via `scripts/catalogo_pecas.py` validando conformidade estrita.
+- **Resultados de Testes:**
+  - `G_TESTES_REAIS.py` → 100% aprovado para as 8 ferramentas (2344 passed, 0 failed).
+  - `G_DISCIPLINA_TESTE_FERRAMENTA.py` → exit 0.
+  - `G_mapa_pecas.py` → exit 0 (7/7 passed).
+  - `gates_mesmo_nome_codigo_diferente`: 0 (zero divergências).
+- **Status:** **RESOLVIDO**.
+- **Data da Última Auditoria:** 28/09/2026.
+

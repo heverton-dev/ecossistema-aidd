@@ -1,0 +1,15 @@
+{
+  "ticket_id": "TICKET-02",
+  "ciclo": "ciclo-04",
+  "ferramenta": "mapa-pecas",
+  "status": "sucesso",
+  "descricao": "Registro formal de gates/G_aidd_forge.py no .pre-commit-config.yaml com fixture deterministica (Lei #9).",
+  "arquivos_modificados": [
+    ".pre-commit-config.yaml",
+    "tests/fixtures/forge_conforme"
+  ],
+  "evidencia_verificacao": {
+    "CAT-declarados-fora-do-commit": 0,
+    "exit_code": 0
+  }
+}

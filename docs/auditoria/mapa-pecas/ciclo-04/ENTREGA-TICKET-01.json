@@ -1,0 +1,17 @@
+{
+  "ticket_id": "TICKET-01",
+  "ciclo": "ciclo-04",
+  "ferramenta": "mapa-pecas",
+  "status": "sucesso",
+  "descricao": "Padronizacao canonica do portao G_SEGREDOS no ecossistema (detect-secrets OSS com baseline).",
+  "arquivos_modificados": [
+    "tools/aidd-enterprise/scripts/gates/G_SEGREDOS.py",
+    "tools/aidd-enterprise/templates/gates/G_SEGREDOS.py",
+    "tools/aidd-master/scripts/gates/G_SEGREDOS.py",
+    "tools/aidd-master/templates/gates/G_SEGREDOS.py"
+  ],
+  "evidencia_verificacao": {
+    "gates_mesmo_nome_codigo_diferente": 0,
+    "exit_code": 0
+  }
+}

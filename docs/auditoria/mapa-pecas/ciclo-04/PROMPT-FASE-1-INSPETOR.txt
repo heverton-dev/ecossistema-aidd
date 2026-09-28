@@ -1,0 +1,1 @@
+Inspetor da Fase 1: Auditar o subsistema mapa-pecas contra o Lens 15-D e o inventário atômico dos 13 mapas visuais, documentando todos os achados em LAUDO-15D-INICIAL.md.

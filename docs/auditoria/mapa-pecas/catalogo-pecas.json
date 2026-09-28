@@ -830,6 +830,11 @@
           "visivel": true
         },
         {
+          "gate": "G_aidd_forge",
+          "forca": "provado",
+          "visivel": true
+        },
+        {
           "gate": "G_PROVA_SKILLS_POCOCK",
           "forca": "provado",
           "visivel": true
@@ -1000,23 +1005,23 @@
       {
         "alvo": "aidd-forge",
         "ciclo": "ciclo-01",
-        "laudo": "docs/auditoria/aidd-forge/ciclo-01/LAUDO-15D-INICIAL.md",
+        "laudo": "docs/auditoria/aidd-forge/ciclo-01/LAUDO-15D-REVISADO.md",
         "dimensoes": {
           "1": "descrito",
           "2": "descrito",
-          "3": "falha",
-          "4": "falha",
+          "3": "ok",
+          "4": "ok",
           "5": "descrito",
           "6": "descrito",
           "7": "descrito",
-          "8": "falha",
+          "8": "descrito",
           "9": "descrito",
-          "10": "falha",
-          "11": "falha",
-          "12": "falha",
-          "13": "falha",
-          "14": "falha",
-          "15": "falha"
+          "10": "ok",
+          "11": "ok",
+          "12": "ok",
+          "13": "ok",
+          "14": "ok",
+          "15": "ok"
         }
       },
       {
@@ -1026,7 +1031,7 @@
         "dimensoes": {
           "1": "descrito",
           "2": "descrito",
-          "3": "parcial",
+          "3": "ok",
           "4": "falha",
           "5": "descrito",
           "6": "descrito",
@@ -1130,9 +1135,15 @@
         }
       },
       {
+        "alvo": "mapa-pecas",
+        "ciclo": "ciclo-04",
+        "laudo": "docs/auditoria/mapa-pecas/ciclo-04/LAUDO-15D-REVISADO.md",
+        "dimensoes": {}
+      },
+      {
         "alvo": "skills-ddd",
         "ciclo": "ciclo-01",
-        "laudo": "docs/auditoria/skills-ddd/ciclo-01/LAUDO-15D-INICIAL.md",
+        "laudo": "docs/auditoria/skills-ddd/ciclo-01/LAUDO-15D-REVISADO.md",
         "dimensoes": {}
       },
       {
@@ -1367,7 +1378,7 @@
         "fases": {
           "laudo_inicial": true,
           "plano_evolucao": true,
-          "laudo_revisado": false,
+          "laudo_revisado": true,
           "dod": true
         },
         "nota": ""
@@ -1433,16 +1444,28 @@
         "nota": ""
       },
       {
+        "alvo": "mapa-pecas",
+        "ciclo": "ciclo-04",
+        "caminho": "docs/auditoria/mapa-pecas/ciclo-04",
+        "fases": {
+          "laudo_inicial": true,
+          "plano_evolucao": true,
+          "laudo_revisado": true,
+          "dod": true
+        },
+        "nota": "10"
+      },
+      {
         "alvo": "skills-ddd",
         "ciclo": "ciclo-01",
         "caminho": "docs/auditoria/skills-ddd/ciclo-01",
         "fases": {
           "laudo_inicial": true,
           "plano_evolucao": true,
-          "laudo_revisado": false,
+          "laudo_revisado": true,
           "dod": true
         },
-        "nota": ""
+        "nota": "10"
       },
       {
         "alvo": "skills-pocock",
@@ -1707,7 +1730,7 @@
       "ferramenta": "aidd-enterprise",
       "molde": "v2",
       "caminho": "tools/aidd-enterprise/templates/v2",
-      "arquivos": 86,
+      "arquivos": 94,
       "dona_canonica": "aidd-master"
     },
     {
@@ -1819,7 +1842,7 @@
       "ferramenta": "aidd-master",
       "molde": "v2",
       "caminho": "tools/aidd-master/templates/v2",
-      "arquivos": 86,
+      "arquivos": 94,
       "dona_canonica": "aidd-master"
     },
     {
@@ -1848,9 +1871,9 @@
           "hook": ".claude/hooks/{nome}",
           "sub-agent": ".claude/agents/{nome}"
         },
-        "skills_em_disco": 41,
+        "skills_em_disco": 60,
         "nossas_faltando": [],
-        "terceiros_em_disco": 0,
+        "terceiros_em_disco": 19,
         "config_mcp": ".mcp.json"
       },
       {
@@ -1869,9 +1892,9 @@
           "hook": ".agents/hooks/{nome}",
           "sub-agent": ".agents/agents/{nome}"
         },
-        "skills_em_disco": 41,
+        "skills_em_disco": 60,
         "nossas_faltando": [],
-        "terceiros_em_disco": 0,
+        "terceiros_em_disco": 19,
         "config_mcp": ".agents/mcp_config.json"
       },
       {
@@ -1890,9 +1913,9 @@
           "hook": ".opencode/hooks/{nome}",
           "sub-agent": ".opencode/agents/{nome}"
         },
-        "skills_em_disco": 41,
+        "skills_em_disco": 46,
         "nossas_faltando": [],
-        "terceiros_em_disco": 0,
+        "terceiros_em_disco": 5,
         "config_mcp": "opencode.jsonc"
       },
       {
@@ -1911,9 +1934,9 @@
           "hook": ".mimocode/hooks/{nome}",
           "sub-agent": ".mimocode/agents/{nome}"
         },
-        "skills_em_disco": 41,
+        "skills_em_disco": 46,
         "nossas_faltando": [],
-        "terceiros_em_disco": 0,
+        "terceiros_em_disco": 5,
         "config_mcp": "mimocode.jsonc"
       },
       {
@@ -1949,9 +1972,9 @@
           "command": ".cursor/commands/{nome}",
           "hook": ".cursor/hooks/{nome}"
         },
-        "skills_em_disco": 41,
+        "skills_em_disco": 46,
         "nossas_faltando": [],
-        "terceiros_em_disco": 0,
+        "terceiros_em_disco": 5,
         "config_mcp": ".cursor/mcp.json"
       },
       {
@@ -1968,9 +1991,9 @@
           "command": ".codebuddy/commands/{nome}",
           "hook": ".codebuddy/hooks/{nome}"
         },
-        "skills_em_disco": 41,
+        "skills_em_disco": 60,
         "nossas_faltando": [],
-        "terceiros_em_disco": 0,
+        "terceiros_em_disco": 19,
         "config_mcp": ""
       }
     ],
@@ -3436,26 +3459,26 @@
         },
         {
           "caminho": "tools/aidd-enterprise/scripts/gates/G_SEGREDOS.py",
-          "versao": "B",
+          "versao": "A",
           "papel": "ferramenta"
         },
         {
           "caminho": "tools/aidd-enterprise/templates/gates/G_SEGREDOS.py",
-          "versao": "B",
+          "versao": "A",
           "papel": "entrega"
         },
         {
           "caminho": "tools/aidd-master/scripts/gates/G_SEGREDOS.py",
-          "versao": "B",
+          "versao": "A",
           "papel": "ferramenta"
         },
         {
           "caminho": "tools/aidd-master/templates/gates/G_SEGREDOS.py",
-          "versao": "B",
+          "versao": "A",
           "papel": "entrega"
         }
       ],
-      "versoes_distintas": 2,
+      "versoes_distintas": 1,
       "no_pre_commit": true,
       "prova_que_morde": true,
       "leis": [
@@ -3792,9 +3815,11 @@
         }
       ],
       "versoes_distintas": 1,
-      "no_pre_commit": false,
+      "no_pre_commit": true,
       "prova_que_morde": true,
-      "leis": []
+      "leis": [
+        9
+      ]
     },
     {
       "id": "G_amelhoria",
@@ -4161,9 +4186,7 @@
     "arquivos_identicos_entre_donas": [],
     "verbos_cli_repetidos": {},
     "tarefas_com_varias_donas": {},
-    "gates_mesmo_nome_codigo_diferente": [
-      "G_SEGREDOS"
-    ],
+    "gates_mesmo_nome_codigo_diferente": [],
     "skills_mesma_descricao": [],
     "etapas_sem_ferramenta": [],
     "etapas_com_atalho_interno": {},

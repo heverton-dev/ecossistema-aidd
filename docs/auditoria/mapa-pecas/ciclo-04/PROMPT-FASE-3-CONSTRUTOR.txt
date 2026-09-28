@@ -1,0 +1,1 @@
+Construtor da Fase 3: Executar em worktrees efêmeras os 4 tickets do plano de evolução com barreira de portão antes de cada commit.

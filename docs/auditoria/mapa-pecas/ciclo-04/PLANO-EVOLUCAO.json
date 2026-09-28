@@ -1,0 +1,54 @@
+{
+  "pipeline_id": "evolucao-mapa-pecas-ciclo-04",
+  "target_tool": "mapa-pecas",
+  "descricao": "Plano de Evolução Tática montado a partir dos 4 tickets de PLANO-EVOLUCAO.md",
+  "config_usuario_ref": "docs/auditoria/CONFIG-EXECUCAO-USUARIO.json",
+  "definition_of_done": "docs/auditoria/mapa-pecas/ciclo-04/DOD.md",
+  "gate_final": "python ecossistema.py audit",
+  "fases": [
+    {
+      "ticket_id": "TICKET-01",
+      "nome": "Fase_1_Ticket_1_Padroniza__o_Can_nica_do_Port_o_G_SEGREDOS",
+      "dimensao_15d": "D9. Segurança e Permissões",
+      "harness": "agy",
+      "model": "gemini-3.8-flash-low",
+      "comando_terminal": "agy --model gemini-3.8-flash-low  --dangerously-skip-permissions",
+      "input_prompt": "docs/auditoria/mapa-pecas/ciclo-04/prompts_tickets/PROMPT-TICKET-01.txt",
+      "output_handoff": "docs/auditoria/mapa-pecas/ciclo-04/ENTREGA-TICKET-01.json",
+      "gate_fase": "python -m pytest -q -p no:cacheprovider tests"
+    },
+    {
+      "ticket_id": "TICKET-02",
+      "nome": "Fase_2_Ticket_2_Registro_do_Port_o_G_aidd_forge_no_Pre_commit",
+      "dimensao_15d": "D13. Quality Gates (Portões)",
+      "harness": "mimo",
+      "model": "xiaomi-token-plan-sgp/mimo-v2.6-flash",
+      "comando_terminal": "MIMOCODE_DANGEROUSLY_SKIP_PERMISSIONS=1 MIMOCODE_TUI_PLAIN=1 mimo -m xiaomi-token-plan-sgp/mimo-v2.6-flash --pure --trust",
+      "input_prompt": "docs/auditoria/mapa-pecas/ciclo-04/prompts_tickets/PROMPT-TICKET-02.txt",
+      "output_handoff": "docs/auditoria/mapa-pecas/ciclo-04/ENTREGA-TICKET-02.json",
+      "gate_fase": "python -m pytest -q -p no:cacheprovider tests"
+    },
+    {
+      "ticket_id": "TICKET-03",
+      "nome": "Fase_3_Ticket_3_Resolu__o_e_Fechamento_das_7_Dimens_es_15_D_de_aidd_forge",
+      "dimensao_15d": "D3. Dependências e Hermeticidade",
+      "harness": "opencode",
+      "model": "opencode/big-pickle",
+      "comando_terminal": "opencode --pure --auto --agent -m opencode/big-pickle",
+      "input_prompt": "docs/auditoria/mapa-pecas/ciclo-04/prompts_tickets/PROMPT-TICKET-03.txt",
+      "output_handoff": "docs/auditoria/mapa-pecas/ciclo-04/ENTREGA-TICKET-03.json",
+      "gate_fase": "python -m pytest -q -p no:cacheprovider tests"
+    },
+    {
+      "ticket_id": "TICKET-04",
+      "nome": "Fase_4_Ticket_4_Conclus_o_do_Laudo_Revisado_de_skills_ddd_ciclo_01",
+      "dimensao_15d": "D14. Higiene e Ciclo de Vida",
+      "harness": "agy",
+      "model": "gemini-3.8-flash-low",
+      "comando_terminal": "agy --model gemini-3.8-flash-low  --dangerously-skip-permissions",
+      "input_prompt": "docs/auditoria/mapa-pecas/ciclo-04/prompts_tickets/PROMPT-TICKET-04.txt",
+      "output_handoff": "docs/auditoria/mapa-pecas/ciclo-04/ENTREGA-TICKET-04.json",
+      "gate_fase": "python -m pytest -q -p no:cacheprovider tests"
+    }
+  ]
+}

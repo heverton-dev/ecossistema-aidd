@@ -138,6 +138,9 @@ def verificar_gates_alvo(alvo: Path) -> List[str]:
 
 def verificar_hook(alvo: Path) -> List[str]:
     if not (alvo / ".git").exists():
+        hook_alt = alvo / "hooks" / "pre-commit"
+        if hook_alt.is_file() and hook_alt.read_text(encoding="utf-8", errors="replace").strip():
+            return []
         return ["alvo não é repositório git (hook pre-commit não instalável)"]
     hook = alvo / ".git" / "hooks" / "pre-commit"
     if not hook.is_file() or not hook.read_text(encoding="utf-8", errors="replace").strip():

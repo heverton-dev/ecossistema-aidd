@@ -1,0 +1,4 @@
+Ticket 3: Review open 15-D dimensions in docs/auditoria/aidd-forge/ciclo-01/LAUDO-15D-REVISADO.md.
+Validate and mark compliant dimensions D3, D10, D11, D12, D13, D14, D15.
+Verify CAT-15d-aidd-forge is eliminated in achados_ciclo.py.
+Write handoff json to docs/auditoria/mapa-pecas/ciclo-04/ENTREGA-TICKET-03.json.

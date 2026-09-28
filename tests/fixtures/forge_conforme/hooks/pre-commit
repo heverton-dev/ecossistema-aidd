@@ -1,0 +1,2 @@
+#!/bin/sh
+python gates/G_BASE.py

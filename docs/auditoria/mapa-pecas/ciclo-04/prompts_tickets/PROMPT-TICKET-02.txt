@@ -1,0 +1,4 @@
+Ticket 2: Register gates/G_aidd_forge.py in the pre-commit hook scripts and governance gate mapping.
+Ensure fast hermetic execution under 2 seconds.
+Verify that CAT-declarados-fora-do-commit is eliminated in achados_ciclo.py.
+Write handoff json to docs/auditoria/mapa-pecas/ciclo-04/ENTREGA-TICKET-02.json.

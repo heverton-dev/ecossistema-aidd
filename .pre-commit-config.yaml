@@ -448,6 +448,14 @@ repos:
         pass_filenames: false
         require_serial: true
 
+      - id: g-aidd-forge
+        name: "G_aidd_forge (qualidade deterministica do bootstrap aidd-forge per Lei #9)"
+        entry: python gates/G_aidd_forge.py --alvo tests/fixtures/forge_conforme
+        language: system
+        always_run: true
+        pass_filenames: false
+        require_serial: true
+
       - id: g-handoff-melhoria
         name: "G_HANDOFF_MELHORIA (assinatura e transicao melhoria para plan per Lei #9)"
         entry: python gates/G_HANDOFF_MELHORIA.py

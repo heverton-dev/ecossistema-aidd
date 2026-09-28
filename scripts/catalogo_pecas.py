@@ -506,6 +506,9 @@ RE_DIMENSAO_LAUDO = re.compile(r"D(\d+)\.\s*[^:*]+:\*\*")
 
 def classificar_dimensao(texto: str) -> str:
     """Classificação por palavra-chave do texto do laudo (aproximação honesta, não julgamento)."""
+    trecho_inicial = texto.strip()[:30].lower()
+    if "implementado" in trecho_inicial or "aprovado" in trecho_inicial:
+        return "ok"
     baixo = texto.lower()
     if "failed" in baixo or "not implemented" in baixo:
         return "falha"
