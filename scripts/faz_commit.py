@@ -71,9 +71,13 @@ def obter_diff_resumido():
     stat = run_git(["diff", "--cached", "--stat"])
     raw_diff = run_git(["diff", "--cached"])
 
-    # Limita o diff a no máximo 4000 caracteres para extrema economia de tokens
-    if len(raw_diff) > 4000:
-        raw_diff = raw_diff[:4000] + "\n... [diff truncado para economia de tokens]"
+    # Limita seções para evitar estourar tempo de pré-processamento de modelos locais
+    if len(status) > 1500:
+        status = status[:1500] + "\n... [status truncado para economia de tokens]"
+    if len(stat) > 1500:
+        stat = stat[:1500] + "\n... [estatísticas truncadas para economia de tokens]"
+    if len(raw_diff) > 3000:
+        raw_diff = raw_diff[:3000] + "\n... [diff truncado para economia de tokens]"
 
     return f"STATUS DOS ARQUIVOS:\n{status}\n\nESTATÍSTICAS:\n{stat}\n\nTRECHO DO DIFF:\n{raw_diff}"
 
@@ -148,10 +152,13 @@ def gerar_mensagem_openai_compatible(diff_summary, api_key, base_url, model):
 
 
 def obter_modelo_ollama():
-    """Consulta os modelos instalados no Ollama e retorna o primeiro disponível."""
+    """Consulta os modelos instalados no Ollama ou usa OLLAMA_MODEL se definido."""
+    env_model = os.environ.get("OLLAMA_MODEL")
+    if env_model:
+        return env_model
     try:
         req = urllib.request.Request("http://localhost:11434/api/tags", headers={"Content-Type": "application/json"})
-        with urllib.request.urlopen(req, timeout=3) as resp:
+        with urllib.request.urlopen(req, timeout=5) as resp:
             data = json.loads(resp.read().decode("utf-8"))
             models = data.get("models", [])
             if models:
@@ -181,7 +188,8 @@ def gerar_mensagem_ollama(diff_summary):
         "prompt": prompt,
         "stream": False,
         "options": {
-            "temperature": 0.2
+            "temperature": 0.2,
+            "num_predict": 60
         }
     }
     req = urllib.request.Request(
@@ -189,7 +197,8 @@ def gerar_mensagem_ollama(diff_summary):
         data=json.dumps(payload).encode("utf-8"),
         headers={"Content-Type": "application/json"}
     )
-    with urllib.request.urlopen(req, timeout=25) as resp:
+    timeout_sec = int(os.environ.get("OLLAMA_TIMEOUT", "90"))
+    with urllib.request.urlopen(req, timeout=timeout_sec) as resp:
         data = json.loads(resp.read().decode("utf-8"))
         raw = data.get("response", "").strip()
         # Pega a primeira linha não vazia e remove crases/aspas

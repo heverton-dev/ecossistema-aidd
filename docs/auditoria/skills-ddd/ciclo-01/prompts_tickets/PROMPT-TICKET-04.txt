@@ -1,0 +1,16 @@
+ROLE: Builder. Ecosystem AIDD. Ticket 4. Target tool: skills-ddd.
+DIMENSION: D2
+DELIVER: componentes/compartilhado/skills/aidd-frontend-forms/SKILL.md
+
+STEPS:
+- Write `tests/test_skill_frontend_forms.py` first. Assert exit 1 while `componentes/compartilhado/skills/aidd-frontend-forms/SKILL.md` is absent.
+- Create `componentes/compartilhado/skills/aidd-frontend-forms/SKILL.md` strictly following `CONVENCAO-AUTORIA-SKILLS.md`.
+- Validate with `python gates/G_SKILL_FORMATO.py` and `python gates/G_SKILL_ROT.py`. Assert exit 0.
+
+RULES:
+1. Write failing test first. Run. Assert exit 1.
+2. Implement. Zero stubs. Real pytest tests. Run. Assert exit 0.
+3. Work inside ephemeral Git Worktree only.
+4. Capture real exit code: redirect to file, read $? same line. Never trust pipes.
+5. NEVER edit docs/auditoria/CONFIG-EXECUCAO-USUARIO.json.
+6. Deliver exactly: componentes/compartilhado/skills/aidd-frontend-forms/SKILL.md

@@ -1,0 +1,16 @@
+ROLE: Builder. Ecosystem AIDD. Ticket 1. Target tool: skills-ddd.
+DIMENSION: D1
+DELIVER: docs/protocolos/PADRAO-DDD-CLEAN-VSA.md
+
+STEPS:
+- Write `tests/test_manual_ddd_clean_vsa.py` first. Assert exit 1 when `docs/protocolos/PADRAO-DDD-CLEAN-VSA.md` is missing or lacks core DDD sections (Entity with try_create, Value Object, Result pattern, VSA integration, zero external vendor lock-in).
+- Create `docs/protocolos/PADRAO-DDD-CLEAN-VSA.md` with complete, typed Python and TypeScript examples.
+- Run `pytest tests/test_manual_ddd_clean_vsa.py` to ensure exit 0.
+
+RULES:
+1. Write failing test first. Run. Assert exit 1.
+2. Implement. Zero stubs. Real pytest tests. Run. Assert exit 0.
+3. Work inside ephemeral Git Worktree only.
+4. Capture real exit code: redirect to file, read $? same line. Never trust pipes.
+5. NEVER edit docs/auditoria/CONFIG-EXECUCAO-USUARIO.json.
+6. Deliver exactly: docs/protocolos/PADRAO-DDD-CLEAN-VSA.md

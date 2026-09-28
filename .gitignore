@@ -115,6 +115,7 @@ docs/secoes/*.md
 docs/rascunhos/
 docs/arquivo/
 docs/tmp/
+.tmp/
 *.tmp.md
 *.draft.md
 

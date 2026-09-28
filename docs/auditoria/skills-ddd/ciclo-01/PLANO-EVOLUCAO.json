@@ -1,0 +1,76 @@
+{
+  "pipeline_id": "evolucao-skills-ddd-ciclo-01",
+  "target_tool": "skills-ddd",
+  "descricao": "Plano de Evolução Tática montado a partir dos 6 tickets de PLANO-EVOLUCAO.md",
+  "config_usuario_ref": "docs/auditoria/CONFIG-EXECUCAO-USUARIO.json",
+  "definition_of_done": "docs/auditoria/skills-ddd/ciclo-01/DOD.md",
+  "gate_final": "python ecossistema.py audit",
+  "fases": [
+    {
+      "ticket_id": "TICKET-01",
+      "nome": "Fase_1_Ticket_1_Manual_Can_nico_de_DDD_T_tico___Invariantes_no_Mon_lito_VSA",
+      "dimensao_15d": "D1. Contratos e Regras",
+      "harness": "agy",
+      "model": "gemini-3.8-flash-low",
+      "comando_terminal": "agy --model gemini-3.8-flash-low  --dangerously-skip-permissions",
+      "input_prompt": "docs/auditoria/skills-ddd/ciclo-01/prompts_tickets/PROMPT-TICKET-01.txt",
+      "output_handoff": "docs/protocolos/PADRAO-DDD-CLEAN-VSA.md",
+      "gate_fase": "python -m pytest -q -p no:cacheprovider tests"
+    },
+    {
+      "ticket_id": "TICKET-02",
+      "nome": "Fase_2_Ticket_2_Manual_Can_nico_de_Leitura_Otimizada_e_CQRS_para_Fatias_Verticais",
+      "dimensao_15d": "D8. O que o Estágio Processa",
+      "harness": "mimo",
+      "model": "xiaomi-token-plan-sgp/mimo-v2.6-flash",
+      "comando_terminal": "MIMOCODE_DANGEROUSLY_SKIP_PERMISSIONS=1 MIMOCODE_TUI_PLAIN=1 mimo -m xiaomi-token-plan-sgp/mimo-v2.6-flash --pure --trust",
+      "input_prompt": "docs/auditoria/skills-ddd/ciclo-01/prompts_tickets/PROMPT-TICKET-02.txt",
+      "output_handoff": "docs/protocolos/PADRAO-CONSULTAS-LEITURA-CQRS.md",
+      "gate_fase": "python -m pytest -q -p no:cacheprovider tests"
+    },
+    {
+      "ticket_id": "TICKET-03",
+      "nome": "Fase_3_Ticket_3_Incorpora__o_de_Nomenclatura_Frontend_na_Stack_Ouro",
+      "dimensao_15d": "D1. Contratos e Regras",
+      "harness": "opencode",
+      "model": "opencode/big-pickle",
+      "comando_terminal": "opencode --pure --auto --agent -m opencode/big-pickle",
+      "input_prompt": "docs/auditoria/skills-ddd/ciclo-01/prompts_tickets/PROMPT-TICKET-03.txt",
+      "output_handoff": "docs/protocolos/PADRAO-OURO-STACK-TECNOLOGICA.md",
+      "gate_fase": "python -m pytest -q -p no:cacheprovider tests"
+    },
+    {
+      "ticket_id": "TICKET-04",
+      "nome": "Fase_4_Ticket_4_Nova_Skill_Can_nica__aidd_frontend_forms_",
+      "dimensao_15d": "D2. Input e Gatilhos",
+      "harness": "agy",
+      "model": "gemini-3.8-flash-low",
+      "comando_terminal": "agy --model gemini-3.8-flash-low  --dangerously-skip-permissions",
+      "input_prompt": "docs/auditoria/skills-ddd/ciclo-01/prompts_tickets/PROMPT-TICKET-04.txt",
+      "output_handoff": "componentes/compartilhado/skills/aidd-frontend-forms/SKILL.md",
+      "gate_fase": "python -m pytest -q -p no:cacheprovider tests"
+    },
+    {
+      "ticket_id": "TICKET-05",
+      "nome": "Fase_5_Ticket_5_Sincroniza__o_Universal_Multi_Harness",
+      "dimensao_15d": "D15. Integração com o Ecossistema",
+      "harness": "mimo",
+      "model": "xiaomi-token-plan-sgp/mimo-v2.6-flash",
+      "comando_terminal": "MIMOCODE_DANGEROUSLY_SKIP_PERMISSIONS=1 MIMOCODE_TUI_PLAIN=1 mimo -m xiaomi-token-plan-sgp/mimo-v2.6-flash --pure --trust",
+      "input_prompt": "docs/auditoria/skills-ddd/ciclo-01/prompts_tickets/PROMPT-TICKET-05.txt",
+      "output_handoff": "componentes/compartilhado/skills/aidd-frontend-forms/SKILL.md",
+      "gate_fase": "python -m pytest -q -p no:cacheprovider tests"
+    },
+    {
+      "ticket_id": "TICKET-06",
+      "nome": "Fase_6_Ticket_6_Quality_Gate_Final_do_Ecossistema",
+      "dimensao_15d": "D15. Output Consolidado e Handoff",
+      "harness": "opencode",
+      "model": "opencode/big-pickle",
+      "comando_terminal": "opencode --pure --auto --agent -m opencode/big-pickle",
+      "input_prompt": "docs/auditoria/skills-ddd/ciclo-01/prompts_tickets/PROMPT-TICKET-06.txt",
+      "output_handoff": "docs/auditoria/skills-ddd/ciclo-01/RELATORIO-CONSTRUTOR.md",
+      "gate_fase": "python -m pytest -q -p no:cacheprovider tests"
+    }
+  ]
+}

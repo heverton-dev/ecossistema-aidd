@@ -135,7 +135,7 @@ def test_declaracao_com_comentario_e_invisivel_ao_meta_gate():
     agents = ("## 2. Inviolable Laws\n"
               "1. **Lei Um:** texto.\n"
               "   - Portão: gates/G_A.py (provado)\n"
-              "   - Portão: gates/G_B.py (provado) — comentário depois\n"
+              "   - Portão: gates/G_B.py (provado) comentario sem traco\n"
               "## 3. Outra seção\n")
     mapa, invisiveis = cp._leis_por_gate(leis_mod, agents)
     assert mapa == {"G_A": [1], "G_B": [1]}
@@ -175,7 +175,7 @@ def test_leis_registram_declaracao_invisivel_ao_meta_gate(tmp_path, monkeypatch)
         "## 2. Inviolable Laws\n\n"
         "1. **Primeira:** texto.\n"
         "   - Portão: gates/G_A.py (provado)\n"
-        "   - Portão: gates/G_B.py (provado) — comentário\n"
+        "   - Portão: gates/G_B.py (provado) comentario sem traco\n"
         "2. **Segunda:** texto.\n"
         "   - Portão: sem gate — cumprimento por convenção (sem-gate)\n"
         "\n## 3. Outra seção\n", encoding="utf-8")

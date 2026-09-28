@@ -1,0 +1,16 @@
+ROLE: Builder. Ecosystem AIDD. Ticket 2. Target tool: skills-ddd.
+DIMENSION: D8
+DELIVER: docs/protocolos/PADRAO-CONSULTAS-LEITURA-CQRS.md
+
+STEPS:
+- Write `tests/test_manual_cqrs_leitura.py` first. Assert exit 1 if `docs/protocolos/PADRAO-CONSULTAS-LEITURA-CQRS.md` does not exist or lacks CQRS command vs query rules, SQL projection, and SQLite WAL guidelines.
+- Create `docs/protocolos/PADRAO-CONSULTAS-LEITURA-CQRS.md`.
+- Run `pytest tests/test_manual_cqrs_leitura.py` to assert exit 0.
+
+RULES:
+1. Write failing test first. Run. Assert exit 1.
+2. Implement. Zero stubs. Real pytest tests. Run. Assert exit 0.
+3. Work inside ephemeral Git Worktree only.
+4. Capture real exit code: redirect to file, read $? same line. Never trust pipes.
+5. NEVER edit docs/auditoria/CONFIG-EXECUCAO-USUARIO.json.
+6. Deliver exactly: docs/protocolos/PADRAO-CONSULTAS-LEITURA-CQRS.md

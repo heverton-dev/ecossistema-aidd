@@ -71,3 +71,13 @@ separado**, nunca disparado automaticamente por `init`/`add-module`/
 `compose`. Isso viola esta lei. Pendência registrada para correção nos
 pipelines geradores (fora do escopo da sessão que documentou esta regra —
 ver `docs/teste-end-to-end/17-09-2026_relatorio-testes-triade-fluxos-1-2-3.md`).
+
+## Convenção Canônica de Nomenclatura Frontend (Next.js)
+
+Para facilitar a identificação determinística por agentes e ferramentas de auditoria, os arquivos da camada frontend Next.js devem adotar nomenclatura em `kebab-case` e sufixos padronizados por responsabilidade:
+
+- Componente de UI (React): `.component.tsx` (ex.: `metric-card.component.tsx`)
+- Página / Rota Next.js: `.page.tsx` ou padrão App Router `page.tsx`
+- Contexto de Estado React: `.context.tsx` (ex.: `auth.context.tsx`)
+- Custom Hook: `.hook.ts` (ex.: `use-produtos.hook.ts`)
+- Schema de Validação (Zod): `.schema.ts` (ex.: `produto-form.schema.ts`)

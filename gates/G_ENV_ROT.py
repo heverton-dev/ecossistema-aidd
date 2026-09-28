@@ -60,6 +60,8 @@ IGNORE_DIRS = {
     ".pytest_cache",
     ".turbo",
     ".temp",
+    ".tmp",
+    "tmp",
     "target_project",
     "projetos",
 }
