@@ -1,0 +1,17 @@
+ROLE: Builder. Ecosystem AIDD. Ticket 1. Target tool: template-tanstack-offline.
+DIMENSION: D1
+DELIVER: componentes/compartilhado/templates/frontend-tanstack/template-manifest.json
+
+STEPS:
+- Write test first: assert absence of proprietary auth packages in template package.json.
+- Extract base visual design tokens (oklch, typography, styles.css) to componentes/compartilhado/templates/frontend-tanstack/.
+- Provide sanitized package.json and template-manifest.json.
+- Run test to ensure 100% agnostic package structure.
+
+RULES:
+1. Write failing test first. Run. Assert exit 1.
+2. Implement. Zero stubs. Real pytest tests. Run. Assert exit 0.
+3. Work inside ephemeral Git Worktree only.
+4. Capture real exit code: redirect to file, read $? same line. Never trust pipes.
+5. NEVER edit docs/auditoria/CONFIG-EXECUCAO-USUARIO.json.
+6. Deliver exactly: componentes/compartilhado/templates/frontend-tanstack/template-manifest.json

@@ -95,3 +95,16 @@ A Lei #10 exige o Quarteto *Sine Qua Non* (`/api` OpenAPI/Swagger, `/webhook`, `
 - 9/9 tickets entregues com TDD red→green real; suíte dos tickets: **85 passed, exit 0**.
 - Suíte completa do repositório: **575 passed / 4 failed**, sendo as 4 falhas **comprovadamente pré-existentes** (baseline idêntico sem os arquivos do ciclo).
 - Handoff estruturado `./handoff-forge.json` emitido e verificado (SHA-256), pronto para consumo pelo `aidd-planner`.
+
+---
+
+## 7. Atualização de Governança — 9 Camadas & TanStack Padrão-Ouro (28/09/2026)
+
+- **Objetivo:** Incorporar o checklist de validação das 9 Camadas de Mercado (`CHECKLIST-CAMADAS-MERCADO.json`) e alinhar o template do gate `G_STACK_PADRAO_OURO.py` à Lei #11 (abolição formal do Next.js e consagração do TanStack Start/Router).
+- **Arquivos atualizados em tools/aidd-forge:**
+  - `tools/aidd-forge/aidd_forge/templates/governance/CHECKLIST-CAMADAS-MERCADO.json`
+  - `tools/aidd-forge/aidd_forge/templates/gates/G_STACK_PADRAO_OURO.py`
+- **Validação:**
+  - `pytest tools/aidd-forge` executado: 297 passed, 0 failed, 1 skipped (exit 0).
+  - Portões `G_STACK_PADRAO_OURO` e `G_NOVE_CAMADAS_MERCADO` auditados e aprovados.
+

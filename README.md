@@ -185,8 +185,29 @@ Antes de qualquer código ser considerado "pronto", ele é obrigado a passar por
 14. ✍️ **G_ESCRITOR_ATOMICO:** Verifica que arquivos são escritos de forma atômica (temporário + rename) para evitar corrupção em caso de falha.
 15. 📋 **G_TRANSACTION_LOG_LRU:** Valida que logs de transações estão íntegros e não corrompidos, usando estratégias LRU.
 16. 🌐 **G_UNIVERSAL_HARNESS:** Confere compatibilidade real com todos os harnesses de IA suportados.
+17. 💎 **G_STACK_PADRAO_OURO (Lei #11):** Audita a conformidade da stack soberana: TanStack Start / Router + React + TypeScript + Tailwind CSS (Next.js formalmente abolido), Backend Python e SQLite WAL.
+18. 📱 **G_TEMPLATE_TANSTACK_OFFLINE:** Valida a integridade do template PWA/Offline-First com casca dupla (Admin/Mobile) e fila criptografada HMAC.
+19. 🏛️ **G_NOVE_CAMADAS_MERCADO:** Audita a aderência completa às 9 Camadas Arquiteturais de Mercado (Design Tokens OKLCH, Shells, PWA, Offline HMAC, Cache/Zod, VSA, SQLite WAL, Quarteto Dinâmico e Testes Reais).
 
 > **Validação em um comando:** `python ecossistema.py audit` (Roda os gates em sequência e retorna `exit 0` apenas com 100% de aprovação).
+
+---
+
+## 💎 Padrão-Ouro Tecnológico Soberano (Lei #11)
+
+Todo software gerado ou evoluído no ecossistema implementa rigorosamente a **Matriz Tecnológica Soberana 2026** ([MANDATO-TECNOLOGICO-SOBERANO.md](docs/protocolos/MANDATO-TECNOLOGICO-SOBERANO.md)):
+
+* **Frontend Soberano:** **TanStack Start / TanStack Router + React 19 + TypeScript + Tailwind CSS v4** (O framework Next.js foi **formalmente abolido** por acoplamento proprietário de runtime, fragilidade na navegação offline por RSC e carência de type-safety nativa em Search Params).
+* **Estética & Acessibilidade:** Design Tokens em formato perceptualmente uniforme **OKLCH**, primitivos acessíveis Radix UI (WCAG 2.2 AA) e princípios da disciplina **Impeccable**.
+* **Casca Dupla Adaptativa:** `AdminShell.tsx` (desktop) e `MobileShell.tsx` (mobile-first com navegação inferior e suporte a gestos).
+* **PWA & Offline-First:** Service Worker Workbox 7 com autoUpdate, Web App Manifest v2 e fila local FIFO protegida por **assinatura criptográfica HMAC SHA-256** anti-adulteração.
+* **Backend & API:** Monólito Modular em Fatias Verticais (**VSA**) com Python puro (Litestar/FastAPI) e contratos dinâmicos em **OpenAPI 3.1**.
+* **Persistência Transacional:** SQLite em modo **WAL** (`journal_mode=WAL`, `busy_timeout=5000`) de alta concorrência ou PostgreSQL 16+ com migrações determinísticas reversíveis (Drizzle / Alembic).
+* **Quarteto Sine Qua Non Dinâmico (Lei #10):** Toda aplicação nasce nativamente com os 4 estúdios embutidos no layout:
+  - OpenAPI Studio (`/api`);
+  - Webhook Studio (`/webhook`);
+  - MCP Studio (`/mcp`) para consumo seguro por agentes de IA;
+  - Central de Documentação e Guia Vivo (`/docs`).
 
 ---
 

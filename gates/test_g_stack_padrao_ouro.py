@@ -35,7 +35,7 @@ def test_stack_morde_quando_falta_tailwind(tmp_path):
     fe = proj / "frontend"
     fe.mkdir()
     pkg = {
-        "dependencies": {"next": "14.2.5", "react": "18.3.1"},
+        "dependencies": {"@tanstack/react-router": "1.81.0", "react": "18.3.1"},
         "devDependencies": {"typescript": "5.4.5"}
         # Sem tailwindcss
     }
@@ -95,13 +95,13 @@ def test_stack_respeita_override_explicito_no_plano(tmp_path):
 
 
 def test_stack_projeto_completo_conforme(tmp_path):
-    """Caminho feliz: projeto com Next.js, TypeScript, Tailwind, SQLite WAL e OpenAPI 3.1."""
+    """Caminho feliz: projeto com TanStack Router, TypeScript, Tailwind, SQLite WAL e OpenAPI 3.1."""
     proj = tmp_path / "proj_padrao_ouro"
     proj.mkdir()
     fe = proj / "frontend"
     fe.mkdir()
     pkg = {
-        "dependencies": {"next": "14.2.5", "react": "18.3.1"},
+        "dependencies": {"@tanstack/react-router": "1.81.0", "react": "18.3.1"},
         "devDependencies": {"typescript": "5.4.5", "tailwindcss": "3.4.4"}
     }
     (fe / "package.json").write_text(json.dumps(pkg), encoding="utf-8")
@@ -123,11 +123,28 @@ openapi_spec = {
     assert len(erros) == 0
 
 
+def test_stack_morde_quando_usa_next_abolido(tmp_path):
+    """Prova que o portão morde (Lei #13): uso de Next.js causa exit 1 (Lei #11 soberana)."""
+    proj = tmp_path / "proj_com_next"
+    proj.mkdir()
+    fe = proj / "frontend"
+    fe.mkdir()
+    pkg = {
+        "dependencies": {"next": "14.2.5", "@tanstack/react-router": "1.81.0", "react": "18.3.1"},
+        "devDependencies": {"typescript": "5.4.5", "tailwindcss": "3.4.4"}
+    }
+    (fe / "package.json").write_text(json.dumps(pkg), encoding="utf-8")
+
+    codigo, erros, res = auditar_projeto(str(proj))
+    assert codigo == 1
+    assert any("Next.js foi formalmente abolido" in e for e in erros)
+
+
 def test_stack_referencia_real_proj_ctt():
-    """Valida a referência canônica real proj_ctt se presente no ambiente."""
-    ctt_path = r"C:\Users\trcnologia\Desktop\proj_ctt\planos-ctt-app"
-    if os.path.isdir(ctt_path):
-        codigo, erros, res = auditar_projeto(ctt_path)
+    """Valida a referência canônica real do template TanStack."""
+    tpl_path = os.path.abspath("componentes/compartilhado/templates/frontend-tanstack")
+    if os.path.isdir(tpl_path):
+        codigo, erros, res = auditar_projeto(tpl_path)
         assert codigo == 0
         assert len(erros) == 0
         assert res["frontend"]["ok"] is True

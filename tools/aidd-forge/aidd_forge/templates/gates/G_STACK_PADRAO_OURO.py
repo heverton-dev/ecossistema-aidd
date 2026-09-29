@@ -33,12 +33,14 @@ if hasattr(sys.stdout, "reconfigure"):
 
 ROOT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
-DEPS_FRONTEND_OBRIGATORIAS = {
-    "next": "Next.js",
+DEPS_FRONTEND_TANSTACK = {
+    "@tanstack/react-router": "TanStack Router",
     "react": "React",
     "typescript": "TypeScript",
     "tailwindcss": "Tailwind CSS",
 }
+
+DEPS_FRONTEND_OBRIGATORIAS = DEPS_FRONTEND_TANSTACK
 
 
 def extrair_overrides_explicitos(projeto_dir: str) -> Dict[str, bool]:
@@ -92,9 +94,9 @@ def extrair_overrides_explicitos(projeto_dir: str) -> Dict[str, bool]:
 
 
 def auditar_frontend(projeto_dir: str, override: bool = False) -> Tuple[bool, List[str], Dict[str, bool]]:
-    """Audita a camada de frontend contra o Padrão-Ouro (Next.js + TS + Tailwind)."""
+    """Audita a camada de frontend contra o Padrão-Ouro Soberano (TanStack Start/Router + TS + Tailwind)."""
     erros: List[str] = []
-    status_deps: Dict[str, bool] = {k: False for k in DEPS_FRONTEND_OBRIGATORIAS}
+    status_deps: Dict[str, bool] = {}
 
     # Procura package.json na raiz do projeto ou em subdiretório frontend/
     pkg_path = None
@@ -125,19 +127,33 @@ def auditar_frontend(projeto_dir: str, override: bool = False) -> Tuple[bool, Li
     todas_deps.update(pkg_data.get("dependencies", {}))
     todas_deps.update(pkg_data.get("devDependencies", {}))
 
-    for dep_key in DEPS_FRONTEND_OBRIGATORIAS:
+    # Checagem de anti-lockin (Lei #6)
+    if any(k.startswith("@lovable.dev") for k in todas_deps):
+        erros.append("Violação da Lei #6: Detectado pacote proprietário '@lovable.dev' no frontend.")
+
+    # Checagem de abolição do Next.js (Lei #11 soberana)
+    if "next" in todas_deps:
+        erros.append("Violação da Lei #11: Next.js foi formalmente abolido do ecossistema. Adote o TanStack Start / TanStack Router.")
+
+    deps_esperadas = DEPS_FRONTEND_TANSTACK
+    status_deps = {k: False for k in deps_esperadas}
+    for dep_key in deps_esperadas:
         if dep_key in todas_deps:
             status_deps[dep_key] = True
         else:
-            erros.append(f"Dependência obrigatória ausente no Frontend: '{DEPS_FRONTEND_OBRIGATORIAS[dep_key]}' ({dep_key})")
+            erros.append(f"Dependência obrigatória ausente no Frontend Padrão-Ouro: '{deps_esperadas[dep_key]}' ({dep_key})")
 
-    # Verifica também existência de tailwind.config.* ou postcss.config.*
-    frontend_dir = os.path.dirname(pkg_path)
-    tem_tailwind_cfg = any(
-        os.path.isfile(os.path.join(frontend_dir, f))
-        for f in ["tailwind.config.js", "tailwind.config.ts", "tailwind.config.mjs", "tailwind.config.cjs"]
-    )
-    # Se tailwindcss está nas deps, a checagem de config é complementar
+    # Checagem complementar de design tokens OKLCH em DESIGN.md se presente
+    design_md = os.path.join(projeto_dir, "DESIGN.md")
+    if os.path.isfile(design_md):
+        try:
+            with open(design_md, "r", encoding="utf-8", errors="ignore") as f:
+                c_design = f.read()
+                if "oklch(" not in c_design:
+                    erros.append("DESIGN.md presente mas não adota tokens no formato moderno 'oklch'.")
+        except Exception:
+            pass
+
     ok = len(erros) == 0
     return ok, erros, status_deps
 
@@ -253,7 +269,7 @@ def auditar_projeto(projeto_dir: str) -> Tuple[int, List[str], Dict[str, Any]]:
 def descobrir_projetos_referencia() -> List[str]:
     """Descobre projetos gerados de referência para validação determinística."""
     candidatos = [
-        r"C:\Users\trcnologia\Desktop\proj_ctt\planos-ctt-app",
+        os.path.join(ROOT_DIR, "componentes", "compartilhado", "templates", "frontend-tanstack"),
     ]
     return [c for c in candidatos if os.path.isdir(c)]
 

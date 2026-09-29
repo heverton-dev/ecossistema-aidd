@@ -1,0 +1,54 @@
+{
+  "pipeline_id": "evolucao-template-tanstack-offline-ciclo-01",
+  "target_tool": "template-tanstack-offline",
+  "descricao": "Plano de Evolução Tática montado a partir dos 4 tickets de PLANO-EVOLUCAO.md",
+  "config_usuario_ref": "docs/auditoria/CONFIG-EXECUCAO-USUARIO.json",
+  "definition_of_done": "docs/auditoria/template-tanstack-offline/ciclo-01/DOD.md",
+  "gate_final": "python ecossistema.py audit",
+  "fases": [
+    {
+      "ticket_id": "TICKET-01",
+      "nome": "Fase_1_Ticket_1_Extra__o_e_Canonicaliza__o_do_Molde_TanStack",
+      "dimensao_15d": "D1. Contratos e Regras",
+      "harness": "agy",
+      "model": "gemini-3.8-flash-low",
+      "comando_terminal": "agy --model gemini-3.8-flash-low  --dangerously-skip-permissions",
+      "input_prompt": "docs/auditoria/template-tanstack-offline/ciclo-01/prompts_tickets/PROMPT-TICKET-01.txt",
+      "output_handoff": "componentes/compartilhado/templates/frontend-tanstack/template-manifest.json",
+      "gate_fase": "python -m pytest -q -p no:cacheprovider tests"
+    },
+    {
+      "ticket_id": "TICKET-02",
+      "nome": "Fase_2_Ticket_2_Casca_Dupla_Responsiva_e_Integra__o_do_Quarteto",
+      "dimensao_15d": "D6. O que o Estágio Faz",
+      "harness": "mimo",
+      "model": "xiaomi-token-plan-sgp/mimo-v2.6-flash",
+      "comando_terminal": "MIMOCODE_DANGEROUSLY_SKIP_PERMISSIONS=1 MIMOCODE_TUI_PLAIN=1 mimo -m xiaomi-token-plan-sgp/mimo-v2.6-flash --pure --trust",
+      "input_prompt": "docs/auditoria/template-tanstack-offline/ciclo-01/prompts_tickets/PROMPT-TICKET-02.txt",
+      "output_handoff": "componentes/compartilhado/templates/frontend-tanstack/src/components/AdminShell.tsx",
+      "gate_fase": "python -m pytest -q -p no:cacheprovider tests"
+    },
+    {
+      "ticket_id": "TICKET-03",
+      "nome": "Fase_3_Ticket_3_Resili_ncia_Offline_e_Fila_Assinada_HMAC",
+      "dimensao_15d": "D8. O que o Estágio Processa",
+      "harness": "opencode",
+      "model": "opencode/big-pickle",
+      "comando_terminal": "opencode --pure --auto --agent -m opencode/big-pickle",
+      "input_prompt": "docs/auditoria/template-tanstack-offline/ciclo-01/prompts_tickets/PROMPT-TICKET-03.txt",
+      "output_handoff": "componentes/compartilhado/templates/frontend-tanstack/src/lib/offline/sync-queue.ts",
+      "gate_fase": "python -m pytest -q -p no:cacheprovider tests"
+    },
+    {
+      "ticket_id": "TICKET-04",
+      "nome": "Fase_4_Ticket_4_Quality_Gate_e_Su_te_de_Valida__o_Determin_stica",
+      "dimensao_15d": "D13. Quality Gates (Portões)",
+      "harness": "agy",
+      "model": "gemini-3.8-flash-low",
+      "comando_terminal": "agy --model gemini-3.8-flash-low  --dangerously-skip-permissions",
+      "input_prompt": "docs/auditoria/template-tanstack-offline/ciclo-01/prompts_tickets/PROMPT-TICKET-04.txt",
+      "output_handoff": "gates/G_TEMPLATE_TANSTACK_OFFLINE.py",
+      "gate_fase": "python -m pytest -q -p no:cacheprovider tests"
+    }
+  ]
+}

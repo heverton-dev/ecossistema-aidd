@@ -19,32 +19,35 @@
 
 ## Stack por camada
 
-| Camada | Tecnologia obrigatória (default) | Evidência em `proj_ctt` |
+| Camada | Tecnologia obrigatória (default) | Evidência Canônica |
 |---|---|---|
-| **Frontend** | Next.js (App Router) + TypeScript + Tailwind CSS | `frontend/` — `next.config.js`, `tailwind.config.ts`, `tsconfig.json`, `app/` |
+| **Frontend** | TanStack Start / TanStack Router + React + TypeScript + Tailwind CSS | `componentes/compartilhado/templates/frontend-tanstack/` — `package.json`, `AdminShell.tsx`, `MobileShell.tsx` |
 | **Backend** | Python puro, 100% determinístico onde possível | `src/core/server.py` |
 | **Database** | SQLite em modo WAL (alta concorrência) | `src/core/database.py`, `app.db` |
-| **API** | OpenAPI 3.1 nativo — Swagger Studio em `/swagger` | `src/core/openapi.py`, `src/core/swagger.html` |
-| **Webhook** | Webhook Studio nativo em `/webhooks` | `src/core/webhooks.py`, `src/core/webhook_studio.html` |
-| **MCP** | MCP Studio nativo em `/mcp` | `src/core/mcp_server.py`, `src/core/mcp_studio.html` |
+| **API** | OpenAPI 3.1 nativo — Swagger Studio em `/api` | `src/core/openapi.py`, `/api` |
+| **Webhook** | Webhook Studio nativo em `/webhook` | `src/core/webhooks.py`, `/webhook` |
+| **MCP** | MCP Studio nativo em `/mcp` | `src/core/mcp_server.py`, `/mcp` |
 | **Documentação** | Guia/Documentação do Utilizador nativo em `/docs` | Quarteto Sine Qua Non (ver Lei #10 do `AGENTS.md` raiz) |
 
-O Frontend (Next.js/TS/Tailwind) é gerado a partir do OpenAPI da própria
-API (tipagem derivada dos contratos, zero divergência manual) — mecanismo
-real já implementado como `nextjs_exporter.py` (`proj_ctt`) e
-`tools/aidd-master/scripts/openapi_to_ts.py` + comando
-`aidd-master export-frontend --stack nextjs`.
+O Frontend (TanStack/TS/Tailwind) é gerado a partir do OpenAPI da própria
+API (tipagem derivada dos contratos, zero divergência manual) com suporte nativo
+a PWA e Offline-First resiliente via fila local assinada com HMAC SHA-256.
 
-## Versões de referência (`frontend/package.json` em `proj_ctt`)
+## Versões de referência (`frontend/package.json`)
 
 ```json
 {
-  "dependencies": { "next": "^14.2.5", "react": "^18.3.1", "react-dom": "^18.3.1" },
+  "dependencies": {
+    "@tanstack/react-router": "^1.81.0",
+    "@tanstack/react-query": "^5.59.0",
+    "@tanstack/start": "^1.81.0",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1"
+  },
   "devDependencies": {
-    "typescript": "^5.4.5",
-    "tailwindcss": "^3.4.4",
-    "postcss": "^8.4.38",
-    "autoprefixer": "^10.4.19"
+    "typescript": "^5.6.3",
+    "tailwindcss": "^3.4.14",
+    "vite": "^5.4.10"
   }
 }
 ```

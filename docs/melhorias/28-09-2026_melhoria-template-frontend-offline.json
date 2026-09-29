@@ -1,0 +1,24 @@
+{
+  "pedido_original": "Mapear templates deterministicos de frontend responsivo, offline PWA e design impecavel a partir do rotaprime-replica para os fluxos do ecossistema",
+  "data": "28-09-2026",
+  "nota_atual": "8.5",
+  "evidencia": "rotaprime-replica com DESIGN.md oklch tokens, AdminShell.tsx, MobileShell.tsx, sync-queue.ts assinado com HMAC, pwa.ts e Service Worker ativo",
+  "plano_existente": null,
+  "item_relacionado": null,
+  "nota_anterior": null,
+  "evidencia_anterior": null,
+  "itens_avaliados": [],
+  "resumo": "O rotaprime-replica possui arquitetura de UI e resiliencia offline de padrao de producao. Sua separacao em tokens oklch, cascas responsivas e fila de sincronizacao assinada permite extracao direta em templates canonicos do aidd-forge.",
+  "achados": [
+    "DESIGN.md padroniza paleta corporativa moderna com oklch e tipografia Public Sans",
+    "AdminShell.tsx e MobileShell.tsx resolvem alternancia perfeita entre desktop e mobile",
+    "sync-queue.ts prove persistencia offline com assinatura de integridade HMAC e despacho sequencial",
+    "PWA funcional com registro de Service Worker e deteccao de instalacao multi-plataforma"
+  ],
+  "riscos": [
+    "Dependencia @lovable.dev/cloud-auth-js deve ser expurgada no template",
+    "Necessidade de compatibilizacao bi-direcional para Next.js (Lei 11) e Vite/TanStack"
+  ],
+  "recomendacao": "Sugestão de refatoração: Criar plano de melhoria com aidd-plan para estruturar os moldes canonicos em componentes/compartilhado/templates/frontend e plugar no aidd-forge",
+  "status": "RASCUNHO - aguardando decisao humana sobre proximo passo (ex: iniciar /plan, ou atualizar a nota do plano existente)"
+}

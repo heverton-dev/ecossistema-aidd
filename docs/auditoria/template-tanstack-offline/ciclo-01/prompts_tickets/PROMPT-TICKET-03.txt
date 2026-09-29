@@ -1,0 +1,17 @@
+ROLE: Builder. Ecosystem AIDD. Ticket 3. Target tool: template-tanstack-offline.
+DIMENSION: D8
+DELIVER: componentes/compartilhado/templates/frontend-tanstack/src/lib/offline/sync-queue.ts
+
+STEPS:
+- Write test first: simulate offline queue item tampering and assert HMAC verification fails.
+- Implement sync-queue.ts and seguranca.ts in template lib/offline.
+- Add Service Worker registration helper in pwa.ts.
+- Run test to ensure tamper-proof queue persistence.
+
+RULES:
+1. Write failing test first. Run. Assert exit 1.
+2. Implement. Zero stubs. Real pytest tests. Run. Assert exit 0.
+3. Work inside ephemeral Git Worktree only.
+4. Capture real exit code: redirect to file, read $? same line. Never trust pipes.
+5. NEVER edit docs/auditoria/CONFIG-EXECUCAO-USUARIO.json.
+6. Deliver exactly: componentes/compartilhado/templates/frontend-tanstack/src/lib/offline/sync-queue.ts

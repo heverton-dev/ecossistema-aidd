@@ -1,0 +1,31 @@
+{
+  "nome": "template-tanstack-offline",
+  "versao": "1.0.0",
+  "descricao": "Template canônico Padrão-Ouro de Frontend PWA com TanStack, offline-first resiliente e Quarteto Sine Qua Non integrado.",
+  "padrao_ouro": true,
+  "stack": {
+    "framework": "TanStack Start / React",
+    "router": "@tanstack/react-router",
+    "query": "@tanstack/react-query",
+    "styling": "Tailwind CSS + Tokens OKLCH",
+    "components": "Radix UI Primitives",
+    "pwa": "Service Worker + Web App Manifest",
+    "offline_storage": "localStorage + IndexedDB",
+    "integridade": "HMAC SHA-256"
+  },
+  "persistencia": {
+    "engine": "SQLite WAL / Drizzle ORM (Backend) + IndexedDB (Frontend)",
+    "journal_mode": "WAL",
+    "busy_timeout_ms": 5000
+  },
+  "quarteto_sine_qua_non": {
+    "api_studio": "/api",
+    "webhook_studio": "/webhook",
+    "mcp_studio": "/mcp",
+    "docs_hub": "/docs"
+  },
+  "shells": [
+    "src/components/AdminShell.tsx",
+    "src/components/MobileShell.tsx"
+  ]
+}
