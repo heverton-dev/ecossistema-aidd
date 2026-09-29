@@ -1,0 +1,38 @@
+<!-- Molde não-técnico do índice geral. Texto explicativo com analogias visuais; listas via scripts/mapa_visual.py. -->
+<div class="wrap">
+
+<a class="voltar" href="{{LINK_MANUAL}}">← Manual de montagem</a>
+<header>
+  <span class="eyebrow">Mapa visual · O Catálogo da Caixa de Montagem</span>
+  <h1>Catálogo Geral de Mapas Visuais</h1>
+  <p class="lead">Pense no ecossistema como uma sofisticada caixa de blocos de montar (como peças de LEGO de alta precisão). Cada mapa a seguir funciona como o folheto ilustrado de uma gaveta da caixa: mostra quais peças existem, como elas se conectam por pinos e furos, e quais regras impedem a construção de desmontar.</p>
+  {{TOTAIS}}
+</header>
+
+<section id="como-ler">
+  <span class="eyebrow">Como Navegar na Caixa</span>
+  <h2>As Três Seções do Manual de Instruções</h2>
+  <div class="grid3">
+    <div class="box">
+      <h3>1. As Regras e os Blocos</h3>
+      <p>Mapas de <strong>01 a 03</strong>: o regulamento da física do jogo (as leis), os grandes blocos de construção (as ferramentas) e os pinos de encaixe macho-fêmea (os contratos de transição).</p>
+    </div>
+    <div class="box">
+      <h3>2. A Segurança e as Habilidades</h3>
+      <p>Mapas de <strong>04 a 08</strong>: os porteiros da cancela com luz verde ou vermelha (os guardas), as ferramentas manuais do assistente (skills), os botões do painel (comandos) e as bancadas de trabalho (harnesses).</p>
+    </div>
+    <div class="box">
+      <h3>3. A Linha de Montagem e a Oficina</h3>
+      <p>Mapas de <strong>09 a 12</strong>: as formas de estamparia (moldes), os robôs mecânicos sem cérebro (scripts), o pit stop de revisão preventiva (a oficina) e a vistoria de Raio-X de 15 pontos (a lente 15D).</p>
+    </div>
+  </div>
+</section>
+
+<section id="lista">
+  <span class="eyebrow">Prateleira de Mapas</span>
+  <h2>Todos os Mapas Ilustrados da Coleção</h2>
+  {{LISTA}}
+</section>
+
+<footer>Gerado deterministicamente por <code>scripts/gerar_mapas_nao_tecnicos.py</code> a partir de <code>docs/auditoria/mapa-pecas/catalogo-pecas.json</code>. Versão ilustrada voltada para visualização didática e conceitual.</footer>
+</div>

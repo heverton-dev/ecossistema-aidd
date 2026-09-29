@@ -1,108 +1,106 @@
 <!-- Molde do mapa das skills. Texto fixo aqui; listas e números entram por scripts/mapa_visual.py. A regra oficial é docs/protocolos/CONVENCAO-AUTORIA-SKILLS.md: este molde só resume e aponta para ela. -->
 <div class="wrap">
 
-<a class="voltar" href="{{LINK_MANUAL}}">← Manual de montagem</a>
+<a class="voltar" href="{{LINK_MANUAL}}">← Manual de Montagem</a>
 <header>
-  <span class="eyebrow">Mapa visual · peça: skill (manual de tarefa)</span>
-  <h1>Mapa das skills</h1>
-  <p class="lead">Uma skill é um <b>manual de tarefa</b>: uma pasta com um <code>SKILL.md</code> que ensina o agente a fazer uma coisa do jeito da casa. Este mapa mostra todas as skills que existem hoje e resume como construir uma nova sem repetir as que já existem.</p>
+  <span class="eyebrow">Mapa Visual · Procedimentos Agênticos (Skills)</span>
+  <h1>Mapa de Procedimentos Agênticos (Skills)</h1>
+  <p class="lead">Uma skill formaliza o procedimento operacional padronizado que orienta o agente em uma tarefa técnica especializada. Estruturada no arquivo canônico <code>SKILL.md</code>, define contexto, parâmetros e critérios determinísticos de aceitação. Este mapa cataloga as skills ativas do ecossistema e consolida as diretrizes para desenvolvimento e governança de novas habilidades.</p>
   {{TOTAIS}}
 </header>
 
 <section id="o-que">
-  <span class="eyebrow">O quê · por quê · para quê</span>
-  <h2>Por que o ecossistema precisa de skills</h2>
+  <span class="eyebrow">Conceito e Finalidade</span>
+  <h2>Fundamentos Arquiteturais de Procedimentos</h2>
   <div class="grid3">
-    <div class="box"><h3>O que é</h3><p>Um manual que o agente só abre quando a tarefa combina com a <b>descrição</b>. Até lá, ele lê apenas o nome e a descrição de cada skill. Por isso a descrição é o gatilho.</p></div>
-    <div class="box"><h3>Por que construir</h3><p>Para a mesma tarefa sair do mesmo jeito em toda sessão, sem alguém explicar de novo: a ordem certa, os comandos exatos, as armadilhas já vividas.</p></div>
-    <div class="box"><h3>O que não é</h3><p>Skill ensina; <b>guarda confere</b>. Se a regra precisa ser obrigatória, ela precisa de um guarda (veja o mapa dos guardas).</p></div>
+    <div class="box"><h3>Gatilho Contextual</h3><p>O agente mantém em contexto apenas o nome e a descrição da skill. O corpo instrucional é carregado sob demanda apenas quando a intenção do usuário converge com a cláusula <code>Use when…</code>.</p></div>
+    <div class="box"><h3>Padronização Operacional</h3><p>Assegura que atividades complexas sejam executadas com reprodutibilidade invariante entre diferentes sessões e modelos, mitigando desvios e alucinações.</p></div>
+    <div class="box"><h3>Segregação Funcional</h3><p>A skill orienta o procedimento executivo, enquanto os <b>portões de qualidade auditam o resultado</b>. A obrigatoriedade técnica decorre de guardas automatizados.</p></div>
   </div>
 </section>
 
 <section id="quando">
-  <span class="eyebrow">Quando</span>
-  <h2>Quando criar, e quando não</h2>
+  <span class="eyebrow">Diretrizes de Decisão</span>
+  <h2>Critérios de Criação e Segregação</h2>
   <div class="grid2">
     <div class="box">
-      <h3>Crie quando…</h3>
+      <h3>Requisitos para Construção</h3>
       <ul>
-        <li>você explicou a mesma coisa ao agente pela segunda vez;</li>
-        <li>a tarefa tem uma ordem de passos que não pode variar;</li>
-        <li>existe um script pronto que o agente deve rodar em vez de reescrever;</li>
-        <li>uma ferramenta nova precisa de um "como usar".</li>
+        <li>Padronização de rotina técnica com sequência mandatória de etapas;</li>
+        <li>Instrução de procedimento operacional sobre ferramentas e scripts existentes;</li>
+        <li>Mitigação de armadilhas conhecidas identificadas em ciclos de desenvolvimento.</li>
       </ul>
     </div>
     <div class="box">
-      <h3>Não crie quando…</h3>
+      <h3>Critérios de Inadmissibilidade</h3>
       <ul>
-        <li>já existe uma skill com o mesmo trabalho (procure na lista abaixo);</li>
-        <li>é só um atalho com outro nome: atalho é <b>comando slash</b>, não skill;</li>
-        <li>é algo que o modelo já sabe sozinho;</li>
-        <li>a skill é de outro fornecedor: ela entra pelo instalador dele, não por cópia.</li>
+        <li>Sobreposição funcional com skill já homologada no catálogo (consulte a listagem abaixo);</li>
+        <li>Criação de atalho ou alias (demanda resolvida por comando slash);</li>
+        <li>Rotinas proprietárias de terceiros (devem ser importadas via gerenciador de dependências).</li>
       </ul>
     </div>
   </div>
 </section>
 
 <section id="onde">
-  <span class="eyebrow">Onde</span>
-  <h2>Onde cada coisa mora</h2>
+  <span class="eyebrow">Arquitetura e Distribuição</span>
+  <h2>Arquitetura de Armazenamento e Distribuição</h2>
   <div class="grid3">
-    <div class="box" style="--c:var(--c-trabalha)"><h3><span class="sw" aria-hidden="true"></span>Fonte única</h3><p><code>componentes/compartilhado/skills/&lt;nome&gt;/</code></p><p>O único lugar onde se edita. As pastas dos harnesses (<code>.claude/</code>, <code>.agents/</code>, <code>.opencode/</code>…) são cópias geradas pelo <code>components sync</code>.</p></div>
-    <div class="box" style="--c:var(--c-regra)"><h3><span class="sw" aria-hidden="true"></span>Atalho para pessoas</h3><p><code>componentes/compartilhado/comandos/&lt;nome&gt;.md</code></p><p>O que você digita (<code>/pure</code>, <code>/melhoria</code>, <code>/plan</code>) pode ter nome em português e só chama a skill <code>aidd-*</code>.</p></div>
-    <div class="box" style="--c:var(--brick)"><h3><span class="sw" aria-hidden="true"></span>Skill de terceiros</h3><p><code>gates/dependencias_externas.json</code></p><p>Registrada com <code>dependencia add-skill</code> e instalada pelo instalador do fornecedor. Nunca copiada para a fonte única.</p>{{TERCEIROS}}</div>
+    <div class="box" style="--c:var(--c-trabalha)"><h3><span class="sw" aria-hidden="true"></span>Fonte Canônica Única</h3><p><code>componentes/compartilhado/skills/&lt;nome&gt;/</code></p><p>Ponto central e exclusivo de manutenção. Árvores nativas dos harnesses (<code>.claude/</code>, <code>.agents/</code>, etc.) constituem réplicas geradas por <code>components sync</code>.</p></div>
+    <div class="box" style="--c:var(--c-regra)"><h3><span class="sw" aria-hidden="true"></span>Comandos Slash Interativos</h3><p><code>componentes/compartilhado/comandos/&lt;nome&gt;.md</code></p><p>Atalhos em português acessíveis no chat do usuário que invocam deterministicamente a respectiva skill <code>aidd-*</code>.</p></div>
+    <div class="box" style="--c:var(--brick)"><h3><span class="sw" aria-hidden="true"></span>Dependências Upstream</h3><p><code>gates/dependencias_externas.json</code></p><p>Componentes comunitários catalogados e gerenciados via <code>dependencia add-skill</code>, preservando o repositório canônico limpo.</p>{{TERCEIROS}}</div>
   </div>
 </section>
 
 <section id="como">
-  <span class="eyebrow">Como</span>
-  <h2>Como construir, em resumo</h2>
-  <p>Resumo da regra oficial, <a href="../protocolos/CONVENCAO-AUTORIA-SKILLS.md"><code>docs/protocolos/CONVENCAO-AUTORIA-SKILLS.md</code></a>. Na dúvida, vale o que está lá.</p>
+  <span class="eyebrow">Protocolo de Engenharia</span>
+  <h2>Metodologia de Desenvolvimento de Skills</h2>
+  <p>Diretrizes consolidadas em <a href="../protocolos/CONVENCAO-AUTORIA-SKILLS.md"><code>docs/protocolos/CONVENCAO-AUTORIA-SKILLS.md</code></a>:</p>
   <ol class="passos">
-    <li><div><b>Procure antes.</b><span>Use o filtro da lista abaixo. Se existe uma parecida, melhore a existente.</span></div></li>
-    <li><div><b>Escreva primeiro os cenários.</b><span>Três pedidos reais em que o agente erra sem a skill. Eles são a linha de base.</span></div></li>
-    <li><div><b>Nome e descrição.</b><span>Nome <code>aidd-&lt;assunto&gt;</code> em inglês, igual à pasta, sem <code>-runner</code> e sem número. Descrição em inglês dizendo o que faz e "Use when…", com as palavras que você digita em português.</span></div></li>
-    <li><div><b>Corpo curto.</b><span>Inglês compacto, meta de 150 linhas, trava em 450. Material de consulta vai para <code>references/</code>; cada passo termina numa condição que dá para conferir.</span></div></li>
-    <li><div><b>Distribua e confira.</b><span><code>python ecossistema.py components sync --tipo skill</code>, depois <code>components verify</code>, <code>G_SKILL_ROT</code> e <code>G_SKILL_FORMATO</code>, todos com exit 0.</span></div></li>
-    <li><div><b>Teste de verdade.</b><span>Rode os três cenários numa sessão nova. Se a skill não disparou sozinha, o problema está na descrição.</span></div></li>
+    <li><div><b>Consulta Prévia.</b><span>Consulte a listagem consolidada para identificar oportunidades de aprimoramento em procedimentos existentes.</span></div></li>
+    <li><div><b>Definição de Cenários de Teste.</b><span>Estruture cenários de teste objetivos comprovando falha de execução pelo modelo na ausência da instrução formal.</span></div></li>
+    <li><div><b>Identificação Canônica.</b><span>Nome padronizado no formato <code>aidd-&lt;assunto&gt;</code> em inglês. Descrição precisa acompanhada da cláusula <code>Use when…</code> com gatilhos semânticos em português.</span></div></li>
+    <li><div><b>Estrutura Concisa e Determinística.</b><span>Corpo em inglês compacto, com meta de 150 linhas e teto regulamentar em 450 linhas. Materiais volumosos de suporte devem residir em <code>references/</code>.</span></div></li>
+    <li><div><b>Sincronização e Auditoria.</b><span>Execute <code>python ecossistema.py components sync --tipo skill</code>, seguido de <code>components verify</code>, <code>G_SKILL_ROT</code> e <code>G_SKILL_FORMATO</code>.</span></div></li>
+    <li><div><b>Validação Prática.</b><span>Execute os cenários em nova sessão e certifique-se da ativação espontânea da skill diante do gatilho definido.</span></div></li>
   </ol>
 </section>
 
 <section id="pronto">
-  <span class="eyebrow">Pronto quando · quem confere</span>
-  <h2>Como saber que a skill está pronta</h2>
+  <span class="eyebrow">Critérios de Aceite</span>
+  <h2>Critérios de Homologação e Conformidade</h2>
   <div class="grid2">
     <div class="box">
-      <h3>Quem confere</h3>
+      <h3>Portões Validadores</h3>
       <ul>
-        <li><code>G_SKILL_FORMATO</code>: nome, "Use when", tamanho, prefixo <code>aidd-</code></li>
-        <li><code>G_SKILL_ROT</code>: todo caminho e comando citado existe; nenhuma cópia órfã</li>
-        <li><code>G_IDIOMA_LEI_4</code>: corpo em inglês compacto</li>
-        <li><code>components verify</code>: cópia idêntica em todos os harnesses</li>
+        <li><code>G_SKILL_FORMATO</code>: valida nomenclatura, presença de "Use when", tamanho e prefixo <code>aidd-</code>;</li>
+        <li><code>G_SKILL_ROT</code>: assegura existência de caminhos citados e ausência de arquivos órfãos;</li>
+        <li><code>G_IDIOMA_LEI_4</code>: audita o inglês compacto no corpo da instrução (Lei #4);</li>
+        <li><code>components verify</code>: garante integridade e sincronização em todos os harnesses.</li>
       </ul>
     </div>
     <div class="box">
-      <h3>Acima da meta de 150 linhas</h3>
-      <p>Passam na trava de 450, mas pedem material movido para <code>references/</code>:</p>
+      <h3>Otimização de Extensão</h3>
+      <p>Procedimentos acima da meta de 150 linhas com potencial de migração para <code>references/</code>:</p>
       {{ACIMA_META}}
     </div>
   </div>
 </section>
 
 <section id="erros">
-  <span class="eyebrow">Erros comuns · encontrados neste ecossistema</span>
-  <h2>O que não fazer</h2>
+  <span class="eyebrow">Diagnóstico de Anti-Padrões</span>
+  <h2>Anti-Padrões Procedimentais Identificados</h2>
   <div class="grid2">
-    <div class="box"><h3>Descrição sem "quando usar"</h3><p>Era o motivo principal de skill que não disparava: em 26/09/2026, só 10 de 75 diziam quando usar.</p></div>
-    <div class="box"><h3>A mesma skill com dois nomes</h3><p>Apelidos como <code>pure</code> e <code>aidd-pure</code> deixavam o agente sem saber qual escolher. Hoje, pares com a mesma descrição:</p>{{MESMA_DESCRICAO}}</div>
-    <div class="box"><h3>Terceiros copiados para dentro</h3><p>Skill de fornecedor copiada para a fonte única existe em dobro e envelhece. O <code>components sync</code> também não pode puxá-la de volta dos harnesses.</p></div>
-    <div class="box"><h3>Renomear sem limpar as cópias</h3><p>O <code>components sync</code> nunca apaga. A pasta antiga precisa sair de todos os harnesses, senão o <code>G_SKILL_ROT</code> acusa skill órfã.</p></div>
+    <div class="box"><h3>Descrição sem Gatilho Explícito</h3><p>Ausência da cláusula <code>Use when…</code>, impedindo a ativação autônoma do procedimento pelo modelo.</p></div>
+    <div class="box"><h3>Ambiguidade de Nomenclatura</h3><p>Duplicação de habilidades com denominações divergentes para a mesma finalidade técnica:</p>{{MESMA_DESCRICAO}}</div>
+    <div class="box"><h3>Reversão de Dependências</h3><p>Importação indevida de pacotes externos na fonte canônica, violando a integridade upstream.</p></div>
+    <div class="box"><h3>Inconsistência de Desativação</h3><p>Remoção na fonte canônica sem purga das cópias sincronizadas nos harnesses (identificado por <code>G_SKILL_ROT</code>).</p></div>
   </div>
 </section>
 
 <section id="lista">
-  <span class="eyebrow">Integrantes · procure antes de construir</span>
-  <h2>Todas as skills nossas</h2>
+  <span class="eyebrow">Inventário Consolidado</span>
+  <h2>Todas as Skills Canônicas</h2>
   <div class="filtros" role="search">
     <label for="busca" class="eyebrow" style="flex-basis:100%">Filtrar</label>
     <input id="busca" type="search" placeholder="nome ou assunto: plano, fluxo, sessão…" autocomplete="off">
@@ -113,7 +111,7 @@
   {{LISTA}}
 </section>
 
-<footer>Gerado por <code>scripts/mapa_visual.py skills</code> a partir de <code>docs/auditoria/mapa-pecas/catalogo-pecas.json</code>. Para atualizar: <code>python scripts/catalogo_pecas.py</code> e depois <code>python scripts/mapa_visual.py skills</code>.</footer>
+<footer>Compilado por <code>scripts/mapa_visual.py skills</code> a partir de <code>docs/auditoria/mapa-pecas/catalogo-pecas.json</code>. Para atualização: execute <code>python scripts/catalogo_pecas.py</code> seguido de <code>python scripts/mapa_visual.py skills</code>.</footer>
 </div>
 
 <script>

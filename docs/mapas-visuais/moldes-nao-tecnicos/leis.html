@@ -1,0 +1,49 @@
+<!-- Molde não-técnico do mapa das leis. Texto explicativo com analogias visuais; listas via scripts/mapa_visual.py. -->
+<div class="wrap">
+
+<a class="voltar" href="{{LINK_MANUAL}}">← Manual de montagem</a>
+<header>
+  <span class="eyebrow">Mapa visual · As Leis da Física da Montagem</span>
+  <h1>Mapa das 13 Regras Invioláveis do Jogo</h1>
+  <p class="lead">Assim como a gravidade impede uma torre de blocos de flutuar no ar, as 13 Leis do ecossistema definem a física do sistema. Cada regra é vigiada por um porteiro eletrônico (um portão de qualidade) que fiscaliza a montagem. Se alguém tentar desobedecer uma lei, o alarme toca e a esteira para imediatamente.</p>
+  {{TOTAIS}}
+</header>
+
+<section id="regra">
+  <span class="eyebrow">Como as Leis Funcionam na Prática</span>
+  <h2>A Diferença entre Sugestão e Lei de Trânsito</h2>
+  <div class="grid3">
+    <div class="box">
+      <h3>O Código de Trânsito</h3>
+      <p>As 13 leis estão escritas no documento <code>AGENTS.md</code>. Elas determinam que o sistema deve ser previsível como um relógio suíço (Lei #1) e seguro contra códigos falsificados ou maquiados (Lei #5 e #8).</p>
+    </div>
+    <div class="box">
+      <h3>O Guarda da Cancela</h3>
+      <p>Uma lei escrita no papel não para ninguém por conta própria. Por isso, toda lei possui um guarda mecânico associado em <code>gates/</code>. É o guarda que confere a peça e aciona a tranca na cancela.</p>
+    </div>
+    <div class="box">
+      <h3>A Prova de que o Guarda Morde</h3>
+      <p>Pela Lei #13, todo guarda precisa comprovar que realmente morde: ele precisa de um teste oficial que simula uma peça defeituosa e prova que o guarda a rejeita com sinal vermelho sem hesitar.</p>
+    </div>
+  </div>
+</section>
+
+<section id="lacunas">
+  <span class="eyebrow">Semáforo de Atenção · Verificação em Tempo Real</span>
+  <h2>Leis que Precisam de Reforço na Fiscalização</h2>
+  <div class="grid2">
+    <div class="box"><h3>Declarações não indexadas pelo validador</h3><p>Linhas com sufixos ou comentários que demandam padronização sintática:</p>{{INVISIVEIS}}</div>
+    <div class="box"><h3>Guardas com execução manual (fora do pré-commit)</h3><p>Portões especializados que não integram o ciclo síncrono de commit:</p>{{FORA_COMMIT}}</div>
+    <div class="box"><h3>Guardas sem teste automatizado de reprovação</h3><p>Portões que necessitam de teste demonstrando rejeição sob violação sintética (Lei #13):</p>{{SEM_PROVA}}</div>
+    <div class="box"><h3>Guardas autônomos sem vinculação formal a leis</h3><p>Portões ativos no repositório ainda não associados a uma lei canônica específica:</p>{{SEM_LEI}}</div>
+  </div>
+</section>
+
+<section id="lista">
+  <span class="eyebrow">O Livro de Leis Completo</span>
+  <h2>As 13 Leis e os Guardas que as Protegem</h2>
+  {{LISTA}}
+</section>
+
+<footer>Gerado deterministicamente a partir de <code>docs/auditoria/mapa-pecas/catalogo-pecas.json</code>. Versão ilustrada voltada para visualização didática e conceitual.</footer>
+</div>

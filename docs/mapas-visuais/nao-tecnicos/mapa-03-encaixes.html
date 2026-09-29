@@ -1,0 +1,169 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Mapa dos Encaixes (Versão Conceitual)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&amp;family=IBM+Plex+Sans:wght@400;500;600&amp;family=IBM+Plex+Mono:wght@400;500&amp;display=swap">
+<style>
+/* Estilo comum dos mapas visuais (docs/mapas-visuais). Mesmos tokens do manual de montagem. */
+:root{
+  --paper:#EEF1F4; --surface:#FFFFFF; --ink:#16202B; --muted:#5A6878; --line:#D3DAE2;
+  --brick:#F2B705; --brick-ink:#3B2C00;
+  --c-pensa:#7048E8; --c-trabalha:#2F6FDB; --c-regra:#0E9384; --c-guarda:#D92D20; --c-liga:#C4620A;
+  --ok:#12805C; --ok-bg:#E3F4EC; --falha:#C0261B; --falha-bg:#FCE7E5; --fach:#A15C00; --fach-bg:#FDF0DC;
+  --tint:#E4E9EF;
+  --display:"Bricolage Grotesque", "Segoe UI", system-ui, sans-serif;
+  --body:"IBM Plex Sans", "Segoe UI", system-ui, sans-serif;
+  --mono:"IBM Plex Mono", ui-monospace, Consolas, monospace;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    color-scheme:dark;
+    --paper:#0F141A; --surface:#17202A; --ink:#E6EBF0; --muted:#95A3B2; --line:#2A3642;
+    --brick:#F5C542; --brick-ink:#2A1F00;
+    --c-pensa:#A48BFF; --c-trabalha:#79A4FF; --c-regra:#3CCBB4; --c-guarda:#FF7A70; --c-liga:#FFAA55;
+    --ok:#4FD1A0; --ok-bg:#12302A; --falha:#FF8A80; --falha-bg:#3A1A18; --fach:#FFBE5C; --fach-bg:#3A2A10;
+    --tint:#1D2833;
+  }
+}
+:root[data-theme="dark"]{
+  color-scheme:dark;
+  --paper:#0F141A; --surface:#17202A; --ink:#E6EBF0; --muted:#95A3B2; --line:#2A3642;
+  --brick:#F5C542; --brick-ink:#2A1F00;
+  --c-pensa:#A48BFF; --c-trabalha:#79A4FF; --c-regra:#3CCBB4; --c-guarda:#FF7A70; --c-liga:#FFAA55;
+  --ok:#4FD1A0; --ok-bg:#12302A; --falha:#FF8A80; --falha-bg:#3A1A18; --fach:#FFBE5C; --fach-bg:#3A2A10;
+  --tint:#1D2833;
+}
+*{box-sizing:border-box}
+::-webkit-scrollbar{width:4px;height:4px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--muted);border-radius:4px}
+::-webkit-scrollbar-thumb:hover{background:var(--brick)}
+::-webkit-scrollbar-corner{background:transparent}
+@supports not selector(::-webkit-scrollbar){*{scrollbar-width:thin;scrollbar-color:var(--muted) transparent}}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--body);font-size:16px;line-height:1.55;padding-inline:16px;padding-block:0 64px}
+.wrap{max-width:1040px;margin:0 auto}
+h1,h2,h3{font-family:var(--display);text-wrap:balance;margin:0;line-height:1.1}
+h1{font-size:clamp(2.2rem,6vw,3.4rem);font-weight:800;letter-spacing:-.02em}
+h2{font-size:clamp(1.45rem,3.4vw,2rem);font-weight:700;letter-spacing:-.01em}
+h3{font-size:1.1rem;font-weight:700}
+p{margin:0;max-width:65ch}
+a{color:inherit}
+a:focus-visible,button:focus-visible,input:focus-visible{outline:2px solid var(--brick);outline-offset:2px}
+code{font-family:var(--mono);font-size:.86em;background:var(--tint);padding:.08em .35em;border-radius:4px;overflow-wrap:anywhere}
+pre{margin:0;font-family:var(--mono);font-size:.8rem;background:var(--tint);border-radius:8px;padding:14px 16px;overflow-x:auto;line-height:1.5}
+pre code{background:none;padding:0;font-size:inherit}
+.eyebrow{font-family:var(--mono);font-size:.75rem;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+.lead{font-size:1.1rem;color:var(--muted)}
+.voltar{display:inline-block;font-size:.88rem;color:var(--muted);text-decoration:none;border-bottom:1px solid var(--line);margin-top:24px}
+header{display:flex;flex-direction:column;gap:14px;padding-block:28px 36px}
+section{display:flex;flex-direction:column;gap:18px;padding-block:40px;border-top:1px solid var(--line)}
+.box{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:18px;display:flex;flex-direction:column;gap:10px}
+.grid2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.grid3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+.grid4{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
+@media (max-width:860px){.grid3,.grid4{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:600px){.grid2,.grid3,.grid4{grid-template-columns:1fr}}
+.box ul,.box ol{margin:0;padding-left:20px;display:flex;flex-direction:column;gap:5px;font-size:.93rem}
+.nota{font-size:.93rem;background:var(--tint);border-radius:8px;padding:12px 16px;max-width:70ch}
+.legenda{font-size:.85rem;color:var(--muted)}
+.chip{display:inline-block;font-family:var(--mono);font-size:.7rem;letter-spacing:.04em;text-transform:uppercase;padding:3px 8px;border-radius:999px;white-space:nowrap;background:var(--tint);color:var(--muted)}
+.chip.ok{color:var(--ok);background:var(--ok-bg)}
+.chip.falha{color:var(--falha);background:var(--falha-bg)}
+.chip.aviso{color:var(--fach);background:var(--fach-bg)}
+.chip.lei{color:var(--brick-ink);background:var(--brick)}
+.totais{display:flex;flex-wrap:wrap;gap:10px}
+.total{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:10px 14px;display:flex;flex-direction:column;min-width:120px}
+.total b{font-family:var(--display);font-size:1.6rem;font-variant-numeric:tabular-nums;line-height:1.1}
+.total span{font-size:.8rem;color:var(--muted)}
+.total.falha b{color:var(--falha)} .total.aviso b{color:var(--fach)}
+.passos{counter-reset:passo;display:flex;flex-direction:column;gap:10px;margin:0;padding:0;list-style:none}
+.passos li{counter-increment:passo;display:grid;grid-template-columns:36px 1fr;gap:12px;align-items:start;background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:14px 16px}
+.passos li::before{content:counter(passo);font-family:var(--display);font-weight:800;font-size:1.3rem;color:var(--c-guarda);line-height:1.2}
+.passos li div{display:flex;flex-direction:column;gap:6px;min-width:0}
+.checklist{list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:6px}
+.checklist li{padding-left:26px;position:relative}
+.checklist li::before{content:"";position:absolute;left:0;top:.3em;width:14px;height:14px;border:2px solid var(--ok);border-radius:3px}
+.filtros{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.filtros input{flex:1 1 240px;font:inherit;font-size:.95rem;padding:9px 12px;border:1px solid var(--line);border-radius:8px;background:var(--surface);color:var(--ink)}
+.filtros button{font-family:var(--mono);font-size:.74rem;padding:7px 11px;border:1px solid var(--line);border-radius:999px;background:var(--surface);color:var(--muted);cursor:pointer}
+.filtros button[aria-pressed="true"]{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+.itens{display:flex;flex-direction:column;gap:8px}
+.item{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:12px 16px;display:flex;flex-direction:column;gap:6px}
+.item .nome{font-family:var(--mono);font-size:.92rem;font-weight:500;overflow-wrap:anywhere}
+/* cor da casa: quadradinho antes do nome, igual à legenda do manual */
+.sw,.item .nome::before{content:"";display:inline-block;width:10px;height:10px;border-radius:2px;background:var(--c,var(--line));margin-right:8px;vertical-align:1px}
+.item .desc{font-size:.9rem;color:var(--muted);max-width:none}
+.item .chips{display:flex;flex-wrap:wrap;gap:6px}
+.item .onde{font-size:.8rem;color:var(--muted);font-family:var(--mono);overflow-wrap:anywhere}
+.grupo{display:flex;flex-direction:column;gap:10px}
+.grupo h3{display:flex;gap:10px;align-items:baseline;flex-wrap:wrap}
+.grupo h3 small{font-family:var(--mono);font-size:.75rem;color:var(--muted);font-weight:400}
+.vazio{font-size:.9rem;color:var(--muted)}
+footer{padding-top:28px;border-top:1px solid var(--line);font-size:.85rem;color:var(--muted)}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<!-- Molde não-técnico do mapa dos encaixes. Texto explicativo com analogias visuais; listas via scripts/mapa_visual.py. -->
+<div class="wrap">
+
+<a class="voltar" href="manual-montagem-aidd.html">← Manual de montagem</a>
+<header>
+  <span class="eyebrow">Mapa visual · Pinos e Conectores Macho-Fêmea</span>
+  <h1>Mapa dos Encaixes e Contratos de Handoff</h1>
+  <p class="lead">Para que dois blocos de montar fiquem firmes sem soltar, o pino de um precisa entrar perfeitamente no furo do outro. No ecossistema, os encaixes são os contratos de handoff: esquemas formais em formato JSON que garantem que o que sai de uma ferramenta entra na próxima sem sobrar nem faltar um único parafuso.</p>
+  <div class="totais"><div class="total "><b>7</b><span>etapas na receita</span></div><div class="total "><b>12</b><span>chamadas conferidas</span></div><div class="total "><b>0</b><span>chamadas que quebram</span></div><div class="total "><b>0</b><span>etapas sem ferramenta</span></div><div class="total "><b>8</b><span>contratos</span></div></div>
+</header>
+
+<section id="o-que">
+  <span class="eyebrow">A Mecânica do Encaixe Perfeito</span>
+  <h2>Como Dois Blocos se Conectam sem Folga</h2>
+  <div class="grid3">
+    <div class="box">
+      <h3>O Pino de Saída</h3>
+      <p>A ferramenta que termina a etapa empacota sua entrega em um arquivo com formato padronizado (o contrato de handoff), como um pino saliente de um bloco de LEGO.</p>
+    </div>
+    <div class="box">
+      <h3>O Furo de Entrada</h3>
+      <p>A ferramenta seguinte possui um gabarito de entrada estrito. Se o pino tiver a espessura certa, a conexão faz "clique" e a montagem continua suavemente.</p>
+    </div>
+    <div class="box">
+      <h3>O Teste do Encaixe</h3>
+      <p>Se o arquivo vier com qualquer dado faltando ou formato diferente, o encaixe quebra, o semáforo fica vermelho e o sistema avisa na hora o que precisa ser ajustado.</p>
+    </div>
+  </div>
+</section>
+
+<section id="receita">
+  <span class="eyebrow">A Linha de Montagem da Tríade</span>
+  <h2>A Conexão das 7 Etapas da Esteira</h2>
+  <p>Cada conexão entre as máquinas da linha de produção é testada. Sinal verde confirma encaixe perfeito; sinal vermelho aponta folga ou parâmetro incompatível:</p>
+  <div class="grupo"><div class="itens"><article class="item" style="--c:var(--c-trabalha)" data-busca="etapa_01_forge"><span class="nome">1 · forge</span><p class="desc">Etapa 1: Fundação, Git, pre-commit e regras de governança.</p><div class="chips"><code>ecossistema.py forge init &lt;var&gt; --force</code><span class="chip ok">encaixa</span></div></article><article class="item" style="--c:var(--c-trabalha)" data-busca="etapa_02_planner"><span class="nome">2 · planner</span><p class="desc">Etapa 2: Planejamento BDD/SDD, contratos e Quarteto Sine Qua Non.</p><div class="chips"><code>ecossistema.py planner init --fluxo &lt;var&gt; --nome &lt;var&gt; --slug &lt;var&gt; --dominio &lt;var&gt; --pasta &lt;var&gt;</code><span class="chip ok">encaixa</span></div></article><article class="item" style="--c:var(--c-trabalha)" data-busca="etapa_03_engine"><span class="nome">3 · engine</span><p class="desc">Etapa 3: Execução da Engine correspondente ao Fluxo.</p><div class="chips"><code>ecossistema.py generate &lt;var&gt; --pasta &lt;var&gt; --implementar-codigo</code><span class="chip ok">encaixa</span><span class="chip lei">só pure</span></div><div class="chips"><code>ecossistema.py dispatch --dispatch &lt;var&gt; --target-dir &lt;var&gt;</code><span class="chip ok">encaixa</span></div><div class="chips"><code>ecossistema.py factory --plano &lt;var&gt; --pasta &lt;var&gt;</code><span class="chip ok">encaixa</span><span class="chip lei">só open</span></div><div class="chips"><code>ecossistema.py bridge scan &lt;var&gt;</code><span class="chip ok">encaixa</span><span class="chip lei">só freedom</span></div></article><article class="item" style="--c:var(--c-trabalha)" data-busca="etapa_04_master"><span class="nome">4 · master</span><p class="desc">Etapa 4: Harmonização no Monólito Modular VSA + Next.js.</p><div class="chips"><code>ecossistema.py master init &lt;var&gt; --pasta &lt;var&gt;</code><span class="chip ok">encaixa</span></div><div class="chips"><code>ecossistema.py master add-module &lt;var&gt; --pasta &lt;var&gt;</code><span class="chip ok">encaixa</span></div></article><article class="item" style="--c:var(--c-trabalha)" data-busca="etapa_05_enterprise"><span class="nome">5 · enterprise</span><p class="desc">Etapa 5: Blindagem SHA-256 e detecção de drift.</p><div class="chips"><code>ecossistema.py enterprise inject rule &lt;var&gt; --dir &lt;var&gt;</code><span class="chip ok">encaixa</span></div><div class="chips"><code>ecossistema.py enterprise verificar-drift --dir &lt;var&gt;</code><span class="chip ok">encaixa</span></div></article><article class="item" style="--c:var(--c-trabalha)" data-busca="etapa_06_ops"><span class="nome">6 · ops</span><p class="desc">Etapa 6: Infraestrutura, Docker Compose e Validação de Portas.</p><div class="chips"><code>ecossistema.py ops plan &lt;var&gt; --pasta &lt;var&gt;</code><span class="chip ok">encaixa</span></div></article><article class="item" style="--c:var(--c-trabalha)" data-busca="etapa_07_auditoria"><span class="nome">7 · auditoria</span><p class="desc">Etapa 7: Verificação final de conformidade do projeto.</p><div class="chips"><code>ecossistema.py audit</code><span class="chip ok">encaixa</span></div></article></div></div>
+</section>
+
+<section id="quebras">
+  <span class="eyebrow">Alerta de Montagem · Verificação em Tempo Real</span>
+  <h2>Encaixes Quebrados ou com Folga</h2>
+  <div class="grid3">
+    <div class="box"><h3>Pinos Incompatíveis</h3><p>Comandos com argumentos rejeitados pela máquina seguinte:</p><p class="vazio">Todas as chamadas encaixam hoje.</p></div>
+    <div class="box"><h3>Etapas sem Máquina</h3><p>Passos da linha de montagem sem ferramenta associada:</p><p class="vazio">Toda etapa chama uma ferramenta.</p></div>
+    <div class="box"><h3>Atalhos por Baixo do Pano</h3><p>Acessos diretos a arquivos internos pulando a esteira oficial:</p><p class="vazio">Nenhum atalho por dentro hoje.</p></div>
+  </div>
+</section>
+
+<section id="contratos">
+  <span class="eyebrow">Gabaritos Oficiais</span>
+  <h2>Contratos de Encaixe Versionados</h2>
+  <p>Localizados em <code>componentes/compartilhado/specs/</code>, definindo a forma exata dos pinos e furos de cada conexão:</p>
+  <div class="grupo"><div class="itens"><article class="item" style="--c:var(--brick)" data-busca="handoff-engine-to-master"><span class="nome">handoff-engine-to-master</span><p class="desc">HandoffEngineToMasterSchema</p><span class="onde">gates/G_ORQUESTRADOR_SINCRONO.py · scripts/orquestrador_sincrono.py</span></article><article class="item" style="--c:var(--brick)" data-busca="handoff-enterprise-to-ops"><span class="nome">handoff-enterprise-to-ops</span><p class="desc">HandoffEnterpriseToOpsSchema</p><span class="onde">gates/G_ORQUESTRADOR_SINCRONO.py · scripts/orquestrador_sincrono.py</span></article><article class="item" style="--c:var(--brick)" data-busca="handoff-execucao"><span class="nome">handoff-execucao</span><p class="desc">HandoffExecucaoSchema</p><span class="onde">gates/G_PIPELINE_HANDOFF.py · scripts/compilador_tickets_plano.py · tools/aidd-planner/aidd_planner/core/planner_engine.py · tools/aidd-planner/src/core/planner_engine.py</span></article><article class="item" style="--c:var(--brick)" data-busca="handoff-master-to-enterprise"><span class="nome">handoff-master-to-enterprise</span><p class="desc">HandoffMasterToEnterpriseSchema</p><span class="onde">gates/G_ORQUESTRADOR_SINCRONO.py · scripts/orquestrador_sincrono.py</span></article><article class="item" style="--c:var(--brick)" data-busca="handoff-melhoria"><span class="nome">handoff-melhoria</span><p class="desc">HandoffMelhoriaSchema</p><span class="onde">componentes/compartilhado/skills/aidd-improvement/scripts/handoff.py · gates/G_HANDOFF_MELHORIA.py</span></article><article class="item" style="--c:var(--brick)" data-busca="handoff-planner-to-engine"><span class="nome">handoff-planner-to-engine</span><p class="desc">HandoffPlannerToEngineSchema</p><span class="onde">gates/G_ORQUESTRADOR_SINCRONO.py · scripts/orquestrador_sincrono.py · tools/aidd-planner/aidd_planner/cli.py · tools/aidd-planner/src/cli.py</span></article><article class="item" style="--c:var(--brick)" data-busca="plano-infraestrutura"><span class="nome">plano-infraestrutura</span><p class="desc">Contrato do PLANO-INFRAESTRUTURA.json (aidd-ops → aidd-master/aidd-enterprise/aidd-factory)</p><span class="onde">tools/aidd-enterprise/scripts/scaffold_infra.py · tools/aidd-master/scripts/scaffold_infra.py · tools/aidd-ops/scripts/contrato_plano.py · tools/aidd-planner/aidd_planner/core/planner_engine.py · tools/aidd-planner/src/core/planner_engine.py</span></article><article class="item" style="--c:var(--brick)" data-busca="vsa-topological-dispatch"><span class="nome">vsa-topological-dispatch</span><p class="desc">VSATopologicalDispatchSchema</p><span class="onde">gates/G_DISPATCH_PIPELINE_VSA.py · tools/aidd-planner/aidd_planner/core/planner_engine.py · tools/aidd-planner/src/core/planner_engine.py</span></article></div></div>
+</section>
+
+<footer>Gerado deterministicamente a partir de <code>docs/auditoria/mapa-pecas/catalogo-pecas.json</code>. Versão ilustrada voltada para visualização didática e conceitual.</footer>
+</div>
+</body>
+</html>

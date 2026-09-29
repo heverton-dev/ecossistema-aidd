@@ -1,31 +1,31 @@
 <!-- Molde do índice dos mapas. A lista e o status de cada mapa entram por scripts/mapa_visual.py (MAPAS_PREVISTOS + status real em disco). -->
 <div class="wrap">
 
-<a class="voltar" href="{{LINK_MANUAL}}">← Manual de montagem</a>
+<a class="voltar" href="{{LINK_MANUAL}}">← Manual de Montagem</a>
 <header>
-  <span class="eyebrow">Mapas visuais · índice</span>
-  <h1>Mapas do ecossistema</h1>
-  <p class="lead">Um mapa por tipo de peça. Cada um mostra tudo o que existe hoje daquele tipo e ensina a construir uma peça nova sem repetir as que já existem. Esta página lista todos os mapas que o ecossistema precisa ter e o estado real de cada um.</p>
+  <span class="eyebrow">Mapas Visuais · Índice Geral</span>
+  <h1>Índice de Mapas do Ecossistema</h1>
+  <p class="lead">Catálogo visual estruturado por família arquitetural. Cada documento inventaria os componentes existentes e estabelece o padrão normativo para desenvolvimento de novas peças. Esta página reúne todos os mapas previstos e seu respectivo estado de sincronização com o código real.</p>
   {{TOTAIS}}
 </header>
 
 <section id="estado">
-  <span class="eyebrow">Estado · conferido agora</span>
-  <h2>Os mapas</h2>
-  <p>O estado não é marcado à mão. <b>Concluído</b> quer dizer que o arquivo existe e está igual ao que o gerador produz hoje a partir do catálogo. <b>Desatualizado</b> quer dizer que o arquivo existe, mas o catálogo mudou depois dele. <b>A criar</b> quer dizer que o mapa ainda não tem molde e gerador.</p>
+  <span class="eyebrow">Auditoria em Tempo Real</span>
+  <h2>Estado de Sincronização dos Mapas</h2>
+  <p>A situação de cada mapa é auditada deterministicamente contra o repositório. O status <b>Concluído</b> certifica que o artefato em disco reflete com precisão os dados atuais do catálogo factual. <b>Desatualizado</b> indica divergência entre o arquivo gerado e alterações recentes no catálogo. <b>A criar</b> sinaliza componente previsto com molde e gerador pendentes de implementação.</p>
   {{LISTA}}
 </section>
 
 <section id="como">
-  <span class="eyebrow">Como</span>
-  <h2>Como um mapa é feito</h2>
+  <span class="eyebrow">Governança Técnica</span>
+  <h2>Arquitetura de Compilação dos Mapas</h2>
   <div class="grid3">
-    <div class="box"><h3>Molde</h3><p><code>docs/mapas-visuais/moldes/&lt;tipo&gt;.html</code>: o texto fixo em português, com marcadores onde entram as listas.</p></div>
-    <div class="box"><h3>Gerador</h3><p><code>scripts/mapa_visual.py</code>: uma função por mapa, que preenche cada marcador a partir do catálogo.</p></div>
-    <div class="box"><h3>Dados</h3><p><code>docs/auditoria/mapa-pecas/catalogo-pecas.json</code>, gerado por <code>scripts/catalogo_pecas.py</code>. Nada da lista é escrito à mão.</p></div>
+    <div class="box"><h3>Molde Estrutural</h3><p><code>docs/mapas-visuais/moldes/&lt;tipo&gt;.html</code>: template semântico em HTML que define layout e seções fixas com marcadores dinâmicos.</p></div>
+    <div class="box"><h3>Gerador Determinístico</h3><p><code>scripts/mapa_visual.py</code>: rotina determinística em Python que preenche os marcadores com dados extraídos do catálogo.</p></div>
+    <div class="box"><h3>Catálogo Factual</h3><p><code>docs/auditoria/mapa-pecas/catalogo-pecas.json</code>: base factual de verdade gerada por <code>scripts/catalogo_pecas.py</code> sem interferência manual.</p></div>
   </div>
-  <p>O passo a passo está na parte 9 do manual de montagem e, para o agente, na skill <code>aidd-visual-maps</code>.</p>
+  <p>O procedimento detalhado de autoria e atualização encontra-se documentado na Parte 9 do Manual de Montagem e na skill canônica <code>aidd-visual-maps</code>.</p>
 </section>
 
-<footer>Gerado por <code>scripts/mapa_visual.py indice</code>. Para atualizar tudo: <code>python scripts/catalogo_pecas.py</code>, depois <code>python scripts/mapa_visual.py &lt;tipo&gt;</code> para cada mapa e, por último, <code>python scripts/mapa_visual.py indice</code>.</footer>
+<footer>Compilado por <code>scripts/mapa_visual.py indice</code>. Procedimento de atualização completa: execute <code>python scripts/catalogo_pecas.py</code>, seguido de <code>python scripts/mapa_visual.py &lt;tipo&gt;</code> para cada mapa e, por fim, <code>python scripts/mapa_visual.py indice</code>.</footer>
 </div>

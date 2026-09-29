@@ -1,0 +1,81 @@
+<!-- Molde não-técnico do mapa dos guardas. Texto explicativo com analogias visuais; listas via scripts/mapa_visual.py. -->
+<div class="wrap">
+
+<a class="voltar" href="{{LINK_MANUAL}}">← Manual de montagem</a>
+<header>
+  <span class="eyebrow">Mapa visual · Os Porteiros da Cancela Eletrônica</span>
+  <h1>Mapa dos Portões de Qualidade (Guardas)</h1>
+  <p class="lead">Os guardas são os fiscais da cancela de segurança do ecossistema. Eles funcionam exatamente como um semáforo de trânsito inteligente: examinam a peça antes que ela entre na base de código. Se estiver tudo conforme as regras, a luz verde acende (exit 0) e a cancela abre. Se houver qualquer defeito ou segredo exposto, a luz fica vermelha (exit 1) e nada passa.</p>
+  {{TOTAIS}}
+</header>
+
+<section id="regra">
+  <span class="eyebrow">Como o Guarda Opera</span>
+  <h2>As Três Características do Porteiro Perfeito</h2>
+  <div class="grid3">
+    <div class="box">
+      <h3>1. Sem "Meio Termo"</h3>
+      <p>O guarda nunca dá uma opinião vaga ou "mais ou menos". A resposta dele é estritamente binária: ou a peça passa com luz verde (0) ou a peça é barrada com luz vermelha (1).</p>
+    </div>
+    <div class="box">
+      <h3>2. O Guarda Não Toca na Peça</h3>
+      <p>O fiscal apenas aponta onde está o defeito. Ele não tenta consertar a peça sozinho, para garantir total imparcialidade e não introduzir novos problemas.</p>
+    </div>
+    <div class="box">
+      <h3>3. Posição na Cancela</h3>
+      <p>Os guardas mais importantes ficam posicionados no <code>pre-commit</code>: eles barram códigos ruins na porta de entrada, antes mesmo que o desenvolvedor grave o commit.</p>
+    </div>
+  </div>
+</section>
+
+<section id="erros">
+  <span class="eyebrow">Guarita de Atenção · Verificação em Tempo Real</span>
+  <h2>Guardas que Precisam de Ajuste de Posição</h2>
+  <div class="grid3">
+    <div class="box"><h3>Divergência entre Postos</h3><p>Guardas com o mesmo nome mas com critérios diferentes entre ferramentas:</p>{{DIVERGENTES}}</div>
+    <div class="box"><h3>Anotações Fora do Padrão</h3><p>Declarações no texto que o fiscal automático não conseguiu ler:</p>{{INVISIVEIS}}</div>
+    <div class="box"><h3>Fora da Cancela do Commit</h3><p>Guardas de governança que ainda não foram ligados na cancela automática de pré-commit:</p>{{FORA_COMMIT}}</div>
+  </div>
+</section>
+
+<section id="lista">
+  <span class="eyebrow">O Batalhão Completo</span>
+  <h2>Todos os Guardas do Ecossistema</h2>
+  <div class="filtros" role="search">
+    <label for="busca" class="eyebrow" style="flex-basis:100%">Filtrar guardas</label>
+    <input id="busca" type="search" placeholder="nome, lei ou assunto: segredos, test, commit…" autocomplete="off">
+    <button type="button" data-filtro="versoes" aria-pressed="false">só com versões diferentes</button>
+    <button type="button" data-filtro="sem-lei" aria-pressed="false">só sem lei</button>
+    <button type="button" data-filtro="fora-commit" aria-pressed="false">só fora do commit</button>
+  </div>
+  <p class="legenda" id="contagem" aria-live="polite"></p>
+  {{LISTA}}
+</section>
+
+<footer>Gerado deterministicamente a partir de <code>docs/auditoria/mapa-pecas/catalogo-pecas.json</code>. Versão ilustrada voltada para visualização didática e conceitual.</footer>
+</div>
+
+<script>
+(function(){
+  var busca=document.getElementById('busca'), botoes=[].slice.call(document.querySelectorAll('[data-filtro]'));
+  var itens=[].slice.call(document.querySelectorAll('.item')), contagem=document.getElementById('contagem');
+  function aplicar(){
+    var q=busca.value.trim().toLowerCase(), ativos=botoes.filter(function(b){return b.getAttribute('aria-pressed')==='true'}).map(function(b){return b.dataset.filtro});
+    var n=0;
+    itens.forEach(function(it){
+      var txt=it.textContent.toLowerCase(), ok=!q||txt.indexOf(q)>=0;
+      if(ok && ativos.indexOf('versoes')>=0 && !it.dataset.versoes) ok=false;
+      if(ok && ativos.indexOf('sem-lei')>=0 && !it.dataset.semlei) ok=false;
+      if(ok && ativos.indexOf('fora-commit')>=0 && !it.dataset.foracommit) ok=false;
+      it.hidden=!ok; if(ok)n++;
+    });
+    contagem.textContent=n+' de '+itens.length+' guardas';
+  }
+  botoes.forEach(function(b){
+    b.addEventListener('click',function(){
+      var p=b.getAttribute('aria-pressed')==='true'; b.setAttribute('aria-pressed',!p); aplicar();
+    });
+  });
+  busca.addEventListener('input',aplicar); aplicar();
+})();
+</script>

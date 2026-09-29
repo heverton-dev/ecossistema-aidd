@@ -1,0 +1,39 @@
+<!-- Molde não-técnico do mapa das conexões. Texto explicativo com analogias visuais; listas via scripts/mapa_visual.py. -->
+<div class="wrap">
+
+<a class="voltar" href="{{LINK_MANUAL}}">← Manual de montagem</a>
+<header>
+  <span class="eyebrow">Mapa visual · A Central Telefônica e os Sensores</span>
+  <h1>Mapa de Conexões Externas e Sensores de Borda</h1>
+  <p class="lead">Para construir sem ficar isolado em uma ilha, o ecossistema usa dois tipos especiais de fios: os <strong>MCPs</strong> (que funcionam como uma linha direta de telefone para consultar serviços externos, nuvens e bancos de dados) e os <strong>Hooks</strong> (que são como sensores de presença que apitam quando o agente vai fazer um movimento arriscado).</p>
+  {{TOTAIS}}
+</header>
+
+<section id="regra">
+  <span class="eyebrow">A Diferença entre o Fone e o Sensor</span>
+  <h2>Como Cada Canal de Comunicação Opera</h2>
+  <div class="grid2">
+    <div class="box">
+      <h3>O Telefone Externo (MCP)</h3>
+      <p>O agente precisa ver o mapa de código, consultar a documentação na nuvem ou acessar o banco? Ele levanta o fone do MCP. Cada servidor externo é catalogado formalmente no arquivo <code>.mcp.json</code> com verificação de segurança.</p>
+    </div>
+    <div class="box">
+      <h3>O Sensor de Alarme (Hook)</h3>
+      <p>É uma tranca automática no ciclo de trabalho. Se o agente tentar executar um comando perigoso ou esquecer de rodar a validação antes de commitar, o sensor dispara, a esteira trava e o assistente é avisado antes de cometer um erro.</p>
+    </div>
+  </div>
+</section>
+
+<section id="lista">
+  <span class="eyebrow">O Quadro de Ligações Completo</span>
+  <h2>Todas as Conexões Ativas</h2>
+  <h3>Telefones Externos Homologados (MCPs de Consumo)</h3>
+  {{REGISTRADOS}}
+  <h3>Telefones Internos Embarcados nas Ferramentas</h3>
+  {{INTERNOS}}
+  <h3>Sensores de Alarme Configurados (Hooks)</h3>
+  {{HOOKS}}
+</section>
+
+<footer>Gerado deterministicamente a partir de <code>docs/auditoria/mapa-pecas/catalogo-pecas.json</code>. Versão ilustrada voltada para visualização didática e conceitual.</footer>
+</div>

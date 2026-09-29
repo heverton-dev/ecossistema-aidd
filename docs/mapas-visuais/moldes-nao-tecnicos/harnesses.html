@@ -1,0 +1,48 @@
+<!-- Molde não-técnico do mapa dos harnesses. Texto explicativo com analogias visuais; listas via scripts/mapa_visual.py. -->
+<div class="wrap">
+
+<a class="voltar" href="{{LINK_MANUAL}}">← Manual de montagem</a>
+<header>
+  <span class="eyebrow">Mapa visual · As Bancadas de Trabalho dos Assistentes</span>
+  <h1>Mapa de Distribuição para os Ambientes (Harnesses)</h1>
+  <p class="lead">Diferentes assistentes de inteligência artificial trabalham em bancadas diferentes (Claude Code, Google Antigravity, Cursor, OpenCode). Para não termos que redesenhar as ferramentas para cada bancada, mantemos uma <strong>matriz central</strong>: quando alteramos uma peça na gaveta principal, ela é copiada de forma idêntica para todas as bancadas com um único comando.</p>
+  {{TOTAIS}}
+</header>
+
+<section id="regra">
+  <span class="eyebrow">A Regra da Fonte Única</span>
+  <h2>Nunca Mexa na Cópia da Bancada</h2>
+  <div class="grid3">
+    <div class="box">
+      <h3>1. A Matriz Original</h3>
+      <p>Todas as habilidades, comandos e especificações originais residem exclusivamente em <code>componentes/compartilhado/</code>. É ali que qualquer melhoria deve ser feita.</p>
+    </div>
+    <div class="box">
+      <h3>2. O Distribuidor Automático</h3>
+      <p>O comando <code>python ecossistema.py sync</code> atua como uma esteira distribuidora que carimba e replica as peças para as pastas de cada assistente (<code>.claude/</code>, <code>.agents/</code>).</p>
+    </div>
+    <div class="box">
+      <h3>3. Proibido Desgarrar da Matriz</h3>
+      <p>Se alguém editar uma cópia local diretamente, o guarda de integridade detecta a divergência e acusa erro, garantindo que ninguém trabalhe com ferramentas desatualizadas.</p>
+    </div>
+  </div>
+</section>
+
+<section id="legado">
+  <span class="eyebrow">Atenção nas Bancadas · Verificação em Tempo Real</span>
+  <h2>Pastas Antigas e Peças Faltando nas Bancadas</h2>
+  <p>Pastas antigas que não devem ser mais usadas como bancada principal:</p>
+  {{LEGADAS}}
+  <h3>Peças Faltando em Alguma Bancada</h3>
+  <p>Ferramentas do ecossistema que precisam estar presentes na bancada de todos os assistentes:</p>
+  {{FALTANDO}}
+</section>
+
+<section id="lista">
+  <span class="eyebrow">Quadro de Bancadas Homologadas</span>
+  <h2>Todos os Ambientes de Desenvolvimento</h2>
+  {{LISTA}}
+</section>
+
+<footer>Gerado deterministicamente a partir de <code>docs/auditoria/mapa-pecas/catalogo-pecas.json</code>. Versão ilustrada voltada para visualização didática e conceitual.</footer>
+</div>

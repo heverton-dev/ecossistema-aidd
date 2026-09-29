@@ -1,0 +1,65 @@
+<!-- Molde não-técnico do mapa das ferramentas. Texto explicativo com analogias visuais; listas via scripts/mapa_visual.py. -->
+<div class="wrap">
+
+<a class="voltar" href="{{LINK_MANUAL}}">← Manual de montagem</a>
+<header>
+  <span class="eyebrow">Mapa visual · As Grandes Máquinas da Linha de Montagem</span>
+  <h1>Mapa das 8 Ferramentas Especialistas</h1>
+  <p class="lead">Se o ecossistema fosse uma fábrica de blocos, as 8 ferramentas seriam as grandes máquinas da linha de produção: cada uma tem sua função própria, seus botões de acionamento e sua responsabilidade exata. Uma máquina prepara a base, outra planeja a estrutura, três montam o motor e as outras cuidam da blindagem e da entrega.</p>
+  {{TOTAIS}}
+</header>
+
+<section id="regra">
+  <span class="eyebrow">Como as Máquinas Trabalham</span>
+  <h2>As Três Regras de Ouro de Cada Estação</h2>
+  <div class="grid3">
+    <div class="box">
+      <h3>1. Alavanca Própria (CLI)</h3>
+      <p>Toda máquina tem seu próprio painel de controle executável via terminal: você digita <code>python ecossistema.py &lt;ferramenta&gt;</code> para acionar a máquina diretamente.</p>
+    </div>
+    <div class="box">
+      <h3>2. Sem Invadir o Espaço Alheio</h3>
+      <p>Cada máquina faz estritamente o seu trabalho e passa a peça para a próxima pela esteira. Uma máquina não fica no meio do caminho da outra.</p>
+    </div>
+    <div class="box">
+      <h3>3. Conversa por Fichas Formais</h3>
+      <p>As ferramentas não "conversam" por palpites ou conversas informais: elas se comunicam entregando uma ficha técnica preenchida (um contrato de handoff) com medidas milimétricas.</p>
+    </div>
+  </div>
+</section>
+
+<section id="repeticoes">
+  <span class="eyebrow">Atenção na Fábrica · Verificação em Tempo Real</span>
+  <h2>Análise de Sobreposição e Peças Compartilhadas</h2>
+  <div class="grid3">
+    <div class="box"><h3>Alavancas com Mesmo Nome</h3><p>Comandos com nomenclaturas idênticas em máquinas distintas:</p>{{VERBOS}}</div>
+    <div class="box"><h3>Dupla Responsabilidade</h3><p>Tarefas executadas concorrentemente por mais de uma máquina:</p>{{DONAS}}</div>
+    <div class="box"><h3>Peças Idênticas Replicadas</h3><p>Arquivos repetidos que podem ser unificados na gaveta central:</p>{{IDENTICOS}}</div>
+  </div>
+</section>
+
+<section id="lista">
+  <span class="eyebrow">Catálogo das Máquinas</span>
+  <h2>As 8 Ferramentas da Linha de Produção</h2>
+  <div class="filtros" role="search">
+    <label for="busca" class="eyebrow" style="flex-basis:100%">Filtrar máquinas</label>
+    <input id="busca" type="search" placeholder="nome, comando ou assunto: compose, audit, lovable…" autocomplete="off">
+  </div>
+  <p class="legenda" id="contagem" aria-live="polite"></p>
+  {{LISTA}}
+</section>
+
+<footer>Gerado deterministicamente a partir de <code>docs/auditoria/mapa-pecas/catalogo-pecas.json</code>. Versão ilustrada voltada para visualização didática e conceitual.</footer>
+</div>
+
+<script>
+(function(){
+  var busca=document.getElementById('busca'), itens=[].slice.call(document.querySelectorAll('.item')), contagem=document.getElementById('contagem');
+  function aplicar(){
+    var q=busca.value.trim().toLowerCase(), n=0;
+    itens.forEach(function(it){var ok=!q||it.dataset.busca.indexOf(q)>=0; it.hidden=!ok; if(ok)n++;});
+    contagem.textContent=n+' de '+itens.length+' ferramentas';
+  }
+  busca.addEventListener('input',aplicar); aplicar();
+})();
+</script>

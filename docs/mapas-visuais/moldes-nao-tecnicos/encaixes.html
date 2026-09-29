@@ -1,0 +1,56 @@
+<!-- Molde não-técnico do mapa dos encaixes. Texto explicativo com analogias visuais; listas via scripts/mapa_visual.py. -->
+<div class="wrap">
+
+<a class="voltar" href="{{LINK_MANUAL}}">← Manual de montagem</a>
+<header>
+  <span class="eyebrow">Mapa visual · Pinos e Conectores Macho-Fêmea</span>
+  <h1>Mapa dos Encaixes e Contratos de Handoff</h1>
+  <p class="lead">Para que dois blocos de montar fiquem firmes sem soltar, o pino de um precisa entrar perfeitamente no furo do outro. No ecossistema, os encaixes são os contratos de handoff: esquemas formais em formato JSON que garantem que o que sai de uma ferramenta entra na próxima sem sobrar nem faltar um único parafuso.</p>
+  {{TOTAIS}}
+</header>
+
+<section id="o-que">
+  <span class="eyebrow">A Mecânica do Encaixe Perfeito</span>
+  <h2>Como Dois Blocos se Conectam sem Folga</h2>
+  <div class="grid3">
+    <div class="box">
+      <h3>O Pino de Saída</h3>
+      <p>A ferramenta que termina a etapa empacota sua entrega em um arquivo com formato padronizado (o contrato de handoff), como um pino saliente de um bloco de LEGO.</p>
+    </div>
+    <div class="box">
+      <h3>O Furo de Entrada</h3>
+      <p>A ferramenta seguinte possui um gabarito de entrada estrito. Se o pino tiver a espessura certa, a conexão faz "clique" e a montagem continua suavemente.</p>
+    </div>
+    <div class="box">
+      <h3>O Teste do Encaixe</h3>
+      <p>Se o arquivo vier com qualquer dado faltando ou formato diferente, o encaixe quebra, o semáforo fica vermelho e o sistema avisa na hora o que precisa ser ajustado.</p>
+    </div>
+  </div>
+</section>
+
+<section id="receita">
+  <span class="eyebrow">A Linha de Montagem da Tríade</span>
+  <h2>A Conexão das 7 Etapas da Esteira</h2>
+  <p>Cada conexão entre as máquinas da linha de produção é testada. Sinal verde confirma encaixe perfeito; sinal vermelho aponta folga ou parâmetro incompatível:</p>
+  {{RECEITA}}
+</section>
+
+<section id="quebras">
+  <span class="eyebrow">Alerta de Montagem · Verificação em Tempo Real</span>
+  <h2>Encaixes Quebrados ou com Folga</h2>
+  <div class="grid3">
+    <div class="box"><h3>Pinos Incompatíveis</h3><p>Comandos com argumentos rejeitados pela máquina seguinte:</p>{{QUEBRADOS}}</div>
+    <div class="box"><h3>Etapas sem Máquina</h3><p>Passos da linha de montagem sem ferramenta associada:</p>{{SEM_FERRAMENTA}}</div>
+    <div class="box"><h3>Atalhos por Baixo do Pano</h3><p>Acessos diretos a arquivos internos pulando a esteira oficial:</p>{{ATALHOS}}</div>
+  </div>
+</section>
+
+<section id="contratos">
+  <span class="eyebrow">Gabaritos Oficiais</span>
+  <h2>Contratos de Encaixe Versionados</h2>
+  <p>Localizados em <code>componentes/compartilhado/specs/</code>, definindo a forma exata dos pinos e furos de cada conexão:</p>
+  {{CONTRATOS}}
+</section>
+
+<footer>Gerado deterministicamente a partir de <code>docs/auditoria/mapa-pecas/catalogo-pecas.json</code>. Versão ilustrada voltada para visualização didática e conceitual.</footer>
+</div>

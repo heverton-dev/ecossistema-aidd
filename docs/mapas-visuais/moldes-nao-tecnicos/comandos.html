@@ -1,0 +1,47 @@
+<!-- Molde não-técnico do mapa dos comandos. Texto explicativo com analogias visuais; listas via scripts/mapa_visual.py. -->
+<div class="wrap">
+
+<a class="voltar" href="{{LINK_MANUAL}}">← Manual de montagem</a>
+<header>
+  <span class="eyebrow">Mapa visual · O Painel de Botões e Alavancas</span>
+  <h1>Mapa dos Comandos Rápidos (Slash Commands)</h1>
+  <p class="lead">Os comandos rápidos (como <code>/pure</code>, <code>/freedom</code>, <code>/melhoria</code> ou <code>/plan</code>) são como os botões de atalho no painel da cabine de comando. Quando você digita uma barra acompanhada do nome, o assistente sabe exatamente qual manual puxar da gaveta e qual máquina acionar sem que você precise digitar instruções longas e cansativas.</p>
+  {{TOTAIS}}
+</header>
+
+<section id="regra">
+  <span class="eyebrow">A Fiação do Painel</span>
+  <h2>Como o Botão se Conecta à Ferramenta</h2>
+  <div class="grid3">
+    <div class="box">
+      <h3>1. O Clique no Teclado</h3>
+      <p>Você digita o atalho no chat (por exemplo, <code>/open</code> ou <code>/diagnose</code>). Esse comando funciona em qualquer ambiente de desenvolvimento suportado.</p>
+    </div>
+    <div class="box">
+      <h3>2. O Fio até a Skill</h3>
+      <p>Cada botão está ligado a uma habilidade correspondente em <code>componentes/compartilhado/skills/</code>, que instrui o agente sobre como proceder de forma disciplinada.</p>
+    </div>
+    <div class="box">
+      <h3>3. A Saída no Terminal</h3>
+      <p>O assistente então aciona a ferramenta ou o script no terminal através do comando unificado <code>python ecossistema.py &lt;ação&gt;</code>, executando o trabalho real.</p>
+    </div>
+  </div>
+</section>
+
+<section id="erros">
+  <span class="eyebrow">Atenção no Painel · Verificação em Tempo Real</span>
+  <h2>Botões Desconectados ou sem Fiação</h2>
+  <div class="grid2">
+    <div class="box"><h3>Vínculos Órfãos</h3><p>Comandos de atalho que apontam para habilidades inexistentes ou descontinuadas:</p>{{QUEBRADOS}}</div>
+    <div class="box"><h3>Botões sem Apontamento Formal</h3><p>Comandos com descrição em texto mas sem o vínculo explícito com a skill correspondente:</p>{{SEM_SKILL}}</div>
+  </div>
+</section>
+
+<section id="lista">
+  <span class="eyebrow">Painel de Controle Completo</span>
+  <h2>Todos os Comandos Rápidos Disponíveis</h2>
+  {{LISTA}}
+</section>
+
+<footer>Gerado deterministicamente a partir de <code>docs/auditoria/mapa-pecas/catalogo-pecas.json</code>. Versão ilustrada voltada para visualização didática e conceitual.</footer>
+</div>

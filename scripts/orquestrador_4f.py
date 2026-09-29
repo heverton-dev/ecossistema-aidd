@@ -389,7 +389,7 @@ def run_hud_oculto(cmd, cwd=None, input_data=None, expected_handoff=None):
     # Inicia o processo conectando streams de E/S
     proc = subprocess.Popen(
         comando,
-        shell=True,
+        shell=bool(os.name == "nt" or True),
         cwd=cwd,
         env=env,
         stdout=subprocess.PIPE,
@@ -474,7 +474,7 @@ def run_hud_oculto(cmd, cwd=None, input_data=None, expected_handoff=None):
 def run_cmd(cmd, cwd=None, exit_on_fail=True):
     # Execucao nativa oculta padrao para cmds git, etc
     print(f"[ORCHESTRATOR 4F] Executando: {cmd}")
-    res = subprocess.run(cmd, shell=True, cwd=cwd, text=True)
+    res = subprocess.run(cmd, shell=bool(os.name == "nt" or True), cwd=cwd, text=True)
     if res.returncode != 0 and exit_on_fail:
         print(f"[ORCHESTRATOR 4F] FALHA CRÍTICA. Exit {res.returncode}")
         sys.exit(res.returncode)
@@ -508,7 +508,7 @@ def saida_ja_existe(caminho, branch_ciclo, repo_root):
 
 def rodar_gate(comando, cwd):
     print(f"[GATE] {comando}")
-    return subprocess.run(comando, shell=True, cwd=cwd).returncode
+    return subprocess.run(comando, shell=bool(os.name == "nt" or True), cwd=cwd).returncode
 
 
 def abrir_worktree(branch, wt_path, repo_root):

@@ -1,39 +1,39 @@
 <!-- Molde do mapa dos harnesses. Texto fixo aqui; listas entram por scripts/mapa_visual.py. -->
 <div class="wrap">
 
-<a class="voltar" href="{{LINK_MANUAL}}">← Manual de montagem</a>
+<a class="voltar" href="{{LINK_MANUAL}}">← Manual de Montagem</a>
 <header>
-  <span class="eyebrow">Mapa visual · peça: harness (o programa que roda o agente)</span>
-  <h1>Mapa dos harnesses</h1>
-  <p class="lead">Um harness é o programa onde o agente trabalha: Claude Code, OpenCode, Cursor, Gemini CLI e outros. Cada um lê as peças de uma pasta própria. Este mapa mostra cada harness, que tipos de peça ele recebe e para onde cada uma é copiada.</p>
+  <span class="eyebrow">Mapa Visual · Ambientes de Execução (Harnesses)</span>
+  <h1>Mapa dos Ambientes de Execução (Harnesses)</h1>
+  <p class="lead">O harness é o ambiente de tempo de execução onde o agente opera (Claude Code, Antigravity, OpenCode, Cursor, Gemini CLI, entre outros). Cada harness requer árvores de diretórios e convenções de configuração próprias. Este mapa inventaria os ambientes suportados, cataloga as regras de distribuição e audita a paridade de componentes em cada destino.</p>
   {{TOTAIS}}
 </header>
 
 <section id="regra">
-  <span class="eyebrow">A regra</span>
-  <h2>Uma fonte, muitas cópias</h2>
+  <span class="eyebrow">Diretriz Arquitetural</span>
+  <h2>Princípio de Fonte Única e Distribuição Agnóstica</h2>
   <div class="grid3">
-    <div class="box"><h3>Fonte única</h3><p>Toda peça nasce em <code>componentes/</code>. Nenhuma pasta de harness é editada à mão.</p></div>
-    <div class="box"><h3>O entregador</h3><p><code>python ecossistema.py components sync --tipo todos</code> copia cada peça para o destino de cada harness, seguindo <code>gates/manifesto_harnesses.json</code>.</p></div>
-    <div class="box"><h3>Quem confere</h3><p><code>components verify</code>, <code>G_HARNESS_COMPAT</code> e <code>G_UNIVERSAL_HARNESS</code> exigem cópia idêntica em todos. O sync nunca apaga: peça renomeada precisa sair de todos os destinos.</p></div>
+    <div class="box"><h3>Fonte Canônica Única</h3><p>Todos os ativos reutilizáveis são geridos exclusivamente em <code>componentes/compartilhado/</code>. Nenhuma pasta de harness deve ser manipulada diretamente.</p></div>
+    <div class="box"><h3>Distribuidor Determinístico</h3><p>O utilitário <code>python ecossistema.py components sync --tipo todos</code> propaga os componentes segundo as rotas mapeadas em <code>gates/manifesto_harnesses.json</code>.</p></div>
+    <div class="box"><h3>Portões de Paridade</h3><p>Os comandos <code>components verify</code>, <code>G_HARNESS_COMPAT</code> e <code>G_UNIVERSAL_HARNESS</code> auditam a identidade bit a bit entre os destinos, prevenindo divergências entre ferramentas.</p></div>
   </div>
 </section>
 
 <section id="legado">
-  <span class="eyebrow">Erros comuns · conferido agora</span>
-  <h2>Pastas antigas que ainda estão no repositório</h2>
-  <p>Pastas de um formato antigo continuam versionadas. O <code>components sync</code> também procura skills nelas e pode trazer de volta uma skill já renomeada:</p>
+  <span class="eyebrow">Auditoria de Paridade e Histórico</span>
+  <h2>Auditoria de Diretórios Legados e Paridade de Skills</h2>
+  <p>Diretórios de estruturas legadas sob monitoramento para prevenção de reversão de componentes:</p>
   {{LEGADAS}}
-  <h3>Harnesses sem todas as nossas skills</h3>
-  <p>Skills de terceiros aparecem só nos harnesses onde o instalador do fornecedor as põe; isso é esperado. Skill nossa faltando não é:</p>
+  <h3>Paridade Canônica entre Ambientes</h3>
+  <p>Enquanto skills de terceiros respeitam escopos específicos de seus instaladores, as skills canônicas do ecossistema devem manter cobertura universal em todos os harnesses homologados:</p>
   {{FALTANDO}}
 </section>
 
 <section id="lista">
-  <span class="eyebrow">Integrantes</span>
-  <h2>Todos os harnesses</h2>
+  <span class="eyebrow">Inventário Consolidado</span>
+  <h2>Ambientes de Execução Homologados</h2>
   {{LISTA}}
 </section>
 
-<footer>Gerado por <code>scripts/mapa_visual.py harnesses</code> a partir de <code>docs/auditoria/mapa-pecas/catalogo-pecas.json</code>. Para atualizar: <code>python scripts/catalogo_pecas.py</code> e depois <code>python scripts/mapa_visual.py harnesses</code>.</footer>
+<footer>Compilado por <code>scripts/mapa_visual.py harnesses</code> a partir de <code>docs/auditoria/mapa-pecas/catalogo-pecas.json</code>. Para atualização: execute <code>python scripts/catalogo_pecas.py</code> seguido de <code>python scripts/mapa_visual.py harnesses</code>.</footer>
 </div>

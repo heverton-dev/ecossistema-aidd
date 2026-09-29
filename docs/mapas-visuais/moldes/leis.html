@@ -1,41 +1,41 @@
 <!-- Molde do mapa das leis e das provas dos guardas. Texto fixo aqui; leis e declarações entram por scripts/mapa_visual.py. -->
 <div class="wrap">
 
-<a class="voltar" href="{{LINK_MANUAL}}">← Manual de montagem</a>
+<a class="voltar" href="{{LINK_MANUAL}}">← Manual de Montagem</a>
 <header>
-  <span class="eyebrow">Mapa visual · peça: lei e sua prova</span>
-  <h1>Mapa das leis</h1>
-  <p class="lead">Uma lei é uma regra do <code>AGENTS.md</code>. Sozinha, ela é só um pedido. Ela vira trava quando um guarda a prova. Este mapa mostra cada lei, os guardas declarados embaixo dela e se essa prova vale de verdade: o guarda tem teste que reprova, roda no commit e o meta-guarda consegue ler a declaração.</p>
+  <span class="eyebrow">Mapa Visual · Governança e Portões</span>
+  <h1>Mapa das Leis Invioláveis e Garantias Determinísticas</h1>
+  <p class="lead">As leis do ecossistema formalizam as diretrizes canônicas em <code>AGENTS.md</code>. Uma diretriz adquire eficácia vinculante quando comprovada por portões de qualidade algorítmicos. Este mapa correlaciona cada lei aos seus respectivos guardas homologados, avaliando se a garantia possui teste de rejeição ativa, execução no pré-commit e rastreabilidade pelo meta-guarda.</p>
   {{TOTAIS}}
 </header>
 
 <section id="regra">
-  <span class="eyebrow">A regra</span>
-  <h2>Como uma lei declara a sua prova</h2>
+  <span class="eyebrow">Diretriz Normativa</span>
+  <h2>Padrão Canônico de Declaração de Prova</h2>
   <div class="grid3">
-    <div class="box"><h3>A linha de declaração</h3><p>Embaixo de cada lei, uma linha <code>- Portão: gates/G_&lt;NOME&gt;.py (provado)</code> por guarda, ou o literal "sem gate — cumprimento por convenção".</p></div>
-    <div class="box"><h3>Quem confere</h3><p>O <code>G_LEI_DECLARA_PORTAO</code> exige a declaração em toda lei. O <code>G_PORTAO_PROVA_QUE_MORDE</code> exige que cada guarda tenha teste que força a reprovação (Lei #13).</p></div>
-    <div class="box"><h3>A armadilha</h3><p>O meta-guarda só lê a linha quando nada vem depois do parêntese. Um comentário depois de "(provado)" faz a declaração passar sem ser conferida.</p></div>
+    <div class="box"><h3>Formato da Declaração</h3><p>Sob cada lei, declara-se a anotação <code>- Portão: gates/G_&lt;NOME&gt;.py (provado)</code> para cada guarda ativo, ou a indicação formal de exceção.</p></div>
+    <div class="box"><h3>Auditoria Automatizada</h3><p><code>G_LEI_DECLARA_PORTAO</code> valida a declaração em 100% das leis. <code>G_PORTAO_PROVA_QUE_MORDE</code> assegura que cada guarda comprove capacidade real de reprovação (Lei #13).</p></div>
+    <div class="box"><h3>Sintaxe Estrita</h3><p>O parser exige encerramento imediato da linha após o parêntese para evitar que comentários sufoquem a checagem determinística do validador.</p></div>
   </div>
-  <p>Regra oficial dos guardas: <a href="../protocolos/CONVENCAO-AUTORIA-GATES.md"><code>docs/protocolos/CONVENCAO-AUTORIA-GATES.md</code></a>.</p>
+  <p>Convenção oficial de autoria: <a href="../protocolos/CONVENCAO-AUTORIA-GATES.md"><code>docs/protocolos/CONVENCAO-AUTORIA-GATES.md</code></a>.</p>
 </section>
 
 <section id="lacunas">
-  <span class="eyebrow">Onde a prova falha · conferido agora</span>
-  <h2>Leis com prova fraca</h2>
+  <span class="eyebrow">Auditoria de Conformidade em Tempo Real</span>
+  <h2>Lacunas e Oportunidades de Fortalecimento</h2>
   <div class="grid2">
-    <div class="box"><h3>Declarações que o meta-guarda não lê</h3><p>A linha tem comentário depois do parêntese; ninguém confere se ela está certa:</p>{{INVISIVEIS}}</div>
-    <div class="box"><h3>Guardas declarados que não rodam no commit</h3><p>A lei aponta para um guarda que só funciona quando alguém lembra de chamar:</p>{{FORA_COMMIT}}</div>
-    <div class="box"><h3>Guardas declarados sem prova que morde</h3><p>Não há teste que force a reprovação deste guarda:</p>{{SEM_PROVA}}</div>
-    <div class="box"><h3>Guardas da raiz que nenhuma lei declara</h3><p>Existem e conferem algo, mas não estão amarrados a nenhuma lei:</p>{{SEM_LEI}}</div>
+    <div class="box"><h3>Declarações não indexadas pelo validador</h3><p>Linhas com sufixos ou comentários que demandam padronização sintática:</p>{{INVISIVEIS}}</div>
+    <div class="box"><h3>Guardas com execução manual (fora do pré-commit)</h3><p>Portões especializados que não integram o ciclo síncrono de commit:</p>{{FORA_COMMIT}}</div>
+    <div class="box"><h3>Guardas sem teste automatizado de reprovação</h3><p>Portões que necessitam de teste demonstrando rejeição sob violação sintética (Lei #13):</p>{{SEM_PROVA}}</div>
+    <div class="box"><h3>Guardas autônomos sem vinculação formal a leis</h3><p>Portões ativos no repositório ainda não associados a uma lei canônica específica:</p>{{SEM_LEI}}</div>
   </div>
 </section>
 
 <section id="lista">
-  <span class="eyebrow">As leis · cada uma com seus guardas</span>
-  <h2>Todas as leis</h2>
+  <span class="eyebrow">Inventário Consolidado</span>
+  <h2>Catálogo Geral das 13 Leis</h2>
   {{LISTA}}
 </section>
 
-<footer>Gerado por <code>scripts/mapa_visual.py leis</code> a partir de <code>docs/auditoria/mapa-pecas/catalogo-pecas.json</code>. Para atualizar: <code>python scripts/catalogo_pecas.py</code> e depois <code>python scripts/mapa_visual.py leis</code>.</footer>
+<footer>Compilado por <code>scripts/mapa_visual.py leis</code> a partir de <code>docs/auditoria/mapa-pecas/catalogo-pecas.json</code>. Para atualização: execute <code>python scripts/catalogo_pecas.py</code> seguido de <code>python scripts/mapa_visual.py leis</code>.</footer>
 </div>

@@ -1,0 +1,33 @@
+<!-- Molde não-técnico da lente 15D. Texto explicativo com analogias visuais; listas via scripts/mapa_visual.py. -->
+<div class="wrap">
+
+<a class="voltar" href="{{LINK_MANUAL}}">← Manual de montagem</a>
+<header>
+  <span class="eyebrow">Mapa visual · O Raio-X e a Vistoria Veicular de 15 Pontos</span>
+  <h1>Mapa da Lente 15D (Auditoria Completa de Peças)</h1>
+  <p class="lead">A Lente 15D funciona como um laudo de vistoria veicular de 15 itens antes de aprovar um veículo para a estrada: o Inspetor checa desde a lataria e os freios (governança e blindagem) até a fiação elétrica, o motor e o escapamento (resiliência, testes reais e documentação). Este mapa exibe o Raio-X atualizado de cada ferramenta auditada.</p>
+  {{TOTAIS}}
+</header>
+
+<section id="dimensoes">
+  <span class="eyebrow">Os 15 Itens da Vistoria</span>
+  <h2>As Perguntas do Checklist de Inspeção</h2>
+  <p>Gabarito oficial de inspeção: <code>docs/auditoria/TEMPLATE-AUDITORIA-FERRAMENTA.md</code>. A vistoria é dividida em 4 blocos: Governança e Blindagem (D1 a D4), Chão de Fábrica e Execução (D5 a D10), Resiliência e Consumo de Recursos (D11 e D12) e Inspeção Final de Entrega (D13 a D15).</p>
+  <ol class="passos">{{DIMENSOES}}</ol>
+</section>
+
+<section id="matriz">
+  <span class="eyebrow">O Painel de Diagnóstico · Verificação em Tempo Real</span>
+  <h2>O Raio-X de Cada Ferramenta Auditada</h2>
+  <p>A classificação mede a saúde real de cada dimensão no laudo mais recente: peças em verde estão 100% aprovadas, amarelo indica ajuste parcial em andamento e vermelho aponta não-conformidade prioritária.</p>
+  {{TABELA}}
+</section>
+
+<section id="falhas">
+  <span class="eyebrow">Semáforo de Atenção</span>
+  <h2>Itens com Reprovação no Laudo</h2>
+  {{FALHAS}}
+</section>
+
+<footer>Gerado deterministicamente a partir de <code>docs/auditoria/mapa-pecas/catalogo-pecas.json</code>. Versão ilustrada voltada para visualização didática e conceitual.</footer>
+</div>

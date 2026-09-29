@@ -1,0 +1,72 @@
+<!-- Molde não-técnico dos scripts. Texto explicativo com analogias visuais; listas via scripts/mapa_visual.py. -->
+<div class="wrap">
+
+<a class="voltar" href="{{LINK_MANUAL}}">← Manual de montagem</a>
+<header>
+  <span class="eyebrow">Mapa visual · Os Robôs Mecânicos sem Cérebro</span>
+  <h1>Mapa dos Scripts e Automações Determinísticas</h1>
+  <p class="lead">Um script é como um robô mecânico de linha de produção industrial: ele não tem cérebro artificial, não sonha nem tem imaginação, mas aperta parafusos e monta engrenagens com precisão matemática absoluta. Sempre que você alimenta o robô com a mesma peça, ele devolve exatamente o mesmo resultado, sem oscilações nem alucinações.</p>
+  {{TOTAIS}}
+</header>
+
+<section id="regra">
+  <span class="eyebrow">Quem Aperta o Botão de Ligar</span>
+  <h2>As Três Fontes de Acionamento dos Robôs</h2>
+  <div class="grid3">
+    <div class="box">
+      <h3>1. O Painel Principal (CLI)</h3>
+      <p>Você digita no terminal através do comando unificado <code>python ecossistema.py &lt;ação&gt;</code> para acionar a rotina diretamente.</p>
+    </div>
+    <div class="box">
+      <h3>2. A Cancela do Commit</h3>
+      <p>O gatilho de pré-commit aciona o script automaticamente para inspecionar cada pedaço de código antes de autorizar a gravação.</p>
+    </div>
+    <div class="box">
+      <h3>3. Os Fiscais e Outros Robôs</h3>
+      <p>Um guarda de qualidade ou outro robô da fábrica convoca o script para realizar um cálculo ou conferência estrutural rápida.</p>
+    </div>
+  </div>
+</section>
+
+<section id="soltos">
+  <span class="eyebrow">Robôs Parados no Galpão · Verificação em Tempo Real</span>
+  <h2>Máquinas sem Fiação Ativa</h2>
+  <div class="grid2">
+    <div class="box">
+      <h3>Ninguém Aciona</h3>
+      <p>Nenhum painel, commit, guarda, script ou teste cita o nome deste arquivo. Candidato a ligação formal ou reciclagem:</p>
+      {{SOLTOS}}
+    </div>
+    <div class="box">
+      <h3>Acionado Apenas em Testes</h3>
+      <p>O robô é testado periodicamente na bancada, mas ainda não opera na linha de montagem real do ecossistema:</p>
+      {{SO_TESTES}}
+    </div>
+  </div>
+</section>
+
+<section id="lista">
+  <span class="eyebrow">O Parque de Máquinas Completo</span>
+  <h2>Todos os Scripts Determinísticos</h2>
+  <div class="filtros" role="search">
+    <label for="busca" class="eyebrow" style="flex-basis:100%">Filtrar robôs e scripts</label>
+    <input id="busca" type="search" placeholder="nome ou assunto: plano, catálogo, livro…" autocomplete="off">
+  </div>
+  <p class="legenda" id="contagem" aria-live="polite"></p>
+  {{LISTA}}
+</section>
+
+<footer>Gerado deterministicamente a partir de <code>docs/auditoria/mapa-pecas/catalogo-pecas.json</code>. Versão ilustrada voltada para visualização didática e conceitual.</footer>
+</div>
+
+<script>
+(function(){
+  var busca=document.getElementById('busca'), itens=[].slice.call(document.querySelectorAll('.item')), contagem=document.getElementById('contagem');
+  function aplicar(){
+    var q=busca.value.trim().toLowerCase(), n=0;
+    itens.forEach(function(it){var ok=!q||it.dataset.busca.indexOf(q)>=0; it.hidden=!ok; if(ok)n++;});
+    contagem.textContent=n+' de '+itens.length+' scripts';
+  }
+  busca.addEventListener('input',aplicar); aplicar();
+})();
+</script>

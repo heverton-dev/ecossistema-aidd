@@ -1,0 +1,96 @@
+<!-- Molde não-técnico do mapa das skills. Texto explicativo com analogias visuais; listas via scripts/mapa_visual.py. -->
+<div class="wrap">
+
+<a class="voltar" href="{{LINK_MANUAL}}">← Manual de montagem</a>
+<header>
+  <span class="eyebrow">Mapa visual · A Caixa de Ferramentas e Manuais de Bolso</span>
+  <h1>Mapa das Habilidades (Skills)</h1>
+  <p class="lead">Uma skill é como um manual de instruções ilustrado que o assistente carrega no bolso do jaleco: ensina exatamente o passo a passo para realizar uma tarefa especializada sem "inventar moda". Com a cartilha da skill, qualquer agente sabe diagnosticar um defeito, planejar uma melhoria ou aplicar testes sem pular etapas.</p>
+  {{TOTAIS}}
+</header>
+
+<section id="regra">
+  <span class="eyebrow">A Anatomia de uma Habilidade</span>
+  <h2>As Três Partes de uma Skill Bem Feita</h2>
+  <div class="grid3">
+    <div class="box">
+      <h3>1. O Rótulo da Capa (Gatilho)</h3>
+      <p>Um resumo curto e claro que explica exatamente quando abrir o manual: <em>"Use when the user wants to..."</em>. Isso ajuda o agente a puxar a ferramenta certa da gaveta.</p>
+    </div>
+    <div class="box">
+      <h3>2. O Passo a Passo Ilustrado</h3>
+      <p>O miolo do manual contém instruções compactas, sem enrolação nem adivinhação, orientando a sequência exata de botões e comandos a serem acionados.</p>
+    </div>
+    <div class="box">
+      <h3>3. A Peça de Origem</h3>
+      <p>Toda habilidade nasce na gaveta central em <code>componentes/compartilhado/skills/</code> e é distribuída automaticamente para todos os programas de assistente (Claude, Antigravity, Cursor).</p>
+    </div>
+  </div>
+</section>
+
+<section id="onde">
+  <span class="eyebrow">Origem e Ferramentas Emprestadas</span>
+  <h2>Ferramentas Comunitárias Catalogadas</h2>
+  <div class="box">
+    <h3>Ferramentas de Fora Homologadas</h3>
+    <p>Manuais e utilitários da comunidade catalogados com selo de segurança em <code>gates/dependencias_externas.json</code>:</p>
+    {{TERCEIROS}}
+  </div>
+</section>
+
+<section id="atencao">
+  <span class="eyebrow">Atenção no Estojo · Verificação em Tempo Real</span>
+  <h2>Manuais que Podem ser Enxugados ou Fundidos</h2>
+  <div class="grid2">
+    <div class="box">
+      <h3>Manuais com Mais de 150 Linhas</h3>
+      <p>Cartilhas volumosas que podem mover partes detalhadas para a gaveta de referências:</p>
+      {{ACIMA_META}}
+    </div>
+    <div class="box">
+      <h3>Manuais com Nomes Parecidos</h3>
+      <p>Habilidades com descrições idênticas concorrendo pela atenção do assistente:</p>
+      {{MESMA_DESCRICAO}}
+    </div>
+  </div>
+</section>
+
+<section id="lista">
+  <span class="eyebrow">O Estojo de Ferramentas Completo</span>
+  <h2>Todas as Skills Canônicas Disponíveis</h2>
+  <div class="filtros" role="search">
+    <label for="busca" class="eyebrow" style="flex-basis:100%">Filtrar habilidades</label>
+    <input id="busca" type="search" placeholder="nome ou finalidade: tdd, grill, ops, diagnose…" autocomplete="off">
+    <button type="button" data-filtro="acima" aria-pressed="false">só acima de 150 linhas</button>
+    <button type="button" data-filtro="semuse" aria-pressed="false">só sem "Use when"</button>
+  </div>
+  <p class="legenda" id="contagem" aria-live="polite"></p>
+  {{LISTA}}
+</section>
+
+<footer>Gerado deterministicamente a partir de <code>docs/auditoria/mapa-pecas/catalogo-pecas.json</code>. Versão ilustrada voltada para visualização didática e conceitual.</footer>
+</div>
+
+<script>
+(function(){
+  var busca=document.getElementById('busca'), botoes=[].slice.call(document.querySelectorAll('[data-filtro]'));
+  var itens=[].slice.call(document.querySelectorAll('.item')), contagem=document.getElementById('contagem');
+  function aplicar(){
+    var q=busca.value.trim().toLowerCase(), ativos=botoes.filter(function(b){return b.getAttribute('aria-pressed')==='true'}).map(function(b){return b.dataset.filtro});
+    var n=0;
+    itens.forEach(function(it){
+      var txt=it.textContent.toLowerCase(), ok=!q||txt.indexOf(q)>=0;
+      if(ok && ativos.indexOf('acima')>=0 && !it.dataset.acima) ok=false;
+      if(ok && ativos.indexOf('semuse')>=0 && !it.dataset.semuse) ok=false;
+      it.hidden=!ok; if(ok)n++;
+    });
+    contagem.textContent=n+' de '+itens.length+' skills';
+  }
+  botoes.forEach(function(b){
+    b.addEventListener('click',function(){
+      var p=b.getAttribute('aria-pressed')==='true'; b.setAttribute('aria-pressed',!p); aplicar();
+    });
+  });
+  busca.addEventListener('input',aplicar); aplicar();
+})();
+</script>

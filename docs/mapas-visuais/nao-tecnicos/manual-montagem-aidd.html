@@ -1,0 +1,584 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Manual de Montagem AIDD (Versão Conceitual e Ilustrada)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+:root{
+  --paper:#EEF1F4; --surface:#FFFFFF; --ink:#16202B; --muted:#5A6878; --line:#D3DAE2;
+  --brick:#F2B705; --brick-ink:#3B2C00;
+  --c-pensa:#7048E8; --c-trabalha:#2F6FDB; --c-regra:#0E9384; --c-guarda:#D92D20; --c-liga:#C4620A;
+  --ok:#12805C; --ok-bg:#E3F4EC; --falha:#C0261B; --falha-bg:#FCE7E5; --fach:#A15C00; --fach-bg:#FDF0DC;
+  --tint:#E4E9EF;
+  --display:"Bricolage Grotesque", "Segoe UI", system-ui, sans-serif;
+  --body:"IBM Plex Sans", "Segoe UI", system-ui, sans-serif;
+  --mono:"IBM Plex Mono", ui-monospace, Consolas, monospace;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    color-scheme:dark;
+    --paper:#0F141A; --surface:#17202A; --ink:#E6EBF0; --muted:#95A3B2; --line:#2A3642;
+    --brick:#F5C542; --brick-ink:#2A1F00;
+    --c-pensa:#A48BFF; --c-trabalha:#79A4FF; --c-regra:#3CCBB4; --c-guarda:#FF7A70; --c-liga:#FFAA55;
+    --ok:#4FD1A0; --ok-bg:#12302A; --falha:#FF8A80; --falha-bg:#3A1A18; --fach:#FFBE5C; --fach-bg:#3A2A10;
+    --tint:#1D2833;
+  }
+}
+:root[data-theme="dark"]{
+  color-scheme:dark;
+  --paper:#0F141A; --surface:#17202A; --ink:#E6EBF0; --muted:#95A3B2; --line:#2A3642;
+  --brick:#F5C542; --brick-ink:#2A1F00;
+  --c-pensa:#A48BFF; --c-trabalha:#79A4FF; --c-regra:#3CCBB4; --c-guarda:#FF7A70; --c-liga:#FFAA55;
+  --ok:#4FD1A0; --ok-bg:#12302A; --falha:#FF8A80; --falha-bg:#3A1A18; --fach:#FFBE5C; --fach-bg:#3A2A10;
+  --tint:#1D2833;
+}
+*{box-sizing:border-box}
+::-webkit-scrollbar{width:4px;height:4px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--muted);border-radius:4px}
+::-webkit-scrollbar-thumb:hover{background:var(--brick)}
+::-webkit-scrollbar-corner{background:transparent}
+@supports not selector(::-webkit-scrollbar){*{scrollbar-width:thin;scrollbar-color:var(--muted) transparent}}
+body{background:var(--paper);color:var(--ink);font-family:var(--body);font-size:16px;line-height:1.55;padding-inline:16px;padding-block:0 64px}
+.wrap{max-width:1040px;margin:0 auto}
+h1,h2,h3{font-family:var(--display);text-wrap:balance;margin:0;line-height:1.1}
+h1{font-size:clamp(2.2rem,6vw,3.6rem);font-weight:800;letter-spacing:-.02em}
+h2{font-size:clamp(1.5rem,3.6vw,2.1rem);font-weight:700;letter-spacing:-.01em}
+h3{font-size:1.15rem;font-weight:700}
+p{margin:0;max-width:65ch}
+code,.mono{font-family:var(--mono);font-size:.86em}
+code{background:var(--tint);padding:.08em .35em;border-radius:4px;overflow-wrap:anywhere}
+.eyebrow{font-family:var(--mono);font-size:.75rem;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+section{display:flex;flex-direction:column;gap:20px;padding-block:44px;border-top:1px solid var(--line)}
+.lead{font-size:1.1rem;color:var(--muted)}
+
+header{display:grid;grid-template-columns:1fr auto;gap:32px;align-items:end;padding-block:48px 40px}
+header .txt{display:flex;flex-direction:column;gap:16px}
+.formula{display:flex;flex-wrap:wrap;gap:8px;align-items:center;font-family:var(--mono);font-size:.9rem}
+.formula span{padding:4px 10px;border:1px solid var(--line);border-radius:6px;background:var(--surface)}
+.formula b{color:var(--muted);font-weight:400}
+.stack{display:grid;gap:6px;justify-items:end}
+.brick{--c:var(--brick);position:relative;display:inline-flex;align-items:center;height:40px;padding:0 14px;background:var(--c);color:#fff;font-family:var(--mono);font-size:.78rem;border-radius:4px;margin-top:9px}
+.brick::before{content:"";position:absolute;top:-9px;left:12px;right:12px;height:9px;background:radial-gradient(circle at 9px 9px,var(--c) 7px,transparent 7.5px) 0 0/28px 18px repeat-x}
+@media (max-width:640px){header{grid-template-columns:1fr}.stack{justify-items:start}}
+
+.chip{display:inline-block;font-family:var(--mono);font-size:.7rem;letter-spacing:.06em;text-transform:uppercase;padding:3px 8px;border-radius:999px;white-space:nowrap}
+.chip.certo{color:var(--ok);background:var(--ok-bg)}
+.chip.ajuste{color:var(--fach);background:var(--fach-bg)}
+.chip.novo{color:var(--brick-ink);background:var(--brick)}
+.chip.falha{color:var(--falha);background:var(--falha-bg)}
+
+.familias{display:flex;flex-wrap:wrap;gap:8px 18px;font-size:.88rem;color:var(--muted)}
+.familias i{display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:6px;vertical-align:-1px}
+.pecas{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:14px}
+.peca{background:var(--surface);border:1px solid var(--line);border-top:6px solid var(--c);border-radius:8px;padding:18px;display:flex;flex-direction:column;gap:10px}
+.peca .top{display:flex;justify-content:space-between;align-items:start;gap:10px}
+.peca .tec{font-family:var(--mono);font-size:.78rem;color:var(--c)}
+.peca .ana{font-size:.95rem}
+.peca .ex{font-size:.82rem;color:var(--muted);border-top:1px dashed var(--line);padding-top:10px}
+.peca .fix{font-size:.9rem;background:var(--fach-bg);color:var(--ink);border-radius:6px;padding:10px 12px}
+.peca .fix b{color:var(--fach)}
+
+.anat{display:grid;grid-template-columns:1fr 1.4fr 1fr;gap:12px;align-items:stretch}
+.box{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:18px;display:flex;flex-direction:column;gap:10px}
+.box h3{display:flex;align-items:center;gap:8px}
+.box ul{margin:0;padding-left:18px;display:flex;flex-direction:column;gap:4px;font-size:.93rem}
+.box.proc{border:2px solid var(--c-trabalha)}
+@media (max-width:760px){.anat{grid-template-columns:1fr}}
+.nota{font-size:.93rem;background:var(--tint);border-radius:8px;padding:12px 16px;max-width:70ch}
+
+.encaixe{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+@media (max-width:760px){.encaixe{grid-template-columns:1fr}}
+.pino{display:flex;align-items:center;gap:0;flex-wrap:nowrap;overflow-x:auto;padding:8px 0}
+.pino .b{flex:0 0 auto;padding:14px 16px;border-radius:6px;font-family:var(--mono);font-size:.8rem;color:#fff;background:var(--c-trabalha)}
+.pino .c{flex:0 0 auto;padding:8px 12px;border:2px dashed var(--brick);border-radius:999px;margin:0 -2px;font-family:var(--mono);font-size:.74rem;background:var(--surface);z-index:1}
+.pino .c.x{border-color:var(--falha);color:var(--falha)}
+.pino .line{flex:0 0 24px;height:2px;background:var(--line)}
+
+.guarda{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+@media (max-width:760px){.guarda{grid-template-columns:1fr}}
+.guarda .box{border-top:6px solid var(--c-guarda)}
+.exit{display:flex;gap:10px;flex-wrap:wrap}
+.exit span{font-family:var(--mono);font-size:.85rem;padding:6px 10px;border-radius:6px}
+.exit .z{background:var(--ok-bg);color:var(--ok)}
+.exit .u{background:var(--falha-bg);color:var(--falha)}
+.ouro{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+@media (max-width:760px){.ouro{grid-template-columns:1fr}}
+.ouro .box{background:var(--tint);border:none}
+
+.receita-scroll{overflow-x:auto;padding-bottom:6px}
+.receita{display:grid;grid-template-columns:repeat(7,minmax(128px,1fr));gap:8px;min-width:940px}
+.passo{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:12px;display:flex;flex-direction:column;gap:8px;font-size:.85rem}
+.passo .n{font-family:var(--mono);font-size:.72rem;color:var(--muted)}
+.passo strong{font-family:var(--display);font-size:1.02rem}
+.passo.var{border:2px solid var(--brick)}
+.passo .alt{display:flex;flex-direction:column;gap:6px}
+.passo .alt div{display:flex;justify-content:space-between;gap:6px;align-items:center;font-family:var(--mono);font-size:.74rem}
+.legenda{font-size:.85rem;color:var(--muted)}
+
+.duo{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+@media (max-width:760px){.duo{grid-template-columns:1fr}}
+.tab-scroll{overflow-x:auto;background:var(--surface);border:1px solid var(--line);border-radius:8px}
+table{border-collapse:collapse;width:100%;font-size:.92rem;min-width:560px}
+th,td{text-align:left;padding:11px 14px;border-bottom:1px solid var(--line);vertical-align:top}
+th{font-family:var(--mono);font-size:.72rem;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:500}
+tr:last-child td{border-bottom:none}
+
+.nav{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:.88rem;padding-block:0 28px}
+.nav a{color:var(--muted);text-decoration:none;border-bottom:1px solid var(--line)}
+.nav a:hover,.nav a:focus-visible{color:var(--ink);border-color:var(--ink)}
+a:focus-visible{outline:2px solid var(--brick);outline-offset:2px}
+
+.inicio{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
+@media (max-width:860px){.inicio{grid-template-columns:1fr}}
+.rota{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:18px;display:flex;flex-direction:column;gap:12px;align-items:flex-start}
+.rota > *{max-width:100%}
+.rota .q{font-family:var(--display);font-size:1.2rem;font-weight:700;line-height:1.2}
+.rota .f{display:flex;justify-content:space-between;align-items:center;gap:8px;width:100%;font-family:var(--mono);font-size:.82rem;color:var(--muted)}
+.rota .f b{font-family:var(--display);font-size:1.05rem;color:var(--ink)}
+.cmd{display:block;width:100%;font-family:var(--mono);font-size:.8rem;background:var(--tint);border-radius:6px;padding:10px 12px;overflow-x:auto;white-space:pre;margin:0}
+.rota .obs{font-size:.88rem;color:var(--muted)}
+.entrega{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:10px}
+.entrega div{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:12px 14px;font-size:.9rem;display:flex;flex-direction:column;gap:4px}
+.entrega b{font-family:var(--display)}
+
+.linha{display:flex;align-items:stretch;overflow-x:auto;padding-bottom:6px}
+.linha .st{flex:0 0 auto;width:190px;background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:14px;display:flex;flex-direction:column;gap:6px;font-size:.86rem}
+.linha .st strong{font-family:var(--display);font-size:1.02rem}
+.linha .st code{align-self:flex-start}
+.linha .seta{flex:0 0 28px;display:flex;align-items:center;justify-content:center;color:var(--muted);font-family:var(--mono)}
+.fases{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
+@media (max-width:760px){.fases{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:440px){.fases{grid-template-columns:1fr}}
+.fase{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:12px 14px;display:flex;flex-direction:column;gap:4px;font-size:.88rem}
+.fase b{font-family:var(--display);font-size:1rem}
+.avulsas{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:10px}
+.avulsas div{background:var(--tint);border-radius:8px;padding:12px 14px;font-size:.88rem;display:flex;flex-direction:column;gap:4px;align-items:flex-start}
+.avulsas code{background:var(--surface)}
+.mapa-link{align-self:flex-start;font-family:var(--display);font-weight:700;font-size:1.02rem;color:var(--ink);text-decoration:none;border-bottom:3px solid var(--brick);padding-bottom:2px}
+.mapa-link:hover{border-color:var(--c-guarda)}
+footer{padding-top:28px;border-top:1px solid var(--line);font-size:.85rem;color:var(--muted)}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <div class="txt">
+    <span class="eyebrow">Ecossistema AIDD · Guia Conceitual Ilustrado</span>
+    <h1>Manual de Montagem</h1>
+    <p class="lead">Construir uma aplicação robusta no ecossistema funciona como montar um modelo sofisticado de blocos (estilo LEGO de engenharia): cada peça possui cor e formato próprios, os blocos se conectam através de pinos e furos macho-fêmea (contratos) e você segue uma receita ilustrada passo a passo na esteira de montagem, com fiscais de segurança na cancela.</p>
+    <div class="formula"><span>peça (bloco)</span><b>+</b><span>conector (pino)</span><b>+</b><span>receita (esteira)</span><b>=</b><span>aplicação pronta</span></div>
+  </div>
+  <div class="stack" aria-hidden="true">
+    <div class="brick" style="--c:var(--c-guarda)">porteiro</div>
+    <div class="brick" style="--c:var(--c-trabalha)">máquina</div>
+    <div class="brick" style="--c:var(--brick);color:var(--brick-ink)">conector</div>
+    <div class="brick" style="--c:var(--c-trabalha)">máquina</div>
+  </div>
+</header>
+
+<nav class="nav" aria-label="Partes do manual">
+  <a href="#inicio">0 · As 3 Receitas Prontas</a>
+  <a href="#pecas">1 · As Peças da Caixa</a>
+  <a href="#resto">2 · A Bancada e a Governança</a>
+  <a href="#ferramenta">3 · A Máquina por Dentro</a>
+  <a href="#encaixe">4 · Pinos e Conectores</a>
+  <a href="#guarda">5 · Os Porteiros da Cancela</a>
+  <a href="#receita">6 · A Linha de Montagem</a>
+  <a href="#oficina">7 · O Pit Stop e a Oficina</a>
+  <a href="#cola">8 · O Dicionário Ilustrado</a>
+  <a href="#mapas">9 · O Catálogo de Mapas</a>
+</nav>
+
+<section id="inicio">
+  <span class="eyebrow">Parte 0</span>
+  <h2>As 3 Receitas Prontas da Caixa</h2>
+  <p>Toda construção começa com uma pergunta fundamental: <em>de onde você está partindo?</em> A resposta escolhe qual das três receitas prontas você vai abrir. O restante da montagem na esteira segue exatamente os mesmos padrões de qualidade.</p>
+  <div class="inicio">
+    <div class="rota">
+      <span class="q">Montar tudo do zero absoluto</span>
+      <span class="f"><b>pure</b>Receita 01 · /pure</span>
+      <p>Você abre uma caixa nova de blocos brancos. Antes de encaixar cada peça, a receita exige criar o teste primeiro (metodologia TDD), garantindo que nada saia fora do esquadro.</p>
+      <code class="cmd">python ecossistema.py pure "Clinica Vet" saude</code>
+      <span class="chip certo">esteira integrada</span>
+      <p class="obs">Executa as 7 estações de montagem com validação automática de ponta a ponta.</p>
+    </div>
+    <div class="rota">
+      <span class="q">Encaixar sobre um motor pronto</span>
+      <span class="f"><b>open</b>Receita 02 · /open ou /aidd-open</span>
+      <p>Você pega um motor consagrado de código aberto (como um chassi pré-montado e testado pelo mercado) e encaixa os seus blocos de negócio exclusivos sobre ele.</p>
+      <code class="cmd">python ecossistema.py open "Clinica Vet" saude</code>
+      <span class="chip certo">esteira integrada</span>
+      <p class="obs">No ambiente Antigravity, utilize <code>/aidd-open</code> para não acionar o atalho do editor.</p>
+    </div>
+    <div class="rota">
+      <span class="q">Libertar de uma vitrine alugada</span>
+      <span class="f"><b>freedom</b>Receita 03 · /freedom</span>
+      <p>Você pega uma construção que estava presa em uma plataforma alugada (Lovable, v0, Bolt), solta as amarras proprietárias, migra para banco autônomo e traz para sua própria bancada.</p>
+      <code class="cmd">python ecossistema.py freedom ./export-lovable "Clinica Vet" saude</code>
+      <span class="chip certo">esteira integrada</span>
+      <p class="obs">O primeiro parâmetro é a pasta onde você descompactou os arquivos exportados da plataforma.</p>
+    </div>
+  </div>
+  <p>Dica útil para todas as receitas: adicione <code>--dry-run</code> para simular a esteira sem gravar nada no disco. Sem especificar domínio, o padrão é <code>saas</code>. A aplicação pronta é entregue na pasta <code>projetos/&lt;nome&gt;</code>.</p>
+  <h3>O Pacote de Entrega Obrigatório (O Quarteto de Ouro)</h3>
+  <div class="entrega">
+    <div><b>Central de API</b><span><code>/api</code>: o catálogo interativo de todas as funções do sistema (OpenAPI / Swagger)</span></div>
+    <div><b>Central de Webhooks</b><span><code>/webhook</code>: o correio eletrônico que recebe avisos de fora em tempo real</span></div>
+    <div><b>Central de MCP</b><span><code>/mcp</code>: a tomada inteligente onde agentes de IA conectam seus plugues</span></div>
+    <div><b>Central de Documentação</b><span><code>/docs</code>: o manual do usuário vivo que se atualiza sozinho a cada peça nova</span></div>
+    <div><b>Estrutura Padrão-Ouro</b><span>Telas modernas em React e TypeScript; Motor veloz em Python com SQLite WAL</span></div>
+    <div><b>Pronto para Rodar</b><span>Tudo configurado em Docker Compose com testes reais de fábrica aprovados</span></div>
+  </div>
+  <p class="legenda">Essas quatro centrais formam a Lei #10 (o Quarteto Sine Qua Non) e a tecnologia segue a Lei #11. É a garantia de que seu software nunca nascerá como uma caixa-preta inacessível.</p>
+</section>
+
+<section id="pecas">
+  <span class="eyebrow">Parte 1</span>
+  <h2>As Peças da Caixa</h2>
+  <p>Conheça os blocos fundamentais que você encontra ao abrir a caixa do ecossistema, separados por cor e função na esteira de produção:</p>
+  <div class="familias">
+    <span><i style="background:var(--c-pensa)"></i>Camada que Pensa (Criatividade)</span>
+    <span><i style="background:var(--c-trabalha)"></i>Camada que Trabalha (Execução)</span>
+    <span><i style="background:var(--c-regra)"></i>Livros de Regras e Manuais</span>
+    <span><i style="background:var(--c-guarda)"></i>Porteiros e Fiscais de Segurança</span>
+    <span><i style="background:var(--c-liga)"></i>Cabos e Sensores de Conexão</span>
+  </div>
+  <div class="pecas">
+    <article class="peca" style="--c:var(--c-pensa)">
+      <div class="top"><h3>O Projetista Criativo</h3></div>
+      <span class="tec">Modelos de IA (Claude, GPT, Gemini)</span>
+      <p class="ana">É a mente criativa que compreende a sua ideia em português, projeta soluções e escreve o código-fonte. Por ter imaginação fértil, atua exclusivamente onde se exige criatividade, nunca em tarefas mecânicas que precisam de exatidão matemática.</p>
+      <p class="ex">A Lei #1 (Determinismo em Primeiro Lugar) impede que a IA faça cálculos repetitivos que um script simples executa sem risco de errar.</p>
+    </article>
+    <article class="peca" style="--c:var(--c-pensa)">
+      <div class="top"><h3>O Mestre de Obras</h3></div>
+      <span class="tec">Sessão Interativa (Claude Code, Antigravity, OpenCode)</span>
+      <p class="ana">É o coordenador de campo que segura as ferramentas com as mãos. Ele escuta seus comandos no chat, abre o manual certo da gaveta, aciona os robôs no terminal e junta as peças prontas na mesa.</p>
+      <p class="ex">Ele pode convocar assistentes temporários (subagentes) para pesquisar na web ou no código sem poluir o espaço da conversa principal.</p>
+    </article>
+    <article class="peca" style="--c:var(--c-trabalha)">
+      <div class="top"><h3>O Robô Mecânico</h3></div>
+      <span class="tec">Scripts Determinísticos (Python Puro / 0 IA)</span>
+      <p class="ana">Uma máquina mecânica sem imaginação nem sentimentos. Ele aperta parafusos e confere arquivos com exatidão milimétrica: se você passar a mesma peça mil vezes, ele entregará rigorosamente o mesmo resultado mil vezes.</p>
+      <p class="ex">Exemplo prático: <code>scripts/catalogo_pecas.py</code> varre o repositório inteiro e conta cada peça existente sem adivinhação.</p>
+    </article>
+    <article class="peca" style="--c:var(--c-trabalha)">
+      <div class="top"><h3>A Máquina da Fábrica</h3></div>
+      <span class="tec">Ferramentas Especialistas (aidd-forge, planner, ops…)</span>
+      <p class="ana">Uma estação completa de trabalho com alavanca própria no terminal. Uma prepara a base limpa, outra desenha a planta baixa e outra prepara o pacote para a nuvem.</p>
+      <p class="ex">Existem 8 ferramentas na fábrica. Você pode acionar qualquer uma pelo console: <code>python ecossistema.py &lt;ferramenta&gt;</code>.</p>
+    </article>
+    <article class="peca" style="--c:var(--c-regra)">
+      <div class="top"><h3>O Manual de Bolso</h3></div>
+      <span class="tec">Habilidade Pronta (Skill / SKILL.md)</span>
+      <p class="ana">Um guia ilustrado passo a passo que o assistente puxa do bolso do jaleco quando precisa realizar uma tarefa especializada (como diagnosticar um bug ou planejar uma evolução) sem se perder.</p>
+      <p class="fix"><b>Importante:</b> O manual é o guia, não o operador. O mesmo mestre de obras lê diferentes cartilhas ao longo do dia.</p>
+      <a class="mapa-link" href="mapa-05-skills.html">Ver a caixa de ferramentas e manuais de bolso →</a>
+    </article>
+    <article class="peca" style="--c:var(--c-regra)">
+      <div class="top"><h3>As Leis da Física da Montagem</h3></div>
+      <span class="tec">Regras Invioláveis de Governança (AGENTS.md)</span>
+      <p class="ana">O regulamento do mundo onde as peças operam. Se uma instrução tentar violar uma lei (por exemplo, esconder um mock falso em vez de código de verdade), os fiscais entram em ação imediatamente.</p>
+      <p class="fix"><b>Garantia Real:</b> Regras escritas servem para orientar, mas quem garante a ordem são os porteiros automáticos na cancela.</p>
+    </article>
+    <article class="peca" style="--c:var(--c-liga)">
+      <div class="top"><h3>O Cabo de Comunicação</h3></div>
+      <span class="tec">Protocolo de Conexão (MCP)</span>
+      <p class="ana">Como uma linha direta de telefone ou cabo USB: permite que o assistente converse com servidores externos, consulte a nuvem ou leia a documentação oficial da internet com total segurança.</p>
+      <p class="ex">Todos os telefones autorizados estão listados na agenda oficial <code>.mcp.json</code>.</p>
+    </article>
+    <article class="peca" style="--c:var(--c-guarda)">
+      <div class="top"><h3>O Sensor de Presença</h3></div>
+      <span class="tec">Gatilhos Reativos (Hooks)</span>
+      <p class="ana">Alarmes automáticos instalados na esteira: se o assistente estiver prestes a fazer um movimento perigoso ou esquecer de conferir os parafusos antes de entregar, o alarme toca e a esteira para na hora.</p>
+      <p class="fix"><b>A Função do Sensor:</b> O sensor apenas percebe a hora exata de parar; quem examina a qualidade da peça é o guarda correspondente.</p>
+    </article>
+    <article class="peca" style="--c:var(--c-guarda)">
+      <div class="top"><h3>O Porteiro da Cancela</h3></div>
+      <span class="tec">Portão de Qualidade (Quality Gate / gates/G_*.py)</span>
+      <p class="ana">O fiscal que fica na cancela de saída. Ele inspeciona a peça com um scanner: luz verde (exit 0) a cancela abre e a peça passa; luz vermelha (exit 1) a cancela trava e a peça defeituosa volta para a bancada.</p>
+      <p class="ex">Exemplo: <code>G_SEGREDOS</code> impede que senhas vazem no código. Temos 56 porteiros vigiando a cancela do commit.</p>
+    </article>
+    <article class="peca" style="--c:var(--brick)">
+      <div class="top"><h3>O Pino de Encaixe</h3></div>
+      <span class="tec">Contrato de Conexão (Handoff / *.schema.json)</span>
+      <p class="ana">O formato milimétrico do pino e do furo que conecta dois blocos. Se o que sai da primeira máquina não tiver exatamente o formato exigido pela próxima, a peça não entra e o alarme soa.</p>
+      <p class="ex">Temos 8 contratos canônicos guardados em <code>componentes/compartilhado/specs/</code>.</p>
+    </article>
+    <article class="peca" style="--c:var(--brick)">
+      <div class="top"><h3>A Linha de Montagem</h3></div>
+      <span class="tec">Esteira Automatizada (Pipeline)</span>
+      <p class="ana">A esteira rolante da fábrica que leva o projeto da primeira até a última estação, parando em cada cancela de conferência antes de seguir viagem.</p>
+      <p class="ex">As três receitas prontas utilizam essa mesma linha de montagem com 7 estações de trabalho. Veja na Parte 6.</p>
+    </article>
+  </div>
+</section>
+
+<section id="resto">
+  <span class="eyebrow">Parte 2</span>
+  <h2>A Bancada e a Governança</h2>
+  <p>Os equipamentos de apoio que mantêm as bancadas limpas, as ferramentas no lugar certo e as peças organizadas:</p>
+  <div class="pecas">
+    <article class="peca" style="--c:var(--c-liga)">
+      <div class="top"><h3>O Painel de Controle Geral</h3></div>
+      <span class="tec">Terminal (ecossistema.py) e Botões de Atalho (Slash Commands)</span>
+      <p class="ana">A mesa de controle com todos os botões e alavancas. Você pode apertar botões rápidos digitando uma barra no chat (como <code>/pure</code> ou <code>/plan</code>) ou acionar comandos no console do computador.</p>
+      <p class="ex">Digite <code>python ecossistema.py help</code> para ver todos os botões disponíveis.</p>
+      <a class="mapa-link" href="mapa-06-comandos.html">Ver o mapa de comandos rápidos e atalhos de chat →</a>
+    </article>
+    <article class="peca" style="--c:var(--c-trabalha)">
+      <div class="top"><h3>As Formas de Estamparia</h3></div>
+      <span class="tec">Moldes de Scaffolding (templates/)</span>
+      <p class="ana">Estruturas pré-fabricadas que servem de molde: a máquina pega a forma sólida da casa, despeja a sua regra de negócio e entrega paredes fortes sem trincas nem remendos.</p>
+      <p class="ex">Exemplos: <code>tools/aidd-master/templates/core</code> e <code>tools/aidd-factory/templates/vsa</code>.</p>
+      <a class="mapa-link" href="mapa-09-moldes.html">Ver o mapa das formas e moldes de entrega →</a>
+    </article>
+    <article class="peca" style="--c:var(--c-regra)">
+      <div class="top"><h3>A Gaveta Matriz e o Distribuidor</h3></div>
+      <span class="tec">Distribuidor Automático (components sync)</span>
+      <p class="ana">A regra da matriz única: todas as peças originais ficam na gaveta central em <code>componentes/compartilhado/</code>. Ao rodar o sincronizador, ele carimba e distribui cópias idênticas para a mesa de cada assistente.</p>
+      <p class="ex">Nunca altere as cópias da bancada. Mexa apenas na matriz e rode <code>components sync --tipo todos</code>.</p>
+      <a class="mapa-link" href="mapa-08-harnesses.html">Ver o mapa de distribuição para as bancadas →</a>
+    </article>
+    <article class="peca" style="--c:var(--c-regra)">
+      <div class="top"><h3>O Diário de Bordo da Obra</h3></div>
+      <span class="tec">Histórico de Sessões e Manifestos (secoes/)</span>
+      <p class="ana">O caderno de anotações que não deixa nada ser esquecido. Como a conversa do chat é volátil, todas as decisões importantes, planos e fichas de entrega são gravados em arquivos de disco auditáveis.</p>
+      <p class="ex">Tudo fica registrado em <code>secoes/INDICE-SESSOES.md</code> e nos manifestos de transição.</p>
+    </article>
+    <article class="peca" style="--c:var(--c-liga)">
+      <div class="top"><h3>A Triagem de Peças de Terceiros</h3></div>
+      <span class="tec">Selo de Homologação (gates/dependencias_externas.json)</span>
+      <p class="ana">Antes de deixar entrar qualquer ferramenta ou conector baixado da internet, ela passa por um laboratório de testes: recebe número de série, selo de autenticidade e só aí é liberada para uso.</p>
+      <p class="ex">Temos 39 ferramentas externas catalogadas e conferidas com <code>dependencia verify</code>.</p>
+      <a class="mapa-link" href="mapa-07-conexoes.html">Ver o mapa de conexões, MCPs e sensores →</a>
+    </article>
+    <article class="peca" style="--c:var(--brick)">
+      <div class="top"><h3>O Produto Final Concluído</h3></div>
+      <span class="tec">Aplicação Montada e Homologada</span>
+      <p class="ana">A construção completa que sai da fábrica pronta para ser usada pelos seus clientes: vem com telas modernas, banco veloz, documentação viva e containers prontos para entrar em produção.</p>
+      <p class="ex">Consulte as características completas do pacote na Parte 0 deste manual.</p>
+    </article>
+  </div>
+</section>
+
+<section id="ferramenta">
+  <span class="eyebrow">Parte 3</span>
+  <h2>A Máquina por Dentro</h2>
+  <p>Toda estação de trabalho da fábrica segue a regra universal da boa engenharia: <strong>Entrada Limpa</strong>, <strong>Trabalho Disciplinado</strong> e <strong>Saída Aprovada</strong>.</p>
+  <div class="anat">
+    <div class="box">
+      <h3>1. Entrada</h3>
+      <ul>
+        <li>Chega por um comando que você deu ou pela esteira da máquina anterior;</li>
+        <li>Embalada em uma ficha técnica padronizada (.json ou .md);</li>
+        <li>Conferida pelo gabarito de entrada antes de começar o trabalho;</li>
+        <li>Sem dados faltando nem instruções ambíguas.</li>
+      </ul>
+    </div>
+    <div class="box proc">
+      <h3>2. Trabalho Disciplinado</h3>
+      <ul>
+        <li>O controle da máquina é 100% mecânico e matemático (Python puro);</li>
+        <li>A inteligência artificial entra apenas na hora de criar código com elegância;</li>
+        <li>O assistente segue fielmente a cartilha de instruções (skill);</li>
+        <li>Consulta serviços externos através dos cabos autorizados (MCPs);</li>
+        <li>Trabalha em uma mesa temporária e limpa (worktree) para não sujar o projeto.</li>
+      </ul>
+    </div>
+    <div class="box">
+      <h3>3. Saída Aprovada</h3>
+      <ul>
+        <li>A peça é finalizada seguindo o contrato de saída à risca;</li>
+        <li>Passa imediatamente pelo scanner do fiscal de qualidade;</li>
+        <li>Segue na esteira para alimentar a próxima máquina;</li>
+        <li>Fica gravada em arquivo seguro com histórico completo.</li>
+      </ul>
+    </div>
+  </div>
+  <p class="nota"><b>A Fórmula Mágica:</b> O controle da esteira é mecânico e rigoroso como uma máquina de relógio. A inteligência generativa atua com liberdade criativa dentro da moldura, criando código limpo e moderno.</p>
+  <p class="nota"><b>Sem Misturar Ferramentas:</b> Cada ferramenta consulta suas próprias cartilhas. As máquinas só conversam entre si entregando peças acabadas na esteira oficial, sem gambiarras nem atalhos por baixo do pano.</p>
+  <a class="mapa-link" href="mapa-02-ferramentas.html">Ver o mapa detalhado das 8 máquinas da fábrica →</a>
+</section>
+
+<section id="encaixe">
+  <span class="eyebrow">Parte 4</span>
+  <h2>Pinos e Conectores Macho-Fêmea</h2>
+  <p>Dois blocos de montar só ficam firmes se os pinos de um entrarem perfeitamente nos furos do outro. No ecossistema, os <strong>contratos de handoff</strong> garantem que nenhuma peça fique frouxa nem se quebre durante a passagem de bastão.</p>
+  <div class="encaixe">
+    <div class="box">
+      <h3>Encaixe Perfeito <span class="chip certo">sinal verde (exit 0)</span></h3>
+      <div class="pino">
+        <span class="b">planner</span><span class="line"></span>
+        <span class="c">ficha técnica padronizada</span><span class="line"></span>
+        <span class="b">generator</span>
+      </div>
+      <p>A planta baixa gerada pelo <code>planner</code> satisfaz todas as medidas exigidas pelo <code>generator</code>. A conexão faz "clique" e a montagem prossegue sem solavancos.</p>
+    </div>
+    <div class="box">
+      <h3>Encaixe Forçado <span class="chip falha">cancela travada (exit 1)</span></h3>
+      <div class="pino">
+        <span class="b">chamador</span><span class="line"></span>
+        <span class="c x">medida errada</span><span class="line"></span>
+        <span class="b">ferramenta</span>
+      </div>
+      <p>Se alguém tentar passar uma peça torta ou com formato diferente do gabarito, o conector rejeita a peça, a esteira para na hora e o sistema avisa onde está o erro.</p>
+    </div>
+  </div>
+  <a class="mapa-link" href="mapa-03-encaixes.html">Ver o mapa dos conectores e contratos de handoff →</a>
+</section>
+
+<section id="guarda">
+  <span class="eyebrow">Parte 5</span>
+  <h2>Os Porteiros da Cancela Eletrônica</h2>
+  <div class="guarda">
+    <div class="box"><h3>O que Chega</h3><p>A peça bruta que acabou de sair da máquina, inspecionada exatamente como foi gerada.</p></div>
+    <div class="box"><h3>Como Inspeciona</h3><p>O porteiro passa um scanner automático e estrito: confere a estrutura, as medidas e as regras.</p></div>
+    <div class="box"><h3>O Semáforo</h3><div class="exit"><span class="z">Sinal Verde (0) · Aprovado</span><span class="u">Sinal Vermelho (1) · Bloqueado</span></div></div>
+  </div>
+  <p>O porteiro é estritamente honesto e binário: ele não remenda a peça nem dá "jeitinho". Se a peça estiver com defeito, ele aponta a falha com precisão e devolve a peça para a máquina consertar antes de tentar passar de novo.</p>
+  <a class="mapa-link" href="mapa-04-guardas.html">Ver o batalhão completo de guardas e porteiros →</a>
+  <a class="mapa-link" href="mapa-01-leis.html">Ver as 13 Leis e os guardas que as protegem →</a>
+  <div class="ouro">
+    <div class="box">
+      <h3>Regra de Ouro 1: Quem Monta Não Fiscaliza</h3>
+      <p>A máquina que constrói a peça nunca é a mesma que faz a auditoria. O guarda é independente e neutro para garantir que nenhum defeito seja escondido.</p>
+    </div>
+    <div class="box">
+      <h3>Regra de Ouro 2: Todo Guarda Precisa Provar que Morde</h3>
+      <p>Pela Lei #13, todo guarda precisa ter um teste gravado que passa uma peça deliberadamente defeituosa e prova que o fiscal acende o sinal vermelho sem pestanejar.</p>
+    </div>
+  </div>
+</section>
+
+<section id="receita">
+  <span class="eyebrow">Parte 6</span>
+  <h2>A Linha de Montagem da Tríade</h2>
+  <p>As três receitas prontas utilizam a mesma esteira com 7 estações de montagem. Apenas a estação 3 (a forja do motor) troca de máquina conforme a sua receita escolhida:</p>
+  <div class="receita-scroll">
+    <div class="receita">
+      <div class="passo"><span class="n">estação 1</span><strong>forge</strong><span>prepara o chão de fábrica e as regras</span><span class="chip certo">aprovado</span></div>
+      <div class="passo"><span class="n">estação 2</span><strong>planner</strong><span>desenha a planta baixa da solução</span><span class="chip certo">aprovado</span></div>
+      <div class="passo var"><span class="n">estação 3 · motor</span><strong>construção</strong>
+        <div class="alt">
+            <div>pure · generator <span class="chip certo">ok</span></div>
+            <div>open · factory <span class="chip certo">ok</span></div>
+            <div>freedom · bridge <span class="chip certo">ok</span></div>
+        </div>
+      </div>
+      <div class="passo"><span class="n">estação 4</span><strong>master</strong><span>encaixa as fatias em um monólito modular</span><span class="chip certo">aprovado</span></div>
+      <div class="passo"><span class="n">estação 5</span><strong>enterprise</strong><span>coloca o lacre de segurança e blindagem</span><span class="chip certo">aprovado</span></div>
+      <div class="passo"><span class="n">estação 6</span><strong>ops</strong><span>prepara os containers e a hospedagem</span><span class="chip certo">aprovado</span></div>
+      <div class="passo"><span class="n">estação 7</span><strong>auditoria</strong><span>passa pelo raio-x dos fiscais de segurança</span><span class="chip certo">aprovado</span></div>
+    </div>
+  </div>
+  <p class="legenda">Todas as 7 estações e as 12 conexões da esteira foram testadas e auditadas: 100% de encaixe perfeito, com zero frouxidão entre as ferramentas.</p>
+</section>
+
+<section id="oficina">
+  <span class="eyebrow">Parte 7</span>
+  <h2>O Pit Stop e a Oficina de Manutenção</h2>
+  <p>Enquanto a Tríade Canônica é a fábrica que produz as aplicações para os clientes, a <strong>Oficina</strong> é o pit stop onde a própria fábrica recebe manutenção preventiva, troca de óleo e melhorias contínuas:</p>
+  <div class="linha">
+    <div class="st"><span class="eyebrow">etapa 1</span><strong>Diagnóstico</strong><span>examina a saúde e dá nota de 0 a 10 com evidências</span><code>melhoria init</code></div>
+    <div class="seta" aria-hidden="true">→</div>
+    <div class="st"><span class="eyebrow">etapa 2</span><strong>Planejamento</strong><span>escreve a ordem de serviço com meta de nota</span><code>plan init</code></div>
+    <div class="seta" aria-hidden="true">→</div>
+    <div class="st"><span class="eyebrow">etapa 3</span><strong>Aprovação</strong><span>você confere a ordem e dá seu aval humano</span><code>plan aprovar</code></div>
+    <div class="seta" aria-hidden="true">→</div>
+    <div class="st"><span class="eyebrow">etapa 4</span><strong>Reforma</strong><span>executa as melhorias em bancadas isoladas</span><code>run-plan · orchestrate</code></div>
+    <div class="seta" aria-hidden="true">→</div>
+    <div class="st"><span class="eyebrow">etapa 5</span><strong>Pronto</strong><span>peça aprovada e integrada de volta à matriz</span><code>docs/planos/feitos</code></div>
+  </div>
+  <a class="mapa-link" href="mapa-11-oficina.html">Ver a oficina de planos e melhorias em andamento →</a>
+  <p class="nota"><b>Você no Controle:</b> A oficina nunca sai desmontando nada sem a sua autorização. O plano é feito e aguarda o seu comando explícito para começar os reparos.</p>
+  <h3>A Vistoria Completa em 4 Fases (Ciclo 4F)</h3>
+  <p>Quando uma ferramenta precisa de uma revisão geral profunda, ela passa pelas 4 fases da inspeção:</p>
+  <div class="fases">
+    <div class="fase"><b>1 · O Inspetor</b><span>faz o raio-x completo e aponta cada parafuso que precisa de ajuste</span></div>
+    <div class="fase"><b>2 · O Arquiteto</b><span>desenha a planta da melhoria com tarefas pequenas e organizadas</span></div>
+    <div class="fase"><b>3 · O Construtor</b><span>executa os reparos aplicando testes reais antes de cada solda</span></div>
+    <div class="fase"><b>4 · O Retorno</b><span>faz o teste de pista final para conferir se a nota subiu de verdade</span></div>
+  </div>
+  <a class="mapa-link" href="mapa-12-lente15d.html">Ver a matriz de Raio-X de 15 Pontos de cada ferramenta →</a>
+  <p class="legenda">Aprovado pelo humano: após a fase 4, as melhorias só entram na fábrica oficial quando você aperta o botão de aprovação.</p>
+  <h3>Ferramentas Úteis da Oficina</h3>
+  <div class="avulsas">
+    <div><b>Investigação Científica</b><span>descobre a causa exata de um defeito por eliminação</span><code>diagnose</code></div>
+    <div><b>Gravador de Voo</b><span>salva o histórico e as decisões das conversas em disco</span><code>sessao</code></div>
+    <div><b>Manual Técnico</b><span>gera o livro-texto oficial do sistema em PDF sem alucinações</span><code>livro</code></div>
+    <div><b>Fiscalização Geral</b><span>confere se todos os porteiros da fábrica estão alertas</span><code>audit</code></div>
+    <div><b>Painel de Instrumentos</b><span>mostra o placar atualizado de todos os testes da fábrica</span><code>status --testes</code></div>
+    <div><b>Checagem Pré-Voo</b><span>confere se o computador tem Git, Python e Docker instalados</span><code>preflight-host</code></div>
+  </div>
+</section>
+
+<section id="cola">
+  <span class="eyebrow">Parte 8</span>
+  <h2>O Dicionário Ilustrado de Termos</h2>
+  <div class="duo">
+    <div class="box">
+      <h3>O Sensor de Alarme (Hook)</h3>
+      <p><b>É o momento da parada.</b> Exemplo: o sensor de pré-commit apita exatamente no segundo em que você tenta salvar o código, parando a esteira para o porteiro entrar.</p>
+    </div>
+    <div class="box">
+      <h3>O Guarda da Cancela (Gate)</h3>
+      <p><b>É a régua de medição.</b> Exemplo: o fiscal examina se não há senhas expostas e se os testes passaram, acendendo a luz verde ou vermelha.</p>
+    </div>
+  </div>
+  <div class="tab-scroll">
+    <table>
+      <thead><tr><th>Termo no Ecossistema</th><th>Analogia no Mundo Real</th><th>Onde Fica Guardado</th></tr></thead>
+      <tbody>
+        <tr><td>skill</td><td>O manual de instruções ilustrado de bolso do assistente</td><td><code>componentes/compartilhado/skills/</code></td></tr>
+        <tr><td>regra, lei</td><td>As leis da física do jogo que ninguém pode burlar</td><td><code>AGENTS.md</code></td></tr>
+        <tr><td>MCP</td><td>O cabo telefônico para consultar serviços externos e nuvem</td><td><code>.mcp.json</code></td></tr>
+        <tr><td>hook</td><td>O sensor de presença que dispara o alarme preventivo</td><td><code>.claude/settings.json</code>, pré-commit</td></tr>
+        <tr><td>gate</td><td>O porteiro da cancela que dá sinal verde (0) ou vermelho (1)</td><td><code>gates/G_*.py</code></td></tr>
+        <tr><td>script</td><td>O robô mecânico que trabalha com precisão matemática sem IA</td><td><code>scripts/</code>, subpastas das ferramentas</td></tr>
+        <tr><td>ferramenta</td><td>A grande máquina da fábrica com sua própria alavanca</td><td><code>tools/aidd-*</code></td></tr>
+        <tr><td>handoff, contrato</td><td>O conector macho-fêmea com medidas milimétricas exatas</td><td><code>componentes/compartilhado/specs/</code></td></tr>
+        <tr><td>fluxo, esteira</td><td>A linha de montagem com 7 estações de produção</td><td><code>scripts/orquestrador_sincrono.py</code></td></tr>
+        <tr><td>worktree</td><td>A bancada temporária e limpa onde a peça é montada sem sujeira</td><td>Criada e desmontada dinamicamente</td></tr>
+        <tr><td>ecossistema.py, slash</td><td>O painel de botões e alavancas no terminal ou no chat</td><td>Raiz do repositório e <code>comandos/</code></td></tr>
+        <tr><td>template</td><td>A forma pronta de estamparia para fundir peças sem defeitos</td><td><code>tools/*/templates/</code></td></tr>
+        <tr><td>components sync</td><td>A esteira que carimba e replica as peças para todas as bancadas</td><td><code>componentes/compartilhado/</code> → bancadas</td></tr>
+        <tr><td>sessão, handoff</td><td>O diário de bordo com as decisões e fichas gravadas em disco</td><td><code>secoes/</code>, arquivos <code>HANDOFF_*.json</code></td></tr>
+        <tr><td>dependência externa</td><td>A ferramenta da comunidade que passou pelo laboratório de selos</td><td><code>gates/dependencias_externas.json</code></td></tr>
+        <tr><td>plano, ciclo 4F</td><td>A ordem de serviço e o laudo de vistoria do pit stop</td><td><code>docs/planos/</code>, <code>docs/auditoria/</code></td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<section id="mapas">
+  <span class="eyebrow">Parte 9</span>
+  <h2>O Catálogo de Mapas Visuais</h2>
+  <p>Cada gaveta da caixa de montagem possui um mapa ilustrado próprio com todas as peças ativas e orientações de montagem:</p>
+  <a class="mapa-link" href="mapa-00-indice.html">Abrir o catálogo geral de mapas ilustrados da coleção →</a>
+  <h3>Como Criar uma Peça Nova e Desenhar seu Mapa</h3>
+  <div class="linha">
+    <div class="st"><span class="eyebrow">etapa 1</span><strong>Contagem</strong><span>o robô varre o galpão e anota cada peça</span><code>catalogo_pecas.py</code></div>
+    <div class="seta" aria-hidden="true">→</div>
+    <div class="st"><span class="eyebrow">etapa 2</span><strong>Molde</strong><span>desenha a página do folheto com marcadores</span><code>moldes/&lt;tipo&gt;.html</code></div>
+    <div class="seta" aria-hidden="true">→</div>
+    <div class="st"><span class="eyebrow">etapa 3</span><strong>Montagem</strong><span>injeta as listas reais na folha sem erro</span><code>mapa_visual.py</code></div>
+    <div class="seta" aria-hidden="true">→</div>
+    <div class="st"><span class="eyebrow">etapa 4</span><strong>Teste</strong><span>comprova que o desenho bate 100% com a realidade</span><code>test_mapa_visual.py</code></div>
+    <div class="seta" aria-hidden="true">→</div>
+    <div class="st"><span class="eyebrow">etapa 5</span><strong>Carimbo</strong><span>confere se não há nenhuma peça desatualizada</span><code>mapa_visual.py --check</code></div>
+    <div class="seta" aria-hidden="true">→</div>
+    <div class="st"><span class="eyebrow">etapa 6</span><strong>Catálogo</strong><span>coloca o novo folheto dentro desta caixa</span><code>manual-montagem-aidd.html</code></div>
+  </div>
+</section>
+
+<footer>Dados e métricas apurados em <code>docs/auditoria/mapa-pecas/catalogo-pecas.json</code> em 29/09/2026. Versão conceitual e ilustrada voltada para visualização didática.</footer>
+</div>
+</body>
+</html>

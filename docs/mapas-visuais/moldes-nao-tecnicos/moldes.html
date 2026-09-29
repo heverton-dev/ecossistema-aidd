@@ -1,0 +1,45 @@
+<!-- Molde não-técnico dos moldes. Texto explicativo com analogias visuais; listas via scripts/mapa_visual.py. -->
+<div class="wrap">
+
+<a class="voltar" href="{{LINK_MANUAL}}">← Manual de montagem</a>
+<header>
+  <span class="eyebrow">Mapa visual · As Formas e Gabaritos de Estamparia</span>
+  <h1>Mapa dos Moldes e Templates de Entrega</h1>
+  <p class="lead">Para não precisar construir as paredes de cada casa tijolo por tijolo a partir do zero, o ecossistema usa <strong>formas prontas de estamparia</strong> (templates). A ferramenta pega o molde estrutural pré-validado, preenche com as regras de negócio específicas da sua aplicação e entrega um produto robusto, uniforme e sem falhas de arquitetura.</p>
+  {{TOTAIS}}
+</header>
+
+<section id="regra">
+  <span class="eyebrow">A Regra da Fundição</span>
+  <h2>O que Toda Forma Precisa Ter</h2>
+  <div class="grid3">
+    <div class="box">
+      <h3>1. Testes de Fábrica Embutidos</h3>
+      <p>Nenhuma aplicação nasce sem testes. Todo molde de software já vem de berço com testes reais configurados para garantir que tudo funcione desde o primeiro minuto.</p>
+    </div>
+    <div class="box">
+      <h3>2. As 4 Centrais Obrigatórias</h3>
+      <p>A Lei #10 (o Quarteto de Ouro) exige que toda aplicação gerada já saia com sua Central de API (Swagger), Webhooks, MCP e Documentação ativa.</p>
+    </div>
+    <div class="box">
+      <h3>3. Sem Sobras nem Sujeira</h3>
+      <p>O molde não pode conter arquivos temporários, senhas escondidas ou dependências desnecessárias que aumentem o tamanho do pacote sem utilidade real.</p>
+    </div>
+  </div>
+</section>
+
+<section id="repetidos">
+  <span class="eyebrow">Atenção na Estamparia · Verificação em Tempo Real</span>
+  <h2>Formas e Peças com Conteúdo Duplicado</h2>
+  <p>Moldes que possuem arquivos idênticos repetidos em ferramentas diferentes e que podem ser unificados:</p>
+  {{REPETIDOS}}
+</section>
+
+<section id="lista">
+  <span class="eyebrow">O Estoque de Formas</span>
+  <h2>Todos os Moldes de Scaffolding por Ferramenta</h2>
+  {{LISTA}}
+</section>
+
+<footer>Gerado deterministicamente a partir de <code>docs/auditoria/mapa-pecas/catalogo-pecas.json</code>. Versão ilustrada voltada para visualização didática e conceitual.</footer>
+</div>

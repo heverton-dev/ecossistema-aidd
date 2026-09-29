@@ -1,0 +1,57 @@
+<!-- Molde não-técnico da oficina. Texto explicativo com analogias visuais; listas via scripts/mapa_visual.py. -->
+<div class="wrap">
+
+<a class="voltar" href="{{LINK_MANUAL}}">← Manual de montagem</a>
+<header>
+  <span class="eyebrow">Mapa visual · O Pit Stop e a Oficina de Manutenção</span>
+  <h1>Mapa da Oficina de Ajustes e Melhorias</h1>
+  <p class="lead">Se a Tríade Canônica é a fábrica que constrói os carros, a Oficina é o pit stop onde a própria fábrica passa por manutenção preventiva, calibração e reformas. É aqui que examinamos cada ferramenta, medimos a saúde das engrenagens com notas objetivas e planejamos melhorias passo a passo.</p>
+  {{TOTAIS}}
+</header>
+
+<section id="regra">
+  <span class="eyebrow">A Rotina do Pit Stop</span>
+  <h2>As Duas Trilhas de Manutenção da Oficina</h2>
+  <div class="grid2">
+    <div class="box">
+      <h3>1. Os Planos de Melhoria Contínua</h3>
+      <p>O comando <code>/melhoria</code> avalia o cenário atual com notas de 0 a 10; o comando <code>/plan</code> cria uma ordem de serviço detalhada em <code>docs/planos/</code>; e o comando <code>/orchestrate</code> executa as reformas na oficina. O plano avança sozinho pelas gavetas <code>a-fazer</code>, <code>fazendo</code> e <code>feitos</code>.</p>
+    </div>
+    <div class="box">
+      <h3>2. O Ciclo de Vistoria Completa (4 Fases)</h3>
+      <p>Uma inspeção profunda em 4 etapas: o Inspetor emite o laudo inicial com o Raio-X de 15 Pontos; o Arquiteto desenha o plano de evolução; o Construtor realiza as melhorias com testes reais; e o Retorno faz o laudo final. A aplicação das melhorias só acontece com o seu aval humano.</p>
+    </div>
+  </div>
+</section>
+
+<section id="atencao">
+  <span class="eyebrow">Atenção na Bancada de Reparos · Verificação em Tempo Real</span>
+  <h2>Ordens de Serviço Abertas no Momento</h2>
+  <div class="grid2">
+    <div class="box">
+      <h3>Planos em Andamento</h3>
+      <p>Ordens de melhoria que estão com as máquinas desmontadas recebendo ajustes na oficina:</p>
+      {{FAZENDO}}
+    </div>
+    <div class="box">
+      <h3>Ciclos com Vistoria Incompleta</h3>
+      <p>Auditorias em andamento que ainda não completaram os 4 laudos formais de entrega:</p>
+      {{INCOMPLETOS}}
+    </div>
+  </div>
+</section>
+
+<section id="planos">
+  <span class="eyebrow">Painel de Ordens de Serviço</span>
+  <h2>Todos os Planos de Melhoria</h2>
+  {{PLANOS}}
+</section>
+
+<section id="ciclos">
+  <span class="eyebrow">Histórico de Vistorias</span>
+  <h2>Todos os Ciclos de Auditoria 4F</h2>
+  {{CICLOS}}
+</section>
+
+<footer>Gerado deterministicamente a partir de <code>docs/auditoria/mapa-pecas/catalogo-pecas.json</code>. Versão ilustrada voltada para visualização didática e conceitual.</footer>
+</div>
