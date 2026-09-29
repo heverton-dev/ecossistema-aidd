@@ -18,8 +18,8 @@
     "mcps_registrados": 9,
     "mcps_internos": 3,
     "hooks": 3,
-    "gates_nomes": 89,
-    "gates_arquivos": 135,
+    "gates_nomes": 91,
+    "gates_arquivos": 137,
     "contratos": 8,
     "etapas_receita": 7,
     "encaixes_quebrados": 0
@@ -879,6 +879,16 @@
           "visivel": true
         },
         {
+          "gate": "G_TEMPLATE_TANSTACK_OFFLINE",
+          "forca": "provado",
+          "visivel": true
+        },
+        {
+          "gate": "G_NOVE_CAMADAS_MERCADO",
+          "forca": "provado",
+          "visivel": true
+        },
+        {
           "gate": "G_FRONTEND_LAYERS",
           "forca": "provado",
           "visivel": true
@@ -1150,6 +1160,28 @@
         "alvo": "skills-pocock",
         "ciclo": "ciclo-01",
         "laudo": "docs/auditoria/skills-pocock/ciclo-01/LAUDO-15D-REVISADO.md",
+        "dimensoes": {
+          "1": "descrito",
+          "2": "descrito",
+          "3": "descrito",
+          "4": "descrito",
+          "5": "descrito",
+          "6": "descrito",
+          "7": "descrito",
+          "8": "descrito",
+          "9": "descrito",
+          "10": "descrito",
+          "11": "descrito",
+          "12": "descrito",
+          "13": "descrito",
+          "14": "descrito",
+          "15": "descrito"
+        }
+      },
+      {
+        "alvo": "template-tanstack-offline",
+        "ciclo": "ciclo-01",
+        "laudo": "docs/auditoria/template-tanstack-offline/ciclo-01/LAUDO-15D-REVISADO.md",
         "dimensoes": {
           "1": "descrito",
           "2": "descrito",
@@ -1478,9 +1510,21 @@
           "dod": true
         },
         "nota": "10.0"
+      },
+      {
+        "alvo": "template-tanstack-offline",
+        "ciclo": "ciclo-01",
+        "caminho": "docs/auditoria/template-tanstack-offline/ciclo-01",
+        "fases": {
+          "laudo_inicial": true,
+          "plano_evolucao": true,
+          "laudo_revisado": true,
+          "dod": true
+        },
+        "nota": ""
       }
     ],
-    "relatorios_melhoria": 13
+    "relatorios_melhoria": 14
   },
   "scripts": [
     {
@@ -1772,7 +1816,7 @@
       "ferramenta": "aidd-forge",
       "molde": "governance",
       "caminho": "tools/aidd-forge/aidd_forge/templates/governance",
-      "arquivos": 1,
+      "arquivos": 2,
       "dona_canonica": "aidd-forge"
     },
     {
@@ -3114,6 +3158,23 @@
       ]
     },
     {
+      "id": "G_NOVE_CAMADAS_MERCADO",
+      "descricao": "Portão determinístico de validação arquitetural das 9 Camadas de Mercado definidas no documento canônico: docs/padroes/PADRAO-OURO-ARQUITETURA-CAMADAS-MERCADO.md",
+      "copias": [
+        {
+          "caminho": "gates/G_NOVE_CAMADAS_MERCADO.py",
+          "versao": "A",
+          "papel": "ecossistema"
+        }
+      ],
+      "versoes_distintas": 1,
+      "no_pre_commit": false,
+      "prova_que_morde": true,
+      "leis": [
+        11
+      ]
+    },
+    {
       "id": "G_OPS_MVP",
       "descricao": "Dois modos de operação: (a) Sem --dir: valida a própria estrutura de tools/aidd-ops/",
       "copias": [
@@ -3635,6 +3696,23 @@
       "prova_que_morde": true,
       "leis": [
         9
+      ]
+    },
+    {
+      "id": "G_TEMPLATE_TANSTACK_OFFLINE",
+      "descricao": "Quality Gate determinístico que valida a integridade do template canônico TanStack Offline. Regido pelas Leis #1, #6, #10 e #11 do Ecossistema AIDD.",
+      "copias": [
+        {
+          "caminho": "gates/G_TEMPLATE_TANSTACK_OFFLINE.py",
+          "versao": "A",
+          "papel": "ecossistema"
+        }
+      ],
+      "versoes_distintas": 1,
+      "no_pre_commit": false,
+      "prova_que_morde": true,
+      "leis": [
+        11
       ]
     },
     {
