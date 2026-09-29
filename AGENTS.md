@@ -88,6 +88,7 @@
    - Portão: gates/G_amelhoria.py (provado) — quality gate da ferramenta `aidd-melhoria` (Fase 6, Ticket 6)
    - Portão: gates/G_aidd_diagnose.py (provado) — quality gate da ferramenta `aidd-diagnose` (Fase 6, Ticket 6)
    - Portão: gates/G_aidd_forge.py (provado) — quality gate da ferramenta `aidd-forge` (DoD 6 / D13)
+   - Portão: gates/G_aidd_enterprise.py (provado) — quality gate da ferramenta idd-enterprise (ciclo-01)
    - Portão: gates/G_PROVA_SKILLS_POCOCK.py (provado, manual) — uso real das skills do ciclo skills-pocock via modelo; fora do pre-commit (skills-pocock, Ticket 13)
    - Portão: gates/G_HANDOFF_MELHORIA.py (provado) — integridade e assinatura HMAC do handoff de melhoria (Fase 8, Ticket 8)
    - Portão: gates/G_INFRA_COMPOSE.py (provado)
