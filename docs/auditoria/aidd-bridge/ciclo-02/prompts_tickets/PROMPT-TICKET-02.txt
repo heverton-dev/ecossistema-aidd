@@ -1,0 +1,17 @@
+ROLE: Builder. Ecosystem AIDD. Ticket 2. Target tool: aidd-bridge.
+DIMENSION: D11
+DELIVER: tools/aidd-bridge/aidd_bridge/pipeline_bridge.py
+
+STEPS:
+- Open tools/aidd-bridge/aidd_bridge/pipeline_bridge.py.
+- Find the except block around gates import in run(). Replace bare except with specific handling: on ImportError or any gate error, print error and return 1. Never swallow gate failures.
+- Write test: monkeypatch sys.path so gate import fails. Call BridgePipeline.run(). Assert return value == 1.
+- Run pytest tools/aidd-bridge/tests -q. Assert all tests pass exit 0.
+
+RULES:
+1. Write failing test first. Run. Assert exit 1.
+2. Implement. Zero stubs. Real pytest tests. Run. Assert exit 0.
+3. Work inside ephemeral Git Worktree only.
+4. Capture real exit code: redirect to file, read $? same line. Never trust pipes.
+5. NEVER edit docs/auditoria/CONFIG-EXECUCAO-USUARIO.json.
+6. Deliver exactly: tools/aidd-bridge/aidd_bridge/pipeline_bridge.py
