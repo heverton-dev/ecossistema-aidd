@@ -7,73 +7,26 @@
   ],
   "como_usar": "Cada achado em aberto traz pedido_melhoria: o texto para python ecossistema.py melhoria init --pedido \"...\".",
   "totais": {
-    "aberto": 5,
+    "aberto": 1,
     "suspeita": 0,
     "resolvido": 14,
     "abertos_alta": 0,
-    "abertos_media": 2,
-    "abertos_baixa": 3
+    "abertos_media": 1,
+    "abertos_baixa": 0
   },
   "achados": [
     {
-      "id": "CAT-15d-aidd-forge",
-      "titulo": "9 dimensões 15-D com falha no laudo de aidd-forge",
+      "id": "CAT-declarados-fora-do-commit",
+      "titulo": "2 guardas declarados em lei que não rodam no commit",
       "gravidade": "media",
-      "estado": "aberto",
-      "origem": "catalogo",
-      "mapa": "lente15d",
-      "evidencia": [
-        "docs/auditoria/aidd-forge/ciclo-01/LAUDO-15D-INICIAL.md: D3, D4, D8, D10, D11, D12, D13, D14, D15"
-      ],
-      "pedido_melhoria": "Abrir o próximo ciclo 4F de aidd-forge para as dimensões D3, D4, D8, D10, D11, D12, D13, D14, D15."
-    },
-    {
-      "id": "CAT-gates-versoes",
-      "titulo": "1 guardas com o mesmo nome e código diferente",
-      "gravidade": "media",
-      "estado": "aberto",
-      "origem": "catalogo",
-      "mapa": "guardas",
-      "evidencia": [
-        "G_SEGREDOS"
-      ],
-      "pedido_melhoria": "Deixar uma versão só de cada guarda repetido e fazer as ferramentas chamarem a original."
-    },
-    {
-      "id": "CAT-ciclo-aidd-forge-ciclo-01",
-      "titulo": "Ciclo de auditoria sem todos os documentos: aidd-forge/ciclo-01",
-      "gravidade": "baixa",
-      "estado": "aberto",
-      "origem": "catalogo",
-      "mapa": "oficina",
-      "evidencia": [
-        "faltam: laudo_revisado"
-      ],
-      "pedido_melhoria": "Completar ou fechar o ciclo aidd-forge/ciclo-01."
-    },
-    {
-      "id": "CAT-ciclo-skills-ddd-ciclo-01",
-      "titulo": "Ciclo de auditoria sem todos os documentos: skills-ddd/ciclo-01",
-      "gravidade": "baixa",
-      "estado": "aberto",
-      "origem": "catalogo",
-      "mapa": "oficina",
-      "evidencia": [
-        "faltam: laudo_revisado"
-      ],
-      "pedido_melhoria": "Completar ou fechar o ciclo skills-ddd/ciclo-01."
-    },
-    {
-      "id": "CAT-guardas-sem-lei",
-      "titulo": "1 guardas da raiz que nenhuma lei declara",
-      "gravidade": "baixa",
       "estado": "aberto",
       "origem": "catalogo",
       "mapa": "leis",
       "evidencia": [
-        "G_aidd_forge"
+        "Lei #11: G_TEMPLATE_TANSTACK_OFFLINE",
+        "Lei #11: G_NOVE_CAMADAS_MERCADO"
       ],
-      "pedido_melhoria": "Amarrar cada guarda da raiz à lei que ele prova no AGENTS.md."
+      "pedido_melhoria": "Colocar no pre-commit os guardas declarados nas leis, ou rebaixar a declaração."
     },
     {
       "id": "VER-001",
