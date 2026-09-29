@@ -17,7 +17,7 @@
     {
       "numero": 2,
       "nome": "Roteamento & Shells Isomórficos",
-      "padrao": "TanStack Start / Router (ou Next.js App Router) + Casca Dupla",
+      "padrao": "TanStack Start / Router + Casca Dupla",
       "itens_obrigatorios": [
         "Rotas 100% tipadas com parâmetros validados",
         "Casca Desktop (AdminShell) com sidebar expansível e status de rede",

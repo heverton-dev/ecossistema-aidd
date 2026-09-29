@@ -120,7 +120,10 @@ def cmd_inject(
 
 @click.group(name="forge", help="AIDD Forge - motor de governanca agentica e economia de tokens")
 def cli() -> None:
-    pass
+    """Grupo raiz do CLI. Garante saída UTF-8 antes de qualquer subcomando
+    (os prints com acentos do forge quebram em console cp852/cp1252)."""
+    if hasattr(sys.stdout, "reconfigure"):
+        sys.stdout.reconfigure(encoding="utf-8", errors="replace")
 
 
 @cli.command("init", help="Injeta a infraestrutura AIDD no projeto alvo")
