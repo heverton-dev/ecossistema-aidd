@@ -1,0 +1,18 @@
+ROLE: Builder. Ecosystem AIDD. Ticket 3. Target tool: aidd-enterprise.
+DIMENSION: D8
+DELIVER: .agents/skills/aidd-enterprise/scripts/injetor.py
+
+STEPS:
+- Write failing test first: feed corrupted payload or mismatched SHA-256 hash. Assert exit 1.
+- Implement .agents/skills/aidd-enterprise/scripts/injetor.py.
+- Enforce strict JSON Schema validation against component_manifest.schema.json.
+- Compute and verify SHA-256 checksums deterministically before copying components.
+- Run pytest tests/test_enterprise_injetor.py. Assert exit 0.
+
+RULES:
+1. Write failing test first. Run. Assert exit 1.
+2. Implement. Zero stubs. Real pytest tests. Run. Assert exit 0.
+3. Work inside ephemeral Git Worktree only.
+4. Capture real exit code: redirect to file, read $? same line. Never trust pipes.
+5. NEVER edit docs/auditoria/CONFIG-EXECUCAO-USUARIO.json.
+6. Deliver exactly: .agents/skills/aidd-enterprise/scripts/injetor.py

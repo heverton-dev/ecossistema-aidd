@@ -1,0 +1,39 @@
+{
+  "ticket": "TICKET-02",
+  "ciclo": "ciclo-01",
+  "alvo": "meus-prompts",
+  "status": "CONCLUIDO",
+  "dimensao_15d": "D8. O que o Estágio Processa",
+  "achados_resolvidos": [
+    "Script validate_palette.py retido em sandbox temporária externa (.tmp/ingest/meus-prompts/), fora do catálogo canônico do ecossistema",
+    "Não existia diretório de skill de dataviz em componentes/compartilhado/skills/ (D8 sem artefato processável)",
+    "Ausência de testes determinísticos que provassem o comportamento de exit 0/1/2 do validador de paletas"
+  ],
+  "alteracoes": [
+    "Migrado validate_palette.py para componentes/compartilhado/skills/aidd-dataviz/scripts/ (306 linhas, stdlib puro, zero dependências)",
+    "Criado SKILL.md canônico aidd-dataviz com frontmatter name/description 'Use when...', sem lock-in proprietário (Lei #6)",
+    "Distribuída a skill para os 6 harnesses via 'python ecossistema.py components sync --tipo todos' (8 destinos, SHA-256 conferido)",
+    "Criado teste TDD tests/test_dataviz_palette_validation.py cobrindo existência, formato de frontmatter, zero lock-in, gate G_SKILL_FORMATO e execução real do script (exit 0/1/2, categórico e ordinal, saída determinística)"
+  ],
+  "testes_tdd": [
+    {
+      "comando": "python -m pytest -q -p no:cacheprovider tests/test_dataviz_palette_validation.py",
+      "exit_antes_do_fix": 1,
+      "exit_depois_do_fix": 0,
+      "detalhe_antes": "9 failed, 2 passed (script e SKILL.md ausentes em componentes/compartilhado/skills/aidd-dataviz/)",
+      "detalhe_depois": "11 passed in 1.07s (100% aprovado)"
+    }
+  ],
+  "gates_verificados": [
+    "python gates/G_SKILL_FORMATO.py: PASS (46 skills auditadas, exit 0)",
+    "python ecossistema.py components sync --tipo todos: PASS (exit 0, aidd-dataviz em 8 destinos)",
+    "python ecossistema.py components verify: PASS (74 componentes, SHA-256 verificado, exit 0)",
+    "python -m pytest -q -p no:cacheprovider tests: PASS (609 passed in 112.90s, exit 0)"
+  ],
+  "evidencias": [
+    "pytest_d8_red.txt (RED: exit 1)",
+    "pytest_d8_green.txt (GREEN: exit 0)",
+    "pytest_d8_full.txt (suíte completa: exit 0)",
+    "gate_d8.txt, sync_d8.txt, verify_d8.txt (exit 0)"
+  ]
+}

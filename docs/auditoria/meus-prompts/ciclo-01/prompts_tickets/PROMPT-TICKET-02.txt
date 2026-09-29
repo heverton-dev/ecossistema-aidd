@@ -1,0 +1,17 @@
+ROLE: Builder. Ecosystem AIDD. Ticket 2. Target tool: meus-prompts.
+DIMENSION: D8
+DELIVER: docs/auditoria/meus-prompts/ciclo-01/HANDOFF-TICKET-02.json
+
+STEPS:
+- Migrate dataviz palette validation script to shared skills directory.
+- Add deterministic unit tests for palette validation.
+- Run pytest to assert exit code zero.
+- Deliver handoff summary.
+
+RULES:
+1. Write failing test first. Run. Assert exit 1.
+2. Implement. Zero stubs. Real pytest tests. Run. Assert exit 0.
+3. Work inside ephemeral Git Worktree only.
+4. Capture real exit code: redirect to file, read $? same line. Never trust pipes.
+5. NEVER edit docs/auditoria/CONFIG-EXECUCAO-USUARIO.json.
+6. Deliver exactly: docs/auditoria/meus-prompts/ciclo-01/HANDOFF-TICKET-02.json

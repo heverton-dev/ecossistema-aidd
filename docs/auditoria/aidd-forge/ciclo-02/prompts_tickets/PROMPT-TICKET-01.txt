@@ -1,0 +1,18 @@
+ROLE: Builder. Ecosystem AIDD. Ticket 1. Target tool: aidd-forge.
+DIMENSION: D13
+DELIVER: docs/auditoria/aidd-forge/ciclo-02/ENTREGA-TICKET-01.json
+
+STEPS:
+- Run pytest on gates/test_g_aidd_forge.py to verify bidirectional bite.
+- Run pytest on all forge tests under tests/test_forge_*.py.
+- Verify that templates in tools/aidd-forge/templates/ adhere to TanStack gold standard.
+- Ensure zero stubs in forge scripts and assert exit 0.
+- Write handoff json to docs/auditoria/aidd-forge/ciclo-02/ENTREGA-TICKET-01.json.
+
+RULES:
+1. Write failing test first. Run. Assert exit 1.
+2. Implement. Zero stubs. Real pytest tests. Run. Assert exit 0.
+3. Work inside ephemeral Git Worktree only.
+4. Capture real exit code: redirect to file, read $? same line. Never trust pipes.
+5. NEVER edit docs/auditoria/CONFIG-EXECUCAO-USUARIO.json.
+6. Deliver exactly: docs/auditoria/aidd-forge/ciclo-02/ENTREGA-TICKET-01.json

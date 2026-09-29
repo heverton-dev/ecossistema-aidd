@@ -1,0 +1,43 @@
+{
+  "ticket": "TICKET-02",
+  "ciclo": "ciclo-02",
+  "alvo": "aidd-forge",
+  "status": "CONCLUIDO",
+  "dimensao_15d": "D15. Output Consolidado e Handoff",
+  "achados_resolvidos": [
+    "handoff-forge.json da raiz estava dessincronizado: 3 hashes SHA-256 divergentes (scripts/cli.py, scripts/rollback.py, gates/G_aidd_forge.py) — emit/verify retornariam exit 1 no estado versionado",
+    "ausência de teste durável de fechamento que validasse cobertura dos 7 módulos, sincronia do manifest e os 8 critérios do DoD"
+  ],
+  "alteracoes": [
+    "handoff-forge.json: re-emitido via `python ecossistema.py forge handoff emit` — 8 componentes (7 módulos de scripts + gates/G_aidd_forge.py) com SHA-256 recomputado",
+    "tests/test_forge_fechamento_ciclo02.py: 4 testes TDD — sincronia do manifest, exit 0 do `handoff verify`, 8 critérios do DoD.md mapeados a evidência executável e execução exit 0 dos 8 módulos"
+  ],
+  "testes_tdd": [
+    {
+      "comando": "python -m pytest -q -p no:cacheprovider tests/test_forge_fechamento_ciclo02.py",
+      "exit_antes_do_fix": 1,
+      "exit_depois_do_fix": 0,
+      "detalhe_antes": "2 failed, 2 passed (3 hashes divergentes; verify exit 1)",
+      "detalhe_depois": "4 passed"
+    }
+  ],
+  "verificacoes_executadas": [
+    "python ecossistema.py forge handoff emit: exit 0 (8 componentes)",
+    "python ecossistema.py forge handoff verify: exit 0",
+    "python ecossistema.py forge audit: exit 0 (conformidade 80.0%, 12/15 PASS)",
+    "python docs/auditoria/aidd-forge/G_auditoria_15D.py: exit 0 (15 dimensões no LAUDO-15D-INICIAL do ciclo-02)",
+    "python -m pytest -q -p no:cacheprovider tests/test_forge_*.py + gates/test_g_aidd_forge.py: exit 0 (94 passed)",
+    "suíte própria do aidd-forge (tools/aidd-forge/tests): exit 0 (297 passed, 1 skipped)"
+  ],
+  "gates_verificados": [
+    "DoD 1 (D4/CLI): tests/test_forge_cli.py PASS",
+    "DoD 2 (D3/Isolamento): tests/test_forge_isolamento.py PASS",
+    "DoD 3 (D8/Determinismo): tests/test_forge_bootstrap.py PASS",
+    "DoD 4 (D11/Resiliência): tests/test_forge_resiliencia.py PASS",
+    "DoD 5 (D12/Observabilidade): tests/test_forge_observabilidade.py PASS",
+    "DoD 6 (D13/Quality Gate): gates/test_g_aidd_forge.py PASS (7 passed)",
+    "DoD 7 (D14/Rollback): tests/test_forge_rollback.py PASS",
+    "DoD 8 (D15/Handoff): tests/test_forge_handoff.py PASS + G_auditoria_15D exit 0",
+    "gate de fase pytest tests: exit 1 apenas com 6 falhas pré-existentes comprovadas no baseline (588 passed, zero regressão)"
+  ]
+}

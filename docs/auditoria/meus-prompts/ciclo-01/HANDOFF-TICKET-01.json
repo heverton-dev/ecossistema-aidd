@@ -1,0 +1,37 @@
+{
+  "ticket": "TICKET-01",
+  "ciclo": "ciclo-01",
+  "alvo": "meus-prompts",
+  "status": "CONCLUIDO",
+  "dimensao_15d": "D2. Input e Gatilhos",
+  "achados_resolvidos": [
+    "Skills de utilitários de documentos estavam retidas em sandbox temporária externa (.tmp/ingest/meus-prompts/)",
+    "Skills continham termos e cabeçalhos de licença proprietária de terceiro violando a Lei #6 (Agnostic Supremacy)",
+    "Falta de padronização canônica AIDD e prefixo obrigatório aidd- exigido por G_SKILL_FORMATO"
+  ],
+  "alteracoes": [
+    "Portadas 4 skills utilitárias de documentos (aidd-docx, aidd-pdf, aidd-pptx, aidd-xlsx) para componentes/compartilhado/skills/",
+    "Removidos arquivos e declarações LICENSE.txt proprietárias de todas as 4 skills, assegurando zero vendor lock-in",
+    "Ajustados frontmatters com 'Use when...' concisos e agnósticos de harness e SO",
+    "Removidos marcadores UTF-8 BOM proibidos nos esquemas XSD das ferramentas",
+    "Sincronizados componentes para todos os harnesses (.agents, .claude, .mimocode, .opencode, .cursor, .codebuddy, .gemini)",
+    "Atualizados livro de mapas e achados de ciclo (scripts/livro_mapas.py, scripts/achados_ciclo.py)",
+    "Criado teste TDD automatizado tests/test_document_utility_skills.py cobrindo existência, frontmatter, zero lock-in e gate de formato"
+  ],
+  "testes_tdd": [
+    {
+      "comando": "python -m pytest -q -p no:cacheprovider tests/test_document_utility_skills.py",
+      "exit_antes_do_fix": 1,
+      "exit_depois_do_fix": 0,
+      "detalhe_antes": "12 failed, 1 passed (skills ausentes em componentes/compartilhado/skills/)",
+      "detalhe_depois": "13 passed in 0.47s (100% aprovado)"
+    }
+  ],
+  "gates_verificados": [
+    "python gates/G_SKILL_FORMATO.py: PASS (45 skills auditadas, exit 0)",
+    "python -m pytest -q -p no:cacheprovider tests/test_skills_pocock_distribuicao.py: PASS (8 passed, exit 0)",
+    "python -m pytest -q -p no:cacheprovider tests/test_livro_mapas.py: PASS (5 passed, exit 0)",
+    "python -m pytest -q -p no:cacheprovider tests/test_achados_ciclo.py: PASS (6 passed, exit 0)",
+    "python -m pytest -q -p no:cacheprovider tests: PASS (598 passed, exit 0)"
+  ]
+}

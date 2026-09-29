@@ -1,0 +1,18 @@
+ROLE: Builder. Ecosystem AIDD. Ticket 8. Target tool: aidd-enterprise.
+DIMENSION: D14
+DELIVER: .agents/skills/aidd-enterprise/scripts/rollback.py
+
+STEPS:
+- Write failing test first: inject failure mid-transaction. Assert exit 1 if orphan files persist.
+- Implement .agents/skills/aidd-enterprise/scripts/rollback.py with transactional context manager.
+- Create pre-injection snapshot. On error or exit 1, revert modified files and purge partial artifacts.
+- Verify workspace cleanliness after rollback.
+- Run pytest tests/test_enterprise_rollback.py. Assert exit 0.
+
+RULES:
+1. Write failing test first. Run. Assert exit 1.
+2. Implement. Zero stubs. Real pytest tests. Run. Assert exit 0.
+3. Work inside ephemeral Git Worktree only.
+4. Capture real exit code: redirect to file, read $? same line. Never trust pipes.
+5. NEVER edit docs/auditoria/CONFIG-EXECUCAO-USUARIO.json.
+6. Deliver exactly: .agents/skills/aidd-enterprise/scripts/rollback.py

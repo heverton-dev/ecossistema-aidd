@@ -1,0 +1,35 @@
+{
+  "origem": "https://github.com/heverton-dev/meus-prompts",
+  "data_triagem": "2026-09-29T17:48:00-03:00",
+  "estatisticas": {
+    "total_arquivos": 704,
+    "markdown_prompts": 451,
+    "scripts_python": 62,
+    "scripts_js_ts": 46,
+    "skills_claude_code": 35
+  },
+  "candidatos_elegiveis": [
+    {
+      "categoria": "skills-utilitarios",
+      "itens": ["docx", "pptx", "xlsx", "pdf", "dataviz", "security-review"],
+      "motivo": "Ferramentas funcionais de processamento de documentos e visualização de dados convertíveis para padrão canônico AIDD."
+    },
+    {
+      "categoria": "referencia-prompts",
+      "itens": ["Anthropic", "Cursor", "DeepSeek", "Google", "OpenAI", "Meta"],
+      "motivo": "Base factual de engenharia reversa e análise comparativa de guardrails de mercado."
+    }
+  ],
+  "descartados": [
+    {
+      "categoria": "runtime-proprietario",
+      "itens": ["artifact-capabilities/0.2.52", "fewer-permission-prompts"],
+      "motivo_descarte": "Violam Lei #6 (Agnostic Supremacy) por dependerem de interfaces internas e binários fechados do runtime Claude Code."
+    },
+    {
+      "categoria": "prompts-redundantes",
+      "itens": ["versões obsoletas/antigas não mantidas"],
+      "motivo_descarte": "Violam Lei #12 (Anti-Docs Rot)."
+    }
+  ]
+}

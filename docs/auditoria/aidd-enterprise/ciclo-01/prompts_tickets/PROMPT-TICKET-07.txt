@@ -1,0 +1,18 @@
+ROLE: Builder. Ecosystem AIDD. Ticket 7. Target tool: aidd-enterprise.
+DIMENSION: D13
+DELIVER: gates/G_aidd_enterprise.py
+
+STEPS:
+- Write failing test first: verify gate bites by feeding tampered component or broken schema. Assert exit 1.
+- Implement gates/G_aidd_enterprise.py as deterministic Quality Gate for aidd-enterprise.
+- Validate component contracts, SHA-256 checksums, and schema adherence.
+- Ensure binary exit code: 0 for compliant components, 1 for any violation.
+- Run pytest tests/test_gate_aidd_enterprise.py. Assert exit 0.
+
+RULES:
+1. Write failing test first. Run. Assert exit 1.
+2. Implement. Zero stubs. Real pytest tests. Run. Assert exit 0.
+3. Work inside ephemeral Git Worktree only.
+4. Capture real exit code: redirect to file, read $? same line. Never trust pipes.
+5. NEVER edit docs/auditoria/CONFIG-EXECUCAO-USUARIO.json.
+6. Deliver exactly: gates/G_aidd_enterprise.py

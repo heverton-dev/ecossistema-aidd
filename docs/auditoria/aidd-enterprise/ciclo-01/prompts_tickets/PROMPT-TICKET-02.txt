@@ -1,0 +1,18 @@
+ROLE: Builder. Ecosystem AIDD. Ticket 2. Target tool: aidd-enterprise.
+DIMENSION: D4
+DELIVER: .agents/skills/aidd-enterprise/scripts/cli.py
+
+STEPS:
+- Write failing test first: calling cli fallback with missing implementation must exit 1.
+- Implement .agents/skills/aidd-enterprise/scripts/cli.py with subcommands inject and audit.
+- Support arguments type and name for component types: skill, rule, mcp, spec, config, hook, agent.
+- Wire command routing cleanly to Python modules instead of raw chat prompts.
+- Run pytest tests/test_enterprise_cli.py. Assert exit 0.
+
+RULES:
+1. Write failing test first. Run. Assert exit 1.
+2. Implement. Zero stubs. Real pytest tests. Run. Assert exit 0.
+3. Work inside ephemeral Git Worktree only.
+4. Capture real exit code: redirect to file, read $? same line. Never trust pipes.
+5. NEVER edit docs/auditoria/CONFIG-EXECUCAO-USUARIO.json.
+6. Deliver exactly: .agents/skills/aidd-enterprise/scripts/cli.py

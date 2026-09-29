@@ -6,9 +6,9 @@
       "sha256": "1a98626fc8a3fa88ec95d1be382d41b695cfa3ce5fd3a198f41729a4b4e3046b"
     },
     {
-      "bytes": 9286,
+      "bytes": 9068,
       "caminho": ".agents/skills/aidd-forge/scripts/cli.py",
-      "sha256": "1713139b91d03beffe0f638052ab9e24c69066fa702a31f8c80125bafb1e3ad2"
+      "sha256": "e32d69a602bc0ea669768191ab5fcbc211cca01d6cb1a7ff827a2eef7dbc2f1b"
     },
     {
       "bytes": 6414,
@@ -31,18 +31,18 @@
       "sha256": "4f1e15d548eff2f2575cf7c3e86ba00bdcd6e5cada628e152afd6be148e7b041"
     },
     {
-      "bytes": 6606,
+      "bytes": 6415,
       "caminho": ".agents/skills/aidd-forge/scripts/rollback.py",
-      "sha256": "3cc8d3b1da65556713bc61bb3b2288bfd4e5779492811fab3fd613e5fa1560b7"
+      "sha256": "e3a4fd89b59452545d366ea03f9a78c1b30d7f9671a6f1b7a50f6cf826035ea1"
     },
     {
-      "bytes": 7330,
+      "bytes": 7499,
       "caminho": "gates/G_aidd_forge.py",
-      "sha256": "a5698ad0b858dc0a6a43266824d899c5f36304d91854082faea6edfd8b6ecfb4"
+      "sha256": "e86ff56d107d2906965b3aa90d803bb93efc4e3d4f17bad9ff1cd9c5d1a089ef"
     }
   ],
   "consumidor": "aidd-planner",
   "ferramenta": "aidd-forge",
-  "gerado_em": "2026-09-28T10:42:05+00:00",
+  "gerado_em": "2026-09-29T19:55:18+00:00",
   "versao": "1.0"
 }
