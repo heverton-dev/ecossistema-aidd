@@ -1,0 +1,54 @@
+{
+  "pipeline_id": "evolucao-aidd-bridge-ciclo-02",
+  "target_tool": "aidd-bridge",
+  "descricao": "Plano de Evolução Tática montado a partir dos 4 tickets de PLANO-EVOLUCAO.md",
+  "config_usuario_ref": "docs/auditoria/CONFIG-EXECUCAO-USUARIO.json",
+  "definition_of_done": "docs/auditoria/aidd-bridge/ciclo-02/DOD.md",
+  "gate_final": "python ecossistema.py audit",
+  "fases": [
+    {
+      "ticket_id": "TICKET-01",
+      "nome": "Fase_1_Ticket_1_Gates_Provam_que_Mordem___Bite_Tests",
+      "dimensao_15d": "D13. Quality Gates (Portões)",
+      "harness": "agy",
+      "model": "gemini-3.8-flash-low",
+      "comando_terminal": "agy --model gemini-3.8-flash-low  --dangerously-skip-permissions",
+      "input_prompt": "docs/auditoria/aidd-bridge/ciclo-02/prompts_tickets/PROMPT-TICKET-01.txt",
+      "output_handoff": "tools/aidd-bridge/tests/test_gate_bites.py",
+      "gate_fase": "python -m pytest -q -p no:cacheprovider tests"
+    },
+    {
+      "ticket_id": "TICKET-02",
+      "nome": "Fase_2_Ticket_2_Falha_Silenciosa_nos_Gates_do_Pipeline",
+      "dimensao_15d": "D11. Tratamento de Exceções e Fallback",
+      "harness": "mimo",
+      "model": "xiaomi-token-plan-sgp/mimo-v2.6-flash",
+      "comando_terminal": "MIMOCODE_DANGEROUSLY_SKIP_PERMISSIONS=1 MIMOCODE_TUI_PLAIN=1 mimo -m xiaomi-token-plan-sgp/mimo-v2.6-flash --pure --trust",
+      "input_prompt": "docs/auditoria/aidd-bridge/ciclo-02/prompts_tickets/PROMPT-TICKET-02.txt",
+      "output_handoff": "tools/aidd-bridge/aidd_bridge/pipeline_bridge.py",
+      "gate_fase": "python -m pytest -q -p no:cacheprovider tests"
+    },
+    {
+      "ticket_id": "TICKET-03",
+      "nome": "Fase_3_Ticket_3_Observabilidade_por_Fase_no_bridge_manifest_json",
+      "dimensao_15d": "D12. Observabilidade e Frugalidade",
+      "harness": "opencode",
+      "model": "opencode/big-pickle",
+      "comando_terminal": "opencode --pure --auto --agent -m opencode/big-pickle",
+      "input_prompt": "docs/auditoria/aidd-bridge/ciclo-02/prompts_tickets/PROMPT-TICKET-03.txt",
+      "output_handoff": "tools/aidd-bridge/aidd_bridge/pipeline_bridge.py",
+      "gate_fase": "python -m pytest -q -p no:cacheprovider tests"
+    },
+    {
+      "ticket_id": "TICKET-04",
+      "nome": "Fase_4_Ticket_4_Handoff_Can_nico_bridge_handoff_json",
+      "dimensao_15d": "D15. Output Consolidado e Handoff",
+      "harness": "agy",
+      "model": "gemini-3.8-flash-low",
+      "comando_terminal": "agy --model gemini-3.8-flash-low  --dangerously-skip-permissions",
+      "input_prompt": "docs/auditoria/aidd-bridge/ciclo-02/prompts_tickets/PROMPT-TICKET-04.txt",
+      "output_handoff": "tools/aidd-bridge/aidd_bridge/pipeline_bridge.py",
+      "gate_fase": "python -m pytest -q -p no:cacheprovider tests"
+    }
+  ]
+}

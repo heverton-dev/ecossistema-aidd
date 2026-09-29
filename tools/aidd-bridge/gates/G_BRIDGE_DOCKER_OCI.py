@@ -16,6 +16,7 @@ Exit 1: Falha de segurança em containers detectada.
 """
 
 import os
+import re
 import sys
 
 def audit_docker_oci(target_dir: str) -> int:
@@ -40,6 +41,8 @@ def audit_docker_oci(target_dir: str) -> int:
         erros.append("  [BLOQUEIO] Dockerfile inválido: sem instrução FROM.")
     if "AS builder" not in docker_content and "as builder" not in docker_content:
         erros.append("  [AVISO] Dockerfile não utiliza multi-stage build (AS builder).")
+    if re.search(r"^\s*USER\s+root\s*$", docker_content, re.IGNORECASE | re.MULTILINE):
+        erros.append("  [BLOQUEIO] Dockerfile executa como root (USER root proibido).")
 
     # Validação Nginx / Segurança
     if os.path.exists(nginx_path):

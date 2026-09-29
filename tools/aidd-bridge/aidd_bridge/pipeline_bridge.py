@@ -13,9 +13,12 @@ Executa a esteira determinística de ponta a ponta:
 ===============================================================================
 """
 
-import os
-import sys
 import json
+import os
+import re
+import sys
+import time
+from datetime import datetime, timezone
 from typing import Dict, Any, Optional
 
 from .scanner import LovableScanner
@@ -43,6 +46,16 @@ class BridgePipeline:
         print(f"  Domínio          : {self.domain}")
         print()
 
+        started_at = datetime.now(timezone.utc).isoformat()
+        run_t0 = time.perf_counter()
+        phase_timings: Dict[str, float] = {}
+        phase_t0 = time.perf_counter()
+
+        def _close_phase(name: str) -> None:
+            nonlocal phase_t0
+            phase_timings[name] = round(time.perf_counter() - phase_t0, 4)
+            phase_t0 = time.perf_counter()
+
         # Fase 1: Scanner
         print("[1/6] Escaneando arquitetura do projeto low-code...")
         scanner = LovableScanner(self.project_dir)
@@ -58,6 +71,7 @@ class BridgePipeline:
             print(f"      ✓ Runtime detectado : {runtime_info['ssr_framework']} (SSR, gerenciador: {runtime_info['package_manager']})")
         else:
             print(f"      ✓ Runtime detectado : SPA estática (gerenciador: {runtime_info.get('package_manager', 'npm')})")
+        _close_phase("scan")
 
         # Fase 2: Desacoplamento de Banco de Dados
         print("\n[2/6] Desacoplando banco de dados para PostgreSQL corporativo...")
@@ -89,6 +103,7 @@ class BridgePipeline:
                 with open(post_auth_path, "w", encoding="utf-8") as f:
                     f.write(post_auth_sql)
                 print(f"      ✓ post-auth-migrations.sql gerado ({len(post_auth_sql.splitlines())} linhas, aguarda GoTrue).")
+        _close_phase("db")
 
         # Fase 3: Separação de Camadas, Cópia e Libertação do Frontend
         print("\n[3/6] Copiando frontend preservado e removendo vendor lock-in...")
@@ -112,12 +127,14 @@ class BridgePipeline:
         with open(env_prod_path, "w", encoding="utf-8") as f:
             f.write(env_content)
         print(f"      ✓ .env.production gerado com chaves auto-geradas e domínio configurado.")
+        _close_phase("frontend")
 
         # Fase 4: Empacotamento DevOps OCI
         print("\n[4/6] Gerando manifestos Docker OCI e Nginx com proteção OWASP...")
         pack_files = packager.export_all()
         for fname in pack_files.keys():
             print(f"      ✓ {fname}")
+        _close_phase("devops")
 
         # Fase 5: Conector VSA & Quarteto Sine Qua Non
         print("\n[5/6] Gerando contratos dinâmicos do Quarteto Sine Qua Non...")
@@ -127,13 +144,18 @@ class BridgePipeline:
         print(f"      ✓ Webhook Studio : {os.path.basename(quarteto['webhooks'])}")
         print(f"      ✓ MCP Studio     : {os.path.basename(quarteto['mcp'])}")
         print(f"      ✓ User Docs      : {os.path.basename(quarteto['docs'])}")
+        _close_phase("vsa")
 
         # Fase 6: Quality Gates Locais
         print("\n[6/6] Executando Quality Gates de validação...")
         gates_dir = os.path.join(os.path.dirname(os.path.dirname(__file__)), "gates")
-        
-        # Importa e executa os gates programaticamente
+
+        # Importa e executa os gates programaticamente.
+        # Lei #1 (Determinismo) / D11: falha de import ou erro de gate é
+        # bloqueio (return 1), nunca um aviso silencioso com exit 0.
         sys.path.insert(0, gates_dir)
+        gate_results: Dict[str, Any] = {}
+        gate_error: Optional[str] = None
         try:
             from G_BRIDGE_VENDOR_LOCKIN import audit_vendor_lockin
             from G_BRIDGE_DOCKER_OCI import audit_docker_oci
@@ -145,11 +167,68 @@ class BridgePipeline:
             r3 = audit_postgresql_script(self.output_dir)
             r4 = audit_vsa_compat(self.output_dir)
 
-            if r1 != 0 or r2 != 0 or r3 != 0 or r4 != 0:
-                print("\n[BLOQUEIO] Um ou mais Quality Gates da Bridge falharam.")
-                return 1
+            gate_results = {
+                "G_BRIDGE_VENDOR_LOCKIN": r1,
+                "G_BRIDGE_DOCKER_OCI": r2,
+                "G_BRIDGE_POSTGRESQL": r3,
+                "G_BRIDGE_VSA_COMPAT": r4,
+            }
         except Exception as e:
-            print(f"\n[AVISO] Verificação dos gates concluída com aviso: {e}")
+            gate_error = str(e)
+        _close_phase("gates")
+
+        finished_at = datetime.now(timezone.utc).isoformat()
+        pipeline_telemetry = {
+            "started_at": started_at,
+            "finished_at": finished_at,
+            "total_duration_s": round(time.perf_counter() - run_t0, 4),
+            "phase_timings": phase_timings,
+        }
+        manifest["pipeline_telemetry"] = pipeline_telemetry
+        with open(manifest_path, "w", encoding="utf-8") as f:
+            json.dump(manifest, f, indent=2, ensure_ascii=False)
+
+        def _write_handoff(status: str, error_phase: Optional[str] = None) -> None:
+            slug = manifest.get("package_info", {}).get("name") or os.path.basename(self.project_dir)
+            slug = re.sub(r"[^a-z0-9]+", "-", str(slug).lower()).strip("-") or "projeto"
+            candidatos = [
+                "bridge-manifest.json",
+                "init-db.sql",
+                ".env.production",
+                "Dockerfile",
+                "nginx.conf",
+                "docker-compose.yml",
+                os.path.join("quarteto_sine_qua_non", "swagger_spec.json"),
+                os.path.join("quarteto_sine_qua_non", "webhooks_contract.json"),
+                os.path.join("quarteto_sine_qua_non", "mcp_studio.json"),
+                os.path.join("quarteto_sine_qua_non", "USER_GUIDE.md"),
+            ]
+            handoff: Dict[str, Any] = {
+                "tool": "aidd-bridge",
+                "pipeline_id": f"bridge-{slug}-{started_at.replace(':', '').replace('-', '').split('.')[0]}",
+                "status": status,
+                "output_dir": self.output_dir,
+                "artifacts": [c for c in candidatos if os.path.exists(os.path.join(self.output_dir, c))],
+                "gate_results": gate_results,
+                "next_tool": "aidd-master",
+                "pipeline_telemetry": pipeline_telemetry,
+            }
+            if error_phase is not None:
+                handoff["error_phase"] = error_phase
+            with open(os.path.join(self.output_dir, "bridge-handoff.json"), "w", encoding="utf-8") as f:
+                json.dump(handoff, f, indent=2, ensure_ascii=False)
+
+        if gate_error is not None:
+            print(f"\n[ERRO] Quality Gates da Bridge falharam: {gate_error}")
+            _write_handoff("failed", error_phase="gates")
+            return 1
+
+        if any(v != 0 for v in gate_results.values()):
+            print("\n[BLOQUEIO] Um ou mais Quality Gates da Bridge falharam.")
+            _write_handoff("failed", error_phase="gates")
+            return 1
+
+        _write_handoff("succeeded")
 
         print("\n" + "=" * 72)
         print(" [SUCESSO] Pipeline aidd-bridge (FLUXO 03) concluído com 100% de êxito!")

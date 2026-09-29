@@ -1,0 +1,20 @@
+ROLE: Builder. Ecosystem AIDD. Ticket 3. Target tool: aidd-bridge.
+DIMENSION: D12
+DELIVER: tools/aidd-bridge/aidd_bridge/pipeline_bridge.py
+
+STEPS:
+- Open tools/aidd-bridge/aidd_bridge/pipeline_bridge.py.
+- At start of run() record started_at = datetime.utcnow().isoformat(). Use time.perf_counter() for per-phase durations.
+- After each of the 6 pipeline phases record phase name and elapsed seconds in phase_timings dict.
+- After phase 6 compute finished_at and total_duration_s. Add pipeline_telemetry block to manifest dict.
+- Write updated manifest JSON to bridge-manifest.json at output_dir.
+- Write test: run BridgePipeline on fixture project. Load bridge-manifest.json. Assert pipeline_telemetry key present. Assert started_at and phase_timings keys present. Assert exit 0.
+- Run pytest tools/aidd-bridge/tests -q. Assert all pass.
+
+RULES:
+1. Write failing test first. Run. Assert exit 1.
+2. Implement. Zero stubs. Real pytest tests. Run. Assert exit 0.
+3. Work inside ephemeral Git Worktree only.
+4. Capture real exit code: redirect to file, read $? same line. Never trust pipes.
+5. NEVER edit docs/auditoria/CONFIG-EXECUCAO-USUARIO.json.
+6. Deliver exactly: tools/aidd-bridge/aidd_bridge/pipeline_bridge.py
