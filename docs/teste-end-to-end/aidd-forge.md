@@ -108,3 +108,18 @@ A Lei #10 exige o Quarteto *Sine Qua Non* (`/api` OpenAPI/Swagger, `/webhook`, `
   - `pytest tools/aidd-forge` executado: 297 passed, 0 failed, 1 skipped (exit 0).
   - Portões `G_STACK_PADRAO_OURO` e `G_NOVE_CAMADAS_MERCADO` auditados e aprovados.
 
+---
+
+## 8. Fechamento da Auditoria 4F — Ciclo 02 (29/09/2026)
+
+- **Objetivo:** Conclusão formal do Ciclo 02 da auditoria 4F da ferramenta `aidd-forge`, cobrindo erradicação de stubs em CLI (Lei #5), purificação dos templates contra menções residuais a Next.js em prol do TanStack Padrão-Ouro (Lei #11) e validação da integridade de handoff SHA-256 (Lei #1).
+- **Evidências por Fase:**
+  - **Fase 1 (Inspetor):** `docs/auditoria/aidd-forge/ciclo-02/LAUDO-15D-INICIAL.md` aprovado com `G_auditoria_15D.py` (exit 0).
+  - **Fase 2 (Arquiteto):** `docs/auditoria/aidd-forge/ciclo-02/PLANO-EVOLUCAO.md` estruturado com TICKET-01 e TICKET-02 aprovado via `compilador_plano_evolucao.py` (exit 0).
+  - **Fase 3 (Construtor):** TDD estrito com entrega de `ENTREGA-TICKET-01.json` e `ENTREGA-TICKET-02.json`, eliminação de stubs em `aidd_forge/cli.py`, purificação de templates e sincronização de `handoff-forge.json`. Bateria de testes `tests` executada com 594 passed (exit 0).
+  - **Fase 4 (Retorno):** `docs/auditoria/aidd-forge/ciclo-02/LAUDO-15D-REVISADO.md` consolidado com nota 10/10 nas 15 dimensões (150/150 = 100%), validado por `G_auditoria_15D.py` (exit 0).
+- **Quality Gates:**
+  - `python gates/G_aidd_forge.py`: EXIT 0 (100% aprovado).
+  - `python ecossistema.py forge audit`: EXIT 0.
+
+
