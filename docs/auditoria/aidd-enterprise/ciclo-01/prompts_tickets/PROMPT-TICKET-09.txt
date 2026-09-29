@@ -1,0 +1,18 @@
+ROLE: Builder. Ecosystem AIDD. Ticket 9. Target tool: aidd-enterprise.
+DIMENSION: D15
+DELIVER: docs/teste-end-to-end/aidd-enterprise.md
+
+STEPS:
+- Write failing test first: run end-to-end flow and assert failure when handoff-enterprise.json is missing.
+- Emit structured handoff-enterprise.json at end of successful injection.
+- Document 5-step verification cycle in docs/teste-end-to-end/aidd-enterprise.md.
+- Include justification that aidd-enterprise is internal CLI tool without HTTP web UI or server routes.
+- Run pytest tests/test_enterprise_handoff.py. Assert exit 0.
+
+RULES:
+1. Write failing test first. Run. Assert exit 1.
+2. Implement. Zero stubs. Real pytest tests. Run. Assert exit 0.
+3. Work inside ephemeral Git Worktree only.
+4. Capture real exit code: redirect to file, read $? same line. Never trust pipes.
+5. NEVER edit docs/auditoria/CONFIG-EXECUCAO-USUARIO.json.
+6. Deliver exactly: docs/teste-end-to-end/aidd-enterprise.md

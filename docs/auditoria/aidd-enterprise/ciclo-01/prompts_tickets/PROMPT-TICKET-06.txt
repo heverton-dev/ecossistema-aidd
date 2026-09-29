@@ -1,0 +1,18 @@
+ROLE: Builder. Ecosystem AIDD. Ticket 6. Target tool: aidd-enterprise.
+DIMENSION: D12
+DELIVER: .agents/skills/aidd-enterprise/scripts/observabilidade.py
+
+STEPS:
+- Write failing test first: verify lack of structured telemetry log after injection. Assert exit 1.
+- Implement .agents/skills/aidd-enterprise/scripts/observabilidade.py.
+- Record execution metrics: start time, end time, duration, component counts, bytes transferred, verified hashes.
+- Persist audit telemetry log to secoes/ directory.
+- Run pytest tests/test_enterprise_observabilidade.py. Assert exit 0.
+
+RULES:
+1. Write failing test first. Run. Assert exit 1.
+2. Implement. Zero stubs. Real pytest tests. Run. Assert exit 0.
+3. Work inside ephemeral Git Worktree only.
+4. Capture real exit code: redirect to file, read $? same line. Never trust pipes.
+5. NEVER edit docs/auditoria/CONFIG-EXECUCAO-USUARIO.json.
+6. Deliver exactly: .agents/skills/aidd-enterprise/scripts/observabilidade.py

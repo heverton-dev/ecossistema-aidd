@@ -1,0 +1,17 @@
+ROLE: Builder. Ecosystem AIDD. Ticket 1. Target tool: aidd-enterprise.
+DIMENSION: D3
+DELIVER: .agents/skills/aidd-enterprise/scripts/isolamento.py
+
+STEPS:
+- Write failing test first: fail with exit 1 when tool writes outside allowed component paths or outside ephemeral Git Worktree.
+- Implement .agents/skills/aidd-enterprise/scripts/isolamento.py to isolate filesystem operations.
+- Enforce boundary checks: reject writes targeting repo root or unlisted directories.
+- Run pytest tests/test_enterprise_isolamento.py. Assert exit 0.
+
+RULES:
+1. Write failing test first. Run. Assert exit 1.
+2. Implement. Zero stubs. Real pytest tests. Run. Assert exit 0.
+3. Work inside ephemeral Git Worktree only.
+4. Capture real exit code: redirect to file, read $? same line. Never trust pipes.
+5. NEVER edit docs/auditoria/CONFIG-EXECUCAO-USUARIO.json.
+6. Deliver exactly: .agents/skills/aidd-enterprise/scripts/isolamento.py
