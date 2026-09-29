@@ -33,7 +33,7 @@
 8. **Label Honesty:** Never claim certification or test coverage beyond real automated test results.
 9. **Tool Testing Discipline:** Follow the 5-step cycle (auto-fix, commit & push, clean target, clean execute, update report).
 10. **Quarteto Sine Qua Non Dinâmico:** Every project generated or evolved MUST natively expose 4 pillars: Swagger Studio (`/docs`), Webhook Studio (`/webhooks`), MCP Studio (`/mcp`) and User Guide (`/docs/guia`).
-11. **Padrão-Ouro de Stack Tecnológica:** Frontend in Next.js + TypeScript + Tailwind CSS; Backend in Python Modular VSA + SQLite WAL + OpenAPI 3.1.
+11. **Padrão-Ouro de Stack Tecnológica:** Frontend em TanStack Start / TanStack Router + React + TypeScript + Tailwind CSS (Next.js é formalmente abolido — Lei #11); Backend em Python puro + SQLite WAL + OpenAPI 3.1.
 12. **Anti-Docs Rot & Canonical Ingestion:** Never ingest stale docs. Living docs reside in `docs/protocolos/` and active schemas.
 13. **Todo Portão Deve Provar que Morde:** Every quality gate must prove it blocks invalid inputs with exit 1 in automated tests.
 

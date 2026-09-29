@@ -7,7 +7,8 @@ ECOSSISTEMA AIDD — QUALITY GATE: G_STACK_PADRAO_OURO (ISSUE-0025 & Lei #11)
 Portão determinístico do Padrão-Ouro de Stack Tecnológica (Lei Canônica #11).
 Audita se os projetos gerados ou entregáveis dos fluxos da Tríade aderem à
 stack mandatória:
-  - Frontend: Next.js + React + TypeScript + Tailwind CSS
+  - Frontend: TanStack Start / TanStack Router + React + TypeScript + Tailwind CSS
+    (Next.js é formalmente abolido — Lei #11)
   - Backend:  Python puro/FastAPI + SQLite WAL (journal_mode=WAL) + OpenAPI 3.1.x
   - Cláusula de Override Explícito: se o plano/projeto registrou decisão
     explícita autorizada para outra stack em dada camada, o gate respeita
@@ -336,8 +337,8 @@ def main(alvo_arg: Optional[str] = None) -> int:
 
     print("\n" + "=" * 72)
     print(" [LIMITE METROLÓGICO — LEI #8 / HONESTIDADE DE RÓTULO]:")
-    print("   O gate valida estaticamente dependências (package.json para Next.js, React,")
-    print("   TypeScript e Tailwind) e configurações de backend (SQLite WAL e OpenAPI 3.1).")
+    print("   O gate valida estaticamente dependências (package.json para TanStack Router,")
+    print("   React, TypeScript e Tailwind) e configurações de backend (SQLite WAL e OpenAPI 3.1).")
     print("   Decisões de override registradas explicitamente no plano são respeitadas.")
     print("=" * 72)
 

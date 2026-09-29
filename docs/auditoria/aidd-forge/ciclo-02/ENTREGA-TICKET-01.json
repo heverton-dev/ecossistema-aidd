@@ -1,0 +1,43 @@
+{
+  "ticket": "TICKET-01",
+  "ciclo": "ciclo-02",
+  "alvo": "aidd-forge",
+  "status": "CONCLUIDO",
+  "dimensao_15d": "D13. Quality Gates (Portões)",
+  "achados_resolvidos": [
+    "templates do aidd-forge prescreviam Next.js (Lei #11 abole o framework)",
+    "Lei #11 do template governance/AGENTS.md declarava stack desatualizada",
+    "CHECKLIST-CAMADAS-MERCADO do forge oferecia Next.js App Router como alternativa",
+    "stub (Lei #5) em aidd_forge/cli.py::cli detectado pelo verificador canônico do portão"
+  ],
+  "alteracoes": [
+    "tools/aidd-forge/aidd_forge/templates/gates/G_STACK_PADRAO_OURO.py: docstring e texto de ajuda agora prescrevem TanStack Start / TanStack Router (Lei #11)",
+    "tools/aidd-forge/aidd_forge/templates/governance/AGENTS.md: Lei #11 atualizada para TanStack Start / TanStack Router + React + TypeScript + Tailwind CSS",
+    "tools/aidd-forge/aidd_forge/templates/governance/CHECKLIST-CAMADAS-MERCADO.json: item de roteamento restrito a TanStack Start / Router",
+    "tools/aidd-forge/aidd_forge/cli.py: cli() sem corpo vazio (pass) — reconfigura saída UTF-8 antes dos subcomandos",
+    "tests/test_forge_templates_padrao_ouro.py: 4 testes TDD de aderência Padrão-Ouro TanStack (Lei #11)",
+    "tests/test_forge_zero_stubs.py: varredura de zero stubs em tools/aidd-forge via gates/G_aidd_forge.verificar_stubs (Lei #5)"
+  ],
+  "testes_tdd": [
+    {
+      "comando": "python -m pytest -q -p no:cacheprovider tests/test_forge_templates_padrao_ouro.py",
+      "exit_antes_do_fix": 1,
+      "exit_depois_do_fix": 0,
+      "detalhe_antes": "3 failed, 1 passed (4 endossos a Next.js detectados)",
+      "detalhe_depois": "4 passed"
+    },
+    {
+      "comando": "python -m pytest -q -p no:cacheprovider tests/test_forge_zero_stubs.py",
+      "exit_antes_do_fix": 1,
+      "exit_depois_do_fix": 0,
+      "detalhe_antes": "1 failed (stub detectado: aidd_forge/cli.py::cli)",
+      "detalhe_depois": "1 passed"
+    }
+  ],
+  "gates_verificados": [
+    "gates/test_g_aidd_forge.py: PASS (7 passed, exit 0, bidirecional)",
+    "tests/test_forge_*.py (8 arquivos + 2 novos): PASS (90 passed, exit 0)",
+    "zero stubs tools/aidd-forge via G_aidd_forge.verificar_stubs: PASS (exit 0)",
+    "suíte própria do aidd-forge (tools/aidd-forge/tests): PASS (297 passed, 1 skipped, exit 0)"
+  ]
+}
