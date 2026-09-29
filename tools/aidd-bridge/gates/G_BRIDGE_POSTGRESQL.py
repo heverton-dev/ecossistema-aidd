@@ -14,7 +14,12 @@ Exit 1: SQL com comandos inválidos ou corrompido.
 """
 
 import os
+import re
 import sys
+
+# Extensões indisponíveis no PostgreSQL vanilla da stack self-hosted
+# (init-db.sql com elas derruba a subida do container).
+EXTENSOES_PROIBIDAS = {"pg_cron"}
 
 def audit_postgresql_script(target_dir: str) -> int:
     print("=" * 72)
@@ -40,6 +45,18 @@ def audit_postgresql_script(target_dir: str) -> int:
     for termo, msg in termos_proibidos:
         if termo in sql and "CREATE ROLE" not in sql and "DO $$" not in sql:
             erros.append(f"  [AVISO] {msg}")
+
+    for match in re.finditer(
+        r"CREATE\s+EXTENSION\s+(?:IF\s+NOT\s+EXISTS\s+)?\"?([A-Za-z0-9_\-]+)",
+        sql,
+        re.IGNORECASE,
+    ):
+        extensao = match.group(1).lower()
+        if extensao in EXTENSOES_PROIBIDAS:
+            erros.append(
+                f"  [BLOQUEIO] Extensão proibida '{match.group(1)}' em init-db.sql "
+                f"(indisponível na stack self-hosted)."
+            )
 
     if erros:
         print(f" [FALHA] Problemas no script SQL ({len(erros)}):")
