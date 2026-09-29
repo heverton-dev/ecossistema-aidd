@@ -1,0 +1,32 @@
+{
+  "pipeline_id": "evolucao-aidd-forge-ciclo-02",
+  "target_tool": "aidd-forge",
+  "descricao": "Plano de Evolução Tática montado a partir dos 2 tickets de PLANO-EVOLUCAO.md",
+  "config_usuario_ref": "docs/auditoria/CONFIG-EXECUCAO-USUARIO.json",
+  "definition_of_done": "docs/auditoria/aidd-forge/ciclo-02/DOD.md",
+  "gate_final": "python ecossistema.py audit",
+  "fases": [
+    {
+      "ticket_id": "TICKET-01",
+      "nome": "Fase_1_Ticket_1_Blindagem_de_Templates_TanStack_Padr_o_Ouro_e_Quality_Gates",
+      "dimensao_15d": "D13. Quality Gates (Portões)",
+      "harness": "agy",
+      "model": "gemini-3.8-flash-low",
+      "comando_terminal": "agy --model gemini-3.8-flash-low  --dangerously-skip-permissions",
+      "input_prompt": "docs/auditoria/aidd-forge/ciclo-02/prompts_tickets/PROMPT-TICKET-01.txt",
+      "output_handoff": "docs/auditoria/aidd-forge/ciclo-02/ENTREGA-TICKET-01.json",
+      "gate_fase": "python -m pytest -q -p no:cacheprovider tests"
+    },
+    {
+      "ticket_id": "TICKET-02",
+      "nome": "Fase_2_Ticket_2_Handoff_Estruturado_SHA_256_e_Fechamento_do_Ciclo_02",
+      "dimensao_15d": "D15. Output Consolidado e Handoff",
+      "harness": "mimo",
+      "model": "xiaomi-token-plan-sgp/mimo-v2.6-flash",
+      "comando_terminal": "MIMOCODE_DANGEROUSLY_SKIP_PERMISSIONS=1 MIMOCODE_TUI_PLAIN=1 mimo -m xiaomi-token-plan-sgp/mimo-v2.6-flash --pure --trust",
+      "input_prompt": "docs/auditoria/aidd-forge/ciclo-02/prompts_tickets/PROMPT-TICKET-02.txt",
+      "output_handoff": "docs/auditoria/aidd-forge/ciclo-02/ENTREGA-TICKET-02.json",
+      "gate_fase": "python -m pytest -q -p no:cacheprovider tests"
+    }
+  ]
+}
