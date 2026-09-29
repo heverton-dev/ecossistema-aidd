@@ -298,7 +298,7 @@ def main(argv=None) -> int:
         if velho.name not in partes:
             velho.unlink()
     for nome, texto in partes.items():
-        (pasta / nome).write_text(texto, encoding="utf-8")
+        (pasta / nome).write_text(texto, encoding="utf-8", newline="\n")
     dados = json.loads(manifesto.read_text(encoding="utf-8"))
     dados["partes"] = sorted(partes)
     manifesto.write_text(json.dumps(dados, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")

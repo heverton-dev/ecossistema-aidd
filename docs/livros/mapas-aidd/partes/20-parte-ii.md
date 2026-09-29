@@ -8,7 +8,7 @@ O nível meso: quem confere, quem ensina, os botões, as conexões e para onde t
 #ficha(
   ("Mapa", "mapa-04-guardas.html"),
   ("Para que serve", "todos os guardas, onde moram e quem prova que morde"),
-  ("Achados em aberto", "1"),
+  ("Achados em aberto", "0"),
 )
 ```
 
@@ -22,8 +22,8 @@ Onde mora: `gates/` e `tools/<f>/gates/`. Quem confere: o próprio pre-commit e 
 
 | Medida | Valor |
 | :-------------------------------------- | :-------------------------------------------- |
-| guardas (nomes) | 89 |
-| no ecossistema | 56 |
+| guardas (nomes) | 91 |
+| no ecossistema | 58 |
 | rodam no commit | 56 |
 | com versões diferentes | 0 |
 
@@ -31,7 +31,7 @@ Os números saem de `docs/auditoria/mapa-pecas/catalogo-pecas.json` (função `c
 
 ## 4.3 O que falta consertar
 
-- **Média** · 1 guardas com o mesmo nome e código diferente (`CAT-gates-versoes`).
+Nenhum achado em aberto para este mapa.
 
 Já resolvido:
 
