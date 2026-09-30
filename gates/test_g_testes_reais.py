@@ -17,6 +17,7 @@ from _gate_test_utils import rodar_gate
 
 GATE_DIR = os.path.dirname(os.path.abspath(__file__))
 GATE_PATH = os.path.join(GATE_DIR, "G_TESTES_REAIS.py")
+ESCOPO_PATH = os.path.join(GATE_DIR, "_escopo_commit.py")
 ROOT_DIR = os.path.dirname(GATE_DIR)
 
 
@@ -25,6 +26,7 @@ def _criar_arvore_sintetica(tmp_path):
     fake_gates = tmp_path / "gates"
     fake_gates.mkdir()
     shutil.copy2(GATE_PATH, fake_gates / "G_TESTES_REAIS.py")
+    shutil.copy2(ESCOPO_PATH, fake_gates / "_escopo_commit.py")
 
     fake_tools = tmp_path / "tools" / "aidd-forge"
     fake_tools.mkdir(parents=True)
