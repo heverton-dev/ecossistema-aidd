@@ -37,7 +37,7 @@ pyyaml==6.0.3
 paramiko==5.0.0
 
 # aidd-bridge: geração de JWT assinado para GoTrue/PostgREST (anon + service_role)
-PyJWT==2.14.0
+PyJWT==2.15.1
 cryptography==50.0.1
 
 # aidd-bridge: migração de contas reais (auth.users/auth.identities) de um

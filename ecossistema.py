@@ -927,6 +927,15 @@ def cmd_diagnose(args):
     return 1
 
 
+def cmd_tdd(args):
+    """Delegação para aidd-tdd (subcomandos: iniciar, red, green, refactor, status)."""
+    script = os.path.join(ROOT_DIR, ".agents", "skills", "aidd-tdd", "scripts", "cli.py")
+    if os.path.isfile(script):
+        return run_command([sys.executable, script] + args, cwd=ROOT_DIR)
+    print(f"Erro: script '{script}' não encontrado.")
+    return 1
+
+
 def cmd_livro(args):
     """Gera o livro-texto de um projeto a partir dos artefatos que a esteira deixou.
 
@@ -1354,6 +1363,8 @@ def main():
         "plan": cmd_plan,
         "melhoria": cmd_melhoria,
         "diagnose": cmd_diagnose,
+        "tdd": cmd_tdd,
+        "aidd-tdd": cmd_tdd,
         "livro": cmd_livro,
         "audit-4f": cmd_audit_4f,
         "aidd-audit-4f": cmd_audit_4f,
