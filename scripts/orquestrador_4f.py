@@ -564,6 +564,71 @@ def ref_aprovavel(pipeline_id):
     return f"refs/aidd/aprovavel/{pipeline_id}"
 
 
+def _modulo_derivados():
+    """Importa scripts/regenerar_derivados.py: fonte única do mapa DERIVADOS e dos geradores."""
+    pasta = str(Path(__file__).resolve().parent)
+    if pasta not in sys.path:
+        sys.path.insert(0, pasta)
+    import regenerar_derivados
+    return regenerar_derivados
+
+
+def _regenerar_derivados(repo_root, chaves):
+    """Refaz só os derivados de 'chaves' na árvore de repo_root (sem lógica duplicada)."""
+    _modulo_derivados().regenerar(Path(repo_root), so=list(chaves))
+
+
+def _chave_derivado(caminho, derivados):
+    """Chave do mapa DERIVADOS que cobre 'caminho' (igual à chave, ou pasta que a contém)."""
+    alvo = Path(caminho).as_posix()
+    for chave in derivados:
+        if alvo == chave or alvo.startswith(chave.rstrip("/") + "/"):
+            return chave
+    return None
+
+
+def _classificar_conflitos(conflitos, derivados):
+    """Separa os conflitos em (chaves de derivados a regenerar, caminhos fora do mapa).
+
+    As chaves saem na ordem canônica do mapa, a mesma que regenerar_derivados respeita
+    ao refazer: determinístico e na ordem de dependência, não na alfabética do git.
+    """
+    derivados = list(derivados)
+    donos = {caminho: _chave_derivado(caminho, derivados) for caminho in conflitos}
+    chaves = [chave for chave in derivados if chave in donos.values()]
+    fora = [caminho for caminho, chave in donos.items() if chave is None]
+    return chaves, fora
+
+
+def _conflitos_do_merge(repo_root):
+    return git(["diff", "--name-only", "--diff-filter=U"], repo_root, exit_on_fail=False).stdout.split()
+
+
+def _encerrar_merge_derivados(repo_root, conflitos, chaves):
+    """Fecha o merge conflituado regenerando o que é derivado.
+
+    'theirs' entra só como base para tirar os marcadores; quem decide o conteúdo é o
+    gerador canônico, rodando sobre a árvore já mesclada. Devolve False (sem commit)
+    se a regeneração ou o commit falhar — o chamador aborta o merge.
+    """
+    for caminho in conflitos:
+        git(["checkout", "--theirs", "--", caminho], repo_root, exit_on_fail=False)
+    try:
+        _regenerar_derivados(repo_root, chaves)
+    except Exception as erro:
+        print(f"[APROVAÇÃO] FALHA ao regenerar derivados ({', '.join(chaves)}): {type(erro).__name__}: {erro}")
+        return False
+    derivados = list(_modulo_derivados().DERIVADOS)
+    alterados = git(["diff", "--name-only"], repo_root, exit_on_fail=False).stdout.split()
+    alvos = sorted(set(conflitos) | {p for p in alterados if _chave_derivado(p, derivados)})
+    git(["add", "--", *alvos], repo_root, exit_on_fail=False)
+    res = git(["commit", "--no-edit"], repo_root, exit_on_fail=False)
+    if res.returncode != 0:
+        print(f"[APROVAÇÃO] FALHA ao fechar o merge dos derivados:\n{res.stdout}{res.stderr}")
+        return False
+    return True
+
+
 def aprovar(pipeline_id, repo_root):
     """Join Barrier: ação HUMANA. Merge na branch atual só do commit que passou no gate_final."""
     branch_ciclo = f"audit/{pipeline_id}"
@@ -576,7 +641,31 @@ def aprovar(pipeline_id, repo_root):
         return 1
     res = git(["merge", "--no-ff", "-m", f"chore(audit): aprova {pipeline_id}", branch_ciclo], repo_root, exit_on_fail=False)
     if res.returncode != 0:
-        print(f"[APROVAÇÃO] FALHA no merge de '{branch_ciclo}':\n{res.stdout}{res.stderr}")
+        derivados = list(_modulo_derivados().DERIVADOS)
+        conflitos = _conflitos_do_merge(repo_root)
+        chaves, fora = _classificar_conflitos(conflitos, derivados)
+        if conflitos and not fora and _encerrar_merge_derivados(repo_root, conflitos, chaves):
+            git(["branch", "-D", branch_ciclo], repo_root, exit_on_fail=False)
+            git(["update-ref", "-d", ref], repo_root, exit_on_fail=False)
+            print(f"[APROVAÇÃO] Conflito resolvido por regeneração dos derivados: {', '.join(chaves)}.")
+            print(f"[APROVAÇÃO] '{branch_ciclo}' mergeada na branch atual e removida.")
+            return 0
+        # Qualquer conflito fora do mapa (ou merge que nem conflitou) volta a árvore ao
+        # estado anterior: o --aprovar nunca deixa um merge pela metade na mão do humano.
+        abortado = git(["merge", "--abort"], repo_root, exit_on_fail=False)
+        if abortado.returncode != 0:
+            print(f"[APROVAÇÃO] AVISO: 'git merge --abort' falhou; a árvore pode seguir em conflito:\n"
+                  f"{abortado.stdout}{abortado.stderr}")
+        if not conflitos:
+            print(f"[APROVAÇÃO] FALHA no merge de '{branch_ciclo}':\n{res.stdout}{res.stderr}")
+            return 1
+        print(f"[APROVAÇÃO] Merge abortado (árvore limpa, nada pela metade). Conflitos de '{branch_ciclo}':")
+        for caminho in conflitos:
+            marca = "derivado" if _chave_derivado(caminho, derivados) else "código"
+            print(f"    - {caminho} [{marca}]")
+        if fora:
+            print(f"[APROVAÇÃO] FALHA: {len(fora)} conflito(s) fora dos derivados. Resolva na mão e rode de novo; "
+                  f"'{branch_ciclo}' continua aprovável.")
         return 1
     git(["branch", "-D", branch_ciclo], repo_root, exit_on_fail=False)
     git(["update-ref", "-d", ref], repo_root, exit_on_fail=False)
