@@ -538,9 +538,10 @@ def configs_mcp_locais():
             for d in gestor_dependencias.DESTINOS_MCP.values()]
 
 
-def preparar_worktree_gate_final(wt_path, repo_root):
+def preparar_worktree(wt_path, repo_root):
     """Worktree nova não tem o que a main tem de gerado/local, e 5 gates do audit reprovavam até
-    na main limpa (2026-09-24): (1) cópias das skills por harness, geradas pelo components sync;
+    na main limpa (2026-09-24); o gate_fase das fases reprovava pelo mesmo motivo
+    (test_components_verify_exit_0, 2026-09-30): (1) cópias das skills por harness, geradas pelo components sync;
     (2) registros de MCP git-ignorados. Copia só o que é ignorado pelo git e não existe na worktree."""
     subprocess.run([sys.executable, "ecossistema.py", "components", "sync", "--tipo", "todos"],
                    cwd=wt_path, capture_output=True)
@@ -640,6 +641,7 @@ def main():
         wt_path = worktrees_base / nome
         print(f"[+] Isolando Worktree na branch do ciclo...")
         abrir_worktree(branch_ciclo, wt_path, repo_root)
+        preparar_worktree(wt_path, repo_root)
 
         print(f"[+] Lendo Input Prompt via nativo: {fase.get('input_prompt')}")
         input_file = repo_root / fase.get("input_prompt")
@@ -702,7 +704,7 @@ def main():
 
     wt_final = worktrees_base / "_gate_final"
     abrir_worktree(branch_ciclo, wt_final, repo_root)
-    preparar_worktree_gate_final(wt_final, repo_root)
+    preparar_worktree(wt_final, repo_root)
     codigo_final = rodar_gate(gate_final, wt_final)
     fechar_worktree(wt_final, repo_root)
     if codigo_final != 0:
