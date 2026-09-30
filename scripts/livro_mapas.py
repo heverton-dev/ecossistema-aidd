@@ -301,7 +301,7 @@ def main(argv=None) -> int:
         (pasta / nome).write_text(texto, encoding="utf-8", newline="\n")
     dados = json.loads(manifesto.read_text(encoding="utf-8"))
     dados["partes"] = sorted(partes)
-    manifesto.write_text(json.dumps(dados, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    manifesto.write_text(json.dumps(dados, ensure_ascii=False, indent=2) + "\n", encoding="utf-8", newline="\n")
     print(f"[OK] {len(partes)} partes gravadas em {pasta}")
     return 0
 

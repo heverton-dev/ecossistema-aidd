@@ -179,7 +179,7 @@ def main(argv=None) -> int:
             return 1
         print(f"[OK] {args.saida} em dia.")
         return 0
-    args.saida.write_text(texto, encoding="utf-8")
+    args.saida.write_text(texto, encoding="utf-8", newline="\n")
     print(f"[OK] Achados gravados em {args.saida}")
     return 0
 

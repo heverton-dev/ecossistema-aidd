@@ -936,6 +936,12 @@ def cmd_tdd(args):
     return 1
 
 
+def cmd_derivados(args):
+    """Regenera arquivos derivados (handoff, baseline, ACHADOS, livro): subcomandos regenerar, listar."""
+    script = os.path.join(ROOT_DIR, "scripts", "regenerar_derivados.py")
+    return run_command([sys.executable, script] + args, cwd=ROOT_DIR)
+
+
 def cmd_livro(args):
     """Gera o livro-texto de um projeto a partir dos artefatos que a esteira deixou.
 
@@ -1367,6 +1373,7 @@ def main():
         "melhoria": cmd_melhoria,
         "diagnose": cmd_diagnose,
         "tdd": cmd_tdd,
+        "derivados": cmd_derivados,
         "aidd-tdd": cmd_tdd,
         "livro": cmd_livro,
         "audit-4f": cmd_audit_4f,
