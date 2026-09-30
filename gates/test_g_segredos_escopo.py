@@ -37,7 +37,9 @@ ESCOPO_PATH = os.path.join(GATES_DIR, "_escopo_commit.py")
 
 # Chave AWS ficticia usada pelos detectores do detect-secrets (mesma fixture do
 # test_g_segredos.py: o detector de AWS Access Key a classifica como segredo).
-SEGREDO_AWS = "AKIAIOSFODNN7EXAMPLE"
+# Montada em runtime: o literal inteiro no arquivo seria um achado real do G_SEGREDOS
+# em modo completo (o gate_final de 30/09/2026 reprovou exatamente por isso).
+SEGREDO_AWS = "AKIA" + "IOSFODNN7EXAMPLE"
 
 # Dentro do pre-commit o git exporta estas variaveis; se elas vazarem para o
 # `git diff --cached` executado pelo gate, o escopo seria lido do indice do
