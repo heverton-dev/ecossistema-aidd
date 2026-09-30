@@ -1,0 +1,98 @@
+{
+  "pipeline_id": "evolucao-aidd-tickets-ciclo-01",
+  "target_tool": "aidd-tickets",
+  "descricao": "Plano de Evolução Tática montado a partir dos 8 tickets de PLANO-EVOLUCAO.md",
+  "config_usuario_ref": "docs/auditoria/CONFIG-EXECUCAO-USUARIO.json",
+  "definition_of_done": "docs/auditoria/aidd-tickets/ciclo-01/DOD.md",
+  "gate_final": "python ecossistema.py audit",
+  "fases": [
+    {
+      "ticket_id": "TICKET-01",
+      "nome": "Fase_1_Ticket_1_CLI_Determin_stica_e_Contrato_de_Entrada",
+      "dimensao_15d": "D2. Input e Gatilhos",
+      "harness": "agy",
+      "model": "gemini-3.8-flash-low",
+      "comando_terminal": "agy --model gemini-3.8-flash-low  --dangerously-skip-permissions",
+      "input_prompt": "docs/auditoria/aidd-tickets/ciclo-01/prompts_tickets/PROMPT-TICKET-01.txt",
+      "output_handoff": ".agents/skills/aidd-tickets/scripts/cli.py",
+      "gate_fase": "python -m pytest -q -p no:cacheprovider tests"
+    },
+    {
+      "ticket_id": "TICKET-02",
+      "nome": "Fase_2_Ticket_2_Isolamento_da_Execu__o_e_Valida__o_de_Escrita",
+      "dimensao_15d": "D3. Raio de Impacto e Isolamento",
+      "harness": "mimo",
+      "model": "xiaomi-token-plan-sgp/mimo-v2.6-flash",
+      "comando_terminal": "MIMOCODE_DANGEROUSLY_SKIP_PERMISSIONS=1 MIMOCODE_TUI_PLAIN=1 mimo -m xiaomi-token-plan-sgp/mimo-v2.6-flash --pure --trust",
+      "input_prompt": "docs/auditoria/aidd-tickets/ciclo-01/prompts_tickets/PROMPT-TICKET-02.txt",
+      "output_handoff": ".agents/skills/aidd-tickets/scripts/isolamento.py",
+      "gate_fase": "python -m pytest -q -p no:cacheprovider tests"
+    },
+    {
+      "ticket_id": "TICKET-03",
+      "nome": "Fase_3_Ticket_3_Parser_Can_nico_de_Tickets_e_Validador_de_Schema",
+      "dimensao_15d": "D4. Componentes e Fractalidade",
+      "harness": "opencode",
+      "model": "opencode/big-pickle",
+      "comando_terminal": "opencode --pure --auto --agent -m opencode/big-pickle",
+      "input_prompt": "docs/auditoria/aidd-tickets/ciclo-01/prompts_tickets/PROMPT-TICKET-03.txt",
+      "output_handoff": ".agents/skills/aidd-tickets/scripts/parser.py",
+      "gate_fase": "python -m pytest -q -p no:cacheprovider tests"
+    },
+    {
+      "ticket_id": "TICKET-04",
+      "nome": "Fase_4_Ticket_4_Analisador_de_Grafo_DAG_e_Detec__o_de_Ciclos",
+      "dimensao_15d": "D8. O que o Estágio Processa",
+      "harness": "agy",
+      "model": "gemini-3.8-flash-low",
+      "comando_terminal": "agy --model gemini-3.8-flash-low  --dangerously-skip-permissions",
+      "input_prompt": "docs/auditoria/aidd-tickets/ciclo-01/prompts_tickets/PROMPT-TICKET-04.txt",
+      "output_handoff": ".agents/skills/aidd-tickets/scripts/grafo_dag.py",
+      "gate_fase": "python -m pytest -q -p no:cacheprovider tests"
+    },
+    {
+      "ticket_id": "TICKET-05",
+      "nome": "Fase_5_Ticket_5_Fallback_e_Resili_ncia_Operacional",
+      "dimensao_15d": "D11. Tratamento de Exceções e Fallback",
+      "harness": "mimo",
+      "model": "xiaomi-token-plan-sgp/mimo-v2.6-flash",
+      "comando_terminal": "MIMOCODE_DANGEROUSLY_SKIP_PERMISSIONS=1 MIMOCODE_TUI_PLAIN=1 mimo -m xiaomi-token-plan-sgp/mimo-v2.6-flash --pure --trust",
+      "input_prompt": "docs/auditoria/aidd-tickets/ciclo-01/prompts_tickets/PROMPT-TICKET-05.txt",
+      "output_handoff": ".agents/skills/aidd-tickets/scripts/fallback.py",
+      "gate_fase": "python -m pytest -q -p no:cacheprovider tests"
+    },
+    {
+      "ticket_id": "TICKET-06",
+      "nome": "Fase_6_Ticket_6_Observabilidade_e_M_tricas_de_Decomposi__o",
+      "dimensao_15d": "D12. Observabilidade e Frugalidade",
+      "harness": "opencode",
+      "model": "opencode/big-pickle",
+      "comando_terminal": "opencode --pure --auto --agent -m opencode/big-pickle",
+      "input_prompt": "docs/auditoria/aidd-tickets/ciclo-01/prompts_tickets/PROMPT-TICKET-06.txt",
+      "output_handoff": ".agents/skills/aidd-tickets/scripts/observabilidade.py",
+      "gate_fase": "python -m pytest -q -p no:cacheprovider tests"
+    },
+    {
+      "ticket_id": "TICKET-07",
+      "nome": "Fase_7_Ticket_7_Quality_Gate_Pr_prio_e_R_tulo_Honesto",
+      "dimensao_15d": "D13. Quality Gates (Portões)",
+      "harness": "agy",
+      "model": "gemini-3.8-flash-low",
+      "comando_terminal": "agy --model gemini-3.8-flash-low  --dangerously-skip-permissions",
+      "input_prompt": "docs/auditoria/aidd-tickets/ciclo-01/prompts_tickets/PROMPT-TICKET-07.txt",
+      "output_handoff": "gates/G_aidd_tickets.py",
+      "gate_fase": "python -m pytest -q -p no:cacheprovider tests"
+    },
+    {
+      "ticket_id": "TICKET-08",
+      "nome": "Fase_8_Ticket_8_Limpeza__Rollback_e_Handoff_Assinado",
+      "dimensao_15d": "D14. Critério de Rejeição (Rollback)",
+      "harness": "mimo",
+      "model": "xiaomi-token-plan-sgp/mimo-v2.6-flash",
+      "comando_terminal": "MIMOCODE_DANGEROUSLY_SKIP_PERMISSIONS=1 MIMOCODE_TUI_PLAIN=1 mimo -m xiaomi-token-plan-sgp/mimo-v2.6-flash --pure --trust",
+      "input_prompt": "docs/auditoria/aidd-tickets/ciclo-01/prompts_tickets/PROMPT-TICKET-08.txt",
+      "output_handoff": ".agents/skills/aidd-tickets/scripts/handoff.py",
+      "gate_fase": "python -m pytest -q -p no:cacheprovider tests"
+    }
+  ]
+}

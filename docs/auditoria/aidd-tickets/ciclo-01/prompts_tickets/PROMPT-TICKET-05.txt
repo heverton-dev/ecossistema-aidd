@@ -1,0 +1,16 @@
+ROLE: Builder. Ecosystem AIDD. Ticket 5. Target tool: aidd-tickets.
+DIMENSION: D11
+DELIVER: .agents/skills/aidd-tickets/scripts/fallback.py
+
+STEPS:
+- Create .agents/skills/aidd-tickets/scripts/fallback.py.
+- Safely handle malformed input and corrupted encodings.
+- Test: feed corrupted ticket block. Assert structured error report and graceful handling.
+
+RULES:
+1. Write failing test first. Run. Assert exit 1.
+2. Implement. Zero stubs. Real pytest tests. Run. Assert exit 0.
+3. Work inside ephemeral Git Worktree only.
+4. Capture real exit code: redirect to file, read $? same line. Never trust pipes.
+5. NEVER edit docs/auditoria/CONFIG-EXECUCAO-USUARIO.json.
+6. Deliver exactly: .agents/skills/aidd-tickets/scripts/fallback.py

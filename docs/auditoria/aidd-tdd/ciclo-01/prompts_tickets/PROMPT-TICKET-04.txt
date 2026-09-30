@@ -1,0 +1,17 @@
+ROLE: Builder. Ecosystem AIDD. Ticket 4. Target tool: aidd-tdd.
+DIMENSION: D8
+DELIVER: .agents/skills/aidd-tdd/scripts/motor_tdd.py
+
+STEPS:
+- Create .agents/skills/aidd-tdd/scripts/motor_tdd.py supporting pytest, vitest, cargo, go.
+- Parse runner output to verify Red fails with AssertionError, not SyntaxError or compile error.
+- Advance session state in sessao.json from RED to GREEN only on runner exit code 0.
+- Test: run test with syntax error. Assert rejected. Run test with assertion failure. Assert accepted as RED.
+
+RULES:
+1. Write failing test first. Run. Assert exit 1.
+2. Implement. Zero stubs. Real pytest tests. Run. Assert exit 0.
+3. Work inside ephemeral Git Worktree only.
+4. Capture real exit code: redirect to file, read $? same line. Never trust pipes.
+5. NEVER edit docs/auditoria/CONFIG-EXECUCAO-USUARIO.json.
+6. Deliver exactly: .agents/skills/aidd-tdd/scripts/motor_tdd.py

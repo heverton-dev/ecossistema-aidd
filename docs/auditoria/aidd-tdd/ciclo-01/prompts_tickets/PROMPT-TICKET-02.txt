@@ -1,0 +1,17 @@
+ROLE: Builder. Ecosystem AIDD. Ticket 2. Target tool: aidd-tdd.
+DIMENSION: D3
+DELIVER: .agents/skills/aidd-tdd/scripts/isolamento.py
+
+STEPS:
+- Create .agents/skills/aidd-tdd/scripts/isolamento.py with TddWorktreeManager.
+- Create ephemeral worktree ../worktrees_tdd-<slug>/ on start, remove on finalize or rollback.
+- Block file writes outside ephemeral worktree except docs/tdd/.
+- Test: create and teardown worktree. Assert exit 0 and git status clean in main tree.
+
+RULES:
+1. Write failing test first. Run. Assert exit 1.
+2. Implement. Zero stubs. Real pytest tests. Run. Assert exit 0.
+3. Work inside ephemeral Git Worktree only.
+4. Capture real exit code: redirect to file, read $? same line. Never trust pipes.
+5. NEVER edit docs/auditoria/CONFIG-EXECUCAO-USUARIO.json.
+6. Deliver exactly: .agents/skills/aidd-tdd/scripts/isolamento.py
