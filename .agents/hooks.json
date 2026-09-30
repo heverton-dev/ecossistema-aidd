@@ -1,0 +1,27 @@
+{
+  "aidd-sessao": {
+    "PreInvocation": [
+      {
+        "type": "command",
+        "command": "python hooks/aidd_session_auto_hook.py",
+        "timeout": 10
+      }
+    ]
+  },
+  "code-review-graph": {
+    "PreInvocation": [
+      {
+        "type": "command",
+        "command": "python hooks/crg_session_start.py",
+        "timeout": 10
+      }
+    ],
+    "PostInvocation": [
+      {
+        "type": "command",
+        "command": "python hooks/crg_update.py",
+        "timeout": 15
+      }
+    ]
+  }
+}

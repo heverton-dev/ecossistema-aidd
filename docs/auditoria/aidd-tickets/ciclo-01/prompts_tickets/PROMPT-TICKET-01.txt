@@ -1,0 +1,16 @@
+ROLE: Builder. Ecosystem AIDD. Ticket 1. Target tool: aidd-tickets.
+DIMENSION: D2
+DELIVER: .agents/skills/aidd-tickets/scripts/cli.py
+
+STEPS:
+- Create .agents/skills/aidd-tickets/scripts/cli.py supporting subcommands: validar, ordenar, exportar.
+- Register tickets command in ecossistema.py delegating to scripts/cli.py.
+- Test: python ecossistema.py tickets validar --arquivo <path>. Assert exit 0 on valid tickets markdown.
+
+RULES:
+1. Write failing test first. Run. Assert exit 1.
+2. Implement. Zero stubs. Real pytest tests. Run. Assert exit 0.
+3. Work inside ephemeral Git Worktree only.
+4. Capture real exit code: redirect to file, read $? same line. Never trust pipes.
+5. NEVER edit docs/auditoria/CONFIG-EXECUCAO-USUARIO.json.
+6. Deliver exactly: .agents/skills/aidd-tickets/scripts/cli.py
