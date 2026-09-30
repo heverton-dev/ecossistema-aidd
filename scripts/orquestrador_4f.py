@@ -252,13 +252,16 @@ def confirmar_confianca_pasta(handle, tentativas=3):
         orca("terminal", "wait", "--terminal", handle, "--for", "tui-idle", "--timeout-ms", "30000", timeout=60)
 
 
+TIPOS_FIM_DO_AGENTE = ("worker_done", "escalation")
+
+
 def aguardar_worker_done(run_id, dispatch_id, timeout_s=None):
     """Bloqueia no inbox do Run (sem polling) até o worker_done/escalation deste dispatch."""
     timeout_s = timeout_s or ORCA_TIMEOUT_AGENTE_S
     espera_ms = min(ORCA_ESPERA_CHECK_MS, timeout_s * 1000)
     inicio = time.time()
     while time.time() - inicio < timeout_s:
-        lote = orca("orchestration", "check", "--run", run_id, "--wait", "--types", "worker_done,escalation",
+        lote = orca("orchestration", "check", "--run", run_id, "--wait", "--types", ",".join(TIPOS_FIM_DO_AGENTE),
                     "--timeout-ms", str(espera_ms), timeout=espera_ms // 1000 + 60)
         if not lote:
             time.sleep(5)
@@ -266,7 +269,8 @@ def aguardar_worker_done(run_id, dispatch_id, timeout_s=None):
         achado = None
         for msg in lote.get("messages", []):
             payload = json.loads(msg.get("payload") or "{}")
-            if payload.get("dispatchId") != dispatch_id:
+            # Entrega reaproveitada pode trazer heartbeat mesmo com --types (visto 2026-09-30).
+            if payload.get("dispatchId") != dispatch_id or msg.get("type") not in TIPOS_FIM_DO_AGENTE:
                 continue
             resumo = msg.get("subject", "")
             rejeicao = payload.get("_orcaLifecycleRejection")
