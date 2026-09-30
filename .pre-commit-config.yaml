@@ -78,7 +78,7 @@ repos:
         require_serial: true
 
       - id: g-segredos
-        name: G_SEGREDOS (detect-secrets sobre git ls-files vs baseline)
+        name: G_SEGREDOS (detect-secrets sobre os arquivos staged do commit vs baseline; arvore inteira com AIDD_GATES_MODO=completo)
         entry: python gates/G_SEGREDOS.py
         language: system
         always_run: true
