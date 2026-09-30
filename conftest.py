@@ -96,3 +96,18 @@ def _isolar_modulos_de_skills(request):
             sys.path.remove(pasta)
         sys.path.insert(0, pasta)
     yield
+
+
+@pytest.fixture(autouse=True)
+def _sem_aviso_do_sistema(monkeypatch):
+    """Nenhum teste abre notificação real do sistema (scripts/fila_ciclos.py avisa no fim do ciclo)."""
+    import importlib.util
+    modulo = sys.modules.get("fila_ciclos")
+    if modulo is None:
+        caminho = os.path.join(os.path.dirname(os.path.abspath(__file__)), "scripts", "fila_ciclos.py")
+        spec = importlib.util.spec_from_file_location("fila_ciclos", caminho)
+        modulo = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(modulo)
+        sys.modules["fila_ciclos"] = modulo
+    monkeypatch.setattr(modulo, "notificar", lambda titulo, mensagem: False)
+    yield

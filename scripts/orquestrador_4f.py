@@ -697,6 +697,13 @@ def main():
     if args.aprovar:
         sys.exit(aprovar(pipeline_id, repo_root))
 
+    # Um ciclo pesado por vez; no fim (sucesso, falha ou sys.exit) solta a fila e avisa.
+    import fila_ciclos
+    with fila_ciclos.ciclo_pesado(pipeline_id, repo_root):
+        executar_pipeline(args, data, pipeline_id, fases, repo_root)
+
+
+def executar_pipeline(args, data, pipeline_id, fases, repo_root):
     # As fases acumulam numa branch própria do ciclo; a branch atual só muda com --aprovar.
     branch_ciclo = f"audit/{pipeline_id}"
     worktrees_base = repo_root.parent / f"worktrees_{pipeline_id}"

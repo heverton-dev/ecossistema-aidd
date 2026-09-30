@@ -25,6 +25,7 @@
     not as the mechanism meant to enforce this.
 - **Editing rule:** Always use exact search/replace block tools (`replace_file_content`). Never dump entire rewritten files into output.
 - **Bash rule:** Always pipe verbose commands to tail/grep. E.g., `pytest 2>&1 | tail -n 25`. Never dump raw bundle outputs, logs, or lockfiles into context.
+- **Long-task rule:** Run anything slower than ~2 minutes (full gate battery, `gate_final`, 4F pipeline) in the background and resume on its completion notice. Never ask the user to "call back in N minutes". One heavy cycle at a time: `scripts/fila_ciclos.py` queues the rest and notifies when each ends.
 - **Graph-first:** Always query knowledge graph (`code-review-graph` MCP) before Grep, Glob, or full file reads.
 - **Docs Ingestion constraint:** Read ONLY living canonical documentation (`docs/protocolos/`, `AGENTS.md`, `MEMORY.md`). Never ingest historical reports, superseded manuals, or past session logs as system truths.
 

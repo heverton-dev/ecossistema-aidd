@@ -139,3 +139,7 @@ skills-lock.json
 */skills/web-perf/
 */skills/workers-best-practices/
 */skills/wrangler/
+
+# Fila de ciclos pesados e medicoes locais (scripts/fila_ciclos.py, scripts/medir_gates.py)
+.aidd/fila-ciclos.lock
+secoes/medicoes/
