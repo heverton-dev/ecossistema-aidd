@@ -150,6 +150,90 @@ def medir_gates(
     return resultados
 
 
+# ---------------------------------------------------------------------------
+# pre-push: código só sobe com a bateria completa verde para aquele conteúdo.
+#
+# O registro verde é por ÁRVORE (tree hash), não por commit: o merge do --aprovar
+# tem SHA novo mas a mesma árvore que passou no gate_final, então não repete os
+# ~25 min da bateria. Push só de documentação passa sem bateria.
+# ---------------------------------------------------------------------------
+
+ZEROS = "0" * 40
+PASTA_REGISTROS = Path("secoes") / "medicoes"
+PREFIXOS_SO_DOC = ("secoes/", "docs/")
+
+
+def _git(raiz: Path, *args: str) -> str:
+    return subprocess.run(["git", *args], cwd=str(raiz), capture_output=True, text=True,
+                          encoding="utf-8", errors="replace", check=True).stdout
+
+
+def arvore_de(raiz: Path, ref: str) -> str:
+    return _git(raiz, "rev-parse", f"{ref}^{{tree}}").strip()
+
+
+def registro_verde(raiz: Path, arvore: str) -> Path:
+    return Path(raiz) / PASTA_REGISTROS / f"completo-{arvore}.json"
+
+
+def registrar_bateria_verde(raiz: Path, ref: str = "HEAD") -> Path:
+    """Grava que a bateria completa passou para a árvore de `ref` (chamado pelo gate_final)."""
+    arvore = arvore_de(raiz, ref)
+    caminho = registro_verde(raiz, arvore)
+    caminho.parent.mkdir(parents=True, exist_ok=True)
+    caminho.write_text(json.dumps({"arvore": arvore, "ref": _git(raiz, "rev-parse", ref).strip(),
+                                   "modo": "completo", "exit_code": 0,
+                                   "em": datetime.now().isoformat(timespec="seconds")},
+                                  ensure_ascii=False, indent=2) + "\n", encoding="utf-8", newline="\n")
+    return caminho
+
+
+def so_documentacao(arquivos: List[str]) -> bool:
+    return all(a.startswith(PREFIXOS_SO_DOC) or a.endswith(".md") for a in arquivos)
+
+
+def _arquivos_do_push(raiz: Path, sha_local: str, sha_remoto: str) -> List[str]:
+    if sha_remoto == ZEROS:  # branch nova no remoto: commits que nenhum remoto tem ainda
+        commits = _git(raiz, "rev-list", sha_local, "--not", "--remotes").split()
+    else:
+        commits = _git(raiz, "rev-list", f"{sha_remoto}..{sha_local}").split()
+    arquivos = set()
+    for commit in commits:
+        arquivos.update(_git(raiz, "diff-tree", "--no-commit-id", "--name-only", "-r", "-m", commit).split())
+    return sorted(arquivos)
+
+
+def _bateria_completa(raiz: Path) -> int:
+    env = {**os.environ, "AIDD_GATES_MODO": "completo"}
+    return subprocess.run([sys.executable, "ecossistema.py", "audit"], cwd=str(raiz), env=env).returncode
+
+
+def verificar_push(linhas: List[str], raiz: Path, rodar_bateria=_bateria_completa, avisar=print) -> int:
+    """Linhas do stdin do pre-push: '<ref local> <sha local> <ref remota> <sha remoto>'."""
+    for linha in linhas:
+        partes = linha.split()
+        if len(partes) != 4 or partes[1] == ZEROS:  # linha vazia ou remoção de branch
+            continue
+        _, sha_local, ref_remota, sha_remoto = partes
+        arquivos = _arquivos_do_push(raiz, sha_local, sha_remoto)
+        if not arquivos or so_documentacao(arquivos):
+            avisar(f"[pre-push] {ref_remota}: só documentação/sessões ({len(arquivos)} arquivo(s)), sem bateria.")
+            continue
+        arvore = arvore_de(raiz, sha_local)
+        if registro_verde(raiz, arvore).is_file():
+            avisar(f"[pre-push] {ref_remota}: bateria completa já aprovada para este conteúdo (árvore {arvore[:10]}).")
+            continue
+        avisar(f"[pre-push] {ref_remota}: {len(arquivos)} arquivo(s) de código sem bateria completa verde. Rodando agora...")
+        if _git(raiz, "rev-parse", "HEAD").strip() != sha_local:
+            avisar(f"[pre-push] BLOQUEADO: o commit enviado ({sha_local[:10]}) não é o HEAD; faça checkout dele e rode de novo.")
+            return 1
+        if rodar_bateria(raiz) != 0:
+            avisar("[pre-push] BLOQUEADO: bateria completa reprovou. Corrija antes do push.")
+            return 1
+        registrar_bateria_verde(raiz, sha_local)
+    return 0
+
+
 def main(argv: Optional[List[str]] = None) -> int:
     parser = argparse.ArgumentParser(
         description="Medição real do tempo de cada Quality Gate do ecossistema AIDD."
@@ -179,7 +263,16 @@ def main(argv: Optional[List[str]] = None) -> int:
         help="Caminho para o arquivo YAML de configuração de gates (padrão: .pre-commit-config.yaml)."
     )
 
+    parser.add_argument(
+        "--verificar-push",
+        action="store_true",
+        help="Modo pre-push: lê o stdin do hook e exige bateria completa verde para push com código."
+    )
+
     args = parser.parse_args(argv)
+
+    if args.verificar_push:
+        return verificar_push(sys.stdin.read().splitlines(), Path.cwd())
 
     caminho_config = Path(args.config) if args.config else None
     caminho_saida = Path(args.saida) if args.saida else None

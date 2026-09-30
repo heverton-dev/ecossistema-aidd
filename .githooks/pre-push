@@ -1,0 +1,9 @@
+#!/bin/sh
+# pre-push: codigo so sobe com a bateria completa verde para aquele conteudo.
+# Push so de secoes/, docs/ ou *.md passa direto. O registro verde e gravado pelo
+# gate_final (orquestrador_4f) por arvore; sem registro, a bateria roda aqui mesmo.
+# Logica em scripts/medir_gates.py (--verificar-push).
+export PYTHONIOENCODING=utf-8
+REPO_ROOT="$(git rev-parse --show-toplevel)"
+cd "$REPO_ROOT" || exit 1
+exec python scripts/medir_gates.py --verificar-push

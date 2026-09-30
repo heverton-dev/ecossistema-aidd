@@ -815,6 +815,9 @@ def executar_pipeline(args, data, pipeline_id, fases, repo_root):
         sys.exit(1)
 
     git(["update-ref", ref_aprovavel(pipeline_id), branch_ciclo], repo_root)
+    # Registro verde por árvore: o push do merge aprovado (mesma árvore) não repete a bateria.
+    import medir_gates
+    medir_gates.registrar_bateria_verde(repo_root, branch_ciclo)
     print("\n============================================================")
     print(f" PIPELINE CONCLUÍDO: {branch_ciclo} passou no gate_final.")
     print(" A branch atual NÃO foi alterada. Aprovação humana (Join Barrier) requerida:")
