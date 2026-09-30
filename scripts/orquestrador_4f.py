@@ -510,9 +510,12 @@ def saida_ja_existe(caminho, branch_ciclo, repo_root):
     return git(["cat-file", "-e", f"{branch_ciclo}:{Path(caminho).as_posix()}"], repo_root, exit_on_fail=False).returncode == 0
 
 
-def rodar_gate(comando, cwd):
+def rodar_gate(comando, cwd, env=None):
     print(f"[GATE] {comando}")
-    return subprocess.run(comando, shell=bool(os.name == "nt" or True), cwd=cwd).returncode
+    merged_env = os.environ.copy()
+    if env:
+        merged_env.update(env)
+    return subprocess.run(comando, shell=bool(os.name == "nt" or True), cwd=cwd, env=merged_env).returncode
 
 
 def abrir_worktree(branch, wt_path, repo_root):
@@ -709,7 +712,7 @@ def main():
     wt_final = worktrees_base / "_gate_final"
     abrir_worktree(branch_ciclo, wt_final, repo_root)
     preparar_worktree(wt_final, repo_root)
-    codigo_final = rodar_gate(gate_final, wt_final)
+    codigo_final = rodar_gate(gate_final, wt_final, env={"AIDD_GATES_MODO": "completo"})
     fechar_worktree(wt_final, repo_root)
     if codigo_final != 0:
         print(f"[-] FALHA: gate_final reprovou (exit {codigo_final}). {branch_ciclo} NÃO está aprovável.")

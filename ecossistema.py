@@ -996,10 +996,10 @@ _GATES_AUDIT = [
 ]
 
 
-def _audit_gates_legado(args):
+def _audit_gates_legado(args, env=None):
     for gate in _GATES_AUDIT:
         gate_script = os.path.join(ROOT_DIR, "gates", gate)
-        codigo = run_command([sys.executable, gate_script] + args, cwd=ROOT_DIR)
+        codigo = run_command([sys.executable, gate_script] + args, cwd=ROOT_DIR, env=env)
         if codigo != 0:
             return codigo
     return 0
@@ -1081,6 +1081,8 @@ def cmd_audit(args):
         print("Executa a bateria de Quality Gates do ecossistema via pre-commit.")
         return 0
 
+    env_audit = {"AIDD_GATES_MODO": "completo"}
+
     # NIH #4 (Fase 2-Gates3): o runner proprio dos quality gates foi
     # substituido pelo framework pre-commit. 'audit' DELEGA para
     # 'pre-commit run --all-files', que roda os mesmos gates do _GATES_AUDIT
@@ -1091,7 +1093,7 @@ def cmd_audit(args):
     if importlib.util.find_spec("pre_commit") is None:
         print("[audit] AVISO: pre-commit nao instalado — usando runner legado "
               "(gates direto). Instale com: pip install pre-commit")
-        return _audit_gates_legado(args)
+        return _audit_gates_legado(args, env=env_audit)
     print("[audit] Delegando para o framework pre-commit "
           "('pre-commit run --all-files')...")
     # --verbose + --color always: mesma correcao aplicada em .githooks/pre-commit
@@ -1100,7 +1102,8 @@ def cmd_audit(args):
     # exemplo), mesmo os gates ja imprimindo progresso real-time internamente.
     return run_command(
         [sys.executable, "-m", "pre_commit", "run", "--all-files", "--color", "always", "--verbose"],
-        cwd=ROOT_DIR
+        cwd=ROOT_DIR,
+        env=env_audit,
     )
 
 def cmd_preflight_host(args):
