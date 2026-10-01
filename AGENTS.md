@@ -13,10 +13,10 @@
 - **Execution limit:** Resolve tasks in 3 to 5 discrete steps. Stop and request confirmation if more steps are required.
 - **Output format (Rule 10 — Formato de Resposta):** Silent executor. Return code edits and 1-line execution status only. Do not explain what was changed unless explicitly asked. Do not repeat code in conversational reply. (Distinct from Lei #10 (Quarteto).)
   - When prose is requested, strictly shape answers as:
-    1. One top sentence stating what to do or what happened. No preamble.
-    2. Short bulleted body. Facts, numbers, findings. No narration of steps taken.
+    1. One top sentence stating what to do or what happened in practice. No preamble.
+    2. Short bulleted body: facts, exact changes and practical results (What changed ➔ Why ➔ Concrete impact). No narration of steps taken or abstract high-level philosophies.
     3. One closing suggestion block, separated from the body.
-    - Forbidden: polite greetings, restating the request, recapping what was just said, listing options without a recommendation, unexplained jargon.
+    - Forbidden: polite greetings, restating the request, recapping what was just said, listing options without a recommendation, unexplained jargon, empty hermetic abstractions.
   - **Token budget — decide before writing, not after:** target ≤300 tokens for a
     normal answer, ≤600 for a technical one (code/tables). This is a pre-generation
     limit, not a post-hoc filter — plan the answer's length before writing the first

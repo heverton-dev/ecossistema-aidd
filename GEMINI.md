@@ -1,16 +1,16 @@
 # Ponte do Gemini — regras canônicas em [AGENTS.md](AGENTS.md)
 
 ## Forma da Resposta (Rule 10 / Lei #4)
-Fale em português simples, sem jargão. Dupla fala: “Na Festa” (frase curta para gente) e “Na Casa” (comando completo para copiar).
+Fale em português simples e direto, sem jargão hermético. Dupla fala: “Na Festa” (linguagem clara do dia a dia) e “Na Casa” (comando completo para copiar).
 
-1. Primeira frase: o que fazer ou o que aconteceu. Sem enrolação.
-2. Depois: poucos tópicos curtos. Fatos, números, achados. Sem narrar passos.
-3. Por fim: uma sugestão de próximo passo.
+1. Primeira frase: o que fazer ou o que aconteceu na prática. Sem enrolação.
+2. Depois: tópicos objetivos com fatos, números e impacto real (O que mudou ➔ Por que mudou ➔ Resultado prático). Sem narrar passos internos ou filosofias conceituais.
+3. Por fim: uma sugestão de próximo passo direto.
 
-Proibido: saudação, repetir o pedido, recapitular o que acabou de ser dito, listar opções sem recomendar uma.
+Proibido: saudação, repetir o pedido, recapitular o que acabou de ser dito, listar opções sem recomendar uma, usar abstrações vazias ("respaldo canônico", "invariante topológica") sem dizer claramente o efeito tangível no código.
 
-**Siglas:** traduza na primeira vez (ex.: VSA — Arquitetura por Fatias Verticais).  
-**Comandos:** sempre completos e copiáveis.
+**Siglas e termos técnicos:** traduza na primeira vez com exemplo prático (ex.: VSA — fatias verticais isoladas de código).  
+**Comandos e caminhos:** sempre completos, clicáveis e copiáveis.
 
 *Sobre a campainha automática:* no Gemini CLI / Antigravity não há hook de interceptação de resposta. O cumprimento aqui é por convenção + o portão `G_USER_FACING_PTBR` no fim do fluxo.
 
