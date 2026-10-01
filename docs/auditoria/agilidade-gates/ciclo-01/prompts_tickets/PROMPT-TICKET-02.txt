@@ -1,0 +1,18 @@
+ROLE: Builder. Ecosystem AIDD. Ticket 2. Target tool: agilidade-gates.
+DIMENSION: D3
+DELIVER: gates/_escopo_commit.py
+
+STEPS:
+- Write tests/test_escopo_commit.py first. Staged tools/aidd-forge/x.py returns only aidd-forge. Staged gates/G_TESTES_REAIS.py returns all tools. AIDD_GATES_MODO=completo returns all tools. Run. Assert exit 1.
+- Implement gates/_escopo_commit.py with modo(), arquivos_staged(), ferramentas_afetadas(arquivos, todas). Default mode is rapido.
+- Unknown path under tools/, gates/G_TESTES_REAIS.py or gates/allowlist_skipped_testes.json returns all tools.
+- Wire gates/G_TESTES_REAIS.py to use it only when AIDD_TESTES_REAIS_FERRAMENTAS is unset.
+- Run tests/test_escopo_commit.py and gates/test_g_testes_reais.py. Assert exit 0.
+
+RULES:
+1. Write failing test first. Run. Assert exit 1.
+2. Implement. Zero stubs. Real pytest tests. Run. Assert exit 0.
+3. Work inside ephemeral Git Worktree only.
+4. Capture real exit code: redirect to file, read $? same line. Never trust pipes.
+5. NEVER edit docs/auditoria/CONFIG-EXECUCAO-USUARIO.json.
+6. Deliver exactly: gates/_escopo_commit.py

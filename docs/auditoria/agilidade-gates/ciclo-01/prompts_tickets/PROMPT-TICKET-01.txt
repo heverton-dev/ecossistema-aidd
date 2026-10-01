@@ -1,0 +1,18 @@
+ROLE: Builder. Ecosystem AIDD. Ticket 1. Target tool: agilidade-gates.
+DIMENSION: D12
+DELIVER: scripts/medir_gates.py
+
+STEPS:
+- Write tests/test_medir_gates.py first. Fake gate sleeps 1s, exits 1. Assert JSON has segundos>=1 and exit_code=1. Run. Assert exit 1 before implementation.
+- Implement scripts/medir_gates.py. Parse hook id and entry from .pre-commit-config.yaml. Run each entry via subprocess. Time with time.perf_counter.
+- Write JSON to secoes/medicoes/gates-DATE-MODE.json with keys id, segundos, exit_code, modo.
+- Support flags --modo rapido or completo, --so HOOK_ID, --saida PATH.
+- Run tests/test_medir_gates.py. Assert exit 0.
+
+RULES:
+1. Write failing test first. Run. Assert exit 1.
+2. Implement. Zero stubs. Real pytest tests. Run. Assert exit 0.
+3. Work inside ephemeral Git Worktree only.
+4. Capture real exit code: redirect to file, read $? same line. Never trust pipes.
+5. NEVER edit docs/auditoria/CONFIG-EXECUCAO-USUARIO.json.
+6. Deliver exactly: scripts/medir_gates.py

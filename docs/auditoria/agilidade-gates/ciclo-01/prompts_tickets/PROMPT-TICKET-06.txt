@@ -1,0 +1,18 @@
+ROLE: Builder. Ecosystem AIDD. Ticket 6. Target tool: agilidade-gates.
+DIMENSION: D14
+DELIVER: tests/test_aprovar_conflito_derivados.py
+
+STEPS:
+- Write tests/test_aprovar_conflito_derivados.py first. Temp git repo, two branches. Conflict only in handoff-melhoria.json must finish merge. Conflict in plain .py must abort merge with clean git status. Run. Assert exit 1.
+- Change --aprovar path in scripts/orquestrador_4f.py. On merge failure list conflicts via git diff --name-only --diff-filter=U.
+- All conflicts in DERIVADOS: checkout theirs, run regenerar_derivados, git add, finish merge.
+- Any other conflict: git merge --abort, print conflict list, exit 1.
+- Run tests/test_aprovar_conflito_derivados.py. Assert exit 0.
+
+RULES:
+1. Write failing test first. Run. Assert exit 1.
+2. Implement. Zero stubs. Real pytest tests. Run. Assert exit 0.
+3. Work inside ephemeral Git Worktree only.
+4. Capture real exit code: redirect to file, read $? same line. Never trust pipes.
+5. NEVER edit docs/auditoria/CONFIG-EXECUCAO-USUARIO.json.
+6. Deliver exactly: tests/test_aprovar_conflito_derivados.py

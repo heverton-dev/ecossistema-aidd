@@ -1,0 +1,17 @@
+ROLE: Builder. Ecosystem AIDD. Ticket 4. Target tool: agilidade-gates.
+DIMENSION: D13
+DELIVER: tests/test_gate_final_modo_completo.py
+
+STEPS:
+- Write tests/test_gate_final_modo_completo.py first. Set AIDD_GATES_MODO=rapido in env. Run orchestrator gate_final path with fake gate printing mode. Assert output is completo. Run. Assert exit 1.
+- Change scripts/orquestrador_4f.py. Force AIDD_GATES_MODO=completo in gate_final subprocess env. Ignore inherited value.
+- Force completo in python ecossistema.py audit too. Keep gate_fase on inherited mode.
+- Run tests/test_gate_final_modo_completo.py. Assert exit 0.
+
+RULES:
+1. Write failing test first. Run. Assert exit 1.
+2. Implement. Zero stubs. Real pytest tests. Run. Assert exit 0.
+3. Work inside ephemeral Git Worktree only.
+4. Capture real exit code: redirect to file, read $? same line. Never trust pipes.
+5. NEVER edit docs/auditoria/CONFIG-EXECUCAO-USUARIO.json.
+6. Deliver exactly: tests/test_gate_final_modo_completo.py

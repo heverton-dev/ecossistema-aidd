@@ -1,0 +1,27 @@
+{
+  "pedido_original": "Otimizar e agilizar o processo de atualizacoes, mudancas, evolucoes e melhorias no ecossistema, mantendo qualidade e seguranca, mas de forma agil, simples e rapida (hoje e longo, repetitivo e pouco escalavel; ex.: 'me chame de novo daqui a 20-30 minutos').",
+  "data": "30-09-2026",
+  "nota_atual": "3",
+  "evidencia": "Medicao real 30/09/2026: python gates/G_SEGREDOS.py levou 903,4 s (exit 0) varrendo todo o git ls-files, com outra sessao ativa na maquina. .pre-commit-config.yaml: 54 hooks always_run: true e G_TESTES_REAIS com files: ^tools/ que roda pytest de TODAS as ferramentas (gates/G_TESTES_REAIS.py:183 ja aceita AIDD_TESTES_REAIS_FERRAMENTAS, mas nada usa). scripts/orquestrador_4f.py:672 commita fases com --no-verify e roda gate_final uma vez (linha 706); commits fora do orquestrador pagam a bateria inteira. Arquivos derivados (handoff-melhoria.json, .secrets.baseline, livro, ACHADOS.json) sao editados em cada branch.",
+  "plano_existente": null,
+  "item_relacionado": null,
+  "nota_anterior": null,
+  "evidencia_anterior": null,
+  "itens_avaliados": [],
+  "resumo": "O processo e seguro mas lento: todo commit paga a bateria completa, e dois gates (G_SEGREDOS e G_TESTES_REAIS) concentram quase todo o tempo. A proposta separa revisao rapida no commit (so o que mudou) da revisao completa no gate_final e no push, regenera arquivos derivados num so lugar e coloca ciclos pesados em fila com aviso ao terminar. A main continua recebendo apenas o que passou na bateria completa.",
+  "achados": [
+    "G_SEGREDOS completo medido em 903,4 s (15 min) nesta maquina, sempre varrendo o repositorio inteiro",
+    "G_TESTES_REAIS roda pytest de todas as ferramentas quando qualquer arquivo de tools/ muda; o filtro por ferramenta ja existe via AIDD_TESTES_REAIS_FERRAMENTAS mas nao e usado",
+    "54 hooks always_run rodam em todo commit, inclusive quando so .md ou secoes/ mudam",
+    "Arquivos derivados reassinados em toda branch geram conflito recorrente no merge (ja reprovaram um gate_final por CRLF)",
+    "Ciclos pesados rodando em paralelo em 16 GB de RAM multiplicam o tempo e ja derrubaram processos",
+    "Agentes pedem ao usuario para voltar depois em vez de rodar em segundo plano e retomar sozinhos"
+  ],
+  "riscos": [
+    "Modo rapido deixar passar erro que so a bateria completa pega: mitigado por gate_final completo obrigatorio e pre-push com registro verde por SHA",
+    "Resolucao automatica de conflito mascarar conflito real: restrita a lista fechada de derivados; qualquer outro arquivo aborta o merge",
+    "Outra sessao de IA ativa na mesma pasta mexendo em gates/.secrets.baseline durante a execucao"
+  ],
+  "recomendacao": "Sugestão de refatoração: Executar o ciclo-01 do pipeline de evolucao em docs/auditoria/agilidade-gates/ciclo-01/ (8 tickets, PLANO-EVOLUCAO.json ja compilado), um ciclo pesado por vez, depois que a outra sessao ativa terminar.",
+  "status": "RASCUNHO - aguardando decisao humana sobre proximo passo (ex: iniciar /plan, ou atualizar a nota do plano existente)"
+}

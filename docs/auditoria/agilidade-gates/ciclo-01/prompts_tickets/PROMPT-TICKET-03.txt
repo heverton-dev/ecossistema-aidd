@@ -1,0 +1,17 @@
+ROLE: Builder. Ecosystem AIDD. Ticket 3. Target tool: agilidade-gates.
+DIMENSION: D3
+DELIVER: gates/test_g_segredos_escopo.py
+
+STEPS:
+- Write gates/test_g_segredos_escopo.py first. Build temp git repo. Plant new secret in staged file. Assert exit 1 in rapido mode. Assert unstaged file not scanned in rapido mode. Assert completo mode scans all tracked files. Run. Assert exit 1 before change.
+- Change gates/G_SEGREDOS.py. Rapido mode scans only existing files from _escopo_commit.arquivos_staged(). Completo mode keeps git ls-files.
+- Keep baseline compare and Windows backslash handling. Empty stage in rapido mode exits 0.
+- Run gates/test_g_segredos_escopo.py and existing G_SEGREDOS tests. Assert exit 0.
+
+RULES:
+1. Write failing test first. Run. Assert exit 1.
+2. Implement. Zero stubs. Real pytest tests. Run. Assert exit 0.
+3. Work inside ephemeral Git Worktree only.
+4. Capture real exit code: redirect to file, read $? same line. Never trust pipes.
+5. NEVER edit docs/auditoria/CONFIG-EXECUCAO-USUARIO.json.
+6. Deliver exactly: gates/test_g_segredos_escopo.py

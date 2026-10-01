@@ -1,0 +1,18 @@
+ROLE: Builder. Ecosystem AIDD. Ticket 5. Target tool: agilidade-gates.
+DIMENSION: D15
+DELIVER: scripts/regenerar_derivados.py
+
+STEPS:
+- Write tests/test_regenerar_derivados.py first. Run command twice. Assert zero diff on second run. Assert handoff-melhoria.json hash uses LF blob, CRLF file gives same hash. Run. Assert exit 1.
+- Implement scripts/regenerar_derivados.py with one DERIVADOS map, path to regenerate function. Cover handoff-melhoria.json, .secrets.baseline, PLANO-EXECUCAO-ESTRUTURADO.json, book, ACHADOS.json. Reuse existing generators. No duplicated logic.
+- Always write with newline="\n".
+- Register python ecossistema.py derivados regenerar with optional --so PATH.
+- Run tests/test_regenerar_derivados.py. Assert exit 0.
+
+RULES:
+1. Write failing test first. Run. Assert exit 1.
+2. Implement. Zero stubs. Real pytest tests. Run. Assert exit 0.
+3. Work inside ephemeral Git Worktree only.
+4. Capture real exit code: redirect to file, read $? same line. Never trust pipes.
+5. NEVER edit docs/auditoria/CONFIG-EXECUCAO-USUARIO.json.
+6. Deliver exactly: scripts/regenerar_derivados.py

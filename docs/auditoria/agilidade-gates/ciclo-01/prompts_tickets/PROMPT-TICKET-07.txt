@@ -1,0 +1,19 @@
+ROLE: Builder. Ecosystem AIDD. Ticket 7. Target tool: agilidade-gates.
+DIMENSION: D11
+DELIVER: scripts/fila_ciclos.py
+
+STEPS:
+- Write tests/test_fila_ciclos.py first. Second process waits until first releases lock. Lock with dead PID is released. Release writes result and calls notifier. Run. Assert exit 1.
+- Implement scripts/fila_ciclos.py. File lock .aidd/fila-ciclos.lock with pid, cycle, start time. Wait with periodic message. Free lock of dead PID.
+- Wire scripts/orquestrador_4f.py: acquire lock before first phase, release in finally.
+- Notify at end via OS toast, notify-send or osascript. Fallback to console print. Write secoes/medicoes/ultimo-ciclo.json.
+- Add rule to AGENTS.md: long task runs in background, agent resumes on completion, never ask user to call back later.
+- Run tests/test_fila_ciclos.py. Assert exit 0.
+
+RULES:
+1. Write failing test first. Run. Assert exit 1.
+2. Implement. Zero stubs. Real pytest tests. Run. Assert exit 0.
+3. Work inside ephemeral Git Worktree only.
+4. Capture real exit code: redirect to file, read $? same line. Never trust pipes.
+5. NEVER edit docs/auditoria/CONFIG-EXECUCAO-USUARIO.json.
+6. Deliver exactly: scripts/fila_ciclos.py

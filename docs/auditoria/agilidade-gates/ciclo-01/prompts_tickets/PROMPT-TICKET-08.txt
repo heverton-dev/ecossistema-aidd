@@ -1,0 +1,18 @@
+ROLE: Builder. Ecosystem AIDD. Ticket 8. Target tool: agilidade-gates.
+DIMENSION: D13
+DELIVER: .githooks/pre-push
+
+STEPS:
+- Write tests/test_pre_push.py first. Temp repo. Push .py change without green full record for SHA returns exit 1. Push only secoes/, docs/ or .md returns exit 0. Push .py with green record for same SHA returns exit 0. Run. Assert exit 1.
+- Create .githooks/pre-push as sh script calling python scripts/medir_gates.py --verificar-push with hook stdin.
+- Green record is secoes/medicoes/completo-SHA.json written by completo mode when all gates exit 0.
+- No record: run full battery now, write record on pass.
+- Run tests/test_pre_push.py. Assert exit 0.
+
+RULES:
+1. Write failing test first. Run. Assert exit 1.
+2. Implement. Zero stubs. Real pytest tests. Run. Assert exit 0.
+3. Work inside ephemeral Git Worktree only.
+4. Capture real exit code: redirect to file, read $? same line. Never trust pipes.
+5. NEVER edit docs/auditoria/CONFIG-EXECUCAO-USUARIO.json.
+6. Deliver exactly: .githooks/pre-push
