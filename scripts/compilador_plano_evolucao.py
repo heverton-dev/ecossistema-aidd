@@ -2,6 +2,7 @@ import argparse
 import json
 import re
 import sys
+import warnings
 from pathlib import Path
 
 try:  # executado como script (scripts/ no sys.path) ou importado como scripts.compilador_plano_evolucao
@@ -74,26 +75,50 @@ def parse_plano_evolucao_md(md_path: Path):
         re.DOTALL
     )
 
+    partes = re.split(r"(^##\s+Bloco\s+\d+[^\n]*)", content, flags=re.MULTILINE)
+
     tickets = []
-    for full_title, num, titulo_limpo, corpo in ticket_pattern.findall(content):
-        dim_match = re.search(r"\*\*Falha 15-D:\*\*\s*`?([^`\n]+)`?", corpo)
-        dimensao = dim_match.group(1).strip() if dim_match else "D3. Raio de Impacto"
+    bloco_atual = None
 
-        # Handoff declarado pelo Arquiteto no próprio ticket (sem mapa fixo por ferramenta)
-        handoff_match = re.search(r"\*\*Artefato de Handoff:\*\*\s*`([^`\n]+)`", corpo)
-        if not handoff_match:
-            raise ValueError(
-                f"Ticket {num} sem '- **Artefato de Handoff:** `<caminho>`' em {md_path}"
-            )
+    for parte in partes:
+        bloco_match = re.match(r"^##\s+Bloco\s+(\d+)", parte.strip())
+        if bloco_match:
+            bloco_atual = int(bloco_match.group(1))
+            continue
 
-        tickets.append({
-            "num": int(num),
-            "titulo": titulo_limpo.strip(),
-            "dimensao_15d": dimensao,
-            "output_handoff": handoff_match.group(1).strip(),
-            "prompt_en": extrair_prompt_ingles(num, corpo, md_path),
-            "nome": f"Fase_{num}_Ticket_{num}_{re.sub(r'[^a-zA-Z0-9_]', '_', titulo_limpo.split('(')[0].strip())}",
-        })
+        for full_title, num, titulo_limpo, corpo in ticket_pattern.findall(parte):
+            dim_match = re.search(r"\*\*Falha 15-D:\*\*\s*`?([^`\n]+)`?", corpo)
+            dimensao = dim_match.group(1).strip() if dim_match else "D3. Raio de Impacto"
+
+            # Handoff declarado pelo Arquiteto no próprio ticket (sem mapa fixo por ferramenta)
+            handoff_match = re.search(r"\*\*Artefato de Handoff:\*\*\s*`([^`\n]+)`", corpo)
+            if not handoff_match:
+                raise ValueError(
+                    f"Ticket {num} sem '- **Artefato de Handoff:** `<caminho>`' em {md_path}"
+                )
+
+            # Gate do Ticket declarado ou fallback para GATE_TESTES com warning
+            gate_match = re.search(r"\*\*Gate do Ticket:\*\*\s*`?([^`\n]+)`?", corpo)
+            if gate_match:
+                gate_fase = gate_match.group(1).strip()
+            else:
+                gate_fase = GATE_TESTES
+                warnings.warn(
+                    f"Ticket {num} sem 'Gate do Ticket' declarado em {md_path}. Usando fallback padrão: {GATE_TESTES}",
+                    UserWarning,
+                    stacklevel=2,
+                )
+
+            tickets.append({
+                "num": int(num),
+                "titulo": titulo_limpo.strip(),
+                "dimensao_15d": dimensao,
+                "output_handoff": handoff_match.group(1).strip(),
+                "gate_fase": gate_fase,
+                "bloco": bloco_atual,
+                "prompt_en": extrair_prompt_ingles(num, corpo, md_path),
+                "nome": f"Fase_{num}_Ticket_{num}_{re.sub(r'[^a-zA-Z0-9_]', '_', titulo_limpo.split('(')[0].strip())}",
+            })
     return tickets
 
 
@@ -157,7 +182,7 @@ def compilar_plano_evolucao(md_file: Path, config_file: Path = None, output_file
             "comando_terminal": config_fase["comando_terminal"],
             "input_prompt": input_rel,
             "output_handoff": t["output_handoff"],
-            "gate_fase": GATE_TESTES
+            "gate_fase": t["gate_fase"]
         })
 
     manifesto = {
@@ -177,6 +202,26 @@ def compilar_plano_evolucao(md_file: Path, config_file: Path = None, output_file
         json.dump(manifesto, out, indent=2, ensure_ascii=False)
         
     print(f"[OK] Manifesto compilado com sucesso: {output_file} ({len(fases)} fases montadas)")
+
+    # Se há tickets atribuídos a blocos, grava um manifesto por bloco: PLANO-EVOLUCAO-BLOCO-N.json
+    blocos_presentes = sorted(set(t["bloco"] for t in tickets if t.get("bloco") is not None))
+    for num_bloco in blocos_presentes:
+        fases_bloco = [f for f, t in zip(fases, tickets) if t.get("bloco") == num_bloco]
+        manifesto_bloco = {
+            "pipeline_id": f"{pipeline_id}-bloco-{num_bloco}",
+            "target_tool": tool_name,
+            "bloco": num_bloco,
+            "descricao": f"Manifesto do Bloco {num_bloco} ({len(fases_bloco)} fases) montado a partir de {md_file.name}",
+            "config_usuario_ref": config_file.as_posix() if config_file else None,
+            "definition_of_done": (tool_dir / "DOD.md").as_posix(),
+            "gate_final": GATE_FINAL,
+            "fases": fases_bloco
+        }
+        bloco_output = tool_dir / f"PLANO-EVOLUCAO-BLOCO-{num_bloco}.json"
+        with open(bloco_output, "w", encoding="utf-8") as out_bloco:
+            json.dump(manifesto_bloco, out_bloco, indent=2, ensure_ascii=False)
+        print(f"[OK] Manifesto de bloco compilado: {bloco_output} ({len(fases_bloco)} fases montadas)")
+
     return output_file
 
 def main():
