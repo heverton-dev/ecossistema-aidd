@@ -424,6 +424,17 @@ repos:
         pass_filenames: false
         require_serial: true
 
+      # MODO AVISO (warn): emite o relatorio de fronteiras e sempre aprova.
+      # O modo bloqueio (AIDD_FRONTEIRA_MODO=bloqueio, exit 1 sob violacao fora
+      # da allowlist datada) e ativado na fase e do ciclo-01.
+      - id: g-fronteira-ferramentas
+        name: "G_FRONTEIRA_FERRAMENTAS (fronteiras das ferramentas — modo aviso, D1)"
+        entry: python gates/G_FRONTEIRA_FERRAMENTAS.py --modo aviso
+        language: system
+        always_run: true
+        pass_filenames: false
+        require_serial: true
+
       - id: g-template-forge-rot
         name: "G_TEMPLATE_FORGE_ROT (integridade de templates do aidd-forge per Lei #9)"
         entry: python gates/G_TEMPLATE_FORGE_ROT.py
