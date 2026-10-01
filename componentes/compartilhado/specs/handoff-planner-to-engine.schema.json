@@ -1,7 +1,7 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
   "title": "HandoffPlannerToEngineSchema",
-  "description": "Contrato formal e determinístico de transferência de artefatos do aidd-planner para qualquer Engine de Construção (generator, factory ou bridge).",
+  "description": "Contrato formal e determinístico de transferência de artefatos da planta baixa (C2) do aidd-planner para qualquer Engine de Construção (generator, factory ou bridge) e etapas de acabamento.",
   "type": "object",
   "required": [
     "versao_schema",
@@ -9,7 +9,12 @@
     "metadados_projeto",
     "quarteto_sine_qua_non",
     "arquitetura_alvo",
-    "modulos_funcionais"
+    "modulos_funcionais",
+    "camadas",
+    "fases",
+    "tickets",
+    "entrada_construtor",
+    "perfil_app"
   ],
   "properties": {
     "versao_schema": {
@@ -19,7 +24,7 @@
     "fluxo_alvo": {
       "type": "integer",
       "enum": [1, 2, 3],
-      "description": "1 = Do Zero Puro (generator), 2 = Open Source (factory), 3 = Low-Code Bridge (bridge)"
+      "description": "1 = Do Zero Puro (generator/pure), 2 = Open Source (factory/open), 3 = Low-Code Bridge (bridge/freedom)"
     },
     "metadados_projeto": {
       "type": "object",
@@ -47,7 +52,7 @@
       "properties": {
         "padrao_frontend": {
           "type": "string",
-          "enum": ["nextjs_typescript_tailwind"]
+          "enum": ["nextjs_typescript_tailwind", "tanstack_router_typescript_tailwind"]
         },
         "padrao_backend": {
           "type": "string",
@@ -105,6 +110,85 @@
             }
           }
         }
+      }
+    },
+    "camadas": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "type": "string" },
+      "description": "Camadas do sistema que seguem a estrutura_projeto acordada no C1."
+    },
+    "fases": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "type": "string" },
+      "description": "Fases de execução sequenciais da entrega."
+    },
+    "tickets": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": [
+          "id",
+          "ferramenta_destino",
+          "entrada",
+          "saida_esperada",
+          "pecas_do_almoxarifado",
+          "criterio_de_aceite"
+        ],
+        "properties": {
+          "id": { "type": "string" },
+          "ferramenta_destino": {
+            "type": "string",
+            "enum": [
+              "aidd-pure",
+              "aidd-open",
+              "aidd-freedom",
+              "aidd-master",
+              "aidd-enterprise",
+              "aidd-ops"
+            ]
+          },
+          "entrada": { "type": "object" },
+          "saida_esperada": { "type": "string" },
+          "pecas_do_almoxarifado": {
+            "type": "array",
+            "items": { "type": "string" }
+          },
+          "criterio_de_aceite": { "type": "string" }
+        }
+      },
+      "description": "Tickets roteados com evidência de ferramentas destino no mapa e peças existentes no almoxarifado."
+    },
+    "entrada_construtor": {
+      "type": "object",
+      "description": "Entrada especializada para o construtor do fluxo (generator, factory ou bridge).",
+      "properties": {
+        "plano_motores": { "type": "object" },
+        "origem_export": {
+          "type": "object",
+          "properties": {
+            "caminho": { "type": "string" },
+            "hash": { "type": "string" }
+          }
+        },
+        "ideia": { "type": "string" },
+        "capacidade_llm": { "type": "string" }
+      }
+    },
+    "perfil_app": {
+      "type": "object",
+      "required": ["modulos", "entidades", "banco", "rotas_quarteto", "portas"],
+      "description": "Perfil dinâmico derivado da própria planta baixa para infraestrutura e deploy.",
+      "properties": {
+        "modulos": { "type": "array", "items": { "type": "string" } },
+        "entidades": { "type": "array", "items": { "type": "string" } },
+        "banco": { "type": "string" },
+        "filas": { "type": "array", "items": { "type": "string" } },
+        "integracoes_externas": { "type": "array", "items": { "type": "string" } },
+        "rotas_quarteto": { "type": "array", "items": { "type": "string" } },
+        "portas": { "type": "array", "items": { "type": "integer" } }
       }
     }
   }

@@ -1,0 +1,311 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "descricao": "Mapa canônico de donos, responsabilidades, fronteiras e zonas de escrita das 8 ferramentas do ecossistema AIDD (Ciclo 01).",
+  "versao": "1.0.0",
+  "aidd-forge": {
+    "nome": "aidd-forge",
+    "responsabilidades": [
+      "preparo_terreno_e_prontidao_projeto",
+      "guarda_e_distribuicao_almoxarifado_pecas",
+      "instalacao_e_auditoria_leis_guardas",
+      "governanca_harnesses_e_regras_globais"
+    ],
+    "pode_guardar_pecas": true,
+    "dono_do_conteudo_de": [
+      "gates_projeto",
+      "catalogo_almoxarifado",
+      "regras_harness",
+      "governance_kit"
+    ],
+    "pode_conter": [
+      "src/**",
+      "scripts/**",
+      "schemas/**",
+      "tests/**",
+      "templates/**",
+      "gates/**",
+      "almoxarifado/**"
+    ],
+    "nunca_conter": [
+      "**/vsa_generator*",
+      "**/dispatch_pipeline*",
+      "**/docker-compose*"
+    ],
+    "zona_escrita_no_projeto": [
+      ".git/hooks/**",
+      "gates/**",
+      "AGENTS.md",
+      "CLAUDE.md",
+      "GEMINI.md",
+      ".aidd/**",
+      ".aidd/HANDOFF_FORGE_PLANNER.json"
+    ]
+  },
+  "aidd-planner": {
+    "nome": "aidd-planner",
+    "responsabilidades": [
+      "desenho_planta_baixa_arquitetural",
+      "intake_sdd_bdd_e_especificacao",
+      "roteamento_tickets_para_ferramentas",
+      "calculo_dinamico_perfil_app"
+    ],
+    "pode_guardar_pecas": false,
+    "dono_do_conteudo_de": [
+      "planta_arquitetura",
+      "tickets_roteados",
+      "perfil_app_dinamico"
+    ],
+    "pode_conter": [
+      "src/**",
+      "scripts/**",
+      "schemas/**",
+      "tests/**",
+      "templates/plano/**"
+    ],
+    "nunca_conter": [
+      "**/Dockerfile*",
+      "**/docker-compose*",
+      "**/deploy.sh",
+      "**/nginx/**",
+      "**/mcp_server*",
+      "**/webhook*",
+      "**/openapi*",
+      "**/swagger*",
+      "**/G_*.py",
+      "**/*inject*"
+    ],
+    "zona_escrita_no_projeto": [
+      "PLANNER.json",
+      "HANDOFF_PLANNER_ENGINE.json",
+      "VSA_DISPATCH.json",
+      "DESIGN-SYSTEM.json"
+    ]
+  },
+  "aidd-pure": {
+    "nome": "aidd-pure",
+    "responsabilidades": [
+      "construcao_do_zero_tdd_red_green",
+      "geracao_fatias_dominio_vsa_zero"
+    ],
+    "pode_guardar_pecas": false,
+    "dono_do_conteudo_de": [
+      "fatias_dominio_pure",
+      "testes_unitarios_dominio_pure"
+    ],
+    "pode_conter": [
+      "src/**",
+      "scripts/**",
+      "schemas/**",
+      "tests/**",
+      "templates/dominio/**"
+    ],
+    "nunca_conter": [
+      "**/Dockerfile*",
+      "**/docker-compose*",
+      "**/deploy.sh",
+      "**/nginx/**",
+      "**/mcp_server*",
+      "**/webhook*",
+      "**/openapi*",
+      "**/swagger*",
+      "**/G_*.py",
+      "**/*inject*"
+    ],
+    "zona_escrita_no_projeto": [
+      "src/modules/*/**",
+      "frontend/app/*/**",
+      "HANDOFF_ENGINE_MASTER.json",
+      ".aidd/cache/**"
+    ]
+  },
+  "aidd-open": {
+    "nome": "aidd-open",
+    "responsabilidades": [
+      "curadoria_motores_opensource",
+      "integracao_fatias_dominio_factory"
+    ],
+    "pode_guardar_pecas": false,
+    "dono_do_conteudo_de": [
+      "fatias_dominio_open",
+      "adaptadores_motores_opensource"
+    ],
+    "pode_conter": [
+      "src/**",
+      "scripts/**",
+      "schemas/**",
+      "tests/**",
+      "templates/dominio/**"
+    ],
+    "nunca_conter": [
+      "**/Dockerfile*",
+      "**/docker-compose*",
+      "**/deploy.sh",
+      "**/nginx/**",
+      "**/mcp_server*",
+      "**/webhook*",
+      "**/openapi*",
+      "**/swagger*",
+      "**/G_*.py",
+      "**/*inject*"
+    ],
+    "zona_escrita_no_projeto": [
+      "src/modules/*/**",
+      "frontend/app/*/**",
+      "HANDOFF_ENGINE_MASTER.json",
+      ".aidd/cache/**"
+    ]
+  },
+  "aidd-freedom": {
+    "nome": "aidd-freedom",
+    "responsabilidades": [
+      "desacoplamento_vendor_lockin_lowcode",
+      "migracao_banco_supabase_para_postgres",
+      "preservacao_ui_e_extracao_fatias_bridge"
+    ],
+    "pode_guardar_pecas": false,
+    "dono_do_conteudo_de": [
+      "fatias_dominio_freedom",
+      "scripts_migracao_sql_freedom"
+    ],
+    "pode_conter": [
+      "src/**",
+      "scripts/**",
+      "schemas/**",
+      "tests/**",
+      "parsers/**"
+    ],
+    "nunca_conter": [
+      "**/Dockerfile*",
+      "**/docker-compose*",
+      "**/deploy.sh",
+      "**/nginx/**",
+      "**/mcp_server*",
+      "**/webhook*",
+      "**/openapi*",
+      "**/swagger*",
+      "**/G_*.py",
+      "**/*inject*"
+    ],
+    "zona_escrita_no_projeto": [
+      ".aidd/bridge-manifest.json",
+      "src/modules/*/**",
+      "frontend/app/*/**",
+      "HANDOFF_ENGINE_MASTER.json",
+      ".aidd/cache/**"
+    ]
+  },
+  "aidd-master": {
+    "nome": "aidd-master",
+    "responsabilidades": [
+      "harmonizacao_monolito_modular_vsa",
+      "despacho_topologico_worktrees_dispatch",
+      "implementacao_quarteto_sine_qua_non",
+      "casca_compartilhada_frontend_backend"
+    ],
+    "pode_guardar_pecas": false,
+    "dono_do_conteudo_de": [
+      "receitas_quarteto",
+      "nucleo_src_core",
+      "rotas_quarteto"
+    ],
+    "pode_conter": [
+      "src/**",
+      "scripts/**",
+      "schemas/**",
+      "tests/**",
+      "templates/quarteto/**"
+    ],
+    "nunca_conter": [
+      "**/Dockerfile*",
+      "**/docker-compose*",
+      "**/deploy.sh",
+      "**/nginx/**",
+      "**/.sops.yaml",
+      "**/secrets/**",
+      "**/G_*.py"
+    ],
+    "zona_escrita_no_projeto": [
+      "src/core/**",
+      "src/server.py",
+      "src/shared/**",
+      "frontend/**",
+      "docs/**",
+      "HANDOFF_MASTER_ENTERPRISE.json"
+    ]
+  },
+  "aidd-enterprise": {
+    "nome": "aidd-enterprise",
+    "responsabilidades": [
+      "blindagem_componentes_missao_critica",
+      "auditoria_integridade_sha256_e_selo",
+      "verificacao_drift_nucleo_compartilhado"
+    ],
+    "pode_guardar_pecas": false,
+    "dono_do_conteudo_de": [
+      "receita_injetor",
+      "catalogo_blindagem_sha256",
+      "regras_missao_critica"
+    ],
+    "pode_conter": [
+      "src/**",
+      "scripts/**",
+      "schemas/**",
+      "tests/**",
+      "templates/rules/**"
+    ],
+    "nunca_conter": [
+      "**/Dockerfile*",
+      "**/docker-compose*",
+      "**/deploy.sh",
+      "**/nginx/**",
+      "**/mcp_server*",
+      "**/webhook*",
+      "**/openapi*"
+    ],
+    "zona_escrita_no_projeto": [
+      "COMPONENT-REGISTRY.json",
+      "RELATORIO-AUDITORIA.json",
+      "templates/rules/**",
+      ".aidd/selo/**",
+      "HANDOFF_ENTERPRISE_OPS.json"
+    ]
+  },
+  "aidd-ops": {
+    "nome": "aidd-ops",
+    "responsabilidades": [
+      "geracao_infraestrutura_docker_compose",
+      "provisionamento_vps_e_hardening",
+      "gerenciamento_secrets_sops_age",
+      "monitoramento_uptime_e_deploy"
+    ],
+    "pode_guardar_pecas": false,
+    "dono_do_conteudo_de": [
+      "receitas_infra",
+      "templates_dockerfile_compose",
+      "scripts_deploy_nginx"
+    ],
+    "pode_conter": [
+      "src/**",
+      "scripts/**",
+      "schemas/**",
+      "tests/**",
+      "templates/infra/**"
+    ],
+    "nunca_conter": [
+      "**/src/modules/**",
+      "**/src/core/**",
+      "**/mcp_server*",
+      "**/G_*.py",
+      "**/vsa_generator*"
+    ],
+    "zona_escrita_no_projeto": [
+      "Dockerfile",
+      "docker-compose.yml",
+      "deploy.sh",
+      "nginx/**",
+      ".sops.yaml",
+      "secrets/**",
+      "monitoramento/**"
+    ]
+  }
+}

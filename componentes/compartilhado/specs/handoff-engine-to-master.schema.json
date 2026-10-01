@@ -1,7 +1,7 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
   "title": "HandoffEngineToMasterSchema",
-  "description": "Contrato formal e determinístico de transferência dos módulos e regras gerados pela Engine para a harmonização Monolito Modular VSA no aidd-master.",
+  "description": "Contrato formal e determinístico de transferência dos módulos e regras gerados pela Engine para a harmonização Monolito Modular VSA no aidd-master (C3).",
   "type": "object",
   "required": [
     "versao_schema",
@@ -9,7 +9,8 @@
     "projeto_slug",
     "slices_geradas",
     "artefatos_frontend",
-    "testes_executados"
+    "testes_executados",
+    "arquivos_fora_da_zona"
   ],
   "properties": {
     "versao_schema": {
@@ -29,10 +30,19 @@
       "minItems": 1,
       "items": {
         "type": "object",
-        "required": ["slice_nome", "caminho_src", "endpoints", "tabelas_sql"],
+        "required": ["slice_nome", "caminho_src", "sha256_arvore", "endpoints", "tabelas_sql"],
         "properties": {
           "slice_nome": { "type": "string" },
-          "caminho_src": { "type": "string" },
+          "caminho_src": {
+            "type": "string",
+            "pattern": "^src/modules/[^/]+",
+            "description": "Caminho da fatia, obrigatoriamente sob src/modules/<dominio>/."
+          },
+          "sha256_arvore": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{64}$",
+            "description": "Hash SHA-256 do conteúdo da árvore de diretórios da fatia gerada."
+          },
           "endpoints": {
             "type": "array",
             "items": {
@@ -56,7 +66,7 @@
       "type": "object",
       "required": ["tecnologia", "paginas_geradas", "origem_design"],
       "properties": {
-        "tecnologia": { "type": "string", "enum": ["nextjs_app_router"] },
+        "tecnologia": { "type": "string", "enum": ["nextjs_app_router", "tanstack_router"] },
         "paginas_geradas": {
           "type": "array",
           "items": { "type": "string" }
@@ -69,13 +79,27 @@
     },
     "testes_executados": {
       "type": "object",
-      "required": ["total", "passaram", "falharam", "zero_stubs"],
+      "required": ["total", "passaram", "falharam", "zero_stubs", "relatorio_pytest"],
       "properties": {
         "total": { "type": "integer", "minimum": 1 },
         "passaram": { "type": "integer", "minimum": 1 },
         "falharam": { "type": "integer", "maximum": 0 },
-        "zero_stubs": { "type": "boolean", "enum": [true] }
+        "zero_stubs": { "type": "boolean", "enum": [true] },
+        "relatorio_pytest": {
+          "type": "object",
+          "required": ["caminho", "exit_code"],
+          "properties": {
+            "caminho": { "type": "string" },
+            "exit_code": { "type": "integer", "enum": [0] }
+          },
+          "description": "Evidência real de execução de testes vinda de relatório do pytest."
+        }
       }
+    },
+    "arquivos_fora_da_zona": {
+      "type": "array",
+      "maxItems": 0,
+      "description": "Lista de arquivos criados fora da zona permitida pelo mapa de donos; deve ser estritamente vazia."
     }
   }
 }

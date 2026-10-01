@@ -1,0 +1,103 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "HandoffForgeToPlannerSchema",
+  "description": "Contrato formal e determinístico de prontidão do terreno (C1) emitido pelo aidd-forge para o aidd-planner.",
+  "type": "object",
+  "required": [
+    "versao_schema",
+    "projeto_dir",
+    "git",
+    "dependencias",
+    "leis_e_guardas",
+    "harnesses",
+    "almoxarifado",
+    "capacidade_llm",
+    "estrutura_projeto"
+  ],
+  "properties": {
+    "versao_schema": {
+      "type": "string",
+      "enum": ["1.0.0"]
+    },
+    "projeto_dir": {
+      "type": "string",
+      "minLength": 2,
+      "description": "Caminho absoluto ou relativo da raiz do projeto auditada."
+    },
+    "git": {
+      "type": "object",
+      "required": ["inicializado", "commit_inicial"],
+      "properties": {
+        "inicializado": {
+          "type": "boolean",
+          "enum": [true]
+        },
+        "commit_inicial": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{7,40}$",
+          "description": "Hash SHA do commit inicial gerado no repositório do projeto."
+        }
+      }
+    },
+    "dependencias": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["pacote", "versao"],
+        "properties": {
+          "pacote": { "type": "string" },
+          "versao": { "type": "string" }
+        }
+      }
+    },
+    "leis_e_guardas": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["gate", "sha256"],
+        "properties": {
+          "gate": { "type": "string" },
+          "sha256": { "type": "string", "pattern": "^[0-9a-f]{64}$" }
+        }
+      }
+    },
+    "harnesses": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "string"
+      }
+    },
+    "almoxarifado": {
+      "type": "object",
+      "required": ["catalogo_sha256", "pecas_disponiveis"],
+      "properties": {
+        "catalogo_sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "pecas_disponiveis": {
+          "type": "array",
+          "items": { "type": "string" }
+        }
+      }
+    },
+    "capacidade_llm": {
+      "type": "string",
+      "enum": ["delegado_com_resposta", "headless_com_chave", "nenhuma"],
+      "description": "Evidência factual de capacidade LLM ativa comprovada via round-trip."
+    },
+    "estrutura_projeto": {
+      "type": "object",
+      "required": ["pastas_criadas"],
+      "properties": {
+        "pastas_criadas": {
+          "type": "array",
+          "items": { "type": "string" }
+        }
+      }
+    }
+  }
+}

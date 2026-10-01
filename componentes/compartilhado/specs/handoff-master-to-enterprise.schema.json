@@ -1,13 +1,13 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
   "title": "HandoffMasterToEnterpriseSchema",
-  "description": "Contrato formal de transferência do Monolito Modular gerado pelo aidd-master para a blindagem de componentes de missao critica e auditoria SHA-256 no aidd-enterprise.",
+  "description": "Contrato formal de transferência do Monolito Modular (C4) gerado pelo aidd-master para blindagem SHA-256 no aidd-enterprise.",
   "type": "object",
   "required": [
     "versao_schema",
     "diretorio_projeto",
-    "servidor_fastapi_ok",
-    "quarteto_sine_qua_non_rotas",
+    "servidor_sobe",
+    "quarteto",
     "componentes_para_blindagem"
   ],
   "properties": {
@@ -19,29 +19,48 @@
       "type": "string",
       "minLength": 2
     },
-    "servidor_fastapi_ok": {
-      "type": "boolean",
-      "enum": [true]
-    },
-    "quarteto_sine_qua_non_rotas": {
+    "servidor_sobe": {
       "type": "object",
-      "required": ["swagger_url", "webhooks_url", "mcp_url", "docs_url"],
+      "required": ["log_subida", "porta"],
       "properties": {
-        "swagger_url": { "type": "string", "enum": ["/openapi.json"] },
-        "webhooks_url": { "type": "string", "enum": ["/webhooks"] },
-        "mcp_url": { "type": "string", "enum": ["/mcp"] },
-        "docs_url": { "type": "string", "enum": ["/docs"] }
-      }
+        "log_subida": { "type": "string", "minLength": 1 },
+        "porta": { "type": "integer", "minimum": 1 }
+      },
+      "description": "Evidência factual de subida do servidor com porta alocada e log capturado."
+    },
+    "quarteto": {
+      "type": "array",
+      "minItems": 4,
+      "items": {
+        "type": "object",
+        "required": ["rota", "status_http_medido"],
+        "properties": {
+          "rota": {
+            "type": "string"
+          },
+          "status_http_medido": {
+            "type": "integer",
+            "minimum": 200,
+            "maximum": 399
+          }
+        }
+      },
+      "description": "Evidência das 4 rotas do Quarteto Sine Qua Non testadas com status HTTP 2xx/3xx."
     },
     "componentes_para_blindagem": {
       "type": "array",
       "minItems": 1,
       "items": {
         "type": "object",
-        "required": ["tipo", "caminho_relativo", "descricao"],
+        "required": ["caminho_relativo", "sha256"],
         "properties": {
           "tipo": { "type": "string", "enum": ["rule", "kernel", "slice", "security"] },
           "caminho_relativo": { "type": "string" },
+          "sha256": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{64}$",
+            "description": "Hash SHA-256 do arquivo a ser blindado."
+          },
           "descricao": { "type": "string" }
         }
       }
