@@ -1,0 +1,17 @@
+ROLE: Builder. Ecosystem AIDD. Ticket 8. Target tool: aidd-grill.
+DIMENSION: D14
+DELIVER: .agents/skills/aidd-grill/scripts/handoff.py
+
+STEPS:
+- Create .agents/skills/aidd-grill/scripts/rollback.py to clean partial outputs on validation failure.
+- Create .agents/skills/aidd-grill/scripts/handoff.py producing HMAC-SHA256 signed assumptions manifest for aidd-spec.
+- Test: run rollback on failure, assert target path cleaned.
+- Test: run handoff on success, assert valid HMAC signature.
+
+RULES:
+1. Write failing test first. Run. Assert exit 1.
+2. Implement. Zero stubs. Real pytest tests. Run. Assert exit 0.
+3. Work inside ephemeral Git Worktree only.
+4. Capture real exit code: redirect to file, read $? same line. Never trust pipes.
+5. NEVER edit docs/auditoria/CONFIG-EXECUCAO-USUARIO.json.
+6. Deliver exactly: .agents/skills/aidd-grill/scripts/handoff.py

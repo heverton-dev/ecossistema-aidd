@@ -1,0 +1,16 @@
+ROLE: Builder. Ecosystem AIDD. Ticket 3. Target tool: aidd-grill.
+DIMENSION: D4
+DELIVER: .agents/skills/aidd-grill/scripts/parser.py
+
+STEPS:
+- Create .agents/skills/aidd-grill/scripts/parser.py parsing numbered questions and recommended answer blocks.
+- Extract and validate: question number, question text, options, and recommended option.
+- Test: parse round missing numbered questions or recommendations. Assert validation fails with exit 1.
+
+RULES:
+1. Write failing test first. Run. Assert exit 1.
+2. Implement. Zero stubs. Real pytest tests. Run. Assert exit 0.
+3. Work inside ephemeral Git Worktree only.
+4. Capture real exit code: redirect to file, read $? same line. Never trust pipes.
+5. NEVER edit docs/auditoria/CONFIG-EXECUCAO-USUARIO.json.
+6. Deliver exactly: .agents/skills/aidd-grill/scripts/parser.py

@@ -936,10 +936,32 @@ def cmd_tdd(args):
     return 1
 
 
+def cmd_spec(args):
+    """Delegação para aidd-spec (subcomandos: validar, compilar, exportar)."""
+    script = os.path.join(ROOT_DIR, "componentes", "compartilhado", "skills", "aidd-spec", "scripts", "cli.py")
+    if not os.path.isfile(script):
+        script = os.path.join(ROOT_DIR, ".agents", "skills", "aidd-spec", "scripts", "cli.py")
+    if os.path.isfile(script):
+        return run_command([sys.executable, script] + args, cwd=ROOT_DIR)
+    print(f"Erro: script '{script}' não encontrado.")
+    return 1
+
+
 def cmd_derivados(args):
     """Regenera arquivos derivados (handoff, baseline, ACHADOS, livro): subcomandos regenerar, listar."""
     script = os.path.join(ROOT_DIR, "scripts", "regenerar_derivados.py")
     return run_command([sys.executable, script] + args, cwd=ROOT_DIR)
+
+
+def cmd_grill(args):
+    """Delegação para aidd-grill (subcomandos: validar, consolidar, exportar)."""
+    script = os.path.join(ROOT_DIR, "componentes", "compartilhado", "skills", "aidd-grill", "scripts", "cli.py")
+    if not os.path.isfile(script):
+        script = os.path.join(ROOT_DIR, ".agents", "skills", "aidd-grill", "scripts", "cli.py")
+    if os.path.isfile(script):
+        return run_command([sys.executable, script] + args, cwd=ROOT_DIR)
+    print(f"Erro: script '{script}' não encontrado.")
+    return 1
 
 
 def cmd_livro(args):
@@ -1375,6 +1397,10 @@ def main():
         "tdd": cmd_tdd,
         "derivados": cmd_derivados,
         "aidd-tdd": cmd_tdd,
+        "spec": cmd_spec,
+        "aidd-spec": cmd_spec,
+        "grill": cmd_grill,
+        "aidd-grill": cmd_grill,
         "livro": cmd_livro,
         "audit-4f": cmd_audit_4f,
         "aidd-audit-4f": cmd_audit_4f,

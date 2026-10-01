@@ -1,0 +1,16 @@
+ROLE: Builder. Ecosystem AIDD. Ticket 2. Target tool: aidd-grill.
+DIMENSION: D3
+DELIVER: .agents/skills/aidd-grill/scripts/isolamento.py
+
+STEPS:
+- Create .agents/skills/aidd-grill/scripts/isolamento.py with GrillWorktreeManager.
+- Block writes outside authorized paths (docs/ and ephemeral worktrees).
+- Test: attempt write outside authorized directory. Assert exit 1 or SandboxViolationError raised.
+
+RULES:
+1. Write failing test first. Run. Assert exit 1.
+2. Implement. Zero stubs. Real pytest tests. Run. Assert exit 0.
+3. Work inside ephemeral Git Worktree only.
+4. Capture real exit code: redirect to file, read $? same line. Never trust pipes.
+5. NEVER edit docs/auditoria/CONFIG-EXECUCAO-USUARIO.json.
+6. Deliver exactly: .agents/skills/aidd-grill/scripts/isolamento.py

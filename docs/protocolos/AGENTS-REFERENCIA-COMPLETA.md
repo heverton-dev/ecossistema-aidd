@@ -145,6 +145,7 @@ O ecossistema dispõe de Quality Gates globais em gates/:
 - gates/G_QUARTETO_SINE_QUA_NON.py: Audita no nível raiz, contra deliverables reais gerados pelos fluxos canônicos, a presença efetiva dos 4 pilares (/docs, /webhooks, /mcp, /docs/guia), complementando o G_CONTRACT_ROT.py na cobertura da Lei #10.
 - gates/G_STACK_PADRAO_OURO.py: Audita dependências de frontend gerado (Next.js, React, TypeScript, Tailwind) e configuração de backend (SQLite WAL, OpenAPI 3.1.x) contra o padrão-ouro da Lei #11, respeitando override explícito registrado no plano.
 - gates/G_PIPELINE_HANDOFF.py: Valida formalmente a conformidade de manifestos de handoff de execução contra o schema canônico handoff-execucao.schema.json, prevenindo dados inválidos, stubs e comandos triviais (ISSUE-PIPE-0002).
+- gates/G_aidd_grill.py: Quality gate da ferramenta `aidd-grill` (ciclo-01) — exige os 8 scripts obrigatórios da skill em componentes/compartilhado/skills/aidd-grill/scripts/.
 
 - **Execução unificada:** `python ecossistema.py audit` delega para `pre-commit run --all-files`.
 

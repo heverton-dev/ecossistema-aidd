@@ -1,0 +1,16 @@
+ROLE: Builder. Ecosystem AIDD. Ticket 5. Target tool: aidd-grill.
+DIMENSION: D11
+DELIVER: .agents/skills/aidd-grill/scripts/fallback.py
+
+STEPS:
+- Create .agents/skills/aidd-grill/scripts/fallback.py.
+- Implement headless autonomous fallback synthesizing ### Consolidated Assumptions from open question recommendations.
+- Test: feed open questions in headless mode. Assert consolidated assumptions generated cleanly.
+
+RULES:
+1. Write failing test first. Run. Assert exit 1.
+2. Implement. Zero stubs. Real pytest tests. Run. Assert exit 0.
+3. Work inside ephemeral Git Worktree only.
+4. Capture real exit code: redirect to file, read $? same line. Never trust pipes.
+5. NEVER edit docs/auditoria/CONFIG-EXECUCAO-USUARIO.json.
+6. Deliver exactly: .agents/skills/aidd-grill/scripts/fallback.py
