@@ -1,0 +1,51 @@
+{
+  "idle_timeout": 300,
+  "backends": {
+    "playwright": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@playwright/mcp@latest"
+      ]
+    },
+    "context7": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@upstash/context7-mcp"
+      ]
+    },
+    "github": {
+      "command": "docker",
+      "args": [
+        "run",
+        "-i",
+        "--rm",
+        "-e",
+        "GITHUB_PERSONAL_ACCESS_TOKEN",
+        "ghcr.io/github/github-mcp-server"
+      ],
+      "env": {
+        "GITHUB_PERSONAL_ACCESS_TOKEN": "${GITHUB_PERSONAL_ACCESS_TOKEN}"
+      }
+    },
+    "mcp-verificador-cve": {
+      "command": "python",
+      "args": [
+        "tools/aidd-generator/mcps/mcp-verificador-cve/server.py"
+      ]
+    },
+    "cloudflare-mcp": {
+      "command": "python",
+      "args": [
+        "tools/aidd-ops/mcps/cloudflare-mcp/server.py"
+      ]
+    },
+    "docker-mcp": {
+      "command": "python",
+      "args": [
+        "tools/aidd-ops/mcps/docker-mcp/server.py"
+      ]
+    }
+  }
+}

@@ -36,7 +36,7 @@ DIRECTIVES: dict[str, str] = {
         "logs, or lockfiles into context."
     ),
     "G09": (
-        "- **Graph-first:** Always query knowledge graph (code-review-graph MCP) "
+        "- **Graph-first:** Always query knowledge graph (codebase-memory-mcp MCP) "
         "before Grep, Glob, or full file reads."
     ),
 }

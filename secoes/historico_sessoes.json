@@ -1,7 +1,7 @@
 {
   "versao": "1.0",
-  "atualizado_em": "2026-10-01T09:19:19.489298",
-  "total_sessoes": 10,
+  "atualizado_em": "2026-10-01T13:30:37.402882",
+  "total_sessoes": 11,
   "sessoes": [
     {
       "id": "fc4566a8-0804-4748-ab5f-ec105414273c",
@@ -73,22 +73,23 @@
     },
     {
       "id": "ee536f65-5f7f-4728-9a58-6ada128f6877",
-      "registrado_em": "2026-09-30 11:55:52",
+      "registrado_em": "2026-10-01 10:13:55",
       "harness": "claude",
       "modelo": "claude-opus-5-5",
-      "titulo": "Auditoria e fechamento do ciclo aidd-planner-ciclo-01",
+      "titulo": "Fechamento do ciclo aidd-planner-ciclo-01 (gate_final)",
       "workspace": "C:\\Users\\trcnologia\\Desktop\\ecossistema-aidd",
-      "transcript_path": ""
+      "transcript_path": "",
+      "atualizado_em": "2026-10-01 10:13:55"
     },
     {
       "id": "57105e95-4742-4e53-af8a-1341cb52e0a9",
-      "registrado_em": "2026-10-01 09:19:19",
+      "registrado_em": "2026-10-01 10:08:26",
       "harness": "antigravity",
       "modelo": "gemini-3.8-flash-low",
       "titulo": "Sessão Ativa (Auto-Registrada)",
       "workspace": "C:/Users/trcnologia/Desktop/ecossistema-aidd",
       "transcript_path": "C:/Users/trcnologia/.gemini/antigravity-cli/brain/57105e95-4742-4e53-af8a-1341cb52e0a9/.system_generated/logs/transcript_full.jsonl",
-      "atualizado_em": "2026-10-01 09:19:19"
+      "atualizado_em": "2026-10-01 10:08:26"
     },
     {
       "id": "b7063bd6-fa6d-4650-84e1-c5ecbdb46fac",
@@ -99,6 +100,16 @@
       "workspace": "C:/Users/trcnologia/Desktop/ecossistema-aidd",
       "transcript_path": "C:/Users/trcnologia/.gemini/antigravity-cli/brain/b7063bd6-fa6d-4650-84e1-c5ecbdb46fac/.system_generated/logs/transcript_full.jsonl",
       "atualizado_em": "2026-10-01 09:10:55"
+    },
+    {
+      "id": "49b00ff6-31c2-4afa-8580-38168af8aa9a",
+      "registrado_em": "2026-10-01 13:30:37",
+      "harness": "antigravity",
+      "modelo": "gemini-3.8-flash-low",
+      "titulo": "Sessão Ativa (Auto-Registrada)",
+      "workspace": "C:/Users/trcnologia/Desktop/ecossistema-aidd",
+      "transcript_path": "C:/Users/trcnologia/.gemini/antigravity-cli/brain/49b00ff6-31c2-4afa-8580-38168af8aa9a/.system_generated/logs/transcript_full.jsonl",
+      "atualizado_em": "2026-10-01 13:30:37"
     }
   ]
 }

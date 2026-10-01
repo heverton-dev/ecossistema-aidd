@@ -43,12 +43,14 @@ DIRS_IGNORADAS = {
     "venv",
     "node_modules",
     ".code-review-graph",
+    ".codebase-memory",
     ".ade_tmp",
     "dist",
     "build",
 }
 
-COMANDO_PROBE = ("code-review-graph", "query", "file_summary")
+COMANDO_PROBE = ("codebase-memory-mcp", "cli", "list_projects")
+COMANDO_PROBE_LEGACY = ("code-review-graph", "query", "file_summary")
 
 
 class FallbackOperacionalError(Exception):
@@ -259,11 +261,30 @@ def busca_impacto_imports(raiz: Path, arquivo_alvo: str) -> List[Dict[str, Any]]
 
 
 def _rodar_probe(raiz: Path, arquivo: str) -> subprocess.CompletedProcess:
-    """Executa a sonda no MCP code-review-graph. Levanta OSError se o CLI não existir."""
+    """Executa a sonda no MCP codebase-memory-mcp ou fallback legadо. Levanta OSError se o CLI não existir."""
+    import shutil
+    cmd_name = COMANDO_PROBE[0]
+    cbm_exe = shutil.which(cmd_name)
+    if not cbm_exe:
+        custom_cbm = r"C:\Users\trcnologia\tools\codebase-memory-mcp\codebase-memory-mcp.exe"
+        if os.path.isfile(custom_cbm):
+            cbm_exe = custom_cbm
+        else:
+            cbm_exe = shutil.which(COMANDO_PROBE_LEGACY[0])
+            if cbm_exe:
+                return subprocess.run(
+                    [cbm_exe, "query", "file_summary", arquivo, "--repo", str(raiz)],
+                    capture_output=True,
+                    timeout=PROBE_TIMEOUT_S,
+                    check=False,
+                )
+            raise FileNotFoundError(f"CLI {cmd_name} ausente no PATH (MCP indisponível)")
+
     return subprocess.run(
-        [*COMANDO_PROBE, arquivo, "--repo", str(raiz)],
+        [cbm_exe, "cli", "list_projects"],
         capture_output=True,
         timeout=PROBE_TIMEOUT_S,
+        stdin=subprocess.DEVNULL,
         check=False,
     )
 

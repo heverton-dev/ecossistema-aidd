@@ -1069,3 +1069,23 @@
 - **Status:** **RESOLVIDO**.
 - **Data da Última Auditoria:** 28/09/2026.
 
+---
+
+## 23. Substituição de CRG por CBM & Implementação do Lazy Gatekeeper (cbm-lazy-proxy Ciclo 01)
+
+- **Objetivo da Correção:**
+  Erradicar a sobrecarga de memória (1.6 GB de RAM com PyTorch) e verbosidade de tokens do `code-review-graph`, substituindo-o pelo `codebase-memory-mcp` (CBM v0.11.0) nativo em todos os harnesses, e introduzir o proxy `mcp_gatekeeper.py` com *idle reaping* para todos os MCPs pesados secundários.
+- **Ferramentas Tocadas:** [`tools/aidd-forge`](file:///C:/Users/trcnologia/Desktop/ecossistema-aidd/tools/aidd-forge), [`tools/aidd-master`](file:///C:/Users/trcnologia/Desktop/ecossistema-aidd/tools/aidd-master).
+- **O que executou:**
+  1. `tools/aidd-forge/aidd_forge/templates/governance/AGENTS.md` e regras de conformidade: atualizados para `codebase-memory-mcp`.
+  2. `tools/aidd-master/tests/unit/test_nextjs_exporter.py`: corrigida invocação de `npm.cmd` em subprocess no Windows com `shell=True`.
+  3. `componentes/compartilhado/src-core/mcp_gatekeeper.py`: implementado servidor proxy sob demanda com encerramento de ociosos.
+  4. `componentes/compartilhado/hooks/cbm_session_start.py` e `cbm_update.py`: implementados hooks universais assíncronos.
+- **Resultados de Testes:**
+  - `G_UNIVERSAL_HARNESS.py` → exit 0 (100% paridade em todos os 7 harnesses).
+  - `G_HARNESS_COMPAT.py` → exit 0 (81 componentes sincronizados).
+  - `G_DISCIPLINA_TESTE_FERRAMENTA.py` → exit 0.
+  - `G_TESTES_REAIS.py` → exit 0 (281 passed em aidd-forge; 413 passed em aidd-master).
+- **Status:** **RESOLVIDO**.
+- **Data da Última Auditoria:** 01/10/2026.
+

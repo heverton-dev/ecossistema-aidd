@@ -1,0 +1,69 @@
+GOAL: each of 8 tools hyper-focused, ONE owner per responsibility, zero duplication. Builders must not overwrite or do work of integration/hardening/infra tools. Stages swappable via fixed hand-off contracts.
+
+FUNNEL (AGENTS.md §3): [FORGE -> PLANNER] -> {GENERATOR | FACTORY | BRIDGE} -> [MASTER -> ENTERPRISE -> OPS]
+Roles reference: docs/anatomias/PAPEIS-DAS-8-FERRAMENTAS.md
+
+TARGET OWNERSHIP MAP (validate, refine, do not assume):
+- forge = rules + gates (single source of all G_*.py)
+- planner = spec -> PLANNER.json
+- generator | factory | bridge = ONLY domain slices (src/modules/<dominio>/) + hand-off manifest. No infra, no core, no gates, no injector, no Quarteto.
+- master = integration: merge slices into modular monolith + Quarteto (/api, /webhook, /mcp, /docs) + compose
+- enterprise = hardening: injector + SHA-256 seal + COMPONENT-REGISTRY + audit
+- ops = infra: Dockerfile, docker-compose, deploy.sh, nginx, sops+age, Uptime Kuma
+- Shared libs = SINGLE SOURCE in componentes/compartilhado/, distributed by sync, never hand-edited copies.
+
+BASELINE 2026-10-01 (own script, md5 per file, excl node_modules/__pycache__/.git/harness dirs):
+- File count: generator 1685, enterprise 1011, master 383, forge 167, ops 94, factory 70, bridge 26, planner 19
+- Identical-content file pairs: enterprise-master 255, enterprise-factory 23, factory-master 21, enterprise-generator 4
+- master vs enterprise (diff -rq): master 404 files, 346 identical (86%), 27 same-name divergent
+  Master-only: scripts/dispatch_pipeline.py, vsa_join_barrier.py, attach_vsa_infra.py, engine_router.py, orchestrator_pipeline.py, application/commands/attach_vsa.py, scripts/gates/G_AST_BOUNDED_CONTEXT.py, src/core/mcp, CAPABILITIES.json(+.sig)
+  Enterprise-only: scripts/injector, COMPONENT-REGISTRY.json, src/core/crypto_signer.py, RELATORIO-AUDITORIA.json
+- Boundary violations found:
+  - factory/templates/vsa/: Dockerfile, docker-compose.yml, deploy.sh (ops job); mcp_server.py, webhooks.py, openapi.py (master job)
+  - generator/scripts/core/injector/ + scripts/aidd_inject.py (enterprise job)
+  - enterprise: 41 infra files (templates/core, templates/v2, nginx, materiais-extras/examples) (ops job)
+- Gate copies (copies/distinct versions): G_HARNESS_COMPAT 19/5, G_SEGREDOS 16/2, G_QUALIDADE 16/2, G_INJECT 5/4
+- Known from past sessions (NOT re-verified, re-check): flows 02/03 break at stage 3 (factory/bridge); inject wrote into real repo instead of generated project; 2 different audit commands; forge CLI only runs from inside tools/aidd-forge.
+
+SCOPE: diagnosis + plan + E2E baseline ONLY. No fix. No remove/move. No commit.
+
+STEP 0 — E2E BASELINE ("before" photo), run FIRST:
+- NEVER on main. Create isolated git worktree on new branch (e.g. aidd/e2e-baseline-ciclo-01) and run everything from there. Main worktree must stay untouched.
+- Output root: C:\Users\trcnologia\Desktop\TESTES_E2E-ecossistema-aidd\ciclo-01\ (outside repo). One folder per flow:
+  - ...\ciclo-01\fluxo-01-pure\
+  - ...\ciclo-01\fluxo-02-open\
+  - ...\ciclo-01\fluxo-03-freedom\
+- Each flow: python ecossistema.py run-fluxo --fluxo <pure|open|freedom> --pasta <flow folder> (check --help for required args; freedom needs --origem with a real low-code export, ask user if none available).
+- Per flow, record in <flow folder>\RESULTADO-E2E.json: command, real exit code, duration, stage where it broke (forge/planner/builder/master/enterprise/ops), error text, Quarteto check (/api, /webhook, /mcp, /docs respond: yes/no), files generated count, tokens if measurable.
+- Leak check: git status of main worktree + repo root BEFORE and AFTER each flow. Any change outside flow folder = boundary bug (record which tool wrote it).
+- Consolidate: ...\ciclo-01\BASELINE-E2E.md (table: flow | exit | broke at | Quarteto | leaks | duration).
+
+STEPS 1-9 (diagnosis):
+1. Re-measure all 8 tools from scratch, own script. Do not trust baseline. Report mismatches.
+2. Build REAL ownership matrix: responsibility x tool, who implements today vs target owner. Grep real code, not README.
+3. Every boundary violation: list files, real importers/users (grep), destination owner, risk of moving.
+4. Every duplicated file/gate: diff versions, pick correct one (git log -- <file> per copy), destination (owner / componentes/compartilhado).
+5. master vs enterprise: table of 27 divergent (file | diff | correct version | destination).
+6. Check existing sync (python ecossistema.py components sync or similar). Confirm coverage of templates/, tests/, scripts/gates/.
+7. HAND-OFF CONTRACTS spec: for each stage boundary (forge->planner, planner->builder, builder->master, master->enterprise, enterprise->ops) define input/output artifact, JSON schema, required fields, who validates. Map each E2E break from step 0 to the contract that would have caught it. Spec only, no code.
+8. Boundary gate spec (e.g. gates/G_FRONTEIRA_FERRAMENTAS.py): per-tool allowed write zones from ownership map; fail if tool ships/writes file owned by another or outside its target folder. Spec only, no code.
+9. Risks: breaking gates, path-dependent tests, 3 flows end-to-end, harness mirrors (.claude/.agents/.gemini/.opencode/.mimocode/.cursor).
+
+DELIVERABLE: 4F initiative at docs/auditoria/fronteiras-ferramentas/ciclo-01/. Template: docs/auditoria/agilidade-gates/ciclo-01/ (PLANO-EVOLUCAO.md + PLANO-EVOLUCAO.json + DOD.md + RESUMO-USUARIO.md). Never docs/planos/. Link BASELINE-E2E.md.
+PLANO-EVOLUCAO phases in safe order:
+  (a) ownership map + hand-off contracts approved; boundary gate + contract validators in warn-only mode
+  (b) single source + sync for shared libs and gates
+  (c) move boundary violations to owner, one tool per ticket, rerun 3 E2E flows after each (same TESTES_E2E structure, new ciclo folder)
+  (d) remove duplicates
+  (e) boundary gate + contracts enforcing
+  (f) "after" photo: rerun 3 E2E flows, compare vs baseline (exit, broke at, Quarteto, leaks, duplicate count, gate time, tokens). Must be equal or better on every metric.
+  (g) per-tool README last
+DOD must require (f) passing.
+
+RULES:
+- Answer user in PT-BR, plain language, no jargon, analogies OK.
+- Every claim backed by command run THIS session. Code reading != test.
+- Before editing: git status, check concurrent session writing same dir.
+- Real exit code: redirect to file, capture $? same line. Never via pipe.
+- E2E never on main, never output inside repo.
+- No fix, no remove/move. On finish: present summary, STOP, await user approval.

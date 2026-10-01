@@ -15,7 +15,7 @@ Deterministic inspection manual to dissect any ecosystem target (tool, pipeline,
    - Resolve destination directory: `docs/anatomias/anatomia-<target>/`. Create if missing.
 
 2. **Factual Evidence Collection (Strict Hierarchy):**
-   - **Step 2.1 (Knowledge Graph):** Query `code-review-graph` (`query_graph_tool`, `detect_changes_tool`, `get_review_context_tool`) for definitions, callers, callees, and dependencies.
+   - **Step 2.1 (Knowledge Graph):** Query `codebase-memory-mcp` (`search_graph`, `trace_path`, `query_graph`, `get_architecture`) for definitions, callers, callees, and dependencies.
    - **Step 2.2 (Canonical Docs):** Read relevant living docs in `docs/protocolos/`, `AGENTS.md`, and active schemas.
    - **Step 2.3 (Target Source Path):** Inspect source files directly in `tools/`, `scripts/`, or `componentes/`.
    - **Step 2.4 (Ecosystem CLI):** Verify command-line wiring in `ecossistema.py`.

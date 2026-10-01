@@ -284,11 +284,17 @@ def _construir_entrada_mcp(nome, cfg, harness):
     cwd_val = None
     if cfg.get("cwd"):
         cwd_val = ROOT_DIR if cfg["cwd"] in ("${WORKSPACE_ROOT}", ".") else cfg["cwd"]
-    elif nome == "code-review-graph":
+    elif nome in ("code-review-graph", "codebase-memory-mcp", "mcp-gatekeeper"):
         cwd_val = ROOT_DIR
 
+    entrada_cmd = cfg["comando"]
+    if entrada_cmd == "codebase-memory-mcp" and not shutil.which("codebase-memory-mcp"):
+        fallback_cbm = r"C:\Users\trcnologia\tools\codebase-memory-mcp\codebase-memory-mcp.exe"
+        if os.path.isfile(fallback_cbm):
+            entrada_cmd = fallback_cbm
+
     if harness in ("claude-code", "cursor", "gemini-cli", "antigravity", "vscode"):
-        entrada = {"command": cfg["comando"], "args": list(cfg.get("args", []))}
+        entrada = {"command": entrada_cmd, "args": list(cfg.get("args", []))}
         if entrada_env:
             entrada["env"] = entrada_env
         if cwd_val:

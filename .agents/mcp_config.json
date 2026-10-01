@@ -34,10 +34,15 @@
     "cloudflare-docs": {
       "serverUrl": "https://docs.mcp.cloudflare.com/mcp"
     },
-    "code-review-graph": {
-      "command": "code-review-graph",
+    "codebase-memory-mcp": {
+      "command": "C:\\Users\\trcnologia\\tools\\codebase-memory-mcp\\codebase-memory-mcp.exe",
+      "args": [],
+      "cwd": "C:\\Users\\trcnologia\\Desktop\\ecossistema-aidd"
+    },
+    "mcp-gatekeeper": {
+      "command": "python",
       "args": [
-        "serve"
+        "componentes/compartilhado/src-core/mcp_gatekeeper.py"
       ],
       "cwd": "C:\\Users\\trcnologia\\Desktop\\ecossistema-aidd"
     }

@@ -7,13 +7,6 @@
         "@playwright/mcp@latest"
       ]
     },
-    "code-review-graph": {
-      "command": "code-review-graph",
-      "args": [
-        "serve"
-      ],
-      "cwd": "C:\\Users\\trcnologia\\Desktop\\ecossistema-aidd"
-    },
     "context7": {
       "command": "npx",
       "args": [
@@ -60,6 +53,18 @@
       "args": [
         "tools/aidd-ops/mcps/docker-mcp/server.py"
       ]
+    },
+    "codebase-memory-mcp": {
+      "command": "C:\\Users\\trcnologia\\tools\\codebase-memory-mcp\\codebase-memory-mcp.exe",
+      "args": [],
+      "cwd": "C:\\Users\\trcnologia\\Desktop\\ecossistema-aidd"
+    },
+    "mcp-gatekeeper": {
+      "command": "python",
+      "args": [
+        "componentes/compartilhado/src-core/mcp_gatekeeper.py"
+      ],
+      "cwd": "C:\\Users\\trcnologia\\Desktop\\ecossistema-aidd"
     }
   }
 }

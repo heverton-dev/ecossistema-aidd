@@ -16,7 +16,7 @@
   - **Token budget:** Target ≤300 tokens for normal answer, ≤600 for technical answer.
 - **Editing rule:** Always use exact search/replace block tools (`replace_file_content`). Never dump entire rewritten files into output.
 - **Bash rule:** Always pipe verbose commands to tail/grep. E.g., `pytest 2>&1 | tail -n 25`. Never dump raw bundle outputs, logs, or lockfiles into context.
-- **Graph-first:** Query knowledge graph (`code-review-graph` MCP) before Grep, Glob, or full file reads.
+- **Graph-first:** Query knowledge graph (`codebase-memory-mcp` MCP) before Grep, Glob, or full file reads.
 - **Docs Ingestion constraint:** Read ONLY living canonical documentation (`docs/protocolos/`, `AGENTS.md`, `MEMORY.md`).
 
 ---
@@ -55,5 +55,5 @@ Convergence Funnel: All flows converge into `aidd-master` (Modular VSA) -> `aidd
 - `/aidd-spec`: Deterministic technical specification generator with binary acceptance criteria.
 - `/aidd-tickets`: Atomic tracer-bullet task decomposition with bounded blast radius.
 - `/aidd-tdd`: Strict Red-Green-Refactor cycle with zero stubs invariant across all language runtimes.
-- `/aidd-diagnose`: 5-phase scientific fault triage integrated with `code-review-graph`.
+- `/aidd-diagnose`: 5-phase scientific fault triage integrated with `codebase-memory-mcp`.
 - `/aidd-handoff`: Compact session context serialization directly into `secoes/`.

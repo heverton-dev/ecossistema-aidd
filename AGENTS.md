@@ -26,7 +26,7 @@
 - **Editing rule:** Always use exact search/replace block tools (`replace_file_content`). Never dump entire rewritten files into output.
 - **Bash rule:** Always pipe verbose commands to tail/grep. E.g., `pytest 2>&1 | tail -n 25`. Never dump raw bundle outputs, logs, or lockfiles into context.
 - **Long-task rule:** Run anything slower than ~2 minutes (full gate battery, `gate_final`, 4F pipeline) in the background and resume on its completion notice. Never ask the user to "call back in N minutes". One heavy cycle at a time: `scripts/fila_ciclos.py` queues the rest and notifies when each ends.
-- **Graph-first:** Always query knowledge graph (`code-review-graph` MCP) before Grep, Glob, or full file reads.
+- **Graph-first:** Always query knowledge graph (`codebase-memory-mcp` MCP) before Grep, Glob, or full file reads.
 - **Docs Ingestion constraint:** Read ONLY living canonical documentation (`docs/protocolos/`, `AGENTS.md`, `MEMORY.md`). Never ingest historical reports, superseded manuals, or past session logs as system truths.
 
 ---
@@ -166,13 +166,14 @@ Core rules are universal. Domain and tool-specific instructions reside in their 
 
 ---
 
-## 5. MCP Tools: code-review-graph
+## 5. MCP Tools: codebase-memory-mcp
 
 Query the graph BEFORE file scanning:
-- `detect_changes_tool`: Analyze change blast radius and risk score.
-- `get_review_context_tool`: Token-efficient code snippets.
-- `get_impact_radius_tool` / `get_affected_flows_tool`: Trace affected paths.
-- `query_graph_tool`: Trace callers, callees, imports, tests.
+- `search_graph`: Query functions, types, and references by name/regex pattern.
+- `trace_path`: Trace callers (inbound), callees (outbound), or blast radius with depth limit.
+- `query_graph`: Cypher-based structural queries on code relationships.
+- `get_architecture`: High-level system architecture and component structure overview.
+- `detect_changes`: Change blast radius, diff analysis, and affected flows.
 
 ---
 
@@ -186,7 +187,7 @@ Canonical workflow skills available across all harnesses to eliminate vibe codin
 - `/aidd-spec`: Deterministic technical specification generator with binary acceptance criteria.
 - `/aidd-tickets`: Vertical-slice tickets (one verifiable behavior each) with `Blocked by`.
 - `/aidd-tdd`: Agreed seams, then Red → Green loop; refactor at review; zero stubs, polyglot.
-- `/aidd-diagnose`: 5-phase scientific fault triage integrated with `code-review-graph`.
+- `/aidd-diagnose`: 5-phase scientific fault triage integrated with `codebase-memory-mcp`.
 - `/aidd-handoff`: Compact session context serialization directly into `secoes/`.
 - `/aidd-session`: Deterministic session ID and metadata persistence in `secoes/` for instant recovery.
 - `/aidd-agent-writing`: Writing guide for skills, AGENTS.md, CLAUDE.md.

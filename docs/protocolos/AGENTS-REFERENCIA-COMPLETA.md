@@ -85,7 +85,7 @@ Conjunto de skills universais inspiradas nas práticas de Matt Pocock, adaptadas
 - **/aidd-spec:** Transforma ideação e alinhamento em especificação técnica formal determinística com não-escopos claros e critérios binários de aceite.
 - **/aidd-tickets:** Decompõe a especificação em tickets de fatia vertical (um comportamento completo e verificável por ticket), com campo `Blocked by`, prefatoração primeiro e refatoração ampla em expand → migrate → contract.
 - **/aidd-tdd:** Seams combinados com o usuário antes do primeiro teste, depois loop Red → Green (um teste, uma implementação por vez); refatoração na revisão. Proíbe teste tautológico, acoplado à implementação e fatiado em camadas. Poliglota (pytest, vitest, cargo test, go test) com regra Zero Stubs.
-- **/aidd-diagnose:** Triage científica de falhas: loop vermelho já executado e minimizado, análise de grafo via `code-review-graph`, 3 a 5 hipóteses em ordem (uma ativa por vez), logs `[DEBUG-xxxx]`, prova e teste de regressão.
+- **/aidd-diagnose:** Triage científica de falhas: loop vermelho já executado e minimizado, análise de grafo via `codebase-memory-mcp`, 3 a 5 hipóteses em ordem (uma ativa por vez), logs `[DEBUG-xxxx]`, prova e teste de regressão.
 - **/aidd-handoff:** Serialização compacta do estado da sessão diretamente em `secoes/sessao-<data>-<slug>.md` para rotação de contexto ou troca de agentes.
 - **/aidd-plan:** Gera o esqueleto de iniciativas em `docs/planos/` (`python ecossistema.py plan init`), com seções "Ainda nao especificado" e "Fora de escopo" (fora de escopo nunca volta para o plano atual).
 - **/aidd-agent-writing:** Guia de escrita para textos que agentes leem (skills, `AGENTS.md`, `CLAUDE.md`): ponteiros de contexto, teste de no-op, fonte única, sedimento, critério de pronto.
@@ -197,19 +197,18 @@ Para qualquer relatório gerado em `.html` salvo em `docs/relatorios/`:
 
 ---
 
-## §MCP — MCP Tools: code-review-graph
+## §MCP — MCP Tools: codebase-memory-mcp
 
-**IMPORTANTE:** Este projeto tem knowledge graph. Use as ferramentas `code-review-graph` ANTES de Grep/Glob/Read.
+**IMPORTANTE:** Este projeto tem knowledge graph. Use as ferramentas `codebase-memory-mcp` ANTES de Grep/Glob/Read.
 
 | Ferramenta | Quando usar |
 | ------ | ---------- |
-| `detect_changes_tool` | Revisão de mudanças — análise com risk score |
-| `get_review_context_tool` | Snippets de código para revisão — eficiente em tokens |
-| `get_impact_radius_tool` | Blast radius de uma mudança |
-| `get_affected_flows_tool` | Caminhos de execução impactados |
-| `query_graph_tool` | Callers, callees, imports, tests, dependências |
-| `semantic_search_nodes_tool` | Funções/classes por nome ou palavra-chave |
-| `get_architecture_overview_tool` | Estrutura de alto nível do codebase |
-| `refactor_tool` | Planejamento de renomes, dead code |
+| `detect_changes` | Revisão de mudanças — blast radius e diff estrutural |
+| `trace_path` | Callers (inbound), callees (outbound) ou blast radius com profundidade |
+| `search_graph` | Busca estrutural de nós por regex ou nome de símbolo |
+| `get_architecture` | Estrutura de alto nível e resumo de componentes |
+| `query_graph` | Consultas estruturais complexas via Cypher |
+| `search_code` | Busca contextual rápida de código com filtros |
+| `get_code_snippet` | Extração pontual e econômica de blocos de código |
 
 Fallback para Grep/Glob/Read **apenas** quando o graph não cobrir o que você precisa.

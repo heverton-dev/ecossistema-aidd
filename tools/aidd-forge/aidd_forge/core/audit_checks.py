@@ -50,7 +50,7 @@ DIRECTIVE_PATTERNS: dict[str, list[str]] = {
     "G09_GRAPH_FIRST": [
         r"(?i)graph-first",
         r"(?i)query\s+(?:knowledge\s+)?graph\s+before",
-        r"(?i)code-review-graph",
+        r"(?i)(?:code-review-graph|codebase-memory-mcp)",
     ],
 }
 

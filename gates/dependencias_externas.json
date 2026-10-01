@@ -267,11 +267,26 @@
         "antigravity"
       ]
     },
-    "code-review-graph": {
-      "pacote": "code-review-graph",
-      "comando": "code-review-graph",
+    "codebase-memory-mcp": {
+      "pacote": "codebase-memory-mcp",
+      "comando": "codebase-memory-mcp",
+      "args": [],
+      "env": [],
+      "harnesses_alvo": [
+        "claude-code",
+        "opencode",
+        "cursor",
+        "gemini-cli",
+        "mimocode",
+        "antigravity",
+        "vscode"
+      ]
+    },
+    "mcp-gatekeeper": {
+      "pacote": "mcp-gatekeeper",
+      "comando": "python",
       "args": [
-        "serve"
+        "componentes/compartilhado/src-core/mcp_gatekeeper.py"
       ],
       "env": [],
       "harnesses_alvo": [

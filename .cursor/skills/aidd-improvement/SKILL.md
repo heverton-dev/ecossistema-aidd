@@ -19,13 +19,13 @@ Do not use when: a report already exists and the user only wants the plan (`/pla
 
 ## Agnostic by rule
 
-Works the same in every harness (Golden Rule #6): heavy work runs in the shared CLI; `code-review-graph` is preferred when present, with Grep/Glob/Read as the universal fallback.
+Works the same in every harness (Golden Rule #6): heavy work runs in the shared CLI; `codebase-memory-mcp` is preferred when present, with Grep/Glob/Read as the universal fallback.
 
 ## Protocol
 
 1. **Start only on an explicit request** in natural language. Never infer one from ambiguous context.
 2. **Investigate the real code**, strictly within the request:
-   - first the `code-review-graph` tools when available (`semantic_search_nodes_tool`, `get_architecture_overview_tool`, `get_impact_radius_tool`, `get_affected_flows_tool`, `query_graph_tool`, `get_review_context_tool`);
+   - first the `codebase-memory-mcp` tools when available (`search_graph`, `get_architecture`, `trace_path`, `query_graph`, `search_code`, `get_code_snippet`);
    - fill gaps with Grep/Glob/Read; never stop because one tool is missing;
    - reproduce for real (command, test, gate) whenever it applies; cross-reading code is not proof of behavior.
 3. **Current grade (0-10) with real evidence** (files checked, command run, concrete finding). Without a reliable grade the field is `NAO AUDITADO`, never an estimate.

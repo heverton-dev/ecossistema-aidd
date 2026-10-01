@@ -117,15 +117,10 @@ if echo "$STAGED" | grep -q '^tools/'; then
   fi
 fi
 
-# --- 4. code-review-graph: mantem o grafo incremental atualizado ---
-# Instalado por 'code-review-graph install'. Remova este bloco para
-# desabilitar as checagens de grafo no pre-commit.
-if command -v code-review-graph >/dev/null 2>&1; then
-    # PYTHONUTF8=1 evita UnicodeEncodeError no Windows: sem isso, o Python
-    # usa a codepage antiga do console (cp1252) pra imprimir os paineis do
-    # code-review-graph, que tem caracteres que ela nao suporta.
-    PYTHONUTF8=1 code-review-graph update || true
-    PYTHONUTF8=1 code-review-graph detect-changes --brief || true
+# --- 4. codebase-memory-mcp: mantem o grafo incremental atualizado ---
+# Substitui o antigo code-review-graph no ciclo cbm-lazy-proxy
+if command -v codebase-memory-mcp >/dev/null 2>&1; then
+    codebase-memory-mcp cli detect_changes || true
 fi
 
 # --- 5. Monitoramento (SOMENTE LEITURA) de armazenamento dos harnesses ---

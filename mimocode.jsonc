@@ -63,11 +63,19 @@
       "url": "https://docs.mcp.cloudflare.com/mcp",
       "enabled": true
     },
-    "code-review-graph": {
+    "codebase-memory-mcp": {
       "type": "local",
       "command": [
-        "code-review-graph",
-        "serve"
+        "codebase-memory-mcp"
+      ],
+      "enabled": true,
+      "cwd": "C:\\Users\\trcnologia\\Desktop\\ecossistema-aidd"
+    },
+    "mcp-gatekeeper": {
+      "type": "local",
+      "command": [
+        "python",
+        "componentes/compartilhado/src-core/mcp_gatekeeper.py"
       ],
       "enabled": true,
       "cwd": "C:\\Users\\trcnologia\\Desktop\\ecossistema-aidd"

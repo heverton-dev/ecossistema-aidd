@@ -176,17 +176,18 @@ def test_npm_install_e_build_funcionam_de_verdade(frontend_gerado):
     isso, os testes acima poderiam passar com um TSX/JSON malformado."""
     frontend_dir, _ = frontend_gerado
 
+    npm_cmd = "npm.cmd" if os.name == "nt" else "npm"
     res_install = subprocess.run(
-        ["npm", "install"], cwd=str(frontend_dir),
+        f"{npm_cmd} install", cwd=str(frontend_dir),
         capture_output=True, text=True, encoding="utf-8", errors="replace",
-        timeout=300, shell=(os.name == "nt"),
+        timeout=300, shell=True,
     )
     assert res_install.returncode == 0, res_install.stdout + res_install.stderr
 
     res_build = subprocess.run(
-        ["npm", "run", "build"], cwd=str(frontend_dir),
+        f"{npm_cmd} run build", cwd=str(frontend_dir),
         capture_output=True, text=True, encoding="utf-8", errors="replace",
-        timeout=300, shell=(os.name == "nt"),
+        timeout=300, shell=True,
     )
     assert res_build.returncode == 0, res_build.stdout + res_build.stderr
     assert (frontend_dir / ".next" / "standalone" / "server.js").is_file()
