@@ -44,19 +44,19 @@ def _escrever(repo, rel, texto):
 
 @pytest.fixture
 def repo(tmp_path):
-    """Repo com duas cópias de um módulo; a de aidd-generator tem uma função a mais."""
+    """Repo com duas cópias de um módulo; a de ferramenta-velha tem uma função a mais."""
     raiz = tmp_path / "repo"
     raiz.mkdir()
     _git(raiz, "init", "-q")
     _git(raiz, "config", "user.name", "teste")
     _git(raiz, "config", "user.email", "teste@teste")
     base = "def montar():\n    return 1\n"
-    _escrever(raiz, "tools/aidd-generator/aidd_generator/gate.py",
+    _escrever(raiz, "tools/ferramenta-velha/pacote_velho/gate.py",
               base + "\n\ndef validar_extra():\n    return 'so nesta copia'\n")
     _escrever(raiz, "componentes/compartilhado/gate.py", base)
     _escrever(raiz, "componentes/compartilhado/test_gate.py", "def test_montar():\n    assert True\n")
-    _escrever(raiz, "tools/aidd-generator/cli.py",
-              "print('[AIDD-Generator] pronto')\nUSO = 'python ecossistema.py generate <ideia>'\n")
+    _escrever(raiz, "tools/ferramenta-velha/cli.py",
+              "print('[Ferramenta-Velha] pronto')\nUSO = 'python ecossistema.py generate <ideia>'\n")
     _escrever(raiz, "componentes/compartilhado/comandos/generate.md", "# Comando /generate\nGera um app.\n")
     _git(raiz, "add", ".")
     _git(raiz, "commit", "-q", "-m", "init")
@@ -72,7 +72,7 @@ def _fotografar(repo):
 
 def test_remover_copia_com_funcao_a_mais_sem_juntar_acusa_orfao(repo):
     _fotografar(repo)
-    _git(repo, "rm", "-q", "tools/aidd-generator/aidd_generator/gate.py")
+    _git(repo, "rm", "-q", "tools/ferramenta-velha/pacote_velho/gate.py")
 
     res = _rodar(repo, "comparar", FOTO)
     assert res.returncode == 1, res.stdout
@@ -99,20 +99,20 @@ def test_mover_arquivo_nao_acusa_orfao(repo):
 
 def test_nomes_antigos_da_tabela_de_apelidos_nao_viram_orfao(repo):
     _fotografar(repo)
-    _git(repo, "mv", "tools/aidd-generator", "tools/aidd-pure")
-    _git(repo, "mv", "tools/aidd-pure/aidd_generator", "tools/aidd-pure/aidd_pure")
-    gate = repo / "tools/aidd-pure/aidd_pure/gate.py"
+    _git(repo, "mv", "tools/ferramenta-velha", "tools/ferramenta-nova")
+    _git(repo, "mv", "tools/ferramenta-nova/pacote_velho", "tools/ferramenta-nova/pacote_novo")
+    gate = repo / "tools/ferramenta-nova/pacote_novo/gate.py"
     gate.write_text(gate.read_text(encoding="utf-8").replace("validar_extra", "validar_mais"), encoding="utf-8")
     # Nome antigo em outra caixa e comando de CLI renomeado; a prosa do .md é reescrita.
-    _escrever(repo, "tools/aidd-pure/cli.py",
-              "print('[AIDD-Pure] pronto')\nUSO = 'python ecossistema.py pure-motor <ideia>'\n")
+    _escrever(repo, "tools/ferramenta-nova/cli.py",
+              "print('[Ferramenta-Nova] pronto')\nUSO = 'python ecossistema.py pure-motor <ideia>'\n")
     _escrever(repo, "componentes/compartilhado/comandos/generate.md", "# Comando /pure-motor\nGera um app.\n")
 
     assert _rodar(repo, "comparar", FOTO).returncode == 1  # sem tabela, a função renomeada some
 
     _escrever(repo, "componentes/compartilhado/specs/NOMES-ANTIGOS.json", json.dumps({
-        "ferramentas": {"aidd-generator": "aidd-pure"},
-        "pacotes_python": {"aidd_generator": "aidd_pure"},
+        "ferramentas": {"ferramenta-velha": "ferramenta-nova"},
+        "pacotes_python": {"pacote_velho": "pacote_novo"},
         "funcoes_renomeadas": {"validar_extra": "validar_mais"},
         "comandos_cli": {"generate": "pure-motor"},
     }))
@@ -122,7 +122,7 @@ def test_nomes_antigos_da_tabela_de_apelidos_nao_viram_orfao(repo):
 
 def test_linha_que_sumiu_de_todas_as_copias_acusa_orfao(repo):
     _fotografar(repo)
-    gate = repo / "tools/aidd-generator/aidd_generator/gate.py"
+    gate = repo / "tools/ferramenta-velha/pacote_velho/gate.py"
     gate.write_text(gate.read_text(encoding="utf-8").replace("'so nesta copia'", "None"), encoding="utf-8")
 
     res = _rodar(repo, "comparar", FOTO)
@@ -131,15 +131,15 @@ def test_linha_que_sumiu_de_todas_as_copias_acusa_orfao(repo):
 
 
 def test_foto_ignora_arquivo_nao_rastreado_e_fora_de_tools_e_componentes(repo):
-    _escrever(repo, "tools/aidd-generator/rascunho_local.py", "def lixo():\n    pass\n")
+    _escrever(repo, "tools/ferramenta-velha/rascunho_local.py", "def lixo():\n    pass\n")
     _escrever(repo, ".claude/skills/espelho.py", "def espelho():\n    pass\n")
     _git(repo, "add", ".claude")
     _rodar(repo, "foto", "--cycle", CICLO)
 
     indice = json.loads((repo / FOTO).read_text(encoding="utf-8"))
-    assert sorted(indice) == ["componentes/compartilhado/comandos/generate.md", "componentes/compartilhado/gate.py",
-                              "componentes/compartilhado/test_gate.py", "tools/aidd-generator/aidd_generator/gate.py",
-                              "tools/aidd-generator/cli.py"]
+    assert sorted(indice) == sorted(["componentes/compartilhado/comandos/generate.md", "componentes/compartilhado/gate.py",
+                              "componentes/compartilhado/test_gate.py", "tools/ferramenta-velha/pacote_velho/gate.py",
+                              "tools/ferramenta-velha/cli.py"])
     assert indice["componentes/compartilhado/test_gate.py"]["testes"] == ["test_montar"]
 
 

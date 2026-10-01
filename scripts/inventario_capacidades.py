@@ -10,7 +10,7 @@ foto      grava a foto do "antes" no ciclo, em dois arquivos:
 comparar  lista o que existia na foto e não existe mais em lugar nenhum; exit 1 se houver órfão.
           Mover ou renomear arquivo não gera órfão. Os nomes antigos da tabela de apelidos
           (NOMES-ANTIGOS.json, Ticket 4) são traduzidos antes de comparar; linhas comparam sem
-          caixa ("AIDD-Factory" é o mesmo nome antigo) e .md fica só no nível de arquivo, porque
+          caixa (o nome antigo em maiúsculas é o mesmo nome) e .md fica só no nível de arquivo, porque
           a prosa é reescrita junto com o nome (195 linhas "órfãs" na Fase 4, nenhuma capacidade).
 
 Só entram arquivos rastreados pelo git: espelhos de harness e lixo local ficam de fora.
