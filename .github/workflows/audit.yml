@@ -55,7 +55,7 @@ jobs:
       matrix:
         ferramenta:
           - aidd-forge
-          - aidd-generator
+          - aidd-pure
           - aidd-master
           - aidd-enterprise
     steps:

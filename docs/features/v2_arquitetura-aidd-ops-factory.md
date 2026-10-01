@@ -1,4 +1,4 @@
-# **Plano Arquitetural v2.0: AIDD-OPS → AIDD-FACTORY**
+# **Plano Arquitetural v2.0: AIDD-OPS → AIDD-OPEN**
 
 ### Meta-Orquestrador Agêntico de Stacks Open Source, Integrações e White-Label
 
@@ -9,7 +9,7 @@
 **Metadados do Projeto:**
 
 - **Documento:** v2_arquitetura-aidd-ops-factory.md
-- **Feature:** AIDD-Factory (sucessora natural do AIDD-Ops MVP)
+- **Feature:** AIDD-Open (sucessora natural do AIDD-Ops MVP)
 - **Estratégia de Dados:** Cenário A: Single-Instance, Multi-Database com Provisionamento Dinâmico
 - **Governança:** Ecossistema AIDD (Multi-Harness & Quality Gates)
 - **Versão:** 2.0 (Setembro de 2026)
@@ -31,12 +31,12 @@ O AIDD-Ops resolve magnificamente o ciclo: *"Como coloco isso em produção?"*. 
 | Pergunta | Resposta |
 |----------|----------|
 | Devemos expandir o aidd-ops? | **NÃO** — quebraria seu contrato de determinismo zero-LLM |
-| Devemos criar uma nova ferramenta? | **SIM** — `aidd-factory`, a 7ª ferramenta do ecossistema |
+| Devemos criar uma nova ferramenta? | **SIM** — `aidd-open`, a 7ª ferramenta do ecossistema |
 | Por quê separar? | Separation of Concerns: infraestrutura (ops) ≠ geração de código (factory) ≠ geração genérica (generator) |
 
 ### Mapa de Responsabilidades (3 Ferramentas Complementares)
 
-| **aidd-ops** (EXISTENTE) | **aidd-factory** (NOVA) | **aidd-generator** (EXISTENTE) |
+| **aidd-ops** (EXISTENTE) | **aidd-open** (NOVA) | **aidd-pure** (EXISTENTE) |
 |:---:|:---:|:---:|
 | Intake | Intake | Idea -> Codigo |
 | Curadoria | Gateway Gen | (8 fases) |
@@ -85,7 +85,7 @@ O AIDD-Ops resolve magnificamente o ciclo: *"Como coloco isso em produção?"*. 
 
 > \* `CoolifyManager.orquestrar_stack()` em modo real retorna `REAL_NAO_IMPLEMENTADO` — falha honesta, não stub.
 
-### 2.2 AIDD-Generator — Inventário Resumido
+### 2.2 AIDD-Pure — Inventário Resumido
 
 | Fase | Linhas | LLM? | Status |
 |------|--------|------|--------|
@@ -103,7 +103,7 @@ O AIDD-Ops resolve magnificamente o ciclo: *"Como coloco isso em produção?"*. 
 
 ```
 aidd-ops:    [Intake] [Curadoria] [Sizing] [Bootstrap] [DNS] [Deploy] [Pre-flight] [Monitor]
-aidd-factory:  [???]    [???]      [???]     [???]      [???]   [???]     [???]       [???]
+aidd-open:  [???]    [???]      [???]     [???]      [???]   [???]     [???]       [???]
                          ↑ GERAÇÃO DE CÓDIGO DE APLICAÇÃO E INTEGRAÇÃO ↑
 ```
 
@@ -143,23 +143,23 @@ Cada fase é validada por gates AST que verificam a ausência de chamadas LLM, a
 | Ferramenta | Responsabilidade | Contrato |
 |------------|------------------|----------|
 | aidd-ops | "Como coloco em produção?" | Determinístico, zero LLM |
-| aidd-factory | "O que生产和como integro?" | LLM + templates + gates |
-| aidd-generator | "Gero código Python genérico" | LLM + AST + self-healing |
+| aidd-open | "O que生产和como integro?" | LLM + templates + gates |
+| aidd-pure | "Gero código Python genérico" | LLM + AST + self-healing |
 
 Misturar essas responsabilidades criaria um "Frankenstein" difícil de testar, auditar e manter.
 
 ---
 
-## 4. AIDD-Factory: A 7ª Ferramenta
+## 4. AIDD-Open: A 7ª Ferramenta
 
 ### 4.1 Definição
 
-> **AIDD-Factory** é o gerador de código de aplicação e integração para stacks multi-serviço. Ele recebe o PLANO-INFRAESTRUTURA.json (gerado pelo aidd-ops) e produz: gateway de integração, frontend whitelabel, scripts de inicialização, documentação Swagger, e configurações de webhook — tudo pronto para o aidd-ops fazer deploy.
+> **AIDD-Open** é o gerador de código de aplicação e integração para stacks multi-serviço. Ele recebe o PLANO-INFRAESTRUTURA.json (gerado pelo aidd-ops) e produz: gateway de integração, frontend whitelabel, scripts de inicialização, documentação Swagger, e configurações de webhook — tudo pronto para o aidd-ops fazer deploy.
 
 ### 4.2 Arquitetura Interna
 
 ```
-aidd-factory/
+aidd-open/
 ├── AGENTS.md                    # Diretrizes canônicas
 ├── scripts/
 │   ├── pipeline_factory.py      # Orquestrador principal (CLI Click)
@@ -212,7 +212,7 @@ aidd-factory/
     └── ...
 ```
 
-### 4.3 As 9 Fases da AIDD-Factory
+### 4.3 As 9 Fases da AIDD-Open
 
 #### Fase 1: Análise do Plano (Determinística)
 - **Input:** PLANO-INFRAESTRUTURA.json
@@ -304,7 +304,7 @@ A v1 descrevia 10 fases em uma única ferramenta. A v2 distribui 15 fases em 3 f
 | 2 | Curadoria da Stack | Não | nicho → ferramentas[] |
 | 3 | Sizing de Recursos | Não | ferramentas → vps_spec |
 
-### Fases 4-12: AIDD-Factory (Geração de Aplicação)
+### Fases 4-12: AIDD-Open (Geração de Aplicação)
 | # | Fase | LLM | Output |
 |---|------|-----|--------|
 | 4 | Análise do Plano | Não | plano → factory_analysis.json |
@@ -381,19 +381,19 @@ A v1 ja definia o **Cenario A** (PostgreSQL centralizado). A v2 confirma:
 **v1 dizia:** "Subagente 1 consulta a base de dados vetorizada e o GitHub via MCP"
 **Realidade:** O `catalogo_nichos.json` é estático com 5 nichos e 11 ferramentas
 
-**Solução v2:** O AIDD-Factory inclui um **Discovery Engine** que:
+**Solução v2:** O AIDD-Open inclui um **Discovery Engine** que:
 1. Recebe o texto do negócio
 2. Busca no GitHub API (repositórios > 100 stars, atividade < 90 dias)
 3. Filtra por: licença permissiva, imagem Docker oficial, documentação
 4. Valida contra o catálogo existente (override ou adição)
 5. Gera candidatos para curadoria humana
 
-Isso **não pertence ao aidd-ops** (que é determinístico) nem ao aidd-generator (que gera código Python). É responsabilidade do factory.
+Isso **não pertence ao aidd-ops** (que é determinístico) nem ao aidd-pure (que gera código Python). É responsabilidade do factory.
 
 **Status (18/09/2026):** subconjunto determinístico implementado — "nicho
 dinâmico" (`aidd-ops/scripts/phases/01_intake.py::reconhecer_nicho_dinamico`
 + `02_curadoria.py::curar_stack_dinamico`, consumido por
-`aidd-factory/scripts/phases/01_analisador.py`). Quando o texto não bate
+`aidd-open/scripts/phases/01_analisador.py`). Quando o texto não bate
 nenhum dos 5 nichos fixos, mas a stack já foi decidida em outra etapa (ex.:
 `aidd-planner` no PRÉ-PLANO), o pipeline usa essa stack direto — sem
 casamento por palavra-chave e sem exigir `templates/infra/nichos/<slug>.json`.
@@ -447,7 +447,7 @@ roadmap (Fase 4: Integrações).
 ## 8. Roadmap de Implementação
 
 ### Fase 1: Fundação (2 semanas)
-- [ ] Criar `tools/aidd-factory/` com estrutura base
+- [ ] Criar `tools/aidd-open/` com estrutura base
 - [ ] Migrar `result.py` de `componentes/compartilhado/`
 - [ ] Implementar `pipeline_factory.py` (CLI Click)
 - [ ] Implementar Fase 1 (analisador determinístico)
@@ -476,7 +476,7 @@ roadmap (Fase 4: Integrações).
 - [ ] Fase 9 (cross-service validation)
 
 ### Fase 5: Orquestração Cross-Tool (2 semanas)
-- [ ] Integração aidd-ops → aidd-factory → aidd-ops
+- [ ] Integração aidd-ops → aidd-open → aidd-ops
 - [ ] CLI unificada: `ecossistema.py factory "<texto>" --deploy`
 - [ ] Testes E2E completos
 - [ ] Documentação
@@ -487,7 +487,7 @@ roadmap (Fase 4: Integrações).
 
 ## 9. Contratos entre Ferramentas
 
-### 9.1 aidd-ops → aidd-factory
+### 9.1 aidd-ops → aidd-open
 
 ```
 Input:  PLANO-INFRAESTRUTURA.json
@@ -496,7 +496,7 @@ Output: FACTORY_ANALYSIS.json
 
 O PLANO-INFRAESTRUTURA.json é o contrato canônico. O factory não precisa conhecer o catálogo de nichos — ele recebe o plano já resolvido.
 
-### 9.2 aidd-factory → aidd-ops
+### 9.2 aidd-open → aidd-ops
 
 ```
 Input:  FACTORY_OUTPUT.json (lista de artefatos gerados)
@@ -514,7 +514,7 @@ O factory produz um diretório pronto com:
 
 O aidd-ops faz deploy desse diretório via Coolify ou Docker Compose direto.
 
-### 9.3 aidd-generator ↔ aidd-factory
+### 9.3 aidd-pure ↔ aidd-open
 
 ```
 O generator NÃO se conecta ao factory.
@@ -544,12 +544,12 @@ A v1 deste documento era um plano ambicioso e correto em sua visão. Sua limita�
 
 A v2 propõe:
 1. **Manter o aidd-ops intocado** — ele é excelente no que faz
-2. **Criar o aidd-factory** — como ponte entre planejamento e deploy
+2. **Criar o aidd-open** — como ponte entre planejamento e deploy
 3. **Integrar as 3 ferramentas** — num pipeline de 15 fases com contratos claros
 
 O resultado é um ecossistema onde:
 - **aidd-ops** resolve *"como coloco em produção?"*
-- **aidd-factory** resolve *"o que生产和como integro?"*
-- **aidd-generator** resolve *"gero código Python genérico?"*
+- **aidd-open** resolve *"o que生产和como integro?"*
+- **aidd-pure** resolve *"gero código Python genérico?"*
 
 Juntos, transformam **dores de negócio em plataformas completas, soberanas e operacionais** — exatamente como a v1 prometia, mas com a arquitetura certa para entregar.

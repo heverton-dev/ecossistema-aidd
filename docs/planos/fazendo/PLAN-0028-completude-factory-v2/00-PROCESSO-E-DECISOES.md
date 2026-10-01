@@ -1,14 +1,14 @@
-# PLAN-0028: Completude do AIDD-Factory conforme v2
+# PLAN-0028: Completude do AIDD-Open conforme v2
 
 ## Origem
 - **Documento:** `docs/features/v2_arquitetura-aidd-ops-factory.md`
-- **Melhoria:** `docs/melhorias/14-09-2026_melhoria-aidd-factory-implementacao.json`
+- **Melhoria:** `docs/melhorias/14-09-2026_melhoria-aidd-open-implementacao.json`
 - **Nota Atual:** 4/10 (apos PLAN-0027)
 - **Nota Alvo:** 10/10 (todas as 9 fases implementadas)
 - **Plan anterior:** PLAN-0027 (MVP — fases 1,4,5,6)
 
 ## Escopo
-Completar as 5 fases restantes do aidd-factory conforme o documento v2:
+Completar as 5 fases restantes do aidd-open conforme o documento v2:
 - Fase 2: Gateway FastAPI (LLM + Templates)
 - Fase 3: Frontend Next.js whitelabel (LLM + Templates)
 - Fase 7: Webhooks/Integracoes (LLM + Templates)

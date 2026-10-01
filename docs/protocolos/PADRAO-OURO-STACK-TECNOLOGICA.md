@@ -7,7 +7,7 @@
 > nunca supor.
 >
 > **Escopo:** vale para TODOS os fluxos e ferramentas do ecossistema
-> (`aidd-generator`, `aidd-master`, `aidd-factory`, `aidd-bridge`, e
+> (`aidd-pure`, `aidd-master`, `aidd-open`, `aidd-freedom`, e
 > qualquer nova ferramenta futura) e para TODAS as camadas de todo projeto
 > gerado ou evoluído.
 >
@@ -66,7 +66,7 @@ nenhum fluxo. Ele só é aceitável como:
 
 ## Achado real (17/09/2026 — validação E2E do Fluxo 01)
 
-Hoje, `aidd-generator` (Fase 5/6) e `aidd-master`
+Hoje, `aidd-pure` (Fase 5/6) e `aidd-master`
 (`provision_project.py`, `compose_suite.py`, `add_module.py`) geram o
 Super-App em Python como frontend **padrão** de todo projeto novo, e
 `export-frontend`/`nextjs_exporter.py` existem mas são um passo **manual

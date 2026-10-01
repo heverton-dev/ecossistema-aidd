@@ -46,14 +46,14 @@ def main():
     r1 = run_cmd([sys.executable, "ecossistema.py", "status"])
     ok_tools = (
         "aidd-forge" in r1["stdout"] and "[OK] Instalado" in r1["stdout"] and
-        "aidd-generator" in r1["stdout"] and
+        "aidd-pure" in r1["stdout"] and
         "aidd-master" in r1["stdout"] and
         "aidd-enterprise" in r1["stdout"] and
         "aidd-ops" in r1["stdout"]
     )
     ok_skills = (
         "aidd-forge" in r1["stdout"] and "[OK]" in r1["stdout"] and
-        "aidd-generator" in r1["stdout"] and
+        "aidd-pure" in r1["stdout"] and
         "aidd-master" in r1["stdout"] and
         "aidd-enterprise" in r1["stdout"] and
         "aidd-ops" in r1["stdout"]

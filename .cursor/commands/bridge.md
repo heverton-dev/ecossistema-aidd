@@ -1,11 +1,11 @@
 ---
-description: Comanda a ferramenta individual aidd-bridge para acoes atomicas
+description: Nome antigo do motor do Fluxo 03 (use /freedom ou freedom-motor)
 argument-hint: "[scan|convert-db|merge|pack] <args>"
 ---
 
-# Comando /bridge
+# Comando /bridge (nome antigo)
 
-Comanda a ferramenta individual `aidd-bridge` para ingestão, conversão de banco e empacotamento de aplicações low-code (Lovable, v0, Bolt).
+Apelido de 1 ciclo para as operações atômicas do motor do Fluxo 03 (`tools/aidd-freedom`): ingestão, conversão de banco e empacotamento de aplicações low-code (Lovable, v0, Bolt).
 
 ## Uso:
 - `/bridge scan <caminho>`
@@ -14,5 +14,5 @@ Comanda a ferramenta individual `aidd-bridge` para ingestão, conversão de banc
 - `/bridge pack <caminho> [--domain meusite.com]`
 
 ## Ação:
-Executa a skill `skills/aidd-bridge` para acionar as operações atômicas da engine `tools/aidd-bridge`.
-Equivalente CLI: `python ecossistema.py bridge [scan|convert-db|merge|pack] <args>`
+Executa a skill `aidd-freedom`, seção "Engine only".
+Equivalente CLI: `python ecossistema.py freedom-motor [scan|convert-db|merge|pack] <args>` (o antigo `python ecossistema.py bridge ...` ainda funciona e avisa "nome antigo").

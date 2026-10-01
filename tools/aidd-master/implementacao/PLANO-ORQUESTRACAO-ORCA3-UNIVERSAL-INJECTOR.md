@@ -1,7 +1,7 @@
 ﻿# 🐋 PLANO MESTRE DE ORQUESTRAÇÃO ORCA 3: INJETOR UNIVERSAL DE COMPONENTES
 > **Arquitetura:** ORCA ADE (Agentic Development Environment) + AIDD 5 Camadas  
 > **Modelo de Execução:** Orquestração Multi-Agente com Mesas Isoladas (Worktrees Git)  
-> **Escopo de Aplicação:** 4 Projetos (`aidd-generator`, `aidd-master`, `aidd-master-enterprise`, `aidd-forge`)  
+> **Escopo de Aplicação:** 4 Projetos (`aidd-pure`, `aidd-master`, `aidd-master-enterprise`, `aidd-forge`)  
 > **Feature Central:** Auto-Injeção e Auto-Integração de Skills, MCPs, Rules, Specs, Configs, Hooks e Agents  
 > **Data de Emissão:** 03/09/2026  
 > **Idioma Oficial:** Português do Brasil (PT-BR)
@@ -74,7 +74,7 @@ Em vez de executar linearmente em uma única sessão de chat (o que causaria con
 Executado pelo Mestre de Obras no terminal raiz:
 ```powershell
 # Registrar os 4 projetos no catálogo do ORCA
-orca repo add --path "C:/Users/trcnologia/Desktop/proj_aidd/aidd-generator"
+orca repo add --path "C:/Users/trcnologia/Desktop/proj_aidd/aidd-pure"
 orca repo add --path "C:/Users/trcnologia/Desktop/proj_aidd/aidd-master"
 orca repo add --path "C:/Users/trcnologia/Desktop/proj_aidd/aidd-master-enterprise"
 orca repo add --path "C:/Users/trcnologia/Desktop/proj_aidd/aidd-forge"
@@ -143,7 +143,7 @@ orca worktree delete --worktree branch:feat-injector-gates
 | Fase | Título | Responsável (Mesa) | Entregáveis Técnicos | Critério de Sucesso Mecânico |
 | :---: | :--- | :---: | :--- | :--- |
 | **Fase 1** | **Contrato Universal & Schema Draft 2020-12** | Mesa 01 | Arquivo `schema_injector_request.json` validando: `tipo`, `nome`, `descricao`, `camada_alvo`, `conteudo`, `alvo_projeto`. | Gate rejeita com erro estruturado qualquer payload incompleto. |
-| **Fase 2** | **Matriz de Perfis (Profiles) dos 4 Projetos** | Mesa 02 | `profiles_registry.py` com o mapeamento exato de pastas para `aidd-generator`, `aidd-master`, `aidd-master-enterprise` e `aidd-forge`. | Resolução exata de diretórios para cada tipo em qualquer um dos 4 projetos. |
+| **Fase 2** | **Matriz de Perfis (Profiles) dos 4 Projetos** | Mesa 02 | `profiles_registry.py` com o mapeamento exato de pastas para `aidd-pure`, `aidd-master`, `aidd-master-enterprise` e `aidd-forge`. | Resolução exata de diretórios para cada tipo em qualquer um dos 4 projetos. |
 | **Fase 3** | **Motor de Detecção Híbrida & Materialização Transacional** | Mesa 01 | `detector_camada.py` (heurística + LLM delegado) + `materializador.py` com buffer atômico e rollback automático em falha de I/O. | Zero arquivos órfãos em caso de interrupção; criação limpa em disco. |
 | **Fase 4** | **Sincronizador Multi-Harness e Integrador Global** | Mesa 02 | `sincronizador_harness.py` que reflete o novo artefato em `.claude/`, `.agent/`, `.gemini/` e atualiza a tabela do `AGENTS.md` e catálogos JSON. | O artefato é detectado imediatamente em todos os harnesses configurados. |
 | **Fase 5** | **CLI Universal & Intent Router em PT-BR** | Mesa 03 | Subcomando `aidd inject <tipo> <nome>` integrado ao `scripts/aidd.py` e padrões de linguagem natural em PT-BR no `IntentRouter`. | Comandos CLI e frases em linguagem natural disparam o fluxo completo. |
@@ -155,7 +155,7 @@ orca worktree delete --worktree branch:feat-injector-gates
 
 ```json
 {
-  "aidd-generator": {
+  "aidd-pure": {
     "skill": { "dest": "skills/{nome}/SKILL.md", "mirrors": [".claude/skills/{nome}/SKILL.md"] },
     "mcp": { "dest": "mcps/{nome}/server.py", "registry": "HARNESS-COMPAT.json" },
     "rule": { "dest": "rules/{nome}.md", "anchor": "AGENTS.md" },

@@ -14,7 +14,7 @@
   "aidd-forge": [
     "tests/unit/test_harness_gate_fails_on_broken_symlink"
   ],
-  "aidd-generator": [
+  "aidd-pure": [
     "tests/test_todas_tasks_sao_registradas_como_task_prefect",
     "tests/test_retries_plural_aplicados_em_tasks",
     "tests/test_persistencia_estado_sqlite",

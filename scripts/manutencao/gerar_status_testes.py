@@ -33,7 +33,7 @@ PLANO_ESTRUTURADO_PATH = os.path.join(ROOT_DIR, "PLANO-EXECUCAO-ESTRUTURADO.json
 sys.path.insert(0, os.path.join(ROOT_DIR, "gates"))
 from G_TESTES_REAIS import _env_sem_repositorio_do_hook  # noqa: E402
 
-FERRAMENTAS = ["aidd-forge", "aidd-generator", "aidd-master", "aidd-enterprise", "aidd-ops"]
+FERRAMENTAS = ["aidd-forge", "aidd-pure", "aidd-master", "aidd-enterprise", "aidd-ops"]
 
 _PADRAO_PASSED = re.compile(r"(\d+) passed")
 _PADRAO_FAILED = re.compile(r"(\d+) failed")

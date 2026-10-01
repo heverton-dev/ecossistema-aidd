@@ -1,0 +1,31 @@
+{
+  "descricao": "Tabela única dos nomes antigos dos construtores (Ticket 4, fronteiras-ferramentas ciclo-01). Cada construtor tem o nome do fluxo que serve. Os comandos antigos da CLI continuam funcionando por 1 ciclo como apelido e avisam 'nome antigo'. Os repositórios separados no GitHub mantêm o nome antigo até confirmação própria do usuário.",
+  "valido_ate": "fronteiras-ferramentas ciclo-02 (removidos no ciclo seguinte)",
+  "ferramentas": {
+    "aidd-generator": "aidd-pure",
+    "aidd-factory": "aidd-open",
+    "aidd-bridge": "aidd-freedom"
+  },
+  "pacotes_python": {
+    "aidd_generator": "aidd_pure",
+    "aidd_factory": "aidd_open",
+    "aidd_bridge": "aidd_freedom"
+  },
+  "comandos_cli": {
+    "generate": "pure-motor",
+    "factory": "open-motor",
+    "bridge": "freedom-motor",
+    "aidd-generator": "pure",
+    "aidd-factory": "open",
+    "aidd-bridge": "freedom"
+  },
+  "mantem_nome_antigo_apos": [
+    "heverton-dev/"
+  ],
+  "funcoes_renomeadas": {
+    "cmd_generate": "cmd_pure_motor",
+    "cmd_factory": "cmd_open_motor",
+    "cmd_bridge": "cmd_freedom_motor",
+    "cmd_aidd_bridge": "_apelido_com_aviso"
+  }
+}

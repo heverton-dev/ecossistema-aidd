@@ -32,7 +32,7 @@
 - **Decisão:** Rota A (Remoção total).
 - **Ações executadas:**
   1. Removidos `componentes/compartilhado/src-core/saga.py`, `tools/aidd-master/src/core/saga.py`, `tools/aidd-enterprise/src/core/saga.py`.
-  2. Removidos espelhos em `templates/core/saga.py`, `templates/v2/saga.py` (master e enterprise) e `tools/aidd-factory/templates/vsa/saga.py`.
+  2. Removidos espelhos em `templates/core/saga.py`, `templates/v2/saga.py` (master e enterprise) e `tools/aidd-open/templates/vsa/saga.py`.
   3. Removidos de `MANIFEST.json` de `src-core` e `baseline_nucleo_compartilhado.json` atualizado.
   4. Removidos testes unitários em `tests/unit/test_cqrs_local_first.py` e referências nos geradores/templates de regras.
   5. Suítes de testes aprovadas e `G_DRIFT_NUCLEO_COMPARTILHADO` aprovado com 100% de paridade.

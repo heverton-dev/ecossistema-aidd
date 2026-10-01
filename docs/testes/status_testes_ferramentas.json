@@ -10,7 +10,7 @@
       "errors": 0,
       "exit_code": 0
     },
-    "aidd-generator": {
+    "aidd-pure": {
       "status": "ok",
       "passed": 1006,
       "failed": 0,

@@ -34,9 +34,9 @@ Um por ferramenta, cada um dono de exatamente um slash command:
 | :------------------------------------- | :---------------------- | :---------------------- |
 | `aidd-forge-runner`                    | `/forge`                | `aidd-forge`            |
 | `aidd-planner-runner`                  | `/planner`              | `aidd-planner`          |
-| `aidd-generator-runner`                | `/generate`             | `aidd-generator`        |
-| `aidd-factory-runner`                  | `/factory`              | `aidd-factory`          |
-| `aidd-bridge-runner`                   | `/bridge`               | `aidd-bridge`           |
+| `aidd-pure-runner`                | `/generate`             | `aidd-pure`        |
+| `aidd-open-runner`                  | `/factory`              | `aidd-open`          |
+| `aidd-freedom-runner`                   | `/bridge`               | `aidd-freedom`           |
 | `aidd-master-runner`                   | `/master`               | `aidd-master`           |
 | `aidd-enterprise-runner`               | `/enterprise`           | `aidd-enterprise`       |
 | `aidd-ops-runner`                      | `/ops`                  | `aidd-ops`              |
@@ -44,7 +44,7 @@ Um por ferramenta, cada um dono de exatamente um slash command:
 ### Runners de fluxo, pipeline e meso-camada
 
 `aidd-pure` e `fluxo-01-runner`; `aidd-open` e `fluxo-02-runner`; `aidd-freedom` e
-`fluxo-03-runner` (com operações atômicas da engine via `aidd-bridge-runner`).
+`fluxo-03-runner` (com operações atômicas da engine via `aidd-freedom-runner`).
 Para execução de planos e despacho concorrente: `aidd-pipeline-runner` (`/run-plan`, `/pipeline`)
 e `aidd-dispatch-runner` (`/dispatch`, `/aidd-dispatch`). O par existe porque uma
 habilidade é a dona do slash command e a outra é o motor que executa a esteira em worktrees.
@@ -156,9 +156,9 @@ menor, e a duplicação entre `aidd-master` e `aidd-enterprise` é justamente o 
 | :---------------- | :-------------------------------------------------------------------------------------------------------- |
 | `aidd-forge`      | `G_BLOQUEAR_SEGREDOS`, `G_CONTRACTS`, `G_CYBERSECURITY_OWASP`, `G_ESTRUTURA_AST`, `G_HARNESS_COMPAT`, `G_INJECT`, `G_PERFORMANCE`, `G_TESTES_REAIS` |
 | `aidd-planner`    | `G_PLANNER_SCHEMA`, `G_PLANNER_SINE_QUA_NON`, `G_PLANNER_COERENCIA_FLUXO`                               |
-| `aidd-generator`  | `G_TOKENOMICS`, `G_CYBERSECURITY_OWASP`, `G_SANDBOX_NIVEL_1`, `G_SESSAO_HERMETICA`, `G_BLOQUEAR_SEGREDOS`, `G_INTEGRACAO_CROSS_SCRIPT`, `G_VERIFICAR_LLM_PRONTO`, `G_INJECT`, `G_HARNESS_COMPAT`, `AUDITAR_COMPARATIVO_HARNESS` |
-| `aidd-factory`    | `G_FACTORY_ANALYSIS`, `G_FACTORY_COMPOSE`, `G_FACTORY_ENV`, `G_FACTORY_INIT_DB`, `G_FACTORY_INTEGRATION`, `G_FACTORY_MVP` |
-| `aidd-bridge`     | `G_BRIDGE_VENDOR_LOCKIN`, `G_BRIDGE_DOCKER_OCI`, `G_BRIDGE_POSTGRESQL`, `G_BRIDGE_VSA_COMPAT`           |
+| `aidd-pure`  | `G_TOKENOMICS`, `G_CYBERSECURITY_OWASP`, `G_SANDBOX_NIVEL_1`, `G_SESSAO_HERMETICA`, `G_BLOQUEAR_SEGREDOS`, `G_INTEGRACAO_CROSS_SCRIPT`, `G_VERIFICAR_LLM_PRONTO`, `G_INJECT`, `G_HARNESS_COMPAT`, `AUDITAR_COMPARATIVO_HARNESS` |
+| `aidd-open`    | `G_FACTORY_ANALYSIS`, `G_FACTORY_COMPOSE`, `G_FACTORY_ENV`, `G_FACTORY_INIT_DB`, `G_FACTORY_INTEGRATION`, `G_FACTORY_MVP` |
+| `aidd-freedom`     | `G_BRIDGE_VENDOR_LOCKIN`, `G_BRIDGE_DOCKER_OCI`, `G_BRIDGE_POSTGRESQL`, `G_BRIDGE_VSA_COMPAT`           |
 | `aidd-master`     | `G_ESTRUTURA`, `G_SEGREDOS`, `G_SEGURANCA`, `G_TESTES`, `G_QUALIDADE`, `G_CONTRACTS`, `G_CHAOS`, `G_HARNESS_COMPAT`, `G_ARQUITETURA`, `G_INJECT`, `G_AST_BOUNDED_CONTEXT`, `G_PERFORMANCE` |
 | `aidd-enterprise` | A mesma bateria do master, com `G_INJECT` estendido para verificação criptográfica                      |
 | `aidd-ops`        | `G_OPS_MVP`, `G_OPS_SSH`                                                                                |
@@ -275,7 +275,7 @@ validação automatizada.
 `docs/protocolos/05-09-2026_protocolo-agnosticidade-componentes.md`;
 `gates/manifesto_harnesses.json`; `gates/G_UNIVERSAL_HARNESS.py`;
 `gates/G_COMPONENTE_AGNOSTICO.py`; `gates/G_PROTOCOL_FALLBACK.py`;
-`tools/aidd-generator/scripts/phases/utils_delegacao.py`.
+`tools/aidd-pure/scripts/phases/utils_delegacao.py`.
 
 # Capítulo 24 — Síntese: a economia de tokens ponta a ponta
 
@@ -288,21 +288,21 @@ dispersamente. É o eixo "economia de tokens" visto simultaneamente nos três n�
 | :------------------------------- | :-------- | :-------------------------------------------------- | :------------------------------------------------------------- |
 | Determinismo obrigatório         | Macro     | Lei #1; 145 portões; 5 das 7 etapas de fluxo       | Elimina a chamada em vez de baratear                          |
 | Protocolo Caveman tri-fase       | Macro     | `componentes/compartilhado/src-core/caveman_protocol.py`                     | 30–50% de redução na entrada, em contagem BPE                 |
-| Linter de Caveman                | Micro     | `tools/aidd-generator/scripts/core/caveman_linter.py`         | Garante a tríade ENTRADA/COT/SAÍDA por AST, sem gastar token  |
+| Linter de Caveman                | Micro     | `tools/aidd-pure/scripts/core/caveman_linter.py`         | Garante a tríade ENTRADA/COT/SAÍDA por AST, sem gastar token  |
 | Fatiamento de contexto           | Macro     | `core/context_slicer.py`                           | Payload de assinaturas abaixo de 150 tokens                   |
 | Grafo antes de busca textual     | Macro     | `AGENTS.md` §1; MCP `code-review-graph`            | Evita leitura de arquivo inteiro e `grep` exploratório        |
 | Descarregamento de esquema MCP   | Macro     | `core/mcp_dynamic_router.py`                       | Remove milhares de tokens fixos do prompt de sistema          |
 | Estado em arquivo                | Meso      | Handoffs JSON; `cognitive_ledger.py`               | Substitui histórico conversacional por ~5k tokens tipados     |
-| Retomada inteligente             | Micro     | `tools/aidd-generator/scripts/core/pipeline_state.py`         | `--resume` pula fase completa com artefato válido             |
-| Micro-ambiente por fase          | Micro     | `tools/aidd-generator/scripts/phases/phase_*/AGENTS.md`       | Só as regras da fase corrente entram em memória               |
-| Orçamento formal por fase        | Micro     | `tools/aidd-generator/config/token_budgets.json`              | Teto declarado + limiar de desvio de 1,2                      |
+| Retomada inteligente             | Micro     | `tools/aidd-pure/scripts/core/pipeline_state.py`         | `--resume` pula fase completa com artefato válido             |
+| Micro-ambiente por fase          | Micro     | `tools/aidd-pure/scripts/phases/phase_*/AGENTS.md`       | Só as regras da fase corrente entram em memória               |
+| Orçamento formal por fase        | Micro     | `tools/aidd-pure/config/token_budgets.json`              | Teto declarado + limiar de desvio de 1,2                      |
 | Auditoria de tokenomics          | Micro     | `G_TOKENOMICS`                                     | Reprova estouro de orçamento e rótulo desonesto de medição    |
-| Benchmark real                   | Micro     | `tools/aidd-generator/scripts/benchmark_tokenomics.py`        | Mede com `tiktoken` contra baseline legada                    |
+| Benchmark real                   | Micro     | `tools/aidd-pure/scripts/benchmark_tokenomics.py`        | Mede com `tiktoken` contra baseline legada                    |
 | Purga de contexto de subagente   | Macro     | `tools/aidd-forge/aidd_forge/core/subagent_purger.py`                    | Subagente morre após validação AST                            |
 | Disciplina de terminal           | Macro     | `AGENTS.md` §1                                     | `tail`/`grep` obrigatórios; zero despejo de log ou lockfile   |
 | Edição por busca e substituição  | Macro     | `AGENTS.md` §1                                     | Nunca reescrever arquivo inteiro na saída                     |
 | Executor silencioso              | Macro     | `AGENTS.md` §1                                     | Status de uma linha; zero repetição de código na conversa     |
-| Protocolo delegado               | Macro     | `tools/aidd-generator/scripts/phases/utils_delegacao.py`      | Usa o modelo da sessão; zero custo adicional de API           |
+| Protocolo delegado               | Macro     | `tools/aidd-pure/scripts/phases/utils_delegacao.py`      | Usa o modelo da sessão; zero custo adicional de API           |
 
 ## 24.2 Onde o token é realmente gasto
 

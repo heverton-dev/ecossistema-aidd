@@ -18,7 +18,7 @@ Cada comando possui contrato formal executável em qualquer harness (Antigravity
 - **CLI Equivalente:** python ecossistema.py forge init [caminho]
 
 ### /generate <ideia>
-- **Skill:** skills/aidd-generator
+- **Skill:** skills/aidd-pure
 - **Ação:** Inicia o pipeline autônomo de 8 fases para transformar uma ideia em um projeto completo de software.
 - **CLI Equivalente:** python ecossistema.py generate "<ideia>"
 
@@ -72,8 +72,8 @@ skills respondendo ao mesmo comando, com regras opostas, foi a causa direta das
 - **CLI Equivalente:** python ecossistema.py freedom (ou python ecossistema.py run-fluxo --fluxo freedom)
 
 ### /bridge [comando]
-- **Skill:** skills/aidd-bridge
-- **Ação:** Aciona operações atômicas da ferramenta aidd-bridge: scan, convert-db, merge, pack e migrate-auth.
+- **Skill:** skills/aidd-freedom
+- **Ação:** Aciona operações atômicas da ferramenta aidd-freedom: scan, convert-db, merge, pack e migrate-auth.
 - **CLI Equivalente:** python ecossistema.py bridge [scan|convert-db|merge|pack]
 
 ### Skills Procedimentais de Engenharia (Anti-Vibe Coding)

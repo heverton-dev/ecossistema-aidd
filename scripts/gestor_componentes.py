@@ -52,6 +52,18 @@ COMPONENTES_DIR = os.path.join(ROOT_DIR, "componentes")
 TODOS_TIPOS_MARCADOR = "todos"
 IGNORAR_ENTRADAS = {".gitkeep", "__pycache__"}
 IGNORAR_DIRS = {"__pycache__", ".venv", "venv", ".git", "node_modules"}
+TABELA_NOMES_ANTIGOS = os.path.join(COMPONENTES_DIR, "compartilhado", "specs", "NOMES-ANTIGOS.json")
+
+
+def nomes_antigos_de_skill() -> set[str]:
+    """Nomes antigos de construtor (tabela NOMES-ANTIGOS.json) que nunca voltam como skill.
+
+    Uma cópia velha esquecida numa pasta de harness (ex.: .codebuddy/, ignorada
+    pelo git) seria re-ingerida pelo auto-ingest e desfaria a renomeação."""
+    if not os.path.isfile(TABELA_NOMES_ANTIGOS):
+        return set()
+    with open(TABELA_NOMES_ANTIGOS, "r", encoding="utf-8") as f:
+        return set(json.load(f).get("ferramentas", {}))
 NOMES_PASTA_COMPONENTE = {"commands", "skills", "mcps", "specs", "hooks", "configs", "scripts", "processes", "tests"}
 
 
@@ -679,6 +691,7 @@ def auto_ingest_skills(dry_run=False) -> list[str]:
     fonte_skills = os.path.join(COMPONENTES_DIR, "compartilhado", "skills")
     os.makedirs(fonte_skills, exist_ok=True)
     skills_canonica = set(os.listdir(fonte_skills))
+    nomes_antigos = nomes_antigos_de_skill()
     terceiros = gestor_dependencias.skills_de_terceiros(
         os.path.join(ROOT_DIR, "gates", "dependencias_externas.json")
     )
@@ -709,7 +722,7 @@ def auto_ingest_skills(dry_run=False) -> list[str]:
                 continue
             if not os.path.isfile(os.path.join(caminho_item, "SKILL.md")):
                 continue
-            if item in skills_canonica or item in terceiros:
+            if item in skills_canonica or item in terceiros or item in nomes_antigos:
                 continue
 
             destino_canonico = os.path.join(fonte_skills, item)

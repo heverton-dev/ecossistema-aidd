@@ -6,7 +6,7 @@ Transição do roteamento LLM estático e atrelado a "cargos" (Arquiteto, Inspet
 
 **Explicit Non-Goals:**  
 - Adicionar ou modificar suporte técnico a provedores (OpenAI, Anthropic) no nível da infraestrutura. A responsabilidade do comando CLI via *harness* permanece sendo do agente no terminal.
-- Re-arquitetar os motores base (`aidd-factory`, `aidd-pure`). Apenas os *dispatchers* serão modificados.
+- Re-arquitetar os motores base (`aidd-open`, `aidd-pure`). Apenas os *dispatchers* serão modificados.
 
 ## 2. Contracts & Typed Interfaces
 

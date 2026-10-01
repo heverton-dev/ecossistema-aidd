@@ -258,12 +258,12 @@ def test_tique_mostra_cronometro_e_progresso_do_gate_sem_quebrar_linha(tmp_path,
 
     painel.parcial("G_TESTES_REAIS (pytest real)........")
     with open(progresso, "a", encoding="utf-8") as f:
-        f.write("[G_TESTES_REAIS] (3/8) aidd-generator: pytest rodando... " + "x" * 80 + "\n")
+        f.write("[G_TESTES_REAIS] (3/8) aidd-pure: pytest rodando... " + "x" * 80 + "\n")
     painel.tique()
 
     ultima = out.getvalue().split("\r\033[K")[-1]
     assert ultima.startswith(faz_commit.RECUO + "⋯ G_TESTES_REAIS")
-    assert "(3/8) aidd-generator: pytest rodando..." in ultima
+    assert "(3/8) aidd-pure: pytest rodando..." in ultima
     assert "mensagem antiga" not in ultima  # só o que o gate atual escreveu
     assert len(ultima) < 120  # nunca quebra a linha, senão o \r não reescreve
 

@@ -5,7 +5,7 @@ description: Runs the aidd-ops agentic infrastructure pipeline (VPS sizing, SSH 
 
 # aidd-ops
 
-Agentic infrastructure meta-orchestrator of the ecosystem: provisioning pipeline, SSH runner, Docker and Cloudflare MCPs. Its infrastructure plan feeds `aidd-factory`.
+Agentic infrastructure meta-orchestrator of the ecosystem: provisioning pipeline, SSH runner, Docker and Cloudflare MCPs. Its infrastructure plan feeds `aidd-open`.
 
 ## Run
 

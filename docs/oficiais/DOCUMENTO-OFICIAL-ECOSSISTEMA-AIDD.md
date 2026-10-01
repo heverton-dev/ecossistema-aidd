@@ -39,9 +39,9 @@ O ecossistema é modularizado em 8 ferramentas atômicas, com fronteiras funcion
 |---|---|---|---|---|
 | **AIDD Forge** | `tools/aidd-forge` | Guardião da Governança | Diretório do projeto / Parâmetros | Regras invioláveis (`AGENTS.md`), hooks pre-commit, bloqueios anti-vibe. |
 | **AIDD Planner** | `tools/aidd-planner` | Planta Baixa BDD/SDD | Linguagem natural / Requisitos | `PLANNER.json` com cenários BDD, entidades e contrato formal de handoff. |
-| **AIDD Generator** | `tools/aidd-generator` | Fábrica Autônoma (8 fases) | `PLANNER.json` | Aplicação construída do zero com TDD estrito Red-Green e monólito VSA. |
-| **AIDD Factory** | `tools/aidd-factory` | Montagem Multi-Serviço | Motores OSS + `PLANNER.json` | Gateway FastAPI BFF, Frontend Next.js integrado e Docker Compose unificado. |
-| **AIDD Bridge** | `tools/aidd-bridge` | Libertador de Low-Code | Export Lovable/v0/Bolt | Aplicação desatada de BaaS proprietário, PostgreSQL nativo e UI preservada. |
+| **AIDD Generator** | `tools/aidd-pure` | Fábrica Autônoma (8 fases) | `PLANNER.json` | Aplicação construída do zero com TDD estrito Red-Green e monólito VSA. |
+| **AIDD Factory** | `tools/aidd-open` | Montagem Multi-Serviço | Motores OSS + `PLANNER.json` | Gateway FastAPI BFF, Frontend Next.js integrado e Docker Compose unificado. |
+| **AIDD Bridge** | `tools/aidd-freedom` | Libertador de Low-Code | Export Lovable/v0/Bolt | Aplicação desatada de BaaS proprietário, PostgreSQL nativo e UI preservada. |
 | **AIDD Master** | `tools/aidd-master` | Harmonização Modular VSA | Código das Engines | Fatias Verticais limpas, Frontend Next.js Padrão-Ouro e OpenAPI 3.1. |
 | **AIDD Enterprise** | `tools/aidd-enterprise`| Selo de Segurança Corporativo | Código do Master | Injeção SHA-256 de componentes auditados, RBAC, Rate-Limit e Zero-Trust. |
 | **AIDD Ops** | `tools/aidd-ops` | Meta-Orquestrador de Infra | Código Enterprise | Sizing VPS, Docker Swarm, Traefik SSL, sops+age e Uptime Kuma. |
@@ -70,9 +70,9 @@ O ecossistema estabelece que qualquer demanda de software deriva de uma **Funda�
                  │                        │                        │
                  ▼                        ▼                        ▼
            [ FLUXO 01 ]             [ FLUXO 02 ]             [ FLUXO 03 ]
-             aidd-pure                aidd-open               aidd-bridge
+             aidd-pure                aidd-open               aidd-freedom
           (Do Zero Puro)        (Motores Open-Source)     (Low-Code Desatado)
-          [aidd-generator]          [aidd-factory]           [aidd-bridge]
+          [aidd-pure]          [aidd-open]           [aidd-freedom]
                  │                        │                        │
                  └────────────────────────┼────────────────────────┘
                                           │
@@ -98,7 +98,7 @@ O ecossistema estabelece que qualquer demanda de software deriva de uma **Funda�
 ### 3.1. FLUXO 01 — `aidd-pure` (Do Zero Puro)
 - **Comando Slash:** `/pure <ideia>`
 - **Comando CLI:** `python ecossistema.py run-fluxo --fluxo pure --nome "<nome>" --slug <slug> --dominio <dominio>`
-- **Motor Subjacente:** `aidd-generator` (Pipeline de 8 fases com auto-crítica).
+- **Motor Subjacente:** `aidd-pure` (Pipeline de 8 fases com auto-crítica).
 - **Adequação:** Demandas com lógica de negócio personalizada, inovadora ou altamente proprietária.
 - **Rigor:** Aplica o ciclo TDD Red-Green-Refactor estrito. Os testes são escritos e forçados a falhar antes que qualquer linha de lógica de produção seja implementada.
 - **Entregável:** Código de domínio 100% puro, sem bibliotecas alienígenas, com suíte completa de testes unitários e de integração.
@@ -106,15 +106,15 @@ O ecossistema estabelece que qualquer demanda de software deriva de uma **Funda�
 ### 3.2. FLUXO 02 — `aidd-open` (Motores Open-Source)
 - **Comando Slash:** `/open <ideia>`
 - **Comando CLI:** `python ecossistema.py run-fluxo --fluxo open --nome "<nome>" --slug <slug> --dominio <dominio>`
-- **Motor Subjacente:** `aidd-factory` (Curadoria e orquestração de ecossistemas OSS).
+- **Motor Subjacente:** `aidd-open` (Curadoria e orquestração de ecossistemas OSS).
 - **Adequação:** Soluções onde a reinvenção da roda é contraproducente (Anti-NIH). Casos como ERPs, CRMs, automação de processos, gateways de mensageria e chatbots.
 - **Rigor:** Seleciona engines maduras (ex: PostgreSQL, N8N, Evolution API, Directus), isola cada uma em contêineres OCI herméticos e gera automaticamente um BFF (Backend-for-Frontend) em FastAPI para mediar a integração.
 - **Entregável:** Orquestração Compose multi-serviço, adaptadores de gateway tipados e interface unificada em Next.js.
 
-### 3.3. FLUXO 03 — `aidd-bridge` (Low-Code Desatado)
+### 3.3. FLUXO 03 — `aidd-freedom` (Low-Code Desatado)
 - **Comando Slash:** `/bridge <pasta-origem> <nome>`
 - **Comando CLI:** `python ecossistema.py run-fluxo --fluxo bridge --origem <pasta> --nome "<nome>"`
-- **Motor Subjacente:** `aidd-bridge` (Scanner estático, AST e migrador de dialeto SQL).
+- **Motor Subjacente:** `aidd-freedom` (Scanner estático, AST e migrador de dialeto SQL).
 - **Adequação:** Aplicações concebidas em ferramentas visuais rápidas (Lovable, v0, Bolt, Cursor) que se tornaram reféns de BaaS proprietários (Supabase Cloud) e infraestruturas fechadas.
 - **Rigor:** Escaneia o código fonte visual, extrai as telas React, elimina dependências de SDK proprietário, compila o schema SQL com compatibilidade para `auth.uid()`, `auth.jwt()` e PostgREST puro, preservando 100% da experiência visual concebida no frontend.
 - **Entregável:** Aplicação pronta para self-hosting em VPS própria, banco PostgreSQL autônomo e sem custos de assinatura recorrente de BaaS.

@@ -7,18 +7,21 @@ Ponto único de entrada e orquestração do ecossistema-aidd.
 Roteia comandos para as 8 ferramentas integradas:
   - forge      -> tools/aidd-forge
   - planner    -> tools/aidd-planner
-  - generate   -> tools/aidd-generator
+  - pure-motor -> tools/aidd-pure
   - master     -> tools/aidd-master
   - enterprise -> tools/aidd-enterprise
   - ops        -> tools/aidd-ops
-  - bridge     -> tools/aidd-bridge
-  - factory    -> tools/aidd-factory
+  - freedom-motor -> tools/aidd-freedom
+  - open-motor -> tools/aidd-open
   - audit      -> gates/G_ECOSSISTEMA_INTEGRIDADE.py
   - status     -> Resumo do status do ecossistema
+Nomes antigos (generate, factory, bridge...) seguem como apelido por 1 ciclo:
+componentes/compartilhado/specs/NOMES-ANTIGOS.json.
 """
 
 import argparse
 import importlib
+import json
 import os
 import shutil
 import subprocess
@@ -27,6 +30,7 @@ import types
 
 ROOT_DIR = os.path.dirname(os.path.abspath(__file__))
 TOOLS_DIR = os.path.join(ROOT_DIR, "tools")
+TABELA_NOMES_ANTIGOS = os.path.join(ROOT_DIR, "componentes", "compartilhado", "specs", "NOMES-ANTIGOS.json")
 
 PYTHON_MINIMO = (3, 10)
 REQUIREMENTS_PATH = os.path.join(ROOT_DIR, "requirements.txt")
@@ -135,7 +139,7 @@ def run_command(cmd, cwd, env=None):
     merged_env = os.environ.copy()
     # Forca UTF-8 no I/O do processo filho: sem isso, no console padrao do
     # Windows (codepage cp1252), qualquer print com caractere fora do
-    # repertorio cp1252 (ex: "✓" usado por aidd-bridge) derruba a
+    # repertorio cp1252 (ex: "✓" usado por aidd-freedom) derruba a
     # ferramenta inteira com UnicodeEncodeError antes de terminar o pipeline.
     merged_env.setdefault("PYTHONIOENCODING", "utf-8")
     if env:
@@ -200,8 +204,9 @@ def cmd_forge(args):
     cmd = [sys.executable, "-m", "aidd_forge.cli"] + args
     return run_command(cmd, cwd=os.getcwd(), env=env)
 
-def cmd_generate(args):
-    gen_dir = os.path.join(TOOLS_DIR, "aidd-generator")
+def cmd_pure_motor(args):
+    """Executa só o motor de 8 fases do Fluxo 01 (tools/aidd-pure)."""
+    gen_dir = os.path.join(TOOLS_DIR, "aidd-pure")
     pipeline_script = os.path.join(gen_dir, "scripts", "pipeline_completo.py")
     env = {"PYTHONPATH": gen_dir}
     cmd = [sys.executable, pipeline_script] + args
@@ -228,14 +233,14 @@ def cmd_ops(args):
     cmd = [sys.executable, pipeline_script] + args
     return run_command(cmd, cwd=os.getcwd(), env=env)
 
-def cmd_bridge(args):
-    """Executa a ferramenta aidd-bridge (scan, convert-db, merge, pack, validate)."""
+def cmd_freedom_motor(args):
+    """Executa o motor do Fluxo 03, tools/aidd-freedom (scan, convert-db, merge, pack, validate)."""
     if any(arg.startswith("--nome") or arg.startswith("--pasta") or arg.startswith("--slug") or arg.startswith("--dry-run") for arg in args):
         print("[AVISO] Para executar o Fluxo 03 completo da Tríade, utilize 'python ecossistema.py freedom' (ou /freedom).")
         return cmd_run_fluxo(["--fluxo", "freedom"] + args)
-    bridge_dir = os.path.join(TOOLS_DIR, "aidd-bridge")
-    env = {"PYTHONPATH": bridge_dir}
-    cmd = [sys.executable, "-m", "aidd_bridge.cli"] + args
+    freedom_dir = os.path.join(TOOLS_DIR, "aidd-freedom")
+    env = {"PYTHONPATH": freedom_dir}
+    cmd = [sys.executable, "-m", "aidd_freedom.cli"] + args
     return run_command(cmd, cwd=os.getcwd(), env=env)
 
 def cmd_pure(args):
@@ -250,12 +255,9 @@ def cmd_freedom(args):
     """Atalho de alta ergonomia para run-fluxo --fluxo freedom (Fluxo 03 da Tríade)."""
     return cmd_run_fluxo(["--fluxo", "freedom"] + args)
 
-def cmd_aidd_bridge(args):
-    """Retrocompatibilidade de alias para o Fluxo 03."""
-    return cmd_freedom(args)
-
-def cmd_factory(args):
-    factory_dir = os.path.join(TOOLS_DIR, "aidd-factory")
+def cmd_open_motor(args):
+    """Executa só o gerador de stack multi-serviço do Fluxo 02 (tools/aidd-open)."""
+    factory_dir = os.path.join(TOOLS_DIR, "aidd-open")
     pipeline_script = os.path.join(factory_dir, "scripts", "pipeline_factory.py")
     env = {"PYTHONPATH": factory_dir}
     cmd = [sys.executable, pipeline_script] + args
@@ -1174,12 +1176,12 @@ def cmd_status(args):
     print("\nFerramentas Integradas em tools/:")
     tools = [
         ("aidd-forge", "Bootstrap, governança, fatiamento e context-purge"),
-        ("aidd-generator", "Fábrica autônoma de software (Pipeline 8 fases)"),
+        ("aidd-pure", "Motor do Fluxo 01: fábrica autônoma de software (Pipeline 8 fases)"),
         ("aidd-master", "Suíte Modular com Fatias Verticais e SQLite WAL"),
         ("aidd-enterprise", "Missão crítica, conformidade SHA-256 e Zero-Trust"),
         ("aidd-ops", "Meta-Orquestrador Agêntico de Infraestrutura (Pacote 3)"),
-        ("aidd-bridge", "Extrator, unificador e empacotador Lovable/VPS"),
-        ("aidd-factory", "Gerador de Aplicacao e Integracao (Pipeline Factory)"),
+        ("aidd-freedom", "Motor do Fluxo 03: extrator, unificador e empacotador Lovable/VPS"),
+        ("aidd-open", "Motor do Fluxo 02: gerador de aplicacao e integracao (Pipeline Factory)"),
         ("aidd-planner", "Motor de Planejamento e Combustao da Triade (SDD/BDD)")
     ]
     for name, desc in tools:
@@ -1190,11 +1192,12 @@ def cmd_status(args):
     print("\nSkills Universais:")
     skills_list = [
         "aidd-forge",
-        "aidd-generator",
+        "aidd-pure",
+        "aidd-open",
         "aidd-master",
         "aidd-enterprise",
         "aidd-ops",
-        "aidd-bridge",
+        "aidd-freedom",
         "aidd-planner",
         "aidd-orca",
         "aidd-plan",
@@ -1211,10 +1214,8 @@ def cmd_status(args):
     print("  /pure <ideia>           -> Dispara aidd-pure (Fluxo 01: Do Zero Puro)")
     print("  /open <ideia>           -> Dispara aidd-open (Fluxo 02: Motores Open-Source)")
     print("  /freedom <export>       -> Dispara aidd-freedom (Fluxo 03: Desacoplamento Low-Code)")
-    print("  /bridge [comando]       -> Dispara aidd-bridge (ferramenta: scan, convert-db, pack)")
     print("  /forge [caminho]        -> Dispara aidd-forge")
     print("  /planner [comando]      -> Dispara aidd-planner (planejamento Tríade)")
-    print("  /generate <ideia>       -> Dispara aidd-generator")
     print("  /master <modulo>        -> Dispara aidd-master")
     print("  /enterprise <tipo> <nome> -> Dispara aidd-enterprise")
     print("  /ops [requisito]        -> Dispara aidd-ops (infraestrutura)")
@@ -1223,7 +1224,7 @@ def cmd_status(args):
     print("  /evolucao [ferramenta]  -> Dispara pipeline de evolução a partir do plano")
     print("  /melhoria <pedido>      -> Dispara analise profunda pre-planejamento (docs/melhorias/)")
     print("  /plan <nome>            -> Dispara aidd-plan")
-    print("  /factory --plano <arq> --pasta <dest> -> Dispara aidd-factory (geracao de stack)")
+    print("  Nomes antigos (/generate, /factory, /bridge) -> apelidos por 1 ciclo, avisam 'nome antigo'")
     print("-" * 72)
     return 0
 
@@ -1236,14 +1237,15 @@ Comandos disponíveis:
   pure <args>         Executa o Fluxo 01 da Tríade (Do Zero Puro via aidd-pure)
   open <args>         Executa o Fluxo 02 da Tríade (Motores Open-Source via aidd-open)
   freedom <args>      Executa o Fluxo 03 da Tríade (Desacoplamento Low-Code via aidd-freedom)
-  bridge <args>       Executa comandos do aidd-bridge (scan, convert-db, merge, pack)
+  pure-motor <args>   Executa só o motor de 8 fases do aidd-pure (ex: pure-motor "Minha Ideia")
+  open-motor <args>   Executa só o gerador de stack do aidd-open (ex: open-motor --plano <arq> --pasta <dest>)
+  freedom-motor <args>
+                      Executa um passo do motor do aidd-freedom (scan, convert-db, merge, pack)
   forge <args>        Executa operações do aidd-forge (ex: forge init [pasta])
   planner <args>      Executa comandos do aidd-planner (init, validate, export, audit)
-  generate <args>     Executa o pipeline do aidd-generator (ex: generate "Minha Ideia")
   master <args>       Executa comandos do aidd-master (ex: master add-module faturamento)
   enterprise <args>   Executa comandos do aidd-enterprise (ex: enterprise inject skill auth)
   ops <args>          Executa o pipeline do aidd-ops (ex: ops "<texto>" --pasta <dest>)
-  factory <args>      Executa o pipeline do aidd-factory (ex: factory --plano <arq> --pasta <dest>)
   run-plan <plano> [--dry-run] ...
                       Compila tickets de plano Markdown para handoff JSON e executa
                       o pipeline em Git Worktrees com barreira de sincronização
@@ -1341,38 +1343,34 @@ Comandos disponíveis:
   status --testes     Roda pytest real em cada ferramenta e atualiza
                       PLANO-EXECUCAO-ESTRUTURADO.json com a contagem medida
   help                Exibe esta ajuda
-""")
 
-def main():
-    # Windows abre stdout/stderr no codepage local (cp1252), que não
-    # representa emojis/travessões usados nas mensagens do CLI — força UTF-8
-    # (mesmo padrao de scripts/atualizar_index_planos.py).
-    for fluxo in (sys.stdout, sys.stderr):
-        if hasattr(fluxo, "reconfigure"):
-            fluxo.reconfigure(encoding="utf-8")
+Nomes antigos (apelidos por 1 ciclo, avisam "nome antigo"):
+""" + "".join(f"  {antigo:<19} -> {novo}\n" for antigo, novo in carregar_nomes_antigos().items()))
 
-    # --auto-bootstrap e flag de auto-recuperacao de ambiente, nao um comando:
-    # sai de sys.argv antes do dispatch para nunca chegar ao roteador de comandos.
-    argv = [a for a in sys.argv if a != FLAG_AUTO_BOOTSTRAP]
+def carregar_nomes_antigos():
+    """Comandos antigos da CLI -> comando novo (tabela única NOMES-ANTIGOS.json)."""
+    with open(TABELA_NOMES_ANTIGOS, "r", encoding="utf-8") as f:
+        return json.load(f)["comandos_cli"]
 
-    if len(argv) < 2:
-        print_help()
-        sys.exit(0)
+def _apelido_com_aviso(antigo, novo, destino):
+    def apelido(args):
+        print(f"[AVISO] '{antigo}' é nome antigo (apelido válido só neste ciclo). Use '{novo}'.",
+              file=sys.stderr)
+        return destino(args)
+    return apelido
 
-    cmd = argv[1].lower()
-    args = argv[2:]
-
+def comandos_disponiveis():
+    """Mapa comando -> função, já com os nomes antigos como apelido que avisa."""
     dispatch = {
         "forge": cmd_forge,
-        "generate": cmd_generate,
+        "pure-motor": cmd_pure_motor,
         "master": cmd_master,
         "enterprise": cmd_enterprise,
         "ops": cmd_ops,
-        "bridge": cmd_bridge,
-        "aidd-bridge": cmd_aidd_bridge,
+        "freedom-motor": cmd_freedom_motor,
         "freedom": cmd_freedom,
         "aidd-freedom": cmd_freedom,
-        "factory": cmd_factory,
+        "open-motor": cmd_open_motor,
         "planner": cmd_planner,
         "pure": cmd_pure,
         "aidd-pure": cmd_pure,
@@ -1417,6 +1415,30 @@ def main():
         "--help": lambda a: print_help() or 0,
         "-h": lambda a: print_help() or 0
     }
+    for antigo, novo in carregar_nomes_antigos().items():
+        dispatch[antigo] = _apelido_com_aviso(antigo, novo, dispatch[novo])
+    return dispatch
+
+def main():
+    # Windows abre stdout/stderr no codepage local (cp1252), que não
+    # representa emojis/travessões usados nas mensagens do CLI — força UTF-8
+    # (mesmo padrao de scripts/atualizar_index_planos.py).
+    for fluxo in (sys.stdout, sys.stderr):
+        if hasattr(fluxo, "reconfigure"):
+            fluxo.reconfigure(encoding="utf-8")
+
+    # --auto-bootstrap e flag de auto-recuperacao de ambiente, nao um comando:
+    # sai de sys.argv antes do dispatch para nunca chegar ao roteador de comandos.
+    argv = [a for a in sys.argv if a != FLAG_AUTO_BOOTSTRAP]
+
+    if len(argv) < 2:
+        print_help()
+        sys.exit(0)
+
+    cmd = argv[1].lower()
+    args = argv[2:]
+
+    dispatch = comandos_disponiveis()
 
     if cmd in dispatch:
         exit_code = dispatch[cmd](args)

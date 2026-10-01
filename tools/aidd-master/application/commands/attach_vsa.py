@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """Use Case: attach-vsa — conecta um backend VSA (core kernel + modulo +
 server.py + Quarteto Sine Qua Non) a um projeto cujo frontend ja existe e
-deve ser preservado (ex: saida do aidd-bridge, FLUXO 03). Nunca gera nem
+deve ser preservado (ex: saida do aidd-freedom, FLUXO 03). Nunca gera nem
 sobrescreve Dockerfile/docker-compose.yml/nginx/frontend do frontend
 preservado -- so acrescenta o backend por cima."""
 

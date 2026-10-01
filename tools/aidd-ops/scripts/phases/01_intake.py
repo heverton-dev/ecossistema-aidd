@@ -47,7 +47,7 @@ DINAMICO_PREFIXO_SLUG = "dinamico"
 def eh_nicho_dinamico(nicho_slug: str) -> bool:
     """True quando o nicho veio do caminho dinâmico (reconhecer_nicho_dinamico),
     não do catálogo fixo de 5 nichos. Fonte única desse discriminador —
-    reusada por aidd-factory (01_analisador.py) para saber quando pular a
+    reusada por aidd-open (01_analisador.py) para saber quando pular a
     leitura de templates/infra/nichos/<slug>.json."""
     return bool(nicho_slug) and nicho_slug.startswith(f"{DINAMICO_PREFIXO_SLUG}_")
 

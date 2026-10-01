@@ -173,21 +173,21 @@
                         </tr>
                         <tr class="hover:bg-slate-800/30">
                             <td class="p-4 font-bold text-white">AIDD Generator</td>
-                            <td class="p-4 font-mono text-slate-400">tools/aidd-generator</td>
+                            <td class="p-4 font-mono text-slate-400">tools/aidd-pure</td>
                             <td class="p-4">Fábrica Autônoma (8 fases)</td>
                             <td class="p-4"><code>PLANNER.json</code></td>
                             <td class="p-4">Aplicação do zero com TDD Red-Green estrito</td>
                         </tr>
                         <tr class="hover:bg-slate-800/30">
                             <td class="p-4 font-bold text-white">AIDD Factory</td>
-                            <td class="p-4 font-mono text-slate-400">tools/aidd-factory</td>
+                            <td class="p-4 font-mono text-slate-400">tools/aidd-open</td>
                             <td class="p-4">Integrador Multi-Serviço</td>
                             <td class="p-4">Engines OSS + Plano</td>
                             <td class="p-4">Gateway BFF FastAPI, Next.js e Compose unificado</td>
                         </tr>
                         <tr class="hover:bg-slate-800/30">
                             <td class="p-4 font-bold text-white">AIDD Bridge</td>
-                            <td class="p-4 font-mono text-slate-400">tools/aidd-bridge</td>
+                            <td class="p-4 font-mono text-slate-400">tools/aidd-freedom</td>
                             <td class="p-4">Libertador de Low-Code</td>
                             <td class="p-4">Export Lovable/v0</td>
                             <td class="p-4">Desacoplamento de BaaS e Postgres nativo</td>
@@ -236,7 +236,7 @@
                         FLUXO 02 — aidd-open (Motores Open-Source)
                     </button>
                     <button onclick="switchTab('bridge')" id="tab-btn-bridge" class="tab-btn pb-3 text-slate-400 hover:text-slate-200 transition">
-                        FLUXO 03 — aidd-bridge (Low-Code Desatado)
+                        FLUXO 03 — aidd-freedom (Low-Code Desatado)
                     </button>
                 </div>
 
@@ -244,7 +244,7 @@
                 <div id="tab-content-pure" class="space-y-4">
                     <div class="flex items-center justify-between">
                         <span class="px-2.5 py-1 rounded bg-teal-500/10 text-teal-400 text-xs font-mono font-bold">Pipeline: [FORGE -> PLANNER] -> GENERATOR -> [MASTER -> ENTERPRISE -> OPS]</span>
-                        <span class="text-xs text-slate-400 font-mono">Engine: aidd-generator</span>
+                        <span class="text-xs text-slate-400 font-mono">Engine: aidd-pure</span>
                     </div>
                     <p class="text-xs text-slate-300 leading-relaxed">
                         Construção de software autônomo do zero absoluto através de um pipeline de 8 fases sequenciais. Aplica rigorosamente o ciclo <strong>TDD Red-Green-Refactor</strong>: os testes unitários e de integração são gerados e forçados a falhar antes de qualquer linha de lógica de domínio ser implementada.
@@ -265,7 +265,7 @@
                 <div id="tab-content-open" class="hidden space-y-4">
                     <div class="flex items-center justify-between">
                         <span class="px-2.5 py-1 rounded bg-teal-500/10 text-teal-400 text-xs font-mono font-bold">Pipeline: [FORGE -> PLANNER] -> FACTORY -> [MASTER -> ENTERPRISE -> OPS]</span>
-                        <span class="text-xs text-slate-400 font-mono">Engine: aidd-factory</span>
+                        <span class="text-xs text-slate-400 font-mono">Engine: aidd-open</span>
                     </div>
                     <p class="text-xs text-slate-300 leading-relaxed">
                         Ideal para aplicações onde já existem motores Open-Source consolidados (ERPs, CRMs, N8N, Evolution API, Directus, etc.). Em vez de reinventar a roda, o ecossistema isola as engines em contêineres OCI herméticos e gera automaticamente o <strong>Gateway/BFF em FastAPI</strong> e o Frontend Next.js para unificação total.
@@ -286,7 +286,7 @@
                 <div id="tab-content-bridge" class="hidden space-y-4">
                     <div class="flex items-center justify-between">
                         <span class="px-2.5 py-1 rounded bg-teal-500/10 text-teal-400 text-xs font-mono font-bold">Pipeline: [FORGE -> PLANNER] -> BRIDGE -> [MASTER -> ENTERPRISE -> OPS]</span>
-                        <span class="text-xs text-slate-400 font-mono">Engine: aidd-bridge</span>
+                        <span class="text-xs text-slate-400 font-mono">Engine: aidd-freedom</span>
                     </div>
                     <p class="text-xs text-slate-300 leading-relaxed">
                         Desacoplamento e libertação de projetos construídos em plataformas Low-Code (Lovable, v0, Bolt). Elimina 100% das dependências de BaaS proprietários (Supabase Cloud, Clerk pago), compila schemas SQL para PostgreSQL puro com PostgREST e preserva a interface de usuário criada.

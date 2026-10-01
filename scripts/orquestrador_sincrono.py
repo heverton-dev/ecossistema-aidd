@@ -42,7 +42,7 @@ SPECS_DIR = ROOT_DIR / "componentes" / "compartilhado" / "specs"
 MAPA_FLUXOS = {
     1: 1, "1": 1, "pure": 1, "aidd-pure": 1,
     2: 2, "2": 2, "open": 2, "aidd-open": 2,
-    3: 3, "3": 3, "freedom": 3, "aidd-freedom": 3, "bridge": 3, "aidd-bridge": 3,
+    3: 3, "3": 3, "freedom": 3, "aidd-freedom": 3, "bridge": 3,
 }
 
 NOMES_CANONICOS_FLUXOS = {
@@ -260,20 +260,20 @@ class OrquestradorSincrono:
     def etapa_03_engine(self) -> bool:
         """Etapa 3: Execução da Engine correspondente ao Fluxo."""
         if self.fluxo == 1:
-            self.log("INICIANDO ETAPA 3: aidd-generator (Engine Fluxo 01: Do Zero Puro)", "ETAPA")
+            self.log("INICIANDO ETAPA 3: aidd-pure (Engine Fluxo 01: Do Zero Puro)", "ETAPA")
             cmd = [
-                sys.executable, "ecossistema.py", "generate",
+                sys.executable, "ecossistema.py", "pure-motor",
                 f"{self.nome}: sistema para {self.dominio}",
                 "--pasta", str(self.pasta),
                 "--implementar-codigo"
             ]
             rc = self._executar_comando(cmd)
             if rc != 0:
-                self.log("Falha na execução do aidd-generator", "ERRO")
+                self.log("Falha na execução do aidd-pure", "ERRO")
                 return False
 
         elif self.fluxo == 2:
-            self.log("INICIANDO ETAPA 3: aidd-factory (Engine Fluxo 02: Open-Source)", "ETAPA")
+            self.log("INICIANDO ETAPA 3: aidd-open (Engine Fluxo 02: Open-Source)", "ETAPA")
             plano_infra = self.pasta / "PLANO-INFRAESTRUTURA.json"
             if not self.dry_run and not plano_infra.exists():
                 plano_infra.parent.mkdir(parents=True, exist_ok=True)
@@ -286,25 +286,25 @@ class OrquestradorSincrono:
                 with open(plano_infra, "w", encoding="utf-8") as f:
                     json.dump(plano_dados, f, indent=2, ensure_ascii=False)
             cmd = [
-                sys.executable, "ecossistema.py", "factory",
+                sys.executable, "ecossistema.py", "open-motor",
                 "--plano", str(plano_infra),
                 "--pasta", str(self.pasta / "factory_output")
             ]
             rc = self._executar_comando(cmd)
             if rc != 0:
-                self.log("Falha na execução do aidd-factory", "ERRO")
+                self.log("Falha na execução do aidd-open", "ERRO")
                 return False
 
         elif self.fluxo == 3:
-            self.log("INICIANDO ETAPA 3: aidd-bridge (Engine Fluxo 03: Low-Code Bridge)", "ETAPA")
+            self.log("INICIANDO ETAPA 3: aidd-freedom (Engine Fluxo 03: Low-Code Bridge)", "ETAPA")
             origem = str(self.origem_export or (self.pasta / "origem"))
             cmd = [
-                sys.executable, "ecossistema.py", "bridge", "scan",
+                sys.executable, "ecossistema.py", "freedom-motor", "scan",
                 origem
             ]
             rc = self._executar_comando(cmd)
             if rc != 0:
-                self.log("Falha na execução do aidd-bridge", "ERRO")
+                self.log("Falha na execução do aidd-freedom", "ERRO")
                 return False
 
         # Despacho determinístico de fatias VSA em Git Worktrees efêmeras
@@ -363,7 +363,7 @@ class OrquestradorSincrono:
         # Validação do contrato Engine -> Master
         handoff_engine = {
             "versao_schema": "1.0.0",
-            "origem_engine": "aidd-generator" if self.fluxo == 1 else ("aidd-factory" if self.fluxo == 2 else "aidd-bridge"),
+            "origem_engine": "aidd-pure" if self.fluxo == 1 else ("aidd-open" if self.fluxo == 2 else "aidd-freedom"),
             "projeto_slug": self.slug,
             "slices_geradas": slices_geradas,
             "artefatos_frontend": {
@@ -710,7 +710,7 @@ def main():
         "--fluxo",
         type=str,
         required=True,
-        choices=["1", "2", "3", "pure", "open", "freedom", "bridge", "aidd-pure", "aidd-open", "aidd-freedom", "aidd-bridge"],
+        choices=["1", "2", "3", "pure", "open", "freedom", "bridge", "aidd-pure", "aidd-open", "aidd-freedom"],
         help="pure (ou 1), open (ou 2), freedom (ou 3)"
     )
     parser.add_argument("--nome", type=str, default=None, help="Nome do projeto")

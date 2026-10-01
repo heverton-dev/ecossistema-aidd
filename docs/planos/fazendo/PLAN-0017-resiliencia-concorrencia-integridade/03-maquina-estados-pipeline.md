@@ -1,6 +1,6 @@
 # Item — maquina-estados-pipeline-generator-e-resume
 
-> **Escopo:** Implementar máquina de estados formal e retomada inteligente (--resume) no pipeline do aidd-generator, com validação jsonschema estrita na leitura inter-fases.
+> **Escopo:** Implementar máquina de estados formal e retomada inteligente (--resume) no pipeline do aidd-pure, com validação jsonschema estrita na leitura inter-fases.
 > **Status:** [CONCLUIDO]
 > **Auditoria por reproducao real (12-09-2026):** CONCLUIDO. Criado pipeline_state.py com schemas v1 em .aidd/cache/_pipeline_state.json, flag --resume implementada com pulo de fases completas e validação de artefatos, validação jsonschema inter-fases e 15 testes dedicados passando.
 

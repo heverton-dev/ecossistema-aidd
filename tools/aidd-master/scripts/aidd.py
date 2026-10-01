@@ -170,7 +170,7 @@ def _add_module_cmd(nome, descricao, dir):
     cmd_add_module(types.SimpleNamespace(nome=nome, descricao=descricao, dir=dir))
 
 
-@cli.command("attach-vsa", help="Conecta backend VSA (core+modulo+Quarteto) a um frontend preservado (ex: saida do aidd-bridge), sem sobrescrever Docker/Caddy/frontend existentes")
+@cli.command("attach-vsa", help="Conecta backend VSA (core+modulo+Quarteto) a um frontend preservado (ex: saida do aidd-freedom), sem sobrescrever Docker/Caddy/frontend existentes")
 @click.argument("nome")
 @click.option("--descricao", "-d", default="", help="Descrição do módulo")
 @click.option("--dir", "--pasta", "dir", default=".", help="Diretório do projeto (--pasta é alias de --dir)")

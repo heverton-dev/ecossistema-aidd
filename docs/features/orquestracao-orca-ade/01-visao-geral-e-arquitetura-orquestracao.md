@@ -19,7 +19,7 @@ flowchart TD
     Claude -->|Worktree 02| WT2["🌱 WT: wt-teste-master<br>🤖 Antigravity (agy)<br>📄 02-testes-aidd-master.md"]
     Claude -->|Worktree 03| WT3["🌱 WT: wt-teste-enterprise<br>🤖 Antigravity (agy)<br>📄 03-testes-aidd-enterprise.md"]
     Claude -->|Worktree 04| WT4["🌱 WT: wt-teste-forge<br>🤖 Antigravity (agy)<br>📄 04-testes-aidd-forge.md"]
-    Claude -->|Worktree 05| WT5["🌱 WT: wt-teste-generator<br>🤖 Antigravity (agy)<br>📄 05-testes-aidd-generator.md"]
+    Claude -->|Worktree 05| WT5["🌱 WT: wt-teste-generator<br>🤖 Antigravity (agy)<br>📄 05-testes-aidd-pure.md"]
 
     WT1 -->|Relatório + Exit 0/1| Claude
     WT2 -->|Relatório + Exit 0/1| Claude
@@ -47,7 +47,7 @@ flowchart TD
   2. `02-testes-aidd-master.md` → Mesa AIDD-Master
   3. `03-testes-aidd-enterprise.md` → Mesa AIDD-Enterprise
   4. `04-testes-aidd-forge.md` → Mesa AIDD-Forge
-  5. `05-testes-aidd-generator.md` → Mesa AIDD-Generator
+  5. `05-testes-aidd-pure.md` → Mesa AIDD-Pure
 
 ---
 

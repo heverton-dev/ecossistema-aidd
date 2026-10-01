@@ -166,6 +166,6 @@ def _obter_projetos_alvo() -> list[str]:
         "tools/aidd-master/src/core",
         "tools/aidd-enterprise/scripts",
         "tools/aidd-enterprise/src/core",
-        "tools/aidd-generator/scripts/phases",
+        "tools/aidd-pure/scripts/phases",
         "tools/aidd-ops/scripts",
     ]

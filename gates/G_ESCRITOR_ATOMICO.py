@@ -13,17 +13,17 @@ do pipeline AIDD:
   - tools/aidd-master/scripts/scaffold_infra.py
   - tools/aidd-master/scripts/compose_suite.py
   - tools/aidd-ops/scripts/pipeline_ops.py  (_gravar_plano)
-  - tools/aidd-generator/scripts/phases/01_pesquisador.py
-  - tools/aidd-generator/scripts/phases/02_analisador.py
-  - tools/aidd-generator/scripts/phases/03_designer.py
-  - tools/aidd-generator/scripts/phases/04_decisor.py
-  - tools/aidd-generator/scripts/phases/05_criador.py
-  - tools/aidd-generator/scripts/phases/06_documentador.py
-  - tools/aidd-generator/scripts/phases/07_analisador.py
-  - tools/aidd-generator/scripts/phases/08_implementador.py
-  - tools/aidd-generator/scripts/phases/utils_delegacao.py
-  - tools/aidd-generator/scripts/phases/utils_fleet_discovery.py
-  - tools/aidd-generator/scripts/phases/utils_subagente_ephemero.py
+  - tools/aidd-pure/scripts/phases/01_pesquisador.py
+  - tools/aidd-pure/scripts/phases/02_analisador.py
+  - tools/aidd-pure/scripts/phases/03_designer.py
+  - tools/aidd-pure/scripts/phases/04_decisor.py
+  - tools/aidd-pure/scripts/phases/05_criador.py
+  - tools/aidd-pure/scripts/phases/06_documentador.py
+  - tools/aidd-pure/scripts/phases/07_analisador.py
+  - tools/aidd-pure/scripts/phases/08_implementador.py
+  - tools/aidd-pure/scripts/phases/utils_delegacao.py
+  - tools/aidd-pure/scripts/phases/utils_fleet_discovery.py
+  - tools/aidd-pure/scripts/phases/utils_subagente_ephemero.py
 
 Detecta:
   - open(..., 'w') ou open(..., 'w+', ...) sem uso de escritor_atomico
@@ -59,17 +59,17 @@ ARQUIVOS_CRITICOS = [
     "tools/aidd-master/scripts/scaffold_infra.py",
     "tools/aidd-master/scripts/compose_suite.py",
     "tools/aidd-ops/scripts/pipeline_ops.py",
-    "tools/aidd-generator/scripts/phases/01_pesquisador.py",
-    "tools/aidd-generator/scripts/phases/02_analisador.py",
-    "tools/aidd-generator/scripts/phases/03_designer.py",
-    "tools/aidd-generator/scripts/phases/04_decisor.py",
-    "tools/aidd-generator/scripts/phases/05_criador.py",
-    "tools/aidd-generator/scripts/phases/06_documentador.py",
-    "tools/aidd-generator/scripts/phases/07_analisador.py",
-    "tools/aidd-generator/scripts/phases/08_implementador.py",
-    "tools/aidd-generator/scripts/phases/utils_delegacao.py",
-    "tools/aidd-generator/scripts/phases/utils_fleet_discovery.py",
-    "tools/aidd-generator/scripts/phases/utils_subagente_ephemero.py",
+    "tools/aidd-pure/scripts/phases/01_pesquisador.py",
+    "tools/aidd-pure/scripts/phases/02_analisador.py",
+    "tools/aidd-pure/scripts/phases/03_designer.py",
+    "tools/aidd-pure/scripts/phases/04_decisor.py",
+    "tools/aidd-pure/scripts/phases/05_criador.py",
+    "tools/aidd-pure/scripts/phases/06_documentador.py",
+    "tools/aidd-pure/scripts/phases/07_analisador.py",
+    "tools/aidd-pure/scripts/phases/08_implementador.py",
+    "tools/aidd-pure/scripts/phases/utils_delegacao.py",
+    "tools/aidd-pure/scripts/phases/utils_fleet_discovery.py",
+    "tools/aidd-pure/scripts/phases/utils_subagente_ephemero.py",
 ]
 
 # Padrões de aceitação: chamadas que NÃO são violação

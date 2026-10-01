@@ -21,23 +21,23 @@ CLI_PATH = os.path.join(
 TOOLS_REQUIRED = [
     "aidd-forge",
     "aidd-planner",
-    "aidd-generator",
+    "aidd-pure",
     "aidd-master",
     "aidd-enterprise",
     "aidd-ops",
-    "aidd-bridge",
-    "aidd-factory"
+    "aidd-freedom",
+    "aidd-open"
 ]
 
 SKILLS_REQUIRED = [
     "aidd-forge",
     "aidd-planner",
-    "aidd-generator",
+    "aidd-pure",
     "aidd-master",
     "aidd-enterprise",
     "aidd-ops",
-    "aidd-bridge",
-    "aidd-factory"
+    "aidd-freedom",
+    "aidd-open"
 ]
 
 COMMANDS_REQUIRED = [

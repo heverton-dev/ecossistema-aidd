@@ -2,7 +2,7 @@
 """
 Conecta o backend VSA (gerado por provision_backend_only) a infraestrutura
 Docker/Caddy JA existente no diretorio do projeto -- tipicamente a saida do
-aidd-bridge (FLUXO 03), que preserva o frontend original e ja definiu seus
+aidd-freedom (FLUXO 03), que preserva o frontend original e ja definiu seus
 proprios servicos (web, db, postgrest, storage, caddy). Nunca regenera esses
 arquivos do zero: so acrescenta o servico "api" (backend Python VSA) e as
 rotas do Quarteto Sine Qua Non (/docs, /webhooks, /mcp, /metrics) por cima.
@@ -19,7 +19,7 @@ API_PORT = 3000
 
 def write_api_dockerfile(project_dir: str) -> str:
     """Copia o Dockerfile core (non-root, healthcheck real) como Dockerfile.api,
-    isolado do Dockerfile do frontend que o aidd-bridge ja escreveu na raiz.
+    isolado do Dockerfile do frontend que o aidd-freedom ja escreveu na raiz.
     O build context continua sendo a raiz do projeto (igual ao Dockerfile do
     frontend), entao as instrucoes COPY sao reescritas com o prefixo
     "backend/" -- e la que provision_backend_only() gera requirements.txt/src/."""
@@ -94,7 +94,7 @@ def _quarteto_handle_blocks() -> str:
 
 def merge_backend_routes_into_caddyfile(project_dir: str) -> str:
     """Insere as rotas nativas do Quarteto Sine Qua Non no Caddyfile que o
-    aidd-bridge ja gerou, sempre ANTES do "handle {}" catch-all do frontend
+    aidd-freedom ja gerou, sempre ANTES do "handle {}" catch-all do frontend
     (Caddy usa a primeira "handle" que casar; um catch-all antes das rotas
     especificas as engoliria)."""
     caddyfile_path = os.path.join(project_dir, "Caddyfile")
@@ -123,7 +123,7 @@ def merge_backend_routes_into_caddyfile(project_dir: str) -> str:
 def attach_infra(project_dir: str) -> dict:
     """Roda os 3 passos de conexao (Dockerfile.api + compose + Caddyfile) se
     -- e somente se -- o projeto ja tiver uma stack Docker/Caddy previa (ex:
-    saida do aidd-bridge). Sem isso, e um monolito puro do Fluxo 01/02 que ja
+    saida do aidd-freedom). Sem isso, e um monolito puro do Fluxo 01/02 que ja
     gera seu proprio Dockerfile/compose via `master init` -- nao ha nada a
     conectar aqui."""
     compose_path = os.path.join(project_dir, "docker-compose.yml")

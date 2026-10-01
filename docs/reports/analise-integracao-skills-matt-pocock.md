@@ -50,7 +50,7 @@ Criadas por Matt Pocock (autor de *Total TypeScript* e *AI Hero*), essas skills 
 
 1. **Viés de Ecossistema Monocultura (TypeScript):** As skills originais assumem `package.json`, Vitest/Jest, TypeScript e conventions de front/fullstack. No AIDD (que suporta backends em Python, Go, Rust, microserviços poliglota), a importação direta sem adaptação gerará atritos.
 2. **Conflito com a Lei "Extreme Token Economy":** Os prompts de Matt Pocock prezam por prolixidade didática. No ecossistema AIDD, comandos e prompts devem ser enxutos (< 2.000 tokens), operando preferencialmente com diretivas densas.
-3. **Travamento em Execuções Autônomas/Headless:** O `grill-me` é deliberadamente interativo e socrático. Em ferramentas como `aidd-generator` (que roda pipelines de 8 fases), a skill de grill precisa possuir um modo de fallback não-bloqueante (ex.: sintetizar premissas assumidas quando em modo batch).
+3. **Travamento em Execuções Autônomas/Headless:** O `grill-me` é deliberadamente interativo e socrático. Em ferramentas como `aidd-pure` (que roda pipelines de 8 fases), a skill de grill precisa possuir um modo de fallback não-bloqueante (ex.: sintetizar premissas assumidas quando em modo batch).
 4. **Sobreposição com Ferramentas Existentes:** O ecossistema já possui o MCP `code-review-graph` e as skills `debug-issue` e `review-changes`. A importação não pode duplicar ou conflitar com as ferramentas nativas.
 
 ---
@@ -132,12 +132,12 @@ Cada skill adaptada receberá o prefixo ou namespace do ecossistema para evitar 
 | Ferramenta AIDD | Papel Atual | Skill Pocock Aplicada | Benefício do Upgrade |
 | :--- | :--- | :--- | :--- |
 | **`aidd-forge`** | Bootstrap de repositórios, templates e blindagem | `setup-skills` + `grill-with-docs` | Ao inicializar um projeto, o forge já configura o mapeamento de documentação, issue tracker e perfis de teste de forma interativa e guiada. |
-| **`aidd-generator`** | Fábrica autônoma de software em 8 fases | `to-spec` + `to-tickets` (Fases 1 e 2) | Refina a Fase 1 (PRD/Spec) e Fase 2 (Decomposição de Tarefas), garantindo que as especificações sejam atômicas e com blast radius controlado antes da geração de código. |
+| **`aidd-pure`** | Fábrica autônoma de software em 8 fases | `to-spec` + `to-tickets` (Fases 1 e 2) | Refina a Fase 1 (PRD/Spec) e Fase 2 (Decomposição de Tarefas), garantindo que as especificações sejam atômicas e com blast radius controlado antes da geração de código. |
 | **`aidd-master`** | Arquitetura Vertical Slice modular | `to-tickets` + `tdd` | Cada Vertical Slice (Domain, Application, Infrastructure) é decomposta em tickets tracer-bullet e construída sob ciclo estrito de TDD agnóstico. |
 | **`aidd-enterprise`** | Injeção e auditoria de componentes críticos (SHA-256) | `tdd` + `code-review` | Garante que componentes de missão crítica tenham 100% de cobertura de especificações e testes reais antes de receberem assinatura de integridade. |
 | **`aidd-ops`** | Orquestração de infra, cloud e containers | `diagnose` + `handoff` | Triage metódica de falhas de build, Dockerfiles, Kubernetes ou redes, registrando relatórios de handoff entre turnos e ambientes. |
-| **`aidd-factory`** | Gerador de aplicações multi-serviço | `to-spec` + `tdd` | Garante que integrações de contratos (APIs REST, gRPC, filas) sejam validadas por testes de contrato antes da codificação de consumidores. |
-| **`aidd-bridge`** | Empacotador e saneador de projetos Low-Code (Lovable/v0) | `diagnose` + `to-spec` | Aplica engenharia reversa disciplinada no código desestruturado gerado por plataformas low-code, gerando uma spec limpa e tickets de saneamento. |
+| **`aidd-open`** | Gerador de aplicações multi-serviço | `to-spec` + `tdd` | Garante que integrações de contratos (APIs REST, gRPC, filas) sejam validadas por testes de contrato antes da codificação de consumidores. |
+| **`aidd-freedom`** | Empacotador e saneador de projetos Low-Code (Lovable/v0) | `diagnose` + `to-spec` | Aplica engenharia reversa disciplinada no código desestruturado gerado por plataformas low-code, gerando uma spec limpa e tickets de saneamento. |
 
 ---
 
@@ -148,7 +148,7 @@ Para que a integração seja aprovada nos Quality Gates do ecossistema, os segui
 1. **Zero Stubs / Zero Mocks:** A skill `tdd` não pode gerar stubs vazios (`pass`, `throw NotImplementedError`, `// TODO`). O teste deve falhar de forma legítima e a implementação deve ser 100% funcional.
 2. **Context Optimization (< 2000 tokens):** Os arquivos `SKILL.md` importados devem ser minificados e redigidos em formato telegráfico e denso, sem preâmbulos prolixos.
 3. **Graph-First Integration:** A skill `diagnose` deve obrigatoriamente chamar o MCP `code-review-graph` (`detect_changes_tool`, `get_impact_radius_tool`) antes de sugerir hipóteses sobre código existente.
-4. **Modo Interativo vs. Não-Interativo:** O `grill-me` deve respeitar o contexto: quando executado via CLI interativa/chat, faz perguntas ao usuário; quando invocado por pipeline batch do `aidd-generator`, sintetiza premissas em documento e prossegue caso sinalizado via flag.
+4. **Modo Interativo vs. Não-Interativo:** O `grill-me` deve respeitar o contexto: quando executado via CLI interativa/chat, faz perguntas ao usuário; quando invocado por pipeline batch do `aidd-pure`, sintetiza premissas em documento e prossegue caso sinalizado via flag.
 
 ---
 
@@ -184,7 +184,7 @@ Para que a integração seja aprovada nos Quality Gates do ecossistema, os segui
   * Suporte a drivers de teste: Pytest (Python), Vitest/Jest (JS/TS), Go test (Go), Cargo test (Rust).
   * Enxugamento de tokens (< 150 linhas por SKILL.md).
 * **Etapa 3:** Criar o script de instalação determinística em `scripts/instalar_skills_pocock.py` e cadastrar o hash no `gates/dependencias_externas.json`. Sincronizar para os harnesses suportados via `componentes/compartilhado/`.
-* **Etapa 4:** Atualizar os `AGENTS.md` de cada ferramenta (`tools/aidd-generator`, `tools/aidd-master`, etc.) para instruir o agente a invocar as skills correspondentes em cada fase do ciclo de vida.
+* **Etapa 4:** Atualizar os `AGENTS.md` de cada ferramenta (`tools/aidd-pure`, `tools/aidd-master`, etc.) para instruir o agente a invocar as skills correspondentes em cada fase do ciclo de vida.
 * **Etapa 5:** Rodar a suite completa de Quality Gates: `python ecossistema.py audit`, garantindo 100% de conformidade com as leis do ecossistema.
 
 ---

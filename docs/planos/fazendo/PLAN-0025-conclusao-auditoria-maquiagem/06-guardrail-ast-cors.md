@@ -1,6 +1,6 @@
 # Item 6 — Guardrail AST para CORS
 
-> **Escopo:** Entra: o template/fase do aidd-generator que produz `src/app.py` com `CORSMiddleware` — corrigir para não combinar `allow_origins=["*"]` com `allow_credentials=True`. Não entra: mudar outras partes do pipeline de 8 fases.
+> **Escopo:** Entra: o template/fase do aidd-pure que produz `src/app.py` com `CORSMiddleware` — corrigir para não combinar `allow_origins=["*"]` com `allow_credentials=True`. Não entra: mudar outras partes do pipeline de 8 fases.
 > **Status:** [APROVADO — Aguardando Execucao]
 > **Nota Atual (0-10):** NAO AUDITADO — evidencia: (nota pendente de medicao real - nao preencher com estimativa)
 > **Nota Alvo (0-10):** NAO AUDITADO
@@ -10,7 +10,7 @@
 
 ## Contexto ja investigado
 
-- Confirmado por fork de auditoria rodando o app real: `teste-isolado-aidd-generator/src/app.py` tem `app.add_middleware(CORSMiddleware, allow_origins=["*"], allow_credentials=True, ...)` — combinação insegura (navegadores modernos rejeitam essa combinação; onde não rejeitam, expõe CORS amplo com credenciais).
+- Confirmado por fork de auditoria rodando o app real: `teste-isolado-aidd-pure/src/app.py` tem `app.add_middleware(CORSMiddleware, allow_origins=["*"], allow_credentials=True, ...)` — combinação insegura (navegadores modernos rejeitam essa combinação; onde não rejeitam, expõe CORS amplo com credenciais).
 - App gerado é real e funcional (CRUD/MCP/webhook testados ao vivo) — este é o único bug real encontrado nesse projeto de saída, isolado e pontual.
 
 ## Definicao de Pronto

@@ -25,23 +25,23 @@ ROOT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 TOOLS_REQUIRED = [
     "aidd-forge",
     "aidd-planner",
-    "aidd-generator",
+    "aidd-pure",
     "aidd-master",
     "aidd-enterprise",
     "aidd-ops",
-    "aidd-bridge",
-    "aidd-factory"
+    "aidd-freedom",
+    "aidd-open"
 ]
 
 SKILLS_REQUIRED = [
     "aidd-forge",
     "aidd-planner",
-    "aidd-generator",
+    "aidd-pure",
     "aidd-master",
     "aidd-enterprise",
     "aidd-ops",
-    "aidd-bridge",
-    "aidd-factory"
+    "aidd-freedom",
+    "aidd-open"
 ]
 
 COMMANDS_REQUIRED = [

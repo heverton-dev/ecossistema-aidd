@@ -198,8 +198,8 @@ Este relatório mapeia cada camada arquitetural do ecossistema AIDD (v5.1), comp
 | Orchestration | **Docker Compose** | v2 |
 | Reverse Proxy | **Nginx Alpine** (aidd-master) | latest |
 | Reverse Proxy | **Traefik** (aidd-ops) | latest |
-| VPS Deploy | **Paramiko SSH/SFTP** (aidd-bridge) | 5.0.0 |
-| DNS | **Cloudflare DNS API** (aidd-bridge) | — |
+| VPS Deploy | **Paramiko SSH/SFTP** (aidd-freedom) | 5.0.0 |
+| DNS | **Cloudflare DNS API** (aidd-freedom) | — |
 | Service Discovery | **Docker networks** | — |
 | Health Checks | **HTTP-based** (urllib) | — |
 

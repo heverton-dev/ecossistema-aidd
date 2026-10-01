@@ -1,7 +1,7 @@
 # Item 2 — Factory-Blueprints (Refatoração Arquitetural VSA & Quarteto Sine Qua Non)
 
-> **Escopo:** Refatoração estrutural da ferramenta `aidd-factory` para elevar sua maturidade de 8.5 para 9.8, eliminando o modelo de microsserviços desconectados e alinhando-a aos padrões canônicos do `aidd-master` e `aidd-enterprise`: Vertical Slice Architecture (VSA), Monólito Modular em Python assíncrono, Quarteto *Sine Qua Non* dinâmico (`/swagger`, `/webhooks`, `/mcp`, `/docs`), Repositórios tipados anti-SQL injection e Super-App UI offline-first (Impeccable Design).
-> **Fora de Escopo:** Modificação do `PLANO-INFRAESTRUTURA.json` do `aidd-ops` (o contrato de entrada é imutável) e alteração das ferramentas de deploy VPS (`aidd-bridge`).
+> **Escopo:** Refatoração estrutural da ferramenta `aidd-open` para elevar sua maturidade de 8.5 para 9.8, eliminando o modelo de microsserviços desconectados e alinhando-a aos padrões canônicos do `aidd-master` e `aidd-enterprise`: Vertical Slice Architecture (VSA), Monólito Modular em Python assíncrono, Quarteto *Sine Qua Non* dinâmico (`/swagger`, `/webhooks`, `/mcp`, `/docs`), Repositórios tipados anti-SQL injection e Super-App UI offline-first (Impeccable Design).
+> **Fora de Escopo:** Modificação do `PLANO-INFRAESTRUTURA.json` do `aidd-ops` (o contrato de entrada é imutável) e alteração das ferramentas de deploy VPS (`aidd-freedom`).
 > **Status:** [EM EXECUCAO]
 > **Nota Atual (0-10):** 8.5 — evidencia: `docs/melhorias/16-09-2026_melhoria-elevacao-maturidade-ferramentas.json` e homologação E2E CTT (Seção 6 de `docs/teste-end-to-end/relatorio-teste-end-to-end.md`).
 > **Nota Alvo (0-10):** 9.8
@@ -12,12 +12,12 @@
 ## Contexto ja investigado
 
 1. **Homologação E2E no Projeto CTT:**
-   - O `aidd-factory` executou e passou nos testes, mas gerou artefatos dissonantes do restante do ecossistema: um proxy FastAPI ralo, um frontend Next.js de prateleira sem modelos de domínio reais e um script bash cru sem camadas de persistência.
+   - O `aidd-open` executou e passou nos testes, mas gerou artefatos dissonantes do restante do ecossistema: um proxy FastAPI ralo, um frontend Next.js de prateleira sem modelos de domínio reais e um script bash cru sem camadas de persistência.
 2. **Divergência com Leis Invioláveis:**
    - **Lei 10 (Quarteto *Sine Qua Non*):** O código gerado não continha o MCP Studio (`/mcp` com SSE/JSON-RPC) nem o Manual Dinâmico do Utilizador (`/docs` gerado via AST).
    - **Padrão VSA:** Ausência de fatias verticais (`src/<servico>/api.py`, `models.py`, `repositories.py`).
 3. **Harmonia do Ecossistema:**
-   - O `aidd-factory` deve atuar como o braço executor de aplicação que consome o dimensionamento do `aidd-ops` e materializa a arquitetura de alta densidade do `aidd-master` e `aidd-enterprise`.
+   - O `aidd-open` deve atuar como o braço executor de aplicação que consome o dimensionamento do `aidd-ops` e materializa a arquitetura de alta densidade do `aidd-master` e `aidd-enterprise`.
 
 ---
 
@@ -41,19 +41,19 @@
      - Navegação por abas dinâmicas para cada módulo da stack.
      - Telas operacionais conectadas aos endpoints reais com tabelas, modais e feedback de erro/sucesso.
      - Conformidade com o design system sem caracteres quebrados ou dependências externas pesadas.
-5. **Quality Gates da Factory Hardened (`tools/aidd-factory/gates/`):**
+5. **Quality Gates da Factory Hardened (`tools/aidd-open/gates/`):**
    - Atualizar `G_FACTORY_INTEGRATION.py` e `G_FACTORY_ANALYSIS.py` para validar a presença das Fatias Verticais e das 4 rotas do Quarteto *Sine Qua Non*.
    - Garantir 100% de aprovação em todos os gates mecânicos da fábrica.
 6. **Zero Stubs e Testes Unitários Reais:**
-   - Suíte `tools/aidd-factory/tests` com testes unitários e de integração validando a nova arquitetura gerada, garantindo 100% PASS.
+   - Suíte `tools/aidd-open/tests` com testes unitários e de integração validando a nova arquitetura gerada, garantindo 100% PASS.
 
 ---
 
 ## Criterio de Saida
 
-- Templates Jinja2 em `tools/aidd-factory/templates/` refatorados para o padrão VSA e Quarteto *Sine Qua Non*.
-- Scripts geradores em `tools/aidd-factory/src/core/` atualizados para orquestrar as fatias e os 4 pilares dinâmicos.
-- Suíte `pytest tools/aidd-factory/tests` passando com 100% de sucesso.
+- Templates Jinja2 em `tools/aidd-open/templates/` refatorados para o padrão VSA e Quarteto *Sine Qua Non*.
+- Scripts geradores em `tools/aidd-open/src/core/` atualizados para orquestrar as fatias e os 4 pilares dinâmicos.
+- Suíte `pytest tools/aidd-open/tests` passando com 100% de sucesso.
 - Meta-Quality Gate `python ecossistema.py audit` retornando exit code 0.
 - Execução limpa de validação demonstrando a geração da aplicação completa em conformidade.
 
@@ -66,7 +66,7 @@
 ```
 Você vai implementar o Item 2: Factory-Blueprints (Refatoração Arquitetural VSA & Quarteto Sine Qua Non) do PLAN-0034.
 Siga rigorosamente a Definição de Pronto acima:
-1. Refatore os geradores e templates de aidd-factory para produzir Vertical Slice Architecture (fatias por serviço com api, models, repositories).
+1. Refatore os geradores e templates de aidd-open para produzir Vertical Slice Architecture (fatias por serviço com api, models, repositories).
 2. Assegure a inclusão nativa do Quarteto Sine Qua Non Dinâmico (/swagger, /webhooks, /mcp, /docs) no servidor gerado.
 3. Entregue frontend Super-App alinhado ao Impeccable Design e repositórios tipados seguros.
 4. Atualize os Quality Gates da ferramenta e garanta aprovação total de pytest e ecossistema audit.
@@ -82,7 +82,7 @@ Não invente aprovações e mantenha as regras do monorepo e token economy.
 ```
 You are going to implement Item 2: Factory-Blueprints (VSA & Sine Qua Non Quartet Architectural Refactoring) of PLAN-0034.
 Strictly follow the Definition of Done above:
-1. Refactor aidd-factory generators and templates to produce Vertical Slice Architecture (slices per service with api, models, repositories).
+1. Refactor aidd-open generators and templates to produce Vertical Slice Architecture (slices per service with api, models, repositories).
 2. Ensure native inclusion of the Dynamic Sine Qua Non Quartet (/swagger, /webhooks, /mcp, /docs) in the generated server.
 3. Deliver Super-App frontend aligned with Impeccable Design and typed secure repositories.
 4. Update tool Quality Gates and ensure full approval in pytest and ecossistema audit.

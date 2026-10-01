@@ -23,7 +23,7 @@ ROOT_DIR = Path(__file__).resolve().parent.parent
 ESCOPO_PATH = ROOT_DIR / "gates" / "_escopo_commit.py"
 GATE_PATH = ROOT_DIR / "gates" / "G_TESTES_REAIS.py"
 
-TODAS = ["aidd-forge", "aidd-planner", "aidd-generator", "aidd-master", "aidd-ops"]
+TODAS = ["aidd-forge", "aidd-planner", "aidd-pure", "aidd-master", "aidd-ops"]
 
 
 @pytest.fixture(scope="session")

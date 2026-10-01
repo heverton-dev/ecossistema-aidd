@@ -32,7 +32,7 @@
     "mcp-verificador-cve": {
       "command": "python",
       "args": [
-        "tools/aidd-generator/mcps/mcp-verificador-cve/server.py"
+        "tools/aidd-pure/mcps/mcp-verificador-cve/server.py"
       ]
     },
     "cloudflare-mcp": {

@@ -117,18 +117,18 @@
 Every robust application in the ecosystem originates from **`aidd-forge`** (supreme governance and rule dictatorship) and an interactive **`PRÉ-PLANO`** intake (`aidd-planner`), allowing the developer or user to derive 3 distinct specialized paths with zero friction (CLI or Slash Commands):
 
 - **FLUXO 01 — `aidd-pure` (Do Zero Puro | Slash: `/pure`):** `[FORGE -> PLANNER] -> GENERATOR -> [MASTER -> ENTERPRISE -> OPS]`
-  - Engine: `aidd-generator` (8-phase pipeline, TDD Red-Green, Monólito Modular VSA + Next.js).
+  - Engine: `aidd-pure` (8-phase pipeline, TDD Red-Green, Monólito Modular VSA + Next.js).
   - CLI: `python ecossistema.py pure` ou `python ecossistema.py run-fluxo --fluxo pure`
   - Skill: `aidd-pure`
 - **FLUXO 02 — `aidd-open` (Motores Open-Source | Slash: `/aidd-open` ou `/open` ou `/factory`):** `[FORGE -> PLANNER] -> FACTORY -> [MASTER -> ENTERPRISE -> OPS]`
-  - Engine: `aidd-factory` (Open-source engine curation, VSA integration slices, compose).
+  - Engine: `aidd-open` (Open-source engine curation, VSA integration slices, compose).
   - CLI: `python ecossistema.py open` (ou `python ecossistema.py aidd-open`) ou `python ecossistema.py run-fluxo --fluxo open`
   - Skill: `aidd-open`
   - *Aviso de Namespace:* No Antigravity CLI (`agy`), o comando `/open <path>` é reservado internamente pela ferramenta para abrir arquivos no editor do sistema. Por isso, no AGY/Antigravity utilize `/aidd-open` ou `/factory` para acionar este fluxo sem colisão.
 - **FLUXO 03 — `aidd-freedom` (Low-Code / Apps Unificadas | Slash: `/freedom`):** `[FORGE -> PLANNER] -> BRIDGE -> [MASTER -> ENTERPRISE -> OPS]`
-  - Engine: `aidd-bridge` (Vendor lock-in eradication, Lovable/v0/Bolt cleanup, PostgreSQL, UI preservation).
+  - Engine: `aidd-freedom` (Vendor lock-in eradication, Lovable/v0/Bolt cleanup, PostgreSQL, UI preservation).
   - CLI: `python ecossistema.py freedom` ou `python ecossistema.py run-fluxo --fluxo freedom`
-  - Skill: `aidd-freedom` (operações atômicas da ferramenta via `aidd-bridge`)
+  - Skill: `aidd-freedom` (operações atômicas da ferramenta via `aidd-freedom`)
 - **EXECUÇÃO DETERMINÍSTICA DE PIPELINE & PLANOS (Slash: `/run-plan` e `/pipeline`):**
   - Engine: `tools/aidd-master/scripts/orchestrator_pipeline.py` & `scripts/compilador_tickets_plano.py` (Worktrees efêmeras + Join Barrier).
   - CLI: `python ecossistema.py run-plan <plano>` e `python ecossistema.py pipeline --handoff <json>`
@@ -157,12 +157,12 @@ Every robust application in the ecosystem originates from **`aidd-forge`** (supr
 Core rules are universal. Domain and tool-specific instructions reside in their respective directories:
 - `tools/aidd-forge/AGENTS.md` -> Bootstrap, templates, and environment shielding.
 - `tools/aidd-planner/AGENTS.md` -> Planning engine, SDD/BDD intake, and Triad fuel generation.
-- `tools/aidd-generator/AGENTS.md` -> 8-phase software generation factory.
+- `tools/aidd-pure/AGENTS.md` -> 8-phase software generation factory.
 - `tools/aidd-master/AGENTS.md` -> Modular Vertical Slice architecture.
 - `tools/aidd-enterprise/AGENTS.md` -> Mission-critical SHA-256 injected components.
 - `tools/aidd-ops/AGENTS.md` -> Agentic infrastructure meta-orchestration.
-- `tools/aidd-factory/AGENTS.md` -> Multi-service application & integration code generator.
-- `tools/aidd-bridge/AGENTS.md` -> Low-code (Lovable/v0/Bolt) VPS packager.
+- `tools/aidd-open/AGENTS.md` -> Multi-service application & integration code generator.
+- `tools/aidd-freedom/AGENTS.md` -> Low-code (Lovable/v0/Bolt) VPS packager.
 
 ---
 

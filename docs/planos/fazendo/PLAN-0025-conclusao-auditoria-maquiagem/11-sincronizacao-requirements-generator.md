@@ -1,6 +1,6 @@
 # Item 11 — Sincronizacao requirements generator
 
-> **Escopo:** Entra: a Fase 5 (`05_criador.py`) do pipeline do aidd-generator, que grava `requirements.txt` fixo (`requests>=2.31.0`) no projeto gerado sem nunca revisitar esse arquivo depois que a Fase 8 (`08_implementador.py`) gera código real via LLM (FastAPI/uvicorn/etc., conforme o caso). Não entra: mudar o mecanismo de MCP hand-rolled (já coberto por outro achado do levantamento NIH, fora deste item) nem o restante do pipeline de 8 fases.
+> **Escopo:** Entra: a Fase 5 (`05_criador.py`) do pipeline do aidd-pure, que grava `requirements.txt` fixo (`requests>=2.31.0`) no projeto gerado sem nunca revisitar esse arquivo depois que a Fase 8 (`08_implementador.py`) gera código real via LLM (FastAPI/uvicorn/etc., conforme o caso). Não entra: mudar o mecanismo de MCP hand-rolled (já coberto por outro achado do levantamento NIH, fora deste item) nem o restante do pipeline de 8 fases.
 > **Status:** [APROVADO — Aguardando Execucao]
 > **Nota Atual (0-10):** NAO AUDITADO — evidencia: (nota pendente de medicao real - nao preencher com estimativa)
 > **Nota Alvo (0-10):** NAO AUDITADO
@@ -11,7 +11,7 @@
 ## Contexto já investigado
 
 - Achado em 2026-09-07 investigando o item 7 do plano `direcionamento-estrategico-anti-nih` (levantamento de dependências por ferramenta), via leitura real de código, não suposição.
-- `tools/aidd-generator/scripts/phases/05_criador.py:772-776` grava `{pasta_projeto}/requirements.txt` com conteúdo fixo: só `requests>=2.31.0`.
+- `tools/aidd-pure/scripts/phases/05_criador.py:772-776` grava `{pasta_projeto}/requirements.txt` com conteúdo fixo: só `requests>=2.31.0`.
 - Nenhuma fase posterior atualiza esse arquivo — confirmado via grep por "requirements" em `08_implementador.py` (zero ocorrências), mesmo essa fase instruindo o LLM a gerar código que tipicamente usa FastAPI/uvicorn/outras libs (`08_implementador.py:384` manda expor `/mcp/rpc` e webhook HMAC).
 - A checagem de auditoria existente (`05_criador.py:269-272`) só confere se o arquivo `requirements.txt` *existe* — nunca se o conteúdo bate com os imports reais do código gerado.
 - Efeito prático: o app entregue ao usuário final frequentemente não sobe (`ModuleNotFoundError`) porque falta declarar as dependências que o próprio LLM usou ao escrever o código, num pipeline que se anuncia como gerador de app funcional.

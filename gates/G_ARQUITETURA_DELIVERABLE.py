@@ -68,11 +68,11 @@ DIRETORIOS_AUDITADOS = [
     "tools/aidd-master/templates",
     "tools/aidd-enterprise/src",
     "tools/aidd-enterprise/templates",
-    "tools/aidd-generator/src",
-    "tools/aidd-generator/templates",
+    "tools/aidd-pure/src",
+    "tools/aidd-pure/templates",
     "tools/aidd-ops/src",
     "tools/aidd-ops/templates",
-    "tools/aidd-bridge/src",
+    "tools/aidd-freedom/src",
     "tools/aidd-forge/aidd_forge",
 ]
 
@@ -496,7 +496,7 @@ def checar(root_dir=None):
 
 
 # ---------------------------------------------------------------------------
-# API pública para reuso programático (ex.: Fase 8 do aidd-generator)
+# API pública para reuso programático (ex.: Fase 8 do aidd-pure)
 # ---------------------------------------------------------------------------
 def auditar_arquivos(diretorios, root_dir=None):
     """Audita uma lista de diretorios e/ou arquivos .py (caminhos relativos a

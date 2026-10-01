@@ -18,7 +18,7 @@
     },
     "origem_engine": {
       "type": "string",
-      "enum": ["aidd-generator", "aidd-factory", "aidd-bridge"]
+      "enum": ["aidd-pure", "aidd-open", "aidd-freedom"]
     },
     "projeto_slug": {
       "type": "string",

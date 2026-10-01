@@ -38,7 +38,7 @@
 
 Este relatorio mapeia cada camada arquitetural do ecossistema AIDD (v5.1), compara a tecnologia atualmente utilizada com o estado da arte da industria, atribui notas de 0-10 e recomenda upgrades quando justificados.
 
-O ecossistema AIDD e composto por 6 ferramentas principais: #mono[aidd-forge], #mono[aidd-generator], #mono[aidd-master], #mono[aidd-enterprise], #mono[aidd-ops] e #mono[aidd-bridge]. A analise foca no que e scaffolded pelos templates.
+O ecossistema AIDD e composto por 6 ferramentas principais: #mono[aidd-forge], #mono[aidd-pure], #mono[aidd-master], #mono[aidd-enterprise], #mono[aidd-ops] e #mono[aidd-freedom]. A analise foca no que e scaffolded pelos templates.
 
 #v(0.5cm)
 

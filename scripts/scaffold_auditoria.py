@@ -371,7 +371,7 @@ def criar_scaffold_auditoria(tool_name: str, repo_root: Path = None) -> Path:
 
 def main():
     parser = argparse.ArgumentParser(description="Scaffolder agêntico de pastas de auditoria do Ecossistema AIDD")
-    parser.add_argument("tool", help="Nome da ferramenta (ex: aidd-planner, aidd-generator, aidd-melhoria)")
+    parser.add_argument("tool", help="Nome da ferramenta (ex: aidd-planner, aidd-pure, aidd-melhoria)")
     args = parser.parse_args()
 
     try:

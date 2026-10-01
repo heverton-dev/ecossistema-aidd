@@ -46,7 +46,7 @@ python -m venv .venv
 .venv/bin/python -m pip install --require-hashes -r requirements-dev.lock           # Linux/macOS
 
 # Dependências específicas de cada ferramenta
-.venv/Scripts/python.exe -m pip install -r tools/aidd-generator/requirements.txt
+.venv/Scripts/python.exe -m pip install -r tools/aidd-pure/requirements.txt
 .venv/Scripts/python.exe -m pip install -r tools/aidd-master/requirements.txt
 .venv/Scripts/python.exe -m pip install -r tools/aidd-enterprise/requirements.txt
 .venv/Scripts/python.exe -m pip install -r tools/aidd-ops/requirements.txt
@@ -67,7 +67,7 @@ O `checkov` **não** entra neste ambiente: ele vive no ambiente isolado do hook 
                                                        │
     ┌──────────────┬────────────────┬──────────────────┼─────────────────┬──────────────┬────────────────┬──────────────┬──────────────┐
     ▼              ▼                ▼                  ▼                 ▼              ▼                ▼              ▼              ▼
-[ aidd-forge ] [ aidd-planner ] [ aidd-generator ] [ aidd-master ] [ aidd-enterprise ] [ aidd-ops ] [ aidd-factory ] [ aidd-bridge ]
+[ aidd-forge ] [ aidd-planner ] [ aidd-pure ] [ aidd-master ] [ aidd-enterprise ] [ aidd-ops ] [ aidd-open ] [ aidd-freedom ]
  Linha de Montagem Planejamento BDD Fábrica Autônoma   Blocos de Lego   Selo de Auditoria Pista & Infra  Integração/BFF  Ponte Low-Code
   & Blindagem    & Contratos SDD   (Ideia -> Código)    Modular & Banco  Zero-Trust & Hashes Nuvem/Deploy Multi-Serviço   -> VPS Nativa
    (/forge)         (/planner)       (/generate)          (/master)        (/enterprise)    (/ops)          (/factory)      (/bridge)
@@ -81,9 +81,9 @@ Toda aplicação robusta no ecossistema nasce da fundação **`aidd-forge`** e d
 
 | Fluxo | Nome Canônico | Motor Principal | Slash Command | Comando Terminal (CLI) | Estratégia de Construção |
 | :--- | :--- | :--- | :---: | :--- | :--- |
-| **Fluxo 01** | **`aidd-pure`** | `aidd-generator` | **`/pure`** | `python ecossistema.py run-fluxo --fluxo pure` | **Do Zero Puro:** Código autoral sob medida, gerado via TDD Red-Green estrito com Clean Architecture. |
-| **Fluxo 02** | **`aidd-open`** | `aidd-factory` | **`/open`** | `python ecossistema.py run-fluxo --fluxo open` | **Motores Open-Source:** Curadoria, integração e fatiamento VSA de bases OSS consolidadas com Compose. |
-| **Fluxo 03** | **`aidd-freedom`** | `aidd-bridge` | **`/freedom`** | `python ecossistema.py run-fluxo --fluxo freedom` | **Desacoplamento Low-Code:** Desmonte de vendor lock-in (Lovable/v0/Bolt), migração para Postgres e preservação pixel-perfect da UI. |
+| **Fluxo 01** | **`aidd-pure`** | `aidd-pure` | **`/pure`** | `python ecossistema.py run-fluxo --fluxo pure` | **Do Zero Puro:** Código autoral sob medida, gerado via TDD Red-Green estrito com Clean Architecture. |
+| **Fluxo 02** | **`aidd-open`** | `aidd-open` | **`/open`** | `python ecossistema.py run-fluxo --fluxo open` | **Motores Open-Source:** Curadoria, integração e fatiamento VSA de bases OSS consolidadas com Compose. |
+| **Fluxo 03** | **`aidd-freedom`** | `aidd-freedom` | **`/freedom`** | `python ecossistema.py run-fluxo --fluxo freedom` | **Desacoplamento Low-Code:** Desmonte de vendor lock-in (Lovable/v0/Bolt), migração para Postgres e preservação pixel-perfect da UI. |
 
 > **Universal Convergence Funnel:** Qualquer que seja o fluxo, a entrega final entrega nativamente o **Quarteto *Sine Qua Non*** (`/swagger`, `/webhooks`, `/mcp`, `/docs`) e o Frontend no **Padrão-Ouro Next.js + TypeScript + Tailwind CSS** (Lei Inviolável #11).
 
@@ -230,12 +230,12 @@ ecossistema-aidd/
 ├── tools/                                  ──► As 8 Ferramentas Homologadas (100% funcionais)
 │   ├── aidd-forge/                         ──► Bootstrap e blindagem de governança
 │   ├── aidd-planner/                       ──► Planejamento BDD/SDD e contratos formais de handoff
-│   ├── aidd-generator/                     ──► Fábrica autônoma de software (8 fases, TDD Red-Green)
+│   ├── aidd-pure/                     ──► Fábrica autônoma de software (8 fases, TDD Red-Green)
 │   ├── aidd-master/                        ──► Monólito modular VSA e Frontend Next.js Padrão-Ouro
 │   ├── aidd-enterprise/                    ──► Missão crítica e validação criptográfica SHA-256
 │   ├── aidd-ops/                           ──► Meta-orquestrador de infraestrutura, Docker e deploy VPS
-│   ├── aidd-factory/                       ──► Gerador de aplicação, BFF e integração multi-serviço
-│   └── aidd-bridge/                        ──► Extrator e empacotador de apps low-code para VPS própria
+│   ├── aidd-open/                       ──► Gerador de aplicação, BFF e integração multi-serviço
+│   └── aidd-freedom/                        ──► Extrator e empacotador de apps low-code para VPS própria
 │
 └── docs/                                   ──► Toda a inteligência documentada
     ├── planos/                             ──► Planos táticos e de auditoria

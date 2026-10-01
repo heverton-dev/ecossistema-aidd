@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
 Gera o DESIGN-SYSTEM.json de um projeto — a identidade visual única que o
-Fluxo 01/02 (aidd-generator/aidd-factory + aidd-master) deve usar ao gerar o
+Fluxo 01/02 (aidd-pure/aidd-open + aidd-master) deve usar ao gerar o
 frontend Next.js (Lei Inviolável #11). Ver justificativa completa do
 mecanismo determinístico (zero LLM) em
 `componentes/compartilhado/src-core/design_catalog.py`.
