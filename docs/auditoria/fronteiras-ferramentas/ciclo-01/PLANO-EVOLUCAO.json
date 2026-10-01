@@ -15,7 +15,7 @@
       "comando_terminal": "agy --model gemini-3.8-flash-low  --dangerously-skip-permissions",
       "input_prompt": "docs/auditoria/fronteiras-ferramentas/ciclo-01/prompts_tickets/PROMPT-TICKET-01.txt",
       "output_handoff": "tests/test_compilador_gate_por_ticket.py",
-      "gate_fase": "python -m pytest -q -p no:cacheprovider tests"
+      "gate_fase": "python -m pytest -q -p no:cacheprovider tests/test_compilador_gate_por_ticket.py"
     },
     {
       "ticket_id": "TICKET-02",
@@ -26,7 +26,7 @@
       "comando_terminal": "MIMOCODE_DANGEROUSLY_SKIP_PERMISSIONS=1 MIMOCODE_TUI_PLAIN=1 mimo -m xiaomi-token-plan-sgp/mimo-v2.6-flash --pure --trust",
       "input_prompt": "docs/auditoria/fronteiras-ferramentas/ciclo-01/prompts_tickets/PROMPT-TICKET-02.txt",
       "output_handoff": "scripts/e2e_foto.py",
-      "gate_fase": "python -m pytest -q -p no:cacheprovider tests"
+      "gate_fase": "python -m pytest -q -p no:cacheprovider tests/test_e2e_foto.py"
     },
     {
       "ticket_id": "TICKET-03",
@@ -37,7 +37,7 @@
       "comando_terminal": "opencode --pure --auto --agent -m opencode/big-pickle",
       "input_prompt": "docs/auditoria/fronteiras-ferramentas/ciclo-01/prompts_tickets/PROMPT-TICKET-03.txt",
       "output_handoff": "scripts/inventario_capacidades.py",
-      "gate_fase": "python -m pytest -q -p no:cacheprovider tests"
+      "gate_fase": "python -m pytest -q -p no:cacheprovider tests/test_inventario_capacidades.py"
     },
     {
       "ticket_id": "TICKET-04",
@@ -48,7 +48,7 @@
       "comando_terminal": "claude --dangerously-skip-permissions --chrome --model opus",
       "input_prompt": "docs/auditoria/fronteiras-ferramentas/ciclo-01/prompts_tickets/PROMPT-TICKET-04.txt",
       "output_handoff": "tests/test_nomes_padronizados.py",
-      "gate_fase": "python -m pytest -q -p no:cacheprovider tests"
+      "gate_fase": "python -m pytest -q -p no:cacheprovider tests/test_nomes_padronizados.py && python ecossistema.py components verify && python scripts/e2e_foto.py rodar --ciclo auto && python scripts/e2e_foto.py comparar --base ciclo-01 --novo ultimo"
     },
     {
       "ticket_id": "TICKET-05",
@@ -59,7 +59,7 @@
       "comando_terminal": "agy --model gemini-3.8-flash-low  --dangerously-skip-permissions",
       "input_prompt": "docs/auditoria/fronteiras-ferramentas/ciclo-01/prompts_tickets/PROMPT-TICKET-05.txt",
       "output_handoff": "componentes/compartilhado/specs/MAPA-DONOS-FERRAMENTAS.json",
-      "gate_fase": "python -m pytest -q -p no:cacheprovider tests"
+      "gate_fase": "python -m pytest -q -p no:cacheprovider tests/test_mapa_donos_ferramentas.py"
     },
     {
       "ticket_id": "TICKET-06",
@@ -70,7 +70,7 @@
       "comando_terminal": "MIMOCODE_DANGEROUSLY_SKIP_PERMISSIONS=1 MIMOCODE_TUI_PLAIN=1 mimo -m xiaomi-token-plan-sgp/mimo-v2.6-flash --pure --trust",
       "input_prompt": "docs/auditoria/fronteiras-ferramentas/ciclo-01/prompts_tickets/PROMPT-TICKET-06.txt",
       "output_handoff": "gates/G_FRONTEIRA_FERRAMENTAS.py",
-      "gate_fase": "python -m pytest -q -p no:cacheprovider tests"
+      "gate_fase": "python -m pytest -q -p no:cacheprovider gates/test_g_fronteira_ferramentas.py"
     },
     {
       "ticket_id": "TICKET-07",
@@ -81,7 +81,7 @@
       "comando_terminal": "opencode --pure --auto --agent -m opencode/big-pickle",
       "input_prompt": "docs/auditoria/fronteiras-ferramentas/ciclo-01/prompts_tickets/PROMPT-TICKET-07.txt",
       "output_handoff": "scripts/validar_handoff.py",
-      "gate_fase": "python -m pytest -q -p no:cacheprovider tests"
+      "gate_fase": "python -m pytest -q -p no:cacheprovider tests/test_validar_handoff.py"
     },
     {
       "ticket_id": "TICKET-08",
@@ -92,7 +92,7 @@
       "comando_terminal": "claude --dangerously-skip-permissions --chrome --model opus",
       "input_prompt": "docs/auditoria/fronteiras-ferramentas/ciclo-01/prompts_tickets/PROMPT-TICKET-08.txt",
       "output_handoff": "componentes/compartilhado/CATALOGO.json",
-      "gate_fase": "python -m pytest -q -p no:cacheprovider tests"
+      "gate_fase": "python -m pytest -q -p no:cacheprovider tests/test_catalogo_almoxarifado.py"
     },
     {
       "ticket_id": "TICKET-09",
@@ -103,7 +103,7 @@
       "comando_terminal": "agy --model gemini-3.8-flash-low  --dangerously-skip-permissions",
       "input_prompt": "docs/auditoria/fronteiras-ferramentas/ciclo-01/prompts_tickets/PROMPT-TICKET-09.txt",
       "output_handoff": "tools/aidd-forge/aidd_forge/core/almoxarifado.py",
-      "gate_fase": "python -m pytest -q -p no:cacheprovider tests"
+      "gate_fase": "python -m pytest -q -p no:cacheprovider tools/aidd-forge/tests/test_almoxarifado.py"
     },
     {
       "ticket_id": "TICKET-10",
@@ -114,7 +114,7 @@
       "comando_terminal": "MIMOCODE_DANGEROUSLY_SKIP_PERMISSIONS=1 MIMOCODE_TUI_PLAIN=1 mimo -m xiaomi-token-plan-sgp/mimo-v2.6-flash --pure --trust",
       "input_prompt": "docs/auditoria/fronteiras-ferramentas/ciclo-01/prompts_tickets/PROMPT-TICKET-10.txt",
       "output_handoff": "tools/aidd-forge/tests/test_prontidao_forge.py",
-      "gate_fase": "python -m pytest -q -p no:cacheprovider tests"
+      "gate_fase": "python -m pytest -q -p no:cacheprovider tools/aidd-forge/tests/test_prontidao_forge.py && python scripts/e2e_foto.py rodar --ciclo auto && python scripts/e2e_foto.py comparar --base ciclo-01 --novo ultimo"
     },
     {
       "ticket_id": "TICKET-11",
@@ -125,7 +125,7 @@
       "comando_terminal": "opencode --pure --auto --agent -m opencode/big-pickle",
       "input_prompt": "docs/auditoria/fronteiras-ferramentas/ciclo-01/prompts_tickets/PROMPT-TICKET-11.txt",
       "output_handoff": "tools/aidd-planner/tests/test_planta_tickets_roteados.py",
-      "gate_fase": "python -m pytest -q -p no:cacheprovider tests"
+      "gate_fase": "python -m pytest -q -p no:cacheprovider tools/aidd-planner/tests/test_planta_tickets_roteados.py && python scripts/e2e_foto.py rodar --ciclo auto && python scripts/e2e_foto.py comparar --base ciclo-01 --novo ultimo"
     },
     {
       "ticket_id": "TICKET-12",
@@ -136,7 +136,7 @@
       "comando_terminal": "claude --dangerously-skip-permissions --chrome --model opus",
       "input_prompt": "docs/auditoria/fronteiras-ferramentas/ciclo-01/prompts_tickets/PROMPT-TICKET-12.txt",
       "output_handoff": "tests/test_orquestrador_contratos_reais.py",
-      "gate_fase": "python -m pytest -q -p no:cacheprovider tests"
+      "gate_fase": "python -m pytest -q -p no:cacheprovider tests/test_orquestrador_contratos_reais.py && python scripts/e2e_foto.py rodar --ciclo auto && python scripts/e2e_foto.py comparar --base ciclo-01 --novo ultimo"
     },
     {
       "ticket_id": "TICKET-13",
@@ -147,7 +147,7 @@
       "comando_terminal": "agy --model gemini-3.8-flash-low  --dangerously-skip-permissions",
       "input_prompt": "docs/auditoria/fronteiras-ferramentas/ciclo-01/prompts_tickets/PROMPT-TICKET-13.txt",
       "output_handoff": "tools/aidd-open/tests/test_fronteira_factory.py",
-      "gate_fase": "python -m pytest -q -p no:cacheprovider tests"
+      "gate_fase": "python -m pytest -q -p no:cacheprovider tools/aidd-open/tests/test_fronteira_factory.py && python scripts/e2e_foto.py rodar --ciclo auto && python scripts/e2e_foto.py comparar --base ciclo-01 --novo ultimo"
     },
     {
       "ticket_id": "TICKET-14",
@@ -158,7 +158,7 @@
       "comando_terminal": "MIMOCODE_DANGEROUSLY_SKIP_PERMISSIONS=1 MIMOCODE_TUI_PLAIN=1 mimo -m xiaomi-token-plan-sgp/mimo-v2.6-flash --pure --trust",
       "input_prompt": "docs/auditoria/fronteiras-ferramentas/ciclo-01/prompts_tickets/PROMPT-TICKET-14.txt",
       "output_handoff": "tools/aidd-freedom/tests/test_fronteira_bridge.py",
-      "gate_fase": "python -m pytest -q -p no:cacheprovider tests"
+      "gate_fase": "python -m pytest -q -p no:cacheprovider tools/aidd-freedom/tests/test_fronteira_bridge.py && python scripts/e2e_foto.py rodar --ciclo auto && python scripts/e2e_foto.py comparar --base ciclo-01 --novo ultimo"
     },
     {
       "ticket_id": "TICKET-15",
@@ -169,7 +169,7 @@
       "comando_terminal": "opencode --pure --auto --agent -m opencode/big-pickle",
       "input_prompt": "docs/auditoria/fronteiras-ferramentas/ciclo-01/prompts_tickets/PROMPT-TICKET-15.txt",
       "output_handoff": "tools/aidd-pure/tests/test_fronteira_generator.py",
-      "gate_fase": "python -m pytest -q -p no:cacheprovider tests"
+      "gate_fase": "python -m pytest -q -p no:cacheprovider tools/aidd-pure/tests/test_fronteira_generator.py && python scripts/e2e_foto.py rodar --ciclo auto && python scripts/e2e_foto.py comparar --base ciclo-01 --novo ultimo"
     },
     {
       "ticket_id": "TICKET-16",
@@ -180,7 +180,7 @@
       "comando_terminal": "claude --dangerously-skip-permissions --chrome --model opus",
       "input_prompt": "docs/auditoria/fronteiras-ferramentas/ciclo-01/prompts_tickets/PROMPT-TICKET-16.txt",
       "output_handoff": "tools/aidd-ops/tests/test_fronteira_ops_infra_generica.py",
-      "gate_fase": "python -m pytest -q -p no:cacheprovider tests"
+      "gate_fase": "python -m pytest -q -p no:cacheprovider tools/aidd-ops/tests/test_fronteira_ops_infra_generica.py && python scripts/e2e_foto.py rodar --ciclo auto && python scripts/e2e_foto.py comparar --base ciclo-01 --novo ultimo"
     },
     {
       "ticket_id": "TICKET-17",
@@ -191,7 +191,7 @@
       "comando_terminal": "agy --model gemini-3.8-flash-low  --dangerously-skip-permissions",
       "input_prompt": "docs/auditoria/fronteiras-ferramentas/ciclo-01/prompts_tickets/PROMPT-TICKET-17.txt",
       "output_handoff": "tools/aidd-master/tests/test_fronteira_master.py",
-      "gate_fase": "python -m pytest -q -p no:cacheprovider tests"
+      "gate_fase": "python -m pytest -q -p no:cacheprovider tools/aidd-master/tests/test_fronteira_master.py && python scripts/e2e_foto.py rodar --ciclo auto && python scripts/e2e_foto.py comparar --base ciclo-01 --novo ultimo"
     },
     {
       "ticket_id": "TICKET-18",
@@ -202,7 +202,7 @@
       "comando_terminal": "MIMOCODE_DANGEROUSLY_SKIP_PERMISSIONS=1 MIMOCODE_TUI_PLAIN=1 mimo -m xiaomi-token-plan-sgp/mimo-v2.6-flash --pure --trust",
       "input_prompt": "docs/auditoria/fronteiras-ferramentas/ciclo-01/prompts_tickets/PROMPT-TICKET-18.txt",
       "output_handoff": "tools/aidd-enterprise/tests/test_fronteira_enterprise.py",
-      "gate_fase": "python -m pytest -q -p no:cacheprovider tests"
+      "gate_fase": "python -m pytest -q -p no:cacheprovider tools/aidd-enterprise/tests/test_fronteira_enterprise.py && python scripts/e2e_foto.py rodar --ciclo auto && python scripts/e2e_foto.py comparar --base ciclo-01 --novo ultimo"
     },
     {
       "ticket_id": "TICKET-19",
@@ -213,7 +213,7 @@
       "comando_terminal": "opencode --pure --auto --agent -m opencode/big-pickle",
       "input_prompt": "docs/auditoria/fronteiras-ferramentas/ciclo-01/prompts_tickets/PROMPT-TICKET-19.txt",
       "output_handoff": "scripts/contar_duplicatas.py",
-      "gate_fase": "python -m pytest -q -p no:cacheprovider tests"
+      "gate_fase": "python -m pytest -q -p no:cacheprovider tests/test_contar_duplicatas.py && python scripts/inventario_capacidades.py comparar docs/auditoria/fronteiras-ferramentas/ciclo-01/INVENTARIO-ANTES.json"
     },
     {
       "ticket_id": "TICKET-20",
@@ -224,7 +224,7 @@
       "comando_terminal": "claude --dangerously-skip-permissions --chrome --model opus",
       "input_prompt": "docs/auditoria/fronteiras-ferramentas/ciclo-01/prompts_tickets/PROMPT-TICKET-20.txt",
       "output_handoff": "gates/test_g_fronteira_bloqueio.py",
-      "gate_fase": "python -m pytest -q -p no:cacheprovider tests"
+      "gate_fase": "python -m pytest -q -p no:cacheprovider gates/test_g_fronteira_bloqueio.py"
     },
     {
       "ticket_id": "TICKET-21",
@@ -235,7 +235,7 @@
       "comando_terminal": "agy --model gemini-3.8-flash-low  --dangerously-skip-permissions",
       "input_prompt": "docs/auditoria/fronteiras-ferramentas/ciclo-01/prompts_tickets/PROMPT-TICKET-21.txt",
       "output_handoff": "docs/auditoria/fronteiras-ferramentas/ciclo-01/COMPARACAO-E2E.md",
-      "gate_fase": "python -m pytest -q -p no:cacheprovider tests"
+      "gate_fase": "python scripts/e2e_foto.py comparar --base ciclo-01 --novo ultimo"
     },
     {
       "ticket_id": "TICKET-22",
@@ -246,7 +246,7 @@
       "comando_terminal": "MIMOCODE_DANGEROUSLY_SKIP_PERMISSIONS=1 MIMOCODE_TUI_PLAIN=1 mimo -m xiaomi-token-plan-sgp/mimo-v2.6-flash --pure --trust",
       "input_prompt": "docs/auditoria/fronteiras-ferramentas/ciclo-01/prompts_tickets/PROMPT-TICKET-22.txt",
       "output_handoff": "docs/anatomias/FRONTEIRAS-POR-FERRAMENTA.md",
-      "gate_fase": "python -m pytest -q -p no:cacheprovider tests"
+      "gate_fase": "python -m pytest -q -p no:cacheprovider tests/test_readme_fronteiras.py"
     },
     {
       "ticket_id": "TICKET-23",
@@ -257,7 +257,7 @@
       "comando_terminal": "opencode --pure --auto --agent -m opencode/big-pickle",
       "input_prompt": "docs/auditoria/fronteiras-ferramentas/ciclo-01/prompts_tickets/PROMPT-TICKET-23.txt",
       "output_handoff": "tests/test_mapas_e_livros_em_dia.py",
-      "gate_fase": "python -m pytest -q -p no:cacheprovider tests"
+      "gate_fase": "python scripts/catalogo_pecas.py --check && python -m pytest -q -p no:cacheprovider tests/test_mapa_visual.py tests/test_catalogo_pecas.py tests/test_mapas_e_livros_em_dia.py"
     }
   ]
 }

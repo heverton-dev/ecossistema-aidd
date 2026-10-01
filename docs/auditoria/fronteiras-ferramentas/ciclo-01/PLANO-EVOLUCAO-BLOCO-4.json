@@ -1,0 +1,22 @@
+{
+  "pipeline_id": "evolucao-fronteiras-ferramentas-ciclo-01-bloco-4",
+  "target_tool": "fronteiras-ferramentas",
+  "bloco": 4,
+  "descricao": "Manifesto do Bloco 4 (1 fases) montado a partir de PLANO-EVOLUCAO.md",
+  "config_usuario_ref": "docs/auditoria/CONFIG-EXECUCAO-USUARIO.json",
+  "definition_of_done": "docs/auditoria/fronteiras-ferramentas/ciclo-01/DOD.md",
+  "gate_final": "python ecossistema.py audit",
+  "fases": [
+    {
+      "ticket_id": "TICKET-19",
+      "nome": "Fase_19_Ticket_19_Remover_as_c_pias_com_prova_de_zero_perda",
+      "dimensao_15d": "D15. Fonte Única e Sincronização",
+      "harness": "opencode",
+      "model": "opencode/big-pickle",
+      "comando_terminal": "opencode --pure --auto --agent -m opencode/big-pickle",
+      "input_prompt": "docs/auditoria/fronteiras-ferramentas/ciclo-01/prompts_tickets/PROMPT-TICKET-19.txt",
+      "output_handoff": "scripts/contar_duplicatas.py",
+      "gate_fase": "python -m pytest -q -p no:cacheprovider tests/test_contar_duplicatas.py && python scripts/inventario_capacidades.py comparar docs/auditoria/fronteiras-ferramentas/ciclo-01/INVENTARIO-ANTES.json"
+    }
+  ]
+}

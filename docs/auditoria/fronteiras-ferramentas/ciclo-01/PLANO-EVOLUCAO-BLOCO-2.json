@@ -1,0 +1,33 @@
+{
+  "pipeline_id": "evolucao-fronteiras-ferramentas-ciclo-01-bloco-2",
+  "target_tool": "fronteiras-ferramentas",
+  "bloco": 2,
+  "descricao": "Manifesto do Bloco 2 (2 fases) montado a partir de PLANO-EVOLUCAO.md",
+  "config_usuario_ref": "docs/auditoria/CONFIG-EXECUCAO-USUARIO.json",
+  "definition_of_done": "docs/auditoria/fronteiras-ferramentas/ciclo-01/DOD.md",
+  "gate_final": "python ecossistema.py audit",
+  "fases": [
+    {
+      "ticket_id": "TICKET-08",
+      "nome": "Fase_8_Ticket_8_Almoxarifado__nico_com_cat_logo",
+      "dimensao_15d": "D15. Fonte Única e Sincronização",
+      "harness": "claude",
+      "model": "opus",
+      "comando_terminal": "claude --dangerously-skip-permissions --chrome --model opus",
+      "input_prompt": "docs/auditoria/fronteiras-ferramentas/ciclo-01/prompts_tickets/PROMPT-TICKET-08.txt",
+      "output_handoff": "componentes/compartilhado/CATALOGO.json",
+      "gate_fase": "python -m pytest -q -p no:cacheprovider tests/test_catalogo_almoxarifado.py"
+    },
+    {
+      "ticket_id": "TICKET-09",
+      "nome": "Fase_9_Ticket_9_Consumo_sob_demanda___o_forge_entrega_a_pe_a",
+      "dimensao_15d": "D15. Fonte Única e Sincronização",
+      "harness": "agy",
+      "model": "gemini-3.8-flash-low",
+      "comando_terminal": "agy --model gemini-3.8-flash-low  --dangerously-skip-permissions",
+      "input_prompt": "docs/auditoria/fronteiras-ferramentas/ciclo-01/prompts_tickets/PROMPT-TICKET-09.txt",
+      "output_handoff": "tools/aidd-forge/aidd_forge/core/almoxarifado.py",
+      "gate_fase": "python -m pytest -q -p no:cacheprovider tools/aidd-forge/tests/test_almoxarifado.py"
+    }
+  ]
+}
