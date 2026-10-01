@@ -252,13 +252,16 @@ def confirmar_confianca_pasta(handle, tentativas=3):
         orca("terminal", "wait", "--terminal", handle, "--for", "tui-idle", "--timeout-ms", "30000", timeout=60)
 
 
+TIPOS_FIM_DO_AGENTE = ("worker_done", "escalation")
+
+
 def aguardar_worker_done(run_id, dispatch_id, timeout_s=None):
     """Bloqueia no inbox do Run (sem polling) até o worker_done/escalation deste dispatch."""
     timeout_s = timeout_s or ORCA_TIMEOUT_AGENTE_S
     espera_ms = min(ORCA_ESPERA_CHECK_MS, timeout_s * 1000)
     inicio = time.time()
     while time.time() - inicio < timeout_s:
-        lote = orca("orchestration", "check", "--run", run_id, "--wait", "--types", "worker_done,escalation",
+        lote = orca("orchestration", "check", "--run", run_id, "--wait", "--types", ",".join(TIPOS_FIM_DO_AGENTE),
                     "--timeout-ms", str(espera_ms), timeout=espera_ms // 1000 + 60)
         if not lote:
             time.sleep(5)
@@ -266,7 +269,8 @@ def aguardar_worker_done(run_id, dispatch_id, timeout_s=None):
         achado = None
         for msg in lote.get("messages", []):
             payload = json.loads(msg.get("payload") or "{}")
-            if payload.get("dispatchId") != dispatch_id:
+            # Entrega reaproveitada pode trazer heartbeat mesmo com --types (visto 2026-09-30).
+            if payload.get("dispatchId") != dispatch_id or msg.get("type") not in TIPOS_FIM_DO_AGENTE:
                 continue
             resumo = msg.get("subject", "")
             rejeicao = payload.get("_orcaLifecycleRejection")
@@ -506,9 +510,12 @@ def saida_ja_existe(caminho, branch_ciclo, repo_root):
     return git(["cat-file", "-e", f"{branch_ciclo}:{Path(caminho).as_posix()}"], repo_root, exit_on_fail=False).returncode == 0
 
 
-def rodar_gate(comando, cwd):
+def rodar_gate(comando, cwd, env=None):
     print(f"[GATE] {comando}")
-    return subprocess.run(comando, shell=bool(os.name == "nt" or True), cwd=cwd).returncode
+    merged_env = os.environ.copy()
+    if env:
+        merged_env.update(env)
+    return subprocess.run(comando, shell=bool(os.name == "nt" or True), cwd=cwd, env=merged_env).returncode
 
 
 def abrir_worktree(branch, wt_path, repo_root):
@@ -538,9 +545,10 @@ def configs_mcp_locais():
             for d in gestor_dependencias.DESTINOS_MCP.values()]
 
 
-def preparar_worktree_gate_final(wt_path, repo_root):
+def preparar_worktree(wt_path, repo_root):
     """Worktree nova não tem o que a main tem de gerado/local, e 5 gates do audit reprovavam até
-    na main limpa (2026-09-24): (1) cópias das skills por harness, geradas pelo components sync;
+    na main limpa (2026-09-24); o gate_fase das fases reprovava pelo mesmo motivo
+    (test_components_verify_exit_0, 2026-09-30): (1) cópias das skills por harness, geradas pelo components sync;
     (2) registros de MCP git-ignorados. Copia só o que é ignorado pelo git e não existe na worktree."""
     subprocess.run([sys.executable, "ecossistema.py", "components", "sync", "--tipo", "todos"],
                    cwd=wt_path, capture_output=True)
@@ -556,6 +564,71 @@ def ref_aprovavel(pipeline_id):
     return f"refs/aidd/aprovavel/{pipeline_id}"
 
 
+def _modulo_derivados():
+    """Importa scripts/regenerar_derivados.py: fonte única do mapa DERIVADOS e dos geradores."""
+    pasta = str(Path(__file__).resolve().parent)
+    if pasta not in sys.path:
+        sys.path.insert(0, pasta)
+    import regenerar_derivados
+    return regenerar_derivados
+
+
+def _regenerar_derivados(repo_root, chaves):
+    """Refaz só os derivados de 'chaves' na árvore de repo_root (sem lógica duplicada)."""
+    _modulo_derivados().regenerar(Path(repo_root), so=list(chaves))
+
+
+def _chave_derivado(caminho, derivados):
+    """Chave do mapa DERIVADOS que cobre 'caminho' (igual à chave, ou pasta que a contém)."""
+    alvo = Path(caminho).as_posix()
+    for chave in derivados:
+        if alvo == chave or alvo.startswith(chave.rstrip("/") + "/"):
+            return chave
+    return None
+
+
+def _classificar_conflitos(conflitos, derivados):
+    """Separa os conflitos em (chaves de derivados a regenerar, caminhos fora do mapa).
+
+    As chaves saem na ordem canônica do mapa, a mesma que regenerar_derivados respeita
+    ao refazer: determinístico e na ordem de dependência, não na alfabética do git.
+    """
+    derivados = list(derivados)
+    donos = {caminho: _chave_derivado(caminho, derivados) for caminho in conflitos}
+    chaves = [chave for chave in derivados if chave in donos.values()]
+    fora = [caminho for caminho, chave in donos.items() if chave is None]
+    return chaves, fora
+
+
+def _conflitos_do_merge(repo_root):
+    return git(["diff", "--name-only", "--diff-filter=U"], repo_root, exit_on_fail=False).stdout.split()
+
+
+def _encerrar_merge_derivados(repo_root, conflitos, chaves):
+    """Fecha o merge conflituado regenerando o que é derivado.
+
+    'theirs' entra só como base para tirar os marcadores; quem decide o conteúdo é o
+    gerador canônico, rodando sobre a árvore já mesclada. Devolve False (sem commit)
+    se a regeneração ou o commit falhar — o chamador aborta o merge.
+    """
+    for caminho in conflitos:
+        git(["checkout", "--theirs", "--", caminho], repo_root, exit_on_fail=False)
+    try:
+        _regenerar_derivados(repo_root, chaves)
+    except Exception as erro:
+        print(f"[APROVAÇÃO] FALHA ao regenerar derivados ({', '.join(chaves)}): {type(erro).__name__}: {erro}")
+        return False
+    derivados = list(_modulo_derivados().DERIVADOS)
+    alterados = git(["diff", "--name-only"], repo_root, exit_on_fail=False).stdout.split()
+    alvos = sorted(set(conflitos) | {p for p in alterados if _chave_derivado(p, derivados)})
+    git(["add", "--", *alvos], repo_root, exit_on_fail=False)
+    res = git(["commit", "--no-edit"], repo_root, exit_on_fail=False)
+    if res.returncode != 0:
+        print(f"[APROVAÇÃO] FALHA ao fechar o merge dos derivados:\n{res.stdout}{res.stderr}")
+        return False
+    return True
+
+
 def aprovar(pipeline_id, repo_root):
     """Join Barrier: ação HUMANA. Merge na branch atual só do commit que passou no gate_final."""
     branch_ciclo = f"audit/{pipeline_id}"
@@ -568,7 +641,31 @@ def aprovar(pipeline_id, repo_root):
         return 1
     res = git(["merge", "--no-ff", "-m", f"chore(audit): aprova {pipeline_id}", branch_ciclo], repo_root, exit_on_fail=False)
     if res.returncode != 0:
-        print(f"[APROVAÇÃO] FALHA no merge de '{branch_ciclo}':\n{res.stdout}{res.stderr}")
+        derivados = list(_modulo_derivados().DERIVADOS)
+        conflitos = _conflitos_do_merge(repo_root)
+        chaves, fora = _classificar_conflitos(conflitos, derivados)
+        if conflitos and not fora and _encerrar_merge_derivados(repo_root, conflitos, chaves):
+            git(["branch", "-D", branch_ciclo], repo_root, exit_on_fail=False)
+            git(["update-ref", "-d", ref], repo_root, exit_on_fail=False)
+            print(f"[APROVAÇÃO] Conflito resolvido por regeneração dos derivados: {', '.join(chaves)}.")
+            print(f"[APROVAÇÃO] '{branch_ciclo}' mergeada na branch atual e removida.")
+            return 0
+        # Qualquer conflito fora do mapa (ou merge que nem conflitou) volta a árvore ao
+        # estado anterior: o --aprovar nunca deixa um merge pela metade na mão do humano.
+        abortado = git(["merge", "--abort"], repo_root, exit_on_fail=False)
+        if abortado.returncode != 0:
+            print(f"[APROVAÇÃO] AVISO: 'git merge --abort' falhou; a árvore pode seguir em conflito:\n"
+                  f"{abortado.stdout}{abortado.stderr}")
+        if not conflitos:
+            print(f"[APROVAÇÃO] FALHA no merge de '{branch_ciclo}':\n{res.stdout}{res.stderr}")
+            return 1
+        print(f"[APROVAÇÃO] Merge abortado (árvore limpa, nada pela metade). Conflitos de '{branch_ciclo}':")
+        for caminho in conflitos:
+            marca = "derivado" if _chave_derivado(caminho, derivados) else "código"
+            print(f"    - {caminho} [{marca}]")
+        if fora:
+            print(f"[APROVAÇÃO] FALHA: {len(fora)} conflito(s) fora dos derivados. Resolva na mão e rode de novo; "
+                  f"'{branch_ciclo}' continua aprovável.")
         return 1
     git(["branch", "-D", branch_ciclo], repo_root, exit_on_fail=False)
     git(["update-ref", "-d", ref], repo_root, exit_on_fail=False)
@@ -600,6 +697,13 @@ def main():
     if args.aprovar:
         sys.exit(aprovar(pipeline_id, repo_root))
 
+    # Um ciclo pesado por vez; no fim (sucesso, falha ou sys.exit) solta a fila e avisa.
+    import fila_ciclos
+    with fila_ciclos.ciclo_pesado(pipeline_id, repo_root):
+        executar_pipeline(args, data, pipeline_id, fases, repo_root)
+
+
+def executar_pipeline(args, data, pipeline_id, fases, repo_root):
     # As fases acumulam numa branch própria do ciclo; a branch atual só muda com --aprovar.
     branch_ciclo = f"audit/{pipeline_id}"
     worktrees_base = repo_root.parent / f"worktrees_{pipeline_id}"
@@ -640,6 +744,7 @@ def main():
         wt_path = worktrees_base / nome
         print(f"[+] Isolando Worktree na branch do ciclo...")
         abrir_worktree(branch_ciclo, wt_path, repo_root)
+        preparar_worktree(wt_path, repo_root)
 
         print(f"[+] Lendo Input Prompt via nativo: {fase.get('input_prompt')}")
         input_file = repo_root / fase.get("input_prompt")
@@ -702,14 +807,17 @@ def main():
 
     wt_final = worktrees_base / "_gate_final"
     abrir_worktree(branch_ciclo, wt_final, repo_root)
-    preparar_worktree_gate_final(wt_final, repo_root)
-    codigo_final = rodar_gate(gate_final, wt_final)
+    preparar_worktree(wt_final, repo_root)
+    codigo_final = rodar_gate(gate_final, wt_final, env={"AIDD_GATES_MODO": "completo"})
     fechar_worktree(wt_final, repo_root)
     if codigo_final != 0:
         print(f"[-] FALHA: gate_final reprovou (exit {codigo_final}). {branch_ciclo} NÃO está aprovável.")
         sys.exit(1)
 
     git(["update-ref", ref_aprovavel(pipeline_id), branch_ciclo], repo_root)
+    # Registro verde por árvore: o push do merge aprovado (mesma árvore) não repete a bateria.
+    import medir_gates
+    medir_gates.registrar_bateria_verde(repo_root, branch_ciclo)
     print("\n============================================================")
     print(f" PIPELINE CONCLUÍDO: {branch_ciclo} passou no gate_final.")
     print(" A branch atual NÃO foi alterada. Aprovação humana (Join Barrier) requerida:")

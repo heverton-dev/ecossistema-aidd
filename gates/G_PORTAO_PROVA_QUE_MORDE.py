@@ -83,7 +83,8 @@ def executar_suite_teste(test_path: str) -> Tuple[bool, str]:
             text=True,
             env=env,
             cwd=ROOT_DIR,
-            timeout=60,
+            # 300s: gates/test_g_infra_compose.py roda Checkov real e leva ~224s nesta máquina (medido 2026-09-30).
+            timeout=300,
         )
         if res.returncode == 0:
             return True, ""
@@ -91,7 +92,7 @@ def executar_suite_teste(test_path: str) -> Tuple[bool, str]:
         resumo_falha = "\n".join(detalhe[-5:]) if detalhe else f"retorno={res.returncode}"
         return False, f"Falha na execução em runtime (código {res.returncode}):\n{resumo_falha}"
     except subprocess.TimeoutExpired:
-        return False, "Execução da suíte de teste excedeu o timeout de 60s."
+        return False, "Execução da suíte de teste excedeu o timeout de 300s."
     except Exception as e:
         return False, f"Erro ao disparar execução do teste: {e}"
 

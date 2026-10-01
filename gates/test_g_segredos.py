@@ -5,6 +5,11 @@ executando o gate real, via subprocess, contra repositórios git sintéticos
 isolados. O baseline usado em cada cenário é gerado pelo próprio
 detect-secrets (nunca fabricado à mão), reproduzindo o fluxo real de
 scan -> baseline -> gate.
+
+Estes cenários exercitam a varredura de TODA a árvore rastreada (todos os
+arquivos são commitados, logo nada sobra staged), por isso fixam
+AIDD_GATES_MODO=completo. O escopo do commit em curso (modo 'rapido') é
+coberto por test_g_segredos_escopo.py.
 """
 
 import os
@@ -18,6 +23,23 @@ GATE_PATH = os.path.join(
     os.path.dirname(os.path.abspath(__file__)),
     "G_SEGREDOS.py"
 )
+ESCOPO_PATH = os.path.join(
+    os.path.dirname(os.path.abspath(__file__)),
+    "_escopo_commit.py"
+)
+
+
+def _rodar_em_modo_completo(gate_path, root_dir):
+    """Roda o gate em modo 'completo' (arvore inteira rastreada) sem vazar a variavel de ambiente."""
+    anterior = os.environ.get("AIDD_GATES_MODO")
+    os.environ["AIDD_GATES_MODO"] = "completo"
+    try:
+        return rodar_gate(gate_path, root_dir)
+    finally:
+        if anterior is None:
+            os.environ.pop("AIDD_GATES_MODO", None)
+        else:
+            os.environ["AIDD_GATES_MODO"] = anterior
 
 
 def _init_repo_sintetico(root_dir):
@@ -40,6 +62,7 @@ def _init_repo_sintetico(root_dir):
     os.makedirs(gdir, exist_ok=True)
     gate_copy = os.path.join(gdir, "G_SEGREDOS.py")
     shutil.copyfile(GATE_PATH, gate_copy)
+    shutil.copyfile(ESCOPO_PATH, os.path.join(gdir, "_escopo_commit.py"))
 
     return gate_copy
 
@@ -77,7 +100,7 @@ def test_repo_limpo_aprova(tmp_path):
     arquivo_ok.write_text("# Repositorio Limpo\nNenhum segredo aqui.", encoding="utf-8")
     _comitar_tudo(tmp_path)
 
-    res = rodar_gate(gate_path, tmp_path)
+    res = _rodar_em_modo_completo(gate_path, tmp_path)
     assert res.returncode == 0
     assert "Quality Gate G_SEGREDOS APROVADO (100% OK)!" in res.stdout
 
@@ -92,7 +115,7 @@ def test_falha_com_segredo_novo_nao_catalogado(tmp_path):
     _comitar_tudo(tmp_path)
 
     # Sem baseline: tolerancia zero, qualquer achado do detect-secrets reprova.
-    res = rodar_gate(gate_path, tmp_path)
+    res = _rodar_em_modo_completo(gate_path, tmp_path)
     assert res.returncode == 1
     assert "Quality Gate REPROVADO" in res.stdout
     assert "AWS Access Key" in res.stdout
@@ -109,7 +132,7 @@ def test_baseline_autoriza_segredo_ja_catalogado(tmp_path):
     _gerar_baseline_real(tmp_path)
     _comitar_tudo(tmp_path, msg="Adiciona baseline")
 
-    res = rodar_gate(gate_path, tmp_path)
+    res = _rodar_em_modo_completo(gate_path, tmp_path)
     assert res.returncode == 0
     assert "Quality Gate G_SEGREDOS APROVADO (100% OK)!" in res.stdout
 
@@ -128,6 +151,6 @@ def test_baseline_nao_esconde_segredo_novo_fora_do_baseline(tmp_path):
     gh_file.write_text("ghp_1234567890abcdefghijklmnopqrstuvwxyz\n", encoding="utf-8")
     _comitar_tudo(tmp_path, msg="Segredo novo nao catalogado")
 
-    res = rodar_gate(gate_path, tmp_path)
+    res = _rodar_em_modo_completo(gate_path, tmp_path)
     assert res.returncode == 1
     assert "Quality Gate REPROVADO" in res.stdout

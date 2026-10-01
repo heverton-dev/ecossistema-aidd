@@ -97,7 +97,8 @@ def executar_scan_checkov(arquivos_compose: List[str]) -> Tuple[bool, List[str]]
         cmd.extend(["-f", arq])
 
     try:
-        res = subprocess.run(cmd, capture_output=True, text=True, timeout=60)
+        # 180s: Checkov levou 73s dentro do pre-commit em 2026-09-30; 60s reprovava por lentidao, nao por achado.
+        res = subprocess.run(cmd, capture_output=True, text=True, timeout=180)
         saida = res.stdout.strip()
         dados = None
         if saida:

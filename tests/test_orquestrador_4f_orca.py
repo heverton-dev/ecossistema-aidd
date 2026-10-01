@@ -166,6 +166,18 @@ def test_worker_done_recusado_pelo_orca_aparece_no_resumo(monkeypatch):
     assert outcome == "succeeded" and "recusado pelo Orca: sender_not_assignee" in resumo
 
 
+def test_heartbeat_reentregue_nao_encerra_a_fase(monkeypatch):
+    # 2026-09-30: um 'orca orchestration check' manual no mesmo Run deixou uma entrega com o
+    # heartbeat 'alive'; o check do orquestrador a reentregou (ignorando --types) e a fase 3
+    # acabou como "worker_done: failed — alive" com o agente ainda trabalhando.
+    def msg(tipo, assunto, **extra):
+        return {"type": tipo, "subject": assunto, "payload": json.dumps({"dispatchId": "ctx_1", **extra})}
+    lotes = iter([{"deliveryId": "d1", "messages": [msg("heartbeat", "alive", phase="investigating")]},
+                  {"deliveryId": "d2", "messages": [msg("worker_done", "feito", outcome="succeeded")]}])
+    monkeypatch.setattr(orquestrador_4f, "orca", lambda *a, **k: next(lotes) if "--wait" in a else {})
+    assert orquestrador_4f.aguardar_worker_done("run_1", "ctx_1", timeout_s=5) == ("succeeded", "feito")
+
+
 def test_aviso_de_risco_com_padrao_exit_nunca_recebe_enter(monkeypatch):
     enviados = []
     tela_risco = {"terminal": {"tail": ["● No, exit (recommended)", "○ Yes, I accept the risks and want to skip permissions"]}}

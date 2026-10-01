@@ -24,6 +24,8 @@ import sys
 import tempfile
 import xml.etree.ElementTree as ET
 
+import _escopo_commit
+
 ROOT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 TOOLS_DIR = os.path.join(ROOT_DIR, "tools")
 ALLOWLIST_PATH = os.path.join(ROOT_DIR, "gates", "allowlist_skipped_testes.json")
@@ -180,9 +182,18 @@ def executar():
 
     resultados = []
     falhou = False
-    ferramentas_alvo = [f.strip() for f in os.environ.get("AIDD_TESTES_REAIS_FERRAMENTAS", "").split(",") if f.strip()] or FERRAMENTAS
+    ferramentas_explicitas = [
+        f.strip() for f in os.environ.get("AIDD_TESTES_REAIS_FERRAMENTAS", "").split(",") if f.strip()
+    ]
+    if ferramentas_explicitas:
+        ferramentas_alvo = ferramentas_explicitas
+    else:
+        ferramentas_alvo = _escopo_commit.ferramentas_afetadas(
+            _escopo_commit.arquivos_staged(), FERRAMENTAS
+        )
     total_ferramentas = len(ferramentas_alvo)
 
+    print(f"  [INFO] Escopo {_escopo_commit.modo()}: {total_ferramentas} ferramenta(s) alvo.")
     _anunciar_ao_vivo(f"[G_TESTES_REAIS] Iniciando: {total_ferramentas} ferramenta(s) em tools/*...")
 
     for indice, ferramenta in enumerate(ferramentas_alvo, start=1):

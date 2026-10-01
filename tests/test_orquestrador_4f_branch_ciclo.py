@@ -170,11 +170,25 @@ def test_preparo_do_gate_final_copia_so_config_local_ignorada(repo, monkeypatch,
     wt = tmp_path / "wt_final"
     _git(repo.path, "worktree", "add", "-q", "--detach", str(wt), "HEAD")
     (wt / "versionado.json").write_text("ciclo", encoding="utf-8")
-    orquestrador_4f.preparar_worktree_gate_final(wt, repo.path)
+    orquestrador_4f.preparar_worktree(wt, repo.path)
 
     assert (wt / ".local" / "mcp.json").read_text(encoding="utf-8") == '{"mcpServers": {}}'
     assert (wt / "versionado.json").read_text(encoding="utf-8") == "ciclo"  # versionado nunca é sobrescrito
     assert not (wt / "ausente.json").exists()
+
+
+def test_worktree_de_cada_fase_e_preparada_antes_do_agente(repo, monkeypatch):
+    # 2026-09-30: gate_fase reprovava em worktree nova (test_components_verify_exit_0) porque só a
+    # worktree do gate_final recebia components sync + configs MCP locais.
+    preparadas = []
+    monkeypatch.setattr(orquestrador_4f, "preparar_worktree",
+                        lambda wt, raiz: preparadas.append((Path(wt).name, list(repo.chamadas))))
+    m = _manifesto(repo.path, [_fase("Fase_1_Ticket_1", "out/a.md"), _fase("Fase_2_Ticket_2", "out/b.md")])
+
+    assert _rodar(monkeypatch, "--manifest", str(m)) == 0
+
+    fases = [(nome, antes) for nome, antes in preparadas if nome.startswith("Fase_")]
+    assert fases == [("Fase_1_Ticket_1", []), ("Fase_2_Ticket_2", ["a.md"])]  # antes do agente de cada fase
 
 
 def test_retomada_com_fases_commitadas_roda_so_o_gate_final(repo, monkeypatch, capsys):
