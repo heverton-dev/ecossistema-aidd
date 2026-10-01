@@ -1,0 +1,138 @@
+============================= test session starts =============================
+platform win32 -- Python 3.14.7, pytest-9.0.3, pluggy-1.6.0
+rootdir: C:\Users\trcnologia\Desktop\worktrees_evolucao-fronteiras-ferramentas-ciclo-01-bloco-1\Fase_2_Ticket_2_Foto_E2E_repet_vel_e_compara__o_autom_tica
+configfile: pytest.ini
+plugins: anyio-4.14.1, hypothesis-6.168.0, cov-7.1.0, xdist-3.8.0, returns-0.29.0
+collected 13 items
+
+tests\test_e2e_foto.py FFFFFFFFFFFFF                                     [100%]
+
+================================== FAILURES ===================================
+_____________ test_comparar_reprova_quando_fluxo_quebra_mais_cedo _____________
+tests\test_e2e_foto.py:90: in test_comparar_reprova_quando_fluxo_quebra_mais_cedo
+    assert proc.returncode == 1, f"stdout={proc.stdout!r} stderr={proc.stderr!r}"
+E   AssertionError: stdout='' stderr="C:\\Users\\trcnologia\\AppData\\Local\\Programs\\Python\\Python314\\python.exe: can't open file 'C:\\\\Users\\\\trcnologia\\\\Desktop\\\\worktrees_evolucao-fronteiras-ferramentas-ciclo-01-bloco-1\\\\Fase_2_Ticket_2_Foto_E2E_repet_vel_e_compara__o_autom_tica\\\\scripts\\\\e2e_foto.py': [Errno 2] No such file or directory\n"
+E   assert 2 == 1
+E    +  where 2 = CompletedProcess(args=['C:\\Users\\trcnologia\\AppData\\Local\\Programs\\Python\\Python314\\python.exe', 'C:\\Users\\t...Ticket_2_Foto_E2E_repet_vel_e_compara__o_autom_tica\\\\scripts\\\\e2e_foto.py': [Errno 2] No such file or directory\n").returncode
+____________________ test_comparar_reprova_vazamento_novo _____________________
+tests\test_e2e_foto.py:113: in test_comparar_reprova_vazamento_novo
+    assert proc.returncode == 1, f"stdout={proc.stdout!r} stderr={proc.stderr!r}"
+E   AssertionError: stdout='' stderr="C:\\Users\\trcnologia\\AppData\\Local\\Programs\\Python\\Python314\\python.exe: can't open file 'C:\\\\Users\\\\trcnologia\\\\Desktop\\\\worktrees_evolucao-fronteiras-ferramentas-ciclo-01-bloco-1\\\\Fase_2_Ticket_2_Foto_E2E_repet_vel_e_compara__o_autom_tica\\\\scripts\\\\e2e_foto.py': [Errno 2] No such file or directory\n"
+E   assert 2 == 1
+E    +  where 2 = CompletedProcess(args=['C:\\Users\\trcnologia\\AppData\\Local\\Programs\\Python\\Python314\\python.exe', 'C:\\Users\\t...Ticket_2_Foto_E2E_repet_vel_e_compara__o_autom_tica\\\\scripts\\\\e2e_foto.py': [Errno 2] No such file or directory\n").returncode
+________________ test_comparar_passa_quando_ciclos_sao_iguais _________________
+tests\test_e2e_foto.py:127: in test_comparar_passa_quando_ciclos_sao_iguais
+    assert proc.returncode == 0, f"stdout={proc.stdout!r} stderr={proc.stderr!r}"
+E   AssertionError: stdout='' stderr="C:\\Users\\trcnologia\\AppData\\Local\\Programs\\Python\\Python314\\python.exe: can't open file 'C:\\\\Users\\\\trcnologia\\\\Desktop\\\\worktrees_evolucao-fronteiras-ferramentas-ciclo-01-bloco-1\\\\Fase_2_Ticket_2_Foto_E2E_repet_vel_e_compara__o_autom_tica\\\\scripts\\\\e2e_foto.py': [Errno 2] No such file or directory\n"
+E   assert 2 == 0
+E    +  where 2 = CompletedProcess(args=['C:\\Users\\trcnologia\\AppData\\Local\\Programs\\Python\\Python314\\python.exe', 'C:\\Users\\t...Ticket_2_Foto_E2E_repet_vel_e_compara__o_autom_tica\\\\scripts\\\\e2e_foto.py': [Errno 2] No such file or directory\n").returncode
+____________________ test_comparar_reprova_exit_code_pior _____________________
+tests\test_e2e_foto.py:143: in test_comparar_reprova_exit_code_pior
+    assert proc.returncode == 1, f"stdout={proc.stdout!r} stderr={proc.stderr!r}"
+E   AssertionError: stdout='' stderr="C:\\Users\\trcnologia\\AppData\\Local\\Programs\\Python\\Python314\\python.exe: can't open file 'C:\\\\Users\\\\trcnologia\\\\Desktop\\\\worktrees_evolucao-fronteiras-ferramentas-ciclo-01-bloco-1\\\\Fase_2_Ticket_2_Foto_E2E_repet_vel_e_compara__o_autom_tica\\\\scripts\\\\e2e_foto.py': [Errno 2] No such file or directory\n"
+E   assert 2 == 1
+E    +  where 2 = CompletedProcess(args=['C:\\Users\\trcnologia\\AppData\\Local\\Programs\\Python\\Python314\\python.exe', 'C:\\Users\\t...Ticket_2_Foto_E2E_repet_vel_e_compara__o_autom_tica\\\\scripts\\\\e2e_foto.py': [Errno 2] No such file or directory\n").returncode
+_____________________ test_comparar_reprova_quarteto_pior _____________________
+tests\test_e2e_foto.py:160: in test_comparar_reprova_quarteto_pior
+    assert proc.returncode == 1, f"stdout={proc.stdout!r} stderr={proc.stderr!r}"
+E   AssertionError: stdout='' stderr="C:\\Users\\trcnologia\\AppData\\Local\\Programs\\Python\\Python314\\python.exe: can't open file 'C:\\\\Users\\\\trcnologia\\\\Desktop\\\\worktrees_evolucao-fronteiras-ferramentas-ciclo-01-bloco-1\\\\Fase_2_Ticket_2_Foto_E2E_repet_vel_e_compara__o_autom_tica\\\\scripts\\\\e2e_foto.py': [Errno 2] No such file or directory\n"
+E   assert 2 == 1
+E    +  where 2 = CompletedProcess(args=['C:\\Users\\trcnologia\\AppData\\Local\\Programs\\Python\\Python314\\python.exe', 'C:\\Users\\t...Ticket_2_Foto_E2E_repet_vel_e_compara__o_autom_tica\\\\scripts\\\\e2e_foto.py': [Errno 2] No such file or directory\n").returncode
+___________ test_comparar_reprova_metrica_de_ciclo_pior[duplicatas] ___________
+tests\test_e2e_foto.py:174: in test_comparar_reprova_metrica_de_ciclo_pior
+    base = _escrever_ciclo(tmp_path, "ciclo-01", {}, metricas=base_metricas)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+tests\test_e2e_foto.py:59: in _escrever_ciclo
+    (ciclo / "METRICAS-CICLO.json").write_text(
+..\..\..\AppData\Local\Programs\Python\Python314\Lib\pathlib\__init__.py:809: in write_text
+    with self.open(mode='w', encoding=encoding, errors=errors, newline=newline) as f:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+..\..\..\AppData\Local\Programs\Python\Python314\Lib\pathlib\__init__.py:771: in open
+    return io.open(self, mode, buffering, encoding, errors, newline)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   FileNotFoundError: [Errno 2] No such file or directory: 'C:\\Users\\trcnologia\\AppData\\Local\\Temp\\pytest-of-tecnologia\\pytest-0\\test_comparar_reprova_metrica_0\\ciclo-01\\METRICAS-CICLO.json'
+__________ test_comparar_reprova_metrica_de_ciclo_pior[tempo_gate_s] __________
+tests\test_e2e_foto.py:174: in test_comparar_reprova_metrica_de_ciclo_pior
+    base = _escrever_ciclo(tmp_path, "ciclo-01", {}, metricas=base_metricas)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+tests\test_e2e_foto.py:59: in _escrever_ciclo
+    (ciclo / "METRICAS-CICLO.json").write_text(
+..\..\..\AppData\Local\Programs\Python\Python314\Lib\pathlib\__init__.py:809: in write_text
+    with self.open(mode='w', encoding=encoding, errors=errors, newline=newline) as f:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+..\..\..\AppData\Local\Programs\Python\Python314\Lib\pathlib\__init__.py:771: in open
+    return io.open(self, mode, buffering, encoding, errors, newline)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   FileNotFoundError: [Errno 2] No such file or directory: 'C:\\Users\\trcnologia\\AppData\\Local\\Temp\\pytest-of-tecnologia\\pytest-0\\test_comparar_reprova_metrica_1\\ciclo-01\\METRICAS-CICLO.json'
+_____________ test_comparar_reprova_metrica_de_ciclo_pior[tokens] _____________
+tests\test_e2e_foto.py:174: in test_comparar_reprova_metrica_de_ciclo_pior
+    base = _escrever_ciclo(tmp_path, "ciclo-01", {}, metricas=base_metricas)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+tests\test_e2e_foto.py:59: in _escrever_ciclo
+    (ciclo / "METRICAS-CICLO.json").write_text(
+..\..\..\AppData\Local\Programs\Python\Python314\Lib\pathlib\__init__.py:809: in write_text
+    with self.open(mode='w', encoding=encoding, errors=errors, newline=newline) as f:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+..\..\..\AppData\Local\Programs\Python\Python314\Lib\pathlib\__init__.py:771: in open
+    return io.open(self, mode, buffering, encoding, errors, newline)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   FileNotFoundError: [Errno 2] No such file or directory: 'C:\\Users\\trcnologia\\AppData\\Local\\Temp\\pytest-of-tecnologia\\pytest-0\\test_comparar_reprova_metrica_2\\ciclo-01\\METRICAS-CICLO.json'
+_______ test_comparar_reprova_metrica_de_ciclo_pior[orfaos_inventario] ________
+tests\test_e2e_foto.py:174: in test_comparar_reprova_metrica_de_ciclo_pior
+    base = _escrever_ciclo(tmp_path, "ciclo-01", {}, metricas=base_metricas)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+tests\test_e2e_foto.py:59: in _escrever_ciclo
+    (ciclo / "METRICAS-CICLO.json").write_text(
+..\..\..\AppData\Local\Programs\Python\Python314\Lib\pathlib\__init__.py:809: in write_text
+    with self.open(mode='w', encoding=encoding, errors=errors, newline=newline) as f:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+..\..\..\AppData\Local\Programs\Python\Python314\Lib\pathlib\__init__.py:771: in open
+    return io.open(self, mode, buffering, encoding, errors, newline)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   FileNotFoundError: [Errno 2] No such file or directory: 'C:\\Users\\trcnologia\\AppData\\Local\\Temp\\pytest-of-tecnologia\\pytest-0\\test_comparar_reprova_metrica_3\\ciclo-01\\METRICAS-CICLO.json'
+______________ test_comparar_passa_com_metricas_de_ciclo_iguais _______________
+tests\test_e2e_foto.py:190: in test_comparar_passa_com_metricas_de_ciclo_iguais
+    base = _escrever_ciclo(tmp_path, "ciclo-01", {}, metricas=metricas)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+tests\test_e2e_foto.py:59: in _escrever_ciclo
+    (ciclo / "METRICAS-CICLO.json").write_text(
+..\..\..\AppData\Local\Programs\Python\Python314\Lib\pathlib\__init__.py:809: in write_text
+    with self.open(mode='w', encoding=encoding, errors=errors, newline=newline) as f:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+..\..\..\AppData\Local\Programs\Python\Python314\Lib\pathlib\__init__.py:771: in open
+    return io.open(self, mode, buffering, encoding, errors, newline)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   FileNotFoundError: [Errno 2] No such file or directory: 'C:\\Users\\trcnologia\\AppData\\Local\\Temp\\pytest-of-tecnologia\\pytest-0\\test_comparar_passa_com_metric0\\ciclo-01\\METRICAS-CICLO.json'
+______________________ test_cli_aceita_subcomando[rodar] ______________________
+tests\test_e2e_foto.py:206: in test_cli_aceita_subcomando
+    assert proc.returncode == 0, f"stdout={proc.stdout!r} stderr={proc.stderr!r}"
+E   AssertionError: stdout='' stderr="C:\\Users\\trcnologia\\AppData\\Local\\Programs\\Python\\Python314\\python.exe: can't open file 'C:\\\\Users\\\\trcnologia\\\\Desktop\\\\worktrees_evolucao-fronteiras-ferramentas-ciclo-01-bloco-1\\\\Fase_2_Ticket_2_Foto_E2E_repet_vel_e_compara__o_autom_tica\\\\scripts\\\\e2e_foto.py': [Errno 2] No such file or directory\n"
+E   assert 2 == 0
+E    +  where 2 = CompletedProcess(args=['C:\\Users\\trcnologia\\AppData\\Local\\Programs\\Python\\Python314\\python.exe', 'C:\\Users\\t...Ticket_2_Foto_E2E_repet_vel_e_compara__o_autom_tica\\\\scripts\\\\e2e_foto.py': [Errno 2] No such file or directory\n").returncode
+____________________ test_cli_aceita_subcomando[comparar] _____________________
+tests\test_e2e_foto.py:206: in test_cli_aceita_subcomando
+    assert proc.returncode == 0, f"stdout={proc.stdout!r} stderr={proc.stderr!r}"
+E   AssertionError: stdout='' stderr="C:\\Users\\trcnologia\\AppData\\Local\\Programs\\Python\\Python314\\python.exe: can't open file 'C:\\\\Users\\\\trcnologia\\\\Desktop\\\\worktrees_evolucao-fronteiras-ferramentas-ciclo-01-bloco-1\\\\Fase_2_Ticket_2_Foto_E2E_repet_vel_e_compara__o_autom_tica\\\\scripts\\\\e2e_foto.py': [Errno 2] No such file or directory\n"
+E   assert 2 == 0
+E    +  where 2 = CompletedProcess(args=['C:\\Users\\trcnologia\\AppData\\Local\\Programs\\Python\\Python314\\python.exe', 'C:\\Users\\t...Ticket_2_Foto_E2E_repet_vel_e_compara__o_autom_tica\\\\scripts\\\\e2e_foto.py': [Errno 2] No such file or directory\n").returncode
+___________________ test_comparar_ciclo01_contra_ele_mesmo ____________________
+tests\test_e2e_foto.py:222: in test_comparar_ciclo01_contra_ele_mesmo
+    assert proc.returncode == 0, f"stdout={proc.stdout!r} stderr={proc.stderr!r}"
+E   AssertionError: stdout='' stderr="C:\\Users\\trcnologia\\AppData\\Local\\Programs\\Python\\Python314\\python.exe: can't open file 'C:\\\\Users\\\\trcnologia\\\\Desktop\\\\worktrees_evolucao-fronteiras-ferramentas-ciclo-01-bloco-1\\\\Fase_2_Ticket_2_Foto_E2E_repet_vel_e_compara__o_autom_tica\\\\scripts\\\\e2e_foto.py': [Errno 2] No such file or directory\n"
+E   assert 2 == 0
+E    +  where 2 = CompletedProcess(args=['C:\\Users\\trcnologia\\AppData\\Local\\Programs\\Python\\Python314\\python.exe', 'C:\\Users\\t...Ticket_2_Foto_E2E_repet_vel_e_compara__o_autom_tica\\\\scripts\\\\e2e_foto.py': [Errno 2] No such file or directory\n").returncode
+=========================== short test summary info ===========================
+FAILED tests/test_e2e_foto.py::test_comparar_reprova_quando_fluxo_quebra_mais_cedo
+FAILED tests/test_e2e_foto.py::test_comparar_reprova_vazamento_novo - Asserti...
+FAILED tests/test_e2e_foto.py::test_comparar_passa_quando_ciclos_sao_iguais
+FAILED tests/test_e2e_foto.py::test_comparar_reprova_exit_code_pior - Asserti...
+FAILED tests/test_e2e_foto.py::test_comparar_reprova_quarteto_pior - Assertio...
+FAILED tests/test_e2e_foto.py::test_comparar_reprova_metrica_de_ciclo_pior[duplicatas]
+FAILED tests/test_e2e_foto.py::test_comparar_reprova_metrica_de_ciclo_pior[tempo_gate_s]
+FAILED tests/test_e2e_foto.py::test_comparar_reprova_metrica_de_ciclo_pior[tokens]
+FAILED tests/test_e2e_foto.py::test_comparar_reprova_metrica_de_ciclo_pior[orfaos_inventario]
+FAILED tests/test_e2e_foto.py::test_comparar_passa_com_metricas_de_ciclo_iguais
+FAILED tests/test_e2e_foto.py::test_cli_aceita_subcomando[rodar] - AssertionE...
+FAILED tests/test_e2e_foto.py::test_cli_aceita_subcomando[comparar] - Asserti...
+FAILED tests/test_e2e_foto.py::test_comparar_ciclo01_contra_ele_mesmo - Asser...
+============================= 13 failed in 2.24s ==============================
