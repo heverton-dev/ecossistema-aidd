@@ -1,0 +1,17 @@
+ROLE: Builder. Ecosystem AIDD. Ticket 10. Target tool: fronteiras-ferramentas.
+DIMENSION: D2
+DELIVER: tools/aidd-forge/tests/test_prontidao_forge.py
+
+STEPS:
+- Write tools/aidd-forge/tests/test_prontidao_forge.py first. Assert forge init makes initial commit. Assert missing dependency fails readiness. Assert capacidade_llm nenhuma fails readiness with clear message. Assert HANDOFF_FORGE_PLANNER.json written with evidence. Run. Assert exit 1.
+- Add readiness checklist to forge init: dependencies importable, gates match catalog sha256, harness mirrors present, initial commit, real LLM round trip check.
+- Write PROJECT/.aidd/HANDOFF_FORGE_PLANNER.json. Exit 1 with fix hint when any item fails.
+- Run test. Run 3 E2E flows into new ciclo folder. Assert no metric worse than ciclo-01.
+
+RULES:
+1. Write failing test first. Run. Assert exit 1.
+2. Implement. Zero stubs. Real pytest tests. Run. Assert exit 0.
+3. Work inside ephemeral Git Worktree only.
+4. Capture real exit code: redirect to file, read $? same line. Never trust pipes.
+5. NEVER edit docs/auditoria/CONFIG-EXECUCAO-USUARIO.json.
+6. Deliver exactly: tools/aidd-forge/tests/test_prontidao_forge.py

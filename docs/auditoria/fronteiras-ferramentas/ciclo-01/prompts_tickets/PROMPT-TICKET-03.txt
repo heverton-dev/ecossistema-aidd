@@ -1,0 +1,17 @@
+ROLE: Builder. Ecosystem AIDD. Ticket 3. Target tool: fronteiras-ferramentas.
+DIMENSION: D15
+DELIVER: scripts/inventario_capacidades.py
+
+STEPS:
+- Write tests/test_inventario_capacidades.py first. Build temp repo with two copies of one module. One copy has extra function. Remove that copy without merge. Assert comparar reports one orphan and exits 1. Run. Assert exit 1.
+- Implement scripts/inventario_capacidades.py with subcommands foto and comparar. Record per file: sha256, AST functions and classes, test names, unique lines per copy family.
+- foto writes INVENTARIO-ANTES.json into cycle folder. comparar exits 1 when any capability exists only in old snapshot.
+- Run test. Run foto on real repo. Assert exit 0.
+
+RULES:
+1. Write failing test first. Run. Assert exit 1.
+2. Implement. Zero stubs. Real pytest tests. Run. Assert exit 0.
+3. Work inside ephemeral Git Worktree only.
+4. Capture real exit code: redirect to file, read $? same line. Never trust pipes.
+5. NEVER edit docs/auditoria/CONFIG-EXECUCAO-USUARIO.json.
+6. Deliver exactly: scripts/inventario_capacidades.py

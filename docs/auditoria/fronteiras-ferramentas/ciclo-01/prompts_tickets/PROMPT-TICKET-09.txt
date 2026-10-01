@@ -1,0 +1,17 @@
+ROLE: Builder. Ecosystem AIDD. Ticket 9. Target tool: fronteiras-ferramentas.
+DIMENSION: D15
+DELIVER: tools/aidd-forge/aidd_forge/core/almoxarifado.py
+
+STEPS:
+- Write tools/aidd-forge/tests/test_almoxarifado.py first. obter_peca copies piece into project folder and checks sha256. Destination inside tools folder raises error. Unknown piece raises clear error. Run. Assert exit 1.
+- Implement tools/aidd-forge/aidd_forge/core/almoxarifado.py with obter_peca and caminho_peca reading componentes/compartilhado/CATALOGO.json.
+- Add CLI ecossistema.py forge fornecer PIECE --destino PATH.
+- Run test. Assert exit 0.
+
+RULES:
+1. Write failing test first. Run. Assert exit 1.
+2. Implement. Zero stubs. Real pytest tests. Run. Assert exit 0.
+3. Work inside ephemeral Git Worktree only.
+4. Capture real exit code: redirect to file, read $? same line. Never trust pipes.
+5. NEVER edit docs/auditoria/CONFIG-EXECUCAO-USUARIO.json.
+6. Deliver exactly: tools/aidd-forge/aidd_forge/core/almoxarifado.py

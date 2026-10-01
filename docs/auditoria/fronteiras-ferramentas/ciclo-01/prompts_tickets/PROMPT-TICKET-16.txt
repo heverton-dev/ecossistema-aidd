@@ -1,0 +1,16 @@
+ROLE: Builder. Ecosystem AIDD. Ticket 16. Target tool: fronteiras-ferramentas.
+DIMENSION: D1
+DELIVER: tools/aidd-ops/tests/test_fronteira_ops_infra_generica.py
+
+STEPS:
+- Write tools/aidd-ops/tests/test_fronteira_ops_infra_generica.py first. Run ops plan with two different perfil_app inputs. Assert exit 0 for both. Assert generated services differ according to profile. Assert Dockerfile, docker-compose.yml, deploy.sh, nginx config generated from catalog pieces. Run. Assert exit 1.
+- Make ops read ops tickets and perfil_app. Fetch moldes/infra pieces through obter_peca. Make niche optional.
+- Run test. Run 3 E2E flows and continuation into new ciclo folder. Assert no metric worse than ciclo-01.
+
+RULES:
+1. Write failing test first. Run. Assert exit 1.
+2. Implement. Zero stubs. Real pytest tests. Run. Assert exit 0.
+3. Work inside ephemeral Git Worktree only.
+4. Capture real exit code: redirect to file, read $? same line. Never trust pipes.
+5. NEVER edit docs/auditoria/CONFIG-EXECUCAO-USUARIO.json.
+6. Deliver exactly: tools/aidd-ops/tests/test_fronteira_ops_infra_generica.py

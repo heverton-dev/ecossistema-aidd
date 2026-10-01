@@ -1,0 +1,18 @@
+ROLE: Builder. Ecosystem AIDD. Ticket 2. Target tool: fronteiras-ferramentas.
+DIMENSION: D12
+DELIVER: scripts/e2e_foto.py
+
+STEPS:
+- Write tests/test_e2e_foto.py first. Fake cycle folder where flow breaks earlier. Assert comparar exits 1. Fake cycle with new leak. Assert exit 1. Fake cycle equal to base. Assert exit 0. Run. Assert exit 1.
+- Implement scripts/e2e_foto.py with subcommands rodar and comparar. Port logic from TESTES_E2E-ecossistema-aidd/ciclo-01/_evidencias scripts.
+- rodar creates isolated worktree, runs 3 flows plus continuation plus Quarteto probe, writes RESULTADO-E2E.json per flow into next ciclo folder outside repo.
+- comparar reads base and new cycle. Compare exit, quebrou_em, quarteto, leaks, duplicate count, gate time, tokens, inventory orphans. Write COMPARACAO-E2E.md. Exit 1 if any metric worse.
+- Run test. Assert exit 0.
+
+RULES:
+1. Write failing test first. Run. Assert exit 1.
+2. Implement. Zero stubs. Real pytest tests. Run. Assert exit 0.
+3. Work inside ephemeral Git Worktree only.
+4. Capture real exit code: redirect to file, read $? same line. Never trust pipes.
+5. NEVER edit docs/auditoria/CONFIG-EXECUCAO-USUARIO.json.
+6. Deliver exactly: scripts/e2e_foto.py

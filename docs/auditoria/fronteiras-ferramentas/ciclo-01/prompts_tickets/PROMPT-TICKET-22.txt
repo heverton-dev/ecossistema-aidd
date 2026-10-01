@@ -1,0 +1,16 @@
+ROLE: Builder. Ecosystem AIDD. Ticket 22. Target tool: fronteiras-ferramentas.
+DIMENSION: D14
+DELIVER: docs/anatomias/FRONTEIRAS-POR-FERRAMENTA.md
+
+STEPS:
+- Write tests/test_readme_fronteiras.py first. Parse each tools/aidd-*/README.md boundary section. Compare with MAPA-DONOS-FERRAMENTAS.json. Run. Assert exit 1.
+- Generate docs/anatomias/FRONTEIRAS-POR-FERRAMENTA.md from map. Update 8 README files and docs/anatomias/PAPEIS-DAS-8-FERRAMENTAS.md.
+- Run test. Assert exit 0.
+
+RULES:
+1. Write failing test first. Run. Assert exit 1.
+2. Implement. Zero stubs. Real pytest tests. Run. Assert exit 0.
+3. Work inside ephemeral Git Worktree only.
+4. Capture real exit code: redirect to file, read $? same line. Never trust pipes.
+5. NEVER edit docs/auditoria/CONFIG-EXECUCAO-USUARIO.json.
+6. Deliver exactly: docs/anatomias/FRONTEIRAS-POR-FERRAMENTA.md

@@ -1,0 +1,17 @@
+ROLE: Builder. Ecosystem AIDD. Ticket 8. Target tool: fronteiras-ferramentas.
+DIMENSION: D15
+DELIVER: componentes/compartilhado/CATALOGO.json
+
+STEPS:
+- Write tests/test_catalogo_almoxarifado.py first. Assert every piece family from inventory exists in componentes/compartilhado/CATALOGO.json. Assert inventario_capacidades.py comparar reports zero orphans between all copies and catalog version. Run. Assert exit 1.
+- For each copy family build one merged version keeping unique content from every copy. Base version per DIAGNOSTICO.md steps 4 and 5.
+- Store under componentes/compartilhado folders gates, src-core, moldes/quarteto, moldes/infra, injetor, specs. Write CATALOGO.json with dono_do_conteudo, versao, sha256, consumidores per piece.
+- Keep old copies in place. Run test. Assert exit 0.
+
+RULES:
+1. Write failing test first. Run. Assert exit 1.
+2. Implement. Zero stubs. Real pytest tests. Run. Assert exit 0.
+3. Work inside ephemeral Git Worktree only.
+4. Capture real exit code: redirect to file, read $? same line. Never trust pipes.
+5. NEVER edit docs/auditoria/CONFIG-EXECUCAO-USUARIO.json.
+6. Deliver exactly: componentes/compartilhado/CATALOGO.json

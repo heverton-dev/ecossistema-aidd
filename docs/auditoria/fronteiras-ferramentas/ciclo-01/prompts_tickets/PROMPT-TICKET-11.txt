@@ -1,0 +1,16 @@
+ROLE: Builder. Ecosystem AIDD. Ticket 11. Target tool: fronteiras-ferramentas.
+DIMENSION: D2
+DELIVER: tools/aidd-planner/tests/test_planta_tickets_roteados.py
+
+STEPS:
+- Write tools/aidd-planner/tests/test_planta_tickets_roteados.py first. Assert planner output has tickets for builder, master, enterprise and ops. Assert each ticket has ferramenta_destino, entrada, saida_esperada, pecas_do_almoxarifado, criterio_de_aceite. Assert perfil_app is derived from planned modules, storage, queues, integrations and routes. Change one planned module and assert perfil_app changes. Assert factory input present for flow 2. Run. Assert exit 1.
+- Make planner read HANDOFF_FORGE_PLANNER.json. Generate layers, phases and routed tickets. Write them into PLANNER.json and HANDOFF_PLANNER_ENGINE.json.
+- Run test. Run 3 E2E flows into new ciclo folder. Assert no metric worse than ciclo-01.
+
+RULES:
+1. Write failing test first. Run. Assert exit 1.
+2. Implement. Zero stubs. Real pytest tests. Run. Assert exit 0.
+3. Work inside ephemeral Git Worktree only.
+4. Capture real exit code: redirect to file, read $? same line. Never trust pipes.
+5. NEVER edit docs/auditoria/CONFIG-EXECUCAO-USUARIO.json.
+6. Deliver exactly: tools/aidd-planner/tests/test_planta_tickets_roteados.py

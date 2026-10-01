@@ -1,0 +1,17 @@
+ROLE: Builder. Ecosystem AIDD. Ticket 7. Target tool: fronteiras-ferramentas.
+DIMENSION: D2
+DELIVER: scripts/validar_handoff.py
+
+STEPS:
+- Write tests/test_validar_handoff.py first. Contract with servidor_sobe true and no log fails. Contract with missing slice path fails. Contract without produzido_por matching tool fails. Dry-run of run-fluxo must not print 100 percent approval. Run. Assert exit 1.
+- Implement scripts/validar_handoff.py. Validate schema plus evidence: paths exist, sha256 matches, measured HTTP status present.
+- Call it from scripts/orquestrador_sincrono.py at every boundary in warn mode. Write RELATORIO-CONTRATOS.json into project folder.
+- Run test. Assert exit 0.
+
+RULES:
+1. Write failing test first. Run. Assert exit 1.
+2. Implement. Zero stubs. Real pytest tests. Run. Assert exit 0.
+3. Work inside ephemeral Git Worktree only.
+4. Capture real exit code: redirect to file, read $? same line. Never trust pipes.
+5. NEVER edit docs/auditoria/CONFIG-EXECUCAO-USUARIO.json.
+6. Deliver exactly: scripts/validar_handoff.py

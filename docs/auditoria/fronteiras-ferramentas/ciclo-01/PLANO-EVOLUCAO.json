@@ -1,0 +1,263 @@
+{
+  "pipeline_id": "evolucao-fronteiras-ferramentas-ciclo-01",
+  "target_tool": "fronteiras-ferramentas",
+  "descricao": "Plano de Evolução Tática montado a partir dos 23 tickets de PLANO-EVOLUCAO.md",
+  "config_usuario_ref": "docs/auditoria/CONFIG-EXECUCAO-USUARIO.json",
+  "definition_of_done": "docs/auditoria/fronteiras-ferramentas/ciclo-01/DOD.md",
+  "gate_final": "python ecossistema.py audit",
+  "fases": [
+    {
+      "ticket_id": "TICKET-01",
+      "nome": "Fase_1_Ticket_1_Gate_pr_prio_por_ticket_e_um_manifesto_por_bloco",
+      "dimensao_15d": "D13. Quality Gates (Portões)",
+      "harness": "agy",
+      "model": "gemini-3.8-flash-low",
+      "comando_terminal": "agy --model gemini-3.8-flash-low  --dangerously-skip-permissions",
+      "input_prompt": "docs/auditoria/fronteiras-ferramentas/ciclo-01/prompts_tickets/PROMPT-TICKET-01.txt",
+      "output_handoff": "tests/test_compilador_gate_por_ticket.py",
+      "gate_fase": "python -m pytest -q -p no:cacheprovider tests"
+    },
+    {
+      "ticket_id": "TICKET-02",
+      "nome": "Fase_2_Ticket_2_Foto_E2E_repet_vel_e_compara__o_autom_tica",
+      "dimensao_15d": "D12. Observabilidade e Frugalidade",
+      "harness": "mimo",
+      "model": "xiaomi-token-plan-sgp/mimo-v2.6-flash",
+      "comando_terminal": "MIMOCODE_DANGEROUSLY_SKIP_PERMISSIONS=1 MIMOCODE_TUI_PLAIN=1 mimo -m xiaomi-token-plan-sgp/mimo-v2.6-flash --pure --trust",
+      "input_prompt": "docs/auditoria/fronteiras-ferramentas/ciclo-01/prompts_tickets/PROMPT-TICKET-02.txt",
+      "output_handoff": "scripts/e2e_foto.py",
+      "gate_fase": "python -m pytest -q -p no:cacheprovider tests"
+    },
+    {
+      "ticket_id": "TICKET-03",
+      "nome": "Fase_3_Ticket_3_Invent_rio_de_capacidades_e_tag_de_seguran_a",
+      "dimensao_15d": "D15. Fonte Única e Sincronização",
+      "harness": "opencode",
+      "model": "opencode/big-pickle",
+      "comando_terminal": "opencode --pure --auto --agent -m opencode/big-pickle",
+      "input_prompt": "docs/auditoria/fronteiras-ferramentas/ciclo-01/prompts_tickets/PROMPT-TICKET-03.txt",
+      "output_handoff": "scripts/inventario_capacidades.py",
+      "gate_fase": "python -m pytest -q -p no:cacheprovider tests"
+    },
+    {
+      "ticket_id": "TICKET-04",
+      "nome": "Fase_4_Ticket_4_Padronizar_os_nomes_dos_construtores_pelo_nome_do_fluxo",
+      "dimensao_15d": "D14. Documentação Viva",
+      "harness": "claude",
+      "model": "opus",
+      "comando_terminal": "claude --dangerously-skip-permissions --chrome --model opus",
+      "input_prompt": "docs/auditoria/fronteiras-ferramentas/ciclo-01/prompts_tickets/PROMPT-TICKET-04.txt",
+      "output_handoff": "tests/test_nomes_padronizados.py",
+      "gate_fase": "python -m pytest -q -p no:cacheprovider tests"
+    },
+    {
+      "ticket_id": "TICKET-05",
+      "nome": "Fase_5_Ticket_5_Mapa_de_donos_e_schemas_dos_5_contratos",
+      "dimensao_15d": "D1. Arquitetura e Fronteiras",
+      "harness": "agy",
+      "model": "gemini-3.8-flash-low",
+      "comando_terminal": "agy --model gemini-3.8-flash-low  --dangerously-skip-permissions",
+      "input_prompt": "docs/auditoria/fronteiras-ferramentas/ciclo-01/prompts_tickets/PROMPT-TICKET-05.txt",
+      "output_handoff": "componentes/compartilhado/specs/MAPA-DONOS-FERRAMENTAS.json",
+      "gate_fase": "python -m pytest -q -p no:cacheprovider tests"
+    },
+    {
+      "ticket_id": "TICKET-06",
+      "nome": "Fase_6_Ticket_6_Gate_de_fronteira_em_modo_aviso",
+      "dimensao_15d": "D1. Arquitetura e Fronteiras",
+      "harness": "mimo",
+      "model": "xiaomi-token-plan-sgp/mimo-v2.6-flash",
+      "comando_terminal": "MIMOCODE_DANGEROUSLY_SKIP_PERMISSIONS=1 MIMOCODE_TUI_PLAIN=1 mimo -m xiaomi-token-plan-sgp/mimo-v2.6-flash --pure --trust",
+      "input_prompt": "docs/auditoria/fronteiras-ferramentas/ciclo-01/prompts_tickets/PROMPT-TICKET-06.txt",
+      "output_handoff": "gates/G_FRONTEIRA_FERRAMENTAS.py",
+      "gate_fase": "python -m pytest -q -p no:cacheprovider tests"
+    },
+    {
+      "ticket_id": "TICKET-07",
+      "nome": "Fase_7_Ticket_7_Validador_de_contratos_com_evid_ncia__em_modo_aviso",
+      "dimensao_15d": "D2. Contratos e Interfaces",
+      "harness": "opencode",
+      "model": "opencode/big-pickle",
+      "comando_terminal": "opencode --pure --auto --agent -m opencode/big-pickle",
+      "input_prompt": "docs/auditoria/fronteiras-ferramentas/ciclo-01/prompts_tickets/PROMPT-TICKET-07.txt",
+      "output_handoff": "scripts/validar_handoff.py",
+      "gate_fase": "python -m pytest -q -p no:cacheprovider tests"
+    },
+    {
+      "ticket_id": "TICKET-08",
+      "nome": "Fase_8_Ticket_8_Almoxarifado__nico_com_cat_logo",
+      "dimensao_15d": "D15. Fonte Única e Sincronização",
+      "harness": "claude",
+      "model": "opus",
+      "comando_terminal": "claude --dangerously-skip-permissions --chrome --model opus",
+      "input_prompt": "docs/auditoria/fronteiras-ferramentas/ciclo-01/prompts_tickets/PROMPT-TICKET-08.txt",
+      "output_handoff": "componentes/compartilhado/CATALOGO.json",
+      "gate_fase": "python -m pytest -q -p no:cacheprovider tests"
+    },
+    {
+      "ticket_id": "TICKET-09",
+      "nome": "Fase_9_Ticket_9_Consumo_sob_demanda___o_forge_entrega_a_pe_a",
+      "dimensao_15d": "D15. Fonte Única e Sincronização",
+      "harness": "agy",
+      "model": "gemini-3.8-flash-low",
+      "comando_terminal": "agy --model gemini-3.8-flash-low  --dangerously-skip-permissions",
+      "input_prompt": "docs/auditoria/fronteiras-ferramentas/ciclo-01/prompts_tickets/PROMPT-TICKET-09.txt",
+      "output_handoff": "tools/aidd-forge/aidd_forge/core/almoxarifado.py",
+      "gate_fase": "python -m pytest -q -p no:cacheprovider tests"
+    },
+    {
+      "ticket_id": "TICKET-10",
+      "nome": "Fase_10_Ticket_10_Prontid_o_do_forge_antes_de_passar_o_bast_o",
+      "dimensao_15d": "D2. Contratos e Interfaces",
+      "harness": "mimo",
+      "model": "xiaomi-token-plan-sgp/mimo-v2.6-flash",
+      "comando_terminal": "MIMOCODE_DANGEROUSLY_SKIP_PERMISSIONS=1 MIMOCODE_TUI_PLAIN=1 mimo -m xiaomi-token-plan-sgp/mimo-v2.6-flash --pure --trust",
+      "input_prompt": "docs/auditoria/fronteiras-ferramentas/ciclo-01/prompts_tickets/PROMPT-TICKET-10.txt",
+      "output_handoff": "tools/aidd-forge/tests/test_prontidao_forge.py",
+      "gate_fase": "python -m pytest -q -p no:cacheprovider tests"
+    },
+    {
+      "ticket_id": "TICKET-11",
+      "nome": "Fase_11_Ticket_11_Planta_com_tickets_roteados_para_as_6_ferramentas",
+      "dimensao_15d": "D2. Contratos e Interfaces",
+      "harness": "opencode",
+      "model": "opencode/big-pickle",
+      "comando_terminal": "opencode --pure --auto --agent -m opencode/big-pickle",
+      "input_prompt": "docs/auditoria/fronteiras-ferramentas/ciclo-01/prompts_tickets/PROMPT-TICKET-11.txt",
+      "output_handoff": "tools/aidd-planner/tests/test_planta_tickets_roteados.py",
+      "gate_fase": "python -m pytest -q -p no:cacheprovider tests"
+    },
+    {
+      "ticket_id": "TICKET-12",
+      "nome": "Fase_12_Ticket_12_Orquestrador_s__passa_o_bast_o__n_o_escreve_contrato",
+      "dimensao_15d": "D2. Contratos e Interfaces",
+      "harness": "claude",
+      "model": "opus",
+      "comando_terminal": "claude --dangerously-skip-permissions --chrome --model opus",
+      "input_prompt": "docs/auditoria/fronteiras-ferramentas/ciclo-01/prompts_tickets/PROMPT-TICKET-12.txt",
+      "output_handoff": "tests/test_orquestrador_contratos_reais.py",
+      "gate_fase": "python -m pytest -q -p no:cacheprovider tests"
+    },
+    {
+      "ticket_id": "TICKET-13",
+      "nome": "Fase_13_Ticket_13_aidd_open_consome_do_almoxarifado_e_entrega_s__fatias",
+      "dimensao_15d": "D1. Arquitetura e Fronteiras",
+      "harness": "agy",
+      "model": "gemini-3.8-flash-low",
+      "comando_terminal": "agy --model gemini-3.8-flash-low  --dangerously-skip-permissions",
+      "input_prompt": "docs/auditoria/fronteiras-ferramentas/ciclo-01/prompts_tickets/PROMPT-TICKET-13.txt",
+      "output_handoff": "tools/aidd-open/tests/test_fronteira_factory.py",
+      "gate_fase": "python -m pytest -q -p no:cacheprovider tests"
+    },
+    {
+      "ticket_id": "TICKET-14",
+      "nome": "Fase_14_Ticket_14_aidd_freedom_escreve_s__dentro_do_projeto",
+      "dimensao_15d": "D1. Arquitetura e Fronteiras",
+      "harness": "mimo",
+      "model": "xiaomi-token-plan-sgp/mimo-v2.6-flash",
+      "comando_terminal": "MIMOCODE_DANGEROUSLY_SKIP_PERMISSIONS=1 MIMOCODE_TUI_PLAIN=1 mimo -m xiaomi-token-plan-sgp/mimo-v2.6-flash --pure --trust",
+      "input_prompt": "docs/auditoria/fronteiras-ferramentas/ciclo-01/prompts_tickets/PROMPT-TICKET-14.txt",
+      "output_handoff": "tools/aidd-freedom/tests/test_fronteira_bridge.py",
+      "gate_fase": "python -m pytest -q -p no:cacheprovider tests"
+    },
+    {
+      "ticket_id": "TICKET-15",
+      "nome": "Fase_15_Ticket_15_aidd_pure_consome_do_almoxarifado__sem_cache_dentro_da_ferramenta",
+      "dimensao_15d": "D1. Arquitetura e Fronteiras",
+      "harness": "opencode",
+      "model": "opencode/big-pickle",
+      "comando_terminal": "opencode --pure --auto --agent -m opencode/big-pickle",
+      "input_prompt": "docs/auditoria/fronteiras-ferramentas/ciclo-01/prompts_tickets/PROMPT-TICKET-15.txt",
+      "output_handoff": "tools/aidd-pure/tests/test_fronteira_generator.py",
+      "gate_fase": "python -m pytest -q -p no:cacheprovider tests"
+    },
+    {
+      "ticket_id": "TICKET-16",
+      "nome": "Fase_16_Ticket_16_aidd_ops_gera_infra_para_qualquer_app",
+      "dimensao_15d": "D1. Arquitetura e Fronteiras",
+      "harness": "claude",
+      "model": "opus",
+      "comando_terminal": "claude --dangerously-skip-permissions --chrome --model opus",
+      "input_prompt": "docs/auditoria/fronteiras-ferramentas/ciclo-01/prompts_tickets/PROMPT-TICKET-16.txt",
+      "output_handoff": "tools/aidd-ops/tests/test_fronteira_ops_infra_generica.py",
+      "gate_fase": "python -m pytest -q -p no:cacheprovider tests"
+    },
+    {
+      "ticket_id": "TICKET-17",
+      "nome": "Fase_17_Ticket_17_aidd_master_integra_e_faz_o_Quarteto__sem_infra",
+      "dimensao_15d": "D1. Arquitetura e Fronteiras",
+      "harness": "agy",
+      "model": "gemini-3.8-flash-low",
+      "comando_terminal": "agy --model gemini-3.8-flash-low  --dangerously-skip-permissions",
+      "input_prompt": "docs/auditoria/fronteiras-ferramentas/ciclo-01/prompts_tickets/PROMPT-TICKET-17.txt",
+      "output_handoff": "tools/aidd-master/tests/test_fronteira_master.py",
+      "gate_fase": "python -m pytest -q -p no:cacheprovider tests"
+    },
+    {
+      "ticket_id": "TICKET-18",
+      "nome": "Fase_18_Ticket_18_aidd_enterprise_s__blindagem",
+      "dimensao_15d": "D1. Arquitetura e Fronteiras",
+      "harness": "mimo",
+      "model": "xiaomi-token-plan-sgp/mimo-v2.6-flash",
+      "comando_terminal": "MIMOCODE_DANGEROUSLY_SKIP_PERMISSIONS=1 MIMOCODE_TUI_PLAIN=1 mimo -m xiaomi-token-plan-sgp/mimo-v2.6-flash --pure --trust",
+      "input_prompt": "docs/auditoria/fronteiras-ferramentas/ciclo-01/prompts_tickets/PROMPT-TICKET-18.txt",
+      "output_handoff": "tools/aidd-enterprise/tests/test_fronteira_enterprise.py",
+      "gate_fase": "python -m pytest -q -p no:cacheprovider tests"
+    },
+    {
+      "ticket_id": "TICKET-19",
+      "nome": "Fase_19_Ticket_19_Remover_as_c_pias_com_prova_de_zero_perda",
+      "dimensao_15d": "D15. Fonte Única e Sincronização",
+      "harness": "opencode",
+      "model": "opencode/big-pickle",
+      "comando_terminal": "opencode --pure --auto --agent -m opencode/big-pickle",
+      "input_prompt": "docs/auditoria/fronteiras-ferramentas/ciclo-01/prompts_tickets/PROMPT-TICKET-19.txt",
+      "output_handoff": "scripts/contar_duplicatas.py",
+      "gate_fase": "python -m pytest -q -p no:cacheprovider tests"
+    },
+    {
+      "ticket_id": "TICKET-20",
+      "nome": "Fase_20_Ticket_20_Fiscal_e_contratos_passam_a_bloquear",
+      "dimensao_15d": "D13. Quality Gates (Portões)",
+      "harness": "claude",
+      "model": "opus",
+      "comando_terminal": "claude --dangerously-skip-permissions --chrome --model opus",
+      "input_prompt": "docs/auditoria/fronteiras-ferramentas/ciclo-01/prompts_tickets/PROMPT-TICKET-20.txt",
+      "output_handoff": "gates/test_g_fronteira_bloqueio.py",
+      "gate_fase": "python -m pytest -q -p no:cacheprovider tests"
+    },
+    {
+      "ticket_id": "TICKET-21",
+      "nome": "Fase_21_Ticket_21_Foto__depois__oficial_comparada_com_o_baseline",
+      "dimensao_15d": "D12. Observabilidade e Frugalidade",
+      "harness": "agy",
+      "model": "gemini-3.8-flash-low",
+      "comando_terminal": "agy --model gemini-3.8-flash-low  --dangerously-skip-permissions",
+      "input_prompt": "docs/auditoria/fronteiras-ferramentas/ciclo-01/prompts_tickets/PROMPT-TICKET-21.txt",
+      "output_handoff": "docs/auditoria/fronteiras-ferramentas/ciclo-01/COMPARACAO-E2E.md",
+      "gate_fase": "python -m pytest -q -p no:cacheprovider tests"
+    },
+    {
+      "ticket_id": "TICKET-22",
+      "nome": "Fase_22_Ticket_22_README_de_cada_ferramenta_com_a_fronteira_final",
+      "dimensao_15d": "D14. Documentação Viva",
+      "harness": "mimo",
+      "model": "xiaomi-token-plan-sgp/mimo-v2.6-flash",
+      "comando_terminal": "MIMOCODE_DANGEROUSLY_SKIP_PERMISSIONS=1 MIMOCODE_TUI_PLAIN=1 mimo -m xiaomi-token-plan-sgp/mimo-v2.6-flash --pure --trust",
+      "input_prompt": "docs/auditoria/fronteiras-ferramentas/ciclo-01/prompts_tickets/PROMPT-TICKET-22.txt",
+      "output_handoff": "docs/anatomias/FRONTEIRAS-POR-FERRAMENTA.md",
+      "gate_fase": "python -m pytest -q -p no:cacheprovider tests"
+    },
+    {
+      "ticket_id": "TICKET-23",
+      "nome": "Fase_23_Ticket_23_Mapas_visuais_e_livros_atualizados_com_o_estado_final",
+      "dimensao_15d": "D14. Documentação Viva",
+      "harness": "opencode",
+      "model": "opencode/big-pickle",
+      "comando_terminal": "opencode --pure --auto --agent -m opencode/big-pickle",
+      "input_prompt": "docs/auditoria/fronteiras-ferramentas/ciclo-01/prompts_tickets/PROMPT-TICKET-23.txt",
+      "output_handoff": "tests/test_mapas_e_livros_em_dia.py",
+      "gate_fase": "python -m pytest -q -p no:cacheprovider tests"
+    }
+  ]
+}

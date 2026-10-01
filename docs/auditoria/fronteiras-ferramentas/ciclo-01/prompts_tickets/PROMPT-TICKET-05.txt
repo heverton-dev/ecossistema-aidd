@@ -1,0 +1,17 @@
+ROLE: Builder. Ecosystem AIDD. Ticket 5. Target tool: fronteiras-ferramentas.
+DIMENSION: D1
+DELIVER: componentes/compartilhado/specs/MAPA-DONOS-FERRAMENTAS.json
+
+STEPS:
+- Write tests/test_mapa_donos_ferramentas.py first. Load componentes/compartilhado/specs/MAPA-DONOS-FERRAMENTAS.json. Assert all 8 tools present. Assert every responsibility has exactly one owner. Assert only aidd-forge has pode_guardar_pecas true. Assert 5 handoff schemas exist. Run. Assert exit 1.
+- Create MAPA-DONOS-FERRAMENTAS.json from ESPEC-CONTRATOS-E-GATE.md. Keys per tool: responsabilidades, dono_do_conteudo_de, pode_conter, nunca_conter, zona_escrita_no_projeto.
+- Create handoff-forge-to-planner.schema.json as readiness checklist. Add evidence fields to the 4 existing handoff schemas as listed in the spec.
+- Run test. Assert exit 0.
+
+RULES:
+1. Write failing test first. Run. Assert exit 1.
+2. Implement. Zero stubs. Real pytest tests. Run. Assert exit 0.
+3. Work inside ephemeral Git Worktree only.
+4. Capture real exit code: redirect to file, read $? same line. Never trust pipes.
+5. NEVER edit docs/auditoria/CONFIG-EXECUCAO-USUARIO.json.
+6. Deliver exactly: componentes/compartilhado/specs/MAPA-DONOS-FERRAMENTAS.json

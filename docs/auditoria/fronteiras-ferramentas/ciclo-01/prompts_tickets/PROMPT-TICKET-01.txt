@@ -1,0 +1,17 @@
+ROLE: Builder. Ecosystem AIDD. Ticket 1. Target tool: fronteiras-ferramentas.
+DIMENSION: D13
+DELIVER: tests/test_compilador_gate_por_ticket.py
+
+STEPS:
+- Write tests/test_compilador_gate_por_ticket.py first. Fake plan with two tickets. One declares Gate do Ticket line with custom command. Assert compiled gate_fase equals that command. Assert other ticket falls back to default gate with warning. Fake plan with two Bloco headers. Assert one manifest per block is written. Run. Assert exit 1.
+- Change scripts/compilador_plano_evolucao.py. Parse line starting with Gate do Ticket label inside each ticket. Store command in gate_fase.
+- Parse headers matching Bloco N. Write PLANO-EVOLUCAO-BLOCO-N.json per block plus full PLANO-EVOLUCAO.json.
+- Run test. Run existing compiler tests. Assert exit 0.
+
+RULES:
+1. Write failing test first. Run. Assert exit 1.
+2. Implement. Zero stubs. Real pytest tests. Run. Assert exit 0.
+3. Work inside ephemeral Git Worktree only.
+4. Capture real exit code: redirect to file, read $? same line. Never trust pipes.
+5. NEVER edit docs/auditoria/CONFIG-EXECUCAO-USUARIO.json.
+6. Deliver exactly: tests/test_compilador_gate_por_ticket.py

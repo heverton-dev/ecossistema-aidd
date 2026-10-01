@@ -1,0 +1,16 @@
+ROLE: Builder. Ecosystem AIDD. Ticket 13. Target tool: fronteiras-ferramentas.
+DIMENSION: D1
+DELIVER: tools/aidd-open/tests/test_fronteira_factory.py
+
+STEPS:
+- Write tools/aidd-open/tests/test_fronteira_factory.py first. Assert vsa_generator reads templates through aidd_forge almoxarifado caminho_peca. Assert factory writes only src/modules/DOMAIN and HANDOFF_ENGINE_MASTER.json. Run. Assert exit 1.
+- Change tools/aidd-open/src/core/vsa_generator.py to use caminho_peca. Read tickets from HANDOFF_PLANNER_ENGINE.json.
+- Run test. Run 3 E2E flows into new ciclo folder. Assert no metric worse than ciclo-01.
+
+RULES:
+1. Write failing test first. Run. Assert exit 1.
+2. Implement. Zero stubs. Real pytest tests. Run. Assert exit 0.
+3. Work inside ephemeral Git Worktree only.
+4. Capture real exit code: redirect to file, read $? same line. Never trust pipes.
+5. NEVER edit docs/auditoria/CONFIG-EXECUCAO-USUARIO.json.
+6. Deliver exactly: tools/aidd-open/tests/test_fronteira_factory.py

@@ -1,0 +1,17 @@
+ROLE: Builder. Ecosystem AIDD. Ticket 19. Target tool: fronteiras-ferramentas.
+DIMENSION: D15
+DELIVER: scripts/contar_duplicatas.py
+
+STEPS:
+- Write tests/test_contar_duplicatas.py first. Assert zero catalog piece copies under tools. Run. Assert exit 1.
+- Implement scripts/contar_duplicatas.py. Use git ls-tree HEAD blob hashes. Skip empty files and harness folders. Print per pair counts and gate copy counts as JSON.
+- List copies per tool and wait for user confirmation before removal.
+- Run inventario_capacidades.py comparar against INVENTARIO-ANTES.json. Assert zero orphans. Assert test count at least 2352. Run full gate battery. Assert exit 0.
+
+RULES:
+1. Write failing test first. Run. Assert exit 1.
+2. Implement. Zero stubs. Real pytest tests. Run. Assert exit 0.
+3. Work inside ephemeral Git Worktree only.
+4. Capture real exit code: redirect to file, read $? same line. Never trust pipes.
+5. NEVER edit docs/auditoria/CONFIG-EXECUCAO-USUARIO.json.
+6. Deliver exactly: scripts/contar_duplicatas.py

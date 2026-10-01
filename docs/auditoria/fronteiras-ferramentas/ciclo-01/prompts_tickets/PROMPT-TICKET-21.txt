@@ -1,0 +1,16 @@
+ROLE: Builder. Ecosystem AIDD. Ticket 21. Target tool: fronteiras-ferramentas.
+DIMENSION: D12
+DELIVER: docs/auditoria/fronteiras-ferramentas/ciclo-01/COMPARACAO-E2E.md
+
+STEPS:
+- Run python scripts/e2e_foto.py rodar --ciclo auto. Assert exit 0.
+- Run python scripts/e2e_foto.py comparar --base ciclo-01 --novo ultimo. Assert exit 0.
+- Copy generated COMPARACAO-E2E.md to docs/auditoria/fronteiras-ferramentas/ciclo-01/COMPARACAO-E2E.md.
+
+RULES:
+1. Write failing test first. Run. Assert exit 1.
+2. Implement. Zero stubs. Real pytest tests. Run. Assert exit 0.
+3. Work inside ephemeral Git Worktree only.
+4. Capture real exit code: redirect to file, read $? same line. Never trust pipes.
+5. NEVER edit docs/auditoria/CONFIG-EXECUCAO-USUARIO.json.
+6. Deliver exactly: docs/auditoria/fronteiras-ferramentas/ciclo-01/COMPARACAO-E2E.md

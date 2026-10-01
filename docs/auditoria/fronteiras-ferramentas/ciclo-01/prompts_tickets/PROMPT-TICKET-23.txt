@@ -1,0 +1,18 @@
+ROLE: Builder. Ecosystem AIDD. Ticket 23. Target tool: fronteiras-ferramentas.
+DIMENSION: D14
+DELIVER: tests/test_mapas_e_livros_em_dia.py
+
+STEPS:
+- Write tests/test_mapas_e_livros_em_dia.py first. Run scripts/mapa_visual.py TYPE --check for all 13 types. Assert all exit 0. Assert newest book of each series is dated on or after cycle close date. Assert books do not cite aidd-generator, aidd-factory or aidd-bridge outside old names table. Run. Assert exit 1.
+- Run python scripts/catalogo_pecas.py. Run python scripts/mapa_visual.py TYPE for all 13 types. Update templates in docs/mapas-visuais/moldes with almoxarifado, 5 contracts, new tool names and tool boundaries.
+- Update docs/livros/partes markdown with numbers read from git ls-files. Run livro.py update docs/livros. Run docs/livros/gerar_livro_auditoria.py with current date. Rebuild mini book with pandoc and livro-aidd.typst.
+- Assert book check findings count not higher than before.
+- Run test. Assert exit 0.
+
+RULES:
+1. Write failing test first. Run. Assert exit 1.
+2. Implement. Zero stubs. Real pytest tests. Run. Assert exit 0.
+3. Work inside ephemeral Git Worktree only.
+4. Capture real exit code: redirect to file, read $? same line. Never trust pipes.
+5. NEVER edit docs/auditoria/CONFIG-EXECUCAO-USUARIO.json.
+6. Deliver exactly: tests/test_mapas_e_livros_em_dia.py

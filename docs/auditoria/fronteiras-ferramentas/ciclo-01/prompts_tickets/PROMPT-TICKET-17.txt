@@ -1,0 +1,17 @@
+ROLE: Builder. Ecosystem AIDD. Ticket 17. Target tool: fronteiras-ferramentas.
+DIMENSION: D1
+DELIVER: tools/aidd-master/tests/test_fronteira_master.py
+
+STEPS:
+- Write tools/aidd-master/tests/test_fronteira_master.py first. Run master init in temp folder. Assert no Dockerfile, docker-compose.yml, deploy.sh, nginx written. Assert GET /webhook returns 200. Run. Assert exit 1.
+- Fetch Quarteto templates through caminho_peca. Stop infra generation. Fix attach_vsa_infra.py, bench.py, compose_suite.py paths.
+- Consume HANDOFF_ENGINE_MASTER.json. Run dispatch. Write HANDOFF_MASTER_ENTERPRISE.json with measured HTTP status. Add /webhook route, keep /webhooks alias.
+- Run test. Run 3 E2E flows and continuation into new ciclo folder. Assert no metric worse than ciclo-01.
+
+RULES:
+1. Write failing test first. Run. Assert exit 1.
+2. Implement. Zero stubs. Real pytest tests. Run. Assert exit 0.
+3. Work inside ephemeral Git Worktree only.
+4. Capture real exit code: redirect to file, read $? same line. Never trust pipes.
+5. NEVER edit docs/auditoria/CONFIG-EXECUCAO-USUARIO.json.
+6. Deliver exactly: tools/aidd-master/tests/test_fronteira_master.py

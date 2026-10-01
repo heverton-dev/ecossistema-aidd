@@ -1,0 +1,17 @@
+ROLE: Builder. Ecosystem AIDD. Ticket 6. Target tool: fronteiras-ferramentas.
+DIMENSION: D1
+DELIVER: gates/G_FRONTEIRA_FERRAMENTAS.py
+
+STEPS:
+- Write gates/test_g_fronteira_ferramentas.py first. Build temp git repo. Plant Dockerfile under tools/aidd-open. Plant copy of catalog piece under tools/aidd-master. Assert both reported. Assert exit 0 when AIDD_FRONTEIRA_MODO=aviso. Assert exit 1 when AIDD_FRONTEIRA_MODO=bloqueio. Assert test fails if gates/allowlist_fronteira.json grows. Run. Assert exit 1.
+- Implement gates/G_FRONTEIRA_FERRAMENTAS.py. Read map. Scan git ls-files under tools. Match hashes against catalog. Print file, current tool, correct owner.
+- Seed gates/allowlist_fronteira.json with current known violations and dates. Register hook in .pre-commit-config.yaml in warn mode.
+- Run test. Assert exit 0.
+
+RULES:
+1. Write failing test first. Run. Assert exit 1.
+2. Implement. Zero stubs. Real pytest tests. Run. Assert exit 0.
+3. Work inside ephemeral Git Worktree only.
+4. Capture real exit code: redirect to file, read $? same line. Never trust pipes.
+5. NEVER edit docs/auditoria/CONFIG-EXECUCAO-USUARIO.json.
+6. Deliver exactly: gates/G_FRONTEIRA_FERRAMENTAS.py
