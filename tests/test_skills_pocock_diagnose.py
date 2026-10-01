@@ -16,8 +16,8 @@ SKILL = ROOT / SKILL_REL
 GATE = ROOT / "gates" / "G_aidd_diagnose.py"
 # Teste real, existente e verde; não pode ser este arquivo (o gate rodaria pytest nele em loop).
 TESTE_REGRESSAO_EXEMPLO = "tests/test_diagnose_rollback.py"
-# Base fixa (merge do aidd-diagnose ciclo-01): comparar com HEAD vira tautologia depois do commit.
-BASE_REF = "f6cdb15"
+# Base fixa (migração crg → codebase-memory-mcp, 7b61b45): comparar com HEAD vira tautologia depois do commit.
+BASE_REF = "7b61b45"
 
 
 def _texto() -> str:
