@@ -203,6 +203,15 @@ def _arquivos_do_push(raiz: Path, sha_local: str, sha_remoto: str) -> List[str]:
     return sorted(arquivos)
 
 
+def _ultimo_commit_aprovado(raiz: Path, sha_local: str, sha_remoto: str) -> Optional[str]:
+    """Commit mais novo do push cuja árvore tem registro verde (ex.: o merge do --aprovar)."""
+    faixa = [sha_local, "--not", "--remotes"] if sha_remoto == ZEROS else [f"{sha_remoto}..{sha_local}"]
+    for commit in _git(raiz, "rev-list", *faixa).split():
+        if registro_verde(raiz, arvore_de(raiz, commit)).is_file():
+            return commit
+    return None
+
+
 def _bateria_completa(raiz: Path) -> int:
     env = {**os.environ, "AIDD_GATES_MODO": "completo"}
     return subprocess.run([sys.executable, "ecossistema.py", "audit"], cwd=str(raiz), env=env).returncode
@@ -222,6 +231,10 @@ def verificar_push(linhas: List[str], raiz: Path, rodar_bateria=_bateria_complet
         arvore = arvore_de(raiz, sha_local)
         if registro_verde(raiz, arvore).is_file():
             avisar(f"[pre-push] {ref_remota}: bateria completa já aprovada para este conteúdo (árvore {arvore[:10]}).")
+            continue
+        aprovado = _ultimo_commit_aprovado(raiz, sha_local, sha_remoto)
+        if aprovado and so_documentacao(_git(raiz, "diff", "--name-only", aprovado, sha_local).split()):
+            avisar(f"[pre-push] {ref_remota}: bateria completa aprovada em {aprovado[:10]}; depois dele só documentação.")
             continue
         avisar(f"[pre-push] {ref_remota}: {len(arquivos)} arquivo(s) de código sem bateria completa verde. Rodando agora...")
         if _git(raiz, "rev-parse", "HEAD").strip() != sha_local:

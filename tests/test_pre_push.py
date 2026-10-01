@@ -93,6 +93,30 @@ def test_registro_por_arvore_vale_para_o_merge_do_aprovar(repo):
     assert codigo == 0
 
 
+def test_so_documentacao_depois_do_commit_aprovado_nao_repete_a_bateria(repo):
+    # 30/09/2026: depois do merge aprovado (c85eab2) entrou um commit só de docs (83227e4);
+    # a árvore do topo mudou e o pre-push queria rodar os ~25 min da bateria de novo.
+    aprovado = _commit(repo, "app.py", "x = 1\n")
+    medir_gates.registrar_bateria_verde(repo, aprovado)
+    _commit(repo, "docs/auditoria/ciclo/RELATORIO.md", "relatorio\n")
+    sha = _commit(repo, "docs/melhorias/relatorio.json", "{}\n")
+
+    codigo = medir_gates.verificar_push(_linha(repo, sha), repo,
+                                        rodar_bateria=lambda raiz: pytest.fail("não devia repetir a bateria"),
+                                        avisar=lambda m: None)
+    assert codigo == 0
+
+
+def test_codigo_depois_do_commit_aprovado_exige_bateria(repo):
+    aprovado = _commit(repo, "app.py", "x = 1\n")
+    medir_gates.registrar_bateria_verde(repo, aprovado)
+    sha = _commit(repo, "app.py", "x = 2\n")
+    chamadas = []
+    codigo = medir_gates.verificar_push(_linha(repo, sha), repo,
+                                        rodar_bateria=lambda raiz: chamadas.append(raiz) or 1, avisar=lambda m: None)
+    assert codigo == 1 and chamadas
+
+
 def test_hook_pre_push_esta_versionado_e_chama_a_verificacao():
     hook = ROOT / ".githooks" / "pre-push"
     assert "medir_gates.py --verificar-push" in hook.read_text(encoding="utf-8")
