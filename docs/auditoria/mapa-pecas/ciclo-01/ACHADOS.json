@@ -7,12 +7,12 @@
   ],
   "como_usar": "Cada achado em aberto traz pedido_melhoria: o texto para python ecossistema.py melhoria init --pedido \"...\".",
   "totais": {
-    "aberto": 5,
+    "aberto": 2,
     "suspeita": 0,
     "resolvido": 14,
     "abertos_alta": 0,
     "abertos_media": 1,
-    "abertos_baixa": 4
+    "abertos_baixa": 1
   },
   "achados": [
     {
@@ -27,42 +27,6 @@
         "planejado em fronteiras-ferramentas/ciclo-01: Ticket 8 (Bloco 2, almoxarifado único) e Ticket 19 (Bloco 4, remove as cópias)"
       ],
       "pedido_melhoria": "Deixar uma versão só de cada guarda repetido e fazer as ferramentas chamarem a original."
-    },
-    {
-      "id": "CAT-ciclo-aidd-master-ciclo-01",
-      "titulo": "Ciclo de auditoria sem todos os documentos: aidd-master/ciclo-01",
-      "gravidade": "baixa",
-      "estado": "aberto",
-      "origem": "catalogo",
-      "mapa": "oficina",
-      "evidencia": [
-        "faltam: laudo_inicial, plano_evolucao, laudo_revisado"
-      ],
-      "pedido_melhoria": "Completar ou fechar o ciclo aidd-master/ciclo-01."
-    },
-    {
-      "id": "CAT-ciclo-aidd-open-ciclo-01",
-      "titulo": "Ciclo de auditoria sem todos os documentos: aidd-open/ciclo-01",
-      "gravidade": "baixa",
-      "estado": "aberto",
-      "origem": "catalogo",
-      "mapa": "oficina",
-      "evidencia": [
-        "faltam: laudo_inicial, plano_evolucao, laudo_revisado"
-      ],
-      "pedido_melhoria": "Completar ou fechar o ciclo aidd-open/ciclo-01."
-    },
-    {
-      "id": "CAT-ciclo-aidd-ops-ciclo-01",
-      "titulo": "Ciclo de auditoria sem todos os documentos: aidd-ops/ciclo-01",
-      "gravidade": "baixa",
-      "estado": "aberto",
-      "origem": "catalogo",
-      "mapa": "oficina",
-      "evidencia": [
-        "faltam: laudo_inicial, plano_evolucao, laudo_revisado"
-      ],
-      "pedido_melhoria": "Completar ou fechar o ciclo aidd-ops/ciclo-01."
     },
     {
       "id": "CAT-ciclo-fronteiras-ferramentas-ciclo-01",

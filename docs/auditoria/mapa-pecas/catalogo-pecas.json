@@ -1661,18 +1661,6 @@
         "nota": "10"
       },
       {
-        "alvo": "aidd-master",
-        "ciclo": "ciclo-01",
-        "caminho": "docs/auditoria/aidd-master/ciclo-01",
-        "fases": {
-          "laudo_inicial": false,
-          "plano_evolucao": false,
-          "laudo_revisado": false,
-          "dod": true
-        },
-        "nota": ""
-      },
-      {
         "alvo": "aidd-melhoria",
         "ciclo": "ciclo-01",
         "caminho": "docs/auditoria/aidd-melhoria/ciclo-01",
@@ -1692,30 +1680,6 @@
           "laudo_inicial": true,
           "plano_evolucao": true,
           "laudo_revisado": true,
-          "dod": true
-        },
-        "nota": ""
-      },
-      {
-        "alvo": "aidd-open",
-        "ciclo": "ciclo-01",
-        "caminho": "docs/auditoria/aidd-open/ciclo-01",
-        "fases": {
-          "laudo_inicial": false,
-          "plano_evolucao": false,
-          "laudo_revisado": false,
-          "dod": true
-        },
-        "nota": ""
-      },
-      {
-        "alvo": "aidd-ops",
-        "ciclo": "ciclo-01",
-        "caminho": "docs/auditoria/aidd-ops/ciclo-01",
-        "fases": {
-          "laudo_inicial": false,
-          "plano_evolucao": false,
-          "laudo_revisado": false,
           "dod": true
         },
         "nota": ""
