@@ -1106,3 +1106,19 @@
   - `python ecossistema.py forge fornecer gates/G_ARQUITETURA.py --destino <projeto>` → exit 0; peça inexistente → exit 1 com erro claro.
 - **Status:** **RESOLVIDO**.
 - **Data da Última Auditoria:** 02/10/2026.
+
+## 25. Prontidão do `aidd-forge` antes de passar o bastão, sem LLM configurada (fronteiras-ferramentas ciclo-01, Bloco 3, Ticket 10)
+
+- **Objetivo da Correção:**
+  O `forge init` confere a prontidão do projeto antes de entregar ao planner e grava `.aidd/HANDOFF_FORGE_PLANNER.json` com a evidência. Regra do usuário: o ecossistema nunca tem LLM ou API key configurada; o modelo é sempre o do harness em execução, via protocolo delegado. Sem API key (`capacidade_llm: "nenhuma"`) a prontidão passa; só reprova sem harness ativo ou por falha real.
+- **Ferramentas Tocadas:** [`tools/aidd-forge`](file:///C:/Users/trcnologia/Desktop/ecossistema-aidd/tools/aidd-forge).
+- **O que executou:**
+  1. `tools/aidd-forge/aidd_forge/core/prontidao.py`: dependências, gates vs sha256 do catálogo, espelhos dos harnesses, commit inicial, almoxarifado, protocolo delegado e estrutura.
+  2. `tools/aidd-forge/aidd_forge/cli.py` e `core/git_hooks.py`: `forge init` roda a prontidão e faz o commit inicial.
+  3. `scripts/orquestrador_sincrono.py`: `perfil_app` com `modulos`, `entidades`, `rotas_quarteto` e `portas`, exigidos pelo contrato C2 (sem isso os 3 fluxos quebravam no planner).
+- **Resultados de Testes:**
+  - `tools/aidd-forge/tests/test_prontidao_forge.py` → exit 0 (6 passed).
+  - `tools/aidd-forge`: `pytest` → exit 0 (310 passed, 1 skipped).
+  - `scripts/e2e_foto.py rodar` + `comparar --base ciclo-01` (ciclo-07) → exit 0, nenhuma métrica piorou.
+- **Status:** **RESOLVIDO**.
+- **Data da Última Auditoria:** 02/10/2026.

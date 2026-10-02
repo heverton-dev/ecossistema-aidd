@@ -128,8 +128,11 @@ def test_pre_commit_hook_blocks_a_real_commit_with_a_secret(tmp_path: Path) -> N
     assert proc.returncode != 0
     assert "G_BLOQUEAR_SEGREDOS" in (proc.stdout + proc.stderr)
 
+    # o commit com segredo NAO entrou; so existe o commit inicial do forge init
     log = subprocess.run(["git", "log", "--oneline"], cwd=target, capture_output=True, text=True)
-    assert log.stdout.strip() == ""
+    linhas = [linha for linha in log.stdout.splitlines() if linha.strip()]
+    assert len(linhas) == 1, linhas
+    assert "commit inicial" in linhas[0], linhas[0]
 
 
 def test_pre_commit_hook_allows_a_clean_commit(tmp_path: Path) -> None:

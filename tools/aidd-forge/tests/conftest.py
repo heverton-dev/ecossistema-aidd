@@ -27,3 +27,14 @@ def isola_raiz_canonica_do_ecossistema(request, tmp_path, monkeypatch):
 
     raiz_fake = tmp_path / "_ecossistema_fake_root"
     monkeypatch.setattr(injector_profiles, "_default_ecossistema_root", lambda: raiz_fake)
+
+
+@pytest.fixture(autouse=True)
+def harness_ativo_padrao(monkeypatch):
+    """Prontidao (C1) exige um harness ativo: o modelo e sempre o do harness
+    em execucao, via protocolo delegado. Sem esta fixture os testes dependeriam
+    do ambiente do host (CLAUDECODE/MIMOCODE/ORCA...) e a suite quebraria em
+    shell sem agente. Testes que querem provar a falta de harness apagam
+    `AIDD_HARNESS_NAME` (e as demais variaveis) com o proprio monkeypatch.
+    """
+    monkeypatch.setenv("AIDD_HARNESS_NAME", "aidd-pytest")

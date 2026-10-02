@@ -16,6 +16,7 @@ from aidd_forge.core.git_hooks import GitHooksInstaller
 from aidd_forge.core.injector import Injector
 from aidd_forge.core.injector_profiles import TIPOS_SUPORTADOS
 from aidd_forge.core.phase_fencer import PhaseFencer
+from aidd_forge.core.prontidao import HANDOFF_NOME, ProntidaoForge
 from aidd_forge.core.universal_injector import UniversalInjector
 
 TEMPLATES_ROOT = Path(__file__).parent / "templates"
@@ -72,6 +73,24 @@ def cmd_init(path: str, force: bool) -> int:
         print(f"[aidd-forge] hook pre-commit instalado em: {hooks_result.hook_path}")
     elif hooks_result.skipped_reason:
         print(f"[aidd-forge] hook pre-commit nao instalado: {hooks_result.skipped_reason}")
+
+    # Checklist de prontidao (C1): so passa o bastao com tudo provado.
+    resultado = ProntidaoForge(target).executar()
+    aprovados = sum(1 for item in resultado.itens if item.ok)
+    situacao = "OK" if resultado.ok else "FALHOU"
+    print(f"[aidd-forge] prontidao: {situacao} ({aprovados}/{len(resultado.itens)} itens)")
+    for item in resultado.itens:
+        marca = "OK" if item.ok else "FALHOU"
+        print(f"[aidd-forge]   [{marca}] {item.nome}: {item.detalhe}")
+        if not item.ok and item.dica:
+            print(f"[aidd-forge]   dica: {item.dica}")
+    if not resultado.ok:
+        print(
+            f"[aidd-forge] prontidao reprovada: {HANDOFF_NOME} nao gravado; "
+            "corrija os itens acima e rode 'forge init' de novo"
+        )
+        return 1
+    print(f"[aidd-forge] handoff gravado: {resultado.handoff_path}")
     return 0
 
 

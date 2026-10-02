@@ -276,10 +276,23 @@ class OrquestradorSincrono:
                     "caminho": "HANDOFF_PLANNER_ENGINE.json",
                     "sha256": "0" * 64,
                 },
+                # perfil_app dinamico derivado da propria planta (exigido pelo
+                # schema C2 desde o Ticket 5): sem os campos obrigatorios a
+                # validacao do contrato reprova a Etapa 2. O Ticket 12 troca
+                # esta montagem do orquestrador pelo arquivo gravado pelo
+                # planner; por ora o payload precisa apenas validar.
                 "perfil_app": {
                     "tipo_runtime": "monolito_modular_docker",
                     "portas_expostas": [8000],
-                    "banco": "sqlite",
+                    "banco": "postgresql" if self.fluxo == 3 else "sqlite",
+                    "modulos": [m["nome"] for m in modulos_funcionais],
+                    "entidades": [
+                        ent["nome"]
+                        for m in modulos_funcionais
+                        for ent in m.get("entidades", [])
+                    ],
+                    "rotas_quarteto": ["/api", "/webhook", "/mcp", "/docs"],
+                    "portas": [8000],
                 },
             }
             if not self._validar_schema(handoff_payload, "handoff-planner-to-engine.schema.json"):
