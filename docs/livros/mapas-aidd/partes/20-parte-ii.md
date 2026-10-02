@@ -8,7 +8,7 @@ O nível meso: quem confere, quem ensina, os botões, as conexões e para onde t
 #ficha(
   ("Mapa", "mapa-04-guardas.html"),
   ("Para que serve", "todos os guardas, onde moram e quem prova que morde"),
-  ("Achados em aberto", "0"),
+  ("Achados em aberto", "1"),
 )
 ```
 
@@ -22,16 +22,16 @@ Onde mora: `gates/` e `tools/<f>/gates/`. Quem confere: o próprio pre-commit e 
 
 | Medida | Valor |
 | :-------------------------------------- | :-------------------------------------------- |
-| guardas (nomes) | 91 |
-| no ecossistema | 58 |
+| guardas (nomes) | 96 |
+| no ecossistema | 63 |
 | rodam no commit | 56 |
-| com versões diferentes | 0 |
+| com versões diferentes | 1 |
 
 Os números saem de `docs/auditoria/mapa-pecas/catalogo-pecas.json` (função `coletar_gates`), os mesmos do mapa `mapa-04-guardas.html`.
 
 ## 4.3 O que falta consertar
 
-Nenhum achado em aberto para este mapa.
+- **Média** · 1 guardas com o mesmo nome e código diferente (`CAT-gates-versoes`).
 
 Já resolvido:
 
@@ -69,9 +69,9 @@ Onde mora: `componentes/compartilhado/skills/`. Quem confere: o `G_SKILL_FORMATO
 
 | Medida | Valor |
 | :-------------------------------------- | :-------------------------------------------- |
-| skills nossas | 41 |
+| skills nossas | 43 |
 | nomes de terceiros registrados | 20 |
-| com "Use when" | 41 |
+| com "Use when" | 43 |
 
 Os números saem de `docs/auditoria/mapa-pecas/catalogo-pecas.json` (função `coletar_skills`), os mesmos do mapa `mapa-05-skills.html`.
 
@@ -116,8 +116,8 @@ Onde mora: `componentes/compartilhado/comandos/`. Quem confere: a conferência d
 
 | Medida | Valor |
 | :-------------------------------------- | :-------------------------------------------- |
-| comandos slash | 18 |
-| apontam para skill que existe | 18 |
+| comandos slash | 19 |
+| apontam para skill que existe | 19 |
 
 Os números saem de `docs/auditoria/mapa-pecas/catalogo-pecas.json` (função `coletar_comandos_slash`), os mesmos do mapa `mapa-06-comandos.html`.
 
@@ -160,7 +160,7 @@ Onde mora: `.mcp.json` e `.claude/settings.json`. Quem confere: o `dependencia v
 
 | Medida | Valor |
 | :-------------------------------------- | :-------------------------------------------- |
-| MCPs que o agente usa | 9 |
+| MCPs que o agente usa | 10 |
 | MCPs dentro das ferramentas | 3 |
 | hooks | 3 |
 

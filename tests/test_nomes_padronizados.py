@@ -134,13 +134,27 @@ def test_nenhum_caminho_com_nome_antigo(arquivos):
     assert not sobra, f"{len(sobra)} caminho(s) com nome antigo, ex.: {sobra[:15]}"
 
 
+BASELINE_SEGREDOS = ".secrets.baseline"
+
+
+def _baseline_sem_historico(texto):
+    """O baseline de segredos indexa achados pelo caminho do arquivo: documento histórico
+    guarda o nome antigo no caminho, então a chave também (renomeá-la reprovou o G_SEGREDOS
+    no gate_final de 01/10). Só sobra para conferir o que aponta para arquivo vivo."""
+    resultados = json.loads(texto).get("results", {})
+    return "\n".join(c for c in resultados if not _e_permitido(c.replace("\\", "/")))
+
+
 def test_nenhum_conteudo_com_nome_antigo(arquivos):
     sobra = {}
     for caminho in arquivos:
         dados = (RAIZ / caminho).read_bytes()
         if b"\0" in dados:  # binário
             continue
-        n = len(_ocorrencias(dados.decode("utf-8", errors="ignore")))
+        texto = dados.decode("utf-8", errors="ignore")
+        if caminho == BASELINE_SEGREDOS:
+            texto = _baseline_sem_historico(texto)
+        n = len(_ocorrencias(texto))
         if n:
             sobra[caminho] = n
     piores = sorted(sobra.items(), key=lambda kv: -kv[1])[:15]
@@ -160,6 +174,11 @@ def test_historico_nao_mascara_codigo_vivo():
     assert _ocorrencias("plano PLAN-0020-aidd-bridge (feito)") == []
     assert len(_ocorrencias("PLAN-0099-aidd-bridge-novo")) == 1  # só IDs de planos fechados
     assert len(_ocorrencias("tools/aidd-generator e AIDD-Bridge")) == 2
+    baseline = json.dumps({"results": {
+        "docs\\melhorias\\14-09-2026_melhoria-aidd-factory-plano.json": [],  # histórico: liberado
+        "tools\\aidd-factory\\scripts\\x.py": [],                          # vivo: reprova
+    }})
+    assert len(_ocorrencias(_baseline_sem_historico(baseline))) == 1
 
 
 @pytest.mark.parametrize("antigo", ["generate", "factory", "bridge",

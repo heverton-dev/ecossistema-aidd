@@ -157,3 +157,33 @@ def test_g_testes_reais_grava_progresso_no_arquivo_pedido(tmp_path):
     conteudo = progresso.read_text(encoding="utf-8")
     assert "(1/1) aidd-forge: pytest rodando..." in conteudo
     assert "(1/1) aidd-forge: OK" in conteudo
+
+
+def _rodar_gate_sintetico(tmp_path, fake_gates, modo):
+    env = os.environ.copy()
+    env.pop("AIDD_TESTES_REAIS_FERRAMENTAS", None)
+    env.pop("AIDD_GATES_MODO", None)
+    if modo:
+        env["AIDD_GATES_MODO"] = modo
+    env["PYTHONIOENCODING"] = "utf-8"
+    return subprocess.run(
+        [sys.executable, str(fake_gates / "G_TESTES_REAIS.py")],
+        cwd=str(tmp_path), capture_output=True, text=True, encoding="utf-8", errors="replace", env=env,
+    )
+
+
+def test_g_testes_reais_modo_completo_reprova_falha_na_bateria_da_raiz(tmp_path):
+    """No modo completo (audit/gate_final) a bateria tests/ da raiz também roda: falha ali
+    reprova com exit 1. Antes ela não rodava em gate nenhum (4 testes quebrados em 02/10)."""
+    fake_gates, fake_tools = _criar_arvore_sintetica(tmp_path)
+    (fake_tools / "test_ok.py").write_text("def test_ok():\n    assert True\n", encoding="utf-8")
+    raiz = tmp_path / "tests"
+    raiz.mkdir()
+    (raiz / "test_raiz.py").write_text("def test_raiz():\n    assert False, 'raiz'\n", encoding="utf-8")
+
+    proc = _rodar_gate_sintetico(tmp_path, fake_gates, "completo")
+    assert proc.returncode == 1, proc.stdout
+    assert "[tests] Rodando pytest... FALHOU" in proc.stdout
+
+    rapido = _rodar_gate_sintetico(tmp_path, fake_gates, None)
+    assert "[tests] Rodando" not in rapido.stdout, rapido.stdout  # commit comum segue rápido

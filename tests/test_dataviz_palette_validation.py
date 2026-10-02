@@ -66,8 +66,12 @@ def test_gate_skill_formato_audita_aidd_dataviz():
     assert r.returncode == 0, f"G_SKILL_FORMATO reprovou:\n{r.stdout}\n{r.stderr}"
     m = re.search(r"Auditando (\d+) skill", r.stdout)
     assert m, f"contagem de skills ausente na saída do gate:\n{r.stdout}"
-    assert int(m.group(1)) >= 46, (
-        f"gate auditou {m.group(1)} skills; aidd-dataviz não entrou na varredura"
+    # Contagem real em vez de número fixo: a renomeação dos construtores (fronteiras-ferramentas,
+    # Ticket 4) juntou skills e derrubou o antigo ">= 46" sem a aidd-dataviz sair da varredura.
+    skills = sorted(ROOT.glob("componentes/*/skills/*/SKILL.md"))
+    assert any(s.parent.name == "aidd-dataviz" for s in skills), "aidd-dataviz sumiu de componentes/"
+    assert int(m.group(1)) == len(skills), (
+        f"gate auditou {m.group(1)} de {len(skills)} skills em componentes/*/skills/"
     )
 
 

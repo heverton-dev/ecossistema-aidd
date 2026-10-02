@@ -23,7 +23,7 @@ Onde mora: `tools/<f>/templates/`. Quem confere: os guardas de entrega gerados p
 | Medida | Valor |
 | :-------------------------------------- | :-------------------------------------------- |
 | moldes | 24 |
-| arquivos de molde | 495 |
+| arquivos de molde | 479 |
 
 Os números saem de `docs/auditoria/mapa-pecas/catalogo-pecas.json` (função `coletar_moldes_entrega`), os mesmos do mapa `mapa-09-moldes.html`.
 
@@ -48,7 +48,7 @@ O detalhe e a evidência de cada achado estão no Apêndice B e em `docs/auditor
 #ficha(
   ("Mapa", "mapa-10-scripts.html"),
   ("Para que serve", "cada script de scripts/, o que faz e quem o chama"),
-  ("Achados em aberto", "0"),
+  ("Achados em aberto", "1"),
 )
 ```
 
@@ -62,15 +62,15 @@ Onde mora: `scripts/`. Quem confere: nenhum guarda específico; o mapa mede quem
 
 | Medida | Valor |
 | :-------------------------------------- | :-------------------------------------------- |
-| scripts | 24 |
-| chamados pelo painel | 15 |
-| nenhum código chama | 0 |
+| scripts | 30 |
+| chamados pelo painel | 16 |
+| nenhum código chama | 1 |
 
 Os números saem de `docs/auditoria/mapa-pecas/catalogo-pecas.json` (função `coletar_scripts`), os mesmos do mapa `mapa-10-scripts.html`.
 
 ## 10.3 O que falta consertar
 
-Nenhum achado em aberto para este mapa.
+- **Baixa** · 1 scripts que nenhum código chama (`CAT-scripts-sem-chamador`).
 
 Já resolvido:
 

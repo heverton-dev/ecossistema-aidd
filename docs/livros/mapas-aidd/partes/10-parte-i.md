@@ -8,7 +8,7 @@ O nível macro: as leis que governam a casa, as fábricas que produzem e a recei
 #ficha(
   ("Mapa", "mapa-01-leis.html"),
   ("Para que serve", "cada lei do AGENTS.md e o guarda que a prova, e onde a prova é fraca"),
-  ("Achados em aberto", "1"),
+  ("Achados em aberto", "2"),
 )
 ```
 
@@ -23,14 +23,15 @@ Onde mora: `AGENTS.md`, seção 2. Quem confere: o meta-guarda `G_LEI_DECLARA_PO
 | Medida | Valor |
 | :-------------------------------------- | :-------------------------------------------- |
 | leis | 13 |
-| declarações de guarda | 58 |
+| declarações de guarda | 62 |
 | declarações que o meta-guarda não lê | 0 |
 
 Os números saem de `docs/auditoria/mapa-pecas/catalogo-pecas.json` (função `coletar_leis`), os mesmos do mapa `mapa-01-leis.html`.
 
 ## 1.3 O que falta consertar
 
-- **Média** · 2 guardas declarados em lei que não rodam no commit (`CAT-declarados-fora-do-commit`).
+- **Média** · 6 guardas declarados em lei que não rodam no commit (`CAT-declarados-fora-do-commit`).
+- **Baixa** · 1 guardas da raiz que nenhuma lei declara (`CAT-guardas-sem-lei`).
 
 Já resolvido:
 

@@ -8,7 +8,7 @@ Onde a fábrica é consertada: os planos, os ciclos de auditoria e a lente que o
 #ficha(
   ("Mapa", "mapa-11-oficina.html"),
   ("Para que serve", "todos os planos e ciclos de auditoria, com as fases cumpridas"),
-  ("Achados em aberto", "0"),
+  ("Achados em aberto", "7"),
 )
 ```
 
@@ -24,13 +24,19 @@ Onde mora: `docs/planos/` e `docs/auditoria/`. Quem confere: o `scripts/atualiza
 | :-------------------------------------- | :-------------------------------------------- |
 | planos | 37 |
 | em execução | 11 |
-| ciclos de auditoria | 11 |
+| ciclos de auditoria | 25 |
 
 Os números saem de `docs/auditoria/mapa-pecas/catalogo-pecas.json` (função `coletar_oficina`), os mesmos do mapa `mapa-11-oficina.html`.
 
 ## 11.3 O que falta consertar
 
-Nenhum achado em aberto para este mapa.
+- **Baixa** · Ciclo de auditoria sem todos os documentos: agilidade-gates/ciclo-01 (`CAT-ciclo-agilidade-gates-ciclo-01`).
+- **Baixa** · Ciclo de auditoria sem todos os documentos: aidd-master/ciclo-01 (`CAT-ciclo-aidd-master-ciclo-01`).
+- **Baixa** · Ciclo de auditoria sem todos os documentos: aidd-open/ciclo-01 (`CAT-ciclo-aidd-open-ciclo-01`).
+- **Baixa** · Ciclo de auditoria sem todos os documentos: aidd-ops/ciclo-01 (`CAT-ciclo-aidd-ops-ciclo-01`).
+- **Baixa** · Ciclo de auditoria sem todos os documentos: cbm-lazy-proxy/ciclo-01 (`CAT-ciclo-cbm-lazy-proxy-ciclo-01`).
+- **Baixa** · Ciclo de auditoria sem todos os documentos: fronteiras-ferramentas/ciclo-01 (`CAT-ciclo-fronteiras-ferramentas-ciclo-01`).
+- **Baixa** · Ciclo de auditoria sem todos os documentos: meus-prompts/ciclo-01 (`CAT-ciclo-meus-prompts-ciclo-01`).
 
 O detalhe e a evidência de cada achado estão no Apêndice B e em `docs/auditoria/mapa-pecas/ciclo-01/ACHADOS.json`.
 
@@ -64,7 +70,7 @@ Onde mora: `docs/auditoria/TEMPLATE-AUDITORIA-FERRAMENTA.md`. Quem confere: o In
 | Medida | Valor |
 | :-------------------------------------- | :-------------------------------------------- |
 | dimensões | 15 |
-| laudos lidos | 11 |
+| laudos lidos | 18 |
 | marcações de falha | 7 |
 
 Os números saem de `docs/auditoria/mapa-pecas/catalogo-pecas.json` (função `coletar_lente_15d`), os mesmos do mapa `mapa-12-lente15d.html`.

@@ -83,6 +83,11 @@ FERRAMENTAS = [
     "aidd-open",
 ]
 
+# Bateria da raiz (tests/): só no modo completo (audit/gate_final/pre-push), para o commit
+# seguir rápido. Ficou fora de todo gate até 02/10, e 4 testes quebrados pelo merge do Bloco 1
+# de fronteiras-ferramentas só apareceram rodando à mão.
+BATERIA_RAIZ = "tests"
+
 
 def _carregar_allowlist():
     """Retorna {ferramenta: set(test_ids autorizados)}; arquivo ausente = tudo vazio."""
@@ -111,12 +116,21 @@ def _env_sem_repositorio_do_hook():
     return {k: v for k, v in os.environ.items() if k not in VARIAVEIS_DE_REPOSITORIO_DO_HOOK}
 
 
-def _rodar_pytest(diretorio, junitxml_path):
+def _env_da_bateria_raiz():
+    """A bateria tests/ roda como roda sozinha: sem AIDD_GATES_MODO. Herdando 'completo', os
+    testes que disparam o hook de pre-commit rodavam este gate de novo, que rodava tests/ de
+    novo (TIMEOUT de 900s em 02/10, test_githooks_pre_commit_visibilidade)."""
+    env = _env_sem_repositorio_do_hook()
+    env.pop("AIDD_GATES_MODO", None)
+    return env
+
+
+def _rodar_pytest(diretorio, junitxml_path, alvos=()):
     """Executa pytest com relatório JUnitXML e retorna (exit_code, stdout_text)."""
     resultado = subprocess.run(
-        [sys.executable, "-m", "pytest", "-q", "--tb=short", f"--junitxml={junitxml_path}"],
+        [sys.executable, "-m", "pytest", "-q", "--tb=short", f"--junitxml={junitxml_path}", *alvos],
         cwd=diretorio,
-        env=_env_sem_repositorio_do_hook(),
+        env=_env_da_bateria_raiz() if alvos == (BATERIA_RAIZ,) else _env_sem_repositorio_do_hook(),
         capture_output=True,
         text=True,
         encoding="utf-8",
@@ -191,14 +205,18 @@ def executar():
         ferramentas_alvo = _escopo_commit.ferramentas_afetadas(
             _escopo_commit.arquivos_staged(), FERRAMENTAS
         )
+        if _escopo_commit.modo() == _escopo_commit.MODO_COMPLETO:
+            ferramentas_alvo = [*ferramentas_alvo, BATERIA_RAIZ]
     total_ferramentas = len(ferramentas_alvo)
 
     print(f"  [INFO] Escopo {_escopo_commit.modo()}: {total_ferramentas} ferramenta(s) alvo.")
     _anunciar_ao_vivo(f"[G_TESTES_REAIS] Iniciando: {total_ferramentas} ferramenta(s) em tools/*...")
 
     for indice, ferramenta in enumerate(ferramentas_alvo, start=1):
-        dir_ferramenta = os.path.join(TOOLS_DIR, ferramenta)
-        if not os.path.isdir(dir_ferramenta):
+        raiz = ferramenta == BATERIA_RAIZ
+        dir_ferramenta = ROOT_DIR if raiz else os.path.join(TOOLS_DIR, ferramenta)
+        alvos = (BATERIA_RAIZ,) if raiz else ()
+        if not os.path.isdir(os.path.join(dir_ferramenta, *alvos)):
             print(f"  [{ferramenta}] DIRETÓRIO AUSENTE — ignorado")
             resultados.append((ferramenta, "AUSENTE", 0, 0, 0, []))
             continue
@@ -210,7 +228,7 @@ def executar():
         os.close(fd_tmp)
         try:
             try:
-                exit_code, output = _rodar_pytest(dir_ferramenta, junitxml_path)
+                exit_code, output = _rodar_pytest(dir_ferramenta, junitxml_path, alvos)
             except subprocess.TimeoutExpired:
                 print("TIMEOUT (900s)")
                 _anunciar_ao_vivo(f"[G_TESTES_REAIS] ({indice}/{total_ferramentas}) {ferramenta}: TIMEOUT (900s)")
