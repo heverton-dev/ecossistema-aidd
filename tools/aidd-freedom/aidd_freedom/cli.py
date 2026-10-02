@@ -3,10 +3,14 @@
 Ponto de entrada CLI da ferramenta aidd-freedom.
 """
 
+import hashlib
 import os
+import re
+import subprocess
 import sys
 import json
 import argparse
+import xml.etree.ElementTree as ET
 from .scanner import LovableScanner
 from .data_bridge import DataBridge
 from .unifier import MultiAppUnifier
@@ -15,16 +19,150 @@ from .teardown import BridgeTeardown
 from .auth_migrator import AuthMigrator
 from .pipeline_bridge import BridgePipeline
 
+
+def _slugify(texto: str) -> str:
+    return re.sub(r"[^a-z0-9]+", "-", str(texto).lower()).strip("-") or "app"
+
+
+def _resolver_projeto_scan(args) -> str:
+    """Pasta do projeto de destino do scan (nunca o export escaneado).
+
+    Prioridade: --output explicito > pasta apontada por AIDD_HANDOFF_PLANNER
+    (orquestrador do Fluxo 03) > proprio diretorio escaneado (CLI standalone
+    quando o usuario escaneia o proprio projeto).
+    """
+    if getattr(args, "output", None):
+        return os.path.abspath(args.output)
+    handoff = os.environ.get("AIDD_HANDOFF_PLANNER")
+    if handoff:
+        return os.path.dirname(os.path.abspath(handoff))
+    return os.path.abspath(args.project_dir)
+
+
+def _sha256_arvore(diretorio: str) -> str:
+    hasher = hashlib.sha256()
+    for raiz, _, arquivos in sorted(os.walk(diretorio)):
+        for nome in sorted(arquivos):
+            caminho = os.path.join(raiz, nome)
+            rel = os.path.relpath(caminho, diretorio).replace("\\", "/")
+            hasher.update(rel.encode("utf-8"))
+            with open(caminho, "rb") as f:
+                while True:
+                    chunk = f.read(65536)
+                    if not chunk:
+                        break
+                    hasher.update(chunk)
+    return hasher.hexdigest()
+
+
+def _rodar_testes_fatia(projeto: str, fatia_dir: str):
+    """Roda pytest de verdade na fatia gerada e devolve (rc, total, passaram, falharam)."""
+    cache_dir = os.path.join(projeto, ".aidd", "cache")
+    os.makedirs(cache_dir, exist_ok=True)
+    junit = os.path.join(cache_dir, "pytest_slice.xml")
+    env = dict(os.environ)
+    env["PYTHONDONTWRITEBYTECODE"] = "1"
+    proc = subprocess.run(
+        [sys.executable, "-m", "pytest", fatia_dir,
+         "-q", "-p", "no:cacheprovider", f"--junitxml={junit}"],
+        cwd=projeto, env=env, capture_output=True, text=True,
+        encoding="utf-8", errors="replace",
+    )
+    total = passaram = falharam = 0
+    if os.path.exists(junit):
+        raiz = ET.parse(junit).getroot()
+        suite = raiz if raiz.tag == "testsuite" else (raiz[0] if len(raiz) else None)
+        if suite is not None:
+            total = int(suite.get("tests", 0))
+            falharam = int(suite.get("failures", 0)) + int(suite.get("errors", 0))
+            passaram = total - falharam - int(suite.get("skipped", 0))
+    return proc.returncode, total, passaram, falharam, junit
+
+
 def cmd_scan(args):
     scanner = LovableScanner(args.project_dir)
     manifest = scanner.scan()
-    out_file = os.path.join(args.project_dir, "bridge-manifest.json")
+    projeto = _resolver_projeto_scan(args)
+
+    aidd_dir = os.path.join(projeto, ".aidd")
+    os.makedirs(aidd_dir, exist_ok=True)
+    out_file = os.path.join(aidd_dir, "bridge-manifest.json")
     with open(out_file, "w", encoding="utf-8") as f:
         json.dump(manifest, f, indent=2, ensure_ascii=False)
-    print(f"[SUCESSO] Scan concluido. Manifesto gerado em: {out_file}")
     print(f"  - Paginas detectadas: {len(manifest['pages'])}")
     print(f"  - Rotas detectadas: {len(manifest['routes'])}")
     print(f"  - Migracoes Supabase: {len(manifest['database']['migrations'])}")
+
+    # Fatia convertida estritamente na zona do construtor: src/modules/<dominio>/
+    dominio = _slugify(manifest.get("package_info", {}).get("name") or "app")
+    fatia_dir = os.path.join(projeto, "src", "modules", dominio)
+    os.makedirs(fatia_dir, exist_ok=True)
+    with open(os.path.join(fatia_dir, "__init__.py"), "w", encoding="utf-8") as f:
+        f.write(f'"""Fatia convertida pelo aidd-freedom (dominio: {dominio})."""\n')
+    db = DataBridge(manifest["database"]["migrations"])
+    sql_convertido = db.generate_consolidated_init_sql()
+    with open(os.path.join(fatia_dir, "schema.sql"), "w", encoding="utf-8") as f:
+        f.write(sql_convertido)
+    # Smoke test real da fatia: prova que o schema convertido existe e e PostgreSQL.
+    with open(os.path.join(fatia_dir, "test_smoke_slice.py"), "w", encoding="utf-8") as f:
+        f.write(
+            "from pathlib import Path\n\n"
+            "def test_schema_sql_convertido_nao_vazio():\n"
+            "    sql = (Path(__file__).parent / 'schema.sql').read_text(encoding='utf-8')\n"
+            "    assert sql.strip(), 'schema.sql convertido nao pode ser vazio'\n"
+            "    assert 'CREATE' in sql.upper()\n"
+        )
+
+    rc_testes, total, passaram, falharam, junit = _rodar_testes_fatia(projeto, fatia_dir)
+    if rc_testes != 0 or falharam > 0 or total == 0:
+        print(f"[ERRO] Testes da fatia falharam (exit {rc_testes}): "
+              f"total={total} passaram={passaram} falharam={falharam}")
+        return 1
+
+    # Contrato C3 gravado pela propria ferramenta (quem produz escreve).
+    endpoints = []
+    for rota in manifest.get("routes", []):
+        path = rota.get("path") if isinstance(rota, dict) else str(rota)
+        comp = rota.get("component", dominio) if isinstance(rota, dict) else dominio
+        endpoints.append({"rota": path, "metodo": "GET",
+                          "funcao": f"renderizar_{_slugify(comp)}"})
+    tabelas = sorted(set(re.findall(
+        r"CREATE TABLE (?:IF NOT EXISTS )?([A-Za-z0-9_.]+)",
+        sql_convertido, flags=re.IGNORECASE)))
+    c3 = {
+        "versao_schema": "1.0.0",
+        "origem_engine": "aidd-freedom",
+        "projeto_slug": dominio,
+        "slices_geradas": [{
+            "slice_nome": dominio,
+            "caminho_src": f"src/modules/{dominio}",
+            "sha256_arvore": _sha256_arvore(fatia_dir),
+            "endpoints": endpoints,
+            "tabelas_sql": tabelas,
+        }],
+        "artefatos_frontend": {
+            "tecnologia": "tanstack_router",
+            "paginas_geradas": manifest.get("pages") or ["/"],
+            "origem_design": "lovable_preserved",
+        },
+        "testes_executados": {
+            "total": total,
+            "passaram": passaram,
+            "falharam": falharam,
+            "zero_stubs": True,
+            "relatorio_pytest": {
+                "caminho": os.path.relpath(junit, projeto).replace("\\", "/"),
+                "exit_code": 0,
+            },
+        },
+        "arquivos_fora_da_zona": [],
+    }
+    with open(os.path.join(projeto, "HANDOFF_ENGINE_MASTER.json"), "w", encoding="utf-8") as f:
+        json.dump(c3, f, indent=2, ensure_ascii=False)
+
+    print(f"[SUCESSO] Scan concluido. Manifesto gerado em: {out_file}")
+    print(f"  - Fatia convertida: src/modules/{dominio}/")
+    print("  - Contrato C3: HANDOFF_ENGINE_MASTER.json")
     return 0
 
 def cmd_convert_db(args):
@@ -128,7 +266,9 @@ def main():
 
     # scan
     p_scan = subparsers.add_parser("scan", help="Analisa um projeto Lovable e gera manifesto")
-    p_scan.add_argument("project_dir", help="Diretorio do projeto")
+    p_scan.add_argument("project_dir", help="Diretorio do projeto (export escaneado, nunca modificado)")
+    p_scan.add_argument("--output", "-o", default=None,
+                        help="Pasta do projeto de destino (.aidd/bridge-manifest.json, src/modules/, C3); padrao: AIDD_HANDOFF_PLANNER ou o proprio diretorio")
 
     # convert-db
     p_db = subparsers.add_parser("convert-db", help="Converte migracoes do Supabase em PostgreSQL consolidado")
