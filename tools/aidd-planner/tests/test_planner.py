@@ -275,7 +275,7 @@ def test_cli_init_e_validate():
         assert handoff_data["fluxo_alvo"] == 1
         assert handoff_data["quarteto_sine_qua_non"]["swagger"] is True
         assert handoff_data["quarteto_sine_qua_non"]["documentacao"] is True
-        assert handoff_data["arquitetura_alvo"]["padrao_frontend"] == "nextjs_typescript_tailwind"
+        assert handoff_data["arquitetura_alvo"]["padrao_frontend"] == "tanstack_router_typescript_tailwind"
 
         # 2. Teste validate
         ret_val = cli_main(["validate", planner_file])

@@ -7,7 +7,7 @@ Responsável por carregar, validar, gerar e exportar planos para os 3 fluxos da 
 import json
 import os
 import sys
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Any, Dict, List, Optional, Set, Tuple
 
 _PLANNER_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 _SCHEMA_PATH = os.path.join(_PLANNER_DIR, "schemas", "planner_schema.json")
@@ -147,7 +147,8 @@ def gerar_template_plano(
     projeto_nome: str,
     slug: str,
     descricao: str,
-    dominio: str
+    dominio: str,
+    modulos_adicionais: Optional[List[str]] = None
 ) -> Dict[str, Any]:
     """Gera um dicionário de plano 100% em conformidade com o schema para o fluxo especificado."""
     if fluxo_alvo not in ["fluxo_01_generator", "fluxo_02_factory", "fluxo_03_bridge"]:
@@ -218,6 +219,43 @@ def gerar_template_plano(
             "ambiente": "vps_docker"
         }
     }
+
+    # Cada modulo desenhado no PRÉ-PLANO vira um bounded context com entidade e
+    # invariantes proprias — o construtor recebe uma fatia vertical por modulo,
+    # e nao um "modulo generico" so.
+    ja_desenhados = {ctx["modulo"] for ctx in base["ddd_bounded_contexts"]}
+    for nome_modulo in modulos_adicionais or []:
+        modulo = str(nome_modulo or "").strip().lower()
+        if not modulo or modulo in ja_desenhados:
+            continue
+        ja_desenhados.add(modulo)
+        base["ddd_bounded_contexts"].append({
+            "modulo": modulo,
+            "descricao": f"Contexto delimitado de {modulo} para o dominio {dominio}",
+            "entidades": [
+                {
+                    "nome": f"{modulo.capitalize()}Registro",
+                    "atributos": {
+                        "id": "string",
+                        "nome": "string",
+                        "status": "string",
+                        "criado_em": "datetime"
+                    },
+                    "regras_invariantes": [
+                        f"O status inicial de {modulo} deve ser sempre 'ativo'",
+                        f"O nome em {modulo} nao pode ser vazio nem conter caracteres ilegais"
+                    ]
+                }
+            ]
+        })
+        base["bdd_cenarios"].append({
+            "id": f"SCN-{len(base['bdd_cenarios']) + 1:03d}",
+            "modulo": modulo,
+            "titulo": f"Criacao com sucesso de registro em {modulo}",
+            "dado": "Um usuario autenticado com dados validos",
+            "quando": f"Uma requisicao for enviada para a rota de criacao de {modulo}",
+            "entao": "O registro deve ser persistido e o sistema retorna status HTTP 201 com id gerado"
+        })
 
     if fluxo_alvo == "fluxo_01_generator":
         base["payload_especifico_fluxo"] = {
