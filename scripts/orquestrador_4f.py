@@ -219,11 +219,14 @@ def tela_estavel(handle, leituras=10, intervalo=2):
     return anterior or ""
 
 
-def enviar_linha(handle, texto, marca, tentativas=5, espera=3):
+def enviar_linha(handle, texto, marca, tentativas=5, espera=3, enter_sem_eco=False):
     """Texto e Enter em envios separados: 'texto + --enter' passa pela observação de prompt do
     Orca, que retém o envio quando acha que o harness ainda espera confiança (mimo, 2026-09-24).
     O Enter só sai depois que 'marca' aparece na tela: texto enviado enquanto o harness ainda
-    carrega é descartado em silêncio (TICKET-03/mimo ficou 10 min parado na tela inicial)."""
+    carrega é descartado em silêncio (TICKET-03/mimo ficou 10 min parado na tela inicial).
+    O claude v2.1.287 aceita o texto mas só o desenha depois do Enter (TICKET-04, 2026-10-01):
+    com enter_sem_eco o Enter sai assim mesmo e o envio vale se a linha aparecer submetida.
+    Só para o claude: no mimo um Enter às cegas cai no aviso de risco, cujo padrão é "No, exit"."""
     for _ in range(tentativas):
         if orca("terminal", "send", "--terminal", handle, "--text", texto) is None:
             return False
@@ -231,6 +234,13 @@ def enviar_linha(handle, texto, marca, tentativas=5, espera=3):
         if marca in tela(handle):
             return orca("terminal", "send", "--terminal", handle, "--enter") is not None
         time.sleep(espera)
+        if not enter_sem_eco:
+            continue
+        if orca("terminal", "send", "--terminal", handle, "--enter") is None:
+            return False
+        time.sleep(espera)
+        if marca in tela(handle):
+            return True
     print(f"[ORCA] FALHA: texto não apareceu no terminal após {tentativas} envios.")
     return False
 
@@ -340,7 +350,8 @@ def run_agente_orca(cmd, cwd, input_data=None, expected_handoff=None, titulo="AI
         excluir_do_git(cwd, PREAMBULO)
         preambulo.write_text(envio["preamble"], encoding="utf-8")
         instrucao = f"Read the file {PREAMBULO} and follow its instructions exactly."
-        if not enviar_linha(handle, instrucao, marca=PREAMBULO):
+        if not enviar_linha(handle, instrucao, marca=PREAMBULO,
+                            enter_sem_eco=any("claude" in p for p in cmd.split()[:2])):
             print("[ORCA] FALHA: instrução não entregue ao terminal.")
             return "failed"
         outcome, resumo = aguardar_worker_done(run_id, envio["dispatch"]["id"])

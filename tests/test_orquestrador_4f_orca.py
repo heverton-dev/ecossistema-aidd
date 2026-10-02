@@ -110,6 +110,29 @@ def test_texto_descartado_pelo_harness_e_reenviado_e_nunca_confirmado_as_cegas(t
     assert not any(a[-1] == "--enter" and "--text" not in a for a in envios)  # Enter nunca às cegas
 
 
+def test_claude_que_so_desenha_o_texto_apos_enter_recebe_a_instrucao_uma_vez(tmp_path, monkeypatch):
+    """claude v2.1.287 (TICKET-04, 2026-10-01): o texto fica num buffer invisível até o Enter."""
+    chamadas, buffer, tela = [], [], []
+    base = _orca_falso(chamadas, [_lote("ctx_1")], eco=False)
+
+    def orca(*args, **kwargs):
+        if args[:2] == ("terminal", "send") and "--text" in args:
+            buffer.append(args[args.index("--text") + 1])
+        if args[:2] == ("terminal", "send") and args[-1] == "--enter" and buffer:
+            tela.append("".join(buffer))
+            buffer.clear()
+        if args[:2] == ("terminal", "read"):
+            chamadas.append(args)
+            return {"terminal": {"tail": tela[-1:]}}
+        return base(*args, **kwargs)
+    monkeypatch.setattr(orquestrador_4f, "orca", orca)
+
+    assert orquestrador_4f.run_agente_orca("claude --x", tmp_path, None, None, titulo="T") == "succeeded"
+    envios = [a for a in chamadas if a[:2] == ("terminal", "send") and "--text" in a]
+    assert len(envios) == 1  # sem reenvio: duplicaria o texto no buffer
+    assert tela == [envios[0][-1]]
+
+
 def test_worker_done_de_outro_dispatch_e_ignorado(tmp_path, monkeypatch):
     chamadas = []
     monkeypatch.setattr(orquestrador_4f, "orca", _orca_falso(chamadas, [_lote("ctx_outro"), _lote("ctx_1", "failed")]))
