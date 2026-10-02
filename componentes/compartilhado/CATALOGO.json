@@ -1,0 +1,2399 @@
+{
+  "descricao": "Catálogo do almoxarifado único (fronteiras-ferramentas ciclo-01, Ticket 8, D15). O aidd-forge guarda e distribui; o conteúdo de cada peça é do dono_do_conteudo. Cada peça tem uma versão principal; variante só existe com tipo_variante e motivo. As cópias antigas (copias) continuam no lugar até a remoção com o usuário (Ticket 19). sha256 vai no formato de 'sha256-<hex>': hex puro, ou depois de ':' ou '=', o detect-secrets acusa como credencial, que foi o que reprovou o G_SEGREDOS no Ticket 3.",
+  "versao": "1.0.0",
+  "guardiao": "aidd-forge",
+  "pastas": [
+    "gates",
+    "src-core",
+    "moldes/quarteto",
+    "moldes/infra",
+    "injetor",
+    "specs"
+  ],
+  "tipos_variante": {
+    "implementacao_independente": "mesmo nome, outra ferramenta e outra API (DIAGNOSTICO Etapa 2, item 7)",
+    "versao_divergente": "mesma linhagem: capacidades juntadas na principal, texto original guardado",
+    "renderizado": "saída já renderizada do molde, servida pela própria ferramenta"
+  },
+  "fora_do_almoxarifado": {
+    "tools/aidd-enterprise/materiais-extras/examples/**": "D4: arquivo histórico fora do repo, não é peça",
+    "gates/** (raiz)": "D2: lei do próprio monorepo, não gate de projeto"
+  },
+  "pecas": [
+    {
+      "nome": "gates/G_ARQUITETURA.py",
+      "caminho": "componentes/compartilhado/gates/G_ARQUITETURA.py",
+      "categoria": "gate de projeto",
+      "familia": "G_ARQUITETURA.py",
+      "papel": "principal",
+      "dono_do_conteudo": "aidd-forge",
+      "versao": "1.0.0",
+      "sha256": "sha256-87a16ce5710e51ced903f1e67f8c3ea4bdfff20d92fcc2524b6e018a4cced069",
+      "consumidores": [
+        "aidd-enterprise",
+        "aidd-master"
+      ],
+      "copias": [
+        "tools/aidd-enterprise/scripts/gates/G_ARQUITETURA.py",
+        "tools/aidd-enterprise/templates/gates/G_ARQUITETURA.py",
+        "tools/aidd-master/scripts/gates/G_ARQUITETURA.py",
+        "tools/aidd-master/templates/gates/G_ARQUITETURA.py"
+      ],
+      "base": "aidd-master templates/gates bc68193 2026-09-09"
+    },
+    {
+      "nome": "gates/G_BLOQUEAR_SEGREDOS.py",
+      "caminho": "componentes/compartilhado/gates/G_BLOQUEAR_SEGREDOS.py",
+      "categoria": "gate de projeto",
+      "familia": "G_BLOQUEAR_SEGREDOS.py",
+      "papel": "principal",
+      "dono_do_conteudo": "aidd-forge",
+      "versao": "1.0.0",
+      "sha256": "sha256-78721202ccd56a6d80cae51e5752774c41ff6eb276949a488fcd899ff7535e0a",
+      "consumidores": [
+        "aidd-pure"
+      ],
+      "copias": [
+        "tools/aidd-pure/scripts/gates/G_BLOQUEAR_SEGREDOS.py"
+      ],
+      "base": "aidd-pure scripts/gates 8c25947 2026-10-01 (DIAGNOSTICO Etapa 4)"
+    },
+    {
+      "nome": "gates/G_CHAOS.py",
+      "caminho": "componentes/compartilhado/gates/G_CHAOS.py",
+      "categoria": "gate de projeto",
+      "familia": "G_CHAOS.py",
+      "papel": "principal",
+      "dono_do_conteudo": "aidd-forge",
+      "versao": "1.0.0",
+      "sha256": "sha256-cf9517dbe7cebecc978e3956a19279f05a2f45699de4dcd52a1f3f302723ba58",
+      "consumidores": [
+        "aidd-enterprise",
+        "aidd-master"
+      ],
+      "copias": [
+        "tools/aidd-enterprise/scripts/gates/G_CHAOS.py",
+        "tools/aidd-enterprise/templates/gates/G_CHAOS.py",
+        "tools/aidd-master/scripts/gates/G_CHAOS.py",
+        "tools/aidd-master/templates/gates/G_CHAOS.py"
+      ],
+      "base": "aidd-master templates/gates 376b832 2026-09-09"
+    },
+    {
+      "nome": "gates/G_CONTRACTS.py",
+      "caminho": "componentes/compartilhado/gates/G_CONTRACTS.py",
+      "categoria": "gate de projeto",
+      "familia": "G_CONTRACTS.py",
+      "papel": "principal",
+      "dono_do_conteudo": "aidd-forge",
+      "versao": "1.0.0",
+      "sha256": "sha256-64ca771de67a8304b1a3b794d6380371bc5a741874d8be124a7d1086d22d5ca2",
+      "consumidores": [
+        "aidd-enterprise",
+        "aidd-master"
+      ],
+      "copias": [
+        "tools/aidd-enterprise/scripts/gates/G_CONTRACTS.py",
+        "tools/aidd-enterprise/templates/gates/G_CONTRACTS.py",
+        "tools/aidd-master/scripts/gates/G_CONTRACTS.py",
+        "tools/aidd-master/templates/gates/G_CONTRACTS.py"
+      ],
+      "base": "aidd-master templates/gates 9ae2e78 2026-09-18 (DIAGNOSTICO Etapa 4)"
+    },
+    {
+      "nome": "gates/G_CYBERSECURITY_OWASP.py",
+      "caminho": "componentes/compartilhado/gates/G_CYBERSECURITY_OWASP.py",
+      "categoria": "gate de projeto",
+      "familia": "G_CYBERSECURITY_OWASP.py",
+      "papel": "principal",
+      "dono_do_conteudo": "aidd-forge",
+      "versao": "1.0.0",
+      "sha256": "sha256-0766ea14b9b50e3500950abaa25850ec46eee02d810c1eac79f1cd0a1e8ba0ce",
+      "consumidores": [
+        "aidd-pure"
+      ],
+      "copias": [
+        "tools/aidd-pure/scripts/gates/G_CYBERSECURITY_OWASP.py"
+      ],
+      "base": "aidd-pure scripts/gates 8c25947 2026-10-01 (DIAGNOSTICO Etapa 4)"
+    },
+    {
+      "nome": "gates/G_DETERMINISMO_LEI_1.py",
+      "caminho": "componentes/compartilhado/gates/G_DETERMINISMO_LEI_1.py",
+      "categoria": "gate de projeto",
+      "familia": "G_DETERMINISMO_LEI_1.py",
+      "papel": "principal",
+      "dono_do_conteudo": "aidd-forge",
+      "versao": "1.0.0",
+      "sha256": "sha256-56f74ba45291b3c3a5e07944b2c732a2f4c53146d34c73ed33e2868ed736533e",
+      "consumidores": [
+        "aidd-forge"
+      ],
+      "copias": [
+        "tools/aidd-forge/aidd_forge/templates/gates/G_DETERMINISMO_LEI_1.py"
+      ],
+      "base": "aidd-forge templates/gates 62b8781 2026-09-21"
+    },
+    {
+      "nome": "gates/G_ESTRUTURA.py",
+      "caminho": "componentes/compartilhado/gates/G_ESTRUTURA.py",
+      "categoria": "gate de projeto",
+      "familia": "G_ESTRUTURA.py",
+      "papel": "principal",
+      "dono_do_conteudo": "aidd-forge",
+      "versao": "1.0.0",
+      "sha256": "sha256-72830c6d0688f3618bb9283372f570f34fdba47680e2d38e279f57f632fa2618",
+      "consumidores": [
+        "aidd-enterprise",
+        "aidd-master"
+      ],
+      "copias": [
+        "tools/aidd-enterprise/scripts/gates/G_ESTRUTURA.py",
+        "tools/aidd-enterprise/templates/gates/G_ESTRUTURA.py",
+        "tools/aidd-master/scripts/gates/G_ESTRUTURA.py",
+        "tools/aidd-master/templates/gates/G_ESTRUTURA.py"
+      ],
+      "base": "aidd-master templates/gates 376b832 2026-09-09"
+    },
+    {
+      "nome": "gates/G_ESTRUTURA_AST.py",
+      "caminho": "componentes/compartilhado/gates/G_ESTRUTURA_AST.py",
+      "categoria": "gate de projeto",
+      "familia": "G_ESTRUTURA_AST.py",
+      "papel": "principal",
+      "dono_do_conteudo": "aidd-forge",
+      "versao": "1.0.0",
+      "sha256": "sha256-b308ff02d288c18f60bf7582ee1034cdb9f1926aff3893ff64c205fc0bbcf315",
+      "consumidores": [
+        "aidd-forge"
+      ],
+      "copias": [
+        "tools/aidd-forge/aidd_forge/templates/gates/G_ESTRUTURA_AST.py",
+        "tools/aidd-forge/sandbox-forge-teste/gates/G_ESTRUTURA_AST.py"
+      ],
+      "base": "aidd-forge templates/gates 3345ce5 2026-09-03"
+    },
+    {
+      "nome": "gates/G_HARNESS_COMPAT.py",
+      "caminho": "componentes/compartilhado/gates/G_HARNESS_COMPAT.py",
+      "categoria": "gate de projeto",
+      "familia": "G_HARNESS_COMPAT.py",
+      "papel": "principal",
+      "dono_do_conteudo": "aidd-forge",
+      "versao": "1.0.0",
+      "sha256": "sha256-d1ba8a35b1cae9ebdd43a88b074195dbfa587129aee9c871c03db73141134725",
+      "consumidores": [
+        "aidd-enterprise",
+        "aidd-master"
+      ],
+      "copias": [
+        "tools/aidd-enterprise/scripts/gates/G_HARNESS_COMPAT.py",
+        "tools/aidd-enterprise/templates/gates/G_HARNESS_COMPAT.py",
+        "tools/aidd-master/scripts/gates/G_HARNESS_COMPAT.py",
+        "tools/aidd-master/templates/gates/G_HARNESS_COMPAT.py"
+      ],
+      "base": "aidd-master templates/gates 376b832 2026-09-09 (DIAGNOSTICO Etapa 4)"
+    },
+    {
+      "nome": "gates/G_PERFORMANCE.py",
+      "caminho": "componentes/compartilhado/gates/G_PERFORMANCE.py",
+      "categoria": "gate de projeto",
+      "familia": "G_PERFORMANCE.py",
+      "papel": "principal",
+      "dono_do_conteudo": "aidd-forge",
+      "versao": "1.0.0",
+      "sha256": "sha256-1206e7501e3f87d66c543ac1ce646a2a95e359afdaec2b63a47c09f5d9ba0268",
+      "consumidores": [
+        "aidd-enterprise",
+        "aidd-master"
+      ],
+      "copias": [
+        "tools/aidd-enterprise/scripts/gates/G_PERFORMANCE.py",
+        "tools/aidd-enterprise/templates/gates/G_PERFORMANCE.py",
+        "tools/aidd-master/scripts/gates/G_PERFORMANCE.py",
+        "tools/aidd-master/templates/gates/G_PERFORMANCE.py"
+      ],
+      "base": "aidd-master templates/gates bc68193 2026-09-09 (DIAGNOSTICO Etapa 4)"
+    },
+    {
+      "nome": "gates/G_QUALIDADE.py",
+      "caminho": "componentes/compartilhado/gates/G_QUALIDADE.py",
+      "categoria": "gate de projeto",
+      "familia": "G_QUALIDADE.py",
+      "papel": "principal",
+      "dono_do_conteudo": "aidd-forge",
+      "versao": "1.0.0",
+      "sha256": "sha256-7d9efdc052ce384f5fa3551105017b409b80c13c40f3c6ee1b5eb805991e0b4a",
+      "consumidores": [
+        "aidd-enterprise",
+        "aidd-master"
+      ],
+      "copias": [
+        "tools/aidd-enterprise/scripts/gates/G_QUALIDADE.py",
+        "tools/aidd-enterprise/templates/gates/G_QUALIDADE.py",
+        "tools/aidd-master/scripts/gates/G_QUALIDADE.py",
+        "tools/aidd-master/templates/gates/G_QUALIDADE.py"
+      ],
+      "base": "aidd-master templates/gates d0f6db9 2026-09-16"
+    },
+    {
+      "nome": "gates/G_QUARTETO_SINE_QUA_NON.py",
+      "caminho": "componentes/compartilhado/gates/G_QUARTETO_SINE_QUA_NON.py",
+      "categoria": "gate de projeto",
+      "familia": "G_QUARTETO_SINE_QUA_NON.py",
+      "papel": "principal",
+      "dono_do_conteudo": "aidd-forge",
+      "versao": "1.0.0",
+      "sha256": "sha256-fced7e14e39dab012d3a9ce89eae9b4a8519077dd9315c124c23fc0497d0a74b",
+      "consumidores": [
+        "aidd-forge"
+      ],
+      "copias": [
+        "tools/aidd-forge/aidd_forge/templates/gates/G_QUARTETO_SINE_QUA_NON.py"
+      ],
+      "base": "aidd-forge templates/gates 62b8781 2026-09-21"
+    },
+    {
+      "nome": "gates/G_SAIDA_BINARIA.py",
+      "caminho": "componentes/compartilhado/gates/G_SAIDA_BINARIA.py",
+      "categoria": "gate de projeto",
+      "familia": "G_SAIDA_BINARIA.py",
+      "papel": "principal",
+      "dono_do_conteudo": "aidd-forge",
+      "versao": "1.0.0",
+      "sha256": "sha256-d40ae962ec582a44fb2127a6b772b406d34288d3836d6f0569e16615ae3fd768",
+      "consumidores": [
+        "aidd-forge"
+      ],
+      "copias": [
+        "tools/aidd-forge/aidd_forge/templates/gates/G_SAIDA_BINARIA.py"
+      ],
+      "base": "aidd-forge templates/gates 62b8781 2026-09-21"
+    },
+    {
+      "nome": "gates/G_SEGREDOS.py",
+      "caminho": "componentes/compartilhado/gates/G_SEGREDOS.py",
+      "categoria": "gate de projeto",
+      "familia": "G_SEGREDOS.py",
+      "papel": "principal",
+      "dono_do_conteudo": "aidd-forge",
+      "versao": "1.0.0",
+      "sha256": "sha256-b432e6089a24b35b43c551553fbfb1401368b2947aea696d06ba545ed9810807",
+      "consumidores": [
+        "aidd-enterprise",
+        "aidd-master"
+      ],
+      "copias": [
+        "tools/aidd-enterprise/scripts/gates/G_SEGREDOS.py",
+        "tools/aidd-enterprise/templates/gates/G_SEGREDOS.py",
+        "tools/aidd-master/scripts/gates/G_SEGREDOS.py",
+        "tools/aidd-master/templates/gates/G_SEGREDOS.py"
+      ],
+      "base": "aidd-master templates/gates da0999b 2026-09-28"
+    },
+    {
+      "nome": "gates/G_SEGURANCA.py",
+      "caminho": "componentes/compartilhado/gates/G_SEGURANCA.py",
+      "categoria": "gate de projeto",
+      "familia": "G_SEGURANCA.py",
+      "papel": "principal",
+      "dono_do_conteudo": "aidd-forge",
+      "versao": "1.0.0",
+      "sha256": "sha256-9c5b1eb33017955e7707fa0e30a264f88f9a9b1bb2edb2dc90bf203e36441bb7",
+      "consumidores": [
+        "aidd-enterprise",
+        "aidd-master"
+      ],
+      "copias": [
+        "tools/aidd-enterprise/scripts/gates/G_SEGURANCA.py",
+        "tools/aidd-enterprise/templates/gates/G_SEGURANCA.py",
+        "tools/aidd-master/scripts/gates/G_SEGURANCA.py",
+        "tools/aidd-master/templates/gates/G_SEGURANCA.py"
+      ],
+      "base": "aidd-master templates/gates a1ea899 2026-09-24"
+    },
+    {
+      "nome": "gates/G_STACK_PADRAO_OURO.py",
+      "caminho": "componentes/compartilhado/gates/G_STACK_PADRAO_OURO.py",
+      "categoria": "gate de projeto",
+      "familia": "G_STACK_PADRAO_OURO.py",
+      "papel": "principal",
+      "dono_do_conteudo": "aidd-forge",
+      "versao": "1.0.0",
+      "sha256": "sha256-a4044f99c0d0b60c3f4ab9667568af99aeb6e68c2b3cf8076e3565254442eb18",
+      "consumidores": [
+        "aidd-forge"
+      ],
+      "copias": [
+        "tools/aidd-forge/aidd_forge/templates/gates/G_STACK_PADRAO_OURO.py"
+      ],
+      "base": "aidd-forge templates/gates 5735507 2026-09-29"
+    },
+    {
+      "nome": "gates/G_TESTES.py",
+      "caminho": "componentes/compartilhado/gates/G_TESTES.py",
+      "categoria": "gate de projeto",
+      "familia": "G_TESTES.py",
+      "papel": "principal",
+      "dono_do_conteudo": "aidd-forge",
+      "versao": "1.0.0",
+      "sha256": "sha256-aa5a097e476326bb35389274c6ea68d2534f12e9a4840ec05a91842f37178040",
+      "consumidores": [
+        "aidd-enterprise",
+        "aidd-master"
+      ],
+      "copias": [
+        "tools/aidd-enterprise/scripts/gates/G_TESTES.py",
+        "tools/aidd-enterprise/templates/gates/G_TESTES.py",
+        "tools/aidd-master/scripts/gates/G_TESTES.py",
+        "tools/aidd-master/templates/gates/G_TESTES.py"
+      ],
+      "base": "aidd-master templates/gates b115282 2026-09-04"
+    },
+    {
+      "nome": "gates/G_TESTES_REAIS.py",
+      "caminho": "componentes/compartilhado/gates/G_TESTES_REAIS.py",
+      "categoria": "gate de projeto",
+      "familia": "G_TESTES_REAIS.py",
+      "papel": "principal",
+      "dono_do_conteudo": "aidd-forge",
+      "versao": "1.0.0",
+      "sha256": "sha256-dbe91c7ba389b97389667fb94b351884ad66ff44e1238c5c3bf15fb41c80f238",
+      "consumidores": [
+        "aidd-forge"
+      ],
+      "copias": [
+        "tools/aidd-forge/aidd_forge/templates/gates/G_TESTES_REAIS.py",
+        "tools/aidd-forge/sandbox-forge-teste/gates/G_TESTES_REAIS.py"
+      ],
+      "base": "aidd-forge templates/gates 3345ce5 2026-09-03"
+    },
+    {
+      "nome": "gates/variantes/aidd-forge/G_BLOQUEAR_SEGREDOS.py",
+      "caminho": "componentes/compartilhado/gates/variantes/aidd-forge/G_BLOQUEAR_SEGREDOS.py",
+      "categoria": "gate de projeto",
+      "familia": "G_BLOQUEAR_SEGREDOS.py",
+      "papel": "variante",
+      "dono_do_conteudo": "aidd-forge",
+      "versao": "1.0.0",
+      "sha256": "sha256-88bb28ff99788bc0170699d2d6f51c22ed735d81936e9b647eca61b4ba2f398f",
+      "consumidores": [
+        "aidd-forge"
+      ],
+      "copias": [
+        "tools/aidd-forge/aidd_forge/templates/gates/G_BLOQUEAR_SEGREDOS.py",
+        "tools/aidd-forge/sandbox-forge-teste/gates/G_BLOQUEAR_SEGREDOS.py"
+      ],
+      "variante_de": "gates/G_BLOQUEAR_SEGREDOS.py",
+      "tipo_variante": "implementacao_independente",
+      "motivo": "Mesmo nome, outra ferramenta e outra API (DIAGNOSTICO Etapa 2, item 7); guardada inteira até a decisão do Ticket 19."
+    },
+    {
+      "nome": "gates/variantes/aidd-forge/G_CONTRACTS.py",
+      "caminho": "componentes/compartilhado/gates/variantes/aidd-forge/G_CONTRACTS.py",
+      "categoria": "gate de projeto",
+      "familia": "G_CONTRACTS.py",
+      "papel": "variante",
+      "dono_do_conteudo": "aidd-forge",
+      "versao": "1.0.0",
+      "sha256": "sha256-1043df201a833f56214d4f1cc22b44b9cccdc858702fddbbb4aab5a69e7261f1",
+      "consumidores": [
+        "aidd-forge"
+      ],
+      "copias": [
+        "tools/aidd-forge/aidd_forge/templates/gates/G_CONTRACTS.py",
+        "tools/aidd-forge/sandbox-forge-teste/gates/G_CONTRACTS.py"
+      ],
+      "variante_de": "gates/G_CONTRACTS.py",
+      "tipo_variante": "implementacao_independente",
+      "motivo": "Mesmo nome, outra ferramenta e outra API (DIAGNOSTICO Etapa 2, item 7); guardada inteira até a decisão do Ticket 19."
+    },
+    {
+      "nome": "gates/variantes/aidd-forge/G_CYBERSECURITY_OWASP.py",
+      "caminho": "componentes/compartilhado/gates/variantes/aidd-forge/G_CYBERSECURITY_OWASP.py",
+      "categoria": "gate de projeto",
+      "familia": "G_CYBERSECURITY_OWASP.py",
+      "papel": "variante",
+      "dono_do_conteudo": "aidd-forge",
+      "versao": "1.0.0",
+      "sha256": "sha256-b3ca4d159fd58d830ecbe0f6a40f6434a47998e819cd2888bfc8f3b064456015",
+      "consumidores": [
+        "aidd-forge"
+      ],
+      "copias": [
+        "tools/aidd-forge/aidd_forge/templates/gates/G_CYBERSECURITY_OWASP.py",
+        "tools/aidd-forge/sandbox-forge-teste/gates/G_CYBERSECURITY_OWASP.py"
+      ],
+      "variante_de": "gates/G_CYBERSECURITY_OWASP.py",
+      "tipo_variante": "implementacao_independente",
+      "motivo": "Mesmo nome, outra ferramenta e outra API (DIAGNOSTICO Etapa 2, item 7); guardada inteira até a decisão do Ticket 19."
+    },
+    {
+      "nome": "gates/variantes/aidd-forge/G_HARNESS_COMPAT.py",
+      "caminho": "componentes/compartilhado/gates/variantes/aidd-forge/G_HARNESS_COMPAT.py",
+      "categoria": "gate de projeto",
+      "familia": "G_HARNESS_COMPAT.py",
+      "papel": "variante",
+      "dono_do_conteudo": "aidd-forge",
+      "versao": "1.0.0",
+      "sha256": "sha256-794772bbb6a25acee118a50d94d82d6dbed3c42b96e27b878ad431a12c83b061",
+      "consumidores": [
+        "aidd-forge"
+      ],
+      "copias": [
+        "tools/aidd-forge/aidd_forge/templates/gates/G_HARNESS_COMPAT.py",
+        "tools/aidd-forge/sandbox-forge-teste/gates/G_HARNESS_COMPAT.py"
+      ],
+      "variante_de": "gates/G_HARNESS_COMPAT.py",
+      "tipo_variante": "implementacao_independente",
+      "motivo": "Mesmo nome, outra ferramenta e outra API (DIAGNOSTICO Etapa 2, item 7); guardada inteira até a decisão do Ticket 19."
+    },
+    {
+      "nome": "gates/variantes/aidd-forge/G_PERFORMANCE.py",
+      "caminho": "componentes/compartilhado/gates/variantes/aidd-forge/G_PERFORMANCE.py",
+      "categoria": "gate de projeto",
+      "familia": "G_PERFORMANCE.py",
+      "papel": "variante",
+      "dono_do_conteudo": "aidd-forge",
+      "versao": "1.0.0",
+      "sha256": "sha256-b45d3f961307b1751a84ccd62d0457974ce0b61041d8e9e4e78786d7faf08d91",
+      "consumidores": [
+        "aidd-forge"
+      ],
+      "copias": [
+        "tools/aidd-forge/aidd_forge/templates/gates/G_PERFORMANCE.py",
+        "tools/aidd-forge/sandbox-forge-teste/gates/G_PERFORMANCE.py"
+      ],
+      "variante_de": "gates/G_PERFORMANCE.py",
+      "tipo_variante": "implementacao_independente",
+      "motivo": "Mesmo nome, outra ferramenta e outra API (DIAGNOSTICO Etapa 2, item 7); guardada inteira até a decisão do Ticket 19."
+    },
+    {
+      "nome": "gates/variantes/aidd-pure/G_HARNESS_COMPAT.py",
+      "caminho": "componentes/compartilhado/gates/variantes/aidd-pure/G_HARNESS_COMPAT.py",
+      "categoria": "gate de projeto",
+      "familia": "G_HARNESS_COMPAT.py",
+      "papel": "variante",
+      "dono_do_conteudo": "aidd-forge",
+      "versao": "1.0.0",
+      "sha256": "sha256-e2746e963997af6b97055d74de28e1d22f3278790b026c6524f6eb1f6cf6da6a",
+      "consumidores": [
+        "aidd-pure"
+      ],
+      "copias": [
+        "tools/aidd-pure/scripts/gates/G_HARNESS_COMPAT.py"
+      ],
+      "variante_de": "gates/G_HARNESS_COMPAT.py",
+      "tipo_variante": "implementacao_independente",
+      "motivo": "Mesmo nome, outra ferramenta e outra API (DIAGNOSTICO Etapa 2, item 7); guardada inteira até a decisão do Ticket 19."
+    },
+    {
+      "nome": "injetor/G_INJECT.py",
+      "caminho": "componentes/compartilhado/injetor/G_INJECT.py",
+      "categoria": "injetor",
+      "familia": "G_INJECT.py",
+      "papel": "principal",
+      "dono_do_conteudo": "aidd-enterprise",
+      "versao": "1.0.0",
+      "sha256": "sha256-71b526f1e6c6f175f56691867e272e91dbd03bfdc998a638f1c80b802d93a01b",
+      "consumidores": [
+        "aidd-enterprise",
+        "aidd-master"
+      ],
+      "copias": [
+        "tools/aidd-enterprise/scripts/gates/G_INJECT.py"
+      ],
+      "base": "aidd-enterprise scripts/gates bc68193 2026-09-09 + checagens do aidd-master"
+    },
+    {
+      "nome": "injetor/__init__.py",
+      "caminho": "componentes/compartilhado/injetor/__init__.py",
+      "categoria": "injetor",
+      "familia": "__init__.py",
+      "papel": "principal",
+      "dono_do_conteudo": "aidd-enterprise",
+      "versao": "1.0.0",
+      "sha256": "sha256-f9017001615fb6669719933c6c46341c7892cec8c1992571d40bdc4fea12f618",
+      "consumidores": [
+        "aidd-enterprise",
+        "aidd-master"
+      ],
+      "copias": [
+        "tools/aidd-enterprise/scripts/injector/__init__.py"
+      ]
+    },
+    {
+      "nome": "injetor/detector_camada.py",
+      "caminho": "componentes/compartilhado/injetor/detector_camada.py",
+      "categoria": "injetor",
+      "familia": "detector_camada.py",
+      "papel": "principal",
+      "dono_do_conteudo": "aidd-enterprise",
+      "versao": "1.0.0",
+      "sha256": "sha256-5d4a413a2f256388de75f3eb0a4502a6ac0f765c4a62ff7116074a5fa48fbf2c",
+      "consumidores": [
+        "aidd-enterprise",
+        "aidd-master"
+      ],
+      "copias": [
+        "tools/aidd-enterprise/src/core/detector_camada.py",
+        "tools/aidd-master/src/core/detector_camada.py"
+      ],
+      "base": "aidd-enterprise src/core b3001b4 2026-09-05; _PROJETO_PADRAO pela localização (aidd-master)"
+    },
+    {
+      "nome": "injetor/inject.py",
+      "caminho": "componentes/compartilhado/injetor/inject.py",
+      "categoria": "injetor",
+      "familia": "inject.py",
+      "papel": "principal",
+      "dono_do_conteudo": "aidd-enterprise",
+      "versao": "1.0.0",
+      "sha256": "sha256-1e1b559aa9038dc517ff23ee7afb5c7546a586ac84d80a34d0b4ccb56197a367",
+      "consumidores": [
+        "aidd-enterprise",
+        "aidd-master"
+      ],
+      "copias": [
+        "tools/aidd-enterprise/application/commands/inject.py"
+      ],
+      "base": "aidd-enterprise application/commands c01ed49 2026-09-10 + aidd-master"
+    },
+    {
+      "nome": "injetor/profiles_registry.py",
+      "caminho": "componentes/compartilhado/injetor/profiles_registry.py",
+      "categoria": "injetor",
+      "familia": "profiles_registry.py",
+      "papel": "principal",
+      "dono_do_conteudo": "aidd-enterprise",
+      "versao": "1.0.0",
+      "sha256": "sha256-0e2ab9f9b5bffd375b9be3fe6a0bf2352a94dd7245130618e1716929083f6f9a",
+      "consumidores": [
+        "aidd-enterprise",
+        "aidd-master"
+      ],
+      "copias": [
+        "tools/aidd-master/src/core/profiles_registry.py"
+      ],
+      "base": "aidd-enterprise src/core b3001b4 2026-09-05 (perfil aidd-enterprise) + hooks em JSON do aidd-master 9325afa 2026-09-10"
+    },
+    {
+      "nome": "injetor/schema/component_manifest.schema.json",
+      "caminho": "componentes/compartilhado/injetor/schema/component_manifest.schema.json",
+      "categoria": "injetor",
+      "familia": "component_manifest.schema.json",
+      "papel": "principal",
+      "dono_do_conteudo": "aidd-enterprise",
+      "versao": "1.0.0",
+      "sha256": "sha256-fde4124c283af16bda3a45418af70d67e926f2fc5471e332821e36560a03f1a3",
+      "consumidores": [
+        "aidd-enterprise",
+        "aidd-master"
+      ],
+      "copias": [
+        "tools/aidd-enterprise/scripts/injector/schema/component_manifest.schema.json"
+      ]
+    },
+    {
+      "nome": "injetor/schema_injector_request.json",
+      "caminho": "componentes/compartilhado/injetor/schema_injector_request.json",
+      "categoria": "injetor",
+      "familia": "schema_injector_request.json",
+      "papel": "principal",
+      "dono_do_conteudo": "aidd-enterprise",
+      "versao": "1.0.0",
+      "sha256": "sha256-b386afc22682ece5f232ddb930814214da4a9436b88040ed9b8adadfd0efdea2",
+      "consumidores": [
+        "aidd-enterprise",
+        "aidd-master"
+      ],
+      "copias": [
+        "tools/aidd-enterprise/src/core/schema_injector_request.json"
+      ],
+      "base": "aidd-enterprise src/core b3001b4 2026-09-05"
+    },
+    {
+      "nome": "injetor/variantes/aidd-enterprise/profiles_registry.py",
+      "caminho": "componentes/compartilhado/injetor/variantes/aidd-enterprise/profiles_registry.py",
+      "categoria": "injetor",
+      "familia": "profiles_registry.py",
+      "papel": "variante",
+      "dono_do_conteudo": "aidd-enterprise",
+      "versao": "1.0.0",
+      "sha256": "sha256-4a5718ca92afb6c3557b71d3f1fec464170b36e1e6b7b93fea77eaa43ab95f65",
+      "consumidores": [
+        "aidd-enterprise"
+      ],
+      "copias": [
+        "tools/aidd-enterprise/src/core/profiles_registry.py"
+      ],
+      "variante_de": "injetor/profiles_registry.py",
+      "tipo_variante": "versao_divergente",
+      "motivo": "Mesma linhagem: as capacidades foram juntadas na principal; o texto original fica guardado até a remoção com o usuário (Ticket 19). Aqui o perfil aidd-master ainda grava hook.sh (o master passou para JSON em 10/09)."
+    },
+    {
+      "nome": "injetor/variantes/aidd-forge/G_INJECT.py",
+      "caminho": "componentes/compartilhado/injetor/variantes/aidd-forge/G_INJECT.py",
+      "categoria": "injetor",
+      "familia": "G_INJECT.py",
+      "papel": "variante",
+      "dono_do_conteudo": "aidd-enterprise",
+      "versao": "1.0.0",
+      "sha256": "sha256-f935273241cebaeb48ed10868b4e6d3b4ab9850a7def81c9f68c16458cbf2109",
+      "consumidores": [
+        "aidd-forge"
+      ],
+      "copias": [
+        "tools/aidd-forge/aidd_forge/templates/gates/G_INJECT.py",
+        "tools/aidd-forge/sandbox-forge-teste/gates/G_INJECT.py"
+      ],
+      "variante_de": "injetor/G_INJECT.py",
+      "tipo_variante": "implementacao_independente",
+      "motivo": "Injetor próprio do aidd-forge (skills/commands no projeto); D3: uma peça só, conteúdo do enterprise."
+    },
+    {
+      "nome": "injetor/variantes/aidd-forge/core/injection_schema.py",
+      "caminho": "componentes/compartilhado/injetor/variantes/aidd-forge/core/injection_schema.py",
+      "categoria": "injetor",
+      "familia": "injection_schema.py",
+      "papel": "variante",
+      "dono_do_conteudo": "aidd-enterprise",
+      "versao": "1.0.0",
+      "sha256": "sha256-6fe2c513fa86679595377827768737578c9b3874637d5bd125d68b21e29541bc",
+      "consumidores": [
+        "aidd-forge"
+      ],
+      "copias": [
+        "tools/aidd-forge/aidd_forge/core/injection_schema.py"
+      ],
+      "variante_de": "injetor/inject.py",
+      "tipo_variante": "implementacao_independente",
+      "motivo": "Injetor próprio do aidd-forge (skills/commands no projeto); D3: uma peça só, conteúdo do enterprise."
+    },
+    {
+      "nome": "injetor/variantes/aidd-forge/core/injector.py",
+      "caminho": "componentes/compartilhado/injetor/variantes/aidd-forge/core/injector.py",
+      "categoria": "injetor",
+      "familia": "injector.py",
+      "papel": "variante",
+      "dono_do_conteudo": "aidd-enterprise",
+      "versao": "1.0.0",
+      "sha256": "sha256-464dc94e44735c689f1fb7288cfaabd2b00029a4a9bfdd1dc1578317df5e359b",
+      "consumidores": [
+        "aidd-forge"
+      ],
+      "copias": [
+        "tools/aidd-forge/aidd_forge/core/injector.py"
+      ],
+      "variante_de": "injetor/inject.py",
+      "tipo_variante": "implementacao_independente",
+      "motivo": "Injetor próprio do aidd-forge (skills/commands no projeto); D3: uma peça só, conteúdo do enterprise."
+    },
+    {
+      "nome": "injetor/variantes/aidd-forge/core/injector_profiles.py",
+      "caminho": "componentes/compartilhado/injetor/variantes/aidd-forge/core/injector_profiles.py",
+      "categoria": "injetor",
+      "familia": "injector_profiles.py",
+      "papel": "variante",
+      "dono_do_conteudo": "aidd-enterprise",
+      "versao": "1.0.0",
+      "sha256": "sha256-964fe858a0d131318512b9100c6a1229b84b0e3659fb3d5b740e8b88129c022a",
+      "consumidores": [
+        "aidd-forge"
+      ],
+      "copias": [
+        "tools/aidd-forge/aidd_forge/core/injector_profiles.py"
+      ],
+      "variante_de": "injetor/inject.py",
+      "tipo_variante": "implementacao_independente",
+      "motivo": "Injetor próprio do aidd-forge (skills/commands no projeto); D3: uma peça só, conteúdo do enterprise."
+    },
+    {
+      "nome": "injetor/variantes/aidd-forge/core/materializador.py",
+      "caminho": "componentes/compartilhado/injetor/variantes/aidd-forge/core/materializador.py",
+      "categoria": "injetor",
+      "familia": "materializador.py",
+      "papel": "variante",
+      "dono_do_conteudo": "aidd-enterprise",
+      "versao": "1.0.0",
+      "sha256": "sha256-99692e990312192b62969e94115b599600fdd9ff99acc8f758cc45d875a7733d",
+      "consumidores": [
+        "aidd-forge"
+      ],
+      "copias": [
+        "tools/aidd-forge/aidd_forge/core/materializador.py"
+      ],
+      "variante_de": "injetor/inject.py",
+      "tipo_variante": "implementacao_independente",
+      "motivo": "Injetor próprio do aidd-forge (skills/commands no projeto); D3: uma peça só, conteúdo do enterprise."
+    },
+    {
+      "nome": "injetor/variantes/aidd-forge/core/universal_injector.py",
+      "caminho": "componentes/compartilhado/injetor/variantes/aidd-forge/core/universal_injector.py",
+      "categoria": "injetor",
+      "familia": "universal_injector.py",
+      "papel": "variante",
+      "dono_do_conteudo": "aidd-enterprise",
+      "versao": "1.0.0",
+      "sha256": "sha256-4d12ca9b49659d062b4921ceb84f5784a60a9c7bc76222e12921db985e8626d2",
+      "consumidores": [
+        "aidd-forge"
+      ],
+      "copias": [
+        "tools/aidd-forge/aidd_forge/core/universal_injector.py"
+      ],
+      "variante_de": "injetor/inject.py",
+      "tipo_variante": "implementacao_independente",
+      "motivo": "Injetor próprio do aidd-forge (skills/commands no projeto); D3: uma peça só, conteúdo do enterprise."
+    },
+    {
+      "nome": "injetor/variantes/aidd-forge/schemas/injection_request.schema.json",
+      "caminho": "componentes/compartilhado/injetor/variantes/aidd-forge/schemas/injection_request.schema.json",
+      "categoria": "injetor",
+      "familia": "injection_request.schema.json",
+      "papel": "variante",
+      "dono_do_conteudo": "aidd-enterprise",
+      "versao": "1.0.0",
+      "sha256": "sha256-0653455382755c380c9def1f3ce0c3203c9b341ed528474ad37d68bedd979b23",
+      "consumidores": [
+        "aidd-forge"
+      ],
+      "copias": [
+        "tools/aidd-forge/aidd_forge/schemas/injection_request.schema.json"
+      ],
+      "variante_de": "injetor/inject.py",
+      "tipo_variante": "implementacao_independente",
+      "motivo": "Injetor próprio do aidd-forge (skills/commands no projeto); D3: uma peça só, conteúdo do enterprise."
+    },
+    {
+      "nome": "injetor/variantes/aidd-master/G_INJECT.py",
+      "caminho": "componentes/compartilhado/injetor/variantes/aidd-master/G_INJECT.py",
+      "categoria": "injetor",
+      "familia": "G_INJECT.py",
+      "papel": "variante",
+      "dono_do_conteudo": "aidd-enterprise",
+      "versao": "1.0.0",
+      "sha256": "sha256-0523549302fb4d384fa58a4936584fb0912922c659c10e222b19fec0aaecbfd9",
+      "consumidores": [
+        "aidd-master"
+      ],
+      "copias": [
+        "tools/aidd-master/scripts/gates/G_INJECT.py"
+      ],
+      "variante_de": "injetor/G_INJECT.py",
+      "tipo_variante": "versao_divergente",
+      "motivo": "Mesma linhagem: as capacidades foram juntadas na principal; o texto original fica guardado até a remoção com o usuário (Ticket 19)."
+    },
+    {
+      "nome": "injetor/variantes/aidd-master/inject.py",
+      "caminho": "componentes/compartilhado/injetor/variantes/aidd-master/inject.py",
+      "categoria": "injetor",
+      "familia": "inject.py",
+      "papel": "variante",
+      "dono_do_conteudo": "aidd-enterprise",
+      "versao": "1.0.0",
+      "sha256": "sha256-383ae47392c702fee02fe37b99c9dc09c6c52758eaa569ffacc3dcfbb3f3129a",
+      "consumidores": [
+        "aidd-master"
+      ],
+      "copias": [
+        "tools/aidd-master/application/commands/inject.py"
+      ],
+      "variante_de": "injetor/inject.py",
+      "tipo_variante": "versao_divergente",
+      "motivo": "Mesma linhagem: as capacidades foram juntadas na principal; o texto original fica guardado até a remoção com o usuário (Ticket 19)."
+    },
+    {
+      "nome": "injetor/variantes/aidd-master/schema_injector_request.json",
+      "caminho": "componentes/compartilhado/injetor/variantes/aidd-master/schema_injector_request.json",
+      "categoria": "injetor",
+      "familia": "schema_injector_request.json",
+      "papel": "variante",
+      "dono_do_conteudo": "aidd-enterprise",
+      "versao": "1.0.0",
+      "sha256": "sha256-1449718a2713f936a638aec6bae9522fa0fd245ad1cf8553b10080bba2e4f1e1",
+      "consumidores": [
+        "aidd-master"
+      ],
+      "copias": [
+        "tools/aidd-master/src/core/schema_injector_request.json"
+      ],
+      "variante_de": "injetor/schema_injector_request.json",
+      "tipo_variante": "versao_divergente",
+      "motivo": "Mesma linhagem: as capacidades foram juntadas na principal; o texto original fica guardado até a remoção com o usuário (Ticket 19). Só muda o default de alvo_projeto (aidd-master); JSON não tem como derivar do local."
+    },
+    {
+      "nome": "injetor/variantes/aidd-pure/G_INJECT.py",
+      "caminho": "componentes/compartilhado/injetor/variantes/aidd-pure/G_INJECT.py",
+      "categoria": "injetor",
+      "familia": "G_INJECT.py",
+      "papel": "variante",
+      "dono_do_conteudo": "aidd-enterprise",
+      "versao": "1.0.0",
+      "sha256": "sha256-48c9e1a47d3f9e0f04b670e9a1941b9755b57ed95879855bb5de278914435137",
+      "consumidores": [
+        "aidd-pure"
+      ],
+      "copias": [
+        "tools/aidd-pure/scripts/gates/G_INJECT.py"
+      ],
+      "variante_de": "injetor/G_INJECT.py",
+      "tipo_variante": "implementacao_independente",
+      "motivo": "Injetor próprio do aidd-pure (outra API); D3: uma peça só, conteúdo do enterprise."
+    },
+    {
+      "nome": "injetor/variantes/aidd-pure/aidd_inject.py",
+      "caminho": "componentes/compartilhado/injetor/variantes/aidd-pure/aidd_inject.py",
+      "categoria": "injetor",
+      "familia": "aidd_inject.py",
+      "papel": "variante",
+      "dono_do_conteudo": "aidd-enterprise",
+      "versao": "1.0.0",
+      "sha256": "sha256-3e965b4f4cf7ee9172c357a1ead78405f05dd485025150e3e54797a1b292d40c",
+      "consumidores": [
+        "aidd-pure"
+      ],
+      "copias": [
+        "tools/aidd-pure/scripts/aidd_inject.py"
+      ],
+      "variante_de": "injetor/inject.py",
+      "tipo_variante": "implementacao_independente",
+      "motivo": "Injetor próprio do aidd-pure (outra API); D3: uma peça só, conteúdo do enterprise."
+    },
+    {
+      "nome": "injetor/variantes/aidd-pure/core/injector/__init__.py",
+      "caminho": "componentes/compartilhado/injetor/variantes/aidd-pure/core/injector/__init__.py",
+      "categoria": "injetor",
+      "familia": "__init__.py",
+      "papel": "variante",
+      "dono_do_conteudo": "aidd-enterprise",
+      "versao": "1.0.0",
+      "sha256": "sha256-4cb33acef870817448fd2f59a7e0c3fe763f7993c5fd0593926e982f78da898a",
+      "consumidores": [
+        "aidd-pure"
+      ],
+      "copias": [
+        "tools/aidd-pure/scripts/core/injector/__init__.py"
+      ],
+      "variante_de": "injetor/__init__.py",
+      "tipo_variante": "implementacao_independente",
+      "motivo": "Injetor próprio do aidd-pure (outra API); D3: uma peça só, conteúdo do enterprise."
+    },
+    {
+      "nome": "injetor/variantes/aidd-pure/core/injector/contrato.py",
+      "caminho": "componentes/compartilhado/injetor/variantes/aidd-pure/core/injector/contrato.py",
+      "categoria": "injetor",
+      "familia": "contrato.py",
+      "papel": "variante",
+      "dono_do_conteudo": "aidd-enterprise",
+      "versao": "1.0.0",
+      "sha256": "sha256-644fd1667dd86af6968b858520e95c2aff2e343d0047af3c371fbc6e767264c8",
+      "consumidores": [
+        "aidd-pure"
+      ],
+      "copias": [
+        "tools/aidd-pure/scripts/core/injector/contrato.py"
+      ],
+      "variante_de": "injetor/inject.py",
+      "tipo_variante": "implementacao_independente",
+      "motivo": "Injetor próprio do aidd-pure (outra API); D3: uma peça só, conteúdo do enterprise."
+    },
+    {
+      "nome": "injetor/variantes/aidd-pure/core/injector/detector_camada.py",
+      "caminho": "componentes/compartilhado/injetor/variantes/aidd-pure/core/injector/detector_camada.py",
+      "categoria": "injetor",
+      "familia": "detector_camada.py",
+      "papel": "variante",
+      "dono_do_conteudo": "aidd-enterprise",
+      "versao": "1.0.0",
+      "sha256": "sha256-26c0be278a15f0f7a09b8a56311dfa6cc46015feb6896e771ef78f8d649fc906",
+      "consumidores": [
+        "aidd-pure"
+      ],
+      "copias": [
+        "tools/aidd-pure/scripts/core/injector/detector_camada.py"
+      ],
+      "variante_de": "injetor/detector_camada.py",
+      "tipo_variante": "implementacao_independente",
+      "motivo": "Injetor próprio do aidd-pure (outra API); D3: uma peça só, conteúdo do enterprise."
+    },
+    {
+      "nome": "injetor/variantes/aidd-pure/core/injector/injetor.py",
+      "caminho": "componentes/compartilhado/injetor/variantes/aidd-pure/core/injector/injetor.py",
+      "categoria": "injetor",
+      "familia": "injetor.py",
+      "papel": "variante",
+      "dono_do_conteudo": "aidd-enterprise",
+      "versao": "1.0.0",
+      "sha256": "sha256-d60553dc145a7329791dea521a4aaefa51c2e1309aebacc85ce550a747e1aeda",
+      "consumidores": [
+        "aidd-pure"
+      ],
+      "copias": [
+        "tools/aidd-pure/scripts/core/injector/injetor.py"
+      ],
+      "variante_de": "injetor/inject.py",
+      "tipo_variante": "implementacao_independente",
+      "motivo": "Injetor próprio do aidd-pure (outra API); D3: uma peça só, conteúdo do enterprise."
+    },
+    {
+      "nome": "injetor/variantes/aidd-pure/core/injector/materializador.py",
+      "caminho": "componentes/compartilhado/injetor/variantes/aidd-pure/core/injector/materializador.py",
+      "categoria": "injetor",
+      "familia": "materializador.py",
+      "papel": "variante",
+      "dono_do_conteudo": "aidd-enterprise",
+      "versao": "1.0.0",
+      "sha256": "sha256-239677cc50b247c057dfa967fa35c8a04fc7c5223b2ad8c479c3183702c1322e",
+      "consumidores": [
+        "aidd-pure"
+      ],
+      "copias": [
+        "tools/aidd-pure/scripts/core/injector/materializador.py"
+      ],
+      "variante_de": "injetor/inject.py",
+      "tipo_variante": "implementacao_independente",
+      "motivo": "Injetor próprio do aidd-pure (outra API); D3: uma peça só, conteúdo do enterprise."
+    },
+    {
+      "nome": "injetor/variantes/aidd-pure/core/injector/profiles_registry.py",
+      "caminho": "componentes/compartilhado/injetor/variantes/aidd-pure/core/injector/profiles_registry.py",
+      "categoria": "injetor",
+      "familia": "profiles_registry.py",
+      "papel": "variante",
+      "dono_do_conteudo": "aidd-enterprise",
+      "versao": "1.0.0",
+      "sha256": "sha256-8140bccdbc26afc907df9cb06e998337049cd586f0f847ee6fc407e35e3fce37",
+      "consumidores": [
+        "aidd-pure"
+      ],
+      "copias": [
+        "tools/aidd-pure/scripts/core/injector/profiles_registry.py"
+      ],
+      "variante_de": "injetor/profiles_registry.py",
+      "tipo_variante": "implementacao_independente",
+      "motivo": "Injetor próprio do aidd-pure (outra API); D3: uma peça só, conteúdo do enterprise."
+    },
+    {
+      "nome": "injetor/variantes/aidd-pure/core/injector/scaffolds.py",
+      "caminho": "componentes/compartilhado/injetor/variantes/aidd-pure/core/injector/scaffolds.py",
+      "categoria": "injetor",
+      "familia": "scaffolds.py",
+      "papel": "variante",
+      "dono_do_conteudo": "aidd-enterprise",
+      "versao": "1.0.0",
+      "sha256": "sha256-f406fd2ae8b0c2f6a180f2f6980133e954cff376c91dde1dd47d7129bfe17ffe",
+      "consumidores": [
+        "aidd-pure"
+      ],
+      "copias": [
+        "tools/aidd-pure/scripts/core/injector/scaffolds.py"
+      ],
+      "variante_de": "injetor/inject.py",
+      "tipo_variante": "implementacao_independente",
+      "motivo": "Injetor próprio do aidd-pure (outra API); D3: uma peça só, conteúdo do enterprise."
+    },
+    {
+      "nome": "injetor/variantes/aidd-pure/core/injector/schema_injector_request.json",
+      "caminho": "componentes/compartilhado/injetor/variantes/aidd-pure/core/injector/schema_injector_request.json",
+      "categoria": "injetor",
+      "familia": "schema_injector_request.json",
+      "papel": "variante",
+      "dono_do_conteudo": "aidd-enterprise",
+      "versao": "1.0.0",
+      "sha256": "sha256-dfbb20c404c9b6f949843a491556a0098a19a371acae15f6fecb138c835e8ce0",
+      "consumidores": [
+        "aidd-pure"
+      ],
+      "copias": [
+        "tools/aidd-pure/scripts/core/injector/schema_injector_request.json"
+      ],
+      "variante_de": "injetor/schema_injector_request.json",
+      "tipo_variante": "implementacao_independente",
+      "motivo": "Injetor próprio do aidd-pure (outra API); D3: uma peça só, conteúdo do enterprise."
+    },
+    {
+      "nome": "injetor/variantes/aidd-pure/core/injector/sincronizador_harness.py",
+      "caminho": "componentes/compartilhado/injetor/variantes/aidd-pure/core/injector/sincronizador_harness.py",
+      "categoria": "injetor",
+      "familia": "sincronizador_harness.py",
+      "papel": "variante",
+      "dono_do_conteudo": "aidd-enterprise",
+      "versao": "1.0.0",
+      "sha256": "sha256-45b4389a40203d5c9e3829159405acac6197d2d80ffb3f9aebd47557d7b17c5e",
+      "consumidores": [
+        "aidd-pure"
+      ],
+      "copias": [
+        "tools/aidd-pure/scripts/core/injector/sincronizador_harness.py"
+      ],
+      "variante_de": "injetor/inject.py",
+      "tipo_variante": "implementacao_independente",
+      "motivo": "Injetor próprio do aidd-pure (outra API); D3: uma peça só, conteúdo do enterprise."
+    },
+    {
+      "nome": "moldes/infra/Dockerfile",
+      "caminho": "componentes/compartilhado/moldes/infra/Dockerfile",
+      "categoria": "molde de infra",
+      "familia": "Dockerfile",
+      "papel": "principal",
+      "dono_do_conteudo": "aidd-ops",
+      "versao": "1.0.0",
+      "sha256": "sha256-2b19460ded71a1bd155b115374ea3f234fbe9146f05c830dc39d5be49baaf413",
+      "consumidores": [
+        "aidd-enterprise",
+        "aidd-master",
+        "aidd-open",
+        "aidd-ops"
+      ],
+      "copias": [
+        "tools/aidd-enterprise/templates/core/Dockerfile",
+        "tools/aidd-enterprise/templates/v2/Dockerfile",
+        "tools/aidd-master/templates/core/Dockerfile",
+        "tools/aidd-master/templates/v2/Dockerfile",
+        "tools/aidd-open/templates/vsa/Dockerfile"
+      ],
+      "base": "aidd-master templates/core 7768f12 2026-09-17 (conserto de 17/09, DIAGNOSTICO Etapa 5)"
+    },
+    {
+      "nome": "moldes/infra/deploy.sh",
+      "caminho": "componentes/compartilhado/moldes/infra/deploy.sh",
+      "categoria": "molde de infra",
+      "familia": "deploy.sh",
+      "papel": "principal",
+      "dono_do_conteudo": "aidd-ops",
+      "versao": "1.0.0",
+      "sha256": "sha256-16398ffab9f766decd3ac7742569cd69f3534bcd6dfba4a1d61c604fbe0b30ab",
+      "consumidores": [
+        "aidd-enterprise",
+        "aidd-master",
+        "aidd-open",
+        "aidd-ops"
+      ],
+      "copias": [
+        "tools/aidd-enterprise/templates/core/deploy.sh",
+        "tools/aidd-enterprise/templates/v2/deploy.sh",
+        "tools/aidd-master/templates/core/deploy.sh",
+        "tools/aidd-master/templates/v2/deploy.sh",
+        "tools/aidd-open/templates/vsa/deploy.sh"
+      ],
+      "base": "aidd-master templates/core 7768f12 2026-09-17 (conserto de 17/09, DIAGNOSTICO Etapa 5)"
+    },
+    {
+      "nome": "moldes/infra/docker-compose.yml",
+      "caminho": "componentes/compartilhado/moldes/infra/docker-compose.yml",
+      "categoria": "molde de infra",
+      "familia": "docker-compose.yml",
+      "papel": "principal",
+      "dono_do_conteudo": "aidd-ops",
+      "versao": "1.0.0",
+      "sha256": "sha256-590fc5ee0296f17450b1bf11b9823b3cfc18b4a3cb3fef95bad22f889f145ecc",
+      "consumidores": [
+        "aidd-enterprise",
+        "aidd-master",
+        "aidd-ops"
+      ],
+      "copias": [
+        "tools/aidd-enterprise/templates/core/docker-compose.yml",
+        "tools/aidd-enterprise/templates/v2/docker-compose.yml",
+        "tools/aidd-master/templates/core/docker-compose.yml",
+        "tools/aidd-master/templates/v2/docker-compose.yml"
+      ],
+      "base": "aidd-master templates/core 9ae2e78 2026-09-18 (conserto de 17/09, DIAGNOSTICO Etapa 5)"
+    },
+    {
+      "nome": "moldes/infra/nginx/nginx.conf",
+      "caminho": "componentes/compartilhado/moldes/infra/nginx/nginx.conf",
+      "categoria": "molde de infra",
+      "familia": "nginx.conf",
+      "papel": "principal",
+      "dono_do_conteudo": "aidd-ops",
+      "versao": "1.0.0",
+      "sha256": "sha256-cd0295866a0665f8e71aea63da376471aaeb4f7fbdabb60c6e5783cfc2b1c0c7",
+      "consumidores": [
+        "aidd-enterprise",
+        "aidd-master",
+        "aidd-ops"
+      ],
+      "copias": [
+        "tools/aidd-enterprise/templates/core/nginx/nginx.conf",
+        "tools/aidd-enterprise/templates/v2/nginx/nginx.conf",
+        "tools/aidd-master/templates/core/nginx/nginx.conf",
+        "tools/aidd-master/templates/v2/nginx/nginx.conf"
+      ],
+      "base": "aidd-master templates/core 9ae2e78 2026-09-18 (conserto de 17/09, DIAGNOSTICO Etapa 5)"
+    },
+    {
+      "nome": "moldes/infra/nginx/ssl/generate_ssl.py",
+      "caminho": "componentes/compartilhado/moldes/infra/nginx/ssl/generate_ssl.py",
+      "categoria": "molde de infra",
+      "familia": "generate_ssl.py",
+      "papel": "principal",
+      "dono_do_conteudo": "aidd-ops",
+      "versao": "1.0.0",
+      "sha256": "sha256-86d595e30e1b42849464e7c318d08cb58c415e3ce54f582f227bf47d5e00646f",
+      "consumidores": [
+        "aidd-enterprise",
+        "aidd-master",
+        "aidd-ops"
+      ],
+      "copias": [
+        "tools/aidd-enterprise/templates/core/nginx/ssl/generate_ssl.py",
+        "tools/aidd-enterprise/templates/v2/nginx/ssl/generate_ssl.py",
+        "tools/aidd-master/templates/core/nginx/ssl/generate_ssl.py",
+        "tools/aidd-master/templates/v2/nginx/ssl/generate_ssl.py"
+      ],
+      "base": "aidd-master templates/core 3345ce5 2026-09-03 (conserto de 17/09, DIAGNOSTICO Etapa 5)"
+    },
+    {
+      "nome": "moldes/infra/variantes/aidd-open/docker-compose.yml",
+      "caminho": "componentes/compartilhado/moldes/infra/variantes/aidd-open/docker-compose.yml",
+      "categoria": "molde de infra",
+      "familia": "docker-compose.yml",
+      "papel": "variante",
+      "dono_do_conteudo": "aidd-ops",
+      "versao": "1.0.0",
+      "sha256": "sha256-7f513bbd4b5c990ed054391142fd149a8eca03a0b2324134814abaf02b7e0926",
+      "consumidores": [
+        "aidd-open",
+        "aidd-ops"
+      ],
+      "copias": [
+        "tools/aidd-open/templates/vsa/docker-compose.yml"
+      ],
+      "variante_de": "moldes/infra/docker-compose.yml",
+      "tipo_variante": "implementacao_independente",
+      "motivo": "Receita só de back-end (app + nginx, sem front-end web) do gerador VSA do aidd-open."
+    },
+    {
+      "nome": "moldes/quarteto/docs.html",
+      "caminho": "componentes/compartilhado/moldes/quarteto/docs.html",
+      "categoria": "molde do Quarteto",
+      "familia": "docs.html",
+      "papel": "principal",
+      "dono_do_conteudo": "aidd-master",
+      "versao": "1.0.0",
+      "sha256": "sha256-63224c0301699eeecbab3e06b4ac5c493954038cd3c6fcffdcb6b07619870af9",
+      "consumidores": [
+        "aidd-enterprise",
+        "aidd-master",
+        "aidd-open"
+      ],
+      "copias": [
+        "tools/aidd-enterprise/templates/core/docs.html",
+        "tools/aidd-enterprise/templates/v2/docs.html",
+        "tools/aidd-master/templates/core/docs.html",
+        "tools/aidd-master/templates/v2/docs.html",
+        "tools/aidd-open/templates/vsa/docs.html"
+      ],
+      "base": "aidd-master templates/core cf9f336 2026-09-26 (molde Jinja)"
+    },
+    {
+      "nome": "moldes/quarteto/mcp_server.py",
+      "caminho": "componentes/compartilhado/moldes/quarteto/mcp_server.py",
+      "categoria": "molde do Quarteto",
+      "familia": "mcp_server.py",
+      "papel": "principal",
+      "dono_do_conteudo": "aidd-master",
+      "versao": "1.0.0",
+      "sha256": "sha256-98b8fddfb05611c8fd70105c856f080e53579e51a36d2ad2d4d2d1a1af6bb4c6",
+      "consumidores": [
+        "aidd-enterprise",
+        "aidd-master",
+        "aidd-open"
+      ],
+      "copias": [
+        "tools/aidd-enterprise/templates/core/mcp_server.py",
+        "tools/aidd-enterprise/templates/v2/mcp_server.py",
+        "tools/aidd-master/templates/core/mcp_server.py",
+        "tools/aidd-master/templates/v2/mcp_server.py"
+      ],
+      "base": "componentes/compartilhado/src-core (DIAGNOSTICO Etapa 4) + tema primary/primary_hover dos templates"
+    },
+    {
+      "nome": "moldes/quarteto/mcp_studio.html",
+      "caminho": "componentes/compartilhado/moldes/quarteto/mcp_studio.html",
+      "categoria": "molde do Quarteto",
+      "familia": "mcp_studio.html",
+      "papel": "principal",
+      "dono_do_conteudo": "aidd-master",
+      "versao": "1.0.0",
+      "sha256": "sha256-b88d77245bcfd8404590437f917bde14b4fadd03c360815c91c93a8ebcc861da",
+      "consumidores": [
+        "aidd-enterprise",
+        "aidd-master",
+        "aidd-open"
+      ],
+      "copias": [],
+      "base": "componentes/compartilhado/src-core (Spotlight Ctrl+K) + tema __PRIMARY__ dos templates"
+    },
+    {
+      "nome": "moldes/quarteto/openapi.json.j2",
+      "caminho": "componentes/compartilhado/moldes/quarteto/openapi.json.j2",
+      "categoria": "molde do Quarteto",
+      "familia": "openapi.json.j2",
+      "papel": "principal",
+      "dono_do_conteudo": "aidd-master",
+      "versao": "1.0.0",
+      "sha256": "sha256-48e5eebd1269af899e020356c167b56866d6d576a8ae6bc51a0f241cfd3508c0",
+      "consumidores": [
+        "aidd-open"
+      ],
+      "copias": [
+        "tools/aidd-open/templates/docs/openapi.json.j2"
+      ]
+    },
+    {
+      "nome": "moldes/quarteto/openapi.py",
+      "caminho": "componentes/compartilhado/moldes/quarteto/openapi.py",
+      "categoria": "molde do Quarteto",
+      "familia": "openapi.py",
+      "papel": "principal",
+      "dono_do_conteudo": "aidd-master",
+      "versao": "1.0.0",
+      "sha256": "sha256-87ff3892a3e7660dde95cb9c068e66711f849946567619c11a2abe65ffd901c4",
+      "consumidores": [
+        "aidd-enterprise",
+        "aidd-master",
+        "aidd-open"
+      ],
+      "copias": [
+        "tools/aidd-enterprise/templates/core/openapi.py",
+        "tools/aidd-enterprise/templates/v2/openapi.py",
+        "tools/aidd-master/templates/core/openapi.py",
+        "tools/aidd-master/templates/v2/openapi.py"
+      ],
+      "base": "templates/core do aidd-master: já é a src-core + tema primary/primary_light/primary_rgb"
+    },
+    {
+      "nome": "moldes/quarteto/swagger.html",
+      "caminho": "componentes/compartilhado/moldes/quarteto/swagger.html",
+      "categoria": "molde do Quarteto",
+      "familia": "swagger.html",
+      "papel": "principal",
+      "dono_do_conteudo": "aidd-master",
+      "versao": "1.0.0",
+      "sha256": "sha256-3fb1ca046b832f0bb64d6d3de9aa554368ec438145580ab09359bdfbf3ee4f44",
+      "consumidores": [
+        "aidd-enterprise",
+        "aidd-master",
+        "aidd-open"
+      ],
+      "copias": [],
+      "base": "componentes/compartilhado/src-core (Spotlight Ctrl+K) + tema __PRIMARY__ dos templates"
+    },
+    {
+      "nome": "moldes/quarteto/variantes/aidd-open/mcp_server.py",
+      "caminho": "componentes/compartilhado/moldes/quarteto/variantes/aidd-open/mcp_server.py",
+      "categoria": "molde do Quarteto",
+      "familia": "mcp_server.py",
+      "papel": "variante",
+      "dono_do_conteudo": "aidd-master",
+      "versao": "1.0.0",
+      "sha256": "sha256-0039313741476eb1bf32d9f48897dc57491dcbd39dfa1df593ea9382cae8ce5d",
+      "consumidores": [
+        "aidd-open"
+      ],
+      "copias": [
+        "tools/aidd-open/templates/vsa/mcp_server.py"
+      ],
+      "variante_de": "moldes/quarteto/mcp_server.py",
+      "tipo_variante": "versao_divergente",
+      "motivo": "Versão do gerador VSA do aidd-open sem o tema (__PRIMARY__); o tema e o resto já estão na principal, o texto original fica guardado até o Ticket 19."
+    },
+    {
+      "nome": "moldes/quarteto/variantes/aidd-open/mcp_studio.html",
+      "caminho": "componentes/compartilhado/moldes/quarteto/variantes/aidd-open/mcp_studio.html",
+      "categoria": "molde do Quarteto",
+      "familia": "mcp_studio.html",
+      "papel": "variante",
+      "dono_do_conteudo": "aidd-master",
+      "versao": "1.0.0",
+      "sha256": "sha256-2b0cf1db54c369c4b6fed4c230fc957db46201cf6d8815db904f0e54b02f100d",
+      "consumidores": [
+        "aidd-open"
+      ],
+      "copias": [
+        "tools/aidd-open/templates/vsa/mcp_studio.html"
+      ],
+      "variante_de": "moldes/quarteto/mcp_studio.html",
+      "tipo_variante": "versao_divergente",
+      "motivo": "Versão do gerador VSA do aidd-open sem o tema (__PRIMARY__); o tema e o resto já estão na principal, o texto original fica guardado até o Ticket 19."
+    },
+    {
+      "nome": "moldes/quarteto/variantes/aidd-open/openapi.py",
+      "caminho": "componentes/compartilhado/moldes/quarteto/variantes/aidd-open/openapi.py",
+      "categoria": "molde do Quarteto",
+      "familia": "openapi.py",
+      "papel": "variante",
+      "dono_do_conteudo": "aidd-master",
+      "versao": "1.0.0",
+      "sha256": "sha256-d77f87f3a0ea52a65803f55cc75e68c462c15a6d369fba829e9564d7dc1f2560",
+      "consumidores": [
+        "aidd-open"
+      ],
+      "copias": [
+        "tools/aidd-open/templates/vsa/openapi.py"
+      ],
+      "variante_de": "moldes/quarteto/openapi.py",
+      "tipo_variante": "versao_divergente",
+      "motivo": "Versão do gerador VSA do aidd-open sem o tema (__PRIMARY__); o tema e o resto já estão na principal, o texto original fica guardado até o Ticket 19."
+    },
+    {
+      "nome": "moldes/quarteto/variantes/aidd-open/swagger.html",
+      "caminho": "componentes/compartilhado/moldes/quarteto/variantes/aidd-open/swagger.html",
+      "categoria": "molde do Quarteto",
+      "familia": "swagger.html",
+      "papel": "variante",
+      "dono_do_conteudo": "aidd-master",
+      "versao": "1.0.0",
+      "sha256": "sha256-14b29651b6c85ca415b0f1229283bfe146a3b5ff9cdc2de131f0526c52c77705",
+      "consumidores": [
+        "aidd-open"
+      ],
+      "copias": [
+        "tools/aidd-open/templates/vsa/swagger.html"
+      ],
+      "variante_de": "moldes/quarteto/swagger.html",
+      "tipo_variante": "versao_divergente",
+      "motivo": "Versão do gerador VSA do aidd-open sem o tema (__PRIMARY__); o tema e o resto já estão na principal, o texto original fica guardado até o Ticket 19."
+    },
+    {
+      "nome": "moldes/quarteto/variantes/aidd-open/webhook_studio.html",
+      "caminho": "componentes/compartilhado/moldes/quarteto/variantes/aidd-open/webhook_studio.html",
+      "categoria": "molde do Quarteto",
+      "familia": "webhook_studio.html",
+      "papel": "variante",
+      "dono_do_conteudo": "aidd-master",
+      "versao": "1.0.0",
+      "sha256": "sha256-211aca865c174c247566020d6d2174b3f21ad3e774e6ccfdc5fc35beba9442ff",
+      "consumidores": [
+        "aidd-open"
+      ],
+      "copias": [
+        "tools/aidd-open/templates/vsa/webhook_studio.html"
+      ],
+      "variante_de": "moldes/quarteto/webhook_studio.html",
+      "tipo_variante": "versao_divergente",
+      "motivo": "Versão do gerador VSA do aidd-open sem o tema (__PRIMARY__); o tema e o resto já estão na principal, o texto original fica guardado até o Ticket 19."
+    },
+    {
+      "nome": "moldes/quarteto/variantes/aidd-open/webhooks.py",
+      "caminho": "componentes/compartilhado/moldes/quarteto/variantes/aidd-open/webhooks.py",
+      "categoria": "molde do Quarteto",
+      "familia": "webhooks.py",
+      "papel": "variante",
+      "dono_do_conteudo": "aidd-master",
+      "versao": "1.0.0",
+      "sha256": "sha256-57033188999095b69e4e57379b031d59dcab2588903cc0ff1dddef5eccc0c7a4",
+      "consumidores": [
+        "aidd-open"
+      ],
+      "copias": [
+        "tools/aidd-open/templates/vsa/webhooks.py"
+      ],
+      "variante_de": "moldes/quarteto/webhooks.py",
+      "tipo_variante": "versao_divergente",
+      "motivo": "Versão do gerador VSA do aidd-open sem o tema (__PRIMARY__); o tema e o resto já estão na principal, o texto original fica guardado até o Ticket 19."
+    },
+    {
+      "nome": "moldes/quarteto/variantes/renderizado/docs.html",
+      "caminho": "componentes/compartilhado/moldes/quarteto/variantes/renderizado/docs.html",
+      "categoria": "molde do Quarteto",
+      "familia": "docs.html",
+      "papel": "variante",
+      "dono_do_conteudo": "aidd-master",
+      "versao": "1.0.0",
+      "sha256": "sha256-74fc0f343b9c6a7dccd66cb2791358c1313c17dadf60f66a8a83edd11c1cc2d0",
+      "consumidores": [
+        "aidd-enterprise",
+        "aidd-master"
+      ],
+      "copias": [
+        "tools/aidd-enterprise/src/static/docs.html",
+        "tools/aidd-master/src/static/docs.html"
+      ],
+      "variante_de": "moldes/quarteto/docs.html",
+      "tipo_variante": "renderizado",
+      "motivo": "Página /docs já renderizada (Modulo1) servida pela própria ferramenta; o molde é o template Jinja."
+    },
+    {
+      "nome": "moldes/quarteto/variantes/templates/mcp_studio.html",
+      "caminho": "componentes/compartilhado/moldes/quarteto/variantes/templates/mcp_studio.html",
+      "categoria": "molde do Quarteto",
+      "familia": "mcp_studio.html",
+      "papel": "variante",
+      "dono_do_conteudo": "aidd-master",
+      "versao": "1.0.0",
+      "sha256": "sha256-8b04a95b595729238bb5f64d003ebcb24802b0afc2d055dbb4ae3702221076b5",
+      "consumidores": [
+        "aidd-enterprise",
+        "aidd-master"
+      ],
+      "copias": [
+        "tools/aidd-enterprise/templates/core/mcp_studio.html",
+        "tools/aidd-enterprise/templates/v2/mcp_studio.html",
+        "tools/aidd-master/templates/core/mcp_studio.html",
+        "tools/aidd-master/templates/v2/mcp_studio.html"
+      ],
+      "variante_de": "moldes/quarteto/mcp_studio.html",
+      "tipo_variante": "versao_divergente",
+      "motivo": "Mesma linhagem: as capacidades foram juntadas na principal; o texto original fica guardado até a remoção com o usuário (Ticket 19). Os templates não têm o Spotlight (Ctrl+K) da src-core."
+    },
+    {
+      "nome": "moldes/quarteto/variantes/templates/swagger.html",
+      "caminho": "componentes/compartilhado/moldes/quarteto/variantes/templates/swagger.html",
+      "categoria": "molde do Quarteto",
+      "familia": "swagger.html",
+      "papel": "variante",
+      "dono_do_conteudo": "aidd-master",
+      "versao": "1.0.0",
+      "sha256": "sha256-4538e60f53907276fd35fedb1117d3d77dd5ede4b106233671eced19921b6ade",
+      "consumidores": [
+        "aidd-enterprise",
+        "aidd-master"
+      ],
+      "copias": [
+        "tools/aidd-enterprise/templates/core/swagger.html",
+        "tools/aidd-enterprise/templates/v2/swagger.html",
+        "tools/aidd-master/templates/core/swagger.html",
+        "tools/aidd-master/templates/v2/swagger.html"
+      ],
+      "variante_de": "moldes/quarteto/swagger.html",
+      "tipo_variante": "versao_divergente",
+      "motivo": "Mesma linhagem: as capacidades foram juntadas na principal; o texto original fica guardado até a remoção com o usuário (Ticket 19). Os templates não têm o Spotlight (Ctrl+K) da src-core."
+    },
+    {
+      "nome": "moldes/quarteto/variantes/templates/webhook_studio.html",
+      "caminho": "componentes/compartilhado/moldes/quarteto/variantes/templates/webhook_studio.html",
+      "categoria": "molde do Quarteto",
+      "familia": "webhook_studio.html",
+      "papel": "variante",
+      "dono_do_conteudo": "aidd-master",
+      "versao": "1.0.0",
+      "sha256": "sha256-b7ce36e4fc1795f7e1cae1ea8dda7992ba63ca2717808e45f2c68beccfa80d2b",
+      "consumidores": [
+        "aidd-enterprise",
+        "aidd-master"
+      ],
+      "copias": [
+        "tools/aidd-enterprise/templates/core/webhook_studio.html",
+        "tools/aidd-enterprise/templates/v2/webhook_studio.html",
+        "tools/aidd-master/templates/core/webhook_studio.html",
+        "tools/aidd-master/templates/v2/webhook_studio.html"
+      ],
+      "variante_de": "moldes/quarteto/webhook_studio.html",
+      "tipo_variante": "versao_divergente",
+      "motivo": "Mesma linhagem: as capacidades foram juntadas na principal; o texto original fica guardado até a remoção com o usuário (Ticket 19). Os templates não têm o Spotlight (Ctrl+K) da src-core."
+    },
+    {
+      "nome": "moldes/quarteto/webhook_studio.html",
+      "caminho": "componentes/compartilhado/moldes/quarteto/webhook_studio.html",
+      "categoria": "molde do Quarteto",
+      "familia": "webhook_studio.html",
+      "papel": "principal",
+      "dono_do_conteudo": "aidd-master",
+      "versao": "1.0.0",
+      "sha256": "sha256-fd643066eed45531ff942f196fb59e5312e394175ba4d851b1402af2068b8495",
+      "consumidores": [
+        "aidd-enterprise",
+        "aidd-master",
+        "aidd-open"
+      ],
+      "copias": [],
+      "base": "componentes/compartilhado/src-core (Spotlight Ctrl+K) + tema __PRIMARY__ dos templates"
+    },
+    {
+      "nome": "moldes/quarteto/webhooks.py",
+      "caminho": "componentes/compartilhado/moldes/quarteto/webhooks.py",
+      "categoria": "molde do Quarteto",
+      "familia": "webhooks.py",
+      "papel": "principal",
+      "dono_do_conteudo": "aidd-master",
+      "versao": "1.0.0",
+      "sha256": "sha256-f08db06b85fc42c08bbb83a68fd6ce8dc84cb717c844cad49310ffa203f5c031",
+      "consumidores": [
+        "aidd-enterprise",
+        "aidd-master",
+        "aidd-open"
+      ],
+      "copias": [
+        "tools/aidd-enterprise/templates/core/webhooks.py",
+        "tools/aidd-enterprise/templates/v2/webhooks.py",
+        "tools/aidd-master/templates/core/webhooks.py",
+        "tools/aidd-master/templates/v2/webhooks.py"
+      ],
+      "base": "templates/core do aidd-master: já é a src-core + persistência do Webhook Studio + tema"
+    },
+    {
+      "nome": "specs/MAPA-DONOS-FERRAMENTAS.json",
+      "caminho": "componentes/compartilhado/specs/MAPA-DONOS-FERRAMENTAS.json",
+      "categoria": "spec",
+      "familia": "MAPA-DONOS-FERRAMENTAS.json",
+      "papel": "principal",
+      "dono_do_conteudo": "aidd-forge",
+      "versao": "1.0.0",
+      "sha256": "sha256-b66e03e810d2c7366182d720aa7d60be101c36fd822714ba5998b813a628e74e",
+      "consumidores": [
+        "aidd-forge",
+        "ecossistema-raiz"
+      ],
+      "copias": []
+    },
+    {
+      "nome": "specs/NOMES-ANTIGOS.json",
+      "caminho": "componentes/compartilhado/specs/NOMES-ANTIGOS.json",
+      "categoria": "spec",
+      "familia": "NOMES-ANTIGOS.json",
+      "papel": "principal",
+      "dono_do_conteudo": "aidd-forge",
+      "versao": "1.0.0",
+      "sha256": "sha256-2f48613380f9f366d4365cd6871f0ae9b01ad62b7d3e05a4f5610882fbd6757a",
+      "consumidores": [
+        "aidd-forge",
+        "ecossistema-raiz"
+      ],
+      "copias": []
+    },
+    {
+      "nome": "specs/handoff-engine-to-master.schema.json",
+      "caminho": "componentes/compartilhado/specs/handoff-engine-to-master.schema.json",
+      "categoria": "spec",
+      "familia": "handoff-engine-to-master.schema.json",
+      "papel": "principal",
+      "dono_do_conteudo": "aidd-master",
+      "versao": "1.0.0",
+      "sha256": "sha256-05f69ab39c8f4f4ec3f6ab69acf4010d4672e2729819e72cf8e999fb8fa2020a",
+      "consumidores": [
+        "aidd-master",
+        "ecossistema-raiz"
+      ],
+      "copias": []
+    },
+    {
+      "nome": "specs/handoff-enterprise-to-ops.schema.json",
+      "caminho": "componentes/compartilhado/specs/handoff-enterprise-to-ops.schema.json",
+      "categoria": "spec",
+      "familia": "handoff-enterprise-to-ops.schema.json",
+      "papel": "principal",
+      "dono_do_conteudo": "aidd-enterprise",
+      "versao": "1.0.0",
+      "sha256": "sha256-a6365797f87bd46c5c56d0deec0041b0114696c276671f30a6bd6dec86dafbb3",
+      "consumidores": [
+        "aidd-enterprise",
+        "ecossistema-raiz"
+      ],
+      "copias": []
+    },
+    {
+      "nome": "specs/handoff-execucao.schema.json",
+      "caminho": "componentes/compartilhado/specs/handoff-execucao.schema.json",
+      "categoria": "spec",
+      "familia": "handoff-execucao.schema.json",
+      "papel": "principal",
+      "dono_do_conteudo": "aidd-planner",
+      "versao": "1.0.0",
+      "sha256": "sha256-e6dec001bae5ae81577b69842b1852a707398766eecf45fe8304ebfbbc50a23d",
+      "consumidores": [
+        "aidd-planner",
+        "ecossistema-raiz"
+      ],
+      "copias": []
+    },
+    {
+      "nome": "specs/handoff-forge-to-planner.schema.json",
+      "caminho": "componentes/compartilhado/specs/handoff-forge-to-planner.schema.json",
+      "categoria": "spec",
+      "familia": "handoff-forge-to-planner.schema.json",
+      "papel": "principal",
+      "dono_do_conteudo": "aidd-forge",
+      "versao": "1.0.0",
+      "sha256": "sha256-6b7bc9daf1575d37689c1327dadf48328b907c0e6c5c86c11eb1eda52359a8c6",
+      "consumidores": [
+        "aidd-forge",
+        "ecossistema-raiz"
+      ],
+      "copias": []
+    },
+    {
+      "nome": "specs/handoff-master-to-enterprise.schema.json",
+      "caminho": "componentes/compartilhado/specs/handoff-master-to-enterprise.schema.json",
+      "categoria": "spec",
+      "familia": "handoff-master-to-enterprise.schema.json",
+      "papel": "principal",
+      "dono_do_conteudo": "aidd-master",
+      "versao": "1.0.0",
+      "sha256": "sha256-a3d72e40abfa52091c856f9b09a59cbd01ff90b68356abad5a9ff136de7c97ed",
+      "consumidores": [
+        "aidd-master",
+        "ecossistema-raiz"
+      ],
+      "copias": []
+    },
+    {
+      "nome": "specs/handoff-melhoria.schema.json",
+      "caminho": "componentes/compartilhado/specs/handoff-melhoria.schema.json",
+      "categoria": "spec",
+      "familia": "handoff-melhoria.schema.json",
+      "papel": "principal",
+      "dono_do_conteudo": "aidd-forge",
+      "versao": "1.0.0",
+      "sha256": "sha256-c55001bc63caf6ca001bf9d0039147d3f67fc3d3d445b22f6a565727a6d41e33",
+      "consumidores": [
+        "aidd-forge",
+        "ecossistema-raiz"
+      ],
+      "copias": []
+    },
+    {
+      "nome": "specs/handoff-planner-to-engine.schema.json",
+      "caminho": "componentes/compartilhado/specs/handoff-planner-to-engine.schema.json",
+      "categoria": "spec",
+      "familia": "handoff-planner-to-engine.schema.json",
+      "papel": "principal",
+      "dono_do_conteudo": "aidd-planner",
+      "versao": "1.0.0",
+      "sha256": "sha256-172239de30e191cc4363f2f774b0ddbc1b8594a70361b172db77e2399ddb1532",
+      "consumidores": [
+        "aidd-planner",
+        "ecossistema-raiz"
+      ],
+      "copias": []
+    },
+    {
+      "nome": "specs/plano-infraestrutura.schema.json",
+      "caminho": "componentes/compartilhado/specs/plano-infraestrutura.schema.json",
+      "categoria": "spec",
+      "familia": "plano-infraestrutura.schema.json",
+      "papel": "principal",
+      "dono_do_conteudo": "aidd-ops",
+      "versao": "1.0.0",
+      "sha256": "sha256-95275b8207e3993f0e3c6a506cf589b97d9330cba2cb04de566e91f5fd4877f9",
+      "consumidores": [
+        "aidd-enterprise",
+        "aidd-master",
+        "aidd-open",
+        "aidd-ops",
+        "aidd-planner"
+      ],
+      "copias": []
+    },
+    {
+      "nome": "specs/vsa-topological-dispatch.schema.json",
+      "caminho": "componentes/compartilhado/specs/vsa-topological-dispatch.schema.json",
+      "categoria": "spec",
+      "familia": "vsa-topological-dispatch.schema.json",
+      "papel": "principal",
+      "dono_do_conteudo": "aidd-planner",
+      "versao": "1.0.0",
+      "sha256": "sha256-67abe8b265333308c3f544841573259197e2c8e7cb4796faf0203ae64f75cc16",
+      "consumidores": [
+        "aidd-planner",
+        "ecossistema-raiz"
+      ],
+      "copias": []
+    },
+    {
+      "nome": "src-core/MANIFEST.json",
+      "caminho": "componentes/compartilhado/src-core/MANIFEST.json",
+      "categoria": "núcleo src-core",
+      "familia": "MANIFEST.json",
+      "papel": "principal",
+      "dono_do_conteudo": "aidd-master",
+      "versao": "1.0.0",
+      "sha256": "sha256-49bb434c6f48c52efcfc49bbbbba86f7993f5375801d7b053aea1af961735fab",
+      "consumidores": [
+        "aidd-enterprise",
+        "aidd-master"
+      ],
+      "copias": []
+    },
+    {
+      "nome": "src-core/__init__.py",
+      "caminho": "componentes/compartilhado/src-core/__init__.py",
+      "categoria": "núcleo src-core",
+      "familia": "__init__.py",
+      "papel": "principal",
+      "dono_do_conteudo": "aidd-master",
+      "versao": "1.0.0",
+      "sha256": "sha256-8b084a9f378124b2b1a51563bf3c22444eb7ff33692017da28b2136ae56987ed",
+      "consumidores": [
+        "aidd-enterprise",
+        "aidd-master"
+      ],
+      "copias": [
+        "tools/aidd-enterprise/src/core/__init__.py",
+        "tools/aidd-master/src/core/__init__.py"
+      ]
+    },
+    {
+      "nome": "src-core/assinatura_manifesto.py",
+      "caminho": "componentes/compartilhado/src-core/assinatura_manifesto.py",
+      "categoria": "núcleo src-core",
+      "familia": "assinatura_manifesto.py",
+      "papel": "principal",
+      "dono_do_conteudo": "aidd-master",
+      "versao": "1.0.0",
+      "sha256": "sha256-53eebfabed16522e624b819f401bb1cee6edafe20df712a225efd5f7b9555f15",
+      "consumidores": [
+        "aidd-enterprise",
+        "aidd-master"
+      ],
+      "copias": [
+        "tools/aidd-enterprise/src/core/assinatura_manifesto.py",
+        "tools/aidd-master/src/core/assinatura_manifesto.py"
+      ]
+    },
+    {
+      "nome": "src-core/caveman_protocol.py",
+      "caminho": "componentes/compartilhado/src-core/caveman_protocol.py",
+      "categoria": "núcleo src-core",
+      "familia": "caveman_protocol.py",
+      "papel": "principal",
+      "dono_do_conteudo": "aidd-master",
+      "versao": "1.0.0",
+      "sha256": "sha256-caa304650751891f23f1477586431fe2bc8d5b84c709a1c5d16bc9813de9cc35",
+      "consumidores": [
+        "aidd-enterprise",
+        "aidd-master"
+      ],
+      "copias": [
+        "tools/aidd-enterprise/src/core/caveman_protocol.py",
+        "tools/aidd-master/src/core/caveman_protocol.py"
+      ]
+    },
+    {
+      "nome": "src-core/circuit_breaker.py",
+      "caminho": "componentes/compartilhado/src-core/circuit_breaker.py",
+      "categoria": "núcleo src-core",
+      "familia": "circuit_breaker.py",
+      "papel": "principal",
+      "dono_do_conteudo": "aidd-master",
+      "versao": "1.0.0",
+      "sha256": "sha256-514fcd432733329b3191bb98dc309b6f4de7df8fb885ce2e4f19d727a36df045",
+      "consumidores": [
+        "aidd-enterprise",
+        "aidd-master"
+      ],
+      "copias": [
+        "tools/aidd-enterprise/src/core/circuit_breaker.py",
+        "tools/aidd-master/src/core/circuit_breaker.py"
+      ]
+    },
+    {
+      "nome": "src-core/cqrs.py",
+      "caminho": "componentes/compartilhado/src-core/cqrs.py",
+      "categoria": "núcleo src-core",
+      "familia": "cqrs.py",
+      "papel": "principal",
+      "dono_do_conteudo": "aidd-master",
+      "versao": "1.0.0",
+      "sha256": "sha256-93bb7de99451e8bc398301289039b6d5274cf389f69c649b7862e565b65d7213",
+      "consumidores": [
+        "aidd-enterprise",
+        "aidd-master"
+      ],
+      "copias": [
+        "tools/aidd-enterprise/src/core/cqrs.py",
+        "tools/aidd-master/src/core/cqrs.py"
+      ]
+    },
+    {
+      "nome": "src-core/database.py",
+      "caminho": "componentes/compartilhado/src-core/database.py",
+      "categoria": "núcleo src-core",
+      "familia": "database.py",
+      "papel": "principal",
+      "dono_do_conteudo": "aidd-master",
+      "versao": "1.0.0",
+      "sha256": "sha256-bbdac2d0000466cf4d7ebbb7695444a9f299234fdabe6bd95c82168d3813a298",
+      "consumidores": [
+        "aidd-enterprise",
+        "aidd-master"
+      ],
+      "copias": [
+        "tools/aidd-enterprise/src/core/database.py",
+        "tools/aidd-master/src/core/database.py"
+      ]
+    },
+    {
+      "nome": "src-core/database_adapter.py",
+      "caminho": "componentes/compartilhado/src-core/database_adapter.py",
+      "categoria": "núcleo src-core",
+      "familia": "database_adapter.py",
+      "papel": "principal",
+      "dono_do_conteudo": "aidd-master",
+      "versao": "1.0.0",
+      "sha256": "sha256-c8b9ec3ebfd713e73e4fc5bc513c349543af877b04fe1aa374ae0c3c8b47a222",
+      "consumidores": [
+        "aidd-enterprise",
+        "aidd-master"
+      ],
+      "copias": [
+        "tools/aidd-enterprise/src/core/database_adapter.py",
+        "tools/aidd-master/src/core/database_adapter.py"
+      ]
+    },
+    {
+      "nome": "src-core/design_catalog.py",
+      "caminho": "componentes/compartilhado/src-core/design_catalog.py",
+      "categoria": "núcleo src-core",
+      "familia": "design_catalog.py",
+      "papel": "principal",
+      "dono_do_conteudo": "aidd-master",
+      "versao": "1.0.0",
+      "sha256": "sha256-2c2d89b23e110a4af847368435251cd56a41a13cdd430959a94b0eb703a3bb5c",
+      "consumidores": [
+        "aidd-enterprise",
+        "aidd-master"
+      ],
+      "copias": [
+        "tools/aidd-enterprise/src/core/design_catalog.py",
+        "tools/aidd-master/src/core/design_catalog.py"
+      ]
+    },
+    {
+      "nome": "src-core/escritor_atomico.py",
+      "caminho": "componentes/compartilhado/src-core/escritor_atomico.py",
+      "categoria": "núcleo src-core",
+      "familia": "escritor_atomico.py",
+      "papel": "principal",
+      "dono_do_conteudo": "aidd-master",
+      "versao": "1.0.0",
+      "sha256": "sha256-282ac74c2212649ebbd4e85c75f7140889f266b747b26471a8c4f4d5c1c7bf99",
+      "consumidores": [
+        "aidd-enterprise",
+        "aidd-master"
+      ],
+      "copias": [
+        "tools/aidd-enterprise/src/core/escritor_atomico.py",
+        "tools/aidd-master/src/core/escritor_atomico.py"
+      ]
+    },
+    {
+      "nome": "src-core/events.py",
+      "caminho": "componentes/compartilhado/src-core/events.py",
+      "categoria": "núcleo src-core",
+      "familia": "events.py",
+      "papel": "principal",
+      "dono_do_conteudo": "aidd-master",
+      "versao": "1.0.0",
+      "sha256": "sha256-9964d701619fadc2c95a0bc9c1e6c45fff5c7ae42c79512c902ba1ff8baa8351",
+      "consumidores": [
+        "aidd-enterprise",
+        "aidd-master"
+      ],
+      "copias": [
+        "tools/aidd-enterprise/src/core/events.py",
+        "tools/aidd-master/src/core/events.py"
+      ]
+    },
+    {
+      "nome": "src-core/external_adapter.py",
+      "caminho": "componentes/compartilhado/src-core/external_adapter.py",
+      "categoria": "núcleo src-core",
+      "familia": "external_adapter.py",
+      "papel": "principal",
+      "dono_do_conteudo": "aidd-master",
+      "versao": "1.0.0",
+      "sha256": "sha256-7fb73300a3787f18ac5e2a06a1ed6522de78d8598271ea31eda39218802dfb77",
+      "consumidores": [
+        "aidd-enterprise",
+        "aidd-master"
+      ],
+      "copias": [
+        "tools/aidd-enterprise/src/core/external_adapter.py",
+        "tools/aidd-master/src/core/external_adapter.py"
+      ]
+    },
+    {
+      "nome": "src-core/fleet_discovery.py",
+      "caminho": "componentes/compartilhado/src-core/fleet_discovery.py",
+      "categoria": "núcleo src-core",
+      "familia": "fleet_discovery.py",
+      "papel": "principal",
+      "dono_do_conteudo": "aidd-master",
+      "versao": "1.0.0",
+      "sha256": "sha256-ca0dfb814c04ce2aa04dbda706f51ed2e298e49b092ecf106e90acf92d3878f5",
+      "consumidores": [
+        "aidd-enterprise",
+        "aidd-master"
+      ],
+      "copias": [
+        "tools/aidd-enterprise/src/core/fleet_discovery.py",
+        "tools/aidd-master/src/core/fleet_discovery.py"
+      ]
+    },
+    {
+      "nome": "src-core/fuzzing.py",
+      "caminho": "componentes/compartilhado/src-core/fuzzing.py",
+      "categoria": "núcleo src-core",
+      "familia": "fuzzing.py",
+      "papel": "principal",
+      "dono_do_conteudo": "aidd-master",
+      "versao": "1.0.0",
+      "sha256": "sha256-ffc45fb8532919d2171ad1426a8ceb7373cef1a7774d87c5e6052a35ad4fdcfe",
+      "consumidores": [
+        "aidd-enterprise",
+        "aidd-master"
+      ],
+      "copias": [
+        "tools/aidd-enterprise/src/core/fuzzing.py",
+        "tools/aidd-master/src/core/fuzzing.py"
+      ]
+    },
+    {
+      "nome": "src-core/intent_router.py",
+      "caminho": "componentes/compartilhado/src-core/intent_router.py",
+      "categoria": "núcleo src-core",
+      "familia": "intent_router.py",
+      "papel": "principal",
+      "dono_do_conteudo": "aidd-master",
+      "versao": "1.0.0",
+      "sha256": "sha256-07415c445464c3fa9d14ccab4d75ca38999a5c6a3ce5e853c2a722050e8c56d5",
+      "consumidores": [
+        "aidd-enterprise",
+        "aidd-master"
+      ],
+      "copias": [
+        "tools/aidd-enterprise/src/core/intent_router.py",
+        "tools/aidd-master/src/core/intent_router.py"
+      ]
+    },
+    {
+      "nome": "src-core/jobs.py",
+      "caminho": "componentes/compartilhado/src-core/jobs.py",
+      "categoria": "núcleo src-core",
+      "familia": "jobs.py",
+      "papel": "principal",
+      "dono_do_conteudo": "aidd-master",
+      "versao": "1.0.0",
+      "sha256": "sha256-270aed1122227539ca22b6b327c861892cfa0b145d41258b1433fe92c94a4108",
+      "consumidores": [
+        "aidd-enterprise",
+        "aidd-master"
+      ],
+      "copias": [
+        "tools/aidd-enterprise/src/core/jobs.py",
+        "tools/aidd-master/src/core/jobs.py"
+      ]
+    },
+    {
+      "nome": "src-core/local_first.py",
+      "caminho": "componentes/compartilhado/src-core/local_first.py",
+      "categoria": "núcleo src-core",
+      "familia": "local_first.py",
+      "papel": "principal",
+      "dono_do_conteudo": "aidd-master",
+      "versao": "1.0.0",
+      "sha256": "sha256-c3b0c2bd19ecce6eaa2a7bddb4f2019774f86f3a013b5d80c70fba5d3c28fe9a",
+      "consumidores": [
+        "aidd-enterprise",
+        "aidd-master"
+      ],
+      "copias": [
+        "tools/aidd-enterprise/src/core/local_first.py",
+        "tools/aidd-master/src/core/local_first.py"
+      ]
+    },
+    {
+      "nome": "src-core/logs.py",
+      "caminho": "componentes/compartilhado/src-core/logs.py",
+      "categoria": "núcleo src-core",
+      "familia": "logs.py",
+      "papel": "principal",
+      "dono_do_conteudo": "aidd-master",
+      "versao": "1.0.0",
+      "sha256": "sha256-6d785feefe4c60c41c040807363415963723e2a0b7831bc70d63174a2dec2888",
+      "consumidores": [
+        "aidd-enterprise",
+        "aidd-master"
+      ],
+      "copias": [
+        "tools/aidd-enterprise/src/core/logs.py",
+        "tools/aidd-master/src/core/logs.py"
+      ]
+    },
+    {
+      "nome": "src-core/materializador.py",
+      "caminho": "componentes/compartilhado/src-core/materializador.py",
+      "categoria": "núcleo src-core",
+      "familia": "materializador.py",
+      "papel": "principal",
+      "dono_do_conteudo": "aidd-master",
+      "versao": "1.0.0",
+      "sha256": "sha256-ac5d9d800c2ead27a43c1df71d011a04adc173f34d018110f6ff912a97f75623",
+      "consumidores": [
+        "aidd-enterprise",
+        "aidd-master"
+      ],
+      "copias": [
+        "tools/aidd-enterprise/src/core/materializador.py",
+        "tools/aidd-master/src/core/materializador.py"
+      ]
+    },
+    {
+      "nome": "src-core/mcp_gatekeeper.py",
+      "caminho": "componentes/compartilhado/src-core/mcp_gatekeeper.py",
+      "categoria": "núcleo src-core",
+      "familia": "mcp_gatekeeper.py",
+      "papel": "principal",
+      "dono_do_conteudo": "aidd-master",
+      "versao": "1.0.0",
+      "sha256": "sha256-da00319d15131a47f915f943d37199905f2530b3e287017b56b703e491c72096",
+      "consumidores": [
+        "aidd-enterprise",
+        "aidd-master"
+      ],
+      "copias": []
+    },
+    {
+      "nome": "src-core/mcp_gatekeeper_backends.json",
+      "caminho": "componentes/compartilhado/src-core/mcp_gatekeeper_backends.json",
+      "categoria": "núcleo src-core",
+      "familia": "mcp_gatekeeper_backends.json",
+      "papel": "principal",
+      "dono_do_conteudo": "aidd-master",
+      "versao": "1.0.0",
+      "sha256": "sha256-a0b4d129515c1e966bf273a4a158155b6367320d905da78e76ba4df49c60d3da",
+      "consumidores": [
+        "aidd-enterprise",
+        "aidd-master"
+      ],
+      "copias": []
+    },
+    {
+      "nome": "src-core/mcp_server.py",
+      "caminho": "componentes/compartilhado/src-core/mcp_server.py",
+      "categoria": "núcleo src-core",
+      "familia": "mcp_server.py",
+      "papel": "principal",
+      "dono_do_conteudo": "aidd-master",
+      "versao": "1.0.0",
+      "sha256": "sha256-e70f9b5f83212eb17fa67eff6ec75314e9c129a6811f8fee71bec53f83fa4431",
+      "consumidores": [
+        "aidd-enterprise",
+        "aidd-master"
+      ],
+      "copias": [
+        "tools/aidd-enterprise/src/core/mcp_server.py",
+        "tools/aidd-master/src/core/mcp_server.py"
+      ]
+    },
+    {
+      "nome": "src-core/mcp_studio.html",
+      "caminho": "componentes/compartilhado/src-core/mcp_studio.html",
+      "categoria": "núcleo src-core",
+      "familia": "mcp_studio.html",
+      "papel": "principal",
+      "dono_do_conteudo": "aidd-master",
+      "versao": "1.0.0",
+      "sha256": "sha256-44131bb757ee7e6496dd3781343d129685d5b357f8cc015322d0a60a30f7b33b",
+      "consumidores": [
+        "aidd-enterprise",
+        "aidd-master"
+      ],
+      "copias": [
+        "tools/aidd-enterprise/src/core/mcp_studio.html",
+        "tools/aidd-master/src/core/mcp_studio.html"
+      ]
+    },
+    {
+      "nome": "src-core/metrics.py",
+      "caminho": "componentes/compartilhado/src-core/metrics.py",
+      "categoria": "núcleo src-core",
+      "familia": "metrics.py",
+      "papel": "principal",
+      "dono_do_conteudo": "aidd-master",
+      "versao": "1.0.0",
+      "sha256": "sha256-043b52bf1f9a62077e09d4c58d9fbd2105ac6039194744591c032fe87dcb30e2",
+      "consumidores": [
+        "aidd-enterprise",
+        "aidd-master"
+      ],
+      "copias": [
+        "tools/aidd-enterprise/src/core/metrics.py",
+        "tools/aidd-master/src/core/metrics.py"
+      ]
+    },
+    {
+      "nome": "src-core/nextjs_exporter.py",
+      "caminho": "componentes/compartilhado/src-core/nextjs_exporter.py",
+      "categoria": "núcleo src-core",
+      "familia": "nextjs_exporter.py",
+      "papel": "principal",
+      "dono_do_conteudo": "aidd-master",
+      "versao": "1.0.0",
+      "sha256": "sha256-87233fbabe24b9f9168d6276ab4b8ce4a8b224a39d2283864f5d7488cbdbfbc5",
+      "consumidores": [
+        "aidd-enterprise",
+        "aidd-master"
+      ],
+      "copias": [
+        "tools/aidd-enterprise/src/core/nextjs_exporter.py",
+        "tools/aidd-master/src/core/nextjs_exporter.py"
+      ]
+    },
+    {
+      "nome": "src-core/openapi.py",
+      "caminho": "componentes/compartilhado/src-core/openapi.py",
+      "categoria": "núcleo src-core",
+      "familia": "openapi.py",
+      "papel": "principal",
+      "dono_do_conteudo": "aidd-master",
+      "versao": "1.0.0",
+      "sha256": "sha256-d77f87f3a0ea52a65803f55cc75e68c462c15a6d369fba829e9564d7dc1f2560",
+      "consumidores": [
+        "aidd-enterprise",
+        "aidd-master"
+      ],
+      "copias": [
+        "tools/aidd-enterprise/src/core/openapi.py",
+        "tools/aidd-master/src/core/openapi.py"
+      ]
+    },
+    {
+      "nome": "src-core/opentelemetry.py",
+      "caminho": "componentes/compartilhado/src-core/opentelemetry.py",
+      "categoria": "núcleo src-core",
+      "familia": "opentelemetry.py",
+      "papel": "principal",
+      "dono_do_conteudo": "aidd-master",
+      "versao": "1.0.0",
+      "sha256": "sha256-f756d339728e664fdd4cdcf8887c5d087adfff224d62969cdb179e7ccc9db4d2",
+      "consumidores": [
+        "aidd-enterprise",
+        "aidd-master"
+      ],
+      "copias": [
+        "tools/aidd-enterprise/src/core/opentelemetry.py",
+        "tools/aidd-master/src/core/opentelemetry.py"
+      ]
+    },
+    {
+      "nome": "src-core/outbox_worker.py",
+      "caminho": "componentes/compartilhado/src-core/outbox_worker.py",
+      "categoria": "núcleo src-core",
+      "familia": "outbox_worker.py",
+      "papel": "principal",
+      "dono_do_conteudo": "aidd-master",
+      "versao": "1.0.0",
+      "sha256": "sha256-36849c547493500bd42bb89aee1cc4be440a26536d6382927d90675728d88e6d",
+      "consumidores": [
+        "aidd-enterprise",
+        "aidd-master"
+      ],
+      "copias": [
+        "tools/aidd-enterprise/src/core/outbox_worker.py",
+        "tools/aidd-master/src/core/outbox_worker.py"
+      ]
+    },
+    {
+      "nome": "src-core/package_verifier.py",
+      "caminho": "componentes/compartilhado/src-core/package_verifier.py",
+      "categoria": "núcleo src-core",
+      "familia": "package_verifier.py",
+      "papel": "principal",
+      "dono_do_conteudo": "aidd-master",
+      "versao": "1.0.0",
+      "sha256": "sha256-f37f47fab71873d77e8f4bbf39e503cebb3a3ace276f960f76aa253615d74840",
+      "consumidores": [
+        "aidd-enterprise",
+        "aidd-master"
+      ],
+      "copias": []
+    },
+    {
+      "nome": "src-core/result.py",
+      "caminho": "componentes/compartilhado/src-core/result.py",
+      "categoria": "núcleo src-core",
+      "familia": "result.py",
+      "papel": "principal",
+      "dono_do_conteudo": "aidd-master",
+      "versao": "1.0.0",
+      "sha256": "sha256-0ebdc8a8752a688273ccfb02f7addf16bac589687c2dc6c4242208b38f78d06b",
+      "consumidores": [
+        "aidd-enterprise",
+        "aidd-master"
+      ],
+      "copias": [
+        "tools/aidd-enterprise/src/core/result.py",
+        "tools/aidd-master/src/core/result.py"
+      ]
+    },
+    {
+      "nome": "src-core/sandbox_runner.py",
+      "caminho": "componentes/compartilhado/src-core/sandbox_runner.py",
+      "categoria": "núcleo src-core",
+      "familia": "sandbox_runner.py",
+      "papel": "principal",
+      "dono_do_conteudo": "aidd-master",
+      "versao": "1.0.0",
+      "sha256": "sha256-d42a9b73d108932e0f097fae525f8a4a8582d2abde40e04bc2775c7e636ae48f",
+      "consumidores": [
+        "aidd-enterprise",
+        "aidd-master"
+      ],
+      "copias": []
+    },
+    {
+      "nome": "src-core/security.py",
+      "caminho": "componentes/compartilhado/src-core/security.py",
+      "categoria": "núcleo src-core",
+      "familia": "security.py",
+      "papel": "principal",
+      "dono_do_conteudo": "aidd-master",
+      "versao": "1.0.0",
+      "sha256": "sha256-4a5d93b347bcc84d51fc48ecdcee7e99361b810725ce1f40fa26ab4514d4a520",
+      "consumidores": [
+        "aidd-enterprise",
+        "aidd-master"
+      ],
+      "copias": [
+        "tools/aidd-enterprise/src/core/security.py",
+        "tools/aidd-master/src/core/security.py"
+      ]
+    },
+    {
+      "nome": "src-core/sincronizador_harness.py",
+      "caminho": "componentes/compartilhado/src-core/sincronizador_harness.py",
+      "categoria": "sincronizador de harness",
+      "familia": "sincronizador_harness.py",
+      "papel": "principal",
+      "dono_do_conteudo": "aidd-master",
+      "versao": "1.0.0",
+      "sha256": "sha256-669bd3d9b3373e939f66f69abe985876dfc4ce9c750e1e5b1b192c0da1896d1b",
+      "consumidores": [
+        "aidd-enterprise",
+        "aidd-master"
+      ],
+      "copias": [
+        "tools/aidd-enterprise/src/core/sincronizador_harness.py",
+        "tools/aidd-master/src/core/sincronizador_harness.py"
+      ]
+    },
+    {
+      "nome": "src-core/subagent_engine.py",
+      "caminho": "componentes/compartilhado/src-core/subagent_engine.py",
+      "categoria": "núcleo src-core",
+      "familia": "subagent_engine.py",
+      "papel": "principal",
+      "dono_do_conteudo": "aidd-master",
+      "versao": "1.0.0",
+      "sha256": "sha256-b7e8080e60d893034e2dcb2fef7ab2a4c189a6611513a296f2ff486bb66fa64d",
+      "consumidores": [
+        "aidd-enterprise",
+        "aidd-master"
+      ],
+      "copias": [
+        "tools/aidd-enterprise/src/core/subagent_engine.py",
+        "tools/aidd-master/src/core/subagent_engine.py"
+      ]
+    },
+    {
+      "nome": "src-core/swagger.html",
+      "caminho": "componentes/compartilhado/src-core/swagger.html",
+      "categoria": "núcleo src-core",
+      "familia": "swagger.html",
+      "papel": "principal",
+      "dono_do_conteudo": "aidd-master",
+      "versao": "1.0.0",
+      "sha256": "sha256-d5cf534de98ece8f76bb6c9879d95f6d495b6e192b6b5e2abe7d0daf609d3bba",
+      "consumidores": [
+        "aidd-enterprise",
+        "aidd-master"
+      ],
+      "copias": [
+        "tools/aidd-enterprise/src/core/swagger.html",
+        "tools/aidd-master/src/core/swagger.html"
+      ]
+    },
+    {
+      "nome": "src-core/sync.py",
+      "caminho": "componentes/compartilhado/src-core/sync.py",
+      "categoria": "núcleo src-core",
+      "familia": "sync.py",
+      "papel": "principal",
+      "dono_do_conteudo": "aidd-master",
+      "versao": "1.0.0",
+      "sha256": "sha256-6fc111da88eff3ddd524bf1840259ca35d9b350ab2c5865b68592bc98dc2ddbd",
+      "consumidores": [
+        "aidd-enterprise",
+        "aidd-master"
+      ],
+      "copias": []
+    },
+    {
+      "nome": "src-core/token_revocation.py",
+      "caminho": "componentes/compartilhado/src-core/token_revocation.py",
+      "categoria": "núcleo src-core",
+      "familia": "token_revocation.py",
+      "papel": "principal",
+      "dono_do_conteudo": "aidd-master",
+      "versao": "1.0.0",
+      "sha256": "sha256-9a5410fa2ac9081705031890ecaded31bb1d2312f8935ffa8162d12995887f67",
+      "consumidores": [
+        "aidd-enterprise",
+        "aidd-master"
+      ],
+      "copias": [
+        "tools/aidd-enterprise/src/core/token_revocation.py",
+        "tools/aidd-master/src/core/token_revocation.py"
+      ]
+    },
+    {
+      "nome": "src-core/transaction_log.py",
+      "caminho": "componentes/compartilhado/src-core/transaction_log.py",
+      "categoria": "núcleo src-core",
+      "familia": "transaction_log.py",
+      "papel": "principal",
+      "dono_do_conteudo": "aidd-master",
+      "versao": "1.0.0",
+      "sha256": "sha256-a82947b33c75a04967b3a2d753bc617d559307d016563d7da3b8ea07b27cab90",
+      "consumidores": [
+        "aidd-enterprise",
+        "aidd-master"
+      ],
+      "copias": [
+        "tools/aidd-enterprise/src/core/transaction_log.py",
+        "tools/aidd-master/src/core/transaction_log.py"
+      ]
+    },
+    {
+      "nome": "src-core/webhook_studio.html",
+      "caminho": "componentes/compartilhado/src-core/webhook_studio.html",
+      "categoria": "núcleo src-core",
+      "familia": "webhook_studio.html",
+      "papel": "principal",
+      "dono_do_conteudo": "aidd-master",
+      "versao": "1.0.0",
+      "sha256": "sha256-287911a49ecf4408a26f8ecb5862543b0a4bfd3b33280558a3031568b93ba1f1",
+      "consumidores": [
+        "aidd-enterprise",
+        "aidd-master"
+      ],
+      "copias": [
+        "tools/aidd-enterprise/src/core/webhook_studio.html",
+        "tools/aidd-master/src/core/webhook_studio.html"
+      ]
+    },
+    {
+      "nome": "src-core/webhooks.py",
+      "caminho": "componentes/compartilhado/src-core/webhooks.py",
+      "categoria": "núcleo src-core",
+      "familia": "webhooks.py",
+      "papel": "principal",
+      "dono_do_conteudo": "aidd-master",
+      "versao": "1.0.0",
+      "sha256": "sha256-69d6cc6162f243deb8545baece8f0c31e3d1a729d88a594a41d2a48169b01981",
+      "consumidores": [
+        "aidd-enterprise",
+        "aidd-master"
+      ],
+      "copias": [
+        "tools/aidd-enterprise/src/core/webhooks.py",
+        "tools/aidd-master/src/core/webhooks.py"
+      ]
+    }
+  ]
+}

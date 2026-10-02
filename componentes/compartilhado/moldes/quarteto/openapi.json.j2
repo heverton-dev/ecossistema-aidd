@@ -1,0 +1,61 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "AIDD Gateway — {{ nicho_nome_exibicao }}",
+    "description": "API Gateway para integracao entre servicos",
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "http://localhost:8000",
+      "description": "Desenvolvimento"
+    }
+  ],
+  "paths": {
+    "/healthz": {
+      "get": {
+        "summary": "Healthcheck global",
+        "responses": {
+          "200": {
+            "description": "Status do gateway e servicos",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": { "type": "string" },
+                    "services": { "type": "object" }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    {% for servico in servicos %}
+    "/{{ servico.nome_slug }}/healthz": {
+      "get": {
+        "summary": "Healthcheck {{ servico.nome }}",
+        "responses": { "200": { "description": "Status do servico" } }
+      }
+    },
+    "/{{ servico.nome_slug }}/{path}": {
+      "get": {
+        "summary": "Proxy GET para {{ servico.nome }}",
+        "parameters": [
+          { "name": "path", "in": "path", "required": true, "schema": { "type": "string" } }
+        ],
+        "responses": { "200": { "description": "Response do servico" } }
+      },
+      "post": {
+        "summary": "Proxy POST para {{ servico.nome }}",
+        "parameters": [
+          { "name": "path", "in": "path", "required": true, "schema": { "type": "string" } }
+        ],
+        "responses": { "201": { "description": "Recurso criado" } }
+      }
+    }{% if not loop.last %},{% endif %}
+    {% endfor %}
+  }
+}

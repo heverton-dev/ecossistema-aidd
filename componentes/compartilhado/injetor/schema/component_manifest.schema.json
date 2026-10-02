@@ -1,0 +1,75 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://aidd-master-enterprise.local/schemas/component_manifest.schema.json",
+  "title": "AIDD Universal Component Injector — Component Manifest",
+  "description": "Contrato de um componente injetável (skill, mcp, rule, spec, config, hook ou agent) no aidd-master-enterprise.",
+  "type": "object",
+  "required": ["type", "name"],
+  "properties": {
+    "type": {
+      "type": "string",
+      "enum": ["skill", "mcp", "rule", "spec", "config", "hook", "agent"],
+      "description": "Categoria do componente a ser materializado."
+    },
+    "name": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9-]*$",
+      "description": "Slug único do componente, usado em nomes de arquivo e chaves do registry."
+    },
+    "description": {
+      "type": "string",
+      "description": "Descrição em PT-BR do propósito do componente."
+    },
+    "content": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Conteúdo textual completo do componente (usado por skill, rule, spec, agent e hook)."
+    },
+    "mcp": {
+      "type": "object",
+      "required": ["command"],
+      "properties": {
+        "command": { "type": "string", "minLength": 1 },
+        "args": { "type": "array", "items": { "type": "string" }, "default": [] },
+        "env": { "type": "object", "additionalProperties": { "type": "string" }, "default": {} }
+      },
+      "additionalProperties": false
+    },
+    "files": {
+      "type": "object",
+      "minProperties": 1,
+      "additionalProperties": { "type": "string" },
+      "description": "Mapa de caminho-relativo -> conteúdo, usado apenas por type=config."
+    }
+  },
+  "allOf": [
+    {
+      "if": { "properties": { "type": { "const": "skill" } } },
+      "then": { "required": ["content"] }
+    },
+    {
+      "if": { "properties": { "type": { "const": "rule" } } },
+      "then": { "required": ["content"] }
+    },
+    {
+      "if": { "properties": { "type": { "const": "spec" } } },
+      "then": { "required": ["content"] }
+    },
+    {
+      "if": { "properties": { "type": { "const": "agent" } } },
+      "then": { "required": ["content"] }
+    },
+    {
+      "if": { "properties": { "type": { "const": "hook" } } },
+      "then": { "required": ["content"] }
+    },
+    {
+      "if": { "properties": { "type": { "const": "mcp" } } },
+      "then": { "required": ["mcp"] }
+    },
+    {
+      "if": { "properties": { "type": { "const": "config" } } },
+      "then": { "required": ["files"] }
+    }
+  ]
+}
