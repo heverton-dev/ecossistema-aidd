@@ -142,8 +142,8 @@
     },
     "scripts": {
       "add_module.py": {
-        "esperado_identico": true,
-        "motivo": null
+        "esperado_identico": false,
+        "motivo": "aidd-master emite o contrato C4 (HANDOFF_MASTER_ENTERPRISE.json) ao adicionar módulo, papel só do master (fronteiras-ferramentas Ticket 17); aidd-enterprise não integra fatias."
       },
       "aidd.py": {
         "esperado_identico": false,

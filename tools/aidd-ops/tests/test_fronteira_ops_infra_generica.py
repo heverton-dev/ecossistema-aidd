@@ -341,3 +341,13 @@ def test_nicho_explicito_continua_como_atalho(tmp_path):
     assert codigo == 0, saida
     plano = json.loads((tmp_path / "atalho" / "PLANO-INFRAESTRUTURA.json").read_text(encoding="utf-8"))
     assert plano["fase_1_intake"]["saida"]["nicho_slug"] == "clinicas"
+
+
+def test_dockerfile_instala_requirements_antes_de_copiar_o_codigo(dois_projetos):
+    """Achado real vindo do aidd-master (Ticket 17): Dockerfile sem `pip install -r
+    requirements.txt` antes do src/ quebrava com ModuleNotFoundError no primeiro pacote
+    de terceiro."""
+    for chave in ("a", "b"):
+        conteudo = (dois_projetos[chave][0] / "Dockerfile").read_text(encoding="utf-8")
+        assert "pip install" in conteudo and "requirements.txt" in conteudo
+        assert conteudo.index("pip install") < conteudo.index("COPY --chown=aidduser:aiddgroup src/")

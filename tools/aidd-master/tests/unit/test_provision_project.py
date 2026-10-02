@@ -156,36 +156,19 @@ def test_provision_requirements_txt_inclui_sqlglot_e_returns(tmp_path):
     assert "returns" in conteudo
 
 
-def test_provision_copia_pasta_nginx_com_conf_e_gerador_ssl(tmp_path):
-    """Achado real: docker-compose.yml gerado monta ./nginx/nginx.conf e
-    ./nginx/ssl como bind mounts, mas provision() nunca copiava a pasta
-    nginx/ (compose_suite() ja fazia isso corretamente, para outro fluxo).
-    `docker compose up` do projeto gerado por `master init` falhava
-    tentando montar um caminho inexistente."""
+def test_provision_nao_gera_infra_que_e_do_aidd_ops(tmp_path):
+    """Ticket 17 (fronteiras-ferramentas): Dockerfile, docker-compose.yml, deploy.sh e
+    nginx/ saem do `master init` e passam a ser do aidd-ops. Os dois achados reais
+    que os testes antigos guardavam (pasta nginx/ com o gerador de SSL; Dockerfile
+    instalando requirements antes do src/) estão em
+    tools/aidd-ops/tests/test_fronteira_ops_infra_generica.py."""
     from provision_project import provision
 
-    provision("Projeto Teste Nginx", base_dir=str(tmp_path))
+    provision("Projeto Teste Sem Infra", base_dir=str(tmp_path))
     projeto_dir = next(p for p in tmp_path.iterdir() if p.is_dir() and not p.name.startswith("proj_"))
 
-    assert (projeto_dir / "nginx" / "nginx.conf").is_file()
-    assert (projeto_dir / "nginx" / "ssl" / "generate_ssl.py").is_file()
-
-
-def test_provision_dockerfile_instala_requirements_antes_de_rodar(tmp_path):
-    """Achado real: templates/core/Dockerfile (usado por `master init`) nunca
-    rodava `pip install -r requirements.txt` — so copiava src/ e executava
-    `python src/server.py` direto. Qualquer projeto gerado quebrava com
-    ModuleNotFoundError na primeira dependencia de terceiro nao presente na
-    imagem base `python:3.12-slim`. templates/v2/Dockerfile (compose_suite)
-    ja instalava; os dois templates divergiam."""
-    from provision_project import provision
-
-    provision("Projeto Teste Dockerfile", base_dir=str(tmp_path))
-    projeto_dir = next(p for p in tmp_path.iterdir() if p.is_dir() and not p.name.startswith("proj_"))
-
-    conteudo = (projeto_dir / "Dockerfile").read_text(encoding="utf-8")
-    assert "pip install" in conteudo and "requirements.txt" in conteudo
-    assert conteudo.index("pip install") < conteudo.index("COPY --chown=aidduser:aiddgroup src/")
+    for nome in ("Dockerfile", "docker-compose.yml", "deploy.sh", "nginx"):
+        assert not (projeto_dir / nome).exists(), f"master init gerou {nome}, que é do aidd-ops"
 
 
 def test_provision_server_py_importa_de_verdade_sem_modulenotfounderror(tmp_path):

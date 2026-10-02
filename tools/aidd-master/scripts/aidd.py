@@ -139,6 +139,16 @@ def _init_cmd(nome, dir):
     cmd_init(types.SimpleNamespace(nome=nome, dir=dir))
 
 
+@cli.command("integrate", help="Integra fatias verticais, mede o Quarteto e emite contrato formal C4")
+@click.option("--dir", "--pasta", "dir", default=".", help="Diretório raiz do projeto")
+def _integrate_cmd(dir):
+    try:
+        from integrador_master import integrar_fatias_e_emitir_c4
+    except ImportError:
+        from scripts.integrador_master import integrar_fatias_e_emitir_c4
+    integrar_fatias_e_emitir_c4(dir)
+
+
 @cli.command("compose", help="Compõe suíte empresarial completa")
 @click.argument("target_dir")
 @click.argument("suite_name")

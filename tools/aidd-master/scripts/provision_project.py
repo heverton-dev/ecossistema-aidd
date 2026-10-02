@@ -21,6 +21,12 @@ def _renderizar_e_escrever_docs_html(templates_dir, static_dir, suite_name, modu
     """
     docs_template_path = os.path.join(templates_dir, 'docs.html')
     if not os.path.exists(docs_template_path):
+        try:
+            from aidd_forge.core.almoxarifado import caminho_peca
+            docs_template_path = str(caminho_peca("moldes/quarteto/docs.html"))
+        except Exception:
+            pass
+    if not os.path.exists(docs_template_path):
         return
     with open(docs_template_path, 'r', encoding='utf-8') as f:
         raw_docs_html = f.read()
@@ -70,51 +76,31 @@ def provision(project_desc, base_dir=None, frontend_stack='nextjs'):
 
     if os.path.exists(templates_dir):
         from compose_suite import CORE_KERNEL_FILES
-        for f in CORE_KERNEL_FILES + ['repositories.py', 'swagger.html', 'webhook_studio.html', 'mcp_studio.html']:
+        for f in CORE_KERNEL_FILES + ['repositories.py']:
             src = os.path.join(templates_dir, f)
             if os.path.exists(src):
                 shutil.copyfile(src, os.path.join(project_dir, 'src', 'core', f))
-        
-        # index.html NÃO é copiado daqui: templates/core/index.html é uma cópia
-        # estática desatualizada (sem as variáveis CSS/modal que G_CONTRACTS
-        # exige) — é gerado dinamicamente no passo 5.1 com o mesmo gerador que
-        # compose_suite() usa (generate_superapp_index_html), sempre em dia.
-        #
-        # output.css: achado real (18/09/2026, print do usuário) — docs.html
-        # (Swagger/Guia) referencia `<link rel="stylesheet" href="/static/
-        # output.css">` para as classes utilitárias Tailwind (w-6, h-4 etc).
-        # compose_suite() já copiava esse arquivo; provision_project() nunca
-        # copiava — o CSS voltava 404 em produção e TODA a página (ícones,
-        # cores, espaçamento) renderizava sem estilo nenhum (ícones SVG
-        # gigantes, texto sem layout).
-        # docs.html NÃO é copiado cru aqui: é um MOLDE Jinja2 (placeholders
-        # tipo {{ spotlight_commands }}) que só é renderizado de verdade mais
-        # abaixo, depois que os módulos já existem em disco (ver passo 5.1).
+
+        # Assets HTML dos Studios do Quarteto Sine Qua Non: obtidos via almoxarifado (Ticket 17 / D1)
+        for asset in ['swagger.html', 'webhook_studio.html', 'mcp_studio.html']:
+            src = None
+            try:
+                from aidd_forge.core.almoxarifado import caminho_peca
+                src = str(caminho_peca(f"moldes/quarteto/{asset}"))
+            except Exception:
+                local_src = os.path.join(templates_dir, asset)
+                if os.path.exists(local_src):
+                    src = local_src
+            if src and os.path.exists(src):
+                shutil.copyfile(src, os.path.join(project_dir, 'src', 'core', asset))
+
         src_output_css = os.path.join(templates_dir, 'output.css')
         if os.path.exists(src_output_css):
             os.makedirs(os.path.join(project_dir, 'src', 'static'), exist_ok=True)
             shutil.copyfile(src_output_css, os.path.join(project_dir, 'src', 'static', 'output.css'))
 
-        for f in ['Dockerfile', 'docker-compose.yml', 'deploy.sh']:
-            src = os.path.join(templates_dir, f)
-            if os.path.exists(src):
-                shutil.copyfile(src, os.path.join(project_dir, f))
-
-        # nginx/ (nginx.conf + ssl/generate_ssl.py): docker-compose.yml monta
-        # ./nginx/nginx.conf e ./nginx/ssl — sem esta pasta o serviço nginx
-        # nunca sobe (bind mount de arquivo inexistente). compose_suite.py já
-        # copiava isto corretamente; provision_project.py nunca copiava
-        # (achado real: `docker compose up` do projeto gerado por `master init`
-        # falhava com bind mount ausente — validação E2E do Fluxo 01, 17/09/2026).
-        nginx_src = os.path.join(templates_dir, 'nginx')
-        if os.path.isdir(nginx_src):
-            nginx_dst = os.path.join(project_dir, 'nginx')
-            for root, _dirs, files in os.walk(nginx_src):
-                rel = os.path.relpath(root, nginx_src)
-                d_dir = os.path.join(nginx_dst, rel) if rel != '.' else nginx_dst
-                os.makedirs(d_dir, exist_ok=True)
-                for f in files:
-                    shutil.copyfile(os.path.join(root, f), os.path.join(d_dir, f))
+        # Ticket 17 / D1: infraestrutura (Dockerfile, docker-compose.yml, deploy.sh, nginx/)
+        # não é mais gerada pelo aidd-master. Essa responsabilidade pertence ao aidd-ops.
 
         if os.path.exists(os.path.join(templates_dir, 'locustfile.py')):
             shutil.copyfile(os.path.join(templates_dir, 'locustfile.py'), os.path.join(project_dir, 'tests', 'load', 'locustfile.py'))
@@ -219,8 +205,14 @@ def provision(project_desc, base_dir=None, frontend_stack='nextjs'):
         json.dump(plano, f, indent=2, ensure_ascii=False)
 
     # 8. Git Init
-    if not os.path.exists(os.path.join(project_dir, '.git')):
-        subprocess.run(['git', 'init'], cwd=project_dir, capture_output=True)
+    # 9. Integração e emissão de C4 se C3 estiver presente
+    try:
+        from integrador_master import integrar_fatias_e_emitir_c4
+        c3_file = os.path.join(project_dir, 'HANDOFF_ENGINE_MASTER.json')
+        if os.path.isfile(c3_file):
+            integrar_fatias_e_emitir_c4(project_dir)
+    except Exception:
+        pass
 
     print(f"✨ PROJETO '{slug}' 100% PROVISIONADO COM SHARED KERNEL, FATIAS VERTICAIS E GATES RÍGIDOS!")
 

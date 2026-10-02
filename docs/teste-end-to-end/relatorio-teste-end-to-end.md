@@ -1138,3 +1138,19 @@
   - `scripts/e2e_foto.py rodar` + `comparar --base ciclo-01` → exit 0, nenhuma métrica piorou.
 - **Status:** **RESOLVIDO**.
 - **Data da Última Auditoria:** 02/10/2026.
+
+## 27. `aidd-master` integra e faz o Quarteto, sem gerar infraestrutura (fronteiras-ferramentas ciclo-01, Bloco 3, Ticket 17)
+
+- **Objetivo da Correção:**
+  O `master init` deixa de gravar Dockerfile, docker-compose.yml, deploy.sh e nginx/, que passam a ser do `aidd-ops` (Ticket 16). Os moldes do Quarteto vêm do almoxarifado (`caminho_peca`) e a rota `/webhook` responde, com `/webhooks` mantido como alias.
+- **Ferramentas Tocadas:** [`tools/aidd-master`](file:///C:/Users/trcnologia/Desktop/ecossistema-aidd/tools/aidd-master), [`tools/aidd-ops`](file:///C:/Users/trcnologia/Desktop/ecossistema-aidd/tools/aidd-ops).
+- **O que executou:**
+  1. `tools/aidd-master/scripts/integrador_master.py` e scripts de provisão: sem geração de infra; C3 consumido e C4 gravado com o status HTTP medido.
+  2. `tools/aidd-master/tests/unit/test_provision_project.py`: os 2 testes de infra viram a prova de que o master não gera infra.
+  3. `tools/aidd-ops/tests/test_fronteira_ops_infra_generica.py`: recebe o achado real do Dockerfile (requirements instalados antes do `src/`); a pasta `nginx/` com o gerador de SSL já era coberta.
+- **Resultados de Testes:**
+  - `tools/aidd-master`: `pytest` → exit 0 (412 passed, 3 skipped).
+  - `tools/aidd-ops`: `pytest` → exit 0 (198 passed).
+  - `tools/aidd-master/tests/test_fronteira_master.py` + E2E `comparar --base ciclo-01` → ver gate da fase.
+- **Status:** **RESOLVIDO**.
+- **Data da Última Auditoria:** 02/10/2026.

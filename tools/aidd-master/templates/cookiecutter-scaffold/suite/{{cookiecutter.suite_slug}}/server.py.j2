@@ -565,7 +565,7 @@ class AppHandler(http.server.SimpleHTTPRequestHandler):
             self.wfile.write(json.dumps(doc, ensure_ascii=False, indent=2).encode("utf-8"))
             return
 
-        if path == "/docs":
+        if path in ("/docs", "/swagger", "/api"):
             self.send_response(200)
             self.send_header("Content-Type", "text/html; charset=utf-8")
             self.end_headers()
@@ -588,7 +588,7 @@ class AppHandler(http.server.SimpleHTTPRequestHandler):
                     self._write_html(f.read())
                 return
 
-        if path == "/webhooks":
+        if path in ("/webhook", "/webhooks"):
             self.send_response(200)
             self.send_header("Content-Type", "text/html; charset=utf-8")
             self.end_headers()
@@ -717,7 +717,7 @@ def run_server():
         print(f"🚀 {{ cookiecutter.suite_name }} (AIDD v5.1 Enterprise)")
         print(f"📡 Servidor Ativo:     http://localhost:{PORT}")
         print(f"📜 Swagger Studio:     http://localhost:{PORT}/docs")
-        print(f"⚡ Webhook Studio:     http://localhost:{PORT}/webhooks")
+        print(f"⚡ Webhook Studio:     http://localhost:{PORT}/webhook (alias: /webhooks)")
         print(f"🤖 MCP Native Studio:  http://localhost:{PORT}/mcp")
         print(f"📊 OpenAPI Spec:       http://localhost:{PORT}/openapi.json")
         print(f"📈 Métricas Prometheus: http://localhost:{PORT}/metrics")

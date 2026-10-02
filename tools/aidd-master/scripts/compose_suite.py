@@ -566,21 +566,23 @@ def _copy_shared_kernel(templates_v2: str, core_dir: str, shared_ui_dir: str, sh
             shutil.copyfile(src, dst)
             print(f"  [+] Core Kernel: {cf}")
 
-    # Assets HTML dos Studios referenciados pelo core: swagger.html é lido
-    # por core/openapi.py (get_swagger_html), webhook_studio.html por
-    # core/webhooks.py (get_studio_html) e mcp_studio.html por
-    # core/mcp_server.py (get_studio_html). Sem eles, o check comportamental
-    # de XSS do G_SEGURANCA e as rotas /docs, /webhooks do server.py gerado
-    # quebram. Achado real (18/09/2026): "swagger.html" nunca esteve nesta
-    # lista — todo projeto criado via `master compose` (nunca via `master
-    # init`/provision_project.py, que copia esse arquivo separadamente)
-    # tinha /docs retornando HTTP 500 (FileNotFoundError) sempre.
+    # Assets HTML dos Studios do Quarteto Sine Qua Non: obtidos via almoxarifado
+    # (Ticket 17 / D1 / DoD 7). swagger.html é lido por core/openapi.py,
+    # webhook_studio.html por core/webhooks.py e mcp_studio.html por core/mcp_server.py.
     for asset in ("swagger.html", "webhook_studio.html", "mcp_studio.html"):
-        src = os.path.join(templates_v2, asset)
-        dst = os.path.join(core_dir, asset)
-        if os.path.isfile(src):
+        src = None
+        try:
+            from aidd_forge.core.almoxarifado import caminho_peca
+            src = str(caminho_peca(f"moldes/quarteto/{asset}"))
+        except Exception:
+            local_src = os.path.join(templates_v2, asset)
+            if os.path.isfile(local_src):
+                src = local_src
+
+        if src and os.path.isfile(src):
+            dst = os.path.join(core_dir, asset)
             shutil.copyfile(src, dst)
-            print(f"  [+] Core Kernel: {asset}")
+            print(f"  [+] Core Kernel (Quarteto Almoxarifado): {asset}")
 
     # Copiar Shared UI
     shared_ui_src = os.path.join(templates_v2, "shared", "ui")
@@ -759,24 +761,14 @@ def _copy_gates_and_automation(
 def _copy_governance_and_rules(
     suite_name: str, clean_modules: list[str], templates_v2: str, target_dir: str
 ) -> None:
-    """Copiar arquivos de produção, Nginx e regras multi-IDE."""
-    for prod_f in ["Dockerfile", "docker-compose.yml", "deploy.sh", "AGENTS.md", "CLAUDE.md", "GEMINI.md"]:
+    """Copiar arquivos de governança e regras multi-IDE (sem arquivos de infraestrutura)."""
+    # Ticket 17 / D1: infraestrutura (Dockerfile, docker-compose.yml, deploy.sh, nginx)
+    # é responsabilidade exclusiva do aidd-ops. Master não gera mais infra.
+    for prod_f in ["AGENTS.md", "CLAUDE.md", "GEMINI.md"]:
         src = os.path.join(templates_v2, prod_f)
         if os.path.isfile(src):
             shutil.copyfile(src, os.path.join(target_dir, prod_f))
-            print(f"  [+] Governança & Deploy: {prod_f}")
-
-    nginx_src = os.path.join(templates_v2, "nginx")
-    nginx_dst = os.path.join(target_dir, "nginx")
-    if os.path.isdir(nginx_src):
-        os.makedirs(nginx_dst, exist_ok=True)
-        for root, _, files in os.walk(nginx_src):
-            rel = os.path.relpath(root, nginx_src)
-            d_dir = os.path.join(nginx_dst, rel) if rel != "." else nginx_dst
-            os.makedirs(d_dir, exist_ok=True)
-            for f in files:
-                shutil.copyfile(os.path.join(root, f), os.path.join(d_dir, f))
-        print("  [+] Nginx Shield & Configurações copiadas!")
+            print(f"  [+] Governança: {prod_f}")
 
     cursor_rules_dir = os.path.join(target_dir, ".cursor", "rules")
     claude_dir = os.path.join(target_dir, ".claude")
