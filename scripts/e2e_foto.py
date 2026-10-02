@@ -348,10 +348,11 @@ def nome_ciclo(arg: str, raiz: Path) -> str:
     sys.exit(2)
 
 
-def preparar_worktree(repo: Path, wt: Path, nome: str) -> None:
+def preparar_worktree(repo: Path, wt: Path, nome: str) -> bool:
+    """Cria a worktree do ciclo; True quando esta chamada a criou (quem cria remove no fim)."""
     if (wt / ".git").exists():
         print(f"worktree reaproveitado: {wt}")
-        return
+        return False
     if wt.exists():
         print(f"erro: {wt} existe e nao e um worktree git", file=sys.stderr)
         sys.exit(2)
@@ -367,6 +368,16 @@ def preparar_worktree(repo: Path, wt: Path, nome: str) -> None:
                   file=sys.stderr)
             sys.exit(2)
     print(f"worktree criado: {wt} (branch {branch})")
+    return True
+
+
+def remover_worktree(repo: Path, wt: Path, nome: str) -> None:
+    """Apaga a worktree e a branch aidd/e2e-<nome> do ciclo; o resultado fica na pasta do ciclo.
+    Sem isso cada E2E deixava worktrees_e2e-ciclo-NN no Desktop (2026-10-02)."""
+    for args in (["worktree", "remove", "--force", str(wt)], ["branch", "-D", f"aidd/e2e-{nome}"]):
+        subprocess.run(["git", "-C", str(repo), *args], capture_output=True, text=True,
+                       encoding="utf-8", errors="replace")
+    print(f"worktree removido: {wt}")
 
 
 def resolver_origem(ciclo: Path, raiz: Path) -> Path:
@@ -615,14 +626,17 @@ def cmd_rodar(args) -> int:
     ciclo = raiz / nome
     ciclo.mkdir(parents=True, exist_ok=True)
     wt = Path(args.worktree) if args.worktree else raiz.parent / f"worktrees_e2e-{nome}"
-    preparar_worktree(repo, wt, nome)
-    origem = resolver_origem(ciclo, raiz)
-
-    for chave, (pasta_nome, nome_app, slug, dominio) in FLUXOS.items():
-        rodar_fluxo(chave, pasta_nome, nome_app, slug, dominio,
-                    ciclo, repo, wt, origem, raiz)
-    rodar_continuacao(ciclo, repo, wt, raiz)
-    gravar_quarteto_no_resultado(ciclo, checar_quarteto(ciclo))
+    criada = preparar_worktree(repo, wt, nome)
+    try:
+        origem = resolver_origem(ciclo, raiz)
+        for chave, (pasta_nome, nome_app, slug, dominio) in FLUXOS.items():
+            rodar_fluxo(chave, pasta_nome, nome_app, slug, dominio,
+                        ciclo, repo, wt, origem, raiz)
+        rodar_continuacao(ciclo, repo, wt, raiz)
+        gravar_quarteto_no_resultado(ciclo, checar_quarteto(ciclo))
+    finally:
+        if criada:
+            remover_worktree(repo, wt, nome)
     print(f"ciclo gravado em {ciclo}")
     return 0
 

@@ -224,3 +224,36 @@ def test_comparar_ciclo01_contra_ele_mesmo(tmp_path):
         cwd=str(ROOT), capture_output=True, text=True, encoding="utf-8", errors="replace")
     assert proc.returncode == 0, f"stdout={proc.stdout!r} stderr={proc.stderr!r}"
     assert (tmp_path / "COMPARACAO-E2E.md").exists()
+
+
+def _repo_git(tmp_path: Path) -> Path:
+    repo = tmp_path / "repo"
+    repo.mkdir()
+    for args in (["init", "-q", "-b", "main"], ["config", "user.email", "t@t"], ["config", "user.name", "t"],
+                 ["config", "core.hooksPath", "/dev/null"]):
+        subprocess.run(["git", *args], cwd=repo, check=True)
+    (repo / "README.md").write_text("x", encoding="utf-8")
+    subprocess.run(["git", "add", "-A"], cwd=repo, check=True)
+    subprocess.run(["git", "commit", "-q", "-m", "base"], cwd=repo, check=True)
+    return repo
+
+
+def test_rodar_remove_a_worktree_e_a_branch_que_criou(tmp_path, monkeypatch):
+    # 2026-10-02: cada E2E deixava worktrees_e2e-ciclo-NN + branch aidd/e2e-ciclo-NN para trás.
+    sys.path.insert(0, str(ROOT / "scripts"))
+    import e2e_foto
+    repo = _repo_git(tmp_path)
+    raiz = tmp_path / "TESTES"
+    monkeypatch.setattr(e2e_foto, "repo_raiz", lambda: repo)
+    for nome in ("rodar_fluxo", "rodar_continuacao", "gravar_quarteto_no_resultado", "checar_quarteto"):
+        monkeypatch.setattr(e2e_foto, nome, lambda *a, **k: None)
+    monkeypatch.setattr(e2e_foto, "resolver_origem", lambda *a, **k: raiz)
+
+    assert e2e_foto.main(["rodar", "--ciclo", "auto", "--raiz", str(raiz)]) == 0
+
+    assert not (tmp_path / "worktrees_e2e-ciclo-01").exists()
+    branches = subprocess.run(["git", "branch", "--list", "aidd/e2e-*"], cwd=repo,
+                              capture_output=True, text=True).stdout
+    assert branches.strip() == ""
+    worktrees = subprocess.run(["git", "worktree", "list"], cwd=repo, capture_output=True, text=True).stdout
+    assert len(worktrees.strip().splitlines()) == 1
