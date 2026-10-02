@@ -99,9 +99,9 @@
       "ticket_id": "TICKET-18",
       "nome": "Fase_18_Ticket_18_aidd_enterprise_s__blindagem",
       "dimensao_15d": "D1. Arquitetura e Fronteiras",
-      "harness": "mimo",
-      "model": "xiaomi-token-plan-sgp/mimo-v2.6-flash",
-      "comando_terminal": "MIMOCODE_DANGEROUSLY_SKIP_PERMISSIONS=1 MIMOCODE_TUI_PLAIN=1 mimo -m xiaomi-token-plan-sgp/mimo-v2.6-flash --pure --trust",
+      "harness": "claude",
+      "model": "opus",
+      "comando_terminal": "claude --dangerously-skip-permissions --chrome --model opus",
       "input_prompt": "docs/auditoria/fronteiras-ferramentas/ciclo-01/prompts_tickets/PROMPT-TICKET-18.txt",
       "output_handoff": "tools/aidd-enterprise/tests/test_fronteira_enterprise.py",
       "gate_fase": "python -m pytest -q -p no:cacheprovider tools/aidd-enterprise/tests/test_fronteira_enterprise.py && python scripts/e2e_foto.py rodar --ciclo auto && python scripts/e2e_foto.py comparar --base ciclo-01 --novo ultimo"
