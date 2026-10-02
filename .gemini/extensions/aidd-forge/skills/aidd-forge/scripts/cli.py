@@ -192,6 +192,10 @@ def _montar_parser() -> argparse.ArgumentParser:
     parser_handoff.add_argument("--path", default=".")
     parser_handoff.add_argument("--componente", action="append", default=None)
 
+    parser_fornecer = subparsers.add_parser("fornecer", help="Entrega uma peca do almoxarifado no projeto alvo")
+    parser_fornecer.add_argument("piece", help="Nome da peca no almoxarifado")
+    parser_fornecer.add_argument("--destino", required=True, help="Diretorio ou caminho de destino no projeto")
+
     return parser
 
 

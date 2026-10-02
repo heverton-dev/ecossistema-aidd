@@ -1089,3 +1089,20 @@
 - **Status:** **RESOLVIDO**.
 - **Data da Última Auditoria:** 01/10/2026.
 
+
+## 24. Almoxarifado do `aidd-forge`: trava de `tools/` e teste da CLI independentes da pasta atual (fronteiras-ferramentas ciclo-01, Bloco 2, Ticket 9)
+
+- **Objetivo da Correção:**
+  Fechar as 3 falhas do `gate_final` do Bloco 2 vindas da Fase 9: o teste `test_ecossistema_cli_forge_fornecer` dependia da pasta atual, o `handoff-forge.json` ficou com o hash antigo do `cli.py` da skill e a trava do `obter_peca` recusava qualquer caminho com uma pasta chamada `tools`, até fora do repositório.
+- **Ferramentas Tocadas:** [`tools/aidd-forge`](file:///C:/Users/trcnologia/Desktop/ecossistema-aidd/tools/aidd-forge).
+- **O que executou:**
+  1. `tools/aidd-forge/aidd_forge/core/almoxarifado.py`: `obter_peca` recusa só a `tools/` do ecossistema; `_encontrar_raiz` sem o `if` redundante.
+  2. `tools/aidd-forge/tests/test_almoxarifado.py`: teste da recusa usa a `tools/` do repositório e confere que nada foi criado; caso novo aceita projeto com pasta `tools` fora do ecossistema; teste da CLI roda com `cwd` na raiz.
+  3. `handoff-forge.json` reemitido (`python ecossistema.py forge handoff emit`) e hash novo no `.secrets.baseline`.
+- **Resultados de Testes:**
+  - `tools/aidd-forge`: `pytest` → exit 0 (304 passed, 1 skipped).
+  - `tests/test_almoxarifado.py` de dentro de `tools/aidd-forge` e da raiz → exit 0 (7 passed).
+  - `tests/test_forge_fechamento_ciclo02.py` → exit 0 (4 passed).
+  - `python ecossistema.py forge fornecer gates/G_ARQUITETURA.py --destino <projeto>` → exit 0; peça inexistente → exit 1 com erro claro.
+- **Status:** **RESOLVIDO**.
+- **Data da Última Auditoria:** 02/10/2026.
