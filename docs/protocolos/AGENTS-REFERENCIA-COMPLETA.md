@@ -101,6 +101,7 @@ Conjunto de skills universais inspiradas nas práticas de Matt Pocock, adaptadas
 O ecossistema dispõe de Quality Gates globais em gates/:
 - gates/G_ECOSSISTEMA_INTEGRIDADE.py: Audita a integridade física, sintática e estrutural dos 5 subprojetos e das skills.
 - gates/G_DRIFT_NUCLEO_COMPARTILHADO.py: Detecta divergência não documentada entre os arquivos de núcleo compartilhados por linhagem entre aidd-master e aidd-enterprise (baseline em gates/baseline_nucleo_compartilhado.json).
+- gates/G_FRONTEIRA_FERRAMENTAS.py: Confere se cada arquivo de tools/ está no dono certo do mapa de donos (fronteiras-ferramentas, Ticket 6); modo aviso por padrão (AIDD_FRONTEIRA_MODO=bloqueio reprova).
 - gates/G_HARNESS_COMPAT.py: Verifica que os artefatos multi-harness da raiz (comandos, skills, arquivos-ponteiro) permanecem sincronizados entre si.
 - gates/G_SEGREDOS.py: Escaneia todo o repositório rastreado pelo git em busca de credenciais hardcoded, delegando ao detect-secrets (Yelp); baseline auditado em .secrets.baseline na raiz. Reativado com `always_run: true` em 2026-09-19 (ISSUE-0002/ISSUE-0003) — roda em todo commit.
 - gates/G_CLI_HELP_CONSISTENCIA.py: Compara, via AST, flags citadas em print()/raise() contra flags realmente definidas via add_argument nos pontos de entrada argparse das 4 ferramentas.
