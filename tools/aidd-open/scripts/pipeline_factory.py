@@ -50,11 +50,10 @@ def _timestamp_iso() -> str:
 
 
 def _carregar_plano(caminho: str) -> Result:
-    """Carrega e valida PLANO-INFRAESTRUTURA.json.
+    """Carrega e valida PLANO-INFRAESTRUTURA.json ou HANDOFF_PLANNER_ENGINE.json (C2).
 
-    Aceita tambem a planta do planner (`HANDOFF_PLANNER_ENGINE.json`, C2): a
-    entrada da factory vem em `entrada_construtor.plano_motores`, no mesmo
-    envelope fase_1/2/3 do aidd-ops (Ticket 12 — ninguem inventa o plano).
+    Aceita a planta do planner (`HANDOFF_PLANNER_ENGINE.json`, C2): a
+    entrada da factory vem em `entrada_construtor.plano_motores` e/ou `tickets`.
     """
     if not os.path.isfile(caminho):
         return Result.fail(
@@ -70,16 +69,28 @@ def _carregar_plano(caminho: str) -> Result:
             codigo="PLANO_JSON_INVALID",
         )
 
-    entrada_construtor = dados.get("entrada_construtor") if isinstance(dados, dict) else None
-    if isinstance(entrada_construtor, dict) and "tickets" in dados:
-        dados = entrada_construtor.get("plano_motores")
-        if not isinstance(dados, dict):
-            return Result.fail(
-                "HANDOFF_PLANNER_ENGINE sem entrada da factory (entrada_construtor.plano_motores).",
-                codigo="FACTORY_INPUT_INVALID",
-            )
+    # Detecção e suporte ao contrato C2 (HANDOFF_PLANNER_ENGINE.json)
+    if isinstance(dados, dict) and ("tickets" in dados or "entrada_construtor" in dados or dados.get("versao_schema") == "1.0.0"):
+        entrada_construtor = dados.get("entrada_construtor", {})
+        plano_motores = entrada_construtor.get("plano_motores") if isinstance(entrada_construtor, dict) else None
 
-    # Validar contrato
+        if isinstance(plano_motores, dict):
+            plano_motores["_is_c2"] = True
+            plano_motores["tickets"] = dados.get("tickets", [])
+            plano_motores["metadados_projeto"] = dados.get("metadados_projeto", {})
+            plano_motores["arquitetura_alvo"] = dados.get("arquitetura_alvo", {})
+            plano_motores["modulos_funcionais"] = dados.get("modulos_funcionais", [])
+            if "fase_3_sizing" in plano_motores:
+                from contrato_factory import validar_plano_factory
+                res = validar_plano_factory(plano_motores)
+                if not res.sucesso:
+                    return res
+            return Result.ok(plano_motores)
+
+        dados["_is_c2"] = True
+        return Result.ok(dados)
+
+    # Validar contrato legado
     from contrato_factory import validar_plano_factory
     res = validar_plano_factory(dados)
     if not res.sucesso:
@@ -100,28 +111,54 @@ def _salvar_artefato(pasta: str, nome: str, dados) -> str:
 
 
 def executar_pipeline(plano_path: str, pasta_destino: str, incluir_llm: bool = True) -> int:
-    """Executa o pipeline COMPLETO do factory (9 fases).
+    """Executa o pipeline do factory (Modo Construtor Triade ou Legado).
 
     Args:
-        plano_path: Caminho para PLANO-INFRAESTRUTURA.json
+        plano_path: Caminho para PLANO-INFRAESTRUTURA.json ou HANDOFF_PLANNER_ENGINE.json
         pasta_destino: Diretorio de saida
-        incluir_llm: Se True, executa fases 2, 3, 7 (LLM). Se False, apenas deterministicas.
+        incluir_llm: Se True, executa fases LLM. Se False, apenas deterministicas.
     """
-    total_fases = 9 if incluir_llm else 6
-    fase_num = 0
-
-    print("=" * 72)
-    print(f" [AIDD-Open] Pipeline Completo ({total_fases} fases)")
-    print(f" Modo: {'COMPLETO (inclui LLM)' if incluir_llm else 'DETERMINISTICO (sem LLM)'}")
-    print("=" * 72)
-
     # Pre-flight: Carregar plano
-    print(f"\n[Pre-flight] Carregando PLANO-INFRAESTRUTURA.json...")
+    print("=" * 72)
+    print(" [AIDD-Open] Inicializando Construtor Open-Source")
+    print("=" * 72)
     res_plano = _carregar_plano(plano_path)
     if not res_plano.sucesso:
         print(f"  [ERRO] {res_plano.codigo}: {res_plano.erro}")
         return 1
     plano = res_plano.valor
+
+    # Modo Construtor Tríade (D1 / DoD 7, Ticket 13):
+    # Consome almoxarifado sob demanda e entrega APENAS src/modules/<dominio>/ e C3.
+    if plano.get("_is_c2"):
+        print("\n[AIDD-Open] Modo Construtor Tríade (Fatias Verticais + C3)...")
+        from core.vsa_generator import gerar_fatias_verticais, emitir_handoff_engine_master
+
+        meta = plano.get("metadados_projeto") or {}
+        slug_projeto = meta.get("slug") or plano.get("nicho_slug") or "projeto-open"
+        nicho_slug = plano.get("nicho_slug") or slug_projeto
+
+        slices_info = gerar_fatias_verticais(pasta_destino, plano, nicho_slug=nicho_slug)
+        print(f"  [OK] Fatias geradas em src/modules/ ({len(slices_info)} fatias)")
+
+        tecnologia_fe = (plano.get("arquitetura_alvo") or {}).get("padrao_frontend", "tanstack_router")
+        c3_path = emitir_handoff_engine_master(
+            pasta_destino, slug_projeto, slices_info, tecnologia_frontend=tecnologia_fe
+        )
+        print(f"  [OK] HANDOFF_ENGINE_MASTER.json (C3) gravado: {c3_path}")
+
+        print("\n" + "=" * 72)
+        print(" [AIDD-Open] Pipeline Concluido com Sucesso (Fronteira Estrita)")
+        print(f" Fatias geradas: {len(slices_info)} em {pasta_destino}/src/modules/")
+        print(f" Contrato entregue: {c3_path}")
+        print("=" * 72)
+        return 0
+
+    total_fases = 9 if incluir_llm else 6
+    fase_num = 0
+
+    print(f"\n[AIDD-Open] Pipeline Legado Multi-serviço ({total_fases} fases)")
+    print(f"Modo: {'COMPLETO (inclui LLM)' if incluir_llm else 'DETERMINISTICO (sem LLM)'}")
 
     nicho = plano["fase_1_intake"]["saida"]
     ferramentas = plano["fase_2_curadoria"]["saida"]["ferramentas"]

@@ -280,7 +280,7 @@ class OrquestradorSincrono:
             cmd = [
                 sys.executable, "ecossistema.py", "open-motor",
                 "--plano", str(self.pasta / CONTRATOS["C2"][0]),
-                "--pasta", str(self.pasta / "factory_output")
+                "--pasta", str(self.pasta)
             ]
         else:
             self.log("INICIANDO ETAPA 3: aidd-freedom (Engine Fluxo 03: Low-Code Bridge)", "ETAPA")
