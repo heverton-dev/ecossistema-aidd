@@ -1154,3 +1154,22 @@
   - `tools/aidd-master/tests/test_fronteira_master.py` + E2E `comparar --base ciclo-01` → ver gate da fase.
 - **Status:** **RESOLVIDO**.
 - **Data da Última Auditoria:** 02/10/2026.
+
+## 28. Fases do Bloco 3 fechadas pelo orquestrador: planner, orquestrador, aidd-open, aidd-freedom, aidd-ops e aidd-enterprise (fronteiras-ferramentas ciclo-01, Tickets 11, 12, 13, 14, 16 e 18)
+
+- **Objetivo da Correção:**
+  Cada ferramenta passa a fazer só o seu papel e a pegar as peças no almoxarifado (`componentes/compartilhado/`), sem escrever fora da pasta do projeto. As cópias locais continuam no lugar até o Bloco 4 (remoção com o usuário, Lei #7).
+- **Ferramentas Tocadas:** [`tools/aidd-planner`](file:///C:/Users/trcnologia/Desktop/ecossistema-aidd/tools/aidd-planner), [`tools/aidd-open`](file:///C:/Users/trcnologia/Desktop/ecossistema-aidd/tools/aidd-open), [`tools/aidd-freedom`](file:///C:/Users/trcnologia/Desktop/ecossistema-aidd/tools/aidd-freedom), [`tools/aidd-ops`](file:///C:/Users/trcnologia/Desktop/ecossistema-aidd/tools/aidd-ops), [`tools/aidd-enterprise`](file:///C:/Users/trcnologia/Desktop/ecossistema-aidd/tools/aidd-enterprise).
+- **O que executou:**
+  1. Ticket 11 (`257a650`): `aidd-planner` gera a planta com tickets roteados para as 6 ferramentas (`core/planta.py`); as cópias `aidd_planner/` e `src/` ficaram idênticas.
+  2. Ticket 12 (`3fd0c62`): `scripts/orquestrador_sincrono.py` só passa o bastão e lê os contratos; não escreve mais nenhum.
+  3. Ticket 13 (`b5d62da`): `aidd-open` pega os moldes no almoxarifado (`caminho_peca`) e entrega só `src/modules/<domínio>/` e o C3.
+  4. Ticket 14 (`f40e403`): `aidd-freedom scan` grava manifesto, fatia e C3 só no projeto; a pasta exportada não muda.
+  5. Ticket 16 (`d6e422e`): `aidd-ops` gera Dockerfile, compose, deploy e nginx a partir do `perfil_app` e das peças `moldes/infra/*`.
+  6. Ticket 18: `aidd-enterprise` fica só com a blindagem; comandos de outras ferramentas são encaminhados ao dono (`delegacao.py`); injetor pela peça do catálogo; `G_DRIFT_NUCLEO_COMPARTILHADO` compara cada cópia com o catálogo e mantém os pares master × enterprise.
+- **Resultados de Testes:**
+  - Gate de cada fase (teste do ticket + E2E `comparar --base ciclo-01`) → exit 0 em todas, sem métrica pior.
+  - Suíte inteira de cada ferramenta tocada (`G_TESTES_REAIS` modo rápido) → exit 0 em cada fase.
+  - E2E depois do Ticket 15: vazamentos 0 nos 3 fluxos (base: 2, 0, 2).
+- **Status:** **RESOLVIDO**.
+- **Data da Última Auditoria:** 02/10/2026.

@@ -92,7 +92,7 @@ def _handoff_c1_valido(pastas_criadas=None):
     handoff = {
         "versao_schema": "1.0.0",
         "projeto_dir": "/tmp/projeto-aidd",
-        "git": {"inicializado": True, "commit_inicial": "a1b2c3d4e5f6"},
+        "git": {"inicializado": True, "commit_inicial": "a1b2c3d4e5f6"},  # pragma: allowlist secret
         "dependencias": [{"pacote": "click", "versao": "8.1.7"}],
         "leis_e_guardas": [{"gate": "gates/G_TESTES.py", "sha256": "a" * 64}],
         "harnesses": [".claude/skills"],
