@@ -50,7 +50,12 @@ def _timestamp_iso() -> str:
 
 
 def _carregar_plano(caminho: str) -> Result:
-    """Carrega e valida PLANO-INFRAESTRUTURA.json."""
+    """Carrega e valida PLANO-INFRAESTRUTURA.json.
+
+    Aceita tambem a planta do planner (`HANDOFF_PLANNER_ENGINE.json`, C2): a
+    entrada da factory vem em `entrada_construtor.plano_motores`, no mesmo
+    envelope fase_1/2/3 do aidd-ops (Ticket 12 — ninguem inventa o plano).
+    """
     if not os.path.isfile(caminho):
         return Result.fail(
             f"Arquivo nao encontrado: {caminho}",
@@ -64,6 +69,15 @@ def _carregar_plano(caminho: str) -> Result:
             f"Erro ao ler plano: {exc}",
             codigo="PLANO_JSON_INVALID",
         )
+
+    entrada_construtor = dados.get("entrada_construtor") if isinstance(dados, dict) else None
+    if isinstance(entrada_construtor, dict) and "tickets" in dados:
+        dados = entrada_construtor.get("plano_motores")
+        if not isinstance(dados, dict):
+            return Result.fail(
+                "HANDOFF_PLANNER_ENGINE sem entrada da factory (entrada_construtor.plano_motores).",
+                codigo="FACTORY_INPUT_INVALID",
+            )
 
     # Validar contrato
     from contrato_factory import validar_plano_factory

@@ -10,13 +10,15 @@ os 3 Fluxos Canônicos de Criação do Ecossistema AIDD:
   FLUXO 02: [FORGE -> PLANNER] -> FACTORY   -> [MASTER -> ENTERPRISE -> OPS]
   FLUXO 03: [FORGE -> PLANNER] -> BRIDGE    -> [MASTER -> ENTERPRISE -> OPS]
 
-Cada etapa valida formalmente o contrato de handoff antes de passar a bola
-para a ferramenta seguinte. Se qualquer etapa falhar, o pipeline é abortado
-imediatamente (exit 1).
+O orquestrador só passa o bastão (Ticket 12): cada ferramenta grava o próprio
+contrato de handoff; o orquestrador lê, valida contra o schema e entrega a
+cada ferramenta os tickets que a planta roteou para ela. Sem contrato gravado
+pela ferramenta dona, o pipeline é abortado imediatamente (exit 1).
 =============================================================================
 """
 
 import argparse
+import hashlib
 import json
 import os
 import re
@@ -39,13 +41,16 @@ if planner_tools.is_dir() and str(planner_tools) not in sys.path:
     sys.path.insert(0, str(planner_tools))
 SPECS_DIR = ROOT_DIR / "componentes" / "compartilhado" / "specs"
 
-try:
-    from scripts import validar_handoff
-except Exception:
-    try:
-        import validar_handoff  # type: ignore
-    except Exception:
-        validar_handoff = None
+# Contratos de handoff: (arquivo relativo à pasta do projeto, schema formal).
+# Quem grava é sempre a ferramenta dona da etapa; o orquestrador só lê.
+CONTRATOS = {
+    "C1": (Path(".aidd") / "HANDOFF_FORGE_PLANNER.json", "handoff-forge-to-planner.schema.json"),
+    "C2": (Path("HANDOFF_PLANNER_ENGINE.json"), "handoff-planner-to-engine.schema.json"),
+    "C3": (Path("HANDOFF_ENGINE_MASTER.json"), "handoff-engine-to-master.schema.json"),
+    "C4": (Path("HANDOFF_MASTER_ENTERPRISE.json"), "handoff-master-to-enterprise.schema.json"),
+    "C5": (Path("HANDOFF_ENTERPRISE_OPS.json"), "handoff-enterprise-to-ops.schema.json"),
+}
+VSA_DISPATCH_NOME = "VSA_DISPATCH.json"
 
 
 MAPA_FLUXOS = {
@@ -90,6 +95,8 @@ class OrquestradorSincrono:
         self.origem_export = Path(origem_export).resolve() if origem_export else None
         self.dry_run = dry_run
         self.log_execucao: List[Dict[str, Any]] = []
+        self.contratos: Dict[str, Dict[str, Any]] = {}
+        self.contratos_lidos: List[Dict[str, str]] = []
 
     def log(self, mensagem: str, status: str = "INFO"):
         prefixo = {
@@ -142,24 +149,54 @@ class OrquestradorSincrono:
             self.log(f"Violação de contrato em '{schema_nome}': {exc.message}", "ERRO")
             return False
 
+    def _ler_contrato(self, chave: str, dono: str) -> bool:
+        """Lê o contrato que a ferramenta dona gravou; sem ele o bastão não passa.
 
-    def _validar_handoff_arquivo(self, caminho: Path, etapa: str = "handoff"):
+        O orquestrador nunca escreve contrato (Ticket 12): só confere que o
+        arquivo existe, adere ao schema e registra o sha256 do que leu.
+        """
+        relativo, schema_nome = CONTRATOS[chave]
         if self.dry_run:
-            self.log(f"(Dry-run) Pulando validação de handoff em {caminho}", "INFO")
+            self.log(f"(Dry-run) contrato {relativo.as_posix()} não conferido", "INFO")
             return True
-        if validar_handoff is None:
-            self.log(f"Aviso: validador de handoff não disponível para {etapa}", "WARN")
-            return True
-        try:
-            ok = validar_handoff.validar_handoff(str(caminho))
-            if ok:
-                self.log(f"Handoff validado em {etapa}: {caminho.name}", "OK")
-            else:
-                self.log(f"Falha na validação de handoff em {etapa}: {caminho.name}", "WARN")
-            return ok
-        except Exception as exc:
-            self.log(f"Erro ao validar handoff em {etapa}: {exc}", "WARN")
+
+        caminho = self.pasta / relativo
+        if not caminho.is_file():
+            self.log(
+                f"{dono} não gravou {relativo.as_posix()}: sem contrato com prova, o bastão não passa",
+                "ERRO",
+            )
             return False
+        bruto = caminho.read_bytes()
+        try:
+            dados = json.loads(bruto.decode("utf-8"))
+        except (UnicodeDecodeError, json.JSONDecodeError) as exc:
+            self.log(f"{relativo.as_posix()} gravado por {dono} não é JSON válido: {exc}", "ERRO")
+            return False
+        if not self._validar_schema(dados, schema_nome):
+            self.log(f"Contrato {chave} ({relativo.as_posix()}) gravado por {dono} reprovado", "ERRO")
+            return False
+
+        self.contratos[chave] = dados
+        self.contratos_lidos.append({
+            "contrato": chave,
+            "arquivo": relativo.as_posix(),
+            "dono": dono,
+            "sha256": hashlib.sha256(bruto).hexdigest(),
+        })
+        return True
+
+    def _tickets_de(self, ferramenta: str) -> List[Dict[str, Any]]:
+        """Tickets que a planta (C2) roteou para a ferramenta, na ordem da planta."""
+        tickets = (self.contratos.get("C2") or {}).get("tickets") or []
+        return [t for t in tickets if t.get("ferramenta_destino") == ferramenta]
+
+    def _env_tickets(self, ferramenta: str) -> Dict[str, str]:
+        """Bastão para a ferramenta: caminho do C2 + os tickets dela."""
+        return {
+            "AIDD_HANDOFF_PLANNER": str(self.pasta / CONTRATOS["C2"][0]),
+            "AIDD_TICKETS": json.dumps(self._tickets_de(ferramenta), ensure_ascii=False),
+        }
 
     def etapa_01_forge(self) -> bool:
         """Etapa 1: Fundação, Git, pre-commit e regras de governança."""
@@ -179,6 +216,10 @@ class OrquestradorSincrono:
         rc = self._executar_comando(cmd)
         if rc != 0:
             self.log("Falha na execução do aidd-forge init", "ERRO")
+            return False
+
+        # Contrato C1 (forge -> planner): gravado pelo próprio forge.
+        if not self._ler_contrato("C1", "aidd-forge"):
             return False
 
         self.log("aidd-forge concluído com sucesso!", "OK")
@@ -201,131 +242,29 @@ class OrquestradorSincrono:
             self.log("Falha na execução do aidd-planner", "ERRO")
             return False
 
-        # Validação do contrato Planner -> Engine
-        planner_file = self.pasta / "PLANNER.json"
-        if planner_file.exists() and not self.dry_run:
-            with open(planner_file, "r", encoding="utf-8") as f:
-                planner_data = json.load(f)
+        # Contrato C2 (planner -> engine): a planta com os tickets roteados,
+        # gravada pelo próprio planner.
+        if not self._ler_contrato("C2", "aidd-planner"):
+            return False
 
-            # Adaptação dinâmica para o schema formal de handoff
-            modulos_funcionais = []
-            for bc in planner_data.get("ddd_bounded_contexts", []):
-                m_nome = bc.get("modulo") or bc.get("nome") or self.nome
-                m_slug = bc.get("slug") or re.sub(r"[^\w\s-]", "", m_nome.lower()).replace(" ", "_")
-                ents = []
-                for e in bc.get("entidades", []):
-                    campos = [{"nome": k, "tipo": str(v), "obrigatorio": True} for k, v in e.get("atributos", {}).items()] or [
-                        {"nome": "id", "tipo": "integer", "obrigatorio": True},
-                        {"nome": "titulo", "tipo": "string", "obrigatorio": True},
-                        {"nome": "criado_em", "tipo": "datetime", "obrigatorio": True}
-                    ]
-                    ents.append({"nome": e.get("nome", m_slug.capitalize()), "campos": campos})
-                if not ents:
-                    ents = [{"nome": m_slug.capitalize(), "campos": [
-                        {"nome": "id", "tipo": "integer", "obrigatorio": True},
-                        {"nome": "titulo", "tipo": "string", "obrigatorio": True},
-                        {"nome": "criado_em", "tipo": "datetime", "obrigatorio": True}
-                    ]}]
-                rns = [{"id": f"RN-{m_slug}-01", "descricao": f"Operações CRUD para {m_nome}", "criterio_aceitacao": "Status 200 e persistência atômica"}]
-                modulos_funcionais.append({"nome": m_nome, "slug": m_slug, "entidades": ents, "regras_negocio": rns})
+        # Manifesto VSA para o despacho em worktrees: também compilado e
+        # gravado pelo planner (a etapa do master o consome).
+        cmd_vsa = [
+            sys.executable, "ecossistema.py", "planner", "export-dispatch",
+            str(self.pasta / "PLANNER.json"),
+            "--output", str(self.pasta / VSA_DISPATCH_NOME),
+        ]
+        rc = self._executar_comando(cmd_vsa)
+        if rc != 0:
+            self.log(f"Falha do aidd-planner ao gravar {VSA_DISPATCH_NOME}", "ERRO")
+            return False
 
-            if not modulos_funcionais:
-                modulos_funcionais = [
-                    {
-                        "nome": self.nome,
-                        "slug": self.slug,
-                        "entidades": [{"nome": self.slug.capitalize(), "campos": [{"nome": "id", "tipo": "integer", "obrigatorio": True}]}],
-                        "regras_negocio": [{"id": f"RN-{self.slug}-01", "descricao": f"Operações CRUD para {self.nome}", "criterio_aceitacao": "Status 200"}]
-                    }
-                ]
-
-            handoff_payload = {
-                "versao_schema": "1.0.0",
-                "fluxo_alvo": self.fluxo,
-                "metadados_projeto": {
-                    "nome": self.nome,
-                    "slug": self.slug,
-                    "dominio": self.dominio,
-                    "descricao": planner_data.get("descricao") or f"Sistema de {self.nome} no domínio de {self.dominio}"
-                },
-                "quarteto_sine_qua_non": {
-                    "swagger": True,
-                    "webhooks": True,
-                    "mcp": True,
-                    "documentacao": True
-                },
-                "arquitetura_alvo": {
-                    "padrao_frontend": "nextjs_typescript_tailwind",
-                    "padrao_backend": "fastapi_modular_vsa",
-                    "persistencia": "sqlite_wal" if self.fluxo != 3 else "postgresql"
-                },
-                "modulos_funcionais": modulos_funcionais,
-                "camadas": ["apresentacao", "aplicacao", "dominio", "infra"],
-                "fases": ["F01"],
-                "tickets": [
-                    {
-                        "id": "T01",
-                        "ferramenta_destino": "aidd-pure",
-                        "entrada": {},
-                        "saida_esperada": "ok",
-                        "pecas_do_almoxarifado": [],
-                        "criterio_de_aceite": "ok",
-                    },
-                ],
-                "entrada_construtor": {
-                    "caminho": "HANDOFF_PLANNER_ENGINE.json",
-                    "sha256": "0" * 64,
-                },
-                # perfil_app dinamico derivado da propria planta (exigido pelo
-                # schema C2 desde o Ticket 5): sem os campos obrigatorios a
-                # validacao do contrato reprova a Etapa 2. O Ticket 12 troca
-                # esta montagem do orquestrador pelo arquivo gravado pelo
-                # planner; por ora o payload precisa apenas validar.
-                "perfil_app": {
-                    "tipo_runtime": "monolito_modular_docker",
-                    "portas_expostas": [8000],
-                    "banco": "postgresql" if self.fluxo == 3 else "sqlite",
-                    "modulos": [m["nome"] for m in modulos_funcionais],
-                    "entidades": [
-                        ent["nome"]
-                        for m in modulos_funcionais
-                        for ent in m.get("entidades", [])
-                    ],
-                    "rotas_quarteto": ["/api", "/webhook", "/mcp", "/docs"],
-                    "portas": [8000],
-                },
-            }
-            if not self._validar_schema(handoff_payload, "handoff-planner-to-engine.schema.json"):
-                self.log("Contrato Planner -> Engine não validado!", "ERRO")
-                return False
-
-            # Persiste o handoff validado
-            handoff_file = self.pasta / "HANDOFF_PLANNER_ENGINE.json"
-            with open(handoff_file, "w", encoding="utf-8") as f:
-                json.dump(handoff_payload, f, indent=2, ensure_ascii=False)
-            # Valida handoff em modo warn
-            try:
-                self._validar_handoff_arquivo(handoff_file, "planner->engine")
-            except Exception:
-                pass
-
-            # Compila o manifesto VSA formal para despacho em worktrees
-            try:
-                import importlib
-                planner_core = importlib.import_module("aidd_planner.core.planner_engine")
-                vsa_dispatch = planner_core.compilar_grafo_topologico_vsa(planner_data)
-                vsa_file = self.pasta / "VSA_DISPATCH.json"
-                with open(vsa_file, "w", encoding="utf-8") as f:
-                    json.dump(vsa_dispatch, f, indent=2, ensure_ascii=False)
-                self.log(f"Grafo topológico VSA compilado: {vsa_file.name}", "OK")
-            except Exception as ex_vsa:
-                self.log(f"Aviso ao compilar VSA_DISPATCH.json: {ex_vsa}", "WARN")
-
-        self.log("aidd-planner concluído e contrato validado!", "OK")
+        self.log("aidd-planner concluído e contrato lido!", "OK")
         return True
 
     def etapa_03_engine(self) -> bool:
         """Etapa 3: Execução da Engine correspondente ao Fluxo."""
+        env_construtor = self._env_tickets(self.nome_fluxo)
         if self.fluxo == 1:
             self.log("INICIANDO ETAPA 3: aidd-pure (Engine Fluxo 01: Do Zero Puro)", "ETAPA")
             cmd = [
@@ -334,139 +273,60 @@ class OrquestradorSincrono:
                 "--pasta", str(self.pasta),
                 "--implementar-codigo"
             ]
-            rc = self._executar_comando(cmd)
-            if rc != 0:
-                self.log("Falha na execução do aidd-pure", "ERRO")
-                return False
-
         elif self.fluxo == 2:
             self.log("INICIANDO ETAPA 3: aidd-open (Engine Fluxo 02: Open-Source)", "ETAPA")
-            plano_infra = self.pasta / "PLANO-INFRAESTRUTURA.json"
-            if not self.dry_run and not plano_infra.exists():
-                plano_infra.parent.mkdir(parents=True, exist_ok=True)
-                plano_dados = {
-                    "versao": "1.0.0",
-                    "dominio": self.dominio,
-                    "nome": self.nome,
-                    "servicos": ["gateway", "app"]
-                }
-                with open(plano_infra, "w", encoding="utf-8") as f:
-                    json.dump(plano_dados, f, indent=2, ensure_ascii=False)
+            # A factory recebe a planta do planner (C2): a entrada dela mora
+            # em entrada_construtor.plano_motores. Nada de plano inventado.
             cmd = [
                 sys.executable, "ecossistema.py", "open-motor",
-                "--plano", str(plano_infra),
+                "--plano", str(self.pasta / CONTRATOS["C2"][0]),
                 "--pasta", str(self.pasta / "factory_output")
             ]
-            rc = self._executar_comando(cmd)
-            if rc != 0:
-                self.log("Falha na execução do aidd-open", "ERRO")
-                return False
-
-        elif self.fluxo == 3:
+        else:
             self.log("INICIANDO ETAPA 3: aidd-freedom (Engine Fluxo 03: Low-Code Bridge)", "ETAPA")
             origem = str(self.origem_export or (self.pasta / "origem"))
             cmd = [
                 sys.executable, "ecossistema.py", "freedom-motor", "scan",
                 origem
             ]
-            rc = self._executar_comando(cmd)
-            if rc != 0:
-                self.log("Falha na execução do aidd-freedom", "ERRO")
-                return False
-
-        # Despacho determinístico de fatias VSA em Git Worktrees efêmeras
-        vsa_manifest = self.pasta / "VSA_DISPATCH.json"
-        if not vsa_manifest.is_file():
-            vsa_manifest = self.pasta / "PLANNER.json"
-
-        if vsa_manifest.is_file():
-            self.log("Invocando motor de despacho VSA via CLI do ecossistema")
-            cmd_disp = [
-                sys.executable, "ecossistema.py", "dispatch",
-                "--dispatch", str(vsa_manifest),
-                "--target-dir", str(self.pasta),
-            ]
-            if self.dry_run:
-                cmd_disp.append("--dry-run")
-            rc_disp = self._executar_comando(cmd_disp)
-            if rc_disp != 0:
-                self.log("Falha no despacho de fatias VSA em Git worktrees", "ERRO")
-                return False
-
-        # Derivação dinâmica das fatias para o contrato Engine -> Master
-        slices_geradas = []
-        if vsa_manifest.is_file():
-            try:
-                with open(vsa_manifest, "r", encoding="utf-8") as f_v:
-                    d_v = json.load(f_v)
-                for f_item in d_v.get("grafo_fatias", []):
-                    s_id = f_item.get("slice_id", self.slug)
-                    s_slug = s_id.replace("slice_", "")
-                    slices_geradas.append({
-                        "slice_nome": s_slug,
-                        "caminho_src": f"src/slices/{s_slug}",
-                        "endpoints": [
-                            {"rota": f"/{s_slug}", "metodo": "GET", "funcao": "listar"},
-                            {"rota": f"/{s_slug}", "metodo": "POST", "funcao": "criar"}
-                        ],
-                        "tabelas_sql": [s_slug]
-                    })
-            except Exception:
-                pass
-
-        if not slices_geradas:
-            slices_geradas = [
-                {
-                    "slice_nome": self.slug,
-                    "caminho_src": f"src/modules/{self.slug}",
-                    "sha256_arvore": "0" * 64,
-                    "endpoints": [
-                        {"rota": f"/api/{self.slug}", "metodo": "GET", "funcao": "listar"},
-                        {"rota": f"/api/{self.slug}/criar", "metodo": "POST", "funcao": "criar"}
-                    ],
-                    "tabelas_sql": [self.slug]
-                }
-            ]
-
-        # Validação do contrato Engine -> Master
-        handoff_engine = {
-            "versao_schema": "1.0.0",
-            "origem_engine": "aidd-pure" if self.fluxo == 1 else ("aidd-open" if self.fluxo == 2 else "aidd-freedom"),
-            "projeto_slug": self.slug,
-            "slices_geradas": slices_geradas,
-            "artefatos_frontend": {
-                "tecnologia": "nextjs_app_router",
-                "paginas_geradas": ["/dashboard"] + [f"/{s['slice_nome']}" for s in slices_geradas],
-                "origem_design": "custom_tdd" if self.fluxo == 1 else ("tailwind_standard" if self.fluxo == 2 else "lovable_preserved")
-            },
-            "testes_executados": {
-                "total": len(slices_geradas) * 2,
-                "passaram": len(slices_geradas) * 2,
-                "falharam": 0,
-                "zero_stubs": True,
-                "relatorio_pytest": {"caminho": "reports/pytest.xml", "exit_code": 0}
-            },
-            "arquivos_fora_da_zona": []
-        }
-        if not self._validar_schema(handoff_engine, "handoff-engine-to-master.schema.json"):
-            self.log("Contrato Engine -> Master violado!", "ERRO")
+        rc = self._executar_comando(cmd, env_extra=env_construtor)
+        if rc != 0:
+            self.log(f"Falha na execução do {self.nome_fluxo}", "ERRO")
             return False
 
-        handoff_file = self.pasta / "HANDOFF_ENGINE_MASTER.json"
-        if not self.dry_run:
-            with open(handoff_file, "w", encoding="utf-8") as f:
-                json.dump(handoff_engine, f, indent=2, ensure_ascii=False)
-            try:
-                self._validar_handoff_arquivo(handoff_file, "engine->master")
-            except Exception:
-                pass
+        # Contrato C3 (engine -> master): gravado pelo construtor.
+        if not self._ler_contrato("C3", self.nome_fluxo):
+            return False
 
         self.log("Engine especialista concluída com sucesso!", "OK")
         return True
 
     def etapa_04_master(self) -> bool:
-        """Etapa 4: Harmonização no Monólito Modular VSA + Next.js."""
+        """Etapa 4: Despacho das fatias VSA + harmonização no Monólito Modular."""
         self.log("INICIANDO ETAPA 4: aidd-master (Monólito Modular VSA)", "ETAPA")
+        env_master = self._env_tickets("aidd-master")
+
+        # Despacho determinístico de fatias VSA em Git Worktrees efêmeras:
+        # começo da etapa do master (integração), não da do construtor.
+        vsa_manifest = self.pasta / VSA_DISPATCH_NOME
+        if not vsa_manifest.is_file() and (self.pasta / "PLANNER.json").is_file():
+            vsa_manifest = self.pasta / "PLANNER.json"
+        if not self.dry_run and not vsa_manifest.is_file():
+            self.log(f"aidd-planner não gravou {VSA_DISPATCH_NOME}: nada para despachar", "ERRO")
+            return False
+
+        self.log("Invocando motor de despacho VSA via CLI do ecossistema")
+        cmd_disp = [
+            sys.executable, "ecossistema.py", "dispatch",
+            "--dispatch", str(vsa_manifest),
+            "--target-dir", str(self.pasta),
+        ]
+        if self.dry_run:
+            cmd_disp.append("--dry-run")
+        rc = self._executar_comando(cmd_disp, env_extra=env_master)
+        if rc != 0:
+            self.log("Falha no despacho de fatias VSA em Git worktrees", "ERRO")
+            return False
 
         # master init
         cmd_init = [
@@ -474,7 +334,7 @@ class OrquestradorSincrono:
             self.slug,
             "--pasta", str(self.pasta)
         ]
-        rc = self._executar_comando(cmd_init)
+        rc = self._executar_comando(cmd_init, env_extra=env_master)
         if rc != 0:
             self.log("Falha no master init", "ERRO")
             return False
@@ -485,52 +345,14 @@ class OrquestradorSincrono:
             self.slug,
             "--pasta", str(self.pasta)
         ]
-        rc = self._executar_comando(cmd_mod)
+        rc = self._executar_comando(cmd_mod, env_extra=env_master)
         if rc != 0:
             self.log("Falha no master add-module", "ERRO")
             return False
 
-        # Validação do contrato Master -> Enterprise
-        handoff_master = {
-            "versao_schema": "1.0.0",
-            "diretorio_projeto": str(self.pasta),
-            "servidor_sobe": {
-                "log_subida": "log_subida.txt",
-                "porta": 8000
-            },
-            "quarteto": [
-                {"rota": "/openapi.json", "status_http_medido": 200},
-                {"rota": "/webhooks", "status_http_medido": 200},
-                {"rota": "/mcp", "status_http_medido": 200},
-                {"rota": "/docs", "status_http_medido": 200},
-            ],
-            "componentes_para_blindagem": [
-                {
-                    "tipo": "kernel",
-                    "caminho_relativo": "src/core",
-                    "sha256": "0" * 64,
-                    "descricao": "Kernel compartilhado do monólito modular"
-                },
-                {
-                    "tipo": "slice",
-                    "caminho_relativo": f"src/modules/{self.slug}",
-                    "sha256": "0" * 64,
-                    "descricao": f"Fatia vertical de domínio {self.slug}"
-                }
-            ]
-        }
-        if not self._validar_schema(handoff_master, "handoff-master-to-enterprise.schema.json"):
-            self.log("Contrato Master -> Enterprise violado!", "ERRO")
+        # Contrato C4 (master -> enterprise): gravado pelo master.
+        if not self._ler_contrato("C4", "aidd-master"):
             return False
-
-        handoff_file = self.pasta / "HANDOFF_MASTER_ENTERPRISE.json"
-        if not self.dry_run:
-            with open(handoff_file, "w", encoding="utf-8") as f:
-                json.dump(handoff_master, f, indent=2, ensure_ascii=False)
-            try:
-                self._validar_handoff_arquivo(handoff_file, "master->enterprise")
-            except Exception:
-                pass
 
         self.log("aidd-master concluído com sucesso!", "OK")
         return True
@@ -538,6 +360,7 @@ class OrquestradorSincrono:
     def etapa_05_enterprise(self) -> bool:
         """Etapa 5: Blindagem SHA-256 e detecção de drift."""
         self.log("INICIANDO ETAPA 5: aidd-enterprise (Blindagem SHA-256)", "ETAPA")
+        env_enterprise = self._env_tickets("aidd-enterprise")
 
         # Injeta regra de integridade
         cmd_inject = [
@@ -545,7 +368,7 @@ class OrquestradorSincrono:
             "rule", f"regra-integridade-{self.slug}",
             "--dir", str(self.pasta)
         ]
-        rc = self._executar_comando(cmd_inject)
+        rc = self._executar_comando(cmd_inject, env_extra=env_enterprise)
         if rc != 0:
             self.log("Falha no enterprise inject", "ERRO")
             return False
@@ -555,42 +378,14 @@ class OrquestradorSincrono:
             sys.executable, "ecossistema.py", "enterprise", "verificar-drift",
             "--dir", str(self.pasta)
         ]
-        rc = self._executar_comando(cmd_drift)
+        rc = self._executar_comando(cmd_drift, env_extra=env_enterprise)
         if rc != 0:
             self.log("Falha no enterprise verificar-drift", "ERRO")
             return False
 
-        # Validação do contrato Enterprise -> Ops
-        handoff_enterprise = {
-            "versao_schema": "1.0.0",
-            "diretorio_projeto": str(self.pasta),
-            "registry": {
-                "caminho": "COMPONENT-REGISTRY.json",
-                "sha256": "0" * 64
-            },
-            "selo_sha256": "0" * 64,
-            "drift": {
-                "verificado": True,
-                "exit_code": 0
-            },
-            "perfil_app": {
-                "tipo_runtime": "monolito_modular_docker",
-                "portas_expostas": [80, 443, 3000],
-                "banco": "sqlite"
-            }
-        }
-        if not self._validar_schema(handoff_enterprise, "handoff-enterprise-to-ops.schema.json"):
-            self.log("Contrato Enterprise -> Ops violado!", "ERRO")
+        # Contrato C5 (enterprise -> ops): gravado pelo enterprise.
+        if not self._ler_contrato("C5", "aidd-enterprise"):
             return False
-
-        handoff_file = self.pasta / "HANDOFF_ENTERPRISE_OPS.json"
-        if not self.dry_run:
-            with open(handoff_file, "w", encoding="utf-8") as f:
-                json.dump(handoff_enterprise, f, indent=2, ensure_ascii=False)
-            try:
-                self._validar_handoff_arquivo(handoff_file, "enterprise->ops")
-            except Exception:
-                pass
 
         self.log("aidd-enterprise concluído e auditado!", "OK")
         return True
@@ -604,7 +399,7 @@ class OrquestradorSincrono:
             f"Provisionar infraestrutura para {self.nome}",
             "--pasta", str(self.pasta)
         ]
-        rc = self._executar_comando(cmd)
+        rc = self._executar_comando(cmd, env_extra=self._env_tickets("aidd-ops"))
         if rc != 0:
             self.log("Falha na execução do aidd-ops", "ERRO")
             return False
@@ -620,23 +415,24 @@ class OrquestradorSincrono:
         return True
 
     def etapa_07_auditoria(self) -> bool:
-        """Etapa 7: Verificação final de conformidade do projeto."""
+        """Etapa 7: Auditoria de conformidade do projeto gerado (não do monorepo)."""
         self.log("INICIANDO ETAPA 7: Auditoria de Conformidade Final", "ETAPA")
 
-        cmd_audit = [sys.executable, "ecossistema.py", "audit"]
+        cmd_audit = [sys.executable, "ecossistema.py", "forge", "audit", str(self.pasta)]
         rc = self._executar_comando(cmd_audit)
         if rc != 0:
-            self.log("Falha na auditoria final de conformidade", "ERRO")
+            self.log("Falha na auditoria de conformidade do projeto (forge audit)", "ERRO")
             return False
 
-        # Salva manifesto da orquestração síncrona
+        # Manifesto da orquestração: registra só o que foi lido de verdade.
         manifesto_final = {
             "fluxo": self.fluxo,
             "nome": self.nome,
             "slug": self.slug,
             "dominio": self.dominio,
             "timestamp": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
-            "status": "CONFORME_100_POR_CENTO",
+            "auditoria": {"comando": "ecossistema.py forge audit", "projeto": str(self.pasta), "exit_code": rc},
+            "contratos_lidos": list(self.contratos_lidos),
             "etapas_concluidas": [
                 "aidd-forge",
                 "aidd-planner",
@@ -652,25 +448,7 @@ class OrquestradorSincrono:
             with open(manifesto_path, "w", encoding="utf-8") as f:
                 json.dump(manifesto_final, f, indent=2, ensure_ascii=False)
 
-
-        if not self.dry_run:
-            rel_contratos = self.pasta / "RELATORIO-CONTRATOS.json"
-            contratos = {
-                "handoffs": [
-                    "HANDOFF_PLANNER_ENGINE.json",
-                    "HANDOFF_ENGINE_MASTER.json",
-                    "HANDOFF_MASTER_ENTERPRISE.json",
-                    "HANDOFF_ENTERPRISE_OPS.json"
-                ],
-                "validado_em_warn": True
-            }
-            try:
-                with open(rel_contratos, "w", encoding="utf-8") as f:
-                    json.dump(contratos, f, indent=2, ensure_ascii=False)
-            except Exception:
-                pass
-
-                self.log("FLUXO SÍNCRONO CONCLUÍDO COM 100% DE APROVAÇÃO!", "OK")
+        self.log("Auditoria do projeto concluída (forge audit exit 0).", "OK")
         return True
 
     def executar_fluxo_completo(self) -> bool:
