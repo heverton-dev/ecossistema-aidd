@@ -338,6 +338,12 @@ def run_agente_orca(cmd, cwd, input_data=None, expected_handoff=None, titulo="AI
         # Commit é do orquestrador, depois do gate_fase. Commit do agente na worktree roda o
         # pre-commit ali (reprova por arquivos gerados fora do git) e já poluiu a branch do ciclo.
         spec += " Do NOT run git commit, git push or git reset: the orchestrator commits after the phase gate."
+        # Bloco 2 de fronteiras (2026-10-02): o agy gastou ~20 min rodando o audit completo por conta
+        # própria, e o claude pesquisou com 101 comandos de shell e zero chamadas ao graph.
+        spec += (" Do NOT run `python ecossistema.py audit`: the orchestrator runs the phase gate,"
+                 " the touched tools' suites and the final gate.")
+        spec += (" Search code graph-first: use the codebase-memory-mcp tools (search_graph, get_code_snippet,"
+                 " trace_path) before grep, glob or full-file reads (AGENTS.md).")
         tarefa = orca("orchestration", "task-create", "--run", run_id, "--task-title", titulo, "--spec", spec)
         # --inject digita o preâmbulo mas o Orca bloqueia o Enter em harness que ele não reconhece
         # (agent_prompt_blocked no agy, 2026-09-24). Preâmbulo em arquivo + 1 linha funciona em todos.
@@ -527,6 +533,23 @@ def rodar_gate(comando, cwd, env=None):
     if env:
         merged_env.update(env)
     return subprocess.run(comando, shell=bool(os.name == "nt" or True), cwd=cwd, env=merged_env).returncode
+
+
+def testes_das_ferramentas_tocadas(arquivos, raiz):
+    """(comando, env) que rodam a suíte de cada ferramenta de tools/ tocada pela fase e os
+    tests/test_<nome curto>_*.py da raiz. Bloco 2 de fronteiras (2026-10-02): o gate_fase rodou só
+    o teste do ticket, e 3 falhas do aidd-forge só apareceram no gate_final de 17 min."""
+    ferramentas = sorted({Path(a).parts[1] for a in arquivos
+                          if len(Path(a).parts) > 2 and Path(a).parts[0] == "tools"})
+    if not ferramentas:
+        return []
+    comandos = [(f'"{sys.executable}" gates/G_TESTES_REAIS.py',
+                 {"AIDD_GATES_MODO": "rapido", "AIDD_TESTES_REAIS_FERRAMENTAS": ",".join(ferramentas)})]
+    da_raiz = sorted(p.relative_to(raiz).as_posix() for f in ferramentas
+                     for p in (Path(raiz) / "tests").glob(f"test_{f.removeprefix('aidd-')}_*.py"))
+    if da_raiz:
+        comandos.append((f'"{sys.executable}" -m pytest -q -p no:cacheprovider {" ".join(da_raiz)}', None))
+    return comandos
 
 
 def abrir_worktree(branch, wt_path, repo_root):
@@ -783,6 +806,12 @@ def executar_pipeline(args, data, pipeline_id, fases, repo_root):
             sys.exit(1)
 
         git(["add", "-A"], wt_path)
+        tocados = [a for a in git(["diff", "--cached", "--name-only", "-z"], wt_path).stdout.split("\0") if a]
+        for comando_teste, env_teste in testes_das_ferramentas_tocadas(tocados, wt_path):
+            if rodar_gate(comando_teste, wt_path, env_teste) != 0:
+                print(f"[-] FALHA: suíte da ferramenta tocada por '{nome}' reprovou. Nada foi commitado.")
+                print(f"    Worktree preservada para inspeção: {wt_path}")
+                sys.exit(1)
         # --no-verify aqui é deliberado: o gate específico da fase acabou de passar, e a bateria
         # completa (gate_final) roda uma única vez no fim, antes de liberar a aprovação.
         git(["commit", "--no-verify", "-m", f"chore(audit): {nome} (gate_fase exit 0)"], wt_path, exit_on_fail=False)

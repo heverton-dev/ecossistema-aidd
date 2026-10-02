@@ -212,3 +212,44 @@ def test_rerodar_antes_de_aprovar_nao_repete_fases(repo, monkeypatch, capsys):
     assert _rodar(monkeypatch, "--manifest", str(m)) == 0
     assert repo.chamadas == []
     assert "NADA A FAZER" in capsys.readouterr().out
+
+
+def test_testes_das_ferramentas_tocadas_cobrem_suite_e_bateria_raiz(tmp_path):
+    (tmp_path / "tests").mkdir()
+    for nome in ("test_forge_cli.py", "test_forge_handoff.py", "test_enterprise_cli.py"):
+        (tmp_path / "tests" / nome).write_text("", encoding="utf-8")
+
+    comandos = orquestrador_4f.testes_das_ferramentas_tocadas(
+        ["tools/aidd-forge/aidd_forge/cli.py", "tools/aidd-forge/tests/t.py", "README.md"], tmp_path)
+
+    assert len(comandos) == 2
+    suite, env = comandos[0]
+    assert "G_TESTES_REAIS.py" in suite
+    assert env == {"AIDD_GATES_MODO": "rapido", "AIDD_TESTES_REAIS_FERRAMENTAS": "aidd-forge"}
+    raiz, env_raiz = comandos[1]
+    assert "tests/test_forge_cli.py" in raiz and "tests/test_forge_handoff.py" in raiz
+    assert "test_enterprise_cli.py" not in raiz and env_raiz is None
+
+
+def test_fase_sem_ferramenta_tocada_nao_roda_suite(tmp_path):
+    assert orquestrador_4f.testes_das_ferramentas_tocadas(["componentes/x.py", "tests/test_a.py"], tmp_path) == []
+
+
+def test_suite_da_ferramenta_tocada_reprova_e_fase_nao_e_commitada(repo, monkeypatch):
+    # 2026-10-02 (Bloco 2, Fase 9): gate_fase rodou só o teste do ticket; a suíte do aidd-forge e
+    # tests/test_forge_* quebraram e só o gate_final (17 min) pegou.
+    rodar_gate_real = orquestrador_4f.rodar_gate
+    comandos = []
+
+    def rodar_gate(comando, cwd, env=None):
+        comandos.append(comando)
+        return 1 if "G_TESTES_REAIS" in comando else rodar_gate_real(comando, cwd, env)
+
+    monkeypatch.setattr(orquestrador_4f, "rodar_gate", rodar_gate)
+    m = _manifesto(repo.path, [_fase("Fase_1_Ticket_1", "tools/aidd-forge/peca.py"), _fase("Fase_2_Ticket_2", "out/b.md")])
+
+    assert _rodar(monkeypatch, "--manifest", str(m)) == 1
+    assert repo.chamadas == ["peca.py"]
+    assert any("G_TESTES_REAIS" in c for c in comandos)
+    arquivos = _git(repo.path, "ls-tree", "-r", "--name-only", "audit/aud-x-ciclo-01")
+    assert "tools/aidd-forge/peca.py" not in arquivos.split()

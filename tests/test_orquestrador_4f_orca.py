@@ -89,6 +89,8 @@ def test_fluxo_injeta_tarefa_espera_worker_done_e_fecha_terminais(tmp_path, monk
     texto_spec = spec[spec.index("--spec") + 1]
     assert texto_spec.startswith("faça") and "out/h.md" in texto_spec  # prompt embutido, nada fora da worktree
     assert "Do NOT run git commit" in texto_spec  # commit é do orquestrador, após o gate
+    assert "Do NOT run `python ecossistema.py audit`" in texto_spec  # bateria completa é do gate_final
+    assert "codebase-memory-mcp" in texto_spec and "before grep" in texto_spec  # graph-first
     dispatch = next(a for a in chamadas if a[:2] == ("orchestration", "dispatch"))
     assert "--return-preamble" in dispatch and dispatch[dispatch.index("--to") + 1] == "term_x"
     preambulo = tmp_path / orquestrador_4f.PREAMBULO
