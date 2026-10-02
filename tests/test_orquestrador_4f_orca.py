@@ -218,3 +218,73 @@ def test_sem_pergunta_de_confianca_nao_envia_nada(monkeypatch):
                         lambda *a, **k: {"terminal": {"tail": ["pronto"]}} if a[:2] == ("terminal", "read") else enviados.append(a))
     orquestrador_4f.confirmar_confianca_pasta("term_x")
     assert enviados == []
+
+
+def test_agente_sem_worker_done_com_entrega_e_tela_parada_encerra_a_fase(tmp_path, monkeypatch):
+    # 2026-10-02 (Bloco 3, Fase 10): mimo e opencode não mandam worker_done; a fase esperava a
+    # 1h inteira com o trabalho pronto. Entrega existente + tela parada por 2 min = concluída.
+    entrega = tmp_path / "out" / "h.md"
+    entrega.parent.mkdir()
+    entrega.write_text("pronto", encoding="utf-8")
+    relogio = {"t": 0.0}
+    monkeypatch.setattr(orquestrador_4f.time, "time", lambda: relogio["t"])
+    monkeypatch.setattr(orquestrador_4f.time, "sleep", lambda s: relogio.__setitem__("t", relogio["t"] + s))
+
+    def orca(*args, **kwargs):
+        if "--wait" in args:
+            relogio["t"] += 30
+            return None
+        if args[:2] == ("terminal", "read"):
+            return {"terminal": {"tail": ["> pronto"]}}
+        return {}
+
+    monkeypatch.setattr(orquestrador_4f, "orca", orca)
+    outcome, resumo = orquestrador_4f.aguardar_worker_done("run_1", "ctx_1", timeout_s=3600,
+                                                          handle="term_x", entrega=entrega)
+    assert outcome == "succeeded" and "tela parada" in resumo
+    assert relogio["t"] < 400  # não esperou a hora inteira
+
+
+def test_tela_mudando_ou_sem_entrega_nao_encerra_a_fase(tmp_path, monkeypatch):
+    relogio = {"t": 0.0, "n": 0}
+    monkeypatch.setattr(orquestrador_4f.time, "time", lambda: relogio["t"])
+    monkeypatch.setattr(orquestrador_4f.time, "sleep", lambda s: relogio.__setitem__("t", relogio["t"] + s))
+
+    def orca(*args, **kwargs):
+        if "--wait" in args:
+            relogio["t"] += 30
+            return None
+        if args[:2] == ("terminal", "read"):
+            relogio["n"] += 1
+            return {"terminal": {"tail": [f"pensando {relogio['n']}"]}}
+        return {}
+
+    monkeypatch.setattr(orquestrador_4f, "orca", orca)
+    entrega = tmp_path / "h.md"
+    entrega.write_text("x", encoding="utf-8")
+    assert orquestrador_4f.aguardar_worker_done("run_1", "ctx_1", timeout_s=600, handle="term_x",
+                                                entrega=entrega)[0] == "timeout"
+    assert orquestrador_4f.aguardar_worker_done("run_1", "ctx_1", timeout_s=600, handle="term_x",
+                                                entrega=tmp_path / "nao_existe.md")[0] == "timeout"
+
+
+def test_tela_parada_com_pergunta_pendente_nao_encerra_a_fase(tmp_path, monkeypatch):
+    entrega = tmp_path / "h.md"
+    entrega.write_text("x", encoding="utf-8")
+    relogio = {"t": 0.0}
+    monkeypatch.setattr(orquestrador_4f.time, "time", lambda: relogio["t"])
+    monkeypatch.setattr(orquestrador_4f.time, "sleep", lambda s: relogio.__setitem__("t", relogio["t"] + s))
+
+    def orca(*args, **kwargs):
+        if "--wait" in args:
+            relogio["t"] += 30
+            return None
+        if args[:2] == ("terminal", "read"):
+            return {"terminal": {"tail": ["aguardando resposta"]}}
+        if "--peek" in args:
+            return {"messages": [{"type": "question", "subject": "Question"}]}
+        return {}
+
+    monkeypatch.setattr(orquestrador_4f, "orca", orca)
+    assert orquestrador_4f.aguardar_worker_done("run_1", "ctx_1", timeout_s=600, handle="term_x",
+                                                entrega=entrega)[0] == "timeout"

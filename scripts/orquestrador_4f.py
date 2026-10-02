@@ -165,6 +165,8 @@ class LiveHUD:
 
 ORCA_TIMEOUT_AGENTE_S = 3600
 ORCA_ESPERA_CHECK_MS = 900000
+ORCA_ESPERA_OCIOSO_MS = 30000
+ORCA_TELA_PARADA_S = 120
 PREAMBULO = ".aidd-preambulo.md"
 GATE_GRAPH_FIRST = Path(__file__).resolve().parent.parent / "gates" / "G_GRAPH_FIRST.py"
 _run_orca = {}
@@ -266,14 +268,32 @@ def confirmar_confianca_pasta(handle, tentativas=3):
 TIPOS_FIM_DO_AGENTE = ("worker_done", "escalation")
 
 
-def aguardar_worker_done(run_id, dispatch_id, timeout_s=None):
-    """Bloqueia no inbox do Run (sem polling) até o worker_done/escalation deste dispatch."""
+def pergunta_pendente(run_id):
+    """Agente parado esperando resposta a um `ask` (tela parada) não terminou o trabalho."""
+    lido = orca("orchestration", "check", "--run", run_id, "--peek", "--types", "question") or {}
+    return bool(lido.get("messages"))
+
+
+def aguardar_worker_done(run_id, dispatch_id, timeout_s=None, handle=None, entrega=None):
+    """Bloqueia no inbox do Run até o worker_done/escalation deste dispatch.
+
+    Com `handle` e `entrega`: mimo e opencode não mandam worker_done (Bloco 3, Fase 10, 2026-10-02,
+    1h perdida com o trabalho pronto). Entrega existente + tela parada por ORCA_TELA_PARADA_S
+    encerra a fase como concluída; o resultado real continua decidido pelo gate_fase."""
     timeout_s = timeout_s or ORCA_TIMEOUT_AGENTE_S
-    espera_ms = min(ORCA_ESPERA_CHECK_MS, timeout_s * 1000)
+    espera_ms = min(ORCA_ESPERA_CHECK_MS if handle is None else ORCA_ESPERA_OCIOSO_MS, timeout_s * 1000)
     inicio = time.time()
+    ultima_tela, desde = None, time.time()
     while time.time() - inicio < timeout_s:
         lote = orca("orchestration", "check", "--run", run_id, "--wait", "--types", ",".join(TIPOS_FIM_DO_AGENTE),
                     "--timeout-ms", str(espera_ms), timeout=espera_ms // 1000 + 60)
+        if handle and entrega:
+            atual = tela(handle)
+            if atual != ultima_tela:
+                ultima_tela, desde = atual, time.time()
+            elif (Path(entrega).exists() and time.time() - desde >= ORCA_TELA_PARADA_S
+                  and not pergunta_pendente(run_id)):
+                return "succeeded", f"sem worker_done: entrega pronta e tela parada há {ORCA_TELA_PARADA_S}s"
         if not lote:
             time.sleep(5)
             continue
@@ -361,7 +381,8 @@ def run_agente_orca(cmd, cwd, input_data=None, expected_handoff=None, titulo="AI
                             enter_sem_eco=any("claude" in p for p in cmd.split()[:2])):
             print("[ORCA] FALHA: instrução não entregue ao terminal.")
             return "failed"
-        outcome, resumo = aguardar_worker_done(run_id, envio["dispatch"]["id"])
+        outcome, resumo = aguardar_worker_done(run_id, envio["dispatch"]["id"], handle=handle,
+                                               entrega=expected_handoff)
         print(f"[ORCA] worker_done: {outcome} — {resumo}")
         return outcome
     finally:
