@@ -40,10 +40,12 @@ from application.commands.heal import cmd_heal  # noqa: E402
 from application.commands.deploy import cmd_deploy  # noqa: E402
 from application.commands.export_frontend import cmd_export_frontend  # noqa: E402
 from application.commands.scaffold_infra import cmd_scaffold_infra  # noqa: E402
-from application.commands.inject import (  # noqa: E402
-    _tentar_injecao_por_linguagem_natural,
-    cmd_inject as _cmd_inject_impl,
-)
+from application.pecas_catalogo import carregar_injetor  # noqa: E402
+
+# Injetor pela peça selada do almoxarifado (Ticket 18 / D3).
+_injetor = carregar_injetor()
+_tentar_injecao_por_linguagem_natural = _injetor._tentar_injecao_por_linguagem_natural
+_cmd_inject_impl = _injetor.cmd_inject
 from application.commands.plan import (  # noqa: E402
     cmd_plan,
     cmd_apply,

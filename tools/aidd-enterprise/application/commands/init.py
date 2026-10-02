@@ -1,18 +1,8 @@
 # -*- coding: utf-8 -*-
-"""Use Case: init — provisão de novo projeto modular."""
+"""Use Case: init — delegado ao aidd-master (Ticket 18 / D1): provisionar projeto é construção."""
 
-from application.commands.setup import ensure_environment
+from application.commands.delegacao import delegar_ou_sair
 
 
 def cmd_init(args):
-    ensure_environment()
-    try:
-        from provision_project import provision
-    except ImportError:
-        from scripts.provision_project import provision
-    destino = getattr(args, "dir", ".") or "."
-    # ISSUE-USA-0003: --dir/--pasta explícito É o diretório do projeto (achatado).
-    if destino not in (".", ""):
-        provision(destino)
-    else:
-        provision(args.nome, base_dir=destino)
+    delegar_ou_sair(["init", args.nome, "--dir", getattr(args, "dir", ".") or "."])

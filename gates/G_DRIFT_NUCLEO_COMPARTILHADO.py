@@ -17,6 +17,16 @@ Dois tipos de par sao cobertos hoje (ver PARES abaixo):
   viva que protege este monorepo comparada com a versao entregue a
   projetos novos gerados a partir do template.
 
+- Catalogo (Ticket 18, fronteiras-ferramentas ciclo-01): cada copia listada em
+  componentes/compartilhado/CATALOGO.json ("copias" de cada peca) e comparada
+  com a versao do catalogo (o sha256 selado da peca), nao so entre master e
+  enterprise. Divergencia so passa se documentada em
+  baseline["catalogo"]["divergencias_documentadas"][<copia>] com motivo.
+  D4 (decisao do usuario, 01/10/2026): tools/aidd-enterprise/materiais-extras/
+  examples/** e arquivo historico fora do almoxarifado — nunca e comparado.
+  Os pares acima continuam valendo para os arquivos que o catalogo nao cobre
+  (ex.: scripts/aidd.py, scripts/add_module.py).
+
 Em ambos os casos as pastas sao mantidas como copias independentes por
 decisao explicita (nenhum acoplamento de runtime entre ferramentas nem
 entre scripts/ e templates/ de uma mesma ferramenta, preservando a
@@ -52,6 +62,16 @@ import sys
 
 ROOT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 BASELINE_PATH = os.path.join(ROOT_DIR, "gates", "baseline_nucleo_compartilhado.json")
+CATALOGO_PATH = os.path.join(ROOT_DIR, "componentes", "compartilhado", "CATALOGO.json")
+
+# D4: arquivo historico, fora do almoxarifado (CATALOGO.json -> fora_do_almoxarifado).
+PREFIXOS_D4 = ("tools/aidd-enterprise/materiais-extras/examples/",)
+
+DESCRICAO_CATALOGO = (
+    "Copias de pecas do CATALOGO.json que divergem de proposito da versao do catalogo "
+    "(chave = caminho da copia, valor = motivo). Toda outra copia tem de ser byte-identica "
+    "a peca. As copias saem do repo no Ticket 19 (remocao com o usuario)."
+)
 
 
 def _tools(*partes):
@@ -150,18 +170,125 @@ def atualizar_baseline():
         novos_arquivos[nome_par] = entradas
         total += len(entradas)
 
+    catalogo_antigo = baseline_antigo.get("catalogo", {})
+    documentadas_antigas = catalogo_antigo.get("divergencias_documentadas", {})
+    novas_documentadas = {}
+    for copia, _peca, identico in _estado_catalogo(_carregar_catalogo()):
+        if identico is False:
+            novas_documentadas[copia] = documentadas_antigas.get(copia) or (
+                "REVISAR: divergencia nova detectada por --atualizar-baseline. "
+                "Edite este motivo antes de commitar."
+            )
+
     novo_baseline = {
         "descricao": baseline_antigo.get("descricao", "Baseline de sincronismo entre pares de "
             "diretorios de tools/aidd-master/ e tools/aidd-enterprise/ (ver PARES em "
             "G_DRIFT_NUCLEO_COMPARTILHADO.py)."),
         "gerado_em": baseline_antigo.get("gerado_em", "auto"),
         "arquivos": novos_arquivos,
+        "catalogo": {
+            "descricao": catalogo_antigo.get("descricao", DESCRICAO_CATALOGO),
+            "divergencias_documentadas": novas_documentadas,
+        },
     }
     with open(BASELINE_PATH, "w", encoding="utf-8") as f:
         json.dump(novo_baseline, f, indent=2, ensure_ascii=False)
         f.write("\n")
-    print(f"[OK] Baseline atualizado com {total} arquivo(s) em {len(PARES)} par(es) de diretorios em {BASELINE_PATH}")
+    print(f"[OK] Baseline atualizado com {total} arquivo(s) em {len(PARES)} par(es) de diretorios "
+          f"e {len(novas_documentadas)} divergencia(s) de copia do catalogo em {BASELINE_PATH}")
     return 0
+
+
+def _carregar_catalogo():
+    if not os.path.isfile(CATALOGO_PATH):
+        return None
+    with open(CATALOGO_PATH, "r", encoding="utf-8") as f:
+        return json.load(f)
+
+
+def _eh_d4(copia):
+    return copia.replace(os.sep, "/").startswith(PREFIXOS_D4)
+
+
+def _sha_catalogo(peca):
+    return str(peca.get("sha256", "")).split("sha256-", 1)[-1]
+
+
+def _caminho_repo(relativo):
+    return os.path.join(ROOT_DIR, *str(relativo).split("/"))
+
+
+def _estado_catalogo(catalogo):
+    """Gera (copia, peca, identico) para cada copia do catalogo fora da D4.
+
+    identico = None quando a copia nao existe no disco.
+    """
+    for peca in (catalogo or {}).get("pecas", []):
+        esperado = _sha_catalogo(peca)
+        for copia in peca.get("copias", []):
+            if _eh_d4(copia):
+                continue
+            caminho = _caminho_repo(copia)
+            if not os.path.isfile(caminho):
+                yield copia, peca, None
+            else:
+                yield copia, peca, _hash(caminho) == esperado
+
+
+def _checar_catalogo(catalogo, baseline_catalogo):
+    """Compara cada copia do CATALOGO.json com a versao do catalogo. Retorna lista de erros (str)."""
+    if catalogo is None:
+        return [f"catalogo: CATALOGO.json ausente ({CATALOGO_PATH}) — nada contra o que comparar as copias."]
+
+    erros = []
+    documentadas = (baseline_catalogo or {}).get("divergencias_documentadas", {})
+    pecas = catalogo.get("pecas", [])
+
+    # A propria peca tem de bater com o selo do catalogo; senao a comparacao nao vale.
+    for peca in pecas:
+        caminho = _caminho_repo(peca.get("caminho", ""))
+        if not os.path.isfile(caminho):
+            erros.append(f"catalogo/{peca.get('nome')}: peca ausente do disco ({peca.get('caminho')}).")
+        elif _hash(caminho) != _sha_catalogo(peca):
+            erros.append(
+                f"catalogo/{peca.get('nome')}: a peca nao bate com o sha256 do CATALOGO.json "
+                f"(peca editada sem atualizar o selo)."
+            )
+        for copia in peca.get("copias", []):
+            if _eh_d4(copia):
+                print(f"[INFO] catalogo/{copia}: D4 — arquivo historico (materiais-extras/examples), nao comparado.")
+
+    total = 0
+    vistas = set()
+    for copia, peca, identico in _estado_catalogo(catalogo):
+        total += 1
+        vistas.add(copia)
+        motivo = documentadas.get(copia)
+        if identico is None:
+            erros.append(
+                f"catalogo/{copia}: copia listada em '{peca.get('nome')}' nao existe no disco "
+                f"(atualize 'copias' no CATALOGO.json)."
+            )
+        elif identico and motivo:
+            erros.append(
+                f"catalogo/{copia}: baseline documenta divergencia, mas a copia ja e identica "
+                f"a '{peca.get('nome')}' (remova a entrada do baseline)."
+            )
+        elif not identico and not motivo:
+            erros.append(
+                f"catalogo/{copia}: diverge da peca '{peca.get('nome')}' do catalogo "
+                f"(drift nao documentado)."
+            )
+        elif not identico and str(motivo).startswith("REVISAR"):
+            erros.append(f"catalogo/{copia}: motivo da divergencia ainda e o placeholder REVISAR.")
+        elif not identico:
+            print(f"[INFO] catalogo/{copia}: divergencia documentada — {motivo}")
+
+    for copia in sorted(set(documentadas) - vistas):
+        erros.append(f"catalogo/{copia}: baseline documenta copia que nao esta no CATALOGO.json.")
+
+    print(f"[OK] catalogo: {total} copia(s) comparada(s) com a versao do catalogo.")
+    return erros
 
 
 def _checar_par(nome_par, dir_a, dir_b, baseline_par):
@@ -233,13 +360,14 @@ def _checar_par(nome_par, dir_a, dir_b, baseline_par):
 
 def checar_drift():
     print("=" * 70)
-    print(" [GATE] G_DRIFT_NUCLEO_COMPARTILHADO — cross-tool e intra-tool")
+    print(" [GATE] G_DRIFT_NUCLEO_COMPARTILHADO — catalogo, cross-tool e intra-tool")
     print("=" * 70)
 
-    baseline = _carregar_baseline().get("arquivos", {})
+    baseline_completo = _carregar_baseline()
+    baseline = baseline_completo.get("arquivos", {})
     legado = _formato_legado(baseline)
 
-    erros = []
+    erros = _checar_catalogo(_carregar_catalogo(), baseline_completo.get("catalogo", {}))
     for nome_par, dir_a, dir_b in PARES:
         if legado and nome_par == "src/core":
             baseline_par = baseline

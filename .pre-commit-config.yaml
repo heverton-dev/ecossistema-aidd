@@ -54,7 +54,7 @@ repos:
         require_serial: true
 
       - id: g-drift-nucleo-compartilhado
-        name: G_DRIFT_NUCLEO_COMPARTILHADO (nucleo master vs enterprise)
+        name: G_DRIFT_NUCLEO_COMPARTILHADO (copias vs catalogo + nucleo master vs enterprise)
         entry: python gates/G_DRIFT_NUCLEO_COMPARTILHADO.py
         language: system
         always_run: true
