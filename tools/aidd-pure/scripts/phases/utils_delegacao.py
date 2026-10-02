@@ -509,8 +509,39 @@ def _validar_pydantic_com_retry(
 # CONSTANTES E CONFIGURAÇÃO DE TIMEOUTS POR FASE
 # =============================================================================
 
-CACHE_DIR = Path(__file__).parent.parent / '.aidd' / 'cache'
-CACHE_DIR.mkdir(parents=True, exist_ok=True)
+def resolver_cache_dir(projeto_dir=None) -> Path:
+    """Resolve `<projeto>/.aidd/cache` (V11: cache vive no projeto, nunca na ferramenta).
+
+    Ordem de resolucao: `projeto_dir` explicito > `AIDD_PROJECT_DIR` > pasta do
+    `AIDD_HANDOFF_PLANNER` (C2 do planner) > cwd do
+    processo (o projeto alvo quando a ferramenta roda dentro dele). Cwd dentro
+    de `tools/` (ferramenta rodada da propria pasta) cai na raiz do ecossistema,
+    nunca dentro da ferramenta.
+    """
+    if projeto_dir is not None:
+        return Path(projeto_dir).resolve() / '.aidd' / 'cache'
+    env = os.environ.get('AIDD_PROJECT_DIR', '').strip()
+    handoff = os.environ.get('AIDD_HANDOFF_PLANNER', '').strip()
+    if env:
+        base = Path(env).resolve()
+    elif handoff:
+        # o orquestrador_sincrono aponta o C2 do planner, que vive na pasta do projeto
+        base = Path(handoff).resolve().parent
+    else:
+        base = Path.cwd().resolve()
+    tools_dir = Path(__file__).resolve().parents[3]
+    if base == tools_dir or tools_dir in base.parents:
+        base = tools_dir.parent
+    return base / '.aidd' / 'cache'
+
+
+CACHE_DIR = resolver_cache_dir()
+
+
+def _garantir_cache_dir() -> Path:
+    """Cria o cache do projeto apenas na hora de usar (nunca no import)."""
+    CACHE_DIR.mkdir(parents=True, exist_ok=True)
+    return CACHE_DIR
 
 TIMEOUT_DELEGACAO = 30  # segundos legado / fallback geral
 TIMEOUT_PADRAO_DELEGACAO = 30
@@ -666,6 +697,7 @@ class RequisicaoLLMDelegada:
         Valida o payload contra schemas/llm_request_v1.json antes de escrever
         (quando schemas disponíveis).
         """
+        _garantir_cache_dir()
         caminho = CACHE_DIR / f"_llm_request_{self.id}.json"
         dados = {
             "id": self.id,
@@ -696,6 +728,7 @@ class RequisicaoLLMDelegada:
         - Valida o payload contra schemas/llm_response_v1.json quando disponível.
         """
         timeout_efetivo = timeout if timeout is not None else obter_timeout_por_fase(fase)
+        _garantir_cache_dir()
         caminho_resposta = CACHE_DIR / f"_llm_response_{id_requisicao}.json"
         nome_alvo = caminho_resposta.name
 

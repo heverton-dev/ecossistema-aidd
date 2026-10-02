@@ -1122,3 +1122,19 @@
   - `scripts/e2e_foto.py rodar` + `comparar --base ciclo-01` (ciclo-07) → exit 0, nenhuma métrica piorou.
 - **Status:** **RESOLVIDO**.
 - **Data da Última Auditoria:** 02/10/2026.
+
+## 26. `aidd-pure` usa a peça do catálogo e o cache delegado sai de dentro da ferramenta (fronteiras-ferramentas ciclo-01, Bloco 3, Ticket 15)
+
+- **Objetivo da Correção:**
+  O generator do `aidd-pure` passa a usar o injetor do almoxarifado (peça do catálogo) e o cache do protocolo delegado (`_llm_request`/`_llm_response`) vive no projeto (`<projeto>/.aidd/cache`), nunca em `tools/aidd-pure/`. As cópias locais do injetor continuam no lugar até o Bloco 4 (remoção com o usuário).
+- **Ferramentas Tocadas:** [`tools/aidd-pure`](file:///C:/Users/trcnologia/Desktop/ecossistema-aidd/tools/aidd-pure).
+- **O que executou:**
+  1. `tools/aidd-pure/scripts/core/pecas_catalogo.py`: resolve as peças pelo `CATALOGO.json`.
+  2. `tools/aidd-pure/scripts/phases/utils_delegacao.py`: `resolver_cache_dir` (projeto explícito > `AIDD_PROJECT_DIR` > cwd); cwd dentro de `tools/` cai na raiz do ecossistema; o import não cria pasta.
+  3. `.gitignore`: `/.aidd/cache/` só na raiz.
+- **Resultados de Testes:**
+  - `tools/aidd-pure/tests/test_fronteira_generator.py` → exit 0 (9 passed), da raiz e de dentro de `tools/aidd-pure`.
+  - `tools/aidd-pure`: `pytest` → exit 0 (1015 passed, 5 skipped), sem criar `.aidd/cache` na ferramenta.
+  - `scripts/e2e_foto.py rodar` + `comparar --base ciclo-01` → exit 0, nenhuma métrica piorou.
+- **Status:** **RESOLVIDO**.
+- **Data da Última Auditoria:** 02/10/2026.

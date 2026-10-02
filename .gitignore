@@ -142,4 +142,7 @@ skills-lock.json
 
 # Fila de ciclos pesados e medicoes locais (scripts/fila_ciclos.py, scripts/medir_gates.py)
 .aidd/fila-ciclos.lock
+# Cache do protocolo delegado das ferramentas: vive no PROJETO (V11/Ticket 15),
+# nunca dentro de tools/<ferramenta>/.
+/.aidd/cache/
 secoes/medicoes/

@@ -106,8 +106,17 @@ def _gate_cybersecurity_owasp(pasta: Path) -> int:
 
 
 def _gate_inject(pasta: Path) -> int:
-    """G_INJECT: valida o Injetor Universal de Componentes (schema, profiles, materialização, rollback)."""
-    mod = _carregar_modulo('G_INJECT', GATES_DIR / 'G_INJECT.py')
+    """G_INJECT: valida o Injetor Universal de Componentes (schema, profiles, materialização, rollback).
+
+    A peça é de `aidd-enterprise` e vem do almoxarifado (D1/Ticket 15): o
+    aidd-pure não guarda cópia. As âncoras de caminho da peça são reancoradas
+    no consumidor pelo carregador.
+    """
+    from scripts.core import pecas_catalogo
+
+    pecas_catalogo.registrar_injetor()
+    mod = _carregar_modulo('G_INJECT', pecas_catalogo.caminho_gate_injetor())
+    pecas_catalogo.reancorar_modulo(mod)
     return mod.executar_gate(pasta)
 
 
