@@ -17,7 +17,6 @@ import mapa_visual as mv
 
 MOLDES_NAO_TECNICOS = RAIZ / "docs" / "mapas-visuais" / "moldes-nao-tecnicos"
 DESTINO = RAIZ / "docs" / "mapas-visuais" / "nao-tecnicos"
-DESTINO.mkdir(parents=True, exist_ok=True)
 
 
 def compilar_nao_tecnico(tipo: str, catalogo: dict, link_manual: str = "manual-montagem-aidd.html") -> str:
@@ -50,26 +49,33 @@ def compilar_nao_tecnico(tipo: str, catalogo: dict, link_manual: str = "manual-m
     )
 
 
+def gravar_ou_conferir(tipo: str, catalogo: dict, check: bool = False) -> bool:
+    """Versão não técnica do mapa, com o mesmo nome de arquivo da técnica. Chamado pelo
+    mapa_visual.py a cada mapa gerado, para as duas versões nunca ficarem desencontradas.
+    Com check, só confere; devolve False se o arquivo estiver desatualizado."""
+    saida = DESTINO / mv.arquivo_mapa(tipo)
+    texto = compilar_nao_tecnico(tipo, catalogo)
+    if check:
+        if not saida.is_file() or saida.read_text(encoding="utf-8") != texto:
+            print(f"[DESATUALIZADO] {saida} difere do catálogo. Rode: python scripts/mapa_visual.py {tipo}")
+            return False
+        print(f"[OK] {saida} em dia com o catálogo.")
+        return True
+    saida.parent.mkdir(parents=True, exist_ok=True)
+    saida.write_text(texto, encoding="utf-8")
+    print(f"[OK] Mapa não técnico gravado em {saida}")
+    return True
+
+
 def main():
     if not mv.CATALOGO.is_file():
         print(f"[ERRO] {mv.CATALOGO} não existe.")
         return 1
     cat = json.loads(mv.CATALOGO.read_text(encoding="utf-8"))
-
-    # Compilar indice (mapa-00)
-    html_indice = compilar_nao_tecnico("indice", cat)
-    (DESTINO / "mapa-00-indice.html").write_text(html_indice, encoding="utf-8")
-    print(f"[OK] Gravado {DESTINO / 'mapa-00-indice.html'}")
-
-    # Compilar os outros 12 mapas
-    for n, (tipo, _, _) in enumerate(mv.MAPAS_PREVISTOS, start=1):
-        nome_arq = f"mapa-{n:02d}-{tipo}.html"
-        saida = DESTINO / nome_arq
-        conteudo = compilar_nao_tecnico(tipo, cat)
-        saida.write_text(conteudo, encoding="utf-8")
-        print(f"[OK] Gravado {saida}")
-
-    print("\nTodos os 13 mapas não-técnicos compilados com sucesso!")
+    tipos = ["indice", *(tipo for tipo, _, _ in mv.MAPAS_PREVISTOS)]
+    for tipo in tipos:
+        gravar_ou_conferir(tipo, cat)
+    print(f"\nTodos os {len(tipos)} mapas não-técnicos compilados com sucesso!")
     return 0
 
 

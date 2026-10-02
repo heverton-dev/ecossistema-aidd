@@ -1,0 +1,8 @@
+{
+  "type": "skill",
+  "name": "skill-gate",
+  "description": "Componente para validacao do gate.",
+  "content": "# Skill enterprise\nComponente integro para o gate.\n",
+  "sha256": "44d474d6856fcf9e7328c92e9403cd80ef56fd582d9b2ed20b8cc916efdce19f",
+  "arquivo": "SKILL.md"
+}

@@ -417,3 +417,21 @@ def test_arquivos_seguem_a_ordem_de_leitura():
         assert mv.arquivo_mapa(tipo) == f"mapa-{n:02d}-{tipo}.html"
         if mv.status_mapa(tipo, json.loads(mv.CATALOGO.read_text(encoding="utf-8"))) != "a-criar":
             assert (mv.MAPAS / mv.arquivo_mapa(tipo)).is_file(), tipo
+
+
+def test_mapa_oficial_sai_nas_duas_versoes_e_check_confere_a_nao_tecnica(tmp_path, monkeypatch):
+    """Gerar um mapa no lugar oficial grava a versão técnica e a não técnica (mesmo nome);
+    o --check reprova se só a não técnica ficou para trás. Antes, o compilador não técnico
+    era um script solto que ninguém chamava (achado CAT-scripts-sem-chamador, 02/10)."""
+    import compilar_mapas_nao_tecnicos as nt
+    monkeypatch.setattr(mv, "MAPAS", tmp_path / "tecnicos")
+    monkeypatch.setattr(nt, "DESTINO", tmp_path / "nao-tecnicos")
+
+    assert mv.main(["guardas"]) == 0
+    tecnico = tmp_path / "tecnicos" / mv.arquivo_mapa("guardas")
+    nao_tecnico = tmp_path / "nao-tecnicos" / mv.arquivo_mapa("guardas")
+    assert tecnico.is_file() and nao_tecnico.is_file()
+    assert mv.main(["guardas", "--check"]) == 0
+
+    nao_tecnico.write_text("velho", encoding="utf-8")
+    assert mv.main(["guardas", "--check"]) == 1

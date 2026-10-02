@@ -17,7 +17,7 @@ abstract: |
   Cada capítulo corresponde a um mapa visual, na mesma ordem dos arquivos em docs/mapas-visuais/.
 
   Nada aqui é estimado. Os números vêm do catálogo de peças e os defeitos vêm do arquivo de achados, que
-  hoje registra 11 achados em aberto, 0 sob suspeita e 14 resolvidos.
+  hoje registra 5 achados em aberto, 0 sob suspeita e 14 resolvidos.
 ---
 
 # Como ler este livro

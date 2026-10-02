@@ -467,6 +467,62 @@ repos:
         pass_filenames: false
         require_serial: true
 
+      - id: g-aidd-spec
+        name: "G_aidd_spec (quality gate da ferramenta aidd-spec per Lei #9)"
+        entry: python gates/G_aidd_spec.py
+        language: system
+        always_run: true
+        pass_filenames: false
+        require_serial: true
+
+      - id: g-aidd-tdd
+        name: "G_aidd_tdd (quality gate da ferramenta aidd-tdd per Lei #9)"
+        entry: python gates/G_aidd_tdd.py
+        language: system
+        always_run: true
+        pass_filenames: false
+        require_serial: true
+
+      - id: g-aidd-tickets
+        name: "G_aidd_tickets (quality gate da ferramenta aidd-tickets per Lei #9)"
+        entry: python gates/G_aidd_tickets.py
+        language: system
+        always_run: true
+        pass_filenames: false
+        require_serial: true
+
+      - id: g-aidd-grill
+        name: "G_aidd_grill (quality gate da ferramenta aidd-grill per Lei #9)"
+        entry: python gates/G_aidd_grill.py
+        language: system
+        always_run: true
+        pass_filenames: false
+        require_serial: true
+
+      - id: g-aidd-enterprise
+        name: "G_aidd_enterprise (manifesto e integridade de componente enterprise per Lei #9)"
+        entry: python gates/G_aidd_enterprise.py --manifest tests/fixtures/enterprise_conforme/manifest.json --dir tests/fixtures/enterprise_conforme
+        language: system
+        always_run: true
+        pass_filenames: false
+        require_serial: true
+
+      - id: g-template-tanstack-offline
+        name: "G_TEMPLATE_TANSTACK_OFFLINE (template TanStack offline per Lei #11)"
+        entry: python gates/G_TEMPLATE_TANSTACK_OFFLINE.py
+        language: system
+        always_run: true
+        pass_filenames: false
+        require_serial: true
+
+      - id: g-nove-camadas-mercado
+        name: "G_NOVE_CAMADAS_MERCADO (nove camadas de mercado per Lei #11)"
+        entry: python gates/G_NOVE_CAMADAS_MERCADO.py
+        language: system
+        always_run: true
+        pass_filenames: false
+        require_serial: true
+
       - id: g-handoff-melhoria
         name: "G_HANDOFF_MELHORIA (assinatura e transicao melhoria para plan per Lei #9)"
         entry: python gates/G_HANDOFF_MELHORIA.py

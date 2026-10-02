@@ -1,22 +1,16 @@
 # Apêndice B — Estado honesto
 
-Tabela consolidada de todos os achados dos mapas, gerada de `docs/auditoria/mapa-pecas/ciclo-01/ACHADOS.json`. Em aberto por gravidade: 0 alta, 2 média, 9 baixa. Cada achado em aberto traz no arquivo o texto pronto para abrir o fluxo de melhoria (`pedido_melhoria`).
+Tabela consolidada de todos os achados dos mapas, gerada de `docs/auditoria/mapa-pecas/ciclo-01/ACHADOS.json`. Em aberto por gravidade: 0 alta, 1 média, 4 baixa. Cada achado em aberto traz no arquivo o texto pronto para abrir o fluxo de melhoria (`pedido_melhoria`).
 
-## Em aberto (11)
+## Em aberto (5)
 
 | Achado | Gravidade · mapa |
 | :-------------------------------------- | :-------------------------------------------- |
-| 6 guardas declarados em lei que não rodam no commit (`CAT-declarados-fora-do-commit`) | Média · leis |
 | 1 guardas com o mesmo nome e código diferente (`CAT-gates-versoes`) | Média · guardas |
-| Ciclo de auditoria sem todos os documentos: agilidade-gates/ciclo-01 (`CAT-ciclo-agilidade-gates-ciclo-01`) | Baixa · oficina |
 | Ciclo de auditoria sem todos os documentos: aidd-master/ciclo-01 (`CAT-ciclo-aidd-master-ciclo-01`) | Baixa · oficina |
 | Ciclo de auditoria sem todos os documentos: aidd-open/ciclo-01 (`CAT-ciclo-aidd-open-ciclo-01`) | Baixa · oficina |
 | Ciclo de auditoria sem todos os documentos: aidd-ops/ciclo-01 (`CAT-ciclo-aidd-ops-ciclo-01`) | Baixa · oficina |
-| Ciclo de auditoria sem todos os documentos: cbm-lazy-proxy/ciclo-01 (`CAT-ciclo-cbm-lazy-proxy-ciclo-01`) | Baixa · oficina |
 | Ciclo de auditoria sem todos os documentos: fronteiras-ferramentas/ciclo-01 (`CAT-ciclo-fronteiras-ferramentas-ciclo-01`) | Baixa · oficina |
-| Ciclo de auditoria sem todos os documentos: meus-prompts/ciclo-01 (`CAT-ciclo-meus-prompts-ciclo-01`) | Baixa · oficina |
-| 1 guardas da raiz que nenhuma lei declara (`CAT-guardas-sem-lei`) | Baixa · leis |
-| 1 scripts que nenhum código chama (`CAT-scripts-sem-chamador`) | Baixa · scripts |
 
 ## Resolvidos (14)
 

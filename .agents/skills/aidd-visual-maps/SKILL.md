@@ -28,7 +28,7 @@ The maps the ecosystem needs are listed in `MAPAS_PREVISTOS` (`scripts/mapa_visu
    python scripts/mapa_visual.py <type>
    python scripts/mapa_visual.py <type> --check
    ```
-   Done when `--check` exits 0.
+   Done when `--check` exits 0. Each run writes both versions: technical in `docs/mapas-visuais/` and non-technical in `docs/mapas-visuais/nao-tecnicos/` (molde in `moldes-nao-tecnicos/<type>.html`, same file name); `--check` checks both.
 6. **Link it from the manual:** add a `mapa-link` in the matching section of `docs/mapas-visuais/manual-montagem-aidd.html`.
 7. **Commit** molde, generator, tests, catalog and generated map together, through the full pre-commit.
 

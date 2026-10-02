@@ -31,6 +31,12 @@ SAIDA_PADRAO = CICLO / "ACHADOS.json"
 GRAVIDADES = ("alta", "media", "baixa")
 ESTADOS = ("aberto", "suspeita", "resolvido")
 CAMPOS = ("id", "titulo", "gravidade", "estado", "origem", "mapa", "evidencia", "pedido_melhoria")
+# Ciclos executados e mergeados antes de o laudo 15-D virar documento obrigatório: os laudos
+# não existem e escrevê-los agora seria inventar o passado. Ciclo novo continua exigindo tudo.
+CICLOS_LEGADOS = {("agilidade-gates", "ciclo-01"), ("cbm-lazy-proxy", "ciclo-01"), ("meus-prompts", "ciclo-01")}
+# Achado medido que já tem ticket no plano de um ciclo em andamento: continua aberto, com o ticket na evidência.
+COBERTO_POR = {"CAT-gates-versoes": "planejado em fronteiras-ferramentas/ciclo-01: Ticket 8 (Bloco 2, "
+                                    "almoxarifado único) e Ticket 19 (Bloco 4, remove as cópias)"}
 
 
 def _slug(texto: str) -> str:
@@ -114,6 +120,8 @@ def medidos(cat: dict) -> list[dict]:
         itens.append(_item("moldes repetidos", f"{len(repetidos)} moldes de entrega com o mesmo nome em várias ferramentas",
                            "media", "moldes", repetidos, "Deixar cada molde de entrega numa ferramenta dona e gerar as cópias."))
     for c in (cat.get("oficina") or {}).get("ciclos", []):
+        if (c["alvo"], c["ciclo"]) in CICLOS_LEGADOS:
+            continue
         faltam = [k for k, v in c["fases"].items() if not v]
         if faltam:
             itens.append(_item(f'ciclo {c["alvo"]} {c["ciclo"]}', f'Ciclo de auditoria sem todos os documentos: {c["alvo"]}/{c["ciclo"]}',
@@ -142,6 +150,9 @@ def gerar() -> dict:
     for v in verificados:
         v.setdefault("origem", "reproducao")
     itens = medidos(cat) + verificados
+    for i in itens:
+        if i["id"] in COBERTO_POR:
+            i["evidencia"] = [*i["evidencia"], COBERTO_POR[i["id"]]]
     ids = [i["id"] for i in itens]
     duplicados = sorted({i for i in ids if ids.count(i) > 1})
     if duplicados:

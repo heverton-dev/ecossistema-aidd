@@ -7,31 +7,14 @@
   ],
   "como_usar": "Cada achado em aberto traz pedido_melhoria: o texto para python ecossistema.py melhoria init --pedido \"...\".",
   "totais": {
-    "aberto": 11,
+    "aberto": 5,
     "suspeita": 0,
     "resolvido": 14,
     "abertos_alta": 0,
-    "abertos_media": 2,
-    "abertos_baixa": 9
+    "abertos_media": 1,
+    "abertos_baixa": 4
   },
   "achados": [
-    {
-      "id": "CAT-declarados-fora-do-commit",
-      "titulo": "6 guardas declarados em lei que não rodam no commit",
-      "gravidade": "media",
-      "estado": "aberto",
-      "origem": "catalogo",
-      "mapa": "leis",
-      "evidencia": [
-        "Lei #9: G_aidd_enterprise",
-        "Lei #9: G_aidd_spec",
-        "Lei #9: G_aidd_tdd",
-        "Lei #9: G_aidd_tickets",
-        "Lei #11: G_TEMPLATE_TANSTACK_OFFLINE",
-        "Lei #11: G_NOVE_CAMADAS_MERCADO"
-      ],
-      "pedido_melhoria": "Colocar no pre-commit os guardas declarados nas leis, ou rebaixar a declaração."
-    },
     {
       "id": "CAT-gates-versoes",
       "titulo": "1 guardas com o mesmo nome e código diferente",
@@ -40,21 +23,10 @@
       "origem": "catalogo",
       "mapa": "guardas",
       "evidencia": [
-        "G_SEGREDOS"
+        "G_SEGREDOS",
+        "planejado em fronteiras-ferramentas/ciclo-01: Ticket 8 (Bloco 2, almoxarifado único) e Ticket 19 (Bloco 4, remove as cópias)"
       ],
       "pedido_melhoria": "Deixar uma versão só de cada guarda repetido e fazer as ferramentas chamarem a original."
-    },
-    {
-      "id": "CAT-ciclo-agilidade-gates-ciclo-01",
-      "titulo": "Ciclo de auditoria sem todos os documentos: agilidade-gates/ciclo-01",
-      "gravidade": "baixa",
-      "estado": "aberto",
-      "origem": "catalogo",
-      "mapa": "oficina",
-      "evidencia": [
-        "faltam: laudo_inicial, laudo_revisado"
-      ],
-      "pedido_melhoria": "Completar ou fechar o ciclo agilidade-gates/ciclo-01."
     },
     {
       "id": "CAT-ciclo-aidd-master-ciclo-01",
@@ -93,18 +65,6 @@
       "pedido_melhoria": "Completar ou fechar o ciclo aidd-ops/ciclo-01."
     },
     {
-      "id": "CAT-ciclo-cbm-lazy-proxy-ciclo-01",
-      "titulo": "Ciclo de auditoria sem todos os documentos: cbm-lazy-proxy/ciclo-01",
-      "gravidade": "baixa",
-      "estado": "aberto",
-      "origem": "catalogo",
-      "mapa": "oficina",
-      "evidencia": [
-        "faltam: laudo_inicial, laudo_revisado, dod"
-      ],
-      "pedido_melhoria": "Completar ou fechar o ciclo cbm-lazy-proxy/ciclo-01."
-    },
-    {
       "id": "CAT-ciclo-fronteiras-ferramentas-ciclo-01",
       "titulo": "Ciclo de auditoria sem todos os documentos: fronteiras-ferramentas/ciclo-01",
       "gravidade": "baixa",
@@ -115,42 +75,6 @@
         "faltam: laudo_inicial, laudo_revisado"
       ],
       "pedido_melhoria": "Completar ou fechar o ciclo fronteiras-ferramentas/ciclo-01."
-    },
-    {
-      "id": "CAT-ciclo-meus-prompts-ciclo-01",
-      "titulo": "Ciclo de auditoria sem todos os documentos: meus-prompts/ciclo-01",
-      "gravidade": "baixa",
-      "estado": "aberto",
-      "origem": "catalogo",
-      "mapa": "oficina",
-      "evidencia": [
-        "faltam: laudo_inicial, laudo_revisado"
-      ],
-      "pedido_melhoria": "Completar ou fechar o ciclo meus-prompts/ciclo-01."
-    },
-    {
-      "id": "CAT-guardas-sem-lei",
-      "titulo": "1 guardas da raiz que nenhuma lei declara",
-      "gravidade": "baixa",
-      "estado": "aberto",
-      "origem": "catalogo",
-      "mapa": "leis",
-      "evidencia": [
-        "G_aidd_grill"
-      ],
-      "pedido_melhoria": "Amarrar cada guarda da raiz à lei que ele prova no AGENTS.md."
-    },
-    {
-      "id": "CAT-scripts-sem-chamador",
-      "titulo": "1 scripts que nenhum código chama",
-      "gravidade": "baixa",
-      "estado": "aberto",
-      "origem": "catalogo",
-      "mapa": "scripts",
-      "evidencia": [
-        "compilar_mapas_nao_tecnicos"
-      ],
-      "pedido_melhoria": "Ligar ao painel ou remover os scripts de scripts/ que nenhum código chama."
     },
     {
       "id": "VER-001",

@@ -8,7 +8,7 @@
     "leis": 13,
     "lente_15d": 15,
     "oficina": 37,
-    "scripts": 30,
+    "scripts": 31,
     "moldes_entrega": 24,
     "harnesses": 7,
     "skills_nossas": 43,
@@ -18,9 +18,9 @@
     "mcps_registrados": 10,
     "mcps_internos": 3,
     "hooks": 3,
-    "gates_nomes": 96,
-    "gates_arquivos": 142,
-    "contratos": 8,
+    "gates_nomes": 97,
+    "gates_arquivos": 143,
+    "contratos": 9,
     "etapas_receita": 7,
     "encaixes_quebrados": 0
   },
@@ -832,6 +832,11 @@
           "visivel": true
         },
         {
+          "gate": "G_FRONTEIRA_FERRAMENTAS",
+          "forca": "provado",
+          "visivel": true
+        },
+        {
           "gate": "G_amelhoria",
           "forca": "provado",
           "visivel": true
@@ -863,6 +868,11 @@
         },
         {
           "gate": "G_aidd_tickets",
+          "forca": "provado",
+          "visivel": true
+        },
+        {
+          "gate": "G_aidd_grill",
           "forca": "provado",
           "visivel": true
         },
@@ -1917,7 +1927,9 @@
     {
       "id": "compilar_mapas_nao_tecnicos",
       "descricao": "Compilador dos mapas visuais da versão NÃO-TÉCNICA (docs/mapas-visuais/nao-tecnicos).",
-      "chamado_por": []
+      "chamado_por": [
+        "testes"
+      ]
     },
     {
       "id": "e2e_foto",
@@ -2026,7 +2038,7 @@
     },
     {
       "id": "inventario_capacidades",
-      "descricao": "",
+      "descricao": "Inventário de capacidades de tools/ e componentes/ (fronteiras-ferramentas ciclo-01, Ticket 3).",
       "chamado_por": [
         "testes"
       ]
@@ -2116,6 +2128,14 @@
         "scripts",
         "testes"
       ]
+    },
+    {
+      "id": "validar_handoff",
+      "descricao": "Validador de contratos de handoff entre etapas do pipeline.",
+      "chamado_por": [
+        "scripts",
+        "testes"
+      ]
     }
   ],
   "moldes_entrega": [
@@ -2165,7 +2185,7 @@
       "ferramenta": "aidd-enterprise",
       "molde": "v2",
       "caminho": "tools/aidd-enterprise/templates/v2",
-      "arquivos": 86,
+      "arquivos": 92,
       "dona_canonica": "aidd-master"
     },
     {
@@ -2249,7 +2269,7 @@
       "ferramenta": "aidd-master",
       "molde": "v2",
       "caminho": "tools/aidd-master/templates/v2",
-      "arquivos": 86,
+      "arquivos": 92,
       "dona_canonica": "aidd-master"
     },
     {
@@ -2306,9 +2326,9 @@
           "hook": ".claude/hooks/{nome}",
           "sub-agent": ".claude/agents/{nome}"
         },
-        "skills_em_disco": 43,
+        "skills_em_disco": 62,
         "nossas_faltando": [],
-        "terceiros_em_disco": 0,
+        "terceiros_em_disco": 19,
         "config_mcp": ".mcp.json"
       },
       {
@@ -2327,9 +2347,9 @@
           "hook": ".agents/hooks/{nome}",
           "sub-agent": ".agents/agents/{nome}"
         },
-        "skills_em_disco": 43,
+        "skills_em_disco": 62,
         "nossas_faltando": [],
-        "terceiros_em_disco": 0,
+        "terceiros_em_disco": 19,
         "config_mcp": ".agents/mcp_config.json"
       },
       {
@@ -2348,9 +2368,9 @@
           "hook": ".opencode/hooks/{nome}",
           "sub-agent": ".opencode/agents/{nome}"
         },
-        "skills_em_disco": 43,
+        "skills_em_disco": 48,
         "nossas_faltando": [],
-        "terceiros_em_disco": 0,
+        "terceiros_em_disco": 5,
         "config_mcp": "opencode.jsonc"
       },
       {
@@ -2369,9 +2389,9 @@
           "hook": ".mimocode/hooks/{nome}",
           "sub-agent": ".mimocode/agents/{nome}"
         },
-        "skills_em_disco": 43,
+        "skills_em_disco": 48,
         "nossas_faltando": [],
-        "terceiros_em_disco": 0,
+        "terceiros_em_disco": 5,
         "config_mcp": "mimocode.jsonc"
       },
       {
@@ -2407,9 +2427,9 @@
           "command": ".cursor/commands/{nome}",
           "hook": ".cursor/hooks/{nome}"
         },
-        "skills_em_disco": 43,
+        "skills_em_disco": 48,
         "nossas_faltando": [],
-        "terceiros_em_disco": 0,
+        "terceiros_em_disco": 5,
         "config_mcp": ".cursor/mcp.json"
       },
       {
@@ -2426,9 +2446,9 @@
           "command": ".codebuddy/commands/{nome}",
           "hook": ".codebuddy/hooks/{nome}"
         },
-        "skills_em_disco": 43,
+        "skills_em_disco": 62,
         "nossas_faltando": [],
-        "terceiros_em_disco": 0,
+        "terceiros_em_disco": 19,
         "config_mcp": ""
       }
     ],
@@ -3244,6 +3264,23 @@
       "leis": []
     },
     {
+      "id": "G_FRONTEIRA_FERRAMENTAS",
+      "descricao": "Gate de fronteira das 8 ferramentas em modo aviso (Ticket 6).",
+      "copias": [
+        {
+          "caminho": "gates/G_FRONTEIRA_FERRAMENTAS.py",
+          "versao": "A",
+          "papel": "ecossistema"
+        }
+      ],
+      "versoes_distintas": 1,
+      "no_pre_commit": true,
+      "prova_que_morde": true,
+      "leis": [
+        9
+      ]
+    },
+    {
       "id": "G_FRONTEND_LAYERS",
       "descricao": "Validação estática de separação de camadas nas entregas e templates de Frontend. Imposição de Arquitetura: Componentes visuais puros (Dumb Components em 'components/ui/') são",
       "copias": [
@@ -3567,7 +3604,7 @@
         }
       ],
       "versoes_distintas": 1,
-      "no_pre_commit": false,
+      "no_pre_commit": true,
       "prova_que_morde": true,
       "leis": [
         11
@@ -4108,7 +4145,7 @@
         }
       ],
       "versoes_distintas": 1,
-      "no_pre_commit": false,
+      "no_pre_commit": true,
       "prova_que_morde": true,
       "leis": [
         11
@@ -4292,7 +4329,7 @@
         }
       ],
       "versoes_distintas": 1,
-      "no_pre_commit": false,
+      "no_pre_commit": true,
       "prova_que_morde": true,
       "leis": [
         9
@@ -4326,9 +4363,11 @@
         }
       ],
       "versoes_distintas": 1,
-      "no_pre_commit": false,
+      "no_pre_commit": true,
       "prova_que_morde": true,
-      "leis": []
+      "leis": [
+        9
+      ]
     },
     {
       "id": "G_aidd_spec",
@@ -4341,7 +4380,7 @@
         }
       ],
       "versoes_distintas": 1,
-      "no_pre_commit": false,
+      "no_pre_commit": true,
       "prova_que_morde": true,
       "leis": [
         9
@@ -4358,7 +4397,7 @@
         }
       ],
       "versoes_distintas": 1,
-      "no_pre_commit": false,
+      "no_pre_commit": true,
       "prova_que_morde": true,
       "leis": [
         9
@@ -4375,7 +4414,7 @@
         }
       ],
       "versoes_distintas": 1,
-      "no_pre_commit": false,
+      "no_pre_commit": true,
       "prova_que_morde": true,
       "leis": [
         9
@@ -4442,6 +4481,11 @@
         "tools/aidd-planner/aidd_planner/core/planner_engine.py",
         "tools/aidd-planner/src/core/planner_engine.py"
       ]
+    },
+    {
+      "id": "handoff-forge-to-planner",
+      "titulo": "HandoffForgeToPlannerSchema",
+      "usado_por": []
     },
     {
       "id": "handoff-master-to-enterprise",

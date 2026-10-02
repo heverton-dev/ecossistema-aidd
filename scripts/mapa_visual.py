@@ -675,21 +675,31 @@ def main(argv: list[str] | None = None) -> int:
         print(f"[ERRO] {CATALOGO} não existe. Rode antes: python scripts/catalogo_pecas.py")
         return 1
     try:
-        texto = montar(args.tipo, json.loads(CATALOGO.read_text(encoding="utf-8")),
-                       args.link_manual, args.fragmento)
+        catalogo = json.loads(CATALOGO.read_text(encoding="utf-8"))
+        texto = montar(args.tipo, catalogo, args.link_manual, args.fragmento)
     except ValueError as erro:
         print(f"[ERRO] {erro}")
         return 1
     saida = args.saida or MAPAS / arquivo_mapa(args.tipo)
+    # Mapa no lugar oficial sai sempre nas duas versões: técnica (aqui) e não técnica
+    # (docs/mapas-visuais/nao-tecnicos/, mesmo nome). --saida/--fragmento geram só a técnica.
+    com_nao_tecnico = args.saida is None and not args.fragmento
+    if com_nao_tecnico:
+        import compilar_mapas_nao_tecnicos as nao_tecnico  # ele importa este módulo: import tardio
     if args.check:
-        if not saida.is_file() or saida.read_text(encoding="utf-8") != texto:
+        em_dia = saida.is_file() and saida.read_text(encoding="utf-8") == texto
+        if em_dia:
+            print(f"[OK] {saida} em dia com o catálogo.")
+        else:
             print(f"[DESATUALIZADO] {saida} difere do catálogo. Rode: python scripts/mapa_visual.py {args.tipo}")
-            return 1
-        print(f"[OK] {saida} em dia com o catálogo.")
-        return 0
+        if com_nao_tecnico:
+            em_dia = nao_tecnico.gravar_ou_conferir(args.tipo, catalogo, check=True) and em_dia
+        return 0 if em_dia else 1
     saida.parent.mkdir(parents=True, exist_ok=True)
     saida.write_text(texto, encoding="utf-8")
     print(f"[OK] Mapa gravado em {saida}")
+    if com_nao_tecnico:
+        nao_tecnico.gravar_ou_conferir(args.tipo, catalogo)
     return 0
 
 
