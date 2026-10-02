@@ -175,6 +175,21 @@ def conform_command(path: str, dry_run: bool, items: tuple[int, ...]) -> None:
     sys.exit(cmd_conform(path, dry_run, items))
 
 
+@cli.command("fornecer", help="Entrega uma peca do almoxarifado no projeto alvo")
+@click.argument("piece")
+@click.option("--destino", required=True, help="Diretorio ou caminho de destino no projeto")
+def fornecer_command(piece: str, destino: str) -> None:
+    from aidd_forge.core.almoxarifado import obter_peca
+
+    try:
+        arquivo_entregue = obter_peca(piece, destino)
+        print(f"[aidd-forge] peca fornecida: {piece} -> {arquivo_entregue}")
+    except Exception as err:
+        print(f"[aidd-forge] erro ao fornecer peca: {err}", file=sys.stderr)
+        sys.exit(1)
+
+
+
 def cmd_audit(path: str, fmt: str, output: str | None) -> int:
     from aidd_forge.core.audit_engine import AuditEngine
     from aidd_forge.core.audit_report import to_html, to_json, to_markdown
