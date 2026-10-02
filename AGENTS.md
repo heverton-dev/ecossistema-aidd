@@ -26,7 +26,7 @@
 - **Editing rule:** Always use exact search/replace block tools (`replace_file_content`). Never dump entire rewritten files into output.
 - **Bash rule:** Always pipe verbose commands to tail/grep. E.g., `pytest 2>&1 | tail -n 25`. Never dump raw bundle outputs, logs, or lockfiles into context.
 - **Long-task rule:** Run anything slower than ~2 minutes (full gate battery, `gate_final`, 4F pipeline) in the background and resume on its completion notice. Never ask the user to "call back in N minutes". One heavy cycle at a time: `scripts/fila_ciclos.py` queues the rest and notifies when each ends.
-- **Graph-first:** Always query knowledge graph (`codebase-memory-mcp` MCP) before Grep, Glob, or full file reads.
+- **Graph-first (Lei #14):** Always query knowledge graph (`codebase-memory-mcp` MCP) before Grep, Glob, or full file reads.
 - **Docs Ingestion constraint:** Read ONLY living canonical documentation (`docs/protocolos/`, `AGENTS.md`, `MEMORY.md`). Never ingest historical reports, superseded manuals, or past session logs as system truths.
 
 ---
@@ -111,6 +111,8 @@
    - Portão: gates/G_DOCS_ROT.py (provado)
 13. **Todo Portão Deve Provar que Morde:** Nenhum quality gate é aceito sem teste automatizado que deliberadamente quebre a condição resguardada e asserte `exit 1`. Testes de caminho feliz (exit 0) não satisfazem o requisito. Qualquer gate incapaz de reprovar sob violação real ou sintética comprovada deve ser registrado como fachada e ter seu claim rebaixado per Lei #8. Ver `docs/protocolos/CONVENCAO-AUTORIA-GATES.md`.
    - Portão: gates/G_PORTAO_PROVA_QUE_MORDE.py (provado)
+14. **Graph-First Obrigatório:** Todo agente pesquisa o código do ecossistema primeiro pelo `codebase-memory-mcp` (`search_graph`, `get_code_snippet`, `trace_path`, `query_graph`). Grep, Glob e leitura de arquivo inteiro só entram depois do graph, ou para texto literal que o graph não indexa. No pipeline 4F, fase cujo agente não fez nenhuma chamada ao graph reprova antes do `gate_fase` e nada é commitado.
+   - Portão: gates/G_GRAPH_FIRST.py (provado) — lê o histórico do agente; cobre o claude (`~/.claude/projects/*.jsonl`); agy, opencode e mimo não gravam histórico legível e só recebem aviso (fronteiras-ferramentas, Bloco 2)
 
 ---
 

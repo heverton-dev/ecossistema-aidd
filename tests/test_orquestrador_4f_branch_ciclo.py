@@ -253,3 +253,21 @@ def test_suite_da_ferramenta_tocada_reprova_e_fase_nao_e_commitada(repo, monkeyp
     assert any("G_TESTES_REAIS" in c for c in comandos)
     arquivos = _git(repo.path, "ls-tree", "-r", "--name-only", "audit/aud-x-ciclo-01")
     assert "tools/aidd-forge/peca.py" not in arquivos.split()
+
+
+def test_fase_sem_graph_first_reprova_antes_do_gate_e_nao_commita(repo, monkeypatch):
+    # Lei #14: G_GRAPH_FIRST roda depois do agente e antes do gate_fase.
+    rodar_gate_real = orquestrador_4f.rodar_gate
+    comandos = []
+
+    def rodar_gate(comando, cwd, env=None):
+        comandos.append(comando)
+        return 1 if "G_GRAPH_FIRST" in comando else rodar_gate_real(comando, cwd, env)
+
+    monkeypatch.setattr(orquestrador_4f, "rodar_gate", rodar_gate)
+    m = _manifesto(repo.path, [_fase("Fase_1_Ticket_1", "out/a.md")])
+
+    assert _rodar(monkeypatch, "--manifest", str(m)) == 1
+    assert "G_GRAPH_FIRST" in comandos[0] and "--worktree" in comandos[0] and "--desde" in comandos[0]
+    arquivos = _git(repo.path, "ls-tree", "-r", "--name-only", "audit/aud-x-ciclo-01")
+    assert "out/a.md" not in arquivos.split()

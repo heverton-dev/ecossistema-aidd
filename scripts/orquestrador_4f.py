@@ -166,6 +166,7 @@ class LiveHUD:
 ORCA_TIMEOUT_AGENTE_S = 3600
 ORCA_ESPERA_CHECK_MS = 900000
 PREAMBULO = ".aidd-preambulo.md"
+GATE_GRAPH_FIRST = Path(__file__).resolve().parent.parent / "gates" / "G_GRAPH_FIRST.py"
 _run_orca = {}
 
 
@@ -786,6 +787,7 @@ def executar_pipeline(args, data, pipeline_id, fases, repo_root):
             print(f"[-] AVISO: Prompt input não encontrado em {input_file}")
 
         print(f"[+] Acionando Agente ({fase.get('harness')} | {fase.get('model')})...")
+        inicio_agente = time.time()
         handoff_file = wt_path / handoff
         outcome = run_cmd_tty(comando, cwd=wt_path,
                               input_data=str(input_file).replace('/', '\\') if input_file.exists() else None,
@@ -797,6 +799,13 @@ def executar_pipeline(args, data, pipeline_id, fases, repo_root):
         print(f"[+] Verificando Output Handoff...")
         if not handoff_file.exists():
             print(f"[-] FALHA: Output {handoff} não foi gerado. Worktree preservada para inspeção: {wt_path}")
+            sys.exit(1)
+
+        # Lei #14: agente com histórico legível que não consultou o graph reprova a fase.
+        if rodar_gate(f'"{sys.executable}" "{GATE_GRAPH_FIRST}" --worktree "{wt_path}" --desde {inicio_agente}',
+                      wt_path) != 0:
+            print(f"[-] FALHA: agente de '{nome}' não pesquisou pelo codebase-memory-mcp (Lei #14). Nada foi commitado.")
+            print(f"    Worktree preservada para inspeção: {wt_path}")
             sys.exit(1)
 
         # Gate da fase ANTES do commit: saída não conferida nunca entra no histórico.
