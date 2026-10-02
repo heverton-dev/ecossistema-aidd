@@ -87,6 +87,37 @@ def dimensionar_monolito(ferramentas: List[Dict[str, str]]) -> Result:
     return Result.ok(resultado)
 
 
+def dimensionar_perfil(
+    modulos: List[str], servicos: List[str], nome_banco: str
+) -> Result:
+    """Dimensiona a VPS pelo perfil do app (Ticket 16): mesma heurística do
+    monólito (baseline + incremento), contando cada módulo da planta e cada
+    serviço de apoio que o perfil pediu (`db`, `fila`) — e registra o banco
+    lógico quando a planta tem PostgreSQL. Nada vem de catálogo de nicho."""
+    apoio = [s for s in servicos if s in ("db", "fila")]
+    contagem = [{"nome": nome} for nome in (list(modulos) or ["principal"]) + apoio]
+    resultado = dimensionar_monolito(contagem).valor
+    resultado["fontes_consultadas"] = [
+        {
+            "ferramenta": servico,
+            "url": "",
+            "requisitos_encontrados": False,
+            "notas": (
+                f"Perfil do app (planta): sizing por heurística de {len(modulos)} "
+                f"módulo(s) + serviço(s) de apoio {apoio or 'nenhum'}, não por catálogo de nicho."
+            ),
+        }
+        for servico in servicos
+    ]
+    if "db" in servicos:
+        resultado["bancos_logicos"] = [{"ferramenta": "app", "nome_banco": nome_banco}]
+        resultado["ferramentas_com_banco"] = ["app"]
+        resultado["ferramentas_sem_banco"] = [s for s in servicos if s != "app"]
+    else:
+        resultado["ferramentas_sem_banco"] = list(servicos)
+    return Result.ok(resultado)
+
+
 def dimensionar(ferramentas: List[Dict[str, str]]) -> Result:
     """Dimensiona os recursos de VPS e lista bancos lógicos necessários.
 
