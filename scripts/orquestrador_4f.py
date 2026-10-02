@@ -341,8 +341,8 @@ def run_agente_orca(cmd, cwd, input_data=None, expected_handoff=None, titulo="AI
         spec += " Do NOT run git commit, git push or git reset: the orchestrator commits after the phase gate."
         # Bloco 2 de fronteiras (2026-10-02): o agy gastou ~20 min rodando o audit completo por conta
         # própria, e o claude pesquisou com 101 comandos de shell e zero chamadas ao graph.
-        spec += (" Do NOT run `python ecossistema.py audit`: the orchestrator runs the phase gate,"
-                 " the touched tools' suites and the final gate.")
+        spec += (" Do NOT run `python ecossistema.py audit` nor `scripts/e2e_foto.py`: the orchestrator runs"
+                 " the phase gate (E2E included), the touched tools' suites and the final gate.")
         spec += (" Search code graph-first: use the codebase-memory-mcp tools (search_graph, get_code_snippet,"
                  " trace_path) before grep, glob or full-file reads (AGENTS.md).")
         tarefa = orca("orchestration", "task-create", "--run", run_id, "--task-title", titulo, "--spec", spec)
@@ -808,22 +808,23 @@ def executar_pipeline(args, data, pipeline_id, fases, repo_root):
             print(f"    Worktree preservada para inspeção: {wt_path}")
             sys.exit(1)
 
-        # Gate da fase ANTES do commit: saída não conferida nunca entra no histórico.
-        if rodar_gate(gate_fase, wt_path) != 0:
-            print(f"[-] FALHA: gate_fase de '{nome}' reprovou. Nada foi commitado; fases seguintes não rodam.")
-            print(f"    Worktree preservada para inspeção: {wt_path}")
-            sys.exit(1)
-
         git(["add", "-A"], wt_path)
         tocados = [a for a in git(["diff", "--cached", "--name-only", "-z"], wt_path).stdout.split("\0") if a]
-        for comando_teste, env_teste in testes_das_ferramentas_tocadas(tocados, wt_path):
+        # Commit provisório ANTES do gate: o e2e_foto monta os fluxos a partir do HEAD, e sem isso
+        # testava o commit anterior (Bloco 3, Fase 10, 2026-10-02). Gate reprovado desfaz o commit.
+        # --no-verify é deliberado: o gate da fase roda logo abaixo, e a bateria completa
+        # (gate_final) roda uma única vez no fim, antes de liberar a aprovação.
+        git(["commit", "--no-verify", "--allow-empty", "-m", f"chore(audit): {nome} (gate_fase em curso)"], wt_path)
+        gates = [(gate_fase, None), *testes_das_ferramentas_tocadas(tocados, wt_path)]
+        for comando_teste, env_teste in gates:
             if rodar_gate(comando_teste, wt_path, env_teste) != 0:
-                print(f"[-] FALHA: suíte da ferramenta tocada por '{nome}' reprovou. Nada foi commitado.")
+                git(["reset", "--soft", "HEAD~1"], wt_path)
+                print(f"[-] FALHA: '{comando_teste[:80]}' reprovou na fase '{nome}'. Nada foi commitado; "
+                      "fases seguintes não rodam.")
                 print(f"    Worktree preservada para inspeção: {wt_path}")
                 sys.exit(1)
-        # --no-verify aqui é deliberado: o gate específico da fase acabou de passar, e a bateria
-        # completa (gate_final) roda uma única vez no fim, antes de liberar a aprovação.
-        git(["commit", "--no-verify", "-m", f"chore(audit): {nome} (gate_fase exit 0)"], wt_path, exit_on_fail=False)
+        git(["commit", "--amend", "--no-verify", "--allow-empty", "-m", f"chore(audit): {nome} (gate_fase exit 0)"],
+            wt_path)
         fechar_worktree(wt_path, repo_root)
         print(f"[+] Fase {nome} commitada em {branch_ciclo}.")
 

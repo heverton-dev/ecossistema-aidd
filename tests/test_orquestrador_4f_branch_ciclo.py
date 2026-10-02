@@ -271,3 +271,14 @@ def test_fase_sem_graph_first_reprova_antes_do_gate_e_nao_commita(repo, monkeypa
     assert "G_GRAPH_FIRST" in comandos[0] and "--worktree" in comandos[0] and "--desde" in comandos[0]
     arquivos = _git(repo.path, "ls-tree", "-r", "--name-only", "audit/aud-x-ciclo-01")
     assert "out/a.md" not in arquivos.split()
+
+
+def test_gate_da_fase_ve_o_trabalho_da_fase_no_head(repo, monkeypatch):
+    # 2026-10-02 (Bloco 3, Fase 10): o e2e_foto monta os fluxos a partir do HEAD; com o gate
+    # rodando antes do commit, ele testava o commit anterior e não o trabalho da fase.
+    gate = "git cat-file -e HEAD:out/a.md"
+    m = _manifesto(repo.path, [_fase("Fase_1_Ticket_1", "out/a.md", gate=gate)])
+
+    assert _rodar(monkeypatch, "--manifest", str(m)) == 0
+    assert _git(repo.path, "log", "-1", "--format=%s", "audit/aud-x-ciclo-01") == \
+        "chore(audit): Fase_1_Ticket_1 (gate_fase exit 0)"
