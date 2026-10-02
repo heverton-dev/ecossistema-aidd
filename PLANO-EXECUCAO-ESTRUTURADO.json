@@ -80,12 +80,12 @@
     }
   ],
   "testes": {
-    "medido_em": "2026-10-01T22:40:21.831539+00:00",
+    "medido_em": "2026-10-02T15:21:03.756208+00:00",
     "metodo": "python -m pytest -q --tb=no em cada tools/<ferramenta>, parseado do resumo real (nao digitado a mao)",
     "por_ferramenta": {
       "aidd-forge": {
         "status": "ok",
-        "passed": 297,
+        "passed": 304,
         "failed": 0,
         "skipped": 1,
         "errors": 0,

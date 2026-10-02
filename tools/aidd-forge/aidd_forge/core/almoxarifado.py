@@ -17,10 +17,7 @@ from typing import Any
 def _encontrar_raiz(raiz: str | Path | None = None) -> Path:
     """Encontra deterministicamente a raiz do repositório contendo CATALOGO.json."""
     if raiz is not None:
-        candidato = Path(raiz).resolve()
-        if (candidato / "componentes" / "compartilhado" / "CATALOGO.json").is_file():
-            return candidato
-        return candidato
+        return Path(raiz).resolve()
 
     # Tenta subindo a partir deste arquivo (aidd_forge/core/almoxarifado.py -> 4 níveis acima)
     arquivo_atual = Path(__file__).resolve()
@@ -109,13 +106,9 @@ def obter_peca(
 
     dest_path = Path(destino).resolve()
 
-    # Validação de segurança arquitetural: proibido gravar em 'tools/'
+    # Validação de segurança arquitetural: proibido gravar na pasta 'tools/' do ecossistema
     tools_repo = (root / "tools").resolve()
-    if (
-        any(part.lower() == "tools" for part in dest_path.parts)
-        or dest_path == tools_repo
-        or tools_repo in dest_path.parents
-    ):
+    if dest_path == tools_repo or tools_repo in dest_path.parents:
         raise ValueError(
             f"Destino inválido '{destino}': proibido gravar dentro de 'tools/'. "
             "O almoxarifado entrega peças exclusivamente para pastas de projetos."

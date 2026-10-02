@@ -8,6 +8,8 @@ from click.testing import CliRunner
 from aidd_forge.cli import cli
 from aidd_forge.core.almoxarifado import caminho_peca, obter_peca
 
+_RAIZ_REPO = Path(__file__).resolve().parents[3]
+
 
 def _sha256(caminho: Path) -> str:
     h = hashlib.sha256()
@@ -35,12 +37,23 @@ def test_obter_peca_copia_para_projeto_e_confere_sha256(tmp_path: Path) -> None:
     assert _sha256(destino_arquivo) == _sha256(origem)
 
 
-def test_obter_peca_recusa_destino_dentro_de_tools(tmp_path: Path) -> None:
-    tools_dir = tmp_path / "tools" / "aidd-pure"
-    tools_dir.mkdir(parents=True, exist_ok=True)
+def test_obter_peca_recusa_destino_dentro_de_tools() -> None:
+    destino = _RAIZ_REPO / "tools" / "aidd-pure" / "_destino_teste_almoxarifado"
 
     with pytest.raises(ValueError, match="tools"):
-        obter_peca("moldes/infra/Dockerfile", destino=tools_dir)
+        obter_peca("moldes/infra/Dockerfile", destino=destino)
+
+    assert not destino.exists()
+
+
+def test_obter_peca_aceita_projeto_com_pasta_tools_fora_do_ecossistema(tmp_path: Path) -> None:
+    projeto_dir = tmp_path / "tools" / "meu_app"
+    projeto_dir.mkdir(parents=True, exist_ok=True)
+
+    destino_arquivo = obter_peca("moldes/infra/Dockerfile", destino=projeto_dir)
+
+    assert destino_arquivo == projeto_dir / "Dockerfile"
+    assert destino_arquivo.is_file()
 
 
 def test_obter_peca_peca_desconhecida_lanca_erro_claro(tmp_path: Path) -> None:
@@ -84,7 +97,7 @@ def test_ecossistema_cli_forge_fornecer(tmp_path: Path) -> None:
         "--destino",
         str(projeto_dir),
     ]
-    res = subprocess.run(cmd, capture_output=True, text=True)
+    res = subprocess.run(cmd, capture_output=True, text=True, cwd=_RAIZ_REPO)
     assert res.returncode == 0, f"Falha CLI ecossistema.py: {res.stderr}\n{res.stdout}"
     assert (projeto_dir / "Dockerfile").is_file()
 
