@@ -168,6 +168,8 @@ ORCA_ESPERA_CHECK_MS = 900000
 ORCA_ESPERA_OCIOSO_MS = 30000
 ORCA_TELA_PARADA_S = 120
 PREAMBULO = ".aidd-preambulo.md"
+# Auto-registro de sessão do harness (agy) grava em secoes/; não é trabalho da fase (Bloco 2 Fase 9, Bloco 3 Fase 13).
+PASTAS_FORA_DO_COMMIT = ("secoes",)
 GATE_GRAPH_FIRST = Path(__file__).resolve().parent.parent / "gates" / "G_GRAPH_FIRST.py"
 _run_orca = {}
 
@@ -830,6 +832,8 @@ def executar_pipeline(args, data, pipeline_id, fases, repo_root):
             sys.exit(1)
 
         git(["add", "-A"], wt_path)
+        for pasta in PASTAS_FORA_DO_COMMIT:
+            git(["reset", "-q", "--", pasta], wt_path, exit_on_fail=False)
         tocados = [a for a in git(["diff", "--cached", "--name-only", "-z"], wt_path).stdout.split("\0") if a]
         # Commit provisório ANTES do gate: o e2e_foto monta os fluxos a partir do HEAD, e sem isso
         # testava o commit anterior (Bloco 3, Fase 10, 2026-10-02). Gate reprovado desfaz o commit.

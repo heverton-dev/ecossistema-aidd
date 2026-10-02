@@ -282,3 +282,26 @@ def test_gate_da_fase_ve_o_trabalho_da_fase_no_head(repo, monkeypatch):
     assert _rodar(monkeypatch, "--manifest", str(m)) == 0
     assert _git(repo.path, "log", "-1", "--format=%s", "audit/aud-x-ciclo-01") == \
         "chore(audit): Fase_1_Ticket_1 (gate_fase exit 0)"
+
+
+def test_auto_registro_de_sessao_em_secoes_nao_entra_no_commit_da_fase(repo, monkeypatch):
+    # 2026-10-02 (Bloco 2 Fase 9, Bloco 3 Fase 13): o agy grava secoes/ e o git add -A levava junto.
+    (repo.path / "secoes").mkdir()
+    (repo.path / "secoes" / "INDICE-SESSOES.md").write_text("main", encoding="utf-8")
+    _git(repo.path, "add", "-A")
+    _git(repo.path, "commit", "-q", "-m", "secoes")
+
+    def agente_que_registra_sessao(cmd, cwd=None, input_data=None, expected_handoff=None, titulo=None):
+        expected_handoff.parent.mkdir(parents=True, exist_ok=True)
+        expected_handoff.write_text("saida", encoding="utf-8")
+        (Path(cwd) / "secoes" / "INDICE-SESSOES.md").write_text("sessao do agente", encoding="utf-8")
+        (Path(cwd) / "secoes" / "nova.json").write_text("{}", encoding="utf-8")
+        return True
+
+    monkeypatch.setattr(orquestrador_4f, "run_cmd_tty", agente_que_registra_sessao)
+    m = _manifesto(repo.path, [_fase("Fase_1_Ticket_1", "out/a.md")])
+
+    assert _rodar(monkeypatch, "--manifest", str(m)) == 0
+    assert _git(repo.path, "show", "audit/aud-x-ciclo-01:secoes/INDICE-SESSOES.md") == "main"
+    arquivos = _git(repo.path, "ls-tree", "-r", "--name-only", "audit/aud-x-ciclo-01").split()
+    assert "out/a.md" in arquivos and "secoes/nova.json" not in arquivos
