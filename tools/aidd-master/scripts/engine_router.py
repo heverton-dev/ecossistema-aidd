@@ -40,9 +40,9 @@ if hasattr(sys.stdout, "reconfigure"):
 
 ROOT_DIR = Path(__file__).resolve().parent.parent.parent.parent
 MASTER_DIR = ROOT_DIR / "tools" / "aidd-master"
-GENERATOR_DIR = ROOT_DIR / "tools" / "aidd-generator"
-FACTORY_DIR = ROOT_DIR / "tools" / "aidd-factory"
-BRIDGE_DIR = ROOT_DIR / "tools" / "aidd-bridge"
+GENERATOR_DIR = ROOT_DIR / "tools" / "aidd-pure"
+FACTORY_DIR = ROOT_DIR / "tools" / "aidd-open"
+BRIDGE_DIR = ROOT_DIR / "tools" / "aidd-freedom"
 
 
 def slugify(text: str) -> str:
@@ -162,7 +162,7 @@ def _rotear_fluxo_01_generator(
     verbose: bool = True,
 ) -> bool:
     """
-    Roteador do Fluxo 01 (Do Zero Puro | aidd-generator).
+    Roteador do Fluxo 01 (Do Zero Puro | aidd-pure).
     Gera arquitetura VSA com ciclo TDD Red-Green, router, models, service e testes.
     """
     slice_id = slice_info["slice_id"]
@@ -263,7 +263,7 @@ def _rotear_fluxo_02_factory(
     verbose: bool = True,
 ) -> bool:
     """
-    Roteador do Fluxo 02 (Motores Open-Source | aidd-factory).
+    Roteador do Fluxo 02 (Motores Open-Source | aidd-open).
     Gera rotas de proxy reverso, adaptadores e contratos de integração na worktree.
     """
     slice_id = slice_info["slice_id"]
@@ -330,7 +330,7 @@ def _rotear_fluxo_03_bridge(
     verbose: bool = True,
 ) -> bool:
     """
-    Roteador do Fluxo 03 (Low-Code Desacoplado | aidd-bridge).
+    Roteador do Fluxo 03 (Low-Code Desacoplado | aidd-freedom).
     Gera modelos soberanos, mapeamento de persistência e integração de UI na worktree.
     """
     slice_id = slice_info["slice_id"]

@@ -1,13 +1,13 @@
 # -*- coding: utf-8 -*-
 """
 Testes para `master attach-vsa` (Etapa 4 do FLUXO 03: conectar o backend VSA
-a um frontend low-code preservado pelo aidd-bridge, sem sobrescrever o
+a um frontend low-code preservado pelo aidd-freedom, sem sobrescrever o
 Dockerfile/docker-compose.yml/Caddyfile/frontend que ja existem).
 
 Contexto do bug de arquitetura que este comando resolve: `aidd-master init`
 sempre gera seu proprio Dockerfile/docker-compose.yml/frontend (Next.js por
 padrao, Lei #11) na raiz do projeto -- rodar isso direto em cima da saida do
-aidd-bridge destruiria a stack Docker (web/db/postgrest/storage/caddy) e o
+aidd-freedom destruiria a stack Docker (web/db/postgrest/storage/caddy) e o
 frontend original ja validados. `attach-vsa` faz so a parte que falta:
 backend isolado em backend/ + servico "api" mesclado no compose/Caddyfile
 existentes.
@@ -26,10 +26,10 @@ if SCRIPTS_DIR not in sys.path:
 
 
 def _cria_saida_bridge_falsa(tmp_path):
-    """Fixture minima que imita o que o aidd-bridge realmente deixa no
+    """Fixture minima que imita o que o aidd-freedom realmente deixa no
     diretorio de saida: frontend na raiz (package.json, src/pages/...),
     Dockerfile do frontend, docker-compose.yml (web/db/postgrest/storage/caddy)
-    e Caddyfile modo localhost -- sem depender do aidd-bridge estar instalado."""
+    e Caddyfile modo localhost -- sem depender do aidd-freedom estar instalado."""
     project_dir = tmp_path / "projeto-bridge"
     (project_dir / "src" / "pages").mkdir(parents=True)
     (project_dir / "src" / "pages" / "Index.tsx").write_text("export default function Index(){}", encoding="utf-8")

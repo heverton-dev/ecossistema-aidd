@@ -28,17 +28,17 @@ O diretório `tools/` abriga 7 subsistemas isolados:
 1. **`aidd-master`:** Orquestrador de fatias verticais (Vertical Slice) e monólito modular. Possui as 5 camadas 100% completas em `src/core/`.
 2. **`aidd-enterprise`:** Responsável por segurança e resiliência transversal auditada com validação criptográfica (SHA-256).
 3. **`aidd-forge`:** Fundação, bootstrap e environment shielding (regras de compliance, templates e hooks).
-4. **`aidd-generator`:** Pipeline determinístico de 8 fases para geração de código de software.
+4. **`aidd-pure`:** Pipeline determinístico de 8 fases para geração de código de software.
 5. **`aidd-ops`:** Meta-orquestrador de infraestrutura, cloud, containers e deployment sem vendor lock-in.
-6. **`aidd-factory`:** Gerador de integrações e aplicações multi-serviço (orientado a scripts/templates).
-7. **`aidd-bridge`:** Empacotador de aplicações low-code para VPS e PostgreSQL.
+6. **`aidd-open`:** Gerador de integrações e aplicações multi-serviço (orientado a scripts/templates).
+7. **`aidd-freedom`:** Empacotador de aplicações low-code para VPS e PostgreSQL.
 
 ---
 
 ## 3. Matriz de Gaps Identificados
 
 ### A. Gaps no Próprio Ecossistema
-* **Roteamento Desatualizado na Raiz:** O despachante `ecossistema.py` referenciava apenas 5 ferramentas no help/core, deixando `aidd-factory` e `aidd-bridge` operando como subsistemas desconectados da CLI unificada.
+* **Roteamento Desatualizado na Raiz:** O despachante `ecossistema.py` referenciava apenas 5 ferramentas no help/core, deixando `aidd-open` e `aidd-freedom` operando como subsistemas desconectados da CLI unificada.
 * **Falta de Pipeline Chaining Declarativo:** Inexistência de um fluxo ponta a ponta único (`ecossistema pipeline run --spec spec.json`). O fluxo atual requer acionamento manual de cada ferramenta em sequência.
 * **Ausência de Transacionalidade / Rollback (Saga):** Em caso de falha durante a injeção ou geração de código, não há rollback atômico automático de arquivos gerados parcialmente.
 * **Dispersão de Persistência:** Logs, relatórios e planos persistem em múltiplos formatos e locais (`docs/planos/`, `audit_reports/`, `PLANO-*.json`, `app.db`).
@@ -71,12 +71,12 @@ G_DEPENDENCIAS_PIN_HASH (pin exato + hash criptografico).......................P
 ### Detalhamento de `G_TESTES_REAIS`:
 * **Total Executado:** 2.211 aprovados, 2 falhas, 8 skipped (dentro do orçamento de 61).
 * `aidd-forge`: 294 passed, 0 failed, 1 skipped [OK]
-* `aidd-generator`: 1015 passed, 0 failed, 5 skipped [OK]
+* `aidd-pure`: 1015 passed, 0 failed, 5 skipped [OK]
 * `aidd-master`: 352 passed, **1 failed**, 1 skipped [FALHA]
 * `aidd-enterprise`: 329 passed, **1 failed**, 1 skipped [FALHA]
 * `aidd-ops`: 168 passed, 0 failed, 0 skipped [OK]
-* `aidd-bridge`: 40 passed, 0 failed, 0 skipped [OK]
-* `aidd-factory`: 13 passed, 0 failed, 0 skipped [OK]
+* `aidd-freedom`: 40 passed, 0 failed, 0 skipped [OK]
+* `aidd-open`: 13 passed, 0 failed, 0 skipped [OK]
 
 #### Causa-Raiz Técnica da Falha Identificada:
 * **Arquivo:** `tools/aidd-master/scripts/test_live.py` (e seu correspondente no enterprise).
@@ -88,6 +88,6 @@ G_DEPENDENCIAS_PIN_HASH (pin exato + hash criptografico).......................P
 ## 5. Plano de Ação Recomendado
 
 1. **Correção Imediata dos Testes:** Isolar e corrigir o teste quebrado em `aidd-master` e `aidd-enterprise` para restaurar o exit code 0 na auditoria.
-2. **Atualização da CLI Raiz:** Integrar comandos de `aidd-factory` e `aidd-bridge` diretamente em `ecossistema.py`.
+2. **Atualização da CLI Raiz:** Integrar comandos de `aidd-open` e `aidd-freedom` diretamente em `ecossistema.py`.
 3. **Enforcement de Frontend:** Desenvolver gate de linting AST (ou regra ESLint personalizada) para impedir chamadas de dados diretas dentro de componentes puros de interface.
 4. **AST Poliglota:** Introduzir parser baseado em Tree-sitter para auditar arquitetura em stacks fora do ecossistema Python.

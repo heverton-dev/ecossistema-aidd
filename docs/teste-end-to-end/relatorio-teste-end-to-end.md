@@ -533,12 +533,12 @@
 
 ---
 
-## 5. Ferramenta: `aidd-generator`
+## 5. Ferramenta: `aidd-pure`
 
 - **Objetivo da Ferramenta:** Atuar como Fábrica Autônoma de Software em 8 Fases (Pesquisador, Analisador, Designer, Decisor, Criador, Documentador, Auto-Crítica, Implementador) com arquitetura Schema-First (Draft 2020-12), auto-descoberta de agentes (Fleet Discovery), suporte nativo ao Protocolo Delegado agnóstico a LLM e geração de documentação tripartite (Markdown, HTML, PDF).
 - **Pasta Foco:** [`C:\Users\trcnologia\Desktop\proj_ctt\planos-ctt-app`](file:///C:/Users/trcnologia/Desktop/proj_ctt/planos-ctt-app)
 - **O que executou:**
-  1. Execução prévia da suíte completa de testes unitários da ferramenta `aidd-generator` (**1015 passed**, 5 skipped em 35.98s).
+  1. Execução prévia da suíte completa de testes unitários da ferramenta `aidd-pure` (**1015 passed**, 5 skipped em 35.98s).
   2. Execução das Fases 1 a 7 do pipeline completo a partir da ideia canônica ("Sistema de Gestão Logística CTT com Frotas, Encomendas Express, Roteirização VRP e Telemetria GPS"):
      - **Fase 1 (Pesquisador):** Busca e consolidação de 10 referências GitHub ativas com 4 insights extraídos (Gates R1-R4 aprovados, 0 tokens).
      - **Fase 2 (Analisador):** Síntese estratégica da ideia com stack recomendada, arquitetura em fatias verticais e zero alucinação (Gates A1-A4 aprovados em 0.2s).
@@ -552,7 +552,7 @@
 - **Como executou:**
   ```powershell
   # 1. Execução da suíte de testes unitários do gerador
-  pytest tools/aidd-generator/tests -q
+  pytest tools/aidd-pure/tests -q
 
   # 2. Execução do pipeline autônomo completo
   python ecossistema.py generate "Sistema de Gestão Logística CTT com Frotas, Encomendas Express, Roteirização VRP e Telemetria GPS" --pasta "C:\Users\trcnologia\Desktop\proj_ctt\planos-ctt-app" --resume
@@ -575,18 +575,18 @@
 
 ---
 
-### Registro de Inconsistências e Auto-Correção (`aidd-generator`)
+### Registro de Inconsistências e Auto-Correção (`aidd-pure`)
 
 #### Inconsistência 22: Deadlock no Protocolo Delegado e Desalinhamento do Diretório de Cache
 - **Nome:** Timeout de 30s no Modo Delegado durante execução em background sem ADE observadora e caminho incorreto de `CACHE_DIR`.
 - **Motivo:**
   1. O script `pipeline_completo.py`, ao detectar um harness ativo (Antigravity), selecionava corretamente o Modo Delegado emitindo requisições `_llm_request_*.json`. Porém, como o processo rodava em subprocesso assíncrono sem um intermediador ativo, ninguém escrevia o `_llm_response_*.json`, gerando timeout de 30s e tentativa de fallback headless que falhava por ausência de chave de API externa.
-  2. Em `tools/aidd-generator/scripts/phases/utils_delegacao.py:512`, a constante `CACHE_DIR` utilizava `Path(__file__).parent.parent / '.aidd' / 'cache'`, apontando para `scripts/.aidd/cache` em vez da pasta de cache do projeto ou raiz da ferramenta.
+  2. Em `tools/aidd-pure/scripts/phases/utils_delegacao.py:512`, a constante `CACHE_DIR` utilizava `Path(__file__).parent.parent / '.aidd' / 'cache'`, apontando para `scripts/.aidd/cache` em vez da pasta de cache do projeto ou raiz da ferramenta.
   3. No subagente `especialista_tokens` da Fase 3, o prompt continha `"AIDD Token Economy Specialist"`, enquanto o filtro buscava `"AIDD Tokenomics"`, resultando em 0% de determinismo no gate `D3_economia_tokens`.
 - **O que ocasionou:** Falha na progressão automática das Fases 2 e 3 do gerador.
 - **Plano de Correção:**
-  1. Criação do [`aidd_delegado_mediator.py`](file:///C:/Users/trcnologia/Desktop/ecossistema-aidd/tools/aidd-generator/scripts/aidd_delegado_mediator.py): mediador do Protocolo Delegado que intercepta eventos no cache e emite instantaneamente respostas ricas e estruturadas em conformidade com os schemas das fases.
-  2. Criação do runner integrado [`run_generator_delegated.py`](file:///C:/Users/trcnologia/Desktop/ecossistema-aidd/tools/aidd-generator/scripts/run_generator_delegated.py) e atualização do `cmd_generate` em [`ecossistema.py`](file:///C:/Users/trcnologia/Desktop/ecossistema-aidd/ecossistema.py).
+  1. Criação do [`aidd_delegado_mediator.py`](file:///C:/Users/trcnologia/Desktop/ecossistema-aidd/tools/aidd-pure/scripts/aidd_delegado_mediator.py): mediador do Protocolo Delegado que intercepta eventos no cache e emite instantaneamente respostas ricas e estruturadas em conformidade com os schemas das fases.
+  2. Criação do runner integrado [`run_generator_delegated.py`](file:///C:/Users/trcnologia/Desktop/ecossistema-aidd/tools/aidd-pure/scripts/run_generator_delegated.py) e atualização do `cmd_generate` em [`ecossistema.py`](file:///C:/Users/trcnologia/Desktop/ecossistema-aidd/ecossistema.py).
   3. Roteamento refinado por nome de fase (`phase_02`, `arquiteto_camadas`, `engenheiro_scripts`, `especialista_tokens`, `arquiteto_ferramentas`, `especialista_gates`), garantindo aprovação de 100% dos gates (A1-A4, D1-D3 com determinismo de 67%, C1-C2, E1-E5+S1, F1-F3).
   4. Limpeza preventiva de arquivos de cache obsoletos em `scripts/.aidd/cache`.
   5. Reexecução com **100% de sucesso (Score 91/100 em 9.4s)**.
@@ -595,7 +595,7 @@
 
 ---
 
-### Resultado Final da Geração Autônoma de Software (`aidd-generator`)
+### Resultado Final da Geração Autônoma de Software (`aidd-pure`)
 
 - **Testes Unitários da Ferramenta:** **1015 passed**, 5 skipped (100% de aprovação).
 - **Fases Executadas:** Fases 1 a 7 concluídas com sucesso.
@@ -613,12 +613,12 @@
 
 ---
 
-## 6. Ferramenta: `aidd-factory`
+## 6. Ferramenta: `aidd-open`
 
 - **Objetivo da Ferramenta:** Atuar como Fábrica de Código de Aplicação e Integração Multi-Serviço, consumindo deterministiamente o plano arquitetural e de dimensionamento de infraestrutura (`PLANO-INFRAESTRUTURA.json` gerado pelo `aidd-ops`), orquestrando as 9 fases de geração: Análise estrutural determinística, Gateway reverso assíncrono em FastAPI, Interface web Next.js 14 Whitelabel com TailwindCSS e suporte multi-tenant, orquestrador Docker Compose unificado, script dinâmico de inicialização de múltiplos bancos PostgreSQL, isolamento de variáveis de ambiente com segredos protegidos, catálogo de contratos de Webhooks inter-serviços, documentação OpenAPI 3.1 viva e validação cruzada integral (Cross-Service).
 - **Pasta Foco:** [`C:\Users\trcnologia\Desktop\proj_ctt\planos-ctt-app\factory-output`](file:///C:/Users/trcnologia/Desktop/proj_ctt/planos-ctt-app/factory-output)
 - **O que executou:**
-  1. Verificação prévia da suíte de testes unitários da ferramenta `aidd-factory` (**15 passed**, 0 falhas).
+  1. Verificação prévia da suíte de testes unitários da ferramenta `aidd-open` (**15 passed**, 0 falhas).
   2. Execução da cadeia completa de geração (9 fases) consumindo o plano oficial de logística e delivery [`PLANO-INFRAESTRUTURA.json`](file:///C:/Users/trcnologia/Desktop/proj_ctt/planos-ctt-app/infra/PLANO-INFRAESTRUTURA.json).
   3. Diagnóstico e captura de 3 inconsistências nos templates de gateway, scripts de gates e no orquestrador do pipeline.
   4. Auto-correção iterativa nos templates Jinja2 (`servico.nome_ident` para identificadores válidos em Python), definição canônica de `_FACTORY_ROOT` e polimorfismo de diretório nos gates (`G_FACTORY_ANALYSIS.py`, `G_FACTORY_ENV.py`, `G_FACTORY_INIT_DB.py`, `G_FACTORY_COMPOSE.py`) e alinhamento do banner/contagem de fases no `pipeline_factory.py`.
@@ -631,12 +631,12 @@
   python ecossistema.py factory --plano "C:\Users\trcnologia\Desktop\proj_ctt\planos-ctt-app\infra\PLANO-INFRAESTRUTURA.json" --pasta "C:\Users\trcnologia\Desktop\proj_ctt\planos-ctt-app\factory-output"
 
   # 2. Execução da bateria completa de Quality Gates da Factory no projeto alvo
-  python tools/aidd-factory/gates/G_FACTORY_ANALYSIS.py "C:\Users\trcnologia\Desktop\proj_ctt\planos-ctt-app\factory-output"
-  python tools/aidd-factory/gates/G_FACTORY_COMPOSE.py "C:\Users\trcnologia\Desktop\proj_ctt\planos-ctt-app\factory-output"
-  python tools/aidd-factory/gates/G_FACTORY_ENV.py "C:\Users\trcnologia\Desktop\proj_ctt\planos-ctt-app\factory-output"
-  python tools/aidd-factory/gates/G_FACTORY_INIT_DB.py "C:\Users\trcnologia\Desktop\proj_ctt\planos-ctt-app\factory-output"
-  python tools/aidd-factory/gates/G_FACTORY_INTEGRATION.py "C:\Users\trcnologia\Desktop\proj_ctt\planos-ctt-app\factory-output"
-  python tools/aidd-factory/gates/G_FACTORY_MVP.py
+  python tools/aidd-open/gates/G_FACTORY_ANALYSIS.py "C:\Users\trcnologia\Desktop\proj_ctt\planos-ctt-app\factory-output"
+  python tools/aidd-open/gates/G_FACTORY_COMPOSE.py "C:\Users\trcnologia\Desktop\proj_ctt\planos-ctt-app\factory-output"
+  python tools/aidd-open/gates/G_FACTORY_ENV.py "C:\Users\trcnologia\Desktop\proj_ctt\planos-ctt-app\factory-output"
+  python tools/aidd-open/gates/G_FACTORY_INIT_DB.py "C:\Users\trcnologia\Desktop\proj_ctt\planos-ctt-app\factory-output"
+  python tools/aidd-open/gates/G_FACTORY_INTEGRATION.py "C:\Users\trcnologia\Desktop\proj_ctt\planos-ctt-app\factory-output"
+  python tools/aidd-open/gates/G_FACTORY_MVP.py
   ```
 - **O que entregou:**
   - **Gateway FastAPI Unificado:**
@@ -663,21 +663,21 @@
 
 ---
 
-### Registro de Inconsistências e Auto-Correção (`aidd-factory`)
+### Registro de Inconsistências e Auto-Correção (`aidd-open`)
 
 #### Inconsistência 23: `SyntaxError` em Nomes de Funções de Gateway com Hífens/Caracteres Especiais
 - **Nome:** `SyntaxError: expected '('` na compilação do `main.py` e `routes.py` gerados pelo Gateway FastAPI.
 - **Motivo:** O template Jinja2 utilizava diretamente `{{ servico.nome_slug }}` (com hífen, ex: `evolution-api`) na declaração de métodos Python (`async def health_evolution-api():` e `async def list_evolution-api():`), o que constitui sintaxe inválida na linguagem Python.
 - **O que ocasionou:** Falha imediata na Fase 9 (`09_integracao.py`) na validação cruzada via `py_compile`, bloqueando a conclusão do pipeline.
 - **Plano de Correção:**
-  1. Implementar sanitização determinística de identificadores em [`tools/aidd-factory/src/core/gateway_generator.py`](file:///C:/Users/trcnologia/Desktop/ecossistema-aidd/tools/aidd-factory/src/core/gateway_generator.py), adicionando `nome_ident` via regex (`re.sub(r'[^a-zA-Z0-9_]', '_', ...)`) com prefixo de segurança se iniciado por dígito.
-  2. Atualizar [`tools/aidd-factory/templates/gateway/main.py.jinja2`](file:///C:/Users/trcnologia/Desktop/ecossistema-aidd/tools/aidd-factory/templates/gateway/main.py.jinja2) e [`tools/aidd-factory/templates/gateway/routes.py.jinja2`](file:///C:/Users/trcnologia/Desktop/ecossistema-aidd/tools/aidd-factory/templates/gateway/routes.py.jinja2) para usar `{{ servico.nome_ident }}` nas assinaturas de funções mantendo `{{ servico.nome_slug }}` nas URLs públicas HTTP.
+  1. Implementar sanitização determinística de identificadores em [`tools/aidd-open/src/core/gateway_generator.py`](file:///C:/Users/trcnologia/Desktop/ecossistema-aidd/tools/aidd-open/src/core/gateway_generator.py), adicionando `nome_ident` via regex (`re.sub(r'[^a-zA-Z0-9_]', '_', ...)`) com prefixo de segurança se iniciado por dígito.
+  2. Atualizar [`tools/aidd-open/templates/gateway/main.py.jinja2`](file:///C:/Users/trcnologia/Desktop/ecossistema-aidd/tools/aidd-open/templates/gateway/main.py.jinja2) e [`tools/aidd-open/templates/gateway/routes.py.jinja2`](file:///C:/Users/trcnologia/Desktop/ecossistema-aidd/tools/aidd-open/templates/gateway/routes.py.jinja2) para usar `{{ servico.nome_ident }}` nas assinaturas de funções mantendo `{{ servico.nome_slug }}` nas URLs públicas HTTP.
   3. Adicionar teste de regressão `test_gateway_generator_com_hifens_e_espacos` na suíte unitária da ferramenta.
 - **Status:** **RESOLVIDO**.
 
 #### Inconsistência 24: `NameError: name '_FACTORY_ROOT' is not defined` nos Quality Gates da Factory
 - **Nome:** `NameError: name '_FACTORY_ROOT' is not defined` ao executar gates isoladamente.
-- **Motivo:** Os scripts [`G_FACTORY_ANALYSIS.py`](file:///C:/Users/trcnologia/Desktop/ecossistema-aidd/tools/aidd-factory/gates/G_FACTORY_ANALYSIS.py), [`G_FACTORY_ENV.py`](file:///C:/Users/trcnologia/Desktop/ecossistema-aidd/tools/aidd-factory/gates/G_FACTORY_ENV.py) e [`G_FACTORY_INIT_DB.py`](file:///C:/Users/trcnologia/Desktop/ecossistema-aidd/tools/aidd-factory/gates/G_FACTORY_INIT_DB.py) faziam referência a `_FACTORY_ROOT` em seus blocos de fallback sem ter a constante definida no topo do módulo. Além disso, não realizavam resolução polimórfica quando um caminho de diretório era fornecido como argumento.
+- **Motivo:** Os scripts [`G_FACTORY_ANALYSIS.py`](file:///C:/Users/trcnologia/Desktop/ecossistema-aidd/tools/aidd-open/gates/G_FACTORY_ANALYSIS.py), [`G_FACTORY_ENV.py`](file:///C:/Users/trcnologia/Desktop/ecossistema-aidd/tools/aidd-open/gates/G_FACTORY_ENV.py) e [`G_FACTORY_INIT_DB.py`](file:///C:/Users/trcnologia/Desktop/ecossistema-aidd/tools/aidd-open/gates/G_FACTORY_INIT_DB.py) faziam referência a `_FACTORY_ROOT` em seus blocos de fallback sem ter a constante definida no topo do módulo. Além disso, não realizavam resolução polimórfica quando um caminho de diretório era fornecido como argumento.
 - **O que ocasionou:** Quebra na auditoria mecânica dos gates com stack trace cru.
 - **Plano de Correção:**
   1. Definir canonicamente `_FACTORY_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))` em todos os 3 gates.
@@ -689,7 +689,7 @@
 - **Motivo:** A leitura do plano (`_carregar_plano`) era incrementada como uma das fases (`fase_num += 1`) quando conceitualmente é o pre-flight de validação da entrada (`G_FACTORY_INPUT`). Adicionalmente, `total_fases` para o modo determinístico estava fixado em 5 quando na realidade executa 6 fases (1, 4, 5, 6, 8 e 9).
 - **O que ocasionou:** Inconsistência de telemetria visual e violação do determinismo no log de execução.
 - **Plano de Correção:**
-  1. Ajustar o carregamento do plano para `[Pre-flight]` sem incrementar `fase_num` em [`tools/aidd-factory/scripts/pipeline_factory.py`](file:///C:/Users/trcnologia/Desktop/ecossistema-aidd/tools/aidd-factory/scripts/pipeline_factory.py).
+  1. Ajustar o carregamento do plano para `[Pre-flight]` sem incrementar `fase_num` em [`tools/aidd-open/scripts/pipeline_factory.py`](file:///C:/Users/trcnologia/Desktop/ecossistema-aidd/tools/aidd-open/scripts/pipeline_factory.py).
   2. Corrigir o cálculo para `total_fases = 9 if incluir_llm else 6`, garantindo correspondência exata de `[1/9]` a `[9/9]` no modo completo e `[1/6]` a `[6/6]` no modo determinístico.
 - **Status:** **RESOLVIDO**.
 
@@ -698,12 +698,12 @@
 - **Motivo:** O gerador original produzia apenas um proxy reverso ralo e um scaffold genérico de microsserviços sem modelos de domínio reais, sem repositórios seguros tipados e desprovido do Quarteto *Sine Qua Non* dinâmico (`/swagger`, `/webhooks`, `/mcp`, `/docs`).
 - **O que ocasionou:** Risco de drift arquitetural nos projetos nascidos via fábrica e quebra de harmonia com o restante do ecossistema.
 - **Plano de Correção:**
-  1. Criação do motor canônico [`tools/aidd-factory/src/core/vsa_generator.py`](file:///C:/Users/trcnologia/Desktop/ecossistema-aidd/tools/aidd-factory/src/core/vsa_generator.py), que materializa:
+  1. Criação do motor canônico [`tools/aidd-open/src/core/vsa_generator.py`](file:///C:/Users/trcnologia/Desktop/ecossistema-aidd/tools/aidd-open/src/core/vsa_generator.py), que materializa:
      - Shared Kernel completo (`database.py`, `events.py`, `openapi.py`, `webhooks.py`, `mcp_server.py`, `security.py`, `token_revocation.py`).
      - Fatias Verticais dedicadas por ferramenta (`src/modules/<slug>/` com `models.py`, `repositories.py` anti-SQL injection, `services.py` e `routes.py`).
      - Servidor Monolítico Modular (`src/server.py`) expondo nativamente o Quarteto *Sine Qua Non* (`/swagger`, `/webhooks`, `/mcp`, `/docs`) e `/healthz`.
      - Super-App UI offline-first (`src/static/index.html` com abas dinâmicas, KPIs e modais) e Manual do Utilizador (`src/static/docs.html`).
-  2. Atualização da Fase 2 e Fase 7 no [`pipeline_factory.py`](file:///C:/Users/trcnologia/Desktop/ecossistema-aidd/tools/aidd-factory/scripts/pipeline_factory.py) e validação cruzada no [`09_integracao.py`](file:///C:/Users/trcnologia/Desktop/ecossistema-aidd/tools/aidd-factory/scripts/phases/09_integracao.py).
+  2. Atualização da Fase 2 e Fase 7 no [`pipeline_factory.py`](file:///C:/Users/trcnologia/Desktop/ecossistema-aidd/tools/aidd-open/scripts/pipeline_factory.py) e validação cruzada no [`09_integracao.py`](file:///C:/Users/trcnologia/Desktop/ecossistema-aidd/tools/aidd-open/scripts/phases/09_integracao.py).
   3. Atualização dos Quality Gates `G_FACTORY_INTEGRATION.py` e `G_FACTORY_MVP.py` para auditar a conformidade de VSA e Quarteto Sine Qua Non.
   4. Criação dos testes unitários e de integração `test_vsa_generator_fatias_e_quarteto` e `test_pipeline_completo_delivery_e2e` (**16 passed**, 0 falhas).
   5. Teste factual no projeto alvo CTT gerando a pasta temporária para conferência humana [`factory-vsa-test`](file:///C:/Users/trcnologia/Desktop/proj_ctt/planos-ctt-app/factory-vsa-test) com 12 de 12 artefatos gerados e 6/6 gates PASS.
@@ -711,7 +711,7 @@
 
 ---
 
-### Resultado Final da Geração de Aplicações e Integração (`aidd-factory`)
+### Resultado Final da Geração de Aplicações e Integração (`aidd-open`)
 
 - **Testes Unitários da Ferramenta:** **16 passed**, 0 falhas (100% de aprovação).
 - **Quality Gates de Fábrica:**
@@ -877,20 +877,20 @@
 
 ---
 
-## 12. Auditoria Bit a Bit e Fortalecimento Contratual: `aidd-planner` e `aidd-generator` (AUDIT-0001)
+## 12. Auditoria Bit a Bit e Fortalecimento Contratual: `aidd-planner` e `aidd-pure` (AUDIT-0001)
 
 - **Objetivo da Auditoria:** Mapeamento integral das 11 dimensões de todas as ferramentas e fortalecimento da integridade de tipos canônicos nos contratos de handoff e consultas temporais de pesquisa.
-- **Ferramentas Tocadas:** [`tools/aidd-planner`](file:///C:/Users/trcnologia/Desktop/ecossistema-aidd/tools/aidd-planner) e [`tools/aidd-generator`](file:///C:/Users/trcnologia/Desktop/ecossistema-aidd/tools/aidd-generator).
+- **Ferramentas Tocadas:** [`tools/aidd-planner`](file:///C:/Users/trcnologia/Desktop/ecossistema-aidd/tools/aidd-planner) e [`tools/aidd-pure`](file:///C:/Users/trcnologia/Desktop/ecossistema-aidd/tools/aidd-pure).
 - **O que executou:**
   1. `tools/aidd-planner/src/cli.py` e `planner_engine.py`: tipagem canônica estrita (`_tipo_canonico`) garantindo enums válidos em `HANDOFF_PLANNER_ENGINE.json` e `PLANNER.json`.
-  2. `tools/aidd-generator/scripts/phases/01_pesquisador.py`: enriquecimento semântico de vocabulário e filtro temporal dinâmico para repositórios ativos nos últimos 90 dias.
-  3. `tools/aidd-generator/scripts/phases/08_implementador.py`: sincronização de `obter_timeout_por_fase` para robustez em execuções concorrentes.
+  2. `tools/aidd-pure/scripts/phases/01_pesquisador.py`: enriquecimento semântico de vocabulário e filtro temporal dinâmico para repositórios ativos nos últimos 90 dias.
+  3. `tools/aidd-pure/scripts/phases/08_implementador.py`: sincronização de `obter_timeout_por_fase` para robustez em execuções concorrentes.
   4. Execução de testes unitários completos de ambas as ferramentas:
      - `tools/aidd-planner`: 24/24 passed (100% de cobertura).
-     - `tools/aidd-generator`: 1006 passed, 0 failed (100% de aprovação funcional).
+     - `tools/aidd-pure`: 1006 passed, 0 failed (100% de aprovação funcional).
 - **Resultados de Testes:**
   - `pytest tools/aidd-planner/tests`: 24 passed in 1.25s.
-  - `pytest tools/aidd-generator/tests`: 1006 passed, 5 skipped in 26.50s.
+  - `pytest tools/aidd-pure/tests`: 1006 passed, 5 skipped in 26.50s.
   - `docs/auditoria/manifesto_auditoria.json`: Atualizado e validado.
 - **Data da Última Auditoria:** 22/09/2026.
 
@@ -992,10 +992,10 @@
 
 ---
 
-## 19. CSP sem `'unsafe-inline'` no `script-src`, com nonce por requisição: `aidd-master`, `aidd-enterprise` e `aidd-factory` (PLAN-0025 item 3)
+## 19. CSP sem `'unsafe-inline'` no `script-src`, com nonce por requisição: `aidd-master`, `aidd-enterprise` e `aidd-open` (PLAN-0025 item 3)
 
 - **Objetivo da Correção:** a `main` ainda emitia `script-src 'self' 'unsafe-inline'` em 14 arquivos. A correção original (`0459f63`, na tag `arquivo/Heverton-dev/PLAN-0025-fase-03-reversao-csp-relaxado`) nunca entrou na `main` e foi feita sobre um commit sujo ("Inicialização de projeto AIDD"). O cherry-pick deu 61 conflitos add/add, então só o delta real (`048cfb5..0459f63`) foi reaplicado sobre a `main` atual.
-- **Ferramentas Tocadas:** [`tools/aidd-master`](file:///C:/Users/trcnologia/Desktop/ecossistema-aidd/tools/aidd-master), [`tools/aidd-enterprise`](file:///C:/Users/trcnologia/Desktop/ecossistema-aidd/tools/aidd-enterprise), [`tools/aidd-factory`](file:///C:/Users/trcnologia/Desktop/ecossistema-aidd/tools/aidd-factory) e a fonte `componentes/compartilhado/src-core`.
+- **Ferramentas Tocadas:** [`tools/aidd-master`](file:///C:/Users/trcnologia/Desktop/ecossistema-aidd/tools/aidd-master), [`tools/aidd-enterprise`](file:///C:/Users/trcnologia/Desktop/ecossistema-aidd/tools/aidd-enterprise), [`tools/aidd-open`](file:///C:/Users/trcnologia/Desktop/ecossistema-aidd/tools/aidd-open) e a fonte `componentes/compartilhado/src-core`.
 - **O que executou:**
   1. `security.py` (fonte compartilhada, src/core, templates core/v2, factory vsa): `script-src 'self' https://cdn.jsdelivr.net 'nonce-<n>'`; handlers inline (`onclick`) seguem via `script-src-attr 'unsafe-inline'`. Novos `new_nonce()` e `inject_nonce()`.
   2. `server.py` / `server.py.j2`: nonce por resposta no header e `_write_html()` troca o placeholder `__CSP_NONCE__` em todas as saídas HTML (index, /static/*.html, Swagger, Guia, Webhook, MCP). Os 9 servidores com conflito foram refeitos à mão.
@@ -1004,11 +1004,11 @@
   5. HTMLs: `<script nonce="__CSP_NONCE__">` nos scripts inline.
 - **Resultados de Testes:**
   - `git grep "script-src[^;]*unsafe-inline"`: sobram só docs/planos históricos, a referência da skill impeccable e os testes que verificam o `script-src-attr`.
-  - `pytest`: `aidd-enterprise` 341 passed / 3 skipped, `aidd-master` 413 / 3, `aidd-factory` 19 (exit 0). `components verify --tipo todos` → exit 0.
+  - `pytest`: `aidd-enterprise` 341 passed / 3 skipped, `aidd-master` 413 / 3, `aidd-open` 19 (exit 0). `components verify --tipo todos` → exit 0.
   - Execução real: `enterprise compose` e `master compose` em pasta temporária → exit 0. Servidores gerados + repo + exemplos v4 no Chromium (Playwright): 18 páginas, 0 violações de CSP. Controle negativo: script sem nonce bloqueado, com nonce executa, `onclick` executa.
 - **Inconsistências:**
   - `ed3a113` (seed de webhook demo opt-in) **não** trazido: sozinho quebra o `compose` (`UndefinedVariableInTemplate: semear_demo_webhook`, reproduzido). Faltam `semear_demo_webhook`, `webhook_demo_secret` e `webhook_demo_descricao` no `cookiecutter.json`/`compose_suite.py`. A `main` segue semeando o webhook demo com segredo fixo `sec_demo_2026`. **Status:** ABERTO.
-  - O servidor gerado por `aidd-factory/src/core/vsa_generator.py` não emite nenhum header CSP (pré-existente). **Status:** ABERTO.
+  - O servidor gerado por `aidd-open/src/core/vsa_generator.py` não emite nenhum header CSP (pré-existente). **Status:** ABERTO.
   - `server_fastapi.py` dos templates não é usado por nenhum gerador e não roda isolado (falta `core.models`); validado só por compilação.
   - `test_cli_inject_hook_ponta_a_ponta` (aidd-master) gravava no repo real: a CLI roda em subprocesso, onde o monkeypatch do conftest não chega, e deixava `componentes/aidd-master/hooks/` vazia para trás. Correção: `_default_ecossistema_root()` aceita `AIDD_ECOSSISTEMA_ROOT` (fonte `componentes/compartilhado/src-core/materializador.py`, sincronizada com `src-core/sync.py`, `verify` exit 0); o teste passa uma raiz falsa e verifica que o repo real ficou intocado. Controle negativo: com o materializador antigo o teste reprova (exit 1); com o novo, 48 passed (master) e 39 passed (enterprise, injector). A pasta vazia `componentes/aidd-master/` foi removida. **Status:** RESOLVIDO.
 - **Data da Última Auditoria:** 26/09/2026.
@@ -1037,10 +1037,10 @@
 
 - **Objetivo da Correção:**
   Sincronizar cópias homônimas de guardas em `tools/*/templates/gates/` e `tools/*/scripts/gates/` com as versões canônicas da raiz `gates/`, eliminando versões divergentes de código e mantendo paridade byte-a-byte com a governança central do monorepo.
-- **Ferramentas Tocadas:** [`tools/aidd-enterprise`](file:///C:/Users/trcnologia/Desktop/ecossistema-aidd/tools/aidd-enterprise), [`tools/aidd-forge`](file:///C:/Users/trcnologia/Desktop/ecossistema-aidd/tools/aidd-forge), [`tools/aidd-generator`](file:///C:/Users/trcnologia/Desktop/ecossistema-aidd/tools/aidd-generator), [`tools/aidd-master`](file:///C:/Users/trcnologia/Desktop/ecossistema-aidd/tools/aidd-master).
+- **Ferramentas Tocadas:** [`tools/aidd-enterprise`](file:///C:/Users/trcnologia/Desktop/ecossistema-aidd/tools/aidd-enterprise), [`tools/aidd-forge`](file:///C:/Users/trcnologia/Desktop/ecossistema-aidd/tools/aidd-forge), [`tools/aidd-pure`](file:///C:/Users/trcnologia/Desktop/ecossistema-aidd/tools/aidd-pure), [`tools/aidd-master`](file:///C:/Users/trcnologia/Desktop/ecossistema-aidd/tools/aidd-master).
 - **O que executou:**
   1. `tools/aidd-forge/aidd_forge/templates/gates/`: Sincronizados `G_SAIDA_BINARIA.py`, `G_TESTES_REAIS.py`, `G_DETERMINISMO_LEI_1.py`, `G_QUARTETO_SINE_QUA_NON.py`, `G_STACK_PADRAO_OURO.py` com as versões vigentes da raiz.
-  2. `tools/aidd-generator/scripts/gates/`: Sincronizados `G_BLOQUEAR_SEGREDOS.py`, `G_CYBERSECURITY_OWASP.py` com `aidd-forge`.
+  2. `tools/aidd-pure/scripts/gates/`: Sincronizados `G_BLOQUEAR_SEGREDOS.py`, `G_CYBERSECURITY_OWASP.py` com `aidd-forge`.
   3. `tools/aidd-master/templates/gates/` e `tools/aidd-enterprise/templates/gates/`: Atualizados gates de template de scaffolding em conformidade com o baseline de drift `baseline_nucleo_compartilhado.json`.
 - **Resultados de Testes:**
   - `G_DRIFT_NUCLEO_COMPARTILHADO.py` → exit 0.

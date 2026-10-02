@@ -30,7 +30,7 @@ literalmente em todo projeto gerado pela ferramenta):
   - gates/
   - tools/aidd-master/scripts/gates/
   - tools/aidd-enterprise/scripts/gates/
-  - tools/aidd-generator/scripts/gates/
+  - tools/aidd-pure/scripts/gates/
   - tools/aidd-ops/gates/
   - tools/aidd-forge/aidd_forge/templates/gates/
 Fora do escopo (deliberado): tools/*/materiais-extras/examples/** (material
@@ -64,7 +64,7 @@ DIRETORIOS_AUDITADOS = [
     "gates",
     "tools/aidd-master/scripts/gates",
     "tools/aidd-enterprise/scripts/gates",
-    "tools/aidd-generator/scripts/gates",
+    "tools/aidd-pure/scripts/gates",
     "tools/aidd-ops/gates",
     "tools/aidd-forge/aidd_forge/templates/gates",
 ]

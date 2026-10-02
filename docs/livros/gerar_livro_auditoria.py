@@ -41,7 +41,7 @@ ERRATA_FICHAS = {
     "`G_FACTORY_OUTPUT` (verificação do manifesto de entrega), `G_FACTORY_DETERMINISTIC` "
     "(garantia de zero LLM nas fases 1, 4, 5 e 6).":
         "`G_FACTORY_ANALYSIS`, `G_FACTORY_COMPOSE`, `G_FACTORY_ENV`, `G_FACTORY_INIT_DB`, "
-        "`G_FACTORY_INTEGRATION` e `G_FACTORY_MVP` (em `tools/aidd-factory/gates/`). "
+        "`G_FACTORY_INTEGRATION` e `G_FACTORY_MVP` (em `tools/aidd-open/gates/`). "
         "`G_FACTORY_INPUT`, `G_FACTORY_OUTPUT` e `G_FACTORY_DETERMINISTIC` são rótulos de "
         "invariante no `AGENTS.md`, não arquivos de portão.",
     "catálogo de ferramentas (`data/catalogo_ferramentas.json`)":
@@ -262,9 +262,9 @@ fichas_macro = {}
 tools_order = [
     "aidd-forge",
     "aidd-planner",
-    "aidd-generator",
-    "aidd-factory",
-    "aidd-bridge",
+    "aidd-pure",
+    "aidd-open",
+    "aidd-freedom",
     "aidd-master",
     "aidd-enterprise",
     "aidd-ops"
@@ -347,20 +347,20 @@ metaforas_macro = {
         "festa": "O Grande Arquiteto que escuta o sonho do cliente, desenha a planta baixa em papel milimetrado com todas as medidas, cores e quartos, e entrega uma receita que qualquer cozinheiro consegue seguir.",
         "caminho": "tools/aidd-planner"
     },
-    "aidd-generator": {
+    "aidd-pure": {
         "nome": "AIDD Generator — O Trem Autônomo de 8 Vagões (Fluxo 01: Do Zero Puro)",
         "festa": "Um trem mágico com 8 vagões sequenciais. Ele recebe a ideia pura em uma ponta e, vagão por vagão (pesquisa, desenho, teste, programação), entrega uma cidade inteira de brinquedo montada e funcionando.",
-        "caminho": "tools/aidd-generator"
+        "caminho": "tools/aidd-pure"
     },
-    "aidd-factory": {
+    "aidd-open": {
         "nome": "AIDD Factory — A Linha de Montagem de Peças Prontas (Fluxo 02: Open-Source)",
         "festa": "O Mestre Montador que pega os melhores motores de brinquedo já inventados no mundo (motores abertos) e os conecta perfeitamente com cabos fortes para criar um veículo superpotente sem reinventar a roda.",
-        "caminho": "tools/aidd-factory"
+        "caminho": "tools/aidd-open"
     },
-    "aidd-bridge": {
+    "aidd-freedom": {
         "nome": "AIDD Bridge — A Ponte da Libertação (Fluxo 03: Desacoplamento Low-Code)",
         "festa": "O Chaveiro Libertador que resgata os brinquedos que estavam presos em gaiolas com cadeados caros de empresas distantes (Lovable, Supabase), limpando-os para funcionarem livres no quintal da sua própria casa.",
-        "caminho": "tools/aidd-bridge"
+        "caminho": "tools/aidd-freedom"
     },
     "aidd-master": {
         "nome": "AIDD Master — O Maestro da Harmonização Monolítica VSA",
@@ -386,9 +386,9 @@ metaforas_macro = {
 pontes_tecnicas = {
     "aidd-forge": "Antes de qualquer parede ser erguida, é este ferreiro que crava as estacas no chão e escreve, na própria parede da oficina, as regras que toda construção futura vai ter que obedecer. Sem terreno preparado e sem regra escrita, não existe planta nem construção — é por isso que ele entra primeiro, e é por isso que ele mesmo não ergue tijolo nenhum.",
     "aidd-planner": "Com o terreno pronto e as regras na parede, é aqui que o sonho do cliente vira desenho técnico: cada cômodo, medida, porta e contrato descritos em detalhe antes de qualquer prego ser batido. O arquiteto entrega a planta — quem constrói é o próximo mestre da linha.",
-    "aidd-generator": "Com a planta em mãos, este é o motor que efetivamente ergue a construção do zero: vagão por vagão, a ideia pura vira aplicação funcionando, sem depender de nenhum tijolo pré-fabricado de terceiros.",
-    "aidd-factory": "Também constrói a partir da mesma planta, mas em vez de erguer tijolo por tijolo, monta a casa com módulos open-source já prontos, testados por milhares de outras obras e encaixados sob medida no projeto.",
-    "aidd-bridge": "Aqui a casa já existe — só que presa a um dono que cobra aluguel para você nem abrir a porta. Este é o chaveiro que destranca as paredes de vendor lock-in e devolve as chaves de verdade para o dono real do código.",
+    "aidd-pure": "Com a planta em mãos, este é o motor que efetivamente ergue a construção do zero: vagão por vagão, a ideia pura vira aplicação funcionando, sem depender de nenhum tijolo pré-fabricado de terceiros.",
+    "aidd-open": "Também constrói a partir da mesma planta, mas em vez de erguer tijolo por tijolo, monta a casa com módulos open-source já prontos, testados por milhares de outras obras e encaixados sob medida no projeto.",
+    "aidd-freedom": "Aqui a casa já existe — só que presa a um dono que cobra aluguel para você nem abrir a porta. Este é o chaveiro que destranca as paredes de vendor lock-in e devolve as chaves de verdade para o dono real do código.",
     "aidd-master": "Com as construções de pé, é este maestro que garante que todas as alas do prédio funcionem como um único edifício coerente — nenhuma fatia vertical pisa no cano ou na fiação da vizinha.",
     "aidd-enterprise": "É o inspetor que sela cada ambiente com um lacre inviolável (assinatura criptográfica) antes de qualquer chave ser entregue para o mundo real — se o lacre estiver quebrado, a entrega não sai.",
     "aidd-ops": "É quem liga a energia do prédio já pronto, tranca as portas externas com fechaduras fortes e instala as câmeras de vigilância — para que a construção funcione 24 horas por dia sem ninguém arrombar a fechadura enquanto todos dormem.",

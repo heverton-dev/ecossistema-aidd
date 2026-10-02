@@ -4,50 +4,27 @@
   "totais": {
     "ferramentas": 8,
     "comandos_cli": 69,
-    "skills": 41,
+    "skills": 43,
     "leis": 13,
     "lente_15d": 15,
     "oficina": 37,
-    "scripts": 24,
+    "scripts": 30,
     "moldes_entrega": 24,
     "harnesses": 7,
-    "skills_nossas": 41,
+    "skills_nossas": 43,
     "skills_terceiros_copiadas": 0,
     "skills_terceiros_registradas": 20,
-    "comandos_slash": 18,
-    "mcps_registrados": 9,
+    "comandos_slash": 19,
+    "mcps_registrados": 10,
     "mcps_internos": 3,
     "hooks": 3,
-    "gates_nomes": 91,
-    "gates_arquivos": 137,
+    "gates_nomes": 96,
+    "gates_arquivos": 142,
     "contratos": 8,
     "etapas_receita": 7,
     "encaixes_quebrados": 0
   },
   "ferramentas": [
-    {
-      "id": "aidd-bridge",
-      "descricao": "Extrator, Unificador e Empacotador de Projetos Low-Code (Lovable, v0, Bolt) para VPS Própria.",
-      "chamada": "python ecossistema.py bridge",
-      "entrada_cli": "tools/aidd-bridge/aidd_bridge/cli.py",
-      "comandos": [
-        "convert-db",
-        "destroy",
-        "merge",
-        "migrate-auth",
-        "pack",
-        "scan",
-        "unpack"
-      ],
-      "gates_proprios": [
-        "tools/aidd-bridge/gates/G_BRIDGE_DOCKER_OCI.py",
-        "tools/aidd-bridge/gates/G_BRIDGE_POSTGRESQL.py",
-        "tools/aidd-bridge/gates/G_BRIDGE_VENDOR_LOCKIN.py",
-        "tools/aidd-bridge/gates/G_BRIDGE_VSA_COMPAT.py"
-      ],
-      "mcps_proprios": [],
-      "arquivos_py": 19
-    },
     {
       "id": "aidd-enterprise",
       "descricao": "O Framework Definitivo para Monólitos Modulares, Clean Architecture, Fatias Verticais e Governança Anti-Atalhos por Gates Rígidos.",
@@ -101,23 +78,6 @@
       "arquivos_py": 185
     },
     {
-      "id": "aidd-factory",
-      "descricao": "Gerador de Código de Aplicação e Integração para Stacks Multi-Serviço.",
-      "chamada": "python ecossistema.py factory",
-      "entrada_cli": "tools/aidd-factory/scripts/pipeline_factory.py",
-      "comandos": [],
-      "gates_proprios": [
-        "tools/aidd-factory/gates/G_FACTORY_ANALYSIS.py",
-        "tools/aidd-factory/gates/G_FACTORY_COMPOSE.py",
-        "tools/aidd-factory/gates/G_FACTORY_ENV.py",
-        "tools/aidd-factory/gates/G_FACTORY_INIT_DB.py",
-        "tools/aidd-factory/gates/G_FACTORY_INTEGRATION.py",
-        "tools/aidd-factory/gates/G_FACTORY_MVP.py"
-      ],
-      "mcps_proprios": [],
-      "arquivos_py": 44
-    },
-    {
       "id": "aidd-forge",
       "descricao": "Motor Universal de Governança Agêntica, Descarte de Contexto e Economia Extrema de Tokens",
       "chamada": "python ecossistema.py forge",
@@ -146,26 +106,27 @@
       "arquivos_py": 40
     },
     {
-      "id": "aidd-generator",
-      "descricao": "",
-      "chamada": "python ecossistema.py generate",
-      "entrada_cli": "tools/aidd-generator/scripts/pipeline_completo.py",
-      "comandos": [],
+      "id": "aidd-freedom",
+      "descricao": "Extrator, Unificador e Empacotador de Projetos Low-Code (Lovable, v0, Bolt) para VPS Própria.",
+      "chamada": "python ecossistema.py freedom-motor",
+      "entrada_cli": "tools/aidd-freedom/aidd_freedom/cli.py",
+      "comandos": [
+        "convert-db",
+        "destroy",
+        "merge",
+        "migrate-auth",
+        "pack",
+        "scan",
+        "unpack"
+      ],
       "gates_proprios": [
-        "tools/aidd-generator/scripts/gates/G_BLOQUEAR_SEGREDOS.py",
-        "tools/aidd-generator/scripts/gates/G_CYBERSECURITY_OWASP.py",
-        "tools/aidd-generator/scripts/gates/G_HARNESS_COMPAT.py",
-        "tools/aidd-generator/scripts/gates/G_INJECT.py",
-        "tools/aidd-generator/scripts/gates/G_INTEGRACAO_CROSS_SCRIPT.py",
-        "tools/aidd-generator/scripts/gates/G_SANDBOX_NIVEL_1.py",
-        "tools/aidd-generator/scripts/gates/G_SESSAO_HERMETICA.py",
-        "tools/aidd-generator/scripts/gates/G_TOKENOMICS.py",
-        "tools/aidd-generator/scripts/gates/G_VERIFICAR_LLM_PRONTO.py"
+        "tools/aidd-freedom/gates/G_BRIDGE_DOCKER_OCI.py",
+        "tools/aidd-freedom/gates/G_BRIDGE_POSTGRESQL.py",
+        "tools/aidd-freedom/gates/G_BRIDGE_VENDOR_LOCKIN.py",
+        "tools/aidd-freedom/gates/G_BRIDGE_VSA_COMPAT.py"
       ],
-      "mcps_proprios": [
-        "tools/aidd-generator/mcps/mcp-verificador-cve/server.py"
-      ],
-      "arquivos_py": 69
+      "mcps_proprios": [],
+      "arquivos_py": 19
     },
     {
       "id": "aidd-master",
@@ -222,6 +183,23 @@
       "arquivos_py": 191
     },
     {
+      "id": "aidd-open",
+      "descricao": "Gerador de Código de Aplicação e Integração para Stacks Multi-Serviço.",
+      "chamada": "python ecossistema.py open-motor",
+      "entrada_cli": "tools/aidd-open/scripts/pipeline_factory.py",
+      "comandos": [],
+      "gates_proprios": [
+        "tools/aidd-open/gates/G_FACTORY_ANALYSIS.py",
+        "tools/aidd-open/gates/G_FACTORY_COMPOSE.py",
+        "tools/aidd-open/gates/G_FACTORY_ENV.py",
+        "tools/aidd-open/gates/G_FACTORY_INIT_DB.py",
+        "tools/aidd-open/gates/G_FACTORY_INTEGRATION.py",
+        "tools/aidd-open/gates/G_FACTORY_MVP.py"
+      ],
+      "mcps_proprios": [],
+      "arquivos_py": 44
+    },
+    {
       "id": "aidd-ops",
       "descricao": "",
       "chamada": "python ecossistema.py ops",
@@ -271,6 +249,28 @@
       ],
       "mcps_proprios": [],
       "arquivos_py": 14
+    },
+    {
+      "id": "aidd-pure",
+      "descricao": "",
+      "chamada": "python ecossistema.py pure-motor",
+      "entrada_cli": "tools/aidd-pure/scripts/pipeline_completo.py",
+      "comandos": [],
+      "gates_proprios": [
+        "tools/aidd-pure/scripts/gates/G_BLOQUEAR_SEGREDOS.py",
+        "tools/aidd-pure/scripts/gates/G_CYBERSECURITY_OWASP.py",
+        "tools/aidd-pure/scripts/gates/G_HARNESS_COMPAT.py",
+        "tools/aidd-pure/scripts/gates/G_INJECT.py",
+        "tools/aidd-pure/scripts/gates/G_INTEGRACAO_CROSS_SCRIPT.py",
+        "tools/aidd-pure/scripts/gates/G_SANDBOX_NIVEL_1.py",
+        "tools/aidd-pure/scripts/gates/G_SESSAO_HERMETICA.py",
+        "tools/aidd-pure/scripts/gates/G_TOKENOMICS.py",
+        "tools/aidd-pure/scripts/gates/G_VERIFICAR_LLM_PRONTO.py"
+      ],
+      "mcps_proprios": [
+        "tools/aidd-pure/mcps/mcp-verificador-cve/server.py"
+      ],
+      "arquivos_py": 69
     }
   ],
   "skills": [
@@ -293,15 +293,15 @@
       "terceiro": false
     },
     {
-      "id": "aidd-bridge",
-      "descricao": "Runs the atomic aidd-bridge tool operations that free low-code projects (Lovable, v0, Bolt) for self-hosting - scan, Supabase-to-PostgreSQL conversion, app merge and VPS packaging. Use when the user asks for one bridge step, or says \"bridge\", \"/bridge\", \"scan do lovable\", \"converter banco\", \"empacotar para VPS\". For the full Flow 03 use aidd-freedom.",
-      "linhas": 28,
-      "terceiro": false
-    },
-    {
       "id": "aidd-components",
       "descricao": "Creates or updates agnostic ecosystem components (skills, commands, hooks, mcps, specs, configs, sub-agents, scripts) in the single source componentes/ and distributes them to every harness with components sync and verify. Use when the user asks to create, update or sync a component, or says \"componente\", \"sincronizar componentes\", \"components sync\", \"distribuir para os harnesses\".",
       "linhas": 33,
+      "terceiro": false
+    },
+    {
+      "id": "aidd-dataviz",
+      "descricao": "Validates categorical and ordinal chart palettes with the deterministic OKLCH/OKLab script validate_palette.py (lightness band, chroma floor, CVD separation, normal-vision floor, WCAG contrast). Use when the user wants to check chart colors, \"validate palette\", \"are these series colors accessible\", \"palette fails CVD\", sequential ramp checks, or before shipping any dashboard/chart color set.",
+      "linhas": 60,
       "terceiro": false
     },
     {
@@ -329,6 +329,12 @@
       "terceiro": false
     },
     {
+      "id": "aidd-docx",
+      "descricao": "Use when creating, reading, editing, or manipulating Word documents (.docx) or Word templates (.dotx), including reports, memos, letters, tracked changes, formatting, or document conversion.",
+      "linhas": 91,
+      "terceiro": false
+    },
+    {
       "id": "aidd-enterprise",
       "descricao": "Injects and audits mission-critical components with JSON Schema validation, SHA-256 integrity and automatic rollback. Use when the user wants to inject a certified skill, rule, mcp, spec, config, hook or agent, or says \"enterprise\", \"/enterprise\", \"injetar componente\", \"blindagem SHA-256\".",
       "linhas": 23,
@@ -341,12 +347,6 @@
       "terceiro": false
     },
     {
-      "id": "aidd-factory",
-      "descricao": "Generates a complete multi-service application stack (gateway, frontend, compose, webhooks, docs) from a PLANO-INFRAESTRUTURA.json produced by aidd-ops. Use when the user wants to go from an infrastructure plan to a deployable app, or says \"factory\", \"/factory\", \"gerar stack\", \"gerar gateway\", \"gerar frontend\", \"gerar compose\".",
-      "linhas": 38,
-      "terceiro": false
-    },
-    {
       "id": "aidd-forge",
       "descricao": "Bootstraps and hardens a target repository with the aidd-forge governance kit (quality gates, git hooks, token-economy rules, phase isolation). Use when the user asks to bootstrap, initialize or harden a project, or says \"forge\", \"/forge\", \"blindar projeto\", \"inicializar governança\".",
       "linhas": 23,
@@ -354,20 +354,14 @@
     },
     {
       "id": "aidd-freedom",
-      "descricao": "Runs Triad Flow 03 (low-code liberation) end to end - removes Lovable, v0 or Bolt vendor lock-in, migrates Supabase to PostgreSQL through aidd-bridge while keeping the UI, then master, enterprise and ops. Use when the user wants to free or self-host a low-code app, or types \"/freedom\", \"freedom\", \"libertar app lovable\", \"desacoplar app low-code\", \"migrar v0 ou bolt para postgresql\". For a single bridge step use aidd-bridge.",
-      "linhas": 45,
+      "descricao": "Runs Triad Flow 03 (low-code liberation) end to end - removes Lovable, v0 or Bolt vendor lock-in, migrates Supabase to PostgreSQL through the aidd-freedom engine while keeping the UI, then master, enterprise and ops; also runs single engine steps (scan, convert-db, merge, pack). Use when the user wants to free or self-host a low-code app or asks for one of those steps, or types \"/freedom\", \"freedom\", \"freedom-motor\", \"/bridge\", \"bridge\", \"libertar app lovable\", \"desacoplar app low-code\", \"migrar v0 ou bolt para postgresql\", \"scan do lovable\", \"converter banco\", \"empacotar para VPS\".",
+      "linhas": 59,
       "terceiro": false
     },
     {
       "id": "aidd-frontend-forms",
       "descricao": "Use when creating, reviewing, or refactoring typed frontend forms in Next.js using Zod validation schemas and React Hook Form.",
       "linhas": 107,
-      "terceiro": false
-    },
-    {
-      "id": "aidd-generator",
-      "descricao": "Runs the aidd-generator 8-phase pipeline that turns a natural-language idea into tested software. Use when the user wants to generate an app from an idea, or says \"generate\", \"/generate\", \"gerar software\", \"gerar app a partir da ideia\".",
-      "linhas": 27,
       "terceiro": false
     },
     {
@@ -414,8 +408,8 @@
     },
     {
       "id": "aidd-open",
-      "descricao": "Runs Triad Flow 02 (open-source engines) end to end - curates tested open-source engines, integrates them as VSA slices through aidd-factory, then master, enterprise and ops. Use when the user wants an app built on open-source engines, or types \"/open\", \"/aidd-open\", \"open\", \"criar com open-source\", \"integrar motor open source\", \"gerar app via factory\".",
-      "linhas": 45,
+      "descricao": "Runs Triad Flow 02 (open-source engines) end to end - curates tested open-source engines, integrates them as VSA slices through the aidd-open engine, then master, enterprise and ops; also runs only the engine that generates a multi-service stack from a PLANO-INFRAESTRUTURA.json. Use when the user wants an app built on open-source engines or a deployable stack from an infrastructure plan, or types \"/open\", \"/aidd-open\", \"open\", \"open-motor\", \"/factory\", \"factory\", \"criar com open-source\", \"integrar motor open source\", \"gerar stack\", \"gerar gateway\", \"gerar compose\".",
+      "linhas": 57,
       "terceiro": false
     },
     {
@@ -437,6 +431,12 @@
       "terceiro": false
     },
     {
+      "id": "aidd-pdf",
+      "descricao": "Use when processing PDF files, including reading or extracting text/tables, combining or splitting PDFs, rotating pages, watermarking, form filling, OCR on scanned pages, or generating new PDFs.",
+      "linhas": 314,
+      "terceiro": false
+    },
+    {
       "id": "aidd-pipeline",
       "descricao": "Runs the deterministic Triad pipeline in ephemeral git worktrees with a join barrier, from a Markdown plan (run-plan) or a JSON handoff manifest (pipeline). Use when the user wants to execute plan tickets in parallel worktrees, or types \"/run-plan\", \"/pipeline\", \"run-plan\", \"pipeline\", \"rodar plano em worktrees\".",
       "linhas": 52,
@@ -455,9 +455,15 @@
       "terceiro": false
     },
     {
+      "id": "aidd-pptx",
+      "descricao": "Use when creating, reading, editing, or manipulating PowerPoint presentations (.pptx) or templates (.potx), including slide decks, pitch decks, layouts, speaker notes, and visual QA.",
+      "linhas": 241,
+      "terceiro": false
+    },
+    {
       "id": "aidd-pure",
-      "descricao": "Runs Triad Flow 01 (build from scratch) end to end - forge, planner, generator with strict TDD Red-Green, then master, enterprise and ops. Use when the user wants a brand-new project from zero, or types \"/pure\", \"pure\", \"criar projeto do zero\", \"projeto do zero puro\", \"novo projeto com TDD\".",
-      "linhas": 43,
+      "descricao": "Runs Triad Flow 01 (build from scratch) end to end - forge, planner, the aidd-pure engine with strict TDD Red-Green, then master, enterprise and ops; also runs only the 8-phase engine that turns an idea into tested software. Use when the user wants a brand-new project from zero or an app from an idea, or types \"/pure\", \"pure\", \"pure-motor\", \"/generate\", \"generate\", \"criar projeto do zero\", \"projeto do zero puro\", \"novo projeto com TDD\", \"gerar app a partir da ideia\".",
+      "linhas": 55,
       "terceiro": false
     },
     {
@@ -518,6 +524,12 @@
       "id": "aidd-wizard",
       "descricao": "Generate an interactive bash wizard that walks a human through steps only they can perform. Use when provisioning infrastructure (VPS, Cloudflare), setting up credentials or CI secrets, walking a third-party dashboard, or running a one-off migration or cutover. Use only for steps the agent cannot perform itself.",
       "linhas": 35,
+      "terceiro": false
+    },
+    {
+      "id": "aidd-xlsx",
+      "descricao": "Use when creating, reading, editing, or validating spreadsheets (.xlsx, .xlsm, .csv, .tsv), including formulas, financial models, openpyxl scripts, pandas manipulation, or tabular data formatting.",
+      "linhas": 99,
       "terceiro": false
     }
   ],
@@ -835,6 +847,26 @@
           "visivel": true
         },
         {
+          "gate": "G_aidd_enterprise",
+          "forca": "provado",
+          "visivel": true
+        },
+        {
+          "gate": "G_aidd_spec",
+          "forca": "provado",
+          "visivel": true
+        },
+        {
+          "gate": "G_aidd_tdd",
+          "forca": "provado",
+          "visivel": true
+        },
+        {
+          "gate": "G_aidd_tickets",
+          "forca": "provado",
+          "visivel": true
+        },
+        {
           "gate": "G_PROVA_SKILLS_POCOCK",
           "forca": "provado",
           "visivel": true
@@ -1013,6 +1045,17 @@
         }
       },
       {
+        "alvo": "aidd-enterprise",
+        "ciclo": "ciclo-01",
+        "laudo": "docs/auditoria/aidd-enterprise/ciclo-01/LAUDO-15D-REVISADO.md",
+        "dimensoes": {
+          "6": "descrito",
+          "7": "descrito",
+          "8": "descrito",
+          "9": "descrito"
+        }
+      },
+      {
         "alvo": "aidd-forge",
         "ciclo": "ciclo-01",
         "laudo": "docs/auditoria/aidd-forge/ciclo-01/LAUDO-15D-REVISADO.md",
@@ -1035,13 +1078,79 @@
         }
       },
       {
+        "alvo": "aidd-forge",
+        "ciclo": "ciclo-02",
+        "laudo": "docs/auditoria/aidd-forge/ciclo-02/LAUDO-15D-REVISADO.md",
+        "dimensoes": {
+          "1": "descrito",
+          "2": "descrito",
+          "3": "descrito",
+          "4": "descrito",
+          "5": "descrito",
+          "6": "descrito",
+          "7": "descrito",
+          "8": "descrito",
+          "9": "descrito",
+          "10": "descrito",
+          "11": "descrito",
+          "12": "descrito",
+          "13": "descrito",
+          "14": "descrito",
+          "15": "descrito"
+        }
+      },
+      {
+        "alvo": "aidd-freedom",
+        "ciclo": "ciclo-02",
+        "laudo": "docs/auditoria/aidd-freedom/ciclo-02/LAUDO-15D-REVISADO.md",
+        "dimensoes": {
+          "1": "descrito",
+          "2": "descrito",
+          "3": "descrito",
+          "4": "descrito",
+          "5": "descrito",
+          "6": "descrito",
+          "7": "descrito",
+          "8": "descrito",
+          "9": "descrito",
+          "10": "descrito",
+          "11": "descrito",
+          "12": "descrito",
+          "13": "descrito",
+          "14": "descrito",
+          "15": "descrito"
+        }
+      },
+      {
+        "alvo": "aidd-grill",
+        "ciclo": "ciclo-01",
+        "laudo": "docs/auditoria/aidd-grill/ciclo-01/LAUDO-15D-REVISADO.md",
+        "dimensoes": {
+          "1": "descrito",
+          "2": "descrito",
+          "3": "ok",
+          "4": "descrito",
+          "5": "descrito",
+          "6": "descrito",
+          "7": "descrito",
+          "8": "descrito",
+          "9": "descrito",
+          "10": "descrito",
+          "11": "ok",
+          "12": "ok",
+          "13": "ok",
+          "14": "ok",
+          "15": "ok"
+        }
+      },
+      {
         "alvo": "aidd-melhoria",
         "ciclo": "ciclo-01",
         "laudo": "docs/auditoria/aidd-melhoria/ciclo-01/LAUDO-15D-REVISADO.md",
         "dimensoes": {
           "1": "descrito",
           "2": "descrito",
-          "3": "ok",
+          "3": "parcial",
           "4": "falha",
           "5": "descrito",
           "6": "descrito",
@@ -1069,6 +1178,72 @@
           "6": "descrito",
           "7": "descrito",
           "8": "ok",
+          "9": "descrito",
+          "10": "descrito",
+          "11": "ok",
+          "12": "ok",
+          "13": "ok",
+          "14": "ok",
+          "15": "ok"
+        }
+      },
+      {
+        "alvo": "aidd-spec",
+        "ciclo": "ciclo-01",
+        "laudo": "docs/auditoria/aidd-spec/ciclo-01/LAUDO-15D-REVISADO.md",
+        "dimensoes": {
+          "1": "descrito",
+          "2": "descrito",
+          "3": "ok",
+          "4": "descrito",
+          "5": "descrito",
+          "6": "descrito",
+          "7": "descrito",
+          "8": "descrito",
+          "9": "descrito",
+          "10": "descrito",
+          "11": "ok",
+          "12": "ok",
+          "13": "ok",
+          "14": "ok",
+          "15": "ok"
+        }
+      },
+      {
+        "alvo": "aidd-tdd",
+        "ciclo": "ciclo-01",
+        "laudo": "docs/auditoria/aidd-tdd/ciclo-01/LAUDO-15D-REVISADO.md",
+        "dimensoes": {
+          "1": "descrito",
+          "2": "ok",
+          "3": "ok",
+          "4": "descrito",
+          "5": "descrito",
+          "6": "descrito",
+          "7": "descrito",
+          "8": "descrito",
+          "9": "descrito",
+          "10": "descrito",
+          "11": "ok",
+          "12": "ok",
+          "13": "ok",
+          "14": "ok",
+          "15": "ok"
+        }
+      },
+      {
+        "alvo": "aidd-tickets",
+        "ciclo": "ciclo-01",
+        "laudo": "docs/auditoria/aidd-tickets/ciclo-01/LAUDO-15D-REVISADO.md",
+        "dimensoes": {
+          "1": "descrito",
+          "2": "descrito",
+          "3": "ok",
+          "4": "descrito",
+          "5": "descrito",
+          "6": "descrito",
+          "7": "descrito",
+          "8": "descrito",
           "9": "descrito",
           "10": "descrito",
           "11": "ok",
@@ -1250,7 +1425,7 @@
         "itens": 11
       },
       {
-        "id": "PLAN-0027-implementacao-aidd-factory",
+        "id": "PLAN-0027-implementacao-aidd-open",
         "estado": "fazendo",
         "itens": 8
       },
@@ -1392,6 +1567,18 @@
     ],
     "ciclos": [
       {
+        "alvo": "agilidade-gates",
+        "ciclo": "ciclo-01",
+        "caminho": "docs/auditoria/agilidade-gates/ciclo-01",
+        "fases": {
+          "laudo_inicial": false,
+          "plano_evolucao": true,
+          "laudo_revisado": false,
+          "dod": true
+        },
+        "nota": ""
+      },
+      {
         "alvo": "aidd-diagnose",
         "ciclo": "ciclo-01",
         "caminho": "docs/auditoria/aidd-diagnose/ciclo-01",
@@ -1404,6 +1591,18 @@
         "nota": "8"
       },
       {
+        "alvo": "aidd-enterprise",
+        "ciclo": "ciclo-01",
+        "caminho": "docs/auditoria/aidd-enterprise/ciclo-01",
+        "fases": {
+          "laudo_inicial": true,
+          "plano_evolucao": true,
+          "laudo_revisado": true,
+          "dod": true
+        },
+        "nota": ""
+      },
+      {
         "alvo": "aidd-forge",
         "ciclo": "ciclo-01",
         "caminho": "docs/auditoria/aidd-forge/ciclo-01",
@@ -1411,6 +1610,54 @@
           "laudo_inicial": true,
           "plano_evolucao": true,
           "laudo_revisado": true,
+          "dod": true
+        },
+        "nota": ""
+      },
+      {
+        "alvo": "aidd-forge",
+        "ciclo": "ciclo-02",
+        "caminho": "docs/auditoria/aidd-forge/ciclo-02",
+        "fases": {
+          "laudo_inicial": true,
+          "plano_evolucao": true,
+          "laudo_revisado": true,
+          "dod": true
+        },
+        "nota": "10"
+      },
+      {
+        "alvo": "aidd-freedom",
+        "ciclo": "ciclo-02",
+        "caminho": "docs/auditoria/aidd-freedom/ciclo-02",
+        "fases": {
+          "laudo_inicial": true,
+          "plano_evolucao": true,
+          "laudo_revisado": true,
+          "dod": true
+        },
+        "nota": "10"
+      },
+      {
+        "alvo": "aidd-grill",
+        "ciclo": "ciclo-01",
+        "caminho": "docs/auditoria/aidd-grill/ciclo-01",
+        "fases": {
+          "laudo_inicial": true,
+          "plano_evolucao": true,
+          "laudo_revisado": true,
+          "dod": true
+        },
+        "nota": "10"
+      },
+      {
+        "alvo": "aidd-master",
+        "ciclo": "ciclo-01",
+        "caminho": "docs/auditoria/aidd-master/ciclo-01",
+        "fases": {
+          "laudo_inicial": false,
+          "plano_evolucao": false,
+          "laudo_revisado": false,
           "dod": true
         },
         "nota": ""
@@ -1435,6 +1682,90 @@
           "laudo_inicial": true,
           "plano_evolucao": true,
           "laudo_revisado": true,
+          "dod": true
+        },
+        "nota": ""
+      },
+      {
+        "alvo": "aidd-open",
+        "ciclo": "ciclo-01",
+        "caminho": "docs/auditoria/aidd-open/ciclo-01",
+        "fases": {
+          "laudo_inicial": false,
+          "plano_evolucao": false,
+          "laudo_revisado": false,
+          "dod": true
+        },
+        "nota": ""
+      },
+      {
+        "alvo": "aidd-ops",
+        "ciclo": "ciclo-01",
+        "caminho": "docs/auditoria/aidd-ops/ciclo-01",
+        "fases": {
+          "laudo_inicial": false,
+          "plano_evolucao": false,
+          "laudo_revisado": false,
+          "dod": true
+        },
+        "nota": ""
+      },
+      {
+        "alvo": "aidd-spec",
+        "ciclo": "ciclo-01",
+        "caminho": "docs/auditoria/aidd-spec/ciclo-01",
+        "fases": {
+          "laudo_inicial": true,
+          "plano_evolucao": true,
+          "laudo_revisado": true,
+          "dod": true
+        },
+        "nota": "10"
+      },
+      {
+        "alvo": "aidd-tdd",
+        "ciclo": "ciclo-01",
+        "caminho": "docs/auditoria/aidd-tdd/ciclo-01",
+        "fases": {
+          "laudo_inicial": true,
+          "plano_evolucao": true,
+          "laudo_revisado": true,
+          "dod": true
+        },
+        "nota": "10"
+      },
+      {
+        "alvo": "aidd-tickets",
+        "ciclo": "ciclo-01",
+        "caminho": "docs/auditoria/aidd-tickets/ciclo-01",
+        "fases": {
+          "laudo_inicial": true,
+          "plano_evolucao": true,
+          "laudo_revisado": true,
+          "dod": true
+        },
+        "nota": "10"
+      },
+      {
+        "alvo": "cbm-lazy-proxy",
+        "ciclo": "ciclo-01",
+        "caminho": "docs/auditoria/cbm-lazy-proxy/ciclo-01",
+        "fases": {
+          "laudo_inicial": false,
+          "plano_evolucao": true,
+          "laudo_revisado": false,
+          "dod": false
+        },
+        "nota": ""
+      },
+      {
+        "alvo": "fronteiras-ferramentas",
+        "ciclo": "ciclo-01",
+        "caminho": "docs/auditoria/fronteiras-ferramentas/ciclo-01",
+        "fases": {
+          "laudo_inicial": false,
+          "plano_evolucao": true,
+          "laudo_revisado": false,
           "dod": true
         },
         "nota": ""
@@ -1488,6 +1819,18 @@
         "nota": "10"
       },
       {
+        "alvo": "meus-prompts",
+        "ciclo": "ciclo-01",
+        "caminho": "docs/auditoria/meus-prompts/ciclo-01",
+        "fases": {
+          "laudo_inicial": false,
+          "plano_evolucao": true,
+          "laudo_revisado": false,
+          "dod": true
+        },
+        "nota": ""
+      },
+      {
         "alvo": "skills-ddd",
         "ciclo": "ciclo-01",
         "caminho": "docs/auditoria/skills-ddd/ciclo-01",
@@ -1524,13 +1867,14 @@
         "nota": ""
       }
     ],
-    "relatorios_melhoria": 14
+    "relatorios_melhoria": 15
   },
   "scripts": [
     {
       "id": "achados_ciclo",
       "descricao": "Gera docs/auditoria/mapa-pecas/ciclo-01/ACHADOS.json: todos os erros e itens em",
       "chamado_por": [
+        "scripts",
         "testes"
       ]
     },
@@ -1548,6 +1892,7 @@
       "id": "catalogo_pecas",
       "descricao": "Catálogo de peças do Ecossistema AIDD (mapa-pecas ciclo-01, passo 1).",
       "chamado_por": [
+        "scripts",
         "testes"
       ]
     },
@@ -1570,9 +1915,29 @@
       ]
     },
     {
+      "id": "compilar_mapas_nao_tecnicos",
+      "descricao": "Compilador dos mapas visuais da versão NÃO-TÉCNICA (docs/mapas-visuais/nao-tecnicos).",
+      "chamado_por": []
+    },
+    {
+      "id": "e2e_foto",
+      "descricao": "Foto E2E repetível e comparação automática do ecossistema-aidd (Ticket 2, D12).",
+      "chamado_por": [
+        "testes"
+      ]
+    },
+    {
       "id": "faz_commit",
       "descricao": "FAZ-COMMIT — EXECUÇÃO DETERMINÍSTICA DE GIT COM MENSAGEM PROBABILÍSTICA (IA)",
       "chamado_por": [
+        "testes"
+      ]
+    },
+    {
+      "id": "fila_ciclos",
+      "descricao": "scripts/fila_ciclos.py — um ciclo pesado por vez, com aviso ao terminar.",
+      "chamado_por": [
+        "scripts",
         "testes"
       ]
     },
@@ -1660,9 +2025,17 @@
       ]
     },
     {
+      "id": "inventario_capacidades",
+      "descricao": "",
+      "chamado_por": [
+        "testes"
+      ]
+    },
+    {
       "id": "livro_mapas",
       "descricao": "Gera as partes do livro corporativo dos mapas (docs/livros/mapas-aidd/) a partir",
       "chamado_por": [
+        "scripts",
         "testes"
       ]
     },
@@ -1670,6 +2043,15 @@
       "id": "mapa_visual",
       "descricao": "Gerador dos mapas visuais (docs/mapas-visuais), um por tipo de peça.",
       "chamado_por": [
+        "scripts",
+        "testes"
+      ]
+    },
+    {
+      "id": "medir_gates",
+      "descricao": "scripts/medir_gates.py — Medição real do tempo de execução de cada Quality Gate.",
+      "chamado_por": [
+        "scripts",
         "testes"
       ]
     },
@@ -1705,6 +2087,15 @@
       "descricao": "Preflight Host — diagnostico instantaneo (< 2s) de binarios do sistema",
       "chamado_por": [
         "guardas",
+        "painel",
+        "scripts",
+        "testes"
+      ]
+    },
+    {
+      "id": "regenerar_derivados",
+      "descricao": "scripts/regenerar_derivados.py — refaz num comando só os arquivos DERIVADOS do repo.",
+      "chamado_por": [
         "painel",
         "scripts",
         "testes"
@@ -1774,36 +2165,8 @@
       "ferramenta": "aidd-enterprise",
       "molde": "v2",
       "caminho": "tools/aidd-enterprise/templates/v2",
-      "arquivos": 94,
+      "arquivos": 86,
       "dona_canonica": "aidd-master"
-    },
-    {
-      "ferramenta": "aidd-factory",
-      "molde": "docs",
-      "caminho": "tools/aidd-factory/templates/docs",
-      "arquivos": 2,
-      "dona_canonica": "aidd-factory"
-    },
-    {
-      "ferramenta": "aidd-factory",
-      "molde": "frontend",
-      "caminho": "tools/aidd-factory/templates/frontend",
-      "arquivos": 4,
-      "dona_canonica": "aidd-factory"
-    },
-    {
-      "ferramenta": "aidd-factory",
-      "molde": "gateway",
-      "caminho": "tools/aidd-factory/templates/gateway",
-      "arquivos": 3,
-      "dona_canonica": "aidd-factory"
-    },
-    {
-      "ferramenta": "aidd-factory",
-      "molde": "vsa",
-      "caminho": "tools/aidd-factory/templates/vsa",
-      "arquivos": 32,
-      "dona_canonica": "aidd-factory"
     },
     {
       "ferramenta": "aidd-forge",
@@ -1886,8 +2249,36 @@
       "ferramenta": "aidd-master",
       "molde": "v2",
       "caminho": "tools/aidd-master/templates/v2",
-      "arquivos": 94,
+      "arquivos": 86,
       "dona_canonica": "aidd-master"
+    },
+    {
+      "ferramenta": "aidd-open",
+      "molde": "docs",
+      "caminho": "tools/aidd-open/templates/docs",
+      "arquivos": 2,
+      "dona_canonica": "aidd-open"
+    },
+    {
+      "ferramenta": "aidd-open",
+      "molde": "frontend",
+      "caminho": "tools/aidd-open/templates/frontend",
+      "arquivos": 4,
+      "dona_canonica": "aidd-open"
+    },
+    {
+      "ferramenta": "aidd-open",
+      "molde": "gateway",
+      "caminho": "tools/aidd-open/templates/gateway",
+      "arquivos": 3,
+      "dona_canonica": "aidd-open"
+    },
+    {
+      "ferramenta": "aidd-open",
+      "molde": "vsa",
+      "caminho": "tools/aidd-open/templates/vsa",
+      "arquivos": 32,
+      "dona_canonica": "aidd-open"
     },
     {
       "ferramenta": "aidd-ops",
@@ -1915,9 +2306,9 @@
           "hook": ".claude/hooks/{nome}",
           "sub-agent": ".claude/agents/{nome}"
         },
-        "skills_em_disco": 60,
+        "skills_em_disco": 43,
         "nossas_faltando": [],
-        "terceiros_em_disco": 19,
+        "terceiros_em_disco": 0,
         "config_mcp": ".mcp.json"
       },
       {
@@ -1936,9 +2327,9 @@
           "hook": ".agents/hooks/{nome}",
           "sub-agent": ".agents/agents/{nome}"
         },
-        "skills_em_disco": 60,
+        "skills_em_disco": 43,
         "nossas_faltando": [],
-        "terceiros_em_disco": 19,
+        "terceiros_em_disco": 0,
         "config_mcp": ".agents/mcp_config.json"
       },
       {
@@ -1957,9 +2348,9 @@
           "hook": ".opencode/hooks/{nome}",
           "sub-agent": ".opencode/agents/{nome}"
         },
-        "skills_em_disco": 46,
+        "skills_em_disco": 43,
         "nossas_faltando": [],
-        "terceiros_em_disco": 5,
+        "terceiros_em_disco": 0,
         "config_mcp": "opencode.jsonc"
       },
       {
@@ -1978,9 +2369,9 @@
           "hook": ".mimocode/hooks/{nome}",
           "sub-agent": ".mimocode/agents/{nome}"
         },
-        "skills_em_disco": 46,
+        "skills_em_disco": 43,
         "nossas_faltando": [],
-        "terceiros_em_disco": 5,
+        "terceiros_em_disco": 0,
         "config_mcp": "mimocode.jsonc"
       },
       {
@@ -1997,7 +2388,7 @@
           "hook": ".gemini/hooks/{nome}",
           "sub-agent": ".gemini/agents/{nome}"
         },
-        "skills_em_disco": 41,
+        "skills_em_disco": 43,
         "nossas_faltando": [],
         "terceiros_em_disco": 0,
         "config_mcp": ".gemini/settings.json"
@@ -2016,9 +2407,9 @@
           "command": ".cursor/commands/{nome}",
           "hook": ".cursor/hooks/{nome}"
         },
-        "skills_em_disco": 46,
+        "skills_em_disco": 43,
         "nossas_faltando": [],
-        "terceiros_em_disco": 5,
+        "terceiros_em_disco": 0,
         "config_mcp": ".cursor/mcp.json"
       },
       {
@@ -2035,9 +2426,9 @@
           "command": ".codebuddy/commands/{nome}",
           "hook": ".codebuddy/hooks/{nome}"
         },
-        "skills_em_disco": 60,
+        "skills_em_disco": 43,
         "nossas_faltando": [],
-        "terceiros_em_disco": 19,
+        "terceiros_em_disco": 0,
         "config_mcp": ""
       }
     ],
@@ -2061,8 +2452,8 @@
     {
       "id": "bridge",
       "caminho": "componentes/compartilhado/comandos/bridge.md",
-      "descricao": "Comanda a ferramenta individual aidd-bridge para acoes atomicas",
-      "skill": "aidd-bridge",
+      "descricao": "Nome antigo do motor do Fluxo 03 (use /freedom ou freedom-motor)",
+      "skill": "aidd-freedom",
       "skill_existe": true
     },
     {
@@ -2080,10 +2471,17 @@
       "skill_existe": true
     },
     {
+      "id": "evolucao",
+      "caminho": "componentes/compartilhado/comandos/evolucao.md",
+      "descricao": "Dispara a execução do pipeline de evolução técnica a partir do `PLANO-EVOLUCAO.json` (ou compila automaticamente do `PLANO-EVOLUCAO.md`).",
+      "skill": "aidd-evolution",
+      "skill_existe": true
+    },
+    {
       "id": "factory",
       "caminho": "componentes/compartilhado/comandos/factory.md",
-      "descricao": "Gera código de aplicação e integrações para stacks multi-serviço através da pipeline Factory.",
-      "skill": "aidd-factory",
+      "descricao": "Apelido de 1 ciclo para o motor do Fluxo 02. Use `/open` (fluxo completo) ou `python ecossistema.py open-motor` (só o gerador da stack multi-serviço).",
+      "skill": "aidd-open",
       "skill_existe": true
     },
     {
@@ -2103,8 +2501,8 @@
     {
       "id": "generate",
       "caminho": "componentes/compartilhado/comandos/generate.md",
-      "descricao": "Dispara o pipeline autônomo de 8 fases do `aidd-generator` para transformar uma ideia em código completo.",
-      "skill": "aidd-generator",
+      "descricao": "Apelido de 1 ciclo para o motor do Fluxo 01. Use `/pure` (fluxo completo) ou `python ecossistema.py pure-motor \"<ideia>\"` (só o motor de 8 fases).",
+      "skill": "aidd-pure",
       "skill_existe": true
     },
     {
@@ -2176,20 +2574,15 @@
       "cloudflare",
       "cloudflare-docs",
       "cloudflare-mcp",
-      "code-review-graph",
+      "codebase-memory-mcp",
       "context7",
       "docker-mcp",
       "github",
+      "mcp-gatekeeper",
       "mcp-verificador-cve",
       "playwright"
     ],
     "internos_das_ferramentas": [
-      {
-        "id": "mcp-verificador-cve",
-        "ferramenta": "aidd-generator",
-        "caminho": "tools/aidd-generator/mcps/mcp-verificador-cve/server.py",
-        "registrado_em_config": true
-      },
       {
         "id": "cloudflare-mcp",
         "ferramenta": "aidd-ops",
@@ -2200,6 +2593,12 @@
         "id": "docker-mcp",
         "ferramenta": "aidd-ops",
         "caminho": "tools/aidd-ops/mcps/docker-mcp/server.py",
+        "registrado_em_config": true
+      },
+      {
+        "id": "mcp-verificador-cve",
+        "ferramenta": "aidd-pure",
+        "caminho": "tools/aidd-pure/mcps/mcp-verificador-cve/server.py",
         "registrado_em_config": true
       }
     ]
@@ -2311,7 +2710,7 @@
           "papel": "entrega"
         },
         {
-          "caminho": "tools/aidd-generator/scripts/gates/G_BLOQUEAR_SEGREDOS.py",
+          "caminho": "tools/aidd-pure/scripts/gates/G_BLOQUEAR_SEGREDOS.py",
           "versao": "B",
           "papel": "ferramenta"
         }
@@ -2323,10 +2722,10 @@
     },
     {
       "id": "G_BRIDGE_DOCKER_OCI",
-      "descricao": "Valida que os manifestos OCI/Docker gerados pela aidd-bridge (Dockerfile, nginx.conf, compose) atendem às melhores práticas de segurança: Multi-stage build",
+      "descricao": "Valida que os manifestos OCI/Docker gerados pela aidd-freedom (Dockerfile, nginx.conf, compose) atendem às melhores práticas de segurança: Multi-stage build",
       "copias": [
         {
-          "caminho": "tools/aidd-bridge/gates/G_BRIDGE_DOCKER_OCI.py",
+          "caminho": "tools/aidd-freedom/gates/G_BRIDGE_DOCKER_OCI.py",
           "versao": "A",
           "papel": "ferramenta"
         }
@@ -2338,10 +2737,10 @@
     },
     {
       "id": "G_BRIDGE_POSTGRESQL",
-      "descricao": "Valida que os scripts SQL gerados/consolidados pela aidd-bridge (init-db.sql) são PostgreSQL puro, possuem integridade de sintaxe básica e garantem isolamento transacional e esquemas padronizados.",
+      "descricao": "Valida que os scripts SQL gerados/consolidados pela aidd-freedom (init-db.sql) são PostgreSQL puro, possuem integridade de sintaxe básica e garantem isolamento transacional e esquemas padronizados.",
       "copias": [
         {
-          "caminho": "tools/aidd-bridge/gates/G_BRIDGE_POSTGRESQL.py",
+          "caminho": "tools/aidd-freedom/gates/G_BRIDGE_POSTGRESQL.py",
           "versao": "A",
           "papel": "ferramenta"
         }
@@ -2353,10 +2752,10 @@
     },
     {
       "id": "G_BRIDGE_VENDOR_LOCKIN",
-      "descricao": "Valida que o projeto extraído/empacotado pela aidd-bridge não possui dependências ou URLs fixas de nuvens proprietárias (ex: *.supabase.co, mock backends não configuráveis). Garante independência…",
+      "descricao": "Valida que o projeto extraído/empacotado pela aidd-freedom não possui dependências ou URLs fixas de nuvens proprietárias (ex: *.supabase.co, mock backends não configuráveis). Garante independência…",
       "copias": [
         {
-          "caminho": "tools/aidd-bridge/gates/G_BRIDGE_VENDOR_LOCKIN.py",
+          "caminho": "tools/aidd-freedom/gates/G_BRIDGE_VENDOR_LOCKIN.py",
           "versao": "A",
           "papel": "ferramenta"
         }
@@ -2368,10 +2767,10 @@
     },
     {
       "id": "G_BRIDGE_VSA_COMPAT",
-      "descricao": "Valida que o pacote gerado pela aidd-bridge possui compatibilidade com o Monólito Modular VSA e entrega os 4 contratos do Quarteto Sine Qua Non: Swagger (/swagger)",
+      "descricao": "Valida que o pacote gerado pela aidd-freedom possui compatibilidade com o Monólito Modular VSA e entrega os 4 contratos do Quarteto Sine Qua Non: Swagger (/swagger)",
       "copias": [
         {
-          "caminho": "tools/aidd-bridge/gates/G_BRIDGE_VSA_COMPAT.py",
+          "caminho": "tools/aidd-freedom/gates/G_BRIDGE_VSA_COMPAT.py",
           "versao": "A",
           "papel": "ferramenta"
         }
@@ -2507,7 +2906,7 @@
           "papel": "entrega"
         },
         {
-          "caminho": "tools/aidd-generator/scripts/gates/G_CYBERSECURITY_OWASP.py",
+          "caminho": "tools/aidd-pure/scripts/gates/G_CYBERSECURITY_OWASP.py",
           "versao": "B",
           "papel": "ferramenta"
         }
@@ -2759,7 +3158,7 @@
       "descricao": "Valida factory_analysis.json.",
       "copias": [
         {
-          "caminho": "tools/aidd-factory/gates/G_FACTORY_ANALYSIS.py",
+          "caminho": "tools/aidd-open/gates/G_FACTORY_ANALYSIS.py",
           "versao": "A",
           "papel": "ferramenta"
         }
@@ -2774,7 +3173,7 @@
       "descricao": "Valida docker-compose.yml gerado pelo factory.",
       "copias": [
         {
-          "caminho": "tools/aidd-factory/gates/G_FACTORY_COMPOSE.py",
+          "caminho": "tools/aidd-open/gates/G_FACTORY_COMPOSE.py",
           "versao": "A",
           "papel": "ferramenta"
         }
@@ -2789,7 +3188,7 @@
       "descricao": "Valida .env gerados pelo factory.",
       "copias": [
         {
-          "caminho": "tools/aidd-factory/gates/G_FACTORY_ENV.py",
+          "caminho": "tools/aidd-open/gates/G_FACTORY_ENV.py",
           "versao": "A",
           "papel": "ferramenta"
         }
@@ -2804,7 +3203,7 @@
       "descricao": "Valida init-multiple-databases.sh gerado.",
       "copias": [
         {
-          "caminho": "tools/aidd-factory/gates/G_FACTORY_INIT_DB.py",
+          "caminho": "tools/aidd-open/gates/G_FACTORY_INIT_DB.py",
           "versao": "A",
           "papel": "ferramenta"
         }
@@ -2819,7 +3218,7 @@
       "descricao": "Valida cadeia completa do pipeline factory.",
       "copias": [
         {
-          "caminho": "tools/aidd-factory/gates/G_FACTORY_INTEGRATION.py",
+          "caminho": "tools/aidd-open/gates/G_FACTORY_INTEGRATION.py",
           "versao": "A",
           "papel": "ferramenta"
         }
@@ -2831,10 +3230,10 @@
     },
     {
       "id": "G_FACTORY_MVP",
-      "descricao": "Valida estrutura do diretorio aidd-factory.",
+      "descricao": "Valida estrutura do diretorio aidd-open.",
       "copias": [
         {
-          "caminho": "tools/aidd-factory/gates/G_FACTORY_MVP.py",
+          "caminho": "tools/aidd-open/gates/G_FACTORY_MVP.py",
           "versao": "A",
           "papel": "ferramenta"
         }
@@ -2937,11 +3336,6 @@
           "papel": "entrega"
         },
         {
-          "caminho": "tools/aidd-generator/scripts/gates/G_HARNESS_COMPAT.py",
-          "versao": "D",
-          "papel": "ferramenta"
-        },
-        {
           "caminho": "tools/aidd-master/scripts/gates/G_HARNESS_COMPAT.py",
           "versao": "B",
           "papel": "ferramenta"
@@ -2950,6 +3344,11 @@
           "caminho": "tools/aidd-master/templates/gates/G_HARNESS_COMPAT.py",
           "versao": "B",
           "papel": "entrega"
+        },
+        {
+          "caminho": "tools/aidd-pure/scripts/gates/G_HARNESS_COMPAT.py",
+          "versao": "D",
+          "papel": "ferramenta"
         }
       ],
       "versoes_distintas": 4,
@@ -3025,12 +3424,12 @@
           "papel": "entrega"
         },
         {
-          "caminho": "tools/aidd-generator/scripts/gates/G_INJECT.py",
+          "caminho": "tools/aidd-master/scripts/gates/G_INJECT.py",
           "versao": "C",
           "papel": "ferramenta"
         },
         {
-          "caminho": "tools/aidd-master/scripts/gates/G_INJECT.py",
+          "caminho": "tools/aidd-pure/scripts/gates/G_INJECT.py",
           "versao": "D",
           "papel": "ferramenta"
         }
@@ -3045,7 +3444,7 @@
       "descricao": "Gate I3: Compatibilidade entre scripts irmãos.",
       "copias": [
         {
-          "caminho": "tools/aidd-generator/scripts/gates/G_INTEGRACAO_CROSS_SCRIPT.py",
+          "caminho": "tools/aidd-pure/scripts/gates/G_INTEGRACAO_CROSS_SCRIPT.py",
           "versao": "A",
           "papel": "ferramenta"
         }
@@ -3499,7 +3898,7 @@
       "descricao": "Subprocessos de código gerado nunca herdam os.environ.",
       "copias": [
         {
-          "caminho": "tools/aidd-generator/scripts/gates/G_SANDBOX_NIVEL_1.py",
+          "caminho": "tools/aidd-pure/scripts/gates/G_SANDBOX_NIVEL_1.py",
           "versao": "A",
           "papel": "ferramenta"
         }
@@ -3511,7 +3910,7 @@
     },
     {
       "id": "G_SEGREDOS",
-      "descricao": "Escaneia TODOS os arquivos rastreados pelo git (na raiz do ecossistema, não só um subprojeto) em busca de credenciais hardcoded, delegando a varredura para o detect-secrets (Yelp) — ferramenta OSS…",
+      "descricao": "Escaneia arquivos em busca de credenciais hardcoded, delegando a varredura para o detect-secrets (Yelp) — ferramenta OSS madura com dezenas de detectores especializados (AWS, GCP, GitHub, Slack,…",
       "copias": [
         {
           "caminho": "gates/G_SEGREDOS.py",
@@ -3520,26 +3919,26 @@
         },
         {
           "caminho": "tools/aidd-enterprise/scripts/gates/G_SEGREDOS.py",
-          "versao": "A",
+          "versao": "B",
           "papel": "ferramenta"
         },
         {
           "caminho": "tools/aidd-enterprise/templates/gates/G_SEGREDOS.py",
-          "versao": "A",
+          "versao": "B",
           "papel": "entrega"
         },
         {
           "caminho": "tools/aidd-master/scripts/gates/G_SEGREDOS.py",
-          "versao": "A",
+          "versao": "B",
           "papel": "ferramenta"
         },
         {
           "caminho": "tools/aidd-master/templates/gates/G_SEGREDOS.py",
-          "versao": "A",
+          "versao": "B",
           "papel": "entrega"
         }
       ],
-      "versoes_distintas": 1,
+      "versoes_distintas": 2,
       "no_pre_commit": true,
       "prova_que_morde": true,
       "leis": [
@@ -3581,7 +3980,7 @@
       "descricao": "Item 4 [TK-6] hermeticidade verificável de sessões.",
       "copias": [
         {
-          "caminho": "tools/aidd-generator/scripts/gates/G_SESSAO_HERMETICA.py",
+          "caminho": "tools/aidd-pure/scripts/gates/G_SESSAO_HERMETICA.py",
           "versao": "A",
           "papel": "ferramenta"
         }
@@ -3636,11 +4035,11 @@
         },
         {
           "caminho": "tools/aidd-forge/aidd_forge/templates/gates/G_STACK_PADRAO_OURO.py",
-          "versao": "A",
+          "versao": "B",
           "papel": "entrega"
         }
       ],
-      "versoes_distintas": 1,
+      "versoes_distintas": 2,
       "no_pre_commit": true,
       "prova_que_morde": true,
       "leis": [
@@ -3772,7 +4171,7 @@
       "descricao": "Validação de economia de tokens no pipeline.",
       "copias": [
         {
-          "caminho": "tools/aidd-generator/scripts/gates/G_TOKENOMICS.py",
+          "caminho": "tools/aidd-pure/scripts/gates/G_TOKENOMICS.py",
           "versao": "A",
           "papel": "ferramenta"
         }
@@ -3838,7 +4237,7 @@
       "descricao": "Pré-voo obrigatório antes de rodar pipeline_completo.py com fallback headless.",
       "copias": [
         {
-          "caminho": "tools/aidd-generator/scripts/gates/G_VERIFICAR_LLM_PRONTO.py",
+          "caminho": "tools/aidd-pure/scripts/gates/G_VERIFICAR_LLM_PRONTO.py",
           "versao": "A",
           "papel": "ferramenta"
         }
@@ -3883,6 +4282,23 @@
       ]
     },
     {
+      "id": "G_aidd_enterprise",
+      "descricao": "Quality Gate Determinístico de contratos de componentes do aidd-enterprise (Lei #8 / Lei #13). Valida estritamente um manifest de componente: JSON legível e presente.",
+      "copias": [
+        {
+          "caminho": "gates/G_aidd_enterprise.py",
+          "versao": "A",
+          "papel": "ecossistema"
+        }
+      ],
+      "versoes_distintas": 1,
+      "no_pre_commit": false,
+      "prova_que_morde": true,
+      "leis": [
+        9
+      ]
+    },
+    {
       "id": "G_aidd_forge",
       "descricao": "Quality Gate Determinístico de bootstrap do aidd-forge (Lei #8 / Lei #13). Valida estritamente um alvo de bootstrap forge: Arquivo de governança AGENTS.md presente e não vazio.",
       "copias": [
@@ -3894,6 +4310,72 @@
       ],
       "versoes_distintas": 1,
       "no_pre_commit": true,
+      "prova_que_morde": true,
+      "leis": [
+        9
+      ]
+    },
+    {
+      "id": "G_aidd_grill",
+      "descricao": "Quality Gate Determinístico de Entrevista Socrática (Ticket 7 / D13 / DoD 6 / Leis #8, #9 e #13). Garante que toda rodada socrática cumpra: Perguntas numeradas (1, 2, 3...).",
+      "copias": [
+        {
+          "caminho": "gates/G_aidd_grill.py",
+          "versao": "A",
+          "papel": "ecossistema"
+        }
+      ],
+      "versoes_distintas": 1,
+      "no_pre_commit": false,
+      "prova_que_morde": true,
+      "leis": []
+    },
+    {
+      "id": "G_aidd_spec",
+      "descricao": "Quality Gate Determinístico de Especificação Técnica (Ticket 7 / D13 / DoD 6 / Leis #8, #9 e #13). Garante que todo documento de especificação cumpra: As 5 seções canônicas obrigatórias (Contexto,…",
+      "copias": [
+        {
+          "caminho": "gates/G_aidd_spec.py",
+          "versao": "A",
+          "papel": "ecossistema"
+        }
+      ],
+      "versoes_distintas": 1,
+      "no_pre_commit": false,
+      "prova_que_morde": true,
+      "leis": [
+        9
+      ]
+    },
+    {
+      "id": "G_aidd_tdd",
+      "descricao": "Quality Gate Determinístico de TDD (Ticket 7 / D13 / DoD 6 / Leis #8, #9 e #13). Garante que todo ciclo TDD cumpra: Zero stubs vazios e zero asserções triviais nos arquivos de teste (Lei #5).",
+      "copias": [
+        {
+          "caminho": "gates/G_aidd_tdd.py",
+          "versao": "A",
+          "papel": "ecossistema"
+        }
+      ],
+      "versoes_distintas": 1,
+      "no_pre_commit": false,
+      "prova_que_morde": true,
+      "leis": [
+        9
+      ]
+    },
+    {
+      "id": "G_aidd_tickets",
+      "descricao": "Quality Gate Determinístico de Decomposição de Tickets (Ticket 7 / D13 / DoD 6 / Leis #8, #9 e #13). Garante que todo plano ou arquivo de tickets decompostos cumpra: Padrão canônico vertical com pelo…",
+      "copias": [
+        {
+          "caminho": "gates/G_aidd_tickets.py",
+          "versao": "A",
+          "papel": "ecossistema"
+        }
+      ],
+      "versoes_distintas": 1,
+      "no_pre_commit": false,
       "prova_que_morde": true,
       "leis": [
         9
@@ -3989,7 +4471,7 @@
     },
     {
       "id": "plano-infraestrutura",
-      "titulo": "Contrato do PLANO-INFRAESTRUTURA.json (aidd-ops → aidd-master/aidd-enterprise/aidd-factory)",
+      "titulo": "Contrato do PLANO-INFRAESTRUTURA.json (aidd-ops → aidd-master/aidd-enterprise/aidd-open)",
       "usado_por": [
         "tools/aidd-enterprise/scripts/scaffold_infra.py",
         "tools/aidd-master/scripts/scaffold_infra.py",
@@ -4054,7 +4536,7 @@
         "descricao": "Etapa 3: Execução da Engine correspondente ao Fluxo.",
         "chamadas_cli": [
           [
-            "generate",
+            "pure-motor",
             "<var>",
             "--pasta",
             "<var>",
@@ -4068,14 +4550,14 @@
             "<var>"
           ],
           [
-            "factory",
+            "open-motor",
             "--plano",
             "<var>",
             "--pasta",
             "<var>"
           ],
           [
-            "bridge",
+            "freedom-motor",
             "scan",
             "<var>"
           ]
@@ -4083,14 +4565,14 @@
         "chamadas_por_fluxo": {
           "freedom": [
             [
-              "bridge",
+              "freedom-motor",
               "scan",
               "<var>"
             ]
           ],
           "open": [
             [
-              "factory",
+              "open-motor",
               "--plano",
               "<var>",
               "--pasta",
@@ -4099,7 +4581,7 @@
           ],
           "pure": [
             [
-              "generate",
+              "pure-motor",
               "<var>",
               "--pasta",
               "<var>",
@@ -4201,7 +4683,7 @@
     },
     {
       "etapa": "etapa_03_engine",
-      "chamada": "ecossistema.py generate <var> --pasta <var> --implementar-codigo",
+      "chamada": "ecossistema.py pure-motor <var> --pasta <var> --implementar-codigo",
       "encaixa": true,
       "problemas": []
     },
@@ -4213,13 +4695,13 @@
     },
     {
       "etapa": "etapa_03_engine",
-      "chamada": "ecossistema.py factory --plano <var> --pasta <var>",
+      "chamada": "ecossistema.py open-motor --plano <var> --pasta <var>",
       "encaixa": true,
       "problemas": []
     },
     {
       "etapa": "etapa_03_engine",
-      "chamada": "ecossistema.py bridge scan <var>",
+      "chamada": "ecossistema.py freedom-motor scan <var>",
       "encaixa": true,
       "problemas": []
     },
@@ -4264,7 +4746,9 @@
     "arquivos_identicos_entre_donas": [],
     "verbos_cli_repetidos": {},
     "tarefas_com_varias_donas": {},
-    "gates_mesmo_nome_codigo_diferente": [],
+    "gates_mesmo_nome_codigo_diferente": [
+      "G_SEGREDOS"
+    ],
     "skills_mesma_descricao": [],
     "etapas_sem_ferramenta": [],
     "etapas_com_atalho_interno": {},

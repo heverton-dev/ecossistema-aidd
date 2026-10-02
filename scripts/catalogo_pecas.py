@@ -45,9 +45,9 @@ IGNORAR = ("materiais-extras", "sandbox-forge-teste", ".venv", "node_modules", "
 ENTRADAS = {
     "aidd-forge": ("forge", "aidd_forge/cli.py"),
     "aidd-planner": ("planner", "aidd_planner/cli.py"),
-    "aidd-generator": ("generate", "scripts/pipeline_completo.py"),
-    "aidd-factory": ("factory", "scripts/pipeline_factory.py"),
-    "aidd-bridge": ("bridge", "aidd_bridge/cli.py"),
+    "aidd-pure": ("pure-motor", "scripts/pipeline_completo.py"),
+    "aidd-open": ("open-motor", "scripts/pipeline_factory.py"),
+    "aidd-freedom": ("freedom-motor", "aidd_freedom/cli.py"),
     "aidd-master": ("master", "scripts/aidd.py"),
     "aidd-enterprise": ("enterprise", "scripts/aidd.py"),
     "aidd-ops": ("ops", "scripts/pipeline_ops.py"),
@@ -74,7 +74,7 @@ DONAS_TAREFAS = {
     "detectar-stack-camada": "aidd-forge",
     "auditar-conformidade": "gates",
     "docker-compose": "aidd-ops",
-    "gerar-frontend": "aidd-generator",
+    "gerar-frontend": "aidd-pure",
     "ponte-orca": "componentes",
     "escrita-atomica": "gates",
     "resultado-monad": "aidd-master",
@@ -725,7 +725,7 @@ def _dona(caminho: str) -> str:
 def _eh_copia_governada(caminhos: list[str]) -> bool:
     """Verifica se os arquivos idênticos pertencem ao cluster de sincronismo governado
     (baseline do núcleo compartilhado, templates de entrega e gates certificados)."""
-    cluster = {"aidd-master", "aidd-enterprise", "aidd-factory", "aidd-forge", "aidd-generator", "componentes", "gates"}
+    cluster = {"aidd-master", "aidd-enterprise", "aidd-open", "aidd-forge", "aidd-pure", "componentes", "gates"}
     donas = {_dona(c) for c in caminhos}
     return donas.issubset(cluster)
 

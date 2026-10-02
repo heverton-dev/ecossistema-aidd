@@ -48,7 +48,7 @@ A bateria de testes de ponta a ponta da camada de orquestração raiz foi execut
 A execução de `python ecossistema.py status --testes` disparou o pytest real nas 4 ferramentas sob o diretório `tools/`, obtendo os seguintes resultados:
 
 - **tools/aidd-forge:** 197 aprovados, 0 falhas, 1 pulado (exit code 0)
-- **tools/aidd-generator:** 770 aprovados, 0 falhas, 0 pulados (exit code 0)
+- **tools/aidd-pure:** 770 aprovados, 0 falhas, 0 pulados (exit code 0)
 - **tools/aidd-master:** 214 aprovados, 0 falhas, 4 pulados (exit code 0)
 - **tools/aidd-enterprise:** 203 aprovados, 0 falhas, 4 pulados (exit code 0)
 

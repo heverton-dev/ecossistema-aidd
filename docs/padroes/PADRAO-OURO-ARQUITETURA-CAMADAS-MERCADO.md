@@ -209,7 +209,7 @@ Engenharia baseada em **Zero Stubs / Zero Mocks (Lei #5)** e **Portões Determin
 
 ## Matriz de Conformidade Canônica para Geradores
 
-Toda geração ou evolução de software pelos motores do ecossistema (`aidd-generator`, `aidd-factory`, `aidd-bridge`) deve auditar a aderência aos padrões deste documento conforme a tabela abaixo:
+Toda geração ou evolução de software pelos motores do ecossistema (`aidd-pure`, `aidd-open`, `aidd-freedom`) deve auditar a aderência aos padrões deste documento conforme a tabela abaixo:
 
 | Camada | Tecnologia Canônica | Verificação Automatizada |
 |---|---|---|

@@ -95,7 +95,7 @@ Este arquivo é atualizado atomicamente após **cada transição de estado** de 
       "commit_sha": null,
       "error": null
     },
-    "05-testes-aidd-generator": {
+    "05-testes-aidd-pure": {
       "status": "PENDING",
       "exit_code": null,
       "worktree_path": null,

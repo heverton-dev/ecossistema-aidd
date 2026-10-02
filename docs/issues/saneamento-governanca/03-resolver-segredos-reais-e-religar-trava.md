@@ -24,7 +24,7 @@ Non-test directory alerts individually inspected:
 | `chaves/manifesto/ed25519_public.json:3` | Public key Ed25519 for CAPABILITIES.json manifest verification | False positive (public key is not a secret) |
 | `componentes/compartilhado/src-core/database_adapter.py:405` | Documentation comment of connection string format (generic example in docstring) | False positive (explanatory comment) |
 | `componentes/compartilhado/src-core/security.py:15` | Security sentinel constant asserting immediate abort if executed in production | False positive (local security sentinel) |
-| `tools/aidd-bridge/aidd_bridge/cli.py:154` | DSN format example in CLI argument help string | False positive (help text) |
+| `tools/aidd-freedom/aidd_freedom/cli.py:154` | DSN format example in CLI argument help string | False positive (help text) |
 | `tools/aidd-master/CAPABILITIES.json:29` | SHA-256 hash of MCP security artifact for integrity | False positive (integrity checksum) |
 
 Zero real secrets identified in source code. No external credential rotation required.

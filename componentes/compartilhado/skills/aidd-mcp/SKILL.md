@@ -10,7 +10,7 @@ Thin coordinator: it does not reimplement the MCP protocol. Third-party MCPs the
 ## Protocol
 
 1. **Find the active harness and its capabilities.** If it has a native MCP authoring tool, use it to decide tools/resources, input/output schemas and error handling. Done when the server design is decided.
-2. **Without a native tool**, build on the Python libraries already in the ecosystem (`mcp`/`fastmcp`; check `pip show fastmcp` before installing again) instead of hand-written JSON-RPC 2.0. Read an existing server first as a structural reference: `tools/aidd-ops/mcps/cloudflare-mcp/server.py` or `tools/aidd-generator/mcps/mcp-verificador-cve/`.
+2. **Without a native tool**, build on the Python libraries already in the ecosystem (`mcp`/`fastmcp`; check `pip show fastmcp` before installing again) instead of hand-written JSON-RPC 2.0. Read an existing server first as a structural reference: `tools/aidd-ops/mcps/cloudflare-mcp/server.py` or `tools/aidd-pure/mcps/mcp-verificador-cve/`.
 3. **Write the source only in** `componentes/<tool or compartilhado>/mcps/<name>/server.py` (plus its own `requirements.txt`/README when needed), never in a harness folder.
 4. **Keep the contract valid:** tool, resource and prompt schemas compatible with the MCP specification.
 5. **Distribute and confirm:**

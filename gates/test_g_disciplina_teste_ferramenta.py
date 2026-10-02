@@ -41,7 +41,7 @@ def test_aprova_quando_nenhuma_ferramenta_tocada():
 def test_aprova_quando_ferramenta_tocada_com_relatorio_atualizado():
     """Valida aprovação quando ferramenta sob tools/ é acompanhada de relatório de teste."""
     arquivos = [
-        "tools/aidd-generator/scripts/core/detector.py",
+        "tools/aidd-pure/scripts/core/detector.py",
         "docs/teste-end-to-end/relatorio-teste-end-to-end.md",
     ]
     res = subprocess.run(
@@ -60,8 +60,8 @@ def test_aprova_quando_ferramenta_tocada_com_relatorio_atualizado():
 def test_reprova_quando_ferramenta_tocada_sem_relatorio():
     """Prova que o portão morde (Lei #13): alteração em tools/ sem relatório causa exit 1."""
     arquivos = [
-        "tools/aidd-generator/scripts/core/detector.py",
-        "tools/aidd-generator/templates/server.py",
+        "tools/aidd-pure/scripts/core/detector.py",
+        "tools/aidd-pure/templates/server.py",
     ]
     res = subprocess.run(
         [sys.executable, GATE_SCRIPT, "--files"] + arquivos,
@@ -74,5 +74,5 @@ def test_reprova_quando_ferramenta_tocada_sem_relatorio():
     assert res.returncode == 1, f"Deveria ter reprovado com exit 1, retornou {res.returncode}"
     assert "FALHA" in res.stdout
     assert "Ferramenta(s) alterada(s) sem atualização de relatório" in res.stdout
-    assert "aidd-generator" in res.stdout
+    assert "aidd-pure" in res.stdout
     assert "Lei #9" in res.stdout

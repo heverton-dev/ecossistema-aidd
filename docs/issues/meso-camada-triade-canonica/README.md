@@ -11,9 +11,9 @@
 Implementar a camada intermediária determinística do ecossistema que:
 1. Traduz o manifesto polimórfico `PLANNER.json` gerado pelo `aidd-planner` em um **Grafo Acíclico Dirigido (DAG)** de fatias verticais VSA.
 2. Executa fatias independentes em **Git Worktrees paralelos**, acionando a engine correta da Tríade:
-   - **Fluxo 01 (`pure`):** `aidd-generator` com ciclo TDD Red-Green.
-   - **Fluxo 02 (`open`):** `aidd-factory` com curadoria open-source e fatias de integração.
-   - **Fluxo 03 (`freedom`):** `aidd-bridge` com desacoplamento low-code.
+   - **Fluxo 01 (`pure`):** `aidd-pure` com ciclo TDD Red-Green.
+   - **Fluxo 02 (`open`):** `aidd-open` com curadoria open-source e fatias de integração.
+   - **Fluxo 03 (`freedom`):** `aidd-freedom` com desacoplamento low-code.
 3. Submete cada fatia a uma **Barreira de Validação** com Quality Gates locais antes de efetuar o merge.
 4. Harmoniza todas as fatias validadas no núcleo Monólito Modular VSA do **`aidd-master`**, dando sequência natural para `aidd-enterprise` (SHA-256) e `aidd-ops` (VPS Docker).
 

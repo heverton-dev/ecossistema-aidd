@@ -7,9 +7,9 @@ de slash command, conforme a dupla camada descrita no capítulo 2.
 
 | Comando                            | Alias        | O que faz                                                      |
 | :--------------------------------- | :----------- | :--------------------------------------------------------------- |
-| `python ecossistema.py pure`       | `aidd-pure`  | Fluxo 01 — do zero puro, motor `aidd-generator`                 |
-| `python ecossistema.py open`       | `aidd-open`  | Fluxo 02 — motores open-source, motor `aidd-factory`            |
-| `python ecossistema.py freedom`    | `aidd-freedom` | Fluxo 03 — libertação de low-code, motor `aidd-bridge`        |
+| `python ecossistema.py pure`       | `aidd-pure`  | Fluxo 01 — do zero puro, motor `aidd-pure`                 |
+| `python ecossistema.py open`       | `aidd-open`  | Fluxo 02 — motores open-source, motor `aidd-open`            |
+| `python ecossistema.py freedom`    | `aidd-freedom` | Fluxo 03 — libertação de low-code, motor `aidd-freedom`        |
 | `python ecossistema.py run-fluxo --fluxo <pure\|open\|freedom>` | — | Forma longa, aceita `--dry-run`             |
 
 Parâmetros comuns aos fluxos: `--nome`, `--slug`, `--dominio`, `--pasta`,
@@ -27,10 +27,10 @@ Parâmetros comuns aos fluxos: `--nome`, `--slug`, `--dominio`, `--pasta`,
 | `planner validate <caminho>`                           | `aidd-planner`    |
 | `planner export <caminho> --formato factory`           | `aidd-planner`    |
 | `planner audit <pasta>`                                | `aidd-planner`    |
-| `generate "<ideia>" --pasta <p> [--implementar-codigo] [--resume]` | `aidd-generator` |
-| `factory --plano <arquivo> --pasta <destino>`          | `aidd-factory`    |
-| `factory curate --dominio <d> --output <pasta>`        | `aidd-factory`    |
-| `bridge scan\|convert-db\|merge\|pack\|migrate-auth\|destroy\|unpack` | `aidd-bridge` |
+| `generate "<ideia>" --pasta <p> [--implementar-codigo] [--resume]` | `aidd-pure` |
+| `factory --plano <arquivo> --pasta <destino>`          | `aidd-open`    |
+| `factory curate --dominio <d> --output <pasta>`        | `aidd-open`    |
+| `bridge scan\|convert-db\|merge\|pack\|migrate-auth\|destroy\|unpack` | `aidd-freedom` |
 | `master init\|add-module\|compose\|compose-orca\|audit\|test\|bench\|heal\|status\|deploy\|apply\|setup\|inject\|attach-vsa\|refine-module\|export-frontend\|scaffold-infra` | `aidd-master` |
 | `enterprise inject <tipo> <nome> [--dir]`              | `aidd-enterprise` |
 | `enterprise verificar-drift [--dir]`                   | `aidd-enterprise` |
@@ -115,7 +115,7 @@ Campos obrigatórios: `versao_schema`, `diretorio_projeto`, `sha256_audit_ok`,
 ## B.5 `plano-infraestrutura.schema.json`
 
 O envelope de três fases — `fase_1_intake`, `fase_2_curadoria`, `fase_3_sizing` —
-compartilhado por `aidd-ops`, `aidd-factory` e `aidd-planner`. É o contrato que permite
+compartilhado por `aidd-ops`, `aidd-open` e `aidd-planner`. É o contrato que permite
 ao planner exportar diretamente para a fábrica sem tradução intermediária.
 
 ## B.6 `handoff-execucao.schema.json`
@@ -199,7 +199,7 @@ assistente da sessão, sem abrir conexão própria com provedor.
 `/docs`, `/webhooks`, `/mcp` e `/docs/guia`.
 
 **Tríade Canônica** — Os três fluxos de criação: `aidd-pure`, `aidd-open` e
-`aidd-bridge`.
+`aidd-freedom`.
 
 **Tokenomics** — A disciplina de orçar, medir e auditar o consumo de tokens por fase.
 
@@ -230,9 +230,9 @@ a rota mais curta para cada assunto.
 | Fatiamento de contexto                   | `core/context_slicer.py`                                         |
 | Roteador MCP dinâmico                    | `core/mcp_dynamic_router.py`                                     |
 | Livro-razão cognitivo                    | `core/cognitive_ledger.py`                                       |
-| Orçamento de tokens por fase             | `tools/aidd-generator/config/token_budgets.json`                 |
-| Auditoria de tokenomics                  | `tools/aidd-generator/scripts/gates/G_TOKENOMICS.py`             |
-| Micro-ambientes das 8 fases              | `tools/aidd-generator/scripts/phases/phase_*/AGENTS.md`          |
+| Orçamento de tokens por fase             | `tools/aidd-pure/config/token_budgets.json`                 |
+| Auditoria de tokenomics                  | `tools/aidd-pure/scripts/gates/G_TOKENOMICS.py`             |
+| Micro-ambientes das 8 fases              | `tools/aidd-pure/scripts/phases/phase_*/AGENTS.md`          |
 | Configuração dos portões no commit       | `.pre-commit-config.yaml`                                        |
 | Hooks de assistente                      | `.claude/settings.json`                                          |
 | Hooks canônicos compartilhados           | `componentes/compartilhado/hooks/`                               |
@@ -258,7 +258,7 @@ vermelho ou aguardando decisão.
 | :------------------------------------------------------------ | :-------------------------------------------------------------------------- | :--------------------------------------------------------------------------- |
 | `G_QUARTETO_SINE_QUA_NON` auto-descoberta                     | Cobre 2 de 3 fluxos canônicos com exemplo real (falta saída real do Fluxo 02/03) | `gates/G_QUARTETO_SINE_QUA_NON.py`, saída do próprio portão                 |
 | Campos de telemetria do orquestrador síncrono                 | **RESOLVIDO** (21/09/2026): payloads de handoff e fatias são derivados dinamicamente de `PLANNER.json` e `dispatch_pipeline.py` | `scripts/orquestrador_sincrono.py`, `ISSUE-MESO-0007`                        |
-| Discovery Engine completo do `aidd-factory`                   | Só o subconjunto determinístico (nicho dinâmico) está implementado         | `docs/features/v2_arquitetura-aidd-ops-factory.md` §7.1 e §9.1              |
+| Discovery Engine completo do `aidd-open`                   | Só o subconjunto determinístico (nicho dinâmico) está implementado         | `docs/features/v2_arquitetura-aidd-ops-factory.md` §7.1 e §9.1              |
 | `.gemini/skills/` como mecanismo                              | Sincronizado, mas `confirmado: false` — o mecanismo real são as extensões  | `docs/protocolos/AGENTS-REFERENCIA-COMPLETA.md` §5                          |
 | Freebuff                                                      | Instalado, sem modo não interativo para validação automatizada             | `docs/protocolos/AGENTS-REFERENCIA-COMPLETA.md` §5                          |
 | 10 portões globais fora do `.pre-commit-config.yaml`           | Rodam só sob demanda; `audit` verde não cobre esses dez (lista no capítulo 5, §5.3). O décimo, `G_GESTOR_SESSOES`, entrou em 24/09/2026 | `.pre-commit-config.yaml`, `gates/`                                          |
@@ -267,7 +267,7 @@ vermelho ou aguardando decisão.
 | `faz-commit` com mais de uma sessão aberta                    | `git add -A` leva o trabalho de outra sessão junto (caso real: commit `a1ea899`) | `scripts/faz_commit.py`                                                      |
 | Commit por fase com `--no-verify` e merge pelo orquestrador   | Escolha deliberada no código, ainda em revisão                             | `scripts/orquestrador_4f.py`                                                 |
 | Compressor de prosa (`sandeco-token-reduce`)                  | **REMOVIDO** (20/09/2026) — nunca esteve ligado ao pipeline                | `docs/issues/saneamento-governanca/` (ISSUE-0008)                            |
-| Portões `G_FACTORY_INPUT/OUTPUT/DETERMINISTIC`                 | São rótulos de invariante no `AGENTS.md` da factory, não arquivos; a cobrança real está nos 6 portões de `tools/aidd-factory/gates/` | `tools/aidd-factory/AGENTS.md`, `tools/aidd-factory/gates/`                  |
+| Portões `G_FACTORY_INPUT/OUTPUT/DETERMINISTIC`                 | São rótulos de invariante no `AGENTS.md` da factory, não arquivos; a cobrança real está nos 6 portões de `tools/aidd-open/gates/` | `tools/aidd-open/AGENTS.md`, `tools/aidd-open/gates/`                  |
 
 ```{=typst}
 #painel("Por que este apêndice existe")[

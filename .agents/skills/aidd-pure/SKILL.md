@@ -1,6 +1,6 @@
 ---
 name: aidd-pure
-description: Runs Triad Flow 01 (build from scratch) end to end - forge, planner, generator with strict TDD Red-Green, then master, enterprise and ops. Use when the user wants a brand-new project from zero, or types "/pure", "pure", "criar projeto do zero", "projeto do zero puro", "novo projeto com TDD".
+description: Runs Triad Flow 01 (build from scratch) end to end - forge, planner, the aidd-pure engine with strict TDD Red-Green, then master, enterprise and ops; also runs only the 8-phase engine that turns an idea into tested software. Use when the user wants a brand-new project from zero or an app from an idea, or types "/pure", "pure", "pure-motor", "/generate", "generate", "criar projeto do zero", "projeto do zero puro", "novo projeto com TDD", "gerar app a partir da ideia".
 ---
 
 # aidd-pure (Flow 01, build from scratch)
@@ -11,7 +11,7 @@ Pipeline: `[FORGE -> PLANNER] -> GENERATOR -> [MASTER -> ENTERPRISE -> OPS]`
 |---|---|---|
 | Foundation | `aidd-forge` | git hooks and isolation rules |
 | Planning | `aidd-planner` | BDD/SDD entities, acceptance criteria, Quarteto Sine Qua Non |
-| Engine | `aidd-generator` | strict TDD Red-Green, Clean Architecture in Python |
+| Engine | `aidd-pure` (`tools/aidd-pure`) | strict TDD Red-Green, Clean Architecture in Python |
 | Harmonization | `aidd-master` | Modular Monolith VSA + Next.js |
 | Shielding | `aidd-enterprise` | SHA-256 injection and anti-drift audit |
 | Infrastructure | `aidd-ops` | Dockerfile, Nginx SSL, compose |
@@ -40,3 +40,15 @@ Pipeline: `[FORGE -> PLANNER] -> GENERATOR -> [MASTER -> ENTERPRISE -> OPS]`
 - Handoffs validated by JSON Schema (`componentes/compartilhado/specs/handoff-*.schema.json`).
 - Fail-fast: any gate break stops the pipeline.
 - Writes `ORQUESTRACAO_EXECUCAO.json` in the target folder.
+
+## Engine only (`pure-motor`)
+
+Runs just the 8-phase engine of `tools/aidd-pure`, without the other stages:
+research and requirements, analysis and decomposition, architecture and design, technical decisions, artifacts and schemas (Draft 2020-12), full documentation, self-critique and gate audit, working implementation with automated tests.
+
+```bash
+python ecossistema.py pure-motor "<idea>"
+```
+
+Old name `generate` (and `/generate`) still works for one cycle and prints an "old name" warning (table in `componentes/compartilhado/specs/NOMES-ANTIGOS.json`).
+Done when: the command exits 0 and the phase 8 tests pass.

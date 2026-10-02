@@ -39,7 +39,7 @@ MANIFESTOS_PYTHON = [
     "requirements-dev.txt",
     os.path.join("tools", "aidd-master", "requirements.txt"),
     os.path.join("tools", "aidd-enterprise", "requirements.txt"),
-    os.path.join("tools", "aidd-generator", "requirements.txt"),
+    os.path.join("tools", "aidd-pure", "requirements.txt"),
     os.path.join("tools", "aidd-ops", "requirements.txt"),
     os.path.join("tools", "aidd-forge", "requirements.txt"),
 ]

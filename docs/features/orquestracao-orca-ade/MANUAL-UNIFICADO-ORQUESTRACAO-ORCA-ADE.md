@@ -22,7 +22,7 @@ flowchart TD
     Claude -->|Worktree 02 - Heavy| WT2["🌱 WT: wt-master<br>🤖 MimoCode - mimo-v2.5<br>📄 02-testes-aidd-master.md"]
     Claude -->|Worktree 03 - Critical| WT3["🌱 WT: wt-enterprise<br>🤖 Antigravity - gemini-3.5-pro<br>📄 03-testes-aidd-enterprise.md"]
     Claude -->|Worktree 04 - Medium| WT4["🌱 WT: wt-forge<br>🤖 OpenCode - big-pickle<br>📄 04-testes-aidd-forge.md"]
-    Claude -->|Worktree 05 - Heavy| WT5["🌱 WT: wt-generator<br>🤖 Claude Code - sonnet<br>📄 05-testes-aidd-generator.md"]
+    Claude -->|Worktree 05 - Heavy| WT5["🌱 WT: wt-generator<br>🤖 Claude Code - sonnet<br>📄 05-testes-aidd-pure.md"]
 
     WT1 -->|Relatório + Exit 0| Claude
     WT2 -->|Relatório + Exit 0| Claude

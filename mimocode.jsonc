@@ -14,8 +14,8 @@
       "template": "Execute imediatamente o Fluxo 02 (aidd-open) da Tríade Canônica para o projeto: $ARGUMENTS. Use a skill aidd-open ou comando CLI: python ecossistema.py open $ARGUMENTS"
     },
     "bridge": {
-      "description": "Executa operacoes atomicas da ferramenta aidd-bridge (scan, convert-db, merge, pack)",
-      "template": "Execute a operacao atomica da ferramenta aidd-bridge: $ARGUMENTS. Use a skill aidd-bridge ou CLI: python ecossistema.py bridge $ARGUMENTS"
+      "description": "Executa operacoes atomicas da ferramenta aidd-freedom (scan, convert-db, merge, pack)",
+      "template": "Execute a operacao atomica da ferramenta aidd-freedom: $ARGUMENTS. Use a skill aidd-freedom ou CLI: python ecossistema.py freedom-motor $ARGUMENTS (nome antigo: bridge)"
     }
   },
   "mcp": {

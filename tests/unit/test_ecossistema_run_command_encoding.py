@@ -3,7 +3,7 @@
 Reproduz bug real: `python ecossistema.py bridge unpack ...` (e qualquer
 outro comando despachado via run_command) derrubava com UnicodeEncodeError
 sempre que a ferramenta chamada imprimia um caractere fora do repertorio da
-codepage padrao do console do Windows (cp1252) -- ex: aidd-bridge usa "✓"
+codepage padrao do console do Windows (cp1252) -- ex: aidd-freedom usa "✓"
 para marcar cada fase concluida do pipeline. O pipeline morria no meio,
 sem completar nenhuma fase, mesmo com todo o codigo correto.
 """

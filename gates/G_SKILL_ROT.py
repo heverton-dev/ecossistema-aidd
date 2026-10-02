@@ -74,13 +74,16 @@ def obter_subcomandos_ecossistema() -> Set[str]:
         for attr in dir(ecossistema):
             if attr.startswith("cmd_"):
                 subcomandos.add(attr[4:].replace("_", "-"))
+        # Apelidos (nomes antigos) não têm cmd_ próprio: vêm do roteador.
+        if hasattr(ecossistema, "comandos_disponiveis"):
+            subcomandos.update(ecossistema.comandos_disponiveis())
     except Exception:
         # Fallback defensivo estático
         subcomandos = {
-            "aidd-bridge", "audit", "bridge", "components", "dependencia",
-            "enterprise", "factory", "forge", "freedom", "generate",
-            "harness", "livro", "master", "melhoria", "open", "ops",
-            "orchestrate", "plan", "planner", "preflight-host", "pure",
+            "audit", "bridge", "components", "dependencia",
+            "enterprise", "factory", "forge", "freedom", "freedom-motor", "generate",
+            "harness", "livro", "master", "melhoria", "open", "open-motor", "ops",
+            "orchestrate", "plan", "planner", "preflight-host", "pure", "pure-motor",
             "run-fluxo", "status"
         }
     return subcomandos

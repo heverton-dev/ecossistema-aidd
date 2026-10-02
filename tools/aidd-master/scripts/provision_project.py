@@ -229,7 +229,7 @@ def provision_backend_only(project_dir, modulo_nome, descricao=""):
     Gera SOMENTE o backend VSA (core kernel, modulo, server.py, gates,
     requirements.txt) num projeto ja existente -- NUNCA toca em Dockerfile,
     docker-compose.yml, nginx/ ou frontend/, porque esses arquivos ja
-    pertencem a um frontend preservado (ex: saida do aidd-bridge, FLUXO 03)
+    pertencem a um frontend preservado (ex: saida do aidd-freedom, FLUXO 03)
     que nao pode ser sobrescrito pelo Super-App/Next.js que `provision()`
     geraria por padrao. Usado por `master attach-vsa`.
 

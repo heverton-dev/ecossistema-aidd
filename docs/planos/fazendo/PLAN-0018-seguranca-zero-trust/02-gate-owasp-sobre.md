@@ -2,7 +2,7 @@
 
 > **Escopo:** Conectar o scanner de segurança estático G_CYBERSECURITY_OWASP para inspecionar o código gerado pela Fase 8 antes de permitir a execução do gate I4.
 > **Status:** [CONCLUIDO]
-> **Auditoria por reproducao real (12-09-2026):** CONCLUÍDO. O gate tools/aidd-generator/scripts/gates/G_CYBERSECURITY_OWASP.py foi integrado ao pipeline da Fase 08 como gate pre-I4 bloqueante (_gate_owasp_pre_i4), detectando chamadas de alto risco e gerando relatorio de conformidade no index. Testes reais (107 passed) cobrem todos os cenarios.
+> **Auditoria por reproducao real (12-09-2026):** CONCLUÍDO. O gate tools/aidd-pure/scripts/gates/G_CYBERSECURITY_OWASP.py foi integrado ao pipeline da Fase 08 como gate pre-I4 bloqueante (_gate_owasp_pre_i4), detectando chamadas de alto risco e gerando relatorio de conformidade no index. Testes reais (107 passed) cobrem todos os cenarios.
 
 ---
 

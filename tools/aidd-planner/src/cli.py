@@ -281,7 +281,7 @@ def cmd_export(args: argparse.Namespace) -> int:
         saida_caminho = os.path.abspath(args.saida or "plano_factory.json")
         with open(saida_caminho, "w", encoding="utf-8") as f:
             json.dump(resultado, f, indent=2, ensure_ascii=False)
-        print(f"[aidd-planner] Exportado com sucesso para aidd-factory: {saida_caminho}")
+        print(f"[aidd-planner] Exportado com sucesso para aidd-open: {saida_caminho}")
         return 0
     elif formato == "pipeline":
         try:

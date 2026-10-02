@@ -129,7 +129,7 @@ continue carregando sob o novo modelo, devidamente assinado.
 **Aviso de governanca — incidente durante o commit (transparencia total):**
 ao tentar commitar, o hook de pre-commit (que roda a suite de testes de
 TODAS as ferramentas em `tools/` antes de aceitar um commit) disparou um
-teste com bug real em `tools/aidd-generator` (`test_phase_05.py`) que, em
+teste com bug real em `tools/aidd-pure` (`test_phase_05.py`) que, em
 vez de escrever numa pasta temporaria isolada, escreveu commits de teste de
 verdade neste repositorio (mensagens como "leak", "clean", "broken", "init",
 "feat: Inicializacao de projeto AIDD para 'Ideia'/'Sistema de videos
@@ -143,7 +143,7 @@ confirmada arquivo por arquivo — do trabalho antes de commitar de novo.
 Com a autorizacao do usuario, o commit final (`a949228`) foi feito com
 `--no-verify` para nao disparar de novo o teste com bug, apos rodar na mao
 as mesmas checagens que o hook faria (testes + gates acima). Esse bug de
-isolamento em `tools/aidd-generator` continua sem correcao e deveria virar
+isolamento em `tools/aidd-pure` continua sem correcao e deveria virar
 um item de correcao separado.
 
 ## 8. Item 6 — jwt-hardening-segredo-prod-exp-obrigatorio (implementado 12-09-2026)

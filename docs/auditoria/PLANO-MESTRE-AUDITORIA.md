@@ -56,9 +56,9 @@ Responsáveis pelo despacho para worktrees e roteamento determinístico.
 - [ ] `aidd-ops-runner` (Infraestrutura Agentic Meta-Orchestrator)
 
 ## 5. Motores de Geração (As Fábricas Verticais Canônicas)
-- [ ] `aidd-generator-runner` (Engine do Fluxo Pure - 8 Fases)
-- [ ] `aidd-factory-runner` (Engine do Fluxo Open/Multi-service)
-- [ ] `aidd-bridge-runner` (Engine do Fluxo Freedom/Low-Code Package)
+- [ ] `aidd-pure-runner` (Engine do Fluxo Pure - 8 Fases)
+- [ ] `aidd-open-runner` (Engine do Fluxo Open/Multi-service)
+- [ ] `aidd-freedom-runner` (Engine do Fluxo Freedom/Low-Code Package)
 
 ## 6. Wrappers End-to-End (A Tríade Final)
 A orquestração invisível que liga o Planner ao Motor e desce para a Infraestrutura.

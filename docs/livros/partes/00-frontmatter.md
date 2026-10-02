@@ -13,7 +13,7 @@ abstract: |
 
   Os três níveis são o **macro** (o ecossistema como organismo único: leis, governança,
   CLI unificada, portões de qualidade e distribuição multi-harness), o **meso** (os três
-  fluxos canônicos de criação — `aidd-pure`, `aidd-open` e `aidd-freedom` [motor `aidd-bridge`] — e o fluxo de
+  fluxos canônicos de criação — `aidd-pure`, `aidd-open` e `aidd-freedom` [motor `aidd-freedom`] — e o fluxo de
   evolução `/melhoria → /plan → /orchestrate`, mais a meso-camada de despacho e os
   pipelines de auditoria `/audit-4f` e `/evolucao`) e o **micro** (cada uma das oito
   ferramentas homologadas, uma a uma).

@@ -35,7 +35,7 @@
 - **Status:** aberta
 - Sentido A: uma das 4 etapas da 4F (Inspetor, Arquiteto, Construtor, Retorno).
 - Sentido B: etapa de um plano em `docs/planos/` (ex.: "Fase 4 anti-nih", "Fase 8").
-- Sentido C: etapa interna de uma ferramenta ou skill (as 8 fases do `aidd-generator`, as fases do `aidd-diagnose`).
+- Sentido C: etapa interna de uma ferramenta ou skill (as 8 fases do `aidd-pure`, as fases do `aidd-diagnose`).
 - Pergunta ao usuário: qual sentido é o padrão e como nomear os outros?
 
 ### plano

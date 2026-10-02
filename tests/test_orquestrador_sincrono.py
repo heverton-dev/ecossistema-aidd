@@ -145,12 +145,29 @@ def test_orquestrador_valida_schema_handoff(tmp_path):
                         {"id": "RN01", "descricao": "Regra 1", "criterio_aceitacao": "Critério"}
                     ]
                 }
-            ]
+            ],
+            "camadas": ["apresentacao", "aplicacao", "dominio", "infra"],
+            "fases": ["F01"],
+            "tickets": [{
+                "id": "T01",
+                "ferramenta_destino": "aidd-pure",
+                "entrada": {},
+                "saida_esperada": "ok",
+                "pecas_do_almoxarifado": [],
+                "criterio_de_aceite": "ok"
+            }],
+            "entrada_construtor": {"caminho": "h.json", "sha256": "0" * 64},
+            "perfil_app": {
+                "modulos": ["teste"],
+                "entidades": ["Entidade"],
+                "banco": "sqlite",
+                "rotas_quarteto": ["/api/x", "/webhooks/x", "/mcp/x", "/docs/x"],
+                "portas": [8000]
+            }
         },
         "handoff-planner-to-engine.schema.json"
     )
     assert valido is True
-
 
 def test_orquestrador_cli_posicionais_freedom(monkeypatch):
     from scripts.orquestrador_sincrono import main

@@ -22,7 +22,7 @@ from pathlib import Path
 
 
 # Known tools and the directory name inside tools/
-KNOWN_TOOLS = ("aidd-forge", "aidd-generator", "aidd-master", "aidd-enterprise")
+KNOWN_TOOLS = ("aidd-forge", "aidd-pure", "aidd-master", "aidd-enterprise")
 
 # Root-level files/dirs that trigger the meta-audit (ecossistema.py audit)
 ROOT_SCOPED_PREFIXES = ("gates/", "scripts/")

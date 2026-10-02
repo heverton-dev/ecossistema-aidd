@@ -1,6 +1,6 @@
 # Item 9 — Otimizacao de custo tokens
 
-> **Escopo:** Entra: medir de verdade (não estimar) o consumo de token de uma rodada de `/master`, `/enterprise`, `/ops` e `python ecossistema.py audit`, identificar onde o assistente gasta token em tarefas que o próprio script já resolve, e cortar. Não entra: mexer no núcleo do aidd-generator — lá o gasto é estruturalmente necessário (fases 2-8 dependem de LLM real).
+> **Escopo:** Entra: medir de verdade (não estimar) o consumo de token de uma rodada de `/master`, `/enterprise`, `/ops` e `python ecossistema.py audit`, identificar onde o assistente gasta token em tarefas que o próprio script já resolve, e cortar. Não entra: mexer no núcleo do aidd-pure — lá o gasto é estruturalmente necessário (fases 2-8 dependem de LLM real).
 > **Status:** [APROVADO — Aguardando Execucao]
 > **Nota Atual (0-10):** NAO AUDITADO — evidencia: (nota pendente de medicao real - nao preencher com estimativa)
 > **Nota Alvo (0-10):** NAO AUDITADO
@@ -10,7 +10,7 @@
 
 ## Contexto ja investigado
 
-- Números informados pelo usuário (não medidos por telemetria bruta nesta auditoria, tratar como estimativa a confirmar): aidd-forge 12k, aidd-generator 178k, aidd-master 69k, aidd-enterprise 52k, aidd-ops 30k, ecossistema-aidd (CLI/audit) 43k tokens por rodada.
+- Números informados pelo usuário (não medidos por telemetria bruta nesta auditoria, tratar como estimativa a confirmar): aidd-forge 12k, aidd-pure 178k, aidd-master 69k, aidd-enterprise 52k, aidd-ops 30k, ecossistema-aidd (CLI/audit) 43k tokens por rodada.
 - Confirmado no código-fonte: `add_module.py`/`compose_suite.py` (master/enterprise) são 100% template+parâmetro, zero chamada a LLM; `03_sizing.py` (ops) é "aritmética pura" por admissão do próprio código; os 8 gates da raiz são `subprocess`/AST/regex puro.
 - Hipótese a validar (não fato ainda, ver relatório): o custo alto nessas 4 linhas provavelmente paga a conversa em volta do script (decidir nomes que poderiam vir de flag/schema, narrar saída de gate que já é texto pronto, redigir `AVALIACAO-AUTO-CRITICA.md`/`RELATORIO-AUDITORIA.json` via LLM quando são deriváveis por template a partir do JSON estruturado que os próprios gates produzem).
 

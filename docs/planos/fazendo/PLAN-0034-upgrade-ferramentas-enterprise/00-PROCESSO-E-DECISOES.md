@@ -8,7 +8,7 @@
 
 ## 1. O que este esforco busca
 
-- **Objetivo Principal:** Elevar a maturidade estrutural e de engenharia das ferramentas `aidd-bridge`, `aidd-factory` e `aidd-forge` para o padrão corporativo Enterprise (9.6+), garantindo Vertical Slice Architecture, Quarteto Sine Qua Non dinâmico e auto-recuperação.
+- **Objetivo Principal:** Elevar a maturidade estrutural e de engenharia das ferramentas `aidd-freedom`, `aidd-open` e `aidd-forge` para o padrão corporativo Enterprise (9.6+), garantindo Vertical Slice Architecture, Quarteto Sine Qua Non dinâmico e auto-recuperação.
 - **Limites de Escopo:** Não inclui alteração dos contratos imutáveis de entrada de planos de infraestrutura.
 
 ### Metrica da Iniciativa (0-10)

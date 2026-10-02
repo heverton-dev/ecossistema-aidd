@@ -70,7 +70,7 @@ PLANNER_MINIMO = {
 
 HANDOFF_ENGINE = {
     "versao_schema": "1.0.0",
-    "origem_engine": "aidd-generator",
+    "origem_engine": "aidd-pure",
     "projeto_slug": "clinica",
     "slices_geradas": [{
         "slice_nome": "agenda",

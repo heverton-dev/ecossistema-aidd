@@ -1,0 +1,865 @@
+{
+  "descricao": "Violacoes de fronteira conhecidas do ecossistema AIDD (so pode diminuir; cada entrada datada).",
+  "violacoes": [
+    {
+      "arquivo": "tools/aidd-enterprise/materiais-extras/examples/catalogo-digital-v3/src/core/openapi.py",
+      "data": "2026-10-01",
+      "motivo": "conhecida no inventario inicial (Ticket 6): nunca_conter(**/openapi*); atual=aidd-enterprise; dono=aidd-master"
+    },
+    {
+      "arquivo": "tools/aidd-enterprise/materiais-extras/examples/catalogo-digital-v3/src/core/webhooks.py",
+      "data": "2026-10-01",
+      "motivo": "conhecida no inventario inicial (Ticket 6): nunca_conter(**/webhook*); atual=aidd-enterprise; dono=aidd-master"
+    },
+    {
+      "arquivo": "tools/aidd-enterprise/materiais-extras/examples/crm-omnichannel-v2/Dockerfile",
+      "data": "2026-10-01",
+      "motivo": "conhecida no inventario inicial (Ticket 6): nunca_conter(**/Dockerfile*); atual=aidd-enterprise; dono=aidd-ops"
+    },
+    {
+      "arquivo": "tools/aidd-enterprise/materiais-extras/examples/crm-omnichannel-v2/deploy.sh",
+      "data": "2026-10-01",
+      "motivo": "conhecida no inventario inicial (Ticket 6): nunca_conter(**/deploy.sh); atual=aidd-enterprise; dono=aidd-ops"
+    },
+    {
+      "arquivo": "tools/aidd-enterprise/materiais-extras/examples/crm-omnichannel-v2/docker-compose.yml",
+      "data": "2026-10-01",
+      "motivo": "conhecida no inventario inicial (Ticket 6): nunca_conter(**/docker-compose*); atual=aidd-enterprise; dono=aidd-ops"
+    },
+    {
+      "arquivo": "tools/aidd-enterprise/materiais-extras/examples/crm-omnichannel-v2/src/core/openapi.py",
+      "data": "2026-10-01",
+      "motivo": "conhecida no inventario inicial (Ticket 6): nunca_conter(**/openapi*); atual=aidd-enterprise; dono=aidd-master"
+    },
+    {
+      "arquivo": "tools/aidd-enterprise/materiais-extras/examples/crm-omnichannel-v2/src/core/webhooks.py",
+      "data": "2026-10-01",
+      "motivo": "conhecida no inventario inicial (Ticket 6): nunca_conter(**/webhook*); atual=aidd-enterprise; dono=aidd-master"
+    },
+    {
+      "arquivo": "tools/aidd-enterprise/materiais-extras/examples/crm-omnichannel-v3/Dockerfile",
+      "data": "2026-10-01",
+      "motivo": "conhecida no inventario inicial (Ticket 6): nunca_conter(**/Dockerfile*); atual=aidd-enterprise; dono=aidd-ops"
+    },
+    {
+      "arquivo": "tools/aidd-enterprise/materiais-extras/examples/crm-omnichannel-v3/deploy.sh",
+      "data": "2026-10-01",
+      "motivo": "conhecida no inventario inicial (Ticket 6): nunca_conter(**/deploy.sh); atual=aidd-enterprise; dono=aidd-ops"
+    },
+    {
+      "arquivo": "tools/aidd-enterprise/materiais-extras/examples/crm-omnichannel-v3/docker-compose.yml",
+      "data": "2026-10-01",
+      "motivo": "conhecida no inventario inicial (Ticket 6): nunca_conter(**/docker-compose*); atual=aidd-enterprise; dono=aidd-ops"
+    },
+    {
+      "arquivo": "tools/aidd-enterprise/materiais-extras/examples/crm-omnichannel-v3/src/core/openapi.py",
+      "data": "2026-10-01",
+      "motivo": "conhecida no inventario inicial (Ticket 6): nunca_conter(**/openapi*); atual=aidd-enterprise; dono=aidd-master"
+    },
+    {
+      "arquivo": "tools/aidd-enterprise/materiais-extras/examples/crm-omnichannel-v3/src/core/webhooks.py",
+      "data": "2026-10-01",
+      "motivo": "conhecida no inventario inicial (Ticket 6): nunca_conter(**/webhook*); atual=aidd-enterprise; dono=aidd-master"
+    },
+    {
+      "arquivo": "tools/aidd-enterprise/materiais-extras/examples/enterprise-suite-v4/Dockerfile",
+      "data": "2026-10-01",
+      "motivo": "conhecida no inventario inicial (Ticket 6): nunca_conter(**/Dockerfile*); atual=aidd-enterprise; dono=aidd-ops"
+    },
+    {
+      "arquivo": "tools/aidd-enterprise/materiais-extras/examples/enterprise-suite-v4/docker-compose.yml",
+      "data": "2026-10-01",
+      "motivo": "conhecida no inventario inicial (Ticket 6): nunca_conter(**/docker-compose*); atual=aidd-enterprise; dono=aidd-ops"
+    },
+    {
+      "arquivo": "tools/aidd-enterprise/materiais-extras/examples/enterprise-suite-v4/nginx/nginx.conf",
+      "data": "2026-10-01",
+      "motivo": "conhecida no inventario inicial (Ticket 6): nunca_conter(**/nginx/**); atual=aidd-enterprise; dono=aidd-ops"
+    },
+    {
+      "arquivo": "tools/aidd-enterprise/materiais-extras/examples/enterprise-suite-v4/nginx/ssl/generate_ssl.py",
+      "data": "2026-10-01",
+      "motivo": "conhecida no inventario inicial (Ticket 6): nunca_conter(**/nginx/**); atual=aidd-enterprise; dono=aidd-ops"
+    },
+    {
+      "arquivo": "tools/aidd-enterprise/materiais-extras/examples/enterprise-suite-v4/src/core/mcp_server.py",
+      "data": "2026-10-01",
+      "motivo": "conhecida no inventario inicial (Ticket 6): nunca_conter(**/mcp_server*); atual=aidd-enterprise; dono=aidd-master"
+    },
+    {
+      "arquivo": "tools/aidd-enterprise/materiais-extras/examples/enterprise-suite-v4/src/core/openapi.py",
+      "data": "2026-10-01",
+      "motivo": "conhecida no inventario inicial (Ticket 6): nunca_conter(**/openapi*); atual=aidd-enterprise; dono=aidd-master"
+    },
+    {
+      "arquivo": "tools/aidd-enterprise/materiais-extras/examples/enterprise-suite-v4/src/core/webhooks.py",
+      "data": "2026-10-01",
+      "motivo": "conhecida no inventario inicial (Ticket 6): nunca_conter(**/webhook*); atual=aidd-enterprise; dono=aidd-master"
+    },
+    {
+      "arquivo": "tools/aidd-enterprise/materiais-extras/examples/erp-financeiro-v2/Dockerfile",
+      "data": "2026-10-01",
+      "motivo": "conhecida no inventario inicial (Ticket 6): nunca_conter(**/Dockerfile*); atual=aidd-enterprise; dono=aidd-ops"
+    },
+    {
+      "arquivo": "tools/aidd-enterprise/materiais-extras/examples/erp-financeiro-v2/deploy.sh",
+      "data": "2026-10-01",
+      "motivo": "conhecida no inventario inicial (Ticket 6): nunca_conter(**/deploy.sh); atual=aidd-enterprise; dono=aidd-ops"
+    },
+    {
+      "arquivo": "tools/aidd-enterprise/materiais-extras/examples/erp-financeiro-v2/docker-compose.yml",
+      "data": "2026-10-01",
+      "motivo": "conhecida no inventario inicial (Ticket 6): nunca_conter(**/docker-compose*); atual=aidd-enterprise; dono=aidd-ops"
+    },
+    {
+      "arquivo": "tools/aidd-enterprise/materiais-extras/examples/erp-financeiro-v2/src/core/openapi.py",
+      "data": "2026-10-01",
+      "motivo": "conhecida no inventario inicial (Ticket 6): nunca_conter(**/openapi*); atual=aidd-enterprise; dono=aidd-master"
+    },
+    {
+      "arquivo": "tools/aidd-enterprise/materiais-extras/examples/erp-financeiro-v2/src/core/webhooks.py",
+      "data": "2026-10-01",
+      "motivo": "conhecida no inventario inicial (Ticket 6): nunca_conter(**/webhook*); atual=aidd-enterprise; dono=aidd-master"
+    },
+    {
+      "arquivo": "tools/aidd-enterprise/materiais-extras/examples/erp-financeiro-v3/Dockerfile",
+      "data": "2026-10-01",
+      "motivo": "conhecida no inventario inicial (Ticket 6): nunca_conter(**/Dockerfile*); atual=aidd-enterprise; dono=aidd-ops"
+    },
+    {
+      "arquivo": "tools/aidd-enterprise/materiais-extras/examples/erp-financeiro-v3/deploy.sh",
+      "data": "2026-10-01",
+      "motivo": "conhecida no inventario inicial (Ticket 6): nunca_conter(**/deploy.sh); atual=aidd-enterprise; dono=aidd-ops"
+    },
+    {
+      "arquivo": "tools/aidd-enterprise/materiais-extras/examples/erp-financeiro-v3/docker-compose.yml",
+      "data": "2026-10-01",
+      "motivo": "conhecida no inventario inicial (Ticket 6): nunca_conter(**/docker-compose*); atual=aidd-enterprise; dono=aidd-ops"
+    },
+    {
+      "arquivo": "tools/aidd-enterprise/materiais-extras/examples/erp-financeiro-v3/src/core/openapi.py",
+      "data": "2026-10-01",
+      "motivo": "conhecida no inventario inicial (Ticket 6): nunca_conter(**/openapi*); atual=aidd-enterprise; dono=aidd-master"
+    },
+    {
+      "arquivo": "tools/aidd-enterprise/materiais-extras/examples/erp-financeiro-v3/src/core/webhooks.py",
+      "data": "2026-10-01",
+      "motivo": "conhecida no inventario inicial (Ticket 6): nunca_conter(**/webhook*); atual=aidd-enterprise; dono=aidd-master"
+    },
+    {
+      "arquivo": "tools/aidd-enterprise/materiais-extras/examples/helpdesk-sla-v2/Dockerfile",
+      "data": "2026-10-01",
+      "motivo": "conhecida no inventario inicial (Ticket 6): nunca_conter(**/Dockerfile*); atual=aidd-enterprise; dono=aidd-ops"
+    },
+    {
+      "arquivo": "tools/aidd-enterprise/materiais-extras/examples/helpdesk-sla-v2/deploy.sh",
+      "data": "2026-10-01",
+      "motivo": "conhecida no inventario inicial (Ticket 6): nunca_conter(**/deploy.sh); atual=aidd-enterprise; dono=aidd-ops"
+    },
+    {
+      "arquivo": "tools/aidd-enterprise/materiais-extras/examples/helpdesk-sla-v2/docker-compose.yml",
+      "data": "2026-10-01",
+      "motivo": "conhecida no inventario inicial (Ticket 6): nunca_conter(**/docker-compose*); atual=aidd-enterprise; dono=aidd-ops"
+    },
+    {
+      "arquivo": "tools/aidd-enterprise/materiais-extras/examples/helpdesk-sla-v2/src/core/openapi.py",
+      "data": "2026-10-01",
+      "motivo": "conhecida no inventario inicial (Ticket 6): nunca_conter(**/openapi*); atual=aidd-enterprise; dono=aidd-master"
+    },
+    {
+      "arquivo": "tools/aidd-enterprise/materiais-extras/examples/helpdesk-sla-v2/src/core/webhooks.py",
+      "data": "2026-10-01",
+      "motivo": "conhecida no inventario inicial (Ticket 6): nunca_conter(**/webhook*); atual=aidd-enterprise; dono=aidd-master"
+    },
+    {
+      "arquivo": "tools/aidd-enterprise/materiais-extras/examples/helpdesk-sla-v3/Dockerfile",
+      "data": "2026-10-01",
+      "motivo": "conhecida no inventario inicial (Ticket 6): nunca_conter(**/Dockerfile*); atual=aidd-enterprise; dono=aidd-ops"
+    },
+    {
+      "arquivo": "tools/aidd-enterprise/materiais-extras/examples/helpdesk-sla-v3/deploy.sh",
+      "data": "2026-10-01",
+      "motivo": "conhecida no inventario inicial (Ticket 6): nunca_conter(**/deploy.sh); atual=aidd-enterprise; dono=aidd-ops"
+    },
+    {
+      "arquivo": "tools/aidd-enterprise/materiais-extras/examples/helpdesk-sla-v3/docker-compose.yml",
+      "data": "2026-10-01",
+      "motivo": "conhecida no inventario inicial (Ticket 6): nunca_conter(**/docker-compose*); atual=aidd-enterprise; dono=aidd-ops"
+    },
+    {
+      "arquivo": "tools/aidd-enterprise/materiais-extras/examples/helpdesk-sla-v3/src/core/openapi.py",
+      "data": "2026-10-01",
+      "motivo": "conhecida no inventario inicial (Ticket 6): nunca_conter(**/openapi*); atual=aidd-enterprise; dono=aidd-master"
+    },
+    {
+      "arquivo": "tools/aidd-enterprise/materiais-extras/examples/helpdesk-sla-v3/src/core/webhooks.py",
+      "data": "2026-10-01",
+      "motivo": "conhecida no inventario inicial (Ticket 6): nunca_conter(**/webhook*); atual=aidd-enterprise; dono=aidd-master"
+    },
+    {
+      "arquivo": "tools/aidd-enterprise/materiais-extras/examples/logistica-hub-v4/Dockerfile",
+      "data": "2026-10-01",
+      "motivo": "conhecida no inventario inicial (Ticket 6): nunca_conter(**/Dockerfile*); atual=aidd-enterprise; dono=aidd-ops"
+    },
+    {
+      "arquivo": "tools/aidd-enterprise/materiais-extras/examples/logistica-hub-v4/docker-compose.yml",
+      "data": "2026-10-01",
+      "motivo": "conhecida no inventario inicial (Ticket 6): nunca_conter(**/docker-compose*); atual=aidd-enterprise; dono=aidd-ops"
+    },
+    {
+      "arquivo": "tools/aidd-enterprise/materiais-extras/examples/logistica-hub-v4/nginx/nginx.conf",
+      "data": "2026-10-01",
+      "motivo": "conhecida no inventario inicial (Ticket 6): nunca_conter(**/nginx/**); atual=aidd-enterprise; dono=aidd-ops"
+    },
+    {
+      "arquivo": "tools/aidd-enterprise/materiais-extras/examples/logistica-hub-v4/nginx/ssl/generate_ssl.py",
+      "data": "2026-10-01",
+      "motivo": "conhecida no inventario inicial (Ticket 6): nunca_conter(**/nginx/**); atual=aidd-enterprise; dono=aidd-ops"
+    },
+    {
+      "arquivo": "tools/aidd-enterprise/materiais-extras/examples/logistica-hub-v4/src/core/mcp_server.py",
+      "data": "2026-10-01",
+      "motivo": "conhecida no inventario inicial (Ticket 6): nunca_conter(**/mcp_server*); atual=aidd-enterprise; dono=aidd-master"
+    },
+    {
+      "arquivo": "tools/aidd-enterprise/materiais-extras/examples/logistica-hub-v4/src/core/openapi.py",
+      "data": "2026-10-01",
+      "motivo": "conhecida no inventario inicial (Ticket 6): nunca_conter(**/openapi*); atual=aidd-enterprise; dono=aidd-master"
+    },
+    {
+      "arquivo": "tools/aidd-enterprise/materiais-extras/examples/logistica-hub-v4/src/core/webhooks.py",
+      "data": "2026-10-01",
+      "motivo": "conhecida no inventario inicial (Ticket 6): nunca_conter(**/webhook*); atual=aidd-enterprise; dono=aidd-master"
+    },
+    {
+      "arquivo": "tools/aidd-enterprise/materiais-extras/examples/plataforma-de-membros/Dockerfile",
+      "data": "2026-10-01",
+      "motivo": "conhecida no inventario inicial (Ticket 6): nunca_conter(**/Dockerfile*); atual=aidd-enterprise; dono=aidd-ops"
+    },
+    {
+      "arquivo": "tools/aidd-enterprise/materiais-extras/examples/plataforma-de-membros/deploy.sh",
+      "data": "2026-10-01",
+      "motivo": "conhecida no inventario inicial (Ticket 6): nunca_conter(**/deploy.sh); atual=aidd-enterprise; dono=aidd-ops"
+    },
+    {
+      "arquivo": "tools/aidd-enterprise/materiais-extras/examples/plataforma-de-membros/docker-compose.yml",
+      "data": "2026-10-01",
+      "motivo": "conhecida no inventario inicial (Ticket 6): nunca_conter(**/docker-compose*); atual=aidd-enterprise; dono=aidd-ops"
+    },
+    {
+      "arquivo": "tools/aidd-enterprise/materiais-extras/examples/plataforma-de-membros/src/core/openapi.py",
+      "data": "2026-10-01",
+      "motivo": "conhecida no inventario inicial (Ticket 6): nunca_conter(**/openapi*); atual=aidd-enterprise; dono=aidd-master"
+    },
+    {
+      "arquivo": "tools/aidd-enterprise/materiais-extras/examples/plataforma-de-membros/src/core/webhooks.py",
+      "data": "2026-10-01",
+      "motivo": "conhecida no inventario inicial (Ticket 6): nunca_conter(**/webhook*); atual=aidd-enterprise; dono=aidd-master"
+    },
+    {
+      "arquivo": "tools/aidd-enterprise/materiais-extras/examples/plataforma-membros-v3/Dockerfile",
+      "data": "2026-10-01",
+      "motivo": "conhecida no inventario inicial (Ticket 6): nunca_conter(**/Dockerfile*); atual=aidd-enterprise; dono=aidd-ops"
+    },
+    {
+      "arquivo": "tools/aidd-enterprise/materiais-extras/examples/plataforma-membros-v3/deploy.sh",
+      "data": "2026-10-01",
+      "motivo": "conhecida no inventario inicial (Ticket 6): nunca_conter(**/deploy.sh); atual=aidd-enterprise; dono=aidd-ops"
+    },
+    {
+      "arquivo": "tools/aidd-enterprise/materiais-extras/examples/plataforma-membros-v3/docker-compose.yml",
+      "data": "2026-10-01",
+      "motivo": "conhecida no inventario inicial (Ticket 6): nunca_conter(**/docker-compose*); atual=aidd-enterprise; dono=aidd-ops"
+    },
+    {
+      "arquivo": "tools/aidd-enterprise/materiais-extras/examples/plataforma-membros-v3/src/core/openapi.py",
+      "data": "2026-10-01",
+      "motivo": "conhecida no inventario inicial (Ticket 6): nunca_conter(**/openapi*); atual=aidd-enterprise; dono=aidd-master"
+    },
+    {
+      "arquivo": "tools/aidd-enterprise/materiais-extras/examples/plataforma-membros-v3/src/core/webhooks.py",
+      "data": "2026-10-01",
+      "motivo": "conhecida no inventario inicial (Ticket 6): nunca_conter(**/webhook*); atual=aidd-enterprise; dono=aidd-master"
+    },
+    {
+      "arquivo": "tools/aidd-enterprise/materiais-extras/examples/plataforma-modular-assinaturas/Dockerfile",
+      "data": "2026-10-01",
+      "motivo": "conhecida no inventario inicial (Ticket 6): nunca_conter(**/Dockerfile*); atual=aidd-enterprise; dono=aidd-ops"
+    },
+    {
+      "arquivo": "tools/aidd-enterprise/materiais-extras/examples/plataforma-modular-assinaturas/deploy.sh",
+      "data": "2026-10-01",
+      "motivo": "conhecida no inventario inicial (Ticket 6): nunca_conter(**/deploy.sh); atual=aidd-enterprise; dono=aidd-ops"
+    },
+    {
+      "arquivo": "tools/aidd-enterprise/materiais-extras/examples/plataforma-modular-assinaturas/docker-compose.yml",
+      "data": "2026-10-01",
+      "motivo": "conhecida no inventario inicial (Ticket 6): nunca_conter(**/docker-compose*); atual=aidd-enterprise; dono=aidd-ops"
+    },
+    {
+      "arquivo": "tools/aidd-enterprise/materiais-extras/examples/plataforma-modular-assinaturas/src/core/openapi.py",
+      "data": "2026-10-01",
+      "motivo": "conhecida no inventario inicial (Ticket 6): nunca_conter(**/openapi*); atual=aidd-enterprise; dono=aidd-master"
+    },
+    {
+      "arquivo": "tools/aidd-enterprise/scripts/openapi_to_ts.py",
+      "data": "2026-10-01",
+      "motivo": "conhecida no inventario inicial (Ticket 6): nunca_conter(**/openapi*); atual=aidd-enterprise; dono=aidd-forge+aidd-master+aidd-ops"
+    },
+    {
+      "arquivo": "tools/aidd-enterprise/src/core/mcp_server.py",
+      "data": "2026-10-01",
+      "motivo": "conhecida no inventario inicial (Ticket 6): nunca_conter(**/mcp_server*); atual=aidd-enterprise; dono=aidd-master"
+    },
+    {
+      "arquivo": "tools/aidd-enterprise/src/core/openapi.py",
+      "data": "2026-10-01",
+      "motivo": "conhecida no inventario inicial (Ticket 6): nunca_conter(**/openapi*); atual=aidd-enterprise; dono=aidd-master"
+    },
+    {
+      "arquivo": "tools/aidd-enterprise/src/core/webhook_studio.html",
+      "data": "2026-10-01",
+      "motivo": "conhecida no inventario inicial (Ticket 6): nunca_conter(**/webhook*); atual=aidd-enterprise; dono=aidd-master"
+    },
+    {
+      "arquivo": "tools/aidd-enterprise/src/core/webhooks.py",
+      "data": "2026-10-01",
+      "motivo": "conhecida no inventario inicial (Ticket 6): nunca_conter(**/webhook*); atual=aidd-enterprise; dono=aidd-master"
+    },
+    {
+      "arquivo": "tools/aidd-enterprise/templates/core/Dockerfile",
+      "data": "2026-10-01",
+      "motivo": "conhecida no inventario inicial (Ticket 6): nunca_conter(**/Dockerfile*); atual=aidd-enterprise; dono=aidd-ops"
+    },
+    {
+      "arquivo": "tools/aidd-enterprise/templates/core/deploy.sh",
+      "data": "2026-10-01",
+      "motivo": "conhecida no inventario inicial (Ticket 6): nunca_conter(**/deploy.sh); atual=aidd-enterprise; dono=aidd-ops"
+    },
+    {
+      "arquivo": "tools/aidd-enterprise/templates/core/docker-compose.yml",
+      "data": "2026-10-01",
+      "motivo": "conhecida no inventario inicial (Ticket 6): nunca_conter(**/docker-compose*); atual=aidd-enterprise; dono=aidd-ops"
+    },
+    {
+      "arquivo": "tools/aidd-enterprise/templates/core/mcp_server.py",
+      "data": "2026-10-01",
+      "motivo": "conhecida no inventario inicial (Ticket 6): nunca_conter(**/mcp_server*); atual=aidd-enterprise; dono=aidd-forge"
+    },
+    {
+      "arquivo": "tools/aidd-enterprise/templates/core/nginx/nginx.conf",
+      "data": "2026-10-01",
+      "motivo": "conhecida no inventario inicial (Ticket 6): nunca_conter(**/nginx/**); atual=aidd-enterprise; dono=aidd-ops"
+    },
+    {
+      "arquivo": "tools/aidd-enterprise/templates/core/nginx/ssl/generate_ssl.py",
+      "data": "2026-10-01",
+      "motivo": "conhecida no inventario inicial (Ticket 6): nunca_conter(**/nginx/**); atual=aidd-enterprise; dono=aidd-ops"
+    },
+    {
+      "arquivo": "tools/aidd-enterprise/templates/core/openapi.py",
+      "data": "2026-10-01",
+      "motivo": "conhecida no inventario inicial (Ticket 6): nunca_conter(**/openapi*); atual=aidd-enterprise; dono=aidd-forge"
+    },
+    {
+      "arquivo": "tools/aidd-enterprise/templates/core/webhook_studio.html",
+      "data": "2026-10-01",
+      "motivo": "conhecida no inventario inicial (Ticket 6): nunca_conter(**/webhook*); atual=aidd-enterprise; dono=aidd-forge"
+    },
+    {
+      "arquivo": "tools/aidd-enterprise/templates/core/webhooks.py",
+      "data": "2026-10-01",
+      "motivo": "conhecida no inventario inicial (Ticket 6): nunca_conter(**/webhook*); atual=aidd-enterprise; dono=aidd-forge"
+    },
+    {
+      "arquivo": "tools/aidd-enterprise/templates/v2/Dockerfile",
+      "data": "2026-10-01",
+      "motivo": "conhecida no inventario inicial (Ticket 6): nunca_conter(**/Dockerfile*); atual=aidd-enterprise; dono=aidd-ops"
+    },
+    {
+      "arquivo": "tools/aidd-enterprise/templates/v2/deploy.sh",
+      "data": "2026-10-01",
+      "motivo": "conhecida no inventario inicial (Ticket 6): nunca_conter(**/deploy.sh); atual=aidd-enterprise; dono=aidd-ops"
+    },
+    {
+      "arquivo": "tools/aidd-enterprise/templates/v2/docker-compose.yml",
+      "data": "2026-10-01",
+      "motivo": "conhecida no inventario inicial (Ticket 6): nunca_conter(**/docker-compose*); atual=aidd-enterprise; dono=aidd-ops"
+    },
+    {
+      "arquivo": "tools/aidd-enterprise/templates/v2/mcp_server.py",
+      "data": "2026-10-01",
+      "motivo": "conhecida no inventario inicial (Ticket 6): nunca_conter(**/mcp_server*); atual=aidd-enterprise; dono=aidd-forge"
+    },
+    {
+      "arquivo": "tools/aidd-enterprise/templates/v2/nginx/nginx.conf",
+      "data": "2026-10-01",
+      "motivo": "conhecida no inventario inicial (Ticket 6): nunca_conter(**/nginx/**); atual=aidd-enterprise; dono=aidd-ops"
+    },
+    {
+      "arquivo": "tools/aidd-enterprise/templates/v2/nginx/ssl/generate_ssl.py",
+      "data": "2026-10-01",
+      "motivo": "conhecida no inventario inicial (Ticket 6): nunca_conter(**/nginx/**); atual=aidd-enterprise; dono=aidd-ops"
+    },
+    {
+      "arquivo": "tools/aidd-enterprise/templates/v2/openapi.py",
+      "data": "2026-10-01",
+      "motivo": "conhecida no inventario inicial (Ticket 6): nunca_conter(**/openapi*); atual=aidd-enterprise; dono=aidd-forge"
+    },
+    {
+      "arquivo": "tools/aidd-enterprise/templates/v2/webhook_studio.html",
+      "data": "2026-10-01",
+      "motivo": "conhecida no inventario inicial (Ticket 6): nunca_conter(**/webhook*); atual=aidd-enterprise; dono=aidd-forge"
+    },
+    {
+      "arquivo": "tools/aidd-enterprise/templates/v2/webhooks.py",
+      "data": "2026-10-01",
+      "motivo": "conhecida no inventario inicial (Ticket 6): nunca_conter(**/webhook*); atual=aidd-enterprise; dono=aidd-forge"
+    },
+    {
+      "arquivo": "tools/aidd-freedom/gates/G_BRIDGE_DOCKER_OCI.py",
+      "data": "2026-10-01",
+      "motivo": "conhecida no inventario inicial (Ticket 6): nunca_conter(**/G_*.py); atual=aidd-freedom; dono=aidd-forge"
+    },
+    {
+      "arquivo": "tools/aidd-freedom/gates/G_BRIDGE_POSTGRESQL.py",
+      "data": "2026-10-01",
+      "motivo": "conhecida no inventario inicial (Ticket 6): nunca_conter(**/G_*.py); atual=aidd-freedom; dono=aidd-forge"
+    },
+    {
+      "arquivo": "tools/aidd-freedom/gates/G_BRIDGE_VENDOR_LOCKIN.py",
+      "data": "2026-10-01",
+      "motivo": "conhecida no inventario inicial (Ticket 6): nunca_conter(**/G_*.py); atual=aidd-freedom; dono=aidd-forge"
+    },
+    {
+      "arquivo": "tools/aidd-freedom/gates/G_BRIDGE_VSA_COMPAT.py",
+      "data": "2026-10-01",
+      "motivo": "conhecida no inventario inicial (Ticket 6): nunca_conter(**/G_*.py); atual=aidd-freedom; dono=aidd-forge"
+    },
+    {
+      "arquivo": "tools/aidd-master/scripts/gates/G_ARQUITETURA.py",
+      "data": "2026-10-01",
+      "motivo": "conhecida no inventario inicial (Ticket 6): nunca_conter(**/G_*.py); atual=aidd-master; dono=aidd-forge"
+    },
+    {
+      "arquivo": "tools/aidd-master/scripts/gates/G_AST_BOUNDED_CONTEXT.py",
+      "data": "2026-10-01",
+      "motivo": "conhecida no inventario inicial (Ticket 6): nunca_conter(**/G_*.py); atual=aidd-master; dono=aidd-forge"
+    },
+    {
+      "arquivo": "tools/aidd-master/scripts/gates/G_CHAOS.py",
+      "data": "2026-10-01",
+      "motivo": "conhecida no inventario inicial (Ticket 6): nunca_conter(**/G_*.py); atual=aidd-master; dono=aidd-forge"
+    },
+    {
+      "arquivo": "tools/aidd-master/scripts/gates/G_CONTRACTS.py",
+      "data": "2026-10-01",
+      "motivo": "conhecida no inventario inicial (Ticket 6): nunca_conter(**/G_*.py); atual=aidd-master; dono=aidd-forge"
+    },
+    {
+      "arquivo": "tools/aidd-master/scripts/gates/G_ESTRUTURA.py",
+      "data": "2026-10-01",
+      "motivo": "conhecida no inventario inicial (Ticket 6): nunca_conter(**/G_*.py); atual=aidd-master; dono=aidd-forge"
+    },
+    {
+      "arquivo": "tools/aidd-master/scripts/gates/G_HARNESS_COMPAT.py",
+      "data": "2026-10-01",
+      "motivo": "conhecida no inventario inicial (Ticket 6): nunca_conter(**/G_*.py); atual=aidd-master; dono=aidd-forge"
+    },
+    {
+      "arquivo": "tools/aidd-master/scripts/gates/G_INJECT.py",
+      "data": "2026-10-01",
+      "motivo": "conhecida no inventario inicial (Ticket 6): nunca_conter(**/G_*.py); atual=aidd-master; dono=aidd-forge"
+    },
+    {
+      "arquivo": "tools/aidd-master/scripts/gates/G_PERFORMANCE.py",
+      "data": "2026-10-01",
+      "motivo": "conhecida no inventario inicial (Ticket 6): nunca_conter(**/G_*.py); atual=aidd-master; dono=aidd-forge"
+    },
+    {
+      "arquivo": "tools/aidd-master/scripts/gates/G_QUALIDADE.py",
+      "data": "2026-10-01",
+      "motivo": "conhecida no inventario inicial (Ticket 6): nunca_conter(**/G_*.py); atual=aidd-master; dono=aidd-forge"
+    },
+    {
+      "arquivo": "tools/aidd-master/scripts/gates/G_SEGREDOS.py",
+      "data": "2026-10-01",
+      "motivo": "conhecida no inventario inicial (Ticket 6): nunca_conter(**/G_*.py); atual=aidd-master; dono=aidd-forge"
+    },
+    {
+      "arquivo": "tools/aidd-master/scripts/gates/G_SEGURANCA.py",
+      "data": "2026-10-01",
+      "motivo": "conhecida no inventario inicial (Ticket 6): nunca_conter(**/G_*.py); atual=aidd-master; dono=aidd-forge"
+    },
+    {
+      "arquivo": "tools/aidd-master/scripts/gates/G_TESTES.py",
+      "data": "2026-10-01",
+      "motivo": "conhecida no inventario inicial (Ticket 6): nunca_conter(**/G_*.py); atual=aidd-master; dono=aidd-forge"
+    },
+    {
+      "arquivo": "tools/aidd-master/templates/core/Dockerfile",
+      "data": "2026-10-01",
+      "motivo": "conhecida no inventario inicial (Ticket 6): nunca_conter(**/Dockerfile*); atual=aidd-master; dono=aidd-ops"
+    },
+    {
+      "arquivo": "tools/aidd-master/templates/core/deploy.sh",
+      "data": "2026-10-01",
+      "motivo": "conhecida no inventario inicial (Ticket 6): nunca_conter(**/deploy.sh); atual=aidd-master; dono=aidd-ops"
+    },
+    {
+      "arquivo": "tools/aidd-master/templates/core/docker-compose.yml",
+      "data": "2026-10-01",
+      "motivo": "conhecida no inventario inicial (Ticket 6): nunca_conter(**/docker-compose*); atual=aidd-master; dono=aidd-ops"
+    },
+    {
+      "arquivo": "tools/aidd-master/templates/core/nginx/nginx.conf",
+      "data": "2026-10-01",
+      "motivo": "conhecida no inventario inicial (Ticket 6): nunca_conter(**/nginx/**); atual=aidd-master; dono=aidd-ops"
+    },
+    {
+      "arquivo": "tools/aidd-master/templates/core/nginx/ssl/generate_ssl.py",
+      "data": "2026-10-01",
+      "motivo": "conhecida no inventario inicial (Ticket 6): nunca_conter(**/nginx/**); atual=aidd-master; dono=aidd-ops"
+    },
+    {
+      "arquivo": "tools/aidd-master/templates/gates/G_ARQUITETURA.py",
+      "data": "2026-10-01",
+      "motivo": "conhecida no inventario inicial (Ticket 6): nunca_conter(**/G_*.py); atual=aidd-master; dono=aidd-forge"
+    },
+    {
+      "arquivo": "tools/aidd-master/templates/gates/G_CHAOS.py",
+      "data": "2026-10-01",
+      "motivo": "conhecida no inventario inicial (Ticket 6): nunca_conter(**/G_*.py); atual=aidd-master; dono=aidd-forge"
+    },
+    {
+      "arquivo": "tools/aidd-master/templates/gates/G_CONTRACTS.py",
+      "data": "2026-10-01",
+      "motivo": "conhecida no inventario inicial (Ticket 6): nunca_conter(**/G_*.py); atual=aidd-master; dono=aidd-forge"
+    },
+    {
+      "arquivo": "tools/aidd-master/templates/gates/G_ESTRUTURA.py",
+      "data": "2026-10-01",
+      "motivo": "conhecida no inventario inicial (Ticket 6): nunca_conter(**/G_*.py); atual=aidd-master; dono=aidd-forge"
+    },
+    {
+      "arquivo": "tools/aidd-master/templates/gates/G_HARNESS_COMPAT.py",
+      "data": "2026-10-01",
+      "motivo": "conhecida no inventario inicial (Ticket 6): nunca_conter(**/G_*.py); atual=aidd-master; dono=aidd-forge"
+    },
+    {
+      "arquivo": "tools/aidd-master/templates/gates/G_PERFORMANCE.py",
+      "data": "2026-10-01",
+      "motivo": "conhecida no inventario inicial (Ticket 6): nunca_conter(**/G_*.py); atual=aidd-master; dono=aidd-forge"
+    },
+    {
+      "arquivo": "tools/aidd-master/templates/gates/G_QUALIDADE.py",
+      "data": "2026-10-01",
+      "motivo": "conhecida no inventario inicial (Ticket 6): nunca_conter(**/G_*.py); atual=aidd-master; dono=aidd-forge"
+    },
+    {
+      "arquivo": "tools/aidd-master/templates/gates/G_SEGREDOS.py",
+      "data": "2026-10-01",
+      "motivo": "conhecida no inventario inicial (Ticket 6): nunca_conter(**/G_*.py); atual=aidd-master; dono=aidd-forge"
+    },
+    {
+      "arquivo": "tools/aidd-master/templates/gates/G_SEGURANCA.py",
+      "data": "2026-10-01",
+      "motivo": "conhecida no inventario inicial (Ticket 6): nunca_conter(**/G_*.py); atual=aidd-master; dono=aidd-forge"
+    },
+    {
+      "arquivo": "tools/aidd-master/templates/gates/G_TESTES.py",
+      "data": "2026-10-01",
+      "motivo": "conhecida no inventario inicial (Ticket 6): nunca_conter(**/G_*.py); atual=aidd-master; dono=aidd-forge"
+    },
+    {
+      "arquivo": "tools/aidd-master/templates/v2/Dockerfile",
+      "data": "2026-10-01",
+      "motivo": "conhecida no inventario inicial (Ticket 6): nunca_conter(**/Dockerfile*); atual=aidd-master; dono=aidd-ops"
+    },
+    {
+      "arquivo": "tools/aidd-master/templates/v2/deploy.sh",
+      "data": "2026-10-01",
+      "motivo": "conhecida no inventario inicial (Ticket 6): nunca_conter(**/deploy.sh); atual=aidd-master; dono=aidd-ops"
+    },
+    {
+      "arquivo": "tools/aidd-master/templates/v2/docker-compose.yml",
+      "data": "2026-10-01",
+      "motivo": "conhecida no inventario inicial (Ticket 6): nunca_conter(**/docker-compose*); atual=aidd-master; dono=aidd-ops"
+    },
+    {
+      "arquivo": "tools/aidd-master/templates/v2/nginx/nginx.conf",
+      "data": "2026-10-01",
+      "motivo": "conhecida no inventario inicial (Ticket 6): nunca_conter(**/nginx/**); atual=aidd-master; dono=aidd-ops"
+    },
+    {
+      "arquivo": "tools/aidd-master/templates/v2/nginx/ssl/generate_ssl.py",
+      "data": "2026-10-01",
+      "motivo": "conhecida no inventario inicial (Ticket 6): nunca_conter(**/nginx/**); atual=aidd-master; dono=aidd-ops"
+    },
+    {
+      "arquivo": "tools/aidd-open/gates/G_FACTORY_ANALYSIS.py",
+      "data": "2026-10-01",
+      "motivo": "conhecida no inventario inicial (Ticket 6): nunca_conter(**/G_*.py); atual=aidd-open; dono=aidd-forge"
+    },
+    {
+      "arquivo": "tools/aidd-open/gates/G_FACTORY_COMPOSE.py",
+      "data": "2026-10-01",
+      "motivo": "conhecida no inventario inicial (Ticket 6): nunca_conter(**/G_*.py); atual=aidd-open; dono=aidd-forge"
+    },
+    {
+      "arquivo": "tools/aidd-open/gates/G_FACTORY_ENV.py",
+      "data": "2026-10-01",
+      "motivo": "conhecida no inventario inicial (Ticket 6): nunca_conter(**/G_*.py); atual=aidd-open; dono=aidd-forge"
+    },
+    {
+      "arquivo": "tools/aidd-open/gates/G_FACTORY_INIT_DB.py",
+      "data": "2026-10-01",
+      "motivo": "conhecida no inventario inicial (Ticket 6): nunca_conter(**/G_*.py); atual=aidd-open; dono=aidd-forge"
+    },
+    {
+      "arquivo": "tools/aidd-open/gates/G_FACTORY_INTEGRATION.py",
+      "data": "2026-10-01",
+      "motivo": "conhecida no inventario inicial (Ticket 6): nunca_conter(**/G_*.py); atual=aidd-open; dono=aidd-forge"
+    },
+    {
+      "arquivo": "tools/aidd-open/gates/G_FACTORY_MVP.py",
+      "data": "2026-10-01",
+      "motivo": "conhecida no inventario inicial (Ticket 6): nunca_conter(**/G_*.py); atual=aidd-open; dono=aidd-forge"
+    },
+    {
+      "arquivo": "tools/aidd-open/src/core/swagger_generator.py",
+      "data": "2026-10-01",
+      "motivo": "conhecida no inventario inicial (Ticket 6): nunca_conter(**/swagger*); atual=aidd-open; dono=aidd-master"
+    },
+    {
+      "arquivo": "tools/aidd-open/templates/docs/openapi.json.j2",
+      "data": "2026-10-01",
+      "motivo": "conhecida no inventario inicial (Ticket 6): nunca_conter(**/openapi*); atual=aidd-open; dono=aidd-master"
+    },
+    {
+      "arquivo": "tools/aidd-open/templates/vsa/Dockerfile",
+      "data": "2026-10-01",
+      "motivo": "conhecida no inventario inicial (Ticket 6): nunca_conter(**/Dockerfile*); atual=aidd-open; dono=aidd-ops"
+    },
+    {
+      "arquivo": "tools/aidd-open/templates/vsa/deploy.sh",
+      "data": "2026-10-01",
+      "motivo": "conhecida no inventario inicial (Ticket 6): nunca_conter(**/deploy.sh); atual=aidd-open; dono=aidd-ops"
+    },
+    {
+      "arquivo": "tools/aidd-open/templates/vsa/docker-compose.yml",
+      "data": "2026-10-01",
+      "motivo": "conhecida no inventario inicial (Ticket 6): nunca_conter(**/docker-compose*); atual=aidd-open; dono=aidd-ops"
+    },
+    {
+      "arquivo": "tools/aidd-open/templates/vsa/mcp_server.py",
+      "data": "2026-10-01",
+      "motivo": "conhecida no inventario inicial (Ticket 6): nunca_conter(**/mcp_server*); atual=aidd-open; dono=aidd-forge"
+    },
+    {
+      "arquivo": "tools/aidd-open/templates/vsa/openapi.py",
+      "data": "2026-10-01",
+      "motivo": "conhecida no inventario inicial (Ticket 6): nunca_conter(**/openapi*); atual=aidd-open; dono=aidd-forge"
+    },
+    {
+      "arquivo": "tools/aidd-open/templates/vsa/swagger.html",
+      "data": "2026-10-01",
+      "motivo": "conhecida no inventario inicial (Ticket 6): nunca_conter(**/swagger*); atual=aidd-open; dono=aidd-forge"
+    },
+    {
+      "arquivo": "tools/aidd-open/templates/vsa/webhook_studio.html",
+      "data": "2026-10-01",
+      "motivo": "conhecida no inventario inicial (Ticket 6): nunca_conter(**/webhook*); atual=aidd-open; dono=aidd-forge"
+    },
+    {
+      "arquivo": "tools/aidd-open/templates/vsa/webhooks.py",
+      "data": "2026-10-01",
+      "motivo": "conhecida no inventario inicial (Ticket 6): nunca_conter(**/webhook*); atual=aidd-open; dono=aidd-forge"
+    },
+    {
+      "arquivo": "tools/aidd-ops/gates/G_OPS_MVP.py",
+      "data": "2026-10-01",
+      "motivo": "conhecida no inventario inicial (Ticket 6): nunca_conter(**/G_*.py); atual=aidd-ops; dono=aidd-forge"
+    },
+    {
+      "arquivo": "tools/aidd-ops/gates/G_OPS_SSH.py",
+      "data": "2026-10-01",
+      "motivo": "conhecida no inventario inicial (Ticket 6): nunca_conter(**/G_*.py); atual=aidd-ops; dono=aidd-forge"
+    },
+    {
+      "arquivo": "tools/aidd-ops/src/core/__init__.py",
+      "data": "2026-10-01",
+      "motivo": "conhecida no inventario inicial (Ticket 6): nunca_conter(**/src/core/**); atual=aidd-ops; dono=aidd-master"
+    },
+    {
+      "arquivo": "tools/aidd-ops/src/core/cofre_credenciais.py",
+      "data": "2026-10-01",
+      "motivo": "conhecida no inventario inicial (Ticket 6): nunca_conter(**/src/core/**); atual=aidd-ops; dono=aidd-master"
+    },
+    {
+      "arquivo": "tools/aidd-ops/src/core/compose_preflight.py",
+      "data": "2026-10-01",
+      "motivo": "conhecida no inventario inicial (Ticket 6): nunca_conter(**/src/core/**); atual=aidd-ops; dono=aidd-master"
+    },
+    {
+      "arquivo": "tools/aidd-ops/src/core/coolify.py",
+      "data": "2026-10-01",
+      "motivo": "conhecida no inventario inicial (Ticket 6): nunca_conter(**/src/core/**); atual=aidd-ops; dono=aidd-master"
+    },
+    {
+      "arquivo": "tools/aidd-ops/src/core/preflight.py",
+      "data": "2026-10-01",
+      "motivo": "conhecida no inventario inicial (Ticket 6): nunca_conter(**/src/core/**); atual=aidd-ops; dono=aidd-master"
+    },
+    {
+      "arquivo": "tools/aidd-ops/src/core/result.py",
+      "data": "2026-10-01",
+      "motivo": "conhecida no inventario inicial (Ticket 6): nunca_conter(**/src/core/**); atual=aidd-ops; dono=aidd-master"
+    },
+    {
+      "arquivo": "tools/aidd-ops/src/core/ssh_runner.py",
+      "data": "2026-10-01",
+      "motivo": "conhecida no inventario inicial (Ticket 6): nunca_conter(**/src/core/**); atual=aidd-ops; dono=aidd-master"
+    },
+    {
+      "arquivo": "tools/aidd-ops/src/core/uptime_kuma.py",
+      "data": "2026-10-01",
+      "motivo": "conhecida no inventario inicial (Ticket 6): nunca_conter(**/src/core/**); atual=aidd-ops; dono=aidd-master"
+    },
+    {
+      "arquivo": "tools/aidd-planner/gates/G_PLANNER_COERENCIA_FLUXO.py",
+      "data": "2026-10-01",
+      "motivo": "conhecida no inventario inicial (Ticket 6): nunca_conter(**/G_*.py); atual=aidd-planner; dono=aidd-forge"
+    },
+    {
+      "arquivo": "tools/aidd-planner/gates/G_PLANNER_SCHEMA.py",
+      "data": "2026-10-01",
+      "motivo": "conhecida no inventario inicial (Ticket 6): nunca_conter(**/G_*.py); atual=aidd-planner; dono=aidd-forge"
+    },
+    {
+      "arquivo": "tools/aidd-planner/gates/G_PLANNER_SINE_QUA_NON.py",
+      "data": "2026-10-01",
+      "motivo": "conhecida no inventario inicial (Ticket 6): nunca_conter(**/G_*.py); atual=aidd-planner; dono=aidd-forge"
+    },
+    {
+      "arquivo": "tools/aidd-pure/scripts/aidd_inject.py",
+      "data": "2026-10-01",
+      "motivo": "conhecida no inventario inicial (Ticket 6): nunca_conter(**/*inject*); atual=aidd-pure; dono=aidd-enterprise+aidd-forge+aidd-master+aidd-ops"
+    },
+    {
+      "arquivo": "tools/aidd-pure/scripts/core/injector/__init__.py",
+      "data": "2026-10-01",
+      "motivo": "conhecida no inventario inicial (Ticket 6): nunca_conter(**/*inject*); atual=aidd-pure; dono=aidd-enterprise+aidd-forge+aidd-master+aidd-ops"
+    },
+    {
+      "arquivo": "tools/aidd-pure/scripts/core/injector/contrato.py",
+      "data": "2026-10-01",
+      "motivo": "conhecida no inventario inicial (Ticket 6): nunca_conter(**/*inject*); atual=aidd-pure; dono=aidd-enterprise+aidd-forge+aidd-master+aidd-ops"
+    },
+    {
+      "arquivo": "tools/aidd-pure/scripts/core/injector/detector_camada.py",
+      "data": "2026-10-01",
+      "motivo": "conhecida no inventario inicial (Ticket 6): nunca_conter(**/*inject*); atual=aidd-pure; dono=aidd-enterprise+aidd-forge+aidd-master+aidd-ops"
+    },
+    {
+      "arquivo": "tools/aidd-pure/scripts/core/injector/injetor.py",
+      "data": "2026-10-01",
+      "motivo": "conhecida no inventario inicial (Ticket 6): nunca_conter(**/*inject*); atual=aidd-pure; dono=aidd-enterprise+aidd-forge+aidd-master+aidd-ops"
+    },
+    {
+      "arquivo": "tools/aidd-pure/scripts/core/injector/materializador.py",
+      "data": "2026-10-01",
+      "motivo": "conhecida no inventario inicial (Ticket 6): nunca_conter(**/*inject*); atual=aidd-pure; dono=aidd-enterprise+aidd-forge+aidd-master+aidd-ops"
+    },
+    {
+      "arquivo": "tools/aidd-pure/scripts/core/injector/profiles_registry.py",
+      "data": "2026-10-01",
+      "motivo": "conhecida no inventario inicial (Ticket 6): nunca_conter(**/*inject*); atual=aidd-pure; dono=aidd-enterprise+aidd-forge+aidd-master+aidd-ops"
+    },
+    {
+      "arquivo": "tools/aidd-pure/scripts/core/injector/scaffolds.py",
+      "data": "2026-10-01",
+      "motivo": "conhecida no inventario inicial (Ticket 6): nunca_conter(**/*inject*); atual=aidd-pure; dono=aidd-enterprise+aidd-forge+aidd-master+aidd-ops"
+    },
+    {
+      "arquivo": "tools/aidd-pure/scripts/core/injector/schema_injector_request.json",
+      "data": "2026-10-01",
+      "motivo": "conhecida no inventario inicial (Ticket 6): nunca_conter(**/*inject*); atual=aidd-pure; dono=aidd-enterprise+aidd-forge+aidd-master+aidd-ops"
+    },
+    {
+      "arquivo": "tools/aidd-pure/scripts/core/injector/sincronizador_harness.py",
+      "data": "2026-10-01",
+      "motivo": "conhecida no inventario inicial (Ticket 6): nunca_conter(**/*inject*); atual=aidd-pure; dono=aidd-enterprise+aidd-forge+aidd-master+aidd-ops"
+    },
+    {
+      "arquivo": "tools/aidd-pure/scripts/gates/G_BLOQUEAR_SEGREDOS.py",
+      "data": "2026-10-01",
+      "motivo": "conhecida no inventario inicial (Ticket 6): nunca_conter(**/G_*.py); atual=aidd-pure; dono=aidd-forge"
+    },
+    {
+      "arquivo": "tools/aidd-pure/scripts/gates/G_CYBERSECURITY_OWASP.py",
+      "data": "2026-10-01",
+      "motivo": "conhecida no inventario inicial (Ticket 6): nunca_conter(**/G_*.py); atual=aidd-pure; dono=aidd-forge"
+    },
+    {
+      "arquivo": "tools/aidd-pure/scripts/gates/G_HARNESS_COMPAT.py",
+      "data": "2026-10-01",
+      "motivo": "conhecida no inventario inicial (Ticket 6): nunca_conter(**/G_*.py); atual=aidd-pure; dono=aidd-forge"
+    },
+    {
+      "arquivo": "tools/aidd-pure/scripts/gates/G_INJECT.py",
+      "data": "2026-10-01",
+      "motivo": "conhecida no inventario inicial (Ticket 6): nunca_conter(**/G_*.py); atual=aidd-pure; dono=aidd-forge"
+    },
+    {
+      "arquivo": "tools/aidd-pure/scripts/gates/G_INTEGRACAO_CROSS_SCRIPT.py",
+      "data": "2026-10-01",
+      "motivo": "conhecida no inventario inicial (Ticket 6): nunca_conter(**/G_*.py); atual=aidd-pure; dono=aidd-forge"
+    },
+    {
+      "arquivo": "tools/aidd-pure/scripts/gates/G_SANDBOX_NIVEL_1.py",
+      "data": "2026-10-01",
+      "motivo": "conhecida no inventario inicial (Ticket 6): nunca_conter(**/G_*.py); atual=aidd-pure; dono=aidd-forge"
+    },
+    {
+      "arquivo": "tools/aidd-pure/scripts/gates/G_SESSAO_HERMETICA.py",
+      "data": "2026-10-01",
+      "motivo": "conhecida no inventario inicial (Ticket 6): nunca_conter(**/G_*.py); atual=aidd-pure; dono=aidd-forge"
+    },
+    {
+      "arquivo": "tools/aidd-pure/scripts/gates/G_TOKENOMICS.py",
+      "data": "2026-10-01",
+      "motivo": "conhecida no inventario inicial (Ticket 6): nunca_conter(**/G_*.py); atual=aidd-pure; dono=aidd-forge"
+    },
+    {
+      "arquivo": "tools/aidd-pure/scripts/gates/G_VERIFICAR_LLM_PRONTO.py",
+      "data": "2026-10-01",
+      "motivo": "conhecida no inventario inicial (Ticket 6): nunca_conter(**/G_*.py); atual=aidd-pure; dono=aidd-forge"
+    },
+    {
+      "arquivo": "tools/aidd-pure/tests/test_aidd_inject_cli.py",
+      "data": "2026-10-01",
+      "motivo": "conhecida no inventario inicial (Ticket 6): nunca_conter(**/*inject*); atual=aidd-pure; dono=aidd-enterprise+aidd-forge+aidd-master+aidd-ops"
+    },
+    {
+      "arquivo": "tools/aidd-pure/tests/test_gate_inject.py",
+      "data": "2026-10-01",
+      "motivo": "conhecida no inventario inicial (Ticket 6): nunca_conter(**/*inject*); atual=aidd-pure; dono=aidd-enterprise+aidd-forge+aidd-master+aidd-ops"
+    },
+    {
+      "arquivo": "tools/aidd-pure/tests/test_injector_core.py",
+      "data": "2026-10-01",
+      "motivo": "conhecida no inventario inicial (Ticket 6): nunca_conter(**/*inject*); atual=aidd-pure; dono=aidd-enterprise+aidd-forge+aidd-master+aidd-ops"
+    },
+    {
+      "arquivo": "tools/aidd-pure/tests/test_injector_materializer.py",
+      "data": "2026-10-01",
+      "motivo": "conhecida no inventario inicial (Ticket 6): nunca_conter(**/*inject*); atual=aidd-pure; dono=aidd-enterprise+aidd-forge+aidd-master+aidd-ops"
+    },
+    {
+      "arquivo": "tools/aidd-pure/tests/test_injector_sincronizador.py",
+      "data": "2026-10-01",
+      "motivo": "conhecida no inventario inicial (Ticket 6): nunca_conter(**/*inject*); atual=aidd-pure; dono=aidd-enterprise+aidd-forge+aidd-master+aidd-ops"
+    }
+  ]
+}

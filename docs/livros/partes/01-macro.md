@@ -99,8 +99,8 @@ casa vai poder existir). Só depois entra o arquiteto, que desenha a planta baix
 decide quantos cômodos a casa vai ter (**isso é o `aidd-planner`**). Com o terreno
 pronto e a planta aprovada, os pedreiros finalmente erguem as paredes — e aqui o
 ecossistema oferece três equipes de obra diferentes conforme o tipo de casa
-(`aidd-generator` para construir do zero, `aidd-factory` para montar com peças
-pré-fabricadas open-source, `aidd-bridge` para reformar uma casa pré-fabricada que veio
+(`aidd-pure` para construir do zero, `aidd-open` para montar com peças
+pré-fabricadas open-source, `aidd-freedom` para reformar uma casa pré-fabricada que veio
 de outro fornecedor). Depois da obra pronta vem a mobília e as instalações finais
 (`aidd-master` une os cômodos num único sistema elétrico e hidráulico coerente,
 `aidd-enterprise` troca as fechaduras por trava de cofre) e, por fim, a concessionária
@@ -120,9 +120,9 @@ variações — terreno e planta sempre antes da construção, nunca depois.
 | :------------------------ | :------------------------------------------------------------------------ | :------------------------------------------------- |
 | `aidd-forge`      | Fundação: prepara o terreno, injeta governança, cerca fases, purga contexto        | `python ecossistema.py forge init [pasta]`         |
 | `aidd-planner`    | Planejamento: intake BDD/SDD e geração do combustível formal dos três fluxos       | `python ecossistema.py planner init --fluxo N`     |
-| `aidd-generator`  | Fábrica autônoma de oito fases: ideia → sistema testado (motor do Fluxo 01)        | `python ecossistema.py generate "<ideia>"`         |
-| `aidd-factory`    | Integrador multi-serviço: curadoria open-source, gateway, compose (motor Fluxo 02) | `python ecossistema.py factory --plano <arquivo>`  |
-| `aidd-bridge`     | Libertador low-code: extrai Lovable/v0/Bolt do lock-in (motor do Fluxo 03)         | `python ecossistema.py bridge unpack <projeto>`    |
+| `aidd-pure`  | Fábrica autônoma de oito fases: ideia → sistema testado (motor do Fluxo 01)        | `python ecossistema.py generate "<ideia>"`         |
+| `aidd-open`    | Integrador multi-serviço: curadoria open-source, gateway, compose (motor Fluxo 02) | `python ecossistema.py factory --plano <arquivo>`  |
+| `aidd-freedom`     | Libertador low-code: extrai Lovable/v0/Bolt do lock-in (motor do Fluxo 03)         | `python ecossistema.py bridge unpack <projeto>`    |
 | `aidd-master`     | Harmonizador: monólito modular em fatias verticais, SQLite WAL, EventBus           | `python ecossistema.py master add-module <nome>`   |
 | `aidd-enterprise` | Blindagem: injeção de componentes validados por SHA-256, zero-trust, drift          | `python ecossistema.py enterprise inject <t> <n>`  |
 | `aidd-ops`        | Infraestrutura: sizing de VPS, Docker, Traefik, hardening Ansible, observabilidade | `python ecossistema.py ops "<requisito>"`          |
@@ -131,7 +131,7 @@ variações — terreno e planta sempre antes da construção, nunca depois.
 #painel("Por que oito e não uma")[
   A separação não é organizacional, é de *regime de execução*. `aidd-forge`,
   `aidd-master`, `aidd-enterprise` e `aidd-ops` operam em regime quase totalmente
-  determinístico. `aidd-generator` e partes do `aidd-factory` operam em regime misto,
+  determinístico. `aidd-pure` e partes do `aidd-open` operam em regime misto,
   com etapas de modelo cercadas por portões. Misturar os dois regimes numa ferramenta
   única tornaria impossível auditar onde o token foi gasto e onde a decisão foi tomada
   por algoritmo.
@@ -244,7 +244,7 @@ persistência estruturada.
 
 ### 2.2.2 Micro-ambientes por fase
 
-O `aidd-generator` materializa, para cada uma das oito fases, um `AGENTS.md`
+O `aidd-pure` materializa, para cada uma das oito fases, um `AGENTS.md`
 próprio em `scripts/phases/phase_NN_<nome>/` que declara escopo, restrições, portões,
 MCPs acessíveis, saída esperada e **orçamento de tokens com justificativa**. Só o
 micro-ambiente da fase em execução é carregado em memória.
@@ -335,9 +335,9 @@ economia de tokens — e é por isso que os capítulos 2 e 4 deste livro se toca
 
 `AGENTS.md` §1, §2 e §6; `docs/protocolos/AGENTS-REFERENCIA-COMPLETA.md` §3;
 `componentes/compartilhado/specs/*.schema.json`;
-`tools/aidd-generator/scripts/phases/phase_*/AGENTS.md`;
-`tools/aidd-generator/config/token_budgets.json`;
-`tools/aidd-generator/scripts/gates/G_TOKENOMICS.py`; `gates/G_ZERO_HEADLESS.py`;
+`tools/aidd-pure/scripts/phases/phase_*/AGENTS.md`;
+`tools/aidd-pure/config/token_budgets.json`;
+`tools/aidd-pure/scripts/gates/G_TOKENOMICS.py`; `gates/G_ZERO_HEADLESS.py`;
 `tools/aidd-forge/aidd_forge/core/subagent_purger.py`.
 
 # Capítulo 3 — Arquitetura do ecossistema
@@ -519,11 +519,11 @@ Disso decorre a hierarquia de decisão que atravessa todo o repositório:
 ## 4.2 Mecanismo 1 — Determinismo como economia primária
 
 A maior economia do ecossistema não vem de comprimir texto: vem de **não chamar o
-modelo**. As Fases 1, 5, 6 e 7 do `aidd-generator` declaram consumo zero porque são
-Python puro. As Fases 1, 4, 5 e 6 do `aidd-factory` são 100% determinísticas por
+modelo**. As Fases 1, 5, 6 e 7 do `aidd-pure` declaram consumo zero porque são
+Python puro. As Fases 1, 4, 5 e 6 do `aidd-open` são 100% determinísticas por
 contrato — o `AGENTS.md` da ferramenta chama essa invariante de `G_FACTORY_DETERMINISTIC`,
 mas ela é um rótulo de regra, não um arquivo: quem cobra de fato são os seis portões
-reais em `tools/aidd-factory/gates/` (`G_FACTORY_ANALYSIS`, `G_FACTORY_COMPOSE`,
+reais em `tools/aidd-open/gates/` (`G_FACTORY_ANALYSIS`, `G_FACTORY_COMPOSE`,
 `G_FACTORY_ENV`, `G_FACTORY_INIT_DB`, `G_FACTORY_INTEGRATION`, `G_FACTORY_MVP`). Todo o `aidd-forge`, todo o `aidd-master`, todo o
 `aidd-enterprise` e o pipeline de três fases do `aidd-ops` operam sem chamada de
 modelo. Os 177 arquivos `G_*.py` do repositório são, sem exceção, determinísticos: leem
@@ -556,7 +556,7 @@ verifica que o código entregue está completo. Comprimir a saída para o usuár
 permitido — a economia acontece na entrada e no raciocínio, nunca na qualidade do que
 é entregue.
 
-O linter estático `tools/aidd-generator/scripts/core/caveman_linter.py` audita, por
+O linter estático `tools/aidd-pure/scripts/core/caveman_linter.py` audita, por
 AST e sem gastar um único token, se as constantes de prompt das fases seguem a tríade
 ENTRADA (inglês) → COT (caveman) → SAÍDA (PT-BR).
 
@@ -590,7 +590,7 @@ realmente usada.
 
 ## 4.6 Mecanismo 5 — Estado em arquivo, não em conversa
 
-O `AGENTS.md` do `aidd-generator` é explícito: o estado é persistido em
+O `AGENTS.md` do `aidd-pure` é explícito: o estado é persistido em
 `PLANO-EXECUCAO-ESTRUTURADO.json` e os agentes leem o estado em JSON — cerca de 5 mil
 tokens — em vez do histórico conversacional, que cresce sem limite.
 
@@ -600,13 +600,13 @@ arquivos alterados e vereditos de portões, permitindo recuperação de sessão 
 depender de histórico volátil. `get_latest_session_state()` devolve os dez eventos mais
 recentes de uma sessão.
 
-O `tools/aidd-generator/scripts/core/pipeline_state.py` do gerador adiciona retomada inteligente: com `--resume`, o
+O `tools/aidd-pure/scripts/core/pipeline_state.py` do gerador adiciona retomada inteligente: com `--resume`, o
 pipeline pula fases já completas cujos artefatos são válidos, evitando reconsumo de
 tokens em trabalho já feito.
 
 ## 4.7 Mecanismo 6 — Orçamento formal e auditoria de tokenomics
 
-`tools/aidd-generator/config/token_budgets.json` declara o teto por fase e o limiar de
+`tools/aidd-pure/config/token_budgets.json` declara o teto por fase e o limiar de
 alerta de desvio (1,2 — vinte por cento acima do orçamento).
 
 | Fase | Nome           | Orçamento | Natureza declarada                                   |
@@ -655,12 +655,12 @@ consumir mais contexto do que três fases inteiras do pipeline.
 
 `componentes/compartilhado/src-core/caveman_protocol.py`; `core/context_slicer.py`;
 `core/mcp_dynamic_router.py`; `core/cognitive_ledger.py`;
-`tools/aidd-generator/config/token_budgets.json`;
-`tools/aidd-generator/scripts/gates/G_TOKENOMICS.py`;
-`tools/aidd-generator/scripts/core/caveman_linter.py`;
-`tools/aidd-generator/scripts/core/pipeline_state.py`;
+`tools/aidd-pure/config/token_budgets.json`;
+`tools/aidd-pure/scripts/gates/G_TOKENOMICS.py`;
+`tools/aidd-pure/scripts/core/caveman_linter.py`;
+`tools/aidd-pure/scripts/core/pipeline_state.py`;
 `docs/issues/saneamento-governanca/08-compressor-sandeco-ligar-ou-remover.md`;
-`tools/aidd-generator/scripts/benchmark_tokenomics.py`; `AGENTS.md` §1 e Lei #4.
+`tools/aidd-pure/scripts/benchmark_tokenomics.py`; `AGENTS.md` §1 e Lei #4.
 
 # Capítulo 5 — Governança executável: portões, hooks e auditoria
 

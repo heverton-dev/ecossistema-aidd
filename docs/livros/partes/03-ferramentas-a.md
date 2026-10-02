@@ -27,8 +27,8 @@ A oitava seção é a *Rastreabilidade*: os arquivos do repositório que sustent
 capítulo.
 
 A ordem dos capítulos segue a ordem da esteira, não a ordem alfabética: primeiro a
-cabeça (`aidd-forge`, `aidd-planner`), depois os três motores (`aidd-generator`,
-`aidd-factory`, `aidd-bridge`), depois a cauda (`aidd-master`, `aidd-enterprise`,
+cabeça (`aidd-forge`, `aidd-planner`), depois os três motores (`aidd-pure`,
+`aidd-open`, `aidd-freedom`), depois a cauda (`aidd-master`, `aidd-enterprise`,
 `aidd-ops`).
 
 # Capítulo 13 — `aidd-forge`: a fundação
@@ -351,7 +351,7 @@ para o caminho do nicho dinâmico no export.
 **Hooks e regras.** Lei #10 (Quarteto), Lei #7 (usuário autoritativo), Zero Stubs.
 
 **Entrega.** Entrega `PLANNER.json` no diretório do projeto. Entrega **para o motor do
-fluxo escolhido** — `aidd-generator`, `aidd-factory` ou `aidd-bridge`.
+fluxo escolhido** — `aidd-pure`, `aidd-open` ou `aidd-freedom`.
 
 ## 14.6 Como funciona dentro da camada FLUXO
 
@@ -391,7 +391,7 @@ cadeia anti-*vibe coding* completa desemboca num plano.
 **Determinismo.** Validação e exportação determinísticas.
 
 **Ferramentas acessadas.** `componentes/compartilhado/specs/plano-infraestrutura.schema.json`
-como contrato compartilhado com `aidd-ops` e `aidd-factory`.
+como contrato compartilhado com `aidd-ops` e `aidd-open`.
 
 **Hooks e regras.** A regra de que o export do factory deve devolver o envelope exato do
 `aidd-ops`, e nunca um formato próprio.
@@ -407,7 +407,7 @@ consumir sem tradução. É o que torna possível trocar o motor sem reescrever 
 `componentes/compartilhado/specs/handoff-planner-to-engine.schema.json`;
 `scripts/orquestrador_sincrono.py::etapa_02_planner`.
 
-# Capítulo 15 — `aidd-generator`: a fábrica autônoma de oito fases
+# Capítulo 15 — `aidd-pure`: a fábrica autônoma de oito fases
 
 ```{=typst}
 #ficha(
@@ -423,9 +423,9 @@ consumir sem tradução. É o que torna possível trocar o motor sem reescrever 
 ## 15.1 O que é a ferramenta
 
 Continuando a obra: com o terreno pronto (forge) e a planta aprovada (planner), o
-`aidd-generator` é a equipe de pedreiros que ergue a casa **tijolo por tijolo, sob
+`aidd-pure` é a equipe de pedreiros que ergue a casa **tijolo por tijolo, sob
 medida**, sem usar nenhuma peça pré-fabricada — é a opção certa quando a planta pede
-algo que nenhum catálogo pronto atende. `aidd-generator` é a ferramenta mais complexa
+algo que nenhum catálogo pronto atende. `aidd-pure` é a ferramenta mais complexa
 do ecossistema e a única que constrói software do zero. É um pipeline de oito fases,
 com máquina de estados formal validada por JSON Schema Draft 2020-12, que vai da
 pesquisa de referências reais até a entrega de código funcional verificado por pytest.
@@ -447,7 +447,7 @@ No ecossistema, o gerador cumpre dois papéis além de gerar software.
 
 É o **laboratório de tokenomics**: `config/token_budgets.json`, `G_TOKENOMICS`,
 `benchmark_tokenomics.py`, `caveman_linter.py` e
-`tools/aidd-generator/scripts/core/pipeline_state.py` estão todos aqui. As técnicas de economia de tokens do
+`tools/aidd-pure/scripts/core/pipeline_state.py` estão todos aqui. As técnicas de economia de tokens do
 ecossistema são desenvolvidas e medidas neste contexto.
 
 É o **laboratório de engenharia agêntica**: Fleet Discovery (descoberta automática dos
@@ -537,7 +537,7 @@ exatamente qual fase falhou e por quê.
 `G_BLOQUEAR_SEGREDOS`, `G_INTEGRACAO_CROSS_SCRIPT`, `G_VERIFICAR_LLM_PRONTO`,
 `G_INJECT`, `G_HARNESS_COMPAT`, e o comparativo `AUDITAR_COMPARATIVO_HARNESS`.
 
-**Habilidades.** `aidd-generator-runner` é a dona de `/generate`. As Fases 1 e 2
+**Habilidades.** `aidd-pure-runner` é a dona de `/generate`. As Fases 1 e 2
 utilizam `/aidd-spec` e `/aidd-tickets` explicitamente, conforme o `AGENTS.md`, para
 impedir *vibe coding*.
 
@@ -549,7 +549,7 @@ Fase 8, `_validar_contrato_ast` roda antes do pytest real.
 **Ferramentas acessadas.** API do GitHub e do HuggingFace (Fase 1, via `requests`);
 provedor de LLM configurado, sempre através de `solicitar_llm()` de
 `utils_delegacao.py` — nunca chamada direta a `litellm`; `pytest` (Fase 8);
-`Repomix` via `tools/aidd-generator/scripts/core/repomix_runner.py` para empacotamento de contexto; Typst (Fase 6,
+`Repomix` via `tools/aidd-pure/scripts/core/repomix_runner.py` para empacotamento de contexto; Typst (Fase 6,
 geração de PDF); MCP de sistema de arquivos; MCP verificador de CVE em `mcps/`.
 
 **Hooks e regras.** Prompt em inglês com saída em PT-BR (tríade Caveman, auditada pelo
@@ -592,7 +592,7 @@ ideia e um sistema. É também o campo de prova das técnicas de economia: rodar
 **Portões.** `G_TOKENOMICS` é o portão que liga esta ferramenta à Lei #8 — ele reprova
 quem alegar medição real para valor autodeclarado.
 
-**Habilidades.** `aidd-generator-runner` é a dona de `/generate`; `aidd-orca` e `aidd-orchestrate` quando a execução acontece em ambiente orquestrado.
+**Habilidades.** `aidd-pure-runner` é a dona de `/generate`; `aidd-orca` e `aidd-orchestrate` quando a execução acontece em ambiente orquestrado.
 
 **Determinismo.** Metade do pipeline.
 
@@ -610,15 +610,15 @@ fase, custo em dólares e resultado de pytest.
 
 ## 15.8 Rastreabilidade
 
-`tools/aidd-generator/AGENTS.md` e `AGENTS-WORKFLOW.md`;
-`tools/aidd-generator/scripts/pipeline_completo.py`;
-`tools/aidd-generator/scripts/phases/` (8 micro-ambientes + 8 módulos de fase);
-`tools/aidd-generator/scripts/fsm_engine.py`;
-`tools/aidd-generator/scripts/core/pipeline_state.py`;
-`tools/aidd-generator/config/token_budgets.json`;
-`tools/aidd-generator/scripts/gates/` (10 portões).
+`tools/aidd-pure/AGENTS.md` e `AGENTS-WORKFLOW.md`;
+`tools/aidd-pure/scripts/pipeline_completo.py`;
+`tools/aidd-pure/scripts/phases/` (8 micro-ambientes + 8 módulos de fase);
+`tools/aidd-pure/scripts/fsm_engine.py`;
+`tools/aidd-pure/scripts/core/pipeline_state.py`;
+`tools/aidd-pure/config/token_budgets.json`;
+`tools/aidd-pure/scripts/gates/` (10 portões).
 
-# Capítulo 16 — `aidd-factory`: o integrador multi-serviço
+# Capítulo 16 — `aidd-open`: o integrador multi-serviço
 
 ```{=typst}
 #ficha(
@@ -633,11 +633,11 @@ fase, custo em dólares e resultado de pytest.
 
 ## 16.1 O que é a ferramenta
 
-Se `aidd-generator` é a equipe que constrói tijolo por tijolo, `aidd-factory` é a
+Se `aidd-pure` é a equipe que constrói tijolo por tijolo, `aidd-open` é a
 equipe que monta a casa com **peças pré-fabricadas de fornecedores confiáveis** —
 como quem compra módulos de cozinha planejada em vez de marcenaria sob medida: mais
 rápido, mais barato, e perfeito quando o "cômodo" que você precisa (um CRM, um sistema
-de agendamento) já existe pronto em algum lugar e só falta encaixar. `aidd-factory` é
+de agendamento) já existe pronto em algum lugar e só falta encaixar. `aidd-open` é
 o **integrador**: em vez de escrever o sistema, ele compõe uma aplicação a partir de
 motores open-source curados, gerando a camada que os une — gateway/BFF, orquestração
 compose, inicialização de banco, variáveis de ambiente e código de integração.
@@ -659,7 +659,7 @@ catálogos de nicho diretamente — o plano já chega resolvido.
 
 ## 16.3 O papel da ferramenta dentro do ECOSSISTEMA
 
-No ecossistema, a `aidd-factory` é o par simétrico do `aidd-ops`: o ops decide *qual
+No ecossistema, a `aidd-open` é o par simétrico do `aidd-ops`: o ops decide *qual
 infraestrutura*, a factory decide *qual código de integração*. Os dois compartilham o
 mesmo esquema de plano, o que permite que o planner exporte para qualquer um dos dois
 sem tradução.
@@ -706,7 +706,7 @@ integração → grava `FACTORY_OUTPUT.json` com todos os artefatos e seus statu
 **Portões.** `G_FACTORY_ANALYSIS`, `G_FACTORY_COMPOSE`, `G_FACTORY_ENV`, `G_FACTORY_INIT_DB`, `G_FACTORY_INTEGRATION`, `G_FACTORY_MVP`, mais AST
 e `bandit` nas fases de modelo.
 
-**Habilidades.** `aidd-factory-runner` é a dona de `/factory`.
+**Habilidades.** `aidd-open-runner` é a dona de `/factory`.
 
 **Determinismo.** Fases 1, 4, 5 e 6 são 100% determinísticas por contrato auditado.
 
@@ -763,8 +763,8 @@ mecânica — e, portanto, majoritariamente determinística.
 
 ## 16.8 Rastreabilidade
 
-`tools/aidd-factory/AGENTS.md`; `tools/aidd-factory/scripts/contrato_factory.py`;
-`tools/aidd-factory/scripts/pipeline_factory.py`;
-`tools/aidd-factory/scripts/phases/`; `tools/aidd-factory/gates/`;
+`tools/aidd-open/AGENTS.md`; `tools/aidd-open/scripts/contrato_factory.py`;
+`tools/aidd-open/scripts/pipeline_factory.py`;
+`tools/aidd-open/scripts/phases/`; `tools/aidd-open/gates/`;
 `componentes/compartilhado/specs/plano-infraestrutura.schema.json`;
 `docs/features/v2_arquitetura-aidd-ops-factory.md`.

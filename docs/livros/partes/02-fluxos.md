@@ -4,7 +4,7 @@ A Parte II desce um nível. Enquanto a Parte I descreveu o organismo, esta descr
 seus **movimentos**: as esteiras que levam uma intenção até um sistema em produção.
 
 São quatro movimentos. Três deles são fluxos de **criação** — a Tríade Canônica
-`aidd-pure`, `aidd-open` e `aidd-bridge` — e diferem entre si apenas na estratégia de
+`aidd-pure`, `aidd-open` e `aidd-freedom` — e diferem entre si apenas na estratégia de
 construção do artefato central. O quarto é o fluxo de **evolução**,
 `/melhoria → /plan → /orchestrate`, que atua sobre o que já existe.
 Acima deles ficam duas engrenagens de apoio: a meso-camada de despacho em worktrees
@@ -53,9 +53,9 @@ AUDITORIA`) são idênticas nos três fluxos. A única diferença é a etapa 3, 
 
 | Fluxo e nome canônico     | Motor da etapa 3     | Acionamento                          | Estratégia de construção                              |
 | :------------------------ | :------------------- | :----------------------------------- | :----------------------------------------------------- |
-| Fluxo 01 — `aidd-pure`    | `aidd-generator`     | `/pure` · `ecossistema.py pure`      | Do zero puro: código autoral sob medida, com TDD       |
-| Fluxo 02 — `aidd-open`    | `aidd-factory`       | `/open` · `ecossistema.py open`      | Motores open-source curados e integrados               |
-| Fluxo 03 — `aidd-bridge`  | `aidd-bridge`        | `/bridge` · `ecossistema.py bridge`  | Desacoplamento de low-code e migração para PostgreSQL  |
+| Fluxo 01 — `aidd-pure`    | `aidd-pure`     | `/pure` · `ecossistema.py pure`      | Do zero puro: código autoral sob medida, com TDD       |
+| Fluxo 02 — `aidd-open`    | `aidd-open`       | `/open` · `ecossistema.py open`      | Motores open-source curados e integrados               |
+| Fluxo 03 — `aidd-freedom`  | `aidd-freedom`        | `/bridge` · `ecossistema.py bridge`  | Desacoplamento de low-code e migração para PostgreSQL  |
 
 Esse desenho — chamado no `AGENTS.md` de **Universal Convergence Funnel** — significa
 que a decisão "como construir" é tomada uma única vez, no início, e não contamina o
@@ -195,7 +195,7 @@ na raiz da pasta de trabalho — a mesma regra do `--pasta ../proj_clinica`.
 `scripts/orquestrador_sincrono.py` (etapas 1 a 7, mapa de fluxos, validação de
 esquema); `componentes/compartilhado/specs/*.schema.json`; `AGENTS.md` §3;
 `gates/G_ORQUESTRADOR_SINCRONO.py`; `ecossistema.py` (`cmd_pure`, `cmd_open`,
-`cmd_aidd_bridge`, `cmd_run_fluxo`).
+`cmd_freedom`, `cmd_run_fluxo`).
 
 # Capítulo 7 — Fluxo 01: `aidd-pure` (do zero puro)
 
@@ -203,7 +203,7 @@ esquema); `componentes/compartilhado/specs/*.schema.json`; `AGENTS.md` §3;
 
 O Fluxo 01 constrói o sistema **do zero, sob medida**, sem reaproveitar base de código
 existente. É o fluxo de maior custo em tokens e o de maior liberdade arquitetural:
-o motor `aidd-generator` executa oito fases que vão de pesquisa de referências reais
+o motor `aidd-pure` executa oito fases que vão de pesquisa de referências reais
 até implementação de código funcional verificada por pytest.
 
 É o fluxo indicado quando o domínio é específico o bastante para que nenhum motor
@@ -214,7 +214,7 @@ open-source sirva, ou quando o controle total sobre a arquitetura é requisito.
 ```{=typst}
 #ficha(
   ("Disparo", [`/pure` ou `python ecossistema.py pure --nome ... --slug ... --dominio ... --pasta ...`]),
-  ("Motor da etapa 3", [`aidd-generator` — pipeline de 8 fases]),
+  ("Motor da etapa 3", [`aidd-pure` — pipeline de 8 fases]),
   ("Persistência alvo", [SQLite em modo WAL]),
   ("Frontend alvo", [Next.js + TypeScript + Tailwind (Padrão-Ouro, Lei #11)]),
   ("Entrega", [Sistema completo, testado, blindado e com manifesto de deploy]),
@@ -265,7 +265,7 @@ score em seis dimensões e roadmap, e o Quarteto *Sine Qua Non* ativo. Entrega *
 ## 8.1 O que é
 
 O Fluxo 02 **não escreve o sistema: integra sistemas que já existem**. O motor
-`aidd-factory` recebe um plano de infraestrutura resolvido, cura os motores
+`aidd-open` recebe um plano de infraestrutura resolvido, cura os motores
 open-source adequados ao nicho, gera a camada de integração (gateway/BFF, compose,
 inicialização de banco, variáveis de ambiente) e entrega uma aplicação multi-serviço.
 
@@ -304,7 +304,7 @@ vez de tentar casar o texto com um dos cinco nichos fixos.
 
 O `AGENTS.md` do factory é explícito sobre o regime de cada fase:
 
-| Fases            | Regime                        | Portão real (`tools/aidd-factory/gates/`)             |
+| Fases            | Regime                        | Portão real (`tools/aidd-open/gates/`)             |
 | :--------------- | :---------------------------- | :----------------------------------------------------- |
 | 1                | 100% determinístico, zero LLM | `G_FACTORY_ANALYSIS` (valida `factory_analysis.json`)  |
 | 4, 5, 6          | 100% determinístico, zero LLM | `G_FACTORY_COMPOSE`, `G_FACTORY_INIT_DB`, `G_FACTORY_ENV` |
@@ -328,21 +328,21 @@ serviços curados, banco inicializado, `.env` resolvido, integração entre os s
 fatia a integração em VSA) e, no fim da esteira, **para o `aidd-ops`**, que provisiona a
 infraestrutura correspondente.
 
-# Capítulo 9 — Fluxo 03: `aidd-freedom` (motor `aidd-bridge` — libertação de low-code)
+# Capítulo 9 — Fluxo 03: `aidd-freedom` (motor `aidd-freedom` — libertação de low-code)
 
 ## 9.1 O que é
 
 O Fluxo 03 resolve um problema específico e muito concreto: uma aplicação foi gerada em
 uma plataforma low-code (Lovable, v0, Bolt), funciona, o usuário gosta da interface —
 e está presa ao fornecedor, com banco Supabase, autenticação proprietária e custo
-recorrente. O motor `aidd-bridge` extrai essa aplicação, converte o banco para
+recorrente. O motor `aidd-freedom` extrai essa aplicação, converte o banco para
 PostgreSQL puro com emulação PostgREST, empacota em Docker e a coloca em VPS própria
 **preservando a interface**.
 
 ## 9.2 Passo a passo de execução
 
 O pipeline determinístico do bridge tem seis fases, documentadas no cabeçalho de
-`aidd_bridge/pipeline_bridge.py`:
+`aidd_freedom/pipeline_bridge.py`:
 
 ```{=typst}
 #esteira(

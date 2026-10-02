@@ -1,9 +1,9 @@
-# Capítulo 17 — `aidd-bridge`: o libertador de low-code
+# Capítulo 17 — `aidd-freedom`: o libertador de low-code
 
 ```{=typst}
 #ficha(
   ("Papel", "Extrator de projetos low-code, unificador PostgreSQL e empacotador para VPS própria"),
-  ("Etapa na esteira", "3 de 7 — motor do Fluxo 03 (`aidd-bridge`)"),
+  ("Etapa na esteira", "3 de 7 — motor do Fluxo 03 (`aidd-freedom`)"),
   ("Slash command", [`/bridge [comando]`]),
   ("CLI", [`python ecossistema.py bridge unpack|scan|convert-db|merge|pack|migrate-auth|destroy`]),
   ("Origem suportada", "React + Vite + Tailwind + Supabase (Lovable, v0, Bolt)"),
@@ -15,9 +15,9 @@
 
 Pense numa casa pré-fabricada que você comprou de outra construtora: por fora está
 linda, mas a fiação e a fundação são proprietárias — só o técnico daquela construtora
-mexe nelas, e você paga aluguel de manutenção para sempre. `aidd-bridge` é a equipe que
+mexe nelas, e você paga aluguel de manutenção para sempre. `aidd-freedom` é a equipe que
 entra, refaz a fiação e a fundação com material aberto e padrão de mercado, **sem
-tocar na decoração que você já gosta**. `aidd-bridge` resolve o aprisionamento por
+tocar na decoração que você já gosta**. `aidd-freedom` resolve o aprisionamento por
 fornecedor em aplicações geradas por
 plataformas low-code. Ele ingere um projeto React + Vite + Tailwind + Supabase, extrai
 páginas, componentes shadcn e migrações, converte o banco para PostgreSQL puro com
@@ -48,7 +48,7 @@ o protocolo de confirmação mais rígido.
 
 ## 17.4 Como foi pensada, está estruturada e configurada
 
-O pacote `aidd_bridge/` organiza-se por responsabilidade de transformação:
+O pacote `aidd_freedom/` organiza-se por responsabilidade de transformação:
 
 | Módulo                  | Responsabilidade                                                        |
 | :---------------------- | :------------------------------------------------------------------------ |
@@ -91,7 +91,7 @@ python ecossistema.py bridge unpack ../export-lovable                         # 
 `G_BRIDGE_DOCKER_OCI` (boas práticas de imagem), `G_BRIDGE_POSTGRESQL` (SQL convertido
 válido) e `G_BRIDGE_VSA_COMPAT` (compatibilidade com o fatiamento do master).
 
-**Habilidades.** `aidd-bridge` e `aidd-bridge-runner` são as skills do comando.
+**Habilidades.** `aidd-freedom` e `aidd-freedom-runner` são as skills do comando.
 
 **Determinismo.** Integral — nenhuma das seis fases chama modelo.
 
@@ -116,7 +116,7 @@ VPS do usuário** ao final.
 `artefatos_frontend.origem_design` recebe `lovable_preserved` neste fluxo — registro
 explícito de que a interface original foi mantida.
 
-**Habilidades.** `aidd-bridge`, `fluxo-03-runner`.
+**Habilidades.** `aidd-freedom`, `fluxo-03-runner`.
 
 **Determinismo.** Integral — é o fluxo mais barato dos três.
 
@@ -152,9 +152,9 @@ governado pelas mesmas leis dos sistemas nascidos aqui.
 
 ## 17.8 Rastreabilidade
 
-`tools/aidd-bridge/AGENTS.md`; `tools/aidd-bridge/aidd_bridge/pipeline_bridge.py`;
-`tools/aidd-bridge/aidd_bridge/` (13 módulos); `tools/aidd-bridge/gates/` (4 portões);
-`ecossistema.py::cmd_bridge`; `scripts/orquestrador_sincrono.py::etapa_03_engine`.
+`tools/aidd-freedom/AGENTS.md`; `tools/aidd-freedom/aidd_freedom/pipeline_bridge.py`;
+`tools/aidd-freedom/aidd_freedom/` (13 módulos); `tools/aidd-freedom/gates/` (4 portões);
+`ecossistema.py::cmd_freedom_motor`; `scripts/orquestrador_sincrono.py::etapa_03_engine`.
 
 # Capítulo 18 — `aidd-master`: o harmonizador modular
 
@@ -249,7 +249,7 @@ A CLI do master é a mais rica do ecossistema. Os principais grupos:
 Dois merecem nota. `compose-orca` compõe módulos via subagentes efêmeros com purga de
 contexto — a aplicação direta da doutrina de isolamento cognitivo. `attach-vsa` conecta
 um backend VSA (núcleo, módulo e Quarteto) a um frontend preservado — por exemplo, a
-saída do `aidd-bridge` — **sem sobrescrever** Docker, Caddy ou o frontend existente; é a
+saída do `aidd-freedom` — **sem sobrescrever** Docker, Caddy ou o frontend existente; é a
 peça que torna o Fluxo 03 possível sem perder a interface original.
 
 ## 18.5 Como funciona individualmente
@@ -529,7 +529,7 @@ fluxo automatizado provisione infraestrutura paga sem decisão humana explícita
 ## 20.3 O papel da ferramenta dentro do ECOSSISTEMA
 
 No ecossistema, o `aidd-ops` é a **fonte do plano de infraestrutura** — o mesmo
-`PLANO-INFRAESTRUTURA.json` que a `aidd-factory` consome e que o `aidd-planner` exporta.
+`PLANO-INFRAESTRUTURA.json` que a `aidd-open` consome e que o `aidd-planner` exporta.
 As três ferramentas compartilham um único esquema, e o caminho do nicho dinâmico
 descrito nos capítulos 8 e 12 nasceu aqui.
 
@@ -629,7 +629,7 @@ Hadolint, Checkov.
 oficiais apenas.
 
 **Entrega.** Entrega `PLANO-INFRAESTRUTURA.json`, manifestos compose, VPS provisionada e
-relatório de preflight em JSON. Entrega **para a `aidd-factory`** (o plano) e **para a
+relatório de preflight em JSON. Entrega **para a `aidd-open`** (o plano) e **para a
 produção** (a infraestrutura).
 
 ## 20.6 Como funciona dentro da camada FLUXO

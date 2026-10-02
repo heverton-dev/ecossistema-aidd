@@ -50,7 +50,7 @@
 
 | Iniciativa | Local |
 |---|---|
-| Implementacao Aidd Factory | `fazendo/PLAN-0027-implementacao-aidd-factory/` |
+| Implementacao Aidd Open | `fazendo/PLAN-0027-implementacao-aidd-open/` |
 | Completude Factory V2 | `fazendo/PLAN-0028-completude-factory-v2/` |
 | Testes Motor Orquestrador | `feitos/PLAN-0024-testes-motor-orquestrador/` |
 

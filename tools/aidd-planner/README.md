@@ -1,9 +1,9 @@
 # AIDD-Planner: Motor Canônico de Planejamento e Combustão Primária da Tríade AIDD
 
 O **`aidd-planner`** é a ferramenta que estabelece a ponte de transição entre as regras e governança suprema (`aidd-forge`) e os 3 Motores Especializados de Construção da Tríade Canônica:
-- **Fluxo 01:** `aidd-generator` (Do Zero Puro / TDD Red-Green / VSA)
-- **Fluxo 02:** `aidd-factory` (Motores Open-Source / Gateway VSA)
-- **Fluxo 03:** `aidd-bridge` (Desacoplamento Low-Code / PostgreSQL)
+- **Fluxo 01:** `aidd-pure` (Do Zero Puro / TDD Red-Green / VSA)
+- **Fluxo 02:** `aidd-open` (Motores Open-Source / Gateway VSA)
+- **Fluxo 03:** `aidd-freedom` (Desacoplamento Low-Code / PostgreSQL)
 
 ---
 
@@ -32,7 +32,7 @@ python ecossistema.py planner init --fluxo 3 --nome "Meu Portal" --pasta ./meu-p
 # 4. Validar conformidade de um PLANNER.json existente
 python ecossistema.py planner validate ./meu-app/PLANNER.json
 
-# 5. Exportar plano para formato de ferramenta downstream (ex: aidd-factory)
+# 5. Exportar plano para formato de ferramenta downstream (ex: aidd-open)
 python ecossistema.py planner export ./meu-hub/PLANNER.json --formato factory --saida ./meu-hub/plano_factory.json
 
 # 6. Auditar com os Quality Gates

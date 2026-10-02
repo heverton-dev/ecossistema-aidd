@@ -170,9 +170,9 @@ O ecossistema é modularizado em 8 ferramentas atômicas com fronteiras de respo
   ),
   [#text(weight: "bold")[AIDD Forge]], [`tools/aidd-forge`], [Diretório alvo / CLI], [Governança, regras e hooks pre-commit.],
   [#text(weight: "bold")[AIDD Planner]], [`tools/aidd-planner`], [Linguagem natural / Requisitos], [Planta baixa BDD/SDD e `PLANNER.json`.],
-  [#text(weight: "bold")[AIDD Generator]], [`tools/aidd-generator`], [`PLANNER.json` estruturado], [Código do zero puro com TDD Red-Green.],
-  [#text(weight: "bold")[AIDD Factory]], [`tools/aidd-factory`], [Motores OSS + Plano], [Gateway BFF FastAPI e Compose unificado.],
-  [#text(weight: "bold")[AIDD Bridge]], [`tools/aidd-bridge`], [Export Lovable/v0/Bolt], [Desacoplamento de BaaS e Postgres nativo.],
+  [#text(weight: "bold")[AIDD Generator]], [`tools/aidd-pure`], [`PLANNER.json` estruturado], [Código do zero puro com TDD Red-Green.],
+  [#text(weight: "bold")[AIDD Factory]], [`tools/aidd-open`], [Motores OSS + Plano], [Gateway BFF FastAPI e Compose unificado.],
+  [#text(weight: "bold")[AIDD Bridge]], [`tools/aidd-freedom`], [Export Lovable/v0/Bolt], [Desacoplamento de BaaS e Postgres nativo.],
   [#text(weight: "bold")[AIDD Master]], [`tools/aidd-master`], [Código bruto das Engines], [Monólito VSA, Next.js 14 e OpenAPI.],
   [#text(weight: "bold")[AIDD Enterprise]], [`tools/aidd-enterprise`], [Código do Master], [Blindagem criptográfica SHA-256 e RBAC.],
   [#text(weight: "bold")[AIDD Ops]], [`tools/aidd-ops`], [Código Enterprise], [Provisionamento VPS, Docker Swarm e SSL.]
@@ -196,7 +196,7 @@ O ecossistema resolveu definitivamente as sobreposições de ferramentas estabel
 - *Aplicação:* Sistemas empresariais que aproveitam componentes maduros (ERPs, CRMs, automação de fluxos, bots).
 - *Rigor:* Curadoria de engines consagradas, isolamento em contêineres e geração automática de Gateway BFF FastAPI.
 
-== Fluxo 03 — `aidd-bridge` (Low-Code Desatado)
+== Fluxo 03 — `aidd-freedom` (Low-Code Desatado)
 - *Pipeline:* `[FORGE -> PLANNER] -> BRIDGE -> [MASTER -> ENTERPRISE -> OPS]`
 - *Comando Slash:* `/bridge <pasta> <nome>`
 - *Comando CLI:* `python ecossistema.py run-fluxo --fluxo bridge --origem <pasta>`

@@ -20,7 +20,7 @@
       "fase": 2,
       "nome": "IMPORT TOOLS",
       "status": "CONCLUIDO",
-      "detalhes": "Cópia não-destrutiva de aidd-forge, aidd-generator, aidd-master e aidd-master-enterprise preservando 100% de integridade e sem .git interno."
+      "detalhes": "Cópia não-destrutiva de aidd-forge, aidd-pure, aidd-master e aidd-master-enterprise preservando 100% de integridade e sem .git interno."
     },
     {
       "fase": 3,
@@ -44,7 +44,7 @@
       "fase": 6,
       "nome": "AUDITORIA E CORRECAO DE RISCOS",
       "status": "CONCLUIDO",
-      "detalhes": "Auditoria completa encontrou 8 riscos reais divergindo das Regras de Ouro do AGENTS.md (ver docs/planos/feitos/PLANO-CORRECAO-RISCOS-ECOSSISTEMA-AIDD.md). Corrigidos: pytest.ini quebrado por BOM, templates/v2 do aidd-master ausente do git, 2 testes nao-hermeticos no aidd-generator, deteccao de drift entre copias de fallback multi-harness, gate de drift de nucleo compartilhado entre aidd-master/aidd-master-enterprise, gates G_HARNESS_COMPAT e G_SEGREDOS materializados na raiz, CI minimo via .github/workflows/audit.yml, e este bloco 'testes' passou a ser gerado por script (python ecossistema.py status --testes) em vez de digitado a mao."
+      "detalhes": "Auditoria completa encontrou 8 riscos reais divergindo das Regras de Ouro do AGENTS.md (ver docs/planos/feitos/PLANO-CORRECAO-RISCOS-ECOSSISTEMA-AIDD.md). Corrigidos: pytest.ini quebrado por BOM, templates/v2 do aidd-master ausente do git, 2 testes nao-hermeticos no aidd-pure, deteccao de drift entre copias de fallback multi-harness, gate de drift de nucleo compartilhado entre aidd-master/aidd-master-enterprise, gates G_HARNESS_COMPAT e G_SEGREDOS materializados na raiz, CI minimo via .github/workflows/audit.yml, e este bloco 'testes' passou a ser gerado por script (python ecossistema.py status --testes) em vez de digitado a mao."
     }
   ],
   "ferramentas": [
@@ -55,9 +55,9 @@
       "slash_command": "/forge [caminho]"
     },
     {
-      "id": "aidd-generator",
-      "caminho": "tools/aidd-generator",
-      "skill": "skills/aidd-generator",
+      "id": "aidd-pure",
+      "caminho": "tools/aidd-pure",
+      "skill": "skills/aidd-pure",
       "slash_command": "/generate <ideia>"
     },
     {
@@ -80,7 +80,7 @@
     }
   ],
   "testes": {
-    "medido_em": "2026-09-29T00:32:09.433688+00:00",
+    "medido_em": "2026-10-01T22:40:21.831539+00:00",
     "metodo": "python -m pytest -q --tb=no em cada tools/<ferramenta>, parseado do resumo real (nao digitado a mao)",
     "por_ferramenta": {
       "aidd-forge": {
@@ -91,7 +91,7 @@
         "errors": 0,
         "exit_code": 0
       },
-      "aidd-generator": {
+      "aidd-pure": {
         "status": "ok",
         "passed": 1006,
         "failed": 0,

@@ -13,12 +13,12 @@ O **Ecossistema AIDD** é um monorepo agnóstico que integra 8 ferramentas compl
 
 - **AIDD Forge (`tools/aidd-forge`):** Bootstrap de governança, isolamento de fases e purge de contexto (`/forge`).
 - **AIDD Planner (`tools/aidd-planner`):** Planejamento BDD/SDD, compilador topológico DAG VSA e contratos de handoff (`/planner`).
-- **AIDD Generator (`tools/aidd-generator`):** Fábrica autônoma com pipeline de 8 fases, TDD Red-Green e Clean Architecture (`/generate` ou `/pure`).
+- **AIDD Generator (`tools/aidd-pure`):** Fábrica autônoma com pipeline de 8 fases, TDD Red-Green e Clean Architecture (`/generate` ou `/pure`).
 - **AIDD Master (`tools/aidd-master`):** Monólito modular VSA com fatias verticais, motor de despacho `dispatch_pipeline.py`, convergência master, Next.js Padrão-Ouro (Lei #11) e OpenAPI (`/master`).
 - **AIDD Enterprise (`tools/aidd-enterprise`):** Missão crítica com injeção de componentes SHA-256 e Zero-Trust (`/enterprise`).
 - **AIDD Ops (`tools/aidd-ops`):** Meta-Orquestrador de Infraestrutura (IaC, sizing, Docker Swarm, Ansible, deploy VPS, `/ops`).
-- **AIDD Factory (`tools/aidd-factory`):** Integração e fatiamento VSA de motores open-source com compose (`/factory` ou `/open` ou `/aidd-open`).
-- **AIDD Bridge (`tools/aidd-bridge`):** Desacoplamento anti-lockin de plataformas Low-Code (Lovable/v0) preservando a UI (`/bridge` ou `/freedom`).
+- **AIDD Factory (`tools/aidd-open`):** Integração e fatiamento VSA de motores open-source com compose (`/factory` ou `/open` ou `/aidd-open`).
+- **AIDD Bridge (`tools/aidd-freedom`):** Desacoplamento anti-lockin de plataformas Low-Code (Lovable/v0) preservando a UI (`/bridge` ou `/freedom`).
 
 ### A Tríade Canônica de Criação (Nomenclatura Oficial):
 1. **`aidd-pure` (Fluxo 01 — Do Zero Puro | Slash: `/pure`):** `[FORGE -> PLANNER] -> GENERATOR -> [MASTER -> ENTERPRISE -> OPS]`
@@ -88,7 +88,7 @@ O **Ecossistema AIDD** é um monorepo agnóstico que integra 8 ferramentas compl
 | `/open <ideia>` | `aidd-open` | `python ecossistema.py open` (ou `run-fluxo --fluxo open`) | **Tríade Fluxo 02:** Execução síncrona com motores Open-Source curados (Factory + Master + Enterprise + Ops). |
 | `/freedom <origem> <nome>` | `aidd-freedom` | `python ecossistema.py freedom` (ou `run-fluxo --fluxo freedom`) | **Tríade Fluxo 03:** Execução síncrona libertando Low-Code (Lovable/v0) para VPS própria (Bridge + Master + Enterprise + Ops). |
 | `/forge [caminho]` | `aidd-forge` | `python ecossistema.py forge init [caminho]` | Bootstrap e blindagem de governança em novos projetos. |
-| `/generate <ideia>` | `aidd-generator` | `python ecossistema.py generate "<ideia>"` | Disparo da fábrica de 8 fases a partir de ideia. |
+| `/generate <ideia>` | `aidd-pure` | `python ecossistema.py generate "<ideia>"` | Disparo da fábrica de 8 fases a partir de ideia. |
 | `/master <modulo>` | `aidd-master` | `python ecossistema.py master add-module <modulo>` | Criação de fatia vertical desacoplada em monólito modular. |
 | `/enterprise <tipo> <nome>` | `aidd-enterprise` | `python ecossistema.py enterprise inject <tipo> <nome>` | Injeção de componentes corporativos certificados SHA-256. |
 | `/ops [requisito]` | `aidd-ops` | `python ecossistema.py ops [requisito]` | Meta-Orquestrador de Infraestrutura: VPS, Docker, SSH, deploy. |
@@ -98,7 +98,7 @@ O **Ecossistema AIDD** é um monorepo agnóstico que integra 8 ferramentas compl
 | `/dispatch [args]` | `aidd-dispatch` | `python ecossistema.py dispatch --planner <plano>` | Despacha fatias verticais VSA em Git Worktrees efêmeras com ordenação DAG topológica e convergência master. |
 | `/aidd-dispatch` | `aidd-dispatch` | `python ecossistema.py dispatch` | Alias canônico para o despacho da Meso-Camada VSA. |
 | `/plan <nome>` | `aidd-plan` | `python ecossistema.py plan init <nome>` | Estruturação determinística de planos de auditoria e evolução. |
-| `/bridge [comando]` | `aidd-bridge` | `python ecossistema.py bridge [scan\|convert-db\|merge\|pack]` | Extrai, unifica e empacota apps Lovable/Supabase para VPS com PostgREST e Docker. |
+| `/bridge [comando]` | `aidd-freedom` | `python ecossistema.py bridge [scan\|convert-db\|merge\|pack]` | Extrai, unifica e empacota apps Lovable/Supabase para VPS com PostgREST e Docker. |
 | `/aidd-grill` | `aidd-grill` | N/A (Chat Interativo / Headless Fallback) | Entrevista socrática pré-código para alinhamento de invariantes e edge cases (handoff para `/aidd-spec`). |
 | `/aidd-grill-docs` | `aidd-grill-docs` | N/A (Chat Interativo) | Questionamento socrático ancorado em MEMORY.md e governança local. |
 | `/aidd-spec` | `aidd-spec` | N/A (Chat / Plan Generator) | Especificação técnica determinística com critérios binários (handoff para `/aidd-planner`). |
@@ -144,9 +144,9 @@ O **Ecossistema AIDD** é um monorepo agnóstico que integra 8 ferramentas compl
   - Correção de XSS armazenado em `get_studio_html`, conclusão da migração para `click` em todos os CLI points e estreitamento de exceções genéricas (`except Exception`).
   - Conclusão da iniciativa `02-direcionamento-estrategico-anti-nih/`.
 - **2026-09-10 — Chegada do AIDD Bridge e Self-Hosted Stack:**
-  - Criação e integração do **AIDD Bridge** (`tools/aidd-bridge`): scanner Lovable, data bridge SQL (compatível com auth.uid(), auth.jwt(), PostgREST), multi-app unifier e DevOps packager com suporte a Swarm/Traefik e Kong Gateway + Postgres oficial Supabase + Storage.
-  - Suíte completa de testes no `tools/aidd-bridge/tests/test_bridge.py` 100% verde (12 passed).
-  - Sincronização automatizada e movimentação do plano `aidd-bridge` para `docs/planos/feitos/aidd-bridge/`.
+  - Criação e integração do **AIDD Bridge** (`tools/aidd-freedom`): scanner Lovable, data bridge SQL (compatível com auth.uid(), auth.jwt(), PostgREST), multi-app unifier e DevOps packager com suporte a Swarm/Traefik e Kong Gateway + Postgres oficial Supabase + Storage.
+  - Suíte completa de testes no `tools/aidd-freedom/tests/test_bridge.py` 100% verde (12 passed).
+  - Sincronização automatizada e movimentação do plano `aidd-freedom` para `docs/planos/feitos/aidd-freedom/`.
   - Atualização completa do grafo de conhecimento (`code-review-graph`) e telemetria de integridade.
 - **2025-07-19 — Auditoria de Stack por Camada (diagnóstico tecnológico comparativo):**
   - Relatório completo gerado em `docs/reports/analise-stack-por-camada.{md,html,pdf,typ}`.
@@ -185,7 +185,7 @@ O **Ecossistema AIDD** é um monorepo agnóstico que integra 8 ferramentas compl
     - `/aidd-handoff`: serialização compacta de sessão salva diretamente em `secoes/`.
   - Todas as 7 skills criadas estritamente em **Compact English** na fonte canônica `componentes/compartilhado/skills/` (padrão Core para economia de tokens BPE).
   - Sincronização e verificação física multi-harness em 7 ambientes (.agents, .claude, .cursor, .gemini, .opencode, .mimocode, .codebuddy) com 100% de hashes SHA-256 validados via `python ecossistema.py components verify --tipo skill`.
-  - Vinculação formal nos `AGENTS.md` das ferramentas `aidd-generator` (Fases 1 e 2), `aidd-master` (Vertical Slices), `aidd-enterprise` (Selo TDD) e `aidd-ops` (Diagnose).
+  - Vinculação formal nos `AGENTS.md` das ferramentas `aidd-pure` (Fases 1 e 2), `aidd-master` (Vertical Slices), `aidd-enterprise` (Selo TDD) e `aidd-ops` (Diagnose).
   - Plano oficial arquivado em `docs/planos/feitos/PLAN-0030-integracao-skills-matt-pocock/plano.md`.
 - **2026-09-21 — Orquestração de Pipeline e Meso-Camada da Tríade Canônica (VSA Topological Dispatch):**
   - **Iniciativa Pipeline de Orquestração (`docs/issues/pipeline-orquestracao-triade/` — 7/7 tickets DONE):**
@@ -233,7 +233,7 @@ O **Ecossistema AIDD** é um monorepo agnóstico que integra 8 ferramentas compl
 - 🔶 **Config Arquivos Tokens** — `docs/planos/fazendo/PLAN-0022-config-arquivos-tokens/`
 - 🔶 **Evolucao Engenharia Software** — `docs/planos/fazendo/PLAN-0023-evolucao-engenharia-software/`
 - 🔶 **Conclusao Auditoria Maquiagem** — `docs/planos/fazendo/PLAN-0025-conclusao-auditoria-maquiagem/`
-- ⏳ **Implementacao Aidd Factory** — `docs/planos/fazendo/PLAN-0027-implementacao-aidd-factory/`
+- ⏳ **Implementacao Aidd Open** — `docs/planos/fazendo/PLAN-0027-implementacao-aidd-open/`
 - ⏳ **Completude Factory V2** — `docs/planos/fazendo/PLAN-0028-completude-factory-v2/`
 - 🔶 **Upgrade Ferramentas Enterprise** — `docs/planos/fazendo/PLAN-0034-upgrade-ferramentas-enterprise/`
 - ⏳ **Direcionamento Estrategico Anti Nih** — `docs/planos/feitos/PLAN-0010-direcionamento-estrategico-anti-nih/`

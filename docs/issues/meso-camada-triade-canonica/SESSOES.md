@@ -92,9 +92,9 @@ Execute docs/issues/meso-camada-triade-canonica/05-roteadores-especialistas-engi
 
 Implement polymorphic engine router tools/aidd-master/scripts/engine_router.py.
 Must enforce:
-- Dispatch Fluxo 01 (Pure): trigger aidd-generator with scoped TDD Red-Green arguments for the slice.
-- Dispatch Fluxo 02 (Open): trigger aidd-factory with open-source integration arguments for the slice.
-- Dispatch Fluxo 03 (Freedom): trigger aidd-bridge with low-code extraction and schema mapping arguments.
+- Dispatch Fluxo 01 (Pure): trigger aidd-pure with scoped TDD Red-Green arguments for the slice.
+- Dispatch Fluxo 02 (Open): trigger aidd-open with open-source integration arguments for the slice.
+- Dispatch Fluxo 03 (Freedom): trigger aidd-freedom with low-code extraction and schema mapping arguments.
 - Zero mock entities; inject real slice attributes from Bounded Contexts.
 - Write unit tests in tools/aidd-master/tests/test_engine_router.py.
 - Stop and ask before commit.

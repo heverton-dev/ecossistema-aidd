@@ -16,7 +16,7 @@ python ecossistema.py planner init --fluxo <1|2|3> --nome "<Project Name>" --pas
 # 2. Validate
 python ecossistema.py planner validate <path/to/PLANNER.json>
 
-# 3. Export to a downstream engine (e.g. aidd-factory)
+# 3. Export to a downstream engine (e.g. aidd-open)
 python ecossistema.py planner export <path/to/PLANNER.json> --formato factory --saida <output.json>
 
 # 4. Audit quality gates

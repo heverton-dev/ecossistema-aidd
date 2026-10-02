@@ -123,7 +123,7 @@ def test_rejeicao_plano_sem_cenarios_bdd():
     assert any("bdd_cenarios" in e for e in erros)
 
 
-def test_exportacao_para_aidd_factory():
+def test_exportacao_para_aidd_open():
     """Achado real (18/09/2026): exportar_para_fluxo_factory produzia
     {projeto, descricao, servicos, banco_central} — um formato que o
     pipeline_factory.py REAL rejeitava com FACTORY_INPUT_INVALID em 100%
@@ -154,7 +154,7 @@ def test_exportacao_para_aidd_factory():
             json.dump(factory_input, f)
 
         _repo_root = os.path.dirname(_ECOSSISTEMA_DIR)  # _ECOSSISTEMA_DIR aqui e' "tools/", nao a raiz
-        pipeline_script = os.path.join(_repo_root, "tools", "aidd-factory", "scripts", "pipeline_factory.py")
+        pipeline_script = os.path.join(_repo_root, "tools", "aidd-open", "scripts", "pipeline_factory.py")
         saida_dir = os.path.join(tmpdir, "saida")
         resultado = subprocess.run(
             [sys.executable, pipeline_script, "--plano", plano_path, "--pasta", saida_dir, "--sem-llm"],
@@ -168,7 +168,7 @@ def test_exportacao_para_aidd_factory():
         assert os.path.isfile(os.path.join(saida_dir, "docker-compose.yml"))
 
 
-def test_exportacao_para_aidd_factory_dominio_fora_do_catalogo_fixo():
+def test_exportacao_para_aidd_open_dominio_fora_do_catalogo_fixo():
     """Achado real (18/09/2026): "gestão de tarefas" não bate nenhuma das
     palavras-chave dos 5 nichos fixos de catalogo_nichos.json — antes desta
     correção, isso quebrava a exportação inteira (NICHO_NAO_RECONHECIDO)

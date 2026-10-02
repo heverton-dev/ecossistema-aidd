@@ -27,7 +27,7 @@ expected pattern, written so the test has something to assert against.
 | `tests/test_properties.py` | 4 |
 | `tools/aidd-enterprise/materiais-extras/examples/logistica-hub-v4/.../test_webhooks_studio.py` | 3 |
 | `tools/aidd-enterprise/materiais-extras/examples/enterprise-suite-v4/.../test_webhooks_studio.py` | 3 |
-| `tools/aidd-bridge/tests/test_bridge.py` | 3 |
+| `tools/aidd-freedom/tests/test_bridge.py` | 3 |
 | `tests/unit/test_sandbox_runner.py` | 3 |
 | `tools/aidd-master/tests/unit/test_jwt_hardening.py` | 2 |
 | `tools/aidd-enterprise/tests/unit/test_jwt_hardening.py` | 2 |
@@ -42,9 +42,9 @@ expected pattern, written so the test has something to assert against.
 5. `tests/unit/test_sandbox_runner.py:23` (`Secret Keyword`): False positive — mock API key variable to test sandbox sanitization.
 6. `tests/unit/test_sandbox_runner.py:24` (`Secret Keyword`): False positive — mock DB password variable to test sandbox sanitization.
 7. `tests/unit/test_sandbox_runner.py:25` (`Secret Keyword`): False positive — mock AWS credential to test sandbox removal.
-8. `tools/aidd-bridge/tests/test_bridge.py:675` (`Secret Keyword`): False positive — dummy hash assert to test preservation of pre-hashed passwords during migration.
-9. `tools/aidd-bridge/tests/test_bridge.py:844` (`Secret Keyword`): False positive — placeholder Cloudflare token in DNS teardown unit test.
-10. `tools/aidd-bridge/tests/test_bridge.py:862` (`Secret Keyword`): False positive — placeholder SSH password in VPS teardown unit test.
+8. `tools/aidd-freedom/tests/test_bridge.py:675` (`Secret Keyword`): False positive — dummy hash assert to test preservation of pre-hashed passwords during migration.
+9. `tools/aidd-freedom/tests/test_bridge.py:844` (`Secret Keyword`): False positive — placeholder Cloudflare token in DNS teardown unit test.
+10. `tools/aidd-freedom/tests/test_bridge.py:862` (`Secret Keyword`): False positive — placeholder SSH password in VPS teardown unit test.
 11. `tools/aidd-enterprise/materiais-extras/examples/enterprise-suite-v4/tests/unit/test_webhooks_studio.py:14` (`Secret Keyword`): False positive — dummy secret in webhook creation unit test.
 12. `tools/aidd-enterprise/materiais-extras/examples/enterprise-suite-v4/tests/unit/test_webhooks_studio.py:33` (`Secret Keyword`): False positive — dummy secret in webhook update unit test.
 13. `tools/aidd-enterprise/materiais-extras/examples/enterprise-suite-v4/tests/unit/test_webhooks_studio.py:73` (`Secret Keyword`): False positive — dummy HMAC secret in real webhook delivery test.
@@ -56,9 +56,9 @@ expected pattern, written so the test has something to assert against.
 19. `tools/aidd-master/tests/unit/test_jwt_hardening.py:89` (`Secret Keyword`): False positive — sentinel insecure key asserting boot aborts in production.
 20. `tools/aidd-master/tests/unit/test_jwt_hardening.py:101` (`Secret Keyword`): False positive — dummy key validating successful boot in production.
 21. `tools/aidd-ops/tests/test_deploy.py:188` (`Secret Keyword`): False positive — mock deploy token for orchestrator unit test.
-22. `tools/aidd-factory/scripts/phases/05_init_db.py:39` (`Secret Keyword`): False positive — bash template with dynamic placeholder for example DB init.
-23. `tools/aidd-factory/templates/vsa/security.py:29` (`Secret Keyword`): False positive — VSA template containing local environment sentinel.
-24. `docs/melhorias/14-09-2026_melhoria-aidd-factory-plano-implementacao.json:474` (`Secret Keyword`): False positive — token count metric string.
+22. `tools/aidd-open/scripts/phases/05_init_db.py:39` (`Secret Keyword`): False positive — bash template with dynamic placeholder for example DB init.
+23. `tools/aidd-open/templates/vsa/security.py:29` (`Secret Keyword`): False positive — VSA template containing local environment sentinel.
+24. `docs/melhorias/14-09-2026_melhoria-aidd-open-plano-implementacao.json:474` (`Secret Keyword`): False positive — token count metric string.
 25. `gates/dependencias_externas.json:9` (`Hex High Entropy String`): False positive — SHA-256 integrity hash for impeccable skill.
 26. `gates/dependencias_externas.json:21` (`Hex High Entropy String`): False positive — SHA-256 integrity hash for code-review-graph skill.
 

@@ -15,13 +15,13 @@ _SCHEMA_PIPELINE_PATH = os.path.join(_PLANNER_DIR, "..", "..", "componentes", "c
 _SCHEMA_VSA_DISPATCH_PATH = os.path.join(_PLANNER_DIR, "..", "..", "componentes", "compartilhado", "specs", "vsa-topological-dispatch.schema.json")
 
 # aidd-ops e a fonte unica das Fases 1-3 (Intake -> Curadoria -> Sizing) que
-# produzem o PLANO-INFRAESTRUTURA.json — o mesmo contrato que aidd-factory
+# produzem o PLANO-INFRAESTRUTURA.json — o mesmo contrato que aidd-open
 # exige (fase_1_intake/fase_2_curadoria/fase_3_sizing), documentado como
 # imutavel em docs/planos/fazendo/PLAN-0034-upgrade-ferramentas-enterprise/
 # 02-factory-blueprints.md. exportar_para_fluxo_factory reusa essa fonte em
 # vez de reimplementar o envelope aqui (achado real: a versao anterior
 # escrevia {projeto, descricao, servicos, banco_central}, que o validador
-# proprio do aidd-factory rejeitava 100% das vezes).
+# proprio do aidd-open rejeitava 100% das vezes).
 _ECOSSISTEMA_ROOT = os.path.join(_PLANNER_DIR, "..", "..")
 _AIDD_OPS_SCRIPTS_DIR = os.path.join(_ECOSSISTEMA_ROOT, "tools", "aidd-ops", "scripts")
 if os.path.isdir(_AIDD_OPS_SCRIPTS_DIR) and _AIDD_OPS_SCRIPTS_DIR not in sys.path:
@@ -277,7 +277,7 @@ def gerar_template_plano(
 
 def exportar_para_fluxo_factory(plano: Dict[str, Any]) -> Dict[str, Any]:
     """
-    Converte um PLANNER.json canônico no formato de entrada exigido pela aidd-factory
+    Converte um PLANNER.json canônico no formato de entrada exigido pela aidd-open
     (`pipeline_factory.py --plano <arquivo>`): o envelope
     fase_1_intake/fase_2_curadoria/fase_3_sizing produzido pelo aidd-ops
     (`componentes/compartilhado/specs/plano-infraestrutura.schema.json`).
@@ -313,7 +313,7 @@ def exportar_para_fluxo_factory(plano: Dict[str, Any]) -> Dict[str, Any]:
     )
     if erro_fase:
         raise PlannerValidationError(
-            f"Exportação para aidd-factory falhou nas Fases 1-3 do aidd-ops: "
+            f"Exportação para aidd-open falhou nas Fases 1-3 do aidd-ops: "
             f"{erro_fase.get('codigo')}: {erro_fase.get('erro')} "
             f"(detalhes: {erro_fase.get('detalhes')})"
         )

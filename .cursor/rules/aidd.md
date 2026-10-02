@@ -2,7 +2,7 @@
 Consulte a governança canônica em AGENTS.md.
 Todas as 4 ferramentas estão organizadas em tools/:
 - tools/aidd-forge
-- tools/aidd-generator
+- tools/aidd-pure
 - tools/aidd-master
 - tools/aidd-enterprise
 
