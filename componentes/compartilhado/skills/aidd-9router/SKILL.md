@@ -59,7 +59,7 @@ python componentes/compartilhado/skills/aidd-9router/scripts/claude_9router.py -
 ```
 
 Inside Orca ADE (verified with a supervised Claude worker), set in Settings > Agents > Claude:
-- Command: `claude-9router` (wrapper in `~/.local/bin`, a bash file and a `.cmd`, both calling this launcher). Off = Command back to `claude`.
+- Command: `claude-9router` (wrapper in `~/.local/bin`, a bash file and a `.cmd`, both calling this launcher). Keep it there; toggle with the Orca Quick Commands "9Router ON" / "9Router OFF" / "9Router ESTADO" (`claude-9router --ligar`, `--desligar`, `--estado`). Off creates `~/.aidd/9router-desligado` and the wrapper starts plain `claude`.
 - Environment: `NINEROUTER_URL`, `NINEROUTER_KEY`, `NINEROUTER_OPUS/SONNET/HAIKU`. Never put `ANTHROPIC_AUTH_TOKEN` there: Orca's managed Claude accounts refuse that launch.
 - Arguments: `--model sonnet` so the default tier is `code-fast`.
 
