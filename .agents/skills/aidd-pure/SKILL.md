@@ -52,3 +52,26 @@ python ecossistema.py pure-motor "<idea>"
 
 Old name `generate` (and `/generate`) still works for one cycle and prints an "old name" warning (table in `componentes/compartilhado/specs/NOMES-ANTIGOS.json`).
 Done when: the command exits 0 and the phase 8 tests pass.
+
+## Negative Guardrails
+
+- NEVER configure an LLM API key or set `AIDD_MODO=headless` to unblock a phase: the model is always the running harness, answering the delegated protocol in `<pasta>/.aidd/cache/` (`_llm_request_<id>.json` -> `_llm_response_<id>.json`).
+- NEVER treat `pure ... --dry-run` exit 0 as proof: in dry-run the orchestrator skips every command and logs "contrato ... não conferido" for C1-C5.
+- NEVER declare Flow 01 done without a red-then-green test: phase 8 (`--implementar-codigo`) must show the failing test first, then the passing run.
+- NEVER point `--pasta` at an existing project or at the ecosystem root: stage 1 runs `git init` and `forge init <pasta> --force` there.
+- NEVER hand-write `HANDOFF_*.json` or `ORQUESTRACAO_EXECUCAO.json` to skip a failed stage; each tool writes its own contract.
+
+## Failure Modes & Fallback
+
+- **"<tool> não gravou HANDOFF_...: o bastão não passa":** the named stage failed upstream; rerun that tool alone (`python ecossistema.py planner validate <pasta>/PLANNER.json`, `master`, `enterprise`) and restart `pure` only after it exits 0.
+- **Phase waits on `_llm_request_<id>.json`:** you are the model. Read the request, write the JSON answer as `_llm_response_<id>.json` in the same folder; on timeout, rerun `python ecossistema.py pure-motor "<idea>" --pasta <dest> --resume` to skip finished phases.
+- **`pure-motor` exits with "Missing option '--pasta'":** the engine requires `--pasta <dest>`; add it (the short form in "Engine only" omits it).
+- **`python tools/aidd-pure/scripts/preflight_llm.py` reports "PRÉ-VOO FALHOU":** confirm you are inside a harness session (delegated mode); never fix it with a key.
+
+## Stopping Checklist
+
+- [ ] `python ecossistema.py pure --nome "<Name>" --slug <slug> --dominio <domain> --pasta <dest> > pure.log 2>&1; echo $? > pure.rc` and `pure.rc` holds `0`.
+- [ ] `<dest>/ORQUESTRACAO_EXECUCAO.json` exists and `contratos_lidos` lists C1-C5 with sha256.
+- [ ] `python gates/G_QUARTETO_SINE_QUA_NON.py --target <dest> > q-pure.log 2>&1; echo $? > q-pure.rc` holds `0` and `<dest>` has the Next.js frontend from step 4.
+- [ ] `python -m pytest <dest> > t.log 2>&1; echo $? > t.rc` holds `0`, and a red run of the same test was observed before the green one.
+- [ ] No API key was added to `.env`, the shell or any config during the run.
