@@ -118,6 +118,47 @@ def test_detectar_drift_orfao_e_force_sync():
             os.remove(destino_teste)
 
 
+def test_remover_sobras_diretorio_so_apaga_o_que_saiu_da_fonte(tmp_path):
+    origem = tmp_path / 'fonte'
+    destino = tmp_path / 'copia'
+    (origem / 'scripts').mkdir(parents=True)
+    (destino / 'scripts').mkdir(parents=True)
+    (origem / 'SKILL.md').write_text('a', encoding='utf-8')
+    (origem / 'scripts' / 'novo.py').write_text('b', encoding='utf-8')
+    (destino / 'SKILL.md').write_text('a', encoding='utf-8')
+    (destino / 'scripts' / 'novo.py').write_text('b', encoding='utf-8')
+    (destino / 'scripts' / 'antigo.py').write_text('c', encoding='utf-8')
+
+    previa = gestor_componentes._remover_sobras_diretorio(str(origem), str(destino), dry_run=True)
+    assert [os.path.basename(p) for p in previa] == ['antigo.py']
+    assert (destino / 'scripts' / 'antigo.py').exists()
+
+    gestor_componentes._remover_sobras_diretorio(str(origem), str(destino), dry_run=False)
+    assert not (destino / 'scripts' / 'antigo.py').exists()
+    assert (destino / 'scripts' / 'novo.py').exists()
+    assert (destino / 'SKILL.md').exists()
+
+
+def test_sync_remove_arquivo_que_saiu_da_fonte_e_verify_fica_limpo():
+    manifesto = gestor_componentes.carregar_manifesto()
+    indice = gestor_componentes._indexar_fontes(manifesto, 'skill')
+    destino_dir = next((d for d, v in indice.items() if v[4] and os.path.isdir(d)), None)
+    if not destino_dir:
+        pytest.skip('Nenhuma skill-diretorio sincronizada para teste')
+    sobra = os.path.join(destino_dir, '__sobra_removida_da_fonte.py')
+    with open(sobra, 'w', encoding='utf-8') as f:
+        f.write('# saiu da fonte\n')
+    try:
+        rel = os.path.relpath(sobra, ROOT_DIR).replace(os.sep, '/')
+        assert rel in [o.caminho for o in gestor_componentes.detectar_drift(tipo='skill').orfaos]
+        rel_sync = gestor_componentes.sync('skill')
+        assert os.path.relpath(sobra, ROOT_DIR) in rel_sync['removidos']
+        assert not os.path.exists(sobra)
+        assert rel not in [o.caminho for o in gestor_componentes.detectar_drift(tipo='skill').orfaos]
+    finally:
+        if os.path.exists(sobra):
+            os.remove(sobra)
+
 def test_auto_ingest_nao_puxa_skill_de_terceiro_para_a_fonte(monkeypatch):
     """Regressao (PROPOSTA-NOMES-SKILLS, etapa 1): o sync ingeria de volta para
     componentes/ as skills de terceiros instaladas nos harnesses, desfazendo a remocao."""

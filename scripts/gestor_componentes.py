@@ -339,6 +339,31 @@ def _copiar_diretorio(origem, destino, dry_run):
             shutil.copy2(os.path.join(raiz, arquivo), os.path.join(destino_raiz, arquivo))
 
 
+def _remover_sobras_diretorio(origem, destino, dry_run):
+    """Apaga, dentro da pasta de um componente, arquivos que não existem mais na fonte.
+
+    Só mexe dentro de `destino` (a cópia gerada do componente); manifestos extra
+    como gemini-extension.json ficam fora dessa pasta e nunca são tocados.
+    """
+    if not os.path.isdir(destino):
+        return []
+    removidos = []
+    for raiz, dirs, arquivos in os.walk(destino):
+        dirs[:] = [d for d in dirs if d not in IGNORAR_DIRS]
+        rel_raiz = os.path.relpath(raiz, destino)
+        for arquivo in arquivos:
+            if arquivo.endswith((".pyc", ".pyo")):
+                continue
+            rel = arquivo if rel_raiz == "." else os.path.join(rel_raiz, arquivo)
+            if os.path.isfile(os.path.join(origem, rel)):
+                continue
+            caminho = os.path.join(raiz, arquivo)
+            if not dry_run:
+                os.remove(caminho)
+            removidos.append(caminho)
+    return removidos
+
+
 def _copiar_arquivo(origem, destino, dry_run):
     if dry_run:
         return
@@ -735,7 +760,11 @@ def auto_ingest_skills(dry_run=False) -> list[str]:
 
 
 def sync(tipo, ferramenta=None, dry_run=False):
-    """Materializa componentes ausentes/divergentes a partir da fonte canônica. Nunca deleta."""
+    """Materializa componentes ausentes/divergentes a partir da fonte canônica.
+
+    Só apaga dentro da pasta de um componente-diretório: arquivos que saíram da
+    fonte (senão o verify acusa órfão depois de um sync limpo). Nada fora disso.
+    """
     if not ferramenta:
         skills_ingeridas = auto_ingest_skills(dry_run=dry_run)
         if skills_ingeridas:
@@ -744,7 +773,7 @@ def sync(tipo, ferramenta=None, dry_run=False):
                 print(f"  + {s}")
 
     manifesto = carregar_manifesto()
-    relatorio = {"pastas_criadas": [], "criados": [], "atualizados": []}
+    relatorio = {"pastas_criadas": [], "criados": [], "atualizados": [], "removidos": []}
 
     for tipo_atual in _tipos_a_processar(manifesto, tipo):
         for nome_escopo in _escopos_do_tipo(manifesto, tipo_atual, ferramenta):
@@ -756,6 +785,9 @@ def sync(tipo, ferramenta=None, dry_run=False):
 
                     if eh_dir:
                         _copiar_diretorio(origem, destino, dry_run)
+                        relatorio["removidos"].extend(
+                            os.path.relpath(c, ROOT_DIR) for c in _remover_sobras_diretorio(origem, destino, dry_run)
+                        )
                     else:
                         _copiar_arquivo(origem, destino, dry_run)
 
@@ -785,6 +817,9 @@ def _cmd_sync(args_ns):
     print(f"{modo}Componentes atualizados: {len(relatorio['atualizados'])}")
     for item in relatorio["atualizados"]:
         print(f"  [ATUALIZADO] {item}")
+    print(f"{modo}Arquivos removidos (saíram da fonte): {len(relatorio['removidos'])}")
+    for item in relatorio["removidos"]:
+        print(f"  [REMOVIDO] {item}")
     return 0
 
 
