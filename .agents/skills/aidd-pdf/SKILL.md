@@ -305,6 +305,26 @@ with open("encrypted.pdf", "wb") as output:
 | OCR scanned PDFs | pytesseract | Convert to image first |
 | Fill PDF forms | pdf-lib or pypdf (see FORMS.md) | See FORMS.md |
 
+## Negative Guardrails
+
+- NEVER guess coordinates when filling non-fillable forms — always run `python scripts/extract_form_structure.py <input.pdf> form_structure.json` or follow `FORMS.md`.
+- NEVER delete original PDF source documents without user confirmation; all transformations (merge, split, encrypt, watermark) must write to distinct output files.
+- NEVER run `python ecossistema.py audit` during skill tasks — verification belongs to dedicated test scripts and gates.
+- NEVER configure an LLM API key for OCR or extraction tasks — the running harness is always the model.
+
+## Failure Modes & Fallback
+
+- **Non-fillable form without native fields:** When `python scripts/check_fillable_fields.py` reports 0 fields, fall back to `FORMS.md` Approach A (structure extraction) or Approach B (visual image overlay via `scripts/convert_pdf_to_images.py`).
+- **Encrypted/password-protected PDF:** When `PdfReader` raises `FileNotDecryptedError`, request the user password or halt immediately without attempting brute-force recovery.
+- **Scanned document text extraction fails:** When `page.extract_text()` returns empty string or whitespace, fall back to OCR flow with image conversion and `pytesseract`.
+
+## Stopping Checklist
+
+- [ ] Target PDF is non-empty and readable: verify page count > 0 via `pypdf.PdfReader` with clean exit code.
+- [ ] For form filling: generated output validated via `python scripts/check_bounding_boxes.py` or visual review of rendered PNGs.
+- [ ] Intermediate artifacts and extracted PNG pages cleaned up unless explicitly requested.
+- [ ] No unstaged or corrupted binary PDF files committed with `--no-verify`.
+
 ## Next Steps
 
 - For advanced pypdfium2 usage, see REFERENCE.md

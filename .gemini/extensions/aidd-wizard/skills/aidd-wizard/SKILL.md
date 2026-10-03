@@ -32,3 +32,27 @@ Bar: open the URL before asking for its value; `ask_secret` for anything secret;
 - `bash -n <script>`; run `shellcheck` if available; `chmod +x <script>`.
 - The agent never runs the wizard end to end: it opens browsers and blocks on human input. Trace it statically: every value from step 1 is captured and lands where step 1 said; every `set_secret` name matches a `secrets.*` reference in CI.
 - Tell the user how to run it (Git Bash on Windows: `bash <script>`).
+
+## Negative Guardrails
+
+- NEVER ask the user to paste a secret into chat; secrets go through `ask_secret` straight into `write_env` or `set_secret`.
+- NEVER run the wizard end to end yourself; it opens browsers and blocks on human input.
+- NEVER edit the library above the `STAGES` marker in `template.sh`; only the stages below it.
+- NEVER write an irreversible stage (DNS cutover, drop, deploy) without a `confirm` right before it.
+- NEVER commit the wizard or a filled `.env`; the wizard is ephemeral unless the user asks to keep it.
+
+## Failure Modes & Fallback
+
+- **Dashboard path unknown or UI changed:** mark the stage "unverified", ask the user or read the vendor docs; never guess clicks.
+- **`gh` missing or not authenticated:** keep `write_env`, skip `set_secret`, tell the user to run `! gh auth login`, then rerun the stage.
+- **`bash -n` fails:** fix the syntax in the stages, never in the library, rerun.
+
+## Stopping Checklist
+
+Exit codes go to a file, never through a pipe: `bash -n <script> > "$TEMP/wz.log" 2>&1; echo $? > "$TEMP/wz.rc"`.
+
+- [ ] `bash -n <script>` wrote rc 0; `shellcheck <script>` too when available.
+- [ ] `TOTAL_STAGES` equals the number of `stage` calls (`grep -c '^stage ' <script>`).
+- [ ] Every `set_secret` name matches a `secrets.*` reference in the CI workflows.
+- [ ] Every value from step 1 lands where step 1 said (`.env.example` keys covered).
+- [ ] No secret value appears in the script or in chat.

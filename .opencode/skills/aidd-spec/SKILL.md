@@ -22,6 +22,28 @@ Every specification produced by this skill must include:
 - Outputs must be structured for direct insertion into `docs/planos/`.
 - Upon user approval of the specification, invoke `/aidd-tickets` or proceed directly to `/aidd-planner`.
 
+## Negative Guardrails
+
+- NEVER hand a spec to `/aidd-planner` or `/aidd-tickets` before `python ecossistema.py spec validar --arquivo <spec.md>` exits 0.
+- NEVER rename or reorder the 5 headings; `scripts/parser.py` finds them by regex (`Context & Explicit Non-Goals` ... `Failure & Degradation Modes`) and fails the spec when one is missing.
+- NEVER write an acceptance criterion that no command, exit code or HTTP status can check ("works well", "is fast").
+- NEVER add a decision the user or the `aidd-grill` resolutions did not make; list it as a Non-Goal or an open question.
+- NEVER hand-write the compiled JSON; only `spec compilar --output` or `spec exportar --output` produce the signed handoff.
+
+## Failure Modes & Fallback
+
+- **`[FALHA] Validação estrutural`:** a heading is missing or misspelled. Fix the heading named in the output and re-run `spec validar`.
+- **`[FALHA] Validação de critérios e regras`:** a criterion is not binary or the invariants are not numbered. Rewrite those items and re-run.
+- **`[FALHA] Não foi possível gerar o handoff assinado`:** re-run `spec compilar` with a writable `--output`; if it fails again, report the stderr to the user.
+- **Key decision still open:** stop and send the question back to `/aidd-grill` instead of guessing it into the spec.
+
+## Stopping Checklist
+
+- [ ] `python ecossistema.py spec validar --arquivo <spec.md> > validar.log 2>&1; echo $? > validar.exit` gives 0.
+- [ ] `python ecossistema.py spec compilar --arquivo <spec.md> --output <manifest.json> > compilar.log 2>&1; echo $? > compilar.exit` gives 0 and the JSON exists.
+- [ ] Every Binary Acceptance Criteria item names a command, an exit code or an HTTP status.
+- [ ] The user approved the spec in this conversation before the next skill was invoked.
+
 ## Encadeamento Canônico de Intake
 Após aprovação da especificação formal:
 - **Próxima Skill:** `/aidd-planner` (gera o blueprint formal `PLANNER.json` com DDD/BDD/SDD).

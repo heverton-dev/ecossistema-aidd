@@ -33,3 +33,25 @@ If the first `--args` value starts with `-` (e.g. `-y,package@latest`), always w
 ## Registered file is not an available variable
 
 `${VAR}` in `.mcp.json`, `opencode.jsonc` etc. only works if `VAR` is already in the environment of the shell that launches the harness. No harness loads the repository `.env` to expand third-party MCP variables. The root `.env` (see `.env.example`) documents the names and is loaded by this repository's Python code, but the user still exports them before opening the harness.
+
+## Negative Guardrails
+
+- NEVER write a secret value into `gates/dependencias_externas.json`, `.mcp.json`, `opencode.jsonc` or `.env.example`; `--env` takes variable names only (`GITHUB_TOKEN`), and `G_SEGREDOS` scans those files.
+- NEVER register an LLM provider key or an LLM-gateway MCP as a dependency to make a step work: the model is always the running harness.
+- NEVER hand-edit `.mcp.json`, `.cursor/mcp.json` or `.gemini/settings.json` to add an MCP; use `dependencia add-mcp` so the manifest and every `DESTINOS_MCP` file stay in step.
+- NEVER commit the installer footprint of a third-party skill: always pass `--gitignore "*/skills/<name>/"` on `add-skill`.
+- NEVER clear or overwrite a `sha256` in the manifest to silence `verify`; a mismatch means the artifact changed, and the user decides.
+
+## Failure Modes & Fallback
+
+- **`npx` missing on PATH:** `bootstrap` cannot run npx-based installers (`_npx_disponivel()` is false). Ask the user to install Node.js LTS, then rerun `python ecossistema.py dependencia bootstrap --tipo skills`.
+- **`verify` says `hash SHA-256 divergente`:** stop and show expected vs obtained hash. Reinstall with the vendor command or, with user approval, re-register via `add-skill --sha256 <new>`.
+- **`harness '<x>' sem schema de config confirmado`:** drop that harness from `--harnesses`; never extend `DESTINOS_MCP` without the harness's official MCP schema.
+- **MCP registered but the server fails to start (`${VAR}` empty):** tell the user to export the variable in the shell that launches the harness; harnesses never read the repo `.env`.
+
+## Stopping Checklist
+
+- [ ] `python ecossistema.py dependencia verify > dep_verify.txt 2>&1; echo $? > dep_verify.rc` holds `0`.
+- [ ] `python ecossistema.py dependencia list > dep_list.txt 2>&1; echo $? > dep_list.rc` holds `0` and shows the new entry installed or registered.
+- [ ] `git status --porcelain` shows no vendor skill folder (the `--gitignore` pattern landed in `.gitignore`).
+- [ ] `python gates/G_SEGREDOS.py > seg.txt 2>&1; echo $? > seg.rc` holds `0` after touching MCP configs.

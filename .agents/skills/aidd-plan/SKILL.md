@@ -58,6 +58,31 @@ python ecossistema.py plan ler-nota <path> [--item <NN>]
 python ecossistema.py plan atualizar-nota <path> [--item <NN>] --nota-atual <n> --evidencia <path>
 ```
 
+## Negative Guardrails
+
+- NEVER run `python ecossistema.py plan aprovar` without a literal approval message from the user in this session; an "APROVADO" on the plan approves the document only, so never chain `plan iniciar-execucao` or `/orchestrate` from it.
+- NEVER write a grade without evidence: `plan atualizar-nota` exits 1 without `--nota-atual` and `--evidencia`; never pass a fake path to get past it, use `NAO AUDITADO`.
+- NEVER create, rename or move folders under `docs/planos/` by hand; numbering comes from `plan init` and the move to `docs/planos/a-fazer/` from `plan aprovar`.
+- NEVER file a tool-audit correction plan here: that is `PLANO-EVOLUCAO.md` under `docs/auditoria/<tool>/` (`aidd-audit-4f`), not `docs/planos/`.
+- NEVER run `git commit`, `git push` or `--no-verify` from this skill, and never point the `test_gerenciador_planos.py` fixtures at the real `docs/planos/`.
+
+## Failure Modes & Fallback
+
+- **`[ERRO] Pasta ja existe` (exit 1) on `plan init`:** never delete the existing folder; read it with `python ecossistema.py plan ler-nota <plan-folder>` and ask the user: reuse it or pick a new initiative name.
+- **`check-fences` exit 1:** a code fence is nested inside another; switch the outer fence of the reported file to `~~~` and rerun until exit 0.
+- **`aprovar` says the folder does not exist:** look in `docs/planos/a-fazer/` and `docs/planos/fazendo/`; the plan may be approved already (re-approval is idempotent). Report it, never recreate it.
+- **Another session edits the same plan:** run `git status docs/planos/` before writing; if a file changed under you, stop and ask the user which session owns it.
+
+## Stopping Checklist
+
+Exit codes go to a file, never through a pipe: `<cmd> > "$TEMP/plan.log" 2>&1; echo $? > "$TEMP/plan.rc"`.
+
+- [ ] `python ecossistema.py plan check-fences docs/planos/<plan-folder>/` wrote rc 0.
+- [ ] `python ecossistema.py plan ler-nota docs/planos/<plan-folder>` shows, for every item, a current grade with evidence or `NAO AUDITADO`.
+- [ ] Every item file still reads DRAFT unless the user approved in this session.
+- [ ] `python -m pytest componentes/compartilhado/skills/aidd-plan/tests/test_gerenciador_planos.py -q` wrote rc 0 when this skill or `scripts/gerenciador_planos.py` changed.
+- [ ] No `git commit` or `git push` ran.
+
 ## References
 
 - `references/plan-structure.md`: naming convention, where a plan lives, generated files, canonical examples.

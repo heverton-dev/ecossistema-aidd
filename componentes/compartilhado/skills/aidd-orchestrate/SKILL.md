@@ -50,6 +50,32 @@ Example: `PLAN-0016-fase-04-eliminar-timesleep-injetar`, branch `orca/<same>`. T
 - Generating the plan structure -> `aidd-plan`.
 - Operating the ORCA app outside a plan -> the global `orca-cli` skill.
 
+## Negative Guardrails
+
+- NEVER pass `--ambiente`, `--harness` or `--yes` the user did not choose: with no `--ambiente` and no TTY (or with `--yes`/`--dry-run`) `orchestrate_cli` silently falls back to `gitworktree`.
+- NEVER run the `worktree create` line from `.orca-flight-plan.json` as is: `orca_real_plan.compilar_plano_orca` emits `--parent-worktree active` (child table), while step 1 requires `--no-parent` unless the user asked for stacked work.
+- NEVER call `python ecossistema.py plan iniciar-execucao <plan>` on a dry-run: it moves the plan to `docs/planos/fazendo/` and marks it IN EXECUTION.
+- NEVER use `--dangerously-force-headless` or launch a table harness with `--resume <session-id>`: unattended tables once committed and pushed 3 times skipping the gate.
+- NEVER run `orca orchestration check` by hand while a 4F phase runs: the re-delivered heartbeat marked the phase "failed — alive".
+- NEVER integrate a table on the AI's word or with `--no-verify`: run `python ecossistema.py audit` inside the table, read `git diff`, then cherry-pick.
+
+## Failure Modes & Fallback
+
+- **`terminal wait --for tui-idle` returns `satisfied: false` twice:** report the front as not started, send nothing, close the table terminal (`references/orca-app.md` step 4).
+- **Ambiguous `terminal send` receipt:** repeat the SAME command with `--retry-request <id>`; no empty resend.
+- **A Subagents front fails or reports a block:** stop before the next front and show the user the front's `rotulo` and error.
+- **Hand-edited Flight Plan:** rerun with `--from-flight-plan <plan-folder>/.orca-flight-plan.json` so the edit is not recompiled away.
+
+## Stopping Checklist
+
+Prove each item with the exit code read from a file (`> x.log 2>&1; echo $? > x.rc`, read `x.rc`), never through a pipe.
+
+- [ ] `python ecossistema.py orchestrate <plan> --ambiente <env> --dry-run` exit 0 and `<plan-folder>/.orca-flight-plan.json` exists.
+- [ ] The user's approval of that Flight Plan is a real message in this session, not inferred.
+- [ ] Every table/front name equals a `rotulo` in `.orca-flight-plan.json`.
+- [ ] Per front: `python ecossistema.py audit` exit 0 inside the table before cherry-pick.
+- [ ] `git worktree list` shows no table of this plan left after cleanup (or the user chose Sleep).
+
 ## References
 
 - `references/orca-app.md`: the ORCA app execution procedure (tables, launch, send, monitor, audit, integrate, clean up).

@@ -56,6 +56,30 @@ Works the same in every harness (Golden Rule #6): heavy work runs in the shared 
      ```
    Never run `/plan` or `atualizar-nota` by yourself: `atualizar-nota` overwrites a grade permanently.
 
+## Negative Guardrails
+
+- NEVER pass `--nota-atual` without a command you ran or a file you read as `--evidencia`; omit it so the report says `NAO AUDITADO`.
+- NEVER grade from cross-reading code: re-run the gate, test or CLI that drives the behavior and cite its exit code.
+- NEVER classify a plan item `feito` because its box is `[x]`; read the commit diff (`git show --stat <sha>`), since a commit that only ticks the box changes no code.
+- NEVER write the report by hand or paste HTML in chat; only `python ecossistema.py melhoria init` writes the pair in `docs/melhorias/`.
+- NEVER create or edit anything under `docs/planos/` in this step (that is `aidd-plan`); a tool audit plan goes to `docs/auditoria/<tool>/ciclo-NN/PLANO-EVOLUCAO.md` through `aidd-audit-4f`.
+- NEVER run `/plan` or `python ecossistema.py plan atualizar-nota` without an explicit "sim" from the user in this conversation.
+
+## Failure Modes & Fallback
+
+- **`plan ler-nota` returns `NAO AUDITADO`:** old-format plan. Do not invent a previous grade; generate the report without the previous -> new comparison and say so in the summary.
+- **`codebase-memory-mcp` absent or project not indexed:** continue with Grep/Glob/Read and add "grafo indisponível" to `--achados`; never stop the analysis for it.
+- **`melhoria init` exits non-zero or one file of the pair is missing:** read its stderr, correct the argument and re-run; never complete the `.json` or `.html` by hand.
+- **Request too vague to scope:** ask the user one question naming the two readings before investigating.
+
+## Stopping Checklist
+
+- [ ] `python ecossistema.py melhoria init ... > melhoria.log 2>&1; echo $? > melhoria.exit` gives 0.
+- [ ] Both `.html` and `.json` of the pair exist: `ls docs/melhorias/<dd-mm-aaaa>_melhoria-<3-words>.* > par.txt` lists two files.
+- [ ] The grade is a number with `--evidencia`, or `NAO AUDITADO`.
+- [ ] `git status --short docs/planos/ > planos.txt` is empty.
+- [ ] The chat ends with the next-step question; no `/plan` or `atualizar-nota` was run.
+
 ## Tool engine
 
 `scripts/` holds the deterministic engine of the melhoria tool (analyzer, fallback, handoff, isolation, observability, rollback). `python ecossistema.py melhoria --manifest <json>` runs `scripts/cli.py`. `tests/` covers the report manager.

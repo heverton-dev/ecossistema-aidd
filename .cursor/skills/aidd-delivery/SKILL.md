@@ -46,3 +46,24 @@ Adapted from `pr` in mattpocock/skills (commit c55ee46), MIT license. "Resumo" s
 - A checkbox marked `[x]` requires its evidence in the same document (command + exit code + output line). A box with no evidence stays `[ ]`.
 - **Dá para desfazer?:** two-way door = cheap rollback (revert commit). One-way door = destructive or hard to reverse (deletes data, migrates schema, pushes, publishes). One-way doors need explicit user approval before running.
 - **O que pode quebrar:** consider consumers of the changed file, harness copies from `python ecossistema.py components sync`, forge templates, and gates that read the file.
+
+## Negative Guardrails
+
+- NEVER fill **Evidência** with a command not run in this session, or with an exit code read through a pipe (`cmd | tail`).
+- NEVER mark a ticket `[x]` in `RELATORIO-CONSTRUTOR.md` when the commit diff only touches the checkbox; the evidence must point at changed code or tests.
+- NEVER write a fix's "Antes" without a test that failed first; a red-then-green pair is the proof, a green-only run is not.
+- NEVER classify as **mão dupla** a change that pushes, publishes, migrates a schema or deletes copies; those are **mão única** and wait for explicit user approval.
+- NEVER cite a delivery committed with `--no-verify` as passed, nor run `python ecossistema.py audit` inside a 4F phase to collect evidence: the orchestrator runs the phase gate.
+
+## Failure Modes & Fallback
+
+- **No "before" output exists (work already done):** check out the parent commit in a scratch worktree, rerun the same command there, and record that exit code; if impossible, write `Antes: não capturado` instead of inventing one.
+- **Evidence command exits non-zero after the change:** the delivery is not closed; leave the box `[ ]`, paste the failing line, and report it to the user or coordinator.
+- **Blast radius unclear:** run `python ecossistema.py components verify --tipo todos` and search consumers of the changed file before choosing `local` over `harnesses` or `ecossistema`.
+
+## Stopping Checklist
+
+- [ ] All four headings present: `grep -c -E "^## (Resumo|Evidência|Dá para desfazer|O que pode quebrar)" <file>` returns 4.
+- [ ] Every evidence line carries a command and an exit code captured as `cmd > out.txt 2>&1; echo $? > cmd.rc`.
+- [ ] Each `[x]` has its evidence in the same document; the count of `[x]` equals the count of evidence lines.
+- [ ] **Porta** is `mão dupla` or `mão única`, and **Raio** is one of `local|ferramenta|harnesses|ecossistema`.

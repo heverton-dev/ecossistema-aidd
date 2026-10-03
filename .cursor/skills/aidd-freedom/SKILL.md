@@ -56,3 +56,25 @@ python ecossistema.py freedom-motor pack [path] --domain example.com
 
 Old name `bridge` (and `/bridge`) still works for one cycle and prints an "old name" warning (table in `componentes/compartilhado/specs/NOMES-ANTIGOS.json`).
 Done when: each operation exits 0.
+
+## Negative Guardrails
+
+- NEVER modify or delete the original export folder (`--origem`): `freedom-motor convert-db <path>` writes `init-db.sql` inside `<path>` unless `--output` is given, so point it at the working copy.
+- NEVER run `freedom-motor destroy` or pass `--yes` without explicit user OK: it removes the Swarm stack, volumes, Cloudflare DNS and the VPS folder, irreversibly.
+- NEVER run `freedom-motor migrate-auth --apply` before showing the user the preview report from the run without `--apply`.
+- NEVER change components, styles or Tailwind tokens of the exported UI: the flow keeps the original visual identity; only Supabase/BaaS calls are replaced.
+- NEVER commit a fixed database password generated in `init-db.sql` or the compose; `G_SEGREDOS` already flagged the data bridge for this.
+
+## Failure Modes & Fallback
+
+- **`scan` finds 0 Supabase migrations:** the export is not Lovable/Vite or lacks `supabase/migrations`; ask the user for the full export before `convert-db`.
+- **Generated slice tests fail after `scan`:** fix the converted slice under `src/modules/<domain>/` and rerun `scan`; never delete the failing test.
+- **`destroy` exits 1 ("ERRO VPS"):** stop; report the VPS error to the user and do not retry with other credentials.
+- **`merge` with more than 4 apps or conflicting routes:** stop and ask the user which apps and routes win.
+
+## Stopping Checklist
+
+- [ ] `python ecossistema.py freedom --nome "<Name>" --slug <slug> --dominio <domain> --pasta <dest> --origem <export> > fr.log 2>&1; echo $? > fr.rc` and `fr.rc` holds `0`.
+- [ ] `git -C <export> status --short` is empty (original export untouched).
+- [ ] No `@supabase/supabase-js` import left: `git -C <dest> grep -l "@supabase/supabase-js" -- src > sb.txt; echo $? > sb.rc` and `sb.rc` holds `1` (no match).
+- [ ] `python gates/G_QUARTETO_SINE_QUA_NON.py --target <dest> > q-freedom.log 2>&1; echo $? > q-freedom.rc` holds `0` on the liberated app, with the exported UI unchanged.

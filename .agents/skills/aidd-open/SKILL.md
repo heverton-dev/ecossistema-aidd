@@ -54,3 +54,25 @@ python ecossistema.py open-motor --plano <PLANO-INFRAESTRUTURA.json> --pasta <de
 Old name `factory` (and `/factory`) still works for one cycle and prints an "old name" warning (table in `componentes/compartilhado/specs/NOMES-ANTIGOS.json`).
 Done when: the command exits 0 and `FACTORY_OUTPUT.json` exists in the destination.
 Architecture: `docs/features/v2_arquitetura-aidd-ops-factory.md`.
+
+## Negative Guardrails
+
+- NEVER configure an LLM API key to run the engine phases: the running harness is the model; for a no-model run use `open-motor ... --sem-llm`.
+- NEVER call `open-motor` without a `PLANO-INFRAESTRUTURA.json` produced by `aidd-ops`; do not hand-craft one to skip that stage.
+- NEVER treat `open ... --dry-run` exit 0 as delivery: dry-run skips every command and does not check contracts C1-C5.
+- NEVER write real secrets into the generated per-service `.env` files or `docker-compose`; keep placeholders and tell the user which keys to fill.
+- NEVER type `/open` inside Antigravity CLI (`agy`): it opens files there; use `/aidd-open`.
+- NEVER mark Flow 02 done while `FACTORY_OUTPUT.json` has `resumo.erros` above 0 (an artifact with `status: erro`, e.g. the cross-service validation).
+
+## Failure Modes & Fallback
+
+- **Stage stops with "não gravou HANDOFF_ENGINE_MASTER.json":** the engine did not finish; rerun `python ecossistema.py open-motor --plano <PLANO-INFRAESTRUTURA.json> --pasta <dest>` alone, read its error, then restart `open`.
+- **Engine phase blocks waiting for a model answer:** answer the delegated request in `<dest>/.aidd/cache/`, or rerun with `--sem-llm` if the user accepts a deterministic stack.
+- **Chosen open-source engine has no tested image or license fit:** stop and ask the user for an alternative engine; do not vendor an untested one.
+
+## Stopping Checklist
+
+- [ ] `python ecossistema.py open --nome "<Name>" --slug <slug> --dominio <domain> --pasta <dest> > open.log 2>&1; echo $? > open.rc` and `open.rc` holds `0`.
+- [ ] `<dest>/ORQUESTRACAO_EXECUCAO.json` exists and `<dest>/FACTORY_OUTPUT.json` has `resumo.erros` equal to `0`.
+- [ ] `docker compose -f <dest>/docker-compose.yml config > dc.log 2>&1; echo $? > dc.rc` holds `0`.
+- [ ] `python gates/G_QUARTETO_SINE_QUA_NON.py --target <dest> > q-open.log 2>&1; echo $? > q-open.rc` holds `0` (the four routes are served by the FastAPI gateway).

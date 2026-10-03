@@ -235,6 +235,27 @@ ls -1 "$PWD"/slide-*.jpg
 
 **After fixes, rerun all four commands above** — the PDF must be regenerated from the edited `.pptx` before `pdftoppm` can reflect your changes.
 
+## Negative Guardrails
+
+- NEVER run bare `soffice` command directly — always invoke `python scripts/office/soffice.py` to prevent hanging in headless/sandboxed execution.
+- NEVER deliver or finalize a deck without validating via `python scripts/office/validate.py deck.pptx` (and `--original src.pptx` for template-based decks).
+- NEVER copy slide files by hand inside unpacked OOXML — always use `python scripts/add_slide.py` to ensure relationship and presentation manifest integrity.
+- NEVER delete slide elements, media, or rels manually without running `python scripts/clean.py unpacked/` after `<p:sldIdLst>` edits.
+- NEVER configure an LLM API key for slide generation or deck review — the model is always the running harness.
+
+## Failure Modes & Fallback
+
+- **PowerPoint reports corrupted file:** Run `python scripts/office/validate.py out.pptx` to identify axis ID mismatches in combos (`valAxes` and `catAxes`), outEnd positions in stacked charts, or schema hierarchy bugs.
+- **LibreOffice rendering hangs or fails:** Check that `python scripts/office/soffice.py` is used with `--headless` and verify Poppler's `pdftoppm` is available for image generation; fall back to `markitdown deck.pptx` text dumps when visual conversion is unavailable.
+- **Thumbnails overwrite each other:** When using `python scripts/thumbnail.py`, always provide a specific prefix (e.g. `python scripts/thumbnail.py deck.pptx deck-thumbs`) to avoid wiping default `thumbnails.jpg`.
+
+## Stopping Checklist
+
+- [ ] Presentation validates cleanly: `python scripts/office/validate.py out.pptx` exits 0.
+- [ ] No orphaned parts or broken rels: `python scripts/clean.py unpacked/` confirms zero unreferenced slide or media items.
+- [ ] Visual QA images produced and checked: `python scripts/office/soffice.py --headless --convert-to pdf out.pptx` exits 0 and slide images generated.
+- [ ] No temporary `unpacked/` folder or stray `slide-*.jpg` staged for commit.
+
 ## Dependencies
 
 `pptxgenjs` (npm, preinstalled — install only if `require('pptxgenjs')` fails) · `markitdown[pptx]`, `Pillow`, `defusedxml`, `lxml` (pip — text dump, thumbnail, clean, validate) · LibreOffice (`soffice`, auto-configured for sandboxed environments via `scripts/office/soffice.py`) · `pdftoppm` (Poppler)
