@@ -1,84 +1,44 @@
 ---
 name: aidd-9router
-description: House calibration for calling the 9Router AI gateway at minimum token cost - which combo to pick for coding (code-pro, code-fast, code-free), when to disable the token saver, stream and max_tokens rules, and how to read the inflated usage numbers. Use when a task sends prompts, code generation or delegated subtasks through 9Router, NINEROUTER_URL or NINEROUTER_KEY, or when the user asks which 9Router model or combo to use. Also covers image, text-to-speech, speech-to-text, embeddings, web search and web fetch through 9Router.
+description: Builds, calibrates, deploys and operates the house 9Router AI gateway end to end - token saver tuning, coding combos (code-pro, code-fast, code-free) chosen by real benchmarks, 24/7 deploy on the VPS with DNS, routing of Claude Code, OpenCode, MiMo and omp through the combos inside Orca ADE with an on/off switch, health diagnosis and cheap direct calls. Use when the user mentions 9Router, NINEROUTER_URL, NINEROUTER_KEY, combos, routing a harness or Orca agents through 9Router, deploying or checking the gateway, or which model to use for coding; also for image, TTS, STT, embeddings and web search/fetch through 9Router.
 ---
 
 # aidd-9router
 
-9Router is the OpenAI-compatible gateway, running 24/7 on the VPS at `https://9router.vpsconexao.org` (Swarm stack `ninerouter`; `NINEROUTER_URL` in `.env`). A local copy at `http://localhost:20128` is only a fallback with its own separate database. This skill holds the house rules measured on 2026-10-03. Non-chat endpoints (image, TTS, STT, embeddings, web search, web fetch): `references/endpoints.md`.
+9Router is the OpenAI/Anthropic-compatible gateway: one key, many providers, fallback combos. The house instance runs 24/7 at `https://9router.vpsconexao.org` (Swarm stack `ninerouter`); `NINEROUTER_URL` in `.env` points to it. All scripts live in `scripts/` (run from the repo root, `python componentes/compartilhado/skills/aidd-9router/scripts/<script>`), read `.env` themselves and never print secrets.
 
-## 1. Config
+Start every task with `doctor.py`. Done when it prints `RESULTADO: ok` (exit 0).
 
-- `.env` holds `NINEROUTER_URL` and `NINEROUTER_KEY` (dashboard "Endpoint & Key", key `aidd`). Never print the key.
-- "Require API key" is ON: `/v1/chat/completions` without the key returns 401. `/v1/models` stays public.
-- Health: `curl $NINEROUTER_URL/api/health` returns `{"ok":true}`. Done when it does.
+## 1. Use it (most tasks)
 
-## 2. Pick the model
-
-| Need | Model | Claude Code tier | Measured (hard parser task, 21 tests) |
-|---|---|---|---|
-| Quality first | `code-pro` | opus | 21/21, ~20 s |
-| Speed, default | `code-fast` | sonnet | 21/21, ~11 s |
-| Zero cost | `code-free` | haiku | 20/21, ~11 s |
-
-Combos fall back in order when a provider fails. Members and full ranking: `references/bench.md`.
-
-Every combo member passed a real Claude Code tool-use run (read a file, answer). Excluded from combos:
-- `groq/*` free tier: 8000 tokens/min, a harness prompt gets 413 and 9Router does not fall back on 413.
-- `cf/*` (32k context) and `ag/gpt-oss-120b-medium` (500 errors).
-
-Avoid for token economy in direct calls:
-- `kr/*` (Kiro) injects 3k-20k hidden input tokens per call.
-- `gemini/*` and `ag/gemini-3.8-flash` (non `-low`) burn 5k-15k reasoning tokens and can stop at `max_tokens` with no code.
-- `xmtp/mimo-*-pro` think for 60-120 s.
-
-## 3. Call it
-
-Run the script instead of hand-writing curl:
-
-```bash
-python componentes/compartilhado/skills/aidd-9router/scripts/chamar.py "<prompt>" --modelo code-fast
-```
-
-Done when it exits 0. Exit 2 means the answer is still truncated after one retry; split the task.
-
-The script applies these rules (follow them when calling by hand):
-1. Always send `"stream": false`. The default is SSE and a plain JSON parse fails.
-2. Set `max_tokens` to the expected answer size plus reasoning margin: 512 short, 2048 code, 8000 for reasoning models.
-3. If `finish_reason` is `length`, retry once with double `max_tokens`.
-4. Short answers: send header `X-9Router-Token-Saver: off`. Long answers (above ~300 tokens): leave the saver on (`--longo`) so Caveman compresses the output.
-
-## 4. Route a harness through the combos
-
-One launcher for Claude Code, OpenCode, MiMo and omp; nothing is written to the harness config:
-
-```bash
-python componentes/compartilhado/skills/aidd-9router/scripts/harness_9router.py <claude|opencode|mimo|omp> [args...]
-python componentes/compartilhado/skills/aidd-9router/scripts/harness_9router.py --ligar | --desligar | --estado
-```
-
-What "on" does per harness (tiers: opus/plan -> `code-pro`, sonnet/default -> `code-fast`, haiku/smol -> `code-free`):
-- `claude`: sets `ANTHROPIC_BASE_URL`, `ANTHROPIC_AUTH_TOKEN` and the three `ANTHROPIC_DEFAULT_*_MODEL`. Subagents and skills pick a tier with their `model:` field.
-- `opencode` / `mimo`: injects provider `aidd9r` through `OPENCODE_CONFIG_CONTENT` / `MIMOCODE_CONFIG_CONTENT`, replaces `-m` with `aidd9r/code-fast`, `small_model` = `code-free`.
-- `omp`: replaces `--model/--smol/--plan/--slow` with the `aidd9r/*` combos. Needs provider `aidd9r` in `~/.omp/agent/models.yml` (`api: openai-completions`, `apiKey: NINEROUTER_KEY`). One invalid provider in that file disables all custom providers; run `omp models aidd9r` to check.
-
-"Off" (marker `~/.aidd/9router-desligado`) starts the harness untouched. Override one tier with `NINEROUTER_OPUS`, `NINEROUTER_SONNET` or `NINEROUTER_HAIKU`. The ecosystem keeps the delegated protocol: it asks the harness, the harness answers through the combo.
-
-Inside Orca ADE, Settings > Agents > Command: `claude-9router`, `opencode-9router`, `mimo-9router`, `omp-9router` (bash and `.cmd` wrappers in `~/.local/bin` calling the launcher). Toggle all at once with the Quick Commands "9Router ON" / "9Router OFF" / "9Router ESTADO" in the terminal tab bar; run them in a shell tab, not inside an agent. Never put `ANTHROPIC_AUTH_TOKEN` in Orca's agent Environment: managed Claude accounts refuse that launch. Verified with Orca supervised workers for Claude, OpenCode and omp; MiMo workers fail Orca's readiness check even with the original `mimo` command, so test MiMo interactively.
-
-## 5. Read usage correctly
-
-- 9Router adds a fixed **+2000** to `prompt_tokens`, `input_tokens` and `total_tokens` in every response. These tokens are never sent to the model. Real input = reported - 2000.
-- Real saver overhead (Caveman Ultra only): ~385 input tokens per call.
-- Dashboard "cost" uses the inflated numbers.
-
-## 6. Token Saver settings (dashboard "Economizador de Tokens")
-
-| Setting | State | Why |
+| Need | Run | Done when |
 |---|---|---|
-| RTK | on | Lossless compression of tool output, adds nothing. |
-| Headroom | off | The service on :8787 is not running, so it saved nothing. |
-| Caveman | on, Ultra | Pays off on long answers; skip it per call with the header. |
-| Ponytail | off | Coding style comes from the harness; it cost ~370 tokens per call. |
+| Ask a model once, cheap | `chamar.py "<prompt>" --modelo code-fast` | exit 0 (2 = still truncated, split the task) |
+| Health of everything | `doctor.py` (`--rapido` skips chat calls) | `RESULTADO: ok` |
+| Image, TTS, STT, embeddings, web search/fetch | endpoints in `references/endpoints.md` | HTTP 200 |
 
-Done when `GET /api/settings` (logged-in dashboard) shows `rtkEnabled:true, headroomEnabled:false, cavemanEnabled:true, ponytailEnabled:false`.
+Pick the combo: `code-pro` (quality, ~20 s), `code-fast` (default, ~11 s), `code-free` (zero cost, Kiro credits). Ranking and members: `references/bench.md`.
+
+Call rules (built into `chamar.py`): `"stream": false`; `max_tokens` sized to the answer (512 short, 2048 code, 8000 reasoning); retry once with double on `finish_reason: length`; header `X-9Router-Token-Saver: off` on short answers. Real input tokens = reported `prompt_tokens` - 2000 (9Router inflates the number; nothing extra reaches the model).
+
+## 2. Route harnesses through the combos
+
+Tiers: opus/plan -> `code-pro`, sonnet/default -> `code-fast`, haiku/smol -> `code-free` (override with `NINEROUTER_OPUS/SONNET/HAIKU` in `.env`). The ecosystem keeps the delegated protocol: it asks the harness, the harness answers through the combo.
+
+1. `instalar_wrappers.py` - creates `claude-9router`, `opencode-9router`, `mimo-9router`, `omp-9router` (bash + `.cmd`) in `~/.local/bin`. Done when exit 0.
+2. `omp_provider.py` - adds provider `aidd9r` to `~/.omp/agent/models.yml` and checks omp loads it. Done when exit 0.
+3. `orca_9router.py --aplicar` - Orca Environment and Arguments of Claude plus Quick Commands "9Router ON/OFF/ESTADO". Exit 2 lists agents whose Command must still be set in Settings > Agents > Command to the wrapper name. Done when `orca_9router.py --estado` exits 0.
+4. Switch: Quick Commands in the terminal tab bar, or `harness_9router.py --ligar | --desligar | --estado`. Off starts every harness untouched.
+5. Prove it: `bench.py harness sonnet` - done when `"passou": true` and `"usou": ["code-fast"]`.
+
+Never put `ANTHROPIC_AUTH_TOKEN` in Orca's agent Environment (managed Claude accounts refuse the launch). Details, MiMo and unsupported harnesses: `references/harnesses.md`.
+
+## 3. Build or rebuild the gateway
+
+1. Local install, key `aidd`, "Exigir chave de API" on, token saver (RTK on, Headroom off, Caveman Ultra on, Ponytail off): `references/setup.md` sections 1-2. Done when chat without key returns 401 and with key returns 200.
+2. Combos: choose members only among models that pass both `bench.py codigo <id>` (21/21) and `bench.py harness <id>`; create them with the dashboard snippets in `references/setup.md` section 4. Done when each combo passes both benches.
+3. Deploy: `deploy_vps.py --dry-run`, then `deploy_vps.py` (copies providers, keys and combos; creates volume, stack and DNS; waits for health). Done when it prints `no ar:`. Then set `NINEROUTER_URL` to the VPS, re-run `orca_9router.py --aplicar` and `doctor.py`. Operations, rollback and dashboard login: `references/deploy-vps.md`.
+
+## 4. Before changing anything
+
+Read `references/achados.md`: measured traps (+2000 usage, Kiro hidden prompt, Groq 413 without fallback, reasoning models stopping at `max_tokens`, Orca managed accounts, invalid omp provider disabling all providers). Asset: `assets/ninerouter-stack.yml` (stack template filled by `deploy_vps.py`).

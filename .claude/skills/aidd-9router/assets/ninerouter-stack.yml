@@ -1,0 +1,45 @@
+# Stack Swarm do 9Router atrás do Traefik (preenchido por scripts/deploy_vps.py).
+version: "3.8"
+
+services:
+  ninerouter:
+    image: decolua/9router:$VERSAO
+    environment:
+      - DATA_DIR=/app/data
+      - NODE_ENV=production
+      - REQUIRE_API_KEY=true
+      - AUTH_COOKIE_SECURE=true
+      - BASE_URL=https://$HOST
+      - NEXT_PUBLIC_BASE_URL=https://$HOST
+    volumes:
+      - $VOLUME:/app/data
+    networks:
+      - $REDE
+    deploy:
+      mode: replicated
+      replicas: 1
+      placement:
+        constraints:
+          - node.role == manager
+      restart_policy:
+        condition: any
+        delay: 5s
+      resources:
+        limits:
+          memory: 1536M
+      labels:
+        - traefik.enable=true
+        - traefik.http.routers.ninerouter.rule=Host(`$HOST`)
+        - traefik.http.routers.ninerouter.entrypoints=$ENTRYPOINT
+        - traefik.http.routers.ninerouter.tls.certresolver=$CERTRESOLVER
+        - traefik.http.routers.ninerouter.service=ninerouter
+        - traefik.http.services.ninerouter.loadbalancer.server.port=20128
+        - traefik.http.services.ninerouter.loadbalancer.passHostHeader=true
+
+volumes:
+  $VOLUME:
+    external: true
+
+networks:
+  $REDE:
+    external: true

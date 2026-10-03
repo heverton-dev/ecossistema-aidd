@@ -17,28 +17,13 @@ Roteamento por nível (troca por nível: NINEROUTER_OPUS / NINEROUTER_SONNET / N
 """
 import json
 import os
-import re
 import shutil
 import subprocess
 import sys
-from pathlib import Path
 
-PADRAO = {"opus": "code-pro", "sonnet": "code-fast", "haiku": "code-free"}
-MARCADOR_DESLIGADO = Path.home() / ".aidd" / "9router-desligado"
-PROVEDOR = "aidd9r"
+from _comum import MARCADOR_DESLIGADO, PROVEDOR, gateway, ler_env, mapa_combos
+
 HARNESSES = ("claude", "opencode", "mimo", "omp")
-
-
-def ler_env(nome):
-    if os.environ.get(nome):
-        return os.environ[nome]
-    for pasta in [Path.cwd(), *Path(__file__).resolve().parents]:
-        env = pasta / ".env"
-        if env.is_file():
-            m = re.search(rf'^{nome}=["\']?([^"\'\r\n]*)', env.read_text(encoding="utf-8"), re.M)
-            if m:
-                return m.group(1).strip()
-    return ""
 
 
 def sem_flags(args, flags):
@@ -113,9 +98,9 @@ def main():
         return 2
     harness, args = args[0], args[1:]
 
-    url = (ler_env("NINEROUTER_URL") or "http://localhost:20128").rstrip("/")
+    url = gateway()
     chave = ler_env("NINEROUTER_KEY")
-    mapa = {nivel: ler_env(f"NINEROUTER_{nivel.upper()}") or combo for nivel, combo in PADRAO.items()}
+    mapa = mapa_combos()
     if "--mapa" in args:
         for nivel, combo in mapa.items():
             print(f"{nivel:<7}-> {combo}")
