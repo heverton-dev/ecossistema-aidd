@@ -124,7 +124,12 @@ class InjectGate:
                 "Roteamento de frases PT-BR para o Injetor ausente em scripts/aidd.py",
             )
         else:
-            repo_aidd = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))), "scripts", "aidd.py")
+            # A peça mora em componentes/compartilhado/injetor/ (almoxarifado): a CLI dona do
+            # subcomando é a do aidd-enterprise, achada a partir da raiz do ecossistema.
+            raiz = os.path.dirname(os.path.abspath(__file__))
+            while raiz != os.path.dirname(raiz) and not os.path.isfile(os.path.join(raiz, "ecossistema.py")):
+                raiz = os.path.dirname(raiz)
+            repo_aidd = os.path.join(raiz, "tools", "aidd-enterprise", "scripts", "aidd.py")
             if os.path.isfile(repo_aidd):
                 self.check(True, "Subcomando CLI 'aidd inject <tipo> <nome>'", "")
             else:

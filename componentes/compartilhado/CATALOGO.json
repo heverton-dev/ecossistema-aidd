@@ -34,8 +34,6 @@
         "aidd-master"
       ],
       "copias": [
-        "tools/aidd-enterprise/scripts/gates/G_ARQUITETURA.py",
-        "tools/aidd-enterprise/templates/gates/G_ARQUITETURA.py",
         "tools/aidd-master/scripts/gates/G_ARQUITETURA.py",
         "tools/aidd-master/templates/gates/G_ARQUITETURA.py"
       ],
@@ -70,8 +68,6 @@
         "aidd-master"
       ],
       "copias": [
-        "tools/aidd-enterprise/scripts/gates/G_CHAOS.py",
-        "tools/aidd-enterprise/templates/gates/G_CHAOS.py",
         "tools/aidd-master/scripts/gates/G_CHAOS.py",
         "tools/aidd-master/templates/gates/G_CHAOS.py"
       ],
@@ -91,8 +87,6 @@
         "aidd-master"
       ],
       "copias": [
-        "tools/aidd-enterprise/scripts/gates/G_CONTRACTS.py",
-        "tools/aidd-enterprise/templates/gates/G_CONTRACTS.py",
         "tools/aidd-master/scripts/gates/G_CONTRACTS.py",
         "tools/aidd-master/templates/gates/G_CONTRACTS.py"
       ],
@@ -144,8 +138,6 @@
         "aidd-master"
       ],
       "copias": [
-        "tools/aidd-enterprise/scripts/gates/G_ESTRUTURA.py",
-        "tools/aidd-enterprise/templates/gates/G_ESTRUTURA.py",
         "tools/aidd-master/scripts/gates/G_ESTRUTURA.py",
         "tools/aidd-master/templates/gates/G_ESTRUTURA.py"
       ],
@@ -183,8 +175,6 @@
         "aidd-master"
       ],
       "copias": [
-        "tools/aidd-enterprise/scripts/gates/G_HARNESS_COMPAT.py",
-        "tools/aidd-enterprise/templates/gates/G_HARNESS_COMPAT.py",
         "tools/aidd-master/scripts/gates/G_HARNESS_COMPAT.py",
         "tools/aidd-master/templates/gates/G_HARNESS_COMPAT.py"
       ],
@@ -204,8 +194,6 @@
         "aidd-master"
       ],
       "copias": [
-        "tools/aidd-enterprise/scripts/gates/G_PERFORMANCE.py",
-        "tools/aidd-enterprise/templates/gates/G_PERFORMANCE.py",
         "tools/aidd-master/scripts/gates/G_PERFORMANCE.py",
         "tools/aidd-master/templates/gates/G_PERFORMANCE.py"
       ],
@@ -225,8 +213,6 @@
         "aidd-master"
       ],
       "copias": [
-        "tools/aidd-enterprise/scripts/gates/G_QUALIDADE.py",
-        "tools/aidd-enterprise/templates/gates/G_QUALIDADE.py",
         "tools/aidd-master/scripts/gates/G_QUALIDADE.py",
         "tools/aidd-master/templates/gates/G_QUALIDADE.py"
       ],
@@ -280,8 +266,6 @@
         "aidd-master"
       ],
       "copias": [
-        "tools/aidd-enterprise/scripts/gates/G_SEGREDOS.py",
-        "tools/aidd-enterprise/templates/gates/G_SEGREDOS.py",
         "tools/aidd-master/scripts/gates/G_SEGREDOS.py",
         "tools/aidd-master/templates/gates/G_SEGREDOS.py"
       ],
@@ -301,8 +285,6 @@
         "aidd-master"
       ],
       "copias": [
-        "tools/aidd-enterprise/scripts/gates/G_SEGURANCA.py",
-        "tools/aidd-enterprise/templates/gates/G_SEGURANCA.py",
         "tools/aidd-master/scripts/gates/G_SEGURANCA.py",
         "tools/aidd-master/templates/gates/G_SEGURANCA.py"
       ],
@@ -339,8 +321,6 @@
         "aidd-master"
       ],
       "copias": [
-        "tools/aidd-enterprise/scripts/gates/G_TESTES.py",
-        "tools/aidd-enterprise/templates/gates/G_TESTES.py",
         "tools/aidd-master/scripts/gates/G_TESTES.py",
         "tools/aidd-master/templates/gates/G_TESTES.py"
       ],
@@ -489,14 +469,12 @@
       "papel": "principal",
       "dono_do_conteudo": "aidd-enterprise",
       "versao": "1.0.0",
-      "sha256": "sha256-71b526f1e6c6f175f56691867e272e91dbd03bfdc998a638f1c80b802d93a01b",
+      "sha256": "sha256-444c281e789db322b5c229e7b77d8e3f9739b965d1941f3ef2cbbc251711bc3d",
       "consumidores": [
         "aidd-enterprise",
         "aidd-master"
       ],
-      "copias": [
-        "tools/aidd-enterprise/scripts/gates/G_INJECT.py"
-      ],
+      "copias": [],
       "base": "aidd-enterprise scripts/gates bc68193 2026-09-09 + checagens do aidd-master"
     },
     {
@@ -512,9 +490,7 @@
         "aidd-enterprise",
         "aidd-master"
       ],
-      "copias": [
-        "tools/aidd-enterprise/scripts/injector/__init__.py"
-      ]
+      "copias": []
     },
     {
       "nome": "injetor/detector_camada.py",
@@ -548,9 +524,7 @@
         "aidd-enterprise",
         "aidd-master"
       ],
-      "copias": [
-        "tools/aidd-enterprise/application/commands/inject.py"
-      ],
+      "copias": [],
       "base": "aidd-enterprise application/commands c01ed49 2026-09-10 + aidd-master"
     },
     {
@@ -584,9 +558,7 @@
         "aidd-enterprise",
         "aidd-master"
       ],
-      "copias": [
-        "tools/aidd-enterprise/scripts/injector/schema/component_manifest.schema.json"
-      ]
+      "copias": []
     },
     {
       "nome": "injetor/schema_injector_request.json",
@@ -1019,8 +991,6 @@
         "aidd-ops"
       ],
       "copias": [
-        "tools/aidd-enterprise/templates/core/Dockerfile",
-        "tools/aidd-enterprise/templates/v2/Dockerfile",
         "tools/aidd-master/templates/core/Dockerfile",
         "tools/aidd-master/templates/v2/Dockerfile"
       ],
@@ -1042,8 +1012,6 @@
         "aidd-ops"
       ],
       "copias": [
-        "tools/aidd-enterprise/templates/core/deploy.sh",
-        "tools/aidd-enterprise/templates/v2/deploy.sh",
         "tools/aidd-master/templates/core/deploy.sh",
         "tools/aidd-master/templates/v2/deploy.sh"
       ],
@@ -1064,8 +1032,6 @@
         "aidd-ops"
       ],
       "copias": [
-        "tools/aidd-enterprise/templates/core/docker-compose.yml",
-        "tools/aidd-enterprise/templates/v2/docker-compose.yml",
         "tools/aidd-master/templates/core/docker-compose.yml",
         "tools/aidd-master/templates/v2/docker-compose.yml"
       ],
@@ -1086,8 +1052,6 @@
         "aidd-ops"
       ],
       "copias": [
-        "tools/aidd-enterprise/templates/core/nginx/nginx.conf",
-        "tools/aidd-enterprise/templates/v2/nginx/nginx.conf",
         "tools/aidd-master/templates/core/nginx/nginx.conf",
         "tools/aidd-master/templates/v2/nginx/nginx.conf"
       ],
@@ -1108,8 +1072,6 @@
         "aidd-ops"
       ],
       "copias": [
-        "tools/aidd-enterprise/templates/core/nginx/ssl/generate_ssl.py",
-        "tools/aidd-enterprise/templates/v2/nginx/ssl/generate_ssl.py",
         "tools/aidd-master/templates/core/nginx/ssl/generate_ssl.py",
         "tools/aidd-master/templates/v2/nginx/ssl/generate_ssl.py"
       ],
@@ -1148,8 +1110,6 @@
         "aidd-open"
       ],
       "copias": [
-        "tools/aidd-enterprise/templates/core/docs.html",
-        "tools/aidd-enterprise/templates/v2/docs.html",
         "tools/aidd-master/templates/core/docs.html",
         "tools/aidd-master/templates/v2/docs.html"
       ],
@@ -1170,8 +1130,6 @@
         "aidd-open"
       ],
       "copias": [
-        "tools/aidd-enterprise/templates/core/mcp_server.py",
-        "tools/aidd-enterprise/templates/v2/mcp_server.py",
         "tools/aidd-master/templates/core/mcp_server.py",
         "tools/aidd-master/templates/v2/mcp_server.py"
       ],
@@ -1223,8 +1181,6 @@
         "aidd-open"
       ],
       "copias": [
-        "tools/aidd-enterprise/templates/core/openapi.py",
-        "tools/aidd-enterprise/templates/v2/openapi.py",
         "tools/aidd-master/templates/core/openapi.py",
         "tools/aidd-master/templates/v2/openapi.py"
       ],
@@ -1363,7 +1319,6 @@
         "aidd-master"
       ],
       "copias": [
-        "tools/aidd-enterprise/src/static/docs.html",
         "tools/aidd-master/src/static/docs.html"
       ],
       "variante_de": "moldes/quarteto/docs.html",
@@ -1384,8 +1339,6 @@
         "aidd-master"
       ],
       "copias": [
-        "tools/aidd-enterprise/templates/core/mcp_studio.html",
-        "tools/aidd-enterprise/templates/v2/mcp_studio.html",
         "tools/aidd-master/templates/core/mcp_studio.html",
         "tools/aidd-master/templates/v2/mcp_studio.html"
       ],
@@ -1407,8 +1360,6 @@
         "aidd-master"
       ],
       "copias": [
-        "tools/aidd-enterprise/templates/core/swagger.html",
-        "tools/aidd-enterprise/templates/v2/swagger.html",
         "tools/aidd-master/templates/core/swagger.html",
         "tools/aidd-master/templates/v2/swagger.html"
       ],
@@ -1430,8 +1381,6 @@
         "aidd-master"
       ],
       "copias": [
-        "tools/aidd-enterprise/templates/core/webhook_studio.html",
-        "tools/aidd-enterprise/templates/v2/webhook_studio.html",
         "tools/aidd-master/templates/core/webhook_studio.html",
         "tools/aidd-master/templates/v2/webhook_studio.html"
       ],
@@ -1471,8 +1420,6 @@
         "aidd-open"
       ],
       "copias": [
-        "tools/aidd-enterprise/templates/core/webhooks.py",
-        "tools/aidd-enterprise/templates/v2/webhooks.py",
         "tools/aidd-master/templates/core/webhooks.py",
         "tools/aidd-master/templates/v2/webhooks.py"
       ],

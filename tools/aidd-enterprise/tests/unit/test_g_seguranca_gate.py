@@ -17,7 +17,8 @@ import subprocess
 import sys
 
 REPO_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
-GATE_SCRIPT = os.path.join(REPO_ROOT, "scripts", "gates", "G_SEGURANCA.py")
+# Bloco 4: o gate é peça do almoxarifado (a cópia em scripts/gates/ saiu).
+GATE_SCRIPT = os.path.join(os.path.dirname(os.path.dirname(REPO_ROOT)), "componentes", "compartilhado", *"gates/G_SEGURANCA.py".split("/"))
 
 TERMOS_MARKETING_PROIBIDOS = [
     "Score de Blindagem",

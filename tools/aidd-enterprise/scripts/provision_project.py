@@ -1,5 +1,8 @@
 import os, sys, shutil, subprocess, json, re
 
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from moldes_catalogo import gates_de_projeto, molde  # noqa: E402
+
 if hasattr(sys.stdout, 'reconfigure'):
     sys.stdout.reconfigure(encoding='utf-8', errors='replace')
 
@@ -46,7 +49,7 @@ def provision(project_desc, base_dir=None):
 
     if os.path.exists(templates_dir):
         for f in ['database.py', 'events.py', 'openapi.py', 'webhooks.py', 'security.py', 'token_revocation.py', 'mcp_server.py', 'mcp_repository.py', 'cqrs.py', 'result.py', 'repositories.py', 'circuit_breaker.py', 'swagger.html', 'webhook_studio.html', 'mcp_studio.html']:
-            src = os.path.join(templates_dir, f)
+            src = molde(templates_dir, f)
             if os.path.exists(src):
                 shutil.copyfile(src, os.path.join(project_dir, 'src', 'core', f))
         
@@ -55,12 +58,12 @@ def provision(project_desc, base_dir=None):
         # (w-6, h-4 etc). Sem esse arquivo o CSS volta 404 e a página inteira
         # (ícones, cores, espaçamento) renderiza sem estilo nenhum.
         for sf in ['index.html', 'docs.html', 'output.css']:
-            src = os.path.join(templates_dir, sf)
+            src = molde(templates_dir, sf)
             if os.path.exists(src):
                 shutil.copyfile(src, os.path.join(project_dir, 'src', 'static', sf))
 
         for f in ['Dockerfile', 'docker-compose.yml', 'deploy.sh']:
-            src = os.path.join(templates_dir, f)
+            src = molde(templates_dir, f)
             if os.path.exists(src):
                 shutil.copyfile(src, os.path.join(project_dir, f))
                 
@@ -75,10 +78,8 @@ def provision(project_desc, base_dir=None):
             shutil.copyfile(src, os.path.join(project_dir, 'scripts', s))
 
     # 4. Copiar Gates Rígidos
-    if os.path.exists(gates_dir):
-        for g in os.listdir(gates_dir):
-            if g.endswith('.py'):
-                shutil.copyfile(os.path.join(gates_dir, g), os.path.join(project_dir, 'scripts', 'gates', g))
+    for g, origem in sorted(gates_de_projeto(gates_dir).items()):
+        shutil.copyfile(origem, os.path.join(project_dir, 'scripts', 'gates', g))
 
     # 4.5. Gerar PLANO-EXECUCAO-ESTRUTURADO.json ANTES do módulo padrão inicial.
     # Achado real (18/09/2026, aidd-master): quando o plano só era escrito

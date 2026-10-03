@@ -23,6 +23,9 @@ import tempfile
 
 from cookiecutter.main import cookiecutter
 
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from moldes_catalogo import gates_de_projeto, molde  # noqa: E402
+
 # Escritor atômico: staging → fsync → os.replace
 try:
     from escritor_atomico import escrever_atomico, escrever_json_atomico
@@ -509,7 +512,7 @@ def _copy_shared_kernel(templates_v2: str, core_dir: str, shared_ui_dir: str, sh
         "local_first.py", "logs.py",
     ]
     for cf in core_files:
-        src = os.path.join(templates_v2, cf)
+        src = molde(templates_v2, cf)
         dst = os.path.join(core_dir, cf)
         if os.path.isfile(src):
             shutil.copyfile(src, dst)
@@ -524,7 +527,7 @@ def _copy_shared_kernel(templates_v2: str, core_dir: str, shared_ui_dir: str, sh
     # lista — todo projeto criado via `compose_suite()` tinha /docs
     # retornando HTTP 500 (FileNotFoundError) sempre.
     for asset in ("swagger.html", "webhook_studio.html", "mcp_studio.html"):
-        src = os.path.join(templates_v2, asset)
+        src = molde(templates_v2, asset)
         dst = os.path.join(core_dir, asset)
         if os.path.isfile(src):
             shutil.copyfile(src, dst)
@@ -607,7 +610,7 @@ def _generate_server_and_ui(
     escrever_atomico(os.path.join(static_dir, "index.html"), index_html)
     print("  [+] Front-end Super-App 'src/static/index.html' gerado!")
 
-    docs_template_path = os.path.join(templates_v2, "docs.html")
+    docs_template_path = molde(templates_v2, "docs.html")
     if os.path.isfile(docs_template_path):
         with open(docs_template_path, "r", encoding="utf-8") as tmpf:
             raw_docs_html = tmpf.read()
@@ -644,11 +647,9 @@ def _copy_gates_and_automation(
     target_dir: str, core_dir: str, target_gates_dir: str, target_scripts_dir: str
 ) -> None:
     """Copiar Quality Gates, Fuzzing, scripts e templates Cookiecutter/Jinja2."""
-    if os.path.isdir(gates_dir):
-        for g in os.listdir(gates_dir):
-            if g.endswith(".py"):
-                shutil.copyfile(os.path.join(gates_dir, g), os.path.join(target_gates_dir, g))
-                print(f"  [+] Quality Gate: {g}")
+    for g, origem in sorted(gates_de_projeto(gates_dir).items()):
+        shutil.copyfile(origem, os.path.join(target_gates_dir, g))
+        print(f"  [+] Quality Gate: {g}")
 
     fuzzing_src = os.path.join(templates_v2, "..", "..", "src", "core", "fuzzing.py")
     if os.path.isfile(fuzzing_src):
@@ -692,12 +693,12 @@ def _copy_governance_and_rules(
 ) -> None:
     """Copiar arquivos de produção, Nginx e regras multi-IDE."""
     for prod_f in ["Dockerfile", "docker-compose.yml", "deploy.sh", "AGENTS.md", "CLAUDE.md", "GEMINI.md"]:
-        src = os.path.join(templates_v2, prod_f)
+        src = molde(templates_v2, prod_f)
         if os.path.isfile(src):
             shutil.copyfile(src, os.path.join(target_dir, prod_f))
             print(f"  [+] Governança & Deploy: {prod_f}")
 
-    nginx_src = os.path.join(templates_v2, "nginx")
+    nginx_src = molde(templates_v2, "nginx")
     nginx_dst = os.path.join(target_dir, "nginx")
     if os.path.isdir(nginx_src):
         os.makedirs(nginx_dst, exist_ok=True)

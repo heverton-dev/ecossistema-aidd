@@ -1207,3 +1207,21 @@
   - `inventario_capacidades.py comparar`: 4 órfãos novos, todos linhas trocadas de propósito em `verificar_gates.py` e no teste.
 - **Status:** **RESOLVIDO**.
 - **Data da Última Auditoria:** 03/10/2026.
+
+## 31. Bloco 4: moldes e gates do almoxarifado removidos do `aidd-enterprise`, parte 1 (fronteiras-ferramentas ciclo-01, Ticket 19)
+
+- **Objetivo da Correção:**
+  Remover do `aidd-enterprise` as 49 cópias de moldes, gates e injetor que já são peça do almoxarifado, com o OK do usuário (Lei #7). O núcleo `src/core` (37 cópias) fica para a parte 2.
+- **Ferramentas Tocadas:** [`tools/aidd-enterprise`](file:///C:/Users/trcnologia/Desktop/ecossistema-aidd/tools/aidd-enterprise).
+- **O que executou:**
+  1. Removidas as cópias de `templates/core`, `templates/v2`, `templates/gates`, `scripts/gates`, `scripts/injector` e `application/commands/inject.py`.
+  2. `scripts/moldes_catalogo.py` (novo): molde local se existir, senão a peça do almoxarifado; lista dos 10 gates de projeto. `compose_suite.py` e `provision_project.py` passam a usá-lo.
+  3. Peça `injetor/G_INJECT.py`: acha o `scripts/aidd.py` do enterprise pela raiz do ecossistema (o caminho por `__file__` quebrava fora da ferramenta); selo sha256 atualizado no catálogo.
+  4. `G_HONESTIDADE_ROTULO` vigia `componentes/compartilhado/gates` e `injetor`; skill `aidd-enterprise` lê o schema do almoxarifado; catálogo, baseline do `G_DRIFT` e allowlist do `G_FRONTEIRA` sem as cópias removidas.
+- **Resultados de Testes:**
+  - `tools/aidd-enterprise`: `pytest` → exit 0 (341 passed, 3 skipped).
+  - `tests/test_enterprise_*.py` → exit 0 (100 passed); gates afetados e catálogo → exit 0 (33 passed).
+  - Projeto gerado por `provision_project` sai com o núcleo do Quarteto e os 10 gates.
+  - E2E `comparar --base ciclo-01` → exit 0, nenhuma métrica piorou.
+- **Status:** **RESOLVIDO**.
+- **Data da Última Auditoria:** 03/10/2026.

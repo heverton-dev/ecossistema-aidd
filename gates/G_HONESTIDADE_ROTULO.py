@@ -63,7 +63,8 @@ TERMOS_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "termos_p
 DIRETORIOS_AUDITADOS = [
     "gates",
     "tools/aidd-master/scripts/gates",
-    "tools/aidd-enterprise/scripts/gates",
+    "componentes/compartilhado/gates",
+    "componentes/compartilhado/injetor",
     "tools/aidd-pure/scripts/gates",
     "tools/aidd-ops/gates",
     "tools/aidd-forge/aidd_forge/templates/gates",

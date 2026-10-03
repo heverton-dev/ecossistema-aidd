@@ -21,7 +21,7 @@ import pytest
 ROOT_DIR = Path(__file__).resolve().parent.parent
 INJETOR_PATH = ROOT_DIR / ".agents" / "skills" / "aidd-enterprise" / "scripts" / "injetor.py"
 SCHEMA_PATH = (
-    ROOT_DIR / "tools" / "aidd-enterprise" / "scripts" / "injector" / "schema" / "component_manifest.schema.json"
+    ROOT_DIR / "componentes" / "compartilhado" / "injetor" / "schema" / "component_manifest.schema.json"
 )
 
 

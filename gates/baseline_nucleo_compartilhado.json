@@ -178,52 +178,7 @@
         "motivo": null
       }
     },
-    "scripts/gates": {
-      "G_ARQUITETURA.py": {
-        "esperado_identico": true,
-        "motivo": null
-      },
-      "G_CHAOS.py": {
-        "esperado_identico": true,
-        "motivo": null
-      },
-      "G_CONTRACTS.py": {
-        "esperado_identico": true,
-        "motivo": null
-      },
-      "G_ESTRUTURA.py": {
-        "esperado_identico": true,
-        "motivo": null
-      },
-      "G_HARNESS_COMPAT.py": {
-        "esperado_identico": true,
-        "motivo": null
-      },
-      "G_INJECT.py": {
-        "esperado_identico": false,
-        "motivo": "Feature divergente entre as duas suites: aidd-master valida auto-carregamento de MCPs injetados (_verificar_auto_carregamento_mcp) e uma prova de fogo via CAPABILITIES.json (_verificar_prova_de_fogo); aidd-enterprise valida sincronizacao/drift multi-harness (_verificar_drift_pos_injecao via sincronizador_harness.verificar_sincronizacao) e a estrutura de COMPONENT-REGISTRY.json - conjuntos de checagem diferentes por design, nao bug."
-      },
-      "G_PERFORMANCE.py": {
-        "esperado_identico": true,
-        "motivo": null
-      },
-      "G_QUALIDADE.py": {
-        "esperado_identico": true,
-        "motivo": null
-      },
-      "G_SEGREDOS.py": {
-        "esperado_identico": true,
-        "motivo": null
-      },
-      "G_SEGURANCA.py": {
-        "esperado_identico": true,
-        "motivo": null
-      },
-      "G_TESTES.py": {
-        "esperado_identico": true,
-        "motivo": null
-      }
-    },
+    "scripts/gates": {},
     "templates/core": {
       "circuit_breaker.py": {
         "esperado_identico": true,
@@ -265,15 +220,7 @@
         "esperado_identico": true,
         "motivo": null
       },
-      "mcp_server.py": {
-        "esperado_identico": true,
-        "motivo": null
-      },
       "metrics.py": {
-        "esperado_identico": true,
-        "motivo": null
-      },
-      "openapi.py": {
         "esperado_identico": true,
         "motivo": null
       },
@@ -298,10 +245,6 @@
         "motivo": null
       },
       "token_revocation.py": {
-        "esperado_identico": true,
-        "motivo": null
-      },
-      "webhooks.py": {
         "esperado_identico": true,
         "motivo": null
       }
@@ -347,15 +290,7 @@
         "esperado_identico": true,
         "motivo": null
       },
-      "mcp_server.py": {
-        "esperado_identico": true,
-        "motivo": null
-      },
       "metrics.py": {
-        "esperado_identico": true,
-        "motivo": null
-      },
-      "openapi.py": {
         "esperado_identico": true,
         "motivo": null
       },
@@ -384,10 +319,6 @@
         "motivo": null
       },
       "token_revocation.py": {
-        "esperado_identico": true,
-        "motivo": null
-      },
-      "webhooks.py": {
         "esperado_identico": true,
         "motivo": null
       }
@@ -480,14 +411,7 @@
   "catalogo": {
     "descricao": "Copias de pecas do CATALOGO.json que divergem de proposito da versao do catalogo (chave = caminho da copia, valor = motivo). Toda outra copia tem de ser byte-identica a peca. As copias saem do repo no Ticket 19 (remocao com o usuario).",
     "divergencias_documentadas": {
-      "tools/aidd-enterprise/application/commands/inject.py": "Versão original do enterprise (c01ed49, 10/09); a peça juntou o motor por payload do aidd-master. Desde o Ticket 18 não é mais importada: o enterprise carrega injetor/inject.py do almoxarifado. Copia antiga, fica no disco até a remoção com o usuário (Ticket 19).",
-      "tools/aidd-enterprise/scripts/gates/G_INJECT.py": "Versão original do enterprise (bc68193, 09/09); a peça juntou as checagens do aidd-master. Copia antiga, fica no disco até a remoção com o usuário (Ticket 19).",
       "tools/aidd-enterprise/src/core/detector_camada.py": "Copia com _PROJETO_PADRAO fixo em 'aidd-enterprise'; a peça deduz o projeto pela localização. Desde o Ticket 18 o enterprise carrega a peça (application/pecas_catalogo.py). Copia antiga, fica no disco até a remoção com o usuário (Ticket 19).",
-      "tools/aidd-enterprise/templates/core/Dockerfile": "Molde de infra anterior ao conserto de 17/09 (7768f12: requirements antes do src/); a peça é a versão consertada, do aidd-ops (Ticket 16). Copia antiga, fica no disco até a remoção com o usuário (Ticket 19).",
-      "tools/aidd-enterprise/templates/core/deploy.sh": "Molde de infra anterior ao conserto de 17/09 (7768f12); a peça é a versão consertada, do aidd-ops (Ticket 16). Copia antiga, fica no disco até a remoção com o usuário (Ticket 19).",
-      "tools/aidd-enterprise/templates/core/mcp_server.py": "Molde do Quarteto anterior à peça: a peça (src-core + tema primary/primary_hover) tem register_injected_tools com selo Ed25519/SHA-256. Copia antiga, fica no disco até a remoção com o usuário (Ticket 19).",
-      "tools/aidd-enterprise/templates/v2/deploy.sh": "Molde de infra anterior ao conserto de 17/09 (7768f12); a peça é a versão consertada, do aidd-ops (Ticket 16). Copia antiga, fica no disco até a remoção com o usuário (Ticket 19).",
-      "tools/aidd-enterprise/templates/v2/mcp_server.py": "Molde do Quarteto anterior à peça: a peça (src-core + tema primary/primary_hover) tem register_injected_tools com selo Ed25519/SHA-256. Copia antiga, fica no disco até a remoção com o usuário (Ticket 19).",
       "tools/aidd-master/src/core/detector_camada.py": "Copia com _PROJETO_PADRAO fixo em 'aidd-master'; a peça deduz o projeto pela localização. Copia antiga, fica no disco até a remoção com o usuário (Ticket 19).",
       "tools/aidd-master/src/core/profiles_registry.py": "Versão do aidd-master (hooks em JSON, 9325afa); a peça é a base do enterprise com esses hooks juntados. Copia antiga, fica no disco até a remoção com o usuário (Ticket 19).",
       "tools/aidd-master/templates/core/mcp_server.py": "Molde do Quarteto anterior à peça: a peça (src-core + tema primary/primary_hover) tem register_injected_tools com selo Ed25519/SHA-256. Copia antiga, fica no disco até a remoção com o usuário (Ticket 19).",
