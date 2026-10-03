@@ -26,3 +26,21 @@ Thin coordinator. The rules live in one place: `docs/protocolos/CONVENCAO-AUTORI
    python gates/G_SKILL_FORMATO.py
    ```
    Done when all four exit 0. Never declare a skill ready just because the file was written.
+
+## Negative Guardrails
+
+- NEVER edit or create skills directly in `.claude/skills/`, `.agents/skills/`, `.opencode/skills/`. Only edit under `componentes/`.
+- NEVER invent broad generic descriptions ("helps with Python", "writes code"). Always state specific domain and exact `Use when ...` trigger.
+- NEVER skip deterministic quality gates (`G_SKILL_FORMATO`, `G_SKILL_ROT`) before declaring completion.
+
+## Failure Modes & Fallback
+
+- **Catalog conflict:** if catalog search finds a skill with overlapping scope, halt creation, prompt user to improve the existing skill or rename with mutually exclusive scope.
+- **Gate failure:** if `G_SKILL_FORMATO` or `G_SKILL_ROT` returns non-zero, inspect line length, frontmatter fields, and disk path references before re-running sync.
+
+## Stopping Checklist
+
+- [ ] Source exists exclusively in `componentes/<escopo>/skills/<name>/SKILL.md`.
+- [ ] Frontmatter contains valid `name` matching folder and English `description` with `Use when`.
+- [ ] Body has under 450 lines (target 150) in compact English.
+- [ ] All four verification commands exit 0.

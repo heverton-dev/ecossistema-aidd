@@ -1,0 +1,43 @@
+{
+  "pipeline_id": "evolucao-aidd-skills-ciclo-01",
+  "target_tool": "aidd-skills",
+  "descricao": "Plano de Evolução Tática montado a partir dos 3 tickets de PLANO-EVOLUCAO.md",
+  "config_usuario_ref": "docs/auditoria/CONFIG-EXECUCAO-USUARIO.json",
+  "definition_of_done": "docs/auditoria/aidd-skills/ciclo-01/DOD.md",
+  "gate_final": "python ecossistema.py audit",
+  "fases": [
+    {
+      "ticket_id": "TICKET-01",
+      "nome": "Fase_1_Ticket_1_Padroniza__o_de_Negative_Guardrails_e_Stopping_Checklist",
+      "dimensao_15d": "D1. Contratos e Regras",
+      "harness": "agy",
+      "model": "gemini-3.8-flash-low",
+      "comando_terminal": "agy --model gemini-3.8-flash-low  --dangerously-skip-permissions",
+      "input_prompt": "docs/auditoria/aidd-skills/ciclo-01/prompts_tickets/PROMPT-TICKET-01.txt",
+      "output_handoff": "docs/protocolos/CONVENCAO-AUTORIA-SKILLS.md",
+      "gate_fase": "python gates/G_SKILL_FORMATO.py"
+    },
+    {
+      "ticket_id": "TICKET-02",
+      "nome": "Fase_2_Ticket_2_Auditoria_de_Falhas_e_Resili_ncia_Operacional_nos_SKILL_md",
+      "dimensao_15d": "D11. Tratamento de Exceções e Fallback",
+      "harness": "mimo",
+      "model": "xiaomi-token-plan-sgp/mimo-v2.6-flash",
+      "comando_terminal": "MIMOCODE_DANGEROUSLY_SKIP_PERMISSIONS=1 MIMOCODE_TUI_PLAIN=1 mimo -m xiaomi-token-plan-sgp/mimo-v2.6-flash --pure --trust",
+      "input_prompt": "docs/auditoria/aidd-skills/ciclo-01/prompts_tickets/PROMPT-TICKET-02.txt",
+      "output_handoff": "componentes/compartilhado/skills/aidd-skills/SKILL.md",
+      "gate_fase": "python gates/G_SKILL_FORMATO.py && python gates/G_SKILL_ROT.py"
+    },
+    {
+      "ticket_id": "TICKET-03",
+      "nome": "Fase_3_Ticket_3_Fortalecimento_do_Quality_Gate_G_SKILL_FORMATO",
+      "dimensao_15d": "D13. Quality Gates (Portões)",
+      "harness": "opencode",
+      "model": "opencode/big-pickle",
+      "comando_terminal": "opencode --pure --auto --agent -m opencode/big-pickle",
+      "input_prompt": "docs/auditoria/aidd-skills/ciclo-01/prompts_tickets/PROMPT-TICKET-03.txt",
+      "output_handoff": "gates/G_SKILL_FORMATO.py",
+      "gate_fase": "python gates/G_SKILL_FORMATO.py"
+    }
+  ]
+}
