@@ -54,3 +54,27 @@ All steps go through `python ecossistema.py diagnose <sub>`; the session lives i
    - Strip all temporary instrumentation before committing: `diagnose limpar --slug <slug>` removes every `AIDD-DIAGNOSE-TEMP` line and discards the worktree (`rollback.py`). Then `grep -n "\[DEBUG-" <instrumented-files>` must return nothing.
    - Generate the report with `diagnose relatorio ...` and run `G_aidd_diagnose`: it re-runs the regression test file and fails if it is missing or red. `falhou_antes` stays self-declared.
    - Hand off with `handoff.py emitir` (`handoff-diagnose.json`).
+
+## Negative Guardrails
+
+- NEVER edit code before Phase 1 holds a repro command, recorded with `diagnose registrar --fase 1 --comando`, that exits non-zero on this bug.
+- NEVER write outside the `diagnose worktree --slug <slug>` worktree or `docs/diagnosticos/` during Phase 4; `scripts/isolamento.py` raises `[SANDBOX VIOLATION]`. Do not work around it.
+- NEVER label a fallback conclusion as graph-derived: `fase2.modo` in `sessao.json` must say `fallback` when `scripts/fallback.py` produced it, and an uncovered file is reported `grafo desatualizado → fallback`, never "0 impacted".
+- NEVER keep more than one entry under `HIPOTESES ATIVAS:`; `G_aidd_diagnose` fails the report.
+- NEVER declare the bug fixed without the regression test red before the fix (`relatorio --exit-antes` non-zero) and green after; `G_aidd_diagnose` re-runs that test file.
+- NEVER commit with `# AIDD-DIAGNOSE-TEMP` or `[DEBUG-` lines left, and never with `git commit --no-verify`.
+
+## Failure Modes & Fallback
+
+- **Bug does not reproduce:** stop at Phase 1. Ask the user for access or a redacted log, dump or payload; do not open Phase 2 on a guess.
+- **Graph down or stale:** `scripts/cobertura_grafo.py verificar` still gives zero nodes after its one reindex → run `scripts/fallback.py analisar` once. Fallback exit 1 = Phase 2 not done; report it and stop.
+- **Every ranked hypothesis disproved:** return to Phase 2 with a wider suspect-file list. After a second exhausted list, show the user the `--descartada` entries and their `--prova` from `sessao.json` and ask for direction.
+- **`G_aidd_diagnose` red on the regression test:** the file is missing or red. Run it alone, fix the path passed to `relatorio --teste-regressao`, regenerate the report and re-run the gate.
+
+## Stopping Checklist
+
+- [ ] Repro red before the fix: `<repro> > antes.log 2>&1; echo $? > antes.exit` gives non-zero.
+- [ ] Same repro green after the fix: `<repro> > depois.log 2>&1; echo $? > depois.exit` gives 0.
+- [ ] `python gates/G_aidd_diagnose.py --relatorio docs/diagnosticos/<sessao>/RELATORIO-CAUSA-RAIZ.md > gate.log 2>&1; echo $? > gate.exit` gives 0.
+- [ ] No instrumentation left: `grep -rnE "AIDD-DIAGNOSE-TEMP|\[DEBUG-" <instrumented-files> > temp.txt; echo $? > temp.exit` gives 1.
+- [ ] `diagnose limpar --slug <slug>` exited 0 and `git worktree list > wt.txt` no longer shows the slug.

@@ -29,3 +29,27 @@ The whole cycle lives in `docs/auditoria/<target-tool>/ciclo-NN/` (e.g. `docs/au
 ## Trigger
 
 On slash or natural language, stop, ask the user to confirm the Harness/Model in the manifest JSON, then run the orchestration command in the terminal.
+
+## Negative Guardrails
+
+- NEVER write a 15-D laudo, `DOD.md` or `PLANO-EVOLUCAO.md` under `docs/planos/`; they live only in the cycle folder opened by `python scripts/scaffold_auditoria.py <tool>`.
+- NEVER run `python scripts/orquestrador_4f.py --manifest <json> --aprovar` or `git merge audit/<pipeline_id>` yourself: the merge is the human join-barrier action. Report the `gate_final` exit and stop.
+- NEVER run `python ecossistema.py audit` or `scripts/e2e_foto.py` from inside a phase worker; the orchestrator runs `gate_fase` per phase and `gate_final` once.
+- NEVER `git commit`, `git commit --no-verify` or `git push` from a phase: only `orquestrador_4f.py` commits, and its own `--no-verify` is followed by the phase gate before the amend.
+- NEVER close a cycle with `--fase <name>`: a single-phase run writes no approvable ref, so `--aprovar` refuses it.
+- NEVER put an LLM API key in the manifest or `docs/auditoria/CONFIG-EXECUCAO-USUARIO.json`; each phase model is the harness in `comando_terminal`.
+
+## Failure Modes & Fallback
+
+- **Phase without `gate_fase`:** the orchestrator exits 1 ("Nenhuma fase é commitada sem gate"). Regenerate the manifest with `scripts/scaffold_auditoria.py` (or `scripts/compilador_plano_evolucao.py`); never delete the gate key to get past it.
+- **`gate_fase` red:** the pipeline stops with nothing committed. Fix inside the same phase and re-run the same manifest; phases whose `output_handoff` already exists are skipped as `[CACHE]`, so only the red phase repeats.
+- **`--aprovar` prints "mudou depois do gate_final":** a commit landed on `audit/<pipeline_id>` after the gate. Re-run the full manifest so `gate_final` re-signs the ref, then ask the user to approve again.
+- **Merge conflict outside the derivatives map:** `--aprovar` aborts the merge and lists `[código]` paths. Hand that list to the user; the cycle branch stays approvable.
+
+## Stopping Checklist
+
+- [ ] Cycle folder complete: `ls docs/auditoria/<tool>/ciclo-NN/ > ls.txt 2>&1; echo $? > ls.exit` gives 0 and lists the laudo, `PLANO-EVOLUCAO.md` and `DOD.md`.
+- [ ] Orchestrator exit read from a file: `python scripts/orquestrador_4f.py --manifest <json> > run.log 2>&1; echo $? > run.exit` gives 0 and `run.log` has no `NADA A FAZER`.
+- [ ] Every phase commit is signed: `git log --oneline audit/<pipeline_id> > log.txt` shows `(gate_fase exit 0)` on each phase line.
+- [ ] `docs/planos/` untouched: `git diff --name-only HEAD...audit/<pipeline_id> -- docs/planos/ > planos.txt` is empty.
+- [ ] The user was asked to run `--aprovar`; the agent did no merge (`git rev-parse HEAD` unchanged since the start).
