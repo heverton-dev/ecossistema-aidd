@@ -46,3 +46,26 @@ Deterministic inspection manual to dissect any ecosystem target (tool, pipeline,
 6. **Terminal Output Constraint:**
    - Emit exactly one line in chat upon completion:
      `ARTEFATOS GERADOS EM: docs/anatomias/anatomia-<alvo>`
+
+## Negative Guardrails
+
+- NEVER overwrite an existing `anatomia-v<N>-<target>.md` or `.html`; bump the version (example: `docs/anatomias/anatomia-orquestrador-4f/`).
+- NEVER fill DEFEITOS E LIMITAÇÕES from memory or reading alone; each defect cites a file:line or a command you ran.
+- NEVER skip Step 2.1: query `codebase-memory-mcp` before grep or full-file reads (Law #14).
+- NEVER hand-roll HTML outside the `docs/mapas-visuais/` tokens; render through `salvar_anatomia_html` in `scripts/gerar_anatomia_html.py`.
+- NEVER print more than the single `ARTEFATOS GERADOS EM:` line in chat.
+
+## Failure Modes & Fallback
+
+- **No graph project for this worktree:** use the main repo project from `codebase-memory-mcp:list_projects`, confirm each path on disk, and say so in DEFEITOS E LIMITAÇÕES.
+- **`KeyError` from `HTML_TEMPLATE.format`:** a key is missing in the data dict; add it, never edit the template.
+- **Target slug ambiguous (tool vs pipeline):** ask the user which one; never create two folders.
+
+## Stopping Checklist
+
+Exit codes go to a file, never through a pipe: `<cmd> > "$TEMP/an.log" 2>&1; echo $? > "$TEMP/an.rc"`.
+
+- [ ] Both `docs/anatomias/anatomia-<target>/anatomia-<version>-<target>.md` and its `.html` exist (`test -e` rc 0).
+- [ ] Both files carry the 6 mandatory sections (`grep -c "DEFEITOS E LIMITAÇÕES"` is at least 1 per file).
+- [ ] No earlier version changed (`git diff --stat docs/anatomias/` is empty; only new files in `git status`).
+- [ ] Chat output is the single line.

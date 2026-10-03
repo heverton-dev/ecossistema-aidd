@@ -60,3 +60,29 @@ Phase 4: Worktree Execution & Quality Gates (`aidd-evolution` / `ecossistema.py 
 - **Zero Git Pollution:** Never commit raw external cloned repositories to the ecosystem.
 - **Single Source of Truth:** All adopted pieces must land in `componentes/` first, then synced across harnesses.
 - **Biting Gates:** Any new gate must prove it bites via automated failure tests (Law #13).
+
+## Negative Guardrails
+
+- NEVER clone outside `.tmp/ingest/<slug>/` nor commit any file from it; `.tmp/` is gitignored for this reason.
+- NEVER run `python ecossistema.py audit` inside a worker phase or an Orca task; Phase 4's audit is run by the orchestrator only.
+- NEVER copy a third-party skill into `componentes/compartilhado/skills/`; register it in `gates/dependencias_externas.json` with the vendor name.
+- NEVER delete `.tmp/ingest/<slug>/` or any copy before the user approves the merge; the purge is the last step.
+- NEVER commit with `--no-verify`, and never add the LLM API key an external repo asks for; the model is the running harness.
+- NEVER mark a migration ticket done without its test red before and green after.
+
+## Failure Modes & Fallback
+
+- **Clone fails (network, auth, private repo):** stop, report the git error, ask the user for access or a local copy path.
+- **Triage finds nothing adoptable:** write `MANIFESTO-TRIAGEM.json` with every discard reason and stop before Phase 2.
+- **Adopted gate does not bite (Law #13):** keep the ticket open, write the failing test first, rerun.
+- **`components sync` exits non-zero:** fix the source under `componentes/`, never the generated copies, rerun.
+
+## Stopping Checklist
+
+Exit codes go to a file, never through a pipe: `<cmd> > "$TEMP/ing.log" 2>&1; echo $? > "$TEMP/ing.rc"`.
+
+- [ ] `git status --porcelain .tmp/` prints nothing (no external file tracked).
+- [ ] `docs/auditoria/<slug>/ciclo-01/RELATORIO-AUDITORIA.md` and `PLANO-EVOLUCAO.json` exist.
+- [ ] `python ecossistema.py components sync --tipo todos` wrote rc 0.
+- [ ] `python gates/G_SKILL_ROT.py` wrote rc 0 when a skill was adopted.
+- [ ] The user approved the merge before the sandbox purge.
