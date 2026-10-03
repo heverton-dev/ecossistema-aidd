@@ -58,6 +58,11 @@ claude                                                                          
 python componentes/compartilhado/skills/aidd-9router/scripts/claude_9router.py --mapa
 ```
 
+Inside Orca ADE (verified with a supervised Claude worker), set in Settings > Agents > Claude:
+- Command: `claude-9router` (wrapper in `~/.local/bin`, a bash file and a `.cmd`, both calling this launcher). Off = Command back to `claude`.
+- Environment: `NINEROUTER_URL`, `NINEROUTER_KEY`, `NINEROUTER_OPUS/SONNET/HAIKU`. Never put `ANTHROPIC_AUTH_TOKEN` there: Orca's managed Claude accounts refuse that launch.
+- Arguments: `--model sonnet` so the default tier is `code-fast`.
+
 The launcher maps tiers: opus -> `code-pro`, sonnet -> `code-fast`, haiku -> `code-free`. Subagents and skills pick a tier with their `model:` field, so each task lands on its combo. Override one tier with `NINEROUTER_OPUS`, `NINEROUTER_SONNET` or `NINEROUTER_HAIKU` in `.env`. The ecosystem keeps the delegated protocol: it asks the harness, the harness answers through the combo.
 
 ## 5. Read usage correctly
