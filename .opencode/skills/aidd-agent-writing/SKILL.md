@@ -61,3 +61,25 @@ Adapted from `writing-for-agents` in mattpocock/skills (commit c55ee46), MIT lic
 - [ ] Each step has a checkable completion criterion.
 - [ ] Positive phrasing; negation only as guardrail.
 - [ ] Skill body under 150 lines; extra reference disclosed behind a pointer.
+
+## Negative Guardrails
+
+- NEVER duplicate instructions across multiple skills — apply single source of truth and point to `docs/protocolos/CONVENCAO-AUTORIA-SKILLS.md` or domain manuals.
+- NEVER write vague, unverifiable completion criteria (e.g. "understanding reached", "code looks clean") without a checkable command or file condition.
+- NEVER write skill bodies exceeding 450 lines (target 150) — disclose supporting reference material into `references/` or `scripts/`.
+- NEVER use negative phrasing when a clear positive directive exists, except for strict domain guardrails.
+- NEVER bypass formatting or quality gates (`G_SKILL_FORMATO.py`, `G_SKILL_ROT.py`) when authoring or reviewing agent documentation.
+
+## Failure Modes & Fallback
+
+- **Sprawl and excessive body length:** When skill body exceeds 150 lines, prune no-op sentences and move procedural lookups or schemas into dedicated files in `references/`.
+- **Premature completion by agents:** If agents rush through multi-step workflows, tighten step boundaries by demanding explicit intermediate artifact paths and checkable exit conditions.
+- **Trigger collision across skills:** If two skills trigger on similar user prompts, sharpen descriptions to create mutually exclusive trigger conditions.
+
+## Stopping Checklist
+
+- [ ] Frontmatter conforms to convention: name matches directory, description includes explicit `Use when` trigger in English.
+- [ ] All steps conclude with deterministic completion criteria.
+- [ ] Body line count verified under 450 lines (target 150).
+- [ ] Verification gate passes: `python gates/G_SKILL_FORMATO.py` exits 0.
+

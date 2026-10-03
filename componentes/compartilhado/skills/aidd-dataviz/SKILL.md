@@ -57,3 +57,25 @@ Same input → byte-identical output. Thresholds and the CVD simulation matrices
 ```sh
 python -m pytest -q -p no:cacheprovider tests/test_dataviz_palette_validation.py
 ```
+
+## Negative Guardrails
+
+- NEVER guess or eyeball chart palette contrast and accessibility — always compute via `python scripts/validate_palette.py`.
+- NEVER deliver a palette where `validate_palette.py` exits 1 (hard failure on lightness band, chroma floor, CVD separation, or normal-vision floor).
+- NEVER lower or modify mathematical thresholds in `scripts/validate_palette.py` to artificially pass a failing palette.
+- NEVER accept WARN level CVD or contrast results without specifying mandatory secondary encoding (direct labels, textures, or borders).
+- NEVER bypass gate checks using `--no-verify` or manual overrides.
+
+## Failure Modes & Fallback
+
+- **Chroma floor failure (C < 0.10):** Color reads as gray/washed out; boost saturation in OKLCH space while preserving hue angle until C ≥ 0.10.
+- **Normal-vision or CVD pair separation failure:** Delta E below threshold; increase lightness difference between adjacent marks or reorder slots in categorical sequence.
+- **Surface contrast failure (WCAG < 3:1):** If mark cannot achieve 3:1 against current background, enforce outline border or adjust background surface value via `--surface`.
+
+## Stopping Checklist
+
+- [ ] Palette validation exits 0: `python scripts/validate_palette.py "<palette>" --mode <light|dark>` completes with exit code 0.
+- [ ] In ordinal mode: lightness monotonicity confirmed across the entire ramp without inversions.
+- [ ] Unit tests pass: `python -m pytest -q -p no:cacheprovider tests/test_dataviz_palette_validation.py` exits 0.
+- [ ] Secondary encodings documented for any metric in the WARN band.
+

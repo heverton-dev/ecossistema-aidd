@@ -85,6 +85,27 @@ python scripts/comment.py contract.docx "This cap is too low" -o annotated.docx
 
 The script writes `comments.xml`, `commentsExtended.xml`, `commentsIds.xml`, `commentsExtensible.xml`, the relationships, and the content-type overrides. Comment IDs are auto-assigned. It then prints the `<w:commentRangeStart>`/`<w:commentRangeEnd>`/`<w:commentReference>` snippet to add to `word/document.xml` so the comment anchors to specific text — until you place those markers, the comment exists but is not visible.
 
+## Negative Guardrails
+
+- NEVER run raw `soffice` directly in commands — always use `python scripts/office/soffice.py` (bare binary hangs in sandboxed or headless execution environments).
+- NEVER pretty-print or reformat `word/document.xml` during unpack/edit cycles — whitespace changes corrupt run boundaries and tracked change markers.
+- NEVER deliver redlines or edited DOCX without running `python scripts/office/validate.py` against `--original` with `--author` specified for redlining.
+- NEVER delete original or reference files without explicit user confirmation, and never commit DOCX artifacts with `--no-verify`.
+- NEVER configure an LLM API key for document processing — the running harness is always the execution model.
+
+## Failure Modes & Fallback
+
+- **Validation failure on packed DOCX:** If `python scripts/office/validate.py` fails on XSD schema checks, re-run with `--auto-repair` to fix durableId bounds and whitespace `xml:space="preserve"` markers.
+- **Run fragmentation blocks text edits:** If target text cannot be found contiguously in `word/document.xml`, run `python scripts/merge_runs.py unpacked/` before editing XML.
+- **Conversion or rendering tool missing:** If `pdftoppm` or `soffice` is unavailable on PATH, fall back to pure text inspection via `pandoc -t markdown file.docx` and inform the user.
+
+## Stopping Checklist
+
+- [ ] Output file exists and is valid OOXML package: `python scripts/office/validate.py out.docx` exits 0.
+- [ ] For tracked changes/redlining, author attribution verified: `python scripts/office/validate.py out.docx --original in.docx --author "<author>"` exits 0.
+- [ ] Rendered visual verification executed: `python scripts/office/soffice.py --headless --convert-to pdf out.docx` generates inspectable pages without crash.
+- [ ] No temporary `unpacked/` working directories left staged in git: `git status --porcelain unpacked/` returns empty.
+
 ## Dependencies
 
 `docx` (npm, preinstalled — install only if `require('docx')` fails) · `pandoc` · LibreOffice (`soffice`) · `pdftoppm` (Poppler)

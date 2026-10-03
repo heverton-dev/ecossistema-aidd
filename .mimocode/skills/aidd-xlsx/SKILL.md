@@ -93,6 +93,27 @@ percentages `0.0%`, **stored as fractions** (`0.15` renders `15.0%`; storing `15
 (`=B5*(1+$B$6)`, never `=B5*1.05`) · formulas consistent across every projection period, since a
 lone edited cell mid-row is the commonest silent error · guard denominators that can be zero.
 
+## Negative Guardrails
+
+- NEVER ship or deliver a workbook while `python scripts/recalc.py <file.xlsx>` reports `errors_found` or exits non-zero.
+- NEVER save an openpyxl workbook opened with `data_only=True` over the original file — doing so permanently strips all formula expressions.
+- NEVER use unsupported functions like bare `XLOOKUP`, `SORT`, `FILTER`, `UNIQUE` that LibreOffice cannot evaluate without error.
+- NEVER overwrite existing formulas in template files when tasked with data input — write exclusively into designated input cells.
+- NEVER commit spreadsheet files using `git commit --no-verify` or bypass ecosystem gates.
+
+## Failure Modes & Fallback
+
+- **Formula calculation returns `#NAME?`:** Check function prefix and syntax — wrap post-2007 functions in `_xlfn.` or replace modern functions with classic `INDEX`/`MATCH` constructs.
+- **`recalc.py` reports external link warning:** If workbook references external files (`='[1]Sheet'!$A$1`), extract values from original before re-saving, or use `--force` only if data loss is authorized.
+- **openpyxl formula values read as `None`:** Remember openpyxl does not compute formulas upon write; run `python scripts/recalc.py output.xlsx` to force LibreOffice recalculation.
+
+## Stopping Checklist
+
+- [ ] Formula recalculation passes with zero errors: `python scripts/recalc.py output.xlsx` outputs `status: success` and `total_errors: 0`.
+- [ ] No hardcoded numbers in formula positions: all aggregate cells contain dynamic Excel formula syntax.
+- [ ] Input cells and assumption cells properly labeled and documented.
+- [ ] Workbook opens without corruption or repair warnings in Office validator.
+
 ## Dependencies
 
 `openpyxl`, `pandas`, `markitdown` (pip, preinstalled — install only if an import fails or the command is missing) · LibreOffice (`soffice`, auto-configured for sandboxed environments via `scripts/office/soffice.py`)

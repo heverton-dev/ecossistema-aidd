@@ -91,6 +91,27 @@ Updating is surgery, not rewriting: touch only the parts affected by the new fac
 | `referencias/ATUALIZACAO.md` | updating an existing work |
 | `referencias/INSTALACAO.md` | installing the skill outside this repository |
 
+## Negative Guardrails
+
+- NEVER overwrite or re-init an existing textbook directory with `livro.py init` without explicit user permission and prior backup.
+- NEVER deliver a textbook without running `python scripts/livro.py check <folder>` with exit 0 (deterministic structural audit).
+- NEVER edit generated consolidated Markdown (`<base-name>.md`) directly — edit only the source parts under `<folder>/partes/*.md`.
+- NEVER include claims without verified sources in the mandatory *Rastreabilidade* section of each chapter.
+- NEVER run full ecosystem audit `python ecossistema.py audit` during textbook authoring tasks.
+
+## Failure Modes & Fallback
+
+- **Check command fails with exit 1:** If `livro.py check` reports uneven fences, narrow table columns, or unaccented PT-BR terms, inspect the specific error message and adjust the offending Markdown part.
+- **Typst or Pandoc missing from environment:** Run `python scripts/livro.py doctor` to verify CLI tool availability; report missing system dependencies directly to user.
+- **Table width overflow:** If `livro.py check` warns about table column widths, reformat using typst relative column widths or split dense tables across multiple pages as directed in `referencias/DIAGRAMACAO.md`.
+
+## Stopping Checklist
+
+- [ ] Structural audit passes: `python scripts/livro.py check <folder>` exits 0.
+- [ ] Build succeeds: `python scripts/livro.py build <folder>` produces valid PDF with exit 0.
+- [ ] Manifest and revision history updated: `<folder>/livro.json` records valid hash and word count.
+- [ ] Visual preview generated: `python scripts/livro.py preview <folder>` renders page images for inspection.
+
 ## 7. Outputs
 
 | Artifact | What it is |
