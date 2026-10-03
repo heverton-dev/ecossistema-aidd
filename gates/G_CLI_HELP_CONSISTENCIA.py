@@ -56,7 +56,7 @@ ARQUIVOS_AUDITADOS = [
     "tools/aidd-forge/aidd_forge/cli.py",
     "tools/aidd-master/scripts/aidd.py",
     "tools/aidd-enterprise/scripts/aidd.py",
-    "tools/aidd-pure/scripts/aidd_inject.py",
+    "componentes/compartilhado/injetor/variantes/aidd-pure/aidd_inject.py",
     "tools/aidd-pure/scripts/pipeline_completo.py",
     "tools/aidd-pure/scripts/verificar_gates.py",
     "tools/aidd-pure/scripts/phases/01_pesquisador.py",
@@ -69,9 +69,9 @@ ARQUIVOS_AUDITADOS = [
     "tools/aidd-pure/scripts/phases/08_implementador.py",
     "tools/aidd-pure/scripts/core/caveman_linter.py",
     "tools/aidd-pure/scripts/gates/G_INTEGRACAO_CROSS_SCRIPT.py",
-    "tools/aidd-pure/scripts/gates/G_CYBERSECURITY_OWASP.py",
+    "componentes/compartilhado/gates/G_CYBERSECURITY_OWASP.py",
     "tools/aidd-pure/scripts/gates/AUDITAR_COMPARATIVO_HARNESS.py",
-    "tools/aidd-pure/scripts/gates/G_BLOQUEAR_SEGREDOS.py",
+    "componentes/compartilhado/gates/G_BLOQUEAR_SEGREDOS.py",
 ]
 
 # Flags que o próprio argparse injeta automaticamente ou que são universais

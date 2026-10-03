@@ -32,7 +32,9 @@ from pathlib import Path
 import pytest
 
 _SCRIPTS_DIR = Path(__file__).resolve().parent.parent / 'scripts'
-sys.path.insert(0, str(_SCRIPTS_DIR / 'gates'))
+sys.path.insert(0, str(_SCRIPTS_DIR))
+from core import pecas_catalogo  # noqa: E402
+sys.path.insert(0, str(pecas_catalogo.caminho_gate_catalogo('G_CYBERSECURITY_OWASP').parent))
 
 import G_CYBERSECURITY_OWASP as gate
 

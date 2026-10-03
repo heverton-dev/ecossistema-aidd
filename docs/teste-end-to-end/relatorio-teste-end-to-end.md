@@ -1190,3 +1190,20 @@
   - `inventario_capacidades.py comparar`: 2 órfãos novos, ambos as linhas trocadas de propósito no `swagger_generator.py`.
 - **Status:** **RESOLVIDO**.
 - **Data da Última Auditoria:** 03/10/2026.
+
+## 30. Bloco 4: cópias do almoxarifado removidas do `aidd-pure` (fronteiras-ferramentas ciclo-01, Ticket 19)
+
+- **Objetivo da Correção:**
+  Remover de `tools/aidd-pure/scripts/` as 14 cópias de peças do almoxarifado, com o OK do usuário (Lei #7), sem perder capacidade.
+- **Ferramentas Tocadas:** [`tools/aidd-pure`](file:///C:/Users/trcnologia/Desktop/ecossistema-aidd/tools/aidd-pure).
+- **O que executou:**
+  1. Removidas: `aidd_inject.py`, `core/injector/` (10 arquivos), `gates/G_INJECT.py`, `gates/G_BLOQUEAR_SEGREDOS.py`, `gates/G_CYBERSECURITY_OWASP.py`, `gates/G_HARNESS_COMPAT.py`.
+  2. O injetor já vinha do almoxarifado (`core/pecas_catalogo.py`, Ticket 15); `verificar_gates.py` passa a buscar os 3 gates no almoxarifado (`PECA_POR_GATE`, `_caminho_gate_catalogo`).
+  3. `CATALOGO.json` sem as 14 cópias; `test_gate_cybersecurity_owasp.py` e `test_verificar_gates.py` apontam para a peça.
+- **Resultados de Testes:**
+  - `tools/aidd-pure`: `pytest` → exit 0 (1016 passed, 5 skipped).
+  - `G_DRIFT_NUCLEO_COMPARTILHADO` e testes do catálogo → exit 0 (11 passed).
+  - E2E `comparar --base ciclo-01` → exit 0, nenhuma métrica piorou.
+  - `inventario_capacidades.py comparar`: 4 órfãos novos, todos linhas trocadas de propósito em `verificar_gates.py` e no teste.
+- **Status:** **RESOLVIDO**.
+- **Data da Última Auditoria:** 03/10/2026.

@@ -53,9 +53,7 @@
       "consumidores": [
         "aidd-pure"
       ],
-      "copias": [
-        "tools/aidd-pure/scripts/gates/G_BLOQUEAR_SEGREDOS.py"
-      ],
+      "copias": [],
       "base": "aidd-pure scripts/gates 8c25947 2026-10-01 (DIAGNOSTICO Etapa 4)"
     },
     {
@@ -112,9 +110,7 @@
       "consumidores": [
         "aidd-pure"
       ],
-      "copias": [
-        "tools/aidd-pure/scripts/gates/G_CYBERSECURITY_OWASP.py"
-      ],
+      "copias": [],
       "base": "aidd-pure scripts/gates 8c25947 2026-10-01 (DIAGNOSTICO Etapa 4)"
     },
     {
@@ -480,9 +476,7 @@
       "consumidores": [
         "aidd-pure"
       ],
-      "copias": [
-        "tools/aidd-pure/scripts/gates/G_HARNESS_COMPAT.py"
-      ],
+      "copias": [],
       "variante_de": "gates/G_HARNESS_COMPAT.py",
       "tipo_variante": "implementacao_independente",
       "motivo": "Mesmo nome, outra ferramenta e outra API (DIAGNOSTICO Etapa 2, item 7); guardada inteira até a decisão do Ticket 19."
@@ -834,9 +828,7 @@
       "consumidores": [
         "aidd-pure"
       ],
-      "copias": [
-        "tools/aidd-pure/scripts/gates/G_INJECT.py"
-      ],
+      "copias": [],
       "variante_de": "injetor/G_INJECT.py",
       "tipo_variante": "implementacao_independente",
       "motivo": "Injetor próprio do aidd-pure (outra API); D3: uma peça só, conteúdo do enterprise."
@@ -853,9 +845,7 @@
       "consumidores": [
         "aidd-pure"
       ],
-      "copias": [
-        "tools/aidd-pure/scripts/aidd_inject.py"
-      ],
+      "copias": [],
       "variante_de": "injetor/inject.py",
       "tipo_variante": "implementacao_independente",
       "motivo": "Injetor próprio do aidd-pure (outra API); D3: uma peça só, conteúdo do enterprise."
@@ -872,9 +862,7 @@
       "consumidores": [
         "aidd-pure"
       ],
-      "copias": [
-        "tools/aidd-pure/scripts/core/injector/__init__.py"
-      ],
+      "copias": [],
       "variante_de": "injetor/__init__.py",
       "tipo_variante": "implementacao_independente",
       "motivo": "Injetor próprio do aidd-pure (outra API); D3: uma peça só, conteúdo do enterprise."
@@ -891,9 +879,7 @@
       "consumidores": [
         "aidd-pure"
       ],
-      "copias": [
-        "tools/aidd-pure/scripts/core/injector/contrato.py"
-      ],
+      "copias": [],
       "variante_de": "injetor/inject.py",
       "tipo_variante": "implementacao_independente",
       "motivo": "Injetor próprio do aidd-pure (outra API); D3: uma peça só, conteúdo do enterprise."
@@ -910,9 +896,7 @@
       "consumidores": [
         "aidd-pure"
       ],
-      "copias": [
-        "tools/aidd-pure/scripts/core/injector/detector_camada.py"
-      ],
+      "copias": [],
       "variante_de": "injetor/detector_camada.py",
       "tipo_variante": "implementacao_independente",
       "motivo": "Injetor próprio do aidd-pure (outra API); D3: uma peça só, conteúdo do enterprise."
@@ -929,9 +913,7 @@
       "consumidores": [
         "aidd-pure"
       ],
-      "copias": [
-        "tools/aidd-pure/scripts/core/injector/injetor.py"
-      ],
+      "copias": [],
       "variante_de": "injetor/inject.py",
       "tipo_variante": "implementacao_independente",
       "motivo": "Injetor próprio do aidd-pure (outra API); D3: uma peça só, conteúdo do enterprise."
@@ -948,9 +930,7 @@
       "consumidores": [
         "aidd-pure"
       ],
-      "copias": [
-        "tools/aidd-pure/scripts/core/injector/materializador.py"
-      ],
+      "copias": [],
       "variante_de": "injetor/inject.py",
       "tipo_variante": "implementacao_independente",
       "motivo": "Injetor próprio do aidd-pure (outra API); D3: uma peça só, conteúdo do enterprise."
@@ -967,9 +947,7 @@
       "consumidores": [
         "aidd-pure"
       ],
-      "copias": [
-        "tools/aidd-pure/scripts/core/injector/profiles_registry.py"
-      ],
+      "copias": [],
       "variante_de": "injetor/profiles_registry.py",
       "tipo_variante": "implementacao_independente",
       "motivo": "Injetor próprio do aidd-pure (outra API); D3: uma peça só, conteúdo do enterprise."
@@ -986,9 +964,7 @@
       "consumidores": [
         "aidd-pure"
       ],
-      "copias": [
-        "tools/aidd-pure/scripts/core/injector/scaffolds.py"
-      ],
+      "copias": [],
       "variante_de": "injetor/inject.py",
       "tipo_variante": "implementacao_independente",
       "motivo": "Injetor próprio do aidd-pure (outra API); D3: uma peça só, conteúdo do enterprise."
@@ -1005,9 +981,7 @@
       "consumidores": [
         "aidd-pure"
       ],
-      "copias": [
-        "tools/aidd-pure/scripts/core/injector/schema_injector_request.json"
-      ],
+      "copias": [],
       "variante_de": "injetor/schema_injector_request.json",
       "tipo_variante": "implementacao_independente",
       "motivo": "Injetor próprio do aidd-pure (outra API); D3: uma peça só, conteúdo do enterprise."
@@ -1024,9 +998,7 @@
       "consumidores": [
         "aidd-pure"
       ],
-      "copias": [
-        "tools/aidd-pure/scripts/core/injector/sincronizador_harness.py"
-      ],
+      "copias": [],
       "variante_de": "injetor/inject.py",
       "tipo_variante": "implementacao_independente",
       "motivo": "Injetor próprio do aidd-pure (outra API); D3: uma peça só, conteúdo do enterprise."

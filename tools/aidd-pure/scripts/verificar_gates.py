@@ -44,9 +44,16 @@ def _carregar_modulo(nome: str, caminho: Path):
 # DEFINIÇÃO DOS GATES
 # =============================================================================
 
+def _caminho_gate_catalogo(nome: str) -> Path:
+    """Gate de projeto que é peça do almoxarifado (Bloco 4: as cópias em gates/ saíram)."""
+    from scripts.core import pecas_catalogo
+
+    return pecas_catalogo.caminho_gate_catalogo(nome)
+
+
 def _gate_bloquear_segredos(pasta: Path) -> int:
     """G_BLOQUEAR_SEGREDOS: escaneia arquivos por segredos hardcoded."""
-    mod = _carregar_modulo('G_BLOQUEAR_SEGREDOS', GATES_DIR / 'G_BLOQUEAR_SEGREDOS.py')
+    mod = _carregar_modulo('G_BLOQUEAR_SEGREDOS', _caminho_gate_catalogo('G_BLOQUEAR_SEGREDOS'))
     # Este gate opera sobre staged files por padrão.
     # Quando chamado via verificar_gates, escaneia a pasta do projeto.
     # Usamos --arquivo em cada .py da pasta.
@@ -89,7 +96,7 @@ def _gate_verificar_llm(pasta: Path) -> int:
 
 def _gate_harness_compat(pasta: Path) -> int:
     """G_HARNESS_COMPAT: verifica compatibilidade de harness."""
-    mod = _carregar_modulo('G_HARNESS_COMPAT', GATES_DIR / 'G_HARNESS_COMPAT.py')
+    mod = _carregar_modulo('G_HARNESS_COMPAT', _caminho_gate_catalogo('G_HARNESS_COMPAT'))
     return mod.main()
 
 
@@ -101,7 +108,7 @@ def _gate_integracao_cross_script(pasta: Path) -> int:
 
 def _gate_cybersecurity_owasp(pasta: Path) -> int:
     """G_CYBERSECURITY_OWASP: varredura OWASP Top 10."""
-    mod = _carregar_modulo('G_CYBERSECURITY_OWASP', GATES_DIR / 'G_CYBERSECURITY_OWASP.py')
+    mod = _carregar_modulo('G_CYBERSECURITY_OWASP', _caminho_gate_catalogo('G_CYBERSECURITY_OWASP'))
     return mod.executar_gate(pasta)
 
 
