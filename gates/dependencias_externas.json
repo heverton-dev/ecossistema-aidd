@@ -298,6 +298,23 @@
         "antigravity",
         "vscode"
       ]
+    },
+    "mobbin-mcp": {
+      "pacote": "mobbin-mcp",
+      "comando": "python",
+      "args": [
+        "componentes/compartilhado/mcps/mobbin_mcp/server.py"
+      ],
+      "env": [],
+      "harnesses_alvo": [
+        "claude-code",
+        "opencode",
+        "cursor",
+        "gemini-cli",
+        "mimocode",
+        "antigravity",
+        "vscode"
+      ]
     }
   }
 }
