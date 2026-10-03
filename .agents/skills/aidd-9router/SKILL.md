@@ -42,3 +42,27 @@ Never put `ANTHROPIC_AUTH_TOKEN` in Orca's agent Environment (managed Claude acc
 ## 4. Before changing anything
 
 Read `references/achados.md`: measured traps (+2000 usage, Kiro hidden prompt, Groq 413 without fallback, reasoning models stopping at `max_tokens`, Orca managed accounts, invalid omp provider disabling all providers). Asset: `assets/ninerouter-stack.yml` (stack template filled by `deploy_vps.py`).
+
+## Negative Guardrails
+
+- NEVER wire `chamar.py` or `NINEROUTER_KEY` into an ecosystem pipeline as its LLM (pure, open, delegated protocol): the model is always the running harness; 9Router only sits behind the harness wrapper.
+- NEVER print, paste or commit `NINEROUTER_KEY`, nor read Orca settings through the accessibility tree: use `orca_9router.py --estado`, which masks the key.
+- NEVER put `ANTHROPIC_AUTH_TOKEN` in Orca's agent Environment: managed accounts refuse the launch; `claude-9router` sets it only in the child process.
+- NEVER run `deploy_vps.py --sobrescrever-dados` or remove the volume without the user's OK: it replaces the VPS database (providers, OAuth tokens, keys, combos).
+- NEVER add a combo member that did not pass both `bench.py codigo <id>` (21/21) and `bench.py harness <id>`, nor a Groq free model in a harness combo (413 above 8000 tokens/min, no fallback).
+
+## Failure Modes & Fallback
+
+- **`doctor.py` prints `RESULTADO: FALHA crítica`:** `harness_9router.py --desligar` so harnesses start untouched, then fix the failing check from `references/achados.md`.
+- **`chamar.py` exit 2 (still truncated):** split the task; do not keep doubling `max_tokens` on reasoning models.
+- **`deploy_vps.py` `ERRO etapa <n>`:** `docker service logs --tail 50 ninerouter_ninerouter`; rollback `docker stack rm ninerouter` (the volume stays).
+- **`orca_9router.py --aplicar` exit 2:** set the listed agents' Command to the wrapper name in Settings > Agents > Command, then `--estado`.
+
+## Stopping Checklist
+
+Prove each item with the exit code read from a file (`> x.log 2>&1; echo $? > x.rc`, read `x.rc`), never through a pipe.
+
+- [ ] `python componentes/compartilhado/skills/aidd-9router/scripts/doctor.py` exit 0 with `RESULTADO: ok`.
+- [ ] `orca_9router.py --estado` exit 0 when Orca routing was touched.
+- [ ] `bench.py harness sonnet` shows `"passou": true` and `"usou": ["code-fast"]` when routing was changed.
+- [ ] `git diff` and the transcript hold no `NINEROUTER_KEY` value.

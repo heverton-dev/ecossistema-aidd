@@ -35,6 +35,30 @@ python ecossistema.py orchestrate [plan] --interactive --harness-map frente1=cla
 python ecossistema.py orchestrate [plan] --dry-run           # Flight Plan only, zero LLM
 ```
 
+## Negative Guardrails
+
+- NEVER delete `.orca/.orca_state.json` to get past `[ERRO] ... ja existe`: use `--resume` (fronts in `MERGED` are skipped); clearing `.orca/` needs the user's OK.
+- NEVER let the gate auditor be the front's own harness: the current session audits; `gate_auditor.audit_front` runs `python ecossistema.py audit` when a front touches `gates/` or `scripts/`, plus the touched tools' pytest.
+- NEVER merge a front that is not `GATE_PASSED` in `.orca/.orca_state.json`, and never with `--no-verify`.
+- NEVER raise `CircuitBreakerConfig` limits (`max_execution_time_seconds` 1800, `idle_heartbeat_seconds` 300) to make a hung front pass.
+- NEVER use `task create`, `invoke_subagent` or background jobs here, nor answer for the user at `_confirm` (it returns 2 when declined).
+
+## Failure Modes & Fallback
+
+- **`[ERRO] --resume pedido mas .orca/.orca_state.json nao existe`:** first run; rerun without `--resume`.
+- **Circuit breaker kills a front (total or idle timeout):** state goes `FAILED`; read `.orca/memory.md` and the front report, tell the user, rerun with `--resume` (FAILED -> retry).
+- **Front in `RUNNING` after a crash:** `classify_resume` only flags `resume_running`; check `git -C <worktree> status` and ask the user whether to continue or restart that front.
+- **Harness binary missing on the Flight Plan:** pick another installed harness with the user and pass `--harness-map <front>=<harness>`.
+
+## Stopping Checklist
+
+Prove each item with the exit code read from a file (`> x.log 2>&1; echo $? > x.rc`, read `x.rc`), never through a pipe.
+
+- [ ] `python ecossistema.py orchestrate <plan> --dry-run` exit 0 with one harness per pending front.
+- [ ] `.orca/.orca_state.json` lists every front as `MERGED`.
+- [ ] `python -m pytest componentes/compartilhado/skills/aidd-orca/tests -q` exit 0 when the engine was changed.
+- [ ] `git worktree list` shows no ephemeral worktree of this plan.
+
 ## Files
 
 - `scripts/`: engine (`orchestrator_engine.py`, `plan_parser.py`, `flight_plan.py`, `orca_real_plan.py`, `subagent_plan.py`, `worktree_engine.py`, `gate_auditor.py`, `circuit_breaker.py`, `state_engine.py`, `hooks.py`, `agent_spawner.py`, `plan_io.py`).
