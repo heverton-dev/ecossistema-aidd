@@ -50,20 +50,21 @@ The script applies these rules (follow them when calling by hand):
 
 ## 4. Route a harness through the combos
 
-Claude Code, on/off per session (no settings file changes):
+One launcher for Claude Code, OpenCode, MiMo and omp; nothing is written to the harness config:
 
 ```bash
-python componentes/compartilhado/skills/aidd-9router/scripts/claude_9router.py   # on
-claude                                                                           # off
-python componentes/compartilhado/skills/aidd-9router/scripts/claude_9router.py --mapa
+python componentes/compartilhado/skills/aidd-9router/scripts/harness_9router.py <claude|opencode|mimo|omp> [args...]
+python componentes/compartilhado/skills/aidd-9router/scripts/harness_9router.py --ligar | --desligar | --estado
 ```
 
-Inside Orca ADE (verified with a supervised Claude worker), set in Settings > Agents > Claude:
-- Command: `claude-9router` (wrapper in `~/.local/bin`, a bash file and a `.cmd`, both calling this launcher). Keep it there; toggle with the Orca Quick Commands "9Router ON" / "9Router OFF" / "9Router ESTADO" (`claude-9router --ligar`, `--desligar`, `--estado`). Off creates `~/.aidd/9router-desligado` and the wrapper starts plain `claude`.
-- Environment: `NINEROUTER_URL`, `NINEROUTER_KEY`, `NINEROUTER_OPUS/SONNET/HAIKU`. Never put `ANTHROPIC_AUTH_TOKEN` there: Orca's managed Claude accounts refuse that launch.
-- Arguments: `--model sonnet` so the default tier is `code-fast`.
+What "on" does per harness (tiers: opus/plan -> `code-pro`, sonnet/default -> `code-fast`, haiku/smol -> `code-free`):
+- `claude`: sets `ANTHROPIC_BASE_URL`, `ANTHROPIC_AUTH_TOKEN` and the three `ANTHROPIC_DEFAULT_*_MODEL`. Subagents and skills pick a tier with their `model:` field.
+- `opencode` / `mimo`: injects provider `aidd9r` through `OPENCODE_CONFIG_CONTENT` / `MIMOCODE_CONFIG_CONTENT`, replaces `-m` with `aidd9r/code-fast`, `small_model` = `code-free`.
+- `omp`: replaces `--model/--smol/--plan/--slow` with the `aidd9r/*` combos. Needs provider `aidd9r` in `~/.omp/agent/models.yml` (`api: openai-completions`, `apiKey: NINEROUTER_KEY`). One invalid provider in that file disables all custom providers; run `omp models aidd9r` to check.
 
-The launcher maps tiers: opus -> `code-pro`, sonnet -> `code-fast`, haiku -> `code-free`. Subagents and skills pick a tier with their `model:` field, so each task lands on its combo. Override one tier with `NINEROUTER_OPUS`, `NINEROUTER_SONNET` or `NINEROUTER_HAIKU` in `.env`. The ecosystem keeps the delegated protocol: it asks the harness, the harness answers through the combo.
+"Off" (marker `~/.aidd/9router-desligado`) starts the harness untouched. Override one tier with `NINEROUTER_OPUS`, `NINEROUTER_SONNET` or `NINEROUTER_HAIKU`. The ecosystem keeps the delegated protocol: it asks the harness, the harness answers through the combo.
+
+Inside Orca ADE, Settings > Agents > Command: `claude-9router`, `opencode-9router`, `mimo-9router`, `omp-9router` (bash and `.cmd` wrappers in `~/.local/bin` calling the launcher). Toggle all at once with the Quick Commands "9Router ON" / "9Router OFF" / "9Router ESTADO" in the terminal tab bar; run them in a shell tab, not inside an agent. Never put `ANTHROPIC_AUTH_TOKEN` in Orca's agent Environment: managed Claude accounts refuse that launch. Verified with Orca supervised workers for Claude, OpenCode and omp; MiMo workers fail Orca's readiness check even with the original `mimo` command, so test MiMo interactively.
 
 ## 5. Read usage correctly
 
