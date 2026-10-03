@@ -1,11 +1,11 @@
 ---
 name: aidd-9router
-description: House calibration for calling the local 9Router AI gateway at minimum token cost - which combo to pick for coding (code-pro, code-fast, code-free), when to disable the token saver, stream and max_tokens rules, and how to read the inflated usage numbers. Use when a task sends prompts, code generation or delegated subtasks through 9Router, NINEROUTER_URL or NINEROUTER_KEY, or when the user asks which 9Router model or combo to use. Also covers image, text-to-speech, speech-to-text, embeddings, web search and web fetch through 9Router.
+description: House calibration for calling the 9Router AI gateway at minimum token cost - which combo to pick for coding (code-pro, code-fast, code-free), when to disable the token saver, stream and max_tokens rules, and how to read the inflated usage numbers. Use when a task sends prompts, code generation or delegated subtasks through 9Router, NINEROUTER_URL or NINEROUTER_KEY, or when the user asks which 9Router model or combo to use. Also covers image, text-to-speech, speech-to-text, embeddings, web search and web fetch through 9Router.
 ---
 
 # aidd-9router
 
-9Router is the local gateway (`http://localhost:20128`, OpenAI-compatible). This skill holds the house rules measured on 2026-10-03. Non-chat endpoints (image, TTS, STT, embeddings, web search, web fetch): `references/endpoints.md`.
+9Router is the OpenAI-compatible gateway, running 24/7 on the VPS at `https://9router.vpsconexao.org` (Swarm stack `ninerouter`; `NINEROUTER_URL` in `.env`). A local copy at `http://localhost:20128` is only a fallback with its own separate database. This skill holds the house rules measured on 2026-10-03. Non-chat endpoints (image, TTS, STT, embeddings, web search, web fetch): `references/endpoints.md`.
 
 ## 1. Config
 
