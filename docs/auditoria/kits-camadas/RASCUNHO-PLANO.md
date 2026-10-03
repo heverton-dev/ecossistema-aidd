@@ -43,7 +43,7 @@ O número exato sai da fase de medição real, que mostra quais gates atuais ser
 
 | # | Camada | Gates que já cobrem | Peças no catálogo | Lacuna provável |
 |---|---|---|---|---|
-| 1 | Visual (OKLCH, Tailwind, microinterações) | `G_NOVE_CAMADAS_MERCADO` (procura tokens `oklch` e Tailwind) | nenhuma | molde de tokens; script de contraste em OKLCH |
+| 1 | Visual (OKLCH, Tailwind, microinterações) | `G_NOVE_CAMADAS_MERCADO` (procura tokens `oklch` e Tailwind), `G_QUALIDADE` (linter básico de UI) | `mcps/mobbin_mcp` (MCP Mobbin registrado); pipeline Impeccable real nos harnesses | molde de tokens; script de contraste em OKLCH; integração Mobbin + Impeccable real |
 | 2 | Rotas e cascas (TanStack Router/Start) | `G_STACK_PADRAO_OURO`, `G_FRONTEND_LAYERS`, `G_TEMPLATE_TANSTACK_OFFLINE` | nenhuma | molde no catálogo (o template vive fora dele) |
 | 3 | PWA (Vite PWA + Workbox) | `G_NOVE_CAMADAS_MERCADO` (detecta a configuração), `G_TEMPLATE_TANSTACK_OFFLINE` | nenhuma | guarda do manifesto e do service worker |
 | 4 | Offline-first + HMAC | `G_NOVE_CAMADAS_MERCADO` (procura a fila e a palavra HMAC), `G_TEMPLATE_TANSTACK_OFFLINE` | nenhuma | **piloto**: script que assina e confere a fila de verdade |

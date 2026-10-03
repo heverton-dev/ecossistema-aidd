@@ -1,0 +1,784 @@
+<!DOCTYPE html>
+<html lang="pt-BR" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>Sovereign Core — Enterprise Banking & Developer Platform PWA</title>
+  <meta name="theme-color" content="#07090e" id="meta-theme-color">
+  <style>
+    /* ==========================================================================
+       CONTRATO DUAL DE PRODUÇÃO — ESTRESSE GLOBAL DE PIPELINE (LEI #10 + DUAL PWA)
+       Multi-Telas, Bottom Sheets, Modais, Tabelas, Sparklines, Quarteto Completo
+       ========================================================================== */
+    :root {
+      --bg-canvas: #07090e;
+      --bg-surface: #0f131d;
+      --bg-card: #151a27;
+      --bg-tabbar: rgba(15, 19, 29, 0.94);
+      --bg-pill: #1f2638;
+      --bg-modal-backdrop: rgba(0, 0, 0, 0.75);
+
+      --text-main: #f1f5f9;
+      --text-muted: #94a3b8;
+      --text-title: #ffffff;
+      --link-action: #60a5fa;
+
+      --color-primary: #3b82f6;
+      --color-primary-text: #ffffff;
+      --color-success: #10b981;
+      --color-warning: #f59e0b;
+      --color-danger: #ef4444;
+      --color-purple: #8b5cf6;
+
+      --border-subtle: rgba(255, 255, 255, 0.08);
+      --border-card: rgba(255, 255, 255, 0.12);
+
+      --touch-target-min: 48px;
+      --safe-top: env(safe-area-inset-top, 24px);
+      --safe-bottom: env(safe-area-inset-bottom, 20px);
+
+      --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+      --font-mono: ui-monospace, SFMono-Regular, Menlo, monospace;
+    }
+
+    :root[data-theme="light"],
+    body[data-theme="light"] {
+      --bg-canvas: #f1f5f9;
+      --bg-surface: #ffffff;
+      --bg-card: #f8fafc;
+      --bg-tabbar: rgba(255, 255, 255, 0.96);
+      --bg-pill: #e2e8f0;
+      --bg-modal-backdrop: rgba(15, 23, 42, 0.45);
+
+      --text-main: #0f172a;
+      --text-muted: #64748b;
+      --text-title: #0f172a;
+      --link-action: #2563eb;
+
+      --color-primary: #2563eb;
+      --color-primary-text: #ffffff;
+      --color-success: #059669;
+      --color-warning: #d97706;
+      --color-danger: #dc2626;
+      --color-purple: #7c3aed;
+
+      --border-subtle: #e2e8f0;
+      --border-card: #cbd5e1;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+
+    body {
+      background: var(--bg-canvas);
+      color: var(--text-main);
+      font-family: var(--font-sans);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      transition: background 0.15s ease, color 0.15s ease;
+    }
+
+    .app-viewport {
+      width: 100%;
+      min-height: 100vh;
+      background: var(--bg-surface);
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      padding-top: var(--safe-top);
+      padding-bottom: calc(72px + var(--safe-bottom));
+      transition: background 0.15s ease;
+    }
+
+    @media (min-width: 640px) {
+      body { padding: 32px 16px; align-items: center; }
+      .app-viewport {
+        max-width: 480px;
+        min-height: 880px;
+        border-radius: 36px;
+        border: 1px solid var(--border-card);
+        box-shadow: 0 25px 60px rgba(0, 0, 0, 0.4);
+        overflow: hidden;
+      }
+    }
+
+    /* Topbar com Filtros Globais & Status da Conexão */
+    .app-header {
+      padding: 16px 20px 12px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid var(--border-subtle);
+    }
+
+    .header-left {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .app-logo {
+      width: 34px;
+      height: 34px;
+      border-radius: 8px;
+      background: var(--color-primary);
+      color: var(--color-primary-text);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      font-size: 14px;
+    }
+
+    .header-actions { display: flex; gap: 8px; }
+
+    .btn-circle {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      background: var(--bg-pill);
+      border: 1px solid var(--border-subtle);
+      color: var(--text-main);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: transform 0.1s ease;
+    }
+    .btn-circle:active { transform: scale(0.92); }
+
+    .svg-icon {
+      width: 20px;
+      height: 20px;
+      fill: none;
+      stroke: currentColor;
+      stroke-width: 2;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    /* Conteúdo Scrollável & Renderização Atômica das Telas */
+    .app-content {
+      flex: 1;
+      overflow-y: auto;
+      padding: 16px 20px 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .screen-view {
+      display: none;
+      flex-direction: column;
+      gap: 18px;
+      animation: fadeIn 0.15s ease forwards;
+    }
+    .screen-view.active { display: flex; }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(4px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .view-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+    }
+
+    .view-title { font-size: 22px; font-weight: 800; color: var(--text-title); letter-spacing: -0.02em; }
+    .view-subtitle { font-size: 12px; color: var(--text-muted); font-family: var(--font-mono); }
+
+    /* Cards e Containers Complexos */
+    .card-box {
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: 16px;
+      padding: 18px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .kpi-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    .kpi-item {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: 12px;
+      padding: 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .kpi-val { font-size: 22px; font-weight: 800; font-family: var(--font-mono); color: var(--text-title); }
+    .kpi-label { font-size: 11px; font-weight: 600; color: var(--text-muted); text-transform: uppercase; }
+
+    /* Tabela de Transações / Endpoints para Mobile */
+    .list-stack {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .list-item {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: 12px;
+      padding: 14px 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      cursor: pointer;
+      transition: border-color 0.1s ease;
+    }
+    .list-item:active { border-color: var(--color-primary); }
+
+    .list-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .badge-pill {
+      font-size: 11px;
+      font-weight: 800;
+      font-family: var(--font-mono);
+      padding: 3px 8px;
+      border-radius: 4px;
+    }
+
+    /* Sub-Navegação Horizontal por Abas no Quarteto */
+    .subnav-tabs {
+      display: flex;
+      background: var(--bg-pill);
+      padding: 4px;
+      border-radius: 10px;
+      gap: 4px;
+    }
+
+    .subnav-btn {
+      flex: 1;
+      padding: 8px 4px;
+      border: none;
+      background: transparent;
+      color: var(--text-muted);
+      font-size: 11px;
+      font-weight: 700;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: background 0.15s ease, color 0.15s ease;
+    }
+
+    .subnav-btn.active {
+      background: var(--bg-surface);
+      color: var(--text-title);
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    /* Painel do Quarteto Sub-View */
+    .quartet-subview { display: none; flex-direction: column; gap: 14px; }
+    .quartet-subview.active { display: flex; }
+
+    /* Bottom Sheet Modal Ergonômico */
+    .bottom-sheet-overlay {
+      position: absolute;
+      top: 0; left: 0; width: 100%; height: 100%;
+      background: var(--bg-modal-backdrop);
+      z-index: 200;
+      display: none;
+      align-items: flex-end;
+      opacity: 0;
+      transition: opacity 0.2s ease;
+    }
+
+    .bottom-sheet-overlay.active {
+      display: flex;
+      opacity: 1;
+    }
+
+    .bottom-sheet-card {
+      width: 100%;
+      background: var(--bg-surface);
+      border-top-left-radius: 24px;
+      border-top-right-radius: 24px;
+      border-top: 1px solid var(--border-card);
+      padding: 24px 20px calc(24px + var(--safe-bottom));
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      box-shadow: 0 -10px 40px rgba(0, 0, 0, 0.4);
+      transform: translateY(100%);
+      transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .bottom-sheet-overlay.active .bottom-sheet-card {
+      transform: translateY(0);
+    }
+
+    .sheet-handle {
+      width: 36px;
+      height: 4px;
+      border-radius: 2px;
+      background: var(--border-card);
+      margin: 0 auto 6px;
+    }
+
+    .btn-submit {
+      width: 100%;
+      height: 48px;
+      border-radius: 12px;
+      background: var(--color-primary);
+      color: #ffffff;
+      font-size: 14px;
+      font-weight: 700;
+      border: none;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+    .btn-submit:active { transform: scale(0.98); }
+
+    /* Bottom TabBar Principal com Safe Area */
+    .bottom-tabbar {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      height: calc(64px + var(--safe-bottom));
+      background: var(--bg-tabbar);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border-top: 1px solid var(--border-subtle);
+      display: flex;
+      align-items: center;
+      justify-content: space-around;
+      padding-bottom: var(--safe-bottom);
+      z-index: 100;
+    }
+
+    .tab-btn {
+      flex: 1;
+      height: 48px;
+      background: transparent;
+      border: none;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+      color: var(--text-muted);
+      cursor: pointer;
+      transition: color 0.15s ease;
+    }
+
+    .tab-btn.active { color: var(--color-primary); }
+    .tab-label { font-size: 11px; font-weight: 700; }
+  </style>
+</head>
+<body>
+
+  <!-- Viewport PWA -->
+  <div class="app-viewport">
+
+    <!-- Header Global -->
+    <header class="app-header">
+      <div class="header-left">
+        <div class="app-logo">SC</div>
+        <div>
+          <span style="font-size: 13px; font-weight: 800; color: var(--text-title); display: block;">SOVEREIGN CORE</span>
+          <span style="font-size: 11px; color: var(--color-success); font-family: var(--font-mono); font-weight: 700;">PRODUÇÃO ONLINE</span>
+        </div>
+      </div>
+      <div class="header-actions">
+        <button type="button" class="btn-circle" onclick="alternarTema()" title="Alternar Modo Claro/Escuro" aria-label="Tema">
+          <svg class="svg-icon" id="icon-theme" viewBox="0 0 24 24">
+            <circle cx="12" cy="12" r="5"></circle>
+            <line x1="12" y1="1" x2="12" y2="3"></line>
+            <line x1="12" y1="21" x2="12" y2="23"></line>
+            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+            <line x1="1" y1="12" x2="3" y2="12"></line>
+            <line x1="21" y1="12" x2="23" y2="12"></line>
+          </svg>
+        </button>
+        <button type="button" class="btn-circle" onclick="abrirBottomSheet()" title="Disparar Ação Rápida" aria-label="Nova Ação">
+          <svg class="svg-icon" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+        </button>
+      </div>
+    </header>
+
+    <!-- Main Content com 4 Grandes Telas do Sistema -->
+    <main class="app-content">
+
+      <!-- ==============================================================
+           TELA 1: FINTECH HUB (Saldo, Cartão, Transações em 1 Mão)
+           ============================================================== -->
+      <section id="screen-fintech" class="screen-view active" aria-label="Fintech Hub">
+        <div class="view-header">
+          <div>
+            <span class="view-subtitle">LIQUIDEZ OPERACIONAL</span>
+            <h1 class="view-title">R$ 2.450.890,12</h1>
+          </div>
+          <span class="badge-pill" style="background: rgba(16, 185, 129, 0.15); color: var(--color-success);">+18,4% Mês</span>
+        </div>
+
+        <div class="kpi-row">
+          <div class="kpi-item">
+            <span class="kpi-label">Entradas Hoje</span>
+            <span class="kpi-val" style="color: var(--color-success);">R$ 84.120</span>
+          </div>
+          <div class="kpi-item">
+            <span class="kpi-label">Settlement Pendente</span>
+            <span class="kpi-val">R$ 12.400</span>
+          </div>
+        </div>
+
+        <!-- Cartão Virtual Escovado com Sparkline -->
+        <div class="card-box" style="background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%); border-color: rgba(255, 255, 255, 0.15);">
+          <div style="display: flex; justify-content: space-between; align-items: center;">
+            <span style="font-size: 12px; font-weight: 800; color: #94a3b8; letter-spacing: 0.1em;">CORPORATE VIRTUAL CARD</span>
+            <div style="width: 28px; height: 20px; background: #475569; border-radius: 4px;"></div>
+          </div>
+          <div style="font-size: 18px; font-family: var(--font-mono); font-weight: 700; color: #fff; letter-spacing: 0.12em;">
+            4092 •••• •••• 9912
+          </div>
+          <div style="display: flex; justify-content: space-between; align-items: flex-end;">
+            <span style="font-size: 12px; font-weight: 600; color: #cbd5e1;">HEVERTON B. / TECH FOUNDER</span>
+            <span class="badge-pill" style="background: rgba(16, 185, 129, 0.2); color: #34d399;">ATIVO PWA</span>
+          </div>
+        </div>
+
+        <!-- Lista de Movimentações -->
+        <div>
+          <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+            <span style="font-size: 13px; font-weight: 700; color: var(--text-title);">Últimos Lançamentos</span>
+            <span style="font-size: 12px; color: var(--link-action); cursor: pointer;" onclick="abrirBottomSheet()">Filtrar</span>
+          </div>
+          <div class="list-stack">
+            <div class="list-item" onclick="abrirBottomSheet()">
+              <div class="list-left">
+                <span class="badge-pill" style="background: rgba(59, 130, 246, 0.15); color: var(--color-primary);">PIX</span>
+                <div>
+                  <div style="font-size: 13px; font-weight: 700; color: var(--text-title);">Recebimento API Gateway</div>
+                  <div style="font-size: 11px; color: var(--text-muted);">Hoje às 14:10 · Liquidação Direta</div>
+                </div>
+              </div>
+              <span style="font-size: 14px; font-weight: 800; font-family: var(--font-mono); color: var(--color-success);">+ R$ 9.850,00</span>
+            </div>
+
+            <div class="list-item" onclick="abrirBottomSheet()">
+              <div class="list-left">
+                <span class="badge-pill" style="background: rgba(239, 68, 68, 0.15); color: var(--color-danger);">IOF</span>
+                <div>
+                  <div style="font-size: 13px; font-weight: 700; color: var(--text-title);">Cloudflare Enterprise Tier</div>
+                  <div style="font-size: 11px; color: var(--text-muted);">Hoje às 11:22 · Câmbio Dólar</div>
+                </div>
+              </div>
+              <span style="font-size: 14px; font-weight: 800; font-family: var(--font-mono); color: var(--text-title);">- R$ 1.420,00</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ==============================================================
+           TELA 2: CLOUD & TELEMETRIA (Métricas de Infra, Edge e Nós)
+           ============================================================== -->
+      <section id="screen-cloud" class="screen-view" aria-label="Cloud e Infraestrutura">
+        <div class="view-header">
+          <div>
+            <span class="view-subtitle">GOVERNANÇA EDGE CLOUD</span>
+            <h1 class="view-title">Nós & Roteamento</h1>
+          </div>
+          <span class="badge-pill" style="background: rgba(16, 185, 129, 0.15); color: var(--color-success);">99,99% SLA</span>
+        </div>
+
+        <div class="kpi-row">
+          <div class="kpi-item">
+            <span class="kpi-label">Latência Média</span>
+            <span class="kpi-val" style="color: var(--color-primary);">12 ms</span>
+          </div>
+          <div class="kpi-item">
+            <span class="kpi-label">Vazão Total</span>
+            <span class="kpi-val">4.2k req/s</span>
+          </div>
+        </div>
+
+        <!-- Sparkline Gráfico de Carga em Tempo Real -->
+        <div class="card-box">
+          <div style="display: flex; justify-content: space-between; align-items: center;">
+            <span style="font-size: 13px; font-weight: 700; color: var(--text-title);">Carga Operacional Contínua (24h)</span>
+            <span style="font-size: 11px; font-family: var(--font-mono); color: var(--color-success);">24 POPS ATIVOS</span>
+          </div>
+          <svg style="width: 100%; height: 60px; overflow: visible;" viewBox="0 0 300 60">
+            <path d="M0,45 Q40,15 80,40 T160,20 T220,35 T300,10" fill="none" stroke="var(--color-primary)" stroke-width="2.5" stroke-linecap="round"></path>
+          </svg>
+        </div>
+
+        <!-- Lista de Microsserviços e Status -->
+        <div class="list-stack">
+          <div class="list-item">
+            <div class="list-left">
+              <span class="badge-pill" style="background: rgba(16, 185, 129, 0.15); color: var(--color-success);">UP</span>
+              <div>
+                <div style="font-size: 13px; font-weight: 700; color: var(--text-title);">auth-service-v3</div>
+                <div style="font-size: 11px; color: var(--text-muted);">Edge Worker · 4 réplicas</div>
+              </div>
+            </div>
+            <span style="font-size: 12px; font-family: var(--font-mono); color: var(--text-muted);">8ms</span>
+          </div>
+
+          <div class="list-item">
+            <div class="list-left">
+              <span class="badge-pill" style="background: rgba(16, 185, 129, 0.15); color: var(--color-success);">UP</span>
+              <div>
+                <div style="font-size: 13px; font-weight: 700; color: var(--text-title);">ledger-settlement</div>
+                <div style="font-size: 11px; color: var(--text-muted);">PostgreSQL Ha · 0 deadlocks</div>
+              </div>
+            </div>
+            <span style="font-size: 12px; font-family: var(--font-mono); color: var(--text-muted);">14ms</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- ==============================================================
+           TELA 3: CRM DEALS (Pipeline Master-Detail em Cards Ergonômicos)
+           ============================================================== -->
+      <section id="screen-crm" class="screen-view" aria-label="CRM Deals">
+        <div class="view-header">
+          <div>
+            <span class="view-subtitle">PIPELINE CORPORATIVO</span>
+            <h1 class="view-title">Negociações</h1>
+          </div>
+          <span class="badge-pill" style="background: rgba(139, 92, 246, 0.15); color: var(--color-purple);">R$ 890k Funil</span>
+        </div>
+
+        <div class="list-stack">
+          <div class="list-item" onclick="abrirBottomSheet()">
+            <div>
+              <div style="font-size: 13px; font-weight: 700; color: var(--text-title);">Acme Corp Global Deal</div>
+              <div style="font-size: 11px; color: var(--text-muted);">Assinatura de Contrato · 500 assentos</div>
+            </div>
+            <div style="text-align: right;">
+              <div style="font-size: 13px; font-weight: 800; font-family: var(--font-mono); color: var(--text-title);">R$ 180.000</div>
+              <span class="badge-pill" style="background: rgba(16, 185, 129, 0.15); color: var(--color-success);">85% Prob</span>
+            </div>
+          </div>
+
+          <div class="list-item" onclick="abrirBottomSheet()">
+            <div>
+              <div style="font-size: 13px; font-weight: 700; color: var(--text-title);">Fintech X Migration</div>
+              <div style="font-size: 11px; color: var(--text-muted);">Qualificação Técnica · Tier 1 Support</div>
+            </div>
+            <div style="text-align: right;">
+              <div style="font-size: 13px; font-weight: 800; font-family: var(--font-mono); color: var(--text-title);">R$ 420.000</div>
+              <span class="badge-pill" style="background: rgba(245, 158, 11, 0.15); color: var(--color-warning);">60% Prob</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ==============================================================
+           TELA 4: QUARTETO SINE QUA NON (LEI #10 COMPLETA E EXPANDIDA)
+           /api (Swagger), /webhook, /mcp, /docs (Guia)
+           ============================================================== -->
+      <section id="screen-quartet" class="screen-view" aria-label="Quarteto Sine Qua Non">
+        <div class="view-header">
+          <div>
+            <span class="view-subtitle">LEI INVIOLÁVEL #10</span>
+            <h1 class="view-title">Quarteto Studio</h1>
+          </div>
+          <span class="badge-pill" style="background: rgba(59, 130, 246, 0.15); color: var(--color-primary);">GATE PROVADO</span>
+        </div>
+
+        <!-- Sub-Navegação por Abas para os 4 Pilares -->
+        <nav class="subnav-tabs" aria-label="Pilares do Quarteto">
+          <button type="button" class="subnav-btn active" onclick="trocarPilar('api', this)">1. API (/docs)</button>
+          <button type="button" class="subnav-btn" onclick="trocarPilar('webhook', this)">2. Webhooks</button>
+          <button type="button" class="subnav-btn" onclick="trocarPilar('mcp', this)">3. MCP Studio</button>
+          <button type="button" class="subnav-btn" onclick="trocarPilar('docs', this)">4. Guia</button>
+        </nav>
+
+        <!-- Pilar 1: API Studio & OpenAPI -->
+        <div id="pilar-api" class="quartet-subview active">
+          <div class="card-box">
+            <div style="display: flex; justify-content: space-between;">
+              <span style="font-size: 13px; font-weight: 700; color: var(--text-title);">Swagger & OpenAPI Studio</span>
+              <span class="badge-pill" style="background: rgba(16, 185, 129, 0.15); color: var(--color-success);">v3.1.0</span>
+            </div>
+            <p style="font-size: 12px; color: var(--text-muted);">Documentação viva e endpoints tipados disponíveis em <code>/api</code> e <code>/docs</code>.</p>
+          </div>
+          <div class="list-stack">
+            <div class="list-item">
+              <div class="list-left">
+                <span class="badge-pill" style="background: rgba(59, 130, 246, 0.15); color: #3b82f6;">GET</span>
+                <span style="font-size: 13px; font-family: var(--font-mono); font-weight: 600;">/api/v1/ledger</span>
+              </div>
+              <span style="font-size: 11px; color: var(--color-success); font-weight: 700;">200 OK</span>
+            </div>
+            <div class="list-item">
+              <div class="list-left">
+                <span class="badge-pill" style="background: rgba(16, 185, 129, 0.15); color: #10b981;">POST</span>
+                <span style="font-size: 13px; font-family: var(--font-mono); font-weight: 600;">/api/v1/transact</span>
+              </div>
+              <span style="font-size: 11px; color: var(--color-success); font-weight: 700;">201 Created</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Pilar 2: Webhook Studio -->
+        <div id="pilar-webhook" class="quartet-subview">
+          <div class="card-box">
+            <div style="display: flex; justify-content: space-between;">
+              <span style="font-size: 13px; font-weight: 700; color: var(--text-title);">Webhook Studio</span>
+              <span class="badge-pill" style="background: rgba(245, 158, 11, 0.15); color: var(--color-warning);">HMAC Ativo</span>
+            </div>
+            <p style="font-size: 12px; color: var(--text-muted);">Recepção e dispatch assíncrono idempotente em <code>/webhook</code> e <code>/api/webhooks</code>.</p>
+          </div>
+          <div class="list-stack">
+            <div class="list-item">
+              <div class="list-left">
+                <span class="badge-pill" style="background: var(--bg-pill); color: var(--text-title);">EVENTO</span>
+                <span style="font-size: 13px; font-weight: 600;">payment.received</span>
+              </div>
+              <span style="font-size: 11px; color: var(--color-success); font-weight: 700;">Idempotente</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Pilar 3: MCP Studio -->
+        <div id="pilar-mcp" class="quartet-subview">
+          <div class="card-box">
+            <div style="display: flex; justify-content: space-between;">
+              <span style="font-size: 13px; font-weight: 700; color: var(--text-title);">MCP Studio Protocol</span>
+              <span class="badge-pill" style="background: rgba(16, 185, 129, 0.15); color: var(--color-success);">SSE Pronto</span>
+            </div>
+            <p style="font-size: 12px; color: var(--text-muted);">Comunicação direta com LLMs e agentes via <code>/mcp</code> e <code>/api/mcp/rpc</code>.</p>
+          </div>
+          <div class="list-stack">
+            <div class="list-item">
+              <div class="list-left">
+                <span class="badge-pill" style="background: rgba(139, 92, 246, 0.15); color: var(--color-purple);">TOOL</span>
+                <span style="font-size: 13px; font-weight: 600;">auditar_bloco_seguranca</span>
+              </div>
+              <span style="font-size: 11px; color: var(--color-primary); font-weight: 700;">FastMCP</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Pilar 4: Guia do Utilizador -->
+        <div id="pilar-docs" class="quartet-subview">
+          <div class="card-box">
+            <div style="display: flex; justify-content: space-between;">
+              <span style="font-size: 13px; font-weight: 700; color: var(--text-title);">Central de Documentação e Guia</span>
+              <span class="badge-pill" style="background: rgba(59, 130, 246, 0.15); color: var(--color-primary);">/docs/guia</span>
+            </div>
+            <p style="font-size: 12px; color: var(--text-muted);">Manuais operacionais para desenvolvedores e operadores humanos com SLA de zero ambiguidade.</p>
+          </div>
+        </div>
+      </section>
+
+    </main>
+
+    <!-- Bottom Sheet Modal Dinâmico -->
+    <div id="bottom-sheet" class="bottom-sheet-overlay" onclick="fecharBottomSheet(event)">
+      <div class="bottom-sheet-card" onclick="event.stopPropagation()">
+        <div class="sheet-handle"></div>
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+          <h2 style="font-size: 16px; font-weight: 800; color: var(--text-title);">Nova Transação Segura</h2>
+          <span style="font-size: 12px; color: var(--text-muted); cursor: pointer;" onclick="fecharBottomSheet()">Fechar</span>
+        </div>
+        <p style="font-size: 13px; color: var(--text-muted);">Simulação de fluxo transacional com validação instantânea em 1 mão.</p>
+        <div style="display: flex; flex-direction: column; gap: 8px;">
+          <label style="font-size: 12px; font-weight: 600; color: var(--text-muted);">Chave PIX ou Conta Destino</label>
+          <input type="text" value="financeiro@empresa.com" style="background: var(--bg-card); border: 1px solid var(--border-card); border-radius: 8px; padding: 12px; color: var(--text-main); font-size: 13px; font-family: var(--font-mono); outline: none;">
+        </div>
+        <button type="button" class="btn-submit" onclick="fecharBottomSheet()">
+          <span>Autorizar Transferência (Touch ID)</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Bottom Navigation Bar com os 4 Grandes Modos -->
+    <nav class="bottom-tabbar" aria-label="Navegação Central">
+      <button type="button" class="tab-btn active" onclick="trocarTelaPrincipal('fintech', this)">
+        <svg class="svg-icon" viewBox="0 0 24 24"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect><line x1="1" y1="10" x2="23" y2="10"></line></svg>
+        <span class="tab-label">Fintech</span>
+      </button>
+
+      <button type="button" class="tab-btn" onclick="trocarTelaPrincipal('cloud', this)">
+        <svg class="svg-icon" viewBox="0 0 24 24"><path d="M18 10h-1.26A8 8 0 1 0 9 20h9a5 5 0 0 0 0-10z"></path></svg>
+        <span class="tab-label">Cloud</span>
+      </button>
+
+      <button type="button" class="tab-btn" onclick="trocarTelaPrincipal('crm', this)">
+        <svg class="svg-icon" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+        <span class="tab-label">Deals</span>
+      </button>
+
+      <button type="button" class="tab-btn" onclick="trocarTelaPrincipal('quartet', this)">
+        <svg class="svg-icon" viewBox="0 0 24 24"><polygon points="12 2 2 7 12 12 22 7 12 2"></polygon><polyline points="2 17 12 22 22 17"></polyline><polyline points="2 12 12 17 22 12"></polyline></svg>
+        <span class="tab-label">Quarteto</span>
+      </button>
+    </nav>
+
+  </div>
+
+  <script>
+    function trocarTelaPrincipal(nome, btn) {
+      document.querySelectorAll('.screen-view').forEach(s => s.classList.remove('active'));
+      document.querySelectorAll('.bottom-tabbar .tab-btn').forEach(b => b.classList.remove('active'));
+
+      const target = document.getElementById('screen-' + nome);
+      if (target) target.classList.add('active');
+      if (btn) btn.classList.add('active');
+    }
+
+    function trocarPilar(pilar, btn) {
+      document.querySelectorAll('.quartet-subview').forEach(p => p.classList.remove('active'));
+      document.querySelectorAll('.subnav-btn').forEach(b => b.classList.remove('active'));
+
+      const targetPilar = document.getElementById('pilar-' + pilar);
+      if (targetPilar) targetPilar.classList.add('active');
+      if (btn) btn.classList.add('active');
+    }
+
+    function abrirBottomSheet() {
+      const sheet = document.getElementById('bottom-sheet');
+      if (sheet) sheet.classList.add('active');
+    }
+
+    function fecharBottomSheet() {
+      const sheet = document.getElementById('bottom-sheet');
+      if (sheet) sheet.classList.remove('active');
+    }
+
+    function alternarTema() {
+      const html = document.documentElement;
+      const temaAtual = html.getAttribute('data-theme') || 'dark';
+      const novoTema = temaAtual === 'dark' ? 'light' : 'dark';
+      html.setAttribute('data-theme', novoTema);
+
+      const meta = document.getElementById('meta-theme-color');
+      if (meta) meta.setAttribute('content', novoTema === 'dark' ? '#07090e' : '#f1f5f9');
+
+      const icon = document.getElementById('icon-theme');
+      if (icon) {
+        if (novoTema === 'light') {
+          icon.innerHTML = '<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>';
+        } else {
+          icon.innerHTML = '<circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line>';
+        }
+      }
+    }
+  </script>
+
+</body>
+</html>

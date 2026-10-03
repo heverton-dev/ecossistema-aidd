@@ -1,0 +1,551 @@
+<!DOCTYPE html>
+<html lang="pt-BR" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>AIDD Sovereign Mesh — Quarteto Sine Qua Non PWA</title>
+  <meta name="theme-color" content="#07090e" id="meta-theme-color">
+  <style>
+    /* ==========================================================================
+       CONTRATO DUAL — QUARTETO SINE QUA NON (LEI #10) MULTI-TELAS MOBILE PWA
+       Pilares Canônicos: /api, /webhook, /mcp, /docs
+       100% SVG, Zero Emojis, Transição Instantânea Light/Dark, Safe Areas
+       ========================================================================== */
+    :root {
+      --bg-canvas: #07090e;
+      --bg-surface: #0f131d;
+      --bg-card: #151a27;
+      --bg-tabbar: rgba(15, 19, 29, 0.94);
+      --bg-pill: #1f2638;
+
+      --text-main: #f1f5f9;
+      --text-muted: #94a3b8;
+      --text-title: #ffffff;
+      --link-action: #60a5fa;
+
+      --color-primary: #3b82f6;
+      --color-primary-text: #ffffff;
+      --color-success: #10b981;
+      --color-warning: #f59e0b;
+      --color-danger: #ef4444;
+
+      --border-subtle: rgba(255, 255, 255, 0.08);
+      --border-card: rgba(255, 255, 255, 0.12);
+
+      --touch-target-min: 48px;
+      --safe-top: env(safe-area-inset-top, 24px);
+      --safe-bottom: env(safe-area-inset-bottom, 20px);
+
+      --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+      --font-mono: ui-monospace, SFMono-Regular, Menlo, monospace;
+    }
+
+    :root[data-theme="light"],
+    body[data-theme="light"] {
+      --bg-canvas: #f1f5f9;
+      --bg-surface: #ffffff;
+      --bg-card: #f8fafc;
+      --bg-tabbar: rgba(255, 255, 255, 0.96);
+      --bg-pill: #e2e8f0;
+
+      --text-main: #0f172a;
+      --text-muted: #64748b;
+      --text-title: #0f172a;
+      --link-action: #2563eb;
+
+      --color-primary: #2563eb;
+      --color-primary-text: #ffffff;
+      --color-success: #059669;
+      --color-warning: #d97706;
+      --color-danger: #dc2626;
+
+      --border-subtle: #e2e8f0;
+      --border-card: #cbd5e1;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+
+    body {
+      background: var(--bg-canvas);
+      color: var(--text-main);
+      font-family: var(--font-sans);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      transition: background 0.15s ease, color 0.15s ease;
+    }
+
+    .app-viewport {
+      width: 100%;
+      min-height: 100vh;
+      background: var(--bg-surface);
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      padding-top: var(--safe-top);
+      padding-bottom: calc(72px + var(--safe-bottom));
+      transition: background 0.15s ease;
+    }
+
+    @media (min-width: 640px) {
+      body { padding: 32px 16px; align-items: center; }
+      .app-viewport {
+        max-width: 480px;
+        min-height: 860px;
+        border-radius: 36px;
+        border: 1px solid var(--border-card);
+        box-shadow: 0 25px 60px rgba(0, 0, 0, 0.4);
+        overflow: hidden;
+      }
+    }
+
+    .app-header {
+      padding: 16px 20px 12px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid var(--border-subtle);
+    }
+
+    .header-brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .brand-icon {
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+      background: var(--color-primary);
+      color: var(--color-primary-text);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .header-actions { display: flex; gap: 8px; }
+
+    .btn-circle {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      background: var(--bg-pill);
+      border: 1px solid var(--border-subtle);
+      color: var(--text-main);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: transform 0.1s ease;
+    }
+    .btn-circle:active { transform: scale(0.92); }
+
+    .svg-icon {
+      width: 20px;
+      height: 20px;
+      fill: none;
+      stroke: currentColor;
+      stroke-width: 2;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    .app-content {
+      flex: 1;
+      overflow-y: auto;
+      padding: 16px 20px 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    /* Navegação entre Telas do Quarteto */
+    .screen-view {
+      display: none;
+      flex-direction: column;
+      gap: 18px;
+      animation: fadeIn 0.15s ease forwards;
+    }
+    .screen-view.active { display: flex; }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(4px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .view-title-wrap {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .view-badge {
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--color-primary);
+      font-family: var(--font-mono);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+
+    .view-heading {
+      font-size: 22px;
+      font-weight: 800;
+      color: var(--text-title);
+    }
+
+    /* Componentes Compartilhados de Cartão */
+    .quad-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: 16px;
+      padding: 18px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .quad-badge {
+      padding: 3px 8px;
+      border-radius: 4px;
+      font-size: 11px;
+      font-weight: 700;
+      font-family: var(--font-mono);
+      text-transform: uppercase;
+      display: inline-block;
+    }
+
+    /* Lista Interativa de Endpoints / Webhooks / Ferramentas */
+    .item-row {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: 12px;
+      padding: 12px 14px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      cursor: pointer;
+    }
+    .item-row:active { border-color: var(--color-primary); }
+
+    .item-left {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .method-pill {
+      font-size: 11px;
+      font-weight: 800;
+      font-family: var(--font-mono);
+      padding: 3px 6px;
+      border-radius: 4px;
+    }
+
+    .method-get { background: rgba(59, 130, 246, 0.15); color: #3b82f6; }
+    .method-post { background: rgba(16, 185, 129, 0.15); color: #10b981; }
+
+    /* Bottom TabBar dos 4 Pilares */
+    .bottom-tabbar {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      height: calc(64px + var(--safe-bottom));
+      background: var(--bg-tabbar);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border-top: 1px solid var(--border-subtle);
+      display: flex;
+      align-items: center;
+      justify-content: space-around;
+      padding-bottom: var(--safe-bottom);
+      z-index: 100;
+    }
+
+    .tab-btn {
+      flex: 1;
+      height: 48px;
+      background: transparent;
+      border: none;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+      color: var(--text-muted);
+      cursor: pointer;
+      transition: color 0.15s ease;
+    }
+
+    .tab-btn.active { color: var(--color-primary); }
+    .tab-label { font-size: 11px; font-weight: 700; }
+  </style>
+</head>
+<body>
+
+  <div class="app-viewport">
+
+    <!-- Topbar Mobile -->
+    <header class="app-header">
+      <div class="header-brand">
+        <div class="brand-icon">
+          <svg class="svg-icon" style="width: 18px; height: 18px;" viewBox="0 0 24 24">
+            <polygon points="12 2 2 7 12 12 22 7 12 2"></polygon>
+            <polyline points="2 17 12 22 22 17"></polyline>
+            <polyline points="2 12 12 17 22 12"></polyline>
+          </svg>
+        </div>
+        <div>
+          <span style="font-size: 13px; font-weight: 800; color: var(--text-title); display: block;">SOVEREIGN QUARTET</span>
+          <span style="font-size: 11px; color: var(--text-muted); font-family: var(--font-mono);">LEI #10 SINE QUA NON</span>
+        </div>
+      </div>
+
+      <div class="header-actions">
+        <button type="button" class="btn-circle" onclick="alternarTema()" title="Alternar Modo Claro/Escuro" aria-label="Tema">
+          <svg class="svg-icon" id="icon-theme" viewBox="0 0 24 24">
+            <circle cx="12" cy="12" r="5"></circle>
+            <line x1="12" y1="1" x2="12" y2="3"></line>
+            <line x1="12" y1="21" x2="12" y2="23"></line>
+            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+            <line x1="1" y1="12" x2="3" y2="12"></line>
+            <line x1="21" y1="12" x2="23" y2="12"></line>
+          </svg>
+        </button>
+      </div>
+    </header>
+
+    <!-- Conteúdo Dinâmico Multi-Telas -->
+    <main class="app-content">
+
+      <!-- ==========================================
+           TELA 1: API STUDIO (/api /docs OpenAPI)
+           ========================================== -->
+      <section id="view-api" class="screen-view active" aria-label="API Studio">
+        <div class="view-title-wrap">
+          <span class="view-badge">PILAR 1 · SWAGGER & API STUDIO</span>
+          <h1 class="view-heading">Endpoints Contratuais</h1>
+        </div>
+
+        <div class="quad-card">
+          <div style="display: flex; justify-content: space-between; align-items: center;">
+            <span style="font-size: 12px; font-weight: 700; color: var(--text-muted);">OpenAPI Spec v3.1.0</span>
+            <span class="quad-badge" style="background: rgba(16, 185, 129, 0.15); color: var(--color-success);">200 OK</span>
+          </div>
+          <div style="font-size: 13px; color: var(--text-muted);">
+            Contrato determinístico rigoroso inspecionado em <code>/openapi.json</code>.
+          </div>
+        </div>
+
+        <div style="display: flex; flex-direction: column; gap: 8px;">
+          <div class="item-row">
+            <div class="item-left">
+              <span class="method-pill method-get">GET</span>
+              <span style="font-size: 13px; font-weight: 600; font-family: var(--font-mono); color: var(--text-title);">/api/v1/health</span>
+            </div>
+            <span style="font-size: 11px; color: var(--color-success); font-weight: 700;">Ativo</span>
+          </div>
+
+          <div class="item-row">
+            <div class="item-left">
+              <span class="method-pill method-post">POST</span>
+              <span style="font-size: 13px; font-weight: 600; font-family: var(--font-mono); color: var(--text-title);">/api/v1/auth/token</span>
+            </div>
+            <span style="font-size: 11px; color: var(--color-success); font-weight: 700;">Ativo</span>
+          </div>
+
+          <div class="item-row">
+            <div class="item-left">
+              <span class="method-pill method-get">GET</span>
+              <span style="font-size: 13px; font-weight: 600; font-family: var(--font-mono); color: var(--text-title);">/api/v1/telemetry</span>
+            </div>
+            <span style="font-size: 11px; color: var(--color-success); font-weight: 700;">Ativo</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- ==========================================
+           TELA 2: WEBHOOK STUDIO (/webhook)
+           ========================================== -->
+      <section id="view-webhook" class="screen-view" aria-label="Webhook Studio">
+        <div class="view-title-wrap">
+          <span class="view-badge">PILAR 2 · WEBHOOK STUDIO</span>
+          <h1 class="view-heading">Eventos & Ingestão</h1>
+        </div>
+
+        <div class="quad-card">
+          <div style="display: flex; justify-content: space-between; align-items: center;">
+            <span style="font-size: 12px; font-weight: 700; color: var(--text-muted);">Recepção HMAC SHA-256</span>
+            <span class="quad-badge" style="background: rgba(59, 130, 246, 0.15); color: var(--color-primary);">Escuta Ativa</span>
+          </div>
+          <div style="font-size: 13px; color: var(--text-muted);">
+            Endpoint centralizado em <code>/api/webhooks</code> com idempotência e retry com backoff.
+          </div>
+        </div>
+
+        <div style="display: flex; flex-direction: column; gap: 8px;">
+          <div class="item-row">
+            <div class="item-left">
+              <svg class="svg-icon" style="color: var(--color-warning);" viewBox="0 0 24 24"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"></path></svg>
+              <div>
+                <div style="font-size: 13px; font-weight: 600; color: var(--text-title);">payment.succeeded</div>
+                <div style="font-size: 11px; color: var(--text-muted); font-family: var(--font-mono);">Disparado por Stripe Engine</div>
+              </div>
+            </div>
+            <span style="font-size: 11px; color: var(--color-success); font-weight: 700;">200 OK</span>
+          </div>
+
+          <div class="item-row">
+            <div class="item-left">
+              <svg class="svg-icon" style="color: var(--color-primary);" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 14 14"></polyline></svg>
+              <div>
+                <div style="font-size: 13px; font-weight: 600; color: var(--text-title);">deploy.promoted</div>
+                <div style="font-size: 11px; color: var(--text-muted); font-family: var(--font-mono);">Disparado por Cloudflare / Edge</div>
+              </div>
+            </div>
+            <span style="font-size: 11px; color: var(--color-success); font-weight: 700;">200 OK</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- ==========================================
+           TELA 3: MCP STUDIO (/mcp)
+           ========================================== -->
+      <section id="view-mcp" class="screen-view" aria-label="MCP Studio">
+        <div class="view-title-wrap">
+          <span class="view-badge">PILAR 3 · MCP STUDIO PROTOCOL</span>
+          <h1 class="view-heading">Ferramentas & Contexto</h1>
+        </div>
+
+        <div class="quad-card">
+          <div style="display: flex; justify-content: space-between; align-items: center;">
+            <span style="font-size: 12px; font-weight: 700; color: var(--text-muted);">Transporte SSE / FastMCP</span>
+            <span class="quad-badge" style="background: rgba(16, 185, 129, 0.15); color: var(--color-success);">Conectado</span>
+          </div>
+          <div style="font-size: 13px; color: var(--text-muted);">
+            Exposição de tools no padrão Model Context Protocol para Claude e agentes em <code>/mcp/rpc</code>.
+          </div>
+        </div>
+
+        <div style="display: flex; flex-direction: column; gap: 8px;">
+          <div class="item-row">
+            <div class="item-left">
+              <svg class="svg-icon" style="color: var(--color-primary);" viewBox="0 0 24 24"><polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline></svg>
+              <div>
+                <div style="font-size: 13px; font-weight: 600; color: var(--text-title);">consultar_saldo_ledger</div>
+                <div style="font-size: 11px; color: var(--text-muted);">Lê o livro-razão imutável</div>
+              </div>
+            </div>
+            <span class="quad-badge" style="background: var(--bg-pill); color: var(--text-main);">Tool</span>
+          </div>
+
+          <div class="item-row">
+            <div class="item-left">
+              <svg class="svg-icon" style="color: var(--color-primary);" viewBox="0 0 24 24"><polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline></svg>
+              <div>
+                <div style="font-size: 13px; font-weight: 600; color: var(--text-title);">emitir_ordem_transferencia</div>
+                <div style="font-size: 11px; color: var(--text-muted);">Comuta pagamentos seguros</div>
+              </div>
+            </div>
+            <span class="quad-badge" style="background: var(--bg-pill); color: var(--text-main);">Tool</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- ==========================================
+           TELA 4: GUIA DO UTILIZADOR (/docs /guia)
+           ========================================== -->
+      <section id="view-docs" class="screen-view" aria-label="Guia do Utilizador">
+        <div class="view-title-wrap">
+          <span class="view-badge">PILAR 4 · CENTRAL DE DOCUMENTAÇÃO</span>
+          <h1 class="view-heading">Guia de Onboarding</h1>
+        </div>
+
+        <div class="quad-card">
+          <span style="font-size: 13px; font-weight: 700; color: var(--text-title);">Passo a Passo de Integração Rápida</span>
+          <div style="font-size: 13px; color: var(--text-muted); line-height: 1.5;">
+            Guia do Utilizador completo em <code>/docs/guia</code> para desenvolvedores e operadores humanos.
+          </div>
+        </div>
+
+        <div style="display: flex; flex-direction: column; gap: 10px;">
+          <div class="quad-card" style="padding: 14px;">
+            <div style="display: flex; align-items: center; gap: 8px;">
+              <span style="width: 22px; height: 22px; border-radius: 50%; background: var(--color-primary); color: #fff; font-size: 12px; font-weight: 800; display: flex; align-items: center; justify-content: center;">1</span>
+              <span style="font-size: 13px; font-weight: 700; color: var(--text-title);">Obter Credenciais da API</span>
+            </div>
+            <p style="font-size: 12px; color: var(--text-muted); margin-top: 4px;">Gere a chave mestre de acesso em Ajustes com escopo de leitura e escrita.</p>
+          </div>
+
+          <div class="quad-card" style="padding: 14px;">
+            <div style="display: flex; align-items: center; gap: 8px;">
+              <span style="width: 22px; height: 22px; border-radius: 50%; background: var(--color-primary); color: #fff; font-size: 12px; font-weight: 800; display: flex; align-items: center; justify-content: center;">2</span>
+              <span style="font-size: 13px; font-weight: 700; color: var(--text-title);">Conectar ao Servidor MCP</span>
+            </div>
+            <p style="font-size: 12px; color: var(--text-muted); margin-top: 4px;">Adicione o JSON de configuração no Claude Desktop ou OpenCode para interagir.</p>
+          </div>
+        </div>
+      </section>
+
+    </main>
+
+    <!-- Bottom TabBar com Troca Atômica de Telas -->
+    <nav class="bottom-tabbar" aria-label="Navegação do Quarteto">
+      <button type="button" class="tab-btn active" onclick="trocarTela('api', this)">
+        <svg class="svg-icon" viewBox="0 0 24 24"><polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline></svg>
+        <span class="tab-label">API Studio</span>
+      </button>
+
+      <button type="button" class="tab-btn" onclick="trocarTela('webhook', this)">
+        <svg class="svg-icon" viewBox="0 0 24 24"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"></path></svg>
+        <span class="tab-label">Webhooks</span>
+      </button>
+
+      <button type="button" class="tab-btn" onclick="trocarTela('mcp', this)">
+        <svg class="svg-icon" viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect><line x1="8" y1="21" x2="16" y2="21"></line><line x1="12" y1="17" x2="12" y2="21"></line></svg>
+        <span class="tab-label">MCP Studio</span>
+      </button>
+
+      <button type="button" class="tab-btn" onclick="trocarTela('docs', this)">
+        <svg class="svg-icon" viewBox="0 0 24 24"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg>
+        <span class="tab-label">Guia</span>
+      </button>
+    </nav>
+
+  </div>
+
+  <script>
+    function trocarTela(id, btn) {
+      document.querySelectorAll('.screen-view').forEach(v => v.classList.remove('active'));
+      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+
+      const targetView = document.getElementById('view-' + id);
+      if (targetView) targetView.classList.add('active');
+      if (btn) btn.classList.add('active');
+    }
+
+    function alternarTema() {
+      const html = document.documentElement;
+      const temaAtual = html.getAttribute('data-theme') || 'dark';
+      const novoTema = temaAtual === 'dark' ? 'light' : 'dark';
+      html.setAttribute('data-theme', novoTema);
+
+      const meta = document.getElementById('meta-theme-color');
+      if (meta) meta.setAttribute('content', novoTema === 'dark' ? '#07090e' : '#f1f5f9');
+
+      const icon = document.getElementById('icon-theme');
+      if (icon) {
+        if (novoTema === 'light') {
+          icon.innerHTML = '<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>';
+        } else {
+          icon.innerHTML = '<circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line>';
+        }
+      }
+    }
+  </script>
+
+</body>
+</html>

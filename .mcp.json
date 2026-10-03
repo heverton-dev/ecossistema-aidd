@@ -57,14 +57,29 @@
     "codebase-memory-mcp": {
       "command": "C:\\Users\\trcnologia\\tools\\codebase-memory-mcp\\codebase-memory-mcp.exe",
       "args": [],
-      "cwd": "C:\\Users\\trcnologia\\Desktop\\ecossistema-aidd"
+      "cwd": "C:\\Users\\trcnologia\\Desktop\\wt_impeccable_mobbin"
     },
     "mcp-gatekeeper": {
       "command": "python",
       "args": [
         "componentes/compartilhado/src-core/mcp_gatekeeper.py"
       ],
-      "cwd": "C:\\Users\\trcnologia\\Desktop\\ecossistema-aidd"
+      "cwd": "C:\\Users\\trcnologia\\Desktop\\wt_impeccable_mobbin"
+    },
+    "code-review-graph": {
+      "command": "uvx",
+      "args": [
+        "code-review-graph",
+        "serve"
+      ],
+      "cwd": "C:\\Users\\trcnologia\\Desktop\\wt_impeccable_mobbin",
+      "type": "stdio"
+    },
+    "mobbin-mcp": {
+      "command": "python",
+      "args": [
+        "componentes/compartilhado/mcps/mobbin_mcp/server.py"
+      ]
     }
   }
 }
