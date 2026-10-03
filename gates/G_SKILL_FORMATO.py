@@ -48,6 +48,9 @@ PADRAO_NOME = re.compile(r"^[a-z0-9]+(-[a-z0-9]+)*$")
 MAX_NOME = 64
 MAX_LINHAS_CORPO = 450
 PREFIXO_NOSSO = "aidd-"
+# Seções de robustez exigidas pela convenção (ciclo-01 aidd-skills, Ticket 3).
+# Por ora só avisam; --secoes-estritas reprova quando todas as skills estiverem adequadas.
+SECOES_DE_ROBUSTEZ = ("Negative Guardrails", "Failure Modes", "Stopping Checklist")
 
 
 def ler_frontmatter(conteudo: str) -> Tuple[Optional[dict], str, Optional[str]]:
@@ -91,6 +94,31 @@ def auditar_skill(skill_md: str, terceiros: set) -> List[str]:
     return violacoes
 
 
+def secoes_faltando(skill_md: str, terceiros: set) -> List[str]:
+    """Seções de robustez ausentes num SKILL.md próprio (skill de terceiro é dispensada)."""
+    pasta = os.path.basename(os.path.dirname(skill_md))
+    with open(skill_md, "r", encoding="utf-8") as f:
+        fm, corpo, _ = ler_frontmatter(f.read())
+    nome = str((fm or {}).get("name") or pasta)
+    if nome in terceiros or pasta in terceiros:
+        return []
+    titulos = {m.lower() for m in re.findall(r"^#{2,3}\s+(.+?)\s*$", corpo, flags=re.MULTILINE)}
+    return [s for s in SECOES_DE_ROBUSTEZ if not any(t.startswith(s.lower()) for t in titulos)]
+
+
+def auditar_secoes(raiz: str) -> List[Tuple[str, List[str]]]:
+    terceiros = gestor_dependencias.skills_de_terceiros(
+        os.path.join(raiz, "gates", "dependencias_externas.json")
+    )
+    resultado = []
+    for skill_md in sorted(glob.glob(os.path.join(raiz, "componentes", "*", "skills", "*", "SKILL.md"))):
+        faltando = secoes_faltando(skill_md, terceiros)
+        if faltando:
+            resultado.append((os.path.relpath(skill_md, raiz).replace("\\", "/"),
+                              [f"SEM_SECOES_DE_ROBUSTEZ: faltam {', '.join(faltando)}"]))
+    return resultado
+
+
 def auditar(raiz: str) -> List[Tuple[str, List[str]]]:
     terceiros = gestor_dependencias.skills_de_terceiros(
         os.path.join(raiz, "gates", "dependencias_externas.json")
@@ -108,11 +136,21 @@ def main() -> int:
     parser = argparse.ArgumentParser(description="G_SKILL_FORMATO: formato e nome das skills (CONVENCAO-AUTORIA-SKILLS 5.1-5.3)")
     parser.add_argument("--raiz", default=ROOT_DIR, help="Raiz do repositorio a auditar")
     parser.add_argument("--aviso", action="store_true", help="Modo aviso: imprime as violacoes e sai com exit 0")
+    parser.add_argument("--secoes-estritas", action="store_true",
+                        help="Reprova skill própria sem Negative Guardrails, Failure Modes e Stopping Checklist")
     args = parser.parse_args()
 
     total_skills = len(glob.glob(os.path.join(args.raiz, "componentes", "*", "skills", "*", "SKILL.md")))
     print(f"[G_SKILL_FORMATO] Auditando {total_skills} skill(s) em componentes/*/skills/ ...")
     achados = auditar(args.raiz)
+    secoes = auditar_secoes(args.raiz)
+    if args.secoes_estritas:
+        achados = achados + secoes
+    elif secoes:
+        print(f"\n[AVISO] {len(secoes)} skill(s) sem as seções de robustez (CONVENCAO-AUTORIA-SKILLS.md); "
+              "não reprova sem --secoes-estritas:")
+        for caminho, violacoes in secoes:
+            print(f"  - {caminho}: {violacoes[0]}")
 
     if not achados:
         print(f"[OK] G_SKILL_FORMATO: {total_skills} skill(s) no formato das secoes 5.1-5.3.")

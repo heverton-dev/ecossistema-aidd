@@ -90,6 +90,7 @@ description: Ajuda com o ecossistema.
 - **Negative Guardrails (o que NUNCA fazer):** liste explicitamente proibições rígidas contra vícios estocásticos comuns da LLM no domínio (ex.: commits cegos, omissão de rollback, mock sem aviso, queries N+1, retries infinitos).
 - **Failure Modes & Fallback:** instrua o agente sobre como recuperar de exceções operacionais esperadas (timeout de rede, violação de constraint, erro de permissão) com parada graciosa em vez de loops infinitos.
 - **Checklist de Fechamento (Stopping Criteria):** cada manual deve fechar com critérios binários (passa / não passa) de auto-auditoria antes do agente notificar o usuário ou tentar commitar.
+- **Verificação:** `python gates/G_SKILL_FORMATO.py` aponta as skills próprias sem essas 3 seções (aviso); `--secoes-estritas` reprova e passa a ser o padrão quando todas estiverem adequadas.
 
 ### 5.3 Nomes: um nome só para cada coisa
 

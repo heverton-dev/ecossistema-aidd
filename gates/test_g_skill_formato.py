@@ -124,3 +124,46 @@ def test_repositorio_real_aprova_em_modo_bloqueante():
     res = subprocess.run([sys.executable, GATE_PATH], capture_output=True, text=True,
                          encoding="utf-8", errors="replace", env=env)
     assert res.returncode == 0, res.stdout
+
+
+SECOES_DE_ROBUSTEZ = "\n## Negative Guardrails\n- NEVER x.\n\n## Failure Modes & Fallback\n- y.\n\n## Stopping Checklist\n- [ ] z.\n"
+
+
+def _acrescentar(raiz, pasta, texto):
+    with open(os.path.join(raiz, "componentes", "compartilhado", "skills", pasta, "SKILL.md"), "a", encoding="utf-8") as f:
+        f.write(texto)
+
+
+def test_skill_sem_secoes_de_robustez_so_avisa_por_padrao(tmp_path):
+    # Ciclo-01 aidd-skills, Ticket 3: a convenção exige as 3 seções; até todas as skills
+    # serem adequadas, a falta delas aparece como aviso e não reprova.
+    _escrever_dependencias(tmp_path, {})
+    _escrever_skill(tmp_path, "aidd-catalog")
+    res = _rodar(tmp_path)
+    assert res.returncode == 0, res.stdout
+    assert "SEM_SECOES_DE_ROBUSTEZ" in res.stdout and "Stopping Checklist" in res.stdout
+
+
+def test_secoes_estritas_reprova_skill_sem_as_3_secoes_exit_1(tmp_path):
+    _escrever_dependencias(tmp_path, {})
+    _escrever_skill(tmp_path, "aidd-catalog")
+    _acrescentar(tmp_path, "aidd-catalog", "\n## Negative Guardrails\n- NEVER x.\n")
+    res = _rodar(tmp_path, "--secoes-estritas")
+    assert res.returncode == 1, res.stdout
+    assert "SEM_SECOES_DE_ROBUSTEZ" in res.stdout and "Failure Modes" in res.stdout
+
+
+def test_secoes_estritas_aprova_skill_com_as_3_secoes(tmp_path):
+    _escrever_dependencias(tmp_path, {})
+    _escrever_skill(tmp_path, "aidd-catalog")
+    _acrescentar(tmp_path, "aidd-catalog", SECOES_DE_ROBUSTEZ)
+    res = _rodar(tmp_path, "--secoes-estritas")
+    assert res.returncode == 0, res.stdout
+    assert "SEM_SECOES_DE_ROBUSTEZ" not in res.stdout
+
+
+def test_skill_de_terceiro_nao_precisa_das_secoes(tmp_path):
+    _escrever_dependencias(tmp_path, {"catalog": {"gitignore": ["*/skills/catalog/"]}})
+    _escrever_skill(tmp_path, "catalog")
+    res = _rodar(tmp_path, "--secoes-estritas")
+    assert res.returncode == 0, res.stdout
