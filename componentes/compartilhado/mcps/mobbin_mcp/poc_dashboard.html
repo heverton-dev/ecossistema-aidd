@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard Analítico de Operações</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col font-sans antialiased text-sm">
+  <!-- Header Corporativo -->
+  <header class="border-b border-slate-800 bg-slate-950 px-6 py-4 flex items-center justify-between">
+    <div class="flex items-center gap-3">
+      <div class="w-8 h-8 rounded bg-indigo-600 flex items-center justify-center font-bold text-white shadow-sm">
+        <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+        </svg>
+      </div>
+      <div>
+        <h1 style="font-size: 28px; line-height: 34px;" class="font-bold text-slate-100">Portal Operacional AIDD</h1>
+        <p class="text-xs text-slate-400">Blueprint AirOps/DoorDash (Referência Mobbin Enterprise)</p>
+      </div>
+    </div>
+    <div class="flex items-center gap-3">
+      <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+        Ambiente Ativo
+      </span>
+      <button type="button" class="px-3 py-1.5 text-xs font-medium rounded bg-indigo-600 hover:bg-indigo-500 text-white transition-colors">
+        Exportar Relatório
+      </button>
+    </div>
+  </header>
+
+  <!-- Conteúdo Principal -->
+  <main class="flex-1 p-6 max-w-7xl w-full mx-auto space-y-8">
+    <!-- Grid de Métricas / KPIs -->
+    <section aria-labelledby="kpi-heading" class="grid grid-cols-1 md:grid-cols-3 gap-5">
+      <h2 id="kpi-heading" class="sr-only">Indicadores Principais</h2>
+
+      <div class="border-b md:border-b-0 md:border-r border-slate-800 pb-4 md:pb-0 md:pr-4">
+        <div class="flex items-center justify-between text-slate-400 text-xs uppercase tracking-wider">
+          <span>Receita Mensal Recorrente</span>
+          <svg class="w-4 h-4 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+          </svg>
+        </div>
+        <div class="mt-2 flex items-baseline gap-2">
+          <span class="text-2xl font-bold text-slate-100">R$ 142.800</span>
+          <span class="text-xs font-semibold text-emerald-400">+12.4%</span>
+        </div>
+        <p class="mt-1 text-xs text-slate-400">Em relação ao mês anterior</p>
+      </div>
+
+      <div class="border-b md:border-b-0 md:border-r border-slate-800 pb-4 md:pb-0 md:pr-4">
+        <div class="flex items-center justify-between text-slate-400 text-xs uppercase tracking-wider">
+          <span>Taxa de Conversão</span>
+          <svg class="w-4 h-4 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+          </svg>
+        </div>
+        <div class="mt-2 flex items-baseline gap-2">
+          <span class="text-2xl font-bold text-slate-100">4.82%</span>
+          <span class="text-xs font-semibold text-emerald-400">+0.6%</span>
+        </div>
+        <p class="mt-1 text-xs text-slate-400">Média móvel de 7 dias</p>
+      </div>
+
+      <div>
+        <div class="flex items-center justify-between text-slate-400 text-xs uppercase tracking-wider">
+          <span>Tempo Médio de Atendimento</span>
+          <svg class="w-4 h-4 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+          </svg>
+        </div>
+        <div class="mt-2 flex items-baseline gap-2">
+          <span class="text-2xl font-bold text-slate-100">1m 45s</span>
+          <span class="text-xs font-semibold text-emerald-400">-18s</span>
+        </div>
+        <p class="mt-1 text-xs text-slate-400">Eficiência operacional de SLA</p>
+      </div>
+    </section>
+
+    <!-- Tabela Operacional -->
+    <section aria-labelledby="tabela-heading" class="pt-6 border-t border-slate-800">
+      <div class="mb-4 flex items-center justify-between">
+        <div>
+          <h2 id="tabela-heading" class="text-lg font-semibold text-slate-100">Últimos Eventos de Faturamento</h2>
+          <p class="text-xs text-slate-400 mt-0.5">Sincronização em tempo real via stream determinístico</p>
+        </div>
+        <span class="text-xs text-slate-400">Exibindo 3 registros</span>
+      </div>
+      <div class="overflow-x-auto">
+        <table class="w-full text-left text-xs text-slate-300">
+          <thead class="uppercase text-slate-400 border-b border-slate-800">
+            <tr>
+              <th scope="col" class="py-3 pr-4">Cliente / Organização</th>
+              <th scope="col" class="py-3 px-4">Plano</th>
+              <th scope="col" class="py-3 px-4">Valor</th>
+              <th scope="col" class="py-3 px-4">Status</th>
+              <th scope="col" class="py-3 pl-4 text-right">Ação</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-slate-800">
+            <tr class="hover:bg-slate-900/60 transition-colors">
+              <td class="py-4 pr-4 font-medium text-slate-100">Acme Logística Global</td>
+              <td class="py-4 px-4 text-slate-300">Enterprise Plus</td>
+              <td class="py-4 px-4 font-semibold text-slate-100">R$ 14.500,00</td>
+              <td class="py-4 px-4">
+                <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+                  Processado
+                </span>
+              </td>
+              <td class="py-4 pl-4 text-right">
+                <button type="button" class="text-indigo-400 hover:text-indigo-300 font-medium">Ver Detalhes</button>
+              </td>
+            </tr>
+            <tr class="hover:bg-slate-900/60 transition-colors">
+              <td class="py-4 pr-4 font-medium text-slate-100">Vortice Tecnologia S.A.</td>
+              <td class="py-4 px-4 text-slate-300">Growth Scale</td>
+              <td class="py-4 px-4 font-semibold text-slate-100">R$ 4.900,00</td>
+              <td class="py-4 px-4">
+                <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+                  Processado
+                </span>
+              </td>
+              <td class="py-4 pl-4 text-right">
+                <button type="button" class="text-indigo-400 hover:text-indigo-300 font-medium">Ver Detalhes</button>
+              </td>
+            </tr>
+            <tr class="hover:bg-slate-900/60 transition-colors">
+              <td class="py-4 pr-4 font-medium text-slate-100">Nuvem Prime Distribuição</td>
+              <td class="py-4 px-4 text-slate-300">Starter Core</td>
+              <td class="py-4 px-4 font-semibold text-slate-100">R$ 1.200,00</td>
+              <td class="py-4 px-4">
+                <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-amber-500/10 text-amber-400 border border-amber-500/20">
+                  Em Análise
+                </span>
+              </td>
+              <td class="py-4 pl-4 text-right">
+                <button type="button" class="text-indigo-400 hover:text-indigo-300 font-medium">Ver Detalhes</button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+</body>
+</html>
