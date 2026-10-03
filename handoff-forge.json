@@ -6,9 +6,9 @@
       "sha256": "1a98626fc8a3fa88ec95d1be382d41b695cfa3ce5fd3a198f41729a4b4e3046b"
     },
     {
-      "bytes": 9373,
+      "bytes": 9996,
       "caminho": ".agents/skills/aidd-forge/scripts/cli.py",
-      "sha256": "c67781ca3c85ca5cd8dd42a7640bea64e81c86789b50e24ea550a43791ea3319"
+      "sha256": "4ec68a310c89f561b1baf5903e7b117981f021534cea92cf6316fbcd91271725"
     },
     {
       "bytes": 6414,
@@ -43,6 +43,6 @@
   ],
   "consumidor": "aidd-planner",
   "ferramenta": "aidd-forge",
-  "gerado_em": "2026-10-02T15:10:18+00:00",
+  "gerado_em": "2026-10-03T20:50:18+00:00",
   "versao": "1.0"
 }
