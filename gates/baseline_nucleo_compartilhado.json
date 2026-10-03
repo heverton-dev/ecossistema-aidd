@@ -491,8 +491,7 @@
       "tools/aidd-master/src/core/detector_camada.py": "Copia com _PROJETO_PADRAO fixo em 'aidd-master'; a peça deduz o projeto pela localização. Copia antiga, fica no disco até a remoção com o usuário (Ticket 19).",
       "tools/aidd-master/src/core/profiles_registry.py": "Versão do aidd-master (hooks em JSON, 9325afa); a peça é a base do enterprise com esses hooks juntados. Copia antiga, fica no disco até a remoção com o usuário (Ticket 19).",
       "tools/aidd-master/templates/core/mcp_server.py": "Molde do Quarteto anterior à peça: a peça (src-core + tema primary/primary_hover) tem register_injected_tools com selo Ed25519/SHA-256. Copia antiga, fica no disco até a remoção com o usuário (Ticket 19).",
-      "tools/aidd-master/templates/v2/mcp_server.py": "Molde do Quarteto anterior à peça: a peça (src-core + tema primary/primary_hover) tem register_injected_tools com selo Ed25519/SHA-256. Copia antiga, fica no disco até a remoção com o usuário (Ticket 19).",
-      "tools/aidd-open/templates/vsa/deploy.sh": "Molde de infra do aidd-open sem a geração do certificado nginx/ssl; a peça é a versão consertada de 17/09, do aidd-ops (Ticket 16). Copia antiga, fica no disco até a remoção com o usuário (Ticket 19)."
+      "tools/aidd-master/templates/v2/mcp_server.py": "Molde do Quarteto anterior à peça: a peça (src-core + tema primary/primary_hover) tem register_injected_tools com selo Ed25519/SHA-256. Copia antiga, fica no disco até a remoção com o usuário (Ticket 19)."
     }
   }
 }

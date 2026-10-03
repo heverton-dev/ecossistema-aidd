@@ -1050,8 +1050,7 @@
         "tools/aidd-enterprise/templates/core/Dockerfile",
         "tools/aidd-enterprise/templates/v2/Dockerfile",
         "tools/aidd-master/templates/core/Dockerfile",
-        "tools/aidd-master/templates/v2/Dockerfile",
-        "tools/aidd-open/templates/vsa/Dockerfile"
+        "tools/aidd-master/templates/v2/Dockerfile"
       ],
       "base": "aidd-master templates/core 7768f12 2026-09-17 (conserto de 17/09, DIAGNOSTICO Etapa 5)"
     },
@@ -1074,8 +1073,7 @@
         "tools/aidd-enterprise/templates/core/deploy.sh",
         "tools/aidd-enterprise/templates/v2/deploy.sh",
         "tools/aidd-master/templates/core/deploy.sh",
-        "tools/aidd-master/templates/v2/deploy.sh",
-        "tools/aidd-open/templates/vsa/deploy.sh"
+        "tools/aidd-master/templates/v2/deploy.sh"
       ],
       "base": "aidd-master templates/core 7768f12 2026-09-17 (conserto de 17/09, DIAGNOSTICO Etapa 5)"
     },
@@ -1158,9 +1156,7 @@
         "aidd-open",
         "aidd-ops"
       ],
-      "copias": [
-        "tools/aidd-open/templates/vsa/docker-compose.yml"
-      ],
+      "copias": [],
       "variante_de": "moldes/infra/docker-compose.yml",
       "tipo_variante": "implementacao_independente",
       "motivo": "Receita só de back-end (app + nginx, sem front-end web) do gerador VSA do aidd-open."
@@ -1183,8 +1179,7 @@
         "tools/aidd-enterprise/templates/core/docs.html",
         "tools/aidd-enterprise/templates/v2/docs.html",
         "tools/aidd-master/templates/core/docs.html",
-        "tools/aidd-master/templates/v2/docs.html",
-        "tools/aidd-open/templates/vsa/docs.html"
+        "tools/aidd-master/templates/v2/docs.html"
       ],
       "base": "aidd-master templates/core cf9f336 2026-09-26 (molde Jinja)"
     },
@@ -1239,9 +1234,7 @@
       "consumidores": [
         "aidd-open"
       ],
-      "copias": [
-        "tools/aidd-open/templates/docs/openapi.json.j2"
-      ]
+      "copias": []
     },
     {
       "nome": "moldes/quarteto/openapi.py",
@@ -1294,9 +1287,7 @@
       "consumidores": [
         "aidd-open"
       ],
-      "copias": [
-        "tools/aidd-open/templates/vsa/mcp_server.py"
-      ],
+      "copias": [],
       "variante_de": "moldes/quarteto/mcp_server.py",
       "tipo_variante": "versao_divergente",
       "motivo": "Versão do gerador VSA do aidd-open sem o tema (__PRIMARY__); o tema e o resto já estão na principal, o texto original fica guardado até o Ticket 19."
@@ -1313,9 +1304,7 @@
       "consumidores": [
         "aidd-open"
       ],
-      "copias": [
-        "tools/aidd-open/templates/vsa/mcp_studio.html"
-      ],
+      "copias": [],
       "variante_de": "moldes/quarteto/mcp_studio.html",
       "tipo_variante": "versao_divergente",
       "motivo": "Versão do gerador VSA do aidd-open sem o tema (__PRIMARY__); o tema e o resto já estão na principal, o texto original fica guardado até o Ticket 19."
@@ -1332,9 +1321,7 @@
       "consumidores": [
         "aidd-open"
       ],
-      "copias": [
-        "tools/aidd-open/templates/vsa/openapi.py"
-      ],
+      "copias": [],
       "variante_de": "moldes/quarteto/openapi.py",
       "tipo_variante": "versao_divergente",
       "motivo": "Versão do gerador VSA do aidd-open sem o tema (__PRIMARY__); o tema e o resto já estão na principal, o texto original fica guardado até o Ticket 19."
@@ -1351,9 +1338,7 @@
       "consumidores": [
         "aidd-open"
       ],
-      "copias": [
-        "tools/aidd-open/templates/vsa/swagger.html"
-      ],
+      "copias": [],
       "variante_de": "moldes/quarteto/swagger.html",
       "tipo_variante": "versao_divergente",
       "motivo": "Versão do gerador VSA do aidd-open sem o tema (__PRIMARY__); o tema e o resto já estão na principal, o texto original fica guardado até o Ticket 19."
@@ -1370,9 +1355,7 @@
       "consumidores": [
         "aidd-open"
       ],
-      "copias": [
-        "tools/aidd-open/templates/vsa/webhook_studio.html"
-      ],
+      "copias": [],
       "variante_de": "moldes/quarteto/webhook_studio.html",
       "tipo_variante": "versao_divergente",
       "motivo": "Versão do gerador VSA do aidd-open sem o tema (__PRIMARY__); o tema e o resto já estão na principal, o texto original fica guardado até o Ticket 19."
@@ -1389,9 +1372,7 @@
       "consumidores": [
         "aidd-open"
       ],
-      "copias": [
-        "tools/aidd-open/templates/vsa/webhooks.py"
-      ],
+      "copias": [],
       "variante_de": "moldes/quarteto/webhooks.py",
       "tipo_variante": "versao_divergente",
       "motivo": "Versão do gerador VSA do aidd-open sem o tema (__PRIMARY__); o tema e o resto já estão na principal, o texto original fica guardado até o Ticket 19."

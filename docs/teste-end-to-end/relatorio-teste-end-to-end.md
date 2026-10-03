@@ -1173,3 +1173,20 @@
   - E2E depois do Ticket 15: vazamentos 0 nos 3 fluxos (base: 2, 0, 2).
 - **Status:** **RESOLVIDO**.
 - **Data da Última Auditoria:** 02/10/2026.
+
+## 29. Bloco 4: cópias do almoxarifado removidas do `aidd-open` (fronteiras-ferramentas ciclo-01, Ticket 19)
+
+- **Objetivo da Correção:**
+  Remover de `tools/aidd-open/templates/` as 11 cópias de peças do almoxarifado, com o OK do usuário (Lei #7), sem perder capacidade.
+- **Ferramentas Tocadas:** [`tools/aidd-open`](file:///C:/Users/trcnologia/Desktop/ecossistema-aidd/tools/aidd-open).
+- **O que executou:**
+  1. Removidas: `templates/vsa/{Dockerfile, docker-compose.yml, deploy.sh, docs.html, mcp_server.py, mcp_studio.html, openapi.py, swagger.html, webhook_studio.html, webhooks.py}` e `templates/docs/openapi.json.j2`.
+  2. `src/core/swagger_generator.py`: `openapi.json.j2` pelo almoxarifado (`obter_molde_vsa`); `README.md.j2`, só do aidd-open, segue em `templates/docs`.
+  3. `CATALOGO.json` e baseline do `G_DRIFT_NUCLEO_COMPARTILHADO` sem as cópias removidas; `tests/test_catalogo_almoxarifado.py` aceita cópia removida quando a família tem peça.
+- **Resultados de Testes:**
+  - `tools/aidd-open`: `pytest` → exit 0 (21 passed).
+  - `G_DRIFT_NUCLEO_COMPARTILHADO`, testes do catálogo e do meta-gate → exit 0 (16 passed).
+  - E2E `comparar --base ciclo-01` → exit 0, nenhuma métrica piorou.
+  - `inventario_capacidades.py comparar`: 2 órfãos novos, ambos as linhas trocadas de propósito no `swagger_generator.py`.
+- **Status:** **RESOLVIDO**.
+- **Data da Última Auditoria:** 03/10/2026.
