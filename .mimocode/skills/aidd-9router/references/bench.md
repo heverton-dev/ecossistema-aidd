@@ -4,15 +4,20 @@ Same prompt to every model, `stream:false`, token saver off, code checked by rea
 - Easy task: `parse_duration` (13 tests). 21 models answered; all scored 13/13.
 - Hard task: `calc` expression parser without eval (21 tests).
 
-## Combos
+## Combos (revised after the harness test)
 
 | Combo | Order (fallback) |
 |---|---|
-| `code-pro` | ag/claude-opus-4-6-thinking, ag/gemini-3.8-flash-low, groq/openai/gpt-oss-120b, ag/gpt-oss-120b-medium, ag/claude-sonnet-4-6, agnes/agnes-3.0-flash |
-| `code-fast` | groq/openai/gpt-oss-120b, ag/gemini-3.8-flash-low, ag/claude-sonnet-4-6, agnes/agnes-3.0-flash, kr/claude-haiku-4.5 |
-| `code-free` | groq/openai/gpt-oss-120b, agnes/agnes-3.0-flash, kr/claude-haiku-4.5, kr/glm-5, cf/@cf/qwen/qwen2.5-coder-32b-instruct |
+| `code-pro` | ag/claude-opus-4-6-thinking, ag/claude-sonnet-4-6, kr/claude-sonnet-4.5, ag/gemini-3.8-flash-low |
+| `code-fast` | ag/gemini-3.8-flash-low, kr/qwen3-coder-next, kr/claude-haiku-4.5, xmtp/mimo-v2.6-flash |
+| `code-free` | kr/qwen3-coder-next, kr/claude-haiku-4.5, kr/glm-5, agnes/agnes-3.0-flash |
 
-`ag/*` and `xmtp/*` are paid plans; the rest are free tiers or free credits.
+`ag/*` and `xmtp/*` are paid plans; `kr/*` (Kiro) uses monthly free credits; `agnes/*` is free.
+
+## Harness test (Claude Code `-p`, Read tool on AGENTS.md, answer first heading)
+
+Passed: ag/gemini-3.8-flash-low 12 s, ag/claude-sonnet-4-6 14 s, ag/claude-opus-4-6-thinking 16 s, kr/claude-haiku-4.5 12 s, kr/claude-sonnet-4.5 16 s, kr/qwen3-coder-next 9 s, kr/glm-5 17 s, xmtp/mimo-v2.6-flash 15 s, kr/minimax-m2.5 21 s, agnes/agnes-3.0-flash 55 s.
+Failed: groq/openai/gpt-oss-120b (413, 8000 tokens/min), cf/@cf/qwen/qwen2.5-coder-32b-instruct (prompt too long), ag/gpt-oss-120b-medium (500).
 
 ## Hard task ranking
 
@@ -39,7 +44,7 @@ Same prompt to every model, `stream:false`, token saver off, code checked by rea
 | ag/gemini-3.8-flash | 0/21 | 69 s | 15891 | stopped at max_tokens |
 | xmtp/mimo-v2.6-pro, xmtp/mimo-v2.6-flash | - | >150 s | - | timeout |
 
-Combos end to end (hard task): code-pro 21/21 in 17 s, code-fast 21/21 in 6 s, code-free 21/21 in 6 s.
+Revised combos end to end (hard task): code-pro 21/21 in 20 s, code-fast 21/21 in 11 s, code-free 20/21 in 11 s.
 
 ## Unavailable on 2026-10-03
 

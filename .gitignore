@@ -147,26 +147,10 @@ skills-lock.json
 /.aidd/cache/
 secoes/medicoes/
 
-# Dependencias externas instaladas via 'python ecossistema.py dependencia bootstrap'
-*/skills/9router/
 
-# Dependencias externas instaladas via 'python ecossistema.py dependencia bootstrap'
-*/skills/9router-chat/
 
-# Dependencias externas instaladas via 'python ecossistema.py dependencia bootstrap'
-*/skills/9router-image/
 
-# Dependencias externas instaladas via 'python ecossistema.py dependencia bootstrap'
-*/skills/9router-tts/
 
-# Dependencias externas instaladas via 'python ecossistema.py dependencia bootstrap'
-*/skills/9router-stt/
 
-# Dependencias externas instaladas via 'python ecossistema.py dependencia bootstrap'
-*/skills/9router-embeddings/
 
-# Dependencias externas instaladas via 'python ecossistema.py dependencia bootstrap'
-*/skills/9router-web-search/
 
-# Dependencias externas instaladas via 'python ecossistema.py dependencia bootstrap'
-*/skills/9router-web-fetch/
