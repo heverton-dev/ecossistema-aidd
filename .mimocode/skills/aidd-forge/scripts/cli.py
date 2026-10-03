@@ -196,6 +196,13 @@ def _montar_parser() -> argparse.ArgumentParser:
     parser_fornecer.add_argument("piece", help="Nome da peca no almoxarifado")
     parser_fornecer.add_argument("--destino", required=True, help="Diretorio ou caminho de destino no projeto")
 
+    parser_mobbin = subparsers.add_parser("mobbin", help="Consulta deterministica de telas e fluxos de UI do Mobbin")
+    parser_mobbin.add_argument("query", help="Termo de busca em linguagem natural")
+    parser_mobbin.add_argument("--plataforma", choices=["web", "ios"], default="web", help="Plataforma alvo")
+    parser_mobbin.add_argument("--modo", choices=["fast", "standard", "deep"], default="standard", help="Modo de busca")
+    parser_mobbin.add_argument("--limite", type=int, default=10, help="Quantidade maxima de telas")
+    parser_mobbin.add_argument("--json", action="store_true", help="Saida em JSON puro")
+
     return parser
 
 

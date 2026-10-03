@@ -36,6 +36,13 @@ pelo pipeline AIDD, sem depender de gosto subjetivo do subagente.
 - Emojis permitidos apenas em documentacao interna/exemplos quando
   explicitamente pedido pelo usuario.
 
+## Referencias e Blueprints Visuais (Mobbin Enterprise)
+
+- Ao desenhar novas interfaces, consultar telas e fluxos reais homologados no Mobbin:
+  `python ecossistema.py forge mobbin "<contexto da tela>" --plataforma web --limite 3`
+- As telas retornadas servem como blueprint de hierarquia visual, densidade de informacao
+  e micro-copys para os componentes Tailwind/Shadcn do projeto.
+
 ## Gate de Saida
 
 `exit 0` somente se: paleta restrita a slate/indigo (+ semanticas de
