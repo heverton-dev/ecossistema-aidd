@@ -1,7 +1,7 @@
 {
   "versao": "1.0",
-  "atualizado_em": "2026-10-01T19:50:06.596258",
-  "total_sessoes": 12,
+  "atualizado_em": "2026-10-03T19:37:20.576734",
+  "total_sessoes": 20,
   "sessoes": [
     {
       "id": "fc4566a8-0804-4748-ab5f-ec105414273c",
@@ -103,13 +103,13 @@
     },
     {
       "id": "49b00ff6-31c2-4afa-8580-38168af8aa9a",
-      "registrado_em": "2026-10-01 13:30:37",
+      "registrado_em": "2026-10-01 14:16:57",
       "harness": "antigravity",
       "modelo": "gemini-3.8-flash-low",
       "titulo": "Sessão Ativa (Auto-Registrada)",
       "workspace": "C:/Users/trcnologia/Desktop/ecossistema-aidd",
       "transcript_path": "C:/Users/trcnologia/.gemini/antigravity-cli/brain/49b00ff6-31c2-4afa-8580-38168af8aa9a/.system_generated/logs/transcript_full.jsonl",
-      "atualizado_em": "2026-10-01 13:30:37"
+      "atualizado_em": "2026-10-01 14:16:57"
     },
     {
       "id": "8caca7e2-65c2-4f24-ab88-3cbf1add7642",
@@ -120,6 +120,80 @@
       "workspace": "C:/Users/trcnologia/Desktop/worktrees_evolucao-fronteiras-ferramentas-ciclo-01-bloco-1/Fase_5_Ticket_5_Mapa_de_donos_e_schemas_dos_5_contratos",
       "transcript_path": "C:/Users/trcnologia/.gemini/antigravity-cli/brain/8caca7e2-65c2-4f24-ab88-3cbf1add7642/.system_generated/logs/transcript_full.jsonl",
       "atualizado_em": "2026-10-01 19:50:06"
+    },
+    {
+      "id": "b6199cb6-6be0-41bc-bf1c-c7a8996f16e5",
+      "registrado_em": "2026-10-01 14:17:27",
+      "harness": "claude",
+      "modelo": "claude-opus-5-5",
+      "titulo": "Sessão Ativa (Claude Code)",
+      "workspace": "C:/Users/trcnologia/Desktop/ecossistema-aidd",
+      "transcript_path": "C:/Users/trcnologia/.claude/projects/C--Users-trcnologia-Desktop-ecossistema-aidd/b6199cb6-6be0-41bc-bf1c-c7a8996f16e5.jsonl"
+    },
+    {
+      "id": "9fd2dd0d-003a-4640-80f8-9bb3b184efad",
+      "registrado_em": "2026-10-01 19:30:41",
+      "harness": "antigravity",
+      "modelo": "gemini-3.8-flash-low",
+      "titulo": "Sessão Ativa (Auto-Registrada)",
+      "workspace": "C:/Users/trcnologia/Desktop/ecossistema-aidd",
+      "transcript_path": "C:/Users/trcnologia/.gemini/antigravity-cli/brain/9fd2dd0d-003a-4640-80f8-9bb3b184efad/.system_generated/logs/transcript_full.jsonl"
+    },
+    {
+      "id": "1ccc39f9-e7b7-48dc-88ca-e206fff30d9f",
+      "registrado_em": "2026-10-03 17:11:49",
+      "harness": "claude-code",
+      "modelo": "code-fast",
+      "titulo": "Integracao agnostica Mobbin Enterprise no ecossistema e aidd-forge",
+      "workspace": "C:\\Users\\trcnologia\\Desktop\\ecossistema-aidd",
+      "transcript_path": ""
+    },
+    {
+      "id": "sessao-analise-skills-audit4f",
+      "registrado_em": "2026-10-03 17:11:49",
+      "harness": "claude-code",
+      "modelo": "aidd9r/code-fast",
+      "titulo": "Analise tecnica e auditoria 4F da convencao de skills AIDD",
+      "workspace": "C:\\Users\\trcnologia\\Desktop\\ecossistema-aidd",
+      "transcript_path": ""
+    },
+    {
+      "id": "2ff5de7b-2099-4eab-acc7-e6c470c73d36",
+      "registrado_em": "2026-10-03 17:11:49",
+      "harness": "claude-code",
+      "modelo": "claude-opus-5-5",
+      "titulo": "fronteiras-ferramentas ciclo-01: Blocos 2, 3 e 4",
+      "workspace": "C:\\Users\\trcnologia\\Desktop\\ecossistema-aidd",
+      "transcript_path": ""
+    },
+    {
+      "id": "8cad6ed3-1da3-4324-9abe-59763aabaf5a",
+      "registrado_em": "2026-10-03 19:37:20",
+      "harness": "antigravity",
+      "modelo": "gemini-3.8-flash-low",
+      "titulo": "Sessão Ativa (Auto-Registrada)",
+      "workspace": "C:/Users/trcnologia/Desktop/ecossistema-aidd",
+      "transcript_path": "C:/Users/trcnologia/.gemini/antigravity-cli/brain/8cad6ed3-1da3-4324-9abe-59763aabaf5a/.system_generated/logs/transcript_full.jsonl",
+      "atualizado_em": "2026-10-03 19:37:20"
+    },
+    {
+      "id": "d6a26231-0b60-4a1f-8c59-c40baf17cf3a",
+      "registrado_em": "2026-10-03 19:13:44",
+      "harness": "antigravity",
+      "modelo": "gemini-3.8-flash-low",
+      "titulo": "Sessão Ativa (Auto-Registrada)",
+      "workspace": "C:/Users/trcnologia/Desktop/ecossistema-aidd",
+      "transcript_path": "C:/Users/trcnologia/.gemini/antigravity-cli/brain/d6a26231-0b60-4a1f-8c59-c40baf17cf3a/.system_generated/logs/transcript_full.jsonl",
+      "atualizado_em": "2026-10-03 19:13:44"
+    },
+    {
+      "id": "77e89c47-ac04-44bb-a3f5-4c4325ad0a1c",
+      "registrado_em": "2026-10-03 19:13:42",
+      "harness": "claude-code",
+      "modelo": "claude-opus-5-5",
+      "titulo": "Ciclo-02 skills: Lote 05 Documentos",
+      "workspace": "C:/Users/trcnologia/Desktop/worktrees_evolucao-aidd-skills-ciclo-02/Fase_5_Lote_05_Documentos",
+      "transcript_path": "C:/Users/trcnologia/.claude/projects/C--Users-trcnologia-Desktop-worktrees-evolucao-aidd-skills-ciclo-02-Fase-5-Lote-05-Documentos/77e89c47-ac04-44bb-a3f5-4c4325ad0a1c.jsonl"
     }
   ]
 }

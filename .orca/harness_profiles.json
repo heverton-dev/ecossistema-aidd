@@ -1,0 +1,121 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "_comment": "Perfis de harness para orquestração em worktrees nativas e ORCA ADE roteados via 9Router.",
+  "profiles": {
+    "claude": {
+      "binary": "claude-9router",
+      "auto_approve_flag": "--dangerously-skip-permissions",
+      "prompt_mode": "positional",
+      "prompt_flag": null,
+      "model_flag": "--model",
+      "default_model": "sonnet",
+      "extra_flags": [
+        "--chrome"
+      ],
+      "startup_wait_seconds": 10,
+      "usage_note": "Roteado pelo 9Router (wrapper claude-9router). Modelos: opus -> code-pro, sonnet -> code-fast, haiku -> code-free."
+    },
+    "claude-9router": {
+      "binary": "claude-9router",
+      "auto_approve_flag": "--dangerously-skip-permissions",
+      "prompt_mode": "positional",
+      "prompt_flag": null,
+      "model_flag": "--model",
+      "default_model": "sonnet",
+      "extra_flags": [
+        "--chrome"
+      ],
+      "startup_wait_seconds": 10,
+      "usage_note": "Alias explícito roteado pelo 9Router (wrapper claude-9router)."
+    },
+    "opencode": {
+      "binary": "opencode-9router",
+      "auto_approve_flag": "--auto",
+      "prompt_mode": "flag_value",
+      "prompt_flag": "--prompt",
+      "model_flag": "-m",
+      "default_model": "aidd9r/code-fast",
+      "agent_flag": "--agent",
+      "agent": "",
+      "extra_flags": [
+        "--pure"
+      ],
+      "startup_wait_seconds": 10,
+      "usage_note": "Roteado pelo 9Router (wrapper opencode-9router) com provedor aidd9r e combo code-fast."
+    },
+    "opencode-9router": {
+      "binary": "opencode-9router",
+      "auto_approve_flag": "--auto",
+      "prompt_mode": "flag_value",
+      "prompt_flag": "--prompt",
+      "model_flag": "-m",
+      "default_model": "aidd9r/code-fast",
+      "agent_flag": "--agent",
+      "agent": "",
+      "extra_flags": [
+        "--pure"
+      ],
+      "startup_wait_seconds": 10,
+      "usage_note": "Alias explícito roteado pelo 9Router (wrapper opencode-9router)."
+    },
+    "mimo": {
+      "binary": "mimo-9router",
+      "auto_approve_flag": null,
+      "prompt_mode": "flag_value",
+      "prompt_flag": "--prompt",
+      "model_flag": "-m",
+      "default_model": "aidd9r/code-fast",
+      "extra_flags": [
+        "--pure"
+      ],
+      "startup_wait_seconds": 10,
+      "usage_note": "Roteado pelo 9Router (wrapper mimo-9router) com provedor aidd9r e combo code-fast."
+    },
+    "mimo-9router": {
+      "binary": "mimo-9router",
+      "auto_approve_flag": null,
+      "prompt_mode": "flag_value",
+      "prompt_flag": "--prompt",
+      "model_flag": "-m",
+      "default_model": "aidd9r/code-fast",
+      "extra_flags": [
+        "--pure"
+      ],
+      "startup_wait_seconds": 10,
+      "usage_note": "Alias explícito roteado pelo 9Router (wrapper mimo-9router)."
+    },
+    "omp": {
+      "binary": "omp-9router",
+      "auto_approve_flag": null,
+      "prompt_mode": "positional",
+      "prompt_flag": null,
+      "model_flag": "--model",
+      "default_model": "aidd9r/code-fast",
+      "extra_flags": [],
+      "startup_wait_seconds": 10,
+      "usage_note": "Roteado pelo 9Router (wrapper omp-9router) usando provedor aidd9r configurado no models.yml."
+    },
+    "omp-9router": {
+      "binary": "omp-9router",
+      "auto_approve_flag": null,
+      "prompt_mode": "positional",
+      "prompt_flag": null,
+      "model_flag": "--model",
+      "default_model": "aidd9r/code-fast",
+      "extra_flags": [],
+      "startup_wait_seconds": 10,
+      "usage_note": "Alias explícito roteado pelo 9Router (wrapper omp-9router)."
+    },
+    "agy": {
+      "binary": "agy",
+      "auto_approve_flag": "--dangerously-skip-permissions",
+      "prompt_mode": "positional",
+      "prompt_flag": null,
+      "model_flag": "--model",
+      "default_model": "gemini-3.8-flash-low",
+      "extra_flags": [],
+      "startup_wait_seconds": 10,
+      "usage_note": "Antigravity AGY original (comunicação direta Google, não compatível com o proxy 9Router)."
+    }
+  }
+}

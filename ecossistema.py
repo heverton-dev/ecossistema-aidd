@@ -604,7 +604,7 @@ def cmd_orchestrate(args):
     )
     @click.option(
         "--harness", default=None,
-        type=click.Choice(["mimo", "opencode", "claude", "agy"]),
+        type=click.Choice(["mimo", "opencode", "claude", "agy", "omp"]),
         help="Harness padrao para ambiente orca/gitworktree (se omitido, pergunta interativamente)",
     )
     @click.option(
@@ -694,10 +694,17 @@ def cmd_orchestrate(args):
 
         if ambiente == "orca":
             if profiles is None:
-                profiles = os.path.join(
-                    ROOT_DIR, "componentes", "compartilhado", "skills",
-                    "aidd-orca", ".orca", "harness_profiles.json.example",
-                )
+                local_p = os.path.join(ROOT_DIR, ".orca", "harness_profiles.json")
+                user_p = os.path.expanduser("~/.orca/harness_profiles.json")
+                if os.path.isfile(local_p):
+                    profiles = local_p
+                elif os.path.isfile(user_p):
+                    profiles = user_p
+                else:
+                    profiles = os.path.join(
+                        ROOT_DIR, "componentes", "compartilhado", "skills",
+                        "aidd-orca", ".orca", "harness_profiles.json.example",
+                    )
             harness_map_pars = {}
             if harness_map:
                 import json
@@ -767,12 +774,19 @@ def cmd_orchestrate(args):
             return 0
 
         if profiles is None:
-            profiles = os.path.join(
-                ROOT_DIR, "componentes", "compartilhado", "skills",
-                "aidd-orca", ".orca", "harness_profiles.json.example",
-            )
+            local_p = os.path.join(ROOT_DIR, ".orca", "harness_profiles.json")
+            user_p = os.path.expanduser("~/.orca/harness_profiles.json")
+            if os.path.isfile(local_p):
+                profiles = local_p
+            elif os.path.isfile(user_p):
+                profiles = user_p
+            else:
+                profiles = os.path.join(
+                    ROOT_DIR, "componentes", "compartilhado", "skills",
+                    "aidd-orca", ".orca", "harness_profiles.json.example",
+                )
 
-        candidatos = ["claude", "agy", "mimo", "opencode"]
+        candidatos = ["claude", "agy", "mimo", "opencode", "omp"]
 
         harness_map_pars = {}
         if harness_map:
