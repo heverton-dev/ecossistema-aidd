@@ -122,4 +122,21 @@ A Lei #10 exige o Quarteto *Sine Qua Non* (`/api` OpenAPI/Swagger, `/webhook`, `
   - `python gates/G_aidd_forge.py`: EXIT 0 (100% aprovado).
   - `python ecossistema.py forge audit`: EXIT 0.
 
+---
+
+## 9. Integração Agnóstica do Mobbin Enterprise (03/10/2026)
+
+- **Objetivo:** Adicionar capacidade de consulta determinística de blueprints, telas e fluxos visuais do Mobbin diretamente no `aidd-forge` e no ecossistema de forma agnóstica a harness.
+- **Entregas e Modificações:**
+  - `tools/aidd-forge/aidd_forge/core/mobbin_client.py`: Client universal determinístico consumindo a API REST Enterprise (`POST /v1/screens/search`) com suporte a CLI (`search`, `status`).
+  - `ecossistema.py`: Roteamento do comando central `mobbin`.
+  - `tools/aidd-forge/aidd_forge/cli.py`: Subcomando `mobbin` integrado via Click com saídas formatada e JSON puro.
+  - `componentes/compartilhado/skills/aidd-forge/scripts/cli.py`: Despacho agnóstico do subcomando `mobbin` nas skills dos 7 harnesses.
+  - `tools/aidd-forge/aidd_forge/commands/slash_router.py`: Roteamento semântico no Intent Router em linguagem natural para pesquisas de design/UI direcionando ao Mobbin.
+  - `tools/aidd-forge/aidd_forge/templates/skills/impeccable-ui/SKILL.md`: Diretriz documentando Mobbin como blueprint oficial de hierarquia visual.
+  - `tools/aidd-forge/tests/unit/test_cli.py`: Teste unitário determinístico com mock da busca do Mobbin.
+- **Validação:**
+  - `pytest tools/aidd-forge`: 311 passed, 0 failed, 1 skipped (exit 0).
+  - Gate `G_TESTES_REAIS` v2: 100% aprovado com 2.421 testes em todas as ferramentas.
+
 

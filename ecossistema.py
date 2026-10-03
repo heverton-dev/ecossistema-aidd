@@ -1163,6 +1163,14 @@ def cmd_sessao(args):
         args = ["listar"]
     return run_command([sys.executable, script] + args, cwd=ROOT_DIR)
 
+def cmd_mobbin(args):
+    """Executa consultas de UI, fluxos e telas via Mobbin Enterprise."""
+    script = os.path.join(TOOLS_DIR, "aidd-forge", "aidd_forge", "core", "mobbin_client.py")
+    if not os.path.exists(script):
+        print(f"Erro: script '{script}' não encontrado.")
+        return 1
+    return run_command([sys.executable, script] + args, cwd=ROOT_DIR)
+
 
 def cmd_status(args):
     if "--testes" in args:
@@ -1339,6 +1347,9 @@ Comandos disponíveis:
   sessao [registrar|listar|buscar]
                       Registra, lista e busca IDs e metadados de sessões agênticas
                       em secoes/historico_sessoes.json e secoes/INDICE-SESSOES.md
+  mobbin status|search <query> [--plataforma web|ios] [--limite N] [--json]
+                      Consulta determinística e agnóstica de telas e fluxos de UI
+                      via API Enterprise do Mobbin para qualquer harness.
   status              Exibe o status do ecossistema e ferramentas integradas
   status --testes     Roda pytest real em cada ferramenta e atualiza
                       PLANO-EXECUCAO-ESTRUTURADO.json com a contagem medida
@@ -1409,6 +1420,7 @@ def comandos_disponiveis():
         "sessao": cmd_sessao,
         "session": cmd_sessao,
         "sessoes": cmd_sessao,
+        "mobbin": cmd_mobbin,
         "preflight-host": cmd_preflight_host,
         "status": cmd_status,
         "help": lambda a: print_help() or 0,

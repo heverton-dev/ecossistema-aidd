@@ -97,7 +97,11 @@ INTENT_ROUTER_SECTION = (
     "- \"crie um mcp de X\" / \"adicione um mcp para X\" -> componente mcp\n"
     "- \"crie uma regra sobre X\" / \"nova regra de X\" -> componente rule\n"
     "- \"crie uma spec para X\" / \"escreva a spec de X\" -> componente spec\n"
-    "- \"crie um roteiro de X\" / \"escreva um tutorial de X\" -> componente roteiro\n"
+    "- \"crie um roteiro de X\" / \"escreva um tutorial de X\" -> componente roteiro\n\n"
+    "Se o usuario pedir referencia visual, telas ou fluxos de UI (\"buscar referencias de UI\", "
+    "\"telas de checkout\", \"design de dashboard\", \"exemplos do mobbin\"), execute a busca "
+    "deterministica via Mobbin Enterprise:\n"
+    "`python ecossistema.py forge mobbin \"<termo>\" --plataforma web`\n"
 )
 
 

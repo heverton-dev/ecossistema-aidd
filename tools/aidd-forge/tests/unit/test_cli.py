@@ -139,3 +139,28 @@ def test_main_inject_falha_reporta_erros_e_sai_com_1(tmp_path: Path, capsys) -> 
 
     assert exit_code == 1
     assert "falhou" in output
+
+
+def test_main_mobbin_search_mocked(monkeypatch, capsys) -> None:
+    from aidd_forge.core import mobbin_client
+
+    def mock_executar_busca(query, platform="web", mode="standard", limit=10, image_quality="optimized"):
+        return {
+            "screens": [
+                {
+                    "app_name": "AppMock",
+                    "name": "TelaMock",
+                    "mobbin_url": "https://mobbin.com/mock",
+                    "image_url": "https://img.mock/1.png"
+                }
+            ]
+        }
+
+    monkeypatch.setattr(mobbin_client, "executar_busca", mock_executar_busca)
+
+    exit_code = main(["mobbin", "dashboard", "--limite", "1"])
+    output = capsys.readouterr().out
+
+    assert exit_code == 0
+    assert "AppMock - TelaMock" in output
+    assert "https://mobbin.com/mock" in output
