@@ -4,14 +4,14 @@
 import os
 import sys
 
-from application.commands.inject import _core_src_path
+from application.pecas_catalogo import CORE_DIR
 from application.commands.setup import ensure_environment
 
 
 def cmd_verificar_drift(args):
     """Roda a checagem de drift (SHA-256) dos componentes registrados em CAPABILITIES.json."""
     ensure_environment()
-    core_src = _core_src_path()
+    core_src = str(CORE_DIR)
     if core_src not in sys.path:
         sys.path.insert(0, core_src)
     from sincronizador_harness import verificar_sincronizacao

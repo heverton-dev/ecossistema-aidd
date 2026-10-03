@@ -1106,3 +1106,70 @@
   - `python ecossistema.py forge fornecer gates/G_ARQUITETURA.py --destino <projeto>` → exit 0; peça inexistente → exit 1 com erro claro.
 - **Status:** **RESOLVIDO**.
 - **Data da Última Auditoria:** 02/10/2026.
+
+## 25. Prontidão do `aidd-forge` antes de passar o bastão, sem LLM configurada (fronteiras-ferramentas ciclo-01, Bloco 3, Ticket 10)
+
+- **Objetivo da Correção:**
+  O `forge init` confere a prontidão do projeto antes de entregar ao planner e grava `.aidd/HANDOFF_FORGE_PLANNER.json` com a evidência. Regra do usuário: o ecossistema nunca tem LLM ou API key configurada; o modelo é sempre o do harness em execução, via protocolo delegado. Sem API key (`capacidade_llm: "nenhuma"`) a prontidão passa; só reprova sem harness ativo ou por falha real.
+- **Ferramentas Tocadas:** [`tools/aidd-forge`](file:///C:/Users/trcnologia/Desktop/ecossistema-aidd/tools/aidd-forge).
+- **O que executou:**
+  1. `tools/aidd-forge/aidd_forge/core/prontidao.py`: dependências, gates vs sha256 do catálogo, espelhos dos harnesses, commit inicial, almoxarifado, protocolo delegado e estrutura.
+  2. `tools/aidd-forge/aidd_forge/cli.py` e `core/git_hooks.py`: `forge init` roda a prontidão e faz o commit inicial.
+  3. `scripts/orquestrador_sincrono.py`: `perfil_app` com `modulos`, `entidades`, `rotas_quarteto` e `portas`, exigidos pelo contrato C2 (sem isso os 3 fluxos quebravam no planner).
+- **Resultados de Testes:**
+  - `tools/aidd-forge/tests/test_prontidao_forge.py` → exit 0 (6 passed).
+  - `tools/aidd-forge`: `pytest` → exit 0 (310 passed, 1 skipped).
+  - `scripts/e2e_foto.py rodar` + `comparar --base ciclo-01` (ciclo-07) → exit 0, nenhuma métrica piorou.
+- **Status:** **RESOLVIDO**.
+- **Data da Última Auditoria:** 02/10/2026.
+
+## 26. `aidd-pure` usa a peça do catálogo e o cache delegado sai de dentro da ferramenta (fronteiras-ferramentas ciclo-01, Bloco 3, Ticket 15)
+
+- **Objetivo da Correção:**
+  O generator do `aidd-pure` passa a usar o injetor do almoxarifado (peça do catálogo) e o cache do protocolo delegado (`_llm_request`/`_llm_response`) vive no projeto (`<projeto>/.aidd/cache`), nunca em `tools/aidd-pure/`. As cópias locais do injetor continuam no lugar até o Bloco 4 (remoção com o usuário).
+- **Ferramentas Tocadas:** [`tools/aidd-pure`](file:///C:/Users/trcnologia/Desktop/ecossistema-aidd/tools/aidd-pure).
+- **O que executou:**
+  1. `tools/aidd-pure/scripts/core/pecas_catalogo.py`: resolve as peças pelo `CATALOGO.json`.
+  2. `tools/aidd-pure/scripts/phases/utils_delegacao.py`: `resolver_cache_dir` (projeto explícito > `AIDD_PROJECT_DIR` > cwd); cwd dentro de `tools/` cai na raiz do ecossistema; o import não cria pasta.
+  3. `.gitignore`: `/.aidd/cache/` só na raiz.
+- **Resultados de Testes:**
+  - `tools/aidd-pure/tests/test_fronteira_generator.py` → exit 0 (9 passed), da raiz e de dentro de `tools/aidd-pure`.
+  - `tools/aidd-pure`: `pytest` → exit 0 (1015 passed, 5 skipped), sem criar `.aidd/cache` na ferramenta.
+  - `scripts/e2e_foto.py rodar` + `comparar --base ciclo-01` → exit 0, nenhuma métrica piorou.
+- **Status:** **RESOLVIDO**.
+- **Data da Última Auditoria:** 02/10/2026.
+
+## 27. `aidd-master` integra e faz o Quarteto, sem gerar infraestrutura (fronteiras-ferramentas ciclo-01, Bloco 3, Ticket 17)
+
+- **Objetivo da Correção:**
+  O `master init` deixa de gravar Dockerfile, docker-compose.yml, deploy.sh e nginx/, que passam a ser do `aidd-ops` (Ticket 16). Os moldes do Quarteto vêm do almoxarifado (`caminho_peca`) e a rota `/webhook` responde, com `/webhooks` mantido como alias.
+- **Ferramentas Tocadas:** [`tools/aidd-master`](file:///C:/Users/trcnologia/Desktop/ecossistema-aidd/tools/aidd-master), [`tools/aidd-ops`](file:///C:/Users/trcnologia/Desktop/ecossistema-aidd/tools/aidd-ops).
+- **O que executou:**
+  1. `tools/aidd-master/scripts/integrador_master.py` e scripts de provisão: sem geração de infra; C3 consumido e C4 gravado com o status HTTP medido.
+  2. `tools/aidd-master/tests/unit/test_provision_project.py`: os 2 testes de infra viram a prova de que o master não gera infra.
+  3. `tools/aidd-ops/tests/test_fronteira_ops_infra_generica.py`: recebe o achado real do Dockerfile (requirements instalados antes do `src/`); a pasta `nginx/` com o gerador de SSL já era coberta.
+- **Resultados de Testes:**
+  - `tools/aidd-master`: `pytest` → exit 0 (412 passed, 3 skipped).
+  - `tools/aidd-ops`: `pytest` → exit 0 (198 passed).
+  - `tools/aidd-master/tests/test_fronteira_master.py` + E2E `comparar --base ciclo-01` → ver gate da fase.
+- **Status:** **RESOLVIDO**.
+- **Data da Última Auditoria:** 02/10/2026.
+
+## 28. Fases do Bloco 3 fechadas pelo orquestrador: planner, orquestrador, aidd-open, aidd-freedom, aidd-ops e aidd-enterprise (fronteiras-ferramentas ciclo-01, Tickets 11, 12, 13, 14, 16 e 18)
+
+- **Objetivo da Correção:**
+  Cada ferramenta passa a fazer só o seu papel e a pegar as peças no almoxarifado (`componentes/compartilhado/`), sem escrever fora da pasta do projeto. As cópias locais continuam no lugar até o Bloco 4 (remoção com o usuário, Lei #7).
+- **Ferramentas Tocadas:** [`tools/aidd-planner`](file:///C:/Users/trcnologia/Desktop/ecossistema-aidd/tools/aidd-planner), [`tools/aidd-open`](file:///C:/Users/trcnologia/Desktop/ecossistema-aidd/tools/aidd-open), [`tools/aidd-freedom`](file:///C:/Users/trcnologia/Desktop/ecossistema-aidd/tools/aidd-freedom), [`tools/aidd-ops`](file:///C:/Users/trcnologia/Desktop/ecossistema-aidd/tools/aidd-ops), [`tools/aidd-enterprise`](file:///C:/Users/trcnologia/Desktop/ecossistema-aidd/tools/aidd-enterprise).
+- **O que executou:**
+  1. Ticket 11 (`257a650`): `aidd-planner` gera a planta com tickets roteados para as 6 ferramentas (`core/planta.py`); as cópias `aidd_planner/` e `src/` ficaram idênticas.
+  2. Ticket 12 (`3fd0c62`): `scripts/orquestrador_sincrono.py` só passa o bastão e lê os contratos; não escreve mais nenhum.
+  3. Ticket 13 (`b5d62da`): `aidd-open` pega os moldes no almoxarifado (`caminho_peca`) e entrega só `src/modules/<domínio>/` e o C3.
+  4. Ticket 14 (`f40e403`): `aidd-freedom scan` grava manifesto, fatia e C3 só no projeto; a pasta exportada não muda.
+  5. Ticket 16 (`d6e422e`): `aidd-ops` gera Dockerfile, compose, deploy e nginx a partir do `perfil_app` e das peças `moldes/infra/*`.
+  6. Ticket 18: `aidd-enterprise` fica só com a blindagem; comandos de outras ferramentas são encaminhados ao dono (`delegacao.py`); injetor pela peça do catálogo; `G_DRIFT_NUCLEO_COMPARTILHADO` compara cada cópia com o catálogo e mantém os pares master × enterprise.
+- **Resultados de Testes:**
+  - Gate de cada fase (teste do ticket + E2E `comparar --base ciclo-01`) → exit 0 em todas, sem métrica pior.
+  - Suíte inteira de cada ferramenta tocada (`G_TESTES_REAIS` modo rápido) → exit 0 em cada fase.
+  - E2E depois do Ticket 15: vazamentos 0 nos 3 fluxos (base: 2, 0, 2).
+- **Status:** **RESOLVIDO**.
+- **Data da Última Auditoria:** 02/10/2026.

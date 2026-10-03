@@ -14,8 +14,32 @@ from pathlib import Path
 
 import pytest
 
-PHASES_DIR = Path(__file__).resolve().parent.parent / 'scripts' / 'phases'
-sys.path.insert(0, str(PHASES_DIR))
+TOOL_DIR = Path(__file__).resolve().parent.parent
+PHASES_DIR = TOOL_DIR / 'scripts' / 'phases'
+
+for _p in (str(TOOL_DIR), str(TOOL_DIR / 'scripts'), str(PHASES_DIR)):
+    if _p not in sys.path:
+        sys.path.insert(0, _p)
+
+# Rodado a partir da raiz do monorepo, `scripts` pode ter entrado como namespace
+# package do `<raiz>/scripts`; a peca regular `tools/aidd-pure/scripts` tem
+# precedencia e precisa estar no topo do sys.path.
+_scripts_atual = sys.modules.get('scripts')
+if _scripts_atual is not None and str(TOOL_DIR / 'scripts') not in list(
+    getattr(_scripts_atual, '__path__', [])
+):
+    for _nome in [n for n in sys.modules if n == 'scripts' or n.startswith('scripts.')]:
+        del sys.modules[_nome]
+
+# D1/Ticket 15: o injetor, a CLI `aidd_inject` e o gate `G_INJECT` sao pecas do
+# almoxarifado (dono: aidd-enterprise). O aidd-pure consome a peca no nome
+# canonico em vez de guardar copia local, entao as suites que importam esses
+# nomes sao servidas pela peca do catalogo.
+from scripts.core import pecas_catalogo as _pecas_catalogo
+
+_pecas_catalogo.registrar_injetor()
+_pecas_catalogo.registrar_cli_injetor()
+_pecas_catalogo.registrar_gate_injetor()
 
 
 def load_phase_module(alias: str, filename: str):

@@ -213,8 +213,10 @@ class TestCanonicalDestination:
     def test_canonical_root_resolves_to_monorepo_root(self):
         from pathlib import Path
         import scripts.core.injector.injetor as injetor_mod
-        injetor_file = Path(injetor_mod.__file__).resolve()
-        ecossistema_root = injetor_file.parents[5]
+        # A peça mora no almoxarifado (D1/Ticket 15), então a raiz do monorepo
+        # é resolvida por quem consome (o aidd-pure), não pela aritmética de
+        # posições do `__file__` da peça.
+        ecossistema_root = Path(injetor_mod._default_ecossistema_root()).resolve()
         assert (ecossistema_root / "gates" / "manifesto_harnesses.json").exists(), (
             f"Raiz calculada invalida: {ecossistema_root} (gates/manifesto_harnesses.json nao existe)"
         )

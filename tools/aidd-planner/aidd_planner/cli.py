@@ -23,6 +23,13 @@ try:
         exportar_para_pipeline_execucao,
         compilar_grafo_topologico_vsa,
     )
+    from .core.planta import (
+        HANDOFF_C2_NOME,
+        PlantaValidationError,
+        carregar_handoff_c1,
+        gravar_planta,
+        pecas_disponiveis,
+    )
 except ImportError:
     from src.core.planner_engine import (
         PlannerValidationError,
@@ -31,6 +38,13 @@ except ImportError:
         exportar_para_fluxo_factory,
         exportar_para_pipeline_execucao,
         compilar_grafo_topologico_vsa,
+    )
+    from src.core.planta import (
+        HANDOFF_C2_NOME,
+        PlantaValidationError,
+        carregar_handoff_c1,
+        gravar_planta,
+        pecas_disponiveis,
     )
 
 MAPA_FLUXOS = {
@@ -45,35 +59,6 @@ MAPA_FLUXOS = {
     "fluxo_02_factory": "fluxo_02_factory",
     "fluxo_03_bridge": "fluxo_03_bridge",
 }
-
-
-def _tipo_canonico(valor: object) -> str:
-    """Normaliza um token de tipo (Python ou textual) para o enum canônico do contrato."""
-    mapa = {
-        "": "string",
-        "str": "string",
-        "string": "string",
-        "text": "string",
-        "texto": "string",
-        "<class 'str'>": "string",
-        "int": "integer",
-        "integer": "integer",
-        "<class 'int'>": "integer",
-        "bool": "boolean",
-        "boolean": "boolean",
-        "<class 'bool'>": "boolean",
-        "float": "float",
-        "<class 'float'>": "float",
-        "datetime": "datetime",
-        "date": "datetime",
-        "timestamp": "datetime",
-        "<class 'datetime.datetime'>": "datetime",
-        "json": "json",
-        "dict": "json",
-        "<class 'dict'>": "json",
-    }
-    chave = valor.lower() if isinstance(valor, str) else str(valor)
-    return mapa.get(chave, "string")
 
 
 def cmd_init(args: argparse.Namespace) -> int:
@@ -102,6 +87,7 @@ def cmd_init(args: argparse.Namespace) -> int:
         slug=slug,
         descricao=descricao,
         dominio=dominio,
+        modulos_adicionais=getattr(args, "dominio_modulo", None),
     )
 
     valido, erros = validar_plano(plano)
@@ -110,9 +96,6 @@ def cmd_init(args: argparse.Namespace) -> int:
         for e in erros:
             print(f"  - {e}", file=sys.stderr)
         return 1
-
-    with open(arquivo_saida, "w", encoding="utf-8") as f:
-        json.dump(plano, f, indent=2, ensure_ascii=False)
 
     # Lei Inviolável #11 (Padrão-Ouro de Stack): a identidade visual de cada
     # projeto (cor de marca) nasce aqui, de forma determinística (Lei #1 —
@@ -130,99 +113,40 @@ def cmd_init(args: argparse.Namespace) -> int:
     with open(caminho_design_system, "w", encoding="utf-8") as f:
         json.dump(design_system, f, indent=2, ensure_ascii=False)
 
-    # Contrato de Handoff Formal: Planner -> Engine
+    # Contrato de Handoff Formal: Planner -> Engine (C2).
+    # Quem produz escreve: o proprio planner desenha a planta, valida o C2
+    # contra a fonte unica e so entao grava PLANNER.json + HANDOFF.
     fluxo_num = 1 if "01" in fluxo_alvo else (2 if "02" in fluxo_alvo else (3 if "03" in fluxo_alvo else 1))
-    caminho_handoff = os.path.join(pasta_destino, "HANDOFF_PLANNER_ENGINE.json")
-    modulos = []
-    for ctx in plano.get("ddd_bounded_contexts", []):
-        modulos.append({
-            "nome": ctx.get("modulo", slug),
-            "slug": ctx.get("modulo", slug).lower().replace(" ", "-"),
-            "entidades": [
-                {
-                    "nome": ent.get("nome"),
-                    "campos": [
-                        {"nome": k, "tipo": _tipo_canonico(v), "obrigatorio": True}
-                        for k, v in ent.get("atributos", {}).items()
-                    ] or [{"nome": "id", "tipo": "integer", "obrigatorio": True}],
-                }
-                for ent in ctx.get("entidades", [])
-            ],
-            "regras_negocio": [
-                {
-                    "id": f"RN-{slug}-01",
-                    "descricao": f"Operações e regras para {ctx.get('modulo', slug)}",
-                    "criterio_aceitacao": "Status 200 e persistência atômica",
-                }
-            ],
-        })
+    caminho_handoff = os.path.join(pasta_destino, HANDOFF_C2_NOME)
 
-    handoff_payload = {
-        "versao_schema": "1.0.0",
-        "fluxo_alvo": fluxo_num,
-        "metadados_projeto": {
-            "nome": nome,
-            "slug": slug,
-            "dominio": dominio,
-            "descricao": descricao,
-        },
-        "quarteto_sine_qua_non": {
-            "swagger": True,
-            "webhooks": True,
-            "mcp": True,
-            "documentacao": True,
-        },
-        "arquitetura_alvo": {
-            "padrao_frontend": "nextjs_typescript_tailwind",
-            "padrao_backend": "fastapi_modular_vsa",
-            "persistencia": "sqlite_wal" if fluxo_num != 3 else "postgresql",
-        },
-        "modulos_funcionais": modulos or [
-            {
-                "nome": nome,
-                "slug": slug,
-                "entidades": [
-                    {
-                        "nome": slug.capitalize(),
-                        "campos": [
-                            {"nome": "id", "tipo": "integer", "obrigatorio": True},
-                            {"nome": "titulo", "tipo": "string", "obrigatorio": True},
-                            {"nome": "criado_em", "tipo": "datetime", "obrigatorio": True},
-                        ],
-                    }
-                ],
-                "regras_negocio": [
-                    {
-                        "id": f"RN-{slug}-01",
-                        "descricao": f"Operações CRUD para {nome}",
-                        "criterio_aceitacao": "Status 200 e persistência atômica",
-                    }
-                ],
-            }
-        ],
-    }
-
-    # Validação do contrato via jsonschema se disponível
+    # Sem terreno (C1) o planner ainda desenha a planta, mas declara o
+    #.limitite no proprio contrato em vez de fingir que existe evidencia.
     try:
-        import jsonschema
-        _root_spec = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))), "componentes", "compartilhado", "specs", "handoff-planner-to-engine.schema.json")
-        if os.path.isfile(_root_spec):
-            with open(_root_spec, "r", encoding="utf-8") as f_spec:
-                schema_handoff = json.load(f_spec)
-            jsonschema.validate(instance=handoff_payload, schema=schema_handoff)
-    except Exception:
-        pass
+        handoff_c1 = carregar_handoff_c1(pasta_destino, caminho=args.handoff_c1)
+    except PlantaValidationError:
+        handoff_c1 = None
 
-    with open(caminho_handoff, "w", encoding="utf-8") as f:
-        json.dump(handoff_payload, f, indent=2, ensure_ascii=False)
+    try:
+        resultado = gravar_planta(pasta_destino, plano, handoff_c1, fluxo_num=fluxo_num)
+    except PlantaValidationError as erro:
+        print(f"[ERRO FATAL] A planta nao pode ser desenhada: {erro}", file=sys.stderr)
+        return 1
+    handoff_payload = resultado["handoff"]
 
     print("=" * 72)
-    print(" [aidd-planner] PLANNER.json GERADO COM SUCESSO")
+    print(" [aidd-planner] PLANNER.json + PLANTA GERADOS COM SUCESSO")
     print("=" * 72)
     print(f" Projeto:       {nome} ({slug})")
     print(f" Fluxo Alvo:    {fluxo_alvo}")
     print(f" Destino:       {arquivo_saida}")
     print(f" Contrato Handoff: {caminho_handoff}")
+    print(f" Fatias roteadas: {len(handoff_payload['tickets'])} ticket(s) para "
+          f"{', '.join(dict.fromkeys(t['ferramenta_destino'] for t in handoff_payload['tickets']))}")
+    print(f" Camadas:       {len(handoff_payload['camadas'])} | Fases: {len(handoff_payload['fases'])}")
+    if handoff_c1:
+        print(f" Terreno (C1):  {len(pecas_disponiveis(handoff_c1))} peca(s) de almoxarifado provadas")
+    for aviso in handoff_payload.get("avisos", []):
+        print(f" [AVISO] {aviso}")
     print(" Status:        100% Conforme (Schema + Quarteto Sine Qua Non + SDD/BDD)")
     print(f" Design System: {design_system['paleta']['nome']} ({design_system['paleta']['primaria']}) -> {caminho_design_system}")
     print("=" * 72)
@@ -391,6 +315,10 @@ def main(argv: Optional[List[str]] = None) -> int:
     p_init.add_argument("--slug", "-s", help="Identificador slug do projeto")
     p_init.add_argument("--descricao", "-d", help="Descrição do projeto")
     p_init.add_argument("--dominio", help="Domínio de negócio")
+    p_init.add_argument("--dominio-modulo", action="append", metavar="MODULO",
+                        help="Modulo (bounded context) desenhado no pre-plano; repita para varios")
+    p_init.add_argument("--handoff-c1", default=None,
+                        help="Caminho do C1 do forge; padrao .aidd/HANDOFF_FORGE_PLANNER.json")
     p_init.add_argument("--pasta", "-p", default=".", help="Pasta de destino onde salvar PLANNER.json")
     p_init.add_argument("--force", action="store_true", help="Sobrescreve PLANNER.json se já existir")
     p_init.set_defaults(func=cmd_init)

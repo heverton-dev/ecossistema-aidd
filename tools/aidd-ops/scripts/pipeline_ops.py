@@ -43,6 +43,7 @@ sys.path.insert(0, os.path.join(_SCRIPTS_DIR, "phases"))
 from importlib import import_module as _imod
 
 from contrato_plano import validar_plano_contrato  # noqa: E402
+import infra_perfil  # noqa: E402
 
 _mod_intake = _imod("01_intake")
 _mod_curadoria = _imod("02_curadoria")
@@ -133,6 +134,7 @@ def montar_plano_em_memoria(
     nicho_explicito: Optional = None,
     dir_projeto: Optional = None,
     ferramentas_planejadas: Optional = None,
+    entrada_ops: Optional[dict] = None,
 ) -> Result:
     """Roda as 3 fases (Intake → Curadoria → Sizing) e monta o plano EM MEMÓRIA.
 
@@ -155,6 +157,11 @@ def montar_plano_em_memoria(
             aidd-planner) e a Fase 1/2 não tentam casar `texto` contra
             `catalogo_nichos.json`. Discriminador: `nicho_slug` com prefixo
             `dinamico_` (`01_intake.DINAMICO_PREFIXO_SLUG`/`eh_nicho_dinamico`).
+        entrada_ops: quando fornecido (saída de `infra_perfil.ler_entrada_ops`,
+            Ticket 16), o plano vem do `perfil_app` + tickets de ops da planta:
+            nenhum casamento de texto contra nichos. As "ferramentas" da Fase 2
+            são os serviços derivados do perfil (app, nginx, web, db, fila).
+            Discriminador: `nicho_slug` com prefixo `perfil_`.
     """
     plano: dict = {
         "versao": "1.0.0",
@@ -163,7 +170,15 @@ def montar_plano_em_memoria(
     }
 
     # ── Fase 1: Intake ──
-    if dir_projeto:
+    if entrada_ops is not None:
+        projeto = entrada_ops["projeto"]
+        resultado_f1 = Result.ok({
+            "nicho_slug": f"{infra_perfil.PERFIL_PREFIXO_SLUG}_{infra_perfil.nome_banco(projeto)}",
+            "nicho_nome_exibicao": f"Perfil do App: {projeto['nome']}",
+            "texto_original": texto,
+            "palavras_chave_candidatas": [],
+        })
+    elif dir_projeto:
         resultado_f1 = _mod_intake.reconhecer_origem_monolito(dir_projeto)
     elif ferramentas_planejadas is not None:
         # `is not None` (nao truthiness): uma lista vazia ainda deve entrar
@@ -186,9 +201,18 @@ def montar_plano_em_memoria(
     nicho_nome = dados_f1["nicho_nome_exibicao"]
     eh_monolito = nicho_slug == _mod_intake.MONOLITO_SLUG
     eh_dinamico = _mod_intake.eh_nicho_dinamico(nicho_slug)
+    eh_perfil = infra_perfil.eh_origem_perfil(nicho_slug)
 
     # ── Fase 2: Curadoria ──
-    if eh_monolito:
+    if eh_perfil:
+        servicos = infra_perfil.servicos_do_perfil(
+            entrada_ops["perfil_app"], entrada_ops["pasta_projeto"])
+        resultado_f2 = Result.ok({
+            "nicho_slug": nicho_slug,
+            "nicho_nome_exibicao": nicho_nome,
+            "ferramentas": [{"nome": nome} for nome in servicos],
+        })
+    elif eh_monolito:
         resultado_f2 = _mod_curadoria.curar_stack_monolito(nicho_slug, nicho_nome, dir_projeto)
     elif eh_dinamico:
         resultado_f2 = _mod_curadoria.curar_stack_dinamico(nicho_slug, nicho_nome, ferramentas_planejadas)
@@ -212,7 +236,13 @@ def montar_plano_em_memoria(
     # os 5 nichos fixos e para o caminho dinâmico, sem precisar de variante
     # própria (diferente do monólito, que dimensiona por contagem de
     # módulos em vez de nome de ferramenta OSS).
-    if eh_monolito:
+    if eh_perfil:
+        resultado_f3 = _mod_sizing.dimensionar_perfil(
+            entrada_ops["perfil_app"].get("modulos") or [],
+            [f["nome"] for f in ferramentas],
+            infra_perfil.nome_banco(entrada_ops["projeto"]),
+        )
+    elif eh_monolito:
         resultado_f3 = _mod_sizing.dimensionar_monolito(ferramentas)
     else:
         resultado_f3 = _mod_sizing.dimensionar(ferramentas)
@@ -232,17 +262,24 @@ def executar_pipeline(
     nicho_explicito: Optional = None,
     dir_projeto: Optional = None,
     ferramentas_planejadas: Optional = None,
+    entrada_ops: Optional[dict] = None,
 ) -> int:
     """Executa o pipeline completo das 3 fases.
 
     Uses montar_plano_em_memoria (fonte única do plano) e grava o resultado
     em PLANO-INFRAESTRUTURA.json, propagando o erro estruturado quando houver.
+    Com `entrada_ops` (perfil do app da planta, Ticket 16), depois do plano
+    gera Dockerfile, docker-compose.yml, deploy.sh e nginx no projeto a partir
+    das peças `moldes/infra/*` do almoxarifado.
 
     Returns:
         exit code: 0 = sucesso, 1 = falha.
     """
     caminho_plano = os.path.join(pasta_destino, "PLANO-INFRAESTRUTURA.json")
-    if dir_projeto:
+    if entrada_ops is not None:
+        print(f"[Fase 1/3] Reconhecimento pelo perfil do app ({infra_perfil.ENTRADA_C2}, "
+              f"tickets {', '.join(entrada_ops['tickets'])})...")
+    elif dir_projeto:
         print("[Fase 1/3] Reconhecimento de Origem (monólito customizado)...")
     elif ferramentas_planejadas is not None:
         print("[Fase 1/3] Reconhecimento de Nicho Dinâmico (stack já decidida)...")
@@ -253,7 +290,7 @@ def executar_pipeline(
 
     resultado = montar_plano_em_memoria(
         texto, nicho_explicito=nicho_explicito, dir_projeto=dir_projeto,
-        ferramentas_planejadas=ferramentas_planejadas,
+        ferramentas_planejadas=ferramentas_planejadas, entrada_ops=entrada_ops,
     )
     plano = resultado.valor
 
@@ -284,6 +321,15 @@ def executar_pipeline(
     dados_f3 = plano["fase_3_sizing"]["saida"]
     vps = dados_f3.get("vps", {})
     print(f"  [OK] VPS: {vps.get('vcpu', '?')} vCPU / {vps.get('ram_gb', '?')} GB RAM / {vps.get('disco_gb', '?')} GB Disco")
+
+    if entrada_ops is not None:
+        try:
+            gravados = infra_perfil.gerar_infra(entrada_ops)
+        except (OSError, ValueError) as exc:
+            print(f"  [ERRO] INFRA_NAO_GERADA: {exc}")
+            return 1
+        for nome, caminho in gravados:
+            print(f"  [peça] {nome} -> {caminho}")
 
     # ── Resumo ──
     _imprimir_resumo(plano)
@@ -381,7 +427,7 @@ def cli():
 @click.option("--nicho", default=None, help="Slug explícito do nicho (clinicas, delivery, farmacias, b2b_industrial, energia_solar)")
 @click.option("--dir-projeto", default=None, help="Diretório de um monólito já gerado por 'aidd-master init' — pula a curadoria OSS de nicho e dimensiona pela contagem real de módulos do projeto")
 @click.option("--ferramentas-json", default=None, help="Caminho de um JSON com lista [{\"nome\": \"...\"}] de ferramentas já decididas — pula o casamento de texto contra os 5 nichos fixos (nicho dinâmico)")
-@click.option("--pasta", default=None, help="Diretório de destino para PLANO-INFRAESTRUTURA.json (default: temporário)")
+@click.option("--pasta", default=None, help="Diretório de destino para PLANO-INFRAESTRUTURA.json (default: temporário). Se tiver a planta (HANDOFF_PLANNER_ENGINE.json), o ops lê os tickets de ops e o perfil_app dela e gera a infra do app ali — o nicho vira atalho opcional")
 def _cmd_plan(texto, nicho, dir_projeto, ferramentas_json, pasta):
     if texto is None and nicho is None and not dir_projeto:
         raise click.UsageError("Forneça um texto posicional, use --nicho <slug> ou --dir-projeto <pasta>")
@@ -393,10 +439,21 @@ def _cmd_plan(texto, nicho, dir_projeto, ferramentas_json, pasta):
     if not pasta:
         pasta = tempfile.mkdtemp(prefix="aidd_ops_plan_")
     os.makedirs(pasta, exist_ok=True)
+    # Planta na pasta = entrada pelo perfil do app. --nicho, --dir-projeto e
+    # --ferramentas-json são escolhas explícitas de quem chama e têm precedência.
+    entrada_ops = None
+    if nicho is None and not dir_projeto and ferramentas_planejadas is None:
+        lida = infra_perfil.ler_entrada_ops(pasta)
+        if lida is not None and not lida.sucesso:
+            print(f"  [ERRO] {lida.codigo}: {lida.erro}")
+            if lida.detalhes:
+                print(f"  Detalhes: {json.dumps(lida.detalhes, ensure_ascii=False)}")
+            _sair(1)
+        entrada_ops = lida.valor if lida is not None else None
     _sair(executar_pipeline(
         texto=texto or dir_projeto or "", pasta_destino=pasta,
         nicho_explicito=nicho, dir_projeto=dir_projeto,
-        ferramentas_planejadas=ferramentas_planejadas,
+        ferramentas_planejadas=ferramentas_planejadas, entrada_ops=entrada_ops,
     ))
 
 

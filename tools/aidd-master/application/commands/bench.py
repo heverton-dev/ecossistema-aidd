@@ -27,6 +27,12 @@ def cmd_bench(args):
         os.path.join(master_root, "templates", "v2"),
         os.path.join(master_root, "src", "core")
     ]
+    try:
+        from aidd_forge.core.almoxarifado import caminho_peca
+        db_peca = caminho_peca("src-core/database.py")
+        candidates.insert(0, str(db_peca.parent))
+    except Exception:
+        pass
     for c in candidates:
         if os.path.exists(c) and c not in sys.path:
             sys.path.insert(0, c)

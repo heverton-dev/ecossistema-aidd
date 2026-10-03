@@ -1,17 +1,23 @@
 # -*- coding: utf-8 -*-
-"""Use Case: add-module / refine-module — fatias verticais e refinamento BDD."""
+"""Use Case: add-module / refine-module — fatias verticais e refinamento BDD.
+
+add-module é construção e vai para o aidd-master (Ticket 18 / D1); refine-module
+só roda o behave do projeto e fica aqui.
+"""
 
 import os
 import subprocess
 import sys
 
+from application.commands.delegacao import delegar_ou_sair
+
 
 def cmd_add_module(args):
-    try:
-        from add_module import criar_modulo
-    except ImportError:
-        from scripts.add_module import criar_modulo
-    criar_modulo(args.nome, args.descricao or "", target_dir=getattr(args, "dir", "."))
+    delegar_ou_sair([
+        "add-module", args.nome,
+        "--descricao", args.descricao or "",
+        "--dir", getattr(args, "dir", ".") or ".",
+    ])
 
 
 def cmd_refine_module(args):

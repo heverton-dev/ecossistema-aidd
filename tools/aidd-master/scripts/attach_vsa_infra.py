@@ -23,10 +23,14 @@ def write_api_dockerfile(project_dir: str) -> str:
     O build context continua sendo a raiz do projeto (igual ao Dockerfile do
     frontend), entao as instrucoes COPY sao reescritas com o prefixo
     "backend/" -- e la que provision_backend_only() gera requirements.txt/src/."""
-    repo_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-    template = os.path.join(repo_root, "templates", "core", "Dockerfile")
-    if not os.path.exists(template):
-        template = os.path.join(repo_root, "templates", "v2", "Dockerfile")
+    try:
+        from aidd_forge.core.almoxarifado import caminho_peca
+        template = str(caminho_peca("moldes/infra/Dockerfile"))
+    except Exception:
+        repo_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+        template = os.path.join(repo_root, "templates", "core", "Dockerfile")
+        if not os.path.exists(template):
+            template = os.path.join(repo_root, "templates", "v2", "Dockerfile")
 
     with open(template, "r", encoding="utf-8") as f:
         conteudo = f.read()

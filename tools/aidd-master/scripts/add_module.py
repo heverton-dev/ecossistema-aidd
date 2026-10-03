@@ -218,6 +218,15 @@ def criar_modulo(nome_modulo: str, descricao: str = "", target_dir: str = "."):
         except Exception as e:
             print(f"  [!] Aviso ao atualizar manifesto: {e}")
 
+    try:
+        try:
+            from integrador_master import integrar_fatias_e_emitir_c4
+        except ImportError:
+            from scripts.integrador_master import integrar_fatias_e_emitir_c4
+        integrar_fatias_e_emitir_c4(target_dir)
+    except Exception as e:
+        print(f"  [!] Aviso na emissão de C4: {e}")
+
     print(f"✨ [OK] Módulo '{slug}' gerado com 100% de integridade e Clean Architecture!")
 
 

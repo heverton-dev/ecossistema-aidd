@@ -9,18 +9,20 @@ from application.commands.deploy import cmd_deploy
 from application.commands.export_frontend import cmd_export_frontend
 from application.commands.heal import cmd_heal
 from application.commands.init import cmd_init
-from application.commands.inject import (
-    _default_component_content,
-    _tentar_injecao_por_linguagem_natural,
-    cmd_inject,
-    run_inject,
-)
 from application.commands.plan import cmd_apply, cmd_plan, parse_natural_language_intent
 from application.commands.scaffold_infra import cmd_scaffold_infra
 from application.commands.setup import cmd_setup, ensure_environment
 from application.commands.status import cmd_status
 from application.commands.test_cmd import cmd_test
 from application.commands.verificar_drift import cmd_verificar_drift
+from application.pecas_catalogo import carregar_injetor
+
+# Injetor: peça do almoxarifado (Ticket 18), não a cópia application/commands/inject.py.
+_injetor = carregar_injetor()
+_default_component_content = _injetor._default_component_content
+_tentar_injecao_por_linguagem_natural = _injetor._tentar_injecao_por_linguagem_natural
+cmd_inject = _injetor.cmd_inject
+run_inject = _injetor.run_inject
 
 __all__ = [
     "_default_component_content",
