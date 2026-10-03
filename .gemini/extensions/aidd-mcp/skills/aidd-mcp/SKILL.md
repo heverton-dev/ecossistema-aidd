@@ -22,3 +22,24 @@ Thin coordinator: it does not reimplement the MCP protocol. Third-party MCPs the
 6. **Secrets:** never ask for or write a secret or API key in the server or the commit. Expose only the environment variable **name** and document in the MCP README that the user exports the real value on their machine.
 
 Edit an existing MCP in `componentes/` and resync; never edit the copies in `.claude/`, `tools/<x>/.claude/` etc.
+
+## Negative Guardrails
+
+- NEVER hand-write JSON-RPC 2.0 framing when `fastmcp`/`mcp` is installed (`pip show fastmcp`).
+- NEVER treat the shipped copies under `tools/aidd-ops/mcps/` or `tools/<x>/.claude/` as the source; `components sync --tipo mcp` overwrites them.
+- NEVER read an LLM API key inside `server.py` or call a model from a tool: the server exposes deterministic tools and the calling harness is the model.
+- NEVER hardcode a token in `server.py`, its README or tests; read `os.environ["<NAME>"]` and fail with a clear message when it is absent (`G_SEGREDOS` scans the source).
+- NEVER register an own server through `dependencia add-mcp` as if it were third-party; that path belongs to `aidd-dependencies`.
+
+## Failure Modes & Fallback
+
+- **`components verify --tipo mcp` exits 1:** the copy differs from `componentes/<scope>/mcps/<name>/`; resync with `--ferramenta <scope>` and verify again, never patch the copy.
+- **Server crashes at startup on a missing env var:** keep the crash explicit, document the variable name in the MCP README, and ask the user to export it; never add a default secret.
+- **No reference server under `componentes/`:** `componentes/compartilhado/mcps/` holds only `.gitkeep` today; read `tools/aidd-ops/mcps/cloudflare-mcp/server.py` for structure and still write the new source under `componentes/`.
+
+## Stopping Checklist
+
+- [ ] Source exists: `test -f componentes/<scope>/mcps/<name>/server.py; echo $? > mcp_src.rc` holds `0`.
+- [ ] `python -m py_compile componentes/<scope>/mcps/<name>/server.py; echo $? > mcp_compile.rc` holds `0`.
+- [ ] `python ecossistema.py components verify --tipo mcp > mcp_verify.txt 2>&1; echo $? > mcp_verify.rc` holds `0`.
+- [ ] `python gates/G_SEGREDOS.py > seg.txt 2>&1; echo $? > seg.rc` holds `0`.

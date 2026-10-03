@@ -47,3 +47,25 @@ Done when the index shows every map as concluded (`tests/test_mapa_visual.py` ch
 ## Publishing
 
 `--fragmento` writes without `<!doctype>`/`<head>` (Artifact publishing format). `--link-manual <url>` sets the "back to the manual" link.
+
+## Negative Guardrails
+
+- NEVER hand-edit a generated map in `docs/mapas-visuais/` or `docs/mapas-visuais/nao-tecnicos/`; change the molde or `valores_<type>()` and regenerate, or `--check` fails.
+- NEVER type a list, count or badge into a molde; it must be a `{{MARKER}}` filled from `docs/auditoria/mapa-pecas/catalogo-pecas.json`.
+- NEVER copy the text of an official rule (e.g. `docs/protocolos/CONVENCAO-AUTORIA-GATES.md`) into a molde; summarize it and link.
+- NEVER regenerate `mapa-00-indice.html` before the other maps; its status reads them from disk.
+- NEVER skip the bite test (a marker without value raises `ValueError`) or commit the map with `--no-verify`.
+
+## Failure Modes & Fallback
+
+- **`ValueError: molde e gerador desencontrados`:** `montar()` lists the markers missing on each side; add them to `valores_<type>()` or remove them from the molde, then rerun.
+- **`--check` exits 1:** the catalog or a piece changed; run `python scripts/catalogo_pecas.py`, regenerate that type, then `indice`.
+- **Catalog lacks a field the map needs:** add it in `scripts/catalogo_pecas.py` with a test in `tests/test_catalogo_pecas.py` first; never fill it inside the generator by hand.
+- **`G_mapa_pecas` fails at pre-commit:** a required map or manual link is missing; add the `mapa-link` in `docs/mapas-visuais/manual-montagem-aidd.html`.
+
+## Stopping Checklist
+
+- [ ] `python scripts/catalogo_pecas.py > cat.txt 2>&1; echo $? > cat.rc` holds `0`.
+- [ ] `python -m pytest tests/test_mapa_visual.py -q > mv.txt 2>&1; echo $? > mv.rc` holds `0`.
+- [ ] `python scripts/mapa_visual.py <type> --check > chk.txt 2>&1; echo $? > chk.rc` holds `0` (both versions).
+- [ ] `python gates/G_mapa_pecas.py > gmp.txt 2>&1; echo $? > gmp.rc` holds `0`.
