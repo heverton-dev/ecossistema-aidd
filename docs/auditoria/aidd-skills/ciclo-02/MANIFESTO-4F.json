@@ -1,0 +1,71 @@
+{
+  "pipeline_id": "evolucao-aidd-skills-ciclo-02",
+  "target_tool": "aidd-skills",
+  "ciclo": "ciclo-02",
+  "descricao": "Adequa as 43 skills próprias às 3 seções de robustez (Ticket 3 do ciclo-01), em 6 lotes",
+  "config_usuario_ref": "docs/auditoria/CONFIG-EXECUCAO-USUARIO.json",
+  "definition_of_done": "docs/auditoria/aidd-skills/ciclo-02/DOD.md",
+  "gate_final": "python ecossistema.py audit",
+  "fases": [
+    {
+      "nome": "Fase_1_Lote_01_Construcao",
+      "ticket_id": "LOTE-01",
+      "harness": "claude",
+      "model": "opus",
+      "input_prompt": "docs/auditoria/aidd-skills/ciclo-02/prompts_tickets/PROMPT-LOTE-01.txt",
+      "comando_terminal": "claude --dangerously-skip-permissions --chrome --model opus",
+      "output_handoff": "docs/auditoria/aidd-skills/ciclo-02/LOTE-01.md",
+      "gate_fase": "python gates/G_SKILL_FORMATO.py --secoes-estritas --apenas aidd-forge,aidd-planner,aidd-pure,aidd-open,aidd-freedom,aidd-master,aidd-enterprise && python gates/G_SKILL_FORMATO.py && python gates/G_SKILL_ROT.py && python gates/G_HARNESS_COMPAT.py"
+    },
+    {
+      "nome": "Fase_2_Lote_02_Entrega",
+      "ticket_id": "LOTE-02",
+      "harness": "claude",
+      "model": "opus",
+      "input_prompt": "docs/auditoria/aidd-skills/ciclo-02/prompts_tickets/PROMPT-LOTE-02.txt",
+      "comando_terminal": "claude --dangerously-skip-permissions --chrome --model opus",
+      "output_handoff": "docs/auditoria/aidd-skills/ciclo-02/LOTE-02.md",
+      "gate_fase": "python gates/G_SKILL_FORMATO.py --secoes-estritas --apenas aidd-ops,aidd-orchestrate,aidd-pipeline,aidd-dispatch,aidd-handoff,aidd-orca,aidd-9router && python gates/G_SKILL_FORMATO.py && python gates/G_SKILL_ROT.py && python gates/G_HARNESS_COMPAT.py"
+    },
+    {
+      "nome": "Fase_3_Lote_03_Auditoria",
+      "ticket_id": "LOTE-03",
+      "harness": "claude",
+      "model": "opus",
+      "input_prompt": "docs/auditoria/aidd-skills/ciclo-02/prompts_tickets/PROMPT-LOTE-03.txt",
+      "comando_terminal": "claude --dangerously-skip-permissions --chrome --model opus",
+      "output_handoff": "docs/auditoria/aidd-skills/ciclo-02/LOTE-03.md",
+      "gate_fase": "python gates/G_SKILL_FORMATO.py --secoes-estritas --apenas aidd-audit-4f,aidd-diagnose,aidd-improvement,aidd-evolution,aidd-retro,aidd-tdd,aidd-spec && python gates/G_SKILL_FORMATO.py && python gates/G_SKILL_ROT.py && python gates/G_HARNESS_COMPAT.py"
+    },
+    {
+      "nome": "Fase_4_Lote_04_Planejamento",
+      "ticket_id": "LOTE-04",
+      "harness": "claude",
+      "model": "opus",
+      "input_prompt": "docs/auditoria/aidd-skills/ciclo-02/prompts_tickets/PROMPT-LOTE-04.txt",
+      "comando_terminal": "claude --dangerously-skip-permissions --chrome --model opus",
+      "output_handoff": "docs/auditoria/aidd-skills/ciclo-02/LOTE-04.md",
+      "gate_fase": "python gates/G_SKILL_FORMATO.py --secoes-estritas --apenas aidd-plan,aidd-tickets,aidd-grill,aidd-grill-docs,aidd-reexplain,aidd-anatomy,aidd-ingest,aidd-wizard && python gates/G_SKILL_FORMATO.py && python gates/G_SKILL_ROT.py && python gates/G_HARNESS_COMPAT.py"
+    },
+    {
+      "nome": "Fase_5_Lote_05_Documentos",
+      "ticket_id": "LOTE-05",
+      "harness": "claude",
+      "model": "opus",
+      "input_prompt": "docs/auditoria/aidd-skills/ciclo-02/prompts_tickets/PROMPT-LOTE-05.txt",
+      "comando_terminal": "claude --dangerously-skip-permissions --chrome --model opus",
+      "output_handoff": "docs/auditoria/aidd-skills/ciclo-02/LOTE-05.md",
+      "gate_fase": "python gates/G_SKILL_FORMATO.py --secoes-estritas --apenas aidd-docx,aidd-pdf,aidd-pptx,aidd-xlsx,aidd-textbook,aidd-dataviz,aidd-agent-writing && python gates/G_SKILL_FORMATO.py && python gates/G_SKILL_ROT.py && python gates/G_HARNESS_COMPAT.py"
+    },
+    {
+      "nome": "Fase_6_Lote_06_Infraestrutura",
+      "ticket_id": "LOTE-06",
+      "harness": "claude",
+      "model": "opus",
+      "input_prompt": "docs/auditoria/aidd-skills/ciclo-02/prompts_tickets/PROMPT-LOTE-06.txt",
+      "comando_terminal": "claude --dangerously-skip-permissions --chrome --model opus",
+      "output_handoff": "docs/auditoria/aidd-skills/ciclo-02/LOTE-06.md",
+      "gate_fase": "python gates/G_SKILL_FORMATO.py --secoes-estritas --apenas aidd-components,aidd-dependencies,aidd-mcp,aidd-session,aidd-delivery,aidd-frontend-forms,aidd-visual-maps && python gates/G_SKILL_FORMATO.py && python gates/G_SKILL_ROT.py && python gates/G_HARNESS_COMPAT.py && python gates/G_SKILL_FORMATO.py --secoes-estritas"
+    }
+  ]
+}

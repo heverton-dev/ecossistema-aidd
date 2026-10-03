@@ -106,12 +106,14 @@ def secoes_faltando(skill_md: str, terceiros: set) -> List[str]:
     return [s for s in SECOES_DE_ROBUSTEZ if not any(t.startswith(s.lower()) for t in titulos)]
 
 
-def auditar_secoes(raiz: str) -> List[Tuple[str, List[str]]]:
+def auditar_secoes(raiz: str, apenas: Optional[set] = None) -> List[Tuple[str, List[str]]]:
     terceiros = gestor_dependencias.skills_de_terceiros(
         os.path.join(raiz, "gates", "dependencias_externas.json")
     )
     resultado = []
     for skill_md in sorted(glob.glob(os.path.join(raiz, "componentes", "*", "skills", "*", "SKILL.md"))):
+        if apenas and os.path.basename(os.path.dirname(skill_md)) not in apenas:
+            continue
         faltando = secoes_faltando(skill_md, terceiros)
         if faltando:
             resultado.append((os.path.relpath(skill_md, raiz).replace("\\", "/"),
@@ -138,12 +140,15 @@ def main() -> int:
     parser.add_argument("--aviso", action="store_true", help="Modo aviso: imprime as violacoes e sai com exit 0")
     parser.add_argument("--secoes-estritas", action="store_true",
                         help="Reprova skill própria sem Negative Guardrails, Failure Modes e Stopping Checklist")
+    parser.add_argument("--apenas", default="",
+                        help="Lista de skills separadas por vírgula: só elas entram na checagem das seções")
     args = parser.parse_args()
+    apenas = {s.strip() for s in args.apenas.split(",") if s.strip()} or None
 
     total_skills = len(glob.glob(os.path.join(args.raiz, "componentes", "*", "skills", "*", "SKILL.md")))
     print(f"[G_SKILL_FORMATO] Auditando {total_skills} skill(s) em componentes/*/skills/ ...")
     achados = auditar(args.raiz)
-    secoes = auditar_secoes(args.raiz)
+    secoes = auditar_secoes(args.raiz, apenas)
     if args.secoes_estritas:
         achados = achados + secoes
     elif secoes:

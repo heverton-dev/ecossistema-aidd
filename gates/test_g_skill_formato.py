@@ -167,3 +167,14 @@ def test_skill_de_terceiro_nao_precisa_das_secoes(tmp_path):
     _escrever_skill(tmp_path, "catalog")
     res = _rodar(tmp_path, "--secoes-estritas")
     assert res.returncode == 0, res.stdout
+
+
+def test_apenas_restringe_as_secoes_estritas_as_skills_do_lote(tmp_path):
+    # Ciclo-02 aidd-skills: cada lote do pipeline confere só as skills que adequou.
+    _escrever_dependencias(tmp_path, {})
+    _escrever_skill(tmp_path, "aidd-catalog")
+    _acrescentar(tmp_path, "aidd-catalog", SECOES_DE_ROBUSTEZ)
+    _escrever_skill(tmp_path, "aidd-outra")
+    assert _rodar(tmp_path, "--secoes-estritas", "--apenas", "aidd-catalog").returncode == 0
+    res = _rodar(tmp_path, "--secoes-estritas", "--apenas", "aidd-catalog,aidd-outra")
+    assert res.returncode == 1 and "aidd-outra" in res.stdout

@@ -1,0 +1,26 @@
+ROLE: Skill author. Ecosystem AIDD. aidd-skills ciclo-02, lote 3 (Auditoria e qualidade).
+DELIVER: docs/auditoria/aidd-skills/ciclo-02/LOTE-03.md
+
+SKILLS: aidd-audit-4f, aidd-diagnose, aidd-improvement, aidd-evolution, aidd-retro, aidd-tdd, aidd-spec
+
+GOAL: give each skill the 3 robustness sections required by docs/protocolos/CONVENCAO-AUTORIA-SKILLS.md: "## Negative Guardrails", "## Failure Modes & Fallback", "## Stopping Checklist". Reference: componentes/compartilhado/skills/aidd-skills/SKILL.md (already done).
+
+STEPS for each skill:
+- Read componentes/compartilhado/skills/<skill>/SKILL.md and the code, gates and protocol it drives (search with codebase-memory-mcp first, Lei #14).
+- Write the 3 sections specific to that skill's domain, in compact English, appended before any closing reference list:
+  - Negative Guardrails: 3-6 "NEVER ..." rules naming real files, commands or gates of this skill. Include the real failures already seen in this ecosystem when they apply (deleting copies without user OK, running ecossistema.py audit inside a phase, declaring work done without a red-then-green test, committing with --no-verify, configuring an LLM API key: the model is always the running harness).
+  - Failure Modes & Fallback: 2-4 expected failures of this skill and the exact recovery (command, file, who to ask).
+  - Stopping Checklist: 3-6 binary checks with the real command that proves each one (exit code read from a file, never through a pipe).
+- Keep the frontmatter and the rest of the body unchanged. Body stays under 450 lines.
+- Edit only componentes/compartilhado/skills/<skill>/SKILL.md, then run: python ecossistema.py components sync --tipo skill
+- No generic text: a bullet that could be pasted into another skill unchanged is not accepted.
+
+THEN:
+- Run: python gates/G_SKILL_FORMATO.py --secoes-estritas --apenas aidd-audit-4f,aidd-diagnose,aidd-improvement,aidd-evolution,aidd-retro,aidd-tdd,aidd-spec (expect exit 0)
+- Write docs/auditoria/aidd-skills/ciclo-02/LOTE-03.md: one row per skill with the 3 sections added and the files/commands each section cites.
+
+RULES:
+1. Do NOT run python ecossistema.py audit nor scripts/e2e_foto.py: the orchestrator runs the gates.
+2. Do NOT edit gates, tools/ or other skills.
+3. Do NOT run git commit, git push or git reset.
+4. Capture real exit codes: redirect to file, read $? on the same line.
