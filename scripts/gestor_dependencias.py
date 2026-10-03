@@ -106,7 +106,7 @@ def skills_de_terceiros(manifesto_path=MANIFESTO_PATH):
 
 def _salvar_manifesto(manifesto):
     tmp_path = MANIFESTO_PATH + ".tmp"
-    with open(tmp_path, "w", encoding="utf-8") as f:
+    with open(tmp_path, "w", encoding="utf-8", newline="\n") as f:
         json.dump(manifesto, f, indent=2, ensure_ascii=False)
         f.write("\n")
     os.replace(tmp_path, MANIFESTO_PATH)
@@ -323,7 +323,7 @@ def _mesclar_mcp(nome, cfg, harness, caminho, chave, dry_run, schema_inicial=Non
     if dry_run:
         return
     tmp_path = caminho + ".tmp"
-    with open(tmp_path, "w", encoding="utf-8") as f:
+    with open(tmp_path, "w", encoding="utf-8", newline="\n") as f:
         json.dump(dados, f, indent=2, ensure_ascii=False)
         f.write("\n")
     os.replace(tmp_path, caminho)
@@ -431,7 +431,7 @@ def _adicionar_padroes_gitignore(padroes):
     if not novos:
         return []
 
-    with open(GITIGNORE_PATH, "a", encoding="utf-8") as f:
+    with open(GITIGNORE_PATH, "a", encoding="utf-8", newline="\n") as f:
         if conteudo_atual and not conteudo_atual.endswith("\n"):
             f.write("\n")
         f.write("\n# Dependencias externas instaladas via 'python ecossistema.py dependencia bootstrap'\n")
