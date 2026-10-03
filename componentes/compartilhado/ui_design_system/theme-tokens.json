@@ -1,0 +1,55 @@
+{
+  "origem_referencia": {
+    "app_name": "Linear",
+    "screen_id": "fed68772-ccc3-48be-8c28-3691a441728b",
+    "mobbin_url": "https://mobbin.com/screens/fed68772-ccc3-48be-8c28-3691a441728b"
+  },
+  "cores": {
+    "modo": "light",
+    "background": "#fdfdfd",
+    "surface": "#ffffff",
+    "primary": "#2f2f2f",
+    "foreground": "#0f172a",
+    "muted": "#64748b",
+    "border": "rgba(0, 0, 0, 0.08)",
+    "paleta_extraida": [
+      "#2f2f2f",
+      "#2a2a2a",
+      "#575757",
+      "#303030",
+      "#c7c7c7"
+    ]
+  },
+  "tipografia": {
+    "font_sans": "Public Sans, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif",
+    "font_mono": "JetBrains Mono, Menlo, monospace",
+    "escala": {
+      "xs": "11px",
+      "sm": "12px",
+      "base": "14px",
+      "md": "16px",
+      "lg": "18px",
+      "xl": "24px",
+      "2xl": "32px",
+      "hero": "44px"
+    }
+  },
+  "espacamentos": {
+    "grid_base": "4px",
+    "padding_container": "24px",
+    "gap_secoes": "32px",
+    "gap_elementos": "16px"
+  },
+  "raios_borda": {
+    "btn": "6px",
+    "card": "8px",
+    "pill": "9999px"
+  },
+  "regras_craft_floor": [
+    "Proibido usar classes de cor arbitrárias fora da paleta extraída",
+    "Proibido aninhar cards soltos (usar divisores border/gap-px padrão KpiStrip)",
+    "Razão mínima de 1.25x entre títulos e texto de apoio para evitar flat-type-hierarchy",
+    "Botões devem possuir obrigatoriamente estados hover, active e focus-visible acessíveis",
+    "Grids decorativos codex-grid-background proibidos sem finalidade analítica"
+  ]
+}

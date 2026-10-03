@@ -1,0 +1,753 @@
+<!DOCTYPE html>
+<html lang="pt-BR" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AIDD Sovereign Engine — Console de Governança de Infraestrutura</title>
+  <style>
+    /* ==========================================================================
+       CONTRATO DUAL DE PRECISÃO CIRÚRGICA (SUPABASE LEVEL CRAFT)
+       ========================================================================== */
+    :root {
+      --bg-rail: #111111;
+      --bg-side: #141414;
+      --bg-main: #0c0c0c;
+      --bg-card: #141414;
+      --bg-header-box: #161616;
+      --bg-th: #111111;
+      --bg-selector: #181818;
+      --bg-active-link: #1e1e1e;
+      --bg-hover-item: #181818;
+      --bg-badge: #202020;
+
+      --text-main: #f3f4f6;
+      --text-title: #ffffff;
+      --text-muted: #94a3b8;
+      --text-table: #d1d5db;
+      --text-table-head: #94a3b8;
+
+      --border-base: #1f1f1f;
+      --border-card: #222222;
+      --border-subtle: #1a1a1a;
+      --border-control: #2e2e2e;
+      --border-focus: #3ecf8e;
+
+      --color-primary: #3ecf8e;
+      --color-primary-hover: #34b27b;
+      --color-primary-text: #052014;
+
+      --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+      --font-mono: ui-monospace, SFMono-Regular, Menlo, monospace;
+    }
+
+    :root[data-theme="light"],
+    body[data-theme="light"] {
+      --bg-rail: #f1f5f9;
+      --bg-side: #f8fafc;
+      --bg-main: #ffffff;
+      --bg-card: #ffffff;
+      --bg-header-box: #f8fafc;
+      --bg-th: #f1f5f9;
+      --bg-selector: #ffffff;
+      --bg-active-link: #e2e8f0;
+      --bg-hover-item: #f1f5f9;
+      --bg-badge: #e2e8f0;
+
+      --text-main: #0f172a;
+      --text-title: #0f172a;
+      --text-muted: #64748b;
+      --text-table: #334155;
+      --text-table-head: #475569;
+
+      --border-base: #e2e8f0;
+      --border-card: #e2e8f0;
+      --border-subtle: #f1f5f9;
+      --border-control: #cbd5e1;
+      --border-focus: #059669;
+
+      --color-primary: #059669;
+      --color-primary-hover: #047857;
+      --color-primary-text: #ffffff;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background: var(--bg-main);
+      color: var(--text-main);
+      font-family: var(--font-sans);
+      height: 100vh;
+      display: flex;
+      overflow: hidden;
+      transition: background 0.15s ease, color 0.15s ease;
+    }
+
+    /* Trilho Primário (Nível 1) */
+    .rail-nav {
+      width: 56px;
+      background: var(--bg-rail);
+      border-right: 1px solid var(--border-base);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 16px 0;
+      gap: 16px;
+    }
+
+    .rail-logo {
+      width: 34px;
+      height: 34px;
+      background: var(--bg-badge);
+      border: 1px solid var(--border-control);
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--color-primary);
+      font-weight: 800;
+      font-size: 14px;
+      cursor: pointer;
+      transition: transform 0.15s ease;
+    }
+
+    .rail-logo:hover {
+      transform: scale(1.05);
+    }
+
+    .rail-btn {
+      width: 38px;
+      height: 38px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--text-muted);
+      border-radius: 6px;
+      font-size: 11px;
+      font-family: var(--font-mono);
+      font-weight: 700;
+      cursor: pointer;
+      border: 1px solid transparent;
+      transition: all 0.15s ease;
+    }
+
+    .rail-btn:hover {
+      color: var(--text-title);
+      background: var(--bg-hover-item);
+      border-color: var(--border-control);
+    }
+
+    .rail-btn.active {
+      background: var(--bg-badge);
+      color: var(--text-title);
+      border-color: var(--border-control);
+    }
+
+    /* Sidebar Hierárquica (Nível 2) */
+    .project-sidebar {
+      width: 240px;
+      background: var(--bg-side);
+      border-right: 1px solid var(--border-base);
+      display: flex;
+      flex-direction: column;
+      padding: 18px 14px;
+      gap: 16px;
+    }
+
+    .project-selector {
+      padding: 9px 12px;
+      background: var(--bg-selector);
+      border: 1px solid var(--border-control);
+      border-radius: 6px;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-title);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      cursor: pointer;
+      transition: border-color 0.15s ease;
+    }
+
+    .project-selector:hover {
+      border-color: var(--border-focus);
+    }
+
+    .side-nav-group {
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+    }
+
+    .side-group-label {
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      font-family: var(--font-mono);
+      padding: 6px 8px;
+    }
+
+    .side-link {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 8px 12px;
+      font-size: 13px;
+      color: var(--text-muted);
+      text-decoration: none;
+      border-radius: 6px;
+      font-weight: 500;
+      border: 1px solid transparent;
+      transition: all 0.15s ease;
+    }
+
+    .side-link:hover {
+      background: var(--bg-hover-item);
+      color: var(--text-title);
+    }
+
+    .side-link.active {
+      background: var(--bg-active-link);
+      color: var(--color-primary);
+      border-color: var(--border-subtle);
+      font-weight: 600;
+    }
+
+    .side-badge {
+      font-size: 11px;
+      padding: 2px 6px;
+      border-radius: 4px;
+      background: var(--bg-badge);
+      color: var(--text-main);
+      font-family: var(--font-mono);
+    }
+
+    /* Área Central de Governança */
+    .console-main {
+      flex: 1;
+      overflow-y: auto;
+      padding: 28px 40px;
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+    }
+
+    .top-meta {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid var(--border-base);
+      padding-bottom: 18px;
+    }
+
+    .breadcrumb {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 13px;
+      color: var(--text-muted);
+    }
+
+    .breadcrumb strong {
+      color: var(--text-title);
+    }
+
+    .action-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .btn-toggle-theme {
+      background: var(--bg-selector);
+      border: 1px solid var(--border-control);
+      color: var(--text-main);
+      padding: 8px 14px;
+      font-size: 12px;
+      font-weight: 600;
+      border-radius: 6px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.15s ease;
+    }
+
+    .btn-toggle-theme:hover {
+      background: var(--bg-hover-item);
+      border-color: var(--border-focus);
+    }
+
+    .btn-supabase-outline {
+      background: var(--bg-selector);
+      border: 1px solid var(--border-control);
+      color: var(--text-main);
+      padding: 8px 16px;
+      font-size: 12px;
+      font-weight: 600;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+
+    .btn-supabase-outline:hover {
+      background: var(--bg-hover-item);
+      border-color: var(--text-muted);
+      color: var(--text-title);
+    }
+
+    .btn-supabase-primary {
+      background: var(--color-primary);
+      border: 1px solid var(--color-primary);
+      color: var(--color-primary-text);
+      padding: 8px 18px;
+      font-size: 12px;
+      font-weight: 700;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+
+    .btn-supabase-primary:hover {
+      background: var(--color-primary-hover);
+      border-color: var(--color-primary-hover);
+    }
+
+    /* Faixa de Métricas Vivas com Micro-Sparklines SVG */
+    .cluster-strip {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 14px;
+    }
+
+    .cluster-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-card);
+      border-radius: 8px;
+      padding: 18px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      transition: border-color 0.15s ease;
+    }
+
+    .cluster-card:hover {
+      border-color: var(--border-control);
+    }
+
+    .cluster-card .k-label {
+      font-size: 11px;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      font-family: var(--font-mono);
+      font-weight: 600;
+      letter-spacing: 0.04em;
+    }
+
+    .cluster-card .k-val-row {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+    }
+
+    .cluster-card .k-val {
+      font-size: 24px;
+      font-weight: 700;
+      color: var(--text-title);
+      font-family: var(--font-mono);
+      letter-spacing: -0.02em;
+    }
+
+    .cluster-card .spark-wrap {
+      width: 72px;
+      height: 20px;
+    }
+
+    .sparkline {
+      width: 100%;
+      height: 100%;
+      stroke: var(--color-primary);
+      stroke-width: 1.5;
+      fill: none;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    .cluster-card .k-sub {
+      font-size: 12px;
+      color: var(--color-primary);
+      font-family: var(--font-mono);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    /* Tabela de Topologia de Nós */
+    .infra-table-box {
+      background: var(--bg-card);
+      border: 1px solid var(--border-card);
+      border-radius: 8px;
+      overflow: hidden;
+    }
+
+    .infra-header {
+      padding: 16px 24px;
+      border-bottom: 1px solid var(--border-card);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: var(--bg-header-box);
+    }
+
+    table.infraTable {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+      text-align: left;
+    }
+
+    table.infraTable thead th {
+      padding: 12px 24px;
+      background: var(--bg-th);
+      color: var(--text-table-head);
+      font-family: var(--font-mono);
+      font-size: 11px;
+      text-transform: uppercase;
+      border-bottom: 1px solid var(--border-card);
+      font-weight: 600;
+    }
+
+    table.infraTable tbody td {
+      padding: 16px 24px;
+      border-bottom: 1px solid var(--border-subtle);
+      color: var(--text-table);
+      transition: background 0.12s ease;
+    }
+
+    table.infraTable tbody tr {
+      cursor: pointer;
+    }
+
+    table.infraTable tbody tr:hover td {
+      background: var(--bg-hover-item);
+      color: var(--text-title);
+    }
+
+    /* Ponto de Pulso Live (Animação de Telemetria Fiel) */
+    .pulse-container {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .pulse-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--color-primary);
+      position: relative;
+    }
+
+    .pulse-dot::after {
+      content: "";
+      position: absolute;
+      top: -3px;
+      left: -3px;
+      right: -3px;
+      bottom: -3px;
+      border-radius: 50%;
+      border: 1.5px solid var(--color-primary);
+      opacity: 0.8;
+      animation: ripple 2s cubic-bezier(0, 0.2, 0.8, 1) infinite;
+    }
+
+    @keyframes ripple {
+      0% { transform: scale(0.6); opacity: 1; }
+      100% { transform: scale(2.2); opacity: 0; }
+    }
+
+    .pill-role {
+      padding: 2px 7px;
+      border-radius: 4px;
+      font-size: 11px;
+      font-family: var(--font-mono);
+      background: var(--bg-badge);
+      color: var(--text-muted);
+      border: 1px solid var(--border-control);
+    }
+
+    .btn-row-action {
+      background: transparent;
+      border: 1px solid var(--border-control);
+      color: var(--text-muted);
+      padding: 4px 10px;
+      font-size: 11px;
+      font-family: var(--font-mono);
+      font-weight: 600;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+
+    .btn-row-action:hover {
+      background: var(--bg-badge);
+      color: var(--text-title);
+      border-color: var(--text-muted);
+    }
+
+    /* Barra de Carga de Memória / CPU por Nó */
+    .mini-load-bar {
+      width: 80px;
+      height: 5px;
+      background: var(--border-control);
+      border-radius: 3px;
+      overflow: hidden;
+      margin-top: 4px;
+    }
+
+    .mini-load-fill {
+      height: 100%;
+      background: var(--color-primary);
+      border-radius: 3px;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Trilho de Ícones Primário (Nível 1) -->
+  <div class="rail-nav">
+    <div class="rail-logo">S</div>
+    <div class="rail-btn active" title="Bancos de Dados">DB</div>
+    <div class="rail-btn" title="Editor SQL">SQL</div>
+    <div class="rail-btn" title="Endpoints de API">API</div>
+    <div class="rail-btn" title="Autenticação & Tokens">AUTH</div>
+    <div class="rail-btn" title="Telemetria & Logs">LOGS</div>
+  </div>
+
+  <!-- Sidebar Hierárquica de Infraestrutura (Nível 2) -->
+  <div class="project-sidebar">
+    <div class="project-selector">
+      <span>production-cluster-eu</span>
+      <span style="font-size: 10px; color: var(--text-muted);">▼</span>
+    </div>
+
+    <div class="side-nav-group">
+      <span class="side-group-label">Database Infrastructure</span>
+      <a href="#" class="side-link active">
+        <span>Instances & Replicas</span>
+        <span class="side-badge">6</span>
+      </a>
+      <a href="#" class="side-link">
+        <span>Connection Poolers</span>
+        <span class="side-badge">Active</span>
+      </a>
+      <a href="#" class="side-link">
+        <span>Replication Streams</span>
+        <span class="side-badge">WAL</span>
+      </a>
+      <a href="#" class="side-link">
+        <span>Point-in-Time Recovery</span>
+      </a>
+      <a href="#" class="side-link">
+        <span>Query Performance</span>
+      </a>
+    </div>
+
+    <div class="side-nav-group" style="margin-top: 14px;">
+      <span class="side-group-label">Security & Access</span>
+      <a href="#" class="side-link">
+        <span>Network Bans & CIDR</span>
+      </a>
+      <a href="#" class="side-link">
+        <span>SSL Enclave Certs</span>
+      </a>
+    </div>
+  </div>
+
+  <!-- Área Operacional de Governança -->
+  <div class="console-main">
+
+    <div class="top-meta">
+      <div class="breadcrumb">
+        <span>Projects</span>
+        <span>/</span>
+        <span>production-cluster-eu</span>
+        <span>/</span>
+        <strong>Instances & Multi-AZ Replicas</strong>
+      </div>
+      <div class="action-row">
+        <button type="button" class="btn-toggle-theme" onclick="alternarTema()">
+          <span id="theme-icon">☀️ Alternar para Light</span>
+        </button>
+        <button type="button" class="btn-supabase-outline">Failover Manual</button>
+        <button type="button" class="btn-supabase-primary">Provisionar Réplica</button>
+      </div>
+    </div>
+
+    <!-- Métricas de Recursos em Tempo Real com Micro-Sparklines -->
+    <div class="cluster-strip">
+      <div class="cluster-card">
+        <span class="k-label">CPU Utilization</span>
+        <div class="k-val-row">
+          <span class="k-val">14.8%</span>
+          <div class="spark-wrap">
+            <svg class="sparkline" viewBox="0 0 72 20">
+              <polyline points="0,14 12,12 24,15 36,9 48,11 60,7 72,10" />
+            </svg>
+          </div>
+        </div>
+        <span class="k-sub">16 vCPUs Dedicated</span>
+      </div>
+
+      <div class="cluster-card">
+        <span class="k-label">Active Pool Connections</span>
+        <div class="k-val-row">
+          <span class="k-val">284 / 1200</span>
+          <div class="spark-wrap">
+            <svg class="sparkline" viewBox="0 0 72 20">
+              <polyline points="0,16 12,14 24,10 36,12 48,8 60,6 72,5" />
+            </svg>
+          </div>
+        </div>
+        <span class="k-sub">Supavisor Pinned</span>
+      </div>
+
+      <div class="cluster-card">
+        <span class="k-label">Replication Lag</span>
+        <div class="k-val-row">
+          <span class="k-val">0.02 ms</span>
+          <div class="spark-wrap">
+            <svg class="sparkline" viewBox="0 0 72 20">
+              <polyline points="0,18 12,18 24,17 36,18 48,18 60,17 72,18" />
+            </svg>
+          </div>
+        </div>
+        <span class="k-sub">Sync State OK</span>
+      </div>
+
+      <div class="cluster-card">
+        <span class="k-label">WAL Disk Usage</span>
+        <div class="k-val-row">
+          <span class="k-val">142.4 GB</span>
+          <div class="spark-wrap">
+            <svg class="sparkline" viewBox="0 0 72 20">
+              <polyline points="0,10 12,9 24,11 36,8 48,6 60,5 72,4" />
+            </svg>
+          </div>
+        </div>
+        <span class="k-sub">IOPS: 12,000 Burst</span>
+      </div>
+    </div>
+
+    <!-- Tabela de Nós e Instâncias Replicadas -->
+    <div class="infra-table-box">
+      <div class="infra-header">
+        <span style="font-size: 13px; font-weight: 700; color: var(--text-title);">Topologia Ativa de Nós Postgres 16.4</span>
+        <span style="font-size: 12px; font-family: var(--font-mono); color: var(--text-muted);">Região: eu-west-1 (Frankfurt)</span>
+      </div>
+
+      <table class="infraTable">
+        <thead>
+          <tr>
+            <th>Nó / Identificador</th>
+            <th>Papel</th>
+            <th>Zona AZ</th>
+            <th>Throughput & Carga</th>
+            <th>Estado</th>
+            <th style="text-align: right;">Ação</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td style="font-family: var(--font-mono); font-weight: 600; color: var(--text-title);">db-master-01.internal</td>
+            <td><span class="pill-role" style="color: var(--color-primary); border-color: var(--color-primary);">PRIMARY WRITER</span></td>
+            <td>eu-west-1a</td>
+            <td>
+              <div style="font-family: var(--font-mono);">4,290 qps</div>
+              <div class="mini-load-bar"><div class="mini-load-fill" style="width: 68%;"></div></div>
+            </td>
+            <td>
+              <div class="pulse-container">
+                <span class="pulse-dot"></span>
+                <span>Online (Healthy)</span>
+              </div>
+            </td>
+            <td style="text-align: right;"><button type="button" class="btn-row-action">Gerenciar</button></td>
+          </tr>
+          <tr>
+            <td style="font-family: var(--font-mono); font-weight: 600; color: var(--text-title);">db-replica-01.internal</td>
+            <td><span class="pill-role">READ REPLICA</span></td>
+            <td>eu-west-1b</td>
+            <td>
+              <div style="font-family: var(--font-mono);">2,840 qps</div>
+              <div class="mini-load-bar"><div class="mini-load-fill" style="width: 44%;"></div></div>
+            </td>
+            <td>
+              <div class="pulse-container">
+                <span class="pulse-dot"></span>
+                <span>Online (Lag 0ms)</span>
+              </div>
+            </td>
+            <td style="text-align: right;"><button type="button" class="btn-row-action">Gerenciar</button>
+            </td>
+          </tr>
+          <tr>
+            <td style="font-family: var(--font-mono); font-weight: 600; color: var(--text-title);">db-replica-02.internal</td>
+            <td><span class="pill-role">READ REPLICA</span></td>
+            <td>eu-west-1c</td>
+            <td>
+              <div style="font-family: var(--font-mono);">2,110 qps</div>
+              <div class="mini-load-bar"><div class="mini-load-fill" style="width: 32%;"></div></div>
+            </td>
+            <td>
+              <div class="pulse-container">
+                <span class="pulse-dot"></span>
+                <span>Online (Lag 0ms)</span>
+              </div>
+            </td>
+            <td style="text-align: right;"><button type="button" class="btn-row-action">Gerenciar</button>
+            </td>
+          </tr>
+          <tr>
+            <td style="font-family: var(--font-mono); font-weight: 600; color: var(--text-title);">db-analytics-sync.internal</td>
+            <td><span class="pill-role">LOGICAL WORKER</span></td>
+            <td>eu-west-1a</td>
+            <td>
+              <div style="font-family: var(--font-mono);">410 qps</div>
+              <div class="mini-load-bar"><div class="mini-load-fill" style="width: 14%;"></div></div>
+            </td>
+            <td>
+              <div class="pulse-container">
+                <span class="pulse-dot"></span>
+                <span>Online (Streaming)</span>
+              </div>
+            </td>
+            <td style="text-align: right;"><button type="button" class="btn-row-action">Gerenciar</button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+  </div>
+
+  <script>
+    function alternarTema() {
+      const html = document.documentElement;
+      const temaAtual = html.getAttribute('data-theme') || 'dark';
+      const novoTema = temaAtual === 'dark' ? 'light' : 'dark';
+      html.setAttribute('data-theme', novoTema);
+
+      const btn = document.getElementById('theme-icon');
+      if (btn) {
+        btn.textContent = novoTema === 'dark' ? '☀️ Alternar para Light' : '🌙 Alternar para Dark';
+      }
+    }
+  </script>
+
+</body>
+</html>

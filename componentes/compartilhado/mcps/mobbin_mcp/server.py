@@ -29,6 +29,8 @@ except ImportError:
     pass
 
 from aidd_forge.core.mobbin_client import executar_busca
+from componentes.compartilhado.mcps.mobbin_mcp.token_extractor import extrair_tokens_mobbin
+from componentes.compartilhado.mcps.mobbin_mcp.theme_compiler import compilar_contrato_design
 
 NOME_SERVIDOR = "mobbin-mcp"
 DESCRICAO_SERVIDOR = "Servidor MCP para busca determinística de telas de design no Mobbin."
@@ -49,7 +51,37 @@ def executar_tool(nome_tool: str, args: Dict[str, Any]) -> Dict[str, Any]:
 
         try:
             res = executar_busca(query=query, platform=platform, mode=mode, limit=limit)
-            return {"sucesso": True, "screens": res.get("screens", []), "raw": res}
+            screens = res.get("screens", [])
+            # Extrai tokens determinísticos se houver telas retornadas
+            tokens = extrair_tokens_mobbin(screens[0]) if screens else None
+            return {"sucesso": True, "screens": screens, "tokens_referencia": tokens, "raw": res}
+        except Exception as e:
+            return {"sucesso": False, "erro": str(e)}
+
+    if nome_tool == "mobbin_extrair_tokens":
+        tela = args.get("tela")
+        if not tela:
+            return {"sucesso": False, "erro": "O parâmetro 'tela' é obrigatório."}
+        try:
+            tokens = extrair_tokens_mobbin(tela)
+            return {"sucesso": True, "tokens": tokens}
+        except Exception as e:
+            return {"sucesso": False, "erro": str(e)}
+
+    if nome_tool == "mobbin_compilar_design_system":
+        tokens = args.get("tokens")
+        saida = args.get("saida_dir")
+        if not tokens or not saida:
+            return {"sucesso": False, "erro": "Parâmetros 'tokens' e 'saida_dir' são obrigatórios."}
+        try:
+            res = compilar_contrato_design(tokens, Path(saida))
+            return {
+                "sucesso": True,
+                "arquivos": {
+                    "json": str(res["json"]),
+                    "css": str(res["css"])
+                }
+            }
         except Exception as e:
             return {"sucesso": False, "erro": str(e)}
 
@@ -65,6 +97,18 @@ def mobbin_buscar_telas(query: str, platform: str = "web", mode: str = "standard
         "mode": mode,
         "limit": limit
     })
+
+
+@mcp.tool()
+def mobbin_extrair_tokens(tela: Dict[str, Any]) -> Dict[str, Any]:
+    """Extrai design tokens determinísticos (paleta, tipografia, bordas) a partir de uma tela do Mobbin."""
+    return executar_tool("mobbin_extrair_tokens", {"tela": tela})
+
+
+@mcp.tool()
+def mobbin_compilar_design_system(tokens: Dict[str, Any], saida_dir: str) -> Dict[str, Any]:
+    """Gera os arquivos de contrato global (theme-tokens.json e design-system.css) para harmonia estrita do app."""
+    return executar_tool("mobbin_compilar_design_system", {"tokens": tokens, "saida_dir": saida_dir})
 
 
 if __name__ == "__main__":
