@@ -219,13 +219,7 @@ def mobbin_command(query: str, plataforma: str, modo: str, limite: int, as_json:
 
 
 def cmd_mobbin(query: str, plataforma: str, modo: str, limite: int, as_json: bool) -> int:
-    try:
-        from tools.mobbin_client import executar_busca
-    except ImportError:
-        # Se tools nao estiver no sys.path, busca pela raiz do monorepo
-        if _TOOLBOX_ROOT.is_dir() and str(_TOOLBOX_ROOT) not in sys.path:
-            sys.path.insert(0, str(_TOOLBOX_ROOT))
-        from tools.mobbin_client import executar_busca
+    from aidd_forge.core.mobbin_client import executar_busca
 
     import json as json_lib
 

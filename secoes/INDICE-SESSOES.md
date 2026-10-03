@@ -1,14 +1,12 @@
 # 📑 Índice Canônico de Sessões Agênticas — Ecossistema AIDD
 
-> **Total de Sessões Registradas:** 14  
-> **Última Atualização:** 2026-10-02T06:47:40.799731
+> **Total de Sessões Registradas:** 12  
+> **Última Atualização:** 2026-10-01T19:50:06.596258
 
 | Data / Hora | Harness | Modelo | Conversation ID | Objetivo / Título | Workspace |
 | :--- | :--- | :--- | :--- | :--- | :--- |
-| 2026-10-01 19:30:41 | `antigravity` | `gemini-3.8-flash-low` | [`9fd2dd0d...`](file:///C:/Users/trcnologia/.gemini/antigravity-cli/brain/9fd2dd0d-003a-4640-80f8-9bb3b184efad/.system_generated/logs/transcript_full.jsonl) | Sessão Ativa (Auto-Registrada) | `C:/Users/trcnologia/Desktop/ecossistema-aidd` |
-| 2026-10-01 14:17:27 | `claude` | `claude-opus-5-5` | [`b6199cb6...`](file:///C:/Users/trcnologia/.claude/projects/C--Users-trcnologia-Desktop-ecossistema-aidd/b6199cb6-6be0-41bc-bf1c-c7a8996f16e5.jsonl) | Sessão Ativa (Claude Code) | `C:/Users/trcnologia/Desktop/ecossistema-aidd` |
 | 2026-10-01 19:50:06 | `antigravity` | `gemini-3.8-flash-low` | [`8caca7e2...`](file:///C:/Users/trcnologia/.gemini/antigravity-cli/brain/8caca7e2-65c2-4f24-ab88-3cbf1add7642/.system_generated/logs/transcript_full.jsonl) | Sessão Ativa (Auto-Registrada) | `C:/Users/trcnologia/Desktop/worktrees_evolucao-fronteiras-ferramentas-ciclo-01-bloco-1/Fase_5_Ticket_5_Mapa_de_donos_e_schemas_dos_5_contratos` |
-| 2026-10-01 14:16:57 | `antigravity` | `gemini-3.8-flash-low` | [`49b00ff6...`](file:///C:/Users/trcnologia/.gemini/antigravity-cli/brain/49b00ff6-31c2-4afa-8580-38168af8aa9a/.system_generated/logs/transcript_full.jsonl) | Sessão Ativa (Auto-Registrada) | `C:/Users/trcnologia/Desktop/ecossistema-aidd` |
+| 2026-10-01 13:30:37 | `antigravity` | `gemini-3.8-flash-low` | [`49b00ff6...`](file:///C:/Users/trcnologia/.gemini/antigravity-cli/brain/49b00ff6-31c2-4afa-8580-38168af8aa9a/.system_generated/logs/transcript_full.jsonl) | Sessão Ativa (Auto-Registrada) | `C:/Users/trcnologia/Desktop/ecossistema-aidd` |
 | 2026-10-01 09:10:55 | `antigravity` | `gemini-3.8-flash-low` | [`b7063bd6...`](file:///C:/Users/trcnologia/.gemini/antigravity-cli/brain/b7063bd6-fa6d-4650-84e1-c5ecbdb46fac/.system_generated/logs/transcript_full.jsonl) | Sessão Ativa (Auto-Registrada) | `C:/Users/trcnologia/Desktop/ecossistema-aidd` |
 | 2026-10-01 10:08:26 | `antigravity` | `gemini-3.8-flash-low` | [`57105e95...`](file:///C:/Users/trcnologia/.gemini/antigravity-cli/brain/57105e95-4742-4e53-af8a-1341cb52e0a9/.system_generated/logs/transcript_full.jsonl) | Sessão Ativa (Auto-Registrada) | `C:/Users/trcnologia/Desktop/ecossistema-aidd` |
 | 2026-10-01 10:13:55 | `claude` | `claude-opus-5-5` | `ee536f65-5f7f-4728-9a58-6ada128f6877` | Fechamento do ciclo aidd-planner-ciclo-01 (gate_final) | `C:/Users/trcnologia/Desktop/ecossistema-aidd` |

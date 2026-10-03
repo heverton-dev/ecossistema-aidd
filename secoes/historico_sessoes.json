@@ -1,7 +1,7 @@
 {
   "versao": "1.0",
-  "atualizado_em": "2026-10-02T06:47:40.799731",
-  "total_sessoes": 14,
+  "atualizado_em": "2026-10-01T19:50:06.596258",
+  "total_sessoes": 12,
   "sessoes": [
     {
       "id": "fc4566a8-0804-4748-ab5f-ec105414273c",
@@ -103,13 +103,13 @@
     },
     {
       "id": "49b00ff6-31c2-4afa-8580-38168af8aa9a",
-      "registrado_em": "2026-10-01 14:16:57",
+      "registrado_em": "2026-10-01 13:30:37",
       "harness": "antigravity",
       "modelo": "gemini-3.8-flash-low",
       "titulo": "Sessão Ativa (Auto-Registrada)",
       "workspace": "C:/Users/trcnologia/Desktop/ecossistema-aidd",
       "transcript_path": "C:/Users/trcnologia/.gemini/antigravity-cli/brain/49b00ff6-31c2-4afa-8580-38168af8aa9a/.system_generated/logs/transcript_full.jsonl",
-      "atualizado_em": "2026-10-01 14:16:57"
+      "atualizado_em": "2026-10-01 13:30:37"
     },
     {
       "id": "8caca7e2-65c2-4f24-ab88-3cbf1add7642",
@@ -120,24 +120,6 @@
       "workspace": "C:/Users/trcnologia/Desktop/worktrees_evolucao-fronteiras-ferramentas-ciclo-01-bloco-1/Fase_5_Ticket_5_Mapa_de_donos_e_schemas_dos_5_contratos",
       "transcript_path": "C:/Users/trcnologia/.gemini/antigravity-cli/brain/8caca7e2-65c2-4f24-ab88-3cbf1add7642/.system_generated/logs/transcript_full.jsonl",
       "atualizado_em": "2026-10-01 19:50:06"
-    },
-    {
-      "id": "b6199cb6-6be0-41bc-bf1c-c7a8996f16e5",
-      "registrado_em": "2026-10-01 14:17:27",
-      "harness": "claude",
-      "modelo": "claude-opus-5-5",
-      "titulo": "Sessão Ativa (Claude Code)",
-      "workspace": "C:/Users/trcnologia/Desktop/ecossistema-aidd",
-      "transcript_path": "C:/Users/trcnologia/.claude/projects/C--Users-trcnologia-Desktop-ecossistema-aidd/b6199cb6-6be0-41bc-bf1c-c7a8996f16e5.jsonl"
-    },
-    {
-      "id": "9fd2dd0d-003a-4640-80f8-9bb3b184efad",
-      "registrado_em": "2026-10-01 19:30:41",
-      "harness": "antigravity",
-      "modelo": "gemini-3.8-flash-low",
-      "titulo": "Sessão Ativa (Auto-Registrada)",
-      "workspace": "C:/Users/trcnologia/Desktop/ecossistema-aidd",
-      "transcript_path": "C:/Users/trcnologia/.gemini/antigravity-cli/brain/9fd2dd0d-003a-4640-80f8-9bb3b184efad/.system_generated/logs/transcript_full.jsonl"
     }
   ]
 }

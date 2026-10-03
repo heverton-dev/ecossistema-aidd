@@ -142,13 +142,7 @@ def test_main_inject_falha_reporta_erros_e_sai_com_1(tmp_path: Path, capsys) -> 
 
 
 def test_main_mobbin_search_mocked(monkeypatch, capsys) -> None:
-    import sys
-    from pathlib import Path
-    raiz_ecossistema = Path(__file__).resolve().parents[4]
-    if str(raiz_ecossistema) not in sys.path:
-        sys.path.insert(0, str(raiz_ecossistema))
-
-    import tools.mobbin_client
+    from aidd_forge.core import mobbin_client
 
     def mock_executar_busca(query, platform="web", mode="standard", limit=10, image_quality="optimized"):
         return {
@@ -162,7 +156,7 @@ def test_main_mobbin_search_mocked(monkeypatch, capsys) -> None:
             ]
         }
 
-    monkeypatch.setattr(tools.mobbin_client, "executar_busca", mock_executar_busca)
+    monkeypatch.setattr(mobbin_client, "executar_busca", mock_executar_busca)
 
     exit_code = main(["mobbin", "dashboard", "--limite", "1"])
     output = capsys.readouterr().out

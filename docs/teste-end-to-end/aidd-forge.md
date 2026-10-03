@@ -128,7 +128,7 @@ A Lei #10 exige o Quarteto *Sine Qua Non* (`/api` OpenAPI/Swagger, `/webhook`, `
 
 - **Objetivo:** Adicionar capacidade de consulta determinística de blueprints, telas e fluxos visuais do Mobbin diretamente no `aidd-forge` e no ecossistema de forma agnóstica a harness.
 - **Entregas e Modificações:**
-  - `tools/mobbin_client.py`: Client universal determinístico consumindo a API REST Enterprise (`POST /v1/screens/search`) com suporte a CLI (`search`, `status`).
+  - `tools/aidd-forge/aidd_forge/core/mobbin_client.py`: Client universal determinístico consumindo a API REST Enterprise (`POST /v1/screens/search`) com suporte a CLI (`search`, `status`).
   - `ecossistema.py`: Roteamento do comando central `mobbin`.
   - `tools/aidd-forge/aidd_forge/cli.py`: Subcomando `mobbin` integrado via Click com saídas formatada e JSON puro.
   - `componentes/compartilhado/skills/aidd-forge/scripts/cli.py`: Despacho agnóstico do subcomando `mobbin` nas skills dos 7 harnesses.

@@ -1165,7 +1165,7 @@ def cmd_sessao(args):
 
 def cmd_mobbin(args):
     """Executa consultas de UI, fluxos e telas via Mobbin Enterprise."""
-    script = os.path.join(TOOLS_DIR, "mobbin_client.py")
+    script = os.path.join(TOOLS_DIR, "aidd-forge", "aidd_forge", "core", "mobbin_client.py")
     if not os.path.exists(script):
         print(f"Erro: script '{script}' não encontrado.")
         return 1

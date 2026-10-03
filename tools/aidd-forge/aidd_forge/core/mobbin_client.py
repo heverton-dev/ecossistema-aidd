@@ -19,7 +19,8 @@ from typing import Any, Dict, Optional
 
 try:
     from dotenv import load_dotenv
-    root_dir = Path(__file__).resolve().parent.parent
+    # aidd_forge/core/mobbin_client.py -> raiz do ecossistema (onde fica o .env)
+    root_dir = Path(__file__).resolve().parents[4]
     load_dotenv(root_dir / ".env")
 except ImportError:
     pass

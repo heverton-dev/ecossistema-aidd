@@ -1173,3 +1173,17 @@
   - E2E depois do Ticket 15: vazamentos 0 nos 3 fluxos (base: 2, 0, 2).
 - **Status:** **RESOLVIDO**.
 - **Data da Última Auditoria:** 02/10/2026.
+
+## 32. Integração do Mobbin no `aidd-forge`, com o cliente dentro da ferramenta (mobbin-integration)
+
+- **Objetivo da Correção:**
+  Busca de referências de UI no Mobbin pelo CLI do ecossistema (`python ecossistema.py mobbin`) e do forge (`aidd-forge mobbin`). O cliente fica em `tools/aidd-forge/aidd_forge/core/mobbin_client.py`: `tools/` só guarda as 8 ferramentas. `MOBBIN_API_KEY` é chave de serviço de design, não de LLM.
+- **Ferramentas Tocadas:** [`tools/aidd-forge`](file:///C:/Users/trcnologia/Desktop/ecossistema-aidd/tools/aidd-forge).
+- **O que executou:**
+  1. `aidd_forge/core/mobbin_client.py`: cliente determinístico da API do Mobbin; `.env` lido na raiz do ecossistema.
+  2. `aidd_forge/cli.py`: subcomando `mobbin` importando pelo pacote; `ecossistema.py` chama o novo caminho.
+- **Resultados de Testes:**
+  - `tools/aidd-forge/tests/unit/test_cli.py` → exit 0 (11 passed), com a busca simulada.
+  - `python ecossistema.py mobbin --help` → exit 0.
+- **Status:** **RESOLVIDO**.
+- **Data da Última Auditoria:** 03/10/2026.
