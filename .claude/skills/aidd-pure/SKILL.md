@@ -5,16 +5,19 @@ description: Runs Triad Flow 01 (build from scratch) end to end - forge, planner
 
 # aidd-pure (Flow 01, build from scratch)
 
-Pipeline: `[FORGE -> PLANNER] -> GENERATOR -> [MASTER -> ENTERPRISE -> OPS]`
+Pipeline: `[FORGE -> PLANNER -> MASTER -> DISPATCH] -> {ENGINE nas Worktrees} -> [BARREIRA (Rebase Sync) -> ENTERPRISE -> OPS -> 54 GATES]`
 
 | Stage | Tool | Output |
 |---|---|---|
-| Foundation | `aidd-forge` | git hooks and isolation rules |
-| Planning | `aidd-planner` | BDD/SDD entities, acceptance criteria, Quarteto Sine Qua Non |
-| Engine | `aidd-pure` (`tools/aidd-pure`) | strict TDD Red-Green, Clean Architecture in Python |
-| Harmonization | `aidd-master` | Modular Monolith VSA + Next.js |
-| Shielding | `aidd-enterprise` | SHA-256 injection and anti-drift audit |
-| Infrastructure | `aidd-ops` | Dockerfile, Nginx SSL, compose |
+| 1. Fundação | `aidd-forge` | blindagem agentica e hooks git |
+| 2. Planejamento | `aidd-planner` | contratos BDD/SDD, Quarteto Sine Qua Non, hash SHA-256 |
+| 3. Fatiamento VSA | `aidd-master` | fatiamento vertical e contratos de fatias |
+| 4. Despacho & Worktrees | `aidd-dispatch` | isolamento em git worktrees com micro-gates |
+| 5. Motor | `aidd-pure` (`tools/aidd-pure`) | execução TDD Red-Green estrito em Clean Architecture |
+| 6. Barreira & Rebase | `aidd-master` | rebase determinístico e merge das fatias |
+| 7. Blindagem | `aidd-enterprise` | auditoria SHA-256 e blindagem corporativa |
+| 8. Infraestrutura | `aidd-ops` | Dockerfile, Nginx SSL, compose |
+| 9. Qualidade Global | `54 Gates` | auditoria determinística final |
 
 ## Steps
 

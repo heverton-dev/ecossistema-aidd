@@ -5,16 +5,19 @@ description: Runs Triad Flow 03 (low-code liberation) end to end - removes Lovab
 
 # aidd-freedom (Flow 03, low-code liberation)
 
-Pipeline: `[FORGE -> PLANNER] -> FREEDOM -> [MASTER -> ENTERPRISE -> OPS]`
+Pipeline: `[FORGE -> PLANNER -> MASTER -> DISPATCH] -> {ENGINE nas Worktrees} -> [BARREIRA (Rebase Sync) -> ENTERPRISE -> OPS -> 54 GATES]`
 
 | Stage | Tool | Output |
 |---|---|---|
-| Foundation | `aidd-forge` | environment shielding and git hooks |
-| Planning | `aidd-planner` | data schemas and routes |
-| Engine | `aidd-freedom` (`tools/aidd-freedom`) | anti-lock-in scan, Supabase removal, PostgreSQL migration, original visual identity kept |
-| Harmonization | `aidd-master` | exported frontend wired to the modular Python API |
-| Shielding | `aidd-enterprise` | SHA-256 shielding and drift detection |
-| Infrastructure | `aidd-ops` | full containerization with Nginx and database |
+| 1. Fundação | `aidd-forge` | blindagem de ambiente e hooks git |
+| 2. Planejamento | `aidd-planner` | contratos BDD/SDD, esquemas de dados e rotas |
+| 3. Fatiamento VSA | `aidd-master` | fatiamento vertical e contratos de fatias |
+| 4. Despacho & Worktrees | `aidd-dispatch` | isolamento em git worktrees com micro-gates |
+| 5. Motor | `aidd-freedom` (`tools/aidd-freedom`) | varredura anti-lock-in, migração PostgreSQL e preservação visual |
+| 6. Barreira & Rebase | `aidd-master` | rebase determinístico e merge das fatias |
+| 7. Blindagem | `aidd-enterprise` | auditoria SHA-256 e proteção corporativa |
+| 8. Infraestrutura | `aidd-ops` | containerização completa, Nginx e banco de dados |
+| 9. Qualidade Global | `54 Gates` | auditoria determinística final |
 
 `freedom-motor` with project flags (`--nome`, `--pasta`, `--slug`, `--dry-run`) also routes here; `freedom-motor <operation>` runs a single engine step (see below).
 

@@ -5,16 +5,19 @@ description: Runs Triad Flow 02 (open-source engines) end to end - curates teste
 
 # aidd-open (Flow 02, open-source engines)
 
-Pipeline: `[FORGE -> PLANNER] -> FACTORY -> [MASTER -> ENTERPRISE -> OPS]`
+Pipeline: `[FORGE -> PLANNER -> MASTER -> DISPATCH] -> {ENGINE nas Worktrees} -> [BARREIRA (Rebase Sync) -> ENTERPRISE -> OPS -> 54 GATES]`
 
 | Stage | Tool | Output |
 |---|---|---|
-| Foundation | `aidd-forge` | agentic governance and hooks |
-| Planning | `aidd-planner` | integrations and requirements |
-| Engine | `aidd-open` (`tools/aidd-open`) | curated engines, multi-service compose, OpenAPI contracts |
-| Harmonization | `aidd-master` | Modular Monolith VSA + Next.js |
-| Shielding | `aidd-enterprise` | SHA-256 audit of proxies and gateways |
-| Infrastructure | `aidd-ops` | isolated networks and native compose |
+| 1. Fundação | `aidd-forge` | blindagem agentica e hooks git |
+| 2. Planejamento | `aidd-planner` | contratos BDD/SDD, integrações e requisitos |
+| 3. Fatiamento VSA | `aidd-master` | fatiamento vertical e contratos de fatias |
+| 4. Despacho & Worktrees | `aidd-dispatch` | isolamento em git worktrees com micro-gates |
+| 5. Motor | `aidd-open` (`tools/aidd-open`) | integração curada de motores open source |
+| 6. Barreira & Rebase | `aidd-master` | rebase determinístico e merge das fatias |
+| 7. Blindagem | `aidd-enterprise` | auditoria SHA-256 e gateways corporativos |
+| 8. Infraestrutura | `aidd-ops` | Dockerfile, compose e redes isoladas |
+| 9. Qualidade Global | `54 Gates` | auditoria determinística final |
 
 Namespace note: Antigravity CLI (`agy`) reserves `/open` to open files. There, use `/aidd-open`.
 
