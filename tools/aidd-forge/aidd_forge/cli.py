@@ -208,7 +208,7 @@ def fornecer_command(piece: str, destino: str) -> None:
         sys.exit(1)
 
 
-@cli.command("mobbin", help="Consulta deterministica de telas e fluxos de UI do Mobbin")
+@cli.command("mobbin", help="Consulta deterministica de telas e fluxos de UI do Mobbin (delegação ao aidd-planner)")
 @click.argument("query")
 @click.option("--plataforma", type=click.Choice(["web", "ios"]), default="web", help="Plataforma alvo")
 @click.option("--modo", type=click.Choice(["fast", "standard", "deep"]), default="standard", help="Modo de busca")
@@ -234,7 +234,7 @@ def cmd_mobbin(query: str, plataforma: str, modo: str, limite: int, as_json: boo
         print(json_lib.dumps(res, indent=2, ensure_ascii=False))
     else:
         screens = res.get("screens", [])
-        print(f"[aidd-forge] Telas encontradas no Mobbin para '{query}' ({plataforma}): {len(screens)}")
+        print(f"[aidd-planner via forge] Telas encontradas no Mobbin para '{query}' ({plataforma}): {len(screens)}")
         for idx, screen in enumerate(screens, 1):
             app_name = screen.get("app_name", "Desconhecido")
             screen_name = screen.get("name", "Sem nome")

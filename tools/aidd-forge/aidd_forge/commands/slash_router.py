@@ -100,8 +100,8 @@ INTENT_ROUTER_SECTION = (
     "- \"crie um roteiro de X\" / \"escreva um tutorial de X\" -> componente roteiro\n\n"
     "Se o usuario pedir referencia visual, telas ou fluxos de UI (\"buscar referencias de UI\", "
     "\"telas de checkout\", \"design de dashboard\", \"exemplos do mobbin\"), execute a busca "
-    "deterministica via Mobbin Enterprise:\n"
-    "`python ecossistema.py forge mobbin \"<termo>\" --plataforma web`\n"
+    "deterministica via Mobbin Enterprise no Planner:\n"
+    "`python ecossistema.py planner mobbin search \"<termo>\" --plataforma web`\n"
 )
 
 

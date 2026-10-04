@@ -38,8 +38,8 @@ pelo pipeline AIDD, sem depender de gosto subjetivo do subagente.
 
 ## Referencias e Blueprints Visuais (Mobbin Enterprise)
 
-- Ao desenhar novas interfaces, consultar telas e fluxos reais homologados no Mobbin:
-  `python ecossistema.py forge mobbin "<contexto da tela>" --plataforma web --limite 3`
+- Ao desenhar novas interfaces, consultar telas e fluxos reais homologados no Mobbin via Planner:
+  `python ecossistema.py planner mobbin search "<contexto da tela>" --plataforma web --limite 3`
 - As telas retornadas servem como blueprint de hierarquia visual, densidade de informacao
   e micro-copys para os componentes Tailwind/Shadcn do projeto.
 

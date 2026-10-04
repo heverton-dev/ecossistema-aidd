@@ -259,6 +259,16 @@ def cmd_export_dispatch(args: argparse.Namespace) -> int:
     return 0
 
 
+def cmd_mobbin(args: argparse.Namespace) -> int:
+    """Delegação direta para o cliente Mobbin do aidd-planner."""
+    from .core.mobbin_client import cmd_search, cmd_status
+    if getattr(args, "subcmd", None) == "status" or not getattr(args, "subcmd", None):
+        return cmd_status()
+    elif getattr(args, "subcmd", None) == "search":
+        return cmd_search(args)
+    return 0
+
+
 def cmd_audit(args: argparse.Namespace) -> int:
     """Executa os Quality Gates do aidd-planner."""
     planner_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -340,6 +350,18 @@ def main(argv: Optional[List[str]] = None) -> int:
     p_exp_disp.add_argument("arquivo", help="Caminho do arquivo PLANNER.json")
     p_exp_disp.add_argument("--output", "-o", "--saida", dest="output", help="Caminho do arquivo exportado")
     p_exp_disp.set_defaults(func=cmd_export_dispatch)
+
+    # Subcomando mobbin
+    p_mob = subparsers.add_parser("mobbin", help="Consulta deterministica de telas e fluxos de UI do Mobbin Enterprise")
+    mob_sub = p_mob.add_subparsers(dest="subcmd")
+    mob_sub.add_parser("status", help="Verifica integridade das credenciais no .env")
+    p_mob_search = mob_sub.add_parser("search", help="Busca telas de UI por linguagem natural")
+    p_mob_search.add_argument("query", help="Termo de pesquisa")
+    p_mob_search.add_argument("--plataforma", choices=["web", "ios"], default="web", help="Plataforma alvo")
+    p_mob_search.add_argument("--modo", choices=["fast", "standard", "deep"], default="standard", help="Modo de busca")
+    p_mob_search.add_argument("--limite", type=int, default=10, help="Quantidade maxima de telas")
+    p_mob_search.add_argument("--json", action="store_true", help="Saida em JSON puro")
+    p_mob.set_defaults(func=cmd_mobbin)
 
     # Subcomando audit
     p_aud = subparsers.add_parser("audit", help="Executa os Quality Gates do aidd-planner")

@@ -1192,3 +1192,25 @@
   - `python ecossistema.py mobbin --help` → exit 0.
 - **Status:** **RESOLVIDO**.
 - **Data da Última Auditoria:** 03/10/2026.
+
+---
+
+## 33. Migração do Cliente Mobbin e Motor Topológico de UI para o `aidd-planner` (mobbin-planner-migration)
+
+- **Objetivo da Correção:**
+  Transferir a responsabilidade e inteligência de design system, arquétipos topológicos e cliente de busca visual do Mobbin do `aidd-forge` para o `aidd-planner`. O `aidd-forge` retém seu foco estrito em governança, canteiro e hooks, mantendo compatibilidade retroativa ao delegar consultas de UI para o `aidd-planner`.
+- **Ferramentas Tocadas:** [`tools/aidd-planner`](file:///C:/Users/trcnologia/Desktop/ecossistema-aidd/tools/aidd-planner) e [`tools/aidd-forge`](file:///C:/Users/trcnologia/Desktop/ecossistema-aidd/tools/aidd-forge).
+- **O que executou:**
+  1. `tools/aidd-planner/aidd_planner/core/mobbin_client.py` e `src/core/mobbin_client.py`: implementação nativa do cliente Mobbin REST (`POST /v1/screens/search`), subcomandos `status` e `search`.
+  2. `tools/aidd-planner/aidd_planner/cli.py` e `src/cli.py`: exposição do comando `planner mobbin status` e `planner mobbin search`.
+  3. `tools/aidd-planner/aidd_planner/core/design_system.py` e `src/core/design_system.py`: acoplamento determinístico de design system dual-mode (WCAG 2.1) e classificação topológica de telas Mobbin sem dependência de LLM (Lei #1).
+  4. `tools/aidd-forge/aidd_forge/cli.py` e `core/mobbin_client.py`: delegação retrocompatível chamando `aidd-planner` com fallback seguro para não quebrar testes unitários existentes.
+  5. `tools/aidd-forge/aidd_forge/templates/skills/impeccable-ui/SKILL.md` e `commands/slash_router.py`: atualização dos comandos e referências de consulta para `python ecossistema.py planner mobbin search`.
+- **Resultados de Testes:**
+  - `pytest tools/aidd-forge/tests` → 311 passed, 1 skipped (exit 0).
+  - `pytest tools/aidd-planner/tests` → 24 passed (exit 0).
+  - `python ecossistema.py planner mobbin status` → exit 0.
+  - Quality Gate `G_DISCIPLINA_TESTE_FERRAMENTA.py` → exit 0 (PASS).
+- **Status:** **RESOLVIDO**.
+- **Data da Última Auditoria:** 04/10/2026.
+
