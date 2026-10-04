@@ -44,7 +44,7 @@ IGNORAR = ("materiais-extras", "sandbox-forge-teste", ".venv", "node_modules", "
 # Ponto de entrada de cada ferramenta (espelha os cmd_* de ecossistema.py).
 ENTRADAS = {
     "aidd-forge": ("forge", "aidd_forge/cli.py"),
-    "aidd-planner": ("planner", "aidd_planner/cli.py"),
+    "aidd-planner": ("planner", "src/cli.py"),
     "aidd-pure": ("pure-motor", "scripts/pipeline_completo.py"),
     "aidd-open": ("open-motor", "scripts/pipeline_factory.py"),
     "aidd-freedom": ("freedom-motor", "aidd_freedom/cli.py"),

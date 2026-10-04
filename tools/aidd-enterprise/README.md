@@ -102,3 +102,27 @@ python scripts/gates/G_SEGURANCA.py
 # 5. Iniciar a aplicação
 python src/server.py
 ```
+
+---
+
+## Fronteiras Canônicas e Responsabilidades
+
+Conforme o mapa oficial de arquitetura (`MAPA-DONOS-FERRAMENTAS.json` e `G_FRONTEIRA_FERRAMENTAS.py`):
+
+- **Responsabilidades:**
+  - `blindagem_componentes_missao_critica`
+  - `auditoria_integridade_sha256_e_selo`
+  - `verificacao_drift_nucleo_compartilhado`
+- **Pode guardar peças do catálogo:** Não (`pode_guardar_pecas: false`).
+- **Dono do conteúdo de:** `receita_injetor`, `catalogo_blindagem_sha256`, `regras_missao_critica`.
+- **Pode conter:** `src/**`, `scripts/**`, `schemas/**`, `tests/**`, `templates/rules/**`.
+- **Nunca conter (violações de fronteira):**
+  - `**/Dockerfile*`
+  - `**/docker-compose*`
+  - `**/deploy.sh`
+  - `**/nginx/**`
+  - `**/mcp_server*`
+  - `**/webhook*`
+  - `**/openapi*`
+- **Zona de escrita no projeto:** `COMPONENT-REGISTRY.json`, `RELATORIO-AUDITORIA.json`, `templates/rules/**`, `.aidd/selo/**`, `HANDOFF_ENTERPRISE_OPS.json`.
+

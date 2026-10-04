@@ -1,7 +1,7 @@
 {
   "versao_manifesto": "1.0",
   "titulo": "Ecossistema AIDD",
-  "nome_base": "25-09-2026_LIVRO-ECOSSISTEMA-AIDD",
+  "nome_base": "04-10-2026_LIVRO-ECOSSISTEMA-AIDD",
   "pasta_partes": "partes",
   "template": "livro-aidd.typst",
   "partes": [
@@ -49,8 +49,14 @@
       "hash_fonte": "343e3bb95d45e58092b3ea14c0e01d7f1b500bb90bb54e67680d91e44e97d6da",
       "palavras": 28261,
       "nota": "Remedição completa a partir do disco (51 portões, 178 G_*.py, 70 habilidades, 8 esquemas, 395 testes rastreados); faz-commit e registro de sessões (§5.6); estado real do ciclo aidd-diagnose e plano skills-pocock; B.8 handoff-melhoria; Correção da forma canônica de components sync no capítulo 12; Lente 15-D explicada no capítulo 12 (D1 a D15) e diferença para a matriz antiga de 11 dimensões"
+    },
+    {
+      "data": "2026-10-04",
+      "hash_fonte": "12683eb4c87f9d8307d24080a7c30be08aa6a3793e24119cc8b13d37d067a781",
+      "palavras": 28270,
+      "nota": ""
     }
   ],
-  "hash_fonte": "343e3bb95d45e58092b3ea14c0e01d7f1b500bb90bb54e67680d91e44e97d6da",
-  "ultima_compilacao": "2026-09-25"
+  "hash_fonte": "12683eb4c87f9d8307d24080a7c30be08aa6a3793e24119cc8b13d37d067a781",
+  "ultima_compilacao": "2026-10-04"
 }

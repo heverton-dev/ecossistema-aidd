@@ -1,6 +1,6 @@
 ---
 name: aidd-mcp
-description: Builds a new Model Context Protocol (MCP) server that ships inside an ecosystem tool or generated product, with its single source in componentes/<scope>/mcps/<name>/ and distribution through components sync. Use when the user wants to create or change an own MCP server, or says "criar MCP", "novo servidor MCP", "expor ferramenta via MCP". Not for third-party MCPs the agent consumes (that is aidd-dependencies).
+description: Builds a new Model Context Protocol (MCP) server that ships inside an ecosystem tool or generated product, with its single source in componentes/<scope>/mcps/<name>/ and distribution through components sync --tipo todos. Use when the user wants to create or change an own MCP server, or says "criar MCP", "novo servidor MCP", "expor ferramenta via MCP". Not for third-party MCPs the agent consumes (that is aidd-dependencies).
 ---
 
 # aidd-mcp

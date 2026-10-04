@@ -21,3 +21,29 @@ O **AIDD Factory** é a fábrica de código e templates de aplicação do ecossi
 # Execução via orquestrador raiz:
 python ecossistema.py factory --plano PLANO-INFRAESTRUTURA.json --pasta ./saida
 ```
+
+---
+
+## Fronteiras Canônicas e Responsabilidades
+
+Conforme o mapa oficial de arquitetura (`MAPA-DONOS-FERRAMENTAS.json` e `G_FRONTEIRA_FERRAMENTAS.py`):
+
+- **Responsabilidades:**
+  - `curadoria_motores_opensource`
+  - `integracao_fatias_dominio_factory`
+- **Pode guardar peças do catálogo:** Não (`pode_guardar_pecas: false`).
+- **Dono do conteúdo de:** `fatias_dominio_open`, `adaptadores_motores_opensource`.
+- **Pode conter:** `src/**`, `scripts/**`, `schemas/**`, `tests/**`, `templates/dominio/**`.
+- **Nunca conter (violações de fronteira):**
+  - `**/Dockerfile*`
+  - `**/docker-compose*`
+  - `**/deploy.sh`
+  - `**/nginx/**`
+  - `**/mcp_server*`
+  - `**/webhook*`
+  - `**/openapi*`
+  - `**/swagger*`
+  - `**/G_*.py`
+  - `**/*inject*`
+- **Zona de escrita no projeto:** `src/modules/*/**`, `frontend/app/*/**`, `HANDOFF_ENGINE_MASTER.json`, `.aidd/cache/**`.
+

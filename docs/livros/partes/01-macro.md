@@ -25,7 +25,7 @@ software assistida por agentes** que transforma uma intenção em linguagem natu
 um sistema completo, testado, auditado e implantado, usando oito ferramentas
 especializadas encadeadas por contratos formais, submetidas a portões determinísticos
 de qualidade e operáveis a partir de qualquer assistente de IA ou de um terminal. Quem
-quiser conferir cada "inspetor" com as próprias mãos encontra os 42 scripts de portão
+quiser conferir cada "inspetor" com as próprias mãos encontra os 65 scripts de portão
 em `gates/*.py` — cada um roda isolado com `python gates/G_<nome>.py` e devolve código
 de saída 0 (aprova) ou 1 (bloqueia), sem meio-termo.
 

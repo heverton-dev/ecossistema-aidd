@@ -92,3 +92,25 @@ Cofre local de segredos sem serviço externo — credenciais saem do `docker-com
 - **Testes de validação binária real:** `tests/test_helm_integration.py` executa `helm lint` e `helm template -f <values>` sobre o chart e afirma que os resources calculados pelo sizing real (Fase 3, `scripts/phases/03_sizing.py`) aparecem exatamente nos manifests renderizados (Deployments e PVCs).
 - **Dependência externa:** requer o binário `helm` (>= v3) no PATH ou em `HELM_BIN`. Se ausente, a suíte pula honestamente (skip) — não simula aprovação.
 
+---
+
+## Fronteiras Canônicas e Responsabilidades
+
+Conforme o mapa oficial de arquitetura (`MAPA-DONOS-FERRAMENTAS.json` e `G_FRONTEIRA_FERRAMENTAS.py`):
+
+- **Responsabilidades:**
+  - `geracao_infraestrutura_docker_compose`
+  - `provisionamento_vps_e_hardening`
+  - `gerenciamento_secrets_sops_age`
+  - `monitoramento_uptime_e_deploy`
+- **Pode guardar peças do catálogo:** Não (`pode_guardar_pecas: false`).
+- **Dono do conteúdo de:** `receitas_infra`, `templates_dockerfile_compose`, `scripts_deploy_nginx`.
+- **Pode conter:** `src/**`, `scripts/**`, `schemas/**`, `tests/**`, `templates/infra/**`.
+- **Nunca conter (violações de fronteira):**
+  - `**/src/modules/**`
+  - `**/src/core/**`
+  - `**/mcp_server*`
+  - `**/G_*.py`
+  - `**/vsa_generator*`
+- **Zona de escrita no projeto:** `Dockerfile`, `docker-compose.yml`, `deploy.sh`, `nginx/**`, `.sops.yaml`, `secrets/**`, `monitoramento/**`.
+

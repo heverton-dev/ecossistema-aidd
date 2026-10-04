@@ -59,3 +59,29 @@ python ecossistema.py bridge migrate-auth --source postgres://... --target postg
 # 6. Remover a aplicação da VPS (stack, volumes e DNS)
 python ecossistema.py bridge destroy hub-teste --domain hub-teste.meudominio.com
 ```
+
+---
+
+## Fronteiras Canônicas e Responsabilidades
+
+Conforme o mapa oficial de arquitetura (`MAPA-DONOS-FERRAMENTAS.json` e `G_FRONTEIRA_FERRAMENTAS.py`):
+
+- **Responsabilidades:**
+  - `desacoplamento_vendor_lockin_lowcode`
+  - `migracao_banco_supabase_para_postgres`
+  - `preservacao_ui_e_extracao_fatias_bridge`
+- **Pode guardar peças do catálogo:** Não (`pode_guardar_pecas: false`).
+- **Dono do conteúdo de:** `fatias_dominio_freedom`, `scripts_migracao_sql_freedom`.
+- **Pode conter:** `src/**`, `scripts/**`, `schemas/**`, `tests/**`, `parsers/**`.
+- **Nunca conter (violações de fronteira):**
+  - `**/Dockerfile*`
+  - `**/docker-compose*`
+  - `**/deploy.sh`
+  - `**/nginx/**`
+  - `**/mcp_server*`
+  - `**/webhook*`
+  - `**/openapi*`
+  - `**/swagger*`
+  - `**/G_*.py`
+  - `**/*inject*`
+- **Zona de escrita no projeto:** `.aidd/bridge-manifest.json`, `src/modules/*/**`, `frontend/app/*/**`, `HANDOFF_ENGINE_MASTER.json`, `.aidd/cache/**`.

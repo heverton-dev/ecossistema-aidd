@@ -81,7 +81,7 @@ def carregar_json(caminho: Path, rotulo: str) -> dict:
 
 def resolver_modo(cli: Optional[str]) -> str:
     bruto = cli if cli else os.environ.get("AIDD_FRONTEIRA_MODO", "")
-    bruto = str(bruto).strip().lower() or "aviso"
+    bruto = str(bruto).strip().lower() or "bloqueio"
     if bruto not in ("aviso", "bloqueio"):
         raise ErroGate(
             f"AIDD_FRONTEIRA_MODO inválido: {bruto!r} (use aviso|bloqueio)"
@@ -268,7 +268,7 @@ def main(argv: Optional[List[str]] = None) -> int:
         "--modo",
         choices=["aviso", "bloqueio"],
         default=None,
-        help="Nível do gate (padrão: variável AIDD_FRONTEIRA_MODO ou aviso)",
+        help="Nível do gate (padrão: variável AIDD_FRONTEIRA_MODO ou bloqueio)",
     )
     args = parser.parse_args(argv)
 

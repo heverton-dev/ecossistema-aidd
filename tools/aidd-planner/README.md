@@ -46,3 +46,30 @@ python ecossistema.py planner audit ./meu-app
 - `gates/G_PLANNER_SCHEMA.py`: Valida a integridade do JSON Schema e ausência de stubs.
 - `gates/G_PLANNER_SINE_QUA_NON.py`: Audita a conformidade da Lei Inviolável 10 (Quarteto).
 - `gates/G_PLANNER_COERENCIA_FLUXO.py`: Valida se os dados técnicos do fluxo escolhido estão completos.
+
+---
+
+## Fronteiras Canônicas e Responsabilidades
+
+Conforme o mapa oficial de arquitetura (`MAPA-DONOS-FERRAMENTAS.json` e `G_FRONTEIRA_FERRAMENTAS.py`):
+
+- **Responsabilidades:**
+  - `desenho_planta_baixa_arquitetural`
+  - `intake_sdd_bdd_e_especificacao`
+  - `roteamento_tickets_para_ferramentas`
+  - `calculo_dinamico_perfil_app`
+- **Pode guardar peças do catálogo:** Não (`pode_guardar_pecas: false`).
+- **Dono do conteúdo de:** `planta_arquitetura`, `tickets_roteados`, `perfil_app_dinamico`.
+- **Pode conter:** `src/**`, `scripts/**`, `schemas/**`, `tests/**`, `templates/plano/**`.
+- **Nunca conter (violações de fronteira):**
+  - `**/Dockerfile*`
+  - `**/docker-compose*`
+  - `**/deploy.sh`
+  - `**/nginx/**`
+  - `**/mcp_server*`
+  - `**/webhook*`
+  - `**/openapi*`
+  - `**/swagger*`
+  - `**/G_*.py`
+  - `**/*inject*`
+- **Zona de escrita no projeto:** `PLANNER.json`, `HANDOFF_PLANNER_ENGINE.json`, `VSA_DISPATCH.json`, `DESIGN-SYSTEM.json`.

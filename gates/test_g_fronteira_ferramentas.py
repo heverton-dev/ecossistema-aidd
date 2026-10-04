@@ -146,12 +146,20 @@ def test_aviso_reporta_dockerfile_e_copia_com_dono_e_sai_zero(tmp_path):
     )
 
 
-def test_aviso_e_padrao_sem_variavel_sai_zero(tmp_path):
-    """Sem AIDD_FRONTEIRA_MODO no ambiente, o padrão é aviso → exit 0."""
+def test_aviso_passa_com_flag_ou_env_sai_zero(tmp_path):
+    """Com --modo aviso ou AIDD_FRONTEIRA_MODO=aviso, o gate sai 0 mesmo com violações."""
     gate = montar_repo(tmp_path, violacoes=True)
-    res = rodar(gate, tmp_path, modo=None)
+    res = rodar(gate, tmp_path, modo="aviso")
     assert res.returncode == 0, res.stdout + res.stderr
     assert "modo=aviso" in res.stdout
+
+
+def test_padrao_sem_env_e_bloqueio_sai_um(tmp_path):
+    """Sem AIDD_FRONTEIRA_MODO no ambiente (padrão a partir do Ticket 20), o padrão é bloqueio → exit 1 sob violação."""
+    gate = montar_repo(tmp_path, violacoes=True)
+    res = rodar(gate, tmp_path, modo=None)
+    assert res.returncode == 1, res.stdout + res.stderr
+    assert "modo=bloqueio" in res.stdout
 
 
 def test_bloqueio_reprova_violacoes_com_exit_1(tmp_path):

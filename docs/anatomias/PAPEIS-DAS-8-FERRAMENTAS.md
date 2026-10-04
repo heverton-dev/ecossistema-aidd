@@ -34,6 +34,9 @@ Os 3 fluxos têm o mesmo começo e o mesmo fim. Só muda a etapa de construção
 - **aidd-enterprise** = BLINDAGEM: injeta componentes aprovados com selo SHA-256, registro e auditoria
 - **aidd-ops** = ENTREGA: coloca no ar na VPS, com segredos protegidos e monitoramento
 
-## Observação
+## Observação e Fronteiras Canônicas
 
-Hoje `aidd-master` e `aidd-enterprise` compartilham 86% dos arquivos (346 de 404 são idênticos). Os papéis acima são o **alvo**. A separação real está em `docs/auditoria/meus-prompts/PROMPT-FRONTEIRAS-E-DEDUP-FERRAMENTAS.txt`.
+Para a especificação formal, delimitação estrita de código, responsabilidades, catálogo e zonas de escrita de cada uma das 8 ferramentas, consulte o documento oficial canônico consolidado no Ciclo 01:
+- [FRONTEIRAS-POR-FERRAMENTA.md](FRONTEIRAS-POR-FERRAMENTA.md) (derivado diretamente de `componentes/compartilhado/specs/MAPA-DONOS-FERRAMENTAS.json` e fiscalizado pelo gate `G_FRONTEIRA_FERRAMENTAS.py`).
+
+A dedup histórica entre `aidd-master` e `aidd-enterprise` foi concluída nos Blocos 3 e 4 do Ciclo 01, consolidando as frentes canônicas.

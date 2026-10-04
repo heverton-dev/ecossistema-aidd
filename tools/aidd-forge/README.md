@@ -69,5 +69,25 @@ pytest -v
 
 ---
 
+## Fronteiras Canônicas e Responsabilidades
+
+Conforme o mapa oficial de arquitetura (`MAPA-DONOS-FERRAMENTAS.json` e `G_FRONTEIRA_FERRAMENTAS.py`):
+
+- **Responsabilidades:**
+  - `preparo_terreno_e_prontidao_projeto`
+  - `guarda_e_distribuicao_almoxarifado_pecas`
+  - `instalacao_e_auditoria_leis_guardas`
+  - `governanca_harnesses_e_regras_globais`
+- **Pode guardar peças do catálogo:** Sim (`pode_guardar_pecas: true`) — único dono legítimo do almoxarifado no ecossistema.
+- **Dono do conteúdo de:** `gates_projeto`, `catalogo_almoxarifado`, `regras_harness`, `governance_kit`.
+- **Pode conter:** `src/**`, `scripts/**`, `schemas/**`, `tests/**`, `templates/**`, `gates/**`, `almoxarifado/**`.
+- **Nunca conter (violações de fronteira):**
+  - `**/vsa_generator*`
+  - `**/dispatch_pipeline*`
+  - `**/docker-compose*`
+- **Zona de escrita no projeto:** `.git/hooks/**`, `gates/**`, `AGENTS.md`, `CLAUDE.md`, `GEMINI.md`, `.aidd/**`, `.aidd/HANDOFF_FORGE_PLANNER.json`.
+
+---
+
 ## 📄 Licença
 Distribuído sob os padrões de engenharia de software industrial do ecossistema AIDD.

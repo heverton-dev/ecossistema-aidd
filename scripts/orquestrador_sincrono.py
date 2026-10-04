@@ -33,6 +33,11 @@ try:
 except ImportError:
     jsonschema = None
 
+try:
+    from scripts import validar_handoff as _modulo_validar_handoff
+except ImportError:
+    _modulo_validar_handoff = None
+
 ROOT_DIR = Path(__file__).resolve().parent.parent
 if str(ROOT_DIR) not in sys.path:
     sys.path.insert(0, str(ROOT_DIR))
@@ -176,6 +181,14 @@ class OrquestradorSincrono:
         if not self._validar_schema(dados, schema_nome):
             self.log(f"Contrato {chave} ({relativo.as_posix()}) gravado por {dono} reprovado", "ERRO")
             return False
+
+        if _modulo_validar_handoff is not None:
+            if not _modulo_validar_handoff.validar_handoff(str(caminho)):
+                self.log(
+                    f"Contrato {chave} ({relativo.as_posix()}) reprovado na validação de evidências (validar_handoff)",
+                    "ERRO",
+                )
+                return False
 
         self.contratos[chave] = dados
         self.contratos_lidos.append({

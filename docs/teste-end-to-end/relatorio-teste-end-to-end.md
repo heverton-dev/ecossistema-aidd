@@ -1284,4 +1284,22 @@
 - **Status:** **RESOLVIDO**.
 - **Data da Última Auditoria:** 04/10/2026.
 
+## 35. Fechamento do Bloco 5: Documentação de Fronteiras nas 8 Ferramentas (Tickets 20 a 23)
+
+- **Objetivo da Correção:**
+  Atualização canônica dos `README.md` das 8 ferramentas (`tools/aidd-*`) documentando rigorosamente fronteiras, responsabilidades únicas, entradas e saídas de handoff e isolamento de escopo (Ticket 20), sem alteração de código executável.
+- **Ferramentas Tocadas:** [`tools/aidd-forge`](file:///C:/Users/trcnologia/Desktop/ecossistema-aidd/tools/aidd-forge), [`tools/aidd-planner`](file:///C:/Users/trcnologia/Desktop/ecossistema-aidd/tools/aidd-planner), [`tools/aidd-pure`](file:///C:/Users/trcnologia/Desktop/ecossistema-aidd/tools/aidd-pure), [`tools/aidd-master`](file:///C:/Users/trcnologia/Desktop/ecossistema-aidd/tools/aidd-master), [`tools/aidd-enterprise`](file:///C:/Users/trcnologia/Desktop/ecossistema-aidd/tools/aidd-enterprise), [`tools/aidd-ops`](file:///C:/Users/trcnologia/Desktop/ecossistema-aidd/tools/aidd-ops), [`tools/aidd-freedom`](file:///C:/Users/trcnologia/Desktop/ecossistema-aidd/tools/aidd-freedom), [`tools/aidd-open`](file:///C:/Users/trcnologia/Desktop/ecossistema-aidd/tools/aidd-open).
+- **O que executou:**
+  1. Adicionada a seção canônica de fronteiras e handoff nos 8 `README.md` em `tools/`.
+  2. Criado `tests/test_readme_fronteiras.py` para validação determinística de presença de seção de fronteira em todas as ferramentas.
+  3. Atualização dos livros vivos, catálogo de peças e 13 mapas visuais da auditoria (Tickets 21, 22 e 23).
+- **Resultados de Testes:**
+  - `pytest tests/test_readme_fronteiras.py` → exit 0 (8 passed).
+  - `pytest tests/test_mapas_e_livros_em_dia.py` → exit 0 (16 passed).
+  - `G_TESTES_REAIS.py` → 2421 passed, 0 failed, 12 skipped (100% OK em todas as 8 ferramentas).
+  - `G_DISCIPLINA_TESTE_FERRAMENTA.py` → exit 0 (PASS).
+- **Status:** **RESOLVIDO**.
+- **Data da Última Auditoria:** 04/10/2026.
+
+
 

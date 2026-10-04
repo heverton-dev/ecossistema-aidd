@@ -157,6 +157,33 @@ O aidd-pure funciona sozinho, via CLI direto — nenhuma ferramenta extra é nec
 
 É uma ferramenta complementar, não um requisito. Se você usa apenas um harness por vez, o aidd-pure via CLI direto já resolve.
 
+---
+
+## Fronteiras Canônicas e Responsabilidades
+
+Conforme o mapa oficial de arquitetura (`MAPA-DONOS-FERRAMENTAS.json` e `G_FRONTEIRA_FERRAMENTAS.py`):
+
+- **Responsabilidades:**
+  - `construcao_do_zero_tdd_red_green`
+  - `geracao_fatias_dominio_vsa_zero`
+- **Pode guardar peças do catálogo:** Não (`pode_guardar_pecas: false`).
+- **Dono do conteúdo de:** `fatias_dominio_pure`, `testes_unitarios_dominio_pure`.
+- **Pode conter:** `src/**`, `scripts/**`, `schemas/**`, `tests/**`, `templates/dominio/**`.
+- **Nunca conter (violações de fronteira):**
+  - `**/Dockerfile*`
+  - `**/docker-compose*`
+  - `**/deploy.sh`
+  - `**/nginx/**`
+  - `**/mcp_server*`
+  - `**/webhook*`
+  - `**/openapi*`
+  - `**/swagger*`
+  - `**/G_*.py`
+  - `**/*inject*`
+- **Zona de escrita no projeto:** `src/modules/*/**`, `frontend/app/*/**`, `HANDOFF_ENGINE_MASTER.json`, `.aidd/cache/**`.
+
+---
+
 ## Licença
 
 MIT — veja [LICENSE](LICENSE).

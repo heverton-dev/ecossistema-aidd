@@ -46,6 +46,8 @@ ERRATA_FICHAS = {
         "invariante no `AGENTS.md`, não arquivos de portão.",
     "catálogo de ferramentas (`data/catalogo_ferramentas.json`)":
         "requisitos de recursos (`data/requisitos_recursos.json`)",
+    "`aidd-generator`, `aidd-factory`, `aidd-bridge`":
+        "`aidd-pure`, `aidd-open`, `aidd-freedom`",
 }
 
 
@@ -259,20 +261,23 @@ HARNESSES = [h for h in (".agents", ".claude", ".codebuddy", ".codex", ".cursor"
 
 # Ler fichas das 8 ferramentas macro
 fichas_macro = {}
-tools_order = [
-    "aidd-forge",
-    "aidd-planner",
-    "aidd-pure",
-    "aidd-open",
-    "aidd-freedom",
-    "aidd-master",
-    "aidd-enterprise",
-    "aidd-ops"
-]
+MAPA_NOMES_HISTORICOS = {
+    "aidd-forge": "aidd-forge",
+    "aidd-planner": "aidd-planner",
+    "aidd-pure": "aidd-generator",
+    "aidd-open": "aidd-factory",
+    "aidd-freedom": "aidd-bridge",
+    "aidd-master": "aidd-master",
+    "aidd-enterprise": "aidd-enterprise",
+    "aidd-ops": "aidd-ops"
+}
+
+tools_order = list(MAPA_NOMES_HISTORICOS.keys())
 
 errata_aplicada = []
 for t in tools_order:
-    f_path = DIR_HISTORICO / f"{t}-{DATA_FICHAS}.md"
+    nome_historico = MAPA_NOMES_HISTORICOS[t]
+    f_path = DIR_HISTORICO / f"{nome_historico}-{DATA_FICHAS}.md"
     if not f_path.is_file():
         raise FileNotFoundError(f"Ficha histórica ausente: {f_path}")
     texto = f_path.read_text(encoding="utf-8")

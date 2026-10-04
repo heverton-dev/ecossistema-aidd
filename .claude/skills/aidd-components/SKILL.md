@@ -1,6 +1,6 @@
 ---
 name: aidd-components
-description: Creates or updates agnostic ecosystem components (skills, commands, hooks, mcps, specs, configs, sub-agents, scripts) in the single source componentes/ and distributes them to every harness with components sync and verify. Use when the user asks to create, update or sync a component, or says "componente", "sincronizar componentes", "components sync", "distribuir para os harnesses".
+description: Creates or updates agnostic ecosystem components (skills, commands, hooks, mcps, specs, configs, sub-agents, scripts) in the single source componentes/ and distributes them to every harness with components sync --tipo todos and verify. Use when the user asks to create, update or sync a component, or says "componente", "sincronizar componentes", "components sync", "distribuir para os harnesses".
 ---
 
 # aidd-components

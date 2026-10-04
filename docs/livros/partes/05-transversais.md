@@ -21,7 +21,7 @@ habilidade nasce em `componentes/compartilhado/skills/<nome>/` — a fonte físi
 — e é distribuída para os dez ambientes de assistente por
 `python ecossistema.py components sync --tipo todos`.
 
-O repositório tem **70 habilidades** nessa pasta e **16 comandos** em
+O repositório tem **44 habilidades** nessa pasta e **19 comandos** em
 `componentes/compartilhado/comandos/`.
 
 ## 21.2 As famílias de habilidades
@@ -125,30 +125,30 @@ Há ainda o modo de reparo: `components sync --tipo todos --force` restaura dest
 
 ## 21.5 Rastreabilidade
 
-`componentes/compartilhado/skills/` (70 habilidades, contagem em 25/09/2026);
-`componentes/compartilhado/comandos/` (16 comandos); `scripts/gestor_componentes.py`;
+`componentes/compartilhado/skills/` (44 habilidades, contagem em 04/10/2026);
+`componentes/compartilhado/comandos/` (19 comandos); `scripts/gestor_componentes.py`;
 `ecossistema.py::cmd_components`; `docs/protocolos/AGENTS-REFERENCIA-COMPLETA.md` §3 e §5.
 
 # Capítulo 22 — O catálogo completo de portões
 
-## 22.1 A distribuição dos 178 portões
+## 22.1 A distribuição dos 186 portões
 
-O repositório tem 178 arquivos `G_*.py` rastreados pelo git (contagem de 25/09/2026).
-Eles se distribuem em seis camadas:
+O repositório tem 186 arquivos `G_*.py` rastreados pelo git (contagem de 04/10/2026).
+Eles se distribuem em camadas:
 
 | Camada                  | Onde                                   | Quantidade | Papel                                               |
 | :---------------------- | :------------------------------------- | ---------: | :---------------------------------------------------- |
-| Portões globais         | `gates/`                               |         51 | Auditam o ecossistema inteiro                        |
-| Portões de ferramenta   | `tools/<ferramenta>/gates/` ou `scripts/gates/` | 47 | Auditam a ferramenta e o que ela produz        |
-| Portões-template        | `templates/gates/` do forge, master e enterprise | 32 (12 + 10 + 10) | São injetados nos projetos gerados |
+| Portões globais         | `gates/`                               |         65 | Auditam o ecossistema inteiro                        |
+| Portões de ferramenta   | `tools/<ferramenta>/gates/` ou `scripts/gates/` | 21 | Auditam a ferramenta e o que ela produz        |
+| Portões compartilhados/injetor | `componentes/compartilhado/{gates,injetor}/` | 28 | Fonte canônica de distribuição e variantes          |
+| Portões-template        | `templates/gates/` do forge            |         12 | São injetados nos projetos gerados                   |
 | Exemplos de referência  | `tools/aidd-enterprise/materiais-extras/examples/` | 38 | Cópias dentro de projetos-exemplo (não rodam no commit) |
-| Sandbox de teste        | `tools/aidd-forge/sandbox-forge-teste/gates/` | 8 | Alvo de teste da injeção do forge |
-| Auditoria 15-D          | `docs/auditoria/{aidd-diagnose,aidd-melhoria}/` | 2 | `G_auditoria_15D.py` do pipeline 4F |
+| Auditoria 15-D          | `docs/auditoria/`                      |         13 | `G_*.py` de auditorias de ciclos e ferramentas        |
+| Sandbox de teste        | `tools/aidd-forge/sandbox-forge-teste/gates/` e fixtures | 9 | Alvo de teste da injeção e conformidade             |
 | Portões de projeto      | Projetos gerados                       |   variável | Cópias dos templates, ativas no projeto do usuário   |
 
-A contagem de 178 inclui as cópias distribuídas — o número de portões **distintos** é
-menor, e a duplicação entre `aidd-master` e `aidd-enterprise` é justamente o que
-`G_DRIFT_NUCLEO_COMPARTILHADO` mantém sob controle.
+A contagem de 186 inclui as cópias distribuídas — o número de portões **distintos** é
+menor, e a dedup do núcleo compartilhado mantém sob controle a paridade entre ferramentas.
 
 ## 22.2 Portões por ferramenta
 
@@ -165,7 +165,7 @@ menor, e a duplicação entre `aidd-master` e `aidd-enterprise` é justamente o 
 
 ## 22.3 As categorias de auditoria
 
-Os 51 portões globais podem ser lidos por intenção, e essa leitura revela a estratégia
+Os 65 portões globais podem ser lidos por intenção, e essa leitura revela a estratégia
 de qualidade do ecossistema:
 
 | Categoria                | Portões                                                                                     |
@@ -212,7 +212,7 @@ que a execução se apoie em artefato residual de uma execução anterior.
 
 ## 22.5 Rastreabilidade
 
-`gates/` (51 portões e suítes); `tools/*/gates/` e `tools/*/scripts/gates/`;
+`gates/` (65 portões e suítes); `tools/*/gates/` e `tools/*/scripts/gates/`;
 `.pre-commit-config.yaml`; `docs/protocolos/PROTOCOLO-TESTES-FERRAMENTAS.md`;
 `docs/protocolos/AGENTS-REFERENCIA-COMPLETA.md` §4.
 
