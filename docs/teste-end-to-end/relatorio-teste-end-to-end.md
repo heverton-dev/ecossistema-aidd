@@ -77,8 +77,13 @@
 - **Entrega:** Templates de gates (`G_DETERMINISMO_LEI_1.py`, `G_QUARTETO_SINE_QUA_NON.py`, `G_SAIDA_BINARIA.py`, `G_STACK_PADRAO_OURO.py`) e skills (`aidd-grill`, `aidd-spec`, `aidd-tdd`, `aidd-tickets`) integrados ao injetor e validados na suíte unitária/integração.
 - **Status:** **HOMOLOGADO** (100% de conformidade com os testes automatizados).
 
+#### Atualização Ciclo-02 (03/10/2026): Seções de Robustez 4F nos Templates do Forge
+- **Nome:** Paridade estrita dos moldes de skills do Forge com a convenção 4F (`CONVENCAO-AUTORIA-SKILLS.md`).
+- **Entrega:** Atualização dos templates de skills (`aidd-grill`, `aidd-spec`, `aidd-tdd`, `aidd-tickets`) em `tools/aidd-forge/aidd_forge/templates/skills/` com as seções `## Negative Guardrails`, `## Failure Modes & Fallback` e `## Stopping Checklist`, garantindo 100% de aprovação em `tests/test_skills_pocock_distribuicao.py` e no gate `G_TESTES_REAIS` (311 passed em `aidd-forge`).
+- **Status:** **HOMOLOGADO** (paridade byte-a-byte validada).
+
 - **Taxa de Conformidade:** **100.0%** (15 de 15 verificadores aprovados - **PASS**)
-- **Testes Unitários:** **294 passed**, 1 skipped.
+- **Testes Unitários:** **311 passed**, 1 skipped.
 
 ---
 

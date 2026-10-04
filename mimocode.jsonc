@@ -69,7 +69,7 @@
         "codebase-memory-mcp"
       ],
       "enabled": true,
-      "cwd": "C:\\Users\\trcnologia\\Desktop\\wt_impeccable_mobbin"
+      "cwd": "C:\\Users\\trcnologia\\Desktop\\ecossistema-aidd"
     },
     "mcp-gatekeeper": {
       "type": "local",
@@ -78,7 +78,7 @@
         "componentes/compartilhado/src-core/mcp_gatekeeper.py"
       ],
       "enabled": true,
-      "cwd": "C:\\Users\\trcnologia\\Desktop\\wt_impeccable_mobbin"
+      "cwd": "C:\\Users\\trcnologia\\Desktop\\ecossistema-aidd"
     },
     "mobbin-mcp": {
       "type": "local",

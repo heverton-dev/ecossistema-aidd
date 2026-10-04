@@ -37,14 +37,14 @@
     "codebase-memory-mcp": {
       "command": "C:\\Users\\trcnologia\\tools\\codebase-memory-mcp\\codebase-memory-mcp.exe",
       "args": [],
-      "cwd": "C:\\Users\\trcnologia\\Desktop\\wt_impeccable_mobbin"
+      "cwd": "C:\\Users\\trcnologia\\Desktop\\ecossistema-aidd"
     },
     "mcp-gatekeeper": {
       "command": "python",
       "args": [
         "componentes/compartilhado/src-core/mcp_gatekeeper.py"
       ],
-      "cwd": "C:\\Users\\trcnologia\\Desktop\\wt_impeccable_mobbin"
+      "cwd": "C:\\Users\\trcnologia\\Desktop\\ecossistema-aidd"
     },
     "mobbin-mcp": {
       "command": "python",
