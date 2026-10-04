@@ -13,7 +13,6 @@ from typing import Dict, List, Any
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "..", "..", "componentes", "compartilhado", "src-core"))
 from core.result import Result
 
-_TEMPLATES_DIR = os.path.join(os.path.dirname(__file__), "..", "..", "templates", "docs")
 
 
 def _montar_contexto(analysis: dict) -> dict:
@@ -49,11 +48,16 @@ def gerar_swagger(analysis: dict, pasta_saida: str) -> Result:
     except ImportError:
         return Result.fail("Jinja2 nao instalado", codigo="JINJA2_AUSENTE")
 
-    env = Environment(loader=FileSystemLoader(_TEMPLATES_DIR))
+    # openapi.json.j2 vem do almoxarifado (Bloco 4: a cópia em templates/docs saiu);
+    # README.md.j2 é só do aidd-open e continua em templates/docs.
+    from core.vsa_generator import obter_molde_vsa
+    molde_openapi = obter_molde_vsa("openapi.json.j2")
+    docs_locais = os.path.join(os.path.dirname(__file__), "..", "..", "templates", "docs")
+    env = Environment(loader=FileSystemLoader([os.path.dirname(molde_openapi), docs_locais]))
 
     # OpenAPI
     try:
-        tpl = env.get_template("openapi.json.j2")
+        tpl = env.get_template(os.path.basename(molde_openapi))
         conteudo = tpl.render(**contexto)
         # Validar JSON
         dados = json.loads(conteudo)

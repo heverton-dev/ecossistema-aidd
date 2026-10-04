@@ -7,8 +7,12 @@ import re
 import sys
 import types
 
-from application.commands.inject import _tentar_injecao_por_linguagem_natural
+from application.pecas_catalogo import carregar_injetor
 from application.commands.setup import ensure_environment
+
+
+def _tentar_injecao_por_linguagem_natural(prompt: str, base_dir: str = ".") -> bool:
+    return carregar_injetor()._tentar_injecao_por_linguagem_natural(prompt, base_dir=base_dir)
 
 
 def cmd_plan(prompt: str, base_dir: str = ".", auto_apply: bool = False):

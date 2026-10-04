@@ -68,7 +68,7 @@ def projeto_com_owasp(tmp_path):
 
 class TestCarregarModulo:
     def test_carrega_modulo_existente(self):
-        caminho = Path(__file__).resolve().parent.parent / 'scripts' / 'gates' / 'G_BLOQUEAR_SEGREDOS.py'
+        caminho = verificar_gates._caminho_gate_catalogo('G_BLOQUEAR_SEGREDOS')
         mod = verificar_gates._carregar_modulo('G_BLOQUEAR_SEGREDOS', caminho)
         assert hasattr(mod, 'escanear_conteudo')
         assert hasattr(mod, 'main')

@@ -127,12 +127,15 @@ def test_templates_usam_biblioteca_secure():
     """Garante que tanto templates/core quanto templates/v2 usam a biblioteca secure via AST."""
     root = Path(__file__).resolve().parent.parent.parent
     caminhos = [
-        root / "templates" / "core" / "security.py",
-        root / "templates" / "v2" / "security.py",
+        p for p in [
+            root / "templates" / "core" / "security.py",
+            root / "templates" / "v2" / "security.py",
+            root / "src" / "core" / "security.py",
+        ] if p.exists()
     ]
+    assert len(caminhos) >= 1, "Nenhum arquivo security.py encontrado"
 
     for p in caminhos:
-        assert p.exists(), f"Template nao encontrado: {p}"
         conteudo = p.read_text(encoding="utf-8")
         arvore = ast.parse(conteudo, filename=str(p))
 

@@ -55,6 +55,7 @@ PECA_POR_MOLDE = {
     "Dockerfile": "moldes/infra/Dockerfile",
     "docker-compose.yml": "moldes/infra/variantes/aidd-open/docker-compose.yml",
     "deploy.sh": "moldes/infra/deploy.sh",
+    "openapi.json.j2": "moldes/quarteto/openapi.json.j2",
 }
 
 

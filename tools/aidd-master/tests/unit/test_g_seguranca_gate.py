@@ -20,6 +20,8 @@ import pytest
 
 REPO_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
 GATE_SCRIPT = os.path.join(REPO_ROOT, "scripts", "gates", "G_SEGURANCA.py")
+if not os.path.isfile(GATE_SCRIPT):
+    GATE_SCRIPT = os.path.join(os.path.dirname(os.path.dirname(REPO_ROOT)), "componentes", "compartilhado", "gates", "G_SEGURANCA.py")
 
 TERMOS_MARKETING_PROIBIDOS = [
     "Score de Blindagem",

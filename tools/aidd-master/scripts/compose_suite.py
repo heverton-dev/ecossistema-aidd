@@ -23,6 +23,16 @@ import tempfile
 
 from cookiecutter.main import cookiecutter
 
+try:
+    sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+    from moldes_catalogo import gates_de_projeto, molde  # noqa: E402
+except ImportError:
+    def molde(pasta_templates, nome):
+        return os.path.join(pasta_templates, nome)
+    def gates_de_projeto(pasta_gates):
+        return {g: os.path.join(pasta_gates, g) for g in os.listdir(pasta_gates)} if os.path.isdir(pasta_gates) else {}
+
+
 # Fonte única de verdade: todo módulo core/*.py que server.py (gerado por
 # generate_modular_server_code) importa via `from core.X import ...`.
 # provision_project.py reusa esta mesma lista — nunca duplicar aqui, ou as
@@ -560,7 +570,7 @@ def _setup_directories(target_dir: str) -> dict[str, str]:
 def _copy_shared_kernel(templates_v2: str, core_dir: str, shared_ui_dir: str, shared_utils_dir: str) -> None:
     """Copia componentes do kernel compartilhado e utilitários transversais."""
     for cf in CORE_KERNEL_FILES:
-        src = os.path.join(templates_v2, cf)
+        src = molde(templates_v2, cf)
         dst = os.path.join(core_dir, cf)
         if os.path.isfile(src):
             shutil.copyfile(src, dst)
@@ -570,17 +580,9 @@ def _copy_shared_kernel(templates_v2: str, core_dir: str, shared_ui_dir: str, sh
     # (Ticket 17 / D1 / DoD 7). swagger.html é lido por core/openapi.py,
     # webhook_studio.html por core/webhooks.py e mcp_studio.html por core/mcp_server.py.
     for asset in ("swagger.html", "webhook_studio.html", "mcp_studio.html"):
-        src = None
-        try:
-            from aidd_forge.core.almoxarifado import caminho_peca
-            src = str(caminho_peca(f"moldes/quarteto/{asset}"))
-        except Exception:
-            local_src = os.path.join(templates_v2, asset)
-            if os.path.isfile(local_src):
-                src = local_src
-
-        if src and os.path.isfile(src):
-            dst = os.path.join(core_dir, asset)
+        src = molde(templates_v2, asset)
+        dst = os.path.join(core_dir, asset)
+        if os.path.isfile(src):
             shutil.copyfile(src, dst)
             print(f"  [+] Core Kernel (Quarteto Almoxarifado): {asset}")
 
@@ -674,7 +676,7 @@ def _generate_server_and_ui(
         escrever_atomico(os.path.join(static_dir, "index.html"), index_html)
         print("  [+] Front-end Super-App 'src/static/index.html' gerado!")
 
-    docs_template_path = os.path.join(templates_v2, "docs.html")
+    docs_template_path = molde(templates_v2, "docs.html")
     if os.path.isfile(docs_template_path):
         with open(docs_template_path, "r", encoding="utf-8") as tmpf:
             raw_docs_html = tmpf.read()
@@ -682,7 +684,7 @@ def _generate_server_and_ui(
         escrever_atomico(os.path.join(static_dir, "docs.html"), final_docs_html)
         print("  [+] Front-end Docs 'src/static/docs.html' gerado dinamicamente via AST!")
 
-    output_css_src = os.path.join(templates_v2, "output.css")
+    output_css_src = molde(templates_v2, "output.css")
     if os.path.isfile(output_css_src):
         shutil.copyfile(output_css_src, os.path.join(static_dir, "output.css"))
         print("  [+] Tailwind CSS estático: src/static/output.css")
@@ -707,18 +709,16 @@ def _copy_gates_and_automation(
     target_dir: str, core_dir: str, target_gates_dir: str, target_scripts_dir: str
 ) -> None:
     """Copiar Quality Gates, Fuzzing, scripts e templates Cookiecutter/Jinja2."""
-    if os.path.isdir(gates_dir):
-        for g in os.listdir(gates_dir):
-            if g.endswith(".py"):
-                shutil.copyfile(os.path.join(gates_dir, g), os.path.join(target_gates_dir, g))
-                print(f"  [+] Quality Gate: {g}")
+    for g, origem in sorted(gates_de_projeto(gates_dir).items()):
+        shutil.copyfile(origem, os.path.join(target_gates_dir, g))
+        print(f"  [+] Quality Gate: {g}")
 
     fuzzing_src = os.path.join(templates_v2, "..", "..", "src", "core", "fuzzing.py")
     if os.path.isfile(fuzzing_src):
         shutil.copyfile(fuzzing_src, os.path.join(core_dir, "fuzzing.py"))
         print(f"  [+] Fuzzing Contínuo: fuzzing.py")
 
-    for s in ["aidd.py", "add_module.py", "compose_suite.py", "openapi_to_ts.py", "scaffold_infra.py"]:
+    for s in ["aidd.py", "add_module.py", "compose_suite.py", "openapi_to_ts.py", "scaffold_infra.py", "moldes_catalogo.py"]:
         src = os.path.join(scripts_dir, s)
         if os.path.isfile(src):
             shutil.copyfile(src, os.path.join(target_scripts_dir, s))

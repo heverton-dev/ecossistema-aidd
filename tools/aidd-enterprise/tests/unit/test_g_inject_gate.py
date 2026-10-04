@@ -13,7 +13,8 @@ import subprocess
 import sys
 
 REPO_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
-GATE_SCRIPT = os.path.join(REPO_ROOT, "scripts", "gates", "G_INJECT.py")
+# Bloco 4: o gate é peça do almoxarifado (a cópia em scripts/gates/ saiu).
+GATE_SCRIPT = os.path.join(os.path.dirname(os.path.dirname(REPO_ROOT)), "componentes", "compartilhado", *"injetor/G_INJECT.py".split("/"))
 
 
 def _montar_projeto_fixture(tmp_path):

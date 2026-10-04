@@ -3,7 +3,7 @@
 Injetor deterministico de componentes para aidd-enterprise (D8).
 
 - Validacao estrita do payload contra
-  tools/aidd-enterprise/scripts/injector/schema/component_manifest.schema.json.
+  componentes/compartilhado/injetor/schema/component_manifest.schema.json.
 - Calculo e verificacao de SHA-256 antes de copiar qualquer componente
   (zero-trust: hash divergente ou ausente bloqueia a copia).
 - Copia confinada ao repo_root; exit 1 em qualquer violacao.
@@ -52,7 +52,7 @@ def caminho_schema() -> Path:
     raiz = encontrar_raiz_repositorio()
     if raiz is None:
         raise FileNotFoundError("raiz do repositorio nao encontrada (ecossistema.py ausente)")
-    return raiz / "tools" / "aidd-enterprise" / "scripts" / "injector" / "schema" / "component_manifest.schema.json"
+    return raiz / "componentes" / "compartilhado" / "injetor" / "schema" / "component_manifest.schema.json"
 
 
 def carregar_schema() -> Dict[str, Any]:

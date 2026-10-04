@@ -182,10 +182,16 @@ def test_toda_familia_do_inventario_esta_no_catalogo(pecas):
         for rel in [peca["caminho"], *peca["copias"]]:
             assert rel not in cobertos, f"{rel} em duas peças: {cobertos.get(rel)} e {peca['nome']}"
             cobertos[rel] = peca["nome"]
+    familias_com_peca = {peca["familia"] for peca in pecas}
     faltando = []
     for (categoria, familia), copias in sorted(familias_do_inventario().items()):
         for rel in copias:
-            assert (ROOT_DIR / rel).is_file(), f"cópia antiga sumiu (tem de ficar no lugar): {rel}"
+            if not (ROOT_DIR / rel).is_file():
+                # Bloco 4 (Ticket 19): cópia removida com o OK do usuário só vale se a família
+                # tem peça no almoxarifado e a cópia saiu também da lista 'copias' do catálogo.
+                assert familia in familias_com_peca, f"cópia removida sem peça no catálogo: {rel}"
+                assert rel not in cobertos, f"cópia removida ainda listada no catálogo: {rel}"
+                continue
             if rel not in cobertos:
                 faltando.append(f"{categoria} / {familia}: {rel}")
     assert not faltando, f"{len(faltando)} cópia(s) fora do catálogo:\n" + "\n".join(faltando[:40])

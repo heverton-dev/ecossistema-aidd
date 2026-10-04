@@ -36,7 +36,7 @@ except ImportError:  # pragma: no cover - dependencia declarada em requirements.
 
 ROOT_DIR = Path(__file__).resolve().parent.parent
 SCHEMA_PATH = (
-    ROOT_DIR / "tools" / "aidd-enterprise" / "scripts" / "injector" / "schema" / "component_manifest.schema.json"
+    ROOT_DIR / "componentes" / "compartilhado" / "injetor" / "schema" / "component_manifest.schema.json"
 )
 
 

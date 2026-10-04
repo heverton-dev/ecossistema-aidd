@@ -110,7 +110,9 @@ def test_provision_passa_no_gate_g_estrutura(tmp_path):
     provision("Projeto Teste Estrutura", base_dir=str(tmp_path))
     projeto_dir = next(p for p in tmp_path.iterdir() if p.is_dir() and not p.name.startswith("proj_"))
 
-    gate_path = os.path.join(SCRIPTS_DIR, "gates", "G_ESTRUTURA.py")
+    gate_path = os.path.join(str(projeto_dir), "scripts", "gates", "G_ESTRUTURA.py")
+    if not os.path.isfile(gate_path):
+        gate_path = os.path.join(os.path.dirname(os.path.dirname(SCRIPTS_DIR)), "componentes", "compartilhado", "gates", "G_ESTRUTURA.py")
     import subprocess
 
     resultado = subprocess.run(
@@ -128,7 +130,9 @@ def test_provision_passa_no_gate_g_contracts(tmp_path):
     provision("Projeto Teste Contracts", base_dir=str(tmp_path))
     projeto_dir = next(p for p in tmp_path.iterdir() if p.is_dir() and not p.name.startswith("proj_"))
 
-    gate_path = os.path.join(SCRIPTS_DIR, "gates", "G_CONTRACTS.py")
+    gate_path = os.path.join(str(projeto_dir), "scripts", "gates", "G_CONTRACTS.py")
+    if not os.path.isfile(gate_path):
+        gate_path = os.path.join(os.path.dirname(os.path.dirname(SCRIPTS_DIR)), "componentes", "compartilhado", "gates", "G_CONTRACTS.py")
 
     resultado = subprocess.run(
         [sys.executable, gate_path, "--dir", str(projeto_dir)],

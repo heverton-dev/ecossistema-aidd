@@ -1,5 +1,8 @@
 import os, sys, shutil, subprocess, json, re
 
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from moldes_catalogo import gates_de_projeto, molde  # noqa: E402
+
 if hasattr(sys.stdout, 'reconfigure'):
     sys.stdout.reconfigure(encoding='utf-8', errors='replace')
 
@@ -19,7 +22,7 @@ def _renderizar_e_escrever_docs_html(templates_dir, static_dir, suite_name, modu
     rodar DEPOIS que os modulos ja existem em disco (generate_documentation_html
     faz parsing AST de src/modules/<slug>/{models,routes}.py para o conteudo).
     """
-    docs_template_path = os.path.join(templates_dir, 'docs.html')
+    docs_template_path = molde(templates_dir, 'docs.html')
     if not os.path.exists(docs_template_path):
         try:
             from aidd_forge.core.almoxarifado import caminho_peca
@@ -76,25 +79,12 @@ def provision(project_desc, base_dir=None, frontend_stack='nextjs'):
 
     if os.path.exists(templates_dir):
         from compose_suite import CORE_KERNEL_FILES
-        for f in CORE_KERNEL_FILES + ['repositories.py']:
-            src = os.path.join(templates_dir, f)
+        for f in CORE_KERNEL_FILES + ['repositories.py', 'swagger.html', 'webhook_studio.html', 'mcp_studio.html']:
+            src = molde(templates_dir, f)
             if os.path.exists(src):
                 shutil.copyfile(src, os.path.join(project_dir, 'src', 'core', f))
 
-        # Assets HTML dos Studios do Quarteto Sine Qua Non: obtidos via almoxarifado (Ticket 17 / D1)
-        for asset in ['swagger.html', 'webhook_studio.html', 'mcp_studio.html']:
-            src = None
-            try:
-                from aidd_forge.core.almoxarifado import caminho_peca
-                src = str(caminho_peca(f"moldes/quarteto/{asset}"))
-            except Exception:
-                local_src = os.path.join(templates_dir, asset)
-                if os.path.exists(local_src):
-                    src = local_src
-            if src and os.path.exists(src):
-                shutil.copyfile(src, os.path.join(project_dir, 'src', 'core', asset))
-
-        src_output_css = os.path.join(templates_dir, 'output.css')
+        src_output_css = molde(templates_dir, 'output.css')
         if os.path.exists(src_output_css):
             os.makedirs(os.path.join(project_dir, 'src', 'static'), exist_ok=True)
             shutil.copyfile(src_output_css, os.path.join(project_dir, 'src', 'static', 'output.css'))
@@ -102,8 +92,9 @@ def provision(project_desc, base_dir=None, frontend_stack='nextjs'):
         # Ticket 17 / D1: infraestrutura (Dockerfile, docker-compose.yml, deploy.sh, nginx/)
         # não é mais gerada pelo aidd-master. Essa responsabilidade pertence ao aidd-ops.
 
-        if os.path.exists(os.path.join(templates_dir, 'locustfile.py')):
-            shutil.copyfile(os.path.join(templates_dir, 'locustfile.py'), os.path.join(project_dir, 'tests', 'load', 'locustfile.py'))
+        locust_src = molde(templates_dir, 'locustfile.py')
+        if os.path.exists(locust_src):
+            shutil.copyfile(locust_src, os.path.join(project_dir, 'tests', 'load', 'locustfile.py'))
 
     # 3. Copiar scripts (aidd.py, add_module.py)
     hub_scripts = os.path.join(repo_root, 'scripts')
@@ -113,10 +104,8 @@ def provision(project_desc, base_dir=None, frontend_stack='nextjs'):
             shutil.copyfile(src, os.path.join(project_dir, 'scripts', s))
 
     # 4. Copiar Gates Rígidos
-    if os.path.exists(gates_dir):
-        for g in os.listdir(gates_dir):
-            if g.endswith('.py'):
-                shutil.copyfile(os.path.join(gates_dir, g), os.path.join(project_dir, 'scripts', 'gates', g))
+    for g, origem in sorted(gates_de_projeto(gates_dir).items()):
+        shutil.copyfile(origem, os.path.join(project_dir, 'scripts', 'gates', g))
 
     # 4.5. Gerar PLANO-EXECUCAO-ESTRUTURADO.json ANTES do módulo padrão inicial.
     # Achado real (18/09/2026): quando o plano só era escrito no passo 7 (depois
@@ -253,13 +242,13 @@ def provision_backend_only(project_dir, modulo_nome, descricao=""):
     if os.path.exists(templates_dir):
         from compose_suite import CORE_KERNEL_FILES
         for f in CORE_KERNEL_FILES + ['repositories.py', 'swagger.html', 'webhook_studio.html', 'mcp_studio.html']:
-            src = os.path.join(templates_dir, f)
+            src = molde(templates_dir, f)
             if os.path.exists(src):
                 shutil.copyfile(src, os.path.join(backend_dir, 'src', 'core', f))
         os.makedirs(os.path.join(backend_dir, 'src', 'static'), exist_ok=True)
         # docs.html NAO e copiado cru aqui (mesmo motivo de provision()): e um
         # molde Jinja2, renderizado de verdade so depois de criar_modulo().
-        src_output_css = os.path.join(templates_dir, 'output.css')
+        src_output_css = molde(templates_dir, 'output.css')
         if os.path.exists(src_output_css):
             shutil.copyfile(src_output_css, os.path.join(backend_dir, 'src', 'static', 'output.css'))
 
@@ -269,10 +258,8 @@ def provision_backend_only(project_dir, modulo_nome, descricao=""):
         if os.path.exists(src):
             shutil.copyfile(src, os.path.join(backend_dir, 'scripts', s))
 
-    if os.path.exists(gates_dir):
-        for g in os.listdir(gates_dir):
-            if g.endswith('.py'):
-                shutil.copyfile(os.path.join(gates_dir, g), os.path.join(backend_dir, 'scripts', 'gates', g))
+    for g, origem in sorted(gates_de_projeto(gates_dir).items()):
+        shutil.copyfile(origem, os.path.join(backend_dir, 'scripts', 'gates', g))
 
     plano_path = os.path.join(backend_dir, 'PLANO-EXECUCAO-ESTRUTURADO.json')
     if not os.path.exists(plano_path):

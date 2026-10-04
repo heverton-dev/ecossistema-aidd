@@ -84,6 +84,20 @@ def caminho_cli_injetor() -> Path:
     return caminho_peca_do_injetor('aidd_inject.py')
 
 
+# Gates de projeto que o aidd-pure roda e que são peça do almoxarifado (Bloco 4: as
+# cópias em scripts/gates/ saíram). G_HARNESS_COMPAT tem variante própria do aidd-pure.
+PECA_POR_GATE = {
+    'G_BLOQUEAR_SEGREDOS': 'gates/G_BLOQUEAR_SEGREDOS.py',
+    'G_CYBERSECURITY_OWASP': 'gates/G_CYBERSECURITY_OWASP.py',
+    'G_HARNESS_COMPAT': 'gates/variantes/aidd-pure/G_HARNESS_COMPAT.py',
+}
+
+
+def caminho_gate_catalogo(nome: str) -> Path:
+    """Caminho de um gate de projeto no almoxarifado (`PECA_POR_GATE`)."""
+    return caminho_peca(PECA_POR_GATE[nome], raiz=RAIZ_ECOSSISTEMA)
+
+
 def caminho_gate_injetor() -> Path:
     """Caminho da peca do gate `G_INJECT`."""
     return caminho_peca_do_injetor('G_INJECT.py')

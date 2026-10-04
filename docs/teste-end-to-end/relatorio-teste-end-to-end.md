@@ -1179,7 +1179,79 @@
 - **Status:** **RESOLVIDO**.
 - **Data da Última Auditoria:** 02/10/2026.
 
-## 32. Integração do Mobbin no `aidd-forge`, com o cliente dentro da ferramenta (mobbin-integration)
+## 29. Bloco 4: cópias do almoxarifado removidas do `aidd-open` (fronteiras-ferramentas ciclo-01, Ticket 19)
+
+- **Objetivo da Correção:**
+  Remover de `tools/aidd-open/templates/` as 11 cópias de peças do almoxarifado, com o OK do usuário (Lei #7), sem perder capacidade.
+- **Ferramentas Tocadas:** [`tools/aidd-open`](file:///C:/Users/trcnologia/Desktop/ecossistema-aidd/tools/aidd-open).
+- **O que executou:**
+  1. Removidas: `templates/vsa/{Dockerfile, docker-compose.yml, deploy.sh, docs.html, mcp_server.py, mcp_studio.html, openapi.py, swagger.html, webhook_studio.html, webhooks.py}` e `templates/docs/openapi.json.j2`.
+  2. `src/core/swagger_generator.py`: `openapi.json.j2` pelo almoxarifado (`obter_molde_vsa`); `README.md.j2`, só do aidd-open, segue em `templates/docs`.
+  3. `CATALOGO.json` e baseline do `G_DRIFT_NUCLEO_COMPARTILHADO` sem as cópias removidas; `tests/test_catalogo_almoxarifado.py` aceita cópia removida quando a família tem peça.
+- **Resultados de Testes:**
+  - `tools/aidd-open`: `pytest` → exit 0 (21 passed).
+  - `G_DRIFT_NUCLEO_COMPARTILHADO`, testes do catálogo e do meta-gate → exit 0 (16 passed).
+  - E2E `comparar --base ciclo-01` → exit 0, nenhuma métrica piorou.
+  - `inventario_capacidades.py comparar`: 2 órfãos novos, ambos as linhas trocadas de propósito no `swagger_generator.py`.
+- **Status:** **RESOLVIDO**.
+- **Data da Última Auditoria:** 03/10/2026.
+
+## 30. Bloco 4: cópias do almoxarifado removidas do `aidd-pure` (fronteiras-ferramentas ciclo-01, Ticket 19)
+
+- **Objetivo da Correção:**
+  Remover de `tools/aidd-pure/scripts/` as 14 cópias de peças do almoxarifado, com o OK do usuário (Lei #7), sem perder capacidade.
+- **Ferramentas Tocadas:** [`tools/aidd-pure`](file:///C:/Users/trcnologia/Desktop/ecossistema-aidd/tools/aidd-pure).
+- **O que executou:**
+  1. Removidas: `aidd_inject.py`, `core/injector/` (10 arquivos), `gates/G_INJECT.py`, `gates/G_BLOQUEAR_SEGREDOS.py`, `gates/G_CYBERSECURITY_OWASP.py`, `gates/G_HARNESS_COMPAT.py`.
+  2. O injetor já vinha do almoxarifado (`core/pecas_catalogo.py`, Ticket 15); `verificar_gates.py` passa a buscar os 3 gates no almoxarifado (`PECA_POR_GATE`, `_caminho_gate_catalogo`).
+  3. `CATALOGO.json` sem as 14 cópias; `test_gate_cybersecurity_owasp.py` e `test_verificar_gates.py` apontam para a peça.
+- **Resultados de Testes:**
+  - `tools/aidd-pure`: `pytest` → exit 0 (1016 passed, 5 skipped).
+  - `G_DRIFT_NUCLEO_COMPARTILHADO` e testes do catálogo → exit 0 (11 passed).
+  - E2E `comparar --base ciclo-01` → exit 0, nenhuma métrica piorou.
+  - `inventario_capacidades.py comparar`: 4 órfãos novos, todos linhas trocadas de propósito em `verificar_gates.py` e no teste.
+- **Status:** **RESOLVIDO**.
+- **Data da Última Auditoria:** 03/10/2026.
+
+## 31. Bloco 4: moldes e gates do almoxarifado removidos do `aidd-enterprise`, parte 1 (fronteiras-ferramentas ciclo-01, Ticket 19)
+
+- **Objetivo da Correção:**
+  Remover do `aidd-enterprise` as 49 cópias de moldes, gates e injetor que já são peça do almoxarifado, com o OK do usuário (Lei #7). O núcleo `src/core` (37 cópias) fica para a parte 2.
+- **Ferramentas Tocadas:** [`tools/aidd-enterprise`](file:///C:/Users/trcnologia/Desktop/ecossistema-aidd/tools/aidd-enterprise).
+- **O que executou:**
+  1. Removidas as cópias de `templates/core`, `templates/v2`, `templates/gates`, `scripts/gates`, `scripts/injector` e `application/commands/inject.py`.
+  2. `scripts/moldes_catalogo.py` (novo): molde local se existir, senão a peça do almoxarifado; lista dos 10 gates de projeto. `compose_suite.py` e `provision_project.py` passam a usá-lo.
+  3. Peça `injetor/G_INJECT.py`: acha o `scripts/aidd.py` do enterprise pela raiz do ecossistema (o caminho por `__file__` quebrava fora da ferramenta); selo sha256 atualizado no catálogo.
+  4. `G_HONESTIDADE_ROTULO` vigia `componentes/compartilhado/gates` e `injetor`; skill `aidd-enterprise` lê o schema do almoxarifado; catálogo, baseline do `G_DRIFT` e allowlist do `G_FRONTEIRA` sem as cópias removidas.
+- **Resultados de Testes:**
+  - `tools/aidd-enterprise`: `pytest` → exit 0 (341 passed, 3 skipped).
+  - `tests/test_enterprise_*.py` → exit 0 (100 passed); gates afetados e catálogo → exit 0 (33 passed).
+  - Projeto gerado por `provision_project` sai com o núcleo do Quarteto e os 10 gates.
+  - E2E `comparar --base ciclo-01` → exit 0, nenhuma métrica piorou.
+- **Status:** **RESOLVIDO**.
+- **Data da Última Auditoria:** 03/10/2026.
+
+## 32. Bloco 4: cópias de moldes, gates e injetor removidos do `aidd-master` e validação de duplicatas (fronteiras-ferramentas ciclo-01, Ticket 19)
+
+- **Objetivo da Correção:**
+  Remover do `aidd-master` as 45 cópias de moldes (infra, Quarteto e templates/v2), 11 gates em `scripts/gates/`, 10 gates em `templates/gates/` e o injetor local, com o OK do usuário (Lei #7). Implementar o analisador determinístico `scripts/contar_duplicatas.py` (DoD 8 / D15).
+- **Ferramentas Tocadas:** [`tools/aidd-master`](file:///C:/Users/trcnologia/Desktop/ecossistema-aidd/tools/aidd-master).
+- **O que executou:**
+  1. Criado `tools/aidd-master/scripts/moldes_catalogo.py` integrando com o almoxarifado em `componentes/compartilhado` e lista canônica de gates de projeto.
+  2. Atualizados `tools/aidd-master/scripts/compose_suite.py`, `provision_project.py` e `attach_vsa_infra.py` para obter moldes e gates via almoxarifado.
+  3. Criado `tools/aidd-master/application/pecas_catalogo.py` e adaptados `commands/__init__.py`, `plan.py`, `verificar_drift.py` e `scripts/aidd.py` para carregar `inject` do almoxarifado selado SHA-256.
+  4. Removidas as cópias em `tools/aidd-master/templates/core/`, `tools/aidd-master/templates/gates/`, `tools/aidd-master/templates/v2/`, `tools/aidd-master/scripts/gates/` e `application/commands/inject.py`.
+  5. Atualizado `componentes/compartilhado/CATALOGO.json` e `gates/allowlist_fronteira.json`.
+  6. Implementado `scripts/contar_duplicatas.py` e `tests/test_contar_duplicatas.py` aprovados com 100% GREEN.
+- **Resultados de Testes:**
+  - `tools/aidd-master`: `pytest` → exit 0 (445 passed).
+  - `tests/test_contar_duplicatas.py` → exit 0 (2 passed).
+  - `G_FRONTEIRA_FERRAMENTAS.py` → exit 0 (100 violações residuais devidamente perdoadas na allowlist transitória).
+  - `G_DRIFT_NUCLEO_COMPARTILHADO.py` → baseline sincronizado e aprovado.
+- **Status:** **RESOLVIDO**.
+- **Data da Última Auditoria:** 04/10/2026.
+
+## 33. Integração do Mobbin no `aidd-forge`, com o cliente dentro da ferramenta (mobbin-integration)
 
 - **Objetivo da Correção:**
   Busca de referências de UI no Mobbin pelo CLI do ecossistema (`python ecossistema.py mobbin`) e do forge (`aidd-forge mobbin`). O cliente fica em `tools/aidd-forge/aidd_forge/core/mobbin_client.py`: `tools/` só guarda as 8 ferramentas. `MOBBIN_API_KEY` é chave de serviço de design, não de LLM.
@@ -1193,9 +1265,7 @@
 - **Status:** **RESOLVIDO**.
 - **Data da Última Auditoria:** 03/10/2026.
 
----
-
-## 33. Migração do Cliente Mobbin e Motor Topológico de UI para o `aidd-planner` (mobbin-planner-migration)
+## 34. Migração do Cliente Mobbin e Motor Topológico de UI para o `aidd-planner` (mobbin-planner-migration)
 
 - **Objetivo da Correção:**
   Transferir a responsabilidade e inteligência de design system, arquétipos topológicos e cliente de busca visual do Mobbin do `aidd-forge` para o `aidd-planner`. O `aidd-forge` retém seu foco estrito em governança, canteiro e hooks, mantendo compatibilidade retroativa ao delegar consultas de UI para o `aidd-planner`.
@@ -1213,4 +1283,5 @@
   - Quality Gate `G_DISCIPLINA_TESTE_FERRAMENTA.py` → exit 0 (PASS).
 - **Status:** **RESOLVIDO**.
 - **Data da Última Auditoria:** 04/10/2026.
+
 
