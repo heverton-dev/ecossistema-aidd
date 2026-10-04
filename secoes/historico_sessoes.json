@@ -1,7 +1,7 @@
 {
   "versao": "1.0",
-  "atualizado_em": "2026-10-04T14:20:15.529809",
-  "total_sessoes": 22,
+  "atualizado_em": "2026-10-04T17:31:06.924056",
+  "total_sessoes": 24,
   "sessoes": [
     {
       "id": "fc4566a8-0804-4748-ab5f-ec105414273c",
@@ -213,6 +213,26 @@
       "titulo": "Alinhamento arquitetural do pipeline e limpeza de worktrees",
       "workspace": "C:\\Users\\trcnologia\\Desktop\\ecossistema-aidd",
       "transcript_path": ""
+    },
+    {
+      "id": "31fd30e7-ed32-4633-aed7-eca35782db29",
+      "registrado_em": "2026-10-04 17:31:06",
+      "harness": "antigravity",
+      "modelo": "gemini-3.8-flash-low",
+      "titulo": "Sessão Ativa (Auto-Registrada)",
+      "workspace": "C:/Users/trcnologia/Desktop/ecossistema-aidd",
+      "transcript_path": "C:/Users/trcnologia/.gemini/antigravity-cli/brain/31fd30e7-ed32-4633-aed7-eca35782db29/.system_generated/logs/transcript_full.jsonl",
+      "atualizado_em": "2026-10-04 17:31:06"
+    },
+    {
+      "id": "78c71e25-1ae5-4fb6-b032-b01d75520ed5",
+      "registrado_em": "2026-10-04 17:30:45",
+      "harness": "antigravity",
+      "modelo": "gemini-3.8-flash-low",
+      "titulo": "Sessão Ativa (Auto-Registrada)",
+      "workspace": "C:/Users/trcnologia/Desktop/ecossistema-aidd",
+      "transcript_path": "C:/Users/trcnologia/.gemini/antigravity-cli/brain/78c71e25-1ae5-4fb6-b032-b01d75520ed5/.system_generated/logs/transcript_full.jsonl",
+      "atualizado_em": "2026-10-04 17:30:45"
     }
   ]
 }
