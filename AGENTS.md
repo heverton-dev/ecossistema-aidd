@@ -153,10 +153,16 @@ Every robust application in the ecosystem originates from **`aidd-forge`** (supr
 - **PIPELINE CANÔNICO CALIBRADO (Fluxo de 9 Etapas com Gates em 2 Níveis e Schemas SHA-256):**
   - Encadeamento Canônico Estrito:
     ```
-    [1. FORGE] ➔ [2. PLANNER (SHA-256)] ➔ [3. ENGINE] ➔ [4. MASTER]
-          ➔ [5. DISPATCH (Worktrees + Micro-Gates)] ➔ [6. BARREIRA (Rebase Sync)]
-          ➔ [7. ENTERPRISE & OPS] ➔ [8. 54 MACRO-GATES] ➔ [9. COMMIT CONSOLIDADO]
+    [1. FORGE] ➔ [2. PLANNER (SHA-256)] ➔ [3. MASTER (Fatiamento VSA)]
+          ➔ [4. DISPATCH (Worktrees + Micro-Gates)] ➔ [5. ENGINE (Execução das Fatias)]
+          ➔ [6. BARREIRA (Rebase Sync)] ➔ [7. ENTERPRISE & OPS] ➔ [8. 54 MACRO-GATES]
+          ➔ [9. COMMIT CONSOLIDADO]
     ```
+  - **Papel das Etapas e dos Motores da Tríade:**
+    - O `aidd-master` atua antes da execução do código compilando o manifesto `VSA_DISPATCH.json` a partir da planta baixa do `aidd-planner`.
+    - O `aidd-dispatch` gera as Git Worktrees paralelas/efêmeras.
+    - O **Motor da Tríade** (`aidd-pure` | `aidd-open` | `aidd-freedom`) executa *dentro das worktrees*, materializando as fatias sob isolamento rigoroso.
+    - A **Barreira de Sincronização** valida os micro-gates, executa o rebase preventivo e consolida as fatias na branch de integração antes da injeção de infraestrutura e conectores corporativos.
   - **Contratos e Handoff Formal:** Todos os contratos centrais (`PLANNER.json`, `VSA_DISPATCH.json`, `handoff_evolution.json`) exigem integridade criptográfica `payload_sha256` calculada sobre o payload canônico. Se o hash divergir, o bastão é bloqueado imediatamente (exit 1).
   - **Gates em 2 Níveis (Shift-Left):**
     - *Nível 1 (Micro-Gates de Worktree):* Execução rápida (< 2s) em isolamento da fatia (`py_compile`, verificação de stubs/Lei #5, testes unitários da fatia, verificação de fronteiras). Reprovação aborta a worktree antes do merge.

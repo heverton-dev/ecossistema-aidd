@@ -3,7 +3,7 @@
   "ferramenta": "aidd-melhoria",
   "status": "SUCESSO",
   "codigo_saida": 0,
-  "emitido_em": "2026-10-04T21:22:15+00:00",
+  "emitido_em": "2026-10-04T21:24:00+00:00",
   "transicao": {
     "fase_atual": "melhoria",
     "proxima_fase": "plan",
@@ -24,6 +24,6 @@
   "assinatura": {
     "algoritmo": "sha256",
     "escopo": "payload-canonico-sem-assinatura",
-    "valor": "eb6c49d0330162a246a5344129524af25fad3b3ed6b8a06529d0f82f750348cd"
+    "valor": "f470aedb6861479657e95b18c7d27596ba4917f8986b6f9c8db21c24cb9935d0"
   }
 }
