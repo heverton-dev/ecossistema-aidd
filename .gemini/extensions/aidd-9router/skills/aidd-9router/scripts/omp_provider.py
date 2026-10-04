@@ -18,7 +18,7 @@ import sys
 import time
 from pathlib import Path
 
-from _comum import PROVEDOR, gateway, ler_env, mapa_combos
+from _comum import LIMITES_COMBOS, PROVEDOR, TODOS_COMBOS, gateway, ler_env, mapa_combos
 
 ARQUIVO = Path.home() / ".omp" / "agent" / "models.yml"
 
@@ -28,8 +28,9 @@ def bloco(url, combos):
               f"  {PROVEDOR}:", f"    baseUrl: {url}/v1", "    api: openai-completions",
               "    apiKey: NINEROUTER_KEY", "    models:"]
     for combo in dict.fromkeys(combos):
+        limites = LIMITES_COMBOS.get(combo, {"context": 200000, "output": 32000})
         linhas += [f"      - id: {combo}", f"        name: 9Router {combo}",
-                   "        contextWindow: 200000", "        maxTokens: 32000"]
+                   f"        contextWindow: {limites['context']}", f"        maxTokens: {limites['output']}"]
     return "\n".join(linhas) + "\n"
 
 
@@ -41,10 +42,22 @@ def main():
         print("ERRO: omp não instalado", file=sys.stderr)
         return 1
     texto = ARQUIVO.read_text(encoding="utf-8") if ARQUIVO.is_file() else "providers:\n"
+    todos_combos = list(dict.fromkeys(list(mapa_combos().values()) + TODOS_COMBOS))
+    novo_bloco = bloco(gateway(), todos_combos)
+    
     if f"\n  {PROVEDOR}:" in texto:
-        print(f"provedor {PROVEDOR} já existe em {ARQUIVO}")
+        # Substitui bloco aidd9r existente
+        import re
+        padrao = rf"  # 9Router.*?\n  {PROVEDOR}:.*?(?=\n  [a-zA-Z0-9_-]+:|\Z)"
+        if re.search(padrao, texto, re.S):
+            novo = re.sub(padrao, novo_bloco.rstrip("\n"), texto, flags=re.S)
+        else:
+            # Fallback substitui a partir de aidd9r:
+            padrao_simples = rf"  {PROVEDOR}:.*?(?=\n  [a-zA-Z0-9_-]+:|\Z)"
+            novo = re.sub(padrao_simples, novo_bloco.rstrip("\n"), texto, flags=re.S)
+        print(f"{'[DRY-RUN] ' if a.dry_run else ''}atualizando {PROVEDOR} em {ARQUIVO}")
     else:
-        novo = texto.rstrip("\n") + "\n" + bloco(gateway(), mapa_combos().values())
+        novo = texto.rstrip("\n") + "\n" + novo_bloco
         print(f"{'[DRY-RUN] ' if a.dry_run else ''}acrescentando {PROVEDOR} em {ARQUIVO}")
         if a.dry_run:
             return 0

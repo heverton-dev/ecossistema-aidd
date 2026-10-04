@@ -8,6 +8,14 @@ import uuid
 from pathlib import Path
 
 PADRAO_COMBOS = {"opus": "code-pro", "sonnet": "code-fast", "haiku": "code-free"}
+TODOS_COMBOS = ["code-fast", "code-pro", "code-free", "task-micro", "code-tests"]
+LIMITES_COMBOS = {
+    "code-fast": {"context": 1000000, "output": 65536},
+    "code-pro": {"context": 1000000, "output": 65536},
+    "code-free": {"context": 200000, "output": 32000},
+    "task-micro": {"context": 32000, "output": 8192},
+    "code-tests": {"context": 128000, "output": 32000},
+}
 PROVEDOR = "aidd9r"
 MARCADOR_DESLIGADO = Path.home() / ".aidd" / "9router-desligado"
 INFLACAO_9ROUTER = 2000

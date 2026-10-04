@@ -21,7 +21,7 @@ import shutil
 import subprocess
 import sys
 
-from _comum import MARCADOR_DESLIGADO, PROVEDOR, gateway, ler_env, mapa_combos
+from _comum import LIMITES_COMBOS, MARCADOR_DESLIGADO, PROVEDOR, TODOS_COMBOS, gateway, ler_env, mapa_combos
 
 HARNESSES = ("claude", "opencode", "mimo", "omp")
 
@@ -43,7 +43,17 @@ def sem_flags(args, flags):
 
 
 def config_opencode(url, mapa):
-    modelos = {combo: {"name": combo, "limit": {"context": 200000, "output": 32000}} for combo in mapa.values()}
+    todos = list(dict.fromkeys(list(mapa.values()) + TODOS_COMBOS))
+    modelos = {}
+    for combo in todos:
+        limites = LIMITES_COMBOS.get(combo, {"context": 200000, "output": 32000})
+        modelos[combo] = {
+            "name": f"9Router {combo}",
+            "limit": {
+                "context": limites["context"],
+                "output": limites["output"]
+            }
+        }
     return json.dumps({
         "provider": {PROVEDOR: {
             "name": "9Router (aidd)",
