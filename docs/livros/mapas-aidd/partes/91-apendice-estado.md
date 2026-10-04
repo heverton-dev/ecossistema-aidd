@@ -1,13 +1,17 @@
 # Apêndice B — Estado honesto
 
-Tabela consolidada de todos os achados dos mapas, gerada de `docs/auditoria/mapa-pecas/ciclo-01/ACHADOS.json`. Em aberto por gravidade: 0 alta, 1 média, 1 baixa. Cada achado em aberto traz no arquivo o texto pronto para abrir o fluxo de melhoria (`pedido_melhoria`).
+Tabela consolidada de todos os achados dos mapas, gerada de `docs/auditoria/mapa-pecas/ciclo-01/ACHADOS.json`. Em aberto por gravidade: 0 alta, 2 média, 4 baixa. Cada achado em aberto traz no arquivo o texto pronto para abrir o fluxo de melhoria (`pedido_melhoria`).
 
-## Em aberto (2)
+## Em aberto (6)
 
 | Achado | Gravidade · mapa |
 | :-------------------------------------- | :-------------------------------------------- |
-| 1 guardas com o mesmo nome e código diferente (`CAT-gates-versoes`) | Média · guardas |
+| 1 guardas declarados em lei que não rodam no commit (`CAT-declarados-fora-do-commit`) | Média · leis |
+| 10 guardas com o mesmo nome e código diferente (`CAT-gates-versoes`) | Média · guardas |
+| Ciclo de auditoria sem todos os documentos: aidd-skills/ciclo-02 (`CAT-ciclo-aidd-skills-ciclo-02`) | Baixa · oficina |
 | Ciclo de auditoria sem todos os documentos: fronteiras-ferramentas/ciclo-01 (`CAT-ciclo-fronteiras-ferramentas-ciclo-01`) | Baixa · oficina |
+| 3 scripts que nenhum código chama (`CAT-scripts-sem-chamador`) | Baixa · scripts |
+| 1 verbos de CLI em mais de uma ferramenta (`CAT-verbos-repetidos`) | Baixa · ferramentas |
 
 ## Resolvidos (14)
 

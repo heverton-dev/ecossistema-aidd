@@ -22,17 +22,18 @@ Executes the evolution tickets written by the Architect in phase 2 of the audit 
 
 ## Execution
 
-1. Read the evolution manifest (e.g. `docs/auditoria/<tool>/ciclo-NN/PLANO-EVOLUCAO.json`).
+1. Read the evolution manifest (e.g. `docs/auditoria/<tool>/ciclo-NN/PLANO-EVOLUCAO.json`) and validate cryptographic contract integrity (`payload_sha256`).
 2. All tickets accumulate on the cycle's own branch (`audit/<pipeline_id>`); the current branch never changes during the run.
 3. For each ticket:
    - isolate an ephemeral worktree on the cycle branch;
    - read the ticket spec (`input_prompt`);
    - launch the configured agent with an interactive TTY and the Watchdog;
    - wait for the expected artifact (`output_handoff`);
-   - run the ticket `gate_fase` (`pytest tests`) **before** committing; on failure the pipeline stops, nothing is committed and the worktree is kept for inspection;
+   - run the ticket **Micro-Gates de Worktree** (`py_compile` de sintaxe, verificação de stubs/Lei #5, fronteiras de fatia e testes unitários focados) **before** committing; on failure the pipeline stops, nothing is committed and the worktree is kept for inspection;
+   - perform barrier sync with proactive rebase (`--barrier-sync`) to guarantee clean branch integration; on conflict, automatic rollback is triggered with a structured report;
    - commit on the cycle branch and discard the worktree.
 4. After the last ticket:
-   - run `gate_final` (`python ecossistema.py audit`) once; only a pass makes the cycle approvable;
+   - run `gate_final` (`python ecossistema.py audit` - 54 Macro-Gates Globais) once; only a pass makes the cycle approvable;
    - join barrier: merge into the current branch only with `python scripts/orquestrador_4f.py --manifest <json> --aprovar`, and only if the cycle branch did not change after `gate_final`;
    - record the closing in `RESUMO-USUARIO.md` and `RELATORIO-TECNICO.md`.
 

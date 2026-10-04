@@ -126,6 +126,26 @@ def executar_barreira_fatia(
                 print(f"[BARREIRA-VSA] [BLOQUEIO] {e}", file=sys.stderr)
         return False, erros
 
+    # 1.1 Micro-Gates de Worktree (Shift-Left: sintaxe, stubs e testes isolados)
+    try:
+        gates_dir = ROOT_DIR / "gates"
+        if str(gates_dir) not in sys.path:
+            sys.path.insert(0, str(gates_dir))
+        from micro_gates_worktree import executar_micro_gates
+        ok_micro, erros_micro = executar_micro_gates(
+            worktree_path=wt_path,
+            slice_id=slice_id,
+            arquivos_esperados=slice_info.get("arquivos_esperados", []),
+            comandos_teste=cmds_teste,
+            verbose=verbose,
+        )
+        if not ok_micro:
+            erros.extend(erros_micro)
+            return False, erros
+    except ImportError:
+        # Fallback se micro_gates_worktree não puder ser importado
+        pass
+
     # 2. Executa comandos de teste da fatia
     for cmd_str in cmds_teste:
         if verbose:

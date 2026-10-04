@@ -150,6 +150,19 @@ Every robust application in the ecosystem originates from **`aidd-forge`** (supr
   - CLI: `python ecossistema.py evolucao <tool>` ou `python ecossistema.py evolucao --manifest <json>`
   - Skill: `aidd-evolution`
 
+- **PIPELINE CANÔNICO CALIBRADO (Fluxo de 9 Etapas com Gates em 2 Níveis e Schemas SHA-256):**
+  - Encadeamento Canônico Estrito:
+    ```
+    [1. FORGE] ➔ [2. PLANNER (SHA-256)] ➔ [3. ENGINE] ➔ [4. MASTER]
+          ➔ [5. DISPATCH (Worktrees + Micro-Gates)] ➔ [6. BARREIRA (Rebase Sync)]
+          ➔ [7. ENTERPRISE & OPS] ➔ [8. 54 MACRO-GATES] ➔ [9. COMMIT CONSOLIDADO]
+    ```
+  - **Contratos e Handoff Formal:** Todos os contratos centrais (`PLANNER.json`, `VSA_DISPATCH.json`, `handoff_evolution.json`) exigem integridade criptográfica `payload_sha256` calculada sobre o payload canônico. Se o hash divergir, o bastão é bloqueado imediatamente (exit 1).
+  - **Gates em 2 Níveis (Shift-Left):**
+    - *Nível 1 (Micro-Gates de Worktree):* Execução rápida (< 2s) em isolamento da fatia (`py_compile`, verificação de stubs/Lei #5, testes unitários da fatia, verificação de fronteiras). Reprovação aborta a worktree antes do merge.
+    - *Nível 2 (54 Macro-Gates Globais):* Executados pós-convergência via `python ecossistema.py audit` / `pre-commit run --all-files`.
+  - **Barreira de Sincronização (--barrier-sync):** Rebase preventivo da branch de integração na worktree antes do merge. Em caso de conflito, executa rollback automático e grava `dispatch_rollback_report.json`.
+
 **Interoperabilidade Universal dos Slash Commands:** Em harnesses sem suporte a slash commands customizados na UI ou com colisões de namespace (como `/open` no Google Antigravity CLI), qualquer entrada do usuário referenciando `/pure`, `pure`, `/open`, `/aidd-open`, `open`, `/freedom`, `freedom`, `/factory`, `/bridge`, `/run-plan`, `run-plan`, `/pipeline`, `pipeline`, `/dispatch`, `dispatch`, `/aidd-dispatch`, `/audit-4f`, `audit-4f`, `/aidd-auditor`, `/evolucao`, `evolucao`, `/aidd-evolucao`, `/sessao`, `sessao`, `/session`, `session`, `/id` DEVE ser interceptada pelo agente como a invocação imediata do respectivo fluxo ou comando do ecossistema. Silêncio ou erro de "comando não suportado" é estritamente proibido.
 
 **Universal Convergence Funnel:** All 3 flows mandatorily converge into `aidd-master` (Harmonização em Monólito Modular: VSA de domínio + camada horizontal compartilhada) -> `aidd-enterprise` (SHA-256 resilience and audit) -> `aidd-ops` (VPS deployment, sops+age, and Uptime Kuma), delivering the dynamic *Quarteto Sine Qua Non* (`/api`, `/webhook`, `/mcp`, `/docs`).

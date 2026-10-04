@@ -1,0 +1,135 @@
+{
+  "versao_schema": "1.0.0",
+  "origem_plano": "evolucao",
+  "fluxo_alvo": "evolution",
+  "meta": {
+    "nome_projeto": "calibracao-pipeline",
+    "repositorio_alvo": ".",
+    "timestamp_execucao": "2026-10-04T14:30:00",
+    "iniciativa_id": "calibracao-pipeline-ciclo-01",
+    "descricao": "Calibrar o ecossistema com contratos SHA-256, barreira de sincronização, micro-gates shift-left e comando canônico refatorado"
+  },
+  "fase_sequencial_sincrona": [
+    {
+      "id": "T01-schema-sha256",
+      "titulo": "Adicionar campo payload_sha256 nos 3 schemas centrais",
+      "arquivos_alvo": [
+        "componentes/compartilhado/specs/vsa-topological-dispatch.schema.json",
+        "componentes/compartilhado/specs/handoff-execucao.schema.json",
+        "tools/aidd-planner/schemas/planner_schema.json"
+      ],
+      "comando_validacao": "python -c \"import json; s=json.load(open('componentes/compartilhado/specs/vsa-topological-dispatch.schema.json')); assert 'payload_sha256' in s['properties']\"",
+      "isolamento": "git-worktree"
+    },
+    {
+      "id": "T02-validador-sha256",
+      "titulo": "Criar módulo contratos/validador_sha256.py com testes",
+      "arquivos_alvo": [
+        "contratos/validador_sha256.py",
+        "contratos/__init__.py",
+        "contratos/tests/test_validador_sha256.py"
+      ],
+      "comando_validacao": "python -m pytest contratos/tests/test_validador_sha256.py -v --tb=short",
+      "isolamento": "git-worktree"
+    },
+    {
+      "id": "T03-integrar-sha256-dispatch-planner",
+      "titulo": "Integrar validação SHA-256 no dispatch_pipeline e planner CLI",
+      "arquivos_alvo": [
+        "tools/aidd-master/scripts/dispatch_pipeline.py",
+        "tools/aidd-planner/src/cli.py"
+      ],
+      "comando_validacao": "python -m pytest tools/aidd-master/tests/unit/test_dispatch_pipeline.py tools/aidd-planner/tests/test_planner.py -v --tb=short",
+      "isolamento": "git-worktree"
+    },
+    {
+      "id": "T04-barrier-sync",
+      "titulo": "Implementar --barrier-sync no dispatch_pipeline.py",
+      "arquivos_alvo": [
+        "tools/aidd-master/scripts/dispatch_pipeline.py"
+      ],
+      "comando_validacao": "python -m pytest tools/aidd-master/tests/unit/test_dispatch_pipeline.py -v --tb=short -k barrier",
+      "isolamento": "git-worktree"
+    },
+    {
+      "id": "T05-rollback-worktree",
+      "titulo": "Rollback automático de worktree em conflito de merge",
+      "arquivos_alvo": [
+        "tools/aidd-master/scripts/dispatch_pipeline.py",
+        "tools/aidd-master/tests/unit/test_dispatch_pipeline.py"
+      ],
+      "comando_validacao": "python -m pytest tools/aidd-master/tests/unit/test_dispatch_pipeline.py -v --tb=short -k rollback",
+      "isolamento": "git-worktree"
+    },
+    {
+      "id": "T06-barrier-sync-ecossistema",
+      "titulo": "Expor --barrier-sync no ecossistema.py",
+      "arquivos_alvo": [
+        "ecossistema.py"
+      ],
+      "comando_validacao": "python ecossistema.py orchestrate --help",
+      "isolamento": "git-worktree"
+    },
+    {
+      "id": "T07-micro-gates-worktree",
+      "titulo": "Criar suíte de Micro-Gates de Worktree",
+      "arquivos_alvo": [
+        "gates/micro_gates_worktree.py",
+        "gates/tests/test_micro_gates_worktree.py"
+      ],
+      "comando_validacao": "python -m pytest gates/tests/test_micro_gates_worktree.py -v --tb=short",
+      "isolamento": "git-worktree"
+    },
+    {
+      "id": "T08-integrar-micro-gates-dispatcher",
+      "titulo": "Integrar micro-gates no fechamento de worktree do dispatcher",
+      "arquivos_alvo": [
+        "tools/aidd-master/scripts/dispatch_pipeline.py",
+        "tools/aidd-master/scripts/vsa_join_barrier.py"
+      ],
+      "comando_validacao": "python -m pytest tools/aidd-master/tests/unit/test_dispatch_pipeline.py tools/aidd-master/tests/unit/test_vsa_join_barrier.py -v --tb=short",
+      "isolamento": "git-worktree"
+    },
+    {
+      "id": "T09-doc-gates-2-niveis",
+      "titulo": "Documentar separação Micro-Gates vs Macro-Gates",
+      "arquivos_alvo": [
+        "docs/auditoria/calibracao-pipeline/ciclo-01/GATES-2-NIVEIS.md"
+      ],
+      "comando_validacao": "python -c \"from pathlib import Path; p=Path('docs/auditoria/calibracao-pipeline/ciclo-01/GATES-2-NIVEIS.md'); assert p.exists() and len(p.read_text(encoding='utf-8'))>500\"",
+      "isolamento": "nenhum"
+    },
+    {
+      "id": "T10-run-fluxo-canonico",
+      "titulo": "Refatorar run-fluxo com encadeamento canônico de 9 etapas",
+      "arquivos_alvo": [
+        "ecossistema.py"
+      ],
+      "comando_validacao": "python ecossistema.py run-fluxo --help",
+      "isolamento": "git-worktree"
+    },
+    {
+      "id": "T11-agents-md-diagrama",
+      "titulo": "Atualizar AGENTS.md com diagrama do pipeline calibrado",
+      "arquivos_alvo": [
+        "AGENTS.md"
+      ],
+      "comando_validacao": "python -c \"t=open('AGENTS.md',encoding='utf-8').read(); assert 'Pipeline Canônico Calibrado' in t and 'SHA-256' in t\"",
+      "isolamento": "nenhum"
+    },
+    {
+      "id": "T12-skills-pipeline-calibrado",
+      "titulo": "Atualizar templates de skills com referência ao pipeline calibrado",
+      "arquivos_alvo": [
+        "componentes/compartilhado/skills/aidd-evolution/SKILL.md"
+      ],
+      "comando_validacao": "python -c \"from pathlib import Path; assert Path('componentes/compartilhado/skills/aidd-evolution/SKILL.md').exists()\"",
+      "isolamento": "nenhum"
+    }
+  ],
+  "barreira_sincronizacao": [
+    "python ecossistema.py audit",
+    "python gates/G_PIPELINE_HANDOFF.py",
+    "python gates/G_DISPATCH_PIPELINE_VSA.py"
+  ]
+}

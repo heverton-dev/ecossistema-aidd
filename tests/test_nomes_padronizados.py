@@ -49,6 +49,9 @@ HISTORICO = (
     # Fonte única dos dados do relatório datado 11-09-2026 (docs/relatorios/): um teste
     # o executa e regrava o relatório, então reescrevê-lo reescreveria o histórico.
     re.compile(r"^scripts/gerador_relatorio_evolucao_planos\.py$"),
+    # Livro gerado e teste de conformidade de livros que testam a menção explícita de apelidos
+    re.compile(r"^docs/livros/gerar_livro_auditoria\.py$"),
+    re.compile(r"^tests/test_mapas_e_livros_em_dia\.py$"),
 )
 
 PERMITIDOS = {TABELA_APELIDOS, ESTE_TESTE}

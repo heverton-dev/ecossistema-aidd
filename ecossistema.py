@@ -405,6 +405,8 @@ def cmd_dispatch(args):
     parser.add_argument("--base-branch", "-b", help="Branch base para convergência (auto-detectada se omitida)")
     parser.add_argument("--dry-run", action="store_true", help="Simulação determinística sem alteração do git")
     parser.add_argument("--workers", "-w", type=int, default=2, help="Número máximo de worktrees simultâneas")
+    parser.add_argument("--barrier-sync", action="store_true", default=True, help="Executa rebase da branch base em cada worktree antes do merge (padrão: ativo)")
+    parser.add_argument("--no-barrier-sync", dest="barrier_sync", action="store_false", help="Desativa o rebase preventivo pré-merge")
 
     parsed, extra = parser.parse_known_args(args)
     caminho_manifesto = parsed.dispatch or parsed.planner
@@ -427,6 +429,8 @@ def cmd_dispatch(args):
         cmd.append("--dry-run")
     if parsed.workers:
         cmd.extend(["--workers", str(parsed.workers)])
+    if not parsed.barrier_sync:
+        cmd.append("--no-barrier-sync")
 
     return run_command(cmd, cwd=ROOT_DIR)
 

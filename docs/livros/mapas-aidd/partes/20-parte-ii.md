@@ -22,16 +22,16 @@ Onde mora: `gates/` e `tools/<f>/gates/`. Quem confere: o próprio pre-commit e 
 
 | Medida | Valor |
 | :-------------------------------------- | :-------------------------------------------- |
-| guardas (nomes) | 97 |
-| no ecossistema | 64 |
+| guardas (nomes) | 98 |
+| no ecossistema | 65 |
 | rodam no commit | 64 |
-| com versões diferentes | 1 |
+| com versões diferentes | 10 |
 
 Os números saem de `docs/auditoria/mapa-pecas/catalogo-pecas.json` (função `coletar_gates`), os mesmos do mapa `mapa-04-guardas.html`.
 
 ## 4.3 O que falta consertar
 
-- **Média** · 1 guardas com o mesmo nome e código diferente (`CAT-gates-versoes`).
+- **Média** · 10 guardas com o mesmo nome e código diferente (`CAT-gates-versoes`).
 
 Já resolvido:
 
@@ -69,9 +69,9 @@ Onde mora: `componentes/compartilhado/skills/`. Quem confere: o `G_SKILL_FORMATO
 
 | Medida | Valor |
 | :-------------------------------------- | :-------------------------------------------- |
-| skills nossas | 43 |
+| skills nossas | 44 |
 | nomes de terceiros registrados | 20 |
-| com "Use when" | 43 |
+| com "Use when" | 44 |
 
 Os números saem de `docs/auditoria/mapa-pecas/catalogo-pecas.json` (função `coletar_skills`), os mesmos do mapa `mapa-05-skills.html`.
 
@@ -160,7 +160,7 @@ Onde mora: `.mcp.json` e `.claude/settings.json`. Quem confere: o `dependencia v
 
 | Medida | Valor |
 | :-------------------------------------- | :-------------------------------------------- |
-| MCPs que o agente usa | 10 |
+| MCPs que o agente usa | 12 |
 | MCPs dentro das ferramentas | 3 |
 | hooks | 3 |
 

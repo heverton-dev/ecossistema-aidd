@@ -28,6 +28,7 @@ from __future__ import annotations
 
 import argparse
 import concurrent.futures
+import hashlib
 import json
 import os
 import re
@@ -100,6 +101,7 @@ class VSADispatchPipeline:
         dry_run: bool = False,
         verbose: bool = True,
         max_workers: int = 2,
+        barrier_sync: bool = False,
     ) -> None:
         self.dispatch_path = Path(dispatch_path).resolve()
         if not self.dispatch_path.is_file():
@@ -109,7 +111,9 @@ class VSADispatchPipeline:
         self.dry_run = dry_run
         self.verbose = verbose
         self.max_workers = max(1, max_workers)
+        self.barrier_sync = barrier_sync
         self.active_worktrees: List[ActiveSliceWorktree] = []
+        self.rollback_history: List[Dict[str, Any]] = []
 
         if base_branch:
             self.base_branch = base_branch
@@ -181,6 +185,21 @@ class VSADispatchPipeline:
                 return False
         else:
             self.manifest_data = raw_data
+
+        # Validação estrita de integridade SHA-256 (Fase 1 / Ticket 3)
+        if "payload_sha256" in self.manifest_data:
+            sha_declarado = self.manifest_data["payload_sha256"]
+            copia = {k: v for k, v in self.manifest_data.items() if k != "payload_sha256"}
+            sha_calc = hashlib.sha256(
+                json.dumps(copia, sort_keys=True, ensure_ascii=False, separators=(",", ":")).encode("utf-8")
+            ).hexdigest()
+            if sha_declarado.lower() != sha_calc.lower():
+                self.log(
+                    f"ERRO FATAL: Violação de integridade SHA-256 no manifesto! "
+                    f"Esperado: {sha_declarado}, Calculado: {sha_calc}"
+                )
+                return False
+            self.log(f"[INTEGRIDADE] SHA-256 verificado com sucesso: {sha_declarado[:12]}...")
 
         # Validação formal via Quality Gate G_DISPATCH_PIPELINE_VSA
         gate_script = self.repo_root / "gates" / "G_DISPATCH_PIPELINE_VSA.py"
@@ -472,8 +491,29 @@ class VSADispatchPipeline:
                 self.log(f"Aviso durante cleanup de {wt.worktree_path}: {e}")
         self.active_worktrees.clear()
 
-    def _merge_slice_branch(self, branch_name: str) -> bool:
-        """Efetua o merge da branch da fatia na branch base."""
+    def _rebase_slice_branch(self, wt_path: Path, branch_name: str) -> bool:
+        """Executa rebase da branch base na worktree antes do merge (Barreira de Sincronização)."""
+        if self.dry_run:
+            self.log(f"[DRY-RUN] Simulando rebase de '{self.base_branch}' em '{branch_name}'")
+            return True
+
+        self.log(f"[BARRIER-SYNC] Rebaseando '{self.base_branch}' na worktree da fatia '{branch_name}'...")
+        res = subprocess.run(
+            ["git", "rebase", self.base_branch],
+            cwd=str(wt_path),
+            capture_output=True,
+            text=True,
+            encoding="utf-8",
+            errors="replace",
+        )
+        if res.returncode != 0:
+            self.log(f"[BARRIER-SYNC] CONFLITO de rebase em '{branch_name}':\n{res.stderr}\n{res.stdout}")
+            subprocess.run(["git", "rebase", "--abort"], cwd=str(wt_path), capture_output=True, check=False)
+            return False
+        return True
+
+    def _merge_slice_branch(self, branch_name: str, slice_id: str = "") -> bool:
+        """Efetua o merge da branch da fatia na branch base com rollback automático."""
         if self.dry_run:
             self.log(f"[DRY-RUN] Simulando merge de '{branch_name}' em '{self.base_branch}'")
             return True
@@ -488,11 +528,35 @@ class VSADispatchPipeline:
             errors="replace",
         )
         if res.returncode != 0:
+            motivo = f"Conflito de merge ({res.stderr.strip() or res.stdout.strip()})"
             self.log(f"ERRO: Conflito ou falha ao mesclar '{branch_name}':\n{res.stderr}\n{res.stdout}")
             subprocess.run(["git", "merge", "--abort"], cwd=str(self.repo_root), capture_output=True, check=False)
+
+            # Rollback determinístico
+            rollback_entry = {
+                "slice_id": slice_id or branch_name,
+                "branch_name": branch_name,
+                "motivo": motivo,
+                "timestamp": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
+                "status": "ROLLED_BACK",
+            }
+            self.rollback_history.append(rollback_entry)
+            self._salvar_relatorio_rollback()
             return False
 
         return True
+
+    def _salvar_relatorio_rollback(self) -> None:
+        """Emite relatório JSON de rollbacks de worktree."""
+        if not self.rollback_history:
+            return
+        caminho_relatorio = self.repo_root / "dispatch_rollback_report.json"
+        try:
+            with open(caminho_relatorio, "w", encoding="utf-8") as f:
+                json.dump({"total_rollbacks": len(self.rollback_history), "rollbacks": self.rollback_history}, f, indent=2)
+            self.log(f"[ROLLBACK] Relatório gravado em {caminho_relatorio}")
+        except Exception as e:
+            self.log(f"Aviso: falha ao gravar relatório de rollback: {e}")
 
     def _run_post_merge_suite(self) -> bool:
         """Executa a suíte de pós-merge de convergência master."""
@@ -574,9 +638,15 @@ class VSADispatchPipeline:
                         self.log(f"ERRO FATAL na fatia '{falha.slice_id}': {falha.error_message}")
                     return 1
 
-                # Merge sequencial das fatias validadas
+                # Merge sequencial das fatias validadas (com Barrier Sync e Rollback)
                 for r in results:
-                    if not self._merge_slice_branch(r.branch_name):
+                    wt_obj = next((w for f, w in active_lote if f["slice_id"] == r.slice_id), None)
+                    if self.barrier_sync and wt_obj:
+                        if not self._rebase_slice_branch(wt_obj.worktree_path, r.branch_name):
+                            self.log(f"[BARRIER-SYNC] Abortando pipeline por falha de rebase na fatia '{r.slice_id}'.")
+                            return 1
+
+                    if not self._merge_slice_branch(r.branch_name, slice_id=r.slice_id):
                         return 1
                     fatias_sucesso += 1
 
@@ -643,6 +713,18 @@ def main(argv: Optional[List[str]] = None) -> int:
         default=2,
         help="Número máximo de worktrees simultâneas por nível"
     )
+    parser.add_argument(
+        "--barrier-sync",
+        action="store_true",
+        default=True,
+        help="Executa rebase da branch base em cada worktree antes do merge (padrão: ativo)"
+    )
+    parser.add_argument(
+        "--no-barrier-sync",
+        dest="barrier_sync",
+        action="store_false",
+        help="Desativa o rebase preventivo pré-merge"
+    )
 
     args = parser.parse_args(argv)
 
@@ -652,6 +734,7 @@ def main(argv: Optional[List[str]] = None) -> int:
         base_branch=args.base_branch,
         dry_run=args.dry_run,
         max_workers=args.workers,
+        barrier_sync=args.barrier_sync,
     )
     return pipeline.run()
 

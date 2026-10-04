@@ -39,6 +39,9 @@ def molde(pasta_templates: str, nome: str) -> str:
     local_src_core = RAIZ_ECOSSISTEMA / "tools" / "aidd-master" / "src" / "core" / nome
     if local_src_core.exists():
         return str(local_src_core)
+    v2_fallback = RAIZ_ECOSSISTEMA / "tools" / "aidd-master" / "templates" / "v2" / nome
+    if v2_fallback.exists():
+        return str(v2_fallback)
     return str(local)
 
 

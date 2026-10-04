@@ -159,7 +159,7 @@
       },
       "moldes_catalogo.py": {
         "esperado_identico": false,
-        "motivo": "REVISAR: divergencia nova detectada por --atualizar-baseline. Edite este motivo antes de commitar."
+        "motivo": "aidd-master busca fallback de moldes em src/core e templates/v2 específico para sua estrutura monólito modular; aidd-enterprise usa apenas PECA_POR_MOLDE do almoxarifado."
       },
       "openapi_to_ts.py": {
         "esperado_identico": false,

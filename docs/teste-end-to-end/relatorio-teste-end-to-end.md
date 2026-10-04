@@ -1284,22 +1284,28 @@
 - **Status:** **RESOLVIDO**.
 - **Data da Última Auditoria:** 04/10/2026.
 
-## 35. Fechamento do Bloco 5: Documentação de Fronteiras nas 8 Ferramentas (Tickets 20 a 23)
+---
+
+## 36. Calibração do Pipeline de Evolução em 4 Fases: Contratos SHA-256, Join Barrier e Micro-Gates (calibracao-pipeline ciclo-01)
 
 - **Objetivo da Correção:**
-  Atualização canônica dos `README.md` das 8 ferramentas (`tools/aidd-*`) documentando rigorosamente fronteiras, responsabilidades únicas, entradas e saídas de handoff e isolamento de escopo (Ticket 20), sem alteração de código executável.
-- **Ferramentas Tocadas:** [`tools/aidd-forge`](file:///C:/Users/trcnologia/Desktop/ecossistema-aidd/tools/aidd-forge), [`tools/aidd-planner`](file:///C:/Users/trcnologia/Desktop/ecossistema-aidd/tools/aidd-planner), [`tools/aidd-pure`](file:///C:/Users/trcnologia/Desktop/ecossistema-aidd/tools/aidd-pure), [`tools/aidd-master`](file:///C:/Users/trcnologia/Desktop/ecossistema-aidd/tools/aidd-master), [`tools/aidd-enterprise`](file:///C:/Users/trcnologia/Desktop/ecossistema-aidd/tools/aidd-enterprise), [`tools/aidd-ops`](file:///C:/Users/trcnologia/Desktop/ecossistema-aidd/tools/aidd-ops), [`tools/aidd-freedom`](file:///C:/Users/trcnologia/Desktop/ecossistema-aidd/tools/aidd-freedom), [`tools/aidd-open`](file:///C:/Users/trcnologia/Desktop/ecossistema-aidd/tools/aidd-open).
+  Implementar formalmente as 4 fases de calibração do pipeline agêntico de evolução: (1) Contratos Pydantic e validação formal SHA-256 em `PLANNER.json`, `vsa_dispatch.json` e `handoff_evolution.json`; (2) Barreira de sincronização determinística e rebase/rollback automático em `dispatch_pipeline.py` e `vsa_join_barrier.py`; (3) Estruturação dos gates em 2 níveis com Micro-Gates rápidos para Git Worktrees e 54 Macro-Gates pós-merge; (4) Atualização dos comandos canônicos e documentação.
+- **Ferramentas Tocadas:** [`tools/aidd-master`](file:///C:/Users/trcnologia/Desktop/ecossistema-aidd/tools/aidd-master), [`tools/aidd-planner`](file:///C:/Users/trcnologia/Desktop/ecossistema-aidd/tools/aidd-planner).
 - **O que executou:**
-  1. Adicionada a seção canônica de fronteiras e handoff nos 8 `README.md` em `tools/`.
-  2. Criado `tests/test_readme_fronteiras.py` para validação determinística de presença de seção de fronteira em todas as ferramentas.
-  3. Atualização dos livros vivos, catálogo de peças e 13 mapas visuais da auditoria (Tickets 21, 22 e 23).
+  1. `contratos/validador_sha256.py`: validador criptográfico SHA-256 dos 3 contratos canônicos com schemas Pydantic e JSON Schema estritos.
+  2. `tools/aidd-planner/schemas/planner_schema.json` e `tools/aidd-planner/src/core/planner_engine.py`: anotação e validação do hash SHA-256 no artefato `PLANNER.json`.
+  3. `tools/aidd-master/scripts/dispatch_pipeline.py` e `tools/aidd-master/scripts/vsa_join_barrier.py`: introdução da flag `--barrier-sync`, rebase em worktree e reversão determinística (rollback) em caso de falha de gates ou conflito de merge.
+  4. `gates/micro_gates_worktree.py`: suíte leve de Micro-Gates (sintaxe AST, segredos e testes unitários rápidos) executável isoladamente nas worktrees de trabalho.
+  5. `ecossistema.py`: adição do subcomando `ecossistema micro-gates` e canalização de `--barrier-sync` no comando `dispatch`.
 - **Resultados de Testes:**
-  - `pytest tests/test_readme_fronteiras.py` → exit 0 (8 passed).
-  - `pytest tests/test_mapas_e_livros_em_dia.py` → exit 0 (16 passed).
-  - `G_TESTES_REAIS.py` → 2421 passed, 0 failed, 12 skipped (100% OK em todas as 8 ferramentas).
+  - `pytest contratos/tests/test_validador_sha256.py` → 4 passed (exit 0).
+  - `pytest gates/tests/test_micro_gates_worktree.py` → 3 passed (exit 0).
+  - `pytest tools/aidd-master/tests/unit/test_dispatch_pipeline.py` → 6 passed (exit 0).
+  - `pytest tools/aidd-planner/tests` → 47 passed (exit 0).
   - `G_DISCIPLINA_TESTE_FERRAMENTA.py` → exit 0 (PASS).
 - **Status:** **RESOLVIDO**.
 - **Data da Última Auditoria:** 04/10/2026.
+
 
 
 

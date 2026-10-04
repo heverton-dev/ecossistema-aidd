@@ -1,11 +1,12 @@
 # 📑 Índice Canônico de Sessões Agênticas — Ecossistema AIDD
 
-> **Total de Sessões Registradas:** 21  
-> **Última Atualização:** 2026-10-04T10:22:51.215467
+> **Total de Sessões Registradas:** 22  
+> **Última Atualização:** 2026-10-04T14:20:15.529809
 
 | Data / Hora | Harness | Modelo | Conversation ID | Objetivo / Título | Workspace |
 | :--- | :--- | :--- | :--- | :--- | :--- |
-| 2026-10-04 10:22:51 | `antigravity` | `gemini-3.8-flash-low` | [`fe814040...`](file:///C:/Users/trcnologia/.gemini/antigravity-cli/brain/fe814040-68b7-49ae-a380-203e1911bf5b/.system_generated/logs/transcript_full.jsonl) | Sessão Ativa (Auto-Registrada) | `C:/Users/trcnologia/Desktop/ecossistema-aidd` |
+| 2026-10-04 14:20:15 | `claude` | `code-fast` | `5385ba52-35dc-4925-9489-f3d6d41457c2` | Alinhamento arquitetural do pipeline e limpeza de worktrees | `C:/Users/trcnologia/Desktop/ecossistema-aidd` |
+| 2026-10-04 10:33:42 | `antigravity` | `gemini-3.8-flash-low` | [`fe814040...`](file:///C:/Users/trcnologia/.gemini/antigravity-cli/brain/fe814040-68b7-49ae-a380-203e1911bf5b/.system_generated/logs/transcript_full.jsonl) | Sessão Ativa (Auto-Registrada) | `C:/Users/trcnologia/Desktop/ecossistema-aidd` |
 | 2026-10-03 19:13:42 | `claude-code` | `claude-opus-5-5` | [`77e89c47...`](file:///C:/Users/trcnologia/.claude/projects/C--Users-trcnologia-Desktop-worktrees-evolucao-aidd-skills-ciclo-02-Fase-5-Lote-05-Documentos/77e89c47-ac04-44bb-a3f5-4c4325ad0a1c.jsonl) | Ciclo-02 skills: Lote 05 Documentos | `C:/Users/trcnologia/Desktop/worktrees_evolucao-aidd-skills-ciclo-02/Fase_5_Lote_05_Documentos` |
 | 2026-10-03 19:13:44 | `antigravity` | `gemini-3.8-flash-low` | [`d6a26231...`](file:///C:/Users/trcnologia/.gemini/antigravity-cli/brain/d6a26231-0b60-4a1f-8c59-c40baf17cf3a/.system_generated/logs/transcript_full.jsonl) | Sessão Ativa (Auto-Registrada) | `C:/Users/trcnologia/Desktop/ecossistema-aidd` |
 | 2026-10-03 19:37:20 | `antigravity` | `gemini-3.8-flash-low` | [`8cad6ed3...`](file:///C:/Users/trcnologia/.gemini/antigravity-cli/brain/8cad6ed3-1da3-4324-9abe-59763aabaf5a/.system_generated/logs/transcript_full.jsonl) | Sessão Ativa (Auto-Registrada) | `C:/Users/trcnologia/Desktop/ecossistema-aidd` |

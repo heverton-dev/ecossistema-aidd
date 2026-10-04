@@ -7,26 +7,59 @@
   ],
   "como_usar": "Cada achado em aberto traz pedido_melhoria: o texto para python ecossistema.py melhoria init --pedido \"...\".",
   "totais": {
-    "aberto": 2,
+    "aberto": 6,
     "suspeita": 0,
     "resolvido": 14,
     "abertos_alta": 0,
-    "abertos_media": 1,
-    "abertos_baixa": 1
+    "abertos_media": 2,
+    "abertos_baixa": 4
   },
   "achados": [
     {
+      "id": "CAT-declarados-fora-do-commit",
+      "titulo": "1 guardas declarados em lei que não rodam no commit",
+      "gravidade": "media",
+      "estado": "aberto",
+      "origem": "catalogo",
+      "mapa": "leis",
+      "evidencia": [
+        "Lei #14: G_GRAPH_FIRST"
+      ],
+      "pedido_melhoria": "Colocar no pre-commit os guardas declarados nas leis, ou rebaixar a declaração."
+    },
+    {
       "id": "CAT-gates-versoes",
-      "titulo": "1 guardas com o mesmo nome e código diferente",
+      "titulo": "10 guardas com o mesmo nome e código diferente",
       "gravidade": "media",
       "estado": "aberto",
       "origem": "catalogo",
       "mapa": "guardas",
       "evidencia": [
+        "G_BLOQUEAR_SEGREDOS",
+        "G_CONTRACTS",
+        "G_CYBERSECURITY_OWASP",
+        "G_DETERMINISMO_LEI_1",
+        "G_PERFORMANCE",
+        "G_QUARTETO_SINE_QUA_NON",
+        "G_SAIDA_BINARIA",
         "G_SEGREDOS",
+        "G_STACK_PADRAO_OURO",
+        "G_TESTES_REAIS",
         "planejado em fronteiras-ferramentas/ciclo-01: Ticket 8 (Bloco 2, almoxarifado único) e Ticket 19 (Bloco 4, remove as cópias)"
       ],
       "pedido_melhoria": "Deixar uma versão só de cada guarda repetido e fazer as ferramentas chamarem a original."
+    },
+    {
+      "id": "CAT-ciclo-aidd-skills-ciclo-02",
+      "titulo": "Ciclo de auditoria sem todos os documentos: aidd-skills/ciclo-02",
+      "gravidade": "baixa",
+      "estado": "aberto",
+      "origem": "catalogo",
+      "mapa": "oficina",
+      "evidencia": [
+        "faltam: laudo_inicial, laudo_revisado"
+      ],
+      "pedido_melhoria": "Completar ou fechar o ciclo aidd-skills/ciclo-02."
     },
     {
       "id": "CAT-ciclo-fronteiras-ferramentas-ciclo-01",
@@ -39,6 +72,32 @@
         "faltam: laudo_inicial, laudo_revisado"
       ],
       "pedido_melhoria": "Completar ou fechar o ciclo fronteiras-ferramentas/ciclo-01."
+    },
+    {
+      "id": "CAT-scripts-sem-chamador",
+      "titulo": "3 scripts que nenhum código chama",
+      "gravidade": "baixa",
+      "estado": "aberto",
+      "origem": "catalogo",
+      "mapa": "scripts",
+      "evidencia": [
+        "buscar_referencia_complexa",
+        "gerar_benchmark_comparativo",
+        "gerar_benchmark_extremo"
+      ],
+      "pedido_melhoria": "Ligar ao painel ou remover os scripts de scripts/ que nenhum código chama."
+    },
+    {
+      "id": "CAT-verbos-repetidos",
+      "titulo": "1 verbos de CLI em mais de uma ferramenta",
+      "gravidade": "baixa",
+      "estado": "aberto",
+      "origem": "catalogo",
+      "mapa": "ferramentas",
+      "evidencia": [
+        "mobbin: aidd-forge, aidd-planner"
+      ],
+      "pedido_melhoria": "Revisar os verbos de CLI repetidos e manter cada comando numa ferramenta só."
     },
     {
       "id": "VER-001",

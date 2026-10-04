@@ -8,7 +8,7 @@ O nível macro: as leis que governam a casa, as fábricas que produzem e a recei
 #ficha(
   ("Mapa", "mapa-01-leis.html"),
   ("Para que serve", "cada lei do AGENTS.md e o guarda que a prova, e onde a prova é fraca"),
-  ("Achados em aberto", "0"),
+  ("Achados em aberto", "1"),
 )
 ```
 
@@ -22,15 +22,15 @@ Onde mora: `AGENTS.md`, seção 2. Quem confere: o meta-guarda `G_LEI_DECLARA_PO
 
 | Medida | Valor |
 | :-------------------------------------- | :-------------------------------------------- |
-| leis | 13 |
-| declarações de guarda | 64 |
+| leis | 14 |
+| declarações de guarda | 65 |
 | declarações que o meta-guarda não lê | 0 |
 
 Os números saem de `docs/auditoria/mapa-pecas/catalogo-pecas.json` (função `coletar_leis`), os mesmos do mapa `mapa-01-leis.html`.
 
 ## 1.3 O que falta consertar
 
-Nenhum achado em aberto para este mapa.
+- **Média** · 1 guardas declarados em lei que não rodam no commit (`CAT-declarados-fora-do-commit`).
 
 Já resolvido:
 
@@ -53,7 +53,7 @@ O detalhe e a evidência de cada achado estão no Apêndice B e em `docs/auditor
 #ficha(
   ("Mapa", "mapa-02-ferramentas.html"),
   ("Para que serve", "as 8 ferramentas, seus comandos de CLI e as tarefas com mais de uma dona"),
-  ("Achados em aberto", "0"),
+  ("Achados em aberto", "1"),
 )
 ```
 
@@ -68,15 +68,15 @@ Onde mora: `tools/`. Quem confere: o `G_TESTES_REAIS` (pytest de cada ferramenta
 | Medida | Valor |
 | :-------------------------------------- | :-------------------------------------------- |
 | ferramentas | 8 |
-| comandos de CLI | 69 |
-| verbos em mais de uma ferramenta | 0 |
+| comandos de CLI | 75 |
+| verbos em mais de uma ferramenta | 1 |
 | tarefas com várias donas | 0 |
 
 Os números saem de `docs/auditoria/mapa-pecas/catalogo-pecas.json` (função `coletar_ferramentas`), os mesmos do mapa `mapa-02-ferramentas.html`.
 
 ## 2.3 O que falta consertar
 
-Nenhum achado em aberto para este mapa.
+- **Baixa** · 1 verbos de CLI em mais de uma ferramenta (`CAT-verbos-repetidos`).
 
 Já resolvido:
 
@@ -114,7 +114,7 @@ Onde mora: `scripts/orquestrador_sincrono.py` e `componentes/compartilhado/specs
 | Medida | Valor |
 | :-------------------------------------- | :-------------------------------------------- |
 | etapas na receita | 7 |
-| chamadas conferidas | 12 |
+| chamadas conferidas | 13 |
 | chamadas que quebram | 0 |
 | etapas sem ferramenta | 0 |
 | contratos | 9 |

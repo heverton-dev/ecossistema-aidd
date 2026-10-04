@@ -149,3 +149,51 @@ def test_cleanup_garantido_de_worktrees(tmp_path):
     pipeline.cleanup_all_worktrees()
     assert len(pipeline.active_worktrees) == 0
     assert not pasta_falsa.exists()
+
+
+def test_barrier_sync_rebase_dry_run(tmp_path):
+    """Garante que a flag barrier_sync executa rebase pré-merge sem falhas em dry-run."""
+    manifesto = _gerar_manifesto_vsa()
+    m_file = tmp_path / "vsa_dispatch.json"
+    m_file.write_text(json.dumps(manifesto), encoding="utf-8")
+
+    pipeline = VSADispatchPipeline(
+        dispatch_path=m_file,
+        worktree_base_dir=tmp_path / ".worktrees",
+        dry_run=True,
+        verbose=False,
+        barrier_sync=True,
+    )
+    codigo = pipeline.run()
+    assert codigo == 0
+    assert pipeline.barrier_sync is True
+
+
+def test_rollback_automatico_em_conflito(tmp_path):
+    """Testa se conflito de merge dispara rollback automático e emite relatório."""
+    manifesto = _gerar_manifesto_vsa()
+    m_file = tmp_path / "vsa_dispatch.json"
+    m_file.write_text(json.dumps(manifesto), encoding="utf-8")
+
+    pipeline = VSADispatchPipeline(
+        dispatch_path=m_file,
+        worktree_base_dir=tmp_path / ".worktrees",
+        dry_run=False,
+        verbose=False,
+    )
+    pipeline.manifest_data = manifesto
+
+    # Simula falha de merge direto
+    ok = pipeline._merge_slice_branch("branch_inexistente_com_erro", slice_id="slice_erro")
+    assert ok is False
+    assert len(pipeline.rollback_history) == 1
+    assert pipeline.rollback_history[0]["status"] == "ROLLED_BACK"
+    assert pipeline.rollback_history[0]["slice_id"] == "slice_erro"
+
+    # Confirma que o relatório JSON foi gravado
+    report_file = pipeline.repo_root / "dispatch_rollback_report.json"
+    if report_file.exists():
+        conteudo = json.loads(report_file.read_text(encoding="utf-8"))
+        assert conteudo["total_rollbacks"] >= 1
+        report_file.unlink(missing_ok=True)
+

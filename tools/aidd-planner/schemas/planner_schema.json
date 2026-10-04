@@ -138,6 +138,11 @@
     "payload_especifico_fluxo": {
       "type": "object",
       "description": "Payload de especialização estrita conforme meta.fluxo_alvo"
+    },
+    "payload_sha256": {
+      "type": "string",
+      "pattern": "^[a-fA-F0-9]{64}$",
+      "description": "Hash SHA-256 canonicalizado do payload para verificação de integridade formal."
     }
   }
 }

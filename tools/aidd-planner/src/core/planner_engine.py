@@ -28,6 +28,14 @@ if os.path.isdir(_AIDD_OPS_SCRIPTS_DIR) and _AIDD_OPS_SCRIPTS_DIR not in sys.pat
     sys.path.insert(0, _AIDD_OPS_SCRIPTS_DIR)
 
 
+def _calcular_sha256_dict(dados: Dict[str, Any]) -> str:
+    """Calcula hash SHA-256 canonicalizado para integridade do payload."""
+    import hashlib
+    copia = {k: v for k, v in dados.items() if k != "payload_sha256"}
+    canonico = json.dumps(copia, sort_keys=True, ensure_ascii=False, separators=(",", ":")).encode("utf-8")
+    return hashlib.sha256(canonico).hexdigest()
+
+
 class PlannerValidationError(Exception):
     """Exceção levantada quando um plano não cumpre os requisitos do schema ou regras invariantes."""
     pass
@@ -503,6 +511,7 @@ def exportar_para_pipeline_execucao(plano: Dict[str, Any]) -> Dict[str, Any]:
         "barreira_sincronizacao": barreira_sincronizacao,
         "fase_sequencial_sincrona": fase_sequencial,
     }
+    manifesto["payload_sha256"] = _calcular_sha256_dict(manifesto)
 
     try:
         import jsonschema
@@ -642,6 +651,7 @@ def compilar_grafo_topologico_vsa(plano: Dict[str, Any]) -> Dict[str, Any]:
         "grafo_fatias": grafo_fatias,
         "convergencia_master": convergencia_master,
     }
+    manifesto_vsa["payload_sha256"] = _calcular_sha256_dict(manifesto_vsa)
 
     try:
         import jsonschema

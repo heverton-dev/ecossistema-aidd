@@ -1423,7 +1423,7 @@
       "papel": "principal",
       "dono_do_conteudo": "aidd-planner",
       "versao": "1.0.0",
-      "sha256": "sha256-e6dec001bae5ae81577b69842b1852a707398766eecf45fe8304ebfbbc50a23d",
+      "sha256": "sha256-01cb178daf965f8ebdb1cb1c2a7fb09f0cd24dd47367e877b13e67b9aee58b3c",
       "consumidores": [
         "aidd-planner",
         "ecossistema-raiz"
@@ -1516,7 +1516,7 @@
       "papel": "principal",
       "dono_do_conteudo": "aidd-planner",
       "versao": "1.0.0",
-      "sha256": "sha256-67abe8b265333308c3f544841573259197e2c8e7cb4796faf0203ae64f75cc16",
+      "sha256": "sha256-7615c26086bedd100dd6eb463c4156c2206f93b200e6f4efd0f29d964f2c2492",
       "consumidores": [
         "aidd-planner",
         "ecossistema-raiz"

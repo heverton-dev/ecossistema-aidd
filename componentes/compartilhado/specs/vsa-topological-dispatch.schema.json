@@ -12,9 +12,14 @@
   ],
   "additionalProperties": false,
   "properties": {
+    "payload_sha256": {
+      "type": "string",
+      "pattern": "^[a-fA-F0-9]{64}$",
+      "description": "Hash SHA-256 canonicalizado do payload para verificação de integridade formal."
+    },
     "versao_schema": {
       "type": "string",
-      "enum": ["1.0.0"],
+      "enum": ["1.0.0", "1.1.0"],
       "description": "Versão estrita do schema de despacho VSA."
     },
     "projeto_slug": {

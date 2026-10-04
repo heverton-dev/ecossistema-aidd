@@ -190,6 +190,19 @@ class OrquestradorSincrono:
                 )
                 return False
 
+        # Validação estrita de integridade de payload SHA-256 (Fase 1 / Ticket 10)
+        try:
+            from contratos.validador_sha256 import verificar_integridade_payload
+            ok_hash, err_hash = verificar_integridade_payload(dados)
+            if not ok_hash:
+                self.log(
+                    f"Contrato {chave} ({relativo.as_posix()}) reprovado na validação de integridade SHA-256: {err_hash}",
+                    "ERRO",
+                )
+                return False
+        except ImportError:
+            pass
+
         self.contratos[chave] = dados
         self.contratos_lidos.append({
             "contrato": chave,
@@ -328,11 +341,12 @@ class OrquestradorSincrono:
             self.log(f"aidd-planner não gravou {VSA_DISPATCH_NOME}: nada para despachar", "ERRO")
             return False
 
-        self.log("Invocando motor de despacho VSA via CLI do ecossistema")
+        self.log("Invocando motor de despacho VSA via CLI do ecossistema (--barrier-sync ativo)")
         cmd_disp = [
             sys.executable, "ecossistema.py", "dispatch",
             "--dispatch", str(vsa_manifest),
             "--target-dir", str(self.pasta),
+            "--barrier-sync",
         ]
         if self.dry_run:
             cmd_disp.append("--dry-run")
