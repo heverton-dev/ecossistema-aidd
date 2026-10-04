@@ -9,11 +9,13 @@ from application.commands.deploy import cmd_deploy
 from application.commands.export_frontend import cmd_export_frontend
 from application.commands.heal import cmd_heal
 from application.commands.init import cmd_init
-from application.commands.inject import (
-    _executar_injecao,
-    _tentar_injecao_por_linguagem_natural,
-    cmd_inject,
-)
+from application.pecas_catalogo import carregar_injetor
+
+_injetor = carregar_injetor()
+_executar_injecao = getattr(_injetor, "_executar_injecao", getattr(_injetor, "run_inject", None))
+_tentar_injecao_por_linguagem_natural = _injetor._tentar_injecao_por_linguagem_natural
+cmd_inject = _injetor.cmd_inject
+run_inject = getattr(_injetor, "run_inject", None)
 from application.commands.plan import cmd_apply, cmd_plan, parse_natural_language_intent
 from application.commands.scaffold_infra import cmd_scaffold_infra
 from application.commands.setup import cmd_setup, ensure_environment

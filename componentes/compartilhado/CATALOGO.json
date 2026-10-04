@@ -33,10 +33,7 @@
         "aidd-enterprise",
         "aidd-master"
       ],
-      "copias": [
-        "tools/aidd-master/scripts/gates/G_ARQUITETURA.py",
-        "tools/aidd-master/templates/gates/G_ARQUITETURA.py"
-      ],
+      "copias": [],
       "base": "aidd-master templates/gates bc68193 2026-09-09"
     },
     {
@@ -67,10 +64,7 @@
         "aidd-enterprise",
         "aidd-master"
       ],
-      "copias": [
-        "tools/aidd-master/scripts/gates/G_CHAOS.py",
-        "tools/aidd-master/templates/gates/G_CHAOS.py"
-      ],
+      "copias": [],
       "base": "aidd-master templates/gates 376b832 2026-09-09"
     },
     {
@@ -86,10 +80,7 @@
         "aidd-enterprise",
         "aidd-master"
       ],
-      "copias": [
-        "tools/aidd-master/scripts/gates/G_CONTRACTS.py",
-        "tools/aidd-master/templates/gates/G_CONTRACTS.py"
-      ],
+      "copias": [],
       "base": "aidd-master templates/gates 9ae2e78 2026-09-18 (DIAGNOSTICO Etapa 4)"
     },
     {
@@ -137,10 +128,7 @@
         "aidd-enterprise",
         "aidd-master"
       ],
-      "copias": [
-        "tools/aidd-master/scripts/gates/G_ESTRUTURA.py",
-        "tools/aidd-master/templates/gates/G_ESTRUTURA.py"
-      ],
+      "copias": [],
       "base": "aidd-master templates/gates 376b832 2026-09-09"
     },
     {
@@ -174,10 +162,7 @@
         "aidd-enterprise",
         "aidd-master"
       ],
-      "copias": [
-        "tools/aidd-master/scripts/gates/G_HARNESS_COMPAT.py",
-        "tools/aidd-master/templates/gates/G_HARNESS_COMPAT.py"
-      ],
+      "copias": [],
       "base": "aidd-master templates/gates 376b832 2026-09-09 (DIAGNOSTICO Etapa 4)"
     },
     {
@@ -193,10 +178,7 @@
         "aidd-enterprise",
         "aidd-master"
       ],
-      "copias": [
-        "tools/aidd-master/scripts/gates/G_PERFORMANCE.py",
-        "tools/aidd-master/templates/gates/G_PERFORMANCE.py"
-      ],
+      "copias": [],
       "base": "aidd-master templates/gates bc68193 2026-09-09 (DIAGNOSTICO Etapa 4)"
     },
     {
@@ -212,10 +194,7 @@
         "aidd-enterprise",
         "aidd-master"
       ],
-      "copias": [
-        "tools/aidd-master/scripts/gates/G_QUALIDADE.py",
-        "tools/aidd-master/templates/gates/G_QUALIDADE.py"
-      ],
+      "copias": [],
       "base": "aidd-master templates/gates d0f6db9 2026-09-16"
     },
     {
@@ -265,10 +244,7 @@
         "aidd-enterprise",
         "aidd-master"
       ],
-      "copias": [
-        "tools/aidd-master/scripts/gates/G_SEGREDOS.py",
-        "tools/aidd-master/templates/gates/G_SEGREDOS.py"
-      ],
+      "copias": [],
       "base": "aidd-master templates/gates da0999b 2026-09-28"
     },
     {
@@ -284,10 +260,7 @@
         "aidd-enterprise",
         "aidd-master"
       ],
-      "copias": [
-        "tools/aidd-master/scripts/gates/G_SEGURANCA.py",
-        "tools/aidd-master/templates/gates/G_SEGURANCA.py"
-      ],
+      "copias": [],
       "base": "aidd-master templates/gates a1ea899 2026-09-24"
     },
     {
@@ -320,10 +293,7 @@
         "aidd-enterprise",
         "aidd-master"
       ],
-      "copias": [
-        "tools/aidd-master/scripts/gates/G_TESTES.py",
-        "tools/aidd-master/templates/gates/G_TESTES.py"
-      ],
+      "copias": [],
       "base": "aidd-master templates/gates b115282 2026-09-04"
     },
     {
@@ -743,9 +713,7 @@
       "consumidores": [
         "aidd-master"
       ],
-      "copias": [
-        "tools/aidd-master/scripts/gates/G_INJECT.py"
-      ],
+      "copias": [],
       "variante_de": "injetor/G_INJECT.py",
       "tipo_variante": "versao_divergente",
       "motivo": "Mesma linhagem: as capacidades foram juntadas na principal; o texto original fica guardado até a remoção com o usuário (Ticket 19)."
@@ -762,9 +730,7 @@
       "consumidores": [
         "aidd-master"
       ],
-      "copias": [
-        "tools/aidd-master/application/commands/inject.py"
-      ],
+      "copias": [],
       "variante_de": "injetor/inject.py",
       "tipo_variante": "versao_divergente",
       "motivo": "Mesma linhagem: as capacidades foram juntadas na principal; o texto original fica guardado até a remoção com o usuário (Ticket 19)."
@@ -990,10 +956,7 @@
         "aidd-open",
         "aidd-ops"
       ],
-      "copias": [
-        "tools/aidd-master/templates/core/Dockerfile",
-        "tools/aidd-master/templates/v2/Dockerfile"
-      ],
+      "copias": [],
       "base": "aidd-master templates/core 7768f12 2026-09-17 (conserto de 17/09, DIAGNOSTICO Etapa 5)"
     },
     {
@@ -1011,10 +974,7 @@
         "aidd-open",
         "aidd-ops"
       ],
-      "copias": [
-        "tools/aidd-master/templates/core/deploy.sh",
-        "tools/aidd-master/templates/v2/deploy.sh"
-      ],
+      "copias": [],
       "base": "aidd-master templates/core 7768f12 2026-09-17 (conserto de 17/09, DIAGNOSTICO Etapa 5)"
     },
     {
@@ -1031,10 +991,7 @@
         "aidd-master",
         "aidd-ops"
       ],
-      "copias": [
-        "tools/aidd-master/templates/core/docker-compose.yml",
-        "tools/aidd-master/templates/v2/docker-compose.yml"
-      ],
+      "copias": [],
       "base": "aidd-master templates/core 9ae2e78 2026-09-18 (conserto de 17/09, DIAGNOSTICO Etapa 5)"
     },
     {
@@ -1051,10 +1008,7 @@
         "aidd-master",
         "aidd-ops"
       ],
-      "copias": [
-        "tools/aidd-master/templates/core/nginx/nginx.conf",
-        "tools/aidd-master/templates/v2/nginx/nginx.conf"
-      ],
+      "copias": [],
       "base": "aidd-master templates/core 9ae2e78 2026-09-18 (conserto de 17/09, DIAGNOSTICO Etapa 5)"
     },
     {
@@ -1071,10 +1025,7 @@
         "aidd-master",
         "aidd-ops"
       ],
-      "copias": [
-        "tools/aidd-master/templates/core/nginx/ssl/generate_ssl.py",
-        "tools/aidd-master/templates/v2/nginx/ssl/generate_ssl.py"
-      ],
+      "copias": [],
       "base": "aidd-master templates/core 3345ce5 2026-09-03 (conserto de 17/09, DIAGNOSTICO Etapa 5)"
     },
     {
@@ -1109,10 +1060,7 @@
         "aidd-master",
         "aidd-open"
       ],
-      "copias": [
-        "tools/aidd-master/templates/core/docs.html",
-        "tools/aidd-master/templates/v2/docs.html"
-      ],
+      "copias": [],
       "base": "aidd-master templates/core cf9f336 2026-09-26 (molde Jinja)"
     },
     {
@@ -1129,10 +1077,7 @@
         "aidd-master",
         "aidd-open"
       ],
-      "copias": [
-        "tools/aidd-master/templates/core/mcp_server.py",
-        "tools/aidd-master/templates/v2/mcp_server.py"
-      ],
+      "copias": [],
       "base": "componentes/compartilhado/src-core (DIAGNOSTICO Etapa 4) + tema primary/primary_hover dos templates"
     },
     {
@@ -1180,10 +1125,7 @@
         "aidd-master",
         "aidd-open"
       ],
-      "copias": [
-        "tools/aidd-master/templates/core/openapi.py",
-        "tools/aidd-master/templates/v2/openapi.py"
-      ],
+      "copias": [],
       "base": "templates/core do aidd-master: já é a src-core + tema primary/primary_light/primary_rgb"
     },
     {
@@ -1338,10 +1280,7 @@
         "aidd-enterprise",
         "aidd-master"
       ],
-      "copias": [
-        "tools/aidd-master/templates/core/mcp_studio.html",
-        "tools/aidd-master/templates/v2/mcp_studio.html"
-      ],
+      "copias": [],
       "variante_de": "moldes/quarteto/mcp_studio.html",
       "tipo_variante": "versao_divergente",
       "motivo": "Mesma linhagem: as capacidades foram juntadas na principal; o texto original fica guardado até a remoção com o usuário (Ticket 19). Os templates não têm o Spotlight (Ctrl+K) da src-core."
@@ -1359,10 +1298,7 @@
         "aidd-enterprise",
         "aidd-master"
       ],
-      "copias": [
-        "tools/aidd-master/templates/core/swagger.html",
-        "tools/aidd-master/templates/v2/swagger.html"
-      ],
+      "copias": [],
       "variante_de": "moldes/quarteto/swagger.html",
       "tipo_variante": "versao_divergente",
       "motivo": "Mesma linhagem: as capacidades foram juntadas na principal; o texto original fica guardado até a remoção com o usuário (Ticket 19). Os templates não têm o Spotlight (Ctrl+K) da src-core."
@@ -1380,10 +1316,7 @@
         "aidd-enterprise",
         "aidd-master"
       ],
-      "copias": [
-        "tools/aidd-master/templates/core/webhook_studio.html",
-        "tools/aidd-master/templates/v2/webhook_studio.html"
-      ],
+      "copias": [],
       "variante_de": "moldes/quarteto/webhook_studio.html",
       "tipo_variante": "versao_divergente",
       "motivo": "Mesma linhagem: as capacidades foram juntadas na principal; o texto original fica guardado até a remoção com o usuário (Ticket 19). Os templates não têm o Spotlight (Ctrl+K) da src-core."
@@ -1419,10 +1352,7 @@
         "aidd-master",
         "aidd-open"
       ],
-      "copias": [
-        "tools/aidd-master/templates/core/webhooks.py",
-        "tools/aidd-master/templates/v2/webhooks.py"
-      ],
+      "copias": [],
       "base": "templates/core do aidd-master: já é a src-core + persistência do Webhook Studio + tema"
     },
     {

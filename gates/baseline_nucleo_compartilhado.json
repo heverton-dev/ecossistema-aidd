@@ -157,6 +157,10 @@
         "esperado_identico": false,
         "motivo": "WEBHOOK_DEMO_URL customizado por projeto ('demo-aidd-master' vs 'demo-aidd-enterprise') e aidd-master tem 4 linhas de comentario extra sobre pyjwt/cryptography serem dependencias incondicionais que aidd-enterprise nao tem."
       },
+      "moldes_catalogo.py": {
+        "esperado_identico": false,
+        "motivo": "REVISAR: divergencia nova detectada por --atualizar-baseline. Edite este motivo antes de commitar."
+      },
       "openapi_to_ts.py": {
         "esperado_identico": false,
         "motivo": "String de descricao do frontend gerado diverge por nome de produto ('AIDD Master' vs 'AIDD Master Enterprise')."
@@ -179,105 +183,8 @@
       }
     },
     "scripts/gates": {},
-    "templates/core": {
-      "circuit_breaker.py": {
-        "esperado_identico": true,
-        "motivo": null
-      },
-      "cqrs.py": {
-        "esperado_identico": true,
-        "motivo": null
-      },
-      "database.py": {
-        "esperado_identico": true,
-        "motivo": null
-      },
-      "events.py": {
-        "esperado_identico": true,
-        "motivo": null
-      },
-      "external_adapter.py": {
-        "esperado_identico": true,
-        "motivo": null
-      },
-      "jobs.py": {
-        "esperado_identico": true,
-        "motivo": null
-      },
-      "local_first.py": {
-        "esperado_identico": true,
-        "motivo": null
-      },
-      "locustfile.py": {
-        "esperado_identico": true,
-        "motivo": null
-      },
-      "logs.py": {
-        "esperado_identico": true,
-        "motivo": null
-      },
-      "mcp_repository.py": {
-        "esperado_identico": true,
-        "motivo": null
-      },
-      "metrics.py": {
-        "esperado_identico": true,
-        "motivo": null
-      },
-      "outbox_worker.py": {
-        "esperado_identico": true,
-        "motivo": null
-      },
-      "repositories.py": {
-        "esperado_identico": true,
-        "motivo": null
-      },
-      "result.py": {
-        "esperado_identico": true,
-        "motivo": null
-      },
-      "security.py": {
-        "esperado_identico": true,
-        "motivo": null
-      },
-      "server.py": {
-        "esperado_identico": true,
-        "motivo": null
-      },
-      "token_revocation.py": {
-        "esperado_identico": true,
-        "motivo": null
-      }
-    },
+    "templates/core": {},
     "templates/v2": {
-      "circuit_breaker.py": {
-        "esperado_identico": true,
-        "motivo": null
-      },
-      "cqrs.py": {
-        "esperado_identico": true,
-        "motivo": null
-      },
-      "database.py": {
-        "esperado_identico": true,
-        "motivo": null
-      },
-      "events.py": {
-        "esperado_identico": true,
-        "motivo": null
-      },
-      "external_adapter.py": {
-        "esperado_identico": true,
-        "motivo": null
-      },
-      "jobs.py": {
-        "esperado_identico": true,
-        "motivo": null
-      },
-      "local_first.py": {
-        "esperado_identico": true,
-        "motivo": null
-      },
       "locustfile.py": {
         "esperado_identico": true,
         "motivo": null
@@ -290,23 +197,7 @@
         "esperado_identico": true,
         "motivo": null
       },
-      "metrics.py": {
-        "esperado_identico": true,
-        "motivo": null
-      },
-      "outbox_worker.py": {
-        "esperado_identico": true,
-        "motivo": null
-      },
       "repositories.py": {
-        "esperado_identico": true,
-        "motivo": null
-      },
-      "result.py": {
-        "esperado_identico": true,
-        "motivo": null
-      },
-      "security.py": {
         "esperado_identico": true,
         "motivo": null
       },
@@ -317,105 +208,17 @@
       "server_fastapi.py": {
         "esperado_identico": true,
         "motivo": null
-      },
-      "token_revocation.py": {
-        "esperado_identico": true,
-        "motivo": null
       }
     },
-    "aidd-enterprise/scripts-gates-vs-templates-gates": {
-      "G_ARQUITETURA.py": {
-        "esperado_identico": true,
-        "motivo": null
-      },
-      "G_CHAOS.py": {
-        "esperado_identico": true,
-        "motivo": null
-      },
-      "G_CONTRACTS.py": {
-        "esperado_identico": true,
-        "motivo": null
-      },
-      "G_ESTRUTURA.py": {
-        "esperado_identico": true,
-        "motivo": null
-      },
-      "G_HARNESS_COMPAT.py": {
-        "esperado_identico": true,
-        "motivo": null
-      },
-      "G_PERFORMANCE.py": {
-        "esperado_identico": true,
-        "motivo": null
-      },
-      "G_QUALIDADE.py": {
-        "esperado_identico": true,
-        "motivo": null
-      },
-      "G_SEGREDOS.py": {
-        "esperado_identico": true,
-        "motivo": null
-      },
-      "G_SEGURANCA.py": {
-        "esperado_identico": true,
-        "motivo": null
-      },
-      "G_TESTES.py": {
-        "esperado_identico": true,
-        "motivo": null
-      }
-    },
-    "aidd-master/scripts-gates-vs-templates-gates": {
-      "G_ARQUITETURA.py": {
-        "esperado_identico": true,
-        "motivo": null
-      },
-      "G_CHAOS.py": {
-        "esperado_identico": true,
-        "motivo": null
-      },
-      "G_CONTRACTS.py": {
-        "esperado_identico": true,
-        "motivo": null
-      },
-      "G_ESTRUTURA.py": {
-        "esperado_identico": true,
-        "motivo": null
-      },
-      "G_HARNESS_COMPAT.py": {
-        "esperado_identico": true,
-        "motivo": null
-      },
-      "G_PERFORMANCE.py": {
-        "esperado_identico": true,
-        "motivo": null
-      },
-      "G_QUALIDADE.py": {
-        "esperado_identico": true,
-        "motivo": null
-      },
-      "G_SEGREDOS.py": {
-        "esperado_identico": true,
-        "motivo": null
-      },
-      "G_SEGURANCA.py": {
-        "esperado_identico": true,
-        "motivo": null
-      },
-      "G_TESTES.py": {
-        "esperado_identico": true,
-        "motivo": null
-      }
-    }
+    "aidd-enterprise/scripts-gates-vs-templates-gates": {},
+    "aidd-master/scripts-gates-vs-templates-gates": {}
   },
   "catalogo": {
     "descricao": "Copias de pecas do CATALOGO.json que divergem de proposito da versao do catalogo (chave = caminho da copia, valor = motivo). Toda outra copia tem de ser byte-identica a peca. As copias saem do repo no Ticket 19 (remocao com o usuario).",
     "divergencias_documentadas": {
       "tools/aidd-enterprise/src/core/detector_camada.py": "Copia com _PROJETO_PADRAO fixo em 'aidd-enterprise'; a peça deduz o projeto pela localização. Desde o Ticket 18 o enterprise carrega a peça (application/pecas_catalogo.py). Copia antiga, fica no disco até a remoção com o usuário (Ticket 19).",
       "tools/aidd-master/src/core/detector_camada.py": "Copia com _PROJETO_PADRAO fixo em 'aidd-master'; a peça deduz o projeto pela localização. Copia antiga, fica no disco até a remoção com o usuário (Ticket 19).",
-      "tools/aidd-master/src/core/profiles_registry.py": "Versão do aidd-master (hooks em JSON, 9325afa); a peça é a base do enterprise com esses hooks juntados. Copia antiga, fica no disco até a remoção com o usuário (Ticket 19).",
-      "tools/aidd-master/templates/core/mcp_server.py": "Molde do Quarteto anterior à peça: a peça (src-core + tema primary/primary_hover) tem register_injected_tools com selo Ed25519/SHA-256. Copia antiga, fica no disco até a remoção com o usuário (Ticket 19).",
-      "tools/aidd-master/templates/v2/mcp_server.py": "Molde do Quarteto anterior à peça: a peça (src-core + tema primary/primary_hover) tem register_injected_tools com selo Ed25519/SHA-256. Copia antiga, fica no disco até a remoção com o usuário (Ticket 19)."
+      "tools/aidd-master/src/core/profiles_registry.py": "Versão do aidd-master (hooks em JSON, 9325afa); a peça é a base do enterprise com esses hooks juntados. Copia antiga, fica no disco até a remoção com o usuário (Ticket 19)."
     }
   }
 }

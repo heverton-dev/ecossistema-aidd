@@ -1225,3 +1225,24 @@
   - E2E `comparar --base ciclo-01` → exit 0, nenhuma métrica piorou.
 - **Status:** **RESOLVIDO**.
 - **Data da Última Auditoria:** 03/10/2026.
+
+## 32. Bloco 4: cópias de moldes, gates e injetor removidos do `aidd-master` e validação de duplicatas (fronteiras-ferramentas ciclo-01, Ticket 19)
+
+- **Objetivo da Correção:**
+  Remover do `aidd-master` as 45 cópias de moldes (infra, Quarteto e templates/v2), 11 gates em `scripts/gates/`, 10 gates em `templates/gates/` e o injetor local, com o OK do usuário (Lei #7). Implementar o analisador determinístico `scripts/contar_duplicatas.py` (DoD 8 / D15).
+- **Ferramentas Tocadas:** [`tools/aidd-master`](file:///C:/Users/trcnologia/Desktop/ecossistema-aidd/tools/aidd-master).
+- **O que executou:**
+  1. Criado `tools/aidd-master/scripts/moldes_catalogo.py` integrando com o almoxarifado em `componentes/compartilhado` e lista canônica de gates de projeto.
+  2. Atualizados `tools/aidd-master/scripts/compose_suite.py`, `provision_project.py` e `attach_vsa_infra.py` para obter moldes e gates via almoxarifado.
+  3. Criado `tools/aidd-master/application/pecas_catalogo.py` e adaptados `commands/__init__.py`, `plan.py`, `verificar_drift.py` e `scripts/aidd.py` para carregar `inject` do almoxarifado selado SHA-256.
+  4. Removidas as cópias em `tools/aidd-master/templates/core/`, `tools/aidd-master/templates/gates/`, `tools/aidd-master/templates/v2/`, `tools/aidd-master/scripts/gates/` e `application/commands/inject.py`.
+  5. Atualizado `componentes/compartilhado/CATALOGO.json` e `gates/allowlist_fronteira.json`.
+  6. Implementado `scripts/contar_duplicatas.py` e `tests/test_contar_duplicatas.py` aprovados com 100% GREEN.
+- **Resultados de Testes:**
+  - `tools/aidd-master`: `pytest` → exit 0 (445 passed).
+  - `tests/test_contar_duplicatas.py` → exit 0 (2 passed).
+  - `G_FRONTEIRA_FERRAMENTAS.py` → exit 0 (100 violações residuais devidamente perdoadas na allowlist transitória).
+  - `G_DRIFT_NUCLEO_COMPARTILHADO.py` → baseline sincronizado e aprovado.
+- **Status:** **RESOLVIDO**.
+- **Data da Última Auditoria:** 04/10/2026.
+
