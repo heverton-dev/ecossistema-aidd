@@ -1,4 +1,0 @@
-Aviso: --tipo ausente; usando 'todos'.
-Componentes verificados: 74
-
-[SUCESSO] Todos os componentes sincronizados com a fonte canonica (SHA-256 verificado).

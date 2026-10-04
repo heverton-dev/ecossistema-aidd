@@ -1,2 +1,0 @@
-base=C:\Users\trcnologia\Desktop\TESTES_E2E-ecossistema-aidd\ciclo-01 novo=C:\Users\trcnologia\Desktop\TESTES_E2E-ecossistema-aidd\ciclo-01 relatorio=%TEMP%\comp_self.md
-VEREDITO: nenhuma metrica piorou — exit 0
