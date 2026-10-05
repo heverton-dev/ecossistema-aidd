@@ -72,11 +72,17 @@ def gerar_design_system(
         }
     }
 
+    fonte_descricao = "catalogo-deterministico + motor topologico mobbin (zero LLM, Lei #1)"
+    if tela_referencia and tela_referencia.get("fonte") == "online_curated_galleries":
+        fonte_descricao = "referencias abertas online (21st.dev/transitions.dev/dribbble) + catalogo-deterministico"
+    elif tela_referencia and tela_referencia.get("fonte") == "mobbin_api":
+        fonte_descricao = "mobbin enterprise api + motor topologico mobbin"
+
     resultado: Dict[str, Any] = {
         "versao": "2.0.0",
         "projeto": slug,
         "gerado_em": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
-        "fonte": "catalogo-deterministico + motor topologico mobbin (zero LLM, Lei #1)",
+        "fonte": fonte_descricao,
         "paleta": paleta,
         "dual_mode": tokens_dual,
         "regras_craft_floor": [

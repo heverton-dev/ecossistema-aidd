@@ -1182,12 +1182,8 @@ def cmd_sessao(args):
     return run_command([sys.executable, script] + args, cwd=ROOT_DIR)
 
 def cmd_mobbin(args):
-    """Executa consultas de UI, fluxos e telas via Mobbin Enterprise."""
-    script = os.path.join(TOOLS_DIR, "aidd-forge", "aidd_forge", "core", "mobbin_client.py")
-    if not os.path.exists(script):
-        print(f"Erro: script '{script}' não encontrado.")
-        return 1
-    return run_command([sys.executable, script] + args, cwd=ROOT_DIR)
+    """Executa consultas de UI, fluxos e telas via Mobbin Enterprise delegando ao aidd-planner."""
+    return cmd_planner(["mobbin"] + args)
 
 
 def cmd_status(args):

@@ -208,47 +208,6 @@ def fornecer_command(piece: str, destino: str) -> None:
         sys.exit(1)
 
 
-@cli.command("mobbin", help="Consulta deterministica de telas e fluxos de UI do Mobbin (delegação ao aidd-planner)")
-@click.argument("query")
-@click.option("--plataforma", type=click.Choice(["web", "ios"]), default="web", help="Plataforma alvo")
-@click.option("--modo", type=click.Choice(["fast", "standard", "deep"]), default="standard", help="Modo de busca")
-@click.option("--limite", type=int, default=10, help="Quantidade maxima de telas")
-@click.option("--json", "as_json", is_flag=True, default=False, help="Saida em JSON puro")
-def mobbin_command(query: str, plataforma: str, modo: str, limite: int, as_json: bool) -> None:
-    sys.exit(cmd_mobbin(query, plataforma, modo, limite, as_json))
-
-
-def cmd_mobbin(query: str, plataforma: str, modo: str, limite: int, as_json: bool) -> int:
-    from aidd_forge.core.mobbin_client import executar_busca
-
-    import json as json_lib
-
-    res = executar_busca(
-        query=query,
-        platform=plataforma,
-        mode=modo,
-        limit=limite
-    )
-
-    if as_json:
-        print(json_lib.dumps(res, indent=2, ensure_ascii=False))
-    else:
-        screens = res.get("screens", [])
-        print(f"[aidd-planner via forge] Telas encontradas no Mobbin para '{query}' ({plataforma}): {len(screens)}")
-        for idx, screen in enumerate(screens, 1):
-            app_name = screen.get("app_name", "Desconhecido")
-            screen_name = screen.get("name", "Sem nome")
-            screen_url = screen.get("mobbin_url") or screen.get("url", "")
-            img_url = screen.get("image_url", "")
-            print(f"  [{idx}] {app_name} - {screen_name}")
-            if screen_url:
-                print(f"      Mobbin: {screen_url}")
-            if img_url:
-                print(f"      Imagem: {img_url}")
-    return 0
-
-
-
 def cmd_audit(path: str, fmt: str, output: str | None) -> int:
     from aidd_forge.core.audit_engine import AuditEngine
     from aidd_forge.core.audit_report import to_html, to_json, to_markdown

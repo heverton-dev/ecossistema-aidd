@@ -775,15 +775,26 @@
   6. Adição de suíte de testes unitários em `tools/aidd-planner/tests/test_planner.py` validando os Fluxos 01 (Pure), 02 (Open) e 03 (Freedom), rejeição de planos inválidos e auditoria de 100% de conformidade contra `gates/G_PIPELINE_HANDOFF.py`.
 - **Status:** **RESOLVIDO**.
 
+#### Inconsistência 30: Descentralização do Mobbin no Forge e Falta de Seleção de Fontes de UI no Planner
+- **Nome:** Acoplamento indevido de cliente/subcomando Mobbin no `aidd-forge` e geração estática do `DESIGN-SYSTEM.json` sem escolha da modalidade de referências de tela.
+- **Motivo:** O `aidd-forge` possuía módulo e comando `mobbin`, duplicando competência do `aidd-planner`. Adicionalmente, o Planner gerava paletas estáticas sem perguntar ao usuário a estratégia de referências de telas.
+- **Plano de Correção:**
+  1. Remoção do subcomando e cliente Mobbin de `tools/aidd-forge/` e de seus testes unitários.
+  2. Redirecionamento canônico de `ecossistema.py mobbin` para o `aidd-planner`.
+  3. Criação de `ui_reference_resolver.py` no `aidd-planner` com 3 caminhos: 1. Mobbin Enterprise API (padrão), 2. Referências online gratuitas (21st.dev/transitions.dev/dribbble), 3. Modelo determinístico offline (Zero LLM/Zero Net).
+  4. Exposição de flag `--ui-ref` e prompt interativo TTY no `aidd-planner init`.
+  5. Testes unitários cobrindo os 3 modos em `tools/aidd-planner/tests/test_planner.py`.
+- **Status:** **RESOLVIDO**.
+
 ### Resultado Final de Validação (`aidd-planner`)
 
-- **Testes Unitários:** **18 passed**, 0 falhas (100% de aprovação).
+- **Testes Unitários:** **48 passed**, 0 falhas (100% de aprovação).
 - **Quality Gates do Planner:**
   - `G_PLANNER_SCHEMA.py`: **PASS**
   - `G_PLANNER_SINE_QUA_NON.py`: **PASS**
   - `G_PLANNER_COERENCIA_FLUXO.py`: **PASS**
 - **Quality Gates Globais:** **100% PASS** (conforme `G_PIPELINE_HANDOFF.py`, `G_QUARTETO_SINE_QUA_NON.py`, `G_TESTES_REAIS.py` e `G_DISCIPLINA_TESTE_FERRAMENTA.py`).
-- **Data da Última Auditoria:** 21/09/2026 (Exportador nativo para pipeline de execução — ISSUE-PIPE-0005).
+- **Data da Última Auditoria:** 05/10/2026 (Centralização canônica do Mobbin e resolvedor triplo de referências de UI).
 
 ---
 
