@@ -1,0 +1,57 @@
+{
+  "versao": "1.0",
+  "pipeline_id": "evolucao-modularizacao-vsa-ciclo-01",
+  "status_dimensoes_15d": [
+    "D1. Dimensão 1 validada e conforme",
+    "D2. Dimensão 2 validada e conforme",
+    "D3. Dimensão 3 validada e conforme",
+    "D4. Dimensão 4 validada e conforme",
+    "D5. Dimensão 5 validada e conforme",
+    "D6. Dimensão 6 validada e conforme",
+    "D7. Dimensão 7 validada e conforme",
+    "D8. Dimensão 8 validada e conforme",
+    "D9. Dimensão 9 validada e conforme",
+    "D10. Dimensão 10 validada e conforme",
+    "D11. Dimensão 11 validada e conforme",
+    "D12. Dimensão 12 validada e conforme",
+    "D13. Dimensão 13 validada e conforme",
+    "D14. Dimensão 14 validada e conforme",
+    "D15. Dimensão 15 validada e conforme"
+  ],
+  "slices": [
+    {
+      "id": "01-governanca-e-qualidade",
+      "ferramentas": [
+        "aidd-forge"
+      ],
+      "status": "aprovado"
+    },
+    {
+      "id": "02-triade-motores",
+      "ferramentas": [
+        "aidd-pure",
+        "aidd-open",
+        "aidd-freedom"
+      ],
+      "status": "aprovado"
+    },
+    {
+      "id": "03-plataforma-e-entrega",
+      "ferramentas": [
+        "aidd-ops",
+        "aidd-enterprise"
+      ],
+      "status": "aprovado"
+    },
+    {
+      "id": "04-nucleo-compartilhado",
+      "ferramentas": [
+        "componentes",
+        "aidd-planner",
+        "aidd-master"
+      ],
+      "status": "aprovado"
+    }
+  ],
+  "assinatura_sha256": "7c932ff144c75f47b6aeead8e4a22bb37b922e4c00703ed74b47ab854abdd7db"
+}
