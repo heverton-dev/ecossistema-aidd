@@ -91,6 +91,14 @@ def test_rota_do_modulo_adicionado_depois_responde_200(suite_com_modulo_adiciona
     correção, 'billing' respondia 404 porque src/server.py nunca era
     religado por add_module.py."""
     target = suite_com_modulo_adicionado
+    import socket
+
+    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+        s.bind(("", 0))
+        porta_livre = s.getsockname()[1]
+
+    env = os.environ.copy()
+    env["PORT"] = str(porta_livre)
     processo = subprocess.Popen(
         [sys.executable, "src/server.py"],
         cwd=str(target),
@@ -99,12 +107,13 @@ def test_rota_do_modulo_adicionado_depois_responde_200(suite_com_modulo_adiciona
         text=True,
         encoding="utf-8",
         errors="replace",
+        env=env,
     )
     try:
-        status_inicial = _aguardar_servidor(processo, "http://127.0.0.1:3000/api/crm")
+        status_inicial = _aguardar_servidor(processo, f"http://127.0.0.1:{porta_livre}/api/crm")
         assert status_inicial == 200
 
-        status_adicionado = _aguardar_servidor(processo, "http://127.0.0.1:3000/api/billing")
+        status_adicionado = _aguardar_servidor(processo, f"http://127.0.0.1:{porta_livre}/api/billing")
         assert status_adicionado == 200
     finally:
         processo.terminate()

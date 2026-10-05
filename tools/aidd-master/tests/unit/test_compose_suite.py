@@ -148,10 +148,15 @@ def test_servidor_gerado_respeita_env_db_path(suite_composta, tmp_path):
     diretorio proprio e confirma que o arquivo e criado la (nao no default)."""
     import urllib.request
     import urllib.error
+    import socket
+
+    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+        s.bind(("", 0))
+        porta_livre = s.getsockname()[1]
 
     db_customizado = tmp_path / "custom_dir" / "suite.db"
     db_customizado.parent.mkdir(parents=True)
-    env = dict(os.environ, DB_PATH=str(db_customizado))
+    env = dict(os.environ, DB_PATH=str(db_customizado), PORT=str(porta_livre))
 
     processo = subprocess.Popen(
         [sys.executable, "src/server.py"],
@@ -161,16 +166,18 @@ def test_servidor_gerado_respeita_env_db_path(suite_composta, tmp_path):
         stderr=subprocess.STDOUT,
         text=True,
     )
+    import threading
+    t_dreno = threading.Thread(target=lambda: [l for l in processo.stdout], daemon=True)
+    t_dreno.start()
     try:
         ultimo_erro = None
         deadline = time.time() + 15
         while time.time() < deadline:
             if processo.poll() is not None:
-                saida = processo.stdout.read()
                 pytest.fail(f"Servidor encerrou sozinho antes de responder (exit "
-                            f"{processo.returncode}):\n{saida}")
+                            f"{processo.returncode})")
             try:
-                with urllib.request.urlopen("http://127.0.0.1:3000/openapi.json", timeout=1) as resp:
+                with urllib.request.urlopen(f"http://127.0.0.1:{porta_livre}/openapi.json", timeout=1) as resp:
                     assert resp.status == 200
                     break
             except (urllib.error.URLError, ConnectionError) as e:
@@ -198,24 +205,34 @@ def test_servidor_gerado_respeita_env_db_path(suite_composta, tmp_path):
 def test_servidor_gerado_sobe_e_responde(suite_composta):
     import urllib.request
     import urllib.error
+    import socket
 
+    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+        s.bind(("", 0))
+        porta_livre = s.getsockname()[1]
+
+    env = os.environ.copy()
+    env["PORT"] = str(porta_livre)
     processo = subprocess.Popen(
         [sys.executable, "src/server.py"],
         cwd=str(suite_composta),
         stdout=subprocess.PIPE,
         stderr=subprocess.STDOUT,
         text=True,
+        env=env,
     )
+    import threading
+    t_dreno = threading.Thread(target=lambda: [l for l in processo.stdout], daemon=True)
+    t_dreno.start()
     try:
         ultimo_erro = None
         deadline = time.time() + 15
         while time.time() < deadline:
             if processo.poll() is not None:
-                saida = processo.stdout.read()
                 pytest.fail(f"Servidor encerrou sozinho antes de responder (exit "
-                            f"{processo.returncode}):\n{saida}")
+                            f"{processo.returncode})")
             try:
-                with urllib.request.urlopen("http://127.0.0.1:3000/api/produtos", timeout=1) as resp:
+                with urllib.request.urlopen(f"http://127.0.0.1:{porta_livre}/api/produtos", timeout=1) as resp:
                     assert resp.status == 200
                     return
             except (urllib.error.URLError, ConnectionError) as e:
@@ -263,7 +280,12 @@ def test_docs_webhooks_mcp_usam_a_paleta_dinamica_do_projeto(tmp_path):
     import json as _json
     import urllib.request
     import urllib.error
+    import socket
     from compose_suite import compose_suite
+
+    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+        s.bind(("", 0))
+        porta_livre = s.getsockname()[1]
 
     target = tmp_path / "suite-paleta"
     target.mkdir()
@@ -273,17 +295,15 @@ def test_docs_webhooks_mcp_usam_a_paleta_dinamica_do_projeto(tmp_path):
     )
     compose_suite(str(target), "Suite Paleta", ["produtos"])
 
-    # stdout redirecionado para arquivo (nao PIPE): server.py loga 2 linhas
-    # JSON por requisicao — com stdout=PIPE e ninguem drenando, o buffer do
-    # SO enche e o processo trava no meio de um write() de log, travando a
-    # request inteira (achado real ao escrever este teste: as 3 paginas
-    # cheias abaixo geram log suficiente pra estourar o buffer de 64KB).
     log_path = tmp_path / "server_stdout.log"
+    env = os.environ.copy()
+    env["PORT"] = str(porta_livre)
     with open(log_path, "w", encoding="utf-8") as log_file:
         processo = subprocess.Popen(
             [sys.executable, "src/server.py"],
             cwd=str(target),
             stdout=log_file, stderr=subprocess.STDOUT,
+            env=env,
         )
     try:
         for path in ("/docs", "/webhooks", "/mcp"):
@@ -294,7 +314,7 @@ def test_docs_webhooks_mcp_usam_a_paleta_dinamica_do_projeto(tmp_path):
                 if processo.poll() is not None:
                     pytest.fail(f"Servidor encerrou sozinho (exit {processo.returncode}):\n{log_path.read_text(encoding='utf-8', errors='replace')}")
                 try:
-                    with urllib.request.urlopen(f"http://127.0.0.1:3000{path}", timeout=2) as resp:
+                    with urllib.request.urlopen(f"http://127.0.0.1:{porta_livre}{path}", timeout=2) as resp:
                         corpo = resp.read().decode("utf-8")
                     break
                 except (urllib.error.URLError, ConnectionError) as e:

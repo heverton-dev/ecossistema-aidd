@@ -1,0 +1,40 @@
+{
+  "alvo": "vsa-migration",
+  "descricao": "Migração estrutural física do ecossistema legando diretórios globais (tools/, gates/) para o modelo de Monólito Modular com fatias VSA em modulos/ sem quebra dos 69 quality gates.",
+  "gate_final": "python ecossistema.py audit",
+  "fases": [
+    {
+      "nome": "Fase 1 - Inspetor",
+      "harness": "antigravity",
+      "agente": "claude",
+      "prompt": "Inspecione os diretórios atuai (tools, gates, componentes) mapeando referências cruzadas que serão movidas para modulos/ conforme ARQUITETURA-MODULARIZACAO-VSA-ECOSSISTEMA.md. Gere o laudo base (ex: docs/auditoria/vsa-migration/laudo_15d.md).",
+      "gate_fase": "python -c \"import os; exit(0 if os.path.exists('docs/auditoria/vsa-migration/laudo_15d.md') else 1)\""
+    },
+    {
+      "nome": "Fase 2 - Arquiteto",
+      "harness": "antigravity",
+      "agente": "claude",
+      "prompt": "Lendo o laudo_15d.md, gere o arquivo docs/auditoria/vsa-migration/PLANO-EVOLUCAO.md contendo os tickets sequenciais para migrar as ferramentas, portões e criar os proxies/aliases retrocompatíveis.",
+      "gate_fase": "python -c \"import os; exit(0 if os.path.exists('docs/auditoria/vsa-migration/PLANO-EVOLUCAO.md') else 1)\""
+    },
+    {
+      "nome": "Fase 3 - Construtor",
+      "harness": "antigravity",
+      "agente": "claude",
+      "prompt": "Usando as Leis de Evolução, processe sequencialmente os tickets do PLANO-EVOLUCAO.md na branch isolada da worktree, movendo os diretórios reais e validando cada passo.",
+      "gate_fase": "python ecossistema.py audit"
+    },
+    {
+      "nome": "Fase 4 - Retorno",
+      "harness": "antigravity",
+      "agente": "claude",
+      "prompt": "Re-inspecione a integridade garantindo que os 69 macro-gates estão verdes no gate_final 'python ecossistema.py audit' e declare prontidão para o merge.",
+      "gate_fase": "python ecossistema.py audit"
+    }
+  ],
+  "criterios_aceite": [
+    "Estrutura física segue ARQUITETURA-MODULARIZACAO-VSA-ECOSSISTEMA.md",
+    "gate_final roda python ecossistema.py audit com sucesso (exit 0)",
+    "Proxies em tools/ e gates/ garantem suporte temporário aos paths antigos"
+  ]
+}

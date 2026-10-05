@@ -139,24 +139,41 @@ def test_requirements_gerado_inclui_secure(suite_composta):
 def test_servidor_gerado_sobe_e_responde(suite_composta):
     import urllib.request
     import urllib.error
+    import socket
 
+    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+        s.bind(("", 0))
+        porta_livre = s.getsockname()[1]
+
+    env = os.environ.copy()
+    env["PORT"] = str(porta_livre)
     processo = subprocess.Popen(
         [sys.executable, "src/server.py"],
         cwd=str(suite_composta),
         stdout=subprocess.PIPE,
         stderr=subprocess.STDOUT,
         text=True,
+        env=env,
     )
+    import threading
+    porta_detectada = [porta_livre]
+    def _ler_saida():
+        for line in processo.stdout:
+            m = re.search(r"http://localhost:(\d+)", line)
+            if m:
+                porta_detectada[0] = int(m.group(1))
+    t_dreno = threading.Thread(target=_ler_saida, daemon=True)
+    t_dreno.start()
     try:
         ultimo_erro = None
         deadline = time.time() + 15
         while time.time() < deadline:
             if processo.poll() is not None:
-                saida = processo.stdout.read()
                 pytest.fail(f"Servidor encerrou sozinho antes de responder (exit "
-                            f"{processo.returncode}):\n{saida}")
+                            f"{processo.returncode})")
             try:
-                with urllib.request.urlopen("http://127.0.0.1:3000/api/produtos", timeout=1) as resp:
+                porta = porta_detectada[0]
+                with urllib.request.urlopen(f"http://127.0.0.1:{porta}/api/produtos", timeout=1) as resp:
                     assert resp.status == 200
                     return
             except (urllib.error.URLError, ConnectionError) as e:

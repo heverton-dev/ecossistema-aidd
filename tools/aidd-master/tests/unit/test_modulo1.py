@@ -172,18 +172,27 @@ def test_modulo_gerado_pelo_add_module_py_atual_crud_via_http(tmp_path):
     target = tmp_path / "suite-modulo-dinamico"
     compose_suite(str(target), "Suite Dinamica Teste", ["itemdinamico"])
 
+    import socket
+
+    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+        s.bind(("", 0))
+        porta_livre = s.getsockname()[1]
+
+    env = os.environ.copy()
+    env["PORT"] = str(porta_livre)
     processo = subprocess.Popen(
         [sys.executable, "src/server.py"],
         cwd=str(target),
         stdout=subprocess.PIPE,
         stderr=subprocess.STDOUT,
         text=True,
+        env=env,
     )
     import threading
     t_dreno = threading.Thread(target=lambda: [l for l in processo.stdout], daemon=True)
     t_dreno.start()
     try:
-        base = "http://127.0.0.1:3000"
+        base = f"http://127.0.0.1:{porta_livre}"
         status = _aguardar_servidor(processo, f"{base}/api/itemdinamico")
         assert status == 200
 

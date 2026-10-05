@@ -80,7 +80,7 @@
     }
   ],
   "testes": {
-    "medido_em": "2026-10-05T15:38:47.939470+00:00",
+    "medido_em": "2026-10-05T21:31:31.552212+00:00",
     "metodo": "python -m pytest -q --tb=no em cada tools/<ferramenta>, parseado do resumo real (nao digitado a mao)",
     "por_ferramenta": {
       "aidd-forge": {

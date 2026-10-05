@@ -87,6 +87,11 @@ def _default_ecossistema_root() -> Path:
     testes possam monkeypatchar este ponto unico e evitar gravar na arvore
     real do repositorio durante `pytest` (ver `conftest.py`).
     """
+    for parent in Path(__file__).resolve().parents:
+        if (parent / "ecossistema.py").is_file() and (parent / "CATALOGO.json").is_file():
+            return parent
+        if (parent / "ecossistema.py").is_file() and (parent / ".git").exists():
+            return parent
     return Path(__file__).resolve().parents[4]
 
 

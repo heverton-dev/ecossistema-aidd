@@ -291,7 +291,8 @@ def cmd_forge(args):
     if os.path.isfile(skill_cli):
         cmd = [sys.executable, skill_cli] + list(args)
         return run_command(cmd, cwd=os.getcwd())
-    forge_dir = os.path.join(TOOLS_DIR, "aidd-forge")
+    vsa_forge_dir = os.path.join(ROOT_DIR, "modulos", "01-governanca-e-qualidade", "core", "aidd-forge")
+    forge_dir = vsa_forge_dir if os.path.isdir(vsa_forge_dir) else os.path.join(TOOLS_DIR, "aidd-forge")
     _reparar_instalacao_editable_aidd_forge(forge_dir)
     env = {"PYTHONPATH": forge_dir}
     cmd = [sys.executable, "-m", "aidd_forge.cli"] + args

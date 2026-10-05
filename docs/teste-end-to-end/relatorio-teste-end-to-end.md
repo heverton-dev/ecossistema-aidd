@@ -1351,4 +1351,44 @@
 - **Status:** **RESOLVIDO**.
 - **Data da Última Auditoria:** 05/10/2026.
 
+---
+
+## 39. Sincronização de Assinatura Webhooks no Núcleo Compartilhado: `aidd-master` e `aidd-enterprise`
+
+- **Objetivo da Correção:**
+  Sincronizar a assinatura do método `get_studio_html` em `webhooks.py` do núcleo compartilhado (`componentes/compartilhado/src-core/webhooks.py`) com as ferramentas consumidoras `aidd-master` e `aidd-enterprise`, suportando customização de temas CSS (`primary`, `primary_hover`, `**kwargs`) e erradicando divergência de sha256 no catálogo do almoxarifado.
+- **Ferramentas Tocadas:** [`tools/aidd-master`](file:///C:/Users/trcnologia/Desktop/ecossistema-aidd/tools/aidd-master), [`tools/aidd-enterprise`](file:///C:/Users/trcnologia/Desktop/ecossistema-aidd/tools/aidd-enterprise) e `componentes/compartilhado/src-core`.
+- **O que executou:**
+  1. `src/core/webhooks.py`: atualização de parâmetros em `get_studio_html` e substituição dinâmica de variáveis `--primary` e `--primary-hover`.
+  2. `componentes/compartilhado/CATALOGO.json`: atualização do hash sha256 da peça `src-core/webhooks.py`.
+  3. Propagação determinística e verificação de integridade entre as cópias do master e enterprise.
+- **Resultados de Testes:**
+  - `pytest tools/aidd-master/tests/test_fronteira_master.py` → 10 passed (exit 0).
+  - `pytest tools/aidd-enterprise` → 341 passed, 3 skipped (exit 0).
+  - `G_DRIFT_NUCLEO_COMPARTILHADO.py` → exit 0 (100% sincronizado).
+  - `G_DISCIPLINA_TESTE_FERRAMENTA.py` → exit 0 (PASS).
+- **Status:** **RESOLVIDO**.
+- **Data da Última Auditoria:** 05/10/2026.
+
+---
+
+## 40. Migração VSA Ticket 1: Desacoplamento e Resolução Dinâmica de Raiz no `aidd-forge`
+
+- **Objetivo da Correção:**
+  Permitir a movimentação física de `tools/aidd-forge` para a fatia de governança `modulos/01-governanca-e-qualidade/core/aidd-forge` sem quebra de testes ou caminhos estáticos dependentes de `parents[N]`, garantindo retrocompatibilidade total via `ecossistema.py`.
+- **Ferramentas Tocadas:** [`tools/aidd-forge`](file:///C:/Users/trcnologia/Desktop/ecossistema-aidd/tools/aidd-forge) e `modulos/01-governanca-e-qualidade/core/aidd-forge`.
+- **O que executou:**
+  1. Refatoração determinística dos resolvedores de raiz (`_default_ecossistema_root`, `default_manifesto_path`, `_descobrir_ecossistema_script`) para busca dinâmica de marcadores ascendentes (`ecossistema.py`, `CATALOGO.json`, `.git`).
+  2. Ajuste dos testes (`test_almoxarifado.py`, `test_prontidao_forge.py`) para localizar deterministicamente a raiz do repositório.
+  3. Cópia física e estruturação do módulo VSA `modulos/01-governanca-e-qualidade/core/aidd-forge`.
+  4. Atualização da CLI `ecossistema.py` para priorizar a execução da fatia VSA `modulos/01-governanca-e-qualidade/core/aidd-forge`.
+- **Resultados de Testes:**
+  - `pytest modulos/01-governanca-e-qualidade/core/aidd-forge/tests` → 310 passed, 0 failed, 1 skipped (exit 0).
+  - `pytest tools/aidd-forge/tests` → 310 passed, 0 failed, 1 skipped (exit 0).
+  - `python ecossistema.py forge --help` → exit 0.
+  - `G_DISCIPLINA_TESTE_FERRAMENTA.py` → exit 0 (PASS).
+- **Status:** **RESOLVIDO**.
+- **Data da Última Auditoria:** 05/10/2026.
+
+
 

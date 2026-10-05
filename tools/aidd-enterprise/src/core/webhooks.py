@@ -216,7 +216,13 @@ class WebhookDispatcher:
             "resposta_recebida": resp_body[:2000]
         }
 
-    def get_studio_html(self, title: str = "Plataforma SaaS Suite — Webhook Studio") -> str:
+    def get_studio_html(
+        self,
+        title: str = "Plataforma SaaS Suite — Webhook Studio",
+        primary: str = "#0284c7",
+        primary_hover: str = "#0369a1",
+        **kwargs
+    ) -> str:
         # Dynamic build of event options & templates
         event_options = "".join([
             f'<option value="{html.escape(str(ev["event"]))}">{html.escape(str(ev["event"]))} ({html.escape(str(ev["modulo"]))})</option>'
@@ -246,4 +252,8 @@ class WebhookDispatcher:
         _html = _html.replace("__MODAL_CHECKBOXES__", str(modal_checkboxes))
         _html = _html.replace("__EVENT_TEMPLATES_JSON__", str(event_templates_json))
         _html = _html.replace("__INITIAL_EVENT__", str(initial_event))
+        if primary:
+            _html = _html.replace("--primary: #0284c7;", f"--primary: {primary};")
+        if primary_hover:
+            _html = _html.replace("--primary-hover: #0369a1;", f"--primary-hover: {primary_hover};")
         return _html

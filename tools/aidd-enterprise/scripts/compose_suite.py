@@ -656,7 +656,7 @@ def _copy_gates_and_automation(
         shutil.copyfile(fuzzing_src, os.path.join(core_dir, "fuzzing.py"))
         print(f"  [+] Fuzzing Contínuo: fuzzing.py")
 
-    for s in ["aidd.py", "add_module.py", "compose_suite.py", "openapi_to_ts.py", "scaffold_infra.py"]:
+    for s in ["aidd.py", "add_module.py", "compose_suite.py", "openapi_to_ts.py", "scaffold_infra.py", "moldes_catalogo.py"]:
         src = os.path.join(scripts_dir, s)
         if os.path.isfile(src):
             shutil.copyfile(src, os.path.join(target_scripts_dir, s))

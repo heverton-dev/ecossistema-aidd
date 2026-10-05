@@ -1,0 +1,14 @@
+# AIDD Framework - Repository Hygiene
+node_modules/
+
+# Environments & Python
+.venv/
+venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+.coverage
+
+# OS
+.DS_Store
+Thumbs.db
