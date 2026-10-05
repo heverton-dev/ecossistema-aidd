@@ -1306,6 +1306,20 @@
 - **Status:** **RESOLVIDO**.
 - **Data da Última Auditoria:** 04/10/2026.
 
+---
 
+## 37. Ajustes de Coleta Pytest e Conformidade de Auditoria: `aidd-forge` e `aidd-pure`
 
+- **Objetivo da Correção:**
+  Garantir isolamento hermético de `rootdir` no pytest da sandbox do `aidd-pure` em ambiente Windows e sincronizar verificações de auditoria e conformidade em `aidd-forge`.
+- **Ferramentas Tocadas:** [`tools/aidd-forge`](file:///C:/Users/trcnologia/Desktop/ecossistema-aidd/tools/aidd-forge), [`tools/aidd-pure`](file:///C:/Users/trcnologia/Desktop/ecossistema-aidd/tools/aidd-pure).
+- **O que executou:**
+  1. `tools/aidd-pure/tests/test_sandbox_nivel_1.py`: adição do argumento `-o rootdir={tmp_path}` no subprocess do pytest da sandbox nível 1, evitando erros espúrios de coleta no Windows.
+  2. `tools/aidd-forge/aidd_forge/core/audit_checks.py`: ajuste refinado das regras de checagem estática e testes unitários associados.
+- **Resultados de Testes:**
+  - `pytest tools/aidd-pure/tests/test_sandbox_nivel_1.py` → 3 passed (exit 0).
+  - `pytest tools/aidd-forge/tests` → 311 passed, 1 skipped (exit 0).
+  - `G_DISCIPLINA_TESTE_FERRAMENTA.py` → exit 0 (PASS).
+- **Status:** **RESOLVIDO**.
+- **Data da Última Auditoria:** 05/10/2026.
 

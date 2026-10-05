@@ -40,7 +40,7 @@
     "codebuddy": {
       "prefixo_pasta": ".codebuddy",
       "confirmado": true,
-      "nota": "Adicionado em 2026-09-10: harness não documentado mas presente no repo com settings.json ( formato similar ao Claude Code) e 4 skills code-review-graph. Hooks já usam git rev-parse (agnósticos)."
+      "nota": "Adicionado em 2026-09-10: harness presente no repo com settings.json (formato similar ao Claude Code). Hooks usam git rev-parse (agnósticos)."
     }
   },
 

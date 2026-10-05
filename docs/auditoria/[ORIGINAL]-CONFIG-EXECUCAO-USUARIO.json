@@ -1,0 +1,17 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "descricao": "Configuração de Execução do Usuário - Claude com -p explícito",
+  "versao": "2.0.0",
+  "pipeline_auditoria_4f": {
+    "inspetor": {"harness": "claude", "model": "opus", "comando_terminal": "claude --dangerously-skip-permissions --chrome --model opus"},
+    "arquiteto": {"harness": "agy", "model": "gemini-3.8-flash-low", "comando_terminal": "agy --model gemini-3.8-flash-low  --dangerously-skip-permissions"},
+    "construtor": {"harness": "mimo", "model": "xiaomi-token-plan-sgp/mimo-v2.6-flash", "comando_terminal": "MIMOCODE_DANGEROUSLY_SKIP_PERMISSIONS=1 MIMOCODE_TUI_PLAIN=1 mimo -m xiaomi-token-plan-sgp/mimo-v2.6-flash --pure --trust"},
+    "retorno": {"harness": "opencode", "model": "opencode/big-pickle", "comando_terminal": "opencode --pure --auto --agent -m opencode/big-pickle"}
+  },
+  "pipeline_evolucao_rotativo": [
+    {"harness": "agy", "model": "gemini-3.8-flash-low", "comando_terminal": "agy --model gemini-3.8-flash-low  --dangerously-skip-permissions"},
+    {"harness": "mimo", "model": "xiaomi-token-plan-sgp/mimo-v2.6-flash", "comando_terminal": "MIMOCODE_DANGEROUSLY_SKIP_PERMISSIONS=1 MIMOCODE_TUI_PLAIN=1 mimo -m xiaomi-token-plan-sgp/mimo-v2.6-flash --pure --trust"},
+    {"harness": "opencode", "model": "opencode/big-pickle", "comando_terminal": "opencode --pure --auto --agent -m opencode/big-pickle"},
+    {"harness": "claude", "model": "opus", "comando_terminal": "claude --dangerously-skip-permissions --chrome --model opus"}
+  ]
+}

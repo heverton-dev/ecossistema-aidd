@@ -1,0 +1,16 @@
+ROLE: Builder. Ecosystem AIDD. Ticket 4. Target tool: aidd-planner-runner.
+DIMENSION: D13
+DELIVER: gates/G_aidd_planner_runner.py
+
+STEPS:
+- Write test first in gates/test_g_aidd_planner_runner.py. Assert exit 1 on missing PLANNER.json and exit 0 on clean valid project.
+- Implement gates/G_aidd_planner_runner.py adhering to Binary Gate Law.
+- Run pytest gates/test_g_aidd_planner_runner.py. Assert exit 0.
+
+RULES:
+1. Write failing test first. Run. Assert exit 1.
+2. Implement. Zero stubs. Real pytest tests. Run. Assert exit 0.
+3. Work inside ephemeral Git Worktree only.
+4. Capture real exit code: redirect to file, read $? same line. Never trust pipes.
+5. NEVER edit docs/auditoria/CONFIG-EXECUCAO-USUARIO.json.
+6. Deliver exactly: gates/G_aidd_planner_runner.py

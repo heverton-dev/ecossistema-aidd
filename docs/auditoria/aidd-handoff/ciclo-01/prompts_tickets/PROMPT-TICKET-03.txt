@@ -1,0 +1,17 @@
+ROLE: Builder. Ecosystem AIDD. Ticket 3. Target tool: aidd-handoff.
+DIMENSION: D8
+DELIVER: componentes/compartilhado/skills/aidd-handoff/scripts/motor.py
+
+STEPS:
+- Write test first in tests/test_handoff_motor.py. Assert exit 1 when artifact misses mandatory sections or contains pasted source code.
+- Implement componentes/compartilhado/skills/aidd-handoff/scripts/motor.py to validate the 5 mandatory sections.
+- Add AST and regex check rejecting pasted code blocks with def, class, or import.
+- Run pytest tests/test_handoff_motor.py. Assert exit 0.
+
+RULES:
+1. Write failing test first. Run. Assert exit 1.
+2. Implement. Zero stubs. Real pytest tests. Run. Assert exit 0.
+3. Work inside ephemeral Git Worktree only.
+4. Capture real exit code: redirect to file, read $? same line. Never trust pipes.
+5. NEVER edit docs/auditoria/CONFIG-EXECUCAO-USUARIO.json.
+6. Deliver exactly: componentes/compartilhado/skills/aidd-handoff/scripts/motor.py

@@ -425,7 +425,7 @@ def consolidar_fluxo(pasta: Path, bruto: dict) -> dict:
         "arquivos_gerados": bruto["arquivos_gerados"],
         "tokens": TOKENS_PADRAO,
         "vazamentos_fora_da_pasta": vaz,
-        "ruido_ignorado": ("arquivos __pycache__ no worktree e .code-review-graph/graph.db "
+        "ruido_ignorado": ("arquivos __pycache__ no worktree e .codebase-memory/ "
                            "no main (indexador em segundo plano, mtime muda sem rodar fluxo)"),
         "evidencia_bruta": "RESULTADO-E2E-bruto.json + log.txt",
     }

@@ -16,7 +16,7 @@ def _write(path: Path, content: str) -> None:
 
 
 def test_audit_returns_zero_when_compliant(tmp_path: Path) -> None:
-    _write(tmp_path / "AGENTS.md", "# Rules\n\nThinking constraint: compact English.\n\nExecution limit: 3 to 5 steps.\n\nOutput format: Silent executor.\n\nBash rule: pipe to tail/grep.\n\nGraph-first: query code-review-graph.\n")
+    _write(tmp_path / "AGENTS.md", "# Rules\n\nThinking constraint: compact English.\n\nExecution limit: 3 to 5 steps.\n\nOutput format: Silent executor.\n\nBash rule: pipe to tail/grep.\n\nGraph-first: query codebase-memory-mcp.\n")
     _write(tmp_path / "CLAUDE.md", "@AGENTS.md\n")
     _write(tmp_path / ".gitignore", "node_modules/\npackage-lock.json\npnpm-lock.yaml\nyarn.lock\nbun.lockb\n")
     _write(tmp_path / ".gitattributes", "* text=auto eol=lf\n")

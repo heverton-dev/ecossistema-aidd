@@ -8,7 +8,7 @@
 #      .pre-commit-config.yaml como hooks locais hermeticos
 #      (repo: local, language: system).
 #   2. Depois dos gates passarem, continua os auto-syncs que sempre viveram
-#      aqui: components sync, planos index, telemetria e code-review-graph.
+#      aqui: components sync, planos index, telemetria e codebase-memory-mcp.
 #
 # Instalado via: git config core.hooksPath .githooks
 # (feito automaticamente por 'python ecossistema.py dependencia bootstrap',

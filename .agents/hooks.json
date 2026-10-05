@@ -8,18 +8,18 @@
       }
     ]
   },
-  "code-review-graph": {
+  "codebase-memory": {
     "PreInvocation": [
       {
         "type": "command",
-        "command": "python hooks/crg_session_start.py",
+        "command": "python hooks/cbm_session_start.py",
         "timeout": 10
       }
     ],
     "PostInvocation": [
       {
         "type": "command",
-        "command": "python hooks/crg_update.py",
+        "command": "python hooks/cbm_update.py",
         "timeout": 15
       }
     ]

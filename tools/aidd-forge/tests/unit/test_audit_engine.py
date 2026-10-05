@@ -31,7 +31,7 @@ def test_engine_empty_project_has_low_compliance(tmp_path: Path) -> None:
 
 def test_engine_well_bootstrapped_project_has_high_compliance(tmp_path: Path) -> None:
     # Create a well-formed project
-    _write(tmp_path / "AGENTS.md", "# AGENTS.md\n\nThinking constraint: Think strictly in compact English.\n\nExecution limit: Resolve tasks in 3 to 5 steps.\n\nOutput format: Silent executor. Return code edits and 1-line execution status.\n\nBash rule: Always pipe verbose commands to tail/grep.\n\nGraph-first: Always query code-review-graph before Grep.\n")
+    _write(tmp_path / "AGENTS.md", "# AGENTS.md\n\nThinking constraint: Think strictly in compact English.\n\nExecution limit: Resolve tasks in 3 to 5 steps.\n\nOutput format: Silent executor. Return code edits and 1-line execution status.\n\nBash rule: Always pipe verbose commands to tail/grep.\n\nGraph-first: Always query codebase-memory-mcp before Grep.\n")
     _write(tmp_path / "CLAUDE.md", "# CLAUDE.md\n\n@AGENTS.md\n")
     _write(tmp_path / ".gitignore", "node_modules/\npackage-lock.json\npnpm-lock.yaml\nyarn.lock\nbun.lockb\n")
     _write(tmp_path / ".gitattributes", "* text=auto eol=lf\n")

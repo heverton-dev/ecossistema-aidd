@@ -1,16 +1,16 @@
 {
-  "code-review-graph": {
+  "codebase-memory": {
     "PreInvocation": [
       {
         "type": "command",
-        "command": "python .gemini/hooks/crg_session_start.py",
+        "command": "python .gemini/hooks/cbm_session_start.py",
         "timeout": 10
       }
     ],
     "PostInvocation": [
       {
         "type": "command",
-        "command": "python .gemini/hooks/crg_update.py",
+        "command": "python .gemini/hooks/cbm_update.py",
         "timeout": 15
       }
     ]

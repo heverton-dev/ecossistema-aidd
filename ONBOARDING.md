@@ -19,8 +19,8 @@ Skills e comandos mais usados:
   /theme          ██░░░░░░░░░░░░░░░░░░  2x/mês
 
 Servidores MCP mais usados:
-  claude-in-chrome   ████████████████████  104 chamadas
-  code-review-graph  ████████░░░░░░░░░░░░  44 chamadas
+  claude-in-chrome     ████████████████████  104 chamadas
+  codebase-memory-mcp  ████████░░░░░░░░░░░░  44 chamadas
 
 ## Checklist de configuração
 
@@ -30,7 +30,7 @@ Servidores MCP mais usados:
 
 ### Servidores MCP para ativar
 - [ ] claude-in-chrome — automação do Chrome (testar apps, ler console, navegar). Instale a extensão Claude in Chrome e rode `claude --chrome`.
-- [ ] code-review-graph — grafo de conhecimento do código (consultas de arquitetura, impacto de mudanças). Já configurado no `.mcp.json` do repo; rode `python ecossistema.py dependencia verify` para confirmar.
+- [ ] codebase-memory-mcp — grafo de conhecimento do código (consultas de arquitetura, impacto de mudanças). Já configurado no `.mcp.json` do repo; rode `python ecossistema.py dependencia verify` para confirmar.
 
 ### Skills para conhecer
 - /clear — limpa o contexto entre tarefas; use sempre que trocar de assunto.

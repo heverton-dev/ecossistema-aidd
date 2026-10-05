@@ -76,14 +76,8 @@ Thumbs.db
 */agents/impeccable-*.md
 */commands/impeccable.md
 */hooks/impeccable.json
-# Added by code-review-graph
-.code-review-graph/
 
-# Instalado por code-review-graph (footprint regeneravel via 'code-review-graph install' — ver gates/dependencias_externas.json)
-*/skills/debug-issue/
-*/skills/explore-codebase/
-*/skills/refactor-safely/
-*/skills/review-changes/
+# Configuracoes e artefatos de harnesses
 .codebuddy/
 .cursor/mcp.json
 .cursor/hooks.json
@@ -97,7 +91,6 @@ QODER.md
 opencode.jsonc
 .gemini/settings.json
 .gemini/hooks/
-.github/code-review-graph.instruction.md
 
 # sandeco-token-reduce: .venv por copia de skill nunca deve ser commitado
 */skills/sandeco-token-reduce/.venv/
@@ -146,6 +139,10 @@ skills-lock.json
 # nunca dentro de tools/<ferramenta>/.
 /.aidd/cache/
 secoes/medicoes/
+
+# Codebase Memory MCP local index
+.codebase-memory/
+
 
 
 

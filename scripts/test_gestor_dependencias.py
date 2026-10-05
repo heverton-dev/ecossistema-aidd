@@ -26,7 +26,7 @@ class TestNpxDeteccao:
         assert gestor_dependencias._comando_requer_npx("npx.cmd install") is True
 
     def test_comando_requer_npx_negativo(self):
-        assert gestor_dependencias._comando_requer_npx("pip install code-review-graph") is False
+        assert gestor_dependencias._comando_requer_npx("pip install fastmcp") is False
         assert gestor_dependencias._comando_requer_npx("git status") is False
         assert gestor_dependencias._comando_requer_npx("python ecossistema.py") is False
 

@@ -8,18 +8,18 @@
     "leis": 14,
     "lente_15d": 15,
     "oficina": 37,
-    "scripts": 35,
-    "moldes_entrega": 21,
+    "scripts": 36,
+    "moldes_entrega": 24,
     "harnesses": 7,
     "skills_nossas": 44,
     "skills_terceiros_copiadas": 0,
-    "skills_terceiros_registradas": 20,
+    "skills_terceiros_registradas": 15,
     "comandos_slash": 19,
-    "mcps_registrados": 12,
+    "mcps_registrados": 11,
     "mcps_internos": 3,
     "hooks": 3,
-    "gates_nomes": 98,
-    "gates_arquivos": 126,
+    "gates_nomes": 102,
+    "gates_arquivos": 130,
     "contratos": 9,
     "etapas_receita": 7,
     "encaixes_quebrados": 0
@@ -259,7 +259,7 @@
     },
     {
       "id": "aidd-components",
-      "descricao": "Creates or updates agnostic ecosystem components (skills, commands, hooks, mcps, specs, configs, sub-agents, scripts) in the single source componentes/ and distributes them to every harness with components sync and verify. Use when the user asks to create, update or sync a component, or says \"componente\", \"sincronizar componentes\", \"components sync\", \"distribuir para os harnesses\".",
+      "descricao": "Creates or updates agnostic ecosystem components (skills, commands, hooks, mcps, specs, configs, sub-agents, scripts) in the single source componentes/ and distributes them to every harness with components sync --tipo todos and verify. Use when the user asks to create, update or sync a component, or says \"componente\", \"sincronizar componentes\", \"components sync\", \"distribuir para os harnesses\".",
       "linhas": 54,
       "terceiro": false
     },
@@ -308,7 +308,7 @@
     {
       "id": "aidd-evolution",
       "descricao": "Runs the technical evolution pipeline that executes, ticket by ticket, the PLANO-EVOLUCAO of an audit cycle in ephemeral git worktrees, with a gate before every commit and merge only on human approval. Use when the user wants to evolve a tool from its evolution plan, or types \"/evolucao\", \"/aidd-evolucao\", \"evolucao\", \"evoluir ferramenta\", \"rodar pipeline de evolução\".",
-      "linhas": 66,
+      "linhas": 67,
       "terceiro": false
     },
     {
@@ -320,7 +320,7 @@
     {
       "id": "aidd-freedom",
       "descricao": "Runs Triad Flow 03 (low-code liberation) end to end - removes Lovable, v0 or Bolt vendor lock-in, migrates Supabase to PostgreSQL through the aidd-freedom engine while keeping the UI, then master, enterprise and ops; also runs single engine steps (scan, convert-db, merge, pack). Use when the user wants to free or self-host a low-code app or asks for one of those steps, or types \"/freedom\", \"freedom\", \"freedom-motor\", \"/bridge\", \"bridge\", \"libertar app lovable\", \"desacoplar app low-code\", \"migrar v0 ou bolt para postgresql\", \"scan do lovable\", \"converter banco\", \"empacotar para VPS\".",
-      "linhas": 81,
+      "linhas": 84,
       "terceiro": false
     },
     {
@@ -367,14 +367,14 @@
     },
     {
       "id": "aidd-mcp",
-      "descricao": "Builds a new Model Context Protocol (MCP) server that ships inside an ecosystem tool or generated product, with its single source in componentes/<scope>/mcps/<name>/ and distribution through components sync. Use when the user wants to create or change an own MCP server, or says \"criar MCP\", \"novo servidor MCP\", \"expor ferramenta via MCP\". Not for third-party MCPs the agent consumes (that is aidd-dependencies).",
+      "descricao": "Builds a new Model Context Protocol (MCP) server that ships inside an ecosystem tool or generated product, with its single source in componentes/<scope>/mcps/<name>/ and distribution through components sync --tipo todos. Use when the user wants to create or change an own MCP server, or says \"criar MCP\", \"novo servidor MCP\", \"expor ferramenta via MCP\". Not for third-party MCPs the agent consumes (that is aidd-dependencies).",
       "linhas": 46,
       "terceiro": false
     },
     {
       "id": "aidd-open",
       "descricao": "Runs Triad Flow 02 (open-source engines) end to end - curates tested open-source engines, integrates them as VSA slices through the aidd-open engine, then master, enterprise and ops; also runs only the engine that generates a multi-service stack from a PLANO-INFRAESTRUTURA.json. Use when the user wants an app built on open-source engines or a deployable stack from an infrastructure plan, or types \"/open\", \"/aidd-open\", \"open\", \"open-motor\", \"/factory\", \"factory\", \"criar com open-source\", \"integrar motor open source\", \"gerar stack\", \"gerar gateway\", \"gerar compose\".",
-      "linhas": 79,
+      "linhas": 82,
       "terceiro": false
     },
     {
@@ -428,7 +428,7 @@
     {
       "id": "aidd-pure",
       "descricao": "Runs Triad Flow 01 (build from scratch) end to end - forge, planner, the aidd-pure engine with strict TDD Red-Green, then master, enterprise and ops; also runs only the 8-phase engine that turns an idea into tested software. Use when the user wants a brand-new project from zero or an app from an idea, or types \"/pure\", \"pure\", \"pure-motor\", \"/generate\", \"generate\", \"criar projeto do zero\", \"projeto do zero puro\", \"novo projeto com TDD\", \"gerar app a partir da ideia\".",
-      "linhas": 78,
+      "linhas": 81,
       "terceiro": false
     },
     {
@@ -504,14 +504,9 @@
     "cloudflare-email-service",
     "cloudflare-one",
     "cloudflare-one-migrations",
-    "code-review-graph",
-    "debug-issue",
     "durable-objects",
-    "explore-codebase",
     "impeccable",
     "nextjs-on-cloudflare",
-    "refactor-safely",
-    "review-changes",
     "sandbox-migrate-to-next",
     "sandbox-next",
     "sandbox-stable",
@@ -1010,6 +1005,50 @@
     ],
     "laudos": [
       {
+        "alvo": "aidd-componentes",
+        "ciclo": "ciclo-01",
+        "laudo": "docs/auditoria/aidd-componentes/ciclo-01/LAUDO-15D-REVISADO.md",
+        "dimensoes": {
+          "1": "descrito",
+          "2": "descrito",
+          "3": "descrito",
+          "4": "descrito",
+          "5": "descrito",
+          "6": "descrito",
+          "7": "descrito",
+          "8": "descrito",
+          "9": "descrito",
+          "10": "descrito",
+          "11": "descrito",
+          "12": "descrito",
+          "13": "descrito",
+          "14": "descrito",
+          "15": "descrito"
+        }
+      },
+      {
+        "alvo": "aidd-dependencias",
+        "ciclo": "ciclo-01",
+        "laudo": "docs/auditoria/aidd-dependencias/ciclo-01/LAUDO-15D-REVISADO.md",
+        "dimensoes": {
+          "1": "descrito",
+          "2": "descrito",
+          "3": "descrito",
+          "4": "descrito",
+          "5": "descrito",
+          "6": "descrito",
+          "7": "descrito",
+          "8": "descrito",
+          "9": "descrito",
+          "10": "descrito",
+          "11": "descrito",
+          "12": "descrito",
+          "13": "descrito",
+          "14": "descrito",
+          "15": "descrito"
+        }
+      },
+      {
         "alvo": "aidd-diagnose",
         "ciclo": "ciclo-01",
         "laudo": "docs/auditoria/aidd-diagnose/ciclo-01/LAUDO-15D-REVISADO.md",
@@ -1032,6 +1071,28 @@
         }
       },
       {
+        "alvo": "aidd-dispatch-runner",
+        "ciclo": "ciclo-01",
+        "laudo": "docs/auditoria/aidd-dispatch-runner/ciclo-01/LAUDO-15D-REVISADO.md",
+        "dimensoes": {
+          "1": "descrito",
+          "2": "descrito",
+          "3": "descrito",
+          "4": "descrito",
+          "5": "descrito",
+          "6": "descrito",
+          "7": "descrito",
+          "8": "descrito",
+          "9": "descrito",
+          "10": "descrito",
+          "11": "descrito",
+          "12": "descrito",
+          "13": "descrito",
+          "14": "descrito",
+          "15": "descrito"
+        }
+      },
+      {
         "alvo": "aidd-enterprise",
         "ciclo": "ciclo-01",
         "laudo": "docs/auditoria/aidd-enterprise/ciclo-01/LAUDO-15D-REVISADO.md",
@@ -1040,6 +1101,28 @@
           "7": "descrito",
           "8": "descrito",
           "9": "descrito"
+        }
+      },
+      {
+        "alvo": "aidd-enterprise-runner",
+        "ciclo": "ciclo-01",
+        "laudo": "docs/auditoria/aidd-enterprise-runner/ciclo-01/LAUDO-15D-REVISADO.md",
+        "dimensoes": {
+          "1": "descrito",
+          "2": "descrito",
+          "3": "descrito",
+          "4": "descrito",
+          "5": "descrito",
+          "6": "descrito",
+          "7": "descrito",
+          "8": "descrito",
+          "9": "descrito",
+          "10": "descrito",
+          "11": "descrito",
+          "12": "descrito",
+          "13": "descrito",
+          "14": "descrito",
+          "15": "descrito"
         }
       },
       {
@@ -1087,9 +1170,53 @@
         }
       },
       {
+        "alvo": "aidd-forge-runner",
+        "ciclo": "ciclo-01",
+        "laudo": "docs/auditoria/aidd-forge-runner/ciclo-01/LAUDO-15D-REVISADO.md",
+        "dimensoes": {
+          "1": "descrito",
+          "2": "descrito",
+          "3": "descrito",
+          "4": "descrito",
+          "5": "descrito",
+          "6": "descrito",
+          "7": "descrito",
+          "8": "descrito",
+          "9": "descrito",
+          "10": "descrito",
+          "11": "descrito",
+          "12": "descrito",
+          "13": "descrito",
+          "14": "descrito",
+          "15": "descrito"
+        }
+      },
+      {
         "alvo": "aidd-freedom",
         "ciclo": "ciclo-02",
         "laudo": "docs/auditoria/aidd-freedom/ciclo-02/LAUDO-15D-REVISADO.md",
+        "dimensoes": {
+          "1": "descrito",
+          "2": "descrito",
+          "3": "descrito",
+          "4": "descrito",
+          "5": "descrito",
+          "6": "descrito",
+          "7": "descrito",
+          "8": "descrito",
+          "9": "descrito",
+          "10": "descrito",
+          "11": "descrito",
+          "12": "descrito",
+          "13": "descrito",
+          "14": "descrito",
+          "15": "descrito"
+        }
+      },
+      {
+        "alvo": "aidd-freedom-runner",
+        "ciclo": "ciclo-01",
+        "laudo": "docs/auditoria/aidd-freedom-runner/ciclo-01/LAUDO-15D-REVISADO.md",
         "dimensoes": {
           "1": "descrito",
           "2": "descrito",
@@ -1128,6 +1255,94 @@
           "13": "ok",
           "14": "ok",
           "15": "ok"
+        }
+      },
+      {
+        "alvo": "aidd-handoff",
+        "ciclo": "ciclo-01",
+        "laudo": "docs/auditoria/aidd-handoff/ciclo-01/LAUDO-15D-REVISADO.md",
+        "dimensoes": {
+          "1": "descrito",
+          "2": "descrito",
+          "3": "ok",
+          "4": "descrito",
+          "5": "descrito",
+          "6": "descrito",
+          "7": "descrito",
+          "8": "descrito",
+          "9": "descrito",
+          "10": "descrito",
+          "11": "ok",
+          "12": "ok",
+          "13": "ok",
+          "14": "ok",
+          "15": "ok"
+        }
+      },
+      {
+        "alvo": "aidd-livro-texto",
+        "ciclo": "ciclo-01",
+        "laudo": "docs/auditoria/aidd-livro-texto/ciclo-01/LAUDO-15D-REVISADO.md",
+        "dimensoes": {
+          "1": "descrito",
+          "2": "descrito",
+          "3": "descrito",
+          "4": "descrito",
+          "5": "descrito",
+          "6": "descrito",
+          "7": "descrito",
+          "8": "descrito",
+          "9": "descrito",
+          "10": "descrito",
+          "11": "descrito",
+          "12": "descrito",
+          "13": "descrito",
+          "14": "descrito",
+          "15": "descrito"
+        }
+      },
+      {
+        "alvo": "aidd-master-runner",
+        "ciclo": "ciclo-01",
+        "laudo": "docs/auditoria/aidd-master-runner/ciclo-01/LAUDO-15D-REVISADO.md",
+        "dimensoes": {
+          "1": "descrito",
+          "2": "descrito",
+          "3": "descrito",
+          "4": "descrito",
+          "5": "descrito",
+          "6": "descrito",
+          "7": "descrito",
+          "8": "descrito",
+          "9": "descrito",
+          "10": "descrito",
+          "11": "descrito",
+          "12": "descrito",
+          "13": "descrito",
+          "14": "descrito",
+          "15": "descrito"
+        }
+      },
+      {
+        "alvo": "aidd-mcp",
+        "ciclo": "ciclo-01",
+        "laudo": "docs/auditoria/aidd-mcp/ciclo-01/LAUDO-15D-REVISADO.md",
+        "dimensoes": {
+          "1": "descrito",
+          "2": "descrito",
+          "3": "descrito",
+          "4": "descrito",
+          "5": "descrito",
+          "6": "descrito",
+          "7": "descrito",
+          "8": "descrito",
+          "9": "descrito",
+          "10": "descrito",
+          "11": "descrito",
+          "12": "descrito",
+          "13": "descrito",
+          "14": "descrito",
+          "15": "descrito"
         }
       },
       {
@@ -1172,6 +1387,204 @@
           "13": "ok",
           "14": "ok",
           "15": "ok"
+        }
+      },
+      {
+        "alvo": "aidd-open-runner",
+        "ciclo": "ciclo-01",
+        "laudo": "docs/auditoria/aidd-open-runner/ciclo-01/LAUDO-15D-REVISADO.md",
+        "dimensoes": {
+          "1": "descrito",
+          "2": "descrito",
+          "3": "descrito",
+          "4": "descrito",
+          "5": "descrito",
+          "6": "descrito",
+          "7": "descrito",
+          "8": "descrito",
+          "9": "descrito",
+          "10": "descrito",
+          "11": "descrito",
+          "12": "descrito",
+          "13": "descrito",
+          "14": "descrito",
+          "15": "descrito"
+        }
+      },
+      {
+        "alvo": "aidd-ops-runner",
+        "ciclo": "ciclo-01",
+        "laudo": "docs/auditoria/aidd-ops-runner/ciclo-01/LAUDO-15D-REVISADO.md",
+        "dimensoes": {
+          "1": "descrito",
+          "2": "descrito",
+          "3": "descrito",
+          "4": "descrito",
+          "5": "descrito",
+          "6": "descrito",
+          "7": "descrito",
+          "8": "descrito",
+          "9": "descrito",
+          "10": "descrito",
+          "11": "descrito",
+          "12": "descrito",
+          "13": "descrito",
+          "14": "descrito",
+          "15": "descrito"
+        }
+      },
+      {
+        "alvo": "aidd-orca",
+        "ciclo": "ciclo-01",
+        "laudo": "docs/auditoria/aidd-orca/ciclo-01/LAUDO-15D-REVISADO.md",
+        "dimensoes": {
+          "1": "descrito",
+          "2": "descrito",
+          "3": "descrito",
+          "4": "descrito",
+          "5": "descrito",
+          "6": "descrito",
+          "7": "descrito",
+          "8": "descrito",
+          "9": "descrito",
+          "10": "descrito",
+          "11": "falha",
+          "12": "descrito",
+          "13": "descrito",
+          "14": "descrito",
+          "15": "descrito"
+        }
+      },
+      {
+        "alvo": "aidd-orchestrator-runner",
+        "ciclo": "ciclo-01",
+        "laudo": "docs/auditoria/aidd-orchestrator-runner/ciclo-01/LAUDO-15D-REVISADO.md",
+        "dimensoes": {
+          "1": "descrito",
+          "2": "descrito",
+          "3": "descrito",
+          "4": "descrito",
+          "5": "descrito",
+          "6": "descrito",
+          "7": "descrito",
+          "8": "descrito",
+          "9": "descrito",
+          "10": "descrito",
+          "11": "descrito",
+          "12": "descrito",
+          "13": "descrito",
+          "14": "descrito",
+          "15": "descrito"
+        }
+      },
+      {
+        "alvo": "aidd-pipeline-runner",
+        "ciclo": "ciclo-01",
+        "laudo": "docs/auditoria/aidd-pipeline-runner/ciclo-01/LAUDO-15D-REVISADO.md",
+        "dimensoes": {
+          "1": "descrito",
+          "2": "descrito",
+          "3": "descrito",
+          "4": "descrito",
+          "5": "descrito",
+          "6": "descrito",
+          "7": "descrito",
+          "8": "descrito",
+          "9": "descrito",
+          "10": "descrito",
+          "11": "descrito",
+          "12": "descrito",
+          "13": "descrito",
+          "14": "descrito",
+          "15": "descrito"
+        }
+      },
+      {
+        "alvo": "aidd-plan",
+        "ciclo": "ciclo-01",
+        "laudo": "docs/auditoria/aidd-plan/ciclo-01/LAUDO-15D-REVISADO.md",
+        "dimensoes": {
+          "1": "descrito",
+          "2": "descrito",
+          "3": "ok",
+          "4": "descrito",
+          "5": "descrito",
+          "6": "descrito",
+          "7": "descrito",
+          "8": "descrito",
+          "9": "descrito",
+          "10": "descrito",
+          "11": "ok",
+          "12": "ok",
+          "13": "ok",
+          "14": "ok",
+          "15": "ok"
+        }
+      },
+      {
+        "alvo": "aidd-planner-runner",
+        "ciclo": "ciclo-01",
+        "laudo": "docs/auditoria/aidd-planner-runner/ciclo-01/LAUDO-15D-REVISADO.md",
+        "dimensoes": {
+          "1": "descrito",
+          "2": "descrito",
+          "3": "ok",
+          "4": "descrito",
+          "5": "descrito",
+          "6": "descrito",
+          "7": "descrito",
+          "8": "descrito",
+          "9": "descrito",
+          "10": "descrito",
+          "11": "ok",
+          "12": "ok",
+          "13": "ok",
+          "14": "ok",
+          "15": "ok"
+        }
+      },
+      {
+        "alvo": "aidd-pure-runner",
+        "ciclo": "ciclo-01",
+        "laudo": "docs/auditoria/aidd-pure-runner/ciclo-01/LAUDO-15D-REVISADO.md",
+        "dimensoes": {
+          "1": "descrito",
+          "2": "descrito",
+          "3": "descrito",
+          "4": "descrito",
+          "5": "descrito",
+          "6": "descrito",
+          "7": "descrito",
+          "8": "descrito",
+          "9": "descrito",
+          "10": "descrito",
+          "11": "descrito",
+          "12": "descrito",
+          "13": "descrito",
+          "14": "descrito",
+          "15": "descrito"
+        }
+      },
+      {
+        "alvo": "aidd-session",
+        "ciclo": "ciclo-01",
+        "laudo": "docs/auditoria/aidd-session/ciclo-01/LAUDO-15D-REVISADO.md",
+        "dimensoes": {
+          "1": "descrito",
+          "2": "descrito",
+          "3": "descrito",
+          "4": "descrito",
+          "5": "descrito",
+          "6": "descrito",
+          "7": "descrito",
+          "8": "descrito",
+          "9": "descrito",
+          "10": "descrito",
+          "11": "descrito",
+          "12": "descrito",
+          "13": "ok",
+          "14": "descrito",
+          "15": "descrito"
         }
       },
       {
@@ -1260,6 +1673,94 @@
           "13": "ok",
           "14": "ok",
           "15": "ok"
+        }
+      },
+      {
+        "alvo": "code-review-graph",
+        "ciclo": "ciclo-01",
+        "laudo": "docs/auditoria/code-review-graph/ciclo-01/LAUDO-15D-REVISADO.md",
+        "dimensoes": {
+          "1": "descrito",
+          "2": "descrito",
+          "3": "descrito",
+          "4": "descrito",
+          "5": "descrito",
+          "6": "descrito",
+          "7": "descrito",
+          "8": "descrito",
+          "9": "descrito",
+          "10": "descrito",
+          "11": "descrito",
+          "12": "descrito",
+          "13": "descrito",
+          "14": "descrito",
+          "15": "descrito"
+        }
+      },
+      {
+        "alvo": "fluxo-01-runner",
+        "ciclo": "ciclo-01",
+        "laudo": "docs/auditoria/fluxo-01-runner/ciclo-01/LAUDO-15D-REVISADO.md",
+        "dimensoes": {
+          "1": "descrito",
+          "2": "descrito",
+          "3": "descrito",
+          "4": "ok",
+          "5": "descrito",
+          "6": "descrito",
+          "7": "descrito",
+          "8": "descrito",
+          "9": "descrito",
+          "10": "descrito",
+          "11": "descrito",
+          "12": "descrito",
+          "13": "descrito",
+          "14": "descrito",
+          "15": "descrito"
+        }
+      },
+      {
+        "alvo": "fluxo-02-runner",
+        "ciclo": "ciclo-01",
+        "laudo": "docs/auditoria/fluxo-02-runner/ciclo-01/LAUDO-15D-REVISADO.md",
+        "dimensoes": {
+          "1": "descrito",
+          "2": "descrito",
+          "3": "descrito",
+          "4": "ok",
+          "5": "descrito",
+          "6": "descrito",
+          "7": "descrito",
+          "8": "descrito",
+          "9": "descrito",
+          "10": "descrito",
+          "11": "descrito",
+          "12": "descrito",
+          "13": "descrito",
+          "14": "descrito",
+          "15": "descrito"
+        }
+      },
+      {
+        "alvo": "fluxo-03-runner",
+        "ciclo": "ciclo-01",
+        "laudo": "docs/auditoria/fluxo-03-runner/ciclo-01/LAUDO-15D-REVISADO.md",
+        "dimensoes": {
+          "1": "descrito",
+          "2": "descrito",
+          "3": "descrito",
+          "4": "ok",
+          "5": "descrito",
+          "6": "descrito",
+          "7": "descrito",
+          "8": "descrito",
+          "9": "descrito",
+          "10": "descrito",
+          "11": "descrito",
+          "12": "descrito",
+          "13": "descrito",
+          "14": "descrito",
+          "15": "descrito"
         }
       },
       {
@@ -1588,6 +2089,30 @@
         "nota": ""
       },
       {
+        "alvo": "aidd-componentes",
+        "ciclo": "ciclo-01",
+        "caminho": "docs/auditoria/aidd-componentes/ciclo-01",
+        "fases": {
+          "laudo_inicial": true,
+          "plano_evolucao": false,
+          "laudo_revisado": true,
+          "dod": true
+        },
+        "nota": "10"
+      },
+      {
+        "alvo": "aidd-dependencias",
+        "ciclo": "ciclo-01",
+        "caminho": "docs/auditoria/aidd-dependencias/ciclo-01",
+        "fases": {
+          "laudo_inicial": true,
+          "plano_evolucao": false,
+          "laudo_revisado": true,
+          "dod": true
+        },
+        "nota": "10"
+      },
+      {
         "alvo": "aidd-diagnose",
         "ciclo": "ciclo-01",
         "caminho": "docs/auditoria/aidd-diagnose/ciclo-01",
@@ -1600,6 +2125,18 @@
         "nota": "8"
       },
       {
+        "alvo": "aidd-dispatch-runner",
+        "ciclo": "ciclo-01",
+        "caminho": "docs/auditoria/aidd-dispatch-runner/ciclo-01",
+        "fases": {
+          "laudo_inicial": true,
+          "plano_evolucao": false,
+          "laudo_revisado": true,
+          "dod": true
+        },
+        "nota": "10"
+      },
+      {
         "alvo": "aidd-enterprise",
         "ciclo": "ciclo-01",
         "caminho": "docs/auditoria/aidd-enterprise/ciclo-01",
@@ -1610,6 +2147,18 @@
           "dod": true
         },
         "nota": ""
+      },
+      {
+        "alvo": "aidd-enterprise-runner",
+        "ciclo": "ciclo-01",
+        "caminho": "docs/auditoria/aidd-enterprise-runner/ciclo-01",
+        "fases": {
+          "laudo_inicial": true,
+          "plano_evolucao": false,
+          "laudo_revisado": true,
+          "dod": true
+        },
+        "nota": "10"
       },
       {
         "alvo": "aidd-forge",
@@ -1636,6 +2185,18 @@
         "nota": "10"
       },
       {
+        "alvo": "aidd-forge-runner",
+        "ciclo": "ciclo-01",
+        "caminho": "docs/auditoria/aidd-forge-runner/ciclo-01",
+        "fases": {
+          "laudo_inicial": true,
+          "plano_evolucao": false,
+          "laudo_revisado": true,
+          "dod": true
+        },
+        "nota": "10"
+      },
+      {
         "alvo": "aidd-freedom",
         "ciclo": "ciclo-02",
         "caminho": "docs/auditoria/aidd-freedom/ciclo-02",
@@ -1648,12 +2209,72 @@
         "nota": "10"
       },
       {
+        "alvo": "aidd-freedom-runner",
+        "ciclo": "ciclo-01",
+        "caminho": "docs/auditoria/aidd-freedom-runner/ciclo-01",
+        "fases": {
+          "laudo_inicial": true,
+          "plano_evolucao": false,
+          "laudo_revisado": true,
+          "dod": true
+        },
+        "nota": "10"
+      },
+      {
         "alvo": "aidd-grill",
         "ciclo": "ciclo-01",
         "caminho": "docs/auditoria/aidd-grill/ciclo-01",
         "fases": {
           "laudo_inicial": true,
           "plano_evolucao": true,
+          "laudo_revisado": true,
+          "dod": true
+        },
+        "nota": "10"
+      },
+      {
+        "alvo": "aidd-handoff",
+        "ciclo": "ciclo-01",
+        "caminho": "docs/auditoria/aidd-handoff/ciclo-01",
+        "fases": {
+          "laudo_inicial": true,
+          "plano_evolucao": true,
+          "laudo_revisado": true,
+          "dod": true
+        },
+        "nota": "10"
+      },
+      {
+        "alvo": "aidd-livro-texto",
+        "ciclo": "ciclo-01",
+        "caminho": "docs/auditoria/aidd-livro-texto/ciclo-01",
+        "fases": {
+          "laudo_inicial": true,
+          "plano_evolucao": false,
+          "laudo_revisado": true,
+          "dod": true
+        },
+        "nota": "10"
+      },
+      {
+        "alvo": "aidd-master-runner",
+        "ciclo": "ciclo-01",
+        "caminho": "docs/auditoria/aidd-master-runner/ciclo-01",
+        "fases": {
+          "laudo_inicial": true,
+          "plano_evolucao": false,
+          "laudo_revisado": true,
+          "dod": true
+        },
+        "nota": "10"
+      },
+      {
+        "alvo": "aidd-mcp",
+        "ciclo": "ciclo-01",
+        "caminho": "docs/auditoria/aidd-mcp/ciclo-01",
+        "fases": {
+          "laudo_inicial": true,
+          "plano_evolucao": false,
           "laudo_revisado": true,
           "dod": true
         },
@@ -1684,6 +2305,114 @@
         "nota": ""
       },
       {
+        "alvo": "aidd-open-runner",
+        "ciclo": "ciclo-01",
+        "caminho": "docs/auditoria/aidd-open-runner/ciclo-01",
+        "fases": {
+          "laudo_inicial": true,
+          "plano_evolucao": false,
+          "laudo_revisado": true,
+          "dod": true
+        },
+        "nota": "10"
+      },
+      {
+        "alvo": "aidd-ops-runner",
+        "ciclo": "ciclo-01",
+        "caminho": "docs/auditoria/aidd-ops-runner/ciclo-01",
+        "fases": {
+          "laudo_inicial": true,
+          "plano_evolucao": false,
+          "laudo_revisado": true,
+          "dod": true
+        },
+        "nota": "10"
+      },
+      {
+        "alvo": "aidd-orca",
+        "ciclo": "ciclo-01",
+        "caminho": "docs/auditoria/aidd-orca/ciclo-01",
+        "fases": {
+          "laudo_inicial": true,
+          "plano_evolucao": false,
+          "laudo_revisado": true,
+          "dod": true
+        },
+        "nota": "10"
+      },
+      {
+        "alvo": "aidd-orchestrator-runner",
+        "ciclo": "ciclo-01",
+        "caminho": "docs/auditoria/aidd-orchestrator-runner/ciclo-01",
+        "fases": {
+          "laudo_inicial": true,
+          "plano_evolucao": false,
+          "laudo_revisado": true,
+          "dod": true
+        },
+        "nota": "10"
+      },
+      {
+        "alvo": "aidd-pipeline-runner",
+        "ciclo": "ciclo-01",
+        "caminho": "docs/auditoria/aidd-pipeline-runner/ciclo-01",
+        "fases": {
+          "laudo_inicial": true,
+          "plano_evolucao": false,
+          "laudo_revisado": true,
+          "dod": true
+        },
+        "nota": "10"
+      },
+      {
+        "alvo": "aidd-plan",
+        "ciclo": "ciclo-01",
+        "caminho": "docs/auditoria/aidd-plan/ciclo-01",
+        "fases": {
+          "laudo_inicial": true,
+          "plano_evolucao": true,
+          "laudo_revisado": true,
+          "dod": true
+        },
+        "nota": "10"
+      },
+      {
+        "alvo": "aidd-planner-runner",
+        "ciclo": "ciclo-01",
+        "caminho": "docs/auditoria/aidd-planner-runner/ciclo-01",
+        "fases": {
+          "laudo_inicial": true,
+          "plano_evolucao": true,
+          "laudo_revisado": true,
+          "dod": true
+        },
+        "nota": "10"
+      },
+      {
+        "alvo": "aidd-pure-runner",
+        "ciclo": "ciclo-01",
+        "caminho": "docs/auditoria/aidd-pure-runner/ciclo-01",
+        "fases": {
+          "laudo_inicial": true,
+          "plano_evolucao": false,
+          "laudo_revisado": true,
+          "dod": true
+        },
+        "nota": "10"
+      },
+      {
+        "alvo": "aidd-session",
+        "ciclo": "ciclo-01",
+        "caminho": "docs/auditoria/aidd-session/ciclo-01",
+        "fases": {
+          "laudo_inicial": true,
+          "plano_evolucao": false,
+          "laudo_revisado": true,
+          "dod": true
+        },
+        "nota": "10"
+      },
+      {
         "alvo": "aidd-skills",
         "ciclo": "ciclo-01",
         "caminho": "docs/auditoria/aidd-skills/ciclo-01",
@@ -1693,7 +2422,7 @@
           "laudo_revisado": true,
           "dod": true
         },
-        "nota": ""
+        "nota": "10"
       },
       {
         "alvo": "aidd-skills",
@@ -1744,6 +2473,18 @@
         "nota": "10"
       },
       {
+        "alvo": "calibracao-pipeline",
+        "ciclo": "ciclo-01",
+        "caminho": "docs/auditoria/calibracao-pipeline/ciclo-01",
+        "fases": {
+          "laudo_inicial": false,
+          "plano_evolucao": true,
+          "laudo_revisado": false,
+          "dod": false
+        },
+        "nota": ""
+      },
+      {
         "alvo": "cbm-lazy-proxy",
         "ciclo": "ciclo-01",
         "caminho": "docs/auditoria/cbm-lazy-proxy/ciclo-01",
@@ -1754,6 +2495,54 @@
           "dod": false
         },
         "nota": ""
+      },
+      {
+        "alvo": "code-review-graph",
+        "ciclo": "ciclo-01",
+        "caminho": "docs/auditoria/code-review-graph/ciclo-01",
+        "fases": {
+          "laudo_inicial": true,
+          "plano_evolucao": false,
+          "laudo_revisado": true,
+          "dod": true
+        },
+        "nota": "10"
+      },
+      {
+        "alvo": "fluxo-01-runner",
+        "ciclo": "ciclo-01",
+        "caminho": "docs/auditoria/fluxo-01-runner/ciclo-01",
+        "fases": {
+          "laudo_inicial": true,
+          "plano_evolucao": false,
+          "laudo_revisado": true,
+          "dod": true
+        },
+        "nota": "10"
+      },
+      {
+        "alvo": "fluxo-02-runner",
+        "ciclo": "ciclo-01",
+        "caminho": "docs/auditoria/fluxo-02-runner/ciclo-01",
+        "fases": {
+          "laudo_inicial": true,
+          "plano_evolucao": false,
+          "laudo_revisado": true,
+          "dod": true
+        },
+        "nota": "10"
+      },
+      {
+        "alvo": "fluxo-03-runner",
+        "ciclo": "ciclo-01",
+        "caminho": "docs/auditoria/fluxo-03-runner/ciclo-01",
+        "fases": {
+          "laudo_inicial": true,
+          "plano_evolucao": false,
+          "laudo_revisado": true,
+          "dod": true
+        },
+        "nota": "10"
       },
       {
         "alvo": "fronteiras-ferramentas",
@@ -1899,6 +2688,11 @@
       ]
     },
     {
+      "id": "checar_combos_vps",
+      "descricao": "",
+      "chamado_por": []
+    },
+    {
       "id": "compilador_plano_evolucao",
       "descricao": "",
       "chamado_por": [
@@ -2004,6 +2798,7 @@
       "id": "gerenciador_planos",
       "descricao": "Gerenciador deterministico de planos de auditoria/evolucao/testes.",
       "chamado_por": [
+        "guardas",
         "painel",
         "scripts",
         "testes"
@@ -2172,6 +2967,13 @@
     },
     {
       "ferramenta": "aidd-enterprise",
+      "molde": "gates",
+      "caminho": "tools/aidd-enterprise/templates/gates",
+      "arquivos": 0,
+      "dona_canonica": "aidd-forge"
+    },
+    {
+      "ferramenta": "aidd-enterprise",
       "molde": "rules",
       "caminho": "tools/aidd-enterprise/templates/rules",
       "arquivos": 11,
@@ -2188,7 +2990,7 @@
       "ferramenta": "aidd-enterprise",
       "molde": "v2",
       "caminho": "tools/aidd-enterprise/templates/v2",
-      "arquivos": 74,
+      "arquivos": 80,
       "dona_canonica": "aidd-master"
     },
     {
@@ -2242,6 +3044,20 @@
     },
     {
       "ferramenta": "aidd-master",
+      "molde": "core",
+      "caminho": "tools/aidd-master/templates/core",
+      "arquivos": 0,
+      "dona_canonica": "aidd-master"
+    },
+    {
+      "ferramenta": "aidd-master",
+      "molde": "gates",
+      "caminho": "tools/aidd-master/templates/gates",
+      "arquivos": 0,
+      "dona_canonica": "aidd-forge"
+    },
+    {
+      "ferramenta": "aidd-master",
       "molde": "rules",
       "caminho": "tools/aidd-master/templates/rules",
       "arquivos": 11,
@@ -2258,7 +3074,7 @@
       "ferramenta": "aidd-master",
       "molde": "v2",
       "caminho": "tools/aidd-master/templates/v2",
-      "arquivos": 62,
+      "arquivos": 68,
       "dona_canonica": "aidd-master"
     },
     {
@@ -2315,9 +3131,9 @@
           "hook": ".claude/hooks/{nome}",
           "sub-agent": ".claude/agents/{nome}"
         },
-        "skills_em_disco": 44,
+        "skills_em_disco": 59,
         "nossas_faltando": [],
-        "terceiros_em_disco": 0,
+        "terceiros_em_disco": 15,
         "config_mcp": ".mcp.json"
       },
       {
@@ -2336,9 +3152,9 @@
           "hook": ".agents/hooks/{nome}",
           "sub-agent": ".agents/agents/{nome}"
         },
-        "skills_em_disco": 44,
+        "skills_em_disco": 59,
         "nossas_faltando": [],
-        "terceiros_em_disco": 0,
+        "terceiros_em_disco": 15,
         "config_mcp": ".agents/mcp_config.json"
       },
       {
@@ -2357,9 +3173,9 @@
           "hook": ".opencode/hooks/{nome}",
           "sub-agent": ".opencode/agents/{nome}"
         },
-        "skills_em_disco": 44,
+        "skills_em_disco": 45,
         "nossas_faltando": [],
-        "terceiros_em_disco": 0,
+        "terceiros_em_disco": 1,
         "config_mcp": "opencode.jsonc"
       },
       {
@@ -2378,9 +3194,9 @@
           "hook": ".mimocode/hooks/{nome}",
           "sub-agent": ".mimocode/agents/{nome}"
         },
-        "skills_em_disco": 44,
+        "skills_em_disco": 45,
         "nossas_faltando": [],
-        "terceiros_em_disco": 0,
+        "terceiros_em_disco": 1,
         "config_mcp": "mimocode.jsonc"
       },
       {
@@ -2416,9 +3232,9 @@
           "command": ".cursor/commands/{nome}",
           "hook": ".cursor/hooks/{nome}"
         },
-        "skills_em_disco": 44,
+        "skills_em_disco": 45,
         "nossas_faltando": [],
-        "terceiros_em_disco": 0,
+        "terceiros_em_disco": 1,
         "config_mcp": ".cursor/mcp.json"
       },
       {
@@ -2435,9 +3251,9 @@
           "command": ".codebuddy/commands/{nome}",
           "hook": ".codebuddy/hooks/{nome}"
         },
-        "skills_em_disco": 44,
+        "skills_em_disco": 59,
         "nossas_faltando": [],
-        "terceiros_em_disco": 0,
+        "terceiros_em_disco": 15,
         "config_mcp": ""
       }
     ],
@@ -2583,7 +3399,6 @@
       "cloudflare",
       "cloudflare-docs",
       "cloudflare-mcp",
-      "code-review-graph",
       "codebase-memory-mcp",
       "context7",
       "docker-mcp",
@@ -2623,12 +3438,12 @@
     {
       "evento": "PostToolUse",
       "matcher": "Edit|Write",
-      "script": "cat >/dev/null || true; command -v code-review-graph >/dev/null 2>&1 || exit 0; "
+      "script": ".claude/hooks/cbm_update.py"
     },
     {
       "evento": "SessionStart",
       "matcher": "",
-      "script": "cat >/dev/null || true; command -v code-review-graph >/dev/null 2>&1 || exit 0; "
+      "script": ".claude/hooks/cbm_session_start.py"
     }
   ],
   "gates": [
@@ -4288,6 +5103,66 @@
       ]
     },
     {
+      "id": "G_aidd_handoff",
+      "descricao": "Quality Gate determinístico para validação de artefato de handoff de sessão (D13 / Lei #9). Regras: Arquivo alvo deve existir.",
+      "copias": [
+        {
+          "caminho": "gates/G_aidd_handoff.py",
+          "versao": "A",
+          "papel": "ecossistema"
+        }
+      ],
+      "versoes_distintas": 1,
+      "no_pre_commit": false,
+      "prova_que_morde": true,
+      "leis": []
+    },
+    {
+      "id": "G_aidd_plan",
+      "descricao": "Quality Gate de repositório para pastas de planos (D13). Retorna estritamente exit 0 (aprovado) ou exit 1 (reprovado).",
+      "copias": [
+        {
+          "caminho": "gates/G_aidd_plan.py",
+          "versao": "A",
+          "papel": "ecossistema"
+        }
+      ],
+      "versoes_distintas": 1,
+      "no_pre_commit": false,
+      "prova_que_morde": false,
+      "leis": []
+    },
+    {
+      "id": "G_aidd_planner_runner",
+      "descricao": "Quality Gate de repositório para projetos do Planner (D13). Retorna estritamente exit 0 (aprovado) ou exit 1 (reprovado).",
+      "copias": [
+        {
+          "caminho": "gates/G_aidd_planner_runner.py",
+          "versao": "A",
+          "papel": "ecossistema"
+        }
+      ],
+      "versoes_distintas": 1,
+      "no_pre_commit": false,
+      "prova_que_morde": false,
+      "leis": []
+    },
+    {
+      "id": "G_aidd_session",
+      "descricao": "Validação de Integridade do Histórico de Sessões (secoes/historico_sessoes.json e secoes/INDICE-SESSOES.md). Retorna exit 0 em sucesso e exit 1 em inconsistências estruturais.",
+      "copias": [
+        {
+          "caminho": "gates/G_aidd_session.py",
+          "versao": "A",
+          "papel": "ecossistema"
+        }
+      ],
+      "versoes_distintas": 1,
+      "no_pre_commit": false,
+      "prova_que_morde": false,
+      "leis": []
+    },
+    {
       "id": "G_aidd_spec",
       "descricao": "Quality Gate Determinístico de Especificação Técnica (Ticket 7 / D13 / DoD 6 / Leis #8, #9 e #13). Garante que todo documento de especificação cumpra: As 5 seções canônicas obrigatórias (Contexto,…",
       "copias": [
@@ -4563,7 +5438,8 @@
             "--dispatch",
             "<var>",
             "--target-dir",
-            "<var>"
+            "<var>",
+            "--barrier-sync"
           ],
           [
             "master",
@@ -4678,7 +5554,7 @@
     },
     {
       "etapa": "etapa_04_master",
-      "chamada": "ecossistema.py dispatch --dispatch <var> --target-dir <var>",
+      "chamada": "ecossistema.py dispatch --dispatch <var> --target-dir <var> --barrier-sync",
       "encaixa": true,
       "problemas": []
     },

@@ -14,34 +14,6 @@
         "*/hooks/impeccable.json"
       ]
     },
-    "code-review-graph": {
-      "pacote": "code-review-graph",
-      "instalar": "pip install code-review-graph && code-review-graph install -y",
-      "verificar": ".claude/skills/review-changes/SKILL.md",
-      "sha256": "ead883c2ff2ff76e239f208afaca2a7a7fa79db1a012ce7411d28772019e964b",
-      "gitignore": [
-        "*/skills/debug-issue/",
-        "*/skills/explore-codebase/",
-        "*/skills/refactor-safely/",
-        "*/skills/review-changes/",
-        ".codebuddy/",
-        ".cursor/mcp.json",
-        ".cursor/hooks.json",
-        ".cursorrules",
-        ".windsurfrules",
-        "CLAUDE.md",
-        "GEMINI.md",
-        "CODEBUDDY.md",
-        "QODER.md",
-        ".kiro/",
-        ".qoder/",
-        ".vscode/mcp.json",
-        "opencode.jsonc",
-        ".gemini/settings.json",
-        ".gemini/hooks/",
-        ".github/code-review-graph.instruction.md"
-      ]
-    },
     "agents-sdk": {
       "pacote": "cloudflare/skills",
       "instalar": "npx -y skills add cloudflare/skills --skill agents-sdk --agent claude-code opencode cursor gemini-cli antigravity codebuddy -y --copy",

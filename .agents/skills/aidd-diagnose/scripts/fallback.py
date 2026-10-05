@@ -2,12 +2,11 @@
 """
 Fallback Operacional sem MCP - aidd-diagnose Fase 2 (Ticket 4, D11, DoD 4).
 
-Quando o MCP `code-review-graph` estiver indisponivel, a Fase 2 do diagnostico
+Quando o MCP `codebase-memory-mcp` estiver indisponivel, a Fase 2 do diagnostico
 NAO deve abortar. Este modulo:
 
-1. Sonda a conexao com `code-review-graph query file_summary` usando retry com
-   backoff exponencial (o servidor sobe a frio em ~11 s; CONNECT_TIMEOUT de
-   30 s foi observado no servidor 2026-09-23, ver docs/auditoria/aidd-diagnose/).
+1. Sonda a conexao com `codebase-memory-mcp cli list_projects` usando retry com
+   backoff exponencial.
 2. Com o MCP derrubado, executa a triagem no espirito determinista de
    Grep/Glob/Read (stdlib exclusivamente, zero dependencia externa):
      * callers -> busca AST pelo NOME da funcao em todos os .py do repositório;
@@ -42,7 +41,6 @@ DIRS_IGNORADAS = {
     ".venv",
     "venv",
     "node_modules",
-    ".code-review-graph",
     ".codebase-memory",
     ".ade_tmp",
     "dist",
@@ -50,7 +48,6 @@ DIRS_IGNORADAS = {
 }
 
 COMANDO_PROBE = ("codebase-memory-mcp", "cli", "list_projects")
-COMANDO_PROBE_LEGACY = ("code-review-graph", "query", "file_summary")
 
 
 class FallbackOperacionalError(Exception):
@@ -261,7 +258,7 @@ def busca_impacto_imports(raiz: Path, arquivo_alvo: str) -> List[Dict[str, Any]]
 
 
 def _rodar_probe(raiz: Path, arquivo: str) -> subprocess.CompletedProcess:
-    """Executa a sonda no MCP codebase-memory-mcp ou fallback legadо. Levanta OSError se o CLI não existir."""
+    """Executa a sonda no MCP codebase-memory-mcp. Levanta OSError se o CLI não existir."""
     import shutil
     cmd_name = COMANDO_PROBE[0]
     cbm_exe = shutil.which(cmd_name)
@@ -270,14 +267,6 @@ def _rodar_probe(raiz: Path, arquivo: str) -> subprocess.CompletedProcess:
         if os.path.isfile(custom_cbm):
             cbm_exe = custom_cbm
         else:
-            cbm_exe = shutil.which(COMANDO_PROBE_LEGACY[0])
-            if cbm_exe:
-                return subprocess.run(
-                    [cbm_exe, "query", "file_summary", arquivo, "--repo", str(raiz)],
-                    capture_output=True,
-                    timeout=PROBE_TIMEOUT_S,
-                    check=False,
-                )
             raise FileNotFoundError(f"CLI {cmd_name} ausente no PATH (MCP indisponível)")
 
     return subprocess.run(

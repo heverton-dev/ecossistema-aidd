@@ -91,7 +91,7 @@ def test_sandbox_pytest_com_plugin_asyncio_nao_quebra_sem_systemroot(tmp_path):
     )
     with SandboxNivel1(pythonpath=tmp_path) as sandbox:
         resultado = sandbox.rodar(
-            [sys.executable, '-m', 'pytest', str(tmp_path), '-p', 'anyio'],
+            [sys.executable, '-m', 'pytest', '-o', f'rootdir={tmp_path}', str(tmp_path), '-p', 'anyio'],
             capture_output=True, text=True, timeout=30,
         )
     saida = resultado.stdout + resultado.stderr

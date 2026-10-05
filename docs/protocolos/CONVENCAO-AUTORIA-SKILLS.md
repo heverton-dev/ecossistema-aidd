@@ -146,7 +146,7 @@ Hoje existem 13 pares com a mesma descrição (`pure`/`aidd-pure`, `plan`/`aidd-
 - **Skill repetida:** 13 pares com a mesma descrição. O agente não sabe qual escolher.
 - **Nenhum teste de comportamento:** fora as 4 skills cobertas por `G_PROVA_SKILLS_POCOCK`, nenhuma prova que muda o que o agente faz. As pastas `tests/` existentes (4) testam scripts, não comportamento.
 - **Nomes misturados:** português (`aidd-componentes`, `aidd-sessao`), inglês (`aidd-diagnose`), sufixo `-runner`, número (`fluxo-01-runner`) e apelido sem prefixo (`pure`, `plan`). 18 descrições estão em português, contra a Lei #4.
-- **Terceiros copiados para dentro:** 19 skills de fornecedores (14 da Cloudflare, `impeccable` e 4 do code-review-graph) estão na fonte única. `impeccable` e as do code-review-graph também são instaladas pelos instaladores deles, então existem em dobro.
+- **Terceiros copiados para dentro:** 15 skills de fornecedores (14 da Cloudflare e `impeccable`) estão na fonte única. `impeccable` também é instalada pelo instalador dela, então existe em dobro.
 
 As regras formais da especificação (nome, tamanho, BOM, `<`/`>`) passam nas 75.
 

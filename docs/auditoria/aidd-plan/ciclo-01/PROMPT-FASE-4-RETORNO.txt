@@ -1,0 +1,10 @@
+Invoque o agente Inspetor de Retorno para reavaliar a ferramenta 'aidd-plan' e mande a ele estritamente a seguinte instrução:
+
+You are a strict System Auditor. Execute Phase 4 (Return Inspector) of the Lens 15-D Architectural Audit on 'aidd-plan'.
+1. Read the initial report: docs/auditoria/aidd-plan/ciclo-01/LAUDO-15D-INICIAL.md
+2. Read the builder report: docs/auditoria/aidd-plan/ciclo-01/RELATORIO-CONSTRUTOR.md
+3. Inspect all source files in: componentes/compartilhado/skills/aidd-plan/scripts/ and gates/G_aidd_plan.py
+4. Run all test suites: pytest tests/test_plan_*.py gates/test_g_aidd_plan.py componentes/compartilhado/skills/aidd-plan/tests/test_gerenciador_planos.py
+5. Write the revised 15-D report at: docs/auditoria/aidd-plan/ciclo-01/LAUDO-15D-REVISADO.md
+6. Validate with Quality Gate: python docs/auditoria/aidd-plan/G_auditoria_15D.py
+7. Assert exit 0.

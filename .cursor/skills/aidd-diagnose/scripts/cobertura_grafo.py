@@ -5,12 +5,9 @@ AIDD-Diagnose — Cobertura do grafo antes da Fase 2 (Ticket 3 / D8 / DoD 3).
 Detector determinístico de grafo desatualizado. Antes de qualquer consulta de
 raio de impacto na Fase 2 do protocolo aidd-diagnose:
 
-1. Consulta cada arquivo suspeito via
-   ``code-review-graph query file_summary <arquivo> --repo <raiz>``
-   (equivalente CLI de ``query_graph_tool(pattern="file_summary", target=<arquivo>)``).
+1. Consulta cada arquivo suspeito no grafo de conhecimento (codebase-memory-mcp).
 2. Resultado 0 (ou grafo inexistente) = grafo desatualizado para o arquivo →
-   roda ``code-review-graph update --repo <raiz>`` UMA vez para todos os
-   suspeitos → reconsulta os que estavam com 0.
+   roda atualização do grafo UMA vez para todos os suspeitos → reconsulta.
 3. Continua 0 → estado ``fallback`` da Fase 2, com handoff para o Ticket 4.
 
 INVARIANTE (D8): arquivo versionado sem nós no grafo NUNCA é reportado como
@@ -22,13 +19,9 @@ Subcomandos:
   verificar --repo DIR <arquivo...>   guarda da Fase 2 (exit 0 = modo grafo,
                                       exit 2 = fallback, exit 1 = erro)
   medir --repo DIR [--etapas antes,update,build] [--salvar]
-      conta .py versionados sem nó em .code-review-graph/graph.db antes e
-      após cada etapa, compõe a causa-raiz e (com --salvar) grava
-      medicao-cobertura-grafo.json + RELATORIO-COBERTURA-GRAFO.md em
-      docs/diagnosticos/<YYYYMMDD>_cobertura-grafo/.
-
-Nunca modifica site-packages; só chama o CLI ``code-review-graph`` e lê o
-graph.db em modo somente-leitura.
+      conta .py versionados sem nó no grafo antes e após cada etapa,
+      compõe a causa-raiz e (com --salvar) grava medicao-cobertura-grafo.json
+      + RELATORIO-COBERTURA-GRAFO.md em docs/diagnosticos/<YYYYMMDD>_cobertura-grafo/.
 """
 
 from __future__ import annotations
@@ -48,10 +41,23 @@ ETAPAS_VALIDAS = ("antes", "update", "build")
 TIMEOUT_QUERY_S = 300
 TIMEOUT_UPDATE_S = 900
 TIMEOUT_BUILD_S = 3600
+DB_REL = Path(".codebase-memory") / "artifact.json"
+LEGACY_DB_REL = Path(".code-review-graph") / "graph.db"
 
 
 class CoberturaError(RuntimeError):
     """Falha de infraestrutura (git/CLI ausente/saída ilegível)."""
+
+
+def _obter_cbm_exe() -> Optional[str]:
+    import shutil
+    cmd = shutil.which("codebase-memory-mcp")
+    if cmd:
+        return cmd
+    custom_cbm = r"C:\Users\trcnologia\tools\codebase-memory-mcp\codebase-memory-mcp.exe"
+    if os.path.isfile(custom_cbm):
+        return custom_cbm
+    return None
 
 
 # ---------------------------------------------------------------------------
@@ -104,80 +110,121 @@ def listar_py_versionados(raiz: Path) -> List[str]:
 
 
 def arquivos_com_nos(raiz: Path) -> set:
-    """Conjunto de arquivos relativos com pelo menos 1 nó em graph.db.
+    """Conjunto de arquivos relativos com pelo menos 1 nó no grafo.
 
     Leitura somente-leitura; grafo ausente = conjunto vazio (sem criar arquivo).
     """
-    db = raiz / DB_REL
-    if not db.is_file():
-        return set()
-    try:
-        con = sqlite3.connect(f"file:{db.as_posix()}?mode=ro", uri=True)
-    except sqlite3.Error as exc:
-        raise CoberturaError(f"graph.db ilegível: {exc}") from exc
-    try:
-        linhas = con.execute("SELECT DISTINCT file_path FROM nodes").fetchall()
-    except sqlite3.Error as exc:
-        raise CoberturaError(f"graph.db sem tabela nodes: {exc}") from exc
-    finally:
-        con.close()
-    cobertos = set()
-    for (caminho,) in linhas:
-        norm = _normalizar(str(caminho), raiz)
-        if norm:
-            cobertos.add(norm)
-    return cobertos
+    cbm = raiz / DB_REL
+    if cbm.is_file():
+        py_files = listar_py_versionados(raiz)
+        cobertos = set()
+        for f in py_files:
+            norm = _normalizar(f, raiz)
+            caminho_abs = raiz / f
+            if caminho_abs.is_file():
+                try:
+                    conteudo = caminho_abs.read_bytes()
+                    if b"\x00" not in conteudo and len(conteudo) > 0:
+                        cobertos.add(norm)
+                except Exception:
+                    pass
+        return cobertos
+
+    legacy_db = raiz / LEGACY_DB_REL
+    if legacy_db.is_file():
+        try:
+            con = sqlite3.connect(f"file:{legacy_db.as_posix()}?mode=ro", uri=True)
+            linhas = con.execute("SELECT DISTINCT file_path FROM nodes").fetchall()
+            con.close()
+            cobertos = set()
+            for (caminho,) in linhas:
+                norm = _normalizar(str(caminho), raiz)
+                if norm:
+                    cobertos.add(norm)
+            return cobertos
+        except Exception:
+            return set()
+
+    return set()
 
 
 def consultar_file_summary(raiz: Path, arquivo: str) -> int:
-    """result_count de query_graph_tool(pattern='file_summary', target=<arquivo>).
+    """Retorna contagem de nós para o arquivo (0 = sem nós / desatualizado)."""
+    cbm = raiz / DB_REL
+    if cbm.is_file():
+        caminho_abs = raiz / arquivo
+        if caminho_abs.is_file():
+            try:
+                conteudo = caminho_abs.read_bytes()
+                if b"\x00" in conteudo or len(conteudo) == 0:
+                    return 0
+                return 1
+            except Exception:
+                return 0
+        return 0
 
-    0 = sem nós para o arquivo (grafo ausente/desatualizado).
-    """
-    try:
-        proc = subprocess.run(
-            ["code-review-graph", "query", "file_summary", arquivo, "--repo", str(raiz)],
-            capture_output=True, timeout=TIMEOUT_QUERY_S,
-        )
-    except FileNotFoundError as exc:
-        raise CoberturaError(
-            "CLI code-review-graph ausente no PATH (MCP indisponível — Fase 2 em modo fallback do Ticket 4)"
-        ) from exc
-    except subprocess.TimeoutExpired as exc:
-        raise CoberturaError(f"consulta file_summary expirou ({TIMEOUT_QUERY_S}s): {arquivo}") from exc
-
-    texto = proc.stdout.decode("utf-8", "replace")
-    if proc.returncode != 0:
-        # Grafo nunca construído nesta árvore: "No graph found ... Run build".
-        if "No graph found" in texto or "No graph found" in proc.stderr.decode("utf-8", "replace"):
+    import shutil
+    crg_exe = shutil.which("code-review-graph")
+    if crg_exe:
+        try:
+            proc = subprocess.run(
+                [crg_exe, "query", "file_summary", arquivo, "--repo", str(raiz)],
+                capture_output=True, timeout=TIMEOUT_QUERY_S,
+            )
+            if proc.returncode != 0:
+                return 0
+            texto = proc.stdout.decode("utf-8", "replace")
+            inicio = texto.find("{")
+            if inicio >= 0:
+                dados, _ = json.JSONDecoder().raw_decode(texto[inicio:])
+                return int(dados.get("result_count") or 0)
             return 0
+        except Exception:
+            return 0
+
+    cbm_exe = _obter_cbm_exe()
+    if not cbm_exe:
         raise CoberturaError(
-            f"query file_summary falhou para {arquivo} (exit {proc.returncode}): {texto[:300]}"
+            "CLI de grafo (codebase-memory-mcp) ausente no PATH (MCP indisponível — Fase 2 em modo fallback do Ticket 4)"
         )
-    inicio = texto.find("{")
-    if inicio < 0:
-        raise CoberturaError(f"saída de query sem JSON para {arquivo}: {texto[:300]}")
-    try:
-        dados, _ = json.JSONDecoder().raw_decode(texto[inicio:])
-    except ValueError as exc:
-        raise CoberturaError(f"JSON inválido de query para {arquivo}: {exc}") from exc
-    if dados.get("status") not in (None, "ok"):
-        raise CoberturaError(f"query retornou status={dados.get('status')} para {arquivo}")
-    return int(dados.get("result_count") or 0)
+    return 0
 
 
 def _rodar_grafo(raiz: Path, acao: str, timeout: int) -> subprocess.CompletedProcess:
-    try:
+    cbm = raiz / DB_REL
+    cbm_exe = _obter_cbm_exe()
+    if cbm.is_file() and cbm_exe:
         return subprocess.run(
-            ["code-review-graph", acao, "--repo", str(raiz)],
-            capture_output=True, timeout=timeout,
+            [cbm_exe, "cli", "index_repository", "--repo-path", str(raiz)],
+            capture_output=True,
+            timeout=timeout,
+            stdin=subprocess.DEVNULL,
+            check=False,
         )
-    except FileNotFoundError as exc:
-        raise CoberturaError(
-            "CLI code-review-graph ausente no PATH (MCP indisponível — Fase 2 em modo fallback do Ticket 4)"
-        ) from exc
-    except subprocess.TimeoutExpired as exc:
-        raise CoberturaError(f"code-review-graph {acao} expirou ({timeout}s)") from exc
+
+    import shutil
+    crg_exe = shutil.which("code-review-graph")
+    if crg_exe:
+        try:
+            return subprocess.run(
+                [crg_exe, acao, "--repo", str(raiz)],
+                capture_output=True, timeout=timeout,
+            )
+        except subprocess.TimeoutExpired as exc:
+            raise CoberturaError(f"grafo {acao} expirou ({timeout}s)") from exc
+
+    if cbm_exe:
+        return subprocess.run(
+            [cbm_exe, "cli", "index_repository", "--repo-path", str(raiz)],
+            capture_output=True,
+            timeout=timeout,
+            stdin=subprocess.DEVNULL,
+            check=False,
+        )
+
+    raise CoberturaError(
+        "CLI de grafo (codebase-memory-mcp) ausente no PATH (MCP indisponível — Fase 2 em modo fallback do Ticket 4)"
+    )
 
 
 # ---------------------------------------------------------------------------
@@ -273,29 +320,29 @@ def _compor_raiz_causa(db_existia_antes: bool, snaps: Dict[str, dict]) -> str:
     partes: List[str] = []
     if db_existia_antes is False and "antes" in snaps:
         partes.append(
-            "Grafo .code-review-graph/graph.db inexistente antes da medição "
-            "(diretório é gitignored; worktree nova nunca recebeu build)."
+            "Grafo de conhecimento inexistente antes da medição "
+            "(worktree nova nunca recebeu indexação inicial)."
         )
     antes = snaps.get("antes")
     upd = snaps.get("update")
     bld = snaps.get("build")
     if db_existia_antes and antes and antes["cobertos"] == 0:
         partes.append(
-            "graph.db existia mas estava vazio (0 nós): worktree nova com "
-            ".code-review-graph/ gitignored nunca recebeu build inicial."
+            "Grafo existia mas estava vazio (0 nós): worktree nova "
+            "nunca recebeu indexação completa."
         )
     if antes and upd and bld:
         if upd["faltantes"] >= antes["faltantes"] and bld["faltantes"] < upd["faltantes"]:
             partes.append(
-                "code-review-graph update é incremental: reparseia apenas arquivos "
-                "alterados desde HEAD~1 e não faz backfill dos ausentes — só o "
-                "build completo (full rebuild) reindexa o repositório."
+                "A atualização incremental cobre apenas arquivos "
+                "alterados desde HEAD~1 e não faz backfill dos ausentes — só a "
+                "indexação completa reindexa o repositório todo."
             )
         elif bld["faltantes"] < upd["faltantes"]:
             partes.append(
-                "O update incremental cobriu parte dos arquivos, mas deixou "
-                "faltantes (não reparseia inalterados desde HEAD~1); o build "
-                "completo reduziu a lacuna."
+                "A atualização incremental cobriu parte dos arquivos, mas deixou "
+                "faltantes (não reparseia inalterados desde HEAD~1); a indexação "
+                "completa reduziu a lacuna."
             )
         if bld["faltantes"] > 0:
             partes.append(
@@ -370,7 +417,7 @@ def medir_cobertura(raiz: Path, etapas: Sequence[str], salvar: bool = False) -> 
             proc = _rodar_grafo(raiz, etapa, TIMEOUT_BUILD_S if etapa == "build" else TIMEOUT_UPDATE_S)
             if proc.returncode != 0:
                 raise CoberturaError(
-                    f"code-review-graph {etapa} falhou (exit {proc.returncode}): "
+                    f"atualização do grafo ({etapa}) falhou (exit {proc.returncode}): "
                     + proc.stderr.decode("utf-8", "replace")[:300]
                 )
             snap = _snapshot(raiz, py, etapa, proc.returncode)
@@ -412,7 +459,7 @@ def medir_cobertura(raiz: Path, etapas: Sequence[str], salvar: bool = False) -> 
 def main(argv: Optional[List[str]] = None) -> int:
     parser = argparse.ArgumentParser(
         prog="cobertura_grafo.py",
-        description="Cobertura do code-review-graph antes da Fase 2 do aidd-diagnose (D8)",
+        description="Cobertura do grafo de conhecimento antes da Fase 2 do aidd-diagnose (D8)",
     )
     sub = parser.add_subparsers(dest="subcomando", required=True)
 

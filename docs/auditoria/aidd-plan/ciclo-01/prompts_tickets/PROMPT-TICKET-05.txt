@@ -1,0 +1,17 @@
+ROLE: Builder. Ecosystem AIDD. Ticket 5. Target tool: aidd-plan.
+DIMENSION: D12
+DELIVER: componentes/compartilhado/skills/aidd-plan/scripts/observabilidade.py
+
+STEPS:
+- Write test first in tests/test_plan_observabilidade.py. Assert calculation of item count, total lines, estimated tokens, and grade distribution.
+- Implement componentes/compartilhado/skills/aidd-plan/scripts/observabilidade.py with RastreadorPlano class.
+- Export structured plan telemetry dictionary.
+- Run pytest tests/test_plan_observabilidade.py. Assert exit 0.
+
+RULES:
+1. Write failing test first. Run. Assert exit 1.
+2. Implement. Zero stubs. Real pytest tests. Run. Assert exit 0.
+3. Work inside ephemeral Git Worktree only.
+4. Capture real exit code: redirect to file, read $? same line. Never trust pipes.
+5. NEVER edit docs/auditoria/CONFIG-EXECUCAO-USUARIO.json.
+6. Deliver exactly: componentes/compartilhado/skills/aidd-plan/scripts/observabilidade.py

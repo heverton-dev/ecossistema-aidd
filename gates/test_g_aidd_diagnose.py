@@ -164,7 +164,8 @@ def test_aprova_relatorio_valido_json(tmp_path):
 def test_aprova_relatorio_valido_markdown(tmp_path):
     """Caminho feliz (exit 0): aprova relatório em formato Markdown (RELATORIO-CAUSA-RAIZ.md)."""
     relatorio = tmp_path / "RELATORIO-CAUSA-RAIZ.md"
-    conteudo = """# RELATORIO-CAUSA-RAIZ
+    arquivo_teste = criar_teste(tmp_path, "test_regressao_diagnose.py")
+    conteudo = f"""# RELATORIO-CAUSA-RAIZ
 
 ## Resumo Executivo
 Análise de diagnose realizada com isolamento de falha.
@@ -187,11 +188,10 @@ Análise de diagnose realizada com isolamento de falha.
 
 ### Fase 5: Teste de Regressão e Correção Cirúrgica
 - **Status**: CONCLUIDA
-- **Teste de Regressão**: `test_regressao_diagnose.py`
+- **Teste de Regressão**: `{str(arquivo_teste).replace('\\', '/')}`
 - **Resultado Antes do Fix**: FALHA (exit 1)
 - **Resultado Após o Fix**: PASSOU (exit 0)
 """
-    criar_teste(tmp_path, "test_regressao_diagnose.py")
     relatorio.write_text(conteudo, encoding="utf-8")
 
     res = executar_gate_diagnose(relatorio)

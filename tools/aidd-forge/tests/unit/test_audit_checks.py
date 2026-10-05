@@ -149,7 +149,7 @@ def test_g08_passes_with_bash_rule(tmp_path: Path) -> None:
 
 
 def test_g09_passes_with_graph_first(tmp_path: Path) -> None:
-    _write(tmp_path / "AGENTS.md", "# Rules\n\nGraph-first: query code-review-graph.\n")
+    _write(tmp_path / "AGENTS.md", "# Rules\n\nGraph-first: query codebase-memory-mcp.\n")
     result = check_g09_graph_first(tmp_path)
     assert result.status == "PASS"
 

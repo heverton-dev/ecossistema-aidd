@@ -66,15 +66,6 @@
       ],
       "cwd": "C:\\Users\\trcnologia\\Desktop\\ecossistema-aidd"
     },
-    "code-review-graph": {
-      "command": "uvx",
-      "args": [
-        "code-review-graph",
-        "serve"
-      ],
-      "cwd": "C:\\Users\\trcnologia\\Desktop\\wt_impeccable_mobbin",
-      "type": "stdio"
-    },
     "mobbin-mcp": {
       "command": "python",
       "args": [

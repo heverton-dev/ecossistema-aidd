@@ -1,0 +1,17 @@
+ROLE: Builder. Ecosystem AIDD. Ticket 1. Target tool: aidd-handoff.
+DIMENSION: D3
+DELIVER: componentes/compartilhado/skills/aidd-handoff/scripts/isolamento.py
+
+STEPS:
+- Write test first in tests/test_handoff_isolamento.py. Assert exit 1 when writing outside docs/secoes/ or outside ephemeral worktree.
+- Implement componentes/compartilhado/skills/aidd-handoff/scripts/isolamento.py with HandoffWorktreeManager and validar_caminho_escrita.
+- Block write I/O on repository root. Allow only docs/secoes/.
+- Run pytest tests/test_handoff_isolamento.py. Assert exit 0.
+
+RULES:
+1. Write failing test first. Run. Assert exit 1.
+2. Implement. Zero stubs. Real pytest tests. Run. Assert exit 0.
+3. Work inside ephemeral Git Worktree only.
+4. Capture real exit code: redirect to file, read $? same line. Never trust pipes.
+5. NEVER edit docs/auditoria/CONFIG-EXECUCAO-USUARIO.json.
+6. Deliver exactly: componentes/compartilhado/skills/aidd-handoff/scripts/isolamento.py

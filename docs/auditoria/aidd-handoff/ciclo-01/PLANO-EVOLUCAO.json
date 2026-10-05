@@ -1,0 +1,98 @@
+{
+  "pipeline_id": "evolucao-aidd-handoff-ciclo-01",
+  "target_tool": "aidd-handoff",
+  "descricao": "Plano de Evolução Tática montado a partir dos 8 tickets de PLANO-EVOLUCAO.md",
+  "config_usuario_ref": "docs/auditoria/CONFIG-EXECUCAO-USUARIO.json",
+  "definition_of_done": "docs/auditoria/aidd-handoff/ciclo-01/DOD.md",
+  "gate_final": "python ecossistema.py audit",
+  "fases": [
+    {
+      "ticket_id": "TICKET-01",
+      "nome": "Fase_1_Ticket_1_Isolamento_de_Raio_de_Impacto_e_Worktree",
+      "dimensao_15d": "D3. Raio de Impacto e Isolamento",
+      "harness": "claude",
+      "model": "sonnet",
+      "comando_terminal": "claude-9router --dangerously-skip-permissions --chrome --model sonnet",
+      "input_prompt": "docs/auditoria/aidd-handoff/ciclo-01/prompts_tickets/PROMPT-TICKET-01.txt",
+      "output_handoff": "componentes/compartilhado/skills/aidd-handoff/scripts/isolamento.py",
+      "gate_fase": "python -m pytest -q -p no:cacheprovider tests"
+    },
+    {
+      "ticket_id": "TICKET-02",
+      "nome": "Fase_2_Ticket_2_CLI_Determin_stico_e_Fallback_de_Terminal",
+      "dimensao_15d": "D4. Componentes e Fractalidade",
+      "harness": "claude",
+      "model": "sonnet",
+      "comando_terminal": "claude-9router --dangerously-skip-permissions --chrome --model sonnet",
+      "input_prompt": "docs/auditoria/aidd-handoff/ciclo-01/prompts_tickets/PROMPT-TICKET-02.txt",
+      "output_handoff": "componentes/compartilhado/skills/aidd-handoff/scripts/cli.py",
+      "gate_fase": "python -m pytest -q -p no:cacheprovider tests"
+    },
+    {
+      "ticket_id": "TICKET-03",
+      "nome": "Fase_3_Ticket_3_Motor_Determin_stico_de_Serializa__o",
+      "dimensao_15d": "D8. O que o Estágio Processa",
+      "harness": "claude",
+      "model": "sonnet",
+      "comando_terminal": "claude-9router --dangerously-skip-permissions --chrome --model sonnet",
+      "input_prompt": "docs/auditoria/aidd-handoff/ciclo-01/prompts_tickets/PROMPT-TICKET-03.txt",
+      "output_handoff": "componentes/compartilhado/skills/aidd-handoff/scripts/motor.py",
+      "gate_fase": "python -m pytest -q -p no:cacheprovider tests"
+    },
+    {
+      "ticket_id": "TICKET-04",
+      "nome": "Fase_4_Ticket_4_Tratamento_de_Exce__es_e_Resolu__o_de_Conflitos",
+      "dimensao_15d": "D11. Tratamento de Exceções e Fallback",
+      "harness": "claude",
+      "model": "sonnet",
+      "comando_terminal": "claude-9router --dangerously-skip-permissions --chrome --model sonnet",
+      "input_prompt": "docs/auditoria/aidd-handoff/ciclo-01/prompts_tickets/PROMPT-TICKET-04.txt",
+      "output_handoff": "componentes/compartilhado/skills/aidd-handoff/scripts/fallback.py",
+      "gate_fase": "python -m pytest -q -p no:cacheprovider tests"
+    },
+    {
+      "ticket_id": "TICKET-05",
+      "nome": "Fase_5_Ticket_5_Observabilidade_e_Frugalidade",
+      "dimensao_15d": "D12. Observabilidade e Frugalidade",
+      "harness": "claude",
+      "model": "sonnet",
+      "comando_terminal": "claude-9router --dangerously-skip-permissions --chrome --model sonnet",
+      "input_prompt": "docs/auditoria/aidd-handoff/ciclo-01/prompts_tickets/PROMPT-TICKET-05.txt",
+      "output_handoff": "componentes/compartilhado/skills/aidd-handoff/scripts/observabilidade.py",
+      "gate_fase": "python -m pytest -q -p no:cacheprovider tests"
+    },
+    {
+      "ticket_id": "TICKET-06",
+      "nome": "Fase_6_Ticket_6_Quality_Gate_Determin_stico",
+      "dimensao_15d": "D13. Quality Gates (Portões)",
+      "harness": "claude",
+      "model": "sonnet",
+      "comando_terminal": "claude-9router --dangerously-skip-permissions --chrome --model sonnet",
+      "input_prompt": "docs/auditoria/aidd-handoff/ciclo-01/prompts_tickets/PROMPT-TICKET-06.txt",
+      "output_handoff": "gates/G_aidd_handoff.py",
+      "gate_fase": "python -m pytest -q -p no:cacheprovider tests"
+    },
+    {
+      "ticket_id": "TICKET-07",
+      "nome": "Fase_7_Ticket_7_Crit_rio_de_Rejei__o_e_Rollback",
+      "dimensao_15d": "D14. Critério de Rejeição (Rollback)",
+      "harness": "claude",
+      "model": "sonnet",
+      "comando_terminal": "claude-9router --dangerously-skip-permissions --chrome --model sonnet",
+      "input_prompt": "docs/auditoria/aidd-handoff/ciclo-01/prompts_tickets/PROMPT-TICKET-07.txt",
+      "output_handoff": "componentes/compartilhado/skills/aidd-handoff/scripts/rollback.py",
+      "gate_fase": "python -m pytest -q -p no:cacheprovider tests"
+    },
+    {
+      "ticket_id": "TICKET-08",
+      "nome": "Fase_8_Ticket_8_Output_Consolidado_e_Assinatura_de_Handoff",
+      "dimensao_15d": "D15. Output Consolidado e Handoff",
+      "harness": "claude",
+      "model": "sonnet",
+      "comando_terminal": "claude-9router --dangerously-skip-permissions --chrome --model sonnet",
+      "input_prompt": "docs/auditoria/aidd-handoff/ciclo-01/prompts_tickets/PROMPT-TICKET-08.txt",
+      "output_handoff": "componentes/compartilhado/skills/aidd-handoff/scripts/handoff.py",
+      "gate_fase": "python -m pytest -q -p no:cacheprovider tests"
+    }
+  ]
+}

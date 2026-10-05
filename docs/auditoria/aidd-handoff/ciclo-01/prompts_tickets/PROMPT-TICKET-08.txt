@@ -1,0 +1,17 @@
+ROLE: Builder. Ecosystem AIDD. Ticket 8. Target tool: aidd-handoff.
+DIMENSION: D15
+DELIVER: componentes/compartilhado/skills/aidd-handoff/scripts/handoff.py
+
+STEPS:
+- Write test first in tests/test_handoff_assinatura.py. Assert exit 1 when HMAC signature is invalid or payload tampered.
+- Implement componentes/compartilhado/skills/aidd-handoff/scripts/handoff.py with HMAC-SHA256 manifest signer.
+- Add signature verification and integrity check for emitted session handoff.
+- Run pytest tests/test_handoff_assinatura.py. Assert exit 0.
+
+RULES:
+1. Write failing test first. Run. Assert exit 1.
+2. Implement. Zero stubs. Real pytest tests. Run. Assert exit 0.
+3. Work inside ephemeral Git Worktree only.
+4. Capture real exit code: redirect to file, read $? same line. Never trust pipes.
+5. NEVER edit docs/auditoria/CONFIG-EXECUCAO-USUARIO.json.
+6. Deliver exactly: componentes/compartilhado/skills/aidd-handoff/scripts/handoff.py

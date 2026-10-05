@@ -1,0 +1,17 @@
+ROLE: Builder. Ecosystem AIDD. Ticket 3. Target tool: aidd-plan.
+DIMENSION: D4
+DELIVER: componentes/compartilhado/skills/aidd-plan/scripts/cli.py
+
+STEPS:
+- Write test first in tests/test_plan_cli.py. Assert exit 1 on missing arguments or invalid subcommands.
+- Implement componentes/compartilhado/skills/aidd-plan/scripts/cli.py with subcommands init, check-fences, aprovar, iniciar-execucao, ler-nota, atualizar-nota.
+- Wire CLI arguments to deterministic handlers.
+- Run pytest tests/test_plan_cli.py. Assert exit 0.
+
+RULES:
+1. Write failing test first. Run. Assert exit 1.
+2. Implement. Zero stubs. Real pytest tests. Run. Assert exit 0.
+3. Work inside ephemeral Git Worktree only.
+4. Capture real exit code: redirect to file, read $? same line. Never trust pipes.
+5. NEVER edit docs/auditoria/CONFIG-EXECUCAO-USUARIO.json.
+6. Deliver exactly: componentes/compartilhado/skills/aidd-plan/scripts/cli.py

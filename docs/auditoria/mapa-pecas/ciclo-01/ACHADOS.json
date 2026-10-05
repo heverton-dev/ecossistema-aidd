@@ -7,14 +7,26 @@
   ],
   "como_usar": "Cada achado em aberto traz pedido_melhoria: o texto para python ecossistema.py melhoria init --pedido \"...\".",
   "totais": {
-    "aberto": 6,
+    "aberto": 29,
     "suspeita": 0,
     "resolvido": 14,
     "abertos_alta": 0,
-    "abertos_media": 2,
-    "abertos_baixa": 4
+    "abertos_media": 3,
+    "abertos_baixa": 26
   },
   "achados": [
+    {
+      "id": "CAT-15d-aidd-orca",
+      "titulo": "1 dimensões 15-D com falha no laudo de aidd-orca",
+      "gravidade": "media",
+      "estado": "aberto",
+      "origem": "catalogo",
+      "mapa": "lente15d",
+      "evidencia": [
+        "docs/auditoria/aidd-orca/ciclo-01/LAUDO-15D-REVISADO.md: D11"
+      ],
+      "pedido_melhoria": "Abrir o próximo ciclo 4F de aidd-orca para as dimensões D11."
+    },
     {
       "id": "CAT-declarados-fora-do-commit",
       "titulo": "1 guardas declarados em lei que não rodam no commit",
@@ -50,6 +62,198 @@
       "pedido_melhoria": "Deixar uma versão só de cada guarda repetido e fazer as ferramentas chamarem a original."
     },
     {
+      "id": "CAT-ciclo-aidd-componentes-ciclo-01",
+      "titulo": "Ciclo de auditoria sem todos os documentos: aidd-componentes/ciclo-01",
+      "gravidade": "baixa",
+      "estado": "aberto",
+      "origem": "catalogo",
+      "mapa": "oficina",
+      "evidencia": [
+        "faltam: plano_evolucao"
+      ],
+      "pedido_melhoria": "Completar ou fechar o ciclo aidd-componentes/ciclo-01."
+    },
+    {
+      "id": "CAT-ciclo-aidd-dependencias-ciclo-01",
+      "titulo": "Ciclo de auditoria sem todos os documentos: aidd-dependencias/ciclo-01",
+      "gravidade": "baixa",
+      "estado": "aberto",
+      "origem": "catalogo",
+      "mapa": "oficina",
+      "evidencia": [
+        "faltam: plano_evolucao"
+      ],
+      "pedido_melhoria": "Completar ou fechar o ciclo aidd-dependencias/ciclo-01."
+    },
+    {
+      "id": "CAT-ciclo-aidd-dispatch-runner-ciclo-01",
+      "titulo": "Ciclo de auditoria sem todos os documentos: aidd-dispatch-runner/ciclo-01",
+      "gravidade": "baixa",
+      "estado": "aberto",
+      "origem": "catalogo",
+      "mapa": "oficina",
+      "evidencia": [
+        "faltam: plano_evolucao"
+      ],
+      "pedido_melhoria": "Completar ou fechar o ciclo aidd-dispatch-runner/ciclo-01."
+    },
+    {
+      "id": "CAT-ciclo-aidd-enterprise-runner-ciclo-01",
+      "titulo": "Ciclo de auditoria sem todos os documentos: aidd-enterprise-runner/ciclo-01",
+      "gravidade": "baixa",
+      "estado": "aberto",
+      "origem": "catalogo",
+      "mapa": "oficina",
+      "evidencia": [
+        "faltam: plano_evolucao"
+      ],
+      "pedido_melhoria": "Completar ou fechar o ciclo aidd-enterprise-runner/ciclo-01."
+    },
+    {
+      "id": "CAT-ciclo-aidd-forge-runner-ciclo-01",
+      "titulo": "Ciclo de auditoria sem todos os documentos: aidd-forge-runner/ciclo-01",
+      "gravidade": "baixa",
+      "estado": "aberto",
+      "origem": "catalogo",
+      "mapa": "oficina",
+      "evidencia": [
+        "faltam: plano_evolucao"
+      ],
+      "pedido_melhoria": "Completar ou fechar o ciclo aidd-forge-runner/ciclo-01."
+    },
+    {
+      "id": "CAT-ciclo-aidd-freedom-runner-ciclo-01",
+      "titulo": "Ciclo de auditoria sem todos os documentos: aidd-freedom-runner/ciclo-01",
+      "gravidade": "baixa",
+      "estado": "aberto",
+      "origem": "catalogo",
+      "mapa": "oficina",
+      "evidencia": [
+        "faltam: plano_evolucao"
+      ],
+      "pedido_melhoria": "Completar ou fechar o ciclo aidd-freedom-runner/ciclo-01."
+    },
+    {
+      "id": "CAT-ciclo-aidd-livro-texto-ciclo-01",
+      "titulo": "Ciclo de auditoria sem todos os documentos: aidd-livro-texto/ciclo-01",
+      "gravidade": "baixa",
+      "estado": "aberto",
+      "origem": "catalogo",
+      "mapa": "oficina",
+      "evidencia": [
+        "faltam: plano_evolucao"
+      ],
+      "pedido_melhoria": "Completar ou fechar o ciclo aidd-livro-texto/ciclo-01."
+    },
+    {
+      "id": "CAT-ciclo-aidd-master-runner-ciclo-01",
+      "titulo": "Ciclo de auditoria sem todos os documentos: aidd-master-runner/ciclo-01",
+      "gravidade": "baixa",
+      "estado": "aberto",
+      "origem": "catalogo",
+      "mapa": "oficina",
+      "evidencia": [
+        "faltam: plano_evolucao"
+      ],
+      "pedido_melhoria": "Completar ou fechar o ciclo aidd-master-runner/ciclo-01."
+    },
+    {
+      "id": "CAT-ciclo-aidd-mcp-ciclo-01",
+      "titulo": "Ciclo de auditoria sem todos os documentos: aidd-mcp/ciclo-01",
+      "gravidade": "baixa",
+      "estado": "aberto",
+      "origem": "catalogo",
+      "mapa": "oficina",
+      "evidencia": [
+        "faltam: plano_evolucao"
+      ],
+      "pedido_melhoria": "Completar ou fechar o ciclo aidd-mcp/ciclo-01."
+    },
+    {
+      "id": "CAT-ciclo-aidd-open-runner-ciclo-01",
+      "titulo": "Ciclo de auditoria sem todos os documentos: aidd-open-runner/ciclo-01",
+      "gravidade": "baixa",
+      "estado": "aberto",
+      "origem": "catalogo",
+      "mapa": "oficina",
+      "evidencia": [
+        "faltam: plano_evolucao"
+      ],
+      "pedido_melhoria": "Completar ou fechar o ciclo aidd-open-runner/ciclo-01."
+    },
+    {
+      "id": "CAT-ciclo-aidd-ops-runner-ciclo-01",
+      "titulo": "Ciclo de auditoria sem todos os documentos: aidd-ops-runner/ciclo-01",
+      "gravidade": "baixa",
+      "estado": "aberto",
+      "origem": "catalogo",
+      "mapa": "oficina",
+      "evidencia": [
+        "faltam: plano_evolucao"
+      ],
+      "pedido_melhoria": "Completar ou fechar o ciclo aidd-ops-runner/ciclo-01."
+    },
+    {
+      "id": "CAT-ciclo-aidd-orca-ciclo-01",
+      "titulo": "Ciclo de auditoria sem todos os documentos: aidd-orca/ciclo-01",
+      "gravidade": "baixa",
+      "estado": "aberto",
+      "origem": "catalogo",
+      "mapa": "oficina",
+      "evidencia": [
+        "faltam: plano_evolucao"
+      ],
+      "pedido_melhoria": "Completar ou fechar o ciclo aidd-orca/ciclo-01."
+    },
+    {
+      "id": "CAT-ciclo-aidd-orchestrator-runner-ciclo-01",
+      "titulo": "Ciclo de auditoria sem todos os documentos: aidd-orchestrator-runner/ciclo-01",
+      "gravidade": "baixa",
+      "estado": "aberto",
+      "origem": "catalogo",
+      "mapa": "oficina",
+      "evidencia": [
+        "faltam: plano_evolucao"
+      ],
+      "pedido_melhoria": "Completar ou fechar o ciclo aidd-orchestrator-runner/ciclo-01."
+    },
+    {
+      "id": "CAT-ciclo-aidd-pipeline-runner-ciclo-01",
+      "titulo": "Ciclo de auditoria sem todos os documentos: aidd-pipeline-runner/ciclo-01",
+      "gravidade": "baixa",
+      "estado": "aberto",
+      "origem": "catalogo",
+      "mapa": "oficina",
+      "evidencia": [
+        "faltam: plano_evolucao"
+      ],
+      "pedido_melhoria": "Completar ou fechar o ciclo aidd-pipeline-runner/ciclo-01."
+    },
+    {
+      "id": "CAT-ciclo-aidd-pure-runner-ciclo-01",
+      "titulo": "Ciclo de auditoria sem todos os documentos: aidd-pure-runner/ciclo-01",
+      "gravidade": "baixa",
+      "estado": "aberto",
+      "origem": "catalogo",
+      "mapa": "oficina",
+      "evidencia": [
+        "faltam: plano_evolucao"
+      ],
+      "pedido_melhoria": "Completar ou fechar o ciclo aidd-pure-runner/ciclo-01."
+    },
+    {
+      "id": "CAT-ciclo-aidd-session-ciclo-01",
+      "titulo": "Ciclo de auditoria sem todos os documentos: aidd-session/ciclo-01",
+      "gravidade": "baixa",
+      "estado": "aberto",
+      "origem": "catalogo",
+      "mapa": "oficina",
+      "evidencia": [
+        "faltam: plano_evolucao"
+      ],
+      "pedido_melhoria": "Completar ou fechar o ciclo aidd-session/ciclo-01."
+    },
+    {
       "id": "CAT-ciclo-aidd-skills-ciclo-02",
       "titulo": "Ciclo de auditoria sem todos os documentos: aidd-skills/ciclo-02",
       "gravidade": "baixa",
@@ -60,6 +264,66 @@
         "faltam: laudo_inicial, laudo_revisado"
       ],
       "pedido_melhoria": "Completar ou fechar o ciclo aidd-skills/ciclo-02."
+    },
+    {
+      "id": "CAT-ciclo-calibracao-pipeline-ciclo-01",
+      "titulo": "Ciclo de auditoria sem todos os documentos: calibracao-pipeline/ciclo-01",
+      "gravidade": "baixa",
+      "estado": "aberto",
+      "origem": "catalogo",
+      "mapa": "oficina",
+      "evidencia": [
+        "faltam: laudo_inicial, laudo_revisado, dod"
+      ],
+      "pedido_melhoria": "Completar ou fechar o ciclo calibracao-pipeline/ciclo-01."
+    },
+    {
+      "id": "CAT-ciclo-code-review-graph-ciclo-01",
+      "titulo": "Ciclo de auditoria sem todos os documentos: code-review-graph/ciclo-01",
+      "gravidade": "baixa",
+      "estado": "aberto",
+      "origem": "catalogo",
+      "mapa": "oficina",
+      "evidencia": [
+        "faltam: plano_evolucao"
+      ],
+      "pedido_melhoria": "Completar ou fechar o ciclo code-review-graph/ciclo-01."
+    },
+    {
+      "id": "CAT-ciclo-fluxo-01-runner-ciclo-01",
+      "titulo": "Ciclo de auditoria sem todos os documentos: fluxo-01-runner/ciclo-01",
+      "gravidade": "baixa",
+      "estado": "aberto",
+      "origem": "catalogo",
+      "mapa": "oficina",
+      "evidencia": [
+        "faltam: plano_evolucao"
+      ],
+      "pedido_melhoria": "Completar ou fechar o ciclo fluxo-01-runner/ciclo-01."
+    },
+    {
+      "id": "CAT-ciclo-fluxo-02-runner-ciclo-01",
+      "titulo": "Ciclo de auditoria sem todos os documentos: fluxo-02-runner/ciclo-01",
+      "gravidade": "baixa",
+      "estado": "aberto",
+      "origem": "catalogo",
+      "mapa": "oficina",
+      "evidencia": [
+        "faltam: plano_evolucao"
+      ],
+      "pedido_melhoria": "Completar ou fechar o ciclo fluxo-02-runner/ciclo-01."
+    },
+    {
+      "id": "CAT-ciclo-fluxo-03-runner-ciclo-01",
+      "titulo": "Ciclo de auditoria sem todos os documentos: fluxo-03-runner/ciclo-01",
+      "gravidade": "baixa",
+      "estado": "aberto",
+      "origem": "catalogo",
+      "mapa": "oficina",
+      "evidencia": [
+        "faltam: plano_evolucao"
+      ],
+      "pedido_melhoria": "Completar ou fechar o ciclo fluxo-03-runner/ciclo-01."
     },
     {
       "id": "CAT-ciclo-fronteiras-ferramentas-ciclo-01",
@@ -74,14 +338,30 @@
       "pedido_melhoria": "Completar ou fechar o ciclo fronteiras-ferramentas/ciclo-01."
     },
     {
+      "id": "CAT-guardas-sem-lei",
+      "titulo": "4 guardas da raiz que nenhuma lei declara",
+      "gravidade": "baixa",
+      "estado": "aberto",
+      "origem": "catalogo",
+      "mapa": "leis",
+      "evidencia": [
+        "G_aidd_handoff",
+        "G_aidd_plan",
+        "G_aidd_planner_runner",
+        "G_aidd_session"
+      ],
+      "pedido_melhoria": "Amarrar cada guarda da raiz à lei que ele prova no AGENTS.md."
+    },
+    {
       "id": "CAT-scripts-sem-chamador",
-      "titulo": "3 scripts que nenhum código chama",
+      "titulo": "4 scripts que nenhum código chama",
       "gravidade": "baixa",
       "estado": "aberto",
       "origem": "catalogo",
       "mapa": "scripts",
       "evidencia": [
         "buscar_referencia_complexa",
+        "checar_combos_vps",
         "gerar_benchmark_comparativo",
         "gerar_benchmark_extremo"
       ],

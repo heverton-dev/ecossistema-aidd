@@ -22,8 +22,8 @@ Onde mora: `tools/<f>/templates/`. Quem confere: os guardas de entrega gerados p
 
 | Medida | Valor |
 | :-------------------------------------- | :-------------------------------------------- |
-| moldes | 21 |
-| arquivos de molde | 355 |
+| moldes | 24 |
+| arquivos de molde | 367 |
 
 Os números saem de `docs/auditoria/mapa-pecas/catalogo-pecas.json` (função `coletar_moldes_entrega`), os mesmos do mapa `mapa-09-moldes.html`.
 
@@ -62,15 +62,15 @@ Onde mora: `scripts/`. Quem confere: nenhum guarda específico; o mapa mede quem
 
 | Medida | Valor |
 | :-------------------------------------- | :-------------------------------------------- |
-| scripts | 35 |
+| scripts | 36 |
 | chamados pelo painel | 16 |
-| nenhum código chama | 3 |
+| nenhum código chama | 4 |
 
 Os números saem de `docs/auditoria/mapa-pecas/catalogo-pecas.json` (função `coletar_scripts`), os mesmos do mapa `mapa-10-scripts.html`.
 
 ## 10.3 O que falta consertar
 
-- **Baixa** · 3 scripts que nenhum código chama (`CAT-scripts-sem-chamador`).
+- **Baixa** · 4 scripts que nenhum código chama (`CAT-scripts-sem-chamador`).
 
 Já resolvido:
 

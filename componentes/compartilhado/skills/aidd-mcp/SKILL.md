@@ -5,7 +5,7 @@ description: Builds a new Model Context Protocol (MCP) server that ships inside 
 
 # aidd-mcp
 
-Thin coordinator: it does not reimplement the MCP protocol. Third-party MCPs the agent uses to work here (Playwright, GitHub, Context7, code-review-graph) belong to `aidd-dependencies`.
+Thin coordinator: it does not reimplement the MCP protocol. Third-party MCPs the agent uses to work here (Playwright, GitHub, Context7, codebase-memory-mcp) belong to `aidd-dependencies`.
 
 ## Protocol
 

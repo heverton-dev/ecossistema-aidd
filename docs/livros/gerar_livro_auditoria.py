@@ -195,7 +195,7 @@ def _dimensoes_skill(s_id: str, s_desc: str, scripts: list) -> list:
     comandos = sorted(c for c, txt in COMANDOS_TEXTO.items() if c == s_id or s_id in txt)
     gate_proprio = sorted(g.name for g in (ROOT_DIR / "gates").glob("G_*.py")
                           if s_id.replace("-", "_").lower() in g.stem.lower())
-    mcps = sorted(set(re.findall(r"code-review-graph|context7|graphify|chrome", md)))
+    mcps = sorted(set(re.findall(r"codebase-memory-mcp|context7|graphify|chrome", md)))
     c = {d: _cita(md, g, t) for d, (g, t) in TERMOS_15D.items()}
     scripts_txt = (", ".join(f"`{x}`" for x in scripts) + " em `scripts/`") if scripts else "nenhum script próprio (roteiro em `SKILL.md`)"
     laudos = _laudos_15d(s_id)

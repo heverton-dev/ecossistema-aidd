@@ -221,7 +221,7 @@ def test_orfaos_ignora_skill_de_terceiro_declarada_em_dependencias_externas():
         with open(os.path.join(temp_root, "gates", "dependencias_externas.json"), "w", encoding="utf-8") as f:
             json.dump({"skills": {
                 "wrangler": {"gitignore": ["*/skills/wrangler/"]},
-                "code-review-graph": {"gitignore": ["*/skills/review-changes/", "CLAUDE.md"]},
+                "cloudflare-bundle": {"gitignore": ["*/skills/review-changes/", "CLAUDE.md"]},
             }}, f)
         for nome in ("wrangler", "review-changes", "skill-sem-dono"):
             d = os.path.join(temp_root, ".claude", "skills", nome)

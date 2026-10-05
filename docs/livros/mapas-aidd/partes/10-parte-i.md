@@ -8,7 +8,7 @@ O nível macro: as leis que governam a casa, as fábricas que produzem e a recei
 #ficha(
   ("Mapa", "mapa-01-leis.html"),
   ("Para que serve", "cada lei do AGENTS.md e o guarda que a prova, e onde a prova é fraca"),
-  ("Achados em aberto", "1"),
+  ("Achados em aberto", "2"),
 )
 ```
 
@@ -31,6 +31,7 @@ Os números saem de `docs/auditoria/mapa-pecas/catalogo-pecas.json` (função `c
 ## 1.3 O que falta consertar
 
 - **Média** · 1 guardas declarados em lei que não rodam no commit (`CAT-declarados-fora-do-commit`).
+- **Baixa** · 4 guardas da raiz que nenhuma lei declara (`CAT-guardas-sem-lei`).
 
 Já resolvido:
 

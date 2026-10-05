@@ -90,7 +90,7 @@ PADRAO_SKILL_GITIGNORE = re.compile(r"^\*/skills/([a-z0-9]+(?:-[a-z0-9]+)*)/$")
 def skills_de_terceiros(manifesto_path=MANIFESTO_PATH):
     """Nomes das skills de terceiros declaradas no manifesto: a chave de cada entrada
     e cada padrao '*/skills/<nome>/' do seu gitignore (um pacote pode instalar varias
-    skills, ex.: code-review-graph). Elas vivem so nos harnesses, nunca na fonte unica."""
+    skills, ex.: cloudflare). Elas vivem so nos harnesses, nunca na fonte unica."""
     if not os.path.exists(manifesto_path):
         return set()
     with open(manifesto_path, "r", encoding="utf-8") as f:
@@ -284,7 +284,7 @@ def _construir_entrada_mcp(nome, cfg, harness):
     cwd_val = None
     if cfg.get("cwd"):
         cwd_val = ROOT_DIR if cfg["cwd"] in ("${WORKSPACE_ROOT}", ".") else cfg["cwd"]
-    elif nome in ("code-review-graph", "codebase-memory-mcp", "mcp-gatekeeper"):
+    elif nome in ("codebase-memory-mcp", "mcp-gatekeeper"):
         cwd_val = ROOT_DIR
 
     entrada_cmd = cfg["comando"]
