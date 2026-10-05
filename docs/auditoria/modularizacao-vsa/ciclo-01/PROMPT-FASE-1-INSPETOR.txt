@@ -1,13 +1,22 @@
-Invoque um subagente Flash para auditar a ferramenta 'modularizacao-vsa' e mande a ele estritamente a seguinte instrução:
+Invoque um subagente Flash para auditar a arquitetura do ecossistema para 'modularizacao-vsa' e mande a ele estritamente a seguinte instrução:
 
-You are a strict System Auditor. Execute the Lens 15-D Architectural Audit on the 'modularizacao-vsa' skill.
-1. Use your tools to read the canonical template file located exactly at:
-docs/auditoria/TEMPLATE-AUDITORIA-FERRAMENTA.md
-2. Use your tools to read and analyze the entire source code of the target skill at:
-.agents/skills/modularizacao-vsa/
-3. Based on the source code, meticulously fill out the 15 dimensions of the template. If a dimension is missing in the source code (e.g., no Quality Gate or Fallback logic), explicitly write "FAILED: Not implemented" for that dimension.
-4. Save the generated Markdown file exactly at:
-docs/auditoria/modularizacao-vsa/ciclo-01/LAUDO-15D-INICIAL.md
-5. Run the Quality Gate script to assert your output:
-python docs/auditoria/modularizacao-vsa/G_auditoria_15D.py docs/auditoria/modularizacao-vsa/ciclo-01/LAUDO-15D-INICIAL.md
-6. If the script returns EXIT 1, fix the missing parameters in your Markdown file and re-run the gate until EXIT 0 is achieved.
+You are a strict System Auditor. Execute the Lens 15-D Architectural Audit on the entire ecosystem structure for 'modularizacao-vsa'.
+MANDATORY LEI #14 (GRAPH-FIRST): You MUST call codebase-memory-mcp tools (e.g. search_graph, get_architecture or query_graph) BEFORE using any file reading or glob tools. Any execution without codebase-memory-mcp tool calls will fail G_GRAPH_FIRST quality gate.
+
+1. First, query the knowledge graph using codebase-memory-mcp (e.g., search_graph with "ecossistema" or get_architecture) to inspect system dependencies.
+2. Read the specification and DoD located at:
+   - docs/padroes/ARQUITETURA-MODULARIZACAO-VSA-ECOSSISTEMA.md
+   - docs/auditoria/modularizacao-vsa/ciclo-01/DOD.md
+   - docs/auditoria/TEMPLATE-AUDITORIA-FERRAMENTA.md
+3. Inspect the current ecosystem architecture across:
+   - tools/ (todas as ferramentas soltas)
+   - gates/ (todos os 54 quality gates horizontais)
+   - componentes/ e .agents/skills/ (dispersão de skills e inchaço de contexto)
+   - scripts/ (scripts de raiz)
+   - ecossistema.py (fachada atual)
+4. Fill out the 15 dimensions of the Lens 15-D template, identifying factual coupling, token bloat, lack of boundaries, and path to VSA modularization. Explicitly state violations and current grades (0-10) with factual code evidence.
+5. Save the generated Markdown file exactly at:
+   docs/auditoria/modularizacao-vsa/ciclo-01/LAUDO-15D-INICIAL.md
+6. Run the Quality Gate script to assert your output:
+   python docs/auditoria/modularizacao-vsa/G_auditoria_15D.py docs/auditoria/modularizacao-vsa/ciclo-01/LAUDO-15D-INICIAL.md
+7. If the script returns EXIT 1, fix the missing parameters in your Markdown file and re-run the gate until EXIT 0 is achieved.

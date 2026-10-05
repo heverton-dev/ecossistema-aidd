@@ -73,6 +73,17 @@ def verificar_layout_sintetico() -> list[str]:
     for base, desloc in ((raiz_ferramenta, "raiz"), (raiz_ferramenta.parent, "pai")):
         if not base.is_dir():
             continue
+        if desloc == "pai" and base.name.lower() in {
+            "desktop",
+            "área de trabalho",
+            "area de trabalho",
+            "documents",
+            "documentos",
+            "downloads",
+            "home",
+            "users",
+        }:
+            continue
         for filho in base.iterdir():
             if filho.name == raiz_ferramenta.name or filho.name.startswith("."):
                 continue

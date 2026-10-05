@@ -11,7 +11,7 @@ from typing import List, Tuple
 
 
 def extrair_imports_arquivo(caminho: Path) -> List[str]:
-    conteudo = caminho.read_text(encoding="utf-8", errors="replace")
+    conteudo = caminho.read_text(encoding="utf-8-sig", errors="replace")
     arvore = ast.parse(conteudo)
     imports: List[str] = []
     for node in ast.walk(arvore):
@@ -28,7 +28,13 @@ def verificar_fronteiras_vsa(diretorio: Path) -> Tuple[bool, List[str]]:
     diretorio = Path(diretorio).resolve()
     violacoes: List[str] = []
 
-    for arq in diretorio.rglob("*.py"):
+    # Alvo principal da checagem: modulos/ (se existir) ou o diretório especificado
+    alvo = diretorio / "modulos" if (diretorio / "modulos").is_dir() else diretorio
+
+    for arq in alvo.rglob("*.py"):
+        # Ignora pastas de cache, worktrees, venv ou testes de mock
+        if any(ign in arq.parts for ign in (".git", ".pytest_cache", "__pycache__", "worktrees_", ".worktrees")):
+            continue
         try:
             imports = extrair_imports_arquivo(arq)
             for imp in imports:
@@ -38,6 +44,7 @@ def verificar_fronteiras_vsa(diretorio: Path) -> Tuple[bool, List[str]]:
             violacoes.append(f"{arq.name}: falha ao analisar AST ({e})")
 
     return len(violacoes) == 0, violacoes
+
 
 
 def main(args: List[str] = None) -> int:

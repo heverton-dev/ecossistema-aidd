@@ -32,6 +32,28 @@ A solução é o **Monólito Modular com Vertical Slice Architecture (VSA)**:
 
 ## 3. Mapa Estrutural Proposto (`modulos/`)
 
+A anatomia canônica de qualquer módulo ou submódulo obedece a **12 camadas atômicas padronizadas + 2 documentos de contexto**, regidas pela regra de **Sparse Scaffolding** (pastas só são criadas quando contêm artefatos reais, sem stubs vazios):
+
+```
+modulos/<dominio>/ (ou modulos/<dominio>/<submodulo>/)
+├── core/         # Código executivo, motores e lógica central da fatia
+├── scripts/      # Scripts CLI locais e utilitários de automação interna
+├── skills/       # Skills agênticas especializadas expostas aos agentes
+├── mcps/         # Servidores MCP dedicados a este domínio (se houver)
+├── hooks/        # Gatilhos locais de ciclo de vida e pre-commit
+├── gates/        # Quality gates determinísticos exclusivos da fatia
+├── tests/        # Testes unitários, de integração, e2e e provas de portão
+├── contracts/    # Schemas JSON, contratos OpenAPI e tipos Pydantic
+├── templates/    # Blueprints, scaffolds e esqueletos geráveis da fatia
+├── prompts/      # Prompts de sistema fechados e personas do domínio
+├── specs/        # Especificações executáveis e critérios de aceite (BDD)
+├── docs/         # Documentação viva, diagramas e ADRs locais da fatia
+├── README.md     # Guia executivo humano (< 500 tokens)
+└── AGENTS.md     # Invariantes e leis locais da IA (< 400 tokens)
+```
+
+### 3.1. Distribuição dos Grandes Domínios
+
 ```
 ecossistema-aidd/
 │
@@ -40,27 +62,37 @@ ecossistema-aidd/
 │   │   ├── core/                      # aidd-forge, orquestrador 4f, scaffold, compilador
 │   │   ├── skills/                    # aidd-grill, aidd-spec, aidd-tdd, aidd-audit-4f, aidd-evolution
 │   │   ├── gates/                     # G_DETERMINISMO, G_DOCS_ROT, G_PORTAO_PROVA_QUE_MORDE...
-│   │   ├── tests/                     # Testes de regressão e provas de portão
-│   │   └── README.md                  # Mapa de contexto mínimo (< 500 tokens)
+│   │   ├── tests/                     # Provas de portão e testes de integridade
+│   │   ├── prompts/                   # Prompts das 4 fases (Inspetor, Arquiteto, Construtor, Retorno)
+│   │   ├── docs/                      # Protocolos e convenções de autoria
+│   │   ├── README.md                  # Contexto executivo (< 500 tokens)
+│   │   └── AGENTS.md                  # Invariantes de governança (< 400 tokens)
 │   │
 │   ├── 02-triade-motores/             # A "Fábrica" de Software (Os 3 Fluxos Canônicos)
-│   │   ├── fluxo-01-pure/             # Motor do Zero Puro (TDD Red-Green, Geradores)
+│   │   ├── fluxo-01-pure/             # Motor do Zero Puro (TDD Red-Green)
 │   │   │   ├── core/                  # aidd-pure engine
 │   │   │   ├── templates/             # TanStack Start, React, Tailwind PWA
 │   │   │   ├── skills/                # aidd-pure
 │   │   │   ├── gates/                 # G_STACK_PADRAO_OURO, G_TESTES_REAIS...
-│   │   │   └── tests/
+│   │   │   ├── tests/                 # Baterias TDD Red-Green
+│   │   │   ├── README.md
+│   │   │   └── AGENTS.md
 │   │   ├── fluxo-02-open/             # Motor Open-Source Integrado
-│   │   │   ├── core/                  # aidd-open factory, compose generator
-│   │   │   ├── catalogo/              # Curadoria de motores open-source testados
+│   │   │   ├── core/                  # aidd-open factory, gerador de compose
+│   │   │   ├── templates/             # Compose bases e stacks curadas
 │   │   │   ├── skills/                # aidd-open
 │   │   │   ├── gates/                 # G_INFRA_COMPOSE, G_COMPONENTE_AGNOSTICO...
-│   │   │   └── tests/
+│   │   │   ├── tests/
+│   │   │   ├── README.md
+│   │   │   └── AGENTS.md
 │   │   └── fluxo-03-freedom/          # Motor de Libertação Low-Code
 │   │       ├── core/                  # aidd-freedom bridge, conversores de DB
+│   │       ├── scripts/               # Scripts de varredura e extração de schemas
 │   │       ├── skills/                # aidd-freedom
 │   │       ├── gates/                 # G_ANT_LOCKIN_LEGADO, G_MIGRATION_ROT...
-│   │       └── tests/
+│   │       ├── tests/
+│   │       ├── README.md
+│   │       └── AGENTS.md
 │   │
 │   ├── 03-plataforma-e-entrega/       # A "Esteira" de Harmonização e Produção
 │   │   ├── fatiamento-master/         # aidd-master, mesocamada VSA, dispatch worktrees
@@ -69,17 +101,23 @@ ecossistema-aidd/
 │   │   ├── quarteto-studios/          # OpenAPI (/api), Webhooks, MCP Studio, Docs (/docs)
 │   │   ├── skills/                    # aidd-master, aidd-dispatch, aidd-enterprise, aidd-ops
 │   │   ├── gates/                     # G_QUARTETO_SINE_QUA_NON, G_ISOLATION_AUDIT...
-│   │   └── tests/
+│   │   ├── contracts/                 # Schemas universais do Quarteto
+│   │   ├── tests/
+│   │   ├── README.md
+│   │   └── AGENTS.md
 │   │
 │   └── 04-nucleo-compartilhado/       # O "Chassi" Comum (Kernel & Facade)
 │       ├── cli/                       # Fachada de comandos e roteamento central
 │       ├── sync/                      # Sincronizador agnóstico de harnesses
-│       ├── contratos/                 # Schemas JSON universais (PLANNER, DISPATCH, HANDOFF)
-│       ├── utilitarios/               # Helpers determinísticos de AST, Git e filesystem
-│       └── gates/                     # G_SAIDA_BINARIA, G_ECOSSISTEMA_INTEGRIDADE...
+│       ├── contracts/                 # Schemas JSON universais (PLANNER, DISPATCH, HANDOFF)
+│       ├── scripts/                   # Utilitários determinísticos de AST, Git e filesystem
+│       ├── gates/                     # G_SAIDA_BINARIA, G_ECOSSISTEMA_INTEGRIDADE...
+│       ├── tests/
+│       ├── README.md
+│       └── AGENTS.md
 │
 ├── ecossistema.py                     # Thin Facade (Roteador fino de linha de comando)
-└── AGENTS.md                          # Governança Canônica com ponteiro para os módulos
+└── AGENTS.md                          # Governança Canônica Global com Despacho Topológico
 ```
 
 ---
@@ -89,11 +127,12 @@ ecossistema-aidd/
 Para viabilizar a economia extrema de tokens e eliminar a confusão cognitiva, a gestão de regras e contexto segue uma disciplina em dois níveis (Local vs. Global):
 
 ### 4.1. O que reside dentro de CADA MÓDULO (`modulos/<fatia>/`)
-Cada fatia vertical funciona como um subdomínio autocontido e deve possuir:
+Cada fatia vertical funciona como um subdomínio autocontido baseado nas 12 camadas atômicas:
 1. **`README.md` (< 500 tokens):** Visão executiva da fatia, lista de comandos suportados, dependências internas e exemplos de uso direto.
 2. **`AGENTS.md` Local (< 400 tokens):** Regras, invariantes de código e contratos específicos daquela fatia (ex: no *Freedom*, regras de substituição do Supabase; no *Pure*, o ciclo TDD Red-Green).
-3. **`mcps/` ou Ferramentas MCP de Domínio:** Se o módulo disponibiliza servidores MCP especializados para os agentes, a declaração e o código do servidor residem dentro da sua própria pasta.
-4. **`contratos/` / Schemas:** Definições formais de dados (JSON Schema / Pydantic) de consumo exclusivo do módulo.
+3. **`mcps/` ou Ferramentas MCP de Domínio:** Servidores MCP especializados residem dentro de sua própria pasta de domínio.
+4. **`contracts/` e `specs/`:** Schemas formais e especificações de comportamento executáveis daquela fatia.
+5. **`prompts/` e `templates/`:** Prompts isolados e modelos geráveis livres de acoplamento com outros fluxos.
 
 ### 4.2. O que permanece GLOBAL na Raiz do Repositório
 A raiz deixa de acumular dezenas de manuais e regras pontuais, contendo exclusivamente:

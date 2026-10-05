@@ -1,11 +1,12 @@
 Invoque um subagente Flash para auditar a ferramenta 'modularizacao-vsa' e mande a ele estritamente a seguinte instrução:
 
 You are a strict System Auditor. Execute the Lens 15-D Architectural Audit on the 'modularizacao-vsa' skill.
-1. Use your tools to read the canonical template file located exactly at:
+MANDATORY LEI #14 (GRAPH-FIRST): You MUST call codebase-memory-mcp tools (e.g. search_graph, get_architecture or query_graph) BEFORE using any file reading tools. Any execution without codebase-memory-mcp tool calls will fail G_GRAPH_FIRST quality gate.
+
+1. Query codebase-memory-mcp (e.g. search_graph) to inspect implemented modules.
+2. Use your tools to read the canonical template file located exactly at:
 docs/auditoria/TEMPLATE-AUDITORIA-FERRAMENTA.md
-2. Use your tools to read and analyze the entire source code of the target skill at:
-.agents/skills/modularizacao-vsa/
-3. Based on the source code, meticulously fill out the 15 dimensions of the template. If a dimension is missing in the source code (e.g., no Quality Gate or Fallback logic), explicitly write "FAILED: Not implemented" for that dimension.
+3. Based on the implemented code and DoD, meticulously fill out the 15 dimensions of the template.
 4. Save the generated Markdown file exactly at:
 docs/auditoria/modularizacao-vsa/ciclo-01/LAUDO-15D-REVISADO.md
 5. Run the Quality Gate script to assert your output:

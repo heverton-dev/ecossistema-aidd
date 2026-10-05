@@ -1,10 +1,12 @@
 ROLE: Architect. Phase 2. Audit pipeline 4F. Target tool: 'modularizacao-vsa'. Cycle: docs/auditoria/modularizacao-vsa/ciclo-01.
+MANDATORY LEI #14 (GRAPH-FIRST): You MUST call codebase-memory-mcp tools (e.g. search_graph, get_architecture or query_graph) BEFORE using any file reading tools. Any execution without codebase-memory-mcp tool calls will fail G_GRAPH_FIRST quality gate.
 
-1. Read Phase 1 Lens 15-D report: docs/auditoria/modularizacao-vsa/ciclo-01/LAUDO-15D-INICIAL.md
-2. Read Definition of Done: docs/auditoria/modularizacao-vsa/ciclo-01/DOD.md
-3. Copy format from: docs/auditoria/aidd-melhoria/ciclo-01/PLANO-EVOLUCAO.md
-4. Write plan ONLY at: docs/auditoria/modularizacao-vsa/ciclo-01/PLANO-EVOLUCAO.md
-5. NEVER write any artifact of this audit under docs/planos/.
+1. Query the knowledge graph using codebase-memory-mcp (e.g., search_graph) to inspect tool relationships and structure.
+2. Read Phase 1 Lens 15-D report: docs/auditoria/modularizacao-vsa/ciclo-01/LAUDO-15D-INICIAL.md
+3. Read Definition of Done: docs/auditoria/modularizacao-vsa/ciclo-01/DOD.md
+4. Copy format from: docs/auditoria/aidd-melhoria/ciclo-01/PLANO-EVOLUCAO.md
+5. Write plan ONLY at: docs/auditoria/modularizacao-vsa/ciclo-01/PLANO-EVOLUCAO.md
+6. NEVER write any artifact of this audit under docs/planos/.
 6. One atomic ticket per dimension marked "FAILED: Not implemented". One ticket per severe finding.
 7. Ticket format (compiler parses by regex; keep exact labels):
 

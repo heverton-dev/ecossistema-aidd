@@ -1,8 +1,10 @@
 ROLE: Builder. Phase 3. Audit pipeline 4F. Target tool: 'modularizacao-vsa'. Cycle: docs/auditoria/modularizacao-vsa/ciclo-01.
+MANDATORY LEI #14 (GRAPH-FIRST): You MUST call codebase-memory-mcp tools (e.g. search_graph, get_architecture or query_graph) BEFORE using any file reading tools. Any execution without codebase-memory-mcp tool calls will fail G_GRAPH_FIRST quality gate.
 
-1. Read compiled plan: docs/auditoria/modularizacao-vsa/ciclo-01/PLANO-EVOLUCAO.json
-2. Execute tickets in listed order. One ticket at a time.
-3. For each ticket read its prompt: docs/auditoria/modularizacao-vsa/ciclo-01/prompts_tickets/PROMPT-TICKET-<NN>.txt
+1. Query codebase-memory-mcp (e.g. search_graph) to inspect target modules before modifying code.
+2. Read compiled plan: docs/auditoria/modularizacao-vsa/ciclo-01/PLANO-EVOLUCAO.json
+3. Execute tickets in listed order. One ticket at a time.
+4. For each ticket read its prompt: docs/auditoria/modularizacao-vsa/ciclo-01/prompts_tickets/PROMPT-TICKET-<NN>.txt
 4. Work inside ephemeral Git Worktree only. Never write in main working tree.
 5. TDD: write failing test first. Run it. Assert exit 1. Implement. Run again. Assert exit 0.
 6. Deliver exactly the ticket output_handoff file. Zero stubs. Real pytest tests.

@@ -46,7 +46,18 @@ def main():
             if str(repo_root) not in sys.path:
                 sys.path.insert(0, str(repo_root))
 
-            from scripts.gestor_sessoes import registrar_sessao
+            from scripts.gestor_sessoes import registrar_sessao, carregar_historico
+
+            json_path = repo_root / "secoes" / "historico_sessoes.json"
+            md_path = repo_root / "secoes" / "INDICE-SESSOES.md"
+
+            if json_path.exists():
+                try:
+                    historico = carregar_historico(str(json_path))
+                    if any(s.get("id") == conv_id for s in historico.get("sessoes", [])):
+                        return
+                except Exception:
+                    pass
 
             workspace = None
             ws_paths = payload.get("workspacePaths") or []
@@ -73,9 +84,6 @@ def main():
                     transcript_path = str(candidato_transcript)
 
             model_name = payload.get("modelName", "auto")
-
-            json_path = repo_root / "secoes" / "historico_sessoes.json"
-            md_path = repo_root / "secoes" / "INDICE-SESSOES.md"
 
             registrar_sessao(
                 session_id=conv_id,
