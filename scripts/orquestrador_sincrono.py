@@ -288,12 +288,74 @@ class OrquestradorSincrono:
         self.log("aidd-planner concluído e contrato lido!", "OK")
         return True
 
-    def etapa_03_master(self) -> bool:
-        """Etapa 3: Fatiamento vertical e compilação do Monólito Modular VSA."""
-        self.log("INICIANDO ETAPA 3: aidd-master (Fatiamento VSA e Preparação Modular)", "ETAPA")
+    def etapa_03_engine(self) -> bool:
+        """Etapa 3: Execução da Engine correspondente ao Fluxo."""
+        env_construtor = self._env_tickets(self.nome_fluxo)
+        if self.fluxo == 1:
+            self.log("INICIANDO ETAPA 3: aidd-pure (Engine Fluxo 01: Do Zero Puro)", "ETAPA")
+            cmd = [
+                sys.executable, "ecossistema.py", "pure-motor",
+                f"{self.nome}: sistema para {self.dominio}",
+                "--pasta", str(self.pasta),
+                "--implementar-codigo"
+            ]
+        elif self.fluxo == 2:
+            self.log("INICIANDO ETAPA 3: aidd-open (Engine Fluxo 02: Open-Source)", "ETAPA")
+            # A factory recebe a planta do planner (C2): a entrada dela mora
+            # em entrada_construtor.plano_motores. Nada de plano inventado.
+            cmd = [
+                sys.executable, "ecossistema.py", "open-motor",
+                "--plano", str(self.pasta / CONTRATOS["C2"][0]),
+                "--pasta", str(self.pasta)
+            ]
+        else:
+            self.log("INICIANDO ETAPA 3: aidd-freedom (Engine Fluxo 03: Low-Code Bridge)", "ETAPA")
+            origem = str(self.origem_export or (self.pasta / "origem"))
+            cmd = [
+                sys.executable, "ecossistema.py", "freedom-motor", "scan",
+                origem
+            ]
+        rc = self._executar_comando(cmd, env_extra=env_construtor)
+        if rc != 0:
+            self.log(f"Falha na execução do {self.nome_fluxo}", "ERRO")
+            return False
+
+        # Contrato C3 (engine -> master): gravado pelo construtor.
+        if not self._ler_contrato("C3", self.nome_fluxo):
+            return False
+
+        self.log("Engine especialista concluída com sucesso!", "OK")
+        return True
+
+    def etapa_04_master(self) -> bool:
+        """Etapa 4: Despacho das fatias VSA + harmonização no Monólito Modular."""
+        self.log("INICIANDO ETAPA 4: aidd-master (Monólito Modular VSA)", "ETAPA")
         env_master = self._env_tickets("aidd-master")
 
-        # master init: prepara estrutura de fatias e bancos SQLite WAL
+        # Despacho determinístico de fatias VSA em Git Worktrees efêmeras:
+        # começo da etapa do master (integração), não da do construtor.
+        vsa_manifest = self.pasta / VSA_DISPATCH_NOME
+        if not vsa_manifest.is_file() and (self.pasta / "PLANNER.json").is_file():
+            vsa_manifest = self.pasta / "PLANNER.json"
+        if not self.dry_run and not vsa_manifest.is_file():
+            self.log(f"aidd-planner não gravou {VSA_DISPATCH_NOME}: nada para despachar", "ERRO")
+            return False
+
+        self.log("Invocando motor de despacho VSA via CLI do ecossistema (--barrier-sync ativo)")
+        cmd_disp = [
+            sys.executable, "ecossistema.py", "dispatch",
+            "--dispatch", str(vsa_manifest),
+            "--target-dir", str(self.pasta),
+            "--barrier-sync",
+        ]
+        if self.dry_run:
+            cmd_disp.append("--dry-run")
+        rc = self._executar_comando(cmd_disp, env_extra=env_master)
+        if rc != 0:
+            self.log("Falha no despacho de fatias VSA em Git worktrees", "ERRO")
+            return False
+
+        # master init
         cmd_init = [
             sys.executable, "ecossistema.py", "master", "init",
             self.slug,
@@ -315,73 +377,11 @@ class OrquestradorSincrono:
             self.log("Falha no master add-module", "ERRO")
             return False
 
-        self.log("aidd-master fatiamento e scaffold modular concluído!", "OK")
-        return True
-
-    def etapa_04_dispatch_e_engine(self) -> bool:
-        """Etapa 4: Despacho em Git Worktrees efêmeras e execução paralela da Engine com Barreira."""
-        self.log(f"INICIANDO ETAPA 4: aidd-dispatch + {self.nome_fluxo} (Execução em Worktrees)", "ETAPA")
-        env_construtor = self._env_tickets(self.nome_fluxo)
-
-        # 1. Executa a Engine de Construção para gerar as implementações das fatias
-        if self.fluxo == 1:
-            self.log(f"Executando motor especialista {self.nome_fluxo} (Fluxo 01: Do Zero Puro)...")
-            cmd_engine = [
-                sys.executable, "ecossistema.py", "pure-motor",
-                f"{self.nome}: sistema para {self.dominio}",
-                "--pasta", str(self.pasta),
-                "--implementar-codigo"
-            ]
-        elif self.fluxo == 2:
-            self.log(f"Executando motor especialista {self.nome_fluxo} (Fluxo 02: Open-Source)...")
-            cmd_engine = [
-                sys.executable, "ecossistema.py", "open-motor",
-                "--plano", str(self.pasta / CONTRATOS["C2"][0]),
-                "--pasta", str(self.pasta)
-            ]
-        else:
-            self.log(f"Executando motor especialista {self.nome_fluxo} (Fluxo 03: Low-Code Bridge)...")
-            origem = str(self.origem_export or (self.pasta / "origem"))
-            cmd_engine = [
-                sys.executable, "ecossistema.py", "freedom-motor", "scan",
-                origem
-            ]
-        rc_eng = self._executar_comando(cmd_engine, env_extra=env_construtor)
-        if rc_eng != 0:
-            self.log(f"Falha na execução do motor especialista {self.nome_fluxo}", "ERRO")
-            return False
-
-        # Validação do contrato da Engine C3
-        if not self._ler_contrato("C3", self.nome_fluxo):
-            return False
-
-        # 2. Despacho determinístico de fatias VSA em Git Worktrees com Barreira de Sincronização
-        vsa_manifest = self.pasta / VSA_DISPATCH_NOME
-        if not vsa_manifest.is_file() and (self.pasta / "PLANNER.json").is_file():
-            vsa_manifest = self.pasta / "PLANNER.json"
-        if not self.dry_run and not vsa_manifest.is_file():
-            self.log(f"Manifesto {VSA_DISPATCH_NOME} ausente: nada para despachar", "ERRO")
-            return False
-
-        self.log("Invocando despacho VSA com Barreira de Sincronização (--barrier-sync ativo)")
-        cmd_disp = [
-            sys.executable, "ecossistema.py", "dispatch",
-            "--dispatch", str(vsa_manifest),
-            "--target-dir", str(self.pasta),
-            "--barrier-sync",
-        ]
-        if self.dry_run:
-            cmd_disp.append("--dry-run")
-        rc_disp = self._executar_comando(cmd_disp, env_extra=env_construtor)
-        if rc_disp != 0:
-            self.log("Falha no despacho de fatias VSA em Git worktrees", "ERRO")
-            return False
-
-        # Contrato C4 (master/convergência -> enterprise)
+        # Contrato C4 (master -> enterprise): gravado pelo master.
         if not self._ler_contrato("C4", "aidd-master"):
             return False
 
-        self.log("Execução paralela de fatias e barreira de convergência concluídas com sucesso!", "OK")
+        self.log("aidd-master concluído com sucesso!", "OK")
         return True
 
     def etapa_05_enterprise(self) -> bool:
@@ -486,8 +486,8 @@ class OrquestradorSincrono:
         etapas = [
             ("Etapa 1: aidd-forge", self.etapa_01_forge),
             ("Etapa 2: aidd-planner", self.etapa_02_planner),
-            ("Etapa 3: aidd-master (Fatiamento VSA)", self.etapa_03_master),
-            ("Etapa 4: aidd-dispatch + Engine + Barreira", self.etapa_04_dispatch_e_engine),
+            ("Etapa 3: Engine Especialista", self.etapa_03_engine),
+            ("Etapa 4: aidd-master", self.etapa_04_master),
             ("Etapa 5: aidd-enterprise", self.etapa_05_enterprise),
             ("Etapa 6: aidd-ops", self.etapa_06_ops),
             ("Etapa 7: Auditoria Final", self.etapa_07_auditoria)
