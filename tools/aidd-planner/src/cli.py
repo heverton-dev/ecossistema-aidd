@@ -105,11 +105,29 @@ def cmd_init(args: argparse.Namespace) -> int:
     caminho_design_system = os.path.join(pasta_destino, "DESIGN-SYSTEM.json")
     try:
         from design_system import gerar_design_system
+        from ui_reference_resolver import resolver_referencia_ui
     except ImportError:
         _planner_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
         sys.path.insert(0, os.path.join(_planner_root, "src", "core"))
         from design_system import gerar_design_system
-    design_system = gerar_design_system(nome, slug, descricao, dominio)
+        from ui_reference_resolver import resolver_referencia_ui
+
+    ui_ref_modo = getattr(args, "ui_ref", None)
+    _, tela_referencia = resolver_referencia_ui(
+        modo=ui_ref_modo,
+        projeto_nome=nome,
+        dominio=dominio,
+        plataforma="web"
+    )
+
+    design_system = gerar_design_system(
+        projeto_nome=nome,
+        slug=slug,
+        descricao=descricao,
+        dominio=dominio,
+        tela_referencia=tela_referencia,
+        plataforma="web"
+    )
     with open(caminho_design_system, "w", encoding="utf-8") as f:
         json.dump(design_system, f, indent=2, ensure_ascii=False)
 
@@ -329,6 +347,9 @@ def main(argv: Optional[List[str]] = None) -> int:
                         help="Modulo (bounded context) desenhado no pre-plano; repita para varios")
     p_init.add_argument("--handoff-c1", default=None,
                         help="Caminho do C1 do forge; padrao .aidd/HANDOFF_FORGE_PLANNER.json")
+    p_init.add_argument("--ui-ref", choices=["1", "2", "3", "mobbin", "online", "deterministico"],
+                        default=None,
+                        help="Fonte de referência de UI: 1/mobbin (padrão), 2/online (21st.dev/dribbble), 3/deterministico (offline)")
     p_init.add_argument("--pasta", "-p", default=".", help="Pasta de destino onde salvar PLANNER.json")
     p_init.add_argument("--force", action="store_true", help="Sobrescreve PLANNER.json se já existir")
     p_init.set_defaults(func=cmd_init)

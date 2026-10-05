@@ -324,6 +324,52 @@ def test_cli_init_gera_design_system_unico_por_projeto():
         assert ds_saude_repetido["paleta"] == ds_saude["paleta"]
 
 
+def test_cli_init_com_modos_ui_ref(monkeypatch):
+    """Verifica comportamento das opções 1 (mobbin), 2 (online) e 3 (deterministico)."""
+    with tempfile.TemporaryDirectory() as tmp_m, tempfile.TemporaryDirectory() as tmp_o, tempfile.TemporaryDirectory() as tmp_d:
+        # 1. Mobbin (com mock de busca)
+        from src.core import ui_reference_resolver
+        monkeypatch.setattr(ui_reference_resolver, "buscar_referencias_mobbin", lambda termo, plataforma="web", limite=3: {
+            "fonte": "mobbin_api",
+            "app_name": "AppMockMobbin",
+            "tags": [termo, plataforma],
+            "mobbin_url": "https://mobbin.com/mock"
+        })
+
+        ret_m = cli_main([
+            "init", "--fluxo", "1", "--nome", "App Mobbin", "--slug", "app-mobbin",
+            "--descricao", "Descricao teste", "--dominio", "fintech",
+            "--ui-ref", "mobbin", "--pasta", tmp_m
+        ])
+        assert ret_m == 0
+        with open(os.path.join(tmp_m, "DESIGN-SYSTEM.json"), "r", encoding="utf-8") as f:
+            ds_m = json.load(f)
+        assert "mobbin enterprise api" in ds_m["fonte"]
+
+        # 2. Online (curated galleries)
+        ret_o = cli_main([
+            "init", "--fluxo", "1", "--nome", "App Online", "--slug", "app-online",
+            "--descricao", "Descricao teste", "--dominio", "fintech",
+            "--ui-ref", "online", "--pasta", tmp_o
+        ])
+        assert ret_o == 0
+        with open(os.path.join(tmp_o, "DESIGN-SYSTEM.json"), "r", encoding="utf-8") as f:
+            ds_o = json.load(f)
+        assert "referencias abertas online" in ds_o["fonte"]
+
+        # 3. Deterministico
+        ret_d = cli_main([
+            "init", "--fluxo", "1", "--nome", "App Det", "--slug", "app-det",
+            "--descricao", "Descricao teste", "--dominio", "fintech",
+            "--ui-ref", "deterministico", "--pasta", tmp_d
+        ])
+        assert ret_d == 0
+        with open(os.path.join(tmp_d, "DESIGN-SYSTEM.json"), "r", encoding="utf-8") as f:
+            ds_d = json.load(f)
+        assert "catalogo-deterministico" in ds_d["fonte"]
+
+
+
 def _preparar_diretorios_alvo(base_dir: str, manifesto: dict) -> None:
     """Garante que diretórios pai dos arquivos alvo existam para o gate G_PIPELINE_HANDOFF."""
     todos_tickets = list(manifesto.get("fase_paralela_assincrona", [])) + list(manifesto.get("fase_sequencial_sincrona", []))
