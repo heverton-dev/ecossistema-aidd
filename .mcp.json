@@ -57,14 +57,14 @@
     "codebase-memory-mcp": {
       "command": "C:\\Users\\trcnologia\\tools\\codebase-memory-mcp\\codebase-memory-mcp.exe",
       "args": [],
-      "cwd": "C:\\Users\\trcnologia\\Desktop\\ecossistema-aidd"
+      "cwd": "C:\\Users\\trcnologia\\Desktop\\worktrees_auditoria-modularizacao-vsa-ciclo-01\\Fase_4_Inspetor_Retorno"
     },
     "mcp-gatekeeper": {
       "command": "python",
       "args": [
         "componentes/compartilhado/src-core/mcp_gatekeeper.py"
       ],
-      "cwd": "C:\\Users\\trcnologia\\Desktop\\ecossistema-aidd"
+      "cwd": "C:\\Users\\trcnologia\\Desktop\\worktrees_auditoria-modularizacao-vsa-ciclo-01\\Fase_4_Inspetor_Retorno"
     },
     "mobbin-mcp": {
       "command": "python",

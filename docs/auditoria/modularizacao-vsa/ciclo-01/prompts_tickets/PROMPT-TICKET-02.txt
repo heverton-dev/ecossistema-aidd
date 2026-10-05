@@ -1,0 +1,17 @@
+ROLE: Builder. Ecosystem AIDD. Ticket 2. Target tool: modularizacao-vsa.
+DIMENSION: D2
+DELIVER: scripts/cli_modularizacao_vsa.py
+
+STEPS:
+- Write test first in tests/test_vsa_cli.py. Assert exit 1 when python ecossistema.py modularizacao-vsa is missing.
+- Implement scripts/cli_modularizacao_vsa.py supporting inspect, verify, and status subcommands.
+- Register modularizacao-vsa subcommand in ecossistema.py with lazy import dispatch.
+- Run pytest tests/test_vsa_cli.py. Assert exit 0.
+
+RULES:
+1. Write failing test first. Run. Assert exit 1.
+2. Implement. Zero stubs. Real pytest tests. Run. Assert exit 0.
+3. Work inside ephemeral Git Worktree only.
+4. Capture real exit code: redirect to file, read $? same line. Never trust pipes.
+5. NEVER edit docs/auditoria/CONFIG-EXECUCAO-USUARIO.json.
+6. Deliver exactly: scripts/cli_modularizacao_vsa.py

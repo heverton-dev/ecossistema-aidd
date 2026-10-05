@@ -69,7 +69,7 @@
         "codebase-memory-mcp"
       ],
       "enabled": true,
-      "cwd": "C:\\Users\\trcnologia\\Desktop\\ecossistema-aidd"
+      "cwd": "C:\\Users\\trcnologia\\Desktop\\worktrees_auditoria-modularizacao-vsa-ciclo-01\\Fase_4_Inspetor_Retorno"
     },
     "mcp-gatekeeper": {
       "type": "local",
@@ -78,7 +78,7 @@
         "componentes/compartilhado/src-core/mcp_gatekeeper.py"
       ],
       "enabled": true,
-      "cwd": "C:\\Users\\trcnologia\\Desktop\\ecossistema-aidd"
+      "cwd": "C:\\Users\\trcnologia\\Desktop\\worktrees_auditoria-modularizacao-vsa-ciclo-01\\Fase_4_Inspetor_Retorno"
     },
     "mobbin-mcp": {
       "type": "local",

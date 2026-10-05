@@ -1282,6 +1282,13 @@ def cmd_mobbin(args):
     return cmd_planner(["mobbin"] + args)
 
 
+def cmd_modularizacao_vsa(args):
+    """Executa a CLI de inspeção e verificação VSA (lazy import)."""
+    sys.path.insert(0, os.path.join(ROOT_DIR, "scripts"))
+    import cli_modularizacao_vsa
+    return cli_modularizacao_vsa.main(args)
+
+
 def cmd_status(args):
     if "--testes" in args:
         sys.path.insert(0, os.path.join(ROOT_DIR, "scripts", "manutencao"))
@@ -1535,6 +1542,7 @@ def comandos_disponiveis():
         "session": cmd_sessao,
         "sessoes": cmd_sessao,
         "mobbin": cmd_mobbin,
+        "modularizacao-vsa": cmd_modularizacao_vsa,
         "preflight-host": cmd_preflight_host,
         "status": cmd_status,
         "help": lambda a: print_help() or 0,
