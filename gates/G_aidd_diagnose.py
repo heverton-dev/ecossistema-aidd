@@ -176,7 +176,7 @@ def conferir_teste_regressao(arquivo: Any, base_relatorio: Optional[Path]) -> Op
     if existente is None:
         return f"Teste de regressão '{arquivo}' não existe em disco: relatório não comprovado (D13)."
     res = subprocess.run(
-        [sys.executable, "-m", "pytest", str(existente), "-q", "-p", "no:cacheprovider"],
+        [sys.executable, "-m", "pytest", "-o", "addopts=", str(existente), "-q", "-p", "no:cacheprovider"],
         cwd=str(ROOT_DIR), capture_output=True, text=True, timeout=600,
     )
     if res.returncode != 0:
