@@ -177,22 +177,23 @@ def conferir_teste_regressao(arquivo: Any, base_relatorio: Optional[Path]) -> Op
     if existente is None:
         return f"Teste de regressão '{arquivo}' não existe em disco: relatório não comprovado (D13)."
     env = {k: v for k, v in os.environ.items() if not k.startswith("PYTEST_")}
-    cache_tmp = str(Path(tempfile.gettempdir()) / "pytest_diag_cache")
-    res = subprocess.run(
-        [
-            sys.executable, "-m", "pytest",
-            "-o", "addopts=",
-            "-o", f"cache_dir={cache_tmp}",
-            str(existente),
-            "-q",
-            "-p", "no:cacheprovider",
-        ],
-        cwd=str(ROOT_DIR),
-        env=env,
-        capture_output=True,
-        text=True,
-        timeout=600,
-    )
+    with tempfile.TemporaryDirectory(prefix="pytest_diag_cache_") as cache_tmp:
+        res = subprocess.run(
+            [
+                sys.executable, "-m", "pytest",
+                "-o", "addopts=",
+                "-o", f"cache_dir={cache_tmp}",
+                "-o", f"rootdir={existente.parent}",
+                str(existente),
+                "-q",
+                "-p", "no:cacheprovider",
+            ],
+            cwd=str(existente.parent),
+            env=env,
+            capture_output=True,
+            text=True,
+            timeout=600,
+        )
     if res.returncode != 0:
         detalhe = (res.stderr + " " + res.stdout).strip()
         return (

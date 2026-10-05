@@ -149,7 +149,7 @@ def test_aprova_relatorio_valido_json(tmp_path):
             {"hipotese": "Hipótese preliminar 0: DNS inválido", "prova": "DNS resolvido com sucesso"}
         ],
         "teste_regressao": {
-            "arquivo": str(criar_teste(tmp_path, "test_regressao.py")),
+            "arquivo": str(criar_teste(tmp_path, "test_regressao_json.py")).replace("\\", "/"),
             "falhou_antes": True,
             "passou_depois": True,
         },
@@ -157,7 +157,7 @@ def test_aprova_relatorio_valido_json(tmp_path):
     relatorio.write_text(json.dumps(dados, ensure_ascii=False), encoding="utf-8")
 
     res = executar_gate_diagnose(relatorio)
-    assert res.returncode == 0, res.stdout + res.stderr
+    assert res.returncode == 0, f"STDOUT: {res.stdout}\nSTDERR: {res.stderr}"
     assert "APROVADO" in res.stdout or "EXIT 0" in res.stdout
 
 
