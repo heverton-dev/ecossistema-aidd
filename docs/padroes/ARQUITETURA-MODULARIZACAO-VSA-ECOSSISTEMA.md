@@ -84,28 +84,52 @@ ecossistema-aidd/
 
 ---
 
-## 4. Análise Profunda dos Ganhos
+## 4. Autocontenção de Contexto por Módulo: README, AGENTS e MCPs
 
-### 4.1. Manutenibilidade (Organização Intuitiva e Isolamento)
+Para viabilizar a economia extrema de tokens e eliminar a confusão cognitiva, a gestão de regras e contexto segue uma disciplina em dois níveis (Local vs. Global):
+
+### 4.1. O que reside dentro de CADA MÓDULO (`modulos/<fatia>/`)
+Cada fatia vertical funciona como um subdomínio autocontido e deve possuir:
+1. **`README.md` (< 500 tokens):** Visão executiva da fatia, lista de comandos suportados, dependências internas e exemplos de uso direto.
+2. **`AGENTS.md` Local (< 400 tokens):** Regras, invariantes de código e contratos específicos daquela fatia (ex: no *Freedom*, regras de substituição do Supabase; no *Pure*, o ciclo TDD Red-Green).
+3. **`mcps/` ou Ferramentas MCP de Domínio:** Se o módulo disponibiliza servidores MCP especializados para os agentes, a declaração e o código do servidor residem dentro da sua própria pasta.
+4. **`contratos/` / Schemas:** Definições formais de dados (JSON Schema / Pydantic) de consumo exclusivo do módulo.
+
+### 4.2. O que permanece GLOBAL na Raiz do Repositório
+A raiz deixa de acumular dezenas de manuais e regras pontuais, contendo exclusivamente:
+1. **`AGENTS.md` Raiz:** Apenas as 13 Leis Invioláveis do Ecossistema e a Tabela de Despacho Topológico (Dispatch Table) que aponta para o `AGENTS.md` de cada módulo.
+2. **Registro Agregado de MCPs (`.mcp` / harnesses):** O script `components sync` compila automaticamente os MCPs declarados nos módulos para a configuração do harness do desenvolvedor.
+3. **`ecossistema.py`:** Fachada fina de execução de comandos.
+
+### 4.3. Princípio Fractal: Submódulos Autocontidos e Idempotentes
+A arquitetura é **fractal (auto-similar)**: qualquer módulo que agregue fluxos distintos (como `02-triade-motores/`) reproduz obrigatoriamente a mesma regra de autocontenção para cada um dos seus submódulos:
+- Cada fluxo (`fluxo-01-pure/`, `fluxo-02-open/`, `fluxo-03-freedom/`) possui seu próprio `core/`, `skills/`, `gates/`, `tests/`, `README.md` e `AGENTS.md`.
+- **Idempotência Estrita:** Qualquer comando executado dentro de um submódulo (geração de código, conversão de schemas, build de docker-compose) é estritamente idempotente — rodar 1 ou 100 vezes gera exatamente o mesmo resultado determinístico, sem efeitos colaterais em submódulos vizinhos.
+
+---
+
+## 5. Análise Profunda dos Ganhos
+
+### 5.1. Manutenibilidade (Organização Intuitiva e Isolamento)
 - **Princípio de Alta Coesão:** Cada pasta de módulo possui sua trinca viva: Código de Execução (`core`), Interface Agêntica (`skills`), Validações (`gates`) e Garantias (`tests`).
 - **Zero Efeito Colateral:** Se você precisa alterar o conversor de banco do *Freedom*, você mexe estritamente em `modulos/02-triade-motores/fluxo-03-freedom/`. Nenhuma outra parte do repositório é tocada.
 - **Onboarding e Descoberta Imediata:** Um desenvolvedor ou agente novo sabe exatamente onde cada funcionalidade nasce e morre apenas navegando pela árvore de pastas.
 
-### 4.2. Performance de Uso e Economia Extrema de Tokens
+### 5.2. Performance de Uso e Economia Extrema de Tokens
 - **Carregamento Cirúrgico de Contexto:** Em vez de fornecer todo o repositório ou dezenas de regras globais para o modelo de linguagem, o harness carrega apenas o `README.md` específico do módulo em edição (< 500 tokens).
 - **Redução Drástica de Consumo:**
   - *Antes:* 40k a 90k tokens gastos em varreduras de arquivos soltos para resolver um ajuste simples.
   - *Depois:* Menos de 4k a 8k tokens no ciclo completo da tarefa.
 - **Menor Latência:** Prompts enxutos geram respostas quase instantâneas dos modelos (Gemini Flash, Claude Sonnet, etc.).
 
-### 4.3. Rastreabilidade de Bugs e Diagnóstico Rápido
+### 5.3. Rastreabilidade de Bugs e Diagnóstico Rápido
 - **Portões Vizinhos ao Código:** O portão de qualidade (`gate`) não fica perdido a quilômetros de distância; ele mora na mesma fatia vertical do código que valida.
 - **Isolamento de Falha:** Se um teste ou portão reprovar, o caminho do arquivo no log já entrega exatamente a fatia responsável (`modulos/03-plataforma-e-entrega/...`).
 - **Reprodução Determinística:** Fica trivial rodar os testes unitários e de integração de apenas uma fatia vertical isoladamente sem precisar acionar a bateria de testes do ecossistema inteiro.
 
 ---
 
-## 5. Haverá Diferença de Uso para o Usuário Final?
+## 6. Haverá Diferença de Uso para o Usuário Final?
 
 **A resposta é: Nenhuma mudança traumática, apenas melhoria drástica de velocidade e acerto.**
 
@@ -118,3 +142,23 @@ ecossistema-aidd/
 1. **Agentes Não Ficam Mais "Perdidos":** As IAs deixam de alucinar ou rodar em círculos buscando scripts perdidos em pastas desconexas.
 2. **Tarefas Resolvidas em Minutos:** Bugs e novas funcionalidades são implementados em 1 a 3 passos diretos, sem estourar limites de contexto.
 3. **Transparência Visual:** Ao abrir a pasta do projeto no VS Code / editor, você vê 4 diretórios limpos e autoexplicativos em vez de uma floresta de dezenas de pastas enigmáticas.
+
+---
+
+## 7. Salvaguardas Técnicas e Invariantes de Implementação
+
+Para garantir que a arquitetura não sofra degradação ou acoplamento acidental ao longo do tempo, 6 garantias técnicas são formalmente incorporadas:
+
+1. **Lazy Import Dinâmico na Fachada CLI (`ecossistema.py`):**
+   - O roteador central não importa módulos antecipadamente. Utiliza carregamento dinâmico via `importlib` sob demanda, reduzindo o tempo de boot do CLI para ~15ms.
+2. **Portão de Fronteira Estrita via AST (`G_MODULO_FRONTEIRA.py`):**
+   - Quality gate determinístico que inspeciona a árvore sintática dos arquivos Python e bloqueia (`exit 1`) importações cruzadas não autorizadas entre módulos sem passar pelas APIs públicas oficiais (`__all__` / `interface.py`).
+3. **Micro-Gates de Commit com Escopo Cirúrgico:**
+   - Durante o desenvolvimento, o hook de pre-commit detecta o `git diff` e dispara apenas os testes e portões da fatia vertical modificada. A bateria completa de 54 macro-gates é acionada na barreira final de integração.
+4. **Camada de Aliases e Retrocompatibilidade Invisível:**
+   - Proxies leves nos caminhos herdados (`tools/`, `gates/`) garantem que referências em scripts externos ou comandos antigos continuem funcionando com avisos informativos durante o período de transição.
+5. **Grafos Federados por Módulo no codebase-memory-mcp:**
+   - Substituição do grafo monolítico global por subgrafos indexados por domínio (`aidd-nucleo`, `modulo-governanca`, `triade-fluxo-pure`, `triade-fluxo-open`, `triade-fluxo-freedom`, `modulo-plataforma-ops`). O agente consulta primeiro o subgrafo específico do módulo em edição, obtendo blast radius cirúrgico (< 10 nós), reindexação incremental rápida e consumo de tokens inferior a 300 tokens por consulta MCP.
+6. **Poda Ativa de Inchaço e Escopo Cirúrgico de Skills (Context Pruning & Lazy Scoping):**
+   - Eliminação da injeção estática e desenfreada de dezenas de skills irrelevantes no prompt de sistema. Cada módulo passa a declarar apenas as skills e MCPs estritamente necessários para sua execução. Skills especializadas ou de uso esporádico (ex: utilitários científicos, manipuladores office) são isoladas em plugins sob demanda e desativadas do perfil de desenvolvimento padrão, erradicando a queima silenciosa de 10.000 a 20.000 tokens a cada mensagem.
+
