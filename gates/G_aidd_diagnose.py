@@ -26,6 +26,7 @@ import os
 import re
 import subprocess
 import sys
+import tempfile
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Tuple, Union
 
@@ -175,13 +176,27 @@ def conferir_teste_regressao(arquivo: Any, base_relatorio: Optional[Path]) -> Op
     existente = next((c for c in candidatos if c.is_file()), None)
     if existente is None:
         return f"Teste de regressão '{arquivo}' não existe em disco: relatório não comprovado (D13)."
+    env = {k: v for k, v in os.environ.items() if not k.startswith("PYTEST_")}
+    cache_tmp = str(Path(tempfile.gettempdir()) / "pytest_diag_cache")
     res = subprocess.run(
-        [sys.executable, "-m", "pytest", "-o", "addopts=", str(existente), "-q", "-p", "no:cacheprovider"],
-        cwd=str(ROOT_DIR), capture_output=True, text=True, timeout=600,
+        [
+            sys.executable, "-m", "pytest",
+            "-o", "addopts=",
+            "-o", f"cache_dir={cache_tmp}",
+            str(existente),
+            "-q",
+            "-p", "no:cacheprovider",
+        ],
+        cwd=str(ROOT_DIR),
+        env=env,
+        capture_output=True,
+        text=True,
+        timeout=600,
     )
     if res.returncode != 0:
+        detalhe = (res.stderr + " " + res.stdout).strip()
         return (
-            f"Teste de regressão '{arquivo}' falha agora (pytest exit {res.returncode}): "
+            f"Teste de regressão '{arquivo}' falha agora (pytest exit {res.returncode}: {detalhe}): "
             "'passou_depois' declarado não confere com a execução real (D13)."
         )
     return None

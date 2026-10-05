@@ -1334,3 +1334,21 @@
 - **Status:** **RESOLVIDO**.
 - **Data da Última Auditoria:** 05/10/2026.
 
+---
+
+## 38. Isolamento de Runtime Pytest e Validação ESM em `aidd-master`
+
+- **Objetivo da Correção:**
+  Garantir isolamento do cache de módulos `sys.modules` ao importar servidores dinâmicos em testes e utilizar extensão `.mjs` para validação de sintaxe de módulos ES no Node 26.
+- **Ferramentas Tocadas:** [`tools/aidd-master`](file:///C:/Users/trcnologia/Desktop/ecossistema-aidd/tools/aidd-master).
+- **O que executou:**
+  1. `tools/aidd-master/tests/test_fronteira_master.py` e `tools/aidd-master/scripts/integrador_master.py`: limpeza profilática de chaves `modules` residuais em `sys.modules` antes do carregamento dinâmico de `server.py`.
+  2. `tools/aidd-master/tests/unit/test_attach_vsa.py`: utilização da extensão `.mjs` para validação sintática via `node --check` em blocos de script que contenham instruções `import`.
+- **Resultados de Testes:**
+  - `pytest tools/aidd-master/tests/test_fronteira_master.py tools/aidd-master/tests/unit/test_attach_vsa.py` → 13 passed (exit 0).
+  - `pytest tools/aidd-master` → 414 passed, 0 failed, 3 skipped (exit 0).
+  - `G_DISCIPLINA_TESTE_FERRAMENTA.py` → exit 0 (PASS).
+- **Status:** **RESOLVIDO**.
+- **Data da Última Auditoria:** 05/10/2026.
+
+

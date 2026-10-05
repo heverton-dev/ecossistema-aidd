@@ -62,6 +62,10 @@ def medir_quarteto_servidor(server_script: Path) -> Dict[str, Any]:
     if server_dir not in sys.path:
         sys.path.insert(0, server_dir)
 
+    for k in list(sys.modules.keys()):
+        if k == "modules" or k.startswith("modules."):
+            del sys.modules[k]
+
     # Carrega dinamicamente o módulo do servidor gerado
     spec = importlib.util.spec_from_file_location("server_medicao", str(server_script))
     if spec is None or spec.loader is None:

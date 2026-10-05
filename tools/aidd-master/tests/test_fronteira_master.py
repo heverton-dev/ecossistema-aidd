@@ -87,6 +87,10 @@ def test_master_servidor_quarteto_webhook_retorna_200(tmp_path: Path):
     if server_dir not in sys.path:
         sys.path.insert(0, server_dir)
 
+    for k in list(sys.modules.keys()):
+        if k == "modules" or k.startswith("modules."):
+            del sys.modules[k]
+
     import importlib.util
     spec = importlib.util.spec_from_file_location("server_gerado", str(server_script))
     server_mod = importlib.util.module_from_spec(spec)

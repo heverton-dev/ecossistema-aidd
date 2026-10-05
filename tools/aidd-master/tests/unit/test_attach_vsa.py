@@ -130,8 +130,9 @@ def test_provision_backend_only_renderiza_docs_html_sem_placeholder_cru(tmp_path
     import re
 
     scripts = re.findall(r"<script[^>]*>(.*?)</script>", docs_html, re.S)
-    for script in scripts:
-        script_path = tmp_path / "_check.js"
+    for i, script in enumerate(scripts):
+        ext = ".mjs" if "import " in script else ".js"
+        script_path = tmp_path / f"_check_{i}{ext}"
         script_path.write_text(script, encoding="utf-8")
         resultado = subprocess.run(["node", "--check", str(script_path)], capture_output=True, text=True)
         assert resultado.returncode == 0, f"JS invalido em docs.html: {resultado.stderr}"
