@@ -1,0 +1,17 @@
+ROLE: Builder. Ecosystem AIDD. Ticket 10. Target tool: modularizacao-vsa.
+DIMENSION: D15
+DELIVER: docs/auditoria/modularizacao-vsa/ciclo-01/MANIFESTO-VSA-MODULOS.json
+
+STEPS:
+- Write test first in tests/test_vsa_handoff.py. Assert exit 1 when handoff manifest is missing or altered.
+- Implement scripts/handoff_vsa.py to produce and sign docs/auditoria/modularizacao-vsa/ciclo-01/MANIFESTO-VSA-MODULOS.json.
+- Include slice mapping, SHA-256 hashes, and 15-D dimension status in manifest.
+- Run pytest tests/test_vsa_handoff.py. Assert exit 0.
+
+RULES:
+1. Write failing test first. Run. Assert exit 1.
+2. Implement. Zero stubs. Real pytest tests. Run. Assert exit 0.
+3. Work inside ephemeral Git Worktree only.
+4. Capture real exit code: redirect to file, read $? same line. Never trust pipes.
+5. NEVER edit docs/auditoria/CONFIG-EXECUCAO-USUARIO.json.
+6. Deliver exactly: docs/auditoria/modularizacao-vsa/ciclo-01/MANIFESTO-VSA-MODULOS.json

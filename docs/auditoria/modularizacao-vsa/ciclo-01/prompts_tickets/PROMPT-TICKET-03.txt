@@ -1,0 +1,17 @@
+ROLE: Builder. Ecosystem AIDD. Ticket 3. Target tool: modularizacao-vsa.
+DIMENSION: D3
+DELIVER: scripts/isolamento_vsa.py
+
+STEPS:
+- Write test first in tests/test_vsa_isolamento.py. Assert exit 1 when mutations happen outside ephemeral Git Worktree.
+- Implement scripts/isolamento_vsa.py with VSAWorktreeContext manager.
+- Restrict write operations to isolated worktree directories.
+- Run pytest tests/test_vsa_isolamento.py. Assert exit 0.
+
+RULES:
+1. Write failing test first. Run. Assert exit 1.
+2. Implement. Zero stubs. Real pytest tests. Run. Assert exit 0.
+3. Work inside ephemeral Git Worktree only.
+4. Capture real exit code: redirect to file, read $? same line. Never trust pipes.
+5. NEVER edit docs/auditoria/CONFIG-EXECUCAO-USUARIO.json.
+6. Deliver exactly: scripts/isolamento_vsa.py
