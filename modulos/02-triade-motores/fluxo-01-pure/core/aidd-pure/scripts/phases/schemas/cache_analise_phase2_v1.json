@@ -1,0 +1,33 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "CacheAnalisePhase2V1",
+  "description": "Schema de validação para cache de análise da Fase 2 (analise_phase2.json)",
+  "type": "object",
+  "required": [
+    "objetivo",
+    "publico_alvo",
+    "constraints",
+    "stack_recomendado"
+  ],
+  "properties": {
+    "objetivo": {
+      "type": "string"
+    },
+    "publico_alvo": {
+      "type": "string"
+    },
+    "constraints": {
+      "type": "array"
+    },
+    "stack_recomendado": {
+      "type": "object"
+    },
+    "arquitetura": {
+      "type": ["string", "object"]
+    },
+    "referencias_utilizadas": {
+      "type": "array"
+    }
+  },
+  "additionalProperties": true
+}

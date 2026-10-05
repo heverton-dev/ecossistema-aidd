@@ -1,0 +1,24 @@
+{
+  "nome": "{{ nicho_nome_exibicao }}",
+  "slug": "{{ nicho_slug }}",
+  "marca": {
+    "logo": "/logo.svg",
+    "cor_primaria": "#0f3460",
+    "cor_secundaria": "#e94560",
+    "fonte": "Inter"
+  },
+  "modulos": [
+    {% for servico in servicos %}
+    {
+      "nome": "{{ servico.nome }}",
+      "slug": "{{ servico.nome_slug }}",
+      "rota": "/{{ servico.nome_slug }}",
+      "icone": "{{ servico.icone | default('layers') }}"
+    }{% if not loop.last %},{% endif %}
+    {% endfor %}
+  ],
+  "gateway": {
+    "url": "${GATEWAY_URL:-http://localhost:8000}",
+    "timeout": 30000
+  }
+}

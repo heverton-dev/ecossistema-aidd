@@ -1,0 +1,21 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "CacheConfigPhase4V1",
+  "description": "Schema de validação para cache de configuração da Fase 4 (config_global_local_phase4.json)",
+  "type": "object",
+  "required": [
+    "decisoes"
+  ],
+  "properties": {
+    "decisoes": {
+      "type": "object"
+    },
+    "symlinks_paths": {
+      "type": "array"
+    },
+    "justificativas": {
+      "type": "object"
+    }
+  },
+  "additionalProperties": true
+}

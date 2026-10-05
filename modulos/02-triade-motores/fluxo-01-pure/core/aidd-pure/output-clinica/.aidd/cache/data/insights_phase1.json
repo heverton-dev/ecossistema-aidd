@@ -1,0 +1,43 @@
+{
+  "total_insights": 4,
+  "insights": [
+    {
+      "tipo": "stack_linguagem",
+      "descricao": "PHP",
+      "frequencia": 2,
+      "fontes": [
+        "github"
+      ]
+    },
+    {
+      "tipo": "stack_linguagem",
+      "descricao": "Python",
+      "frequencia": 2,
+      "fontes": [
+        "github"
+      ]
+    },
+    {
+      "tipo": "stack_linguagem",
+      "descricao": "TypeScript",
+      "frequencia": 2,
+      "fontes": [
+        "github"
+      ]
+    },
+    {
+      "tipo": "stack_linguagem",
+      "descricao": "C#",
+      "frequencia": 1,
+      "fontes": [
+        "github"
+      ]
+    }
+  ],
+  "linguagens_comuns": {
+    "unknown": 2,
+    "PHP": 2,
+    "Python": 2
+  },
+  "densidade_media_commits": 0
+}

@@ -1,0 +1,40 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ecossistema-aidd.github.io/schemas/llm_response_v1.json",
+  "title": "Resposta LLM Delegada",
+  "description": "Payload de resposta escrito pelo orquestrador ADE para utils_delegacao.py.",
+  "type": "object",
+  "required": ["conteudo", "tokens_consumidos", "origem_medicao", "modelo_usado", "timestamp_resposta"],
+  "additionalProperties": false,
+  "properties": {
+    "id": {
+      "type": "string",
+      "description": "ID da requisição correspondente"
+    },
+    "conteudo": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Conteúdo da resposta gerada pelo LLM"
+    },
+    "tokens_consumidos": {
+      "type": ["integer", "null"],
+      "minimum": 0,
+      "description": "Total de tokens consumidos (null se indisponível)"
+    },
+    "origem_medicao": {
+      "type": "string",
+      "enum": ["autodeclarado", "medido_api", "indisponivel"],
+      "description": "Origem da medição de tokens"
+    },
+    "modelo_usado": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Modelo LLM efetivamente utilizado"
+    },
+    "timestamp_resposta": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO 8601 com timezone (UTC) do momento da resposta"
+    }
+  }
+}

@@ -1,0 +1,30 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "CacheDesignPhase3V1",
+  "description": "Schema de validação para cache de design da Fase 3 (design_aidd_phase3.json)",
+  "type": "object",
+  "required": [
+    "design"
+  ],
+  "properties": {
+    "design": {
+      "type": "object",
+      "required": [
+        "camadas",
+        "scripts"
+      ],
+      "properties": {
+        "camadas": {
+          "type": "array"
+        },
+        "scripts": {
+          "type": "array"
+        },
+        "tokens": {
+          "type": "object"
+        }
+      }
+    }
+  },
+  "additionalProperties": true
+}

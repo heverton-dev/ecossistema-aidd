@@ -299,8 +299,9 @@ def cmd_forge(args):
     return run_command(cmd, cwd=os.getcwd(), env=env)
 
 def cmd_pure_motor(args):
-    """Executa só o motor de 8 fases do Fluxo 01 (tools/aidd-pure)."""
-    gen_dir = os.path.join(TOOLS_DIR, "aidd-pure")
+    """Executa só o motor de 8 fases do Fluxo 01 (tools/aidd-pure ou VSA)."""
+    vsa_dir = os.path.join(ROOT_DIR, "modulos", "02-triade-motores", "fluxo-01-pure", "core", "aidd-pure")
+    gen_dir = vsa_dir if os.path.isdir(vsa_dir) else os.path.join(TOOLS_DIR, "aidd-pure")
     pipeline_script = os.path.join(gen_dir, "scripts", "pipeline_completo.py")
     env = {"PYTHONPATH": gen_dir}
     cmd = [sys.executable, pipeline_script] + args
@@ -328,11 +329,12 @@ def cmd_ops(args):
     return run_command(cmd, cwd=os.getcwd(), env=env)
 
 def cmd_freedom_motor(args):
-    """Executa o motor do Fluxo 03, tools/aidd-freedom (scan, convert-db, merge, pack, validate)."""
+    """Executa o motor do Fluxo 03, tools/aidd-freedom ou VSA (scan, convert-db, merge, pack, validate)."""
     if any(arg.startswith("--nome") or arg.startswith("--pasta") or arg.startswith("--slug") or arg.startswith("--dry-run") for arg in args):
         print("[AVISO] Para executar o Fluxo 03 completo da Tríade, utilize 'python ecossistema.py freedom' (ou /freedom).")
         return cmd_run_fluxo(["--fluxo", "freedom"] + args)
-    freedom_dir = os.path.join(TOOLS_DIR, "aidd-freedom")
+    vsa_dir = os.path.join(ROOT_DIR, "modulos", "02-triade-motores", "fluxo-03-freedom", "core", "aidd-freedom")
+    freedom_dir = vsa_dir if os.path.isdir(vsa_dir) else os.path.join(TOOLS_DIR, "aidd-freedom")
     env = {"PYTHONPATH": freedom_dir}
     cmd = [sys.executable, "-m", "aidd_freedom.cli"] + args
     return run_command(cmd, cwd=os.getcwd(), env=env)
@@ -350,8 +352,9 @@ def cmd_freedom(args):
     return cmd_run_fluxo(["--fluxo", "freedom"] + args)
 
 def cmd_open_motor(args):
-    """Executa só o gerador de stack multi-serviço do Fluxo 02 (tools/aidd-open)."""
-    factory_dir = os.path.join(TOOLS_DIR, "aidd-open")
+    """Executa só o gerador de stack multi-serviço do Fluxo 02 (tools/aidd-open ou VSA)."""
+    vsa_dir = os.path.join(ROOT_DIR, "modulos", "02-triade-motores", "fluxo-02-open", "core", "aidd-open")
+    factory_dir = vsa_dir if os.path.isdir(vsa_dir) else os.path.join(TOOLS_DIR, "aidd-open")
     pipeline_script = os.path.join(factory_dir, "scripts", "pipeline_factory.py")
     env = {"PYTHONPATH": factory_dir}
     cmd = [sys.executable, pipeline_script] + args

@@ -1,0 +1,98 @@
+{
+  "fase_id": "phase_01_research",
+  "versao": "2.1",
+  "status": "COMPLETO",
+  "timestamps": {
+    "data_inicio": "2026-09-04T00:09:33.369570+00:00",
+    "data_conclusao": "2026-09-04T00:09:33.369570+00:00",
+    "duracao_segundos": 9.894679
+  },
+  "tokens": {
+    "consumidos": 0,
+    "percentual_determinismo": "100%"
+  },
+  "processamento": {
+    "total_itens_processados": 10,
+    "total_novo_processado": 10,
+    "total_reutilizado_cache": 0,
+    "checksum_integridade": "ac4fe04ab400c05572d0e0e3301e7f1f349674d400e6162de734f8c2d6d8abd7",
+    "hash_conteudo": "ac4fe04ab400c055"
+  },
+  "validacoes": {
+    "total_checks": 4,
+    "passou": 4,
+    "falhou": 0,
+    "avisos": 0,
+    "taxa_sucesso_percentual": 100.0
+  },
+  "saidas_estruturadas": {
+    "referencias_github": {
+      "arquivo": "./_phase_cache/referencias_github.json",
+      "quantidade": 10,
+      "tamanho_bytes": 4258,
+      "hash": "2739c5e64449aced"
+    },
+    "referencias_huggingface": {
+      "arquivo": "./_phase_cache/referencias_hf.json",
+      "quantidade": 0,
+      "tamanho_bytes": 2,
+      "hash": "4f53cda18c2baa0c"
+    },
+    "insights_consolidados": {
+      "arquivo": "./_phase_cache/insights_phase1.json",
+      "quantidade": 4,
+      "tamanho_bytes": 486,
+      "hash": "0cb83bc5452ed9e0"
+    },
+    "matriz_stacks": {
+      "arquivo": "./_phase_cache/matriz_stacks.json",
+      "quantidade": 3,
+      "tamanho_bytes": 107,
+      "hash": "631732aef7fec381"
+    }
+  },
+  "gates_executados": [
+    {
+      "gate_id": "R1_urls_validas",
+      "descricao": "Validar URLs retornam HTTP 200",
+      "status": "PASSOU",
+      "detalhes": "10/10 URLs retornaram HTTP 200"
+    },
+    {
+      "gate_id": "R2_atividade_recente",
+      "descricao": "Verificar atividade recente",
+      "status": "PASSOU",
+      "detalhes": "10/10 repos com commits últimos 90 dias (100%)"
+    },
+    {
+      "gate_id": "R3_estrutura_valida",
+      "descricao": "Validar estrutura de dados",
+      "status": "PASSOU",
+      "detalhes": "10/10 estruturas de metadados válidas"
+    },
+    {
+      "gate_id": "R4_quantidade_minima",
+      "descricao": "Verificar quantidade mínima",
+      "status": "PASSOU",
+      "detalhes": "10 referências encontradas (mínimo: 5)"
+    }
+  ],
+  "resume_info": {
+    "proxima_fase": "phase_02_analysis",
+    "arquivos_temporarios": [
+      "./_phase_cache/*"
+    ],
+    "dependencias_satisfeitas": true,
+    "pode_prosseguir": true,
+    "requer_intervencao_manual": false
+  },
+  "metadados": {
+    "criado_por": "aidd-project-generator v2.1",
+    "ideia_projeto": "Sistema de Agendamento e Gestao de Consultas Medicas",
+    "projeto_hash": "d42072b4",
+    "ambiente": {
+      "sistema_operacional": "win32",
+      "versao_python": "3.14.7"
+    }
+  }
+}
