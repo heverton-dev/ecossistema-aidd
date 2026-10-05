@@ -135,6 +135,89 @@ def print_banner():
     print(" [ECOSSISTEMA AIDD] Meta-Orquestrador Unificado de Engenharia Agêntica")
     print("=" * 72)
 
+def _executar_pre_commit_formatado(cmd, cwd, env=None):
+    """Executa os Quality Gates renderizando o painel visual compacto de faz_commit."""
+    import time
+    import threading
+    from scripts.faz_commit import (
+        PainelGates, ui, diagnosticar, imprimir_falha, _limpa, _tempo
+    )
+    inicio = time.time()
+    caminho_log = os.path.join(ROOT_DIR, ".git", "audit.log")
+    try:
+        os.makedirs(os.path.dirname(caminho_log), exist_ok=True)
+    except OSError:
+        pass
+
+    caminho_progresso = os.path.join(ROOT_DIR, ".git", "audit.progresso")
+    try:
+        with open(caminho_progresso, "w", encoding="utf-8") as f:
+            f.write("")
+    except OSError:
+        caminho_progresso = None
+
+    merged_env = dict(env or os.environ)
+    if caminho_progresso:
+        merged_env["AIDD_PROGRESSO_AO_VIVO"] = caminho_progresso
+
+    painel = PainelGates(ui, caminho_progresso)
+    ui.preparar_console()
+    ui.etapa(1, 1, "Quality Gates (bateria do ecossistema)")
+
+    cmd_limpo = [c for c in cmd if c != "--raw"]
+
+    proc = subprocess.Popen(
+        cmd_limpo, cwd=cwd, env=merged_env,
+        stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
+        text=True, encoding="utf-8", errors="replace"
+    )
+
+    parar = threading.Event()
+    if ui.interativo:
+        def _relogio():
+            while not parar.wait(1):
+                painel.tique()
+        threading.Thread(target=_relogio, daemon=True).start()
+
+    capturado, buffer = [], []
+    def _gravar_log(ch):
+        if caminho_log:
+            try:
+                with open(caminho_log, "a", encoding="utf-8") as f:
+                    f.write(ch)
+            except OSError:
+                pass
+
+    try:
+        with open(caminho_log, "w", encoding="utf-8") as f:
+            pass
+    except OSError:
+        pass
+
+    while True:
+        ch = proc.stdout.read(1)
+        if not ch:
+            break
+        capturado.append(ch)
+        _gravar_log(ch)
+        if ch == "\n":
+            painel.linha(_limpa("".join(buffer)))
+            buffer = []
+        elif ch != "\r":
+            buffer.append(ch)
+            if ch == ".":
+                painel.parcial(_limpa("".join(buffer)).strip())
+    proc.wait()
+    parar.set()
+    painel.resumo()
+    saida = "".join(capturado)
+    if proc.returncode != 0:
+        imprimir_falha(diagnosticar("audit (quality gates)", saida), inicio, caminho_log=caminho_log)
+    else:
+        ui.ok(f"Quality Gates aprovados (100% OK) ∙ {_tempo(time.time() - inicio)}")
+    return proc.returncode
+
+
 def run_command(cmd, cwd, env=None):
     merged_env = os.environ.copy()
     # Forca UTF-8 no I/O do processo filho: sem isso, no console padrao do
@@ -144,6 +227,16 @@ def run_command(cmd, cwd, env=None):
     merged_env.setdefault("PYTHONIOENCODING", "utf-8")
     if env:
         merged_env.update(env)
+
+    # Detecção de execução dos Quality Gates via pre_commit:
+    is_pre_commit = any("pre_commit" in str(arg) for arg in cmd) and "run" in cmd
+    is_raw = "--raw" in cmd
+    if is_pre_commit and not is_raw:
+        try:
+            return _executar_pre_commit_formatado(cmd, cwd=cwd, env=merged_env)
+        except Exception:
+            pass
+
     res = subprocess.run(cmd, cwd=cwd, env=merged_env)
     return res.returncode
 
@@ -1123,9 +1216,14 @@ def cmd_evolucao(args):
     ]
     return subprocess.run(cmd).returncode
 
+def cmd_commit(args):
+    """Executa o commit determinístico com interface organizada e gates compactos."""
+    script = os.path.join(ROOT_DIR, "scripts", "faz_commit.py")
+    return run_command([sys.executable, script] + args, cwd=ROOT_DIR)
+
 def cmd_audit(args):
     if "-h" in args or "--help" in args:
-        print("Uso: python ecossistema.py audit")
+        print("Uso: python ecossistema.py audit [--raw]")
         print("Executa a bateria de Quality Gates do ecossistema via pre-commit.")
         return 0
 
@@ -1142,14 +1240,12 @@ def cmd_audit(args):
         print("[audit] AVISO: pre-commit nao instalado — usando runner legado "
               "(gates direto). Instale com: pip install pre-commit")
         return _audit_gates_legado(args, env=env_audit)
-    print("[audit] Delegando para o framework pre-commit "
-          "('pre-commit run --all-files')...")
-    # --verbose + --color always: mesma correcao aplicada em .githooks/pre-commit
-    # -- sem --verbose, o pre-commit so mostra a saida de cada gate depois que
-    # ele termina (silencio total durante os ~5min do G_TESTES_REAIS, por
-    # exemplo), mesmo os gates ja imprimindo progresso real-time internamente.
+    
+    cmd = [sys.executable, "-m", "pre_commit", "run", "--all-files", "--color", "always", "--verbose"]
+    if "--raw" in args:
+        cmd.append("--raw")
     return run_command(
-        [sys.executable, "-m", "pre_commit", "run", "--all-files", "--color", "always", "--verbose"],
+        cmd,
         cwd=ROOT_DIR,
         env=env_audit,
     )
@@ -1364,6 +1460,8 @@ Comandos disponíveis:
   mobbin status|search <query> [--plataforma web|ios] [--limite N] [--json]
                       Consulta determinística e agnóstica de telas e fluxos de UI
                       via API Enterprise do Mobbin para qualquer harness.
+  commit [args]       Executa commit determinístico com interface organizada (faz-commit)
+  faz-commit [args]   Alias para 'commit'
   status              Exibe o status do ecossistema e ferramentas integradas
   status --testes     Roda pytest real em cada ferramenta e atualiza
                       PLANO-EXECUCAO-ESTRUTURADO.json com a contagem medida
@@ -1429,6 +1527,8 @@ def comandos_disponiveis():
         "aidd-audit-4f": cmd_audit_4f,
         "evolucao": cmd_evolucao,
         "aidd-evolucao": cmd_evolucao,
+        "commit": cmd_commit,
+        "faz-commit": cmd_commit,
         "audit": cmd_audit,
         "harness": cmd_harness,
         "sessao": cmd_sessao,
