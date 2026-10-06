@@ -3,11 +3,14 @@
 Validador e Dispatcher de Micro-Gates no Pre-Commit baseado em Git Diff (Ticket 3 VSA).
 
 Mapeia alterações em fatias e executa seletivamente os gates e testes direcionados:
-- modulos/01-governanca-e-qualidade/ -> Gates e testes de governança
-- modulos/02-triade-motores/         -> Gates e testes de motores
-- modulos/03-plataforma-e-entrega/   -> Gates e testes de plataforma
-- gates/                            -> Meta-gates e integridade
+- modulos/01-governanca-e-qualidade/ -> suítes do forge e do planner
+- modulos/02-triade-motores/         -> suítes do pure, open e freedom
+- modulos/03-plataforma-e-entrega/   -> suítes do enterprise, master e ops
 - ecossistema.py / scripts/         -> Core CLI e boot tests
+
+Cada suíte roda de dentro da pasta da ferramenta (ciclo-03 VSA, Ticket 16): o
+pytest da fatia inteira a partir da raiz quebrava na coleta (módulos de mesmo nome
+em pastas diferentes) e barrava todo commit em modulos/.
 """
 from __future__ import annotations
 
@@ -26,22 +29,43 @@ from scripts.exit_codes import ExitCode
 
 FATIAS_MAPA: Dict[str, Dict[str, List[str]]] = {
     "01-governanca": {
-        "prefixo": ["modulos/01-governanca-e-qualidade", "tools/aidd-forge"],
-        "testes": ["pytest modulos/01-governanca-e-qualidade/ -q --maxfail=1"],
+        "prefixo": ["modulos/01-governanca-e-qualidade"],
+        "suites": [
+            "modulos/01-governanca-e-qualidade/core/aidd-forge",
+            "modulos/01-governanca-e-qualidade/core/aidd-planner",
+        ],
     },
     "02-motores": {
-        "prefixo": ["modulos/02-triade-motores", "tools/aidd-pure", "tools/aidd-open", "tools/aidd-freedom"],
-        "testes": ["pytest modulos/02-triade-motores/ -q --maxfail=1"],
+        "prefixo": ["modulos/02-triade-motores"],
+        "suites": [
+            "modulos/02-triade-motores/fluxo-01-pure/core/aidd-pure",
+            "modulos/02-triade-motores/fluxo-02-open/core/aidd-open",
+            "modulos/02-triade-motores/fluxo-03-freedom/core/aidd-freedom",
+        ],
     },
     "03-plataforma": {
-        "prefixo": ["modulos/03-plataforma-e-entrega", "tools/aidd-master", "tools/aidd-enterprise", "tools/aidd-ops"],
-        "testes": ["pytest modulos/03-plataforma-e-entrega/ -q --maxfail=1"],
+        "prefixo": ["modulos/03-plataforma-e-entrega"],
+        "suites": [
+            "modulos/03-plataforma-e-entrega/blindagem-enterprise/aidd-enterprise",
+            "modulos/03-plataforma-e-entrega/fatiamento-master/aidd-master",
+            "modulos/03-plataforma-e-entrega/operacoes-ops/aidd-ops",
+        ],
     },
     "core-cli": {
         "prefixo": ["ecossistema.py", "scripts/", "componentes/compartilhado/src-core/"],
         "testes": ["pytest tests/test_ecossistema_lazy_boot.py scripts/test_exit_codes.py tests/test_subgrafos_federados.py tests/test_lazy_skills_scope.py -q"],
     },
 }
+
+
+def comando_suite() -> List[str]:
+    """pytest de uma suíte, rodado com cwd na pasta da ferramenta."""
+    return [sys.executable, "-m", "pytest", "-q", "-p", "no:cacheprovider", "--maxfail=1"]
+
+
+def _rodar(cmd, cwd: Path, shell: bool) -> subprocess.CompletedProcess:
+    return subprocess.run(cmd, cwd=str(cwd), shell=shell, capture_output=True, text=True,
+                          encoding="utf-8", errors="replace")
 
 
 def obter_arquivos_modificados(root_dir: Path) -> List[str]:
@@ -99,17 +123,13 @@ def executar_micro_gates_diff(root_dir: Path, verbose: bool = True) -> int:
         print(f"[MICRO-GATES-DIFF] Fatias afetadas: {', '.join(sorted(fatias))}")
 
     for fatia in sorted(fatias):
-        comandos = FATIAS_MAPA[fatia]["testes"]
-        for cmd in comandos:
+        execucoes = [(" ".join(comando_suite()[1:]) + f"  (em {suite})", comando_suite(), root_dir / suite, False)
+                     for suite in FATIAS_MAPA[fatia].get("suites", [])]
+        execucoes += [(cmd, cmd, root_dir, True) for cmd in FATIAS_MAPA[fatia].get("testes", [])]
+        for rotulo, cmd, cwd, shell in execucoes:
             if verbose:
-                print(f"[MICRO-GATES-DIFF] Executando gate seletivo da fatia '{fatia}': {cmd}")
-            proc = subprocess.run(
-                cmd,
-                cwd=str(root_dir),
-                shell=True,
-                capture_output=True,
-                text=True,
-            )
+                print(f"[MICRO-GATES-DIFF] Executando gate seletivo da fatia '{fatia}': {rotulo}")
+            proc = _rodar(cmd, cwd, shell)
             if proc.returncode != 0:
                 print(f"[MICRO-GATES-DIFF] [FALHA] Fatia '{fatia}' falhou na verificação:")
                 print(proc.stderr or proc.stdout)
