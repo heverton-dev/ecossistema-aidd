@@ -62,9 +62,9 @@ Onde mora: `scripts/`. Quem confere: nenhum guarda específico; o mapa mede quem
 
 | Medida | Valor |
 | :-------------------------------------- | :-------------------------------------------- |
-| scripts | 36 |
-| chamados pelo painel | 16 |
-| nenhum código chama | 4 |
+| scripts | 50 |
+| chamados pelo painel | 18 |
+| nenhum código chama | 5 |
 
 Os números saem de `docs/auditoria/mapa-pecas/catalogo-pecas.json` (função `coletar_scripts`), os mesmos do mapa `mapa-10-scripts.html`.
 

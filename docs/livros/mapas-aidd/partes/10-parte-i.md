@@ -23,7 +23,7 @@ Onde mora: `AGENTS.md`, seção 2. Quem confere: o meta-guarda `G_LEI_DECLARA_PO
 | Medida | Valor |
 | :-------------------------------------- | :-------------------------------------------- |
 | leis | 14 |
-| declarações de guarda | 65 |
+| declarações de guarda | 70 |
 | declarações que o meta-guarda não lê | 0 |
 
 Os números saem de `docs/auditoria/mapa-pecas/catalogo-pecas.json` (função `coletar_leis`), os mesmos do mapa `mapa-01-leis.html`.
@@ -69,8 +69,8 @@ Onde mora: `tools/`. Quem confere: o `G_TESTES_REAIS` (pytest de cada ferramenta
 | Medida | Valor |
 | :-------------------------------------- | :-------------------------------------------- |
 | ferramentas | 8 |
-| comandos de CLI | 75 |
-| verbos em mais de uma ferramenta | 1 |
+| comandos de CLI | 74 |
+| verbos em mais de uma ferramenta | 0 |
 | tarefas com várias donas | 0 |
 
 Os números saem de `docs/auditoria/mapa-pecas/catalogo-pecas.json` (função `coletar_ferramentas`), os mesmos do mapa `mapa-02-ferramentas.html`.
@@ -116,7 +116,7 @@ Onde mora: `scripts/orquestrador_sincrono.py` e `componentes/compartilhado/specs
 | :-------------------------------------- | :-------------------------------------------- |
 | etapas na receita | 7 |
 | chamadas conferidas | 13 |
-| chamadas que quebram | 0 |
+| chamadas que quebram | 1 |
 | etapas sem ferramenta | 0 |
 | contratos | 9 |
 

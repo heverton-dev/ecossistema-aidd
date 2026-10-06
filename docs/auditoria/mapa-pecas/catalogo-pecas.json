@@ -3,12 +3,12 @@
   "gerado_por": "scripts/catalogo_pecas.py",
   "totais": {
     "ferramentas": 8,
-    "comandos_cli": 75,
+    "comandos_cli": 74,
     "skills": 44,
     "leis": 14,
     "lente_15d": 15,
     "oficina": 37,
-    "scripts": 36,
+    "scripts": 50,
     "moldes_entrega": 24,
     "harnesses": 7,
     "skills_nossas": 44,
@@ -18,8 +18,8 @@
     "mcps_registrados": 11,
     "mcps_internos": 3,
     "hooks": 3,
-    "gates_nomes": 102,
-    "gates_arquivos": 130,
+    "gates_nomes": 103,
+    "gates_arquivos": 132,
     "contratos": 9,
     "etapas_receita": 7,
     "encaixes_quebrados": 0
@@ -65,8 +65,7 @@
         "conform",
         "fornecer",
         "init",
-        "inject",
-        "mobbin"
+        "inject"
       ],
       "gates_proprios": [
         "tools/aidd-forge/aidd_forge/templates/gates/G_BLOQUEAR_SEGREDOS.py",
@@ -83,7 +82,7 @@
         "tools/aidd-forge/aidd_forge/templates/gates/G_TESTES_REAIS.py"
       ],
       "mcps_proprios": [],
-      "arquivos_py": 43
+      "arquivos_py": 42
     },
     {
       "id": "aidd-freedom",
@@ -211,7 +210,7 @@
         "tools/aidd-planner/gates/G_PLANNER_SINE_QUA_NON.py"
       ],
       "mcps_proprios": [],
-      "arquivos_py": 18
+      "arquivos_py": 20
     },
     {
       "id": "aidd-pure",
@@ -837,6 +836,26 @@
           "visivel": true
         },
         {
+          "gate": "G_aidd_handoff",
+          "forca": "provado",
+          "visivel": true
+        },
+        {
+          "gate": "G_aidd_plan",
+          "forca": "provado",
+          "visivel": true
+        },
+        {
+          "gate": "G_aidd_planner_runner",
+          "forca": "provado",
+          "visivel": true
+        },
+        {
+          "gate": "G_aidd_session",
+          "forca": "provado",
+          "visivel": true
+        },
+        {
           "gate": "G_PROVA_SKILLS_POCOCK",
           "forca": "provado",
           "visivel": true
@@ -848,6 +867,11 @@
         },
         {
           "gate": "G_INFRA_COMPOSE",
+          "forca": "provado",
+          "visivel": true
+        },
+        {
+          "gate": "G_modularizacao_vsa",
           "forca": "provado",
           "visivel": true
         }
@@ -1836,6 +1860,28 @@
         "dimensoes": {}
       },
       {
+        "alvo": "modularizacao-vsa",
+        "ciclo": "ciclo-01",
+        "laudo": "docs/auditoria/modularizacao-vsa/ciclo-01/LAUDO-15D-REVISADO.md",
+        "dimensoes": {
+          "1": "descrito",
+          "2": "descrito",
+          "3": "descrito",
+          "4": "descrito",
+          "5": "descrito",
+          "6": "descrito",
+          "7": "descrito",
+          "8": "descrito",
+          "9": "descrito",
+          "10": "descrito",
+          "11": "descrito",
+          "12": "descrito",
+          "13": "descrito",
+          "14": "descrito",
+          "15": "descrito"
+        }
+      },
+      {
         "alvo": "skills-ddd",
         "ciclo": "ciclo-01",
         "laudo": "docs/auditoria/skills-ddd/ciclo-01/LAUDO-15D-REVISADO.md",
@@ -2617,6 +2663,18 @@
         "nota": ""
       },
       {
+        "alvo": "modularizacao-vsa",
+        "ciclo": "ciclo-01",
+        "caminho": "docs/auditoria/modularizacao-vsa/ciclo-01",
+        "fases": {
+          "laudo_inicial": true,
+          "plano_evolucao": true,
+          "laudo_revisado": true,
+          "dod": true
+        },
+        "nota": "10"
+      },
+      {
         "alvo": "skills-ddd",
         "ciclo": "ciclo-01",
         "caminho": "docs/auditoria/skills-ddd/ciclo-01",
@@ -2665,6 +2723,13 @@
       ]
     },
     {
+      "id": "analisador_acoplamento_vsa",
+      "descricao": "Motor Analítico Determinístico de Acoplamento (VSA).",
+      "chamado_por": [
+        "testes"
+      ]
+    },
+    {
       "id": "atualizar_index_planos",
       "descricao": "ECOSSISTEMA AIDD — ATUALIZADOR DETERMINÍSTICO DE docs/planos/INDEX.md",
       "chamado_por": [
@@ -2691,6 +2756,14 @@
       "id": "checar_combos_vps",
       "descricao": "",
       "chamado_por": []
+    },
+    {
+      "id": "cli_modularizacao_vsa",
+      "descricao": "CLI de Fallback e Despacho Modular (VSA).",
+      "chamado_por": [
+        "painel",
+        "testes"
+      ]
     },
     {
       "id": "compilador_plano_evolucao",
@@ -2733,9 +2806,18 @@
       ]
     },
     {
+      "id": "exit_codes",
+      "descricao": "Módulo canônico de Exit Codes semânticos e Saída Estruturada AIDD.",
+      "chamado_por": [
+        "scripts",
+        "testes"
+      ]
+    },
+    {
       "id": "faz_commit",
       "descricao": "FAZ-COMMIT — EXECUÇÃO DETERMINÍSTICA DE GIT COM MENSAGEM PROBABILÍSTICA (IA)",
       "chamado_por": [
+        "painel",
         "testes"
       ]
     },
@@ -2834,6 +2916,13 @@
       ]
     },
     {
+      "id": "handoff_vsa",
+      "descricao": "Output Consolidado e Handoff Estruturado (VSA).",
+      "chamado_por": [
+        "testes"
+      ]
+    },
+    {
       "id": "harness_hygiene",
       "descricao": "Higiene e Manutenção Preventiva Multi-Harness",
       "chamado_por": [
@@ -2845,6 +2934,21 @@
       "id": "inventario_capacidades",
       "descricao": "Inventário de capacidades de tools/ e componentes/ (fronteiras-ferramentas ciclo-01, Ticket 3).",
       "chamado_por": [
+        "testes"
+      ]
+    },
+    {
+      "id": "isolamento_vsa",
+      "descricao": "Isolamento de Raio de Impacto e Worktree Efêmera (VSA).",
+      "chamado_por": [
+        "testes"
+      ]
+    },
+    {
+      "id": "lazy_skills_scope",
+      "descricao": "Módulo de Escopo Preguiçoso e Poda de Contexto em Skills Locais VSA (Ticket 7).",
+      "chamado_por": [
+        "scripts",
         "testes"
       ]
     },
@@ -2869,6 +2973,22 @@
       "descricao": "scripts/medir_gates.py — Medição real do tempo de execução de cada Quality Gate.",
       "chamado_por": [
         "scripts",
+        "testes"
+      ]
+    },
+    {
+      "id": "micro_gates",
+      "descricao": "Validador e Dispatcher de Micro-Gates no Pre-Commit baseado em Git Diff (Ticket 3 VSA).",
+      "chamado_por": [
+        "commit",
+        "scripts",
+        "testes"
+      ]
+    },
+    {
+      "id": "observabilidade_vsa",
+      "descricao": "Observabilidade, Métricas e Orçamento de Tokens (VSA).",
+      "chamado_por": [
         "testes"
       ]
     },
@@ -2926,6 +3046,20 @@
       ]
     },
     {
+      "id": "resiliencia_vsa",
+      "descricao": "Tratamento de Exceções e Resiliência Operacional (VSA).",
+      "chamado_por": [
+        "testes"
+      ]
+    },
+    {
+      "id": "rollback_vsa",
+      "descricao": "Limpeza Determinística e Rollback Transacional (VSA).",
+      "chamado_por": [
+        "testes"
+      ]
+    },
+    {
       "id": "scaffold_auditoria",
       "descricao": "",
       "chamado_por": [
@@ -2935,8 +3069,37 @@
       ]
     },
     {
+      "id": "self_healing",
+      "descricao": "Mecanismo Canônico de Self-Healing Determinístico do Ecossistema AIDD.",
+      "chamado_por": [
+        "scripts",
+        "testes"
+      ]
+    },
+    {
+      "id": "validador_fatias_vsa",
+      "descricao": "Validador Determinístico de Fatias Verticais VSA e Autocontenção Fractal.",
+      "chamado_por": []
+    },
+    {
+      "id": "validador_fractalidade_vsa",
+      "descricao": "Autocontenção Fractal e Verificação de Submódulos (VSA).",
+      "chamado_por": [
+        "scripts",
+        "testes"
+      ]
+    },
+    {
       "id": "validar_handoff",
       "descricao": "Validador de contratos de handoff entre etapas do pipeline.",
+      "chamado_por": [
+        "scripts",
+        "testes"
+      ]
+    },
+    {
+      "id": "worktree_hermetico",
+      "descricao": "Gerenciador Hermético de Worktrees Git para o Ecossistema AIDD.",
       "chamado_por": [
         "scripts",
         "testes"
@@ -3251,9 +3414,9 @@
           "command": ".codebuddy/commands/{nome}",
           "hook": ".codebuddy/hooks/{nome}"
         },
-        "skills_em_disco": 59,
+        "skills_em_disco": 44,
         "nossas_faltando": [],
-        "terceiros_em_disco": 15,
+        "terceiros_em_disco": 0,
         "config_mcp": ""
       }
     ],
@@ -3498,17 +3661,22 @@
     },
     {
       "id": "G_AST_BOUNDED_CONTEXT",
-      "descricao": "Analisa a AST de todos os arquivos em src/modules/ e bloqueia qualquer importacao direta cruzada entre dominios de negocio distintos (ex: modulo crm importando modulo erp diretamente sem passar pelo…",
+      "descricao": "Analisa a AST de todos os módulos de modulos/ e bloqueia qualquer acoplamento ou importação direta cruzada não-autorizada entre domínios independentes.",
       "copias": [
         {
-          "caminho": "tools/aidd-master/scripts/gates/G_AST_BOUNDED_CONTEXT.py",
+          "caminho": "gates/G_AST_BOUNDED_CONTEXT.py",
           "versao": "A",
+          "papel": "ecossistema"
+        },
+        {
+          "caminho": "tools/aidd-master/scripts/gates/G_AST_BOUNDED_CONTEXT.py",
+          "versao": "B",
           "papel": "ferramenta"
         }
       ],
-      "versoes_distintas": 1,
+      "versoes_distintas": 2,
       "no_pre_commit": false,
-      "prova_que_morde": null,
+      "prova_que_morde": true,
       "leis": []
     },
     {
@@ -5115,7 +5283,9 @@
       "versoes_distintas": 1,
       "no_pre_commit": false,
       "prova_que_morde": true,
-      "leis": []
+      "leis": [
+        9
+      ]
     },
     {
       "id": "G_aidd_plan",
@@ -5129,8 +5299,10 @@
       ],
       "versoes_distintas": 1,
       "no_pre_commit": false,
-      "prova_que_morde": false,
-      "leis": []
+      "prova_que_morde": true,
+      "leis": [
+        9
+      ]
     },
     {
       "id": "G_aidd_planner_runner",
@@ -5144,8 +5316,10 @@
       ],
       "versoes_distintas": 1,
       "no_pre_commit": false,
-      "prova_que_morde": false,
-      "leis": []
+      "prova_que_morde": true,
+      "leis": [
+        9
+      ]
     },
     {
       "id": "G_aidd_session",
@@ -5159,8 +5333,10 @@
       ],
       "versoes_distintas": 1,
       "no_pre_commit": false,
-      "prova_que_morde": false,
-      "leis": []
+      "prova_que_morde": true,
+      "leis": [
+        9
+      ]
     },
     {
       "id": "G_aidd_spec",
@@ -5246,6 +5422,23 @@
       "leis": [
         8
       ]
+    },
+    {
+      "id": "G_modularizacao_vsa",
+      "descricao": "Quality Gate Determinístico de Fronteira VSA. Dimensão D13: Quality Gates (Portões).",
+      "copias": [
+        {
+          "caminho": "gates/G_modularizacao_vsa.py",
+          "versao": "A",
+          "papel": "ecossistema"
+        }
+      ],
+      "versoes_distintas": 1,
+      "no_pre_commit": false,
+      "prova_que_morde": true,
+      "leis": [
+        9
+      ]
     }
   ],
   "contratos": [
@@ -5254,6 +5447,7 @@
       "titulo": "HandoffEngineToMasterSchema",
       "usado_por": [
         "gates/G_ORQUESTRADOR_SINCRONO.py",
+        "modulos/04-nucleo-compartilhado/gates/G_ORQUESTRADOR_SINCRONO.py",
         "scripts/orquestrador_sincrono.py"
       ]
     },
@@ -5262,6 +5456,7 @@
       "titulo": "HandoffEnterpriseToOpsSchema",
       "usado_por": [
         "gates/G_ORQUESTRADOR_SINCRONO.py",
+        "modulos/04-nucleo-compartilhado/gates/G_ORQUESTRADOR_SINCRONO.py",
         "scripts/orquestrador_sincrono.py"
       ]
     },
@@ -5270,6 +5465,7 @@
       "titulo": "HandoffExecucaoSchema",
       "usado_por": [
         "gates/G_PIPELINE_HANDOFF.py",
+        "modulos/04-nucleo-compartilhado/gates/G_PIPELINE_HANDOFF.py",
         "scripts/compilador_tickets_plano.py",
         "tools/aidd-planner/aidd_planner/core/planner_engine.py",
         "tools/aidd-planner/src/core/planner_engine.py"
@@ -5279,6 +5475,7 @@
       "id": "handoff-forge-to-planner",
       "titulo": "HandoffForgeToPlannerSchema",
       "usado_por": [
+        "modulos/01-governanca-e-qualidade/core/aidd-forge/aidd_forge/core/prontidao.py",
         "scripts/orquestrador_sincrono.py",
         "tools/aidd-forge/aidd_forge/core/prontidao.py",
         "tools/aidd-planner/aidd_planner/core/planta.py",
@@ -5290,6 +5487,8 @@
       "titulo": "HandoffMasterToEnterpriseSchema",
       "usado_por": [
         "gates/G_ORQUESTRADOR_SINCRONO.py",
+        "modulos/03-plataforma-e-entrega/fatiamento-master/aidd-master/scripts/integrador_master.py",
+        "modulos/04-nucleo-compartilhado/gates/G_ORQUESTRADOR_SINCRONO.py",
         "scripts/orquestrador_sincrono.py",
         "tools/aidd-master/scripts/integrador_master.py"
       ]
@@ -5299,7 +5498,8 @@
       "titulo": "HandoffMelhoriaSchema",
       "usado_por": [
         "componentes/compartilhado/skills/aidd-improvement/scripts/handoff.py",
-        "gates/G_HANDOFF_MELHORIA.py"
+        "gates/G_HANDOFF_MELHORIA.py",
+        "modulos/01-governanca-e-qualidade/gates/G_HANDOFF_MELHORIA.py"
       ]
     },
     {
@@ -5307,6 +5507,8 @@
       "titulo": "HandoffPlannerToEngineSchema",
       "usado_por": [
         "gates/G_ORQUESTRADOR_SINCRONO.py",
+        "modulos/03-plataforma-e-entrega/operacoes-ops/aidd-ops/scripts/infra_perfil.py",
+        "modulos/04-nucleo-compartilhado/gates/G_ORQUESTRADOR_SINCRONO.py",
         "scripts/orquestrador_sincrono.py",
         "tools/aidd-ops/scripts/infra_perfil.py",
         "tools/aidd-planner/aidd_planner/core/planta.py",
@@ -5317,6 +5519,9 @@
       "id": "plano-infraestrutura",
       "titulo": "Contrato do PLANO-INFRAESTRUTURA.json (aidd-ops → aidd-master/aidd-enterprise/aidd-open)",
       "usado_por": [
+        "modulos/03-plataforma-e-entrega/blindagem-enterprise/aidd-enterprise/scripts/scaffold_infra.py",
+        "modulos/03-plataforma-e-entrega/fatiamento-master/aidd-master/scripts/scaffold_infra.py",
+        "modulos/03-plataforma-e-entrega/operacoes-ops/aidd-ops/scripts/contrato_plano.py",
         "tools/aidd-enterprise/scripts/scaffold_infra.py",
         "tools/aidd-master/scripts/scaffold_infra.py",
         "tools/aidd-ops/scripts/contrato_plano.py",
@@ -5329,6 +5534,7 @@
       "titulo": "VSATopologicalDispatchSchema",
       "usado_por": [
         "gates/G_DISPATCH_PIPELINE_VSA.py",
+        "modulos/03-plataforma-e-entrega/gates/G_DISPATCH_PIPELINE_VSA.py",
         "tools/aidd-planner/aidd_planner/core/planner_engine.py",
         "tools/aidd-planner/src/core/planner_engine.py"
       ]
@@ -5597,14 +5803,10 @@
   ],
   "achados": {
     "arquivos_identicos_entre_donas": [],
-    "verbos_cli_repetidos": {
-      "mobbin": [
-        "aidd-forge",
-        "aidd-planner"
-      ]
-    },
+    "verbos_cli_repetidos": {},
     "tarefas_com_varias_donas": {},
     "gates_mesmo_nome_codigo_diferente": [
+      "G_AST_BOUNDED_CONTEXT",
       "G_BLOQUEAR_SEGREDOS",
       "G_CONTRACTS",
       "G_CYBERSECURITY_OWASP",

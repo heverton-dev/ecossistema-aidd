@@ -24,7 +24,7 @@ Onde mora: `docs/planos/` e `docs/auditoria/`. Quem confere: o `scripts/atualiza
 | :-------------------------------------- | :-------------------------------------------- |
 | planos | 37 |
 | em execução | 11 |
-| ciclos de auditoria | 48 |
+| ciclos de auditoria | 49 |
 
 Os números saem de `docs/auditoria/mapa-pecas/catalogo-pecas.json` (função `coletar_oficina`), os mesmos do mapa `mapa-11-oficina.html`.
 
@@ -86,7 +86,7 @@ Onde mora: `docs/auditoria/TEMPLATE-AUDITORIA-FERRAMENTA.md`. Quem confere: o In
 | Medida | Valor |
 | :-------------------------------------- | :-------------------------------------------- |
 | dimensões | 15 |
-| laudos lidos | 42 |
+| laudos lidos | 43 |
 | marcações de falha | 8 |
 
 Os números saem de `docs/auditoria/mapa-pecas/catalogo-pecas.json` (função `coletar_lente_15d`), os mesmos do mapa `mapa-12-lente15d.html`.
