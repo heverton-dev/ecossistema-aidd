@@ -4,6 +4,7 @@
 *   **Ação:** Mover `tools/aidd-forge/` para `modulos/01-governanca-e-qualidade/core/aidd-forge/`.
 *   **Proxy:** Criar um script proxy em `tools/aidd-forge/__init__.py` (se aplicável) e alias em `ecossistema.py` caso ele chame diretamente, garantindo que `python ecossistema.py forge` e importações legadas funcionem.
 *   **Gate:** Passar nos testes unitários e `python ecossistema.py audit`.
+*   **Status:** [x] CONCLUÍDO (Commit `21847f3`).
 
 ## Ticket 2: Migração da Tríade de Motores (Pure, Open, Freedom)
 *   **Ação:** Mover:
@@ -12,6 +13,7 @@
     *   `tools/aidd-freedom/` ➔ `modulos/02-triade-motores/fluxo-03-freedom/core/aidd-freedom/`
 *   **Proxy:** Redirecionadores leves em `tools/` que emitem Warning e importam o novo caminho.
 *   **Gate:** Passar em todos os testes e testes de engine (`aidd-pure`, etc).
+*   **Status:** [x] CONCLUÍDO (Commit `854a844`).
 
 ## Ticket 3: Migração de Plataforma (Master, Enterprise, Ops)
 *   **Ação:** Mover:
@@ -20,8 +22,10 @@
     *   `tools/aidd-ops/` ➔ `modulos/03-plataforma-e-entrega/operacoes-ops/aidd-ops/`
 *   **Proxy:** Redirecionadores em `tools/`.
 *   **Gate:** Passar no gate de fatiamento (`validador_fatias_vsa.py`).
+*   **Status:** [x] CONCLUÍDO (Commit `44d7bad`).
 
 ## Ticket 4: Distribuição dos Portões (Gates) e Skills
 *   **Ação:** Mover scripts de `gates/` (ex: `G_PORTAO_PROVA_QUE_MORDE.py`) para os `gates/` específicos de cada domínio com base em qual núcleo o gate audita, e skills soltas para as pastas `skills/` locais de cada fatia.
 *   **Proxy:** O runner de gates (`ecossistema.py audit` e `pre-commit`) precisa ser ajustado para varrer `modulos/**/gates/`.
 *   **Gate:** O teste `python ecossistema.py audit` deve encontrar e executar exatamente os 69 gates, nem um a menos, reportando verde (exit 0).
+*   **Status:** [x] CONCLUÍDO (Commit `3622981`).
