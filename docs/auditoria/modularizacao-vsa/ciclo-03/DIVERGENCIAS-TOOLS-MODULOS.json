@@ -1,0 +1,142 @@
+{
+  "ferramentas": {
+    "aidd-forge": {
+      "origem": "tools/aidd-forge",
+      "destino": "modulos/01-governanca-e-qualidade/core/aidd-forge",
+      "identicos": 182,
+      "divergentes": [],
+      "so_tools": [],
+      "so_modulos": []
+    },
+    "aidd-planner": {
+      "origem": "tools/aidd-planner",
+      "destino": "modulos/01-governanca-e-qualidade/core/aidd-planner",
+      "identicos": 0,
+      "divergentes": [],
+      "so_tools": [
+        "AGENTS.md",
+        "README.md",
+        "aidd_planner/__init__.py",
+        "aidd_planner/cli.py",
+        "aidd_planner/core/__init__.py",
+        "aidd_planner/core/design_system.py",
+        "aidd_planner/core/mobbin_client.py",
+        "aidd_planner/core/planner_engine.py",
+        "aidd_planner/core/planta.py",
+        "aidd_planner/core/ui_reference_resolver.py",
+        "gates/G_PLANNER_COERENCIA_FLUXO.py",
+        "gates/G_PLANNER_SCHEMA.py",
+        "gates/G_PLANNER_SINE_QUA_NON.py",
+        "schemas/planner_schema.json",
+        "setup.py",
+        "src/__init__.py",
+        "src/cli.py",
+        "src/core/__init__.py",
+        "src/core/design_system.py",
+        "src/core/mobbin_client.py",
+        "src/core/planner_engine.py",
+        "src/core/planta.py",
+        "src/core/ui_reference_resolver.py",
+        "tests/test_planner.py",
+        "tests/test_planta_tickets_roteados.py",
+        "tests/test_vsa_compiler.py"
+      ],
+      "so_modulos": []
+    },
+    "aidd-pure": {
+      "origem": "tools/aidd-pure",
+      "destino": "modulos/02-triade-motores/fluxo-01-pure/core/aidd-pure",
+      "identicos": 197,
+      "divergentes": [
+        "scripts/core/pecas_catalogo.py",
+        "tests/conftest.py",
+        "tests/test_fronteira_generator.py"
+      ],
+      "so_tools": [],
+      "so_modulos": []
+    },
+    "aidd-open": {
+      "origem": "tools/aidd-open",
+      "destino": "modulos/02-triade-motores/fluxo-02-open/core/aidd-open",
+      "identicos": 54,
+      "divergentes": [
+        "scripts/phases/01_analisador.py",
+        "scripts/phases/04_compose.py",
+        "scripts/phases/06_env.py",
+        "src/core/result.py",
+        "tests/test_fronteira_factory.py",
+        "tests/test_pipeline_factory.py"
+      ],
+      "so_tools": [],
+      "so_modulos": []
+    },
+    "aidd-freedom": {
+      "origem": "tools/aidd-freedom",
+      "destino": "modulos/02-triade-motores/fluxo-03-freedom/core/aidd-freedom",
+      "identicos": 26,
+      "divergentes": [
+        "tests/test_fronteira_bridge.py"
+      ],
+      "so_tools": [],
+      "so_modulos": []
+    },
+    "aidd-enterprise": {
+      "origem": "tools/aidd-enterprise",
+      "destino": "modulos/03-plataforma-e-entrega/blindagem-enterprise/aidd-enterprise",
+      "identicos": 950,
+      "divergentes": [
+        "application/commands/delegacao.py",
+        "application/pecas_catalogo.py",
+        "scripts/compose_suite.py",
+        "scripts/moldes_catalogo.py",
+        "scripts/scaffold_infra.py",
+        "tests/test_fronteira_enterprise.py",
+        "tests/unit/test_g_inject_gate.py",
+        "tests/unit/test_g_seguranca_gate.py"
+      ],
+      "so_tools": [
+        "materiais-extras/examples/catalogo-digital-v3/.cursorrules",
+        "materiais-extras/examples/catalogo-digital-whatsapp/.cursorrules",
+        "materiais-extras/examples/plataforma-de-membros/.cursorrules",
+        "materiais-extras/examples/plataforma-membros-v3/.cursorrules",
+        "materiais-extras/examples/plataforma-modular-assinaturas/.cursorrules"
+      ],
+      "so_modulos": []
+    },
+    "aidd-master": {
+      "origem": "tools/aidd-master",
+      "destino": "modulos/03-plataforma-e-entrega/fatiamento-master/aidd-master",
+      "identicos": 302,
+      "divergentes": [
+        "application/pecas_catalogo.py",
+        "scripts/compose_suite.py",
+        "scripts/moldes_catalogo.py",
+        "scripts/scaffold_infra.py"
+      ],
+      "so_tools": [],
+      "so_modulos": []
+    },
+    "aidd-ops": {
+      "origem": "tools/aidd-ops",
+      "destino": "modulos/03-plataforma-e-entrega/operacoes-ops/aidd-ops",
+      "identicos": 90,
+      "divergentes": [
+        "scripts/contrato_plano.py",
+        "scripts/infra_perfil.py",
+        "scripts/pipeline_ops.py",
+        "tests/test_contrato_infraestrutura.py",
+        "tests/test_fronteira_ops_infra_generica.py",
+        "tests/test_mcps.py"
+      ],
+      "so_tools": [],
+      "so_modulos": []
+    }
+  },
+  "totais": {
+    "divergentes": 28,
+    "so_tools": 31,
+    "so_modulos": 0,
+    "identicos": 1801
+  },
+  "linha_base_testes_passando": 3463
+}
