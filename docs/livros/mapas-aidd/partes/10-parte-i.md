@@ -30,8 +30,8 @@ Os números saem de `docs/auditoria/mapa-pecas/catalogo-pecas.json` (função `c
 
 ## 1.3 O que falta consertar
 
-- **Média** · 1 guardas declarados em lei que não rodam no commit (`CAT-declarados-fora-do-commit`).
-- **Baixa** · 4 guardas da raiz que nenhuma lei declara (`CAT-guardas-sem-lei`).
+- **Média** · 6 guardas declarados em lei que não rodam no commit (`CAT-declarados-fora-do-commit`).
+- **Baixa** · 1 guardas da raiz que nenhuma lei declara (`CAT-guardas-sem-lei`).
 
 Já resolvido:
 
@@ -54,7 +54,7 @@ O detalhe e a evidência de cada achado estão no Apêndice B e em `docs/auditor
 #ficha(
   ("Mapa", "mapa-02-ferramentas.html"),
   ("Para que serve", "as 8 ferramentas, seus comandos de CLI e as tarefas com mais de uma dona"),
-  ("Achados em aberto", "1"),
+  ("Achados em aberto", "0"),
 )
 ```
 
@@ -77,7 +77,7 @@ Os números saem de `docs/auditoria/mapa-pecas/catalogo-pecas.json` (função `c
 
 ## 2.3 O que falta consertar
 
-- **Baixa** · 1 verbos de CLI em mais de uma ferramenta (`CAT-verbos-repetidos`).
+Nenhum achado em aberto para este mapa.
 
 Já resolvido:
 
@@ -116,7 +116,7 @@ Onde mora: `scripts/orquestrador_sincrono.py` e `componentes/compartilhado/specs
 | :-------------------------------------- | :-------------------------------------------- |
 | etapas na receita | 7 |
 | chamadas conferidas | 13 |
-| chamadas que quebram | 1 |
+| chamadas que quebram | 0 |
 | etapas sem ferramenta | 0 |
 | contratos | 9 |
 

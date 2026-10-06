@@ -113,11 +113,11 @@ class TestUpdateFrontState:
         state = create_initial_state(["f1"])
         update_front_state(
             state, "f1", FrontState.RUNNING,
-            branch="orca/f1", commit_sha="abc123def456",
+            branch="orca/f1", commit_sha="abc123def456",  # pragma: allowlist secret
         )
         assert state["fronts"]["f1"]["state"] == "RUNNING"
         assert state["fronts"]["f1"]["branch"] == "orca/f1"
-        assert state["fronts"]["f1"]["commit_sha"] == "abc123def456"
+        assert state["fronts"]["f1"]["commit_sha"] == "abc123def456"  # pragma: allowlist secret
 
     def test_unknown_front_raises(self) -> None:
         state = create_initial_state(["f1"])

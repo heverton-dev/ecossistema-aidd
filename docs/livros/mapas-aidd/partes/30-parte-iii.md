@@ -70,7 +70,7 @@ Os números saem de `docs/auditoria/mapa-pecas/catalogo-pecas.json` (função `c
 
 ## 10.3 O que falta consertar
 
-- **Baixa** · 4 scripts que nenhum código chama (`CAT-scripts-sem-chamador`).
+- **Baixa** · 5 scripts que nenhum código chama (`CAT-scripts-sem-chamador`).
 
 Já resolvido:
 

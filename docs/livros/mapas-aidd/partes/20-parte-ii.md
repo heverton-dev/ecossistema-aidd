@@ -31,7 +31,7 @@ Os números saem de `docs/auditoria/mapa-pecas/catalogo-pecas.json` (função `c
 
 ## 4.3 O que falta consertar
 
-- **Média** · 10 guardas com o mesmo nome e código diferente (`CAT-gates-versoes`).
+- **Média** · 11 guardas com o mesmo nome e código diferente (`CAT-gates-versoes`).
 
 Já resolvido:
 
