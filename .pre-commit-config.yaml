@@ -435,6 +435,16 @@ repos:
         pass_filenames: false
         require_serial: true
 
+      # MODO AVISO (warn): uma peca, um lugar (ciclo-03 VSA, decisoes A e C).
+      # O modo bloqueio (AIDD_COPIA_UNICA_MODO=bloqueio) e ligado no Ticket 20.
+      - id: g-copia-unica-vsa
+        name: "G_COPIA_UNICA_VSA (copia unica de ferramenta, gate e skill — modo aviso, D13)"
+        entry: python modulos/04-nucleo-compartilhado/gates/G_COPIA_UNICA_VSA.py --modo aviso
+        language: system
+        always_run: true
+        pass_filenames: false
+        require_serial: true
+
       - id: g-template-forge-rot
         name: "G_TEMPLATE_FORGE_ROT (integridade de templates do aidd-forge per Lei #9)"
         entry: python gates/G_TEMPLATE_FORGE_ROT.py
