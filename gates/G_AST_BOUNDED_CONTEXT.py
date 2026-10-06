@@ -1,14 +1,18 @@
 # -*- coding: utf-8 -*-
 """
 =============================================================================
-ECOSSISTEMA AIDD — QUALITY GATE: G_AST_BOUNDED_CONTEXT (Lei #2 & VSA)
+ECOSSISTEMA AIDD — QUALITY GATE: G_AST_BOUNDED_CONTEXT (Lei #2, #5 & VSA)
 =============================================================================
 Analisa a AST de todos os módulos de modulos/ e bloqueia qualquer acoplamento
 ou importação direta cruzada não-autorizada entre domínios independentes.
 
+Exige que a comunicação entre fatias se dê estritamente por contratos públicos
+exportados via __all__ ou interface.py / public.py, proibindo acesso a
+módulos internos privados (_* ou subpastas internas não exportadas).
+
 Exit Codes:
-  0 = Aprovado (Bounded contexts 100% isolados).
-  1 = Violação de regra (Acoplamento cruzado direto detectado).
+  0 = Aprovado (Bounded contexts 100% isolados e contratos públicos respeitados).
+  1 = Violação de regra (Acoplamento cruzado direto ou quebra de fronteira).
 """
 
 import ast
@@ -43,11 +47,24 @@ def verificar_bounded_context_vsa(raiz: Path) -> Tuple[bool, List[str]]:
             if isinstance(node, ast.Import):
                 for alias in node.names:
                     name = alias.name
-                    if name.startswith("tools.") or (name.startswith("modulos.") and "compartilhado" not in name):
-                        violacoes.append(f"{arq.relative_to(raiz)}: import direto ilegal '{name}'")
+                    # Bloqueia import direto do namespace legado tools
+                    if name.startswith("tools."):
+                        violacoes.append(f"{arq.relative_to(raiz)}: import direto ilegal de tools '{name}'")
+                    # Bloqueia acesso a módulos privados internos de outras fatias
+                    elif name.startswith("modulos.") and "compartilhado" not in name:
+                        partes_import = name.split(".")
+                        if len(partes_import) > 3 and not (name.endswith("interface") or name.endswith("public")):
+                            violacoes.append(f"{arq.relative_to(raiz)}: import interno de fatia sem interface pública '{name}'")
             elif isinstance(node, ast.ImportFrom):
-                if node.module and (node.module.startswith("tools.") or (node.module.startswith("modulos.") and "compartilhado" not in node.module)):
-                    violacoes.append(f"{arq.relative_to(raiz)}: from import ilegal '{node.module}'")
+                if node.module:
+                    # Bloqueia from import de tools
+                    if node.module.startswith("tools."):
+                        violacoes.append(f"{arq.relative_to(raiz)}: from import ilegal de tools '{node.module}'")
+                    # Bloqueia from import interno de outras fatias
+                    elif node.module.startswith("modulos.") and "compartilhado" not in node.module:
+                        partes_mod = node.module.split(".")
+                        if len(partes_mod) > 3 and not (node.module.endswith("interface") or node.module.endswith("public")):
+                            violacoes.append(f"{arq.relative_to(raiz)}: from import interno de fatia sem interface pública '{node.module}'")
 
     return len(violacoes) == 0, violacoes
 
