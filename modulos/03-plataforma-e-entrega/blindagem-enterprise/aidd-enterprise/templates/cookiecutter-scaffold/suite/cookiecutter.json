@@ -1,0 +1,23 @@
+{
+    "suite_slug": "suite_gerada",
+    "suite_name": "Suite Exemplo",
+    "webhook_demo_url": "https://webhook.site/demo-aidd-enterprise",
+    "db_init": "",
+    "db_url_expr": "",
+    "imports": "",
+    "init_schemas": "",
+    "rls_init": "",
+    "service_inits": "",
+    "routes_regs": "",
+    "mcp_tool_regs": "",
+    "webhook_event_regs": "",
+    "tabs_nav": "",
+    "sections": "",
+    "scripts": "",
+    "spotlight_modules": "",
+    "initial_loads": "",
+    "primary_hex": "#4F46E5",
+    "primary_hover_hex": "#4338CA",
+    "primary_light_hex": "#8280F0",
+    "primary_rgb": "79, 70, 229"
+}

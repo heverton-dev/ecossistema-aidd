@@ -1,0 +1,59 @@
+# =============================================================================
+# AIDD-Ops — Bloco: Traefik com TLS Let's Encrypt
+# Camada de Reverse Proxy e Terminação TLS Automática
+# =============================================================================
+# Imagem oficial: traefik (Docker Hub — mantida por Traefik Labs)
+# Validação: docker compose config (syntaxe) + G_INFRA_COMPOSE.py (Pacote 6)
+# =============================================================================
+
+services:
+  traefik:
+    image: traefik:v3.3
+    container_name: aidd_traefik
+    restart: unless-stopped
+    command:
+      - "--api.dashboard=true"
+      - "--providers.docker=true"
+      - "--providers.docker.exposedbydefault=false"
+      - "--entrypoints.web.address=:${TRAEFIK_HTTP_PORT:-80}"
+      - "--entrypoints.websecure.address=:${TRAEFIK_HTTPS_PORT:-443}"
+      - "--entrypoints.web.http.redirections.entryPoint.to=websecure"
+      - "--entrypoints.web.http.redirections.entryPoint.scheme=https"
+      - "--certificatesresolvers.letsencrypt.acme.tlschallenge=true"
+      - "--certificatesresolvers.letsencrypt.acme.email=${ACME_EMAIL:?Defina ACME_EMAIL no .env}"
+      - "--certificatesresolvers.letsencrypt.acme.storage=/letsencrypt/acme.json"
+      - "--log.level=${TRAEFIK_LOG_LEVEL:-INFO}"
+    environment:
+      - CF_DNS_API_TOKEN=${CF_DNS_API_TOKEN:-}
+    ports:
+      - "${TRAEFIK_HTTP_PORT:-80}:80"
+      - "${TRAEFIK_HTTPS_PORT:-443}:443"
+    volumes:
+      - traefik_certs:/letsencrypt
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    networks:
+      - aidd_internal
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.dashboard.rule=Host(`${TRAEFIK_DASHBOARD_HOST:-traefik.localhost}`)"
+      - "traefik.http.routers.dashboard.service=api@internal"
+      - "traefik.http.routers.dashboard.entrypoints=websecure"
+      - "traefik.http.routers.dashboard.tls.certresolver=letsencrypt"
+    healthcheck:
+      test: ["CMD", "traefik", "healthcheck", "--ping"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 15s
+    deploy:
+      resources:
+        limits:
+          memory: ${TRAEFIK_MAX_RAM:-256m}
+
+volumes:
+  traefik_certs:
+    driver: local
+
+networks:
+  aidd_internal:
+    driver: bridge

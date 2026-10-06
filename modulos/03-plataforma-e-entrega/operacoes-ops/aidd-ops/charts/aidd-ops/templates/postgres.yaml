@@ -1,0 +1,86 @@
+{{- if .Values.services.postgres.enabled }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: postgres
+  namespace: {{ include "aidd-ops.namespace" . }}
+  labels:
+    {{- include "aidd-ops.labels" . | nindent 4 }}
+    app.kubernetes.io/component: postgres
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: postgres
+      app.kubernetes.io/instance: {{ .Release.Name }}
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: postgres
+        app.kubernetes.io/instance: {{ .Release.Name }}
+    spec:
+      containers:
+        - name: postgres
+          image: "{{ .Values.services.postgres.image.repository }}:{{ .Values.services.postgres.image.tag }}"
+          imagePullPolicy: {{ .Values.services.postgres.image.pullPolicy }}
+          env:
+            - name: POSTGRES_USER
+              value: {{ .Values.services.postgres.env.POSTGRES_USER | quote }}
+            - name: PGDATA
+              value: {{ .Values.services.postgres.env.PGDATA | quote }}
+          ports:
+            - name: postgres
+              containerPort: {{ .Values.services.postgres.port }}
+              protocol: TCP
+          {{- if .Values.services.postgres.resources }}
+          resources:
+            {{- toYaml .Values.services.postgres.resources | nindent 12 }}
+          {{- end }}
+          {{- if .Values.services.postgres.persistence.enabled }}
+          volumeMounts:
+            - name: postgres-data
+              mountPath: {{ .Values.services.postgres.persistence.mountPath }}
+          {{- end }}
+      {{- if .Values.services.postgres.persistence.enabled }}
+      volumes:
+        - name: postgres-data
+          persistentVolumeClaim:
+            claimName: postgres-pvc
+      {{- end }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: postgres
+  namespace: {{ include "aidd-ops.namespace" . }}
+  labels:
+    {{- include "aidd-ops.labels" . | nindent 4 }}
+    app.kubernetes.io/component: postgres
+spec:
+  type: ClusterIP
+  selector:
+    app.kubernetes.io/name: postgres
+    app.kubernetes.io/instance: {{ .Release.Name }}
+  ports:
+    - name: postgres
+      port: {{ .Values.services.postgres.port }}
+      targetPort: postgres
+      protocol: TCP
+---
+{{- if .Values.services.postgres.persistence.enabled }}
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: postgres-pvc
+  namespace: {{ include "aidd-ops.namespace" . }}
+  labels:
+    {{- include "aidd-ops.labels" . | nindent 4 }}
+    app.kubernetes.io/component: postgres
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: {{ .Values.services.postgres.persistence.size }}
+{{- end }}
+{{- end }}

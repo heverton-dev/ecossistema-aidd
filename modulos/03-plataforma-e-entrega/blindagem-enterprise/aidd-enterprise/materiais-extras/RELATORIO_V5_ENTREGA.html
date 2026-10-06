@@ -1,0 +1,708 @@
+<title>AIDD Master Pack v5</title>
+<style>
+  @media (prefers-reduced-motion: reduce) {
+    * { animation-duration: 0.001ms !important; transition-duration: 0.001ms !important; }
+  }
+
+  :root {
+    --ground: #f2f4f7;
+    --surface: #ffffff;
+    --surface-2: #eaeef2;
+    --ink: #1a2230;
+    --muted: #5c6b7a;
+    --line: #d7dee5;
+    --accent: #b8631f;
+    --accent-soft: #f1e4d3;
+    --accent-2: #1f7a7a;
+    --accent-2-soft: #dcefef;
+    --good: #2f7a4f;
+    --good-soft: #e3f1e8;
+    --warn: #9c6b12;
+    --warn-soft: #f6ecd6;
+    --skip: #5c6b7a;
+    --skip-soft: #e7ebef;
+
+    --font-display: ui-monospace, "SF Mono", "Cascadia Code", "JetBrains Mono", Consolas, "Liberation Mono", monospace;
+    --font-body: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+
+    --shadow: 0 1px 2px rgba(20, 30, 45, 0.06), 0 8px 24px -12px rgba(20, 30, 45, 0.12);
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --ground: #0d1117;
+      --surface: #131a22;
+      --surface-2: #1a2029;
+      --ink: #e7ebf0;
+      --muted: #90a0b0;
+      --line: #232c37;
+      --accent: #dd9553;
+      --accent-soft: #2a2013;
+      --accent-2: #5fbcbc;
+      --accent-2-soft: #12262a;
+      --good: #7bc496;
+      --good-soft: #16261c;
+      --warn: #e0b45a;
+      --warn-soft: #2b2311;
+      --skip: #90a0b0;
+      --skip-soft: #1a2029;
+      --shadow: 0 1px 2px rgba(0, 0, 0, 0.3), 0 12px 32px -16px rgba(0, 0, 0, 0.5);
+    }
+  }
+
+  :root[data-theme="dark"] {
+    --ground: #0d1117;
+    --surface: #131a22;
+    --surface-2: #1a2029;
+    --ink: #e7ebf0;
+    --muted: #90a0b0;
+    --line: #232c37;
+    --accent: #dd9553;
+    --accent-soft: #2a2013;
+    --accent-2: #5fbcbc;
+    --accent-2-soft: #12262a;
+    --good: #7bc496;
+    --good-soft: #16261c;
+    --warn: #e0b45a;
+    --warn-soft: #2b2311;
+    --skip: #90a0b0;
+    --skip-soft: #1a2029;
+    --shadow: 0 1px 2px rgba(0, 0, 0, 0.3), 0 12px 32px -16px rgba(0, 0, 0, 0.5);
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    background: var(--ground);
+    color: var(--ink);
+    font-family: var(--font-body);
+    font-size: 16px;
+    line-height: 1.65;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .wrap {
+    max-width: 880px;
+    margin: 0 auto;
+    padding: 3.5rem 1.5rem 6rem;
+  }
+
+  a { color: var(--accent-2); }
+
+  h1, h2, h3 {
+    font-family: var(--font-display);
+    text-wrap: balance;
+    letter-spacing: -0.01em;
+    line-height: 1.2;
+    margin: 0;
+  }
+
+  .eyebrow {
+    font-family: var(--font-display);
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--muted);
+    margin: 0 0 0.6rem;
+  }
+
+  p { margin: 0 0 1rem; max-width: 65ch; }
+  p:last-child { margin-bottom: 0; }
+
+  code, .mono {
+    font-family: var(--font-display);
+    font-size: 0.88em;
+  }
+
+  code {
+    background: var(--surface-2);
+    border: 1px solid var(--line);
+    border-radius: 4px;
+    padding: 0.1em 0.4em;
+  }
+
+  pre {
+    font-family: var(--font-display);
+    font-size: 0.82rem;
+    background: var(--surface-2);
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    padding: 1rem 1.1rem;
+    overflow-x: auto;
+    line-height: 1.6;
+    margin: 0;
+  }
+  pre code { background: none; border: none; padding: 0; }
+
+  /* ---------- Header ---------- */
+
+  header.top {
+    display: flex;
+    flex-direction: column;
+    gap: 1.75rem;
+    padding-bottom: 2.5rem;
+    border-bottom: 1px solid var(--line);
+    margin-bottom: 3rem;
+  }
+
+  header.top h1 {
+    font-size: clamp(1.7rem, 4vw, 2.3rem);
+  }
+
+  .lede { color: var(--muted); max-width: 60ch; font-size: 1.02rem; }
+
+  .stat-row {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+    gap: 1px;
+    background: var(--line);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    overflow: hidden;
+  }
+
+  .stat {
+    background: var(--surface);
+    padding: 0.85rem 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+  }
+
+  .stat .n {
+    font-family: var(--font-display);
+    font-variant-numeric: tabular-nums;
+    font-size: 1.3rem;
+    font-weight: 600;
+  }
+
+  .stat .label {
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--muted);
+  }
+
+  /* ---------- Section scaffolding ---------- */
+
+  section { margin-bottom: 3.25rem; }
+
+  section > h2 {
+    font-size: 1.05rem;
+    margin-bottom: 1.1rem;
+  }
+
+  section > .section-intro {
+    color: var(--muted);
+    margin-bottom: 1.5rem;
+  }
+
+  /* ---------- Wave pipeline ---------- */
+
+  .pipeline {
+    display: grid;
+    grid-template-columns: 2.25rem 1fr;
+    column-gap: 1.1rem;
+  }
+
+  .rail {
+    grid-column: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .rail .dot {
+    width: 2.25rem;
+    height: 2.25rem;
+    border-radius: 50%;
+    background: var(--surface);
+    border: 1.5px solid var(--accent);
+    color: var(--accent);
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: 0.85rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+
+  .rail .segment {
+    width: 1.5px;
+    flex: 1;
+    background: var(--line);
+    min-height: 1.5rem;
+  }
+
+  .wave {
+    grid-column: 2;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 1.4rem 1.5rem 1.5rem;
+    box-shadow: var(--shadow);
+    margin-bottom: 1.5rem;
+  }
+
+  .wave-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    flex-wrap: wrap;
+    gap: 0.5rem 1rem;
+    margin-bottom: 0.9rem;
+  }
+
+  .wave-head h3 { font-size: 1.08rem; }
+
+  .wave-commit {
+    font-family: var(--font-display);
+    font-size: 0.75rem;
+    color: var(--muted);
+    background: var(--surface-2);
+    border: 1px solid var(--line);
+    border-radius: 5px;
+    padding: 0.15rem 0.5rem;
+    white-space: nowrap;
+  }
+
+  .kv { margin-bottom: 1rem; }
+  .kv:last-child { margin-bottom: 0; }
+
+  .kv .k {
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--muted);
+    margin-bottom: 0.3rem;
+  }
+
+  .kv .v { margin: 0; }
+
+  .file-list {
+    font-family: var(--font-display);
+    font-size: 0.8rem;
+    color: var(--accent-2);
+    line-height: 1.9;
+  }
+
+  .verified-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-family: var(--font-display);
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--good);
+    background: var(--good-soft);
+    border-radius: 5px;
+    padding: 0.25rem 0.6rem;
+    margin-top: 0.9rem;
+  }
+  .verified-badge::before { content: "✓"; font-family: var(--font-body); }
+
+  /* ---------- Bug table ---------- */
+
+  .table-scroll { overflow-x: auto; border: 1px solid var(--line); border-radius: 10px; }
+
+  table {
+    border-collapse: collapse;
+    width: 100%;
+    min-width: 640px;
+    background: var(--surface);
+  }
+
+  th, td {
+    text-align: left;
+    padding: 0.75rem 1rem;
+    border-bottom: 1px solid var(--line);
+    vertical-align: top;
+    font-size: 0.92rem;
+  }
+
+  thead th {
+    font-family: var(--font-display);
+    font-size: 0.68rem;
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    color: var(--muted);
+    background: var(--surface-2);
+  }
+
+  tbody tr:last-child td { border-bottom: none; }
+
+  td.tag {
+    white-space: nowrap;
+  }
+
+  .pill {
+    display: inline-block;
+    font-family: var(--font-display);
+    font-size: 0.68rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    padding: 0.15rem 0.5rem;
+    border-radius: 999px;
+  }
+  .pill.pre-existing { background: var(--warn-soft); color: var(--warn); }
+  .pill.introduced { background: var(--accent-soft); color: var(--accent); }
+
+  /* ---------- Merge story ---------- */
+
+  .merge-box {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-left: 3px solid var(--accent-2);
+    border-radius: 0 10px 10px 0;
+    padding: 1.3rem 1.5rem;
+    box-shadow: var(--shadow);
+  }
+
+  .merge-box h4 {
+    font-family: var(--font-display);
+    font-size: 0.85rem;
+    color: var(--accent-2);
+    margin: 1.1rem 0 0.4rem;
+  }
+  .merge-box h4:first-child { margin-top: 0; }
+
+  /* ---------- Limitations ---------- */
+
+  .limits { display: grid; gap: 0.9rem; }
+
+  .limit-row {
+    display: grid;
+    grid-template-columns: 1.4rem 1fr;
+    gap: 0.7rem;
+    align-items: start;
+  }
+
+  .limit-row .icon {
+    color: var(--warn);
+    font-family: var(--font-display);
+    font-size: 0.95rem;
+    line-height: 1.65;
+  }
+
+  /* ---------- Commands reference ---------- */
+
+  .cmd-grid { display: grid; gap: 0.9rem; }
+  .cmd-row { display: grid; grid-template-columns: minmax(180px, 260px) 1fr; gap: 1rem; align-items: start; }
+  .cmd-row .desc { color: var(--muted); font-size: 0.92rem; padding-top: 0.15rem; }
+
+  @media (max-width: 620px) {
+    .cmd-row { grid-template-columns: 1fr; }
+    .pipeline { grid-template-columns: 1.6rem 1fr; column-gap: 0.75rem; }
+    .rail .dot { width: 1.6rem; height: 1.6rem; font-size: 0.7rem; }
+  }
+
+  footer.page-footer {
+    margin-top: 4rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--line);
+    color: var(--muted);
+    font-size: 0.85rem;
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+</style>
+
+<div class="wrap">
+
+  <header class="top">
+    <div>
+      <p class="eyebrow">Relatório de Entrega · heverton-dev/aidd-master-pack</p>
+      <h1>AIDD Master Pack v5.1.0</h1>
+    </div>
+    <p class="lede">
+      As quatro ondas de <code>PLANO_ACAO_EVOLUCAO_V5_V6.md</code> — persistência poliglota,
+      mensageria distribuída, frontend híbrido com SSO corporativo, e IA recursiva BDD com
+      Cloud Native IaC — implementadas, verificadas ponta a ponta com servidores reais rodando,
+      reconciliadas com correções feitas em paralelo em <code>main</code>, e publicadas.
+    </p>
+    <div class="stat-row">
+      <div class="stat"><span class="n">4/4</span><span class="label">Ondas concluídas</span></div>
+      <div class="stat"><span class="n">54</span><span class="label">Testes verdes</span></div>
+      <div class="stat"><span class="n">7/7</span><span class="label">Gates aprovados</span></div>
+      <div class="stat"><span class="n">6</span><span class="label">Bugs corrigidos</span></div>
+      <div class="stat"><span class="n">v5.1.0</span><span class="label">Tag publicada</span></div>
+    </div>
+  </header>
+
+  <section>
+    <p class="eyebrow">Contexto</p>
+    <h2>O que foi pedido e como foi entregue</h2>
+    <p>
+      A pasta <code>aidd-master-pack-v4</code> permaneceu intocada. Todo o trabalho foi feito em
+      uma cópia nova, <code>aidd-master-pack-v5</code>, no Desktop — mesmo histórico Git, mesmo
+      remoto. Ao final, os commits e a tag <code>v5.1.0</code> foram publicados no mesmo
+      repositório GitHub (<code>heverton-dev/aidd-master-pack</code>), ao lado das tags
+      <code>v5.1.0</code>–<code>v4.3.0</code> já existentes.
+    </p>
+    <p>
+      Regra de execução seguida à risca: cada onda foi implementada, testada e validada a 100%
+      antes de iniciar a próxima. Nenhuma onda avançou com um teste vermelho ou um gate reprovado.
+    </p>
+  </section>
+
+  <section>
+    <p class="eyebrow">Execução</p>
+    <h2>As quatro ondas</h2>
+    <p class="section-intro">Nesta ordem — cada uma sobre a base validada da anterior.</p>
+
+    <div class="pipeline">
+
+      <div class="rail"><div class="dot">01</div><div class="segment"></div></div>
+      <article class="wave">
+        <div class="wave-head">
+          <h3>Persistência Poliglota &amp; Outbox Transacional</h3>
+          <span class="wave-commit">92407d3</span>
+        </div>
+        <div class="kv">
+          <p class="k">O quê</p>
+          <p class="v">Um <code>DatabaseAdapter</code> (Bridge) faz SQLite e PostgreSQL responderem à
+          mesma API: um <code>PostgresConnectionProxy</code> traduz <code>?</code> → <code>%s</code>,
+          injeta <code>RETURNING id</code> para emular <code>cursor.lastrowid</code>, e converte
+          o DDL <code>AUTOINCREMENT</code> → <code>SERIAL</code>. O Transactional Outbox Pattern
+          grava cada evento de domínio na mesma transação da mutação, garantindo entrega
+          at-least-once mesmo se o processo cair antes do <code>EventBus.emit()</code>.</p>
+        </div>
+        <div class="kv">
+          <p class="k">Arquivos</p>
+          <p class="file-list">templates/v2/database.py · templates/v2/outbox_worker.py (novo) ·
+          scripts/add_module.py · scripts/compose_suite.py · scripts/aidd.py (<code>--db</code>)</p>
+        </div>
+        <div class="verified-badge">18 testes · SQLite real ponta a ponta · suite gerada 7/7 gates</div>
+      </article>
+
+      <div class="rail"><div class="segment"></div><div class="dot">02</div><div class="segment"></div></div>
+      <article class="wave">
+        <div class="wave-head">
+          <h3>EventBus Distribuído &amp; Jobs Resilientes</h3>
+          <span class="wave-commit">ff6600a</span>
+        </div>
+        <div class="kv">
+          <p class="k">O quê</p>
+          <p class="v">O <code>EventBus</code> virou fachada sobre um <code>EventBusDriver</code>
+          plugável — <code>InMemoryEventBusDriver</code> por padrão, <code>RedisStreamsDriver</code>
+          (XADD/XREADGROUP com Consumer Groups) quando <code>EVENTBUS_URL</code> é definido. O
+          <code>JobQueue</code> ganhou persistência opcional em <code>_jobs</code>, backoff
+          exponencial (<code>2ⁿ×5s</code>) e Dead Letter Queue após esgotar as tentativas, com
+          painel <code>GET /api/jobs</code> e <code>POST /api/jobs/reprocessar</code>.</p>
+        </div>
+        <div class="kv">
+          <p class="k">Arquivos</p>
+          <p class="file-list">templates/v2/events.py · templates/v2/jobs.py · scripts/compose_suite.py</p>
+        </div>
+        <div class="verified-badge">29 testes · servidor real: outbox pendente→processado em 0,4s</div>
+      </article>
+
+      <div class="rail"><div class="segment"></div><div class="dot">03</div><div class="segment"></div></div>
+      <article class="wave">
+        <div class="wave-head">
+          <h3>Frontend Híbrido &amp; SSO Corporativo</h3>
+          <span class="wave-commit">58efc13</span>
+        </div>
+        <div class="kv">
+          <p class="k">O quê</p>
+          <p class="v"><code>aidd.py export-frontend --stack nextjs</code> introspecciona o
+          <code>RouteRegistry</code> gerado e escreve um Next.js 14 (App Router) + TypeScript +
+          Tailwind completo, com <code>types.ts</code> inferido dos exemplos OpenAPI. O
+          <code>OIDCService</code> implementa Authorization Code + PKCE (RFC 7636) com validação
+          RS256 do <code>id_token</code> via JWKS, expondo <code>/api/auth/oauth/login</code> e
+          <code>/callback</code> — o login local por JWT continua ativo sem nenhuma dependência
+          extra quando o SSO não está configurado.</p>
+        </div>
+        <div class="kv">
+          <p class="k">Arquivos</p>
+          <p class="file-list">scripts/openapi_to_ts.py (novo) · templates/v2/security.py ·
+          scripts/compose_suite.py</p>
+        </div>
+        <div class="verified-badge">8 testes · <code>next build</code> real, exit 0 · fluxo OIDC completo contra mock provider local</div>
+      </article>
+
+      <div class="rail"><div class="segment"></div><div class="dot">04</div></div>
+      <article class="wave">
+        <div class="wave-head">
+          <h3>Refinador BDD &amp; Cloud Native IaC</h3>
+          <span class="wave-commit">b37cacb</span>
+        </div>
+        <div class="kv">
+          <p class="k">O quê</p>
+          <p class="v"><code>aidd.py refine-module &lt;módulo&gt; --spec &lt;arquivo.feature&gt;</code>
+          roda <code>behave</code> como gate determinístico RED/GREEN — o ciclo de edição é
+          conduzido pelo agente de coding (ver <code>agent_domain_refiner.md</code>), não por
+          uma chamada de LLM embutida. <code>scaffold-infra</code> gera um chart Helm real
+          (<code>Chart.yaml</code> + templates) e um <code>main.tf</code> (VPC, RDS Postgres,
+          ElastiCache Redis). <code>metrics.py</code> expõe <code>/metrics</code> no formato
+          Prometheus escrito à mão, sem nova dependência.</p>
+        </div>
+        <div class="kv">
+          <p class="k">Arquivos</p>
+          <p class="file-list">templates/agents/agent_domain_refiner.md (novo) ·
+          scripts/scaffold_infra.py (novo) · templates/v2/metrics.py (novo) · scripts/aidd.py</p>
+        </div>
+        <div class="verified-badge">17 testes · ciclo RED→GREEN real (desconto progressivo) · /metrics ao vivo</div>
+      </article>
+
+    </div>
+  </section>
+
+  <section>
+    <p class="eyebrow">Verificação Real</p>
+    <h2>Bugs encontrados e corrigidos</h2>
+    <p class="section-intro">
+      Nenhum destes apareceria em uma auditoria puramente estática — todos vieram de rodar um
+      servidor de verdade e bater nas rotas com <code>curl</code>.
+    </p>
+    <div class="table-scroll">
+      <table>
+        <thead>
+          <tr><th>Onda</th><th>Origem</th><th>O que quebrava</th><th>Correção</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="tag">1</td>
+            <td class="tag"><span class="pill introduced">Introduzido</span></td>
+            <td><code>PostgresCursorProxy</code> não capturava <code>lastrowid</code> quando a query já tinha <code>RETURNING</code></td>
+            <td>Separada a emulação de <code>RETURNING</code> da captura do <code>lastrowid</code></td>
+          </tr>
+          <tr>
+            <td class="tag">2</td>
+            <td class="tag"><span class="pill introduced">Introduzido</span></td>
+            <td>Gate <code>G_SEGURANCA</code> reprovava um <code>UPDATE</code> com SET montado via f-string (falso-positivo de SQL injection)</td>
+            <td>Reescrito como métodos de transição com SQL 100% estático</td>
+          </tr>
+          <tr>
+            <td class="tag">2</td>
+            <td class="tag"><span class="pill pre-existing">Pré-existente v4</span></td>
+            <td>Rotas de módulo nunca chegavam ao servidor HTTP — cada <code>routes.py</code> tinha seu próprio <code>RouteRegistry</code> isolado</td>
+            <td>Corrigido com <code>include_registry()</code>; substituído no merge pelo fix upstream (Singleton)</td>
+          </tr>
+          <tr>
+            <td class="tag">3</td>
+            <td class="tag"><span class="pill introduced">Introduzido</span></td>
+            <td><code>MCPServer(DB_PATH)</code> quebrava com <code>NameError</code> em modo <code>--db postgres</code></td>
+            <td><code>DB_PATH</code> definido também no modo Postgres (MCP segue SQLite por design próprio)</td>
+          </tr>
+          <tr>
+            <td class="tag">3</td>
+            <td class="tag"><span class="pill introduced">Introduzido</span></td>
+            <td><code>OutboxWorker</code> começava a sondar o banco antes do schema dos módulos existir — <code>database is locked</code> transitório</td>
+            <td>Workers de background movidos para depois da inicialização de schema</td>
+          </tr>
+          <tr>
+            <td class="tag">4</td>
+            <td class="tag"><span class="pill introduced">Introduzido</span></td>
+            <td>Um <code>%</code> literal em texto de ajuda do argparse ("100% dos cenários") derrubava <strong>todo</strong> comando da CLI</td>
+            <td>Escapado para <code>%%</code></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section>
+    <p class="eyebrow">Reconciliação</p>
+    <h2>O encontro com o <code>main</code> remoto</h2>
+    <div class="merge-box">
+      <p>
+        No momento do <code>push</code>, o <code>origin/main</code> já tinha avançado 6 commits —
+        alguém havia corrigido, em paralelo e de forma independente, o mesmo bug de roteamento da
+        Onda 2, mas transformando <code>RouteRegistry</code> em um <strong>Singleton</strong>
+        (toda instância no processo passa a compartilhar o mesmo estado), além de rotas de
+        favicon, arquivos estáticos e um CSS 100% offline.
+      </p>
+      <h4>O conflito textual</h4>
+      <p>
+        Um único ponto de conflito em <code>scripts/compose_suite.py</code>: meu bloco de
+        <code>/metrics</code> e os blocos de <code>/favicon.ico</code>/estáticos do <code>main</code>
+        tentavam ocupar a mesma posição em <code>_handle_get()</code>. Resolvido colocando os dois
+        lado a lado — são independentes.
+      </p>
+      <h4>O conflito que o Git não via</h4>
+      <p>
+        Mais sério: minha chamada <code>registry.include_registry(registry_&lt;módulo&gt;)</code>
+        (Onda 2) e a lógica equivalente em <code>openapi_to_ts.py</code> (Onda 3) passaram a
+        mesclar o Singleton <em>nele mesmo</em> assim que o merge trouxe a mudança — o que entra
+        em loop infinito dentro de <code>RouteRegistry.mount()</code>, que itera
+        <code>self.endpoints</code> enquanto anexa a ele. Nenhuma marca de conflito indicava isso;
+        só apareceu ao subir o servidor de verdade.
+      </p>
+      <h4>Como foi resolvido</h4>
+      <p>
+        As duas chamadas de mesclagem explícita foram removidas — o Singleton, sozinho, já resolve
+        o compartilhamento de rotas de forma mais simples do que minha abordagem original.
+        Servidor com 2 módulos testado depois do merge: inicialização sem travar, ambas as rotas
+        respondendo, <code>/favicon.ico</code>, <code>/</code> e <code>/metrics</code> convivendo
+        sem regressão.
+      </p>
+    </div>
+  </section>
+
+  <section>
+    <p class="eyebrow">Honestidade</p>
+    <h2>Limites deste ambiente</h2>
+    <div class="limits">
+      <div class="limit-row">
+        <span class="icon">‣</span>
+        <p><strong>Docker Desktop não estava rodando.</strong> Os testes de integração real com
+        Postgres e Redis (containers efêmeros) existem e rodam automaticamente se o daemon
+        estiver disponível — aqui, pularam com motivo explícito. A lógica crítica (tradução de
+        placeholders, emulação de <code>lastrowid</code>, tradução de DDL) foi validada com
+        duplos de teste determinísticos no lugar disso.</p>
+      </div>
+      <div class="limit-row">
+        <span class="icon">‣</span>
+        <p><strong><code>terraform</code> e <code>helm</code> não estão instalados.</strong> Os
+        arquivos gerados foram validados estruturalmente — um "fake render" substitui cada
+        expressão <code>{'{{ }}'}</code> por um placeholder e faz o parse do YAML resultante — em
+        vez de <code>terraform validate</code>/<code>helm lint</code> reais. Os testes com os
+        binários reais existem e rodam sozinhos assim que instalados.</p>
+      </div>
+      <div class="limit-row">
+        <span class="icon">‣</span>
+        <p><strong><code>pyjwt</code> e <code>redis</code> não são adicionados automaticamente ao
+        <code>requirements.txt</code></strong> quando SSO ou EventBus distribuído são usados —
+        diferente de <code>psycopg2-binary</code> (Onda 1) e <code>behave</code> (Onda 4), que
+        ganharam esse tratamento. Hoje, o erro de import lazy já orienta o
+        <code>pip install</code> correto; adicionar a persistência em
+        <code>requirements.txt</code> fica como polimento pendente para uma v5.0.1.</p>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <p class="eyebrow">Referência</p>
+    <h2>Comandos novos nesta versão</h2>
+    <div class="cmd-grid">
+      <div class="cmd-row">
+        <pre><code>aidd.py compose &lt;dir&gt; &lt;nome&gt; [módulos] --db postgres</code></pre>
+        <p class="desc">Seleciona o motor de persistência (padrão: <code>sqlite</code>)</p>
+      </div>
+      <div class="cmd-row">
+        <pre><code>aidd.py export-frontend --stack nextjs</code></pre>
+        <p class="desc">Gera o frontend Next.js/TypeScript tipado em <code>frontend/</code></p>
+      </div>
+      <div class="cmd-row">
+        <pre><code>aidd.py refine-module &lt;módulo&gt; --spec features/x.feature</code></pre>
+        <p class="desc">Roda a suíte BDD (<code>behave</code>) como gate RED/GREEN</p>
+      </div>
+      <div class="cmd-row">
+        <pre><code>aidd.py scaffold-infra</code></pre>
+        <p class="desc">Gera <code>infra/terraform/</code> e o chart Helm em <code>infra/helm/</code></p>
+      </div>
+    </div>
+  </section>
+
+  <footer class="page-footer">
+    <span>heverton-dev/aidd-master-pack</span>
+    <span class="mono">tag v5.1.0 · merge e41ae6b</span>
+  </footer>
+
+</div>

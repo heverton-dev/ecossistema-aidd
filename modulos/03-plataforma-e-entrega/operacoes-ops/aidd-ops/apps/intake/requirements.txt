@@ -1,0 +1,4 @@
+# AIDD-Ops Intake Web — dependências do app (imagem Docker / Coolify)
+# Mantido somente com o que o app realmente importa.
+streamlit>=1.37,<2
+returns>=0.23

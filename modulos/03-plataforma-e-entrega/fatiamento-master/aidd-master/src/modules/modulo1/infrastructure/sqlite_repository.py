@@ -1,0 +1,165 @@
+# -*- coding: utf-8 -*-
+"""
+SQLiteRepository da fatia vertical modulo1 — TODO o SQL fica aqui.
+
+Persiste e recarrega o agregado ``Modulo1Item`` usando a fachada
+``core.database.Database`` (WAL + pooling via SQLAlchemy). Executa o
+Transactional Outbox na MESMA conexão/transação da mutação de negócio,
+garantindo entrega at-least-once dos Domain Events.
+
+Regras:
+- 100% dos ``execute()`` parametrizados (nunca concatenar strings em SQL).
+- Soft-delete obrigatório (``deletado_em IS NULL``); zero ``DELETE`` físico.
+- Desserialização do JSON de ``dados_json`` aqui (fronteira de infra).
+"""
+
+from __future__ import annotations
+
+import json
+from typing import Any, List, Optional
+
+from ..domain.entities import Modulo1Item
+from ..domain.repositories import Modulo1Repositorio, RegistradorOutbox
+
+
+class SqliteModulo1Repository(Modulo1Repositorio):
+    """Implementação SQLite (via ``core.database.Database``) do repositório."""
+
+    def __init__(self, db: Any, outbox: RegistradorOutbox):
+        self._db = db
+        self._outbox = outbox
+
+    # ------------------------------------------------------------------ #
+    # Escrita
+    # ------------------------------------------------------------------ #
+
+    def adicionar(self, item: Modulo1Item) -> Modulo1Item:
+        with self._db.get_connection() as conn:
+            cur = conn.execute(
+                """
+                INSERT INTO mod_modulo1 (titulo, descricao, dados_json, status, ativo)
+                VALUES (?, ?, ?, ?, 1)
+                """,
+                (
+                    item.titulo.valor,
+                    item.descricao,
+                    json.dumps(item.dados.valor, ensure_ascii=False),
+                    item.status.valor,
+                ),
+            )
+            novo_id = int(cur.lastrowid)
+            item.confirmar_criacao(novo_id)
+            for evento in item.domain_events:
+                self._outbox.registrar(conn, evento)
+            conn.commit()
+        return item
+
+    def atualizar(self, item: Modulo1Item) -> Optional[Modulo1Item]:
+        with self._db.get_connection() as conn:
+            existe = conn.execute(
+                "SELECT id FROM mod_modulo1 WHERE id = ? AND deletado_em IS NULL",
+                (item.id,),
+            ).fetchone()
+            if not existe:
+                return None
+            conn.execute(
+                """
+                UPDATE mod_modulo1
+                SET titulo = ?, descricao = ?, dados_json = ?, status = ?,
+                    atualizado_em = CURRENT_TIMESTAMP
+                WHERE id = ?
+                """,
+                (
+                    item.titulo.valor,
+                    item.descricao,
+                    json.dumps(item.dados.valor, ensure_ascii=False),
+                    item.status.valor,
+                    item.id,
+                ),
+            )
+            for evento in item.domain_events:
+                self._outbox.registrar(conn, evento)
+            conn.commit()
+        return item
+
+    def deletar(self, item: Modulo1Item) -> Optional[Modulo1Item]:
+        with self._db.get_connection() as conn:
+            existe = conn.execute(
+                "SELECT id FROM mod_modulo1 WHERE id = ? AND deletado_em IS NULL",
+                (item.id,),
+            ).fetchone()
+            if not existe:
+                return None
+            conn.execute(
+                "UPDATE mod_modulo1 SET deletado_em = CURRENT_TIMESTAMP, ativo = 0 WHERE id = ?",
+                (item.id,),
+            )
+            for evento in item.domain_events:
+                self._outbox.registrar(conn, evento)
+            conn.commit()
+        return item
+
+    # ------------------------------------------------------------------ #
+    # Leitura
+    # ------------------------------------------------------------------ #
+
+    def buscar_por_id(self, item_id: int) -> Optional[Modulo1Item]:
+        with self._db.get_connection() as conn:
+            row = conn.execute(
+                "SELECT * FROM mod_modulo1 WHERE id = ? AND deletado_em IS NULL",
+                (item_id,),
+            ).fetchone()
+        return Modulo1Item.from_linha(self._linha_para_entidade(row)) if row else None
+
+    def listar(
+        self,
+        apenas_ativos: bool = True,
+        status: Optional[str] = None,
+        busca: Optional[str] = None,
+        pagina: int = 1,
+        limite: int = 50,
+    ) -> List[Modulo1Item]:
+        query = "SELECT * FROM mod_modulo1 WHERE deletado_em IS NULL"
+        params: List[Any] = []
+        if apenas_ativos:
+            query += " AND ativo = 1"
+        if status:
+            query += " AND status = ?"
+            params.append(status)
+        if busca:
+            query += " AND (titulo LIKE ? OR descricao LIKE ?)"
+            params.extend([f"%{busca}%", f"%{busca}%"])
+        query += " ORDER BY id DESC"
+        offset = max(0, (pagina - 1) * limite)
+        query += " LIMIT ? OFFSET ?"
+        params.extend([limite, offset])
+
+        with self._db.get_connection() as conn:
+            rows = conn.execute(query, params).fetchall()
+        return [Modulo1Item.from_linha(self._linha_para_entidade(r)) for r in rows]
+
+    def obter_metricas(self) -> dict:
+        with self._db.get_connection() as conn:
+            total = conn.execute(
+                "SELECT count(*) FROM mod_modulo1 WHERE deletado_em IS NULL"
+            ).fetchone()[0]
+            ativos = conn.execute(
+                "SELECT count(*) FROM mod_modulo1 WHERE deletado_em IS NULL AND ativo = 1"
+            ).fetchone()[0]
+            concluidos = conn.execute(
+                "SELECT count(*) FROM mod_modulo1 WHERE deletado_em IS NULL AND status = ?",
+                ("concluido",),
+            ).fetchone()[0]
+        return {"total": total, "ativos": ativos, "concluidos": concluidos}
+
+    # ------------------------------------------------------------------ #
+    # Mapeamento de fronteira (linha do banco -> entidade)
+    # ------------------------------------------------------------------ #
+
+    @staticmethod
+    def _linha_para_entidade(row: Any) -> dict:
+        linha = dict(row)
+        linha["dados"] = (
+            json.loads(linha["dados_json"]) if linha.get("dados_json") else {}
+        )
+        return linha

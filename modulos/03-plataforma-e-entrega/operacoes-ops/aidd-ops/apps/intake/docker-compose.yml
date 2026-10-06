@@ -1,0 +1,10 @@
+# AIDD-Ops Intake Web — execução local (docker compose) e modelo para o Coolify.
+# Build context: tools/aidd-ops (pai deste diretório); Dockerfile.intake na raiz do contexto.
+services:
+  intake:
+    build:
+      context: ../..
+      dockerfile: Dockerfile.intake
+    ports:
+      - "${INTAKE_PORT:-8501}:8501"
+    restart: unless-stopped

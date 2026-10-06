@@ -1,0 +1,49 @@
+# =============================================================================
+# AIDD-Ops ? Bloco: Uptime Kuma
+# Camada de Observabilidade, Healthchecks Reais e Dashboard de Status (NIH #14)
+# =============================================================================
+# Imagem oficial: louislam/uptime-kuma:1 (Docker Hub ? Louis Lam)
+# Substitui dashboards hardcoded por monitoramento ativo real, persistente e open-source.
+# Valida??o: docker compose config (sintaxe) + G_INFRA_COMPOSE.py
+# =============================================================================
+
+services:
+  uptime-kuma:
+    image: louislam/uptime-kuma:1
+    container_name: aidd_uptime_kuma
+    restart: unless-stopped
+    environment:
+      UPTIME_KUMA_PORT: "3001"
+      NODE_ENV: "production"
+    ports:
+      - "${UPTIME_KUMA_PORT:-3005}:3001"
+    volumes:
+      - uptime_kuma_data:/app/data
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    networks:
+      - aidd_internal
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.uptime-kuma.rule=Host(`${UPTIME_KUMA_HOST:-status.localhost}`)"
+      - "traefik.http.routers.uptime-kuma.service=uptime-kuma"
+      - "traefik.http.routers.uptime-kuma.entrypoints=websecure"
+      - "traefik.http.routers.uptime-kuma.tls.certresolver=letsencrypt"
+      - "traefik.http.services.uptime-kuma.loadbalancer.server.port=3001"
+    healthcheck:
+      test: ["CMD-SHELL", "node -e \"require('http').get('http://localhost:3001', (r) => { process.exit(r.statusCode === 200 || r.statusCode === 302 ? 0 : 1); }).on('error', () => process.exit(1));\""]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 20s
+    deploy:
+      resources:
+        limits:
+          memory: ${UPTIME_KUMA_MAX_RAM:-256m}
+
+volumes:
+  uptime_kuma_data:
+    driver: local
+
+networks:
+  aidd_internal:
+    driver: bridge

@@ -1,0 +1,103 @@
+# =============================================================================
+# AIDD-Ops — Bloco: Authentik SSO com PostgreSQL Próprio
+# Camada de Autenticação e Identidade (SSO/OIDC/SAML)
+# =============================================================================
+# Imagem oficial: ghcr.io/goauthentik/server (GHCR — Authentik Project)
+# Nota: Authentik exige seu próprio PostgreSQL por requisito de schema interno
+#       específico que não pode compartilhar instância com outros bancos.
+# Validação: docker compose config (syntaxe) + G_INFRA_COMPOSE.py (Pacote 6)
+# =============================================================================
+
+services:
+  authentik-db:
+    image: postgres:16-alpine
+    container_name: aidd_authentik_db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${AUTHENTIK_DB_NAME:-authentik}
+      POSTGRES_USER: ${AUTHENTIK_DB_USER:-authentik}
+      POSTGRES_PASSWORD: ${AUTHENTIK_DB_PASSWORD:?Defina AUTHENTIK_DB_PASSWORD no .env}
+      PGDATA: /var/lib/postgresql/data/pgdata
+    volumes:
+      - authentik_db_data:/var/lib/postgresql/data
+    networks:
+      - aidd_internal
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${AUTHENTIK_DB_USER:-authentik}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+    deploy:
+      resources:
+        limits:
+          memory: ${AUTHENTIK_DB_MAX_RAM:-512m}
+
+  authentik-server:
+    image: ghcr.io/goauthentik/server:2025.4
+    container_name: aidd_authentik_server
+    restart: unless-stopped
+    command: server
+    environment:
+      AUTHENTIK_POSTGRESQL__HOST: authentik-db
+      AUTHENTIK_POSTGRESQL__PORT: "5432"
+      AUTHENTIK_POSTGRESQL__NAME: ${AUTHENTIK_DB_NAME:-authentik}
+      AUTHENTIK_POSTGRESQL__USER: ${AUTHENTIK_DB_USER:-authentik}
+      AUTHENTIK_POSTGRESQL__PASSWORD: ${AUTHENTIK_DB_PASSWORD:?Defina AUTHENTIK_DB_PASSWORD no .env}
+      AUTHENTIK_SECRET_KEY: ${AUTHENTIK_SECRET_KEY:?Defina AUTHENTIK_SECRET_KEY no .env}
+      AUTHENTIK_ERROR_REPORTING__ENABLED: "false"
+    volumes:
+      - authentik_media:/media
+    ports:
+      - "${AUTHENTIK_HTTP_PORT:-9000}:9000"
+      - "${AUTHENTIK_HTTPS_PORT:-9443}:9443"
+    networks:
+      - aidd_internal
+    depends_on:
+      authentik-db:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://localhost:9000/-/health/ || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+    deploy:
+      resources:
+        limits:
+          memory: ${AUTHENTIK_SERVER_MAX_RAM:-512m}
+
+  authentik-worker:
+    image: ghcr.io/goauthentik/server:2025.4
+    container_name: aidd_authentik_worker
+    restart: unless-stopped
+    command: worker
+    environment:
+      AUTHENTIK_POSTGRESQL__HOST: authentik-db
+      AUTHENTIK_POSTGRESQL__PORT: "5432"
+      AUTHENTIK_POSTGRESQL__NAME: ${AUTHENTIK_DB_NAME:-authentik}
+      AUTHENTIK_POSTGRESQL__USER: ${AUTHENTIK_DB_USER:-authentik}
+      AUTHENTIK_POSTGRESQL__PASSWORD: ${AUTHENTIK_DB_PASSWORD:?Defina AUTHENTIK_DB_PASSWORD no .env}
+      AUTHENTIK_SECRET_KEY: ${AUTHENTIK_SECRET_KEY:?Defina AUTHENTIK_SECRET_KEY no .env}
+      AUTHENTIK_ERROR_REPORTING__ENABLED: "false"
+    volumes:
+      - authentik_media:/media
+    networks:
+      - aidd_internal
+    depends_on:
+      authentik-db:
+        condition: service_healthy
+    deploy:
+      resources:
+        limits:
+          memory: ${AUTHENTIK_WORKER_MAX_RAM:-256m}
+
+volumes:
+  authentik_db_data:
+    driver: local
+  authentik_media:
+    driver: local
+
+networks:
+  aidd_internal:
+    driver: bridge

@@ -1,0 +1,82 @@
+{
+  "versao": "1.0.0",
+  "nicho": "b2b_industrial",
+  "nome_exibicao": "Indústrias & Vendas B2B",
+  "descricao": "Plano de infraestrutura para o nicho de Indústrias e Vendas B2B. Mapeia ferramentas do catálogo para blocos construtivos canônicos.",
+  "fonte": "tools/aidd-ops/data/catalogo_nichos.json → nicho 'b2b_industrial'",
+  "blocos": [
+    {
+      "slug": "traefik",
+      "caminho": "tools/aidd-ops/templates/infra/traefik/",
+      "obrigatorio": true,
+      "motivo": "Reverse proxy e terminação TLS para todos os serviços expostos publicamente"
+    },
+    {
+      "slug": "postgres",
+      "caminho": "tools/aidd-ops/templates/infra/postgres/",
+      "obrigatorio": true,
+      "motivo": "Banco centralizado para EspoCRM, Mautic e Documenso"
+    },
+    {
+      "slug": "gateway",
+      "caminho": "tools/aidd-ops/templates/infra/gateway/",
+      "obrigatorio": false,
+      "motivo": "API Gateway para orquestrar integrações entre CRM, marketing automation e ERP"
+    }
+  ],
+  "bancos_logicos": [
+    {
+      "nome": "espocrm_db",
+      "usuario": "espocrm_user",
+      "bloco_consumer": null,
+      "notas": "CRM — gestão de leads e vendas B2B. EspoCRM suporta PostgreSQL nativamente. Requer container dedicado não incluído nos blocos canônicos."
+    },
+    {
+      "nome": "mautic_db",
+      "usuario": "mautic_user",
+      "bloco_consumer": null,
+      "notas": "Marketing automation — campanhas, nutrição de leads. Mautic suporta PostgreSQL. Requer container dedicado não incluído nos blocos canônicos."
+    },
+    {
+      "nome": "documenso_db",
+      "usuario": "documenso_user",
+      "bloco_consumer": null,
+      "notas": "Assinatura digital — contratos e propostas técnicas. Documenso usa PostgreSQL. Requer container dedicado não incluído nos blocos canônicos."
+    },
+    {
+      "nome": "erpnext_db",
+      "usuario": "erpnext_user",
+      "bloco_consumer": null,
+      "notas": "ERP — faturamento e gestão. ERPNext usa MariaDB (não PostgreSQL). Requer container MariaDB dedicado."
+    }
+  ],
+  "ferramentas_sem_bloco": [
+    {
+      "nome": "EspoCRM",
+      "motivo": "CRM B2B — tem imagem oficial (espocrm/espocrm) mas requer configuração customizada. Pode ser adicionado como bloco futuro."
+    },
+    {
+      "nome": "Mautic",
+      "motivo": "Marketing automation — imagem community (mautic/mautic). Repute PHP pesado, precisa de tuning."
+    },
+    {
+      "nome": "Documenso",
+      "motivo": "Assinatura digital — imagem oficial (documenso/documenso). Pode ser adicionado como bloco futuro."
+    },
+    {
+      "nome": "ERPNext",
+      "motivo": "ERP completo — usa MariaDB (não PostgreSQL) e stack Frappe. Stack pesada, requer container dedicado complexo."
+    }
+  ],
+  "portas_host": {
+    "80": "Traefik HTTP (redirect → HTTPS)",
+    "443": "Traefik HTTPS",
+    "8000": "Gateway FastAPI (se habilitado)"
+  },
+  "requisitos_recursos": {
+    "vcpu_minima": 6,
+    "ram_minima_gb": 12,
+    "disco_minimo_gb": 120,
+    "notas": "Nicho pesado — ERPNext(2vCPU/4GB) + EspoCRM(1vCPU/2GB) + Mautic(1vCPU/2GB) + Documenso(1vCPU/1GB) + overhead Traefik/PostgreSQL. Maior da matriz."
+  }
+}

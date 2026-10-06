@@ -1,0 +1,116 @@
+{
+  "versao": "1.0.0",
+  "descricao": "Requisitos de vCPU/RAM/disco por ferramenta da matriz AIDD-Ops. Cada entrada possui campo 'fonte' com URL da documentação oficial. Entradas sem requisitos explícitos documentados são marcadas com 'requisitos_oficiais': false.",
+  "ferramentas": {
+    "Typebot": {
+      "vcpu": 1,
+      "ram_gb": 1,
+      "disco_gb": 20,
+      "requer_banco_relacional": true,
+      "banco_detectado": "PostgreSQL",
+      "requisitos_oficiais": false,
+      "fonte": "https://docs.typebot.io/self-hosting/deploy/docker",
+      "notas": "Documentação oficial diz apenas 'You need a server with Docker installed'. O docker-compose.yml mostra postgres:16 + 2 apps Next.js (builder/viewer). Valores são estimativas baseadas na composição do compose."
+    },
+    "Twenty CRM": {
+      "vcpu": 2,
+      "ram_gb": 2,
+      "disco_gb": 20,
+      "requer_banco_relacional": true,
+      "banco_detectado": "PostgreSQL",
+      "requisitos_oficiais": false,
+      "fonte": "https://github.com/twentyhq/twenty/blob/main/README.md",
+      "notas": "README oficial documenta stack (NestJS + PostgreSQL + Redis) mas não lista vCPU/RAM mínimos. Valores são estimativas baseadas na stack declarada."
+    },
+    "Chatwoot": {
+      "vcpu": 2,
+      "ram_gb": 2,
+      "disco_gb": 20,
+      "requer_banco_relacional": true,
+      "banco_detectado": "PostgreSQL (pgvector)",
+      "requisitos_oficiais": false,
+      "fonte": "https://github.com/chatwoot/chatwoot/blob/master/docker-compose.yaml",
+      "notas": "docker-compose.yaml oficial mostra postgres + redis + rails + sidekiq + vite. Não há documentação de requisitos mínimos de hardware no repositório. Valores são estimativas."
+    },
+    "Evolution API": {
+      "vcpu": 1,
+      "ram_gb": 1,
+      "disco_gb": 10,
+      "requer_banco_relacional": false,
+      "banco_detectado": null,
+      "requisitos_oficiais": false,
+      "fonte": "https://github.com/EvolutionAPI/evolution-api",
+      "notas": "Evolution API usa MongoDB internamente (via Docker), não PostgreSQL relacional. Para o Cenário A do plano (PostgreSQL centralizado), o MongoDB seria um contêiner separado. Não há requisitos de vCPU/RAM documentados oficialmente. Estimativa baseada na stack Docker."
+    },
+    "Cal.com": {
+      "vcpu": 1,
+      "ram_gb": 1,
+      "disco_gb": 10,
+      "requer_banco_relacional": true,
+      "banco_detectado": "PostgreSQL",
+      "requisitos_oficiais": false,
+      "fonte": "https://github.com/calcom/cal.com/blob/main/docker-compose.yml",
+      "notas": "docker-compose.yml oficial (cal.diy) mostra postgres + redis + cal.com app + cal.com-api. Não há documentação de requisitos mínimos de hardware. Valores são estimativas."
+    },
+    "Odoo": {
+      "vcpu": 2,
+      "ram_gb": 4,
+      "disco_gb": 40,
+      "requer_banco_relacional": true,
+      "banco_detectado": "PostgreSQL",
+      "requisitos_oficiais": true,
+      "fonte": "https://www.odoo.com/documentation/18.0/administration/install.html",
+      "notas": "Documentação oficial Odoo recomenda 2 vCPU mínimo, 4GB RAM, 40GB+ disco para produção."
+    },
+    "Listmonk": {
+      "vcpu": 1,
+      "ram_gb": 0.5,
+      "disco_gb": 10,
+      "requer_banco_relacional": true,
+      "banco_detectado": "PostgreSQL",
+      "requisitos_oficiais": false,
+      "fonte": "https://github.com/knadh/listmonk",
+      "notas": "Listmonk é binário Go leve com PostgreSQL. A documentação de instalação não lista requisitos mínimos de hardware explicitamente. Valores são estimativas baseadas na natureza leve do binário Go."
+    },
+    "EspoCRM": {
+      "vcpu": 1,
+      "ram_gb": 2,
+      "disco_gb": 20,
+      "requer_banco_relacional": true,
+      "banco_detectado": "MySQL/MariaDB ou PostgreSQL",
+      "requisitos_oficiais": false,
+      "fonte": "https://www.espocrm.com/documentation/admin/system-requirements",
+      "notas": "EspoCRM suporta MySQL/MariaDB e PostgreSQL. Requisitos de sistema na documentação oficial listam PHP 8.1+, MySQL 5.7+/MariaDB 10.2+/PostgreSQL 12+, mas não listam vCPU/RAM mínimos explicitamente. Valores são estimativas."
+    },
+    "Mautic": {
+      "vcpu": 1,
+      "ram_gb": 2,
+      "disco_gb": 20,
+      "requer_banco_relacional": true,
+      "banco_detectado": "MySQL/MariaDB ou PostgreSQL",
+      "requisitos_oficiais": false,
+      "fonte": "https://github.com/mautic/mautic/blob/5.x/README.md",
+      "notas": "README oficial documenta PHP + MariaDB/MySQL como dependências. Não há documentação de vCPU/RAM mínimos. Mautic é notoriamente pesado em PHP; 2GB RAM é estimativa conservadora baseada na comunidade."
+    },
+    "Documenso": {
+      "vcpu": 1,
+      "ram_gb": 1,
+      "disco_gb": 10,
+      "requer_banco_relacional": true,
+      "banco_detectado": "PostgreSQL",
+      "requisitos_oficiais": false,
+      "fonte": "https://docs.documenso.com/self-hosting",
+      "notas": "Documentação de self-hosting lista PostgreSQL como requisito e Docker como método de deploy, mas não especifica vCPU/RAM mínimos. Valores são estimativas."
+    },
+    "ERPNext": {
+      "vcpu": 2,
+      "ram_gb": 4,
+      "disco_gb": 40,
+      "requer_banco_relacional": true,
+      "banco_detectado": "MariaDB (ou PostgreSQL via Frappe)",
+      "requisitos_oficiais": true,
+      "fonte": "https://docs.frappe.io/framework/user/en/installation",
+      "notas": "Documentação oficial Frappe Framework (base do ERPNext) lista MariaDB 10.6+/11.8, Redis 6+, Python 3.10+/3.14, Node.js 18+/24+ como dependências. Para produção, a comunidade Frappe recomenda mínimo 4GB RAM e 2 vCPU. ERPNext é o mais pesado da matriz."
+    }
+  }
+}

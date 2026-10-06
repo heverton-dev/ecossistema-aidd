@@ -308,21 +308,24 @@ def cmd_pure_motor(args):
     return run_command(cmd, cwd=os.getcwd(), env=env)
 
 def cmd_master(args):
-    master_dir = os.path.join(TOOLS_DIR, "aidd-master")
+    vsa_dir = os.path.join(ROOT_DIR, "modulos", "03-plataforma-e-entrega", "fatiamento-master", "aidd-master")
+    master_dir = vsa_dir if os.path.isdir(vsa_dir) else os.path.join(TOOLS_DIR, "aidd-master")
     aidd_script = os.path.join(master_dir, "scripts", "aidd.py")
     env = {"PYTHONPATH": master_dir}
     cmd = [sys.executable, aidd_script] + args
     return run_command(cmd, cwd=os.getcwd(), env=env)
 
 def cmd_enterprise(args):
-    ent_dir = os.path.join(TOOLS_DIR, "aidd-enterprise")
+    vsa_dir = os.path.join(ROOT_DIR, "modulos", "03-plataforma-e-entrega", "blindagem-enterprise", "aidd-enterprise")
+    ent_dir = vsa_dir if os.path.isdir(vsa_dir) else os.path.join(TOOLS_DIR, "aidd-enterprise")
     aidd_script = os.path.join(ent_dir, "scripts", "aidd.py")
     env = {"PYTHONPATH": ent_dir}
     cmd = [sys.executable, aidd_script] + args
     return run_command(cmd, cwd=os.getcwd(), env=env)
 
 def cmd_ops(args):
-    ops_dir = os.path.join(TOOLS_DIR, "aidd-ops")
+    vsa_dir = os.path.join(ROOT_DIR, "modulos", "03-plataforma-e-entrega", "operacoes-ops", "aidd-ops")
+    ops_dir = vsa_dir if os.path.isdir(vsa_dir) else os.path.join(TOOLS_DIR, "aidd-ops")
     pipeline_script = os.path.join(ops_dir, "scripts", "pipeline_ops.py")
     env = {"PYTHONPATH": ops_dir}
     cmd = [sys.executable, pipeline_script] + args

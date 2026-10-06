@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Central de Helpdesk & Gestão de SLA — AIDD v2.0</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #030712;
+            --surface: rgba(17, 24, 39, 0.85);
+            --border: rgba(255, 255, 255, 0.08);
+            --primary: #a855f7;
+            --primary-hover: #9333ea;
+            --danger: #ef4444;
+            --text: #f9fafb;
+            --muted: #9ca3af;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Plus Jakarta Sans', sans-serif; }
+        body {
+            background-color: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            background-image: radial-gradient(circle at 50% -20%, rgba(168, 85, 247, 0.25), transparent 60%);
+            padding: 2rem 3.5rem;
+        }
+        header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); padding-bottom: 1.5rem; margin-bottom: 2rem; }
+        .brand { display: flex; align-items: center; gap: 0.8rem; font-size: 1.35rem; font-weight: 800; }
+        .btn { padding: 0.65rem 1.3rem; border-radius: 10px; font-weight: 700; font-size: 0.88rem; border: 1px solid var(--border); background: rgba(255, 255, 255, 0.05); color: #fff; text-decoration: none; cursor: pointer; display: inline-flex; align-items: center; gap: 0.5rem; }
+        .btn:hover { background: rgba(255, 255, 255, 0.1); }
+        .btn-primary { background: var(--primary); border-color: var(--primary); }
+        .btn-primary:hover { background: var(--primary-hover); }
+        .metrics-bar { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1.5rem; margin-bottom: 2.5rem; }
+        .metric-card { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 1.3rem 1.5rem; backdrop-filter: blur(16px); }
+        .metric-label { font-size: 0.78rem; font-weight: 700; color: var(--muted); text-transform: uppercase; }
+        .metric-value { font-size: 1.7rem; font-weight: 800; margin-top: 0.4rem; }
+        .controls { display: flex; justify-content: space-between; gap: 1rem; margin-bottom: 1.5rem; }
+        .search-box input { padding: 0.75rem 1.2rem; background: var(--surface); border: 1px solid var(--border); border-radius: 10px; color: #fff; width: 350px; outline: none; }
+        .search-box input:focus { border-color: var(--primary); }
+        .ticket-list { display: flex; flex-direction: column; gap: 1rem; }
+        .ticket-card { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 1.4rem 1.6rem; backdrop-filter: blur(16px); display: flex; justify-content: space-between; align-items: center; transition: all 0.2s; }
+        .ticket-card:hover { border-color: rgba(168, 85, 247, 0.4); transform: translateY(-2px); }
+        .prio-badge { padding: 0.25rem 0.6rem; border-radius: 6px; font-weight: 800; font-size: 0.75rem; }
+        .prio-P1 { background: rgba(239, 68, 68, 0.2); color: #f87171; border: 1px solid rgba(239, 68, 68, 0.4); }
+        .prio-P2 { background: rgba(245, 158, 11, 0.2); color: #fcd34d; border: 1px solid rgba(245, 158, 11, 0.4); }
+        .prio-P3 { background: rgba(59, 130, 246, 0.2); color: #93c5fd; border: 1px solid rgba(59, 130, 246, 0.4); }
+        .prio-P4 { background: rgba(16, 185, 129, 0.2); color: #6ee7b7; border: 1px solid rgba(16, 185, 129, 0.4); }
+        .status-badge { padding: 0.3rem 0.7rem; border-radius: 9999px; font-size: 0.75rem; font-weight: 800; cursor: pointer; }
+        .status-aberto { background: rgba(239, 68, 68, 0.2); color: #f87171; }
+        .status-em_andamento { background: rgba(59, 130, 246, 0.2); color: #93c5fd; }
+        .status-resolvido { background: rgba(16, 185, 129, 0.2); color: #6ee7b7; }
+        .btn-icon { background: none; border: none; color: var(--muted); cursor: pointer; padding: 0.3rem; border-radius: 6px; }
+        .btn-icon:hover { color: #fff; }
+        .btn-icon.delete:hover { color: var(--danger); }
+        .modal-overlay { position: fixed; inset: 0; background: rgba(3, 7, 18, 0.85); backdrop-filter: blur(16px); display: none; align-items: center; justify-content: center; z-index: 100; }
+        .modal-content { background: #0b0f19; border: 1px solid var(--border); border-radius: 20px; width: 100%; max-width: 520px; padding: 2rem; }
+        .form-group { margin-bottom: 1.2rem; }
+        .form-label { display: block; font-size: 0.8rem; font-weight: 700; color: var(--muted); margin-bottom: 0.4rem; }
+        .form-input { width: 100%; padding: 0.75rem 1rem; background: #060911; border: 1px solid var(--border); border-radius: 10px; color: #fff; outline: none; }
+        .form-input:focus { border-color: var(--primary); }
+    
+/* =========================================================================
+   DESIGN SYSTEM UNIVERSAL (SCROLLBAR 4PX & BUTTON WRAP PROTECTION)
+   ========================================================================= */
+* {
+    scrollbar-width: thin;
+    scrollbar-color: rgba(59, 130, 246, 0.4) transparent;
+}
+::-webkit-scrollbar {
+    width: 4px !important;
+    height: 4px !important;
+}
+::-webkit-scrollbar-track {
+    background: transparent !important;
+}
+::-webkit-scrollbar-thumb {
+    background: rgba(59, 130, 246, 0.35) !important;
+    border-radius: 9999px !important;
+    transition: background 0.2s ease !important;
+}
+::-webkit-scrollbar-thumb:hover {
+    background: rgba(59, 130, 246, 0.75) !important;
+}
+
+button, .btn, .btn-primary, .btn-secondary, .btn-gold, .btn-danger,
+.tab-btn, .resp-status-btn, .lang-tab, .endpoint-link, .nav-item {
+    white-space: nowrap !important;
+    text-overflow: ellipsis;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    flex-shrink: 0 !important;
+    line-height: 1.2 !important;
+}
+
+    </style>
+</head>
+<body>
+    <header>
+        <div class="brand">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#a855f7" stroke-width="2.5"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+            Central de Helpdesk & Gestão de SLA
+        </div>
+        <div style="display: flex; gap: 0.8rem;">
+            <a href="/docs" target="_blank" class="btn">Swagger /docs</a>
+            <button class="btn btn-primary" onclick="abrirModalNovo()">Novo Chamado</button>
+        </div>
+    </header>
+
+    <div class="metrics-bar">
+        <div class="metric-card">
+            <div class="metric-label">CHAMADOS CRÍTICOS (P1)</div>
+            <div class="metric-value" id="val-p1" style="color: #ef4444;">0</div>
+        </div>
+        <div class="metric-card">
+            <div class="metric-label">CHAMADOS ABERTOS</div>
+            <div class="metric-value" id="val-abertos" style="color: #f59e0b;">0</div>
+        </div>
+        <div class="metric-card">
+            <div class="metric-label">EM ATENDIMENTO</div>
+            <div class="metric-value" id="val-andamento" style="color: #60a5fa;">0</div>
+        </div>
+        <div class="metric-card">
+            <div class="metric-label">RESOLVIDOS COM SUCESSO</div>
+            <div class="metric-value" id="val-resolvidos" style="color: #10b981;">0</div>
+        </div>
+    </div>
+
+    <div class="controls">
+        <div class="search-box">
+            <input type="text" id="busca" placeholder="Buscar por protocolo, assunto ou cliente..." oninput="carregar()">
+        </div>
+        <div style="display: flex; gap: 0.5rem;">
+            <select id="filtro-prio" class="form-input" style="width: auto;" onchange="carregar()">
+                <option value="todos">Todas as Prioridades</option>
+                <option value="P1">P1 - Crítico</option>
+                <option value="P2">P2 - Alto</option>
+                <option value="P3">P3 - Médio</option>
+                <option value="P4">P4 - Baixo</option>
+            </select>
+        </div>
+    </div>
+
+    <div class="ticket-list" id="tickets-container">Carregando fila...</div>
+
+    <!-- MODAL FULL-CRUD -->
+    <div class="modal-overlay" id="modal-ticket">
+        <div class="modal-content">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+                <h3 id="modal-title" style="font-size: 1.25rem; font-weight: 800;">Novo Chamado</h3>
+                <button onclick="fecharModal()" style="background: none; border: none; color: #fff; cursor: pointer; font-size: 1.5rem;">&times;</button>
+            </div>
+            <form onsubmit="salvarTicket(event)">
+                <input type="hidden" id="ticket-id" value="">
+                <div class="form-group">
+                    <label class="form-label">ASSUNTO DO CHAMADO</label>
+                    <input type="text" class="form-input" id="ticket-assunto" required placeholder="Ex: Lentidão na API de Pagamentos">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">DESCRIÇÃO DETALHADA</label>
+                    <textarea class="form-input" id="ticket-desc" rows="3" required placeholder="Descreva os passos para reproduzir o problema..."></textarea>
+                </div>
+                <div style="display: flex; gap: 1rem;">
+                    <div class="form-group" style="flex: 1;">
+                        <label class="form-label">NOME DO CLIENTE</label>
+                        <input type="text" class="form-input" id="ticket-nome" required placeholder="Rafael Souza">
+                    </div>
+                    <div class="form-group" style="flex: 1;">
+                        <label class="form-label">EMAIL</label>
+                        <input type="email" class="form-input" id="ticket-email" required placeholder="rafael@empresa.com">
+                    </div>
+                </div>
+                <div style="display: flex; gap: 1rem;">
+                    <div class="form-group" style="flex: 1;">
+                        <label class="form-label">PRIORIDADE</label>
+                        <select class="form-input" id="ticket-prio">
+                            <option value="P1">P1 - Crítico (SLA 2h)</option>
+                            <option value="P2">P2 - Alto (SLA 4h)</option>
+                            <option value="P3" selected>P3 - Médio (SLA 24h)</option>
+                            <option value="P4">P4 - Baixo (SLA 48h)</option>
+                        </select>
+                    </div>
+                    <div class="form-group" style="flex: 1;">
+                        <label class="form-label">STATUS</label>
+                        <select class="form-input" id="ticket-status">
+                            <option value="aberto">Aberto</option>
+                            <option value="em_andamento">Em Andamento</option>
+                            <option value="resolvido">Resolvido</option>
+                        </select>
+                    </div>
+                </div>
+                <div style="display: flex; justify-content: flex-end; gap: 0.8rem; margin-top: 1.5rem;">
+                    <button type="button" class="btn" onclick="fecharModal()">Cancelar</button>
+                    <button type="submit" class="btn btn-primary">Salvar Chamado</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        async function carregar() {
+            const busca = document.getElementById('busca').value;
+            const prio = document.getElementById('filtro-prio').value;
+            const tickets = await fetch('/api/tickets?prioridade=' + prio + '&busca=' + encodeURIComponent(busca)).then(r => r.json());
+
+            let p1 = 0, abertos = 0, andamento = 0, resolvidos = 0;
+            tickets.forEach(t => {
+                if (t.prioridade === 'P1' && t.status !== 'resolvido') p1++;
+                if (t.status === 'aberto') abertos++;
+                if (t.status === 'em_andamento') andamento++;
+                if (t.status === 'resolvido') resolvidos++;
+            });
+
+            document.getElementById('val-p1').innerText = p1;
+            document.getElementById('val-abertos').innerText = abertos;
+            document.getElementById('val-andamento').innerText = andamento;
+            document.getElementById('val-resolvidos').innerText = resolvidos;
+
+            document.getElementById('tickets-container').innerHTML = tickets.map(t => `
+                <div class="ticket-card">
+                    <div>
+                        <div style="display: flex; align-items: center; gap: 0.6rem; margin-bottom: 0.4rem;">
+                            <span class="prio-badge prio-${t.prioridade}">${t.prioridade}</span>
+                            <span style="font-weight: 800; font-size: 0.85rem; color: var(--muted);">${t.protocolo}</span>
+                            <span class="status-badge status-${t.status}" onclick="avancarStatus(${t.id})" title="Clique para avançar status">
+                                ${t.status.replace('_', ' ').toUpperCase()}
+                            </span>
+                        </div>
+                        <h3 style="font-size: 1.15rem; font-weight: 700; margin-bottom: 0.3rem;">${t.assunto}</h3>
+                        <div style="color: var(--muted); font-size: 0.85rem;">Cliente: ${t.cliente_nome} (${t.cliente_email})</div>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 1.5rem;">
+                        <div style="text-align: right;">
+                            <div style="font-size: 0.75rem; font-weight: 700; color: var(--muted); margin-bottom: 0.2rem;">SLA RESTANTE</div>
+                            <div style="font-weight: 800; font-size: 1.2rem; color: ${t.prioridade === 'P1' ? '#ef4444' : '#60a5fa'};">${t.sla_limite_horas}h 00m</div>
+                        </div>
+                        <div style="display: flex; gap: 0.4rem;">
+                            <button class="btn-icon" title="Editar" onclick="editarTicket(${t.id})">
+                                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+                            </button>
+                            <button class="btn-icon delete" title="Excluir" onclick="excluirTicket(${t.id}, '${t.protocolo}')">
+                                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        async function avancarStatus(id) {
+            await fetch('/api/tickets/avancar-status', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({ id })
+            });
+            carregar();
+        }
+
+        function abrirModalNovo() {
+            document.getElementById('modal-title').innerText = 'Novo Chamado';
+            document.getElementById('ticket-id').value = '';
+            document.getElementById('ticket-assunto').value = '';
+            document.getElementById('ticket-desc').value = '';
+            document.getElementById('modal-ticket').style.display = 'flex';
+        }
+
+        async function editarTicket(id) {
+            const t = await fetch('/api/tickets/detalhes?id=' + id).then(r => r.json());
+            document.getElementById('modal-title').innerText = 'Editar Chamado ' + t.protocolo;
+            document.getElementById('ticket-id').value = t.id;
+            document.getElementById('ticket-assunto').value = t.assunto;
+            document.getElementById('ticket-desc').value = t.descricao;
+            document.getElementById('ticket-nome').value = t.cliente_nome;
+            document.getElementById('ticket-email').value = t.cliente_email;
+            document.getElementById('ticket-prio').value = t.prioridade;
+            document.getElementById('ticket-status').value = t.status;
+            document.getElementById('modal-ticket').style.display = 'flex';
+        }
+
+        async function salvarTicket(e) {
+            e.preventDefault();
+            const prio = document.getElementById('ticket-prio').value;
+            const sla = prio === 'P1' ? 2 : (prio === 'P2' ? 4 : (prio === 'P3' ? 24 : 48));
+            await fetch('/api/tickets/salvar', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({
+                    id: document.getElementById('ticket-id').value || null,
+                    assunto: document.getElementById('ticket-assunto').value,
+                    descricao: document.getElementById('ticket-desc').value,
+                    cliente_nome: document.getElementById('ticket-nome').value,
+                    cliente_email: document.getElementById('ticket-email').value,
+                    prioridade: prio,
+                    sla_limite_horas: sla,
+                    status: document.getElementById('ticket-status').value
+                })
+            });
+            fecharModal();
+            carregar();
+        }
+
+        async function excluirTicket(id, proto) {
+            if (confirm('Excluir chamado ' + proto + '?')) {
+                await fetch('/api/tickets/deletar', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({ id })
+                });
+                carregar();
+            }
+        }
+
+        function fecharModal() { document.getElementById('modal-ticket').style.display = 'none'; }
+        window.onload = carregar;
+    </script>
+</body>
+</html>

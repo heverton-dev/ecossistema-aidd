@@ -1,0 +1,44 @@
+# =============================================================================
+# AIDD-Ops — Bloco: Gateway FastAPI Mínimo
+# Camada de API Gateway / Proxy Reverso Interno
+# =============================================================================
+# Imagem oficial: fastapi/uvicorn (Docker Hub — Tiangolo)
+# Nota: Este bloco é um gateway leve para orquestrar chamadas entre microserviços.
+#       Para TLS/reverse proxy público, use o bloco traefik/.
+# Validação: docker compose config (syntaxe) + G_INFRA_COMPOSE.py (Pacote 6)
+# =============================================================================
+
+services:
+  gateway:
+    image: fastapi/uvicorn:latest
+    container_name: aidd_gateway
+    restart: unless-stopped
+    command: >
+      uvicorn main:app
+      --host 0.0.0.0
+      --port 8000
+      --workers ${GATEWAY_WORKERS:-2}
+      --log-level ${GATEWAY_LOG_LEVEL:-info}
+    environment:
+      GATEWAY_ENV: ${GATEWAY_ENV:-production}
+      LOG_LEVEL: ${GATEWAY_LOG_LEVEL:-info}
+    volumes:
+      - ./app:/app/app:ro
+    ports:
+      - "${GATEWAY_PORT:-8000}:8000"
+    networks:
+      - aidd_internal
+    healthcheck:
+      test: ["CMD-SHELL", "python -c \"import urllib.request; urllib.request.urlopen('http://localhost:8000/health')\" || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
+    deploy:
+      resources:
+        limits:
+          memory: ${GATEWAY_MAX_RAM:-256m}
+
+networks:
+  aidd_internal:
+    driver: bridge

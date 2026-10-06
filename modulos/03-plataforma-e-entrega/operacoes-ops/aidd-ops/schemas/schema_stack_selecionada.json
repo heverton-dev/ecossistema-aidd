@@ -1,0 +1,37 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "aidd-ops-stack-selecionada",
+  "title": "AIDD-Ops Fase 2 — Stack Selecionada",
+  "description": "Contrato de saída da Fase 2 (Curadoria). Lista de ferramentas open-source selecionadas para o nicho.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["nicho_slug", "nicho_nome_exibicao", "ferramentas"],
+  "properties": {
+    "nicho_slug": {
+      "type": "string",
+      "description": "Slug do nicho de mercado",
+      "minLength": 1
+    },
+    "nicho_nome_exibicao": {
+      "type": "string",
+      "description": "Nome de exibição do nicho em PT-BR",
+      "minLength": 1
+    },
+    "ferramentas": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["nome"],
+        "properties": {
+          "nome": {
+            "type": "string",
+            "description": "Nome oficial da ferramenta"
+          }
+        }
+      },
+      "minItems": 1,
+      "description": "Lista de ferramentas selecionadas para a stack do nicho"
+    }
+  }
+}

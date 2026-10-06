@@ -1,0 +1,279 @@
+# -*- coding: utf-8 -*-
+"""
+Testes de provision_project.py — cobertura que nao existia antes de
+17/09/2026 (achado real na validacao E2E do Fluxo 01/Etapa 4).
+
+Contexto: provision_project.py e a implementacao real por tras de
+`aidd-master init`, o comando OFICIAL de entrada para provisionar um novo
+projeto modular (documentado como tal em `aidd.py init --help`). Ate
+17/09/2026 nenhum teste chamava `provision()` e verificava os arquivos
+gerados. Isso permitiu 2 bugs reais sobreviverem sem ninguem notar:
+
+1. Todo projeto criado com `aidd-master init` nascia sem `src/server.py`,
+   porque `add_module.criar_modulo()` so RE-liga (regenera) o server.py
+   quando ele ja existe (comentario explicito no proprio codigo dizendo
+   que a composicao inicial e responsabilidade de quem chama
+   `criar_modulo()` pela primeira vez) — e `provision()` nunca gerava esse
+   arquivo na primeira vez. G_ESTRUTURA reprova isso ("Servidor ausente ou
+   vazio").
+2. `src/static/index.html` era copiado estaticamente de
+   `templates/core/index.html`, uma versao desatualizada sem as variaveis
+   CSS (`--bg-base`) e a estrutura modal (`modal-overlay`/`modal-generic`)
+   que G_CONTRACTS exige — enquanto `compose_suite()` (usado por outro
+   fluxo) ja gerava esse mesmo arquivo dinamicamente via
+   `generate_superapp_index_html()`, sempre em dia.
+3. A lista hardcoded de arquivos `core/*.py` copiados por `provision()`
+   estava desatualizada em relacao ao que `generate_modular_server_code()`
+   realmente importa: faltavam `outbox_worker.py`, `jobs.py`, `metrics.py`
+   e `logs.py`. O servidor de QUALQUER projeto criado por `master init`
+   quebrava com `ModuleNotFoundError: No module named 'core.outbox_worker'`
+   ao tentar subir de verdade (`python src/server.py`) — achado ao pedir
+   ao usuario para abrir a aplicacao gerada no navegador, nao pelos gates
+   (que nunca importam server.py de verdade). Corrigido promovendo a lista
+   completa e correta de `compose_suite.py` para a constante de modulo
+   `CORE_KERNEL_FILES`, reusada por ambos — fonte unica, nunca mais diverge.
+
+Juntos, os tres bugs faziam o comando oficial de inicio do Fluxo 01/Etapa 4
+nunca produzir um projeto que passasse na propria auditoria do produto nem
+que realmente subisse como aplicacao.
+"""
+
+import json
+import os
+import subprocess
+import sys
+
+import pytest
+
+SCRIPTS_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", "scripts"))
+if SCRIPTS_DIR not in sys.path:
+    sys.path.insert(0, SCRIPTS_DIR)
+
+
+def test_provision_gera_server_py_no_primeiro_modulo(tmp_path):
+    """Achado real: `provision()` criava o modulo 'principal' mas nunca
+    escrevia src/server.py na primeira composicao do projeto."""
+    from provision_project import provision
+
+    provision("Projeto Teste Provision", base_dir=str(tmp_path))
+
+    # ISSUE-USA-0003: layout achatado — sem prefixo proj_ e sem camada extra.
+    assert not list(tmp_path.glob("proj_*")), "prefixo proj_ foi abolido (ISSUE-USA-0003)"
+    projetos = [p for p in tmp_path.iterdir() if p.is_dir()]
+    assert len(projetos) == 1, f"esperava 1 diretorio de projeto, achei: {projetos}"
+    projeto_dir = projetos[0]
+
+    server_path = projeto_dir / "src" / "server.py"
+    assert server_path.exists(), "src/server.py nao foi gerado por provision()"
+    assert server_path.stat().st_size > 0, "src/server.py foi gerado vazio"
+
+
+def test_provision_gera_frontend_nextjs_por_padrao(tmp_path):
+    """Lei Inviolável #11 (Padrão-Ouro de Stack): provision() sem
+    frontend_stack explícito deve gerar frontend/ em Next.js, não mais o
+    Super-App em src/static/index.html (Python/HTML puro)."""
+    from provision_project import provision
+
+    provision("Projeto Teste Nextjs Default", base_dir=str(tmp_path))
+    projeto_dir = next(p for p in tmp_path.iterdir() if p.is_dir() and not p.name.startswith("proj_"))
+
+    assert (projeto_dir / "frontend" / "package.json").is_file()
+    assert (projeto_dir / "frontend" / "app" / "layout.tsx").is_file()
+    assert not (projeto_dir / "src" / "static" / "index.html").exists()
+
+    pkg = json.loads((projeto_dir / "frontend" / "package.json").read_text(encoding="utf-8"))
+    assert pkg["dependencies"]["next"] == "^14.2.5"
+
+
+def test_provision_gera_index_html_python_quando_pedido_explicitamente(tmp_path):
+    """Lei #11: só muda da stack default (Next.js) se pedido explicitamente
+    (frontend_stack="python-html") — silêncio nunca é licença para gerar
+    outra coisa, mas um pedido explícito continua honrado."""
+    from provision_project import provision
+
+    provision("Projeto Teste Index Explicito", base_dir=str(tmp_path), frontend_stack="python-html")
+    projeto_dir = next(p for p in tmp_path.iterdir() if p.is_dir() and not p.name.startswith("proj_"))
+
+    index_path = projeto_dir / "src" / "static" / "index.html"
+    conteudo = index_path.read_text(encoding="utf-8")
+    assert "<style>" in conteudo and "--bg-base" in conteudo
+    assert "modal-overlay" in conteudo or "modal-generic" in conteudo
+    assert not (projeto_dir / "frontend").exists()
+
+
+def test_provision_passa_no_gate_g_estrutura(tmp_path):
+    """Nao basta o arquivo existir — precisa satisfazer de verdade o mesmo
+    gate que `aidd-master audit` roda contra qualquer projeto provisionado
+    (reproducao real, sem leitura cruzada de codigo)."""
+    from provision_project import provision
+
+    provision("Projeto Teste Estrutura", base_dir=str(tmp_path))
+    projeto_dir = next(p for p in tmp_path.iterdir() if p.is_dir() and not p.name.startswith("proj_"))
+
+    gate_path = os.path.join(str(projeto_dir), "scripts", "gates", "G_ESTRUTURA.py")
+    if not os.path.isfile(gate_path):
+        gate_path = os.path.join(os.path.dirname(os.path.dirname(SCRIPTS_DIR)), "componentes", "compartilhado", "gates", "G_ESTRUTURA.py")
+    import subprocess
+
+    resultado = subprocess.run(
+        [sys.executable, gate_path, "--dir", str(projeto_dir)],
+        capture_output=True, text=True, encoding="utf-8", errors="replace", timeout=30,
+    )
+    assert resultado.returncode == 0, resultado.stdout + resultado.stderr
+
+
+def test_provision_passa_no_gate_g_contracts(tmp_path):
+    """Mesma logica do teste acima, para o gate que pegava o index.html
+    desatualizado (G_CONTRACTS)."""
+    from provision_project import provision
+
+    provision("Projeto Teste Contracts", base_dir=str(tmp_path))
+    projeto_dir = next(p for p in tmp_path.iterdir() if p.is_dir() and not p.name.startswith("proj_"))
+
+    gate_path = os.path.join(str(projeto_dir), "scripts", "gates", "G_CONTRACTS.py")
+    if not os.path.isfile(gate_path):
+        gate_path = os.path.join(os.path.dirname(os.path.dirname(SCRIPTS_DIR)), "componentes", "compartilhado", "gates", "G_CONTRACTS.py")
+
+    resultado = subprocess.run(
+        [sys.executable, gate_path, "--dir", str(projeto_dir)],
+        capture_output=True, text=True, encoding="utf-8", errors="replace", timeout=30,
+    )
+    assert resultado.returncode == 0, resultado.stdout + resultado.stderr
+
+
+def test_provision_requirements_txt_inclui_sqlglot_e_returns(tmp_path):
+    """Achado real (validacao E2E do Fluxo 01/Etapa 6, 17/09/2026):
+    requirements.txt gerado por provision() tinha uma lista hardcoded e
+    incompleta — faltavam sqlglot (core/database.py importa incondicional
+    na linha de topo) e returns (core/result.py idem). `docker compose up`
+    contra o projeto gerado quebrava com ModuleNotFoundError dentro do
+    container (ambiente isolado, sem os pacotes ja instalados no host).
+    Corrigido promovendo o conteudo para a constante CORE_KERNEL_REQUIREMENTS
+    em compose_suite.py, mesma fonte unica usada pelo outro fluxo."""
+    from provision_project import provision
+
+    provision("Projeto Teste Requirements", base_dir=str(tmp_path))
+    projeto_dir = next(p for p in tmp_path.iterdir() if p.is_dir() and not p.name.startswith("proj_"))
+
+    conteudo = (projeto_dir / "requirements.txt").read_text(encoding="utf-8")
+    assert "sqlglot" in conteudo
+    assert "returns" in conteudo
+
+
+def test_provision_nao_gera_infra_que_e_do_aidd_ops(tmp_path):
+    """Ticket 17 (fronteiras-ferramentas): Dockerfile, docker-compose.yml, deploy.sh e
+    nginx/ saem do `master init` e passam a ser do aidd-ops. Os dois achados reais
+    que os testes antigos guardavam (pasta nginx/ com o gerador de SSL; Dockerfile
+    instalando requirements antes do src/) estão em
+    tools/aidd-ops/tests/test_fronteira_ops_infra_generica.py."""
+    from provision_project import provision
+
+    provision("Projeto Teste Sem Infra", base_dir=str(tmp_path))
+    projeto_dir = next(p for p in tmp_path.iterdir() if p.is_dir() and not p.name.startswith("proj_"))
+
+    for nome in ("Dockerfile", "docker-compose.yml", "deploy.sh", "nginx"):
+        assert not (projeto_dir / nome).exists(), f"master init gerou {nome}, que é do aidd-ops"
+
+
+def test_provision_server_py_importa_de_verdade_sem_modulenotfounderror(tmp_path):
+    """Achado real: server.py gerado faz `from core.outbox_worker import ...`
+    (e jobs/metrics/logs), mas a lista hardcoded de arquivos copiados por
+    provision() nao incluia esses 4 modulos — o servidor de qualquer
+    projeto criado por `master init` nunca conseguia sequer ser importado.
+    Reproducao real: sobe um subprocess que importa server.py de verdade a
+    partir de src/ (nao apenas confere se os arquivos existem em disco)."""
+    from provision_project import provision
+
+    provision("Projeto Teste Import Server", base_dir=str(tmp_path))
+    projeto_dir = next(p for p in tmp_path.iterdir() if p.is_dir() and not p.name.startswith("proj_"))
+
+    resultado = subprocess.run(
+        [sys.executable, "-c", "import server"],
+        cwd=str(projeto_dir / "src"),
+        capture_output=True, text=True, encoding="utf-8", errors="replace", timeout=15,
+    )
+    assert resultado.returncode == 0, resultado.stdout + resultado.stderr
+
+
+def test_provision_copia_output_css_para_docs_html_funcionar(tmp_path):
+    """Achado real (print do usuário, 18/09/2026): `src/static/docs.html`
+    (Swagger Studio e Guia) referencia `<link rel="stylesheet" href="/static/
+    output.css">` para TODAS as classes utilitárias Tailwind (w-6, h-4,
+    cores, espaçamento). `provision()` nunca copiava esse arquivo (só
+    `compose_suite()` copiava, para outro fluxo) — em produção o CSS voltava
+    HTTP 404 e a página inteira renderizava sem nenhum estilo: ícones SVG
+    gigantes sem tamanho, texto sem layout, cores default do navegador."""
+    from provision_project import provision
+
+    provision("Projeto Teste Output Css", base_dir=str(tmp_path))
+    projeto_dir = next(p for p in tmp_path.iterdir() if p.is_dir() and not p.name.startswith("proj_"))
+
+    css_path = projeto_dir / "src" / "static" / "output.css"
+    assert css_path.is_file(), "src/static/output.css nao foi copiado por provision()"
+    conteudo = css_path.read_text(encoding="utf-8")
+    assert ".w-6{" in conteudo or ".w-6 {" in conteudo, "output.css nao contem as classes Tailwind usadas por docs.html"
+
+
+def test_provision_registra_modulo_principal_no_manifesto(tmp_path):
+    """Achado real (validacao com o usuario, 18/09/2026): `provision()`
+    escrevia PLANO-EXECUCAO-ESTRUTURADO.json SO DEPOIS de chamar
+    `criar_modulo("principal", ...)` — nesse momento o arquivo ainda nao
+    existia, entao `criar_modulo()` (que so registra o modulo no manifesto
+    `if os.path.isfile(plano_path)`) pulava silenciosamente o registro.
+    "principal" ficava so como pasta fisica em disco, nunca contabilizado
+    em `modulos`. Quando outro modulo era adicionado depois via
+    `add_module`, o server.py era regenerado usando so `modulos` do
+    manifesto (sem "principal") -> a pagina Next.js de "principal" (que o
+    frontend gera varrendo pastas em disco, nao o manifesto) chamava uma
+    rota que o backend nunca registrou -> HTTP 404 real, visto pelo usuario
+    rodando a aplicacao de verdade."""
+    from provision_project import provision
+
+    provision("Projeto Teste Manifesto Principal", base_dir=str(tmp_path))
+    projeto_dir = next(p for p in tmp_path.iterdir() if p.is_dir() and not p.name.startswith("proj_"))
+
+    plano = json.loads((projeto_dir / "PLANO-EXECUCAO-ESTRUTURADO.json").read_text(encoding="utf-8"))
+    slugs = [m.get("slug") for m in plano.get("modulos", [])]
+    assert "principal" in slugs, f"'principal' nao foi registrado no manifesto: {slugs}"
+
+
+def test_add_module_nao_orfa_modulo_anterior_no_server_py(tmp_path):
+    """Reproducao real do bug reportado pelo usuario: depois de adicionar um
+    segundo modulo, o server.py final precisa religar AMBOS os modulos
+    (import + registro de rotas), nao so o modulo novo. Checar apenas se a
+    pagina do frontend existe (como o teste anterior ja fazia) nao pega
+    esse bug — a pagina existe, mas a rota por tras dela nunca foi
+    religada, e isso so aparece testando o server.py gerado de verdade."""
+    from provision_project import provision
+    from add_module import criar_modulo
+
+    provision("Projeto Teste Server Nao Orfao", base_dir=str(tmp_path))
+    projeto_dir = next(p for p in tmp_path.iterdir() if p.is_dir() and not p.name.startswith("proj_"))
+
+    criar_modulo("tarefas", "Módulo de tarefas", target_dir=str(projeto_dir))
+
+    server_code = (projeto_dir / "src" / "server.py").read_text(encoding="utf-8")
+    assert "from modules.principal.routes import registrar_rotas" in server_code, (
+        "server.py final nao religa mais o modulo 'principal' apos add_module — "
+        "orfao real: a pagina do frontend chamaria uma rota inexistente (HTTP 404)."
+    )
+    assert "from modules.tarefas.routes import registrar_rotas" in server_code
+
+
+def test_add_module_religa_pagina_do_frontend_nextjs(tmp_path):
+    """Achado real: `add-module` religava `src/server.py` com o módulo novo,
+    mas nunca regenerava o frontend Next.js — o módulo novo ficava sem
+    página nenhuma em frontend/app/<modulo>/page.tsx."""
+    from provision_project import provision
+    from add_module import criar_modulo
+
+    provision("Projeto Teste Add Module Frontend", base_dir=str(tmp_path))
+    projeto_dir = next(p for p in tmp_path.iterdir() if p.is_dir() and not p.name.startswith("proj_"))
+    assert (projeto_dir / "frontend" / "package.json").is_file()
+
+    criar_modulo("tarefas", "Módulo de tarefas", target_dir=str(projeto_dir))
+
+    assert (projeto_dir / "frontend" / "app" / "tarefas" / "page.tsx").is_file()
+    # A página do módulo original ("principal") continua existindo — a
+    # regeneração não pode apagar páginas de módulos já existentes.
+    assert (projeto_dir / "frontend" / "app" / "principal" / "page.tsx").is_file()

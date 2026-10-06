@@ -1,0 +1,38 @@
+# syntax=docker/dockerfile:1
+# =============================================================================
+# AIDD-Ops — Intake Web (Streamlit) Dockerfile
+# =============================================================================
+# Build context convencional p/ Coolify:
+#   - Base Directory:  tools/aidd-ops
+#   - Dockerfile Location: Dockerfile.intake
+#   - Porta exposta: 8501  (apps/intake/.streamlit/config.toml)
+# A raiz do contexto (tools/aidd-ops) contém scripts/, src/, data/ e schemas/
+# que o intake_core importa — nunca usar apps/intake/ como raiz de contexto.
+# =============================================================================
+
+FROM python:3.12-slim
+
+ENV PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONUNBUFFERED=1
+
+WORKDIR /app
+
+# Dependências do app web (streamlit + returns, que core.result importa)
+COPY apps/intake/requirements.txt apps/intake/requirements.txt
+RUN pip install --no-cache-dir -r apps/intake/requirements.txt
+
+# Código do Intake Web + núcleo compartilhado com o pipeline CLI
+COPY apps/intake/ apps/intake/
+COPY scripts/ scripts/
+COPY src/ src/
+COPY data/ data/
+COPY schemas/ schemas/
+
+EXPOSE 8501
+
+# Healthcheck real usado pelo Coolify/Traefik (endpoint nativo do Streamlit)
+HEALTHCHECK --interval=30s --timeout=5s --start-period=15s --retries=3 \
+    CMD ["python", "-c", "import urllib.request, sys; sys.exit(0 if urllib.request.urlopen('http://127.0.0.1:8501/_stcore/health', timeout=3).status == 200 else 1)"]
+
+# Config vinculada (config.toml do app, headless e gatherUsageStats=false)
+CMD ["streamlit", "run", "apps/intake/app.py", "--server.address=0.0.0.0", "--server.port=8501", "--server.headless=true"]

@@ -1,0 +1,148 @@
+# =============================================================================
+# AIDD-Ops — Playbook de Hardening + Bootstrap de VPS (NIH #15)
+# =============================================================================
+# Substitui a lista fechada de comandos shell manuais (antigo OPERACOES_PERMITIDAS
+# em src/core/ssh_runner.py) por uma colecao Ansible testada e mantida:
+# devsec.hardening (os_hardening, ssh_hardening). As etapas que a colecao nao
+# cobre (docker, firewall, fail2ban, swap) permanecem em tasks locais, porem
+# executadas via modulos Ansible idempotentes — nunca via string de shell
+# concatenada a partir de entrada externa.
+#
+# Tags fechadas (devem espelhar TAGS_PERMITIDAS em src/core/ssh_runner.py):
+#   atualizar_pacotes, docker, firewall, fail2ban, os_hardening, ssh_hardening, swap
+# =============================================================================
+- name: "AIDD-Ops — Hardening determinístico de VPS"
+  hosts: all
+  become: true
+  gather_facts: true
+
+  vars:
+    # devsec.hardening.os_hardening desativa net.ipv4.ip_forward por padrao;
+    # Docker precisa dele ligado para NAT/bridge de rede dos containers.
+    sysctl_overwrite:
+      net.ipv4.ip_forward: 1
+      net.ipv4.conf.all.forwarding: 1
+
+    # Bootstrap inicial autentica como root via chave publica (SSHRunner.user
+    # default). Mante-lo permitido *sem senha* preserva o bootstrap sem abrir
+    # mao do hardening (senha continua proibida).
+    ssh_permit_root_login: "without-password"
+    ssh_password_authentication: false
+    ssh_allow_tcp_forwarding: "no"
+    ssh_allow_agent_forwarding: "no"
+
+    aidd_ops_swap_path: /swapfile
+    aidd_ops_swap_size: 2G
+
+  roles:
+    - role: devsec.hardening.os_hardening
+      tags: [os_hardening]
+    - role: devsec.hardening.ssh_hardening
+      tags: [ssh_hardening]
+
+  tasks:
+    - name: "[atualizar_pacotes] Atualizar indice e pacotes do SO"
+      tags: [atualizar_pacotes]
+      block:
+        - name: Atualizar indice de pacotes apt
+          ansible.builtin.apt:
+            update_cache: true
+            cache_valid_time: 3600
+        - name: Atualizar pacotes instalados (dist-upgrade seguro)
+          ansible.builtin.apt:
+            upgrade: dist
+            autoremove: true
+
+    - name: "[docker] Instalar Docker Engine"
+      tags: [docker]
+      block:
+        - name: Verificar se o Docker ja esta instalado
+          ansible.builtin.command: docker --version
+          register: aidd_ops_docker_check
+          changed_when: false
+          failed_when: false
+        - name: Baixar instalador oficial do Docker (get.docker.com)
+          ansible.builtin.get_url:
+            url: https://get.docker.com
+            dest: /tmp/get-docker.sh
+            mode: "0755"
+          when: aidd_ops_docker_check.rc != 0
+        - name: Executar instalador oficial do Docker
+          ansible.builtin.command: sh /tmp/get-docker.sh
+          when: aidd_ops_docker_check.rc != 0
+        - name: Remover script de instalacao temporario
+          ansible.builtin.file:
+            path: /tmp/get-docker.sh
+            state: absent
+        - name: Garantir que o servico docker esta ativo e habilitado
+          ansible.builtin.systemd:
+            name: docker
+            enabled: true
+            state: started
+
+    - name: "[firewall] Configurar UFW com portas minimas (SSH/HTTP/HTTPS)"
+      tags: [firewall]
+      block:
+        - name: Politica padrao — negar trafego de entrada
+          community.general.ufw:
+            direction: incoming
+            policy: deny
+        - name: Politica padrao — permitir trafego de saida
+          community.general.ufw:
+            direction: outgoing
+            policy: allow
+        - name: Permitir porta SSH (22/tcp)
+          community.general.ufw:
+            rule: allow
+            port: "22"
+            proto: tcp
+        - name: Permitir porta HTTP (80/tcp)
+          community.general.ufw:
+            rule: allow
+            port: "80"
+            proto: tcp
+        - name: Permitir porta HTTPS (443/tcp)
+          community.general.ufw:
+            rule: allow
+            port: "443"
+            proto: tcp
+        - name: Ativar UFW
+          community.general.ufw:
+            state: enabled
+
+    - name: "[fail2ban] Instalar e ativar fail2ban"
+      tags: [fail2ban]
+      block:
+        - name: Instalar pacote fail2ban
+          ansible.builtin.apt:
+            name: fail2ban
+            state: present
+        - name: Garantir que o servico fail2ban esta ativo e habilitado
+          ansible.builtin.systemd:
+            name: fail2ban
+            enabled: true
+            state: started
+
+    - name: "[swap] Provisionar swapfile de 2G"
+      tags: [swap]
+      block:
+        - name: Alocar arquivo de swap (idempotente via 'creates')
+          ansible.builtin.command: "fallocate -l {{ aidd_ops_swap_size }} {{ aidd_ops_swap_path }}"
+          args:
+            creates: "{{ aidd_ops_swap_path }}"
+          register: aidd_ops_swap_criado
+        - name: Restringir permissoes do swapfile (0600)
+          ansible.builtin.file:
+            path: "{{ aidd_ops_swap_path }}"
+            mode: "0600"
+        - name: Formatar swapfile
+          ansible.builtin.command: "mkswap {{ aidd_ops_swap_path }}"
+          when: aidd_ops_swap_criado.changed
+        - name: Ativar swap
+          ansible.builtin.command: "swapon {{ aidd_ops_swap_path }}"
+          when: aidd_ops_swap_criado.changed
+        - name: Persistir swap no /etc/fstab
+          ansible.builtin.lineinfile:
+            path: /etc/fstab
+            line: "{{ aidd_ops_swap_path }} none swap sw 0 0"
+            state: present

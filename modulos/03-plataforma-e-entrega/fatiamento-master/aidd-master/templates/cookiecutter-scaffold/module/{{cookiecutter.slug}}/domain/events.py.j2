@@ -1,0 +1,52 @@
+{%- set slug = cookiecutter.slug -%}
+{%- set pascal = cookiecutter.pascal -%}
+{%- set desc = cookiecutter.desc -%}
+# -*- coding: utf-8 -*-
+"""
+Domain Events da fatia vertical {{ slug }}.
+
+Eventos de domínio são FATOS que ocorreram dentro do agregado. A
+infraestrutura persiste estes eventos via Transactional Outbox na MESMA
+transação da mutação (at-least-once) e, após o commit, o mesmo evento é
+publicado no EventBus do Shared Kernel para reação assíncrona.
+"""
+
+from __future__ import annotations
+
+from dataclasses import dataclass, field
+from typing import Any, Dict, Optional
+
+
+@dataclass(frozen=True)
+class DomainEvent:
+    """Base imutável de um evento de domínio do agregado {{ slug }}."""
+
+    event_name: str = "domain_event"
+    item_id: Optional[int] = None
+    payload: Dict[str, Any] = field(default_factory=dict)
+
+    def to_payload(self) -> Dict[str, Any]:
+        corpo = dict(self.payload)
+        corpo.setdefault("id", self.item_id)
+        return corpo
+
+
+@dataclass(frozen=True)
+class {{ pascal }}Criado(DomainEvent):
+    """Fato: um novo item do módulo {{ slug }} foi criado."""
+
+    event_name: str = "{{ slug }}_criado"
+
+
+@dataclass(frozen=True)
+class {{ pascal }}Atualizado(DomainEvent):
+    """Fato: um item existente do módulo {{ slug }} teve campos alterados."""
+
+    event_name: str = "{{ slug }}_atualizado"
+
+
+@dataclass(frozen=True)
+class {{ pascal }}Deletado(DomainEvent):
+    """Fato: um item existente do módulo {{ slug }} foi removido (soft delete)."""
+
+    event_name: str = "{{ slug }}_deletado"

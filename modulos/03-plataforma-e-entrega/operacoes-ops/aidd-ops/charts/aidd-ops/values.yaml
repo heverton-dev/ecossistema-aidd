@@ -1,0 +1,50 @@
+global:
+  namespace: aidd-ops
+  labels:
+    app.kubernetes.io/managed-by: aidd-ops
+
+services:
+  postgres:
+    enabled: true
+    image:
+      repository: postgres
+      tag: "16-alpine"
+      pullPolicy: IfNotPresent
+    port: 5432
+    resources:
+      requests:
+        cpu: "0.5"
+        memory: "512Mi"
+      limits:
+        cpu: "1"
+        memory: "1Gi"
+    env:
+      POSTGRES_USER: postgres_admin
+      PGDATA: /var/lib/postgresql/data/pgdata
+    persistence:
+      enabled: true
+      size: 20Gi
+      mountPath: /var/lib/postgresql/data
+
+  traefik:
+    enabled: true
+    image:
+      repository: traefik
+      tag: "v3.3"
+      pullPolicy: IfNotPresent
+    ports:
+      http: 80
+      https: 443
+    resources:
+      requests:
+        cpu: "0.1"
+        memory: "128Mi"
+      limits:
+        cpu: "0.5"
+        memory: "256Mi"
+    persistence:
+      enabled: true
+      size: 1Gi
+      mountPath: /letsencrypt
+
+  apps: {}

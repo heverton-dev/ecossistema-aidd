@@ -1,0 +1,11 @@
+.pytest_cache/
+__pycache__/
+*.pyc
+*.db
+*.db-wal
+*.db-shm
+.venv/
+venv/
+node_modules/
+app/
+AIDD_EXECUTION_REPORT.md

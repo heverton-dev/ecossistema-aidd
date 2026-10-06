@@ -1,0 +1,16 @@
+{%- set slug = cookiecutter.slug -%}
+{%- set pascal = cookiecutter.pascal -%}
+{%- set desc = cookiecutter.desc -%}
+# -*- coding: utf-8 -*-
+"""
+Facade de Rotas da fatia vertical {{ slug }} (compatibilidade com server.py).
+
+As rotas finas agora vivem em ``interfaces/routes.py`` (thin routes adapter,
+sem SQL e sem regra de negócio); este módulo apenas re-exporta
+``registrar_rotas`` para preservar o contrato público
+``modules.{{ slug }}.routes.registrar_rotas(service)``.
+"""
+
+from .interfaces.routes import registrar_rotas
+
+__all__ = ["registrar_rotas"]
