@@ -32,7 +32,15 @@ import subprocess
 import sys
 from typing import Dict, List, Tuple
 
-ROOT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+def _achar_raiz_repo() -> str:
+    candidato = os.path.abspath(__file__)
+    for _ in range(8):
+        candidato = os.path.dirname(candidato)
+        if os.path.isfile(os.path.join(candidato, "ecossistema.py")):
+            return candidato
+    return os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
+ROOT_DIR = _achar_raiz_repo()
 GATES_DIR = os.path.join(ROOT_DIR, "gates")
 
 # Padrões que indicam asserção de saída com falha (exit 1)
@@ -56,7 +64,6 @@ TERMOS_CENARIO_FALHA = {
     "corrompido", "orfa", "ausente", "sem_", "bloqueio", "leak", "proibido",
     "morde", "bite", "fail", "broken", "dirty"
 }
-
 
 PASTAS_GATES_VSA = [
     os.path.join(ROOT_DIR, "modulos", "01-governanca-e-qualidade", "gates"),
@@ -174,15 +181,6 @@ def auditar_gates(gates_dir: str = GATES_DIR) -> int:
     if not os.path.isdir(gates_dir):
         print(f"[ERRO] Diretório de gates não encontrado: {gates_dir}")
         return 1
-
-    PASTAS_GATES_VSA = [
-        os.path.join(ROOT_DIR, "modulos", "01-governanca-e-qualidade", "gates"),
-        os.path.join(ROOT_DIR, "modulos", "02-triade-motores", "fluxo-01-pure", "gates"),
-        os.path.join(ROOT_DIR, "modulos", "02-triade-motores", "fluxo-02-open", "gates"),
-        os.path.join(ROOT_DIR, "modulos", "02-triade-motores", "fluxo-03-freedom", "gates"),
-        os.path.join(ROOT_DIR, "modulos", "03-plataforma-e-entrega", "gates"),
-        os.path.join(ROOT_DIR, "modulos", "04-nucleo-compartilhado", "gates"),
-    ]
 
     todos_arquivos = set(os.listdir(gates_dir))
     for p in PASTAS_GATES_VSA:
