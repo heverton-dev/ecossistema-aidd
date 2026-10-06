@@ -30,44 +30,44 @@
 
 ## Ciclo 02: As 7 Salvaguardas Mandatórias da Migração VSA
 
-### Ticket 5: Convenção Universal de Exit Codes Determinísticos (0 a 5)
-*   **Ação:** Implementar módulo canônico de exit codes determinísticos e envelope JSON padronizado.
-*   **Arquivos:** `scripts/exit_codes.py`, `scripts/test_exit_codes.py`, `docs/protocolos/CONVENCAO-EXIT-CODES-DETERMINISTICOS.md`.
-*   **DoD:** Exit codes `0` (Success), `1` (Rule Violation), `2` (Invalid Usage), `3` (Environment Error), `4` (IO/Timeout), `5` (Internal Bug) testados e validados.
-*   **Status:** [x] CONCLUÍDO (Commit `f0a238f`).
+### Ticket 1: Adoção Universal de Exit Codes Determinísticos nos Quality Gates
+*   **Ação:** Integrar taxonomia canônica de 0 a 5 (`scripts/exit_codes.py`) e envelopes padronizados na execução dos quality gates do monorepo.
+*   **Arquivos:** `scripts/exit_codes.py`, `scripts/test_exit_codes.py`, `gates/G_DETERMINISMO_LEI_1.py`, `docs/protocolos/CONVENCAO-EXIT-CODES-DETERMINISTICOS.md`.
+*   **DoD:** Validação de 0 a 5 sem retorno solto de exceção não tratada em gates.
+*   **Status:** [x] CONCLUÍDO
 
-### Ticket 6: Validador AST de Fronteiras Arquiteturais entre Fatias VSA
-*   **Ação:** Criar gate e validador determinístico inspecionando a AST de imports em `modulos/` para proibir acoplamento ilegal direto entre fatias independentes.
+### Ticket 2: Lazy Dynamic Import (`importlib`) em `ecossistema.py` para Boot Acelerado
+*   **Ação:** Mover imports globais de módulos pesados (`click`, `dotenv`, analisadores) para dentro dos comandos específicos disparados via lazy loading.
+*   **Arquivos:** `ecossistema.py`.
+*   **DoD:** Redução no tempo de boot da CLI e desacoplamento do carregamento estático.
+*   **Status:** [x] CONCLUÍDO (Commit `34ccd2f`).
+
+### Ticket 3: Gatilhos de Micro-Gates no Pre-Commit Baseados em `git diff` por Fatia
+*   **Ação:** Implementar runner seletivo de micro-gates com disparo condicional atrelado à fatia modificada via `git diff --cached`.
+*   **Arquivos:** `scripts/micro_gates.py`, `.pre-commit-config.yaml`.
+*   **DoD:** Verificação direcionada em tempo recorde sem dispensar a bateria de segurança integral.
+*   **Status:** [x] CONCLUÍDO (Commit `5577a94`).
+
+### Ticket 4: Fronteiras Arquiteturais Estritas via AST (`interface.py` e `__all__`)
+*   **Ação:** Validar via AST de imports que acoplamentos entre fatias só ocorram através de contratos formais declarados.
 *   **Arquivos:** `gates/G_AST_BOUNDED_CONTEXT.py`, `gates/test_g_ast_bounded_context.py`.
-*   **DoD:** Varredura em todas as fatias detectando e bloqueando imports cruzados diretos; prova negativa comprovando exit 1.
-*   **Status:** [x] CONCLUÍDO
+*   **DoD:** Varredura em todas as fatias detectando e bloqueando imports cruzados diretos; contraprova negativa assertando exit 1.
+*   **Status:** [x] CONCLUÍDO (Commit `324d86e`).
 
-### Ticket 7: Módulo e Engine Canônica de Self-Healing Determinístico
-*   **Ação:** Desenvolver engine de self-healing resiliente com retry determinístico, fallback e circuit breaker para operações de IO/rede/processos.
-*   **Arquivos:** `scripts/self_healing.py`, `scripts/test_self_healing.py`.
-*   **DoD:** Testes comprovando recuperação determinística em falhas transitórias e encerramento com exit code apropriado sem loops infinitos.
-*   **Status:** [x] CONCLUÍDO
+### Ticket 5: Desacoplamento dos Proxies Legados de `tools/` em Prol de Imports Diretos da Fatia
+*   **Ação:** Migrar dependências e referências nos módulos para importar diretamente de `modulos/` em vez de transitar por redirecionadores em `tools/`.
+*   **Arquivos:** `modulos/`, `tools/`.
+*   **DoD:** Redução gradual da dependência de ponte com validação 100% verde nos gates.
+*   **Status:** [x] CONCLUÍDO (Commit `998b87d`).
 
-### Ticket 8: Blindagem e Atualização Estrita do Baseline de Secrets
-*   **Ação:** Sanear caminhos de arquivos migrados e manter `.secrets.baseline` rigorosamente sincronizado em UTF-8.
-*   **Arquivos:** `.secrets.baseline`, `gates/G_SEGREDOS.py`.
-*   **DoD:** Quality gate `G_SEGREDOS` 100% aprovado sem alertas não-triados ou drifts de número de linha.
-*   **Status:** [x] CONCLUÍDO (Commit `d917293`).
+### Ticket 6: Particionamento de Domínio do `codebase-memory-mcp` em Subgrafos Federados
+*   **Ação:** Estruturar particionamento lógico por domínio nos scripts de memória e indexação da base de código.
+*   **Arquivos:** `componentes/compartilhado/src-core/`.
+*   **DoD:** Resolução e consulta isoladas por bounded context sem contaminação global de grafo.
+*   **Status:** [x] CONCLUÍDO (Commit `78bfd80`).
 
-### Ticket 9: Protocolo de Isolamento Hermético de Worktrees com Sanitização de Env
-*   **Ação:** Implementar utilitário de gerenciamento seguro de worktree que previne vazamento de `GIT_DIR`, `GIT_INDEX_FILE` e realiza pre-sync automático.
-*   **Arquivos:** `scripts/worktree_hermetico.py`, `scripts/test_worktree_hermetico.py`.
-*   **DoD:** Criação, validação e deleção segura de worktrees com isolamento de variáveis de repositório.
-*   **Status:** [x] CONCLUÍDO
-
-### Ticket 10: Auditoria Completa de Paridade e Provas Negativas (Lei #13)
-*   **Ação:** Validar que todo gate possui teste automatizado espelho que asserte exit 1 perante quebra proposital de invariante.
-*   **Arquivos:** `gates/G_PORTAO_PROVA_QUE_MORDE.py`, `gates/test_g_*.py`.
-*   **DoD:** Meta-gate `G_PORTAO_PROVA_QUE_MORDE` executado e aprovado com 100% de conformidade.
-*   **Status:** [x] CONCLUÍDO
-
-### Ticket 11: Certificação e Bateria Completa dos Quality Gates
-*   **Ação:** Rodar auditoria ponta a ponta dos quality gates do ecossistema e certificar branch `main` limpa e sincronizada.
-*   **Arquivos:** `.githooks/pre-push`, `scripts/medir_gates.py`.
-*   **DoD:** Push para `origin/main` aprovado pelo pre-push determinístico sem bypass.
-*   **Status:** [x] CONCLUÍDO (Commit `f0a238f`).
+### Ticket 7: Escopo Preguiçoso e Poda de Contexto em Skills de Módulos
+*   **Ação:** Aplicar poda dinâmica de contexto e carregamento sob demanda para skills locais de fatias.
+*   **Arquivos:** `modulos/**/skills/`.
+*   **DoD:** Otimização severa de consumo de tokens em execuções de subagentes locais.
+*   **Status:** [x] CONCLUÍDO (Commit `d99382d`).

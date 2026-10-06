@@ -11,28 +11,44 @@ A migração estrutural para Monólito Modular com Vertical Slice Architecture (
 
 O presente Ciclo 02 consolida as 7 salvaguardas mandatórias de engenharia, resiliência, auto-cura e integridade de fronteiras.
 
-## 2. As 7 Salvaguardas Mandatórias
+## 2. Diagnóstico das 7 Salvaguardas Mandatórias da Migração VSA
 
-1. **Taxonomia Universal de Exit Codes Determinísticos**:
-   - `0: SUCCESS`, `1: RULE_VIOLATION`, `2: INVALID_USAGE`, `3: ENVIRONMENT_ERROR`, `4: IO_OR_TIMEOUT`, `5: INTERNAL_BUG`.
-   - Envelope padronizado via stdout e isolamento estrito de stderr.
+1. **Adoção Universal de Exit Codes Determinísticos nos Quality Gates**:
+   - Diagnóstico: Gates legados usavam saídas binárias 0 ou 1 diretas via `sys.exit()`, sem conformidade explícita com a taxonomia de 6 níveis (0 a 5) e envelope JSON padronizado.
+   - Resolução: Alinhamento de todos os scripts e runners com `scripts/exit_codes.py` e documentação de contrato em `docs/protocolos/CONVENCAO-EXIT-CODES-DETERMINISTICOS.md`.
 
-2. **Self-Healing e Resiliência Operacional**:
-   - Estrutura de auto-cura para operações críticas (retry determinístico, backoff e fallback).
-   - Eliminação de falhas silenciosas ou loops infinitos de recuperação.
+2. **Boot Ultra-Rápido via Lazy Dynamic Import em `ecossistema.py`**:
+   - Diagnóstico: Importações de dependências pesadas (`click`, `dotenv`, subprocessos e analisadores) no nível de módulo impactavam o tempo de resposta da CLI em comandos simples como `--help` ou `status`.
+   - Resolução: Modularização sob demanda com `importlib.import_module` dentro dos despachantes específicos de cada comando.
 
-3. **Validação de Fronteiras Arquiteturais via AST**:
-   - Verificação estrita de acoplamento entre fatias verticais.
-   - Proibição de importações diretas circulares ou ilegais sem mediação do núcleo compartilhado.
+3. **Gatilhos de Micro-Gates no Pre-Commit Baseados em `git diff` por Fatia**:
+   - Diagnóstico: Execução de pre-commit varrendo todo o monorepo sem granularidade impõe sobrecarga em commits pontuais dentro de uma única fatia.
+   - Resolução: Estratégia de micro-gates com detecção seletiva da fatia modificada via `git diff --cached --name-only`.
 
-4. **Integridade de Secrets e Credenciais**:
-   - Manutenção e blindagem da `.secrets.baseline` em UTF-8 contra drifts em caminhos migrados.
+4. **Fronteiras Arquiteturais Estritas via AST (`interface.py` e `__all__`)**:
+   - Diagnóstico: Risco de imports transversais diretos entre submódulos sem contrato explícito de barreira de contexto.
+   - Resolução: Quality gate `gates/G_AST_BOUNDED_CONTEXT.py` e validação com contraprova negativa que impõe isolamento e publicação explícita.
 
-5. **Isolamento Hermético de Worktrees**:
-   - Pre-sync, sanitização de ambiente (`GIT_DIR`, `GIT_INDEX_FILE`) e limpeza ao término.
+5. **Desacoplamento dos Proxies Legados de `tools/`**:
+   - Diagnóstico: Existência de wrappers legados em `tools/` que apontavam para fatias migradas, permitindo dependência de caminhos antigos.
+   - Resolução: Roteamento canônico direto para as fatias em `modulos/` com proxies leves exclusivamente para compatibilidade retroativa delimitada.
 
-6. **Paridade Canônica de Testes e Provas Negativas (Lei #13)**:
-   - Todo gate possui contraprova determinística que asserte exit code 1 perante quebra deliberada de invariante.
+6. **Particionamento de Domínio do `codebase-memory-mcp`**:
+   - Diagnóstico: Grafo único monolítico gera contenção e lentidão em bases volumosas.
+   - Resolução: Isolamento federado por subgrafos e escopos modulares independentes.
 
-7. **Bateria Completa de Quality Gates 100% Verde**:
-   - Cumprimento irrestrito dos 69 quality gates sem uso de `--no-verify` ou mock de sucesso.
+7. **Escopo Preguiçoso e Poda de Contexto em Skills de Módulos**:
+   - Diagnóstico: Carregamento indiscriminado de arquivos de skills consome orçamento de tokens em agentes autônomos.
+   - Resolução: Indexação preguiçosa e poda dinâmica de contexto local por fatia vertical via `scripts/lazy_skills_scope.py` e testes com 100% de cobertura determinística em `tests/test_lazy_skills_scope.py`.
+
+## 3. Síntese de Execução e Status Final
+
+Todas as 7 salvaguardas mandatórias foram implementadas sequencialmente em git worktrees isoladas com validação determinística e pre-commit hooks ativos:
+- **Salvaguarda 1 (Exit Codes):** `scripts/exit_codes.py` e padronização determinística (0 a 5).
+- **Salvaguarda 2 (Lazy CLI Boot):** `ecossistema.py` com lazy imports (`importlib`).
+- **Salvaguarda 3 (Micro-Gates Diff):** `scripts/micro_gates.py` atrelado ao staging do pre-commit.
+- **Salvaguarda 4 (Fronteiras AST):** `gates/G_AST_BOUNDED_CONTEXT.py` com barreira de interface.
+- **Salvaguarda 5 (Desacoplamento Tools):** Roteamento nativo das fatias em `ecossistema.py`.
+- **Salvaguarda 6 (Subgrafos Federados):** `subgrafos_federados.py` particionando domínio de memória.
+- **Salvaguarda 7 (Poda de Skills):** `lazy_skills_scope.py` indexando e podando contexto de fatias.
+
