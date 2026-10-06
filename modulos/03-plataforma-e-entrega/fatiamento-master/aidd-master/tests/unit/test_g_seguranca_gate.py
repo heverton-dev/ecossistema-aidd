@@ -21,7 +21,10 @@ import pytest
 REPO_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
 GATE_SCRIPT = os.path.join(REPO_ROOT, "scripts", "gates", "G_SEGURANCA.py")
 if not os.path.isfile(GATE_SCRIPT):
-    GATE_SCRIPT = os.path.join(os.path.dirname(os.path.dirname(REPO_ROOT)), "componentes", "compartilhado", "gates", "G_SEGURANCA.py")
+    _RAIZ = REPO_ROOT  # sobe até a pasta com ecossistema.py, em qualquer layout
+    while os.path.dirname(_RAIZ) != _RAIZ and not os.path.isfile(os.path.join(_RAIZ, "ecossistema.py")):
+        _RAIZ = os.path.dirname(_RAIZ)
+    GATE_SCRIPT = os.path.join(_RAIZ, "componentes", "compartilhado", "gates", "G_SEGURANCA.py")
 
 TERMOS_MARKETING_PROIBIDOS = [
     "Score de Blindagem",

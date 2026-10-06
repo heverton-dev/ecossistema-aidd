@@ -5,9 +5,12 @@ Relatório determinístico de divergência entre tools/ e modulos/ (ciclo-03 VSA
 Para cada ferramenta de tools/aidd-* compara os arquivos versionados com a pasta canônica
 em modulos/ (decisão A: modulos/ é a cópia canônica). Ignora CRLF e pastas de cache.
 Com --exigir-zero, sai com 1 se houver arquivo divergente ou só em tools/.
+Divergência decidida em RECONCILIACAO.md (lado "modulos" + hash final igual ao do
+arquivo atual em modulos/) conta como resolvida (Ticket 3).
 """
 
 import argparse
+import hashlib
 import json
 import subprocess
 import sys
@@ -15,6 +18,7 @@ from pathlib import Path
 
 RAIZ_PADRAO = Path(__file__).resolve().parents[1]
 SAIDA_PADRAO = "docs/auditoria/modularizacao-vsa/ciclo-03/DIVERGENCIAS-TOOLS-MODULOS.json"
+DECISOES_PADRAO = "docs/auditoria/modularizacao-vsa/ciclo-03/RECONCILIACAO.md"
 
 MAPA_CANONICO = {
     "aidd-forge": "modulos/01-governanca-e-qualidade/core/aidd-forge",
@@ -59,29 +63,58 @@ def _conteudo_normalizado(caminho: Path) -> bytes | None:
         return None
 
 
-def comparar(raiz: Path) -> dict:
+def hash_normalizado(caminho: Path) -> str:
+    """sha256 (16 hex) do conteúdo sem CRLF: o 'hash final' registrado em RECONCILIACAO.md."""
+    conteudo = _conteudo_normalizado(caminho)
+    return hashlib.sha256(conteudo or b"").hexdigest()[:16]
+
+
+def ler_decisoes(caminho: Path) -> dict[str, tuple[str, str]]:
+    """Linhas '| ferramenta/arquivo | lado | motivo | hash |' -> {ferramenta/arquivo: (lado, hash)}."""
+    decisoes = {}
+    try:
+        linhas = caminho.read_text(encoding="utf-8").splitlines()
+    except OSError:
+        return decisoes
+    for linha in linhas:
+        celulas = [c.strip().strip("`") for c in linha.strip().strip("|").split("|")]
+        if len(celulas) == 4 and "/" in celulas[0] and celulas[1] in ("modulos", "tools"):
+            decisoes[celulas[0]] = (celulas[1], celulas[3])
+    return decisoes
+
+
+def comparar(raiz: Path, decisoes: dict | None = None) -> dict:
+    decisoes = decisoes or {}
     ferramentas = {}
     for ferramenta, destino in MAPA_CANONICO.items():
         origem = f"tools/{ferramenta}"
         lado_tools = _arquivos_versionados(raiz, origem)
         lado_modulos = _arquivos_versionados(raiz, destino)
-        divergentes, identicos = [], 0
+        divergentes, resolvidos, hash_velho, identicos = [], [], [], 0
         for rel in sorted(lado_tools & lado_modulos):
             if _conteudo_normalizado(raiz / origem / rel) == _conteudo_normalizado(raiz / destino / rel):
                 identicos += 1
+                continue
+            decisao = decisoes.get(f"{ferramenta}/{rel}")
+            if decisao and decisao[0] == "modulos" and decisao[1] == hash_normalizado(raiz / destino / rel):
+                resolvidos.append(rel)
             else:
                 divergentes.append(rel)
+                if decisao:
+                    hash_velho.append(rel)
         ferramentas[ferramenta] = {
             "origem": origem,
             "destino": destino,
             "identicos": identicos,
             "divergentes": divergentes,
+            "resolvidos": resolvidos,
+            "hash_velho": hash_velho,
             "so_tools": sorted(lado_tools - lado_modulos),
             "so_modulos": sorted(lado_modulos - lado_tools),
         }
     totais = {
         chave: sum(len(f[chave]) for f in ferramentas.values())
-        for chave in ("divergentes", "so_tools", "so_modulos")
+        for chave in ("divergentes", "resolvidos", "so_tools", "so_modulos")
     }
     totais["identicos"] = sum(f["identicos"] for f in ferramentas.values())
     return {"ferramentas": ferramentas, "totais": totais}
@@ -100,6 +133,8 @@ def main(argv=None) -> int:
     parser.add_argument("--saida", default=None, help=f"JSON de saída (padrão: <raiz>/{SAIDA_PADRAO})")
     parser.add_argument("--exigir-zero", action="store_true",
                         help="exit 1 se houver arquivo divergente ou só em tools/")
+    parser.add_argument("--decisoes", default=None,
+                        help=f"RECONCILIACAO.md com as decisões (padrão: <raiz>/{DECISOES_PADRAO})")
     parser.add_argument("--linha-base-testes", type=int, default=None,
                         help="total de testes passando na bateria completa (linha de base do ciclo)")
     args = parser.parse_args(argv)
@@ -107,7 +142,8 @@ def main(argv=None) -> int:
     raiz = Path(args.raiz).resolve()
     saida = Path(args.saida) if args.saida else raiz / SAIDA_PADRAO
 
-    relatorio = comparar(raiz)
+    decisoes = ler_decisoes(Path(args.decisoes) if args.decisoes else raiz / DECISOES_PADRAO)
+    relatorio = comparar(raiz, decisoes)
     linha_base = args.linha_base_testes if args.linha_base_testes is not None else _linha_base_anterior(saida)
     relatorio["linha_base_testes_passando"] = linha_base
 
@@ -119,12 +155,13 @@ def main(argv=None) -> int:
     pendentes = []
     for ferramenta, dados in relatorio["ferramentas"].items():
         for rel in dados["divergentes"]:
-            pendentes.append(f"  [DIVERGENTE] {ferramenta}/{rel}")
+            marca = "[HASH VELHO]" if rel in dados["hash_velho"] else "[DIVERGENTE]"
+            pendentes.append(f"  {marca} {ferramenta}/{rel}")
         for rel in dados["so_tools"]:
             pendentes.append(f"  [SO_TOOLS]   {ferramenta}/{rel}")
 
     t = relatorio["totais"]
-    print(f"[reconciliar] identicos={t['identicos']} divergentes={t['divergentes']} "
+    print(f"[reconciliar] identicos={t['identicos']} divergentes={t['divergentes']} resolvidos={t['resolvidos']} "
           f"so_tools={t['so_tools']} so_modulos={t['so_modulos']} -> {saida}")
     if pendentes:
         print("\n".join(pendentes))

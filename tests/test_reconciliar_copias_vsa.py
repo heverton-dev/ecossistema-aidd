@@ -90,3 +90,44 @@ def test_linha_base_de_testes_e_preservada(tmp_path):
     _rodar(raiz, saida, "--linha-base-testes", "1234")
     _rodar(raiz, saida)
     assert json.loads(saida.read_text(encoding="utf-8"))["linha_base_testes_passando"] == 1234
+
+
+# --- Ticket 3: decisões registradas em RECONCILIACAO.md resolvem a divergência ---
+
+def _hash_modulos(raiz: Path, rel: str) -> str:
+    sys.path.insert(0, str(RAIZ_REPO / "scripts"))
+    try:
+        import reconciliar_copias_vsa as mod
+    finally:
+        sys.path.pop(0)
+    return mod.hash_normalizado(raiz / "modulos" / "01-governanca-e-qualidade" / "core" / "aidd-forge" / rel)
+
+
+def _gravar_decisoes(caminho: Path, linhas: list[str]) -> None:
+    cabecalho = ["| Arquivo | Lado | Motivo | Hash final |", "|---|---|---|---|"]
+    _gravar(caminho, "\n".join(["# Reconciliação", "", *cabecalho, *linhas]) + "\n")
+
+
+def test_decisao_registrada_com_hash_certo_resolve_divergencia(tmp_path):
+    raiz = _repo_temporario(tmp_path)
+    _gravar(raiz / "modulos" / "01-governanca-e-qualidade" / "core" / "aidd-forge" / "so_tools.py", "z = 1\n")
+    subprocess.run(["git", "add", "-A"], cwd=raiz, check=True)
+    decisoes = tmp_path / "RECONCILIACAO.md"
+    _gravar_decisoes(decisoes, [
+        f"| aidd-forge/diferente.py | modulos | caminho VSA | {_hash_modulos(raiz, 'diferente.py')} |",
+    ])
+    proc = _rodar(raiz, tmp_path / "out.json", "--exigir-zero", "--decisoes", str(decisoes))
+    assert proc.returncode == 0, proc.stdout + proc.stderr
+    relatorio = json.loads((tmp_path / "out.json").read_text(encoding="utf-8"))
+    assert relatorio["ferramentas"]["aidd-forge"]["resolvidos"] == ["diferente.py"]
+
+
+def test_decisao_com_hash_velho_nao_resolve(tmp_path):
+    raiz = _repo_temporario(tmp_path)
+    _gravar(raiz / "modulos" / "01-governanca-e-qualidade" / "core" / "aidd-forge" / "so_tools.py", "z = 1\n")
+    subprocess.run(["git", "add", "-A"], cwd=raiz, check=True)
+    decisoes = tmp_path / "RECONCILIACAO.md"
+    _gravar_decisoes(decisoes, ["| aidd-forge/diferente.py | modulos | caminho VSA | 0000000000000000 |"])
+    proc = _rodar(raiz, tmp_path / "out.json", "--exigir-zero", "--decisoes", str(decisoes))
+    assert proc.returncode == 1, proc.stdout + proc.stderr
+    assert "hash" in proc.stdout.lower()
