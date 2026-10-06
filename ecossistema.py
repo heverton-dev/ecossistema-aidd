@@ -117,18 +117,15 @@ if not _verificar_minimo_python():
     _exibir_banner_python_antigo()
     sys.exit(1)
 
-# Guarda 2: imports de terceiros com auto-recuperacao.
-click = _importar_dependencia("click")
-dotenv = _importar_dependencia("dotenv")
-load_dotenv = dotenv.load_dotenv
 
-# Carrega .env da raiz do ecossistema para os.environ (nunca sobrescreve variavel ja
-# exportada no shell — override=False). Cobre esta CLI e todo subprocesso disparado por
-# run_command() (forge/generate/master/enterprise/ops), que herda os.environ.copy().
-# NAO cobre MCP servers de terceiros lancados diretamente pelo harness (.mcp.json,
-# opencode.jsonc etc.) — esses expandem ${VAR} a partir do proprio ambiente do harness,
-# nao deste processo. Ver gates/dependencias_externas.json e .env.example.
-load_dotenv(os.path.join(ROOT_DIR, ".env"), override=False)
+def _obter_click():
+    return _importar_dependencia("click")
+
+
+def _garantir_dotenv():
+    dotenv = _importar_dependencia("dotenv")
+    dotenv.load_dotenv(os.path.join(ROOT_DIR, ".env"), override=False)
+
 
 def print_banner():
     print("=" * 72)
@@ -560,6 +557,8 @@ def cmd_sync(args):
 
 
 def cmd_components(args):
+    _garantir_dotenv()
+    click = _obter_click()
     sys.path.insert(0, os.path.join(ROOT_DIR, "scripts"))
     import gestor_componentes
 
@@ -621,6 +620,8 @@ def cmd_components(args):
 
 
 def cmd_dependencia(args):
+    _garantir_dotenv()
+    click = _obter_click()
     sys.path.insert(0, os.path.join(ROOT_DIR, "scripts"))
     import gestor_dependencias
 
@@ -686,6 +687,8 @@ def cmd_dependencia(args):
 
 
 def cmd_orchestrate(args):
+    _garantir_dotenv()
+    click = _obter_click()
     @click.command(
         name="orchestrate",
         context_settings={"help_option_names": ["-h", "--help"]},
