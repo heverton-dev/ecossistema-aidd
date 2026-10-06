@@ -26,6 +26,7 @@ if str(ROOT_DIR) not in sys.path:
     sys.path.insert(0, str(ROOT_DIR))
 
 from scripts.exit_codes import ExitCode
+from scripts.worktree_hermetico import obter_env_sanitizado
 
 FATIAS_MAPA: Dict[str, Dict[str, List[str]]] = {
     "01-governanca": {
@@ -64,8 +65,10 @@ def comando_suite() -> List[str]:
 
 
 def _rodar(cmd, cwd: Path, shell: bool) -> subprocess.CompletedProcess:
+    """Sem o GIT_DIR/GIT_INDEX_FILE do hook: os testes de git em tmp_path das suítes
+    gravavam no repositório real (06/10: core.bare=true e [user] forge-test no .git/config)."""
     return subprocess.run(cmd, cwd=str(cwd), shell=shell, capture_output=True, text=True,
-                          encoding="utf-8", errors="replace")
+                          encoding="utf-8", errors="replace", env=obter_env_sanitizado())
 
 
 def obter_arquivos_modificados(root_dir: Path) -> List[str]:

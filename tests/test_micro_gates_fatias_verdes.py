@@ -49,3 +49,17 @@ def test_cada_suite_coleta_sem_erro():
             capture_output=True, text=True, encoding="utf-8", errors="replace",
         )
         assert proc.returncode == 0, f"{suite}: exit {proc.returncode}\n{proc.stdout[-2000:]}"
+
+
+def test_suites_rodam_sem_o_git_dir_do_hook(monkeypatch, tmp_path):
+    """Regressão 06/10: dentro do pre-commit o GIT_DIR do hook vazava para a suíte do forge,
+    cujos testes de git em tmp_path gravaram core.bare=true e [user] forge-test no .git/config real."""
+    from scripts import micro_gates
+
+    monkeypatch.setenv("GIT_DIR", str(tmp_path / "repo-real" / ".git"))
+    monkeypatch.setenv("GIT_INDEX_FILE", str(tmp_path / "repo-real" / ".git" / "index"))
+    proc = micro_gates._rodar(
+        [sys.executable, "-c", "import os; print(os.environ.get('GIT_DIR'), os.environ.get('GIT_INDEX_FILE'))"],
+        tmp_path, False,
+    )
+    assert proc.stdout.strip() == "None None"
