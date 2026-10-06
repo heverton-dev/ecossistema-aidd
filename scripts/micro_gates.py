@@ -38,8 +38,8 @@ FATIAS_MAPA: Dict[str, Dict[str, List[str]]] = {
         "testes": ["pytest modulos/03-plataforma-e-entrega/ -q --maxfail=1"],
     },
     "core-cli": {
-        "prefixo": ["ecossistema.py", "scripts/"],
-        "testes": ["pytest tests/test_ecossistema_lazy_boot.py scripts/test_exit_codes.py -q"],
+        "prefixo": ["ecossistema.py", "scripts/", "componentes/compartilhado/src-core/"],
+        "testes": ["pytest tests/test_ecossistema_lazy_boot.py scripts/test_exit_codes.py tests/test_subgrafos_federados.py -q"],
     },
 }
 
