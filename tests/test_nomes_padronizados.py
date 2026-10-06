@@ -45,6 +45,7 @@ HISTORICO = (
     re.compile(r"^docs/auditoria/[^/]+/ciclo-\d+/"),       # registros de cada ciclo
     re.compile(r"^docs/(.+/)?\d{2}-\d{2}-\d{4}_[^/]+$"),  # documento datado = foto do dia (livros, melhorias...)
     re.compile(r"^tools/aidd-enterprise/materiais-extras/"),  # material de pesquisa arquivado
+    re.compile(r"^modulos/03-plataforma-e-entrega/blindagem-enterprise/aidd-enterprise/materiais-extras/"),  # material de pesquisa arquivado migrado VSA
     re.compile(r"^(?!requirements)[^/]+\.txt$"),          # logs de evidência dos tickets na raiz
     # Fonte única dos dados do relatório datado 11-09-2026 (docs/relatorios/): um teste
     # o executa e regrava o relatório, então reescrevê-lo reescreveria o histórico.

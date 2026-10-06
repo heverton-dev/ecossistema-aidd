@@ -1,7 +1,7 @@
 {
   "versao": "1.0",
-  "atualizado_em": "2026-10-05T20:55:30.489244",
-  "total_sessoes": 28,
+  "atualizado_em": "2026-10-06T00:06:44.621088",
+  "total_sessoes": 30,
   "sessoes": [
     {
       "id": "fc4566a8-0804-4748-ab5f-ec105414273c",
@@ -270,6 +270,24 @@
       "harness": "Antigravity IDE",
       "modelo": "Gemini 3.8 Flash (Low)",
       "titulo": "Reorganização HDSM Desktop",
+      "workspace": "C:\\Users\\trcnologia\\Desktop\\ecossistema-aidd",
+      "transcript_path": ""
+    },
+    {
+      "id": "e1ea634a-ef95-4059-84a0-bd4d54722df2",
+      "registrado_em": "2026-10-05 23:48:42",
+      "harness": "antigravity",
+      "modelo": "gemini-3.8-flash-low",
+      "titulo": "Sessão Ativa (Auto-Registrada)",
+      "workspace": "C:/Users/trcnologia/Desktop/ecossistema-aidd",
+      "transcript_path": "C:/Users/trcnologia/.gemini/antigravity-cli/brain/e1ea634a-ef95-4059-84a0-bd4d54722df2/.system_generated/logs/transcript_full.jsonl"
+    },
+    {
+      "id": "b40fca9d-d303-4f48-90ea-ff287677d07e",
+      "registrado_em": "2026-10-06 00:06:44",
+      "harness": "claude-code",
+      "modelo": "code-fast",
+      "titulo": "Padronizacao de convencoes e saidas deterministicas",
       "workspace": "C:\\Users\\trcnologia\\Desktop\\ecossistema-aidd",
       "transcript_path": ""
     }
