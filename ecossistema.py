@@ -374,7 +374,9 @@ def cmd_run_fluxo(args):
 
 def cmd_pipeline(args):
     """Executa o pipeline determinístico em Git Worktrees via orchestrator_pipeline."""
-    script_path = os.path.join(TOOLS_DIR, "aidd-master", "scripts", "orchestrator_pipeline.py")
+    vsa_master = os.path.join(ROOT_DIR, "modulos", "03-plataforma-e-entrega", "fatiamento-master", "aidd-master")
+    master_dir = vsa_master if os.path.isdir(vsa_master) else os.path.join(TOOLS_DIR, "aidd-master")
+    script_path = os.path.join(master_dir, "scripts", "orchestrator_pipeline.py")
     mapped_args = ["-m" if a == "--handoff" else a for a in args]
     cmd = [sys.executable, script_path] + mapped_args
     return run_command(cmd, cwd=os.getcwd())
