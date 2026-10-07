@@ -1475,3 +1475,19 @@
   - `git status --ignored` de `modulos/` e `componentes/` idêntico antes e depois das duas suítes.
 - **Status:** **RESOLVIDO**.
 - **Data da Última Auditoria:** 07/10/2026.
+
+## 46. Modularização VSA ciclo-03, Bloco 4 (gate_final): casca `aidd_planner` e MCP do Mobbin após o T10
+
+- **Objetivo da Correção:**
+  O gate_final do Bloco 4 reprovou no `G_TESTES_REAIS` (bateria `tests/`): a renomeação `src/core` → `src/core_planner` do T10 não alcançou a casca `aidd_planner/core/*` (que reexporta de `src.core`) nem o caminho alternativo do servidor MCP do Mobbin.
+- **Ferramentas Tocadas:** aidd-planner (`aidd_planner/core/{design_system,mobbin_client,planta,ui_reference_resolver}.py`), MCP do Mobbin (`componentes/compartilhado/mcps/mobbin_mcp/server.py`).
+- **O que executou:**
+  1. Os 4 arquivos da casca importam de `src.core_planner`; o servidor do Mobbin cai em `core_planner.mobbin_client`.
+  2. `tests/test_sem_referencia_tools.py` passa a permitir o `G_MODULO_FRONTEIRA` e o teste dele (são o detector de `tools/`).
+  3. Achado de medição: rodar `tests/` com `AIDD_GATES_MODO=completo` herdado reprova `test_g_testes_reais_visibilidade`; o gate tira essa variável antes da bateria raiz, então não é falha real.
+- **Resultados de Testes (07/10/2026):**
+  - `pytest tests` (como o gate roda) → exit 1 antes (`test_mobbin_mcp` ×3, `test_sem_referencia_tools`), exit 0 depois (1133 passed, 1 skipped).
+  - planner 48 passed; casca `aidd_planner.core` importa sem erro.
+  - 8 ferramentas no modo do gate: forge 316, planner 48, pure 1016, master 414, enterprise 341, ops 198, freedom 75, open 21 (0 failed).
+- **Status:** **RESOLVIDO**.
+- **Data da Última Auditoria:** 07/10/2026.

@@ -37,7 +37,7 @@ except ImportError:
         _planner_src = ROOT_DIR / "modulos" / "01-governanca-e-qualidade" / "core" / "aidd-planner" / "src"
         if str(_planner_src) not in sys.path:
             sys.path.insert(0, str(_planner_src))
-        from core.mobbin_client import executar_busca
+        from core_planner.mobbin_client import executar_busca
 from componentes.compartilhado.mcps.mobbin_mcp.token_extractor import extrair_tokens_mobbin
 from componentes.compartilhado.mcps.mobbin_mcp.theme_compiler import compilar_contrato_design
 

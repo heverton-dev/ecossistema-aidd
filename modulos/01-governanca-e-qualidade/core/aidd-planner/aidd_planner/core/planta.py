@@ -36,7 +36,7 @@ from typing import Any, Dict, Iterable, List, Optional, Sequence, Set
 try:  # pragma: no cover - a CLI cai no espelho src/ quando o pacote nao existe
     from .planner_engine import PlannerValidationError
 except ImportError:  # pragma: no cover
-    from src.core.planner_engine import PlannerValidationError
+    from src.core_planner.planner_engine import PlannerValidationError
 
 PLANNER_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 RAIZ_ECOSSISTEMA = PLANNER_DIR  # sobe até a pasta com ecossistema.py, em qualquer layout

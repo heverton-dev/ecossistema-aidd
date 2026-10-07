@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from src.core.ui_reference_resolver import (
+from src.core_planner.ui_reference_resolver import (
     MODO_MOBBIN,
     MODO_ONLINE,
     MODO_DETERMINISTICO,

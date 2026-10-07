@@ -39,6 +39,8 @@ PERMITIDOS = {
     "tests/test_tools_extinto.py",
     "modulos/04-nucleo-compartilhado/gates/G_COPIA_UNICA_VSA.py",
     "modulos/04-nucleo-compartilhado/gates/test_g_copia_unica_vsa.py",
+    "modulos/04-nucleo-compartilhado/gates/G_MODULO_FRONTEIRA.py",  # detector de referência a tools/
+    "modulos/04-nucleo-compartilhado/gates/test_g_modulo_fronteira.py",  # planta a referência para provar que morde
     "MEMORY.md",  # diário histórico do repo
     ".secrets.baseline",  # estado gerado; reescrito pelo comando de baseline (Ticket 9)
     "tests/test_mapas_e_livros_em_dia.py",  # detector de texto velho nos livros

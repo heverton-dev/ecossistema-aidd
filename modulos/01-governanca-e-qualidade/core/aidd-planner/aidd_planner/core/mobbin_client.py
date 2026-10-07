@@ -10,7 +10,7 @@ Permite busca determinística de telas do Mobbin via API REST oficial
 Consome MOBBIN_API_KEY e MOBBIN_API_URL centralizados no .env raiz.
 """
 
-from src.core.mobbin_client import (
+from src.core_planner.mobbin_client import (
     obter_config,
     executar_busca,
     cmd_status,
