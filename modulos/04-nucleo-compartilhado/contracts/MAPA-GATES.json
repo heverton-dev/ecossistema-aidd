@@ -86,11 +86,11 @@
       "caminho": "modulos/03-plataforma-e-entrega/gates/G_ARQUITETURA_DELIVERABLE.py",
       "caminho_final": "modulos/03-plataforma-e-entrega/gates/G_ARQUITETURA_DELIVERABLE.py"
     },
-    "G_AST_BOUNDED_CONTEXT": {
+    "G_MODULO_FRONTEIRA": {
       "dono": "04-nucleo-compartilhado",
       "transversal": true,
-      "caminho": "modulos/04-nucleo-compartilhado/gates/G_AST_BOUNDED_CONTEXT.py",
-      "caminho_final": "modulos/04-nucleo-compartilhado/gates/G_AST_BOUNDED_CONTEXT.py"
+      "caminho": "modulos/04-nucleo-compartilhado/gates/G_MODULO_FRONTEIRA.py",
+      "caminho_final": "modulos/04-nucleo-compartilhado/gates/G_MODULO_FRONTEIRA.py"
     },
     "G_CLI_HELP_CONSISTENCIA": {
       "dono": "04-nucleo-compartilhado",
@@ -283,12 +283,6 @@
       "transversal": false,
       "caminho": "modulos/02-triade-motores/fluxo-03-freedom/gates/G_MIGRATION_ROT.py",
       "caminho_final": "modulos/02-triade-motores/fluxo-03-freedom/gates/G_MIGRATION_ROT.py"
-    },
-    "G_modularizacao_vsa": {
-      "dono": "04-nucleo-compartilhado",
-      "transversal": true,
-      "caminho": "modulos/04-nucleo-compartilhado/gates/G_modularizacao_vsa.py",
-      "caminho_final": "modulos/04-nucleo-compartilhado/gates/G_modularizacao_vsa.py"
     },
     "G_NOVE_CAMADAS_MERCADO": {
       "dono": "02-triade-motores/fluxo-01-pure",

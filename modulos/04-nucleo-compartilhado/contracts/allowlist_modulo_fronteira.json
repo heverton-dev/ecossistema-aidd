@@ -1,0 +1,370 @@
+{
+  "descricao": "Acoplamentos entre fatias perdoados com data. So pode diminuir (G_MODULO_FRONTEIRA).",
+  "teto": 52,
+  "entradas": [
+    {
+      "arquivo": "modulos/01-governanca-e-qualidade/core/aidd-forge/tests/test_almoxarifado.py",
+      "tipo": "caminho",
+      "alvo": "fluxo-01-pure",
+      "data": "2026-10-07",
+      "motivo": "acoplamento existente na semeadura do Ticket 11 (ciclo-03); migrar para interface.py"
+    },
+    {
+      "arquivo": "modulos/01-governanca-e-qualidade/core/aidd-planner/aidd_planner/core/planner_engine.py",
+      "tipo": "caminho",
+      "alvo": "operacoes-ops",
+      "data": "2026-10-07",
+      "motivo": "acoplamento existente na semeadura do Ticket 11 (ciclo-03); migrar para interface.py"
+    },
+    {
+      "arquivo": "modulos/01-governanca-e-qualidade/core/aidd-planner/src/core_planner/planner_engine.py",
+      "tipo": "caminho",
+      "alvo": "operacoes-ops",
+      "data": "2026-10-07",
+      "motivo": "acoplamento existente na semeadura do Ticket 11 (ciclo-03); migrar para interface.py"
+    },
+    {
+      "arquivo": "modulos/01-governanca-e-qualidade/core/aidd-planner/tests/test_planner.py",
+      "tipo": "caminho",
+      "alvo": "fluxo-02-open",
+      "data": "2026-10-07",
+      "motivo": "acoplamento existente na semeadura do Ticket 11 (ciclo-03); migrar para interface.py"
+    },
+    {
+      "arquivo": "modulos/01-governanca-e-qualidade/core/aidd-planner/tests/test_planner.py",
+      "tipo": "import",
+      "alvo": "operacoes-ops",
+      "data": "2026-10-07",
+      "motivo": "acoplamento existente na semeadura do Ticket 11 (ciclo-03); migrar para interface.py"
+    },
+    {
+      "arquivo": "modulos/01-governanca-e-qualidade/gates/G_DETERMINISMO_LEI_1.py",
+      "tipo": "caminho",
+      "alvo": "fluxo-01-pure",
+      "data": "2026-10-07",
+      "motivo": "acoplamento existente na semeadura do Ticket 11 (ciclo-03); migrar para interface.py"
+    },
+    {
+      "arquivo": "modulos/01-governanca-e-qualidade/gates/G_DETERMINISMO_LEI_1.py",
+      "tipo": "caminho",
+      "alvo": "fluxo-02-open",
+      "data": "2026-10-07",
+      "motivo": "acoplamento existente na semeadura do Ticket 11 (ciclo-03); migrar para interface.py"
+    },
+    {
+      "arquivo": "modulos/01-governanca-e-qualidade/gates/G_DETERMINISMO_LEI_1.py",
+      "tipo": "caminho",
+      "alvo": "fluxo-03-freedom",
+      "data": "2026-10-07",
+      "motivo": "acoplamento existente na semeadura do Ticket 11 (ciclo-03); migrar para interface.py"
+    },
+    {
+      "arquivo": "modulos/01-governanca-e-qualidade/gates/G_PORTAO_PROVA_QUE_MORDE.py",
+      "tipo": "caminho",
+      "alvo": "fluxo-01-pure",
+      "data": "2026-10-07",
+      "motivo": "acoplamento existente na semeadura do Ticket 11 (ciclo-03); migrar para interface.py"
+    },
+    {
+      "arquivo": "modulos/01-governanca-e-qualidade/gates/G_PORTAO_PROVA_QUE_MORDE.py",
+      "tipo": "caminho",
+      "alvo": "fluxo-02-open",
+      "data": "2026-10-07",
+      "motivo": "acoplamento existente na semeadura do Ticket 11 (ciclo-03); migrar para interface.py"
+    },
+    {
+      "arquivo": "modulos/01-governanca-e-qualidade/gates/G_PORTAO_PROVA_QUE_MORDE.py",
+      "tipo": "caminho",
+      "alvo": "fluxo-03-freedom",
+      "data": "2026-10-07",
+      "motivo": "acoplamento existente na semeadura do Ticket 11 (ciclo-03); migrar para interface.py"
+    },
+    {
+      "arquivo": "modulos/01-governanca-e-qualidade/gates/test_g_disciplina_teste_ferramenta.py",
+      "tipo": "caminho",
+      "alvo": "fluxo-01-pure",
+      "data": "2026-10-07",
+      "motivo": "acoplamento existente na semeadura do Ticket 11 (ciclo-03); migrar para interface.py"
+    },
+    {
+      "arquivo": "modulos/02-triade-motores/fluxo-01-pure/core/aidd-pure/scripts/core_pure/pecas_catalogo.py",
+      "tipo": "caminho",
+      "alvo": "01-governanca-e-qualidade",
+      "data": "2026-10-07",
+      "motivo": "acoplamento existente na semeadura do Ticket 11 (ciclo-03); migrar para interface.py"
+    },
+    {
+      "arquivo": "modulos/02-triade-motores/fluxo-01-pure/core/aidd-pure/scripts/core_pure/pecas_catalogo.py",
+      "tipo": "import",
+      "alvo": "01-governanca-e-qualidade",
+      "data": "2026-10-07",
+      "motivo": "acoplamento existente na semeadura do Ticket 11 (ciclo-03); migrar para interface.py"
+    },
+    {
+      "arquivo": "modulos/02-triade-motores/fluxo-01-pure/core/aidd-pure/tests/test_fronteira_generator.py",
+      "tipo": "caminho",
+      "alvo": "01-governanca-e-qualidade",
+      "data": "2026-10-07",
+      "motivo": "acoplamento existente na semeadura do Ticket 11 (ciclo-03); migrar para interface.py"
+    },
+    {
+      "arquivo": "modulos/02-triade-motores/fluxo-01-pure/core/aidd-pure/tests/test_fronteira_generator.py",
+      "tipo": "import",
+      "alvo": "01-governanca-e-qualidade",
+      "data": "2026-10-07",
+      "motivo": "acoplamento existente na semeadura do Ticket 11 (ciclo-03); migrar para interface.py"
+    },
+    {
+      "arquivo": "modulos/02-triade-motores/fluxo-02-open/core/aidd-open/scripts/phases_open/01_analisador.py",
+      "tipo": "caminho",
+      "alvo": "operacoes-ops",
+      "data": "2026-10-07",
+      "motivo": "acoplamento existente na semeadura do Ticket 11 (ciclo-03); migrar para interface.py"
+    },
+    {
+      "arquivo": "modulos/02-triade-motores/fluxo-02-open/core/aidd-open/scripts/phases_open/06_env.py",
+      "tipo": "caminho",
+      "alvo": "operacoes-ops",
+      "data": "2026-10-07",
+      "motivo": "acoplamento existente na semeadura do Ticket 11 (ciclo-03); migrar para interface.py"
+    },
+    {
+      "arquivo": "modulos/02-triade-motores/fluxo-02-open/core/aidd-open/src/core_open/vsa_generator.py",
+      "tipo": "caminho",
+      "alvo": "01-governanca-e-qualidade",
+      "data": "2026-10-07",
+      "motivo": "acoplamento existente na semeadura do Ticket 11 (ciclo-03); migrar para interface.py"
+    },
+    {
+      "arquivo": "modulos/02-triade-motores/fluxo-02-open/core/aidd-open/src/core_open/vsa_generator.py",
+      "tipo": "import",
+      "alvo": "01-governanca-e-qualidade",
+      "data": "2026-10-07",
+      "motivo": "acoplamento existente na semeadura do Ticket 11 (ciclo-03); migrar para interface.py"
+    },
+    {
+      "arquivo": "modulos/02-triade-motores/fluxo-02-open/core/aidd-open/tests/test_fronteira_factory.py",
+      "tipo": "caminho",
+      "alvo": "01-governanca-e-qualidade",
+      "data": "2026-10-07",
+      "motivo": "acoplamento existente na semeadura do Ticket 11 (ciclo-03); migrar para interface.py"
+    },
+    {
+      "arquivo": "modulos/02-triade-motores/fluxo-02-open/core/aidd-open/tests/test_fronteira_factory.py",
+      "tipo": "import",
+      "alvo": "01-governanca-e-qualidade",
+      "data": "2026-10-07",
+      "motivo": "acoplamento existente na semeadura do Ticket 11 (ciclo-03); migrar para interface.py"
+    },
+    {
+      "arquivo": "modulos/02-triade-motores/fluxo-03-freedom/gates/G_MIGRATION_ROT.py",
+      "tipo": "caminho",
+      "alvo": "blindagem-enterprise",
+      "data": "2026-10-07",
+      "motivo": "acoplamento existente na semeadura do Ticket 11 (ciclo-03); migrar para interface.py"
+    },
+    {
+      "arquivo": "modulos/02-triade-motores/fluxo-03-freedom/gates/G_MIGRATION_ROT.py",
+      "tipo": "caminho",
+      "alvo": "fatiamento-master",
+      "data": "2026-10-07",
+      "motivo": "acoplamento existente na semeadura do Ticket 11 (ciclo-03); migrar para interface.py"
+    },
+    {
+      "arquivo": "modulos/02-triade-motores/fluxo-03-freedom/gates/test_g_migration_rot.py",
+      "tipo": "caminho",
+      "alvo": "fatiamento-master",
+      "data": "2026-10-07",
+      "motivo": "acoplamento existente na semeadura do Ticket 11 (ciclo-03); migrar para interface.py"
+    },
+    {
+      "arquivo": "modulos/03-plataforma-e-entrega/blindagem-enterprise/aidd-enterprise/application/pecas_catalogo.py",
+      "tipo": "caminho",
+      "alvo": "01-governanca-e-qualidade",
+      "data": "2026-10-07",
+      "motivo": "acoplamento existente na semeadura do Ticket 11 (ciclo-03); migrar para interface.py"
+    },
+    {
+      "arquivo": "modulos/03-plataforma-e-entrega/blindagem-enterprise/aidd-enterprise/application/pecas_catalogo.py",
+      "tipo": "import",
+      "alvo": "01-governanca-e-qualidade",
+      "data": "2026-10-07",
+      "motivo": "acoplamento existente na semeadura do Ticket 11 (ciclo-03); migrar para interface.py"
+    },
+    {
+      "arquivo": "modulos/03-plataforma-e-entrega/blindagem-enterprise/aidd-enterprise/src/core/escritor_atomico.py",
+      "tipo": "caminho",
+      "alvo": "fatiamento-master",
+      "data": "2026-10-07",
+      "motivo": "acoplamento existente na semeadura do Ticket 11 (ciclo-03); migrar para interface.py"
+    },
+    {
+      "arquivo": "modulos/03-plataforma-e-entrega/blindagem-enterprise/aidd-enterprise/src/core/escritor_atomico.py",
+      "tipo": "caminho",
+      "alvo": "fluxo-01-pure",
+      "data": "2026-10-07",
+      "motivo": "acoplamento existente na semeadura do Ticket 11 (ciclo-03); migrar para interface.py"
+    },
+    {
+      "arquivo": "modulos/03-plataforma-e-entrega/blindagem-enterprise/aidd-enterprise/src/core/escritor_atomico.py",
+      "tipo": "caminho",
+      "alvo": "operacoes-ops",
+      "data": "2026-10-07",
+      "motivo": "acoplamento existente na semeadura do Ticket 11 (ciclo-03); migrar para interface.py"
+    },
+    {
+      "arquivo": "modulos/03-plataforma-e-entrega/blindagem-enterprise/aidd-enterprise/tests/test_fronteira_enterprise.py",
+      "tipo": "caminho",
+      "alvo": "01-governanca-e-qualidade",
+      "data": "2026-10-07",
+      "motivo": "acoplamento existente na semeadura do Ticket 11 (ciclo-03); migrar para interface.py"
+    },
+    {
+      "arquivo": "modulos/03-plataforma-e-entrega/blindagem-enterprise/aidd-enterprise/tests/test_fronteira_enterprise.py",
+      "tipo": "caminho",
+      "alvo": "fatiamento-master",
+      "data": "2026-10-07",
+      "motivo": "acoplamento existente na semeadura do Ticket 11 (ciclo-03); migrar para interface.py"
+    },
+    {
+      "arquivo": "modulos/03-plataforma-e-entrega/blindagem-enterprise/aidd-enterprise/tests/test_fronteira_enterprise.py",
+      "tipo": "import",
+      "alvo": "01-governanca-e-qualidade",
+      "data": "2026-10-07",
+      "motivo": "acoplamento existente na semeadura do Ticket 11 (ciclo-03); migrar para interface.py"
+    },
+    {
+      "arquivo": "modulos/03-plataforma-e-entrega/fatiamento-master/aidd-master/application/commands/bench.py",
+      "tipo": "import",
+      "alvo": "01-governanca-e-qualidade",
+      "data": "2026-10-07",
+      "motivo": "acoplamento existente na semeadura do Ticket 11 (ciclo-03); migrar para interface.py"
+    },
+    {
+      "arquivo": "modulos/03-plataforma-e-entrega/fatiamento-master/aidd-master/application/pecas_catalogo.py",
+      "tipo": "caminho",
+      "alvo": "01-governanca-e-qualidade",
+      "data": "2026-10-07",
+      "motivo": "acoplamento existente na semeadura do Ticket 11 (ciclo-03); migrar para interface.py"
+    },
+    {
+      "arquivo": "modulos/03-plataforma-e-entrega/fatiamento-master/aidd-master/application/pecas_catalogo.py",
+      "tipo": "import",
+      "alvo": "01-governanca-e-qualidade",
+      "data": "2026-10-07",
+      "motivo": "acoplamento existente na semeadura do Ticket 11 (ciclo-03); migrar para interface.py"
+    },
+    {
+      "arquivo": "modulos/03-plataforma-e-entrega/fatiamento-master/aidd-master/scripts/attach_vsa_infra.py",
+      "tipo": "import",
+      "alvo": "01-governanca-e-qualidade",
+      "data": "2026-10-07",
+      "motivo": "acoplamento existente na semeadura do Ticket 11 (ciclo-03); migrar para interface.py"
+    },
+    {
+      "arquivo": "modulos/03-plataforma-e-entrega/fatiamento-master/aidd-master/scripts/dispatch_pipeline.py",
+      "tipo": "caminho",
+      "alvo": "01-governanca-e-qualidade",
+      "data": "2026-10-07",
+      "motivo": "acoplamento existente na semeadura do Ticket 11 (ciclo-03); migrar para interface.py"
+    },
+    {
+      "arquivo": "modulos/03-plataforma-e-entrega/fatiamento-master/aidd-master/scripts/dispatch_pipeline.py",
+      "tipo": "import",
+      "alvo": "01-governanca-e-qualidade",
+      "data": "2026-10-07",
+      "motivo": "acoplamento existente na semeadura do Ticket 11 (ciclo-03); migrar para interface.py"
+    },
+    {
+      "arquivo": "modulos/03-plataforma-e-entrega/fatiamento-master/aidd-master/scripts/engine_router.py",
+      "tipo": "caminho",
+      "alvo": "fluxo-01-pure",
+      "data": "2026-10-07",
+      "motivo": "acoplamento existente na semeadura do Ticket 11 (ciclo-03); migrar para interface.py"
+    },
+    {
+      "arquivo": "modulos/03-plataforma-e-entrega/fatiamento-master/aidd-master/scripts/engine_router.py",
+      "tipo": "caminho",
+      "alvo": "fluxo-02-open",
+      "data": "2026-10-07",
+      "motivo": "acoplamento existente na semeadura do Ticket 11 (ciclo-03); migrar para interface.py"
+    },
+    {
+      "arquivo": "modulos/03-plataforma-e-entrega/fatiamento-master/aidd-master/scripts/engine_router.py",
+      "tipo": "caminho",
+      "alvo": "fluxo-03-freedom",
+      "data": "2026-10-07",
+      "motivo": "acoplamento existente na semeadura do Ticket 11 (ciclo-03); migrar para interface.py"
+    },
+    {
+      "arquivo": "modulos/03-plataforma-e-entrega/fatiamento-master/aidd-master/scripts/provision_project.py",
+      "tipo": "import",
+      "alvo": "01-governanca-e-qualidade",
+      "data": "2026-10-07",
+      "motivo": "acoplamento existente na semeadura do Ticket 11 (ciclo-03); migrar para interface.py"
+    },
+    {
+      "arquivo": "modulos/03-plataforma-e-entrega/fatiamento-master/aidd-master/src/core/escritor_atomico.py",
+      "tipo": "caminho",
+      "alvo": "blindagem-enterprise",
+      "data": "2026-10-07",
+      "motivo": "acoplamento existente na semeadura do Ticket 11 (ciclo-03); migrar para interface.py"
+    },
+    {
+      "arquivo": "modulos/03-plataforma-e-entrega/fatiamento-master/aidd-master/src/core/escritor_atomico.py",
+      "tipo": "caminho",
+      "alvo": "fluxo-01-pure",
+      "data": "2026-10-07",
+      "motivo": "acoplamento existente na semeadura do Ticket 11 (ciclo-03); migrar para interface.py"
+    },
+    {
+      "arquivo": "modulos/03-plataforma-e-entrega/fatiamento-master/aidd-master/src/core/escritor_atomico.py",
+      "tipo": "caminho",
+      "alvo": "operacoes-ops",
+      "data": "2026-10-07",
+      "motivo": "acoplamento existente na semeadura do Ticket 11 (ciclo-03); migrar para interface.py"
+    },
+    {
+      "arquivo": "modulos/03-plataforma-e-entrega/fatiamento-master/aidd-master/tests/test_fronteira_master.py",
+      "tipo": "caminho",
+      "alvo": "01-governanca-e-qualidade",
+      "data": "2026-10-07",
+      "motivo": "acoplamento existente na semeadura do Ticket 11 (ciclo-03); migrar para interface.py"
+    },
+    {
+      "arquivo": "modulos/03-plataforma-e-entrega/fatiamento-master/aidd-master/tests/test_fronteira_master.py",
+      "tipo": "import",
+      "alvo": "01-governanca-e-qualidade",
+      "data": "2026-10-07",
+      "motivo": "acoplamento existente na semeadura do Ticket 11 (ciclo-03); migrar para interface.py"
+    },
+    {
+      "arquivo": "modulos/03-plataforma-e-entrega/operacoes-ops/aidd-ops/scripts/infra_perfil.py",
+      "tipo": "caminho",
+      "alvo": "01-governanca-e-qualidade",
+      "data": "2026-10-07",
+      "motivo": "acoplamento existente na semeadura do Ticket 11 (ciclo-03); migrar para interface.py"
+    },
+    {
+      "arquivo": "modulos/03-plataforma-e-entrega/operacoes-ops/aidd-ops/scripts/infra_perfil.py",
+      "tipo": "import",
+      "alvo": "01-governanca-e-qualidade",
+      "data": "2026-10-07",
+      "motivo": "acoplamento existente na semeadura do Ticket 11 (ciclo-03); migrar para interface.py"
+    },
+    {
+      "arquivo": "modulos/03-plataforma-e-entrega/operacoes-ops/aidd-ops/tests/test_contrato_infraestrutura.py",
+      "tipo": "caminho",
+      "alvo": "blindagem-enterprise",
+      "data": "2026-10-07",
+      "motivo": "acoplamento existente na semeadura do Ticket 11 (ciclo-03); migrar para interface.py"
+    },
+    {
+      "arquivo": "modulos/03-plataforma-e-entrega/operacoes-ops/aidd-ops/tests/test_contrato_infraestrutura.py",
+      "tipo": "caminho",
+      "alvo": "fatiamento-master",
+      "data": "2026-10-07",
+      "motivo": "acoplamento existente na semeadura do Ticket 11 (ciclo-03); migrar para interface.py"
+    }
+  ]
+}

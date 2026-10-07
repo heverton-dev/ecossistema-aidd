@@ -445,6 +445,16 @@ repos:
         pass_filenames: false
         require_serial: true
 
+      # MODO AVISO (warn): fatia so fala com outra pelo interface.py (ciclo-03 VSA, Ticket 11).
+      # O modo bloqueio (AIDD_MODULO_FRONTEIRA_MODO=bloqueio) e ligado no Ticket 20.
+      - id: g-modulo-fronteira
+        name: "G_MODULO_FRONTEIRA (fronteira entre fatias: sys.path, caminho, tools/ e import — modo aviso, D13)"
+        entry: python modulos/04-nucleo-compartilhado/gates/G_MODULO_FRONTEIRA.py --modo aviso
+        language: system
+        always_run: true
+        pass_filenames: false
+        require_serial: true
+
       - id: g-template-forge-rot
         name: "G_TEMPLATE_FORGE_ROT (integridade de templates do aidd-forge per Lei #9)"
         entry: python modulos/01-governanca-e-qualidade/gates/G_TEMPLATE_FORGE_ROT.py
