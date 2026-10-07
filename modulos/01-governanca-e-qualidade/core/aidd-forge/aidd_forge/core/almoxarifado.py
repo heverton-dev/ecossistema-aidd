@@ -2,7 +2,7 @@
 
 Guarda e distribui peças do ecossistema a partir de componentes/compartilhado/CATALOGO.json.
 Nenhuma ferramenta guarda cópia; o forge entrega sob demanda para projetos e recusa
-gravar dentro de 'modulos/'.
+gravar em 'modulos/', 'componentes/' ou na raiz do ecossistema.
 """
 
 from __future__ import annotations
@@ -88,6 +88,24 @@ def _calcular_sha256(caminho: Path) -> str:
     return hasher.hexdigest()
 
 
+def _recusar_destino_do_ecossistema(dest_path: Path, destino: str | Path, root: Path) -> None:
+    """Peça só vai para pasta de projeto: nunca para o código das fatias (modulos/), o próprio
+    almoxarifado (componentes/) ou a raiz do ecossistema (a pasta ou um arquivo direto nela)."""
+    raiz = root.resolve()
+    for pasta in ("modulos", "componentes"):
+        proibida = raiz / pasta
+        if dest_path == proibida or proibida in dest_path.parents:
+            raise ValueError(
+                f"Destino inválido '{destino}': proibido gravar dentro de '{pasta}/'. "
+                "O almoxarifado entrega peças exclusivamente para pastas de projetos."
+            )
+    if dest_path == raiz or dest_path.parent == raiz:
+        raise ValueError(
+            f"Destino inválido '{destino}': proibido gravar na raiz do ecossistema. "
+            "O almoxarifado entrega peças exclusivamente para pastas de projetos."
+        )
+
+
 def obter_peca(
     nome: str,
     destino: str | Path,
@@ -97,7 +115,7 @@ def obter_peca(
     """Copia uma peça do almoxarifado para a pasta do projeto e verifica o sha256.
 
     Regras:
-    - Recusa expressamente qualquer destino dentro da pasta 'modulos/'.
+    - Recusa destino em 'modulos/', 'componentes/' ou na raiz do ecossistema.
     - Verifica a integridade do sha256 contra o catálogo oficial.
     """
     root = _encontrar_raiz(raiz)
@@ -106,13 +124,7 @@ def obter_peca(
 
     dest_path = Path(destino).resolve()
 
-    # Validação de segurança arquitetural: proibido gravar no código das ferramentas (modulos/)
-    modulos_repo = (root / "modulos").resolve()
-    if dest_path == modulos_repo or modulos_repo in dest_path.parents:
-        raise ValueError(
-            f"Destino inválido '{destino}': proibido gravar dentro de 'modulos/'. "
-            "O almoxarifado entrega peças exclusivamente para pastas de projetos."
-        )
+    _recusar_destino_do_ecossistema(dest_path, destino, root)
 
     origem = caminho_peca(nome, raiz=root)
 

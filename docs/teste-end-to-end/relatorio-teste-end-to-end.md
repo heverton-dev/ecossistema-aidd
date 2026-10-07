@@ -1460,3 +1460,18 @@
   - pure `test_fronteira_generator.py` + open `test_fronteira_factory.py` no mesmo processo: exit 2 antes (`core` do pure), exit 0 depois (12 passed).
 - **Status:** **RESOLVIDO**.
 - **Data da Última Auditoria:** 07/10/2026.
+
+## 45. Modularização VSA ciclo-03, Bloco 4 (Ticket 12): almoxarifado só entrega para pasta de projeto
+
+- **Objetivo da Correção:**
+  `obter_peca` passa a recusar destino em `modulos/`, em `componentes/` (o próprio almoxarifado) e na raiz do ecossistema (a pasta ou um arquivo direto nela). Origem: `_destino_teste_almoxarifado` versionado dentro de `modulos/` em 06/10.
+- **Ferramentas Tocadas:** aidd-forge (`aidd_forge/core/almoxarifado.py`, nova guarda `_recusar_destino_do_ecossistema`).
+- **O que executou:**
+  1. Teste novo `tests/test_almoxarifado_guarda_modulos.py`: 4 destinos proibidos (erro claro, nada criado) e 2 projetos fora do ecossistema com pasta `modulos`/`componentes` (recebem a peça).
+  2. No vermelho, a peça foi de fato copiada para a raiz do ecossistema (`Dockerfile`) e uma pasta foi criada em `componentes/compartilhado/`: sujeira removida após a prova.
+- **Resultados de Testes (07/10/2026, rodados de dentro de cada pasta em `modulos/`):**
+  - `tests/test_almoxarifado_guarda_modulos.py` → exit 1 antes (3 falhas), exit 0 depois (6 passed).
+  - forge 316 passed, 1 skipped · ops 198 passed (única outra ferramenta que chama `obter_peca`), ambos exit 0.
+  - `git status --ignored` de `modulos/` e `componentes/` idêntico antes e depois das duas suítes.
+- **Status:** **RESOLVIDO**.
+- **Data da Última Auditoria:** 07/10/2026.
