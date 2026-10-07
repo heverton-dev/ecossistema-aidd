@@ -124,8 +124,13 @@ def test_tabela_de_apelidos_mapeia_ferramentas_e_pacotes(tabela):
 
 @pytest.mark.parametrize("antigo,novo", sorted(FERRAMENTAS.items()))
 def test_pasta_da_ferramenta_tem_o_nome_do_fluxo(antigo, novo):
+    sys.path.insert(0, str(RAIZ / "scripts"))
+    from pastas_ferramentas import pasta_ferramenta
+
     assert not (RAIZ / "tools" / antigo).exists(), f"tools/{antigo} ainda existe"
-    assert (RAIZ / "tools" / novo / "README.md").is_file(), f"tools/{novo} sem README"
+    pasta = pasta_ferramenta(novo, RAIZ)
+    assert not (pasta.parent / antigo).exists(), f"{antigo} ainda existe ao lado de {novo}"
+    assert (pasta / "README.md").is_file(), f"{pasta} sem README"
 
 
 def test_pacote_python_do_freedom_renomeado():

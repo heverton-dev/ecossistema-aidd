@@ -1,0 +1,2902 @@
+{
+  "descricao": "Órfãos aceitos de INVENTARIO-ANTES.json (fronteiras ciclo-01) no ciclo-03 VSA. Lista só pode diminuir; órfão novo fora dela reprova.",
+  "gerado_em": "2026-10-06",
+  "total": 579,
+  "aceitos": [
+    {
+      "arquivo": "tools/aidd-master/tests/unit/test_provision_project.py",
+      "item": "função test_provision_copia_pasta_nginx_com_conf_e_gerador_ssl",
+      "motivo": "já órfão na tag pre-vsa-ciclo-03 (232cac4): dívida da foto de 04/10, anterior a este ciclo"
+    },
+    {
+      "arquivo": "tools/aidd-master/tests/unit/test_provision_project.py",
+      "item": "função test_provision_dockerfile_instala_requirements_antes_de_rodar",
+      "motivo": "já órfão na tag pre-vsa-ciclo-03 (232cac4): dívida da foto de 04/10, anterior a este ciclo"
+    },
+    {
+      "arquivo": "tools/aidd-master/tests/unit/test_provision_project.py",
+      "item": "teste test_provision_copia_pasta_nginx_com_conf_e_gerador_ssl",
+      "motivo": "já órfão na tag pre-vsa-ciclo-03 (232cac4): dívida da foto de 04/10, anterior a este ciclo"
+    },
+    {
+      "arquivo": "tools/aidd-master/tests/unit/test_provision_project.py",
+      "item": "teste test_provision_dockerfile_instala_requirements_antes_de_rodar",
+      "motivo": "já órfão na tag pre-vsa-ciclo-03 (232cac4): dívida da foto de 04/10, anterior a este ciclo"
+    },
+    {
+      "arquivo": "tools/aidd-planner/aidd_planner/cli.py",
+      "item": "função _tipo_canonico",
+      "motivo": "já órfão na tag pre-vsa-ciclo-03 (232cac4): dívida da foto de 04/10, anterior a este ciclo"
+    },
+    {
+      "arquivo": "tools/aidd-planner/src/cli.py",
+      "item": "função _tipo_canonico",
+      "motivo": "já órfão na tag pre-vsa-ciclo-03 (232cac4): dívida da foto de 04/10, anterior a este ciclo"
+    },
+    {
+      "arquivo": "componentes/compartilhado/hooks/aidd_session_auto_hook.py",
+      "item": "linha: from scripts.gestor_sessoes import registrar_sessao",
+      "motivo": "já órfão na tag pre-vsa-ciclo-03 (232cac4): dívida da foto de 04/10, anterior a este ciclo"
+    },
+    {
+      "arquivo": "componentes/compartilhado/hooks/crg-session-start.cmd",
+      "item": "linha: python \"%~dp0crg_session_start.py\" %*",
+      "motivo": "já órfão na tag pre-vsa-ciclo-03 (232cac4): dívida da foto de 04/10, anterior a este ciclo"
+    },
+    {
+      "arquivo": "componentes/compartilhado/hooks/crg-session-start.sh",
+      "item": "linha: python3 \"$(dirname \"$0\")/crg_session_start.py\" \"$@\" 2>/dev/null || python \"$(dirname \"$0\")/crg_session_start.py\" \"$@\" 2>/dev/null || echo '{\"suppressOutput\": true}'",
+      "motivo": "já órfão na tag pre-vsa-ciclo-03 (232cac4): dívida da foto de 04/10, anterior a este ciclo"
+    },
+    {
+      "arquivo": "componentes/compartilhado/hooks/crg-update.cmd",
+      "item": "linha: python \"%~dp0crg_update.py\" %*",
+      "motivo": "já órfão na tag pre-vsa-ciclo-03 (232cac4): dívida da foto de 04/10, anterior a este ciclo"
+    },
+    {
+      "arquivo": "componentes/compartilhado/hooks/crg-update.sh",
+      "item": "linha: python3 \"$(dirname \"$0\")/crg_update.py\" \"$@\" 2>/dev/null || python \"$(dirname \"$0\")/crg_update.py\" \"$@\" 2>/dev/null || echo '{\"suppressOutput\": true}'",
+      "motivo": "já órfão na tag pre-vsa-ciclo-03 (232cac4): dívida da foto de 04/10, anterior a este ciclo"
+    },
+    {
+      "arquivo": "componentes/compartilhado/hooks/crg_session_start.py",
+      "item": "linha: [\"code-review-graph\", \"status\", \"--repo\", repo_root],",
+      "motivo": "já órfão na tag pre-vsa-ciclo-03 (232cac4): dívida da foto de 04/10, anterior a este ciclo"
+    },
+    {
+      "arquivo": "componentes/compartilhado/hooks/crg_session_start.py",
+      "item": "linha: code-review-graph: Session start hook (Cross-platform Python).",
+      "motivo": "já órfão na tag pre-vsa-ciclo-03 (232cac4): dívida da foto de 04/10, anterior a este ciclo"
+    },
+    {
+      "arquivo": "componentes/compartilhado/hooks/crg_session_start.py",
+      "item": "linha: system_msg = f\"Knowledge Graph Active: {first_line}\"",
+      "motivo": "já órfão na tag pre-vsa-ciclo-03 (232cac4): dívida da foto de 04/10, anterior a este ciclo"
+    },
+    {
+      "arquivo": "componentes/compartilhado/hooks/crg_update.py",
+      "item": "linha: # Detect repo root",
+      "motivo": "já órfão na tag pre-vsa-ciclo-03 (232cac4): dívida da foto de 04/10, anterior a este ciclo"
+    },
+    {
+      "arquivo": "componentes/compartilhado/hooks/crg_update.py",
+      "item": "linha: # Must output ONLY JSON on stdout for harnesses like Gemini/Antigravity/Claude",
+      "motivo": "já órfão na tag pre-vsa-ciclo-03 (232cac4): dívida da foto de 04/10, anterior a este ciclo"
+    },
+    {
+      "arquivo": "componentes/compartilhado/hooks/crg_update.py",
+      "item": "linha: # Run code-review-graph update silently with timeout",
+      "motivo": "já órfão na tag pre-vsa-ciclo-03 (232cac4): dívida da foto de 04/10, anterior a este ciclo"
+    },
+    {
+      "arquivo": "componentes/compartilhado/hooks/crg_update.py",
+      "item": "linha: Executes code-review-graph update after edits/commits without blocking or crashing.",
+      "motivo": "já órfão na tag pre-vsa-ciclo-03 (232cac4): dívida da foto de 04/10, anterior a este ciclo"
+    },
+    {
+      "arquivo": "componentes/compartilhado/hooks/crg_update.py",
+      "item": "linha: cmd = [\"code-review-graph\", \"update\", \"--skip-flows\", \"--repo\", repo_root]",
+      "motivo": "já órfão na tag pre-vsa-ciclo-03 (232cac4): dívida da foto de 04/10, anterior a este ciclo"
+    },
+    {
+      "arquivo": "componentes/compartilhado/hooks/crg_update.py",
+      "item": "linha: code-review-graph: Incremental update hook (Cross-platform Python).",
+      "motivo": "já órfão na tag pre-vsa-ciclo-03 (232cac4): dívida da foto de 04/10, anterior a este ciclo"
+    },
+    {
+      "arquivo": "componentes/compartilhado/hooks/crg_update.py",
+      "item": "linha: timeout=20,",
+      "motivo": "já órfão na tag pre-vsa-ciclo-03 (232cac4): dívida da foto de 04/10, anterior a este ciclo"
+    },
+    {
+      "arquivo": "componentes/compartilhado/skills/aidd-diagnose/scripts/cobertura_grafo.py",
+      "item": "linha: \"\"\"Conjunto de arquivos relativos com pelo menos 1 nó em graph.db.",
+      "motivo": "já órfão na tag pre-vsa-ciclo-03 (232cac4): dívida da foto de 04/10, anterior a este ciclo"
+    },
+    {
+      "arquivo": "componentes/compartilhado/skills/aidd-diagnose/scripts/cobertura_grafo.py",
+      "item": "linha: \"\"\"result_count de query_graph_tool(pattern='file_summary', target=<arquivo>).",
+      "motivo": "já órfão na tag pre-vsa-ciclo-03 (232cac4): dívida da foto de 04/10, anterior a este ciclo"
+    },
+    {
+      "arquivo": "componentes/compartilhado/skills/aidd-diagnose/scripts/cobertura_grafo.py",
+      "item": "linha: \"(diretório é gitignored; worktree nova nunca recebeu build).\"",
+      "motivo": "já órfão na tag pre-vsa-ciclo-03 (232cac4): dívida da foto de 04/10, anterior a este ciclo"
+    },
+    {
+      "arquivo": "componentes/compartilhado/skills/aidd-diagnose/scripts/cobertura_grafo.py",
+      "item": "linha: \".code-review-graph/ gitignored nunca recebeu build inicial.\"",
+      "motivo": "já órfão na tag pre-vsa-ciclo-03 (232cac4): dívida da foto de 04/10, anterior a este ciclo"
+    },
+    {
+      "arquivo": "componentes/compartilhado/skills/aidd-diagnose/scripts/cobertura_grafo.py",
+      "item": "linha: \"CLI code-review-graph ausente no PATH (MCP indisponível — Fase 2 em modo fallback do Ticket 4)\"",
+      "motivo": "já órfão na tag pre-vsa-ciclo-03 (232cac4): dívida da foto de 04/10, anterior a este ciclo"
+    },
+    {
+      "arquivo": "componentes/compartilhado/skills/aidd-diagnose/scripts/cobertura_grafo.py",
+      "item": "linha: \"Grafo .code-review-graph/graph.db inexistente antes da medição \"",
+      "motivo": "já órfão na tag pre-vsa-ciclo-03 (232cac4): dívida da foto de 04/10, anterior a este ciclo"
+    },
+    {
+      "arquivo": "componentes/compartilhado/skills/aidd-diagnose/scripts/cobertura_grafo.py",
+      "item": "linha: \"O update incremental cobriu parte dos arquivos, mas deixou \"",
+      "motivo": "já órfão na tag pre-vsa-ciclo-03 (232cac4): dívida da foto de 04/10, anterior a este ciclo"
+    },
+    {
+      "arquivo": "componentes/compartilhado/skills/aidd-diagnose/scripts/cobertura_grafo.py",
+      "item": "linha: \"alterados desde HEAD~1 e não faz backfill dos ausentes — só o \"",
+      "motivo": "já órfão na tag pre-vsa-ciclo-03 (232cac4): dívida da foto de 04/10, anterior a este ciclo"
+    },
+    {
+      "arquivo": "componentes/compartilhado/skills/aidd-diagnose/scripts/cobertura_grafo.py",
+      "item": "linha: \"build completo (full rebuild) reindexa o repositório.\"",
+      "motivo": "já órfão na tag pre-vsa-ciclo-03 (232cac4): dívida da foto de 04/10, anterior a este ciclo"
+    },
+    {
+      "arquivo": "componentes/compartilhado/skills/aidd-diagnose/scripts/cobertura_grafo.py",
+      "item": "linha: \"code-review-graph update é incremental: reparseia apenas arquivos \"",
+      "motivo": "já órfão na tag pre-vsa-ciclo-03 (232cac4): dívida da foto de 04/10, anterior a este ciclo"
+    },
+    {
+      "arquivo": "componentes/compartilhado/skills/aidd-diagnose/scripts/cobertura_grafo.py",
+      "item": "linha: \"completo reduziu a lacuna.\"",
+      "motivo": "já órfão na tag pre-vsa-ciclo-03 (232cac4): dívida da foto de 04/10, anterior a este ciclo"
+    },
+    {
+      "arquivo": "componentes/compartilhado/skills/aidd-diagnose/scripts/cobertura_grafo.py",
+      "item": "linha: \"faltantes (não reparseia inalterados desde HEAD~1); o build \"",
+      "motivo": "já órfão na tag pre-vsa-ciclo-03 (232cac4): dívida da foto de 04/10, anterior a este ciclo"
+    },
+    {
+      "arquivo": "componentes/compartilhado/skills/aidd-diagnose/scripts/cobertura_grafo.py",
+      "item": "linha: \"graph.db existia mas estava vazio (0 nós): worktree nova com \"",
+      "motivo": "já órfão na tag pre-vsa-ciclo-03 (232cac4): dívida da foto de 04/10, anterior a este ciclo"
+    },
+    {
+      "arquivo": "componentes/compartilhado/skills/aidd-diagnose/scripts/cobertura_grafo.py",
+      "item": "linha: # Grafo nunca construído nesta árvore: \"No graph found ... Run build\".",
+      "motivo": "já órfão na tag pre-vsa-ciclo-03 (232cac4): dívida da foto de 04/10, anterior a este ciclo"
+    },
+    {
+      "arquivo": "componentes/compartilhado/skills/aidd-diagnose/scripts/cobertura_grafo.py",
+      "item": "linha: (equivalente CLI de ``query_graph_tool(pattern=\"file_summary\", target=<arquivo>)``).",
+      "motivo": "já órfão na tag pre-vsa-ciclo-03 (232cac4): dívida da foto de 04/10, anterior a este ciclo"
+    },
+    {
+      "arquivo": "componentes/compartilhado/skills/aidd-diagnose/scripts/cobertura_grafo.py",
+      "item": "linha: 0 = sem nós para o arquivo (grafo ausente/desatualizado).",
+      "motivo": "já órfão na tag pre-vsa-ciclo-03 (232cac4): dívida da foto de 04/10, anterior a este ciclo"
+    },
+    {
+      "arquivo": "componentes/compartilhado/skills/aidd-diagnose/scripts/cobertura_grafo.py",
+      "item": "linha: 1. Consulta cada arquivo suspeito via",
+      "motivo": "já órfão na tag pre-vsa-ciclo-03 (232cac4): dívida da foto de 04/10, anterior a este ciclo"
+    },
+    {
+      "arquivo": "componentes/compartilhado/skills/aidd-diagnose/scripts/cobertura_grafo.py",
+      "item": "linha: Nunca modifica site-packages; só chama o CLI ``code-review-graph`` e lê o",
+      "motivo": "já órfão na tag pre-vsa-ciclo-03 (232cac4): dívida da foto de 04/10, anterior a este ciclo"
+    },
+    {
+      "arquivo": "componentes/compartilhado/skills/aidd-diagnose/scripts/cobertura_grafo.py",
+      "item": "linha: [\"code-review-graph\", \"query\", \"file_summary\", arquivo, \"--repo\", str(raiz)],",
+      "motivo": "já órfão na tag pre-vsa-ciclo-03 (232cac4): dívida da foto de 04/10, anterior a este ciclo"
+    },
+    {
+      "arquivo": "componentes/compartilhado/skills/aidd-diagnose/scripts/cobertura_grafo.py",
+      "item": "linha: [\"code-review-graph\", acao, \"--repo\", str(raiz)],",
+      "motivo": "já órfão na tag pre-vsa-ciclo-03 (232cac4): dívida da foto de 04/10, anterior a este ciclo"
+    },
+    {
+      "arquivo": "componentes/compartilhado/skills/aidd-diagnose/scripts/cobertura_grafo.py",
+      "item": "linha: ``code-review-graph query file_summary <arquivo> --repo <raiz>``",
+      "motivo": "já órfão na tag pre-vsa-ciclo-03 (232cac4): dívida da foto de 04/10, anterior a este ciclo"
+    },
+    {
+      "arquivo": "componentes/compartilhado/skills/aidd-diagnose/scripts/cobertura_grafo.py",
+      "item": "linha: após cada etapa, compõe a causa-raiz e (com --salvar) grava",
+      "motivo": "já órfão na tag pre-vsa-ciclo-03 (232cac4): dívida da foto de 04/10, anterior a este ciclo"
+    },
+    {
+      "arquivo": "componentes/compartilhado/skills/aidd-diagnose/scripts/cobertura_grafo.py",
+      "item": "linha: con = sqlite3.connect(f\"file:{db.as_posix()}?mode=ro\", uri=True)",
+      "motivo": "já órfão na tag pre-vsa-ciclo-03 (232cac4): dívida da foto de 04/10, anterior a este ciclo"
+    },
+    {
+      "arquivo": "componentes/compartilhado/skills/aidd-diagnose/scripts/cobertura_grafo.py",
+      "item": "linha: conta .py versionados sem nó em .code-review-graph/graph.db antes e",
+      "motivo": "já órfão na tag pre-vsa-ciclo-03 (232cac4): dívida da foto de 04/10, anterior a este ciclo"
+    },
+    {
+      "arquivo": "componentes/compartilhado/skills/aidd-diagnose/scripts/cobertura_grafo.py",
+      "item": "linha: db = raiz / DB_REL",
+      "motivo": "já órfão na tag pre-vsa-ciclo-03 (232cac4): dívida da foto de 04/10, anterior a este ciclo"
+    },
+    {
+      "arquivo": "componentes/compartilhado/skills/aidd-diagnose/scripts/cobertura_grafo.py",
+      "item": "linha: description=\"Cobertura do code-review-graph antes da Fase 2 do aidd-diagnose (D8)\",",
+      "motivo": "já órfão na tag pre-vsa-ciclo-03 (232cac4): dívida da foto de 04/10, anterior a este ciclo"
+    },
+    {
+      "arquivo": "componentes/compartilhado/skills/aidd-diagnose/scripts/cobertura_grafo.py",
+      "item": "linha: docs/diagnosticos/<YYYYMMDD>_cobertura-grafo/.",
+      "motivo": "já órfão na tag pre-vsa-ciclo-03 (232cac4): dívida da foto de 04/10, anterior a este ciclo"
+    },
+    {
+      "arquivo": "componentes/compartilhado/skills/aidd-diagnose/scripts/cobertura_grafo.py",
+      "item": "linha: except sqlite3.Error as exc:",
+      "motivo": "já órfão na tag pre-vsa-ciclo-03 (232cac4): dívida da foto de 04/10, anterior a este ciclo"
+    },
+    {
+      "arquivo": "componentes/compartilhado/skills/aidd-diagnose/scripts/cobertura_grafo.py",
+      "item": "linha: f\"code-review-graph {etapa} falhou (exit {proc.returncode}): \"",
+      "motivo": "já órfão na tag pre-vsa-ciclo-03 (232cac4): dívida da foto de 04/10, anterior a este ciclo"
+    },
+    {
+      "arquivo": "componentes/compartilhado/skills/aidd-diagnose/scripts/cobertura_grafo.py",
+      "item": "linha: f\"query file_summary falhou para {arquivo} (exit {proc.returncode}): {texto[:300]}\"",
+      "motivo": "já órfão na tag pre-vsa-ciclo-03 (232cac4): dívida da foto de 04/10, anterior a este ciclo"
+    },
+    {
+      "arquivo": "componentes/compartilhado/skills/aidd-diagnose/scripts/cobertura_grafo.py",
+      "item": "linha: graph.db em modo somente-leitura.",
+      "motivo": "já órfão na tag pre-vsa-ciclo-03 (232cac4): dívida da foto de 04/10, anterior a este ciclo"
+    },
+    {
+      "arquivo": "componentes/compartilhado/skills/aidd-diagnose/scripts/cobertura_grafo.py",
+      "item": "linha: if \"No graph found\" in texto or \"No graph found\" in proc.stderr.decode(\"utf-8\", \"replace\"):",
+      "motivo": "já órfão na tag pre-vsa-ciclo-03 (232cac4): dívida da foto de 04/10, anterior a este ciclo"
+    },
+    {
+      "arquivo": "componentes/compartilhado/skills/aidd-diagnose/scripts/cobertura_grafo.py",
+      "item": "linha: if dados.get(\"status\") not in (None, \"ok\"):",
+      "motivo": "já órfão na tag pre-vsa-ciclo-03 (232cac4): dívida da foto de 04/10, anterior a este ciclo"
+    },
+    {
+      "arquivo": "componentes/compartilhado/skills/aidd-diagnose/scripts/cobertura_grafo.py",
+      "item": "linha: if inicio < 0:",
+      "motivo": "já órfão na tag pre-vsa-ciclo-03 (232cac4): dívida da foto de 04/10, anterior a este ciclo"
+    },
+    {
+      "arquivo": "componentes/compartilhado/skills/aidd-diagnose/scripts/cobertura_grafo.py",
+      "item": "linha: if not db.is_file():",
+      "motivo": "já órfão na tag pre-vsa-ciclo-03 (232cac4): dívida da foto de 04/10, anterior a este ciclo"
+    },
+    {
+      "arquivo": "componentes/compartilhado/skills/aidd-diagnose/scripts/cobertura_grafo.py",
+      "item": "linha: medicao-cobertura-grafo.json + RELATORIO-COBERTURA-GRAFO.md em",
+      "motivo": "já órfão na tag pre-vsa-ciclo-03 (232cac4): dívida da foto de 04/10, anterior a este ciclo"
+    },
+    {
+      "arquivo": "componentes/compartilhado/skills/aidd-diagnose/scripts/cobertura_grafo.py",
+      "item": "linha: raise CoberturaError(f\"JSON inválido de query para {arquivo}: {exc}\") from exc",
+      "motivo": "já órfão na tag pre-vsa-ciclo-03 (232cac4): dívida da foto de 04/10, anterior a este ciclo"
+    },
+    {
+      "arquivo": "componentes/compartilhado/skills/aidd-diagnose/scripts/cobertura_grafo.py",
+      "item": "linha: raise CoberturaError(f\"code-review-graph {acao} expirou ({timeout}s)\") from exc",
+      "motivo": "já órfão na tag pre-vsa-ciclo-03 (232cac4): dívida da foto de 04/10, anterior a este ciclo"
+    },
+    {
+      "arquivo": "componentes/compartilhado/skills/aidd-diagnose/scripts/cobertura_grafo.py",
+      "item": "linha: raise CoberturaError(f\"consulta file_summary expirou ({TIMEOUT_QUERY_S}s): {arquivo}\") from exc",
+      "motivo": "já órfão na tag pre-vsa-ciclo-03 (232cac4): dívida da foto de 04/10, anterior a este ciclo"
+    },
+    {
+      "arquivo": "componentes/compartilhado/skills/aidd-diagnose/scripts/cobertura_grafo.py",
+      "item": "linha: raise CoberturaError(f\"graph.db ilegível: {exc}\") from exc",
+      "motivo": "já órfão na tag pre-vsa-ciclo-03 (232cac4): dívida da foto de 04/10, anterior a este ciclo"
+    },
+    {
+      "arquivo": "componentes/compartilhado/skills/aidd-diagnose/scripts/cobertura_grafo.py",
+      "item": "linha: raise CoberturaError(f\"graph.db sem tabela nodes: {exc}\") from exc",
+      "motivo": "já órfão na tag pre-vsa-ciclo-03 (232cac4): dívida da foto de 04/10, anterior a este ciclo"
+    },
+    {
+      "arquivo": "componentes/compartilhado/skills/aidd-diagnose/scripts/cobertura_grafo.py",
+      "item": "linha: raise CoberturaError(f\"query retornou status={dados.get('status')} para {arquivo}\")",
+      "motivo": "já órfão na tag pre-vsa-ciclo-03 (232cac4): dívida da foto de 04/10, anterior a este ciclo"
+    },
+    {
+      "arquivo": "componentes/compartilhado/skills/aidd-diagnose/scripts/cobertura_grafo.py",
+      "item": "linha: raise CoberturaError(f\"saída de query sem JSON para {arquivo}: {texto[:300]}\")",
+      "motivo": "já órfão na tag pre-vsa-ciclo-03 (232cac4): dívida da foto de 04/10, anterior a este ciclo"
+    },
+    {
+      "arquivo": "componentes/compartilhado/skills/aidd-diagnose/scripts/cobertura_grafo.py",
+      "item": "linha: roda ``code-review-graph update --repo <raiz>`` UMA vez para todos os",
+      "motivo": "já órfão na tag pre-vsa-ciclo-03 (232cac4): dívida da foto de 04/10, anterior a este ciclo"
+    },
+    {
+      "arquivo": "componentes/compartilhado/skills/aidd-diagnose/scripts/cobertura_grafo.py",
+      "item": "linha: suspeitos → reconsulta os que estavam com 0.",
+      "motivo": "já órfão na tag pre-vsa-ciclo-03 (232cac4): dívida da foto de 04/10, anterior a este ciclo"
+    },
+    {
+      "arquivo": "componentes/compartilhado/skills/aidd-diagnose/scripts/fallback.py",
+      "item": "linha: \"\"\"Executa a sonda no MCP codebase-memory-mcp ou fallback legadо. Levanta OSError se o CLI não existir.\"\"\"",
+      "motivo": "já órfão na tag pre-vsa-ciclo-03 (232cac4): dívida da foto de 04/10, anterior a este ciclo"
+    },
+    {
+      "arquivo": "componentes/compartilhado/skills/aidd-diagnose/scripts/fallback.py",
+      "item": "linha: \".code-review-graph\",",
+      "motivo": "já órfão na tag pre-vsa-ciclo-03 (232cac4): dívida da foto de 04/10, anterior a este ciclo"
+    },
+    {
+      "arquivo": "componentes/compartilhado/skills/aidd-diagnose/scripts/fallback.py",
+      "item": "linha: 1. Sonda a conexao com `code-review-graph query file_summary` usando retry com",
+      "motivo": "já órfão na tag pre-vsa-ciclo-03 (232cac4): dívida da foto de 04/10, anterior a este ciclo"
+    },
+    {
+      "arquivo": "componentes/compartilhado/skills/aidd-diagnose/scripts/fallback.py",
+      "item": "linha: 30 s foi observado no servidor 2026-09-23, ver docs/auditoria/aidd-diagnose/).",
+      "motivo": "já órfão na tag pre-vsa-ciclo-03 (232cac4): dívida da foto de 04/10, anterior a este ciclo"
+    },
+    {
+      "arquivo": "componentes/compartilhado/skills/aidd-diagnose/scripts/fallback.py",
+      "item": "linha: COMANDO_PROBE_LEGACY = (\"code-review-graph\", \"query\", \"file_summary\")",
+      "motivo": "já órfão na tag pre-vsa-ciclo-03 (232cac4): dívida da foto de 04/10, anterior a este ciclo"
+    },
+    {
+      "arquivo": "componentes/compartilhado/skills/aidd-diagnose/scripts/fallback.py",
+      "item": "linha: Quando o MCP `code-review-graph` estiver indisponivel, a Fase 2 do diagnostico",
+      "motivo": "já órfão na tag pre-vsa-ciclo-03 (232cac4): dívida da foto de 04/10, anterior a este ciclo"
+    },
+    {
+      "arquivo": "componentes/compartilhado/skills/aidd-diagnose/scripts/fallback.py",
+      "item": "linha: [cbm_exe, \"query\", \"file_summary\", arquivo, \"--repo\", str(raiz)],",
+      "motivo": "já órfão na tag pre-vsa-ciclo-03 (232cac4): dívida da foto de 04/10, anterior a este ciclo"
+    },
+    {
+      "arquivo": "componentes/compartilhado/skills/aidd-diagnose/scripts/fallback.py",
+      "item": "linha: backoff exponencial (o servidor sobe a frio em ~11 s; CONNECT_TIMEOUT de",
+      "motivo": "já órfão na tag pre-vsa-ciclo-03 (232cac4): dívida da foto de 04/10, anterior a este ciclo"
+    },
+    {
+      "arquivo": "componentes/compartilhado/skills/aidd-diagnose/scripts/fallback.py",
+      "item": "linha: cbm_exe = shutil.which(COMANDO_PROBE_LEGACY[0])",
+      "motivo": "já órfão na tag pre-vsa-ciclo-03 (232cac4): dívida da foto de 04/10, anterior a este ciclo"
+    },
+    {
+      "arquivo": "componentes/compartilhado/skills/aidd-enterprise/scripts/cli.py",
+      "item": "linha: \"\"\"Raiz do pacote local tools/aidd-enterprise quando presente neste repositorio.\"\"\"",
+      "motivo": "ciclo-03 Tickets 3-4: linha com caminho/descoberta de raiz do layout tools/ reescrita para modulos/; nenhuma função, classe ou teste sumiu"
+    },
+    {
+      "arquivo": "componentes/compartilhado/skills/aidd-enterprise/scripts/cli.py",
+      "item": "linha: - Roteamento direto para os modulos Python de tools/aidd-enterprise,",
+      "motivo": "ciclo-03 Tickets 3-4: linha com caminho/descoberta de raiz do layout tools/ reescrita para modulos/; nenhuma função, classe ou teste sumiu"
+    },
+    {
+      "arquivo": "componentes/compartilhado/skills/aidd-enterprise/scripts/cli.py",
+      "item": "linha: Delega os argumentos ja validados ao pacote local tools/aidd-enterprise.",
+      "motivo": "ciclo-03 Tickets 3-4: linha com caminho/descoberta de raiz do layout tools/ reescrita para modulos/; nenhuma função, classe ou teste sumiu"
+    },
+    {
+      "arquivo": "componentes/compartilhado/skills/aidd-enterprise/scripts/cli.py",
+      "item": "linha: pacote = raiz / \"tools\" / \"aidd-enterprise\"",
+      "motivo": "ciclo-03 Tickets 3-4: linha com caminho/descoberta de raiz do layout tools/ reescrita para modulos/; nenhuma função, classe ou teste sumiu"
+    },
+    {
+      "arquivo": "componentes/compartilhado/skills/aidd-enterprise/scripts/cli.py",
+      "item": "linha: raise RuntimeError(\"pacote local tools/aidd-enterprise nao encontrado\")",
+      "motivo": "ciclo-03 Tickets 3-4: linha com caminho/descoberta de raiz do layout tools/ reescrita para modulos/; nenhuma função, classe ou teste sumiu"
+    },
+    {
+      "arquivo": "componentes/compartilhado/skills/aidd-enterprise/scripts/injetor.py",
+      "item": "linha: return raiz / \"tools\" / \"aidd-enterprise\" / \"scripts\" / \"injector\" / \"schema\" / \"component_manifest.schema.json\"",
+      "motivo": "já órfão na tag pre-vsa-ciclo-03 (232cac4): dívida da foto de 04/10, anterior a este ciclo"
+    },
+    {
+      "arquivo": "componentes/compartilhado/skills/aidd-enterprise/scripts/injetor.py",
+      "item": "linha: tools/aidd-enterprise/scripts/injector/schema/component_manifest.schema.json.",
+      "motivo": "já órfão na tag pre-vsa-ciclo-03 (232cac4): dívida da foto de 04/10, anterior a este ciclo"
+    },
+    {
+      "arquivo": "componentes/compartilhado/skills/aidd-forge/scripts/cli.py",
+      "item": "linha: \"\"\"Raiz do pacote local tools/aidd-forge quando presente neste repositorio.\"\"\"",
+      "motivo": "ciclo-03 Tickets 3-4: linha com caminho/descoberta de raiz do layout tools/ reescrita para modulos/; nenhuma função, classe ou teste sumiu"
+    },
+    {
+      "arquivo": "componentes/compartilhado/skills/aidd-forge/scripts/cli.py",
+      "item": "linha: - Delegacao direta ao pacote local tools/aidd-forge (scripts do repositorio),",
+      "motivo": "ciclo-03 Tickets 3-4: linha com caminho/descoberta de raiz do layout tools/ reescrita para modulos/; nenhuma função, classe ou teste sumiu"
+    },
+    {
+      "arquivo": "componentes/compartilhado/skills/aidd-forge/scripts/cli.py",
+      "item": "linha: pacote = raiz / \"tools\" / \"aidd-forge\"",
+      "motivo": "ciclo-03 Tickets 3-4: linha com caminho/descoberta de raiz do layout tools/ reescrita para modulos/; nenhuma função, classe ou teste sumiu"
+    },
+    {
+      "arquivo": "componentes/compartilhado/skills/aidd-forge/scripts/cli.py",
+      "item": "linha: raise RuntimeError(\"pacote local tools/aidd-forge nao encontrado\")",
+      "motivo": "ciclo-03 Tickets 3-4: linha com caminho/descoberta de raiz do layout tools/ reescrita para modulos/; nenhuma função, classe ou teste sumiu"
+    },
+    {
+      "arquivo": "componentes/compartilhado/skills/aidd-orca/scripts/gate_auditor.py",
+      "item": "linha: \"\"\"Given a relative path, return the tool name if it's under tools/<tool>/.\"\"\"",
+      "motivo": "ciclo-03 Tickets 3-4: linha com caminho/descoberta de raiz do layout tools/ reescrita para modulos/; nenhuma função, classe ou teste sumiu"
+    },
+    {
+      "arquivo": "componentes/compartilhado/skills/aidd-orca/scripts/gate_auditor.py",
+      "item": "linha: if len(parts) >= 2 and parts[0] == \"tools\":",
+      "motivo": "ciclo-03 Tickets 3-4: linha com caminho/descoberta de raiz do layout tools/ reescrita para modulos/; nenhuma função, classe ou teste sumiu"
+    },
+    {
+      "arquivo": "componentes/compartilhado/skills/aidd-orca/scripts/gate_auditor.py",
+      "item": "linha: if tool in KNOWN_TOOLS:",
+      "motivo": "ciclo-03 Tickets 3-4: linha com caminho/descoberta de raiz do layout tools/ reescrita para modulos/; nenhuma função, classe ou teste sumiu"
+    },
+    {
+      "arquivo": "componentes/compartilhado/skills/aidd-orca/scripts/gate_auditor.py",
+      "item": "linha: tool = parts[1]",
+      "motivo": "ciclo-03 Tickets 3-4: linha com caminho/descoberta de raiz do layout tools/ reescrita para modulos/; nenhuma função, classe ou teste sumiu"
+    },
+    {
+      "arquivo": "componentes/compartilhado/skills/aidd-orca/scripts/gate_auditor.py",
+      "item": "linha: tool_dir = wt / \"tools\" / tool",
+      "motivo": "ciclo-03 Tickets 3-4: linha com caminho/descoberta de raiz do layout tools/ reescrita para modulos/; nenhuma função, classe ou teste sumiu"
+    },
+    {
+      "arquivo": "componentes/compartilhado/skills/aidd-orca/tests/test_gate_auditor.py",
+      "item": "linha: \"tools/aidd-forge/src/bar.py\",",
+      "motivo": "ciclo-03 Tickets 3-4: linha com caminho/descoberta de raiz do layout tools/ reescrita para modulos/; nenhuma função, classe ou teste sumiu"
+    },
+    {
+      "arquivo": "componentes/compartilhado/skills/aidd-orca/tests/test_gate_auditor.py",
+      "item": "linha: \"tools/aidd-master/src/foo.py\",",
+      "motivo": "ciclo-03 Tickets 3-4: linha com caminho/descoberta de raiz do layout tools/ reescrita para modulos/; nenhuma função, classe ou teste sumiu"
+    },
+    {
+      "arquivo": "componentes/compartilhado/skills/aidd-orca/tests/test_gate_auditor.py",
+      "item": "linha: \"tools/aidd-master/src/x.py\",",
+      "motivo": "ciclo-03 Tickets 3-4: linha com caminho/descoberta de raiz do layout tools/ reescrita para modulos/; nenhuma função, classe ou teste sumiu"
+    },
+    {
+      "arquivo": "componentes/compartilhado/skills/aidd-orca/tests/test_gate_auditor.py",
+      "item": "linha: # tools/aidd-master/ with pytest.ini and a test",
+      "motivo": "ciclo-03 Tickets 3-4: linha com caminho/descoberta de raiz do layout tools/ reescrita para modulos/; nenhuma função, classe ou teste sumiu"
+    },
+    {
+      "arquivo": "componentes/compartilhado/skills/aidd-orca/tests/test_gate_auditor.py",
+      "item": "linha: [\"gates/G_MINIMAL.py\", \"tools/aidd-master/src/x.py\"],",
+      "motivo": "ciclo-03 Tickets 3-4: linha com caminho/descoberta de raiz do layout tools/ reescrita para modulos/; nenhuma função, classe ou teste sumiu"
+    },
+    {
+      "arquivo": "componentes/compartilhado/skills/aidd-orca/tests/test_gate_auditor.py",
+      "item": "linha: tool_dir = repo / \"tools\" / \"aidd-master\"",
+      "motivo": "ciclo-03 Tickets 3-4: linha com caminho/descoberta de raiz do layout tools/ reescrita para modulos/; nenhuma função, classe ou teste sumiu"
+    },
+    {
+      "arquivo": "componentes/compartilhado/skills/aidd-orca/tests/test_gate_auditor.py",
+      "item": "linha: tools, root = resolve_commands([\"tools/aidd-master/src/foo.py\"])",
+      "motivo": "ciclo-03 Tickets 3-4: linha com caminho/descoberta de raiz do layout tools/ reescrita para modulos/; nenhuma função, classe ou teste sumiu"
+    },
+    {
+      "arquivo": "componentes/compartilhado/skills/aidd-orca/tests/test_gate_auditor.py",
+      "item": "linha: tools, root = resolve_commands([\"tools\\\\aidd-forge\\\\src\\\\bar.py\"])",
+      "motivo": "ciclo-03 Tickets 3-4: linha com caminho/descoberta de raiz do layout tools/ reescrita para modulos/; nenhuma função, classe ou teste sumiu"
+    },
+    {
+      "arquivo": "componentes/compartilhado/skills/aidd-orca/tests/test_gate_auditor.py",
+      "item": "linha: verdict = audit_front(repo, \"front-tool-fail\", [\"tools/aidd-master/src/x.py\"])",
+      "motivo": "ciclo-03 Tickets 3-4: linha com caminho/descoberta de raiz do layout tools/ reescrita para modulos/; nenhuma função, classe ou teste sumiu"
+    },
+    {
+      "arquivo": "componentes/compartilhado/skills/aidd-orca/tests/test_gate_auditor.py",
+      "item": "linha: verdict = audit_front(repo, \"front-tool-pass\", [\"tools/aidd-master/src/x.py\"])",
+      "motivo": "ciclo-03 Tickets 3-4: linha com caminho/descoberta de raiz do layout tools/ reescrita para modulos/; nenhuma função, classe ou teste sumiu"
+    },
+    {
+      "arquivo": "componentes/compartilhado/skills/aidd-orca/tests/test_hooks.py",
+      "item": "linha: # Touch a path under tools/aidd-forge — audit_front will try to",
+      "motivo": "ciclo-03 Tickets 3-4: linha com caminho/descoberta de raiz do layout tools/ reescrita para modulos/; nenhuma função, classe ou teste sumiu"
+    },
+    {
+      "arquivo": "componentes/compartilhado/skills/aidd-orca/tests/test_state_engine.py",
+      "item": "linha: assert state[\"fronts\"][\"f1\"][\"commit_sha\"] == \"abc123def456\"",
+      "motivo": "já órfão na tag pre-vsa-ciclo-03 (232cac4): dívida da foto de 04/10, anterior a este ciclo"
+    },
+    {
+      "arquivo": "componentes/compartilhado/skills/aidd-orca/tests/test_state_engine.py",
+      "item": "linha: branch=\"orca/f1\", commit_sha=\"abc123def456\",",
+      "motivo": "já órfão na tag pre-vsa-ciclo-03 (232cac4): dívida da foto de 04/10, anterior a este ciclo"
+    },
+    {
+      "arquivo": "componentes/compartilhado/specs/handoff-engine-to-master.schema.json",
+      "item": "linha: \"caminho_src\": { \"type\": \"string\" },",
+      "motivo": "já órfão na tag pre-vsa-ciclo-03 (232cac4): dívida da foto de 04/10, anterior a este ciclo"
+    },
+    {
+      "arquivo": "componentes/compartilhado/specs/handoff-engine-to-master.schema.json",
+      "item": "linha: \"description\": \"Contrato formal e determinístico de transferência dos módulos e regras gerados pela Engine para a harmonização Monolito Modular VSA no aidd-master.\",",
+      "motivo": "já órfão na tag pre-vsa-ciclo-03 (232cac4): dívida da foto de 04/10, anterior a este ciclo"
+    },
+    {
+      "arquivo": "componentes/compartilhado/specs/handoff-engine-to-master.schema.json",
+      "item": "linha: \"required\": [\"slice_nome\", \"caminho_src\", \"endpoints\", \"tabelas_sql\"],",
+      "motivo": "já órfão na tag pre-vsa-ciclo-03 (232cac4): dívida da foto de 04/10, anterior a este ciclo"
+    },
+    {
+      "arquivo": "componentes/compartilhado/specs/handoff-engine-to-master.schema.json",
+      "item": "linha: \"required\": [\"total\", \"passaram\", \"falharam\", \"zero_stubs\"],",
+      "motivo": "já órfão na tag pre-vsa-ciclo-03 (232cac4): dívida da foto de 04/10, anterior a este ciclo"
+    },
+    {
+      "arquivo": "componentes/compartilhado/specs/handoff-engine-to-master.schema.json",
+      "item": "linha: \"tecnologia\": { \"type\": \"string\", \"enum\": [\"nextjs_app_router\"] },",
+      "motivo": "já órfão na tag pre-vsa-ciclo-03 (232cac4): dívida da foto de 04/10, anterior a este ciclo"
+    },
+    {
+      "arquivo": "componentes/compartilhado/specs/handoff-engine-to-master.schema.json",
+      "item": "linha: \"testes_executados\"",
+      "motivo": "já órfão na tag pre-vsa-ciclo-03 (232cac4): dívida da foto de 04/10, anterior a este ciclo"
+    },
+    {
+      "arquivo": "componentes/compartilhado/specs/handoff-engine-to-master.schema.json",
+      "item": "linha: \"zero_stubs\": { \"type\": \"boolean\", \"enum\": [true] }",
+      "motivo": "já órfão na tag pre-vsa-ciclo-03 (232cac4): dívida da foto de 04/10, anterior a este ciclo"
+    },
+    {
+      "arquivo": "componentes/compartilhado/specs/handoff-enterprise-to-ops.schema.json",
+      "item": "linha: \"compose_presente\": { \"type\": \"boolean\", \"enum\": [true] },",
+      "motivo": "já órfão na tag pre-vsa-ciclo-03 (232cac4): dívida da foto de 04/10, anterior a este ciclo"
+    },
+    {
+      "arquivo": "componentes/compartilhado/specs/handoff-enterprise-to-ops.schema.json",
+      "item": "linha: \"description\": \"Contrato formal de transferência do projeto blindado e auditado pelo aidd-enterprise para o aidd-ops para orquestracao, Docker e deploy VPS.\",",
+      "motivo": "já órfão na tag pre-vsa-ciclo-03 (232cac4): dívida da foto de 04/10, anterior a este ciclo"
+    },
+    {
+      "arquivo": "componentes/compartilhado/specs/handoff-enterprise-to-ops.schema.json",
+      "item": "linha: \"dockerfile_presente\": { \"type\": \"boolean\", \"enum\": [true] },",
+      "motivo": "já órfão na tag pre-vsa-ciclo-03 (232cac4): dívida da foto de 04/10, anterior a este ciclo"
+    },
+    {
+      "arquivo": "componentes/compartilhado/specs/handoff-enterprise-to-ops.schema.json",
+      "item": "linha: \"drift_verificado\",",
+      "motivo": "já órfão na tag pre-vsa-ciclo-03 (232cac4): dívida da foto de 04/10, anterior a este ciclo"
+    },
+    {
+      "arquivo": "componentes/compartilhado/specs/handoff-enterprise-to-ops.schema.json",
+      "item": "linha: \"drift_verificado\": {",
+      "motivo": "já órfão na tag pre-vsa-ciclo-03 (232cac4): dívida da foto de 04/10, anterior a este ciclo"
+    },
+    {
+      "arquivo": "componentes/compartilhado/specs/handoff-enterprise-to-ops.schema.json",
+      "item": "linha: \"manifesto_deploy\"",
+      "motivo": "já órfão na tag pre-vsa-ciclo-03 (232cac4): dívida da foto de 04/10, anterior a este ciclo"
+    },
+    {
+      "arquivo": "componentes/compartilhado/specs/handoff-enterprise-to-ops.schema.json",
+      "item": "linha: \"manifesto_deploy\": {",
+      "motivo": "já órfão na tag pre-vsa-ciclo-03 (232cac4): dívida da foto de 04/10, anterior a este ciclo"
+    },
+    {
+      "arquivo": "componentes/compartilhado/specs/handoff-enterprise-to-ops.schema.json",
+      "item": "linha: \"required\": [\"tipo_runtime\", \"dockerfile_presente\", \"compose_presente\", \"portas_expostas\"],",
+      "motivo": "já órfão na tag pre-vsa-ciclo-03 (232cac4): dívida da foto de 04/10, anterior a este ciclo"
+    },
+    {
+      "arquivo": "componentes/compartilhado/specs/handoff-enterprise-to-ops.schema.json",
+      "item": "linha: \"sha256_audit_ok\",",
+      "motivo": "já órfão na tag pre-vsa-ciclo-03 (232cac4): dívida da foto de 04/10, anterior a este ciclo"
+    },
+    {
+      "arquivo": "componentes/compartilhado/specs/handoff-enterprise-to-ops.schema.json",
+      "item": "linha: \"sha256_audit_ok\": {",
+      "motivo": "já órfão na tag pre-vsa-ciclo-03 (232cac4): dívida da foto de 04/10, anterior a este ciclo"
+    },
+    {
+      "arquivo": "componentes/compartilhado/specs/handoff-enterprise-to-ops.schema.json",
+      "item": "linha: \"tipo_runtime\": { \"type\": \"string\", \"enum\": [\"monolito_modular_docker\", \"compose_multi_service\"] },",
+      "motivo": "já órfão na tag pre-vsa-ciclo-03 (232cac4): dívida da foto de 04/10, anterior a este ciclo"
+    },
+    {
+      "arquivo": "componentes/compartilhado/specs/handoff-master-to-enterprise.schema.json",
+      "item": "linha: \"description\": \"Contrato formal de transferência do Monolito Modular gerado pelo aidd-master para a blindagem de componentes de missao critica e auditoria SHA-256 no aidd-enterprise.\",",
+      "motivo": "já órfão na tag pre-vsa-ciclo-03 (232cac4): dívida da foto de 04/10, anterior a este ciclo"
+    },
+    {
+      "arquivo": "componentes/compartilhado/specs/handoff-master-to-enterprise.schema.json",
+      "item": "linha: \"docs_url\": { \"type\": \"string\", \"enum\": [\"/docs\"] }",
+      "motivo": "já órfão na tag pre-vsa-ciclo-03 (232cac4): dívida da foto de 04/10, anterior a este ciclo"
+    },
+    {
+      "arquivo": "componentes/compartilhado/specs/handoff-master-to-enterprise.schema.json",
+      "item": "linha: \"mcp_url\": { \"type\": \"string\", \"enum\": [\"/mcp\"] },",
+      "motivo": "já órfão na tag pre-vsa-ciclo-03 (232cac4): dívida da foto de 04/10, anterior a este ciclo"
+    },
+    {
+      "arquivo": "componentes/compartilhado/specs/handoff-master-to-enterprise.schema.json",
+      "item": "linha: \"quarteto_sine_qua_non_rotas\",",
+      "motivo": "já órfão na tag pre-vsa-ciclo-03 (232cac4): dívida da foto de 04/10, anterior a este ciclo"
+    },
+    {
+      "arquivo": "componentes/compartilhado/specs/handoff-master-to-enterprise.schema.json",
+      "item": "linha: \"quarteto_sine_qua_non_rotas\": {",
+      "motivo": "já órfão na tag pre-vsa-ciclo-03 (232cac4): dívida da foto de 04/10, anterior a este ciclo"
+    },
+    {
+      "arquivo": "componentes/compartilhado/specs/handoff-master-to-enterprise.schema.json",
+      "item": "linha: \"required\": [\"swagger_url\", \"webhooks_url\", \"mcp_url\", \"docs_url\"],",
+      "motivo": "já órfão na tag pre-vsa-ciclo-03 (232cac4): dívida da foto de 04/10, anterior a este ciclo"
+    },
+    {
+      "arquivo": "componentes/compartilhado/specs/handoff-master-to-enterprise.schema.json",
+      "item": "linha: \"required\": [\"tipo\", \"caminho_relativo\", \"descricao\"],",
+      "motivo": "já órfão na tag pre-vsa-ciclo-03 (232cac4): dívida da foto de 04/10, anterior a este ciclo"
+    },
+    {
+      "arquivo": "componentes/compartilhado/specs/handoff-master-to-enterprise.schema.json",
+      "item": "linha: \"servidor_fastapi_ok\",",
+      "motivo": "já órfão na tag pre-vsa-ciclo-03 (232cac4): dívida da foto de 04/10, anterior a este ciclo"
+    },
+    {
+      "arquivo": "componentes/compartilhado/specs/handoff-master-to-enterprise.schema.json",
+      "item": "linha: \"servidor_fastapi_ok\": {",
+      "motivo": "já órfão na tag pre-vsa-ciclo-03 (232cac4): dívida da foto de 04/10, anterior a este ciclo"
+    },
+    {
+      "arquivo": "componentes/compartilhado/specs/handoff-master-to-enterprise.schema.json",
+      "item": "linha: \"swagger_url\": { \"type\": \"string\", \"enum\": [\"/openapi.json\"] },",
+      "motivo": "já órfão na tag pre-vsa-ciclo-03 (232cac4): dívida da foto de 04/10, anterior a este ciclo"
+    },
+    {
+      "arquivo": "componentes/compartilhado/specs/handoff-master-to-enterprise.schema.json",
+      "item": "linha: \"webhooks_url\": { \"type\": \"string\", \"enum\": [\"/webhooks\"] },",
+      "motivo": "já órfão na tag pre-vsa-ciclo-03 (232cac4): dívida da foto de 04/10, anterior a este ciclo"
+    },
+    {
+      "arquivo": "componentes/compartilhado/specs/handoff-planner-to-engine.schema.json",
+      "item": "linha: \"description\": \"1 = Do Zero Puro (generator), 2 = Open Source (factory), 3 = Low-Code Bridge (bridge)\"",
+      "motivo": "já órfão na tag pre-vsa-ciclo-03 (232cac4): dívida da foto de 04/10, anterior a este ciclo"
+    },
+    {
+      "arquivo": "componentes/compartilhado/specs/handoff-planner-to-engine.schema.json",
+      "item": "linha: \"description\": \"Contrato formal e determinístico de transferência de artefatos do aidd-planner para qualquer Engine de Construção (generator, factory ou bridge).\",",
+      "motivo": "já órfão na tag pre-vsa-ciclo-03 (232cac4): dívida da foto de 04/10, anterior a este ciclo"
+    },
+    {
+      "arquivo": "componentes/compartilhado/specs/handoff-planner-to-engine.schema.json",
+      "item": "linha: \"enum\": [\"nextjs_typescript_tailwind\"]",
+      "motivo": "já órfão na tag pre-vsa-ciclo-03 (232cac4): dívida da foto de 04/10, anterior a este ciclo"
+    },
+    {
+      "arquivo": "componentes/compartilhado/specs/handoff-planner-to-engine.schema.json",
+      "item": "linha: \"modulos_funcionais\"",
+      "motivo": "já órfão na tag pre-vsa-ciclo-03 (232cac4): dívida da foto de 04/10, anterior a este ciclo"
+    },
+    {
+      "arquivo": "componentes/compartilhado/specs/vsa-topological-dispatch.schema.json",
+      "item": "linha: \"enum\": [\"1.0.0\"],",
+      "motivo": "já órfão na tag pre-vsa-ciclo-03 (232cac4): dívida da foto de 04/10, anterior a este ciclo"
+    },
+    {
+      "arquivo": "componentes/compartilhado/src-core/MANIFEST.json",
+      "item": "linha: \"tools/aidd-enterprise/src/core\"",
+      "motivo": "ciclo-03 Tickets 3-4: linha com caminho/descoberta de raiz do layout tools/ reescrita para modulos/; nenhuma função, classe ou teste sumiu"
+    },
+    {
+      "arquivo": "componentes/compartilhado/src-core/MANIFEST.json",
+      "item": "linha: \"tools/aidd-master/src/core\",",
+      "motivo": "ciclo-03 Tickets 3-4: linha com caminho/descoberta de raiz do layout tools/ reescrita para modulos/; nenhuma função, classe ou teste sumiu"
+    },
+    {
+      "arquivo": "componentes/compartilhado/src-core/assinatura_manifesto.py",
+      "item": "linha: byte-idêntico em tools/aidd-master/src/core/ e tools/aidd-enterprise/src/core/",
+      "motivo": "ciclo-03 Tickets 3-4: linha com caminho/descoberta de raiz do layout tools/ reescrita para modulos/; nenhuma função, classe ou teste sumiu"
+    },
+    {
+      "arquivo": "componentes/compartilhado/src-core/escritor_atomico.py",
+      "item": "linha: \"tools/aidd-enterprise/scripts\",",
+      "motivo": "ciclo-03 Tickets 3-4: linha com caminho/descoberta de raiz do layout tools/ reescrita para modulos/; nenhuma função, classe ou teste sumiu"
+    },
+    {
+      "arquivo": "componentes/compartilhado/src-core/escritor_atomico.py",
+      "item": "linha: \"tools/aidd-enterprise/src/core\",",
+      "motivo": "ciclo-03 Tickets 3-4: linha com caminho/descoberta de raiz do layout tools/ reescrita para modulos/; nenhuma função, classe ou teste sumiu"
+    },
+    {
+      "arquivo": "componentes/compartilhado/src-core/escritor_atomico.py",
+      "item": "linha: \"tools/aidd-generator/scripts/phases\",",
+      "motivo": "ciclo-03 Tickets 3-4: linha com caminho/descoberta de raiz do layout tools/ reescrita para modulos/; nenhuma função, classe ou teste sumiu"
+    },
+    {
+      "arquivo": "componentes/compartilhado/src-core/escritor_atomico.py",
+      "item": "linha: \"tools/aidd-master/scripts\",",
+      "motivo": "ciclo-03 Tickets 3-4: linha com caminho/descoberta de raiz do layout tools/ reescrita para modulos/; nenhuma função, classe ou teste sumiu"
+    },
+    {
+      "arquivo": "componentes/compartilhado/src-core/escritor_atomico.py",
+      "item": "linha: \"tools/aidd-master/src/core\",",
+      "motivo": "ciclo-03 Tickets 3-4: linha com caminho/descoberta de raiz do layout tools/ reescrita para modulos/; nenhuma função, classe ou teste sumiu"
+    },
+    {
+      "arquivo": "componentes/compartilhado/src-core/escritor_atomico.py",
+      "item": "linha: \"tools/aidd-ops/scripts\",",
+      "motivo": "ciclo-03 Tickets 3-4: linha com caminho/descoberta de raiz do layout tools/ reescrita para modulos/; nenhuma função, classe ou teste sumiu"
+    },
+    {
+      "arquivo": "componentes/compartilhado/src-core/materializador.py",
+      "item": "linha: arquivo é byte-idêntico em tools/aidd-master/src/core/ e",
+      "motivo": "ciclo-03 Tickets 3-4: linha com caminho/descoberta de raiz do layout tools/ reescrita para modulos/; nenhuma função, classe ou teste sumiu"
+    },
+    {
+      "arquivo": "componentes/compartilhado/src-core/materializador.py",
+      "item": "linha: tools/aidd-enterprise/src/core/ (sincronizado por",
+      "motivo": "ciclo-03 Tickets 3-4: linha com caminho/descoberta de raiz do layout tools/ reescrita para modulos/; nenhuma função, classe ou teste sumiu"
+    },
+    {
+      "arquivo": "componentes/compartilhado/src-core/mcp_gatekeeper_backends.json",
+      "item": "linha: \"tools/aidd-generator/mcps/mcp-verificador-cve/server.py\"",
+      "motivo": "ciclo-03 Tickets 3-4: linha com caminho/descoberta de raiz do layout tools/ reescrita para modulos/; nenhuma função, classe ou teste sumiu"
+    },
+    {
+      "arquivo": "componentes/compartilhado/src-core/mcp_gatekeeper_backends.json",
+      "item": "linha: \"tools/aidd-ops/mcps/cloudflare-mcp/server.py\"",
+      "motivo": "ciclo-03 Tickets 3-4: linha com caminho/descoberta de raiz do layout tools/ reescrita para modulos/; nenhuma função, classe ou teste sumiu"
+    },
+    {
+      "arquivo": "componentes/compartilhado/src-core/mcp_gatekeeper_backends.json",
+      "item": "linha: \"tools/aidd-ops/mcps/docker-mcp/server.py\"",
+      "motivo": "ciclo-03 Tickets 3-4: linha com caminho/descoberta de raiz do layout tools/ reescrita para modulos/; nenhuma função, classe ou teste sumiu"
+    },
+    {
+      "arquivo": "componentes/compartilhado/src-core/nextjs_exporter.py",
+      "item": "linha: `tools/aidd-enterprise/src/core/nextjs_exporter.py` — qualquer alteracao aqui",
+      "motivo": "ciclo-03 Tickets 3-4: linha com caminho/descoberta de raiz do layout tools/ reescrita para modulos/; nenhuma função, classe ou teste sumiu"
+    },
+    {
+      "arquivo": "componentes/compartilhado/src-core/nextjs_exporter.py",
+      "item": "linha: copiada identica em `tools/aidd-master/src/core/nextjs_exporter.py` e",
+      "motivo": "ciclo-03 Tickets 3-4: linha com caminho/descoberta de raiz do layout tools/ reescrita para modulos/; nenhuma função, classe ou teste sumiu"
+    },
+    {
+      "arquivo": "componentes/compartilhado/src-core/nextjs_exporter.py",
+      "item": "linha: os.path.dirname(__file__), \"..\", \"..\", \"..\", \"componentes\", \"compartilhado\", \"src-core\"",
+      "motivo": "ciclo-03 Tickets 3-4: linha com caminho/descoberta de raiz do layout tools/ reescrita para modulos/; nenhuma função, classe ou teste sumiu"
+    },
+    {
+      "arquivo": "componentes/compartilhado/src-core/sync.py",
+      "item": "linha: Destinos:     tools/aidd-master/src/core/ e tools/aidd-enterprise/src/core/",
+      "motivo": "ciclo-03 Tickets 3-4: linha com caminho/descoberta de raiz do layout tools/ reescrita para modulos/; nenhuma função, classe ou teste sumiu"
+    },
+    {
+      "arquivo": "tools/aidd-bridge/aidd_bridge/cli.py",
+      "item": "linha: out_file = os.path.join(args.project_dir, \"bridge-manifest.json\")",
+      "motivo": "já órfão na tag pre-vsa-ciclo-03 (232cac4): dívida da foto de 04/10, anterior a este ciclo"
+    },
+    {
+      "arquivo": "tools/aidd-bridge/aidd_bridge/cli.py",
+      "item": "linha: p_scan.add_argument(\"project_dir\", help=\"Diretorio do projeto\")",
+      "motivo": "já órfão na tag pre-vsa-ciclo-03 (232cac4): dívida da foto de 04/10, anterior a este ciclo"
+    },
+    {
+      "arquivo": "tools/aidd-enterprise/RELATORIO-AUDITORIA.json",
+      "item": "linha: \"target_dir\": \"C:\\\\Users\\\\trcnologia\\\\Desktop\\\\ecossistema-aidd\\\\tools\\\\aidd-enterprise\",",
+      "motivo": "ciclo-03 Tickets 3-4: linha com caminho/descoberta de raiz do layout tools/ reescrita para modulos/; nenhuma função, classe ou teste sumiu"
+    },
+    {
+      "arquivo": "tools/aidd-enterprise/application/commands/__init__.py",
+      "item": "linha: _default_component_content,",
+      "motivo": "já órfão na tag pre-vsa-ciclo-03 (232cac4): dívida da foto de 04/10, anterior a este ciclo"
+    },
+    {
+      "arquivo": "tools/aidd-enterprise/application/commands/__init__.py",
+      "item": "linha: _tentar_injecao_por_linguagem_natural,",
+      "motivo": "já órfão na tag pre-vsa-ciclo-03 (232cac4): dívida da foto de 04/10, anterior a este ciclo"
+    },
+    {
+      "arquivo": "tools/aidd-enterprise/application/commands/__init__.py",
+      "item": "linha: cmd_inject,",
+      "motivo": "já órfão na tag pre-vsa-ciclo-03 (232cac4): dívida da foto de 04/10, anterior a este ciclo"
+    },
+    {
+      "arquivo": "tools/aidd-enterprise/application/commands/__init__.py",
+      "item": "linha: from application.commands.inject import (",
+      "motivo": "já órfão na tag pre-vsa-ciclo-03 (232cac4): dívida da foto de 04/10, anterior a este ciclo"
+    },
+    {
+      "arquivo": "tools/aidd-enterprise/application/commands/__init__.py",
+      "item": "linha: run_inject,",
+      "motivo": "já órfão na tag pre-vsa-ciclo-03 (232cac4): dívida da foto de 04/10, anterior a este ciclo"
+    },
+    {
+      "arquivo": "tools/aidd-enterprise/application/commands/plan.py",
+      "item": "linha: \"\"\"Ponto de entrada por Linguagem Natural.",
+      "motivo": "já órfão na tag pre-vsa-ciclo-03 (232cac4): dívida da foto de 04/10, anterior a este ciclo"
+    },
+    {
+      "arquivo": "tools/aidd-enterprise/application/commands/plan.py",
+      "item": "linha: Roteia para o Universal Component Injector (inject) quando o pedido",
+      "motivo": "já órfão na tag pre-vsa-ciclo-03 (232cac4): dívida da foto de 04/10, anterior a este ciclo"
+    },
+    {
+      "arquivo": "tools/aidd-enterprise/application/commands/plan.py",
+      "item": "linha: descreve claramente um componente. Caso nenhum padrão de injeção",
+      "motivo": "já órfão na tag pre-vsa-ciclo-03 (232cac4): dívida da foto de 04/10, anterior a este ciclo"
+    },
+    {
+      "arquivo": "tools/aidd-enterprise/application/commands/plan.py",
+      "item": "linha: from application.commands.inject import _tentar_injecao_por_linguagem_natural",
+      "motivo": "já órfão na tag pre-vsa-ciclo-03 (232cac4): dívida da foto de 04/10, anterior a este ciclo"
+    },
+    {
+      "arquivo": "tools/aidd-enterprise/application/commands/plan.py",
+      "item": "linha: seja identificado, cai no fluxo padrão de Plano / SPEC (Fase 1.5).",
+      "motivo": "já órfão na tag pre-vsa-ciclo-03 (232cac4): dívida da foto de 04/10, anterior a este ciclo"
+    },
+    {
+      "arquivo": "tools/aidd-enterprise/application/commands/verificar_drift.py",
+      "item": "linha: from application.commands.inject import _core_src_path",
+      "motivo": "já órfão na tag pre-vsa-ciclo-03 (232cac4): dívida da foto de 04/10, anterior a este ciclo"
+    },
+    {
+      "arquivo": "tools/aidd-enterprise/scripts/aidd.py",
+      "item": "linha: _tentar_injecao_por_linguagem_natural,",
+      "motivo": "já órfão na tag pre-vsa-ciclo-03 (232cac4): dívida da foto de 04/10, anterior a este ciclo"
+    },
+    {
+      "arquivo": "tools/aidd-enterprise/scripts/aidd.py",
+      "item": "linha: cmd_inject as _cmd_inject_impl,",
+      "motivo": "já órfão na tag pre-vsa-ciclo-03 (232cac4): dívida da foto de 04/10, anterior a este ciclo"
+    },
+    {
+      "arquivo": "tools/aidd-enterprise/scripts/aidd.py",
+      "item": "linha: from application.commands.inject import (  # noqa: E402",
+      "motivo": "já órfão na tag pre-vsa-ciclo-03 (232cac4): dívida da foto de 04/10, anterior a este ciclo"
+    },
+    {
+      "arquivo": "tools/aidd-enterprise/scripts/compose_suite.py",
+      "item": "linha: dc_src = os.path.join(scripts_dir, \"..\", \"..\", \"..\", \"componentes\", \"compartilhado\", \"src-core\", \"design_catalog.py\")",
+      "motivo": "ciclo-03 Tickets 3-4: linha com caminho/descoberta de raiz do layout tools/ reescrita para modulos/; nenhuma função, classe ou teste sumiu"
+    },
+    {
+      "arquivo": "tools/aidd-enterprise/scripts/compose_suite.py",
+      "item": "linha: escritor_src = os.path.join(scripts_dir, \"..\", \"..\", \"..\", \"componentes\", \"compartilhado\", \"src-core\", \"escritor_atomico.py\")",
+      "motivo": "ciclo-03 Tickets 3-4: linha com caminho/descoberta de raiz do layout tools/ reescrita para modulos/; nenhuma função, classe ou teste sumiu"
+    },
+    {
+      "arquivo": "tools/aidd-enterprise/scripts/compose_suite.py",
+      "item": "linha: for g in os.listdir(gates_dir):",
+      "motivo": "já órfão na tag pre-vsa-ciclo-03 (232cac4): dívida da foto de 04/10, anterior a este ciclo"
+    },
+    {
+      "arquivo": "tools/aidd-enterprise/scripts/compose_suite.py",
+      "item": "linha: for s in [\"aidd.py\", \"add_module.py\", \"compose_suite.py\", \"openapi_to_ts.py\", \"scaffold_infra.py\"]:",
+      "motivo": "já órfão na tag pre-vsa-ciclo-03 (232cac4): dívida da foto de 04/10, anterior a este ciclo"
+    },
+    {
+      "arquivo": "tools/aidd-enterprise/scripts/compose_suite.py",
+      "item": "linha: if g.endswith(\".py\"):",
+      "motivo": "já órfão na tag pre-vsa-ciclo-03 (232cac4): dívida da foto de 04/10, anterior a este ciclo"
+    },
+    {
+      "arquivo": "tools/aidd-enterprise/scripts/compose_suite.py",
+      "item": "linha: nginx_src = os.path.join(templates_v2, \"nginx\")",
+      "motivo": "já órfão na tag pre-vsa-ciclo-03 (232cac4): dívida da foto de 04/10, anterior a este ciclo"
+    },
+    {
+      "arquivo": "tools/aidd-enterprise/scripts/compose_suite.py",
+      "item": "linha: os.path.dirname(__file__), \"..\", \"..\", \"..\", \"componentes\", \"compartilhado\", \"src-core\"",
+      "motivo": "ciclo-03 Tickets 3-4: linha com caminho/descoberta de raiz do layout tools/ reescrita para modulos/; nenhuma função, classe ou teste sumiu"
+    },
+    {
+      "arquivo": "tools/aidd-enterprise/scripts/compose_suite.py",
+      "item": "linha: shutil.copyfile(os.path.join(gates_dir, g), os.path.join(target_gates_dir, g))",
+      "motivo": "já órfão na tag pre-vsa-ciclo-03 (232cac4): dívida da foto de 04/10, anterior a este ciclo"
+    },
+    {
+      "arquivo": "tools/aidd-enterprise/scripts/compose_suite.py",
+      "item": "linha: src = os.path.join(templates_v2, asset)",
+      "motivo": "já órfão na tag pre-vsa-ciclo-03 (232cac4): dívida da foto de 04/10, anterior a este ciclo"
+    },
+    {
+      "arquivo": "tools/aidd-enterprise/scripts/compose_suite.py",
+      "item": "linha: src = os.path.join(templates_v2, cf)",
+      "motivo": "já órfão na tag pre-vsa-ciclo-03 (232cac4): dívida da foto de 04/10, anterior a este ciclo"
+    },
+    {
+      "arquivo": "tools/aidd-enterprise/scripts/gates/G_INJECT.py",
+      "item": "linha: repo_aidd = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))), \"scripts\", \"aidd.py\")",
+      "motivo": "já órfão na tag pre-vsa-ciclo-03 (232cac4): dívida da foto de 04/10, anterior a este ciclo"
+    },
+    {
+      "arquivo": "tools/aidd-enterprise/scripts/provision_project.py",
+      "item": "linha: for g in os.listdir(gates_dir):",
+      "motivo": "já órfão na tag pre-vsa-ciclo-03 (232cac4): dívida da foto de 04/10, anterior a este ciclo"
+    },
+    {
+      "arquivo": "tools/aidd-enterprise/scripts/provision_project.py",
+      "item": "linha: if g.endswith('.py'):",
+      "motivo": "já órfão na tag pre-vsa-ciclo-03 (232cac4): dívida da foto de 04/10, anterior a este ciclo"
+    },
+    {
+      "arquivo": "tools/aidd-enterprise/scripts/provision_project.py",
+      "item": "linha: shutil.copyfile(os.path.join(gates_dir, g), os.path.join(project_dir, 'scripts', 'gates', g))",
+      "motivo": "já órfão na tag pre-vsa-ciclo-03 (232cac4): dívida da foto de 04/10, anterior a este ciclo"
+    },
+    {
+      "arquivo": "tools/aidd-enterprise/scripts/provision_project.py",
+      "item": "linha: src = os.path.join(templates_dir, f)",
+      "motivo": "já órfão na tag pre-vsa-ciclo-03 (232cac4): dívida da foto de 04/10, anterior a este ciclo"
+    },
+    {
+      "arquivo": "tools/aidd-enterprise/scripts/provision_project.py",
+      "item": "linha: src = os.path.join(templates_dir, sf)",
+      "motivo": "já órfão na tag pre-vsa-ciclo-03 (232cac4): dívida da foto de 04/10, anterior a este ciclo"
+    },
+    {
+      "arquivo": "tools/aidd-enterprise/scripts/scaffold_infra.py",
+      "item": "linha: _RAIZ_ECOSSISTEMA = os.path.abspath(os.path.join(os.path.dirname(__file__), \"..\", \"..\", \"..\"))",
+      "motivo": "ciclo-03 Tickets 3-4: linha com caminho/descoberta de raiz do layout tools/ reescrita para modulos/; nenhuma função, classe ou teste sumiu"
+    },
+    {
+      "arquivo": "tools/aidd-enterprise/scripts/scaffold_infra.py",
+      "item": "linha: os.path.dirname(__file__), \"..\", \"..\", \"..\", \"componentes\", \"compartilhado\", \"src-core\"",
+      "motivo": "ciclo-03 Tickets 3-4: linha com caminho/descoberta de raiz do layout tools/ reescrita para modulos/; nenhuma função, classe ou teste sumiu"
+    },
+    {
+      "arquivo": "tools/aidd-enterprise/src/core/assinatura_manifesto.py",
+      "item": "linha: byte-idêntico em tools/aidd-master/src/core/ e tools/aidd-enterprise/src/core/",
+      "motivo": "ciclo-03 Tickets 3-4: linha com caminho/descoberta de raiz do layout tools/ reescrita para modulos/; nenhuma função, classe ou teste sumiu"
+    },
+    {
+      "arquivo": "tools/aidd-enterprise/src/core/escritor_atomico.py",
+      "item": "linha: \"tools/aidd-enterprise/scripts\",",
+      "motivo": "ciclo-03 Tickets 3-4: linha com caminho/descoberta de raiz do layout tools/ reescrita para modulos/; nenhuma função, classe ou teste sumiu"
+    },
+    {
+      "arquivo": "tools/aidd-enterprise/src/core/escritor_atomico.py",
+      "item": "linha: \"tools/aidd-enterprise/src/core\",",
+      "motivo": "ciclo-03 Tickets 3-4: linha com caminho/descoberta de raiz do layout tools/ reescrita para modulos/; nenhuma função, classe ou teste sumiu"
+    },
+    {
+      "arquivo": "tools/aidd-enterprise/src/core/escritor_atomico.py",
+      "item": "linha: \"tools/aidd-generator/scripts/phases\",",
+      "motivo": "ciclo-03 Tickets 3-4: linha com caminho/descoberta de raiz do layout tools/ reescrita para modulos/; nenhuma função, classe ou teste sumiu"
+    },
+    {
+      "arquivo": "tools/aidd-enterprise/src/core/escritor_atomico.py",
+      "item": "linha: \"tools/aidd-master/scripts\",",
+      "motivo": "ciclo-03 Tickets 3-4: linha com caminho/descoberta de raiz do layout tools/ reescrita para modulos/; nenhuma função, classe ou teste sumiu"
+    },
+    {
+      "arquivo": "tools/aidd-enterprise/src/core/escritor_atomico.py",
+      "item": "linha: \"tools/aidd-master/src/core\",",
+      "motivo": "ciclo-03 Tickets 3-4: linha com caminho/descoberta de raiz do layout tools/ reescrita para modulos/; nenhuma função, classe ou teste sumiu"
+    },
+    {
+      "arquivo": "tools/aidd-enterprise/src/core/escritor_atomico.py",
+      "item": "linha: \"tools/aidd-ops/scripts\",",
+      "motivo": "ciclo-03 Tickets 3-4: linha com caminho/descoberta de raiz do layout tools/ reescrita para modulos/; nenhuma função, classe ou teste sumiu"
+    },
+    {
+      "arquivo": "tools/aidd-enterprise/src/core/materializador.py",
+      "item": "linha: arquivo é byte-idêntico em tools/aidd-master/src/core/ e",
+      "motivo": "ciclo-03 Tickets 3-4: linha com caminho/descoberta de raiz do layout tools/ reescrita para modulos/; nenhuma função, classe ou teste sumiu"
+    },
+    {
+      "arquivo": "tools/aidd-enterprise/src/core/materializador.py",
+      "item": "linha: tools/aidd-enterprise/src/core/ (sincronizado por",
+      "motivo": "ciclo-03 Tickets 3-4: linha com caminho/descoberta de raiz do layout tools/ reescrita para modulos/; nenhuma função, classe ou teste sumiu"
+    },
+    {
+      "arquivo": "tools/aidd-enterprise/src/core/nextjs_exporter.py",
+      "item": "linha: `tools/aidd-enterprise/src/core/nextjs_exporter.py` — qualquer alteracao aqui",
+      "motivo": "ciclo-03 Tickets 3-4: linha com caminho/descoberta de raiz do layout tools/ reescrita para modulos/; nenhuma função, classe ou teste sumiu"
+    },
+    {
+      "arquivo": "tools/aidd-enterprise/src/core/nextjs_exporter.py",
+      "item": "linha: copiada identica em `tools/aidd-master/src/core/nextjs_exporter.py` e",
+      "motivo": "ciclo-03 Tickets 3-4: linha com caminho/descoberta de raiz do layout tools/ reescrita para modulos/; nenhuma função, classe ou teste sumiu"
+    },
+    {
+      "arquivo": "tools/aidd-enterprise/src/core/nextjs_exporter.py",
+      "item": "linha: os.path.dirname(__file__), \"..\", \"..\", \"..\", \"componentes\", \"compartilhado\", \"src-core\"",
+      "motivo": "ciclo-03 Tickets 3-4: linha com caminho/descoberta de raiz do layout tools/ reescrita para modulos/; nenhuma função, classe ou teste sumiu"
+    },
+    {
+      "arquivo": "tools/aidd-enterprise/tests/integration/test_add_module_server_wiring.py",
+      "item": "linha: status_adicionado = _aguardar_servidor(processo, \"http://127.0.0.1:3000/api/billing\")",
+      "motivo": "já órfão na tag pre-vsa-ciclo-03 (232cac4): dívida da foto de 04/10, anterior a este ciclo"
+    },
+    {
+      "arquivo": "tools/aidd-enterprise/tests/integration/test_add_module_server_wiring.py",
+      "item": "linha: status_inicial = _aguardar_servidor(processo, \"http://127.0.0.1:3000/api/crm\")",
+      "motivo": "já órfão na tag pre-vsa-ciclo-03 (232cac4): dívida da foto de 04/10, anterior a este ciclo"
+    },
+    {
+      "arquivo": "tools/aidd-enterprise/tests/unit/test_compose_suite.py",
+      "item": "linha: f\"{processo.returncode}):\\n{saida}\")",
+      "motivo": "já órfão na tag pre-vsa-ciclo-03 (232cac4): dívida da foto de 04/10, anterior a este ciclo"
+    },
+    {
+      "arquivo": "tools/aidd-enterprise/tests/unit/test_compose_suite.py",
+      "item": "linha: saida = processo.stdout.read()",
+      "motivo": "já órfão na tag pre-vsa-ciclo-03 (232cac4): dívida da foto de 04/10, anterior a este ciclo"
+    },
+    {
+      "arquivo": "tools/aidd-enterprise/tests/unit/test_compose_suite.py",
+      "item": "linha: with urllib.request.urlopen(\"http://127.0.0.1:3000/api/produtos\", timeout=1) as resp:",
+      "motivo": "já órfão na tag pre-vsa-ciclo-03 (232cac4): dívida da foto de 04/10, anterior a este ciclo"
+    },
+    {
+      "arquivo": "tools/aidd-enterprise/tests/unit/test_g_inject_gate.py",
+      "item": "linha: GATE_SCRIPT = os.path.join(REPO_ROOT, \"scripts\", \"gates\", \"G_INJECT.py\")",
+      "motivo": "já órfão na tag pre-vsa-ciclo-03 (232cac4): dívida da foto de 04/10, anterior a este ciclo"
+    },
+    {
+      "arquivo": "tools/aidd-enterprise/tests/unit/test_modulo1.py",
+      "item": "linha: base = \"http://127.0.0.1:3000\"",
+      "motivo": "já órfão na tag pre-vsa-ciclo-03 (232cac4): dívida da foto de 04/10, anterior a este ciclo"
+    },
+    {
+      "arquivo": "tools/aidd-factory/scripts/contrato_factory.py",
+      "item": "linha: sys.path.insert(0, os.path.join(_FACTORY_ROOT, \"..\", \"..\", \"componentes\", \"compartilhado\", \"src-core\"))",
+      "motivo": "ciclo-03 Tickets 3-4: linha com caminho/descoberta de raiz do layout tools/ reescrita para modulos/; nenhuma função, classe ou teste sumiu"
+    },
+    {
+      "arquivo": "tools/aidd-factory/scripts/phases/01_analisador.py",
+      "item": "linha: _AIDD_OPS_ROOT = os.path.join(_FACTORY_ROOT, \"..\", \"aidd-ops\")",
+      "motivo": "ciclo-03 Tickets 3-4: linha com caminho/descoberta de raiz do layout tools/ reescrita para modulos/; nenhuma função, classe ou teste sumiu"
+    },
+    {
+      "arquivo": "tools/aidd-factory/scripts/phases/01_analisador.py",
+      "item": "linha: caminho_relativo = f\"tools/aidd-ops/templates/infra/{slug}/\"",
+      "motivo": "ciclo-03 Tickets 3-4: linha com caminho/descoberta de raiz do layout tools/ reescrita para modulos/; nenhuma função, classe ou teste sumiu"
+    },
+    {
+      "arquivo": "tools/aidd-factory/scripts/phases/01_analisador.py",
+      "item": "linha: repo_root = os.path.normpath(os.path.join(_FACTORY_ROOT, \"..\", \"..\"))",
+      "motivo": "ciclo-03 Tickets 3-4: linha com caminho/descoberta de raiz do layout tools/ reescrita para modulos/; nenhuma função, classe ou teste sumiu"
+    },
+    {
+      "arquivo": "tools/aidd-factory/scripts/phases/01_analisador.py",
+      "item": "linha: sys.path.insert(0, os.path.join(_FACTORY_ROOT, \"..\", \"..\", \"componentes\", \"compartilhado\", \"src-core\"))",
+      "motivo": "ciclo-03 Tickets 3-4: linha com caminho/descoberta de raiz do layout tools/ reescrita para modulos/; nenhuma função, classe ou teste sumiu"
+    },
+    {
+      "arquivo": "tools/aidd-factory/scripts/phases/04_compose.py",
+      "item": "linha: _AIDD_OPS_ROOT = os.path.join(_FACTORY_ROOT, \"..\", \"aidd-ops\")",
+      "motivo": "ciclo-03 Tickets 3-4: linha com caminho/descoberta de raiz do layout tools/ reescrita para modulos/; nenhuma função, classe ou teste sumiu"
+    },
+    {
+      "arquivo": "tools/aidd-factory/scripts/phases/04_compose.py",
+      "item": "linha: repo_root = os.path.normpath(os.path.join(_FACTORY_ROOT, \"..\", \"..\"))",
+      "motivo": "ciclo-03 Tickets 3-4: linha com caminho/descoberta de raiz do layout tools/ reescrita para modulos/; nenhuma função, classe ou teste sumiu"
+    },
+    {
+      "arquivo": "tools/aidd-factory/scripts/phases/04_compose.py",
+      "item": "linha: sys.path.insert(0, os.path.join(_FACTORY_ROOT, \"..\", \"..\", \"componentes\", \"compartilhado\", \"src-core\"))",
+      "motivo": "ciclo-03 Tickets 3-4: linha com caminho/descoberta de raiz do layout tools/ reescrita para modulos/; nenhuma função, classe ou teste sumiu"
+    },
+    {
+      "arquivo": "tools/aidd-factory/scripts/phases/05_init_db.py",
+      "item": "linha: sys.path.insert(0, os.path.join(_FACTORY_ROOT, \"..\", \"..\", \"componentes\", \"compartilhado\", \"src-core\"))",
+      "motivo": "ciclo-03 Tickets 3-4: linha com caminho/descoberta de raiz do layout tools/ reescrita para modulos/; nenhuma função, classe ou teste sumiu"
+    },
+    {
+      "arquivo": "tools/aidd-factory/scripts/phases/06_env.py",
+      "item": "linha: _AIDD_OPS_ROOT = os.path.join(_FACTORY_ROOT, \"..\", \"aidd-ops\")",
+      "motivo": "ciclo-03 Tickets 3-4: linha com caminho/descoberta de raiz do layout tools/ reescrita para modulos/; nenhuma função, classe ou teste sumiu"
+    },
+    {
+      "arquivo": "tools/aidd-factory/scripts/phases/06_env.py",
+      "item": "linha: sys.path.insert(0, os.path.join(_FACTORY_ROOT, \"..\", \"..\", \"componentes\", \"compartilhado\", \"src-core\"))",
+      "motivo": "ciclo-03 Tickets 3-4: linha com caminho/descoberta de raiz do layout tools/ reescrita para modulos/; nenhuma função, classe ou teste sumiu"
+    },
+    {
+      "arquivo": "tools/aidd-factory/scripts/phases/09_integracao.py",
+      "item": "linha: sys.path.insert(0, os.path.join(_FACTORY_ROOT, \"..\", \"..\", \"componentes\", \"compartilhado\", \"src-core\"))",
+      "motivo": "ciclo-03 Tickets 3-4: linha com caminho/descoberta de raiz do layout tools/ reescrita para modulos/; nenhuma função, classe ou teste sumiu"
+    },
+    {
+      "arquivo": "tools/aidd-factory/scripts/pipeline_factory.py",
+      "item": "linha: \"\"\"Carrega e valida PLANO-INFRAESTRUTURA.json.\"\"\"",
+      "motivo": "já órfão na tag pre-vsa-ciclo-03 (232cac4): dívida da foto de 04/10, anterior a este ciclo"
+    },
+    {
+      "arquivo": "tools/aidd-factory/scripts/pipeline_factory.py",
+      "item": "linha: \"\"\"Executa o pipeline COMPLETO do factory (9 fases).",
+      "motivo": "já órfão na tag pre-vsa-ciclo-03 (232cac4): dívida da foto de 04/10, anterior a este ciclo"
+    },
+    {
+      "arquivo": "tools/aidd-factory/scripts/pipeline_factory.py",
+      "item": "linha: # Validar contrato",
+      "motivo": "já órfão na tag pre-vsa-ciclo-03 (232cac4): dívida da foto de 04/10, anterior a este ciclo"
+    },
+    {
+      "arquivo": "tools/aidd-factory/scripts/pipeline_factory.py",
+      "item": "linha: incluir_llm: Se True, executa fases 2, 3, 7 (LLM). Se False, apenas deterministicas.",
+      "motivo": "já órfão na tag pre-vsa-ciclo-03 (232cac4): dívida da foto de 04/10, anterior a este ciclo"
+    },
+    {
+      "arquivo": "tools/aidd-factory/scripts/pipeline_factory.py",
+      "item": "linha: plano_path: Caminho para PLANO-INFRAESTRUTURA.json",
+      "motivo": "já órfão na tag pre-vsa-ciclo-03 (232cac4): dívida da foto de 04/10, anterior a este ciclo"
+    },
+    {
+      "arquivo": "tools/aidd-factory/scripts/pipeline_factory.py",
+      "item": "linha: print(f\" Modo: {'COMPLETO (inclui LLM)' if incluir_llm else 'DETERMINISTICO (sem LLM)'}\")",
+      "motivo": "já órfão na tag pre-vsa-ciclo-03 (232cac4): dívida da foto de 04/10, anterior a este ciclo"
+    },
+    {
+      "arquivo": "tools/aidd-factory/scripts/pipeline_factory.py",
+      "item": "linha: print(f\" [AIDD-Factory] Pipeline Completo ({total_fases} fases)\")",
+      "motivo": "já órfão na tag pre-vsa-ciclo-03 (232cac4): dívida da foto de 04/10, anterior a este ciclo"
+    },
+    {
+      "arquivo": "tools/aidd-factory/scripts/pipeline_factory.py",
+      "item": "linha: print(f\"\\n[Pre-flight] Carregando PLANO-INFRAESTRUTURA.json...\")",
+      "motivo": "já órfão na tag pre-vsa-ciclo-03 (232cac4): dívida da foto de 04/10, anterior a este ciclo"
+    },
+    {
+      "arquivo": "tools/aidd-factory/scripts/pipeline_factory.py",
+      "item": "linha: sys.path.insert(0, os.path.join(_FACTORY_ROOT, \"..\", \"..\", \"componentes\", \"compartilhado\", \"src-core\"))",
+      "motivo": "ciclo-03 Tickets 3-4: linha com caminho/descoberta de raiz do layout tools/ reescrita para modulos/; nenhuma função, classe ou teste sumiu"
+    },
+    {
+      "arquivo": "tools/aidd-factory/src/core/escritor_atomico.py",
+      "item": "linha: \"..\", \"..\", \"..\", \"componentes\", \"compartilhado\", \"src-core\"",
+      "motivo": "ciclo-03 Tickets 3-4: linha com caminho/descoberta de raiz do layout tools/ reescrita para modulos/; nenhuma função, classe ou teste sumiu"
+    },
+    {
+      "arquivo": "tools/aidd-factory/src/core/escritor_atomico.py",
+      "item": "linha: _COMP_DIR = _os.path.join(",
+      "motivo": "ciclo-03 Tickets 3-4: linha com caminho/descoberta de raiz do layout tools/ reescrita para modulos/; nenhuma função, classe ou teste sumiu"
+    },
+    {
+      "arquivo": "tools/aidd-factory/src/core/escritor_atomico.py",
+      "item": "linha: _os.path.dirname(_os.path.abspath(__file__)),",
+      "motivo": "ciclo-03 Tickets 3-4: linha com caminho/descoberta de raiz do layout tools/ reescrita para modulos/; nenhuma função, classe ou teste sumiu"
+    },
+    {
+      "arquivo": "tools/aidd-factory/src/core/frontend_generator.py",
+      "item": "linha: sys.path.insert(0, os.path.join(os.path.dirname(__file__), \"..\", \"..\", \"..\", \"componentes\", \"compartilhado\", \"src-core\"))",
+      "motivo": "ciclo-03 Tickets 3-4: linha com caminho/descoberta de raiz do layout tools/ reescrita para modulos/; nenhuma função, classe ou teste sumiu"
+    },
+    {
+      "arquivo": "tools/aidd-factory/src/core/gateway_generator.py",
+      "item": "linha: sys.path.insert(0, os.path.join(os.path.dirname(__file__), \"..\", \"..\", \"..\", \"componentes\", \"compartilhado\", \"src-core\"))",
+      "motivo": "ciclo-03 Tickets 3-4: linha com caminho/descoberta de raiz do layout tools/ reescrita para modulos/; nenhuma função, classe ou teste sumiu"
+    },
+    {
+      "arquivo": "tools/aidd-factory/src/core/result.py",
+      "item": "linha: \"..\", \"..\", \"..\", \"componentes\", \"compartilhado\", \"src-core\"",
+      "motivo": "ciclo-03 Tickets 3-4: linha com caminho/descoberta de raiz do layout tools/ reescrita para modulos/; nenhuma função, classe ou teste sumiu"
+    },
+    {
+      "arquivo": "tools/aidd-factory/src/core/result.py",
+      "item": "linha: _COMP_DIR = _os.path.join(",
+      "motivo": "ciclo-03 Tickets 3-4: linha com caminho/descoberta de raiz do layout tools/ reescrita para modulos/; nenhuma função, classe ou teste sumiu"
+    },
+    {
+      "arquivo": "tools/aidd-factory/src/core/result.py",
+      "item": "linha: _os.path.dirname(_os.path.abspath(__file__)),",
+      "motivo": "ciclo-03 Tickets 3-4: linha com caminho/descoberta de raiz do layout tools/ reescrita para modulos/; nenhuma função, classe ou teste sumiu"
+    },
+    {
+      "arquivo": "tools/aidd-factory/src/core/swagger_generator.py",
+      "item": "linha: _TEMPLATES_DIR = os.path.join(os.path.dirname(__file__), \"..\", \"..\", \"templates\", \"docs\")",
+      "motivo": "já órfão na tag pre-vsa-ciclo-03 (232cac4): dívida da foto de 04/10, anterior a este ciclo"
+    },
+    {
+      "arquivo": "tools/aidd-factory/src/core/swagger_generator.py",
+      "item": "linha: sys.path.insert(0, os.path.join(os.path.dirname(__file__), \"..\", \"..\", \"..\", \"componentes\", \"compartilhado\", \"src-core\"))",
+      "motivo": "ciclo-03 Tickets 3-4: linha com caminho/descoberta de raiz do layout tools/ reescrita para modulos/; nenhuma função, classe ou teste sumiu"
+    },
+    {
+      "arquivo": "tools/aidd-factory/src/core/swagger_generator.py",
+      "item": "linha: tpl = env.get_template(\"openapi.json.j2\")",
+      "motivo": "já órfão na tag pre-vsa-ciclo-03 (232cac4): dívida da foto de 04/10, anterior a este ciclo"
+    },
+    {
+      "arquivo": "tools/aidd-factory/src/core/vsa_generator.py",
+      "item": "linha: sys.path.insert(0, os.path.join(os.path.dirname(__file__), \"..\", \"..\", \"..\", \"componentes\", \"compartilhado\", \"src-core\"))",
+      "motivo": "ciclo-03 Tickets 3-4: linha com caminho/descoberta de raiz do layout tools/ reescrita para modulos/; nenhuma função, classe ou teste sumiu"
+    },
+    {
+      "arquivo": "tools/aidd-factory/tests/test_pipeline_factory.py",
+      "item": "linha: sys.path.insert(0, os.path.join(_FACTORY_ROOT, \"..\", \"..\", \"componentes\", \"compartilhado\", \"src-core\"))",
+      "motivo": "ciclo-03 Tickets 3-4: linha com caminho/descoberta de raiz do layout tools/ reescrita para modulos/; nenhuma função, classe ou teste sumiu"
+    },
+    {
+      "arquivo": "tools/aidd-forge/aidd_forge/cli.py",
+      "item": "linha: # aidd_forge/ -> tools/aidd-forge/ -> tools/ -> ecossistema-aidd/), quando",
+      "motivo": "ciclo-03 Tickets 3-4: linha com caminho/descoberta de raiz do layout tools/ reescrita para modulos/; nenhuma função, classe ou teste sumiu"
+    },
+    {
+      "arquivo": "tools/aidd-forge/aidd_forge/cli.py",
+      "item": "linha: ECOSSISTEMA_SCRIPT = _ECOSSISTEMA_SCRIPT if _ECOSSISTEMA_SCRIPT.is_file() else None",
+      "motivo": "já órfão na tag pre-vsa-ciclo-03 (232cac4): dívida da foto de 04/10, anterior a este ciclo"
+    },
+    {
+      "arquivo": "tools/aidd-forge/aidd_forge/cli.py",
+      "item": "linha: _ECOSSISTEMA_SCRIPT = _TOOLBOX_ROOT / \"ecossistema.py\"",
+      "motivo": "já órfão na tag pre-vsa-ciclo-03 (232cac4): dívida da foto de 04/10, anterior a este ciclo"
+    },
+    {
+      "arquivo": "tools/aidd-forge/aidd_forge/cli.py",
+      "item": "linha: _TOOLBOX_ROOT = Path(__file__).resolve().parents[3]",
+      "motivo": "já órfão na tag pre-vsa-ciclo-03 (232cac4): dívida da foto de 04/10, anterior a este ciclo"
+    },
+    {
+      "arquivo": "tools/aidd-forge/aidd_forge/commands/slash_router.py",
+      "item": "linha: \"- \\\"crie um roteiro de X\\\" / \\\"escreva um tutorial de X\\\" -> componente roteiro\\n\"",
+      "motivo": "já órfão na tag pre-vsa-ciclo-03 (232cac4): dívida da foto de 04/10, anterior a este ciclo"
+    },
+    {
+      "arquivo": "tools/aidd-forge/aidd_forge/core/audit_checks.py",
+      "item": "linha: r\"(?i)(?:code-review-graph|codebase-memory-mcp)\",",
+      "motivo": "já órfão na tag pre-vsa-ciclo-03 (232cac4): dívida da foto de 04/10, anterior a este ciclo"
+    },
+    {
+      "arquivo": "tools/aidd-forge/aidd_forge/core/git_hooks.py",
+      "item": "linha: return injector.run()",
+      "motivo": "já órfão na tag pre-vsa-ciclo-03 (232cac4): dívida da foto de 04/10, anterior a este ciclo"
+    },
+    {
+      "arquivo": "tools/aidd-forge/aidd_forge/core/harness_manifest.py",
+      "item": "linha: \"\"\"Acha `gates/manifesto_harnesses.json` na raiz do monorepo, se existir.",
+      "motivo": "já órfão na tag pre-vsa-ciclo-03 (232cac4): dívida da foto de 04/10, anterior a este ciclo"
+    },
+    {
+      "arquivo": "tools/aidd-forge/aidd_forge/core/harness_manifest.py",
+      "item": "linha: Deste arquivo (`aidd_forge/core/harness_manifest.py`), a raiz do monorepo",
+      "motivo": "já órfão na tag pre-vsa-ciclo-03 (232cac4): dívida da foto de 04/10, anterior a este ciclo"
+    },
+    {
+      "arquivo": "tools/aidd-forge/aidd_forge/core/harness_manifest.py",
+      "item": "linha: fica 4 niveis acima: core/ -> aidd_forge/ -> aidd-forge/ -> tools/ -> ecossistema-aidd/.",
+      "motivo": "já órfão na tag pre-vsa-ciclo-03 (232cac4): dívida da foto de 04/10, anterior a este ciclo"
+    },
+    {
+      "arquivo": "tools/aidd-forge/aidd_forge/templates/gates/G_QUARTETO_SINE_QUA_NON.py",
+      "item": "linha: os.path.join(root_dir, \"tools\", \"aidd-enterprise\", \"materiais-extras\", \"examples\", \"enterprise-suite-v4\"),",
+      "motivo": "ciclo-03 Tickets 3-4: linha com caminho/descoberta de raiz do layout tools/ reescrita para modulos/; nenhuma função, classe ou teste sumiu"
+    },
+    {
+      "arquivo": "tools/aidd-forge/tests/integration/test_full_forge_pipeline.py",
+      "item": "linha: assert log.stdout.strip() == \"\"",
+      "motivo": "já órfão na tag pre-vsa-ciclo-03 (232cac4): dívida da foto de 04/10, anterior a este ciclo"
+    },
+    {
+      "arquivo": "tools/aidd-forge/tests/unit/test_audit_checks.py",
+      "item": "linha: _write(tmp_path / \"AGENTS.md\", \"# Rules\\n\\nGraph-first: query code-review-graph.\\n\")",
+      "motivo": "já órfão na tag pre-vsa-ciclo-03 (232cac4): dívida da foto de 04/10, anterior a este ciclo"
+    },
+    {
+      "arquivo": "tools/aidd-forge/tests/unit/test_audit_conform_cli.py",
+      "item": "linha: _write(tmp_path / \"AGENTS.md\", \"# Rules\\n\\nThinking constraint: compact English.\\n\\nExecution limit: 3 to 5 steps.\\n\\nOutput format: Silent executor.\\n\\nBash rule: pipe to tail/grep.\\n\\nGraph-first: query code-review-graph.\\n\")",
+      "motivo": "já órfão na tag pre-vsa-ciclo-03 (232cac4): dívida da foto de 04/10, anterior a este ciclo"
+    },
+    {
+      "arquivo": "tools/aidd-forge/tests/unit/test_audit_engine.py",
+      "item": "linha: _write(tmp_path / \"AGENTS.md\", \"# AGENTS.md\\n\\nThinking constraint: Think strictly in compact English.\\n\\nExecution limit: Resolve tasks in 3 to 5 steps.\\n\\nOutput format: Silent executor. Return code edits and 1-line execution status.\\n\\nBash rule: Always pipe verbose commands to tail/grep.\\n\\nGraph-first: Always query code-review-graph before Grep.\\n\")",
+      "motivo": "já órfão na tag pre-vsa-ciclo-03 (232cac4): dívida da foto de 04/10, anterior a este ciclo"
+    },
+    {
+      "arquivo": "tools/aidd-forge/tests/unit/test_injector_profiles.py",
+      "item": "linha: assert \"tools/componentes\" not in dest.as_posix()",
+      "motivo": "ciclo-03 Tickets 3-4: linha com caminho/descoberta de raiz do layout tools/ reescrita para modulos/; nenhuma função, classe ou teste sumiu"
+    },
+    {
+      "arquivo": "tools/aidd-generator/scripts/core/pipeline_state.py",
+      "item": "linha: os.path.dirname(__file__), \"..\", \"..\", \"..\", \"..\", \"componentes\", \"compartilhado\", \"src-core\"",
+      "motivo": "ciclo-03 Tickets 3-4: linha com caminho/descoberta de raiz do layout tools/ reescrita para modulos/; nenhuma função, classe ou teste sumiu"
+    },
+    {
+      "arquivo": "tools/aidd-generator/scripts/phases/01_pesquisador.py",
+      "item": "linha: os.path.dirname(__file__), \"..\", \"..\", \"..\", \"..\", \"componentes\", \"compartilhado\", \"src-core\"",
+      "motivo": "ciclo-03 Tickets 3-4: linha com caminho/descoberta de raiz do layout tools/ reescrita para modulos/; nenhuma função, classe ou teste sumiu"
+    },
+    {
+      "arquivo": "tools/aidd-generator/scripts/phases/02_analisador.py",
+      "item": "linha: os.path.dirname(__file__), \"..\", \"..\", \"..\", \"..\", \"componentes\", \"compartilhado\", \"src-core\"",
+      "motivo": "ciclo-03 Tickets 3-4: linha com caminho/descoberta de raiz do layout tools/ reescrita para modulos/; nenhuma função, classe ou teste sumiu"
+    },
+    {
+      "arquivo": "tools/aidd-generator/scripts/phases/03_designer.py",
+      "item": "linha: os.path.dirname(__file__), \"..\", \"..\", \"..\", \"..\", \"componentes\", \"compartilhado\", \"src-core\"",
+      "motivo": "ciclo-03 Tickets 3-4: linha com caminho/descoberta de raiz do layout tools/ reescrita para modulos/; nenhuma função, classe ou teste sumiu"
+    },
+    {
+      "arquivo": "tools/aidd-generator/scripts/phases/04_decisor.py",
+      "item": "linha: os.path.dirname(__file__), \"..\", \"..\", \"..\", \"..\", \"componentes\", \"compartilhado\", \"src-core\"",
+      "motivo": "ciclo-03 Tickets 3-4: linha com caminho/descoberta de raiz do layout tools/ reescrita para modulos/; nenhuma função, classe ou teste sumiu"
+    },
+    {
+      "arquivo": "tools/aidd-generator/scripts/phases/05_criador.py",
+      "item": "linha: os.path.dirname(__file__), \"..\", \"..\", \"..\", \"..\", \"componentes\", \"compartilhado\", \"src-core\"",
+      "motivo": "ciclo-03 Tickets 3-4: linha com caminho/descoberta de raiz do layout tools/ reescrita para modulos/; nenhuma função, classe ou teste sumiu"
+    },
+    {
+      "arquivo": "tools/aidd-generator/scripts/phases/06_documentador.py",
+      "item": "linha: os.path.dirname(__file__), \"..\", \"..\", \"..\", \"..\", \"componentes\", \"compartilhado\", \"src-core\"",
+      "motivo": "ciclo-03 Tickets 3-4: linha com caminho/descoberta de raiz do layout tools/ reescrita para modulos/; nenhuma função, classe ou teste sumiu"
+    },
+    {
+      "arquivo": "tools/aidd-generator/scripts/phases/07_analisador.py",
+      "item": "linha: os.path.dirname(__file__), \"..\", \"..\", \"..\", \"..\", \"componentes\", \"compartilhado\", \"src-core\"",
+      "motivo": "ciclo-03 Tickets 3-4: linha com caminho/descoberta de raiz do layout tools/ reescrita para modulos/; nenhuma função, classe ou teste sumiu"
+    },
+    {
+      "arquivo": "tools/aidd-generator/scripts/phases/08_implementador.py",
+      "item": "linha: os.path.dirname(__file__), \"..\", \"..\", \"..\", \"..\", \"componentes\", \"compartilhado\", \"src-core\"",
+      "motivo": "ciclo-03 Tickets 3-4: linha com caminho/descoberta de raiz do layout tools/ reescrita para modulos/; nenhuma função, classe ou teste sumiu"
+    },
+    {
+      "arquivo": "tools/aidd-generator/scripts/phases/utils_delegacao.py",
+      "item": "linha: CACHE_DIR = Path(__file__).parent.parent / '.aidd' / 'cache'",
+      "motivo": "já órfão na tag pre-vsa-ciclo-03 (232cac4): dívida da foto de 04/10, anterior a este ciclo"
+    },
+    {
+      "arquivo": "tools/aidd-generator/scripts/phases/utils_delegacao.py",
+      "item": "linha: os.path.dirname(__file__), \"..\", \"..\", \"..\", \"..\", \"componentes\", \"compartilhado\", \"src-core\"",
+      "motivo": "ciclo-03 Tickets 3-4: linha com caminho/descoberta de raiz do layout tools/ reescrita para modulos/; nenhuma função, classe ou teste sumiu"
+    },
+    {
+      "arquivo": "tools/aidd-generator/scripts/phases/utils_fleet_discovery.py",
+      "item": "linha: os.path.dirname(__file__), \"..\", \"..\", \"..\", \"..\", \"componentes\", \"compartilhado\", \"src-core\"",
+      "motivo": "ciclo-03 Tickets 3-4: linha com caminho/descoberta de raiz do layout tools/ reescrita para modulos/; nenhuma função, classe ou teste sumiu"
+    },
+    {
+      "arquivo": "tools/aidd-generator/scripts/phases/utils_subagente_ephemero.py",
+      "item": "linha: os.path.dirname(__file__), \"..\", \"..\", \"..\", \"..\", \"componentes\", \"compartilhado\", \"src-core\"",
+      "motivo": "ciclo-03 Tickets 3-4: linha com caminho/descoberta de raiz do layout tools/ reescrita para modulos/; nenhuma função, classe ou teste sumiu"
+    },
+    {
+      "arquivo": "tools/aidd-generator/scripts/pipeline_completo.py",
+      "item": "linha: os.path.dirname(__file__), \"..\", \"..\", \"..\", \"componentes\", \"compartilhado\", \"src-core\"",
+      "motivo": "ciclo-03 Tickets 3-4: linha com caminho/descoberta de raiz do layout tools/ reescrita para modulos/; nenhuma função, classe ou teste sumiu"
+    },
+    {
+      "arquivo": "tools/aidd-generator/scripts/verificar_gates.py",
+      "item": "linha: \"\"\"G_INJECT: valida o Injetor Universal de Componentes (schema, profiles, materialização, rollback).\"\"\"",
+      "motivo": "já órfão na tag pre-vsa-ciclo-03 (232cac4): dívida da foto de 04/10, anterior a este ciclo"
+    },
+    {
+      "arquivo": "tools/aidd-generator/scripts/verificar_gates.py",
+      "item": "linha: mod = _carregar_modulo('G_BLOQUEAR_SEGREDOS', GATES_DIR / 'G_BLOQUEAR_SEGREDOS.py')",
+      "motivo": "já órfão na tag pre-vsa-ciclo-03 (232cac4): dívida da foto de 04/10, anterior a este ciclo"
+    },
+    {
+      "arquivo": "tools/aidd-generator/scripts/verificar_gates.py",
+      "item": "linha: mod = _carregar_modulo('G_CYBERSECURITY_OWASP', GATES_DIR / 'G_CYBERSECURITY_OWASP.py')",
+      "motivo": "já órfão na tag pre-vsa-ciclo-03 (232cac4): dívida da foto de 04/10, anterior a este ciclo"
+    },
+    {
+      "arquivo": "tools/aidd-generator/scripts/verificar_gates.py",
+      "item": "linha: mod = _carregar_modulo('G_HARNESS_COMPAT', GATES_DIR / 'G_HARNESS_COMPAT.py')",
+      "motivo": "já órfão na tag pre-vsa-ciclo-03 (232cac4): dívida da foto de 04/10, anterior a este ciclo"
+    },
+    {
+      "arquivo": "tools/aidd-generator/scripts/verificar_gates.py",
+      "item": "linha: mod = _carregar_modulo('G_INJECT', GATES_DIR / 'G_INJECT.py')",
+      "motivo": "já órfão na tag pre-vsa-ciclo-03 (232cac4): dívida da foto de 04/10, anterior a este ciclo"
+    },
+    {
+      "arquivo": "tools/aidd-generator/tests/conftest.py",
+      "item": "linha: PHASES_DIR = Path(__file__).resolve().parent.parent / 'scripts' / 'phases'",
+      "motivo": "já órfão na tag pre-vsa-ciclo-03 (232cac4): dívida da foto de 04/10, anterior a este ciclo"
+    },
+    {
+      "arquivo": "tools/aidd-generator/tests/test_injector_core.py",
+      "item": "linha: assert \"tools/componentes\" not in dest_canonico.as_posix()",
+      "motivo": "ciclo-03 Tickets 3-4: linha com caminho/descoberta de raiz do layout tools/ reescrita para modulos/; nenhuma função, classe ou teste sumiu"
+    },
+    {
+      "arquivo": "tools/aidd-generator/tests/test_injector_core.py",
+      "item": "linha: ecossistema_root = injetor_file.parents[5]",
+      "motivo": "já órfão na tag pre-vsa-ciclo-03 (232cac4): dívida da foto de 04/10, anterior a este ciclo"
+    },
+    {
+      "arquivo": "tools/aidd-generator/tests/test_injector_core.py",
+      "item": "linha: injetor_file = Path(injetor_mod.__file__).resolve()",
+      "motivo": "já órfão na tag pre-vsa-ciclo-03 (232cac4): dívida da foto de 04/10, anterior a este ciclo"
+    },
+    {
+      "arquivo": "tools/aidd-generator/tests/test_sandbox_nivel_1.py",
+      "item": "linha: [sys.executable, '-m', 'pytest', str(tmp_path), '-p', 'anyio'],",
+      "motivo": "já órfão na tag pre-vsa-ciclo-03 (232cac4): dívida da foto de 04/10, anterior a este ciclo"
+    },
+    {
+      "arquivo": "tools/aidd-generator/tests/test_verificar_gates.py",
+      "item": "linha: caminho = Path(__file__).resolve().parent.parent / 'scripts' / 'gates' / 'G_BLOQUEAR_SEGREDOS.py'",
+      "motivo": "já órfão na tag pre-vsa-ciclo-03 (232cac4): dívida da foto de 04/10, anterior a este ciclo"
+    },
+    {
+      "arquivo": "tools/aidd-generator/tmp_junit.xml",
+      "item": "linha: <?xml version=\"1.0\" encoding=\"utf-8\"?><testsuites name=\"pytest tests\"><testsuite name=\"pytest\" errors=\"0\" failures=\"0\" skipped=\"5\" tests=\"14\" time=\"0.946\" timestamp=\"2026-09-12T08:03:29.008283-03:00\" hostname=\"NBK011\"><testcase classname=\"tests.test_pipeline_prefect\" name=\"test_modulo_importa_com_registry_completo\" time=\"0.000\" /><testcase classname=\"tests.test_pipeline_prefect\" name=\"test_disponibilidade_retorna_tupla_ok_explicita\" time=\"0.000\" /><testcase classname=\"tests.test_pipeline_prefect\" name=\"test_todas_tasks_sao_registradas_como_task_prefect\" time=\"0.000\"><skipped type=\"pytest.skip\" message=\"Prefect não disponível neste ambiente — degrade testado separadamente\">C:\\Users\\trcnologia\\Desktop\\ecossistema-aidd\\tools\\aidd-generator\\tests\\test_pipeline_prefect.py:60: Prefect não disponível neste ambiente — degrade testado separadamente</skipped></testcase><testcase classname=\"tests.test_pipeline_prefect\" name=\"test_retries_configurados_por_phase\" time=\"0.000\" /><testcase classname=\"tests.test_pipeline_prefect\" name=\"test_retries_plural_aplicados_em_tasks\" time=\"0.000\"><skipped type=\"pytest.skip\" message=\"Prefect não disponível neste ambiente\">C:\\Users\\trcnologia\\Desktop\\ecossistema-aidd\\tools\\aidd-generator\\tests\\test_pipeline_prefect.py:77: Prefect não disponível neste ambiente</skipped></testcase><testcase classname=\"tests.test_pipeline_prefect\" name=\"test_chave_checkpoint_deterministica_por_ideia_fase\" time=\"0.000\" /><testcase classname=\"tests.test_pipeline_prefect\" name=\"test_chave_checkpoint_diferencia_fases\" time=\"0.000\" /><testcase classname=\"tests.test_pipeline_prefect\" name=\"test_chave_checkpoint_diferencia_ideias\" time=\"0.000\" /><testcase classname=\"tests.test_pipeline_prefect\" name=\"test_chave_checkpoint_faz_hash_curto_elegivel_a_cache\" time=\"0.000\" /><testcase classname=\"tests.test_pipeline_prefect\" name=\"test_prefect_home_default_aponta_para_aidd_local\" time=\"0.000\" /><testcase classname=\"tests.test_pipeline_prefect\" name=\"test_prefect_home_quando_variavel_de_ambiente_fornecida\" time=\"0.006\" /><testcase classname=\"tests.test_pipeline_prefect\" name=\"test_persistencia_estado_sqlite\" time=\"0.001\"><skipped type=\"pytest.skip\" message=\"Prefect não disponível neste ambiente — degrade testado separadamente\">C:\\Users\\trcnologia\\Desktop\\ecossistema-aidd\\tools\\aidd-generator\\tests\\test_pipeline_prefect.py:146: Prefect não disponível neste ambiente — degrade testado separadamente</skipped></testcase><testcase classname=\"tests.test_pipeline_prefect\" name=\"test_fluxo_e_do_tipo_flow_quando_prefect_disponivel\" time=\"0.000\"><skipped type=\"pytest.skip\" message=\"Prefect não disponível neste ambiente\">C:\\Users\\trcnologia\\Desktop\\ecossistema-aidd\\tools\\aidd-generator\\tests\\test_pipeline_prefect.py:188: Prefect não disponível neste ambiente</skipped></testcase><testcase classname=\"tests.test_pipeline_prefect\" name=\"test_fluxo_aceita_mesmos_argumentos_do_pipeline_legado\" time=\"0.000\"><skipped type=\"pytest.skip\" message=\"Prefect não disponível neste ambiente\">C:\\Users\\trcnologia\\Desktop\\ecossistema-aidd\\tools\\aidd-generator\\tests\\test_pipeline_prefect.py:196: Prefect não disponível neste ambiente</skipped></testcase></testsuite></testsuites>",
+      "motivo": "ciclo-03 Tickets 3-4: linha com caminho/descoberta de raiz do layout tools/ reescrita para modulos/; nenhuma função, classe ou teste sumiu"
+    },
+    {
+      "arquivo": "tools/aidd-master/application/commands/__init__.py",
+      "item": "linha: _executar_injecao,",
+      "motivo": "já órfão na tag pre-vsa-ciclo-03 (232cac4): dívida da foto de 04/10, anterior a este ciclo"
+    },
+    {
+      "arquivo": "tools/aidd-master/application/commands/__init__.py",
+      "item": "linha: _tentar_injecao_por_linguagem_natural,",
+      "motivo": "já órfão na tag pre-vsa-ciclo-03 (232cac4): dívida da foto de 04/10, anterior a este ciclo"
+    },
+    {
+      "arquivo": "tools/aidd-master/application/commands/__init__.py",
+      "item": "linha: cmd_inject,",
+      "motivo": "já órfão na tag pre-vsa-ciclo-03 (232cac4): dívida da foto de 04/10, anterior a este ciclo"
+    },
+    {
+      "arquivo": "tools/aidd-master/application/commands/__init__.py",
+      "item": "linha: from application.commands.inject import (",
+      "motivo": "já órfão na tag pre-vsa-ciclo-03 (232cac4): dívida da foto de 04/10, anterior a este ciclo"
+    },
+    {
+      "arquivo": "tools/aidd-master/application/commands/plan.py",
+      "item": "linha: from application.commands.inject import _tentar_injecao_por_linguagem_natural",
+      "motivo": "já órfão na tag pre-vsa-ciclo-03 (232cac4): dívida da foto de 04/10, anterior a este ciclo"
+    },
+    {
+      "arquivo": "tools/aidd-master/application/commands/verificar_drift.py",
+      "item": "linha: from application.commands.inject import _core_src_path",
+      "motivo": "já órfão na tag pre-vsa-ciclo-03 (232cac4): dívida da foto de 04/10, anterior a este ciclo"
+    },
+    {
+      "arquivo": "tools/aidd-master/scripts/aidd.py",
+      "item": "linha: _tentar_injecao_por_linguagem_natural,",
+      "motivo": "já órfão na tag pre-vsa-ciclo-03 (232cac4): dívida da foto de 04/10, anterior a este ciclo"
+    },
+    {
+      "arquivo": "tools/aidd-master/scripts/aidd.py",
+      "item": "linha: cmd_inject as _cmd_inject_impl,",
+      "motivo": "já órfão na tag pre-vsa-ciclo-03 (232cac4): dívida da foto de 04/10, anterior a este ciclo"
+    },
+    {
+      "arquivo": "tools/aidd-master/scripts/aidd.py",
+      "item": "linha: from application.commands.inject import (  # noqa: E402",
+      "motivo": "já órfão na tag pre-vsa-ciclo-03 (232cac4): dívida da foto de 04/10, anterior a este ciclo"
+    },
+    {
+      "arquivo": "tools/aidd-master/scripts/attach_vsa_infra.py",
+      "item": "linha: if not os.path.exists(template):",
+      "motivo": "já órfão na tag pre-vsa-ciclo-03 (232cac4): dívida da foto de 04/10, anterior a este ciclo"
+    },
+    {
+      "arquivo": "tools/aidd-master/scripts/attach_vsa_infra.py",
+      "item": "linha: template = os.path.join(repo_root, \"templates\", \"core\", \"Dockerfile\")",
+      "motivo": "já órfão na tag pre-vsa-ciclo-03 (232cac4): dívida da foto de 04/10, anterior a este ciclo"
+    },
+    {
+      "arquivo": "tools/aidd-master/scripts/attach_vsa_infra.py",
+      "item": "linha: template = os.path.join(repo_root, \"templates\", \"v2\", \"Dockerfile\")",
+      "motivo": "já órfão na tag pre-vsa-ciclo-03 (232cac4): dívida da foto de 04/10, anterior a este ciclo"
+    },
+    {
+      "arquivo": "tools/aidd-master/scripts/compose_suite.py",
+      "item": "linha: # init`/provision_project.py, que copia esse arquivo separadamente)",
+      "motivo": "já órfão na tag pre-vsa-ciclo-03 (232cac4): dívida da foto de 04/10, anterior a este ciclo"
+    },
+    {
+      "arquivo": "tools/aidd-master/scripts/compose_suite.py",
+      "item": "linha: # lista — todo projeto criado via `master compose` (nunca via `master",
+      "motivo": "já órfão na tag pre-vsa-ciclo-03 (232cac4): dívida da foto de 04/10, anterior a este ciclo"
+    },
+    {
+      "arquivo": "tools/aidd-master/scripts/compose_suite.py",
+      "item": "linha: # tinha /docs retornando HTTP 500 (FileNotFoundError) sempre.",
+      "motivo": "já órfão na tag pre-vsa-ciclo-03 (232cac4): dívida da foto de 04/10, anterior a este ciclo"
+    },
+    {
+      "arquivo": "tools/aidd-master/scripts/compose_suite.py",
+      "item": "linha: dc_src = os.path.join(scripts_dir, \"..\", \"..\", \"..\", \"componentes\", \"compartilhado\", \"src-core\", \"design_catalog.py\")",
+      "motivo": "ciclo-03 Tickets 3-4: linha com caminho/descoberta de raiz do layout tools/ reescrita para modulos/; nenhuma função, classe ou teste sumiu"
+    },
+    {
+      "arquivo": "tools/aidd-master/scripts/compose_suite.py",
+      "item": "linha: escritor_src = os.path.join(scripts_dir, \"..\", \"..\", \"..\", \"componentes\", \"compartilhado\", \"src-core\", \"escritor_atomico.py\")",
+      "motivo": "ciclo-03 Tickets 3-4: linha com caminho/descoberta de raiz do layout tools/ reescrita para modulos/; nenhuma função, classe ou teste sumiu"
+    },
+    {
+      "arquivo": "tools/aidd-master/scripts/compose_suite.py",
+      "item": "linha: for g in os.listdir(gates_dir):",
+      "motivo": "já órfão na tag pre-vsa-ciclo-03 (232cac4): dívida da foto de 04/10, anterior a este ciclo"
+    },
+    {
+      "arquivo": "tools/aidd-master/scripts/compose_suite.py",
+      "item": "linha: for s in [\"aidd.py\", \"add_module.py\", \"compose_suite.py\", \"openapi_to_ts.py\", \"scaffold_infra.py\"]:",
+      "motivo": "já órfão na tag pre-vsa-ciclo-03 (232cac4): dívida da foto de 04/10, anterior a este ciclo"
+    },
+    {
+      "arquivo": "tools/aidd-master/scripts/compose_suite.py",
+      "item": "linha: if g.endswith(\".py\"):",
+      "motivo": "já órfão na tag pre-vsa-ciclo-03 (232cac4): dívida da foto de 04/10, anterior a este ciclo"
+    },
+    {
+      "arquivo": "tools/aidd-master/scripts/compose_suite.py",
+      "item": "linha: nginx_src = os.path.join(templates_v2, \"nginx\")",
+      "motivo": "já órfão na tag pre-vsa-ciclo-03 (232cac4): dívida da foto de 04/10, anterior a este ciclo"
+    },
+    {
+      "arquivo": "tools/aidd-master/scripts/compose_suite.py",
+      "item": "linha: njs_src = os.path.join(scripts_dir, \"..\", \"..\", \"..\", \"componentes\", \"compartilhado\", \"src-core\", \"nextjs_exporter.py\")",
+      "motivo": "ciclo-03 Tickets 3-4: linha com caminho/descoberta de raiz do layout tools/ reescrita para modulos/; nenhuma função, classe ou teste sumiu"
+    },
+    {
+      "arquivo": "tools/aidd-master/scripts/compose_suite.py",
+      "item": "linha: os.path.dirname(__file__), \"..\", \"..\", \"..\", \"componentes\", \"compartilhado\", \"src-core\"",
+      "motivo": "ciclo-03 Tickets 3-4: linha com caminho/descoberta de raiz do layout tools/ reescrita para modulos/; nenhuma função, classe ou teste sumiu"
+    },
+    {
+      "arquivo": "tools/aidd-master/scripts/compose_suite.py",
+      "item": "linha: shutil.copyfile(os.path.join(gates_dir, g), os.path.join(target_gates_dir, g))",
+      "motivo": "já órfão na tag pre-vsa-ciclo-03 (232cac4): dívida da foto de 04/10, anterior a este ciclo"
+    },
+    {
+      "arquivo": "tools/aidd-master/scripts/compose_suite.py",
+      "item": "linha: src = os.path.join(templates_v2, asset)",
+      "motivo": "já órfão na tag pre-vsa-ciclo-03 (232cac4): dívida da foto de 04/10, anterior a este ciclo"
+    },
+    {
+      "arquivo": "tools/aidd-master/scripts/compose_suite.py",
+      "item": "linha: src = os.path.join(templates_v2, cf)",
+      "motivo": "já órfão na tag pre-vsa-ciclo-03 (232cac4): dívida da foto de 04/10, anterior a este ciclo"
+    },
+    {
+      "arquivo": "tools/aidd-master/scripts/dispatch_pipeline.py",
+      "item": "linha: \"\"\"Efetua o merge da branch da fatia na branch base.\"\"\"",
+      "motivo": "já órfão na tag pre-vsa-ciclo-03 (232cac4): dívida da foto de 04/10, anterior a este ciclo"
+    },
+    {
+      "arquivo": "tools/aidd-master/scripts/dispatch_pipeline.py",
+      "item": "linha: # Merge sequencial das fatias validadas",
+      "motivo": "já órfão na tag pre-vsa-ciclo-03 (232cac4): dívida da foto de 04/10, anterior a este ciclo"
+    },
+    {
+      "arquivo": "tools/aidd-master/scripts/dispatch_pipeline.py",
+      "item": "linha: def _merge_slice_branch(self, branch_name: str) -> bool:",
+      "motivo": "já órfão na tag pre-vsa-ciclo-03 (232cac4): dívida da foto de 04/10, anterior a este ciclo"
+    },
+    {
+      "arquivo": "tools/aidd-master/scripts/dispatch_pipeline.py",
+      "item": "linha: if not self._merge_slice_branch(r.branch_name):",
+      "motivo": "já órfão na tag pre-vsa-ciclo-03 (232cac4): dívida da foto de 04/10, anterior a este ciclo"
+    },
+    {
+      "arquivo": "tools/aidd-master/scripts/dispatch_pipeline.py",
+      "item": "linha: python tools/aidd-master/scripts/dispatch_pipeline.py --dispatch <vsa_dispatch.json>",
+      "motivo": "ciclo-03 Tickets 3-4: linha com caminho/descoberta de raiz do layout tools/ reescrita para modulos/; nenhuma função, classe ou teste sumiu"
+    },
+    {
+      "arquivo": "tools/aidd-master/scripts/dispatch_pipeline.py",
+      "item": "linha: python tools/aidd-master/scripts/dispatch_pipeline.py --dispatch PLANNER.json --dry-run",
+      "motivo": "ciclo-03 Tickets 3-4: linha com caminho/descoberta de raiz do layout tools/ reescrita para modulos/; nenhuma função, classe ou teste sumiu"
+    },
+    {
+      "arquivo": "tools/aidd-master/scripts/dispatch_pipeline.py",
+      "item": "linha: tools_planner = self.repo_root / \"tools\" / \"aidd-planner\"",
+      "motivo": "ciclo-03 Tickets 3-4: linha com caminho/descoberta de raiz do layout tools/ reescrita para modulos/; nenhuma função, classe ou teste sumiu"
+    },
+    {
+      "arquivo": "tools/aidd-master/scripts/engine_router.py",
+      "item": "linha: BRIDGE_DIR = ROOT_DIR / \"tools\" / \"aidd-bridge\"",
+      "motivo": "ciclo-03 Tickets 3-4: linha com caminho/descoberta de raiz do layout tools/ reescrita para modulos/; nenhuma função, classe ou teste sumiu"
+    },
+    {
+      "arquivo": "tools/aidd-master/scripts/engine_router.py",
+      "item": "linha: FACTORY_DIR = ROOT_DIR / \"tools\" / \"aidd-factory\"",
+      "motivo": "ciclo-03 Tickets 3-4: linha com caminho/descoberta de raiz do layout tools/ reescrita para modulos/; nenhuma função, classe ou teste sumiu"
+    },
+    {
+      "arquivo": "tools/aidd-master/scripts/engine_router.py",
+      "item": "linha: GENERATOR_DIR = ROOT_DIR / \"tools\" / \"aidd-generator\"",
+      "motivo": "ciclo-03 Tickets 3-4: linha com caminho/descoberta de raiz do layout tools/ reescrita para modulos/; nenhuma função, classe ou teste sumiu"
+    },
+    {
+      "arquivo": "tools/aidd-master/scripts/engine_router.py",
+      "item": "linha: MASTER_DIR = ROOT_DIR / \"tools\" / \"aidd-master\"",
+      "motivo": "ciclo-03 Tickets 3-4: linha com caminho/descoberta de raiz do layout tools/ reescrita para modulos/; nenhuma função, classe ou teste sumiu"
+    },
+    {
+      "arquivo": "tools/aidd-master/scripts/orchestrator_pipeline.py",
+      "item": "linha: python tools/aidd-master/scripts/orchestrator_pipeline.py --manifesto <caminho_manifesto.json>",
+      "motivo": "ciclo-03 Tickets 3-4: linha com caminho/descoberta de raiz do layout tools/ reescrita para modulos/; nenhuma função, classe ou teste sumiu"
+    },
+    {
+      "arquivo": "tools/aidd-master/scripts/provision_project.py",
+      "item": "linha: # (Swagger/Guia) referencia `<link rel=\"stylesheet\" href=\"/static/",
+      "motivo": "já órfão na tag pre-vsa-ciclo-03 (232cac4): dívida da foto de 04/10, anterior a este ciclo"
+    },
+    {
+      "arquivo": "tools/aidd-master/scripts/provision_project.py",
+      "item": "linha: # (achado real: `docker compose up` do projeto gerado por `master init`",
+      "motivo": "já órfão na tag pre-vsa-ciclo-03 (232cac4): dívida da foto de 04/10, anterior a este ciclo"
+    },
+    {
+      "arquivo": "tools/aidd-master/scripts/provision_project.py",
+      "item": "linha: # ./nginx/nginx.conf e ./nginx/ssl — sem esta pasta o serviço nginx",
+      "motivo": "já órfão na tag pre-vsa-ciclo-03 (232cac4): dívida da foto de 04/10, anterior a este ciclo"
+    },
+    {
+      "arquivo": "tools/aidd-master/scripts/provision_project.py",
+      "item": "linha: # abaixo, depois que os módulos já existem em disco (ver passo 5.1).",
+      "motivo": "já órfão na tag pre-vsa-ciclo-03 (232cac4): dívida da foto de 04/10, anterior a este ciclo"
+    },
+    {
+      "arquivo": "tools/aidd-master/scripts/provision_project.py",
+      "item": "linha: # compose_suite() já copiava esse arquivo; provision_project() nunca",
+      "motivo": "já órfão na tag pre-vsa-ciclo-03 (232cac4): dívida da foto de 04/10, anterior a este ciclo"
+    },
+    {
+      "arquivo": "tools/aidd-master/scripts/provision_project.py",
+      "item": "linha: # compose_suite() usa (generate_superapp_index_html), sempre em dia.",
+      "motivo": "já órfão na tag pre-vsa-ciclo-03 (232cac4): dívida da foto de 04/10, anterior a este ciclo"
+    },
+    {
+      "arquivo": "tools/aidd-master/scripts/provision_project.py",
+      "item": "linha: # copiava isto corretamente; provision_project.py nunca copiava",
+      "motivo": "já órfão na tag pre-vsa-ciclo-03 (232cac4): dívida da foto de 04/10, anterior a este ciclo"
+    },
+    {
+      "arquivo": "tools/aidd-master/scripts/provision_project.py",
+      "item": "linha: # copiava — o CSS voltava 404 em produção e TODA a página (ícones,",
+      "motivo": "já órfão na tag pre-vsa-ciclo-03 (232cac4): dívida da foto de 04/10, anterior a este ciclo"
+    },
+    {
+      "arquivo": "tools/aidd-master/scripts/provision_project.py",
+      "item": "linha: # cores, espaçamento) renderizava sem estilo nenhum (ícones SVG",
+      "motivo": "já órfão na tag pre-vsa-ciclo-03 (232cac4): dívida da foto de 04/10, anterior a este ciclo"
+    },
+    {
+      "arquivo": "tools/aidd-master/scripts/provision_project.py",
+      "item": "linha: # docs.html NÃO é copiado cru aqui: é um MOLDE Jinja2 (placeholders",
+      "motivo": "já órfão na tag pre-vsa-ciclo-03 (232cac4): dívida da foto de 04/10, anterior a este ciclo"
+    },
+    {
+      "arquivo": "tools/aidd-master/scripts/provision_project.py",
+      "item": "linha: # estática desatualizada (sem as variáveis CSS/modal que G_CONTRACTS",
+      "motivo": "já órfão na tag pre-vsa-ciclo-03 (232cac4): dívida da foto de 04/10, anterior a este ciclo"
+    },
+    {
+      "arquivo": "tools/aidd-master/scripts/provision_project.py",
+      "item": "linha: # exige) — é gerado dinamicamente no passo 5.1 com o mesmo gerador que",
+      "motivo": "já órfão na tag pre-vsa-ciclo-03 (232cac4): dívida da foto de 04/10, anterior a este ciclo"
+    },
+    {
+      "arquivo": "tools/aidd-master/scripts/provision_project.py",
+      "item": "linha: # falhava com bind mount ausente — validação E2E do Fluxo 01, 17/09/2026).",
+      "motivo": "já órfão na tag pre-vsa-ciclo-03 (232cac4): dívida da foto de 04/10, anterior a este ciclo"
+    },
+    {
+      "arquivo": "tools/aidd-master/scripts/provision_project.py",
+      "item": "linha: # gigantes, texto sem layout).",
+      "motivo": "já órfão na tag pre-vsa-ciclo-03 (232cac4): dívida da foto de 04/10, anterior a este ciclo"
+    },
+    {
+      "arquivo": "tools/aidd-master/scripts/provision_project.py",
+      "item": "linha: # index.html NÃO é copiado daqui: templates/core/index.html é uma cópia",
+      "motivo": "já órfão na tag pre-vsa-ciclo-03 (232cac4): dívida da foto de 04/10, anterior a este ciclo"
+    },
+    {
+      "arquivo": "tools/aidd-master/scripts/provision_project.py",
+      "item": "linha: # nginx/ (nginx.conf + ssl/generate_ssl.py): docker-compose.yml monta",
+      "motivo": "já órfão na tag pre-vsa-ciclo-03 (232cac4): dívida da foto de 04/10, anterior a este ciclo"
+    },
+    {
+      "arquivo": "tools/aidd-master/scripts/provision_project.py",
+      "item": "linha: # nunca sobe (bind mount de arquivo inexistente). compose_suite.py já",
+      "motivo": "já órfão na tag pre-vsa-ciclo-03 (232cac4): dívida da foto de 04/10, anterior a este ciclo"
+    },
+    {
+      "arquivo": "tools/aidd-master/scripts/provision_project.py",
+      "item": "linha: # output.css\">` para as classes utilitárias Tailwind (w-6, h-4 etc).",
+      "motivo": "já órfão na tag pre-vsa-ciclo-03 (232cac4): dívida da foto de 04/10, anterior a este ciclo"
+    },
+    {
+      "arquivo": "tools/aidd-master/scripts/provision_project.py",
+      "item": "linha: # output.css: achado real (18/09/2026, print do usuário) — docs.html",
+      "motivo": "já órfão na tag pre-vsa-ciclo-03 (232cac4): dívida da foto de 04/10, anterior a este ciclo"
+    },
+    {
+      "arquivo": "tools/aidd-master/scripts/provision_project.py",
+      "item": "linha: # tipo {{ spotlight_commands }}) que só é renderizado de verdade mais",
+      "motivo": "já órfão na tag pre-vsa-ciclo-03 (232cac4): dívida da foto de 04/10, anterior a este ciclo"
+    },
+    {
+      "arquivo": "tools/aidd-master/scripts/provision_project.py",
+      "item": "linha: d_dir = os.path.join(nginx_dst, rel) if rel != '.' else nginx_dst",
+      "motivo": "já órfão na tag pre-vsa-ciclo-03 (232cac4): dívida da foto de 04/10, anterior a este ciclo"
+    },
+    {
+      "arquivo": "tools/aidd-master/scripts/provision_project.py",
+      "item": "linha: docs_template_path = os.path.join(templates_dir, 'docs.html')",
+      "motivo": "já órfão na tag pre-vsa-ciclo-03 (232cac4): dívida da foto de 04/10, anterior a este ciclo"
+    },
+    {
+      "arquivo": "tools/aidd-master/scripts/provision_project.py",
+      "item": "linha: for g in os.listdir(gates_dir):",
+      "motivo": "já órfão na tag pre-vsa-ciclo-03 (232cac4): dívida da foto de 04/10, anterior a este ciclo"
+    },
+    {
+      "arquivo": "tools/aidd-master/scripts/provision_project.py",
+      "item": "linha: for root, _dirs, files in os.walk(nginx_src):",
+      "motivo": "já órfão na tag pre-vsa-ciclo-03 (232cac4): dívida da foto de 04/10, anterior a este ciclo"
+    },
+    {
+      "arquivo": "tools/aidd-master/scripts/provision_project.py",
+      "item": "linha: if g.endswith('.py'):",
+      "motivo": "já órfão na tag pre-vsa-ciclo-03 (232cac4): dívida da foto de 04/10, anterior a este ciclo"
+    },
+    {
+      "arquivo": "tools/aidd-master/scripts/provision_project.py",
+      "item": "linha: nginx_dst = os.path.join(project_dir, 'nginx')",
+      "motivo": "já órfão na tag pre-vsa-ciclo-03 (232cac4): dívida da foto de 04/10, anterior a este ciclo"
+    },
+    {
+      "arquivo": "tools/aidd-master/scripts/provision_project.py",
+      "item": "linha: nginx_src = os.path.join(templates_dir, 'nginx')",
+      "motivo": "já órfão na tag pre-vsa-ciclo-03 (232cac4): dívida da foto de 04/10, anterior a este ciclo"
+    },
+    {
+      "arquivo": "tools/aidd-master/scripts/provision_project.py",
+      "item": "linha: shutil.copyfile(os.path.join(gates_dir, g), os.path.join(backend_dir, 'scripts', 'gates', g))",
+      "motivo": "já órfão na tag pre-vsa-ciclo-03 (232cac4): dívida da foto de 04/10, anterior a este ciclo"
+    },
+    {
+      "arquivo": "tools/aidd-master/scripts/provision_project.py",
+      "item": "linha: shutil.copyfile(os.path.join(gates_dir, g), os.path.join(project_dir, 'scripts', 'gates', g))",
+      "motivo": "já órfão na tag pre-vsa-ciclo-03 (232cac4): dívida da foto de 04/10, anterior a este ciclo"
+    },
+    {
+      "arquivo": "tools/aidd-master/scripts/provision_project.py",
+      "item": "linha: src = os.path.join(templates_dir, f)",
+      "motivo": "já órfão na tag pre-vsa-ciclo-03 (232cac4): dívida da foto de 04/10, anterior a este ciclo"
+    },
+    {
+      "arquivo": "tools/aidd-master/scripts/provision_project.py",
+      "item": "linha: src_output_css = os.path.join(templates_dir, 'output.css')",
+      "motivo": "já órfão na tag pre-vsa-ciclo-03 (232cac4): dívida da foto de 04/10, anterior a este ciclo"
+    },
+    {
+      "arquivo": "tools/aidd-master/scripts/scaffold_infra.py",
+      "item": "linha: _RAIZ_ECOSSISTEMA = os.path.abspath(os.path.join(os.path.dirname(__file__), \"..\", \"..\", \"..\"))",
+      "motivo": "ciclo-03 Tickets 3-4: linha com caminho/descoberta de raiz do layout tools/ reescrita para modulos/; nenhuma função, classe ou teste sumiu"
+    },
+    {
+      "arquivo": "tools/aidd-master/scripts/scaffold_infra.py",
+      "item": "linha: os.path.dirname(__file__), \"..\", \"..\", \"..\", \"componentes\", \"compartilhado\", \"src-core\"",
+      "motivo": "ciclo-03 Tickets 3-4: linha com caminho/descoberta de raiz do layout tools/ reescrita para modulos/; nenhuma função, classe ou teste sumiu"
+    },
+    {
+      "arquivo": "tools/aidd-master/src/core/assinatura_manifesto.py",
+      "item": "linha: byte-idêntico em tools/aidd-master/src/core/ e tools/aidd-enterprise/src/core/",
+      "motivo": "ciclo-03 Tickets 3-4: linha com caminho/descoberta de raiz do layout tools/ reescrita para modulos/; nenhuma função, classe ou teste sumiu"
+    },
+    {
+      "arquivo": "tools/aidd-master/src/core/escritor_atomico.py",
+      "item": "linha: \"tools/aidd-enterprise/scripts\",",
+      "motivo": "ciclo-03 Tickets 3-4: linha com caminho/descoberta de raiz do layout tools/ reescrita para modulos/; nenhuma função, classe ou teste sumiu"
+    },
+    {
+      "arquivo": "tools/aidd-master/src/core/escritor_atomico.py",
+      "item": "linha: \"tools/aidd-enterprise/src/core\",",
+      "motivo": "ciclo-03 Tickets 3-4: linha com caminho/descoberta de raiz do layout tools/ reescrita para modulos/; nenhuma função, classe ou teste sumiu"
+    },
+    {
+      "arquivo": "tools/aidd-master/src/core/escritor_atomico.py",
+      "item": "linha: \"tools/aidd-generator/scripts/phases\",",
+      "motivo": "ciclo-03 Tickets 3-4: linha com caminho/descoberta de raiz do layout tools/ reescrita para modulos/; nenhuma função, classe ou teste sumiu"
+    },
+    {
+      "arquivo": "tools/aidd-master/src/core/escritor_atomico.py",
+      "item": "linha: \"tools/aidd-master/scripts\",",
+      "motivo": "ciclo-03 Tickets 3-4: linha com caminho/descoberta de raiz do layout tools/ reescrita para modulos/; nenhuma função, classe ou teste sumiu"
+    },
+    {
+      "arquivo": "tools/aidd-master/src/core/escritor_atomico.py",
+      "item": "linha: \"tools/aidd-master/src/core\",",
+      "motivo": "ciclo-03 Tickets 3-4: linha com caminho/descoberta de raiz do layout tools/ reescrita para modulos/; nenhuma função, classe ou teste sumiu"
+    },
+    {
+      "arquivo": "tools/aidd-master/src/core/escritor_atomico.py",
+      "item": "linha: \"tools/aidd-ops/scripts\",",
+      "motivo": "ciclo-03 Tickets 3-4: linha com caminho/descoberta de raiz do layout tools/ reescrita para modulos/; nenhuma função, classe ou teste sumiu"
+    },
+    {
+      "arquivo": "tools/aidd-master/src/core/materializador.py",
+      "item": "linha: arquivo é byte-idêntico em tools/aidd-master/src/core/ e",
+      "motivo": "ciclo-03 Tickets 3-4: linha com caminho/descoberta de raiz do layout tools/ reescrita para modulos/; nenhuma função, classe ou teste sumiu"
+    },
+    {
+      "arquivo": "tools/aidd-master/src/core/materializador.py",
+      "item": "linha: tools/aidd-enterprise/src/core/ (sincronizado por",
+      "motivo": "ciclo-03 Tickets 3-4: linha com caminho/descoberta de raiz do layout tools/ reescrita para modulos/; nenhuma função, classe ou teste sumiu"
+    },
+    {
+      "arquivo": "tools/aidd-master/src/core/nextjs_exporter.py",
+      "item": "linha: `tools/aidd-enterprise/src/core/nextjs_exporter.py` — qualquer alteracao aqui",
+      "motivo": "ciclo-03 Tickets 3-4: linha com caminho/descoberta de raiz do layout tools/ reescrita para modulos/; nenhuma função, classe ou teste sumiu"
+    },
+    {
+      "arquivo": "tools/aidd-master/src/core/nextjs_exporter.py",
+      "item": "linha: copiada identica em `tools/aidd-master/src/core/nextjs_exporter.py` e",
+      "motivo": "ciclo-03 Tickets 3-4: linha com caminho/descoberta de raiz do layout tools/ reescrita para modulos/; nenhuma função, classe ou teste sumiu"
+    },
+    {
+      "arquivo": "tools/aidd-master/src/core/nextjs_exporter.py",
+      "item": "linha: os.path.dirname(__file__), \"..\", \"..\", \"..\", \"componentes\", \"compartilhado\", \"src-core\"",
+      "motivo": "ciclo-03 Tickets 3-4: linha com caminho/descoberta de raiz do layout tools/ reescrita para modulos/; nenhuma função, classe ou teste sumiu"
+    },
+    {
+      "arquivo": "tools/aidd-master/tests/integration/test_add_module_server_wiring.py",
+      "item": "linha: status_adicionado = _aguardar_servidor(processo, \"http://127.0.0.1:3000/api/billing\")",
+      "motivo": "já órfão na tag pre-vsa-ciclo-03 (232cac4): dívida da foto de 04/10, anterior a este ciclo"
+    },
+    {
+      "arquivo": "tools/aidd-master/tests/integration/test_add_module_server_wiring.py",
+      "item": "linha: status_inicial = _aguardar_servidor(processo, \"http://127.0.0.1:3000/api/crm\")",
+      "motivo": "já órfão na tag pre-vsa-ciclo-03 (232cac4): dívida da foto de 04/10, anterior a este ciclo"
+    },
+    {
+      "arquivo": "tools/aidd-master/tests/unit/test_alembic_migrations.py",
+      "item": "linha: ALEMBIC_DIR = os.path.join(TOOLS_DIR, \"alembic\")",
+      "motivo": "ciclo-03 Tickets 3-4: linha com caminho/descoberta de raiz do layout tools/ reescrita para modulos/; nenhuma função, classe ou teste sumiu"
+    },
+    {
+      "arquivo": "tools/aidd-master/tests/unit/test_alembic_migrations.py",
+      "item": "linha: SRC_DIR = os.path.join(TOOLS_DIR, \"src\")",
+      "motivo": "ciclo-03 Tickets 3-4: linha com caminho/descoberta de raiz do layout tools/ reescrita para modulos/; nenhuma função, classe ou teste sumiu"
+    },
+    {
+      "arquivo": "tools/aidd-master/tests/unit/test_alembic_migrations.py",
+      "item": "linha: TOOLS_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), \"..\", \"..\"))",
+      "motivo": "ciclo-03 Tickets 3-4: linha com caminho/descoberta de raiz do layout tools/ reescrita para modulos/; nenhuma função, classe ou teste sumiu"
+    },
+    {
+      "arquivo": "tools/aidd-master/tests/unit/test_alembic_migrations.py",
+      "item": "linha: cwd=TOOLS_DIR,",
+      "motivo": "ciclo-03 Tickets 3-4: linha com caminho/descoberta de raiz do layout tools/ reescrita para modulos/; nenhuma função, classe ou teste sumiu"
+    },
+    {
+      "arquivo": "tools/aidd-master/tests/unit/test_attach_vsa.py",
+      "item": "linha: for script in scripts:",
+      "motivo": "já órfão na tag pre-vsa-ciclo-03 (232cac4): dívida da foto de 04/10, anterior a este ciclo"
+    },
+    {
+      "arquivo": "tools/aidd-master/tests/unit/test_attach_vsa.py",
+      "item": "linha: script_path = tmp_path / \"_check.js\"",
+      "motivo": "já órfão na tag pre-vsa-ciclo-03 (232cac4): dívida da foto de 04/10, anterior a este ciclo"
+    },
+    {
+      "arquivo": "tools/aidd-master/tests/unit/test_compose_suite.py",
+      "item": "linha: # JSON por requisicao — com stdout=PIPE e ninguem drenando, o buffer do",
+      "motivo": "já órfão na tag pre-vsa-ciclo-03 (232cac4): dívida da foto de 04/10, anterior a este ciclo"
+    },
+    {
+      "arquivo": "tools/aidd-master/tests/unit/test_compose_suite.py",
+      "item": "linha: # SO enche e o processo trava no meio de um write() de log, travando a",
+      "motivo": "já órfão na tag pre-vsa-ciclo-03 (232cac4): dívida da foto de 04/10, anterior a este ciclo"
+    },
+    {
+      "arquivo": "tools/aidd-master/tests/unit/test_compose_suite.py",
+      "item": "linha: # cheias abaixo geram log suficiente pra estourar o buffer de 64KB).",
+      "motivo": "já órfão na tag pre-vsa-ciclo-03 (232cac4): dívida da foto de 04/10, anterior a este ciclo"
+    },
+    {
+      "arquivo": "tools/aidd-master/tests/unit/test_compose_suite.py",
+      "item": "linha: # request inteira (achado real ao escrever este teste: as 3 paginas",
+      "motivo": "já órfão na tag pre-vsa-ciclo-03 (232cac4): dívida da foto de 04/10, anterior a este ciclo"
+    },
+    {
+      "arquivo": "tools/aidd-master/tests/unit/test_compose_suite.py",
+      "item": "linha: # stdout redirecionado para arquivo (nao PIPE): server.py loga 2 linhas",
+      "motivo": "já órfão na tag pre-vsa-ciclo-03 (232cac4): dívida da foto de 04/10, anterior a este ciclo"
+    },
+    {
+      "arquivo": "tools/aidd-master/tests/unit/test_compose_suite.py",
+      "item": "linha: env = dict(os.environ, DB_PATH=str(db_customizado))",
+      "motivo": "já órfão na tag pre-vsa-ciclo-03 (232cac4): dívida da foto de 04/10, anterior a este ciclo"
+    },
+    {
+      "arquivo": "tools/aidd-master/tests/unit/test_compose_suite.py",
+      "item": "linha: f\"{processo.returncode}):\\n{saida}\")",
+      "motivo": "já órfão na tag pre-vsa-ciclo-03 (232cac4): dívida da foto de 04/10, anterior a este ciclo"
+    },
+    {
+      "arquivo": "tools/aidd-master/tests/unit/test_compose_suite.py",
+      "item": "linha: saida = processo.stdout.read()",
+      "motivo": "já órfão na tag pre-vsa-ciclo-03 (232cac4): dívida da foto de 04/10, anterior a este ciclo"
+    },
+    {
+      "arquivo": "tools/aidd-master/tests/unit/test_compose_suite.py",
+      "item": "linha: with urllib.request.urlopen(\"http://127.0.0.1:3000/api/produtos\", timeout=1) as resp:",
+      "motivo": "já órfão na tag pre-vsa-ciclo-03 (232cac4): dívida da foto de 04/10, anterior a este ciclo"
+    },
+    {
+      "arquivo": "tools/aidd-master/tests/unit/test_compose_suite.py",
+      "item": "linha: with urllib.request.urlopen(\"http://127.0.0.1:3000/openapi.json\", timeout=1) as resp:",
+      "motivo": "já órfão na tag pre-vsa-ciclo-03 (232cac4): dívida da foto de 04/10, anterior a este ciclo"
+    },
+    {
+      "arquivo": "tools/aidd-master/tests/unit/test_compose_suite.py",
+      "item": "linha: with urllib.request.urlopen(f\"http://127.0.0.1:3000{path}\", timeout=2) as resp:",
+      "motivo": "já órfão na tag pre-vsa-ciclo-03 (232cac4): dívida da foto de 04/10, anterior a este ciclo"
+    },
+    {
+      "arquivo": "tools/aidd-master/tests/unit/test_drift_gate_blind_spot.py",
+      "item": "linha: DOS_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), \"..\", \"..\", \"..\", \"..\"))",
+      "motivo": "ciclo-03 Tickets 3-4: linha com caminho/descoberta de raiz do layout tools/ reescrita para modulos/; nenhuma função, classe ou teste sumiu"
+    },
+    {
+      "arquivo": "tools/aidd-master/tests/unit/test_modulo1.py",
+      "item": "linha: base = \"http://127.0.0.1:3000\"",
+      "motivo": "já órfão na tag pre-vsa-ciclo-03 (232cac4): dívida da foto de 04/10, anterior a este ciclo"
+    },
+    {
+      "arquivo": "tools/aidd-master/tests/unit/test_provision_project.py",
+      "item": "linha: \"\"\"Achado real: docker-compose.yml gerado monta ./nginx/nginx.conf e",
+      "motivo": "já órfão na tag pre-vsa-ciclo-03 (232cac4): dívida da foto de 04/10, anterior a este ciclo"
+    },
+    {
+      "arquivo": "tools/aidd-master/tests/unit/test_provision_project.py",
+      "item": "linha: \"\"\"Achado real: templates/core/Dockerfile (usado por `master init`) nunca",
+      "motivo": "já órfão na tag pre-vsa-ciclo-03 (232cac4): dívida da foto de 04/10, anterior a este ciclo"
+    },
+    {
+      "arquivo": "tools/aidd-master/tests/unit/test_provision_project.py",
+      "item": "linha: ./nginx/ssl como bind mounts, mas provision() nunca copiava a pasta",
+      "motivo": "já órfão na tag pre-vsa-ciclo-03 (232cac4): dívida da foto de 04/10, anterior a este ciclo"
+    },
+    {
+      "arquivo": "tools/aidd-master/tests/unit/test_provision_project.py",
+      "item": "linha: ModuleNotFoundError na primeira dependencia de terceiro nao presente na",
+      "motivo": "já órfão na tag pre-vsa-ciclo-03 (232cac4): dívida da foto de 04/10, anterior a este ciclo"
+    },
+    {
+      "arquivo": "tools/aidd-master/tests/unit/test_provision_project.py",
+      "item": "linha: `docker compose up` do projeto gerado por `master init` falhava",
+      "motivo": "já órfão na tag pre-vsa-ciclo-03 (232cac4): dívida da foto de 04/10, anterior a este ciclo"
+    },
+    {
+      "arquivo": "tools/aidd-master/tests/unit/test_provision_project.py",
+      "item": "linha: `python src/server.py` direto. Qualquer projeto gerado quebrava com",
+      "motivo": "já órfão na tag pre-vsa-ciclo-03 (232cac4): dívida da foto de 04/10, anterior a este ciclo"
+    },
+    {
+      "arquivo": "tools/aidd-master/tests/unit/test_provision_project.py",
+      "item": "linha: assert (projeto_dir / \"nginx\" / \"nginx.conf\").is_file()",
+      "motivo": "já órfão na tag pre-vsa-ciclo-03 (232cac4): dívida da foto de 04/10, anterior a este ciclo"
+    },
+    {
+      "arquivo": "tools/aidd-master/tests/unit/test_provision_project.py",
+      "item": "linha: assert (projeto_dir / \"nginx\" / \"ssl\" / \"generate_ssl.py\").is_file()",
+      "motivo": "já órfão na tag pre-vsa-ciclo-03 (232cac4): dívida da foto de 04/10, anterior a este ciclo"
+    },
+    {
+      "arquivo": "tools/aidd-master/tests/unit/test_provision_project.py",
+      "item": "linha: conteudo = (projeto_dir / \"Dockerfile\").read_text(encoding=\"utf-8\")",
+      "motivo": "já órfão na tag pre-vsa-ciclo-03 (232cac4): dívida da foto de 04/10, anterior a este ciclo"
+    },
+    {
+      "arquivo": "tools/aidd-master/tests/unit/test_provision_project.py",
+      "item": "linha: def test_provision_copia_pasta_nginx_com_conf_e_gerador_ssl(tmp_path):",
+      "motivo": "já órfão na tag pre-vsa-ciclo-03 (232cac4): dívida da foto de 04/10, anterior a este ciclo"
+    },
+    {
+      "arquivo": "tools/aidd-master/tests/unit/test_provision_project.py",
+      "item": "linha: def test_provision_dockerfile_instala_requirements_antes_de_rodar(tmp_path):",
+      "motivo": "já órfão na tag pre-vsa-ciclo-03 (232cac4): dívida da foto de 04/10, anterior a este ciclo"
+    },
+    {
+      "arquivo": "tools/aidd-master/tests/unit/test_provision_project.py",
+      "item": "linha: gate_path = os.path.join(SCRIPTS_DIR, \"gates\", \"G_CONTRACTS.py\")",
+      "motivo": "já órfão na tag pre-vsa-ciclo-03 (232cac4): dívida da foto de 04/10, anterior a este ciclo"
+    },
+    {
+      "arquivo": "tools/aidd-master/tests/unit/test_provision_project.py",
+      "item": "linha: gate_path = os.path.join(SCRIPTS_DIR, \"gates\", \"G_ESTRUTURA.py\")",
+      "motivo": "já órfão na tag pre-vsa-ciclo-03 (232cac4): dívida da foto de 04/10, anterior a este ciclo"
+    },
+    {
+      "arquivo": "tools/aidd-master/tests/unit/test_provision_project.py",
+      "item": "linha: imagem base `python:3.12-slim`. templates/v2/Dockerfile (compose_suite)",
+      "motivo": "já órfão na tag pre-vsa-ciclo-03 (232cac4): dívida da foto de 04/10, anterior a este ciclo"
+    },
+    {
+      "arquivo": "tools/aidd-master/tests/unit/test_provision_project.py",
+      "item": "linha: ja instalava; os dois templates divergiam.\"\"\"",
+      "motivo": "já órfão na tag pre-vsa-ciclo-03 (232cac4): dívida da foto de 04/10, anterior a este ciclo"
+    },
+    {
+      "arquivo": "tools/aidd-master/tests/unit/test_provision_project.py",
+      "item": "linha: nginx/ (compose_suite() ja fazia isso corretamente, para outro fluxo).",
+      "motivo": "já órfão na tag pre-vsa-ciclo-03 (232cac4): dívida da foto de 04/10, anterior a este ciclo"
+    },
+    {
+      "arquivo": "tools/aidd-master/tests/unit/test_provision_project.py",
+      "item": "linha: provision(\"Projeto Teste Dockerfile\", base_dir=str(tmp_path))",
+      "motivo": "já órfão na tag pre-vsa-ciclo-03 (232cac4): dívida da foto de 04/10, anterior a este ciclo"
+    },
+    {
+      "arquivo": "tools/aidd-master/tests/unit/test_provision_project.py",
+      "item": "linha: provision(\"Projeto Teste Nginx\", base_dir=str(tmp_path))",
+      "motivo": "já órfão na tag pre-vsa-ciclo-03 (232cac4): dívida da foto de 04/10, anterior a este ciclo"
+    },
+    {
+      "arquivo": "tools/aidd-master/tests/unit/test_provision_project.py",
+      "item": "linha: rodava `pip install -r requirements.txt` — so copiava src/ e executava",
+      "motivo": "já órfão na tag pre-vsa-ciclo-03 (232cac4): dívida da foto de 04/10, anterior a este ciclo"
+    },
+    {
+      "arquivo": "tools/aidd-master/tests/unit/test_provision_project.py",
+      "item": "linha: tentando montar um caminho inexistente.\"\"\"",
+      "motivo": "já órfão na tag pre-vsa-ciclo-03 (232cac4): dívida da foto de 04/10, anterior a este ciclo"
+    },
+    {
+      "arquivo": "tools/aidd-ops/.dockerignore",
+      "item": "linha: # O contexto é tools/aidd-ops (Base Directory no Coolify). Só entra na",
+      "motivo": "ciclo-03 Tickets 3-4: linha com caminho/descoberta de raiz do layout tools/ reescrita para modulos/; nenhuma função, classe ou teste sumiu"
+    },
+    {
+      "arquivo": "tools/aidd-ops/Dockerfile.intake",
+      "item": "linha: #   - Base Directory:  tools/aidd-ops",
+      "motivo": "ciclo-03 Tickets 3-4: linha com caminho/descoberta de raiz do layout tools/ reescrita para modulos/; nenhuma função, classe ou teste sumiu"
+    },
+    {
+      "arquivo": "tools/aidd-ops/Dockerfile.intake",
+      "item": "linha: # A raiz do contexto (tools/aidd-ops) contém scripts/, src/, data/ e schemas/",
+      "motivo": "ciclo-03 Tickets 3-4: linha com caminho/descoberta de raiz do layout tools/ reescrita para modulos/; nenhuma função, classe ou teste sumiu"
+    },
+    {
+      "arquivo": "tools/aidd-ops/ansible/requirements.yml",
+      "item": "linha: #     -p tools/aidd-ops/ansible/collections",
+      "motivo": "ciclo-03 Tickets 3-4: linha com caminho/descoberta de raiz do layout tools/ reescrita para modulos/; nenhuma função, classe ou teste sumiu"
+    },
+    {
+      "arquivo": "tools/aidd-ops/ansible/requirements.yml",
+      "item": "linha: #   ansible-galaxy collection install -r tools/aidd-ops/ansible/requirements.yml \\",
+      "motivo": "ciclo-03 Tickets 3-4: linha com caminho/descoberta de raiz do layout tools/ reescrita para modulos/; nenhuma função, classe ou teste sumiu"
+    },
+    {
+      "arquivo": "tools/aidd-ops/apps/intake/docker-compose.yml",
+      "item": "linha: # Build context: tools/aidd-ops (pai deste diretório); Dockerfile.intake na raiz do contexto.",
+      "motivo": "ciclo-03 Tickets 3-4: linha com caminho/descoberta de raiz do layout tools/ reescrita para modulos/; nenhuma função, classe ou teste sumiu"
+    },
+    {
+      "arquivo": "tools/aidd-ops/gates/G_OPS_MVP.py",
+      "item": "linha: \"\"\"Modo (a): valida estrutura de tools/aidd-ops/.\"\"\"",
+      "motivo": "ciclo-03 Tickets 3-4: linha com caminho/descoberta de raiz do layout tools/ reescrita para modulos/; nenhuma função, classe ou teste sumiu"
+    },
+    {
+      "arquivo": "tools/aidd-ops/gates/G_OPS_MVP.py",
+      "item": "linha: (a) Sem --dir: valida a própria estrutura de tools/aidd-ops/",
+      "motivo": "ciclo-03 Tickets 3-4: linha com caminho/descoberta de raiz do layout tools/ reescrita para modulos/; nenhuma função, classe ou teste sumiu"
+    },
+    {
+      "arquivo": "tools/aidd-ops/gates/G_OPS_MVP.py",
+      "item": "linha: self.check(False, \"Arquivos .py encontrados\", \"Nenhum .py encontrado em tools/aidd-ops/\")",
+      "motivo": "ciclo-03 Tickets 3-4: linha com caminho/descoberta de raiz do layout tools/ reescrita para modulos/; nenhuma função, classe ou teste sumiu"
+    },
+    {
+      "arquivo": "tools/aidd-ops/gates/G_OPS_SSH.py",
+      "item": "linha: Validação estrita via AST de tools/aidd-ops/src/core/ssh_runner.py (NIH #15:",
+      "motivo": "ciclo-03 Tickets 3-4: linha com caminho/descoberta de raiz do layout tools/ reescrita para modulos/; nenhuma função, classe ou teste sumiu"
+    },
+    {
+      "arquivo": "tools/aidd-ops/mcps/cloudflare-mcp/server.py",
+      "item": "linha: # (tools/aidd-ops/mcps/cloudflare-mcp/) — mesma profundidade nas duas copias.",
+      "motivo": "ciclo-03 Tickets 3-4: linha com caminho/descoberta de raiz do layout tools/ reescrita para modulos/; nenhuma função, classe ou teste sumiu"
+    },
+    {
+      "arquivo": "tools/aidd-ops/scripts/contrato_plano.py",
+      "item": "linha: _RAIZ_ECOSSISTEMA = os.path.abspath(",
+      "motivo": "ciclo-03 Tickets 3-4: linha com caminho/descoberta de raiz do layout tools/ reescrita para modulos/; nenhuma função, classe ou teste sumiu"
+    },
+    {
+      "arquivo": "tools/aidd-ops/scripts/contrato_plano.py",
+      "item": "linha: os.path.join(os.path.dirname(__file__), \"..\", \"..\", \"..\")",
+      "motivo": "ciclo-03 Tickets 3-4: linha com caminho/descoberta de raiz do layout tools/ reescrita para modulos/; nenhuma função, classe ou teste sumiu"
+    },
+    {
+      "arquivo": "tools/aidd-ops/scripts/phases/01_intake.py",
+      "item": "linha: tools/aidd-master/src/core/detector_camada.py (nunca LLM, nunca escolha",
+      "motivo": "ciclo-03 Tickets 3-4: linha com caminho/descoberta de raiz do layout tools/ reescrita para modulos/; nenhuma função, classe ou teste sumiu"
+    },
+    {
+      "arquivo": "tools/aidd-ops/scripts/pipeline_ops.py",
+      "item": "linha: @click.option(\"--base-dir\", default=None, help=\"Base Directory (default: tools/aidd-ops)\")",
+      "motivo": "ciclo-03 Tickets 3-4: linha com caminho/descoberta de raiz do layout tools/ reescrita para modulos/; nenhuma função, classe ou teste sumiu"
+    },
+    {
+      "arquivo": "tools/aidd-ops/scripts/pipeline_ops.py",
+      "item": "linha: @click.option(\"--pasta\", default=None, help=\"Diretório de destino para PLANO-INFRAESTRUTURA.json (default: temporário)\")",
+      "motivo": "já órfão na tag pre-vsa-ciclo-03 (232cac4): dívida da foto de 04/10, anterior a este ciclo"
+    },
+    {
+      "arquivo": "tools/aidd-ops/scripts/pipeline_ops.py",
+      "item": "linha: _ECOSISTEMA_ROOT = os.path.join(_TOOL_ROOT, \"..\", \"..\")",
+      "motivo": "ciclo-03 Tickets 3-4: linha com caminho/descoberta de raiz do layout tools/ reescrita para modulos/; nenhuma função, classe ou teste sumiu"
+    },
+    {
+      "arquivo": "tools/aidd-ops/scripts/pipeline_ops.py",
+      "item": "linha: ferramentas_planejadas=ferramentas_planejadas,",
+      "motivo": "já órfão na tag pre-vsa-ciclo-03 (232cac4): dívida da foto de 04/10, anterior a este ciclo"
+    },
+    {
+      "arquivo": "tools/aidd-ops/scripts/pipeline_ops.py",
+      "item": "linha: if dir_projeto:",
+      "motivo": "já órfão na tag pre-vsa-ciclo-03 (232cac4): dívida da foto de 04/10, anterior a este ciclo"
+    },
+    {
+      "arquivo": "tools/aidd-ops/scripts/pipeline_ops.py",
+      "item": "linha: if eh_monolito:",
+      "motivo": "já órfão na tag pre-vsa-ciclo-03 (232cac4): dívida da foto de 04/10, anterior a este ciclo"
+    },
+    {
+      "arquivo": "tools/aidd-ops/scripts/pipeline_ops.py",
+      "item": "linha: print(f\" Build: dockerfile | Base Directory: {base_dir or 'tools/aidd-ops'} | Dockerfile: {dockerfile or 'Dockerfile.intake'}\")",
+      "motivo": "ciclo-03 Tickets 3-4: linha com caminho/descoberta de raiz do layout tools/ reescrita para modulos/; nenhuma função, classe ou teste sumiu"
+    },
+    {
+      "arquivo": "tools/aidd-ops/scripts/rotate_secrets.py",
+      "item": "linha: python tools/aidd-ops/scripts/rotate_secrets.py --check --secrets-dir PATH",
+      "motivo": "ciclo-03 Tickets 3-4: linha com caminho/descoberta de raiz do layout tools/ reescrita para modulos/; nenhuma função, classe ou teste sumiu"
+    },
+    {
+      "arquivo": "tools/aidd-ops/scripts/rotate_secrets.py",
+      "item": "linha: python tools/aidd-ops/scripts/rotate_secrets.py --secrets-dir PATH [--keys KEY1,KEY2]",
+      "motivo": "ciclo-03 Tickets 3-4: linha com caminho/descoberta de raiz do layout tools/ reescrita para modulos/; nenhuma função, classe ou teste sumiu"
+    },
+    {
+      "arquivo": "tools/aidd-ops/src/core/cofre_credenciais.py",
+      "item": "linha: e executar o CLI do cofre do diretorio `tools/aidd-ops` (que nao e o",
+      "motivo": "ciclo-03 Tickets 3-4: linha com caminho/descoberta de raiz do layout tools/ reescrita para modulos/; nenhuma função, classe ou teste sumiu"
+    },
+    {
+      "arquivo": "tools/aidd-ops/src/core/coolify.py",
+      "item": "linha: APP_BASE_DIR_INTAKE = \"tools/aidd-ops\"",
+      "motivo": "ciclo-03 Tickets 3-4: linha com caminho/descoberta de raiz do layout tools/ reescrita para modulos/; nenhuma função, classe ou teste sumiu"
+    },
+    {
+      "arquivo": "tools/aidd-ops/src/core/coolify.py",
+      "item": "linha: Dockerfile padrão apontam para tools/aidd-ops quando não informados.",
+      "motivo": "ciclo-03 Tickets 3-4: linha com caminho/descoberta de raiz do layout tools/ reescrita para modulos/; nenhuma função, classe ou teste sumiu"
+    },
+    {
+      "arquivo": "tools/aidd-ops/src/core/result.py",
+      "item": "linha: Mesmo padrão de tools/aidd-master/src/core/result.py baseado na biblioteca",
+      "motivo": "ciclo-03 Tickets 3-4: linha com caminho/descoberta de raiz do layout tools/ reescrita para modulos/; nenhuma função, classe ou teste sumiu"
+    },
+    {
+      "arquivo": "tools/aidd-ops/templates/infra/nichos/b2b_industrial.json",
+      "item": "linha: \"caminho\": \"tools/aidd-ops/templates/infra/gateway/\",",
+      "motivo": "ciclo-03 Tickets 3-4: linha com caminho/descoberta de raiz do layout tools/ reescrita para modulos/; nenhuma função, classe ou teste sumiu"
+    },
+    {
+      "arquivo": "tools/aidd-ops/templates/infra/nichos/b2b_industrial.json",
+      "item": "linha: \"caminho\": \"tools/aidd-ops/templates/infra/postgres/\",",
+      "motivo": "ciclo-03 Tickets 3-4: linha com caminho/descoberta de raiz do layout tools/ reescrita para modulos/; nenhuma função, classe ou teste sumiu"
+    },
+    {
+      "arquivo": "tools/aidd-ops/templates/infra/nichos/b2b_industrial.json",
+      "item": "linha: \"caminho\": \"tools/aidd-ops/templates/infra/traefik/\",",
+      "motivo": "ciclo-03 Tickets 3-4: linha com caminho/descoberta de raiz do layout tools/ reescrita para modulos/; nenhuma função, classe ou teste sumiu"
+    },
+    {
+      "arquivo": "tools/aidd-ops/templates/infra/nichos/b2b_industrial.json",
+      "item": "linha: \"fonte\": \"tools/aidd-ops/data/catalogo_nichos.json → nicho 'b2b_industrial'\",",
+      "motivo": "ciclo-03 Tickets 3-4: linha com caminho/descoberta de raiz do layout tools/ reescrita para modulos/; nenhuma função, classe ou teste sumiu"
+    },
+    {
+      "arquivo": "tools/aidd-ops/templates/infra/nichos/clinicas.json",
+      "item": "linha: \"caminho\": \"tools/aidd-ops/templates/infra/authentik/\",",
+      "motivo": "ciclo-03 Tickets 3-4: linha com caminho/descoberta de raiz do layout tools/ reescrita para modulos/; nenhuma função, classe ou teste sumiu"
+    },
+    {
+      "arquivo": "tools/aidd-ops/templates/infra/nichos/clinicas.json",
+      "item": "linha: \"caminho\": \"tools/aidd-ops/templates/infra/calcom/\",",
+      "motivo": "ciclo-03 Tickets 3-4: linha com caminho/descoberta de raiz do layout tools/ reescrita para modulos/; nenhuma função, classe ou teste sumiu"
+    },
+    {
+      "arquivo": "tools/aidd-ops/templates/infra/nichos/clinicas.json",
+      "item": "linha: \"caminho\": \"tools/aidd-ops/templates/infra/chatwoot/\",",
+      "motivo": "ciclo-03 Tickets 3-4: linha com caminho/descoberta de raiz do layout tools/ reescrita para modulos/; nenhuma função, classe ou teste sumiu"
+    },
+    {
+      "arquivo": "tools/aidd-ops/templates/infra/nichos/clinicas.json",
+      "item": "linha: \"caminho\": \"tools/aidd-ops/templates/infra/postgres/\",",
+      "motivo": "ciclo-03 Tickets 3-4: linha com caminho/descoberta de raiz do layout tools/ reescrita para modulos/; nenhuma função, classe ou teste sumiu"
+    },
+    {
+      "arquivo": "tools/aidd-ops/templates/infra/nichos/clinicas.json",
+      "item": "linha: \"caminho\": \"tools/aidd-ops/templates/infra/traefik/\",",
+      "motivo": "ciclo-03 Tickets 3-4: linha com caminho/descoberta de raiz do layout tools/ reescrita para modulos/; nenhuma função, classe ou teste sumiu"
+    },
+    {
+      "arquivo": "tools/aidd-ops/templates/infra/nichos/clinicas.json",
+      "item": "linha: \"caminho\": \"tools/aidd-ops/templates/infra/twenty/\",",
+      "motivo": "ciclo-03 Tickets 3-4: linha com caminho/descoberta de raiz do layout tools/ reescrita para modulos/; nenhuma função, classe ou teste sumiu"
+    },
+    {
+      "arquivo": "tools/aidd-ops/templates/infra/nichos/clinicas.json",
+      "item": "linha: \"fonte\": \"tools/aidd-ops/data/catalogo_nichos.json → nicho 'clinicas'\",",
+      "motivo": "ciclo-03 Tickets 3-4: linha com caminho/descoberta de raiz do layout tools/ reescrita para modulos/; nenhuma função, classe ou teste sumiu"
+    },
+    {
+      "arquivo": "tools/aidd-ops/templates/infra/nichos/delivery.json",
+      "item": "linha: \"caminho\": \"tools/aidd-ops/templates/infra/gateway/\",",
+      "motivo": "ciclo-03 Tickets 3-4: linha com caminho/descoberta de raiz do layout tools/ reescrita para modulos/; nenhuma função, classe ou teste sumiu"
+    },
+    {
+      "arquivo": "tools/aidd-ops/templates/infra/nichos/delivery.json",
+      "item": "linha: \"caminho\": \"tools/aidd-ops/templates/infra/postgres/\",",
+      "motivo": "ciclo-03 Tickets 3-4: linha com caminho/descoberta de raiz do layout tools/ reescrita para modulos/; nenhuma função, classe ou teste sumiu"
+    },
+    {
+      "arquivo": "tools/aidd-ops/templates/infra/nichos/delivery.json",
+      "item": "linha: \"caminho\": \"tools/aidd-ops/templates/infra/traefik/\",",
+      "motivo": "ciclo-03 Tickets 3-4: linha com caminho/descoberta de raiz do layout tools/ reescrita para modulos/; nenhuma função, classe ou teste sumiu"
+    },
+    {
+      "arquivo": "tools/aidd-ops/templates/infra/nichos/delivery.json",
+      "item": "linha: \"fonte\": \"tools/aidd-ops/data/catalogo_nichos.json → nicho 'delivery'\",",
+      "motivo": "ciclo-03 Tickets 3-4: linha com caminho/descoberta de raiz do layout tools/ reescrita para modulos/; nenhuma função, classe ou teste sumiu"
+    },
+    {
+      "arquivo": "tools/aidd-ops/templates/infra/nichos/energia_solar.json",
+      "item": "linha: \"caminho\": \"tools/aidd-ops/templates/infra/authentik/\",",
+      "motivo": "ciclo-03 Tickets 3-4: linha com caminho/descoberta de raiz do layout tools/ reescrita para modulos/; nenhuma função, classe ou teste sumiu"
+    },
+    {
+      "arquivo": "tools/aidd-ops/templates/infra/nichos/energia_solar.json",
+      "item": "linha: \"caminho\": \"tools/aidd-ops/templates/infra/calcom/\",",
+      "motivo": "ciclo-03 Tickets 3-4: linha com caminho/descoberta de raiz do layout tools/ reescrita para modulos/; nenhuma função, classe ou teste sumiu"
+    },
+    {
+      "arquivo": "tools/aidd-ops/templates/infra/nichos/energia_solar.json",
+      "item": "linha: \"caminho\": \"tools/aidd-ops/templates/infra/postgres/\",",
+      "motivo": "ciclo-03 Tickets 3-4: linha com caminho/descoberta de raiz do layout tools/ reescrita para modulos/; nenhuma função, classe ou teste sumiu"
+    },
+    {
+      "arquivo": "tools/aidd-ops/templates/infra/nichos/energia_solar.json",
+      "item": "linha: \"caminho\": \"tools/aidd-ops/templates/infra/traefik/\",",
+      "motivo": "ciclo-03 Tickets 3-4: linha com caminho/descoberta de raiz do layout tools/ reescrita para modulos/; nenhuma função, classe ou teste sumiu"
+    },
+    {
+      "arquivo": "tools/aidd-ops/templates/infra/nichos/energia_solar.json",
+      "item": "linha: \"caminho\": \"tools/aidd-ops/templates/infra/twenty/\",",
+      "motivo": "ciclo-03 Tickets 3-4: linha com caminho/descoberta de raiz do layout tools/ reescrita para modulos/; nenhuma função, classe ou teste sumiu"
+    },
+    {
+      "arquivo": "tools/aidd-ops/templates/infra/nichos/energia_solar.json",
+      "item": "linha: \"fonte\": \"tools/aidd-ops/data/catalogo_nichos.json → nicho 'energia_solar'\",",
+      "motivo": "ciclo-03 Tickets 3-4: linha com caminho/descoberta de raiz do layout tools/ reescrita para modulos/; nenhuma função, classe ou teste sumiu"
+    },
+    {
+      "arquivo": "tools/aidd-ops/templates/infra/nichos/farmacias.json",
+      "item": "linha: \"caminho\": \"tools/aidd-ops/templates/infra/authentik/\",",
+      "motivo": "ciclo-03 Tickets 3-4: linha com caminho/descoberta de raiz do layout tools/ reescrita para modulos/; nenhuma função, classe ou teste sumiu"
+    },
+    {
+      "arquivo": "tools/aidd-ops/templates/infra/nichos/farmacias.json",
+      "item": "linha: \"caminho\": \"tools/aidd-ops/templates/infra/chatwoot/\",",
+      "motivo": "ciclo-03 Tickets 3-4: linha com caminho/descoberta de raiz do layout tools/ reescrita para modulos/; nenhuma função, classe ou teste sumiu"
+    },
+    {
+      "arquivo": "tools/aidd-ops/templates/infra/nichos/farmacias.json",
+      "item": "linha: \"caminho\": \"tools/aidd-ops/templates/infra/postgres/\",",
+      "motivo": "ciclo-03 Tickets 3-4: linha com caminho/descoberta de raiz do layout tools/ reescrita para modulos/; nenhuma função, classe ou teste sumiu"
+    },
+    {
+      "arquivo": "tools/aidd-ops/templates/infra/nichos/farmacias.json",
+      "item": "linha: \"caminho\": \"tools/aidd-ops/templates/infra/traefik/\",",
+      "motivo": "ciclo-03 Tickets 3-4: linha com caminho/descoberta de raiz do layout tools/ reescrita para modulos/; nenhuma função, classe ou teste sumiu"
+    },
+    {
+      "arquivo": "tools/aidd-ops/templates/infra/nichos/farmacias.json",
+      "item": "linha: \"fonte\": \"tools/aidd-ops/data/catalogo_nichos.json → nicho 'farmacias'\",",
+      "motivo": "ciclo-03 Tickets 3-4: linha com caminho/descoberta de raiz do layout tools/ reescrita para modulos/; nenhuma função, classe ou teste sumiu"
+    },
+    {
+      "arquivo": "tools/aidd-ops/tests/test_contrato_infraestrutura.py",
+      "item": "linha: \"aidd-enterprise\": os.path.abspath(",
+      "motivo": "ciclo-03 Tickets 3-4: linha com caminho/descoberta de raiz do layout tools/ reescrita para modulos/; nenhuma função, classe ou teste sumiu"
+    },
+    {
+      "arquivo": "tools/aidd-ops/tests/test_contrato_infraestrutura.py",
+      "item": "linha: \"aidd-master\": os.path.abspath(",
+      "motivo": "ciclo-03 Tickets 3-4: linha com caminho/descoberta de raiz do layout tools/ reescrita para modulos/; nenhuma função, classe ou teste sumiu"
+    },
+    {
+      "arquivo": "tools/aidd-ops/tests/test_coolify.py",
+      "item": "linha: assert body[\"base_directory\"] == \"tools/aidd-ops\"",
+      "motivo": "ciclo-03 Tickets 3-4: linha com caminho/descoberta de raiz do layout tools/ reescrita para modulos/; nenhuma função, classe ou teste sumiu"
+    },
+    {
+      "arquivo": "tools/aidd-ops/tests/test_coolify.py",
+      "item": "linha: base_directory=\"tools/aidd-ops\",",
+      "motivo": "ciclo-03 Tickets 3-4: linha com caminho/descoberta de raiz do layout tools/ reescrita para modulos/; nenhuma função, classe ou teste sumiu"
+    },
+    {
+      "arquivo": "tools/aidd-ops/tests/test_helm_integration.py",
+      "item": "linha: (tools/aidd-ops/charts/aidd-ops/) e valida que os resources calculados",
+      "motivo": "ciclo-03 Tickets 3-4: linha com caminho/descoberta de raiz do layout tools/ reescrita para modulos/; nenhuma função, classe ou teste sumiu"
+    },
+    {
+      "arquivo": "tools/aidd-ops/tests/test_intake_app.py",
+      "item": "linha: \"\"\"Dockerfile deve ser raiz do contexto (Base Directory tools/aidd-ops).\"\"\"",
+      "motivo": "ciclo-03 Tickets 3-4: linha com caminho/descoberta de raiz do layout tools/ reescrita para modulos/; nenhuma função, classe ou teste sumiu"
+    },
+    {
+      "arquivo": "tools/aidd-ops/tests/test_mcps.py",
+      "item": "linha: REPO_ROOT / \"tools\" / \"aidd-ops\" / \"mcps\" / \"cloudflare-mcp\" / \"server.py\",",
+      "motivo": "ciclo-03 Tickets 3-4: linha com caminho/descoberta de raiz do layout tools/ reescrita para modulos/; nenhuma função, classe ou teste sumiu"
+    },
+    {
+      "arquivo": "tools/aidd-ops/tests/test_mcps.py",
+      "item": "linha: REPO_ROOT / \"tools\" / \"aidd-ops\" / \"mcps\" / \"docker-mcp\" / \"server.py\",",
+      "motivo": "ciclo-03 Tickets 3-4: linha com caminho/descoberta de raiz do layout tools/ reescrita para modulos/; nenhuma função, classe ou teste sumiu"
+    },
+    {
+      "arquivo": "tools/aidd-ops/tests/test_mcps.py",
+      "item": "linha: REPO_ROOT = Path(__file__).resolve().parent.parent.parent.parent",
+      "motivo": "ciclo-03 Tickets 3-4: linha com caminho/descoberta de raiz do layout tools/ reescrita para modulos/; nenhuma função, classe ou teste sumiu"
+    },
+    {
+      "arquivo": "tools/aidd-planner/aidd_planner/cli.py",
+      "item": "linha: \"\"\"Normaliza um token de tipo (Python ou textual) para o enum canônico do contrato.\"\"\"",
+      "motivo": "já órfão na tag pre-vsa-ciclo-03 (232cac4): dívida da foto de 04/10, anterior a este ciclo"
+    },
+    {
+      "arquivo": "tools/aidd-planner/aidd_planner/cli.py",
+      "item": "linha: \"criterio_aceitacao\": \"Status 200 e persistência atômica\",",
+      "motivo": "já órfão na tag pre-vsa-ciclo-03 (232cac4): dívida da foto de 04/10, anterior a este ciclo"
+    },
+    {
+      "arquivo": "tools/aidd-planner/aidd_planner/cli.py",
+      "item": "linha: \"descricao\": f\"Operações CRUD para {nome}\",",
+      "motivo": "já órfão na tag pre-vsa-ciclo-03 (232cac4): dívida da foto de 04/10, anterior a este ciclo"
+    },
+    {
+      "arquivo": "tools/aidd-planner/aidd_planner/cli.py",
+      "item": "linha: \"descricao\": f\"Operações e regras para {ctx.get('modulo', slug)}\",",
+      "motivo": "já órfão na tag pre-vsa-ciclo-03 (232cac4): dívida da foto de 04/10, anterior a este ciclo"
+    },
+    {
+      "arquivo": "tools/aidd-planner/aidd_planner/cli.py",
+      "item": "linha: \"fluxo_alvo\": fluxo_num,",
+      "motivo": "já órfão na tag pre-vsa-ciclo-03 (232cac4): dívida da foto de 04/10, anterior a este ciclo"
+    },
+    {
+      "arquivo": "tools/aidd-planner/aidd_planner/cli.py",
+      "item": "linha: \"id\": f\"RN-{slug}-01\",",
+      "motivo": "já órfão na tag pre-vsa-ciclo-03 (232cac4): dívida da foto de 04/10, anterior a este ciclo"
+    },
+    {
+      "arquivo": "tools/aidd-planner/aidd_planner/cli.py",
+      "item": "linha: \"modulos_funcionais\": modulos or [",
+      "motivo": "já órfão na tag pre-vsa-ciclo-03 (232cac4): dívida da foto de 04/10, anterior a este ciclo"
+    },
+    {
+      "arquivo": "tools/aidd-planner/aidd_planner/cli.py",
+      "item": "linha: \"nome\": ctx.get(\"modulo\", slug),",
+      "motivo": "já órfão na tag pre-vsa-ciclo-03 (232cac4): dívida da foto de 04/10, anterior a este ciclo"
+    },
+    {
+      "arquivo": "tools/aidd-planner/aidd_planner/cli.py",
+      "item": "linha: \"nome\": ent.get(\"nome\"),",
+      "motivo": "já órfão na tag pre-vsa-ciclo-03 (232cac4): dívida da foto de 04/10, anterior a este ciclo"
+    },
+    {
+      "arquivo": "tools/aidd-planner/aidd_planner/cli.py",
+      "item": "linha: \"padrao_frontend\": \"nextjs_typescript_tailwind\",",
+      "motivo": "já órfão na tag pre-vsa-ciclo-03 (232cac4): dívida da foto de 04/10, anterior a este ciclo"
+    },
+    {
+      "arquivo": "tools/aidd-planner/aidd_planner/cli.py",
+      "item": "linha: \"persistencia\": \"sqlite_wal\" if fluxo_num != 3 else \"postgresql\",",
+      "motivo": "já órfão na tag pre-vsa-ciclo-03 (232cac4): dívida da foto de 04/10, anterior a este ciclo"
+    },
+    {
+      "arquivo": "tools/aidd-planner/aidd_planner/cli.py",
+      "item": "linha: \"slug\": ctx.get(\"modulo\", slug).lower().replace(\" \", \"-\"),",
+      "motivo": "já órfão na tag pre-vsa-ciclo-03 (232cac4): dívida da foto de 04/10, anterior a este ciclo"
+    },
+    {
+      "arquivo": "tools/aidd-planner/aidd_planner/cli.py",
+      "item": "linha: # Contrato de Handoff Formal: Planner -> Engine",
+      "motivo": "já órfão na tag pre-vsa-ciclo-03 (232cac4): dívida da foto de 04/10, anterior a este ciclo"
+    },
+    {
+      "arquivo": "tools/aidd-planner/aidd_planner/cli.py",
+      "item": "linha: # Validação do contrato via jsonschema se disponível",
+      "motivo": "já órfão na tag pre-vsa-ciclo-03 (232cac4): dívida da foto de 04/10, anterior a este ciclo"
+    },
+    {
+      "arquivo": "tools/aidd-planner/aidd_planner/cli.py",
+      "item": "linha: ] or [{\"nome\": \"id\", \"tipo\": \"integer\", \"obrigatorio\": True}],",
+      "motivo": "já órfão na tag pre-vsa-ciclo-03 (232cac4): dívida da foto de 04/10, anterior a este ciclo"
+    },
+    {
+      "arquivo": "tools/aidd-planner/aidd_planner/cli.py",
+      "item": "linha: _root_spec = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))), \"componentes\", \"compartilhado\", \"specs\", \"handoff-planner-to-engine.schema.json\")",
+      "motivo": "já órfão na tag pre-vsa-ciclo-03 (232cac4): dívida da foto de 04/10, anterior a este ciclo"
+    },
+    {
+      "arquivo": "tools/aidd-planner/aidd_planner/cli.py",
+      "item": "linha: caminho_handoff = os.path.join(pasta_destino, \"HANDOFF_PLANNER_ENGINE.json\")",
+      "motivo": "já órfão na tag pre-vsa-ciclo-03 (232cac4): dívida da foto de 04/10, anterior a este ciclo"
+    },
+    {
+      "arquivo": "tools/aidd-planner/aidd_planner/cli.py",
+      "item": "linha: def _tipo_canonico(valor: object) -> str:",
+      "motivo": "já órfão na tag pre-vsa-ciclo-03 (232cac4): dívida da foto de 04/10, anterior a este ciclo"
+    },
+    {
+      "arquivo": "tools/aidd-planner/aidd_planner/cli.py",
+      "item": "linha: design_system = gerar_design_system(nome, slug, descricao, dominio)",
+      "motivo": "já órfão na tag pre-vsa-ciclo-03 (232cac4): dívida da foto de 04/10, anterior a este ciclo"
+    },
+    {
+      "arquivo": "tools/aidd-planner/aidd_planner/cli.py",
+      "item": "linha: for ctx in plano.get(\"ddd_bounded_contexts\", []):",
+      "motivo": "já órfão na tag pre-vsa-ciclo-03 (232cac4): dívida da foto de 04/10, anterior a este ciclo"
+    },
+    {
+      "arquivo": "tools/aidd-planner/aidd_planner/cli.py",
+      "item": "linha: for ent in ctx.get(\"entidades\", [])",
+      "motivo": "já órfão na tag pre-vsa-ciclo-03 (232cac4): dívida da foto de 04/10, anterior a este ciclo"
+    },
+    {
+      "arquivo": "tools/aidd-planner/aidd_planner/cli.py",
+      "item": "linha: for k, v in ent.get(\"atributos\", {}).items()",
+      "motivo": "já órfão na tag pre-vsa-ciclo-03 (232cac4): dívida da foto de 04/10, anterior a este ciclo"
+    },
+    {
+      "arquivo": "tools/aidd-planner/aidd_planner/cli.py",
+      "item": "linha: handoff_payload = {",
+      "motivo": "já órfão na tag pre-vsa-ciclo-03 (232cac4): dívida da foto de 04/10, anterior a este ciclo"
+    },
+    {
+      "arquivo": "tools/aidd-planner/aidd_planner/cli.py",
+      "item": "linha: if os.path.isfile(_root_spec):",
+      "motivo": "já órfão na tag pre-vsa-ciclo-03 (232cac4): dívida da foto de 04/10, anterior a este ciclo"
+    },
+    {
+      "arquivo": "tools/aidd-planner/aidd_planner/cli.py",
+      "item": "linha: json.dump(handoff_payload, f, indent=2, ensure_ascii=False)",
+      "motivo": "já órfão na tag pre-vsa-ciclo-03 (232cac4): dívida da foto de 04/10, anterior a este ciclo"
+    },
+    {
+      "arquivo": "tools/aidd-planner/aidd_planner/cli.py",
+      "item": "linha: jsonschema.validate(instance=handoff_payload, schema=schema_handoff)",
+      "motivo": "já órfão na tag pre-vsa-ciclo-03 (232cac4): dívida da foto de 04/10, anterior a este ciclo"
+    },
+    {
+      "arquivo": "tools/aidd-planner/aidd_planner/cli.py",
+      "item": "linha: mapa = {",
+      "motivo": "já órfão na tag pre-vsa-ciclo-03 (232cac4): dívida da foto de 04/10, anterior a este ciclo"
+    },
+    {
+      "arquivo": "tools/aidd-planner/aidd_planner/cli.py",
+      "item": "linha: modulos.append({",
+      "motivo": "já órfão na tag pre-vsa-ciclo-03 (232cac4): dívida da foto de 04/10, anterior a este ciclo"
+    },
+    {
+      "arquivo": "tools/aidd-planner/aidd_planner/cli.py",
+      "item": "linha: print(\" [aidd-planner] PLANNER.json GERADO COM SUCESSO\")",
+      "motivo": "já órfão na tag pre-vsa-ciclo-03 (232cac4): dívida da foto de 04/10, anterior a este ciclo"
+    },
+    {
+      "arquivo": "tools/aidd-planner/aidd_planner/cli.py",
+      "item": "linha: return mapa.get(chave, \"string\")",
+      "motivo": "já órfão na tag pre-vsa-ciclo-03 (232cac4): dívida da foto de 04/10, anterior a este ciclo"
+    },
+    {
+      "arquivo": "tools/aidd-planner/aidd_planner/cli.py",
+      "item": "linha: schema_handoff = json.load(f_spec)",
+      "motivo": "já órfão na tag pre-vsa-ciclo-03 (232cac4): dívida da foto de 04/10, anterior a este ciclo"
+    },
+    {
+      "arquivo": "tools/aidd-planner/aidd_planner/cli.py",
+      "item": "linha: with open(_root_spec, \"r\", encoding=\"utf-8\") as f_spec:",
+      "motivo": "já órfão na tag pre-vsa-ciclo-03 (232cac4): dívida da foto de 04/10, anterior a este ciclo"
+    },
+    {
+      "arquivo": "tools/aidd-planner/aidd_planner/cli.py",
+      "item": "linha: with open(arquivo_saida, \"w\", encoding=\"utf-8\") as f:",
+      "motivo": "já órfão na tag pre-vsa-ciclo-03 (232cac4): dívida da foto de 04/10, anterior a este ciclo"
+    },
+    {
+      "arquivo": "tools/aidd-planner/aidd_planner/cli.py",
+      "item": "linha: with open(caminho_handoff, \"w\", encoding=\"utf-8\") as f:",
+      "motivo": "já órfão na tag pre-vsa-ciclo-03 (232cac4): dívida da foto de 04/10, anterior a este ciclo"
+    },
+    {
+      "arquivo": "tools/aidd-planner/aidd_planner/cli.py",
+      "item": "linha: {\"nome\": \"criado_em\", \"tipo\": \"datetime\", \"obrigatorio\": True},",
+      "motivo": "já órfão na tag pre-vsa-ciclo-03 (232cac4): dívida da foto de 04/10, anterior a este ciclo"
+    },
+    {
+      "arquivo": "tools/aidd-planner/aidd_planner/cli.py",
+      "item": "linha: {\"nome\": \"id\", \"tipo\": \"integer\", \"obrigatorio\": True},",
+      "motivo": "já órfão na tag pre-vsa-ciclo-03 (232cac4): dívida da foto de 04/10, anterior a este ciclo"
+    },
+    {
+      "arquivo": "tools/aidd-planner/aidd_planner/cli.py",
+      "item": "linha: {\"nome\": k, \"tipo\": _tipo_canonico(v), \"obrigatorio\": True}",
+      "motivo": "já órfão na tag pre-vsa-ciclo-03 (232cac4): dívida da foto de 04/10, anterior a este ciclo"
+    },
+    {
+      "arquivo": "tools/aidd-planner/aidd_planner/core/design_system.py",
+      "item": "linha: \"\"\"Monta o DESIGN-SYSTEM.json (paleta única e determinística do projeto).\"\"\"",
+      "motivo": "já órfão na tag pre-vsa-ciclo-03 (232cac4): dívida da foto de 04/10, anterior a este ciclo"
+    },
+    {
+      "arquivo": "tools/aidd-planner/aidd_planner/core/design_system.py",
+      "item": "linha: \"fonte\": \"catalogo-deterministico (zero LLM, Lei #1)\",",
+      "motivo": "já órfão na tag pre-vsa-ciclo-03 (232cac4): dívida da foto de 04/10, anterior a este ciclo"
+    },
+    {
+      "arquivo": "tools/aidd-planner/aidd_planner/core/design_system.py",
+      "item": "linha: Fluxo 01/02 (aidd-generator/aidd-factory + aidd-master) deve usar ao gerar o",
+      "motivo": "já órfão na tag pre-vsa-ciclo-03 (232cac4): dívida da foto de 04/10, anterior a este ciclo"
+    },
+    {
+      "arquivo": "tools/aidd-planner/aidd_planner/core/design_system.py",
+      "item": "linha: Gera o DESIGN-SYSTEM.json de um projeto — a identidade visual única que o",
+      "motivo": "já órfão na tag pre-vsa-ciclo-03 (232cac4): dívida da foto de 04/10, anterior a este ciclo"
+    },
+    {
+      "arquivo": "tools/aidd-planner/aidd_planner/core/design_system.py",
+      "item": "linha: _ECOSSISTEMA_ROOT = os.path.join(_PLANNER_ROOT, \"..\", \"..\")",
+      "motivo": "ciclo-03 Tickets 3-4: linha com caminho/descoberta de raiz do layout tools/ reescrita para modulos/; nenhuma função, classe ou teste sumiu"
+    },
+    {
+      "arquivo": "tools/aidd-planner/aidd_planner/core/design_system.py",
+      "item": "linha: `componentes/compartilhado/src-core/design_catalog.py`.",
+      "motivo": "já órfão na tag pre-vsa-ciclo-03 (232cac4): dívida da foto de 04/10, anterior a este ciclo"
+    },
+    {
+      "arquivo": "tools/aidd-planner/aidd_planner/core/design_system.py",
+      "item": "linha: def gerar_design_system(projeto_nome: str, slug: str, descricao: str, dominio: str) -> Dict[str, Any]:",
+      "motivo": "já órfão na tag pre-vsa-ciclo-03 (232cac4): dívida da foto de 04/10, anterior a este ciclo"
+    },
+    {
+      "arquivo": "tools/aidd-planner/aidd_planner/core/design_system.py",
+      "item": "linha: frontend Next.js (Lei Inviolável #11). Ver justificativa completa do",
+      "motivo": "já órfão na tag pre-vsa-ciclo-03 (232cac4): dívida da foto de 04/10, anterior a este ciclo"
+    },
+    {
+      "arquivo": "tools/aidd-planner/aidd_planner/core/design_system.py",
+      "item": "linha: mecanismo determinístico (zero LLM) em",
+      "motivo": "já órfão na tag pre-vsa-ciclo-03 (232cac4): dívida da foto de 04/10, anterior a este ciclo"
+    },
+    {
+      "arquivo": "tools/aidd-planner/aidd_planner/core/planner_engine.py",
+      "item": "linha: _AIDD_OPS_SCRIPTS_DIR = os.path.join(_ECOSSISTEMA_ROOT, \"tools\", \"aidd-ops\", \"scripts\")",
+      "motivo": "ciclo-03 Tickets 3-4: linha com caminho/descoberta de raiz do layout tools/ reescrita para modulos/; nenhuma função, classe ou teste sumiu"
+    },
+    {
+      "arquivo": "tools/aidd-planner/aidd_planner/core/planner_engine.py",
+      "item": "linha: _ECOSSISTEMA_ROOT = os.path.join(_PLANNER_DIR, \"..\", \"..\")",
+      "motivo": "ciclo-03 Tickets 3-4: linha com caminho/descoberta de raiz do layout tools/ reescrita para modulos/; nenhuma função, classe ou teste sumiu"
+    },
+    {
+      "arquivo": "tools/aidd-planner/aidd_planner/core/planner_engine.py",
+      "item": "linha: _SCHEMA_PIPELINE_PATH = os.path.join(_PLANNER_DIR, \"..\", \"..\", \"componentes\", \"compartilhado\", \"specs\", \"handoff-execucao.schema.json\")",
+      "motivo": "ciclo-03 Tickets 3-4: linha com caminho/descoberta de raiz do layout tools/ reescrita para modulos/; nenhuma função, classe ou teste sumiu"
+    },
+    {
+      "arquivo": "tools/aidd-planner/aidd_planner/core/planner_engine.py",
+      "item": "linha: _SCHEMA_VSA_DISPATCH_PATH = os.path.join(_PLANNER_DIR, \"..\", \"..\", \"componentes\", \"compartilhado\", \"specs\", \"vsa-topological-dispatch.schema.json\")",
+      "motivo": "ciclo-03 Tickets 3-4: linha com caminho/descoberta de raiz do layout tools/ reescrita para modulos/; nenhuma função, classe ou teste sumiu"
+    },
+    {
+      "arquivo": "tools/aidd-planner/aidd_planner/core/planner_engine.py",
+      "item": "linha: dominio: str",
+      "motivo": "já órfão na tag pre-vsa-ciclo-03 (232cac4): dívida da foto de 04/10, anterior a este ciclo"
+    },
+    {
+      "arquivo": "tools/aidd-planner/src/cli.py",
+      "item": "linha: \"\"\"Normaliza um token de tipo (Python ou textual) para o enum canônico do contrato.\"\"\"",
+      "motivo": "já órfão na tag pre-vsa-ciclo-03 (232cac4): dívida da foto de 04/10, anterior a este ciclo"
+    },
+    {
+      "arquivo": "tools/aidd-planner/src/cli.py",
+      "item": "linha: \"criterio_aceitacao\": \"Status 200 e persistência atômica\",",
+      "motivo": "já órfão na tag pre-vsa-ciclo-03 (232cac4): dívida da foto de 04/10, anterior a este ciclo"
+    },
+    {
+      "arquivo": "tools/aidd-planner/src/cli.py",
+      "item": "linha: \"descricao\": f\"Operações CRUD para {nome}\",",
+      "motivo": "já órfão na tag pre-vsa-ciclo-03 (232cac4): dívida da foto de 04/10, anterior a este ciclo"
+    },
+    {
+      "arquivo": "tools/aidd-planner/src/cli.py",
+      "item": "linha: \"descricao\": f\"Operações e regras para {ctx.get('modulo', slug)}\",",
+      "motivo": "já órfão na tag pre-vsa-ciclo-03 (232cac4): dívida da foto de 04/10, anterior a este ciclo"
+    },
+    {
+      "arquivo": "tools/aidd-planner/src/cli.py",
+      "item": "linha: \"fluxo_alvo\": fluxo_num,",
+      "motivo": "já órfão na tag pre-vsa-ciclo-03 (232cac4): dívida da foto de 04/10, anterior a este ciclo"
+    },
+    {
+      "arquivo": "tools/aidd-planner/src/cli.py",
+      "item": "linha: \"id\": f\"RN-{slug}-01\",",
+      "motivo": "já órfão na tag pre-vsa-ciclo-03 (232cac4): dívida da foto de 04/10, anterior a este ciclo"
+    },
+    {
+      "arquivo": "tools/aidd-planner/src/cli.py",
+      "item": "linha: \"modulos_funcionais\": modulos or [",
+      "motivo": "já órfão na tag pre-vsa-ciclo-03 (232cac4): dívida da foto de 04/10, anterior a este ciclo"
+    },
+    {
+      "arquivo": "tools/aidd-planner/src/cli.py",
+      "item": "linha: \"nome\": ctx.get(\"modulo\", slug),",
+      "motivo": "já órfão na tag pre-vsa-ciclo-03 (232cac4): dívida da foto de 04/10, anterior a este ciclo"
+    },
+    {
+      "arquivo": "tools/aidd-planner/src/cli.py",
+      "item": "linha: \"nome\": ent.get(\"nome\"),",
+      "motivo": "já órfão na tag pre-vsa-ciclo-03 (232cac4): dívida da foto de 04/10, anterior a este ciclo"
+    },
+    {
+      "arquivo": "tools/aidd-planner/src/cli.py",
+      "item": "linha: \"padrao_frontend\": \"nextjs_typescript_tailwind\",",
+      "motivo": "já órfão na tag pre-vsa-ciclo-03 (232cac4): dívida da foto de 04/10, anterior a este ciclo"
+    },
+    {
+      "arquivo": "tools/aidd-planner/src/cli.py",
+      "item": "linha: \"persistencia\": \"sqlite_wal\" if fluxo_num != 3 else \"postgresql\",",
+      "motivo": "já órfão na tag pre-vsa-ciclo-03 (232cac4): dívida da foto de 04/10, anterior a este ciclo"
+    },
+    {
+      "arquivo": "tools/aidd-planner/src/cli.py",
+      "item": "linha: \"slug\": ctx.get(\"modulo\", slug).lower().replace(\" \", \"-\"),",
+      "motivo": "já órfão na tag pre-vsa-ciclo-03 (232cac4): dívida da foto de 04/10, anterior a este ciclo"
+    },
+    {
+      "arquivo": "tools/aidd-planner/src/cli.py",
+      "item": "linha: # Contrato de Handoff Formal: Planner -> Engine",
+      "motivo": "já órfão na tag pre-vsa-ciclo-03 (232cac4): dívida da foto de 04/10, anterior a este ciclo"
+    },
+    {
+      "arquivo": "tools/aidd-planner/src/cli.py",
+      "item": "linha: # Validação do contrato via jsonschema se disponível",
+      "motivo": "já órfão na tag pre-vsa-ciclo-03 (232cac4): dívida da foto de 04/10, anterior a este ciclo"
+    },
+    {
+      "arquivo": "tools/aidd-planner/src/cli.py",
+      "item": "linha: ] or [{\"nome\": \"id\", \"tipo\": \"integer\", \"obrigatorio\": True}],",
+      "motivo": "já órfão na tag pre-vsa-ciclo-03 (232cac4): dívida da foto de 04/10, anterior a este ciclo"
+    },
+    {
+      "arquivo": "tools/aidd-planner/src/cli.py",
+      "item": "linha: _root_spec = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))), \"componentes\", \"compartilhado\", \"specs\", \"handoff-planner-to-engine.schema.json\")",
+      "motivo": "já órfão na tag pre-vsa-ciclo-03 (232cac4): dívida da foto de 04/10, anterior a este ciclo"
+    },
+    {
+      "arquivo": "tools/aidd-planner/src/cli.py",
+      "item": "linha: caminho_handoff = os.path.join(pasta_destino, \"HANDOFF_PLANNER_ENGINE.json\")",
+      "motivo": "já órfão na tag pre-vsa-ciclo-03 (232cac4): dívida da foto de 04/10, anterior a este ciclo"
+    },
+    {
+      "arquivo": "tools/aidd-planner/src/cli.py",
+      "item": "linha: def _tipo_canonico(valor: object) -> str:",
+      "motivo": "já órfão na tag pre-vsa-ciclo-03 (232cac4): dívida da foto de 04/10, anterior a este ciclo"
+    },
+    {
+      "arquivo": "tools/aidd-planner/src/cli.py",
+      "item": "linha: design_system = gerar_design_system(nome, slug, descricao, dominio)",
+      "motivo": "já órfão na tag pre-vsa-ciclo-03 (232cac4): dívida da foto de 04/10, anterior a este ciclo"
+    },
+    {
+      "arquivo": "tools/aidd-planner/src/cli.py",
+      "item": "linha: for ctx in plano.get(\"ddd_bounded_contexts\", []):",
+      "motivo": "já órfão na tag pre-vsa-ciclo-03 (232cac4): dívida da foto de 04/10, anterior a este ciclo"
+    },
+    {
+      "arquivo": "tools/aidd-planner/src/cli.py",
+      "item": "linha: for ent in ctx.get(\"entidades\", [])",
+      "motivo": "já órfão na tag pre-vsa-ciclo-03 (232cac4): dívida da foto de 04/10, anterior a este ciclo"
+    },
+    {
+      "arquivo": "tools/aidd-planner/src/cli.py",
+      "item": "linha: for k, v in ent.get(\"atributos\", {}).items()",
+      "motivo": "já órfão na tag pre-vsa-ciclo-03 (232cac4): dívida da foto de 04/10, anterior a este ciclo"
+    },
+    {
+      "arquivo": "tools/aidd-planner/src/cli.py",
+      "item": "linha: handoff_payload = {",
+      "motivo": "já órfão na tag pre-vsa-ciclo-03 (232cac4): dívida da foto de 04/10, anterior a este ciclo"
+    },
+    {
+      "arquivo": "tools/aidd-planner/src/cli.py",
+      "item": "linha: if os.path.isfile(_root_spec):",
+      "motivo": "já órfão na tag pre-vsa-ciclo-03 (232cac4): dívida da foto de 04/10, anterior a este ciclo"
+    },
+    {
+      "arquivo": "tools/aidd-planner/src/cli.py",
+      "item": "linha: json.dump(handoff_payload, f, indent=2, ensure_ascii=False)",
+      "motivo": "já órfão na tag pre-vsa-ciclo-03 (232cac4): dívida da foto de 04/10, anterior a este ciclo"
+    },
+    {
+      "arquivo": "tools/aidd-planner/src/cli.py",
+      "item": "linha: jsonschema.validate(instance=handoff_payload, schema=schema_handoff)",
+      "motivo": "já órfão na tag pre-vsa-ciclo-03 (232cac4): dívida da foto de 04/10, anterior a este ciclo"
+    },
+    {
+      "arquivo": "tools/aidd-planner/src/cli.py",
+      "item": "linha: mapa = {",
+      "motivo": "já órfão na tag pre-vsa-ciclo-03 (232cac4): dívida da foto de 04/10, anterior a este ciclo"
+    },
+    {
+      "arquivo": "tools/aidd-planner/src/cli.py",
+      "item": "linha: modulos.append({",
+      "motivo": "já órfão na tag pre-vsa-ciclo-03 (232cac4): dívida da foto de 04/10, anterior a este ciclo"
+    },
+    {
+      "arquivo": "tools/aidd-planner/src/cli.py",
+      "item": "linha: print(\" [aidd-planner] PLANNER.json GERADO COM SUCESSO\")",
+      "motivo": "já órfão na tag pre-vsa-ciclo-03 (232cac4): dívida da foto de 04/10, anterior a este ciclo"
+    },
+    {
+      "arquivo": "tools/aidd-planner/src/cli.py",
+      "item": "linha: return mapa.get(chave, \"string\")",
+      "motivo": "já órfão na tag pre-vsa-ciclo-03 (232cac4): dívida da foto de 04/10, anterior a este ciclo"
+    },
+    {
+      "arquivo": "tools/aidd-planner/src/cli.py",
+      "item": "linha: schema_handoff = json.load(f_spec)",
+      "motivo": "já órfão na tag pre-vsa-ciclo-03 (232cac4): dívida da foto de 04/10, anterior a este ciclo"
+    },
+    {
+      "arquivo": "tools/aidd-planner/src/cli.py",
+      "item": "linha: with open(_root_spec, \"r\", encoding=\"utf-8\") as f_spec:",
+      "motivo": "já órfão na tag pre-vsa-ciclo-03 (232cac4): dívida da foto de 04/10, anterior a este ciclo"
+    },
+    {
+      "arquivo": "tools/aidd-planner/src/cli.py",
+      "item": "linha: with open(arquivo_saida, \"w\", encoding=\"utf-8\") as f:",
+      "motivo": "já órfão na tag pre-vsa-ciclo-03 (232cac4): dívida da foto de 04/10, anterior a este ciclo"
+    },
+    {
+      "arquivo": "tools/aidd-planner/src/cli.py",
+      "item": "linha: with open(caminho_handoff, \"w\", encoding=\"utf-8\") as f:",
+      "motivo": "já órfão na tag pre-vsa-ciclo-03 (232cac4): dívida da foto de 04/10, anterior a este ciclo"
+    },
+    {
+      "arquivo": "tools/aidd-planner/src/cli.py",
+      "item": "linha: {\"nome\": \"criado_em\", \"tipo\": \"datetime\", \"obrigatorio\": True},",
+      "motivo": "já órfão na tag pre-vsa-ciclo-03 (232cac4): dívida da foto de 04/10, anterior a este ciclo"
+    },
+    {
+      "arquivo": "tools/aidd-planner/src/cli.py",
+      "item": "linha: {\"nome\": \"id\", \"tipo\": \"integer\", \"obrigatorio\": True},",
+      "motivo": "já órfão na tag pre-vsa-ciclo-03 (232cac4): dívida da foto de 04/10, anterior a este ciclo"
+    },
+    {
+      "arquivo": "tools/aidd-planner/src/cli.py",
+      "item": "linha: {\"nome\": k, \"tipo\": _tipo_canonico(v), \"obrigatorio\": True}",
+      "motivo": "já órfão na tag pre-vsa-ciclo-03 (232cac4): dívida da foto de 04/10, anterior a este ciclo"
+    },
+    {
+      "arquivo": "tools/aidd-planner/src/core/design_system.py",
+      "item": "linha: \"\"\"Monta o DESIGN-SYSTEM.json (paleta única e determinística do projeto).\"\"\"",
+      "motivo": "já órfão na tag pre-vsa-ciclo-03 (232cac4): dívida da foto de 04/10, anterior a este ciclo"
+    },
+    {
+      "arquivo": "tools/aidd-planner/src/core/design_system.py",
+      "item": "linha: \"fonte\": \"catalogo-deterministico (zero LLM, Lei #1)\",",
+      "motivo": "já órfão na tag pre-vsa-ciclo-03 (232cac4): dívida da foto de 04/10, anterior a este ciclo"
+    },
+    {
+      "arquivo": "tools/aidd-planner/src/core/design_system.py",
+      "item": "linha: Fluxo 01/02 (aidd-generator/aidd-factory + aidd-master) deve usar ao gerar o",
+      "motivo": "já órfão na tag pre-vsa-ciclo-03 (232cac4): dívida da foto de 04/10, anterior a este ciclo"
+    },
+    {
+      "arquivo": "tools/aidd-planner/src/core/design_system.py",
+      "item": "linha: Gera o DESIGN-SYSTEM.json de um projeto — a identidade visual única que o",
+      "motivo": "já órfão na tag pre-vsa-ciclo-03 (232cac4): dívida da foto de 04/10, anterior a este ciclo"
+    },
+    {
+      "arquivo": "tools/aidd-planner/src/core/design_system.py",
+      "item": "linha: _ECOSSISTEMA_ROOT = os.path.join(_PLANNER_ROOT, \"..\", \"..\")",
+      "motivo": "ciclo-03 Tickets 3-4: linha com caminho/descoberta de raiz do layout tools/ reescrita para modulos/; nenhuma função, classe ou teste sumiu"
+    },
+    {
+      "arquivo": "tools/aidd-planner/src/core/design_system.py",
+      "item": "linha: `componentes/compartilhado/src-core/design_catalog.py`.",
+      "motivo": "já órfão na tag pre-vsa-ciclo-03 (232cac4): dívida da foto de 04/10, anterior a este ciclo"
+    },
+    {
+      "arquivo": "tools/aidd-planner/src/core/design_system.py",
+      "item": "linha: def gerar_design_system(projeto_nome: str, slug: str, descricao: str, dominio: str) -> Dict[str, Any]:",
+      "motivo": "já órfão na tag pre-vsa-ciclo-03 (232cac4): dívida da foto de 04/10, anterior a este ciclo"
+    },
+    {
+      "arquivo": "tools/aidd-planner/src/core/design_system.py",
+      "item": "linha: frontend Next.js (Lei Inviolável #11). Ver justificativa completa do",
+      "motivo": "já órfão na tag pre-vsa-ciclo-03 (232cac4): dívida da foto de 04/10, anterior a este ciclo"
+    },
+    {
+      "arquivo": "tools/aidd-planner/src/core/design_system.py",
+      "item": "linha: mecanismo determinístico (zero LLM) em",
+      "motivo": "já órfão na tag pre-vsa-ciclo-03 (232cac4): dívida da foto de 04/10, anterior a este ciclo"
+    },
+    {
+      "arquivo": "tools/aidd-planner/src/core/planner_engine.py",
+      "item": "linha: _AIDD_OPS_SCRIPTS_DIR = os.path.join(_ECOSSISTEMA_ROOT, \"tools\", \"aidd-ops\", \"scripts\")",
+      "motivo": "ciclo-03 Tickets 3-4: linha com caminho/descoberta de raiz do layout tools/ reescrita para modulos/; nenhuma função, classe ou teste sumiu"
+    },
+    {
+      "arquivo": "tools/aidd-planner/src/core/planner_engine.py",
+      "item": "linha: _ECOSSISTEMA_ROOT = os.path.join(_PLANNER_DIR, \"..\", \"..\")",
+      "motivo": "ciclo-03 Tickets 3-4: linha com caminho/descoberta de raiz do layout tools/ reescrita para modulos/; nenhuma função, classe ou teste sumiu"
+    },
+    {
+      "arquivo": "tools/aidd-planner/src/core/planner_engine.py",
+      "item": "linha: _SCHEMA_PIPELINE_PATH = os.path.join(_PLANNER_DIR, \"..\", \"..\", \"componentes\", \"compartilhado\", \"specs\", \"handoff-execucao.schema.json\")",
+      "motivo": "ciclo-03 Tickets 3-4: linha com caminho/descoberta de raiz do layout tools/ reescrita para modulos/; nenhuma função, classe ou teste sumiu"
+    },
+    {
+      "arquivo": "tools/aidd-planner/src/core/planner_engine.py",
+      "item": "linha: _SCHEMA_VSA_DISPATCH_PATH = os.path.join(_PLANNER_DIR, \"..\", \"..\", \"componentes\", \"compartilhado\", \"specs\", \"vsa-topological-dispatch.schema.json\")",
+      "motivo": "ciclo-03 Tickets 3-4: linha com caminho/descoberta de raiz do layout tools/ reescrita para modulos/; nenhuma função, classe ou teste sumiu"
+    },
+    {
+      "arquivo": "tools/aidd-planner/src/core/planner_engine.py",
+      "item": "linha: dominio: str",
+      "motivo": "já órfão na tag pre-vsa-ciclo-03 (232cac4): dívida da foto de 04/10, anterior a este ciclo"
+    },
+    {
+      "arquivo": "tools/aidd-planner/tests/test_planner.py",
+      "item": "linha: _ROOT_DIR = os.path.dirname(_ECOSSISTEMA_DIR)",
+      "motivo": "ciclo-03 Tickets 3-4: linha com caminho/descoberta de raiz do layout tools/ reescrita para modulos/; nenhuma função, classe ou teste sumiu"
+    },
+    {
+      "arquivo": "tools/aidd-planner/tests/test_planner.py",
+      "item": "linha: _repo_root = os.path.dirname(_ECOSSISTEMA_DIR)  # _ECOSSISTEMA_DIR aqui e' \"tools/\", nao a raiz",
+      "motivo": "ciclo-03 Tickets 3-4: linha com caminho/descoberta de raiz do layout tools/ reescrita para modulos/; nenhuma função, classe ou teste sumiu"
+    },
+    {
+      "arquivo": "tools/aidd-planner/tests/test_planner.py",
+      "item": "linha: assert handoff_data[\"arquitetura_alvo\"][\"padrao_frontend\"] == \"nextjs_typescript_tailwind\"",
+      "motivo": "já órfão na tag pre-vsa-ciclo-03 (232cac4): dívida da foto de 04/10, anterior a este ciclo"
+    },
+    {
+      "arquivo": "tools/aidd-planner/tests/test_planner.py",
+      "item": "linha: pipeline_script = os.path.join(_repo_root, \"tools\", \"aidd-factory\", \"scripts\", \"pipeline_factory.py\")",
+      "motivo": "ciclo-03 Tickets 3-4: linha com caminho/descoberta de raiz do layout tools/ reescrita para modulos/; nenhuma função, classe ou teste sumiu"
+    },
+    {
+      "arquivo": "tools/aidd-planner/tests/test_vsa_compiler.py",
+      "item": "linha: _ROOT_DIR = os.path.dirname(_ECOSSISTEMA_DIR)",
+      "motivo": "ciclo-03 Tickets 3-4: linha com caminho/descoberta de raiz do layout tools/ reescrita para modulos/; nenhuma função, classe ou teste sumiu"
+    }
+  ]
+}

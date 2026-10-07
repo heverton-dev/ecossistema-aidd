@@ -68,6 +68,95 @@ O planner (cópia nova) e 3 arquivos do master ainda calculavam a raiz pela prof
 - `python scripts/reconciliar_copias_vsa.py --exigir-zero`: exit 0.
 - Suítes rodadas de dentro de cada pasta em `modulos/`: forge 310, planner 48, pure 1016, open 21, freedom 75, enterprise 341, master 414, ops 198 passando; todas com exit 0 (2423 no total).
 
+### Ajustes do Ticket 4 (reapontar para modulos/)
+
+Arquivos que o Ticket 4 editou só em `modulos/` (caminhos). Linha mais nova vale sobre a anterior do mesmo arquivo.
+
+| Arquivo | Lado | Motivo | Hash final |
+|---|---|---|---|
+| aidd-forge/aidd_forge/cli.py | modulos | Ticket 4: só troca de caminho tools/ -> modulos/ (descoberta da raiz ou pasta do mapa) | 4ca3fcfa6d01aa8a |
+| aidd-forge/aidd_forge/core/almoxarifado.py | modulos | Ticket 4: só troca de caminho tools/ -> modulos/ (descoberta da raiz ou pasta do mapa) | 345cdb5ae0ee026a |
+| aidd-forge/aidd_forge/templates/gates/G_QUARTETO_SINE_QUA_NON.py | modulos | Ticket 4: só troca de caminho tools/ -> modulos/ (descoberta da raiz ou pasta do mapa) | b26b0ac812117340 |
+| aidd-forge/tests/test_almoxarifado.py | modulos | Ticket 4: só troca de caminho tools/ -> modulos/ (descoberta da raiz ou pasta do mapa) | d16d4a94eff530a6 |
+| aidd-forge/tests/unit/test_injector_profiles.py | modulos | Ticket 4: só troca de caminho tools/ -> modulos/ (descoberta da raiz ou pasta do mapa) | 31919734c5079190 |
+| aidd-planner/AGENTS.md | modulos | Ticket 4: só troca de caminho tools/ -> modulos/ (descoberta da raiz ou pasta do mapa) | 4e3414ce1fde1227 |
+| aidd-pure/scripts/core/pecas_catalogo.py | modulos | Ticket 4: só troca de caminho tools/ -> modulos/ (descoberta da raiz ou pasta do mapa) | 0a16b8ba433deb66 |
+| aidd-pure/scripts/core/pipeline_state.py | modulos | Ticket 4: só troca de caminho tools/ -> modulos/ (descoberta da raiz ou pasta do mapa) | a7a4857c6909597b |
+| aidd-pure/scripts/phases/01_pesquisador.py | modulos | Ticket 4: só troca de caminho tools/ -> modulos/ (descoberta da raiz ou pasta do mapa) | 7dd5836b18f150f2 |
+| aidd-pure/scripts/phases/02_analisador.py | modulos | Ticket 4: só troca de caminho tools/ -> modulos/ (descoberta da raiz ou pasta do mapa) | 7a2adb8651fde6b9 |
+| aidd-pure/scripts/phases/03_designer.py | modulos | Ticket 4: só troca de caminho tools/ -> modulos/ (descoberta da raiz ou pasta do mapa) | 4923cc7bde4aeee9 |
+| aidd-pure/scripts/phases/04_decisor.py | modulos | Ticket 4: só troca de caminho tools/ -> modulos/ (descoberta da raiz ou pasta do mapa) | 8cdaff1f5b38faeb |
+| aidd-pure/scripts/phases/05_criador.py | modulos | Ticket 4: só troca de caminho tools/ -> modulos/ (descoberta da raiz ou pasta do mapa) | 1d8f7030dd808a6d |
+| aidd-pure/scripts/phases/06_documentador.py | modulos | Ticket 4: só troca de caminho tools/ -> modulos/ (descoberta da raiz ou pasta do mapa) | adf8664c95cb60bc |
+| aidd-pure/scripts/phases/07_analisador.py | modulos | Ticket 4: só troca de caminho tools/ -> modulos/ (descoberta da raiz ou pasta do mapa) | f70a3902cfb7abc4 |
+| aidd-pure/scripts/phases/08_implementador.py | modulos | Ticket 4: só troca de caminho tools/ -> modulos/ (descoberta da raiz ou pasta do mapa) | d4f5993d08fd3cab |
+| aidd-pure/scripts/phases/utils_delegacao.py | modulos | Ticket 4: só troca de caminho tools/ -> modulos/ (descoberta da raiz ou pasta do mapa) | b0b392fc6cb8b690 |
+| aidd-pure/scripts/phases/utils_fleet_discovery.py | modulos | Ticket 4: só troca de caminho tools/ -> modulos/ (descoberta da raiz ou pasta do mapa) | accd78d2f7f1e14d |
+| aidd-pure/scripts/phases/utils_subagente_ephemero.py | modulos | Ticket 4: só troca de caminho tools/ -> modulos/ (descoberta da raiz ou pasta do mapa) | 3f3ba18f96942d28 |
+| aidd-pure/scripts/pipeline_completo.py | modulos | Ticket 4: só troca de caminho tools/ -> modulos/ (descoberta da raiz ou pasta do mapa) | 2ef812cec0e61973 |
+| aidd-pure/tests/conftest.py | modulos | Ticket 4: só troca de caminho tools/ -> modulos/ (descoberta da raiz ou pasta do mapa) | 290bc3791c11e6fe |
+| aidd-pure/tests/test_fronteira_generator.py | modulos | Ticket 4: só troca de caminho tools/ -> modulos/ (descoberta da raiz ou pasta do mapa) | 335d79f4f81fda0e |
+| aidd-pure/tests/test_injector_core.py | modulos | Ticket 4: só troca de caminho tools/ -> modulos/ (descoberta da raiz ou pasta do mapa) | 3502267d44c73066 |
+| aidd-pure/tmp_junit.xml | modulos | Ticket 4: só troca de caminho tools/ -> modulos/ (descoberta da raiz ou pasta do mapa) | e1f441932321335e |
+| aidd-open/scripts/contrato_factory.py | modulos | Ticket 4: só troca de caminho tools/ -> modulos/ (descoberta da raiz ou pasta do mapa) | f0fcd732cfd0f237 |
+| aidd-open/scripts/phases/01_analisador.py | modulos | Ticket 4: só troca de caminho tools/ -> modulos/ (descoberta da raiz ou pasta do mapa) | bc52c3e9345354de |
+| aidd-open/scripts/phases/04_compose.py | modulos | Ticket 4: só troca de caminho tools/ -> modulos/ (descoberta da raiz ou pasta do mapa) | 6f7ebd9c5829e33a |
+| aidd-open/scripts/phases/05_init_db.py | modulos | Ticket 4: só troca de caminho tools/ -> modulos/ (descoberta da raiz ou pasta do mapa) | fb9ea60c156900c2 |
+| aidd-open/scripts/phases/06_env.py | modulos | Ticket 4: só troca de caminho tools/ -> modulos/ (descoberta da raiz ou pasta do mapa) | ceb27e7a51a9a998 |
+| aidd-open/scripts/phases/09_integracao.py | modulos | Ticket 4: só troca de caminho tools/ -> modulos/ (descoberta da raiz ou pasta do mapa) | 32e6addf6f58f555 |
+| aidd-open/scripts/pipeline_factory.py | modulos | Ticket 4: só troca de caminho tools/ -> modulos/ (descoberta da raiz ou pasta do mapa) | ce5a360fa7216c6b |
+| aidd-open/src/core/escritor_atomico.py | modulos | Ticket 4: só troca de caminho tools/ -> modulos/ (descoberta da raiz ou pasta do mapa) | 6c28a822a56a400f |
+| aidd-open/src/core/frontend_generator.py | modulos | Ticket 4: só troca de caminho tools/ -> modulos/ (descoberta da raiz ou pasta do mapa) | 5aee5a00d7f1529d |
+| aidd-open/src/core/gateway_generator.py | modulos | Ticket 4: só troca de caminho tools/ -> modulos/ (descoberta da raiz ou pasta do mapa) | 6e851ed8041ac65a |
+| aidd-open/src/core/swagger_generator.py | modulos | Ticket 4: só troca de caminho tools/ -> modulos/ (descoberta da raiz ou pasta do mapa) | a3224daeab15ed0e |
+| aidd-open/src/core/vsa_generator.py | modulos | Ticket 4: só troca de caminho tools/ -> modulos/ (descoberta da raiz ou pasta do mapa) | 7d1f9fe0f7836354 |
+| aidd-open/tests/test_fronteira_factory.py | modulos | Ticket 4: só troca de caminho tools/ -> modulos/ (descoberta da raiz ou pasta do mapa) | f1c5db3cb16ef691 |
+| aidd-enterprise/RELATORIO-AUDITORIA.json | modulos | Ticket 4: só troca de caminho tools/ -> modulos/ (descoberta da raiz ou pasta do mapa) | 4dc81002034926ba |
+| aidd-enterprise/application/commands/delegacao.py | modulos | Ticket 4: só troca de caminho tools/ -> modulos/ (descoberta da raiz ou pasta do mapa) | 720e0bf5424f493f |
+| aidd-enterprise/scripts/compose_suite.py | modulos | Ticket 4: só troca de caminho tools/ -> modulos/ (descoberta da raiz ou pasta do mapa) | b945deb51ae3ccd5 |
+| aidd-enterprise/src/core/assinatura_manifesto.py | modulos | Ticket 4: só troca de caminho tools/ -> modulos/ (descoberta da raiz ou pasta do mapa) | 8c9acb7cf459c378 |
+| aidd-enterprise/src/core/escritor_atomico.py | modulos | Ticket 4: só troca de caminho tools/ -> modulos/ (descoberta da raiz ou pasta do mapa) | 09b9b20feaa7f3bf |
+| aidd-enterprise/src/core/materializador.py | modulos | Ticket 4: só troca de caminho tools/ -> modulos/ (descoberta da raiz ou pasta do mapa) | 1788cc0de093143e |
+| aidd-enterprise/src/core/nextjs_exporter.py | modulos | Ticket 4: só troca de caminho tools/ -> modulos/ (descoberta da raiz ou pasta do mapa) | 45e8dd5f6c747344 |
+| aidd-enterprise/tests/test_fronteira_enterprise.py | modulos | Ticket 4: só troca de caminho tools/ -> modulos/ (descoberta da raiz ou pasta do mapa) | 98e082ed23fc8ff2 |
+| aidd-master/scripts/compose_suite.py | modulos | Ticket 4: só troca de caminho tools/ -> modulos/ (descoberta da raiz ou pasta do mapa) | acfabe8b77c89b6e |
+| aidd-master/scripts/dispatch_pipeline.py | modulos | Ticket 4: só troca de caminho tools/ -> modulos/ (descoberta da raiz ou pasta do mapa) | 8855dd03e247b8a5 |
+| aidd-master/scripts/engine_router.py | modulos | Ticket 4: só troca de caminho tools/ -> modulos/ (descoberta da raiz ou pasta do mapa) | ab62609fb17cd317 |
+| aidd-master/scripts/moldes_catalogo.py | modulos | Ticket 4: só troca de caminho tools/ -> modulos/ (descoberta da raiz ou pasta do mapa) | 7e661f6dcc6297fc |
+| aidd-master/scripts/orchestrator_pipeline.py | modulos | Ticket 4: só troca de caminho tools/ -> modulos/ (descoberta da raiz ou pasta do mapa) | 33d1d55ca9e03358 |
+| aidd-master/src/core/assinatura_manifesto.py | modulos | Ticket 4: só troca de caminho tools/ -> modulos/ (descoberta da raiz ou pasta do mapa) | 8c9acb7cf459c378 |
+| aidd-master/src/core/escritor_atomico.py | modulos | Ticket 4: só troca de caminho tools/ -> modulos/ (descoberta da raiz ou pasta do mapa) | 09b9b20feaa7f3bf |
+| aidd-master/src/core/materializador.py | modulos | Ticket 4: só troca de caminho tools/ -> modulos/ (descoberta da raiz ou pasta do mapa) | 1788cc0de093143e |
+| aidd-master/src/core/nextjs_exporter.py | modulos | Ticket 4: só troca de caminho tools/ -> modulos/ (descoberta da raiz ou pasta do mapa) | 45e8dd5f6c747344 |
+| aidd-master/tests/test_fronteira_master.py | modulos | Ticket 4: só troca de caminho tools/ -> modulos/ (descoberta da raiz ou pasta do mapa) | 8bf60c34bce131f0 |
+| aidd-master/tests/unit/test_alembic_migrations.py | modulos | Ticket 4: só troca de caminho tools/ -> modulos/ (descoberta da raiz ou pasta do mapa) | 2de9e45630313ccf |
+| aidd-master/tests/unit/test_provision_project.py | modulos | Ticket 4: só troca de caminho tools/ -> modulos/ (descoberta da raiz ou pasta do mapa) | 24da6b28a0259c69 |
+| aidd-ops/.dockerignore | modulos | Ticket 4: só troca de caminho tools/ -> modulos/ (descoberta da raiz ou pasta do mapa) | 724646f5b2ae95ee |
+| aidd-ops/Dockerfile.intake | modulos | Ticket 4: só troca de caminho tools/ -> modulos/ (descoberta da raiz ou pasta do mapa) | 8fe2a1efb9e7eefc |
+| aidd-ops/README.md | modulos | Ticket 4: só troca de caminho tools/ -> modulos/ (descoberta da raiz ou pasta do mapa) | 162ba7083e6cd2b4 |
+| aidd-ops/ansible/requirements.yml | modulos | Ticket 4: só troca de caminho tools/ -> modulos/ (descoberta da raiz ou pasta do mapa) | e0222a459d8b793f |
+| aidd-ops/apps/intake/README.md | modulos | Ticket 4: só troca de caminho tools/ -> modulos/ (descoberta da raiz ou pasta do mapa) | 6c9c508519765b2c |
+| aidd-ops/apps/intake/docker-compose.yml | modulos | Ticket 4: só troca de caminho tools/ -> modulos/ (descoberta da raiz ou pasta do mapa) | c8fe08e6f224d01e |
+| aidd-ops/gates/G_OPS_MVP.py | modulos | Ticket 4: só troca de caminho tools/ -> modulos/ (descoberta da raiz ou pasta do mapa) | b97a3411d67ed3cc |
+| aidd-ops/gates/G_OPS_SSH.py | modulos | Ticket 4: só troca de caminho tools/ -> modulos/ (descoberta da raiz ou pasta do mapa) | 2703353249ddf789 |
+| aidd-ops/mcps/cloudflare-mcp/server.py | modulos | Ticket 4: só troca de caminho tools/ -> modulos/ (descoberta da raiz ou pasta do mapa) | 7b3412bac459898d |
+| aidd-ops/scripts/infra_perfil.py | modulos | Ticket 4: só troca de caminho tools/ -> modulos/ (descoberta da raiz ou pasta do mapa) | 8c9cdaff5ce025d2 |
+| aidd-ops/scripts/phases/01_intake.py | modulos | Ticket 4: só troca de caminho tools/ -> modulos/ (descoberta da raiz ou pasta do mapa) | fca3b2b68175c38a |
+| aidd-ops/scripts/pipeline_ops.py | modulos | Ticket 4: só troca de caminho tools/ -> modulos/ (descoberta da raiz ou pasta do mapa) | d9655d7e1566e4af |
+| aidd-ops/scripts/rotate_secrets.py | modulos | Ticket 4: só troca de caminho tools/ -> modulos/ (descoberta da raiz ou pasta do mapa) | 2a4c354c89ee815b |
+| aidd-ops/src/core/cofre_credenciais.py | modulos | Ticket 4: só troca de caminho tools/ -> modulos/ (descoberta da raiz ou pasta do mapa) | 1774f4404b95c180 |
+| aidd-ops/src/core/coolify.py | modulos | Ticket 4: só troca de caminho tools/ -> modulos/ (descoberta da raiz ou pasta do mapa) | 581f63fc656116c1 |
+| aidd-ops/src/core/result.py | modulos | Ticket 4: só troca de caminho tools/ -> modulos/ (descoberta da raiz ou pasta do mapa) | 9f5cee36356ebf9f |
+| aidd-ops/templates/infra/nichos/b2b_industrial.json | modulos | Ticket 4: só troca de caminho tools/ -> modulos/ (descoberta da raiz ou pasta do mapa) | 71902f5fdf18cb0a |
+| aidd-ops/templates/infra/nichos/clinicas.json | modulos | Ticket 4: só troca de caminho tools/ -> modulos/ (descoberta da raiz ou pasta do mapa) | 4cc8d14ae9ed5826 |
+| aidd-ops/templates/infra/nichos/delivery.json | modulos | Ticket 4: só troca de caminho tools/ -> modulos/ (descoberta da raiz ou pasta do mapa) | ed60ce5c9fa830d3 |
+| aidd-ops/templates/infra/nichos/energia_solar.json | modulos | Ticket 4: só troca de caminho tools/ -> modulos/ (descoberta da raiz ou pasta do mapa) | 8a718fc721267c34 |
+| aidd-ops/templates/infra/nichos/farmacias.json | modulos | Ticket 4: só troca de caminho tools/ -> modulos/ (descoberta da raiz ou pasta do mapa) | ededc1b08b84d0e1 |
+| aidd-ops/tests/test_coolify.py | modulos | Ticket 4: só troca de caminho tools/ -> modulos/ (descoberta da raiz ou pasta do mapa) | 279e87e36bd18e76 |
+| aidd-ops/tests/test_helm_integration.py | modulos | Ticket 4: só troca de caminho tools/ -> modulos/ (descoberta da raiz ou pasta do mapa) | a8d5a4f979ce5bca |
+| aidd-ops/tests/test_intake_app.py | modulos | Ticket 4: só troca de caminho tools/ -> modulos/ (descoberta da raiz ou pasta do mapa) | aae74fe3378550eb |
+| aidd-ops/tests/test_mcps.py | modulos | Ticket 4: só troca de caminho tools/ -> modulos/ (descoberta da raiz ou pasta do mapa) | 21e3d41ce39b8544 |
+
 ## Conteúdo que só existia em tools/ (copiado para modulos/)
 
 | Arquivo | Destino |

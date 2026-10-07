@@ -109,7 +109,16 @@ def _traduzir(texto, trocas):
     return texto
 
 
-def comparar(raiz, foto_json, apelidos):
+def carregar_aceitos(caminho):
+    """{(arquivo, item): motivo} de órfãos aceitos; item = "<rótulo> <nome>" ou "linha: <texto>".
+    Entrada sem motivo não vale (Lei #7: toda perda aceita tem de dizer por quê)."""
+    if caminho is None:
+        return {}
+    dados = json.loads(Path(caminho).read_text(encoding="utf-8"))
+    return {(a["arquivo"], a["item"]): a["motivo"] for a in dados.get("aceitos", []) if a.get("motivo", "").strip()}
+
+
+def comparar(raiz, foto_json, apelidos, aceitos=None):
     if not foto_json.is_file() or not caminho_linhas(foto_json).is_file():
         print(f"[-] FALHA: foto incompleta: {foto_json} e {caminho_linhas(foto_json).name} são obrigatórios.")
         return 1
@@ -124,21 +133,29 @@ def comparar(raiz, foto_json, apelidos):
                          for tipo in TIPOS for nome in meta[tipo]}
     linhas_agora = {linha.lower() for meta in linhas.values() for linha in meta["linhas_unicas"]}
 
-    orfas = []
+    aceitos = aceitos or {}
+    orfas, ja_aceitos = [], 0
     for rel, meta in sorted(antes.items()):
         for tipo, rotulo in TIPOS.items():
             for nome in meta[tipo]:
                 if (tipo, _traduzir(nome, trocas)) not in capacidades_agora:
-                    orfas.append(f"{rel}: {rotulo} {nome}")
+                    if (rel, f"{rotulo} {nome}") in aceitos:
+                        ja_aceitos += 1
+                    else:
+                        orfas.append(f"{rel}: {rotulo} {nome}")
     for rel, meta in sorted(linhas_antes.items()):
         if rel.endswith(SEM_COMPARAR_LINHAS):
             continue
         for linha in meta["linhas_unicas"]:
             if _traduzir(linha.lower(), trocas_sem_caixa) not in linhas_agora:
-                orfas.append(f"{rel}: linha {linha[:120]!r}")
+                if (rel, f"linha: {linha}") in aceitos:
+                    ja_aceitos += 1
+                else:
+                    orfas.append(f"{rel}: linha {linha[:120]!r}")
 
     if not orfas:
-        print(f"[OK] comparar: zero órfão ({len(antes)} arquivo(s) na foto, {len(indice)} agora).")
+        print(f"[OK] comparar: zero órfão fora da lista ({ja_aceitos} aceito(s) com motivo; "
+              f"{len(antes)} arquivo(s) na foto, {len(indice)} agora).")
         return 0
     print(f"[-] FALHA: {len(orfas)} órfão(s): existiam na foto e não existem mais em lugar nenhum.")
     for item in orfas[:MAX_LISTADOS]:
@@ -157,6 +174,8 @@ def main(argv=None):
     c = sub.add_parser("comparar", help="exit 1 se algo da foto não existe mais em lugar nenhum")
     c.add_argument("foto", help="caminho do INVENTARIO-ANTES.json")
     c.add_argument("--repo", default=".", help="raiz do repositório (padrão: .)")
+    c.add_argument("--aceitos", default=None,
+                   help="JSON {aceitos: [{arquivo, item, motivo}]} de órfãos aceitos com motivo")
     c.add_argument("--apelidos", default=None,
                    help=f"tabela de nomes antigos (padrão: {TABELA_APELIDOS}, se existir)")
     args = p.parse_args(argv)
@@ -166,7 +185,10 @@ def main(argv=None):
         return foto(raiz, args.cycle)
     foto_json = Path(args.foto) if Path(args.foto).is_absolute() else raiz / args.foto
     apelidos = Path(args.apelidos) if args.apelidos else raiz / TABELA_APELIDOS
-    return comparar(raiz, foto_json, apelidos)
+    aceitos_json = None
+    if args.aceitos:
+        aceitos_json = Path(args.aceitos) if Path(args.aceitos).is_absolute() else raiz / args.aceitos
+    return comparar(raiz, foto_json, apelidos, carregar_aceitos(aceitos_json))
 
 
 if __name__ == "__main__":

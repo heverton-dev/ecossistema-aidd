@@ -172,3 +172,30 @@ def test_foto_e_deterministica(repo):
 
 def test_comparar_sem_foto_reprova(repo):
     assert _rodar(repo, "comparar", FOTO).returncode == 1
+
+
+def _aceitos(repo, itens):
+    caminho = repo / "ORFAOS-ACEITOS.json"
+    caminho.write_text(json.dumps({"aceitos": itens}, ensure_ascii=False), encoding="utf-8")
+    return str(caminho)
+
+
+def test_orfao_aceito_com_motivo_nao_reprova(repo):
+    """Ciclo-03 VSA, Ticket 5: órfão listado com motivo passa; o que não está na lista reprova."""
+    _fotografar(repo)
+    gate = repo / "modulos/ferramenta-velha/pacote_velho/gate.py"
+    gate.write_text(gate.read_text(encoding="utf-8").replace("'so nesta copia'", "None"), encoding="utf-8")
+    aceitos = _aceitos(repo, [{"arquivo": "modulos/ferramenta-velha/pacote_velho/gate.py",
+                               "item": "linha: return 'so nesta copia'", "motivo": "teste"}])
+    res = _rodar(repo, "comparar", FOTO, "--aceitos", aceitos)
+    assert res.returncode == 0, res.stdout
+    assert "1 aceito(s)" in res.stdout
+
+
+def test_orfao_aceito_sem_motivo_reprova(repo):
+    _fotografar(repo)
+    gate = repo / "modulos/ferramenta-velha/pacote_velho/gate.py"
+    gate.write_text(gate.read_text(encoding="utf-8").replace("'so nesta copia'", "None"), encoding="utf-8")
+    aceitos = _aceitos(repo, [{"arquivo": "modulos/ferramenta-velha/pacote_velho/gate.py",
+                               "item": "linha: return 'so nesta copia'", "motivo": ""}])
+    assert _rodar(repo, "comparar", FOTO, "--aceitos", aceitos).returncode == 1
