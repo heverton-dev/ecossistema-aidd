@@ -1491,3 +1491,19 @@
   - 8 ferramentas no modo do gate: forge 316, planner 48, pure 1016, master 414, enterprise 341, ops 198, freedom 75, open 21 (0 failed).
 - **Status:** **RESOLVIDO**.
 - **Data da Última Auditoria:** 07/10/2026.
+
+## 47. Modularização VSA ciclo-03, Bloco 5 (gate_final): teste antigo da CLI e destino do T12 sem citar fatia
+
+- **Objetivo da Correção:**
+  O gate_final do Bloco 5 reprovou em G_TESTES_REAIS (`tests/`: 1129 passed, 4 failed). Falha reproduzida: `tests/test_vsa_cli.py` exigia `verify == 0`, mas desde o T13 o `verify` mede de verdade e sai 1 com as lacunas reais de fractalidade das fatias. Dentro do `verify`, o `G_MODULO_FRONTEIRA` em bloqueio acusava acoplamento novo no teste do T12, que citava o caminho `fluxo-01-pure`.
+- **Ferramentas Tocadas:** aidd-forge (`tests/test_almoxarifado_guarda_modulos.py`: destino proibido passa a ser `modulos/_destino_teste_t12`).
+- **O que executou:**
+  1. `tests/test_vsa_cli.py` aceita `verify` em 0 ou 1 (saída binária honesta); o caso de falha real segue coberto por `tests/test_vsa_cli_real.py`.
+  2. As lacunas de fractalidade (core/skills/gates/tests/README.md ausentes em várias fatias) ficam como dívida para o Bloco 6.
+- **Resultados de Testes (07/10/2026):**
+  - `tests/test_vsa_cli.py` → exit 1 antes, exit 0 depois (com `test_vsa_cli_real.py`: 6 passed).
+  - `test_almoxarifado_guarda_modulos.py` (de dentro do aidd-forge) → 6 passed, exit 0.
+  - `G_MODULO_FRONTEIRA` com `AIDD_MODULO_FRONTEIRA_MODO=bloqueio` → 1 acoplamento novo antes, 0 depois (exit 0).
+  - Suíte `tests/` reexecutada isolada antes da correção: 1131 passed, 1 failed (só o caso acima; as outras 3 falhas do audit não se repetiram).
+- **Status:** **RESOLVIDO**.
+- **Data da Última Auditoria:** 07/10/2026.

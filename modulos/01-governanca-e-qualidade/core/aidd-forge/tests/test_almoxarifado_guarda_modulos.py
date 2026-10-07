@@ -30,7 +30,7 @@ def _achar_raiz_repo() -> Path:
 RAIZ = _achar_raiz_repo()
 
 PROIBIDOS = {
-    "modulos": (RAIZ / "modulos" / "02-triade-motores" / "fluxo-01-pure" / "_destino_teste_t12", "modulos"),
+    "modulos": (RAIZ / "modulos" / "_destino_teste_t12", "modulos"),
     "componentes": (RAIZ / "componentes" / "compartilhado" / "_destino_teste_t12", "componentes"),
     "raiz_pasta": (RAIZ, "raiz do ecossistema"),
     "raiz_arquivo": (RAIZ / "Dockerfile_destino_teste_t12", "raiz do ecossistema"),

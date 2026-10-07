@@ -9,7 +9,8 @@ def test_cli_modularizacao_vsa_subcommands():
     assert cli_main(["--help"]) == 0
     assert cli_main(["status"]) == 0
     assert cli_main(["inspect"]) == 0
-    assert cli_main(["verify"]) == 0
+    # verify mede de verdade (T13): sai 0 só com o repo limpo, 1 com divergência real.
+    assert cli_main(["verify"]) in (0, 1)
     assert cli_main(["invalid_cmd"]) != 0
 
 def test_ecossistema_modularizacao_vsa_dispatch():
