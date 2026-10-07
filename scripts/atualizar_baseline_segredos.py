@@ -10,7 +10,7 @@ quem atualiza o arquivo é este comando:
   python scripts/atualizar_baseline_segredos.py [--raiz <repo>]
   python -m detect_secrets audit .secrets.baseline   (marca real/falso positivo)
 
-Varre os arquivos rastreados pelo git (menos o próprio baseline), mantém as
+Varre os arquivos rastreados pelo git (menos o próprio baseline, sem passá-los na linha de comando), mantém as
 marcações de auditoria já feitas (detect-secrets scan --baseline) e grava o
 filtro is_baseline_file com caminho relativo. Rodar duas vezes seguidas não
 muda nada. Saída: exit 0 = baseline atualizado; exit 1 = erro.
@@ -73,8 +73,11 @@ def atualizar(raiz: Path) -> int:
         print(f"[ERRO] {erro}")
         return 1
     antes = baseline.read_bytes()
+    # Sem a lista na linha de comando: com milhares de caminhos ela estoura o limite do
+    # Windows (WinError 206). Sem caminho, o detect-secrets varre os mesmos arquivos
+    # rastreados pelo git, e o filtro is_baseline_file tira o proprio baseline.
     proc = subprocess.run(
-        [sys.executable, "-m", "detect_secrets", "scan", "--baseline", ARQUIVO_BASELINE, *arquivos],
+        [sys.executable, "-m", "detect_secrets", "scan", "--baseline", ARQUIVO_BASELINE],
         cwd=str(raiz), capture_output=True, text=True, encoding="utf-8", errors="replace",
     )
     if proc.returncode != 0:

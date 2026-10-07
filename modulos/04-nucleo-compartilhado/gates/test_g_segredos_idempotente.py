@@ -110,3 +110,19 @@ def test_comando_explicito_atualiza_a_baseline(repo):
     # Segunda execução não muda mais nada (idempotente).
     _rodar([str(ATUALIZAR), "--raiz", str(repo)], repo, "rapido")
     assert (repo / ".secrets.baseline").read_text(encoding="utf-8") == depois
+
+
+def test_comando_explicito_aguenta_repo_grande_no_windows(repo):
+    """Achado 07/10: o comando passava cada arquivo rastreado na linha de comando e,
+    no repo real, estourava o limite do Windows (WinError 206, ~32 mil caracteres)."""
+    pasta = repo / ("pasta_com_nome_bem_comprido_para_simular_o_repo_real_" * 2)
+    pasta.mkdir()
+    for i in range(400):
+        (pasta / f"arquivo_numero_{i:04d}_com_nome_longo_igual_aos_do_ecossistema.txt").write_text(
+            "nada\n", encoding="utf-8")
+    _git(repo, "add", "-A")
+    _git(repo, "commit", "-q", "-m", "muitos arquivos")
+    proc = _rodar([str(ATUALIZAR), "--raiz", str(repo)], repo, "rapido")
+    assert proc.returncode == 0, proc.stdout + proc.stderr
+    depois = (repo / ".secrets.baseline").read_text(encoding="utf-8")
+    assert '"line_number": 3' in depois, "segredo catalogado sumiu da baseline"
