@@ -157,7 +157,7 @@ def test_ecossistema_audit_forca_modo_completo_legado(monkeypatch):
         return 0
 
     monkeypatch.setattr(ecossistema, "run_command", fake_run_command)
-    monkeypatch.setattr(ecossistema, "_GATES_AUDIT", ["G_FAKE_GATE.py"])
+    monkeypatch.setattr(ecossistema, "_GATES_AUDIT", ["G_SEGREDOS.py"])  # nome real: o caminho vem do MAPA-GATES.json
     import importlib.util
     monkeypatch.setattr(importlib.util, "find_spec", lambda name: None)
 

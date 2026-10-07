@@ -13,7 +13,7 @@ Roteia comandos para as 8 ferramentas integradas:
   - ops        -> modulos/03-plataforma-e-entrega/operacoes-ops/aidd-ops
   - freedom-motor -> modulos/02-triade-motores/fluxo-03-freedom/core/aidd-freedom
   - open-motor -> modulos/02-triade-motores/fluxo-02-open/core/aidd-open
-  - audit      -> gates/G_ECOSSISTEMA_INTEGRIDADE.py
+  - audit      -> pre-commit run --all-files (gates de MAPA-GATES.json)
   - status     -> Resumo do status do ecossistema
 Nomes antigos (generate, factory, bridge...) seguem como apelido por 1 ciclo:
 componentes/compartilhado/specs/NOMES-ANTIGOS.json.
@@ -1108,12 +1108,14 @@ def cmd_livro(args):
     # pior que livro nenhum, porque carrega autoridade de documento oficial.
     pasta = next((a for a in args if not a.startswith("-")), None)
     if pasta:
-        gate = os.path.join(ROOT_DIR, "gates", "G_LIVRO_EVIDENCIA.py")
+        from scripts import mapa_gates
+        gate = str(mapa_gates.caminho("G_LIVRO_EVIDENCIA"))
         return run_command([sys.executable, gate, "--projeto", pasta], cwd=ROOT_DIR)
     return 0
 
-# Gates realmente materializados em gates/ e executados pelo 'audit'.
-# Ordem identica a AGENTS.md §4 (inclui G_HADOLINT, que jah existe em gates/).
+# Gates executados pelo runner legado do 'audit' (sem pre-commit instalado).
+# Ordem identica a AGENTS.md §4. O caminho de cada um vem do mapa de donos
+# (modulos/04-nucleo-compartilhado/contracts/MAPA-GATES.json).
 _GATES_AUDIT = [
     "G_ECOSSISTEMA_INTEGRIDADE.py",
     "G_DRIFT_NUCLEO_COMPARTILHADO.py",
@@ -1153,8 +1155,13 @@ _GATES_AUDIT = [
 
 
 def _audit_gates_legado(args, env=None):
+    from scripts import mapa_gates
     for gate in _GATES_AUDIT:
-        gate_script = os.path.join(ROOT_DIR, "gates", gate)
+        try:
+            gate_script = str(mapa_gates.caminho(gate[:-len(".py")]))
+        except (OSError, KeyError, ValueError) as erro:
+            print(f"[audit] ERRO: {gate} sem caminho no MAPA-GATES.json ({erro!r})")
+            return 1
         codigo = run_command([sys.executable, gate_script] + args, cwd=ROOT_DIR, env=env)
         if codigo != 0:
             return codigo
