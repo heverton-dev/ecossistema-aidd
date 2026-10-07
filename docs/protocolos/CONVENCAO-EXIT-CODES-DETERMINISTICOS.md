@@ -11,8 +11,9 @@
 Em ambientes de desenvolvimento orientado por IA (AIDD), agentes e orquestradores automatizados **nunca devem depender de heurísticas ou expressões regulares sobre texto livre** para saber se uma operação foi bem-sucedida ou onde ela falhou.
 
 1. **Exit Code controla o fluxo de decisão** (avançar, bloquear, corrigir argumentos, alertar ambiente).
-2. **Payload JSON em stdout detalha o diagnóstico** (código de erro interno, mensagem humana, arquivo afetado, diff sugerido).
-3. **Stderr é reservado para logs humanos, avisos de runtime ou rastros de exceção imprevistos**.
+2. **Escopo de Aplicação:** A taxonomia estendida com escala de 0 a 5 aplica-se exclusivamente a **scripts e CLIs** operacionais do ecossistema. Quality Gates seguem estritamente a **Lei Canônica #2 (Qualidade Binária)**: saída puramente binária 0 (aprovado) ou 1 (reprovado/bloqueado), sendo vedada a importação de `exit_codes` ou o retorno de códigos intermediários em gates.
+3. **Payload JSON em stdout detalha o diagnóstico** (código de erro interno, mensagem humana, arquivo afetado, diff sugerido).
+4. **Stderr é reservado para logs humanos, avisos de runtime ou rastros de exceção imprevistos**.
 
 ---
 
