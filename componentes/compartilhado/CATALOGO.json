@@ -754,7 +754,7 @@
       "papel": "variante",
       "dono_do_conteudo": "aidd-enterprise",
       "versao": "1.0.0",
-      "sha256": "sha256-48c9e1a47d3f9e0f04b670e9a1941b9755b57ed95879855bb5de278914435137",
+      "sha256": "sha256-3d244b02a63c8b9fd075eda73ee990bb2be0ef4d0c9b3e220c015282d6bb56ac",
       "consumidores": [
         "aidd-pure"
       ],
@@ -771,7 +771,7 @@
       "papel": "variante",
       "dono_do_conteudo": "aidd-enterprise",
       "versao": "1.0.0",
-      "sha256": "sha256-3e965b4f4cf7ee9172c357a1ead78405f05dd485025150e3e54797a1b292d40c",
+      "sha256": "sha256-bfbc58679adaddf446b031ff2b021e90e2664674144d254b74721114650754f2",
       "consumidores": [
         "aidd-pure"
       ],
@@ -788,7 +788,7 @@
       "papel": "variante",
       "dono_do_conteudo": "aidd-enterprise",
       "versao": "1.0.0",
-      "sha256": "sha256-4cb33acef870817448fd2f59a7e0c3fe763f7993c5fd0593926e982f78da898a",
+      "sha256": "sha256-01ae751bce5add003673bb2c21c708768a0aa57065ee69cdcfd865752d745369",
       "consumidores": [
         "aidd-pure"
       ],
@@ -839,7 +839,7 @@
       "papel": "variante",
       "dono_do_conteudo": "aidd-enterprise",
       "versao": "1.0.0",
-      "sha256": "sha256-d60553dc145a7329791dea521a4aaefa51c2e1309aebacc85ce550a747e1aeda",
+      "sha256": "sha256-945383e6989f7222db73804892d64d7dc95db78c6c04fd90deae8ee1356be394",
       "consumidores": [
         "aidd-pure"
       ],
@@ -890,7 +890,7 @@
       "papel": "variante",
       "dono_do_conteudo": "aidd-enterprise",
       "versao": "1.0.0",
-      "sha256": "sha256-f406fd2ae8b0c2f6a180f2f6980133e954cff376c91dde1dd47d7129bfe17ffe",
+      "sha256": "sha256-7d67c03cd0a2b803ffc011df557c6ebfc7ae5900da5054e50e66fbc9d65704e1",
       "consumidores": [
         "aidd-pure"
       ],
@@ -924,7 +924,7 @@
       "papel": "variante",
       "dono_do_conteudo": "aidd-enterprise",
       "versao": "1.0.0",
-      "sha256": "sha256-45b4389a40203d5c9e3829159405acac6197d2d80ffb3f9aebd47557d7b17c5e",
+      "sha256": "sha256-816ac55b6d77c168d433f69ccc2134c426e805cc5e2cdd0d1638354c4627cb4f",
       "consumidores": [
         "aidd-pure"
       ],

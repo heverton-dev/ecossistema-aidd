@@ -11,7 +11,7 @@ import sys
 import tempfile
 from pathlib import Path
 
-from scripts.core.injector.scaffolds import gerar_mcp
+from scripts.core_pure.injector.scaffolds import gerar_mcp
 
 
 def _executar_codigo_gerado(codigo: str):

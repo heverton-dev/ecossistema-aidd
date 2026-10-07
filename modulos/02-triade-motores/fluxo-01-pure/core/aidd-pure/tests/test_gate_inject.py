@@ -30,7 +30,7 @@ class TestGateInject:
         assert gate.main() == 0
 
     def test_checar_schema_falha_se_payload_bom_for_rejeitado(self, monkeypatch):
-        import scripts.core.injector.contrato as contrato_mod
+        import scripts.core_pure.injector.contrato as contrato_mod
 
         def validar_sempre_invalido(payload):
             return contrato_mod.ResultadoValidacao(valido=False, erros=["forcado para teste"])

@@ -22,16 +22,16 @@ _THIS_DIR = Path(__file__).resolve().parent
 if str(_THIS_DIR.parent.parent) not in sys.path:
     sys.path.insert(0, str(_THIS_DIR.parent.parent))  # repo root, para `python -m` e imports relativos
 
-from scripts.core.injector.contrato import validar_request
-from scripts.core.injector.detector_camada import detectar_tipo
-from scripts.core.injector.profiles_registry import (
+from scripts.core_pure.injector.contrato import validar_request
+from scripts.core_pure.injector.detector_camada import detectar_tipo
+from scripts.core_pure.injector.profiles_registry import (
     ProjetoNaoSuportadoError,
     TipoNaoSuportadoError,
     resolver_rota,
 )
-from scripts.core.injector.materializador import materializar
-from scripts.core.injector.sincronizador_harness import sincronizar
-from scripts.core.injector import scaffolds
+from scripts.core_pure.injector.materializador import materializar
+from scripts.core_pure.injector.sincronizador_harness import sincronizar
+from scripts.core_pure.injector import scaffolds
 
 import json
 import subprocess

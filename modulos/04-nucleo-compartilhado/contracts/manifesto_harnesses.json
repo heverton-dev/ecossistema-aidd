@@ -80,7 +80,7 @@
       "pasta_fonte": "mcps",
       "distribuicao": "destino-unico-por-ferramenta",
       "unidade": "diretorio",
-      "status_evidencia": "PROPOSTO NESTA MIGRAÇÃO, mas com precedente real: modulos/02-triade-motores/fluxo-01-pure/core/aidd-pure/scripts/core/injector/profiles_registry.py e modulos/03-plataforma-e-entrega/fatiamento-master/aidd-master/src/core/profiles_registry.py já definem o tipo 'mcp' com UM destino físico e mirrors=[] (nenhum espelho por harness). MCP servers são referenciados por cada harness via seu próprio arquivo de config (ex.: .mcp.json) apontando para 1 caminho - não por pasta duplicada por harness. Este manifesto formaliza esse precedente real; não inventa duplicação onde ela não existe no código já em produção.",
+      "status_evidencia": "PROPOSTO NESTA MIGRAÇÃO, mas com precedente real: modulos/02-triade-motores/fluxo-01-pure/core/aidd-pure/scripts/core_pure/injector/profiles_registry.py e modulos/03-plataforma-e-entrega/fatiamento-master/aidd-master/src/core/profiles_registry.py já definem o tipo 'mcp' com UM destino físico e mirrors=[] (nenhum espelho por harness). MCP servers são referenciados por cada harness via seu próprio arquivo de config (ex.: .mcp.json) apontando para 1 caminho - não por pasta duplicada por harness. Este manifesto formaliza esse precedente real; não inventa duplicação onde ela não existe no código já em produção.",
       "harnesses_aplicaveis": [],
       "dest_unico_template": "mcps/{nome}",
       "overrides_por_escopo": {

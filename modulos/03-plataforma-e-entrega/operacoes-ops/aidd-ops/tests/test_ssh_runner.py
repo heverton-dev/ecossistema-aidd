@@ -18,8 +18,8 @@ TOOL_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 if TOOL_ROOT not in sys.path:
     sys.path.insert(0, TOOL_ROOT)
 
-from src.core.ssh_runner import SSHRunner, TAGS_PERMITIDAS, ORDEM_BOOTSTRAP
-from src.core.result import Result
+from src.core_ops.ssh_runner import SSHRunner, TAGS_PERMITIDAS, ORDEM_BOOTSTRAP
+from src.core_ops.result import Result
 from gates.G_OPS_SSH import OpsSshGate
 
 
@@ -120,7 +120,7 @@ class TestSSHRunnerPreVooParamiko:
         assert res.sucesso
         assert res.valor["dry_run"] is True
 
-    @patch("src.core.ssh_runner.paramiko")
+    @patch("src.core_ops.ssh_runner.paramiko")
     def test_pre_voo_sucesso(self, mock_paramiko):
         mock_client = MagicMock()
         mock_transport = MagicMock()
@@ -136,7 +136,7 @@ class TestSSHRunnerPreVooParamiko:
         assert res.valor["conectividade"] == "ok"
         mock_client.close.assert_called_once()
 
-    @patch("src.core.ssh_runner.paramiko")
+    @patch("src.core_ops.ssh_runner.paramiko")
     def test_pre_voo_falha_autenticacao_sem_vazar_segredos(self, mock_paramiko):
         import paramiko as real_paramiko
         mock_client = MagicMock()
@@ -151,7 +151,7 @@ class TestSSHRunnerPreVooParamiko:
         assert res.codigo == "FALHA_AUTENTICACAO"
         assert "chave" in res.erro.lower()
 
-    @patch("src.core.ssh_runner.paramiko")
+    @patch("src.core_ops.ssh_runner.paramiko")
     def test_pre_voo_falha_timeout(self, mock_paramiko):
         mock_client = MagicMock()
         mock_client.connect.side_effect = socket.timeout("timed out")
@@ -171,8 +171,8 @@ class TestSSHRunnerExecucaoAnsibleComMock:
     def _mock_pre_voo_ok(self, monkeypatch, runner):
         monkeypatch.setattr(runner, "testar_conexao", lambda: Result.ok({"conectividade": "ok"}))
 
-    @patch("src.core.ssh_runner.subprocess.run")
-    @patch("src.core.ssh_runner.shutil.which", return_value="/usr/bin/ansible-playbook")
+    @patch("src.core_ops.ssh_runner.subprocess.run")
+    @patch("src.core_ops.ssh_runner.shutil.which", return_value="/usr/bin/ansible-playbook")
     def test_execucao_sucesso(self, mock_which, mock_run, monkeypatch):
         runner = SSHRunner(host="192.168.1.50", dry_run=False)
         self._mock_pre_voo_ok(monkeypatch, runner)
@@ -190,8 +190,8 @@ class TestSSHRunnerExecucaoAnsibleComMock:
         assert argv[0] == "/usr/bin/ansible-playbook"
         assert "--tags" in argv and "docker" in argv
 
-    @patch("src.core.ssh_runner.subprocess.run")
-    @patch("src.core.ssh_runner.shutil.which", return_value="/usr/bin/ansible-playbook")
+    @patch("src.core_ops.ssh_runner.subprocess.run")
+    @patch("src.core_ops.ssh_runner.shutil.which", return_value="/usr/bin/ansible-playbook")
     def test_execucao_falha_exit_code(self, mock_which, mock_run, monkeypatch):
         runner = SSHRunner(host="192.168.1.50", dry_run=False)
         self._mock_pre_voo_ok(monkeypatch, runner)
@@ -204,7 +204,7 @@ class TestSSHRunnerExecucaoAnsibleComMock:
         assert res.codigo == "FALHA_EXECUCAO_REMOTA"
         assert res.detalhes["exit_code"] == 2
 
-    @patch("src.core.ssh_runner.shutil.which", return_value=None)
+    @patch("src.core_ops.ssh_runner.shutil.which", return_value=None)
     def test_ansible_nao_instalado(self, mock_which, monkeypatch):
         runner = SSHRunner(host="192.168.1.50", dry_run=False)
         self._mock_pre_voo_ok(monkeypatch, runner)
@@ -214,7 +214,7 @@ class TestSSHRunnerExecucaoAnsibleComMock:
         assert not res.sucesso
         assert res.codigo == "ANSIBLE_NAO_INSTALADO"
 
-    @patch("src.core.ssh_runner.paramiko")
+    @patch("src.core_ops.ssh_runner.paramiko")
     def test_pre_voo_falha_bloqueia_execucao_ansible(self, mock_paramiko):
         mock_client = MagicMock()
         mock_client.connect.side_effect = socket.timeout("timed out")
@@ -231,7 +231,7 @@ class TestSSHRunnerExecucaoAnsibleComMock:
 class TestGateSshRunnerAST:
     def test_gate_aprova_codigo_limpo(self):
         gate = OpsSshGate()
-        caminho_real = os.path.join(TOOL_ROOT, "src", "core", "ssh_runner.py")
+        caminho_real = os.path.join(TOOL_ROOT, "src", "core_ops", "ssh_runner.py")
         assert gate.auditar(caminho_real) == 0
 
     def test_gate_reprova_concatenacao_insegura(self):

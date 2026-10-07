@@ -42,12 +42,12 @@ if os.path.isdir(_COMP_DIR) and _COMP_DIR not in sys.path:
     sys.path.insert(0, _COMP_DIR)
 from escritor_atomico import escrever_json_atomico
 
-from core.result import Result
+from core_ops.result import Result
 
 # Importar as 3 fases
 sys.path.insert(0, _SCRIPTS_DIR)
-from phases import __init__ as _phases_init  # noqa: F401
-sys.path.insert(0, os.path.join(_SCRIPTS_DIR, "phases"))
+from phases_ops import __init__ as _phases_init  # noqa: F401
+sys.path.insert(0, os.path.join(_SCRIPTS_DIR, "phases_ops"))
 from importlib import import_module as _imod
 
 from contrato_plano import validar_plano_contrato  # noqa: E402
@@ -481,7 +481,7 @@ def _cmd_bootstrap(host, user, port, key, real, dry_run):
     print(" [AIDD-Ops] Bootstrapping Remoto via SSHRunner")
     print(f" Alvo: {user}@{host}:{port} | Modo: {'DRY-RUN (Simulação)' if dry_run else 'EXECUÇÃO REAL'}")
     print("=" * 72)
-    from core.ssh_runner import SSHRunner
+    from core_ops.ssh_runner import SSHRunner
     try:
         runner = SSHRunner(
             host=host,
@@ -521,7 +521,7 @@ def _cmd_bootstrap(host, user, port, key, real, dry_run):
 @click.option("--json", "modo_json", is_flag=True, help="Imprime exclusivamente o relatório JSON estruturado")
 @click.option("--dry-run", is_flag=True, help="Simula execução em modo dry-run")
 def _cmd_preflight(ambiente, host, timeout, retries, retry_interval, servicos, webhook_url, subdominios, modo_json, dry_run):
-    from core.preflight import PreflightRunner
+    from core_ops.preflight import PreflightRunner
 
     servicos_list = []
     for s in servicos:
@@ -688,7 +688,7 @@ class DeployOrchestrator:
     def etapa_2_bootstrap_vps(self) -> Result[List[Dict[str, Any]]]:
         """Executa bootstrapping seguro de VPS via SSHRunner."""
         try:
-            from core.ssh_runner import SSHRunner
+            from core_ops.ssh_runner import SSHRunner
             runner = SSHRunner(
                 host=self.host,
                 user=self.user_ssh,
@@ -743,7 +743,7 @@ class DeployOrchestrator:
             return self._etapa_5_compose_nativo()
 
         if self.motor == "coolify":
-            from core.coolify import CoolifyManager
+            from core_ops.coolify import CoolifyManager
             manager = CoolifyManager(dry_run=self.dry_run)
             # Achado real corrigido: esta lista era sempre hardcoded
             # (Twenty/Chatwoot/Calcom/Postgres/UptimeKuma, o "nicho" clínicas)
@@ -829,7 +829,7 @@ class DeployOrchestrator:
                 detalhes={"dir_projeto": dir_projeto},
             )
 
-        from core.compose_preflight import ComposePreflightValidator
+        from core_ops.compose_preflight import ComposePreflightValidator
         with open(compose_path, "r", encoding="utf-8") as f:
             compose_conteudo = f.read()
         compose_ok, compose_erros = ComposePreflightValidator.validate_compose_content(compose_conteudo)
@@ -860,7 +860,7 @@ class DeployOrchestrator:
         # arquivos do projeto para a VPS + `docker compose up -d --build`
         # remoto (ou o `deploy.sh` já gerado pelo projeto). Preferir falhar
         # de forma explícita a fingir sucesso sem executar nada real.
-        from core.ssh_runner import SSHRunner
+        from core_ops.ssh_runner import SSHRunner
         runner = SSHRunner(host=self.host, user=self.user_ssh, port=self.port_ssh, dry_run=False)
         res_conexao = runner.testar_conexao()
         self._registrar_etapa(
@@ -885,7 +885,7 @@ class DeployOrchestrator:
 
     def etapa_6_preflight_verificacao(self) -> Result[Dict[str, Any]]:
         """Dispara a bateria de testes pré-produção via PreflightRunner."""
-        from core.preflight import PreflightRunner
+        from core_ops.preflight import PreflightRunner
         if self.dry_run:
             # Em modo dry-run simula resolução e healthz locais sem falha
             mock_dns = lambda h: [self.host]
@@ -1050,7 +1050,7 @@ def _cmd_monitor():
 @click.option("--saida", default="uptime-kuma-monitors.json", show_default=True, help="Arquivo JSON de saída")
 @click.option("--title", default="AIDD-Ops Stack", show_default=True, help="Título do dashboard Uptime Kuma")
 def _monitor_export(compose, saida, title):
-    from core.uptime_kuma import UptimeKumaManager
+    from core_ops.uptime_kuma import UptimeKumaManager
     manager = UptimeKumaManager()
     if not os.path.isfile(compose):
         print(f"[ERRO] Arquivo compose não encontrado: {compose}")
@@ -1078,7 +1078,7 @@ def _monitor_export(compose, saida, title):
 @click.option("--url", default="http://localhost:3005", show_default=True, help="URL do dashboard Uptime Kuma")
 @click.option("--timeout", type=float, default=5.0, show_default=True, help="Timeout em segundos")
 def _monitor_check(url, timeout):
-    from core.uptime_kuma import UptimeKumaManager
+    from core_ops.uptime_kuma import UptimeKumaManager
     manager = UptimeKumaManager()
     res_check = manager.verificar_saude_dashboard(url, timeout=timeout)
     if res_check.sucesso:
@@ -1101,7 +1101,7 @@ def _cmd_cofre():
 @click.option("--sops-config", required=True, help="Caminho de saída do .sops.yaml")
 @click.option("--padrao", default=r"templates[\\/]infra[\\/].*\.env$", help="path_regex do .sops.yaml (casa com o .env de ENTRADA, nao o .env.enc)")
 def _cofre_init(chave, sops_config, padrao):
-    from core.cofre_credenciais import CofreCredenciais
+    from core_ops.cofre_credenciais import CofreCredenciais
     cofre = CofreCredenciais()
     res_chave = cofre.gerar_chave_age(chave)
     if not res_chave.sucesso:
@@ -1121,7 +1121,7 @@ def _cofre_init(chave, sops_config, padrao):
 @click.option("--saida", required=True, help="Caminho do .env.enc de destino")
 @click.option("--chave-publica", default=None, help="Chave age pública (opcional; senão usa .sops.yaml)")
 def _cofre_encrypt(caminho_env, saida, chave_publica):
-    from core.cofre_credenciais import CofreCredenciais
+    from core_ops.cofre_credenciais import CofreCredenciais
     cofre = CofreCredenciais()
     res = cofre.cifrar_env(caminho_env, saida, chave_publica=chave_publica)
     if res.sucesso:
@@ -1136,7 +1136,7 @@ def _cofre_encrypt(caminho_env, saida, chave_publica):
 @click.option("--saida", required=True, help="Caminho do .env decifrado de destino")
 @click.option("--chave-privada", default=None, help="Caminho do arquivo de chave privada age")
 def _cofre_decrypt(env_enc, saida, chave_privada):
-    from core.cofre_credenciais import CofreCredenciais
+    from core_ops.cofre_credenciais import CofreCredenciais
     cofre = CofreCredenciais()
     res = cofre.decifrar_env(env_enc, saida, arquivo_chave_privada=chave_privada)
     if res.sucesso:
@@ -1150,7 +1150,7 @@ def _cofre_decrypt(env_enc, saida, chave_privada):
 @click.option("--servico", required=True, help="Diretório do serviço (com docker-compose.yml + .env.enc)")
 @click.option("--chave-privada", default=None, help="Caminho do arquivo de chave privada age")
 def _cofre_up(servico, chave_privada):
-    from core.cofre_credenciais import CofreCredenciais
+    from core_ops.cofre_credenciais import CofreCredenciais
     cofre = CofreCredenciais()
     res = cofre.subir_servico_com_cofre(servico, arquivo_chave_privada=chave_privada)
     if res.sucesso:
@@ -1179,7 +1179,7 @@ def _cmd_coolify():
 @_cmd_coolify.command("health", context_settings=_CONTEXT, help="Checa se a instancia do Coolify responde (sem auth)")
 @click.option("--url", default=None, help="URL base do Coolify (default: env COOLIFY_BASE_URL)")
 def _coolify_health(url):
-    from core.coolify import CoolifyClient
+    from core_ops.coolify import CoolifyClient
     base_url = _coolify_url(url)
     cliente = CoolifyClient(base_url=base_url)
     res = cliente.checar_health()
@@ -1197,7 +1197,7 @@ for _acao, _ajuda in (("version", "Versao do servidor Coolify"), ("servers", "Li
         @click.option("--url", default=None, help="URL base do Coolify")
         @click.option("--token", default=None, help="API Token (default: env COOLIFY_API_TOKEN)")
         def _coolify_leitura(url, token):
-            from core.coolify import CoolifyClient
+            from core_ops.coolify import CoolifyClient
             base_url = _coolify_url(url)
             token_efetivo = token or os.environ.get("COOLIFY_API_TOKEN", "")
             cliente = CoolifyClient(base_url=base_url, api_token=token_efetivo)
@@ -1237,7 +1237,7 @@ for _acao, _ajuda in (("version", "Versao do servidor Coolify"), ("servers", "Li
 @click.option("--token", default=None, help="API Token")
 @click.option("--app", required=True, help="UUID do app")
 def _coolify_status(url, token, app):
-    from core.coolify import CoolifyClient
+    from core_ops.coolify import CoolifyClient
     base_url = _coolify_url(url)
     token_efetivo = token or os.environ.get("COOLIFY_API_TOKEN", "")
     cliente = CoolifyClient(base_url=base_url, api_token=token_efetivo)
@@ -1265,7 +1265,7 @@ def _coolify_status(url, token, app):
 @click.option("--real", is_flag=True, help="Executa contra o Coolify real (padrao e --dry-run)")
 @click.option("--dry-run", is_flag=True, default=None, help="Somente mostra o payload (padrao)")
 def _coolify_create(url, token, project_uuid, server_uuid, environment_name, repo, branch, base_dir, dockerfile, port_exposes, domain, nome, real, dry_run):
-    from core.coolify import CoolifyClient
+    from core_ops.coolify import CoolifyClient
     base_url = _coolify_url(url)
     token_efetivo = token or os.environ.get("COOLIFY_API_TOKEN", "")
     cliente = CoolifyClient(base_url=base_url, api_token=token_efetivo)
@@ -1308,7 +1308,7 @@ def _coolify_create(url, token, project_uuid, server_uuid, environment_name, rep
 @click.option("--real", is_flag=True, help="Executa contra o Coolify real (padrao e --dry-run)")
 @click.option("--dry-run", is_flag=True, default=None, help="Somente mostra os pares (padrao)")
 def _coolify_setenv(url, token, app, pares, real, dry_run):
-    from core.coolify import CoolifyClient
+    from core_ops.coolify import CoolifyClient
     base_url = _coolify_url(url)
     token_efetivo = token or os.environ.get("COOLIFY_API_TOKEN", "")
     cliente = CoolifyClient(base_url=base_url, api_token=token_efetivo)
@@ -1343,7 +1343,7 @@ def _coolify_setenv(url, token, app, pares, real, dry_run):
 @click.option("--real", is_flag=True, help="Executa contra o Coolify real (padrao e --dry-run)")
 @click.option("--dry-run", is_flag=True, default=None, help="Somente mostra o que seria enviado (padrao)")
 def _coolify_deploy(url, token, app, force, real, dry_run):
-    from core.coolify import CoolifyClient
+    from core_ops.coolify import CoolifyClient
     base_url = _coolify_url(url)
     token_efetivo = token or os.environ.get("COOLIFY_API_TOKEN", "")
     cliente = CoolifyClient(base_url=base_url, api_token=token_efetivo)

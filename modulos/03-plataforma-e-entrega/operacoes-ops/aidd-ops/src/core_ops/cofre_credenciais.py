@@ -38,9 +38,9 @@ import tempfile
 from typing import Any, Callable, Dict, List, Optional
 
 try:
-    from core.result import Result
+    from core_ops.result import Result
 except ImportError:
-    from src.core.result import Result
+    from src.core_ops.result import Result
 
 
 def _executor_padrao(comando: List[str], **kwargs: Any) -> subprocess.CompletedProcess:

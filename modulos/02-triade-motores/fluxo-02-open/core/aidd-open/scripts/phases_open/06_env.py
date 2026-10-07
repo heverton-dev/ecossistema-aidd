@@ -25,7 +25,7 @@ def _achar_raiz_repo() -> str:
 sys.path.insert(0, os.path.join(_FACTORY_ROOT, "src"))
 sys.path.insert(0, os.path.join(_achar_raiz_repo(), "componentes", "compartilhado", "src-core"))
 
-from core.result import Result
+from core_open.result import Result
 
 
 _INFRA_DIR = os.path.join(_achar_raiz_repo(), "modulos", "03-plataforma-e-entrega", "operacoes-ops", "aidd-ops", "templates", "infra")

@@ -31,8 +31,8 @@ _PHASES_DIR = _ROOT / 'scripts' / 'phases'
 if str(_PHASES_DIR) not in sys.path:
     sys.path.insert(0, str(_PHASES_DIR))
 
-from scripts.core.injector.injetor import injetar, ResultadoInjecao
-from scripts.core.injector.profiles_registry import PROJETOS_SUPORTADOS
+from scripts.core_pure.injector.injetor import injetar, ResultadoInjecao
+from scripts.core_pure.injector.profiles_registry import PROJETOS_SUPORTADOS
 from utils_intent_router import detectar_injecao, slug_a_partir_da_ideia
 
 

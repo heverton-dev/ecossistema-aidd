@@ -18,7 +18,7 @@ def _achar_raiz_repo() -> str:
     return os.path.abspath(os.path.join(_FACTORY_ROOT, "..", "..", "..", ".."))
 
 _ROOT_REPO = _achar_raiz_repo()
-sys.path.insert(0, os.path.join(_FACTORY_ROOT, "scripts", "phases"))
+sys.path.insert(0, os.path.join(_FACTORY_ROOT, "scripts", "phases_open"))
 sys.path.insert(0, os.path.join(_FACTORY_ROOT, "scripts"))
 sys.path.insert(0, os.path.join(_FACTORY_ROOT, "src"))
 sys.path.insert(0, os.path.join(_ROOT_REPO, "componentes", "compartilhado", "src-core"))
@@ -302,7 +302,7 @@ class TestPipelineE2E:
 
     def test_gateway_generator_com_hifens_e_espacos(self):
         """Garante que ferramentas como Evolution API geram funcoes Python sintaticamente validas."""
-        from core.gateway_generator import gerar_gateway
+        from core_open.gateway_generator import gerar_gateway
         import py_compile
 
         analysis = {
@@ -355,7 +355,7 @@ class TestPipelineE2E:
 
     def test_vsa_generator_fatias_e_quarteto(self):
         """Valida que vsa_generator gera Shared Kernel, fatias com repositorios e estúdios."""
-        from core.vsa_generator import gerar_aplicacao_vsa
+        from core_open.vsa_generator import gerar_aplicacao_vsa
         import py_compile
 
         analysis = {
@@ -404,7 +404,7 @@ class TestPipelineE2E:
         explicitamente o Super-App em HTML/CSS/JS puro (Lei #11: silêncio
         nunca é licença para gerar outra coisa, mas pedido explícito é
         honrado)."""
-        from core.vsa_generator import gerar_aplicacao_vsa
+        from core_open.vsa_generator import gerar_aplicacao_vsa
 
         analysis = {
             "nicho_slug": "clinicas",

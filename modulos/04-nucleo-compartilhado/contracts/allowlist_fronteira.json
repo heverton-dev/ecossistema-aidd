@@ -82,7 +82,7 @@
       "motivo": "conhecida no inventario inicial (Ticket 6): nunca_conter(**/G_*.py); atual=aidd-open; dono=aidd-forge"
     },
     {
-      "arquivo": "modulos/02-triade-motores/fluxo-02-open/core/aidd-open/src/core/swagger_generator.py",
+      "arquivo": "modulos/02-triade-motores/fluxo-02-open/core/aidd-open/src/core_open/swagger_generator.py",
       "data": "2026-10-01",
       "motivo": "conhecida no inventario inicial (Ticket 6): nunca_conter(**/swagger*); atual=aidd-open; dono=aidd-master"
     },
@@ -97,42 +97,42 @@
       "motivo": "conhecida no inventario inicial (Ticket 6): nunca_conter(**/G_*.py); atual=aidd-ops; dono=aidd-forge"
     },
     {
-      "arquivo": "modulos/03-plataforma-e-entrega/operacoes-ops/aidd-ops/src/core/__init__.py",
+      "arquivo": "modulos/03-plataforma-e-entrega/operacoes-ops/aidd-ops/src/core_ops/__init__.py",
       "data": "2026-10-01",
       "motivo": "conhecida no inventario inicial (Ticket 6): nunca_conter(**/src/core/**); atual=aidd-ops; dono=aidd-master"
     },
     {
-      "arquivo": "modulos/03-plataforma-e-entrega/operacoes-ops/aidd-ops/src/core/cofre_credenciais.py",
+      "arquivo": "modulos/03-plataforma-e-entrega/operacoes-ops/aidd-ops/src/core_ops/cofre_credenciais.py",
       "data": "2026-10-01",
       "motivo": "conhecida no inventario inicial (Ticket 6): nunca_conter(**/src/core/**); atual=aidd-ops; dono=aidd-master"
     },
     {
-      "arquivo": "modulos/03-plataforma-e-entrega/operacoes-ops/aidd-ops/src/core/compose_preflight.py",
+      "arquivo": "modulos/03-plataforma-e-entrega/operacoes-ops/aidd-ops/src/core_ops/compose_preflight.py",
       "data": "2026-10-01",
       "motivo": "conhecida no inventario inicial (Ticket 6): nunca_conter(**/src/core/**); atual=aidd-ops; dono=aidd-master"
     },
     {
-      "arquivo": "modulos/03-plataforma-e-entrega/operacoes-ops/aidd-ops/src/core/coolify.py",
+      "arquivo": "modulos/03-plataforma-e-entrega/operacoes-ops/aidd-ops/src/core_ops/coolify.py",
       "data": "2026-10-01",
       "motivo": "conhecida no inventario inicial (Ticket 6): nunca_conter(**/src/core/**); atual=aidd-ops; dono=aidd-master"
     },
     {
-      "arquivo": "modulos/03-plataforma-e-entrega/operacoes-ops/aidd-ops/src/core/preflight.py",
+      "arquivo": "modulos/03-plataforma-e-entrega/operacoes-ops/aidd-ops/src/core_ops/preflight.py",
       "data": "2026-10-01",
       "motivo": "conhecida no inventario inicial (Ticket 6): nunca_conter(**/src/core/**); atual=aidd-ops; dono=aidd-master"
     },
     {
-      "arquivo": "modulos/03-plataforma-e-entrega/operacoes-ops/aidd-ops/src/core/result.py",
+      "arquivo": "modulos/03-plataforma-e-entrega/operacoes-ops/aidd-ops/src/core_ops/result.py",
       "data": "2026-10-01",
       "motivo": "conhecida no inventario inicial (Ticket 6): nunca_conter(**/src/core/**); atual=aidd-ops; dono=aidd-master"
     },
     {
-      "arquivo": "modulos/03-plataforma-e-entrega/operacoes-ops/aidd-ops/src/core/ssh_runner.py",
+      "arquivo": "modulos/03-plataforma-e-entrega/operacoes-ops/aidd-ops/src/core_ops/ssh_runner.py",
       "data": "2026-10-01",
       "motivo": "conhecida no inventario inicial (Ticket 6): nunca_conter(**/src/core/**); atual=aidd-ops; dono=aidd-master"
     },
     {
-      "arquivo": "modulos/03-plataforma-e-entrega/operacoes-ops/aidd-ops/src/core/uptime_kuma.py",
+      "arquivo": "modulos/03-plataforma-e-entrega/operacoes-ops/aidd-ops/src/core_ops/uptime_kuma.py",
       "data": "2026-10-01",
       "motivo": "conhecida no inventario inicial (Ticket 6): nunca_conter(**/src/core/**); atual=aidd-ops; dono=aidd-master"
     },

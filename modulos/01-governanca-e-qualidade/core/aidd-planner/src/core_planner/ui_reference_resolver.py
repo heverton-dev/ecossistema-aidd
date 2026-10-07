@@ -67,7 +67,7 @@ def buscar_referencias_mobbin(
         from .mobbin_client import executar_busca
     except ImportError:
         try:
-            from src.core.mobbin_client import executar_busca
+            from src.core_planner.mobbin_client import executar_busca
         except ImportError:
             return None
 

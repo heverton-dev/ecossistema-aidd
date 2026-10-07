@@ -5,7 +5,7 @@ AIDD-Ops MVP — Item 10: Teste de Integração Helm
 =============================================================================
 Executa helm lint e helm template sobre o chart gerado pelo aidd-ops
 (modulos/03-plataforma-e-entrega/operacoes-ops/aidd-ops/charts/aidd-ops/) e valida que os resources calculados
-pelo sizing REAL (Fase 3 — scripts/phases/03_sizing.py) são injetados sem
+pelo sizing REAL (Fase 3 — scripts/phases_ops/03_sizing.py) são injetados sem
 erro nos manifests Kubernetes renderizados.
 
 Design:
@@ -74,7 +74,7 @@ def _carregar_sizing() -> dict:
     stack real. Usa o catálogo de requisitos para evitar depender de um
     nicho específico; o contrato é: para cada ferramenta cadastrada, os
     resources do chart devem refletir os requisitos reais."""
-    sys.path.insert(0, os.path.join(TOOL_ROOT, "scripts", "phases"))
+    sys.path.insert(0, os.path.join(TOOL_ROOT, "scripts", "phases_ops"))
     sizing = importlib.import_module("03_sizing")
     requisitos = _carregar_requisitos()
     ferramentas = [{"nome": nome} for nome in requisitos["ferramentas"]]

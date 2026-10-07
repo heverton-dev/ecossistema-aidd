@@ -12,7 +12,7 @@ from unittest.mock import MagicMock, patch
 
 import pytest
 
-CORE_DIR = Path(__file__).parent.parent / 'scripts' / 'core'
+CORE_DIR = Path(__file__).parent.parent / 'scripts' / 'core_pure'
 PHASES_DIR = Path(__file__).parent.parent / 'scripts' / 'phases'
 sys.path.insert(0, str(CORE_DIR))
 sys.path.insert(0, str(PHASES_DIR))

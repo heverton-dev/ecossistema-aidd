@@ -8,7 +8,7 @@ import json
 
 import pytest
 
-from scripts.core.injector.sincronizador_harness import sincronizar
+from scripts.core_pure.injector.sincronizador_harness import sincronizar
 
 AGENTS_MD_FIXTURE = """# AGENTS
 

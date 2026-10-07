@@ -9,8 +9,8 @@ Caveman Ultra Linter — validates LLM prompt constants follow the triad:
 Static analysis only — no LLM calls, zero tokens.
 
 Usage:
-  python -m scripts.core.caveman_linter scripts/phases/02_analisador.py
-  python -m scripts.core.caveman_linter scripts/phases/  # lint all .py in dir
+  python -m scripts.core_pure.caveman_linter scripts/phases/02_analisador.py
+  python -m scripts.core_pure.caveman_linter scripts/phases/  # lint all .py in dir
 """
 
 import ast

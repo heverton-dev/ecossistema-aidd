@@ -35,8 +35,13 @@ for p in (str(ROOT_DIR), str(OPEN_DIR), str(OPEN_DIR / "src"), str(FORGE_DIR)):
         sys.path.insert(0, p)
 
 from aidd_forge.core.almoxarifado import caminho_peca
-from core import vsa_generator
-from scripts import pipeline_factory
+from core_open import vsa_generator
+# Carregado pelo caminho: `scripts` e caixa de layout de varias fatias e, rodando
+# junto com outra suite no mesmo processo, `from scripts import` pegaria a dela.
+import importlib.util as _ilu
+_spec = _ilu.spec_from_file_location("open_pipeline_factory", OPEN_DIR / "scripts" / "pipeline_factory.py")
+pipeline_factory = _ilu.module_from_spec(_spec)
+_spec.loader.exec_module(pipeline_factory)
 
 
 def _criar_handoff_planner_c2(pasta: Path, modulos: list[str]) -> Path:

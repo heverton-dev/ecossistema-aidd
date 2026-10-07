@@ -430,7 +430,7 @@ def test_sizing_valores_exatos_por_nicho(slug, texto, tmp_path):
 def test_dimensionar_unidade_aritmetica_exata(tmp_path):
     """Teste de unidade direto de dimensionar(): soma conhecida + margem 1.2
     + ceil + mínimos, sem subprocess — determinismo aritmético puro."""
-    sys.path.insert(0, os.path.join(TOOL_ROOT, "scripts", "phases"))
+    sys.path.insert(0, os.path.join(TOOL_ROOT, "scripts", "phases_ops"))
     from importlib import import_module
     sizing = import_module("03_sizing")
 

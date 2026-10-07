@@ -2,13 +2,13 @@
 # AIDD-Ops — Playbook de Hardening + Bootstrap de VPS (NIH #15)
 # =============================================================================
 # Substitui a lista fechada de comandos shell manuais (antigo OPERACOES_PERMITIDAS
-# em src/core/ssh_runner.py) por uma colecao Ansible testada e mantida:
+# em src/core_ops/ssh_runner.py) por uma colecao Ansible testada e mantida:
 # devsec.hardening (os_hardening, ssh_hardening). As etapas que a colecao nao
 # cobre (docker, firewall, fail2ban, swap) permanecem em tasks locais, porem
 # executadas via modulos Ansible idempotentes — nunca via string de shell
 # concatenada a partir de entrada externa.
 #
-# Tags fechadas (devem espelhar TAGS_PERMITIDAS em src/core/ssh_runner.py):
+# Tags fechadas (devem espelhar TAGS_PERMITIDAS em src/core_ops/ssh_runner.py):
 #   atualizar_pacotes, docker, firewall, fail2ban, os_hardening, ssh_hardening, swap
 # =============================================================================
 - name: "AIDD-Ops — Hardening determinístico de VPS"

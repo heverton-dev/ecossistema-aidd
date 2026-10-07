@@ -37,7 +37,7 @@ for _pasta in (_PLANNER_DIR,):
 from src.cli import main as cli_main  # noqa: E402
 
 try:  # o motor da planta e' o que este ticket entrega (TDD Red: ainda nao existe)
-    from src.core import planta as _modulo_planta
+    from src.core_planner import planta as _modulo_planta
     _ERRO_IMPORT = ""
 except ImportError as _erro:  # pragma: no cover - caminho do Red
     _modulo_planta = None
@@ -46,7 +46,7 @@ except ImportError as _erro:  # pragma: no cover - caminho do Red
 
 def _planta():
     """Import tardio: no Red cada teste FALHA (exit 1) em vez de quebrar a colecao."""
-    assert _modulo_planta is not None, f"src.core.planta ausente: {_ERRO_IMPORT}"
+    assert _modulo_planta is not None, f"src.core_planner.planta ausente: {_ERRO_IMPORT}"
     return _modulo_planta
 
 SCHEMA_C1 = os.path.join(
@@ -485,7 +485,7 @@ def test_montar_handoff_engine_rejeita_handoff_c1_invalido(tmp_path):
 
 
 def _plano_minimo():
-    from src.core.planner_engine import gerar_template_plano
+    from src.core_planner.planner_engine import gerar_template_plano
 
     return gerar_template_plano(
         fluxo_alvo="fluxo_01_generator",

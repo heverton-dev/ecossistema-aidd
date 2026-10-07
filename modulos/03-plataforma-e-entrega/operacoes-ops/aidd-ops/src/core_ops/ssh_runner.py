@@ -27,10 +27,10 @@ import tempfile
 from typing import Any, Dict, List, Optional
 
 try:
-    from src.core.result import Result
+    from src.core_ops.result import Result
 except ImportError:
     try:
-        from core.result import Result
+        from core_ops.result import Result
     except ImportError:
         from result import Result
 

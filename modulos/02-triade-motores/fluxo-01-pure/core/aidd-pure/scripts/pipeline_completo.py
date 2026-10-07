@@ -86,8 +86,8 @@ from preflight_llm import verificar_llm_pronto  # noqa: E402
 from phases.utils_delegacao import LLMNaoConfiguradoException
 from phases.utils_fleet_discovery import resolver_fleet, fleet_status_para_log, persistir_fleet_status
 from phases.utils_subagente_ephemero import ContextPurgeEngine
-from core.repomix_runner import empacotar_repositorio, repomix_disponivel
-from core.pipeline_state import (
+from core_pure.repomix_runner import empacotar_repositorio, repomix_disponivel
+from core_pure.pipeline_state import (
     PipelineStateManager,
     ler_cache_com_validacao,
     PipelineCorrompidoError,

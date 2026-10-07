@@ -34,7 +34,7 @@ def gerar_skill(nome: str, descricao: str) -> str:
 ## 🎯 O que faz
 
 Esta skill foi materializada pelo Injetor Universal de Componentes
-(`scripts/core/injector/`) do aidd-pure. Ela cobre:
+(`scripts/core_pure/injector/`) do aidd-pure. Ela cobre:
 
 - {descricao}
 

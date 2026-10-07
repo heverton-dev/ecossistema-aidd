@@ -14,9 +14,9 @@ if os.path.join(TOOL_ROOT, "src") not in sys.path:
 
 from returns.result import Success, Failure, Result as ReturnsResult
 try:
-    from core.result import Result
+    from core_ops.result import Result
 except ImportError:
-    from src.core.result import Result
+    from src.core_ops.result import Result
 
 
 class TestResultReturnsMonad(unittest.TestCase):

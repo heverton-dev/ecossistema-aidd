@@ -19,7 +19,7 @@ def _achar_raiz_repo(inicio: str) -> str:
     return os.path.abspath(inicio)
 
 sys.path.insert(0, os.path.join(_achar_raiz_repo(os.path.dirname(__file__)), "componentes", "compartilhado", "src-core"))
-from core.result import Result
+from core_open.result import Result
 
 _TEMPLATES_DIR = os.path.join(os.path.dirname(__file__), "..", "..", "templates", "frontend")
 

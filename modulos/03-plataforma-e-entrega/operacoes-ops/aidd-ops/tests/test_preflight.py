@@ -20,7 +20,7 @@ if TOOL_ROOT not in sys.path:
 if os.path.join(TOOL_ROOT, "src") not in sys.path:
     sys.path.insert(0, os.path.join(TOOL_ROOT, "src"))
 
-from src.core.preflight import PreflightRunner
+from src.core_ops.preflight import PreflightRunner
 
 
 class _MockHealthHandler(http.server.BaseHTTPRequestHandler):

@@ -30,7 +30,7 @@ def _auditar_manifesto_pipeline(manifesto_path):
     from pathlib import Path
     return mod.auditar_manifesto(Path(manifesto_path))
 
-from src.core.planner_engine import (
+from src.core_planner.planner_engine import (
     carregar_schema,
     validar_plano,
     gerar_template_plano,
@@ -319,7 +319,7 @@ def test_cli_init_gera_design_system_unico_por_projeto():
         assert ds_delivery["paleta"]["primaria"] == "#EA580C"
 
         # Determinismo: gerar de novo para o MESMO projeto dá a MESMA paleta
-        from src.core.design_system import gerar_design_system
+        from src.core_planner.design_system import gerar_design_system
         ds_saude_repetido = gerar_design_system(
             "Clinica Bem Estar", "clinica-bem-estar",
             "Sistema de agendamento para clinica de saude", "saude",
@@ -331,7 +331,7 @@ def test_cli_init_com_modos_ui_ref(monkeypatch):
     """Verifica comportamento das opções 1 (mobbin), 2 (online) e 3 (deterministico)."""
     with tempfile.TemporaryDirectory() as tmp_m, tempfile.TemporaryDirectory() as tmp_o, tempfile.TemporaryDirectory() as tmp_d:
         # 1. Mobbin (com mock de busca)
-        from src.core import ui_reference_resolver
+        from src.core_planner import ui_reference_resolver
         monkeypatch.setattr(ui_reference_resolver, "buscar_referencias_mobbin", lambda termo, plataforma="web", limite=3: {
             "fonte": "mobbin_api",
             "app_name": "AppMockMobbin",

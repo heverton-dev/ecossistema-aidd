@@ -35,11 +35,11 @@ def _achar_raiz_repo(inicio: str) -> str:
 
 _FACTORY_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, os.path.join(_FACTORY_ROOT, "src"))
-sys.path.insert(0, os.path.join(_FACTORY_ROOT, "scripts", "phases"))
+sys.path.insert(0, os.path.join(_FACTORY_ROOT, "scripts", "phases_open"))
 sys.path.insert(0, os.path.join(_achar_raiz_repo(_FACTORY_ROOT), "componentes", "compartilhado", "src-core"))
 
-from core.result import Result
-from core.escritor_atomico import escrever_json_atomico
+from core_open.result import Result
+from core_open.escritor_atomico import escrever_json_atomico
 
 # Importar fases
 from importlib import import_module as _imod
@@ -142,7 +142,7 @@ def executar_pipeline(plano_path: str, pasta_destino: str, incluir_llm: bool = T
     # Consome almoxarifado sob demanda e entrega APENAS src/modules/<dominio>/ e C3.
     if plano.get("_is_c2"):
         print("\n[AIDD-Open] Modo Construtor Tríade (Fatias Verticais + C3)...")
-        from core.vsa_generator import gerar_fatias_verticais, emitir_handoff_engine_master
+        from core_open.vsa_generator import gerar_fatias_verticais, emitir_handoff_engine_master
 
         meta = plano.get("metadados_projeto") or {}
         slug_projeto = meta.get("slug") or plano.get("nicho_slug") or "projeto-open"
@@ -199,7 +199,7 @@ def executar_pipeline(plano_path: str, pasta_destino: str, incluir_llm: bool = T
         fase_num += 1
         print(f"\n[{fase_num}/{total_fases}] Fase 2 - Aplicacao Modular VSA & Quarteto Sine Qua Non...")
         try:
-            from core.vsa_generator import gerar_aplicacao_vsa
+            from core_open.vsa_generator import gerar_aplicacao_vsa
             res_vsa = gerar_aplicacao_vsa(res_analysis.valor, pasta_destino)
             if res_vsa.sucesso:
                 artefatos.append({"tipo": "vsa_app", "caminho": os.path.join(pasta_destino, "src"), "status": "gerado"})
@@ -210,7 +210,7 @@ def executar_pipeline(plano_path: str, pasta_destino: str, incluir_llm: bool = T
                 erros += 1
 
             # Gateway FastAPI complementar
-            from core.gateway_generator import gerar_gateway
+            from core_open.gateway_generator import gerar_gateway
             res_gw = gerar_gateway(res_analysis.valor, pasta_destino)
             if res_gw.sucesso:
                 artefatos.append({"tipo": "gateway", "caminho": os.path.join(pasta_destino, "src", "gateway"), "status": "gerado"})
@@ -326,7 +326,7 @@ def executar_pipeline(plano_path: str, pasta_destino: str, incluir_llm: bool = T
         fase_num += 1
         print(f"\n[{fase_num}/{total_fases}] Fase 8 - Swagger/OpenAPI...")
         try:
-            from core.swagger_generator import gerar_swagger
+            from core_open.swagger_generator import gerar_swagger
             res_sw = gerar_swagger(res_analysis.valor, pasta_destino)
             if res_sw.sucesso:
                 artefatos.append({"tipo": "swagger", "caminho": pasta_destino, "status": "gerado"})

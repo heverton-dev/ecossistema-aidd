@@ -4,14 +4,14 @@
 Testes: Injetor Universal de Componentes — contrato, profiles e detector.
 """
 
-from scripts.core.injector.contrato import (
+from scripts.core_pure.injector.contrato import (
     InjectorRequest,
     ResultadoValidacao,
     TIPOS_VALIDOS,
     validar_request,
 )
-from scripts.core.injector.detector_camada import detectar_tipo
-from scripts.core.injector.profiles_registry import (
+from scripts.core_pure.injector.detector_camada import detectar_tipo
+from scripts.core_pure.injector.profiles_registry import (
     PROFILES,
     ProjetoNaoSuportadoError,
     TipoNaoSuportadoError,
@@ -212,7 +212,7 @@ class TestDetectorCamada:
 class TestCanonicalDestination:
     def test_canonical_root_resolves_to_monorepo_root(self):
         from pathlib import Path
-        import scripts.core.injector.injetor as injetor_mod
+        import scripts.core_pure.injector.injetor as injetor_mod
         # A peça mora no almoxarifado (D1/Ticket 15), então a raiz do monorepo
         # é resolvida por quem consome (o aidd-pure), não pela aritmética de
         # posições do `__file__` da peça.

@@ -6,7 +6,7 @@ Regras de conformidade:
 1. V3 — o injetor e a CLI `aidd_inject` sao PEÇAS DO ALMOXARIFADO. O aidd-pure
    consome `componentes/compartilhado/injetor/variantes/aidd-pure/**` via
    `aidd_forge.core.almoxarifado.caminho_peca`: todo modulo ligado em
-   `scripts.core.injector.*` tem de resolver `__file__` para a peça do
+   `scripts.core_pure.injector.*` tem de resolver `__file__` para a peça do
    almoxarifado. As copias legacy em `modulos/02-triade-motores/fluxo-01-pure/core/aidd-pure/` PERMANECEM no lugar
    neste ticket (PLANO-EVOLUCAO item 6 / Ticket 8 "keep old copies in place";
    a remocao definitiva é o Bloco 4 / Ticket 19) — elas nao podem ser a
@@ -87,17 +87,17 @@ def test_copias_legacy_permanecem_mas_nao_sao_a_origem_do_generador():
     """As copias legacy continuam no lugar (Ticket 8) e o gerador nao as usa.
 
     Este teste morde mesmo com as copias presentes: sem o carregador do
-    almoxarifado, `scripts.core.injector.*` resolveria para a copia local de
+    almoxarifado, `scripts.core_pure.injector.*` resolveria para a copia local de
     `modulos/02-triade-motores/fluxo-01-pure/core/aidd-pure/` e falharia.
     """
     copias = _copias_locais_do_injetor()
-    pecas = _importar("scripts.core.pecas_catalogo", PURE_DIR / "scripts")
+    pecas = _importar("scripts.core_pure.pecas_catalogo", PURE_DIR / "scripts")
     raiz_canonica = ROOT_DIR / "componentes" / "compartilhado" / PECA_INJETOR
 
     for modulo in ("contrato", "detector_camada", "injetor", "materializador"):
-        origem = Path(sys.modules[f"scripts.core.injector.{modulo}"].__file__).resolve()
+        origem = Path(sys.modules[f"scripts.core_pure.injector.{modulo}"].__file__).resolve()
         assert _dentro(origem, raiz_canonica), (
-            f"scripts.core.injector.{modulo} veio de {origem}, fora da peca "
+            f"scripts.core_pure.injector.{modulo} veio de {origem}, fora da peca "
             f"canonica {raiz_canonica}. As copias legacy em modulos/02-triade-motores/fluxo-01-pure/core/aidd-pure/ "
             f"({len(copias)} arquivo(s) casando '**/*inject*') nao podem ser a "
             "origem do que o gerador executa."
@@ -136,12 +136,12 @@ def test_catalogo_declarou_o_injetor_do_pure_como_peca_do_almoxarifado():
 
 def test_modulos_do_injetor_sao_carregados_da_peca_do_almoxarifado():
     """O carregador do aidd-pure importa o injetor do almoxarifado, não de cópia."""
-    pecas = _importar("scripts.core.pecas_catalogo", PURE_DIR / "scripts")
+    pecas = _importar("scripts.core_pure.pecas_catalogo", PURE_DIR / "scripts")
     assert hasattr(pecas, "caminho_peca"), (
-        "scripts.core.pecas_catalogo deve expor caminho_peca do almoxarifado"
+        "scripts.core_pure.pecas_catalogo deve expor caminho_peca do almoxarifado"
     )
     assert hasattr(pecas, "registrar_injetor"), (
-        "scripts.core.pecas_catalogo deve expor registrar_injetor()"
+        "scripts.core_pure.pecas_catalogo deve expor registrar_injetor()"
     )
 
     chamadas: list = []
@@ -161,14 +161,14 @@ def test_modulos_do_injetor_sao_carregados_da_peca_do_almoxarifado():
     assert all(n.startswith(PECA_INJETOR) for n in chamadas), chamadas
 
     modulos = {
-        "scripts.core.injector": f"{PECA_INJETOR}/core/injector/__init__.py",
-        "scripts.core.injector.contrato": f"{PECA_INJETOR}/core/injector/contrato.py",
-        "scripts.core.injector.detector_camada": f"{PECA_INJETOR}/core/injector/detector_camada.py",
-        "scripts.core.injector.injetor": f"{PECA_INJETOR}/core/injector/injetor.py",
-        "scripts.core.injector.materializador": f"{PECA_INJETOR}/core/injector/materializador.py",
-        "scripts.core.injector.profiles_registry": f"{PECA_INJETOR}/core/injector/profiles_registry.py",
-        "scripts.core.injector.scaffolds": f"{PECA_INJETOR}/core/injector/scaffolds.py",
-        "scripts.core.injector.sincronizador_harness": f"{PECA_INJETOR}/core/injector/sincronizador_harness.py",
+        "scripts.core_pure.injector": f"{PECA_INJETOR}/core/injector/__init__.py",
+        "scripts.core_pure.injector.contrato": f"{PECA_INJETOR}/core/injector/contrato.py",
+        "scripts.core_pure.injector.detector_camada": f"{PECA_INJETOR}/core/injector/detector_camada.py",
+        "scripts.core_pure.injector.injetor": f"{PECA_INJETOR}/core/injector/injetor.py",
+        "scripts.core_pure.injector.materializador": f"{PECA_INJETOR}/core/injector/materializador.py",
+        "scripts.core_pure.injector.profiles_registry": f"{PECA_INJETOR}/core/injector/profiles_registry.py",
+        "scripts.core_pure.injector.scaffolds": f"{PECA_INJETOR}/core/injector/scaffolds.py",
+        "scripts.core_pure.injector.sincronizador_harness": f"{PECA_INJETOR}/core/injector/sincronizador_harness.py",
     }
     for nome_modulo, nome_peca in modulos.items():
         modulo = sys.modules.get(nome_modulo)
@@ -182,20 +182,20 @@ def test_modulos_do_injetor_sao_carregados_da_peca_do_almoxarifado():
 
 def test_ancoras_de_caminho_da_peca_apontam_para_o_consumidor():
     """Peça relocável: âncoras `__file__` são reancoradas no consumidor."""
-    pecas = _importar("scripts.core.pecas_catalogo", PURE_DIR / "scripts")
+    pecas = _importar("scripts.core_pure.pecas_catalogo", PURE_DIR / "scripts")
     pecas.registrar_injetor()
 
-    detector = sys.modules["scripts.core.injector.detector_camada"]
+    detector = sys.modules["scripts.core_pure.injector.detector_camada"]
     assert Path(detector._PHASES_DIR).resolve() == (PURE_DIR / "scripts" / "phases").resolve(), (
         "detector_camada._PHASES_DIR deve apontar para modulos/02-triade-motores/fluxo-01-pure/core/aidd-pure/scripts/phases"
     )
 
-    injetor = sys.modules["scripts.core.injector.injetor"]
+    injetor = sys.modules["scripts.core_pure.injector.injetor"]
     assert Path(injetor._default_ecossistema_root()).resolve() == ROOT_DIR.resolve(), (
         "_default_ecossistema_root() deve devolver a raiz do ecossistema"
     )
 
-    contrato = sys.modules["scripts.core.injector.contrato"]
+    contrato = sys.modules["scripts.core_pure.injector.contrato"]
     assert contrato.carregar_schema()["type"] == "object", (
         "o schema do injetor deve carregar a partir da peça do almoxarifado"
     )

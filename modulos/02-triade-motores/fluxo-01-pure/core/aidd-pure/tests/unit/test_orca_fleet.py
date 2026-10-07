@@ -14,11 +14,11 @@ from unittest.mock import patch
 
 import pytest
 
-# Path setup para importar scripts/core
+# Path setup para importar scripts/core_pure
 import sys
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent.parent / 'scripts'))
 
-from core.detector import (
+from core_pure.detector import (
     DetectorResultado,
     FerramentaDetectada,
     detectar_ferramentas,
@@ -28,7 +28,7 @@ from core.detector import (
     FERRAMENTAS_CONHECIDAS,
     ORCA_AMBIENTE_SINAIS,
 )
-from core.orca_fleet import (
+from core_pure.orca_fleet import (
     OrcaFleetStatus,
     gerar_inventory,
     inicializar_frota,
@@ -143,7 +143,7 @@ class TestDetectorResultado:
 # =============================================================================
 
 class TestDetectarFerramentas:
-    @patch('core.detector.shutil.which')
+    @patch('core_pure.detector.shutil.which')
     def test_detecta_claude(self, mock_which):
         def which_side(cmd):
             return '/usr/local/bin/claude' if cmd == 'claude' else None
@@ -153,7 +153,7 @@ class TestDetectarFerramentas:
         assert len(resultado) == 1
         assert resultado[0].nome == 'claude'
 
-    @patch('core.detector.shutil.which')
+    @patch('core_pure.detector.shutil.which')
     def test_detecta_multiplos_ordenados_por_prioridade(self, mock_which):
         def which_side(cmd):
             paths = {'claude': '/bin/claude', 'codex': '/bin/codex', 'ollama': '/bin/ollama'}
@@ -167,13 +167,13 @@ class TestDetectarFerramentas:
         assert resultado[1].nome == 'codex'
         assert resultado[2].nome == 'ollama'
 
-    @patch('core.detector.shutil.which')
+    @patch('core_pure.detector.shutil.which')
     def test_detecta_nenhum(self, mock_which):
         mock_which.return_value = None
         resultado = detectar_ferramentas()
         assert len(resultado) == 0
 
-    @patch('core.detector.shutil.which')
+    @patch('core_pure.detector.shutil.which')
     def test_detecta_agy_por_alias(self, mock_which):
         """agy pode ser encontrado como 'agy' ou 'antigravity'."""
         def which_side(cmd):
@@ -184,7 +184,7 @@ class TestDetectarFerramentas:
         nomes = [f.nome for f in resultado]
         assert 'agy' in nomes
 
-    @patch('core.detector.shutil.which')
+    @patch('core_pure.detector.shutil.which')
     def test_nao_duplica_agy(self, mock_which):
         """Se 'agy' ja foi encontrado, nao testa 'antigravity'."""
         chamados = []
@@ -225,8 +225,8 @@ class TestDetectarOrcaAde:
 
 
 class TestDeteccaoCompleta:
-    @patch('core.detector.detectar_orca_ade')
-    @patch('core.detector.detectar_ferramentas')
+    @patch('core_pure.detector.detectar_orca_ade')
+    @patch('core_pure.detector.detectar_ferramentas')
     def test_resultado_completo(self, mock_ferr, mock_orca):
         mock_ferr.return_value = [_make_ferramenta('claude')]
         mock_orca.return_value = True
@@ -389,14 +389,14 @@ class TestGerarInventory:
 # =============================================================================
 
 class TestInicializarFrota:
-    @patch('core.orca_fleet.executar_deteccao_completa')
+    @patch('core_pure.orca_fleet.executar_deteccao_completa')
     def test_retorna_fleet_status(self, mock_detec, resultado_multiplas):
         mock_detec.return_value = resultado_multiplas
 
         fleet = inicializar_frota(gerar_json=False)
         assert fleet.modo == 'multi-agente'
 
-    @patch('core.orca_fleet.executar_deteccao_completa')
+    @patch('core_pure.orca_fleet.executar_deteccao_completa')
     def test_gera_json_por_default(self, mock_detec, resultado_multiplas, tmp_path):
         mock_detec.return_value = resultado_multiplas
         destino = tmp_path / '.orca' / '01_orca_inventory.json'
@@ -404,7 +404,7 @@ class TestInicializarFrota:
         inicializar_frota(gerar_json=True, destino_json=destino)
         assert destino.exists()
 
-    @patch('core.orca_fleet.executar_deteccao_completa')
+    @patch('core_pure.orca_fleet.executar_deteccao_completa')
     def test_override_passado_para_resolver(self, mock_detec, resultado_multiplas):
         mock_detec.return_value = resultado_multiplas
 

@@ -36,7 +36,7 @@ import urllib.request
 
 from typing import Any, Callable, Dict, List, Optional, Tuple
 
-from core.result import Result
+from core_ops.result import Result
 
 # Sigla da função HTTP injetável:
 #   http_fn(metodo: str, url: str, body: Optional[dict], headers: dict, timeout: float)

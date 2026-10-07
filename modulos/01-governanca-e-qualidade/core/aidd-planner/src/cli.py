@@ -31,7 +31,7 @@ try:
         pecas_disponiveis,
     )
 except ImportError:
-    from src.core.planner_engine import (
+    from src.core_planner.planner_engine import (
         PlannerValidationError,
         validar_plano,
         gerar_template_plano,
@@ -39,7 +39,7 @@ except ImportError:
         exportar_para_pipeline_execucao,
         compilar_grafo_topologico_vsa,
     )
-    from src.core.planta import (
+    from src.core_planner.planta import (
         HANDOFF_C2_NOME,
         PlantaValidationError,
         carregar_handoff_c1,
@@ -108,7 +108,7 @@ def cmd_init(args: argparse.Namespace) -> int:
         from ui_reference_resolver import resolver_referencia_ui
     except ImportError:
         _planner_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-        sys.path.insert(0, os.path.join(_planner_root, "src", "core"))
+        sys.path.insert(0, os.path.join(_planner_root, "src", "core_planner"))
         from design_system import gerar_design_system
         from ui_reference_resolver import resolver_referencia_ui
 

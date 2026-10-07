@@ -22,7 +22,7 @@ if _PLANNER_ROOT not in sys.path:
 if _ECOSSISTEMA_ROOT not in sys.path:
     sys.path.insert(0, _ECOSSISTEMA_ROOT)
 
-from src.core.planner_engine import validar_plano
+from src.core_planner.planner_engine import validar_plano
 
 
 def resolver_caminho_plano(alvo: str) -> str:

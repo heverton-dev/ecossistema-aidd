@@ -44,7 +44,7 @@ if _scripts_atual is not None and str(TOOL_DIR / 'scripts') not in list(
 # almoxarifado (dono: aidd-enterprise). O aidd-pure consome a peca no nome
 # canonico em vez de guardar copia local, entao as suites que importam esses
 # nomes sao servidas pela peca do catalogo.
-from scripts.core import pecas_catalogo as _pecas_catalogo
+from scripts.core_pure import pecas_catalogo as _pecas_catalogo
 
 _pecas_catalogo.registrar_injetor()
 _pecas_catalogo.registrar_cli_injetor()

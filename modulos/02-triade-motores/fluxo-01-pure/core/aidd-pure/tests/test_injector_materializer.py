@@ -8,7 +8,7 @@ import os
 from pathlib import Path
 from unittest import mock
 
-from scripts.core.injector.materializador import materializar
+from scripts.core_pure.injector.materializador import materializar
 
 
 class TestMaterializacaoComSucesso:
@@ -71,7 +71,7 @@ class TestRollback:
                 raise OSError("falha de I/O simulada")
             return original_replace(src, dst)
 
-        with mock.patch("scripts.core.injector.materializador.os.replace", side_effect=replace_com_falha_na_segunda):
+        with mock.patch("scripts.core_pure.injector.materializador.os.replace", side_effect=replace_com_falha_na_segunda):
             resultado = materializar(tmp_path, arquivos)
 
         assert resultado.sucesso is False
@@ -90,7 +90,7 @@ class TestRollback:
                 raise OSError("falha simulada")
             return original_replace(src, dst)
 
-        with mock.patch("scripts.core.injector.materializador.os.replace", side_effect=replace_com_falha_na_segunda):
+        with mock.patch("scripts.core_pure.injector.materializador.os.replace", side_effect=replace_com_falha_na_segunda):
             materializar(tmp_path, {
                 "mcps/x/server.py": "# a",
                 "mcps/x/extra.py": "# b",
@@ -111,7 +111,7 @@ class TestRollback:
                 raise OSError("falha simulada")
             return original_replace(src, dst)
 
-        with mock.patch("scripts.core.injector.materializador.os.replace", side_effect=replace_com_falha_na_primeira):
+        with mock.patch("scripts.core_pure.injector.materializador.os.replace", side_effect=replace_com_falha_na_primeira):
             materializar(tmp_path, {"rules/nova.md": "novo"}, force=True)
 
         assert (tmp_path / "rules" / "existente.md").read_text(encoding="utf-8") == "nao mexer"

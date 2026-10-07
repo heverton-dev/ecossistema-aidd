@@ -17,7 +17,7 @@ import pytest
 PROJECT_ROOT = Path(__file__).resolve().parent.parent.parent
 sys.path.insert(0, str(PROJECT_ROOT))
 
-from scripts.core.caveman_linter import (
+from scripts.core_pure.caveman_linter import (
     lint_file,
     lint_directory,
     lint_single_prompt,

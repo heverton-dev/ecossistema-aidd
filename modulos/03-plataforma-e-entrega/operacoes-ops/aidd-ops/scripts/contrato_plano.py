@@ -27,7 +27,7 @@ _SCRIPTS_DIR = os.path.dirname(os.path.abspath(__file__))
 _TOOL_ROOT = os.path.dirname(_SCRIPTS_DIR)
 sys.path.insert(0, os.path.join(_TOOL_ROOT, "src"))
 
-from core.result import Result  # noqa: E402
+from core_ops.result import Result  # noqa: E402
 
 from jsonschema import ValidationError, validate  # noqa: E402
 

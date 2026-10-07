@@ -108,11 +108,11 @@ class OpsMvpGate:
 
         # Verificar arquivos core
         arquivos_necessarios = [
-            os.path.join("src", "core", "result.py"),
+            os.path.join("src", "core_ops", "result.py"),
             os.path.join("scripts", "pipeline_ops.py"),
-            os.path.join("scripts", "phases", "01_intake.py"),
-            os.path.join("scripts", "phases", "02_curadoria.py"),
-            os.path.join("scripts", "phases", "03_sizing.py"),
+            os.path.join("scripts", "phases_ops", "01_intake.py"),
+            os.path.join("scripts", "phases_ops", "02_curadoria.py"),
+            os.path.join("scripts", "phases_ops", "03_sizing.py"),
         ]
         for rel in arquivos_necessarios:
             caminho = os.path.join(TOOL_ROOT, rel)

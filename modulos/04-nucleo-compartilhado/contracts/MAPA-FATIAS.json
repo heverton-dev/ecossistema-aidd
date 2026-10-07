@@ -1,0 +1,36 @@
+{
+  "versao": 1,
+  "descricao": "Fonte unica das 7 fatias verticais: pasta da fatia e pastas das ferramentas (relativas a fatia). Lido por tests/test_interfaces_fatias.py e pelo G_MODULO_FRONTEIRA.",
+  "raizes_import": ["", "src", "scripts"],
+  "caixas_de_layout": ["src", "scripts", "tests"],
+  "fatias": {
+    "01-governanca-e-qualidade": {
+      "caminho": "modulos/01-governanca-e-qualidade",
+      "ferramentas": ["core/aidd-forge", "core/aidd-planner"]
+    },
+    "fluxo-01-pure": {
+      "caminho": "modulos/02-triade-motores/fluxo-01-pure",
+      "ferramentas": ["core/aidd-pure"]
+    },
+    "fluxo-02-open": {
+      "caminho": "modulos/02-triade-motores/fluxo-02-open",
+      "ferramentas": ["core/aidd-open"]
+    },
+    "fluxo-03-freedom": {
+      "caminho": "modulos/02-triade-motores/fluxo-03-freedom",
+      "ferramentas": ["core/aidd-freedom"]
+    },
+    "blindagem-enterprise": {
+      "caminho": "modulos/03-plataforma-e-entrega/blindagem-enterprise",
+      "ferramentas": ["aidd-enterprise"]
+    },
+    "fatiamento-master": {
+      "caminho": "modulos/03-plataforma-e-entrega/fatiamento-master",
+      "ferramentas": ["aidd-master"]
+    },
+    "operacoes-ops": {
+      "caminho": "modulos/03-plataforma-e-entrega/operacoes-ops",
+      "ferramentas": ["aidd-ops"]
+    }
+  }
+}

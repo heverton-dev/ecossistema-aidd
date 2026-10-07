@@ -8,11 +8,11 @@ neste projeto, seguindo a Seção 5 do plano mestre ORCA 3
 (PLANO-ORQUESTRACAO-ORCA3-UNIVERSAL-INJECTOR.md).
 
 Uso programatico:
-    from scripts.core.injector.injetor import injetar
+    from scripts.core_pure.injector.injetor import injetar
 
     resultado = injetar(nome="minha-skill", descricao="...", tipo="skill")
 """
 
-from scripts.core.injector.injetor import ResultadoInjecao, injetar
+from scripts.core_pure.injector.injetor import ResultadoInjecao, injetar
 
 __all__ = ["injetar", "ResultadoInjecao"]

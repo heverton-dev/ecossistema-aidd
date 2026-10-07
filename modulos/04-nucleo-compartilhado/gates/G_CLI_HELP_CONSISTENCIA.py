@@ -68,7 +68,7 @@ ARQUIVOS_AUDITADOS = [
     "modulos/02-triade-motores/fluxo-01-pure/core/aidd-pure/scripts/phases/06_documentador.py",
     "modulos/02-triade-motores/fluxo-01-pure/core/aidd-pure/scripts/phases/07_analisador.py",
     "modulos/02-triade-motores/fluxo-01-pure/core/aidd-pure/scripts/phases/08_implementador.py",
-    "modulos/02-triade-motores/fluxo-01-pure/core/aidd-pure/scripts/core/caveman_linter.py",
+    "modulos/02-triade-motores/fluxo-01-pure/core/aidd-pure/scripts/core_pure/caveman_linter.py",
     "modulos/02-triade-motores/fluxo-01-pure/core/aidd-pure/scripts/gates/G_INTEGRACAO_CROSS_SCRIPT.py",
     "componentes/compartilhado/gates/G_CYBERSECURITY_OWASP.py",
     "modulos/02-triade-motores/fluxo-01-pure/core/aidd-pure/scripts/gates/AUDITAR_COMPARATIVO_HARNESS.py",

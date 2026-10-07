@@ -13,7 +13,7 @@ _SCRIPTS_DIR = Path(__file__).resolve().parent.parent / 'scripts'
 sys.path.insert(0, str(_SCRIPTS_DIR))
 
 import aidd_inject
-from scripts.core.injector import injetor as _injetor_mod
+from scripts.core_pure.injector import injetor as _injetor_mod
 
 
 @pytest.fixture(autouse=True)

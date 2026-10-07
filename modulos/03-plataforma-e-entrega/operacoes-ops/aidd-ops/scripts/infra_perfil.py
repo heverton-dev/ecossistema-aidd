@@ -53,7 +53,7 @@ for _p in (os.path.join(_TOOL_ROOT, "src"), _FORGE_DIR):
     if _p not in sys.path:
         sys.path.insert(0, _p)
 
-from core.result import Result  # noqa: E402
+from core_ops.result import Result  # noqa: E402
 from aidd_forge.core.almoxarifado import carregar_catalogo, obter_peca  # noqa: E402
 
 ENTRADA_C2 = "HANDOFF_PLANNER_ENGINE.json"

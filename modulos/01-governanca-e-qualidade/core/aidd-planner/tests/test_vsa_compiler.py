@@ -19,7 +19,7 @@ if _PLANNER_DIR not in sys.path:
 if _ECOSSISTEMA_DIR not in sys.path:
     sys.path.insert(0, _ECOSSISTEMA_DIR)
 
-from src.core.planner_engine import (
+from src.core_planner.planner_engine import (
     gerar_template_plano,
     compilar_grafo_topologico_vsa,
     PlannerValidationError,

@@ -118,7 +118,7 @@ def _parsear_resposta_codegen(conteudo: str) -> Any:
 # Import do core via pacote (modo serviço/pipeline) com fallback bare
 # (execução direta da fase) e sentinel quando o repomix não está disponível.
 try:
-    from core.repomix_runner import empacotar_repositorio, repomix_disponivel, comparar_empacotamento_tokens
+    from core_pure.repomix_runner import empacotar_repositorio, repomix_disponivel, comparar_empacotamento_tokens
 except ImportError:
     try:
         from repomix_runner import empacotar_repositorio, repomix_disponivel, comparar_empacotamento_tokens

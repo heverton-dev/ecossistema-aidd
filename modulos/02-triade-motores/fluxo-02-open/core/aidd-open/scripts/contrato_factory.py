@@ -23,7 +23,7 @@ _FACTORY_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, os.path.join(_FACTORY_ROOT, "src"))
 sys.path.insert(0, os.path.join(_achar_raiz_repo(_FACTORY_ROOT), "componentes", "compartilhado", "src-core"))
 
-from core.result import Result
+from core_open.result import Result
 
 _SCHEMAS_DIR = os.path.join(_FACTORY_ROOT, "schemas")
 

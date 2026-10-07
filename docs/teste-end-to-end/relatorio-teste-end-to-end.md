@@ -1442,3 +1442,21 @@
   - `tests/test_mapa_gates.py` e `tests/test_gates_raiz_extinta.py` → exit 1 antes, exit 0 depois.
 - **Status:** **RESOLVIDO**.
 - **Data da Última Auditoria:** 07/10/2026.
+
+## 44. Modularização VSA ciclo-03, Bloco 4 (Ticket 10): interface pública por fatia e fim da colisão de pacote
+
+- **Objetivo da Correção:**
+  Cada uma das 7 fatias ganha `interface.py` com `__all__` (o único ponto que outras fatias podem usar) e nenhum pacote importável repete nome entre fatias. Decisão do usuário (07/10, opção B): as caixas de layout `src`, `scripts` e `tests` não contam; a cópia enterprise × master fica numa allowlist datada que só diminui.
+- **Ferramentas Tocadas:** aidd-planner (`src/core` → `src/core_planner`), aidd-pure (`scripts/core` → `scripts/core_pure`, mais a variante do injetor no almoxarifado e o sha no `CATALOGO.json`), aidd-open (`src/core` → `src/core_open`, `scripts/phases` → `scripts/phases_open`), aidd-ops (`src/core` → `src/core_ops`, `scripts/phases` → `scripts/phases_ops`), aidd-forge (exposto pela interface da fatia 01).
+- **O que executou:**
+  1. `modulos/04-nucleo-compartilhado/contracts/MAPA-FATIAS.json`: fonte única das 7 fatias e das raízes de import.
+  2. 7 `interface.py`: fatia 01 expõe `obter_peca`, `caminho_peca`, `RAIZ_FORGE`, `RAIZ_PLANNER`; ops expõe raiz, scripts, fases, `templates/infra`, nichos e `requisitos_recursos.json`; as demais expõem a raiz da ferramenta.
+  3. 99 imports trocados por AST (o código de projeto gerado dentro de strings, como o `src/core` do Shared Kernel, ficou intacto) + caminhos em gates, testes, allowlist de fronteira e manifesto.
+  4. `allowlist_pacotes_repetidos.json`: `alembic`, `application`, `core`, `modules` e `shared` entre enterprise e master (src difere em 6 arquivos: duplicação a resolver em ticket próprio).
+  5. Achado: `G_OPS_MVP` imprime "BLOQUEADO" e sai com exit 0 (gate que não morde).
+- **Resultados de Testes (07/10/2026, rodados de dentro de cada pasta em `modulos/`):**
+  - `tests/test_interfaces_fatias.py` → exit 1 antes (16 falhas), exit 0 depois (16 passed).
+  - planner 48, open 21, ops 198, pure 1016 (5 skipped), forge 310 (1 skipped): iguais à linha de base, todos exit 0.
+  - pure `test_fronteira_generator.py` + open `test_fronteira_factory.py` no mesmo processo: exit 2 antes (`core` do pure), exit 0 depois (12 passed).
+- **Status:** **RESOLVIDO**.
+- **Data da Última Auditoria:** 07/10/2026.

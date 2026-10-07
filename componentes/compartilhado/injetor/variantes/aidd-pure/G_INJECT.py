@@ -29,9 +29,9 @@ _ROOT = Path(__file__).resolve().parent.parent.parent
 if str(_ROOT) not in sys.path:
     sys.path.insert(0, str(_ROOT))
 
-from scripts.core.injector.contrato import validar_request, carregar_schema, TIPOS_VALIDOS
-from scripts.core.injector.profiles_registry import PROFILES, resolver_rota
-from scripts.core.injector.materializador import materializar
+from scripts.core_pure.injector.contrato import validar_request, carregar_schema, TIPOS_VALIDOS
+from scripts.core_pure.injector.profiles_registry import PROFILES, resolver_rota
+from scripts.core_pure.injector.materializador import materializar
 
 
 def _checar_schema() -> bool:
@@ -128,7 +128,7 @@ def _checar_materializacao_e_rollback() -> bool:
                 raise OSError("falha de I/O simulada para provar o rollback")
             return os_replace_original(src, dst)
 
-        with mock.patch("scripts.core.injector.materializador.os.replace", side_effect=_replace_com_falha_na_segunda_chamada):
+        with mock.patch("scripts.core_pure.injector.materializador.os.replace", side_effect=_replace_com_falha_na_segunda_chamada):
             resultado = materializar(root, arquivos)
 
         if resultado.sucesso:

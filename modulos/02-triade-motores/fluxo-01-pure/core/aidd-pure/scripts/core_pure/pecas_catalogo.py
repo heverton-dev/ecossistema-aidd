@@ -55,10 +55,10 @@ from aidd_forge.core.almoxarifado import caminho_peca  # noqa: E402
 # =============================================================================
 
 PECA_INJETOR = 'injetor/variantes/aidd-pure'
-PKG_INJETOR = 'scripts.core.injector'
+PKG_INJETOR = 'scripts.core_pure.injector'
 
 # Ordem importa: as folhas entram antes dos modulos que as importam, porque a
-# peca usa imports absolutos `from scripts.core.injector.<modulo> import ...`.
+# peca usa imports absolutos `from scripts.core_pure.injector.<modulo> import ...`.
 MODULOS_INJETOR = (
     'contrato',
     'detector_camada',
@@ -136,11 +136,11 @@ def reancorar_modulo(modulo: types.ModuleType) -> None:
 
 
 def registrar_injetor() -> types.ModuleType:
-    """Registra `scripts.core.injector.*` a partir da peca do almoxarifado.
+    """Registra `scripts.core_pure.injector.*` a partir da peca do almoxarifado.
 
     Idempotente. Retorna o modulo de pacote do injetor.
     """
-    import scripts.core as core
+    import scripts.core_pure as core
 
     caminho_init = caminho_modulo_injetor('__init__')
     if caminho_init.parent.name != 'injector':

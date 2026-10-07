@@ -1,0 +1,35 @@
+{
+  "descricao": "Pacotes com o mesmo nome em fatias diferentes, perdoados com data. So pode diminuir (tests/test_interfaces_fatias.py reprova entrada morta).",
+  "entradas": [
+    {
+      "pacote": "alembic",
+      "fatias": ["blindagem-enterprise", "fatiamento-master"],
+      "data": "2026-10-07",
+      "motivo": "aidd-master e copia quase integral do aidd-enterprise (src difere em 6 arquivos); resolver junto com a duplicacao, em ticket proprio."
+    },
+    {
+      "pacote": "application",
+      "fatias": ["blindagem-enterprise", "fatiamento-master"],
+      "data": "2026-10-07",
+      "motivo": "aidd-master e copia quase integral do aidd-enterprise (src difere em 6 arquivos); resolver junto com a duplicacao, em ticket proprio."
+    },
+    {
+      "pacote": "core",
+      "fatias": ["blindagem-enterprise", "fatiamento-master"],
+      "data": "2026-10-07",
+      "motivo": "aidd-master e copia quase integral do aidd-enterprise (src difere em 6 arquivos); resolver junto com a duplicacao, em ticket proprio."
+    },
+    {
+      "pacote": "modules",
+      "fatias": ["blindagem-enterprise", "fatiamento-master"],
+      "data": "2026-10-07",
+      "motivo": "aidd-master e copia quase integral do aidd-enterprise (src difere em 6 arquivos); resolver junto com a duplicacao, em ticket proprio."
+    },
+    {
+      "pacote": "shared",
+      "fatias": ["blindagem-enterprise", "fatiamento-master"],
+      "data": "2026-10-07",
+      "motivo": "aidd-master e copia quase integral do aidd-enterprise (src difere em 6 arquivos); resolver junto com a duplicacao, em ticket proprio."
+    }
+  ]
+}

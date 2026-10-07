@@ -24,7 +24,7 @@ PIPELINE_SCRIPT = os.path.join(TOOL_ROOT, "scripts", "pipeline_ops.py")
 sys.path.insert(0, TOOL_ROOT)
 sys.path.insert(0, os.path.join(TOOL_ROOT, "src"))
 
-from src.core.coolify import CoolifyClient, CoolifyManager  # noqa: E402
+from src.core_ops.coolify import CoolifyClient, CoolifyManager  # noqa: E402
 
 TOKEN_TESTE = "teste-token-abc-123"
 

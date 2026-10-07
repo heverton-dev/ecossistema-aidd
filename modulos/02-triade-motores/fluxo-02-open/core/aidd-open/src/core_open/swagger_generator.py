@@ -21,7 +21,7 @@ def _achar_raiz_repo(inicio: str) -> str:
     return os.path.abspath(inicio)
 
 sys.path.insert(0, os.path.join(_achar_raiz_repo(os.path.dirname(__file__)), "componentes", "compartilhado", "src-core"))
-from core.result import Result
+from core_open.result import Result
 
 
 
@@ -60,7 +60,7 @@ def gerar_swagger(analysis: dict, pasta_saida: str) -> Result:
 
     # openapi.json.j2 vem do almoxarifado (Bloco 4: a cópia em templates/docs saiu);
     # README.md.j2 é só do aidd-open e continua em templates/docs.
-    from core.vsa_generator import obter_molde_vsa
+    from core_open.vsa_generator import obter_molde_vsa
     molde_openapi = obter_molde_vsa("openapi.json.j2")
     docs_locais = os.path.join(os.path.dirname(__file__), "..", "..", "templates", "docs")
     env = Environment(loader=FileSystemLoader([os.path.dirname(molde_openapi), docs_locais]))

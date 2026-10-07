@@ -46,7 +46,7 @@ def _carregar_modulo(nome: str, caminho: Path):
 
 def _caminho_gate_catalogo(nome: str) -> Path:
     """Gate de projeto que é peça do almoxarifado (Bloco 4: as cópias em gates/ saíram)."""
-    from scripts.core import pecas_catalogo
+    from scripts.core_pure import pecas_catalogo
 
     return pecas_catalogo.caminho_gate_catalogo(nome)
 
@@ -119,7 +119,7 @@ def _gate_inject(pasta: Path) -> int:
     aidd-pure não guarda cópia. As âncoras de caminho da peça são reancoradas
     no consumidor pelo carregador.
     """
-    from scripts.core import pecas_catalogo
+    from scripts.core_pure import pecas_catalogo
 
     pecas_catalogo.registrar_injetor()
     mod = _carregar_modulo('G_INJECT', pecas_catalogo.caminho_gate_injetor())

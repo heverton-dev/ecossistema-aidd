@@ -25,7 +25,7 @@ def _achar_raiz_repo() -> str:
 sys.path.insert(0, os.path.join(_FACTORY_ROOT, "src"))
 sys.path.insert(0, os.path.join(_achar_raiz_repo(), "componentes", "compartilhado", "src-core"))
 
-from core.result import Result
+from core_open.result import Result
 
 def _achar_aidd_ops_root() -> str:
     # 1. Dentro de modulos/03-plataforma-e-entrega/operacoes-ops/aidd-ops
@@ -49,7 +49,7 @@ _REQUISITOS_PATH = os.path.join(_AIDD_OPS_ROOT, "data", "requisitos_recursos.jso
 # 01_intake.eh_nicho_dinamico) em vez de duplicar o prefixo "dinamico_"
 # aqui. Precedente ja existente neste arquivo: _AIDD_OPS_ROOT acima ja le
 # templates/data de aidd-ops diretamente.
-sys.path.insert(0, os.path.join(_AIDD_OPS_ROOT, "scripts", "phases"))
+sys.path.insert(0, os.path.join(_AIDD_OPS_ROOT, "scripts", "phases_ops"))
 from importlib import import_module as _imod  # noqa: E402
 _mod_intake_ops = _imod("01_intake")
 

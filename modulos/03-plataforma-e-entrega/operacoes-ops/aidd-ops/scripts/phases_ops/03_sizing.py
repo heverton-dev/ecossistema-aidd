@@ -20,7 +20,7 @@ import sys
 from typing import Any, Dict, List
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "..", "src"))
-from core.result import Result
+from core_ops.result import Result
 
 _DATA_DIR = os.path.join(os.path.dirname(__file__), "..", "..", "data")
 

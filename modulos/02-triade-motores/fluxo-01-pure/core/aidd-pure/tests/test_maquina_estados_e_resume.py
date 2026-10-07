@@ -19,7 +19,7 @@ import pytest
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(PROJECT_ROOT / "scripts"))
 
-from core.pipeline_state import (
+from core_pure.pipeline_state import (
     PipelineStateManager,
     ler_cache_com_validacao,
     PipelineCorrompidoError,
