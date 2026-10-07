@@ -1,1 +1,0 @@
-# Skill: validador-contratos\nValidates JSON payloads against schemas.

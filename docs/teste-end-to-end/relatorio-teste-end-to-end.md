@@ -1407,3 +1407,21 @@
   - `tests/test_sem_referencia_tools.py` → exit 0; `python ecossistema.py components verify` → exit 0.
 - **Status:** **RESOLVIDO** (remoção de `tools/` no Ticket 5).
 - **Data da Última Auditoria:** 06/10/2026.
+
+## 42. Modularização VSA ciclo-03, Bloco 2 (Tickets 5 e 6): fim de `tools/` e lixo fora de `modulos/`
+
+- **Objetivo da Correção:**
+  Remover `tools/aidd-*` (decisão A, conteúdo único já reconciliado no Ticket 3) e tirar do git o lixo versionado e as pastas casca de `modulos/`.
+- **Ferramentas Tocadas:** aidd-forge (`sandbox-forge-teste/`, `secoes/`), aidd-pure (`secoes/`, `output-clinica/.aidd/cache/`), aidd-enterprise (`materiais-extras/`, `secoes/`).
+- **O que executou:**
+  1. `git rm` de 1.860 arquivos em `tools/aidd-*`; `tools/LEIA-ME.md` aponta cada caminho antigo para o canônico.
+  2. `inventario_capacidades.py comparar --aceitos ORFAOS-ACEITOS.json`: 579 linhas justificadas (373 dívida anterior à tag `pre-vsa-ciclo-03`, 206 caminhos renomeados), 0 função/classe/teste perdido.
+  3. `materiais-extras/` (635 arquivos) arquivada em `C:\Users\trcnologia\arquivo-historico\aidd-enterprise-materiais-extras` com contagem conferida 635/635 e removida; 60 entradas mortas saíram de `gates/allowlist_fronteira.json`.
+  4. 5 registros `secoes/` internos movidos para `docs/secoes/`; 18 pastas só com `__init__.py` removidas; `CATALOGO.json` sem as 8 cópias que moravam em `sandbox-forge-teste/`.
+  5. Achado real: os testes do aidd-pure gravam `.aidd/cache/_llm_request_*.json` dentro de `modulos/` (barrado por `.gitignore`; correção dos testes fica como dívida).
+- **Resultados de Testes (07/10/2026, rodados de dentro de cada pasta em `modulos/`):**
+  - Ticket 5, bateria completa: 8 ferramentas 2423 passed + `tests` 1054 passed = 3477 passed, 0 failed (baseline 3463).
+  - Ticket 6: forge 310 passed, 1 skipped · pure 1016 passed, 5 skipped · enterprise 341 passed, 3 skipped (todas exit 0).
+  - `tests/test_modulos_sem_lixo.py` → exit 1 antes, exit 0 depois; `G_FRONTEIRA_FERRAMENTAS` e `G_DRIFT_NUCLEO_COMPARTILHADO` → exit 0.
+- **Status:** **RESOLVIDO**.
+- **Data da Última Auditoria:** 07/10/2026.

@@ -144,8 +144,7 @@
         "aidd-forge"
       ],
       "copias": [
-        "modulos/01-governanca-e-qualidade/core/aidd-forge/aidd_forge/templates/gates/G_ESTRUTURA_AST.py",
-        "modulos/01-governanca-e-qualidade/core/aidd-forge/sandbox-forge-teste/gates/G_ESTRUTURA_AST.py"
+        "modulos/01-governanca-e-qualidade/core/aidd-forge/aidd_forge/templates/gates/G_ESTRUTURA_AST.py"
       ],
       "base": "aidd-forge templates/gates 3345ce5 2026-09-03"
     },
@@ -309,8 +308,7 @@
         "aidd-forge"
       ],
       "copias": [
-        "modulos/01-governanca-e-qualidade/core/aidd-forge/aidd_forge/templates/gates/G_TESTES_REAIS.py",
-        "modulos/01-governanca-e-qualidade/core/aidd-forge/sandbox-forge-teste/gates/G_TESTES_REAIS.py"
+        "modulos/01-governanca-e-qualidade/core/aidd-forge/aidd_forge/templates/gates/G_TESTES_REAIS.py"
       ],
       "base": "aidd-forge templates/gates 3345ce5 2026-09-03"
     },
@@ -327,8 +325,7 @@
         "aidd-forge"
       ],
       "copias": [
-        "modulos/01-governanca-e-qualidade/core/aidd-forge/aidd_forge/templates/gates/G_BLOQUEAR_SEGREDOS.py",
-        "modulos/01-governanca-e-qualidade/core/aidd-forge/sandbox-forge-teste/gates/G_BLOQUEAR_SEGREDOS.py"
+        "modulos/01-governanca-e-qualidade/core/aidd-forge/aidd_forge/templates/gates/G_BLOQUEAR_SEGREDOS.py"
       ],
       "variante_de": "gates/G_BLOQUEAR_SEGREDOS.py",
       "tipo_variante": "implementacao_independente",
@@ -347,8 +344,7 @@
         "aidd-forge"
       ],
       "copias": [
-        "modulos/01-governanca-e-qualidade/core/aidd-forge/aidd_forge/templates/gates/G_CONTRACTS.py",
-        "modulos/01-governanca-e-qualidade/core/aidd-forge/sandbox-forge-teste/gates/G_CONTRACTS.py"
+        "modulos/01-governanca-e-qualidade/core/aidd-forge/aidd_forge/templates/gates/G_CONTRACTS.py"
       ],
       "variante_de": "gates/G_CONTRACTS.py",
       "tipo_variante": "implementacao_independente",
@@ -367,8 +363,7 @@
         "aidd-forge"
       ],
       "copias": [
-        "modulos/01-governanca-e-qualidade/core/aidd-forge/aidd_forge/templates/gates/G_CYBERSECURITY_OWASP.py",
-        "modulos/01-governanca-e-qualidade/core/aidd-forge/sandbox-forge-teste/gates/G_CYBERSECURITY_OWASP.py"
+        "modulos/01-governanca-e-qualidade/core/aidd-forge/aidd_forge/templates/gates/G_CYBERSECURITY_OWASP.py"
       ],
       "variante_de": "gates/G_CYBERSECURITY_OWASP.py",
       "tipo_variante": "implementacao_independente",
@@ -387,8 +382,7 @@
         "aidd-forge"
       ],
       "copias": [
-        "modulos/01-governanca-e-qualidade/core/aidd-forge/aidd_forge/templates/gates/G_HARNESS_COMPAT.py",
-        "modulos/01-governanca-e-qualidade/core/aidd-forge/sandbox-forge-teste/gates/G_HARNESS_COMPAT.py"
+        "modulos/01-governanca-e-qualidade/core/aidd-forge/aidd_forge/templates/gates/G_HARNESS_COMPAT.py"
       ],
       "variante_de": "gates/G_HARNESS_COMPAT.py",
       "tipo_variante": "implementacao_independente",
@@ -407,8 +401,7 @@
         "aidd-forge"
       ],
       "copias": [
-        "modulos/01-governanca-e-qualidade/core/aidd-forge/aidd_forge/templates/gates/G_PERFORMANCE.py",
-        "modulos/01-governanca-e-qualidade/core/aidd-forge/sandbox-forge-teste/gates/G_PERFORMANCE.py"
+        "modulos/01-governanca-e-qualidade/core/aidd-forge/aidd_forge/templates/gates/G_PERFORMANCE.py"
       ],
       "variante_de": "gates/G_PERFORMANCE.py",
       "tipo_variante": "implementacao_independente",
@@ -580,8 +573,7 @@
         "aidd-forge"
       ],
       "copias": [
-        "modulos/01-governanca-e-qualidade/core/aidd-forge/aidd_forge/templates/gates/G_INJECT.py",
-        "modulos/01-governanca-e-qualidade/core/aidd-forge/sandbox-forge-teste/gates/G_INJECT.py"
+        "modulos/01-governanca-e-qualidade/core/aidd-forge/aidd_forge/templates/gates/G_INJECT.py"
       ],
       "variante_de": "injetor/G_INJECT.py",
       "tipo_variante": "implementacao_independente",

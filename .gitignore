@@ -151,3 +151,9 @@ secoes/medicoes/
 
 
 
+
+# VSA ciclo-03 T6: lixo que nao volta para modulos/
+sandbox-forge-teste/
+_destino_teste*/
+materiais-extras/
+modulos/**/.aidd/cache/
