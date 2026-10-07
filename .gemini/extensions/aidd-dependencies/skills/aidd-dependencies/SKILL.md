@@ -1,6 +1,6 @@
 ---
 name: aidd-dependencies
-description: Registers, installs and verifies third-party skills and MCP servers the agent itself uses in this repository (e.g. impeccable, Cloudflare skills, Playwright, GitHub) through gates/dependencias_externas.json. Use when the user wants to bootstrap after a clone, add a third-party skill or MCP, or says "/dependencia", "dependência", "instalar skill de terceiro", "adicionar MCP". Not for MCPs that ship inside a generated product (that is aidd-mcp).
+description: Registers, installs and verifies third-party skills and MCP servers the agent itself uses in this repository (e.g. impeccable, Cloudflare skills, Playwright, GitHub) through modulos/04-nucleo-compartilhado/contracts/dependencias_externas.json. Use when the user wants to bootstrap after a clone, add a third-party skill or MCP, or says "/dependencia", "dependência", "instalar skill de terceiro", "adicionar MCP". Not for MCPs that ship inside a generated product (that is aidd-mcp).
 ---
 
 # aidd-dependencies
@@ -36,7 +36,7 @@ If the first `--args` value starts with `-` (e.g. `-y,package@latest`), always w
 
 ## Negative Guardrails
 
-- NEVER write a secret value into `gates/dependencias_externas.json`, `.mcp.json`, `opencode.jsonc` or `.env.example`; `--env` takes variable names only (`GITHUB_TOKEN`), and `G_SEGREDOS` scans those files.
+- NEVER write a secret value into `modulos/04-nucleo-compartilhado/contracts/dependencias_externas.json`, `.mcp.json`, `opencode.jsonc` or `.env.example`; `--env` takes variable names only (`GITHUB_TOKEN`), and `G_SEGREDOS` scans those files.
 - NEVER register an LLM provider key or an LLM-gateway MCP as a dependency to make a step work: the model is always the running harness.
 - NEVER hand-edit `.mcp.json`, `.cursor/mcp.json` or `.gemini/settings.json` to add an MCP; use `dependencia add-mcp` so the manifest and every `DESTINOS_MCP` file stay in step.
 - NEVER commit the installer footprint of a third-party skill: always pass `--gitignore "*/skills/<name>/"` on `add-skill`.
@@ -54,4 +54,4 @@ If the first `--args` value starts with `-` (e.g. `-y,package@latest`), always w
 - [ ] `python ecossistema.py dependencia verify > dep_verify.txt 2>&1; echo $? > dep_verify.rc` holds `0`.
 - [ ] `python ecossistema.py dependencia list > dep_list.txt 2>&1; echo $? > dep_list.rc` holds `0` and shows the new entry installed or registered.
 - [ ] `git status --porcelain` shows no vendor skill folder (the `--gitignore` pattern landed in `.gitignore`).
-- [ ] `python gates/G_SEGREDOS.py > seg.txt 2>&1; echo $? > seg.rc` holds `0` after touching MCP configs.
+- [ ] `python modulos/04-nucleo-compartilhado/gates/G_SEGREDOS.py > seg.txt 2>&1; echo $? > seg.rc` holds `0` after touching MCP configs.

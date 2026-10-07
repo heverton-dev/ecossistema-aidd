@@ -50,7 +50,7 @@ def init_test_git_repo(repo_dir: Path) -> str:
     
     gates_target = repo_dir / "gates"
     gates_target.mkdir(parents=True, exist_ok=True)
-    gate_orig = ROOT_DIR / "gates" / "G_PIPELINE_HANDOFF.py"
+    gate_orig = ROOT_DIR / "modulos" / "04-nucleo-compartilhado" / "gates" / "G_PIPELINE_HANDOFF.py"
     if gate_orig.is_file():
         shutil.copy(gate_orig, gates_target / "G_PIPELINE_HANDOFF.py")
         

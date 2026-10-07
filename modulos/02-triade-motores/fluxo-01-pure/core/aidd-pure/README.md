@@ -42,7 +42,7 @@ O aidd-pure automatiza a criação de projetos seguindo 5 camadas:
 | 7 | Autocrítica e auditoria |
 | 8 | **(opcional)** Implementação funcional via LLM |
 
-A Fase 8 só roda quando você passa `--implementar-codigo`. Ela gera scripts Python funcionais com testes, usando LLM com loop de correção automático — e audita o próprio código gerado contra as regras de Clean Architecture (`gates/G_ARQUITETURA_DELIVERABLE.py`), tentando se autocorrigir quando encontra uma violação antes de reportar sucesso.
+A Fase 8 só roda quando você passa `--implementar-codigo`. Ela gera scripts Python funcionais com testes, usando LLM com loop de correção automático — e audita o próprio código gerado contra as regras de Clean Architecture (`modulos/03-plataforma-e-entrega/gates/G_ARQUITETURA_DELIVERABLE.py`), tentando se autocorrigir quando encontra uma violação antes de reportar sucesso.
 
 As fases vivem em `scripts/phases/` como um pacote Python formal (carregamento via `importlib`, sem manipulação manual de `sys.path`).
 

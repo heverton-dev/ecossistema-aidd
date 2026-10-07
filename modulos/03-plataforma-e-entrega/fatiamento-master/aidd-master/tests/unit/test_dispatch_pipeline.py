@@ -32,7 +32,7 @@ def _gerar_manifesto_vsa() -> dict:
                 "arquivos_esperados": ["src/slices/auth/router.py"],
                 "barreira_validacao": {
                     "comandos_teste": ["pytest tests/test_auth.py"],
-                    "quality_gates": ["python gates/G_SAIDA_BINARIA.py"]
+                    "quality_gates": ["python modulos/04-nucleo-compartilhado/gates/G_SAIDA_BINARIA.py"]
                 }
             },
             {
@@ -43,7 +43,7 @@ def _gerar_manifesto_vsa() -> dict:
                 "arquivos_esperados": ["src/slices/catalogo/router.py"],
                 "barreira_validacao": {
                     "comandos_teste": ["pytest tests/test_catalogo.py"],
-                    "quality_gates": ["python gates/G_SAIDA_BINARIA.py"]
+                    "quality_gates": ["python modulos/04-nucleo-compartilhado/gates/G_SAIDA_BINARIA.py"]
                 }
             },
             {
@@ -54,7 +54,7 @@ def _gerar_manifesto_vsa() -> dict:
                 "arquivos_esperados": ["src/slices/pedidos/router.py"],
                 "barreira_validacao": {
                     "comandos_teste": ["pytest tests/test_pedidos.py"],
-                    "quality_gates": ["python gates/G_SAIDA_BINARIA.py"]
+                    "quality_gates": ["python modulos/04-nucleo-compartilhado/gates/G_SAIDA_BINARIA.py"]
                 }
             }
         ],

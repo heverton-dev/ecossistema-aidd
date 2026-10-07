@@ -43,7 +43,7 @@ ROOT_DIR = Path(__file__).resolve().parent.parent
 DOCS_PLANOS_DIR = ROOT_DIR / "docs" / "planos"
 SPECS_DIR = ROOT_DIR / "componentes" / "compartilhado" / "specs"
 SCHEMA_CANONICO = SPECS_DIR / "handoff-execucao.schema.json"
-GATE_SCRIPT = ROOT_DIR / "gates" / "G_PIPELINE_HANDOFF.py"
+GATE_SCRIPT = ROOT_DIR / "modulos" / "04-nucleo-compartilhado" / "gates" / "G_PIPELINE_HANDOFF.py"
 
 PADRAO_STUB = re.compile(r"(?i)\b(TODO|FIXME|PLACEHOLDER|TBD|stub|dummy)\b")
 PADRAO_CMD_TRIVIAL = re.compile(r"^\s*(exit\s+0|echo\s+ok|true|pass)\s*$", re.IGNORECASE)
@@ -535,7 +535,7 @@ def particionar_fases(tickets_ordenados: List[Dict[str, Any]]) -> Tuple[List[Dic
 def compilar_plano(
     pasta_plano_arg: str | Path,
     output_path_arg: Optional[str | Path] = None,
-    barreira_gate_padrao: str = "gates/G_SAIDA_BINARIA.py",
+    barreira_gate_padrao: str = "modulos/04-nucleo-compartilhado/gates/G_SAIDA_BINARIA.py",
 ) -> Tuple[Dict[str, Any], Path]:
     """
     Compila determinísticamente um diretório de plano em manifesto handoff_evolution.json.
@@ -610,8 +610,8 @@ def compilar_plano(
 def validar_manifesto_com_gate(caminho_manifesto: Path) -> Tuple[bool, List[str]]:
     """Valida o manifesto compilado contra o Quality Gate G_PIPELINE_HANDOFF."""
     try:
-        sys.path.insert(0, str(ROOT_DIR))
-        from gates.G_PIPELINE_HANDOFF import auditar_manifesto
+        sys.path.insert(0, str(GATE_SCRIPT.parent))
+        from G_PIPELINE_HANDOFF import auditar_manifesto
         return auditar_manifesto(caminho_manifesto)
     except Exception as ex:
         return False, [f"Falha ao executar auditoria de gate: {ex}"]
@@ -638,13 +638,13 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument(
         "--barreira-gate",
         type=str,
-        default="gates/G_SAIDA_BINARIA.py",
-        help="Quality gate a inserir na barreira de sincronização (padrão: gates/G_SAIDA_BINARIA.py).",
+        default="modulos/04-nucleo-compartilhado/gates/G_SAIDA_BINARIA.py",
+        help="Quality gate a inserir na barreira de sincronização (padrão: modulos/04-nucleo-compartilhado/gates/G_SAIDA_BINARIA.py).",
     )
     parser.add_argument(
         "--no-validar-gate",
         action="store_true",
-        help="Ignora a validação final através de gates/G_PIPELINE_HANDOFF.py.",
+        help="Ignora a validação final através de modulos/04-nucleo-compartilhado/gates/G_PIPELINE_HANDOFF.py.",
     )
     return parser.parse_args()
 

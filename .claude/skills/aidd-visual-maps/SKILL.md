@@ -68,4 +68,4 @@ Done when the index shows every map as concluded (`tests/test_mapa_visual.py` ch
 - [ ] `python scripts/catalogo_pecas.py > cat.txt 2>&1; echo $? > cat.rc` holds `0`.
 - [ ] `python -m pytest tests/test_mapa_visual.py -q > mv.txt 2>&1; echo $? > mv.rc` holds `0`.
 - [ ] `python scripts/mapa_visual.py <type> --check > chk.txt 2>&1; echo $? > chk.rc` holds `0` (both versions).
-- [ ] `python gates/G_mapa_pecas.py > gmp.txt 2>&1; echo $? > gmp.rc` holds `0`.
+- [ ] `python modulos/04-nucleo-compartilhado/gates/G_mapa_pecas.py > gmp.txt 2>&1; echo $? > gmp.rc` holds `0`.

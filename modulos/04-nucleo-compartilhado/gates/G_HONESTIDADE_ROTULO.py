@@ -20,14 +20,14 @@ so precisa DETECTAR o padrao, nao corrigi-lo.
 Usa `ast.parse` (nao regex ingenua sobre o arquivo inteiro) e restringe a
 checagem a strings que sao argumento de uma chamada `print(...)` ou fazem
 parte da construcao da excecao de um `raise ...(...)` — mesma tecnica de
-escopo de gates/G_CLI_HELP_CONSISTENCIA.py, que por construcao ignora
+escopo de modulos/04-nucleo-compartilhado/gates/G_CLI_HELP_CONSISTENCIA.py, que por construcao ignora
 docstrings, comentarios e strings gravadas em arquivo (nunca impressas nem
 levantadas ao usuario).
 
-Diretorios auditados (gates/ da raiz e scripts/gates/ ou gates/ de cada
+Diretorios auditados (gates/ de cada fatia em modulos/ e scripts/gates/ ou gates/ de cada
 ferramenta — templates/gates do aidd-forge inclusos porque sao carimbados
 literalmente em todo projeto gerado pela ferramenta):
-  - gates/
+  - modulos/<fatia>/gates/ (as 6 pastas de gates do ecossistema)
   - modulos/03-plataforma-e-entrega/fatiamento-master/aidd-master/scripts/gates/
   - modulos/03-plataforma-e-entrega/blindagem-enterprise/aidd-enterprise/scripts/gates/
   - modulos/02-triade-motores/fluxo-01-pure/core/aidd-pure/scripts/gates/
@@ -37,11 +37,11 @@ Fora do escopo (deliberado): tools/*/materiais-extras/examples/** (material
 de documentacao/exemplo, nao script vivo) e modulos/01-governanca-e-qualidade/core/aidd-forge/sandbox-forge-teste/
 (saida gerada de um teste manual, nao fonte).
 
-Lista de termos proibidos em gates/termos_proibidos_marketing.json (edita-se
+Lista de termos proibidos em modulos/04-nucleo-compartilhado/gates/termos_proibidos_marketing.json (edita-se
 o JSON, nao este script, pra adicionar/remover termo).
 
 Uso:
-  python gates/G_HONESTIDADE_ROTULO.py
+  python modulos/04-nucleo-compartilhado/gates/G_HONESTIDADE_ROTULO.py
       exit 0 = nenhum termo proibido encontrado em print()/raise() dos
                scripts de gate auditados.
       exit 1 = ao menos 1 termo proibido encontrado (arquivo, linha, termo
@@ -57,11 +57,18 @@ import unicodedata
 if hasattr(sys.stdout, "reconfigure"):
     sys.stdout.reconfigure(encoding="utf-8", errors="replace")
 
-ROOT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+from pathlib import Path as _Path
+ROOT_DIR = str(next((p.parent for p in _Path(__file__).resolve().parents if p.name == "modulos"), _Path(__file__).resolve().parent.parent))  # raiz: pai de modulos/ (VSA) ou de gates/ (árvore sintética)
 TERMOS_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "termos_proibidos_marketing.json")
 
 DIRETORIOS_AUDITADOS = [
-    "gates",
+    # gates do ecossistema, cada um na fatia dona (MAPA-GATES.json, ciclo-03 VSA)
+    "modulos/01-governanca-e-qualidade/gates",
+    "modulos/02-triade-motores/fluxo-01-pure/gates",
+    "modulos/02-triade-motores/fluxo-02-open/gates",
+    "modulos/02-triade-motores/fluxo-03-freedom/gates",
+    "modulos/03-plataforma-e-entrega/gates",
+    "modulos/04-nucleo-compartilhado/gates",
     "modulos/03-plataforma-e-entrega/fatiamento-master/aidd-master/scripts/gates",
     "componentes/compartilhado/gates",
     "componentes/compartilhado/injetor",

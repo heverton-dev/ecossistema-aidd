@@ -46,7 +46,9 @@ AIDD_BIN = os.path.join(AIDD_DIR, "bin")
 
 # Detectores canonicos de gates reutilizados como fonte unica de verdade.
 # Guarded: se algum gate mudar de assinatura, o preflight continua funcional.
-sys.path.insert(0, os.path.join(ROOT_DIR, "gates"))
+# Gates na fatia dona (MAPA-GATES.json): G_HADOLINT no núcleo, G_INFRA_COMPOSE na plataforma.
+for _fatia in ("04-nucleo-compartilhado", "03-plataforma-e-entrega"):
+    sys.path.insert(0, os.path.join(ROOT_DIR, "modulos", _fatia, "gates"))
 try:
     from G_HADOLINT import encontrar_binario_hadolint as _encontrar_binario_hadolint
 except Exception:

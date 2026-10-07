@@ -98,8 +98,8 @@ Toda aplicação nasce com os 4 estúdios plenamente funcionais:
 - **Zero Mocks em Produção (Lei #5):** 100% de código real e tipado; proibição absoluta de stubs que simulam funcionamento inexistente.
 - **Portões que Provam que Mordem (Lei #13):** Todo Quality Gate (`G_*.py`) possui obrigatoriamente suíte de testes automatizados que forçam deliberadamente o cenário de falha e assertam `exit 1`.
 - **Validação Automatizada Contínua:**
-  - `gates/G_STACK_PADRAO_OURO.py`
-  - `gates/G_TEMPLATE_TANSTACK_OFFLINE.py`
-  - `gates/G_NOVE_CAMADAS_MERCADO.py`
-  - `gates/G_QUARTETO_SINE_QUA_NON.py`
-  - `gates/G_COMPONENTE_AGNOSTICO.py`
+  - `modulos/02-triade-motores/fluxo-01-pure/gates/G_STACK_PADRAO_OURO.py`
+  - `modulos/02-triade-motores/fluxo-01-pure/gates/G_TEMPLATE_TANSTACK_OFFLINE.py`
+  - `modulos/02-triade-motores/fluxo-01-pure/gates/G_NOVE_CAMADAS_MERCADO.py`
+  - `modulos/03-plataforma-e-entrega/gates/G_QUARTETO_SINE_QUA_NON.py`
+  - `modulos/02-triade-motores/fluxo-02-open/gates/G_COMPONENTE_AGNOSTICO.py`

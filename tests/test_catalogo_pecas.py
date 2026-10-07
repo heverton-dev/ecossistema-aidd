@@ -187,7 +187,7 @@ def test_leis_registram_declaracao_invisivel_ao_meta_gate(tmp_path, monkeypatch)
 
 
 def _leis_mod():
-    sys.path.insert(0, str(ROOT / "gates"))
+    sys.path.insert(0, str(ROOT / "modulos" / "01-governanca-e-qualidade" / "gates"))
     try:
         import G_LEI_DECLARA_PORTAO as leis
     finally:

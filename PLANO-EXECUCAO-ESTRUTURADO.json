@@ -32,7 +32,7 @@
       "fase": 4,
       "nome": "UNIFIED CLI & GATES",
       "status": "CONCLUIDO",
-      "detalhes": "Implementação da CLI raiz ecossistema.py e Quality Gate gates/G_ECOSSISTEMA_INTEGRIDADE.py com aprovação determinística 100% verde."
+      "detalhes": "Implementação da CLI raiz ecossistema.py e Quality Gate modulos/04-nucleo-compartilhado/gates/G_ECOSSISTEMA_INTEGRIDADE.py com aprovação determinística 100% verde."
     },
     {
       "fase": 5,

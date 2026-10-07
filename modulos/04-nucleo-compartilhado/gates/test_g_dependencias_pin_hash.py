@@ -41,7 +41,7 @@ jobs:
 
 
 def _preparar_gate_sintetico(root_dir):
-    gdir = os.path.join(root_dir, "gates")
+    gdir = os.path.join(root_dir, "modulos", "04-nucleo-compartilhado", "gates")
     os.makedirs(gdir, exist_ok=True)
     shutil.copyfile(GATE_PATH, os.path.join(gdir, "G_DEPENDENCIAS_PIN_HASH.py"))
     return gdir
@@ -87,7 +87,7 @@ def _montar_arvore_valida(root_dir):
 
 def test_arvore_valida_aprova(tmp_path):
     _montar_arvore_valida(tmp_path)
-    res = rodar_gate(os.path.join(tmp_path, "gates", "G_DEPENDENCIAS_PIN_HASH.py"), tmp_path)
+    res = rodar_gate(os.path.join(tmp_path, "modulos", "04-nucleo-compartilhado", "gates", "G_DEPENDENCIAS_PIN_HASH.py"), tmp_path)
     assert res.returncode == 0
     assert "Quality Gate G_DEPENDENCIAS_PIN_HASH APROVADO" in res.stdout
 
@@ -98,7 +98,7 @@ def test_especificador_solto_e_detectado(tmp_path):
         os.path.join(tmp_path, "requirements.txt"),
         "requests>=2.34.2\nclick==8.5.0\n",
     )
-    res = rodar_gate(os.path.join(tmp_path, "gates", "G_DEPENDENCIAS_PIN_HASH.py"), tmp_path)
+    res = rodar_gate(os.path.join(tmp_path, "modulos", "04-nucleo-compartilhado", "gates", "G_DEPENDENCIAS_PIN_HASH.py"), tmp_path)
     assert res.returncode == 1
     assert "Quality Gate REPROVADO" in res.stdout
     assert "requirements.txt:1" in res.stdout
@@ -111,7 +111,7 @@ def test_pacote_sem_versao_e_detectado(tmp_path):
         os.path.join(tmp_path, "requirements.txt"),
         "requests\nclick==8.5.0\n",
     )
-    res = rodar_gate(os.path.join(tmp_path, "gates", "G_DEPENDENCIAS_PIN_HASH.py"), tmp_path)
+    res = rodar_gate(os.path.join(tmp_path, "modulos", "04-nucleo-compartilhado", "gates", "G_DEPENDENCIAS_PIN_HASH.py"), tmp_path)
     assert res.returncode == 1
     assert "requirements.txt:1" in res.stdout
 
@@ -122,7 +122,7 @@ def test_instalacao_editable_url_e_detectada(tmp_path):
         os.path.join(tmp_path, "requirements.txt"),
         "-e git+https://github.com/exemplo/repo.git#egg=exemplo\nclick==8.5.0\n",
     )
-    res = rodar_gate(os.path.join(tmp_path, "gates", "G_DEPENDENCIAS_PIN_HASH.py"), tmp_path)
+    res = rodar_gate(os.path.join(tmp_path, "modulos", "04-nucleo-compartilhado", "gates", "G_DEPENDENCIAS_PIN_HASH.py"), tmp_path)
     assert res.returncode == 1
     assert "editable/VCS/URL" in res.stdout
 
@@ -130,7 +130,7 @@ def test_instalacao_editable_url_e_detectada(tmp_path):
 def test_lockfile_ausente_e_detectado(tmp_path):
     _montar_arvore_valida(tmp_path)
     os.remove(os.path.join(tmp_path, "requirements.lock"))
-    res = rodar_gate(os.path.join(tmp_path, "gates", "G_DEPENDENCIAS_PIN_HASH.py"), tmp_path)
+    res = rodar_gate(os.path.join(tmp_path, "modulos", "04-nucleo-compartilhado", "gates", "G_DEPENDENCIAS_PIN_HASH.py"), tmp_path)
     assert res.returncode == 1
     assert "requirements.lock — lockfile nao encontrado" in res.stdout
 
@@ -143,7 +143,7 @@ def test_pacote_do_lock_sem_hash_e_detectado(tmp_path):
         "click==8.5.0 \\\n"
         "    --hash=sha256:bbbb\n",
     )
-    res = rodar_gate(os.path.join(tmp_path, "gates", "G_DEPENDENCIAS_PIN_HASH.py"), tmp_path)
+    res = rodar_gate(os.path.join(tmp_path, "modulos", "04-nucleo-compartilhado", "gates", "G_DEPENDENCIAS_PIN_HASH.py"), tmp_path)
     assert res.returncode == 1
     assert "requests" in res.stdout
     assert "sem nenhum --hash=sha256" in res.stdout
@@ -152,7 +152,7 @@ def test_pacote_do_lock_sem_hash_e_detectado(tmp_path):
 def test_ci_sem_require_hashes_e_detectado(tmp_path):
     _montar_arvore_valida(tmp_path)
     _escrever(os.path.join(tmp_path, ".github/workflows/audit.yml"), WORKFLOW_SEM_HASH)
-    res = rodar_gate(os.path.join(tmp_path, "gates", "G_DEPENDENCIAS_PIN_HASH.py"), tmp_path)
+    res = rodar_gate(os.path.join(tmp_path, "modulos", "04-nucleo-compartilhado", "gates", "G_DEPENDENCIAS_PIN_HASH.py"), tmp_path)
     assert res.returncode == 1
     assert "nenhuma instalacao usa '--require-hashes'" in res.stdout
 
@@ -166,6 +166,6 @@ def test_linha_de_include_e_comentario_nao_sao_falso_positivo(tmp_path):
         "\n"
         "pytest==9.1.1  # comentario inline\n",
     )
-    res = rodar_gate(os.path.join(tmp_path, "gates", "G_DEPENDENCIAS_PIN_HASH.py"), tmp_path)
+    res = rodar_gate(os.path.join(tmp_path, "modulos", "04-nucleo-compartilhado", "gates", "G_DEPENDENCIAS_PIN_HASH.py"), tmp_path)
     assert res.returncode == 0
     assert "Quality Gate G_DEPENDENCIAS_PIN_HASH APROVADO" in res.stdout

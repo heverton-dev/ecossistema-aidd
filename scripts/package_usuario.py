@@ -18,7 +18,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 
 INCLUDE_DIRS = [
-    "gates",
+    "modulos",  # inclui os gates de cada fatia (modulos/<fatia>/gates)
     "core",
     "componentes",
     "scripts",

@@ -24,7 +24,7 @@ from pathlib import Path
 import pytest
 
 ROOT_DIR = Path(__file__).resolve().parent.parent
-GATE_SCRIPT = ROOT_DIR / "gates" / "G_DISPATCH_PIPELINE_VSA.py"
+GATE_SCRIPT = ROOT_DIR / "modulos" / "03-plataforma-e-entrega" / "gates" / "G_DISPATCH_PIPELINE_VSA.py"
 
 
 def executar_gate(manifesto_path: Path | None = None) -> subprocess.CompletedProcess:
@@ -57,7 +57,7 @@ def _gerar_manifesto_valido() -> dict:
                 "arquivos_esperados": ["src/slices/auth/router.py"],
                 "barreira_validacao": {
                     "comandos_teste": ["pytest tests/slices/test_auth.py"],
-                    "quality_gates": ["python gates/G_SAIDA_BINARIA.py"]
+                    "quality_gates": ["python modulos/04-nucleo-compartilhado/gates/G_SAIDA_BINARIA.py"]
                 }
             },
             {
@@ -68,7 +68,7 @@ def _gerar_manifesto_valido() -> dict:
                 "arquivos_esperados": ["src/slices/pedidos/router.py"],
                 "barreira_validacao": {
                     "comandos_teste": ["pytest tests/slices/test_pedidos.py"],
-                    "quality_gates": ["python gates/G_SAIDA_BINARIA.py"]
+                    "quality_gates": ["python modulos/04-nucleo-compartilhado/gates/G_SAIDA_BINARIA.py"]
                 }
             }
         ],

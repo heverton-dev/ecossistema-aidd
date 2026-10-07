@@ -57,7 +57,7 @@ SAIDA_PRE_COMMIT_FALHA = (
     "- hook id: g-segredos\n"
     "- exit code: 1\n"
     "Traceback (most recent call last):\n"
-    '  File "gates/G_SEGREDOS.py", line 88, in <module>\n'
+    '  File "modulos/04-nucleo-compartilhado/gates/G_SEGREDOS.py", line 88, in <module>\n'
     "    main()\n"
     '  File "C:\\Python314\\Lib\\json\\__init__.py", line 346, in loads\n'
     "    return _default_decoder.decode(s)\n"
@@ -85,7 +85,7 @@ def test_diagnostico_extrai_arquivo_linha_e_teste_pytest():
 def test_diagnostico_traceback_pega_frame_do_projeto_nao_da_biblioteca():
     gate = faz_commit.diagnosticar("commit", SAIDA_PRE_COMMIT_FALHA).gates[1]
     assert len(gate.locais) == 1
-    assert gate.locais[0].arquivo == "gates/G_SEGREDOS.py"
+    assert gate.locais[0].arquivo == "modulos/04-nucleo-compartilhado/gates/G_SEGREDOS.py"
     assert gate.locais[0].linha == "88"
     assert "JSONDecodeError" in gate.locais[0].mensagem
 
@@ -129,7 +129,7 @@ def test_estilo_sem_cor_nao_emite_ansi_nem_linhas_extras():
     texto = err.getvalue()
     assert "\x1b[" not in texto
     assert "FALHOU em: commit" in texto
-    assert "gates/G_SEGREDOS.py:88" in texto
+    assert "modulos/04-nucleo-compartilhado/gates/G_SEGREDOS.py:88" in texto
 
 
 def test_estilo_com_cor_emite_ansi():

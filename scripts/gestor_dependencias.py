@@ -3,7 +3,7 @@
 =============================================================================
 ECOSSISTEMA AIDD — GESTOR DE DEPENDÊNCIAS EXTERNAS (SKILLS + MCPS DE TERCEIROS)
 =============================================================================
-Lê gates/dependencias_externas.json (fonte única declarativa) e garante que
+Lê modulos/04-nucleo-compartilhado/contracts/dependencias_externas.json (fonte única declarativa) e garante que
 cada skill/MCP de terceiro declarado esteja de fato instalado/registrado
 nesta máquina — pensado para rodar uma vez após `git clone` e sempre que uma
 nova dependência for adicionada via `/dependencia`.
@@ -54,7 +54,7 @@ import subprocess
 import sys
 
 ROOT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-MANIFESTO_PATH = os.path.join(ROOT_DIR, "gates", "dependencias_externas.json")
+MANIFESTO_PATH = os.path.join(ROOT_DIR, "modulos", "04-nucleo-compartilhado", "contracts", "dependencias_externas.json")
 GITIGNORE_PATH = os.path.join(ROOT_DIR, ".gitignore")
 
 # Harnesses com schema de MCP config confirmado nesta v1 (ver docstring acima).
@@ -375,7 +375,7 @@ def bootstrap_mcps(apenas=None, dry_run=False):
 
 def auto_ingest_mcps() -> list[str]:
     """Descobre MCPs configurados manualmente em arquivos de harness e os ingere
-    na fonte declarativa única gates/dependencias_externas.json, propagando para todos."""
+    na fonte declarativa única modulos/04-nucleo-compartilhado/contracts/dependencias_externas.json, propagando para todos."""
     manifesto = carregar_manifesto()
     mcps_declarados = manifesto.setdefault("mcps", {})
     novos_mcps = []

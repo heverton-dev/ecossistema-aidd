@@ -202,7 +202,7 @@ class VSADispatchPipeline:
             self.log(f"[INTEGRIDADE] SHA-256 verificado com sucesso: {sha_declarado[:12]}...")
 
         # Validação formal via Quality Gate G_DISPATCH_PIPELINE_VSA
-        gate_script = self.repo_root / "gates" / "G_DISPATCH_PIPELINE_VSA.py"
+        gate_script = self.repo_root / "modulos" / "03-plataforma-e-entrega" / "gates" / "G_DISPATCH_PIPELINE_VSA.py"
         if gate_script.is_file():
             # Salva temporário se for compilado sob demanda
             temp_manifest = self.dispatch_path

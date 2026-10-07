@@ -11,8 +11,9 @@ import sys
 import tempfile
 import pytest
 
-ROOT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-GATES_DIR = os.path.join(ROOT_DIR, "gates")
+from pathlib import Path as _Path
+ROOT_DIR = str(next((p.parent for p in _Path(__file__).resolve().parents if p.name == "modulos"), _Path(__file__).resolve().parent.parent))  # raiz: pai de modulos/ (VSA) ou de gates/ (árvore sintética)
+GATES_DIR = os.path.dirname(os.path.abspath(__file__))
 if ROOT_DIR not in sys.path:
     sys.path.insert(0, ROOT_DIR)
 if GATES_DIR not in sys.path:
@@ -56,7 +57,7 @@ def guia(): return {"status": "ok"}
     assert any("MCP Studio" in e for e in erros)
 
     # Executa via CLI/subprocess para garantir saída binária 1
-    cmd = [sys.executable, os.path.abspath("gates/G_QUARTETO_SINE_QUA_NON.py"), str(proj_dir)]
+    cmd = [sys.executable, os.path.abspath("modulos/03-plataforma-e-entrega/gates/G_QUARTETO_SINE_QUA_NON.py"), str(proj_dir)]
     res = subprocess.run(cmd, capture_output=True, text=True)
     assert res.returncode == 1
     assert "[ERRO]" in res.stderr or "[FALHA]" in res.stdout or "[FALHA]" in res.stderr
@@ -89,7 +90,7 @@ def guia(): return {"status": "ok"}
     assert len(erros) == 0
     assert all(status.values())
 
-    cmd = [sys.executable, os.path.abspath("gates/G_QUARTETO_SINE_QUA_NON.py"), str(proj_dir)]
+    cmd = [sys.executable, os.path.abspath("modulos/03-plataforma-e-entrega/gates/G_QUARTETO_SINE_QUA_NON.py"), str(proj_dir)]
     res = subprocess.run(cmd, capture_output=True, text=True)
     assert res.returncode == 0
     assert "[SUCESSO]" in res.stdout

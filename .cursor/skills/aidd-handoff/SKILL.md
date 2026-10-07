@@ -27,7 +27,7 @@ Execute this skill when closing a session, rotating context, or transferring wor
 - NEVER assume `docs/secoes/sessao-<date>-<slug>.md` reaches another worktree or branch: `docs/secoes/*.md` is in `.gitignore`; give the incoming agent the absolute path.
 - NEVER list a file under "Completed Work" without `git diff --stat` showing it, nor mark a ticket done when its commit only touched a checkbox.
 - NEVER write approvals or user decisions the user did not give into "Next Actions".
-- NEVER confuse this file with the signed `handoff-melhoria` (`gates/G_HANDOFF_MELHORIA.py`, owned by `aidd-improvement`) or the session ID record in `secoes/historico_sessoes.json` (`aidd-session`).
+- NEVER confuse this file with the signed `handoff-melhoria` (`modulos/01-governanca-e-qualidade/gates/G_HANDOFF_MELHORIA.py`, owned by `aidd-improvement`) or the session ID record in `secoes/historico_sessoes.json` (`aidd-session`).
 
 ## Failure Modes & Fallback
 

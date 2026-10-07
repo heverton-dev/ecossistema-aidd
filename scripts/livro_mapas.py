@@ -70,7 +70,7 @@ TEXTO = {
                  "o `dependencia verify` para os MCPs de terceiros", "`.mcp.json` e `.claude/settings.json`"),
     "harnesses": ("Um harness é o programa onde o agente trabalha (Claude Code, OpenCode, Cursor e outros). Cada um lê "
                   "as peças de uma pasta própria, gerada a partir de uma fonte única.",
-                  "o `components verify`, o `G_HARNESS_COMPAT` e o `G_UNIVERSAL_HARNESS`", "`gates/manifesto_harnesses.json`"),
+                  "o `components verify`, o `G_HARNESS_COMPAT` e o `G_UNIVERSAL_HARNESS`", "`modulos/04-nucleo-compartilhado/contracts/manifesto_harnesses.json`"),
     "moldes": ("Um molde é a forma de onde sai o app gerado. Ele mora dentro da ferramenta, em `templates/`, e vai junto "
                "com o que ela entrega ao cliente.",
                "os guardas de entrega gerados por `scripts/gerador_templates_gates.py`", "`tools/<f>/templates/`"),

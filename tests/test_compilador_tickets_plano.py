@@ -5,7 +5,7 @@ ECOSSISTEMA AIDD — TESTE DO COMPILADOR DE TICKETS DE PLANO (ISSUE-PIPE-0004)
 =============================================================================
 Validação determinística de conformidade (Leis #1, #2, #5, #13):
   1. Compilação de plano fixture completo em manifesto handoff_evolution.json.
-  2. Validação direta do JSON gerado contra gates/G_PIPELINE_HANDOFF.py (exit 0).
+  2. Validação direta do JSON gerado contra modulos/04-nucleo-compartilhado/gates/G_PIPELINE_HANDOFF.py (exit 0).
   3. Particionamento correto entre fase paralela (sem dependências e arquivos disjuntos)
      e fase sequencial (dependentes ou arquivos colidentes).
   4. Reprovação com exit 1 quando há ciclos no grafo de dependências (DAG).
@@ -23,7 +23,7 @@ import pytest
 
 ROOT_DIR = Path(__file__).resolve().parent.parent
 COMPILADOR_SCRIPT = ROOT_DIR / "scripts" / "compilador_tickets_plano.py"
-GATE_SCRIPT = ROOT_DIR / "gates" / "G_PIPELINE_HANDOFF.py"
+GATE_SCRIPT = ROOT_DIR / "modulos" / "04-nucleo-compartilhado" / "gates" / "G_PIPELINE_HANDOFF.py"
 
 
 def executar_compilador_cli(*args: str) -> subprocess.CompletedProcess:
@@ -120,7 +120,7 @@ def test_compilacao_plano_fixture_valido(tmp_path):
     assert "TICKET-01" in paralelos
     assert "TICKET-03" in paralelos
     assert "TICKET-02" in sequenciais
-    assert conteudo["barreira_sincronizacao"] == ["gates/G_SAIDA_BINARIA.py"]
+    assert conteudo["barreira_sincronizacao"] == ["modulos/04-nucleo-compartilhado/gates/G_SAIDA_BINARIA.py"]
 
     # Validação formal com G_PIPELINE_HANDOFF
     gate_res = subprocess.run(

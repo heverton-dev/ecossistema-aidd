@@ -22,9 +22,9 @@ Regras auditadas (exit 1 em qualquer violacao):
   R6. Ausencia declarada: artefato ausente aparece no apendice de estado honesto.
 
 Uso:
-  python gates/G_LIVRO_EVIDENCIA.py --projeto <pasta-do-projeto>
-  python gates/G_LIVRO_EVIDENCIA.py --livro <pasta-do-livro>
-  python gates/G_LIVRO_EVIDENCIA.py --projeto <pasta> --json
+  python modulos/04-nucleo-compartilhado/gates/G_LIVRO_EVIDENCIA.py --projeto <pasta-do-projeto>
+  python modulos/04-nucleo-compartilhado/gates/G_LIVRO_EVIDENCIA.py --livro <pasta-do-livro>
+  python modulos/04-nucleo-compartilhado/gates/G_LIVRO_EVIDENCIA.py --projeto <pasta> --json
 
 Exit: 0 = aprovado, 1 = reprovado.
 =============================================================================
@@ -37,6 +37,9 @@ import json
 import re
 import sys
 from pathlib import Path
+
+# Raiz do ecossistema: pai de modulos/ (VSA) ou de gates/ (árvore sintética).
+RAIZ_ECOSSISTEMA = next((p.parent for p in Path(__file__).resolve().parents if p.name == "modulos"), Path(__file__).resolve().parent.parent)
 
 if hasattr(sys.stdout, "reconfigure"):
     sys.stdout.reconfigure(encoding="utf-8", errors="replace")
@@ -172,7 +175,7 @@ def auditar(pasta_livro: Path, pasta_projeto: Path, modo_json: bool) -> int:
             # e obrigatoria; a segunda vira aviso.
             if (pasta_projeto / citado).exists():
                 continue
-            if (Path(__file__).resolve().parent.parent / citado).exists():
+            if (RAIZ_ECOSSISTEMA / citado).exists():
                 continue
             # O apendice de estado honesto CITA justamente os artefatos ausentes —
             # essa e a funcao dele. Exigir que existam inverteria a regra: o livro

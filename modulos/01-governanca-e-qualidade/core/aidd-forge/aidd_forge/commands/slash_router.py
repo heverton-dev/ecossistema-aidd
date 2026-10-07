@@ -7,9 +7,9 @@ projeto alvo contenha a secao de Intent Router em Linguagem Natural,
 injetando-a quando ausente para projetos com um `AGENTS.md` pre-existente
 que a `Injector` preservou (self-healing, idempotente).
 
-As pastas de destino vem de `gates/manifesto_harnesses.json` (fonte unica
+As pastas de destino vem de `modulos/04-nucleo-compartilhado/contracts/manifesto_harnesses.json` (fonte unica
 de harnesses do ecossistema, ja usada por `scripts/gestor_componentes.py`
-e `gates/G_HARNESS_COMPAT.py`) via `aidd_forge.core.harness_manifest` —
+e `modulos/04-nucleo-compartilhado/gates/G_HARNESS_COMPAT.py`) via `aidd_forge.core.harness_manifest` —
 nunca de uma lista propria hardcoded aqui. Achado real (2026-09-15): a lista
 antiga (`.cursor/rules`, `.claude/commands`, `.agent/commands`) estava
 dessincronizada desse manifesto ha tempo: o caminho confirmado do Cursor e

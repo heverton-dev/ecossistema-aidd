@@ -10,12 +10,13 @@ import sys
 from pathlib import Path
 import pytest
 
-ROOT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+from pathlib import Path as _Path
+ROOT_DIR = str(next((p.parent for p in _Path(__file__).resolve().parents if p.name == "modulos"), _Path(__file__).resolve().parent.parent))  # raiz: pai de modulos/ (VSA) ou de gates/ (árvore sintética)
 if ROOT_DIR not in sys.path:
     sys.path.insert(0, ROOT_DIR)
 
-import gates.G_ORQUESTRADOR_SINCRONO as gate
-from gates.G_ORQUESTRADOR_SINCRONO import auditar
+import G_ORQUESTRADOR_SINCRONO as gate
+from G_ORQUESTRADOR_SINCRONO import auditar
 
 
 def test_gate_orquestrador_sincrono_passa():

@@ -23,9 +23,9 @@ Cada violação imprime: arquivo, ferramenta atual e dono certo.
 Níveis (AIDD_FRONTEIRA_MODO, precedência: --modo > variável > padrão):
   - aviso    (padrão): imprime o relatório e sai com exit 0;
   - bloqueio          : exit 1 se restar violação fora de
-                        gates/allowlist_fronteira.json (lista datada que só
+                        modulos/04-nucleo-compartilhado/contracts/allowlist_fronteira.json (lista datada que só
                         pode diminuir — reprovação garantida por
-                        gates/test_g_fronteira_ferramentas.py).
+                        modulos/04-nucleo-compartilhado/gates/test_g_fronteira_ferramentas.py).
   Valor desconhecido, mapa/catálogo/allowlist ilegível ou git fora de repo →
   exit 1 em qualquer modo (erro de infraestrutura).
 =============================================================================
@@ -45,10 +45,10 @@ from typing import Dict, List, Optional, Set, Tuple
 if hasattr(sys.stdout, "reconfigure"):
     sys.stdout.reconfigure(encoding="utf-8", errors="replace")
 
-RAIZ = Path(__file__).resolve().parent.parent
+RAIZ = next((p.parent for p in Path(__file__).resolve().parents if p.name == "modulos"), Path(__file__).resolve().parent.parent)  # raiz: pai de modulos/ (VSA) ou de gates/ (árvore sintética)
 MAPA_PADRAO = RAIZ / "componentes" / "compartilhado" / "specs" / "MAPA-DONOS-FERRAMENTAS.json"
 CATALOGO_PADRAO = RAIZ / "docs" / "auditoria" / "mapa-pecas" / "catalogo-pecas.json"
-ALLOWLIST_PADRAO = RAIZ / "gates" / "allowlist_fronteira.json"
+ALLOWLIST_PADRAO = RAIZ / "modulos" / "04-nucleo-compartilhado" / "contracts" / "allowlist_fronteira.json"
 
 DONO_ALMOXARIFADO = "aidd-forge"
 RE_DATA = re.compile(r"^\d{4}-\d{2}-\d{2}$")
@@ -95,7 +95,7 @@ def carregar_mapa(caminho: Path) -> Dict[str, dict]:
 
 
 def carregar_allowlist(caminho: Path) -> Dict[str, str]:
-    dados = carregar_json(caminho, "Allowlist de fronteira (gates/allowlist_fronteira.json)")
+    dados = carregar_json(caminho, "Allowlist de fronteira (modulos/04-nucleo-compartilhado/contracts/allowlist_fronteira.json)")
     violacoes = dados.get("violacoes")
     if not isinstance(violacoes, list):
         raise ErroGate(f"Allowlist inválida (chave 'violacoes' deve ser lista): {caminho}")

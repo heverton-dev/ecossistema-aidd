@@ -42,7 +42,7 @@ Decomposes the specification created by `/aidd-spec` into executable tickets ope
 
 ## Negative Guardrails
 
-- NEVER emit a tests-only, code-only or setup-only ticket (types, skeleton); `gates/G_PROVA_SKILLS_POCOCK.py` reproves it and `scripts/compilador_tickets_plano.py` rejects stub target files.
+- NEVER emit a tests-only, code-only or setup-only ticket (types, skeleton); `modulos/01-governanca-e-qualidade/gates/G_PROVA_SKILLS_POCOCK.py` reproves it and `scripts/compilador_tickets_plano.py` rejects stub target files.
 - NEVER omit **Blocked by:** or leave a blocker cycle; `cli.py validar` fails on it (Kahn sort in `scripts/grafo_dag.py`).
 - NEVER write a Validation Command that cannot fail (`echo ok`, `true`, `exit 0`), nor accept a ticket as done without its test going red, then green.
 - NEVER publish or dispatch tickets to `aidd-master` before the user approves the list.
@@ -51,7 +51,7 @@ Decomposes the specification created by `/aidd-spec` into executable tickets ope
 ## Failure Modes & Fallback
 
 - **`[FALHA]` cycle message from `cli.py validar`:** a blocker loop; move the shared behavior into a prefactor ticket both depend on, rerun until `[OK] ... ordenados em DAG`.
-- **`CompiladorErro` from `python scripts/compilador_tickets_plano.py --plano docs/planos/<plan>`:** fix the ticket block it names (`[TICKET-XX]` header, Target Files, Validation Command); never pass `--no-validar-gate` to skip `gates/G_PIPELINE_HANDOFF.py`.
+- **`CompiladorErro` from `python scripts/compilador_tickets_plano.py --plano docs/planos/<plan>`:** fix the ticket block it names (`[TICKET-XX]` header, Target Files, Validation Command); never pass `--no-validar-gate` to skip `modulos/04-nucleo-compartilhado/gates/G_PIPELINE_HANDOFF.py`.
 - **Spec too vague to slice:** stop and route to `/aidd-grill`, then `/aidd-spec`; never invent behaviors.
 
 ## Stopping Checklist
@@ -60,5 +60,5 @@ Exit codes go to a file, never through a pipe: `<cmd> > "$TEMP/tk.log" 2>&1; ech
 
 - [ ] `python componentes/compartilhado/skills/aidd-tickets/scripts/cli.py validar --arquivo <tickets.md>` wrote rc 0.
 - [ ] Every ticket's Target Files include at least one test file.
-- [ ] `python gates/G_PROVA_SKILLS_POCOCK.py --artefatos <dir> --skill aidd-tickets` wrote rc 0 when this skill's text changed.
+- [ ] `python modulos/01-governanca-e-qualidade/gates/G_PROVA_SKILLS_POCOCK.py --artefatos <dir> --skill aidd-tickets` wrote rc 0 when this skill's text changed.
 - [ ] The user approved the list before any publish.

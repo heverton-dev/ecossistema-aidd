@@ -81,5 +81,5 @@ Adapted from `writing-for-agents` in mattpocock/skills (commit c55ee46), MIT lic
 - [ ] Frontmatter conforms to convention: name matches directory, description includes explicit `Use when` trigger in English.
 - [ ] All steps conclude with deterministic completion criteria.
 - [ ] Body line count verified under 450 lines (target 150).
-- [ ] Verification gate passes: `python gates/G_SKILL_FORMATO.py` exits 0.
+- [ ] Verification gate passes: `python modulos/04-nucleo-compartilhado/gates/G_SKILL_FORMATO.py` exits 0.
 

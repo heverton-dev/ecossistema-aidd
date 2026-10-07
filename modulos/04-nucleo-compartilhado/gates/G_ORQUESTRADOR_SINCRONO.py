@@ -12,7 +12,7 @@ import subprocess
 import sys
 from pathlib import Path
 
-ROOT_DIR = Path(__file__).resolve().parent.parent
+ROOT_DIR = next((p.parent for p in Path(__file__).resolve().parents if p.name == "modulos"), Path(__file__).resolve().parent.parent)  # raiz: pai de modulos/ (VSA) ou de gates/ (árvore sintética)
 SPECS_DIR = ROOT_DIR / "componentes" / "compartilhado" / "specs"
 SKILLS_DIR = ROOT_DIR / "componentes" / "compartilhado" / "skills"
 

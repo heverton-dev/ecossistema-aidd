@@ -18,7 +18,7 @@ O **AIDD Master Enterprise** eleva o ecossistema de desenvolvimento assistido po
 - **Swagger Studio OpenAPI 3.1 (`/docs`):** Registro dinâmico de contratos de API com testador interativo ao vivo.
 - **Model Context Protocol (`/mcp`):** Servidor JSON-RPC 2.0 nativo pronto para integração com Claude, Cursor, Antigravity e OpenHands.
 - **Design System Corporativo Impeccable:** CSS padronizado com variáveis `:root`, dark mode, cards studio e scrollbars sutis de 4px.
-- **Suíte de 10 Gates Rígidos:** `G_ESTRUTURA`, `G_ARQUITETURA` (AST de Bounded Context), `G_QUALIDADE`, `G_TESTES`, `G_CONTRACTS`, `G_PERFORMANCE` (SLOs e OTel), `G_SEGREDOS`, `G_SEGURANCA` (OWASP e CVE pip-audit), `G_CHAOS` e `G_HARNESS_COMPAT`. Na raiz do ecossistema, o gate cross-cutting `gates/G_ARQUITETURA_DELIVERABLE.py` audita se todo módulo (novo ou existente) respeita as 4 camadas de Clean Architecture.
+- **Suíte de 10 Gates Rígidos:** `G_ESTRUTURA`, `G_ARQUITETURA` (AST de Bounded Context), `G_QUALIDADE`, `G_TESTES`, `G_CONTRACTS`, `G_PERFORMANCE` (SLOs e OTel), `G_SEGREDOS`, `G_SEGURANCA` (OWASP e CVE pip-audit), `G_CHAOS` e `G_HARNESS_COMPAT`. Na raiz do ecossistema, o gate cross-cutting `modulos/03-plataforma-e-entrega/gates/G_ARQUITETURA_DELIVERABLE.py` audita se todo módulo (novo ou existente) respeita as 4 camadas de Clean Architecture.
 
 ---
 

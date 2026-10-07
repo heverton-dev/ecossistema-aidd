@@ -14,7 +14,7 @@
 # requirements-dev.lock, instalado com verificacao de hash obrigatoria:
 #   pip install --require-hashes -r requirements-dev.lock
 # Nunca instale a partir de requirements-dev.txt direto (sem hash) para rodar
-# estes hooks. Auditado por gates/G_DEPENDENCIAS_PIN_HASH.py.
+# estes hooks. Auditado por modulos/04-nucleo-compartilhado/gates/G_DEPENDENCIAS_PIN_HASH.py.
 #
 # Regras de gatilho:
 #   * always_run: true   -> checagem de repo inteiro em TODO commit.
@@ -47,7 +47,7 @@ repos:
     hooks:
       - id: g-ecossistema-integridade
         name: G_ECOSSISTEMA_INTEGRIDADE (ferramentas/skills/commands/AST)
-        entry: python gates/G_ECOSSISTEMA_INTEGRIDADE.py
+        entry: python modulos/04-nucleo-compartilhado/gates/G_ECOSSISTEMA_INTEGRIDADE.py
         language: system
         always_run: true
         pass_filenames: false
@@ -55,7 +55,7 @@ repos:
 
       - id: g-drift-nucleo-compartilhado
         name: G_DRIFT_NUCLEO_COMPARTILHADO (copias vs catalogo + nucleo master vs enterprise)
-        entry: python gates/G_DRIFT_NUCLEO_COMPARTILHADO.py
+        entry: python modulos/04-nucleo-compartilhado/gates/G_DRIFT_NUCLEO_COMPARTILHADO.py
         language: system
         always_run: true
         pass_filenames: false
@@ -63,7 +63,7 @@ repos:
 
       - id: g-harness-compat
         name: G_HARNESS_COMPAT (artefatos multi-harness sincronizados)
-        entry: python gates/G_HARNESS_COMPAT.py
+        entry: python modulos/04-nucleo-compartilhado/gates/G_HARNESS_COMPAT.py
         language: system
         always_run: true
         pass_filenames: false
@@ -71,7 +71,7 @@ repos:
 
       - id: g-universal-harness
         name: G_UNIVERSAL_HARNESS (paridade universal de skills, mcps e hooks)
-        entry: python gates/G_UNIVERSAL_HARNESS.py
+        entry: python modulos/04-nucleo-compartilhado/gates/G_UNIVERSAL_HARNESS.py
         language: system
         always_run: true
         pass_filenames: false
@@ -79,7 +79,7 @@ repos:
 
       - id: g-segredos
         name: G_SEGREDOS (detect-secrets sobre os arquivos staged do commit vs baseline; arvore inteira com AIDD_GATES_MODO=completo)
-        entry: python gates/G_SEGREDOS.py
+        entry: python modulos/04-nucleo-compartilhado/gates/G_SEGREDOS.py
         language: system
         always_run: true
         pass_filenames: false
@@ -87,7 +87,7 @@ repos:
 
       - id: g-cli-help-consistencia
         name: G_CLI_HELP_CONSISTENCIA (flags citadas vs add_argument)
-        entry: python gates/G_CLI_HELP_CONSISTENCIA.py
+        entry: python modulos/04-nucleo-compartilhado/gates/G_CLI_HELP_CONSISTENCIA.py
         language: system
         always_run: true
         pass_filenames: false
@@ -95,7 +95,7 @@ repos:
 
       - id: g-componente-agnostico
         name: G_COMPONENTE_AGNOSTICO (componentes vs manifesto de harnesses)
-        entry: python gates/G_COMPONENTE_AGNOSTICO.py
+        entry: python modulos/02-triade-motores/fluxo-02-open/gates/G_COMPONENTE_AGNOSTICO.py
         language: system
         always_run: true
         pass_filenames: false
@@ -103,7 +103,7 @@ repos:
 
       - id: g-zero-headless
         name: G_ZERO_HEADLESS (modo interativo obrigatorio / zero headless)
-        entry: python gates/G_ZERO_HEADLESS.py
+        entry: python modulos/04-nucleo-compartilhado/gates/G_ZERO_HEADLESS.py
         language: system
         always_run: true
         pass_filenames: false
@@ -111,7 +111,7 @@ repos:
 
       - id: g-infra-compose
         name: G_INFRA_COMPOSE (compose e init sql estaticos do aidd-ops)
-        entry: python gates/G_INFRA_COMPOSE.py
+        entry: python modulos/03-plataforma-e-entrega/gates/G_INFRA_COMPOSE.py
         # AMBIENTE ISOLADO (2026-09-19): 'language: python' faz o pre-commit criar um
         # venv proprio para este hook, com as dependencias abaixo. Motivo: checkov
         # exige importlib-metadata<8 e o litellm sem vulnerabilidades conhecidas exige
@@ -129,7 +129,7 @@ repos:
 
       - id: g-hadolint
         name: G_HADOLINT (melhores praticas OCI via Hadolint)
-        entry: python gates/G_HADOLINT.py
+        entry: python modulos/02-triade-motores/fluxo-02-open/gates/G_HADOLINT.py
         language: system
         always_run: true
         pass_filenames: false
@@ -137,7 +137,7 @@ repos:
 
       - id: g-testes-reais
         name: G_TESTES_REAIS (pytest real por ferramenta em tools/)
-        entry: python gates/G_TESTES_REAIS.py
+        entry: python modulos/01-governanca-e-qualidade/gates/G_TESTES_REAIS.py
         language: system
         files: ^tools/
         pass_filenames: false
@@ -145,7 +145,7 @@ repos:
 
       - id: g-dependencias-pin-hash
         name: G_DEPENDENCIAS_PIN_HASH (pin exato + hash criptografico em requirements)
-        entry: python gates/G_DEPENDENCIAS_PIN_HASH.py
+        entry: python modulos/04-nucleo-compartilhado/gates/G_DEPENDENCIAS_PIN_HASH.py
         language: system
         always_run: true
         pass_filenames: false
@@ -153,7 +153,7 @@ repos:
 
       - id: g-honestidade-rotulo
         name: G_HONESTIDADE_ROTULO (termos de marketing proibidos em gates)
-        entry: python gates/G_HONESTIDADE_ROTULO.py
+        entry: python modulos/04-nucleo-compartilhado/gates/G_HONESTIDADE_ROTULO.py
         language: system
         always_run: true
         pass_filenames: false
@@ -161,7 +161,7 @@ repos:
 
       - id: g-arquitetura-deliverable
         name: G_ARQUITETURA_DELIVERABLE (Clean Arch / DDD nos deliverables)
-        entry: python gates/G_ARQUITETURA_DELIVERABLE.py
+        entry: python modulos/03-plataforma-e-entrega/gates/G_ARQUITETURA_DELIVERABLE.py
         language: system
         always_run: true
         pass_filenames: false
@@ -169,7 +169,7 @@ repos:
 
       - id: g-frontend-layers
         name: G_FRONTEND_LAYERS (separacao de camadas UI vs rede no frontend)
-        entry: python gates/G_FRONTEND_LAYERS.py
+        entry: python modulos/02-triade-motores/fluxo-01-pure/gates/G_FRONTEND_LAYERS.py
         language: system
         always_run: true
         pass_filenames: false
@@ -177,7 +177,7 @@ repos:
 
       - id: g-isolation-audit
         name: G_ISOLATION_AUDIT (auditoria estrita de isolamento inter-fatias VSA)
-        entry: python gates/G_ISOLATION_AUDIT.py
+        entry: python modulos/03-plataforma-e-entrega/gates/G_ISOLATION_AUDIT.py
         language: system
         always_run: true
         pass_filenames: false
@@ -185,7 +185,7 @@ repos:
 
       - id: g-protocol-fallback
         name: G_PROTOCOL_FALLBACK (paridade e fallback REST vs MCP)
-        entry: python gates/G_PROTOCOL_FALLBACK.py
+        entry: python modulos/04-nucleo-compartilhado/gates/G_PROTOCOL_FALLBACK.py
         language: system
         always_run: true
         pass_filenames: false
@@ -193,7 +193,7 @@ repos:
 
       - id: g-llm-prompt-shield
         name: G_LLM_PROMPT_SHIELD (auditoria de blindagem anti-prompt injection)
-        entry: python gates/G_LLM_PROMPT_SHIELD.py
+        entry: python modulos/04-nucleo-compartilhado/gates/G_LLM_PROMPT_SHIELD.py
         language: system
         always_run: true
         pass_filenames: false
@@ -201,7 +201,7 @@ repos:
 
       - id: g-drift-analyzer
         name: G_DRIFT_ANALYZER (analise de redundancia funcional inter-fatias VSA)
-        entry: python gates/G_DRIFT_ANALYZER.py
+        entry: python modulos/04-nucleo-compartilhado/gates/G_DRIFT_ANALYZER.py
         language: system
         always_run: true
         pass_filenames: false
@@ -209,7 +209,7 @@ repos:
 
       - id: g-prototype-rewrite
         name: G_PROTOTYPE_REWRITE (isolamento de sandbox e trava anti-vibe coding)
-        entry: python gates/G_PROTOTYPE_REWRITE.py
+        entry: python modulos/02-triade-motores/fluxo-01-pure/gates/G_PROTOTYPE_REWRITE.py
         language: system
         always_run: true
         pass_filenames: false
@@ -217,7 +217,7 @@ repos:
 
       - id: g-livro-evidencia
         name: G_LIVRO_EVIDENCIA (auditoria de evidencia do livro-texto)
-        entry: python gates/G_LIVRO_EVIDENCIA.py
+        entry: python modulos/04-nucleo-compartilhado/gates/G_LIVRO_EVIDENCIA.py
         language: system
         stages: [manual]
         pass_filenames: false
@@ -226,7 +226,7 @@ repos:
       # Manual: chama o modelo (claude -p --model haiku), gasta tokens e depende de rede.
       - id: g-prova-skills-pocock
         name: G_PROVA_SKILLS_POCOCK (uso real das skills do ciclo skills-pocock)
-        entry: python gates/G_PROVA_SKILLS_POCOCK.py
+        entry: python modulos/01-governanca-e-qualidade/gates/G_PROVA_SKILLS_POCOCK.py
         language: system
         stages: [manual]
         pass_filenames: false
@@ -234,7 +234,7 @@ repos:
 
       - id: g-portao-prova-que-morde
         name: "G_PORTAO_PROVA_QUE_MORDE (meta-gate: bloqueia gates sem teste de reprovação exit 1)"
-        entry: python gates/G_PORTAO_PROVA_QUE_MORDE.py
+        entry: python modulos/01-governanca-e-qualidade/gates/G_PORTAO_PROVA_QUE_MORDE.py
         language: system
         always_run: true
         pass_filenames: false
@@ -242,7 +242,7 @@ repos:
 
       - id: g-lei-declara-portao
         name: "G_LEI_DECLARA_PORTAO (meta-gate: bloqueia leis sem portao declarado e forca)"
-        entry: python gates/G_LEI_DECLARA_PORTAO.py
+        entry: python modulos/01-governanca-e-qualidade/gates/G_LEI_DECLARA_PORTAO.py
         language: system
         always_run: true
         pass_filenames: false
@@ -250,7 +250,7 @@ repos:
 
       - id: g-contract-rot
         name: "G_CONTRACT_ROT (prevencao de contract rot entre servidor vivo e openapi.json)"
-        entry: python gates/G_CONTRACT_ROT.py
+        entry: python modulos/03-plataforma-e-entrega/gates/G_CONTRACT_ROT.py
         language: system
         always_run: true
         pass_filenames: false
@@ -258,7 +258,7 @@ repos:
 
       - id: g-env-rot
         name: "G_ENV_ROT (prevencao de environment rot via AST vs .env.example)"
-        entry: python gates/G_ENV_ROT.py
+        entry: python modulos/04-nucleo-compartilhado/gates/G_ENV_ROT.py
         language: system
         always_run: true
         pass_filenames: false
@@ -266,7 +266,7 @@ repos:
 
       - id: g-skill-rot
         name: "G_SKILL_ROT (prevencao de skill rot e resolucao estatica de paths e comandos)"
-        entry: python gates/G_SKILL_ROT.py
+        entry: python modulos/04-nucleo-compartilhado/gates/G_SKILL_ROT.py
         language: system
         always_run: true
         pass_filenames: false
@@ -274,7 +274,7 @@ repos:
 
       - id: g-skill-formato
         name: "G_SKILL_FORMATO (nome, descricao e tamanho das skills)"
-        entry: python gates/G_SKILL_FORMATO.py
+        entry: python modulos/04-nucleo-compartilhado/gates/G_SKILL_FORMATO.py
         language: system
         always_run: true
         pass_filenames: false
@@ -282,7 +282,7 @@ repos:
 
       - id: g-migration-rot
         name: "G_MIGRATION_ROT (prevencao de migration rot, rollback e idempotencia)"
-        entry: python gates/G_MIGRATION_ROT.py
+        entry: python modulos/02-triade-motores/fluxo-03-freedom/gates/G_MIGRATION_ROT.py
         language: system
         always_run: true
         pass_filenames: false
@@ -290,7 +290,7 @@ repos:
 
       - id: g-ant-lockin-legado
         name: "G_ANT_LOCKIN_LEGADO (varredura vendor lock-in na entrega)"
-        entry: python gates/G_ANT_LOCKIN_LEGADO.py
+        entry: python modulos/02-triade-motores/fluxo-03-freedom/gates/G_ANT_LOCKIN_LEGADO.py
         language: system
         always_run: true
         pass_filenames: false
@@ -298,7 +298,7 @@ repos:
 
       - id: g-resumo-usuario
         name: "G_RESUMO_USUARIO (template duplo de encerramento)"
-        entry: python gates/G_RESUMO_USUARIO.py
+        entry: python modulos/04-nucleo-compartilhado/gates/G_RESUMO_USUARIO.py
         language: system
         always_run: true
         pass_filenames: false
@@ -306,7 +306,7 @@ repos:
 
       - id: g-pacote-core
         name: "G_PACOTE_CORE (pacote usuario sem artefatos dev-only)"
-        entry: python gates/G_PACOTE_CORE.py
+        entry: python modulos/04-nucleo-compartilhado/gates/G_PACOTE_CORE.py
         language: system
         always_run: true
         pass_filenames: false
@@ -314,7 +314,7 @@ repos:
 
       - id: g-user-facing-ptbr
         name: "G_USER_FACING_PTBR (jargao explicado em superficies de usuario)"
-        entry: python gates/G_USER_FACING_PTBR.py
+        entry: python modulos/04-nucleo-compartilhado/gates/G_USER_FACING_PTBR.py
         language: system
         always_run: true
         pass_filenames: false
@@ -322,7 +322,7 @@ repos:
 
       - id: g-layout-entrega
         name: "G_LAYOUT_ENTREGA (posicionamento da entrega vs legado irmao)"
-        entry: python gates/G_LAYOUT_ENTREGA.py
+        entry: python modulos/03-plataforma-e-entrega/gates/G_LAYOUT_ENTREGA.py
         language: system
         always_run: true
         pass_filenames: false
@@ -330,7 +330,7 @@ repos:
 
       - id: g-sync-cmd-rot
         name: "G_SYNC_CMD_ROT (forma canonica de components sync + aliases)"
-        entry: python gates/G_SYNC_CMD_ROT.py
+        entry: python modulos/04-nucleo-compartilhado/gates/G_SYNC_CMD_ROT.py
         language: system
         always_run: true
         pass_filenames: false
@@ -338,7 +338,7 @@ repos:
 
       - id: g-idioma-lei-4
         name: "G_IDIOMA_LEI_4 (ingles compacto no nucleo e tickets per Lei #4)"
-        entry: python gates/G_IDIOMA_LEI_4.py
+        entry: python modulos/04-nucleo-compartilhado/gates/G_IDIOMA_LEI_4.py
         language: system
         always_run: true
         pass_filenames: false
@@ -346,7 +346,7 @@ repos:
 
       - id: g-determinismo-lei-1
         name: "G_DETERMINISMO_LEI_1 (bloqueio de chamadas LLM em rotas mecanicas per Lei #1)"
-        entry: python gates/G_DETERMINISMO_LEI_1.py
+        entry: python modulos/01-governanca-e-qualidade/gates/G_DETERMINISMO_LEI_1.py
         language: system
         always_run: true
         pass_filenames: false
@@ -354,7 +354,7 @@ repos:
 
       - id: g-saida-binaria
         name: "G_SAIDA_BINARIA (auditoria de saida estritamente binaria 0/1 per Lei #2)"
-        entry: python gates/G_SAIDA_BINARIA.py
+        entry: python modulos/04-nucleo-compartilhado/gates/G_SAIDA_BINARIA.py
         language: system
         always_run: true
         pass_filenames: false
@@ -362,7 +362,7 @@ repos:
 
       - id: g-estrutura-estado
         name: "G_ESTRUTURA_ESTADO (persistencia estruturada schemas de orquestracao per Lei #3)"
-        entry: python gates/G_ESTRUTURA_ESTADO.py
+        entry: python modulos/04-nucleo-compartilhado/gates/G_ESTRUTURA_ESTADO.py
         language: system
         always_run: true
         pass_filenames: false
@@ -370,7 +370,7 @@ repos:
 
       - id: g-disciplina-teste-ferramenta
         name: "G_DISCIPLINA_TESTE_FERRAMENTA (ciclo de 5 passos e frescor de relatorio per Lei #9)"
-        entry: python gates/G_DISCIPLINA_TESTE_FERRAMENTA.py
+        entry: python modulos/01-governanca-e-qualidade/gates/G_DISCIPLINA_TESTE_FERRAMENTA.py
         language: system
         always_run: true
         pass_filenames: false
@@ -378,7 +378,7 @@ repos:
 
       - id: g-quarteto-sine-qua-non
         name: "G_QUARTETO_SINE_QUA_NON (auditoria dos 4 pilares mandatorios per Lei #10)"
-        entry: python gates/G_QUARTETO_SINE_QUA_NON.py
+        entry: python modulos/03-plataforma-e-entrega/gates/G_QUARTETO_SINE_QUA_NON.py
         language: system
         always_run: true
         pass_filenames: false
@@ -386,7 +386,7 @@ repos:
 
       - id: g-stack-padrao-ouro
         name: "G_STACK_PADRAO_OURO (auditoria da stack padrao-ouro Next/TS/Tailwind + Py/WAL/OpenAPI per Lei #11)"
-        entry: python gates/G_STACK_PADRAO_OURO.py
+        entry: python modulos/02-triade-motores/fluxo-01-pure/gates/G_STACK_PADRAO_OURO.py
         language: system
         always_run: true
         pass_filenames: false
@@ -394,7 +394,7 @@ repos:
 
       - id: g-pipeline-handoff
         name: "G_PIPELINE_HANDOFF (validacao deterministica de manifestos de handoff)"
-        entry: python gates/G_PIPELINE_HANDOFF.py
+        entry: python modulos/04-nucleo-compartilhado/gates/G_PIPELINE_HANDOFF.py
         language: system
         always_run: true
         pass_filenames: false
@@ -402,7 +402,7 @@ repos:
 
       - id: g-dispatch-pipeline-vsa
         name: "G_DISPATCH_PIPELINE_VSA (validacao topologica de fatias VSA per Lei #1)"
-        entry: python gates/G_DISPATCH_PIPELINE_VSA.py
+        entry: python modulos/03-plataforma-e-entrega/gates/G_DISPATCH_PIPELINE_VSA.py
         language: system
         always_run: true
         pass_filenames: false
@@ -410,7 +410,7 @@ repos:
 
       - id: g-gestor-sessoes
         name: "G_GESTOR_SESSOES (persistencia deterministica de sessoes per Lei #3)"
-        entry: python gates/G_GESTOR_SESSOES.py
+        entry: python modulos/04-nucleo-compartilhado/gates/G_GESTOR_SESSOES.py
         language: system
         always_run: true
         pass_filenames: false
@@ -418,7 +418,7 @@ repos:
 
       - id: g-mapa-pecas
         name: "G_mapa_pecas (integridade de catalogo de pecas e mapas visuais per Lei #8)"
-        entry: python gates/G_mapa_pecas.py
+        entry: python modulos/04-nucleo-compartilhado/gates/G_mapa_pecas.py
         language: system
         always_run: true
         pass_filenames: false
@@ -429,7 +429,7 @@ repos:
       # da allowlist datada) e ativado na fase e do ciclo-01.
       - id: g-fronteira-ferramentas
         name: "G_FRONTEIRA_FERRAMENTAS (fronteiras das ferramentas — modo aviso, D1)"
-        entry: python gates/G_FRONTEIRA_FERRAMENTAS.py --modo aviso
+        entry: python modulos/04-nucleo-compartilhado/gates/G_FRONTEIRA_FERRAMENTAS.py --modo aviso
         language: system
         always_run: true
         pass_filenames: false
@@ -447,7 +447,7 @@ repos:
 
       - id: g-template-forge-rot
         name: "G_TEMPLATE_FORGE_ROT (integridade de templates do aidd-forge per Lei #9)"
-        entry: python gates/G_TEMPLATE_FORGE_ROT.py
+        entry: python modulos/01-governanca-e-qualidade/gates/G_TEMPLATE_FORGE_ROT.py
         language: system
         always_run: true
         pass_filenames: false
@@ -455,7 +455,7 @@ repos:
 
       - id: g-amelhoria
         name: "G_amelhoria (rotulo honesto de melhoria per Lei #9)"
-        entry: python gates/G_amelhoria.py
+        entry: python modulos/01-governanca-e-qualidade/gates/G_amelhoria.py
         language: system
         always_run: true
         pass_filenames: false
@@ -463,7 +463,7 @@ repos:
 
       - id: g-aidd-diagnose
         name: "G_aidd_diagnose (qualidade deterministica de diagnose per Lei #9)"
-        entry: python gates/G_aidd_diagnose.py
+        entry: python modulos/01-governanca-e-qualidade/gates/G_aidd_diagnose.py
         language: system
         always_run: true
         pass_filenames: false
@@ -471,7 +471,7 @@ repos:
 
       - id: g-aidd-forge
         name: "G_aidd_forge (qualidade deterministica do bootstrap aidd-forge per Lei #9)"
-        entry: python gates/G_aidd_forge.py --alvo tests/fixtures/forge_conforme
+        entry: python modulos/01-governanca-e-qualidade/gates/G_aidd_forge.py --alvo tests/fixtures/forge_conforme
         language: system
         always_run: true
         pass_filenames: false
@@ -479,7 +479,7 @@ repos:
 
       - id: g-aidd-spec
         name: "G_aidd_spec (quality gate da ferramenta aidd-spec per Lei #9)"
-        entry: python gates/G_aidd_spec.py
+        entry: python modulos/01-governanca-e-qualidade/gates/G_aidd_spec.py
         language: system
         always_run: true
         pass_filenames: false
@@ -487,7 +487,7 @@ repos:
 
       - id: g-aidd-tdd
         name: "G_aidd_tdd (quality gate da ferramenta aidd-tdd per Lei #9)"
-        entry: python gates/G_aidd_tdd.py
+        entry: python modulos/01-governanca-e-qualidade/gates/G_aidd_tdd.py
         language: system
         always_run: true
         pass_filenames: false
@@ -495,7 +495,7 @@ repos:
 
       - id: g-aidd-tickets
         name: "G_aidd_tickets (quality gate da ferramenta aidd-tickets per Lei #9)"
-        entry: python gates/G_aidd_tickets.py
+        entry: python modulos/01-governanca-e-qualidade/gates/G_aidd_tickets.py
         language: system
         always_run: true
         pass_filenames: false
@@ -503,7 +503,7 @@ repos:
 
       - id: g-aidd-grill
         name: "G_aidd_grill (quality gate da ferramenta aidd-grill per Lei #9)"
-        entry: python gates/G_aidd_grill.py
+        entry: python modulos/01-governanca-e-qualidade/gates/G_aidd_grill.py
         language: system
         always_run: true
         pass_filenames: false
@@ -511,7 +511,7 @@ repos:
 
       - id: g-aidd-enterprise
         name: "G_aidd_enterprise (manifesto e integridade de componente enterprise per Lei #9)"
-        entry: python gates/G_aidd_enterprise.py --manifest tests/fixtures/enterprise_conforme/manifest.json --dir tests/fixtures/enterprise_conforme
+        entry: python modulos/03-plataforma-e-entrega/gates/G_aidd_enterprise.py --manifest tests/fixtures/enterprise_conforme/manifest.json --dir tests/fixtures/enterprise_conforme
         language: system
         always_run: true
         pass_filenames: false
@@ -519,7 +519,7 @@ repos:
 
       - id: g-template-tanstack-offline
         name: "G_TEMPLATE_TANSTACK_OFFLINE (template TanStack offline per Lei #11)"
-        entry: python gates/G_TEMPLATE_TANSTACK_OFFLINE.py
+        entry: python modulos/02-triade-motores/fluxo-01-pure/gates/G_TEMPLATE_TANSTACK_OFFLINE.py
         language: system
         always_run: true
         pass_filenames: false
@@ -527,7 +527,7 @@ repos:
 
       - id: g-nove-camadas-mercado
         name: "G_NOVE_CAMADAS_MERCADO (nove camadas de mercado per Lei #11)"
-        entry: python gates/G_NOVE_CAMADAS_MERCADO.py
+        entry: python modulos/02-triade-motores/fluxo-01-pure/gates/G_NOVE_CAMADAS_MERCADO.py
         language: system
         always_run: true
         pass_filenames: false
@@ -535,7 +535,7 @@ repos:
 
       - id: g-handoff-melhoria
         name: "G_HANDOFF_MELHORIA (assinatura e transicao melhoria para plan per Lei #9)"
-        entry: python gates/G_HANDOFF_MELHORIA.py
+        entry: python modulos/01-governanca-e-qualidade/gates/G_HANDOFF_MELHORIA.py
         language: system
         always_run: true
         pass_filenames: false
@@ -543,7 +543,7 @@ repos:
 
       - id: g-docs-rot
         name: "G_DOCS_ROT (anti-docs rot e integridade de links canonicos per Lei #12)"
-        entry: python gates/G_DOCS_ROT.py
+        entry: python modulos/01-governanca-e-qualidade/gates/G_DOCS_ROT.py
         language: system
         always_run: true
         pass_filenames: false
@@ -551,7 +551,7 @@ repos:
 
       - id: g-escritor-atomico
         name: "G_ESCRITOR_ATOMICO (escrita atomica deterministica per Lei #1)"
-        entry: python gates/G_ESCRITOR_ATOMICO.py
+        entry: python modulos/04-nucleo-compartilhado/gates/G_ESCRITOR_ATOMICO.py
         language: system
         always_run: true
         pass_filenames: false
@@ -559,7 +559,7 @@ repos:
 
       - id: g-orquestrador-sincrono
         name: "G_ORQUESTRADOR_SINCRONO (orquestracao sincrona deterministica per Lei #1)"
-        entry: python gates/G_ORQUESTRADOR_SINCRONO.py
+        entry: python modulos/04-nucleo-compartilhado/gates/G_ORQUESTRADOR_SINCRONO.py
         language: system
         always_run: true
         pass_filenames: false
@@ -567,7 +567,7 @@ repos:
 
       - id: g-transaction-log-lru
         name: "G_TRANSACTION_LOG_LRU (log transacional deterministico per Lei #1)"
-        entry: python gates/G_TRANSACTION_LOG_LRU.py
+        entry: python modulos/04-nucleo-compartilhado/gates/G_TRANSACTION_LOG_LRU.py
         language: system
         always_run: true
         pass_filenames: false
@@ -575,7 +575,7 @@ repos:
 
       - id: g-supply-chain
         name: "G_SUPPLY_CHAIN (seguranca da cadeia de suprimentos per Lei #6)"
-        entry: python gates/G_SUPPLY_CHAIN.py
+        entry: python modulos/04-nucleo-compartilhado/gates/G_SUPPLY_CHAIN.py
         language: system
         always_run: true
         pass_filenames: false

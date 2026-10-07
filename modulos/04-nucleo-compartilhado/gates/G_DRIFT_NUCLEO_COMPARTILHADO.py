@@ -40,12 +40,12 @@ um par que deveria estar sincronizado (baseline_nucleo_compartilhado.json)
 divergir sem essa mudança ter sido documentada.
 
 Uso:
-  python gates/G_DRIFT_NUCLEO_COMPARTILHADO.py
+  python modulos/04-nucleo-compartilhado/gates/G_DRIFT_NUCLEO_COMPARTILHADO.py
       Roda a checagem em todos os pares de PARES. exit 0 = sem drift não
       documentado em nenhum par. exit 1 = drift encontrado ou baseline
       desatualizado (arquivo novo não catalogado) em algum par.
 
-  python gates/G_DRIFT_NUCLEO_COMPARTILHADO.py --atualizar-baseline
+  python modulos/04-nucleo-compartilhado/gates/G_DRIFT_NUCLEO_COMPARTILHADO.py --atualizar-baseline
       Regrava o baseline refletindo o estado atual de todos os pares (todo
       arquivo idêntico vira esperado_identico=true; todo arquivo divergente
       vira esperado_identico=false com motivo placeholder "REVISAR: ..."
@@ -60,8 +60,9 @@ import json
 import os
 import sys
 
-ROOT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-BASELINE_PATH = os.path.join(ROOT_DIR, "gates", "baseline_nucleo_compartilhado.json")
+from pathlib import Path as _Path
+ROOT_DIR = str(next((p.parent for p in _Path(__file__).resolve().parents if p.name == "modulos"), _Path(__file__).resolve().parent.parent))  # raiz: pai de modulos/ (VSA) ou de gates/ (árvore sintética)
+BASELINE_PATH = os.path.join(ROOT_DIR, "modulos", "04-nucleo-compartilhado", "contracts", "baseline_nucleo_compartilhado.json")
 CATALOGO_PATH = os.path.join(ROOT_DIR, "componentes", "compartilhado", "CATALOGO.json")
 
 # D4: arquivo historico, fora do almoxarifado (CATALOGO.json -> fora_do_almoxarifado).
@@ -83,7 +84,7 @@ def _tools(ferramenta, *partes):
 
 
 # Pares de diretorios comparados entre aidd-master e aidd-enterprise.
-# Cada par tem sua propria chave no baseline (gates/baseline_nucleo_compartilhado.json)
+# Cada par tem sua propria chave no baseline (modulos/04-nucleo-compartilhado/contracts/baseline_nucleo_compartilhado.json)
 # para nao colidir nomes de arquivo repetidos entre pares diferentes
 # (ex.: "openapi.py" existe em src/core, templates/core e templates/v2 com
 # conteudos e vereditos diferentes entre si).

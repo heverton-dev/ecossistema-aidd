@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
 Teste de Quality Gate Determinístico de aidd-forge (Ticket 7 / D13 / DoD 6).
-Exige que `gates/G_aidd_forge.py`:
+Exige que `modulos/01-governanca-e-qualidade/gates/G_aidd_forge.py`:
 - aprove (exit 0) um alvo de bootstrap forge conforme (governança + gates +
   hook pre-commit, sem stubs);
 - reprove (exit 1) alvo incompleto, alvo com stub, rótulo ilusório (Lei #8),
@@ -14,8 +14,8 @@ from pathlib import Path
 
 import pytest
 
-ROOT_DIR = Path(__file__).resolve().parent.parent
-GATE_SCRIPT = ROOT_DIR / "gates" / "G_aidd_forge.py"
+ROOT_DIR = next((p.parent for p in Path(__file__).resolve().parents if p.name == "modulos"), Path(__file__).resolve().parent.parent)  # raiz: pai de modulos/ (VSA) ou de gates/ (árvore sintética)
+GATE_SCRIPT = ROOT_DIR / "modulos" / "01-governanca-e-qualidade" / "gates" / "G_aidd_forge.py"
 
 AGENTS_CONFORME = """# AGENTS.md
 
@@ -23,7 +23,7 @@ AGENTS_CONFORME = """# AGENTS.md
 1. **Determinism First:** gates determinísticos obrigatórios.
 2. **Binary Quality:** exit 0 aprova, exit 1 bloqueia.
 
-Portão: gates/G_aidd_forge.py (provado)
+Portão: modulos/01-governanca-e-qualidade/gates/G_aidd_forge.py (provado)
 """
 
 GATE_CONFORME = '''#!/usr/bin/env python3

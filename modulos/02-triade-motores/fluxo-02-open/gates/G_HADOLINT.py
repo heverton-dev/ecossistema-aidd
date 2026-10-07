@@ -19,7 +19,7 @@ Checagens executadas:
    em hooks de pre-commit.
 
 Uso:
-  python gates/G_HADOLINT.py [arquivo1] [arquivo2] ...
+  python modulos/02-triade-motores/fluxo-02-open/gates/G_HADOLINT.py [arquivo1] [arquivo2] ...
       exit 0 = todos os Dockerfiles em conformidade com as regras Hadolint.
       exit 1 = falha sintática, regra violada ou hadolint não instalado.
 =============================================================================
@@ -32,7 +32,8 @@ import subprocess
 import sys
 from typing import Dict, List, Optional, Tuple
 
-ROOT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+from pathlib import Path as _Path
+ROOT_DIR = str(next((p.parent for p in _Path(__file__).resolve().parents if p.name == "modulos"), _Path(__file__).resolve().parent.parent))  # raiz: pai de modulos/ (VSA) ou de gates/ (árvore sintética)
 
 
 def encontrar_binario_hadolint() -> Optional[str]:

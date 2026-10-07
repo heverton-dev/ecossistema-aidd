@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
 Teste de Quality Gate Determinístico e Rótulo Honesto (Ticket 6 / D13 / DoD 3 / DoD 6).
-Exige que `gates/G_amelhoria.py` aprove saídas com rótulo honesto ("Sugestão de refatoração...")
+Exige que `modulos/01-governanca-e-qualidade/gates/G_amelhoria.py` aprove saídas com rótulo honesto ("Sugestão de refatoração...")
 e reprove terminantemente com exit 1 afirmações imperativas enganosas como "Refatoração concluída".
 """
 
@@ -11,8 +11,8 @@ import sys
 from pathlib import Path
 import pytest
 
-ROOT_DIR = Path(__file__).resolve().parent.parent
-GATE_SCRIPT = ROOT_DIR / "gates" / "G_amelhoria.py"
+ROOT_DIR = next((p.parent for p in Path(__file__).resolve().parents if p.name == "modulos"), Path(__file__).resolve().parent.parent)  # raiz: pai de modulos/ (VSA) ou de gates/ (árvore sintética)
+GATE_SCRIPT = ROOT_DIR / "modulos" / "01-governanca-e-qualidade" / "gates" / "G_amelhoria.py"
 
 
 def executar_gate_amelhoria(caminho_relatorio: Path) -> subprocess.CompletedProcess:

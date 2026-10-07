@@ -19,7 +19,8 @@ import sys
 
 import pytest
 
-GATES_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", "gates"))
+GATES_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", "modulos",
+                                         "01-governanca-e-qualidade", "gates"))
 if GATES_DIR not in sys.path:
     sys.path.insert(0, GATES_DIR)
 

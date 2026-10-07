@@ -14,11 +14,11 @@ import sys
 from pathlib import Path
 import pytest
 
-from _gate_test_utils import rodar_gate
+from _gate_test_utils import copiar_mapa_donos, rodar_gate
 
 GATE_DIR = os.path.dirname(os.path.abspath(__file__))
 GATE_PATH = os.path.join(GATE_DIR, "G_DRIFT_NUCLEO_COMPARTILHADO.py")
-ROOT_DIR = os.path.dirname(GATE_DIR)
+ROOT_DIR = str(next(p.parent for p in __import__("pathlib").Path(__file__).resolve().parents if p.name == "modulos"))  # raiz do ecossistema
 
 
 def test_g_drift_nucleo_compartilhado_passa_no_repositorio():
@@ -30,9 +30,10 @@ def test_g_drift_nucleo_compartilhado_passa_no_repositorio():
 
 def test_g_drift_nucleo_compartilhado_reprova_drift_nao_documentado(tmp_path):
     """Valida que G_DRIFT_NUCLEO_COMPARTILHADO reprova (exit 1) quando arquivos idênticos divergem."""
-    fake_gates = tmp_path / "gates"
-    fake_gates.mkdir()
+    fake_gates = tmp_path / "modulos" / "04-nucleo-compartilhado" / "gates"
+    fake_gates.mkdir(parents=True)
     shutil.copy2(GATE_PATH, fake_gates / "G_DRIFT_NUCLEO_COMPARTILHADO.py")
+    copiar_mapa_donos(tmp_path)
 
     dir_a = tmp_path / "modulos" / "03-plataforma-e-entrega" / "fatiamento-master" / "aidd-master" / "src" / "core"
     dir_b = tmp_path / "modulos" / "03-plataforma-e-entrega" / "blindagem-enterprise" / "aidd-enterprise" / "src" / "core"
@@ -53,7 +54,8 @@ def test_g_drift_nucleo_compartilhado_reprova_drift_nao_documentado(tmp_path):
             }
         }
     }
-    (fake_gates / "baseline_nucleo_compartilhado.json").write_text(json.dumps(baseline), encoding="utf-8")
+    (tmp_path / "modulos" / "04-nucleo-compartilhado" / "contracts").mkdir(parents=True, exist_ok=True)
+    (tmp_path / "modulos" / "04-nucleo-compartilhado" / "contracts" / "baseline_nucleo_compartilhado.json").write_text(json.dumps(baseline), encoding="utf-8")
 
     proc = rodar_gate(str(fake_gates / "G_DRIFT_NUCLEO_COMPARTILHADO.py"), cwd=str(tmp_path))
     assert proc.returncode == 1, f"Deveria ter retornado 1, retornou {proc.returncode}"
@@ -62,9 +64,10 @@ def test_g_drift_nucleo_compartilhado_reprova_drift_nao_documentado(tmp_path):
 
 def test_g_drift_nucleo_compartilhado_reprova_arquivo_nao_catalogado(tmp_path):
     """Valida que G_DRIFT_NUCLEO_COMPARTILHADO reprova (exit 1) quando arquivo novo não está no baseline."""
-    fake_gates = tmp_path / "gates"
-    fake_gates.mkdir()
+    fake_gates = tmp_path / "modulos" / "04-nucleo-compartilhado" / "gates"
+    fake_gates.mkdir(parents=True)
     shutil.copy2(GATE_PATH, fake_gates / "G_DRIFT_NUCLEO_COMPARTILHADO.py")
+    copiar_mapa_donos(tmp_path)
 
     dir_a = tmp_path / "modulos" / "03-plataforma-e-entrega" / "fatiamento-master" / "aidd-master" / "src" / "core"
     dir_b = tmp_path / "modulos" / "03-plataforma-e-entrega" / "blindagem-enterprise" / "aidd-enterprise" / "src" / "core"
@@ -75,7 +78,8 @@ def test_g_drift_nucleo_compartilhado_reprova_arquivo_nao_catalogado(tmp_path):
     (dir_b / "novo.py").write_text("# arquivo novo\n", encoding="utf-8")
 
     baseline = {"arquivos": {"src/core": {}}}
-    (fake_gates / "baseline_nucleo_compartilhado.json").write_text(json.dumps(baseline), encoding="utf-8")
+    (tmp_path / "modulos" / "04-nucleo-compartilhado" / "contracts").mkdir(parents=True, exist_ok=True)
+    (tmp_path / "modulos" / "04-nucleo-compartilhado" / "contracts" / "baseline_nucleo_compartilhado.json").write_text(json.dumps(baseline), encoding="utf-8")
 
     proc = rodar_gate(str(fake_gates / "G_DRIFT_NUCLEO_COMPARTILHADO.py"), cwd=str(tmp_path))
     assert proc.returncode == 1, f"Deveria ter retornado 1, retornou {proc.returncode}"

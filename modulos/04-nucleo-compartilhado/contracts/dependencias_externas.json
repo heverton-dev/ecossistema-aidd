@@ -1,0 +1,292 @@
+{
+  "versao": "1.0.0",
+  "descricao": "Manifesto único de dependências externas de terceiros usadas pelo AGENTE (skills e MCPs consumidos por quem desenvolve neste monorepo — nunca componentes de produtos gerados pelas ferramentas aidd-*, esses seguem componentes/<escopo>/mcps/ em modulos/04-nucleo-compartilhado/contracts/manifesto_harnesses.json). Consumido por scripts/gestor_dependencias.py (comandos 'python ecossistema.py dependencia bootstrap|add-skill|add-mcp|list|verify'). Skills com 'verificar' apontando para um ARQUIVO único podem declarar 'sha256' com o hash esperado do artefato instalado — 'dependencia verify'/'bootstrap' bloqueiam ao detectar divergência. MCPs (npx/docker/remoto) não têm artefato local sob controle deste repositório para hashear: o pacote é buscado em tempo de execução pelo próprio harness fora do boundary de instalação deste manifesto, então nenhum campo 'sha256' é declarado para eles (evita checagem fabricada).",
+  "skills": {
+    "impeccable": {
+      "pacote": "impeccable",
+      "instalar": "npx impeccable install --providers=claude,cursor,gemini,agents,agent,github,opencode --scope=project -y",
+      "verificar": ".claude/skills/impeccable/SKILL.md",
+      "sha256": "3895765e9434400dfc1b30e364be002cf499c1718fb2431e65b907c14ae2cb27",
+      "gitignore": [
+        "*/skills/impeccable/",
+        "*/agents/impeccable-*.md",
+        "*/commands/impeccable.md",
+        "*/hooks/impeccable.json"
+      ]
+    },
+    "agents-sdk": {
+      "pacote": "cloudflare/skills",
+      "instalar": "npx -y skills add cloudflare/skills --skill agents-sdk --agent claude-code opencode cursor gemini-cli antigravity codebuddy -y --copy",
+      "verificar": ".claude/skills/agents-sdk/SKILL.md",
+      "sha256": null,
+      "gitignore": [
+        "*/skills/agents-sdk/",
+        "skills-lock.json"
+      ]
+    },
+    "cloudflare": {
+      "pacote": "cloudflare/skills",
+      "instalar": "npx -y skills add cloudflare/skills --skill cloudflare --agent claude-code opencode cursor gemini-cli antigravity codebuddy -y --copy",
+      "verificar": ".claude/skills/cloudflare/SKILL.md",
+      "sha256": null,
+      "gitignore": [
+        "*/skills/cloudflare/",
+        "skills-lock.json"
+      ]
+    },
+    "cloudflare-email-service": {
+      "pacote": "cloudflare/skills",
+      "instalar": "npx -y skills add cloudflare/skills --skill cloudflare-email-service --agent claude-code opencode cursor gemini-cli antigravity codebuddy -y --copy",
+      "verificar": ".claude/skills/cloudflare-email-service/SKILL.md",
+      "sha256": null,
+      "gitignore": [
+        "*/skills/cloudflare-email-service/",
+        "skills-lock.json"
+      ]
+    },
+    "cloudflare-one": {
+      "pacote": "cloudflare/skills",
+      "instalar": "npx -y skills add cloudflare/skills --skill cloudflare-one --agent claude-code opencode cursor gemini-cli antigravity codebuddy -y --copy",
+      "verificar": ".claude/skills/cloudflare-one/SKILL.md",
+      "sha256": null,
+      "gitignore": [
+        "*/skills/cloudflare-one/",
+        "skills-lock.json"
+      ]
+    },
+    "cloudflare-one-migrations": {
+      "pacote": "cloudflare/skills",
+      "instalar": "npx -y skills add cloudflare/skills --skill cloudflare-one-migrations --agent claude-code opencode cursor gemini-cli antigravity codebuddy -y --copy",
+      "verificar": ".claude/skills/cloudflare-one-migrations/SKILL.md",
+      "sha256": null,
+      "gitignore": [
+        "*/skills/cloudflare-one-migrations/",
+        "skills-lock.json"
+      ]
+    },
+    "durable-objects": {
+      "pacote": "cloudflare/skills",
+      "instalar": "npx -y skills add cloudflare/skills --skill durable-objects --agent claude-code opencode cursor gemini-cli antigravity codebuddy -y --copy",
+      "verificar": ".claude/skills/durable-objects/SKILL.md",
+      "sha256": null,
+      "gitignore": [
+        "*/skills/durable-objects/",
+        "skills-lock.json"
+      ]
+    },
+    "nextjs-on-cloudflare": {
+      "pacote": "cloudflare/skills",
+      "instalar": "npx -y skills add cloudflare/skills --skill nextjs-on-cloudflare --agent claude-code opencode cursor gemini-cli antigravity codebuddy -y --copy",
+      "verificar": ".claude/skills/nextjs-on-cloudflare/SKILL.md",
+      "sha256": null,
+      "gitignore": [
+        "*/skills/nextjs-on-cloudflare/",
+        "skills-lock.json"
+      ]
+    },
+    "sandbox-migrate-to-next": {
+      "pacote": "cloudflare/skills",
+      "instalar": "npx -y skills add cloudflare/skills --skill sandbox-migrate-to-next --agent claude-code opencode cursor gemini-cli antigravity codebuddy -y --copy",
+      "verificar": ".claude/skills/sandbox-migrate-to-next/SKILL.md",
+      "sha256": null,
+      "gitignore": [
+        "*/skills/sandbox-migrate-to-next/",
+        "skills-lock.json"
+      ]
+    },
+    "sandbox-next": {
+      "pacote": "cloudflare/skills",
+      "instalar": "npx -y skills add cloudflare/skills --skill sandbox-next --agent claude-code opencode cursor gemini-cli antigravity codebuddy -y --copy",
+      "verificar": ".claude/skills/sandbox-next/SKILL.md",
+      "sha256": null,
+      "gitignore": [
+        "*/skills/sandbox-next/",
+        "skills-lock.json"
+      ]
+    },
+    "sandbox-stable": {
+      "pacote": "cloudflare/skills",
+      "instalar": "npx -y skills add cloudflare/skills --skill sandbox-stable --agent claude-code opencode cursor gemini-cli antigravity codebuddy -y --copy",
+      "verificar": ".claude/skills/sandbox-stable/SKILL.md",
+      "sha256": null,
+      "gitignore": [
+        "*/skills/sandbox-stable/",
+        "skills-lock.json"
+      ]
+    },
+    "turnstile-spin": {
+      "pacote": "cloudflare/skills",
+      "instalar": "npx -y skills add cloudflare/skills --skill turnstile-spin --agent claude-code opencode cursor gemini-cli antigravity codebuddy -y --copy",
+      "verificar": ".claude/skills/turnstile-spin/SKILL.md",
+      "sha256": null,
+      "gitignore": [
+        "*/skills/turnstile-spin/",
+        "skills-lock.json"
+      ]
+    },
+    "web-perf": {
+      "pacote": "cloudflare/skills",
+      "instalar": "npx -y skills add cloudflare/skills --skill web-perf --agent claude-code opencode cursor gemini-cli antigravity codebuddy -y --copy",
+      "verificar": ".claude/skills/web-perf/SKILL.md",
+      "sha256": null,
+      "gitignore": [
+        "*/skills/web-perf/",
+        "skills-lock.json"
+      ]
+    },
+    "workers-best-practices": {
+      "pacote": "cloudflare/skills",
+      "instalar": "npx -y skills add cloudflare/skills --skill workers-best-practices --agent claude-code opencode cursor gemini-cli antigravity codebuddy -y --copy",
+      "verificar": ".claude/skills/workers-best-practices/SKILL.md",
+      "sha256": null,
+      "gitignore": [
+        "*/skills/workers-best-practices/",
+        "skills-lock.json"
+      ]
+    },
+    "wrangler": {
+      "pacote": "cloudflare/skills",
+      "instalar": "npx -y skills add cloudflare/skills --skill wrangler --agent claude-code opencode cursor gemini-cli antigravity codebuddy -y --copy",
+      "verificar": ".claude/skills/wrangler/SKILL.md",
+      "sha256": null,
+      "gitignore": [
+        "*/skills/wrangler/",
+        "skills-lock.json"
+      ]
+    }
+  },
+  "mcps": {
+    "playwright": {
+      "pacote": "@playwright/mcp",
+      "comando": "npx",
+      "args": [
+        "-y",
+        "@playwright/mcp@latest"
+      ],
+      "env": [],
+      "harnesses_alvo": [
+        "claude-code",
+        "opencode",
+        "cursor",
+        "gemini-cli",
+        "mimocode",
+        "antigravity"
+      ]
+    },
+    "context7": {
+      "pacote": "@upstash/context7-mcp",
+      "comando": "npx",
+      "args": [
+        "-y",
+        "@upstash/context7-mcp"
+      ],
+      "env": [],
+      "harnesses_alvo": [
+        "claude-code",
+        "opencode",
+        "cursor",
+        "gemini-cli",
+        "mimocode",
+        "antigravity"
+      ]
+    },
+    "github": {
+      "pacote": "ghcr.io/github/github-mcp-server",
+      "comando": "docker",
+      "args": [
+        "run",
+        "-i",
+        "--rm",
+        "-e",
+        "GITHUB_PERSONAL_ACCESS_TOKEN",
+        "ghcr.io/github/github-mcp-server"
+      ],
+      "env": [
+        "GITHUB_PERSONAL_ACCESS_TOKEN"
+      ],
+      "harnesses_alvo": [
+        "claude-code",
+        "opencode",
+        "cursor",
+        "gemini-cli",
+        "mimocode",
+        "antigravity"
+      ]
+    },
+    "cloudflare": {
+      "pacote": "Cloudflare MCP oficial (remoto)",
+      "tipo": "remote",
+      "url": "https://mcp.cloudflare.com/mcp",
+      "harnesses_alvo": [
+        "claude-code",
+        "opencode",
+        "cursor",
+        "gemini-cli",
+        "mimocode",
+        "antigravity"
+      ]
+    },
+    "cloudflare-docs": {
+      "pacote": "Cloudflare Docs MCP oficial (remoto)",
+      "tipo": "remote",
+      "url": "https://docs.mcp.cloudflare.com/mcp",
+      "harnesses_alvo": [
+        "claude-code",
+        "opencode",
+        "cursor",
+        "gemini-cli",
+        "mimocode",
+        "antigravity"
+      ]
+    },
+    "codebase-memory-mcp": {
+      "pacote": "codebase-memory-mcp",
+      "comando": "codebase-memory-mcp",
+      "args": [],
+      "env": [],
+      "harnesses_alvo": [
+        "claude-code",
+        "opencode",
+        "cursor",
+        "gemini-cli",
+        "mimocode",
+        "antigravity",
+        "vscode"
+      ]
+    },
+    "mcp-gatekeeper": {
+      "pacote": "mcp-gatekeeper",
+      "comando": "python",
+      "args": [
+        "componentes/compartilhado/src-core/mcp_gatekeeper.py"
+      ],
+      "env": [],
+      "harnesses_alvo": [
+        "claude-code",
+        "opencode",
+        "cursor",
+        "gemini-cli",
+        "mimocode",
+        "antigravity",
+        "vscode"
+      ]
+    },
+    "mobbin-mcp": {
+      "pacote": "mobbin-mcp",
+      "comando": "python",
+      "args": [
+        "componentes/compartilhado/mcps/mobbin_mcp/server.py"
+      ],
+      "env": [],
+      "harnesses_alvo": [
+        "claude-code",
+        "opencode",
+        "cursor",
+        "gemini-cli",
+        "mimocode",
+        "antigravity",
+        "vscode"
+      ]
+    }
+  }
+}

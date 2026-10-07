@@ -9,12 +9,13 @@ from pathlib import Path
 from _gate_test_utils import rodar_gate
 
 GATE_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "G_RESUMO_USUARIO.py")
-ROOT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+from pathlib import Path as _Path
+ROOT_DIR = str(next((p.parent for p in _Path(__file__).resolve().parents if p.name == "modulos"), _Path(__file__).resolve().parent.parent))  # raiz: pai de modulos/ (VSA) ou de gates/ (árvore sintética)
 
 
 def _montar(tmp_path, *, com_readme=True, com_resumo=True, resumo=None, com_relatorio=True):
-    gates = tmp_path / "gates"
-    gates.mkdir()
+    gates = tmp_path / "modulos" / "04-nucleo-compartilhado" / "gates"
+    gates.mkdir(parents=True)
     shutil.copy2(GATE_PATH, gates / "G_RESUMO_USUARIO.py")
     (tmp_path / "core").mkdir()
     (tmp_path / "core" / "entrega_guia.py").write_text(
@@ -49,14 +50,14 @@ def test_g_resumo_usuario_passa_no_repositorio_sem_entrega():
 
 def test_g_resumo_usuario_failing_path_readme_sem_resumo(tmp_path):
     _montar(tmp_path, com_resumo=False, com_relatorio=True)
-    proc = rodar_gate(str(tmp_path / "gates" / "G_RESUMO_USUARIO.py"), cwd=str(tmp_path))
+    proc = rodar_gate(str(tmp_path / "modulos" / "04-nucleo-compartilhado" / "gates" / "G_RESUMO_USUARIO.py"), cwd=str(tmp_path))
     assert proc.returncode == 1, proc.stdout
     assert "RESUMO-USUARIO" in proc.stdout
 
 
 def test_g_resumo_usuario_failing_path_resumo_sem_perguntas(tmp_path):
     _montar(tmp_path, resumo="# App\n\nAqui mudou alguma coisa.\nsem estrutura\n")
-    proc = rodar_gate(str(tmp_path / "gates" / "G_RESUMO_USUARIO.py"), cwd=str(tmp_path))
+    proc = rodar_gate(str(tmp_path / "modulos" / "04-nucleo-compartilhado" / "gates" / "G_RESUMO_USUARIO.py"), cwd=str(tmp_path))
     assert proc.returncode == 1, proc.stdout
     assert "obrigatória" in proc.stdout or "O que mudou" in proc.stdout
 
@@ -65,12 +66,12 @@ def test_g_resumo_usuario_failing_path_resumo_longo(tmp_path):
     longo = "# App\n" + "\n".join(f"Linha {i}" for i in range(25))
     _montar(tmp_path, resumo=longo + "\n## O que mudou?\nx\n## Como eu abro?\ny\n## Como eu verifico?\nz\n")
     # 25+ linhas de cabecalho + 3 perguntas ainda estouram o limite
-    proc = rodar_gate(str(tmp_path / "gates" / "G_RESUMO_USUARIO.py"), cwd=str(tmp_path))
+    proc = rodar_gate(str(tmp_path / "modulos" / "04-nucleo-compartilhado" / "gates" / "G_RESUMO_USUARIO.py"), cwd=str(tmp_path))
     assert proc.returncode == 1, proc.stdout
     assert "linhas" in proc.stdout
 
 
 def test_g_resumo_usuario_aceita_template_bem_formado(tmp_path):
     _montar(tmp_path)
-    proc = rodar_gate(str(tmp_path / "gates" / "G_RESUMO_USUARIO.py"), cwd=str(tmp_path))
+    proc = rodar_gate(str(tmp_path / "modulos" / "04-nucleo-compartilhado" / "gates" / "G_RESUMO_USUARIO.py"), cwd=str(tmp_path))
     assert proc.returncode == 0, proc.stdout

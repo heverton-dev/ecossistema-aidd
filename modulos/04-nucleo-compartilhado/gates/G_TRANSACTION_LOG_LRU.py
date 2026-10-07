@@ -11,14 +11,14 @@ Verificação determinística (AST + hashes SHA-256) da entrega do item
    (modulos/03-plataforma-e-entrega/fatiamento-master/aidd-master/src/core/ e modulos/03-plataforma-e-entrega/blindagem-enterprise/aidd-enterprise/src/core/).
 2. O arquivo está declarado no MANIFEST.json do núcleo compartilhado.
 3. O par src/core da baseline de drift registra o arquivo
-   (gates/baseline_nucleo_compartilhado.json).
+   (modulos/04-nucleo-compartilhado/contracts/baseline_nucleo_compartilhado.json).
 4. O módulo expõe os símbolos críticos da entrega via análise AST:
    LruCache, TransactionLogEntry e TransactionLogRepositoryImpl.
 5. Os testes unitários do item existem e são byte-idênticos nos dois tools
    (tests/unit/test_transaction_log_lru.py).
 
 Uso:
-  python gates/G_TRANSACTION_LOG_LRU.py
+  python modulos/04-nucleo-compartilhado/gates/G_TRANSACTION_LOG_LRU.py
       exit 0 = entrega íntegra e completamente espelhada
       exit 1 = ao menos 1 divergência encontrada
 """
@@ -32,7 +32,8 @@ import sys
 if hasattr(sys.stdout, "reconfigure"):
     sys.stdout.reconfigure(encoding="utf-8", errors="replace")
 
-ROOT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+from pathlib import Path as _Path
+ROOT_DIR = str(next((p.parent for p in _Path(__file__).resolve().parents if p.name == "modulos"), _Path(__file__).resolve().parent.parent))  # raiz: pai de modulos/ (VSA) ou de gates/ (árvore sintética)
 
 FONTE = "componentes/compartilhado/src-core/transaction_log.py"
 DESTINOS = [
@@ -40,7 +41,7 @@ DESTINOS = [
     "modulos/03-plataforma-e-entrega/blindagem-enterprise/aidd-enterprise/src/core/transaction_log.py",
 ]
 MANIFEST = "componentes/compartilhado/src-core/MANIFEST.json"
-BASELINE = "gates/baseline_nucleo_compartilhado.json"
+BASELINE = "modulos/04-nucleo-compartilhado/contracts/baseline_nucleo_compartilhado.json"
 TESTES = [
     "modulos/03-plataforma-e-entrega/fatiamento-master/aidd-master/tests/unit/test_transaction_log_lru.py",
     "modulos/03-plataforma-e-entrega/blindagem-enterprise/aidd-enterprise/tests/unit/test_transaction_log_lru.py",

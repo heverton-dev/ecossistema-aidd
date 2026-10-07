@@ -9,12 +9,13 @@ from pathlib import Path
 from _gate_test_utils import rodar_gate
 
 GATE_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "G_PACOTE_CORE.py")
-ROOT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+from pathlib import Path as _Path
+ROOT_DIR = str(next((p.parent for p in _Path(__file__).resolve().parents if p.name == "modulos"), _Path(__file__).resolve().parent.parent))  # raiz: pai de modulos/ (VSA) ou de gates/ (árvore sintética)
 
 
 def _montar(tmp_path, com_sujeira: bool, com_export: bool = True):
-    gates = tmp_path / "gates"
-    gates.mkdir()
+    gates = tmp_path / "modulos" / "04-nucleo-compartilhado" / "gates"
+    gates.mkdir(parents=True)
     shutil.copy2(GATE_PATH, gates / "G_PACOTE_CORE.py")
     (tmp_path / "ecossistema.py").write_text("#\n", encoding="utf-8")
     (tmp_path / "scripts").mkdir()
@@ -25,7 +26,7 @@ def _montar(tmp_path, com_sujeira: bool, com_export: bool = True):
     else:
         (tmp_path / ".gitattributes").write_text("* text=auto\n", encoding="utf-8")
     if com_sujeira:
-        (tmp_path / "gates" / "junk.db").write_bytes(b"x")
+        (tmp_path / "modulos" / "04-nucleo-compartilhado" / "gates" / "junk.db").write_bytes(b"x")
         (tmp_path / "scripts" / "requirements-dev.txt").write_text("x\n", encoding="utf-8")
 
 
@@ -36,7 +37,7 @@ def test_g_pacote_core_passa_no_repositorio():
 
 def test_g_pacote_core_failing_path_db_e_devreq(tmp_path):
     _montar(tmp_path, com_sujeira=True)
-    proc = rodar_gate(str(tmp_path / "gates" / "G_PACOTE_CORE.py"), cwd=str(tmp_path))
+    proc = rodar_gate(str(tmp_path / "modulos" / "04-nucleo-compartilhado" / "gates" / "G_PACOTE_CORE.py"), cwd=str(tmp_path))
     assert proc.returncode == 1, proc.stdout
     assert "G_PACOTE_CORE" in proc.stdout
     assert ".db" in proc.stdout
@@ -44,12 +45,12 @@ def test_g_pacote_core_failing_path_db_e_devreq(tmp_path):
 
 def test_g_pacote_core_failing_path_sem_export_ignore(tmp_path):
     _montar(tmp_path, com_sujeira=False, com_export=False)
-    proc = rodar_gate(str(tmp_path / "gates" / "G_PACOTE_CORE.py"), cwd=str(tmp_path))
+    proc = rodar_gate(str(tmp_path / "modulos" / "04-nucleo-compartilhado" / "gates" / "G_PACOTE_CORE.py"), cwd=str(tmp_path))
     assert proc.returncode == 1, proc.stdout
     assert "export-ignore" in proc.stdout
 
 
 def test_g_pacote_core_aceita_pacote_limpo(tmp_path):
     _montar(tmp_path, com_sujeira=False)
-    proc = rodar_gate(str(tmp_path / "gates" / "G_PACOTE_CORE.py"), cwd=str(tmp_path))
+    proc = rodar_gate(str(tmp_path / "modulos" / "04-nucleo-compartilhado" / "gates" / "G_PACOTE_CORE.py"), cwd=str(tmp_path))
     assert proc.returncode == 0, proc.stdout

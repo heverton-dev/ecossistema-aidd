@@ -53,7 +53,7 @@ MASTER_CLI = _VSA_MASTER if _VSA_MASTER.is_file() else (ROOT_DIR / "modulos" / "
 _VSA_FORGE = ROOT_DIR / "modulos" / "01-governanca-e-qualidade" / "core" / "aidd-forge"
 FORGE_DIR = _VSA_FORGE if _VSA_FORGE.is_dir() else (ROOT_DIR / "modulos" / "01-governanca-e-qualidade" / "core" / "aidd-forge")
 
-GATE_DRIFT = ROOT_DIR / "gates" / "G_DRIFT_NUCLEO_COMPARTILHADO.py"
+GATE_DRIFT = ROOT_DIR / "modulos" / "04-nucleo-compartilhado" / "gates" / "G_DRIFT_NUCLEO_COMPARTILHADO.py"
 CATALOGO_PATH = ROOT_DIR / "componentes" / "compartilhado" / "CATALOGO.json"
 
 for _p in (str(ENTERPRISE_DIR), str(ENTERPRISE_DIR / "scripts"), str(FORGE_DIR)):
@@ -356,7 +356,7 @@ def _raiz_fake_drift(tmp_path: Path, copias: dict[str, bytes], peca: bytes, docu
     }
     (raiz / "componentes" / "compartilhado" / "CATALOGO.json").write_text(json.dumps(catalogo), encoding="utf-8")
     baseline = {"arquivos": {}, "catalogo": {"divergencias_documentadas": documentadas}}
-    (raiz / "gates" / "baseline_nucleo_compartilhado.json").write_text(json.dumps(baseline), encoding="utf-8")
+    (raiz / "modulos" / "04-nucleo-compartilhado" / "contracts" / "baseline_nucleo_compartilhado.json").write_text(json.dumps(baseline), encoding="utf-8")
     return raiz
 
 

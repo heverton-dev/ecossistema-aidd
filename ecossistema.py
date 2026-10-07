@@ -1401,7 +1401,7 @@ Comandos disponíveis:
                       a partir de manifesto formal de handoff de execução
   components sync|verify --tipo <tipo|todos> [--ferramenta <nome>] [--dry-run]
                       Sincroniza/verifica distribuicao fisica multi-harness de
-                      componentes (gates/manifesto_harnesses.json).
+                      componentes (modulos/04-nucleo-compartilhado/contracts/manifesto_harnesses.json).
                       Alias: `sync` (== components sync). --tipos e sinonimo
                       de --tipo. Sem --tipo, default 'todos' + aviso.
   sync [--tipo <tipo|todos>] [--ferramenta <nome>] [--dry-run]
@@ -1415,7 +1415,7 @@ Comandos disponíveis:
   dependencia add-mcp --nome <n> --pacote <p> --tipo remote --url <url> [--harnesses claude-code,opencode]
   dependencia list|verify
                       Instala/registra skills e MCPs de terceiros usados pelo
-                      agente (gates/dependencias_externas.json)
+                      agente (modulos/04-nucleo-compartilhado/contracts/dependencias_externas.json)
   orchestrate <plano> [--dry-run] [--resume] [--yes]
                       [--ambiente {orca,subagent,gitworktree}]
                       [--harness {mimo,opencode,claude,agy}] [--harness-map ...]

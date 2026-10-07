@@ -42,10 +42,10 @@ def test_resolve_destination_por_tipo(tmp_path: Path, tipo, esperado):
 def test_resolve_canonical_destination():
     dest = resolve_canonical_destination("skill", "demo")
     assert dest is not None
-    # Raiz real do monorepo possui gates/manifesto_harnesses.json
+    # Raiz real do monorepo possui modulos/04-nucleo-compartilhado/contracts/manifesto_harnesses.json
     monorepo_root = dest.parents[4]
-    assert (monorepo_root / "gates" / "manifesto_harnesses.json").exists(), (
-        f"Destino canonico resolveu para raiz invalida: {monorepo_root} (gates/manifesto_harnesses.json nao existe)"
+    assert (monorepo_root / "modulos" / "04-nucleo-compartilhado" / "contracts" / "manifesto_harnesses.json").exists(), (
+        f"Destino canonico resolveu para raiz invalida: {monorepo_root} (modulos/04-nucleo-compartilhado/contracts/manifesto_harnesses.json nao existe)"
     )
     assert dest == monorepo_root / "componentes" / "aidd-forge" / "skills" / "demo" / "SKILL.md"
     assert "/modulos/" not in dest.as_posix()

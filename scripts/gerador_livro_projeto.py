@@ -626,7 +626,7 @@ def parte_apendices(ev: Evidencia) -> str:
         "Para conferir automaticamente que nenhum arquivo citado desapareceu:",
         "",
         "```bash",
-        "python gates/G_LIVRO_EVIDENCIA.py --projeto <pasta-do-projeto>",
+        "python modulos/04-nucleo-compartilhado/gates/G_LIVRO_EVIDENCIA.py --projeto <pasta-do-projeto>",
         "```",
         "",
         "# Apêndice C — Procedência",

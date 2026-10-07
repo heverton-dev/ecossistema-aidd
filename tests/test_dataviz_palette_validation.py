@@ -16,7 +16,7 @@ ROOT = Path(__file__).resolve().parent.parent
 SKILL_DIR = ROOT / "componentes" / "compartilhado" / "skills" / "aidd-dataviz"
 SKILL_MD = SKILL_DIR / "SKILL.md"
 SCRIPT = SKILL_DIR / "scripts" / "validate_palette.py"
-GATE = ROOT / "gates" / "G_SKILL_FORMATO.py"
+GATE = ROOT / "modulos" / "04-nucleo-compartilhado" / "gates" / "G_SKILL_FORMATO.py"
 
 # Fixtures verificadas contra o validador: exit 0 / 1 / 2 respectivamente.
 CATEGORICAL_OK = "#2a78d6,#eb6834,#1baf7a,#eda100,#e87ba4,#008300,#4a3aa7,#e34948"

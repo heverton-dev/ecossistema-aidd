@@ -34,7 +34,7 @@ Done when: the command exits 0 with no hash divergence reported.
 
 - **Injection fails mid-way:** the transaction restores snapshots; confirm with `rollback.py <target>` printing "workspace limpo" (exit 0). Exit 1 means still dirty: stop and show the user the listed files.
 - **`enterprise verificar-drift --dir <target>` reports a divergent hash:** someone edited an injected file. Ask the user whether to keep the edit (re-inject from it) or restore the certified version.
-- **`python gates/G_aidd_enterprise.py --manifest <file> --dir <target>` exits 1:** fix the manifest fields against the schema, then rerun `inject --dry-run`.
+- **`python modulos/03-plataforma-e-entrega/gates/G_aidd_enterprise.py --manifest <file> --dir <target>` exits 1:** fix the manifest fields against the schema, then rerun `inject --dry-run`.
 
 ## Stopping Checklist
 

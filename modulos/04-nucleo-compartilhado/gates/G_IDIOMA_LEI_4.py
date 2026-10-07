@@ -34,7 +34,7 @@ Detecção:
   - Proporção de caracteres acentuados típicos (`áéíóúâêôãõçà`).
 
 Uso:
-  python gates/G_IDIOMA_LEI_4.py [--caminho <arquivo_ou_dir>]
+  python modulos/04-nucleo-compartilhado/gates/G_IDIOMA_LEI_4.py [--caminho <arquivo_ou_dir>]
       exit 0 = nenhum arquivo sob escopo contém prosa em PT-BR acima do limiar.
       exit 1 = ao menos 1 arquivo contém violação de idioma (arquivo, densidade
                e amostra de termos são impressos).
@@ -50,7 +50,8 @@ from typing import Dict, List, Optional, Set, Tuple
 if hasattr(sys.stdout, "reconfigure"):
     sys.stdout.reconfigure(encoding="utf-8", errors="replace")
 
-ROOT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+from pathlib import Path as _Path
+ROOT_DIR = str(next((p.parent for p in _Path(__file__).resolve().parents if p.name == "modulos"), _Path(__file__).resolve().parent.parent))  # raiz: pai de modulos/ (VSA) ou de gates/ (árvore sintética)
 
 # Arquivos ou nomes explicitamente isentos sob docs/issues
 ISENCOES_ISSUES = {"INDEX.md", "README.md", "SESSOES.md"}

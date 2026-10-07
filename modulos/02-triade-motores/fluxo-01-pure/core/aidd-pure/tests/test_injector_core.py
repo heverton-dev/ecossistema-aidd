@@ -217,8 +217,8 @@ class TestCanonicalDestination:
         # é resolvida por quem consome (o aidd-pure), não pela aritmética de
         # posições do `__file__` da peça.
         ecossistema_root = Path(injetor_mod._default_ecossistema_root()).resolve()
-        assert (ecossistema_root / "gates" / "manifesto_harnesses.json").exists(), (
-            f"Raiz calculada invalida: {ecossistema_root} (gates/manifesto_harnesses.json nao existe)"
+        assert (ecossistema_root / "modulos" / "04-nucleo-compartilhado" / "contracts" / "manifesto_harnesses.json").exists(), (
+            f"Raiz calculada invalida: {ecossistema_root} (modulos/04-nucleo-compartilhado/contracts/manifesto_harnesses.json nao existe)"
         )
         assert (ecossistema_root / "ecossistema.py").exists()
 

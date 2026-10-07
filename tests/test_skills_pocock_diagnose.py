@@ -13,7 +13,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 SKILL_REL = "componentes/compartilhado/skills/aidd-diagnose/SKILL.md"
 SKILL = ROOT / SKILL_REL
-GATE = ROOT / "gates" / "G_aidd_diagnose.py"
+GATE = ROOT / "modulos" / "01-governanca-e-qualidade" / "gates" / "G_aidd_diagnose.py"
 # Teste real, existente e verde; não pode ser este arquivo (o gate rodaria pytest nele em loop).
 TESTE_REGRESSAO_EXEMPLO = "tests/test_diagnose_rollback.py"
 # Base fixa (migração crg → codebase-memory-mcp, 7b61b45): comparar com HEAD vira tautologia depois do commit.
@@ -29,7 +29,9 @@ def _texto_base() -> str:
         ["git", "show", f"{BASE_REF}:{SKILL_REL}"],
         cwd=str(ROOT), capture_output=True, check=True,
     )
-    return res.stdout.decode("utf-8")
+    # Ciclo-03 VSA (T8): o gate mudou de gates/ para a fatia dona; só o caminho mudou.
+    return res.stdout.decode("utf-8").replace(
+        "python gates/G_aidd_diagnose.py", "python modulos/01-governanca-e-qualidade/gates/G_aidd_diagnose.py")
 
 
 def _bloco(texto: str, inicio: str, fim: str) -> str:

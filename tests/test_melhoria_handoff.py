@@ -19,7 +19,7 @@ import pytest
 
 ROOT_DIR = Path(__file__).resolve().parent.parent
 SKILL_SCRIPTS = ROOT_DIR / ".agents" / "skills" / "aidd-improvement" / "scripts"
-GATE = ROOT_DIR / "gates" / "G_HANDOFF_MELHORIA.py"
+GATE = ROOT_DIR / "modulos" / "01-governanca-e-qualidade" / "gates" / "G_HANDOFF_MELHORIA.py"
 
 if str(SKILL_SCRIPTS) not in sys.path:
     sys.path.insert(0, str(SKILL_SCRIPTS))

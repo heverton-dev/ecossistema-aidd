@@ -13,21 +13,26 @@ import sys
 from pathlib import Path
 import pytest
 
-from _gate_test_utils import rodar_gate
+import sys  # noqa: E402
+# _gate_test_utils mora no núcleo (modulos/04-nucleo-compartilhado/gates).
+sys.path.insert(0, str(next(p.parent for p in __import__("pathlib").Path(__file__).resolve().parents if p.name == "modulos")
+                       / "modulos" / "04-nucleo-compartilhado" / "gates"))
+from _gate_test_utils import copiar_mapa_donos, rodar_gate
 
 GATE_DIR = os.path.dirname(os.path.abspath(__file__))
 GATE_PATH = os.path.join(GATE_DIR, "G_TESTES_REAIS.py")
-ESCOPO_PATH = os.path.join(GATE_DIR, "_escopo_commit.py")
-ROOT_DIR = os.path.dirname(GATE_DIR)
+ROOT_DIR = str(next(p.parent for p in Path(__file__).resolve().parents if p.name == "modulos"))
+ESCOPO_PATH = os.path.join(ROOT_DIR, "modulos", "04-nucleo-compartilhado", "gates", "_escopo_commit.py")
 
 
 def _criar_arvore_sintetica(tmp_path):
     """Cria uma estrutura de diretórios sintética com o gate copiado."""
-    fake_gates = tmp_path / "gates"
-    fake_gates.mkdir()
+    fake_gates = tmp_path / "modulos" / "01-governanca-e-qualidade" / "gates"
+    fake_gates.mkdir(parents=True)
     shutil.copy2(GATE_PATH, fake_gates / "G_TESTES_REAIS.py")
     shutil.copy2(ESCOPO_PATH, fake_gates / "_escopo_commit.py")
 
+    copiar_mapa_donos(tmp_path)
     fake_tools = tmp_path / "modulos" / "01-governanca-e-qualidade" / "core" / "aidd-forge"
     fake_tools.mkdir(parents=True)
     return fake_gates, fake_tools

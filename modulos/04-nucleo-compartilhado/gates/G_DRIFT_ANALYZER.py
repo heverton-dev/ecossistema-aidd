@@ -14,7 +14,7 @@ Regras de conformidade:
   3. Suporta modo de verificação estrita (--strict) para pipelines CI/CD.
 
 Uso:
-  python gates/G_DRIFT_ANALYZER.py [--target PATH] [--strict]
+  python modulos/04-nucleo-compartilhado/gates/G_DRIFT_ANALYZER.py [--target PATH] [--strict]
       exit 0 = Nenhuma duplicação indevida encontrada
       exit 1 = Duplicação inter-fatias detectada (modo estrito)
 """

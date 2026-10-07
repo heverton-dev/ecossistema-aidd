@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
 Teste de Quality Gate Determinístico de modularizacao-vsa (Lei #13 / D13).
-Exige que `gates/G_modularizacao_vsa.py`:
+Exige que `modulos/04-nucleo-compartilhado/gates/G_modularizacao_vsa.py`:
 - aprove (exit 0) diretório sem acoplamento;
 - reprove (exit 1) import não autorizado entre fatias.
 """
@@ -10,8 +10,8 @@ import subprocess
 import sys
 from pathlib import Path
 
-ROOT_DIR = Path(__file__).resolve().parent.parent
-GATE_SCRIPT = ROOT_DIR / "gates" / "G_modularizacao_vsa.py"
+ROOT_DIR = next((p.parent for p in Path(__file__).resolve().parents if p.name == "modulos"), Path(__file__).resolve().parent.parent)  # raiz: pai de modulos/ (VSA) ou de gates/ (árvore sintética)
+GATE_SCRIPT = ROOT_DIR / "modulos" / "04-nucleo-compartilhado" / "gates" / "G_modularizacao_vsa.py"
 
 
 def test_g_modularizacao_vsa_aprova(tmp_path):

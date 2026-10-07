@@ -128,9 +128,9 @@ def executar_barreira_fatia(
 
     # 1.1 Micro-Gates de Worktree (Shift-Left: sintaxe, stubs e testes isolados)
     try:
-        gates_dir = ROOT_DIR / "gates"
-        if str(gates_dir) not in sys.path:
-            sys.path.insert(0, str(gates_dir))
+        scripts_dir = ROOT_DIR / "scripts"  # micro_gates_worktree.py saiu de gates/ (ciclo-03 VSA T8)
+        if str(scripts_dir) not in sys.path:
+            sys.path.insert(0, str(scripts_dir))
         from micro_gates_worktree import executar_micro_gates
         ok_micro, erros_micro = executar_micro_gates(
             worktree_path=wt_path,

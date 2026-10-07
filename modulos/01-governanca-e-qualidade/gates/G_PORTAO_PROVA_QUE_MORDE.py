@@ -12,7 +12,7 @@ Regra Canônica (docs/protocolos/CONVENCAO-AUTORIA-GATES.md e Lei #13 do AGENTS.
   a condição resguardada e asserte exit 1 (reprovação).
   Testes de caminho feliz (que apenas afirmam exit 0) NÃO satisfazem o requisito.
 
-Critérios determinísticos validados por este meta-gate para cada gates/G_*.py:
+Critérios determinísticos validados por este meta-gate para cada gate do MAPA-GATES.json:
   1. Paridade de Arquivo: Existência de gates/test_g_<nome_minusculo>.py.
   2. Presença de Funções de Teste: Ao menos uma função test_*().
   3. Prova de Reprovação (Exit 1): Ao menos uma asserção de código de erro 1
@@ -32,16 +32,12 @@ import subprocess
 import sys
 from typing import Dict, List, Tuple
 
-def _achar_raiz_repo() -> str:
-    candidato = os.path.abspath(__file__)
-    for _ in range(8):
-        candidato = os.path.dirname(candidato)
-        if os.path.isfile(os.path.join(candidato, "ecossistema.py")):
-            return candidato
-    return os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-
-ROOT_DIR = _achar_raiz_repo()
-GATES_DIR = os.path.join(ROOT_DIR, "gates")
+from pathlib import Path as _Path
+ROOT_DIR = str(next((p.parent for p in _Path(__file__).resolve().parents if p.name == "modulos"), _Path(__file__).resolve().parent.parent))  # raiz: pai de modulos/ (VSA) ou de gates/ (árvore sintética)
+GATES_DIR = os.path.dirname(os.path.abspath(__file__))
+if ROOT_DIR not in sys.path:
+    sys.path.insert(0, ROOT_DIR)
+from scripts import mapa_gates  # noqa: E402  (lista de gates vem de MAPA-GATES.json)
 
 # Padrões que indicam asserção de saída com falha (exit 1)
 PATTERNS_FAILING_EXIT = [
@@ -64,6 +60,7 @@ TERMOS_CENARIO_FALHA = {
     "corrompido", "orfa", "ausente", "sem_", "bloqueio", "leak", "proibido",
     "morde", "bite", "fail", "broken", "dirty"
 }
+
 
 PASTAS_GATES_VSA = [
     os.path.join(ROOT_DIR, "modulos", "01-governanca-e-qualidade", "gates"),
@@ -104,7 +101,7 @@ def executar_suite_teste(test_path: str) -> Tuple[bool, str]:
             text=True,
             env=env,
             cwd=ROOT_DIR,
-            # 300s: gates/test_g_infra_compose.py roda Checkov real e leva ~224s nesta máquina (medido 2026-09-30).
+            # 300s: modulos/03-plataforma-e-entrega/gates/test_g_infra_compose.py roda Checkov real e leva ~224s nesta máquina (medido 2026-09-30).
             timeout=300,
         )
         if res.returncode == 0:
@@ -172,25 +169,31 @@ def auditar_teste_de_falha(test_path: str, executar: bool = True) -> Tuple[bool,
     return len(erros) == 0, erros
 
 
-def auditar_gates(gates_dir: str = GATES_DIR) -> int:
-    """Executa a auditoria em todos os scripts de gate no diretório."""
+def _gates_a_auditar(gates_dir: str | None, raiz: str) -> Dict[str, str]:
+    """{arquivo: pasta}. Com gates_dir, só aquela pasta; sem, todos os gates de MAPA-GATES.json."""
+    if gates_dir is not None:
+        arquivos = {f: gates_dir for f in os.listdir(gates_dir)}
+    else:
+        arquivos = {p.name: str(p.parent) for p in mapa_gates.caminhos(raiz)}
+    return {f: d for f, d in arquivos.items()
+            if f.startswith("G_") and f.endswith(".py") and f != "G_PORTAO_PROVA_QUE_MORDE.py"}
+
+
+def auditar_gates(gates_dir: str | None = None, raiz: str = ROOT_DIR) -> int:
+    """Audita os gates de uma pasta (gates_dir) ou, por padrão, todos os do mapa de donos."""
     print("=" * 72)
     print(" [GATE] G_PORTAO_PROVA_QUE_MORDE — Meta-Gate de Reprovação (Lei #13)")
     print("=" * 72)
 
-    if not os.path.isdir(gates_dir):
+    if gates_dir is not None and not os.path.isdir(gates_dir):
         print(f"[ERRO] Diretório de gates não encontrado: {gates_dir}")
         return 1
-
-    todos_arquivos = set(os.listdir(gates_dir))
-    for p in PASTAS_GATES_VSA:
-        if os.path.isdir(p):
-            todos_arquivos.update(os.listdir(p))
-
-    gates = sorted([
-        f for f in todos_arquivos
-        if f.startswith("G_") and f.endswith(".py") and f != "G_PORTAO_PROVA_QUE_MORDE.py"
-    ])
+    try:
+        pasta_de = _gates_a_auditar(gates_dir, raiz)
+    except (OSError, KeyError, ValueError) as erro:
+        print(f"[ERRO] MAPA-GATES.json ilegível: {erro!r}")
+        return 1
+    gates = sorted(pasta_de)
 
     if not gates:
         print("[AVISO] Nenhum script de Quality Gate (G_*.py) encontrado para auditar.")
@@ -200,7 +203,7 @@ def auditar_gates(gates_dir: str = GATES_DIR) -> int:
     conformes = []
 
     def processar_gate(gate_file: str) -> Tuple[str, bool, List[str]]:
-        test_file = encontrar_arquivo_teste(gate_file, gates_dir)
+        test_file = encontrar_arquivo_teste(gate_file, pasta_de[gate_file])
         if not test_file:
             return gate_file, False, [
                 f"Arquivo de teste ausente. Esperado: test_{os.path.splitext(gate_file)[0].lower()}.py"
@@ -252,4 +255,6 @@ def auditar_gates(gates_dir: str = GATES_DIR) -> int:
 
 
 if __name__ == "__main__":
+    if len(sys.argv) == 3 and sys.argv[1] == "--raiz":
+        sys.exit(auditar_gates(raiz=sys.argv[2]))
     sys.exit(auditar_gates())

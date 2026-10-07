@@ -181,7 +181,7 @@ def validar_alvo(alvo: Path) -> Tuple[bool, List[str]]:
 
 def main(argv=None) -> int:
     parser = argparse.ArgumentParser(
-        prog="python gates/G_aidd_forge.py",
+        prog="python modulos/01-governanca-e-qualidade/gates/G_aidd_forge.py",
         description="Quality Gate determinístico do bootstrap aidd-forge (D13)",
     )
     parser.add_argument("--alvo", required=True, help="Diretório do projeto alvo do forge")

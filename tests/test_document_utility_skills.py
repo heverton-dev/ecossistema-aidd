@@ -53,6 +53,6 @@ def test_zero_lockin_proprietario_document_skills(skill_name):
 
 def test_conformidade_gate_skill_formato():
     """Valida que o gate determinístico G_SKILL_FORMATO passa com sucesso."""
-    gate_script = ROOT / "gates" / "G_SKILL_FORMATO.py"
+    gate_script = ROOT / "modulos" / "04-nucleo-compartilhado" / "gates" / "G_SKILL_FORMATO.py"
     resultado = subprocess.run([sys.executable, str(gate_script), "--raiz", str(ROOT)], capture_output=True, text=True)
     assert resultado.returncode == 0, f"G_SKILL_FORMATO falhou:\n{resultado.stdout}\n{resultado.stderr}"

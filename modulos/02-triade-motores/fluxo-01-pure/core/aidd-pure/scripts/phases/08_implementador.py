@@ -153,7 +153,7 @@ def _obter_gate_arquitetura():
     _GATE_ARQUITETURA_TENTOU = True
     raiz = Path(__file__).resolve()
     for pai in raiz.parents:
-        gate_py = pai / 'gates' / 'G_ARQUITETURA_DELIVERABLE.py'
+        gate_py = pai / 'modulos' / '03-plataforma-e-entrega' / 'gates' / 'G_ARQUITETURA_DELIVERABLE.py'
         if gate_py.exists():
             try:
                 spec = importlib.util.spec_from_file_location(

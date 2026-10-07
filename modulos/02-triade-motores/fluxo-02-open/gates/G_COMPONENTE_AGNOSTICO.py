@@ -5,7 +5,7 @@ ECOSSISTEMA AIDD — QUALITY GATE: G_COMPONENTE_AGNOSTICO
 =============================================================================
 Audita se todo componente novo ou modificado (detectado via git diff / status)
 possui cobertura completa em todas as pastas de harness exigidas pelo
-manifesto canonico (gates/manifesto_harnesses.json).
+manifesto canonico (modulos/04-nucleo-compartilhado/contracts/manifesto_harnesses.json).
 
 Identifica componentes tocados sob:
   - componentes/<escopo>/<pasta_fonte>/<nome>/...
@@ -15,7 +15,7 @@ e valida que cada um possui presenca fisica e conteudo identico em todos os
 destinos exigidos pelo manifesto unico.
 
 Uso:
-  python gates/G_COMPONENTE_AGNOSTICO.py [--base <commit_ref>] [--todos]
+  python modulos/02-triade-motores/fluxo-02-open/gates/G_COMPONENTE_AGNOSTICO.py [--base <commit_ref>] [--todos]
       exit 0 = todos os componentes tocados estao 100% conformes com o manifesto.
       exit 1 = algum componente tocado esta ausente em algum harness ou diverge.
 """
@@ -27,11 +27,12 @@ import os
 import subprocess
 import sys
 
-ROOT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+from pathlib import Path as _Path
+ROOT_DIR = str(next((p.parent for p in _Path(__file__).resolve().parents if p.name == "modulos"), _Path(__file__).resolve().parent.parent))  # raiz: pai de modulos/ (VSA) ou de gates/ (árvore sintética)
 sys.path.insert(0, os.path.join(ROOT_DIR, "scripts"))
 import gestor_componentes
 
-MANIFESTO_PATH = os.path.join(ROOT_DIR, "gates", "manifesto_harnesses.json")
+MANIFESTO_PATH = os.path.join(ROOT_DIR, "modulos", "04-nucleo-compartilhado", "contracts", "manifesto_harnesses.json")
 
 
 def _obter_arquivos_tocados(base: str | None = None) -> list[str]:

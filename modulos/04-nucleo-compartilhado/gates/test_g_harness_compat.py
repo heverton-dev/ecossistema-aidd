@@ -15,7 +15,7 @@ from _gate_test_utils import rodar_gate
 
 GATE_DIR = os.path.dirname(os.path.abspath(__file__))
 GATE_PATH = os.path.join(GATE_DIR, "G_HARNESS_COMPAT.py")
-ROOT_DIR = os.path.dirname(GATE_DIR)
+ROOT_DIR = str(next(p.parent for p in __import__("pathlib").Path(__file__).resolve().parents if p.name == "modulos"))  # raiz do ecossistema
 
 
 def test_g_harness_compat_passa_no_repositorio():
@@ -27,8 +27,8 @@ def test_g_harness_compat_passa_no_repositorio():
 
 def test_g_harness_compat_reprova_ponteiro_quebrado(tmp_path):
     """Valida que G_HARNESS_COMPAT reprova (exit 1) quando arquivo ponteiro não referencia AGENTS.md."""
-    fake_gates = tmp_path / "gates"
-    fake_gates.mkdir()
+    fake_gates = tmp_path / "modulos" / "04-nucleo-compartilhado" / "gates"
+    fake_gates.mkdir(parents=True)
     shutil.copy2(GATE_PATH, fake_gates / "G_HARNESS_COMPAT.py")
 
     fake_scripts = tmp_path / "scripts"
@@ -63,8 +63,8 @@ def test_g_harness_compat_reprova_ponteiro_quebrado(tmp_path):
 
 def test_g_harness_compat_reprova_gate_nao_documentado(tmp_path):
     """Valida que G_HARNESS_COMPAT reprova (exit 1) quando existe gate em disco não documentado."""
-    fake_gates = tmp_path / "gates"
-    fake_gates.mkdir()
+    fake_gates = tmp_path / "modulos" / "04-nucleo-compartilhado" / "gates"
+    fake_gates.mkdir(parents=True)
     shutil.copy2(GATE_PATH, fake_gates / "G_HARNESS_COMPAT.py")
     (fake_gates / "G_FANTASMA.py").write_text("# gate nao documentado", encoding="utf-8")
 

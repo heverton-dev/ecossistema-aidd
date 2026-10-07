@@ -11,8 +11,8 @@ from pathlib import Path
 
 import pytest
 
-ROOT_DIR = Path(__file__).resolve().parents[1]
-GATE_SCRIPT = ROOT_DIR / "gates" / "G_TEMPLATE_FORGE_ROT.py"
+ROOT_DIR = next((p.parent for p in Path(__file__).resolve().parents if p.name == "modulos"), Path(__file__).resolve().parent.parent)  # raiz: pai de modulos/ (VSA) ou de gates/ (árvore sintética)
+GATE_SCRIPT = ROOT_DIR / "modulos" / "01-governanca-e-qualidade" / "gates" / "G_TEMPLATE_FORGE_ROT.py"
 REAL_TEMPLATES_DIR = ROOT_DIR / "modulos" / "01-governanca-e-qualidade" / "core" / "aidd-forge" / "aidd_forge" / "templates"
 
 

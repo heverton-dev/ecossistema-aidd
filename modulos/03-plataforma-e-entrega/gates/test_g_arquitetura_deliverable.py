@@ -13,17 +13,21 @@ import sys
 from pathlib import Path
 import pytest
 
+import sys  # noqa: E402
+# _gate_test_utils mora no núcleo (modulos/04-nucleo-compartilhado/gates).
+sys.path.insert(0, str(next(p.parent for p in __import__("pathlib").Path(__file__).resolve().parents if p.name == "modulos")
+                       / "modulos" / "04-nucleo-compartilhado" / "gates"))
 from _gate_test_utils import rodar_gate
 
 GATE_DIR = os.path.dirname(os.path.abspath(__file__))
 GATE_PATH = os.path.join(GATE_DIR, "G_ARQUITETURA_DELIVERABLE.py")
-ROOT_DIR = os.path.dirname(GATE_DIR)
+ROOT_DIR = str(next(p.parent for p in __import__("pathlib").Path(__file__).resolve().parents if p.name == "modulos"))  # raiz do ecossistema
 
 
 def test_g_arquitetura_deliverable_reprova_sql_fora_de_infra(tmp_path):
     """Valida que G_ARQUITETURA_DELIVERABLE reprova (exit 1) quando há SQL fora de infrastructure/."""
-    fake_gates = tmp_path / "gates"
-    fake_gates.mkdir()
+    fake_gates = tmp_path / "modulos" / "03-plataforma-e-entrega" / "gates"
+    fake_gates.mkdir(parents=True)
     shutil.copy2(GATE_PATH, fake_gates / "G_ARQUITETURA_DELIVERABLE.py")
 
     fake_src = tmp_path / "modulos" / "03-plataforma-e-entrega" / "fatiamento-master" / "aidd-master" / "src"
@@ -47,8 +51,8 @@ def test_g_arquitetura_deliverable_reprova_sql_fora_de_infra(tmp_path):
 
 def test_g_arquitetura_deliverable_reprova_import_infra_no_dominio(tmp_path):
     """Valida que G_ARQUITETURA_DELIVERABLE reprova (exit 1) quando a camada de domínio importa infraestrutura."""
-    fake_gates = tmp_path / "gates"
-    fake_gates.mkdir()
+    fake_gates = tmp_path / "modulos" / "03-plataforma-e-entrega" / "gates"
+    fake_gates.mkdir(parents=True)
     shutil.copy2(GATE_PATH, fake_gates / "G_ARQUITETURA_DELIVERABLE.py")
 
     fake_domain = tmp_path / "modulos" / "03-plataforma-e-entrega" / "fatiamento-master" / "aidd-master" / "src" / "domain"
@@ -70,8 +74,8 @@ def test_g_arquitetura_deliverable_reprova_import_infra_no_dominio(tmp_path):
 
 def test_g_arquitetura_deliverable_passa_com_arquitetura_limpa(tmp_path):
     """Valida que G_ARQUITETURA_DELIVERABLE aprova (exit 0) quando o código está em conformidade."""
-    fake_gates = tmp_path / "gates"
-    fake_gates.mkdir()
+    fake_gates = tmp_path / "modulos" / "03-plataforma-e-entrega" / "gates"
+    fake_gates.mkdir(parents=True)
     shutil.copy2(GATE_PATH, fake_gates / "G_ARQUITETURA_DELIVERABLE.py")
 
     fake_infra = tmp_path / "modulos" / "03-plataforma-e-entrega" / "fatiamento-master" / "aidd-master" / "src" / "infrastructure"

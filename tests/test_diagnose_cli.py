@@ -109,7 +109,7 @@ def test_registrar_e_relatorio_geram_relatorio_aceito_pelo_gate(tmp_path):
     assert relatorio.is_file()
 
     gate = subprocess.run(
-        [sys.executable, str(ROOT / "gates" / "G_aidd_diagnose.py"), "--relatorio", str(relatorio)],
+        [sys.executable, str(ROOT / "modulos" / "01-governanca-e-qualidade" / "gates" / "G_aidd_diagnose.py"), "--relatorio", str(relatorio)],
         cwd=str(ROOT), capture_output=True, text=True, encoding="utf-8", errors="replace",
     )
     assert gate.returncode == 0, gate.stdout

@@ -7,10 +7,15 @@ import shutil
 import sys
 from pathlib import Path
 
+import sys  # noqa: E402
+# _gate_test_utils mora no núcleo (modulos/04-nucleo-compartilhado/gates).
+sys.path.insert(0, str(next(p.parent for p in __import__("pathlib").Path(__file__).resolve().parents if p.name == "modulos")
+                       / "modulos" / "04-nucleo-compartilhado" / "gates"))
 from _gate_test_utils import rodar_gate
 
 GATE_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "G_ANT_LOCKIN_LEGADO.py")
-ROOT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+from pathlib import Path as _Path
+ROOT_DIR = str(next((p.parent for p in _Path(__file__).resolve().parents if p.name == "modulos"), _Path(__file__).resolve().parent.parent))  # raiz: pai de modulos/ (VSA) ou de gates/ (árvore sintética)
 sys.path.insert(0, ROOT_DIR)
 
 from core.anti_lockin import possui_sujeira, varredura  # noqa: E402
@@ -41,8 +46,8 @@ def test_varredura_limpa_exit0(tmp_path):
 
 def test_g_ant_lockin_failing_path_fixture_suja(tmp_path):
     """Repo sintético com sujeira + módulo => exit 1 (Lei #13)."""
-    gates = tmp_path / "gates"
-    gates.mkdir()
+    gates = tmp_path / "modulos" / "02-triade-motores" / "fluxo-03-freedom" / "gates"
+    gates.mkdir(parents=True)
     shutil.copy2(GATE_PATH, gates / "G_ANT_LOCKIN_LEGADO.py")
     (tmp_path / "core").mkdir()
     shutil.copy2(Path(ROOT_DIR) / "core" / "anti_lockin.py", tmp_path / "core" / "anti_lockin.py")

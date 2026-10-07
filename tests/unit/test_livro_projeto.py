@@ -2,7 +2,7 @@
 """
 Testes reais da etapa final dos fluxos: gerador do livro-texto do projeto
 (scripts/gerador_livro_projeto.py) e sua trava de honestidade
-(gates/G_LIVRO_EVIDENCIA.py).
+(modulos/04-nucleo-compartilhado/gates/G_LIVRO_EVIDENCIA.py).
 
 Cobre o contrato que importa:
   - o livro so afirma o que tem artefato que comprove;
@@ -25,7 +25,7 @@ import pytest
 
 RAIZ = Path(__file__).resolve().parents[2]
 GERADOR = RAIZ / "scripts" / "gerador_livro_projeto.py"
-GATE = RAIZ / "gates" / "G_LIVRO_EVIDENCIA.py"
+GATE = RAIZ / "modulos" / "04-nucleo-compartilhado" / "gates" / "G_LIVRO_EVIDENCIA.py"
 
 
 def rodar(script: Path, *args: str) -> subprocess.CompletedProcess:

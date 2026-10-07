@@ -8,11 +8,12 @@ import subprocess
 import sys
 import pytest
 
-ROOT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+from pathlib import Path as _Path
+ROOT_DIR = str(next((p.parent for p in _Path(__file__).resolve().parents if p.name == "modulos"), _Path(__file__).resolve().parent.parent))  # raiz: pai de modulos/ (VSA) ou de gates/ (árvore sintética)
 if ROOT_DIR not in sys.path:
     sys.path.insert(0, ROOT_DIR)
 
-from gates.G_PROTOTYPE_REWRITE import (
+from G_PROTOTYPE_REWRITE import (
     verificar_imports_sandbox,
     verificar_promocao_sem_testes,
     main,
@@ -83,7 +84,7 @@ def test_gate_reprova_com_import_sandbox_sob_src(tmp_path):
     src.mkdir()
     (src / "leak.py").write_text("import sandbox.poc\n", encoding="utf-8")
 
-    gate_script = os.path.join(ROOT_DIR, "gates", "G_PROTOTYPE_REWRITE.py")
+    gate_script = os.path.join(ROOT_DIR, "modulos", "02-triade-motores", "fluxo-01-pure", "gates", "G_PROTOTYPE_REWRITE.py")
     cmd = [sys.executable, gate_script, "--target", str(tmp_path)]
     res = subprocess.run(cmd, capture_output=True, text=True)
     assert res.returncode == 1
@@ -92,7 +93,7 @@ def test_gate_reprova_com_import_sandbox_sob_src(tmp_path):
 
 def test_gate_aprova_estado_atual():
     """Valida que o estado atual do repositório é limpo (exit 0)."""
-    gate_script = os.path.join(ROOT_DIR, "gates", "G_PROTOTYPE_REWRITE.py")
+    gate_script = os.path.join(ROOT_DIR, "modulos", "02-triade-motores", "fluxo-01-pure", "gates", "G_PROTOTYPE_REWRITE.py")
     cmd = [sys.executable, gate_script, "--target", ROOT_DIR]
     res = subprocess.run(cmd, capture_output=True, text=True)
     assert res.returncode == 0

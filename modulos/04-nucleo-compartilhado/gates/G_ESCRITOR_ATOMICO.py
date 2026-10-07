@@ -39,7 +39,7 @@ Permitido (não é violação):
   - Escritas no open(c, "wb") do rollback (restaurar snapshot)
 
 Uso:
-  python gates/G_ESCRITOR_ATOMICO.py
+  python modulos/04-nucleo-compartilhado/gates/G_ESCRITOR_ATOMICO.py
       exit 0 = todos os pontos críticos usam escritor_atomico
       exit 1 = ao menos 1 violação encontrada (arquivo, linha, código)
 """
@@ -51,7 +51,8 @@ import sys
 if hasattr(sys.stdout, "reconfigure"):
     sys.stdout.reconfigure(encoding="utf-8", errors="replace")
 
-ROOT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+from pathlib import Path as _Path
+ROOT_DIR = str(next((p.parent for p in _Path(__file__).resolve().parents if p.name == "modulos"), _Path(__file__).resolve().parent.parent))  # raiz: pai de modulos/ (VSA) ou de gates/ (árvore sintética)
 
 # Caminhos relativos dos arquivos críticos auditados
 ARQUIVOS_CRITICOS = [

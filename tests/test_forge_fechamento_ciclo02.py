@@ -4,7 +4,7 @@ Fechamento do ciclo-02 do aidd-forge (TICKET-02 / D15 / DoD 8).
 
 Exige:
 - handoff-forge.json da raiz em sincronia real com os 7 módulos de
-  `.agents/skills/aidd-forge/scripts/` + `gates/G_aidd_forge.py`
+  `.agents/skills/aidd-forge/scripts/` + `modulos/01-governanca-e-qualidade/gates/G_aidd_forge.py`
   (SHA-256 recomputado, zero claims sem verificação — Lei #8);
 - `handoff verify` da CLI retornando exit 0 no repositório;
 - os 8 critérios de docs/auditoria/aidd-forge/ciclo-02/DOD.md presentes,
@@ -32,7 +32,7 @@ COMPONENTES_ESPERADOS = [
     ".agents/skills/aidd-forge/scripts/resiliencia.py",
     ".agents/skills/aidd-forge/scripts/observabilidade.py",
     ".agents/skills/aidd-forge/scripts/rollback.py",
-    "gates/G_aidd_forge.py",
+    "modulos/01-governanca-e-qualidade/gates/G_aidd_forge.py",
 ]
 
 # Evidência executável de cada critério DoD do ciclo-02.
@@ -42,7 +42,7 @@ EVIDENCIAS_DOD = {
     3: ROOT_DIR / "tests" / "test_forge_bootstrap.py",
     4: ROOT_DIR / "tests" / "test_forge_resiliencia.py",
     5: ROOT_DIR / "tests" / "test_forge_observabilidade.py",
-    6: ROOT_DIR / "gates" / "test_g_aidd_forge.py",
+    6: ROOT_DIR / "modulos" / "01-governanca-e-qualidade" / "gates" / "test_g_aidd_forge.py",
     7: ROOT_DIR / "tests" / "test_forge_rollback.py",
     8: ROOT_DIR / "tests" / "test_forge_handoff.py",
 }

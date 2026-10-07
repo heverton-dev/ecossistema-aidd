@@ -12,7 +12,7 @@ from _gate_test_utils import rodar_gate
 
 GATE_DIR = os.path.dirname(os.path.abspath(__file__))
 GATE_PATH = os.path.join(GATE_DIR, "G_SYNC_CMD_ROT.py")
-ROOT_DIR = os.path.dirname(GATE_DIR)
+ROOT_DIR = str(next(p.parent for p in __import__("pathlib").Path(__file__).resolve().parents if p.name == "modulos"))  # raiz do ecossistema
 
 
 def test_g_sync_cmd_rot_passa_no_repositorio():
@@ -24,8 +24,8 @@ def test_g_sync_cmd_rot_passa_no_repositorio():
 
 def test_g_sync_cmd_rot_failing_path_doc_incompleto(tmp_path):
     """Doc vivo com `components sync` sem --tipo => exit 1 (Lei #13)."""
-    fake_gates = tmp_path / "gates"
-    fake_gates.mkdir()
+    fake_gates = tmp_path / "modulos" / "04-nucleo-compartilhado" / "gates"
+    fake_gates.mkdir(parents=True)
     shutil.copy2(GATE_PATH, fake_gates / "G_SYNC_CMD_ROT.py")
 
     (tmp_path / "docs" / "protocolos").mkdir(parents=True)
@@ -53,8 +53,8 @@ def test_g_sync_cmd_rot_failing_path_doc_incompleto(tmp_path):
 
 def test_g_sync_cmd_rot_failing_path_alias_desmapeado(tmp_path):
     """Parser sem alias `sync`/`--tipos` => exit 1 (Lei #13)."""
-    fake_gates = tmp_path / "gates"
-    fake_gates.mkdir()
+    fake_gates = tmp_path / "modulos" / "04-nucleo-compartilhado" / "gates"
+    fake_gates.mkdir(parents=True)
     shutil.copy2(GATE_PATH, fake_gates / "G_SYNC_CMD_ROT.py")
 
     (tmp_path / "MEMORY.md").write_text(
@@ -78,8 +78,8 @@ def test_g_sync_cmd_rot_failing_path_alias_desmapeado(tmp_path):
 
 def test_g_sync_cmd_rot_aceita_forma_canonica(tmp_path):
     """Linha com --tipo (ex.: --tipo skills) nao reprova."""
-    fake_gates = tmp_path / "gates"
-    fake_gates.mkdir()
+    fake_gates = tmp_path / "modulos" / "04-nucleo-compartilhado" / "gates"
+    fake_gates.mkdir(parents=True)
     shutil.copy2(GATE_PATH, fake_gates / "G_SYNC_CMD_ROT.py")
 
     (tmp_path / "MEMORY.md").write_text(

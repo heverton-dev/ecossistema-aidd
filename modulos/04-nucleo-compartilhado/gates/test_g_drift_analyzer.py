@@ -10,11 +10,12 @@ import sys
 import tempfile
 import pytest
 
-ROOT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+from pathlib import Path as _Path
+ROOT_DIR = str(next((p.parent for p in _Path(__file__).resolve().parents if p.name == "modulos"), _Path(__file__).resolve().parent.parent))  # raiz: pai de modulos/ (VSA) ou de gates/ (árvore sintética)
 if ROOT_DIR not in sys.path:
     sys.path.insert(0, ROOT_DIR)
 
-from gates.G_DRIFT_ANALYZER import analyze_slice_drift, main
+from G_DRIFT_ANALYZER import analyze_slice_drift, main
 
 
 
@@ -108,7 +109,7 @@ def test_gate_reprova_com_drift_duplicado_em_modo_estrito(temp_project):
     (slice1 / "utils.py").write_text(code_duplicate, encoding="utf-8")
     (slice2 / "helpers.py").write_text(code_duplicate, encoding="utf-8")
 
-    gate_script = os.path.join(ROOT_DIR, "gates", "G_DRIFT_ANALYZER.py")
+    gate_script = os.path.join(ROOT_DIR, "modulos", "04-nucleo-compartilhado", "gates", "G_DRIFT_ANALYZER.py")
     cmd = [sys.executable, gate_script, "--target", str(temp_project), "--strict"]
     res = subprocess.run(cmd, capture_output=True, text=True)
     assert res.returncode == 1

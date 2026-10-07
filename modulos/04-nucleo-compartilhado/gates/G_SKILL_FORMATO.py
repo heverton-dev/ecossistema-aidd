@@ -18,12 +18,12 @@ Violacoes (codigo impresso no relatorio):
   SEM_USE_WHEN             description sem "Use when" (o gatilho de quando usar)
   CORPO_ACIMA_DE_450       corpo (depois do frontmatter) com mais de 450 linhas
   SEM_PREFIXO_AIDD         skill nossa sem o prefixo aidd- (terceiro = declarado em
-                           gates/dependencias_externas.json)
+                           modulos/04-nucleo-compartilhado/contracts/dependencias_externas.json)
 
 Deteccao 100% deterministica (leitura de arquivo e regex), zero LLM.
 
 Uso:
-  python gates/G_SKILL_FORMATO.py [--raiz <repo>] [--aviso]
+  python modulos/04-nucleo-compartilhado/gates/G_SKILL_FORMATO.py [--raiz <repo>] [--aviso]
       exit 0 = nenhuma violacao (ou --aviso: violacoes so impressas)
       exit 1 = ao menos 1 violacao
 """
@@ -40,7 +40,8 @@ import yaml
 if hasattr(sys.stdout, "reconfigure"):
     sys.stdout.reconfigure(encoding="utf-8", errors="replace")
 
-ROOT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+from pathlib import Path as _Path
+ROOT_DIR = str(next((p.parent for p in _Path(__file__).resolve().parents if p.name == "modulos"), _Path(__file__).resolve().parent.parent))  # raiz: pai de modulos/ (VSA) ou de gates/ (árvore sintética)
 sys.path.insert(0, os.path.join(ROOT_DIR, "scripts"))
 import gestor_dependencias  # noqa: E402
 
@@ -108,7 +109,7 @@ def secoes_faltando(skill_md: str, terceiros: set) -> List[str]:
 
 def auditar_secoes(raiz: str, apenas: Optional[set] = None) -> List[Tuple[str, List[str]]]:
     terceiros = gestor_dependencias.skills_de_terceiros(
-        os.path.join(raiz, "gates", "dependencias_externas.json")
+        os.path.join(raiz, "modulos", "04-nucleo-compartilhado", "contracts", "dependencias_externas.json")
     )
     resultado = []
     for skill_md in sorted(glob.glob(os.path.join(raiz, "componentes", "*", "skills", "*", "SKILL.md"))):
@@ -123,7 +124,7 @@ def auditar_secoes(raiz: str, apenas: Optional[set] = None) -> List[Tuple[str, L
 
 def auditar(raiz: str) -> List[Tuple[str, List[str]]]:
     terceiros = gestor_dependencias.skills_de_terceiros(
-        os.path.join(raiz, "gates", "dependencias_externas.json")
+        os.path.join(raiz, "modulos", "04-nucleo-compartilhado", "contracts", "dependencias_externas.json")
     )
     padrao = os.path.join(raiz, "componentes", "*", "skills", "*", "SKILL.md")
     resultado = []

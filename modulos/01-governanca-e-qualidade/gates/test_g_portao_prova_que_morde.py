@@ -10,12 +10,13 @@ import subprocess
 import sys
 import pytest
 
-ROOT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+from pathlib import Path as _Path
+ROOT_DIR = str(next((p.parent for p in _Path(__file__).resolve().parents if p.name == "modulos"), _Path(__file__).resolve().parent.parent))  # raiz: pai de modulos/ (VSA) ou de gates/ (árvore sintética)
 if ROOT_DIR not in sys.path:
     sys.path.insert(0, ROOT_DIR)
 
-import gates.G_PORTAO_PROVA_QUE_MORDE as meta_gate
-from gates.G_PORTAO_PROVA_QUE_MORDE import auditar_gates
+import G_PORTAO_PROVA_QUE_MORDE as meta_gate
+from G_PORTAO_PROVA_QUE_MORDE import auditar_gates
 
 
 def test_meta_gate_aprova_estado_atual():
@@ -73,14 +74,14 @@ def test_meta_gate_subprocess_exit_1_com_violacao(tmp_path):
     novo_gate = tmp_path / "G_FACHADA.py"
     novo_gate.write_text("# Gate fachada\n", encoding="utf-8")
 
-    cmd = [sys.executable, os.path.join(ROOT_DIR, "gates", "G_PORTAO_PROVA_QUE_MORDE.py")]
+    cmd = [sys.executable, os.path.join(ROOT_DIR, "modulos", "01-governanca-e-qualidade", "gates", "G_PORTAO_PROVA_QUE_MORDE.py")]
     # Monkeypatchando diretório via argumento / import
     # Criamos script wrapper para rodar subprocess no tmp_path
     wrapper = tmp_path / "run_meta.py"
     wrapper.write_text(
         f"import sys\n"
-        f"sys.path.insert(0, r'{ROOT_DIR}')\n"
-        f"from gates.G_PORTAO_PROVA_QUE_MORDE import auditar_gates\n"
+        f"sys.path.insert(0, r'{os.path.dirname(os.path.abspath(__file__))}')\n"
+        f"from G_PORTAO_PROVA_QUE_MORDE import auditar_gates\n"
         f"sys.exit(auditar_gates(r'{tmp_path}'))\n",
         encoding="utf-8"
     )

@@ -123,7 +123,7 @@ class TestResolveCommands:
         assert not root
 
     def test_root_scoped_triggers_audit(self):
-        tools, root = resolve_commands(["gates/G_SEGREDOS.py"])
+        tools, root = resolve_commands(["modulos/04-nucleo-compartilhado/gates/G_SEGREDOS.py"])
         assert not tools
         assert root
 
@@ -135,7 +135,7 @@ class TestResolveCommands:
     def test_mixed_paths(self):
         tools, root = resolve_commands([
             "modulos/03-plataforma-e-entrega/fatiamento-master/aidd-master/src/x.py",
-            "gates/G_SEGREDOS.py",
+            "modulos/04-nucleo-compartilhado/gates/G_SEGREDOS.py",
         ])
         assert tools == {"aidd-master"}
         assert root

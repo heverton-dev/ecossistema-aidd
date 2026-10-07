@@ -21,7 +21,8 @@ import sys
 import ast
 import re
 
-ROOT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+from pathlib import Path as _Path
+ROOT_DIR = str(next((p.parent for p in _Path(__file__).resolve().parents if p.name == "modulos"), _Path(__file__).resolve().parent.parent))  # raiz: pai de modulos/ (VSA) ou de gates/ (árvore sintética)
 MAPA_DONOS = os.path.join(ROOT_DIR, "componentes", "compartilhado", "specs", "MAPA-DONOS-FERRAMENTAS.json")
 
 
@@ -138,7 +139,7 @@ def audit():
     # 5. Validação Sintática AST em Arquivos Python Raiz e Gates
     print("\n--- Validação Sintática (AST parse) ---")
     py_files_to_check = [
-        os.path.join(ROOT_DIR, "gates", "G_ECOSSISTEMA_INTEGRIDADE.py")
+        os.path.join(ROOT_DIR, "modulos", "04-nucleo-compartilhado", "gates", "G_ECOSSISTEMA_INTEGRIDADE.py")
     ]
     cli_path = os.path.join(ROOT_DIR, "ecossistema.py")
     if os.path.exists(cli_path):

@@ -29,7 +29,7 @@ diagnóstico do Pacote 1 sem precisar de heurística frágil por classe:
    exemplo — não são argumento de print/raise.
 
 Uso:
-  python gates/G_CLI_HELP_CONSISTENCIA.py
+  python modulos/04-nucleo-compartilhado/gates/G_CLI_HELP_CONSISTENCIA.py
       exit 0 = toda flag citada em texto do usuário tem `add_argument`
                correspondente, em todos os arquivos auditados.
       exit 1 = alguma flag citada em texto não é definida no argparse do
@@ -49,7 +49,8 @@ import os
 import re
 import sys
 
-ROOT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+from pathlib import Path as _Path
+ROOT_DIR = str(next((p.parent for p in _Path(__file__).resolve().parents if p.name == "modulos"), _Path(__file__).resolve().parent.parent))  # raiz: pai de modulos/ (VSA) ou de gates/ (árvore sintética)
 ALLOWLIST_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "allowlist_cli_help.json")
 
 ARQUIVOS_AUDITADOS = [

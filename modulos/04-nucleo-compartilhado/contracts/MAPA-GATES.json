@@ -5,109 +5,109 @@
     "G_aidd_diagnose": {
       "dono": "01-governanca-e-qualidade",
       "transversal": false,
-      "caminho": "gates/G_aidd_diagnose.py",
+      "caminho": "modulos/01-governanca-e-qualidade/gates/G_aidd_diagnose.py",
       "caminho_final": "modulos/01-governanca-e-qualidade/gates/G_aidd_diagnose.py"
     },
     "G_aidd_enterprise": {
       "dono": "03-plataforma-e-entrega",
       "transversal": false,
-      "caminho": "gates/G_aidd_enterprise.py",
+      "caminho": "modulos/03-plataforma-e-entrega/gates/G_aidd_enterprise.py",
       "caminho_final": "modulos/03-plataforma-e-entrega/gates/G_aidd_enterprise.py"
     },
     "G_aidd_forge": {
       "dono": "01-governanca-e-qualidade",
       "transversal": false,
-      "caminho": "gates/G_aidd_forge.py",
+      "caminho": "modulos/01-governanca-e-qualidade/gates/G_aidd_forge.py",
       "caminho_final": "modulos/01-governanca-e-qualidade/gates/G_aidd_forge.py"
     },
     "G_aidd_grill": {
       "dono": "01-governanca-e-qualidade",
       "transversal": false,
-      "caminho": "gates/G_aidd_grill.py",
+      "caminho": "modulos/01-governanca-e-qualidade/gates/G_aidd_grill.py",
       "caminho_final": "modulos/01-governanca-e-qualidade/gates/G_aidd_grill.py"
     },
     "G_aidd_handoff": {
       "dono": "01-governanca-e-qualidade",
       "transversal": false,
-      "caminho": "gates/G_aidd_handoff.py",
+      "caminho": "modulos/01-governanca-e-qualidade/gates/G_aidd_handoff.py",
       "caminho_final": "modulos/01-governanca-e-qualidade/gates/G_aidd_handoff.py"
     },
     "G_aidd_plan": {
       "dono": "01-governanca-e-qualidade",
       "transversal": false,
-      "caminho": "gates/G_aidd_plan.py",
+      "caminho": "modulos/01-governanca-e-qualidade/gates/G_aidd_plan.py",
       "caminho_final": "modulos/01-governanca-e-qualidade/gates/G_aidd_plan.py"
     },
     "G_aidd_planner_runner": {
       "dono": "01-governanca-e-qualidade",
       "transversal": false,
-      "caminho": "gates/G_aidd_planner_runner.py",
+      "caminho": "modulos/01-governanca-e-qualidade/gates/G_aidd_planner_runner.py",
       "caminho_final": "modulos/01-governanca-e-qualidade/gates/G_aidd_planner_runner.py"
     },
     "G_aidd_session": {
       "dono": "01-governanca-e-qualidade",
       "transversal": false,
-      "caminho": "gates/G_aidd_session.py",
+      "caminho": "modulos/01-governanca-e-qualidade/gates/G_aidd_session.py",
       "caminho_final": "modulos/01-governanca-e-qualidade/gates/G_aidd_session.py"
     },
     "G_aidd_spec": {
       "dono": "01-governanca-e-qualidade",
       "transversal": false,
-      "caminho": "gates/G_aidd_spec.py",
+      "caminho": "modulos/01-governanca-e-qualidade/gates/G_aidd_spec.py",
       "caminho_final": "modulos/01-governanca-e-qualidade/gates/G_aidd_spec.py"
     },
     "G_aidd_tdd": {
       "dono": "01-governanca-e-qualidade",
       "transversal": false,
-      "caminho": "gates/G_aidd_tdd.py",
+      "caminho": "modulos/01-governanca-e-qualidade/gates/G_aidd_tdd.py",
       "caminho_final": "modulos/01-governanca-e-qualidade/gates/G_aidd_tdd.py"
     },
     "G_aidd_tickets": {
       "dono": "01-governanca-e-qualidade",
       "transversal": false,
-      "caminho": "gates/G_aidd_tickets.py",
+      "caminho": "modulos/01-governanca-e-qualidade/gates/G_aidd_tickets.py",
       "caminho_final": "modulos/01-governanca-e-qualidade/gates/G_aidd_tickets.py"
     },
     "G_amelhoria": {
       "dono": "01-governanca-e-qualidade",
       "transversal": false,
-      "caminho": "gates/G_amelhoria.py",
+      "caminho": "modulos/01-governanca-e-qualidade/gates/G_amelhoria.py",
       "caminho_final": "modulos/01-governanca-e-qualidade/gates/G_amelhoria.py"
     },
     "G_ANT_LOCKIN_LEGADO": {
       "dono": "02-triade-motores/fluxo-03-freedom",
       "transversal": false,
-      "caminho": "gates/G_ANT_LOCKIN_LEGADO.py",
+      "caminho": "modulos/02-triade-motores/fluxo-03-freedom/gates/G_ANT_LOCKIN_LEGADO.py",
       "caminho_final": "modulos/02-triade-motores/fluxo-03-freedom/gates/G_ANT_LOCKIN_LEGADO.py"
     },
     "G_ARQUITETURA_DELIVERABLE": {
       "dono": "03-plataforma-e-entrega",
       "transversal": false,
-      "caminho": "gates/G_ARQUITETURA_DELIVERABLE.py",
+      "caminho": "modulos/03-plataforma-e-entrega/gates/G_ARQUITETURA_DELIVERABLE.py",
       "caminho_final": "modulos/03-plataforma-e-entrega/gates/G_ARQUITETURA_DELIVERABLE.py"
     },
     "G_AST_BOUNDED_CONTEXT": {
       "dono": "04-nucleo-compartilhado",
       "transversal": true,
-      "caminho": "gates/G_AST_BOUNDED_CONTEXT.py",
+      "caminho": "modulos/04-nucleo-compartilhado/gates/G_AST_BOUNDED_CONTEXT.py",
       "caminho_final": "modulos/04-nucleo-compartilhado/gates/G_AST_BOUNDED_CONTEXT.py"
     },
     "G_CLI_HELP_CONSISTENCIA": {
       "dono": "04-nucleo-compartilhado",
       "transversal": true,
-      "caminho": "gates/G_CLI_HELP_CONSISTENCIA.py",
+      "caminho": "modulos/04-nucleo-compartilhado/gates/G_CLI_HELP_CONSISTENCIA.py",
       "caminho_final": "modulos/04-nucleo-compartilhado/gates/G_CLI_HELP_CONSISTENCIA.py"
     },
     "G_COMPONENTE_AGNOSTICO": {
       "dono": "02-triade-motores/fluxo-02-open",
       "transversal": false,
-      "caminho": "gates/G_COMPONENTE_AGNOSTICO.py",
+      "caminho": "modulos/02-triade-motores/fluxo-02-open/gates/G_COMPONENTE_AGNOSTICO.py",
       "caminho_final": "modulos/02-triade-motores/fluxo-02-open/gates/G_COMPONENTE_AGNOSTICO.py"
     },
     "G_CONTRACT_ROT": {
       "dono": "03-plataforma-e-entrega",
       "transversal": false,
-      "caminho": "gates/G_CONTRACT_ROT.py",
+      "caminho": "modulos/03-plataforma-e-entrega/gates/G_CONTRACT_ROT.py",
       "caminho_final": "modulos/03-plataforma-e-entrega/gates/G_CONTRACT_ROT.py"
     },
     "G_COPIA_UNICA_VSA": {
@@ -119,319 +119,319 @@
     "G_DEPENDENCIAS_PIN_HASH": {
       "dono": "04-nucleo-compartilhado",
       "transversal": true,
-      "caminho": "gates/G_DEPENDENCIAS_PIN_HASH.py",
+      "caminho": "modulos/04-nucleo-compartilhado/gates/G_DEPENDENCIAS_PIN_HASH.py",
       "caminho_final": "modulos/04-nucleo-compartilhado/gates/G_DEPENDENCIAS_PIN_HASH.py"
     },
     "G_DETERMINISMO_LEI_1": {
       "dono": "01-governanca-e-qualidade",
       "transversal": false,
-      "caminho": "gates/G_DETERMINISMO_LEI_1.py",
+      "caminho": "modulos/01-governanca-e-qualidade/gates/G_DETERMINISMO_LEI_1.py",
       "caminho_final": "modulos/01-governanca-e-qualidade/gates/G_DETERMINISMO_LEI_1.py"
     },
     "G_DISCIPLINA_TESTE_FERRAMENTA": {
       "dono": "01-governanca-e-qualidade",
       "transversal": false,
-      "caminho": "gates/G_DISCIPLINA_TESTE_FERRAMENTA.py",
+      "caminho": "modulos/01-governanca-e-qualidade/gates/G_DISCIPLINA_TESTE_FERRAMENTA.py",
       "caminho_final": "modulos/01-governanca-e-qualidade/gates/G_DISCIPLINA_TESTE_FERRAMENTA.py"
     },
     "G_DISPATCH_PIPELINE_VSA": {
       "dono": "03-plataforma-e-entrega",
       "transversal": false,
-      "caminho": "gates/G_DISPATCH_PIPELINE_VSA.py",
+      "caminho": "modulos/03-plataforma-e-entrega/gates/G_DISPATCH_PIPELINE_VSA.py",
       "caminho_final": "modulos/03-plataforma-e-entrega/gates/G_DISPATCH_PIPELINE_VSA.py"
     },
     "G_DOCS_ROT": {
       "dono": "01-governanca-e-qualidade",
       "transversal": false,
-      "caminho": "gates/G_DOCS_ROT.py",
+      "caminho": "modulos/01-governanca-e-qualidade/gates/G_DOCS_ROT.py",
       "caminho_final": "modulos/01-governanca-e-qualidade/gates/G_DOCS_ROT.py"
     },
     "G_DRIFT_ANALYZER": {
       "dono": "04-nucleo-compartilhado",
       "transversal": true,
-      "caminho": "gates/G_DRIFT_ANALYZER.py",
+      "caminho": "modulos/04-nucleo-compartilhado/gates/G_DRIFT_ANALYZER.py",
       "caminho_final": "modulos/04-nucleo-compartilhado/gates/G_DRIFT_ANALYZER.py"
     },
     "G_DRIFT_NUCLEO_COMPARTILHADO": {
       "dono": "04-nucleo-compartilhado",
       "transversal": true,
-      "caminho": "gates/G_DRIFT_NUCLEO_COMPARTILHADO.py",
+      "caminho": "modulos/04-nucleo-compartilhado/gates/G_DRIFT_NUCLEO_COMPARTILHADO.py",
       "caminho_final": "modulos/04-nucleo-compartilhado/gates/G_DRIFT_NUCLEO_COMPARTILHADO.py"
     },
     "G_ECOSSISTEMA_INTEGRIDADE": {
       "dono": "04-nucleo-compartilhado",
       "transversal": true,
-      "caminho": "gates/G_ECOSSISTEMA_INTEGRIDADE.py",
+      "caminho": "modulos/04-nucleo-compartilhado/gates/G_ECOSSISTEMA_INTEGRIDADE.py",
       "caminho_final": "modulos/04-nucleo-compartilhado/gates/G_ECOSSISTEMA_INTEGRIDADE.py"
     },
     "G_ENV_ROT": {
       "dono": "04-nucleo-compartilhado",
       "transversal": true,
-      "caminho": "gates/G_ENV_ROT.py",
+      "caminho": "modulos/04-nucleo-compartilhado/gates/G_ENV_ROT.py",
       "caminho_final": "modulos/04-nucleo-compartilhado/gates/G_ENV_ROT.py"
     },
     "G_ESCRITOR_ATOMICO": {
       "dono": "04-nucleo-compartilhado",
       "transversal": true,
-      "caminho": "gates/G_ESCRITOR_ATOMICO.py",
+      "caminho": "modulos/04-nucleo-compartilhado/gates/G_ESCRITOR_ATOMICO.py",
       "caminho_final": "modulos/04-nucleo-compartilhado/gates/G_ESCRITOR_ATOMICO.py"
     },
     "G_ESTRUTURA_ESTADO": {
       "dono": "04-nucleo-compartilhado",
       "transversal": true,
-      "caminho": "gates/G_ESTRUTURA_ESTADO.py",
+      "caminho": "modulos/04-nucleo-compartilhado/gates/G_ESTRUTURA_ESTADO.py",
       "caminho_final": "modulos/04-nucleo-compartilhado/gates/G_ESTRUTURA_ESTADO.py"
     },
     "G_FRONTEIRA_FERRAMENTAS": {
       "dono": "04-nucleo-compartilhado",
       "transversal": true,
-      "caminho": "gates/G_FRONTEIRA_FERRAMENTAS.py",
+      "caminho": "modulos/04-nucleo-compartilhado/gates/G_FRONTEIRA_FERRAMENTAS.py",
       "caminho_final": "modulos/04-nucleo-compartilhado/gates/G_FRONTEIRA_FERRAMENTAS.py"
     },
     "G_FRONTEND_LAYERS": {
       "dono": "02-triade-motores/fluxo-01-pure",
       "transversal": false,
-      "caminho": "gates/G_FRONTEND_LAYERS.py",
+      "caminho": "modulos/02-triade-motores/fluxo-01-pure/gates/G_FRONTEND_LAYERS.py",
       "caminho_final": "modulos/02-triade-motores/fluxo-01-pure/gates/G_FRONTEND_LAYERS.py"
     },
     "G_GESTOR_SESSOES": {
       "dono": "04-nucleo-compartilhado",
       "transversal": true,
-      "caminho": "gates/G_GESTOR_SESSOES.py",
+      "caminho": "modulos/04-nucleo-compartilhado/gates/G_GESTOR_SESSOES.py",
       "caminho_final": "modulos/04-nucleo-compartilhado/gates/G_GESTOR_SESSOES.py"
     },
     "G_GRAPH_FIRST": {
       "dono": "04-nucleo-compartilhado",
       "transversal": true,
-      "caminho": "gates/G_GRAPH_FIRST.py",
+      "caminho": "modulos/04-nucleo-compartilhado/gates/G_GRAPH_FIRST.py",
       "caminho_final": "modulos/04-nucleo-compartilhado/gates/G_GRAPH_FIRST.py"
     },
     "G_HADOLINT": {
       "dono": "02-triade-motores/fluxo-02-open",
       "transversal": false,
-      "caminho": "gates/G_HADOLINT.py",
+      "caminho": "modulos/02-triade-motores/fluxo-02-open/gates/G_HADOLINT.py",
       "caminho_final": "modulos/02-triade-motores/fluxo-02-open/gates/G_HADOLINT.py"
     },
     "G_HANDOFF_MELHORIA": {
       "dono": "01-governanca-e-qualidade",
       "transversal": false,
-      "caminho": "gates/G_HANDOFF_MELHORIA.py",
+      "caminho": "modulos/01-governanca-e-qualidade/gates/G_HANDOFF_MELHORIA.py",
       "caminho_final": "modulos/01-governanca-e-qualidade/gates/G_HANDOFF_MELHORIA.py"
     },
     "G_HARNESS_COMPAT": {
       "dono": "04-nucleo-compartilhado",
       "transversal": true,
-      "caminho": "gates/G_HARNESS_COMPAT.py",
+      "caminho": "modulos/04-nucleo-compartilhado/gates/G_HARNESS_COMPAT.py",
       "caminho_final": "modulos/04-nucleo-compartilhado/gates/G_HARNESS_COMPAT.py"
     },
     "G_HONESTIDADE_ROTULO": {
       "dono": "04-nucleo-compartilhado",
       "transversal": true,
-      "caminho": "gates/G_HONESTIDADE_ROTULO.py",
+      "caminho": "modulos/04-nucleo-compartilhado/gates/G_HONESTIDADE_ROTULO.py",
       "caminho_final": "modulos/04-nucleo-compartilhado/gates/G_HONESTIDADE_ROTULO.py"
     },
     "G_IDIOMA_LEI_4": {
       "dono": "04-nucleo-compartilhado",
       "transversal": true,
-      "caminho": "gates/G_IDIOMA_LEI_4.py",
+      "caminho": "modulos/04-nucleo-compartilhado/gates/G_IDIOMA_LEI_4.py",
       "caminho_final": "modulos/04-nucleo-compartilhado/gates/G_IDIOMA_LEI_4.py"
     },
     "G_INFRA_COMPOSE": {
       "dono": "03-plataforma-e-entrega",
       "transversal": false,
-      "caminho": "gates/G_INFRA_COMPOSE.py",
+      "caminho": "modulos/03-plataforma-e-entrega/gates/G_INFRA_COMPOSE.py",
       "caminho_final": "modulos/03-plataforma-e-entrega/gates/G_INFRA_COMPOSE.py"
     },
     "G_ISOLATION_AUDIT": {
       "dono": "03-plataforma-e-entrega",
       "transversal": false,
-      "caminho": "gates/G_ISOLATION_AUDIT.py",
+      "caminho": "modulos/03-plataforma-e-entrega/gates/G_ISOLATION_AUDIT.py",
       "caminho_final": "modulos/03-plataforma-e-entrega/gates/G_ISOLATION_AUDIT.py"
     },
     "G_LAYOUT_ENTREGA": {
       "dono": "03-plataforma-e-entrega",
       "transversal": false,
-      "caminho": "gates/G_LAYOUT_ENTREGA.py",
+      "caminho": "modulos/03-plataforma-e-entrega/gates/G_LAYOUT_ENTREGA.py",
       "caminho_final": "modulos/03-plataforma-e-entrega/gates/G_LAYOUT_ENTREGA.py"
     },
     "G_LEI_DECLARA_PORTAO": {
       "dono": "01-governanca-e-qualidade",
       "transversal": false,
-      "caminho": "gates/G_LEI_DECLARA_PORTAO.py",
+      "caminho": "modulos/01-governanca-e-qualidade/gates/G_LEI_DECLARA_PORTAO.py",
       "caminho_final": "modulos/01-governanca-e-qualidade/gates/G_LEI_DECLARA_PORTAO.py"
     },
     "G_LIVRO_EVIDENCIA": {
       "dono": "04-nucleo-compartilhado",
       "transversal": true,
-      "caminho": "gates/G_LIVRO_EVIDENCIA.py",
+      "caminho": "modulos/04-nucleo-compartilhado/gates/G_LIVRO_EVIDENCIA.py",
       "caminho_final": "modulos/04-nucleo-compartilhado/gates/G_LIVRO_EVIDENCIA.py"
     },
     "G_LLM_PROMPT_SHIELD": {
       "dono": "04-nucleo-compartilhado",
       "transversal": true,
-      "caminho": "gates/G_LLM_PROMPT_SHIELD.py",
+      "caminho": "modulos/04-nucleo-compartilhado/gates/G_LLM_PROMPT_SHIELD.py",
       "caminho_final": "modulos/04-nucleo-compartilhado/gates/G_LLM_PROMPT_SHIELD.py"
     },
     "G_mapa_pecas": {
       "dono": "04-nucleo-compartilhado",
       "transversal": true,
-      "caminho": "gates/G_mapa_pecas.py",
+      "caminho": "modulos/04-nucleo-compartilhado/gates/G_mapa_pecas.py",
       "caminho_final": "modulos/04-nucleo-compartilhado/gates/G_mapa_pecas.py"
     },
     "G_MIGRATION_ROT": {
       "dono": "02-triade-motores/fluxo-03-freedom",
       "transversal": false,
-      "caminho": "gates/G_MIGRATION_ROT.py",
+      "caminho": "modulos/02-triade-motores/fluxo-03-freedom/gates/G_MIGRATION_ROT.py",
       "caminho_final": "modulos/02-triade-motores/fluxo-03-freedom/gates/G_MIGRATION_ROT.py"
     },
     "G_modularizacao_vsa": {
       "dono": "04-nucleo-compartilhado",
       "transversal": true,
-      "caminho": "gates/G_modularizacao_vsa.py",
+      "caminho": "modulos/04-nucleo-compartilhado/gates/G_modularizacao_vsa.py",
       "caminho_final": "modulos/04-nucleo-compartilhado/gates/G_modularizacao_vsa.py"
     },
     "G_NOVE_CAMADAS_MERCADO": {
       "dono": "02-triade-motores/fluxo-01-pure",
       "transversal": false,
-      "caminho": "gates/G_NOVE_CAMADAS_MERCADO.py",
+      "caminho": "modulos/02-triade-motores/fluxo-01-pure/gates/G_NOVE_CAMADAS_MERCADO.py",
       "caminho_final": "modulos/02-triade-motores/fluxo-01-pure/gates/G_NOVE_CAMADAS_MERCADO.py"
     },
     "G_ORQUESTRADOR_SINCRONO": {
       "dono": "04-nucleo-compartilhado",
       "transversal": true,
-      "caminho": "gates/G_ORQUESTRADOR_SINCRONO.py",
+      "caminho": "modulos/04-nucleo-compartilhado/gates/G_ORQUESTRADOR_SINCRONO.py",
       "caminho_final": "modulos/04-nucleo-compartilhado/gates/G_ORQUESTRADOR_SINCRONO.py"
     },
     "G_PACOTE_CORE": {
       "dono": "04-nucleo-compartilhado",
       "transversal": true,
-      "caminho": "gates/G_PACOTE_CORE.py",
+      "caminho": "modulos/04-nucleo-compartilhado/gates/G_PACOTE_CORE.py",
       "caminho_final": "modulos/04-nucleo-compartilhado/gates/G_PACOTE_CORE.py"
     },
     "G_PIPELINE_HANDOFF": {
       "dono": "04-nucleo-compartilhado",
       "transversal": true,
-      "caminho": "gates/G_PIPELINE_HANDOFF.py",
+      "caminho": "modulos/04-nucleo-compartilhado/gates/G_PIPELINE_HANDOFF.py",
       "caminho_final": "modulos/04-nucleo-compartilhado/gates/G_PIPELINE_HANDOFF.py"
     },
     "G_PORTAO_PROVA_QUE_MORDE": {
       "dono": "01-governanca-e-qualidade",
       "transversal": false,
-      "caminho": "gates/G_PORTAO_PROVA_QUE_MORDE.py",
+      "caminho": "modulos/01-governanca-e-qualidade/gates/G_PORTAO_PROVA_QUE_MORDE.py",
       "caminho_final": "modulos/01-governanca-e-qualidade/gates/G_PORTAO_PROVA_QUE_MORDE.py"
     },
     "G_PROTOCOL_FALLBACK": {
       "dono": "04-nucleo-compartilhado",
       "transversal": true,
-      "caminho": "gates/G_PROTOCOL_FALLBACK.py",
+      "caminho": "modulos/04-nucleo-compartilhado/gates/G_PROTOCOL_FALLBACK.py",
       "caminho_final": "modulos/04-nucleo-compartilhado/gates/G_PROTOCOL_FALLBACK.py"
     },
     "G_PROTOTYPE_REWRITE": {
       "dono": "02-triade-motores/fluxo-01-pure",
       "transversal": false,
-      "caminho": "gates/G_PROTOTYPE_REWRITE.py",
+      "caminho": "modulos/02-triade-motores/fluxo-01-pure/gates/G_PROTOTYPE_REWRITE.py",
       "caminho_final": "modulos/02-triade-motores/fluxo-01-pure/gates/G_PROTOTYPE_REWRITE.py"
     },
     "G_PROVA_SKILLS_POCOCK": {
       "dono": "01-governanca-e-qualidade",
       "transversal": false,
-      "caminho": "gates/G_PROVA_SKILLS_POCOCK.py",
+      "caminho": "modulos/01-governanca-e-qualidade/gates/G_PROVA_SKILLS_POCOCK.py",
       "caminho_final": "modulos/01-governanca-e-qualidade/gates/G_PROVA_SKILLS_POCOCK.py"
     },
     "G_QUARTETO_SINE_QUA_NON": {
       "dono": "03-plataforma-e-entrega",
       "transversal": false,
-      "caminho": "gates/G_QUARTETO_SINE_QUA_NON.py",
+      "caminho": "modulos/03-plataforma-e-entrega/gates/G_QUARTETO_SINE_QUA_NON.py",
       "caminho_final": "modulos/03-plataforma-e-entrega/gates/G_QUARTETO_SINE_QUA_NON.py"
     },
     "G_RESUMO_USUARIO": {
       "dono": "04-nucleo-compartilhado",
       "transversal": true,
-      "caminho": "gates/G_RESUMO_USUARIO.py",
+      "caminho": "modulos/04-nucleo-compartilhado/gates/G_RESUMO_USUARIO.py",
       "caminho_final": "modulos/04-nucleo-compartilhado/gates/G_RESUMO_USUARIO.py"
     },
     "G_SAIDA_BINARIA": {
       "dono": "04-nucleo-compartilhado",
       "transversal": true,
-      "caminho": "gates/G_SAIDA_BINARIA.py",
+      "caminho": "modulos/04-nucleo-compartilhado/gates/G_SAIDA_BINARIA.py",
       "caminho_final": "modulos/04-nucleo-compartilhado/gates/G_SAIDA_BINARIA.py"
     },
     "G_SEGREDOS": {
       "dono": "04-nucleo-compartilhado",
       "transversal": true,
-      "caminho": "gates/G_SEGREDOS.py",
+      "caminho": "modulos/04-nucleo-compartilhado/gates/G_SEGREDOS.py",
       "caminho_final": "modulos/04-nucleo-compartilhado/gates/G_SEGREDOS.py"
     },
     "G_SKILL_FORMATO": {
       "dono": "04-nucleo-compartilhado",
       "transversal": true,
-      "caminho": "gates/G_SKILL_FORMATO.py",
+      "caminho": "modulos/04-nucleo-compartilhado/gates/G_SKILL_FORMATO.py",
       "caminho_final": "modulos/04-nucleo-compartilhado/gates/G_SKILL_FORMATO.py"
     },
     "G_SKILL_ROT": {
       "dono": "04-nucleo-compartilhado",
       "transversal": true,
-      "caminho": "gates/G_SKILL_ROT.py",
+      "caminho": "modulos/04-nucleo-compartilhado/gates/G_SKILL_ROT.py",
       "caminho_final": "modulos/04-nucleo-compartilhado/gates/G_SKILL_ROT.py"
     },
     "G_STACK_PADRAO_OURO": {
       "dono": "02-triade-motores/fluxo-01-pure",
       "transversal": false,
-      "caminho": "gates/G_STACK_PADRAO_OURO.py",
+      "caminho": "modulos/02-triade-motores/fluxo-01-pure/gates/G_STACK_PADRAO_OURO.py",
       "caminho_final": "modulos/02-triade-motores/fluxo-01-pure/gates/G_STACK_PADRAO_OURO.py"
     },
     "G_SUPPLY_CHAIN": {
       "dono": "04-nucleo-compartilhado",
       "transversal": true,
-      "caminho": "gates/G_SUPPLY_CHAIN.py",
+      "caminho": "modulos/04-nucleo-compartilhado/gates/G_SUPPLY_CHAIN.py",
       "caminho_final": "modulos/04-nucleo-compartilhado/gates/G_SUPPLY_CHAIN.py"
     },
     "G_SYNC_CMD_ROT": {
       "dono": "04-nucleo-compartilhado",
       "transversal": true,
-      "caminho": "gates/G_SYNC_CMD_ROT.py",
+      "caminho": "modulos/04-nucleo-compartilhado/gates/G_SYNC_CMD_ROT.py",
       "caminho_final": "modulos/04-nucleo-compartilhado/gates/G_SYNC_CMD_ROT.py"
     },
     "G_TEMPLATE_FORGE_ROT": {
       "dono": "01-governanca-e-qualidade",
       "transversal": false,
-      "caminho": "gates/G_TEMPLATE_FORGE_ROT.py",
+      "caminho": "modulos/01-governanca-e-qualidade/gates/G_TEMPLATE_FORGE_ROT.py",
       "caminho_final": "modulos/01-governanca-e-qualidade/gates/G_TEMPLATE_FORGE_ROT.py"
     },
     "G_TEMPLATE_TANSTACK_OFFLINE": {
       "dono": "02-triade-motores/fluxo-01-pure",
       "transversal": false,
-      "caminho": "gates/G_TEMPLATE_TANSTACK_OFFLINE.py",
+      "caminho": "modulos/02-triade-motores/fluxo-01-pure/gates/G_TEMPLATE_TANSTACK_OFFLINE.py",
       "caminho_final": "modulos/02-triade-motores/fluxo-01-pure/gates/G_TEMPLATE_TANSTACK_OFFLINE.py"
     },
     "G_TESTES_REAIS": {
       "dono": "01-governanca-e-qualidade",
       "transversal": false,
-      "caminho": "gates/G_TESTES_REAIS.py",
+      "caminho": "modulos/01-governanca-e-qualidade/gates/G_TESTES_REAIS.py",
       "caminho_final": "modulos/01-governanca-e-qualidade/gates/G_TESTES_REAIS.py"
     },
     "G_TRANSACTION_LOG_LRU": {
       "dono": "04-nucleo-compartilhado",
       "transversal": true,
-      "caminho": "gates/G_TRANSACTION_LOG_LRU.py",
+      "caminho": "modulos/04-nucleo-compartilhado/gates/G_TRANSACTION_LOG_LRU.py",
       "caminho_final": "modulos/04-nucleo-compartilhado/gates/G_TRANSACTION_LOG_LRU.py"
     },
     "G_UNIVERSAL_HARNESS": {
       "dono": "04-nucleo-compartilhado",
       "transversal": true,
-      "caminho": "gates/G_UNIVERSAL_HARNESS.py",
+      "caminho": "modulos/04-nucleo-compartilhado/gates/G_UNIVERSAL_HARNESS.py",
       "caminho_final": "modulos/04-nucleo-compartilhado/gates/G_UNIVERSAL_HARNESS.py"
     },
     "G_USER_FACING_PTBR": {
       "dono": "04-nucleo-compartilhado",
       "transversal": true,
-      "caminho": "gates/G_USER_FACING_PTBR.py",
+      "caminho": "modulos/04-nucleo-compartilhado/gates/G_USER_FACING_PTBR.py",
       "caminho_final": "modulos/04-nucleo-compartilhado/gates/G_USER_FACING_PTBR.py"
     },
     "G_ZERO_HEADLESS": {
       "dono": "04-nucleo-compartilhado",
       "transversal": true,
-      "caminho": "gates/G_ZERO_HEADLESS.py",
+      "caminho": "modulos/04-nucleo-compartilhado/gates/G_ZERO_HEADLESS.py",
       "caminho_final": "modulos/04-nucleo-compartilhado/gates/G_ZERO_HEADLESS.py"
     }
   }

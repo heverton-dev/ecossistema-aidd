@@ -38,7 +38,7 @@ import sys
 import tempfile
 from pathlib import Path
 
-ROOT_DIR = Path(__file__).resolve().parent.parent
+ROOT_DIR = next((p.parent for p in Path(__file__).resolve().parents if p.name == "modulos"), Path(__file__).resolve().parent.parent)  # raiz: pai de modulos/ (VSA) ou de gates/ (árvore sintética)
 HOOK_COMPARTILHADO = ROOT_DIR / "componentes" / "compartilhado" / "hooks" / "anti_headless_subagent_hook.py"
 HOOK_CLAUDE = ROOT_DIR / ".claude" / "hooks" / "anti_headless_subagent_hook.py"
 CLAUDE_SETTINGS = ROOT_DIR / ".claude" / "settings.json"

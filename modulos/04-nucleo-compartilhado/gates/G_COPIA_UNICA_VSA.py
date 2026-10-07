@@ -6,9 +6,12 @@ ECOSSISTEMA AIDD — QUALITY GATE: G_COPIA_UNICA_VSA (ciclo-03 VSA / D13)
 =============================================================================
 Uma peça, um lugar (decisões A e C do ciclo-03). Lê `git ls-files` e acusa:
   1. ferramenta presente em tools/aidd-<x>/ e também em modulos/ (pasta aidd-<x>);
-  2. gate G_*.py com o mesmo nome em mais de uma pasta (os moldes de projeto do
-     almoxarifado em aidd_forge/templates/gates/ são peças e não contam);
+  2. gate G_*.py com o mesmo nome em mais de uma pasta;
   3. skill com o mesmo nome em componentes/compartilhado/skills e modulos/**/skills.
+Não contam (são peças, não cópias): os moldes de projeto do almoxarifado
+(aidd_forge/templates/**, componentes/compartilhado/gates/** e
+componentes/compartilhado/injetor/**, carimbados nos projetos gerados) e a evidência
+de ciclo em docs/auditoria/**.
 
 Níveis (AIDD_COPIA_UNICA_MODO, precedência: --modo > variável > padrão):
   - aviso    (padrão): imprime o relatório e sai com exit 0;
@@ -29,7 +32,17 @@ if hasattr(sys.stdout, "reconfigure"):
 
 RAIZ = Path(__file__).resolve().parents[3]
 MODOS = ("aviso", "bloqueio")
-MOLDES_ALMOXARIFADO = "aidd_forge/templates/gates/"
+# Peças, não cópias: moldes carimbados em projetos gerados e evidência de auditoria.
+FORA_DO_ESCOPO = (
+    "aidd_forge/templates/",
+    "componentes/compartilhado/gates/",
+    "componentes/compartilhado/injetor/",
+    "docs/auditoria/",
+)
+
+
+def _eh_peca(caminho: str) -> bool:
+    return any(trecho in caminho for trecho in FORA_DO_ESCOPO)
 SKILLS_COMPARTILHADAS = "componentes/compartilhado/skills/"
 
 
@@ -53,7 +66,7 @@ def gates_duplicados(arquivos: list[str]) -> list[str]:
     locais = defaultdict(set)
     for p in arquivos:
         nome = p.rsplit("/", 1)[-1]
-        if nome.startswith("G_") and nome.endswith(".py") and MOLDES_ALMOXARIFADO not in p:
+        if nome.startswith("G_") and nome.endswith(".py") and not _eh_peca(p):
             locais[nome].add(p.rsplit("/", 1)[0] if "/" in p else ".")
     return [f"gate {nome}: {', '.join(sorted(pastas))}"
             for nome, pastas in sorted(locais.items()) if len(pastas) > 1]
@@ -64,7 +77,7 @@ def skills_duplicadas(arquivos: list[str]) -> list[str]:
     for p in arquivos:
         if p.startswith(SKILLS_COMPARTILHADAS) and p.count("/") >= 4:
             compartilhadas.add(p.split("/")[3])
-        elif p.startswith("modulos/") and "/skills/" in p:
+        elif p.startswith("modulos/") and "/skills/" in p and not _eh_peca(p):
             antes, depois = p.split("/skills/", 1)
             if "/" in depois:
                 nas_fatias[depois.split("/")[0]].add(antes + "/skills")

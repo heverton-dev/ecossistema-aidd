@@ -25,7 +25,7 @@ TERMOS_PATH = os.path.join(GATE_DIR, "termos_proibidos_marketing.json")
 
 def _preparar_gates_sintetico(root_dir):
     """Copia o gate real + a lista de termos pra gates/ dentro do tmp_path."""
-    gdir = os.path.join(root_dir, "gates")
+    gdir = os.path.join(root_dir, "modulos", "04-nucleo-compartilhado", "gates")
     os.makedirs(gdir, exist_ok=True)
     shutil.copyfile(GATE_PATH, os.path.join(gdir, "G_HONESTIDADE_ROTULO.py"))
     shutil.copyfile(TERMOS_PATH, os.path.join(gdir, "termos_proibidos_marketing.json"))

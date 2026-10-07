@@ -6,9 +6,9 @@
       "sha256": "1a98626fc8a3fa88ec95d1be382d41b695cfa3ce5fd3a198f41729a4b4e3046b"
     },
     {
-      "bytes": 10136,
+      "bytes": 10170,
       "caminho": ".agents/skills/aidd-forge/scripts/cli.py",
-      "sha256": "7d6149e9a8689fb937c9d8704977153ef419de6cc34e026580178c85acea2830"
+      "sha256": "0137fccd732f53d8ad89b0016a6a1a3770411d690e9c06474a26b4153c988c16"
     },
     {
       "bytes": 6414,
@@ -36,13 +36,13 @@
       "sha256": "e3a4fd89b59452545d366ea03f9a78c1b30d7f9671a6f1b7a50f6cf826035ea1"
     },
     {
-      "bytes": 7499,
-      "caminho": "gates/G_aidd_forge.py",
-      "sha256": "e86ff56d107d2906965b3aa90d803bb93efc4e3d4f17bad9ff1cd9c5d1a089ef"
+      "bytes": 7533,
+      "caminho": "modulos/01-governanca-e-qualidade/gates/G_aidd_forge.py",
+      "sha256": "234f8cf8b43ab0dffe1c686188d04c602c3819f4c0cf0e2d448f8b3a1f7af662"
     }
   ],
   "consumidor": "aidd-planner",
   "ferramenta": "aidd-forge",
-  "gerado_em": "2026-10-03T20:50:18+00:00",
+  "gerado_em": "2026-10-07T13:26:49+00:00",
   "versao": "1.0"
 }

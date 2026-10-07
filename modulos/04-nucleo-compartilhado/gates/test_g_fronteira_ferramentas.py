@@ -18,13 +18,13 @@ from pathlib import Path
 
 import pytest
 
-RAIZ = Path(__file__).resolve().parent.parent
-GATE_SCRIPT = RAIZ / "gates" / "G_FRONTEIRA_FERRAMENTAS.py"
+RAIZ = next((p.parent for p in Path(__file__).resolve().parents if p.name == "modulos"), Path(__file__).resolve().parent.parent)  # raiz: pai de modulos/ (VSA) ou de gates/ (árvore sintética)
+GATE_SCRIPT = RAIZ / "modulos" / "04-nucleo-compartilhado" / "gates" / "G_FRONTEIRA_FERRAMENTAS.py"
 MAPA_REAL = RAIZ / "componentes" / "compartilhado" / "specs" / "MAPA-DONOS-FERRAMENTAS.json"
-ALLOWLIST_REAL = RAIZ / "gates" / "allowlist_fronteira.json"
+ALLOWLIST_REAL = RAIZ / "modulos" / "04-nucleo-compartilhado" / "contracts" / "allowlist_fronteira.json"
 
 # Limite congelado da allowlist (número de entradas conhecidas com data).
-# Só pode diminuir: se gates/allowlist_fronteira.json crescer, o teste reprova.
+# Só pode diminuir: se modulos/04-nucleo-compartilhado/contracts/allowlist_fronteira.json crescer, o teste reprova.
 BASELINE_ALLOWLIST = 172
 
 PIECA = "modulos/02-triade-motores/fluxo-02-open/core/aidd-open/templates/dominio/peca.py"
@@ -100,9 +100,11 @@ def montar_repo(tmp_path, violacoes=True):
         limpo.parent.mkdir(parents=True, exist_ok=True)
         limpo.write_text("x = 1\n", encoding="utf-8")
 
-    gates_dir = tmp_path / "gates"
+    gates_dir = tmp_path / "modulos" / "04-nucleo-compartilhado" / "gates"
     gates_dir.mkdir(parents=True, exist_ok=True)
-    (gates_dir / "allowlist_fronteira.json").write_text(
+    contratos = tmp_path / "modulos" / "04-nucleo-compartilhado" / "contracts"
+    contratos.mkdir(parents=True, exist_ok=True)
+    (contratos / "allowlist_fronteira.json").write_text(
         json.dumps({"violacoes": []}, ensure_ascii=False, indent=1), encoding="utf-8"
     )
     shutil.copy(GATE_SCRIPT, gates_dir / "G_FRONTEIRA_FERRAMENTAS.py")
@@ -188,7 +190,7 @@ def test_allowlist_perdoa_violacoes_conhecidas(tmp_path):
             {"arquivo": COPIA, "data": "2026-09-01", "motivo": "violação conhecida"},
         ]
     }
-    (tmp_path / "gates" / "allowlist_fronteira.json").write_text(
+    (tmp_path / "modulos" / "04-nucleo-compartilhado" / "contracts" / "allowlist_fronteira.json").write_text(
         json.dumps(allowlist, ensure_ascii=False, indent=1), encoding="utf-8"
     )
     res = rodar(gate, tmp_path, modo="bloqueio")

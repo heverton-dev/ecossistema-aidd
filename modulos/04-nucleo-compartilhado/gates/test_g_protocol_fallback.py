@@ -6,12 +6,13 @@ import os
 import subprocess
 import sys
 import tempfile
-ROOT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+from pathlib import Path as _Path
+ROOT_DIR = str(next((p.parent for p in _Path(__file__).resolve().parents if p.name == "modulos"), _Path(__file__).resolve().parent.parent))  # raiz: pai de modulos/ (VSA) ou de gates/ (árvore sintética)
 if ROOT_DIR not in sys.path:
     sys.path.insert(0, ROOT_DIR)
 
-import gates.G_PROTOCOL_FALLBACK as gate
-from gates.G_PROTOCOL_FALLBACK import verificar_paridade_contratos, scan_protocol_fallbacks, main
+import G_PROTOCOL_FALLBACK as gate
+from G_PROTOCOL_FALLBACK import verificar_paridade_contratos, scan_protocol_fallbacks, main
 
 
 

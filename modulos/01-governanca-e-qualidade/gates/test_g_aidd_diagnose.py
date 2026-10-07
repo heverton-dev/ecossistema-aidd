@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
 Teste de Quality Gate Determinístico de Diagnose (Ticket 6 / D13 / DoD 6).
-Exige que `gates/G_aidd_diagnose.py` aprove relatórios de causa-raiz válidos
+Exige que `modulos/01-governanca-e-qualidade/gates/G_aidd_diagnose.py` aprove relatórios de causa-raiz válidos
 e reprove (exit 1) casos inválidos:
 1. Ausência de comando de reprodução determinística (missing repro).
 2. Duas ou mais hipóteses ativas simultâneas (two active hypotheses).
@@ -16,8 +16,8 @@ import sys
 from pathlib import Path
 import pytest
 
-ROOT_DIR = Path(__file__).resolve().parent.parent
-GATE_SCRIPT = ROOT_DIR / "gates" / "G_aidd_diagnose.py"
+ROOT_DIR = next((p.parent for p in Path(__file__).resolve().parents if p.name == "modulos"), Path(__file__).resolve().parent.parent)  # raiz: pai de modulos/ (VSA) ou de gates/ (árvore sintética)
+GATE_SCRIPT = ROOT_DIR / "modulos" / "01-governanca-e-qualidade" / "gates" / "G_aidd_diagnose.py"
 
 
 def executar_gate_diagnose(caminho_relatorio: Path) -> subprocess.CompletedProcess:

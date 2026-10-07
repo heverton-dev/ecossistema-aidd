@@ -27,7 +27,7 @@ def test_roteador_fluxo_01_generator_cria_arquivos_e_quarteto(tmp_path):
         "arquivos_esperados": ["src/slices/usuarios/router.py"],
         "barreira_validacao": {
             "comandos_teste": ["pytest tests/slices/test_usuarios.py"],
-            "quality_gates": ["python gates/G_SAIDA_BINARIA.py"]
+            "quality_gates": ["python modulos/04-nucleo-compartilhado/gates/G_SAIDA_BINARIA.py"]
         }
     }
 
@@ -69,7 +69,7 @@ def test_roteador_fluxo_02_factory_cria_integracao_e_quarteto(tmp_path):
         "arquivos_esperados": ["src/slices/notificacoes/router.py"],
         "barreira_validacao": {
             "comandos_teste": ["pytest tests/slices/test_notificacoes.py"],
-            "quality_gates": ["python gates/G_SAIDA_BINARIA.py"]
+            "quality_gates": ["python modulos/04-nucleo-compartilhado/gates/G_SAIDA_BINARIA.py"]
         }
     }
 
@@ -100,7 +100,7 @@ def test_roteador_fluxo_03_bridge_cria_desacoplamento_e_quarteto(tmp_path):
         "arquivos_esperados": ["src/slices/faturamento/router.py"],
         "barreira_validacao": {
             "comandos_teste": ["pytest tests/slices/test_faturamento.py"],
-            "quality_gates": ["python gates/G_SAIDA_BINARIA.py"]
+            "quality_gates": ["python modulos/04-nucleo-compartilhado/gates/G_SAIDA_BINARIA.py"]
         }
     }
 

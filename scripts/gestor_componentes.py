@@ -3,7 +3,7 @@
  =============================================================================
  ECOSSISTEMA AIDD — GESTOR ÚNICO DE COMPONENTES MULTI-HARNESS
  =============================================================================
- Lê gates/manifesto_harnesses.json (fonte única de mapeamento tipo de
+ Lê modulos/04-nucleo-compartilhado/contracts/manifesto_harnesses.json (fonte única de mapeamento tipo de
  componente -> destinos físicos por harness) e materializa/compara
  `componentes/<escopo>/<tipo>/<nome>` contra todos os destinos declarados.
 
@@ -46,7 +46,7 @@ from dataclasses import dataclass, field
 from typing import Optional
 
 ROOT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-MANIFESTO_PATH = os.path.join(ROOT_DIR, "gates", "manifesto_harnesses.json")
+MANIFESTO_PATH = os.path.join(ROOT_DIR, "modulos", "04-nucleo-compartilhado", "contracts", "manifesto_harnesses.json")
 COMPONENTES_DIR = os.path.join(ROOT_DIR, "componentes")
 
 TODOS_TIPOS_MARCADOR = "todos"
@@ -426,7 +426,7 @@ def _checar_bom_em_componentes():
 # NOVO: Index de fontes para detecção bidirecional
 # ---------------------------------------------------------------------------
 
-ALLOWLIST_ORFAOS_PATH = os.path.join(ROOT_DIR, "gates", "allowlist_orfaos.json")
+ALLOWLIST_ORFAOS_PATH = os.path.join(ROOT_DIR, "modulos", "04-nucleo-compartilhado", "contracts", "allowlist_orfaos.json")
 
 
 def _carregar_allowlist_orfaos() -> set[str]:
@@ -709,7 +709,7 @@ def auto_ingest_skills(dry_run=False) -> list[str]:
     """Varre as pastas de skills de todos os harnesses suportados.
     Se encontrar uma skill que possui SKILL.md mas não existe em componentes/compartilhado/skills/,
     ingere-a automaticamente para a fonte canônica, permitindo propagação universal.
-    Skills de terceiros declaradas em gates/dependencias_externas.json nunca são
+    Skills de terceiros declaradas em modulos/04-nucleo-compartilhado/contracts/dependencias_externas.json nunca são
     ingeridas: são instaladas pelo instalador do fornecedor (CONVENCAO-AUTORIA-SKILLS 5.3.5)."""
     import gestor_dependencias
     manifesto = carregar_manifesto()
@@ -718,7 +718,7 @@ def auto_ingest_skills(dry_run=False) -> list[str]:
     skills_canonica = set(os.listdir(fonte_skills))
     nomes_antigos = nomes_antigos_de_skill()
     terceiros = gestor_dependencias.skills_de_terceiros(
-        os.path.join(ROOT_DIR, "gates", "dependencias_externas.json")
+        os.path.join(ROOT_DIR, "modulos", "04-nucleo-compartilhado", "contracts", "dependencias_externas.json")
     )
 
     pastas_busca = []

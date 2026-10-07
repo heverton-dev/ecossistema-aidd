@@ -18,15 +18,16 @@ import subprocess
 import sys
 import pytest
 
-ROOT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-GATES_DIR = os.path.join(ROOT_DIR, "gates")
+from pathlib import Path as _Path
+ROOT_DIR = str(next((p.parent for p in _Path(__file__).resolve().parents if p.name == "modulos"), _Path(__file__).resolve().parent.parent))  # raiz: pai de modulos/ (VSA) ou de gates/ (árvore sintética)
+GATES_DIR = os.path.dirname(os.path.abspath(__file__))
 GATE_SCRIPT = os.path.join(GATES_DIR, "G_DISCIPLINA_TESTE_FERRAMENTA.py")
 
 
 def test_aprova_quando_nenhuma_ferramenta_tocada():
     """Valida que alterações fora de tools/ (ex: docs/, gates/) passam sem exigir relatório."""
     res = subprocess.run(
-        [sys.executable, GATE_SCRIPT, "--files", "gates/G_SAIDA_BINARIA.py", "README.md"],
+        [sys.executable, GATE_SCRIPT, "--files", "modulos/04-nucleo-compartilhado/gates/G_SAIDA_BINARIA.py", "README.md"],
         capture_output=True,
         text=True,
         cwd=ROOT_DIR,

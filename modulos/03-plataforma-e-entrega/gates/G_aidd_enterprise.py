@@ -34,7 +34,7 @@ try:
 except ImportError:  # pragma: no cover - dependencia declarada em requirements.txt
     Draft202012Validator = None  # type: ignore[assignment]
 
-ROOT_DIR = Path(__file__).resolve().parent.parent
+ROOT_DIR = next((p.parent for p in Path(__file__).resolve().parents if p.name == "modulos"), Path(__file__).resolve().parent.parent)  # raiz: pai de modulos/ (VSA) ou de gates/ (árvore sintética)
 SCHEMA_PATH = (
     ROOT_DIR / "componentes" / "compartilhado" / "injetor" / "schema" / "component_manifest.schema.json"
 )
@@ -138,7 +138,7 @@ def validar_manifest_arquivo(manifest_path: Path, diretorio: Path) -> Tuple[bool
 
 def main(argv: Optional[List[str]] = None) -> int:
     parser = argparse.ArgumentParser(
-        prog="python gates/G_aidd_enterprise.py",
+        prog="python modulos/03-plataforma-e-entrega/gates/G_aidd_enterprise.py",
         description="Quality Gate determinístico de contratos do aidd-enterprise (D13)",
     )
     parser.add_argument("--manifest", required=True, help="Arquivo JSON do manifest do componente")

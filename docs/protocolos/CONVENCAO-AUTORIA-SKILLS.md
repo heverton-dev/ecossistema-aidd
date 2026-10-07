@@ -38,7 +38,7 @@ Consequência prática: **a descrição é o gatilho**. Uma descrição vaga faz
 |---|---|---|
 | **Fonte única** | `componentes/compartilhado/skills/<nome>/` | Único lugar onde se edita. Skill de uma ferramenta só: `componentes/<ferramenta>/skills/<nome>/`. |
 | Cópias por harness | `.claude/skills/`, `.agents/skills/`, `.opencode/skills/`, `.gemini/…`, `.mimocode/skills/`… | **Geradas** por `python ecossistema.py components sync --tipo skill`. Nunca editar à mão. |
-| Skill de terceiros | `gates/dependencias_externas.json` | Registrada com `dependencia add-skill`, e não copiada para a fonte única. |
+| Skill de terceiros | `modulos/04-nucleo-compartilhado/contracts/dependencias_externas.json` | Registrada com `dependencia add-skill`, e não copiada para a fonte única. |
 
 Dentro da pasta da skill (padrão da especificação aberta):
 
@@ -90,7 +90,7 @@ description: Ajuda com o ecossistema.
 - **Negative Guardrails (o que NUNCA fazer):** liste explicitamente proibições rígidas contra vícios estocásticos comuns da LLM no domínio (ex.: commits cegos, omissão de rollback, mock sem aviso, queries N+1, retries infinitos).
 - **Failure Modes & Fallback:** instrua o agente sobre como recuperar de exceções operacionais esperadas (timeout de rede, violação de constraint, erro de permissão) com parada graciosa em vez de loops infinitos.
 - **Checklist de Fechamento (Stopping Criteria):** cada manual deve fechar com critérios binários (passa / não passa) de auto-auditoria antes do agente notificar o usuário ou tentar commitar.
-- **Verificação:** `python gates/G_SKILL_FORMATO.py` aponta as skills próprias sem essas 3 seções (aviso); `--secoes-estritas` reprova e passa a ser o padrão quando todas estiverem adequadas.
+- **Verificação:** `python modulos/04-nucleo-compartilhado/gates/G_SKILL_FORMATO.py` aponta as skills próprias sem essas 3 seções (aviso); `--secoes-estritas` reprova e passa a ser o padrão quando todas estiverem adequadas.
 
 ### 5.3 Nomes: um nome só para cada coisa
 
@@ -98,7 +98,7 @@ description: Ajuda com o ecossistema.
 2. **Uma skill por assunto.** Duas skills com o mesmo trabalho viram uma só; o conteúdo maior e mais recente prevalece, e o resto vai para `references/`.
 3. **Skill de ferramenta:** tem o nome exato da ferramenta (`aidd-forge`, `aidd-ops`). Skill de fluxo tem o nome do fluxo (`aidd-pure`, `aidd-open`, `aidd-freedom`).
 4. **Atalho para pessoas é comando slash, não skill.** O que o usuário digita (`/pure`, `/melhoria`, `/plan`) mora em `componentes/compartilhado/comandos/` e pode ter nome em PT-BR. O comando só chama a skill `aidd-*`; ele nunca copia o conteúdo.
-5. **Skill de terceiros:** mantém o nome original do fornecedor e é registrada em `gates/dependencias_externas.json`, instalada pelo instalador dele. Ela não é copiada para a fonte única.
+5. **Skill de terceiros:** mantém o nome original do fornecedor e é registrada em `modulos/04-nucleo-compartilhado/contracts/dependencias_externas.json`, instalada pelo instalador dele. Ela não é copiada para a fonte única.
 6. **Nomes vizinhos precisam de descrições que se excluem.** Exemplo: `aidd-planner` (planta do app, `PLANNER.json`) e `aidd-plan` (planos de melhoria do ecossistema, `docs/planos/`). A descrição de cada uma diz qual das duas é.
 
 ## 6. Como criar, passo a passo
@@ -107,7 +107,7 @@ description: Ajuda com o ecossistema.
 2. **Escreva os testes de comportamento primeiro.** São 3 cenários reais em que o agente erra sem a skill: o pedido do usuário e o que ele deve fazer. Rode sem a skill e anote o resultado; essa é a linha de base. **Pronto quando:** os 3 cenários falham ou saem ruins sem a skill.
 3. **Escreva o mínimo que resolve os 3 cenários, em inglês.** Primeiro a descrição (o gatilho), depois os passos. **Pronto quando:** o frontmatter segue a seção 5.1, o nome segue a 5.3 e o corpo tem menos de 150 linhas.
 4. **Distribua.** `python ecossistema.py components sync --tipo skill` e depois `python ecossistema.py components verify --tipo skill`. **Pronto quando:** o verify sai com exit 0.
-5. **Rode os guardas.** `python gates/G_SKILL_ROT.py` (todo caminho e comando citado existe) e `python gates/G_HARNESS_COMPAT.py`. **Pronto quando:** os dois saem com exit 0.
+5. **Rode os guardas.** `python modulos/04-nucleo-compartilhado/gates/G_SKILL_ROT.py` (todo caminho e comando citado existe) e `python modulos/04-nucleo-compartilhado/gates/G_HARNESS_COMPAT.py`. **Pronto quando:** os dois saem com exit 0.
 6. **Teste de verdade.** Chame `/<nome>` direto e depois rode os 3 cenários numa sessão nova. Se a skill não disparou sozinha, o problema está na descrição. **Pronto quando:** os 3 cenários passam, de preferência também num modelo menor (Haiku).
 7. **Commit** com o `SKILL.md`, os arquivos de apoio e os testes.
 

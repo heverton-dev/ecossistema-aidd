@@ -24,8 +24,8 @@ import tempfile
 from pathlib import Path
 import pytest
 
-ROOT_DIR = Path(__file__).resolve().parent.parent
-GATE_SCRIPT = ROOT_DIR / "gates" / "G_PIPELINE_HANDOFF.py"
+ROOT_DIR = next((p.parent for p in Path(__file__).resolve().parents if p.name == "modulos"), Path(__file__).resolve().parent.parent)  # raiz: pai de modulos/ (VSA) ou de gates/ (árvore sintética)
+GATE_SCRIPT = ROOT_DIR / "modulos" / "04-nucleo-compartilhado" / "gates" / "G_PIPELINE_HANDOFF.py"
 
 
 def executar_gate(manifesto_path: Path | None = None) -> subprocess.CompletedProcess:
@@ -59,7 +59,7 @@ def test_aprova_manifesto_valido_conforme(tmp_path):
             "descricao": "Execucao de testes do quality gate de pipeline"
         },
         "barreira_sincronizacao": [
-            "gates/G_SAIDA_BINARIA.py"
+            "modulos/04-nucleo-compartilhado/gates/G_SAIDA_BINARIA.py"
         ],
         "fase_sequencial_sincrona": [
             {
@@ -128,7 +128,7 @@ def test_reprova_stubs_e_placeholders(tmp_path):
             {
                 "id": "STEP-01",
                 "titulo": "TODO: implementar depois",
-                "arquivos_alvo": ["gates/G_PIPELINE_HANDOFF.py"],
+                "arquivos_alvo": ["modulos/04-nucleo-compartilhado/gates/G_PIPELINE_HANDOFF.py"],
                 "comando_validacao": "pytest tests"
             }
         ]
@@ -189,7 +189,7 @@ def test_reprova_gate_inexistente_na_barreira(tmp_path):
             {
                 "id": "STEP-01",
                 "titulo": "Ticket valido com arquivo existente",
-                "arquivos_alvo": ["gates/G_PIPELINE_HANDOFF.py"],
+                "arquivos_alvo": ["modulos/04-nucleo-compartilhado/gates/G_PIPELINE_HANDOFF.py"],
                 "comando_validacao": "pytest tests"
             }
         ]
@@ -218,7 +218,7 @@ def test_reprova_comando_validacao_trivial(tmp_path):
             {
                 "id": "STEP-01",
                 "titulo": "Ticket com comando trivial",
-                "arquivos_alvo": ["gates/G_PIPELINE_HANDOFF.py"],
+                "arquivos_alvo": ["modulos/04-nucleo-compartilhado/gates/G_PIPELINE_HANDOFF.py"],
                 "comando_validacao": "exit 0"
             }
         ]

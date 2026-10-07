@@ -24,18 +24,19 @@ import tempfile
 import threading
 import pytest
 
-ROOT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+from pathlib import Path as _Path
+ROOT_DIR = str(next((p.parent for p in _Path(__file__).resolve().parents if p.name == "modulos"), _Path(__file__).resolve().parent.parent))  # raiz: pai de modulos/ (VSA) ou de gates/ (árvore sintética)
 if ROOT_DIR not in sys.path:
     sys.path.insert(0, ROOT_DIR)
 
-from gates.G_CONTRACT_ROT import (
+from G_CONTRACT_ROT import (
     diff_specs,
     auditar_servidor_e_spec,
     coletar_spec_servidor_vivo,
     encontrar_porta_livre,
 )
 
-GATE_SCRIPT = os.path.join(ROOT_DIR, "gates", "G_CONTRACT_ROT.py")
+GATE_SCRIPT = os.path.join(ROOT_DIR, "modulos", "03-plataforma-e-entrega", "gates", "G_CONTRACT_ROT.py")
 
 
 def _criar_spec_base():

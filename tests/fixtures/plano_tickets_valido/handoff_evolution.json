@@ -15,13 +15,13 @@
       "titulo": "Validar contratos e schemas de handoff",
       "arquivos_alvo": [
         "componentes/compartilhado/specs/handoff-execucao.schema.json",
-        "gates/G_PIPELINE_HANDOFF.py"
+        "modulos/04-nucleo-compartilhado/gates/G_PIPELINE_HANDOFF.py"
       ],
-      "comando_validacao": "python gates/G_PIPELINE_HANDOFF.py",
+      "comando_validacao": "python modulos/04-nucleo-compartilhado/gates/G_PIPELINE_HANDOFF.py",
       "blocked_by": [],
       "isolamento": "git-worktree",
-      "comando_red": "python gates/G_PIPELINE_HANDOFF.py",
-      "comando_green": "python gates/G_PIPELINE_HANDOFF.py"
+      "comando_red": "python modulos/04-nucleo-compartilhado/gates/G_PIPELINE_HANDOFF.py",
+      "comando_green": "python modulos/04-nucleo-compartilhado/gates/G_PIPELINE_HANDOFF.py"
     },
     {
       "id": "TICKET-03",
@@ -36,7 +36,7 @@
     }
   ],
   "barreira_sincronizacao": [
-    "gates/G_SAIDA_BINARIA.py"
+    "modulos/04-nucleo-compartilhado/gates/G_SAIDA_BINARIA.py"
   ],
   "fase_sequencial_sincrona": [
     {

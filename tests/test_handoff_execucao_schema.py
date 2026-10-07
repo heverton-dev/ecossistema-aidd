@@ -95,7 +95,7 @@ def test_positive_fixture_en_prompt(validator):
             }
         ],
         "join_barrier": [
-            "gates/G_SAIDA_BINARIA.py"
+            "modulos/04-nucleo-compartilhado/gates/G_SAIDA_BINARIA.py"
         ],
         "sequential_sync_steps": [
             {

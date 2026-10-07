@@ -5,7 +5,7 @@ from pathlib import Path
 import tempfile
 import importlib.util
 
-ROOT = Path(__file__).resolve().parent.parent
+ROOT = next((p.parent for p in Path(__file__).resolve().parents if p.name == "modulos"), Path(__file__).resolve().parent.parent)  # raiz: pai de modulos/ (VSA) ou de gates/ (árvore sintética)
 
 def _carregar_modulo(nome, rel_path):
     p = ROOT / rel_path
@@ -14,7 +14,7 @@ def _carregar_modulo(nome, rel_path):
     spec.loader.exec_module(mod)
     return mod
 
-g_plan = _carregar_modulo("g_aidd_plan", "gates/G_aidd_plan.py")
+g_plan = _carregar_modulo("g_aidd_plan", "modulos/01-governanca-e-qualidade/gates/G_aidd_plan.py")
 
 
 def test_gate_plan_aprova_plano_valido():
@@ -25,7 +25,7 @@ def test_gate_plan_aprova_plano_valido():
         (pasta / "00-PROCESSO-E-DECISOES.md").write_text("# Processo\n```bash\necho ok\n```\n", encoding="utf-8")
         (pasta / "01-item.md").write_text("# Item 1\n> **Status:** [DRAFT]\n", encoding="utf-8")
 
-        res = subprocess.run([sys.executable, str(ROOT / "gates" / "G_aidd_plan.py"), str(pasta)], capture_output=True)
+        res = subprocess.run([sys.executable, str(ROOT / "modulos" / "01-governanca-e-qualidade" / "gates" / "G_aidd_plan.py"), str(pasta)], capture_output=True)
         assert res.returncode == 0
 
 
@@ -36,7 +36,7 @@ def test_gate_plan_reprova_sem_processo():
         pasta.mkdir()
         (pasta / "01-item.md").write_text("# Item 1\n", encoding="utf-8")
 
-        res = subprocess.run([sys.executable, str(ROOT / "gates" / "G_aidd_plan.py"), str(pasta)], capture_output=True)
+        res = subprocess.run([sys.executable, str(ROOT / "modulos" / "01-governanca-e-qualidade" / "gates" / "G_aidd_plan.py"), str(pasta)], capture_output=True)
         assert res.returncode == 1
 
 
@@ -47,5 +47,5 @@ def test_gate_plan_reprova_cerca_quebrada():
         pasta.mkdir()
         (pasta / "00-PROCESSO-E-DECISOES.md").write_text("# Processo\n```bash\necho ok\nsem fechar\n", encoding="utf-8")
 
-        res = subprocess.run([sys.executable, str(ROOT / "gates" / "G_aidd_plan.py"), str(pasta)], capture_output=True)
+        res = subprocess.run([sys.executable, str(ROOT / "modulos" / "01-governanca-e-qualidade" / "gates" / "G_aidd_plan.py"), str(pasta)], capture_output=True)
         assert res.returncode == 1

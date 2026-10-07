@@ -14,13 +14,14 @@ import sys
 import tempfile
 import pytest
 
-ROOT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+from pathlib import Path as _Path
+ROOT_DIR = str(next((p.parent for p in _Path(__file__).resolve().parents if p.name == "modulos"), _Path(__file__).resolve().parent.parent))  # raiz: pai de modulos/ (VSA) ou de gates/ (árvore sintética)
 if ROOT_DIR not in sys.path:
     sys.path.insert(0, ROOT_DIR)
 
-from gates.G_LEI_DECLARA_PORTAO import auditar_declaracoes_leis
+from G_LEI_DECLARA_PORTAO import auditar_declaracoes_leis
 
-GATE_SCRIPT = os.path.join(ROOT_DIR, "gates", "G_LEI_DECLARA_PORTAO.py")
+GATE_SCRIPT = os.path.join(ROOT_DIR, "modulos", "01-governanca-e-qualidade", "gates", "G_LEI_DECLARA_PORTAO.py")
 
 
 def test_gate_aprova_estado_atual_agents_md():
@@ -38,8 +39,8 @@ def test_gate_aprova_multiplos_portoes_por_lei():
 ## 2. Inviolable Laws
 
 1. **Tool Testing Discipline:** Protocolo de testes de ferramentas.
-   - Portão: gates/G_ENV_ROT.py (provado)
-   - Portão: gates/G_SKILL_ROT.py (provado)
+   - Portão: modulos/04-nucleo-compartilhado/gates/G_ENV_ROT.py (provado)
+   - Portão: modulos/04-nucleo-compartilhado/gates/G_SKILL_ROT.py (provado)
 
 ---
 """

@@ -1,7 +1,7 @@
 """Fonte unica de pastas de comando/skill por harness.
 
-Le `gates/manifesto_harnesses.json` (fonte unica de harnesses do ecossistema,
-ja usada por `scripts/gestor_componentes.py` e `gates/G_HARNESS_COMPAT.py`) em
+Le `modulos/04-nucleo-compartilhado/contracts/manifesto_harnesses.json` (fonte unica de harnesses do ecossistema,
+ja usada por `scripts/gestor_componentes.py` e `modulos/04-nucleo-compartilhado/gates/G_HARNESS_COMPAT.py`) em
 vez de cada consumidor manter sua propria lista hardcoded. Achado real
 (2026-09-15): antes desta extracao, `slash_router.py` e `harness_sync.py`
 tinham cada um sua propria copia, e ambas ja tinham ficado desatualizadas em
@@ -25,12 +25,12 @@ FALLBACK_HARNESS_PREFIXES: tuple[str, ...] = (".claude", ".cursor")
 
 
 def default_manifesto_path() -> Path | None:
-    """Acha `gates/manifesto_harnesses.json` na raiz do monorepo, se existir."""
+    """Acha `modulos/04-nucleo-compartilhado/contracts/manifesto_harnesses.json` na raiz do monorepo, se existir."""
     for parent in Path(__file__).resolve().parents:
-        candidato = parent / "gates" / "manifesto_harnesses.json"
+        candidato = parent / "modulos" / "04-nucleo-compartilhado" / "contracts" / "manifesto_harnesses.json"
         if candidato.is_file():
             return candidato
-    candidato = Path(__file__).resolve().parents[4] / "gates" / "manifesto_harnesses.json"
+    candidato = Path(__file__).resolve().parents[4] / "modulos" / "04-nucleo-compartilhado" / "contracts" / "manifesto_harnesses.json"
     return candidato if candidato.is_file() else None
 
 

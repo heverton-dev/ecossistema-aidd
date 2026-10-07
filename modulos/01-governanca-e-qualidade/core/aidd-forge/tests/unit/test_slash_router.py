@@ -28,7 +28,7 @@ def test_run_writes_forge_and_aidd_init_in_every_ide_dir(tmp_path: Path) -> None
 
 
 def test_known_ide_dirs_come_from_canonical_harness_manifest() -> None:
-    # Derivado de gates/manifesto_harnesses.json (tipos_componente.command) —
+    # Derivado de modulos/04-nucleo-compartilhado/contracts/manifesto_harnesses.json (tipos_componente.command) —
     # nao mais uma lista hardcoded. Cursor usa "commands" (nao "rules"), e
     # gemini-cli fica de fora de proposito (usa .toml, nao .md).
     assert IDE_COMMAND_DIRS == (

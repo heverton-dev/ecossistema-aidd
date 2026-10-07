@@ -12,11 +12,15 @@ import shutil
 from pathlib import Path
 import pytest
 
+import sys  # noqa: E402
+# _gate_test_utils mora no núcleo (modulos/04-nucleo-compartilhado/gates).
+sys.path.insert(0, str(next(p.parent for p in __import__("pathlib").Path(__file__).resolve().parents if p.name == "modulos")
+                       / "modulos" / "04-nucleo-compartilhado" / "gates"))
 from _gate_test_utils import rodar_gate
 
 GATE_DIR = os.path.dirname(os.path.abspath(__file__))
 GATE_PATH = os.path.join(GATE_DIR, "G_COMPONENTE_AGNOSTICO.py")
-ROOT_DIR = os.path.dirname(GATE_DIR)
+ROOT_DIR = str(next(p.parent for p in __import__("pathlib").Path(__file__).resolve().parents if p.name == "modulos"))  # raiz do ecossistema
 
 
 def test_g_componente_agnostico_passa_no_repositorio():
@@ -28,8 +32,8 @@ def test_g_componente_agnostico_passa_no_repositorio():
 
 def test_g_componente_agnostico_reprova_sob_problemas_de_distribuicao(tmp_path):
     """Valida que G_COMPONENTE_AGNOSTICO reprova (exit 1) quando gestor_componentes relata problemas."""
-    fake_gates = tmp_path / "gates"
-    fake_gates.mkdir()
+    fake_gates = tmp_path / "modulos" / "02-triade-motores" / "fluxo-02-open" / "gates"
+    fake_gates.mkdir(parents=True)
     shutil.copy2(GATE_PATH, fake_gates / "G_COMPONENTE_AGNOSTICO.py")
 
     manifesto = {
@@ -38,7 +42,8 @@ def test_g_componente_agnostico_reprova_sob_problemas_de_distribuicao(tmp_path):
         },
         "escopos": ["compartilhado"]
     }
-    (fake_gates / "manifesto_harnesses.json").write_text(json.dumps(manifesto), encoding="utf-8")
+    (tmp_path / "modulos" / "04-nucleo-compartilhado" / "contracts").mkdir(parents=True, exist_ok=True)
+    (tmp_path / "modulos" / "04-nucleo-compartilhado" / "contracts" / "manifesto_harnesses.json").write_text(json.dumps(manifesto), encoding="utf-8")
 
     fake_scripts = tmp_path / "scripts"
     fake_scripts.mkdir()

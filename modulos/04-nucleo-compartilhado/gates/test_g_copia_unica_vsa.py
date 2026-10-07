@@ -91,3 +91,32 @@ def test_modo_invalido_sai_com_1(tmp_path):
 def test_saida_so_binaria_sem_exit_codes():
     fonte = GATE.read_text(encoding="utf-8")
     assert "exit_codes" not in fonte
+
+
+def test_moldes_de_projeto_e_evidencia_de_auditoria_nao_contam(tmp_path):
+    """Molde de projeto (forge templates, componentes/compartilhado/gates|injetor) e evidência
+    de ciclo em docs/auditoria são peças, não cópias do gate/skill do ecossistema."""
+    raiz = _repo(tmp_path, [
+        "modulos/04-nucleo-compartilhado/gates/G_SEGREDOS.py",
+        "componentes/compartilhado/gates/G_SEGREDOS.py",
+        "componentes/compartilhado/gates/variantes/aidd-forge/G_SEGREDOS.py",
+        "componentes/compartilhado/injetor/G_INJECT.py",
+        "componentes/compartilhado/injetor/variantes/aidd-pure/G_INJECT.py",
+        "docs/auditoria/aidd-forge/G_auditoria_15D.py",
+        "docs/auditoria/aidd-plan/G_auditoria_15D.py",
+        "componentes/compartilhado/skills/aidd-tdd/SKILL.md",
+        "modulos/01-governanca-e-qualidade/core/aidd-forge/aidd_forge/templates/skills/aidd-tdd/SKILL.md",
+    ])
+    proc = _rodar(raiz, "bloqueio")
+    assert proc.returncode == 0, proc.stdout + proc.stderr
+
+
+def test_gate_do_ecossistema_repetido_entre_fatias_ainda_reprova(tmp_path):
+    raiz = _repo(tmp_path, [
+        "modulos/04-nucleo-compartilhado/gates/G_SEGREDOS.py",
+        "modulos/03-plataforma-e-entrega/gates/G_SEGREDOS.py",
+        "componentes/compartilhado/gates/G_SEGREDOS.py",
+    ])
+    proc = _rodar(raiz, "bloqueio")
+    assert proc.returncode == 1, proc.stdout + proc.stderr
+    assert "modulos/03-plataforma-e-entrega/gates, modulos/04-nucleo-compartilhado/gates" in proc.stdout

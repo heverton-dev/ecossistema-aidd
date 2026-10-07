@@ -19,7 +19,7 @@ from _gate_test_utils import rodar_gate
 
 GATE_DIR = os.path.dirname(os.path.abspath(__file__))
 GATE_PATH = os.path.join(GATE_DIR, "G_ZERO_HEADLESS.py")
-ROOT_DIR = os.path.dirname(GATE_DIR)
+ROOT_DIR = str(next(p.parent for p in __import__("pathlib").Path(__file__).resolve().parents if p.name == "modulos"))  # raiz do ecossistema
 HOOK_PATH = os.path.join(ROOT_DIR, "componentes", "compartilhado", "hooks", "anti_headless_subagent_hook.py")
 
 
@@ -130,8 +130,8 @@ def test_g_zero_headless_reprova_se_hook_nao_bloquear_paralelos(tmp_path):
     Lei #13: Valida que G_ZERO_HEADLESS reprova (exit 1) se o hook de intercepção
     for adulterado para não bloquear chamadas paralelas (falha da proteção).
     """
-    fake_gates = tmp_path / "gates"
-    fake_gates.mkdir()
+    fake_gates = tmp_path / "modulos" / "04-nucleo-compartilhado" / "gates"
+    fake_gates.mkdir(parents=True)
     shutil.copy2(GATE_PATH, fake_gates / "G_ZERO_HEADLESS.py")
 
     # Hook falso permissivo que não bloqueia (fachada / bug)
@@ -166,8 +166,8 @@ def test_g_zero_headless_reprova_se_hook_estiver_desconfigurado(tmp_path):
     """
     Lei #13: Valida que G_ZERO_HEADLESS reprova (exit 1) se o settings.json não tiver o hook registrado.
     """
-    fake_gates = tmp_path / "gates"
-    fake_gates.mkdir()
+    fake_gates = tmp_path / "modulos" / "04-nucleo-compartilhado" / "gates"
+    fake_gates.mkdir(parents=True)
     shutil.copy2(GATE_PATH, fake_gates / "G_ZERO_HEADLESS.py")
 
     fake_hooks_dir = tmp_path / "componentes" / "compartilhado" / "hooks"

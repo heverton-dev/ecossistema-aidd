@@ -16,11 +16,17 @@ from pathlib import Path
 if hasattr(sys.stdout, "reconfigure"):
     sys.stdout.reconfigure(encoding="utf-8", errors="replace")
 
-ROOT = Path(__file__).resolve().parent.parent
+ROOT = next((p.parent for p in Path(__file__).resolve().parents if p.name == "modulos"), Path(__file__).resolve().parent.parent)  # raiz: pai de modulos/ (VSA) ou de gates/ (árvore sintética)
 
 ALVOS = [
     ROOT / "ecossistema.py",
-    ROOT / "gates",
+    # gates do ecossistema, cada um na fatia dona (MAPA-GATES.json, ciclo-03 VSA)
+    ROOT / "modulos" / "01-governanca-e-qualidade" / "gates",
+    ROOT / "modulos" / "02-triade-motores" / "fluxo-01-pure" / "gates",
+    ROOT / "modulos" / "02-triade-motores" / "fluxo-02-open" / "gates",
+    ROOT / "modulos" / "02-triade-motores" / "fluxo-03-freedom" / "gates",
+    ROOT / "modulos" / "03-plataforma-e-entrega" / "gates",
+    ROOT / "modulos" / "04-nucleo-compartilhado" / "gates",
     ROOT / "core",
     ROOT / "componentes",
     ROOT / "scripts",

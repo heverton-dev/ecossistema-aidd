@@ -16,7 +16,7 @@ Invariantes:
 Saída binária (Lei #2): exit 0 = transição liberada; exit 1 = bloqueada.
 
 Uso:
-  python gates/G_HANDOFF_MELHORIA.py [--handoff handoff-melhoria.json] [--repo-root .]
+  python modulos/01-governanca-e-qualidade/gates/G_HANDOFF_MELHORIA.py [--handoff handoff-melhoria.json] [--repo-root .]
 =============================================================================
 """
 
@@ -30,7 +30,7 @@ from typing import List, Optional
 if hasattr(sys.stdout, "reconfigure"):
     sys.stdout.reconfigure(encoding="utf-8", errors="replace")
 
-ROOT_DIR = Path(__file__).resolve().parent.parent
+ROOT_DIR = next((p.parent for p in Path(__file__).resolve().parents if p.name == "modulos"), Path(__file__).resolve().parent.parent)  # raiz: pai de modulos/ (VSA) ou de gates/ (árvore sintética)
 SKILL_SCRIPTS = ROOT_DIR / ".agents" / "skills" / "aidd-improvement" / "scripts"
 if str(SKILL_SCRIPTS) not in sys.path:
     sys.path.insert(0, str(SKILL_SCRIPTS))

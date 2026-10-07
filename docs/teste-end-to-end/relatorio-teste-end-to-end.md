@@ -1425,3 +1425,20 @@
   - `tests/test_modulos_sem_lixo.py` → exit 1 antes, exit 0 depois; `G_FRONTEIRA_FERRAMENTAS` e `G_DRIFT_NUCLEO_COMPARTILHADO` → exit 0.
 - **Status:** **RESOLVIDO**.
 - **Data da Última Auditoria:** 07/10/2026.
+
+## 43. Modularização VSA ciclo-03, Bloco 3 (Tickets 7 e 8): cada gate na fatia dona
+
+- **Objetivo da Correção:**
+  Dar dono e caminho único a cada quality gate (decisão C): `MAPA-GATES.json` em `modulos/04-nucleo-compartilhado/contracts/`, runner do `audit`, pre-commit e gates varredores lendo o mapa, e fim da pasta `gates/` da raiz.
+- **Ferramentas Tocadas:** aidd-forge e aidd-planner (caminhos dos gates nos manifestos e handoffs), aidd-pure (Fase 8 acha o gate de arquitetura), aidd-master (orquestrador resolve gate pelo mapa; gate interno renomeado para `G_AST_IMPORT_GUARD`), aidd-enterprise (allowlist de isolamento).
+- **O que executou:**
+  1. 72 gates no mapa; 71 movidos de `gates/` para `modulos/<fatia>/gates/` com seus testes; 146 cópias duplicadas em `modulos/` apagadas.
+  2. Raiz de cada gate passou a ser o pai de `modulos/` (ou de `gates/` numa árvore sintética de teste).
+  3. `G_COPIA_UNICA_VSA` em bloqueio: 71 → 0 violações (moldes de projeto e evidência de `docs/auditoria` contam como peça).
+  4. Achado: `tests/test_ecossistema_self_healing.py` (ex-`gates/`) já tinha 4 falhas na main, fora de qualquer bateria; foi para `scripts/`, sem entrar no G_TESTES_REAIS.
+- **Resultados de Testes (07/10/2026):**
+  - `AIDD_GATES_MODO=completo G_TESTES_REAIS`: forge 310, planner 48, pure 1016, master 414, enterprise 341, ops 198, freedom 75, open 21 (2423 passed, 0 failed).
+  - `pytest tests` → 1121 passed, 1 skipped; pastas de gates das 6 fatias → 393 passed.
+  - `tests/test_mapa_gates.py` e `tests/test_gates_raiz_extinta.py` → exit 1 antes, exit 0 depois.
+- **Status:** **RESOLVIDO**.
+- **Data da Última Auditoria:** 07/10/2026.

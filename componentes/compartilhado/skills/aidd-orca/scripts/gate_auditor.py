@@ -25,8 +25,19 @@ from pathlib import Path
 # Known tools and the directory name inside tools/
 KNOWN_TOOLS = ("aidd-forge", "aidd-pure", "aidd-master", "aidd-enterprise")
 
-# Root-level files/dirs that trigger the meta-audit (ecossistema.py audit)
-ROOT_SCOPED_PREFIXES = ("gates/", "scripts/")
+# Root-level files/dirs that trigger the meta-audit (ecossistema.py audit).
+# Ecosystem gates live in each slice's gates/ folder (MAPA-GATES.json, ciclo-03 VSA).
+ROOT_SCOPED_PREFIXES = (
+    "gates/",
+    "scripts/",
+    "modulos/01-governanca-e-qualidade/gates/",
+    "modulos/02-triade-motores/fluxo-01-pure/gates/",
+    "modulos/02-triade-motores/fluxo-02-open/gates/",
+    "modulos/02-triade-motores/fluxo-03-freedom/gates/",
+    "modulos/03-plataforma-e-entrega/gates/",
+    "modulos/04-nucleo-compartilhado/gates/",
+    "modulos/04-nucleo-compartilhado/contracts/",
+)
 
 
 @dataclass

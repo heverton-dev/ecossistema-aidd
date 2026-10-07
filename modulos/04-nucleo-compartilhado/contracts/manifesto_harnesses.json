@@ -1,0 +1,150 @@
+{
+  "versao": "1.0.0",
+  "data_criacao": "2026-09-05",
+  "fonte_unica": "componentes/",
+  "descricao": "Manifesto único de distribuição física de componentes do Ecossistema AIDD entre harnesses (Regra de Ouro #6 - AGENTS.md, Supremacia Agnóstica). Consumido por scripts/gestor_componentes.py (comandos 'python ecossistema.py components sync|verify'). A partir desta migração, as pastas físicas por harness (.agent, .claude, .gemini, skills/ bare etc.) são DESTINOS GERADOS por sync - nunca mais editadas manualmente. Fonte de diagnóstico original: docs/planos/PLANO-CORRECAO-SKILLS-AGNOSTICAS.md.",
+
+  "harnesses_suportados": {
+    "claude-code": {
+      "prefixo_pasta": ".claude",
+      "confirmado": true
+    },
+    "antigravity": {
+      "prefixo_pasta": ".agents",
+      "confirmado": true,
+      "nota": "CORRIGIDO em 2026-09-07 após pesquisa em documentação oficial (antigravity.google/docs/skills/, antigravity.google/docs/rules-workflows/): o default atual do Antigravity é '.agents/' (plural) para skills e rules; '.agent/' (singular) só é mantido como fallback de compatibilidade retroativa (legado), não é mais o caminho recomendado. Migrado de '.agent/' para '.agents/'; ver [[correcao-harnesses-2026-09-07]]."
+    },
+    "opencode": {
+      "prefixo_pasta": ".opencode",
+      "confirmado": true,
+      "nota": "CORRIGIDO em 2026-09-07: '.agent/' nunca foi a convenção real do OpenCode. Documentação oficial (opencode.ai/docs/skills/, opencode.ai/docs/commands/, opencode.ai/docs/agents/) confirma pasta própria '.opencode/{skills,commands,agents}'. OpenCode também lê '.claude/skills/' e '.agents/skills/' como buscas extras, mas a pasta nativa de projeto é '.opencode/'."
+    },
+    "mimocode": {
+      "prefixo_pasta": ".mimocode",
+      "confirmado": true,
+      "nota": "REVERTIDO em 2026-09-07: a decisão de 2026-09-05 (abaixo, mantida para histórico) estava incorreta. MimoCode (github.com/XiaomiMiMo/MiMo-Code, fork oficial do OpenCode pela Xiaomi) documenta '.mimocode/skills/<nome>/SKILL.md' como a pasta nativa de projeto - não é redundante, é a única forma de descoberta de skill em nível de projeto (o fallback documentado é '~/.claude/skills' e '~/.opencode/skills', pastas GLOBAIS do usuário, nunca '.agent/'). A pasta '.mimocode/' também é o diretório de runtime próprio do MimoCode (config, node_modules) - escrever 'skills/' e 'commands/' dentro dela é o comportamento nativo esperado, não uma invasão.",
+      "nota_historica_2026-09-05_incorreta": "Decisão do usuário (2026-09-05): '.mimocode/' próprio é redundante - AGENTS.md §5 já afirmava que MimoCode lê '.agent/', mas o disco mantinha '.mimocode/skills/' como pasta separada em modulos/03-plataforma-e-entrega/fatiamento-master/aidd-master e modulos/03-plataforma-e-entrega/blindagem-enterprise/aidd-enterprise. Diff de segurança confirmou conteúdo idêntico a '.agent/skills/' antes da remoção (ver relatório desta execução). MimoCode passa a apontar só para '.agent/', sem pasta própria."
+    },
+    "gemini-cli": {
+      "prefixo_pasta": ".gemini",
+      "confirmado": true,
+      "nota": "CORRIGIDO em 2026-09-08 (item 6.2 da Fase 4): migrado do diretório não documentado '.gemini/skills/' para o formato oficial de extensions, confirmado em geminicli.com/docs/extensions/writing-extensions/ (schema real capturado nesta data: campos 'name'/'version' em gemini-extension.json; estrutura de diretório com subpasta 'skills/<nome>/SKILL.md' descoberta automaticamente pelo carregador de extensions — não exige 'contextFileName' explícito para isso). Cada skill vira sua própria extension em '.gemini/extensions/<nome>/', com 'gemini-extension.json' gerado deterministicamente (ver 'manifestos_extra_por_harness' em tipos_componente.skill) e o conteúdo da skill copiado para 'skills/<nome>/' dentro dela (ver 'dest_harness_template_overrides'). 'command' continua excluído (comandos do Gemini CLI usam '.toml', não há nenhum comando deste manifesto migrado para esse formato ainda — fora de escopo deste item, nada usa o destino hoje)."
+    },
+    "cursor": {
+      "prefixo_pasta": ".cursor",
+      "mecanismo": "arquivo_unico_de_regra + pastas nativas de skill/command/agent",
+      "arquivo_regra": ".cursor/rules/aidd.md",
+      "confirmado": true,
+      "nota": "ATUALIZADO 2026-09-07: documentação oficial (cursor.com/docs/rules, cursor.com/docs/subagents) confirma que o Cursor, além do arquivo único de regra (AGENTS.md/`.cursor/rules/*.mdc`), também tem pastas nativas reais: '.cursor/commands/<nome>.md' (slash-commands) e '.cursor/skills/<nome>/SKILL.md' e '.cursor/agents/<nome>.md' (subagentes) - mesmo padrão de nome/estrutura usado por Claude Code. Adicionado a 'harnesses_aplicaveis' de 'skill' e 'command' agora que a convenção real é conhecida; o arquivo único de regra continua existindo em paralelo, é complementar (instruções gerais de projeto), não concorrente com skills/commands."
+    },
+    "codebuddy": {
+      "prefixo_pasta": ".codebuddy",
+      "confirmado": true,
+      "nota": "Adicionado em 2026-09-10: harness presente no repo com settings.json (formato similar ao Claude Code). Hooks usam git rev-parse (agnósticos)."
+    }
+  },
+
+  "tipos_componente": {
+    "skill": {
+      "pasta_fonte": "skills",
+      "distribuicao": "multi-harness",
+      "unidade": "diretorio",
+      "status_evidencia": "confirmado por reprodução direta (docs/planos/PLANO-CORRECAO-SKILLS-AGNOSTICAS.md secao 2.1)",
+      "harnesses_aplicaveis": ["claude-code", "antigravity", "opencode", "mimocode", "gemini-cli", "cursor", "codebuddy"],
+      "dest_harness_template": "{prefixo_pasta}/skills/{nome}",
+      "dest_harness_template_overrides": {
+        "gemini-cli": "{prefixo_pasta}/extensions/{nome}/skills/{nome}"
+      },
+      "manifestos_extra_por_harness": {
+        "gemini-cli": {
+          "caminho_template": "{prefixo_pasta}/extensions/{nome}/gemini-extension.json",
+          "conteudo_template": {"name": "{nome}", "version": "1.0.0"}
+        }
+      },
+      "nota_gemini_extension": "Item 6.2 (Fase 4, 2026-09-08): Gemini CLI não lê SKILL.md solto — exige o formato de extensions (geminicli.com/docs/extensions/writing-extensions/). 'dest_harness_template_overrides' dá a esse harness uma pasta de destino aninhada ('extensions/<nome>/skills/<nome>/' em vez de 'skills/<nome>/' direto); 'manifestos_extra_por_harness' descreve um arquivo SEM fonte 1:1 em componentes/ (gerado deterministicamente a partir do nome do componente) que scripts/gestor_componentes.py materializa e verifica à parte do espelhamento genérico.",
+      "extra_destinos_compartilhado": [],
+      "extra_destinos_por_ferramenta": [".skills/{nome}", "skills/{nome}"],
+      "nota_extra_destinos": "'.skills/{nome}' e 'skills/{nome}' (bare) são cópias adicionais sem harness específico, já em uso real e inconsistente por ferramenta antes desta migração (aidd-master/aidd-enterprise usavam '.skills/'; aidd-pure usava 'skills/' bare). O sync agora materializa AMBAS para todas as ferramentas, fechando a divergência sem escolher apenas uma. '.agents/skills/{nome}' foi REMOVIDO desta lista em 2026-09-07 por ter virado redundante: agora é coberto nativamente pelo próprio harness 'antigravity' (prefixo_pasta corrigido para '.agents') - mesma pasta, uma fonte só, sem duplicar a regra."
+    },
+    "command": {
+      "pasta_fonte": "comandos",
+      "distribuicao": "multi-harness",
+      "unidade": "arquivo",
+      "status_evidencia": "confirmado (modulos/04-nucleo-compartilhado/gates/G_HARNESS_COMPAT.py já compara .agent/commands/*.md vs .claude/commands/*.md)",
+      "harnesses_aplicaveis": ["claude-code", "antigravity", "opencode", "mimocode", "cursor", "codebuddy"],
+      "dest_harness_template": "{prefixo_pasta}/commands/{nome}",
+      "escopos_aplicaveis": ["compartilhado"],
+      "nota": "gemini-cli excluído deste tipo: confirmado em 2026-09-07 (geminicli.com/docs/cli/custom-commands/) que comandos do Gemini CLI usam arquivos '.toml', não '.md' - formato incompatível com os comandos deste manifesto, não é só falta de evidência. 'cursor' adicionado em 2026-09-07: documentação oficial confirma '.cursor/commands/<nome>.md', mesmo formato usado aqui. Escopo hoje é só 'compartilhado' (raiz) - nenhuma ferramenta em tools/* tem slash-commands próprios; cada uma expõe equivalente via CLI ('python ecossistema.py <ferramenta> ...')."
+    },
+    "mcp": {
+      "pasta_fonte": "mcps",
+      "distribuicao": "destino-unico-por-ferramenta",
+      "unidade": "diretorio",
+      "status_evidencia": "PROPOSTO NESTA MIGRAÇÃO, mas com precedente real: modulos/02-triade-motores/fluxo-01-pure/core/aidd-pure/scripts/core/injector/profiles_registry.py e modulos/03-plataforma-e-entrega/fatiamento-master/aidd-master/src/core/profiles_registry.py já definem o tipo 'mcp' com UM destino físico e mirrors=[] (nenhum espelho por harness). MCP servers são referenciados por cada harness via seu próprio arquivo de config (ex.: .mcp.json) apontando para 1 caminho - não por pasta duplicada por harness. Este manifesto formaliza esse precedente real; não inventa duplicação onde ela não existe no código já em produção.",
+      "harnesses_aplicaveis": [],
+      "dest_unico_template": "mcps/{nome}",
+      "overrides_por_escopo": {
+        "aidd-master": {
+          "dest_unico_template": "src/core/mcp/{nome}.py",
+          "unidade": "arquivo"
+        }
+      },
+      "nota_revisao": "PARA REVISÃO DO USUÁRIO / Prompt B: este manifesto só garante presença física do código-fonte do servidor MCP em 1 caminho canônico por ferramenta; não gera nem escreve o arquivo de config (.mcp.json ou equivalente) que cada harness usaria para registrar/invocar esse servidor - isso é wiring de injetor, fora de escopo desta migração."
+    },
+    "spec": {
+      "pasta_fonte": "specs",
+      "distribuicao": "destino-unico-por-ferramenta",
+      "unidade": "arquivo",
+      "status_evidencia": "confirmado por precedente real: ambos os profiles_registry.py internos (aidd-pure e aidd-master) definem 'spec' com destino único 'docs/specs/{nome}.md', sem mirrors.",
+      "harnesses_aplicaveis": [],
+      "dest_unico_template": "docs/specs/{nome}"
+    },
+    "config": {
+      "pasta_fonte": "config",
+      "distribuicao": "destino-unico-por-ferramenta",
+      "unidade": "arquivo",
+      "status_evidencia": "confirmado por precedente real: os mesmos dois profiles_registry.py definem 'config' com destino único, sem mirrors (aidd-pure: 'config/{nome}.json'; aidd-master: 'templates/core/config/{nome}.json').",
+      "harnesses_aplicaveis": [],
+      "dest_unico_template": "config/{nome}",
+      "overrides_por_escopo": {
+        "aidd-master": {
+          "dest_unico_template": "templates/core/config/{nome}.json",
+          "unidade": "arquivo"
+        }
+      }
+    },
+    "hook": {
+      "pasta_fonte": "hooks",
+      "distribuicao": "multi-harness",
+      "unidade": "arquivo",
+      "status_evidencia": "SEM PRECEDENTE FÍSICO NO REPOSITÓRIO - nenhum '.claude/settings.json' encontrado em nenhuma ferramenta, nenhuma pasta 'hooks/' de componente (só '.git/hooks/*.sample', irrelevante ao ecossistema AIDD). PROPOSTO NESTA MIGRAÇÃO por simetria com 'skill', PARA REVISÃO EXPLÍCITA DO USUÁRIO.",
+      "harnesses_aplicaveis": ["claude-code", "antigravity", "opencode", "mimocode", "gemini-cli", "cursor", "codebuddy"],
+      "dest_harness_template": "{prefixo_pasta}/hooks/{nome}",
+      "nota_revisao": "Claude Code registra hooks via '.claude/settings.json'; CodeBuddy via '.codebuddy/settings.json'; Gemini CLI via '.gemini/hooks/'. A pasta '{prefixo}/hooks/' garante presença física do script; o wiring em settings.json de cada harness fica para o integrador."
+    },
+    "sub-agent": {
+      "pasta_fonte": "subagentes",
+      "distribuicao": "multi-harness",
+      "unidade": "arquivo",
+      "status_evidencia": "SEM PRECEDENTE FÍSICO NO REPOSITÓRIO para este conceito. 'templates/agents/*.md' já existente em modulos/03-plataforma-e-entrega/fatiamento-master/aidd-master e modulos/03-plataforma-e-entrega/blindagem-enterprise/aidd-enterprise são TEMPLATES injetados em projetos GERADOS por essas ferramentas (personas de subagente para o produto final downstream) - conceito diferente de 'sub-agent descoberto pelo harness ao trabalhar neste monorepo'; por isso NÃO foram migrados para este tipo. PROPOSTO NESTA MIGRAÇÃO por simetria com 'skill', PARA REVISÃO EXPLÍCITA DO USUÁRIO. Apenas Claude Code tem convenção real confirmada externamente ('.claude/agents/{nome}.md', recurso documentado do produto Claude Code); as demais pastas abaixo são proposta simétrica NÃO confirmada.",
+      "harnesses_aplicaveis": ["claude-code", "antigravity", "opencode", "mimocode", "gemini-cli"],
+      "dest_harness_template": "{prefixo_pasta}/agents/{nome}"
+    },
+    "script": {
+      "pasta_fonte": "scripts",
+      "distribuicao": "destino-unico-por-ferramenta",
+      "unidade": "arquivo",
+      "status_evidencia": "SEM PRECEDENTE EM PROFILES_REGISTRY - nenhum profile interno (aidd-pure ou aidd-master) define o tipo 'script'. PROPOSTO NESTA MIGRAÇÃO por simetria com os demais tipos de destino único, PARA REVISÃO EXPLÍCITA DO USUÁRIO.",
+      "harnesses_aplicaveis": [],
+      "dest_unico_template": "scripts/{nome}"
+    }
+  },
+
+  "escopos": {
+    "compartilhado": {
+      "root": ".",
+      "tipos_aplicaveis": ["skill", "command", "hook"],
+      "nota": "componentes/compartilhado/{skills,comandos,hooks}/ cobre os tipos com componentes reais ecosystem-wide hoje (as skills-runner, slash commands, hooks agnósticos e skills compartilhadas). Componentes específicos de cada ferramenta vivem em tools/<ferramenta>/ e são sincronizados por mecanismos internos de cada tool — não por este manifesto."
+    }
+  }
+}

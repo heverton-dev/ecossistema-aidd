@@ -2,10 +2,10 @@
 """
 tests/test_escopo_commit.py — Escopo de ferramentas do G_TESTES_REAIS (Ticket 2, D3).
 
-Regras sob prova em gates/_escopo_commit.py:
+Regras sob prova em modulos/04-nucleo-compartilhado/gates/_escopo_commit.py:
   * modo padrão é 'rapido'; AIDD_GATES_MODO=completo força todas as ferramentas.
   * staged em tools/<ferramenta>/ → só aquela ferramenta.
-  * staged em gates/G_TESTES_REAIS.py ou gates/allowlist_skipped_testes.json,
+  * staged em modulos/01-governanca-e-qualidade/gates/G_TESTES_REAIS.py ou modulos/01-governanca-e-qualidade/gates/allowlist_skipped_testes.json,
     ou caminho desconhecido sob tools/, → todas as ferramentas.
   * o gate só consulta o escopo quando AIDD_TESTES_REAIS_FERRAMENTAS está ausente.
 """
@@ -20,15 +20,15 @@ from pathlib import Path
 import pytest
 
 ROOT_DIR = Path(__file__).resolve().parent.parent
-ESCOPO_PATH = ROOT_DIR / "gates" / "_escopo_commit.py"
-GATE_PATH = ROOT_DIR / "gates" / "G_TESTES_REAIS.py"
+ESCOPO_PATH = ROOT_DIR / "modulos" / "04-nucleo-compartilhado" / "gates" / "_escopo_commit.py"
+GATE_PATH = ROOT_DIR / "modulos" / "01-governanca-e-qualidade" / "gates" / "G_TESTES_REAIS.py"
 
 TODAS = ["aidd-forge", "aidd-planner", "aidd-pure", "aidd-master", "aidd-ops"]
 
 
 @pytest.fixture(scope="session")
 def escopo():
-    """Módulo gates/_escopo_commit.py carregado do disco (ausente = erro vermelho)."""
+    """Módulo modulos/04-nucleo-compartilhado/gates/_escopo_commit.py carregado do disco (ausente = erro vermelho)."""
     spec = importlib.util.spec_from_file_location("_escopo_commit_testado", ESCOPO_PATH)
     modulo = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(modulo)
@@ -106,14 +106,14 @@ def test_staged_em_tools_de_uma_ferramenta_restringe_o_escopo(escopo, tmp_path):
 
 def test_staged_no_gate_testes_reais_executa_todas(escopo, tmp_path):
     """Staged do próprio gate (com uma ferramenta staged) executa todas."""
-    raiz = _repo_com_staged(tmp_path, ["modulos/01-governanca-e-qualidade/core/aidd-forge/x.py", "gates/G_TESTES_REAIS.py"])
+    raiz = _repo_com_staged(tmp_path, ["modulos/01-governanca-e-qualidade/core/aidd-forge/x.py", "modulos/01-governanca-e-qualidade/gates/G_TESTES_REAIS.py"])
     assert _ferramentas_para(escopo, raiz) == TODAS
 
 
 def test_staged_na_allowlist_de_skips_executa_todas(escopo, tmp_path):
     """Staged do orçamento de skipped executa todas (a regra de skip mudou)."""
     raiz = _repo_com_staged(
-        tmp_path, ["modulos/01-governanca-e-qualidade/core/aidd-forge/x.py", "gates/allowlist_skipped_testes.json"]
+        tmp_path, ["modulos/01-governanca-e-qualidade/core/aidd-forge/x.py", "modulos/01-governanca-e-qualidade/gates/allowlist_skipped_testes.json"]
     )
     assert _ferramentas_para(escopo, raiz) == TODAS
 

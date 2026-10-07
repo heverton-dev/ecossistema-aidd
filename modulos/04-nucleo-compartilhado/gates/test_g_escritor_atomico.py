@@ -9,8 +9,9 @@ import subprocess
 
 import pytest
 
-ROOT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-GATE_PATH = os.path.join(ROOT_DIR, "gates", "G_ESCRITOR_ATOMICO.py")
+from pathlib import Path as _Path
+ROOT_DIR = str(next((p.parent for p in _Path(__file__).resolve().parents if p.name == "modulos"), _Path(__file__).resolve().parent.parent))  # raiz: pai de modulos/ (VSA) ou de gates/ (árvore sintética)
+GATE_PATH = os.path.join(ROOT_DIR, "modulos", "04-nucleo-compartilhado", "gates", "G_ESCRITOR_ATOMICO.py")
 
 
 class TestGEscritorAtomico:

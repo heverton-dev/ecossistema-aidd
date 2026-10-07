@@ -9,7 +9,8 @@ from pathlib import Path
 from _gate_test_utils import rodar_gate
 
 GATE_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "G_GESTOR_SESSOES.py")
-ROOT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+from pathlib import Path as _Path
+ROOT_DIR = str(next((p.parent for p in _Path(__file__).resolve().parents if p.name == "modulos"), _Path(__file__).resolve().parent.parent))  # raiz: pai de modulos/ (VSA) ou de gates/ (árvore sintética)
 
 
 def test_g_gestor_sessoes_passa_no_repositorio():
@@ -20,8 +21,8 @@ def test_g_gestor_sessoes_passa_no_repositorio():
 
 def test_g_gestor_sessoes_morde_se_script_ausente(tmp_path):
     """Repo sintético sem scripts/gestor_sessoes.py deve retornar exit 1 (Lei #13)."""
-    gates_dir = tmp_path / "gates"
-    gates_dir.mkdir()
+    gates_dir = tmp_path / "modulos" / "04-nucleo-compartilhado" / "gates"
+    gates_dir.mkdir(parents=True)
     shutil.copy2(GATE_PATH, gates_dir / "G_GESTOR_SESSOES.py")
 
     proc = rodar_gate(str(gates_dir / "G_GESTOR_SESSOES.py"), cwd=str(tmp_path))
@@ -31,8 +32,8 @@ def test_g_gestor_sessoes_morde_se_script_ausente(tmp_path):
 
 def test_g_gestor_sessoes_morde_se_funcao_faltar(tmp_path):
     """Repo sintético com script incompleto deve retornar exit 1 (Lei #13)."""
-    gates_dir = tmp_path / "gates"
-    gates_dir.mkdir()
+    gates_dir = tmp_path / "modulos" / "04-nucleo-compartilhado" / "gates"
+    gates_dir.mkdir(parents=True)
     shutil.copy2(GATE_PATH, gates_dir / "G_GESTOR_SESSOES.py")
 
     scripts_dir = tmp_path / "scripts"

@@ -21,8 +21,8 @@ Invariantes e Leis Auditadas:
      provando reprovação estrita em cenários deliberadamente corrompidos.
 
 Uso:
-  python gates/G_PIPELINE_HANDOFF.py --manifesto <caminho_manifesto.json>
-  python gates/G_PIPELINE_HANDOFF.py  # Modo auto-descoberta / auditoria de integridade
+  python modulos/04-nucleo-compartilhado/gates/G_PIPELINE_HANDOFF.py --manifesto <caminho_manifesto.json>
+  python modulos/04-nucleo-compartilhado/gates/G_PIPELINE_HANDOFF.py  # Modo auto-descoberta / auditoria de integridade
 =============================================================================
 """
 
@@ -40,8 +40,18 @@ from typing import Any, Dict, List, Optional, Tuple
 if hasattr(sys.stdout, "reconfigure"):
     sys.stdout.reconfigure(encoding="utf-8", errors="replace")
 
-ROOT_DIR = Path(__file__).resolve().parent.parent
-GATES_DIR = ROOT_DIR / "gates"
+ROOT_DIR = next((p.parent for p in Path(__file__).resolve().parents if p.name == "modulos"), Path(__file__).resolve().parent.parent)  # raiz: pai de modulos/ (VSA) ou de gates/ (árvore sintética)
+GATES_DIR = Path(__file__).resolve().parent
+MAPA_GATES = ROOT_DIR / "modulos" / "04-nucleo-compartilhado" / "contracts" / "MAPA-GATES.json"
+
+
+def _gate_pelo_mapa(nome_arquivo: str) -> Path | None:
+    """Caminho vigente de um gate citado só pelo nome (ex.: gates/G_X.py antigo), via MAPA-GATES.json."""
+    try:
+        info = json.loads(MAPA_GATES.read_text(encoding="utf-8"))["gates"].get(Path(nome_arquivo).stem)
+    except (OSError, ValueError, KeyError):
+        return None
+    return ROOT_DIR / info["caminho"] if info else None
 SPECS_DIR = ROOT_DIR / "componentes" / "compartilhado" / "specs"
 SCHEMA_CANONICO = SPECS_DIR / "handoff-execucao.schema.json"
 
@@ -142,7 +152,8 @@ def validar_barreira_gates(barreiras: List[str], base_repo: Path) -> List[str]:
                 p2 = base_repo / parte_cmd
                 p3 = GATES_DIR / parte_cmd
                 p4 = GATES_DIR / Path(parte_cmd).name
-                if p1.is_file() or p2.is_file() or p3.is_file() or p4.is_file():
+                p5 = _gate_pelo_mapa(parte_cmd)
+                if p1.is_file() or p2.is_file() or p3.is_file() or p4.is_file() or (p5 and p5.is_file()):
                     break
                 else:
                     erros.append(

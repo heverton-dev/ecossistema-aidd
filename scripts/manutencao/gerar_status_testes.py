@@ -30,7 +30,7 @@ PLANO_ESTRUTURADO_PATH = os.path.join(ROOT_DIR, "PLANO-EXECUCAO-ESTRUTURADO.json
 # Fonte única das variáveis que o hook do git exporta (GIT_DIR/GIT_INDEX_FILE...):
 # sem limpá-las, os testes das ferramentas que fazem 'git commit' em tmp_path
 # gravavam na branch real (25/09/2026: 9 commits de lixo na branch do ciclo).
-sys.path.insert(0, os.path.join(ROOT_DIR, "gates"))
+sys.path.insert(0, os.path.join(ROOT_DIR, "modulos", "01-governanca-e-qualidade", "gates"))
 from G_TESTES_REAIS import _env_sem_repositorio_do_hook  # noqa: E402
 
 FERRAMENTAS = ["aidd-forge", "aidd-pure", "aidd-master", "aidd-enterprise", "aidd-ops"]

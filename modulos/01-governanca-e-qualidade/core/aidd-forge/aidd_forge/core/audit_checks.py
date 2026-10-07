@@ -461,7 +461,7 @@ def check_g13_gitattributes(project_path: Path) -> AuditItem:
 
 def check_g14_no_duplicates(project_path: Path) -> AuditItem:
     """G14: Verifica duplicatas entre componentes/ e QUALQUER pasta de harness
-    confirmada em `gates/manifesto_harnesses.json` (via `harness_manifest`)."""
+    confirmada em `modulos/04-nucleo-compartilhado/contracts/manifesto_harnesses.json` (via `harness_manifest`)."""
     comp_dir = project_path / "componentes"
     if not comp_dir.exists():
         return AuditItem(

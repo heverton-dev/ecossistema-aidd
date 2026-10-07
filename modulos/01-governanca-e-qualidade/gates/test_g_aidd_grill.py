@@ -12,8 +12,8 @@ import sys
 from pathlib import Path
 import pytest
 
-ROOT = Path(__file__).resolve().parent.parent
-GATE = ROOT / "gates" / "G_aidd_grill.py"
+ROOT = next((p.parent for p in Path(__file__).resolve().parents if p.name == "modulos"), Path(__file__).resolve().parent.parent)  # raiz: pai de modulos/ (VSA) ou de gates/ (árvore sintética)
+GATE = ROOT / "modulos" / "01-governanca-e-qualidade" / "gates" / "G_aidd_grill.py"
 
 
 def executar_gate(arquivo_path: Path) -> subprocess.CompletedProcess:

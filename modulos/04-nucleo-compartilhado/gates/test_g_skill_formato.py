@@ -29,8 +29,8 @@ def _escrever_skill(raiz, pasta, name=None, description=DESCRICAO_BOA, linhas_co
 
 
 def _escrever_dependencias(raiz, skills):
-    os.makedirs(os.path.join(raiz, "gates"), exist_ok=True)
-    with open(os.path.join(raiz, "gates", "dependencias_externas.json"), "w", encoding="utf-8") as f:
+    os.makedirs(os.path.join(raiz, "modulos", "04-nucleo-compartilhado", "contracts"), exist_ok=True)
+    with open(os.path.join(raiz, "modulos", "04-nucleo-compartilhado", "contracts", "dependencias_externas.json"), "w", encoding="utf-8") as f:
         json.dump({"skills": skills}, f)
 
 

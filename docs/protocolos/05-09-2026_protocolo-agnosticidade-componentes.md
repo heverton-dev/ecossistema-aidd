@@ -3,7 +3,7 @@
 > **Documento Canônico de Governança:** `docs/protocolos/05-09-2026_protocolo-agnosticidade-componentes.md`  
 > **Origem:** Seção 5 de `docs/planos/PLANO-CORRECAO-SKILLS-AGNOSTICAS.md`  
 > **Vínculo Normativo:** Regra de Ouro #6 de `AGENTS.md` (Supremacia Agnóstica)  
-> **Status:** PRODUÇÃO & AUDITADO DETERMINISTICAMENTE (`gates/G_COMPONENTE_AGNOSTICO.py`)  
+> **Status:** PRODUÇÃO & AUDITADO DETERMINISTICAMENTE (`modulos/02-triade-motores/fluxo-02-open/gates/G_COMPONENTE_AGNOSTICO.py`)  
 > **Escopo:** Todo e qualquer componente adicionado ou modificado no ecossistema (skills, specs, MCPs, arquivos de configuração, hooks, comandos, subagentes e scripts), na raiz ou em qualquer subprojeto sob `tools/*`.
 
 ---
@@ -17,7 +17,7 @@ Um componente só é considerado agnóstico se atender simultaneamente a quatro 
    - Conteúdo de negócio de uma spec ou módulo pode ser específico de uma tecnologia por necessidade do domínio; a forma como ela é localizada, versionada e distribuída no monorepo, nunca.
 
 2. **Independência de Harness (Multi-Harness):**
-   - O componente deve existir fisicamente e com conteúdo byte-idêntico em todo diretório de harness que o manifesto (`gates/manifesto_harnesses.json`) declarar como aplicável para o seu tipo:
+   - O componente deve existir fisicamente e com conteúdo byte-idêntico em todo diretório de harness que o manifesto (`modulos/04-nucleo-compartilhado/contracts/manifesto_harnesses.json`) declarar como aplicável para o seu tipo:
      - Claude Code (`.claude/`)
      - Antigravity / OpenCode / MimoCode (`.agent/`)
      - Gemini CLI (`.gemini/`)
@@ -41,7 +41,7 @@ Antes de considerar qualquer componente concluído ou pronto para commit, execut
 
 ```text
 [ ] 1. Identificar o tipo do componente (skill, mcp, spec, config, command, hook, sub-agent, script)
-       e verificar suas regras de distribuição em 'gates/manifesto_harnesses.json'.
+       e verificar suas regras de distribuição em 'modulos/04-nucleo-compartilhado/contracts/manifesto_harnesses.json'.
 
 [ ] 2. Materializar o componente EXCLUSIVAMENTE dentro de sua pasta canônica na fonte única:
        componentes/<ferramenta ou compartilhado>/<pasta_fonte>/<nome>/...
@@ -68,4 +68,4 @@ Antes de considerar qualquer componente concluído ou pronto para commit, execut
 ## 3. AUDITORIA AUTOMATIZADA EM CI / GATES
 
 A conformidade deste protocolo é validada de forma binária e determinística pelo Quality Gate:
-- `gates/G_COMPONENTE_AGNOSTICO.py`: Roda a verificação multi-harness sobre todos os componentes tocados no diff do commit, falhando imediatamente (`exit 1`) se qualquer pasta de harness estiver ausente ou divergente da fonte canônica.
+- `modulos/02-triade-motores/fluxo-02-open/gates/G_COMPONENTE_AGNOSTICO.py`: Roda a verificação multi-harness sobre todos os componentes tocados no diff do commit, falhando imediatamente (`exit 1`) se qualquer pasta de harness estiver ausente ou divergente da fonte canônica.

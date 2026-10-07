@@ -12,8 +12,9 @@ import sys
 import tempfile
 import pytest
 
-ROOT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-GATES_DIR = os.path.join(ROOT_DIR, "gates")
+from pathlib import Path as _Path
+ROOT_DIR = str(next((p.parent for p in _Path(__file__).resolve().parents if p.name == "modulos"), _Path(__file__).resolve().parent.parent))  # raiz: pai de modulos/ (VSA) ou de gates/ (árvore sintética)
+GATES_DIR = os.path.dirname(os.path.abspath(__file__))
 if ROOT_DIR not in sys.path:
     sys.path.insert(0, ROOT_DIR)
 if GATES_DIR not in sys.path:
@@ -46,7 +47,7 @@ def test_stack_morde_quando_falta_tailwind(tmp_path):
     assert any("Tailwind CSS" in e for e in erros)
 
     # Verifica via subprocess para garantir saída binária
-    cmd = [sys.executable, os.path.abspath("gates/G_STACK_PADRAO_OURO.py"), str(proj)]
+    cmd = [sys.executable, os.path.abspath("modulos/02-triade-motores/fluxo-01-pure/gates/G_STACK_PADRAO_OURO.py"), str(proj)]
     proc = subprocess.run(cmd, capture_output=True, text=True)
     assert proc.returncode == 1
     assert "[ERRO]" in proc.stderr or "[FALHA]" in proc.stderr or "[FALHA]" in proc.stdout

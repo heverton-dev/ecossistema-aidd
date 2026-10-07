@@ -16,7 +16,7 @@
     agnóstica em Python (.py), executável tanto em Windows quanto em Unix.
 
  Uso:
-   python gates/G_UNIVERSAL_HARNESS.py
+   python modulos/04-nucleo-compartilhado/gates/G_UNIVERSAL_HARNESS.py
        exit 0 = 100% universal e sincronizado.
        exit 1 = ausência, divergência ou drift em qualquer harness.
 """
@@ -25,13 +25,14 @@ import json
 import os
 import sys
 
-ROOT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+from pathlib import Path as _Path
+ROOT_DIR = str(next((p.parent for p in _Path(__file__).resolve().parents if p.name == "modulos"), _Path(__file__).resolve().parent.parent))  # raiz: pai de modulos/ (VSA) ou de gates/ (árvore sintética)
 sys.path.insert(0, os.path.join(ROOT_DIR, "scripts"))
 import gestor_componentes
 import gestor_dependencias
 
-MANIFESTO_HARNESSES = os.path.join(ROOT_DIR, "gates", "manifesto_harnesses.json")
-MANIFESTO_DEPS = os.path.join(ROOT_DIR, "gates", "dependencias_externas.json")
+MANIFESTO_HARNESSES = os.path.join(ROOT_DIR, "modulos", "04-nucleo-compartilhado", "contracts", "manifesto_harnesses.json")
+MANIFESTO_DEPS = os.path.join(ROOT_DIR, "modulos", "04-nucleo-compartilhado", "contracts", "dependencias_externas.json")
 
 
 def checar():

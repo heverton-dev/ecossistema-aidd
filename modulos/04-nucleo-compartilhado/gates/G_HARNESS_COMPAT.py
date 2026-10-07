@@ -21,16 +21,18 @@
  3. Gates documentados em AGENTS.md vs gates/ em disco.
 
  Uso:
-   python gates/G_HARNESS_COMPAT.py
+   python modulos/04-nucleo-compartilhado/gates/G_HARNESS_COMPAT.py
        exit 0 = todos os pares sincronizados e ponteiros corretos.
        exit 1 = algum par divergiu ou ponteiro está ausente/quebrado.
 """
 
+import glob
 import os
 import re
 import sys
 
-ROOT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+from pathlib import Path as _Path
+ROOT_DIR = str(next((p.parent for p in _Path(__file__).resolve().parents if p.name == "modulos"), _Path(__file__).resolve().parent.parent))  # raiz: pai de modulos/ (VSA) ou de gates/ (árvore sintética)
 
 sys.path.insert(0, os.path.join(ROOT_DIR, "scripts"))
 import gestor_componentes
@@ -116,9 +118,13 @@ def checar():
         conteudo_referenciado = _ler(referenciado)
         if conteudo_referenciado:
             texto_documentacao += "\n" + conteudo_referenciado
-    documentados = set(re.findall(r"(?<!/)gates/(G_[A-Za-z0-9_]+\.py)", texto_documentacao))
+    # Gates do ecossistema: gates/ da fatia dona (modulos/<fatia>[/<fluxo>]/gates, MAPA-GATES.json)
+    # ou gates/ na raiz de uma árvore sintética. Gates internos de ferramenta não entram.
+    documentados = set(re.findall(
+        r"(?<![\w/.-])(?:modulos/[\w-]+/(?:[\w-]+/)?)?gates/(G_[A-Za-z0-9_]+\.py)", texto_documentacao))
+    pastas_de_gates = [os.path.join(ROOT_DIR, "gates")] + glob.glob(os.path.join(ROOT_DIR, "modulos", "*", "gates"))         + glob.glob(os.path.join(ROOT_DIR, "modulos", "*", "*", "gates"))
     em_disco = {
-        f for f in os.listdir(os.path.join(ROOT_DIR, "gates"))
+        f for pasta in pastas_de_gates if os.path.isdir(pasta) for f in os.listdir(pasta)
         if f.startswith("G_") and f.endswith(".py")
     }
     faltando_no_agents = em_disco - documentados

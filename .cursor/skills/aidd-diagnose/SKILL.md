@@ -21,7 +21,7 @@ All steps go through `python ecossistema.py diagnose <sub>`; the session lives i
 | Phase 4 isolated worktree | `worktree --slug <slug>` |
 | End of Phase 5 cleanup | `limpar [--slug <slug>]` |
 | Root-cause report | `relatorio --execucoes N --teste-regressao <file> --exit-antes <code>` |
-| Gate | `python gates/G_aidd_diagnose.py --relatorio docs/diagnosticos/<sessao>/RELATORIO-CAUSA-RAIZ.md` |
+| Gate | `python modulos/01-governanca-e-qualidade/gates/G_aidd_diagnose.py --relatorio docs/diagnosticos/<sessao>/RELATORIO-CAUSA-RAIZ.md` |
 | Handoff | `python .agents/skills/aidd-diagnose/scripts/handoff.py emitir ...` / `transicionar ...` |
 
 ## 5-Phase Protocol
@@ -75,6 +75,6 @@ All steps go through `python ecossistema.py diagnose <sub>`; the session lives i
 
 - [ ] Repro red before the fix: `<repro> > antes.log 2>&1; echo $? > antes.exit` gives non-zero.
 - [ ] Same repro green after the fix: `<repro> > depois.log 2>&1; echo $? > depois.exit` gives 0.
-- [ ] `python gates/G_aidd_diagnose.py --relatorio docs/diagnosticos/<sessao>/RELATORIO-CAUSA-RAIZ.md > gate.log 2>&1; echo $? > gate.exit` gives 0.
+- [ ] `python modulos/01-governanca-e-qualidade/gates/G_aidd_diagnose.py --relatorio docs/diagnosticos/<sessao>/RELATORIO-CAUSA-RAIZ.md > gate.log 2>&1; echo $? > gate.exit` gives 0.
 - [ ] No instrumentation left: `grep -rnE "AIDD-DIAGNOSE-TEMP|\[DEBUG-" <instrumented-files> > temp.txt; echo $? > temp.exit` gives 1.
 - [ ] `diagnose limpar --slug <slug>` exited 0 and `git worktree list > wt.txt` no longer shows the slug.

@@ -9,10 +9,10 @@
  (Item 6 do plano 03-qualidade-testes-e-mutacao) — nada de regex sobre
  stdout. Skipped é regido por orçamento estrito: cada ferramenta só pode
  pular testes autorizados, identificados por test-id, no allowlist
- gates/allowlist_skipped_testes.json (arquivo ausente = orçamento zero).
+ modulos/01-governanca-e-qualidade/gates/allowlist_skipped_testes.json (arquivo ausente = orçamento zero).
 
  Uso:
-   python gates/G_TESTES_REAIS.py
+   python modulos/01-governanca-e-qualidade/gates/G_TESTES_REAIS.py
        exit 0 = todas as suítes passaram e skipped dentro do orçamento.
        exit 1 = falha, timeout, ou skipped não autorizado em alguma suíte.
 """
@@ -24,11 +24,17 @@ import sys
 import tempfile
 import xml.etree.ElementTree as ET
 
-import _escopo_commit
+# _escopo_commit mora no núcleo (04-nucleo-compartilhado/gates); numa árvore sintética, ao lado do gate.
+_AQUI = os.path.dirname(os.path.abspath(__file__))
+for _pasta in (os.path.join(os.path.dirname(os.path.dirname(_AQUI)), "04-nucleo-compartilhado", "gates"), _AQUI):
+    if os.path.isdir(_pasta) and _pasta not in sys.path:
+        sys.path.insert(0, _pasta)
+import _escopo_commit  # noqa: E402
 
-ROOT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+from pathlib import Path as _Path
+ROOT_DIR = str(next((p.parent for p in _Path(__file__).resolve().parents if p.name == "modulos"), _Path(__file__).resolve().parent.parent))  # raiz: pai de modulos/ (VSA) ou de gates/ (árvore sintética)
 MAPA_DONOS_PATH = os.path.join(ROOT_DIR, "componentes", "compartilhado", "specs", "MAPA-DONOS-FERRAMENTAS.json")
-ALLOWLIST_PATH = os.path.join(ROOT_DIR, "gates", "allowlist_skipped_testes.json")
+ALLOWLIST_PATH = os.path.join(ROOT_DIR, "modulos", "01-governanca-e-qualidade", "gates", "allowlist_skipped_testes.json")
 
 
 def _abrir_console_ao_vivo():
@@ -340,7 +346,7 @@ def executar():
     if falhou:
         print(" [FALHA] Quality Gate G_TESTES_REAIS REPROVADO — falhas reais ou skipped fora do orçamento!")
         print("  Ação necessária: corrija os testes ou documente o skip em")
-        print(f"  gates/allowlist_skipped_testes.json com justificativa.")
+        print(f"  modulos/01-governanca-e-qualidade/gates/allowlist_skipped_testes.json com justificativa.")
         print("=" * 70)
         return 1
 

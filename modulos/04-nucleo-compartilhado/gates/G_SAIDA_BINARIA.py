@@ -5,7 +5,7 @@
 ECOSSISTEMA AIDD — QUALITY GATE: G_SAIDA_BINARIA (Lei Canônica #2)
 =============================================================================
 Auditoria de Qualidade Binária: Verifica deterministicamente via AST que todos
-os Quality Gates em gates/ terminam estritamente com sys.exit(0) ou sys.exit(1).
+os Quality Gates do MAPA-GATES.json terminam estritamente com sys.exit(0) ou sys.exit(1).
 Nenhum código de saída ambíguo (2, 3, strings, bare return, fall-through) é aceito.
 
 Invariante Inviolável (Lei #2 - Binary Quality):
@@ -13,7 +13,7 @@ Invariante Inviolável (Lei #2 - Binary Quality):
   0 = APROVADO (passa), 1 = REPROVADO (bloqueia).
 
 Critérios de Aceite (ISSUE-0021):
-  1. Todo arquivo gates/G_*.py deve conter bloco if __name__ == '__main__':
+  1. Todo gate listado no MAPA-GATES.json deve conter bloco if __name__ == '__main__':
      com chamada explícita a sys.exit.
   2. Todos os call sites de sys.exit devem passar estritamente literal 0 ou 1,
      ou função cujos retornos sejam exclusivamente 0 ou 1.
@@ -33,8 +33,12 @@ from typing import Dict, List, Optional, Set, Tuple
 if hasattr(sys.stdout, "reconfigure"):
     sys.stdout.reconfigure(encoding="utf-8", errors="replace")
 
-ROOT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-GATES_DIR = os.path.join(ROOT_DIR, "gates")
+from pathlib import Path as _Path
+ROOT_DIR = str(next((p.parent for p in _Path(__file__).resolve().parents if p.name == "modulos"), _Path(__file__).resolve().parent.parent))  # raiz: pai de modulos/ (VSA) ou de gates/ (árvore sintética)
+GATES_DIR = os.path.dirname(os.path.abspath(__file__))
+if ROOT_DIR not in sys.path:
+    sys.path.insert(0, ROOT_DIR)
+from scripts import mapa_gates  # noqa: E402  (lista de gates vem de MAPA-GATES.json)
 
 
 class BinaryExitVisitor(ast.NodeVisitor):
@@ -141,22 +145,33 @@ def auditar_arquivo(caminho: str) -> List[str]:
     return erros
 
 
-def auditar_todos_os_gates(gates_dir: str = GATES_DIR) -> Tuple[int, List[str], int]:
-    """Audita todos os arquivos G_*.py em gates/."""
+def auditar_lista(caminhos: List[str]) -> Tuple[int, List[str], int]:
+    """Audita a lista de arquivos de gate informada."""
     erros_totais: List[str] = []
-    total_auditados = 0
+    for caminho in caminhos:
+        if not os.path.isfile(caminho):
+            erros_totais.append(f"{os.path.basename(caminho)}: arquivo do mapa não existe ({caminho})")
+            continue
+        erros_totais.extend(auditar_arquivo(caminho))
+    return (1 if erros_totais else 0), erros_totais, len(caminhos)
 
+
+def auditar_todos_os_gates(gates_dir: str = GATES_DIR) -> Tuple[int, List[str], int]:
+    """Audita todos os arquivos G_*.py de uma pasta (uso: argumento posicional)."""
     if not os.path.isdir(gates_dir):
         return 1, [f"Diretório não encontrado: {gates_dir}"], 0
+    arquivos = [os.path.join(gates_dir, f) for f in sorted(os.listdir(gates_dir))
+                if f.startswith("G_") and f.endswith(".py")]
+    return auditar_lista(arquivos)
 
-    for file in sorted(os.listdir(gates_dir)):
-        if file.startswith("G_") and file.endswith(".py"):
-            total_auditados += 1
-            caminho = os.path.join(gates_dir, file)
-            erros = auditar_arquivo(caminho)
-            erros_totais.extend(erros)
 
-    return (1 if erros_totais else 0), erros_totais, total_auditados
+def auditar_gates_do_mapa(raiz: str = ROOT_DIR) -> Tuple[int, List[str], int]:
+    """Audita todos os gates listados em MAPA-GATES.json (padrão do gate)."""
+    try:
+        caminhos = [str(p) for p in mapa_gates.caminhos(raiz)]
+    except (OSError, KeyError, ValueError) as erro:
+        return 1, [f"MAPA-GATES.json ilegível: {erro!r}"], 0
+    return auditar_lista(caminhos)
 
 
 def main() -> int:
@@ -164,11 +179,13 @@ def main() -> int:
     print(" [GATE] G_SAIDA_BINARIA — Auditoria de Saída Estritamente Binária (Lei #2)")
     print("=" * 72)
 
-    target_dir = GATES_DIR
-    if len(sys.argv) > 1 and not sys.argv[1].startswith("-"):
-        target_dir = sys.argv[1]
-
-    code, erros, total = auditar_todos_os_gates(target_dir)
+    argv = sys.argv[1:]
+    if argv and not argv[0].startswith("-"):
+        code, erros, total = auditar_todos_os_gates(argv[0])
+    elif len(argv) == 2 and argv[0] == "--raiz":
+        code, erros, total = auditar_gates_do_mapa(argv[1])
+    else:
+        code, erros, total = auditar_gates_do_mapa()
 
     if erros:
         print(f"\n[FALHA] Detectada(s) {len(erros)} violação(ões) de saída binária (Lei #2):\n")

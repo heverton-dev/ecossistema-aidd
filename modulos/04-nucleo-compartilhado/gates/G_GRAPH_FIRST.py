@@ -12,7 +12,7 @@ Cobertura: só o claude grava histórico legível (~/.claude/projects/<pasta>/*.
 Sem histórico (agy, opencode, mimo), o gate só avisa e não reprova.
 
 Uso:
-    python gates/G_GRAPH_FIRST.py --worktree <pasta da worktree da fase>
+    python modulos/04-nucleo-compartilhado/gates/G_GRAPH_FIRST.py --worktree <pasta da worktree da fase>
 
 Exit 0: graph consultado, ou harness sem histórico legível (aviso).
 Exit 1: histórico legível com zero chamadas ao codebase-memory-mcp.

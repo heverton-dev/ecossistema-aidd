@@ -9,11 +9,15 @@ from pathlib import Path
 
 import pytest
 
+import sys  # noqa: E402
+# _gate_test_utils mora no núcleo (modulos/04-nucleo-compartilhado/gates).
+sys.path.insert(0, str(next(p.parent for p in __import__("pathlib").Path(__file__).resolve().parents if p.name == "modulos")
+                       / "modulos" / "04-nucleo-compartilhado" / "gates"))
 from _gate_test_utils import rodar_gate
 
 GATE_DIR = os.path.dirname(os.path.abspath(__file__))
 GATE_PATH = os.path.join(GATE_DIR, "G_LAYOUT_ENTREGA.py")
-ROOT_DIR = os.path.dirname(GATE_DIR)
+ROOT_DIR = str(next(p.parent for p in __import__("pathlib").Path(__file__).resolve().parents if p.name == "modulos"))  # raiz do ecossistema
 
 sys.path.insert(0, ROOT_DIR)
 from core.resolve_pasta_entrega import resolve_pasta_entrega  # noqa: E402
@@ -32,7 +36,7 @@ def test_legacy_sibling_forces_workspace_root(tmp_path):
     workspace = tmp_path / "workspace"
     clone = workspace / "ecossistema-aidd"
     legado = workspace / "proj_app"
-    (clone / "gates").mkdir(parents=True)
+    (clone / "modulos" / "03-plataforma-e-entrega" / "gates").mkdir(parents=True)
     (clone / "componentes").mkdir()
     (clone / "ecossistema.py").write_text("# tool\n", encoding="utf-8")
     (legado / "src").mkdir(parents=True)
@@ -46,7 +50,7 @@ def test_legacy_sibling_forces_workspace_root(tmp_path):
 
 def test_ecosystem_only_uses_projetos(tmp_path):
     clone = tmp_path / "ecossistema-aidd"
-    (clone / "gates").mkdir(parents=True)
+    (clone / "modulos" / "03-plataforma-e-entrega" / "gates").mkdir(parents=True)
     (clone / "componentes").mkdir()
     (clone / "ecossistema.py").write_text("# tool\n", encoding="utf-8")
 
@@ -82,8 +86,8 @@ def test_g_layout_entrega_passa_no_repositorio():
 
 def test_g_layout_entrega_failing_path_helper_desmapeado(tmp_path):
     """Orquestrador sem resolve_pasta_entrega => exit 1 (Lei #13)."""
-    fake_gates = tmp_path / "gates"
-    fake_gates.mkdir()
+    fake_gates = tmp_path / "modulos" / "03-plataforma-e-entrega" / "gates"
+    fake_gates.mkdir(parents=True)
     shutil.copy2(GATE_PATH, fake_gates / "G_LAYOUT_ENTREGA.py")
     (tmp_path / "core").mkdir()
     (tmp_path / "core" / "resolve_pasta_entrega.py").write_text(
@@ -108,8 +112,8 @@ def test_g_layout_entrega_failing_path_helper_desmapeado(tmp_path):
 
 def test_g_layout_entrega_failing_path_layout_aninhado(tmp_path):
     """projetos/ preenchido com legado irmao => exit 1 (Lei #13)."""
-    fake_gates = tmp_path / "gates"
-    fake_gates.mkdir()
+    fake_gates = tmp_path / "modulos" / "03-plataforma-e-entrega" / "gates"
+    fake_gates.mkdir(parents=True)
     shutil.copy2(GATE_PATH, fake_gates / "G_LAYOUT_ENTREGA.py")
     (tmp_path / "core").mkdir()
     (tmp_path / "core" / "resolve_pasta_entrega.py").write_text(

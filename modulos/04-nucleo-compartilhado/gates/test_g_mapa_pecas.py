@@ -13,8 +13,8 @@ from pathlib import Path
 
 import pytest
 
-RAIZ = Path(__file__).resolve().parent.parent
-GATE_SCRIPT = RAIZ / "gates" / "G_mapa_pecas.py"
+RAIZ = next((p.parent for p in Path(__file__).resolve().parents if p.name == "modulos"), Path(__file__).resolve().parent.parent)  # raiz: pai de modulos/ (VSA) ou de gates/ (árvore sintética)
+GATE_SCRIPT = RAIZ / "modulos" / "04-nucleo-compartilhado" / "gates" / "G_mapa_pecas.py"
 
 
 def test_mapa_pecas_conformidade_real():

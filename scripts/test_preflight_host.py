@@ -5,7 +5,7 @@ Testes standalone do bootstrapper assistido do preflight-host.
 Rodam com: pytest scripts/test_preflight_host.py
 (FORA do coletor padrao — pytest.ini usa testpaths = gates.)
 
-Coverage adicional a gates/test_g_preflight_fix.py:
+Coverage adicional a tests/test_preflight_fix.py:
   - URLs oficiais de download (node LTS, hadolint release)
   - Instaladores user-space com _baixar patched (boundary de rede)
   - Extracao zip/tar.gz/tar.xz

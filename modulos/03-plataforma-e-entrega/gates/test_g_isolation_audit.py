@@ -9,12 +9,13 @@ import sys
 import tempfile
 import pytest
 
-ROOT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+from pathlib import Path as _Path
+ROOT_DIR = str(next((p.parent for p in _Path(__file__).resolve().parents if p.name == "modulos"), _Path(__file__).resolve().parent.parent))  # raiz: pai de modulos/ (VSA) ou de gates/ (árvore sintética)
 if ROOT_DIR not in sys.path:
     sys.path.insert(0, ROOT_DIR)
 
-import gates.G_ISOLATION_AUDIT as gate
-from gates.G_ISOLATION_AUDIT import (
+import G_ISOLATION_AUDIT as gate
+from G_ISOLATION_AUDIT import (
     extrair_modulo_e_fatia,
     analisar_imports_arquivo,
     scan_isolation_violations,

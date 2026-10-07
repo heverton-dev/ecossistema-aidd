@@ -9,7 +9,7 @@ def test_g_nove_camadas_passa_no_template_canonico():
     """Valida que o template canônico atinge 100% de aprovação nas 9 camadas (exit 0)."""
     cmd = [
         sys.executable,
-        "gates/G_NOVE_CAMADAS_MERCADO.py",
+        "modulos/02-triade-motores/fluxo-01-pure/gates/G_NOVE_CAMADAS_MERCADO.py",
         "--target",
         "componentes/compartilhado/templates/frontend-tanstack"
     ]
@@ -28,7 +28,7 @@ def test_g_nove_camadas_morde_se_houver_lockin(tmp_path):
     dados = pkg.read_text(encoding="utf-8")
     pkg.write_text(dados.replace('"dependencies": {', '"dependencies": {\n    "@lovable.dev/cloud-auth-js": "1.0",'), encoding="utf-8")
 
-    cmd = [sys.executable, "gates/G_NOVE_CAMADAS_MERCADO.py", "--target", str(clone)]
+    cmd = [sys.executable, "modulos/02-triade-motores/fluxo-01-pure/gates/G_NOVE_CAMADAS_MERCADO.py", "--target", str(clone)]
     res = subprocess.run(cmd, capture_output=True, text=True, encoding="utf-8")
     assert res.returncode == 1, f"Deveria reprovar com exit 1 por lock-in, retornou {res.returncode}"
     assert "Violação da Lei #6 — detectado pacote proprietário '@lovable.dev'" in res.stdout
@@ -43,7 +43,7 @@ def test_g_nove_camadas_morde_se_remover_hmac(tmp_path):
     seg = clone / "src" / "lib" / "seguranca.ts"
     seg.write_text("// modulo vazio sem hmac\nexport const ok = true;\n", encoding="utf-8")
 
-    cmd = [sys.executable, "gates/G_NOVE_CAMADAS_MERCADO.py", "--target", str(clone)]
+    cmd = [sys.executable, "modulos/02-triade-motores/fluxo-01-pure/gates/G_NOVE_CAMADAS_MERCADO.py", "--target", str(clone)]
     res = subprocess.run(cmd, capture_output=True, text=True, encoding="utf-8")
     assert res.returncode == 1, f"Deveria reprovar com exit 1 por falta de HMAC, retornou {res.returncode}"
     assert "Assinatura criptográfica HMAC SHA-256 para integridade offline ausente" in res.stdout

@@ -21,7 +21,7 @@ ISOLAMENTO_PATH = SKILL_SCRIPTS / "isolamento.py"
 
 CAMINHOS_PERMITIDOS = [
     ".agents/skills/aidd-enterprise",
-    "gates",
+    "modulos/03-plataforma-e-entrega/gates",
     "docs/auditoria/aidd-enterprise",
 ]
 
@@ -63,7 +63,7 @@ def test_escrita_dentro_de_componentes_listados_ou_worktree_e_permitida(tmp_path
     )
 
     # Permitido: componente listado (gate)
-    gate_ok = repo_alvo / "gates" / "G_aidd_enterprise.py"
+    gate_ok = repo_alvo / "modulos" / "03-plataforma-e-entrega" / "gates" / "G_aidd_enterprise.py"
     assert (
         validar_caminho_escrita(
             gate_ok,

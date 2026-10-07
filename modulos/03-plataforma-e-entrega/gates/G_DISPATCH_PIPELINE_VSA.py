@@ -19,8 +19,8 @@ Invariantes e Leis Auditadas:
      test_gate_dispatch_pipeline_vsa.py provando reprovação estrita em violações.
 
 Uso:
-  python gates/G_DISPATCH_PIPELINE_VSA.py --manifesto <caminho_manifesto.json>
-  python gates/G_DISPATCH_PIPELINE_VSA.py  # Modo auto-descoberta / auditoria de integridade
+  python modulos/03-plataforma-e-entrega/gates/G_DISPATCH_PIPELINE_VSA.py --manifesto <caminho_manifesto.json>
+  python modulos/03-plataforma-e-entrega/gates/G_DISPATCH_PIPELINE_VSA.py  # Modo auto-descoberta / auditoria de integridade
 =============================================================================
 """
 
@@ -37,7 +37,7 @@ from typing import Any, Dict, List, Optional, Set, Tuple
 if hasattr(sys.stdout, "reconfigure"):
     sys.stdout.reconfigure(encoding="utf-8", errors="replace")
 
-ROOT_DIR = Path(__file__).resolve().parent.parent
+ROOT_DIR = next((p.parent for p in Path(__file__).resolve().parents if p.name == "modulos"), Path(__file__).resolve().parent.parent)  # raiz: pai de modulos/ (VSA) ou de gates/ (árvore sintética)
 SPECS_DIR = ROOT_DIR / "componentes" / "compartilhado" / "specs"
 SCHEMA_CANONICO = SPECS_DIR / "vsa-topological-dispatch.schema.json"
 
@@ -257,7 +257,7 @@ def modo_autodescoberta() -> int:
                     "arquivos_esperados": ["src/slices/nucleo/router.py"],
                     "barreira_validacao": {
                         "comandos_teste": ["pytest tests/test_nucleo.py"],
-                        "quality_gates": ["python gates/G_SAIDA_BINARIA.py"]
+                        "quality_gates": ["python modulos/04-nucleo-compartilhado/gates/G_SAIDA_BINARIA.py"]
                     }
                 }
             ],

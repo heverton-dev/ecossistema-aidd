@@ -16,7 +16,7 @@ Regras de conformidade:
   3. Proíbe referências diretas a 'sandbox.' em código de produção.
 
 Uso:
-  python gates/G_PROTOTYPE_REWRITE.py [--target PATH]
+  python modulos/02-triade-motores/fluxo-01-pure/gates/G_PROTOTYPE_REWRITE.py [--target PATH]
       exit 0 = Isolamento de sandbox e cobertura de promoção válidos
       exit 1 = Violação de isolamento ou promoção de protótipo sem testes
 """

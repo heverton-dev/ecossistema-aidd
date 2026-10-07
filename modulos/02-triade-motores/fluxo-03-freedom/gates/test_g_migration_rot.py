@@ -22,18 +22,19 @@ import sys
 import tempfile
 import pytest
 
-ROOT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+from pathlib import Path as _Path
+ROOT_DIR = str(next((p.parent for p in _Path(__file__).resolve().parents if p.name == "modulos"), _Path(__file__).resolve().parent.parent))  # raiz: pai de modulos/ (VSA) ou de gates/ (árvore sintética)
 if ROOT_DIR not in sys.path:
     sys.path.insert(0, ROOT_DIR)
 
-from gates.G_MIGRATION_ROT import (
+from G_MIGRATION_ROT import (
     auditar_ast_migracoes,
     auditar_migracoes_target,
     extrair_schema_sqlite,
     comparar_schemas_sqlite,
 )
 
-GATE_SCRIPT = os.path.join(ROOT_DIR, "gates", "G_MIGRATION_ROT.py")
+GATE_SCRIPT = os.path.join(ROOT_DIR, "modulos", "02-triade-motores", "fluxo-03-freedom", "gates", "G_MIGRATION_ROT.py")
 SOURCE_TARGET = os.path.join(ROOT_DIR, "modulos", "03-plataforma-e-entrega", "fatiamento-master", "aidd-master")
 
 

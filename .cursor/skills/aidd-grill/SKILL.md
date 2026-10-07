@@ -29,7 +29,7 @@ Após concluir a entrevista socrática, avance deterministicamente para a próxi
 
 - NEVER ask the user a fact the repo answers (code, `AGENTS.md`, git log); read first, ask only decisions.
 - NEVER treat silence as approval in interactive mode, and never write "the user chose X" unless the user wrote it in this session (a fabricated decision is a known incident here).
-- NEVER write a bare decision in `### Consolidated Assumptions`; each item is `Recommended: <answer>, because <reason>`, or `cli.py validar` and `gates/G_PROVA_SKILLS_POCOCK.py` reprove it.
+- NEVER write a bare decision in `### Consolidated Assumptions`; each item is `Recommended: <answer>, because <reason>`, or `cli.py validar` and `modulos/01-governanca-e-qualidade/gates/G_PROVA_SKILLS_POCOCK.py` reprove it.
 - NEVER start coding or jump to `/aidd-spec` while the frontier still has open questions.
 - NEVER propose configuring an LLM API key to run the interview; the model is always the running harness.
 
@@ -46,4 +46,4 @@ Exit codes go to a file, never through a pipe: `<cmd> > "$TEMP/grill.log" 2>&1; 
 - [ ] `python componentes/compartilhado/skills/aidd-grill/scripts/cli.py validar --arquivo <round.md>` wrote rc 0.
 - [ ] Frontier empty: no numbered question left without an answer or a `Recommended:` default.
 - [ ] User confirmed alignment (interactive), or the assumptions block exists (headless).
-- [ ] `python gates/G_PROVA_SKILLS_POCOCK.py --artefatos <dir> --skill aidd-grill` wrote rc 0 when this skill's text changed.
+- [ ] `python modulos/01-governanca-e-qualidade/gates/G_PROVA_SKILLS_POCOCK.py --artefatos <dir> --skill aidd-grill` wrote rc 0 when this skill's text changed.

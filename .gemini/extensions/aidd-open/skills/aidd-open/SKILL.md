@@ -78,4 +78,4 @@ Architecture: `docs/features/v2_arquitetura-aidd-ops-factory.md`.
 - [ ] `python ecossistema.py open --nome "<Name>" --slug <slug> --dominio <domain> --pasta <dest> > open.log 2>&1; echo $? > open.rc` and `open.rc` holds `0`.
 - [ ] `<dest>/ORQUESTRACAO_EXECUCAO.json` exists and `<dest>/FACTORY_OUTPUT.json` has `resumo.erros` equal to `0`.
 - [ ] `docker compose -f <dest>/docker-compose.yml config > dc.log 2>&1; echo $? > dc.rc` holds `0`.
-- [ ] `python gates/G_QUARTETO_SINE_QUA_NON.py --target <dest> > q-open.log 2>&1; echo $? > q-open.rc` holds `0` (the four routes are served by the FastAPI gateway).
+- [ ] `python modulos/03-plataforma-e-entrega/gates/G_QUARTETO_SINE_QUA_NON.py --target <dest> > q-open.log 2>&1; echo $? > q-open.rc` holds `0` (the four routes are served by the FastAPI gateway).

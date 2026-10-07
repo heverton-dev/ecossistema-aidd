@@ -18,11 +18,11 @@ Tudo o que o modelo gera fica numa pasta temporária apagada no fim.
   - aidd-tdd: seção de pontos de teste (seams) antes do primeiro teste.
 
 Modo --artefatos DIR: confere artefatos já salvos (<skill>.md), sem modelo.
-É o modo usado pelo teste (gates/test_g_prova_skills_pocock.py).
+É o modo usado pelo teste (modulos/01-governanca-e-qualidade/gates/test_g_prova_skills_pocock.py).
 
 Gate MANUAL (gasta tokens e depende de rede): fora do pre-commit e do audit;
 roda com `pre-commit run --hook-stage manual g-prova-skills-pocock --all-files`
-ou `python gates/G_PROVA_SKILLS_POCOCK.py`.
+ou `python modulos/01-governanca-e-qualidade/gates/G_PROVA_SKILLS_POCOCK.py`.
 
 Saída: exit 0 = todas as skills aprovadas; exit 1 = alguma reprovada.
 =============================================================================
@@ -42,7 +42,7 @@ from typing import Callable, Dict, List, Optional
 if hasattr(sys.stdout, "reconfigure"):
     sys.stdout.reconfigure(encoding="utf-8", errors="replace")
 
-ROOT = Path(__file__).resolve().parent.parent
+ROOT = next((p.parent for p in Path(__file__).resolve().parents if p.name == "modulos"), Path(__file__).resolve().parent.parent)  # raiz: pai de modulos/ (VSA) ou de gates/ (árvore sintética)
 FIXTURES = ROOT / "tests" / "fixtures" / "skills_pocock"
 PROJETO_BUG = FIXTURES / "projeto_bug"
 SPEC = FIXTURES / "spec.md"

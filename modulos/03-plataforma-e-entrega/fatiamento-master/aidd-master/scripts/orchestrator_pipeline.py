@@ -136,7 +136,7 @@ class OrchestratorPipeline:
     def validate_manifest(self) -> bool:
         """Valida formalmente o manifesto contra G_PIPELINE_HANDOFF."""
         self.log(f"Validando conformidade do manifesto: {self.manifest_path}")
-        gate_script = self.repo_root / "gates" / "G_PIPELINE_HANDOFF.py"
+        gate_script = self.repo_root / "modulos" / "04-nucleo-compartilhado" / "gates" / "G_PIPELINE_HANDOFF.py"
 
         if gate_script.is_file():
             cmd = [sys.executable, str(gate_script), "--manifesto", str(self.manifest_path)]
@@ -342,6 +342,15 @@ class OrchestratorPipeline:
         all_passed = all(r.passed for r in results)
         return all_passed, results
 
+    def _gate_pelo_mapa(self, nome: str) -> Path:
+        """Caminho de um gate citado só pelo nome (ex.: G_X.py), via MAPA-GATES.json; senão gates/<nome>."""
+        mapa = self.repo_root / "modulos" / "04-nucleo-compartilhado" / "contracts" / "MAPA-GATES.json"
+        try:
+            info = json.loads(mapa.read_text(encoding="utf-8"))["gates"].get(Path(nome).stem)
+        except (OSError, ValueError, KeyError):
+            info = None
+        return self.repo_root / info["caminho"] if info else self.repo_root / "gates" / nome
+
     def _execute_quality_gates_on_branch(self, branch_name: str, worktree_path: Path, gates: List[str]) -> bool:
         """Executa Quality Gates requeridos no contexto de uma branch antes do merge."""
         if not gates:
@@ -350,8 +359,8 @@ class OrchestratorPipeline:
         self.log(f"Executando {len(gates)} Quality Gates na branch '{branch_name}'...")
         for gate in gates:
             cmd = gate.strip()
-            # Se for apenas o nome de um arquivo python em gates/
-            gate_path = self.repo_root / "gates" / cmd
+            # Se for apenas o nome de um gate do ecossistema: caminho vem do MAPA-GATES.json
+            gate_path = self._gate_pelo_mapa(cmd)
             if gate_path.is_file():
                 run_cmd = f'"{sys.executable}" "{gate_path}"'
             elif (self.repo_root / cmd).is_file():

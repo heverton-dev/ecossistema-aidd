@@ -7,6 +7,7 @@ executando-o contra arvores sinteticas isoladas via subprocess.
 import json
 import os
 import shutil
+from pathlib import Path
 
 from _gate_test_utils import rodar_gate
 
@@ -15,7 +16,7 @@ GATE_PATH = os.path.join(
     "G_ECOSSISTEMA_INTEGRIDADE.py"
 )
 CLI_PATH = os.path.join(
-    os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
+    str(next(p.parent for p in Path(__file__).resolve().parents if p.name == "modulos")),
     "ecossistema.py"
 )
 
@@ -91,7 +92,7 @@ def _montar_arvore_valida(root_dir):
                 f.write(f"# Command {cmd}\n")
 
     # 5. Pasta gates com o proprio gate copiado + ecossistema.py
-    gdir = os.path.join(root_dir, "gates")
+    gdir = os.path.join(root_dir, "modulos", "04-nucleo-compartilhado", "gates")
     os.makedirs(gdir, exist_ok=True)
     gate_copy = os.path.join(gdir, "G_ECOSSISTEMA_INTEGRIDADE.py")
     shutil.copyfile(GATE_PATH, gate_copy)

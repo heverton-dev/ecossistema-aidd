@@ -56,7 +56,8 @@ from typing import Dict, List, Set, Tuple
 if hasattr(sys.stdout, "reconfigure"):
     sys.stdout.reconfigure(encoding="utf-8", errors="replace")
 
-ROOT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+from pathlib import Path as _Path
+ROOT_DIR = str(next((p.parent for p in _Path(__file__).resolve().parents if p.name == "modulos"), _Path(__file__).resolve().parent.parent))  # raiz: pai de modulos/ (VSA) ou de gates/ (árvore sintética)
 sys.path.insert(0, os.path.join(ROOT_DIR, "scripts"))
 import gestor_dependencias  # noqa: E402
 if ROOT_DIR not in sys.path:
@@ -64,7 +65,7 @@ if ROOT_DIR not in sys.path:
 
 # Diretórios canônicos
 CANONICAL_SKILLS_DIR = os.path.join(ROOT_DIR, "componentes", "compartilhado", "skills")
-MANIFESTO_PATH = os.path.join(ROOT_DIR, "gates", "manifesto_harnesses.json")
+MANIFESTO_PATH = os.path.join(ROOT_DIR, "modulos", "04-nucleo-compartilhado", "contracts", "manifesto_harnesses.json")
 
 # Subcomandos suportados pelo CLI ecossistema.py
 def obter_subcomandos_ecossistema() -> Set[str]:
@@ -317,7 +318,7 @@ def auditar_orfaos_em_mirrors(repo_root: str = ROOT_DIR) -> List[str]:
     """
     Verifica se existem skills em pastas de harness que não possuem origem
     na fonte canônica compartilhada nem são de terceiros declaradas em
-    gates/dependencias_externas.json.
+    modulos/04-nucleo-compartilhado/contracts/dependencias_externas.json.
     """
     orfaos: List[str] = []
     canonical_skills_path = os.path.join(repo_root, "componentes", "compartilhado", "skills")
@@ -328,7 +329,7 @@ def auditar_orfaos_em_mirrors(repo_root: str = ROOT_DIR) -> List[str]:
         s for s in os.listdir(canonical_skills_path)
         if os.path.isdir(os.path.join(canonical_skills_path, s))
     } | gestor_dependencias.skills_de_terceiros(
-        os.path.join(repo_root, "gates", "dependencias_externas.json")
+        os.path.join(repo_root, "modulos", "04-nucleo-compartilhado", "contracts", "dependencias_externas.json")
     )
 
     # Harnesses padrões a checar

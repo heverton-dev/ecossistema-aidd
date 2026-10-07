@@ -23,7 +23,7 @@ if _ECOSSISTEMA_DIR not in sys.path:
 import importlib.util
 
 def _auditar_manifesto_pipeline(manifesto_path):
-    gate_script = os.path.join(_ROOT_DIR, "gates", "G_PIPELINE_HANDOFF.py")
+    gate_script = os.path.join(_ROOT_DIR, "modulos", "04-nucleo-compartilhado", "gates", "G_PIPELINE_HANDOFF.py")
     spec = importlib.util.spec_from_file_location("G_PIPELINE_HANDOFF_GATE", gate_script)
     mod = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(mod)
@@ -412,8 +412,8 @@ def test_exportar_para_pipeline_execucao_fluxo_01_pure(tmp_path):
         assert "pytest tests/unit/" in ticket["comando_validacao"]
 
     # Verifica barreira de sincronização
-    assert "gates/G_SAIDA_BINARIA.py" in manifesto["barreira_sincronizacao"]
-    assert "gates/G_TESTES_REAIS.py" in manifesto["barreira_sincronizacao"]
+    assert "modulos/04-nucleo-compartilhado/gates/G_SAIDA_BINARIA.py" in manifesto["barreira_sincronizacao"]
+    assert "modulos/01-governanca-e-qualidade/gates/G_TESTES_REAIS.py" in manifesto["barreira_sincronizacao"]
 
     # Verifica fase sequencial síncrona
     fase_seq = manifesto["fase_sequencial_sincrona"]
@@ -426,7 +426,7 @@ def test_exportar_para_pipeline_execucao_fluxo_01_pure(tmp_path):
     assert step_core["blocked_by"] == [t["id"] for t in fase_paralela]
 
     step_quarteto = next(t for t in fase_seq if t["id"] == "STEP-QUARTETO-SINE-QUA-NON")
-    assert "python gates/G_QUARTETO_SINE_QUA_NON.py" in step_quarteto["comando_validacao"]
+    assert "python modulos/03-plataforma-e-entrega/gates/G_QUARTETO_SINE_QUA_NON.py" in step_quarteto["comando_validacao"]
 
     # Prepara diretórios e audita com G_PIPELINE_HANDOFF
     _preparar_diretorios_alvo(str(tmp_path), manifesto)

@@ -27,7 +27,7 @@ Este gate reprova (exit 1) qualquer regressao nas duas camadas da correcao:
      .txt sem hash.
 
 Uso:
-  python gates/G_DEPENDENCIAS_PIN_HASH.py
+  python modulos/04-nucleo-compartilhado/gates/G_DEPENDENCIAS_PIN_HASH.py
       exit 0 = todos os arquivos-fonte com pin exato, lockfiles com hash
                completo e CI usando --require-hashes.
       exit 1 = ao menos 1 violacao (arquivo, linha e motivo sao impressos).
@@ -40,7 +40,8 @@ import sys
 if hasattr(sys.stdout, "reconfigure"):
     sys.stdout.reconfigure(encoding="utf-8", errors="replace")
 
-ROOT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+from pathlib import Path as _Path
+ROOT_DIR = str(next((p.parent for p in _Path(__file__).resolve().parents if p.name == "modulos"), _Path(__file__).resolve().parent.parent))  # raiz: pai de modulos/ (VSA) ou de gates/ (árvore sintética)
 
 # (arquivo-fonte, lockfile derivado) — ambos relativos a raiz do repositorio.
 PARES_DEPENDENCIA = [

@@ -33,13 +33,14 @@ from collections import defaultdict
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
+import mapa_gates  # noqa: E402  (dono e caminho de cada gate)
 from pastas_ferramentas import ferramenta_do_caminho, pastas  # noqa: E402  (ciclo-03 VSA)
 
 RAIZ = Path(__file__).resolve().parent.parent
 SAIDA_PADRAO = RAIZ / "docs" / "auditoria" / "mapa-pecas" / "catalogo-pecas.json"
 COMPARTILHADO = RAIZ / "componentes" / "compartilhado"
 ORQUESTRADOR = RAIZ / "scripts" / "orquestrador_sincrono.py"
-DEPENDENCIAS = RAIZ / "gates" / "dependencias_externas.json"
+DEPENDENCIAS = RAIZ / "modulos" / "04-nucleo-compartilhado" / "contracts" / "dependencias_externas.json"
 
 # Pastas que são exemplos/sandboxes copiados, não peças vivas.
 IGNORAR = ("materiais-extras", "sandbox-forge-teste", ".venv", "node_modules", "__pycache__")
@@ -189,7 +190,7 @@ def coletar_ferramentas() -> list[dict]:
 
 
 def coletar_skills_terceiros() -> list[str]:
-    """Skills de terceiros registradas em gates/dependencias_externas.json (instaladas
+    """Skills de terceiros registradas em modulos/04-nucleo-compartilhado/contracts/dependencias_externas.json (instaladas
     pelo instalador do fornecedor, nunca copiadas para a fonte unica)."""
     sys.path.insert(0, str(RAIZ / "scripts"))
     import gestor_dependencias
@@ -279,10 +280,22 @@ def _gates_no_pre_commit() -> set[str]:
     return set(re.findall(r"gates/(G_\w+)\.py", _ler(cfg))) if cfg.is_file() else set()
 
 
+# Pastas de gates do ecossistema (cada gate na fatia dona, MAPA-GATES.json).
+PASTAS_DE_GATES_DO_ECOSSISTEMA = {
+    "modulos/01-governanca-e-qualidade/gates",
+    "modulos/02-triade-motores/fluxo-01-pure/gates",
+    "modulos/02-triade-motores/fluxo-02-open/gates",
+    "modulos/02-triade-motores/fluxo-03-freedom/gates",
+    "modulos/03-plataforma-e-entrega/gates",
+    "modulos/04-nucleo-compartilhado/gates",
+}
+
+
 def _papel_gate(p: Path) -> str:
     """Onde o guarda trabalha: ecossistema (raiz), ferramenta, entrega (vai no app) ou componente."""
     partes = p.relative_to(RAIZ).parts
-    if partes[0] == "gates":
+    if partes[0] == "gates" or (partes[0] == "modulos" and partes[-2] == "gates"
+                                and "/".join(partes[:-1]) in PASTAS_DE_GATES_DO_ECOSSISTEMA):
         return "ecossistema"
     if "templates" in partes:
         return "entrega"
@@ -324,7 +337,7 @@ def _descricao_gate(p: Path) -> str:
 
 def _meta_gates():
     """Reaproveita os parsers dos próprios meta-guardas (fonte única da regra)."""
-    sys.path.insert(0, str(RAIZ / "gates"))
+    sys.path.insert(0, str(RAIZ / "modulos" / "01-governanca-e-qualidade" / "gates"))  # meta-guardas moram na fatia 01 (MAPA-GATES.json)
     try:
         import G_LEI_DECLARA_PORTAO as leis
         import G_PORTAO_PROVA_QUE_MORDE as morde
@@ -396,7 +409,7 @@ def coletar_leis() -> list[dict]:
 def coletar_harnesses() -> dict:
     """Cada harness do manifesto: pasta, tipos de peça que recebe, destino de cada tipo,
     skills presentes em disco e arquivo de config de MCP. Mais as pastas legadas versionadas."""
-    manifesto = json.loads(_ler(RAIZ / "gates" / "manifesto_harnesses.json"))
+    manifesto = json.loads(_ler(RAIZ / "modulos" / "04-nucleo-compartilhado" / "contracts" / "manifesto_harnesses.json"))
     sys.path.insert(0, str(RAIZ / "scripts"))
     import gestor_dependencias
     tipos = manifesto["tipos_componente"]
@@ -453,10 +466,10 @@ def coletar_scripts() -> list[dict]:
     """Cada script de scripts/: o que faz (docstring) e quem o chama (painel, commit, guardas, outros scripts, testes)."""
     fontes = {"painel": [RAIZ / "ecossistema.py"],
               "commit": [RAIZ / ".pre-commit-config.yaml", RAIZ / ".githooks" / "pre-commit"],
-              "guardas": sorted((RAIZ / "gates").glob("G_*.py")),
+              "guardas": _caminhos_dos_gates(),
               "scripts": sorted((RAIZ / "scripts").glob("*.py")),
               "testes": sorted((RAIZ / "tests").rglob("test_*.py")) + sorted((RAIZ / "scripts").glob("test_*.py"))
-              + sorted((RAIZ / "gates").glob("test_*.py"))}
+              + sorted(t for p in {g.parent for g in _caminhos_dos_gates()} for t in p.glob("test_*.py"))}
     # Geradores de documentação citam scripts como dado (texto do mapa/livro), não os chamam.
     textos = {grupo: [(p, _ler(p)) for p in arquivos if p.is_file() and p.stem not in GERADORES_DE_DOC]
               for grupo, arquivos in fontes.items()}
@@ -545,8 +558,24 @@ def coletar_lente_15d() -> dict:
                 break
     return {"dimensoes": [{"numero": n, "titulo": t} for n, t in sorted(dimensoes.items())], "laudos": laudos}
 
+def _caminhos_dos_gates() -> list[Path]:
+    """Todos os gates do MAPA-GATES.json (vazio numa árvore sem mapa)."""
+    try:
+        return sorted(mapa_gates.caminhos(RAIZ))
+    except (KeyError, OSError, ValueError):
+        return []
+
+
+def _caminho_do_gate(nome: str) -> Path:
+    """Caminho do gate na fatia dona (MAPA-GATES.json); fora do mapa, um caminho inexistente."""
+    try:
+        return mapa_gates.caminho(nome, RAIZ)
+    except (KeyError, OSError, ValueError):
+        return RAIZ / "gates" / f"{nome}.py"
+
+
 def _prova_que_morde(morde_mod, nome: str) -> bool:
-    teste = morde_mod.encontrar_arquivo_teste(f"{nome}.py", str(RAIZ / "gates"))
+    teste = morde_mod.encontrar_arquivo_teste(f"{nome}.py", str(_caminho_do_gate(nome).parent))
     return bool(teste) and morde_mod.auditar_teste_de_falha(teste, executar=False)[0]
 
 
@@ -555,15 +584,15 @@ def coletar_gates() -> tuple[list[dict], list[str]]:
     leis_mod, morde_mod = _meta_gates()
     leis, invisiveis = _leis_por_gate(leis_mod, _ler(RAIZ / "AGENTS.md"))
     por_nome = defaultdict(list)
-    for base in (RAIZ / "gates", RAIZ / "modulos", RAIZ / "componentes"):
+    for base in (RAIZ / "modulos", RAIZ / "componentes"):
         for p in _py_vivos(base):
             if p.name.startswith("G_") and p.suffix == ".py":
                 por_nome[p.stem].append(p)
     gates = []
     for nome in sorted(por_nome):
         copias = sorted(por_nome[nome])
-        na_raiz = RAIZ / "gates" / f"{nome}.py"
-        principal = na_raiz if na_raiz.is_file() else copias[0]
+        no_dono = _caminho_do_gate(nome)
+        principal = no_dono if no_dono.is_file() else copias[0]
         versoes = {}
         for p in copias:
             versoes.setdefault(_hash(p), chr(ord("A") + len(versoes)))
@@ -574,9 +603,9 @@ def coletar_gates() -> tuple[list[dict], list[str]]:
             # Não grava o hash em si: sequência hex longa vira falso positivo no G_SEGREDOS.
             "copias": [{"caminho": _rel(p), "versao": versoes[_hash(p)], "papel": _papel_gate(p)} for p in copias],
             "versoes_distintas": len(versoes),
-            "no_pre_commit": nome in no_pre_commit and na_raiz.is_file(),
+            "no_pre_commit": nome in no_pre_commit and no_dono.is_file(),
             # Só medido para a raiz: é lá que a Lei #13 exige gates/test_g_<nome>.py.
-            "prova_que_morde": _prova_que_morde(morde_mod, nome) if na_raiz.is_file() else None,
+            "prova_que_morde": _prova_que_morde(morde_mod, nome) if no_dono.is_file() else None,
             "leis": sorted(leis.get(nome, [])),
         })
     return gates, invisiveis

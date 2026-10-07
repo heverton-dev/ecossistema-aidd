@@ -34,7 +34,7 @@ COMPONENTES_PADRAO = [
     ".agents/skills/aidd-enterprise/scripts/fallback.py",
     ".agents/skills/aidd-enterprise/scripts/observabilidade.py",
     ".agents/skills/aidd-enterprise/scripts/rollback.py",
-    "gates/G_aidd_enterprise.py",
+    "modulos/03-plataforma-e-entrega/gates/G_aidd_enterprise.py",
 ]
 
 

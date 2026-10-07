@@ -23,7 +23,7 @@ GATE_PATH = os.path.join(GATE_DIR, "G_IDIOMA_LEI_4.py")
 
 def _preparar_arvore_sintetica(root_dir):
     """Copia o gate real para a árvore sintética em tmp_path."""
-    gdir = os.path.join(root_dir, "gates")
+    gdir = os.path.join(root_dir, "modulos", "04-nucleo-compartilhado", "gates")
     os.makedirs(gdir, exist_ok=True)
     target_gate = os.path.join(gdir, "G_IDIOMA_LEI_4.py")
     shutil.copyfile(GATE_PATH, target_gate)
@@ -124,7 +124,7 @@ def test_repo_real_passes():
     """Execução contra o repositório vivo real deve retornar exit 0."""
     res = subprocess.run(
         [sys.executable, GATE_PATH],
-        cwd=os.path.dirname(GATE_DIR),
+        cwd=str(next(p.parent for p in __import__("pathlib").Path(__file__).resolve().parents if p.name == "modulos")),
         capture_output=True,
         text=True,
         encoding="utf-8",

@@ -80,4 +80,4 @@ Done when: each operation exits 0.
 - [ ] `python ecossistema.py freedom --nome "<Name>" --slug <slug> --dominio <domain> --pasta <dest> --origem <export> > fr.log 2>&1; echo $? > fr.rc` and `fr.rc` holds `0`.
 - [ ] `git -C <export> status --short` is empty (original export untouched).
 - [ ] No `@supabase/supabase-js` import left: `git -C <dest> grep -l "@supabase/supabase-js" -- src > sb.txt; echo $? > sb.rc` and `sb.rc` holds `1` (no match).
-- [ ] `python gates/G_QUARTETO_SINE_QUA_NON.py --target <dest> > q-freedom.log 2>&1; echo $? > q-freedom.rc` holds `0` on the liberated app, with the exported UI unchanged.
+- [ ] `python modulos/03-plataforma-e-entrega/gates/G_QUARTETO_SINE_QUA_NON.py --target <dest> > q-freedom.log 2>&1; echo $? > q-freedom.rc` holds `0` on the liberated app, with the exported UI unchanged.

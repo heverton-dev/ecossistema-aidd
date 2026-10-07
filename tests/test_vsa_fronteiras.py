@@ -1,8 +1,13 @@
+import sys
+
 import pytest
 from pathlib import Path
 
+# G_modularizacao_vsa mora no núcleo (MAPA-GATES.json, ciclo-03 VSA).
+sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "modulos" / "04-nucleo-compartilhado" / "gates"))
+
 def test_gate_modularizacao_vsa_aprova_codigo_sem_acoplamento(tmp_path):
-    from gates.G_modularizacao_vsa import verificar_fronteiras_vsa
+    from G_modularizacao_vsa import verificar_fronteiras_vsa
 
     fatia = tmp_path / "fatia_limpa"
     fatia.mkdir()
@@ -20,7 +25,7 @@ def handler():
     assert violacoes == []
 
 def test_gate_modularizacao_vsa_rejeita_import_ilegal_entre_fatias(tmp_path):
-    from gates.G_modularizacao_vsa import verificar_fronteiras_vsa
+    from G_modularizacao_vsa import verificar_fronteiras_vsa
 
     fatia = tmp_path / "fatia_acoplada"
     fatia.mkdir()

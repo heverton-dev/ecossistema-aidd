@@ -17,7 +17,7 @@ Verificações determinísticas:
      - Validação de que não há dependências legadas comprovadamente inseguras.
 
 Uso:
-  python gates/G_SUPPLY_CHAIN.py
+  python modulos/04-nucleo-compartilhado/gates/G_SUPPLY_CHAIN.py
       exit 0 = Nenhuma vulnerabilidade crítica de supply chain encontrada.
       exit 1 = Vulnerabilidades ou violações de supply chain detectadas.
 """
@@ -32,7 +32,8 @@ from typing import Dict, List, Set, Tuple
 if hasattr(sys.stdout, "reconfigure"):
     sys.stdout.reconfigure(encoding="utf-8", errors="replace")
 
-ROOT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+from pathlib import Path as _Path
+ROOT_DIR = str(next((p.parent for p in _Path(__file__).resolve().parents if p.name == "modulos"), _Path(__file__).resolve().parent.parent))  # raiz: pai de modulos/ (VSA) ou de gates/ (árvore sintética)
 
 MANIFESTOS_PYTHON = [
     "requirements.txt",
@@ -131,7 +132,7 @@ def audit_offline_supply_chain(root_dir: str) -> List[str]:
 
 def carregar_allowlist_supply_chain(root_dir: str) -> Set[str]:
     """Carrega IDs de vulnerabilidades auditadas e catalogadas."""
-    caminho = os.path.join(root_dir, "gates", "allowlist_supply_chain.json")
+    caminho = os.path.join(root_dir, "modulos", "04-nucleo-compartilhado", "gates", "allowlist_supply_chain.json")
     if not os.path.isfile(caminho):
         return set()
     try:

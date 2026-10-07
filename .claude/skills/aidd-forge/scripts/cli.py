@@ -67,7 +67,7 @@ COMPONENTES_PADRAO = [
     ".agents/skills/aidd-forge/scripts/resiliencia.py",
     ".agents/skills/aidd-forge/scripts/observabilidade.py",
     ".agents/skills/aidd-forge/scripts/rollback.py",
-    "gates/G_aidd_forge.py",
+    "modulos/01-governanca-e-qualidade/gates/G_aidd_forge.py",
 ]
 
 

@@ -16,7 +16,7 @@ from _gate_test_utils import rodar_gate
 
 GATE_DIR = os.path.dirname(os.path.abspath(__file__))
 GATE_PATH = os.path.join(GATE_DIR, "G_UNIVERSAL_HARNESS.py")
-ROOT_DIR = os.path.dirname(GATE_DIR)
+ROOT_DIR = str(next(p.parent for p in __import__("pathlib").Path(__file__).resolve().parents if p.name == "modulos"))  # raiz do ecossistema
 
 
 def test_g_universal_harness_passa_no_repositorio():
@@ -28,8 +28,8 @@ def test_g_universal_harness_passa_no_repositorio():
 
 def test_g_universal_harness_reprova_quando_skill_falta_em_harness(tmp_path):
     """Valida que G_UNIVERSAL_HARNESS reprova (exit 1) quando uma skill não está em todos os harnesses."""
-    fake_gates = tmp_path / "gates"
-    fake_gates.mkdir()
+    fake_gates = tmp_path / "modulos" / "04-nucleo-compartilhado" / "gates"
+    fake_gates.mkdir(parents=True)
     shutil.copy2(GATE_PATH, fake_gates / "G_UNIVERSAL_HARNESS.py")
 
     manifesto = {
@@ -38,8 +38,10 @@ def test_g_universal_harness_reprova_quando_skill_falta_em_harness(tmp_path):
             "opencode": {"prefixo_pasta": ".opencode"}
         }
     }
-    (fake_gates / "manifesto_harnesses.json").write_text(json.dumps(manifesto), encoding="utf-8")
-    (fake_gates / "dependencias_externas.json").write_text(json.dumps({"mcps": {}}), encoding="utf-8")
+    (tmp_path / "modulos" / "04-nucleo-compartilhado" / "contracts").mkdir(parents=True, exist_ok=True)
+    (tmp_path / "modulos" / "04-nucleo-compartilhado" / "contracts" / "manifesto_harnesses.json").write_text(json.dumps(manifesto), encoding="utf-8")
+    (tmp_path / "modulos" / "04-nucleo-compartilhado" / "contracts").mkdir(parents=True, exist_ok=True)
+    (tmp_path / "modulos" / "04-nucleo-compartilhado" / "contracts" / "dependencias_externas.json").write_text(json.dumps({"mcps": {}}), encoding="utf-8")
 
     fake_scripts = tmp_path / "scripts"
     fake_scripts.mkdir()
@@ -66,13 +68,15 @@ def test_g_universal_harness_reprova_quando_skill_falta_em_harness(tmp_path):
 
 def test_g_universal_harness_reprova_hook_sintaxe_invalida(tmp_path):
     """Valida que G_UNIVERSAL_HARNESS reprova (exit 1) quando há hook Python com sintaxe inválida."""
-    fake_gates = tmp_path / "gates"
-    fake_gates.mkdir()
+    fake_gates = tmp_path / "modulos" / "04-nucleo-compartilhado" / "gates"
+    fake_gates.mkdir(parents=True)
     shutil.copy2(GATE_PATH, fake_gates / "G_UNIVERSAL_HARNESS.py")
 
     manifesto = {"harnesses_suportados": {}}
-    (fake_gates / "manifesto_harnesses.json").write_text(json.dumps(manifesto), encoding="utf-8")
-    (fake_gates / "dependencias_externas.json").write_text(json.dumps({"mcps": {}}), encoding="utf-8")
+    (tmp_path / "modulos" / "04-nucleo-compartilhado" / "contracts").mkdir(parents=True, exist_ok=True)
+    (tmp_path / "modulos" / "04-nucleo-compartilhado" / "contracts" / "manifesto_harnesses.json").write_text(json.dumps(manifesto), encoding="utf-8")
+    (tmp_path / "modulos" / "04-nucleo-compartilhado" / "contracts").mkdir(parents=True, exist_ok=True)
+    (tmp_path / "modulos" / "04-nucleo-compartilhado" / "contracts" / "dependencias_externas.json").write_text(json.dumps({"mcps": {}}), encoding="utf-8")
 
     fake_scripts = tmp_path / "scripts"
     fake_scripts.mkdir()

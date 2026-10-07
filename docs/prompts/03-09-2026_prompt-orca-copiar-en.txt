@@ -15,7 +15,7 @@ EXECUTION PHASES:
    - /generate <idea> -> skills/aidd-generator-runner
    - /master <module> -> skills/aidd-master-runner
    - /enterprise <type> <name> -> skills/aidd-enterprise-runner
-4. UNIFIED CLI & GATES: Create root CLI ecossistema.py and quality gate gates/G_ECOSSISTEMA_INTEGRIDADE.py to audit all subprojects.
+4. UNIFIED CLI & GATES: Create root CLI ecossistema.py and quality gate modulos/04-nucleo-compartilhado/gates/G_ECOSSISTEMA_INTEGRIDADE.py to audit all subprojects.
 5. DOCUMENTATION & RELEASE: Create README.md portal, run validation tests ensuring exit code 0, make the initial commit and push to origin main.
 
 Begin execution immediately with Phase 1.

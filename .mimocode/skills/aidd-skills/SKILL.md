@@ -22,8 +22,8 @@ Thin coordinator. The rules live in one place: `docs/protocolos/CONVENCAO-AUTORI
    ```bash
    python ecossistema.py components sync --tipo skill --ferramenta <tool or compartilhado>
    python ecossistema.py components verify --tipo skill
-   python gates/G_SKILL_ROT.py
-   python gates/G_SKILL_FORMATO.py
+   python modulos/04-nucleo-compartilhado/gates/G_SKILL_ROT.py
+   python modulos/04-nucleo-compartilhado/gates/G_SKILL_FORMATO.py
    ```
    Done when all four exit 0. Never declare a skill ready just because the file was written.
 

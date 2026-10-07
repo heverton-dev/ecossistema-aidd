@@ -56,27 +56,27 @@ O **Ecossistema AIDD** é um monorepo agnóstico que integra 8 ferramentas compl
 
 | Gate | Arquivo | Responsabilidade |
 |---|---|---|
-| **G_DETERMINISMO_LEI_1** | `gates/G_DETERMINISMO_LEI_1.py` | Bloqueia chamadas LLM em rotas e scripts mecânicos. |
-| **G_SAIDA_BINARIA** | `gates/G_SAIDA_BINARIA.py` | Audita saída estritamente binária (0/1) em todos os gates. |
-| **G_ESTRUTURA_ESTADO** | `gates/G_ESTRUTURA_ESTADO.py` | Audita persistência estruturada e validação de schemas. |
-| **G_IDIOMA_LEI_4** | `gates/G_IDIOMA_LEI_4.py` | Assegura inglês compacto no núcleo/tickets para economia de tokens. |
-| **G_TESTES_REAIS** | `gates/G_TESTES_REAIS.py` | Executa suítes reais de pytest em cada ferramenta (zero mocks). |
-| **G_COMPONENTE_AGNOSTICO** | `gates/G_COMPONENTE_AGNOSTICO.py` | Audita conformidade e integridade multi-harness. |
-| **G_ZERO_HEADLESS** | `gates/G_ZERO_HEADLESS.py` | Garante modo interativo e bloqueia subagentes headless. |
-| **G_HONESTIDADE_ROTULO** | `gates/G_HONESTIDADE_ROTULO.py` | Bloqueia alegações de marketing não comprovadas. |
-| **G_DISCIPLINA_TESTE_FERRAMENTA** | `gates/G_DISCIPLINA_TESTE_FERRAMENTA.py` | Exige relatório end-to-end atualizado para mudanças em tools/. |
-| **G_QUARTETO_SINE_QUA_NON** | `gates/G_QUARTETO_SINE_QUA_NON.py` | Valida `/docs`, `/webhooks`, `/mcp`, `/docs/guia` nos deliverables. |
-| **G_STACK_PADRAO_OURO** | `gates/G_STACK_PADRAO_OURO.py` | Audita aderência ao padrão Next.js/TS/Tailwind + Py/WAL. |
-| **G_PORTAO_PROVA_QUE_MORDE** | `gates/G_PORTAO_PROVA_QUE_MORDE.py` | Garante que todo gate possui teste unitário comprovando `exit 1`. |
-| **G_PIPELINE_HANDOFF** | `gates/G_PIPELINE_HANDOFF.py` | Validação determinística de manifestos JSON de execução de pipeline. |
-| **G_DISPATCH_PIPELINE_VSA** | `gates/G_DISPATCH_PIPELINE_VSA.py` | Validação formal de grafos DAG topológicos e fatias VSA. |
-| **G_DOCS_ROT** | `gates/G_DOCS_ROT.py` | Bloqueia documentação rot e links quebrados na documentação viva. |
-| **G_SYNC_CMD_ROT** | `gates/G_SYNC_CMD_ROT.py` | Valida forma canônica `components sync --tipo todos` e aliases públicos. |
-| **G_LAYOUT_ENTREGA** | `gates/G_LAYOUT_ENTREGA.py` | Garante entrega achatada fora do clone e impede legado aninhado. |
-| **G_USER_FACING_PTBR** | `gates/G_USER_FACING_PTBR.py` | Garante PT-BR amigável ao leigo nas camadas voltadas ao usuário final. |
-| **G_PACOTE_CORE** | `gates/G_PACOTE_CORE.py` | Audita empacotamento enxuto de distribuição sem arquivos de dev/testes. |
-| **G_RESUMO_USUARIO** | `gates/G_RESUMO_USUARIO.py` | Exige template duplo de encerramento (RESUMO-USUARIO e RELATORIO-TECNICO). |
-| **G_ANT_LOCKIN_LEGADO** | `gates/G_ANT_LOCKIN_LEGADO.py` | Varredura de resíduos de plataformas proprietárias (lovable, supabase, firebase). |
+| **G_DETERMINISMO_LEI_1** | `modulos/01-governanca-e-qualidade/gates/G_DETERMINISMO_LEI_1.py` | Bloqueia chamadas LLM em rotas e scripts mecânicos. |
+| **G_SAIDA_BINARIA** | `modulos/04-nucleo-compartilhado/gates/G_SAIDA_BINARIA.py` | Audita saída estritamente binária (0/1) em todos os gates. |
+| **G_ESTRUTURA_ESTADO** | `modulos/04-nucleo-compartilhado/gates/G_ESTRUTURA_ESTADO.py` | Audita persistência estruturada e validação de schemas. |
+| **G_IDIOMA_LEI_4** | `modulos/04-nucleo-compartilhado/gates/G_IDIOMA_LEI_4.py` | Assegura inglês compacto no núcleo/tickets para economia de tokens. |
+| **G_TESTES_REAIS** | `modulos/01-governanca-e-qualidade/gates/G_TESTES_REAIS.py` | Executa suítes reais de pytest em cada ferramenta (zero mocks). |
+| **G_COMPONENTE_AGNOSTICO** | `modulos/02-triade-motores/fluxo-02-open/gates/G_COMPONENTE_AGNOSTICO.py` | Audita conformidade e integridade multi-harness. |
+| **G_ZERO_HEADLESS** | `modulos/04-nucleo-compartilhado/gates/G_ZERO_HEADLESS.py` | Garante modo interativo e bloqueia subagentes headless. |
+| **G_HONESTIDADE_ROTULO** | `modulos/04-nucleo-compartilhado/gates/G_HONESTIDADE_ROTULO.py` | Bloqueia alegações de marketing não comprovadas. |
+| **G_DISCIPLINA_TESTE_FERRAMENTA** | `modulos/01-governanca-e-qualidade/gates/G_DISCIPLINA_TESTE_FERRAMENTA.py` | Exige relatório end-to-end atualizado para mudanças em tools/. |
+| **G_QUARTETO_SINE_QUA_NON** | `modulos/03-plataforma-e-entrega/gates/G_QUARTETO_SINE_QUA_NON.py` | Valida `/docs`, `/webhooks`, `/mcp`, `/docs/guia` nos deliverables. |
+| **G_STACK_PADRAO_OURO** | `modulos/02-triade-motores/fluxo-01-pure/gates/G_STACK_PADRAO_OURO.py` | Audita aderência ao padrão Next.js/TS/Tailwind + Py/WAL. |
+| **G_PORTAO_PROVA_QUE_MORDE** | `modulos/01-governanca-e-qualidade/gates/G_PORTAO_PROVA_QUE_MORDE.py` | Garante que todo gate possui teste unitário comprovando `exit 1`. |
+| **G_PIPELINE_HANDOFF** | `modulos/04-nucleo-compartilhado/gates/G_PIPELINE_HANDOFF.py` | Validação determinística de manifestos JSON de execução de pipeline. |
+| **G_DISPATCH_PIPELINE_VSA** | `modulos/03-plataforma-e-entrega/gates/G_DISPATCH_PIPELINE_VSA.py` | Validação formal de grafos DAG topológicos e fatias VSA. |
+| **G_DOCS_ROT** | `modulos/01-governanca-e-qualidade/gates/G_DOCS_ROT.py` | Bloqueia documentação rot e links quebrados na documentação viva. |
+| **G_SYNC_CMD_ROT** | `modulos/04-nucleo-compartilhado/gates/G_SYNC_CMD_ROT.py` | Valida forma canônica `components sync --tipo todos` e aliases públicos. |
+| **G_LAYOUT_ENTREGA** | `modulos/03-plataforma-e-entrega/gates/G_LAYOUT_ENTREGA.py` | Garante entrega achatada fora do clone e impede legado aninhado. |
+| **G_USER_FACING_PTBR** | `modulos/04-nucleo-compartilhado/gates/G_USER_FACING_PTBR.py` | Garante PT-BR amigável ao leigo nas camadas voltadas ao usuário final. |
+| **G_PACOTE_CORE** | `modulos/04-nucleo-compartilhado/gates/G_PACOTE_CORE.py` | Audita empacotamento enxuto de distribuição sem arquivos de dev/testes. |
+| **G_RESUMO_USUARIO** | `modulos/04-nucleo-compartilhado/gates/G_RESUMO_USUARIO.py` | Exige template duplo de encerramento (RESUMO-USUARIO e RELATORIO-TECNICO). |
+| **G_ANT_LOCKIN_LEGADO** | `modulos/02-triade-motores/fluxo-03-freedom/gates/G_ANT_LOCKIN_LEGADO.py` | Varredura de resíduos de plataformas proprietárias (lovable, supabase, firebase). |
 
 ---
 

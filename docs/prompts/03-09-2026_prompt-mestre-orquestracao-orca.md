@@ -46,7 +46,7 @@ Sua missão é executar de ponta a ponta o plano estratégico definido em `plano
 
 #### 4. Meta-Orquestrador CLI & Quality Gates Globais
 - Crie o script CLI unificado na raiz: `ecossistema.py` (ou `aidd.py`), permitindo invocar qualquer uma das ferramentas via linha de comando comum.
-- Crie o Quality Gate `gates/G_ECOSSISTEMA_INTEGRIDADE.py` que testa se todas as 4 ferramentas mantêm seus testes verdes e se as skills do ecossistema estão devidamente ancoradas.
+- Crie o Quality Gate `modulos/04-nucleo-compartilhado/gates/G_ECOSSISTEMA_INTEGRIDADE.py` que testa se todas as 4 ferramentas mantêm seus testes verdes e se as skills do ecossistema estão devidamente ancoradas.
 
 #### 5. Documentação de Alto Nível, Teste e Publicação
 - Crie o arquivo `README.md` principal do ecossistema: portal didático, mapa visual da evolução das ferramentas e guia de início rápido com 1-clique.
@@ -95,7 +95,7 @@ Your mission is to execute the strategic plan defined in `planos/PLANO-EXECUCAO-
 
 #### 4. Unified Meta-Orchestrator CLI & Global Quality Gates
 - Create the root CLI orchestrator: `ecossistema.py` (or `aidd.py`), enabling execution of any tool via standard command line.
-- Implement the Quality Gate `gates/G_ECOSSISTEMA_INTEGRIDADE.py` to verify that all 4 tools maintain green tests and ecosystem skills are correctly anchored.
+- Implement the Quality Gate `modulos/04-nucleo-compartilhado/gates/G_ECOSSISTEMA_INTEGRIDADE.py` to verify that all 4 tools maintain green tests and ecosystem skills are correctly anchored.
 
 #### 5. High-Level Documentation, Verification, and Publishing
 - Author the primary `README.md` ecosystem portal: didactic visual roadmap, tool evolution comparison, and 1-click quickstart.

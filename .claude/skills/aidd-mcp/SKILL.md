@@ -42,4 +42,4 @@ Edit an existing MCP in `componentes/` and resync; never edit the copies in `.cl
 - [ ] Source exists: `test -f componentes/<scope>/mcps/<name>/server.py; echo $? > mcp_src.rc` holds `0`.
 - [ ] `python -m py_compile componentes/<scope>/mcps/<name>/server.py; echo $? > mcp_compile.rc` holds `0`.
 - [ ] `python ecossistema.py components verify --tipo mcp > mcp_verify.txt 2>&1; echo $? > mcp_verify.rc` holds `0`.
-- [ ] `python gates/G_SEGREDOS.py > seg.txt 2>&1; echo $? > seg.rc` holds `0`.
+- [ ] `python modulos/04-nucleo-compartilhado/gates/G_SEGREDOS.py > seg.txt 2>&1; echo $? > seg.rc` holds `0`.

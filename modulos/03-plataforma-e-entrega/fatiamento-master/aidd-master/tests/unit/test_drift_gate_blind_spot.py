@@ -18,7 +18,7 @@ import pytest
 DOS_ROOT = os.path.dirname(os.path.abspath(__file__))  # sobe até a pasta com ecossistema.py (raiz do repo), em qualquer layout
 while os.path.dirname(DOS_ROOT) != DOS_ROOT and not os.path.isfile(os.path.join(DOS_ROOT, "ecossistema.py")):
     DOS_ROOT = os.path.dirname(DOS_ROOT)
-GATE_PATH = os.path.join(DOS_ROOT, "gates", "G_DRIFT_NUCLEO_COMPARTILHADO.py")
+GATE_PATH = os.path.join(DOS_ROOT, "modulos", "04-nucleo-compartilhado", "gates", "G_DRIFT_NUCLEO_COMPARTILHADO.py")
 
 
 @pytest.fixture

@@ -7,7 +7,7 @@ description: Creates or updates agnostic ecosystem components (skills, commands,
 
 ## Protocol
 
-1. **Write only in the single source** `componentes/<tool or compartilhado>/<type>/<name>/...`, following the unit and folder convention of `gates/manifesto_harnesses.json`:
+1. **Write only in the single source** `componentes/<tool or compartilhado>/<type>/<name>/...`, following the unit and folder convention of `modulos/04-nucleo-compartilhado/contracts/manifesto_harnesses.json`:
    - `skill`: `componentes/<scope>/skills/<name>/SKILL.md`
    - `mcp`: `componentes/<scope>/mcps/<name>/server.py`
    - `spec`: `componentes/<scope>/specs/<name>.md`
@@ -36,18 +36,18 @@ Renaming or deleting a skill: sync never deletes, so remove the old folder from 
 - NEVER edit `.claude/skills/`, `.agents/skills/`, `.opencode/skills/` or `.gemini/extensions/`: the next `components sync` overwrites them, and `auto_ingest_skills()` turns a stray harness-only folder into a new canonical skill.
 - NEVER run `components sync` without `--tipo` (`G_SYNC_CMD_ROT` fails the bare form in live docs).
 - NEVER delete a renamed or removed component's harness copies without the user's OK listing each path; sync only prunes leftover files inside a component folder (`_remover_sobras_diretorio`), never whole folders.
-- NEVER copy a third-party skill registered in `gates/dependencias_externas.json` into `componentes/`; its vendor installer owns it (`aidd-dependencies`).
+- NEVER copy a third-party skill registered in `modulos/04-nucleo-compartilhado/contracts/dependencias_externas.json` into `componentes/`; its vendor installer owns it (`aidd-dependencies`).
 - NEVER declare done on sync output alone, nor commit with `--no-verify`: only `components verify` exit 0 proves the copies match the source hash.
 
 ## Failure Modes & Fallback
 
 - **verify reports drift or orphan:** rerun `python ecossistema.py components sync --tipo <type>`; if the orphan is a whole old folder, list it to the user and remove it only after approval, then verify again.
 - **Unexpected `[AUTO-INGEST]` line in sync output:** a skill existed only in a harness folder. Diff it against the intended source, keep one canonical copy in `componentes/compartilhado/skills/<name>/`, and tell the user.
-- **`G_COMPONENTE_AGNOSTICO` fails at pre-commit:** a touched component lacks a harness copy listed in `gates/manifesto_harnesses.json`; resync that `--tipo` instead of copying files by hand.
+- **`G_COMPONENTE_AGNOSTICO` fails at pre-commit:** a touched component lacks a harness copy listed in `modulos/04-nucleo-compartilhado/contracts/manifesto_harnesses.json`; resync that `--tipo` instead of copying files by hand.
 
 ## Stopping Checklist
 
 - [ ] Only `componentes/<scope>/...` files changed by hand: `git status --porcelain -- componentes/` lists them and every harness diff comes from sync.
 - [ ] `python ecossistema.py components sync --tipo <type> > sync.txt 2>&1; echo $? > sync.rc` holds `0`.
 - [ ] `python ecossistema.py components verify --tipo <type> > verify.txt 2>&1; echo $? > verify.rc` holds `0`.
-- [ ] `python gates/G_SKILL_ROT.py > rot.txt 2>&1; echo $? > rot.rc` holds `0` (no orphan after a rename or delete).
+- [ ] `python modulos/04-nucleo-compartilhado/gates/G_SKILL_ROT.py > rot.txt 2>&1; echo $? > rot.rc` holds `0` (no orphan after a rename or delete).

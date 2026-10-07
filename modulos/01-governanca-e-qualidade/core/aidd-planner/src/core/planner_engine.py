@@ -466,8 +466,8 @@ def exportar_para_pipeline_execucao(plano: Dict[str, Any]) -> Dict[str, Any]:
         })
 
     barreira_sincronizacao = [
-        "gates/G_SAIDA_BINARIA.py",
-        "gates/G_TESTES_REAIS.py",
+        "modulos/04-nucleo-compartilhado/gates/G_SAIDA_BINARIA.py",
+        "modulos/01-governanca-e-qualidade/gates/G_TESTES_REAIS.py",
     ]
 
     todos_slices_ids = [t["id"] for t in fase_paralela]
@@ -499,10 +499,10 @@ def exportar_para_pipeline_execucao(plano: Dict[str, Any]) -> Dict[str, Any]:
             "id": "STEP-QUARTETO-SINE-QUA-NON",
             "titulo": "Validar conformidade dos 4 pilares do Quarteto Sine Qua Non (/docs, /webhooks, /mcp, /guia)",
             "arquivos_alvo": [
-                "gates/G_QUARTETO_SINE_QUA_NON.py",
+                "modulos/03-plataforma-e-entrega/gates/G_QUARTETO_SINE_QUA_NON.py",
                 "docs/guia/README.md",
             ],
-            "comando_validacao": "python gates/G_QUARTETO_SINE_QUA_NON.py",
+            "comando_validacao": "python modulos/03-plataforma-e-entrega/gates/G_QUARTETO_SINE_QUA_NON.py",
             "blocked_by": ["STEP-DB-MIGRATIONS"],
             "isolamento": "processo-isolado",
         },
@@ -616,7 +616,7 @@ def compilar_grafo_topologico_vsa(plano: Dict[str, Any]) -> Dict[str, Any]:
             "arquivos_esperados": arquivos_alvo,
             "barreira_validacao": {
                 "comandos_teste": [f"pytest tests/slices/test_{slug_bc}.py"],
-                "quality_gates": ["python gates/G_SAIDA_BINARIA.py", "python gates/G_TESTES_REAIS.py"],
+                "quality_gates": ["python modulos/04-nucleo-compartilhado/gates/G_SAIDA_BINARIA.py", "python modulos/01-governanca-e-qualidade/gates/G_TESTES_REAIS.py"],
             },
         })
 
@@ -652,7 +652,7 @@ def compilar_grafo_topologico_vsa(plano: Dict[str, Any]) -> Dict[str, Any]:
         "merge_strategy": "fast-forward",
         "post_merge_suite": [
             "python ecossistema.py audit",
-            "python gates/G_QUARTETO_SINE_QUA_NON.py",
+            "python modulos/03-plataforma-e-entrega/gates/G_QUARTETO_SINE_QUA_NON.py",
         ],
     }
 

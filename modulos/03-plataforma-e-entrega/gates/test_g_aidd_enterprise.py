@@ -12,8 +12,8 @@ import subprocess
 import sys
 from pathlib import Path
 
-ROOT_DIR = Path(__file__).resolve().parent.parent
-GATE_SCRIPT = ROOT_DIR / "gates" / "G_aidd_enterprise.py"
+ROOT_DIR = next((p.parent for p in Path(__file__).resolve().parents if p.name == "modulos"), Path(__file__).resolve().parent.parent)  # raiz: pai de modulos/ (VSA) ou de gates/ (árvore sintética)
+GATE_SCRIPT = ROOT_DIR / "modulos" / "03-plataforma-e-entrega" / "gates" / "G_aidd_enterprise.py"
 
 CONTEUDO = "# Skill enterprise\nComponente integro para o gate.\n"
 

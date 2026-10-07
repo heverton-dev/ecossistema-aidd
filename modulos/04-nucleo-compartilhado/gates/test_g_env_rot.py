@@ -16,13 +16,13 @@ from _gate_test_utils import rodar_gate
 
 GATE_DIR = os.path.dirname(os.path.abspath(__file__))
 GATE_PATH = os.path.join(GATE_DIR, "G_ENV_ROT.py")
-ROOT_DIR = os.path.dirname(GATE_DIR)
+ROOT_DIR = str(next(p.parent for p in __import__("pathlib").Path(__file__).resolve().parents if p.name == "modulos"))  # raiz do ecossistema
 
 
 def _preparar_arvore_sintetica(tmp_path: Path) -> Path:
     """Prepara a estrutura sintética com pasta gates/ e cópia do G_ENV_ROT.py."""
-    fake_gates = tmp_path / "gates"
-    fake_gates.mkdir(exist_ok=True)
+    fake_gates = tmp_path / "modulos" / "04-nucleo-compartilhado" / "gates"
+    fake_gates.mkdir(parents=True, exist_ok=True)
     shutil.copy2(GATE_PATH, fake_gates / "G_ENV_ROT.py")
     return fake_gates / "G_ENV_ROT.py"
 

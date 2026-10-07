@@ -35,8 +35,19 @@ from typing import Dict, List, Set, Tuple
 if hasattr(sys.stdout, "reconfigure"):
     sys.stdout.reconfigure(encoding="utf-8", errors="replace")
 
-ROOT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-GATES_DIR = os.path.join(ROOT_DIR, "gates")
+from pathlib import Path as _Path
+ROOT_DIR = str(next((p.parent for p in _Path(__file__).resolve().parents if p.name == "modulos"), _Path(__file__).resolve().parent.parent))  # raiz: pai de modulos/ (VSA) ou de gates/ (árvore sintética)
+GATES_DIR = os.path.dirname(os.path.abspath(__file__))
+# Pastas de gates do ecossistema (cada gate na fatia dona, MAPA-GATES.json); "gates" = árvore sintética.
+PASTAS_DE_GATES = (
+    "gates",
+    "modulos/01-governanca-e-qualidade/gates",
+    "modulos/02-triade-motores/fluxo-01-pure/gates",
+    "modulos/02-triade-motores/fluxo-02-open/gates",
+    "modulos/02-triade-motores/fluxo-03-freedom/gates",
+    "modulos/03-plataforma-e-entrega/gates",
+    "modulos/04-nucleo-compartilhado/gates",
+)
 EXCECOES_FILE = os.path.join(GATES_DIR, "excecoes_determinismo.json")
 
 # SDKs de LLM proibidos em rotas determinísticas
@@ -109,14 +120,15 @@ def auditar_arquivo(caminho: str) -> List[str]:
 
 
 def auditar_determinismo(repo_root: str = ROOT_DIR) -> Tuple[int, List[str], int]:
-    """Verifica todos os arquivos em gates/ e rotas mecânicas declaradas."""
+    """Verifica todos os gates do ecossistema (gates/ de cada fatia) e rotas mecânicas declaradas."""
     excecoes = carregar_excecoes()
     violations: List[str] = []
     total_auditados = 0
-    gates_dir = os.path.join(repo_root, "gates")
 
-    # Escopo 1: Todos os scripts em gates/ (excluindo testes que testam a própria detecção)
-    if os.path.isdir(gates_dir):
+    # Escopo 1: Todos os scripts das pastas de gates (excluindo testes que testam a própria detecção)
+    for gates_dir in [os.path.join(repo_root, *pasta.split("/")) for pasta in PASTAS_DE_GATES]:
+        if not os.path.isdir(gates_dir):
+            continue
         for root, _, files in os.walk(gates_dir):
             for file in sorted(files):
                 if not file.endswith(".py"):

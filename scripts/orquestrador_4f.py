@@ -170,7 +170,7 @@ ORCA_TELA_PARADA_S = 120
 PREAMBULO = ".aidd-preambulo.md"
 # Auto-registro de sessão do harness (agy) grava em secoes/; não é trabalho da fase (Bloco 2 Fase 9, Bloco 3 Fase 13).
 PASTAS_FORA_DO_COMMIT = ("secoes",)
-GATE_GRAPH_FIRST = Path(__file__).resolve().parent.parent / "gates" / "G_GRAPH_FIRST.py"
+GATE_GRAPH_FIRST = Path(__file__).resolve().parent.parent / "modulos" / "04-nucleo-compartilhado" / "gates" / "G_GRAPH_FIRST.py"
 _run_orca = {}
 
 
@@ -567,7 +567,7 @@ def testes_das_ferramentas_tocadas(arquivos, raiz):
                           for p in Path(a).parts[:-1] if p.startswith("aidd-")})
     if not ferramentas:
         return []
-    comandos = [(f'"{sys.executable}" gates/G_TESTES_REAIS.py',
+    comandos = [(f'"{sys.executable}" modulos/01-governanca-e-qualidade/gates/G_TESTES_REAIS.py',
                  {"AIDD_GATES_MODO": "rapido", "AIDD_TESTES_REAIS_FERRAMENTAS": ",".join(ferramentas)})]
     da_raiz = sorted(p.relative_to(raiz).as_posix() for f in ferramentas
                      for p in (Path(raiz) / "tests").glob(f"test_{f.removeprefix('aidd-')}_*.py"))

@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
 Teste do Quality Gate Determinístico de aidd-enterprise (Ticket 7 / D13).
-Exige que `gates/G_aidd_enterprise.py`:
+Exige que `modulos/03-plataforma-e-entrega/gates/G_aidd_enterprise.py`:
 - aprove (exit 0) manifest de componente conforme (schema + SHA-256);
 - reprove (exit 1) componente adulterado, hash divergente, schema quebrado
   e entrada inválida (Lei #13: portão que não morde é fachada).
@@ -16,7 +16,7 @@ from pathlib import Path
 import pytest
 
 ROOT_DIR = Path(__file__).resolve().parent.parent
-GATE_SCRIPT = ROOT_DIR / "gates" / "G_aidd_enterprise.py"
+GATE_SCRIPT = ROOT_DIR / "modulos" / "03-plataforma-e-entrega" / "gates" / "G_aidd_enterprise.py"
 
 CONTEUDO = "# Skill enterprise\nComponente integro para o gate.\n"
 

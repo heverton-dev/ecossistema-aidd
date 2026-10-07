@@ -10,11 +10,15 @@ import shutil
 from pathlib import Path
 import pytest
 
+import sys  # noqa: E402
+# _gate_test_utils mora no núcleo (modulos/04-nucleo-compartilhado/gates).
+sys.path.insert(0, str(next(p.parent for p in __import__("pathlib").Path(__file__).resolve().parents if p.name == "modulos")
+                       / "modulos" / "04-nucleo-compartilhado" / "gates"))
 from _gate_test_utils import rodar_gate
 
 GATE_DIR = os.path.dirname(os.path.abspath(__file__))
 GATE_PATH = os.path.join(GATE_DIR, "G_DOCS_ROT.py")
-ROOT_DIR = os.path.dirname(GATE_DIR)
+ROOT_DIR = str(next(p.parent for p in __import__("pathlib").Path(__file__).resolve().parents if p.name == "modulos"))  # raiz do ecossistema
 
 
 def test_g_docs_rot_passa_no_repositorio():
@@ -27,8 +31,8 @@ def test_g_docs_rot_passa_no_repositorio():
 def test_g_docs_rot_detecta_link_quebrado(tmp_path):
     """Valida que G_DOCS_ROT reprova (exit 1) quando existe link relativo quebrado."""
     # Monta estrutura sintética
-    fake_gates = tmp_path / "gates"
-    fake_gates.mkdir()
+    fake_gates = tmp_path / "modulos" / "01-governanca-e-qualidade" / "gates"
+    fake_gates.mkdir(parents=True)
     shutil.copy2(GATE_PATH, fake_gates / "G_DOCS_ROT.py")
 
     fake_docs = tmp_path / "docs" / "protocolos"
@@ -49,8 +53,8 @@ def test_g_docs_rot_detecta_link_quebrado(tmp_path):
 
 def test_g_docs_rot_detecta_plano_orfaos(tmp_path):
     """Valida que G_DOCS_ROT reprova (exit 1) quando existe plano fora dos buckets canônicos."""
-    fake_gates = tmp_path / "gates"
-    fake_gates.mkdir()
+    fake_gates = tmp_path / "modulos" / "01-governanca-e-qualidade" / "gates"
+    fake_gates.mkdir(parents=True)
     shutil.copy2(GATE_PATH, fake_gates / "G_DOCS_ROT.py")
 
     fake_planos = tmp_path / "docs" / "planos"

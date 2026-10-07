@@ -195,7 +195,7 @@ O detalhe e a evidência de cada achado estão no Apêndice B e em `docs/auditor
 
 Um harness é o programa onde o agente trabalha (Claude Code, OpenCode, Cursor e outros). Cada um lê as peças de uma pasta própria, gerada a partir de uma fonte única.
 
-Onde mora: `gates/manifesto_harnesses.json`. Quem confere: o `components verify`, o `G_HARNESS_COMPAT` e o `G_UNIVERSAL_HARNESS`.
+Onde mora: `modulos/04-nucleo-compartilhado/contracts/manifesto_harnesses.json`. Quem confere: o `components verify`, o `G_HARNESS_COMPAT` e o `G_UNIVERSAL_HARNESS`.
 
 ## 8.2 Os números de hoje
 

@@ -16,8 +16,9 @@ import sys
 import tempfile
 import pytest
 
-ROOT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-GATES_DIR = os.path.join(ROOT_DIR, "gates")
+from pathlib import Path as _Path
+ROOT_DIR = str(next((p.parent for p in _Path(__file__).resolve().parents if p.name == "modulos"), _Path(__file__).resolve().parent.parent))  # raiz: pai de modulos/ (VSA) ou de gates/ (árvore sintética)
+GATES_DIR = os.path.dirname(os.path.abspath(__file__))
 GATE_SCRIPT = os.path.join(GATES_DIR, "G_DETERMINISMO_LEI_1.py")
 
 
@@ -39,7 +40,7 @@ def test_aprova_gates_determinismo_conformes():
 def test_reprova_quando_llm_sdk_injetado_em_gates():
     """Prova que o portão morde (Lei #13): injeção de import openai/anthropic deve retornar exit 1."""
     with tempfile.TemporaryDirectory() as tmp_dir:
-        tmp_gates = os.path.join(tmp_dir, "gates")
+        tmp_gates = os.path.join(tmp_dir, "modulos", "01-governanca-e-qualidade", "gates")
         os.makedirs(tmp_gates, exist_ok=True)
         synthetic_gate_file = os.path.join(tmp_gates, "G_SYNTHETIC_LLM_TRAP.py")
         with open(synthetic_gate_file, "w", encoding="utf-8") as f:
@@ -63,7 +64,7 @@ def test_reprova_quando_llm_sdk_injetado_em_gates():
 def test_reprova_quando_import_from_llm_sdk_injetado():
     """Prova que o portão morde com 'from anthropic import Anthropic' (exit 1)."""
     with tempfile.TemporaryDirectory() as tmp_dir:
-        tmp_gates = os.path.join(tmp_dir, "gates")
+        tmp_gates = os.path.join(tmp_dir, "modulos", "01-governanca-e-qualidade", "gates")
         os.makedirs(tmp_gates, exist_ok=True)
         synthetic_gate_file = os.path.join(tmp_gates, "G_SYNTHETIC_ANTHROPIC_TRAP.py")
         with open(synthetic_gate_file, "w", encoding="utf-8") as f:

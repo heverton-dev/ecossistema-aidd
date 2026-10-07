@@ -27,11 +27,12 @@ import sys
 import tempfile
 import pytest
 
-ROOT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+from pathlib import Path as _Path
+ROOT_DIR = str(next((p.parent for p in _Path(__file__).resolve().parents if p.name == "modulos"), _Path(__file__).resolve().parent.parent))  # raiz: pai de modulos/ (VSA) ou de gates/ (árvore sintética)
 if ROOT_DIR not in sys.path:
     sys.path.insert(0, ROOT_DIR)
 
-from gates.G_SKILL_ROT import (
+from G_SKILL_ROT import (
     auditar_skills,
     auditar_orfaos_em_mirrors,
     resolver_referencia_estatica,
@@ -40,7 +41,7 @@ from gates.G_SKILL_ROT import (
     obter_subcomandos_ecossistema,
 )
 
-GATE_SCRIPT = os.path.join(ROOT_DIR, "gates", "G_SKILL_ROT.py")
+GATE_SCRIPT = os.path.join(ROOT_DIR, "modulos", "04-nucleo-compartilhado", "gates", "G_SKILL_ROT.py")
 
 
 def test_gate_aprova_estado_atual_do_repositorio():
@@ -211,14 +212,14 @@ def test_gate_reprova_skill_orfa_no_harness():
 
 
 def test_orfaos_ignora_skill_de_terceiro_declarada_em_dependencias_externas():
-    """Skill de terceiro registrada em gates/dependencias_externas.json (pela chave ou
+    """Skill de terceiro registrada em modulos/04-nucleo-compartilhado/contracts/dependencias_externas.json (pela chave ou
     pelo padrao */skills/<nome>/ do gitignore) vive so no harness: nao e orfa. A nao
     declarada continua reprovada."""
     import json
     with tempfile.TemporaryDirectory() as temp_root:
         os.makedirs(os.path.join(temp_root, "componentes", "compartilhado", "skills"))
-        os.makedirs(os.path.join(temp_root, "gates"))
-        with open(os.path.join(temp_root, "gates", "dependencias_externas.json"), "w", encoding="utf-8") as f:
+        os.makedirs(os.path.join(temp_root, "modulos", "04-nucleo-compartilhado", "contracts"))
+        with open(os.path.join(temp_root, "modulos", "04-nucleo-compartilhado", "contracts", "dependencias_externas.json"), "w", encoding="utf-8") as f:
             json.dump({"skills": {
                 "wrangler": {"gitignore": ["*/skills/wrangler/"]},
                 "cloudflare-bundle": {"gitignore": ["*/skills/review-changes/", "CLAUDE.md"]},
