@@ -35,6 +35,7 @@ def criar_parser() -> argparse.ArgumentParser:
     subparsers.add_parser("inspect", help="Inspeciona a estrutura modular VSA.")
     subparsers.add_parser("verify", help="Verifica a integridade das fatias verticais VSA.")
     subparsers.add_parser("status", help="Exibe o status atual da arquitetura VSA.")
+    subparsers.add_parser("reconcile", help="Gera o relatório de divergências entre tools e modulos.")
     subparsers.add_parser("index-subgraphs", help="Indexa todos os subgrafos federados no codebase-memory-mcp.")
 
     return parser
@@ -209,6 +210,15 @@ def comando_index_subgraphs(raiz: Path) -> int:
         return 1
 
 
+def comando_reconcile(raiz: Path) -> int:
+    try:
+        from scripts.reconciliar_copias_vsa import main as reconciliar_main
+        return reconciliar_main(["--raiz", str(raiz)])
+    except Exception as e:
+        print(f"[modularizacao-vsa] Erro ao executar reconciliação: {e}")
+        return 1
+
+
 def main(args: Optional[List[str]] = None) -> int:
     if args is None:
         args = sys.argv[1:]
@@ -231,6 +241,8 @@ def main(args: Optional[List[str]] = None) -> int:
         return comando_verify(raiz)
     elif parsed.subcomando == "status":
         return comando_status(raiz)
+    elif parsed.subcomando == "reconcile":
+        return comando_reconcile(raiz)
     elif parsed.subcomando == "index-subgraphs":
         return comando_index_subgraphs(raiz)
     else:
