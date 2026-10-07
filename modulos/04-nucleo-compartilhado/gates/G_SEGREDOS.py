@@ -27,8 +27,11 @@ Achados já revisados e catalogados no baseline .secrets.baseline (raiz do
 ecossistema) — fixtures de teste, placeholders de demonstração — não
 reprovam o gate; um achado novo, fora do baseline, reprova.
 
-Para atualizar o baseline depois de revisar manualmente um achado novo:
-  1. python -m detect_secrets scan --baseline .secrets.baseline
+O gate só LÊ o baseline (ciclo-03 VSA, Ticket 9): o detect-secrets trabalha
+numa cópia temporária, então rodar o gate não regrava .secrets.baseline (antes
+o pre-commit reprovava com "files were modified by this hook"). Atualizar o
+baseline é um comando explícito e separado:
+  1. python scripts/atualizar_baseline_segredos.py
   2. python -m detect_secrets audit .secrets.baseline   (marca real/falso positivo)
   3. Commitar o .secrets.baseline atualizado.
 
@@ -39,8 +42,10 @@ Uso:
 """
 
 import os
+import shutil
 import subprocess
 import sys
+import tempfile
 
 _GATES_DIR = os.path.dirname(os.path.abspath(__file__))
 if _GATES_DIR not in sys.path:
@@ -134,28 +139,6 @@ def escopo_de_varredura():
     return modo, rotulo, arquivos
 
 
-def _sanitizar_baseline(caminho_baseline):
-    """Garante que o filtro is_baseline_file use caminho relativo, sem vazar caminhos absolutos."""
-    if not os.path.isfile(caminho_baseline):
-        return
-    try:
-        import json
-        with open(caminho_baseline, "r", encoding="utf-8") as f:
-            data = json.load(f)
-        alterado = False
-        for filtro in data.get("filters_used", []):
-            if filtro.get("path") == "detect_secrets.filters.common.is_baseline_file":
-                if filtro.get("filename") != ".secrets.baseline":
-                    filtro["filename"] = ".secrets.baseline"
-                    alterado = True
-        if alterado:
-            with open(caminho_baseline, "w", encoding="utf-8") as f:
-                json.dump(data, f, indent=2)
-                f.write("\n")
-    except Exception:
-        pass
-
-
 def escanear():
     print("=" * 70)
     print(" [GATE] G_SEGREDOS — Varredura de credenciais hardcoded (detect-secrets)")
@@ -172,9 +155,15 @@ def escanear():
     print(f"[INFO] Escopo {modo}: {rotulo}.")
 
     tem_baseline = os.path.exists(BASELINE_PATH)
+    copia_baseline = None
     if tem_baseline:
-        print(f"[OK] Baseline carregado de {os.path.relpath(BASELINE_PATH, ROOT_DIR)}")
-        argv = ["--baseline", ARQUIVO_BASELINE]
+        print(f"[OK] Baseline carregado de {os.path.relpath(BASELINE_PATH, ROOT_DIR)} (somente leitura)")
+        # Cópia temporária: o detect-secrets pode querer regravar números de linha;
+        # isso nunca chega ao arquivo versionado.
+        fd, copia_baseline = tempfile.mkstemp(prefix="aidd_baseline_", suffix=".json")
+        os.close(fd)
+        shutil.copyfile(BASELINE_PATH, copia_baseline)
+        argv = ["--baseline", copia_baseline]
     else:
         print("[AVISO] Nenhum .secrets.baseline encontrado — tolerância zero "
               "(qualquer achado é tratado como novo).")
@@ -193,15 +182,16 @@ def escanear():
     try:
         codigo = pre_commit_hook.main(argv)
     finally:
-        _sanitizar_baseline(BASELINE_PATH)
         os.chdir(cwd_original)
+        if copia_baseline and os.path.exists(copia_baseline):
+            os.remove(copia_baseline)
 
     print("\n" + "=" * 70)
     if codigo not in (0, 3):
         print(" [FALHA] Quality Gate REPROVADO — achado(s) de credencial fora do baseline.")
         print(
             "\nSe for um falso positivo real, revise e adicione ao baseline com "
-            "`python -m detect_secrets scan --baseline .secrets.baseline`, audite "
+            "`python scripts/atualizar_baseline_segredos.py`, audite "
             "com `python -m detect_secrets audit .secrets.baseline` e comite o "
             "baseline atualizado. Se for um segredo de verdade, remova-o do "
             "arquivo e rotacione a credencial imediatamente."
@@ -210,8 +200,9 @@ def escanear():
         return 1
 
     if codigo == 3:
-        print(" [ATENÇÃO] .secrets.baseline foi atualizado automaticamente "
-              "(números de linha desatualizados). Rode `git add .secrets.baseline`.")
+        print(" [INFO] Números de linha do .secrets.baseline estão desatualizados "
+              "(o arquivo NÃO foi alterado). Para atualizar: "
+              "`python scripts/atualizar_baseline_segredos.py`.")
 
     print(" [SUCESSO] Quality Gate G_SEGREDOS APROVADO (100% OK)!")
     print("=" * 70)
