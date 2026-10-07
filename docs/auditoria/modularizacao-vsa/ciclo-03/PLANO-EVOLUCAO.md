@@ -27,6 +27,7 @@ Origem: `DIAGNOSTICO.md` (auditoria por reprodução real, 06/10/2026). Critéri
 | 6 Micro-gates | 16 | Autônomo |
 | 7 Contexto enxuto | 17–19 | Com o usuário no 19 (apagar grafos) |
 | 8 Fechamento | 20–22 | Autônomo |
+| 9 Esqueleto único (achado do Bloco 4) | 23 | Com o usuário (escolha do dono e remoções) |
 
 **Desvio consciente do padrão (§7, salvaguarda 4):** não ficam proxies de código em `tools/`. Os nomes antigos de comando da CLI continuam como apelido; a pasta `tools/` deixa só um `LEIA-ME.md` por 1 ciclo. Motivo: proxy em pasta mantém a duplicação viva e confunde os gates.
 
@@ -363,3 +364,23 @@ Origem: `DIAGNOSTICO.md` (auditoria por reprodução real, 06/10/2026). Critéri
   - Write LAUDO-REVISADO.md. For each finding in DIAGNOSTICO.md give the proof command and its exit code.
   - Regenerate visual maps and books. Update the architecture standard status and record the deviations.
   - Run audit. Run tests/test_mapas_e_livros_em_dia.py. Assert exit 0.
+
+## Bloco 9 — Esqueleto único enterprise × master (Ticket 23) · com o usuário
+
+> Achado do Bloco 4 (07/10/2026), registrado por decisão do usuário em vez de corrigido dentro do bloco.
+
+### Ticket 23: Uma cópia só do esqueleto de app entre aidd-enterprise e aidd-master (Refere-se a D15 / DoD 1 e DoD 4)
+- **Falha 15-D:** `D15. Output Consolidado e Handoff`
+- **Artefato de Handoff:** `tests/test_esqueleto_unico_enterprise_master.py`
+- **Gate do Ticket:** `python -m pytest -q -p no:cacheprovider tests/test_esqueleto_unico_enterprise_master.py tests/test_interfaces_fatias.py`
+- **Requisito TDD (Red):** Reprova se um arquivo de `src/` ou `alembic/` for idêntico byte a byte entre as duas ferramentas fora do núcleo vendorizado (`src/core`, vigiado pelo `G_DRIFT_NUCLEO_COMPARTILHADO`), ou se `allowlist_pacotes_repetidos.json` ainda tiver entradas. Medido em 07/10: 44 arquivos idênticos fora do núcleo (`src/modules/modulo1` 18, `src/shared` 9, `src/static` 4, `server.py`, `alembic` 4…) e 5 pacotes perdoados (`alembic`, `application`, `core`, `modules`, `shared`).
+- **Implementação Técnica:**
+  - Escolher com o usuário o dono do esqueleto (almoxarifado como peça, ou uma das duas ferramentas expondo pelo `interface.py`).
+  - O que é idêntico sai de uma das ferramentas (lista do que sai e para onde foi, Lei #7); `application/commands` continua de cada ferramenta (12 comandos divergem: `plan`, `compose`, `bench`…).
+  - Renomear os pacotes restantes para nomes únicos por fatia; esvaziar `allowlist_pacotes_repetidos.json`.
+- **Verificação (Green):** teste passa; suítes do enterprise e do master com o mesmo número de testes passando; `G_DRIFT_NUCLEO_COMPARTILHADO` e `G_MODULO_FRONTEIRA` exit 0.
+- **Construtor Prompt (EN):**
+  - Write tests/test_esqueleto_unico_enterprise_master.py first. Assert no byte identical file in src or alembic between both tools outside src/core. Assert allowlist_pacotes_repetidos.json is empty. Run. Assert exit 1.
+  - Ask the user who owns the skeleton. List what leaves and where it goes before deleting.
+  - Rewire both tools to the single copy. Rename remaining colliding packages. Empty the allowlist.
+  - Run test. Run enterprise and master suites. Assert exit 0 and same passing counts.
