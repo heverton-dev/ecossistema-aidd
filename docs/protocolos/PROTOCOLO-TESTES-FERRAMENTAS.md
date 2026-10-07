@@ -21,7 +21,7 @@ flowchart TD
 ### 1. Corrigir os Bugs (Auto-Correção Iterativa Obrigatória)
 - **Auto-correção até 100% de Conformidade:** Executar ciclo contínuo de diagnóstico, correção e auditoria até que a taxa de conformidade atinja 100% e ZERO inconsistências permaneçam no alvo.
 - Identificar a causa raiz (template desatualizado, violação de regra de tokens, syntax error, etc.).
-- Corrigir o código fonte ou os templates no repositório do ecossistema (`tools/aidd-*`).
+- Corrigir o código fonte ou os templates no repositório do ecossistema (`modulos/**/aidd-*`).
 - Rodar a suite de testes unitários da ferramenta até garantir aprovação total antes de avançar.
 
 ### 2. Commit e Push das Correções

@@ -7,8 +7,8 @@ Verificacao mecanica da Regra de Ouro #9 (AGENTS.md §2, "Honestidade de
 Rotulo"): nenhuma mensagem de saida de gate/CLI pode usar linguagem que
 sugira certificacao/seguranca maior do que a cobertura real testada.
 
-Origem real do achado que motivou a regra: tools/aidd-master/scripts/gates/
-G_SEGURANCA.py e tools/aidd-enterprise/scripts/gates/G_SEGURANCA.py imprimem
+Origem real do achado que motivou a regra: modulos/03-plataforma-e-entrega/fatiamento-master/aidd-master/scripts/gates/
+G_SEGURANCA.py e modulos/03-plataforma-e-entrega/blindagem-enterprise/aidd-enterprise/scripts/gates/G_SEGURANCA.py imprimem
 "Score de Blindagem: 100.0% (NOTA A+)" para um gate onde apenas ~4 dos 21
 checks sao funcionais reais (o resto e grep/config estatico) — ver
 docs/planos/fazendo/01-correcao-pos-auditoria-sem-maquiagem/
@@ -28,13 +28,13 @@ Diretorios auditados (gates/ da raiz e scripts/gates/ ou gates/ de cada
 ferramenta — templates/gates do aidd-forge inclusos porque sao carimbados
 literalmente em todo projeto gerado pela ferramenta):
   - gates/
-  - tools/aidd-master/scripts/gates/
-  - tools/aidd-enterprise/scripts/gates/
-  - tools/aidd-pure/scripts/gates/
-  - tools/aidd-ops/gates/
-  - tools/aidd-forge/aidd_forge/templates/gates/
+  - modulos/03-plataforma-e-entrega/fatiamento-master/aidd-master/scripts/gates/
+  - modulos/03-plataforma-e-entrega/blindagem-enterprise/aidd-enterprise/scripts/gates/
+  - modulos/02-triade-motores/fluxo-01-pure/core/aidd-pure/scripts/gates/
+  - modulos/03-plataforma-e-entrega/operacoes-ops/aidd-ops/gates/
+  - modulos/01-governanca-e-qualidade/core/aidd-forge/aidd_forge/templates/gates/
 Fora do escopo (deliberado): tools/*/materiais-extras/examples/** (material
-de documentacao/exemplo, nao script vivo) e tools/aidd-forge/sandbox-forge-teste/
+de documentacao/exemplo, nao script vivo) e modulos/01-governanca-e-qualidade/core/aidd-forge/sandbox-forge-teste/
 (saida gerada de um teste manual, nao fonte).
 
 Lista de termos proibidos em gates/termos_proibidos_marketing.json (edita-se
@@ -62,12 +62,12 @@ TERMOS_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "termos_p
 
 DIRETORIOS_AUDITADOS = [
     "gates",
-    "tools/aidd-master/scripts/gates",
+    "modulos/03-plataforma-e-entrega/fatiamento-master/aidd-master/scripts/gates",
     "componentes/compartilhado/gates",
     "componentes/compartilhado/injetor",
-    "tools/aidd-pure/scripts/gates",
-    "tools/aidd-ops/gates",
-    "tools/aidd-forge/aidd_forge/templates/gates",
+    "modulos/02-triade-motores/fluxo-01-pure/core/aidd-pure/scripts/gates",
+    "modulos/03-plataforma-e-entrega/operacoes-ops/aidd-ops/gates",
+    "modulos/01-governanca-e-qualidade/core/aidd-forge/aidd_forge/templates/gates",
 ]
 
 # Arquivos utilitarios/de teste dentro dos diretorios de gate não são o

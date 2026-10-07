@@ -46,7 +46,7 @@ def test_telemetria_nao_vaza_git_do_hook(tmp_path, monkeypatch):
     antes = _git(isca, "rev-list", "--count", "HEAD")
 
     raiz = tmp_path / "raiz"
-    ferramenta = raiz / "tools" / "ferramenta-falsa"
+    ferramenta = raiz / "modulos" / "ferramenta-falsa"
     ferramenta.mkdir(parents=True)
     (ferramenta / "test_commit.py").write_text(TESTE_DA_FERRAMENTA, encoding="utf-8")
 

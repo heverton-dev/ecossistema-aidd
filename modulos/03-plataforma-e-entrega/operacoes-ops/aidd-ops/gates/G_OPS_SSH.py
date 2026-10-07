@@ -3,7 +3,7 @@
 =============================================================================
 AIDD-Ops — QUALITY GATE DETERMINÍSTICO SSH (G_OPS_SSH)
 =============================================================================
-Validação estrita via AST de tools/aidd-ops/src/core/ssh_runner.py (NIH #15:
+Validação estrita via AST de modulos/03-plataforma-e-entrega/operacoes-ops/aidd-ops/src/core/ssh_runner.py (NIH #15:
 hardening manual via paramiko substituído por Ansible + devsec.hardening):
 1. Zero injeção de comandos (nenhuma chamada a subprocess/os.system/os.popen
    ou exec_command com concatenação/f-string dinâmica baseada em argumentos

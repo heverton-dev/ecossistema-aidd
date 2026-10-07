@@ -84,7 +84,7 @@ try:
     from nextjs_exporter import NextJSExporter
 except ImportError:
     _njs_dir = os.path.join(
-        os.path.dirname(__file__), "..", "..", "..", "componentes", "compartilhado", "src-core"
+        _achar_raiz_repo(os.path.dirname(__file__)), "componentes", "compartilhado", "src-core"
     )
     if os.path.isdir(_njs_dir) and _njs_dir not in sys.path:
         sys.path.insert(0, _njs_dir)
@@ -104,7 +104,7 @@ try:
     from design_catalog import resolver_paleta_projeto, hex_para_rgb_str, clarear_hex, escolher_paleta
 except ImportError:
     _dc_dir = os.path.join(
-        os.path.dirname(__file__), "..", "..", "..", "componentes", "compartilhado", "src-core"
+        _achar_raiz_repo(os.path.dirname(__file__)), "componentes", "compartilhado", "src-core"
     )
     if os.path.isdir(_dc_dir) and _dc_dir not in sys.path:
         sys.path.insert(0, _dc_dir)

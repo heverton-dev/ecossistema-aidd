@@ -54,13 +54,13 @@ O detalhe e a evidência de cada achado estão no Apêndice B e em `docs/auditor
 #ficha(
   ("Mapa", "mapa-02-ferramentas.html"),
   ("Para que serve", "as 8 ferramentas, seus comandos de CLI e as tarefas com mais de uma dona"),
-  ("Achados em aberto", "0"),
+  ("Achados em aberto", "1"),
 )
 ```
 
 ## 2.1 O que é
 
-Uma ferramenta é uma pequena fábrica especialista em `tools/aidd-<nome>/`, chamada pelo painel `ecossistema.py`. Cada uma deveria fazer um trabalho só.
+Uma ferramenta é uma pequena fábrica especialista em `modulos/<fatia>/.../aidd-<nome>/`, chamada pelo painel `ecossistema.py`. Cada uma deveria fazer um trabalho só.
 
 Onde mora: `tools/`. Quem confere: o `G_TESTES_REAIS` (pytest de cada ferramenta) e o `G_DISCIPLINA_TESTE_FERRAMENTA`.
 
@@ -77,7 +77,7 @@ Os números saem de `docs/auditoria/mapa-pecas/catalogo-pecas.json` (função `c
 
 ## 2.3 O que falta consertar
 
-Nenhum achado em aberto para este mapa.
+- **Alta** · 69 arquivos idênticos copiados entre ferramentas (`CAT-arquivos-identicos`).
 
 Já resolvido:
 

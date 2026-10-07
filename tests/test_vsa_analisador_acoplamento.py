@@ -8,7 +8,7 @@ import os
 from tools.aidd_master.core import algo
 from tools.aidd_pure.engine import roda
 """
-    relatorio = analisar_codigo_fonte(codigo, modulo_origem="tools/aidd-forge")
+    relatorio = analisar_codigo_fonte(codigo, modulo_origem="modulos/01-governanca-e-qualidade/core/aidd-forge")
 
     assert isinstance(relatorio, dict)
     assert "status" in relatorio
@@ -18,7 +18,7 @@ from tools.aidd_pure.engine import roda
     assert "acoplamento_detectado" in relatorio
 
     # Validação do envelope estrito
-    assert relatorio["modulo_origem"] == "tools/aidd-forge"
+    assert relatorio["modulo_origem"] == "modulos/01-governanca-e-qualidade/core/aidd-forge"
     assert relatorio["total_imports"] == 3
     assert len(relatorio["imports_externos"]) == 2
     assert "tools.aidd_master.core" in relatorio["imports_externos"]

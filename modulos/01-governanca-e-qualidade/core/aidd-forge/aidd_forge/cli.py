@@ -22,7 +22,7 @@ from aidd_forge.core.universal_injector import UniversalInjector
 TEMPLATES_ROOT = Path(__file__).parent / "templates"
 
 # Raiz do toolbox ecossistema-aidd (4 niveis acima deste arquivo:
-# aidd_forge/ -> tools/aidd-forge/ -> tools/ -> ecossistema-aidd/), quando
+# aidd_forge/ -> modulos/01-governanca-e-qualidade/core/aidd-forge/ -> tools/ -> ecossistema-aidd/), quando
 # o aidd-forge estiver rodando dentro do monorepo. Usado para gravar slash
 # commands auto-contidos (sem depender de instalacao pip do aidd-forge, que
 # pode ficar orfa se o clone do toolbox for movido ou apagado). Ausente

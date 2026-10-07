@@ -10,7 +10,17 @@ import os
 import sys
 from typing import Dict, List, Any
 
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "..", "..", "componentes", "compartilhado", "src-core"))
+
+def _achar_raiz_repo(inicio: str) -> str:
+    """Sobe pastas até achar ecossistema.py (raiz do repo), sem depender da profundidade."""
+    curr = os.path.abspath(inicio)
+    while os.path.dirname(curr) != curr:
+        if os.path.isfile(os.path.join(curr, "ecossistema.py")):
+            return curr
+        curr = os.path.dirname(curr)
+    return os.path.abspath(inicio)
+
+sys.path.insert(0, os.path.join(_achar_raiz_repo(os.path.dirname(__file__)), "componentes", "compartilhado", "src-core"))
 from core.result import Result
 
 

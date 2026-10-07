@@ -216,9 +216,9 @@
   "catalogo": {
     "descricao": "Copias de pecas do CATALOGO.json que divergem de proposito da versao do catalogo (chave = caminho da copia, valor = motivo). Toda outra copia tem de ser byte-identica a peca. As copias saem do repo no Ticket 19 (remocao com o usuario).",
     "divergencias_documentadas": {
-      "tools/aidd-enterprise/src/core/detector_camada.py": "Copia com _PROJETO_PADRAO fixo em 'aidd-enterprise'; a peça deduz o projeto pela localização. Desde o Ticket 18 o enterprise carrega a peça (application/pecas_catalogo.py). Copia antiga, fica no disco até a remoção com o usuário (Ticket 19).",
-      "tools/aidd-master/src/core/detector_camada.py": "Copia com _PROJETO_PADRAO fixo em 'aidd-master'; a peça deduz o projeto pela localização. Copia antiga, fica no disco até a remoção com o usuário (Ticket 19).",
-      "tools/aidd-master/src/core/profiles_registry.py": "Versão do aidd-master (hooks em JSON, 9325afa); a peça é a base do enterprise com esses hooks juntados. Copia antiga, fica no disco até a remoção com o usuário (Ticket 19)."
+      "modulos/03-plataforma-e-entrega/blindagem-enterprise/aidd-enterprise/src/core/detector_camada.py": "Copia com _PROJETO_PADRAO fixo em 'aidd-enterprise'; a peça deduz o projeto pela localização. Desde o Ticket 18 o enterprise carrega a peça (application/pecas_catalogo.py). Copia antiga, fica no disco até a remoção com o usuário (Ticket 19).",
+      "modulos/03-plataforma-e-entrega/fatiamento-master/aidd-master/src/core/detector_camada.py": "Copia com _PROJETO_PADRAO fixo em 'aidd-master'; a peça deduz o projeto pela localização. Copia antiga, fica no disco até a remoção com o usuário (Ticket 19).",
+      "modulos/03-plataforma-e-entrega/fatiamento-master/aidd-master/src/core/profiles_registry.py": "Versão do aidd-master (hooks em JSON, 9325afa); a peça é a base do enterprise com esses hooks juntados. Copia antiga, fica no disco até a remoção com o usuário (Ticket 19)."
     }
   }
 }

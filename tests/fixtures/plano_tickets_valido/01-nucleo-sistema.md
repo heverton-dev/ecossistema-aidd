@@ -12,7 +12,7 @@
 
 ### [TICKET-02] Implementar motor de execucao síncrono
 - **Target Files:**
-  - `tools/aidd-master/scripts/orchestrator_pipeline.py`
+  - `modulos/03-plataforma-e-entrega/fatiamento-master/aidd-master/scripts/orchestrator_pipeline.py`
   - `tests/test_orchestrator_pipeline.py`
 - **Validation Command:** `pytest tests/test_orchestrator_pipeline.py`
 - **Blocked By:** [TICKET-01]

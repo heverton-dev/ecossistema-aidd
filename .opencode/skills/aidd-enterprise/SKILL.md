@@ -27,7 +27,7 @@ Done when: the command exits 0 with no hash divergence reported.
 - NEVER use `--remover` to delete an injected component without explicit user OK.
 - NEVER delete `.ENTERPRISE-SNAPSHOT/` or `.ENTERPRISE-ROLLBACK-JOURNAL.json` by hand; recover with `python componentes/compartilhado/skills/aidd-enterprise/scripts/rollback.py <target>`.
 - NEVER fix a SHA-256 divergence by rewriting `CAPABILITIES.json` hashes; find who edited the component, then re-inject it.
-- NEVER mistype the subcommand: `tools/aidd-enterprise/scripts/aidd.py` routes unknown words to natural-language injection instead of failing.
+- NEVER mistype the subcommand: `modulos/03-plataforma-e-entrega/blindagem-enterprise/aidd-enterprise/scripts/aidd.py` routes unknown words to natural-language injection instead of failing.
 - NEVER put real tokens in `--mcp-env`; pass variable names and let the user fill values.
 
 ## Failure Modes & Fallback

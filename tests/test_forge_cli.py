@@ -84,7 +84,7 @@ def test_falha_no_script_local_retorna_exit_1(monkeypatch):
 
 
 def test_conecta_ao_pacote_local_do_repositorio():
-    """A CLI aponta para o pacote local tools/aidd-forge (conexao deterministica)."""
+    """A CLI aponta para o pacote local modulos/01-governanca-e-qualidade/core/aidd-forge (conexao deterministica)."""
     cli = carregar_cli_forge()
     raiz_pacote = cli.raiz_pacote_local()
     assert raiz_pacote is not None

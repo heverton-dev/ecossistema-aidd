@@ -3,41 +3,41 @@
   "nicho": "clinicas",
   "nome_exibicao": "Clínicas & Odontologia",
   "descricao": "Plano de infraestrutura para o nicho de Clínicas e Odontologia. Mapeia ferramentas do catálogo para blocos construtivos canônicos.",
-  "fonte": "tools/aidd-ops/data/catalogo_nichos.json → nicho 'clinicas'",
+  "fonte": "modulos/03-plataforma-e-entrega/operacoes-ops/aidd-ops/data/catalogo_nichos.json → nicho 'clinicas'",
   "blocos": [
     {
       "slug": "traefik",
-      "caminho": "tools/aidd-ops/templates/infra/traefik/",
+      "caminho": "modulos/03-plataforma-e-entrega/operacoes-ops/aidd-ops/templates/infra/traefik/",
       "obrigatorio": true,
       "motivo": "Reverse proxy e terminação TLS para todos os serviços expostos publicamente"
     },
     {
       "slug": "postgres",
-      "caminho": "tools/aidd-ops/templates/infra/postgres/",
+      "caminho": "modulos/03-plataforma-e-entrega/operacoes-ops/aidd-ops/templates/infra/postgres/",
       "obrigatorio": true,
       "motivo": "Banco centralizado para Twenty, Chatwoot e Cal.com"
     },
     {
       "slug": "authentik",
-      "caminho": "tools/aidd-ops/templates/infra/authentik/",
+      "caminho": "modulos/03-plataforma-e-entrega/operacoes-ops/aidd-ops/templates/infra/authentik/",
       "obrigatorio": false,
       "motivo": "SSO/OIDC centralizado (recomendado para multi-equipes)"
     },
     {
       "slug": "twenty",
-      "caminho": "tools/aidd-ops/templates/infra/twenty/",
+      "caminho": "modulos/03-plataforma-e-entrega/operacoes-ops/aidd-ops/templates/infra/twenty/",
       "obrigatorio": true,
       "motivo": "CRM Twenty — gestão de pacientes e contatos"
     },
     {
       "slug": "chatwoot",
-      "caminho": "tools/aidd-ops/templates/infra/chatwoot/",
+      "caminho": "modulos/03-plataforma-e-entrega/operacoes-ops/aidd-ops/templates/infra/chatwoot/",
       "obrigatorio": true,
       "motivo": "Atendimento ao paciente via chat/WhatsApp"
     },
     {
       "slug": "calcom",
-      "caminho": "tools/aidd-ops/templates/infra/calcom/",
+      "caminho": "modulos/03-plataforma-e-entrega/operacoes-ops/aidd-ops/templates/infra/calcom/",
       "obrigatorio": true,
       "motivo": "Agendamento de consultas online"
     }

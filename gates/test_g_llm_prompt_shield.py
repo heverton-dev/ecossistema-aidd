@@ -72,7 +72,7 @@ def responder(prompt_usuario):
 
 def test_gate_reprova_com_chamada_llm_insegura(tmp_path, monkeypatch):
     """Lei #13: Prova que o gate morde (exit 1) se houver chamada LLM desprotegida."""
-    tools_dir = tmp_path / "tools" / "servico_teste"
+    tools_dir = tmp_path / "modulos" / "servico_teste"
     tools_dir.mkdir(parents=True)
     vuln_file = tools_dir / "chamada_insegura.py"
     vuln_file.write_text(

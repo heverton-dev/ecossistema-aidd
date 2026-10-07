@@ -107,8 +107,8 @@ def analisar_duplicatas(raiz: Path) -> dict:
     hashes_catalogo = {todos_arquivos[p]: p for p in pecas_rel if p in todos_arquivos}
 
     FERRAMENTAS_OPERACIONAIS = (
-        "tools/aidd-master/", "tools/aidd-enterprise/", "tools/aidd-pure/",
-        "tools/aidd-open/", "tools/aidd-ops/", "tools/aidd-freedom/", "tools/aidd-planner/",
+        "modulos/03-plataforma-e-entrega/fatiamento-master/aidd-master/", "modulos/03-plataforma-e-entrega/blindagem-enterprise/aidd-enterprise/", "modulos/02-triade-motores/fluxo-01-pure/core/aidd-pure/",
+        "modulos/02-triade-motores/fluxo-02-open/core/aidd-open/", "modulos/03-plataforma-e-entrega/operacoes-ops/aidd-ops/", "modulos/02-triade-motores/fluxo-03-freedom/core/aidd-freedom/", "modulos/01-governanca-e-qualidade/core/aidd-planner/",
     )
 
     copias_catalogo_sob_tools = []

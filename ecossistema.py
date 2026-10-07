@@ -5,14 +5,14 @@ ECOSSISTEMA AIDD — CLI UNIFICADA DO META-REPOSITÓRIO
 =============================================================================
 Ponto único de entrada e orquestração do ecossistema-aidd.
 Roteia comandos para as 8 ferramentas integradas:
-  - forge      -> tools/aidd-forge
-  - planner    -> tools/aidd-planner
-  - pure-motor -> tools/aidd-pure
-  - master     -> tools/aidd-master
-  - enterprise -> tools/aidd-enterprise
-  - ops        -> tools/aidd-ops
-  - freedom-motor -> tools/aidd-freedom
-  - open-motor -> tools/aidd-open
+  - forge      -> modulos/01-governanca-e-qualidade/core/aidd-forge
+  - planner    -> modulos/01-governanca-e-qualidade/core/aidd-planner
+  - pure-motor -> modulos/02-triade-motores/fluxo-01-pure/core/aidd-pure
+  - master     -> modulos/03-plataforma-e-entrega/fatiamento-master/aidd-master
+  - enterprise -> modulos/03-plataforma-e-entrega/blindagem-enterprise/aidd-enterprise
+  - ops        -> modulos/03-plataforma-e-entrega/operacoes-ops/aidd-ops
+  - freedom-motor -> modulos/02-triade-motores/fluxo-03-freedom/core/aidd-freedom
+  - open-motor -> modulos/02-triade-motores/fluxo-02-open/core/aidd-open
   - audit      -> gates/G_ECOSSISTEMA_INTEGRIDADE.py
   - status     -> Resumo do status do ecossistema
 Nomes antigos (generate, factory, bridge...) seguem como apelido por 1 ciclo:
@@ -29,8 +29,19 @@ import sys
 import types
 
 ROOT_DIR = os.path.dirname(os.path.abspath(__file__))
-TOOLS_DIR = os.path.join(ROOT_DIR, "tools")
+MAPA_DONOS_FERRAMENTAS = os.path.join(ROOT_DIR, "componentes", "compartilhado", "specs", "MAPA-DONOS-FERRAMENTAS.json")
 TABELA_NOMES_ANTIGOS = os.path.join(ROOT_DIR, "componentes", "compartilhado", "specs", "NOMES-ANTIGOS.json")
+
+
+
+def pasta_ferramenta(nome):
+    """Pasta canônica da ferramenta em modulos/ (campo 'pasta' do MAPA-DONOS-FERRAMENTAS.json).
+
+    Decisão A do ciclo-03 VSA: modulos/ é a única cópia; não há fallback para tools/."""
+    import json
+    with open(MAPA_DONOS_FERRAMENTAS, encoding="utf-8") as fh:
+        return os.path.join(ROOT_DIR, *json.load(fh)[nome]["pasta"].split("/"))
+
 
 PYTHON_MINIMO = (3, 10)
 REQUIREMENTS_PATH = os.path.join(ROOT_DIR, "requirements.txt")
@@ -288,53 +299,47 @@ def cmd_forge(args):
     if os.path.isfile(skill_cli):
         cmd = [sys.executable, skill_cli] + list(args)
         return run_command(cmd, cwd=os.getcwd())
-    vsa_forge_dir = os.path.join(ROOT_DIR, "modulos", "01-governanca-e-qualidade", "core", "aidd-forge")
-    forge_dir = vsa_forge_dir if os.path.isdir(vsa_forge_dir) else os.path.join(TOOLS_DIR, "aidd-forge")
+    forge_dir = pasta_ferramenta("aidd-forge")
     _reparar_instalacao_editable_aidd_forge(forge_dir)
     env = {"PYTHONPATH": forge_dir}
     cmd = [sys.executable, "-m", "aidd_forge.cli"] + args
     return run_command(cmd, cwd=os.getcwd(), env=env)
 
 def cmd_pure_motor(args):
-    """Executa só o motor de 8 fases do Fluxo 01 (tools/aidd-pure ou VSA)."""
-    vsa_dir = os.path.join(ROOT_DIR, "modulos", "02-triade-motores", "fluxo-01-pure", "core", "aidd-pure")
-    gen_dir = vsa_dir if os.path.isdir(vsa_dir) else os.path.join(TOOLS_DIR, "aidd-pure")
+    """Executa só o motor de 8 fases do Fluxo 01 (modulos/02-triade-motores/fluxo-01-pure/core/aidd-pure ou VSA)."""
+    gen_dir = pasta_ferramenta("aidd-pure")
     pipeline_script = os.path.join(gen_dir, "scripts", "pipeline_completo.py")
     env = {"PYTHONPATH": gen_dir}
     cmd = [sys.executable, pipeline_script] + args
     return run_command(cmd, cwd=os.getcwd(), env=env)
 
 def cmd_master(args):
-    vsa_dir = os.path.join(ROOT_DIR, "modulos", "03-plataforma-e-entrega", "fatiamento-master", "aidd-master")
-    master_dir = vsa_dir if os.path.isdir(vsa_dir) else os.path.join(TOOLS_DIR, "aidd-master")
+    master_dir = pasta_ferramenta("aidd-master")
     aidd_script = os.path.join(master_dir, "scripts", "aidd.py")
     env = {"PYTHONPATH": master_dir}
     cmd = [sys.executable, aidd_script] + args
     return run_command(cmd, cwd=os.getcwd(), env=env)
 
 def cmd_enterprise(args):
-    vsa_dir = os.path.join(ROOT_DIR, "modulos", "03-plataforma-e-entrega", "blindagem-enterprise", "aidd-enterprise")
-    ent_dir = vsa_dir if os.path.isdir(vsa_dir) else os.path.join(TOOLS_DIR, "aidd-enterprise")
+    ent_dir = pasta_ferramenta("aidd-enterprise")
     aidd_script = os.path.join(ent_dir, "scripts", "aidd.py")
     env = {"PYTHONPATH": ent_dir}
     cmd = [sys.executable, aidd_script] + args
     return run_command(cmd, cwd=os.getcwd(), env=env)
 
 def cmd_ops(args):
-    vsa_dir = os.path.join(ROOT_DIR, "modulos", "03-plataforma-e-entrega", "operacoes-ops", "aidd-ops")
-    ops_dir = vsa_dir if os.path.isdir(vsa_dir) else os.path.join(TOOLS_DIR, "aidd-ops")
+    ops_dir = pasta_ferramenta("aidd-ops")
     pipeline_script = os.path.join(ops_dir, "scripts", "pipeline_ops.py")
     env = {"PYTHONPATH": ops_dir}
     cmd = [sys.executable, pipeline_script] + args
     return run_command(cmd, cwd=os.getcwd(), env=env)
 
 def cmd_freedom_motor(args):
-    """Executa o motor do Fluxo 03, tools/aidd-freedom ou VSA (scan, convert-db, merge, pack, validate)."""
+    """Executa o motor do Fluxo 03, modulos/02-triade-motores/fluxo-03-freedom/core/aidd-freedom ou VSA (scan, convert-db, merge, pack, validate)."""
     if any(arg.startswith("--nome") or arg.startswith("--pasta") or arg.startswith("--slug") or arg.startswith("--dry-run") for arg in args):
         print("[AVISO] Para executar o Fluxo 03 completo da Tríade, utilize 'python ecossistema.py freedom' (ou /freedom).")
         return cmd_run_fluxo(["--fluxo", "freedom"] + args)
-    vsa_dir = os.path.join(ROOT_DIR, "modulos", "02-triade-motores", "fluxo-03-freedom", "core", "aidd-freedom")
-    freedom_dir = vsa_dir if os.path.isdir(vsa_dir) else os.path.join(TOOLS_DIR, "aidd-freedom")
+    freedom_dir = pasta_ferramenta("aidd-freedom")
     env = {"PYTHONPATH": freedom_dir}
     cmd = [sys.executable, "-m", "aidd_freedom.cli"] + args
     return run_command(cmd, cwd=os.getcwd(), env=env)
@@ -352,16 +357,15 @@ def cmd_freedom(args):
     return cmd_run_fluxo(["--fluxo", "freedom"] + args)
 
 def cmd_open_motor(args):
-    """Executa só o gerador de stack multi-serviço do Fluxo 02 (tools/aidd-open ou VSA)."""
-    vsa_dir = os.path.join(ROOT_DIR, "modulos", "02-triade-motores", "fluxo-02-open", "core", "aidd-open")
-    factory_dir = vsa_dir if os.path.isdir(vsa_dir) else os.path.join(TOOLS_DIR, "aidd-open")
+    """Executa só o gerador de stack multi-serviço do Fluxo 02 (modulos/02-triade-motores/fluxo-02-open/core/aidd-open ou VSA)."""
+    factory_dir = pasta_ferramenta("aidd-open")
     pipeline_script = os.path.join(factory_dir, "scripts", "pipeline_factory.py")
     env = {"PYTHONPATH": factory_dir}
     cmd = [sys.executable, pipeline_script] + args
     return run_command(cmd, cwd=os.getcwd(), env=env)
 
 def cmd_planner(args):
-    planner_dir = os.path.join(TOOLS_DIR, "aidd-planner")
+    planner_dir = pasta_ferramenta("aidd-planner")
     env = {"PYTHONPATH": planner_dir}
     modulo_cli = "aidd_planner.cli" if os.path.isdir(os.path.join(planner_dir, "aidd_planner")) else "src.cli"
     cmd = [sys.executable, "-m", modulo_cli] + args
@@ -374,8 +378,7 @@ def cmd_run_fluxo(args):
 
 def cmd_pipeline(args):
     """Executa o pipeline determinístico em Git Worktrees via orchestrator_pipeline."""
-    vsa_master = os.path.join(ROOT_DIR, "modulos", "03-plataforma-e-entrega", "fatiamento-master", "aidd-master")
-    master_dir = vsa_master if os.path.isdir(vsa_master) else os.path.join(TOOLS_DIR, "aidd-master")
+    master_dir = pasta_ferramenta("aidd-master")
     script_path = os.path.join(master_dir, "scripts", "orchestrator_pipeline.py")
     mapped_args = ["-m" if a == "--handoff" else a for a in args]
     cmd = [sys.executable, script_path] + mapped_args
@@ -493,7 +496,7 @@ def cmd_run_plan(args):
 
 def cmd_dispatch(args):
     """Despacha a execução e materialização de fatias verticais VSA em Git Worktrees efêmeras."""
-    dispatch_script = os.path.join(TOOLS_DIR, "aidd-master", "scripts", "dispatch_pipeline.py")
+    dispatch_script = os.path.join(pasta_ferramenta("aidd-master"), "scripts", "dispatch_pipeline.py")
     parser = argparse.ArgumentParser(
         prog="ecossistema.py dispatch",
         description="Despacha fatias verticais VSA em Git Worktrees efêmeras com isolamento e convergência master"
@@ -1310,7 +1313,7 @@ def cmd_status(args):
         return 0
 
     print_banner()
-    print("\nFerramentas Integradas em tools/:")
+    print("\nFerramentas Integradas em modulos/:")
     tools = [
         ("aidd-forge", "Bootstrap, governança, fatiamento e context-purge"),
         ("aidd-pure", "Motor do Fluxo 01: fábrica autônoma de software (Pipeline 8 fases)"),
@@ -1322,7 +1325,7 @@ def cmd_status(args):
         ("aidd-planner", "Motor de Planejamento e Combustao da Triade (SDD/BDD)")
     ]
     for name, desc in tools:
-        path = os.path.join(TOOLS_DIR, name)
+        path = pasta_ferramenta(name)
         status = "[OK] Instalado" if os.path.isdir(path) else "[FALTA] Não encontrado"
         print(f"  - {name:<24} {status:<16} {desc}")
 

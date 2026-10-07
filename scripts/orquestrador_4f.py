@@ -560,11 +560,11 @@ def rodar_gate(comando, cwd, env=None):
 
 
 def testes_das_ferramentas_tocadas(arquivos, raiz):
-    """(comando, env) que rodam a suíte de cada ferramenta de tools/ tocada pela fase e os
+    """(comando, env) que rodam a suíte de cada ferramenta (modulos/**/aidd-<x>) tocada pela fase e os
     tests/test_<nome curto>_*.py da raiz. Bloco 2 de fronteiras (2026-10-02): o gate_fase rodou só
     o teste do ticket, e 3 falhas do aidd-forge só apareceram no gate_final de 17 min."""
-    ferramentas = sorted({Path(a).parts[1] for a in arquivos
-                          if len(Path(a).parts) > 2 and Path(a).parts[0] == "tools"})
+    ferramentas = sorted({p for a in arquivos if Path(a).parts[:1] == ("modulos",)
+                          for p in Path(a).parts[:-1] if p.startswith("aidd-")})
     if not ferramentas:
         return []
     comandos = [(f'"{sys.executable}" gates/G_TESTES_REAIS.py',

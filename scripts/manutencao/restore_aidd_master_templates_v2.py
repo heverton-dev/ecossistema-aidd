@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-Restaura tools/aidd-master/templates/v2/ (R1 do
+Restaura modulos/03-plataforma-e-entrega/fatiamento-master/aidd-master/templates/v2/ (R1 do
 PLANO-CORRECAO-RISCOS-ECOSSISTEMA-AIDD.md).
 
 Diagnostico confirmado: o diretorio esta vazio ha muito tempo (nao existe nem
@@ -17,8 +17,8 @@ import shutil
 import sys
 
 ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-SRC = os.path.join(ROOT, "tools", "aidd-enterprise", "templates", "v2")
-DST = os.path.join(ROOT, "tools", "aidd-master", "templates", "v2")
+SRC = os.path.join(ROOT, "modulos", "03-plataforma-e-entrega", "blindagem-enterprise", "aidd-enterprise", "templates", "v2")
+DST = os.path.join(ROOT, "modulos", "03-plataforma-e-entrega", "fatiamento-master", "aidd-master", "templates", "v2")
 
 
 def main():

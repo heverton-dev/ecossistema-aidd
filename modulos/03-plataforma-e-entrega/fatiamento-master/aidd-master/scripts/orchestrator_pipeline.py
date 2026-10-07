@@ -18,7 +18,7 @@ Invariantes e Leis Auditadas:
   6. Multiplataforma: Compatibilidade total Windows (PowerShell/CMD) e Linux (Bash).
 
 Uso:
-  python tools/aidd-master/scripts/orchestrator_pipeline.py --manifesto <caminho_manifesto.json>
+  python modulos/03-plataforma-e-entrega/fatiamento-master/aidd-master/scripts/orchestrator_pipeline.py --manifesto <caminho_manifesto.json>
 =============================================================================
 """
 

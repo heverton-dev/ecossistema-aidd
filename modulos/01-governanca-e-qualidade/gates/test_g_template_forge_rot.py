@@ -13,7 +13,7 @@ import pytest
 
 ROOT_DIR = Path(__file__).resolve().parents[1]
 GATE_SCRIPT = ROOT_DIR / "gates" / "G_TEMPLATE_FORGE_ROT.py"
-REAL_TEMPLATES_DIR = ROOT_DIR / "tools" / "aidd-forge" / "aidd_forge" / "templates"
+REAL_TEMPLATES_DIR = ROOT_DIR / "modulos" / "01-governanca-e-qualidade" / "core" / "aidd-forge" / "aidd_forge" / "templates"
 
 
 def test_template_forge_rot_passa_no_estado_real_integro() -> None:

@@ -1257,7 +1257,7 @@ def _coolify_status(url, token, app):
 @click.option("--environment-name", default="production", show_default=True, help="Nome do ambiente")
 @click.option("--repo", required=True, help="URL do repositorio git publico do monopolito")
 @click.option("--branch", default="main", show_default=True, help="Branch a implantar")
-@click.option("--base-dir", default=None, help="Base Directory (default: tools/aidd-ops)")
+@click.option("--base-dir", default=None, help="Base Directory (default: modulos/03-plataforma-e-entrega/operacoes-ops/aidd-ops)")
 @click.option("--dockerfile", default=None, help="Dockerfile Location (default: Dockerfile.intake)")
 @click.option("--port-exposes", type=int, default=8501, show_default=True, help="Porta exposta pelo container")
 @click.option("--domain", default=None, help="Dominio publico (opcional)")
@@ -1275,7 +1275,7 @@ def _coolify_create(url, token, project_uuid, server_uuid, environment_name, rep
     print(" [AIDD-Ops] Registro do Intake Web como app gerenciado no Coolify")
     print(f" Repo: {repo} (branch {branch})")
     print(f" Projeto: {project_uuid} | Servidor: {server_uuid} | Ambiente: {environment_name}")
-    print(f" Build: dockerfile | Base Directory: {base_dir or 'tools/aidd-ops'} | Dockerfile: {dockerfile or 'Dockerfile.intake'}")
+    print(f" Build: dockerfile | Base Directory: {base_dir or 'modulos/03-plataforma-e-entrega/operacoes-ops/aidd-ops'} | Dockerfile: {dockerfile or 'Dockerfile.intake'}")
     print(f" Porta exposta: {port_exposes} | Dominio: {domain or '(nenhum)'} | Nome: {nome or 'aidd-ops-intake'}")
     print("=" * 72)
     if dry_run:

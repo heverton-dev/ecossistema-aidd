@@ -32,7 +32,7 @@ class O:
             cmd = [sys.executable, "ecossistema.py", "factory", "curate"]
         if self.modo == 3:
             cmd = [sys.executable, "ecossistema.py", "bridge", "scan"]
-        script = ROOT_DIR / "tools" / "aidd-master" / "scripts" / "dispatch.py"
+        script = ROOT_DIR / "modulos" / "03-plataforma-e-entrega" / "fatiamento-master" / "aidd-master" / "scripts" / "dispatch.py"
         if rc != 0:
             return False
 
@@ -63,7 +63,7 @@ def test_ramos_por_fluxo_ignoram_if_que_nao_e_fluxo(tmp_path, monkeypatch):
 
 def test_atalho_interno_guarda_so_caminho_completo(tmp_path, monkeypatch):
     etapa = _receita(tmp_path, monkeypatch)["etapa_03_engine"]
-    assert etapa["atalhos_internos"] == ["tools/aidd-master/scripts/dispatch.py"]
+    assert etapa["atalhos_internos"] == ["modulos/03-plataforma-e-entrega/fatiamento-master/aidd-master/scripts/dispatch.py"]
 
 
 def _encaixe(monkeypatch, tokens, comandos, texto_help):

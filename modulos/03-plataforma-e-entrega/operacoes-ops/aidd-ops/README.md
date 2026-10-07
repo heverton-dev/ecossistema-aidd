@@ -68,7 +68,7 @@ Cofre local de segredos sem serviço externo — credenciais saem do `docker-com
    ```bash
    python scripts/pipeline_ops.py cofre init \
      --chave "$HOME/.config/aidd/age-key.txt" \
-     --sops-config "PATH_TO/tools/aidd-ops/templates/infra/.sops.yaml"
+     --sops-config "PATH_TO/modulos/03-plataforma-e-entrega/operacoes-ops/aidd-ops/templates/infra/.sops.yaml"
    ```
 2. **Cifrar** o `.env` de trabalho → `.env.enc` versionável (sem chave explícita usa o `.sops.yaml` descoberto a partir do diretório do `.env` ou do cwd; com `--chave-publica` usa uma config temporária catch-all via `--config`, nunca vazando para o repo):
    ```bash

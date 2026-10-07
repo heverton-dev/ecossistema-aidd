@@ -44,20 +44,20 @@ Chain: `/aidd-grill` -> `/aidd-spec` -> `/aidd-planner` -> `/aidd-dispatch` -> `
 - NEVER omit `--dominio` and `--slug` on `planner init`: missing values silently become `logistica` and a slug derived from the name.
 - NEVER add `--force` over an existing `PLANNER.json` without user OK: it replaces the reviewed blueprint with a fresh template.
 - NEVER hand-edit `HANDOFF_PLANNER_ENGINE.json` (contract C2): `run-fluxo` checks it against `componentes/compartilhado/specs/handoff-planner-to-engine.schema.json` and records its sha256; only `planner init` writes it.
-- NEVER edit `tools/aidd-planner/schemas/planner_schema.json` to make `planner validate` pass; fix the blueprint.
-- NEVER fill requirements with TODO or placeholder text to pass validation; `tools/aidd-planner/gates/G_PLANNER_SINE_QUA_NON.py` treats stubs as failure.
+- NEVER edit `modulos/01-governanca-e-qualidade/core/aidd-planner/schemas/planner_schema.json` to make `planner validate` pass; fix the blueprint.
+- NEVER fill requirements with TODO or placeholder text to pass validation; `modulos/01-governanca-e-qualidade/core/aidd-planner/gates/G_PLANNER_SINE_QUA_NON.py` treats stubs as failure.
 
 ## Failure Modes & Fallback
 
 - **`planner init` exits 1 ("já existe"):** show the user the existing `PLANNER.json`; rerun with another `--pasta`, or with `--force` only after explicit OK.
-- **`planner validate` exits 1:** map each listed error to `tools/aidd-planner/schemas/planner_schema.json`, fix the field in `PLANNER.json`, validate again. After 3 failed rounds, stop and show the errors to the user.
+- **`planner validate` exits 1:** map each listed error to `modulos/01-governanca-e-qualidade/core/aidd-planner/schemas/planner_schema.json`, fix the field in `PLANNER.json`, validate again. After 3 failed rounds, stop and show the errors to the user.
 - **"A planta nao pode ser desenhada":** the forge contract C1 (`.aidd/HANDOFF_FORGE_PLANNER.json`) is invalid; rerun `python ecossistema.py forge init <pasta>`, then `planner init`.
 - **Quarteto missing in `planner audit <pasta>`:** add `/swagger`, `/webhooks`, `/mcp` and `/docs` to the blueprint, then rerun the audit.
 
 ## Stopping Checklist
 
 - [ ] `python ecossistema.py planner validate <pasta>/PLANNER.json > pval.log 2>&1; echo $? > pval.rc` and `pval.rc` holds `0`.
-- [ ] `python tools/aidd-planner/gates/G_PLANNER_SCHEMA.py <pasta> > pschema.log 2>&1; echo $? > pschema.rc` holds `0`.
-- [ ] `python tools/aidd-planner/gates/G_PLANNER_SINE_QUA_NON.py <pasta> > psqn.log 2>&1; echo $? > psqn.rc` holds `0`.
-- [ ] `python tools/aidd-planner/gates/G_PLANNER_COERENCIA_FLUXO.py <pasta> > pflow.log 2>&1; echo $? > pflow.rc` holds `0` (`--fluxo` matches the flow the user chose).
+- [ ] `python modulos/01-governanca-e-qualidade/core/aidd-planner/gates/G_PLANNER_SCHEMA.py <pasta> > pschema.log 2>&1; echo $? > pschema.rc` holds `0`.
+- [ ] `python modulos/01-governanca-e-qualidade/core/aidd-planner/gates/G_PLANNER_SINE_QUA_NON.py <pasta> > psqn.log 2>&1; echo $? > psqn.rc` holds `0`.
+- [ ] `python modulos/01-governanca-e-qualidade/core/aidd-planner/gates/G_PLANNER_COERENCIA_FLUXO.py <pasta> > pflow.log 2>&1; echo $? > pflow.rc` holds `0` (`--fluxo` matches the flow the user chose).
 - [ ] `HANDOFF_PLANNER_ENGINE.json` and `DESIGN-SYSTEM.json` exist next to `PLANNER.json`.

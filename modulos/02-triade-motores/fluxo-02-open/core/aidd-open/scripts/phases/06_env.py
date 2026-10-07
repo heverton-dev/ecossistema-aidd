@@ -11,10 +11,7 @@ import string
 import sys
 
 _FACTORY_ROOT = os.path.join(os.path.dirname(__file__), "..", "..")
-sys.path.insert(0, os.path.join(_FACTORY_ROOT, "src"))
-sys.path.insert(0, os.path.join(_FACTORY_ROOT, "..", "..", "componentes", "compartilhado", "src-core"))
 
-from core.result import Result
 
 def _achar_raiz_repo() -> str:
     curr = _FACTORY_ROOT
@@ -24,7 +21,14 @@ def _achar_raiz_repo() -> str:
         curr = os.path.dirname(curr)
     return os.path.normpath(os.path.join(_FACTORY_ROOT, "..", ".."))
 
-_INFRA_DIR = os.path.join(_achar_raiz_repo(), "tools", "aidd-ops", "templates", "infra")
+
+sys.path.insert(0, os.path.join(_FACTORY_ROOT, "src"))
+sys.path.insert(0, os.path.join(_achar_raiz_repo(), "componentes", "compartilhado", "src-core"))
+
+from core.result import Result
+
+
+_INFRA_DIR = os.path.join(_achar_raiz_repo(), "modulos", "03-plataforma-e-entrega", "operacoes-ops", "aidd-ops", "templates", "infra")
 
 
 def _gerar_senha(tamanho: int = 32) -> str:

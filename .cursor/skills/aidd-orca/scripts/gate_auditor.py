@@ -14,6 +14,7 @@ Zero LLM cost — pure deterministic subprocess execution.
 
 from __future__ import annotations
 
+import json
 import os
 import subprocess
 import sys
@@ -54,13 +55,22 @@ class AuditVerdict:
 
 
 def _extract_tool_name(path: str) -> str | None:
-    """Given a relative path, return the tool name if it's under tools/<tool>/."""
+    """Given a relative path, return the tool name if it's under modulos/**/aidd-<tool>/."""
     parts = path.replace("\\", "/").split("/")
-    if len(parts) >= 2 and parts[0] == "tools":
-        tool = parts[1]
-        if tool in KNOWN_TOOLS:
+    if parts[0] == "modulos":
+        tool = next((p for p in parts[:-1] if p in KNOWN_TOOLS), None)
+        if tool:
             return tool
     return None
+
+
+def _tool_dir(wt: Path, tool: str) -> Path:
+    """Canonical folder of a tool under modulos/ (field "pasta" of MAPA-DONOS-FERRAMENTAS.json)."""
+    mapa = wt / "componentes" / "compartilhado" / "specs" / "MAPA-DONOS-FERRAMENTAS.json"
+    try:
+        return wt / json.loads(mapa.read_text(encoding="utf-8"))[tool]["pasta"]
+    except (OSError, KeyError, ValueError):
+        return wt / "modulos" / tool
 
 
 def _is_root_scoped(path: str) -> bool:
@@ -142,7 +152,7 @@ def audit_front(
 
     # 2. Tool pytest suites
     for tool in sorted(tools_needed):
-        tool_dir = wt / "tools" / tool
+        tool_dir = _tool_dir(wt, tool)
         if tool_dir.is_dir():
             result = _run_verification(
                 [sys.executable, "-m", "pytest", "-x", "-q"],

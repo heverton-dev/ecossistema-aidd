@@ -7,8 +7,8 @@ Gera o frontend `frontend/` (Next.js 14 App Router + TypeScript + Tailwind
 CSS) de qualquer suite AIDD (monolito modular com `src/modules/<nome>/`).
 
 Fonte unica de verdade (Lei #11, `docs/protocolos/PADRAO-OURO-STACK-TECNOLOGICA.md`):
-copiada identica em `tools/aidd-master/src/core/nextjs_exporter.py` e
-`tools/aidd-enterprise/src/core/nextjs_exporter.py` — qualquer alteracao aqui
+copiada identica em `modulos/03-plataforma-e-entrega/fatiamento-master/aidd-master/src/core/nextjs_exporter.py` e
+`modulos/03-plataforma-e-entrega/blindagem-enterprise/aidd-enterprise/src/core/nextjs_exporter.py` — qualquer alteracao aqui
 precisa ser sincronizada nas 3 copias (G_DRIFT_NUCLEO_COMPARTILHADO cobre
 apenas master/enterprise; sincronizar manualmente com `componentes/`).
 
@@ -47,12 +47,22 @@ import os
 import re
 from typing import Any, Dict, List
 
+
+def _achar_raiz_repo(inicio: str) -> str:
+    """Sobe pastas até achar ecossistema.py (raiz do repo), sem depender da profundidade."""
+    curr = os.path.abspath(inicio)
+    while os.path.dirname(curr) != curr:
+        if os.path.isfile(os.path.join(curr, "ecossistema.py")):
+            return curr
+        curr = os.path.dirname(curr)
+    return os.path.abspath(inicio)
+
 try:
     from design_catalog import escolher_paleta
 except ImportError:
     import sys
     _njs_dir = os.path.join(
-        os.path.dirname(__file__), "..", "..", "..", "componentes", "compartilhado", "src-core"
+        _achar_raiz_repo(os.path.dirname(__file__)), "componentes", "compartilhado", "src-core"
     )
     if os.path.isdir(_njs_dir) and _njs_dir not in sys.path:
         sys.path.insert(0, _njs_dir)

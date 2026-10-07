@@ -45,13 +45,13 @@ def _achar_raiz_repo(inicio: Path) -> Path:
 
 ROOT_DIR = _achar_raiz_repo(Path(__file__).resolve().parent)
 _VSA_ENTERPRISE = ROOT_DIR / "modulos" / "03-plataforma-e-entrega" / "blindagem-enterprise" / "aidd-enterprise"
-ENTERPRISE_DIR = _VSA_ENTERPRISE if _VSA_ENTERPRISE.is_dir() else (ROOT_DIR / "tools" / "aidd-enterprise")
+ENTERPRISE_DIR = _VSA_ENTERPRISE if _VSA_ENTERPRISE.is_dir() else (ROOT_DIR / "modulos" / "03-plataforma-e-entrega" / "blindagem-enterprise" / "aidd-enterprise")
 
 _VSA_MASTER = ROOT_DIR / "modulos" / "03-plataforma-e-entrega" / "fatiamento-master" / "aidd-master" / "scripts" / "aidd.py"
-MASTER_CLI = _VSA_MASTER if _VSA_MASTER.is_file() else (ROOT_DIR / "tools" / "aidd-master" / "scripts" / "aidd.py")
+MASTER_CLI = _VSA_MASTER if _VSA_MASTER.is_file() else (ROOT_DIR / "modulos" / "03-plataforma-e-entrega" / "fatiamento-master" / "aidd-master" / "scripts" / "aidd.py")
 
 _VSA_FORGE = ROOT_DIR / "modulos" / "01-governanca-e-qualidade" / "core" / "aidd-forge"
-FORGE_DIR = _VSA_FORGE if _VSA_FORGE.is_dir() else (ROOT_DIR / "tools" / "aidd-forge")
+FORGE_DIR = _VSA_FORGE if _VSA_FORGE.is_dir() else (ROOT_DIR / "modulos" / "01-governanca-e-qualidade" / "core" / "aidd-forge")
 
 GATE_DRIFT = ROOT_DIR / "gates" / "G_DRIFT_NUCLEO_COMPARTILHADO.py"
 CATALOGO_PATH = ROOT_DIR / "componentes" / "compartilhado" / "CATALOGO.json"
@@ -350,7 +350,7 @@ def _raiz_fake_drift(tmp_path: Path, copias: dict[str, bytes], peca: bytes, docu
         (raiz / rel).parent.mkdir(parents=True, exist_ok=True)
         (raiz / rel).write_bytes(conteudo)
     catalogo = {
-        "fora_do_almoxarifado": {"tools/aidd-enterprise/materiais-extras/examples/**": "D4"},
+        "fora_do_almoxarifado": {"modulos/03-plataforma-e-entrega/blindagem-enterprise/aidd-enterprise/materiais-extras/examples/**": "D4"},
         "pecas": [{"nome": "src-core/peca_t18.py", "caminho": caminho,
                    "sha256": "sha256-" + hashlib.sha256(peca).hexdigest(), "copias": sorted(copias)}],
     }
@@ -371,7 +371,7 @@ def test_gate_drift_real_compara_copias_com_o_catalogo():
 
 
 def test_gate_drift_reprova_copia_divergente_do_catalogo(tmp_path):
-    copia = "tools/aidd-master/src/core/peca_t18.py"
+    copia = "modulos/03-plataforma-e-entrega/fatiamento-master/aidd-master/src/core/peca_t18.py"
     raiz = _raiz_fake_drift(tmp_path, {copia: b"# editada a mao\n"}, b"# peca\n", {})
     proc = _rodar_gate(raiz / "gates" / GATE_DRIFT.name, raiz)
     assert proc.returncode == 1, proc.stdout
@@ -379,7 +379,7 @@ def test_gate_drift_reprova_copia_divergente_do_catalogo(tmp_path):
 
 
 def test_gate_drift_aceita_divergencia_documentada(tmp_path):
-    copia = "tools/aidd-master/src/core/peca_t18.py"
+    copia = "modulos/03-plataforma-e-entrega/fatiamento-master/aidd-master/src/core/peca_t18.py"
     raiz = _raiz_fake_drift(tmp_path, {copia: b"# editada\n"}, b"# peca\n",
                             {copia: "Variante local documentada para o teste."})
     proc = _rodar_gate(raiz / "gates" / GATE_DRIFT.name, raiz)
@@ -387,8 +387,8 @@ def test_gate_drift_aceita_divergencia_documentada(tmp_path):
 
 
 def test_gate_drift_aplica_d4_e_ignora_examples(tmp_path):
-    exemplo = "tools/aidd-enterprise/materiais-extras/examples/app-antigo/src/core/peca_t18.py"
-    identica = "tools/aidd-enterprise/src/core/peca_t18.py"
+    exemplo = "modulos/03-plataforma-e-entrega/blindagem-enterprise/aidd-enterprise/materiais-extras/examples/app-antigo/src/core/peca_t18.py"
+    identica = "modulos/03-plataforma-e-entrega/blindagem-enterprise/aidd-enterprise/src/core/peca_t18.py"
     raiz = _raiz_fake_drift(tmp_path, {exemplo: b"# historico\n", identica: b"# peca\n"}, b"# peca\n", {})
     proc = _rodar_gate(raiz / "gates" / GATE_DRIFT.name, raiz)
     assert proc.returncode == 0, proc.stdout
@@ -399,7 +399,7 @@ def test_gate_drift_reprova_copia_ausente_do_disco(tmp_path):
     raiz = _raiz_fake_drift(tmp_path, {}, b"# peca\n", {})
     catalogo_path = raiz / "componentes" / "compartilhado" / "CATALOGO.json"
     catalogo = json.loads(catalogo_path.read_text(encoding="utf-8"))
-    catalogo["pecas"][0]["copias"] = ["tools/aidd-master/src/core/sumiu.py"]
+    catalogo["pecas"][0]["copias"] = ["modulos/03-plataforma-e-entrega/fatiamento-master/aidd-master/src/core/sumiu.py"]
     catalogo_path.write_text(json.dumps(catalogo), encoding="utf-8")
     proc = _rodar_gate(raiz / "gates" / GATE_DRIFT.name, raiz)
     assert proc.returncode == 1, proc.stdout

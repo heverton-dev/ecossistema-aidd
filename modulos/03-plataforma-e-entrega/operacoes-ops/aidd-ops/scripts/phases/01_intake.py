@@ -6,7 +6,7 @@ AIDD-Ops MVP — Fase 1: Intake & Reconhecimento de Nicho
 Reconhece o nicho de mercado a partir de texto livre em PT-BR ou de um
 slug explícito (bypass). Casamento de palavras-chave contra
 data/catalogo_nichos.json, seguindo o padrão determinístico de
-tools/aidd-master/src/core/detector_camada.py (nunca LLM, nunca escolha
+modulos/03-plataforma-e-entrega/fatiamento-master/aidd-master/src/core/detector_camada.py (nunca LLM, nunca escolha
 silenciosa).
 
 Resultados possíveis:

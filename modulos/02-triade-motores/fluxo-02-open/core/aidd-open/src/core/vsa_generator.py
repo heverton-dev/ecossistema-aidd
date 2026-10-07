@@ -19,7 +19,17 @@ import shutil
 import json
 from typing import Dict, List, Any
 
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "..", "..", "componentes", "compartilhado", "src-core"))
+
+def _achar_raiz_repo(inicio: str) -> str:
+    """Sobe pastas até achar ecossistema.py (raiz do repo), sem depender da profundidade."""
+    curr = os.path.abspath(inicio)
+    while os.path.dirname(curr) != curr:
+        if os.path.isfile(os.path.join(curr, "ecossistema.py")):
+            return curr
+        curr = os.path.dirname(curr)
+    return os.path.abspath(inicio)
+
+sys.path.insert(0, os.path.join(_achar_raiz_repo(os.path.dirname(__file__)), "componentes", "compartilhado", "src-core"))
 from core.result import Result
 from pathlib import Path
 
@@ -29,7 +39,7 @@ try:
 except ImportError:
     _raiz_busca = Path(__file__).resolve()
     for _parent in _raiz_busca.parents:
-        _forge_dir = _parent / "tools" / "aidd-forge"
+        _forge_dir = _parent / "modulos" / "01-governanca-e-qualidade" / "core" / "aidd-forge"
         if (_forge_dir / "aidd_forge").is_dir():
             if str(_forge_dir) not in sys.path:
                 sys.path.insert(0, str(_forge_dir))

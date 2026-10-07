@@ -20,7 +20,7 @@ Invariante Inviolável (Lei #9 - Tool Testing Discipline):
   5. Atualização obrigatória do relatório dinâmico em docs/teste-end-to-end/.
 
 Regras de Auditoria (ISSUE-0023):
-  1. Identificação de Alvo: Verifica se o changeset toca arquivos sob 'tools/<nome>/'.
+  1. Identificação de Alvo: Verifica se o changeset toca arquivos sob modulos/**/aidd-<nome>/.
   2. Condição de Bloqueio: Se qualquer ferramenta for alterada, exige que ao menos um
      relatório sob 'docs/teste-end-to-end/' seja atualizado no mesmo changeset ou
      possua data/timestamp contemporâneo à modificação da ferramenta.
@@ -96,15 +96,13 @@ def obter_arquivos_alterados(explicit_files: List[str] | None = None) -> List[st
 
 
 def extrair_ferramentas_tocadas(arquivos: List[str]) -> Set[str]:
-    """Extrai os nomes das ferramentas sob tools/<nome>/ que foram tocadas."""
+    """Extrai os nomes das ferramentas (pasta aidd-<nome> sob modulos/) que foram tocadas."""
     ferramentas = set()
     for f in arquivos:
         norm = f.strip().replace("\\", "/")
-        if norm.startswith("tools/"):
-            partes = norm.split("/")
-            if len(partes) >= 2 and partes[1]:
-                # Ignora arquivos soltos diretamente na raiz de tools/ se houver
-                ferramenta = partes[1]
+        if norm.startswith("modulos/"):
+            ferramenta = next((p for p in norm.split("/")[:-1] if p.startswith("aidd-")), None)
+            if ferramenta:
                 ferramentas.add(ferramenta)
     return ferramentas
 

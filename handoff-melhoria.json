@@ -13,7 +13,7 @@
   "artefatos": [
     {
       "caminho": "AGENTS.md",
-      "sha256": "d810008d27443155c4ebf264a5e313fdddbf211ee155e23b39d6bb3bd4e32350"
+      "sha256": "a7fb0eefea9bce39c322b6ed8a7b2db8e7a936a1b111925b012ac3bf046434a6"
     }
   ],
   "manifesto": "docs/melhorias/manifesto-exemplo.json",
@@ -24,6 +24,6 @@
   "assinatura": {
     "algoritmo": "sha256",
     "escopo": "payload-canonico-sem-assinatura",
-    "valor": "6db795c77f7c53ce69e31118e4fea091c93b1e45d4fe1cac47845cf0a203de3e"
+    "valor": "8d3908568cb8c99c685b1db335fd2db1ebec70ade59140714901837662364153"
   }
 }

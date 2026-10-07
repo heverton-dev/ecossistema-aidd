@@ -48,7 +48,7 @@ def test_resolve_canonical_destination():
         f"Destino canonico resolveu para raiz invalida: {monorepo_root} (gates/manifesto_harnesses.json nao existe)"
     )
     assert dest == monorepo_root / "componentes" / "aidd-forge" / "skills" / "demo" / "SKILL.md"
-    assert "tools/componentes" not in dest.as_posix()
+    assert "/modulos/" not in dest.as_posix()
 
 
 def test_apenas_mcp_tem_registry():

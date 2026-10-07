@@ -103,7 +103,7 @@ def test_scan_protocol_fallbacks_ignora_pastas_especiais(tmp_path):
 
 def test_gate_reprova_com_tool_orfa(tmp_path, monkeypatch):
     """Lei #13: Prova que o gate morde (exit 1) se houver tool MCP sem correspondente REST."""
-    deliverable_dir = tmp_path / "tools" / "app_teste"
+    deliverable_dir = tmp_path / "modulos" / "app_teste"
     deliverable_dir.mkdir(parents=True)
 
     swagger_file = deliverable_dir / "swagger_spec.json"

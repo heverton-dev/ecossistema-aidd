@@ -39,10 +39,10 @@ if hasattr(sys.stdout, "reconfigure"):
     sys.stdout.reconfigure(encoding="utf-8", errors="replace")
 
 ROOT_DIR = Path(__file__).resolve().parent.parent.parent.parent
-MASTER_DIR = ROOT_DIR / "tools" / "aidd-master"
-GENERATOR_DIR = ROOT_DIR / "tools" / "aidd-pure"
-FACTORY_DIR = ROOT_DIR / "tools" / "aidd-open"
-BRIDGE_DIR = ROOT_DIR / "tools" / "aidd-freedom"
+MASTER_DIR = ROOT_DIR / "modulos" / "03-plataforma-e-entrega" / "fatiamento-master" / "aidd-master"
+GENERATOR_DIR = ROOT_DIR / "modulos" / "02-triade-motores" / "fluxo-01-pure" / "core" / "aidd-pure"
+FACTORY_DIR = ROOT_DIR / "modulos" / "02-triade-motores" / "fluxo-02-open" / "core" / "aidd-open"
+BRIDGE_DIR = ROOT_DIR / "modulos" / "02-triade-motores" / "fluxo-03-freedom" / "core" / "aidd-freedom"
 
 
 def slugify(text: str) -> str:

@@ -18,7 +18,7 @@ from mcp.server.fastmcp import FastMCP
 ROOT_DIR = Path(__file__).resolve().parents[4]
 if str(ROOT_DIR) not in sys.path:
     sys.path.insert(0, str(ROOT_DIR))
-FORGE_DIR = ROOT_DIR / "tools" / "aidd-forge"
+FORGE_DIR = ROOT_DIR / "modulos" / "01-governanca-e-qualidade" / "core" / "aidd-forge"
 if str(FORGE_DIR) not in sys.path:
     sys.path.insert(0, str(FORGE_DIR))
 
@@ -34,7 +34,7 @@ except ImportError:
     try:
         from aidd_planner.core.mobbin_client import executar_busca
     except ImportError:
-        _planner_src = ROOT_DIR / "tools" / "aidd-planner" / "src"
+        _planner_src = ROOT_DIR / "modulos" / "01-governanca-e-qualidade" / "core" / "aidd-planner" / "src"
         if str(_planner_src) not in sys.path:
             sys.path.insert(0, str(_planner_src))
         from core.mobbin_client import executar_busca

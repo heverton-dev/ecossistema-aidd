@@ -224,5 +224,5 @@ class TestCanonicalDestination:
 
         dest_canonico = ecossistema_root / injetor_mod.CANONICAL_TEMPLATES["skill"].format(nome="demo")
         assert dest_canonico == ecossistema_root / "componentes" / "aidd-pure" / "skills" / "demo" / "SKILL.md"
-        assert "tools/componentes" not in dest_canonico.as_posix()
+        assert "/modulos/" not in dest_canonico.as_posix()
 

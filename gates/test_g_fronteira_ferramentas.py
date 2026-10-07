@@ -27,10 +27,10 @@ ALLOWLIST_REAL = RAIZ / "gates" / "allowlist_fronteira.json"
 # Só pode diminuir: se gates/allowlist_fronteira.json crescer, o teste reprova.
 BASELINE_ALLOWLIST = 172
 
-PIECA = "tools/aidd-open/templates/dominio/peca.py"
-COPIA = "tools/aidd-master/templates/dominio/peca.py"
-DOCKERFILE = "tools/aidd-open/Dockerfile"
-ARQUIVO_LIMPO = "tools/aidd-open/scripts/limpo.py"
+PIECA = "modulos/02-triade-motores/fluxo-02-open/core/aidd-open/templates/dominio/peca.py"
+COPIA = "modulos/03-plataforma-e-entrega/fatiamento-master/aidd-master/templates/dominio/peca.py"
+DOCKERFILE = "modulos/02-triade-motores/fluxo-02-open/core/aidd-open/Dockerfile"
+ARQUIVO_LIMPO = "modulos/02-triade-motores/fluxo-02-open/core/aidd-open/scripts/limpo.py"
 CONTEUDO_PECA = "peca canonica do almoxarifado — ticket 6 fronteira\n"
 
 
@@ -76,7 +76,7 @@ def montar_repo(tmp_path, violacoes=True):
         "ferramentas": [
             {
                 "id": "aidd-open",
-                "entrada_cli": "tools/aidd-open/scripts/pipeline_factory.py",
+                "entrada_cli": "modulos/02-triade-motores/fluxo-02-open/core/aidd-open/scripts/pipeline_factory.py",
                 "gates_proprios": [PIECA if violacoes else ARQUIVO_LIMPO],
             }
         ],
@@ -223,7 +223,7 @@ def test_allowlist_real_esta_no_baseline():
 def test_morde_allowlist_crescida(tmp_path):
     """Prova que a checagem de crescimento da allowlist morde: baseline+1 → AssertionError."""
     cresceu = tmp_path / "allowlist_fronteira.json"
-    entradas = [{"arquivo": f"tools/aidd-master/x{i}.py", "data": "2026-09-01"} for i in range(3)]
+    entradas = [{"arquivo": f"modulos/03-plataforma-e-entrega/fatiamento-master/aidd-master/x{i}.py", "data": "2026-09-01"} for i in range(3)]
     cresceu.write_text(json.dumps({"violacoes": entradas}), encoding="utf-8")
     with pytest.raises(AssertionError):
         conferir_allowlist(cresceu, 2)

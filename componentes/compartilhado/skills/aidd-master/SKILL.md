@@ -23,7 +23,7 @@ Done when: the command exits 0 and the module's contract tests pass.
 
 - NEVER run `master add-module <module>` for a module that already exists in `src/modules/<module>/`: the generator uses `overwrite_if_exists=True` and replaces hand-written code; check the folder first.
 - NEVER run it without `--dir <project>` from the ecosystem root: the default `.` writes the slice into the ecosystem itself.
-- NEVER mistype the subcommand: `tools/aidd-master/scripts/aidd.py` sends unknown words to natural-language intent parsing instead of failing.
+- NEVER mistype the subcommand: `modulos/03-plataforma-e-entrega/fatiamento-master/aidd-master/scripts/aidd.py` sends unknown words to natural-language intent parsing instead of failing.
 - NEVER import another module's internals from a slice; cross-slice talk goes through the Shared Kernel and the EventBus.
 - NEVER declare the slice done without a red-then-green contract test: show `master test contracts` failing before the service code, then passing.
 

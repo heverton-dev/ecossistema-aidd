@@ -19,10 +19,10 @@ Done when: the pipeline exits 0.
 
 ## Negative Guardrails
 
-- NEVER run `ops bootstrap <host> --real` or `ops deploy <env> --real` before the same command passed in its default dry-run and the user named the real host: `--real` applies `tools/aidd-ops/ansible/playbooks/hardening.yml` (SSH hardening, UFW, fail2ban) and a wrong `--user`/`--key` locks you out of the VPS.
+- NEVER run `ops bootstrap <host> --real` or `ops deploy <env> --real` before the same command passed in its default dry-run and the user named the real host: `--real` applies `modulos/03-plataforma-e-entrega/operacoes-ops/aidd-ops/ansible/playbooks/hardening.yml` (SSH hardening, UFW, fail2ban) and a wrong `--user`/`--key` locks you out of the VPS.
 - NEVER call the legacy form `ops "<requirement>"` without `--pasta` (`_cmd_legado` raises a UsageError), and never run `ops plan` without `--pasta`: the default is a temp folder, so `aidd-open` never finds `PLANO-INFRAESTRUTURA.json`.
-- NEVER hand-edit `PLANO-INFRAESTRUTURA.json` to clear a `[ERRO] <codigo>`: rerun `ops plan` with `--nicho`, `--dir-projeto` or `--ferramentas-json`; `validar_plano_contrato` and `tools/aidd-ops/gates/G_OPS_MVP.py --dir` reject a patched plan.
-- NEVER leave a plain `.env` in a service folder or commit it: `ops cofre encrypt` it to `.env.enc` and keep the age private key from `ops cofre init --chave` outside the repo; rotate with `tools/aidd-ops/scripts/rotate_secrets.py`.
+- NEVER hand-edit `PLANO-INFRAESTRUTURA.json` to clear a `[ERRO] <codigo>`: rerun `ops plan` with `--nicho`, `--dir-projeto` or `--ferramentas-json`; `validar_plano_contrato` and `modulos/03-plataforma-e-entrega/operacoes-ops/aidd-ops/gates/G_OPS_MVP.py --dir` reject a patched plan.
+- NEVER leave a plain `.env` in a service folder or commit it: `ops cofre encrypt` it to `.env.enc` and keep the age private key from `ops cofre init --chave` outside the repo; rotate with `modulos/03-plataforma-e-entrega/operacoes-ops/aidd-ops/scripts/rotate_secrets.py`.
 - NEVER read a failed `ops deploy` as rolled back: it only prints `rollback_recomendado` (containers, temporary DNS records, credentials); undo each item and tell the user before any re-run.
 
 ## Failure Modes & Fallback
@@ -37,7 +37,7 @@ Done when: the pipeline exits 0.
 Prove each item with the exit code read from a file (`> x.log 2>&1; echo $? > x.rc`, read `x.rc`), never through a pipe.
 
 - [ ] `python ecossistema.py ops plan "<requirement>" --pasta <dest>` exit 0 and `<dest>/PLANO-INFRAESTRUTURA.json` exists.
-- [ ] `python tools/aidd-ops/gates/G_OPS_MVP.py --dir <dest>` exit 0.
+- [ ] `python modulos/03-plataforma-e-entrega/operacoes-ops/aidd-ops/gates/G_OPS_MVP.py --dir <dest>` exit 0.
 - [ ] Every `--real` command ran only after its dry-run exit 0 and an explicit user OK for that host.
 - [ ] `python ecossistema.py ops preflight <env> --host <host> --json` exit 0 after a real deploy.
 - [ ] `git status --short` shows no `.env` or age key from this run.

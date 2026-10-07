@@ -5,7 +5,7 @@ Ticket 12 (skills-pocock ciclo-01, D15): distribuição das skills do ciclo.
 Passo vermelho trocado com aprovação do usuário (25/09/2026): o hook de commit já
 sincroniza os harnesses a cada commit, então `components verify` não reprova mais
 antes do sync. A divergência real que sobra é a cópia do forge
-(tools/aidd-forge/aidd_forge/templates/skills/), que nenhum gate compara por conteúdo.
+(modulos/01-governanca-e-qualidade/core/aidd-forge/aidd_forge/templates/skills/), que nenhum gate compara por conteúdo.
 """
 import re
 import subprocess
@@ -16,7 +16,7 @@ import pytest
 
 ROOT = Path(__file__).resolve().parent.parent
 CANONICO = ROOT / "componentes" / "compartilhado" / "skills"
-FORGE = ROOT / "tools" / "aidd-forge" / "aidd_forge" / "templates" / "skills"
+FORGE = ROOT / "modulos" / "01-governanca-e-qualidade" / "core" / "aidd-forge" / "aidd_forge" / "templates" / "skills"
 REFERENCIA = ROOT / "docs" / "protocolos" / "AGENTS-REFERENCIA-COMPLETA.md"
 AGENTS = ROOT / "AGENTS.md"
 

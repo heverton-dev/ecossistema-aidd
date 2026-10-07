@@ -31,7 +31,7 @@ for _p in (str(TOOL_DIR), str(TOOL_DIR / 'scripts'), str(PHASES_DIR), str(COMP_S
         sys.path.insert(0, _p)
 
 # Rodado a partir da raiz do monorepo, `scripts` pode ter entrado como namespace
-# package do `<raiz>/scripts`; a peca regular `tools/aidd-pure/scripts` tem
+# package do `<raiz>/scripts`; a peca regular `modulos/02-triade-motores/fluxo-01-pure/core/aidd-pure/scripts` tem
 # precedencia e precisa estar no topo do sys.path.
 _scripts_atual = sys.modules.get('scripts')
 if _scripts_atual is not None and str(TOOL_DIR / 'scripts') not in list(

@@ -76,7 +76,7 @@ def main():
     print("=" * 72)
 
     alvos = [
-        os.path.join(ROOT_DIR, "tools"),
+        os.path.join(ROOT_DIR, "modulos"),
         os.path.join(ROOT_DIR, "componentes")
     ]
 

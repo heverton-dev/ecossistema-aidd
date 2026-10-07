@@ -82,7 +82,7 @@ def auditar_arquivo(caminho_arquivo: str) -> list[str]:
 
 def scan_prompt_shield(repo_root: str) -> list[str]:
     todos_erros = []
-    pastas_alvo = ["tools", "componentes", "src"]
+    pastas_alvo = ["modulos", "componentes", "src"]
     for pasta in pastas_alvo:
         dir_completo = os.path.join(repo_root, pasta)
         if not os.path.exists(dir_completo):

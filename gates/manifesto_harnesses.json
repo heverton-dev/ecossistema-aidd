@@ -23,7 +23,7 @@
       "prefixo_pasta": ".mimocode",
       "confirmado": true,
       "nota": "REVERTIDO em 2026-09-07: a decisão de 2026-09-05 (abaixo, mantida para histórico) estava incorreta. MimoCode (github.com/XiaomiMiMo/MiMo-Code, fork oficial do OpenCode pela Xiaomi) documenta '.mimocode/skills/<nome>/SKILL.md' como a pasta nativa de projeto - não é redundante, é a única forma de descoberta de skill em nível de projeto (o fallback documentado é '~/.claude/skills' e '~/.opencode/skills', pastas GLOBAIS do usuário, nunca '.agent/'). A pasta '.mimocode/' também é o diretório de runtime próprio do MimoCode (config, node_modules) - escrever 'skills/' e 'commands/' dentro dela é o comportamento nativo esperado, não uma invasão.",
-      "nota_historica_2026-09-05_incorreta": "Decisão do usuário (2026-09-05): '.mimocode/' próprio é redundante - AGENTS.md §5 já afirmava que MimoCode lê '.agent/', mas o disco mantinha '.mimocode/skills/' como pasta separada em tools/aidd-master e tools/aidd-enterprise. Diff de segurança confirmou conteúdo idêntico a '.agent/skills/' antes da remoção (ver relatório desta execução). MimoCode passa a apontar só para '.agent/', sem pasta própria."
+      "nota_historica_2026-09-05_incorreta": "Decisão do usuário (2026-09-05): '.mimocode/' próprio é redundante - AGENTS.md §5 já afirmava que MimoCode lê '.agent/', mas o disco mantinha '.mimocode/skills/' como pasta separada em modulos/03-plataforma-e-entrega/fatiamento-master/aidd-master e modulos/03-plataforma-e-entrega/blindagem-enterprise/aidd-enterprise. Diff de segurança confirmou conteúdo idêntico a '.agent/skills/' antes da remoção (ver relatório desta execução). MimoCode passa a apontar só para '.agent/', sem pasta própria."
     },
     "gemini-cli": {
       "prefixo_pasta": ".gemini",
@@ -80,7 +80,7 @@
       "pasta_fonte": "mcps",
       "distribuicao": "destino-unico-por-ferramenta",
       "unidade": "diretorio",
-      "status_evidencia": "PROPOSTO NESTA MIGRAÇÃO, mas com precedente real: tools/aidd-pure/scripts/core/injector/profiles_registry.py e tools/aidd-master/src/core/profiles_registry.py já definem o tipo 'mcp' com UM destino físico e mirrors=[] (nenhum espelho por harness). MCP servers são referenciados por cada harness via seu próprio arquivo de config (ex.: .mcp.json) apontando para 1 caminho - não por pasta duplicada por harness. Este manifesto formaliza esse precedente real; não inventa duplicação onde ela não existe no código já em produção.",
+      "status_evidencia": "PROPOSTO NESTA MIGRAÇÃO, mas com precedente real: modulos/02-triade-motores/fluxo-01-pure/core/aidd-pure/scripts/core/injector/profiles_registry.py e modulos/03-plataforma-e-entrega/fatiamento-master/aidd-master/src/core/profiles_registry.py já definem o tipo 'mcp' com UM destino físico e mirrors=[] (nenhum espelho por harness). MCP servers são referenciados por cada harness via seu próprio arquivo de config (ex.: .mcp.json) apontando para 1 caminho - não por pasta duplicada por harness. Este manifesto formaliza esse precedente real; não inventa duplicação onde ela não existe no código já em produção.",
       "harnesses_aplicaveis": [],
       "dest_unico_template": "mcps/{nome}",
       "overrides_por_escopo": {
@@ -126,7 +126,7 @@
       "pasta_fonte": "subagentes",
       "distribuicao": "multi-harness",
       "unidade": "arquivo",
-      "status_evidencia": "SEM PRECEDENTE FÍSICO NO REPOSITÓRIO para este conceito. 'templates/agents/*.md' já existente em tools/aidd-master e tools/aidd-enterprise são TEMPLATES injetados em projetos GERADOS por essas ferramentas (personas de subagente para o produto final downstream) - conceito diferente de 'sub-agent descoberto pelo harness ao trabalhar neste monorepo'; por isso NÃO foram migrados para este tipo. PROPOSTO NESTA MIGRAÇÃO por simetria com 'skill', PARA REVISÃO EXPLÍCITA DO USUÁRIO. Apenas Claude Code tem convenção real confirmada externamente ('.claude/agents/{nome}.md', recurso documentado do produto Claude Code); as demais pastas abaixo são proposta simétrica NÃO confirmada.",
+      "status_evidencia": "SEM PRECEDENTE FÍSICO NO REPOSITÓRIO para este conceito. 'templates/agents/*.md' já existente em modulos/03-plataforma-e-entrega/fatiamento-master/aidd-master e modulos/03-plataforma-e-entrega/blindagem-enterprise/aidd-enterprise são TEMPLATES injetados em projetos GERADOS por essas ferramentas (personas de subagente para o produto final downstream) - conceito diferente de 'sub-agent descoberto pelo harness ao trabalhar neste monorepo'; por isso NÃO foram migrados para este tipo. PROPOSTO NESTA MIGRAÇÃO por simetria com 'skill', PARA REVISÃO EXPLÍCITA DO USUÁRIO. Apenas Claude Code tem convenção real confirmada externamente ('.claude/agents/{nome}.md', recurso documentado do produto Claude Code); as demais pastas abaixo são proposta simétrica NÃO confirmada.",
       "harnesses_aplicaveis": ["claude-code", "antigravity", "opencode", "mimocode", "gemini-cli"],
       "dest_harness_template": "{prefixo_pasta}/agents/{nome}"
     },

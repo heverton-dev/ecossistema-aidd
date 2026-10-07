@@ -140,7 +140,7 @@ def test_dockerfile_intake_na_raiz_do_contexto():
 
 
 def test_dockerfile_nao_copia_fora_do_contexto():
-    """Dockerfile deve ser raiz do contexto (Base Directory tools/aidd-ops)."""
+    """Dockerfile deve ser raiz do contexto (Base Directory modulos/03-plataforma-e-entrega/operacoes-ops/aidd-ops)."""
     caminho = os.path.join(TOOL_ROOT, "Dockerfile.intake")
     with open(caminho, "r", encoding="utf-8") as f:
         conteudo = f.read()

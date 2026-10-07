@@ -162,10 +162,10 @@ def _obter_projetos_alvo() -> list[str]:
     """Retorna a lista de diretórios alvo para migração dos pontos críticos."""
     return [
         "componentes/compartilhado/src-core",
-        "tools/aidd-master/scripts",
-        "tools/aidd-master/src/core",
-        "tools/aidd-enterprise/scripts",
-        "tools/aidd-enterprise/src/core",
-        "tools/aidd-pure/scripts/phases",
-        "tools/aidd-ops/scripts",
+        "modulos/03-plataforma-e-entrega/fatiamento-master/aidd-master/scripts",
+        "modulos/03-plataforma-e-entrega/fatiamento-master/aidd-master/src/core",
+        "modulos/03-plataforma-e-entrega/blindagem-enterprise/aidd-enterprise/scripts",
+        "modulos/03-plataforma-e-entrega/blindagem-enterprise/aidd-enterprise/src/core",
+        "modulos/02-triade-motores/fluxo-01-pure/core/aidd-pure/scripts/phases",
+        "modulos/03-plataforma-e-entrega/operacoes-ops/aidd-ops/scripts",
     ]

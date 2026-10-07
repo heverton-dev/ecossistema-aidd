@@ -33,7 +33,7 @@ Critérios Determinísticos:
   3. Resolução de Scripts Executáveis: Scripts (.py, .sh, .js, .cmd) invocados
      em comandos devem existir na pasta da skill ou no repositório.
   4. Resolução de Caminhos de Repositório: Diretórios e arquivos sob 'docs/',
-     'tools/', 'gates/', 'componentes/', etc., devem existir no disco.
+     'modulos/', 'gates/', 'componentes/', etc., devem existir no disco.
   5. Detecção de Ponto de Entrada / Ambiente Virtual Inacessível (Caso Sandeco):
      Referências a binários de ambientes virtuais (.venv, <venv-python>) não
      distribuídos ou inexistentes são bloqueadas.

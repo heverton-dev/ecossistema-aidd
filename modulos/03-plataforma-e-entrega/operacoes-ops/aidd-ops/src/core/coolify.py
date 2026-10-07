@@ -44,7 +44,7 @@ from core.result import Result
 HttpFn = Callable[..., Tuple[int, bytes]]
 
 APP_PORT_INTAKE = 8501
-APP_BASE_DIR_INTAKE = "tools/aidd-ops"
+APP_BASE_DIR_INTAKE = "modulos/03-plataforma-e-entrega/operacoes-ops/aidd-ops"
 APP_DOCKERFILE_INTAKE = "Dockerfile.intake"
 
 
@@ -184,7 +184,7 @@ class CoolifyClient:
         """POST /api/v1/applications/public — cria app gerenciado a partir de repositório git.
 
         Convenção do Intake Web: build_pack 'dockerfile', Base Directory e
-        Dockerfile padrão apontam para tools/aidd-ops quando não informados.
+        Dockerfile padrão apontam para modulos/03-plataforma-e-entrega/operacoes-ops/aidd-ops quando não informados.
         Retorna Result.ok(uuid do app criado).
         """
         body: Dict[str, object] = {

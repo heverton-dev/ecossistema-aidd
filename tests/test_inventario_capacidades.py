@@ -51,11 +51,11 @@ def repo(tmp_path):
     _git(raiz, "config", "user.name", "teste")
     _git(raiz, "config", "user.email", "teste@teste")
     base = "def montar():\n    return 1\n"
-    _escrever(raiz, "tools/ferramenta-velha/pacote_velho/gate.py",
+    _escrever(raiz, "modulos/ferramenta-velha/pacote_velho/gate.py",
               base + "\n\ndef validar_extra():\n    return 'so nesta copia'\n")
     _escrever(raiz, "componentes/compartilhado/gate.py", base)
     _escrever(raiz, "componentes/compartilhado/test_gate.py", "def test_montar():\n    assert True\n")
-    _escrever(raiz, "tools/ferramenta-velha/cli.py",
+    _escrever(raiz, "modulos/ferramenta-velha/cli.py",
               "print('[Ferramenta-Velha] pronto')\nUSO = 'python ecossistema.py generate <ideia>'\n")
     _escrever(raiz, "componentes/compartilhado/comandos/generate.md", "# Comando /generate\nGera um app.\n")
     _git(raiz, "add", ".")
@@ -72,7 +72,7 @@ def _fotografar(repo):
 
 def test_remover_copia_com_funcao_a_mais_sem_juntar_acusa_orfao(repo):
     _fotografar(repo)
-    _git(repo, "rm", "-q", "tools/ferramenta-velha/pacote_velho/gate.py")
+    _git(repo, "rm", "-q", "modulos/ferramenta-velha/pacote_velho/gate.py")
 
     res = _rodar(repo, "comparar", FOTO)
     assert res.returncode == 1, res.stdout
@@ -80,10 +80,10 @@ def test_remover_copia_com_funcao_a_mais_sem_juntar_acusa_orfao(repo):
 
 
 def test_remover_copia_identica_nao_acusa_orfao(repo):
-    _escrever(repo, "tools/aidd-forge/gate.py", "def montar():\n    return 1\n")
+    _escrever(repo, "modulos/01-governanca-e-qualidade/core/aidd-forge/gate.py", "def montar():\n    return 1\n")
     _git(repo, "add", ".")
     _fotografar(repo)
-    _git(repo, "rm", "-q", "tools/aidd-forge/gate.py")
+    _git(repo, "rm", "-q", "modulos/01-governanca-e-qualidade/core/aidd-forge/gate.py")
 
     res = _rodar(repo, "comparar", FOTO)
     assert res.returncode == 0, res.stdout
@@ -99,12 +99,12 @@ def test_mover_arquivo_nao_acusa_orfao(repo):
 
 def test_nomes_antigos_da_tabela_de_apelidos_nao_viram_orfao(repo):
     _fotografar(repo)
-    _git(repo, "mv", "tools/ferramenta-velha", "tools/ferramenta-nova")
-    _git(repo, "mv", "tools/ferramenta-nova/pacote_velho", "tools/ferramenta-nova/pacote_novo")
-    gate = repo / "tools/ferramenta-nova/pacote_novo/gate.py"
+    _git(repo, "mv", "modulos/ferramenta-velha", "modulos/ferramenta-nova")
+    _git(repo, "mv", "modulos/ferramenta-nova/pacote_velho", "modulos/ferramenta-nova/pacote_novo")
+    gate = repo / "modulos/ferramenta-nova/pacote_novo/gate.py"
     gate.write_text(gate.read_text(encoding="utf-8").replace("validar_extra", "validar_mais"), encoding="utf-8")
     # Nome antigo em outra caixa e comando de CLI renomeado; a prosa do .md é reescrita.
-    _escrever(repo, "tools/ferramenta-nova/cli.py",
+    _escrever(repo, "modulos/ferramenta-nova/cli.py",
               "print('[Ferramenta-Nova] pronto')\nUSO = 'python ecossistema.py pure-motor <ideia>'\n")
     _escrever(repo, "componentes/compartilhado/comandos/generate.md", "# Comando /pure-motor\nGera um app.\n")
 
@@ -122,7 +122,7 @@ def test_nomes_antigos_da_tabela_de_apelidos_nao_viram_orfao(repo):
 
 def test_linha_que_sumiu_de_todas_as_copias_acusa_orfao(repo):
     _fotografar(repo)
-    gate = repo / "tools/ferramenta-velha/pacote_velho/gate.py"
+    gate = repo / "modulos/ferramenta-velha/pacote_velho/gate.py"
     gate.write_text(gate.read_text(encoding="utf-8").replace("'so nesta copia'", "None"), encoding="utf-8")
 
     res = _rodar(repo, "comparar", FOTO)
@@ -131,21 +131,21 @@ def test_linha_que_sumiu_de_todas_as_copias_acusa_orfao(repo):
 
 
 def test_foto_ignora_arquivo_nao_rastreado_e_fora_de_tools_e_componentes(repo):
-    _escrever(repo, "tools/ferramenta-velha/rascunho_local.py", "def lixo():\n    pass\n")
+    _escrever(repo, "modulos/ferramenta-velha/rascunho_local.py", "def lixo():\n    pass\n")
     _escrever(repo, ".claude/skills/espelho.py", "def espelho():\n    pass\n")
     _git(repo, "add", ".claude")
     _rodar(repo, "foto", "--cycle", CICLO)
 
     indice = json.loads((repo / FOTO).read_text(encoding="utf-8"))
     assert sorted(indice) == sorted(["componentes/compartilhado/comandos/generate.md", "componentes/compartilhado/gate.py",
-                              "componentes/compartilhado/test_gate.py", "tools/ferramenta-velha/pacote_velho/gate.py",
-                              "tools/ferramenta-velha/cli.py"])
+                              "componentes/compartilhado/test_gate.py", "modulos/ferramenta-velha/pacote_velho/gate.py",
+                              "modulos/ferramenta-velha/cli.py"])
     assert indice["componentes/compartilhado/test_gate.py"]["testes"] == ["test_montar"]
 
 
 def test_foto_nao_tem_nada_que_o_detect_secrets_acuse(repo):
     pytest.importorskip("detect_secrets")
-    _escrever(repo, "tools/aidd-forge/test_segredos.py",
+    _escrever(repo, "modulos/01-governanca-e-qualidade/core/aidd-forge/test_segredos.py",
               "def test_chave_falsa():\n"
               "    aws = 'aws_key=AKIAIOSFODNN7EXAMPLE'  # pragma: allowlist secret\n"
               "    gh = 'ghp_1234567890abcdefghijklmnopqrstuvwxyz'  # pragma: allowlist secret\n")
@@ -154,7 +154,7 @@ def test_foto_nao_tem_nada_que_o_detect_secrets_acuse(repo):
 
     with gzip.open(repo / f"{CICLO}/INVENTARIO-ANTES.linhas.json.gz", "rb") as gz:
         linhas = json.loads(gz.read().decode("utf-8"))
-    assert len(linhas["tools/aidd-forge/test_segredos.py"]["sha256"]) == 64  # hash e linhas vão no .gz
+    assert len(linhas["modulos/01-governanca-e-qualidade/core/aidd-forge/test_segredos.py"]["sha256"]) == 64  # hash e linhas vão no .gz
     res = subprocess.run([sys.executable, "-m", "detect_secrets", "scan", FOTO,
                           f"{CICLO}/INVENTARIO-ANTES.linhas.json.gz"],
                          cwd=repo, capture_output=True, text=True, encoding="utf-8")

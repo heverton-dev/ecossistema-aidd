@@ -9,8 +9,8 @@ ou volumes em memória (/run/secrets), em conformidade estrita com a
 Lei #6 (Zero Cloud Lock-in / Supremacia Agnóstica).
 
 Uso:
-  python tools/aidd-ops/scripts/rotate_secrets.py --secrets-dir PATH [--keys KEY1,KEY2]
-  python tools/aidd-ops/scripts/rotate_secrets.py --check --secrets-dir PATH
+  python modulos/03-plataforma-e-entrega/operacoes-ops/aidd-ops/scripts/rotate_secrets.py --secrets-dir PATH [--keys KEY1,KEY2]
+  python modulos/03-plataforma-e-entrega/operacoes-ops/aidd-ops/scripts/rotate_secrets.py --check --secrets-dir PATH
 """
 
 import argparse

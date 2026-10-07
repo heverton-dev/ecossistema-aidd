@@ -11,13 +11,24 @@ import os
 import sys
 
 _FACTORY_ROOT = os.path.join(os.path.dirname(__file__), "..", "..")
+
+
+def _achar_raiz_repo() -> str:
+    curr = _FACTORY_ROOT
+    while curr and os.path.dirname(curr) != curr:
+        if os.path.isfile(os.path.join(curr, "ecossistema.py")):
+            return curr
+        curr = os.path.dirname(curr)
+    return os.path.normpath(os.path.join(_FACTORY_ROOT, "..", ".."))
+
+
 sys.path.insert(0, os.path.join(_FACTORY_ROOT, "src"))
-sys.path.insert(0, os.path.join(_FACTORY_ROOT, "..", "..", "componentes", "compartilhado", "src-core"))
+sys.path.insert(0, os.path.join(_achar_raiz_repo(), "componentes", "compartilhado", "src-core"))
 
 from core.result import Result
 
 def _achar_aidd_ops_root() -> str:
-    # 1. Dentro de tools/aidd-ops
+    # 1. Dentro de modulos/03-plataforma-e-entrega/operacoes-ops/aidd-ops
     cand1 = os.path.abspath(os.path.join(_FACTORY_ROOT, "..", "aidd-ops"))
     if os.path.isdir(cand1):
         return cand1
@@ -25,7 +36,7 @@ def _achar_aidd_ops_root() -> str:
     curr = _FACTORY_ROOT
     while curr and os.path.dirname(curr) != curr:
         if os.path.isfile(os.path.join(curr, "ecossistema.py")):
-            return os.path.join(curr, "tools", "aidd-ops")
+            return os.path.join(curr, "modulos", "03-plataforma-e-entrega", "operacoes-ops", "aidd-ops")
         curr = os.path.dirname(curr)
     return cand1
 
@@ -63,14 +74,6 @@ def _carregar_requisitos() -> dict:
     with open(_REQUISITOS_PATH, "r", encoding="utf-8") as f:
         return json.load(f)
 
-
-def _achar_raiz_repo() -> str:
-    curr = _FACTORY_ROOT
-    while curr and os.path.dirname(curr) != curr:
-        if os.path.isfile(os.path.join(curr, "ecossistema.py")):
-            return curr
-        curr = os.path.dirname(curr)
-    return os.path.normpath(os.path.join(_FACTORY_ROOT, "..", ".."))
 
 def _mapear_blocos(nicho_spec: dict) -> list:
     """Extrai blocos do nicho spec com status de existencia."""
@@ -136,7 +139,7 @@ def _blocos_dinamicos(ferramentas_com_req: list) -> list:
     repo_root = _achar_raiz_repo()
 
     def _bloco(slug, obrigatorio, motivo):
-        caminho_relativo = f"tools/aidd-ops/templates/infra/{slug}/"
+        caminho_relativo = f"modulos/03-plataforma-e-entrega/operacoes-ops/aidd-ops/templates/infra/{slug}/"
         caminho_absoluto = os.path.normpath(os.path.join(repo_root, caminho_relativo))
         existe = os.path.isdir(caminho_absoluto)
         compose_existe = os.path.isfile(os.path.join(caminho_absoluto, "docker-compose.yml")) if existe else False

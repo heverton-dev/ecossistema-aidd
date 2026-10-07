@@ -168,14 +168,14 @@ O ecossistema é modularizado em 8 ferramentas atômicas com fronteiras de respo
     text(fill: white, weight: "bold", size: 9pt)[Entrada Principal],
     text(fill: white, weight: "bold", size: 9pt)[Entrega Primária]
   ),
-  [#text(weight: "bold")[AIDD Forge]], [`tools/aidd-forge`], [Diretório alvo / CLI], [Governança, regras e hooks pre-commit.],
-  [#text(weight: "bold")[AIDD Planner]], [`tools/aidd-planner`], [Linguagem natural / Requisitos], [Planta baixa BDD/SDD e `PLANNER.json`.],
-  [#text(weight: "bold")[AIDD Generator]], [`tools/aidd-pure`], [`PLANNER.json` estruturado], [Código do zero puro com TDD Red-Green.],
-  [#text(weight: "bold")[AIDD Factory]], [`tools/aidd-open`], [Motores OSS + Plano], [Gateway BFF FastAPI e Compose unificado.],
-  [#text(weight: "bold")[AIDD Bridge]], [`tools/aidd-freedom`], [Export Lovable/v0/Bolt], [Desacoplamento de BaaS e Postgres nativo.],
-  [#text(weight: "bold")[AIDD Master]], [`tools/aidd-master`], [Código bruto das Engines], [Monólito VSA, Next.js 14 e OpenAPI.],
-  [#text(weight: "bold")[AIDD Enterprise]], [`tools/aidd-enterprise`], [Código do Master], [Blindagem criptográfica SHA-256 e RBAC.],
-  [#text(weight: "bold")[AIDD Ops]], [`tools/aidd-ops`], [Código Enterprise], [Provisionamento VPS, Docker Swarm e SSL.]
+  [#text(weight: "bold")[AIDD Forge]], [`modulos/01-governanca-e-qualidade/core/aidd-forge`], [Diretório alvo / CLI], [Governança, regras e hooks pre-commit.],
+  [#text(weight: "bold")[AIDD Planner]], [`modulos/01-governanca-e-qualidade/core/aidd-planner`], [Linguagem natural / Requisitos], [Planta baixa BDD/SDD e `PLANNER.json`.],
+  [#text(weight: "bold")[AIDD Generator]], [`modulos/02-triade-motores/fluxo-01-pure/core/aidd-pure`], [`PLANNER.json` estruturado], [Código do zero puro com TDD Red-Green.],
+  [#text(weight: "bold")[AIDD Factory]], [`modulos/02-triade-motores/fluxo-02-open/core/aidd-open`], [Motores OSS + Plano], [Gateway BFF FastAPI e Compose unificado.],
+  [#text(weight: "bold")[AIDD Bridge]], [`modulos/02-triade-motores/fluxo-03-freedom/core/aidd-freedom`], [Export Lovable/v0/Bolt], [Desacoplamento de BaaS e Postgres nativo.],
+  [#text(weight: "bold")[AIDD Master]], [`modulos/03-plataforma-e-entrega/fatiamento-master/aidd-master`], [Código bruto das Engines], [Monólito VSA, Next.js 14 e OpenAPI.],
+  [#text(weight: "bold")[AIDD Enterprise]], [`modulos/03-plataforma-e-entrega/blindagem-enterprise/aidd-enterprise`], [Código do Master], [Blindagem criptográfica SHA-256 e RBAC.],
+  [#text(weight: "bold")[AIDD Ops]], [`modulos/03-plataforma-e-entrega/operacoes-ops/aidd-ops`], [Código Enterprise], [Provisionamento VPS, Docker Swarm e SSL.]
 )
 
 = 3. A Tríade Canônica de Criação

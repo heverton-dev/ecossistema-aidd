@@ -4,6 +4,7 @@ Testes do gate G_ECOSSISTEMA_INTEGRIDADE — valida comportamento do gate
 executando-o contra arvores sinteticas isoladas via subprocess.
 """
 
+import json
 import os
 import shutil
 
@@ -60,9 +61,16 @@ def _montar_arvore_valida(root_dir):
     with open(os.path.join(root_dir, ".gitignore"), "w", encoding="utf-8") as f:
         f.write(".venv\n")
 
-    # 2. Ferramentas em tools/
+    # 2. Ferramentas na pasta canônica de modulos/ (mapa de donos copiado do repo)
+    mapa_real = os.path.join(os.path.dirname(CLI_PATH), "componentes", "compartilhado", "specs",
+                             "MAPA-DONOS-FERRAMENTAS.json")
+    specs = os.path.join(root_dir, "componentes", "compartilhado", "specs")
+    os.makedirs(specs, exist_ok=True)
+    shutil.copy(mapa_real, specs)
+    with open(mapa_real, encoding="utf-8") as fh:
+        pastas = {k: v["pasta"] for k, v in json.load(fh).items() if isinstance(v, dict) and "pasta" in v}
     for tool in TOOLS_REQUIRED:
-        tdir = os.path.join(root_dir, "tools", tool)
+        tdir = os.path.join(root_dir, *pastas[tool].split("/"))
         os.makedirs(tdir, exist_ok=True)
         with open(os.path.join(tdir, "README.md"), "w", encoding="utf-8") as f:
             f.write(f"# {tool}\n")
@@ -107,20 +115,20 @@ def test_arvore_valida_aprova(tmp_path):
 
 def test_falha_se_readme_ausente_em_tool(tmp_path):
     gate_path = _montar_arvore_valida(tmp_path)
-    os.remove(tmp_path / "tools" / "aidd-forge" / "README.md")
+    os.remove(tmp_path / "modulos" / "01-governanca-e-qualidade" / "core" / "aidd-forge" / "README.md")
 
     res = rodar_gate(gate_path, tmp_path)
     assert res.returncode == 1
-    assert "README.md ausente em tools/aidd-forge" in res.stdout
+    assert "README.md ausente em modulos/01-governanca-e-qualidade/core/aidd-forge" in res.stdout
 
 
 def test_falha_se_git_acidental_dentro_de_tool(tmp_path):
     gate_path = _montar_arvore_valida(tmp_path)
-    os.makedirs(tmp_path / "tools" / "aidd-forge" / ".git", exist_ok=True)
+    os.makedirs(tmp_path / "modulos" / "01-governanca-e-qualidade" / "core" / "aidd-forge" / ".git", exist_ok=True)
 
     res = rodar_gate(gate_path, tmp_path)
     assert res.returncode == 1
-    assert "Diretório .git encontrado indevidamente dentro de tools/aidd-forge!" in res.stdout
+    assert "Diretório .git encontrado indevidamente dentro de modulos/01-governanca-e-qualidade/core/aidd-forge!" in res.stdout
 
 
 def test_falha_se_skill_sem_yaml_frontmatter(tmp_path):
@@ -152,14 +160,14 @@ def test_falha_se_agents_md_ausente(tmp_path):
 
 
 def test_falha_se_tool_aidd_ops_ausente(tmp_path):
-    """Gate reprova quando tools/aidd-ops/ não existe."""
+    """Gate reprova quando modulos/03-plataforma-e-entrega/operacoes-ops/aidd-ops/ não existe."""
     gate_path = _montar_arvore_valida(tmp_path)
-    os.remove(tmp_path / "tools" / "aidd-ops" / "README.md")
-    os.rmdir(tmp_path / "tools" / "aidd-ops")
+    os.remove(tmp_path / "modulos" / "03-plataforma-e-entrega" / "operacoes-ops" / "aidd-ops" / "README.md")
+    os.rmdir(tmp_path / "modulos" / "03-plataforma-e-entrega" / "operacoes-ops" / "aidd-ops")
 
     res = rodar_gate(gate_path, tmp_path)
     assert res.returncode == 1
-    assert "Diretório da ferramenta tools/aidd-ops não encontrado" in res.stdout
+    assert "Diretório da ferramenta modulos/03-plataforma-e-entrega/operacoes-ops/aidd-ops não encontrado" in res.stdout
 
 
 def test_falha_se_skill_aidd_ops_runner_ausente(tmp_path):

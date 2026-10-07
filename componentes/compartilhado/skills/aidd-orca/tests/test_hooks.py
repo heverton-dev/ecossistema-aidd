@@ -89,7 +89,7 @@ class TestPostHook:
         _make_state_file(state_path, ["f1"])
         executar_pre_hook("f1", wt, state_path)
 
-        # Touch a path under tools/aidd-forge — audit_front will try to
+        # Touch a path under modulos/01-governanca-e-qualidade/core/aidd-forge — audit_front will try to
         # run pytest there.  In the test worktree no such dir exists, so
         # the verdict.commands list is empty → approved=False → FAILED.
         # We therefore monkeypatch audit_front to return approved=True.

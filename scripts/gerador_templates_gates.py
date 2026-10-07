@@ -33,12 +33,19 @@ import shutil
 import sys
 
 ROOT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-TOOLS_DIR = os.path.join(ROOT_DIR, "tools")
+MAPA_DONOS = os.path.join(ROOT_DIR, "componentes", "compartilhado", "specs", "MAPA-DONOS-FERRAMENTAS.json")
 
 # Gates específicos da ferramenta — NUNCA viram template de projeto de cliente.
 GATES_NAO_TEMPLATED = {"G_INJECT.py"}
 
 FERRAMENTAS_PADRAO = ("aidd-master", "aidd-enterprise")
+
+
+def _pasta(ferramenta):
+    """Pasta canônica da ferramenta em modulos/ (campo 'pasta' do mapa de donos, ciclo-03 VSA)."""
+    import json
+    with open(MAPA_DONOS, encoding="utf-8") as fh:
+        return os.path.join(ROOT_DIR, *json.load(fh)[ferramenta]["pasta"].split("/"))
 
 
 def _hash_arquivo(caminho):
@@ -48,8 +55,8 @@ def _hash_arquivo(caminho):
 
 def _gerar_para_ferramenta(ferramenta, dry_run=False):
     """Gera templates/gates de UMA ferramenta. Retorna lista de erros (str)."""
-    fonte = os.path.join(TOOLS_DIR, ferramenta, "scripts", "gates")
-    destino = os.path.join(TOOLS_DIR, ferramenta, "templates", "gates")
+    fonte = os.path.join(_pasta(ferramenta), "scripts", "gates")
+    destino = os.path.join(_pasta(ferramenta), "templates", "gates")
     erros = []
 
     if not os.path.isdir(fonte):
@@ -95,8 +102,8 @@ def _gerar_para_ferramenta(ferramenta, dry_run=False):
 
 def _verificar_ferramenta(ferramenta):
     """Verificação determinística (SHA-256). Retorna lista de erros (str)."""
-    fonte = os.path.join(TOOLS_DIR, ferramenta, "scripts", "gates")
-    destino = os.path.join(TOOLS_DIR, ferramenta, "templates", "gates")
+    fonte = os.path.join(_pasta(ferramenta), "scripts", "gates")
+    destino = os.path.join(_pasta(ferramenta), "templates", "gates")
     erros = []
 
     if not os.path.isdir(fonte):

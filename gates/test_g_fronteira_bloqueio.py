@@ -22,7 +22,7 @@ import pytest
 RAIZ = Path(__file__).resolve().parent.parent
 GATE_SCRIPT = RAIZ / "gates" / "G_FRONTEIRA_FERRAMENTAS.py"
 MAPA_REAL = RAIZ / "componentes" / "compartilhado" / "specs" / "MAPA-DONOS-FERRAMENTAS.json"
-DOCKERFILE_VIOLACAO = "tools/aidd-open/Dockerfile"
+DOCKERFILE_VIOLACAO = "modulos/02-triade-motores/fluxo-02-open/core/aidd-open/Dockerfile"
 
 
 def _subprocesso(args, cwd, env_vars=None):
@@ -66,7 +66,7 @@ def montar_repo_violacao(tmp_path):
         "ferramentas": [
             {
                 "id": "aidd-open",
-                "entrada_cli": "tools/aidd-open/scripts/pipeline_factory.py",
+                "entrada_cli": "modulos/02-triade-motores/fluxo-02-open/core/aidd-open/scripts/pipeline_factory.py",
                 "gates_proprios": [],
             }
         ],

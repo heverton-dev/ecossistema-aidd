@@ -44,17 +44,17 @@ def test_obter_peca_copia_para_projeto_e_confere_sha256(tmp_path: Path) -> None:
     assert _sha256(destino_arquivo) == _sha256(origem)
 
 
-def test_obter_peca_recusa_destino_dentro_de_tools() -> None:
-    destino = _RAIZ_REPO / "tools" / "aidd-pure" / "_destino_teste_almoxarifado"
+def test_obter_peca_recusa_destino_dentro_de_modulos() -> None:
+    destino = _RAIZ_REPO / "modulos" / "02-triade-motores" / "fluxo-01-pure" / "core" / "aidd-pure" / "_destino_teste_almoxarifado"
 
-    with pytest.raises(ValueError, match="tools"):
+    with pytest.raises(ValueError, match="modulos"):
         obter_peca("moldes/infra/Dockerfile", destino=destino)
 
     assert not destino.exists()
 
 
-def test_obter_peca_aceita_projeto_com_pasta_tools_fora_do_ecossistema(tmp_path: Path) -> None:
-    projeto_dir = tmp_path / "tools" / "meu_app"
+def test_obter_peca_aceita_projeto_com_pasta_modulos_fora_do_ecossistema(tmp_path: Path) -> None:
+    projeto_dir = tmp_path / "modulos" / "meu_app"
     projeto_dir.mkdir(parents=True, exist_ok=True)
 
     destino_arquivo = obter_peca("moldes/infra/Dockerfile", destino=projeto_dir)

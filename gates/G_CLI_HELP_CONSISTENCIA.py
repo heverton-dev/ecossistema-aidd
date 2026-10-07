@@ -36,7 +36,7 @@ Uso:
                mesmo arquivo (arquivo, linha e trecho são impressos).
 
 Nota de Evolução (NIH #2):
-  As CLIs `ecossistema.py` e `tools/aidd-ops/scripts/pipeline_ops.py` foram
+  As CLIs `ecossistema.py` e `modulos/03-plataforma-e-entrega/operacoes-ops/aidd-ops/scripts/pipeline_ops.py` foram
   migradas de argparse para Click. O Click valida flags e tipos em tempo
   de execução/parse e gera o help automaticamente a partir da assinatura,
   tornando este gate obsoleto por construção para essas CLIs. O gate permanece
@@ -53,24 +53,24 @@ ROOT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 ALLOWLIST_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "allowlist_cli_help.json")
 
 ARQUIVOS_AUDITADOS = [
-    "tools/aidd-forge/aidd_forge/cli.py",
-    "tools/aidd-master/scripts/aidd.py",
-    "tools/aidd-enterprise/scripts/aidd.py",
+    "modulos/01-governanca-e-qualidade/core/aidd-forge/aidd_forge/cli.py",
+    "modulos/03-plataforma-e-entrega/fatiamento-master/aidd-master/scripts/aidd.py",
+    "modulos/03-plataforma-e-entrega/blindagem-enterprise/aidd-enterprise/scripts/aidd.py",
     "componentes/compartilhado/injetor/variantes/aidd-pure/aidd_inject.py",
-    "tools/aidd-pure/scripts/pipeline_completo.py",
-    "tools/aidd-pure/scripts/verificar_gates.py",
-    "tools/aidd-pure/scripts/phases/01_pesquisador.py",
-    "tools/aidd-pure/scripts/phases/02_analisador.py",
-    "tools/aidd-pure/scripts/phases/03_designer.py",
-    "tools/aidd-pure/scripts/phases/04_decisor.py",
-    "tools/aidd-pure/scripts/phases/05_criador.py",
-    "tools/aidd-pure/scripts/phases/06_documentador.py",
-    "tools/aidd-pure/scripts/phases/07_analisador.py",
-    "tools/aidd-pure/scripts/phases/08_implementador.py",
-    "tools/aidd-pure/scripts/core/caveman_linter.py",
-    "tools/aidd-pure/scripts/gates/G_INTEGRACAO_CROSS_SCRIPT.py",
+    "modulos/02-triade-motores/fluxo-01-pure/core/aidd-pure/scripts/pipeline_completo.py",
+    "modulos/02-triade-motores/fluxo-01-pure/core/aidd-pure/scripts/verificar_gates.py",
+    "modulos/02-triade-motores/fluxo-01-pure/core/aidd-pure/scripts/phases/01_pesquisador.py",
+    "modulos/02-triade-motores/fluxo-01-pure/core/aidd-pure/scripts/phases/02_analisador.py",
+    "modulos/02-triade-motores/fluxo-01-pure/core/aidd-pure/scripts/phases/03_designer.py",
+    "modulos/02-triade-motores/fluxo-01-pure/core/aidd-pure/scripts/phases/04_decisor.py",
+    "modulos/02-triade-motores/fluxo-01-pure/core/aidd-pure/scripts/phases/05_criador.py",
+    "modulos/02-triade-motores/fluxo-01-pure/core/aidd-pure/scripts/phases/06_documentador.py",
+    "modulos/02-triade-motores/fluxo-01-pure/core/aidd-pure/scripts/phases/07_analisador.py",
+    "modulos/02-triade-motores/fluxo-01-pure/core/aidd-pure/scripts/phases/08_implementador.py",
+    "modulos/02-triade-motores/fluxo-01-pure/core/aidd-pure/scripts/core/caveman_linter.py",
+    "modulos/02-triade-motores/fluxo-01-pure/core/aidd-pure/scripts/gates/G_INTEGRACAO_CROSS_SCRIPT.py",
     "componentes/compartilhado/gates/G_CYBERSECURITY_OWASP.py",
-    "tools/aidd-pure/scripts/gates/AUDITAR_COMPARATIVO_HARNESS.py",
+    "modulos/02-triade-motores/fluxo-01-pure/core/aidd-pure/scripts/gates/AUDITAR_COMPARATIVO_HARNESS.py",
     "componentes/compartilhado/gates/G_BLOQUEAR_SEGREDOS.py",
 ]
 

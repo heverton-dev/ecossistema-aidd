@@ -38,7 +38,7 @@ from typing import Dict, List, Set, Tuple
 import yaml
 
 ROOT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-AIDD_OPS_DIR = os.path.join(ROOT_DIR, "tools", "aidd-ops")
+AIDD_OPS_DIR = os.path.join(ROOT_DIR, "modulos", "03-plataforma-e-entrega", "operacoes-ops", "aidd-ops")
 TEMPLATES_INFRA_DIR = os.path.join(AIDD_OPS_DIR, "templates", "infra")
 NICHOS_DIR = os.path.join(TEMPLATES_INFRA_DIR, "nichos")
 
@@ -223,7 +223,7 @@ def extrair_portas_host(conteudo_compose: str) -> List[Tuple[str, str]]:
 
 
 def auditar_composes() -> List[str]:
-    """Audita todos os arquivos docker-compose.yml sob tools/aidd-ops delegando análise ao Checkov."""
+    """Audita todos os arquivos docker-compose.yml sob modulos/03-plataforma-e-entrega/operacoes-ops/aidd-ops delegando análise ao Checkov."""
     erros = []
     if not os.path.isdir(AIDD_OPS_DIR):
         return erros
@@ -235,7 +235,7 @@ def auditar_composes() -> List[str]:
                 arquivos_compose.append(os.path.join(raiz, f))
 
     if not arquivos_compose:
-        print("[AVISO] Nenhum docker-compose.yml encontrado em tools/aidd-ops.")
+        print("[AVISO] Nenhum docker-compose.yml encontrado em modulos/03-plataforma-e-entrega/operacoes-ops/aidd-ops.")
         return erros
 
     print(f"--- Validando {len(arquivos_compose)} arquivo(s) Docker Compose via Checkov ---")

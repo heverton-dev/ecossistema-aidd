@@ -5,7 +5,7 @@ ECOSSISTEMA AIDD — QUALITY GATE: G_ECOSSISTEMA_INTEGRIDADE
 =============================================================================
 Validação determinística de integridade do meta-repositório ecossistema-aidd.
 Audita:
-1. Existência e integridade estrutural das 5 ferramentas em tools/
+1. Existência e integridade estrutural das ferramentas em modulos/ (pasta do mapa de donos)
 2. Existência e conformidade das 5 skills universais (YAML frontmatter)
 3. Presença dos Slash Commands para multi-harness (.agents/ e .claude/)
 4. Validação sintática (ast.parse) dos scripts centrais
@@ -15,12 +15,23 @@ Audita:
 Saída: exit 0 (Aprovado) ou exit 1 (Bloqueado).
 """
 
+import json
 import os
 import sys
 import ast
 import re
 
 ROOT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+MAPA_DONOS = os.path.join(ROOT_DIR, "componentes", "compartilhado", "specs", "MAPA-DONOS-FERRAMENTAS.json")
+
+
+def _pasta_ferramenta(tool):
+    """Pasta canônica da ferramenta (campo 'pasta' do mapa de donos); sem mapa, um caminho que não existe."""
+    try:
+        with open(MAPA_DONOS, encoding="utf-8") as fh:
+            return json.load(fh)[tool]["pasta"]
+    except (OSError, KeyError, ValueError):
+        return f"modulos/{tool}"
 
 TOOLS_REQUIRED = [
     "aidd-forge",
@@ -76,25 +87,25 @@ def audit():
     else:
         print("[OK] .gitignore presente.")
 
-    # 2. Checagem das 4 ferramentas em tools/
-    print("\n--- Verificando Ferramentas Integradas (tools/) ---")
+    # 2. Checagem das ferramentas na pasta canônica de modulos/ (mapa de donos)
+    print("\n--- Verificando Ferramentas Integradas (modulos/) ---")
     for tool in TOOLS_REQUIRED:
-        tool_dir = os.path.join(ROOT_DIR, "tools", tool)
+        tool_dir = os.path.join(ROOT_DIR, *_pasta_ferramenta(tool).split("/"))
         if not os.path.isdir(tool_dir):
-            erros.append(f"Diretório da ferramenta tools/{tool} não encontrado.")
+            erros.append(f"Diretório da ferramenta {_pasta_ferramenta(tool)} não encontrado.")
             continue
         
         # Verificar que não contém .git acidental
         git_dir = os.path.join(tool_dir, ".git")
         if os.path.exists(git_dir):
-            erros.append(f"Diretório .git encontrado indevidamente dentro de tools/{tool}!")
+            erros.append(f"Diretório .git encontrado indevidamente dentro de {_pasta_ferramenta(tool)}!")
         
         # Verificar README e testes
         readme = os.path.join(tool_dir, "README.md")
         if not os.path.exists(readme):
-            erros.append(f"README.md ausente em tools/{tool}")
+            erros.append(f"README.md ausente em {_pasta_ferramenta(tool)}")
         else:
-            print(f"[OK] tools/{tool} presente e documentado.")
+            print(f"[OK] {_pasta_ferramenta(tool)} presente e documentado.")
 
     # 3. Checagem das Skills Universais
     print("\n--- Verificando Skills Universais (componentes/compartilhado/skills/) ---")

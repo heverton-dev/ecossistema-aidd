@@ -123,7 +123,7 @@ def test_quarteto_execucao_raiz():
 
 def test_quarteto_projetos_reais_canonicos():
     """Valida projetos canônicos reais do ecossistema."""
-    enterprise_suite = os.path.join(ROOT_DIR, "tools", "aidd-enterprise", "materiais-extras", "examples", "enterprise-suite-v4")
+    enterprise_suite = os.path.join(ROOT_DIR, "modulos", "03-plataforma-e-entrega", "blindagem-enterprise", "aidd-enterprise", "materiais-extras", "examples", "enterprise-suite-v4")
     if os.path.isdir(enterprise_suite):
         cod, errs, status = auditar_projeto(enterprise_suite)
         assert cod == 0

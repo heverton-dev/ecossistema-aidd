@@ -47,7 +47,7 @@ _SCRIPTS_DIR = os.path.dirname(os.path.abspath(__file__))
 _TOOL_ROOT = os.path.dirname(_SCRIPTS_DIR)
 RAIZ_ECOSSISTEMA = _achar_raiz_repo(_TOOL_ROOT)
 _VSA_FORGE = os.path.join(RAIZ_ECOSSISTEMA, "modulos", "01-governanca-e-qualidade", "core", "aidd-forge")
-_FORGE_DIR = _VSA_FORGE if os.path.isdir(_VSA_FORGE) else os.path.join(RAIZ_ECOSSISTEMA, "tools", "aidd-forge")
+_FORGE_DIR = _VSA_FORGE if os.path.isdir(_VSA_FORGE) else os.path.join(RAIZ_ECOSSISTEMA, "modulos", "01-governanca-e-qualidade", "core", "aidd-forge")
 
 for _p in (os.path.join(_TOOL_ROOT, "src"), _FORGE_DIR):
     if _p not in sys.path:

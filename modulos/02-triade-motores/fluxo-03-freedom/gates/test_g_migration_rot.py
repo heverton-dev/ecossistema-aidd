@@ -34,7 +34,7 @@ from gates.G_MIGRATION_ROT import (
 )
 
 GATE_SCRIPT = os.path.join(ROOT_DIR, "gates", "G_MIGRATION_ROT.py")
-SOURCE_TARGET = os.path.join(ROOT_DIR, "tools", "aidd-master")
+SOURCE_TARGET = os.path.join(ROOT_DIR, "modulos", "03-plataforma-e-entrega", "fatiamento-master", "aidd-master")
 
 
 def _copiar_ambiente_migracao(dest_dir: str):

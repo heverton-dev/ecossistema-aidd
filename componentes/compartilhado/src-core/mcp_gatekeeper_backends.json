@@ -32,19 +32,19 @@
     "mcp-verificador-cve": {
       "command": "python",
       "args": [
-        "tools/aidd-pure/mcps/mcp-verificador-cve/server.py"
+        "modulos/02-triade-motores/fluxo-01-pure/core/aidd-pure/mcps/mcp-verificador-cve/server.py"
       ]
     },
     "cloudflare-mcp": {
       "command": "python",
       "args": [
-        "tools/aidd-ops/mcps/cloudflare-mcp/server.py"
+        "modulos/03-plataforma-e-entrega/operacoes-ops/aidd-ops/mcps/cloudflare-mcp/server.py"
       ]
     },
     "docker-mcp": {
       "command": "python",
       "args": [
-        "tools/aidd-ops/mcps/docker-mcp/server.py"
+        "modulos/03-plataforma-e-entrega/operacoes-ops/aidd-ops/mcps/docker-mcp/server.py"
       ]
     }
   }

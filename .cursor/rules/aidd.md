@@ -1,10 +1,10 @@
 # Cursor Rules — Ecossistema AIDD Unificado
 Consulte a governança canônica em AGENTS.md.
 Todas as 4 ferramentas estão organizadas em tools/:
-- tools/aidd-forge
-- tools/aidd-pure
-- tools/aidd-master
-- tools/aidd-enterprise
+- modulos/01-governanca-e-qualidade/core/aidd-forge
+- modulos/02-triade-motores/fluxo-01-pure/core/aidd-pure
+- modulos/03-plataforma-e-entrega/fatiamento-master/aidd-master
+- modulos/03-plataforma-e-entrega/blindagem-enterprise/aidd-enterprise
 
 Auditoria completa (todos os Quality Gates da raiz): python ecossistema.py audit
 CLI Unificada: python ecossistema.py

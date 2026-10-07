@@ -41,8 +41,19 @@ _PADRAO_SKIPPED = re.compile(r"(\d+) skipped")
 _PADRAO_ERRORS = re.compile(r"(\d+) error")
 
 
+def _pasta(ferramenta: str) -> str:
+    """Pasta canônica em modulos/ (campo 'pasta' do mapa de donos); ferramenta fora do mapa
+    (testes com árvore falsa) cai em modulos/<nome>."""
+    try:
+        with open(os.path.join(ROOT_DIR, "componentes", "compartilhado", "specs", "MAPA-DONOS-FERRAMENTAS.json"),
+                  encoding="utf-8") as fh:
+            return json.load(fh).get(ferramenta, {}).get("pasta", f"modulos/{ferramenta}")
+    except (OSError, ValueError):
+        return f"modulos/{ferramenta}"
+
+
 def _rodar_pytest(ferramenta: str) -> dict:
-    caminho = os.path.join(ROOT_DIR, "tools", ferramenta)
+    caminho = os.path.join(ROOT_DIR, *_pasta(ferramenta).split("/"))
     try:
         resultado = subprocess.run(
             [sys.executable, "-m", "pytest", "-q", "--tb=no"],
@@ -74,7 +85,7 @@ def _rodar_pytest(ferramenta: str) -> dict:
 def gerar(escrever: bool = True) -> dict:
     testes = {}
     for ferramenta in FERRAMENTAS:
-        print(f"Rodando pytest em tools/{ferramenta} ...")
+        print(f"Rodando pytest em {_pasta(ferramenta)} ...")
         testes[ferramenta] = _rodar_pytest(ferramenta)
         print(f"  -> {testes[ferramenta]}")
 

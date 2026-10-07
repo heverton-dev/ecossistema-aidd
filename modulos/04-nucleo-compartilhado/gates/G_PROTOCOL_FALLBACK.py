@@ -97,7 +97,7 @@ def main() -> int:
     print("=" * 72)
 
     diretorios_busca = [
-        os.path.join(ROOT_DIR, "tools"),
+        os.path.join(ROOT_DIR, "modulos"),
         os.path.join(ROOT_DIR, "testes"),
     ]
 

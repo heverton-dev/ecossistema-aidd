@@ -2,7 +2,7 @@
 
 Guarda e distribui peças do ecossistema a partir de componentes/compartilhado/CATALOGO.json.
 Nenhuma ferramenta guarda cópia; o forge entrega sob demanda para projetos e recusa
-gravar dentro de 'tools/'.
+gravar dentro de 'modulos/'.
 """
 
 from __future__ import annotations
@@ -97,7 +97,7 @@ def obter_peca(
     """Copia uma peça do almoxarifado para a pasta do projeto e verifica o sha256.
 
     Regras:
-    - Recusa expressamente qualquer destino dentro da pasta 'tools/'.
+    - Recusa expressamente qualquer destino dentro da pasta 'modulos/'.
     - Verifica a integridade do sha256 contra o catálogo oficial.
     """
     root = _encontrar_raiz(raiz)
@@ -106,11 +106,11 @@ def obter_peca(
 
     dest_path = Path(destino).resolve()
 
-    # Validação de segurança arquitetural: proibido gravar na pasta 'tools/' do ecossistema
-    tools_repo = (root / "tools").resolve()
-    if dest_path == tools_repo or tools_repo in dest_path.parents:
+    # Validação de segurança arquitetural: proibido gravar no código das ferramentas (modulos/)
+    modulos_repo = (root / "modulos").resolve()
+    if dest_path == modulos_repo or modulos_repo in dest_path.parents:
         raise ValueError(
-            f"Destino inválido '{destino}': proibido gravar dentro de 'tools/'. "
+            f"Destino inválido '{destino}': proibido gravar dentro de 'modulos/'. "
             "O almoxarifado entrega peças exclusivamente para pastas de projetos."
         )
 

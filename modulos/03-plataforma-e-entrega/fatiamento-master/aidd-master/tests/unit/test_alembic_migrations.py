@@ -20,9 +20,9 @@ import tempfile
 import pytest
 
 # Resolve paths
-TOOLS_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
-ALEMBIC_DIR = os.path.join(TOOLS_DIR, "alembic")
-SRC_DIR = os.path.join(TOOLS_DIR, "src")
+FERRAMENTA_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
+ALEMBIC_DIR = os.path.join(FERRAMENTA_DIR, "alembic")
+SRC_DIR = os.path.join(FERRAMENTA_DIR, "src")
 
 # ---------------------------------------------------------------------------
 # Expected schema — the tables, columns, and indexes that upgrade(head) must
@@ -126,7 +126,7 @@ def _run_alembic(args: list, db_path: str) -> subprocess.CompletedProcess:
         ["alembic"] + args,
         capture_output=True,
         text=True,
-        cwd=TOOLS_DIR,
+        cwd=FERRAMENTA_DIR,
         env=env,
     )
 

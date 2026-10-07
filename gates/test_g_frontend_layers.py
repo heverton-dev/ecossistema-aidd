@@ -66,7 +66,7 @@ def test_hook_com_fetch_fora_de_ui_passa():
 
 def test_gate_reprova_com_violacao_de_camada(tmp_path, monkeypatch):
     """Lei #13: Prova que o gate morde (exit 1) quando há chamada de rede em components/ui/."""
-    ui_dir = tmp_path / "tools" / "components" / "ui"
+    ui_dir = tmp_path / "modulos" / "components" / "ui"
     ui_dir.mkdir(parents=True)
     card_file = ui_dir / "Card.tsx"
     card_file.write_text(

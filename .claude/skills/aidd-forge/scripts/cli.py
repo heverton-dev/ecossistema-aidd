@@ -5,7 +5,7 @@ AIDD-Forge CLI: entrada deterministica da skill aidd-forge (D4 / DoD 1).
 Ponto unico de entrada local de `python ecossistema.py forge <args>`:
 - Subcomandos declarativos (init, inject, audit, conform) validados por argparse.
 - exit 1 em parametros faltantes ou entrada nao tratada (nunca exit 2).
-- Delegacao direta ao pacote local tools/aidd-forge (scripts do repositorio),
+- Delegacao direta ao pacote local modulos/01-governanca-e-qualidade/core/aidd-forge (scripts do repositorio),
   sem nenhuma interpretacao por prompt de LLM.
 """
 
@@ -30,11 +30,11 @@ def encontrar_raiz_repositorio() -> Optional[Path]:
 
 
 def raiz_pacote_local() -> Optional[Path]:
-    """Raiz do pacote local tools/aidd-forge quando presente neste repositorio."""
+    """Raiz do pacote local modulos/01-governanca-e-qualidade/core/aidd-forge quando presente neste repositorio."""
     raiz = encontrar_raiz_repositorio()
     if raiz is None:
         return None
-    pacote = raiz / "tools" / "aidd-forge"
+    pacote = raiz / "modulos" / "01-governanca-e-qualidade" / "core" / "aidd-forge"
     if (pacote / "aidd_forge" / "cli.py").is_file():
         return pacote
     return None
@@ -47,7 +47,7 @@ def executar_script_local(argumentos: List[str]) -> int:
     """
     pacote = raiz_pacote_local()
     if pacote is None:
-        raise RuntimeError("pacote local tools/aidd-forge nao encontrado")
+        raise RuntimeError("pacote local modulos/01-governanca-e-qualidade/core/aidd-forge nao encontrado")
 
     raiz_str = str(pacote)
     if raiz_str not in sys.path:

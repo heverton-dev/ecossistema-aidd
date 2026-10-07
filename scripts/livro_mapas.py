@@ -49,7 +49,7 @@ TEXTO = {
     "leis": ("Uma lei é uma regra do `AGENTS.md`. Sozinha, ela é um pedido; vira trava quando um guarda a prova. "
              "Cada lei declara, numa linha própria, o guarda que a prova.",
              "o meta-guarda `G_LEI_DECLARA_PORTAO` e o `G_PORTAO_PROVA_QUE_MORDE`", "`AGENTS.md`, seção 2"),
-    "ferramentas": ("Uma ferramenta é uma pequena fábrica especialista em `tools/aidd-<nome>/`, chamada pelo painel "
+    "ferramentas": ("Uma ferramenta é uma pequena fábrica especialista em `modulos/<fatia>/.../aidd-<nome>/`, chamada pelo painel "
                     "`ecossistema.py`. Cada uma deveria fazer um trabalho só.",
                     "o `G_TESTES_REAIS` (pytest de cada ferramenta) e o `G_DISCIPLINA_TESTE_FERRAMENTA`", "`tools/`"),
     "encaixes": ("Um encaixe é o formato combinado entre duas peças: a chamada que a receita da Tríade faz a cada "

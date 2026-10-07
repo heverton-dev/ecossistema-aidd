@@ -68,8 +68,8 @@ def arquivos_staged(raiz=None):
 def ferramentas_afetadas(arquivos, todas):
     """Ferramentas a executar para os `arquivos` staged, preservando a ordem de `todas`.
 
-    Retorna `todas` quando: o modo é 'completo'; algum arquivo sob tools/ não
-    corresponde a nenhuma ferramenta de `todas`; gates/G_TESTES_REAIS.py ou
+    Retorna `todas` quando: o modo é 'completo'; algum arquivo sob modulos/ está numa
+    pasta aidd-<x> que não é ferramenta de `todas`; gates/G_TESTES_REAIS.py ou
     gates/allowlist_skipped_testes.json está staged; ou nenhum arquivo staged
     mapeia ferramenta (escopo indeterminável — nunca aprovar sem rodar nada).
     """
@@ -82,10 +82,11 @@ def ferramentas_afetadas(arquivos, todas):
         while caminho.startswith("./"):
             caminho = caminho[2:]
         partes = caminho.split("/")
-        if partes[0] == "tools":
-            if len(partes) < 2 or partes[1] not in todas:
+        pasta_ferramenta = next((p for p in partes[:-1] if p.startswith("aidd-")), None)
+        if partes[0] == "modulos" and pasta_ferramenta:
+            if pasta_ferramenta not in todas:
                 return list(todas)
-            afetadas.add(partes[1])
+            afetadas.add(pasta_ferramenta)
         elif caminho in _ARQUIVOS_GLOBAIS_DO_GATE:
             return list(todas)
 

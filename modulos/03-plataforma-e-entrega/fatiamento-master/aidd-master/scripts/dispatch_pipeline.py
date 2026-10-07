@@ -19,8 +19,8 @@ Invariantes e Leis Auditadas:
   6. Multiplataforma: Compatibilidade total com Windows e POSIX.
 
 Uso:
-  python tools/aidd-master/scripts/dispatch_pipeline.py --dispatch <vsa_dispatch.json>
-  python tools/aidd-master/scripts/dispatch_pipeline.py --dispatch PLANNER.json --dry-run
+  python modulos/03-plataforma-e-entrega/fatiamento-master/aidd-master/scripts/dispatch_pipeline.py --dispatch <vsa_dispatch.json>
+  python modulos/03-plataforma-e-entrega/fatiamento-master/aidd-master/scripts/dispatch_pipeline.py --dispatch PLANNER.json --dry-run
 =============================================================================
 """
 
@@ -175,7 +175,7 @@ class VSADispatchPipeline:
         if "ddd_bounded_contexts" in raw_data and "grafo_fatias" not in raw_data:
             self.log("Detectado formato PLANNER.json. Invocando compilador VSA nativo...")
             try:
-                tools_planner = self.repo_root / "tools" / "aidd-planner"
+                tools_planner = self.repo_root / "modulos" / "01-governanca-e-qualidade" / "core" / "aidd-planner"
                 if str(tools_planner) not in sys.path:
                     sys.path.insert(0, str(tools_planner))
                 from aidd_planner.core.planner_engine import compilar_grafo_topologico_vsa

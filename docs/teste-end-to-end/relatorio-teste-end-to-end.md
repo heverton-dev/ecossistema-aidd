@@ -1390,5 +1390,20 @@
 - **Status:** **RESOLVIDO**.
 - **Data da Última Auditoria:** 05/10/2026.
 
+## 41. Modularização VSA ciclo-03, Bloco 2 (Tickets 3 e 4): `modulos/` como cópia única
 
-
+- **Objetivo da Correção:**
+  Juntar em `modulos/` o que só existia em `tools/` (decisão A) e reapontar código, gates, testes, skills e docs vivos para a pasta canônica de cada ferramenta, sem fallback para `tools/`.
+- **Ferramentas Tocadas:** as 8 ferramentas em `modulos/` (forge, planner, pure, open, freedom, enterprise, master, ops).
+- **O que executou:**
+  1. `MAPA-DONOS-FERRAMENTAS.json` ganhou o campo `pasta` (fonte única ferramenta → pasta); `scripts/pastas_ferramentas.py` lê o mapa.
+  2. 30 arquivos em `modulos/` montavam `componentes/` por profundidade fixa do layout de `tools/`; agora acham a raiz pelo `ecossistema.py`.
+  3. Achado real: `ecossistema.py pure-motor --help` e `open-motor --help` saíam com exit 1 (`ModuleNotFoundError: escritor_atomico`) rodando de `modulos/`; o catálogo antigo não mostrava porque foi gerado com `tools/`.
+  4. Almoxarifado passou a recusar destino dentro de `modulos/`.
+- **Resultados de Testes (06/10/2026, rodados de dentro de cada pasta em `modulos/`):**
+  - forge 310 passed, 1 skipped · planner 48 passed · pure 1016 passed, 5 skipped · open 21 passed · freedom 75 passed · enterprise 341 passed, 3 skipped · master 414 passed, 3 skipped · ops 198 passed (todas exit 0; 2423 no total).
+  - `pytest tests` → 1050 passed, 1 skipped (exit 0).
+  - `python ecossistema.py <ferramenta> --help` → exit 0 nas 8 ferramentas.
+  - `tests/test_sem_referencia_tools.py` → exit 0; `python ecossistema.py components verify` → exit 0.
+- **Status:** **RESOLVIDO** (remoção de `tools/` no Ticket 5).
+- **Data da Última Auditoria:** 06/10/2026.

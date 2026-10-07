@@ -10,10 +10,10 @@ Fontes de dados:
   - componentes/compartilhado/specs/MAPA-DONOS-FERRAMENTAS.json (mapa de donos:
     pode_conter / nunca_conter / zona_escrita_no_projeto por ferramenta).
   - docs/auditoria/mapa-pecas/catalogo-pecas.json (catálogo de peças; indexa o
-    sha256 de cada peça canônica para detectar cópias dentro de tools/).
+    sha256 de cada peça canônica para detectar cópias dentro das ferramentas).
 
 Varredura (modo estático, ESPEC-CONTRATOS-E-GATE.md):
-  1. `git ls-files tools` → cada arquivo sob tools/<ferramenta>/ que bate no
+  1. `git ls-files modulos` → cada arquivo sob a pasta da ferramenta (campo `pasta`) que bate no
      `nunca_conter` da própria ferramenta é violação;
   2. cujo sha256 bate com peça do catálogo de outro dono é cópia de peça
      (o almoxarifado é do aidd-forge; quem copiou deveria consumir, não guardar).
@@ -115,9 +115,18 @@ def carregar_allowlist(caminho: Path) -> Dict[str, str]:
     return permitidas
 
 
-def listar_arquivos_tools(raiz: Path) -> List[str]:
+def ferramenta_e_resto(mapa: Dict[str, dict], rel_repo: str) -> Tuple[Optional[str], str]:
+    """(ferramenta dona pela pasta canônica do mapa, caminho relativo à pasta) ou (None, '')."""
+    for nome, dados in mapa.items():
+        pasta = dados.get("pasta") if isinstance(dados, dict) else None
+        if pasta and rel_repo.startswith(pasta + "/"):
+            return nome, rel_repo[len(pasta) + 1:]
+    return None, ""
+
+
+def listar_arquivos_ferramentas(raiz: Path) -> List[str]:
     proc = subprocess.run(
-        ["git", "ls-files", "tools"],
+        ["git", "ls-files", "modulos"],
         cwd=str(raiz),
         capture_output=True,
         text=True,
@@ -125,7 +134,7 @@ def listar_arquivos_tools(raiz: Path) -> List[str]:
         errors="replace",
     )
     if proc.returncode != 0:
-        raise ErroGate(f"git ls-files tools falhou: {proc.stderr.strip() or proc.stdout.strip()}")
+        raise ErroGate(f"git ls-files modulos falhou: {proc.stderr.strip() or proc.stdout.strip()}")
     return [
         linha.strip().replace("\\", "/")
         for linha in proc.stdout.splitlines()
@@ -154,11 +163,11 @@ def indexar_catalogo(catalogo: dict, raiz: Path, mapa: Dict[str, dict]) -> Tuple
         caminho = raiz / bruto
         if not caminho.is_file():
             continue
-        if bruto.startswith("tools/"):
-            segmento = bruto.split("/")[1]
-            if segmento not in mapa:
+        ferramenta, _ = ferramenta_e_resto(mapa, bruto)
+        if bruto.startswith("modulos/"):
+            if ferramenta is None:
                 continue
-            dono = segmento
+            dono = ferramenta
         else:
             dono = DONO_ALMOXARIFADO
         conteudo = caminho.read_bytes()
@@ -211,13 +220,9 @@ def coletar_violacoes(
 ) -> List[Dict[str, str]]:
     violacoes: List[Dict[str, str]] = []
     for rel_repo in arquivos:
-        segmentos = rel_repo.split("/")
-        if len(segmentos) < 3:
+        ferramenta, rel_ferramenta = ferramenta_e_resto(mapa, rel_repo)
+        if ferramenta is None:
             continue
-        ferramenta = segmentos[1]
-        if ferramenta not in mapa:
-            continue
-        rel_ferramenta = "/".join(segmentos[2:])
         dados = mapa[ferramenta]
 
         for padrao in dados.get("nunca_conter", []):
@@ -281,7 +286,7 @@ def main(argv: Optional[List[str]] = None) -> int:
         mapa = carregar_mapa(MAPA_PADRAO)
         catalogo = carregar_json(CATALOGO_PADRAO, "Catálogo de peças (catalogo-pecas.json)")
         permitidas = carregar_allowlist(ALLOWLIST_PADRAO)
-        arquivos = listar_arquivos_tools(RAIZ)
+        arquivos = listar_arquivos_ferramentas(RAIZ)
         indice, conhecidos = indexar_catalogo(catalogo, RAIZ, mapa)
         violacoes = coletar_violacoes(arquivos, mapa, indice, conhecidos, RAIZ)
     except ErroGate as exc:

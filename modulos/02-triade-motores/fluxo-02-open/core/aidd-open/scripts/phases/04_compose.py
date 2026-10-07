@@ -11,10 +11,7 @@ import sys
 import yaml
 
 _FACTORY_ROOT = os.path.join(os.path.dirname(__file__), "..", "..")
-sys.path.insert(0, os.path.join(_FACTORY_ROOT, "src"))
-sys.path.insert(0, os.path.join(_FACTORY_ROOT, "..", "..", "componentes", "compartilhado", "src-core"))
 
-from core.result import Result
 
 def _achar_raiz_repo() -> str:
     curr = _FACTORY_ROOT
@@ -23,6 +20,12 @@ def _achar_raiz_repo() -> str:
             return curr
         curr = os.path.dirname(curr)
     return os.path.normpath(os.path.join(_FACTORY_ROOT, "..", ".."))
+
+
+sys.path.insert(0, os.path.join(_FACTORY_ROOT, "src"))
+sys.path.insert(0, os.path.join(_achar_raiz_repo(), "componentes", "compartilhado", "src-core"))
+
+from core.result import Result
 
 
 def _ler_compose(caminho: str) -> Result:

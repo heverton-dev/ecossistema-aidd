@@ -4,7 +4,7 @@
 AIDD-Ops MVP — GATE DETERMINÍSTICO (G_OPS_MVP)
 =============================================================================
 Dois modos de operação:
-  (a) Sem --dir: valida a própria estrutura de tools/aidd-ops/
+  (a) Sem --dir: valida a própria estrutura de modulos/03-plataforma-e-entrega/operacoes-ops/aidd-ops/
       - Compila via py_compile todos os .py
       - Varredura AST anti-stubs (nenhuma função com só pass/.../docstring)
   (b) Com --dir <saída>: valida que <saída>/PLANO-INFRAESTRUTURA.json
@@ -100,7 +100,7 @@ class OpsMvpGate:
                 self.check(False, f"Varredura AST em '{relativo}'", str(e))
 
     def _validar_estrutura(self):
-        """Modo (a): valida estrutura de tools/aidd-ops/."""
+        """Modo (a): valida estrutura de modulos/03-plataforma-e-entrega/operacoes-ops/aidd-ops/."""
         print("=" * 70)
         print(" [GATE G_OPS_MVP] Validacao da Estrutura do aidd-ops")
         print(f" Raiz: {TOOL_ROOT}")
@@ -171,7 +171,7 @@ class OpsMvpGate:
             self._verificar_compilacao(todos_py)
             self._verificar_anti_stubs(todos_py)
         else:
-            self.check(False, "Arquivos .py encontrados", "Nenhum .py encontrado em tools/aidd-ops/")
+            self.check(False, "Arquivos .py encontrados", "Nenhum .py encontrado em modulos/03-plataforma-e-entrega/operacoes-ops/aidd-ops/")
 
     def _carregar_plano_saida(self, dir_saida: str):
         """Confere que PLANO-INFRAESTRUTURA.json existe e e JSON valido; retorna o dict ou None."""

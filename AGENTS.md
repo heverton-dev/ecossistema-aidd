@@ -139,11 +139,11 @@ Every robust application in the ecosystem originates from **`aidd-forge`** (supr
   - CLI: `python ecossistema.py freedom` ou `python ecossistema.py run-fluxo --fluxo freedom`
   - Skill: `aidd-freedom` (operações atômicas da ferramenta via `aidd-freedom`)
 - **EXECUÇÃO DETERMINÍSTICA DE PIPELINE & PLANOS (Slash: `/run-plan` e `/pipeline`):**
-  - Engine: `tools/aidd-master/scripts/orchestrator_pipeline.py` & `scripts/compilador_tickets_plano.py` (Worktrees efêmeras + Join Barrier).
+  - Engine: `modulos/03-plataforma-e-entrega/fatiamento-master/aidd-master/scripts/orchestrator_pipeline.py` & `scripts/compilador_tickets_plano.py` (Worktrees efêmeras + Join Barrier).
   - CLI: `python ecossistema.py run-plan <plano>` e `python ecossistema.py pipeline --handoff <json>`
   - Skill: `aidd-pipeline`
 - **MESO-CAMADA VSA — DESPACHO TOPOLÓGICO EM WORKTREES (Slash: `/dispatch` e `/aidd-dispatch`):**
-  - Engine: `tools/aidd-master/scripts/dispatch_pipeline.py` & `engine_router.py` & `vsa_join_barrier.py` (Kahn DAG, worktrees efêmeras, barreira de validação e convergência master).
+  - Engine: `modulos/03-plataforma-e-entrega/fatiamento-master/aidd-master/scripts/dispatch_pipeline.py` & `engine_router.py` & `vsa_join_barrier.py` (Kahn DAG, worktrees efêmeras, barreira de validação e convergência master).
   - CLI: `python ecossistema.py dispatch --planner <plano>` ou `python ecossistema.py dispatch --dispatch <json>`
   - Skill: `aidd-dispatch`
 - **PIPELINE LINEAR DE AUDITORIA 4 FASES (Slash: `/audit-4f` e `/aidd-auditor`):**
@@ -183,14 +183,14 @@ Every robust application in the ecosystem originates from **`aidd-forge`** (supr
 ## 4. Architecture & Context Dispatch
 
 Core rules are universal. Domain and tool-specific instructions reside in their respective directories:
-- `tools/aidd-forge/AGENTS.md` -> Bootstrap, templates, and environment shielding.
-- `tools/aidd-planner/AGENTS.md` -> Planning engine, SDD/BDD intake, and Triad fuel generation.
-- `tools/aidd-pure/AGENTS.md` -> 8-phase software generation factory.
-- `tools/aidd-master/AGENTS.md` -> Modular Vertical Slice architecture.
-- `tools/aidd-enterprise/AGENTS.md` -> Mission-critical SHA-256 injected components.
-- `tools/aidd-ops/AGENTS.md` -> Agentic infrastructure meta-orchestration.
-- `tools/aidd-open/AGENTS.md` -> Multi-service application & integration code generator.
-- `tools/aidd-freedom/AGENTS.md` -> Low-code (Lovable/v0/Bolt) VPS packager.
+- `modulos/01-governanca-e-qualidade/core/aidd-forge/AGENTS.md` -> Bootstrap, templates, and environment shielding.
+- `modulos/01-governanca-e-qualidade/core/aidd-planner/AGENTS.md` -> Planning engine, SDD/BDD intake, and Triad fuel generation.
+- `modulos/02-triade-motores/fluxo-01-pure/core/aidd-pure/AGENTS.md` -> 8-phase software generation factory.
+- `modulos/03-plataforma-e-entrega/fatiamento-master/aidd-master/AGENTS.md` -> Modular Vertical Slice architecture.
+- `modulos/03-plataforma-e-entrega/blindagem-enterprise/aidd-enterprise/AGENTS.md` -> Mission-critical SHA-256 injected components.
+- `modulos/03-plataforma-e-entrega/operacoes-ops/aidd-ops/AGENTS.md` -> Agentic infrastructure meta-orchestration.
+- `modulos/02-triade-motores/fluxo-02-open/core/aidd-open/AGENTS.md` -> Multi-service application & integration code generator.
+- `modulos/02-triade-motores/fluxo-03-freedom/core/aidd-freedom/AGENTS.md` -> Low-code (Lovable/v0/Bolt) VPS packager.
 
 ---
 

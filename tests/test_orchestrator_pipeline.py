@@ -24,9 +24,9 @@ from pathlib import Path
 import pytest
 
 ROOT_DIR = Path(__file__).resolve().parent.parent
-SCRIPT_ORCHESTRATOR = ROOT_DIR / "tools" / "aidd-master" / "scripts" / "orchestrator_pipeline.py"
+SCRIPT_ORCHESTRATOR = ROOT_DIR / "modulos" / "03-plataforma-e-entrega" / "fatiamento-master" / "aidd-master" / "scripts" / "orchestrator_pipeline.py"
 sys.path.insert(0, str(ROOT_DIR))
-sys.path.insert(0, str(ROOT_DIR / "tools" / "aidd-master" / "scripts"))
+sys.path.insert(0, str(ROOT_DIR / "modulos" / "03-plataforma-e-entrega" / "fatiamento-master" / "aidd-master" / "scripts"))
 
 from orchestrator_pipeline import OrchestratorPipeline
 

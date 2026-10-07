@@ -3,7 +3,7 @@
 Validação de conformidade das seções de fronteiras dos READMEs das 8 ferramentas (Ticket 22 - D14).
 
 Regra:
-Cada tools/aidd-*/README.md deve conter uma seção de Fronteira Canônica
+Cada modulos/**/aidd-*/README.md deve conter uma seção de Fronteira Canônica
 refletindo com exatidão as regras de MAPA-DONOS-FERRAMENTAS.json:
 - Responsabilidades
 - O que pode conter / O que nunca conter
@@ -15,6 +15,8 @@ from pathlib import Path
 import pytest
 
 RAIZ = Path(__file__).resolve().parent.parent
+_MAPA = json.loads((RAIZ / "componentes/compartilhado/specs/MAPA-DONOS-FERRAMENTAS.json").read_text(encoding="utf-8"))
+_PASTAS = {k: v["pasta"] for k, v in _MAPA.items() if isinstance(v, dict) and "pasta" in v}
 MAPA_PATH = RAIZ / "componentes" / "compartilhado" / "specs" / "MAPA-DONOS-FERRAMENTAS.json"
 DOC_FRONTEIRAS = RAIZ / "docs" / "anatomias" / "FRONTEIRAS-POR-FERRAMENTA.md"
 DOC_PAPEIS = RAIZ / "docs" / "anatomias" / "PAPEIS-DAS-8-FERRAMENTAS.md"
@@ -48,7 +50,7 @@ def test_documento_papeis_das_8_ferramentas_atualizado():
 
 @pytest.mark.parametrize("ferramenta", FERRAMENTAS)
 def test_readme_ferramenta_tem_secao_de_fronteiras_alinhada(ferramenta):
-    readme = RAIZ / "tools" / ferramenta / "README.md"
+    readme = RAIZ / _PASTAS[ferramenta] / "README.md"
     assert readme.exists(), f"README não encontrado para {ferramenta}"
     conteudo = readme.read_text(encoding="utf-8")
 

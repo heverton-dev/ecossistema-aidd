@@ -220,7 +220,7 @@ def test_testes_das_ferramentas_tocadas_cobrem_suite_e_bateria_raiz(tmp_path):
         (tmp_path / "tests" / nome).write_text("", encoding="utf-8")
 
     comandos = orquestrador_4f.testes_das_ferramentas_tocadas(
-        ["tools/aidd-forge/aidd_forge/cli.py", "tools/aidd-forge/tests/t.py", "README.md"], tmp_path)
+        ["modulos/01-governanca-e-qualidade/core/aidd-forge/aidd_forge/cli.py", "modulos/01-governanca-e-qualidade/core/aidd-forge/tests/t.py", "README.md"], tmp_path)
 
     assert len(comandos) == 2
     suite, env = comandos[0]
@@ -246,13 +246,13 @@ def test_suite_da_ferramenta_tocada_reprova_e_fase_nao_e_commitada(repo, monkeyp
         return 1 if "G_TESTES_REAIS" in comando else rodar_gate_real(comando, cwd, env)
 
     monkeypatch.setattr(orquestrador_4f, "rodar_gate", rodar_gate)
-    m = _manifesto(repo.path, [_fase("Fase_1_Ticket_1", "tools/aidd-forge/peca.py"), _fase("Fase_2_Ticket_2", "out/b.md")])
+    m = _manifesto(repo.path, [_fase("Fase_1_Ticket_1", "modulos/01-governanca-e-qualidade/core/aidd-forge/peca.py"), _fase("Fase_2_Ticket_2", "out/b.md")])
 
     assert _rodar(monkeypatch, "--manifest", str(m)) == 1
     assert repo.chamadas == ["peca.py"]
     assert any("G_TESTES_REAIS" in c for c in comandos)
     arquivos = _git(repo.path, "ls-tree", "-r", "--name-only", "audit/aud-x-ciclo-01")
-    assert "tools/aidd-forge/peca.py" not in arquivos.split()
+    assert "modulos/01-governanca-e-qualidade/core/aidd-forge/peca.py" not in arquivos.split()
 
 
 def test_fase_sem_graph_first_reprova_antes_do_gate_e_nao_commita(repo, monkeypatch):

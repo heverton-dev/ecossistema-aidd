@@ -50,8 +50,8 @@ def test_selos_saem_do_catalogo():
 
 def test_casa_meta_e_ordem_das_casas():
     assert mv._casa(_gate("G_PORTAO_PROVA_QUE_MORDE")) == "meta"
-    misto = _gate("G_X", copias=[{"caminho": "tools/aidd-master/templates/gates/G_X.py", "papel": "entrega"},
-                                 {"caminho": "tools/aidd-master/scripts/gates/G_X.py", "papel": "ferramenta"}])
+    misto = _gate("G_X", copias=[{"caminho": "modulos/03-plataforma-e-entrega/fatiamento-master/aidd-master/templates/gates/G_X.py", "papel": "entrega"},
+                                 {"caminho": "modulos/03-plataforma-e-entrega/fatiamento-master/aidd-master/scripts/gates/G_X.py", "papel": "ferramenta"}])
     assert mv._casa(misto) == "ferramenta"
 
 
@@ -154,7 +154,7 @@ def _cat_encaixes():
         {"etapa": "etapa_01_forge", "descricao": "Etapa 1.", "chamadas_cli": [["forge", "init"]],
          "chamadas_por_fluxo": {}, "atalhos_internos": [], "chama_alguma_ferramenta": True},
         {"etapa": "etapa_03_engine", "descricao": "Etapa 3.", "chamadas_cli": [["factory", "curate"]],
-         "chamadas_por_fluxo": {"open": [["factory", "curate"]]}, "atalhos_internos": ["tools/x"],
+         "chamadas_por_fluxo": {"open": [["factory", "curate"]]}, "atalhos_internos": ["modulos/x"],
          "chama_alguma_ferramenta": True},
         {"etapa": "etapa_07_auditoria", "descricao": "Etapa 7.", "chamadas_cli": [], "chamadas_por_fluxo": {},
          "atalhos_internos": [], "chama_alguma_ferramenta": False},
@@ -165,14 +165,14 @@ def _cat_encaixes():
                           "problemas": ["flags inexistentes: --dir"]}],
             "contratos": [{"id": "handoff-a", "titulo": "A", "usado_por": ["scripts/x.py"]}],
             "achados": {"etapas_sem_ferramenta": ["etapa_07_auditoria"],
-                        "etapas_com_atalho_interno": {"etapa_03_engine": ["tools/x"]}}}
+                        "etapas_com_atalho_interno": {"etapa_03_engine": ["modulos/x"]}}}
 
 
 def test_encaixes_quebra_e_fachada_saem_do_catalogo():
     valores = mv.valores_encaixes(_cat_encaixes())
     assert 'chip falha">quebra' in valores["RECEITA"] and "só open" in valores["RECEITA"]
     assert "flags inexistentes: --dir" in valores["QUEBRADOS"]
-    assert "7 · auditoria" in valores["SEM_FERRAMENTA"] and "tools/x" in valores["ATALHOS"]
+    assert "7 · auditoria" in valores["SEM_FERRAMENTA"] and "modulos/x" in valores["ATALHOS"]
     assert "Não chama nenhuma ferramenta." in valores["RECEITA"] and "handoff-a" in valores["CONTRATOS"]
 
 
@@ -199,9 +199,9 @@ def test_mapa_roda_de_verdade_no_repositorio(tmp_path, tipo):
 def _cat_ferramentas():
     return {"ferramentas": [
         {"id": "aidd-a", "descricao": "Faz A.", "chamada": "python ecossistema.py a", "comandos": ["audit", "run"],
-         "gates_proprios": ["tools/aidd-a/gates/G_A.py"], "mcps_proprios": [], "arquivos_py": 3},
+         "gates_proprios": ["modulos/01-x/core/aidd-a/gates/G_A.py"], "mcps_proprios": [], "arquivos_py": 3},
         {"id": "aidd-b", "descricao": "", "chamada": "python ecossistema.py b", "comandos": ["audit"],
-         "gates_proprios": [], "mcps_proprios": ["tools/aidd-b/mcps/m/server.py"], "arquivos_py": 1}],
+         "gates_proprios": [], "mcps_proprios": ["modulos/01-x/core/aidd-b/mcps/m/server.py"], "arquivos_py": 1}],
         "achados": {"verbos_cli_repetidos": {"audit": ["aidd-a", "aidd-b"]},
                     "tarefas_com_varias_donas": {"barrar-segredos": {"donas": ["aidd-a", "aidd-b"], "arquivos": []}},
                     "arquivos_identicos_entre_donas": [{"donas": "aidd-a + aidd-b", "arquivos": 4}]}}
@@ -247,7 +247,7 @@ def test_comandos_marcador_desencontrado_reprova(tmp_path, monkeypatch):
 def _cat_conexoes(internos=True, hooks=True):
     return {"mcps": {"registrados_mcp_json": ["context7", "github"],
                      "internos_das_ferramentas": [{"id": "docker-mcp", "ferramenta": "aidd-ops",
-                                                   "caminho": "tools/aidd-ops/mcps/docker-mcp/server.py",
+                                                   "caminho": "modulos/03-plataforma-e-entrega/operacoes-ops/aidd-ops/mcps/docker-mcp/server.py",
                                                    "registrado_em_config": False}] if internos else []},
             "hooks": [{"evento": "PreToolUse", "matcher": "Task|Agent", "script": ".claude/hooks/x.py"}] if hooks else []}
 
@@ -327,9 +327,9 @@ def test_harnesses_marcador_desencontrado_reprova(tmp_path, monkeypatch):
 
 def _cat_moldes():
     return {"moldes_entrega": [
-        {"ferramenta": "aidd-master", "molde": "core", "caminho": "tools/aidd-master/templates/core", "arquivos": 20},
-        {"ferramenta": "aidd-enterprise", "molde": "core", "caminho": "tools/aidd-enterprise/templates/core", "arquivos": 20},
-        {"ferramenta": "aidd-forge", "molde": "skills", "caminho": "tools/aidd-forge/templates/skills", "arquivos": 4}]}
+        {"ferramenta": "aidd-master", "molde": "core", "caminho": "modulos/03-plataforma-e-entrega/fatiamento-master/aidd-master/templates/core", "arquivos": 20},
+        {"ferramenta": "aidd-enterprise", "molde": "core", "caminho": "modulos/03-plataforma-e-entrega/blindagem-enterprise/aidd-enterprise/templates/core", "arquivos": 20},
+        {"ferramenta": "aidd-forge", "molde": "skills", "caminho": "modulos/01-governanca-e-qualidade/core/aidd-forge/templates/skills", "arquivos": 4}]}
 
 
 def test_moldes_repetidos_saem_do_catalogo():

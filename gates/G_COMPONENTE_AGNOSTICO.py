@@ -107,10 +107,11 @@ def _detectar_componentes_tocados(arquivos: list[str], manifesto: dict) -> set[t
         for idx, parte in enumerate(partes):
             if parte in ("skills", "commands"):
                 tipo = "skill" if parte == "skills" else "command"
-                # Identifica se eh compartilhado (raiz) ou de tools/*
+                # Identifica se eh compartilhado (raiz) ou de uma ferramenta em modulos/
                 escopo = "compartilhado"
-                if len(partes) > 1 and partes[0] == "tools" and partes[1] in manifesto["escopos"]:
-                    escopo = partes[1]
+                ferramenta = next((p for p in partes[:idx] if p.startswith("aidd-")), None)
+                if partes[0] == "modulos" and ferramenta in manifesto["escopos"]:
+                    escopo = ferramenta
                 componentes_detectados.add((tipo, escopo))
 
     return componentes_detectados

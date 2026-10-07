@@ -13,7 +13,7 @@ Pipeline: `[FORGE -> PLANNER -> MASTER -> DISPATCH] -> {ENGINE nas Worktrees} ->
 | 2. Planejamento | `aidd-planner` | contratos BDD/SDD, Quarteto Sine Qua Non, hash SHA-256 |
 | 3. Fatiamento VSA | `aidd-master` | fatiamento vertical e contratos de fatias |
 | 4. Despacho & Worktrees | `aidd-dispatch` | isolamento em git worktrees com micro-gates |
-| 5. Motor | `aidd-pure` (`tools/aidd-pure`) | execução TDD Red-Green estrito em Clean Architecture |
+| 5. Motor | `aidd-pure` (`modulos/02-triade-motores/fluxo-01-pure/core/aidd-pure`) | execução TDD Red-Green estrito em Clean Architecture |
 | 6. Barreira & Rebase | `aidd-master` | rebase determinístico e merge das fatias |
 | 7. Blindagem | `aidd-enterprise` | auditoria SHA-256 e blindagem corporativa |
 | 8. Infraestrutura | `aidd-ops` | Dockerfile, Nginx SSL, compose |
@@ -46,7 +46,7 @@ Pipeline: `[FORGE -> PLANNER -> MASTER -> DISPATCH] -> {ENGINE nas Worktrees} ->
 
 ## Engine only (`pure-motor`)
 
-Runs just the 8-phase engine of `tools/aidd-pure`, without the other stages:
+Runs just the 8-phase engine of `modulos/02-triade-motores/fluxo-01-pure/core/aidd-pure`, without the other stages:
 research and requirements, analysis and decomposition, architecture and design, technical decisions, artifacts and schemas (Draft 2020-12), full documentation, self-critique and gate audit, working implementation with automated tests.
 
 ```bash
@@ -69,7 +69,7 @@ Done when: the command exits 0 and the phase 8 tests pass.
 - **"<tool> não gravou HANDOFF_...: o bastão não passa":** the named stage failed upstream; rerun that tool alone (`python ecossistema.py planner validate <pasta>/PLANNER.json`, `master`, `enterprise`) and restart `pure` only after it exits 0.
 - **Phase waits on `_llm_request_<id>.json`:** you are the model. Read the request, write the JSON answer as `_llm_response_<id>.json` in the same folder; on timeout, rerun `python ecossistema.py pure-motor "<idea>" --pasta <dest> --resume` to skip finished phases.
 - **`pure-motor` exits with "Missing option '--pasta'":** the engine requires `--pasta <dest>`; add it (the short form in "Engine only" omits it).
-- **`python tools/aidd-pure/scripts/preflight_llm.py` reports "PRÉ-VOO FALHOU":** confirm you are inside a harness session (delegated mode); never fix it with a key.
+- **`python modulos/02-triade-motores/fluxo-01-pure/core/aidd-pure/scripts/preflight_llm.py` reports "PRÉ-VOO FALHOU":** confirm you are inside a harness session (delegated mode); never fix it with a key.
 
 ## Stopping Checklist
 

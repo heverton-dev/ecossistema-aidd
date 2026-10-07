@@ -7,7 +7,7 @@ Ponto unico de entrada local de `python ecossistema.py enterprise <args>`:
 - Tipos de componente: skill, rule, mcp, spec, config, hook, agent.
 - exit 1 em parametros faltantes, entrada nao tratada ou fallback sem
   implementacao local (nunca exit 2, nunca sucesso silencioso).
-- Roteamento direto para os modulos Python de tools/aidd-enterprise,
+- Roteamento direto para os modulos Python de modulos/03-plataforma-e-entrega/blindagem-enterprise/aidd-enterprise,
   sem nenhuma interpretacao por prompt de LLM.
 """
 
@@ -48,11 +48,11 @@ def encontrar_raiz_repositorio() -> Optional[Path]:
 
 
 def raiz_pacote_local() -> Optional[Path]:
-    """Raiz do pacote local tools/aidd-enterprise quando presente neste repositorio."""
+    """Raiz do pacote local modulos/03-plataforma-e-entrega/blindagem-enterprise/aidd-enterprise quando presente neste repositorio."""
     raiz = encontrar_raiz_repositorio()
     if raiz is None:
         return None
-    pacote = raiz / "tools" / "aidd-enterprise"
+    pacote = raiz / "modulos" / "03-plataforma-e-entrega" / "blindagem-enterprise" / "aidd-enterprise"
     if (pacote / "scripts" / "aidd.py").is_file():
         return pacote
     return None
@@ -60,13 +60,13 @@ def raiz_pacote_local() -> Optional[Path]:
 
 def executar_script_local(argumentos: List[str]) -> int:
     """
-    Delega os argumentos ja validados ao pacote local tools/aidd-enterprise.
+    Delega os argumentos ja validados ao pacote local modulos/03-plataforma-e-entrega/blindagem-enterprise/aidd-enterprise.
     Levanta RuntimeError quando o pacote local nao esta disponivel (fallback
     sem implementacao -> exit 1 no chamador).
     """
     pacote = raiz_pacote_local()
     if pacote is None:
-        raise RuntimeError("pacote local tools/aidd-enterprise nao encontrado")
+        raise RuntimeError("pacote local modulos/03-plataforma-e-entrega/blindagem-enterprise/aidd-enterprise nao encontrado")
 
     script = pacote / "scripts" / "aidd.py"
     env = dict(os.environ)

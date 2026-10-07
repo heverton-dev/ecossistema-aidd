@@ -13,7 +13,7 @@ import sys
 from pathlib import Path
 import pytest
 
-from _gate_test_utils import rodar_gate
+from _gate_test_utils import copiar_mapa_donos, rodar_gate
 
 GATE_DIR = os.path.dirname(os.path.abspath(__file__))
 GATE_PATH = os.path.join(GATE_DIR, "G_TESTES_REAIS.py")
@@ -28,7 +28,8 @@ def _criar_arvore_sintetica(tmp_path):
     shutil.copy2(GATE_PATH, fake_gates / "G_TESTES_REAIS.py")
     shutil.copy2(ESCOPO_PATH, fake_gates / "_escopo_commit.py")
 
-    fake_tools = tmp_path / "tools" / "aidd-forge"
+    copiar_mapa_donos(tmp_path)
+    fake_tools = tmp_path / "modulos" / "01-governanca-e-qualidade" / "core" / "aidd-forge"
     fake_tools.mkdir(parents=True)
     return fake_gates, fake_tools
 

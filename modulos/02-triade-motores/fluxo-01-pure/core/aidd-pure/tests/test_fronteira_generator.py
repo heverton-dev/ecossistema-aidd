@@ -7,13 +7,13 @@ Regras de conformidade:
    consome `componentes/compartilhado/injetor/variantes/aidd-pure/**` via
    `aidd_forge.core.almoxarifado.caminho_peca`: todo modulo ligado em
    `scripts.core.injector.*` tem de resolver `__file__` para a peça do
-   almoxarifado. As copias legacy em `tools/aidd-pure/` PERMANECEM no lugar
+   almoxarifado. As copias legacy em `modulos/02-triade-motores/fluxo-01-pure/core/aidd-pure/` PERMANECEM no lugar
    neste ticket (PLANO-EVOLUCAO item 6 / Ticket 8 "keep old copies in place";
    a remocao definitiva é o Bloco 4 / Ticket 19) — elas nao podem ser a
    origem do que o gerador executa.
 2. V11 — o cache do protocolo delegado vive no PROJETO (`.aidd/cache`), nunca
    dentro da ferramenta. `import` nao pode criar diretorio dentro de
-   `tools/aidd-pure/`, e a requisicao delegada tem de ser gravada no projeto.
+   `modulos/02-triade-motores/fluxo-01-pure/core/aidd-pure/`, e a requisicao delegada tem de ser gravada no projeto.
 """
 import fnmatch
 import importlib
@@ -32,7 +32,7 @@ ROOT_DIR = _achar_raiz_repo()
 PURE_DIR = Path(__file__).resolve().parent.parent
 FORGE_DIR = ROOT_DIR / "modulos" / "01-governanca-e-qualidade" / "core" / "aidd-forge"
 if not FORGE_DIR.exists():
-    FORGE_DIR = ROOT_DIR / "tools" / "aidd-forge"
+    FORGE_DIR = ROOT_DIR / "modulos" / "01-governanca-e-qualidade" / "core" / "aidd-forge"
 CATALOGO = ROOT_DIR / "componentes" / "compartilhado"
 PECA_INJETOR = "injetor/variantes/aidd-pure"
 
@@ -60,7 +60,7 @@ def _importar(nome: str, caminho_raiz: Path):
 
 
 def _copias_locais_do_injetor() -> list:
-    """Caminhos relativos dentro de tools/aidd-pure que casam `**/*inject*`."""
+    """Caminhos relativos dentro de modulos/02-triade-motores/fluxo-01-pure/core/aidd-pure que casam `**/*inject*`."""
     encontrados = []
     for arquivo in PURE_DIR.rglob("*"):
         if not arquivo.is_file():
@@ -88,7 +88,7 @@ def test_copias_legacy_permanecem_mas_nao_sao_a_origem_do_generador():
 
     Este teste morde mesmo com as copias presentes: sem o carregador do
     almoxarifado, `scripts.core.injector.*` resolveria para a copia local de
-    `tools/aidd-pure/` e falharia.
+    `modulos/02-triade-motores/fluxo-01-pure/core/aidd-pure/` e falharia.
     """
     copias = _copias_locais_do_injetor()
     pecas = _importar("scripts.core.pecas_catalogo", PURE_DIR / "scripts")
@@ -98,7 +98,7 @@ def test_copias_legacy_permanecem_mas_nao_sao_a_origem_do_generador():
         origem = Path(sys.modules[f"scripts.core.injector.{modulo}"].__file__).resolve()
         assert _dentro(origem, raiz_canonica), (
             f"scripts.core.injector.{modulo} veio de {origem}, fora da peca "
-            f"canonica {raiz_canonica}. As copias legacy em tools/aidd-pure/ "
+            f"canonica {raiz_canonica}. As copias legacy em modulos/02-triade-motores/fluxo-01-pure/core/aidd-pure/ "
             f"({len(copias)} arquivo(s) casando '**/*inject*') nao podem ser a "
             "origem do que o gerador executa."
         )
@@ -187,7 +187,7 @@ def test_ancoras_de_caminho_da_peca_apontam_para_o_consumidor():
 
     detector = sys.modules["scripts.core.injector.detector_camada"]
     assert Path(detector._PHASES_DIR).resolve() == (PURE_DIR / "scripts" / "phases").resolve(), (
-        "detector_camada._PHASES_DIR deve apontar para tools/aidd-pure/scripts/phases"
+        "detector_camada._PHASES_DIR deve apontar para modulos/02-triade-motores/fluxo-01-pure/core/aidd-pure/scripts/phases"
     )
 
     injetor = sys.modules["scripts.core.injector.injetor"]
@@ -219,7 +219,7 @@ def test_cache_delegado_resolve_dentro_do_projeto(tmp_path: Path):
 
 
 def test_import_de_utils_delegacao_nao_cria_diretorio_na_ferramenta():
-    """Importar o módulo não pode materializar `.aidd/` dentro de tools/aidd-pure."""
+    """Importar o módulo não pode materializar `.aidd/` dentro de modulos/02-triade-motores/fluxo-01-pure/core/aidd-pure."""
     antes = sorted(p.as_posix() for p in PURE_DIR.rglob(".aidd"))
     caminho_modulo = PURE_DIR / "scripts" / "phases" / "utils_delegacao.py"
     spec = importlib.util.spec_from_file_location("utils_delegacao_isolado", caminho_modulo)
@@ -230,7 +230,7 @@ def test_import_de_utils_delegacao_nao_cria_diretorio_na_ferramenta():
     depois = sorted(p.as_posix() for p in PURE_DIR.rglob(".aidd"))
     assert antes == depois, f"import criou estrutura na ferramenta: {set(depois) - set(antes)}"
     assert not (PURE_DIR / "scripts" / ".aidd").exists(), (
-        "tools/aidd-pure/scripts/.aidd não pode existir (V11)"
+        "modulos/02-triade-motores/fluxo-01-pure/core/aidd-pure/scripts/.aidd não pode existir (V11)"
     )
 
 
@@ -251,7 +251,7 @@ def test_requisicao_delegada_e_gravada_no_projeto(tmp_path: Path, monkeypatch):
     assert json.loads(caminho.read_text(encoding="utf-8"))["id"] == requisicao.id
 
 def test_cache_com_cwd_dentro_da_ferramenta_cai_fora_de_tools(monkeypatch):
-    """Rodar o aidd-pure de dentro de tools/aidd-pure não pode pôr o cache na ferramenta."""
+    """Rodar o aidd-pure de dentro de modulos/02-triade-motores/fluxo-01-pure/core/aidd-pure não pode pôr o cache na ferramenta."""
     utils = _importar("utils_delegacao", PURE_DIR / "scripts" / "phases")
     monkeypatch.delenv("AIDD_PROJECT_DIR", raising=False)
     monkeypatch.chdir(PURE_DIR)

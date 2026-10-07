@@ -13,7 +13,7 @@ Pipeline: `[FORGE -> PLANNER -> MASTER -> DISPATCH] -> {ENGINE nas Worktrees} ->
 | 2. Planejamento | `aidd-planner` | contratos BDD/SDD, integrações e requisitos |
 | 3. Fatiamento VSA | `aidd-master` | fatiamento vertical e contratos de fatias |
 | 4. Despacho & Worktrees | `aidd-dispatch` | isolamento em git worktrees com micro-gates |
-| 5. Motor | `aidd-open` (`tools/aidd-open`) | integração curada de motores open source |
+| 5. Motor | `aidd-open` (`modulos/02-triade-motores/fluxo-02-open/core/aidd-open`) | integração curada de motores open source |
 | 6. Barreira & Rebase | `aidd-master` | rebase determinístico e merge das fatias |
 | 7. Blindagem | `aidd-enterprise` | auditoria SHA-256 e gateways corporativos |
 | 8. Infraestrutura | `aidd-ops` | Dockerfile, compose e redes isoladas |

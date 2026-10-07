@@ -15,7 +15,7 @@ jsonschema==4.26.0
 # exige importlib-metadata<8 e o litellm corrigido exige >=8; a solucao foi mover o
 # checkov para o venv isolado do hook 'g-infra-compose' em vez de manter um pacote
 # vulneravel. Superficie de uso no codigo: apenas litellm.completion()
-# (tools/aidd-pure/scripts/phases/utils_delegacao.py), contrato estavel.
+# (modulos/02-triade-motores/fluxo-01-pure/core/aidd-pure/scripts/phases/utils_delegacao.py), contrato estavel.
 litellm==1.101.0
 fastapi==0.141.1
 uvicorn==0.52.4

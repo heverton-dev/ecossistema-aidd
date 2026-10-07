@@ -22,7 +22,7 @@ try:
     from dotenv import load_dotenv
     # Este arquivo vive 4 niveis abaixo da raiz do ecossistema tanto na fonte
     # (componentes/aidd-ops/mcps/cloudflare-mcp/) quanto no destino sincronizado
-    # (tools/aidd-ops/mcps/cloudflare-mcp/) — mesma profundidade nas duas copias.
+    # (modulos/03-plataforma-e-entrega/operacoes-ops/aidd-ops/mcps/cloudflare-mcp/) — mesma profundidade nas duas copias.
     load_dotenv(Path(__file__).resolve().parents[4] / ".env", override=False)
 except ImportError:
     pass  # python-dotenv ausente no venv que sobe este MCP: segue só com o shell env.

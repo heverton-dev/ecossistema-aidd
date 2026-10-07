@@ -368,8 +368,8 @@ def auditar_migracoes_target(target_dir: str) -> Tuple[bool, List[str]]:
 def descobrir_alvos_migracao() -> List[str]:
     """Descobre automaticamente projetos com alembic.ini no ecossistema."""
     candidatos = [
-        os.path.join(ROOT_DIR, "tools", "aidd-master"),
-        os.path.join(ROOT_DIR, "tools", "aidd-enterprise"),
+        os.path.join(ROOT_DIR, "modulos", "03-plataforma-e-entrega", "fatiamento-master", "aidd-master"),
+        os.path.join(ROOT_DIR, "modulos", "03-plataforma-e-entrega", "blindagem-enterprise", "aidd-enterprise"),
     ]
     alvos = []
     for cand in candidatos:

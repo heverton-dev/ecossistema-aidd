@@ -37,7 +37,7 @@ Done when the command exits 0 and every slice converged into master.
 
 ## Negative Guardrails
 
-- NEVER trust invariant 4 alone: no code in `tools/aidd-master/scripts/dispatch_pipeline.py` or `gates/G_DISPATCH_PIPELINE_VSA.py` reads `arquivos_permitidos` (the manifest field is `arquivos_esperados`); check each `slice/<slice_id>` with `git diff --name-only <base>...slice/<slice_id>` yourself.
+- NEVER trust invariant 4 alone: no code in `modulos/03-plataforma-e-entrega/fatiamento-master/aidd-master/scripts/dispatch_pipeline.py` or `gates/G_DISPATCH_PIPELINE_VSA.py` reads `arquivos_permitidos` (the manifest field is `arquivos_esperados`); check each `slice/<slice_id>` with `git diff --name-only <base>...slice/<slice_id>` yourself.
 - NEVER keep manual edits in `.worktrees/<slice_id>`: `_run_slice_validation` runs `git add -A` and auto-commits everything there as `feat(<slice_id>): auto-commit vertical slice`, and even `--dry-run` cleanup `shutil.rmtree`s that folder.
 - NEVER break a cycle by deleting edges from `vsa_dispatch.json`: fix dependencies in `PLANNER.json` (`aidd-planner`) and recompile.
 - NEVER read a `--dry-run` exit 0 as converged: slices, `despachar_fatia` and `post_merge_suite` are simulated.

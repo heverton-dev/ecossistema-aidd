@@ -31,7 +31,7 @@ if hasattr(sys.stdout, "reconfigure"):
     sys.stdout.reconfigure(encoding="utf-8", errors="replace")
 
 ROOT_DIR = Path(__file__).resolve().parents[1]
-FORGE_TEMPLATES_DIR = ROOT_DIR / "tools" / "aidd-forge" / "aidd_forge" / "templates"
+FORGE_TEMPLATES_DIR = ROOT_DIR / "modulos" / "01-governanca-e-qualidade" / "core" / "aidd-forge" / "aidd_forge" / "templates"
 
 CHARS_PER_TOKEN = 4
 MAX_GOVERNANCE_TOKENS = 1500

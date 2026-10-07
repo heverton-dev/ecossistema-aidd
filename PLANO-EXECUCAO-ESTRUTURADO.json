@@ -50,37 +50,37 @@
   "ferramentas": [
     {
       "id": "aidd-forge",
-      "caminho": "tools/aidd-forge",
+      "caminho": "modulos/01-governanca-e-qualidade/core/aidd-forge",
       "skill": "skills/aidd-forge",
       "slash_command": "/forge [caminho]"
     },
     {
       "id": "aidd-pure",
-      "caminho": "tools/aidd-pure",
+      "caminho": "modulos/02-triade-motores/fluxo-01-pure/core/aidd-pure",
       "skill": "skills/aidd-pure",
       "slash_command": "/generate <ideia>"
     },
     {
       "id": "aidd-master",
-      "caminho": "tools/aidd-master",
+      "caminho": "modulos/03-plataforma-e-entrega/fatiamento-master/aidd-master",
       "skill": "skills/aidd-master",
       "slash_command": "/master <modulo>"
     },
     {
       "id": "aidd-enterprise",
-      "caminho": "tools/aidd-enterprise",
+      "caminho": "modulos/03-plataforma-e-entrega/blindagem-enterprise/aidd-enterprise",
       "skill": "skills/aidd-enterprise",
       "slash_command": "/enterprise <tipo> <nome>"
     },
     {
       "id": "aidd-ops",
-      "caminho": "tools/aidd-ops",
+      "caminho": "modulos/03-plataforma-e-entrega/operacoes-ops/aidd-ops",
       "skill": "skills/aidd-ops",
       "slash_command": "/ops [acao]"
     }
   ],
   "testes": {
-    "medido_em": "2026-10-05T21:31:31.552212+00:00",
+    "medido_em": "2026-10-07T00:59:31.330331+00:00",
     "metodo": "python -m pytest -q --tb=no em cada tools/<ferramenta>, parseado do resumo real (nao digitado a mao)",
     "por_ferramenta": {
       "aidd-forge": {

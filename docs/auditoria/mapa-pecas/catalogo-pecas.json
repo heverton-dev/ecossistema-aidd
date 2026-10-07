@@ -8,8 +8,8 @@
     "leis": 14,
     "lente_15d": 15,
     "oficina": 37,
-    "scripts": 50,
-    "moldes_entrega": 24,
+    "scripts": 52,
+    "moldes_entrega": 21,
     "harnesses": 7,
     "skills_nossas": 44,
     "skills_terceiros_copiadas": 0,
@@ -18,8 +18,8 @@
     "mcps_registrados": 11,
     "mcps_internos": 3,
     "hooks": 3,
-    "gates_nomes": 103,
-    "gates_arquivos": 132,
+    "gates_nomes": 104,
+    "gates_arquivos": 203,
     "contratos": 9,
     "etapas_receita": 7,
     "encaixes_quebrados": 0
@@ -29,7 +29,7 @@
       "id": "aidd-enterprise",
       "descricao": "O Framework Definitivo para Monólitos Modulares, Clean Architecture, Fatias Verticais e Governança Anti-Atalhos por Gates Rígidos.",
       "chamada": "python ecossistema.py enterprise",
-      "entrada_cli": "tools/aidd-enterprise/scripts/aidd.py",
+      "entrada_cli": "modulos/03-plataforma-e-entrega/blindagem-enterprise/aidd-enterprise/scripts/aidd.py",
       "comandos": [
         "add-module",
         "apply",
@@ -59,7 +59,7 @@
       "id": "aidd-forge",
       "descricao": "Motor Universal de Governança Agêntica, Descarte de Contexto e Economia Extrema de Tokens",
       "chamada": "python ecossistema.py forge",
-      "entrada_cli": "tools/aidd-forge/aidd_forge/cli.py",
+      "entrada_cli": "modulos/01-governanca-e-qualidade/core/aidd-forge/aidd_forge/cli.py",
       "comandos": [
         "audit",
         "conform",
@@ -68,18 +68,18 @@
         "inject"
       ],
       "gates_proprios": [
-        "tools/aidd-forge/aidd_forge/templates/gates/G_BLOQUEAR_SEGREDOS.py",
-        "tools/aidd-forge/aidd_forge/templates/gates/G_CONTRACTS.py",
-        "tools/aidd-forge/aidd_forge/templates/gates/G_CYBERSECURITY_OWASP.py",
-        "tools/aidd-forge/aidd_forge/templates/gates/G_DETERMINISMO_LEI_1.py",
-        "tools/aidd-forge/aidd_forge/templates/gates/G_ESTRUTURA_AST.py",
-        "tools/aidd-forge/aidd_forge/templates/gates/G_HARNESS_COMPAT.py",
-        "tools/aidd-forge/aidd_forge/templates/gates/G_INJECT.py",
-        "tools/aidd-forge/aidd_forge/templates/gates/G_PERFORMANCE.py",
-        "tools/aidd-forge/aidd_forge/templates/gates/G_QUARTETO_SINE_QUA_NON.py",
-        "tools/aidd-forge/aidd_forge/templates/gates/G_SAIDA_BINARIA.py",
-        "tools/aidd-forge/aidd_forge/templates/gates/G_STACK_PADRAO_OURO.py",
-        "tools/aidd-forge/aidd_forge/templates/gates/G_TESTES_REAIS.py"
+        "modulos/01-governanca-e-qualidade/core/aidd-forge/aidd_forge/templates/gates/G_BLOQUEAR_SEGREDOS.py",
+        "modulos/01-governanca-e-qualidade/core/aidd-forge/aidd_forge/templates/gates/G_CONTRACTS.py",
+        "modulos/01-governanca-e-qualidade/core/aidd-forge/aidd_forge/templates/gates/G_CYBERSECURITY_OWASP.py",
+        "modulos/01-governanca-e-qualidade/core/aidd-forge/aidd_forge/templates/gates/G_DETERMINISMO_LEI_1.py",
+        "modulos/01-governanca-e-qualidade/core/aidd-forge/aidd_forge/templates/gates/G_ESTRUTURA_AST.py",
+        "modulos/01-governanca-e-qualidade/core/aidd-forge/aidd_forge/templates/gates/G_HARNESS_COMPAT.py",
+        "modulos/01-governanca-e-qualidade/core/aidd-forge/aidd_forge/templates/gates/G_INJECT.py",
+        "modulos/01-governanca-e-qualidade/core/aidd-forge/aidd_forge/templates/gates/G_PERFORMANCE.py",
+        "modulos/01-governanca-e-qualidade/core/aidd-forge/aidd_forge/templates/gates/G_QUARTETO_SINE_QUA_NON.py",
+        "modulos/01-governanca-e-qualidade/core/aidd-forge/aidd_forge/templates/gates/G_SAIDA_BINARIA.py",
+        "modulos/01-governanca-e-qualidade/core/aidd-forge/aidd_forge/templates/gates/G_STACK_PADRAO_OURO.py",
+        "modulos/01-governanca-e-qualidade/core/aidd-forge/aidd_forge/templates/gates/G_TESTES_REAIS.py"
       ],
       "mcps_proprios": [],
       "arquivos_py": 42
@@ -88,7 +88,7 @@
       "id": "aidd-freedom",
       "descricao": "Extrator, Unificador e Empacotador de Projetos Low-Code (Lovable, v0, Bolt) para VPS Própria.",
       "chamada": "python ecossistema.py freedom-motor",
-      "entrada_cli": "tools/aidd-freedom/aidd_freedom/cli.py",
+      "entrada_cli": "modulos/02-triade-motores/fluxo-03-freedom/core/aidd-freedom/aidd_freedom/cli.py",
       "comandos": [
         "convert-db",
         "destroy",
@@ -99,10 +99,10 @@
         "unpack"
       ],
       "gates_proprios": [
-        "tools/aidd-freedom/gates/G_BRIDGE_DOCKER_OCI.py",
-        "tools/aidd-freedom/gates/G_BRIDGE_POSTGRESQL.py",
-        "tools/aidd-freedom/gates/G_BRIDGE_VENDOR_LOCKIN.py",
-        "tools/aidd-freedom/gates/G_BRIDGE_VSA_COMPAT.py"
+        "modulos/02-triade-motores/fluxo-03-freedom/core/aidd-freedom/gates/G_BRIDGE_DOCKER_OCI.py",
+        "modulos/02-triade-motores/fluxo-03-freedom/core/aidd-freedom/gates/G_BRIDGE_POSTGRESQL.py",
+        "modulos/02-triade-motores/fluxo-03-freedom/core/aidd-freedom/gates/G_BRIDGE_VENDOR_LOCKIN.py",
+        "modulos/02-triade-motores/fluxo-03-freedom/core/aidd-freedom/gates/G_BRIDGE_VSA_COMPAT.py"
       ],
       "mcps_proprios": [],
       "arquivos_py": 19
@@ -111,7 +111,7 @@
       "id": "aidd-master",
       "descricao": "O Framework Definitivo para Monólitos Modulares, Clean Architecture, Fatias Verticais e Governança Anti-Atalhos por Gates Rígidos.",
       "chamada": "python ecossistema.py master",
-      "entrada_cli": "tools/aidd-master/scripts/aidd.py",
+      "entrada_cli": "modulos/03-plataforma-e-entrega/fatiamento-master/aidd-master/scripts/aidd.py",
       "comandos": [
         "add-module",
         "apply",
@@ -136,7 +136,7 @@
         "verificar-drift"
       ],
       "gates_proprios": [
-        "tools/aidd-master/scripts/gates/G_AST_BOUNDED_CONTEXT.py"
+        "modulos/03-plataforma-e-entrega/fatiamento-master/aidd-master/scripts/gates/G_AST_BOUNDED_CONTEXT.py"
       ],
       "mcps_proprios": [],
       "arquivos_py": 125
@@ -145,15 +145,15 @@
       "id": "aidd-open",
       "descricao": "Gerador de Código de Aplicação e Integração para Stacks Multi-Serviço.",
       "chamada": "python ecossistema.py open-motor",
-      "entrada_cli": "tools/aidd-open/scripts/pipeline_factory.py",
+      "entrada_cli": "modulos/02-triade-motores/fluxo-02-open/core/aidd-open/scripts/pipeline_factory.py",
       "comandos": [],
       "gates_proprios": [
-        "tools/aidd-open/gates/G_FACTORY_ANALYSIS.py",
-        "tools/aidd-open/gates/G_FACTORY_COMPOSE.py",
-        "tools/aidd-open/gates/G_FACTORY_ENV.py",
-        "tools/aidd-open/gates/G_FACTORY_INIT_DB.py",
-        "tools/aidd-open/gates/G_FACTORY_INTEGRATION.py",
-        "tools/aidd-open/gates/G_FACTORY_MVP.py"
+        "modulos/02-triade-motores/fluxo-02-open/core/aidd-open/gates/G_FACTORY_ANALYSIS.py",
+        "modulos/02-triade-motores/fluxo-02-open/core/aidd-open/gates/G_FACTORY_COMPOSE.py",
+        "modulos/02-triade-motores/fluxo-02-open/core/aidd-open/gates/G_FACTORY_ENV.py",
+        "modulos/02-triade-motores/fluxo-02-open/core/aidd-open/gates/G_FACTORY_INIT_DB.py",
+        "modulos/02-triade-motores/fluxo-02-open/core/aidd-open/gates/G_FACTORY_INTEGRATION.py",
+        "modulos/02-triade-motores/fluxo-02-open/core/aidd-open/gates/G_FACTORY_MVP.py"
       ],
       "mcps_proprios": [],
       "arquivos_py": 41
@@ -162,7 +162,7 @@
       "id": "aidd-ops",
       "descricao": "",
       "chamada": "python ecossistema.py ops",
-      "entrada_cli": "tools/aidd-ops/scripts/pipeline_ops.py",
+      "entrada_cli": "modulos/03-plataforma-e-entrega/operacoes-ops/aidd-ops/scripts/pipeline_ops.py",
       "comandos": [
         "bootstrap",
         "check",
@@ -180,12 +180,12 @@
         "up"
       ],
       "gates_proprios": [
-        "tools/aidd-ops/gates/G_OPS_MVP.py",
-        "tools/aidd-ops/gates/G_OPS_SSH.py"
+        "modulos/03-plataforma-e-entrega/operacoes-ops/aidd-ops/gates/G_OPS_MVP.py",
+        "modulos/03-plataforma-e-entrega/operacoes-ops/aidd-ops/gates/G_OPS_SSH.py"
       ],
       "mcps_proprios": [
-        "tools/aidd-ops/mcps/cloudflare-mcp/server.py",
-        "tools/aidd-ops/mcps/docker-mcp/server.py"
+        "modulos/03-plataforma-e-entrega/operacoes-ops/aidd-ops/mcps/cloudflare-mcp/server.py",
+        "modulos/03-plataforma-e-entrega/operacoes-ops/aidd-ops/mcps/docker-mcp/server.py"
       ],
       "arquivos_py": 26
     },
@@ -193,7 +193,7 @@
       "id": "aidd-planner",
       "descricao": "",
       "chamada": "python ecossistema.py planner",
-      "entrada_cli": "tools/aidd-planner/src/cli.py",
+      "entrada_cli": "modulos/01-governanca-e-qualidade/core/aidd-planner/src/cli.py",
       "comandos": [
         "audit",
         "export",
@@ -205,9 +205,9 @@
         "validate"
       ],
       "gates_proprios": [
-        "tools/aidd-planner/gates/G_PLANNER_COERENCIA_FLUXO.py",
-        "tools/aidd-planner/gates/G_PLANNER_SCHEMA.py",
-        "tools/aidd-planner/gates/G_PLANNER_SINE_QUA_NON.py"
+        "modulos/01-governanca-e-qualidade/core/aidd-planner/gates/G_PLANNER_COERENCIA_FLUXO.py",
+        "modulos/01-governanca-e-qualidade/core/aidd-planner/gates/G_PLANNER_SCHEMA.py",
+        "modulos/01-governanca-e-qualidade/core/aidd-planner/gates/G_PLANNER_SINE_QUA_NON.py"
       ],
       "mcps_proprios": [],
       "arquivos_py": 20
@@ -216,17 +216,17 @@
       "id": "aidd-pure",
       "descricao": "",
       "chamada": "python ecossistema.py pure-motor",
-      "entrada_cli": "tools/aidd-pure/scripts/pipeline_completo.py",
+      "entrada_cli": "modulos/02-triade-motores/fluxo-01-pure/core/aidd-pure/scripts/pipeline_completo.py",
       "comandos": [],
       "gates_proprios": [
-        "tools/aidd-pure/scripts/gates/G_INTEGRACAO_CROSS_SCRIPT.py",
-        "tools/aidd-pure/scripts/gates/G_SANDBOX_NIVEL_1.py",
-        "tools/aidd-pure/scripts/gates/G_SESSAO_HERMETICA.py",
-        "tools/aidd-pure/scripts/gates/G_TOKENOMICS.py",
-        "tools/aidd-pure/scripts/gates/G_VERIFICAR_LLM_PRONTO.py"
+        "modulos/02-triade-motores/fluxo-01-pure/core/aidd-pure/scripts/gates/G_INTEGRACAO_CROSS_SCRIPT.py",
+        "modulos/02-triade-motores/fluxo-01-pure/core/aidd-pure/scripts/gates/G_SANDBOX_NIVEL_1.py",
+        "modulos/02-triade-motores/fluxo-01-pure/core/aidd-pure/scripts/gates/G_SESSAO_HERMETICA.py",
+        "modulos/02-triade-motores/fluxo-01-pure/core/aidd-pure/scripts/gates/G_TOKENOMICS.py",
+        "modulos/02-triade-motores/fluxo-01-pure/core/aidd-pure/scripts/gates/G_VERIFICAR_LLM_PRONTO.py"
       ],
       "mcps_proprios": [
-        "tools/aidd-pure/mcps/mcp-verificador-cve/server.py"
+        "modulos/02-triade-motores/fluxo-01-pure/core/aidd-pure/mcps/mcp-verificador-cve/server.py"
       ],
       "arquivos_py": 57
     }
@@ -2675,6 +2675,18 @@
         "nota": "10"
       },
       {
+        "alvo": "modularizacao-vsa",
+        "ciclo": "ciclo-03",
+        "caminho": "docs/auditoria/modularizacao-vsa/ciclo-03",
+        "fases": {
+          "laudo_inicial": false,
+          "plano_evolucao": true,
+          "laudo_revisado": false,
+          "dod": true
+        },
+        "nota": ""
+      },
+      {
         "alvo": "skills-ddd",
         "ciclo": "ciclo-01",
         "caminho": "docs/auditoria/skills-ddd/ciclo-01",
@@ -2932,7 +2944,7 @@
     },
     {
       "id": "inventario_capacidades",
-      "descricao": "Inventário de capacidades de tools/ e componentes/ (fronteiras-ferramentas ciclo-01, Ticket 3).",
+      "descricao": "Inventário de capacidades de modulos/ e componentes/ (fronteiras-ferramentas ciclo-01, Ticket 3).",
       "chamado_por": [
         "testes"
       ]
@@ -3020,12 +3032,26 @@
       ]
     },
     {
+      "id": "pastas_ferramentas",
+      "descricao": "Fonte única ferramenta -> pasta canônica em modulos/ (ciclo-03 VSA, decisão A).",
+      "chamado_por": [
+        "testes"
+      ]
+    },
+    {
       "id": "preflight_host",
       "descricao": "Preflight Host — diagnostico instantaneo (< 2s) de binarios do sistema",
       "chamado_por": [
         "guardas",
         "painel",
         "scripts",
+        "testes"
+      ]
+    },
+    {
+      "id": "reconciliar_copias_vsa",
+      "descricao": "Relatório determinístico de divergência entre tools/ e modulos/ (ciclo-03 VSA, Ticket 1).",
+      "chamado_por": [
         "testes"
       ]
     },
@@ -3108,170 +3134,149 @@
   ],
   "moldes_entrega": [
     {
-      "ferramenta": "aidd-enterprise",
-      "molde": "agents",
-      "caminho": "tools/aidd-enterprise/templates/agents",
-      "arquivos": 9,
-      "dona_canonica": "aidd-master"
-    },
-    {
-      "ferramenta": "aidd-enterprise",
-      "molde": "cookiecutter-scaffold",
-      "caminho": "tools/aidd-enterprise/templates/cookiecutter-scaffold",
-      "arquivos": 24,
-      "dona_canonica": "aidd-master"
-    },
-    {
-      "ferramenta": "aidd-enterprise",
-      "molde": "core",
-      "caminho": "tools/aidd-enterprise/templates/core",
-      "arquivos": 33,
-      "dona_canonica": "aidd-master"
-    },
-    {
-      "ferramenta": "aidd-enterprise",
-      "molde": "gates",
-      "caminho": "tools/aidd-enterprise/templates/gates",
-      "arquivos": 0,
-      "dona_canonica": "aidd-forge"
-    },
-    {
-      "ferramenta": "aidd-enterprise",
-      "molde": "rules",
-      "caminho": "tools/aidd-enterprise/templates/rules",
-      "arquivos": 11,
-      "dona_canonica": "aidd-forge"
-    },
-    {
-      "ferramenta": "aidd-enterprise",
-      "molde": "static",
-      "caminho": "tools/aidd-enterprise/templates/static",
-      "arquivos": 1,
-      "dona_canonica": "aidd-master"
-    },
-    {
-      "ferramenta": "aidd-enterprise",
-      "molde": "v2",
-      "caminho": "tools/aidd-enterprise/templates/v2",
-      "arquivos": 80,
-      "dona_canonica": "aidd-master"
-    },
-    {
       "ferramenta": "aidd-forge",
       "molde": "gates",
-      "caminho": "tools/aidd-forge/aidd_forge/templates/gates",
+      "caminho": "modulos/01-governanca-e-qualidade/core/aidd-forge/aidd_forge/templates/gates",
       "arquivos": 12,
       "dona_canonica": "aidd-forge"
     },
     {
       "ferramenta": "aidd-forge",
       "molde": "governance",
-      "caminho": "tools/aidd-forge/aidd_forge/templates/governance",
+      "caminho": "modulos/01-governanca-e-qualidade/core/aidd-forge/aidd_forge/templates/governance",
       "arquivos": 2,
       "dona_canonica": "aidd-forge"
     },
     {
       "ferramenta": "aidd-forge",
       "molde": "orca",
-      "caminho": "tools/aidd-forge/aidd_forge/templates/orca",
+      "caminho": "modulos/01-governanca-e-qualidade/core/aidd-forge/aidd_forge/templates/orca",
       "arquivos": 2,
       "dona_canonica": "aidd-forge"
     },
     {
       "ferramenta": "aidd-forge",
       "molde": "pipeline_phases",
-      "caminho": "tools/aidd-forge/aidd_forge/templates/pipeline_phases",
+      "caminho": "modulos/01-governanca-e-qualidade/core/aidd-forge/aidd_forge/templates/pipeline_phases",
       "arquivos": 10,
       "dona_canonica": "aidd-forge"
     },
     {
       "ferramenta": "aidd-forge",
       "molde": "skills",
-      "caminho": "tools/aidd-forge/aidd_forge/templates/skills",
+      "caminho": "modulos/01-governanca-e-qualidade/core/aidd-forge/aidd_forge/templates/skills",
       "arquivos": 10,
       "dona_canonica": "aidd-forge"
     },
     {
-      "ferramenta": "aidd-master",
-      "molde": "agents",
-      "caminho": "tools/aidd-master/templates/agents",
-      "arquivos": 9,
-      "dona_canonica": "aidd-master"
-    },
-    {
-      "ferramenta": "aidd-master",
-      "molde": "cookiecutter-scaffold",
-      "caminho": "tools/aidd-master/templates/cookiecutter-scaffold",
-      "arquivos": 24,
-      "dona_canonica": "aidd-master"
-    },
-    {
-      "ferramenta": "aidd-master",
-      "molde": "core",
-      "caminho": "tools/aidd-master/templates/core",
-      "arquivos": 0,
-      "dona_canonica": "aidd-master"
-    },
-    {
-      "ferramenta": "aidd-master",
-      "molde": "gates",
-      "caminho": "tools/aidd-master/templates/gates",
-      "arquivos": 0,
-      "dona_canonica": "aidd-forge"
-    },
-    {
-      "ferramenta": "aidd-master",
-      "molde": "rules",
-      "caminho": "tools/aidd-master/templates/rules",
-      "arquivos": 11,
-      "dona_canonica": "aidd-forge"
-    },
-    {
-      "ferramenta": "aidd-master",
-      "molde": "static",
-      "caminho": "tools/aidd-master/templates/static",
-      "arquivos": 1,
-      "dona_canonica": "aidd-master"
-    },
-    {
-      "ferramenta": "aidd-master",
-      "molde": "v2",
-      "caminho": "tools/aidd-master/templates/v2",
-      "arquivos": 68,
-      "dona_canonica": "aidd-master"
-    },
-    {
       "ferramenta": "aidd-open",
       "molde": "docs",
-      "caminho": "tools/aidd-open/templates/docs",
+      "caminho": "modulos/02-triade-motores/fluxo-02-open/core/aidd-open/templates/docs",
       "arquivos": 1,
       "dona_canonica": "aidd-open"
     },
     {
       "ferramenta": "aidd-open",
       "molde": "frontend",
-      "caminho": "tools/aidd-open/templates/frontend",
+      "caminho": "modulos/02-triade-motores/fluxo-02-open/core/aidd-open/templates/frontend",
       "arquivos": 4,
       "dona_canonica": "aidd-open"
     },
     {
       "ferramenta": "aidd-open",
       "molde": "gateway",
-      "caminho": "tools/aidd-open/templates/gateway",
+      "caminho": "modulos/02-triade-motores/fluxo-02-open/core/aidd-open/templates/gateway",
       "arquivos": 3,
       "dona_canonica": "aidd-open"
     },
     {
       "ferramenta": "aidd-open",
       "molde": "vsa",
-      "caminho": "tools/aidd-open/templates/vsa",
+      "caminho": "modulos/02-triade-motores/fluxo-02-open/core/aidd-open/templates/vsa",
       "arquivos": 22,
       "dona_canonica": "aidd-open"
     },
     {
+      "ferramenta": "aidd-enterprise",
+      "molde": "agents",
+      "caminho": "modulos/03-plataforma-e-entrega/blindagem-enterprise/aidd-enterprise/templates/agents",
+      "arquivos": 9,
+      "dona_canonica": "aidd-master"
+    },
+    {
+      "ferramenta": "aidd-enterprise",
+      "molde": "cookiecutter-scaffold",
+      "caminho": "modulos/03-plataforma-e-entrega/blindagem-enterprise/aidd-enterprise/templates/cookiecutter-scaffold",
+      "arquivos": 24,
+      "dona_canonica": "aidd-master"
+    },
+    {
+      "ferramenta": "aidd-enterprise",
+      "molde": "core",
+      "caminho": "modulos/03-plataforma-e-entrega/blindagem-enterprise/aidd-enterprise/templates/core",
+      "arquivos": 33,
+      "dona_canonica": "aidd-master"
+    },
+    {
+      "ferramenta": "aidd-enterprise",
+      "molde": "rules",
+      "caminho": "modulos/03-plataforma-e-entrega/blindagem-enterprise/aidd-enterprise/templates/rules",
+      "arquivos": 11,
+      "dona_canonica": "aidd-forge"
+    },
+    {
+      "ferramenta": "aidd-enterprise",
+      "molde": "static",
+      "caminho": "modulos/03-plataforma-e-entrega/blindagem-enterprise/aidd-enterprise/templates/static",
+      "arquivos": 1,
+      "dona_canonica": "aidd-master"
+    },
+    {
+      "ferramenta": "aidd-enterprise",
+      "molde": "v2",
+      "caminho": "modulos/03-plataforma-e-entrega/blindagem-enterprise/aidd-enterprise/templates/v2",
+      "arquivos": 74,
+      "dona_canonica": "aidd-master"
+    },
+    {
+      "ferramenta": "aidd-master",
+      "molde": "agents",
+      "caminho": "modulos/03-plataforma-e-entrega/fatiamento-master/aidd-master/templates/agents",
+      "arquivos": 9,
+      "dona_canonica": "aidd-master"
+    },
+    {
+      "ferramenta": "aidd-master",
+      "molde": "cookiecutter-scaffold",
+      "caminho": "modulos/03-plataforma-e-entrega/fatiamento-master/aidd-master/templates/cookiecutter-scaffold",
+      "arquivos": 24,
+      "dona_canonica": "aidd-master"
+    },
+    {
+      "ferramenta": "aidd-master",
+      "molde": "rules",
+      "caminho": "modulos/03-plataforma-e-entrega/fatiamento-master/aidd-master/templates/rules",
+      "arquivos": 11,
+      "dona_canonica": "aidd-forge"
+    },
+    {
+      "ferramenta": "aidd-master",
+      "molde": "static",
+      "caminho": "modulos/03-plataforma-e-entrega/fatiamento-master/aidd-master/templates/static",
+      "arquivos": 1,
+      "dona_canonica": "aidd-master"
+    },
+    {
+      "ferramenta": "aidd-master",
+      "molde": "v2",
+      "caminho": "modulos/03-plataforma-e-entrega/fatiamento-master/aidd-master/templates/v2",
+      "arquivos": 62,
+      "dona_canonica": "aidd-master"
+    },
+    {
       "ferramenta": "aidd-ops",
       "molde": "infra",
-      "caminho": "tools/aidd-ops/templates/infra",
+      "caminho": "modulos/03-plataforma-e-entrega/operacoes-ops/aidd-ops/templates/infra",
       "arquivos": 30,
       "dona_canonica": "aidd-ops"
     }
@@ -3294,9 +3299,9 @@
           "hook": ".claude/hooks/{nome}",
           "sub-agent": ".claude/agents/{nome}"
         },
-        "skills_em_disco": 59,
+        "skills_em_disco": 44,
         "nossas_faltando": [],
-        "terceiros_em_disco": 15,
+        "terceiros_em_disco": 0,
         "config_mcp": ".mcp.json"
       },
       {
@@ -3315,9 +3320,9 @@
           "hook": ".agents/hooks/{nome}",
           "sub-agent": ".agents/agents/{nome}"
         },
-        "skills_em_disco": 59,
+        "skills_em_disco": 44,
         "nossas_faltando": [],
-        "terceiros_em_disco": 15,
+        "terceiros_em_disco": 0,
         "config_mcp": ".agents/mcp_config.json"
       },
       {
@@ -3336,9 +3341,9 @@
           "hook": ".opencode/hooks/{nome}",
           "sub-agent": ".opencode/agents/{nome}"
         },
-        "skills_em_disco": 45,
+        "skills_em_disco": 44,
         "nossas_faltando": [],
-        "terceiros_em_disco": 1,
+        "terceiros_em_disco": 0,
         "config_mcp": "opencode.jsonc"
       },
       {
@@ -3357,9 +3362,9 @@
           "hook": ".mimocode/hooks/{nome}",
           "sub-agent": ".mimocode/agents/{nome}"
         },
-        "skills_em_disco": 45,
+        "skills_em_disco": 44,
         "nossas_faltando": [],
-        "terceiros_em_disco": 1,
+        "terceiros_em_disco": 0,
         "config_mcp": "mimocode.jsonc"
       },
       {
@@ -3395,9 +3400,9 @@
           "command": ".cursor/commands/{nome}",
           "hook": ".cursor/hooks/{nome}"
         },
-        "skills_em_disco": 45,
+        "skills_em_disco": 44,
         "nossas_faltando": [],
-        "terceiros_em_disco": 1,
+        "terceiros_em_disco": 0,
         "config_mcp": ".cursor/mcp.json"
       },
       {
@@ -3575,19 +3580,19 @@
       {
         "id": "cloudflare-mcp",
         "ferramenta": "aidd-ops",
-        "caminho": "tools/aidd-ops/mcps/cloudflare-mcp/server.py",
+        "caminho": "modulos/03-plataforma-e-entrega/operacoes-ops/aidd-ops/mcps/cloudflare-mcp/server.py",
         "registrado_em_config": true
       },
       {
         "id": "docker-mcp",
         "ferramenta": "aidd-ops",
-        "caminho": "tools/aidd-ops/mcps/docker-mcp/server.py",
+        "caminho": "modulos/03-plataforma-e-entrega/operacoes-ops/aidd-ops/mcps/docker-mcp/server.py",
         "registrado_em_config": true
       },
       {
         "id": "mcp-verificador-cve",
         "ferramenta": "aidd-pure",
-        "caminho": "tools/aidd-pure/mcps/mcp-verificador-cve/server.py",
+        "caminho": "modulos/02-triade-motores/fluxo-01-pure/core/aidd-pure/mcps/mcp-verificador-cve/server.py",
         "registrado_em_config": true
       }
     ]
@@ -3618,6 +3623,11 @@
           "caminho": "gates/G_ANT_LOCKIN_LEGADO.py",
           "versao": "A",
           "papel": "ecossistema"
+        },
+        {
+          "caminho": "modulos/02-triade-motores/fluxo-03-freedom/gates/G_ANT_LOCKIN_LEGADO.py",
+          "versao": "A",
+          "papel": "componente"
         }
       ],
       "versoes_distintas": 1,
@@ -3650,6 +3660,11 @@
           "caminho": "gates/G_ARQUITETURA_DELIVERABLE.py",
           "versao": "A",
           "papel": "ecossistema"
+        },
+        {
+          "caminho": "modulos/03-plataforma-e-entrega/gates/G_ARQUITETURA_DELIVERABLE.py",
+          "versao": "A",
+          "papel": "componente"
         }
       ],
       "versoes_distintas": 1,
@@ -3669,7 +3684,7 @@
           "papel": "ecossistema"
         },
         {
-          "caminho": "tools/aidd-master/scripts/gates/G_AST_BOUNDED_CONTEXT.py",
+          "caminho": "modulos/03-plataforma-e-entrega/fatiamento-master/aidd-master/scripts/gates/G_AST_BOUNDED_CONTEXT.py",
           "versao": "B",
           "papel": "ferramenta"
         }
@@ -3694,7 +3709,7 @@
           "papel": "componente"
         },
         {
-          "caminho": "tools/aidd-forge/aidd_forge/templates/gates/G_BLOQUEAR_SEGREDOS.py",
+          "caminho": "modulos/01-governanca-e-qualidade/core/aidd-forge/aidd_forge/templates/gates/G_BLOQUEAR_SEGREDOS.py",
           "versao": "B",
           "papel": "entrega"
         }
@@ -3709,7 +3724,7 @@
       "descricao": "Valida que os manifestos OCI/Docker gerados pela aidd-freedom (Dockerfile, nginx.conf, compose) atendem às melhores práticas de segurança: Multi-stage build",
       "copias": [
         {
-          "caminho": "tools/aidd-freedom/gates/G_BRIDGE_DOCKER_OCI.py",
+          "caminho": "modulos/02-triade-motores/fluxo-03-freedom/core/aidd-freedom/gates/G_BRIDGE_DOCKER_OCI.py",
           "versao": "A",
           "papel": "ferramenta"
         }
@@ -3724,7 +3739,7 @@
       "descricao": "Valida que os scripts SQL gerados/consolidados pela aidd-freedom (init-db.sql) são PostgreSQL puro, possuem integridade de sintaxe básica e garantem isolamento transacional e esquemas padronizados.",
       "copias": [
         {
-          "caminho": "tools/aidd-freedom/gates/G_BRIDGE_POSTGRESQL.py",
+          "caminho": "modulos/02-triade-motores/fluxo-03-freedom/core/aidd-freedom/gates/G_BRIDGE_POSTGRESQL.py",
           "versao": "A",
           "papel": "ferramenta"
         }
@@ -3739,7 +3754,7 @@
       "descricao": "Valida que o projeto extraído/empacotado pela aidd-freedom não possui dependências ou URLs fixas de nuvens proprietárias (ex: *.supabase.co, mock backends não configuráveis). Garante independência…",
       "copias": [
         {
-          "caminho": "tools/aidd-freedom/gates/G_BRIDGE_VENDOR_LOCKIN.py",
+          "caminho": "modulos/02-triade-motores/fluxo-03-freedom/core/aidd-freedom/gates/G_BRIDGE_VENDOR_LOCKIN.py",
           "versao": "A",
           "papel": "ferramenta"
         }
@@ -3754,7 +3769,7 @@
       "descricao": "Valida que o pacote gerado pela aidd-freedom possui compatibilidade com o Monólito Modular VSA e entrega os 4 contratos do Quarteto Sine Qua Non: Swagger (/swagger)",
       "copias": [
         {
-          "caminho": "tools/aidd-freedom/gates/G_BRIDGE_VSA_COMPAT.py",
+          "caminho": "modulos/02-triade-motores/fluxo-03-freedom/core/aidd-freedom/gates/G_BRIDGE_VSA_COMPAT.py",
           "versao": "A",
           "papel": "ferramenta"
         }
@@ -3787,6 +3802,11 @@
           "caminho": "gates/G_CLI_HELP_CONSISTENCIA.py",
           "versao": "A",
           "papel": "ecossistema"
+        },
+        {
+          "caminho": "modulos/04-nucleo-compartilhado/gates/G_CLI_HELP_CONSISTENCIA.py",
+          "versao": "A",
+          "papel": "componente"
         }
       ],
       "versoes_distintas": 1,
@@ -3804,6 +3824,11 @@
           "caminho": "gates/G_COMPONENTE_AGNOSTICO.py",
           "versao": "A",
           "papel": "ecossistema"
+        },
+        {
+          "caminho": "modulos/02-triade-motores/fluxo-02-open/gates/G_COMPONENTE_AGNOSTICO.py",
+          "versao": "A",
+          "papel": "componente"
         }
       ],
       "versoes_distintas": 1,
@@ -3828,7 +3853,7 @@
           "papel": "componente"
         },
         {
-          "caminho": "tools/aidd-forge/aidd_forge/templates/gates/G_CONTRACTS.py",
+          "caminho": "modulos/01-governanca-e-qualidade/core/aidd-forge/aidd_forge/templates/gates/G_CONTRACTS.py",
           "versao": "B",
           "papel": "entrega"
         }
@@ -3846,6 +3871,11 @@
           "caminho": "gates/G_CONTRACT_ROT.py",
           "versao": "A",
           "papel": "ecossistema"
+        },
+        {
+          "caminho": "modulos/03-plataforma-e-entrega/gates/G_CONTRACT_ROT.py",
+          "versao": "A",
+          "papel": "componente"
         }
       ],
       "versoes_distintas": 1,
@@ -3854,6 +3884,21 @@
       "leis": [
         10
       ]
+    },
+    {
+      "id": "G_COPIA_UNICA_VSA",
+      "descricao": "Uma peça, um lugar (decisões A e C do ciclo-03). Lê `git ls-files` e acusa: ferramenta presente em tools/aidd-<x>/ e também em modulos/ (pasta aidd-<x>);",
+      "copias": [
+        {
+          "caminho": "modulos/04-nucleo-compartilhado/gates/G_COPIA_UNICA_VSA.py",
+          "versao": "A",
+          "papel": "componente"
+        }
+      ],
+      "versoes_distintas": 1,
+      "no_pre_commit": false,
+      "prova_que_morde": null,
+      "leis": []
     },
     {
       "id": "G_CYBERSECURITY_OWASP",
@@ -3870,7 +3915,7 @@
           "papel": "componente"
         },
         {
-          "caminho": "tools/aidd-forge/aidd_forge/templates/gates/G_CYBERSECURITY_OWASP.py",
+          "caminho": "modulos/01-governanca-e-qualidade/core/aidd-forge/aidd_forge/templates/gates/G_CYBERSECURITY_OWASP.py",
           "versao": "B",
           "papel": "entrega"
         }
@@ -3888,6 +3933,11 @@
           "caminho": "gates/G_DEPENDENCIAS_PIN_HASH.py",
           "versao": "A",
           "papel": "ecossistema"
+        },
+        {
+          "caminho": "modulos/04-nucleo-compartilhado/gates/G_DEPENDENCIAS_PIN_HASH.py",
+          "versao": "A",
+          "papel": "componente"
         }
       ],
       "versoes_distintas": 1,
@@ -3912,9 +3962,14 @@
           "papel": "ecossistema"
         },
         {
-          "caminho": "tools/aidd-forge/aidd_forge/templates/gates/G_DETERMINISMO_LEI_1.py",
+          "caminho": "modulos/01-governanca-e-qualidade/core/aidd-forge/aidd_forge/templates/gates/G_DETERMINISMO_LEI_1.py",
           "versao": "A",
           "papel": "entrega"
+        },
+        {
+          "caminho": "modulos/01-governanca-e-qualidade/gates/G_DETERMINISMO_LEI_1.py",
+          "versao": "B",
+          "papel": "componente"
         }
       ],
       "versoes_distintas": 2,
@@ -3932,6 +3987,11 @@
           "caminho": "gates/G_DISCIPLINA_TESTE_FERRAMENTA.py",
           "versao": "A",
           "papel": "ecossistema"
+        },
+        {
+          "caminho": "modulos/01-governanca-e-qualidade/gates/G_DISCIPLINA_TESTE_FERRAMENTA.py",
+          "versao": "A",
+          "papel": "componente"
         }
       ],
       "versoes_distintas": 1,
@@ -3949,6 +4009,11 @@
           "caminho": "gates/G_DISPATCH_PIPELINE_VSA.py",
           "versao": "A",
           "papel": "ecossistema"
+        },
+        {
+          "caminho": "modulos/03-plataforma-e-entrega/gates/G_DISPATCH_PIPELINE_VSA.py",
+          "versao": "A",
+          "papel": "componente"
         }
       ],
       "versoes_distintas": 1,
@@ -3966,6 +4031,11 @@
           "caminho": "gates/G_DOCS_ROT.py",
           "versao": "A",
           "papel": "ecossistema"
+        },
+        {
+          "caminho": "modulos/01-governanca-e-qualidade/gates/G_DOCS_ROT.py",
+          "versao": "A",
+          "papel": "componente"
         }
       ],
       "versoes_distintas": 1,
@@ -3983,6 +4053,11 @@
           "caminho": "gates/G_DRIFT_ANALYZER.py",
           "versao": "A",
           "papel": "ecossistema"
+        },
+        {
+          "caminho": "modulos/04-nucleo-compartilhado/gates/G_DRIFT_ANALYZER.py",
+          "versao": "A",
+          "papel": "componente"
         }
       ],
       "versoes_distintas": 1,
@@ -4000,6 +4075,11 @@
           "caminho": "gates/G_DRIFT_NUCLEO_COMPARTILHADO.py",
           "versao": "A",
           "papel": "ecossistema"
+        },
+        {
+          "caminho": "modulos/04-nucleo-compartilhado/gates/G_DRIFT_NUCLEO_COMPARTILHADO.py",
+          "versao": "A",
+          "papel": "componente"
         }
       ],
       "versoes_distintas": 1,
@@ -4011,12 +4091,17 @@
     },
     {
       "id": "G_ECOSSISTEMA_INTEGRIDADE",
-      "descricao": "Validação determinística de integridade do meta-repositório ecossistema-aidd. Audita: Existência e integridade estrutural das 5 ferramentas em tools/",
+      "descricao": "Validação determinística de integridade do meta-repositório ecossistema-aidd. Audita: Existência e integridade estrutural das ferramentas em modulos/ (pasta do mapa de donos)",
       "copias": [
         {
           "caminho": "gates/G_ECOSSISTEMA_INTEGRIDADE.py",
           "versao": "A",
           "papel": "ecossistema"
+        },
+        {
+          "caminho": "modulos/04-nucleo-compartilhado/gates/G_ECOSSISTEMA_INTEGRIDADE.py",
+          "versao": "A",
+          "papel": "componente"
         }
       ],
       "versoes_distintas": 1,
@@ -4034,6 +4119,11 @@
           "caminho": "gates/G_ENV_ROT.py",
           "versao": "A",
           "papel": "ecossistema"
+        },
+        {
+          "caminho": "modulos/04-nucleo-compartilhado/gates/G_ENV_ROT.py",
+          "versao": "A",
+          "papel": "componente"
         }
       ],
       "versoes_distintas": 1,
@@ -4051,6 +4141,11 @@
           "caminho": "gates/G_ESCRITOR_ATOMICO.py",
           "versao": "A",
           "papel": "ecossistema"
+        },
+        {
+          "caminho": "modulos/04-nucleo-compartilhado/gates/G_ESCRITOR_ATOMICO.py",
+          "versao": "A",
+          "papel": "componente"
         }
       ],
       "versoes_distintas": 1,
@@ -4085,7 +4180,7 @@
           "papel": "componente"
         },
         {
-          "caminho": "tools/aidd-forge/aidd_forge/templates/gates/G_ESTRUTURA_AST.py",
+          "caminho": "modulos/01-governanca-e-qualidade/core/aidd-forge/aidd_forge/templates/gates/G_ESTRUTURA_AST.py",
           "versao": "A",
           "papel": "entrega"
         }
@@ -4103,6 +4198,11 @@
           "caminho": "gates/G_ESTRUTURA_ESTADO.py",
           "versao": "A",
           "papel": "ecossistema"
+        },
+        {
+          "caminho": "modulos/04-nucleo-compartilhado/gates/G_ESTRUTURA_ESTADO.py",
+          "versao": "A",
+          "papel": "componente"
         }
       ],
       "versoes_distintas": 1,
@@ -4117,7 +4217,7 @@
       "descricao": "Valida factory_analysis.json.",
       "copias": [
         {
-          "caminho": "tools/aidd-open/gates/G_FACTORY_ANALYSIS.py",
+          "caminho": "modulos/02-triade-motores/fluxo-02-open/core/aidd-open/gates/G_FACTORY_ANALYSIS.py",
           "versao": "A",
           "papel": "ferramenta"
         }
@@ -4132,7 +4232,7 @@
       "descricao": "Valida docker-compose.yml gerado pelo factory.",
       "copias": [
         {
-          "caminho": "tools/aidd-open/gates/G_FACTORY_COMPOSE.py",
+          "caminho": "modulos/02-triade-motores/fluxo-02-open/core/aidd-open/gates/G_FACTORY_COMPOSE.py",
           "versao": "A",
           "papel": "ferramenta"
         }
@@ -4147,7 +4247,7 @@
       "descricao": "Valida .env gerados pelo factory.",
       "copias": [
         {
-          "caminho": "tools/aidd-open/gates/G_FACTORY_ENV.py",
+          "caminho": "modulos/02-triade-motores/fluxo-02-open/core/aidd-open/gates/G_FACTORY_ENV.py",
           "versao": "A",
           "papel": "ferramenta"
         }
@@ -4162,7 +4262,7 @@
       "descricao": "Valida init-multiple-databases.sh gerado.",
       "copias": [
         {
-          "caminho": "tools/aidd-open/gates/G_FACTORY_INIT_DB.py",
+          "caminho": "modulos/02-triade-motores/fluxo-02-open/core/aidd-open/gates/G_FACTORY_INIT_DB.py",
           "versao": "A",
           "papel": "ferramenta"
         }
@@ -4177,7 +4277,7 @@
       "descricao": "Valida cadeia completa do pipeline factory.",
       "copias": [
         {
-          "caminho": "tools/aidd-open/gates/G_FACTORY_INTEGRATION.py",
+          "caminho": "modulos/02-triade-motores/fluxo-02-open/core/aidd-open/gates/G_FACTORY_INTEGRATION.py",
           "versao": "A",
           "papel": "ferramenta"
         }
@@ -4192,7 +4292,7 @@
       "descricao": "Valida estrutura do diretorio aidd-open.",
       "copias": [
         {
-          "caminho": "tools/aidd-open/gates/G_FACTORY_MVP.py",
+          "caminho": "modulos/02-triade-motores/fluxo-02-open/core/aidd-open/gates/G_FACTORY_MVP.py",
           "versao": "A",
           "papel": "ferramenta"
         }
@@ -4210,6 +4310,11 @@
           "caminho": "gates/G_FRONTEIRA_FERRAMENTAS.py",
           "versao": "A",
           "papel": "ecossistema"
+        },
+        {
+          "caminho": "modulos/04-nucleo-compartilhado/gates/G_FRONTEIRA_FERRAMENTAS.py",
+          "versao": "A",
+          "papel": "componente"
         }
       ],
       "versoes_distintas": 1,
@@ -4227,6 +4332,11 @@
           "caminho": "gates/G_FRONTEND_LAYERS.py",
           "versao": "A",
           "papel": "ecossistema"
+        },
+        {
+          "caminho": "modulos/02-triade-motores/fluxo-01-pure/gates/G_FRONTEND_LAYERS.py",
+          "versao": "A",
+          "papel": "componente"
         }
       ],
       "versoes_distintas": 1,
@@ -4244,6 +4354,11 @@
           "caminho": "gates/G_GESTOR_SESSOES.py",
           "versao": "A",
           "papel": "ecossistema"
+        },
+        {
+          "caminho": "modulos/04-nucleo-compartilhado/gates/G_GESTOR_SESSOES.py",
+          "versao": "A",
+          "papel": "componente"
         }
       ],
       "versoes_distintas": 1,
@@ -4261,6 +4376,11 @@
           "caminho": "gates/G_GRAPH_FIRST.py",
           "versao": "A",
           "papel": "ecossistema"
+        },
+        {
+          "caminho": "modulos/04-nucleo-compartilhado/gates/G_GRAPH_FIRST.py",
+          "versao": "A",
+          "papel": "componente"
         }
       ],
       "versoes_distintas": 1,
@@ -4278,6 +4398,11 @@
           "caminho": "gates/G_HADOLINT.py",
           "versao": "A",
           "papel": "ecossistema"
+        },
+        {
+          "caminho": "modulos/02-triade-motores/fluxo-02-open/gates/G_HADOLINT.py",
+          "versao": "A",
+          "papel": "componente"
         }
       ],
       "versoes_distintas": 1,
@@ -4295,6 +4420,11 @@
           "caminho": "gates/G_HANDOFF_MELHORIA.py",
           "versao": "A",
           "papel": "ecossistema"
+        },
+        {
+          "caminho": "modulos/01-governanca-e-qualidade/gates/G_HANDOFF_MELHORIA.py",
+          "versao": "A",
+          "papel": "componente"
         }
       ],
       "versoes_distintas": 1,
@@ -4329,9 +4459,14 @@
           "papel": "ecossistema"
         },
         {
-          "caminho": "tools/aidd-forge/aidd_forge/templates/gates/G_HARNESS_COMPAT.py",
+          "caminho": "modulos/01-governanca-e-qualidade/core/aidd-forge/aidd_forge/templates/gates/G_HARNESS_COMPAT.py",
           "versao": "B",
           "papel": "entrega"
+        },
+        {
+          "caminho": "modulos/04-nucleo-compartilhado/gates/G_HARNESS_COMPAT.py",
+          "versao": "D",
+          "papel": "componente"
         }
       ],
       "versoes_distintas": 4,
@@ -4349,6 +4484,11 @@
           "caminho": "gates/G_HONESTIDADE_ROTULO.py",
           "versao": "A",
           "papel": "ecossistema"
+        },
+        {
+          "caminho": "modulos/04-nucleo-compartilhado/gates/G_HONESTIDADE_ROTULO.py",
+          "versao": "A",
+          "papel": "componente"
         }
       ],
       "versoes_distintas": 1,
@@ -4366,6 +4506,11 @@
           "caminho": "gates/G_IDIOMA_LEI_4.py",
           "versao": "A",
           "papel": "ecossistema"
+        },
+        {
+          "caminho": "modulos/04-nucleo-compartilhado/gates/G_IDIOMA_LEI_4.py",
+          "versao": "A",
+          "papel": "componente"
         }
       ],
       "versoes_distintas": 1,
@@ -4383,6 +4528,11 @@
           "caminho": "gates/G_INFRA_COMPOSE.py",
           "versao": "A",
           "papel": "ecossistema"
+        },
+        {
+          "caminho": "modulos/02-triade-motores/fluxo-02-open/gates/G_INFRA_COMPOSE.py",
+          "versao": "A",
+          "papel": "componente"
         }
       ],
       "versoes_distintas": 1,
@@ -4417,7 +4567,7 @@
           "papel": "componente"
         },
         {
-          "caminho": "tools/aidd-forge/aidd_forge/templates/gates/G_INJECT.py",
+          "caminho": "modulos/01-governanca-e-qualidade/core/aidd-forge/aidd_forge/templates/gates/G_INJECT.py",
           "versao": "B",
           "papel": "entrega"
         }
@@ -4432,7 +4582,7 @@
       "descricao": "Gate I3: Compatibilidade entre scripts irmãos.",
       "copias": [
         {
-          "caminho": "tools/aidd-pure/scripts/gates/G_INTEGRACAO_CROSS_SCRIPT.py",
+          "caminho": "modulos/02-triade-motores/fluxo-01-pure/core/aidd-pure/scripts/gates/G_INTEGRACAO_CROSS_SCRIPT.py",
           "versao": "A",
           "papel": "ferramenta"
         }
@@ -4450,6 +4600,11 @@
           "caminho": "gates/G_ISOLATION_AUDIT.py",
           "versao": "A",
           "papel": "ecossistema"
+        },
+        {
+          "caminho": "modulos/03-plataforma-e-entrega/gates/G_ISOLATION_AUDIT.py",
+          "versao": "A",
+          "papel": "componente"
         }
       ],
       "versoes_distintas": 1,
@@ -4467,6 +4622,11 @@
           "caminho": "gates/G_LAYOUT_ENTREGA.py",
           "versao": "A",
           "papel": "ecossistema"
+        },
+        {
+          "caminho": "modulos/03-plataforma-e-entrega/gates/G_LAYOUT_ENTREGA.py",
+          "versao": "A",
+          "papel": "componente"
         }
       ],
       "versoes_distintas": 1,
@@ -4484,6 +4644,11 @@
           "caminho": "gates/G_LEI_DECLARA_PORTAO.py",
           "versao": "A",
           "papel": "ecossistema"
+        },
+        {
+          "caminho": "modulos/01-governanca-e-qualidade/gates/G_LEI_DECLARA_PORTAO.py",
+          "versao": "A",
+          "papel": "componente"
         }
       ],
       "versoes_distintas": 1,
@@ -4501,6 +4666,11 @@
           "caminho": "gates/G_LIVRO_EVIDENCIA.py",
           "versao": "A",
           "papel": "ecossistema"
+        },
+        {
+          "caminho": "modulos/04-nucleo-compartilhado/gates/G_LIVRO_EVIDENCIA.py",
+          "versao": "A",
+          "papel": "componente"
         }
       ],
       "versoes_distintas": 1,
@@ -4518,6 +4688,11 @@
           "caminho": "gates/G_LLM_PROMPT_SHIELD.py",
           "versao": "A",
           "papel": "ecossistema"
+        },
+        {
+          "caminho": "modulos/04-nucleo-compartilhado/gates/G_LLM_PROMPT_SHIELD.py",
+          "versao": "A",
+          "papel": "componente"
         }
       ],
       "versoes_distintas": 1,
@@ -4535,6 +4710,11 @@
           "caminho": "gates/G_MIGRATION_ROT.py",
           "versao": "A",
           "papel": "ecossistema"
+        },
+        {
+          "caminho": "modulos/02-triade-motores/fluxo-03-freedom/gates/G_MIGRATION_ROT.py",
+          "versao": "A",
+          "papel": "componente"
         }
       ],
       "versoes_distintas": 1,
@@ -4552,6 +4732,11 @@
           "caminho": "gates/G_NOVE_CAMADAS_MERCADO.py",
           "versao": "A",
           "papel": "ecossistema"
+        },
+        {
+          "caminho": "modulos/02-triade-motores/fluxo-01-pure/gates/G_NOVE_CAMADAS_MERCADO.py",
+          "versao": "A",
+          "papel": "componente"
         }
       ],
       "versoes_distintas": 1,
@@ -4563,10 +4748,10 @@
     },
     {
       "id": "G_OPS_MVP",
-      "descricao": "Dois modos de operação: (a) Sem --dir: valida a própria estrutura de tools/aidd-ops/",
+      "descricao": "Dois modos de operação: (a) Sem --dir: valida a própria estrutura de modulos/03-plataforma-e-entrega/operacoes-ops/aidd-ops/",
       "copias": [
         {
-          "caminho": "tools/aidd-ops/gates/G_OPS_MVP.py",
+          "caminho": "modulos/03-plataforma-e-entrega/operacoes-ops/aidd-ops/gates/G_OPS_MVP.py",
           "versao": "A",
           "papel": "ferramenta"
         }
@@ -4578,10 +4763,10 @@
     },
     {
       "id": "G_OPS_SSH",
-      "descricao": "Validação estrita via AST de tools/aidd-ops/src/core/ssh_runner.py (NIH #15: hardening manual via paramiko substituído por Ansible + devsec.hardening):",
+      "descricao": "Validação estrita via AST de modulos/03-plataforma-e-entrega/operacoes-ops/aidd-ops/src/core/ssh_runner.py (NIH #15: hardening manual via paramiko substituído por Ansible + devsec.hardening):",
       "copias": [
         {
-          "caminho": "tools/aidd-ops/gates/G_OPS_SSH.py",
+          "caminho": "modulos/03-plataforma-e-entrega/operacoes-ops/aidd-ops/gates/G_OPS_SSH.py",
           "versao": "A",
           "papel": "ferramenta"
         }
@@ -4599,6 +4784,11 @@
           "caminho": "gates/G_ORQUESTRADOR_SINCRONO.py",
           "versao": "A",
           "papel": "ecossistema"
+        },
+        {
+          "caminho": "modulos/04-nucleo-compartilhado/gates/G_ORQUESTRADOR_SINCRONO.py",
+          "versao": "A",
+          "papel": "componente"
         }
       ],
       "versoes_distintas": 1,
@@ -4616,6 +4806,11 @@
           "caminho": "gates/G_PACOTE_CORE.py",
           "versao": "A",
           "papel": "ecossistema"
+        },
+        {
+          "caminho": "modulos/04-nucleo-compartilhado/gates/G_PACOTE_CORE.py",
+          "versao": "A",
+          "papel": "componente"
         }
       ],
       "versoes_distintas": 1,
@@ -4640,7 +4835,7 @@
           "papel": "componente"
         },
         {
-          "caminho": "tools/aidd-forge/aidd_forge/templates/gates/G_PERFORMANCE.py",
+          "caminho": "modulos/01-governanca-e-qualidade/core/aidd-forge/aidd_forge/templates/gates/G_PERFORMANCE.py",
           "versao": "B",
           "papel": "entrega"
         }
@@ -4658,6 +4853,11 @@
           "caminho": "gates/G_PIPELINE_HANDOFF.py",
           "versao": "A",
           "papel": "ecossistema"
+        },
+        {
+          "caminho": "modulos/04-nucleo-compartilhado/gates/G_PIPELINE_HANDOFF.py",
+          "versao": "A",
+          "papel": "componente"
         }
       ],
       "versoes_distintas": 1,
@@ -4672,7 +4872,7 @@
       "descricao": "Valida a coerência do payload específico com o fluxo alvo selecionado.",
       "copias": [
         {
-          "caminho": "tools/aidd-planner/gates/G_PLANNER_COERENCIA_FLUXO.py",
+          "caminho": "modulos/01-governanca-e-qualidade/core/aidd-planner/gates/G_PLANNER_COERENCIA_FLUXO.py",
           "versao": "A",
           "papel": "ferramenta"
         }
@@ -4687,7 +4887,7 @@
       "descricao": "Valida a conformidade de schema do PLANNER.json gerado pelo aidd-planner.",
       "copias": [
         {
-          "caminho": "tools/aidd-planner/gates/G_PLANNER_SCHEMA.py",
+          "caminho": "modulos/01-governanca-e-qualidade/core/aidd-planner/gates/G_PLANNER_SCHEMA.py",
           "versao": "A",
           "papel": "ferramenta"
         }
@@ -4702,7 +4902,7 @@
       "descricao": "Valida a conformidade da Lei Inviolável 10 (Quarteto Sine Qua Non Dinâmico).",
       "copias": [
         {
-          "caminho": "tools/aidd-planner/gates/G_PLANNER_SINE_QUA_NON.py",
+          "caminho": "modulos/01-governanca-e-qualidade/core/aidd-planner/gates/G_PLANNER_SINE_QUA_NON.py",
           "versao": "A",
           "papel": "ferramenta"
         }
@@ -4720,9 +4920,14 @@
           "caminho": "gates/G_PORTAO_PROVA_QUE_MORDE.py",
           "versao": "A",
           "papel": "ecossistema"
+        },
+        {
+          "caminho": "modulos/01-governanca-e-qualidade/gates/G_PORTAO_PROVA_QUE_MORDE.py",
+          "versao": "B",
+          "papel": "componente"
         }
       ],
-      "versoes_distintas": 1,
+      "versoes_distintas": 2,
       "no_pre_commit": true,
       "prova_que_morde": true,
       "leis": [
@@ -4737,6 +4942,11 @@
           "caminho": "gates/G_PROTOCOL_FALLBACK.py",
           "versao": "A",
           "papel": "ecossistema"
+        },
+        {
+          "caminho": "modulos/04-nucleo-compartilhado/gates/G_PROTOCOL_FALLBACK.py",
+          "versao": "A",
+          "papel": "componente"
         }
       ],
       "versoes_distintas": 1,
@@ -4754,6 +4964,11 @@
           "caminho": "gates/G_PROTOTYPE_REWRITE.py",
           "versao": "A",
           "papel": "ecossistema"
+        },
+        {
+          "caminho": "modulos/02-triade-motores/fluxo-01-pure/gates/G_PROTOTYPE_REWRITE.py",
+          "versao": "A",
+          "papel": "componente"
         }
       ],
       "versoes_distintas": 1,
@@ -4771,6 +4986,11 @@
           "caminho": "gates/G_PROVA_SKILLS_POCOCK.py",
           "versao": "A",
           "papel": "ecossistema"
+        },
+        {
+          "caminho": "modulos/01-governanca-e-qualidade/gates/G_PROVA_SKILLS_POCOCK.py",
+          "versao": "A",
+          "papel": "componente"
         }
       ],
       "versoes_distintas": 1,
@@ -4810,9 +5030,14 @@
           "papel": "ecossistema"
         },
         {
-          "caminho": "tools/aidd-forge/aidd_forge/templates/gates/G_QUARTETO_SINE_QUA_NON.py",
+          "caminho": "modulos/01-governanca-e-qualidade/core/aidd-forge/aidd_forge/templates/gates/G_QUARTETO_SINE_QUA_NON.py",
           "versao": "A",
           "papel": "entrega"
+        },
+        {
+          "caminho": "modulos/03-plataforma-e-entrega/gates/G_QUARTETO_SINE_QUA_NON.py",
+          "versao": "B",
+          "papel": "componente"
         }
       ],
       "versoes_distintas": 2,
@@ -4830,6 +5055,11 @@
           "caminho": "gates/G_RESUMO_USUARIO.py",
           "versao": "A",
           "papel": "ecossistema"
+        },
+        {
+          "caminho": "modulos/04-nucleo-compartilhado/gates/G_RESUMO_USUARIO.py",
+          "versao": "A",
+          "papel": "componente"
         }
       ],
       "versoes_distintas": 1,
@@ -4854,9 +5084,14 @@
           "papel": "ecossistema"
         },
         {
-          "caminho": "tools/aidd-forge/aidd_forge/templates/gates/G_SAIDA_BINARIA.py",
+          "caminho": "modulos/01-governanca-e-qualidade/core/aidd-forge/aidd_forge/templates/gates/G_SAIDA_BINARIA.py",
           "versao": "A",
           "papel": "entrega"
+        },
+        {
+          "caminho": "modulos/04-nucleo-compartilhado/gates/G_SAIDA_BINARIA.py",
+          "versao": "B",
+          "papel": "componente"
         }
       ],
       "versoes_distintas": 2,
@@ -4871,7 +5106,7 @@
       "descricao": "Subprocessos de código gerado nunca herdam os.environ.",
       "copias": [
         {
-          "caminho": "tools/aidd-pure/scripts/gates/G_SANDBOX_NIVEL_1.py",
+          "caminho": "modulos/02-triade-motores/fluxo-01-pure/core/aidd-pure/scripts/gates/G_SANDBOX_NIVEL_1.py",
           "versao": "A",
           "papel": "ferramenta"
         }
@@ -4894,6 +5129,11 @@
           "caminho": "gates/G_SEGREDOS.py",
           "versao": "B",
           "papel": "ecossistema"
+        },
+        {
+          "caminho": "modulos/03-plataforma-e-entrega/gates/G_SEGREDOS.py",
+          "versao": "B",
+          "papel": "componente"
         }
       ],
       "versoes_distintas": 2,
@@ -4923,7 +5163,7 @@
       "descricao": "Item 4 [TK-6] hermeticidade verificável de sessões.",
       "copias": [
         {
-          "caminho": "tools/aidd-pure/scripts/gates/G_SESSAO_HERMETICA.py",
+          "caminho": "modulos/02-triade-motores/fluxo-01-pure/core/aidd-pure/scripts/gates/G_SESSAO_HERMETICA.py",
           "versao": "A",
           "papel": "ferramenta"
         }
@@ -4941,6 +5181,11 @@
           "caminho": "gates/G_SKILL_FORMATO.py",
           "versao": "A",
           "papel": "ecossistema"
+        },
+        {
+          "caminho": "modulos/04-nucleo-compartilhado/gates/G_SKILL_FORMATO.py",
+          "versao": "A",
+          "papel": "componente"
         }
       ],
       "versoes_distintas": 1,
@@ -4958,6 +5203,11 @@
           "caminho": "gates/G_SKILL_ROT.py",
           "versao": "A",
           "papel": "ecossistema"
+        },
+        {
+          "caminho": "modulos/04-nucleo-compartilhado/gates/G_SKILL_ROT.py",
+          "versao": "A",
+          "papel": "componente"
         }
       ],
       "versoes_distintas": 1,
@@ -4982,9 +5232,14 @@
           "papel": "ecossistema"
         },
         {
-          "caminho": "tools/aidd-forge/aidd_forge/templates/gates/G_STACK_PADRAO_OURO.py",
+          "caminho": "modulos/01-governanca-e-qualidade/core/aidd-forge/aidd_forge/templates/gates/G_STACK_PADRAO_OURO.py",
           "versao": "A",
           "papel": "entrega"
+        },
+        {
+          "caminho": "modulos/02-triade-motores/fluxo-01-pure/gates/G_STACK_PADRAO_OURO.py",
+          "versao": "B",
+          "papel": "componente"
         }
       ],
       "versoes_distintas": 2,
@@ -5002,6 +5257,11 @@
           "caminho": "gates/G_SUPPLY_CHAIN.py",
           "versao": "A",
           "papel": "ecossistema"
+        },
+        {
+          "caminho": "modulos/04-nucleo-compartilhado/gates/G_SUPPLY_CHAIN.py",
+          "versao": "A",
+          "papel": "componente"
         }
       ],
       "versoes_distintas": 1,
@@ -5019,6 +5279,11 @@
           "caminho": "gates/G_SYNC_CMD_ROT.py",
           "versao": "A",
           "papel": "ecossistema"
+        },
+        {
+          "caminho": "modulos/04-nucleo-compartilhado/gates/G_SYNC_CMD_ROT.py",
+          "versao": "A",
+          "papel": "componente"
         }
       ],
       "versoes_distintas": 1,
@@ -5036,6 +5301,11 @@
           "caminho": "gates/G_TEMPLATE_FORGE_ROT.py",
           "versao": "A",
           "papel": "ecossistema"
+        },
+        {
+          "caminho": "modulos/01-governanca-e-qualidade/gates/G_TEMPLATE_FORGE_ROT.py",
+          "versao": "A",
+          "papel": "componente"
         }
       ],
       "versoes_distintas": 1,
@@ -5053,6 +5323,11 @@
           "caminho": "gates/G_TEMPLATE_TANSTACK_OFFLINE.py",
           "versao": "A",
           "papel": "ecossistema"
+        },
+        {
+          "caminho": "modulos/02-triade-motores/fluxo-01-pure/gates/G_TEMPLATE_TANSTACK_OFFLINE.py",
+          "versao": "A",
+          "papel": "componente"
         }
       ],
       "versoes_distintas": 1,
@@ -5092,9 +5367,14 @@
           "papel": "ecossistema"
         },
         {
-          "caminho": "tools/aidd-forge/aidd_forge/templates/gates/G_TESTES_REAIS.py",
+          "caminho": "modulos/01-governanca-e-qualidade/core/aidd-forge/aidd_forge/templates/gates/G_TESTES_REAIS.py",
           "versao": "A",
           "papel": "entrega"
+        },
+        {
+          "caminho": "modulos/01-governanca-e-qualidade/gates/G_TESTES_REAIS.py",
+          "versao": "B",
+          "papel": "componente"
         }
       ],
       "versoes_distintas": 2,
@@ -5109,7 +5389,7 @@
       "descricao": "Validação de economia de tokens no pipeline.",
       "copias": [
         {
-          "caminho": "tools/aidd-pure/scripts/gates/G_TOKENOMICS.py",
+          "caminho": "modulos/02-triade-motores/fluxo-01-pure/core/aidd-pure/scripts/gates/G_TOKENOMICS.py",
           "versao": "A",
           "papel": "ferramenta"
         }
@@ -5127,6 +5407,11 @@
           "caminho": "gates/G_TRANSACTION_LOG_LRU.py",
           "versao": "A",
           "papel": "ecossistema"
+        },
+        {
+          "caminho": "modulos/04-nucleo-compartilhado/gates/G_TRANSACTION_LOG_LRU.py",
+          "versao": "A",
+          "papel": "componente"
         }
       ],
       "versoes_distintas": 1,
@@ -5144,6 +5429,11 @@
           "caminho": "gates/G_UNIVERSAL_HARNESS.py",
           "versao": "A",
           "papel": "ecossistema"
+        },
+        {
+          "caminho": "modulos/04-nucleo-compartilhado/gates/G_UNIVERSAL_HARNESS.py",
+          "versao": "A",
+          "papel": "componente"
         }
       ],
       "versoes_distintas": 1,
@@ -5161,6 +5451,11 @@
           "caminho": "gates/G_USER_FACING_PTBR.py",
           "versao": "A",
           "papel": "ecossistema"
+        },
+        {
+          "caminho": "modulos/04-nucleo-compartilhado/gates/G_USER_FACING_PTBR.py",
+          "versao": "A",
+          "papel": "componente"
         }
       ],
       "versoes_distintas": 1,
@@ -5175,7 +5470,7 @@
       "descricao": "Pré-voo obrigatório antes de rodar pipeline_completo.py com fallback headless.",
       "copias": [
         {
-          "caminho": "tools/aidd-pure/scripts/gates/G_VERIFICAR_LLM_PRONTO.py",
+          "caminho": "modulos/02-triade-motores/fluxo-01-pure/core/aidd-pure/scripts/gates/G_VERIFICAR_LLM_PRONTO.py",
           "versao": "A",
           "papel": "ferramenta"
         }
@@ -5193,6 +5488,11 @@
           "caminho": "gates/G_ZERO_HEADLESS.py",
           "versao": "A",
           "papel": "ecossistema"
+        },
+        {
+          "caminho": "modulos/04-nucleo-compartilhado/gates/G_ZERO_HEADLESS.py",
+          "versao": "A",
+          "papel": "componente"
         }
       ],
       "versoes_distintas": 1,
@@ -5210,6 +5510,11 @@
           "caminho": "gates/G_aidd_diagnose.py",
           "versao": "A",
           "papel": "ecossistema"
+        },
+        {
+          "caminho": "modulos/01-governanca-e-qualidade/gates/G_aidd_diagnose.py",
+          "versao": "A",
+          "papel": "componente"
         }
       ],
       "versoes_distintas": 1,
@@ -5227,6 +5532,11 @@
           "caminho": "gates/G_aidd_enterprise.py",
           "versao": "A",
           "papel": "ecossistema"
+        },
+        {
+          "caminho": "modulos/03-plataforma-e-entrega/gates/G_aidd_enterprise.py",
+          "versao": "A",
+          "papel": "componente"
         }
       ],
       "versoes_distintas": 1,
@@ -5244,6 +5554,11 @@
           "caminho": "gates/G_aidd_forge.py",
           "versao": "A",
           "papel": "ecossistema"
+        },
+        {
+          "caminho": "modulos/01-governanca-e-qualidade/gates/G_aidd_forge.py",
+          "versao": "A",
+          "papel": "componente"
         }
       ],
       "versoes_distintas": 1,
@@ -5261,6 +5576,11 @@
           "caminho": "gates/G_aidd_grill.py",
           "versao": "A",
           "papel": "ecossistema"
+        },
+        {
+          "caminho": "modulos/01-governanca-e-qualidade/gates/G_aidd_grill.py",
+          "versao": "A",
+          "papel": "componente"
         }
       ],
       "versoes_distintas": 1,
@@ -5278,6 +5598,11 @@
           "caminho": "gates/G_aidd_handoff.py",
           "versao": "A",
           "papel": "ecossistema"
+        },
+        {
+          "caminho": "modulos/01-governanca-e-qualidade/gates/G_aidd_handoff.py",
+          "versao": "A",
+          "papel": "componente"
         }
       ],
       "versoes_distintas": 1,
@@ -5295,6 +5620,11 @@
           "caminho": "gates/G_aidd_plan.py",
           "versao": "A",
           "papel": "ecossistema"
+        },
+        {
+          "caminho": "modulos/01-governanca-e-qualidade/gates/G_aidd_plan.py",
+          "versao": "A",
+          "papel": "componente"
         }
       ],
       "versoes_distintas": 1,
@@ -5312,6 +5642,11 @@
           "caminho": "gates/G_aidd_planner_runner.py",
           "versao": "A",
           "papel": "ecossistema"
+        },
+        {
+          "caminho": "modulos/01-governanca-e-qualidade/gates/G_aidd_planner_runner.py",
+          "versao": "A",
+          "papel": "componente"
         }
       ],
       "versoes_distintas": 1,
@@ -5329,6 +5664,11 @@
           "caminho": "gates/G_aidd_session.py",
           "versao": "A",
           "papel": "ecossistema"
+        },
+        {
+          "caminho": "modulos/01-governanca-e-qualidade/gates/G_aidd_session.py",
+          "versao": "A",
+          "papel": "componente"
         }
       ],
       "versoes_distintas": 1,
@@ -5346,6 +5686,11 @@
           "caminho": "gates/G_aidd_spec.py",
           "versao": "A",
           "papel": "ecossistema"
+        },
+        {
+          "caminho": "modulos/01-governanca-e-qualidade/gates/G_aidd_spec.py",
+          "versao": "A",
+          "papel": "componente"
         }
       ],
       "versoes_distintas": 1,
@@ -5363,6 +5708,11 @@
           "caminho": "gates/G_aidd_tdd.py",
           "versao": "A",
           "papel": "ecossistema"
+        },
+        {
+          "caminho": "modulos/01-governanca-e-qualidade/gates/G_aidd_tdd.py",
+          "versao": "A",
+          "papel": "componente"
         }
       ],
       "versoes_distintas": 1,
@@ -5380,6 +5730,11 @@
           "caminho": "gates/G_aidd_tickets.py",
           "versao": "A",
           "papel": "ecossistema"
+        },
+        {
+          "caminho": "modulos/01-governanca-e-qualidade/gates/G_aidd_tickets.py",
+          "versao": "A",
+          "papel": "componente"
         }
       ],
       "versoes_distintas": 1,
@@ -5397,6 +5752,11 @@
           "caminho": "gates/G_amelhoria.py",
           "versao": "A",
           "papel": "ecossistema"
+        },
+        {
+          "caminho": "modulos/01-governanca-e-qualidade/gates/G_amelhoria.py",
+          "versao": "A",
+          "papel": "componente"
         }
       ],
       "versoes_distintas": 1,
@@ -5414,6 +5774,11 @@
           "caminho": "gates/G_mapa_pecas.py",
           "versao": "A",
           "papel": "ecossistema"
+        },
+        {
+          "caminho": "modulos/04-nucleo-compartilhado/gates/G_mapa_pecas.py",
+          "versao": "A",
+          "papel": "componente"
         }
       ],
       "versoes_distintas": 1,
@@ -5431,6 +5796,11 @@
           "caminho": "gates/G_modularizacao_vsa.py",
           "versao": "A",
           "papel": "ecossistema"
+        },
+        {
+          "caminho": "modulos/04-nucleo-compartilhado/gates/G_modularizacao_vsa.py",
+          "versao": "A",
+          "papel": "componente"
         }
       ],
       "versoes_distintas": 1,
@@ -5465,6 +5835,8 @@
       "titulo": "HandoffExecucaoSchema",
       "usado_por": [
         "gates/G_PIPELINE_HANDOFF.py",
+        "modulos/01-governanca-e-qualidade/core/aidd-planner/aidd_planner/core/planner_engine.py",
+        "modulos/01-governanca-e-qualidade/core/aidd-planner/src/core/planner_engine.py",
         "modulos/04-nucleo-compartilhado/gates/G_PIPELINE_HANDOFF.py",
         "scripts/compilador_tickets_plano.py",
         "tools/aidd-planner/aidd_planner/core/planner_engine.py",
@@ -5476,6 +5848,8 @@
       "titulo": "HandoffForgeToPlannerSchema",
       "usado_por": [
         "modulos/01-governanca-e-qualidade/core/aidd-forge/aidd_forge/core/prontidao.py",
+        "modulos/01-governanca-e-qualidade/core/aidd-planner/aidd_planner/core/planta.py",
+        "modulos/01-governanca-e-qualidade/core/aidd-planner/src/core/planta.py",
         "scripts/orquestrador_sincrono.py",
         "tools/aidd-forge/aidd_forge/core/prontidao.py",
         "tools/aidd-planner/aidd_planner/core/planta.py",
@@ -5507,6 +5881,8 @@
       "titulo": "HandoffPlannerToEngineSchema",
       "usado_por": [
         "gates/G_ORQUESTRADOR_SINCRONO.py",
+        "modulos/01-governanca-e-qualidade/core/aidd-planner/aidd_planner/core/planta.py",
+        "modulos/01-governanca-e-qualidade/core/aidd-planner/src/core/planta.py",
         "modulos/03-plataforma-e-entrega/operacoes-ops/aidd-ops/scripts/infra_perfil.py",
         "modulos/04-nucleo-compartilhado/gates/G_ORQUESTRADOR_SINCRONO.py",
         "scripts/orquestrador_sincrono.py",
@@ -5519,6 +5895,8 @@
       "id": "plano-infraestrutura",
       "titulo": "Contrato do PLANO-INFRAESTRUTURA.json (aidd-ops → aidd-master/aidd-enterprise/aidd-open)",
       "usado_por": [
+        "modulos/01-governanca-e-qualidade/core/aidd-planner/aidd_planner/core/planner_engine.py",
+        "modulos/01-governanca-e-qualidade/core/aidd-planner/src/core/planner_engine.py",
         "modulos/03-plataforma-e-entrega/blindagem-enterprise/aidd-enterprise/scripts/scaffold_infra.py",
         "modulos/03-plataforma-e-entrega/fatiamento-master/aidd-master/scripts/scaffold_infra.py",
         "modulos/03-plataforma-e-entrega/operacoes-ops/aidd-ops/scripts/contrato_plano.py",
@@ -5534,6 +5912,8 @@
       "titulo": "VSATopologicalDispatchSchema",
       "usado_por": [
         "gates/G_DISPATCH_PIPELINE_VSA.py",
+        "modulos/01-governanca-e-qualidade/core/aidd-planner/aidd_planner/core/planner_engine.py",
+        "modulos/01-governanca-e-qualidade/core/aidd-planner/src/core/planner_engine.py",
         "modulos/03-plataforma-e-entrega/gates/G_DISPATCH_PIPELINE_VSA.py",
         "tools/aidd-planner/aidd_planner/core/planner_engine.py",
         "tools/aidd-planner/src/core/planner_engine.py"
@@ -5802,7 +6182,12 @@
     }
   ],
   "achados": {
-    "arquivos_identicos_entre_donas": [],
+    "arquivos_identicos_entre_donas": [
+      {
+        "donas": "gates + modulos",
+        "arquivos": 69
+      }
+    ],
     "verbos_cli_repetidos": {},
     "tarefas_com_varias_donas": {},
     "gates_mesmo_nome_codigo_diferente": [
@@ -5812,6 +6197,7 @@
       "G_CYBERSECURITY_OWASP",
       "G_DETERMINISMO_LEI_1",
       "G_PERFORMANCE",
+      "G_PORTAO_PROVA_QUE_MORDE",
       "G_QUARTETO_SINE_QUA_NON",
       "G_SAIDA_BINARIA",
       "G_SEGREDOS",

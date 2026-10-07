@@ -28,6 +28,9 @@ import sys
 from collections import defaultdict
 from pathlib import Path
 
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from pastas_ferramentas import ferramenta_do_caminho, pastas  # noqa: E402  (ciclo-03 VSA)
+
 RAIZ = Path(__file__).resolve().parent.parent
 MAPAS = RAIZ / "docs" / "mapas-visuais"
 MOLDES = MAPAS / "moldes"
@@ -67,7 +70,7 @@ ORDEM_CASAS = ("meta", "ecossistema", "ferramenta", "entrega", "componente")
 NOMES_CASAS = {
     "meta": ("Meta-guardas", "vigiam os outros guardas", "var(--c-pensa)"),
     "ecossistema": ("Guardas do ecossistema", "gates/ · rodam no commit", "var(--c-guarda)"),
-    "ferramenta": ("Guardas das ferramentas", "tools/<f>/gates · scripts/gates", "var(--c-trabalha)"),
+    "ferramenta": ("Guardas das ferramentas", "modulos/**/aidd-<f>/gates · scripts/gates", "var(--c-trabalha)"),
     "entrega": ("Só nos moldes de entrega", "templates/gates · vão junto com o app", "var(--brick)"),
     "componente": ("Guardas de componentes", "componentes/", "var(--c-regra)"),
 }
@@ -78,8 +81,8 @@ def e(texto) -> str:
 
 
 def _dona(caminho: str) -> str:
-    partes = caminho.split("/")
-    return partes[1].replace("aidd-", "") if partes[0] == "tools" else partes[0]
+    ferramenta = ferramenta_do_caminho(caminho)
+    return ferramenta.replace("aidd-", "") if ferramenta else caminho.split("/")[0]
 
 
 def _casa(gate: dict) -> str:

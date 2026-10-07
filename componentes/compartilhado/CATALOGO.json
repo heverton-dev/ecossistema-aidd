@@ -16,7 +16,7 @@
     "renderizado": "saída já renderizada do molde, servida pela própria ferramenta"
   },
   "fora_do_almoxarifado": {
-    "tools/aidd-enterprise/materiais-extras/examples/**": "D4: arquivo histórico fora do repo, não é peça",
+    "modulos/03-plataforma-e-entrega/blindagem-enterprise/aidd-enterprise/materiais-extras/examples/**": "D4: arquivo histórico fora do repo, não é peça",
     "gates/** (raiz)": "D2: lei do próprio monorepo, não gate de projeto"
   },
   "pecas": [
@@ -111,7 +111,7 @@
         "aidd-forge"
       ],
       "copias": [
-        "tools/aidd-forge/aidd_forge/templates/gates/G_DETERMINISMO_LEI_1.py"
+        "modulos/01-governanca-e-qualidade/core/aidd-forge/aidd_forge/templates/gates/G_DETERMINISMO_LEI_1.py"
       ],
       "base": "aidd-forge templates/gates 62b8781 2026-09-21"
     },
@@ -144,8 +144,8 @@
         "aidd-forge"
       ],
       "copias": [
-        "tools/aidd-forge/aidd_forge/templates/gates/G_ESTRUTURA_AST.py",
-        "tools/aidd-forge/sandbox-forge-teste/gates/G_ESTRUTURA_AST.py"
+        "modulos/01-governanca-e-qualidade/core/aidd-forge/aidd_forge/templates/gates/G_ESTRUTURA_AST.py",
+        "modulos/01-governanca-e-qualidade/core/aidd-forge/sandbox-forge-teste/gates/G_ESTRUTURA_AST.py"
       ],
       "base": "aidd-forge templates/gates 3345ce5 2026-09-03"
     },
@@ -205,12 +205,12 @@
       "papel": "principal",
       "dono_do_conteudo": "aidd-forge",
       "versao": "1.0.0",
-      "sha256": "sha256-fced7e14e39dab012d3a9ce89eae9b4a8519077dd9315c124c23fc0497d0a74b",
+      "sha256": "sha256-b26b0ac8121173402c76c9ef42140d3b9d1c3f1a0e9b2114c4eb6b3b176d126b",
       "consumidores": [
         "aidd-forge"
       ],
       "copias": [
-        "tools/aidd-forge/aidd_forge/templates/gates/G_QUARTETO_SINE_QUA_NON.py"
+        "modulos/01-governanca-e-qualidade/core/aidd-forge/aidd_forge/templates/gates/G_QUARTETO_SINE_QUA_NON.py"
       ],
       "base": "aidd-forge templates/gates 62b8781 2026-09-21"
     },
@@ -227,7 +227,7 @@
         "aidd-forge"
       ],
       "copias": [
-        "tools/aidd-forge/aidd_forge/templates/gates/G_SAIDA_BINARIA.py"
+        "modulos/01-governanca-e-qualidade/core/aidd-forge/aidd_forge/templates/gates/G_SAIDA_BINARIA.py"
       ],
       "base": "aidd-forge templates/gates 62b8781 2026-09-21"
     },
@@ -276,7 +276,7 @@
         "aidd-forge"
       ],
       "copias": [
-        "tools/aidd-forge/aidd_forge/templates/gates/G_STACK_PADRAO_OURO.py"
+        "modulos/01-governanca-e-qualidade/core/aidd-forge/aidd_forge/templates/gates/G_STACK_PADRAO_OURO.py"
       ],
       "base": "aidd-forge templates/gates 5735507 2026-09-29"
     },
@@ -309,8 +309,8 @@
         "aidd-forge"
       ],
       "copias": [
-        "tools/aidd-forge/aidd_forge/templates/gates/G_TESTES_REAIS.py",
-        "tools/aidd-forge/sandbox-forge-teste/gates/G_TESTES_REAIS.py"
+        "modulos/01-governanca-e-qualidade/core/aidd-forge/aidd_forge/templates/gates/G_TESTES_REAIS.py",
+        "modulos/01-governanca-e-qualidade/core/aidd-forge/sandbox-forge-teste/gates/G_TESTES_REAIS.py"
       ],
       "base": "aidd-forge templates/gates 3345ce5 2026-09-03"
     },
@@ -327,8 +327,8 @@
         "aidd-forge"
       ],
       "copias": [
-        "tools/aidd-forge/aidd_forge/templates/gates/G_BLOQUEAR_SEGREDOS.py",
-        "tools/aidd-forge/sandbox-forge-teste/gates/G_BLOQUEAR_SEGREDOS.py"
+        "modulos/01-governanca-e-qualidade/core/aidd-forge/aidd_forge/templates/gates/G_BLOQUEAR_SEGREDOS.py",
+        "modulos/01-governanca-e-qualidade/core/aidd-forge/sandbox-forge-teste/gates/G_BLOQUEAR_SEGREDOS.py"
       ],
       "variante_de": "gates/G_BLOQUEAR_SEGREDOS.py",
       "tipo_variante": "implementacao_independente",
@@ -347,8 +347,8 @@
         "aidd-forge"
       ],
       "copias": [
-        "tools/aidd-forge/aidd_forge/templates/gates/G_CONTRACTS.py",
-        "tools/aidd-forge/sandbox-forge-teste/gates/G_CONTRACTS.py"
+        "modulos/01-governanca-e-qualidade/core/aidd-forge/aidd_forge/templates/gates/G_CONTRACTS.py",
+        "modulos/01-governanca-e-qualidade/core/aidd-forge/sandbox-forge-teste/gates/G_CONTRACTS.py"
       ],
       "variante_de": "gates/G_CONTRACTS.py",
       "tipo_variante": "implementacao_independente",
@@ -367,8 +367,8 @@
         "aidd-forge"
       ],
       "copias": [
-        "tools/aidd-forge/aidd_forge/templates/gates/G_CYBERSECURITY_OWASP.py",
-        "tools/aidd-forge/sandbox-forge-teste/gates/G_CYBERSECURITY_OWASP.py"
+        "modulos/01-governanca-e-qualidade/core/aidd-forge/aidd_forge/templates/gates/G_CYBERSECURITY_OWASP.py",
+        "modulos/01-governanca-e-qualidade/core/aidd-forge/sandbox-forge-teste/gates/G_CYBERSECURITY_OWASP.py"
       ],
       "variante_de": "gates/G_CYBERSECURITY_OWASP.py",
       "tipo_variante": "implementacao_independente",
@@ -387,8 +387,8 @@
         "aidd-forge"
       ],
       "copias": [
-        "tools/aidd-forge/aidd_forge/templates/gates/G_HARNESS_COMPAT.py",
-        "tools/aidd-forge/sandbox-forge-teste/gates/G_HARNESS_COMPAT.py"
+        "modulos/01-governanca-e-qualidade/core/aidd-forge/aidd_forge/templates/gates/G_HARNESS_COMPAT.py",
+        "modulos/01-governanca-e-qualidade/core/aidd-forge/sandbox-forge-teste/gates/G_HARNESS_COMPAT.py"
       ],
       "variante_de": "gates/G_HARNESS_COMPAT.py",
       "tipo_variante": "implementacao_independente",
@@ -407,8 +407,8 @@
         "aidd-forge"
       ],
       "copias": [
-        "tools/aidd-forge/aidd_forge/templates/gates/G_PERFORMANCE.py",
-        "tools/aidd-forge/sandbox-forge-teste/gates/G_PERFORMANCE.py"
+        "modulos/01-governanca-e-qualidade/core/aidd-forge/aidd_forge/templates/gates/G_PERFORMANCE.py",
+        "modulos/01-governanca-e-qualidade/core/aidd-forge/sandbox-forge-teste/gates/G_PERFORMANCE.py"
       ],
       "variante_de": "gates/G_PERFORMANCE.py",
       "tipo_variante": "implementacao_independente",
@@ -439,7 +439,7 @@
       "papel": "principal",
       "dono_do_conteudo": "aidd-enterprise",
       "versao": "1.0.0",
-      "sha256": "sha256-444c281e789db322b5c229e7b77d8e3f9739b965d1941f3ef2cbbc251711bc3d",
+      "sha256": "sha256-94697c49f435f60285ace35be9f4006e1da3ecbfa3cc33db7827aa36f6750c64",
       "consumidores": [
         "aidd-enterprise",
         "aidd-master"
@@ -476,8 +476,8 @@
         "aidd-master"
       ],
       "copias": [
-        "tools/aidd-enterprise/src/core/detector_camada.py",
-        "tools/aidd-master/src/core/detector_camada.py"
+        "modulos/03-plataforma-e-entrega/blindagem-enterprise/aidd-enterprise/src/core/detector_camada.py",
+        "modulos/03-plataforma-e-entrega/fatiamento-master/aidd-master/src/core/detector_camada.py"
       ],
       "base": "aidd-enterprise src/core b3001b4 2026-09-05; _PROJETO_PADRAO pela localização (aidd-master)"
     },
@@ -511,7 +511,7 @@
         "aidd-master"
       ],
       "copias": [
-        "tools/aidd-master/src/core/profiles_registry.py"
+        "modulos/03-plataforma-e-entrega/fatiamento-master/aidd-master/src/core/profiles_registry.py"
       ],
       "base": "aidd-enterprise src/core b3001b4 2026-09-05 (perfil aidd-enterprise) + hooks em JSON do aidd-master 9325afa 2026-09-10"
     },
@@ -544,7 +544,7 @@
         "aidd-master"
       ],
       "copias": [
-        "tools/aidd-enterprise/src/core/schema_injector_request.json"
+        "modulos/03-plataforma-e-entrega/blindagem-enterprise/aidd-enterprise/src/core/schema_injector_request.json"
       ],
       "base": "aidd-enterprise src/core b3001b4 2026-09-05"
     },
@@ -561,7 +561,7 @@
         "aidd-enterprise"
       ],
       "copias": [
-        "tools/aidd-enterprise/src/core/profiles_registry.py"
+        "modulos/03-plataforma-e-entrega/blindagem-enterprise/aidd-enterprise/src/core/profiles_registry.py"
       ],
       "variante_de": "injetor/profiles_registry.py",
       "tipo_variante": "versao_divergente",
@@ -580,8 +580,8 @@
         "aidd-forge"
       ],
       "copias": [
-        "tools/aidd-forge/aidd_forge/templates/gates/G_INJECT.py",
-        "tools/aidd-forge/sandbox-forge-teste/gates/G_INJECT.py"
+        "modulos/01-governanca-e-qualidade/core/aidd-forge/aidd_forge/templates/gates/G_INJECT.py",
+        "modulos/01-governanca-e-qualidade/core/aidd-forge/sandbox-forge-teste/gates/G_INJECT.py"
       ],
       "variante_de": "injetor/G_INJECT.py",
       "tipo_variante": "implementacao_independente",
@@ -600,7 +600,7 @@
         "aidd-forge"
       ],
       "copias": [
-        "tools/aidd-forge/aidd_forge/core/injection_schema.py"
+        "modulos/01-governanca-e-qualidade/core/aidd-forge/aidd_forge/core/injection_schema.py"
       ],
       "variante_de": "injetor/inject.py",
       "tipo_variante": "implementacao_independente",
@@ -619,7 +619,7 @@
         "aidd-forge"
       ],
       "copias": [
-        "tools/aidd-forge/aidd_forge/core/injector.py"
+        "modulos/01-governanca-e-qualidade/core/aidd-forge/aidd_forge/core/injector.py"
       ],
       "variante_de": "injetor/inject.py",
       "tipo_variante": "implementacao_independente",
@@ -638,7 +638,7 @@
         "aidd-forge"
       ],
       "copias": [
-        "tools/aidd-forge/aidd_forge/core/injector_profiles.py"
+        "modulos/01-governanca-e-qualidade/core/aidd-forge/aidd_forge/core/injector_profiles.py"
       ],
       "variante_de": "injetor/inject.py",
       "tipo_variante": "implementacao_independente",
@@ -657,7 +657,7 @@
         "aidd-forge"
       ],
       "copias": [
-        "tools/aidd-forge/aidd_forge/core/materializador.py"
+        "modulos/01-governanca-e-qualidade/core/aidd-forge/aidd_forge/core/materializador.py"
       ],
       "variante_de": "injetor/inject.py",
       "tipo_variante": "implementacao_independente",
@@ -676,7 +676,7 @@
         "aidd-forge"
       ],
       "copias": [
-        "tools/aidd-forge/aidd_forge/core/universal_injector.py"
+        "modulos/01-governanca-e-qualidade/core/aidd-forge/aidd_forge/core/universal_injector.py"
       ],
       "variante_de": "injetor/inject.py",
       "tipo_variante": "implementacao_independente",
@@ -695,7 +695,7 @@
         "aidd-forge"
       ],
       "copias": [
-        "tools/aidd-forge/aidd_forge/schemas/injection_request.schema.json"
+        "modulos/01-governanca-e-qualidade/core/aidd-forge/aidd_forge/schemas/injection_request.schema.json"
       ],
       "variante_de": "injetor/inject.py",
       "tipo_variante": "implementacao_independente",
@@ -748,7 +748,7 @@
         "aidd-master"
       ],
       "copias": [
-        "tools/aidd-master/src/core/schema_injector_request.json"
+        "modulos/03-plataforma-e-entrega/fatiamento-master/aidd-master/src/core/schema_injector_request.json"
       ],
       "variante_de": "injetor/schema_injector_request.json",
       "tipo_variante": "versao_divergente",
@@ -1261,7 +1261,7 @@
         "aidd-master"
       ],
       "copias": [
-        "tools/aidd-master/src/static/docs.html"
+        "modulos/03-plataforma-e-entrega/fatiamento-master/aidd-master/src/static/docs.html"
       ],
       "variante_de": "moldes/quarteto/docs.html",
       "tipo_variante": "renderizado",
@@ -1363,7 +1363,7 @@
       "papel": "principal",
       "dono_do_conteudo": "aidd-forge",
       "versao": "1.0.0",
-      "sha256": "sha256-b66e03e810d2c7366182d720aa7d60be101c36fd822714ba5998b813a628e74e",
+      "sha256": "sha256-8e4d1b45e525a5a2bda564256af7e757a839b1b20c80e0b13b765362287476a0",
       "consumidores": [
         "aidd-forge",
         "ecossistema-raiz"
@@ -1531,7 +1531,7 @@
       "papel": "principal",
       "dono_do_conteudo": "aidd-master",
       "versao": "1.0.0",
-      "sha256": "sha256-49bb434c6f48c52efcfc49bbbbba86f7993f5375801d7b053aea1af961735fab",
+      "sha256": "sha256-3627dfa8b807f3984c2164b58d5f80944bac2687ee50842595f1628e84b2b2ce",
       "consumidores": [
         "aidd-enterprise",
         "aidd-master"
@@ -1552,8 +1552,8 @@
         "aidd-master"
       ],
       "copias": [
-        "tools/aidd-enterprise/src/core/__init__.py",
-        "tools/aidd-master/src/core/__init__.py"
+        "modulos/03-plataforma-e-entrega/blindagem-enterprise/aidd-enterprise/src/core/__init__.py",
+        "modulos/03-plataforma-e-entrega/fatiamento-master/aidd-master/src/core/__init__.py"
       ]
     },
     {
@@ -1564,14 +1564,14 @@
       "papel": "principal",
       "dono_do_conteudo": "aidd-master",
       "versao": "1.0.0",
-      "sha256": "sha256-53eebfabed16522e624b819f401bb1cee6edafe20df712a225efd5f7b9555f15",
+      "sha256": "sha256-8c9acb7cf459c3787066735434038160744294c587dbec683106001cafb15644",
       "consumidores": [
         "aidd-enterprise",
         "aidd-master"
       ],
       "copias": [
-        "tools/aidd-enterprise/src/core/assinatura_manifesto.py",
-        "tools/aidd-master/src/core/assinatura_manifesto.py"
+        "modulos/03-plataforma-e-entrega/blindagem-enterprise/aidd-enterprise/src/core/assinatura_manifesto.py",
+        "modulos/03-plataforma-e-entrega/fatiamento-master/aidd-master/src/core/assinatura_manifesto.py"
       ]
     },
     {
@@ -1588,8 +1588,8 @@
         "aidd-master"
       ],
       "copias": [
-        "tools/aidd-enterprise/src/core/caveman_protocol.py",
-        "tools/aidd-master/src/core/caveman_protocol.py"
+        "modulos/03-plataforma-e-entrega/blindagem-enterprise/aidd-enterprise/src/core/caveman_protocol.py",
+        "modulos/03-plataforma-e-entrega/fatiamento-master/aidd-master/src/core/caveman_protocol.py"
       ]
     },
     {
@@ -1606,8 +1606,8 @@
         "aidd-master"
       ],
       "copias": [
-        "tools/aidd-enterprise/src/core/circuit_breaker.py",
-        "tools/aidd-master/src/core/circuit_breaker.py"
+        "modulos/03-plataforma-e-entrega/blindagem-enterprise/aidd-enterprise/src/core/circuit_breaker.py",
+        "modulos/03-plataforma-e-entrega/fatiamento-master/aidd-master/src/core/circuit_breaker.py"
       ]
     },
     {
@@ -1624,8 +1624,8 @@
         "aidd-master"
       ],
       "copias": [
-        "tools/aidd-enterprise/src/core/cqrs.py",
-        "tools/aidd-master/src/core/cqrs.py"
+        "modulos/03-plataforma-e-entrega/blindagem-enterprise/aidd-enterprise/src/core/cqrs.py",
+        "modulos/03-plataforma-e-entrega/fatiamento-master/aidd-master/src/core/cqrs.py"
       ]
     },
     {
@@ -1642,8 +1642,8 @@
         "aidd-master"
       ],
       "copias": [
-        "tools/aidd-enterprise/src/core/database.py",
-        "tools/aidd-master/src/core/database.py"
+        "modulos/03-plataforma-e-entrega/blindagem-enterprise/aidd-enterprise/src/core/database.py",
+        "modulos/03-plataforma-e-entrega/fatiamento-master/aidd-master/src/core/database.py"
       ]
     },
     {
@@ -1660,8 +1660,8 @@
         "aidd-master"
       ],
       "copias": [
-        "tools/aidd-enterprise/src/core/database_adapter.py",
-        "tools/aidd-master/src/core/database_adapter.py"
+        "modulos/03-plataforma-e-entrega/blindagem-enterprise/aidd-enterprise/src/core/database_adapter.py",
+        "modulos/03-plataforma-e-entrega/fatiamento-master/aidd-master/src/core/database_adapter.py"
       ]
     },
     {
@@ -1678,8 +1678,8 @@
         "aidd-master"
       ],
       "copias": [
-        "tools/aidd-enterprise/src/core/design_catalog.py",
-        "tools/aidd-master/src/core/design_catalog.py"
+        "modulos/03-plataforma-e-entrega/blindagem-enterprise/aidd-enterprise/src/core/design_catalog.py",
+        "modulos/03-plataforma-e-entrega/fatiamento-master/aidd-master/src/core/design_catalog.py"
       ]
     },
     {
@@ -1690,14 +1690,14 @@
       "papel": "principal",
       "dono_do_conteudo": "aidd-master",
       "versao": "1.0.0",
-      "sha256": "sha256-282ac74c2212649ebbd4e85c75f7140889f266b747b26471a8c4f4d5c1c7bf99",
+      "sha256": "sha256-09b9b20feaa7f3bf3cb11eb7776ebbb27fa3414434ee7b33a2a55ed166d1260a",
       "consumidores": [
         "aidd-enterprise",
         "aidd-master"
       ],
       "copias": [
-        "tools/aidd-enterprise/src/core/escritor_atomico.py",
-        "tools/aidd-master/src/core/escritor_atomico.py"
+        "modulos/03-plataforma-e-entrega/blindagem-enterprise/aidd-enterprise/src/core/escritor_atomico.py",
+        "modulos/03-plataforma-e-entrega/fatiamento-master/aidd-master/src/core/escritor_atomico.py"
       ]
     },
     {
@@ -1714,8 +1714,8 @@
         "aidd-master"
       ],
       "copias": [
-        "tools/aidd-enterprise/src/core/events.py",
-        "tools/aidd-master/src/core/events.py"
+        "modulos/03-plataforma-e-entrega/blindagem-enterprise/aidd-enterprise/src/core/events.py",
+        "modulos/03-plataforma-e-entrega/fatiamento-master/aidd-master/src/core/events.py"
       ]
     },
     {
@@ -1732,8 +1732,8 @@
         "aidd-master"
       ],
       "copias": [
-        "tools/aidd-enterprise/src/core/external_adapter.py",
-        "tools/aidd-master/src/core/external_adapter.py"
+        "modulos/03-plataforma-e-entrega/blindagem-enterprise/aidd-enterprise/src/core/external_adapter.py",
+        "modulos/03-plataforma-e-entrega/fatiamento-master/aidd-master/src/core/external_adapter.py"
       ]
     },
     {
@@ -1750,8 +1750,8 @@
         "aidd-master"
       ],
       "copias": [
-        "tools/aidd-enterprise/src/core/fleet_discovery.py",
-        "tools/aidd-master/src/core/fleet_discovery.py"
+        "modulos/03-plataforma-e-entrega/blindagem-enterprise/aidd-enterprise/src/core/fleet_discovery.py",
+        "modulos/03-plataforma-e-entrega/fatiamento-master/aidd-master/src/core/fleet_discovery.py"
       ]
     },
     {
@@ -1768,8 +1768,8 @@
         "aidd-master"
       ],
       "copias": [
-        "tools/aidd-enterprise/src/core/fuzzing.py",
-        "tools/aidd-master/src/core/fuzzing.py"
+        "modulos/03-plataforma-e-entrega/blindagem-enterprise/aidd-enterprise/src/core/fuzzing.py",
+        "modulos/03-plataforma-e-entrega/fatiamento-master/aidd-master/src/core/fuzzing.py"
       ]
     },
     {
@@ -1786,8 +1786,8 @@
         "aidd-master"
       ],
       "copias": [
-        "tools/aidd-enterprise/src/core/intent_router.py",
-        "tools/aidd-master/src/core/intent_router.py"
+        "modulos/03-plataforma-e-entrega/blindagem-enterprise/aidd-enterprise/src/core/intent_router.py",
+        "modulos/03-plataforma-e-entrega/fatiamento-master/aidd-master/src/core/intent_router.py"
       ]
     },
     {
@@ -1804,8 +1804,8 @@
         "aidd-master"
       ],
       "copias": [
-        "tools/aidd-enterprise/src/core/jobs.py",
-        "tools/aidd-master/src/core/jobs.py"
+        "modulos/03-plataforma-e-entrega/blindagem-enterprise/aidd-enterprise/src/core/jobs.py",
+        "modulos/03-plataforma-e-entrega/fatiamento-master/aidd-master/src/core/jobs.py"
       ]
     },
     {
@@ -1822,8 +1822,8 @@
         "aidd-master"
       ],
       "copias": [
-        "tools/aidd-enterprise/src/core/local_first.py",
-        "tools/aidd-master/src/core/local_first.py"
+        "modulos/03-plataforma-e-entrega/blindagem-enterprise/aidd-enterprise/src/core/local_first.py",
+        "modulos/03-plataforma-e-entrega/fatiamento-master/aidd-master/src/core/local_first.py"
       ]
     },
     {
@@ -1840,8 +1840,8 @@
         "aidd-master"
       ],
       "copias": [
-        "tools/aidd-enterprise/src/core/logs.py",
-        "tools/aidd-master/src/core/logs.py"
+        "modulos/03-plataforma-e-entrega/blindagem-enterprise/aidd-enterprise/src/core/logs.py",
+        "modulos/03-plataforma-e-entrega/fatiamento-master/aidd-master/src/core/logs.py"
       ]
     },
     {
@@ -1852,14 +1852,14 @@
       "papel": "principal",
       "dono_do_conteudo": "aidd-master",
       "versao": "1.0.0",
-      "sha256": "sha256-ac5d9d800c2ead27a43c1df71d011a04adc173f34d018110f6ff912a97f75623",
+      "sha256": "sha256-1788cc0de093143e4e81b07e7111c725d7e0f79942ee6b27ce2650fae23d5b02",
       "consumidores": [
         "aidd-enterprise",
         "aidd-master"
       ],
       "copias": [
-        "tools/aidd-enterprise/src/core/materializador.py",
-        "tools/aidd-master/src/core/materializador.py"
+        "modulos/03-plataforma-e-entrega/blindagem-enterprise/aidd-enterprise/src/core/materializador.py",
+        "modulos/03-plataforma-e-entrega/fatiamento-master/aidd-master/src/core/materializador.py"
       ]
     },
     {
@@ -1885,7 +1885,7 @@
       "papel": "principal",
       "dono_do_conteudo": "aidd-master",
       "versao": "1.0.0",
-      "sha256": "sha256-a0b4d129515c1e966bf273a4a158155b6367320d905da78e76ba4df49c60d3da",
+      "sha256": "sha256-3a87527bb82db671c83e593f48fe8cffec2e4d67b86a669b172a998835f26eb5",
       "consumidores": [
         "aidd-enterprise",
         "aidd-master"
@@ -1906,8 +1906,8 @@
         "aidd-master"
       ],
       "copias": [
-        "tools/aidd-enterprise/src/core/mcp_server.py",
-        "tools/aidd-master/src/core/mcp_server.py"
+        "modulos/03-plataforma-e-entrega/blindagem-enterprise/aidd-enterprise/src/core/mcp_server.py",
+        "modulos/03-plataforma-e-entrega/fatiamento-master/aidd-master/src/core/mcp_server.py"
       ]
     },
     {
@@ -1924,8 +1924,8 @@
         "aidd-master"
       ],
       "copias": [
-        "tools/aidd-enterprise/src/core/mcp_studio.html",
-        "tools/aidd-master/src/core/mcp_studio.html"
+        "modulos/03-plataforma-e-entrega/blindagem-enterprise/aidd-enterprise/src/core/mcp_studio.html",
+        "modulos/03-plataforma-e-entrega/fatiamento-master/aidd-master/src/core/mcp_studio.html"
       ]
     },
     {
@@ -1942,8 +1942,8 @@
         "aidd-master"
       ],
       "copias": [
-        "tools/aidd-enterprise/src/core/metrics.py",
-        "tools/aidd-master/src/core/metrics.py"
+        "modulos/03-plataforma-e-entrega/blindagem-enterprise/aidd-enterprise/src/core/metrics.py",
+        "modulos/03-plataforma-e-entrega/fatiamento-master/aidd-master/src/core/metrics.py"
       ]
     },
     {
@@ -1954,14 +1954,14 @@
       "papel": "principal",
       "dono_do_conteudo": "aidd-master",
       "versao": "1.0.0",
-      "sha256": "sha256-87233fbabe24b9f9168d6276ab4b8ce4a8b224a39d2283864f5d7488cbdbfbc5",
+      "sha256": "sha256-45e8dd5f6c747344054044bbfffbe929dcdf7f6bd6ffe53e1d9f7db404efb39e",
       "consumidores": [
         "aidd-enterprise",
         "aidd-master"
       ],
       "copias": [
-        "tools/aidd-enterprise/src/core/nextjs_exporter.py",
-        "tools/aidd-master/src/core/nextjs_exporter.py"
+        "modulos/03-plataforma-e-entrega/blindagem-enterprise/aidd-enterprise/src/core/nextjs_exporter.py",
+        "modulos/03-plataforma-e-entrega/fatiamento-master/aidd-master/src/core/nextjs_exporter.py"
       ]
     },
     {
@@ -1978,8 +1978,8 @@
         "aidd-master"
       ],
       "copias": [
-        "tools/aidd-enterprise/src/core/openapi.py",
-        "tools/aidd-master/src/core/openapi.py"
+        "modulos/03-plataforma-e-entrega/blindagem-enterprise/aidd-enterprise/src/core/openapi.py",
+        "modulos/03-plataforma-e-entrega/fatiamento-master/aidd-master/src/core/openapi.py"
       ]
     },
     {
@@ -1996,8 +1996,8 @@
         "aidd-master"
       ],
       "copias": [
-        "tools/aidd-enterprise/src/core/opentelemetry.py",
-        "tools/aidd-master/src/core/opentelemetry.py"
+        "modulos/03-plataforma-e-entrega/blindagem-enterprise/aidd-enterprise/src/core/opentelemetry.py",
+        "modulos/03-plataforma-e-entrega/fatiamento-master/aidd-master/src/core/opentelemetry.py"
       ]
     },
     {
@@ -2014,8 +2014,8 @@
         "aidd-master"
       ],
       "copias": [
-        "tools/aidd-enterprise/src/core/outbox_worker.py",
-        "tools/aidd-master/src/core/outbox_worker.py"
+        "modulos/03-plataforma-e-entrega/blindagem-enterprise/aidd-enterprise/src/core/outbox_worker.py",
+        "modulos/03-plataforma-e-entrega/fatiamento-master/aidd-master/src/core/outbox_worker.py"
       ]
     },
     {
@@ -2047,8 +2047,8 @@
         "aidd-master"
       ],
       "copias": [
-        "tools/aidd-enterprise/src/core/result.py",
-        "tools/aidd-master/src/core/result.py"
+        "modulos/03-plataforma-e-entrega/blindagem-enterprise/aidd-enterprise/src/core/result.py",
+        "modulos/03-plataforma-e-entrega/fatiamento-master/aidd-master/src/core/result.py"
       ]
     },
     {
@@ -2080,8 +2080,8 @@
         "aidd-master"
       ],
       "copias": [
-        "tools/aidd-enterprise/src/core/security.py",
-        "tools/aidd-master/src/core/security.py"
+        "modulos/03-plataforma-e-entrega/blindagem-enterprise/aidd-enterprise/src/core/security.py",
+        "modulos/03-plataforma-e-entrega/fatiamento-master/aidd-master/src/core/security.py"
       ]
     },
     {
@@ -2098,8 +2098,8 @@
         "aidd-master"
       ],
       "copias": [
-        "tools/aidd-enterprise/src/core/sincronizador_harness.py",
-        "tools/aidd-master/src/core/sincronizador_harness.py"
+        "modulos/03-plataforma-e-entrega/blindagem-enterprise/aidd-enterprise/src/core/sincronizador_harness.py",
+        "modulos/03-plataforma-e-entrega/fatiamento-master/aidd-master/src/core/sincronizador_harness.py"
       ]
     },
     {
@@ -2116,8 +2116,8 @@
         "aidd-master"
       ],
       "copias": [
-        "tools/aidd-enterprise/src/core/subagent_engine.py",
-        "tools/aidd-master/src/core/subagent_engine.py"
+        "modulos/03-plataforma-e-entrega/blindagem-enterprise/aidd-enterprise/src/core/subagent_engine.py",
+        "modulos/03-plataforma-e-entrega/fatiamento-master/aidd-master/src/core/subagent_engine.py"
       ]
     },
     {
@@ -2134,8 +2134,8 @@
         "aidd-master"
       ],
       "copias": [
-        "tools/aidd-enterprise/src/core/swagger.html",
-        "tools/aidd-master/src/core/swagger.html"
+        "modulos/03-plataforma-e-entrega/blindagem-enterprise/aidd-enterprise/src/core/swagger.html",
+        "modulos/03-plataforma-e-entrega/fatiamento-master/aidd-master/src/core/swagger.html"
       ]
     },
     {
@@ -2146,7 +2146,7 @@
       "papel": "principal",
       "dono_do_conteudo": "aidd-master",
       "versao": "1.0.0",
-      "sha256": "sha256-6fc111da88eff3ddd524bf1840259ca35d9b350ab2c5865b68592bc98dc2ddbd",
+      "sha256": "sha256-fc33f09247d2d8c26859166fc794aefa4ca34230e402babe734edf8ab381322a",
       "consumidores": [
         "aidd-enterprise",
         "aidd-master"
@@ -2167,8 +2167,8 @@
         "aidd-master"
       ],
       "copias": [
-        "tools/aidd-enterprise/src/core/token_revocation.py",
-        "tools/aidd-master/src/core/token_revocation.py"
+        "modulos/03-plataforma-e-entrega/blindagem-enterprise/aidd-enterprise/src/core/token_revocation.py",
+        "modulos/03-plataforma-e-entrega/fatiamento-master/aidd-master/src/core/token_revocation.py"
       ]
     },
     {
@@ -2185,8 +2185,8 @@
         "aidd-master"
       ],
       "copias": [
-        "tools/aidd-enterprise/src/core/transaction_log.py",
-        "tools/aidd-master/src/core/transaction_log.py"
+        "modulos/03-plataforma-e-entrega/blindagem-enterprise/aidd-enterprise/src/core/transaction_log.py",
+        "modulos/03-plataforma-e-entrega/fatiamento-master/aidd-master/src/core/transaction_log.py"
       ]
     },
     {
@@ -2203,8 +2203,8 @@
         "aidd-master"
       ],
       "copias": [
-        "tools/aidd-enterprise/src/core/webhook_studio.html",
-        "tools/aidd-master/src/core/webhook_studio.html"
+        "modulos/03-plataforma-e-entrega/blindagem-enterprise/aidd-enterprise/src/core/webhook_studio.html",
+        "modulos/03-plataforma-e-entrega/fatiamento-master/aidd-master/src/core/webhook_studio.html"
       ]
     },
     {
@@ -2221,8 +2221,8 @@
         "aidd-master"
       ],
       "copias": [
-        "tools/aidd-enterprise/src/core/webhooks.py",
-        "tools/aidd-master/src/core/webhooks.py"
+        "modulos/03-plataforma-e-entrega/blindagem-enterprise/aidd-enterprise/src/core/webhooks.py",
+        "modulos/03-plataforma-e-entrega/fatiamento-master/aidd-master/src/core/webhooks.py"
       ]
     }
   ]

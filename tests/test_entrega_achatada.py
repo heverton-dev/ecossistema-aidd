@@ -10,7 +10,7 @@ import pytest
 
 ROOT_DIR = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT_DIR))
-sys.path.insert(0, str(ROOT_DIR / "tools" / "aidd-master" / "scripts"))
+sys.path.insert(0, str(ROOT_DIR / "modulos" / "03-plataforma-e-entrega" / "fatiamento-master" / "aidd-master" / "scripts"))
 
 from scripts.orquestrador_sincrono import OrquestradorSincrono  # noqa: E402
 

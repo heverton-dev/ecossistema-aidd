@@ -7,14 +7,26 @@
   ],
   "como_usar": "Cada achado em aberto traz pedido_melhoria: o texto para python ecossistema.py melhoria init --pedido \"...\".",
   "totais": {
-    "aberto": 28,
+    "aberto": 30,
     "suspeita": 0,
     "resolvido": 14,
-    "abertos_alta": 0,
+    "abertos_alta": 1,
     "abertos_media": 3,
-    "abertos_baixa": 25
+    "abertos_baixa": 26
   },
   "achados": [
+    {
+      "id": "CAT-arquivos-identicos",
+      "titulo": "69 arquivos idênticos copiados entre ferramentas",
+      "gravidade": "alta",
+      "estado": "aberto",
+      "origem": "catalogo",
+      "mapa": "ferramentas",
+      "evidencia": [
+        "gates + modulos: 69"
+      ],
+      "pedido_melhoria": "Separar aidd-master (esqueleto) de aidd-enterprise (blindagem) e tirar as cópias idênticas."
+    },
     {
       "id": "CAT-15d-aidd-orca",
       "titulo": "1 dimensões 15-D com falha no laudo de aidd-orca",
@@ -46,7 +58,7 @@
     },
     {
       "id": "CAT-gates-versoes",
-      "titulo": "11 guardas com o mesmo nome e código diferente",
+      "titulo": "12 guardas com o mesmo nome e código diferente",
       "gravidade": "media",
       "estado": "aberto",
       "origem": "catalogo",
@@ -58,6 +70,7 @@
         "G_CYBERSECURITY_OWASP",
         "G_DETERMINISMO_LEI_1",
         "G_PERFORMANCE",
+        "G_PORTAO_PROVA_QUE_MORDE",
         "G_QUARTETO_SINE_QUA_NON",
         "G_SAIDA_BINARIA",
         "G_SEGREDOS",
@@ -342,6 +355,18 @@
         "faltam: laudo_inicial, laudo_revisado"
       ],
       "pedido_melhoria": "Completar ou fechar o ciclo fronteiras-ferramentas/ciclo-01."
+    },
+    {
+      "id": "CAT-ciclo-modularizacao-vsa-ciclo-03",
+      "titulo": "Ciclo de auditoria sem todos os documentos: modularizacao-vsa/ciclo-03",
+      "gravidade": "baixa",
+      "estado": "aberto",
+      "origem": "catalogo",
+      "mapa": "oficina",
+      "evidencia": [
+        "faltam: laudo_inicial, laudo_revisado"
+      ],
+      "pedido_melhoria": "Completar ou fechar o ciclo modularizacao-vsa/ciclo-03."
     },
     {
       "id": "CAT-guardas-sem-lei",

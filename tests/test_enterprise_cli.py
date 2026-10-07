@@ -3,7 +3,7 @@
 Teste da CLI deterministica de aidd-enterprise (Ticket 2 / D4).
 Exige:
 - exit 1 em parametros faltantes, entrada nao tratada ou fallback sem
-  implementacao local (pacote tools/aidd-enterprise ausente).
+  implementacao local (pacote modulos/03-plataforma-e-entrega/blindagem-enterprise/aidd-enterprise ausente).
 - Subcomandos inject e audit com argumentos tipo e nome.
 - Tipos de componente: skill, rule, mcp, spec, config, hook, agent.
 - Roteamento direto para modulos Python locais (sem prompt de LLM).
@@ -86,7 +86,7 @@ def test_fallback_sem_implementacao_retorna_exit_1(monkeypatch):
     cli = carregar_cli_enterprise()
 
     def sem_implementacao(argumentos):
-        raise RuntimeError("pacote local tools/aidd-enterprise nao encontrado")
+        raise RuntimeError("pacote local modulos/03-plataforma-e-entrega/blindagem-enterprise/aidd-enterprise nao encontrado")
 
     monkeypatch.setattr(cli, "executar_script_local", sem_implementacao)
     assert cli.main(["inject", "skill", "auth"]) == 1
@@ -122,7 +122,7 @@ def test_roteamento_audit_para_modulo_python_local(monkeypatch):
 
 
 def test_conecta_ao_pacote_local_do_repositorio():
-    """A CLI aponta para o pacote local tools/aidd-enterprise (conexao deterministica)."""
+    """A CLI aponta para o pacote local modulos/03-plataforma-e-entrega/blindagem-enterprise/aidd-enterprise (conexao deterministica)."""
     cli = carregar_cli_enterprise()
     assert cli.raiz_pacote_local() is not None
     assert (cli.raiz_pacote_local() / "scripts" / "aidd.py").is_file()

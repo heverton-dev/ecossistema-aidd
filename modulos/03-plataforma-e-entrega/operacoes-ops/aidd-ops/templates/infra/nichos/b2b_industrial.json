@@ -3,23 +3,23 @@
   "nicho": "b2b_industrial",
   "nome_exibicao": "Indústrias & Vendas B2B",
   "descricao": "Plano de infraestrutura para o nicho de Indústrias e Vendas B2B. Mapeia ferramentas do catálogo para blocos construtivos canônicos.",
-  "fonte": "tools/aidd-ops/data/catalogo_nichos.json → nicho 'b2b_industrial'",
+  "fonte": "modulos/03-plataforma-e-entrega/operacoes-ops/aidd-ops/data/catalogo_nichos.json → nicho 'b2b_industrial'",
   "blocos": [
     {
       "slug": "traefik",
-      "caminho": "tools/aidd-ops/templates/infra/traefik/",
+      "caminho": "modulos/03-plataforma-e-entrega/operacoes-ops/aidd-ops/templates/infra/traefik/",
       "obrigatorio": true,
       "motivo": "Reverse proxy e terminação TLS para todos os serviços expostos publicamente"
     },
     {
       "slug": "postgres",
-      "caminho": "tools/aidd-ops/templates/infra/postgres/",
+      "caminho": "modulos/03-plataforma-e-entrega/operacoes-ops/aidd-ops/templates/infra/postgres/",
       "obrigatorio": true,
       "motivo": "Banco centralizado para EspoCRM, Mautic e Documenso"
     },
     {
       "slug": "gateway",
-      "caminho": "tools/aidd-ops/templates/infra/gateway/",
+      "caminho": "modulos/03-plataforma-e-entrega/operacoes-ops/aidd-ops/templates/infra/gateway/",
       "obrigatorio": false,
       "motivo": "API Gateway para orquestrar integrações entre CRM, marketing automation e ERP"
     }

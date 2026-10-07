@@ -8,8 +8,8 @@ atômico: ou todos os arquivos da operação são criados com sucesso, ou
 nenhum arquivo órfão permanece em disco (rollback automático em falha de I/O).
 
 Fonte única: componentes/compartilhado/src-core/materializador.py — este
-arquivo é byte-idêntico em tools/aidd-master/src/core/ e
-tools/aidd-enterprise/src/core/ (sincronizado por
+arquivo é byte-idêntico em modulos/03-plataforma-e-entrega/fatiamento-master/aidd-master/src/core/ e
+modulos/03-plataforma-e-entrega/blindagem-enterprise/aidd-enterprise/src/core/ (sincronizado por
 componentes/compartilhado/src-core/sync.py). O nome do projeto padrão é
 derivado da localização física do módulo (nunca hardcoded), para que o
 mesmo arquivo sirva as duas ferramentas sem drift silencioso.

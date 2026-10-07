@@ -32,8 +32,8 @@ import pytest
 
 # Configuração de caminhos do ecossistema
 ROOT_DIR = Path(__file__).resolve().parents[3]
-MASTER_DIR = ROOT_DIR / "tools" / "aidd-master"
-FORGE_DIR = ROOT_DIR / "tools" / "aidd-forge"
+MASTER_DIR = ROOT_DIR / "modulos" / "03-plataforma-e-entrega" / "fatiamento-master" / "aidd-master"
+FORGE_DIR = ROOT_DIR / "modulos" / "01-governanca-e-qualidade" / "core" / "aidd-forge"
 SPECS_DIR = ROOT_DIR / "componentes" / "compartilhado" / "specs"
 CATALOGO_PATH = ROOT_DIR / "componentes" / "compartilhado" / "CATALOGO.json"
 

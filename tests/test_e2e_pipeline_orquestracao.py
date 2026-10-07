@@ -34,11 +34,11 @@ import pytest
 
 ROOT_DIR = Path(__file__).resolve().parent.parent
 SCRIPT_ECOSSISTEMA = ROOT_DIR / "ecossistema.py"
-SCRIPT_ORCHESTRATOR = ROOT_DIR / "tools" / "aidd-master" / "scripts" / "orchestrator_pipeline.py"
+SCRIPT_ORCHESTRATOR = ROOT_DIR / "modulos" / "03-plataforma-e-entrega" / "fatiamento-master" / "aidd-master" / "scripts" / "orchestrator_pipeline.py"
 SCRIPT_COMPILADOR = ROOT_DIR / "scripts" / "compilador_tickets_plano.py"
 
 sys.path.insert(0, str(ROOT_DIR))
-sys.path.insert(0, str(ROOT_DIR / "tools" / "aidd-master" / "scripts"))
+sys.path.insert(0, str(ROOT_DIR / "modulos" / "03-plataforma-e-entrega" / "fatiamento-master" / "aidd-master" / "scripts"))
 sys.path.insert(0, str(ROOT_DIR / "scripts"))
 
 from orchestrator_pipeline import OrchestratorPipeline

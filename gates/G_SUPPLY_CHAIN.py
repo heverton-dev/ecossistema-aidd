@@ -37,11 +37,11 @@ ROOT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 MANIFESTOS_PYTHON = [
     "requirements.txt",
     "requirements-dev.txt",
-    os.path.join("tools", "aidd-master", "requirements.txt"),
-    os.path.join("tools", "aidd-enterprise", "requirements.txt"),
-    os.path.join("tools", "aidd-pure", "requirements.txt"),
-    os.path.join("tools", "aidd-ops", "requirements.txt"),
-    os.path.join("tools", "aidd-forge", "requirements.txt"),
+    os.path.join("modulos", "03-plataforma-e-entrega", "fatiamento-master", "aidd-master", "requirements.txt"),
+    os.path.join("modulos", "03-plataforma-e-entrega", "blindagem-enterprise", "aidd-enterprise", "requirements.txt"),
+    os.path.join("modulos", "02-triade-motores", "fluxo-01-pure", "core", "aidd-pure", "requirements.txt"),
+    os.path.join("modulos", "03-plataforma-e-entrega", "operacoes-ops", "aidd-ops", "requirements.txt"),
+    os.path.join("modulos", "01-governanca-e-qualidade", "core", "aidd-forge", "requirements.txt"),
 ]
 
 # Pacotes conhecidos por ataques de typosquatting ou obsoletos/vulneráveis por design

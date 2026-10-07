@@ -3,10 +3,10 @@
 # AIDD-Ops — Intake Web (Streamlit) Dockerfile
 # =============================================================================
 # Build context convencional p/ Coolify:
-#   - Base Directory:  tools/aidd-ops
+#   - Base Directory:  modulos/03-plataforma-e-entrega/operacoes-ops/aidd-ops
 #   - Dockerfile Location: Dockerfile.intake
 #   - Porta exposta: 8501  (apps/intake/.streamlit/config.toml)
-# A raiz do contexto (tools/aidd-ops) contém scripts/, src/, data/ e schemas/
+# A raiz do contexto (modulos/03-plataforma-e-entrega/operacoes-ops/aidd-ops) contém scripts/, src/, data/ e schemas/
 # que o intake_core importa — nunca usar apps/intake/ como raiz de contexto.
 # =============================================================================
 

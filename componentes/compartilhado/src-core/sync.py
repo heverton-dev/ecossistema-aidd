@@ -3,7 +3,7 @@
 Sincronizador determinístico do núcleo compartilhado.
 
 Fonte única: componentes/compartilhado/src-core/
-Destinos:     tools/aidd-master/src/core/ e tools/aidd-enterprise/src/core/
+Destinos:     modulos/03-plataforma-e-entrega/fatiamento-master/aidd-master/src/core/ e modulos/03-plataforma-e-entrega/blindagem-enterprise/aidd-enterprise/src/core/
 
 Uso:
     python componentes/compartilhado/src-core/sync.py            # sincroniza (copia byte-a-byte o que mudou)

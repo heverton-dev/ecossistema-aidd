@@ -32,6 +32,9 @@ import sys
 from collections import defaultdict
 from pathlib import Path
 
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from pastas_ferramentas import ferramenta_do_caminho, pastas  # noqa: E402  (ciclo-03 VSA)
+
 RAIZ = Path(__file__).resolve().parent.parent
 SAIDA_PADRAO = RAIZ / "docs" / "auditoria" / "mapa-pecas" / "catalogo-pecas.json"
 COMPARTILHADO = RAIZ / "componentes" / "compartilhado"
@@ -162,10 +165,11 @@ def _py_vivos(base: Path):
 
 def coletar_ferramentas() -> list[dict]:
     ferramentas = []
-    for pasta in sorted((RAIZ / "tools").iterdir()):
-        if not pasta.is_dir() or pasta.name not in ENTRADAS:
+    for nome, rel in sorted(pastas().items()):
+        pasta = RAIZ / rel
+        if not pasta.is_dir() or nome not in ENTRADAS:
             continue
-        atalho, entrada = ENTRADAS[pasta.name]
+        atalho, entrada = ENTRADAS[nome]
         cli = pasta / entrada
         texto = _ler(cli) if cli.is_file() else ""
         comandos = sorted(set(RE_CLICK.findall(texto)) | set(RE_ARGPARSE.findall(texto)))
@@ -282,7 +286,7 @@ def _papel_gate(p: Path) -> str:
         return "ecossistema"
     if "templates" in partes:
         return "entrega"
-    return "ferramenta" if partes[0] == "tools" else "componente"
+    return "ferramenta" if ferramenta_do_caminho("/".join(partes)) else "componente"
 
 
 def _descricao_gate(p: Path) -> str:
@@ -425,13 +429,14 @@ def coletar_harnesses() -> dict:
     return {"harnesses": lista, "pastas_legadas": legadas}
 
 def coletar_moldes_entrega() -> list[dict]:
-    """Cada molde de entrega (tools/<f>/templates/<molde>/): o que vai junto com o app gerado."""
+    """Cada molde de entrega (<pasta da ferramenta>/templates/<molde>/): o que vai junto com o app gerado."""
     moldes = []
-    pastas = list(RAIZ.glob("tools/*/templates")) + list(RAIZ.glob("tools/*/aidd_*/templates"))
-    for tpl in sorted(pastas):
+    templates = [t for rel in pastas().values()
+                 for t in [RAIZ / rel / "templates", *(RAIZ / rel).glob("aidd_*/templates")] if t.is_dir()]
+    for tpl in sorted(templates):
         for sub in sorted(p for p in tpl.iterdir() if p.is_dir() and p.name not in IGNORAR):
             arquivos = [f for f in sub.rglob("*") if f.is_file() and not any(x in IGNORAR for x in f.parts)]
-            dona = tpl.relative_to(RAIZ / "tools").parts[0]
+            dona = ferramenta_do_caminho(_rel(tpl))
             moldes.append({
                 "ferramenta": dona,
                 "molde": sub.name,
@@ -550,7 +555,7 @@ def coletar_gates() -> tuple[list[dict], list[str]]:
     leis_mod, morde_mod = _meta_gates()
     leis, invisiveis = _leis_por_gate(leis_mod, _ler(RAIZ / "AGENTS.md"))
     por_nome = defaultdict(list)
-    for base in (RAIZ / "gates", RAIZ / "tools", RAIZ / "componentes"):
+    for base in (RAIZ / "gates", RAIZ / "modulos", RAIZ / "componentes"):
         for p in _py_vivos(base):
             if p.name.startswith("G_") and p.suffix == ".py":
                 por_nome[p.stem].append(p)
@@ -603,14 +608,14 @@ def _lista_de_chamada(no: ast.List) -> list[str] | None:
 
 
 def _caminho_interno(no: ast.BinOp) -> str | None:
-    """Detecta ROOT_DIR / "tools" / ... (atalho que pula a CLI da ferramenta)."""
+    """Detecta ROOT_DIR / "modulos" / ... (atalho que pula a CLI da ferramenta)."""
     partes = []
     while isinstance(no, ast.BinOp) and isinstance(no.op, ast.Div):
         if isinstance(no.right, ast.Constant):
             partes.append(str(no.right.value))
         no = no.left
     partes.reverse()
-    return "/".join(partes) if partes and partes[0] == "tools" else None
+    return "/".join(partes) if partes and partes[0] == "modulos" else None
 
 
 def _compara_fluxo(teste) -> bool:
@@ -718,8 +723,7 @@ def verificar_encaixes(receita: dict, ferramentas: list[dict]) -> list[dict]:
 # ── Achados ──────────────────────────────────────────────────────────────
 
 def _dona(caminho: str) -> str:
-    partes = caminho.split("/")
-    return partes[1] if partes[0] == "tools" else partes[0]
+    return ferramenta_do_caminho(caminho) or caminho.split("/")[0]
 
 
 def _eh_copia_governada(caminhos: list[str]) -> bool:
@@ -733,7 +737,7 @@ def _eh_copia_governada(caminhos: list[str]) -> bool:
 def achar_repeticoes(ferramentas, skills, gates, receita) -> dict:
     # 1. Arquivos byte-idênticos entre ferramentas diferentes (não governados).
     por_hash = defaultdict(list)
-    for base in (RAIZ / "tools", RAIZ / "componentes", RAIZ / "gates", RAIZ / "core"):
+    for base in (RAIZ / "modulos", RAIZ / "componentes", RAIZ / "gates", RAIZ / "core"):
         for p in _py_vivos(base):
             if p.name != "__init__.py" and p.stat().st_size and "test" not in p.name:
                 por_hash[_hash(p)].append(_rel(p))
@@ -858,7 +862,7 @@ def main(argv: list[str] | None = None) -> int:
         print(f"[OK] {args.saida} em dia com o código.")
         return 0
     args.saida.parent.mkdir(parents=True, exist_ok=True)
-    args.saida.write_text(texto, encoding="utf-8")
+    args.saida.write_text(texto, encoding="utf-8", newline="\n")
     print(f"[OK] Catálogo gravado em {args.saida}")
     return 0
 

@@ -28,7 +28,7 @@ def _criar_arvore_sintetica(tmp_path):
     shutil.copy2(GATE_PATH, fake_gates / "G_TESTES_REAIS.py")
     shutil.copy2(ESCOPO_PATH, fake_gates / "_escopo_commit.py")
 
-    fake_tools = tmp_path / "tools" / "aidd-forge"
+    fake_tools = tmp_path / "modulos" / "01-governanca-e-qualidade" / "core" / "aidd-forge"
     fake_tools.mkdir(parents=True)
     return fake_gates, fake_tools
 

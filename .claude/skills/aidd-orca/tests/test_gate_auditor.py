@@ -86,8 +86,8 @@ def _make_minimal_repo(base: Path, *, include_failing_test: bool = False) -> Pat
     gates_dir.mkdir()
     (gates_dir / "G_MINIMAL.py").write_text(_MINIMAL_GATE_PASSING)
 
-    # tools/aidd-master/ with pytest.ini and a test
-    tool_dir = repo / "tools" / "aidd-master"
+    # modulos/03-plataforma-e-entrega/fatiamento-master/aidd-master/ with pytest.ini and a test
+    tool_dir = repo / "modulos" / "03-plataforma-e-entrega" / "fatiamento-master" / "aidd-master"
     tool_dir.mkdir(parents=True)
     (tool_dir / "pytest.ini").write_text(
         "[pytest]\n"
@@ -110,14 +110,14 @@ def _make_minimal_repo(base: Path, *, include_failing_test: bool = False) -> Pat
 
 class TestResolveCommands:
     def test_tool_paths_resolve(self):
-        tools, root = resolve_commands(["tools/aidd-master/src/foo.py"])
+        tools, root = resolve_commands(["modulos/03-plataforma-e-entrega/fatiamento-master/aidd-master/src/foo.py"])
         assert tools == {"aidd-master"}
         assert not root
 
     def test_multiple_tools(self):
         tools, root = resolve_commands([
-            "tools/aidd-master/src/foo.py",
-            "tools/aidd-forge/src/bar.py",
+            "modulos/03-plataforma-e-entrega/fatiamento-master/aidd-master/src/foo.py",
+            "modulos/01-governanca-e-qualidade/core/aidd-forge/src/bar.py",
         ])
         assert tools == {"aidd-master", "aidd-forge"}
         assert not root
@@ -134,7 +134,7 @@ class TestResolveCommands:
 
     def test_mixed_paths(self):
         tools, root = resolve_commands([
-            "tools/aidd-master/src/x.py",
+            "modulos/03-plataforma-e-entrega/fatiamento-master/aidd-master/src/x.py",
             "gates/G_SEGREDOS.py",
         ])
         assert tools == {"aidd-master"}
@@ -146,7 +146,7 @@ class TestResolveCommands:
         assert not root
 
     def test_windows_style_paths(self):
-        tools, root = resolve_commands(["tools\\aidd-forge\\src\\bar.py"])
+        tools, root = resolve_commands(["modulos\\01-governanca-e-qualidade\\core\\aidd-forge\\src\\bar.py"])
         assert tools == {"aidd-forge"}
         assert not root
 
@@ -178,7 +178,7 @@ class TestScenarioA_Pass:
 
     def test_tool_pytest_passes(self, tmp_path: Path):
         repo = _make_minimal_repo(tmp_path)
-        verdict = audit_front(repo, "front-tool-pass", ["tools/aidd-master/src/x.py"])
+        verdict = audit_front(repo, "front-tool-pass", ["modulos/03-plataforma-e-entrega/fatiamento-master/aidd-master/src/x.py"])
 
         print(f"\n[Scenario A - Tool Pytest]")
         for cmd in verdict.commands:
@@ -204,7 +204,7 @@ class TestScenarioB_Fail:
 
     def test_broken_pytest_detected(self, tmp_path: Path):
         repo = _make_minimal_repo(tmp_path, include_failing_test=True)
-        verdict = audit_front(repo, "front-tool-fail", ["tools/aidd-master/src/x.py"])
+        verdict = audit_front(repo, "front-tool-fail", ["modulos/03-plataforma-e-entrega/fatiamento-master/aidd-master/src/x.py"])
 
         print(f"\n[Scenario B - Broken Pytest]")
         for cmd in verdict.commands:
@@ -231,7 +231,7 @@ class TestScenarioB_Fail:
         verdict = audit_front(
             repo,
             "front-mixed-fail",
-            ["gates/G_MINIMAL.py", "tools/aidd-master/src/x.py"],
+            ["gates/G_MINIMAL.py", "modulos/03-plataforma-e-entrega/fatiamento-master/aidd-master/src/x.py"],
         )
 
         print(f"\n[Scenario B - Mixed: root pass + tool fail]")

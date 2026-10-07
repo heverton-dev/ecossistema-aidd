@@ -173,7 +173,7 @@ def auditar_projeto(projeto_dir: str) -> Tuple[int, List[str], Dict[str, bool]]:
 def descobrir_projetos_canonicos(root_dir: str = ROOT_DIR) -> List[str]:
     """Descobre entregáveis canônicos do ecossistema e projetos gerados."""
     candidatos = [
-        os.path.join(root_dir, "tools", "aidd-enterprise", "materiais-extras", "examples", "enterprise-suite-v4"),
+        os.path.join(root_dir, "modulos", "03-plataforma-e-entrega", "blindagem-enterprise", "aidd-enterprise", "materiais-extras", "examples", "enterprise-suite-v4"),
         os.path.join(r"C:\Users\trcnologia\Desktop\proj_ctt\planos-ctt-app"),
     ]
     existentes = [c for c in candidatos if os.path.isdir(c)]

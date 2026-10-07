@@ -41,7 +41,7 @@ def test_aprova_quando_nenhuma_ferramenta_tocada():
 def test_aprova_quando_ferramenta_tocada_com_relatorio_atualizado():
     """Valida aprovação quando ferramenta sob tools/ é acompanhada de relatório de teste."""
     arquivos = [
-        "tools/aidd-pure/scripts/core/detector.py",
+        "modulos/02-triade-motores/fluxo-01-pure/core/aidd-pure/scripts/core/detector.py",
         "docs/teste-end-to-end/relatorio-teste-end-to-end.md",
     ]
     res = subprocess.run(
@@ -60,8 +60,8 @@ def test_aprova_quando_ferramenta_tocada_com_relatorio_atualizado():
 def test_reprova_quando_ferramenta_tocada_sem_relatorio():
     """Prova que o portão morde (Lei #13): alteração em tools/ sem relatório causa exit 1."""
     arquivos = [
-        "tools/aidd-pure/scripts/core/detector.py",
-        "tools/aidd-pure/templates/server.py",
+        "modulos/02-triade-motores/fluxo-01-pure/core/aidd-pure/scripts/core/detector.py",
+        "modulos/02-triade-motores/fluxo-01-pure/core/aidd-pure/templates/server.py",
     ]
     res = subprocess.run(
         [sys.executable, GATE_SCRIPT, "--files"] + arquivos,

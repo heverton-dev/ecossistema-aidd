@@ -165,7 +165,7 @@ def test_provision_nao_gera_infra_que_e_do_aidd_ops(tmp_path):
     nginx/ saem do `master init` e passam a ser do aidd-ops. Os dois achados reais
     que os testes antigos guardavam (pasta nginx/ com o gerador de SSL; Dockerfile
     instalando requirements antes do src/) estão em
-    tools/aidd-ops/tests/test_fronteira_ops_infra_generica.py."""
+    modulos/03-plataforma-e-entrega/operacoes-ops/aidd-ops/tests/test_fronteira_ops_infra_generica.py."""
     from provision_project import provision
 
     provision("Projeto Teste Sem Infra", base_dir=str(tmp_path))

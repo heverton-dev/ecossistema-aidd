@@ -9,9 +9,19 @@ a partir da lista de bancos logicos do factory_analysis.
 import os
 import sys
 
+
+def _achar_raiz_repo(inicio: str) -> str:
+    """Sobe pastas até achar ecossistema.py (raiz do repo), sem depender da profundidade."""
+    curr = os.path.abspath(inicio)
+    while os.path.dirname(curr) != curr:
+        if os.path.isfile(os.path.join(curr, "ecossistema.py")):
+            return curr
+        curr = os.path.dirname(curr)
+    return os.path.abspath(inicio)
+
 _FACTORY_ROOT = os.path.join(os.path.dirname(__file__), "..", "..")
 sys.path.insert(0, os.path.join(_FACTORY_ROOT, "src"))
-sys.path.insert(0, os.path.join(_FACTORY_ROOT, "..", "..", "componentes", "compartilhado", "src-core"))
+sys.path.insert(0, os.path.join(_achar_raiz_repo(_FACTORY_ROOT), "componentes", "compartilhado", "src-core"))
 
 from core.result import Result
 

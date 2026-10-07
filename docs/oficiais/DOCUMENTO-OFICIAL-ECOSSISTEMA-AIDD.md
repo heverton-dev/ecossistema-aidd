@@ -37,14 +37,14 @@ O ecossistema é modularizado em 8 ferramentas atômicas, com fronteiras funcion
 
 | Ferramenta | Diretório | Papel Primário | Entrada Principal | Entrega Primária |
 |---|---|---|---|---|
-| **AIDD Forge** | `tools/aidd-forge` | Guardião da Governança | Diretório do projeto / Parâmetros | Regras invioláveis (`AGENTS.md`), hooks pre-commit, bloqueios anti-vibe. |
-| **AIDD Planner** | `tools/aidd-planner` | Planta Baixa BDD/SDD | Linguagem natural / Requisitos | `PLANNER.json` com cenários BDD, entidades e contrato formal de handoff. |
-| **AIDD Generator** | `tools/aidd-pure` | Fábrica Autônoma (8 fases) | `PLANNER.json` | Aplicação construída do zero com TDD estrito Red-Green e monólito VSA. |
-| **AIDD Factory** | `tools/aidd-open` | Montagem Multi-Serviço | Motores OSS + `PLANNER.json` | Gateway FastAPI BFF, Frontend Next.js integrado e Docker Compose unificado. |
-| **AIDD Bridge** | `tools/aidd-freedom` | Libertador de Low-Code | Export Lovable/v0/Bolt | Aplicação desatada de BaaS proprietário, PostgreSQL nativo e UI preservada. |
-| **AIDD Master** | `tools/aidd-master` | Harmonização Modular VSA | Código das Engines | Fatias Verticais limpas, Frontend Next.js Padrão-Ouro e OpenAPI 3.1. |
-| **AIDD Enterprise** | `tools/aidd-enterprise`| Selo de Segurança Corporativo | Código do Master | Injeção SHA-256 de componentes auditados, RBAC, Rate-Limit e Zero-Trust. |
-| **AIDD Ops** | `tools/aidd-ops` | Meta-Orquestrador de Infra | Código Enterprise | Sizing VPS, Docker Swarm, Traefik SSL, sops+age e Uptime Kuma. |
+| **AIDD Forge** | `modulos/01-governanca-e-qualidade/core/aidd-forge` | Guardião da Governança | Diretório do projeto / Parâmetros | Regras invioláveis (`AGENTS.md`), hooks pre-commit, bloqueios anti-vibe. |
+| **AIDD Planner** | `modulos/01-governanca-e-qualidade/core/aidd-planner` | Planta Baixa BDD/SDD | Linguagem natural / Requisitos | `PLANNER.json` com cenários BDD, entidades e contrato formal de handoff. |
+| **AIDD Generator** | `modulos/02-triade-motores/fluxo-01-pure/core/aidd-pure` | Fábrica Autônoma (8 fases) | `PLANNER.json` | Aplicação construída do zero com TDD estrito Red-Green e monólito VSA. |
+| **AIDD Factory** | `modulos/02-triade-motores/fluxo-02-open/core/aidd-open` | Montagem Multi-Serviço | Motores OSS + `PLANNER.json` | Gateway FastAPI BFF, Frontend Next.js integrado e Docker Compose unificado. |
+| **AIDD Bridge** | `modulos/02-triade-motores/fluxo-03-freedom/core/aidd-freedom` | Libertador de Low-Code | Export Lovable/v0/Bolt | Aplicação desatada de BaaS proprietário, PostgreSQL nativo e UI preservada. |
+| **AIDD Master** | `modulos/03-plataforma-e-entrega/fatiamento-master/aidd-master` | Harmonização Modular VSA | Código das Engines | Fatias Verticais limpas, Frontend Next.js Padrão-Ouro e OpenAPI 3.1. |
+| **AIDD Enterprise** | `modulos/03-plataforma-e-entrega/blindagem-enterprise/aidd-enterprise`| Selo de Segurança Corporativo | Código do Master | Injeção SHA-256 de componentes auditados, RBAC, Rate-Limit e Zero-Trust. |
+| **AIDD Ops** | `modulos/03-plataforma-e-entrega/operacoes-ops/aidd-ops` | Meta-Orquestrador de Infra | Código Enterprise | Sizing VPS, Docker Swarm, Traefik SSL, sops+age e Uptime Kuma. |
 
 ---
 

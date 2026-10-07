@@ -3,7 +3,7 @@
 =============================================================================
 AIDD-Ops MVP — PADRÃO RESULTADO MONÁDICO (Result Pattern via returns)
 =============================================================================
-Mesmo padrão de tools/aidd-master/src/core/result.py baseado na biblioteca
+Mesmo padrão de modulos/03-plataforma-e-entrega/fatiamento-master/aidd-master/src/core/result.py baseado na biblioteca
 'returns' (dry-python). Elimina exceções soltas e fornece retornos previsíveis
 com métodos monádicos completos (map, bind, alt, unwrap, value_or).
 =============================================================================

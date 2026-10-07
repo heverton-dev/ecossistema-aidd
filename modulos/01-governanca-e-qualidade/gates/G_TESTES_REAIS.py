@@ -27,7 +27,7 @@ import xml.etree.ElementTree as ET
 import _escopo_commit
 
 ROOT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-TOOLS_DIR = os.path.join(ROOT_DIR, "tools")
+MAPA_DONOS_PATH = os.path.join(ROOT_DIR, "componentes", "compartilhado", "specs", "MAPA-DONOS-FERRAMENTAS.json")
 ALLOWLIST_PATH = os.path.join(ROOT_DIR, "gates", "allowlist_skipped_testes.json")
 
 
@@ -179,6 +179,16 @@ def _skips_nao_autorizados(ferramenta, skipped_ids, allowlist):
     return [sid for sid in skipped_ids if sid not in autorizados]
 
 
+def _pasta_ferramenta(ferramenta):
+    """Pasta canônica da ferramenta em modulos/ (campo 'pasta' do mapa de donos; ciclo-03 VSA)."""
+    try:
+        with open(MAPA_DONOS_PATH, encoding="utf-8") as fh:
+            pasta = json.load(fh).get(ferramenta, {}).get("pasta")
+    except (OSError, json.JSONDecodeError):
+        pasta = None
+    return os.path.join(ROOT_DIR, *pasta.split("/")) if pasta else os.path.join(ROOT_DIR, "modulos", ferramenta)
+
+
 def executar():
     print("=" * 70)
     print(" [GATE] G_TESTES_REAIS v2 — Execução real de pytest por ferramenta")
@@ -214,7 +224,7 @@ def executar():
 
     for indice, ferramenta in enumerate(ferramentas_alvo, start=1):
         raiz = ferramenta == BATERIA_RAIZ
-        dir_ferramenta = ROOT_DIR if raiz else os.path.join(TOOLS_DIR, ferramenta)
+        dir_ferramenta = ROOT_DIR if raiz else _pasta_ferramenta(ferramenta)
         alvos = (BATERIA_RAIZ,) if raiz else ()
         if not os.path.isdir(os.path.join(dir_ferramenta, *alvos)):
             print(f"  [{ferramenta}] DIRETÓRIO AUSENTE — ignorado")

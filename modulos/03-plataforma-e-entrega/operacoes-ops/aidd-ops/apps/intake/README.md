@@ -28,7 +28,7 @@ Pré-requisitos no painel Coolify: um **projeto** (nome opcional) e um **servido
 1. **Commitar e publicar** o repositório (o Coolify constrói a partir do git público/registrado).
 2. Configuração do app (tela *Public Repository* do Coolify):
    - Build Pack: `Dockerfile`
-   - Base Directory: `tools/aidd-ops`
+   - Base Directory: `modulos/03-plataforma-e-entrega/operacoes-ops/aidd-ops`
    - Dockerfile Location: `Dockerfile.intake`
    - Ports Exposes: `8501`
    - Branch: `main` (ou a desejada)
@@ -44,17 +44,17 @@ export COOLIFY_BASE_URL=https://seu-coolify.interno
 export COOLIFY_API_TOKEN=seu_token
 
 # 2) Descobrir o UUID do servidor e do projeto (somente leitura)
-python tools/aidd-ops/scripts/pipeline_ops.py coolify servers
-python tools/aidd-ops/scripts/pipeline_ops.py coolify apps
+python modulos/03-plataforma-e-entrega/operacoes-ops/aidd-ops/scripts/pipeline_ops.py coolify servers
+python modulos/03-plataforma-e-entrega/operacoes-ops/aidd-ops/scripts/pipeline_ops.py coolify apps
 
 # 3) Registrar o app (dry-run por padrão — adicione --real para aplicar)
-python tools/aidd-ops/scripts/pipeline_ops.py coolify create \
+python modulos/03-plataforma-e-entrega/operacoes-ops/aidd-ops/scripts/pipeline_ops.py coolify create \
   --project-uuid <projeto> --server-uuid <servidor> \
   --repo https://github.com/<org>/<repo>.git --real
 
 # 4) Variáveis de ambiente + deploy
-python tools/aidd-ops/scripts/pipeline_ops.py coolify setenv --app <uuid-do-app> STREAMLIT_SERVER_HEADLESS=true --real
-python tools/aidd-ops/scripts/pipeline_ops.py coolify deploy --app <uuid-do-app> --real
+python modulos/03-plataforma-e-entrega/operacoes-ops/aidd-ops/scripts/pipeline_ops.py coolify setenv --app <uuid-do-app> STREAMLIT_SERVER_HEADLESS=true --real
+python modulos/03-plataforma-e-entrega/operacoes-ops/aidd-ops/scripts/pipeline_ops.py coolify deploy --app <uuid-do-app> --real
 ```
 
 > Credenciais só entram por ambiente (`COOLIFY_BASE_URL`/`COOLIFY_API_TOKEN`) ou por flag
@@ -64,7 +64,7 @@ python tools/aidd-ops/scripts/pipeline_ops.py coolify deploy --app <uuid-do-app>
 ## Testes
 
 ```bash
-python -m pytest tools/aidd-ops/tests/test_intake_app.py tools/aidd-ops/tests/test_coolify.py -q
+python -m pytest modulos/03-plataforma-e-entrega/operacoes-ops/aidd-ops/tests/test_intake_app.py modulos/03-plataforma-e-entrega/operacoes-ops/aidd-ops/tests/test_coolify.py -q
 ```
 
 O contrato HTTP do Coolify em `test_coolify.py` é validado contra um servidor HTTP real

@@ -5,7 +5,7 @@ argument-hint: "[scan|convert-db|merge|pack] <args>"
 
 # Comando /bridge (nome antigo)
 
-Apelido de 1 ciclo para as operações atômicas do motor do Fluxo 03 (`tools/aidd-freedom`): ingestão, conversão de banco e empacotamento de aplicações low-code (Lovable, v0, Bolt).
+Apelido de 1 ciclo para as operações atômicas do motor do Fluxo 03 (`modulos/02-triade-motores/fluxo-03-freedom/core/aidd-freedom`): ingestão, conversão de banco e empacotamento de aplicações low-code (Lovable, v0, Bolt).
 
 ## Uso:
 - `/bridge scan <caminho>`

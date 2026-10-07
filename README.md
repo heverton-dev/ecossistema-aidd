@@ -46,10 +46,10 @@ python -m venv .venv
 .venv/bin/python -m pip install --require-hashes -r requirements-dev.lock           # Linux/macOS
 
 # Dependências específicas de cada ferramenta
-.venv/Scripts/python.exe -m pip install -r tools/aidd-pure/requirements.txt
-.venv/Scripts/python.exe -m pip install -r tools/aidd-master/requirements.txt
-.venv/Scripts/python.exe -m pip install -r tools/aidd-enterprise/requirements.txt
-.venv/Scripts/python.exe -m pip install -r tools/aidd-ops/requirements.txt
+.venv/Scripts/python.exe -m pip install -r modulos/02-triade-motores/fluxo-01-pure/core/aidd-pure/requirements.txt
+.venv/Scripts/python.exe -m pip install -r modulos/03-plataforma-e-entrega/fatiamento-master/aidd-master/requirements.txt
+.venv/Scripts/python.exe -m pip install -r modulos/03-plataforma-e-entrega/blindagem-enterprise/aidd-enterprise/requirements.txt
+.venv/Scripts/python.exe -m pip install -r modulos/03-plataforma-e-entrega/operacoes-ops/aidd-ops/requirements.txt
 ```
 
 `--require-hashes` é obrigatório: ele recusa qualquer pacote cuja assinatura não bata com a registrada no lockfile. Nunca instale a partir de `requirements.txt` direto para trabalhar no repositório — esse arquivo é a **fonte** dos pins, e o lockfile é o que tem as assinaturas.

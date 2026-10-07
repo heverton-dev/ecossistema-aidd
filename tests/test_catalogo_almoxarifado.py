@@ -36,6 +36,9 @@ import pytest
 ROOT_DIR = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT_DIR / "scripts"))
 import inventario_capacidades as inv  # noqa: E402
+from pastas_ferramentas import ferramenta_do_caminho, pastas  # noqa: E402
+
+LEGADO = "tools" + "/"  # prefixo da foto antiga (INVENTARIO-ANTES), antes da VSA
 
 ALMOXARIFADO = "componentes/compartilhado"
 CATALOGO = ROOT_DIR / ALMOXARIFADO / "CATALOGO.json"
@@ -55,17 +58,17 @@ TIPOS_VARIANTE = ("implementacao_independente", "versao_divergente", "renderizad
 RE_GATE = re.compile(r"/(templates/gates|scripts/gates|sandbox-forge-teste/gates)/G_[A-Za-z0-9_]+\.py$")
 QUARTETO = {"mcp_server.py", "mcp_studio.html", "webhooks.py", "webhook_studio.html",
             "openapi.py", "swagger.html", "docs.html", "openapi.json.j2"}
-RE_QUARTETO = re.compile(r"^tools/aidd-[a-z]+/(templates/(core|v2|vsa|docs)|src/static)/[^/]+$")
+RE_QUARTETO = re.compile(r"^modulos/(?:[^/]+/)*?aidd-[a-z]+/(templates/(core|v2|vsa|docs)|src/static)/[^/]+$")
 INFRA = {"Dockerfile", "docker-compose.yml", "deploy.sh", "nginx.conf", "generate_ssl.py"}
-RE_INFRA = re.compile(r"^tools/aidd-[a-z]+/templates/(core|v2|vsa)/")
+RE_INFRA = re.compile(r"^modulos/(?:[^/]+/)*?aidd-[a-z]+/templates/(core|v2|vsa)/")
 RE_INJETOR = re.compile(
-    r"^tools/aidd-pure/scripts/(core/injector/[^/]+|aidd_inject\.py)$"
-    r"|^tools/aidd-forge/aidd_forge/(core/(injector|injector_profiles|universal_injector"
+    r"^modulos/02-triade-motores/fluxo-01-pure/core/aidd-pure/scripts/(core/injector/[^/]+|aidd_inject\.py)$"
+    r"|^modulos/01-governanca-e-qualidade/core/aidd-forge/aidd_forge/(core/(injector|injector_profiles|universal_injector"
     r"|injection_schema|materializador)\.py|schemas/injection_request\.schema\.json)$"
-    r"|^tools/aidd-(master|enterprise)/application/commands/inject\.py$"
-    r"|^tools/aidd-(master|enterprise)/src/core/(detector_camada\.py|profiles_registry\.py"
+    r"|^modulos/(?:[^/]+/)*?aidd-(master|enterprise)/application/commands/inject\.py$"
+    r"|^modulos/(?:[^/]+/)*?aidd-(master|enterprise)/src/core/(detector_camada\.py|profiles_registry\.py"
     r"|schema_injector_request\.json)$"
-    r"|^tools/aidd-enterprise/scripts/injector/")
+    r"|^modulos/03-plataforma-e-entrega/blindagem-enterprise/aidd-enterprise/scripts/injector/")
 
 
 def _ferramentas_renomeadas():
@@ -73,11 +76,14 @@ def _ferramentas_renomeadas():
 
 
 def _caminho_atual(rel):
-    """Caminho da foto (nomes antigos) traduzido para o nome de hoje da ferramenta."""
-    partes = rel.split("/")
-    if len(partes) > 1 and partes[0] == "tools":
-        partes[1] = _ferramentas_renomeadas().get(partes[1], partes[1])
-    return "/".join(partes)
+    """Caminho da foto (tools/<nome antigo>/...) traduzido para a pasta de hoje em modulos/."""
+    legado, _, resto = rel.partition("/")
+    if legado + "/" != LEGADO or not resto:
+        return rel
+    nome, _, dentro = resto.partition("/")
+    nome = _ferramentas_renomeadas().get(nome, nome)
+    pasta = pastas().get(nome)
+    return f"{pasta}/{dentro}" if pasta and dentro else rel
 
 
 def _src_core_espelhos():
@@ -171,7 +177,7 @@ def test_cada_peca_tem_os_campos_e_o_sha256_de_hoje(pecas):
 
 def test_consumidores_incluem_toda_ferramenta_que_guarda_copia(pecas):
     for peca in pecas:
-        donos_das_copias = {c.split("/")[1] for c in peca["copias"] if c.startswith("tools/")}
+        donos_das_copias = {ferramenta_do_caminho(c) for c in peca["copias"]} - {None}
         faltando = donos_das_copias - set(peca["consumidores"])
         assert not faltando, f"{peca['nome']}: consumidores sem {sorted(faltando)}"
 

@@ -28,7 +28,7 @@ ROOT_DIR = _achar_raiz_repo()
 OPEN_DIR = Path(__file__).resolve().parent.parent
 FORGE_DIR = ROOT_DIR / "modulos" / "01-governanca-e-qualidade" / "core" / "aidd-forge"
 if not FORGE_DIR.exists():
-    FORGE_DIR = ROOT_DIR / "tools" / "aidd-forge"
+    FORGE_DIR = ROOT_DIR / "modulos" / "01-governanca-e-qualidade" / "core" / "aidd-forge"
 
 for p in (str(ROOT_DIR), str(OPEN_DIR), str(OPEN_DIR / "src"), str(FORGE_DIR)):
     if p not in sys.path:

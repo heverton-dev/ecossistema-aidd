@@ -77,7 +77,6 @@ def test_executar_anuncia_inicio_progresso_e_conclusao_ao_vivo(monkeypatch, tmp_
     buffer = io.StringIO()
     monkeypatch.setattr(gate, "_CONSOLE_AO_VIVO", buffer)
     monkeypatch.setattr(gate, "FERRAMENTAS", ["ferramenta-inexistente-1", "ferramenta-inexistente-2"])
-    monkeypatch.setattr(gate, "TOOLS_DIR", str(tmp_path))
     monkeypatch.setattr(gate, "_carregar_allowlist", lambda: {})
 
     gate.executar()

@@ -8,7 +8,7 @@ Verificação determinística (AST + hashes SHA-256) da entrega do item
 
 1. O módulo `transaction_log.py` existe na fonte única
    (componentes/compartilhado/src-core/) e é BYTE-IDÊNTICO nos dois destinos
-   (tools/aidd-master/src/core/ e tools/aidd-enterprise/src/core/).
+   (modulos/03-plataforma-e-entrega/fatiamento-master/aidd-master/src/core/ e modulos/03-plataforma-e-entrega/blindagem-enterprise/aidd-enterprise/src/core/).
 2. O arquivo está declarado no MANIFEST.json do núcleo compartilhado.
 3. O par src/core da baseline de drift registra o arquivo
    (gates/baseline_nucleo_compartilhado.json).
@@ -36,14 +36,14 @@ ROOT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 FONTE = "componentes/compartilhado/src-core/transaction_log.py"
 DESTINOS = [
-    "tools/aidd-master/src/core/transaction_log.py",
-    "tools/aidd-enterprise/src/core/transaction_log.py",
+    "modulos/03-plataforma-e-entrega/fatiamento-master/aidd-master/src/core/transaction_log.py",
+    "modulos/03-plataforma-e-entrega/blindagem-enterprise/aidd-enterprise/src/core/transaction_log.py",
 ]
 MANIFEST = "componentes/compartilhado/src-core/MANIFEST.json"
 BASELINE = "gates/baseline_nucleo_compartilhado.json"
 TESTES = [
-    "tools/aidd-master/tests/unit/test_transaction_log_lru.py",
-    "tools/aidd-enterprise/tests/unit/test_transaction_log_lru.py",
+    "modulos/03-plataforma-e-entrega/fatiamento-master/aidd-master/tests/unit/test_transaction_log_lru.py",
+    "modulos/03-plataforma-e-entrega/blindagem-enterprise/aidd-enterprise/tests/unit/test_transaction_log_lru.py",
 ]
 
 SIMBOLOS_EXIGIDOS = ["LruCache", "TransactionLogEntry", "TransactionLogRepositoryImpl"]

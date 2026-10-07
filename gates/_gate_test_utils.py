@@ -8,8 +8,20 @@ então não é coletado como suíte.
 """
 
 import os
+import shutil
 import subprocess
 import sys
+
+MAPA_DONOS_REL = os.path.join("componentes", "compartilhado", "specs", "MAPA-DONOS-FERRAMENTAS.json")
+RAIZ_REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
+
+def copiar_mapa_donos(raiz_sintetica):
+    """Copia o mapa de donos real (campo 'pasta' de cada ferramenta) para a árvore sintética:
+    desde o ciclo-03 VSA os gates acham a pasta da ferramenta em modulos/ por ele."""
+    destino = os.path.join(str(raiz_sintetica), MAPA_DONOS_REL)
+    os.makedirs(os.path.dirname(destino), exist_ok=True)
+    shutil.copy2(os.path.join(RAIZ_REPO, MAPA_DONOS_REL), destino)
 
 
 def rodar_gate(gate_path, cwd):

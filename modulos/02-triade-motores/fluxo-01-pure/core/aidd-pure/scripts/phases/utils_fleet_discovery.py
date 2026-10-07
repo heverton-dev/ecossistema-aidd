@@ -27,13 +27,23 @@ from datetime import datetime, timezone
 from dataclasses import dataclass, field
 from typing import Optional, Dict, List, Any
 
+
+def _achar_raiz_repo(inicio: str) -> str:
+    """Sobe pastas até achar ecossistema.py (raiz do repo), sem depender da profundidade."""
+    curr = os.path.abspath(inicio)
+    while os.path.dirname(curr) != curr:
+        if os.path.isfile(os.path.join(curr, "ecossistema.py")):
+            return curr
+        curr = os.path.dirname(curr)
+    return os.path.abspath(inicio)
+
 # Escritor atômico: staging → fsync → os.replace
 try:
     from escritor_atomico import escrever_json_atomico
 except ImportError:
     import importlib.util
     _comp_dir = os.path.join(
-        os.path.dirname(__file__), "..", "..", "..", "..", "componentes", "compartilhado", "src-core"
+        _achar_raiz_repo(os.path.dirname(__file__)), "componentes", "compartilhado", "src-core"
     )
     if os.path.isdir(_comp_dir) and _comp_dir not in sys.path:
         sys.path.insert(0, _comp_dir)

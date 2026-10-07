@@ -4,7 +4,7 @@
 AIDD v5.1 Enterprise — Assinatura Ed25519 do Manifesto Canônico
 =============================================================================
 Fonte única: componentes/compartilhado/src-core/assinatura_manifesto.py —
-byte-idêntico em tools/aidd-master/src/core/ e tools/aidd-enterprise/src/core/
+byte-idêntico em modulos/03-plataforma-e-entrega/fatiamento-master/aidd-master/src/core/ e modulos/03-plataforma-e-entrega/blindagem-enterprise/aidd-enterprise/src/core/
 (sincronizado por componentes/compartilhado/src-core/sync.py).
 
 Ameaça mitigada (SEGURANCA-SUPPLY-CHAIN-BASELINE, SEC-8/9): o registro

@@ -37,11 +37,11 @@ def carregar_modulo(nome_modulo: str, caminho_arquivo: Path):
 
 cf_server = carregar_modulo(
     "cloudflare_mcp_server",
-    REPO_ROOT / "tools" / "aidd-ops" / "mcps" / "cloudflare-mcp" / "server.py",
+    REPO_ROOT / "modulos" / "03-plataforma-e-entrega" / "operacoes-ops" / "aidd-ops" / "mcps" / "cloudflare-mcp" / "server.py",
 )
 docker_server = carregar_modulo(
     "docker_mcp_server",
-    REPO_ROOT / "tools" / "aidd-ops" / "mcps" / "docker-mcp" / "server.py",
+    REPO_ROOT / "modulos" / "03-plataforma-e-entrega" / "operacoes-ops" / "aidd-ops" / "mcps" / "docker-mcp" / "server.py",
 )
 
 

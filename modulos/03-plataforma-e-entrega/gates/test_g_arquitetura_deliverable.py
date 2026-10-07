@@ -26,7 +26,7 @@ def test_g_arquitetura_deliverable_reprova_sql_fora_de_infra(tmp_path):
     fake_gates.mkdir()
     shutil.copy2(GATE_PATH, fake_gates / "G_ARQUITETURA_DELIVERABLE.py")
 
-    fake_src = tmp_path / "tools" / "aidd-master" / "src"
+    fake_src = tmp_path / "modulos" / "03-plataforma-e-entrega" / "fatiamento-master" / "aidd-master" / "src"
     fake_src.mkdir(parents=True)
 
     # Cria rota violando Clean Architecture com SQL direto
@@ -51,7 +51,7 @@ def test_g_arquitetura_deliverable_reprova_import_infra_no_dominio(tmp_path):
     fake_gates.mkdir()
     shutil.copy2(GATE_PATH, fake_gates / "G_ARQUITETURA_DELIVERABLE.py")
 
-    fake_domain = tmp_path / "tools" / "aidd-master" / "src" / "domain"
+    fake_domain = tmp_path / "modulos" / "03-plataforma-e-entrega" / "fatiamento-master" / "aidd-master" / "src" / "domain"
     fake_domain.mkdir(parents=True)
 
     # Entidade importando banco ou infra
@@ -74,7 +74,7 @@ def test_g_arquitetura_deliverable_passa_com_arquitetura_limpa(tmp_path):
     fake_gates.mkdir()
     shutil.copy2(GATE_PATH, fake_gates / "G_ARQUITETURA_DELIVERABLE.py")
 
-    fake_infra = tmp_path / "tools" / "aidd-master" / "src" / "infrastructure"
+    fake_infra = tmp_path / "modulos" / "03-plataforma-e-entrega" / "fatiamento-master" / "aidd-master" / "src" / "infrastructure"
     fake_infra.mkdir(parents=True)
     (fake_infra / "repositorio.py").write_text(
         "import sqlite3\n"
@@ -84,7 +84,7 @@ def test_g_arquitetura_deliverable_passa_com_arquitetura_limpa(tmp_path):
         encoding="utf-8"
     )
 
-    fake_domain = tmp_path / "tools" / "aidd-master" / "src" / "domain"
+    fake_domain = tmp_path / "modulos" / "03-plataforma-e-entrega" / "fatiamento-master" / "aidd-master" / "src" / "domain"
     fake_domain.mkdir(parents=True)
     (fake_domain / "modelo.py").write_text(
         "class Modelo:\n"

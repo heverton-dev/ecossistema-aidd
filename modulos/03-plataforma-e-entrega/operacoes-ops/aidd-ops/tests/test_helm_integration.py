@@ -4,7 +4,7 @@
 AIDD-Ops MVP — Item 10: Teste de Integração Helm
 =============================================================================
 Executa helm lint e helm template sobre o chart gerado pelo aidd-ops
-(tools/aidd-ops/charts/aidd-ops/) e valida que os resources calculados
+(modulos/03-plataforma-e-entrega/operacoes-ops/aidd-ops/charts/aidd-ops/) e valida que os resources calculados
 pelo sizing REAL (Fase 3 — scripts/phases/03_sizing.py) são injetados sem
 erro nos manifests Kubernetes renderizados.
 

@@ -3,7 +3,7 @@
 Teste de aderência dos templates do aidd-forge ao Padrão-Ouro TanStack
 (TICKET-01 / D13 / Lei #11).
 
-Exige que `tools/aidd-forge/aidd_forge/templates/`:
+Exige que `modulos/01-governanca-e-qualidade/core/aidd-forge/aidd_forge/templates/`:
 - não prescreva Next.js (endosso reprova; menção de abolição é permitida);
 - declare TanStack Start / TanStack Router + React + TypeScript + Tailwind
   como stack mandatória (Lei #11, G_STACK_PADRAO_OURO).
@@ -17,7 +17,7 @@ import re
 from pathlib import Path
 
 ROOT_DIR = Path(__file__).resolve().parent.parent
-TEMPLATES_DIR = ROOT_DIR / "tools" / "aidd-forge" / "aidd_forge" / "templates"
+TEMPLATES_DIR = ROOT_DIR / "modulos" / "01-governanca-e-qualidade" / "core" / "aidd-forge" / "aidd_forge" / "templates"
 
 SUFIXOS_TEXTO = {".py", ".md", ".json", ".html"}
 

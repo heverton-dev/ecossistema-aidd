@@ -43,7 +43,7 @@
       "id": "TICKET-02",
       "titulo": "Implementar motor de execucao síncrono",
       "arquivos_alvo": [
-        "tools/aidd-master/scripts/orchestrator_pipeline.py",
+        "modulos/03-plataforma-e-entrega/fatiamento-master/aidd-master/scripts/orchestrator_pipeline.py",
         "tests/test_orchestrator_pipeline.py"
       ],
       "comando_validacao": "pytest tests/test_orchestrator_pipeline.py",

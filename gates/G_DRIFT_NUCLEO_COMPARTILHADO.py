@@ -11,7 +11,7 @@ item 5 de docs/planos/fazendo/correcao-arquitetura-limpa/).
 Dois tipos de par sao cobertos hoje (ver PARES abaixo):
 - Cross-tool: src/core, scripts, scripts/gates, templates/core e
   templates/v2 — mesma subpasta relativa comparada entre
-  tools/aidd-master/ e tools/aidd-enterprise/.
+  modulos/03-plataforma-e-entrega/fatiamento-master/aidd-master/ e modulos/03-plataforma-e-entrega/blindagem-enterprise/aidd-enterprise/.
 - Intra-tool (item 5): scripts/gates/ vs templates/gates/ dentro da MESMA
   ferramenta (aidd-enterprise e aidd-master, separadamente) — a versao
   viva que protege este monorepo comparada com a versao entregue a
@@ -22,7 +22,7 @@ Dois tipos de par sao cobertos hoje (ver PARES abaixo):
   com a versao do catalogo (o sha256 selado da peca), nao so entre master e
   enterprise. Divergencia so passa se documentada em
   baseline["catalogo"]["divergencias_documentadas"][<copia>] com motivo.
-  D4 (decisao do usuario, 01/10/2026): tools/aidd-enterprise/materiais-extras/
+  D4 (decisao do usuario, 01/10/2026): modulos/03-plataforma-e-entrega/blindagem-enterprise/aidd-enterprise/materiais-extras/
   examples/** e arquivo historico fora do almoxarifado — nunca e comparado.
   Os pares acima continuam valendo para os arquivos que o catalogo nao cobre
   (ex.: scripts/aidd.py, scripts/add_module.py).
@@ -65,7 +65,7 @@ BASELINE_PATH = os.path.join(ROOT_DIR, "gates", "baseline_nucleo_compartilhado.j
 CATALOGO_PATH = os.path.join(ROOT_DIR, "componentes", "compartilhado", "CATALOGO.json")
 
 # D4: arquivo historico, fora do almoxarifado (CATALOGO.json -> fora_do_almoxarifado).
-PREFIXOS_D4 = ("tools/aidd-enterprise/materiais-extras/examples/",)
+PREFIXOS_D4 = ("modulos/03-plataforma-e-entrega/blindagem-enterprise/aidd-enterprise/materiais-extras/examples/",)
 
 DESCRICAO_CATALOGO = (
     "Copias de pecas do CATALOGO.json que divergem de proposito da versao do catalogo "
@@ -74,8 +74,12 @@ DESCRICAO_CATALOGO = (
 )
 
 
-def _tools(*partes):
-    return os.path.join(ROOT_DIR, "tools", *partes)
+def _tools(ferramenta, *partes):
+    """Caminho dentro da pasta canônica da ferramenta em modulos/ (mapa de donos, ciclo-03 VSA)."""
+    with open(os.path.join(ROOT_DIR, "componentes", "compartilhado", "specs", "MAPA-DONOS-FERRAMENTAS.json"),
+              encoding="utf-8") as fh:
+        pasta = json.load(fh)[ferramenta]["pasta"]
+    return os.path.join(ROOT_DIR, *pasta.split("/"), *partes)
 
 
 # Pares de diretorios comparados entre aidd-master e aidd-enterprise.
@@ -182,7 +186,7 @@ def atualizar_baseline():
 
     novo_baseline = {
         "descricao": baseline_antigo.get("descricao", "Baseline de sincronismo entre pares de "
-            "diretorios de tools/aidd-master/ e tools/aidd-enterprise/ (ver PARES em "
+            "diretorios de modulos/03-plataforma-e-entrega/fatiamento-master/aidd-master/ e modulos/03-plataforma-e-entrega/blindagem-enterprise/aidd-enterprise/ (ver PARES em "
             "G_DRIFT_NUCLEO_COMPARTILHADO.py)."),
         "gerado_em": baseline_antigo.get("gerado_em", "auto"),
         "arquivos": novos_arquivos,

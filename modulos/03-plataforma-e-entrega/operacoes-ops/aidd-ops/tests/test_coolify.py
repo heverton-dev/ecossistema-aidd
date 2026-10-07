@@ -192,7 +192,7 @@ def test_criar_app_dockerfile_payload_contrato(coolify_local):
         server_uuid="srv-1",
         environment_name="production",
         git_repository="https://github.com/org/ecossistema-aidd.git",
-        base_directory="tools/aidd-ops",
+        base_directory="modulos/03-plataforma-e-entrega/operacoes-ops/aidd-ops",
         dockerfile_location="Dockerfile.intake",
         ports_exposes=[8501],
         domains=["intake.test"],
@@ -209,7 +209,7 @@ def test_criar_app_dockerfile_payload_contrato(coolify_local):
     assert body["server_uuid"] == "srv-1"
     assert body["environment_name"] == "production"
     assert body["build_pack"] == "dockerfile"
-    assert body["base_directory"] == "tools/aidd-ops"
+    assert body["base_directory"] == "modulos/03-plataforma-e-entrega/operacoes-ops/aidd-ops"
     assert body["dockerfile_location"] == "Dockerfile.intake"
     assert body["ports_exposes"] == [8501]
     assert body["domains"] == ["intake.test"]
@@ -222,7 +222,7 @@ def test_criar_app_padroes_do_intake(coolify_local):
     res = cliente.criar_app_dockerfile("proj-1", "srv-1", "production", "https://git.repo/x.git")
     assert res.sucesso is True
     _, _, _, body = next(r for r in coolify_local["requisicoes"] if r[0] == "POST" and r[1].endswith("/public"))
-    assert body["base_directory"] == "tools/aidd-ops"
+    assert body["base_directory"] == "modulos/03-plataforma-e-entrega/operacoes-ops/aidd-ops"
     assert body["dockerfile_location"] == "Dockerfile.intake"
     assert body["ports_exposes"] == [8501]
     assert body["name"] == "aidd-ops-intake"

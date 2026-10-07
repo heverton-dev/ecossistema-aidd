@@ -91,8 +91,8 @@ def test_scan_isolation_violations_end_to_end(tmp_path):
 
 def test_gate_reprova_com_cross_slice_import(tmp_path, monkeypatch):
     """Lei #13: Prova que o gate morde (exit 1) se houver import direto entre fatias."""
-    slice_a = tmp_path / "tools" / "src" / "features" / "slice_a"
-    slice_b = tmp_path / "tools" / "src" / "features" / "slice_b"
+    slice_a = tmp_path / "modulos" / "src" / "features" / "slice_a"
+    slice_b = tmp_path / "modulos" / "src" / "features" / "slice_b"
     slice_a.mkdir(parents=True)
     slice_b.mkdir(parents=True)
 

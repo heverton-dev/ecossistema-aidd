@@ -412,7 +412,7 @@ def test_factory_aceita_c2_real_do_planner(tmp_path):
     assert proc.returncode == 0, proc.stdout + proc.stderr
 
     # Processo proprio: o pacote `core` da factory colide com o `core` da raiz.
-    factory_dir = ROOT_DIR / "tools" / "aidd-open"
+    factory_dir = ROOT_DIR / "modulos" / "02-triade-motores" / "fluxo-02-open" / "core" / "aidd-open"
     sonda = (
         "import json, sys\n"
         "import pipeline_factory\n"

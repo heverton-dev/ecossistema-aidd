@@ -25,18 +25,17 @@ def _achar_raiz_repo(inicio: str) -> str:
 
 _ENTERPRISE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 _RAIZ = _achar_raiz_repo(_ENTERPRISE_DIR)
-_TOOLS_DIR = os.path.join(_RAIZ, "tools")
+_MAPA_DONOS = os.path.join(_RAIZ, "componentes", "compartilhado", "specs", "MAPA-DONOS-FERRAMENTAS.json")
 
 DONO_CONSTRUCAO = "aidd-master"
 
 
 def cli_do_dono(ferramenta: str = DONO_CONSTRUCAO) -> str:
-    """Caminho da CLI `scripts/aidd.py` da ferramenta dona do comando."""
-    if ferramenta == "aidd-master":
-        vsa_master = os.path.join(_RAIZ, "modulos", "03-plataforma-e-entrega", "fatiamento-master", "aidd-master", "scripts", "aidd.py")
-        if os.path.isfile(vsa_master):
-            return vsa_master
-    return os.path.join(_TOOLS_DIR, ferramenta, "scripts", "aidd.py")
+    """Caminho da CLI `scripts/aidd.py` da ferramenta dona (pasta do mapa de donos, ciclo-03 VSA)."""
+    import json
+    with open(_MAPA_DONOS, encoding="utf-8") as fh:
+        pasta = json.load(fh)[ferramenta]["pasta"]
+    return os.path.join(_RAIZ, *pasta.split("/"), "scripts", "aidd.py")
 
 
 def delegar(argv, ferramenta: str = DONO_CONSTRUCAO) -> int:

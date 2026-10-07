@@ -3,6 +3,7 @@
   "descricao": "Mapa canônico de donos, responsabilidades, fronteiras e zonas de escrita das 8 ferramentas do ecossistema AIDD (Ciclo 01).",
   "versao": "1.0.0",
   "aidd-forge": {
+    "pasta": "modulos/01-governanca-e-qualidade/core/aidd-forge",
     "nome": "aidd-forge",
     "responsabilidades": [
       "preparo_terreno_e_prontidao_projeto",
@@ -42,6 +43,7 @@
     ]
   },
   "aidd-planner": {
+    "pasta": "modulos/01-governanca-e-qualidade/core/aidd-planner",
     "nome": "aidd-planner",
     "responsabilidades": [
       "desenho_planta_baixa_arquitetural",
@@ -82,6 +84,7 @@
     ]
   },
   "aidd-pure": {
+    "pasta": "modulos/02-triade-motores/fluxo-01-pure/core/aidd-pure",
     "nome": "aidd-pure",
     "responsabilidades": [
       "construcao_do_zero_tdd_red_green",
@@ -119,6 +122,7 @@
     ]
   },
   "aidd-open": {
+    "pasta": "modulos/02-triade-motores/fluxo-02-open/core/aidd-open",
     "nome": "aidd-open",
     "responsabilidades": [
       "curadoria_motores_opensource",
@@ -156,6 +160,7 @@
     ]
   },
   "aidd-freedom": {
+    "pasta": "modulos/02-triade-motores/fluxo-03-freedom/core/aidd-freedom",
     "nome": "aidd-freedom",
     "responsabilidades": [
       "desacoplamento_vendor_lockin_lowcode",
@@ -195,6 +200,7 @@
     ]
   },
   "aidd-master": {
+    "pasta": "modulos/03-plataforma-e-entrega/fatiamento-master/aidd-master",
     "nome": "aidd-master",
     "responsabilidades": [
       "harmonizacao_monolito_modular_vsa",
@@ -234,6 +240,7 @@
     ]
   },
   "aidd-enterprise": {
+    "pasta": "modulos/03-plataforma-e-entrega/blindagem-enterprise/aidd-enterprise",
     "nome": "aidd-enterprise",
     "responsabilidades": [
       "blindagem_componentes_missao_critica",
@@ -271,6 +278,7 @@
     ]
   },
   "aidd-ops": {
+    "pasta": "modulos/03-plataforma-e-entrega/operacoes-ops/aidd-ops",
     "nome": "aidd-ops",
     "responsabilidades": [
       "geracao_infraestrutura_docker_compose",

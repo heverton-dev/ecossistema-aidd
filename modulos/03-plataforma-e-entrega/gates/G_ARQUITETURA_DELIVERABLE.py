@@ -64,16 +64,16 @@ ROOT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # Diretorios a escanear (caminhos relativos a ROOT_DIR)
 # ---------------------------------------------------------------------------
 DIRETORIOS_AUDITADOS = [
-    "tools/aidd-master/src",
-    "tools/aidd-master/templates",
-    "tools/aidd-enterprise/src",
-    "tools/aidd-enterprise/templates",
-    "tools/aidd-pure/src",
-    "tools/aidd-pure/templates",
-    "tools/aidd-ops/src",
-    "tools/aidd-ops/templates",
-    "tools/aidd-freedom/src",
-    "tools/aidd-forge/aidd_forge",
+    "modulos/03-plataforma-e-entrega/fatiamento-master/aidd-master/src",
+    "modulos/03-plataforma-e-entrega/fatiamento-master/aidd-master/templates",
+    "modulos/03-plataforma-e-entrega/blindagem-enterprise/aidd-enterprise/src",
+    "modulos/03-plataforma-e-entrega/blindagem-enterprise/aidd-enterprise/templates",
+    "modulos/02-triade-motores/fluxo-01-pure/core/aidd-pure/src",
+    "modulos/02-triade-motores/fluxo-01-pure/core/aidd-pure/templates",
+    "modulos/03-plataforma-e-entrega/operacoes-ops/aidd-ops/src",
+    "modulos/03-plataforma-e-entrega/operacoes-ops/aidd-ops/templates",
+    "modulos/02-triade-motores/fluxo-03-freedom/core/aidd-freedom/src",
+    "modulos/01-governanca-e-qualidade/core/aidd-forge/aidd_forge",
 ]
 
 # ---------------------------------------------------------------------------

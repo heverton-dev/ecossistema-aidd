@@ -99,46 +99,46 @@ def test_modo_completo_vem_do_ambiente(escopo, monkeypatch):
 
 
 def test_staged_em_tools_de_uma_ferramenta_restringe_o_escopo(escopo, tmp_path):
-    """Staged tools/aidd-forge/x.py roda só o aidd-forge."""
-    raiz = _repo_com_staged(tmp_path, ["tools/aidd-forge/x.py"])
+    """Staged modulos/01-governanca-e-qualidade/core/aidd-forge/x.py roda só o aidd-forge."""
+    raiz = _repo_com_staged(tmp_path, ["modulos/01-governanca-e-qualidade/core/aidd-forge/x.py"])
     assert _ferramentas_para(escopo, raiz) == ["aidd-forge"]
 
 
 def test_staged_no_gate_testes_reais_executa_todas(escopo, tmp_path):
     """Staged do próprio gate (com uma ferramenta staged) executa todas."""
-    raiz = _repo_com_staged(tmp_path, ["tools/aidd-forge/x.py", "gates/G_TESTES_REAIS.py"])
+    raiz = _repo_com_staged(tmp_path, ["modulos/01-governanca-e-qualidade/core/aidd-forge/x.py", "gates/G_TESTES_REAIS.py"])
     assert _ferramentas_para(escopo, raiz) == TODAS
 
 
 def test_staged_na_allowlist_de_skips_executa_todas(escopo, tmp_path):
     """Staged do orçamento de skipped executa todas (a regra de skip mudou)."""
     raiz = _repo_com_staged(
-        tmp_path, ["tools/aidd-forge/x.py", "gates/allowlist_skipped_testes.json"]
+        tmp_path, ["modulos/01-governanca-e-qualidade/core/aidd-forge/x.py", "gates/allowlist_skipped_testes.json"]
     )
     assert _ferramentas_para(escopo, raiz) == TODAS
 
 
 def test_caminho_desconhecido_sob_tools_executa_todas(escopo, tmp_path):
     """Ferramenta sem mapeamento em tools/ não pode ser silenciosamente ignorada."""
-    raiz = _repo_com_staged(tmp_path, ["tools/aidd-forge/x.py", "tools/ferramenta-nova/y.py"])
+    raiz = _repo_com_staged(tmp_path, ["modulos/01-governanca-e-qualidade/core/aidd-forge/x.py", "modulos/02-triade-motores/fluxo-09-novo/core/aidd-nova/y.py"])
     assert _ferramentas_para(escopo, raiz) == TODAS
 
 
 def test_modo_completo_executa_todas_mesmo_com_staged_de_uma_ferramenta(escopo, tmp_path):
     """AIDD_GATES_MODO=completo prevalece sobre o escopo staged."""
-    raiz = _repo_com_staged(tmp_path, ["tools/aidd-forge/x.py"])
+    raiz = _repo_com_staged(tmp_path, ["modulos/01-governanca-e-qualidade/core/aidd-forge/x.py"])
     assert _ferramentas_para(escopo, raiz, AIDD_GATES_MODO="completo") == TODAS
 
 
 def test_gate_usa_escopo_so_quando_ferramentas_nao_esta_definido(tmp_path):
     """Com AIDD_TESTES_REAIS_FERRAMENTAS ausente, o gate roda só a ferramenta staged."""
-    ferramenta = tmp_path / "tools" / "aidd-forge"
+    ferramenta = tmp_path / "modulos" / "01-governanca-e-qualidade" / "core" / "aidd-forge"
     ferramenta.mkdir(parents=True)
     (ferramenta / "test_ok.py").write_text("def test_ok():\n    assert True\n", encoding="utf-8")
-    (tmp_path / "tools" / "aidd-planner").mkdir()
+    (tmp_path / "modulos" / "01-governanca-e-qualidade" / "core" / "aidd-planner").mkdir()
 
     _git(tmp_path, "init", "-q")
-    _git(tmp_path, "add", "tools/aidd-forge/test_ok.py")
+    _git(tmp_path, "add", "modulos/01-governanca-e-qualidade/core/aidd-forge/test_ok.py")
 
     proc = _alvo_do_gate(tmp_path, {})
 
@@ -149,7 +149,7 @@ def test_gate_usa_escopo_so_quando_ferramentas_nao_esta_definido(tmp_path):
 
 def test_gate_prioriza_ferramentas_explicitas_sobre_o_escopo(tmp_path):
     """AIDD_TESTES_REAIS_FERRAMENTAS definido tem prioridade sobre o escopo staged."""
-    ferramenta = tmp_path / "tools" / "aidd-planner"
+    ferramenta = tmp_path / "modulos" / "01-governanca-e-qualidade" / "core" / "aidd-planner"
     ferramenta.mkdir(parents=True)
     (ferramenta / "test_ok.py").write_text("def test_ok():\n    assert True\n", encoding="utf-8")
 

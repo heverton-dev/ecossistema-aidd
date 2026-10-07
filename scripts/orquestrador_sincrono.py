@@ -41,7 +41,7 @@ except ImportError:
 ROOT_DIR = Path(__file__).resolve().parent.parent
 if str(ROOT_DIR) not in sys.path:
     sys.path.insert(0, str(ROOT_DIR))
-planner_tools = ROOT_DIR / "tools" / "aidd-planner"
+planner_tools = ROOT_DIR / "modulos" / "01-governanca-e-qualidade" / "core" / "aidd-planner"
 if planner_tools.is_dir() and str(planner_tools) not in sys.path:
     sys.path.insert(0, str(planner_tools))
 SPECS_DIR = ROOT_DIR / "componentes" / "compartilhado" / "specs"

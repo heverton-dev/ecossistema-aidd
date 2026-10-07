@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Inventário de capacidades de tools/ e componentes/ (fronteiras-ferramentas ciclo-01, Ticket 3).
+"""Inventário de capacidades de modulos/ e componentes/ (fronteiras-ferramentas ciclo-01, Ticket 3).
 
 foto      grava a foto do "antes" no ciclo, em dois arquivos:
             INVENTARIO-ANTES.json            funções, classes e testes de cada arquivo, por família
@@ -24,7 +24,7 @@ import subprocess
 import sys
 from pathlib import Path
 
-ESCOPO = ("tools", "componentes")
+ESCOPO = ("modulos", "componentes")  # tools/ saiu no ciclo-03 VSA (decisão A)
 TABELA_APELIDOS = "componentes/compartilhado/specs/NOMES-ANTIGOS.json"
 NOME_FOTO = "INVENTARIO-ANTES.json"
 SUFIXO_LINHAS = ".linhas.json.gz"

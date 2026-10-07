@@ -3,9 +3,9 @@
 Ticket 4 (fronteiras-ferramentas ciclo-01, D14 / DoD 12): os construtores têm o
 nome do fluxo que servem.
 
-    tools/aidd-generator -> tools/aidd-pure     (Fluxo 01)
-    tools/aidd-factory   -> tools/aidd-open     (Fluxo 02)
-    tools/aidd-bridge    -> tools/aidd-freedom  (Fluxo 03)
+    tools/aidd-generator -> modulos/02-triade-motores/fluxo-01-pure/core/aidd-pure     (Fluxo 01)
+    tools/aidd-factory   -> modulos/02-triade-motores/fluxo-02-open/core/aidd-open     (Fluxo 02)
+    tools/aidd-bridge    -> modulos/02-triade-motores/fluxo-03-freedom/core/aidd-freedom  (Fluxo 03)
 
 O teste varre os arquivos do repositório (rastreados + novos não ignorados) e
 reprova se o nome antigo aparecer no caminho ou no conteúdo fora de dois
@@ -44,8 +44,8 @@ HISTORICO = (
     re.compile(r"^docs/auditoria/historico_auditorias/"),  # auditorias antigas
     re.compile(r"^docs/auditoria/[^/]+/ciclo-\d+/"),       # registros de cada ciclo
     re.compile(r"^docs/(.+/)?\d{2}-\d{2}-\d{4}_[^/]+$"),  # documento datado = foto do dia (livros, melhorias...)
-    re.compile(r"^tools/aidd-enterprise/materiais-extras/"),  # material de pesquisa arquivado
-    re.compile(r"^modulos/03-plataforma-e-entrega/blindagem-enterprise/aidd-enterprise/materiais-extras/"),  # material de pesquisa arquivado migrado VSA
+    re.compile(r"^(tools/aidd-enterprise|modulos/03-plataforma-e-entrega/blindagem-enterprise/aidd-enterprise)/materiais-extras/"),  # material de pesquisa arquivado
+    re.compile(r"^(tools/aidd-enterprise|modulos/03-plataforma-e-entrega/blindagem-enterprise/aidd-enterprise)/materiais-extras/"),  # material de pesquisa arquivado migrado VSA
     re.compile(r"^(?!requirements)[^/]+\.txt$"),          # logs de evidência dos tickets na raiz
     # Fonte única dos dados do relatório datado 11-09-2026 (docs/relatorios/): um teste
     # o executa e regrava o relatório, então reescrevê-lo reescreveria o histórico.
@@ -129,8 +129,8 @@ def test_pasta_da_ferramenta_tem_o_nome_do_fluxo(antigo, novo):
 
 
 def test_pacote_python_do_freedom_renomeado():
-    assert (RAIZ / "tools/aidd-freedom/aidd_freedom/__init__.py").is_file()
-    assert not (RAIZ / "tools/aidd-freedom/aidd_bridge").exists()
+    assert (RAIZ / "modulos/02-triade-motores/fluxo-03-freedom/core/aidd-freedom/aidd_freedom/__init__.py").is_file()
+    assert not (RAIZ / "modulos/02-triade-motores/fluxo-03-freedom/core/aidd-freedom/aidd_bridge").exists()
 
 
 def test_nenhum_caminho_com_nome_antigo(arquivos):
@@ -171,7 +171,7 @@ def test_nenhum_conteudo_com_nome_antigo(arquivos):
 def test_historico_nao_mascara_codigo_vivo():
     # Os filtros de histórico nunca podem cobrir código ou config das ferramentas.
     for vivo in ("ecossistema.py", "gates/G_X.py", "tests/test_x.py",
-                 "tools/aidd-pure/scripts/x.py", "componentes/compartilhado/skills/x/SKILL.md",
+                 "modulos/02-triade-motores/fluxo-01-pure/core/aidd-pure/scripts/x.py", "componentes/compartilhado/skills/x/SKILL.md",
                  "docs/livros/partes/01-macro.md", "docs/planos/fazendo/x.md"):
         assert not _e_permitido(vivo), vivo
     assert _ocorrencias("ver heverton-dev/aidd-generator") == []

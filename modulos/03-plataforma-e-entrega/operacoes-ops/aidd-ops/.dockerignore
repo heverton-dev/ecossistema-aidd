@@ -1,5 +1,5 @@
 # AIDD-Ops — .dockerignore do contexto de build do Intake Web.
-# O contexto é tools/aidd-ops (Base Directory no Coolify). Só entra na
+# O contexto é modulos/03-plataforma-e-entrega/operacoes-ops/aidd-ops (Base Directory no Coolify). Só entra na
 # imagem o que o app importa (Dockerfile.intake faz COPIES explícitos).
 __pycache__/
 *.py[cod]

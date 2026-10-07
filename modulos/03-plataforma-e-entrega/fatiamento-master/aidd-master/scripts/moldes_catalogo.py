@@ -45,10 +45,10 @@ def molde(pasta_templates: str, nome: str) -> str:
     peca_kernel = ALMOXARIFADO / "src-core" / nome
     if peca_kernel.exists():
         return str(peca_kernel)
-    local_src_core = RAIZ_ECOSSISTEMA / "tools" / "aidd-master" / "src" / "core" / nome
+    local_src_core = RAIZ_ECOSSISTEMA / "modulos" / "03-plataforma-e-entrega" / "fatiamento-master" / "aidd-master" / "src" / "core" / nome
     if local_src_core.exists():
         return str(local_src_core)
-    v2_fallback = RAIZ_ECOSSISTEMA / "tools" / "aidd-master" / "templates" / "v2" / nome
+    v2_fallback = RAIZ_ECOSSISTEMA / "modulos" / "03-plataforma-e-entrega" / "fatiamento-master" / "aidd-master" / "templates" / "v2" / nome
     if v2_fallback.exists():
         return str(v2_fallback)
     return str(local)

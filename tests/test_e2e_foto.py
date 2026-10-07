@@ -104,7 +104,7 @@ def test_comparar_reprova_vazamento_novo(tmp_path):
     alvo = novo / "fluxo-02-open" / "RESULTADO-E2E.json"
     dados = json.loads(alvo.read_text(encoding="utf-8"))
     dados["vazamentos_fora_da_pasta"] = {
-        "worktree": ["tools/aidd-pure/scripts/.aidd/cache/_llm_request_abc.json"],
+        "worktree": ["modulos/02-triade-motores/fluxo-01-pure/core/aidd-pure/scripts/.aidd/cache/_llm_request_abc.json"],
         "main": ["secoes/arquivo_escrito_fora_da_pasta.json"],
     }
     alvo.write_text(json.dumps(dados, ensure_ascii=False), encoding="utf-8", newline="\n")

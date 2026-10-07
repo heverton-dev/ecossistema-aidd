@@ -13,7 +13,7 @@ Pipeline: `[FORGE -> PLANNER -> MASTER -> DISPATCH] -> {ENGINE nas Worktrees} ->
 | 2. Planejamento | `aidd-planner` | contratos BDD/SDD, esquemas de dados e rotas |
 | 3. Fatiamento VSA | `aidd-master` | fatiamento vertical e contratos de fatias |
 | 4. Despacho & Worktrees | `aidd-dispatch` | isolamento em git worktrees com micro-gates |
-| 5. Motor | `aidd-freedom` (`tools/aidd-freedom`) | varredura anti-lock-in, migração PostgreSQL e preservação visual |
+| 5. Motor | `aidd-freedom` (`modulos/02-triade-motores/fluxo-03-freedom/core/aidd-freedom`) | varredura anti-lock-in, migração PostgreSQL e preservação visual |
 | 6. Barreira & Rebase | `aidd-master` | rebase determinístico e merge das fatias |
 | 7. Blindagem | `aidd-enterprise` | auditoria SHA-256 e proteção corporativa |
 | 8. Infraestrutura | `aidd-ops` | containerização completa, Nginx e banco de dados |
@@ -48,7 +48,7 @@ Pipeline: `[FORGE -> PLANNER -> MASTER -> DISPATCH] -> {ENGINE nas Worktrees} ->
 
 ## Engine only (`freedom-motor`)
 
-Atomic operations of `tools/aidd-freedom`: ingest and scan Lovable/Vite/React repositories; sanitize Supabase migrations into plain PostgreSQL and PostgREST; merge 2 to 4 apps into one monorepo with unified Tailwind; generate Dockerfile, Docker Compose and Caddy reverse proxy with automatic HTTPS.
+Atomic operations of `modulos/02-triade-motores/fluxo-03-freedom/core/aidd-freedom`: ingest and scan Lovable/Vite/React repositories; sanitize Supabase migrations into plain PostgreSQL and PostgREST; merge 2 to 4 apps into one monorepo with unified Tailwind; generate Dockerfile, Docker Compose and Caddy reverse proxy with automatic HTTPS.
 
 ```bash
 python ecossistema.py freedom-motor scan [path]

@@ -42,7 +42,7 @@ def _descobrir_raiz_ecossistema(inicio: Path) -> Path:
 
 RAIZ_ECOSSISTEMA = _descobrir_raiz_ecossistema(SCRIPTS_DIR)
 FORGE_VSA = RAIZ_ECOSSISTEMA / "modulos" / "01-governanca-e-qualidade" / "core" / "aidd-forge"
-FORGE_DIR = FORGE_VSA if FORGE_VSA.is_dir() else (RAIZ_ECOSSISTEMA / "tools" / "aidd-forge")
+FORGE_DIR = FORGE_VSA if FORGE_VSA.is_dir() else (RAIZ_ECOSSISTEMA / "modulos" / "01-governanca-e-qualidade" / "core" / "aidd-forge")
 
 for _p in (str(SCRIPTS_DIR), str(PHASES_DIR), str(FORGE_DIR)):
     if _p not in sys.path:

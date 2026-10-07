@@ -14,7 +14,7 @@ import sys
 from pathlib import Path
 import pytest
 
-from _gate_test_utils import rodar_gate
+from _gate_test_utils import copiar_mapa_donos, rodar_gate
 
 GATE_DIR = os.path.dirname(os.path.abspath(__file__))
 GATE_PATH = os.path.join(GATE_DIR, "G_DRIFT_NUCLEO_COMPARTILHADO.py")
@@ -33,9 +33,10 @@ def test_g_drift_nucleo_compartilhado_reprova_drift_nao_documentado(tmp_path):
     fake_gates = tmp_path / "gates"
     fake_gates.mkdir()
     shutil.copy2(GATE_PATH, fake_gates / "G_DRIFT_NUCLEO_COMPARTILHADO.py")
+    copiar_mapa_donos(tmp_path)
 
-    dir_a = tmp_path / "tools" / "aidd-master" / "src" / "core"
-    dir_b = tmp_path / "tools" / "aidd-enterprise" / "src" / "core"
+    dir_a = tmp_path / "modulos" / "03-plataforma-e-entrega" / "fatiamento-master" / "aidd-master" / "src" / "core"
+    dir_b = tmp_path / "modulos" / "03-plataforma-e-entrega" / "blindagem-enterprise" / "aidd-enterprise" / "src" / "core"
     dir_a.mkdir(parents=True)
     dir_b.mkdir(parents=True)
 
@@ -65,9 +66,10 @@ def test_g_drift_nucleo_compartilhado_reprova_arquivo_nao_catalogado(tmp_path):
     fake_gates = tmp_path / "gates"
     fake_gates.mkdir()
     shutil.copy2(GATE_PATH, fake_gates / "G_DRIFT_NUCLEO_COMPARTILHADO.py")
+    copiar_mapa_donos(tmp_path)
 
-    dir_a = tmp_path / "tools" / "aidd-master" / "src" / "core"
-    dir_b = tmp_path / "tools" / "aidd-enterprise" / "src" / "core"
+    dir_a = tmp_path / "modulos" / "03-plataforma-e-entrega" / "fatiamento-master" / "aidd-master" / "src" / "core"
+    dir_b = tmp_path / "modulos" / "03-plataforma-e-entrega" / "blindagem-enterprise" / "aidd-enterprise" / "src" / "core"
     dir_a.mkdir(parents=True)
     dir_b.mkdir(parents=True)
 

@@ -208,7 +208,7 @@ class CofreCredenciais:
 
         O sops so descobre `.sops.yaml` a partir do cwd (e ancestrais) — nao
         a partir do diretorio do arquivo cifrado. Como o padrao do ecossistema
-        e executar o CLI do cofre do diretorio `tools/aidd-ops` (que nao e o
+        e executar o CLI do cofre do diretorio `modulos/03-plataforma-e-entrega/operacoes-ops/aidd-ops` (que nao e o
         mesmo do .env sob `templates/infra/...`), procuramos primeiro subindo
         do arquivo de entrada e, como fallback, do cwd — e passamos o caminho
         explícito via `--config` para eliminar a dependencia de cwd.
