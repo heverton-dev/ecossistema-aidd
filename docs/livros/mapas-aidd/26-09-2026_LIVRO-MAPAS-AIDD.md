@@ -447,7 +447,7 @@ Onde mora: `tools/<f>/templates/`. Quem confere: os guardas de entrega gerados p
 | Medida | Valor |
 | :-------------------------------------- | :-------------------------------------------- |
 | moldes | 21 |
-| arquivos de molde | 355 |
+| arquivos de molde | 367 |
 
 Os números saem de `docs/auditoria/mapa-pecas/catalogo-pecas.json` (função `coletar_moldes_entrega`), os mesmos do mapa `mapa-09-moldes.html`.
 
@@ -602,7 +602,7 @@ Onde mora: `docs/auditoria/TEMPLATE-AUDITORIA-FERRAMENTA.md`. Quem confere: o In
 | :-------------------------------------- | :-------------------------------------------- |
 | dimensões | 15 |
 | laudos lidos | 44 |
-| marcações de falha | 11 |
+| marcações de falha | 8 |
 
 Os números saem de `docs/auditoria/mapa-pecas/catalogo-pecas.json` (função `coletar_lente_15d`), os mesmos do mapa `mapa-12-lente15d.html`.
 

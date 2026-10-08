@@ -1710,11 +1710,11 @@
       {
         "alvo": "aidd-visual-maps",
         "ciclo": "ciclo-01",
-        "laudo": "docs/auditoria/aidd-visual-maps/ciclo-01/LAUDO-15D-INICIAL.md",
+        "laudo": "docs/auditoria/aidd-visual-maps/ciclo-01/LAUDO-15D-REVISADO.md",
         "dimensoes": {
           "1": "descrito",
-          "2": "parcial",
-          "3": "falha",
+          "2": "descrito",
+          "3": "descrito",
           "4": "descrito",
           "5": "descrito",
           "6": "descrito",
@@ -1723,10 +1723,10 @@
           "9": "descrito",
           "10": "descrito",
           "11": "descrito",
-          "12": "falha",
+          "12": "descrito",
           "13": "descrito",
-          "14": "falha",
-          "15": "parcial"
+          "14": "descrito",
+          "15": "descrito"
         }
       },
       {
@@ -2555,7 +2555,7 @@
         "fases": {
           "laudo_inicial": true,
           "plano_evolucao": true,
-          "laudo_revisado": false,
+          "laudo_revisado": true,
           "dod": true
         },
         "nota": ""

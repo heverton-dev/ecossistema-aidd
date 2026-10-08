@@ -23,7 +23,7 @@ Onde mora: `tools/<f>/templates/`. Quem confere: os guardas de entrega gerados p
 | Medida | Valor |
 | :-------------------------------------- | :-------------------------------------------- |
 | moldes | 21 |
-| arquivos de molde | 355 |
+| arquivos de molde | 367 |
 
 Os números saem de `docs/auditoria/mapa-pecas/catalogo-pecas.json` (função `coletar_moldes_entrega`), os mesmos do mapa `mapa-09-moldes.html`.
 
