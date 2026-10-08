@@ -12,9 +12,9 @@ TODOS_COMBOS = ["code-fast", "code-pro", "code-free", "task-micro", "code-tests"
 LIMITES_COMBOS = {
     "code-fast": {"context": 1000000, "output": 65536},
     "code-pro": {"context": 1000000, "output": 65536},
-    "code-free": {"context": 200000, "output": 32000},
-    "task-micro": {"context": 32000, "output": 8192},
-    "code-tests": {"context": 128000, "output": 32000},
+    "code-free": {"context": 1000000, "output": 65536},
+    "task-micro": {"context": 1000000, "output": 32000},
+    "code-tests": {"context": 1000000, "output": 65536},
 }
 PROVEDOR = "aidd9r"
 MARCADOR_DESLIGADO = Path.home() / ".aidd" / "9router-desligado"
