@@ -5,17 +5,17 @@ RESUME RUN. The previous Builder run (2026-10-08) hit the 1h timeout after imple
 0. Restore the saved work into this worktree, from the worktree root:
    - Assert `git rev-parse HEAD` equals the content of C:/Users/trcnologia/backup_ciclo_vmaps_2026-10-08/base_commit.txt. If not, stop and report.
    - `git apply --check C:/Users/trcnologia/backup_ciclo_vmaps_2026-10-08/fase3_rastreados.patch` must exit 0; then `git apply` the same patch.
-   - `tar -xf C:/Users/trcnologia/backup_ciclo_vmaps_2026-10-08/fase3_novos.tar` (27 new files: tests, scripts, moldes, maps 13-15).
+   - `tar -xf C:/Users/trcnologia/backup_ciclo_vmaps_2026-10-08/fase3_novos.tar` (new files from tickets 1-12).
    - Never edit or delete anything under C:/Users/trcnologia/backup_ciclo_vmaps_2026-10-08/.
 1. Read compiled plan: docs/auditoria/aidd-visual-maps/ciclo-01/PLANO-EVOLUCAO.json
-2. Tickets 1-10 are already implemented. For each one, run its tests (tests/test_visual_maps_*.py, tests/test_g_mapa_pecas_conteudo.py and the ticket's own Verificacao command) and assert exit 0. Fix only what is red; do not rewrite working code.
-   Red proof for tickets 1-10: create a temporary worktree of the base commit under C:/Users/trcnologia/aidd-tmp/ (`git worktree add <path> <base_commit>`), copy in only that ticket's test files plus tests/_repo_mapas.py, run them, record the exit code (expected 1), then `git worktree remove --force <path>`.
-3. Execute tickets 11-15 in listed order, one at a time. For each ticket read its prompt: docs/auditoria/aidd-visual-maps/ciclo-01/prompts_tickets/PROMPT-TICKET-<NN>.txt
+2. Tickets 1-12 are already implemented. For each one, run its tests (tests/test_visual_maps_*.py, tests/test_g_mapa_pecas_conteudo.py and the ticket's own Verificacao command) and assert exit 0. Fix only what is red; do not rewrite working code.
+   Red proof for tickets 1-12: create a temporary worktree of the base commit under C:/Users/trcnologia/aidd-tmp/ (`git worktree add <path> <base_commit>`), copy in only that ticket's test files plus tests/_repo_mapas.py, run them, record the exit code (expected 1), then `git worktree remove --force <path>`.
+3. Execute tickets 13-15 in listed order, one at a time. For each ticket read its prompt: docs/auditoria/aidd-visual-maps/ciclo-01/prompts_tickets/PROMPT-TICKET-<NN>.txt
 4. Work inside this ephemeral Git Worktree only. Never write in the main working tree.
-5. TDD for tickets 11-15: write failing test first. Run it. Assert exit 1. Implement. Run again. Assert exit 0.
+5. TDD for tickets 13-15: write failing test first. Run it. Assert exit 1. Implement. Run again. Assert exit 0.
 6. Deliver exactly the ticket output_handoff file. Zero stubs. Real pytest tests. Prefer the smallest change that meets each ticket; no speculative extras.
 7. Capture real exit codes: redirect output to file, read $? on same line. Never trust pipes. Set TEMP=C:\Users\trcnologia\aidd-tmp and TMP=C:\Users\trcnologia\aidd-tmp first.
 8. NEVER edit docs/auditoria/CONFIG-EXECUCAO-USUARIO.json. NEVER git commit, git push or git stash: the orchestrator commits after the phase gate.
 9. Stop on first ticket failure. Report ticket id, command, exit code.
 10. Before finishing, regenerate in order: `python scripts/catalogo_pecas.py`, every map type, then `python scripts/mapa_visual.py indice`; assert `python scripts/catalogo_pecas.py --check` and every `python scripts/mapa_visual.py <tipo> --check` exit 0.
-11. Finish by writing docs/auditoria/aidd-visual-maps/ciclo-01/RELATORIO-CONSTRUTOR.md: one row per ticket (all 15) with ticket id, delivered file, test command, exit code before fix, exit code after fix. Mark tickets 1-10 as "restaurado do backup".
+11. Finish by writing docs/auditoria/aidd-visual-maps/ciclo-01/RELATORIO-CONSTRUTOR.md: one row per ticket (all 15) with ticket id, delivered file, test command, exit code before fix, exit code after fix. Mark tickets 1-12 as "restaurado do backup".
