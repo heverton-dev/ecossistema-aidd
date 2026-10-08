@@ -8,11 +8,15 @@ Quality Gate Determinístico de Integridade do Mapa de Peças e Catálogo.
 Valida estritamente:
   1. Integridade estrutural e factual do catálogo de peças (catalogo-pecas.json).
   2. Inexistência de achados críticos/altos abertos em achados-verificados.json.
-  3. Existência e completude dos 13 mapas visuais HTML e do manual de montagem.
+  3. Conteúdo de cada mapa visual oficial (técnico e não técnico, lista de
+     MAPAS_PREVISTOS em scripts/mapa_visual.py) idêntico, byte a byte, ao que o
+     gerador monta do catálogo, e presença do manual de montagem.
 
 Critérios de Aceite:
-  - Exit 0: Catálogo íntegro, nenhum achado crítico/alto aberto e mapas presentes.
-  - Exit 1: Catálogo ausente/corrompido, achado crítico/alto aberto ou mapa faltante.
+  - Exit 0: Catálogo íntegro (listas cheias, totais batendo), nenhum achado
+    crítico/alto aberto e mapas iguais ao que o gerador monta.
+  - Exit 1: Catálogo ausente/corrompido/vazio, achado crítico/alto aberto, mapa
+    faltante ou mapa com conteúdo diferente do gerado.
 =============================================================================
 """
 
@@ -28,22 +32,16 @@ if hasattr(sys.stdout, "reconfigure"):
 
 RAIZ = next((p.parent for p in Path(__file__).resolve().parents if p.name == "modulos"), Path(__file__).resolve().parent.parent)  # raiz: pai de modulos/ (VSA) ou de gates/ (árvore sintética)
 
-MAPAS_OBRIGATORIOS = [
-    "manual-montagem-aidd.html",
-    "mapa-00-indice.html",
-    "mapa-01-leis.html",
-    "mapa-02-ferramentas.html",
-    "mapa-03-encaixes.html",
-    "mapa-04-guardas.html",
-    "mapa-05-skills.html",
-    "mapa-06-comandos.html",
-    "mapa-07-conexoes.html",
-    "mapa-08-harnesses.html",
-    "mapa-09-moldes.html",
-    "mapa-10-scripts.html",
-    "mapa-11-oficina.html",
-    "mapa-12-lente15d.html",
-]
+sys.path.insert(0, str(RAIZ / "scripts"))
+import catalogo_pecas as cp  # noqa: E402  (caminho do catálogo declarado uma vez: cp.SAIDA_PADRAO)
+import mapa_visual as mv  # noqa: E402  (mesma montagem do --check: fonte única da regra)
+import compilar_mapas_nao_tecnicos as nt  # noqa: E402
+
+MANUAL = mv.MANUAL
+# Listas que um catálogo de verdade nunca tem vazias (F2: catálogo de listas vazias aprovava).
+LISTAS_OBRIGATORIAS = ("ferramentas", "skills", "leis", "encaixes", "gates")
+# totais.<chave> que não têm o mesmo nome da lista que contam.
+TOTAIS_DE_OUTRA_LISTA = {"gates_nomes": "gates"}
 
 
 def auditar_catalogo(caminho_catalogo: Path) -> List[str]:
@@ -70,6 +68,15 @@ def auditar_catalogo(caminho_catalogo: Path) -> List[str]:
     for metrica in ("ferramentas", "skills", "leis"):
         if totais.get(metrica, 0) <= 0:
             erros.append(f"Catálogo inválido: métrica 'totais.{metrica}' menor ou igual a zero")
+
+    for chave in LISTAS_OBRIGATORIAS:
+        if not isinstance(dados.get(chave), list) or not dados[chave]:
+            erros.append(f"Catálogo inválido: lista '{chave}' vazia ou ausente")
+
+    for chave, valor in sorted(totais.items()):
+        lista = dados.get(TOTAIS_DE_OUTRA_LISTA.get(chave, chave))
+        if isinstance(lista, list) and valor != len(lista):
+            erros.append(f"Catálogo inválido: totais.{chave} = {valor}, mas a lista tem {len(lista)} itens")
 
     if totais.get("encaixes_quebrados", 0) > 0:
         erros.append(f"Catálogo inválido: detectados {totais.get('encaixes_quebrados')} encaixes quebrados no ecossistema")
@@ -104,24 +111,48 @@ def auditar_achados(caminho_achados: Path) -> List[str]:
     return erros
 
 
-def auditar_mapas_visuais(pasta_mapas: Path) -> List[str]:
+def mapas_esperados(catalogo: dict) -> List[Tuple[str, str]]:
+    """(caminho relativo à pasta dos mapas, texto que o gerador monta) de cada mapa oficial,
+    nas duas versões, com o índice e os tipos de MAPAS_PREVISTOS."""
+    pares = []
+    for tipo in ("indice", *(t for t, _, _ in mv.MAPAS_PREVISTOS)):
+        nome = mv.arquivo_mapa(tipo)
+        pares.append((nome, mv.montar(tipo, catalogo, MANUAL, False)))
+        pares.append((f"nao-tecnicos/{nome}", nt.compilar_nao_tecnico(tipo, catalogo)))
+    return pares
+
+
+def auditar_mapas_visuais(pasta_mapas: Path, caminho_catalogo: Optional[Path] = None) -> List[str]:
     erros: List[str] = []
     if not pasta_mapas.is_dir():
         erros.append(f"Diretório de mapas visuais não encontrado: {pasta_mapas}")
         return erros
+    if not (pasta_mapas / MANUAL).is_file():
+        erros.append(f"Mapa visual obrigatório ausente: {MANUAL}")
 
-    for mapa in MAPAS_OBRIGATORIOS:
-        arquivo = pasta_mapas / mapa
+    caminho_catalogo = caminho_catalogo or mv.CATALOGO
+    try:
+        catalogo = json.loads(caminho_catalogo.read_text(encoding="utf-8"))
+    except (OSError, ValueError) as e:
+        return erros + [f"Sem catálogo legível para conferir os mapas ({caminho_catalogo}): {e}"]
+
+    # O índice mostra o estado de cada mapa na pasta conferida, não na pasta oficial.
+    mapas_originais, catalogo_original = mv.MAPAS, mv.CATALOGO
+    mv.MAPAS, mv.CATALOGO = pasta_mapas, caminho_catalogo
+    try:
+        esperados = mapas_esperados(catalogo)
+    except (KeyError, OSError, ValueError) as e:
+        return erros + [f"Gerador não monta os mapas a partir de {caminho_catalogo}: {e}"]
+    finally:
+        mv.MAPAS, mv.CATALOGO = mapas_originais, catalogo_original
+
+    for rel, texto in esperados:
+        arquivo = pasta_mapas / rel
         if not arquivo.is_file():
-            erros.append(f"Mapa visual obrigatório ausente: {mapa}")
-        else:
-            try:
-                conteudo = arquivo.read_text(encoding="utf-8", errors="replace")
-                if len(conteudo.strip()) < 100 or "<html" not in conteudo.lower():
-                    erros.append(f"Mapa visual inválido ou vazio: {mapa}")
-            except Exception as e:
-                erros.append(f"Erro ao ler mapa visual {mapa}: {e}")
-
+            erros.append(f"Mapa visual obrigatório ausente: {rel}")
+        elif arquivo.read_bytes() != texto.encode("utf-8"):
+            erros.append(f"Mapa visual {rel} difere do que o mapa_visual monta do catálogo. "
+                         f"Rode: python scripts/mapa_visual.py <tipo>")
     return erros
 
 
@@ -130,14 +161,14 @@ def auditar_tudo(
     caminho_achados: Optional[Path] = None,
     pasta_mapas: Optional[Path] = None,
 ) -> Tuple[int, List[str]]:
-    catalogo = caminho_catalogo or (RAIZ / "docs" / "auditoria" / "mapa-pecas" / "catalogo-pecas.json")
+    catalogo = caminho_catalogo or cp.SAIDA_PADRAO
     achados = caminho_achados or (RAIZ / "docs" / "auditoria" / "mapa-pecas" / "ciclo-01" / "achados-verificados.json")
     mapas = pasta_mapas or (RAIZ / "docs" / "mapas-visuais")
 
     todos_erros: List[str] = []
     todos_erros.extend(auditar_catalogo(catalogo))
     todos_erros.extend(auditar_achados(achados))
-    todos_erros.extend(auditar_mapas_visuais(mapas))
+    todos_erros.extend(auditar_mapas_visuais(mapas, catalogo))
 
     codigo = 1 if todos_erros else 0
     return codigo, todos_erros

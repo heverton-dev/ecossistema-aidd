@@ -1,0 +1,275 @@
+{
+  "ferramenta": "aidd-visual-maps",
+  "catalogo": "docs/auditoria/mapa-pecas/catalogo-pecas.json",
+  "hash_catalogo": "9d8cccbe672da04e28872fcca6e03010524194c96b3ae25d7526d2a1e6ee3486",
+  "mapas": [
+    {
+      "tipo": "leis",
+      "arquivo": "docs/mapas-visuais/mapa-01-leis.html",
+      "versao": "tecnica",
+      "sha256": "d201ae62668009223f9c7c22ea220d957fa3359db3b45d46334d056f4feb0ff3",
+      "status": "concluido"
+    },
+    {
+      "tipo": "leis",
+      "arquivo": "docs/mapas-visuais/nao-tecnicos/mapa-01-leis.html",
+      "versao": "nao-tecnica",
+      "sha256": "b3f44d9182703a828cc09baa79f6db21f2b49072786d7fb7d5e936f9e5912404",
+      "status": "concluido"
+    },
+    {
+      "tipo": "ferramentas",
+      "arquivo": "docs/mapas-visuais/mapa-02-ferramentas.html",
+      "versao": "tecnica",
+      "sha256": "046d7439b2ceb08877d61ed8366b24dc4bbe07ea30283dd53daf0577590e3c26",
+      "status": "concluido"
+    },
+    {
+      "tipo": "ferramentas",
+      "arquivo": "docs/mapas-visuais/nao-tecnicos/mapa-02-ferramentas.html",
+      "versao": "nao-tecnica",
+      "sha256": "0c7151ac98d67f368363adcb3ec80ae28544130bbb427c169bdeb473f1890249",
+      "status": "concluido"
+    },
+    {
+      "tipo": "encaixes",
+      "arquivo": "docs/mapas-visuais/mapa-03-encaixes.html",
+      "versao": "tecnica",
+      "sha256": "42cc2acd9fa234a2c42ee4bce5bdf942fbe5421fba940c03c4d0daaed5604667",
+      "status": "concluido"
+    },
+    {
+      "tipo": "encaixes",
+      "arquivo": "docs/mapas-visuais/nao-tecnicos/mapa-03-encaixes.html",
+      "versao": "nao-tecnica",
+      "sha256": "77182f2fe6cbf26c10a497ddd217a5e668519acf0370770b1721d95d93c441b6",
+      "status": "concluido"
+    },
+    {
+      "tipo": "guardas",
+      "arquivo": "docs/mapas-visuais/mapa-04-guardas.html",
+      "versao": "tecnica",
+      "sha256": "96f6244720d644814fbbd0419b7fee1bd39a6c7bdb131b964962efd70b4e3932",
+      "status": "concluido"
+    },
+    {
+      "tipo": "guardas",
+      "arquivo": "docs/mapas-visuais/nao-tecnicos/mapa-04-guardas.html",
+      "versao": "nao-tecnica",
+      "sha256": "3ef5dee28829c21cc6f9def9cf458ff842ac60055ab3bd109211e9fe75360b9e",
+      "status": "concluido"
+    },
+    {
+      "tipo": "skills",
+      "arquivo": "docs/mapas-visuais/mapa-05-skills.html",
+      "versao": "tecnica",
+      "sha256": "1aef880db178c2925f690e52bd4ed1d0ecb88bcef16288b5ed2c167e829a098e",
+      "status": "concluido"
+    },
+    {
+      "tipo": "skills",
+      "arquivo": "docs/mapas-visuais/nao-tecnicos/mapa-05-skills.html",
+      "versao": "nao-tecnica",
+      "sha256": "3998d55f7a390124b3eb5695c0a26020ee99d7bfaef9376b3bf37489a1e68fca",
+      "status": "concluido"
+    },
+    {
+      "tipo": "comandos",
+      "arquivo": "docs/mapas-visuais/mapa-06-comandos.html",
+      "versao": "tecnica",
+      "sha256": "97376ce0a02d8dcbc15dc81a4892c629da2a6b6fd90f9d3ad141ddff1ddf273b",
+      "status": "concluido"
+    },
+    {
+      "tipo": "comandos",
+      "arquivo": "docs/mapas-visuais/nao-tecnicos/mapa-06-comandos.html",
+      "versao": "nao-tecnica",
+      "sha256": "2f7536d798cf27fe194604ec42fc38902fd4cedc2fb2f58a6c0b353a48d19b8f",
+      "status": "concluido"
+    },
+    {
+      "tipo": "conexoes",
+      "arquivo": "docs/mapas-visuais/mapa-07-conexoes.html",
+      "versao": "tecnica",
+      "sha256": "245067421b29749ac6457e3953b88c950428896a2d9bea2ef4f1c26082602e89",
+      "status": "concluido"
+    },
+    {
+      "tipo": "conexoes",
+      "arquivo": "docs/mapas-visuais/nao-tecnicos/mapa-07-conexoes.html",
+      "versao": "nao-tecnica",
+      "sha256": "4af789de3c8337889b03b8404fc8a28ac2a016633cc882edfbee64d035d08904",
+      "status": "concluido"
+    },
+    {
+      "tipo": "harnesses",
+      "arquivo": "docs/mapas-visuais/mapa-08-harnesses.html",
+      "versao": "tecnica",
+      "sha256": "26541f177af0bd543d9d55f2def9cb86206c0fec3edda2e1d46237a22b77a690",
+      "status": "concluido"
+    },
+    {
+      "tipo": "harnesses",
+      "arquivo": "docs/mapas-visuais/nao-tecnicos/mapa-08-harnesses.html",
+      "versao": "nao-tecnica",
+      "sha256": "44b421420622fa73a7c011f7f90a66e4595af88be694073fd32fd496328e71d1",
+      "status": "concluido"
+    },
+    {
+      "tipo": "moldes",
+      "arquivo": "docs/mapas-visuais/mapa-09-moldes.html",
+      "versao": "tecnica",
+      "sha256": "25edbf447a12d3714c8dbc9c1a2d6779ab0be82a322365ca79e42c9018212bf8",
+      "status": "concluido"
+    },
+    {
+      "tipo": "moldes",
+      "arquivo": "docs/mapas-visuais/nao-tecnicos/mapa-09-moldes.html",
+      "versao": "nao-tecnica",
+      "sha256": "26bc5e4a28e0ba9973d8d4a7e779f4f3338bef7d721992c5f9df20ae8ed6fb73",
+      "status": "concluido"
+    },
+    {
+      "tipo": "scripts",
+      "arquivo": "docs/mapas-visuais/mapa-10-scripts.html",
+      "versao": "tecnica",
+      "sha256": "df341292c2d87de3615571775c07d1692da25be77c56930494b55d56fbec7c19",
+      "status": "concluido"
+    },
+    {
+      "tipo": "scripts",
+      "arquivo": "docs/mapas-visuais/nao-tecnicos/mapa-10-scripts.html",
+      "versao": "nao-tecnica",
+      "sha256": "f9501c76ea6ad8c037ffe1c7483a5f484408859a7112085d6e4660ef500bedec",
+      "status": "concluido"
+    },
+    {
+      "tipo": "oficina",
+      "arquivo": "docs/mapas-visuais/mapa-11-oficina.html",
+      "versao": "tecnica",
+      "sha256": "b22f5795bdd7f78953e53ae8551175ef1ced8b3fc99653adb5f4f23be2809a84",
+      "status": "concluido"
+    },
+    {
+      "tipo": "oficina",
+      "arquivo": "docs/mapas-visuais/nao-tecnicos/mapa-11-oficina.html",
+      "versao": "nao-tecnica",
+      "sha256": "7eb3e58580657482432e3d721847941d07538b15795db2655a95aea4246cd98a",
+      "status": "concluido"
+    },
+    {
+      "tipo": "lente15d",
+      "arquivo": "docs/mapas-visuais/mapa-12-lente15d.html",
+      "versao": "tecnica",
+      "sha256": "e53eba5e66f8717178647e2924319ac889ddbe7fabb3ebccf1ff26ef1bbaa298",
+      "status": "concluido"
+    },
+    {
+      "tipo": "lente15d",
+      "arquivo": "docs/mapas-visuais/nao-tecnicos/mapa-12-lente15d.html",
+      "versao": "nao-tecnica",
+      "sha256": "7436fe1d30c99c25e2a9f74d1448defa01707cda9ef65e0bfc470e6ccea804cd",
+      "status": "concluido"
+    },
+    {
+      "tipo": "pipelines",
+      "arquivo": "docs/mapas-visuais/mapa-13-pipelines.html",
+      "versao": "tecnica",
+      "sha256": "eac3158cf817ae5706df2ba64ad2f9865c4ab2ac9bf3ed50b24af4c1d99e1bbc",
+      "status": "concluido"
+    },
+    {
+      "tipo": "pipelines",
+      "arquivo": "docs/mapas-visuais/nao-tecnicos/mapa-13-pipelines.html",
+      "versao": "nao-tecnica",
+      "sha256": "a544bced9f34eba868a35243589a5aa20c32bd44c03d2a8294ae9c1a2825dda1",
+      "status": "concluido"
+    },
+    {
+      "tipo": "modulos",
+      "arquivo": "docs/mapas-visuais/mapa-14-modulos.html",
+      "versao": "tecnica",
+      "sha256": "02edf6e0c54f7d4623cc120ca0664b1202e8e89109a7a2fcd0f9fdb415b1ae33",
+      "status": "concluido"
+    },
+    {
+      "tipo": "modulos",
+      "arquivo": "docs/mapas-visuais/nao-tecnicos/mapa-14-modulos.html",
+      "versao": "nao-tecnica",
+      "sha256": "26b7c7b9bd51f31af6aa85c847f6e716dd3b49c72d8918355e85701b8147e7f6",
+      "status": "concluido"
+    },
+    {
+      "tipo": "agentes",
+      "arquivo": "docs/mapas-visuais/mapa-15-agentes.html",
+      "versao": "tecnica",
+      "sha256": "6c3939258bc1fd44f18e6d8eb08d06c23630e6537ad3000fec1bc029da9507c1",
+      "status": "concluido"
+    },
+    {
+      "tipo": "agentes",
+      "arquivo": "docs/mapas-visuais/nao-tecnicos/mapa-15-agentes.html",
+      "versao": "nao-tecnica",
+      "sha256": "50d97b97202474a3b64e4cb56bd42cd656bc9f78aa29ba11b9f8cbc5f8ce95fc",
+      "status": "concluido"
+    },
+    {
+      "tipo": "indice",
+      "arquivo": "docs/mapas-visuais/mapa-00-indice.html",
+      "versao": "tecnica",
+      "sha256": "5c1dde9c7b8520f8e6e2e276131c7730177471621d2db897b4d011007ea6cf48",
+      "status": "concluido"
+    },
+    {
+      "tipo": "indice",
+      "arquivo": "docs/mapas-visuais/nao-tecnicos/mapa-00-indice.html",
+      "versao": "nao-tecnica",
+      "sha256": "b08f69e9822aeb35195cafeeb80e0456bb543819ef7cec5cc93d30eefdc4133f",
+      "status": "concluido"
+    }
+  ],
+  "handoff_livro": {
+    "skill": "aidd-textbook",
+    "pasta": "docs/livros/mapas-aidd",
+    "partes": [
+      {
+        "arquivo": "docs/livros/mapas-aidd/partes/00-frontmatter.md",
+        "sha256": "a4871626d01e18cc815674fa5d5493458b8a6832e7b45a4d29a3aeaa142f6c78"
+      },
+      {
+        "arquivo": "docs/livros/mapas-aidd/partes/10-parte-i.md",
+        "sha256": "a002710bfea119336e6991d6133fa6d329d0f0c03691b952a76ecdd7abbcddba"
+      },
+      {
+        "arquivo": "docs/livros/mapas-aidd/partes/20-parte-ii.md",
+        "sha256": "83d1329b79b6861d3a488579f09b68a11b54420021a661b2a15db7454eb00b53"
+      },
+      {
+        "arquivo": "docs/livros/mapas-aidd/partes/30-parte-iii.md",
+        "sha256": "06e0cf42a583a977a495c4c71811970bbec5adf49df5f3b88f65c323677dcd9a"
+      },
+      {
+        "arquivo": "docs/livros/mapas-aidd/partes/40-parte-iv.md",
+        "sha256": "8b487f29f4097c78687266c53c432600002036b99c0fb10868652c92c09620ea"
+      },
+      {
+        "arquivo": "docs/livros/mapas-aidd/partes/50-parte-v.md",
+        "sha256": "9b94979ec6be4a94f96d3b835036a9fa09cc21cb80328ab33ef526b26e437938"
+      },
+      {
+        "arquivo": "docs/livros/mapas-aidd/partes/90-apendice-glossario.md",
+        "sha256": "4d2fd3521fa33e86b123c82e04fa4c57c286ee5bc98509145019b4fd3c85757c"
+      },
+      {
+        "arquivo": "docs/livros/mapas-aidd/partes/91-apendice-estado.md",
+        "sha256": "a45f72225917f65592e652c930b32fa252c78c25ff0b4376d40133f6ebadd513"
+      }
+    ],
+    "build": {
+      "comando": "python componentes/compartilhado/skills/aidd-textbook/scripts/livro.py build docs/livros/mapas-aidd",
+      "exit_code": 0,
+      "pdf": "docs/livros/mapas-aidd/26-09-2026_LIVRO-MAPAS-AIDD.pdf",
+      "sha256": "a506e16f60d347f29df50d7f770f303453dfe1c676aa68af9b3e509f228f0eab"
+    }
+  }
+}

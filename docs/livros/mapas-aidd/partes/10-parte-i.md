@@ -23,14 +23,14 @@ Onde mora: `AGENTS.md`, seção 2. Quem confere: o meta-guarda `G_LEI_DECLARA_PO
 | Medida | Valor |
 | :-------------------------------------- | :-------------------------------------------- |
 | leis | 14 |
-| declarações de guarda | 70 |
+| declarações de guarda | 71 |
 | declarações que o meta-guarda não lê | 0 |
 
 Os números saem de `docs/auditoria/mapa-pecas/catalogo-pecas.json` (função `coletar_leis`), os mesmos do mapa `mapa-01-leis.html`.
 
 ## 1.3 O que falta consertar
 
-- **Média** · 6 guardas declarados em lei que não rodam no commit (`CAT-declarados-fora-do-commit`).
+- **Média** · 5 guardas declarados em lei que não rodam no commit (`CAT-declarados-fora-do-commit`).
 - **Baixa** · 1 guardas da raiz que nenhuma lei declara (`CAT-guardas-sem-lei`).
 
 Já resolvido:
@@ -53,8 +53,8 @@ O detalhe e a evidência de cada achado estão no Apêndice B e em `docs/auditor
 ```{=typst}
 #ficha(
   ("Mapa", "mapa-02-ferramentas.html"),
-  ("Para que serve", "as 8 ferramentas, seus comandos de CLI e as tarefas com mais de uma dona"),
-  ("Achados em aberto", "1"),
+  ("Para que serve", "as ferramentas, seus comandos de CLI e as tarefas com mais de uma dona"),
+  ("Achados em aberto", "0"),
 )
 ```
 
@@ -77,7 +77,7 @@ Os números saem de `docs/auditoria/mapa-pecas/catalogo-pecas.json` (função `c
 
 ## 2.3 O que falta consertar
 
-- **Alta** · 69 arquivos idênticos copiados entre ferramentas (`CAT-arquivos-identicos`).
+Nenhum achado em aberto para este mapa.
 
 Já resolvido:
 

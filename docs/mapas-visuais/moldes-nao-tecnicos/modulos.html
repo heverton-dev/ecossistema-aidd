@@ -1,0 +1,35 @@
+<!-- Molde não-técnico dos módulos VSA. Texto explicativo com analogias; listas via scripts/mapa_visual.py. -->
+<div class="wrap">
+
+<a class="voltar" href="{{LINK_MANUAL}}">← Manual de montagem</a>
+<header>
+  <span class="eyebrow">Mapa visual · Os Bairros da Cidade</span>
+  <h1>Mapa dos Bairros (Módulos VSA)</h1>
+  <p class="lead">Pense no ecossistema como uma cidade dividida em <strong>bairros</strong>. Cada bairro (área) tem suas ruas (fatias), e em cada rua moram algumas fábricas e alguns fiscais. Uma rua não entra na casa da outra: o que todos usam fica no centro comum.</p>
+  {{TOTAIS}}
+</header>
+
+<section id="regra">
+  <span class="eyebrow">Como Ler</span>
+  <h2>Bairro, Rua e Morador</h2>
+  <div class="grid3">
+    <div class="box"><h3>Bairro</h3><p>Uma grande área do ecossistema, como governança, fabricação, entrega ou o núcleo compartilhado.</p></div>
+    <div class="box"><h3>Rua</h3><p>Uma fatia dentro do bairro, com um trabalho bem definido.</p></div>
+    <div class="box"><h3>Morador</h3><p>As fábricas (ferramentas) e os fiscais (guardas) que moram em cada rua.</p></div>
+  </div>
+</section>
+
+<section id="sem-dona">
+  <span class="eyebrow">Atenção</span>
+  <h2>Ruas Sem Fábrica Nem Fiscal</h2>
+  {{SEM_DONA}}
+</section>
+
+<section id="lista">
+  <span class="eyebrow">A Planta da Cidade</span>
+  <h2>Todos os Bairros e Suas Ruas</h2>
+  {{LISTA}}
+</section>
+
+<footer>Gerado deterministicamente a partir de <code>docs/auditoria/mapa-pecas/catalogo-pecas.json</code>. Versão ilustrada voltada para visualização didática e conceitual.</footer>
+</div>

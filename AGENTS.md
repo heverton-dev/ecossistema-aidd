@@ -98,6 +98,7 @@
    - Portão: modulos/01-governanca-e-qualidade/gates/G_aidd_handoff.py (provado) — quality gate da ferramenta `aidd-handoff` (ciclo-01)
    - Portão: modulos/01-governanca-e-qualidade/gates/G_aidd_plan.py (provado) — quality gate da ferramenta `aidd-plan` (ciclo-01)
    - Portão: modulos/01-governanca-e-qualidade/gates/G_aidd_planner_runner.py (provado) — quality gate da ferramenta `aidd-planner-runner` (ciclo-01)
+   - Portão: modulos/04-nucleo-compartilhado/gates/G_aidd_visual_maps.py (provado) — quality gate da ferramenta `aidd-visual-maps` (ciclo-01)
    - Portão: modulos/01-governanca-e-qualidade/gates/G_aidd_session.py (provado) — quality gate da ferramenta `aidd-session` (ciclo-01)
    - Portão: modulos/01-governanca-e-qualidade/gates/G_PROVA_SKILLS_POCOCK.py (provado, manual) — uso real das skills do ciclo skills-pocock via modelo; fora do pre-commit (skills-pocock, Ticket 13)
    - Portão: modulos/01-governanca-e-qualidade/gates/G_HANDOFF_MELHORIA.py (provado) — integridade e assinatura HMAC do handoff de melhoria (Fase 8, Ticket 8)
@@ -216,6 +217,7 @@ Canonical workflow skills available across all harnesses to eliminate vibe codin
 - `/aidd-tickets`: Vertical-slice tickets (one verifiable behavior each) with `Blocked by`.
 - `/aidd-tdd`: Agreed seams, then Red → Green loop; refactor at review; zero stubs, polyglot.
 - `/aidd-diagnose`: 5-phase scientific fault triage integrated with `codebase-memory-mcp`.
+- `/aidd-visual-maps`: Visual maps of each piece type from the parts catalog; `python ecossistema.py visual-maps gerar|check` (gate `G_aidd_visual_maps`).
 - `/aidd-handoff`: Compact session context serialization directly into `secoes/`.
 - `/aidd-session`: Deterministic session ID and metadata persistence in `secoes/` for instant recovery.
 - `/aidd-agent-writing`: Writing guide for skills, AGENTS.md, CLAUDE.md.

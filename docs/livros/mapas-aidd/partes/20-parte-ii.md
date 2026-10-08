@@ -22,16 +22,16 @@ Onde mora: `gates/` e `tools/<f>/gates/`. Quem confere: o próprio pre-commit e 
 
 | Medida | Valor |
 | :-------------------------------------- | :-------------------------------------------- |
-| guardas (nomes) | 104 |
-| no ecossistema | 71 |
-| rodam no commit | 64 |
-| com versões diferentes | 12 |
+| guardas (nomes) | 105 |
+| no ecossistema | 72 |
+| rodam no commit | 67 |
+| com versões diferentes | 10 |
 
 Os números saem de `docs/auditoria/mapa-pecas/catalogo-pecas.json` (função `coletar_gates`), os mesmos do mapa `mapa-04-guardas.html`.
 
 ## 4.3 O que falta consertar
 
-- **Média** · 12 guardas com o mesmo nome e código diferente (`CAT-gates-versoes`).
+- **Média** · 10 guardas com o mesmo nome e código diferente (`CAT-gates-versoes`).
 
 Já resolvido:
 
@@ -161,8 +161,8 @@ Onde mora: `.mcp.json` e `.claude/settings.json`. Quem confere: o `dependencia v
 | Medida | Valor |
 | :-------------------------------------- | :-------------------------------------------- |
 | MCPs que o agente usa | 11 |
-| MCPs dentro das ferramentas | 3 |
-| hooks | 3 |
+| MCPs dentro das ferramentas | 5 |
+| hooks | 5 |
 
 Os números saem de `docs/auditoria/mapa-pecas/catalogo-pecas.json` (função `coletar_mcps`), os mesmos do mapa `mapa-07-conexoes.html`.
 

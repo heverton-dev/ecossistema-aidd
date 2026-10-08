@@ -1055,6 +1055,17 @@ def cmd_diagnose(args):
     return 1
 
 
+def cmd_visual_maps(args):
+    """Delegação para aidd-visual-maps (subcomandos: catalogo, mapa, gerar, check)."""
+    script = os.path.join(ROOT_DIR, "componentes", "compartilhado", "skills", "aidd-visual-maps", "scripts", "cli.py")
+    if not os.path.isfile(script):
+        script = os.path.join(ROOT_DIR, ".agents", "skills", "aidd-visual-maps", "scripts", "cli.py")
+    if os.path.isfile(script):
+        return run_command([sys.executable, script] + args, cwd=ROOT_DIR)
+    print(f"Erro: script '{script}' não encontrado.")
+    return 1
+
+
 def cmd_tdd(args):
     """Delegação para aidd-tdd (subcomandos: iniciar, red, green, refactor, status)."""
     script = os.path.join(ROOT_DIR, ".agents", "skills", "aidd-tdd", "scripts", "cli.py")
@@ -1544,6 +1555,8 @@ def comandos_disponiveis():
         "plan": cmd_plan,
         "melhoria": cmd_melhoria,
         "diagnose": cmd_diagnose,
+        "visual-maps": cmd_visual_maps,
+        "aidd-visual-maps": cmd_visual_maps,
         "tdd": cmd_tdd,
         "derivados": cmd_derivados,
         "aidd-tdd": cmd_tdd,

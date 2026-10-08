@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Mapa das Conexões</title>
+<title>Mapa dos Módulos VSA (Versão Conceitual)</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&amp;family=IBM+Plex+Sans:wght@400;500;600&amp;family=IBM+Plex+Mono:wght@400;500&amp;display=swap">
@@ -109,62 +109,40 @@ footer{padding-top:28px;border-top:1px solid var(--line);font-size:.85rem;color:
 </style>
 </head>
 <body>
-<!-- Molde do mapa das conexões (MCPs e hooks). Texto fixo aqui; listas entram por scripts/mapa_visual.py. -->
+<!-- Molde não-técnico dos módulos VSA. Texto explicativo com analogias; listas via scripts/mapa_visual.py. -->
 <div class="wrap">
 
-<a class="voltar" href="manual-montagem-aidd.html">← Manual de Montagem</a>
+<a class="voltar" href="manual-montagem-aidd.html">← Manual de montagem</a>
 <header>
-  <span class="eyebrow">Mapa Visual · Protocolos de Integração e Gatilhos</span>
-  <h1>Mapa de Conexões: Servidores MCP e Ganchos (Hooks)</h1>
-  <p class="lead">Componentes de integração e controle do ciclo de vida agêntico. Os servidores do <b>Model Context Protocol (MCP)</b> viabilizam comunicação bidirecional com sistemas e documentações externas. Os <b>Hooks (Ganchos Reativos)</b> interceptam eventos temporais específicos da sessão, disparando validações determinísticas imediatas.</p>
-  <div class="totais"><div class="total "><b>9</b><span>MCPs que o agente usa</span></div><div class="total "><b>3</b><span>MCPs dentro das ferramentas</span></div><div class="total "><b>3</b><span>hooks</span></div></div>
+  <span class="eyebrow">Mapa visual · Os Bairros da Cidade</span>
+  <h1>Mapa dos Bairros (Módulos VSA)</h1>
+  <p class="lead">Pense no ecossistema como uma cidade dividida em <strong>bairros</strong>. Cada bairro (área) tem suas ruas (fatias), e em cada rua moram algumas fábricas e alguns fiscais. Uma rua não entra na casa da outra: o que todos usam fica no centro comum.</p>
+  <div class="totais"><div class="total "><b>4</b><span>áreas em modulos/</span></div><div class="total "><b>11</b><span>fatias</span></div><div class="total "><b>8</b><span>ferramentas morando em fatias</span></div><div class="total "><b>105</b><span>guardas nas fatias</span></div><div class="total aviso"><b>1</b><span>fatias sem ferramenta nem guarda</span></div></div>
 </header>
 
-<section id="o-que">
-  <span class="eyebrow">Classificação Técnica</span>
-  <h2>Categorias de Conexão Arquitetural</h2>
+<section id="regra">
+  <span class="eyebrow">Como Ler</span>
+  <h2>Bairro, Rua e Morador</h2>
   <div class="grid3">
-    <div class="box" style="--c:var(--c-liga)"><h3><span class="sw" aria-hidden="true"></span>MCPs de Consumo Agêntico</h3><p>Registrados centralizadamente em <code>.mcp.json</code> e propagados aos harnesses. Procedimento de homologação gerenciado via <code>dependencia add-mcp</code> na skill <code>aidd-dependencies</code>.</p></div>
-    <div class="box" style="--c:var(--c-trabalha)"><h3><span class="sw" aria-hidden="true"></span>Servidores MCP Distribuíveis</h3><p>Módulos desenvolvidos internamente (<code>tools/&lt;f&gt;/mcps/</code>) incorporados aos produtos gerados para consumo por agentes externos. Governança via skill <code>aidd-mcp</code>.</p></div>
-    <div class="box" style="--c:var(--c-guarda)"><h3><span class="sw" aria-hidden="true"></span>Ganchos de Interceptação (Hooks)</h3><p>Mecanismos configurados nas definições dos harnesses (ex.: <code>.claude/settings.json</code>) para capturar eventos de ciclo de vida (<code>PreToolUse</code>, <code>SessionStart</code>) e disparar validações preventivas.</p></div>
+    <div class="box"><h3>Bairro</h3><p>Uma grande área do ecossistema, como governança, fabricação, entrega ou o núcleo compartilhado.</p></div>
+    <div class="box"><h3>Rua</h3><p>Uma fatia dentro do bairro, com um trabalho bem definido.</p></div>
+    <div class="box"><h3>Morador</h3><p>As fábricas (ferramentas) e os fiscais (guardas) que moram em cada rua.</p></div>
   </div>
 </section>
 
-<section id="quando">
-  <span class="eyebrow">Diretrizes de Decisão</span>
-  <h2>Critérios de Implementação e Uso</h2>
-  <div class="grid2">
-    <div class="box">
-      <h3>Servidores MCP</h3>
-      <ul>
-        <li>Demanda por consumo de contexto ou ferramentas externas (Cloudflare, GitHub, navegador headless);</li>
-        <li>Exposição de serviços próprios nas aplicações entregues para agentes clientes;</li>
-        <li>Gestão segura de credenciais: apenas identificadores de variáveis de ambiente são admitidos na configuração.</li>
-      </ul>
-    </div>
-    <div class="box">
-      <h3>Ganchos Reativos (Hooks)</h3>
-      <ul>
-        <li>Exigência mandatória de execução síncrona em eventos específicos da sessão agêntica;</li>
-        <li>Regras de validação estática de código devem residir em portões no pré-commit, e não em hooks de conversação;</li>
-        <li>Execução ultrarrápida sem bloqueio da sessão sob ausência de dependências opcionais.</li>
-      </ul>
-    </div>
-  </div>
+<section id="sem-dona">
+  <span class="eyebrow">Atenção</span>
+  <h2>Ruas Sem Fábrica Nem Fiscal</h2>
+  <p class="chips" style="display:flex;flex-wrap:wrap;gap:6px"><code>modulos/04-nucleo-compartilhado/contracts</code></p>
 </section>
 
 <section id="lista">
-  <span class="eyebrow">Inventário Consolidado</span>
-  <h2>Todas as Conexões Ativas</h2>
-  <h3>MCPs de Consumo Agêntico</h3>
-  <p class="chips" style="display:flex;flex-wrap:wrap;gap:6px"><code>cloudflare</code><code>cloudflare-docs</code><code>cloudflare-mcp</code><code>code-review-graph</code><code>context7</code><code>docker-mcp</code><code>github</code><code>mcp-verificador-cve</code><code>playwright</code></p>
-  <h3>Servidores MCP Distribuíveis em Ferramentas</h3>
-  <div class="grupo"><div class="itens"><article class="item" style="--c:var(--c-trabalha)" data-busca="mcp-verificador-cve"><span class="nome">mcp-verificador-cve</span><p class="desc">da ferramenta aidd-pure</p><div class="chips"><span class="chip ok">registrado para o agente</span></div><span class="onde">tools/aidd-pure/mcps/mcp-verificador-cve/server.py</span></article><article class="item" style="--c:var(--c-trabalha)" data-busca="cloudflare-mcp"><span class="nome">cloudflare-mcp</span><p class="desc">da ferramenta aidd-ops</p><div class="chips"><span class="chip ok">registrado para o agente</span></div><span class="onde">tools/aidd-ops/mcps/cloudflare-mcp/server.py</span></article><article class="item" style="--c:var(--c-trabalha)" data-busca="docker-mcp"><span class="nome">docker-mcp</span><p class="desc">da ferramenta aidd-ops</p><div class="chips"><span class="chip ok">registrado para o agente</span></div><span class="onde">tools/aidd-ops/mcps/docker-mcp/server.py</span></article></div></div>
-  <h3>Ganchos Reativos Configurados</h3>
-  <div class="grupo"><div class="itens"><article class="item" style="--c:var(--c-guarda)" data-busca="PreToolUse"><span class="nome">PreToolUse</span><p class="desc">filtro: Task|Agent</p><span class="onde">.claude/hooks/anti_headless_subagent_hook.py</span></article><article class="item" style="--c:var(--c-guarda)" data-busca="PostToolUse"><span class="nome">PostToolUse</span><p class="desc">filtro: Edit|Write</p><span class="onde">cat &gt;/dev/null || true; command -v code-review-graph &gt;/dev/null 2&gt;&amp;1 || exit 0; </span></article><article class="item" style="--c:var(--c-guarda)" data-busca="SessionStart"><span class="nome">SessionStart</span><p class="desc">filtro: qualquer ferramenta</p><span class="onde">cat &gt;/dev/null || true; command -v code-review-graph &gt;/dev/null 2&gt;&amp;1 || exit 0; </span></article></div></div>
+  <span class="eyebrow">A Planta da Cidade</span>
+  <h2>Todos os Bairros e Suas Ruas</h2>
+  <div class="grupo"><h3>01-governanca-e-qualidade <small>2 · Fatia vertical canônica de governança agêntica, integridade arquitetural e quality gates do Ecossistema AIDD.</small></h3><div class="itens"><article class="item" style="--c:var(--c-liga)" data-busca="core aidd-forge aidd-planner"><span class="nome">core</span><div class="chips" style="display:flex;flex-wrap:wrap;gap:6px"><code>aidd-forge</code><code>aidd-planner</code><span class="chip">15 guardas</span><span class="chip">62 arquivos .py</span></div><span class="onde">modulos/01-governanca-e-qualidade/core</span></article><article class="item" style="--c:var(--c-liga)" data-busca="gates "><span class="nome">gates</span><div class="chips" style="display:flex;flex-wrap:wrap;gap:6px"><span class="chip lei">sem ferramenta</span><span class="chip">20 guardas</span><span class="chip">20 arquivos .py</span></div><span class="onde">modulos/01-governanca-e-qualidade/gates</span></article></div></div><div class="grupo"><h3>02-triade-motores <small>3 · Fatia vertical canônica de fabricação de software e fluxos de geração do Ecossistema AIDD.</small></h3><div class="itens"><article class="item" style="--c:var(--c-liga)" data-busca="fluxo-01-pure aidd-pure"><span class="nome">fluxo-01-pure</span><div class="chips" style="display:flex;flex-wrap:wrap;gap:6px"><code>aidd-pure</code><span class="chip">10 guardas</span><span class="chip">63 arquivos .py</span></div><span class="onde">modulos/02-triade-motores/fluxo-01-pure</span></article><article class="item" style="--c:var(--c-liga)" data-busca="fluxo-02-open aidd-open"><span class="nome">fluxo-02-open</span><div class="chips" style="display:flex;flex-wrap:wrap;gap:6px"><code>aidd-open</code><span class="chip">8 guardas</span><span class="chip">44 arquivos .py</span></div><span class="onde">modulos/02-triade-motores/fluxo-02-open</span></article><article class="item" style="--c:var(--c-liga)" data-busca="fluxo-03-freedom aidd-freedom"><span class="nome">fluxo-03-freedom</span><div class="chips" style="display:flex;flex-wrap:wrap;gap:6px"><code>aidd-freedom</code><span class="chip">6 guardas</span><span class="chip">22 arquivos .py</span></div><span class="onde">modulos/02-triade-motores/fluxo-03-freedom</span></article></div></div><div class="grupo"><h3>03-plataforma-e-entrega <small>4 · Fatia vertical canônica responsável por fatiamento de meso-camada, blindagem enterprise e operações de infraestrutura.</small></h3><div class="itens"><article class="item" style="--c:var(--c-liga)" data-busca="blindagem-enterprise aidd-enterprise"><span class="nome">blindagem-enterprise</span><div class="chips" style="display:flex;flex-wrap:wrap;gap:6px"><code>aidd-enterprise</code><span class="chip">0 guardas</span><span class="chip">159 arquivos .py</span></div><span class="onde">modulos/03-plataforma-e-entrega/blindagem-enterprise</span></article><article class="item" style="--c:var(--c-liga)" data-busca="fatiamento-master aidd-master"><span class="nome">fatiamento-master</span><div class="chips" style="display:flex;flex-wrap:wrap;gap:6px"><code>aidd-master</code><span class="chip">1 guardas</span><span class="chip">127 arquivos .py</span></div><span class="onde">modulos/03-plataforma-e-entrega/fatiamento-master</span></article><article class="item" style="--c:var(--c-liga)" data-busca="gates "><span class="nome">gates</span><div class="chips" style="display:flex;flex-wrap:wrap;gap:6px"><span class="chip lei">sem ferramenta</span><span class="chip">8 guardas</span><span class="chip">8 arquivos .py</span></div><span class="onde">modulos/03-plataforma-e-entrega/gates</span></article><article class="item" style="--c:var(--c-liga)" data-busca="operacoes-ops aidd-ops"><span class="nome">operacoes-ops</span><div class="chips" style="display:flex;flex-wrap:wrap;gap:6px"><code>aidd-ops</code><span class="chip">2 guardas</span><span class="chip">28 arquivos .py</span></div><span class="onde">modulos/03-plataforma-e-entrega/operacoes-ops</span></article></div></div><div class="grupo"><h3>04-nucleo-compartilhado <small>2 · Fatia vertical canônica do kernel de utilitários, CLI unificada e contratos centrais do Ecossistema AIDD.</small></h3><div class="itens"><article class="item" style="--c:var(--c-liga)" data-busca="contracts "><span class="nome">contracts</span><div class="chips" style="display:flex;flex-wrap:wrap;gap:6px"><span class="chip lei">sem ferramenta</span><span class="chip">0 guardas</span><span class="chip">0 arquivos .py</span></div><span class="onde">modulos/04-nucleo-compartilhado/contracts</span></article><article class="item" style="--c:var(--c-liga)" data-busca="gates "><span class="nome">gates</span><div class="chips" style="display:flex;flex-wrap:wrap;gap:6px"><span class="chip lei">sem ferramenta</span><span class="chip">35 guardas</span><span class="chip">36 arquivos .py</span></div><span class="onde">modulos/04-nucleo-compartilhado/gates</span></article></div></div>
 </section>
 
-<footer>Compilado por <code>scripts/mapa_visual.py conexoes</code> a partir de <code>docs/auditoria/mapa-pecas/catalogo-pecas.json</code>. Para atualização: execute <code>python scripts/catalogo_pecas.py</code> seguido de <code>python scripts/mapa_visual.py conexoes</code>.</footer>
+<footer>Gerado deterministicamente a partir de <code>docs/auditoria/mapa-pecas/catalogo-pecas.json</code>. Versão ilustrada voltada para visualização didática e conceitual.</footer>
 </div>
 </body>
 </html>

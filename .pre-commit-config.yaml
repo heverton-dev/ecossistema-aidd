@@ -479,6 +479,14 @@ repos:
         pass_filenames: false
         require_serial: true
 
+      - id: g-aidd-visual-maps
+        name: "G_aidd_visual_maps (qualidade deterministica dos mapas visuais per Lei #9)"
+        entry: python modulos/04-nucleo-compartilhado/gates/G_aidd_visual_maps.py
+        language: system
+        always_run: true
+        pass_filenames: false
+        require_serial: true
+
       - id: g-aidd-forge
         name: "G_aidd_forge (qualidade deterministica do bootstrap aidd-forge per Lei #9)"
         entry: python modulos/01-governanca-e-qualidade/gates/G_aidd_forge.py --alvo tests/fixtures/forge_conforme

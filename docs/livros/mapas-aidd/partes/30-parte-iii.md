@@ -63,14 +63,14 @@ Onde mora: `scripts/`. Quem confere: nenhum guarda específico; o mapa mede quem
 | Medida | Valor |
 | :-------------------------------------- | :-------------------------------------------- |
 | scripts | 52 |
-| chamados pelo painel | 18 |
-| nenhum código chama | 5 |
+| chamados pelo painel | 19 |
+| nenhum código chama | 4 |
 
 Os números saem de `docs/auditoria/mapa-pecas/catalogo-pecas.json` (função `coletar_scripts`), os mesmos do mapa `mapa-10-scripts.html`.
 
 ## 10.3 O que falta consertar
 
-- **Baixa** · 5 scripts que nenhum código chama (`CAT-scripts-sem-chamador`).
+- **Baixa** · 4 scripts que nenhum código chama (`CAT-scripts-sem-chamador`).
 
 Já resolvido:
 

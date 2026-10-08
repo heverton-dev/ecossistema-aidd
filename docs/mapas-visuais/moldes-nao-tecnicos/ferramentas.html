@@ -4,8 +4,8 @@
 <a class="voltar" href="{{LINK_MANUAL}}">← Manual de montagem</a>
 <header>
   <span class="eyebrow">Mapa visual · As Grandes Máquinas da Linha de Montagem</span>
-  <h1>Mapa das 8 Ferramentas Especialistas</h1>
-  <p class="lead">Se o ecossistema fosse uma fábrica de blocos, as 8 ferramentas seriam as grandes máquinas da linha de produção: cada uma tem sua função própria, seus botões de acionamento e sua responsabilidade exata. Uma máquina prepara a base, outra planeja a estrutura, três montam o motor e as outras cuidam da blindagem e da entrega.</p>
+  <h1>Mapa das {{TOTAL_FERRAMENTAS}} Ferramentas Especialistas</h1>
+  <p class="lead">Se o ecossistema fosse uma fábrica de blocos, as {{TOTAL_FERRAMENTAS}} ferramentas seriam as grandes máquinas da linha de produção: cada uma tem sua função própria, seus botões de acionamento e sua responsabilidade exata. Uma máquina prepara a base, outra planeja a estrutura, três montam o motor e as outras cuidam da blindagem e da entrega.</p>
   {{TOTAIS}}
 </header>
 
@@ -40,7 +40,7 @@
 
 <section id="lista">
   <span class="eyebrow">Catálogo das Máquinas</span>
-  <h2>As 8 Ferramentas da Linha de Produção</h2>
+  <h2>As {{TOTAL_FERRAMENTAS}} Ferramentas da Linha de Produção</h2>
   <div class="filtros" role="search">
     <label for="busca" class="eyebrow" style="flex-basis:100%">Filtrar máquinas</label>
     <input id="busca" type="search" placeholder="nome, comando ou assunto: compose, audit, lovable…" autocomplete="off">

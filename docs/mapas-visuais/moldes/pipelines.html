@@ -1,0 +1,35 @@
+<!-- Molde do mapa dos pipelines. Texto fixo aqui; listas entram por scripts/mapa_visual.py. -->
+<div class="wrap">
+
+<a class="voltar" href="{{LINK_MANUAL}}">← Manual de Montagem</a>
+<header>
+  <span class="eyebrow">Mapa Visual · Pipelines de Ponta a Ponta</span>
+  <h1>Mapa dos Pipelines</h1>
+  <p class="lead">Um pipeline é a ordem fixa em que as peças trabalham. Este mapa mostra cada fluxo da Tríade (etapas e chamada de CLI por fluxo, lidas do <code>scripts/orquestrador_sincrono.py</code>), as cadeias declaradas nas skills (<em>Step N of the … flow</em>) e as skills que rodam um pipeline próprio, com as etapas do respectivo <code>SKILL.md</code>.</p>
+  {{TOTAIS}}
+</header>
+
+<section id="regra">
+  <span class="eyebrow">Regra de Montagem</span>
+  <h2>De Onde Vem Cada Pipeline</h2>
+  <div class="grid3">
+    <div class="box"><h3>Tríade</h3><p>Um pipeline por fluxo (pure, open, freedom). As etapas são os métodos <code>etapa_NN_*</code> do orquestrador; a chamada é a do ramo daquele fluxo.</p></div>
+    <div class="box"><h3>Cadeias de skills</h3><p>Skills cuja descrição diz <em>Step N of the &lt;x&gt; flow</em> formam uma cadeia, na ordem de N (ex.: melhoria → plan → orchestrate).</p></div>
+    <div class="box"><h3>Skills de pipeline</h3><p>Skills que <em>run the … pipeline</em>: as etapas são os títulos <code>### Phase N</code> ou os itens numerados da seção Execution/Steps/Workflow/Protocol.</p></div>
+  </div>
+</section>
+
+<section id="sem-etapas">
+  <span class="eyebrow">Achado</span>
+  <h2>Pipelines Sem Etapas Declaradas</h2>
+  {{SEM_ETAPAS}}
+</section>
+
+<section id="lista">
+  <span class="eyebrow">Inventário</span>
+  <h2>Todos os Pipelines, Etapa por Etapa</h2>
+  {{LISTA}}
+</section>
+
+<footer>Compilado por <code>scripts/mapa_visual.py pipelines</code> a partir de <code>docs/auditoria/mapa-pecas/catalogo-pecas.json</code> (função <code>coletar_pipelines</code>). Para atualizar: <code>python scripts/catalogo_pecas.py</code> e depois <code>python scripts/mapa_visual.py pipelines</code>.</footer>
+</div>

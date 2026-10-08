@@ -7,26 +7,14 @@
   ],
   "como_usar": "Cada achado em aberto traz pedido_melhoria: o texto para python ecossistema.py melhoria init --pedido \"...\".",
   "totais": {
-    "aberto": 30,
+    "aberto": 31,
     "suspeita": 0,
     "resolvido": 14,
-    "abertos_alta": 1,
-    "abertos_media": 3,
-    "abertos_baixa": 26
+    "abertos_alta": 0,
+    "abertos_media": 4,
+    "abertos_baixa": 27
   },
   "achados": [
-    {
-      "id": "CAT-arquivos-identicos",
-      "titulo": "69 arquivos idênticos copiados entre ferramentas",
-      "gravidade": "alta",
-      "estado": "aberto",
-      "origem": "catalogo",
-      "mapa": "ferramentas",
-      "evidencia": [
-        "gates + modulos: 69"
-      ],
-      "pedido_melhoria": "Separar aidd-master (esqueleto) de aidd-enterprise (blindagem) e tirar as cópias idênticas."
-    },
     {
       "id": "CAT-15d-aidd-orca",
       "titulo": "1 dimensões 15-D com falha no laudo de aidd-orca",
@@ -40,8 +28,20 @@
       "pedido_melhoria": "Abrir o próximo ciclo 4F de aidd-orca para as dimensões D11."
     },
     {
+      "id": "CAT-15d-aidd-visual-maps",
+      "titulo": "3 dimensões 15-D com falha no laudo de aidd-visual-maps",
+      "gravidade": "media",
+      "estado": "aberto",
+      "origem": "catalogo",
+      "mapa": "lente15d",
+      "evidencia": [
+        "docs/auditoria/aidd-visual-maps/ciclo-01/LAUDO-15D-INICIAL.md: D3, D12, D14"
+      ],
+      "pedido_melhoria": "Abrir o próximo ciclo 4F de aidd-visual-maps para as dimensões D3, D12, D14."
+    },
+    {
       "id": "CAT-declarados-fora-do-commit",
-      "titulo": "6 guardas declarados em lei que não rodam no commit",
+      "titulo": "5 guardas declarados em lei que não rodam no commit",
       "gravidade": "media",
       "estado": "aberto",
       "origem": "catalogo",
@@ -51,26 +51,23 @@
         "Lei #9: G_aidd_plan",
         "Lei #9: G_aidd_planner_runner",
         "Lei #9: G_aidd_session",
-        "Lei #9: G_modularizacao_vsa",
         "Lei #14: G_GRAPH_FIRST"
       ],
       "pedido_melhoria": "Colocar no pre-commit os guardas declarados nas leis, ou rebaixar a declaração."
     },
     {
       "id": "CAT-gates-versoes",
-      "titulo": "12 guardas com o mesmo nome e código diferente",
+      "titulo": "10 guardas com o mesmo nome e código diferente",
       "gravidade": "media",
       "estado": "aberto",
       "origem": "catalogo",
       "mapa": "guardas",
       "evidencia": [
-        "G_AST_BOUNDED_CONTEXT",
         "G_BLOQUEAR_SEGREDOS",
         "G_CONTRACTS",
         "G_CYBERSECURITY_OWASP",
         "G_DETERMINISMO_LEI_1",
         "G_PERFORMANCE",
-        "G_PORTAO_PROVA_QUE_MORDE",
         "G_QUARTETO_SINE_QUA_NON",
         "G_SAIDA_BINARIA",
         "G_SEGREDOS",
@@ -285,6 +282,18 @@
       "pedido_melhoria": "Completar ou fechar o ciclo aidd-skills/ciclo-02."
     },
     {
+      "id": "CAT-ciclo-aidd-visual-maps-ciclo-01",
+      "titulo": "Ciclo de auditoria sem todos os documentos: aidd-visual-maps/ciclo-01",
+      "gravidade": "baixa",
+      "estado": "aberto",
+      "origem": "catalogo",
+      "mapa": "oficina",
+      "evidencia": [
+        "faltam: laudo_revisado"
+      ],
+      "pedido_melhoria": "Completar ou fechar o ciclo aidd-visual-maps/ciclo-01."
+    },
+    {
       "id": "CAT-ciclo-calibracao-pipeline-ciclo-01",
       "titulo": "Ciclo de auditoria sem todos os documentos: calibracao-pipeline/ciclo-01",
       "gravidade": "baixa",
@@ -376,13 +385,13 @@
       "origem": "catalogo",
       "mapa": "leis",
       "evidencia": [
-        "G_AST_BOUNDED_CONTEXT"
+        "G_COPIA_UNICA_VSA"
       ],
       "pedido_melhoria": "Amarrar cada guarda da raiz à lei que ele prova no AGENTS.md."
     },
     {
       "id": "CAT-scripts-sem-chamador",
-      "titulo": "5 scripts que nenhum código chama",
+      "titulo": "4 scripts que nenhum código chama",
       "gravidade": "baixa",
       "estado": "aberto",
       "origem": "catalogo",
@@ -391,8 +400,7 @@
         "buscar_referencia_complexa",
         "checar_combos_vps",
         "gerar_benchmark_comparativo",
-        "gerar_benchmark_extremo",
-        "validador_fatias_vsa"
+        "gerar_benchmark_extremo"
       ],
       "pedido_melhoria": "Ligar ao painel ou remover os scripts de scripts/ que nenhum código chama."
     },

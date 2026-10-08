@@ -16,12 +16,15 @@
     "skills_terceiros_registradas": 15,
     "comandos_slash": 19,
     "mcps_registrados": 11,
-    "mcps_internos": 3,
-    "hooks": 3,
-    "gates_nomes": 104,
-    "gates_arquivos": 203,
+    "mcps_internos": 5,
+    "hooks": 5,
+    "gates_nomes": 105,
+    "gates_arquivos": 133,
     "contratos": 9,
     "etapas_receita": 7,
+    "pipelines": 9,
+    "modulos": 4,
+    "agentes": 9,
     "encaixes_quebrados": 0
   },
   "ferramentas": [
@@ -136,7 +139,7 @@
         "verificar-drift"
       ],
       "gates_proprios": [
-        "modulos/03-plataforma-e-entrega/fatiamento-master/aidd-master/scripts/gates/G_AST_BOUNDED_CONTEXT.py"
+        "modulos/03-plataforma-e-entrega/fatiamento-master/aidd-master/scripts/gates/G_AST_IMPORT_GUARD.py"
       ],
       "mcps_proprios": [],
       "arquivos_py": 125
@@ -276,7 +279,7 @@
     },
     {
       "id": "aidd-dependencies",
-      "descricao": "Registers, installs and verifies third-party skills and MCP servers the agent itself uses in this repository (e.g. impeccable, Cloudflare skills, Playwright, GitHub) through gates/dependencias_externas.json. Use when the user wants to bootstrap after a clone, add a third-party skill or MCP, or says \"/dependencia\", \"dependência\", \"instalar skill de terceiro\", \"adicionar MCP\". Not for MCPs that ship inside a generated product (that is aidd-mcp).",
+      "descricao": "Registers, installs and verifies third-party skills and MCP servers the agent itself uses in this repository (e.g. impeccable, Cloudflare skills, Playwright, GitHub) through modulos/04-nucleo-compartilhado/contracts/dependencias_externas.json. Use when the user wants to bootstrap after a clone, add a third-party skill or MCP, or says \"/dependencia\", \"dependência\", \"instalar skill de terceiro\", \"adicionar MCP\". Not for MCPs that ship inside a generated product (that is aidd-mcp).",
       "linhas": 58,
       "terceiro": false
     },
@@ -481,7 +484,7 @@
     {
       "id": "aidd-visual-maps",
       "descricao": "Builds or updates a visual map of one ecosystem piece type (guards, skills...) in docs/mapas-visuais/ from a PT-BR molde plus data read from the parts catalog, with tests that prove the generator bites. Use when the user wants a new map, to refresh a stale map, or says \"mapa visual\", \"novo mapa\", \"mapa das skills\", \"mapa dos guardas\", \"atualizar mapa\".",
-      "linhas": 72,
+      "linhas": 84,
       "terceiro": false
     },
     {
@@ -851,6 +854,11 @@
           "visivel": true
         },
         {
+          "gate": "G_aidd_visual_maps",
+          "forca": "provado",
+          "visivel": true
+        },
+        {
           "gate": "G_aidd_session",
           "forca": "provado",
           "visivel": true
@@ -871,7 +879,7 @@
           "visivel": true
         },
         {
-          "gate": "G_modularizacao_vsa",
+          "gate": "G_MODULO_FRONTEIRA",
           "forca": "provado",
           "visivel": true
         }
@@ -1700,6 +1708,28 @@
         }
       },
       {
+        "alvo": "aidd-visual-maps",
+        "ciclo": "ciclo-01",
+        "laudo": "docs/auditoria/aidd-visual-maps/ciclo-01/LAUDO-15D-INICIAL.md",
+        "dimensoes": {
+          "1": "descrito",
+          "2": "parcial",
+          "3": "falha",
+          "4": "descrito",
+          "5": "descrito",
+          "6": "descrito",
+          "7": "descrito",
+          "8": "descrito",
+          "9": "descrito",
+          "10": "descrito",
+          "11": "descrito",
+          "12": "falha",
+          "13": "descrito",
+          "14": "falha",
+          "15": "parcial"
+        }
+      },
+      {
         "alvo": "code-review-graph",
         "ciclo": "ciclo-01",
         "laudo": "docs/auditoria/code-review-graph/ciclo-01/LAUDO-15D-REVISADO.md",
@@ -2519,6 +2549,18 @@
         "nota": "10"
       },
       {
+        "alvo": "aidd-visual-maps",
+        "ciclo": "ciclo-01",
+        "caminho": "docs/auditoria/aidd-visual-maps/ciclo-01",
+        "fases": {
+          "laudo_inicial": true,
+          "plano_evolucao": true,
+          "laudo_revisado": false,
+          "dod": true
+        },
+        "nota": ""
+      },
+      {
         "alvo": "calibracao-pipeline",
         "ciclo": "ciclo-01",
         "caminho": "docs/auditoria/calibracao-pipeline/ciclo-01",
@@ -2735,9 +2777,10 @@
       ]
     },
     {
-      "id": "analisador_acoplamento_vsa",
-      "descricao": "Motor Analítico Determinístico de Acoplamento (VSA).",
+      "id": "atualizar_baseline_segredos",
+      "descricao": "Atualiza o .secrets.baseline (comando explícito, separado do gate G_SEGREDOS).",
       "chamado_por": [
+        "guardas",
         "testes"
       ]
     },
@@ -2760,6 +2803,7 @@
       "id": "catalogo_pecas",
       "descricao": "Catálogo de peças do Ecossistema AIDD (mapa-pecas ciclo-01, passo 1).",
       "chamado_por": [
+        "guardas",
         "scripts",
         "testes"
       ]
@@ -2799,6 +2843,8 @@
       "id": "compilar_mapas_nao_tecnicos",
       "descricao": "Compilador dos mapas visuais da versão NÃO-TÉCNICA (docs/mapas-visuais/nao-tecnicos).",
       "chamado_por": [
+        "guardas",
+        "scripts",
         "testes"
       ]
     },
@@ -2812,6 +2858,14 @@
     {
       "id": "e2e_foto",
       "descricao": "Foto E2E repetível e comparação automática do ecossistema-aidd (Ticket 2, D12).",
+      "chamado_por": [
+        "scripts",
+        "testes"
+      ]
+    },
+    {
+      "id": "escopo_escrita_mapas",
+      "descricao": "Escopo de escrita dos mapas visuais (aidd-visual-maps, D3 / DoD 2).",
       "chamado_por": [
         "scripts",
         "testes"
@@ -2928,9 +2982,10 @@
       ]
     },
     {
-      "id": "handoff_vsa",
-      "descricao": "Output Consolidado e Handoff Estruturado (VSA).",
+      "id": "gravacao_atomica_mapas",
+      "descricao": "Gravação atômica de um lote de arquivos dos mapas visuais (aidd-visual-maps, D14).",
       "chamado_por": [
+        "scripts",
         "testes"
       ]
     },
@@ -2945,13 +3000,6 @@
     {
       "id": "inventario_capacidades",
       "descricao": "Inventário de capacidades de modulos/ e componentes/ (fronteiras-ferramentas ciclo-01, Ticket 3).",
-      "chamado_por": [
-        "testes"
-      ]
-    },
-    {
-      "id": "isolamento_vsa",
-      "descricao": "Isolamento de Raio de Impacto e Worktree Efêmera (VSA).",
       "chamado_por": [
         "testes"
       ]
@@ -2973,9 +3021,20 @@
       ]
     },
     {
+      "id": "mapa_gates",
+      "descricao": "Leitor único do mapa de donos dos gates (ciclo-03 VSA, decisão C).",
+      "chamado_por": [
+        "guardas",
+        "painel",
+        "scripts",
+        "testes"
+      ]
+    },
+    {
       "id": "mapa_visual",
       "descricao": "Gerador dos mapas visuais (docs/mapas-visuais), um por tipo de peça.",
       "chamado_por": [
+        "guardas",
         "scripts",
         "testes"
       ]
@@ -2998,8 +3057,8 @@
       ]
     },
     {
-      "id": "observabilidade_vsa",
-      "descricao": "Observabilidade, Métricas e Orçamento de Tokens (VSA).",
+      "id": "micro_gates_worktree",
+      "descricao": "Suíte de Micro-Gates Determinísticos de Worktree (Shift-Left).",
       "chamado_por": [
         "testes"
       ]
@@ -3052,6 +3111,7 @@
       "id": "reconciliar_copias_vsa",
       "descricao": "Relatório determinístico de divergência entre tools/ e modulos/ (ciclo-03 VSA, Ticket 1).",
       "chamado_por": [
+        "scripts",
         "testes"
       ]
     },
@@ -3072,16 +3132,10 @@
       ]
     },
     {
-      "id": "resiliencia_vsa",
-      "descricao": "Tratamento de Exceções e Resiliência Operacional (VSA).",
+      "id": "resiliencia_mapas",
+      "descricao": "Retry de I/O e falha estruturada dos mapas visuais (aidd-visual-maps, D11).",
       "chamado_por": [
-        "testes"
-      ]
-    },
-    {
-      "id": "rollback_vsa",
-      "descricao": "Limpeza Determinística e Rollback Transacional (VSA).",
-      "chamado_por": [
+        "scripts",
         "testes"
       ]
     },
@@ -3103,9 +3157,12 @@
       ]
     },
     {
-      "id": "validador_fatias_vsa",
-      "descricao": "Validador Determinístico de Fatias Verticais VSA e Autocontenção Fractal.",
-      "chamado_por": []
+      "id": "telemetria_mapas",
+      "descricao": "Telemetria de execução dos mapas visuais (aidd-visual-maps, D12).",
+      "chamado_por": [
+        "scripts",
+        "testes"
+      ]
     },
     {
       "id": "validador_fractalidade_vsa",
@@ -3594,6 +3651,18 @@
         "ferramenta": "aidd-pure",
         "caminho": "modulos/02-triade-motores/fluxo-01-pure/core/aidd-pure/mcps/mcp-verificador-cve/server.py",
         "registrado_em_config": true
+      },
+      {
+        "id": "mobbin_mcp",
+        "ferramenta": "componentes",
+        "caminho": "componentes/compartilhado/mcps/mobbin_mcp/server.py",
+        "registrado_em_config": true
+      },
+      {
+        "id": "mcp-gatekeeper",
+        "ferramenta": "componentes",
+        "caminho": "componentes/compartilhado/src-core/mcp_gatekeeper.py",
+        "registrado_em_config": true
       }
     ]
   },
@@ -3601,17 +3670,32 @@
     {
       "evento": "PreToolUse",
       "matcher": "Task|Agent",
-      "script": ".claude/hooks/anti_headless_subagent_hook.py"
+      "script": ".claude/hooks/anti_headless_subagent_hook.py",
+      "status": "ligado no settings.json"
     },
     {
       "evento": "PostToolUse",
       "matcher": "Edit|Write",
-      "script": ".claude/hooks/cbm_update.py"
+      "script": ".claude/hooks/cbm_update.py",
+      "status": "ligado no settings.json"
     },
     {
       "evento": "SessionStart",
       "matcher": "",
-      "script": ".claude/hooks/cbm_session_start.py"
+      "script": ".claude/hooks/cbm_session_start.py",
+      "status": "ligado no settings.json"
+    },
+    {
+      "evento": "sem gatilho",
+      "matcher": "",
+      "script": ".claude/hooks/aidd_session_auto_hook.py",
+      "status": "sem gatilho no settings.json"
+    },
+    {
+      "evento": "sem gatilho",
+      "matcher": "",
+      "script": ".claude/hooks/regra10_check.py",
+      "status": "sem gatilho no settings.json"
     }
   ],
   "gates": [
@@ -3620,14 +3704,9 @@
       "descricao": "Varre entrega/legado por resíduo lovable|supabase|firebase e dirs `.lovable/`, `supabase/`. Nunca apaga (Lei #7). Allowlist: lockin-allowlist.txt (Lei #8).",
       "copias": [
         {
-          "caminho": "gates/G_ANT_LOCKIN_LEGADO.py",
-          "versao": "A",
-          "papel": "ecossistema"
-        },
-        {
           "caminho": "modulos/02-triade-motores/fluxo-03-freedom/gates/G_ANT_LOCKIN_LEGADO.py",
           "versao": "A",
-          "papel": "componente"
+          "papel": "ecossistema"
         }
       ],
       "versoes_distintas": 1,
@@ -3657,14 +3736,9 @@
       "descricao": "Gate estatico via AST que valida conformidade com Clean Architecture e DDD nos deliverables (templates e modulos de software gerados pelas ferramentas).",
       "copias": [
         {
-          "caminho": "gates/G_ARQUITETURA_DELIVERABLE.py",
-          "versao": "A",
-          "papel": "ecossistema"
-        },
-        {
           "caminho": "modulos/03-plataforma-e-entrega/gates/G_ARQUITETURA_DELIVERABLE.py",
           "versao": "A",
-          "papel": "componente"
+          "papel": "ecossistema"
         }
       ],
       "versoes_distintas": 1,
@@ -3675,23 +3749,18 @@
       ]
     },
     {
-      "id": "G_AST_BOUNDED_CONTEXT",
-      "descricao": "Analisa a AST de todos os módulos de modulos/ e bloqueia qualquer acoplamento ou importação direta cruzada não-autorizada entre domínios independentes.",
+      "id": "G_AST_IMPORT_GUARD",
+      "descricao": "Analisa a AST de todos os arquivos em src/modules/ e bloqueia qualquer importacao direta cruzada entre dominios de negocio distintos (ex: modulo crm importando modulo erp diretamente sem passar pelo…",
       "copias": [
         {
-          "caminho": "gates/G_AST_BOUNDED_CONTEXT.py",
+          "caminho": "modulos/03-plataforma-e-entrega/fatiamento-master/aidd-master/scripts/gates/G_AST_IMPORT_GUARD.py",
           "versao": "A",
-          "papel": "ecossistema"
-        },
-        {
-          "caminho": "modulos/03-plataforma-e-entrega/fatiamento-master/aidd-master/scripts/gates/G_AST_BOUNDED_CONTEXT.py",
-          "versao": "B",
           "papel": "ferramenta"
         }
       ],
-      "versoes_distintas": 2,
+      "versoes_distintas": 1,
       "no_pre_commit": false,
-      "prova_que_morde": true,
+      "prova_que_morde": null,
       "leis": []
     },
     {
@@ -3799,14 +3868,9 @@
       "descricao": "Detecta divergência entre flags de CLI realmente definidas via `argparse.add_argument(...)` e flags citadas em mensagens de erro/print dentro do mesmo arquivo (Pacote 1 —…",
       "copias": [
         {
-          "caminho": "gates/G_CLI_HELP_CONSISTENCIA.py",
-          "versao": "A",
-          "papel": "ecossistema"
-        },
-        {
           "caminho": "modulos/04-nucleo-compartilhado/gates/G_CLI_HELP_CONSISTENCIA.py",
           "versao": "A",
-          "papel": "componente"
+          "papel": "ecossistema"
         }
       ],
       "versoes_distintas": 1,
@@ -3821,14 +3885,9 @@
       "descricao": "Audita se todo componente novo ou modificado (detectado via git diff / status) possui cobertura completa em todas as pastas de harness exigidas pelo manifesto canonico…",
       "copias": [
         {
-          "caminho": "gates/G_COMPONENTE_AGNOSTICO.py",
-          "versao": "A",
-          "papel": "ecossistema"
-        },
-        {
           "caminho": "modulos/02-triade-motores/fluxo-02-open/gates/G_COMPONENTE_AGNOSTICO.py",
           "versao": "A",
-          "papel": "componente"
+          "papel": "ecossistema"
         }
       ],
       "versoes_distintas": 1,
@@ -3868,14 +3927,9 @@
       "descricao": "Portão determinístico de prevenção de Contract Rot. Compara a árvore de rotas e formatos de resposta expostos pelo servidor em execução com o contrato canônico openapi.json commitado.",
       "copias": [
         {
-          "caminho": "gates/G_CONTRACT_ROT.py",
-          "versao": "A",
-          "papel": "ecossistema"
-        },
-        {
           "caminho": "modulos/03-plataforma-e-entrega/gates/G_CONTRACT_ROT.py",
           "versao": "A",
-          "papel": "componente"
+          "papel": "ecossistema"
         }
       ],
       "versoes_distintas": 1,
@@ -3892,12 +3946,12 @@
         {
           "caminho": "modulos/04-nucleo-compartilhado/gates/G_COPIA_UNICA_VSA.py",
           "versao": "A",
-          "papel": "componente"
+          "papel": "ecossistema"
         }
       ],
       "versoes_distintas": 1,
-      "no_pre_commit": false,
-      "prova_que_morde": null,
+      "no_pre_commit": true,
+      "prova_que_morde": true,
       "leis": []
     },
     {
@@ -3930,14 +3984,9 @@
       "descricao": "PLAN-0018 fase 04 (pin-exato-e-hashes-requirements-lockfile — SEC-4): requirements.txt/requirements-dev.txt usavam `>=` solto, permitindo que",
       "copias": [
         {
-          "caminho": "gates/G_DEPENDENCIAS_PIN_HASH.py",
-          "versao": "A",
-          "papel": "ecossistema"
-        },
-        {
           "caminho": "modulos/04-nucleo-compartilhado/gates/G_DEPENDENCIAS_PIN_HASH.py",
           "versao": "A",
-          "papel": "componente"
+          "papel": "ecossistema"
         }
       ],
       "versoes_distintas": 1,
@@ -3957,11 +4006,6 @@
           "papel": "componente"
         },
         {
-          "caminho": "gates/G_DETERMINISMO_LEI_1.py",
-          "versao": "B",
-          "papel": "ecossistema"
-        },
-        {
           "caminho": "modulos/01-governanca-e-qualidade/core/aidd-forge/aidd_forge/templates/gates/G_DETERMINISMO_LEI_1.py",
           "versao": "A",
           "papel": "entrega"
@@ -3969,7 +4013,7 @@
         {
           "caminho": "modulos/01-governanca-e-qualidade/gates/G_DETERMINISMO_LEI_1.py",
           "versao": "B",
-          "papel": "componente"
+          "papel": "ecossistema"
         }
       ],
       "versoes_distintas": 2,
@@ -3984,14 +4028,9 @@
       "descricao": "Auditoria de Disciplina de Teste e Validação de Ferramentas. Valida deterministicamente o cumprimento do ciclo de 5 passos definido em docs/protocolos/PROTOCOLO-TESTES-FERRAMENTAS.md, bloqueando…",
       "copias": [
         {
-          "caminho": "gates/G_DISCIPLINA_TESTE_FERRAMENTA.py",
-          "versao": "A",
-          "papel": "ecossistema"
-        },
-        {
           "caminho": "modulos/01-governanca-e-qualidade/gates/G_DISCIPLINA_TESTE_FERRAMENTA.py",
           "versao": "A",
-          "papel": "componente"
+          "papel": "ecossistema"
         }
       ],
       "versoes_distintas": 1,
@@ -4006,14 +4045,9 @@
       "descricao": "Portão determinístico de validação formal de manifestos de despacho topológico de fatias verticais (VSA) pelas engines da Tríade Canônica (pure, open, freedom).",
       "copias": [
         {
-          "caminho": "gates/G_DISPATCH_PIPELINE_VSA.py",
-          "versao": "A",
-          "papel": "ecossistema"
-        },
-        {
           "caminho": "modulos/03-plataforma-e-entrega/gates/G_DISPATCH_PIPELINE_VSA.py",
           "versao": "A",
-          "papel": "componente"
+          "papel": "ecossistema"
         }
       ],
       "versoes_distintas": 1,
@@ -4028,14 +4062,9 @@
       "descricao": "Verifica: Links relativos quebrados em documentações vivas (docs/protocolos, docs/ e READMEs principais).",
       "copias": [
         {
-          "caminho": "gates/G_DOCS_ROT.py",
-          "versao": "A",
-          "papel": "ecossistema"
-        },
-        {
           "caminho": "modulos/01-governanca-e-qualidade/gates/G_DOCS_ROT.py",
           "versao": "A",
-          "papel": "componente"
+          "papel": "ecossistema"
         }
       ],
       "versoes_distintas": 1,
@@ -4050,14 +4079,9 @@
       "descricao": "Detecta redundâncias estruturais e duplicidade de assinaturas de funções entre fatias verticais VSA (features).",
       "copias": [
         {
-          "caminho": "gates/G_DRIFT_ANALYZER.py",
-          "versao": "A",
-          "papel": "ecossistema"
-        },
-        {
           "caminho": "modulos/04-nucleo-compartilhado/gates/G_DRIFT_ANALYZER.py",
           "versao": "A",
-          "papel": "componente"
+          "papel": "ecossistema"
         }
       ],
       "versoes_distintas": 1,
@@ -4072,14 +4096,9 @@
       "descricao": "Detecta divergência silenciosa entre pares de diretórios que nasceram da mesma linhagem e compartilham arquivos byte-a-byte idênticos (R3 do PLANO-CORRECAO-RISCOS-ECOSSISTEMA-AIDD.md, ampliado pelo…",
       "copias": [
         {
-          "caminho": "gates/G_DRIFT_NUCLEO_COMPARTILHADO.py",
-          "versao": "A",
-          "papel": "ecossistema"
-        },
-        {
           "caminho": "modulos/04-nucleo-compartilhado/gates/G_DRIFT_NUCLEO_COMPARTILHADO.py",
           "versao": "A",
-          "papel": "componente"
+          "papel": "ecossistema"
         }
       ],
       "versoes_distintas": 1,
@@ -4094,14 +4113,9 @@
       "descricao": "Validação determinística de integridade do meta-repositório ecossistema-aidd. Audita: Existência e integridade estrutural das ferramentas em modulos/ (pasta do mapa de donos)",
       "copias": [
         {
-          "caminho": "gates/G_ECOSSISTEMA_INTEGRIDADE.py",
-          "versao": "A",
-          "papel": "ecossistema"
-        },
-        {
           "caminho": "modulos/04-nucleo-compartilhado/gates/G_ECOSSISTEMA_INTEGRIDADE.py",
           "versao": "A",
-          "papel": "componente"
+          "papel": "ecossistema"
         }
       ],
       "versoes_distintas": 1,
@@ -4116,14 +4130,9 @@
       "descricao": "Quality Gate determinístico de prevenção a Config & Environment Rot. Audita via AST (Abstract Syntax Tree) todas as chamadas de variáveis de ambiente no código-fonte (Python: os.getenv, os.environ;…",
       "copias": [
         {
-          "caminho": "gates/G_ENV_ROT.py",
-          "versao": "A",
-          "papel": "ecossistema"
-        },
-        {
           "caminho": "modulos/04-nucleo-compartilhado/gates/G_ENV_ROT.py",
           "versao": "A",
-          "papel": "componente"
+          "papel": "ecossistema"
         }
       ],
       "versoes_distintas": 1,
@@ -4138,14 +4147,9 @@
       "descricao": "Verificação determinística (AST) de que os pontos críticos de gravação de filesystem utilizam o módulo `escritor_atomico` ao invés de `open(..., 'w')` direto.",
       "copias": [
         {
-          "caminho": "gates/G_ESCRITOR_ATOMICO.py",
-          "versao": "A",
-          "papel": "ecossistema"
-        },
-        {
           "caminho": "modulos/04-nucleo-compartilhado/gates/G_ESCRITOR_ATOMICO.py",
           "versao": "A",
-          "papel": "componente"
+          "papel": "ecossistema"
         }
       ],
       "versoes_distintas": 1,
@@ -4195,14 +4199,9 @@
       "descricao": "Auditoria de Persistência Estruturada de Estado de Orquestração. Valida deterministicamente que as ferramentas de orquestração do ecossistema persistem seu estado em formatos estruturados (JSON…",
       "copias": [
         {
-          "caminho": "gates/G_ESTRUTURA_ESTADO.py",
-          "versao": "A",
-          "papel": "ecossistema"
-        },
-        {
           "caminho": "modulos/04-nucleo-compartilhado/gates/G_ESTRUTURA_ESTADO.py",
           "versao": "A",
-          "papel": "componente"
+          "papel": "ecossistema"
         }
       ],
       "versoes_distintas": 1,
@@ -4307,14 +4306,9 @@
       "descricao": "Gate de fronteira das 8 ferramentas em modo aviso (Ticket 6).",
       "copias": [
         {
-          "caminho": "gates/G_FRONTEIRA_FERRAMENTAS.py",
-          "versao": "A",
-          "papel": "ecossistema"
-        },
-        {
           "caminho": "modulos/04-nucleo-compartilhado/gates/G_FRONTEIRA_FERRAMENTAS.py",
           "versao": "A",
-          "papel": "componente"
+          "papel": "ecossistema"
         }
       ],
       "versoes_distintas": 1,
@@ -4329,14 +4323,9 @@
       "descricao": "Validação estática de separação de camadas nas entregas e templates de Frontend. Imposição de Arquitetura: Componentes visuais puros (Dumb Components em 'components/ui/') são",
       "copias": [
         {
-          "caminho": "gates/G_FRONTEND_LAYERS.py",
-          "versao": "A",
-          "papel": "ecossistema"
-        },
-        {
           "caminho": "modulos/02-triade-motores/fluxo-01-pure/gates/G_FRONTEND_LAYERS.py",
           "versao": "A",
-          "papel": "componente"
+          "papel": "ecossistema"
         }
       ],
       "versoes_distintas": 1,
@@ -4351,14 +4340,9 @@
       "descricao": "Valida a integridade determinística do subsistema de rastreamento de sessões: scripts/gestor_sessoes.py deve existir e compilar via AST sem erros.",
       "copias": [
         {
-          "caminho": "gates/G_GESTOR_SESSOES.py",
-          "versao": "A",
-          "papel": "ecossistema"
-        },
-        {
           "caminho": "modulos/04-nucleo-compartilhado/gates/G_GESTOR_SESSOES.py",
           "versao": "A",
-          "papel": "componente"
+          "papel": "ecossistema"
         }
       ],
       "versoes_distintas": 1,
@@ -4373,14 +4357,9 @@
       "descricao": "Lê o histórico do agente que trabalhou numa worktree e reprova se ele pesquisou o código sem nenhuma chamada ao codebase-memory-mcp. Bloco 2 de fronteiras-ferramentas (2026-10-02): o claude da Fase 8…",
       "copias": [
         {
-          "caminho": "gates/G_GRAPH_FIRST.py",
-          "versao": "A",
-          "papel": "ecossistema"
-        },
-        {
           "caminho": "modulos/04-nucleo-compartilhado/gates/G_GRAPH_FIRST.py",
           "versao": "A",
-          "papel": "componente"
+          "papel": "ecossistema"
         }
       ],
       "versoes_distintas": 1,
@@ -4395,14 +4374,9 @@
       "descricao": "Audita estaticamente todos os Dockerfiles do repositório (e os gerados pelas ferramentas do ecossistema) utilizando o Hadolint (Haskell Dockerfile Linter), garantindo melhores práticas OCI, segurança…",
       "copias": [
         {
-          "caminho": "gates/G_HADOLINT.py",
-          "versao": "A",
-          "papel": "ecossistema"
-        },
-        {
           "caminho": "modulos/02-triade-motores/fluxo-02-open/gates/G_HADOLINT.py",
           "versao": "A",
-          "papel": "componente"
+          "papel": "ecossistema"
         }
       ],
       "versoes_distintas": 1,
@@ -4417,14 +4391,9 @@
       "descricao": "Portão de transição melhoria -> plan consumido pelo orquestrador.",
       "copias": [
         {
-          "caminho": "gates/G_HANDOFF_MELHORIA.py",
-          "versao": "A",
-          "papel": "ecossistema"
-        },
-        {
           "caminho": "modulos/01-governanca-e-qualidade/gates/G_HANDOFF_MELHORIA.py",
           "versao": "A",
-          "papel": "componente"
+          "papel": "ecossistema"
         }
       ],
       "versoes_distintas": 1,
@@ -4454,11 +4423,6 @@
           "papel": "componente"
         },
         {
-          "caminho": "gates/G_HARNESS_COMPAT.py",
-          "versao": "D",
-          "papel": "ecossistema"
-        },
-        {
           "caminho": "modulos/01-governanca-e-qualidade/core/aidd-forge/aidd_forge/templates/gates/G_HARNESS_COMPAT.py",
           "versao": "B",
           "papel": "entrega"
@@ -4466,7 +4430,7 @@
         {
           "caminho": "modulos/04-nucleo-compartilhado/gates/G_HARNESS_COMPAT.py",
           "versao": "D",
-          "papel": "componente"
+          "papel": "ecossistema"
         }
       ],
       "versoes_distintas": 4,
@@ -4481,14 +4445,9 @@
       "descricao": "Verificacao mecanica da Regra de Ouro #9 (AGENTS.md §2, \"Honestidade de Rotulo\"): nenhuma mensagem de saida de gate/CLI pode usar linguagem que sugira certificacao/seguranca maior do que a cobertura…",
       "copias": [
         {
-          "caminho": "gates/G_HONESTIDADE_ROTULO.py",
-          "versao": "A",
-          "papel": "ecossistema"
-        },
-        {
           "caminho": "modulos/04-nucleo-compartilhado/gates/G_HONESTIDADE_ROTULO.py",
           "versao": "A",
-          "papel": "componente"
+          "papel": "ecossistema"
         }
       ],
       "versoes_distintas": 1,
@@ -4503,14 +4462,9 @@
       "descricao": "Verificação mecânica determinística da Lei #4 (AGENTS.md §2, \"Extreme Token Economy: Minimalist prompts, compact English core rules, dense PT-BR user responses only when requested\").",
       "copias": [
         {
-          "caminho": "gates/G_IDIOMA_LEI_4.py",
-          "versao": "A",
-          "papel": "ecossistema"
-        },
-        {
           "caminho": "modulos/04-nucleo-compartilhado/gates/G_IDIOMA_LEI_4.py",
           "versao": "A",
-          "papel": "componente"
+          "papel": "ecossistema"
         }
       ],
       "versoes_distintas": 1,
@@ -4525,14 +4479,9 @@
       "descricao": "Audita a integridade estática, sintática, de segurança e topológica dos arquivos de orquestração Docker Compose e scripts de banco de dados do aidd-ops, delegando a análise de segurança e…",
       "copias": [
         {
-          "caminho": "gates/G_INFRA_COMPOSE.py",
+          "caminho": "modulos/03-plataforma-e-entrega/gates/G_INFRA_COMPOSE.py",
           "versao": "A",
           "papel": "ecossistema"
-        },
-        {
-          "caminho": "modulos/02-triade-motores/fluxo-02-open/gates/G_INFRA_COMPOSE.py",
-          "versao": "A",
-          "papel": "componente"
         }
       ],
       "versoes_distintas": 1,
@@ -4597,14 +4546,9 @@
       "descricao": "Auditoria estática de isolamento de fatias verticais (Vertical Slice Architecture - VSA).",
       "copias": [
         {
-          "caminho": "gates/G_ISOLATION_AUDIT.py",
-          "versao": "A",
-          "papel": "ecossistema"
-        },
-        {
           "caminho": "modulos/03-plataforma-e-entrega/gates/G_ISOLATION_AUDIT.py",
           "versao": "A",
-          "papel": "componente"
+          "papel": "ecossistema"
         }
       ],
       "versoes_distintas": 1,
@@ -4619,14 +4563,9 @@
       "descricao": "Bloqueia entrega do usuário gerada sob `<clone>/projetos/` quando existe projeto legado irmão (a regra do livro: projeto nasce irmão do clone).",
       "copias": [
         {
-          "caminho": "gates/G_LAYOUT_ENTREGA.py",
-          "versao": "A",
-          "papel": "ecossistema"
-        },
-        {
           "caminho": "modulos/03-plataforma-e-entrega/gates/G_LAYOUT_ENTREGA.py",
           "versao": "A",
-          "papel": "componente"
+          "papel": "ecossistema"
         }
       ],
       "versoes_distintas": 1,
@@ -4641,14 +4580,9 @@
       "descricao": "Meta-Quality Gate que audita e bloqueia se qualquer Lei Inviolável em AGENTS.md não declarar explicitamente seu portão verificador ou a ausência deliberada dele, junto com o nível de força de…",
       "copias": [
         {
-          "caminho": "gates/G_LEI_DECLARA_PORTAO.py",
-          "versao": "A",
-          "papel": "ecossistema"
-        },
-        {
           "caminho": "modulos/01-governanca-e-qualidade/gates/G_LEI_DECLARA_PORTAO.py",
           "versao": "A",
-          "papel": "componente"
+          "papel": "ecossistema"
         }
       ],
       "versoes_distintas": 1,
@@ -4663,14 +4597,9 @@
       "descricao": "Audita deterministicamente o livro-texto gerado para um projeto, impedindo que ele afirme o que nao pode provar.",
       "copias": [
         {
-          "caminho": "gates/G_LIVRO_EVIDENCIA.py",
-          "versao": "A",
-          "papel": "ecossistema"
-        },
-        {
           "caminho": "modulos/04-nucleo-compartilhado/gates/G_LIVRO_EVIDENCIA.py",
           "versao": "A",
-          "papel": "componente"
+          "papel": "ecossistema"
         }
       ],
       "versoes_distintas": 1,
@@ -4685,14 +4614,9 @@
       "descricao": "Auditoria de Blindagem e Sanitização Anti-Prompt Injection em Clientes LLM.",
       "copias": [
         {
-          "caminho": "gates/G_LLM_PROMPT_SHIELD.py",
-          "versao": "A",
-          "papel": "ecossistema"
-        },
-        {
           "caminho": "modulos/04-nucleo-compartilhado/gates/G_LLM_PROMPT_SHIELD.py",
           "versao": "A",
-          "papel": "componente"
+          "papel": "ecossistema"
         }
       ],
       "versoes_distintas": 1,
@@ -4707,14 +4631,9 @@
       "descricao": "Quality Gate determinístico de prevenção a Migration Rot. Garante que toda migração de banco de dados seja idempotente, possua rollback funcional e completo (downgrade) e convirja perfeitamente para…",
       "copias": [
         {
-          "caminho": "gates/G_MIGRATION_ROT.py",
-          "versao": "A",
-          "papel": "ecossistema"
-        },
-        {
           "caminho": "modulos/02-triade-motores/fluxo-03-freedom/gates/G_MIGRATION_ROT.py",
           "versao": "A",
-          "papel": "componente"
+          "papel": "ecossistema"
         }
       ],
       "versoes_distintas": 1,
@@ -4725,18 +4644,30 @@
       ]
     },
     {
+      "id": "G_MODULO_FRONTEIRA",
+      "descricao": "Fronteira entre fatias que morde. Varre por AST cada .py das 7 fatias de MAPA-FATIAS.json (menos o interface.py da fatia, único ponto cruzado permitido, e as pastas templates/ de moldes de projeto…",
+      "copias": [
+        {
+          "caminho": "modulos/04-nucleo-compartilhado/gates/G_MODULO_FRONTEIRA.py",
+          "versao": "A",
+          "papel": "ecossistema"
+        }
+      ],
+      "versoes_distintas": 1,
+      "no_pre_commit": true,
+      "prova_que_morde": true,
+      "leis": [
+        9
+      ]
+    },
+    {
       "id": "G_NOVE_CAMADAS_MERCADO",
       "descricao": "Portão determinístico de validação arquitetural das 9 Camadas de Mercado definidas no documento canônico: docs/padroes/PADRAO-OURO-ARQUITETURA-CAMADAS-MERCADO.md",
       "copias": [
         {
-          "caminho": "gates/G_NOVE_CAMADAS_MERCADO.py",
-          "versao": "A",
-          "papel": "ecossistema"
-        },
-        {
           "caminho": "modulos/02-triade-motores/fluxo-01-pure/gates/G_NOVE_CAMADAS_MERCADO.py",
           "versao": "A",
-          "papel": "componente"
+          "papel": "ecossistema"
         }
       ],
       "versoes_distintas": 1,
@@ -4763,7 +4694,7 @@
     },
     {
       "id": "G_OPS_SSH",
-      "descricao": "Validação estrita via AST de modulos/03-plataforma-e-entrega/operacoes-ops/aidd-ops/src/core/ssh_runner.py (NIH #15: hardening manual via paramiko substituído por Ansible + devsec.hardening):",
+      "descricao": "Validação estrita via AST de modulos/03-plataforma-e-entrega/operacoes-ops/aidd-ops/src/core_ops/ssh_runner.py (NIH #15: hardening manual via paramiko substituído por Ansible + devsec.hardening):",
       "copias": [
         {
           "caminho": "modulos/03-plataforma-e-entrega/operacoes-ops/aidd-ops/gates/G_OPS_SSH.py",
@@ -4781,14 +4712,9 @@
       "descricao": "Valida a existência, integridade, conformidade dos contratos de handoff e a capacidade de execução síncrona dos 3 fluxos canônicos do ecossistema.",
       "copias": [
         {
-          "caminho": "gates/G_ORQUESTRADOR_SINCRONO.py",
-          "versao": "A",
-          "papel": "ecossistema"
-        },
-        {
           "caminho": "modulos/04-nucleo-compartilhado/gates/G_ORQUESTRADOR_SINCRONO.py",
           "versao": "A",
-          "papel": "componente"
+          "papel": "ecossistema"
         }
       ],
       "versoes_distintas": 1,
@@ -4803,14 +4729,9 @@
       "descricao": "Falha se a árvore de distribuição (export / pacote usuário) contiver artefatos dev-only: *.db, requirements-dev*, docs/relatorios/.",
       "copias": [
         {
-          "caminho": "gates/G_PACOTE_CORE.py",
-          "versao": "A",
-          "papel": "ecossistema"
-        },
-        {
           "caminho": "modulos/04-nucleo-compartilhado/gates/G_PACOTE_CORE.py",
           "versao": "A",
-          "papel": "componente"
+          "papel": "ecossistema"
         }
       ],
       "versoes_distintas": 1,
@@ -4850,14 +4771,9 @@
       "descricao": "Portão determinístico de validação formal de manifestos de handoff de execução da Tríade Canônica (pure, open, freedom) e Planos de Evolução.",
       "copias": [
         {
-          "caminho": "gates/G_PIPELINE_HANDOFF.py",
-          "versao": "A",
-          "papel": "ecossistema"
-        },
-        {
           "caminho": "modulos/04-nucleo-compartilhado/gates/G_PIPELINE_HANDOFF.py",
           "versao": "A",
-          "papel": "componente"
+          "papel": "ecossistema"
         }
       ],
       "versoes_distintas": 1,
@@ -4917,17 +4833,12 @@
       "descricao": "Meta-Quality Gate que audita e bloqueia qualquer gate que seja entregue sem um teste automatizado que prove que ele reprova (exit 1).",
       "copias": [
         {
-          "caminho": "gates/G_PORTAO_PROVA_QUE_MORDE.py",
+          "caminho": "modulos/01-governanca-e-qualidade/gates/G_PORTAO_PROVA_QUE_MORDE.py",
           "versao": "A",
           "papel": "ecossistema"
-        },
-        {
-          "caminho": "modulos/01-governanca-e-qualidade/gates/G_PORTAO_PROVA_QUE_MORDE.py",
-          "versao": "B",
-          "papel": "componente"
         }
       ],
-      "versoes_distintas": 2,
+      "versoes_distintas": 1,
       "no_pre_commit": true,
       "prova_que_morde": true,
       "leis": [
@@ -4939,14 +4850,9 @@
       "descricao": "Auditoria de Paridade e Fallback REST vs Model Context Protocol (MCP).",
       "copias": [
         {
-          "caminho": "gates/G_PROTOCOL_FALLBACK.py",
-          "versao": "A",
-          "papel": "ecossistema"
-        },
-        {
           "caminho": "modulos/04-nucleo-compartilhado/gates/G_PROTOCOL_FALLBACK.py",
           "versao": "A",
-          "papel": "componente"
+          "papel": "ecossistema"
         }
       ],
       "versoes_distintas": 1,
@@ -4961,14 +4867,9 @@
       "descricao": "Garante o isolamento determinístico de protótipos em sandbox/ e impede a promoção direta de código experimental (vibe coding / PoC) para produção (src/ ou features/) sem cobertura de testes TDD…",
       "copias": [
         {
-          "caminho": "gates/G_PROTOTYPE_REWRITE.py",
-          "versao": "A",
-          "papel": "ecossistema"
-        },
-        {
           "caminho": "modulos/02-triade-motores/fluxo-01-pure/gates/G_PROTOTYPE_REWRITE.py",
           "versao": "A",
-          "papel": "componente"
+          "papel": "ecossistema"
         }
       ],
       "versoes_distintas": 1,
@@ -4983,14 +4884,9 @@
       "descricao": "Prova de uso real das skills alteradas no ciclo skills-pocock/ciclo-01.",
       "copias": [
         {
-          "caminho": "gates/G_PROVA_SKILLS_POCOCK.py",
-          "versao": "A",
-          "papel": "ecossistema"
-        },
-        {
           "caminho": "modulos/01-governanca-e-qualidade/gates/G_PROVA_SKILLS_POCOCK.py",
           "versao": "A",
-          "papel": "componente"
+          "papel": "ecossistema"
         }
       ],
       "versoes_distintas": 1,
@@ -5025,11 +4921,6 @@
           "papel": "componente"
         },
         {
-          "caminho": "gates/G_QUARTETO_SINE_QUA_NON.py",
-          "versao": "B",
-          "papel": "ecossistema"
-        },
-        {
           "caminho": "modulos/01-governanca-e-qualidade/core/aidd-forge/aidd_forge/templates/gates/G_QUARTETO_SINE_QUA_NON.py",
           "versao": "A",
           "papel": "entrega"
@@ -5037,7 +4928,7 @@
         {
           "caminho": "modulos/03-plataforma-e-entrega/gates/G_QUARTETO_SINE_QUA_NON.py",
           "versao": "B",
-          "papel": "componente"
+          "papel": "ecossistema"
         }
       ],
       "versoes_distintas": 2,
@@ -5052,14 +4943,9 @@
       "descricao": "Exige, quando existe raiz de entrega com README-USUARIO.md, também `RESUMO-USUARIO.md` (≤20 linhas, 3 perguntas) e `RELATORIO-TECNICO.md`.",
       "copias": [
         {
-          "caminho": "gates/G_RESUMO_USUARIO.py",
-          "versao": "A",
-          "papel": "ecossistema"
-        },
-        {
           "caminho": "modulos/04-nucleo-compartilhado/gates/G_RESUMO_USUARIO.py",
           "versao": "A",
-          "papel": "componente"
+          "papel": "ecossistema"
         }
       ],
       "versoes_distintas": 1,
@@ -5071,17 +4957,12 @@
     },
     {
       "id": "G_SAIDA_BINARIA",
-      "descricao": "Auditoria de Qualidade Binária: Verifica deterministicamente via AST que todos os Quality Gates em gates/ terminam estritamente com sys.exit(0) ou sys.exit(1). Nenhum código de saída ambíguo (2, 3,…",
+      "descricao": "Auditoria de Qualidade Binária: Verifica deterministicamente via AST que todos os Quality Gates do MAPA-GATES.json terminam estritamente com sys.exit(0) ou sys.exit(1). Nenhum código de saída ambíguo…",
       "copias": [
         {
           "caminho": "componentes/compartilhado/gates/G_SAIDA_BINARIA.py",
           "versao": "A",
           "papel": "componente"
-        },
-        {
-          "caminho": "gates/G_SAIDA_BINARIA.py",
-          "versao": "B",
-          "papel": "ecossistema"
         },
         {
           "caminho": "modulos/01-governanca-e-qualidade/core/aidd-forge/aidd_forge/templates/gates/G_SAIDA_BINARIA.py",
@@ -5091,7 +4972,7 @@
         {
           "caminho": "modulos/04-nucleo-compartilhado/gates/G_SAIDA_BINARIA.py",
           "versao": "B",
-          "papel": "componente"
+          "papel": "ecossistema"
         }
       ],
       "versoes_distintas": 2,
@@ -5126,14 +5007,9 @@
           "papel": "componente"
         },
         {
-          "caminho": "gates/G_SEGREDOS.py",
+          "caminho": "modulos/04-nucleo-compartilhado/gates/G_SEGREDOS.py",
           "versao": "B",
           "papel": "ecossistema"
-        },
-        {
-          "caminho": "modulos/03-plataforma-e-entrega/gates/G_SEGREDOS.py",
-          "versao": "B",
-          "papel": "componente"
         }
       ],
       "versoes_distintas": 2,
@@ -5178,14 +5054,9 @@
       "descricao": "Confere o formato de cada skill da fonte unica contra docs/protocolos/CONVENCAO-AUTORIA-SKILLS.md (secoes 5.1, 5.2 e 5.3).",
       "copias": [
         {
-          "caminho": "gates/G_SKILL_FORMATO.py",
-          "versao": "A",
-          "papel": "ecossistema"
-        },
-        {
           "caminho": "modulos/04-nucleo-compartilhado/gates/G_SKILL_FORMATO.py",
           "versao": "A",
-          "papel": "componente"
+          "papel": "ecossistema"
         }
       ],
       "versoes_distintas": 1,
@@ -5200,14 +5071,9 @@
       "descricao": "Quality Gate determinístico de prevenção a Skill & Tool Rot. Audita e resolve estaticamente todo caminho de arquivo, referência a script, link markdown, comando CLI e ponto de entrada de ambiente…",
       "copias": [
         {
-          "caminho": "gates/G_SKILL_ROT.py",
-          "versao": "A",
-          "papel": "ecossistema"
-        },
-        {
           "caminho": "modulos/04-nucleo-compartilhado/gates/G_SKILL_ROT.py",
           "versao": "A",
-          "papel": "componente"
+          "papel": "ecossistema"
         }
       ],
       "versoes_distintas": 1,
@@ -5227,11 +5093,6 @@
           "papel": "componente"
         },
         {
-          "caminho": "gates/G_STACK_PADRAO_OURO.py",
-          "versao": "B",
-          "papel": "ecossistema"
-        },
-        {
           "caminho": "modulos/01-governanca-e-qualidade/core/aidd-forge/aidd_forge/templates/gates/G_STACK_PADRAO_OURO.py",
           "versao": "A",
           "papel": "entrega"
@@ -5239,7 +5100,7 @@
         {
           "caminho": "modulos/02-triade-motores/fluxo-01-pure/gates/G_STACK_PADRAO_OURO.py",
           "versao": "B",
-          "papel": "componente"
+          "papel": "ecossistema"
         }
       ],
       "versoes_distintas": 2,
@@ -5254,14 +5115,9 @@
       "descricao": "PLAN-0031 fase 01: Verificação da integridade da cadeia de suprimentos e auditoria de vulnerabilidades conhecidas (CVEs / advisories) em dependências.",
       "copias": [
         {
-          "caminho": "gates/G_SUPPLY_CHAIN.py",
-          "versao": "A",
-          "papel": "ecossistema"
-        },
-        {
           "caminho": "modulos/04-nucleo-compartilhado/gates/G_SUPPLY_CHAIN.py",
           "versao": "A",
-          "papel": "componente"
+          "papel": "ecossistema"
         }
       ],
       "versoes_distintas": 1,
@@ -5276,14 +5132,9 @@
       "descricao": "Bloqueia a forma incompleta de sincronizacao de componentes em docs vivos e exige que o parser continue mapeando os aliases publicos.",
       "copias": [
         {
-          "caminho": "gates/G_SYNC_CMD_ROT.py",
-          "versao": "A",
-          "papel": "ecossistema"
-        },
-        {
           "caminho": "modulos/04-nucleo-compartilhado/gates/G_SYNC_CMD_ROT.py",
           "versao": "A",
-          "papel": "componente"
+          "papel": "ecossistema"
         }
       ],
       "versoes_distintas": 1,
@@ -5298,14 +5149,9 @@
       "descricao": "Portão determinístico de integridade dos templates do aidd-forge. Impede o apodrecimento e divergência dos artefatos injetados em novos projetos: AGENTS.md template deve conter as 13 Leis Canônicas…",
       "copias": [
         {
-          "caminho": "gates/G_TEMPLATE_FORGE_ROT.py",
-          "versao": "A",
-          "papel": "ecossistema"
-        },
-        {
           "caminho": "modulos/01-governanca-e-qualidade/gates/G_TEMPLATE_FORGE_ROT.py",
           "versao": "A",
-          "papel": "componente"
+          "papel": "ecossistema"
         }
       ],
       "versoes_distintas": 1,
@@ -5320,14 +5166,9 @@
       "descricao": "Quality Gate determinístico que valida a integridade do template canônico TanStack Offline. Regido pelas Leis #1, #6, #10 e #11 do Ecossistema AIDD.",
       "copias": [
         {
-          "caminho": "gates/G_TEMPLATE_TANSTACK_OFFLINE.py",
-          "versao": "A",
-          "papel": "ecossistema"
-        },
-        {
           "caminho": "modulos/02-triade-motores/fluxo-01-pure/gates/G_TEMPLATE_TANSTACK_OFFLINE.py",
           "versao": "A",
-          "papel": "componente"
+          "papel": "ecossistema"
         }
       ],
       "versoes_distintas": 1,
@@ -5362,11 +5203,6 @@
           "papel": "componente"
         },
         {
-          "caminho": "gates/G_TESTES_REAIS.py",
-          "versao": "B",
-          "papel": "ecossistema"
-        },
-        {
           "caminho": "modulos/01-governanca-e-qualidade/core/aidd-forge/aidd_forge/templates/gates/G_TESTES_REAIS.py",
           "versao": "A",
           "papel": "entrega"
@@ -5374,7 +5210,7 @@
         {
           "caminho": "modulos/01-governanca-e-qualidade/gates/G_TESTES_REAIS.py",
           "versao": "B",
-          "papel": "componente"
+          "papel": "ecossistema"
         }
       ],
       "versoes_distintas": 2,
@@ -5404,14 +5240,9 @@
       "descricao": "Verificação determinística (AST + hashes SHA-256) da entrega do item 'transactionlog-lru-cache' (PLAN-0017, fase 06): O módulo `transaction_log.py` existe na fonte única",
       "copias": [
         {
-          "caminho": "gates/G_TRANSACTION_LOG_LRU.py",
-          "versao": "A",
-          "papel": "ecossistema"
-        },
-        {
           "caminho": "modulos/04-nucleo-compartilhado/gates/G_TRANSACTION_LOG_LRU.py",
           "versao": "A",
-          "papel": "componente"
+          "papel": "ecossistema"
         }
       ],
       "versoes_distintas": 1,
@@ -5426,14 +5257,9 @@
       "descricao": "Audita a garantia SINE QUA NON de que todo componente, skill, MCP e hook esteja universalmente sincronizado, configurado e disponível de forma agnóstica para qualquer harness e sistema operacional…",
       "copias": [
         {
-          "caminho": "gates/G_UNIVERSAL_HARNESS.py",
-          "versao": "A",
-          "papel": "ecossistema"
-        },
-        {
           "caminho": "modulos/04-nucleo-compartilhado/gates/G_UNIVERSAL_HARNESS.py",
           "versao": "A",
-          "papel": "componente"
+          "papel": "ecossistema"
         }
       ],
       "versoes_distintas": 1,
@@ -5448,14 +5274,9 @@
       "descricao": "Bloqueia jargão não explicado em superfícies lidas pelo usuário leigo (README.md, --help da CLI raiz, card de entrega / perfis de linguagem).",
       "copias": [
         {
-          "caminho": "gates/G_USER_FACING_PTBR.py",
-          "versao": "A",
-          "papel": "ecossistema"
-        },
-        {
           "caminho": "modulos/04-nucleo-compartilhado/gates/G_USER_FACING_PTBR.py",
           "versao": "A",
-          "papel": "componente"
+          "papel": "ecossistema"
         }
       ],
       "versoes_distintas": 1,
@@ -5485,14 +5306,9 @@
       "descricao": "Gate de Enforcement Real contra Subagentes Headless e Concorrência Paralela Silenciosa.",
       "copias": [
         {
-          "caminho": "gates/G_ZERO_HEADLESS.py",
-          "versao": "A",
-          "papel": "ecossistema"
-        },
-        {
           "caminho": "modulos/04-nucleo-compartilhado/gates/G_ZERO_HEADLESS.py",
           "versao": "A",
-          "papel": "componente"
+          "papel": "ecossistema"
         }
       ],
       "versoes_distintas": 1,
@@ -5507,14 +5323,9 @@
       "descricao": "Quality Gate Determinístico e Rótulo Honesto para a ferramenta aidd-diagnose. Valida estritamente os critérios científicos de relatório de causa-raiz: Comando de reprodução determinística executado N…",
       "copias": [
         {
-          "caminho": "gates/G_aidd_diagnose.py",
-          "versao": "A",
-          "papel": "ecossistema"
-        },
-        {
           "caminho": "modulos/01-governanca-e-qualidade/gates/G_aidd_diagnose.py",
           "versao": "A",
-          "papel": "componente"
+          "papel": "ecossistema"
         }
       ],
       "versoes_distintas": 1,
@@ -5529,14 +5340,9 @@
       "descricao": "Quality Gate Determinístico de contratos de componentes do aidd-enterprise (Lei #8 / Lei #13). Valida estritamente um manifest de componente: JSON legível e presente.",
       "copias": [
         {
-          "caminho": "gates/G_aidd_enterprise.py",
-          "versao": "A",
-          "papel": "ecossistema"
-        },
-        {
           "caminho": "modulos/03-plataforma-e-entrega/gates/G_aidd_enterprise.py",
           "versao": "A",
-          "papel": "componente"
+          "papel": "ecossistema"
         }
       ],
       "versoes_distintas": 1,
@@ -5551,14 +5357,9 @@
       "descricao": "Quality Gate Determinístico de bootstrap do aidd-forge (Lei #8 / Lei #13). Valida estritamente um alvo de bootstrap forge: Arquivo de governança AGENTS.md presente e não vazio.",
       "copias": [
         {
-          "caminho": "gates/G_aidd_forge.py",
-          "versao": "A",
-          "papel": "ecossistema"
-        },
-        {
           "caminho": "modulos/01-governanca-e-qualidade/gates/G_aidd_forge.py",
           "versao": "A",
-          "papel": "componente"
+          "papel": "ecossistema"
         }
       ],
       "versoes_distintas": 1,
@@ -5573,14 +5374,9 @@
       "descricao": "Quality Gate Determinístico de Entrevista Socrática (Ticket 7 / D13 / DoD 6 / Leis #8, #9 e #13). Garante que toda rodada socrática cumpra: Perguntas numeradas (1, 2, 3...).",
       "copias": [
         {
-          "caminho": "gates/G_aidd_grill.py",
-          "versao": "A",
-          "papel": "ecossistema"
-        },
-        {
           "caminho": "modulos/01-governanca-e-qualidade/gates/G_aidd_grill.py",
           "versao": "A",
-          "papel": "componente"
+          "papel": "ecossistema"
         }
       ],
       "versoes_distintas": 1,
@@ -5595,14 +5391,9 @@
       "descricao": "Quality Gate determinístico para validação de artefato de handoff de sessão (D13 / Lei #9). Regras: Arquivo alvo deve existir.",
       "copias": [
         {
-          "caminho": "gates/G_aidd_handoff.py",
-          "versao": "A",
-          "papel": "ecossistema"
-        },
-        {
           "caminho": "modulos/01-governanca-e-qualidade/gates/G_aidd_handoff.py",
           "versao": "A",
-          "papel": "componente"
+          "papel": "ecossistema"
         }
       ],
       "versoes_distintas": 1,
@@ -5617,14 +5408,9 @@
       "descricao": "Quality Gate de repositório para pastas de planos (D13). Retorna estritamente exit 0 (aprovado) ou exit 1 (reprovado).",
       "copias": [
         {
-          "caminho": "gates/G_aidd_plan.py",
-          "versao": "A",
-          "papel": "ecossistema"
-        },
-        {
           "caminho": "modulos/01-governanca-e-qualidade/gates/G_aidd_plan.py",
           "versao": "A",
-          "papel": "componente"
+          "papel": "ecossistema"
         }
       ],
       "versoes_distintas": 1,
@@ -5639,14 +5425,9 @@
       "descricao": "Quality Gate de repositório para projetos do Planner (D13). Retorna estritamente exit 0 (aprovado) ou exit 1 (reprovado).",
       "copias": [
         {
-          "caminho": "gates/G_aidd_planner_runner.py",
-          "versao": "A",
-          "papel": "ecossistema"
-        },
-        {
           "caminho": "modulos/01-governanca-e-qualidade/gates/G_aidd_planner_runner.py",
           "versao": "A",
-          "papel": "componente"
+          "papel": "ecossistema"
         }
       ],
       "versoes_distintas": 1,
@@ -5661,14 +5442,9 @@
       "descricao": "Validação de Integridade do Histórico de Sessões (secoes/historico_sessoes.json e secoes/INDICE-SESSOES.md). Retorna exit 0 em sucesso e exit 1 em inconsistências estruturais.",
       "copias": [
         {
-          "caminho": "gates/G_aidd_session.py",
-          "versao": "A",
-          "papel": "ecossistema"
-        },
-        {
           "caminho": "modulos/01-governanca-e-qualidade/gates/G_aidd_session.py",
           "versao": "A",
-          "papel": "componente"
+          "papel": "ecossistema"
         }
       ],
       "versoes_distintas": 1,
@@ -5683,14 +5459,9 @@
       "descricao": "Quality Gate Determinístico de Especificação Técnica (Ticket 7 / D13 / DoD 6 / Leis #8, #9 e #13). Garante que todo documento de especificação cumpra: As 5 seções canônicas obrigatórias (Contexto,…",
       "copias": [
         {
-          "caminho": "gates/G_aidd_spec.py",
-          "versao": "A",
-          "papel": "ecossistema"
-        },
-        {
           "caminho": "modulos/01-governanca-e-qualidade/gates/G_aidd_spec.py",
           "versao": "A",
-          "papel": "componente"
+          "papel": "ecossistema"
         }
       ],
       "versoes_distintas": 1,
@@ -5705,14 +5476,9 @@
       "descricao": "Quality Gate Determinístico de TDD (Ticket 7 / D13 / DoD 6 / Leis #8, #9 e #13). Garante que todo ciclo TDD cumpra: Zero stubs vazios e zero asserções triviais nos arquivos de teste (Lei #5).",
       "copias": [
         {
-          "caminho": "gates/G_aidd_tdd.py",
-          "versao": "A",
-          "papel": "ecossistema"
-        },
-        {
           "caminho": "modulos/01-governanca-e-qualidade/gates/G_aidd_tdd.py",
           "versao": "A",
-          "papel": "componente"
+          "papel": "ecossistema"
         }
       ],
       "versoes_distintas": 1,
@@ -5727,14 +5493,26 @@
       "descricao": "Quality Gate Determinístico de Decomposição de Tickets (Ticket 7 / D13 / DoD 6 / Leis #8, #9 e #13). Garante que todo plano ou arquivo de tickets decompostos cumpra: Padrão canônico vertical com pelo…",
       "copias": [
         {
-          "caminho": "gates/G_aidd_tickets.py",
-          "versao": "A",
-          "papel": "ecossistema"
-        },
-        {
           "caminho": "modulos/01-governanca-e-qualidade/gates/G_aidd_tickets.py",
           "versao": "A",
-          "papel": "componente"
+          "papel": "ecossistema"
+        }
+      ],
+      "versoes_distintas": 1,
+      "no_pre_commit": true,
+      "prova_que_morde": true,
+      "leis": [
+        9
+      ]
+    },
+    {
+      "id": "G_aidd_visual_maps",
+      "descricao": "Quality gate da ferramenta aidd-visual-maps. Junta, sem reimplementar, as conferências que o ciclo-01 criou nos scripts dos mapas: catálogo em dia com o repositório     …",
+      "copias": [
+        {
+          "caminho": "modulos/04-nucleo-compartilhado/gates/G_aidd_visual_maps.py",
+          "versao": "A",
+          "papel": "ecossistema"
         }
       ],
       "versoes_distintas": 1,
@@ -5749,14 +5527,9 @@
       "descricao": "Quality Gate Determinístico de Rótulo Honesto para aidd-melhoria. Valida estritamente a presença do rótulo honesto (\"Sugestão de refatoração...\") e veta categoricamente afirmações imperativas…",
       "copias": [
         {
-          "caminho": "gates/G_amelhoria.py",
-          "versao": "A",
-          "papel": "ecossistema"
-        },
-        {
           "caminho": "modulos/01-governanca-e-qualidade/gates/G_amelhoria.py",
           "versao": "A",
-          "papel": "componente"
+          "papel": "ecossistema"
         }
       ],
       "versoes_distintas": 1,
@@ -5771,14 +5544,9 @@
       "descricao": "Quality Gate Determinístico de Integridade do Mapa de Peças e Catálogo. Valida estritamente: Integridade estrutural e factual do catálogo de peças (catalogo-pecas.json).",
       "copias": [
         {
-          "caminho": "gates/G_mapa_pecas.py",
-          "versao": "A",
-          "papel": "ecossistema"
-        },
-        {
           "caminho": "modulos/04-nucleo-compartilhado/gates/G_mapa_pecas.py",
           "versao": "A",
-          "papel": "componente"
+          "papel": "ecossistema"
         }
       ],
       "versoes_distintas": 1,
@@ -5787,28 +5555,6 @@
       "leis": [
         8
       ]
-    },
-    {
-      "id": "G_modularizacao_vsa",
-      "descricao": "Quality Gate Determinístico de Fronteira VSA. Dimensão D13: Quality Gates (Portões).",
-      "copias": [
-        {
-          "caminho": "gates/G_modularizacao_vsa.py",
-          "versao": "A",
-          "papel": "ecossistema"
-        },
-        {
-          "caminho": "modulos/04-nucleo-compartilhado/gates/G_modularizacao_vsa.py",
-          "versao": "A",
-          "papel": "componente"
-        }
-      ],
-      "versoes_distintas": 1,
-      "no_pre_commit": false,
-      "prova_que_morde": true,
-      "leis": [
-        9
-      ]
     }
   ],
   "contratos": [
@@ -5816,7 +5562,6 @@
       "id": "handoff-engine-to-master",
       "titulo": "HandoffEngineToMasterSchema",
       "usado_por": [
-        "gates/G_ORQUESTRADOR_SINCRONO.py",
         "modulos/04-nucleo-compartilhado/gates/G_ORQUESTRADOR_SINCRONO.py",
         "scripts/orquestrador_sincrono.py"
       ]
@@ -5825,7 +5570,6 @@
       "id": "handoff-enterprise-to-ops",
       "titulo": "HandoffEnterpriseToOpsSchema",
       "usado_por": [
-        "gates/G_ORQUESTRADOR_SINCRONO.py",
         "modulos/04-nucleo-compartilhado/gates/G_ORQUESTRADOR_SINCRONO.py",
         "scripts/orquestrador_sincrono.py"
       ]
@@ -5834,13 +5578,10 @@
       "id": "handoff-execucao",
       "titulo": "HandoffExecucaoSchema",
       "usado_por": [
-        "gates/G_PIPELINE_HANDOFF.py",
         "modulos/01-governanca-e-qualidade/core/aidd-planner/aidd_planner/core/planner_engine.py",
-        "modulos/01-governanca-e-qualidade/core/aidd-planner/src/core/planner_engine.py",
+        "modulos/01-governanca-e-qualidade/core/aidd-planner/src/core_planner/planner_engine.py",
         "modulos/04-nucleo-compartilhado/gates/G_PIPELINE_HANDOFF.py",
-        "scripts/compilador_tickets_plano.py",
-        "tools/aidd-planner/aidd_planner/core/planner_engine.py",
-        "tools/aidd-planner/src/core/planner_engine.py"
+        "scripts/compilador_tickets_plano.py"
       ]
     },
     {
@@ -5849,22 +5590,17 @@
       "usado_por": [
         "modulos/01-governanca-e-qualidade/core/aidd-forge/aidd_forge/core/prontidao.py",
         "modulos/01-governanca-e-qualidade/core/aidd-planner/aidd_planner/core/planta.py",
-        "modulos/01-governanca-e-qualidade/core/aidd-planner/src/core/planta.py",
-        "scripts/orquestrador_sincrono.py",
-        "tools/aidd-forge/aidd_forge/core/prontidao.py",
-        "tools/aidd-planner/aidd_planner/core/planta.py",
-        "tools/aidd-planner/src/core/planta.py"
+        "modulos/01-governanca-e-qualidade/core/aidd-planner/src/core_planner/planta.py",
+        "scripts/orquestrador_sincrono.py"
       ]
     },
     {
       "id": "handoff-master-to-enterprise",
       "titulo": "HandoffMasterToEnterpriseSchema",
       "usado_por": [
-        "gates/G_ORQUESTRADOR_SINCRONO.py",
         "modulos/03-plataforma-e-entrega/fatiamento-master/aidd-master/scripts/integrador_master.py",
         "modulos/04-nucleo-compartilhado/gates/G_ORQUESTRADOR_SINCRONO.py",
-        "scripts/orquestrador_sincrono.py",
-        "tools/aidd-master/scripts/integrador_master.py"
+        "scripts/orquestrador_sincrono.py"
       ]
     },
     {
@@ -5872,7 +5608,6 @@
       "titulo": "HandoffMelhoriaSchema",
       "usado_por": [
         "componentes/compartilhado/skills/aidd-improvement/scripts/handoff.py",
-        "gates/G_HANDOFF_MELHORIA.py",
         "modulos/01-governanca-e-qualidade/gates/G_HANDOFF_MELHORIA.py"
       ]
     },
@@ -5880,15 +5615,11 @@
       "id": "handoff-planner-to-engine",
       "titulo": "HandoffPlannerToEngineSchema",
       "usado_por": [
-        "gates/G_ORQUESTRADOR_SINCRONO.py",
         "modulos/01-governanca-e-qualidade/core/aidd-planner/aidd_planner/core/planta.py",
-        "modulos/01-governanca-e-qualidade/core/aidd-planner/src/core/planta.py",
+        "modulos/01-governanca-e-qualidade/core/aidd-planner/src/core_planner/planta.py",
         "modulos/03-plataforma-e-entrega/operacoes-ops/aidd-ops/scripts/infra_perfil.py",
         "modulos/04-nucleo-compartilhado/gates/G_ORQUESTRADOR_SINCRONO.py",
-        "scripts/orquestrador_sincrono.py",
-        "tools/aidd-ops/scripts/infra_perfil.py",
-        "tools/aidd-planner/aidd_planner/core/planta.py",
-        "tools/aidd-planner/src/core/planta.py"
+        "scripts/orquestrador_sincrono.py"
       ]
     },
     {
@@ -5896,27 +5627,19 @@
       "titulo": "Contrato do PLANO-INFRAESTRUTURA.json (aidd-ops → aidd-master/aidd-enterprise/aidd-open)",
       "usado_por": [
         "modulos/01-governanca-e-qualidade/core/aidd-planner/aidd_planner/core/planner_engine.py",
-        "modulos/01-governanca-e-qualidade/core/aidd-planner/src/core/planner_engine.py",
+        "modulos/01-governanca-e-qualidade/core/aidd-planner/src/core_planner/planner_engine.py",
         "modulos/03-plataforma-e-entrega/blindagem-enterprise/aidd-enterprise/scripts/scaffold_infra.py",
         "modulos/03-plataforma-e-entrega/fatiamento-master/aidd-master/scripts/scaffold_infra.py",
-        "modulos/03-plataforma-e-entrega/operacoes-ops/aidd-ops/scripts/contrato_plano.py",
-        "tools/aidd-enterprise/scripts/scaffold_infra.py",
-        "tools/aidd-master/scripts/scaffold_infra.py",
-        "tools/aidd-ops/scripts/contrato_plano.py",
-        "tools/aidd-planner/aidd_planner/core/planner_engine.py",
-        "tools/aidd-planner/src/core/planner_engine.py"
+        "modulos/03-plataforma-e-entrega/operacoes-ops/aidd-ops/scripts/contrato_plano.py"
       ]
     },
     {
       "id": "vsa-topological-dispatch",
       "titulo": "VSATopologicalDispatchSchema",
       "usado_por": [
-        "gates/G_DISPATCH_PIPELINE_VSA.py",
         "modulos/01-governanca-e-qualidade/core/aidd-planner/aidd_planner/core/planner_engine.py",
-        "modulos/01-governanca-e-qualidade/core/aidd-planner/src/core/planner_engine.py",
-        "modulos/03-plataforma-e-entrega/gates/G_DISPATCH_PIPELINE_VSA.py",
-        "tools/aidd-planner/aidd_planner/core/planner_engine.py",
-        "tools/aidd-planner/src/core/planner_engine.py"
+        "modulos/01-governanca-e-qualidade/core/aidd-planner/src/core_planner/planner_engine.py",
+        "modulos/03-plataforma-e-entrega/gates/G_DISPATCH_PIPELINE_VSA.py"
       ]
     }
   ],
@@ -6181,23 +5904,547 @@
       "problemas": []
     }
   ],
+  "pipelines": [
+    {
+      "id": "triade-pure",
+      "origem": "scripts/orquestrador_sincrono.py",
+      "etapas": [
+        {
+          "titulo": "Etapa 1: Fundação, Git, pre-commit e regras de governança.",
+          "peca": "etapa_01_forge",
+          "chamada": "forge init <var> --force"
+        },
+        {
+          "titulo": "Etapa 2: Planejamento BDD/SDD, contratos e Quarteto Sine Qua Non.",
+          "peca": "etapa_02_planner",
+          "chamada": "planner init --fluxo <var> --nome <var> --slug <var> --dominio <var> --pasta <var>"
+        },
+        {
+          "titulo": "Etapa 3: Execução da Engine correspondente ao Fluxo.",
+          "peca": "etapa_03_engine",
+          "chamada": "pure-motor <var> --pasta <var> --implementar-codigo"
+        },
+        {
+          "titulo": "Etapa 4: Despacho das fatias VSA + harmonização no Monólito Modular.",
+          "peca": "etapa_04_master",
+          "chamada": "dispatch --dispatch <var> --target-dir <var> --barrier-sync"
+        },
+        {
+          "titulo": "Etapa 5: Blindagem SHA-256 e detecção de drift.",
+          "peca": "etapa_05_enterprise",
+          "chamada": "enterprise inject rule <var> --dir <var>"
+        },
+        {
+          "titulo": "Etapa 6: Infraestrutura, Docker Compose e Validação de Portas.",
+          "peca": "etapa_06_ops",
+          "chamada": "ops plan <var> --pasta <var>"
+        },
+        {
+          "titulo": "Etapa 7: Auditoria de conformidade do projeto gerado (não do monorepo).",
+          "peca": "etapa_07_auditoria",
+          "chamada": "forge audit <var>"
+        }
+      ]
+    },
+    {
+      "id": "triade-open",
+      "origem": "scripts/orquestrador_sincrono.py",
+      "etapas": [
+        {
+          "titulo": "Etapa 1: Fundação, Git, pre-commit e regras de governança.",
+          "peca": "etapa_01_forge",
+          "chamada": "forge init <var> --force"
+        },
+        {
+          "titulo": "Etapa 2: Planejamento BDD/SDD, contratos e Quarteto Sine Qua Non.",
+          "peca": "etapa_02_planner",
+          "chamada": "planner init --fluxo <var> --nome <var> --slug <var> --dominio <var> --pasta <var>"
+        },
+        {
+          "titulo": "Etapa 3: Execução da Engine correspondente ao Fluxo.",
+          "peca": "etapa_03_engine",
+          "chamada": "open-motor --plano <var> --pasta <var>"
+        },
+        {
+          "titulo": "Etapa 4: Despacho das fatias VSA + harmonização no Monólito Modular.",
+          "peca": "etapa_04_master",
+          "chamada": "dispatch --dispatch <var> --target-dir <var> --barrier-sync"
+        },
+        {
+          "titulo": "Etapa 5: Blindagem SHA-256 e detecção de drift.",
+          "peca": "etapa_05_enterprise",
+          "chamada": "enterprise inject rule <var> --dir <var>"
+        },
+        {
+          "titulo": "Etapa 6: Infraestrutura, Docker Compose e Validação de Portas.",
+          "peca": "etapa_06_ops",
+          "chamada": "ops plan <var> --pasta <var>"
+        },
+        {
+          "titulo": "Etapa 7: Auditoria de conformidade do projeto gerado (não do monorepo).",
+          "peca": "etapa_07_auditoria",
+          "chamada": "forge audit <var>"
+        }
+      ]
+    },
+    {
+      "id": "triade-freedom",
+      "origem": "scripts/orquestrador_sincrono.py",
+      "etapas": [
+        {
+          "titulo": "Etapa 1: Fundação, Git, pre-commit e regras de governança.",
+          "peca": "etapa_01_forge",
+          "chamada": "forge init <var> --force"
+        },
+        {
+          "titulo": "Etapa 2: Planejamento BDD/SDD, contratos e Quarteto Sine Qua Non.",
+          "peca": "etapa_02_planner",
+          "chamada": "planner init --fluxo <var> --nome <var> --slug <var> --dominio <var> --pasta <var>"
+        },
+        {
+          "titulo": "Etapa 3: Execução da Engine correspondente ao Fluxo.",
+          "peca": "etapa_03_engine",
+          "chamada": "freedom-motor scan <var>"
+        },
+        {
+          "titulo": "Etapa 4: Despacho das fatias VSA + harmonização no Monólito Modular.",
+          "peca": "etapa_04_master",
+          "chamada": "dispatch --dispatch <var> --target-dir <var> --barrier-sync"
+        },
+        {
+          "titulo": "Etapa 5: Blindagem SHA-256 e detecção de drift.",
+          "peca": "etapa_05_enterprise",
+          "chamada": "enterprise inject rule <var> --dir <var>"
+        },
+        {
+          "titulo": "Etapa 6: Infraestrutura, Docker Compose e Validação de Portas.",
+          "peca": "etapa_06_ops",
+          "chamada": "ops plan <var> --pasta <var>"
+        },
+        {
+          "titulo": "Etapa 7: Auditoria de conformidade do projeto gerado (não do monorepo).",
+          "peca": "etapa_07_auditoria",
+          "chamada": "forge audit <var>"
+        }
+      ]
+    },
+    {
+      "id": "melhoria -> plan -> orchestrate",
+      "origem": "componentes/compartilhado/skills/aidd-improvement/SKILL.md, componentes/compartilhado/skills/aidd-plan/SKILL.md, componentes/compartilhado/skills/aidd-orchestrate/SKILL.md",
+      "etapas": [
+        {
+          "titulo": "passo 1",
+          "peca": "aidd-improvement",
+          "chamada": ""
+        },
+        {
+          "titulo": "passo 2",
+          "peca": "aidd-plan",
+          "chamada": ""
+        },
+        {
+          "titulo": "passo 3",
+          "peca": "aidd-orchestrate",
+          "chamada": ""
+        }
+      ]
+    },
+    {
+      "id": "aidd-audit-4f",
+      "origem": "componentes/compartilhado/skills/aidd-audit-4f/SKILL.md",
+      "etapas": [
+        {
+          "titulo": "Read the target manifest (e.g. `docs/auditoria/template-pipeline-4f.json`)",
+          "peca": "aidd-audit-4f",
+          "chamada": ""
+        },
+        {
+          "titulo": "Create or reuse `docs/auditoria/<tool>/ciclo-NN/`",
+          "peca": "aidd-audit-4f",
+          "chamada": ""
+        },
+        {
+          "titulo": "Accumulate phases on the cycle's own branch (`audit/<pipeline_id>`) without touching the c",
+          "peca": "aidd-audit-4f",
+          "chamada": ""
+        },
+        {
+          "titulo": "Phase 1 (Inspector)",
+          "peca": "aidd-audit-4f",
+          "chamada": ""
+        },
+        {
+          "titulo": "Phase 2 (Architect)",
+          "peca": "aidd-audit-4f",
+          "chamada": ""
+        },
+        {
+          "titulo": "Phase 3 (Builder)",
+          "peca": "aidd-audit-4f",
+          "chamada": ""
+        },
+        {
+          "titulo": "Phase 4 (Return inspector)",
+          "peca": "aidd-audit-4f",
+          "chamada": ""
+        },
+        {
+          "titulo": "Run `gate_final` (full battery) once",
+          "peca": "aidd-audit-4f",
+          "chamada": ""
+        }
+      ]
+    },
+    {
+      "id": "aidd-evolution",
+      "origem": "componentes/compartilhado/skills/aidd-evolution/SKILL.md",
+      "etapas": [
+        {
+          "titulo": "Read the evolution manifest (e.g. `docs/auditoria/<tool>/ciclo-NN/PLANO-EVOLUCAO.json`) an",
+          "peca": "aidd-evolution",
+          "chamada": ""
+        },
+        {
+          "titulo": "All tickets accumulate on the cycle's own branch (`audit/<pipeline_id>`); the current bran",
+          "peca": "aidd-evolution",
+          "chamada": ""
+        },
+        {
+          "titulo": "For each ticket",
+          "peca": "aidd-evolution",
+          "chamada": ""
+        },
+        {
+          "titulo": "After the last ticket",
+          "peca": "aidd-evolution",
+          "chamada": ""
+        }
+      ]
+    },
+    {
+      "id": "aidd-ingest",
+      "origem": "componentes/compartilhado/skills/aidd-ingest/SKILL.md",
+      "etapas": [
+        {
+          "titulo": "Triage & Sandbox Isolation",
+          "peca": "aidd-ingest",
+          "chamada": ""
+        },
+        {
+          "titulo": "4F Audit Pipeline",
+          "peca": "aidd-ingest",
+          "chamada": ""
+        },
+        {
+          "titulo": "Architecture & Evolution Plan",
+          "peca": "aidd-ingest",
+          "chamada": ""
+        },
+        {
+          "titulo": "Worktree Execution & Convergence",
+          "peca": "aidd-ingest",
+          "chamada": ""
+        }
+      ]
+    },
+    {
+      "id": "aidd-ops",
+      "origem": "componentes/compartilhado/skills/aidd-ops/SKILL.md",
+      "etapas": []
+    },
+    {
+      "id": "aidd-pipeline",
+      "origem": "componentes/compartilhado/skills/aidd-pipeline/SKILL.md",
+      "etapas": []
+    }
+  ],
+  "modulos": [
+    {
+      "id": "01-governanca-e-qualidade",
+      "caminho": "modulos/01-governanca-e-qualidade",
+      "descricao": "Fatia vertical canônica de governança agêntica, integridade arquitetural e quality gates do Ecossistema AIDD.",
+      "fatias": [
+        {
+          "id": "core",
+          "caminho": "modulos/01-governanca-e-qualidade/core",
+          "ferramentas": [
+            "aidd-forge",
+            "aidd-planner"
+          ],
+          "guardas": 15,
+          "arquivos_py": 62
+        },
+        {
+          "id": "gates",
+          "caminho": "modulos/01-governanca-e-qualidade/gates",
+          "ferramentas": [],
+          "guardas": 20,
+          "arquivos_py": 20
+        }
+      ]
+    },
+    {
+      "id": "02-triade-motores",
+      "caminho": "modulos/02-triade-motores",
+      "descricao": "Fatia vertical canônica de fabricação de software e fluxos de geração do Ecossistema AIDD.",
+      "fatias": [
+        {
+          "id": "fluxo-01-pure",
+          "caminho": "modulos/02-triade-motores/fluxo-01-pure",
+          "ferramentas": [
+            "aidd-pure"
+          ],
+          "guardas": 10,
+          "arquivos_py": 63
+        },
+        {
+          "id": "fluxo-02-open",
+          "caminho": "modulos/02-triade-motores/fluxo-02-open",
+          "ferramentas": [
+            "aidd-open"
+          ],
+          "guardas": 8,
+          "arquivos_py": 44
+        },
+        {
+          "id": "fluxo-03-freedom",
+          "caminho": "modulos/02-triade-motores/fluxo-03-freedom",
+          "ferramentas": [
+            "aidd-freedom"
+          ],
+          "guardas": 6,
+          "arquivos_py": 22
+        }
+      ]
+    },
+    {
+      "id": "03-plataforma-e-entrega",
+      "caminho": "modulos/03-plataforma-e-entrega",
+      "descricao": "Fatia vertical canônica responsável por fatiamento de meso-camada, blindagem enterprise e operações de infraestrutura.",
+      "fatias": [
+        {
+          "id": "blindagem-enterprise",
+          "caminho": "modulos/03-plataforma-e-entrega/blindagem-enterprise",
+          "ferramentas": [
+            "aidd-enterprise"
+          ],
+          "guardas": 0,
+          "arquivos_py": 159
+        },
+        {
+          "id": "fatiamento-master",
+          "caminho": "modulos/03-plataforma-e-entrega/fatiamento-master",
+          "ferramentas": [
+            "aidd-master"
+          ],
+          "guardas": 1,
+          "arquivos_py": 127
+        },
+        {
+          "id": "gates",
+          "caminho": "modulos/03-plataforma-e-entrega/gates",
+          "ferramentas": [],
+          "guardas": 8,
+          "arquivos_py": 8
+        },
+        {
+          "id": "operacoes-ops",
+          "caminho": "modulos/03-plataforma-e-entrega/operacoes-ops",
+          "ferramentas": [
+            "aidd-ops"
+          ],
+          "guardas": 2,
+          "arquivos_py": 28
+        }
+      ]
+    },
+    {
+      "id": "04-nucleo-compartilhado",
+      "caminho": "modulos/04-nucleo-compartilhado",
+      "descricao": "Fatia vertical canônica do kernel de utilitários, CLI unificada e contratos centrais do Ecossistema AIDD.",
+      "fatias": [
+        {
+          "id": "contracts",
+          "caminho": "modulos/04-nucleo-compartilhado/contracts",
+          "ferramentas": [],
+          "guardas": 0,
+          "arquivos_py": 0
+        },
+        {
+          "id": "gates",
+          "caminho": "modulos/04-nucleo-compartilhado/gates",
+          "ferramentas": [],
+          "guardas": 35,
+          "arquivos_py": 36
+        }
+      ]
+    }
+  ],
+  "agentes": [
+    {
+      "id": "agent_architect",
+      "papel": "Subagente Especializado: Engenheiro de Arquitetura & DDD (Agent Architect)",
+      "copias": [
+        {
+          "caminho": "modulos/03-plataforma-e-entrega/blindagem-enterprise/aidd-enterprise/templates/agents/agent_architect.md",
+          "ferramenta": "aidd-enterprise",
+          "versao": "A"
+        },
+        {
+          "caminho": "modulos/03-plataforma-e-entrega/fatiamento-master/aidd-master/templates/agents/agent_architect.md",
+          "ferramenta": "aidd-master",
+          "versao": "A"
+        }
+      ],
+      "versoes_distintas": 1
+    },
+    {
+      "id": "agent_backend",
+      "papel": "Subagente Especializado: Engenheiro de Back-End & APIs (Agent Backend)",
+      "copias": [
+        {
+          "caminho": "modulos/03-plataforma-e-entrega/blindagem-enterprise/aidd-enterprise/templates/agents/agent_backend.md",
+          "ferramenta": "aidd-enterprise",
+          "versao": "A"
+        },
+        {
+          "caminho": "modulos/03-plataforma-e-entrega/fatiamento-master/aidd-master/templates/agents/agent_backend.md",
+          "ferramenta": "aidd-master",
+          "versao": "A"
+        }
+      ],
+      "versoes_distintas": 1
+    },
+    {
+      "id": "agent_domain_refiner",
+      "papel": "Subagente Especializado: Refinador de Domínio via BDD (Agent Domain Refiner)",
+      "copias": [
+        {
+          "caminho": "modulos/03-plataforma-e-entrega/blindagem-enterprise/aidd-enterprise/templates/agents/agent_domain_refiner.md",
+          "ferramenta": "aidd-enterprise",
+          "versao": "A"
+        },
+        {
+          "caminho": "modulos/03-plataforma-e-entrega/fatiamento-master/aidd-master/templates/agents/agent_domain_refiner.md",
+          "ferramenta": "aidd-master",
+          "versao": "A"
+        }
+      ],
+      "versoes_distintas": 1
+    },
+    {
+      "id": "agent_frontend",
+      "papel": "Subagente Especializado: Engenheiro de Front-End & UX (Agent Frontend)",
+      "copias": [
+        {
+          "caminho": "modulos/03-plataforma-e-entrega/blindagem-enterprise/aidd-enterprise/templates/agents/agent_frontend.md",
+          "ferramenta": "aidd-enterprise",
+          "versao": "A"
+        },
+        {
+          "caminho": "modulos/03-plataforma-e-entrega/fatiamento-master/aidd-master/templates/agents/agent_frontend.md",
+          "ferramenta": "aidd-master",
+          "versao": "A"
+        }
+      ],
+      "versoes_distintas": 1
+    },
+    {
+      "id": "agent_qa",
+      "papel": "Subagente Especializado: Engenheiro de QA & Testes (Agent QA)",
+      "copias": [
+        {
+          "caminho": "modulos/03-plataforma-e-entrega/blindagem-enterprise/aidd-enterprise/templates/agents/agent_qa.md",
+          "ferramenta": "aidd-enterprise",
+          "versao": "A"
+        },
+        {
+          "caminho": "modulos/03-plataforma-e-entrega/fatiamento-master/aidd-master/templates/agents/agent_qa.md",
+          "ferramenta": "aidd-master",
+          "versao": "A"
+        }
+      ],
+      "versoes_distintas": 1
+    },
+    {
+      "id": "architect-agent",
+      "papel": "Subagente Especializado: Architecture Specialist (Architect Agent)",
+      "copias": [
+        {
+          "caminho": "modulos/03-plataforma-e-entrega/blindagem-enterprise/aidd-enterprise/templates/agents/architect-agent.md",
+          "ferramenta": "aidd-enterprise",
+          "versao": "A"
+        },
+        {
+          "caminho": "modulos/03-plataforma-e-entrega/fatiamento-master/aidd-master/templates/agents/architect-agent.md",
+          "ferramenta": "aidd-master",
+          "versao": "A"
+        }
+      ],
+      "versoes_distintas": 1
+    },
+    {
+      "id": "backend-agent",
+      "papel": "Subagente Especializado: Backend Specialist (Backend Agent)",
+      "copias": [
+        {
+          "caminho": "modulos/03-plataforma-e-entrega/blindagem-enterprise/aidd-enterprise/templates/agents/backend-agent.md",
+          "ferramenta": "aidd-enterprise",
+          "versao": "A"
+        },
+        {
+          "caminho": "modulos/03-plataforma-e-entrega/fatiamento-master/aidd-master/templates/agents/backend-agent.md",
+          "ferramenta": "aidd-master",
+          "versao": "A"
+        }
+      ],
+      "versoes_distintas": 1
+    },
+    {
+      "id": "database-agent",
+      "papel": "Subagente Especializado: Database Specialist (Database Agent)",
+      "copias": [
+        {
+          "caminho": "modulos/03-plataforma-e-entrega/blindagem-enterprise/aidd-enterprise/templates/agents/database-agent.md",
+          "ferramenta": "aidd-enterprise",
+          "versao": "A"
+        },
+        {
+          "caminho": "modulos/03-plataforma-e-entrega/fatiamento-master/aidd-master/templates/agents/database-agent.md",
+          "ferramenta": "aidd-master",
+          "versao": "A"
+        }
+      ],
+      "versoes_distintas": 1
+    },
+    {
+      "id": "frontend-agent",
+      "papel": "Subagente Especializado: Frontend Specialist (Frontend Agent)",
+      "copias": [
+        {
+          "caminho": "modulos/03-plataforma-e-entrega/blindagem-enterprise/aidd-enterprise/templates/agents/frontend-agent.md",
+          "ferramenta": "aidd-enterprise",
+          "versao": "A"
+        },
+        {
+          "caminho": "modulos/03-plataforma-e-entrega/fatiamento-master/aidd-master/templates/agents/frontend-agent.md",
+          "ferramenta": "aidd-master",
+          "versao": "A"
+        }
+      ],
+      "versoes_distintas": 1
+    }
+  ],
   "achados": {
-    "arquivos_identicos_entre_donas": [
-      {
-        "donas": "gates + modulos",
-        "arquivos": 69
-      }
-    ],
+    "arquivos_identicos_entre_donas": [],
     "verbos_cli_repetidos": {},
     "tarefas_com_varias_donas": {},
     "gates_mesmo_nome_codigo_diferente": [
-      "G_AST_BOUNDED_CONTEXT",
       "G_BLOQUEAR_SEGREDOS",
       "G_CONTRACTS",
       "G_CYBERSECURITY_OWASP",
       "G_DETERMINISMO_LEI_1",
       "G_PERFORMANCE",
-      "G_PORTAO_PROVA_QUE_MORDE",
       "G_QUARTETO_SINE_QUA_NON",
       "G_SAIDA_BINARIA",
       "G_SEGREDOS",

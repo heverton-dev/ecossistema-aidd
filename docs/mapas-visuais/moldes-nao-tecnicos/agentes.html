@@ -1,0 +1,41 @@
+<!-- Molde não-técnico dos agentes. Texto explicativo com analogias; listas via scripts/mapa_visual.py. -->
+<div class="wrap">
+
+<a class="voltar" href="{{LINK_MANUAL}}">← Manual de montagem</a>
+<header>
+  <span class="eyebrow">Mapa visual · As Fichas de Função da Equipe</span>
+  <h1>Mapa dos Agentes (Fichas de Função)</h1>
+  <p class="lead">Quando o app sai da fábrica, ele leva junto as <strong>fichas de função</strong> da equipe que vai cuidar dele: o arquiteto, quem faz o servidor, quem faz a tela, quem testa. Este mapa mostra cada ficha e se fábricas diferentes entregam a mesma ficha ou versões diferentes dela.</p>
+  {{TOTAIS}}
+</header>
+
+<section id="regra">
+  <span class="eyebrow">Como Ler</span>
+  <h2>A Letra de Cada Ficha</h2>
+  <div class="grid3">
+    <div class="box"><h3>Ficha</h3><p>O texto que diz a um ajudante (agente) qual é o trabalho dele.</p></div>
+    <div class="box"><h3>Mesma letra</h3><p>Fábricas diferentes entregam exatamente a mesma ficha: bastaria guardar uma.</p></div>
+    <div class="box"><h3>Letras diferentes</h3><p>A mesma função com instruções diferentes, conforme a fábrica que entregou o app.</p></div>
+  </div>
+</section>
+
+<section id="copiados">
+  <span class="eyebrow">Atenção</span>
+  <h2>Fichas Repetidas em Mais de uma Fábrica</h2>
+  {{COPIADOS}}
+</section>
+
+<section id="divergentes">
+  <span class="eyebrow">Atenção</span>
+  <h2>Fichas com Versões Diferentes</h2>
+  {{DIVERGENTES}}
+</section>
+
+<section id="lista">
+  <span class="eyebrow">Todas as Fichas</span>
+  <h2>A Equipe que Viaja com o App</h2>
+  {{LISTA}}
+</section>
+
+<footer>Gerado deterministicamente a partir de <code>docs/auditoria/mapa-pecas/catalogo-pecas.json</code>. Versão ilustrada voltada para visualização didática e conceitual.</footer>
+</div>
