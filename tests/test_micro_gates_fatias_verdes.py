@@ -3,15 +3,11 @@
 
 Antecipado no Bloco 2: o comando antigo (pytest da fatia inteira a partir da raiz)
 quebrava na coleta e barrava qualquer commit em modulos/. Bloco 6: um comando por
-subfatia (só a ferramenta tocada roda), cada um com --rootdir e conftest próprios,
-e todo comando sai com 0 de verdade (DoD 6).
+subfatia (só a ferramenta tocada roda), cada um com --rootdir e conftest próprios.
 """
 
-import subprocess
 import sys
 from pathlib import Path
-
-import pytest
 
 RAIZ = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(RAIZ))
@@ -88,11 +84,6 @@ def test_suites_rodam_sem_o_git_dir_do_hook(monkeypatch, tmp_path):
     assert proc.stdout.strip() == "None None"
 
 
-@pytest.mark.parametrize("fatia", sorted(FATIAS_MAPA))
-def test_comando_da_fatia_sai_com_zero(fatia):
-    """DoD 6: o comando de cada fatia roda de verdade (não só a coleta) e sai com 0."""
-    from scripts import micro_gates
-
-    for rotulo, cmd, cwd, shell in micro_gates.execucoes_da_fatia(RAIZ, fatia):
-        proc = micro_gates._rodar(cmd, cwd, shell)
-        assert proc.returncode == 0, f"{fatia} ({rotulo}): exit {proc.returncode}\n{proc.stdout[-3000:]}"
+# DoD 6 (cada comando de fatia sai com 0) não roda mais aqui: rodar as 8 suítes dentro da
+# bateria tests/ estourou o teto de 900 s do G_TESTES_REAIS (audit de 08/10). A prova agora
+# é o pre-commit (micro-gates das fatias tocadas) e as suítes por ferramenta no G_TESTES_REAIS.
