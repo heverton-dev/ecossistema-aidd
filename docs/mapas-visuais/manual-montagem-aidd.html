@@ -317,13 +317,13 @@ footer{padding-top:28px;border-top:1px solid var(--line);font-size:.85rem;color:
       <div class="top"><h3>O Portão de Qualidade</h3></div>
       <span class="tec">Quality Gate (gates/G_*.py)</span>
       <p class="ana">Auditor algorítmico independente que analisa conformidade, integridade e segurança, respondendo com veredito binário estrito (sucesso via exit 0 ou bloqueio via exit 1).</p>
-      <p class="ex">Exemplo: <code>G_SEGREDOS</code> bloqueia exposição de chaves privadas. O repositório mantém 56 guardas vinculados ao pré-commit.</p>
+      <p class="ex">Exemplo: <code>G_SEGREDOS</code> bloqueia exposição de chaves privadas. O repositório mantém mais de 100 guardas vinculados à governança e ao pré-commit.</p>
     </article>
     <article class="peca" style="--c:var(--brick)">
       <div class="top"><h3>O Contrato de Interface</h3></div>
       <span class="tec">Contrato de Handoff (handoff-*.schema.json)</span>
       <p class="ana">Esquema formal em JSON Schema que parametriza os dados trafegados entre componentes adjacentes, prevenindo rupturas de integração ao longo da esteira.</p>
-      <p class="ex">Atualmente 8 contratos canônicos encontram-se versionados em <code>componentes/compartilhado/specs/</code>.</p>
+      <p class="ex">Atualmente 9 contratos canônicos encontram-se versionados em <code>componentes/compartilhado/specs/</code>.</p>
     </article>
     <article class="peca" style="--c:var(--brick)">
       <div class="top"><h3>A Esteira Orquestrada</h3></div>
@@ -431,9 +431,9 @@ footer{padding-top:28px;border-top:1px solid var(--line);font-size:.85rem;color:
       <div class="pino">
         <span class="b">planner</span><span class="line"></span>
         <span class="c">handoff-planner-to-engine</span><span class="line"></span>
-        <span class="b">generator</span>
+        <span class="b">pure / open / freedom</span>
       </div>
-      <p>A saída serializada pelo <code>planner</code> satisfaz integralmente as restrições contratuais do <code>generator</code>, assegurando integração contínua sem quebras de execução.</p>
+      <p>A saída serializada pelo <code>planner</code> satisfaz integralmente as restrições contratuais das engines construtoras (<code>pure</code>, <code>open</code> ou <code>freedom</code>), assegurando integração contínua sem quebras de execução.</p>
     </div>
     <div class="box">
       <h3>Bloqueio Preventivo <span class="chip falha">exit não-zero</span></h3>
@@ -458,7 +458,7 @@ footer{padding-top:28px;border-top:1px solid var(--line);font-size:.85rem;color:
   </div>
   <p>Os portões de qualidade exercem auditoria estritamente avaliativa e binária, sem efetuar mutações de código. Diante de qualquer violação, o portão emite diagnóstico objetivo, cabendo à ferramenta aplicar o ajuste e submeter nova validação.</p>
   <a class="mapa-link" href="mapa-04-guardas.html">Consultar o catálogo de portões e padrões de conformidade →</a>
-  <a class="mapa-link" href="mapa-01-leis.html">Consultar as 13 Leis Invioláveis e os portões que as provam →</a>
+  <a class="mapa-link" href="mapa-01-leis.html">Consultar as 14 Leis Invioláveis e os portões que as provam →</a>
   <div class="ouro">
     <div class="box">
       <h3>Regra de Ouro 1: Segregação de Funções (quem constrói não audita)</h3>
@@ -478,15 +478,15 @@ footer{padding-top:28px;border-top:1px solid var(--line);font-size:.85rem;color:
   <div class="receita-scroll">
     <div class="receita">
       <div class="passo"><span class="n">etapa 1</span><strong>forge</strong><span>estabelece governança e regras</span><span class="chip certo">conforme</span></div>
-      <div class="passo"><span class="n">etapa 2</span><strong>planner</strong><span>estrutura o blueprint da solução</span><span class="chip certo">conforme</span></div>
+      <div class="passo"><span class="n">etapa 2</span><strong>planner</strong><span>estrutura o blueprint BDD/SDD</span><span class="chip certo">conforme</span></div>
       <div class="passo var"><span class="n">etapa 3 · engine</span><strong>criação</strong>
         <div class="alt">
-          <div>pure · generator <span class="chip certo">ok</span></div>
-          <div>open · factory <span class="chip certo">ok</span></div>
-          <div>freedom · bridge <span class="chip certo">ok</span></div>
+          <div>pure · aidd-pure <span class="chip certo">ok</span></div>
+          <div>open · aidd-open <span class="chip certo">ok</span></div>
+          <div>freedom · aidd-freedom <span class="chip certo">ok</span></div>
         </div>
       </div>
-      <div class="passo"><span class="n">etapa 4</span><strong>master</strong><span>consolida monólito modular VSA</span><span class="chip certo">conforme</span></div>
+      <div class="passo"><span class="n">etapa 4</span><strong>master</strong><span>despacha fatias VSA e consolida</span><span class="chip certo">conforme</span></div>
       <div class="passo"><span class="n">etapa 5</span><strong>enterprise</strong><span>blinda contratos e rastreabilidade</span><span class="chip certo">conforme</span></div>
       <div class="passo"><span class="n">etapa 6</span><strong>ops</strong><span>planeja infraestrutura e deploy</span><span class="chip certo">conforme</span></div>
       <div class="passo"><span class="n">etapa 7</span><strong>auditoria</strong><span>executa portões de qualidade</span><span class="chip certo">conforme</span></div>
@@ -593,7 +593,7 @@ footer{padding-top:28px;border-top:1px solid var(--line);font-size:.85rem;color:
   <p class="nota"><b>Diretriz de Autoria:</b> Havendo especificação técnica oficial já documentada, o molde apenas resume e referencia o artefato canônico, sem duplicar textos normativos. A adição ou remoção de componentes exige regeneração via <code>--check</code>. O procedimento completo está consolidado na skill <code>aidd-visual-maps</code>.</p>
 </section>
 
-<footer>Métricas extraídas de <code>docs/auditoria/mapa-pecas/catalogo-pecas.json</code>, gerado deterministicamente por <code>scripts/catalogo_pecas.py</code> em 29/09/2026.</footer>
+<footer>Métricas extraídas de <code>docs/auditoria/mapa-pecas/catalogo-pecas.json</code>, gerado deterministicamente por <code>scripts/catalogo_pecas.py</code> em 06/10/2026.</footer>
 </div>
 </body>
 </html>

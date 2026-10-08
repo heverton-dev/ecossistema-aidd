@@ -14,8 +14,8 @@
   <h2>Definição Arquitetural de Ferramenta</h2>
   <div class="grid3">
     <div class="box"><h3>Estrutura Modular</h3><p>Diretório dedicado em <code>tools/aidd-&lt;nome&gt;/</code> contendo código de produção, testes automatizados, portões de qualidade próprios e um <code>AGENTS.md</code> específico. A invocação opera via <code>python ecossistema.py &lt;nome&gt; [args]</code>.</p></div>
-    <div class="box"><h3>Princípio da Responsabilidade Única</h3><p>Cada estágio da esteira demanda uma unidade especializada focada exclusivamente em seu domínio técnico, viabilizando testabilidade e evolução isoladas.</p></div>
-    <div class="box"><h3>Distinção Conceitual</h3><p>A ferramenta não se confunde com skill (o guia procedimental que orienta o modelo) nem com portão de qualidade (o auditor algorítmico que inspeciona a saída produzida).</p></div>
+    <div class="box"><h3>Arquitetura VSA e Clean Architecture</h3><p>As ferramentas estruturam a entrega em Fatias Verticais (Vertical Slice Architecture), garantindo alta coesão e baixo acoplamento entre módulos de negócio e infraestrutura desacoplada.</p></div>
+    <div class="box"><h3>Princípio da Responsabilidade Única</h3><p>Cada estágio da esteira demanda uma unidade especializada focada exclusivamente em seu domínio técnico, comunicando-se exclusivamente via contratos JSON Schema e comandos CLI.</p></div>
   </div>
 </section>
 

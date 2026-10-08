@@ -303,13 +303,13 @@ footer{padding-top:28px;border-top:1px solid var(--line);font-size:.85rem;color:
       <div class="top"><h3>O Porteiro da Cancela</h3></div>
       <span class="tec">Portão de Qualidade (Quality Gate / gates/G_*.py)</span>
       <p class="ana">O fiscal que fica na cancela de saída. Ele inspeciona a peça com um scanner: luz verde (exit 0) a cancela abre e a peça passa; luz vermelha (exit 1) a cancela trava e a peça defeituosa volta para a bancada.</p>
-      <p class="ex">Exemplo: <code>G_SEGREDOS</code> impede que senhas vazem no código. Temos 56 porteiros vigiando a cancela do commit.</p>
+      <p class="ex">Exemplo: <code>G_SEGREDOS</code> impede que senhas vazem no código. Temos mais de 100 porteiros vigiando a governança e o commit.</p>
     </article>
     <article class="peca" style="--c:var(--brick)">
       <div class="top"><h3>O Pino de Encaixe</h3></div>
       <span class="tec">Contrato de Conexão (Handoff / *.schema.json)</span>
       <p class="ana">O formato milimétrico do pino e do furo que conecta dois blocos. Se o que sai da primeira máquina não tiver exatamente o formato exigido pela próxima, a peça não entra e o alarme soa.</p>
-      <p class="ex">Temos 8 contratos canônicos guardados em <code>componentes/compartilhado/specs/</code>.</p>
+      <p class="ex">Temos 9 contratos canônicos guardados em <code>componentes/compartilhado/specs/</code>.</p>
     </article>
     <article class="peca" style="--c:var(--brick)">
       <div class="top"><h3>A Linha de Montagem</h3></div>
@@ -417,9 +417,9 @@ footer{padding-top:28px;border-top:1px solid var(--line);font-size:.85rem;color:
       <div class="pino">
         <span class="b">planner</span><span class="line"></span>
         <span class="c">ficha técnica padronizada</span><span class="line"></span>
-        <span class="b">generator</span>
+        <span class="b">pure / open / freedom</span>
       </div>
-      <p>A planta baixa gerada pelo <code>planner</code> satisfaz todas as medidas exigidas pelo <code>generator</code>. A conexão faz "clique" e a montagem prossegue sem solavancos.</p>
+      <p>A planta baixa gerada pelo <code>planner</code> satisfaz todas as medidas exigidas pelas engines construtoras (<code>pure</code>, <code>open</code> ou <code>freedom</code>). A conexão faz "clique" e a montagem prossegue sem solavancos.</p>
     </div>
     <div class="box">
       <h3>Encaixe Forçado <span class="chip falha">cancela travada (exit 1)</span></h3>
@@ -444,7 +444,7 @@ footer{padding-top:28px;border-top:1px solid var(--line);font-size:.85rem;color:
   </div>
   <p>O porteiro é estritamente honesto e binário: ele não remenda a peça nem dá "jeitinho". Se a peça estiver com defeito, ele aponta a falha com precisão e devolve a peça para a máquina consertar antes de tentar passar de novo.</p>
   <a class="mapa-link" href="mapa-04-guardas.html">Ver o batalhão completo de guardas e porteiros →</a>
-  <a class="mapa-link" href="mapa-01-leis.html">Ver as 13 Leis e os guardas que as protegem →</a>
+  <a class="mapa-link" href="mapa-01-leis.html">Ver as 14 Leis e os guardas que as protegem →</a>
   <div class="ouro">
     <div class="box">
       <h3>Regra de Ouro 1: Quem Monta Não Fiscaliza</h3>
@@ -464,15 +464,15 @@ footer{padding-top:28px;border-top:1px solid var(--line);font-size:.85rem;color:
   <div class="receita-scroll">
     <div class="receita">
       <div class="passo"><span class="n">estação 1</span><strong>forge</strong><span>prepara o chão de fábrica e as regras</span><span class="chip certo">aprovado</span></div>
-      <div class="passo"><span class="n">estação 2</span><strong>planner</strong><span>desenha a planta baixa da solução</span><span class="chip certo">aprovado</span></div>
+      <div class="passo"><span class="n">estação 2</span><strong>planner</strong><span>desenha a planta baixa BDD/SDD</span><span class="chip certo">aprovado</span></div>
       <div class="passo var"><span class="n">estação 3 · motor</span><strong>construção</strong>
         <div class="alt">
-            <div>pure · generator <span class="chip certo">ok</span></div>
-            <div>open · factory <span class="chip certo">ok</span></div>
-            <div>freedom · bridge <span class="chip certo">ok</span></div>
+            <div>pure · aidd-pure <span class="chip certo">ok</span></div>
+            <div>open · aidd-open <span class="chip certo">ok</span></div>
+            <div>freedom · aidd-freedom <span class="chip certo">ok</span></div>
         </div>
       </div>
-      <div class="passo"><span class="n">estação 4</span><strong>master</strong><span>encaixa as fatias em um monólito modular</span><span class="chip certo">aprovado</span></div>
+      <div class="passo"><span class="n">estação 4</span><strong>master</strong><span>despacha fatias VSA em worktrees e consolida</span><span class="chip certo">aprovado</span></div>
       <div class="passo"><span class="n">estação 5</span><strong>enterprise</strong><span>coloca o lacre de segurança e blindagem</span><span class="chip certo">aprovado</span></div>
       <div class="passo"><span class="n">estação 6</span><strong>ops</strong><span>prepara os containers e a hospedagem</span><span class="chip certo">aprovado</span></div>
       <div class="passo"><span class="n">estação 7</span><strong>auditoria</strong><span>passa pelo raio-x dos fiscais de segurança</span><span class="chip certo">aprovado</span></div>
@@ -578,7 +578,7 @@ footer{padding-top:28px;border-top:1px solid var(--line);font-size:.85rem;color:
   </div>
 </section>
 
-<footer>Dados e métricas apurados em <code>docs/auditoria/mapa-pecas/catalogo-pecas.json</code> em 29/09/2026. Versão conceitual e ilustrada voltada para visualização didática.</footer>
+<footer>Dados e métricas apurados em <code>docs/auditoria/mapa-pecas/catalogo-pecas.json</code> em 06/10/2026. Versão conceitual e ilustrada voltada para visualização didática.</footer>
 </div>
 </body>
 </html>

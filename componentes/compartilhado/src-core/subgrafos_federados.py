@@ -17,8 +17,12 @@ from typing import Dict, List, Optional, Any
 
 DOMINIOS_VSA = {
     "01-governanca": "modulos/01-governanca-e-qualidade",
-    "02-motores": "modulos/02-triade-motores",
-    "03-plataforma": "modulos/03-plataforma-e-entrega",
+    "triade-fluxo-pure": "modulos/02-triade-motores/fluxo-01-pure",
+    "triade-fluxo-open": "modulos/02-triade-motores/fluxo-02-open",
+    "triade-fluxo-freedom": "modulos/02-triade-motores/fluxo-03-freedom",
+    "fatiamento-master": "modulos/03-plataforma-e-entrega/fatiamento-master",
+    "blindagem-enterprise": "modulos/03-plataforma-e-entrega/blindagem-enterprise",
+    "operacoes-ops": "modulos/03-plataforma-e-entrega/operacoes-ops",
     "04-nucleo": "modulos/04-nucleo-compartilhado",
     "core-cli": "scripts",
 }
@@ -99,6 +103,14 @@ class SubgrafoFederadoVSA:
                 "dominio": dominio,
                 "erro": str(exc),
             }
+
+    def indexar_todos(self, modo: str = "fast") -> Dict[str, Any]:
+        """Indexa todos os subgrafos federados de cada módulo e submódulo."""
+        resultados = {}
+        for dom in DOMINIOS_VSA:
+            res = self.indexar_subgrafo(dom, modo=modo)
+            resultados[dom] = res
+        return resultados
 
 
 if __name__ == "__main__":
