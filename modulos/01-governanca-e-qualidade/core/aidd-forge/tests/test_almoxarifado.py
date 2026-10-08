@@ -45,7 +45,7 @@ def test_obter_peca_copia_para_projeto_e_confere_sha256(tmp_path: Path) -> None:
 
 
 def test_obter_peca_recusa_destino_dentro_de_modulos() -> None:
-    destino = _RAIZ_REPO / "modulos" / "02-triade-motores" / "fluxo-01-pure" / "core" / "aidd-pure" / "_destino_teste_almoxarifado"
+    destino = _RAIZ_REPO / "modulos" / "_destino_teste_almoxarifado"
 
     with pytest.raises(ValueError, match="modulos"):
         obter_peca("moldes/infra/Dockerfile", destino=destino)

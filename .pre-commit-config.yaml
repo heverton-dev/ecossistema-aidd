@@ -435,21 +435,21 @@ repos:
         pass_filenames: false
         require_serial: true
 
-      # MODO AVISO (warn): uma peca, um lugar (ciclo-03 VSA, decisoes A e C).
-      # O modo bloqueio (AIDD_COPIA_UNICA_MODO=bloqueio) e ligado no Ticket 20.
+      # MODO BLOQUEIO (Ticket 20): uma peca, um lugar (ciclo-03 VSA, decisoes A e C).
+      # Exit 1 com ferramenta, gate ou skill em mais de um lugar.
       - id: g-copia-unica-vsa
-        name: "G_COPIA_UNICA_VSA (copia unica de ferramenta, gate e skill — modo aviso, D13)"
-        entry: python modulos/04-nucleo-compartilhado/gates/G_COPIA_UNICA_VSA.py --modo aviso
+        name: "G_COPIA_UNICA_VSA (copia unica de ferramenta, gate e skill — modo bloqueio, D13)"
+        entry: python modulos/04-nucleo-compartilhado/gates/G_COPIA_UNICA_VSA.py
         language: system
         always_run: true
         pass_filenames: false
         require_serial: true
 
-      # MODO AVISO (warn): fatia so fala com outra pelo interface.py (ciclo-03 VSA, Ticket 11).
-      # O modo bloqueio (AIDD_MODULO_FRONTEIRA_MODO=bloqueio) e ligado no Ticket 20.
+      # MODO BLOQUEIO (Ticket 20): fatia so fala com outra pelo interface.py (ciclo-03 VSA, Ticket 11).
+      # Exit 1 com acoplamento fora da allowlist datada ou entrada morta nela.
       - id: g-modulo-fronteira
-        name: "G_MODULO_FRONTEIRA (fronteira entre fatias: sys.path, caminho, tools/ e import — modo aviso, D13)"
-        entry: python modulos/04-nucleo-compartilhado/gates/G_MODULO_FRONTEIRA.py --modo aviso
+        name: "G_MODULO_FRONTEIRA (fronteira entre fatias: sys.path, caminho, tools/ e import — modo bloqueio, D13)"
+        entry: python modulos/04-nucleo-compartilhado/gates/G_MODULO_FRONTEIRA.py
         language: system
         always_run: true
         pass_filenames: false

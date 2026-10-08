@@ -20,8 +20,8 @@ pode diminuir: mais entradas que o `teto`, teto maior que o do HEAD ou entrada s
 data/motivo → exit 1 em qualquer modo; entrada morta conta como violação.
 
 Níveis (AIDD_MODULO_FRONTEIRA_MODO, precedência: --modo > variável > padrão):
-  - aviso    (padrão): imprime o relatório e sai com exit 0;
-  - bloqueio          : exit 1 se houver violação.
+  - bloqueio (padrão desde o Ticket 20): exit 1 se houver violação;
+  - aviso                              : imprime o relatório e sai com exit 0.
 Saída binária 0/1 (Lei #2).
 =============================================================================
 """
@@ -212,7 +212,7 @@ def carregar_allowlist(raiz: Path) -> list[dict]:
 
 
 def _modo(cli: str | None) -> str:
-    bruto = (cli or os.environ.get("AIDD_MODULO_FRONTEIRA_MODO", "") or "aviso").strip().lower()
+    bruto = (cli or os.environ.get("AIDD_MODULO_FRONTEIRA_MODO", "") or "bloqueio").strip().lower()
     if bruto not in MODOS:
         raise ErroConfig(f"AIDD_MODULO_FRONTEIRA_MODO inválido: {bruto!r} (use aviso|bloqueio)")
     return bruto

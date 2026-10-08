@@ -9,7 +9,7 @@ plantado fora de interface.py tem de ser acusado:
   2. caminho literal para dentro da outra fatia (string e Path/os.path.join);
   3. referencia a tools/aidd-* (pasta extinta no Ticket 5);
   4. import de pacote que so existe na outra fatia.
-Em bloqueio sai com 1; em aviso, 0. Allowlist datada perdoa, mas so pode
+Em bloqueio (padrao desde o Ticket 20) sai com 1; em aviso, 0. Allowlist datada perdoa, mas so pode
 diminuir: entrada a mais que o teto, entrada sem data/motivo ou entrada morta
 reprovam.
 """
@@ -101,7 +101,9 @@ def test_cada_acoplamento_plantado_e_acusado(repo, caso):
     proc = _rodar(repo, "--modo", "bloqueio")
     assert proc.returncode == 1, f"{caso} nao mordeu:\n{proc.stdout}"
     assert rel in proc.stdout and f"[{tipo}]" in proc.stdout, proc.stdout
-    aviso = _rodar(repo)  # padrao: aviso
+    padrao = _rodar(repo)  # padrao: bloqueio (Ticket 20)
+    assert padrao.returncode == 1 and "modo bloqueio" in padrao.stdout, padrao.stdout
+    aviso = _rodar(repo, "--modo", "aviso")
     assert aviso.returncode == 0 and rel in aviso.stdout, aviso.stdout
 
 

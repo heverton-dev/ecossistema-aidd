@@ -58,10 +58,11 @@ def test_bloqueio_reprova_com_exit_1(tmp_path):
     assert proc.returncode == 1, proc.stdout + proc.stderr
 
 
-def test_padrao_e_aviso(tmp_path):
+def test_padrao_e_bloqueio(tmp_path):
+    """Ticket 20 (ciclo-03): sem --modo e sem variável, cópia dupla reprova."""
     proc = _rodar(_repo(tmp_path, DUPLICADO), None)
-    assert proc.returncode == 0, proc.stdout + proc.stderr
-    assert "aviso" in proc.stdout
+    assert proc.returncode == 1, proc.stdout + proc.stderr
+    assert "modo bloqueio" in proc.stdout
 
 
 def test_moldes_de_projeto_do_almoxarifado_nao_contam(tmp_path):

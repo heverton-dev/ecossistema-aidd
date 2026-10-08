@@ -1569,3 +1569,21 @@
 - **Achados (sem correção neste ticket):** o `pytest.ini` das ferramentas tem `testpaths = tests/unit`, então `tests/integration/` e a raiz de `tests/` não rodam na suíte; 4 testes `test_gate_drift_*` em `test_fronteira_enterprise.py` já falham na main e ficam fora de qualquer suíte.
 - **Status:** **RESOLVIDO**.
 - **Data da Última Auditoria:** 09/10/2026.
+
+## 52. Modularização VSA ciclo-03, Bloco 8 (Ticket 20): fiscais da VSA em bloqueio e allowlists enxutas
+
+- **Objetivo da Correção:**
+  `G_COPIA_UNICA_VSA` e `G_MODULO_FRONTEIRA` saíam com exit 0 por padrão (modo aviso) e o pre-commit, que o `audit` também roda, forçava `--modo aviso`. A `allowlist_fronteira.json` tinha 8 entradas mortas e as duas allowlists só traziam o motivo genérico da semeadura ou do inventário inicial.
+- **Ferramentas Tocadas:** aidd-forge (`tests/test_almoxarifado.py`: o destino proibido do teste de recusa passa a ser `modulos/_destino_teste_almoxarifado`, sem citar a pasta do pure). Nenhum código de produção das ferramentas mudou.
+- **O que executou:**
+  1. Padrão `bloqueio` nos dois gates; o pre-commit deixa de passar `--modo aviso`.
+  2. `allowlist_fronteira.json`: 40 → 32 entradas (saíram as 8 de `aidd-ops/src/core_ops/`, que deixaram de ser violação quando `src/core` virou `src/core_ops` no T10); as 26 restantes fora de enterprise e master ganharam data 2026-10-08 e motivo atual.
+  3. `allowlist_modulo_fronteira.json`: 52 → 50 entradas e teto 50. Dois testes deixaram de citar outra fatia sem precisar (`test_almoxarifado.py` do forge e `test_g_disciplina_teste_ferramenta.py`); as 27 restantes fora de enterprise e master ganharam data e motivo atual.
+  4. As 29 entradas de `aidd-enterprise/` e `aidd-master/` ficaram sem mudança: são do Ticket 23 (Bloco 9).
+  5. Achado: a suíte do forge rodada a partir da raiz da worktree importa o `aidd_forge` editável da main; a guarda do almoxarifado usa a raiz da main e o teste de recusa grava na worktree. De dentro da pasta do forge (como o micro-gate e o `G_TESTES_REAIS` rodam) a guarda vale.
+- **Resultados de Testes (08/10/2026):**
+  - `pytest tests/test_fiscais_vsa_bloqueio.py` → exit 1 antes (68 failed, 1 passed), exit 0 depois (59 passed).
+  - `G_COPIA_UNICA_VSA` sem `--modo` → modo bloqueio, 0 violações, exit 0. `G_MODULO_FRONTEIRA` sem `--modo` → modo bloqueio, 0 acoplamentos novos, 50 perdoados, 0 entradas mortas, exit 0.
+  - Suíte do forge (de dentro da pasta) → 316 passed, 1 skipped, exit 0.
+- **Status:** **RESOLVIDO**.
+- **Data da Última Auditoria:** 08/10/2026.

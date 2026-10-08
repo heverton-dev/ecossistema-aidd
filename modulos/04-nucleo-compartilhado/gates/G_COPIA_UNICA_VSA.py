@@ -14,8 +14,8 @@ componentes/compartilhado/injetor/**, carimbados nos projetos gerados) e a evid�
 de ciclo em docs/auditoria/**.
 
 Níveis (AIDD_COPIA_UNICA_MODO, precedência: --modo > variável > padrão):
-  - aviso    (padrão): imprime o relatório e sai com exit 0;
-  - bloqueio          : exit 1 se houver violação.
+  - bloqueio (padrão desde o Ticket 20): exit 1 se houver violação;
+  - aviso                              : imprime o relatório e sai com exit 0.
 Modo desconhecido ou git fora de repo → exit 1. Saída binária 0/1 (Lei #2).
 =============================================================================
 """
@@ -86,7 +86,7 @@ def skills_duplicadas(arquivos: list[str]) -> list[str]:
 
 
 def _modo(cli: str | None) -> str:
-    bruto = (cli or os.environ.get("AIDD_COPIA_UNICA_MODO", "") or "aviso").strip().lower()
+    bruto = (cli or os.environ.get("AIDD_COPIA_UNICA_MODO", "") or "bloqueio").strip().lower()
     if bruto not in MODOS:
         raise ValueError(f"AIDD_COPIA_UNICA_MODO inválido: {bruto!r} (use aviso|bloqueio)")
     return bruto

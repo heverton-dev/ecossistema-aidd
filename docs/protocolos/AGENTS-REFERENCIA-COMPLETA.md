@@ -102,7 +102,7 @@ O ecossistema dispõe de Quality Gates globais em gates/:
 - modulos/04-nucleo-compartilhado/gates/G_ECOSSISTEMA_INTEGRIDADE.py: Audita a integridade física, sintática e estrutural dos 5 subprojetos e das skills.
 - modulos/04-nucleo-compartilhado/gates/G_DRIFT_NUCLEO_COMPARTILHADO.py: Detecta divergência não documentada entre os arquivos de núcleo compartilhados por linhagem entre aidd-master e aidd-enterprise (baseline em modulos/04-nucleo-compartilhado/contracts/baseline_nucleo_compartilhado.json).
 - modulos/04-nucleo-compartilhado/gates/G_FRONTEIRA_FERRAMENTAS.py: Confere se cada arquivo de tools/ está no dono certo do mapa de donos (fronteiras-ferramentas, Ticket 6); modo aviso por padrão (AIDD_FRONTEIRA_MODO=bloqueio reprova).
-- modulos/04-nucleo-compartilhado/gates/G_COPIA_UNICA_VSA.py: Uma peça, um lugar (ciclo-03 VSA, decisões A e C): acusa ferramenta, gate ou skill com o mesmo nome em mais de um lugar; modo aviso por padrão (AIDD_COPIA_UNICA_MODO=bloqueio reprova).
+- modulos/04-nucleo-compartilhado/gates/G_COPIA_UNICA_VSA.py: Uma peça, um lugar (ciclo-03 VSA, decisões A e C): acusa ferramenta, gate ou skill com o mesmo nome em mais de um lugar; modo bloqueio por padrão desde o Ticket 20 (AIDD_COPIA_UNICA_MODO=aviso só relata).
 - modulos/04-nucleo-compartilhado/gates/G_HARNESS_COMPAT.py: Verifica que os artefatos multi-harness da raiz (comandos, skills, arquivos-ponteiro) permanecem sincronizados entre si.
 - modulos/04-nucleo-compartilhado/gates/G_SEGREDOS.py: Escaneia todo o repositório rastreado pelo git em busca de credenciais hardcoded, delegando ao detect-secrets (Yelp); baseline auditado em .secrets.baseline na raiz. Reativado com `always_run: true` em 2026-09-19 (ISSUE-0002/ISSUE-0003) — roda em todo commit.
 - modulos/04-nucleo-compartilhado/gates/G_CLI_HELP_CONSISTENCIA.py: Compara, via AST, flags citadas em print()/raise() contra flags realmente definidas via add_argument nos pontos de entrada argparse das 4 ferramentas.
@@ -148,7 +148,7 @@ O ecossistema dispõe de Quality Gates globais em gates/:
 - modulos/02-triade-motores/fluxo-01-pure/gates/G_STACK_PADRAO_OURO.py: Audita dependências de frontend gerado (Next.js, React, TypeScript, Tailwind) e configuração de backend (SQLite WAL, OpenAPI 3.1.x) contra o padrão-ouro da Lei #11, respeitando override explícito registrado no plano.
 - modulos/04-nucleo-compartilhado/gates/G_PIPELINE_HANDOFF.py: Valida formalmente a conformidade de manifestos de handoff de execução contra o schema canônico handoff-execucao.schema.json, prevenindo dados inválidos, stubs e comandos triviais (ISSUE-PIPE-0002).
 - modulos/01-governanca-e-qualidade/gates/G_aidd_grill.py: Quality gate da ferramenta `aidd-grill` (ciclo-01) — exige os 8 scripts obrigatórios da skill em componentes/compartilhado/skills/aidd-grill/scripts/.
-- modulos/04-nucleo-compartilhado/gates/G_MODULO_FRONTEIRA.py: Audita via AST a fronteira entre as 7 fatias VSA (MAPA-FATIAS.json): sys.path, caminho literal e import para outra fatia fora do interface.py, e referência a tools/; allowlist datada que só diminui (aviso; bloqueio no Ticket 20).
+- modulos/04-nucleo-compartilhado/gates/G_MODULO_FRONTEIRA.py: Audita via AST a fronteira entre as 7 fatias VSA (MAPA-FATIAS.json): sys.path, caminho literal e import para outra fatia fora do interface.py, e referência a tools/; allowlist datada que só diminui; modo bloqueio por padrão desde o Ticket 20 (AIDD_MODULO_FRONTEIRA_MODO=aviso só relata).
 
 - **Execução unificada:** `python ecossistema.py audit` delega para `pre-commit run --all-files`.
 

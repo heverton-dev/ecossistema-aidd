@@ -1,174 +1,160 @@
 {
   "descricao": "Acoplamentos entre fatias perdoados com data. So pode diminuir (G_MODULO_FRONTEIRA).",
-  "teto": 51,
+  "teto": 49,
   "entradas": [
-    {
-      "arquivo": "modulos/01-governanca-e-qualidade/core/aidd-forge/tests/test_almoxarifado.py",
-      "tipo": "caminho",
-      "alvo": "fluxo-01-pure",
-      "data": "2026-10-07",
-      "motivo": "acoplamento existente na semeadura do Ticket 11 (ciclo-03); migrar para interface.py"
-    },
     {
       "arquivo": "modulos/01-governanca-e-qualidade/core/aidd-planner/aidd_planner/core/planner_engine.py",
       "tipo": "caminho",
       "alvo": "operacoes-ops",
-      "data": "2026-10-07",
-      "motivo": "acoplamento existente na semeadura do Ticket 11 (ciclo-03); migrar para interface.py"
+      "data": "2026-10-08",
+      "motivo": "Mesmo código de src/core_planner/planner_engine.py na casca aidd_planner/core (achado do Bloco 4): reusa as Fases 1-3 do aidd-ops pelo sys.path."
     },
     {
       "arquivo": "modulos/01-governanca-e-qualidade/core/aidd-planner/src/core_planner/planner_engine.py",
       "tipo": "caminho",
       "alvo": "operacoes-ops",
-      "data": "2026-10-07",
-      "motivo": "acoplamento existente na semeadura do Ticket 11 (ciclo-03); migrar para interface.py"
+      "data": "2026-10-08",
+      "motivo": "Reusa as Fases 1-3 do aidd-ops (Intake, Curadoria, Sizing), fonte única do contrato PLANO-INFRAESTRUTURA (PLAN-0034), em vez de reimplementar; o interface.py do ops não expõe essas fases."
     },
     {
       "arquivo": "modulos/01-governanca-e-qualidade/core/aidd-planner/tests/test_planner.py",
       "tipo": "caminho",
       "alvo": "fluxo-02-open",
-      "data": "2026-10-07",
-      "motivo": "acoplamento existente na semeadura do Ticket 11 (ciclo-03); migrar para interface.py"
+      "data": "2026-10-08",
+      "motivo": "Teste de contrato planner → open: roda scripts/pipeline_factory.py do aidd-open com o plano exportado pelo planner."
     },
     {
       "arquivo": "modulos/01-governanca-e-qualidade/core/aidd-planner/tests/test_planner.py",
       "tipo": "import",
       "alvo": "operacoes-ops",
-      "data": "2026-10-07",
-      "motivo": "acoplamento existente na semeadura do Ticket 11 (ciclo-03); migrar para interface.py"
+      "data": "2026-10-08",
+      "motivo": "Falso positivo: `gates` é a pasta gates/ do próprio planner (sem __init__.py); o G_MODULO_FRONTEIRA atribui o nome ao pacote gates do aidd-ops."
     },
     {
       "arquivo": "modulos/01-governanca-e-qualidade/gates/G_DETERMINISMO_LEI_1.py",
       "tipo": "caminho",
       "alvo": "fluxo-01-pure",
-      "data": "2026-10-07",
-      "motivo": "acoplamento existente na semeadura do Ticket 11 (ciclo-03); migrar para interface.py"
+      "data": "2026-10-08",
+      "motivo": "Gate de governança (Lei #1): lista as pastas gates/ de todas as fatias para varrer; lê arquivos, não usa código da fatia."
     },
     {
       "arquivo": "modulos/01-governanca-e-qualidade/gates/G_DETERMINISMO_LEI_1.py",
       "tipo": "caminho",
       "alvo": "fluxo-02-open",
-      "data": "2026-10-07",
-      "motivo": "acoplamento existente na semeadura do Ticket 11 (ciclo-03); migrar para interface.py"
+      "data": "2026-10-08",
+      "motivo": "Gate de governança (Lei #1): lista as pastas gates/ de todas as fatias para varrer; lê arquivos, não usa código da fatia."
     },
     {
       "arquivo": "modulos/01-governanca-e-qualidade/gates/G_DETERMINISMO_LEI_1.py",
       "tipo": "caminho",
       "alvo": "fluxo-03-freedom",
-      "data": "2026-10-07",
-      "motivo": "acoplamento existente na semeadura do Ticket 11 (ciclo-03); migrar para interface.py"
+      "data": "2026-10-08",
+      "motivo": "Gate de governança (Lei #1): lista as pastas gates/ de todas as fatias para varrer; lê arquivos, não usa código da fatia."
     },
     {
       "arquivo": "modulos/01-governanca-e-qualidade/gates/G_PORTAO_PROVA_QUE_MORDE.py",
       "tipo": "caminho",
       "alvo": "fluxo-01-pure",
-      "data": "2026-10-07",
-      "motivo": "acoplamento existente na semeadura do Ticket 11 (ciclo-03); migrar para interface.py"
+      "data": "2026-10-08",
+      "motivo": "Gate de governança (prova que morde): lista as pastas gates/ de todas as fatias para conferir o teste de cada gate; lê arquivos, não usa código da fatia."
     },
     {
       "arquivo": "modulos/01-governanca-e-qualidade/gates/G_PORTAO_PROVA_QUE_MORDE.py",
       "tipo": "caminho",
       "alvo": "fluxo-02-open",
-      "data": "2026-10-07",
-      "motivo": "acoplamento existente na semeadura do Ticket 11 (ciclo-03); migrar para interface.py"
+      "data": "2026-10-08",
+      "motivo": "Gate de governança (prova que morde): lista as pastas gates/ de todas as fatias para conferir o teste de cada gate; lê arquivos, não usa código da fatia."
     },
     {
       "arquivo": "modulos/01-governanca-e-qualidade/gates/G_PORTAO_PROVA_QUE_MORDE.py",
       "tipo": "caminho",
       "alvo": "fluxo-03-freedom",
-      "data": "2026-10-07",
-      "motivo": "acoplamento existente na semeadura do Ticket 11 (ciclo-03); migrar para interface.py"
-    },
-    {
-      "arquivo": "modulos/01-governanca-e-qualidade/gates/test_g_disciplina_teste_ferramenta.py",
-      "tipo": "caminho",
-      "alvo": "fluxo-01-pure",
-      "data": "2026-10-07",
-      "motivo": "acoplamento existente na semeadura do Ticket 11 (ciclo-03); migrar para interface.py"
+      "data": "2026-10-08",
+      "motivo": "Gate de governança (prova que morde): lista as pastas gates/ de todas as fatias para conferir o teste de cada gate; lê arquivos, não usa código da fatia."
     },
     {
       "arquivo": "modulos/02-triade-motores/fluxo-01-pure/core/aidd-pure/scripts/core_pure/pecas_catalogo.py",
       "tipo": "caminho",
       "alvo": "01-governanca-e-qualidade",
-      "data": "2026-10-07",
-      "motivo": "acoplamento existente na semeadura do Ticket 11 (ciclo-03); migrar para interface.py"
+      "data": "2026-10-08",
+      "motivo": "Consome caminho_peca do almoxarifado do aidd-forge para servir o injetor ao aidd-pure (D1/Ticket 15); é a função que o interface.py da fatia 01 expõe, ainda carregada pelo sys.path do forge."
     },
     {
       "arquivo": "modulos/02-triade-motores/fluxo-01-pure/core/aidd-pure/scripts/core_pure/pecas_catalogo.py",
       "tipo": "import",
       "alvo": "01-governanca-e-qualidade",
-      "data": "2026-10-07",
-      "motivo": "acoplamento existente na semeadura do Ticket 11 (ciclo-03); migrar para interface.py"
+      "data": "2026-10-08",
+      "motivo": "Consome caminho_peca do almoxarifado do aidd-forge para servir o injetor ao aidd-pure (D1/Ticket 15); é a função que o interface.py da fatia 01 expõe, ainda carregada pelo sys.path do forge."
     },
     {
       "arquivo": "modulos/02-triade-motores/fluxo-01-pure/core/aidd-pure/tests/test_fronteira_generator.py",
       "tipo": "caminho",
       "alvo": "01-governanca-e-qualidade",
-      "data": "2026-10-07",
-      "motivo": "acoplamento existente na semeadura do Ticket 11 (ciclo-03); migrar para interface.py"
+      "data": "2026-10-08",
+      "motivo": "Teste de fronteira do aidd-pure: prova que a peça que a ferramenta usa vem do almoxarifado (caminho_peca do aidd-forge)."
     },
     {
       "arquivo": "modulos/02-triade-motores/fluxo-01-pure/core/aidd-pure/tests/test_fronteira_generator.py",
       "tipo": "import",
       "alvo": "01-governanca-e-qualidade",
-      "data": "2026-10-07",
-      "motivo": "acoplamento existente na semeadura do Ticket 11 (ciclo-03); migrar para interface.py"
+      "data": "2026-10-08",
+      "motivo": "Teste de fronteira do aidd-pure: prova que a peça que a ferramenta usa vem do almoxarifado (caminho_peca do aidd-forge)."
     },
     {
       "arquivo": "modulos/02-triade-motores/fluxo-02-open/core/aidd-open/scripts/phases_open/01_analisador.py",
       "tipo": "caminho",
       "alvo": "operacoes-ops",
-      "data": "2026-10-07",
-      "motivo": "acoplamento existente na semeadura do Ticket 11 (ciclo-03); migrar para interface.py"
+      "data": "2026-10-08",
+      "motivo": "Lê os moldes de nicho em aidd-ops/templates/infra/nichos (o aidd-ops é dono dos moldes de infraestrutura); leitura de dados."
     },
     {
       "arquivo": "modulos/02-triade-motores/fluxo-02-open/core/aidd-open/scripts/phases_open/06_env.py",
       "tipo": "caminho",
       "alvo": "operacoes-ops",
-      "data": "2026-10-07",
-      "motivo": "acoplamento existente na semeadura do Ticket 11 (ciclo-03); migrar para interface.py"
+      "data": "2026-10-08",
+      "motivo": "Lê os moldes de .env em aidd-ops/templates/infra (o aidd-ops é dono dos moldes de infraestrutura); leitura de dados."
     },
     {
       "arquivo": "modulos/02-triade-motores/fluxo-02-open/core/aidd-open/src/core_open/vsa_generator.py",
       "tipo": "caminho",
       "alvo": "01-governanca-e-qualidade",
-      "data": "2026-10-07",
-      "motivo": "acoplamento existente na semeadura do Ticket 11 (ciclo-03); migrar para interface.py"
+      "data": "2026-10-08",
+      "motivo": "Consome caminho_peca do almoxarifado do aidd-forge para copiar peças canônicas no projeto gerado; é a função que o interface.py da fatia 01 expõe, ainda carregada pelo sys.path do forge."
     },
     {
       "arquivo": "modulos/02-triade-motores/fluxo-02-open/core/aidd-open/src/core_open/vsa_generator.py",
       "tipo": "import",
       "alvo": "01-governanca-e-qualidade",
-      "data": "2026-10-07",
-      "motivo": "acoplamento existente na semeadura do Ticket 11 (ciclo-03); migrar para interface.py"
+      "data": "2026-10-08",
+      "motivo": "Consome caminho_peca do almoxarifado do aidd-forge para copiar peças canônicas no projeto gerado; é a função que o interface.py da fatia 01 expõe, ainda carregada pelo sys.path do forge."
     },
     {
       "arquivo": "modulos/02-triade-motores/fluxo-02-open/core/aidd-open/tests/test_fronteira_factory.py",
       "tipo": "caminho",
       "alvo": "01-governanca-e-qualidade",
-      "data": "2026-10-07",
-      "motivo": "acoplamento existente na semeadura do Ticket 11 (ciclo-03); migrar para interface.py"
+      "data": "2026-10-08",
+      "motivo": "Teste de fronteira do aidd-open: prova que a peça que a ferramenta usa vem do almoxarifado (caminho_peca do aidd-forge)."
     },
     {
       "arquivo": "modulos/02-triade-motores/fluxo-02-open/core/aidd-open/tests/test_fronteira_factory.py",
       "tipo": "import",
       "alvo": "01-governanca-e-qualidade",
-      "data": "2026-10-07",
-      "motivo": "acoplamento existente na semeadura do Ticket 11 (ciclo-03); migrar para interface.py"
+      "data": "2026-10-08",
+      "motivo": "Teste de fronteira do aidd-open: prova que a peça que a ferramenta usa vem do almoxarifado (caminho_peca do aidd-forge)."
     },
     {
       "arquivo": "modulos/02-triade-motores/fluxo-03-freedom/gates/G_MIGRATION_ROT.py",
       "tipo": "caminho",
       "alvo": "fatiamento-master",
-      "data": "2026-10-07",
-      "motivo": "acoplamento existente na semeadura do Ticket 11 (ciclo-03); migrar para interface.py"
+      "data": "2026-10-08",
+      "motivo": "Gate do fluxo-03 que audita as migrações alembic do aidd-master e do aidd-enterprise (procura alembic.ini nas duas) em banco temporário isolado."
     },
     {
       "arquivo": "modulos/02-triade-motores/fluxo-03-freedom/gates/test_g_migration_rot.py",
       "tipo": "caminho",
       "alvo": "fatiamento-master",
-      "data": "2026-10-07",
-      "motivo": "acoplamento existente na semeadura do Ticket 11 (ciclo-03); migrar para interface.py"
+      "data": "2026-10-08",
+      "motivo": "Teste do G_MIGRATION_ROT: copia o alembic do aidd-master para pasta temporária como amostra real."
     },
     {
       "arquivo": "modulos/03-plataforma-e-entrega/blindagem-enterprise/aidd-enterprise/application_enterprise/pecas_catalogo.py",
@@ -335,29 +321,29 @@
       "arquivo": "modulos/03-plataforma-e-entrega/operacoes-ops/aidd-ops/scripts/infra_perfil.py",
       "tipo": "caminho",
       "alvo": "01-governanca-e-qualidade",
-      "data": "2026-10-07",
-      "motivo": "acoplamento existente na semeadura do Ticket 11 (ciclo-03); migrar para interface.py"
+      "data": "2026-10-08",
+      "motivo": "Consome carregar_catalogo e obter_peca do almoxarifado do aidd-forge para montar o perfil de infraestrutura; obter_peca é exposto pelo interface.py da fatia 01, ainda carregado pelo sys.path do forge."
     },
     {
       "arquivo": "modulos/03-plataforma-e-entrega/operacoes-ops/aidd-ops/scripts/infra_perfil.py",
       "tipo": "import",
       "alvo": "01-governanca-e-qualidade",
-      "data": "2026-10-07",
-      "motivo": "acoplamento existente na semeadura do Ticket 11 (ciclo-03); migrar para interface.py"
+      "data": "2026-10-08",
+      "motivo": "Consome carregar_catalogo e obter_peca do almoxarifado do aidd-forge para montar o perfil de infraestrutura; obter_peca é exposto pelo interface.py da fatia 01, ainda carregado pelo sys.path do forge."
     },
     {
       "arquivo": "modulos/03-plataforma-e-entrega/operacoes-ops/aidd-ops/tests/test_contrato_infraestrutura.py",
       "tipo": "caminho",
       "alvo": "blindagem-enterprise",
-      "data": "2026-10-07",
-      "motivo": "acoplamento existente na semeadura do Ticket 11 (ciclo-03); migrar para interface.py"
+      "data": "2026-10-08",
+      "motivo": "Teste de contrato PLANO-INFRAESTRUTURA: confere que o scripts/scaffold_infra.py do aidd-master e do aidd-enterprise consome o plano que o aidd-ops produz."
     },
     {
       "arquivo": "modulos/03-plataforma-e-entrega/operacoes-ops/aidd-ops/tests/test_contrato_infraestrutura.py",
       "tipo": "caminho",
       "alvo": "fatiamento-master",
-      "data": "2026-10-07",
-      "motivo": "acoplamento existente na semeadura do Ticket 11 (ciclo-03); migrar para interface.py"
+      "data": "2026-10-08",
+      "motivo": "Teste de contrato PLANO-INFRAESTRUTURA: confere que o scripts/scaffold_infra.py do aidd-master e do aidd-enterprise consome o plano que o aidd-ops produz."
     }
   ]
 }

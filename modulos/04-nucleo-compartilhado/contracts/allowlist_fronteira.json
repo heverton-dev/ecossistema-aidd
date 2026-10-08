@@ -28,23 +28,23 @@
     },
     {
       "arquivo": "modulos/02-triade-motores/fluxo-03-freedom/core/aidd-freedom/gates/G_BRIDGE_DOCKER_OCI.py",
-      "data": "2026-10-01",
-      "motivo": "conhecida no inventario inicial (Ticket 6): nunca_conter(**/G_*.py); atual=aidd-freedom; dono=aidd-forge"
+      "data": "2026-10-08",
+      "motivo": "Decisão C (06/10/2026): gate interno do aidd-freedom, na ferramenta dona e em cópia única; a regra nunca_conter(**/G_*.py) é da D2 do fronteiras ciclo-01, revista pela Decisão C. Chamado por aidd_freedom/pipeline_bridge.py; testado em tests/test_gate_bites.py."
     },
     {
       "arquivo": "modulos/02-triade-motores/fluxo-03-freedom/core/aidd-freedom/gates/G_BRIDGE_POSTGRESQL.py",
-      "data": "2026-10-01",
-      "motivo": "conhecida no inventario inicial (Ticket 6): nunca_conter(**/G_*.py); atual=aidd-freedom; dono=aidd-forge"
+      "data": "2026-10-08",
+      "motivo": "Decisão C (06/10/2026): gate interno do aidd-freedom, na ferramenta dona e em cópia única; a regra nunca_conter(**/G_*.py) é da D2 do fronteiras ciclo-01, revista pela Decisão C. Chamado por aidd_freedom/pipeline_bridge.py; testado em tests/test_gate_bites.py."
     },
     {
       "arquivo": "modulos/02-triade-motores/fluxo-03-freedom/core/aidd-freedom/gates/G_BRIDGE_VENDOR_LOCKIN.py",
-      "data": "2026-10-01",
-      "motivo": "conhecida no inventario inicial (Ticket 6): nunca_conter(**/G_*.py); atual=aidd-freedom; dono=aidd-forge"
+      "data": "2026-10-08",
+      "motivo": "Decisão C (06/10/2026): gate interno do aidd-freedom, na ferramenta dona e em cópia única; a regra nunca_conter(**/G_*.py) é da D2 do fronteiras ciclo-01, revista pela Decisão C. Chamado por aidd_freedom/pipeline_bridge.py; testado em tests/test_gate_bites.py."
     },
     {
       "arquivo": "modulos/02-triade-motores/fluxo-03-freedom/core/aidd-freedom/gates/G_BRIDGE_VSA_COMPAT.py",
-      "data": "2026-10-01",
-      "motivo": "conhecida no inventario inicial (Ticket 6): nunca_conter(**/G_*.py); atual=aidd-freedom; dono=aidd-forge"
+      "data": "2026-10-08",
+      "motivo": "Decisão C (06/10/2026): gate interno do aidd-freedom, na ferramenta dona e em cópia única; a regra nunca_conter(**/G_*.py) é da D2 do fronteiras ciclo-01, revista pela Decisão C. Chamado por aidd_freedom/pipeline_bridge.py; testado em tests/test_gate_bites.py."
     },
     {
       "arquivo": "modulos/03-plataforma-e-entrega/fatiamento-master/aidd-master/scripts/gates/G_AST_IMPORT_GUARD.py",
@@ -53,153 +53,113 @@
     },
     {
       "arquivo": "modulos/02-triade-motores/fluxo-02-open/core/aidd-open/gates/G_FACTORY_ANALYSIS.py",
-      "data": "2026-10-01",
-      "motivo": "conhecida no inventario inicial (Ticket 6): nunca_conter(**/G_*.py); atual=aidd-open; dono=aidd-forge"
+      "data": "2026-10-08",
+      "motivo": "Decisão C (06/10/2026): gate interno do aidd-open, na ferramenta dona e em cópia única; a regra nunca_conter(**/G_*.py) é da D2 do fronteiras ciclo-01, revista pela Decisão C. Sem chamador no código (só citado em docs); ligar ou apagar é decisão pendente."
     },
     {
       "arquivo": "modulos/02-triade-motores/fluxo-02-open/core/aidd-open/gates/G_FACTORY_COMPOSE.py",
-      "data": "2026-10-01",
-      "motivo": "conhecida no inventario inicial (Ticket 6): nunca_conter(**/G_*.py); atual=aidd-open; dono=aidd-forge"
+      "data": "2026-10-08",
+      "motivo": "Decisão C (06/10/2026): gate interno do aidd-open, na ferramenta dona e em cópia única; a regra nunca_conter(**/G_*.py) é da D2 do fronteiras ciclo-01, revista pela Decisão C. Sem chamador no código (só citado em docs); ligar ou apagar é decisão pendente."
     },
     {
       "arquivo": "modulos/02-triade-motores/fluxo-02-open/core/aidd-open/gates/G_FACTORY_ENV.py",
-      "data": "2026-10-01",
-      "motivo": "conhecida no inventario inicial (Ticket 6): nunca_conter(**/G_*.py); atual=aidd-open; dono=aidd-forge"
+      "data": "2026-10-08",
+      "motivo": "Decisão C (06/10/2026): gate interno do aidd-open, na ferramenta dona e em cópia única; a regra nunca_conter(**/G_*.py) é da D2 do fronteiras ciclo-01, revista pela Decisão C. Sem chamador no código (só citado em docs); ligar ou apagar é decisão pendente."
     },
     {
       "arquivo": "modulos/02-triade-motores/fluxo-02-open/core/aidd-open/gates/G_FACTORY_INIT_DB.py",
-      "data": "2026-10-01",
-      "motivo": "conhecida no inventario inicial (Ticket 6): nunca_conter(**/G_*.py); atual=aidd-open; dono=aidd-forge"
+      "data": "2026-10-08",
+      "motivo": "Decisão C (06/10/2026): gate interno do aidd-open, na ferramenta dona e em cópia única; a regra nunca_conter(**/G_*.py) é da D2 do fronteiras ciclo-01, revista pela Decisão C. Sem chamador no código (só citado em docs); ligar ou apagar é decisão pendente."
     },
     {
       "arquivo": "modulos/02-triade-motores/fluxo-02-open/core/aidd-open/gates/G_FACTORY_INTEGRATION.py",
-      "data": "2026-10-01",
-      "motivo": "conhecida no inventario inicial (Ticket 6): nunca_conter(**/G_*.py); atual=aidd-open; dono=aidd-forge"
+      "data": "2026-10-08",
+      "motivo": "Decisão C (06/10/2026): gate interno do aidd-open, na ferramenta dona e em cópia única; a regra nunca_conter(**/G_*.py) é da D2 do fronteiras ciclo-01, revista pela Decisão C. Sem chamador no código (só citado em docs); ligar ou apagar é decisão pendente."
     },
     {
       "arquivo": "modulos/02-triade-motores/fluxo-02-open/core/aidd-open/gates/G_FACTORY_MVP.py",
-      "data": "2026-10-01",
-      "motivo": "conhecida no inventario inicial (Ticket 6): nunca_conter(**/G_*.py); atual=aidd-open; dono=aidd-forge"
+      "data": "2026-10-08",
+      "motivo": "Decisão C (06/10/2026): gate interno do aidd-open, na ferramenta dona e em cópia única; a regra nunca_conter(**/G_*.py) é da D2 do fronteiras ciclo-01, revista pela Decisão C. Testado em tests/test_pipeline_factory.py; o pipeline não o chama."
     },
     {
       "arquivo": "modulos/02-triade-motores/fluxo-02-open/core/aidd-open/src/core_open/swagger_generator.py",
-      "data": "2026-10-01",
-      "motivo": "conhecida no inventario inicial (Ticket 6): nunca_conter(**/swagger*); atual=aidd-open; dono=aidd-master"
+      "data": "2026-10-08",
+      "motivo": "Gera o openapi.json e o README do gateway que o próprio aidd-open cria (scripts/pipeline_factory.py, fase de documentação); a regra nunca_conter(**/swagger*) protege o Swagger Studio do aidd-master."
     },
     {
       "arquivo": "modulos/03-plataforma-e-entrega/operacoes-ops/aidd-ops/gates/G_OPS_MVP.py",
-      "data": "2026-10-01",
-      "motivo": "conhecida no inventario inicial (Ticket 6): nunca_conter(**/G_*.py); atual=aidd-ops; dono=aidd-forge"
+      "data": "2026-10-08",
+      "motivo": "Decisão C (06/10/2026): gate interno do aidd-ops, na ferramenta dona e em cópia única; a regra nunca_conter(**/G_*.py) é da D2 do fronteiras ciclo-01, revista pela Decisão C. Testado em tests/test_pipeline_ops.py; o pipeline não o chama."
     },
     {
       "arquivo": "modulos/03-plataforma-e-entrega/operacoes-ops/aidd-ops/gates/G_OPS_SSH.py",
-      "data": "2026-10-01",
-      "motivo": "conhecida no inventario inicial (Ticket 6): nunca_conter(**/G_*.py); atual=aidd-ops; dono=aidd-forge"
-    },
-    {
-      "arquivo": "modulos/03-plataforma-e-entrega/operacoes-ops/aidd-ops/src/core_ops/__init__.py",
-      "data": "2026-10-01",
-      "motivo": "conhecida no inventario inicial (Ticket 6): nunca_conter(**/src/core/**); atual=aidd-ops; dono=aidd-master"
-    },
-    {
-      "arquivo": "modulos/03-plataforma-e-entrega/operacoes-ops/aidd-ops/src/core_ops/cofre_credenciais.py",
-      "data": "2026-10-01",
-      "motivo": "conhecida no inventario inicial (Ticket 6): nunca_conter(**/src/core/**); atual=aidd-ops; dono=aidd-master"
-    },
-    {
-      "arquivo": "modulos/03-plataforma-e-entrega/operacoes-ops/aidd-ops/src/core_ops/compose_preflight.py",
-      "data": "2026-10-01",
-      "motivo": "conhecida no inventario inicial (Ticket 6): nunca_conter(**/src/core/**); atual=aidd-ops; dono=aidd-master"
-    },
-    {
-      "arquivo": "modulos/03-plataforma-e-entrega/operacoes-ops/aidd-ops/src/core_ops/coolify.py",
-      "data": "2026-10-01",
-      "motivo": "conhecida no inventario inicial (Ticket 6): nunca_conter(**/src/core/**); atual=aidd-ops; dono=aidd-master"
-    },
-    {
-      "arquivo": "modulos/03-plataforma-e-entrega/operacoes-ops/aidd-ops/src/core_ops/preflight.py",
-      "data": "2026-10-01",
-      "motivo": "conhecida no inventario inicial (Ticket 6): nunca_conter(**/src/core/**); atual=aidd-ops; dono=aidd-master"
-    },
-    {
-      "arquivo": "modulos/03-plataforma-e-entrega/operacoes-ops/aidd-ops/src/core_ops/result.py",
-      "data": "2026-10-01",
-      "motivo": "conhecida no inventario inicial (Ticket 6): nunca_conter(**/src/core/**); atual=aidd-ops; dono=aidd-master"
-    },
-    {
-      "arquivo": "modulos/03-plataforma-e-entrega/operacoes-ops/aidd-ops/src/core_ops/ssh_runner.py",
-      "data": "2026-10-01",
-      "motivo": "conhecida no inventario inicial (Ticket 6): nunca_conter(**/src/core/**); atual=aidd-ops; dono=aidd-master"
-    },
-    {
-      "arquivo": "modulos/03-plataforma-e-entrega/operacoes-ops/aidd-ops/src/core_ops/uptime_kuma.py",
-      "data": "2026-10-01",
-      "motivo": "conhecida no inventario inicial (Ticket 6): nunca_conter(**/src/core/**); atual=aidd-ops; dono=aidd-master"
+      "data": "2026-10-08",
+      "motivo": "Decisão C (06/10/2026): gate interno do aidd-ops, na ferramenta dona e em cópia única; a regra nunca_conter(**/G_*.py) é da D2 do fronteiras ciclo-01, revista pela Decisão C. Testado em tests/test_ssh_runner.py; o pipeline não o chama."
     },
     {
       "arquivo": "modulos/01-governanca-e-qualidade/core/aidd-planner/gates/G_PLANNER_COERENCIA_FLUXO.py",
-      "data": "2026-10-01",
-      "motivo": "conhecida no inventario inicial (Ticket 6): nunca_conter(**/G_*.py); atual=aidd-planner; dono=aidd-forge"
+      "data": "2026-10-08",
+      "motivo": "Decisão C (06/10/2026): gate interno do aidd-planner, na ferramenta dona e em cópia única; a regra nunca_conter(**/G_*.py) é da D2 do fronteiras ciclo-01, revista pela Decisão C. Chamado por src/cli.py; testado em tests/test_planner.py."
     },
     {
       "arquivo": "modulos/01-governanca-e-qualidade/core/aidd-planner/gates/G_PLANNER_SCHEMA.py",
-      "data": "2026-10-01",
-      "motivo": "conhecida no inventario inicial (Ticket 6): nunca_conter(**/G_*.py); atual=aidd-planner; dono=aidd-forge"
+      "data": "2026-10-08",
+      "motivo": "Decisão C (06/10/2026): gate interno do aidd-planner, na ferramenta dona e em cópia única; a regra nunca_conter(**/G_*.py) é da D2 do fronteiras ciclo-01, revista pela Decisão C. Chamado por src/cli.py; testado em tests/test_planner.py."
     },
     {
       "arquivo": "modulos/01-governanca-e-qualidade/core/aidd-planner/gates/G_PLANNER_SINE_QUA_NON.py",
-      "data": "2026-10-01",
-      "motivo": "conhecida no inventario inicial (Ticket 6): nunca_conter(**/G_*.py); atual=aidd-planner; dono=aidd-forge"
+      "data": "2026-10-08",
+      "motivo": "Decisão C (06/10/2026): gate interno do aidd-planner, na ferramenta dona e em cópia única; a regra nunca_conter(**/G_*.py) é da D2 do fronteiras ciclo-01, revista pela Decisão C. Chamado por src/cli.py; testado em tests/test_planner.py."
     },
     {
       "arquivo": "modulos/02-triade-motores/fluxo-01-pure/core/aidd-pure/scripts/gates/G_INTEGRACAO_CROSS_SCRIPT.py",
-      "data": "2026-10-01",
-      "motivo": "conhecida no inventario inicial (Ticket 6): nunca_conter(**/G_*.py); atual=aidd-pure; dono=aidd-forge"
+      "data": "2026-10-08",
+      "motivo": "Decisão C (06/10/2026): gate interno do aidd-pure, na ferramenta dona e em cópia única; a regra nunca_conter(**/G_*.py) é da D2 do fronteiras ciclo-01, revista pela Decisão C. Sem chamador no código (só citado em docs); ligar ou apagar é decisão pendente."
     },
     {
       "arquivo": "modulos/02-triade-motores/fluxo-01-pure/core/aidd-pure/scripts/gates/G_SANDBOX_NIVEL_1.py",
-      "data": "2026-10-01",
-      "motivo": "conhecida no inventario inicial (Ticket 6): nunca_conter(**/G_*.py); atual=aidd-pure; dono=aidd-forge"
+      "data": "2026-10-08",
+      "motivo": "Decisão C (06/10/2026): gate interno do aidd-pure, na ferramenta dona e em cópia única; a regra nunca_conter(**/G_*.py) é da D2 do fronteiras ciclo-01, revista pela Decisão C. Chamado por scripts/verificar_gates.py; testado em tests/test_sandbox_nivel_1.py."
     },
     {
       "arquivo": "modulos/02-triade-motores/fluxo-01-pure/core/aidd-pure/scripts/gates/G_SESSAO_HERMETICA.py",
-      "data": "2026-10-01",
-      "motivo": "conhecida no inventario inicial (Ticket 6): nunca_conter(**/G_*.py); atual=aidd-pure; dono=aidd-forge"
+      "data": "2026-10-08",
+      "motivo": "Decisão C (06/10/2026): gate interno do aidd-pure, na ferramenta dona e em cópia única; a regra nunca_conter(**/G_*.py) é da D2 do fronteiras ciclo-01, revista pela Decisão C. Chamado por scripts/phases/utils_delegacao.py; testado em tests/test_hermeticidade_sessoes.py."
     },
     {
       "arquivo": "modulos/02-triade-motores/fluxo-01-pure/core/aidd-pure/scripts/gates/G_TOKENOMICS.py",
-      "data": "2026-10-01",
-      "motivo": "conhecida no inventario inicial (Ticket 6): nunca_conter(**/G_*.py); atual=aidd-pure; dono=aidd-forge"
+      "data": "2026-10-08",
+      "motivo": "Decisão C (06/10/2026): gate interno do aidd-pure, na ferramenta dona e em cópia única; a regra nunca_conter(**/G_*.py) é da D2 do fronteiras ciclo-01, revista pela Decisão C. Testado em tests/test_benchmark_tokenomics.py; o pipeline não o chama."
     },
     {
       "arquivo": "modulos/02-triade-motores/fluxo-01-pure/core/aidd-pure/scripts/gates/G_VERIFICAR_LLM_PRONTO.py",
-      "data": "2026-10-01",
-      "motivo": "conhecida no inventario inicial (Ticket 6): nunca_conter(**/G_*.py); atual=aidd-pure; dono=aidd-forge"
+      "data": "2026-10-08",
+      "motivo": "Decisão C (06/10/2026): gate interno do aidd-pure, na ferramenta dona e em cópia única; a regra nunca_conter(**/G_*.py) é da D2 do fronteiras ciclo-01, revista pela Decisão C. Chamado por scripts/preflight_llm.py e scripts/verificar_gates.py."
     },
     {
       "arquivo": "modulos/02-triade-motores/fluxo-01-pure/core/aidd-pure/tests/test_aidd_inject_cli.py",
-      "data": "2026-10-01",
-      "motivo": "conhecida no inventario inicial (Ticket 6): nunca_conter(**/*inject*); atual=aidd-pure; dono=aidd-enterprise+aidd-forge+aidd-master+aidd-ops"
+      "data": "2026-10-08",
+      "motivo": "Testa o injetor do almoxarifado (dono aidd-enterprise, componentes/compartilhado/injetor/variantes/aidd-pure) que o aidd-pure recebe por scripts/core_pure/pecas_catalogo.py (D1/Ticket 15); só o nome do arquivo tem inject, não há cópia local do injetor."
     },
     {
       "arquivo": "modulos/02-triade-motores/fluxo-01-pure/core/aidd-pure/tests/test_gate_inject.py",
-      "data": "2026-10-01",
-      "motivo": "conhecida no inventario inicial (Ticket 6): nunca_conter(**/*inject*); atual=aidd-pure; dono=aidd-enterprise+aidd-forge+aidd-master+aidd-ops"
+      "data": "2026-10-08",
+      "motivo": "Testa o injetor do almoxarifado (dono aidd-enterprise, componentes/compartilhado/injetor/variantes/aidd-pure) que o aidd-pure recebe por scripts/core_pure/pecas_catalogo.py (D1/Ticket 15); só o nome do arquivo tem inject, não há cópia local do injetor."
     },
     {
       "arquivo": "modulos/02-triade-motores/fluxo-01-pure/core/aidd-pure/tests/test_injector_core.py",
-      "data": "2026-10-01",
-      "motivo": "conhecida no inventario inicial (Ticket 6): nunca_conter(**/*inject*); atual=aidd-pure; dono=aidd-enterprise+aidd-forge+aidd-master+aidd-ops"
+      "data": "2026-10-08",
+      "motivo": "Testa o injetor do almoxarifado (dono aidd-enterprise, componentes/compartilhado/injetor/variantes/aidd-pure) que o aidd-pure recebe por scripts/core_pure/pecas_catalogo.py (D1/Ticket 15); só o nome do arquivo tem inject, não há cópia local do injetor."
     },
     {
       "arquivo": "modulos/02-triade-motores/fluxo-01-pure/core/aidd-pure/tests/test_injector_materializer.py",
-      "data": "2026-10-01",
-      "motivo": "conhecida no inventario inicial (Ticket 6): nunca_conter(**/*inject*); atual=aidd-pure; dono=aidd-enterprise+aidd-forge+aidd-master+aidd-ops"
+      "data": "2026-10-08",
+      "motivo": "Testa o injetor do almoxarifado (dono aidd-enterprise, componentes/compartilhado/injetor/variantes/aidd-pure) que o aidd-pure recebe por scripts/core_pure/pecas_catalogo.py (D1/Ticket 15); só o nome do arquivo tem inject, não há cópia local do injetor."
     },
     {
       "arquivo": "modulos/02-triade-motores/fluxo-01-pure/core/aidd-pure/tests/test_injector_sincronizador.py",
-      "data": "2026-10-01",
-      "motivo": "conhecida no inventario inicial (Ticket 6): nunca_conter(**/*inject*); atual=aidd-pure; dono=aidd-enterprise+aidd-forge+aidd-master+aidd-ops"
+      "data": "2026-10-08",
+      "motivo": "Testa o injetor do almoxarifado (dono aidd-enterprise, componentes/compartilhado/injetor/variantes/aidd-pure) que o aidd-pure recebe por scripts/core_pure/pecas_catalogo.py (D1/Ticket 15); só o nome do arquivo tem inject, não há cópia local do injetor."
     }
   ]
 }
