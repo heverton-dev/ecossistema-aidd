@@ -203,6 +203,27 @@ def test_heartbeat_reentregue_nao_encerra_a_fase(monkeypatch):
     assert orquestrador_4f.aguardar_worker_done("run_1", "ctx_1", timeout_s=5) == ("succeeded", "feito")
 
 
+def test_teto_de_espera_vem_do_ambiente(monkeypatch):
+    # 2026-10-08: o Construtor do ciclo aidd-visual-maps (15 tickets) estourou o teto fixo de 1h.
+    relogio = {"t": 0.0}
+    monkeypatch.setattr(orquestrador_4f.time, "time", lambda: relogio["t"])
+    monkeypatch.setattr(orquestrador_4f.time, "sleep", lambda s: relogio.__setitem__("t", relogio["t"] + s))
+    monkeypatch.setattr(orquestrador_4f, "orca", lambda *a, **k: {})
+    monkeypatch.setenv("AIDD_ORCA_TIMEOUT_AGENTE_S", "7")
+    assert orquestrador_4f.aguardar_worker_done("run_1", "ctx_1") == ("timeout", "sem worker_done em 7s")
+    monkeypatch.setenv("AIDD_ORCA_TIMEOUT_AGENTE_S", "")  # vazio no .env = padrão
+    assert orquestrador_4f.timeout_agente_s() == orquestrador_4f.ORCA_TIMEOUT_AGENTE_S
+
+
+@pytest.mark.parametrize("valor", ["abc", "0", "-5"])
+def test_teto_de_espera_invalido_no_ambiente_falha_alto(monkeypatch, valor):
+    monkeypatch.setattr(orquestrador_4f, "orca", lambda *a, **k: pytest.fail("não pode chamar o Orca"))
+    monkeypatch.setattr(orquestrador_4f.time, "sleep", lambda s: pytest.fail("não pode esperar"))
+    monkeypatch.setenv("AIDD_ORCA_TIMEOUT_AGENTE_S", valor)
+    with pytest.raises(ValueError):
+        orquestrador_4f.aguardar_worker_done("run_1", "ctx_1")
+
+
 def test_aviso_de_risco_com_padrao_exit_nunca_recebe_enter(monkeypatch):
     enviados = []
     tela_risco = {"terminal": {"tail": ["● No, exit (recommended)", "○ Yes, I accept the risks and want to skip permissions"]}}

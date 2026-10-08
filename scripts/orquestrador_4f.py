@@ -276,13 +276,25 @@ def pergunta_pendente(run_id):
     return bool(lido.get("messages"))
 
 
+def timeout_agente_s():
+    """Teto de espera pelo worker_done do agente. AIDD_ORCA_TIMEOUT_AGENTE_S sobe o teto por execução:
+    o Construtor de 15 tickets do ciclo aidd-visual-maps estourou 1h (2026-10-08). Valor inválido falha."""
+    valor = os.environ.get("AIDD_ORCA_TIMEOUT_AGENTE_S")
+    if not valor:
+        return ORCA_TIMEOUT_AGENTE_S
+    segundos = int(valor)
+    if segundos <= 0:
+        raise ValueError(f"AIDD_ORCA_TIMEOUT_AGENTE_S precisa ser positivo, veio {valor!r}")
+    return segundos
+
+
 def aguardar_worker_done(run_id, dispatch_id, timeout_s=None, handle=None, entrega=None):
     """Bloqueia no inbox do Run até o worker_done/escalation deste dispatch.
 
     Com `handle` e `entrega`: mimo e opencode não mandam worker_done (Bloco 3, Fase 10, 2026-10-02,
     1h perdida com o trabalho pronto). Entrega existente + tela parada por ORCA_TELA_PARADA_S
     encerra a fase como concluída; o resultado real continua decidido pelo gate_fase."""
-    timeout_s = timeout_s or ORCA_TIMEOUT_AGENTE_S
+    timeout_s = timeout_s or timeout_agente_s()
     espera_ms = min(ORCA_ESPERA_CHECK_MS if handle is None else ORCA_ESPERA_OCIOSO_MS, timeout_s * 1000)
     inicio = time.time()
     ultima_tela, desde = None, time.time()
