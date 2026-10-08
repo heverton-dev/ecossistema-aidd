@@ -1,7 +1,7 @@
 {
   "versao": "1.0",
-  "atualizado_em": "2026-10-08T11:25:04.419132",
-  "total_sessoes": 34,
+  "atualizado_em": "2026-10-08T14:36:42.328842",
+  "total_sessoes": 35,
   "sessoes": [
     {
       "id": "fc4566a8-0804-4748-ab5f-ec105414273c",
@@ -326,6 +326,15 @@
       "titulo": "Sessão Ativa (Auto-Registrada)",
       "workspace": "C:/Users/trcnologia/Desktop/ecossistema-aidd",
       "transcript_path": "C:/Users/trcnologia/.gemini/antigravity-cli/brain/2d82354c-e173-46af-acc1-d4b4496f1d69/.system_generated/logs/transcript_full.jsonl"
+    },
+    {
+      "id": "ee92a22c-7890-4ba5-9cb2-01a91291520a",
+      "registrado_em": "2026-10-08 14:36:42",
+      "harness": "antigravity",
+      "modelo": "gemini-3.8-flash-high",
+      "titulo": "Sessão Ativa (Auto-Registrada)",
+      "workspace": "C:/Users/trcnologia/Desktop/ecossistema-aidd",
+      "transcript_path": "C:/Users/trcnologia/.gemini/antigravity-cli/brain/ee92a22c-7890-4ba5-9cb2-01a91291520a/.system_generated/logs/transcript_full.jsonl"
     }
   ]
 }

@@ -30,7 +30,7 @@
   "ferramentas": [
     {
       "id": "aidd-enterprise",
-      "descricao": "O Framework Definitivo para Monólitos Modulares, Clean Architecture, Fatias Verticais e Governança Anti-Atalhos por Gates Rígidos.",
+      "descricao": "",
       "chamada": "python ecossistema.py enterprise",
       "entrada_cli": "modulos/03-plataforma-e-entrega/blindagem-enterprise/aidd-enterprise/scripts/aidd.py",
       "comandos": [
@@ -60,7 +60,7 @@
     },
     {
       "id": "aidd-forge",
-      "descricao": "Motor Universal de Governança Agêntica, Descarte de Contexto e Economia Extrema de Tokens",
+      "descricao": "",
       "chamada": "python ecossistema.py forge",
       "entrada_cli": "modulos/01-governanca-e-qualidade/core/aidd-forge/aidd_forge/cli.py",
       "comandos": [
@@ -89,7 +89,7 @@
     },
     {
       "id": "aidd-freedom",
-      "descricao": "Extrator, Unificador e Empacotador de Projetos Low-Code (Lovable, v0, Bolt) para VPS Própria.",
+      "descricao": "",
       "chamada": "python ecossistema.py freedom-motor",
       "entrada_cli": "modulos/02-triade-motores/fluxo-03-freedom/core/aidd-freedom/aidd_freedom/cli.py",
       "comandos": [
@@ -112,7 +112,7 @@
     },
     {
       "id": "aidd-master",
-      "descricao": "O Framework Definitivo para Monólitos Modulares, Clean Architecture, Fatias Verticais e Governança Anti-Atalhos por Gates Rígidos.",
+      "descricao": "",
       "chamada": "python ecossistema.py master",
       "entrada_cli": "modulos/03-plataforma-e-entrega/fatiamento-master/aidd-master/scripts/aidd.py",
       "comandos": [
@@ -231,7 +231,7 @@
       "mcps_proprios": [
         "modulos/02-triade-motores/fluxo-01-pure/core/aidd-pure/mcps/mcp-verificador-cve/server.py"
       ],
-      "arquivos_py": 57
+      "arquivos_py": 58
     }
   ],
   "skills": [
@@ -3292,7 +3292,7 @@
       "ferramenta": "aidd-enterprise",
       "molde": "v2",
       "caminho": "modulos/03-plataforma-e-entrega/blindagem-enterprise/aidd-enterprise/templates/v2",
-      "arquivos": 74,
+      "arquivos": 80,
       "dona_canonica": "aidd-master"
     },
     {
@@ -3327,7 +3327,7 @@
       "ferramenta": "aidd-master",
       "molde": "v2",
       "caminho": "modulos/03-plataforma-e-entrega/fatiamento-master/aidd-master/templates/v2",
-      "arquivos": 62,
+      "arquivos": 68,
       "dona_canonica": "aidd-master"
     },
     {
@@ -3356,9 +3356,9 @@
           "hook": ".claude/hooks/{nome}",
           "sub-agent": ".claude/agents/{nome}"
         },
-        "skills_em_disco": 44,
+        "skills_em_disco": 59,
         "nossas_faltando": [],
-        "terceiros_em_disco": 0,
+        "terceiros_em_disco": 15,
         "config_mcp": ".mcp.json"
       },
       {
@@ -3377,9 +3377,9 @@
           "hook": ".agents/hooks/{nome}",
           "sub-agent": ".agents/agents/{nome}"
         },
-        "skills_em_disco": 44,
+        "skills_em_disco": 59,
         "nossas_faltando": [],
-        "terceiros_em_disco": 0,
+        "terceiros_em_disco": 15,
         "config_mcp": ".agents/mcp_config.json"
       },
       {
@@ -3398,9 +3398,9 @@
           "hook": ".opencode/hooks/{nome}",
           "sub-agent": ".opencode/agents/{nome}"
         },
-        "skills_em_disco": 44,
+        "skills_em_disco": 45,
         "nossas_faltando": [],
-        "terceiros_em_disco": 0,
+        "terceiros_em_disco": 1,
         "config_mcp": "opencode.jsonc"
       },
       {
@@ -3419,9 +3419,9 @@
           "hook": ".mimocode/hooks/{nome}",
           "sub-agent": ".mimocode/agents/{nome}"
         },
-        "skills_em_disco": 44,
+        "skills_em_disco": 45,
         "nossas_faltando": [],
-        "terceiros_em_disco": 0,
+        "terceiros_em_disco": 1,
         "config_mcp": "mimocode.jsonc"
       },
       {
@@ -3457,9 +3457,9 @@
           "command": ".cursor/commands/{nome}",
           "hook": ".cursor/hooks/{nome}"
         },
-        "skills_em_disco": 44,
+        "skills_em_disco": 45,
         "nossas_faltando": [],
-        "terceiros_em_disco": 0,
+        "terceiros_em_disco": 1,
         "config_mcp": ".cursor/mcp.json"
       },
       {
@@ -6195,7 +6195,7 @@
             "aidd-pure"
           ],
           "guardas": 10,
-          "arquivos_py": 63
+          "arquivos_py": 64
         },
         {
           "id": "fluxo-02-open",

@@ -1,7 +1,7 @@
 {
   "ferramenta": "aidd-visual-maps",
   "catalogo": "docs/auditoria/mapa-pecas/catalogo-pecas.json",
-  "hash_catalogo": "9d8cccbe672da04e28872fcca6e03010524194c96b3ae25d7526d2a1e6ee3486",
+  "hash_catalogo": "5da0509278fc60738927b8151595a77a6ba80999261e670b83fe2cd6325c13bd",
   "mapas": [
     {
       "tipo": "leis",
@@ -21,14 +21,14 @@
       "tipo": "ferramentas",
       "arquivo": "docs/mapas-visuais/mapa-02-ferramentas.html",
       "versao": "tecnica",
-      "sha256": "046d7439b2ceb08877d61ed8366b24dc4bbe07ea30283dd53daf0577590e3c26",
+      "sha256": "7ad016a6674001dcfa881348f4c80aca3d4932ef7e5672bda97bef6ba2c1c565",
       "status": "concluido"
     },
     {
       "tipo": "ferramentas",
       "arquivo": "docs/mapas-visuais/nao-tecnicos/mapa-02-ferramentas.html",
       "versao": "nao-tecnica",
-      "sha256": "0c7151ac98d67f368363adcb3ec80ae28544130bbb427c169bdeb473f1890249",
+      "sha256": "9d2293bfe0fa8871e5ab326a1399e4f2bb086fc6b4cfd14680554b8942bc52e8",
       "status": "concluido"
     },
     {
@@ -105,28 +105,28 @@
       "tipo": "harnesses",
       "arquivo": "docs/mapas-visuais/mapa-08-harnesses.html",
       "versao": "tecnica",
-      "sha256": "26541f177af0bd543d9d55f2def9cb86206c0fec3edda2e1d46237a22b77a690",
+      "sha256": "0fc9e3ba46a12639cc27ca7fcb262101909fdf8d8f30a6e85d23918bf40d67f9",
       "status": "concluido"
     },
     {
       "tipo": "harnesses",
       "arquivo": "docs/mapas-visuais/nao-tecnicos/mapa-08-harnesses.html",
       "versao": "nao-tecnica",
-      "sha256": "44b421420622fa73a7c011f7f90a66e4595af88be694073fd32fd496328e71d1",
+      "sha256": "dcab6c7a5c99f04343f41a5d4bbd3d56af82fac458646982aad66d697497f872",
       "status": "concluido"
     },
     {
       "tipo": "moldes",
       "arquivo": "docs/mapas-visuais/mapa-09-moldes.html",
       "versao": "tecnica",
-      "sha256": "25edbf447a12d3714c8dbc9c1a2d6779ab0be82a322365ca79e42c9018212bf8",
+      "sha256": "9a3024d9182969d8fc366fe9ef0304ccb5015cf549db27f56d3528fb502ffa22",
       "status": "concluido"
     },
     {
       "tipo": "moldes",
       "arquivo": "docs/mapas-visuais/nao-tecnicos/mapa-09-moldes.html",
       "versao": "nao-tecnica",
-      "sha256": "26bc5e4a28e0ba9973d8d4a7e779f4f3338bef7d721992c5f9df20ae8ed6fb73",
+      "sha256": "5efb4a0a7135e841266c7f44a374949be4a6f8fe0679771e29f2a63ab2088c71",
       "status": "concluido"
     },
     {
@@ -189,14 +189,14 @@
       "tipo": "modulos",
       "arquivo": "docs/mapas-visuais/mapa-14-modulos.html",
       "versao": "tecnica",
-      "sha256": "02edf6e0c54f7d4623cc120ca0664b1202e8e89109a7a2fcd0f9fdb415b1ae33",
+      "sha256": "7004f010b44d3acab6fbc7b49e6708ad9738fbac2eaf167554bb809db4374951",
       "status": "concluido"
     },
     {
       "tipo": "modulos",
       "arquivo": "docs/mapas-visuais/nao-tecnicos/mapa-14-modulos.html",
       "versao": "nao-tecnica",
-      "sha256": "26b7c7b9bd51f31af6aa85c847f6e716dd3b49c72d8918355e85701b8147e7f6",
+      "sha256": "fe4686aeb8336e1d670e61527a89c9446203784839288d4866b8b49d85fcc71e",
       "status": "concluido"
     },
     {
@@ -269,7 +269,7 @@
       "comando": "python componentes/compartilhado/skills/aidd-textbook/scripts/livro.py build docs/livros/mapas-aidd",
       "exit_code": 0,
       "pdf": "docs/livros/mapas-aidd/26-09-2026_LIVRO-MAPAS-AIDD.pdf",
-      "sha256": "a506e16f60d347f29df50d7f770f303453dfe1c676aa68af9b3e509f228f0eab"
+      "sha256": "994394e9ab6c5625cf95878537c1aedcd56f7bdf2e4f1c3765995779a097a58d"
     }
   }
 }
