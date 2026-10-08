@@ -1,0 +1,18 @@
+ROLE: Builder. Ecosystem AIDD. Ticket 7. Target tool: aidd-visual-maps.
+DIMENSION: D8
+DELIVER: tests/test_visual_maps_sem_contagem_fixa.py
+
+STEPS:
+- Write test first: tests/test_visual_maps_sem_contagem_fixa.py. Scan mold HTML and MAPAS_PREVISTOS strings with regex number plus countable noun (leis, ferramentas, mapas, skills, guardas, scripts, hooks, comandos). Run. Assert exit 1.
+- Replace each typed count with marker like {{TOTAL_LEIS}} or {{TOTAL_FERRAMENTAS}}. Fill markers from catalog totais in value builders.
+- Rewrite MAPAS_PREVISTOS descriptions without numbers in scripts/mapa_visual.py.
+- Regenerate maps and book. Assert law count in docs/mapas-visuais/nao-tecnicos/mapa-01-leis.html equals totais.leis.
+- Run tests/test_visual_maps_sem_contagem_fixa.py and tests/test_mapa_visual.py. Assert exit 0.
+
+RULES:
+1. Write failing test first. Run. Assert exit 1.
+2. Implement. Zero stubs. Real pytest tests. Run. Assert exit 0.
+3. Work inside ephemeral Git Worktree only.
+4. Capture real exit code: redirect to file, read $? same line. Never trust pipes.
+5. NEVER edit docs/auditoria/CONFIG-EXECUCAO-USUARIO.json.
+6. Deliver exactly: tests/test_visual_maps_sem_contagem_fixa.py

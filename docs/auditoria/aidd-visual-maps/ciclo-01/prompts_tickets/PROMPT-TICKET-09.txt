@@ -1,0 +1,19 @@
+ROLE: Builder. Ecosystem AIDD. Ticket 9. Target tool: aidd-visual-maps.
+DIMENSION: D14
+DELIVER: scripts/gravacao_atomica_mapas.py
+
+STEPS:
+- Write test first: tests/test_visual_maps_rollback.py. Fixture repo. Delete moldes-nao-tecnicos/guardas.html. Run mapa_visual.py guardas. Assert exit 1, [ERRO] message, no traceback, technical map hash unchanged, no temp files left. Run. Assert test fails today.
+- Implement scripts/gravacao_atomica_mapas.py with gravar_lote(pares). Write temp file per target in same folder. Swap all via os.replace. On error remove temps and restore swapped files from memory backup.
+- Build technical and non-technical text in memory before any write in scripts/mapa_visual.py.
+- Use gravar_lote in scripts/mapa_visual.py, scripts/compilar_mapas_nao_tecnicos.py, scripts/livro_mapas.py.
+- Turn FileNotFoundError and OSError from molds into [ERRO] line and exit 1.
+- Run tests/test_visual_maps_rollback.py and tests/test_mapa_visual.py. Assert exit 0.
+
+RULES:
+1. Write failing test first. Run. Assert exit 1.
+2. Implement. Zero stubs. Real pytest tests. Run. Assert exit 0.
+3. Work inside ephemeral Git Worktree only.
+4. Capture real exit code: redirect to file, read $? same line. Never trust pipes.
+5. NEVER edit docs/auditoria/CONFIG-EXECUCAO-USUARIO.json.
+6. Deliver exactly: scripts/gravacao_atomica_mapas.py

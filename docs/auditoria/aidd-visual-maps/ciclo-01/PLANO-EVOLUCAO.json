@@ -1,0 +1,175 @@
+{
+  "pipeline_id": "evolucao-aidd-visual-maps-ciclo-01",
+  "target_tool": "aidd-visual-maps",
+  "descricao": "Plano de Evolução Tática montado a partir dos 15 tickets de PLANO-EVOLUCAO.md",
+  "config_usuario_ref": "docs/auditoria/CONFIG-EXECUCAO-USUARIO.json",
+  "definition_of_done": "docs/auditoria/aidd-visual-maps/ciclo-01/DOD.md",
+  "gate_final": "python ecossistema.py audit",
+  "fases": [
+    {
+      "ticket_id": "TICKET-01",
+      "nome": "Fase_1_Ticket_1_Cat_logo_Conferido_Contra_o_Reposit_rio",
+      "dimensao_15d": "D10. Orquestração e Topologia",
+      "harness": "claude",
+      "model": "sonnet",
+      "comando_terminal": "claude-9router --dangerously-skip-permissions --chrome --model sonnet",
+      "input_prompt": "docs/auditoria/aidd-visual-maps/ciclo-01/prompts_tickets/PROMPT-TICKET-01.txt",
+      "output_handoff": "tests/test_visual_maps_catalogo_fresco.py",
+      "gate_fase": "python -m pytest -q -p no:cacheprovider tests"
+    },
+    {
+      "ticket_id": "TICKET-02",
+      "nome": "Fase_2_Ticket_2_Port_o_G_mapa_pecas_Confere_Conte_do__N_o_S__Exist_ncia",
+      "dimensao_15d": "D13. Quality Gates (Portões)",
+      "harness": "claude",
+      "model": "sonnet",
+      "comando_terminal": "claude-9router --dangerously-skip-permissions --chrome --model sonnet",
+      "input_prompt": "docs/auditoria/aidd-visual-maps/ciclo-01/prompts_tickets/PROMPT-TICKET-02.txt",
+      "output_handoff": "modulos/04-nucleo-compartilhado/gates/G_mapa_pecas.py",
+      "gate_fase": "python -m pytest -q -p no:cacheprovider tests"
+    },
+    {
+      "ticket_id": "TICKET-03",
+      "nome": "Fase_3_Ticket_3_Remover_a_Pasta__rf__tecnicos__e_Barrar__rf_os_Novos",
+      "dimensao_15d": "D3. Raio de Impacto e Isolamento",
+      "harness": "claude",
+      "model": "sonnet",
+      "comando_terminal": "claude-9router --dangerously-skip-permissions --chrome --model sonnet",
+      "input_prompt": "docs/auditoria/aidd-visual-maps/ciclo-01/prompts_tickets/PROMPT-TICKET-03.txt",
+      "output_handoff": "tests/test_visual_maps_sem_orfaos.py",
+      "gate_fase": "python -m pytest -q -p no:cacheprovider tests"
+    },
+    {
+      "ticket_id": "TICKET-04",
+      "nome": "Fase_4_Ticket_4_Coletores_de_Hooks_e_MCPs_Completos",
+      "dimensao_15d": "D4. Componentes e Fractalidade",
+      "harness": "claude",
+      "model": "sonnet",
+      "comando_terminal": "claude-9router --dangerously-skip-permissions --chrome --model sonnet",
+      "input_prompt": "docs/auditoria/aidd-visual-maps/ciclo-01/prompts_tickets/PROMPT-TICKET-04.txt",
+      "output_handoff": "tests/test_visual_maps_coletores.py",
+      "gate_fase": "python -m pytest -q -p no:cacheprovider tests"
+    },
+    {
+      "ticket_id": "TICKET-05",
+      "nome": "Fase_5_Ticket_5_Mapas_de_Pipelines__M_dulos_VSA_e_Agentes",
+      "dimensao_15d": "D5. Visão e Escopo",
+      "harness": "claude",
+      "model": "sonnet",
+      "comando_terminal": "claude-9router --dangerously-skip-permissions --chrome --model sonnet",
+      "input_prompt": "docs/auditoria/aidd-visual-maps/ciclo-01/prompts_tickets/PROMPT-TICKET-05.txt",
+      "output_handoff": "tests/test_visual_maps_cobertura.py",
+      "gate_fase": "python -m pytest -q -p no:cacheprovider tests"
+    },
+    {
+      "ticket_id": "TICKET-06",
+      "nome": "Fase_6_Ticket_6_Mapa_N_o_T_cnico_em_PT_BR_e_Montagem_Sem_C_pia",
+      "dimensao_15d": "D8. O que o Estágio Processa",
+      "harness": "claude",
+      "model": "sonnet",
+      "comando_terminal": "claude-9router --dangerously-skip-permissions --chrome --model sonnet",
+      "input_prompt": "docs/auditoria/aidd-visual-maps/ciclo-01/prompts_tickets/PROMPT-TICKET-06.txt",
+      "output_handoff": "scripts/compilar_mapas_nao_tecnicos.py",
+      "gate_fase": "python -m pytest -q -p no:cacheprovider tests"
+    },
+    {
+      "ticket_id": "TICKET-07",
+      "nome": "Fase_7_Ticket_7_Nenhuma_Contagem_Digitada_nos_Moldes",
+      "dimensao_15d": "D8. O que o Estágio Processa",
+      "harness": "claude",
+      "model": "sonnet",
+      "comando_terminal": "claude-9router --dangerously-skip-permissions --chrome --model sonnet",
+      "input_prompt": "docs/auditoria/aidd-visual-maps/ciclo-01/prompts_tickets/PROMPT-TICKET-07.txt",
+      "output_handoff": "tests/test_visual_maps_sem_contagem_fixa.py",
+      "gate_fase": "python -m pytest -q -p no:cacheprovider tests"
+    },
+    {
+      "ticket_id": "TICKET-08",
+      "nome": "Fase_8_Ticket_8_Manual_Liga_Todos_os_Mapas",
+      "dimensao_15d": "D9. O que o Estágio Entrega",
+      "harness": "claude",
+      "model": "sonnet",
+      "comando_terminal": "claude-9router --dangerously-skip-permissions --chrome --model sonnet",
+      "input_prompt": "docs/auditoria/aidd-visual-maps/ciclo-01/prompts_tickets/PROMPT-TICKET-08.txt",
+      "output_handoff": "docs/mapas-visuais/manual-montagem-aidd.html",
+      "gate_fase": "python -m pytest -q -p no:cacheprovider tests"
+    },
+    {
+      "ticket_id": "TICKET-09",
+      "nome": "Fase_9_Ticket_9_Grava__o_At_mica_do_Par_T_cnico_N_o_T_cnico_e_Rollback",
+      "dimensao_15d": "D14. Critério de Rejeição (Rollback)",
+      "harness": "claude",
+      "model": "sonnet",
+      "comando_terminal": "claude-9router --dangerously-skip-permissions --chrome --model sonnet",
+      "input_prompt": "docs/auditoria/aidd-visual-maps/ciclo-01/prompts_tickets/PROMPT-TICKET-09.txt",
+      "output_handoff": "scripts/gravacao_atomica_mapas.py",
+      "gate_fase": "python -m pytest -q -p no:cacheprovider tests"
+    },
+    {
+      "ticket_id": "TICKET-10",
+      "nome": "Fase_10_Ticket_10_Escopo_de_Escrita_Permitido",
+      "dimensao_15d": "D3. Raio de Impacto e Isolamento",
+      "harness": "claude",
+      "model": "sonnet",
+      "comando_terminal": "claude-9router --dangerously-skip-permissions --chrome --model sonnet",
+      "input_prompt": "docs/auditoria/aidd-visual-maps/ciclo-01/prompts_tickets/PROMPT-TICKET-10.txt",
+      "output_handoff": "scripts/escopo_escrita_mapas.py",
+      "gate_fase": "python -m pytest -q -p no:cacheprovider tests"
+    },
+    {
+      "ticket_id": "TICKET-11",
+      "nome": "Fase_11_Ticket_11_Falha_Estruturada_e_Retry_com_Backoff_de_I_O",
+      "dimensao_15d": "D11. Tratamento de Exceções e Fallback",
+      "harness": "claude",
+      "model": "sonnet",
+      "comando_terminal": "claude-9router --dangerously-skip-permissions --chrome --model sonnet",
+      "input_prompt": "docs/auditoria/aidd-visual-maps/ciclo-01/prompts_tickets/PROMPT-TICKET-11.txt",
+      "output_handoff": "scripts/resiliencia_mapas.py",
+      "gate_fase": "python -m pytest -q -p no:cacheprovider tests"
+    },
+    {
+      "ticket_id": "TICKET-12",
+      "nome": "Fase_12_Ticket_12_Telemetria_de_Execu__o_Persistida",
+      "dimensao_15d": "D12. Observabilidade e Frugalidade",
+      "harness": "claude",
+      "model": "sonnet",
+      "comando_terminal": "claude-9router --dangerously-skip-permissions --chrome --model sonnet",
+      "input_prompt": "docs/auditoria/aidd-visual-maps/ciclo-01/prompts_tickets/PROMPT-TICKET-12.txt",
+      "output_handoff": "scripts/telemetria_mapas.py",
+      "gate_fase": "python -m pytest -q -p no:cacheprovider tests"
+    },
+    {
+      "ticket_id": "TICKET-13",
+      "nome": "Fase_13_Ticket_13_CLI_Unificada_e_Ordem_do_Pipeline_Garantida",
+      "dimensao_15d": "D2. Input e Gatilhos",
+      "harness": "claude",
+      "model": "sonnet",
+      "comando_terminal": "claude-9router --dangerously-skip-permissions --chrome --model sonnet",
+      "input_prompt": "docs/auditoria/aidd-visual-maps/ciclo-01/prompts_tickets/PROMPT-TICKET-13.txt",
+      "output_handoff": "componentes/compartilhado/skills/aidd-visual-maps/scripts/cli.py",
+      "gate_fase": "python -m pytest -q -p no:cacheprovider tests"
+    },
+    {
+      "ticket_id": "TICKET-14",
+      "nome": "Fase_14_Ticket_14_Manifesto_dos_Mapas__Handoff_ao_Livro_e_Contrato_da_SKILL",
+      "dimensao_15d": "D15. Output Consolidado e Handoff",
+      "harness": "claude",
+      "model": "sonnet",
+      "comando_terminal": "claude-9router --dangerously-skip-permissions --chrome --model sonnet",
+      "input_prompt": "docs/auditoria/aidd-visual-maps/ciclo-01/prompts_tickets/PROMPT-TICKET-14.txt",
+      "output_handoff": "componentes/compartilhado/skills/aidd-visual-maps/scripts/handoff.py",
+      "gate_fase": "python -m pytest -q -p no:cacheprovider tests"
+    },
+    {
+      "ticket_id": "TICKET-15",
+      "nome": "Fase_15_Ticket_15_Port_o_G_aidd_visual_maps_no_Pre_commit_e_Registro_no_AGENTS_md",
+      "dimensao_15d": "D13. Quality Gates (Portões)",
+      "harness": "claude",
+      "model": "sonnet",
+      "comando_terminal": "claude-9router --dangerously-skip-permissions --chrome --model sonnet",
+      "input_prompt": "docs/auditoria/aidd-visual-maps/ciclo-01/prompts_tickets/PROMPT-TICKET-15.txt",
+      "output_handoff": "modulos/04-nucleo-compartilhado/gates/G_aidd_visual_maps.py",
+      "gate_fase": "python -m pytest -q -p no:cacheprovider tests"
+    }
+  ]
+}

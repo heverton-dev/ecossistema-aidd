@@ -1,0 +1,20 @@
+ROLE: Builder. Ecosystem AIDD. Ticket 13. Target tool: aidd-visual-maps.
+DIMENSION: D2
+DELIVER: componentes/compartilhado/skills/aidd-visual-maps/scripts/cli.py
+
+STEPS:
+- Write test first: tests/test_visual_maps_cli.py. Run python ecossistema.py visual-maps check. Assert exit 0 required; fails today with unknown command. Assert gerar on stale fixture catalog refreshes catalog before maps. Run. Assert exit 1.
+- Implement componentes/compartilhado/skills/aidd-visual-maps/scripts/cli.py. Subcommands: catalogo, mapa <tipo>, gerar, check.
+- Make gerar run catalog, maps, index, book in fixed order inside ephemeral worktree. Promote only allowed paths via gravar_lote.
+- Make check run catalog freshness, every map --check, book --check. Exit 1 on first drift.
+- Add cmd_visual_maps to ecossistema.py like cmd_diagnose. Register visual-maps and aidd-visual-maps.
+- Run components sync. Assert harness copies match canonical hash.
+- Run tests/test_visual_maps_cli.py. Assert exit 0.
+
+RULES:
+1. Write failing test first. Run. Assert exit 1.
+2. Implement. Zero stubs. Real pytest tests. Run. Assert exit 0.
+3. Work inside ephemeral Git Worktree only.
+4. Capture real exit code: redirect to file, read $? same line. Never trust pipes.
+5. NEVER edit docs/auditoria/CONFIG-EXECUCAO-USUARIO.json.
+6. Deliver exactly: componentes/compartilhado/skills/aidd-visual-maps/scripts/cli.py

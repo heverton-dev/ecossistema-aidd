@@ -1,0 +1,19 @@
+ROLE: Builder. Ecosystem AIDD. Ticket 6. Target tool: aidd-visual-maps.
+DIMENSION: D8
+DELIVER: scripts/compilar_mapas_nao_tecnicos.py
+
+STEPS:
+- Write test first: tests/test_visual_maps_nao_tecnico_ptbr.py. Count English boilerplate (Use when, Builds, Runs, Records, Use this) in docs/mapas-visuais/nao-tecnicos/*.html. Assert zero. Assert compilar_nao_tecnico calls shared mold helper. Run. Assert exit 1.
+- Resolve Portuguese text per skill: slash command description first, then docs/mapas-visuais/moldes-nao-tecnicos/descricoes-pt.json. Missing both: raise ValueError listing skills, exit 1. Never fall back to English.
+- Add per-type non-technical value builders. Reuse technical values. Swap only description fields. Stop calling mv.GERADORES directly from scripts/compilar_mapas_nao_tecnicos.py.
+- Extract aplicar_molde(molde, valores, titulo, fragmento) from montar in scripts/mapa_visual.py. Use it in both versions.
+- Declare catalog path once in catalogo_pecas.SAIDA_PADRAO. Import it in scripts/mapa_visual.py, scripts/livro_mapas.py, modulos/04-nucleo-compartilhado/gates/G_mapa_pecas.py.
+- Regenerate maps and book. Run tests/test_visual_maps_nao_tecnico_ptbr.py and tests/test_mapa_visual.py. Assert exit 0.
+
+RULES:
+1. Write failing test first. Run. Assert exit 1.
+2. Implement. Zero stubs. Real pytest tests. Run. Assert exit 0.
+3. Work inside ephemeral Git Worktree only.
+4. Capture real exit code: redirect to file, read $? same line. Never trust pipes.
+5. NEVER edit docs/auditoria/CONFIG-EXECUCAO-USUARIO.json.
+6. Deliver exactly: scripts/compilar_mapas_nao_tecnicos.py

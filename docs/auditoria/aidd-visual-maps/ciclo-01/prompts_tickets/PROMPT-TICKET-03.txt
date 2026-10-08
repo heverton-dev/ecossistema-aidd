@@ -1,0 +1,18 @@
+ROLE: Builder. Ecosystem AIDD. Ticket 3. Target tool: aidd-visual-maps.
+DIMENSION: D3
+DELIVER: tests/test_visual_maps_sem_orfaos.py
+
+STEPS:
+- Write test first: tests/test_visual_maps_sem_orfaos.py. List tracked HTML under docs/mapas-visuais/. Fail on any file outside expected set. Run. Assert exit 1 on 14 orphans in docs/mapas-visuais/tecnicos/.
+- Grep repo for references to docs/mapas-visuais/tecnicos/. Confirm none outside tmp_path tests.
+- Run git rm -r docs/mapas-visuais/tecnicos/.
+- Add arquivos_esperados() to scripts/mapa_visual.py. Derive set from MAPAS_PREVISTOS, index, manual, non-technical twins, mold folders.
+- Run tests/test_visual_maps_sem_orfaos.py and tests/test_mapa_visual.py. Assert exit 0. Drop stray HTML file. Assert exit 1. Remove it.
+
+RULES:
+1. Write failing test first. Run. Assert exit 1.
+2. Implement. Zero stubs. Real pytest tests. Run. Assert exit 0.
+3. Work inside ephemeral Git Worktree only.
+4. Capture real exit code: redirect to file, read $? same line. Never trust pipes.
+5. NEVER edit docs/auditoria/CONFIG-EXECUCAO-USUARIO.json.
+6. Deliver exactly: tests/test_visual_maps_sem_orfaos.py

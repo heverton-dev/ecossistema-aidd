@@ -1,0 +1,19 @@
+ROLE: Builder. Ecosystem AIDD. Ticket 1. Target tool: aidd-visual-maps.
+DIMENSION: D10
+DELIVER: tests/test_visual_maps_catalogo_fresco.py
+
+STEPS:
+- Write test first: tests/test_visual_maps_catalogo_fresco.py. Build fixture repo in tmp_path. Commit catalog citing deleted script. Assert mapa_visual.py --check, livro_mapas.py --check and status_mapa all report stale. Run. Assert exit 1.
+- Add catalogo_em_dia(raiz) to scripts/catalogo_pecas.py. Build catalog in memory. Compare with JSON on disk. Return divergent keys.
+- Call catalogo_em_dia first inside --check of scripts/mapa_visual.py and scripts/livro_mapas.py. Stale catalog: print stale message, exit 1.
+- Make status_mapa return desatualizado when disk catalog differs from repo scan.
+- Regenerate in order: catalogo_pecas.py, all 13 map types, index, livro_mapas.py.
+- Run tests/test_visual_maps_catalogo_fresco.py, tests/test_mapa_visual.py, tests/test_catalogo_pecas.py, tests/test_livro_mapas.py, tests/test_mapas_e_livros_em_dia.py. Assert exit 0.
+
+RULES:
+1. Write failing test first. Run. Assert exit 1.
+2. Implement. Zero stubs. Real pytest tests. Run. Assert exit 0.
+3. Work inside ephemeral Git Worktree only.
+4. Capture real exit code: redirect to file, read $? same line. Never trust pipes.
+5. NEVER edit docs/auditoria/CONFIG-EXECUCAO-USUARIO.json.
+6. Deliver exactly: tests/test_visual_maps_catalogo_fresco.py

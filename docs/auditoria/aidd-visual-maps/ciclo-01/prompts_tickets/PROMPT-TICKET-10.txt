@@ -1,0 +1,17 @@
+ROLE: Builder. Ecosystem AIDD. Ticket 10. Target tool: aidd-visual-maps.
+DIMENSION: D3
+DELIVER: scripts/escopo_escrita_mapas.py
+
+STEPS:
+- Write test first: tests/test_visual_maps_escopo.py. Run mapa_visual.py leis --saida pointing to AGENTS.md in fixture repo. Assert exit 1 and file untouched. Run. Assert test fails today.
+- Implement scripts/escopo_escrita_mapas.py with garantir_escopo(caminho). Allow docs/mapas-visuais/, docs/auditoria/mapa-pecas/, docs/livros/mapas-aidd/, temp dir, ephemeral worktree. Reject rest with [ERRO] and exit 1.
+- Call garantir_escopo inside gravar_lote and on --saida of scripts/catalogo_pecas.py, scripts/mapa_visual.py, scripts/livro_mapas.py.
+- Run tests/test_visual_maps_escopo.py. Assert exit 0. Assert --saida inside temp dir still exit 0.
+
+RULES:
+1. Write failing test first. Run. Assert exit 1.
+2. Implement. Zero stubs. Real pytest tests. Run. Assert exit 0.
+3. Work inside ephemeral Git Worktree only.
+4. Capture real exit code: redirect to file, read $? same line. Never trust pipes.
+5. NEVER edit docs/auditoria/CONFIG-EXECUCAO-USUARIO.json.
+6. Deliver exactly: scripts/escopo_escrita_mapas.py

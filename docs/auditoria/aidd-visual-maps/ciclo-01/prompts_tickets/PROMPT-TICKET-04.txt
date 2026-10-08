@@ -1,0 +1,19 @@
+ROLE: Builder. Ecosystem AIDD. Ticket 4. Target tool: aidd-visual-maps.
+DIMENSION: D4
+DELIVER: tests/test_visual_maps_coletores.py
+
+STEPS:
+- Write test first: tests/test_visual_maps_coletores.py. Fixture repo with .mcp.json registering mobbin_mcp, componentes/compartilhado/mcps/mobbin_mcp/server.py, five scripts in .claude/hooks/, three wired in .claude/settings.json. Assert catalog lists mobbin_mcp and five hooks. Run. Assert exit 1.
+- Edit coletar_mcps in scripts/catalogo_pecas.py. Merge mcps_proprios, .mcp.json servers, componentes/compartilhado/mcps/*/server.py. Dedupe by name.
+- Edit coletar_hooks. Keep .claude/settings.json triggers. Add every .claude/hooks/*.py without tracked trigger, status "no trigger in settings.json".
+- Never read .claude/settings.local.json. Explain why in docstring: untracked, breaks catalog freshness check across machines.
+- Regenerate catalog, maps, index, book.
+- Run tests/test_visual_maps_coletores.py and tests/test_catalogo_pecas.py. Assert exit 0.
+
+RULES:
+1. Write failing test first. Run. Assert exit 1.
+2. Implement. Zero stubs. Real pytest tests. Run. Assert exit 0.
+3. Work inside ephemeral Git Worktree only.
+4. Capture real exit code: redirect to file, read $? same line. Never trust pipes.
+5. NEVER edit docs/auditoria/CONFIG-EXECUCAO-USUARIO.json.
+6. Deliver exactly: tests/test_visual_maps_coletores.py
