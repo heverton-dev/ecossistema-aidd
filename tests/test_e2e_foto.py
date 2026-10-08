@@ -214,7 +214,9 @@ def test_cli_aceita_subcomando(subcomando):
 # 9. Base real (ciclo-01) comparada contra ela mesma -> exit 0
 # ---------------------------------------------------------------------------
 def test_comparar_ciclo01_contra_ele_mesmo(tmp_path):
-    raiz = Path.home() / "Desktop" / "TESTES_E2E-ecossistema-aidd" / "ciclo-01"
+    sys.path.insert(0, str(ROOT / "scripts"))
+    import e2e_foto
+    raiz = e2e_foto.raiz_padrao() / "ciclo-01"
     if not (raiz / "fluxo-01-pure" / "RESULTADO-E2E.json").exists():
         pytest.skip(f"ciclo-01 real não encontrado em {raiz}")
     proc = subprocess.run(

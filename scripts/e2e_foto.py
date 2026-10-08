@@ -53,12 +53,14 @@ ORIGEM_URL = "https://github.com/heverton-dev/conexao-hub"
 
 
 def raiz_padrao() -> Path:
-    """Raiz das pastas de ciclo: env AIDD_E2E_RAIZ > Desktop > irmão do repo."""
+    """Raiz das pastas de ciclo: env AIDD_E2E_RAIZ > Desktop > Desktop/01_projetos_apps > irmão do repo.
+    A pasta foi para Desktop/01_projetos_apps/testes-e2e-ecossistema-aidd em 05/10/2026 (ciclo-03 T21)."""
     env = os.environ.get("AIDD_E2E_RAIZ")
     if env:
         return Path(env)
     candidatos = [
         Path.home() / "Desktop" / "TESTES_E2E-ecossistema-aidd",
+        Path.home() / "Desktop" / "01_projetos_apps" / "testes-e2e-ecossistema-aidd",
         Path(__file__).resolve().parents[1].parent / "TESTES_E2E-ecossistema-aidd",
     ]
     for c in candidatos:
@@ -654,8 +656,9 @@ def main(argv=None) -> int:
     p_rodar.add_argument("--ciclo", default="auto",
                          help="auto (próximo ciclo-NN) ou um nome ciclo-NN")
     p_rodar.add_argument("--raiz", default=None,
-                         help="raiz das pastas de ciclo (padrão: "
-                              "$AIDD_E2E_RAIZ ou Desktop/TESTES_E2E-ecossistema-aidd)")
+                         help="raiz das pastas de ciclo (padrão: $AIDD_E2E_RAIZ, "
+                              "Desktop/TESTES_E2E-ecossistema-aidd ou "
+                              "Desktop/01_projetos_apps/testes-e2e-ecossistema-aidd)")
     p_rodar.add_argument("--worktree", default=None,
                          help="caminho do worktree isolado (padrão: ao lado da raiz)")
 
