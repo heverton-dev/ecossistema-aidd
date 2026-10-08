@@ -1,0 +1,31 @@
+You are a strict System Auditor. Execute the Lens 15-D Architectural Audit on the 'aidd-visual-maps' tool yourself. Do not delegate to a subagent.
+MANDATORY LEI #14 (GRAPH-FIRST): call codebase-memory-mcp tools (search_graph, get_architecture, trace_path or query_graph) BEFORE any Grep, Glob or full file read.
+MANDATORY: every finding is proven by a command you run yourself in this session. Reading code never replaces running it. Capture exit codes by redirecting to a file and reading $? on the same line; never trust a pipe.
+MANDATORY: set TEMP=C:\Users\trcnologia\aidd-tmp and TMP=C:\Users\trcnologia\aidd-tmp before running anything; write scratch output only under that folder.
+READ-ONLY: write no file in the repo except the laudo below. For catalog checks use `python scripts/catalogo_pecas.py --check` or `--saida <aidd-tmp path>`; never regenerate catalog or maps in place.
+
+1. Read the canonical template: docs/auditoria/TEMPLATE-AUDITORIA-FERRAMENTA.md
+2. Read the cycle Definition of Done: docs/auditoria/aidd-visual-maps/ciclo-01/DOD.md
+3. Audit scope. The skill folder holds only the manual; the code lives elsewhere. Audit ALL of:
+   - .agents/skills/aidd-visual-maps/SKILL.md (manual)
+   - scripts/mapa_visual.py (generator, GERADORES, MAPAS_PREVISTOS, --check)
+   - scripts/catalogo_pecas.py (catalog collector, --check)
+   - scripts/compilar_mapas_nao_tecnicos.py and scripts/livro_mapas.py
+   - modulos/04-nucleo-compartilhado/gates/G_mapa_pecas.py and its pre-commit hook in .pre-commit-config.yaml
+   - tests/test_mapa_visual.py and tests/test_catalogo_pecas.py
+   - docs/mapas-visuais/ (generated technical maps), docs/mapas-visuais/nao-tecnicos/, docs/mapas-visuais/moldes/, docs/mapas-visuais/moldes-nao-tecnicos/, docs/mapas-visuais/tecnicos/
+   - docs/auditoria/mapa-pecas/catalogo-pecas.json (data source)
+4. Known findings to reproduce. For each one run your own command, record command + exit code + evidence, and confirm or refute it. Treat each confirmed one as a severe finding:
+   F1. Stale catalog passes every map check: `python scripts/catalogo_pecas.py --check` exits 1 while every `python scripts/mapa_visual.py <tipo> --check` and `G_mapa_pecas.py` exit 0. Maps show deleted scripts (e.g. handoff_vsa, rollback_vsa), old gate names (G_AST_BOUNDED_CONTEXT, G_modularizacao_vsa) and a resolved finding as open. Pre-commit does not run the catalog check.
+   F2. Shallow gate: G_mapa_pecas.auditar_mapas_visuais only checks that each map file exists, has more than 100 chars and contains "<html".
+   F3. Orphan folder: docs/mapas-visuais/tecnicos/ holds 14 files that no script generates and that differ from the maps in docs/mapas-visuais/.
+   F4. Coverage gaps: no map for pipelines (multi-stage flows such as Triad flows 01/02/03, melhoria->plan->orchestrate, aidd-ingest, aidd-audit-4f, aidd-evolution), none for modulos/ (4 areas and their VSA slices) and none for subagents (.claude/agents/).
+   F5. Incomplete catalog: coletar_hooks reads only .claude/settings.json (hooks in .claude/settings.local.json are missing); internal MCPs are collected only under modulos/ (componentes/compartilhado/mcps/mobbin_mcp is missing).
+   F6. Non-technical maps are not non-technical: docs/mapas-visuais/nao-tecnicos/mapa-05-skills.html shows the English SKILL.md description verbatim instead of plain PT-BR.
+5. Then look for further problems on your own across the whole scope: fidelity of each map to the real ecosystem, depth of explanation, generator correctness, test strength (do tests bite?), DRY and naming consistency.
+6. Fill the 15 dimensions of the template with grades 0-10 and factual evidence (path:line and command + exit code). If a dimension is missing, write "FAILED: Not implemented".
+7. Save the laudo exactly at:
+docs/auditoria/aidd-visual-maps/ciclo-01/LAUDO-15D-INICIAL.md
+8. Run the Quality Gate:
+python docs/auditoria/aidd-visual-maps/G_auditoria_15D.py docs/auditoria/aidd-visual-maps/ciclo-01/LAUDO-15D-INICIAL.md
+9. If it returns EXIT 1, fix the laudo and re-run until EXIT 0.

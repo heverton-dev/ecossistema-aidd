@@ -1,0 +1,20 @@
+You are a strict System Auditor (return inspection). Execute the Lens 15-D Architectural Audit on the 'aidd-visual-maps' tool yourself, after the Builder phase. Do not delegate to a subagent.
+MANDATORY LEI #14 (GRAPH-FIRST): call codebase-memory-mcp tools (search_graph, get_architecture, trace_path or query_graph) BEFORE any Grep, Glob or full file read.
+MANDATORY: every verdict is proven by a command you run yourself in this session. Reading code or the Builder report never replaces running it. Capture exit codes by redirecting to a file and reading $? on the same line; never trust a pipe.
+MANDATORY: set TEMP=C:\Users\trcnologia\aidd-tmp and TMP=C:\Users\trcnologia\aidd-tmp before running anything; write scratch output only under that folder.
+READ-ONLY: write no file in the repo except the laudo below.
+
+1. Read: docs/auditoria/TEMPLATE-AUDITORIA-FERRAMENTA.md, docs/auditoria/aidd-visual-maps/ciclo-01/DOD.md, docs/auditoria/aidd-visual-maps/ciclo-01/LAUDO-15D-INICIAL.md, docs/auditoria/aidd-visual-maps/ciclo-01/PLANO-EVOLUCAO.md and docs/auditoria/aidd-visual-maps/ciclo-01/RELATORIO-CONSTRUTOR.md.
+2. Audit scope (same as phase 1): .agents/skills/aidd-visual-maps/SKILL.md, scripts/mapa_visual.py, scripts/catalogo_pecas.py, scripts/compilar_mapas_nao_tecnicos.py, scripts/livro_mapas.py, modulos/04-nucleo-compartilhado/gates/G_mapa_pecas.py, .pre-commit-config.yaml, tests/test_mapa_visual.py, tests/test_catalogo_pecas.py, docs/mapas-visuais/ (all subfolders) and docs/auditoria/mapa-pecas/catalogo-pecas.json.
+3. For every ticket in PLANO-EVOLUCAO.md and every finding F1-F6 of the initial laudo, re-run your own reproduction command and state FIXED or NOT FIXED with command + exit code. At minimum run:
+   - python scripts/catalogo_pecas.py --check
+   - python scripts/mapa_visual.py <tipo> --check for every tipo in GERADORES
+   - python -m pytest tests/test_mapa_visual.py tests/test_catalogo_pecas.py -q -p no:cacheprovider
+   - python modulos/04-nucleo-compartilhado/gates/G_mapa_pecas.py
+4. Check every DoD criterion as met / not met with evidence.
+5. Fill the 15 dimensions with "Nota Inicial -> Nota Revisada" and what changed in the code.
+6. Save the laudo exactly at:
+docs/auditoria/aidd-visual-maps/ciclo-01/LAUDO-15D-REVISADO.md
+7. Run the Quality Gate:
+python docs/auditoria/aidd-visual-maps/G_auditoria_15D.py docs/auditoria/aidd-visual-maps/ciclo-01/LAUDO-15D-REVISADO.md
+8. If it returns EXIT 1, fix the laudo and re-run until EXIT 0.
