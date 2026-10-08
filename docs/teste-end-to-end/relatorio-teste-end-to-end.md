@@ -1537,3 +1537,18 @@
   - Suíte do master no comando do micro-gate → 417 passed, 3 skipped, exit 0.
 - **Status:** **RESOLVIDO**.
 - **Data da Última Auditoria:** 08/10/2026.
+
+## 50. Modularização VSA ciclo-03, Bloco 7 (Ticket 17): AGENTS.md e README.md enxutos em cada fatia e subfatia
+
+- **Objetivo da Correção:**
+  Só 1 de 7 fatias tinha `AGENTS.md`; 3 fatias não tinham `README.md`; 7 README de ferramenta passavam de 500 tokens (pure 1547) e 4 `AGENTS.md` de ferramenta passavam de 400 (ops 561). O `cli_modularizacao_vsa.py verify` saía 1 por exigir `core/`, `skills/`, `gates/` e `tests/` na raiz de toda fatia.
+- **Ferramentas Tocadas:** as 8 (`README.md` e `AGENTS.md`). O README antigo de forge, planner, pure, freedom, enterprise, master e ops virou `GUIA.md` na mesma pasta, sem a seção de Fronteiras, que continua no README. A §1 dos `AGENTS.md` de ferramenta, cópia da §1 raiz, virou ponteiro com o foco da ferramenta. Nenhum código de produção das ferramentas mudou.
+- **O que executou:**
+  1. `validador_fractalidade_vsa`: exige `AGENTS.md` (< 400 tokens) e `README.md` (< 500) na raiz da fatia e uma pasta `tests/` em algum ponto dela; `core/`, `skills/` e `gates/` só quando a fatia tem esse conteúdo (decisão do usuário, 08/10).
+  2. `AGENTS.md` novo nas 6 fatias sem ele; `README.md` novo em enterprise, master e ops; tabela de despacho no `AGENTS.md` raiz (§4).
+  3. `tests/test_vsa_fractalidade.py` atualizado para a regra nova.
+- **Resultados de Testes (08/10/2026):**
+  - `pytest tests/test_agents_por_fatia.py` → exit 1 antes (32 failed, 12 passed), exit 0 depois (com fractalidade, fronteiras, CLI VSA e nomes padronizados: 79 passed).
+  - `python scripts/cli_modularizacao_vsa.py verify` → exit 1 antes (23 violações), exit 0 depois.
+- **Status:** **RESOLVIDO**.
+- **Data da Última Auditoria:** 08/10/2026.

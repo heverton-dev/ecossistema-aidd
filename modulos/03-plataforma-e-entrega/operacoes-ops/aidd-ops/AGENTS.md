@@ -8,11 +8,8 @@
 
 ## 1. Core Execution Constraints
 
-- **Thinking constraint:** Think strictly in compact English. Focus on container security, OCI linting, network isolation, and idempotent state. Under 150 words.
-- **Execution limit:** Resolve tasks in 3 to 5 discrete steps. Stop and request confirmation if more steps are required.
-- **Output format:** Silent executor. Return code edits and 1-line execution status only. Do not dump raw compose manifests or logs in chat.
-- **Bash rule:** Always pipe verbose commands to tail/grep. E.g., `docker compose config 2>&1 | tail -n 25`.
-- **Editing rule:** Use exact search/replace block edits (`replace_file_content`).
+- Root `AGENTS.md` §1 governs execution (compact thinking, 3-5 steps, silent executor, piped bash, exact edits).
+- Tool focus: container security, OCI linting, network isolation, and idempotent state.
 
 ---
 
@@ -24,8 +21,8 @@
 4. **Idempotent Hardening (Anti-NIH #15):** VPS configuration uses Ansible collection `devsec.hardening` via `ansible/playbooks/hardening.yml`. Zero ad-hoc shell scripts.
 5. **Zero Stubs:** All infrastructure definitions and Python managers must be fully functional and tested.
 6. **Engineering Skills Alignment:** Production incidents, container failures, or pipeline regressions must follow the `/aidd-diagnose` protocol (scientific triage & regression test) before applying hotfixes.
-7. **Nicho Dinâmico (Fluxo 02, fora do catálogo fixo):** `01_intake.reconhecer_nicho_dinamico` + `02_curadoria.curar_stack_dinamico` (`pipeline_ops.montar_plano_em_memoria(..., ferramentas_planejadas=[...])`, CLI `plan --ferramentas-json <arquivo>`) let a caller with an already-curated OSS tool list (e.g. `aidd-planner`'s PRÉ-PLANO) skip the 5-niche keyword match in `data/catalogo_nichos.json` entirely. Discriminador: `nicho_slug` prefixed `dinamico_` (`01_intake.DINAMICO_PREFIXO_SLUG`/`eh_nicho_dinamico`) — mirrors the existing `monolito_customizado` bypass for Fluxo 01. Sizing (`03_sizing.dimensionar`) needed no change — it was already 100% tool-name-driven and gracefully skips unknown tools.
-8. **Infra pelo perfil do app (Ticket 16, C2):** `plan ... --pasta <projeto>` with the planner's `HANDOFF_PLANNER_ENGINE.json` in that folder reads the `aidd-ops` tickets + `perfil_app` (`scripts/infra_perfil.py`, validated against the C2 schema) and writes `Dockerfile`, `docker-compose.yml`, `deploy.sh`, `nginx/` from the `moldes/infra/*` catalog pieces via `obter_peca`. Services follow the profile (`app`+`nginx`; `web` only with `frontend/Dockerfile`; `db` for PostgreSQL; `fila` when queues exist). Discriminador: `nicho_slug` prefixed `perfil_`. Niche is an optional shortcut: `--nicho`/`--dir-projeto`/`--ferramentas-json` take precedence; without a plant the old niche match is unchanged.
+7. **Nicho Dinâmico (Fluxo 02):** a curated tool list skips the 5-niche catalog match; `nicho_slug` prefixed `dinamico_`. Detail: `GUIA.md`.
+8. **Infra pelo perfil do app (C2):** `plan --pasta <projeto>` with `HANDOFF_PLANNER_ENGINE.json` writes infra from `moldes/infra/*` via `obter_peca`; `nicho_slug` prefixed `perfil_`. Detail: `GUIA.md`.
 
 ---
 

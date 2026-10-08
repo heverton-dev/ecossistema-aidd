@@ -1,163 +1,15 @@
 # aidd-pure
 
-Gerador de projetos de software usando a metodologia **AIDD** (AI-Driven Development). Dada uma ideia em linguagem natural, o pipeline percorre 8 fases e produz um projeto completo: schemas, scripts, testes, documentação e — opcionalmente — código funcional gerado por LLM.
+Fluxo 01 da Tríade: motor de 8 fases que leva uma ideia em linguagem natural a um projeto testado (schemas, scripts, testes e documentação), com TDD Red-Green estrito.
 
-## 🌐 SUPREMACIA AGNÓSTICA — Princípio da Universalidade Total
-
-Este projeto foi construído sob o princípio inegociável da **Supremacia Agnóstica** da Engenharia Agêntica Aplicada (AIDD).
-
-NADA aqui é proprietário ou dependente de um único ecossistema:
-
-1. 💻 **Ambiente e SO Agnóstico:** Roda de forma 100% idêntica em Windows, Linux e macOS (Python puro).
-2. 🤖 **Harness e ADE Agnóstico:** Suporte nativo e transparente a **OpenCode, Antigravity, Claude Code, MimoCode, Freebuff, Hermes, DeepSeek, Codex, Cursor e Gemini CLI**.
-3. 🧠 **LLM e Cognição Agnóstica:**
-   - *Modo Delegado:* Aproveita a sessão do agente já autenticado no host (Zero API Keys necessárias).
-   - *Modo Headless:* Fallback universal via LiteLLM para dezenas de provedores (Groq, NVIDIA NIM, OpenAI, Anthropic, Ollama local).
-4. 🔀 **Orquestração Adaptativa em 3 Níveis:**
-   - *Nível Fleet:* Git Worktrees concorrentes por agente (quando em ORCA ADE).
-   - *Nível Harness:* Subagentes nativos do assistente em uso.
-   - *Nível Local:* `ContextPurgeEngine` com fatiamento limpo e purga estrita de memória a cada fase (CLI puro e CI/CD).
-5. 📦 **Artefatos Universais:** Skills, MCPs, JSON Schemas Draft 2020-12, Slash Commands e `AGENTS.md` são escritos uma única vez e projetados deterministicamente para todos os harnesses ativos (Zero Duplicidade).
-
-## O que é
-
-O aidd-pure automatiza a criação de projetos seguindo 5 camadas:
-
-1. **Contratos/Schemas** — JSON Schemas (Draft 2020-12) definem as estruturas de dados antes de qualquer código
-2. **Determinismo primeiro** — toda lógica mecânica roda em Python puro, sem LLM (Zero Token)
-3. **Gates mecânicos** — validações binárias (`exit 0` / `exit 1`) que bloqueiam erros em cascata
-4. **Persistência estruturada** — estado do projeto em JSON/SQLite, não na memória volátil de conversa
-5. **Bundles modulares** — cada fase gera artefatos autocontidos e auditáveis
-
-### Pipeline de fases
-
-| Fase | Descrição |
-|------|-----------|
-| 1 | Pesquisa e coleta de requisitos |
-| 2 | Análise e decomposição |
-| 3 | Design e arquitetura |
-| 4 | Planejamento e definições técnicas |
-| 5 | Criação de artefatos |
-| 6 | Documentação |
-| 7 | Autocrítica e auditoria |
-| 8 | **(opcional)** Implementação funcional via LLM |
-
-A Fase 8 só roda quando você passa `--implementar-codigo`. Ela gera scripts Python funcionais com testes, usando LLM com loop de correção automático — e audita o próprio código gerado contra as regras de Clean Architecture (`modulos/03-plataforma-e-entrega/gates/G_ARQUITETURA_DELIVERABLE.py`), tentando se autocorrigir quando encontra uma violação antes de reportar sucesso.
-
-As fases vivem em `scripts/phases/` como um pacote Python formal (carregamento via `importlib`, sem manipulação manual de `sys.path`).
-
-## Instalação
+## Uso rápido
 
 ```bash
-git clone https://github.com/heverton-dev/aidd-generator.git
-cd aidd-pure
-pip install -r requirements-dev.txt
+python ecossistema.py pure-motor "Minha ideia"
 ```
 
-### Dependência de sistema: Pandoc (Fase 6 — Documentador Tripartite)
-
-A Fase 6 (documentação final) gera os 3 formatos (HTML, Markdown, PDF) a
-partir de **uma única fonte Markdown** via [Pandoc](https://pandoc.org/)
-(NIH #25) — sem templates paralelos por formato e sem "PDF" falso.
-
-```bash
-# Linux/Mac
-sudo apt install pandoc      # ou: brew install pandoc
-# Windows (winget)
-winget install --id JohnMacFarlane.Pandoc
-```
-
-- HTML: `pandoc --standalone`
-- PDF: `pandoc --pdf-engine=typst` — requer o [Typst](https://typst.app/):
-
-  ```bash
-  sudo apt install typst     # ou: brew install typst / winget install Typst.Typst
-  ```
-
-Se o `pandoc` não estiver no `PATH`, a Fase 6 **reprova honestamente** os
-gates F1 (HTML) e F2 (PDF) — o `documento.md` (a fonte) ainda é gerado, mas
-não há conversão nem stub falso.
-
-### Dependência de sistema: Repomix (Empacotador de Contexto para LLM)
-
-O empacotamento de contexto do repositório (código e testes) para alimentar
-LLMs nas fases de teste de integração, auto-cura e auto-crítica delega ao
-[Repomix](https://repomix.com/) (NIH #22) em formato XML/Markdown canônico com
-remoção determinística de comentários e linhas vazias (economia direta de tokens):
-
-```bash
-# Instalação global via npm (ou npx automático)
-npm install -g repomix
-```
-
-Se o `repomix` não estiver no `PATH`, o runner ativa fallback determinístico
-estruturado honesto sem interromper o pipeline.
-
-## Configuração de credenciais
-
-Copie o exemplo e preencha com suas chaves:
-
-```bash
-cp .env.example .env
-```
-
-Provedores suportados (configure via variável `LLM_MODEL` no `.env`):
-
-| Provedor | Exemplo de modelo |
-|----------|-------------------|
-| TogetherAI | `together_ai/meta-llama/Llama-3.3-70B-Instruct-Turbo` |
-| NVIDIA NIM | `nvidia_nim/meta/llama-3.3-70b-instruct` |
-| Groq | `groq/llama-3.3-70b-versatile` |
-| OpenRouter | `openrouter/meta-llama/llama-3.3-70b-instruct:free` |
-| OpenAI-compatível | `openai/<modelo>` (requer `OPENAI_API_BASE`) |
-
-O `.env.example` tem todas as variáveis documentadas. O `.env` nunca é commitado (está no `.gitignore`).
-
-## Uso
-
-```bash
-# Pipeline completo (Fases 1-7): gera projeto sem código funcional
-python scripts/pipeline_completo.py "app de tarefas com autenticacao" --pasta ../meu-projeto
-
-# Com Fase 8: gera código funcional via LLM
-python scripts/pipeline_completo.py "app de tarefas com autenticacao" --pasta ../meu-projeto --implementar-codigo
-
-# Modo interativo
-python scripts/pipeline_completo.py "app de tarefas" --pasta ../meu-projeto --interativo
-```
-
-## Testes
-
-```bash
-python -m pytest tests/ -v
-```
-
-941 testes, cobrindo schemas, gates, persistência, compilação, fases e pipeline completo.
-
-## Disclaimer sobre a Fase 8 (geração de código funcional)
-
-A Fase 8 usa LLM para gerar código Python funcional com testes. Resultados reais de auditoria interna:
-
-- **Taxa de sucesso real: 55% a 91%**, dependendo da complexidade da ideia
-- **Não é garantia de 100% funcional de primeira** — o mecanismo pode gerar código que falha em parte dos testes
-- O pipeline reporta falha honestamente quando acontece (status `FALHOU` no index, com `requer_intervencao_manual: true`)
-- Em caso de falha, o projeto gerado ainda tem schemas, design e documentação válidos — só o código funcional precisa de revisão manual
-- O loop de correção tenta até N vezes corrigir erros automaticamente, mas não garante convergência
-
-**Resumo**: Fases 1-7 são determinísticas e confiáveis. A Fase 8 é um assistente que acelera, não substitui revisão humana.
-
-## Dica: orquestração multi-agente com ORCA
-
-O aidd-pure funciona sozinho, via CLI direto — nenhuma ferramenta extra é necessária. Mas se você estiver rodando múltiplos harnesses de IA ao mesmo tempo (Claude Code, Antigravity, MimoCode, OpenCode, etc.), o **ORCA** pode ajudar a organizar o trabalho:
-
-- **Worktrees isoladas** — cada agente trabalha em sua própria cópia do repositório, sem conflito de arquivos
-- **Fase 8 em paralelo** — rode a implementação de código com LLMs diferentes ao mesmo tempo e compare resultados lado a lado
-- **Auditoria/revisão concorrente** — paralelize a revisão do código gerado por diferentes agentes sem que um atrapalhe o outro
-- **Terminais gerenciados** — cada agente tem seu próprio terminal, sem disputa de recursos
-
-É uma ferramenta complementar, não um requisito. Se você usa apenas um harness por vez, o aidd-pure via CLI direto já resolve.
-
----
+- Guia completo (instalação, arquitetura, testes): [GUIA.md](GUIA.md)
+- Regras e invariantes para agentes: [AGENTS.md](AGENTS.md)
 
 ## Fronteiras Canônicas e Responsabilidades
 
@@ -183,7 +35,3 @@ Conforme o mapa oficial de arquitetura (`MAPA-DONOS-FERRAMENTAS.json` e `G_FRONT
 - **Zona de escrita no projeto:** `src/modules/*/**`, `frontend/app/*/**`, `HANDOFF_ENGINE_MASTER.json`, `.aidd/cache/**`.
 
 ---
-
-## Licença
-
-MIT — veja [LICENSE](LICENSE).

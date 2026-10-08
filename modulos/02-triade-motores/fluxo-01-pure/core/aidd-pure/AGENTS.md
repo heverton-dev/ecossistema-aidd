@@ -8,11 +8,7 @@
 
 ## 1. Core Execution Constraints
 
-- **Thinking constraint:** Think strictly in compact English. Focus only on phase transition contracts, artifact schemas, and validation gates. Under 150 words.
-- **Execution limit:** Resolve tasks in 3 to 5 discrete steps. Stop and request confirmation if exceeding 5 steps.
-- **Output format:** Silent executor. Return code edits and 1-line status only. Do not duplicate JSON or phase artifacts in conversation reply.
-- **Bash rule:** Always pipe verbose commands to tail/grep. E.g., `python scripts/executar_fase.py --fase 1 2>&1 | tail -n 25`.
-- **Editing rule:** Use exact search/replace block edits (`replace_file_content`).
+- Root `AGENTS.md` §1 governs execution (compact thinking, 3-5 steps, silent executor, piped bash, exact edits).
 
 ---
 

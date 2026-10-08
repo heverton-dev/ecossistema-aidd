@@ -8,11 +8,8 @@
 
 ## 1. Core Execution Constraints
 
-- **Thinking constraint:** Think strictly in compact English. Focus on schema sanitization, PostgREST compatibility, auth hash migration, and atomic rollback. Under 150 words.
-- **Execution limit:** Resolve tasks in 3 to 5 discrete steps. Stop and request confirmation if more steps are required.
-- **Output format:** Silent executor. Return code edits and 1-line execution status only. Do not duplicate SQL scripts or component trees in chat.
-- **Bash rule:** Always pipe verbose commands to tail/grep. E.g., `pytest tests/ 2>&1 | tail -n 25`.
-- **Editing rule:** Use exact search/replace block edits (`replace_file_content`).
+- Root `AGENTS.md` §1 governs execution (compact thinking, 3-5 steps, silent executor, piped bash, exact edits).
+- Tool focus: schema sanitization, PostgREST compatibility, auth hash migration, and atomic rollback.
 
 ---
 

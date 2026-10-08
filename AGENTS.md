@@ -182,15 +182,17 @@ Every robust application in the ecosystem originates from **`aidd-forge`** (supr
 
 ## 4. Architecture & Context Dispatch
 
-Core rules are universal. Domain and tool-specific instructions reside in their respective directories:
-- `modulos/01-governanca-e-qualidade/core/aidd-forge/AGENTS.md` -> Bootstrap, templates, and environment shielding.
-- `modulos/01-governanca-e-qualidade/core/aidd-planner/AGENTS.md` -> Planning engine, SDD/BDD intake, and Triad fuel generation.
-- `modulos/02-triade-motores/fluxo-01-pure/core/aidd-pure/AGENTS.md` -> 8-phase software generation factory.
-- `modulos/03-plataforma-e-entrega/fatiamento-master/aidd-master/AGENTS.md` -> Modular Vertical Slice architecture.
-- `modulos/03-plataforma-e-entrega/blindagem-enterprise/aidd-enterprise/AGENTS.md` -> Mission-critical SHA-256 injected components.
-- `modulos/03-plataforma-e-entrega/operacoes-ops/aidd-ops/AGENTS.md` -> Agentic infrastructure meta-orchestration.
-- `modulos/02-triade-motores/fluxo-02-open/core/aidd-open/AGENTS.md` -> Multi-service application & integration code generator.
-- `modulos/02-triade-motores/fluxo-03-freedom/core/aidd-freedom/AGENTS.md` -> Low-code (Lovable/v0/Bolt) VPS packager.
+Core rules are universal. Dispatch: editing inside a slice, read that slice's `AGENTS.md` first (slice invariants, < 400 tokens), then the tool's `AGENTS.md`. Slices come from `modulos/04-nucleo-compartilhado/contracts/MAPA-FATIAS.json`; `validador_fractalidade_vsa` requires `AGENTS.md` + `README.md` in every slice.
+
+| Slice | Slice rules | Tool rules | Scope |
+|---|---|---|---|
+| 01-governanca-e-qualidade | `modulos/01-governanca-e-qualidade/AGENTS.md` | `core/aidd-forge/AGENTS.md`, `core/aidd-planner/AGENTS.md` | Bootstrap, piece warehouse, planning engine and Triad fuel |
+| fluxo-01-pure | `modulos/02-triade-motores/fluxo-01-pure/AGENTS.md` | `core/aidd-pure/AGENTS.md` | 8-phase software generation factory |
+| fluxo-02-open | `modulos/02-triade-motores/fluxo-02-open/AGENTS.md` | `core/aidd-open/AGENTS.md` | Multi-service application and integration generator |
+| fluxo-03-freedom | `modulos/02-triade-motores/fluxo-03-freedom/AGENTS.md` | `core/aidd-freedom/AGENTS.md` | Low-code (Lovable/v0/Bolt) VPS packager |
+| blindagem-enterprise | `modulos/03-plataforma-e-entrega/blindagem-enterprise/AGENTS.md` | `aidd-enterprise/AGENTS.md` | Mission-critical SHA-256 injected components |
+| fatiamento-master | `modulos/03-plataforma-e-entrega/fatiamento-master/AGENTS.md` | `aidd-master/AGENTS.md` | Modular Vertical Slice architecture |
+| operacoes-ops | `modulos/03-plataforma-e-entrega/operacoes-ops/AGENTS.md` | `aidd-ops/AGENTS.md` | Agentic infrastructure meta-orchestration |
 
 ---
 
