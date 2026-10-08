@@ -19,7 +19,7 @@ import harness_9router  # noqa: E402
 import instalar_wrappers  # noqa: E402
 import omp_provider  # noqa: E402
 
-MAPA = {"opus": "code-pro", "sonnet": "code-fast", "haiku": "code-free"}
+MAPA = {"opus": "code-pro", "sonnet": "code-fast", "haiku": "code-free", "fable": "code-free"}
 URL = "https://gw.exemplo"
 
 
