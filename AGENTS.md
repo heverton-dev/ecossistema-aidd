@@ -198,7 +198,7 @@ Core rules are universal. Dispatch: editing inside a slice, read that slice's `A
 
 ## 5. MCP Tools: codebase-memory-mcp
 
-Query the graph BEFORE file scanning:
+Query the graph BEFORE file scanning. Query the slice subgraph first: editing inside a slice, query its `vsa-<domain>` project before the whole-repo graph (smaller blast radius, fewer tokens). Domains (`componentes/compartilhado/src-core/subgrafos_federados.py`, `DOMINIOS_VSA`): `vsa-aidd-nucleo` (04), `vsa-modulo-governanca` (01), `vsa-triade-fluxo-pure`, `vsa-triade-fluxo-open`, `vsa-triade-fluxo-freedom`, `vsa-modulo-plataforma-ops` (03: enterprise, master, ops). Reindex: `python scripts/cli_modularizacao_vsa.py index-subgraphs`. `scripts/` and root files live only in the whole-repo graph.
 - `search_graph`: Query functions, types, and references by name/regex pattern.
 - `trace_path`: Trace callers (inbound), callees (outbound), or blast radius with depth limit.
 - `query_graph`: Cypher-based structural queries on code relationships.

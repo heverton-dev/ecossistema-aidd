@@ -202,9 +202,9 @@ def comando_index_subgraphs(raiz: Path) -> int:
         print("[modularizacao-vsa] Indexando subgrafos federados VSA...")
         res = fed.indexar_todos(modo="fast")
         for dom, r in res.items():
-            status = "OK" if r.get("sucesso") else f"FALHA: {r.get('erro')}"
+            status = "OK" if r.get("sucesso") else f"FALHA: {r.get('erro') or r.get('stderr') or r.get('exit_code')}"
             print(f"  - {dom:<25} [{status}]")
-        return 0
+        return 0 if all(r.get("sucesso") for r in res.values()) else 1
     except Exception as e:
         print(f"[modularizacao-vsa] Erro ao indexar subgrafos: {e}")
         return 1

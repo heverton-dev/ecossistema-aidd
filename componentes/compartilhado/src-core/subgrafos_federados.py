@@ -15,16 +15,15 @@ import shutil
 import subprocess
 from typing import Dict, List, Optional, Any
 
+# Nomes do padrão (docs/padroes/ARQUITETURA-MODULARIZACAO-VSA-ECOSSISTEMA.md §7, ciclo-03 T19).
+# Plataforma = enterprise + master + ops; scripts/ fica no grafo do repositório inteiro.
 DOMINIOS_VSA = {
-    "01-governanca": "modulos/01-governanca-e-qualidade",
+    "aidd-nucleo": "modulos/04-nucleo-compartilhado",
+    "modulo-governanca": "modulos/01-governanca-e-qualidade",
     "triade-fluxo-pure": "modulos/02-triade-motores/fluxo-01-pure",
     "triade-fluxo-open": "modulos/02-triade-motores/fluxo-02-open",
     "triade-fluxo-freedom": "modulos/02-triade-motores/fluxo-03-freedom",
-    "fatiamento-master": "modulos/03-plataforma-e-entrega/fatiamento-master",
-    "blindagem-enterprise": "modulos/03-plataforma-e-entrega/blindagem-enterprise",
-    "operacoes-ops": "modulos/03-plataforma-e-entrega/operacoes-ops",
-    "04-nucleo": "modulos/04-nucleo-compartilhado",
-    "core-cli": "scripts",
+    "modulo-plataforma-ops": "modulos/03-plataforma-e-entrega",
 }
 
 

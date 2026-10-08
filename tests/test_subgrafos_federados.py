@@ -19,28 +19,23 @@ class TestSubgrafosFederados(unittest.TestCase):
 
     def test_dominios_mapeados_corretamente(self):
         dominios = self.fed.listar_dominios()
-        self.assertIn("01-governanca", dominios)
-        self.assertIn("triade-fluxo-pure", dominios)
-        self.assertIn("triade-fluxo-open", dominios)
-        self.assertIn("triade-fluxo-freedom", dominios)
-        self.assertIn("fatiamento-master", dominios)
-        self.assertIn("blindagem-enterprise", dominios)
-        self.assertIn("operacoes-ops", dominios)
-        self.assertIn("04-nucleo", dominios)
-        self.assertIn("core-cli", dominios)
+        for nome in ("aidd-nucleo", "modulo-governanca", "triade-fluxo-pure", "triade-fluxo-open",
+                     "triade-fluxo-freedom", "modulo-plataforma-ops"):
+            self.assertIn(nome, dominios)
+        self.assertEqual(len(dominios), 6)
 
     def test_resolucao_de_dominio_por_caminho(self):
         d1 = self.fed.obter_dominio_de_caminho("modulos/01-governanca-e-qualidade/core/aidd-forge")
-        self.assertEqual(d1, "01-governanca")
+        self.assertEqual(d1, "modulo-governanca")
 
         d2 = self.fed.obter_dominio_de_caminho("modulos/02-triade-motores/fluxo-01-pure")
         self.assertEqual(d2, "triade-fluxo-pure")
 
         d3 = self.fed.obter_dominio_de_caminho("modulos/03-plataforma-e-entrega/fatiamento-master")
-        self.assertEqual(d3, "fatiamento-master")
+        self.assertEqual(d3, "modulo-plataforma-ops")
 
         d4 = self.fed.obter_dominio_de_caminho("scripts/micro_gates.py")
-        self.assertEqual(d4, "core-cli")
+        self.assertEqual(d4, "global")
 
         d_global = self.fed.obter_dominio_de_caminho("README.md")
         self.assertEqual(d_global, "global")
