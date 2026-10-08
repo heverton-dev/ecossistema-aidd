@@ -1,12 +1,11 @@
 # 📑 Índice Canônico de Sessões Agênticas — Ecossistema AIDD
 
-> **Total de Sessões Registradas:** 34  
+> **Total de Sessões Registradas:** 33  
 > **Última Atualização:** 2026-10-08T06:52:20.628638
 
 | Data / Hora | Harness | Modelo | Conversation ID | Objetivo / Título | Workspace |
 | :--- | :--- | :--- | :--- | :--- | :--- |
 | 2026-10-08 06:52:20 | `claude-code` | `code-fast` | `7aded27f-303f-41bf-b416-d185bba093b6` | Modularizacao VSA Ciclo-03 Bloco 6 | `C:/Users/trcnologia/Desktop/ecossistema-aidd` |
-| 2026-10-08 06:51:07 | `claude-code` | `code-fast` | `sessao-vsa-bloco-06-20261008` | Modularizacao VSA Ciclo-03 Bloco 6 - Ticket 16 Micro-gates | `C:/Users/trcnologia/Desktop/ecossistema-aidd` |
 | 2026-10-08 06:50:54 | `claude-code` | `code-fast` | `e555f6de-a057-44b7-8880-33dfb0c3d515` | Retomada push Bloco 5 ciclo-03 VSA e limpeza de pendencias | `C:/Users/trcnologia/Desktop/ecossistema-aidd` |
 | 2026-10-07 06:22:25 | `claude-code` | `code-fast` | `8e3ba650-23fe-4d3d-9f43-eda75c8fefca` | Retomada Ciclo 03 VSA - Bloco 2 Ticket 5 e 6 | `C:/Users/trcnologia/Desktop/ecossistema-aidd` |
 | 2026-10-06 00:06:44 | `claude-code` | `code-fast` | `b40fca9d-d303-4f48-90ea-ff287677d07e` | Padronizacao de convencoes e saidas deterministicas | `C:/Users/trcnologia/Desktop/ecossistema-aidd` |

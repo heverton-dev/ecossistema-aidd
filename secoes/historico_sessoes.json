@@ -1,7 +1,7 @@
 {
   "versao": "1.0",
   "atualizado_em": "2026-10-08T06:52:20.628638",
-  "total_sessoes": 34,
+  "total_sessoes": 33,
   "sessoes": [
     {
       "id": "fc4566a8-0804-4748-ab5f-ec105414273c",
@@ -306,15 +306,6 @@
       "harness": "claude-code",
       "modelo": "code-fast",
       "titulo": "Retomada push Bloco 5 ciclo-03 VSA e limpeza de pendencias",
-      "workspace": "C:\\Users\\trcnologia\\Desktop\\ecossistema-aidd",
-      "transcript_path": ""
-    },
-    {
-      "id": "sessao-vsa-bloco-06-20261008",
-      "registrado_em": "2026-10-08 06:51:07",
-      "harness": "claude-code",
-      "modelo": "code-fast",
-      "titulo": "Modularizacao VSA Ciclo-03 Bloco 6 - Ticket 16 Micro-gates",
       "workspace": "C:\\Users\\trcnologia\\Desktop\\ecossistema-aidd",
       "transcript_path": ""
     },
