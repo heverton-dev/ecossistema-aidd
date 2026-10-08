@@ -17,7 +17,7 @@ abstract: |
   Cada capítulo corresponde a um mapa visual, na mesma ordem dos arquivos em docs/mapas-visuais/.
 
   Nada aqui é estimado. Os números vêm do catálogo de peças e os defeitos vêm do arquivo de achados, que
-  hoje registra 31 achados em aberto, 0 sob suspeita e 14 resolvidos.
+  hoje registra 29 achados em aberto, 0 sob suspeita e 14 resolvidos.
 ---
 
 # Como ler este livro
@@ -521,7 +521,7 @@ Onde a fábrica é consertada: os planos, os ciclos de auditoria e a lente que o
 #ficha(
   ("Mapa", "mapa-11-oficina.html"),
   ("Para que serve", "todos os planos e ciclos de auditoria, com as fases cumpridas"),
-  ("Achados em aberto", "25"),
+  ("Achados em aberto", "24"),
 )
 ```
 
@@ -560,7 +560,6 @@ Os números saem de `docs/auditoria/mapa-pecas/catalogo-pecas.json` (função `c
 - **Baixa** · Ciclo de auditoria sem todos os documentos: aidd-pure-runner/ciclo-01 (`CAT-ciclo-aidd-pure-runner-ciclo-01`).
 - **Baixa** · Ciclo de auditoria sem todos os documentos: aidd-session/ciclo-01 (`CAT-ciclo-aidd-session-ciclo-01`).
 - **Baixa** · Ciclo de auditoria sem todos os documentos: aidd-skills/ciclo-02 (`CAT-ciclo-aidd-skills-ciclo-02`).
-- **Baixa** · Ciclo de auditoria sem todos os documentos: aidd-visual-maps/ciclo-01 (`CAT-ciclo-aidd-visual-maps-ciclo-01`).
 - **Baixa** · Ciclo de auditoria sem todos os documentos: calibracao-pipeline/ciclo-01 (`CAT-ciclo-calibracao-pipeline-ciclo-01`).
 - **Baixa** · Ciclo de auditoria sem todos os documentos: code-review-graph/ciclo-01 (`CAT-ciclo-code-review-graph-ciclo-01`).
 - **Baixa** · Ciclo de auditoria sem todos os documentos: fluxo-01-runner/ciclo-01 (`CAT-ciclo-fluxo-01-runner-ciclo-01`).
@@ -586,7 +585,7 @@ O detalhe e a evidência de cada achado estão no Apêndice B e em `docs/auditor
 #ficha(
   ("Mapa", "mapa-12-lente15d.html"),
   ("Para que serve", "as 15 dimensões de auditoria e como cada ferramenta se saiu"),
-  ("Achados em aberto", "2"),
+  ("Achados em aberto", "1"),
 )
 ```
 
@@ -609,7 +608,6 @@ Os números saem de `docs/auditoria/mapa-pecas/catalogo-pecas.json` (função `c
 ## 12.3 O que falta consertar
 
 - **Média** · 1 dimensões 15-D com falha no laudo de aidd-orca (`CAT-15d-aidd-orca`).
-- **Média** · 3 dimensões 15-D com falha no laudo de aidd-visual-maps (`CAT-15d-aidd-visual-maps`).
 
 O detalhe e a evidência de cada achado estão no Apêndice B e em `docs/auditoria/mapa-pecas/ciclo-01/ACHADOS.json`.
 
@@ -765,14 +763,13 @@ O detalhe e a evidência de cada achado estão no Apêndice B e em `docs/auditor
 
 # Apêndice B — Estado honesto
 
-Tabela consolidada de todos os achados dos mapas, gerada de `docs/auditoria/mapa-pecas/ciclo-01/ACHADOS.json`. Em aberto por gravidade: 0 alta, 4 média, 27 baixa. Cada achado em aberto traz no arquivo o texto pronto para abrir o fluxo de melhoria (`pedido_melhoria`).
+Tabela consolidada de todos os achados dos mapas, gerada de `docs/auditoria/mapa-pecas/ciclo-01/ACHADOS.json`. Em aberto por gravidade: 0 alta, 3 média, 26 baixa. Cada achado em aberto traz no arquivo o texto pronto para abrir o fluxo de melhoria (`pedido_melhoria`).
 
-## Em aberto (31)
+## Em aberto (29)
 
 | Achado | Gravidade · mapa |
 | :-------------------------------------- | :-------------------------------------------- |
 | 1 dimensões 15-D com falha no laudo de aidd-orca (`CAT-15d-aidd-orca`) | Média · lente15d |
-| 3 dimensões 15-D com falha no laudo de aidd-visual-maps (`CAT-15d-aidd-visual-maps`) | Média · lente15d |
 | 5 guardas declarados em lei que não rodam no commit (`CAT-declarados-fora-do-commit`) | Média · leis |
 | 10 guardas com o mesmo nome e código diferente (`CAT-gates-versoes`) | Média · guardas |
 | Ciclo de auditoria sem todos os documentos: aidd-componentes/ciclo-01 (`CAT-ciclo-aidd-componentes-ciclo-01`) | Baixa · oficina |
@@ -792,7 +789,6 @@ Tabela consolidada de todos os achados dos mapas, gerada de `docs/auditoria/mapa
 | Ciclo de auditoria sem todos os documentos: aidd-pure-runner/ciclo-01 (`CAT-ciclo-aidd-pure-runner-ciclo-01`) | Baixa · oficina |
 | Ciclo de auditoria sem todos os documentos: aidd-session/ciclo-01 (`CAT-ciclo-aidd-session-ciclo-01`) | Baixa · oficina |
 | Ciclo de auditoria sem todos os documentos: aidd-skills/ciclo-02 (`CAT-ciclo-aidd-skills-ciclo-02`) | Baixa · oficina |
-| Ciclo de auditoria sem todos os documentos: aidd-visual-maps/ciclo-01 (`CAT-ciclo-aidd-visual-maps-ciclo-01`) | Baixa · oficina |
 | Ciclo de auditoria sem todos os documentos: calibracao-pipeline/ciclo-01 (`CAT-ciclo-calibracao-pipeline-ciclo-01`) | Baixa · oficina |
 | Ciclo de auditoria sem todos os documentos: code-review-graph/ciclo-01 (`CAT-ciclo-code-review-graph-ciclo-01`) | Baixa · oficina |
 | Ciclo de auditoria sem todos os documentos: fluxo-01-runner/ciclo-01 (`CAT-ciclo-fluxo-01-runner-ciclo-01`) | Baixa · oficina |

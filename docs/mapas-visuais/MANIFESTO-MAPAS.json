@@ -234,7 +234,7 @@
     "partes": [
       {
         "arquivo": "docs/livros/mapas-aidd/partes/00-frontmatter.md",
-        "sha256": "a4871626d01e18cc815674fa5d5493458b8a6832e7b45a4d29a3aeaa142f6c78"
+        "sha256": "a593ae8802c3a86227d1cafd90190001680181b97a7905d4c22381aa7f473ef0"
       },
       {
         "arquivo": "docs/livros/mapas-aidd/partes/10-parte-i.md",
@@ -250,7 +250,7 @@
       },
       {
         "arquivo": "docs/livros/mapas-aidd/partes/40-parte-iv.md",
-        "sha256": "ca501497eba5f6e96b2360e44f2b44fa3db2b91c69b345b392760c76edb6a4e0"
+        "sha256": "3fca8ca66b9aae55011d7337c90146babe66f3d6d2e928f283343252f0f7dde4"
       },
       {
         "arquivo": "docs/livros/mapas-aidd/partes/50-parte-v.md",
@@ -262,14 +262,14 @@
       },
       {
         "arquivo": "docs/livros/mapas-aidd/partes/91-apendice-estado.md",
-        "sha256": "a45f72225917f65592e652c930b32fa252c78c25ff0b4376d40133f6ebadd513"
+        "sha256": "0393a9e142bf36997b29cf2b6f42ca3e468082e43fa06ca40499bf34321560de"
       }
     ],
     "build": {
       "comando": "python componentes/compartilhado/skills/aidd-textbook/scripts/livro.py build docs/livros/mapas-aidd",
       "exit_code": 0,
       "pdf": "docs/livros/mapas-aidd/26-09-2026_LIVRO-MAPAS-AIDD.pdf",
-      "sha256": "b3a86dea2713045419f89508592e6be42cc2e288bfa238e22694c2874b60821d"
+      "sha256": "787dc999d1a0100cf51bba94fd5cbf8277143ae70004ed4887efab3c6294aa60"
     }
   }
 }
