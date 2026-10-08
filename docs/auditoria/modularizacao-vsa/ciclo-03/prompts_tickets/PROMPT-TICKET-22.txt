@@ -1,0 +1,16 @@
+ROLE: Builder. Ecosystem AIDD. Ticket 22. Target tool: modularizacao-vsa.
+DIMENSION: D15
+DELIVER: docs/auditoria/modularizacao-vsa/ciclo-03/LAUDO-REVISADO.md
+
+STEPS:
+- Write LAUDO-REVISADO.md. For each finding in DIAGNOSTICO.md give the proof command and its exit code.
+- Regenerate visual maps and books. Update the architecture standard status and record the deviations.
+- Run audit. Run tests/test_mapas_e_livros_em_dia.py. Assert exit 0.
+
+RULES:
+1. Write failing test first. Run. Assert exit 1.
+2. Implement. Zero stubs. Real pytest tests. Run. Assert exit 0.
+3. Work inside ephemeral Git Worktree only.
+4. Capture real exit code: redirect to file, read $? same line. Never trust pipes.
+5. NEVER edit docs/auditoria/CONFIG-EXECUCAO-USUARIO.json.
+6. Deliver exactly: docs/auditoria/modularizacao-vsa/ciclo-03/LAUDO-REVISADO.md

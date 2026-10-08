@@ -1,0 +1,44 @@
+{
+  "pipeline_id": "evolucao-modularizacao-vsa-ciclo-03-bloco-5",
+  "target_tool": "modularizacao-vsa",
+  "bloco": 5,
+  "descricao": "Manifesto do Bloco 5 (3 fases) montado a partir de PLANO-EVOLUCAO.md",
+  "config_usuario_ref": "docs/auditoria/CONFIG-EXECUCAO-USUARIO.json",
+  "definition_of_done": "docs/auditoria/modularizacao-vsa/ciclo-03/DOD.md",
+  "gate_final": "python ecossistema.py audit",
+  "fases": [
+    {
+      "ticket_id": "TICKET-13",
+      "nome": "Fase_13_Ticket_13_CLI_modularizacao_vsa_de_verdade",
+      "dimensao_15d": "D2. Input e Gatilhos",
+      "harness": "claude",
+      "model": "sonnet",
+      "comando_terminal": "claude-9router --dangerously-skip-permissions --chrome --model sonnet",
+      "input_prompt": "docs/auditoria/modularizacao-vsa/ciclo-03/prompts_tickets/PROMPT-TICKET-13.txt",
+      "output_handoff": "tests/test_vsa_cli_real.py",
+      "gate_fase": "python -m pytest -q -p no:cacheprovider tests/test_vsa_cli_real.py"
+    },
+    {
+      "ticket_id": "TICKET-14",
+      "nome": "Fase_14_Ticket_14_Ligar_ou_apagar_os_scripts__rf_os_do_ciclo_01",
+      "dimensao_15d": "D8. O que o Estágio Processa",
+      "harness": "claude",
+      "model": "sonnet",
+      "comando_terminal": "claude-9router --dangerously-skip-permissions --chrome --model sonnet",
+      "input_prompt": "docs/auditoria/modularizacao-vsa/ciclo-03/prompts_tickets/PROMPT-TICKET-14.txt",
+      "output_handoff": "tests/test_sem_orfaos_vsa.py",
+      "gate_fase": "python -m pytest -q -p no:cacheprovider tests/test_sem_orfaos_vsa.py"
+    },
+    {
+      "ticket_id": "TICKET-15",
+      "nome": "Fase_15_Ticket_15_Escopo_da_conven__o_de_exit_codes",
+      "dimensao_15d": "D13. Quality Gates (Portões)",
+      "harness": "claude",
+      "model": "sonnet",
+      "comando_terminal": "claude-9router --dangerously-skip-permissions --chrome --model sonnet",
+      "input_prompt": "docs/auditoria/modularizacao-vsa/ciclo-03/prompts_tickets/PROMPT-TICKET-15.txt",
+      "output_handoff": "tests/test_convencao_exit_escopo.py",
+      "gate_fase": "python -m pytest -q -p no:cacheprovider tests/test_convencao_exit_escopo.py"
+    }
+  ]
+}

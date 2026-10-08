@@ -1,0 +1,17 @@
+ROLE: Builder. Ecosystem AIDD. Ticket 10. Target tool: modularizacao-vsa.
+DIMENSION: D1
+DELIVER: tests/test_interfaces_fatias.py
+
+STEPS:
+- Write tests/test_interfaces_fatias.py first. Assert each of the 7 slices has interface.py with __all__. Assert no two slices expose the same top level package name. Run. Assert exit 1.
+- Add interface.py per slice exposing only what other slices consume.
+- Rename colliding core packages to unique per slice names. Update imports and tests.
+- Run test. Run open slice test_fronteira_factory.py. Assert exit 0.
+
+RULES:
+1. Write failing test first. Run. Assert exit 1.
+2. Implement. Zero stubs. Real pytest tests. Run. Assert exit 0.
+3. Work inside ephemeral Git Worktree only.
+4. Capture real exit code: redirect to file, read $? same line. Never trust pipes.
+5. NEVER edit docs/auditoria/CONFIG-EXECUCAO-USUARIO.json.
+6. Deliver exactly: tests/test_interfaces_fatias.py

@@ -1,0 +1,44 @@
+{
+  "pipeline_id": "evolucao-modularizacao-vsa-ciclo-03-bloco-7",
+  "target_tool": "modularizacao-vsa",
+  "bloco": 7,
+  "descricao": "Manifesto do Bloco 7 (3 fases) montado a partir de PLANO-EVOLUCAO.md",
+  "config_usuario_ref": "docs/auditoria/CONFIG-EXECUCAO-USUARIO.json",
+  "definition_of_done": "docs/auditoria/modularizacao-vsa/ciclo-03/DOD.md",
+  "gate_final": "python ecossistema.py audit",
+  "fases": [
+    {
+      "ticket_id": "TICKET-17",
+      "nome": "Fase_17_Ticket_17_AGENTS_md_local_em_cada_fatia",
+      "dimensao_15d": "D14. Documentação Viva",
+      "harness": "claude",
+      "model": "sonnet",
+      "comando_terminal": "claude-9router --dangerously-skip-permissions --chrome --model sonnet",
+      "input_prompt": "docs/auditoria/modularizacao-vsa/ciclo-03/prompts_tickets/PROMPT-TICKET-17.txt",
+      "output_handoff": "tests/test_agents_por_fatia.py",
+      "gate_fase": "python -m pytest -q -p no:cacheprovider tests/test_agents_por_fatia.py"
+    },
+    {
+      "ticket_id": "TICKET-18",
+      "nome": "Fase_18_Ticket_18_Skills_com_dono__nico_e_sync_lendo_as_fatias",
+      "dimensao_15d": "D15. Fonte Única e Sincronização",
+      "harness": "claude",
+      "model": "sonnet",
+      "comando_terminal": "claude-9router --dangerously-skip-permissions --chrome --model sonnet",
+      "input_prompt": "docs/auditoria/modularizacao-vsa/ciclo-03/prompts_tickets/PROMPT-TICKET-18.txt",
+      "output_handoff": "tests/test_skills_fatias_sync.py",
+      "gate_fase": "python -m pytest -q -p no:cacheprovider tests/test_skills_fatias_sync.py && python ecossistema.py components verify"
+    },
+    {
+      "ticket_id": "TICKET-19",
+      "nome": "Fase_19_Ticket_19_Subgrafos_com_os_nomes_do_padr_o_e_grafos__rf_os_removidos",
+      "dimensao_15d": "D12. Observabilidade e Frugalidade",
+      "harness": "claude",
+      "model": "sonnet",
+      "comando_terminal": "claude-9router --dangerously-skip-permissions --chrome --model sonnet",
+      "input_prompt": "docs/auditoria/modularizacao-vsa/ciclo-03/prompts_tickets/PROMPT-TICKET-19.txt",
+      "output_handoff": "tests/test_subgrafos_nomes_padrao.py",
+      "gate_fase": "python -m pytest -q -p no:cacheprovider tests/test_subgrafos_nomes_padrao.py"
+    }
+  ]
+}

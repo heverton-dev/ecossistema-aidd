@@ -1,0 +1,16 @@
+ROLE: Builder. Ecosystem AIDD. Ticket 17. Target tool: modularizacao-vsa.
+DIMENSION: D14
+DELIVER: tests/test_agents_por_fatia.py
+
+STEPS:
+- Write tests/test_agents_por_fatia.py first. Assert each slice and sub slice has AGENTS.md under 400 tokens and README.md under 500 tokens. Run. Assert exit 1.
+- Write each AGENTS.md with slice rules and invariants. Add a dispatch table to the root AGENTS.md. Make validador_fractalidade_vsa require both files.
+- Run test. Assert exit 0.
+
+RULES:
+1. Write failing test first. Run. Assert exit 1.
+2. Implement. Zero stubs. Real pytest tests. Run. Assert exit 0.
+3. Work inside ephemeral Git Worktree only.
+4. Capture real exit code: redirect to file, read $? same line. Never trust pipes.
+5. NEVER edit docs/auditoria/CONFIG-EXECUCAO-USUARIO.json.
+6. Deliver exactly: tests/test_agents_por_fatia.py

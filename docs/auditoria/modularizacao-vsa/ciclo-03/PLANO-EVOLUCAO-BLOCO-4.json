@@ -1,0 +1,44 @@
+{
+  "pipeline_id": "evolucao-modularizacao-vsa-ciclo-03-bloco-4",
+  "target_tool": "modularizacao-vsa",
+  "bloco": 4,
+  "descricao": "Manifesto do Bloco 4 (3 fases) montado a partir de PLANO-EVOLUCAO.md",
+  "config_usuario_ref": "docs/auditoria/CONFIG-EXECUCAO-USUARIO.json",
+  "definition_of_done": "docs/auditoria/modularizacao-vsa/ciclo-03/DOD.md",
+  "gate_final": "python ecossistema.py audit",
+  "fases": [
+    {
+      "ticket_id": "TICKET-10",
+      "nome": "Fase_10_Ticket_10_Interface_p_blica_por_fatia_e_fim_da_colis_o_de_pacote_core",
+      "dimensao_15d": "D1. Arquitetura e Fronteiras",
+      "harness": "claude",
+      "model": "sonnet",
+      "comando_terminal": "claude-9router --dangerously-skip-permissions --chrome --model sonnet",
+      "input_prompt": "docs/auditoria/modularizacao-vsa/ciclo-03/prompts_tickets/PROMPT-TICKET-10.txt",
+      "output_handoff": "tests/test_interfaces_fatias.py",
+      "gate_fase": "python -m pytest -q -p no:cacheprovider tests/test_interfaces_fatias.py"
+    },
+    {
+      "ticket_id": "TICKET-11",
+      "nome": "Fase_11_Ticket_11_G_MODULO_FRONTEIRA_que_enxerga_sys_path_e_caminhos",
+      "dimensao_15d": "D13. Quality Gates (Portões)",
+      "harness": "claude",
+      "model": "sonnet",
+      "comando_terminal": "claude-9router --dangerously-skip-permissions --chrome --model sonnet",
+      "input_prompt": "docs/auditoria/modularizacao-vsa/ciclo-03/prompts_tickets/PROMPT-TICKET-11.txt",
+      "output_handoff": "modulos/04-nucleo-compartilhado/gates/G_MODULO_FRONTEIRA.py",
+      "gate_fase": "python -m pytest -q -p no:cacheprovider modulos/04-nucleo-compartilhado/gates/test_g_modulo_fronteira.py"
+    },
+    {
+      "ticket_id": "TICKET-12",
+      "nome": "Fase_12_Ticket_12_Almoxarifado_pro_be_destino_dentro_de_modulos",
+      "dimensao_15d": "D3. Raio de Impacto e Isolamento",
+      "harness": "claude",
+      "model": "sonnet",
+      "comando_terminal": "claude-9router --dangerously-skip-permissions --chrome --model sonnet",
+      "input_prompt": "docs/auditoria/modularizacao-vsa/ciclo-03/prompts_tickets/PROMPT-TICKET-12.txt",
+      "output_handoff": "modulos/01-governanca-e-qualidade/core/aidd-forge/tests/test_almoxarifado_guarda_modulos.py",
+      "gate_fase": "python -m pytest -q -p no:cacheprovider modulos/01-governanca-e-qualidade/core/aidd-forge/tests/test_almoxarifado_guarda_modulos.py"
+    }
+  ]
+}

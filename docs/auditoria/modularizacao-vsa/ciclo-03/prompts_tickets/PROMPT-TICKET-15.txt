@@ -1,0 +1,16 @@
+ROLE: Builder. Ecosystem AIDD. Ticket 15. Target tool: modularizacao-vsa.
+DIMENSION: D13
+DELIVER: tests/test_convencao_exit_escopo.py
+
+STEPS:
+- Write tests/test_convencao_exit_escopo.py first. Assert the convention doc limits the 0 to 5 scale to scripts and CLIs. Assert no gate imports exit_codes. Assert G_SAIDA_BINARIA scans all gate paths from MAPA-GATES.json. Run. Assert exit 1.
+- Update docs/protocolos/CONVENCAO-EXIT-CODES-DETERMINISTICOS.md. Make G_SAIDA_BINARIA read the gate map.
+- Run test. Run G_SAIDA_BINARIA. Assert exit 0.
+
+RULES:
+1. Write failing test first. Run. Assert exit 1.
+2. Implement. Zero stubs. Real pytest tests. Run. Assert exit 0.
+3. Work inside ephemeral Git Worktree only.
+4. Capture real exit code: redirect to file, read $? same line. Never trust pipes.
+5. NEVER edit docs/auditoria/CONFIG-EXECUCAO-USUARIO.json.
+6. Deliver exactly: tests/test_convencao_exit_escopo.py

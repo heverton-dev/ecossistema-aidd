@@ -1,0 +1,44 @@
+{
+  "pipeline_id": "evolucao-modularizacao-vsa-ciclo-03-bloco-3",
+  "target_tool": "modularizacao-vsa",
+  "bloco": 3,
+  "descricao": "Manifesto do Bloco 3 (3 fases) montado a partir de PLANO-EVOLUCAO.md",
+  "config_usuario_ref": "docs/auditoria/CONFIG-EXECUCAO-USUARIO.json",
+  "definition_of_done": "docs/auditoria/modularizacao-vsa/ciclo-03/DOD.md",
+  "gate_final": "python ecossistema.py audit",
+  "fases": [
+    {
+      "ticket_id": "TICKET-07",
+      "nome": "Fase_7_Ticket_7_Mapa_de_donos_dos_gates_e_runner_lendo_o_mapa",
+      "dimensao_15d": "D13. Quality Gates (Portões)",
+      "harness": "claude",
+      "model": "sonnet",
+      "comando_terminal": "claude-9router --dangerously-skip-permissions --chrome --model sonnet",
+      "input_prompt": "docs/auditoria/modularizacao-vsa/ciclo-03/prompts_tickets/PROMPT-TICKET-07.txt",
+      "output_handoff": "modulos/04-nucleo-compartilhado/contracts/MAPA-GATES.json",
+      "gate_fase": "python -m pytest -q -p no:cacheprovider tests/test_mapa_gates.py"
+    },
+    {
+      "ticket_id": "TICKET-08",
+      "nome": "Fase_8_Ticket_8_Mover_cada_gate_para_o_dono_e_extinguir_gates_da_raiz",
+      "dimensao_15d": "D13. Quality Gates (Portões)",
+      "harness": "claude",
+      "model": "sonnet",
+      "comando_terminal": "claude-9router --dangerously-skip-permissions --chrome --model sonnet",
+      "input_prompt": "docs/auditoria/modularizacao-vsa/ciclo-03/prompts_tickets/PROMPT-TICKET-08.txt",
+      "output_handoff": "tests/test_gates_raiz_extinta.py",
+      "gate_fase": "python -m pytest -q -p no:cacheprovider tests/test_gates_raiz_extinta.py && AIDD_COPIA_UNICA_MODO=bloqueio python modulos/04-nucleo-compartilhado/gates/G_COPIA_UNICA_VSA.py"
+    },
+    {
+      "ticket_id": "TICKET-09",
+      "nome": "Fase_9_Ticket_9_G_SEGREDOS_est_vel_e_mais_r_pido",
+      "dimensao_15d": "D13. Quality Gates (Portões)",
+      "harness": "claude",
+      "model": "sonnet",
+      "comando_terminal": "claude-9router --dangerously-skip-permissions --chrome --model sonnet",
+      "input_prompt": "docs/auditoria/modularizacao-vsa/ciclo-03/prompts_tickets/PROMPT-TICKET-09.txt",
+      "output_handoff": "modulos/04-nucleo-compartilhado/gates/test_g_segredos_idempotente.py",
+      "gate_fase": "python -m pytest -q -p no:cacheprovider modulos/04-nucleo-compartilhado/gates/test_g_segredos_idempotente.py"
+    }
+  ]
+}

@@ -1,0 +1,16 @@
+ROLE: Builder. Ecosystem AIDD. Ticket 9. Target tool: modularizacao-vsa.
+DIMENSION: D13
+DELIVER: modulos/04-nucleo-compartilhado/gates/test_g_segredos_idempotente.py
+
+STEPS:
+- Write modulos/04-nucleo-compartilhado/gates/test_g_segredos_idempotente.py first. Run the gate twice in a temp repo. Assert baseline file unchanged and git status clean. Run. Assert exit 1.
+- Make G_SEGREDOS read-only on the baseline. Add a separate explicit command to refresh the baseline. Limit default scope to staged files.
+- Run test. Run audit. Assert G_SEGREDOS passes. Record its duration.
+
+RULES:
+1. Write failing test first. Run. Assert exit 1.
+2. Implement. Zero stubs. Real pytest tests. Run. Assert exit 0.
+3. Work inside ephemeral Git Worktree only.
+4. Capture real exit code: redirect to file, read $? same line. Never trust pipes.
+5. NEVER edit docs/auditoria/CONFIG-EXECUCAO-USUARIO.json.
+6. Deliver exactly: modulos/04-nucleo-compartilhado/gates/test_g_segredos_idempotente.py

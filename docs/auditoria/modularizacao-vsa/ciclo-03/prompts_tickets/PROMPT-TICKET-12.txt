@@ -1,0 +1,16 @@
+ROLE: Builder. Ecosystem AIDD. Ticket 12. Target tool: modularizacao-vsa.
+DIMENSION: D3
+DELIVER: modulos/01-governanca-e-qualidade/core/aidd-forge/tests/test_almoxarifado_guarda_modulos.py
+
+STEPS:
+- Write the guard test first. Call obter_peca with destination inside modulos, inside componentes and at repo root. Assert each raises a clear error. Run. Assert exit 1.
+- Extend the guard in almoxarifado.py. Make forge tests write only under tmp_path.
+- Run test. Run forge suite. Assert git status unchanged under modulos.
+
+RULES:
+1. Write failing test first. Run. Assert exit 1.
+2. Implement. Zero stubs. Real pytest tests. Run. Assert exit 0.
+3. Work inside ephemeral Git Worktree only.
+4. Capture real exit code: redirect to file, read $? same line. Never trust pipes.
+5. NEVER edit docs/auditoria/CONFIG-EXECUCAO-USUARIO.json.
+6. Deliver exactly: modulos/01-governanca-e-qualidade/core/aidd-forge/tests/test_almoxarifado_guarda_modulos.py

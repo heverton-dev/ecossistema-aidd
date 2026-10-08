@@ -1,0 +1,16 @@
+ROLE: Builder. Ecosystem AIDD. Ticket 20. Target tool: modularizacao-vsa.
+DIMENSION: D13
+DELIVER: tests/test_fiscais_vsa_bloqueio.py
+
+STEPS:
+- Write tests/test_fiscais_vsa_bloqueio.py first. Assert both new gates default to bloqueio. Assert every allowlist entry points to an existing file and has a current reason. Run. Assert exit 1.
+- Switch defaults to bloqueio. Fix or justify each remaining allowlist entry.
+- Run test. Run both gates. Assert exit 0.
+
+RULES:
+1. Write failing test first. Run. Assert exit 1.
+2. Implement. Zero stubs. Real pytest tests. Run. Assert exit 0.
+3. Work inside ephemeral Git Worktree only.
+4. Capture real exit code: redirect to file, read $? same line. Never trust pipes.
+5. NEVER edit docs/auditoria/CONFIG-EXECUCAO-USUARIO.json.
+6. Deliver exactly: tests/test_fiscais_vsa_bloqueio.py

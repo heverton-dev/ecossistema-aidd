@@ -1,0 +1,44 @@
+{
+  "pipeline_id": "evolucao-modularizacao-vsa-ciclo-03-bloco-8",
+  "target_tool": "modularizacao-vsa",
+  "bloco": 8,
+  "descricao": "Manifesto do Bloco 8 (3 fases) montado a partir de PLANO-EVOLUCAO.md",
+  "config_usuario_ref": "docs/auditoria/CONFIG-EXECUCAO-USUARIO.json",
+  "definition_of_done": "docs/auditoria/modularizacao-vsa/ciclo-03/DOD.md",
+  "gate_final": "python ecossistema.py audit",
+  "fases": [
+    {
+      "ticket_id": "TICKET-20",
+      "nome": "Fase_20_Ticket_20_Fiscais_em_bloqueio_e_allowlists_enxutas",
+      "dimensao_15d": "D13. Quality Gates (Portões)",
+      "harness": "claude",
+      "model": "sonnet",
+      "comando_terminal": "claude-9router --dangerously-skip-permissions --chrome --model sonnet",
+      "input_prompt": "docs/auditoria/modularizacao-vsa/ciclo-03/prompts_tickets/PROMPT-TICKET-20.txt",
+      "output_handoff": "tests/test_fiscais_vsa_bloqueio.py",
+      "gate_fase": "python -m pytest -q -p no:cacheprovider tests/test_fiscais_vsa_bloqueio.py"
+    },
+    {
+      "ticket_id": "TICKET-21",
+      "nome": "Fase_21_Ticket_21_Foto_E2E_p_s_VSA",
+      "dimensao_15d": "D12. Observabilidade e Frugalidade",
+      "harness": "claude",
+      "model": "sonnet",
+      "comando_terminal": "claude-9router --dangerously-skip-permissions --chrome --model sonnet",
+      "input_prompt": "docs/auditoria/modularizacao-vsa/ciclo-03/prompts_tickets/PROMPT-TICKET-21.txt",
+      "output_handoff": "docs/auditoria/modularizacao-vsa/ciclo-03/COMPARACAO-E2E.md",
+      "gate_fase": "python scripts/e2e_foto.py comparar --base ciclo-01 --novo ultimo"
+    },
+    {
+      "ticket_id": "TICKET-22",
+      "nome": "Fase_22_Ticket_22_Laudo_revisado__mapas_e_livros",
+      "dimensao_15d": "D15. Output Consolidado e Handoff",
+      "harness": "claude",
+      "model": "sonnet",
+      "comando_terminal": "claude-9router --dangerously-skip-permissions --chrome --model sonnet",
+      "input_prompt": "docs/auditoria/modularizacao-vsa/ciclo-03/prompts_tickets/PROMPT-TICKET-22.txt",
+      "output_handoff": "docs/auditoria/modularizacao-vsa/ciclo-03/LAUDO-REVISADO.md",
+      "gate_fase": "python ecossistema.py audit && python -m pytest -q -p no:cacheprovider tests/test_mapas_e_livros_em_dia.py"
+    }
+  ]
+}

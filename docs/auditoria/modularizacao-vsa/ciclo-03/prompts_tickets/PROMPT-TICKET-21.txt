@@ -1,0 +1,16 @@
+ROLE: Builder. Ecosystem AIDD. Ticket 21. Target tool: modularizacao-vsa.
+DIMENSION: D12
+DELIVER: docs/auditoria/modularizacao-vsa/ciclo-03/COMPARACAO-E2E.md
+
+STEPS:
+- Restore the ciclo-01 E2E base folder from history or from the numbers in fronteiras-ferramentas COMPARACAO-E2E.md.
+- Run scripts/e2e_foto.py rodar with --ciclo auto against the modulos layout. Run comparar against ciclo-01.
+- Write the result to docs/auditoria/modularizacao-vsa/ciclo-03/COMPARACAO-E2E.md. Assert exit 0.
+
+RULES:
+1. Write failing test first. Run. Assert exit 1.
+2. Implement. Zero stubs. Real pytest tests. Run. Assert exit 0.
+3. Work inside ephemeral Git Worktree only.
+4. Capture real exit code: redirect to file, read $? same line. Never trust pipes.
+5. NEVER edit docs/auditoria/CONFIG-EXECUCAO-USUARIO.json.
+6. Deliver exactly: docs/auditoria/modularizacao-vsa/ciclo-03/COMPARACAO-E2E.md

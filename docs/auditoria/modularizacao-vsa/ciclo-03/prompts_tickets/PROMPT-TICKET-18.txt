@@ -1,0 +1,16 @@
+ROLE: Builder. Ecosystem AIDD. Ticket 18. Target tool: modularizacao-vsa.
+DIMENSION: D15
+DELIVER: tests/test_skills_fatias_sync.py
+
+STEPS:
+- Write tests/test_skills_fatias_sync.py first. Fail when one skill name exists in both componentes/compartilhado/skills and modulos skills. Fail when components sync skips a skill that only exists in a slice. Run. Assert exit 1.
+- Delete the 4 duplicated skills. Make components sync read both sources and use lazy_skills_scope.py for per slice scoping.
+- Record loaded skill count before and after. Run test and components verify. Assert exit 0.
+
+RULES:
+1. Write failing test first. Run. Assert exit 1.
+2. Implement. Zero stubs. Real pytest tests. Run. Assert exit 0.
+3. Work inside ephemeral Git Worktree only.
+4. Capture real exit code: redirect to file, read $? same line. Never trust pipes.
+5. NEVER edit docs/auditoria/CONFIG-EXECUCAO-USUARIO.json.
+6. Deliver exactly: tests/test_skills_fatias_sync.py

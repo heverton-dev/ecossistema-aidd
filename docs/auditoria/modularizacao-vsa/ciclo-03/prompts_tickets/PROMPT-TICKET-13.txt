@@ -1,0 +1,16 @@
+ROLE: Builder. Ecosystem AIDD. Ticket 13. Target tool: modularizacao-vsa.
+DIMENSION: D2
+DELIVER: tests/test_vsa_cli_real.py
+
+STEPS:
+- Write tests/test_vsa_cli_real.py first. Temp tree with one broken slice missing README.md and with a cross slice path. Assert verify exits non zero. Assert status output contains measured counts, not fixed text. Run. Assert exit 1.
+- Make inspect list slices with measured file, test and gate counts. Make verify call manifesto_modulos, validador_fractalidade_vsa, G_MODULO_FRONTEIRA and G_COPIA_UNICA_VSA. Make status print measured data.
+- Keep the pending index-subgraphs subcommand. Run test. Assert exit 0.
+
+RULES:
+1. Write failing test first. Run. Assert exit 1.
+2. Implement. Zero stubs. Real pytest tests. Run. Assert exit 0.
+3. Work inside ephemeral Git Worktree only.
+4. Capture real exit code: redirect to file, read $? same line. Never trust pipes.
+5. NEVER edit docs/auditoria/CONFIG-EXECUCAO-USUARIO.json.
+6. Deliver exactly: tests/test_vsa_cli_real.py

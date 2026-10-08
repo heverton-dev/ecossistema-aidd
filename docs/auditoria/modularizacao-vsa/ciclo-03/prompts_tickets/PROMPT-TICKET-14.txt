@@ -1,0 +1,16 @@
+ROLE: Builder. Ecosystem AIDD. Ticket 14. Target tool: modularizacao-vsa.
+DIMENSION: D8
+DELIVER: tests/test_sem_orfaos_vsa.py
+
+STEPS:
+- Write tests/test_sem_orfaos_vsa.py first. For each scripts/*_vsa.py and manifesto_modulos.py assert at least one non test consumer. Run. Assert exit 1.
+- Wire manifesto_modulos and validador_fractalidade_vsa into the verify subcommand. Delete isolamento_vsa, resiliencia_vsa, observabilidade_vsa, rollback_vsa and handoff_vsa with their tests.
+- Add ERRATA.md to docs/auditoria/modularizacao-vsa/ciclo-01 correcting the zero stubs claim. Run test. Assert exit 0.
+
+RULES:
+1. Write failing test first. Run. Assert exit 1.
+2. Implement. Zero stubs. Real pytest tests. Run. Assert exit 0.
+3. Work inside ephemeral Git Worktree only.
+4. Capture real exit code: redirect to file, read $? same line. Never trust pipes.
+5. NEVER edit docs/auditoria/CONFIG-EXECUCAO-USUARIO.json.
+6. Deliver exactly: tests/test_sem_orfaos_vsa.py

@@ -1,0 +1,16 @@
+ROLE: Builder. Ecosystem AIDD. Ticket 19. Target tool: modularizacao-vsa.
+DIMENSION: D12
+DELIVER: tests/test_subgrafos_nomes_padrao.py
+
+STEPS:
+- Write tests/test_subgrafos_nomes_padrao.py first. Assert DOMINIOS_VSA keys match the six names from the architecture standard section 7.5. Assert root AGENTS.md tells agents to query the slice subgraph first. Run. Assert exit 1.
+- Rename domains and reindex. Show the user the orphan worktree projects in codebase-memory. Delete only after approval.
+- Run test. Assert exit 0.
+
+RULES:
+1. Write failing test first. Run. Assert exit 1.
+2. Implement. Zero stubs. Real pytest tests. Run. Assert exit 0.
+3. Work inside ephemeral Git Worktree only.
+4. Capture real exit code: redirect to file, read $? same line. Never trust pipes.
+5. NEVER edit docs/auditoria/CONFIG-EXECUCAO-USUARIO.json.
+6. Deliver exactly: tests/test_subgrafos_nomes_padrao.py

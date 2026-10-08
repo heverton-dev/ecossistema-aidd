@@ -1,0 +1,18 @@
+ROLE: Builder. Ecosystem AIDD. Ticket 4. Target tool: modularizacao-vsa.
+DIMENSION: D1
+DELIVER: tests/test_sem_referencia_tools.py
+
+STEPS:
+- Write tests/test_sem_referencia_tools.py first. Scan git ls-files for tools/aidd- and TOOLS_DIR. Allow only secoes, docs/relatorios and closed cycle reports. Run. Assert exit 1.
+- Point every ecossistema.py command straight to modulos with no tools fallback. Keep old command names as aliases.
+- Reinstall aidd_forge editable from modulos/01-governanca-e-qualidade/core/aidd-forge. Assert import works from repo root.
+- Update CATALOGO.json, MAPA-DONOS-FERRAMENTAS.json, gates/allowlist_fronteira.json, G_FRONTEIRA_FERRAMENTAS, contar_duplicatas.py, micro_gates.py, e2e_foto.py, harness configs and skills.
+- Run test. Run components verify. Assert exit 0.
+
+RULES:
+1. Write failing test first. Run. Assert exit 1.
+2. Implement. Zero stubs. Real pytest tests. Run. Assert exit 0.
+3. Work inside ephemeral Git Worktree only.
+4. Capture real exit code: redirect to file, read $? same line. Never trust pipes.
+5. NEVER edit docs/auditoria/CONFIG-EXECUCAO-USUARIO.json.
+6. Deliver exactly: tests/test_sem_referencia_tools.py

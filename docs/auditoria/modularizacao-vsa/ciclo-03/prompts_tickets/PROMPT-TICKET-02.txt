@@ -1,0 +1,16 @@
+ROLE: Builder. Ecosystem AIDD. Ticket 2. Target tool: modularizacao-vsa.
+DIMENSION: D13
+DELIVER: modulos/04-nucleo-compartilhado/gates/G_COPIA_UNICA_VSA.py
+
+STEPS:
+- Write modulos/04-nucleo-compartilhado/gates/test_g_copia_unica_vsa.py first. Temp git repo with same tool under tools and modulos, and same G_X.py in two folders. Assert both reported. Assert exit 0 with AIDD_COPIA_UNICA_MODO=aviso and exit 1 with bloqueio. Run. Assert exit 1.
+- Implement modulos/04-nucleo-compartilhado/gates/G_COPIA_UNICA_VSA.py. Scan git ls-files. Skip project template gates under aidd_forge/templates/gates. Exit only 0 or 1.
+- Register warn mode hook in .pre-commit-config.yaml. Run test. Assert exit 0.
+
+RULES:
+1. Write failing test first. Run. Assert exit 1.
+2. Implement. Zero stubs. Real pytest tests. Run. Assert exit 0.
+3. Work inside ephemeral Git Worktree only.
+4. Capture real exit code: redirect to file, read $? same line. Never trust pipes.
+5. NEVER edit docs/auditoria/CONFIG-EXECUCAO-USUARIO.json.
+6. Deliver exactly: modulos/04-nucleo-compartilhado/gates/G_COPIA_UNICA_VSA.py

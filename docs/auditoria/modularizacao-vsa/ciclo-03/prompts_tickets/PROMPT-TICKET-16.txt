@@ -1,0 +1,16 @@
+ROLE: Builder. Ecosystem AIDD. Ticket 16. Target tool: modularizacao-vsa.
+DIMENSION: D12
+DELIVER: tests/test_micro_gates_fatias_verdes.py
+
+STEPS:
+- Write tests/test_micro_gates_fatias_verdes.py first. Run every slice command defined in micro_gates.py. Assert each exits 0. Run. Assert exit 1.
+- Keep only modulos prefixes. Split commands per sub slice with own rootdir and conftest.
+- Measure commit time for a one slice change and for the full battery. Write both numbers to docs/auditoria/modularizacao-vsa/ciclo-03/DOD.md. Run test. Assert exit 0.
+
+RULES:
+1. Write failing test first. Run. Assert exit 1.
+2. Implement. Zero stubs. Real pytest tests. Run. Assert exit 0.
+3. Work inside ephemeral Git Worktree only.
+4. Capture real exit code: redirect to file, read $? same line. Never trust pipes.
+5. NEVER edit docs/auditoria/CONFIG-EXECUCAO-USUARIO.json.
+6. Deliver exactly: tests/test_micro_gates_fatias_verdes.py
