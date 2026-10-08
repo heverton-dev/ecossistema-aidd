@@ -9,6 +9,7 @@ de aidd-agent-writing e aos limites de G_SKILL_FORMATO.
 
 from __future__ import annotations
 
+import json
 import os
 import re
 from dataclasses import dataclass, field
@@ -170,3 +171,28 @@ def obter_resumo_skills_fatia(fatia: str, raiz_repo: Optional[Path | str] = None
             "linhas": str(meta.linhas_totais),
         })
     return ponteiros
+
+
+MAPA_FATIAS_REL = Path("modulos/04-nucleo-compartilhado/contracts/MAPA-FATIAS.json")
+
+
+def pastas_das_ferramentas(raiz_repo: Path | str) -> Dict[str, Path]:
+    """Nome da ferramenta -> pasta, lido do MAPA-FATIAS (fonte única das fatias). Usado pelo components sync."""
+    raiz = Path(raiz_repo)
+    mapa = raiz / MAPA_FATIAS_REL
+    if not mapa.is_file():
+        return {}
+    pastas: Dict[str, Path] = {}
+    for info in json.loads(mapa.read_text(encoding="utf-8")).get("fatias", {}).values():
+        base = raiz / info["caminho"]
+        for ferramenta in info.get("ferramentas", []):
+            pastas[Path(ferramenta).name] = base / ferramenta
+    return pastas
+
+
+def skills_da_ferramenta(pasta_ferramenta: Path | str) -> List[Path]:
+    """Skills declaradas pela ferramenta: cada pasta com SKILL.md em <ferramenta>/skills/ (a fonte; as cópias de harness são destino)."""
+    fonte = Path(pasta_ferramenta) / "skills"
+    if not fonte.is_dir():
+        return []
+    return sorted(d for d in fonte.iterdir() if d.is_dir() and (d / "SKILL.md").is_file())

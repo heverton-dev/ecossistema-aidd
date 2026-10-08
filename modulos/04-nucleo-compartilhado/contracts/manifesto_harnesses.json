@@ -144,7 +144,12 @@
     "compartilhado": {
       "root": ".",
       "tipos_aplicaveis": ["skill", "command", "hook"],
-      "nota": "componentes/compartilhado/{skills,comandos,hooks}/ cobre os tipos com componentes reais ecosystem-wide hoje (as skills-runner, slash commands, hooks agnósticos e skills compartilhadas). Componentes específicos de cada ferramenta vivem em tools/<ferramenta>/ e são sincronizados por mecanismos internos de cada tool — não por este manifesto."
+      "nota": "componentes/compartilhado/{skills,comandos,hooks}/ cobre os tipos com componentes reais ecosystem-wide hoje (as skills-runner, slash commands, hooks agnósticos e skills compartilhadas). Skills próprias de uma ferramenta ficam no escopo 'fatias'."
+    },
+    "fatias": {
+      "origem": "MAPA-FATIAS",
+      "tipos_aplicaveis": ["skill"],
+      "nota": "Ciclo-03 T18 (VSA): vira um escopo por ferramenta de modulos/04-nucleo-compartilhado/contracts/MAPA-FATIAS.json (scripts/lazy_skills_scope.py). Fonte: <ferramenta>/skills/<nome>; destinos (harness e '.skills/') dentro da própria ferramenta. Uma skill tem um dono só: nunca o mesmo nome aqui e em componentes/compartilhado/skills (G_COPIA_UNICA_VSA). 'components sync --ferramenta <nome>' grava só as skills daquela fatia."
     }
   }
 }

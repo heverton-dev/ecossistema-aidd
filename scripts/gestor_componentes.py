@@ -139,9 +139,35 @@ def _escopo_dir_nome(nome_escopo):
     return "compartilhado" if nome_escopo == "compartilhado" else nome_escopo
 
 
+def _escopos(manifesto):
+    """Escopos do manifesto, com o escopo 'fatias' aberto num escopo por ferramenta do
+    MAPA-FATIAS (ciclo-03 T18): root = pasta da ferramenta, fonte = <ferramenta>/<pasta_fonte>."""
+    escopos = {}
+    for nome_escopo, cfg in manifesto["escopos"].items():
+        if cfg.get("origem") != "MAPA-FATIAS":
+            escopos[nome_escopo] = cfg
+            continue
+        import lazy_skills_scope
+        for ferramenta, pasta in lazy_skills_scope.pastas_das_ferramentas(ROOT_DIR).items():
+            escopos[ferramenta] = {**cfg, "root": os.path.relpath(pasta, ROOT_DIR)}
+    return escopos
+
+
+def _raiz_escopo(cfg):
+    return ROOT_DIR if cfg["root"] == "." else os.path.join(ROOT_DIR, cfg["root"])
+
+
+def _dir_fonte(manifesto, tipo, nome_escopo):
+    pasta_fonte = manifesto["tipos_componente"][tipo]["pasta_fonte"]
+    cfg = _escopos(manifesto)[nome_escopo]
+    if cfg.get("origem") == "MAPA-FATIAS":
+        return os.path.join(_raiz_escopo(cfg), pasta_fonte)
+    return os.path.join(COMPONENTES_DIR, _escopo_dir_nome(nome_escopo), pasta_fonte)
+
+
 def _escopos_do_tipo(manifesto, tipo, ferramenta=None):
     resultado = []
-    for nome_escopo, cfg in manifesto["escopos"].items():
+    for nome_escopo, cfg in _escopos(manifesto).items():
         if ferramenta and nome_escopo != ferramenta:
             continue
         if tipo in cfg.get("tipos_aplicaveis", []):
@@ -152,7 +178,7 @@ def _escopos_do_tipo(manifesto, tipo, ferramenta=None):
 def _listar_componentes_fonte(manifesto, tipo, nome_escopo):
     """Lista (nome, caminho_fonte_abs, eh_diretorio) para um tipo/escopo."""
     tipo_cfg = manifesto["tipos_componente"][tipo]
-    dir_fonte = os.path.join(COMPONENTES_DIR, _escopo_dir_nome(nome_escopo), tipo_cfg["pasta_fonte"])
+    dir_fonte = _dir_fonte(manifesto, tipo, nome_escopo)
     if not os.path.isdir(dir_fonte):
         return []
 
@@ -189,8 +215,7 @@ def _listar_componentes_fonte(manifesto, tipo, nome_escopo):
 def _resolver_destinos(manifesto, tipo, nome_escopo, nome):
     """Resolve a lista (sem duplicados) de caminhos absolutos de destino."""
     tipo_cfg = manifesto["tipos_componente"][tipo]
-    escopo_cfg = manifesto["escopos"][nome_escopo]
-    root_escopo = ROOT_DIR if escopo_cfg["root"] == "." else os.path.join(ROOT_DIR, escopo_cfg["root"])
+    root_escopo = _raiz_escopo(_escopos(manifesto)[nome_escopo])
 
     destinos = []
 
@@ -217,7 +242,8 @@ def _resolver_destinos(manifesto, tipo, nome_escopo, nome):
         rel = template_unico.format(nome=nome_formatado)
         destinos.append(os.path.normpath(os.path.join(root_escopo, rel)))
 
-    vistos = set()
+    # A fonte de uma fatia (<ferramenta>/skills/<nome>) coincide com o destino bare 'skills/{nome}'.
+    vistos = {os.path.normpath(os.path.join(_dir_fonte(manifesto, tipo, nome_escopo), nome))}
     unicos = []
     for d in destinos:
         if d not in vistos:
@@ -241,8 +267,7 @@ def _resolver_manifestos_extra(manifesto, tipo, nome_escopo, nome):
     specs = tipo_cfg.get("manifestos_extra_por_harness", {})
     if not specs:
         return []
-    escopo_cfg = manifesto["escopos"][nome_escopo]
-    root_escopo = ROOT_DIR if escopo_cfg["root"] == "." else os.path.join(ROOT_DIR, escopo_cfg["root"])
+    root_escopo = _raiz_escopo(_escopos(manifesto)[nome_escopo])
 
     resolvidos = []
     for harness, spec in specs.items():
@@ -265,7 +290,7 @@ def _gerar_manifestos_extra(manifesto, tipo, nome_escopo, nome, dry_run):
     for caminho_abs, conteudo in _resolver_manifestos_extra(manifesto, tipo, nome_escopo, nome):
         if not dry_run:
             os.makedirs(os.path.dirname(caminho_abs), exist_ok=True)
-            with open(caminho_abs, "w", encoding="utf-8") as f:
+            with open(caminho_abs, "w", encoding="utf-8", newline="\n") as f:
                 json.dump(conteudo, f, indent=2, ensure_ascii=False)
                 f.write("\n")
         gerados.append(caminho_abs)
