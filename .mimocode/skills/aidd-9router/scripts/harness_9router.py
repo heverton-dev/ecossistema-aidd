@@ -75,6 +75,7 @@ def montar(harness, args, url, chave, mapa):
             "ANTHROPIC_DEFAULT_OPUS_MODEL": mapa["opus"],
             "ANTHROPIC_DEFAULT_SONNET_MODEL": mapa["sonnet"],
             "ANTHROPIC_DEFAULT_HAIKU_MODEL": mapa["haiku"],
+            "ANTHROPIC_DEFAULT_FABLE_MODEL": mapa["fable"],
         }
     if harness in ("opencode", "mimo"):
         variavel = "OPENCODE_CONFIG_CONTENT" if harness == "opencode" else "MIMOCODE_CONFIG_CONTENT"

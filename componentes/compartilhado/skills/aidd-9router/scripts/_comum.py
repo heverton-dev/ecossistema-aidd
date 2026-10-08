@@ -7,7 +7,7 @@ import urllib.request
 import uuid
 from pathlib import Path
 
-PADRAO_COMBOS = {"opus": "code-pro", "sonnet": "code-fast", "haiku": "code-free"}
+PADRAO_COMBOS = {"opus": "code-pro", "sonnet": "code-fast", "haiku": "code-tests", "fable": "code-free"}
 TODOS_COMBOS = ["code-fast", "code-pro", "code-free", "task-micro", "code-tests"]
 LIMITES_COMBOS = {
     "code-fast": {"context": 1000000, "output": 65536},
