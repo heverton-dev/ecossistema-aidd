@@ -35,7 +35,10 @@ from typing import Any, Dict, List, Optional, Set, Tuple
 if hasattr(sys.stdout, "reconfigure"):
     sys.stdout.reconfigure(encoding="utf-8", errors="replace")
 
-ROOT_DIR = Path(__file__).resolve().parent.parent.parent.parent
+# Raiz do ecossistema = pai de modulos/. O parents[3] fixo caía em modulos/03-plataforma-e-entrega
+# depois da migração VSA, e o import dos micro-gates falhava calado (achado do Bloco 3, ciclo-03).
+ROOT_DIR = next((p.parent for p in Path(__file__).resolve().parents if p.name == "modulos"),
+                Path(__file__).resolve().parent.parent.parent.parent)
 
 
 def _calcular_sha256(arquivo: Path) -> str:
@@ -142,9 +145,10 @@ def executar_barreira_fatia(
         if not ok_micro:
             erros.extend(erros_micro)
             return False, erros
-    except ImportError:
-        # Fallback se micro_gates_worktree não puder ser importado
-        pass
+    except ImportError as exc:
+        # Sem micro-gates a barreira não pode aprovar: pular aqui fazia toda fatia passar sem eles.
+        erros.append(f"micro_gates_worktree indisponível em {ROOT_DIR / 'scripts'}: {exc}")
+        return False, erros
 
     # 2. Executa comandos de teste da fatia
     for cmd_str in cmds_teste:

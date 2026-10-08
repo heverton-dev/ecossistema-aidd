@@ -1523,3 +1523,17 @@
   - Soma dos 9 comandos: 753 s antes, 693 s depois. Commit só no pure: 147 s de suítes antes (pure + open + freedom), 32 s depois.
 - **Status:** **RESOLVIDO**.
 - **Data da Última Auditoria:** 08/10/2026.
+
+## 49. Modularização VSA ciclo-03, Bloco 6: barreira VSA do master roda os micro-gates de verdade
+
+- **Objetivo da Correção:**
+  Achado do Bloco 3: `vsa_join_barrier.py` calculava a raiz do ecossistema com `parents[3]` fixo, que depois da migração VSA cai em `modulos/03-plataforma-e-entrega`. O import de `micro_gates_worktree` falhava e o `ImportError` era engolido: a checagem de sintaxe e de stubs das fatias nunca rodava, e a barreira aprovava assim mesmo.
+- **Ferramentas Tocadas:** aidd-master (`scripts/vsa_join_barrier.py`, `tests/unit/test_vsa_join_barrier_micro_gates.py`).
+- **O que executou:**
+  1. `ROOT_DIR` = pai de `modulos/` (com o cálculo antigo como reserva fora do monorepo).
+  2. Sem `micro_gates_worktree`, a barreira reprova com o motivo em vez de pular.
+- **Resultados de Testes (08/10/2026):**
+  - `test_vsa_join_barrier_micro_gates.py` → exit 1 antes (3 failed: raiz em `modulos/03-plataforma-e-entrega`, fatia com sintaxe inválida aprovada, import ausente ignorado), exit 0 depois (com `test_vsa_join_barrier.py`: 7 passed).
+  - Suíte do master no comando do micro-gate → 417 passed, 3 skipped, exit 0.
+- **Status:** **RESOLVIDO**.
+- **Data da Última Auditoria:** 08/10/2026.
