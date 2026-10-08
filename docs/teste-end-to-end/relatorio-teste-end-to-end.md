@@ -1507,3 +1507,19 @@
   - Suíte `tests/` reexecutada isolada antes da correção: 1131 passed, 1 failed (só o caso acima; as outras 3 falhas do audit não se repetiram).
 - **Status:** **RESOLVIDO**.
 - **Data da Última Auditoria:** 07/10/2026.
+
+## 48. Modularização VSA ciclo-03, Bloco 6 (Ticket 16): micro-gates por subfatia com rootdir e conftest próprios
+
+- **Objetivo da Correção:**
+  O `scripts/micro_gates.py` rodava, num commit que tocava uma ferramenta, as suítes de todas as ferramentas da mesma fatia (commit só no pure rodava pure, open e freedom). Planner, open e ops não tinham `pytest.ini`: a raiz do pytest subia até o repositório e carregava a config e o `conftest.py` da raiz. Freedom, planner, open e ops não tinham `conftest.py` que limpasse o GIT_DIR do hook.
+- **Ferramentas Tocadas:** aidd-planner, aidd-open e aidd-ops (`pytest.ini` e `tests/conftest.py` novos), aidd-freedom (`tests/conftest.py` novo). Nenhum código de produção das ferramentas mudou.
+- **O que executou:**
+  1. `FATIAS_MAPA` com uma entrada por subfatia (forge, planner, pure, open, freedom, enterprise, master, ops) mais core-cli; prefixo = pasta da ferramenta.
+  2. `comando_suite()` com `--rootdir=.`; `execucoes_da_fatia()` usada pelo hook e pelo teste.
+  3. `tests/test_micro_gates_fatias_verdes.py` roda de verdade o comando de cada fatia e exige exit 0.
+- **Resultados de Testes (08/10/2026):**
+  - `pytest tests/test_micro_gates_fatias_verdes.py` → exit 1 antes (7 failed, 4 passed), exit 0 depois (com `scripts/test_micro_gates.py`: 20 passed em 779 s).
+  - As 8 suítes no comando novo, mesmas contagens de antes: forge 316, planner 48, pure 1016, open 21, freedom 75, enterprise 341, master 414, ops 198 (0 failed); core-cli 17.
+  - Soma dos 9 comandos: 753 s antes, 693 s depois. Commit só no pure: 147 s de suítes antes (pure + open + freedom), 32 s depois.
+- **Status:** **RESOLVIDO**.
+- **Data da Última Auditoria:** 08/10/2026.

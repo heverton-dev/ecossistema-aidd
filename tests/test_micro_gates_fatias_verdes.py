@@ -2,16 +2,20 @@
 """Ticket 16 (ciclo-03 VSA): micro-gates por subfatia, só com prefixos de modulos/.
 
 Antecipado no Bloco 2: o comando antigo (pytest da fatia inteira a partir da raiz)
-quebrava na coleta e barrava qualquer commit em modulos/.
+quebrava na coleta e barrava qualquer commit em modulos/. Bloco 6: um comando por
+subfatia (só a ferramenta tocada roda), cada um com --rootdir e conftest próprios,
+e todo comando sai com 0 de verdade (DoD 6).
 """
 
 import subprocess
 import sys
 from pathlib import Path
 
+import pytest
+
 RAIZ = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(RAIZ))
-from scripts.micro_gates import FATIAS_MAPA, comando_suite  # noqa: E402
+from scripts.micro_gates import FATIAS_MAPA, comando_suite, mapear_fatias_afetadas  # noqa: E402
 
 FERRAMENTAS = {"aidd-forge", "aidd-planner", "aidd-pure", "aidd-open", "aidd-freedom",
                "aidd-enterprise", "aidd-master", "aidd-ops"}
@@ -35,20 +39,39 @@ def test_uma_suite_por_subfatia_cobrindo_as_8_ferramentas():
         assert (RAIZ / suite).is_dir(), suite
 
 
+def test_um_comando_por_subfatia_com_prefixo_da_propria_ferramenta():
+    """Commit no pure não pode rodar open e freedom junto (eram 3 suítes por fatia)."""
+    for fatia, config in FATIAS_MAPA.items():
+        suites = config.get("suites", [])
+        if not suites:
+            continue
+        assert len(suites) == 1, f"{fatia}: {len(suites)} suítes num comando só"
+        assert config["prefixo"] == [suites[0] + "/"], f"{fatia}: prefixo {config['prefixo']}"
+
+
+def test_arquivo_numa_ferramenta_dispara_so_a_subfatia_dela():
+    for suite in _suites():
+        afetadas = mapear_fatias_afetadas([f"{suite}/qualquer.py"])
+        assert len(afetadas) == 1, f"{suite}: {afetadas}"
+        assert FATIAS_MAPA[afetadas.pop()]["suites"] == [suite]
+
+
+def test_cada_suite_tem_rootdir_e_conftest_proprios():
+    """Sem pytest.ini próprio a raiz do pytest subia até o repositório e carregava a config
+    e o conftest.py da raiz (planner, open, ops); sem conftest a limpeza do GIT_DIR do hook
+    dependia só do ambiente do chamador (freedom, planner, open, ops)."""
+    assert "--rootdir=." in comando_suite()
+    for suite in _suites():
+        pasta = RAIZ / suite
+        assert (pasta / "pytest.ini").is_file(), f"{suite}: sem pytest.ini"
+        conftests = [pasta / "conftest.py", pasta / "tests" / "conftest.py"]
+        assert any(c.is_file() for c in conftests), f"{suite}: sem conftest.py"
+
+
 def test_nenhum_pytest_da_fatia_inteira():
     for config in FATIAS_MAPA.values():
         for cmd in config.get("testes", []):
             assert "modulos/" not in cmd, f"pytest de fatia inteira a partir da raiz: {cmd}"
-
-
-def test_cada_suite_coleta_sem_erro():
-    """A falha medida em 06/10 era na coleta (exit 1/2); a coleta de cada suíte tem de sair com 0."""
-    for suite in _suites():
-        proc = subprocess.run(
-            [*comando_suite(), "--collect-only"], cwd=str(RAIZ / suite),
-            capture_output=True, text=True, encoding="utf-8", errors="replace",
-        )
-        assert proc.returncode == 0, f"{suite}: exit {proc.returncode}\n{proc.stdout[-2000:]}"
 
 
 def test_suites_rodam_sem_o_git_dir_do_hook(monkeypatch, tmp_path):
@@ -63,3 +86,13 @@ def test_suites_rodam_sem_o_git_dir_do_hook(monkeypatch, tmp_path):
         tmp_path, False,
     )
     assert proc.stdout.strip() == "None None"
+
+
+@pytest.mark.parametrize("fatia", sorted(FATIAS_MAPA))
+def test_comando_da_fatia_sai_com_zero(fatia):
+    """DoD 6: o comando de cada fatia roda de verdade (não só a coleta) e sai com 0."""
+    from scripts import micro_gates
+
+    for rotulo, cmd, cwd, shell in micro_gates.execucoes_da_fatia(RAIZ, fatia):
+        proc = micro_gates._rodar(cmd, cwd, shell)
+        assert proc.returncode == 0, f"{fatia} ({rotulo}): exit {proc.returncode}\n{proc.stdout[-3000:]}"

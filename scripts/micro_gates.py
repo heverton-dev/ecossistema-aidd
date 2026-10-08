@@ -2,15 +2,14 @@
 """
 Validador e Dispatcher de Micro-Gates no Pre-Commit baseado em Git Diff (Ticket 3 VSA).
 
-Mapeia alterações em fatias e executa seletivamente os gates e testes direcionados:
-- modulos/01-governanca-e-qualidade/ -> suítes do forge e do planner
-- modulos/02-triade-motores/         -> suítes do pure, open e freedom
-- modulos/03-plataforma-e-entrega/   -> suítes do enterprise, master e ops
-- ecossistema.py / scripts/         -> Core CLI e boot tests
+Mapeia alterações em subfatias e executa só a suíte da ferramenta tocada:
+- modulos/<fatia>/.../aidd-<ferramenta>/ -> suíte daquela ferramenta (8 subfatias)
+- ecossistema.py / scripts/ / src-core   -> Core CLI e boot tests
 
-Cada suíte roda de dentro da pasta da ferramenta (ciclo-03 VSA, Ticket 16): o
-pytest da fatia inteira a partir da raiz quebrava na coleta (módulos de mesmo nome
-em pastas diferentes) e barrava todo commit em modulos/.
+Cada suíte roda de dentro da pasta da ferramenta, com --rootdir, pytest.ini e
+conftest.py próprios (ciclo-03 VSA, Ticket 16): o pytest da fatia inteira a partir
+da raiz quebrava na coleta (módulos de mesmo nome em pastas diferentes) e barrava
+todo commit em modulos/; e a fatia inteira rodava 3 suítes para um arquivo de 1 ferramenta.
 """
 from __future__ import annotations
 
@@ -28,30 +27,19 @@ if str(ROOT_DIR) not in sys.path:
 from scripts.exit_codes import ExitCode
 from scripts.worktree_hermetico import obter_env_sanitizado
 
+_SUBFATIAS = {
+    "forge": "modulos/01-governanca-e-qualidade/core/aidd-forge",
+    "planner": "modulos/01-governanca-e-qualidade/core/aidd-planner",
+    "pure": "modulos/02-triade-motores/fluxo-01-pure/core/aidd-pure",
+    "open": "modulos/02-triade-motores/fluxo-02-open/core/aidd-open",
+    "freedom": "modulos/02-triade-motores/fluxo-03-freedom/core/aidd-freedom",
+    "enterprise": "modulos/03-plataforma-e-entrega/blindagem-enterprise/aidd-enterprise",
+    "master": "modulos/03-plataforma-e-entrega/fatiamento-master/aidd-master",
+    "ops": "modulos/03-plataforma-e-entrega/operacoes-ops/aidd-ops",
+}
+
 FATIAS_MAPA: Dict[str, Dict[str, List[str]]] = {
-    "01-governanca": {
-        "prefixo": ["modulos/01-governanca-e-qualidade"],
-        "suites": [
-            "modulos/01-governanca-e-qualidade/core/aidd-forge",
-            "modulos/01-governanca-e-qualidade/core/aidd-planner",
-        ],
-    },
-    "02-motores": {
-        "prefixo": ["modulos/02-triade-motores"],
-        "suites": [
-            "modulos/02-triade-motores/fluxo-01-pure/core/aidd-pure",
-            "modulos/02-triade-motores/fluxo-02-open/core/aidd-open",
-            "modulos/02-triade-motores/fluxo-03-freedom/core/aidd-freedom",
-        ],
-    },
-    "03-plataforma": {
-        "prefixo": ["modulos/03-plataforma-e-entrega"],
-        "suites": [
-            "modulos/03-plataforma-e-entrega/blindagem-enterprise/aidd-enterprise",
-            "modulos/03-plataforma-e-entrega/fatiamento-master/aidd-master",
-            "modulos/03-plataforma-e-entrega/operacoes-ops/aidd-ops",
-        ],
-    },
+    **{nome: {"prefixo": [suite + "/"], "suites": [suite]} for nome, suite in _SUBFATIAS.items()},
     "core-cli": {
         "prefixo": ["ecossistema.py", "scripts/", "componentes/compartilhado/src-core/"],
         "testes": ["pytest tests/test_ecossistema_lazy_boot.py scripts/test_exit_codes.py tests/test_subgrafos_federados.py tests/test_lazy_skills_scope.py -q"],
@@ -61,7 +49,15 @@ FATIAS_MAPA: Dict[str, Dict[str, List[str]]] = {
 
 def comando_suite() -> List[str]:
     """pytest de uma suíte, rodado com cwd na pasta da ferramenta."""
-    return [sys.executable, "-m", "pytest", "-q", "-p", "no:cacheprovider", "--maxfail=1"]
+    return [sys.executable, "-m", "pytest", "-q", "-p", "no:cacheprovider", "--maxfail=1", "--rootdir=."]
+
+
+def execucoes_da_fatia(root_dir: Path, fatia: str) -> List[Tuple[str, List[str] | str, Path, bool]]:
+    """(rótulo, comando, cwd, shell) de cada comando da fatia."""
+    config = FATIAS_MAPA[fatia]
+    execucoes = [(" ".join(comando_suite()[1:]) + f"  (em {suite})", comando_suite(), root_dir / suite, False)
+                 for suite in config.get("suites", [])]
+    return execucoes + [(cmd, cmd, root_dir, True) for cmd in config.get("testes", [])]
 
 
 def _rodar(cmd, cwd: Path, shell: bool) -> subprocess.CompletedProcess:
@@ -126,10 +122,7 @@ def executar_micro_gates_diff(root_dir: Path, verbose: bool = True) -> int:
         print(f"[MICRO-GATES-DIFF] Fatias afetadas: {', '.join(sorted(fatias))}")
 
     for fatia in sorted(fatias):
-        execucoes = [(" ".join(comando_suite()[1:]) + f"  (em {suite})", comando_suite(), root_dir / suite, False)
-                     for suite in FATIAS_MAPA[fatia].get("suites", [])]
-        execucoes += [(cmd, cmd, root_dir, True) for cmd in FATIAS_MAPA[fatia].get("testes", [])]
-        for rotulo, cmd, cwd, shell in execucoes:
+        for rotulo, cmd, cwd, shell in execucoes_da_fatia(root_dir, fatia):
             if verbose:
                 print(f"[MICRO-GATES-DIFF] Executando gate seletivo da fatia '{fatia}': {rotulo}")
             proc = _rodar(cmd, cwd, shell)
